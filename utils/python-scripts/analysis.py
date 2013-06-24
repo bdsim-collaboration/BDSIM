@@ -13,25 +13,25 @@ def analysis(fileName) :
 
     _plt.figure()
     _plt.subplot(5,1,1)
-    _plt.plot(z,a._analOut[:,0],'+-')    
+    _plt.plot(z,a._analOut[:,0],'-')    
     _plt.ylabel('$N_{particle}$')
 
     _plt.subplot(5,1,2)
-    _plt.plot(z,a._analOut[:,1],'+-')    
-    _plt.plot(z,a._analOut[:,2],'+-')    
+    _plt.plot(z,a._analOut[:,1],'-')    
+    _plt.plot(z,a._analOut[:,2],'-')    
 
     _plt.subplot(5,1,3)
-    _plt.plot(z,a._analOut[:,4],'+-')    
-    _plt.plot(z,a._analOut[:,5],'o-')    
+    _plt.plot(z,a._analOut[:,4],'-')    
+    _plt.plot(z,a._analOut[:,5],'-')    
 
     _plt.subplot(5,1,4)
-    _plt.plot(z,a._analOut[:,6],'+-')
-    _plt.plot(z,a._analOut[:,7],'+-')
+    _plt.plot(z,a._analOut[:,6],'-')
+    _plt.plot(z,a._analOut[:,7],'-')
     _plt.ylabel('$\sigma_{x,y}$')
 
     _plt.subplot(5,1,5)
-    _plt.plot(z,a._analOut[:,8],'+-')
-    _plt.plot(z,a._analOut[:,9],'+-')
+    _plt.plot(z,a._analOut[:,8],'-')
+    _plt.plot(z,a._analOut[:,9],'-')
     _plt.ylabel('$\sigma_{xp,yp}$')
 
     return a  
@@ -48,7 +48,6 @@ def basicSamplerAnalysis(sd) :
     xprms = sd[:,sd._keys['xp']].std()
     yprms = sd[:,sd._keys['yp']].std()
 
-    print xmean,ymean,xpmean,ypmean
     return _np.array([npart,xmean,ymean,zmean,xpmean,ypmean,xrms,yrms,xprms,yprms])
     
 class asciiDataAnalysis : 

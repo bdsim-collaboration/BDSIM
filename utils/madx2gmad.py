@@ -115,7 +115,6 @@ def LHC(ifilename, ofilename ,markers='all') :
         #prepare string to write for that type of element
         stw = ''
         elementname = na[i].replace('.','_').replace('$','_')
-        names.append(elementname)
 
         #To prevent name degeneracy, add integer suffix if name as appeared
         #before.  If it hasn't, don't bother.  Names held in dictionary
@@ -127,7 +126,7 @@ def LHC(ifilename, ofilename ,markers='all') :
         #prepare necessary suffix
         if masternamedict[elementname][0] > 1:
             elementname = elementname + '_' + str(masternamedict[elementname][0]-1)
-        
+        names.append(elementname)
 
         if kw[i] == 'SBEND':
             stw = elementname+': sbend, l='+str(l[i])+'*m, angle='+str(angle[i])
