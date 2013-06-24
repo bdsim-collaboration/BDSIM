@@ -1,8 +1,8 @@
-include twiss.3.5tev.b2.gmad;
+include twiss.4.0tev.b1.gmad;
 include options.gmad
 
 beam,  particle="proton",
-       energy=450 * GeV,
+       energy=4000 * GeV,
        distrType="reference",
        sigmaX=0.002*mm,
        sigmaY=0.002*mm,
