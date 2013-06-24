@@ -77,7 +77,8 @@ class Survey :
 
 class Loader :
     def __init__(self) :
-        self._parserLibFileName = "/Users/sboogert/Physics/general/acc/bdsim/bdsim-mac/parser/libgmadShared.dylib"
+        #self._parserLibFileName = "/Users/sboogert/Physics/general/acc/bdsim/bdsim-mac/parser/libgmadShared.dylib"
+        self._parserLibFileName = "/Users/nevay/physics/reps/bdsim-build/parser/libgmadShared.dylib"
         self._parserLib = _ctypes.cdll.LoadLibrary(self._parserLibFileName)
         
         self._parserLib.get_name.restype    = _ctypes.c_char_p

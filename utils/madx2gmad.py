@@ -104,6 +104,7 @@ def LHC(ifilename, ofilename ,markers='all') :
     elementcount       = 0
     missedelementcount = 0
     names = []
+    masternamedict = {}
     
     stw = '' 
     #iterate over each element in the twiss file
@@ -115,25 +116,41 @@ def LHC(ifilename, ofilename ,markers='all') :
         stw = ''
         elementname = na[i].replace('.','_').replace('$','_')
         names.append(elementname)
+
+        #To prevent name degeneracy, add integer suffix if name as appeared
+        #before.  If it hasn't, don't bother.  Names held in dictionary
+        #check if it's come up before
+        if masternamedict.has_key(elementname) == False:
+            masternamedict[elementname] = [1]
+        else:
+            masternamedict[elementname][0] += 1
+        #prepare necessary suffix
+        if masternamedict[elementname][0] > 1:
+            elementname = elementname + '_' + str(masternamedict[elementname][0]-1)
+        
+
         if kw[i] == 'SBEND':
-            stw = elementname+': sbend, l='+str(l[i])+', angle='+str(angle[i])
+            stw = elementname+': sbend, l='+str(l[i])+'*m, angle='+str(angle[i])
         elif kw[i] == 'RBEND':
             print 'madx2gmad.LHC> warning RBEND not implemented :',elementname
-            stw = elementname+': sbend, l='+str(l[i])+', angle='+str(angle[i])
+            stw = elementname+': sbend, l='+str(l[i])+'*m, angle='+str(angle[i])
         elif kw[i] == 'QUADRUPOLE':
-            stw = elementname+': quadrupole, l='+str(l[i])+', k1='+str(k1l[i])
+            #stw = elementname+': quadrupole, l='+str(l[i])+'*m, k1='+str(k1l[i])
+            #temporary test of l normalisation - k or K???
+            stw = elementname+': quadrupole, l='+str(l[i])+'*m, k1='+str(k1l[i]/l[i])
         elif kw[i] == 'SEXTUPOLE':
-            stw = elementname+': sextupole, l='+str(l[i])+', k2='+str(k2l[i])
+            #stw = elementname+': sextupole, l='+str(l[i])+'*m, k2='+str(k2l[i])
+            stw = elementname+': sextupole, l='+str(l[i])+'*m, k2='+str(k2l[i]/l[i])
         #elif kw[i] == 'MULTIPOLE':
-        #    stw = elementname+': quadrupole, l='+str(l[i])+', k1='+str(k1l[i])
+        #    stw = elementname+': quadrupole, l='+str(l[i])+'*m, k1='+str(k1l[i])
         elif kw[i] == 'VKICKER':
-            stw = elementname+': vkick, l='+str(l[i])
+            stw = elementname+': vkick, l='+str(l[i])+'*m'
         elif kw[i] == 'HKICKER':
-            stw = elementname+': hkick, l='+str(l[i])
+            stw = elementname+': hkick, l='+str(l[i])+'*m'
         elif kw[i] == 'MARKER':
             stw = elementname+': marker'
         elif kw[i] == 'DRIFT' : 
-            stw = elementname+': drift, l='+str(l[i])
+            stw = elementname+': drift, l='+str(l[i])+'*m'
         elif l[i] != 0:
             #if it's something we can't deal with, but has a length
             #put a drift in
