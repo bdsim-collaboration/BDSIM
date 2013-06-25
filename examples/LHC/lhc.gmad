@@ -1,16 +1,17 @@
 include twiss.4.0tev.b1.gmad;
+!include twiss.4.0tev.b2.gmad;
 include options.gmad
 
 beam,  particle="proton",
        energy=4000 * GeV,
-       distrType="reference",
-       sigmaX=0.002*mm,
-       sigmaY=0.002*mm,
+       distrType="gauss",
+       X0= 0.1 * mm,
+       Y0= 0.1 * mm,
+       sigmaX=0.002 * mm,
+       sigmaY=0.002 * mm,
        sigmaXp=0.02*0.005,
        sigmaYp=0.02*0.004;
 
-!use ,period=all;
-
-option, ngenerate=1;
+option, ngenerate=5;
 
 !print, line;

@@ -38,7 +38,7 @@ class asciiData(_np.ndarray) :
         
         # rounded z sampler locations
         z = self[:,self._keys['z']]
-        round = 7
+        round = 11
         self.sampzround = _np.round(z,round)                 
         self.sampz      = _np.unique(self.sampzround)
         self.nsamp      = len(self.sampz)

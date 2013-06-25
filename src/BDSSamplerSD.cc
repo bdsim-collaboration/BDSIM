@@ -34,7 +34,7 @@
 //typedef std::vector<G4int> MuonTrackVector;
 //extern MuonTrackVector* theMuonTrackVector;
 
-#define DEBUG
+// #define DEBUG
 
 extern G4double
   initial_x, initial_xp,
