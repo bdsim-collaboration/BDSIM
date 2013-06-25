@@ -48,7 +48,7 @@ BDSRunAction::~BDSRunAction()
 
 void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 {
-  G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
+  G4cout << "BDSRunAction::BeginOfRunAction> Run number " << aRun->GetRunID() << " start." << G4endl;
   
 
   //  if (G4VVisManager::GetConcreteInstance())
@@ -67,7 +67,7 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
 
   if(BDSGlobalConstants::Instance()->getWaitingForDump()) // synchronization with placet
     {
-      G4cout<<"last event reached! dumping"<<G4endl;
+      G4cout<<"BDSRunAction::EnfOfRunAction> last event reached! dumping"<<G4endl;
       
       G4StackManager* SM = G4EventManager::GetEventManager()->GetStackManager();
       
