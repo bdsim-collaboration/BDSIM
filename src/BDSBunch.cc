@@ -30,15 +30,15 @@ BDSBunch::BDSBunch():
 
 BDSBunch::~BDSBunch()
 {
+  // Delete random number generators
   delete GaussGen;
   delete FlatGen;
 }
 
 // set options from gmad
 
-G4double dummy_val;
-
 void BDSBunch::skip(G4int nvalues){
+  G4double dummy_val;
   for(G4int i=0;i<nvalues;i++) ReadValue(dummy_val);
 }
 
@@ -56,6 +56,7 @@ void BDSBunch::SetOptions(struct Options& opt)
   distType["cain"]=_CAIN;                       // (LC) Bunch bunch collision
   distType["eshell"]=_ESHELL;                   // ?? 
   distType["gausstwiss"]=_GAUSSIAN_TWISS;       // Normal Gaussian Twiss 
+  distType["gaussmatrix"]=_GAUSSIAN_MATRIX;     // Normal Gaussian sigma matrix
 
   nlinesIgnore = opt.nlinesIgnore;
   inputfile=opt.distribFile;
@@ -103,7 +104,7 @@ void BDSBunch::SetOptions(struct Options& opt)
       SetSigmaXp(0.0);
       SetSigmaYp(0.0);
       SetSigmaT(opt.sigmaT);
-      energySpread = opt.sigmaE;            
+      SetEnergySpread(opt.sigmaE);          
       break;
     }
 
@@ -114,22 +115,27 @@ void BDSBunch::SetOptions(struct Options& opt)
       SetSigmaXp(opt.sigmaXp);
       SetSigmaYp(opt.sigmaYp);
       SetSigmaT(opt.sigmaT);
-      energySpread = opt.sigmaE;
+      SetEnergySpread(opt.sigmaE);
       break;
     } 
 
   case _GAUSSIAN_TWISS:
     {
       SetSigmaT(opt.sigmaT);
-      energySpread = opt.sigmaE;
+      SetEnergySpread(opt.sigmaE);
       break;
     } 
+
+  case _GAUSSIAN_MATRIX:
+    {            
+      break;
+    }
     
   case _RING:
     {
       rMin = opt.Rmin;
       rMax = opt.Rmax;
-      energySpread = opt.sigmaE;
+      SetEnergySpread(opt.sigmaE);
       break;
     } 
     
@@ -139,7 +145,7 @@ void BDSBunch::SetOptions(struct Options& opt)
       shelly = opt.shellY;
       shellxp = opt.shellXp;
       shellyp = opt.shellYp;
-      energySpread = opt.sigmaE;
+      SetEnergySpread(opt.sigmaE);
       break;
     }
     
@@ -204,7 +210,7 @@ void BDSBunch::SetOptions(struct Options& opt)
 	  unparsed_str = unparsed_str.substr(pos+1);
 #ifdef DEBUG 
           G4cout<< "BDSBunch : " <<"token ->"<<token<<G4endl;
-	  G4cout << "BDSBunch : token.substr(0,1) -> " << token.substr(0,1) << G4endl;
+	  G4cout<< "BDSBunch : token.substr(0,1) -> " << token.substr(0,1) << G4endl;
 	  G4cout<< "BDSBunch : " <<"unparsed_str ->"<<unparsed_str<<G4endl;
           G4cout<< "BDSBunch : " <<"pos ->"<<pos<<G4endl;
 #endif
@@ -489,8 +495,6 @@ G4double BDSBunch::GetNextZ()
   return 0;
 }
 
-
-
 G4double BDSBunch::GetNextXp()
 {
   return sigmaXp * GaussGen->shoot();
@@ -711,7 +715,12 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * (1 + energySpread * GaussGen->shoot());
       break;
     }
-case _RING:
+  case _GAUSSIAN_MATRIX :
+    {
+      break;
+    }
+
+  case _RING:
     {
 #ifdef DEBUG 
       G4cout<< "BDSBunch : " <<"RING: "<<G4endl
@@ -750,17 +759,17 @@ case _RING:
       
 #ifdef DEBUG 
       G4cout<< "BDSBunch : " <<"SHELL: " 
-            <<" X0= "<<X0<<" m"<<G4endl
-            <<" Y0= "<<Y0<<" m"<<G4endl
-           <<" Z0= "<<Z0<<" m"<<G4endl
-            <<" T0= "<<T0<<" s"<<G4endl
-            <<" Xp0= "<<Xp0<<G4endl
-            <<" Yp0= "<<Yp0<<G4endl
-            <<" Zp0= "<<Zp0<<G4endl
-            <<" shellX= "<<shellx<<" m"<<G4endl
-            <<" shellY= "<<shelly<<" m"<<G4endl
-            <<" shellXp= "<<shellxp<<G4endl
-            <<" shellYp= "<<shellyp<<G4endl
+            <<" X0= " <<X0<<" m"<<G4endl
+            <<" Y0= " <<Y0<<" m"<<G4endl
+	    <<" Z0= " <<Z0<<" m"<<G4endl
+            <<" T0= " <<T0<<" s"<<G4endl
+            <<" Xp0= " <<Xp0<<G4endl
+            <<" Yp0= " <<Yp0<<G4endl
+            <<" Zp0= " <<Zp0<<G4endl
+            <<" shellX= " <<shellx<<" m"<<G4endl
+            <<" shellY= " <<shelly<<" m"<<G4endl
+            <<" shellXp= " <<shellxp<<G4endl
+            <<" shellYp= " <<shellyp<<G4endl
             <<" relative energy spread= "<<energySpread<<G4endl;
 #endif
       
@@ -1227,6 +1236,11 @@ void BDSBunch::SetBetaX(double val)
 void BDSBunch::SetBetaY(double val)
 {
   betaY = val;
+}
+
+void BDSBunch::SetEnergySpread(double val)
+{
+  energySpread = val;
 }
 
 template <typename Type> G4bool  BDSBunch::ReadValue(Type &value){

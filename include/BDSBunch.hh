@@ -61,7 +61,6 @@ public:
   G4double GetBetaX();
   G4double GetBetaY();
 
-
   void SetSigmaT(double);  // set initial bunch distribution parameters in Gaussian case 
   void SetSigmaX(double); 
   void SetSigmaY(double); 
@@ -82,6 +81,8 @@ public:
   void SetBetaX(double);
   void SetBetaY(double);
 
+  void SetEnergySpread(double);
+  
   std::ifstream fifoReader;
 
 private:
@@ -91,6 +92,9 @@ private:
   G4bool verboseEvent;
   G4bool verboseEventNumber;
   G4int  nptwiss;
+
+  // distribution type
+  int distribType;
 
   // distribution centre
   G4double X0;
@@ -116,6 +120,7 @@ private:
   // parameters for the elliptic shell distribution
   G4double shellx, shelly, shellxp, shellyp;
   
+  // twiss parameters
   G4double betaX;
   G4double betaY;
   G4double alphaX;
@@ -123,7 +128,10 @@ private:
   G4double emitX;
   G4double emitY;
 
-  int distribType;
+  // sigma matrix parameters 
+  
+
+  // energy spread
   G4double energySpread;
 
   std::list<struct Doublet> fields;

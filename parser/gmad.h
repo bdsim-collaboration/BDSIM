@@ -79,6 +79,7 @@ enum {
   _CAIN = 8,
   _ESHELL = 9,
   _GAUSSIAN_TWISS = 10,
+  _GAUSSIAN_MATRIX = 11,
   _UDEF = 32
 };
 
@@ -108,6 +109,14 @@ struct Options {
   // for the gaussian beam distribution
   double sigmaX, sigmaXp, sigmaY, sigmaYp;
 
+  // for the gaussian sigma matrix distribution
+  double sigma11, sigma12, sigma13, sigma14, sigma15, sigma16;
+  double sigma21, sigma22, sigma23, sigma24, sigma25, sigma26;
+  double sigma31, sigma32, sigma33, sigma34, sigma35, sigma36;
+  double sigma41, sigma42, sigma43, sigma44, sigma45, sigma46;
+  double sigma51, sigma52, sigma53, sigma54, sigma55, sigma56;
+  double sigma61, sigma62, sigma63, sigma64, sigma65, sigma66;
+  
   // for the elliptic shell distribution
   double shellX, shellXp, shellY, shellYp;
 
@@ -435,7 +444,6 @@ struct Parameters {
   }
   
 };
-
 
 extern std::list<Element> beamline_list;
 extern std::list<Element> material_list;
