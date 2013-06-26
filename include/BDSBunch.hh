@@ -5,9 +5,16 @@
 #ifndef BDSBunch_h
 #define BDSBunch_h 
 
+// BDSIM
 #include "parser/gmad.h"
-#include "Randomize.hh"
 #include "globals.hh"
+
+// CLHEP vector
+#include "Randomize.hh"
+#include "CLHEP/Matrix/Vector.h" 
+#include "CLHEP/Matrix/SymMatrix.h"
+
+// C++ 
 #include <fstream>
 #include <list>
 
@@ -129,7 +136,8 @@ private:
   G4double emitY;
 
   // sigma matrix parameters 
-  
+  CLHEP::HepVector    meansGM;
+  CLHEP::HepSymMatrix sigmaGM;
 
   // energy spread
   G4double energySpread;

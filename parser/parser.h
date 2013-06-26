@@ -1276,7 +1276,7 @@ void set_value(std::string name, double value )
   if(name == "sigmaXp" ) { options.sigmaXp = value; return; }
   if(name == "sigmaYp" ) { options.sigmaYp = value; return; }
 
-  // options for beam distrType="gaussm_matrix"
+  // options for beam distrType="gaussmatrix"
   if(name == "sigma11" ) { options.sigma11 = value; return; }
   if(name == "sigma12" ) { options.sigma12 = value; return; }
   if(name == "sigma13" ) { options.sigma13 = value; return; }
@@ -1284,39 +1284,24 @@ void set_value(std::string name, double value )
   if(name == "sigma15" ) { options.sigma15 = value; return; }
   if(name == "sigma16" ) { options.sigma16 = value; return; }
 
-  if(name == "sigma21" ) { options.sigma21 = value; return; }
   if(name == "sigma22" ) { options.sigma22 = value; return; }
   if(name == "sigma23" ) { options.sigma23 = value; return; }
   if(name == "sigma24" ) { options.sigma24 = value; return; }
   if(name == "sigma25" ) { options.sigma25 = value; return; }
   if(name == "sigma26" ) { options.sigma26 = value; return; }
 
-  if(name == "sigma31" ) { options.sigma31 = value; return; }
-  if(name == "sigma32" ) { options.sigma32 = value; return; }
   if(name == "sigma33" ) { options.sigma33 = value; return; }
   if(name == "sigma34" ) { options.sigma34 = value; return; }
   if(name == "sigma35" ) { options.sigma35 = value; return; }
   if(name == "sigma36" ) { options.sigma36 = value; return; }
 
-  if(name == "sigma41" ) { options.sigma41 = value; return; }
-  if(name == "sigma42" ) { options.sigma42 = value; return; }
-  if(name == "sigma43" ) { options.sigma43 = value; return; }
   if(name == "sigma44" ) { options.sigma44 = value; return; }
   if(name == "sigma45" ) { options.sigma45 = value; return; }
   if(name == "sigma46" ) { options.sigma46 = value; return; }
 
-  if(name == "sigma51" ) { options.sigma51 = value; return; }
-  if(name == "sigma52" ) { options.sigma52 = value; return; }
-  if(name == "sigma53" ) { options.sigma53 = value; return; }
-  if(name == "sigma54" ) { options.sigma54 = value; return; }
   if(name == "sigma55" ) { options.sigma55 = value; return; }
   if(name == "sigma56" ) { options.sigma56 = value; return; }
 
-  if(name == "sigma61" ) { options.sigma61 = value; return; }
-  if(name == "sigma62" ) { options.sigma62 = value; return; }
-  if(name == "sigma63" ) { options.sigma63 = value; return; }
-  if(name == "sigma64" ) { options.sigma64 = value; return; }
-  if(name == "sigma65" ) { options.sigma65 = value; return; }
   if(name == "sigma66" ) { options.sigma66 = value; return; }
     
   // options for beam distrType="eshell"

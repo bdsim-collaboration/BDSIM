@@ -127,7 +127,49 @@ void BDSBunch::SetOptions(struct Options& opt)
     } 
 
   case _GAUSSIAN_MATRIX:
-    {            
+    {       
+      // set means
+      meansGM[0] = X0;
+      meansGM[1] = Xp0;
+      meansGM[2] = Y0;
+      meansGM[3] = Yp0;
+      meansGM[4] = T0;
+      meansGM[5] = 1;
+	
+      // set sigma matrix for generation
+      sigmaGM[0][0] = opt.sigma11;
+      sigmaGM[0][1] = opt.sigma12;
+      sigmaGM[0][2] = opt.sigma13;
+      sigmaGM[0][3] = opt.sigma14;
+      sigmaGM[0][4] = opt.sigma15;
+      sigmaGM[0][5] = opt.sigma16;
+
+      sigmaGM[1][1] = opt.sigma22;
+      sigmaGM[1][2] = opt.sigma23;
+      sigmaGM[1][3] = opt.sigma24;
+      sigmaGM[1][4] = opt.sigma25;
+      sigmaGM[1][5] = opt.sigma26;
+
+      sigmaGM[2][2] = opt.sigma33;
+      sigmaGM[2][3] = opt.sigma34;
+      sigmaGM[2][4] = opt.sigma35;
+      sigmaGM[2][5] = opt.sigma36;
+
+      sigmaGM[3][3] = opt.sigma44;
+      sigmaGM[3][4] = opt.sigma45;
+      sigmaGM[3][5] = opt.sigma46;
+
+      sigmaGM[4][4] = opt.sigma55;
+      sigmaGM[4][5] = opt.sigma56;
+
+      sigmaGM[5][5] = opt.sigma66;
+
+      // Set sigma T 
+      SetSigmaT(opt.sigma55);
+       
+      // Set energy spread
+      SetEnergySpread(opt.sigma66);
+      
       break;
     }
     

@@ -111,11 +111,11 @@ struct Options {
 
   // for the gaussian sigma matrix distribution
   double sigma11, sigma12, sigma13, sigma14, sigma15, sigma16;
-  double sigma21, sigma22, sigma23, sigma24, sigma25, sigma26;
-  double sigma31, sigma32, sigma33, sigma34, sigma35, sigma36;
-  double sigma41, sigma42, sigma43, sigma44, sigma45, sigma46;
-  double sigma51, sigma52, sigma53, sigma54, sigma55, sigma56;
-  double sigma61, sigma62, sigma63, sigma64, sigma65, sigma66;
+  double          sigma22, sigma23, sigma24, sigma25, sigma26;
+  double                   sigma33, sigma34, sigma35, sigma36;
+  double                            sigma44, sigma45, sigma46;
+  double                                     sigma55, sigma56;
+  double                                              sigma66;
   
   // for the elliptic shell distribution
   double shellX, shellXp, shellY, shellYp;
