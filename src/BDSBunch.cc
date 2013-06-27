@@ -8,8 +8,6 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSBunch.hh"
 
-using namespace std;
-
 BDSBunch::BDSBunch():  
   X0(0.0),Y0(0.0),Z0(0.0),T0(0.0),Xp0(0.0),Yp0(0.0),Zp0(1.0),
   sigmaX(0.0),sigmaY(0.0),sigmaT(0.0),sigmaXp(0.0),sigmaYp(0.0),
@@ -23,7 +21,7 @@ BDSBunch::BDSBunch():
   verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
   nptwiss            = BDSExecOptions::Instance()->GetNPTwiss();
 
-  // Instanciate random number generators
+  // Instantiate random number generators
   GaussGen = new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
@@ -44,7 +42,7 @@ void BDSBunch::skip(G4int nvalues){
 
 void BDSBunch::SetOptions(struct Options& opt)
 {
-  map<const G4String, int, strCmp> distType;
+  std::map<const G4String, int, strCmp> distType;
   distType["reference"]=_REFERENCE;             // Reference orbit
   distType["gauss"]=_GAUSSIAN;                  // Gaussian with only diagonal sigma matrix
   distType["ring"]=_RING;                       // Ring in cannonical phase space
@@ -69,7 +67,7 @@ void BDSBunch::SetOptions(struct Options& opt)
   SetEmitX(opt.emitx);
   SetEmitY(opt.emity);
   
-  map<const G4String,int>::iterator iter;
+  std::map<const G4String,int>::iterator iter;
   iter = distType.find(opt.distribType);
   if(iter!=distType.end()) 
     distribType = (*iter).second;
@@ -1043,7 +1041,7 @@ case _RING:
 #endif
       skip((G4int)(nlinesIgnore * fields.size()));
      
-      list<struct Doublet>::iterator it;
+      std::list<struct Doublet>::iterator it;
      for(it=fields.begin();it!=fields.end();it++)
        {
 #ifdef DEBUG 

@@ -431,7 +431,7 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
     for (G4int i=0;i<n_hit;i++)
       {
         G4double Energy=(*hc)[i]->GetEnergy();
-	G4double Zpos=(*hc)[i]->GetZ();;
+	G4double Zpos=(*hc)[i]->GetZ();
 	G4int partID = (*hc)[i]->GetPartID();
 	G4double weight = (*hc)[i]->GetWeight();
 
