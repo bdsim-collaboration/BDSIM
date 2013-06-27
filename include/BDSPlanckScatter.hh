@@ -74,10 +74,10 @@ private:
     G4double itsPlanckMeanFreePath;     
 };
 inline G4bool BDSPlanckScatter::IsApplicable(
-                            const G4ParticleDefinition& particle)
+                            const G4ParticleDefinition& part)
 {
-   return(  (&particle == G4Electron::Electron())
-          ||(&particle == G4Positron::Positron()) );
+   return(  (&part == G4Electron::Electron())
+          ||(&part == G4Positron::Positron()) );
 }
 inline G4double BDSPlanckScatter::GetMeanFreePath(const G4Track&,
                                            G4double,

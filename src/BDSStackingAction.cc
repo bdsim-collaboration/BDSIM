@@ -75,7 +75,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
 	  // if we are in the twiss module - aperture hit is suspicious
 	  if( BDSGlobalConstants::Instance()->DoTwiss() ) 
 	    G4cout<<"WARNING : Electron "<<aTrack->GetParentID()<<" outside of aperture, twiss results will be incorrect"<<
-	      G4endl;;
+	      G4endl;
 
 	}
       

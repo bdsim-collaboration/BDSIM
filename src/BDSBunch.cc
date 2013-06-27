@@ -24,7 +24,7 @@ BDSBunch::BDSBunch():
   verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
   nptwiss            = BDSExecOptions::Instance()->GetNPTwiss();
 
-  // Instanciate random number generators
+  // Instantiate random number generators
   GaussGen = new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 
@@ -49,7 +49,7 @@ void BDSBunch::skip(G4int nvalues){
 
 void BDSBunch::SetOptions(struct Options& opt)
 {
-  map<const G4String, int, strCmp> distType;
+  std::map<const G4String, int, strCmp> distType;
   distType["reference"]=_REFERENCE;             // Reference orbit
   distType["gauss"]=_GAUSSIAN;                  // Gaussian with only diagonal sigma matrix
   distType["ring"]=_RING;                       // Ring in cannonical phase space
@@ -75,7 +75,7 @@ void BDSBunch::SetOptions(struct Options& opt)
   SetEmitX(opt.emitx);
   SetEmitY(opt.emity);
   
-  map<const G4String,int>::iterator iter;
+  std::map<const G4String,int>::iterator iter;
   iter = distType.find(opt.distribType);
   if(iter!=distType.end()) 
     distribType = (*iter).second;
@@ -1148,7 +1148,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 #endif
       skip((G4int)(nlinesIgnore * fields.size()));
      
-      list<struct Doublet>::iterator it;
+      std::list<struct Doublet>::iterator it;
      for(it=fields.begin();it!=fields.end();it++)
        {
 #ifdef DEBUG 

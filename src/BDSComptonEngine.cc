@@ -61,7 +61,7 @@ void BDSComptonEngine::PerformCompton()
       G4double r1=G4UniformRand();
       G4double r2=G4UniformRand();
       if(r1>costh)costh=r1;
-      if(r2>costh)costh=r2;;
+      if(r2>costh)costh=r2;
       if(G4UniformRand()<0.5)costh=-costh;
     }
   

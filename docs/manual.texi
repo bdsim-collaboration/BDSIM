@@ -1362,7 +1362,7 @@ variables if they have been defined previously. It will also recalculate the Twi
 ranges between @code{M} and @code{6}
 @end itemize 
 
-@item @code{distrType}=''eshell'': an infinitely thin elliptic shell in @code{x,x'} and @code{y,y'} with given semiaxes:
+@item @code{distrType}=''eshell'': an infinitely thin elliptic shell (locus) in @code{x,x'} and @code{y,y'} with given semiaxes:
 @itemize @bullet
 @item @code{shellX}
 @item @code{shellXp}

@@ -138,7 +138,7 @@ BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
 
 #ifdef DEBUG
           G4cout<<"*****************SR*************************"<<G4endl;
-          G4cout<<"Track momentum: "<<InitMag<<G4endl;;
+          G4cout<<"Track momentum: "<<InitMag<<G4endl;
           G4cout<<"Blocal="<<Blocal/tesla<<"  Rlocal="<<Rlocal/m<<G4endl;
           G4cout<<track.GetVolume()->GetName()<<" mfp="<<MeanFreePath/m<<G4endl;
           G4cout<<"********************************************"<<G4endl;
