@@ -1,4 +1,5 @@
 import ctypes as _ctypes
+import ctypes as __ctypes
 import numpy as _np
 import matplotlib.pyplot as _plt
 
@@ -77,7 +78,11 @@ class Survey :
 
 class Loader :
     def __init__(self) :
+        self.loadLib()
+    
+    def loadLib(self) :
         self._parserLibFileName = "/Users/sboogert/Physics/general/acc/bdsim/bdsim-mac/parser/libgmadShared.dylib"
+        # self._parserLibFileName = "/Users/nevay/physics/reps/bdsim-build/parser/libgmadShared.dylib"
         self._parserLib = _ctypes.cdll.LoadLibrary(self._parserLibFileName)
         
         self._parserLib.get_name.restype    = _ctypes.c_char_p
@@ -88,7 +93,7 @@ class Loader :
         self._parserLib.get_length.argtypes = [_ctypes.c_int]
         self._parserLib.get_angle.restype   = _ctypes.c_double
         self._parserLib.get_angle.argtypes  = [_ctypes.c_int]
-    
+        
     def load(self, fileName) :
         self._parserLib.gmad_parser_c(fileName)
     
@@ -98,16 +103,30 @@ class Loader :
         length = self._parserLib.get_length(i)
         angle  = self._parserLib.get_angle(i)
         
-        return [name,type,length,angle]
+        d = dict() 
+        d['name']   = name
+        d['type']   = type
+        d['length'] = length
+        d['angle']  = angle
+        
+        return d
 
+    def parseLattice(self) : 
+        '''Parse entire lattice to python''' 
+        nelement = self._parserLib.get_nelements()
+        self._lattice = [] 
+        suml = 0 
+        for i in range(0,nelement,1) : 
+            d = self.getElement(i) 
+            d['suml'] = suml 
+            self._lattice.append(d)
+            suml += d['length']
+        
     def getElementByName(self, name) :
         pass
 
-    def parseLattice(self) : 
-        return 
-
-    
     def printToScreen(self) :
+        '''Print entire lattice to screen''' 
         nelement = self._parserLib.get_nelements()
 
         for i in range(0,nelement,1) : 
@@ -117,3 +136,24 @@ class Loader :
             angle  = self._parserLib.get_angle(i)
             print i,name,type,length,angle        
     
+    def printZeroLength(self) : 
+        '''Print elements with zero length with s location''' 
+        
+        nelement = self._parserLib.get_nelements()
+
+
+        types = [] 
+        sumlength = 0 
+
+        for i in range(0,nelement,1) : 
+            name   = self._parserLib.get_name(i) 
+            type   = self._parserLib.get_type(i) 
+            length = self._parserLib.get_length(i)
+            angle  = self._parserLib.get_angle(i)
+            sumlength += length
+
+            if length == 0.0 and type != 41 : 
+                types.append(type)
+#                print name,type,length,sumlength
+            
+        print _np.unique(types)

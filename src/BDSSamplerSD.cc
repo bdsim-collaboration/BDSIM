@@ -34,6 +34,8 @@
 //typedef std::vector<G4int> MuonTrackVector;
 //extern MuonTrackVector* theMuonTrackVector;
 
+// #define DEBUG
+
 extern G4double
   initial_x, initial_xp,
   initial_y, initial_yp,
@@ -210,8 +212,11 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
       smpHit->SetType(itsType);
 
 #ifdef DEBUG
+      G4cout << "BDSSamplerSD> Sampler : " << SampName << G4endl;
       G4cout << "BDSSamplerSD> Storing hit: E, x, y, z, xPrime, yPrime" << G4endl;
-      G4cout << energy << " " << x << " " << y << " " << z << " " << xPrime << " " << yPrime << G4endl;
+      G4cout << "BDSSamplerSD> " << energy <<" "  << x << " " << y << " " << z << " " << xPrime << " " << yPrime << G4endl;
+      G4cout << "BDSSamplerSD> Storing hit: E, x, y, z, xPrime, yPrime" << G4endl;
+      G4cout << "BDSSamplerSD> " << energy <<" "  << pos.x() << " " << pos.y() << " " << pos.z() << " " << xPrime << " " << yPrime << G4endl;
       G4cout << "BDSSamplerSD> entries in hits collection before inserting hit: " << SamplerCollection->entries() << G4endl;
 #endif
       SamplerCollection->insert(smpHit);

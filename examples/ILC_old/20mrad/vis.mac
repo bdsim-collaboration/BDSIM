@@ -5,8 +5,7 @@
 
 # Invoke the OGLSX driver 
 #  Create a scene handler and a viewer for the OGLSX driver
-#/vis/open OGLSQt 600x600-0+0
-/vis/open OGLSX
+/vis/open OGLIX
 #/vis/open DAWNFILE
 
 # Create an empty scene 
@@ -20,9 +19,12 @@
 /vis/sceneHandler/attach
 
 /vis/viewer/set/background white
-/vis/viewer/set/viewpointThetaPhi 45 45 
-# /vis/viewer/pan -20 0 m
-/vis/viewer/zoom 10
+/vis/viewer/set/viewpointThetaPhi 90 89.999
+/vis/viewer/scaleTo 1 200 1
 
 /tracking/storeTrajectory 1
 
+#
+# for BDS:
+#/vis/viewer/zoom 300
+#/vis/viewer/set/viewpointThetaPhi 3 45

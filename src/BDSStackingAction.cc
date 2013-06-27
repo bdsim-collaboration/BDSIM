@@ -33,8 +33,7 @@ BDSStackingAction::~BDSStackingAction()
 {
 }
 
-G4ClassificationOfNewTrack 
-BDSStackingAction::ClassifyNewTrack(const G4Track * aTrack)
+G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * aTrack)
 {
   G4ClassificationOfNewTrack classification = fUrgent;
 

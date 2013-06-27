@@ -1,4 +1,4 @@
-include ATF2lat_BX10BY1m.gmad;
+include atf_optics.gmad;
 include options.gmad
 
 beam,  particle="e-",
@@ -10,14 +10,11 @@ beam,  particle="e-",
        sigmaYp=0.02*0.004;
 
 
-all  : line = (atfdr, ext, ff, post);
-atf2 : line = (iex,ext,ff,post);
+use ,period=ext;
 
-use ,period=all;
+!sample, range = startl;
+!sample, range = endl;
 
-sample, range = iex;
-sample, range = qm16ff;
+option, ngenerate=2000;
 
-option, ngenerate=100;
-
-print, line;
+!print, line;

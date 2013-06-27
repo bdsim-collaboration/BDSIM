@@ -114,11 +114,11 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     x0 = outputParticle.x; //
     y0 = outputParticle.y; //
     z0 = outputParticle.z; //
-    t = holdingParticle.t;  //
+    t  = holdingParticle.t;  //
     xp = holdingParticle.xp;
     yp = holdingParticle.yp;
     zp = holdingParticle.zp;
-    E = holdingParticle.E;
+    E  = holdingParticle.E;
     weight = holdingParticle.weight;
 
     //flag for secondaries from previous runs

@@ -110,6 +110,7 @@ BDSEventAction::~BDSEventAction()
 
 void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 { 
+  G4cout<<"BDSEventAction::BeginOfEventAction>"<<G4endl;
 #ifdef DEBUG
   G4cout<<"BDSEventAction : processing begin of event action"<<G4endl;
 #endif
