@@ -1,7 +1,7 @@
 beam,  particle="e-",
        energy=1.0 * GeV,
-       distrType="gauss",
-       sigmaX=0.002*mm,
-       sigmaY=0.002*mm,
-       sigmaXp=0.02*0.005,
-       sigmaYp=0.02*0.005;
+       distrType="reference",
+       X0=0.0*mm,
+       Y0=0.0*mm,
+       Xp0=0.0,
+       Yp0=0.0;

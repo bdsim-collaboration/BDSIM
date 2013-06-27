@@ -1355,13 +1355,14 @@ has been chosen:
 @end itemize
 
 @item @code{distrType}=''gaussmatrix'': a gaussian bunch defined by @math{N(N-1)/2} elements of sigma matrix, 
-this overwrites @code{sigmaE} and @code{sigmaT} variables if they have been defined previously.  
+this overwrites @code{sigmaX}, @code{sigmaXp}, @code{sigmaY}, @code{sigmaYp}, @code{sigmaE} and @code{sigmaT} 
+variables if they have been defined previously. It will also recalculate the Twiss parameters. 
 @itemize @bullet
 @item @code{sigmaMN} - @math{\sigma_{MN}} in [m] where @code{M} range between @code{1} and @code{6} and @code{N} 
 ranges between @code{M} and @code{6}
 @end itemize 
 
-@item @code{distrType}=''eshell'': a thin elliptic shell in @code{x,x'} and @code{y,y'} with given semiaxes:
+@item @code{distrType}=''eshell'': an infinitely thin elliptic shell in @code{x,x'} and @code{y,y'} with given semiaxes:
 @itemize @bullet
 @item @code{shellX}
 @item @code{shellXp}

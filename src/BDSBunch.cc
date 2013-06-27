@@ -8,6 +8,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSBunch.hh"
 
+#define DEBUG 1 
 using namespace std;
 
 BDSBunch::BDSBunch():  
@@ -26,6 +27,10 @@ BDSBunch::BDSBunch():
   // Instanciate random number generators
   GaussGen = new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
+
+  // Instanciate vector and matrix for gaussian sigma matrix generation
+  meansGM = CLHEP::HepVector(6);
+  sigmaGM = CLHEP::HepSymMatrix(6);
 }
 
 BDSBunch::~BDSBunch()
@@ -75,7 +80,7 @@ void BDSBunch::SetOptions(struct Options& opt)
   if(iter!=distType.end()) 
     distribType = (*iter).second;
 #ifdef DEBUG 
-  G4cout<< "BDSBunch : " <<"distrType -> "<<opt.distribType<<G4endl;
+  G4cout<< "BDSBunch::SetOptions> distrType : "<<opt.distribType<<G4endl;
 #endif
   //
   // global parameters
@@ -128,6 +133,12 @@ void BDSBunch::SetOptions(struct Options& opt)
 
   case _GAUSSIAN_MATRIX:
     {       
+#ifdef DEBUG
+      G4cout<< "BDSBunch::SetOptions> case _GAUSSIAN_MATRIX " << G4endl;      
+      G4cout<< "BDSBunch::SetOptions> " << X0 << " " << Xp0 << " " << Y0 << " " << Yp0 << " " << T0 << G4endl;
+#endif      
+
+
       // set means
       meansGM[0] = X0;
       meansGM[1] = Xp0;
@@ -164,12 +175,23 @@ void BDSBunch::SetOptions(struct Options& opt)
 
       sigmaGM[5][5] = opt.sigma66;
 
+      // Set gauss sigmas for consistency 
+      
+
       // Set sigma T 
-      SetSigmaT(opt.sigma55);
+      SetSigmaT(sqrt(opt.sigma55));
        
       // Set energy spread
-      SetEnergySpread(opt.sigma66);
+      SetEnergySpread(sqrt(opt.sigma66));
       
+      // make gaussian generator 
+      GaussMultiGen = new CLHEP::RandMultiGauss(*CLHEP::HepRandom::getTheEngine(),
+						meansGM,sigmaGM);   
+
+#ifdef DEBUG
+      G4cout<< "BDSBunch::SetOptions> case _GAUSSIAN_MATRIX break " << G4endl;      
+#endif      					       
+
       break;
     }
     
@@ -559,7 +581,9 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 {
 
 #ifdef DEBUG 
-  G4cout<< "BDSBunch : " <<"Twiss: "<<betaX<<" "<<betaY<<" "<<alphaX<<" "<<alphaY<<" "<<emitX<<" "<<emitY<<G4endl;
+  G4cout<< "BDSBunch::GetNextParticle> Twiss : " << betaX  << " " << betaY  << " " 
+	                                         << alphaX << " " << alphaY << " "
+	                                         << emitX  << " " << emitY  << G4endl;
 #endif
   if(verboseStep) G4cout<< "BDSBunch : " <<"distribution type: "<<distribType<<G4endl;
 
@@ -759,6 +783,36 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
     }
   case _GAUSSIAN_MATRIX :
     {
+#ifdef DEBUG 
+      G4cout<< "BDSBunch::GetNextParticle> V0 : " << X0 << " " << Xp0 << " " << Y0 << " " << Yp0 << " " << T0 << G4endl;
+#endif
+
+      CLHEP::HepVector v = GaussMultiGen->fire();
+      x0 = v[0]*m;
+      xp = v[1]*rad;
+      y0 = v[2]*m;
+      yp = v[3]*rad;
+      t  = v[4];
+      z0 = Z0*m + t*c_light;
+      G4cout << z0 << " " << Z0*m << " " << c_light << " " << t*c_light*mum << G4endl;
+      E  = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * v[5];
+      
+      if (Zp0<0)
+        zp = -sqrt(1.-xp*xp -yp*yp);
+      else
+        zp =  sqrt(1.-xp*xp -yp*yp);
+
+#ifdef DEBUG 
+      G4cout<< "BDSBunch::GetNextParticle>" << " GAUSSIAN_MATRIX : "<<G4endl
+            <<" x0= "<<x0<<" m"<<G4endl
+            <<" y0= "<<y0<<" m"<<G4endl
+            <<" z0= "<<z0<<" m"<<G4endl
+            <<" t= "<<t<<" s"<<G4endl
+            <<" xp= "<<xp<<G4endl
+            <<" yp= "<<yp<<G4endl
+            <<" zp= "<<zp<<G4endl
+            <<" E= "<<E<<G4endl;
+#endif
       break;
     }
 

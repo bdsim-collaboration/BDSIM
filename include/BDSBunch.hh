@@ -13,6 +13,7 @@
 #include "Randomize.hh"
 #include "CLHEP/Matrix/Vector.h" 
 #include "CLHEP/Matrix/SymMatrix.h"
+#include "CLHEP/RandomObjects/RandMultiGauss.h"
 
 // C++ 
 #include <fstream>
@@ -68,7 +69,8 @@ public:
   G4double GetBetaX();
   G4double GetBetaY();
 
-  void SetSigmaT(double);  // set initial bunch distribution parameters in Gaussian case 
+  // set initial bunch distribution parameters in Gaussian case 
+  void SetSigmaT(double);  
   void SetSigmaX(double); 
   void SetSigmaY(double); 
   void SetSigmaXp(double);
@@ -154,9 +156,11 @@ private:
   void CloseBunchFile();
 
  // Gaussian Random number generator:
-  CLHEP::RandGauss* GaussGen;
-  CLHEP::RandFlat*  FlatGen;
-  
+  CLHEP::RandGauss*      GaussGen;
+  CLHEP::RandFlat*       FlatGen;
+  CLHEP::RandMultiGauss* GaussMultiGen;
+
+
   // event number for phase for ellipse for SR rescaling
   G4int partId;
 };
