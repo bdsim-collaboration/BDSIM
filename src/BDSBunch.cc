@@ -794,7 +794,6 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       yp = v[3]*rad;
       t  = v[4];
       z0 = Z0*m + t*c_light;
-      G4cout << z0 << " " << Z0*m << " " << c_light << " " << t*c_light*mum << G4endl;
       E  = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * v[5];
       
       if (Zp0<0)

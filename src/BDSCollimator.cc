@@ -94,7 +94,7 @@ void BDSCollimator::BuildBLMs(){
 
 G4VisAttributes* BDSCollimator::SetVisAttributes()
 {
-  itsVisAttributes=new G4VisAttributes(G4Colour(0.3,0.4,0.2));
+  itsVisAttributes=new G4VisAttributes(G4Colour(0.3,0.4,0.2,0.1));
   itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
