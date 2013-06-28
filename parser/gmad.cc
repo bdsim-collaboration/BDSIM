@@ -76,7 +76,7 @@ void init()
 
   params.flush();
 
-  // Default Values for Options (the rest are set to 0)
+  // Default Values for Options (the rest are set to 0 -- better to do this explicitly! -- JS
 
   options.maximumTrackingTime = 1e-4;
   options.vacuumPressure = 1e-12;
