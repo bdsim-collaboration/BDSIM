@@ -7,6 +7,7 @@
 #  Create a scene handler and a viewer for the OGLSX driver
 /vis/open OGLSX
 #/vis/open DAWNFILE
+#/vis/open RayTracerX
 
 # Create an empty scene 
 /vis/scene/create
@@ -21,7 +22,8 @@
 /vis/viewer/set/background white
 #/vis/viewer/set/viewpointThetaPhi 45 45 
 #/vis/viewer/pan -20 0 m
-#/vis/viewer/zoom 10
+/vis/viewer/zoom 5
+/vis/viewer/refresh
 
 /tracking/storeTrajectory 1
 

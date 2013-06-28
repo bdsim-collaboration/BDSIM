@@ -1206,6 +1206,7 @@ The following options influence the geometry:
 The following options influence the tracking:
 
 @multitable @columnfractions .3 .7
+@item @code{maximumTrackingTime}  @tab maximum tracking time for entire simulation
 @item @code{deltaChord }          @tab chord finder precision
 @item @code{deltaIntersection }   @tab boundary intersection precision
 @item @code{chordStepMinimum }    @tab minimum step size

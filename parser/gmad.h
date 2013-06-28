@@ -87,6 +87,7 @@ enum {
 
 struct Options {
 
+  // list of pyhysics processes 
   std::string physicsList;
 
   // beam parameters
@@ -102,9 +103,17 @@ struct Options {
   double defaultRangeCut;
   double ffact;
   double beamEnergy;
+
+  // initial beam centroid
   double X0, Y0, Z0;
   double Xp0, Yp0, Zp0;
-  double T0, sigmaT;
+  double T0; 
+  
+  // bunch length
+  double sigmaT;
+
+  // initial twiss parameters
+  double betx, bety, alfx, alfy, emitx, emity; 
 
   // for the gaussian beam distribution
   double sigmaX, sigmaXp, sigmaY, sigmaYp;
@@ -125,94 +134,99 @@ struct Options {
 
   // for the gaussian, elliptic shell, ring distributions
   double sigmaE;
- 
-  double betx, bety, alfx, alfy, emitx, emity; // initial twiss parameters
-  int doTwiss;
-  int doPlanckScattering;
-  int checkOverlaps;
-  int numberOfEventsPerNtuple;
+
+  // bdsim options 
+  int       doTwiss;
+  int       doPlanckScattering;
+  int       checkOverlaps;
+  int       numberOfEventsPerNtuple;
   unsigned long int eventNumberOffset;
-  double vacuumPressure;
-  double planckScatterFe;
+
+  double    vacuumPressure;
+  double    planckScatterFe;
 
   // default geometry parameters
-  double componentBoxSize;
-  double tunnelRadius;
-  double beampipeRadius;
-  double beampipeThickness;
+  double    componentBoxSize;
+  double    tunnelRadius;
+  double    beampipeRadius;
+  double    beampipeThickness;
   std::string pipeMaterial;
   std::string vacMaterial;
   std::string tunnelMaterial;
   std::string tunnelCavityMaterial;
   std::string soilMaterial;
 
-  int includeIronMagFields;
+  int      includeIronMagFields;
 
   // tunnel geometry parameters
-  int buildTunnel;
-  int buildTunnelFloor;
-  int showTunnel;
-  double tunnelOffsetX;
-  double tunnelOffsetY;
-  double samplerDiameter;
-  double tunnelThickness;
-  double tunnelSoilThickness;
-  double tunnelFloorOffset;
+  int      buildTunnel;
+  int      buildTunnelFloor;
+  int      showTunnel;
+  double   tunnelOffsetX;
+  double   tunnelOffsetY;
+  double   samplerDiameter;
+  double   tunnelThickness;
+  double   tunnelSoilThickness;
+  double   tunnelFloorOffset;
   
   //Geometry biasing
-  int geometryBias;
+  int      geometryBias;
 
   //BLM geometry
-  double blmRad;
-  double blmLength;
+  double   blmRad;
+  double   blmLength;
 
   //Cross section biasing parameters
-  double gammaToMuFe;
-  double annihiToMuFe;
-  double eeToHadronsFe;
+  double   gammaToMuFe;
+  double   annihiToMuFe;
+  double   eeToHadronsFe;
  
-  int useEMLPB;
-  int useHadLPB;
+  int      useEMLPB;
+  int      useHadLPB;
 
-  int sensitiveBeamlineComponents, sensitiveBeamPipe, sensitiveBLMs;
+  int      sensitiveBeamlineComponents;
+  int      sensitiveBeamPipe;
+  int      sensitiveBLMs;
+ 
+  double   LPBFraction;
 
-  double LPBFraction;
-
-  double thresholdCutCharged;
-  double thresholdCutPhotons;
+  double   thresholdCutCharged;
+  double   thresholdCutPhotons;
   
-  double prodCutPhotons;
-  double prodCutPhotonsP;
-  double prodCutElectrons;
-  double prodCutElectronsP;
-  double prodCutPositrons;
-  double prodCutPositronsP;
+  double   prodCutPhotons;
+  double   prodCutPhotonsP;
+  double   prodCutElectrons;
+  double   prodCutElectronsP;
+  double   prodCutPositrons;
+  double   prodCutPositronsP;
 
-  double deltaChord;
-  double chordStepMinimum;
-  double deltaIntersection;
-  double minimumEpsilonStep;
-  double maximumEpsilonStep;
-  double deltaOneStep;
-  int turnOnCerenkov;
-  int synchRadOn;
-  int decayOn;
-  int synchRescale;
-  int synchTrackPhotons;
-  double synchLowX;
-  double synchLowGamE;
-  int synchPhotonMultiplicity;
-  int synchMeanFreeFactor;
-  double lengthSafety;
+  // Tracking related parameters 
+  double    maximumTrackingTime;
+  double   deltaChord;
+  double   chordStepMinimum;
+  double   deltaIntersection;
+  double   minimumEpsilonStep;
+  double   maximumEpsilonStep;
+  double   deltaOneStep;
+  int      turnOnCerenkov;
+  int      synchRadOn;
+  int      decayOn;
+  int      synchRescale;
+  int      synchTrackPhotons;
+  double   synchLowX;
+  double   synchLowGamE;
+  int      synchPhotonMultiplicity;
+  int      synchMeanFreeFactor;
+  double   lengthSafety;
   long int randomSeed;
 
-  int useTimer;
-  int storeMuonTrajectories;
-  double trajCutGTZ;
-  double trajCutLTR;
-  int storeNeutronTrajectories;
-  int storeTrajectory;
-  int stopTracks;
+  int      useTimer;
+  int      storeMuonTrajectories;
+  double   trajCutGTZ;
+  double   trajCutLTR;
+  int      storeNeutronTrajectories;
+  int      storeTrajectory;
+  int      stopTracks;
 
   std::string fifo; // fifo for BDSIM-placet
   std::string refvolume; //initial starting volume

@@ -1367,6 +1367,7 @@ void set_value(std::string name, double value )
 
 
   // options which influence tracking 
+  if(name == "maximumTrackingTime") {options.maximumTrackingTime = value; return;}
   if(name == "deltaChord") { options.deltaChord = value; return; }
   if(name == "deltaIntersection") { options.deltaIntersection = value; return; }
   if(name == "chordStepMinimum") { options.chordStepMinimum = value; return; }

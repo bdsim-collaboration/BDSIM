@@ -55,28 +55,38 @@ class analysis :
             self._dataDict['yprms'].append(a._yprms)
 
     def plot(self,figureNr=1) :
-        _plt.figure(figureNr)        
-        _plt.subplot(5,1,1)
+        fig = _plt.figure(figureNr)        
+        fig.subplots_adjust(left=0.2,hspace = 0.5)
+
+        ax1 = _plt.subplot(5,1,1)
         _plt.plot(self._dataDict['z'],self._dataDict['npart'],'-')    
-        _plt.ylabel('$N_{particle}$')
-        
-        _plt.subplot(5,1,2)
+        _plt.ylabel('$N_{\\textrm{particle}}$')
+        ax1.yaxis.set_major_locator(_plt.MaxNLocator(3))        
+
+        ax2 = _plt.subplot(5,1,2)
         _plt.plot(self._dataDict['z'],self._dataDict['xmean'],'-')    
-        _plt.plot(self._dataDict['z'],self._dataDict['ymean'],'-')    
-        
-        _plt.subplot(5,1,3)
+        _plt.plot(self._dataDict['z'],self._dataDict['ymean'],'-') 
+        _plt.ylabel('$\\overline{x},\\overline{y}/\\mu\\textrm{m}$')
+        ax2.yaxis.set_major_locator(_plt.MaxNLocator(3))                
+
+        ax3 = _plt.subplot(5,1,3)
         _plt.plot(self._dataDict['z'],self._dataDict['xpmean'],'-')    
-        _plt.plot(self._dataDict['z'],self._dataDict['ypmean'],'-')    
-        
-        _plt.subplot(5,1,4)
+        _plt.plot(self._dataDict['z'],self._dataDict['ypmean'],'-')
+        _plt.ylabel('$\\overline{x^{\prime}},\\overline{y^{\prime}}$')    
+        ax3.yaxis.set_major_locator(_plt.MaxNLocator(3))                
+
+        ax4 = _plt.subplot(5,1,4)
         _plt.plot(self._dataDict['z'],self._dataDict['xrms'],'-')
         _plt.plot(self._dataDict['z'],self._dataDict['yrms'],'-')
-        _plt.ylabel('$\sigma_{x,y}$')
-        
-        _plt.subplot(5,1,5)
+        _plt.ylabel('$\sigma_{x,y}/\\mu\\textrm{m}$')
+        ax4.yaxis.set_major_locator(_plt.MaxNLocator(3))                        
+
+        ax5 = _plt.subplot(5,1,5)
         _plt.plot(self._dataDict['z'],self._dataDict['xprms'],'-')
         _plt.plot(self._dataDict['z'],self._dataDict['yprms'],'-')
         _plt.ylabel('$\sigma_{xp,yp}$')
+        ax5.yaxis.set_major_locator(_plt.MaxNLocator(3))                
+        _plt.xlabel('$S$/m')
 
         _plt.show()
     

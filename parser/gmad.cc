@@ -78,6 +78,7 @@ void init()
 
   // Default Values for Options (the rest are set to 0)
 
+  options.maximumTrackingTime = 1e-4;
   options.vacuumPressure = 1e-12;
   options.planckScatterFe = 1.0;
   options.doPlanckScattering=0;
