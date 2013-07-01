@@ -9,14 +9,13 @@
 #include "BDSBunch.hh"
 
 #define DEBUG 1 
-using namespace std;
 
 BDSBunch::BDSBunch():  
-  X0(0.0),Y0(0.0),Z0(0.0),T0(0.0),Xp0(0.0),Yp0(0.0),Zp0(1.0),
+  distribType(-1),X0(0.0),Y0(0.0),Z0(0.0),T0(0.0),Xp0(0.0),Yp0(0.0),Zp0(1.0),
   sigmaX(0.0),sigmaY(0.0),sigmaT(0.0),sigmaXp(0.0),sigmaYp(0.0),
   rMin(0.0),rMax(0.0),shellx(0.0),shelly(0.0),shellxp(0.0),shellyp(0.0),
   betaX(0.0),betaY(0.0),alphaX(0.0),alphaY(0.0),emitX(0.0),emitY(0.0),
-  distribType(-1),energySpread(0.0),nlinesIgnore(0),partId(0)
+  energySpread(0.0),nlinesIgnore(0),partId(0)
 { 
   verbose            = BDSExecOptions::Instance()->GetVerbose();
   verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
@@ -27,8 +26,9 @@ BDSBunch::BDSBunch():
   // Instantiate random number generators
   GaussGen = new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
+  GaussMultiGen = NULL;
 
-  // Instanciate vector and matrix for gaussian sigma matrix generation
+  // Instantiate vector and matrix for gaussian sigma matrix generation
   meansGM = CLHEP::HepVector(6);
   sigmaGM = CLHEP::HepSymMatrix(6);
 }
@@ -38,6 +38,7 @@ BDSBunch::~BDSBunch()
   // Delete random number generators
   delete GaussGen;
   delete FlatGen;
+  delete GaussMultiGen;
 }
 
 // set options from gmad
