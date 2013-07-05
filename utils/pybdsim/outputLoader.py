@@ -78,6 +78,8 @@ class ascii :
         returns numpy array
         """
 
+        print 'ascii.load>'
+
         dataSet = []
         
         f = open(filename,'r')
@@ -88,6 +90,8 @@ class ascii :
             dataSet.append(map(_np.double,line.strip("\n").split()))
             
         dataSet=_np.array(dataSet)
+
+        print 'ascii.load> end'
 
         return asciiData(dataSet)
 

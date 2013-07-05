@@ -23,6 +23,7 @@ class arrayDict :
 
 class analysis :
     def __init__(self,fileName) : 
+        print 'analysis.__init__>'
         self._asciiLoader   = _ol.ascii() 
         self._data          = self._asciiLoader.load(fileName)
         self._samplerArray  = self._data.getSamplerDataArray()
@@ -39,7 +40,11 @@ class analysis :
         self._dataDict['yrms']   = []
         self._dataDict['xprms']  = []
         self._dataDict['yprms']  = []
-                               
+        
+        self.run()
+
+    def run(self) : 
+        print 'analysis.run>'
         for sa in self._samplerArray : 
             a = asciiAnalysis(sa) 
             self._analysisArray.append(a) 
@@ -55,6 +60,7 @@ class analysis :
             self._dataDict['yprms'].append(a._yprms)
 
     def plot(self,figureNr=1) :
+        print 'analysis.plot>'
         fig = _plt.figure(figureNr)        
         fig.subplots_adjust(left=0.2,hspace = 0.5)
 
