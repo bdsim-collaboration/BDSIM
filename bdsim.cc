@@ -460,7 +460,7 @@ int main(int argc,char** argv) {
   delete BDSGlobalConstants::Instance();
   
 #ifdef DEBUG 
-  G4cout<< __FUNCTION__ << ">BDSRunManager deleting..."<<G4endl;
+  G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif
   delete runManager;
  

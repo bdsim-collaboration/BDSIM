@@ -48,7 +48,7 @@ BDSSamplerSD::BDSSamplerSD(G4String name, G4String type)
    StoreHit(true),itsType(type)
 {
   itsCollectionName="Sampler_"+type;
-  collectionName.insert(itsCollectionName);  
+  collectionName.insert(itsCollectionName);
   //  maxNStepsInSampler=1e4;
 }
 
@@ -57,8 +57,13 @@ BDSSamplerSD::~BDSSamplerSD()
 
 void BDSSamplerSD::Initialize(G4HCofThisEvent*)
 {
-  SamplerCollection = 
-    new BDSSamplerHitsCollection(SensitiveDetectorName,itsCollectionName);
+  // Create Sampler hits collection
+  SamplerCollection = new BDSSamplerHitsCollection(SensitiveDetectorName,itsCollectionName);
+
+  // Record the collection ID for later
+  G4SDManager *SDman = G4SDManager::GetSDMpointer();
+  itsHCID = SDman->GetCollectionID(itsCollectionName);
+
 }
 
 G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
@@ -232,9 +237,13 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 
 void BDSSamplerSD::EndOfEvent(G4HCofThisEvent*HCE)
 {
-  G4SDManager * SDman = G4SDManager::GetSDMpointer();
-  G4int HCID = SDman->GetCollectionID(itsCollectionName);
-  HCE->AddHitsCollection( HCID, SamplerCollection );
+  //  G4SDManager * SDman = G4SDManager::GetSDMpointer();
+  //  G4int HCID = SDman->GetCollectionID(itsCollectionName);
+  //  HCE->AddHitsCollection(HCID, SamplerCollection );
+
+  HCE->AddHitsCollection(itsHCID, SamplerCollection );
+
+
 }
 
 void BDSSamplerSD::clear(){} 

@@ -239,6 +239,7 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   G4cout<<"BDSEventAction : storing energy loss histograms"<<G4endl;
 #endif
 
+#if 0
   for(iEC=theECList->begin();iEC!=theECList->end();iEC++)
     {
       G4String name=(*iEC)->GetCollectionName(0);
@@ -247,14 +248,11 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
       
       if(BDSEnergyCounter_ID>=0)
 	{
-	  BDSEnergyCounter_HC=
-	    (BDSEnergyCounterHitsCollection*)(HCE->GetHC(BDSEnergyCounter_ID));
-	
-	  if(BDSEnergyCounter_HC) bdsOutput->WriteEnergyLoss(BDSEnergyCounter_HC);
-	 
+	  BDSEnergyCounter_HC = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(BDSEnergyCounter_ID));	
+	  if(BDSEnergyCounter_HC) bdsOutput->WriteEnergyLoss(BDSEnergyCounter_HC);	 
 	}
     }
-
+#endif
 
   // if events per ntuples not set (default 0) - only write out at end 
   int evntsPerNtuple = BDSGlobalConstants::Instance()->GetNumberOfEventsPerNtuple();

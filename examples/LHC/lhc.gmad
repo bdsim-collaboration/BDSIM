@@ -12,6 +12,7 @@ beam,  particle="proton",
        sigmaXp=0.02*0.005,
        sigmaYp=0.02*0.004;
 
-option, ngenerate=1;
+option, ngenerate=10;
+! option, nperfile=1;
 
 !print, line;
