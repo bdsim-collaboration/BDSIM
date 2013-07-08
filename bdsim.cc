@@ -17,7 +17,7 @@
 
 #include "BDSDebug.hh" 
 #include "BDSExecOptions.hh"     // executable command line options 
-#include "BDSGlobalConstants.hh" // global parameters
+#include "BDSGlobalConstants.hh" //  global parameters
 
 #include "G4UImanager.hh"        // G4 session managers
 #include "G4UIterminal.hh"
