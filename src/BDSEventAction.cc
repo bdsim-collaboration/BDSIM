@@ -239,7 +239,7 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   G4cout<<"BDSEventAction : storing energy loss histograms"<<G4endl;
 #endif
 
-#if 0
+#if 1
   for(iEC=theECList->begin();iEC!=theECList->end();iEC++)
     {
       G4String name=(*iEC)->GetCollectionName(0);

@@ -237,11 +237,11 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 
 void BDSSamplerSD::EndOfEvent(G4HCofThisEvent*HCE)
 {
-  //  G4SDManager * SDman = G4SDManager::GetSDMpointer();
-  //  G4int HCID = SDman->GetCollectionID(itsCollectionName);
-  //  HCE->AddHitsCollection(HCID, SamplerCollection );
+  G4SDManager * SDman = G4SDManager::GetSDMpointer();
+  G4int HCID = SDman->GetCollectionID(itsCollectionName);
+  HCE->AddHitsCollection(HCID, SamplerCollection );
 
-  HCE->AddHitsCollection(itsHCID, SamplerCollection );
+  //  HCE->AddHitsCollection(itsHCID, SamplerCollection );
 
 
 }

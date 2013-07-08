@@ -208,8 +208,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
 
 void BDSEnergyCounterSD::EndOfEvent(G4HCofThisEvent*HCE)
 {
-  //  G4int HCID = GetCollectionID(0); 
-  //  HCE->AddHitsCollection( HCID, BDSEnergyCounterCollection );
+  G4int HCID = GetCollectionID(0); 
+  HCE->AddHitsCollection( HCID, BDSEnergyCounterCollection );
   
   //  G4SDManager *SDman = G4SDManager::GetSDpointer();
   //  G4int HCID         = SDMan->GetCollectionID(itsName);
