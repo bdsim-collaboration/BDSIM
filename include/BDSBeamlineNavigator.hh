@@ -6,7 +6,7 @@
 
 #include "BDSAcceleratorComponent.hh"
 
-class BDSBeamlineNavigator : public vector<G4Transform3D*> {
+class BDSBeamlineNavigator : public std::vector<G4Transform3D*> {
 public:
   BDSBeamlineNavigator();
   ~BDSBeamlineNavigator();
@@ -40,19 +40,19 @@ private:
   G4RotationMatrix* _rotationGlobal;
   G4RotationMatrix* _rotation;
 
-  list <G4RotationMatrix*> _rotationList;
-  list <G4RotationMatrix*> _rotationGlobalList;
-  list <G4ThreeVector*> _positionList;
-  list <G4ThreeVector*> _positionStartList;
-  list <G4ThreeVector*> _positionEndList;
-  list <G4ThreeVector*> _positionFromCurrentCenterList;
+  std::list<G4RotationMatrix*> _rotationList;
+  std::list<G4RotationMatrix*> _rotationGlobalList;
+  std::list<G4ThreeVector*> _positionList;
+  std::list<G4ThreeVector*> _positionStartList;
+  std::list<G4ThreeVector*> _positionEndList;
+  std::list<G4ThreeVector*> _positionFromCurrentCenterList;
   
-  list<G4RotationMatrix*>::const_iterator  _iterRotation;
-  list<G4RotationMatrix*>::const_iterator  _iterRotationGlobal;
-  list<G4ThreeVector*>::const_iterator  _iterPosition;
-  list<G4ThreeVector*>::const_iterator  _iterPositionStart;
-  list<G4ThreeVector*>::const_iterator  _iterPositionEnd;
-  list<G4ThreeVector*>::const_iterator  _iterPositionFromCurrentCenter;
+  std::list<G4RotationMatrix*>::const_iterator  _iterRotation;
+  std::list<G4RotationMatrix*>::const_iterator  _iterRotationGlobal;
+  std::list<G4ThreeVector*>::const_iterator  _iterPosition;
+  std::list<G4ThreeVector*>::const_iterator  _iterPositionStart;
+  std::list<G4ThreeVector*>::const_iterator  _iterPositionEnd;
+  std::list<G4ThreeVector*>::const_iterator  _iterPositionFromCurrentCenter;
 
   G4double _s_local, _s_total;
 };

@@ -21,6 +21,7 @@
 #include "G4ProcessVector.hh"
 #include "G4ParticleTypes.hh"
 #include "G4ParticleTable.hh"
+#include "G4FastSimulationManagerProcess.hh"
 
 #include "G4Version.hh"
 
@@ -82,7 +83,7 @@
 #if G4VERSION_NUMBER < 950
 #include "G4MuonNucleusProcess.hh"
 #elif G4VERSION_NUMBER < 953
-#include "G4MuNuclearInteraction.hh"*/
+#include "G4MuNuclearInteraction.hh"
 #else 
 #include "G4MuonVDNuclearModel.hh"
 #endif
@@ -770,8 +771,10 @@ void BDSPhysicsList::ConstructMuon()
 #endif
 #if G4VERSION_NUMBER < 950
         pmanager->AddDiscreteProcess(new G4MuonNucleusProcess);     
-#else
+#elif G4VERSION_NUMBER < 953
 	pmanager->AddDiscreteProcess(new G4MuNuclearInteraction);     
+#else 
+	/*	pmanager->AddDiscreteProcess(new G4MuonVDNuclearModel); */
 #endif
       }
     }
@@ -1540,4 +1543,23 @@ void BDSPhysicsList::ConstructSR()
     
   }
   return; 
+}
+
+void BDSPhysicsList::AddParameterisation()
+{
+  G4FastSimulationManagerProcess*
+    theFastSimulationManagerProcess =
+    new G4FastSimulationManagerProcess();
+  G4cout << "FastSimulationManagerProcess" <<G4endl;
+  theParticleIterator->reset();
+  //G4cout<<"---"<<G4endl;                                                                                                                                              
+  while( (*theParticleIterator)() ){
+    //G4cout<<"+++"<<G4endl;                                                                                                                                            
+
+    G4ParticleDefinition* particle = theParticleIterator->value();
+    // G4cout<<"--- particle "<<particle->GetParticleName()<<G4endl;                                                                                                    
+    G4ProcessManager* pmanager = particle->GetProcessManager();
+    // The fast simulation process becomes a discrete process only since 9.0:                                                                                                 
+    pmanager->AddDiscreteProcess(theFastSimulationManagerProcess);
+  }
 }

@@ -103,7 +103,7 @@ private:
   G4Box*             solidWorld;    //pointer to the solid World 
   G4LogicalVolume*   logicWorld;    //pointer to the logical World
   G4VPhysicalVolume* physiWorld;    //pointer to the physical World
-  vector<G4double> itsWorldSize;
+  std::vector<G4double> itsWorldSize;
   std::vector< G4VPhysicalVolume * > fPhysicalVolumeVector; //a vector with all the physical volumes
 
   void DefineMaterials();

@@ -193,8 +193,11 @@ int main(int argc,char** argv) {
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
 
-  if(DEBUG) G4cout<<"constructing phys list"<<G4endl;
+#ifdef DEBUG 
+  G4cout<<"constructing phys list"<<G4endl;
+#endif 
   BDSPhysicsList* PhysList=new BDSPhysicsList;
+  runManager->SetUserInitialization(PhysList);
   
 #ifdef DEBUG 
   G4cout<< __FUNCTION__ << "> User init phys list"<<G4endl;
@@ -440,10 +443,11 @@ int main(int argc,char** argv) {
 #ifdef G4UI_USE
       G4UIExecutive* session = new G4UIExecutive(argc, argv);
 #ifdef G4VIS_USE
-      UIManager->ApplyCommand("/control/execute " + visMacroFile);    
+      UIManager->ApplyCommand("/control/execute " + BDSExecOptions::Instance()->GetVisMacroFilename());    
 #endif
       session->SessionStart();
       delete session;
+#endif
 
 #ifdef G4VIS_USE
 #ifdef DEBUG 

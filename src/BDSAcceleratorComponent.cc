@@ -45,7 +45,6 @@
 #include "G4Transform3D.hh"
 
 
-extern BDSMaterials* theMaterials;
 extern G4RotationMatrix* RotY90;
 extern G4RotationMatrix* RotYM90;
 extern G4RotationMatrix* RotX90;
@@ -113,10 +112,10 @@ void BDSAcceleratorComponent::BuildTunnel()
   } else {
     tunnelMaterialName =BDSGlobalConstants::Instance()->GetTunnelMaterialName();
   }
-  G4Material *tunnelMaterial=theMaterials->GetMaterial(tunnelMaterialName);
+  G4Material *tunnelMaterial=BDSMaterials::Instance()->GetMaterial(tunnelMaterialName);
   
   std::string soilMaterialName =BDSGlobalConstants::Instance()->GetSoilMaterialName();
-  G4Material *soilMaterial=theMaterials->GetMaterial(soilMaterialName);
+  G4Material *soilMaterial=BDSMaterials::Instance()->GetMaterial(soilMaterialName);
 
 
 #ifdef DEBUG

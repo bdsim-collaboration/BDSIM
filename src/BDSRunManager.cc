@@ -23,7 +23,6 @@
 #include "BDSDump.hh"
 #include "BDSWorld.hh"
 
-extern G4int nptwiss;
 
 BDSRunManager* BDSRunManager::fRunManager = 0;
 

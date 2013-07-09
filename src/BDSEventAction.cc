@@ -252,7 +252,7 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 	    (BDSEnergyCounterHitsCollection*)(HCE->GetHC(BDSEnergyCounter_ID));
 	
 	  if(BDSEnergyCounter_HC) 
-	    bdsOutput.WriteEnergyLoss(BDSEnergyCounter_HC);
+	    bdsOutput->WriteEnergyLoss(BDSEnergyCounter_HC);
 	}
     }
 #endif

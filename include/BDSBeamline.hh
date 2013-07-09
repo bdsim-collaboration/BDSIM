@@ -34,10 +34,10 @@ public:
 private: 
   BDSBeamline();
   static BDSBeamline* _instance;
-  list <BDSAcceleratorComponent*> _componentList;
+  std::list <BDSAcceleratorComponent*> _componentList;
 
-  list<BDSAcceleratorComponent*>::const_iterator _iterComponent;
-  list<BDSAcceleratorComponent*>::const_iterator _iterLastComponent;
+  std::list<BDSAcceleratorComponent*>::const_iterator _iterComponent;
+  std::list<BDSAcceleratorComponent*>::const_iterator _iterLastComponent;
   void setRefTransform(BDSAcceleratorComponent* var);
 
 
@@ -57,21 +57,21 @@ private:
   G4RotationMatrix* _rotationGlobal;
   G4RotationMatrix* _rotation;
 
-  list <G4RotationMatrix*> _rotationList;
-  list <G4RotationMatrix*> _rotationGlobalList;
-  list <G4ThreeVector*> _positionList;
-  list <G4ThreeVector*> _positionStartList;
-  list <G4ThreeVector*> _positionEndList;
-  list <G4ThreeVector*> _positionFromCurrentCenterList;
-  list <G4double> _positionSList; //Position along the curvilinear coordiante "s"
+  std::list <G4RotationMatrix*> _rotationList;
+  std::list <G4RotationMatrix*> _rotationGlobalList;
+  std::list <G4ThreeVector*> _positionList;
+  std::list <G4ThreeVector*> _positionStartList;
+  std::list <G4ThreeVector*> _positionEndList;
+  std::list <G4ThreeVector*> _positionFromCurrentCenterList;
+  std::list <G4double> _positionSList; //Position along the curvilinear coordiante "s"
 
-  list<G4RotationMatrix*>::const_iterator  _iterRotation;
-  list<G4RotationMatrix*>::const_iterator  _iterRotationGlobal;
-  list<G4ThreeVector*>::const_iterator  _iterPosition;
-  list<G4ThreeVector*>::const_iterator  _iterPositionStart;
-  list<G4ThreeVector*>::const_iterator  _iterPositionEnd;
-  list<G4ThreeVector*>::const_iterator  _iterPositionFromCurrentCenter;
-  list<G4double>::const_iterator _iterPositionS; //Position along the curvilinear coordinate "s"
+  std::list<G4RotationMatrix*>::const_iterator  _iterRotation;
+  std::list<G4RotationMatrix*>::const_iterator  _iterRotationGlobal;
+  std::list<G4ThreeVector*>::const_iterator  _iterPosition;
+  std::list<G4ThreeVector*>::const_iterator  _iterPositionStart;
+  std::list<G4ThreeVector*>::const_iterator  _iterPositionEnd;
+  std::list<G4ThreeVector*>::const_iterator  _iterPositionFromCurrentCenter;
+  std::list<G4double>::const_iterator _iterPositionS; //Position along the curvilinear coordinate "s"
   G4double _s_local, _s_total;
 };
 

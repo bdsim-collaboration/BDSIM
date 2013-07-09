@@ -6,6 +6,7 @@
 
 #include "BDSGlobalConstants.hh" 
 #include "BDSLWCalorimeter.hh"
+#include "BDSMaterials.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"

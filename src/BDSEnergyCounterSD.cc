@@ -122,7 +122,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 
    G4double weight = aStep->GetTrack()->GetWeight();
    if (weight == 0){
-     G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << endl;
+     G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl;
      exit(1);
    }
    int ptype = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();

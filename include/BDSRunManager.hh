@@ -26,6 +26,7 @@ class BDSRunManager:public G4RunManager
     // its derived class.
 
   private:
+  G4int nptwiss;
   static BDSRunManager* fRunManager;
   int GetNumberOfMesh();
 

@@ -1,4 +1,5 @@
 #include "BDSComponentFactory.hh"
+#include "BDSExecOptions.hh"
 // elements
 //#include "BDSBeamPipe.hh"
 #include "BDSDrift.hh"
@@ -26,7 +27,6 @@
 #include "BDSCollimator.hh"
 //#include "BDSRealisticCollimator.hh"
 
-extern G4bool verbose;
 extern G4bool outline;
 
 #define DEBUG 1
@@ -37,6 +37,7 @@ bool debug1 = false;
 #endif
 
 BDSComponentFactory::BDSComponentFactory(){
+  verbose = BDSExecOptions::Instance()->GetVerbose();
   //
   // compute magnetic rigidity brho
   // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * |charge(e)|)
@@ -75,7 +76,7 @@ BDSComponentFactory::BDSComponentFactory(){
 BDSComponentFactory::~BDSComponentFactory(){
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createComponent(list<struct Element>::iterator elementIter, list<struct Element>& beamline_list){
+BDSAcceleratorComponent* BDSComponentFactory::createComponent(std::list<struct Element>::iterator elementIter, std::list<struct Element>& beamline_list){
   G4cout << "BDSComponentFactory::createComponent() making iterators" << G4endl;  
   _elementIter = elementIter;
   _previousElementIter = elementIter; 
@@ -337,7 +338,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createPCLDrift(){
 					       _element.aperX*m, _element.aperYUp*m, _element.aperYDown*m,_element.aperDy*m, _element.tunnelMaterial, aper, _element.tunnelRadius*m, _element.tunnelOffsetX*m));
       }
     } else {
-    G4cerr << "Element too short!" << endl;
+    G4cerr << "Element too short!" << G4endl;
     return NULL;
   }
 }
@@ -854,7 +855,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole(){
   //
   // magnetic field
   //
-  list<double>::iterator kit;
+  std::list<double>::iterator kit;
   
 #ifdef DEBUG 
   G4cout << " knl={ ";

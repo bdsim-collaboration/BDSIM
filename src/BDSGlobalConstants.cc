@@ -175,8 +175,8 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsIncludeIronMagFields = opt.includeIronMagFields;
   zeroMagField = new G4UniformMagField(G4ThreeVector());
   itsZeroFieldManager=new G4FieldManager();
-  itsZeroFieldManager->SetDetectorField(magField);
-  itsZeroFieldManager->CreateChordFinder(magField);
+  itsZeroFieldManager->SetDetectorField(zeroMagField);
+  itsZeroFieldManager->CreateChordFinder(zeroMagField);
    
 }
 

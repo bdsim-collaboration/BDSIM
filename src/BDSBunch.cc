@@ -1337,3 +1337,34 @@ void BDSBunch::SetBetaY(double val)
 {
   betaY = val;
 }
+
+void BDSBunch::SetEnergySpread(double val)
+{
+  energySpread = val;
+}
+
+template <typename Type> G4bool  BDSBunch::ReadValue(Type &value){
+  InputBunchFile>>value; 
+  if (InputBunchFile.eof()){ //If the end of the file is reached go back to the beginning of the file.
+#ifdef DEBUG
+    G4cout << "BDSBunch.cc> End of file reached. Returning to beginning of file." << G4endl;
+#endif
+    CloseBunchFile();
+    OpenBunchFile();
+    InputBunchFile>>value; 
+  } 
+
+  return !InputBunchFile.eof();
+}
+
+void BDSBunch::OpenBunchFile(){
+  InputBunchFile.open(inputfile);
+  if(!InputBunchFile.good()){ 
+    G4cerr<<"Cannot open bunch file "<<inputfile<<G4endl; 
+    exit(1); 
+  } 
+}
+
+void BDSBunch::CloseBunchFile(){
+  InputBunchFile.close();
+}

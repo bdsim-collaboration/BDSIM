@@ -1020,3 +1020,48 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
 }
 
 //=================================================================
+
+G4double* BDSDetectorConstruction::GetWorldSize(){
+  int s=3;
+  G4double* ret = new G4double[s];
+  for(int i=0; i<s; i++){
+    ret[i]=itsWorldSize[i];
+  }
+  return ret;
+}
+
+G4double BDSDetectorConstruction::GetWorldSizeX(){
+  return itsWorldSize[0];
+}
+
+G4double BDSDetectorConstruction::GetWorldSizeY(){
+  return itsWorldSize[1];
+}
+
+G4double BDSDetectorConstruction::GetWorldSizeZ(){
+  return itsWorldSize[2];
+}
+
+void BDSDetectorConstruction::SetWorldSize(G4double* val){
+  int sExpected = 3;
+  int s=sizeof(val)/sizeof(val[0]);
+  if(s!=sExpected){
+    std::cerr << "Error: BDSDetectorConstruction::SetWorldSize(G4double*) expects an array of size " << sExpected << ". Exiting." << std::endl;
+    exit(1);
+  }
+  for(int i=0; i<s; i++){
+    itsWorldSize[i]=val[i];
+  }
+}
+
+void BDSDetectorConstruction::SetWorldSizeX(G4double val){
+  itsWorldSize[0]=val;
+}
+
+void BDSDetectorConstruction::SetWorldSizeY(G4double val){
+  itsWorldSize[1]=val;
+}
+
+void BDSDetectorConstruction::SetWorldSizeZ(G4double val){
+  itsWorldSize[2]=val;
+}

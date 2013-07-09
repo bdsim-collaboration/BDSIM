@@ -9,11 +9,13 @@ class BDSComponentFactory{
 public:
   BDSComponentFactory();
   ~BDSComponentFactory();
-  BDSAcceleratorComponent* createComponent(list<struct Element>::iterator elementIter, list<struct Element>& beamline_list);
+  BDSAcceleratorComponent* createComponent(std::list<struct Element>::iterator elementIter, std::list<struct Element>& beamline_list);
   BDSAcceleratorComponent* createComponent(Element aElement, Element previousElement, Element nextElement);
   BDSAcceleratorComponent* createComponent();
   
 private:
+  G4bool   verbose;
+  
   G4double _charge, _momentum, _brho;
   G4double _bpRad, _FeRad; 
   // magnetic field moments (depending on the magnet type)
@@ -28,10 +30,10 @@ private:
   G4double _driftLength;
   G4String _driftName ;
   G4double _driftStartAper, _driftEndAper;
-  list<struct Element>::iterator _elementIter, _previousElementIter, _nextElementIter;
+  std::list<struct Element>::iterator _elementIter, _previousElementIter, _nextElementIter;
   
   
-  list<BDSAcceleratorComponent*> itsBeamline;
+  std::list<BDSAcceleratorComponent*> itsBeamline;
   Element _element, _previousElement, _nextElement;
   BDSAcceleratorComponent* createSampler();
   BDSAcceleratorComponent* createCSampler();

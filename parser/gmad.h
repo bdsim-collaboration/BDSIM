@@ -141,12 +141,12 @@ struct Options {
   int       checkOverlaps;
   int       numberOfEventsPerNtuple;
   unsigned long int eventNumberOffset;
+  double    vacuumPressure;
+  double    planckScatterFe; 
 
   // for element specification
   double xsize, ysize;
 
-  int numberOfEventsPerNtuple;
-  unsigned long int eventNumberOffset;
   int backgroundScaleFactor;
 
   // default geometry parameters

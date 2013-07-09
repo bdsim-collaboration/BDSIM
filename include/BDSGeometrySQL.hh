@@ -102,8 +102,6 @@ private:
 
 void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
 
-void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
-
 protected:
 };
 

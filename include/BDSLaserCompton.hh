@@ -105,7 +105,7 @@ inline G4double BDSLaserCompton::GetMeanFreePath(const G4Track& track,
 						 G4double PreviousStepSize,
 						 G4ForceCondition* ForceCondition)
 {
-  if( track.GetMaterial()==theMaterials->GetMaterial("LaserVac") &&
+  if( track.GetMaterial()==BDSMaterials::Instance()->GetMaterial("LaserVac") &&
       FireLaserCompton ) {
     *ForceCondition=Forced;
   }

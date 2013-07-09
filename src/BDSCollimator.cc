@@ -170,7 +170,7 @@ void BDSCollimator::BuildInnerCollimator()
     G4cout << "BDSCollimator: placing aperture" << G4endl;
     itsPhysiComp2 = 
       new G4PVPlacement(
-			nullRotationMatrix0,  // no rotation
+			nullRotationMatrix,  // no rotation
 			nullThreeVector,     // its position
 			itsInnerLogVol,      // its logical volume
 			itsName+"_inner_phys", // its name
