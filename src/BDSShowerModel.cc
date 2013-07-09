@@ -47,6 +47,6 @@ G4bool BDSShowerModel::CheckContainment(const G4FastTrack& fastTrack){
   
   // choose to parameterise or flag when all inetc...
   if(NlateralInside==4) filter=true;
-  // std::cout << " points =   " <<NlateralInside << std::endl;
+  // G4cout << " points =   " <<NlateralInside << G4endl;
   return filter;
 }

@@ -16,14 +16,16 @@ class G4Run;
 
 class BDSRunAction : public G4UserRunAction
 {
-  public:
-    BDSRunAction();
-   ~BDSRunAction();
-
-  public:
-    void BeginOfRunAction(const G4Run*);
-    void EndOfRunAction(const G4Run*);
-
+public:
+  BDSRunAction();
+  ~BDSRunAction();
+  
+public:
+  void BeginOfRunAction(const G4Run*);
+  void EndOfRunAction(const G4Run*);
+  
+private:
+  G4int nptwiss;
 };
 
 #endif

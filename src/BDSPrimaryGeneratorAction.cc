@@ -9,7 +9,7 @@
 
 //==================================================================
 //==================================================================
-#include "BDSGlobalConstants.hh" 
+#include "BDSGlobalConstants.hh" // must be first in include list
 #include "BDSPrimaryGeneratorAction.hh"
 
 #include "BDSDetectorConstruction.hh"
@@ -30,7 +30,7 @@
 
 #include<iostream>
 
-extern BDSBunch theBunch;
+extern BDSBunch bdsBunch;
 
 //===================================================
 // Keep initial point in phase space for diagnostics
@@ -43,7 +43,7 @@ G4double
 
 BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(
 					      BDSDetectorConstruction* BDSDC)
-:BDSDetector(BDSDC)
+  :BDSDetector(BDSDC), itsBDSSynchrotronRadiation(NULL)
 {
  
   particleGun  = new G4ParticleGun(1); // 1-particle gun
@@ -92,6 +92,7 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(
 BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
 {
   delete particleGun;
+  delete itsBDSSynchrotronRadiation;
 }
 
 //===================================================
@@ -105,7 +106,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   particleGun->SetParticleDefinition(BDSGlobalConstants::Instance()->GetParticleDefinition());
 
   if(!BDSGlobalConstants::Instance()->getReadFromStack()){
-    theBunch.GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight); // get next starting point
+    bdsBunch.GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight); // get next starting point
   }
   else if(BDSGlobalConstants::Instance()->holdingQueue.size()!=0){
     tmpParticle holdingParticle = BDSGlobalConstants::Instance()->holdingQueue.front();
@@ -113,11 +114,11 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     x0 = outputParticle.x; //
     y0 = outputParticle.y; //
     z0 = outputParticle.z; //
-    t = holdingParticle.t;  //
+    t  = holdingParticle.t;  //
     xp = holdingParticle.xp;
     yp = holdingParticle.yp;
     zp = holdingParticle.zp;
-    E = holdingParticle.E;
+    E  = holdingParticle.E;
     weight = holdingParticle.weight;
 
     //flag for secondaries from previous runs

@@ -18,7 +18,7 @@
 class BDSSamplerHit :public G4VHit
 {
 public:
-  BDSSamplerHit();
+  //BDSSamplerHit();
   BDSSamplerHit(G4String aName,
 		G4double init_mom,
 		G4double init_x, G4double init_xPrime, 
@@ -204,8 +204,8 @@ public:
   inline G4double GetT() const
     {return itsT;}
 
-  inline void SetS(G4double s)
-    {itsS=s;}
+  inline void SetS(G4double ss)
+    {itsS=ss;}
   inline G4double GetS() const
     {return itsS;}
 

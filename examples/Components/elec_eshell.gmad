@@ -1,0 +1,8 @@
+beam,  particle="e-",
+       energy=1.0 * GeV,
+       distrType="eshell",
+       shellX=0.002*mm,
+       shellY=0.002*mm,
+       shellXp=0.02*0.005,
+       shellYp=0.02*0.005,
+       sigmaE=1e-5;

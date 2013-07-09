@@ -29,17 +29,19 @@
 #include "TH3F.h"
 #endif
 
-const G4int _ASCII = 0;
-const G4int _ROOT = 1;
-const G4int _ASCII_ROOT = 2;
+enum BDSOutputFormat {
+  _ASCII = 0,
+  _ROOT = 1
+  //, _ASCII_ROOT = 2
+};
 
 class BDSOutput {
 
 public: 
   BDSOutput(); // default constructor
-  BDSOutput(G4int format);
+  BDSOutput(BDSOutputFormat format);
 
-  void SetFormat(G4int format);
+  void SetFormat(BDSOutputFormat format);
   void Init(G4int FileNum);
   ~BDSOutput();
 
@@ -56,10 +58,10 @@ public:
 
 #ifdef USE_ROOT
   TFile* theRootOutputFile;
-  TTree *theLWCalorimeterTree;
+  //  TTree *theLWCalorimeterTree;
 
   TH1F *EnergyLossHisto;
-  TH3F *EnergyLossHisto3d;
+  //  TH3F *EnergyLossHisto3d;
   TTree *PrecisionRegionEnergyLossTree;
   TTree *EnergyLossTree;
 #endif
@@ -72,7 +74,7 @@ public:
 private:
   G4String _filename;
   G4int format;
-  ofstream of;
+  std::ofstream of;
   int outputFileNumber;
 
 //#ifdef USE_ROOT

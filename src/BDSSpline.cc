@@ -7,11 +7,11 @@
 #include "globals.hh"
 #include "BDSSpline.hh"
 //---------------
-BDSSpline::BDSSpline(G4int nIn):n(nIn)
+BDSSpline::BDSSpline(G4int nIn):n(nIn),xscal(0),yscal(0)
 {
   G4int i;
-  u= *(new vDbl(n));
-  tab=*(new vTab(n));
+  u=vDbl(n);
+  tab=vTab(n);
   for(i=0;i<n;i++) tab[i]=new BDSSpline_tab_entry();
 
 }
@@ -81,7 +81,7 @@ void BDSSpline::initialise(vDbl* xIn,G4int xscalIn,
     }
 }
 
-G4double BDSSpline::integrate(G4double xIn)
+G4double BDSSpline::integrate(G4double xIn)const
 {
   int kmin,kmax,kpoint;
   double a,b,w;
@@ -142,10 +142,6 @@ BDSSpline::~BDSSpline()
 {
   size_t i;
   for(i=0;i<tab.size();i++)
-    if(tab[i]) delete tab[i];
-  if(&tab)delete &tab;
-
-  if(&u) delete &u;
-
+    delete tab[i];
 }
 

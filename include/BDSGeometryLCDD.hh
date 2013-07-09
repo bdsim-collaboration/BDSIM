@@ -51,8 +51,6 @@
 
 extern BDSMaterials* theMaterials;
 
-//using namespace std;
-
 class BDSClassicalRK4;
 
 struct POS_REF{
@@ -104,7 +102,7 @@ public:
 
   void Construct(G4LogicalVolume *marker);
   std::vector<G4LogicalVolume*> SensitiveComponents;           //For registering the sensitive components
-  std::vector<G4VPhysicalVolume*> itsMultiplePhysicalVolumes;
+  //  std::vector<G4VPhysicalVolume*> itsMultiplePhysicalVolumes;
   std::vector<G4LogicalVolume*> VOL_LIST;
   G4String parseStrChar(xmlChar* value);
   G4double parseDblChar(xmlChar* value);

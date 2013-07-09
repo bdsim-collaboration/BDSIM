@@ -9,7 +9,7 @@ e0=1500*GeV;
 
 beam,  particle="proton",
        energy=1500 * GeV,
-       nparticles=1e+10,
+!       nparticles=1e+10,
        distrType="gauss",
        sigmaX=0.002*mm,
        sigmaY=0.002*mm,

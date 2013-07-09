@@ -32,8 +32,8 @@ class BDSComptonEngine
  
      BDSComptonEngine();
 
-     BDSComptonEngine( G4LorentzVector InGam_FourVec, 
-                      G4LorentzVector InEl_FourVec=0 );
+     BDSComptonEngine(G4LorentzVector InGam_FourVec, 
+                      G4LorentzVector InEl_FourVec );
  
     ~BDSComptonEngine();
 

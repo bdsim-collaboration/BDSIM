@@ -13,10 +13,11 @@
 
 #if G4VERSION_NUMBER > 899
 BDSLaserCompton::BDSLaserCompton(const G4String& processName)
-  :  G4VDiscreteProcess(processName),isInitialised(false)
+  :  G4VDiscreteProcess(processName),//isInitialised(false),
+     itsLaserEnergy(0.0)
 #else
 BDSLaserCompton::BDSLaserCompton(const G4String& processName)
-  :  G4VeEnergyLoss(processName)
+     :  G4VeEnergyLoss(processName), itsLaserEnergy(0.0)
 #endif
 {
   itsLaserWavelength=BDSGlobalConstants::Instance()->GetLaserwireWavelength();
@@ -33,7 +34,10 @@ BDSLaserCompton::BDSLaserCompton(const G4String& processName)
 } 
 
  
-BDSLaserCompton::~BDSLaserCompton(){}
+BDSLaserCompton::~BDSLaserCompton()
+{
+  delete itsComptonEngine;
+}
 
 
 G4VParticleChange* BDSLaserCompton::PostStepDoIt(const G4Track& trackData,

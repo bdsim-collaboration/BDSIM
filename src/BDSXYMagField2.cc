@@ -12,8 +12,8 @@ BDSXYMagField2::BDSXYMagField2( const char* filename )
 	 << "\n      Magnetic field"
 	 << "\n-----------------------------------------------------------";
     
-  G4cout << "\n ---> " "Reading the field grid from " << filename << " ... " << endl; 
-  ifstream file( filename ); // Open the file for reading.
+  G4cout << "\n ---> " "Reading the field grid from " << filename << " ... " << G4endl; 
+  std::ifstream file( filename ); // Open the file for reading.
   
   // Ignore first blank line
   char buffer[256];
@@ -24,7 +24,7 @@ BDSXYMagField2::BDSXYMagField2( const char* filename )
 
   G4cout << "  [ Number of values x,y: " 
 	 << nx << " " << ny << " ] "
-	 << endl;
+	 << G4endl;
 
   // Set up storage space for table
   xField.resize( nx );
@@ -50,7 +50,7 @@ BDSXYMagField2::BDSXYMagField2( const char* filename )
   for (ix=0; ix<nx; ix++) {
     for (iy=0; iy<ny; iy++) {
       file >> xval >> yval >> bx >> by >> bz;
-      //      cout << ii << " " << xval << " " << yval << " " << bx << " " << by << " "  << bz << endl;
+      //      G4cout << ii << " " << xval << " " << yval << " " << bx << " " << by << " "  << bz << G4endl;
       ii++;
       if ( ix==0 && iy==0 ) {
 	minx = xval * lenUnit;
@@ -66,19 +66,19 @@ BDSXYMagField2::BDSXYMagField2( const char* filename )
   maxx = xval * lenUnit;
   maxy = yval * lenUnit;
 
-  G4cout << "\n ---> ... done reading " << endl;
+  G4cout << "\n ---> ... done reading " << G4endl;
 
-  // G4cout << " Read values of field from file " << filename << endl; 
+  // G4cout << " Read values of field from file " << filename << G4endl; 
   G4cout << " ---> assumed the order:  x, y, Bx, By, Bz "
 	 << "\n ---> Min values x,y: " 
 	 << minx/cm << " " << miny/cm << " cm "
 	 << "\n ---> Max values x,y: " 
-	 << maxx/cm << " " << maxy/cm << " " << endl;
+	 << maxx/cm << " " << maxy/cm << " " << G4endl;
 
 
   // Should really check that the limits are not the wrong way around.
-  if (maxx < minx) {swap(maxx,minx); invertX = true;} 
-  if (maxy < miny) {swap(maxy,miny); invertY = true;} 
+  if (maxx < minx) {std::swap(maxx,minx); invertX = true;} 
+  if (maxy < miny) {std::swap(maxy,miny); invertY = true;} 
 
   G4cout << "\nAfter reordering if neccesary"  
 	 << "\n ---> Min values x,y: " 
@@ -90,7 +90,7 @@ BDSXYMagField2::BDSXYMagField2( const char* filename )
   dy = maxy - miny;
   G4cout << "\n ---> Dif values x,y (range): " 
 	 << dx/cm << " " << dy/cm << " " << " cm"
-	 << "\n-----------------------------------------------------------" << endl;
+	 << "\n-----------------------------------------------------------" << G4endl;
 }
 
 void BDSXYMagField2::GetFieldValue(const double point[4],
@@ -128,8 +128,8 @@ void BDSXYMagField2::GetFieldValue(const double point[4],
     
 
 #ifdef DEBUG_INTERPOLATING_FIELD
-    G4cout << "Local x,y: " << xlocal << " " << ylocal << endl;
-    G4cout << "Index x,y: " << xindex << " " << yindex << endl;
+    G4cout << "Local x,y: " << xlocal << " " << ylocal << G4endl;
+    G4cout << "Index x,y: " << xindex << " " << yindex << G4endl;
     double valx0z0, mulx0z0, valx1z0, mulx1z0;
     double valx0z1, mulx0z1, valx1z1, mulx1z1;
     //   valx0z0= table[xindex  ][0];  mulx0z0=  (1-xlocal);

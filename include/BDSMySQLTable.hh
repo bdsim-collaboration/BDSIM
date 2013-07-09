@@ -12,7 +12,6 @@
 #ifndef BDSMySQLTable_h
 #define BDSMySQLTable_h 1
 
-//using namespace std;
 #include <vector>
 
 class BDSMySQLVariable

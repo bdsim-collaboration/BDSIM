@@ -36,7 +36,8 @@ BDSSkewSextupole::BDSSkewSextupole(G4String& aName,G4double aLength,
                                    G4String aTunnelMaterial, G4String aMaterial,
 				   G4double BDblPrime):
   BDSMultipole(aName,aLength, bpRad, FeRad,SetVisAttributes(),blmLocZ, blmLocTheta, aTunnelMaterial,aMaterial),
-  itsBDblPrime(BDblPrime)
+  itsBDblPrime(BDblPrime),
+  itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
 {
   if (!(*LogVolCount)[itsName])
     {
@@ -143,9 +144,6 @@ void BDSSkewSextupole::BuildBPFieldAndStepper()
 BDSSkewSextupole::~BDSSkewSextupole()
 {
   delete itsVisAttributes;
-  delete itsMarkerLogicalVolume;
-  delete itsOuterLogicalVolume;
-  delete itsPhysiComp;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

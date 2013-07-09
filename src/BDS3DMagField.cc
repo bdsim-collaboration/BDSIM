@@ -1,4 +1,6 @@
 //Based on the Geant4 example examples/advanced/purging_magnet/src/PurgMagTabulatedField3D.cc
+#include <iostream>
+
 #include "BDSGlobalConstants.hh"
 #include "BDS3DMagField.hh"
 
@@ -13,8 +15,8 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
 	 << "\n      Magnetic field"
 	 << "\n-----------------------------------------------------------";
     
-  G4cout << "\n ---> " "Reading the field grid from " << filename << " ... " << endl; 
-  ifstream file( filename ); // Open the file for reading.
+  G4cout << "\n ---> " "Reading the field grid from " << filename << " ... " << G4endl; 
+  std::ifstream file( filename ); // Open the file for reading.
   
   // Ignore first blank line
   char buffer[256];
@@ -25,7 +27,7 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
 
   G4cout << "  [ Number of values x,y,z: " 
 	 << nx << " " << ny << " " << nz << " ] "
-	 << endl;
+	 << G4endl;
 
   // Set up storage space for table
   xField.resize( nx );
@@ -74,20 +76,20 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
   maxy = yval * lenUnit;
   maxz = zval * lenUnit;
 
-  G4cout << "\n ---> ... done reading " << endl;
+  G4cout << "\n ---> ... done reading " << G4endl;
 
-  // G4cout << " Read values of field from file " << filename << endl; 
+  // G4cout << " Read values of field from file " << filename << G4endl; 
   G4cout << " ---> assumed the order:  x, y, z, Bx, By, Bz "
 	 << "\n ---> Min values x,y,z: " 
 	 << minx/cm << " " << miny/cm << " " << minz/cm << " cm "
 	 << "\n ---> Max values x,y,z: " 
 	 << maxx/cm << " " << maxy/cm << " " << maxz/cm << " cm "
-	 << "\n ---> The field will be offset by " << zOffset/cm << " cm " << endl;
+	 << "\n ---> The field will be offset by " << zOffset/cm << " cm " << G4endl;
 
   // Should really check that the limits are not the wrong way around.
-  if (maxx < minx) {swap(maxx,minx); invertX = true;} 
-  if (maxy < miny) {swap(maxy,miny); invertY = true;} 
-  if (maxz < minz) {swap(maxz,minz); invertZ = true;} 
+  if (maxx < minx) {std::swap(maxx,minx); invertX = true;} 
+  if (maxy < miny) {std::swap(maxy,miny); invertY = true;} 
+  if (maxz < minz) {std::swap(maxz,minz); invertZ = true;} 
   G4cout << "\nAfter reordering if neccesary"  
 	 << "\n ---> Min values x,y,z: " 
 	 << minx/cm << " " << miny/cm << " " << minz/cm << " cm "
@@ -99,7 +101,7 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
   dz = maxz - minz;
   G4cout << "\n ---> Dif values x,y,z (range): " 
 	 << dx/cm << " " << dy/cm << " " << dz/cm << " cm in z "
-	 << "\n-----------------------------------------------------------" << endl;
+	 << "\n-----------------------------------------------------------" << G4endl;
 }
 
 void BDS3DMagField::GetFieldValue(const double point[4],
@@ -164,8 +166,8 @@ void BDS3DMagField::GetFieldValue(const double point[4],
     
 
 #ifdef DEBUG_INTERPOLATING_FIELD
-    G4cout << "Local x,y,z: " << xlocal << " " << ylocal << " " << zlocal << endl;
-    G4cout << "Index x,y,z: " << xindex << " " << yindex << " " << zindex << endl;
+    G4cout << "Local x,y,z: " << xlocal << " " << ylocal << " " << zlocal << G4endl;
+    G4cout << "Index x,y,z: " << xindex << " " << yindex << " " << zindex << G4endl;
     double valx0z0, mulx0z0, valx1z0, mulx1z0;
     double valx0z1, mulx0z1, valx1z1, mulx1z1;
     //    valx0z0= table[xindex  ][0][zindex];  mulx0z0=  (1-xlocal) * (1-zlocal);

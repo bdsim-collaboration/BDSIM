@@ -1,5 +1,9 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSElement.hh"
+#include "BDSDebug.hh"
+#include "BDSAcceleratorComponent.hh"
+#include "ggmad.hh"
+
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Cons.hh"
@@ -12,17 +16,10 @@
 #include "G4PVPlacement.hh"
 #include "G4UserLimits.hh"
 
-#include "BDSAcceleratorComponent.hh"
-#include "ggmad.hh"
-
-using namespace std;
-
-//void GetMaterial(G4Material*& theMaterial, G4String material);
-
 
 GGmadDriver::GGmadDriver(G4String file)
 {
-  G4cout<<"reading file "<<file<<G4endl;
+  G4cout << __METHOD_NAME__ << "> reading file : " << file << G4endl;
   inputf.open(file);
   if(!inputf.good()) {G4cerr<<"ggmad driver: error  opening input file "<<file<<G4endl; exit(1);}
 }
@@ -34,12 +31,12 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
   G4String token1;
 
   G4double x0=0, y0=0, z0=0, x=0, y=0, z=0; // box parameters
-  G4double rmin, rmax,rmin2, rmax2, phi0, dphi; // cylindrical parameters
+  G4double rmin=0, rmax=0, rmin2=0, rmax2=0, phi0=0, dphi=0; // cylindrical parameters
   G4double x1=0, x2=0, y1=0, y2=0;
   G4double phi=0, theta=0, psi=0; // Euler angles - for rotation of components
   G4String material;
-  G4double FieldX, FieldY, FieldZ;
-  FieldX = FieldY = FieldZ = 0.0;
+  // G4double FieldX, FieldY, FieldZ;
+  // FieldX = FieldY = FieldZ = 0.0;
 
   G4Material *theMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
 
@@ -66,14 +63,14 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	if(getWord() == "{")
 	  {
 	    
-	    while(token = getWord())
+	    while((token = getWord()))
 	      {
 		if (token == "}") break;
 		
 		getParameter(x0,"x0",token); // origin
 		getParameter(y0,"y0",token);
 		getParameter(z0,"z0",token);
-		getParameter(x,"x",token); //half lengthes
+		getParameter(x,"x",token); //half lengths
 		getParameter(y,"y",token);
 		getParameter(z,"z",token);
 		getParameter(phi,"phi",token);
@@ -87,7 +84,7 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    theMaterial = BDSMaterials::Instance()->GetMaterial(material);
 	    
 	  
-	    G4cout<<"creating box : "<<x0<<"  "<<y0<<" "<<z0<<endl;
+	    G4cout<<"creating box : "<<x0<<"  "<<y0<<" "<<z0<<G4endl;
 
 
 	    aBox = new G4Box("aBox" + G4String(count),
@@ -108,15 +105,14 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    rot->rotateZ(2*pi*psi/360.);
 
 	    PhysiComp = 
-	       new G4PVPlacement(
-		      rot,			     // rotation
-		      G4ThreeVector(x0,y0,z0),	                     // at (x0,y0,z0)
-		      lvol,  // its logical volume
-		      "vol_"+G4String(count),	     // its name
-		      marker,     // its mother  volume
-		      false,		     // no boolean operation
-		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		   
-
+	    new G4PVPlacement(
+	      rot,		       // rotation
+	      G4ThreeVector(x0,y0,z0), // at (x0,y0,z0)
+	      lvol,                    // its logical volume
+	      "vol_"+G4String(count),  // its name
+	      marker,                  // its mother  volume
+	      false,		       // no boolean operation
+	      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
 	    count++;
 
 	  } else error();
@@ -127,14 +123,14 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	if(getWord() == "{")
 	  {
 	    
-	    while(token = getWord())
+	    while((token = getWord()))
 	      {
 		if (token == "}") break;
 		
 		getParameter(x0,"x0",token); // origin
 		getParameter(y0,"y0",token);
 		getParameter(z0,"z0",token);
-		getParameter(rmin,"rmin",token); //half lengthes
+		getParameter(rmin,"rmin",token); //half lengths
 		getParameter(rmax,"rmax",token);
 		getParameter(z,"z",token);
 		getParameter(phi0,"phi0",token);
@@ -150,7 +146,7 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    theMaterial = BDSMaterials::Instance()->GetMaterial(material);
 	    
 	    
-	    G4cout<<"creating tubs : "<<x0<<"  "<<y0<<" "<<z0<<endl;
+	    G4cout<<"creating tubs : "<<x0<<"  "<<y0<<" "<<z0<<G4endl;
 	    
 	    // default - tube
 	    phi0 = 0;
@@ -195,16 +191,16 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	if(getWord() == "{")
 	  {
 	    
-	    while(token = getWord())
+	    while((token = getWord()))
 	      {
 		if (token == "}") break;
 		
 		getParameter(x0,"x0",token); // origin
 		getParameter(y0,"y0",token);
 		getParameter(z0,"z0",token);
-		getParameter(rmin,"rmin1",token); //half lengthes
+		getParameter(rmin,"rmin1",token); //half lengths
 		getParameter(rmax,"rmax1",token);
-		getParameter(rmin2,"rmin2",token); //half lengthes
+		getParameter(rmin2,"rmin2",token); //half lengths
 		getParameter(rmax2,"rmax2",token);
 		getParameter(z,"z",token);
 		getParameter(phi0,"phi0",token);
@@ -220,8 +216,8 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    theMaterial = BDSMaterials::Instance()->GetMaterial(material);
 	    
 	    
-	    G4cout<<"creating cons : "<<x0<<"  "<<y0<<" "<<z0<<endl;
-	    G4cout<<"rotation : "<<phi<<"  "<<theta<<" "<<psi<<endl;
+	    G4cout<<"creating cons : "<<x0<<"  "<<y0<<" "<<z0<<G4endl;
+	    G4cout<<"rotation : "<<phi<<"  "<<theta<<" "<<psi<<G4endl;
 	    
 	    // default - tube
 	    phi0 = 0;
@@ -268,7 +264,7 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	if(getWord() == "{")
 	  {
 	    
-	    while(token = getWord())
+	    while((token = getWord()))
 	      {
 		if (token == "}") break;
 		
@@ -276,9 +272,9 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 		getParameter(y0,"y0",token);
 		getParameter(z0,"z0",token);
 		getParameter(x1,"x1",token); //half length at wider side
-		getParameter(x2,"x2",token); // half length at narrow side
-		getParameter(y1,"y1",token); //half lengthes
-		getParameter(y2,"y2",token); //half lengthes
+		getParameter(x2,"x2",token); //half length at narrow side
+		getParameter(y1,"y1",token); //half lengths
+		getParameter(y2,"y2",token); //half lengths
 		getParameter(z,"z",token);
 		getParameter(phi,"phi",token);
 		getParameter(theta,"theta",token);
@@ -292,7 +288,7 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    
 	    
 	    G4cout<<"creating trd : "<<x0<<"  "<<y0<<" "<<z0<<
-		  z<<" "<<y<<" "<<x1<<" "<<x2<<endl;
+		  z<<" "<<y<<" "<<x1<<" "<<x2<<G4endl;
 	    
 	    
 	    aTrd = new G4Trd("aTrd" + G4String(count),

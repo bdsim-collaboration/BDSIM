@@ -10,6 +10,7 @@
 //    beam dumper/reader for online exchange with external codes
 //
 
+#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSDump.hh"
 #include "G4Box.hh"
@@ -43,14 +44,18 @@ BDSDump::BDSDump (G4String aName,G4double aLength, G4String aTunnelMaterial):
   BDSAcceleratorComponent(
 			 aName,
 			 aLength,0,0,0,
-			 SetVisAttributes(), aTunnelMaterial)
+			 SetVisAttributes(), aTunnelMaterial),
+  itsVisAttributes(NULL)
 {
+  nptwiss = BDSExecOptions::Instance()->GetNPTwiss();
+  
   SetName("Dump_"+BDSGlobalConstants::Instance()->StringFromInt(nDumps)+"_"+itsName);
   DumpLogicalVolume();
   const int nParticles = nptwiss;
   BDSGlobalConstants::Instance()->referenceQueue.push_back(new G4double[nParticles]);
   ++nDumps;
   //G4int nDumps=(*LogVolCount)[itsName];
+
   //BDSRoot->SetDumpNumber(nDumps);
 
  
@@ -115,7 +120,6 @@ G4VisAttributes* BDSDump::SetVisAttributes()
 
 BDSDump::~BDSDump()
 {
-  if(itsVisAttributes) delete itsVisAttributes;
-  if(itsUserLimits) delete itsUserLimits;
+  delete itsVisAttributes;
   nDumps--;
 }

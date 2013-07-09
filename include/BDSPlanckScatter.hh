@@ -57,7 +57,7 @@ class BDSPlanckScatter : public G4VeEnergyLoss
 
   protected:
 
-     virtual G4double SecondaryEnergyThreshold(size_t index);
+  //     virtual G4double SecondaryEnergyThreshold(size_t index);
 
   private:
 
@@ -65,7 +65,7 @@ class BDSPlanckScatter : public G4VeEnergyLoss
      
      BDSPlanckScatter(const BDSPlanckScatter&);
 
-     const std::vector<G4double>* secondaryEnergyCuts;
+  //     const std::vector<G4double>* secondaryEnergyCuts;
 
 private:
     G4double itsTemperature;
@@ -74,10 +74,10 @@ private:
     G4double itsPlanckMeanFreePath;     
 };
 inline G4bool BDSPlanckScatter::IsApplicable(
-                            const G4ParticleDefinition& particle)
+                            const G4ParticleDefinition& part)
 {
-   return(  (&particle == G4Electron::Electron())
-          ||(&particle == G4Positron::Positron()) );
+   return(  (&part == G4Electron::Electron())
+          ||(&part == G4Positron::Positron()) );
 }
 inline G4double BDSPlanckScatter::GetMeanFreePath(const G4Track&,
                                            G4double,
@@ -93,10 +93,9 @@ inline void BDSPlanckScatter::SetTemperature(G4double aTemperature)
 inline G4double BDSPlanckScatter::GetTemperature()
 {return itsTemperature;}
 
-inline G4double BDSPlanckScatter::SecondaryEnergyThreshold(size_t index)
-{
-  return (*secondaryEnergyCuts)[index];
-}
-
+// inline G4double BDSPlanckScatter::SecondaryEnergyThreshold(size_t index)
+// {
+//   return (*secondaryEnergyCuts)[index];
+// }
 
 #endif

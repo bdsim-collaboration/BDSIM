@@ -29,7 +29,9 @@ G4double aWavelength, G4ThreeVector aDirection):
   BDSAcceleratorComponent(
     aName,
     aLength,0,0,0,
-    SetVisAttributes())
+    SetVisAttributes()),
+  itsVisAttributes(NULL),itsLaserCompton(NULL),
+  itsLaserDirection(aDirection),itsLaserWavelength(aWavelength)
 {
   LaserWireLogicalVolume();
   BDSGlobalConstants::Instance()->
@@ -74,6 +76,5 @@ G4VisAttributes* BDSLaserWire::SetVisAttributes()
 BDSLaserWire::~BDSLaserWire()
 {
   delete itsVisAttributes;
-  delete itsUserLimits;
   delete itsLaserCompton;
 }

@@ -3,7 +3,7 @@
 ! beamline parameters
 option, beampipeRadius = 15 * cm,
         boxSize = 1.0 * m,
-        tunnelRadius= 100.0 * m,
+        tunnelRadius= 1.0 * m,
         beampipeThickness = 0.1 * cm,
         chordStepMinimum = 0.0000000001 * m,
         deltaIntersection = 0.00000001 * m,
@@ -53,7 +53,7 @@ sample, range=mk;
 
 beam,  particle="e-",
        energy=10.0 * GeV,
-       nparticles=1e+3,
+!       nparticles=1e+3,
        distrType="gauss",
        sigmaX=0.01,
        sigmaY=0.01;

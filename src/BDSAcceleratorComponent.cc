@@ -17,6 +17,12 @@
 //
 //
 
+
+#include <list>
+#include <sstream>
+#include <string>
+#include <cmath>
+
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSAcceleratorComponent.hh"
@@ -37,8 +43,9 @@
 #include "G4UnionSolid.hh"
 #include "G4AssemblyVolume.hh"
 #include "G4Transform3D.hh"
-#include <sstream>
 
+
+extern BDSMaterials* theMaterials;
 extern G4RotationMatrix* RotY90;
 extern G4RotationMatrix* RotYM90;
 extern G4RotationMatrix* RotX90;
@@ -82,48 +89,12 @@ void BDSAcceleratorComponent::AlignComponent(G4ThreeVector& TargetPos,
 
 BDSAcceleratorComponent::~BDSAcceleratorComponent ()
 {
-  if(itsOuterLogicalVolume)delete itsOuterLogicalVolume;
-  //  if(itsBeamPipe)delete itsBeamPipe;
-  if(itsBDSEnergyCounter)delete itsBDSEnergyCounter;
-  if(itsOuterUserLimits)delete itsOuterUserLimits;
-  if(itsOuterLogicalVolume)delete itsOuterLogicalVolume;
-  if(itsMarkerLogicalVolume)delete itsMarkerLogicalVolume;
-  if(itsInnerBeampipeUserLimits)delete itsInnerBeampipeUserLimits;
-  //Solid shapes used in building tunnel
-  delete itsTunnelSolid;
-  delete itsSoilSolid;
-  delete itsInnerTunnelSolid;
-  delete itsTunnelCavity;
-  delete itsLargerTunnelCavity;
-  delete itsLargerInnerTunnelSolid; 
-  delete itsTunnelMinusCavity;
-  delete itsTunnelSizedBlock;
-  delete itsMarkerSolidVolume;
-  //Tunnel logical volumes
-  delete itsSoilTunnelLogicalVolume;
-  delete itsTunnelCavityLogicalVolume;
-  delete  itsTunnelMinusCavityLogicalVolume;
-  //Tunnel physical volumes
-  delete itsTunnelPhysiInner;
-  delete itsTunnelPhysiComp;
-  delete itsTunnelPhysiCompSoil;
-  //Tunnel user limits
-  delete itsTunnelUserLimits;
-  delete itsSoilTunnelUserLimits;
-  delete itsInnerTunnelUserLimits;
-
-  delete nullRotationMatrix;
-  delete tunnelRot;
-  delete gateRot;
-  delete gateMaterial;
   delete VisAtt;
   delete VisAtt1;
   delete VisAtt2;
   delete VisAtt3;
   delete VisAtt4;
   delete VisAtt5;
-  delete itsBLMSolid;
-  delete itsBlmOuterSolid;
 }
 
 void BDSAcceleratorComponent::BuildTunnel()
@@ -142,14 +113,11 @@ void BDSAcceleratorComponent::BuildTunnel()
   } else {
     tunnelMaterialName =BDSGlobalConstants::Instance()->GetTunnelMaterialName();
   }
-  G4Material *tunnelMaterial=BDSMaterials::Instance()->GetMaterial(tunnelMaterialName);
+  G4Material *tunnelMaterial=theMaterials->GetMaterial(tunnelMaterialName);
   
   std::string soilMaterialName =BDSGlobalConstants::Instance()->GetSoilMaterialName();
-  G4Material *soilMaterial=BDSMaterials::Instance()->GetMaterial(soilMaterialName);
+  G4Material *soilMaterial=theMaterials->GetMaterial(soilMaterialName);
 
-
-
-   
 
 #ifdef DEBUG
   G4cout << "Soil :"
@@ -516,7 +484,7 @@ void BDSAcceleratorComponent::BuildBLMs()
    itsBlmLocationR = itsBlmLocationR + BDSGlobalConstants::Instance()->GetBlmRad() + BDSGlobalConstants::Instance()->GetLengthSafety() +itsBpRadius + blmCaseThickness;
    
 #ifdef DEBUG
-   G4cout << "BDSAccleratorComponent::BuildBLMs() itsBlmLocationRadius = " << itsBlmLocationR/mm << " mm" << G4endl;
+   G4cout << "BDSAcceleratorComponent::BuildBLMs() itsBlmLocationRadius = " << itsBlmLocationR/mm << " mm" << G4endl;
 #endif
    
    G4double localLength;
@@ -535,15 +503,15 @@ void BDSAcceleratorComponent::BuildBLMs()
    }
    
    G4int i = 0;
-   list<double>::iterator zit;
-   list<double>::iterator thetait;
+   std::list<double>::iterator zit;
+   std::list<double>::iterator thetait;
    for (zit=itsBlmLocZ.begin(), thetait=itsBlmLocTheta.begin(); zit!=itsBlmLocZ.end(); zit++, thetait++){
 #ifdef DEBUG
      G4cout << "Building BLM " << i << G4endl; 
 #endif
      G4double indexInt = (G4double)i;
-     string index;
-     stringstream out;
+     std::string index;
+     std::stringstream out;
      out << indexInt;
      index = out.str();
      
@@ -555,8 +523,8 @@ void BDSAcceleratorComponent::BuildBLMs()
      
 #ifdef DEBUG
      if((*zit*1000) < 0){
-       G4cout << "itsLength is: " << itsLength << endl;
-       G4cout << "z position defined is: " << (*zit*1000) << endl;
+       G4cout << "itsLength is: " << itsLength << G4endl;
+       G4cout << "z position defined is: " << (*zit*1000) << G4endl;
      }
 #endif
      

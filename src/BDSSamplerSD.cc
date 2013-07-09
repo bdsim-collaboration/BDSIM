@@ -42,11 +42,12 @@ extern G4double
 
 
 BDSSamplerSD::BDSSamplerSD(G4String name, G4String type)
-  :G4VSensitiveDetector(name),StoreHit(true),itsType(type)
+  :G4VSensitiveDetector(name),SamplerCollection(NULL),StepperNavigator(NULL),
+   StoreHit(true),itsType(type)
 {
   itsCollectionName="Sampler_"+type;
-  collectionName.insert(itsCollectionName);  
-  maxNStepsInSampler=1e4;
+  collectionName.insert(itsCollectionName);
+  //  maxNStepsInSampler=1e4;
 }
 
 BDSSamplerSD::~BDSSamplerSD()
@@ -54,15 +55,20 @@ BDSSamplerSD::~BDSSamplerSD()
 
 void BDSSamplerSD::Initialize(G4HCofThisEvent*)
 {
-  SamplerCollection = 
-    new BDSSamplerHitsCollection(SensitiveDetectorName,itsCollectionName);
+  // Create Sampler hits collection
+  SamplerCollection = new BDSSamplerHitsCollection(SensitiveDetectorName,itsCollectionName);
+
+  // Record the collection ID for later
+  G4SDManager *SDman = G4SDManager::GetSDMpointer();
+  itsHCID = SDman->GetCollectionID(itsCollectionName);
+
 }
 
 G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
   G4Track* theTrack = aStep->GetTrack();
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
-  G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
+  //  G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
   //  // tmp - only store muons
   //     G4String pName=theTrack->GetDefinition()->GetParticleName();
   //    if(pName=="mu+"||pName=="mu-")
@@ -133,10 +139,11 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
       G4int nSampler=theTrack->GetVolume()->GetCopyNo()+1;
       G4String SampName = theTrack->GetVolume()->GetName()+"_"+BDSGlobalConstants::Instance()->StringFromInt(nSampler);
       G4int PDGtype=theTrack->GetDefinition()->GetPDGEncoding();
+
       G4String pName=theTrack->GetDefinition()->GetParticleName();
       
 #ifdef DEBUG
-      G4cout << "BDSSamplerSD> Paricle name: " << pName << G4endl;  
+      G4cout << "BDSSamplerSD> Particle name: " << pName << G4endl;  
       G4cout << "BDSSamplerSD> PDG encoding: " << PDGtype << G4endl;  
       G4cout << "BDSSamplerSD> TrackID: " << TrackID << G4endl;  
 #endif
@@ -209,16 +216,20 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
       smpHit->SetType(itsType);
 
 #ifdef DEBUG
+      G4cout << "BDSSamplerSD> Sampler : " << SampName << G4endl;
       G4cout << "BDSSamplerSD> Storing hit: E, x, y, z, xPrime, yPrime" << G4endl;
-      G4cout << energy << " " << x << " " << y << " " << z << " " << xPrime << " " << yPrime << G4endl;
+      G4cout << "BDSSamplerSD> " << energy <<" "  << x << " " << y << " " << z << " " << xPrime << " " << yPrime << G4endl;
+      G4cout << "BDSSamplerSD> Storing hit: E, x, y, z, xPrime, yPrime" << G4endl;
+      G4cout << "BDSSamplerSD> " << energy <<" "  << pos.x() << " " << pos.y() << " " << pos.z() << " " << xPrime << " " << yPrime << G4endl;
       G4cout << "BDSSamplerSD> entries in hits collection before inserting hit: " << SamplerCollection->entries() << G4endl;
 #endif
       SamplerCollection->insert(smpHit);
 #ifdef DEBUG
       G4cout << "BDSSamplerSD> entries in hits collection after inserting hit: " << SamplerCollection->entries() << G4endl;
 #endif
-      nStepsInSampler=0;
+      //      nStepsInSampler=0;
       return true;
+
     }
   }
   return false;
@@ -228,7 +239,11 @@ void BDSSamplerSD::EndOfEvent(G4HCofThisEvent*HCE)
 {
   G4SDManager * SDman = G4SDManager::GetSDMpointer();
   G4int HCID = SDman->GetCollectionID(itsCollectionName);
-  HCE->AddHitsCollection( HCID, SamplerCollection );
+  HCE->AddHitsCollection(HCID, SamplerCollection );
+
+  //  HCE->AddHitsCollection(itsHCID, SamplerCollection );
+
+
 }
 
 void BDSSamplerSD::clear(){} 

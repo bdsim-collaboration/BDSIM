@@ -8,9 +8,6 @@ Symbol table for numeric variables and functions
 #define _INT 0
 #define _DOUBLE 1
 #define _ARRAY 2
-
-
-using namespace std;
  
 #define NSYMS 65532
  
@@ -20,7 +17,7 @@ struct symtab {
   char *name;
   double (*funcptr)(double);
   double value;
-  list<double> array;
+  std::list<double> array;
 };
  
 struct symtab *symlook();

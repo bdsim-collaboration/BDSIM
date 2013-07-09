@@ -1,0 +1,283 @@
+cmake_minimum_required(VERSION 2.6.4)
+
+project(BDSIM) 
+
+# project version
+set( BDSIM_MAJOR_VERSION 0 )
+set( BDSIM_MINOR_VERSION 6 )
+set( BDSIM_PATCH_LEVEL 0 )
+set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
+
+message(STATUS "Configuring BDSIM ${BDSIM_VERSION}")
+
+# add source dir as a place for CMake modules (e.g. FindGSL.cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
+
+# With this true we automatically include current src/binary directory
+set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+
+# Default build type (defines different sets of flags)
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
+       "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel DebugProf DebugCoverage."
+       FORCE)
+endif()
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    add_definitions("-g -DDEBUG")
+endif()
+message(STATUS "Build Type   ${CMAKE_BUILD_TYPE}")
+
+# Check for Scientific Linux
+if(UNIX)
+    if("${CMAKE_SYSTEM}" MATCHES "el5")
+        set(RHL5 TRUE)
+    elseif("${CMAKE_SYSTEM}" MATCHES "el6")
+        set(RHL6 TRUE)
+    endif()
+    if(RHL5 OR RHL6)
+        set(RHL TRUE)
+    endif()
+endif()
+
+# We use afs version of Geant4/CLHEP if we are on afs by default:
+if(EXISTS "/afs/cern.ch" AND RHL5)
+    option(USE_AFS "Use Geant4/CLHEP libraries from AFS" OFF)
+else()
+    option(USE_AFS "Use Geant4/CLHEP libraries from AFS" OFF)
+endif()
+
+# CLHEP
+if (USE_AFS AND NOT CLHEP_LIBRARY_DIR)
+   if (APPLE)
+      set(CLHEP_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.0.1/x86_64-mac106-gcc42-opt/include)
+      set(CLHEP_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.0.1/x86_64-mac106-gcc42-opt/lib)
+   else ()
+      set(CLHEP_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.0.1/x86_64-slc5-gcc43-opt/include)
+      set(CLHEP_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.0.1/x86_64-slc5-gcc43-opt/lib)
+   endif()
+endif()
+
+set(CLHEP_VERSION 9)
+find_package(CLHEP REQUIRED)
+include_directories(${CLHEP_INCLUDE_DIR})
+
+# ROOT
+if(USE_AFS)
+   # add ROOT afs library to PATH (only in cmake)
+   if (APPLE)
+       set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.03/x86_64-mac106-gcc42-opt/root")
+   else()
+       set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.03/x86_64-slc5-gcc43-opt/root")
+   endif()
+endif()
+
+if(USE_ROOT)
+    find_package(ROOT REQUIRED)
+else()
+    find_package(ROOT)
+endif()
+if(ROOT_FOUND)
+    option(USE_ROOT "Include ROOT support."  ON )
+else()
+    option(USE_ROOT "Include ROOT support."  OFF )
+endif()
+if(USE_ROOT)
+    add_definitions("-DUSE_ROOT")
+    include_directories(${ROOT_INCLUDE_DIR})
+    message(STATUS "ROOT support ON")
+endif()
+
+# add xercesc include path:
+if(USE_AFS)
+   if(APPLE)
+      set(XercesC_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.0/x86_64-mac106-gcc42-opt/include)
+      set(XercesC_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.0/x86_64-mac106-gcc42-opt/lib)
+   else()
+      set(XercesC_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.0/x86_64-slc5-gcc43-opt/include)
+      set(XercesC_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.0/x86_64-slc5-gcc43-opt/lib)
+   endif()
+endif()
+find_package(XercesC)
+
+# GDML (on by default)
+if(XercesC_FOUND)
+     option( USE_GDML "Include GDML support."  ON )
+else()
+    option( USE_GDML "Include GDML support."  OFF )
+endif()
+if(USE_GDML)
+    add_definitions("-DUSE_GDML")
+    include_directories(${XercesC_INCLUDE_DIR})
+    message(STATUS "GDML support ON")
+endif()
+
+# LCDD (on by default if xml libraries are found, todo fix for AFS!)
+
+#include XML directory
+find_path(XML2_INCLUDE_DIR NAMES libxml2)
+set(XML_INCLUDE_DIR ${XML2_INCLUDE_DIR}/libxml2)
+if($ENV{VERBOSE})
+    message(STATUS "XML_INCLUDE_DIR: ${XML_INCLUDE_DIR}")
+endif()
+find_library(XML_LIBRARIES NAMES xml2 PATH_SUFFIXES xml2)
+if(XML_LIBRARIES)
+    MESSAGE(STATUS "Looking for XML2... - found")
+else()
+    MESSAGE(STATUS "Looking for XML2... - Not found")
+endif(XML_LIBRARIES)
+if($ENV{VERBOSE})
+    message(STATUS "XML_LIBRARIES: ${XML_LIBRARIES}")
+endif()
+
+if(XML_LIBRARIES)
+    option( USE_LCDD "Include LCDD support."  ON )
+else()
+    option( USE_LCDD "Include LCDD support."  OFF )
+endif()
+if(USE_LCDD)
+    add_definitions("-DUSE_LCDD")
+    include_directories(${XML_INCLUDE_DIR})
+    message(STATUS "LCDD support ON")
+endif()
+
+
+# Try first with Geant4 built-in Config (versions 9.5 and higher should have it):
+if ($ENV{VERBOSE})
+   set(Geant4_CONFIG_DEBUG TRUE)
+endif()
+
+find_package(Geant4 QUIET COMPONENTS ui_all vis_all CONFIG PATHS ${Geant4_PREFIX})
+
+if (Geant4_FOUND)
+      include(${Geant4_USE_FILE})
+      message(STATUS "Geant4 Definitions: ${Geant4_DEFINITIONS}")
+
+      if($ENV{VERBOSE})
+        message(STATUS "Geant4_INCLUDE_DIRS: ${Geant4_INCLUDE_DIRS}")
+        message(STATUS "Geant4_LIBRARY_DIR: ${Geant4_LIBRARY_DIR}")
+        message(STATUS "Geant4_LIBRARIES: ${Geant4_LIBRARIES}")
+      endif()
+endif()
+
+if (NOT Geant4_FOUND)
+   # Use own module (for versions 9.4 and lower)
+   if (USE_AFS)
+      if(APPLE)
+         message(STATUS "WARNING NO MACOS GEANT4 LIBRARIES AVAILABLE ON AFS")
+      else()
+         set(Geant4_INCLUDE_DIRS /afs/cern.ch/sw/lcg/external/geant4/9.4.p01/share/include)
+         set(Geant4_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/geant4/9.4.p01/x86_64-slc5-gcc43/lib)
+   	endif()
+   endif()
+   find_package(Geant4 REQUIRED)
+   # Local UseGeant4.cmake
+   set(Geant4_USE_FILE UseGeant4.cmake)
+   include(${Geant4_USE_FILE})
+   include_directories(${Geant4_INCLUDE_DIRS})
+
+   # set visualisation flags (to be fixed to automagic .. easier in Geant4 9.6)
+   option(VIS_RAYTRACER "RayTracer visualisation" OFF)
+   option(VIS_RAYTRACERX "RayTracerX visualisation" OFF)
+   option(VIS_OPENGLQT "OpenGLQT visualisation" OFF)
+   option(VIS_OPENGLX "OpenGLX visualisation" OFF)
+   option(VIS_OPENINVENTOR "Open Inventor Visualisation" OFF)
+
+   set(VIS_FLAGS "-DG4VIS_USE")
+   if(VIS_RAYTRACER)
+	set(VIS_FLAGS "-DG4VIS_USE_RAYTRACER ${VIS_FLAGS}")
+   endif()
+   if(VIS_RAYTRACERX)
+	set(VIS_FLAGS "-DG4VIS_USE_RAYTRACERX ${VIS_FLAGS}")
+   endif()
+   if(VIS_OPENGLQT)
+	set(VIS_FLAGS "-DG4VIS_USE_OPENGLQT ${VIS_FLAGS}")
+   endif()
+   if(VIS_OPENGLX)
+	set(VIS_FLAGS "-DG4VIS_USE_OPENGLX ${VIS_FLAGS}")
+   endif()
+   if(VIS_OPENINVENTOR)
+	set(VIS_FLAGS "-DG4VIS_USE_OPENINVENTOR ${VIS_FLAGS}")
+   endif()
+
+
+   message(STATUS "Visualisation Flags: ${VIS_FLAGS}")
+endif()
+
+if (Geant4_VERSION)
+    string(SUBSTRING ${Geant4_VERSION} 0 1 G4_MAJOR_VERSION)
+    string(SUBSTRING ${Geant4_VERSION} 2 1 G4_MINOR_VERSION) 
+    string(SUBSTRING ${Geant4_VERSION} 4 1 G4_PATCH_LEVEL)
+endif()
+
+if($ENV{VERBOSE})
+    message(STATUS "G4_VERSION: ${Geant4_VERSION}")
+    message(STATUS "G4_MAJOR_VERSION: ${G4_MAJOR_VERSION}")
+    message(STATUS "G4_MINOR_VERSION: ${G4_MINOR_VERSION}")
+    message(STATUS "G4_PATCH_LEVEL: ${G4_PATCH_LEVEL}")
+endif()
+
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+# set compiler flags
+set(WFLAGS "-Wall -Wextra -Wno-write-strings")
+set(CMAKE_FLAGS "${CMAKE_FLAGS} ${CLHEP_DEFINITIONS}  ${WFLAGS}")
+set(BDSIM_FLAGS "${CMAKE_FLAGS} ${VIS_FLAGS} -DCLHEP_VERSION=${CLHEP_VERSION} -DG4VERSION=${G4_MAJOR_VERSION} -DG4MINORVERSION=${G4_MINOR_VERSION} ${BDSIM_FLAGS}")
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${BDSIM_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BDSIM_FLAGS}")
+
+# source files
+GEANT4_COLLATE_APPLICATION_SOURCES(bdsim_sources)
+if(NOT USE_LCDD)
+       list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryLCDD.cc)
+endif()
+if(NOT USE_GDML)
+       list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryGDML.cc)
+endif()			
+if($ENV{VERBOSE})
+	message(STATUS "bdsim sources ${bdsim_sources}")
+endif()
+add_library(bdsim ${bdsim_sources})
+
+# This module sets up installation:
+include(bdsim_install)
+
+add_subdirectory( parser )
+
+add_executable(bdsimexec bdsim.cc)
+
+set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
+target_link_libraries(bdsimexec bdsim gmad)
+target_link_libraries(bdsim ${CLHEP_LIBRARIES})
+target_link_libraries(bdsim ${Geant4_LIBRARIES})
+
+# xercesc library:
+target_link_libraries(bdsim ${XercesC_LIBRARIES})
+
+if(USE_ROOT)
+    target_link_libraries(bdsim ${ROOT_LIBRARIES_GLOB})
+    target_link_libraries(bdsim ${ROOT_LIBRARIES})
+endif()
+
+if(USE_LCDD)
+    target_link_libraries(bdsim ${XML_LIBRARIES})
+endif()
+
+get_target_property(binaryname bdsimexec OUTPUT_NAME)
+set(binary ${CMAKE_CURRENT_BINARY_DIR}/./${binaryname})
+
+# Install the targets:
+set(executables bdsimexec)
+set(libraries bdsim)
+set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
+bdsim_install_targets(${executables} ${libraries})
+file(GLOB headers include/*.hh parser/*.h)
+bdsim_install_headers(${headers})
+
+# Testing:
+enable_testing()
+include(CTest)
+include(bdsim_test_macros)
+add_subdirectory(examples)
+add_subdirectory(utils)

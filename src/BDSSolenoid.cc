@@ -50,7 +50,8 @@ BDSSolenoid::BDSSolenoid(G4String aName, G4double aLength,
                          std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
 			 G4String aTunnelMaterial, G4String aMaterial):
   BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
-  itsBField(bField)
+  itsBField(bField),
+  itsMagField(NULL),itsStepper(NULL),itsEqRhs(NULL)
 {
   SetOuterRadius(outR);
   itsType="solenoid";
@@ -209,9 +210,6 @@ void BDSSolenoid::BuildBPFieldAndStepper()
 BDSSolenoid::~BDSSolenoid()
 {
   delete itsVisAttributes;
-  delete itsMarkerLogicalVolume;
-  delete itsOuterLogicalVolume;
-  delete itsPhysiComp;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

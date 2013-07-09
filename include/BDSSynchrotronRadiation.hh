@@ -77,7 +77,7 @@ BDSSynchrotronRadiation::IsApplicable(const G4ParticleDefinition& particle)
 
 inline G4double 
 BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
-					G4double,
+					G4double PreviousStepSize,
 					G4ForceCondition* ForceCondition)
 {  
   *ForceCondition = NotForced ;
@@ -99,7 +99,7 @@ BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
     {
       const G4Field* pField = TheFieldManager->GetDetectorField() ;
       G4ThreeVector  globPosition = track.GetPosition() ;
-      G4double  globPosVec[3], FieldValueVec[3] ;
+      G4double  globPosVec[3], FieldValueVec[3]={0.} ;
       globPosVec[0] = globPosition.x() ;
       globPosVec[1] = globPosition.y() ;
       globPosVec[2] = globPosition.z() ;
@@ -137,7 +137,7 @@ BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
 
 #ifdef DEBUG
           G4cout<<"*****************SR*************************"<<G4endl;
-          G4cout<<"Track momentum: "<<InitMag<<G4endl;;
+          G4cout<<"Track momentum: "<<InitMag<<G4endl;
           G4cout<<"Blocal="<<Blocal/tesla<<"  Rlocal="<<Rlocal/m<<G4endl;
           G4cout<<track.GetVolume()->GetName()<<" mfp="<<MeanFreePath/m<<G4endl;
           G4cout<<"********************************************"<<G4endl;

@@ -40,7 +40,8 @@ BDSSextupole::BDSSextupole(G4String aName, G4double aLength,
                            std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
                            G4String aTunnelMaterial, G4String aMaterial):
   BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
-  itsBDblPrime(BDblPrime)
+  itsBDblPrime(BDblPrime),
+  itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
 {
   SetOuterRadius(outR);
   itsTilt=tilt;
@@ -231,9 +232,6 @@ void BDSSextupole::BuildBPFieldAndStepper()
 BDSSextupole::~BDSSextupole()
 {
   delete itsVisAttributes;
-  delete itsMarkerLogicalVolume;
-  delete itsOuterLogicalVolume;
-  delete itsPhysiComp;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

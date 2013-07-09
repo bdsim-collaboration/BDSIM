@@ -37,10 +37,9 @@ protected:
 private:
   void LaserWireLogicalVolume();
   G4VisAttributes* SetVisAttributes();
-  G4UserLimits* itsUserLimits;
   G4VisAttributes* itsVisAttributes;
 
-  BDSLaserCompton* itsLaserCompton;
+  BDSLaserCompton* itsLaserCompton; // not used atm, JS
   G4ThreeVector itsLaserDirection;
   G4double itsLaserWavelength;
 };

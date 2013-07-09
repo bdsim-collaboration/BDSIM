@@ -23,8 +23,9 @@ extern G4double BDSLocalRadiusOfCurvature;
 extern G4int event_number;
 
 BDSSkewSextStepper::BDSSkewSextStepper(G4Mag_EqRhs *EqRhs)
-   : G4MagIntegratorStepper(EqRhs,6)  // integrate over 6 variables only !!
-                                       // position & velocity
+  : G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
+                                      // position & velocity
+    itsBDblPrime(0.0), itsDist(0.0)
 {
   fPtrMagEqOfMot = EqRhs;
 }

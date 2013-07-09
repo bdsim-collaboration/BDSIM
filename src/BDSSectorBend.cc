@@ -33,7 +33,8 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
 			     G4double tilt, G4double bGrad, 
 			     G4String aTunnelMaterial, G4String aMaterial, G4double aXAper, G4double aYAper):
   BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
-	       aXAper, aYAper, angle)
+	       aXAper, aYAper, angle),
+  itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
 {
   SetOuterRadius(outR);
   itsTilt=tilt;
@@ -260,29 +261,29 @@ void BDSSectorBend::BuildSBMarkerLogicalVolume()
     " m, l= "<<  (itsLength)/2/m <<" m"<<G4endl;
 #endif
 
-    G4double xHalfLengthPlus, xHalfLengthMinus;
-    if(fabs(itsAngle) > 1e-20){
-      xHalfLengthMinus = (itsLength/itsAngle)*sin(itsAngle/2)
-        - fabs(cos(itsAngle/2))*transverseSize*tan(itsAngle/2)/2;
-      
-      xHalfLengthPlus = (itsLength/itsAngle)*sin(itsAngle/2)
-        + fabs(cos(itsAngle/2))*transverseSize*tan(itsAngle/2)/2;
-    } else {
-      xHalfLengthPlus=(itsLength)/2.0;
-      xHalfLengthMinus=(itsLength)/2.0;
-    }
+  G4double xHalfLengthPlus, xHalfLengthMinus;
+  if(fabs(itsAngle) > 1e-20){
+    xHalfLengthMinus = (itsLength/itsAngle)*sin(itsAngle/2)
+      - fabs(cos(itsAngle/2))*transverseSize*tan(itsAngle/2)/2;
     
-    if((xHalfLengthPlus<0) || (xHalfLengthMinus<0)){
-      G4cerr << "Bend radius in " << itsName << " too small for this tunnel/component geometry. Exiting." << G4endl;
-      exit(1);
-    }
+    xHalfLengthPlus = (itsLength/itsAngle)*sin(itsAngle/2)
+      + fabs(cos(itsAngle/2))*transverseSize*tan(itsAngle/2)/2;
+  } else {
+    xHalfLengthPlus=(itsLength)/2.0;
+    xHalfLengthMinus=(itsLength)/2.0;
+  }
+  
+  if((xHalfLengthPlus<0) || (xHalfLengthMinus<0)){
+    G4cerr << "Bend radius in " << itsName << " too small for this tunnel/component geometry. Exiting." << G4endl;
+    exit(1);
+  }
 
-    itsMarkerSolidVolume = new G4Trd(itsName+"_marker",
-				  xHalfLengthPlus,     // x hlf lgth at +z
-				  xHalfLengthMinus,    // x hlf lgth at -z
-				  transverseSize/2,           // y hlf lgth at +z
-				  transverseSize/2,           // y hlf lgth at -z
-				     fabs(cos(itsAngle/2))*transverseSize/2);// z hlf lgth
+  itsMarkerSolidVolume = new G4Trd(itsName+"_marker",
+				   xHalfLengthPlus,     // x hlf lgth at +z
+				   xHalfLengthMinus,    // x hlf lgth at -z
+				   transverseSize/2,    // y hlf lgth at +z
+				   transverseSize/2,    // y hlf lgth at -z
+				   fabs(cos(itsAngle/2))*transverseSize/2);// z hlf lgth
 
   G4String LocalLogicalName=itsName;
   
@@ -536,9 +537,6 @@ SetMultiplePhysicalVolumes(itsPhysiComp);
 BDSSectorBend::~BDSSectorBend()
 {
   delete itsVisAttributes;
-  delete itsMarkerLogicalVolume;
-  delete itsOuterLogicalVolume;
-  delete itsPhysiComp;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

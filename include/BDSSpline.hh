@@ -15,10 +15,8 @@
 #include "BDSSpline_tab_entry.hh"
 #include <vector>
 
-using std::vector;
-
-typedef vector<BDSSpline_tab_entry*> vTab;
-typedef vector<G4double> vDbl;
+typedef std::vector<BDSSpline_tab_entry*> vTab;
+typedef std::vector<G4double> vDbl;
 
 class BDSSpline
 {
@@ -28,13 +26,13 @@ public:
 
   void initialise(vDbl* xIn,G4int xscalIn, 
 		  vDbl* yIn,G4int yscalIn);
-  G4double integrate(G4double xIn);
-
-  vTab tab;
-  G4int n,xscal,yscal;
+  G4double integrate(G4double xIn)const;
 
 private:
+  vTab tab;
   vDbl u;
+  /// nr of points, x/y scale linear (0) or logarithmic (1)
+  G4int n,xscal,yscal;
 };
 
 #endif

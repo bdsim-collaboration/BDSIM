@@ -47,6 +47,8 @@ int include_stack_ptr = 0;
 int line_num = 1;
 char* yyfilename;
 
+
+
 %}
 
 %s ERROR
@@ -113,7 +115,6 @@ include   BEGIN(incl);  //reserved commands
 beam { return BEAM; }
 option { return OPTION; }
 print { return PRINT; }
-echo { return ECHO; }
 "return" { return STOP; }
 stop {return STOP;}
 use { return USE; }
@@ -149,7 +150,7 @@ dump  { return DUMP; }
 <incl>[ \t]*  // eat the whitespace
 <incl>[^ \t\n;]+ {
 string filename = sBDSHOME+(string)yytext;
-  printf("reading file %s \n",(char*)filename.c_str());//yytext
+  printf("parser> reading file %s \n",(char*)filename.c_str());//yytext
   if( include_stack_ptr >= MAX_INCLUDE_DEPTH )
     {
       fprintf(stderr , "Error : Include depth exceeds %d\n",MAX_INCLUDE_DEPTH);
@@ -199,6 +200,7 @@ string filename = sBDSHOME+(string)yytext;
 
 [\n]  line_num++;
 %%
+
 
 struct symtab * symlook(char *s)
 {

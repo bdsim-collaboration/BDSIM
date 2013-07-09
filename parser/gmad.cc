@@ -78,6 +78,7 @@ void init()
 
   // Default Values for Options (the rest are set to 0)
 
+  options.maximumTrackingTime = 1e-4;
   options.vacuumPressure = 1e-12;
   options.planckScatterFe = 1.0;
   options.doPlanckScattering=0;
@@ -103,12 +104,12 @@ void init()
   options.elossHistoBinWidth = 1.0;
   options.elossHistoTransBinWidth = 0.1;
   options.defaultRangeCut = 7e-4;
-  options.prodCutPositrons=7e-4,
-    options.prodCutElectrons=7e-4,
-    options.prodCutPhotons=7e-4,
-    options.prodCutPositronsP=7e-4,
-    options.prodCutElectronsP=7e-4,
-    options.prodCutPhotonsP=7e-4,
+  options.prodCutPositrons=7e-4;
+  options.prodCutElectrons=7e-4;
+  options.prodCutPhotons=7e-4;
+  options.prodCutPositronsP=7e-4;
+  options.prodCutElectronsP=7e-4;
+  options.prodCutPhotonsP=7e-4;
 
   //Beam loss monitors geometry
   options.blmRad = 0.05;
@@ -121,12 +122,12 @@ void init()
   //  options.synchRadOn = 0;
   //tracking options
   options.chordStepMinimum = 0.000001;
-    options.deltaIntersection = 0.00001;
-    options.deltaChord = 0.00001;
-    options.deltaOneStep = 0.00001;
-    options.minimumEpsilonStep=0;
-    options.maximumEpsilonStep=1e-7;
-    options.lengthSafety = 0.000000001;
+  options.deltaIntersection = 0.00001;
+  options.deltaChord = 0.00001;
+  options.deltaOneStep = 0.00001;
+  options.minimumEpsilonStep=0;
+  options.maximumEpsilonStep=1e-7;
+  options.lengthSafety = 0.000000001;
 
 }
 
@@ -136,20 +137,39 @@ int gmad_parser(FILE *f)
   init();
 
   yyin=f; 
+
+#ifdef DEBUG
+  cout << "gmad_parser> beginning to parse file" << endl;
+#endif
+
   while(!feof(yyin))
     {
       yyparse();
     }
 
+#ifdef DEBUG
+  cout << "gmad_parser> finished to parsing file" << endl;
+#endif
+
   // clear temporary stuff
 
-  cout<<"clearing..."<<endl;
+#ifdef DEBUG
+  cout << "gmad_parser> clearing temporary lists" << endl;
+#endif
   element_list.clear();
   tmp_list.clear();
   
-    
+  delete[] symtab;
+  symtab = 0;
+
+#ifdef DEBUG
+  cout << "gmad_parser> finished" << endl;
+#endif
+
+  fclose(f);
+
   return 0;
-};
+}
 
 int gmad_parser(string name)
 {
@@ -160,40 +180,59 @@ int gmad_parser(string name)
 
   if(f==NULL) return -1;
 
-  init();
-  
-  yyin=f; 
   yyfilename = new char[MAXFILENAMELENGTH];
   strncpy(yyfilename,name.c_str(),MAXFILENAMELENGTH);
 
-#ifdef DEBUG
-  cout << "gmad_parser>beginning to parse file" << endl;
-#endif
-
-
-  while(!feof(yyin))
-    {
-      yyparse();
-    }
-
-#ifdef DEBUG
-  cout << "gmad_parser>finished to parsing file" << endl;
-#endif
-
-
-  // clear temporary stuff
-
-#ifdef DEBUG
-  cout << "gmad_parser>clearing temporary lists" << endl;
-#endif
-
-  element_list.clear();
-  tmp_list.clear();
-
-#ifdef DEBUG
-  cout << "gmad_parser> finished" << endl;
-#endif
+  gmad_parser(f);
 
   return 0;
-};
+}
 
+
+/** Python interface **/ 
+int gmad_parser_c(char *name) 
+{
+  gmad_parser(name);
+  return 0;
+}
+
+int get_nelements() 
+{
+  return beamline_list.size();
+}  
+
+char* get_name(int i) 
+{
+  std::list<Element>::iterator it = beamline_list.begin();
+  std::advance(it, i);
+  return it->name;
+}
+
+int get_name(int i, char *name) 
+{
+  std::list<Element>::iterator it = beamline_list.begin();
+  std::advance(it, i);
+  strcpy(name,it->name);
+  return 0;
+}
+
+short get_type(int i) 
+{
+  std::list<Element>::iterator it = beamline_list.begin();
+  std::advance(it, i);
+  return it->type;
+}
+
+double get_length(int i) 
+{
+  std::list<Element>::iterator it = beamline_list.begin();
+  std::advance(it, i);
+  return it->l;
+}
+
+double get_angle(int i) 
+{
+  std::list<Element>::iterator it = beamline_list.begin();
+  std::advance(it, i);
+  return it->angle;  
+}

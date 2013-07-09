@@ -16,10 +16,9 @@
 #include "G4Navigator.hh"
 #include "G4TransportationManager.hh"
 
-ofstream testf;
+//std::ofstream testf;
 
-
-BDSMultipoleMagField::BDSMultipoleMagField(list<G4double> kn, list<G4double> ks)
+BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4double> ks)
 {
 
 #ifdef DEBUG 
@@ -50,8 +49,8 @@ BDSMultipoleMagField::BDSMultipoleMagField(list<G4double> kn, list<G4double> ks)
   // in Geant4 units
   bn = kn;
   bs = ks;
-  list<G4double>::iterator it;
-  list<G4double>::iterator its;
+  std::list<G4double>::iterator it;
+  std::list<G4double>::iterator its;
   int n(0);
   for(it=bn.begin(), its=bs.begin();it!=bn.end();it++, its++)
     {
@@ -139,8 +138,8 @@ void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
   G4double br = 0;
   G4double bphi = 0;
 
-  list<G4double>::const_iterator it;
-  list<G4double>::const_iterator its;
+  std::list<G4double>::const_iterator it;
+  std::list<G4double>::const_iterator its;
 
   G4double r = sqrt(LocalR[0]*LocalR[0] + LocalR[1]*LocalR[1]);
   G4double phi;

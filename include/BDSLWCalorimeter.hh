@@ -8,14 +8,14 @@
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
 
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
+class G4Box;
+class G4FieldManager;
+class G4LogicalVolume;
+class G4Tubs;
+class G4UserLimits;
+class G4VisAttributes;
+class G4VPhysicalVolume;
 
 class BDSLWCalorimeter :public BDSAcceleratorComponent
 {
@@ -28,6 +28,8 @@ public:
 protected:
   G4LogicalVolume* itsBeampipeLogicalVolume;
   G4LogicalVolume* itsInnerBPLogicalVolume;
+  G4VPhysicalVolume* itsPhysiInner;
+  G4VPhysicalVolume* itsPhysiComp;
   G4LogicalVolume* itsLWCalLogicalVolume;
   G4UserLimits* itsBeampipeUserLimits;
   G4FieldManager* itsBPFieldMgr;
@@ -36,11 +38,11 @@ private:
   G4Tubs* itsBPTube;
   G4Tubs* itsInnerBPTube;
   G4Box*  itsLWCal;
+  G4VPhysicalVolume* itsPhysiLWCal;
   G4VisAttributes* SetVisAttributes();
   void LWCalorimeterLogicalVolume();
 
   // field related objects:
-  G4UserLimits* itsUserLimits;
   G4VisAttributes* itsVisAttributes;
 };
 

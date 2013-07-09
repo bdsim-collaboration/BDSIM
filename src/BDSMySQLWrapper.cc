@@ -84,7 +84,7 @@ inline G4String StripEnd(const G4String& text)
 }
 
 BDSMySQLWrapper::BDSMySQLWrapper (const G4String& SQLFileName)
-  : ifs(SQLFileName.c_str())
+  : ifs(SQLFileName.c_str()), ComponentN(0), tableN(-1)
   
 {
   if(ifs) G4cout<<"BDSMySQLWrapper contructor: Loading SQL Filename="<<SQLFileName<<G4endl;

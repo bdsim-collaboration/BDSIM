@@ -1,0 +1,7 @@
+I have MadX.py on my python path so you should be able to import that to use this.
+
+import lhc.py
+
+a = lhc.BeamLine()
+a.Load('../twiss.3.5tev.b2.tfs')
+a.Plot()

@@ -7,6 +7,12 @@
 #ifndef BDSMagFieldSQL_h
 #define BDSMagFieldSQL_h 
 
+#include <iostream>
+#include <list>
+#include <map>
+#include <string>
+#include <vector>
+
 #include "G4Types.hh"
 #include "G4MagneticField.hh"
 
@@ -15,12 +21,6 @@
 #include "G4TouchableHistory.hh"
 #include "G4TouchableHistoryHandle.hh"
 #include "BDSMagField.hh"
-#include <string>
-#include <vector>
-#include <list>
-#include <map>
-
-//using namespace std;
 
 class BDSMagFieldSQL : public BDSMagField
 {
@@ -60,8 +60,8 @@ private:
   G4bool itsHasUniformField;
   G4bool itsHasFieldMap;
 
-  ofstream ofs;
-  ifstream ifs;
+  std::ofstream ofs;
+  std::ifstream ifs;
 
   G4double itsMarkerLength;
   G4String FieldFile;

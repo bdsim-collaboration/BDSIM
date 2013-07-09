@@ -18,6 +18,7 @@
 #include <cstring>
 #include <cmath>
 #include <list>
+#include <string>
 #include <vector>
 
 #include <iostream>
@@ -25,9 +26,7 @@
 #include "gmad.h"
 #include "getEnv.h"
 
-//using namespace std;
-
-std::string sBDSIMHOME = std::string(getEnv("BDSIMHOME"));
+std::string sBDSIMHOME = getEnv("BDSIMHOME");
 
 //double pow(double x, double y) {return exp( y * log(x));}
 
@@ -111,19 +110,19 @@ const char *typestr(int type) {
   default:
     return "none";
   }
-};
+}
 struct Parameters params;
 struct Options options;
 struct Element element;
 
-void print(struct Parameters params)
+void print(struct Parameters pars)
 {
   printf("printing parameters:\n");
   std::list<double>::iterator it;
-  for(it = params.knl.begin();it!=params.knl.end();it++)
+  for(it = pars.knl.begin();it!=pars.knl.end();++it)
     printf(" %f ", (*it));
   printf("\n");
-};
+}
 
 void flush(struct Element& e )
 {
@@ -189,7 +188,7 @@ void flush(struct Element& e )
   e.tunnelCavityMaterial="Air";
   e.tunnelRadius=0;
   e.tunnelOffsetX=1e6;
-};
+}
 
 void copy_properties(std::list<struct Element>::iterator dest, std::list<struct Element>::iterator src)
 {
@@ -269,7 +268,7 @@ void copy_properties(std::list<struct Element>::iterator dest, std::list<struct 
   (*dest).spec = (*src).spec;
 
   return;
-}; 
+} 
 
 void inherit_properties(struct Element e)
 {
@@ -345,7 +344,7 @@ void inherit_properties(struct Element e)
 
 
 
-};
+}
 
 void set_vector(std::list<double>& dst, struct Array *src)
 {
@@ -359,7 +358,7 @@ void set_vector(std::list<double>& dst, struct Array *src)
   std::cout << std::endl;
 #endif
   
-};
+}
 
 
 void set_vector(std::list<char*>& dst, struct Array *src)
@@ -373,7 +372,7 @@ void set_vector(std::list<char*>& dst, struct Array *src)
 #ifdef DEBUG 
   std::cout << std::endl;
 #endif
-};
+}
 
 void set_vector(std::list<const char*>& dst, struct Array *src)
 {
@@ -386,20 +385,20 @@ void set_vector(std::list<const char*>& dst, struct Array *src)
 #ifdef DEBUG 
   std::cout << std::endl;
 #endif
-};
+}
 
-void set_vector(std::list<string>& dst, struct Array *src)
+void set_vector(std::list<std::string>& dst, struct Array *src)
 {
   for(int i=0; i< src->size;i++){
-    dst.push_back((string)src->symbols[i]);
+    dst.push_back((std::string)src->symbols[i]);
 #ifdef DEBUG 
-    std::cout << (string)src->symbols[i] << " ";
+    std::cout << (std::string)src->symbols[i] << " ";
 #endif
   }
 #ifdef DEBUG 
   std::cout << std::endl;
 #endif
-};
+}
 
 
 void set_vector(std::list<int>& dst, struct Array *src)
@@ -413,7 +412,7 @@ void set_vector(std::list<int>& dst, struct Array *src)
 #ifdef DEBUG 
   std::cout << std::endl;
 #endif
-};
+}
 
 
 // list of all encountered elements
@@ -436,7 +435,7 @@ extern struct symtab * symlook(char *s);
 
 std::list<struct Element>::iterator element_lookup(char *name);
 std::list<struct Element>::iterator element_lookup(char *name, std::list<struct Element>& el);
-int write_table(struct Parameters params,char* name, int type, std::list<struct Element> *lst=NULL);
+int write_table(struct Parameters pars,char* name, int type, std::list<struct Element> *lst=NULL);
 int expand_line(char *name, char *start, char *end);
 void print(std::list<struct Element> l, int ident=0);
 
@@ -1256,7 +1255,7 @@ void print(struct Options opt)
 void set_value(std::string name, double value )
 {
 #ifdef DEBUG
-  cout << "parser.h> Setting value " << name << ", " << value << endl; 
+  std::cout << "parser.h> Setting value " << name << ", " << value << std::endl; 
 #endif
   //
   // numeric options for the "beam" command
@@ -1283,6 +1282,34 @@ void set_value(std::string name, double value )
   if(name == "sigmaXp" ) { options.sigmaXp = value; return; }
   if(name == "sigmaYp" ) { options.sigmaYp = value; return; }
 
+  // options for beam distrType="gaussmatrix"
+  if(name == "sigma11" ) { options.sigma11 = value; return; }
+  if(name == "sigma12" ) { options.sigma12 = value; return; }
+  if(name == "sigma13" ) { options.sigma13 = value; return; }
+  if(name == "sigma14" ) { options.sigma14 = value; return; }
+  if(name == "sigma15" ) { options.sigma15 = value; return; }
+  if(name == "sigma16" ) { options.sigma16 = value; return; }
+
+  if(name == "sigma22" ) { options.sigma22 = value; return; }
+  if(name == "sigma23" ) { options.sigma23 = value; return; }
+  if(name == "sigma24" ) { options.sigma24 = value; return; }
+  if(name == "sigma25" ) { options.sigma25 = value; return; }
+  if(name == "sigma26" ) { options.sigma26 = value; return; }
+
+  if(name == "sigma33" ) { options.sigma33 = value; return; }
+  if(name == "sigma34" ) { options.sigma34 = value; return; }
+  if(name == "sigma35" ) { options.sigma35 = value; return; }
+  if(name == "sigma36" ) { options.sigma36 = value; return; }
+
+  if(name == "sigma44" ) { options.sigma44 = value; return; }
+  if(name == "sigma45" ) { options.sigma45 = value; return; }
+  if(name == "sigma46" ) { options.sigma46 = value; return; }
+
+  if(name == "sigma55" ) { options.sigma55 = value; return; }
+  if(name == "sigma56" ) { options.sigma56 = value; return; }
+
+  if(name == "sigma66" ) { options.sigma66 = value; return; }
+    
   // options for beam distrType="eshell"
   if(name == "shellX" ) { options.shellX = value; return; }
   if(name == "shellY" ) { options.shellY = value; return; }
@@ -1346,6 +1373,7 @@ void set_value(std::string name, double value )
 
 
   // options which influence tracking 
+  if(name == "maximumTrackingTime") {options.maximumTrackingTime = value; return;}
   if(name == "deltaChord") { options.deltaChord = value; return; }
   if(name == "deltaIntersection") { options.deltaIntersection = value; return; }
   if(name == "chordStepMinimum") { options.chordStepMinimum = value; return; }
@@ -1424,7 +1452,7 @@ void set_value(std::string name, double value )
 
   // options for neutrons
   if(name=="refcopyno") { options.refcopyno = (int) value; return; }
-  cerr << "Error: parser.h> unkown option \"" << name << "\"" << endl; 
+  std::cerr << "Error: parser.h> unkown option \"" << name << "\"" << std::endl; 
   exit(1);
 }
 
@@ -1432,7 +1460,7 @@ void set_value(std::string name, double value )
 void set_value(std::string name, std::string value )
 {
 #ifdef DEBUG
-  cout << "parser.h> Setting value " << name << ", " << value << endl; 
+  std::cout << "parser.h> Setting value " << name << ", " << value << std::endl; 
 #endif
   // 
   // string options for the "beam" command
@@ -1459,7 +1487,7 @@ void set_value(std::string name, std::string value )
   // options for external code interfaces
   if(name == "fifo") { options.fifo = value; return; }
   if(name == "refvolume") { options.refvolume = value; return; }
-  cerr << "Error: parser.h> unkown option \"" << name << "\"" << endl; 
+  std::cerr << "Error: parser.h> unkown option \"" << name << "\"" << std::endl; 
   exit(1);
 }
 
@@ -1511,7 +1539,7 @@ double property_lookup(char *element_name, char *property_name)
    if(!strcmp(property_name,"T")) return (*it).temper;
    if(!strcmp(property_name,"P")) return (*it).pressure;
 
-   cerr << "parser.h> Error: unkown property \"" << property_name << "\". Returning 0." <<endl; 
+   std::cerr << "parser.h> Error: unkown property \"" << property_name << "\". Returning 0." << std::endl; 
    exit(1);
    //what about property_lookup for attributes of type string, like material?
 }

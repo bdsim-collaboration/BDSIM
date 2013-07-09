@@ -11,8 +11,11 @@
 
 
 #include "BDSGlobalConstants.hh" 
+#include "BDSDebug.hh"
 
 #include <cstdlib>
+#include <cstddef>
+#include <cmath>
 
 #include "BDSMultipole.hh"
 #include "G4Box.hh"
@@ -39,7 +42,7 @@
 #include <map>
 #include <string>
 
-
+// #define DEBUG 1
 //============================================================
 
 typedef std::map<G4String,int> LogVolCountMap;
@@ -47,6 +50,8 @@ extern LogVolCountMap* LogVolCount;
 
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
+
+extern BDSMaterials* theMaterials;
 
 extern G4RotationMatrix* RotY90;
 extern G4RotationMatrix* RotYM90;
@@ -56,8 +61,8 @@ BDSMultipole::BDSMultipole( G4String aName,
 			    G4double aLength,
 			    G4double aBpRadius,
 			    G4double aInnerIronRadius,
-                            G4VisAttributes* aVisAtt,
-                            G4String aMaterial,
+			    G4VisAttributes* aVisAtt,
+			    G4String aMaterial,
 			    G4double aXAper,
 			    G4double aYAper,
 			    G4double angle,
@@ -70,12 +75,20 @@ BDSMultipole::BDSMultipole( G4String aName,
 			 aXAper,
 			 aYAper,
 			 aVisAtt,
-                         aMaterial,
+			 aMaterial,
 			 angle),
   itsInnerIronRadius(aInnerIronRadius)
 {  
   CalculateLengths();
   SetBeampipeThickness(beampipeThicknessSet, beampipeThickness); 
+  itsPhysiComp=NULL; 
+  itsPhysiInner=NULL;
+  itsBPFieldMgr=NULL;
+  itsBeampipeLogicalVolume=NULL;
+  itsChordFinder=NULL;
+  itsBeampipeUserLimits=NULL;
+  itsOuterFieldMgr=NULL;
+  itsOuterMagField=NULL;
 }
 
 BDSMultipole::BDSMultipole( G4String aName, 
@@ -118,6 +131,14 @@ BDSMultipole::BDSMultipole( G4String aName,
   BDSAcceleratorComponent::itsPhiAngleIn=phiAngleIn;
   BDSAcceleratorComponent::itsPhiAngleOut=phiAngleOut;
   SetBeampipeThickness(beampipeThicknessSet, beampipeThickness); 
+  itsPhysiComp=NULL; 
+  itsPhysiInner=NULL;
+  itsBPFieldMgr=NULL;
+  itsBeampipeLogicalVolume=NULL;
+  itsChordFinder=NULL;
+  itsBeampipeUserLimits=NULL;
+  itsOuterFieldMgr=NULL;
+  itsOuterMagField=NULL;
 }
 
 BDSMultipole::BDSMultipole( G4String aName, 
@@ -189,17 +210,17 @@ void BDSMultipole::BuildBeampipe(G4String materialName)
 
   if((itsPhiAngleIn==0)&&(itsPhiAngleOut==0)){
 #ifdef DEBUG
-    G4cout << "BDSMultipole.cc> Building ordinary beam pipe (not trapezoid) " << G4endl;
+    G4cout << __METHOD_NAME__ << "Building ordinary beam pipe (not trapezoid) " << G4endl;
 #endif
     RotY=NULL;
     
 #ifdef DEBUG 
-    G4cout << "Outer pipe :"
+    G4cout << __METHOD_NAME__ << "Outer pipe :"
 	   << " r= " << itsBpRadius/m << " m"
 	   << " l= " << itsLength/(2.)/m << " m"
 	   << G4endl;
-    G4cout << "Drift aperX: " << this->GetAperX()/m << " m" << G4endl;
-    G4cout << "Drift aperY: " << this->GetAperY()/m << " m" << G4endl;
+    G4cout << __METHOD_NAME__ << "Drift aperX: " << this->GetAperX()/m << " m" << G4endl;
+    G4cout << __METHOD_NAME__ << "Drift aperY: " << this->GetAperY()/m << " m" << G4endl;
 #endif
     
     
@@ -384,7 +405,7 @@ void BDSMultipole::BuildBeampipe(G4double startAper,
   // build beampipe
   
 #ifdef DEBUG 
-  G4cout << "Outer pipe :"
+  G4cout << __METHOD_NAME__ << "Outer pipe :"
 	 << " start r= " << startAper/m << " m"
 	 << " end r= " << endAper/m << " m"
 	 << " l= " << itsLength/(2.)/m << " m"
@@ -400,11 +421,10 @@ void BDSMultipole::BuildBeampipe(G4double startAper,
 			      0,twopi*radian);
       
 #ifdef DEBUG 
-      G4cout << "Inner pipe :"
-	     << " r= " << (itsBpRadius-BDSGlobalConstants::Instance()->GetBeampipeThickness() )/m
-	     << " m"
-	     << " l= " << itsLength/(2.)/m << " m"
-	     << G4endl;
+  G4cout << __METHOD_NAME__ << "Inner pipe :"
+	 << " r= " << (itsBpRadius-BDSGlobalConstants::Instance()->GetBeampipeThickness() )/m << " m"
+	 << " l= " << itsLength/(2.)/m << " m"
+	 << G4endl;
 #endif
       
       itsInnerBeampipeSolid=new G4Cons(itsName+"_inner_bmp_solid",
@@ -457,7 +477,6 @@ void BDSMultipole::BuildBeampipe(G4double startAper,
       
       itsBeampipeLogicalVolume->SetUserLimits(itsBeampipeUserLimits);
       itsInnerBPLogicalVolume->SetUserLimits(itsBeampipeUserLimits);
-
 #endif
 
   itsBeampipeLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
@@ -476,9 +495,9 @@ void BDSMultipole::BuildBeampipe(G4double startAper,
   //
   // set visualization attributes
   //
-  G4VisAttributes* VisAtt =  new G4VisAttributes(G4Colour(0., 0., 0));
+  G4VisAttributes* VisAtt =  new G4VisAttributes(G4Colour(0., 0., 0, 0.1));
   VisAtt->SetForceSolid(true);
-  VisAtt->SetVisibility(false);
+  VisAtt->SetVisibility(true);
   itsInnerBPLogicalVolume->SetVisAttributes(VisAtt);
 
   G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.4, 0.4, 0.4));
@@ -606,6 +625,7 @@ void BDSMultipole::BuildDefaultMarkerLogicalVolume()
 #endif
 }
 
+
 void BDSMultipole::BuildDefaultOuterLogicalVolume(G4double aLength,
 						  G4bool OuterMaterialIsVacuum)
 {
@@ -620,14 +640,14 @@ void BDSMultipole::BuildDefaultOuterLogicalVolume(G4double aLength,
   if(itsOuterR==0) outerRadius = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
 
 #ifdef DEBUG 
-  G4cout << "Outer volume inner radius :"
+  G4cout << __METHOD_NAME__ << "Outer volume inner radius :"
          << " r= " << (itsInnerIronRadius)/m << " m"
          << " l= " << aLength/2./m << " m"
          << G4endl;
 #endif
 
 #ifdef DEBUG 
-  G4cout << "Outer radius :"
+  G4cout << __METHOD_NAME__ << "Outer radius :"
          << " r= " << outerRadius/m << " m"
          << " l= " << aLength/2./m << " m"
          << G4endl;
@@ -742,6 +762,7 @@ void BDSMultipole::BuildOuterFieldManager(G4int nPoles, G4double poleField,
   if (poleField==0) return;
 
   itsOuterMagField=new BDSMultipoleOuterMagField(nPoles,poleField,phiOffset);
+
   itsOuterFieldMgr=new G4FieldManager(itsOuterMagField);
   if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0){
     itsOuterFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
@@ -753,20 +774,24 @@ void BDSMultipole::BuildOuterFieldManager(G4int nPoles, G4double poleField,
   if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0)
     itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
   itsOuterLogicalVolume->SetFieldManager(itsOuterFieldMgr,false);
+
+
 }
 
 
 BDSMultipole::~BDSMultipole()
 {
-  if(itsPhysiComp) delete itsPhysiComp;
-  if(itsPhysiInner) delete itsPhysiInner;
-  if(itsBPFieldMgr) delete itsBPFieldMgr;
-  if(itsBeampipeLogicalVolume) delete itsBeampipeLogicalVolume;
-  if(itsChordFinder) delete itsChordFinder;
-  if(itsOuterChordFinder) delete itsOuterChordFinder;
-  if(itsOuterUserLimits) delete itsOuterUserLimits;
-  if(itsBeampipeUserLimits) delete itsBeampipeUserLimits;
-  if(itsOuterFieldMgr) delete itsOuterFieldMgr;
-  if(itsOuterMagField) delete itsOuterMagField;
-  if(itsSegRot)delete itsSegRot;
+//   //  delete itsPhysiComp; 
+//   //  delete itsPhysiInner;
+  delete itsBPFieldMgr;
+//   delete itsBeampipeLogicalVolume;
+  delete itsChordFinder;
+//   delete itsOuterFieldMgr;
+//   delete itsOuterMagField;
+#ifndef NOUSERLIMITS
+  delete itsOuterUserLimits;
+  delete itsMarkerUserLimits;
+  delete itsBeampipeUserLimits;
+  delete itsInnerBeampipeUserLimits;
+#endif
 }

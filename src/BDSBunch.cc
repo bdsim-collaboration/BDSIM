@@ -3,80 +3,71 @@
 #include <iostream>
 #include "globals.hh"
 #include <cmath>
+#include <cstdlib>
 
-using namespace std;
+#include "BDSExecOptions.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSBunch.hh"
 
-extern G4bool verbose;      // run options
-extern G4bool verboseStep;
-extern G4bool verboseEvent;
-extern G4int verboseEventNumber;
-extern G4bool isBatch;
+#define DEBUG 1 
 
-extern G4int nptwiss;
+BDSBunch::BDSBunch():  
+  distribType(-1),X0(0.0),Y0(0.0),Z0(0.0),T0(0.0),Xp0(0.0),Yp0(0.0),Zp0(1.0),
+  sigmaX(0.0),sigmaY(0.0),sigmaT(0.0),sigmaXp(0.0),sigmaYp(0.0),
+  rMin(0.0),rMax(0.0),shellx(0.0),shelly(0.0),shellxp(0.0),shellyp(0.0),
+  betaX(0.0),betaY(0.0),alphaX(0.0),alphaY(0.0),emitX(0.0),emitY(0.0),
+  energySpread(0.0),nlinesIgnore(0),partId(0)
+{ 
+  verbose            = BDSExecOptions::Instance()->GetVerbose();
+  verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
+  verboseEvent       = BDSExecOptions::Instance()->GetVerboseEvent();
+  verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
+  nptwiss            = BDSExecOptions::Instance()->GetNPTwiss();
 
-BDSBunch::BDSBunch()
-{
-  X0 = 0;
-  Y0 = 0;
-  Z0 = 0;
-  T0 = 0;
-  
-  Xp0 = 0;
-  Yp0 = 0;
-  Zp0 = 1;
+  // Instantiate random number generators
+  GaussGen = new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
+  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
+  GaussMultiGen = NULL;
 
-  sigmaX = 0;
-  sigmaY = 0;
-  sigmaT = 0;
-
-  sigmaXp = 0;
-  sigmaYp = 0;
-
-  energySpread = 0;
-
-  betaX = 0;
-  betaY = 0;
-  alphaX = 0;
-  alphaY = 0;
-  emitX = 0;
-  emitY = 0;
-
-  partId = 0;
-
-  distribType = -1;
- 
-  GaussGen =new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
-  FlatGen =new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
-  
+  // Instantiate vector and matrix for gaussian sigma matrix generation
+  meansGM = CLHEP::HepVector(6);
+  sigmaGM = CLHEP::HepSymMatrix(6);
 }
 
 BDSBunch::~BDSBunch()
 {
+  // Delete random number generators
   delete GaussGen;
   delete FlatGen;
+  delete GaussMultiGen;
 }
 
 // set options from gmad
 
-G4double val;
+void BDSBunch::skip(G4int nvalues){
+  G4double dummy_val;
+  for(G4int i=0;i<nvalues;i++) ReadValue(dummy_val);
+}
 
 void BDSBunch::SetOptions(struct Options& opt)
 {
-  map<const G4String, int, strCmp> distType;
-  distType["gauss"]=_GAUSSIAN;
-  distType["ring"]=_RING;
-  distType["square"]=_SQUARE;
-  distType["circle"]=_CIRCLE;
-  distType["guineapig_bunch"]=_GUINEAPIG_BUNCH;
-  distType["guineapig_pairs"]=_GUINEAPIG_PAIRS;
-  distType["guineapig_slac"]=_GUINEAPIG_SLAC;
-  distType["cain"]=_CAIN;
-  distType["eshell"]=_ESHELL;
-  distType["gausstwiss"]=_GAUSSIAN_TWISS;
+  std::map<const G4String, int, strCmp> distType;
+  distType["reference"]=_REFERENCE;             // Reference orbit
+  distType["gauss"]=_GAUSSIAN;                  // Gaussian with only diagonal sigma matrix
+  distType["ring"]=_RING;                       // Ring in cannonical phase space
+  distType["square"]=_SQUARE;                   // Square phase space (flat)
+  distType["circle"]=_CIRCLE;                   // Circular phase space (flat) 
+  distType["guineapig_bunch"]=_GUINEAPIG_BUNCH; // (LC) Bunch bunch collision 
+  distType["guineapig_pairs"]=_GUINEAPIG_PAIRS; // (LC) Electron and positron pair from bunch bunch collision
+  distType["guineapig_slac"]=_GUINEAPIG_SLAC;   // (LC) SLAC variant of same code
+  distType["cain"]=_CAIN;                       // (LC) Bunch bunch collision
+  distType["eshell"]=_ESHELL;                   // ?? 
+  distType["gausstwiss"]=_GAUSSIAN_TWISS;       // Normal Gaussian Twiss 
+  distType["gaussmatrix"]=_GAUSSIAN_MATRIX;     // Normal Gaussian sigma matrix
 
   nlinesIgnore = opt.nlinesIgnore;
   inputfile=opt.distribFile;
-#define _skip(nvalues) for(G4int i=0;i<nvalues;i++) ReadValue(val);
+  //#define _skip(nvalues) for(G4int i=0;i<nvalues;i++) ReadValue(dummy_val);
   
   // twiss parameters - set always if present
   SetBetaX(opt.betx);
@@ -86,12 +77,12 @@ void BDSBunch::SetOptions(struct Options& opt)
   SetEmitX(opt.emitx);
   SetEmitY(opt.emity);
   
-  map<const G4String,int>::iterator iter;
+  std::map<const G4String,int>::iterator iter;
   iter = distType.find(opt.distribType);
   if(iter!=distType.end()) 
     distribType = (*iter).second;
 #ifdef DEBUG 
-  G4cout<< "BDSBunch : " <<"distrType -> "<<opt.distribType<<G4endl;
+  G4cout<< "BDSBunch::SetOptions> distrType : "<<opt.distribType<<G4endl;
 #endif
   //
   // global parameters
@@ -112,7 +103,18 @@ void BDSBunch::SetOptions(struct Options& opt)
   // specific parameters which depend on distribution type
   //
   switch(distribType){
-    
+  
+  case _REFERENCE :
+    {
+      SetSigmaX(0.0); 
+      SetSigmaY(0.0);
+      SetSigmaXp(0.0);
+      SetSigmaYp(0.0);
+      SetSigmaT(opt.sigmaT);
+      SetEnergySpread(opt.sigmaE);          
+      break;
+    }
+
   case _GAUSSIAN:
     {
       SetSigmaX(opt.sigmaX); 
@@ -120,22 +122,86 @@ void BDSBunch::SetOptions(struct Options& opt)
       SetSigmaXp(opt.sigmaXp);
       SetSigmaYp(opt.sigmaYp);
       SetSigmaT(opt.sigmaT);
-      energySpread = opt.sigmaE;
+      SetEnergySpread(opt.sigmaE);
       break;
     } 
 
   case _GAUSSIAN_TWISS:
     {
       SetSigmaT(opt.sigmaT);
-      energySpread = opt.sigmaE;
+      SetEnergySpread(opt.sigmaE);
       break;
     } 
+
+  case _GAUSSIAN_MATRIX:
+    {       
+#ifdef DEBUG
+      G4cout<< "BDSBunch::SetOptions> case _GAUSSIAN_MATRIX " << G4endl;      
+      G4cout<< "BDSBunch::SetOptions> " << X0 << " " << Xp0 << " " << Y0 << " " << Yp0 << " " << T0 << G4endl;
+#endif      
+
+
+      // set means
+      meansGM[0] = X0;
+      meansGM[1] = Xp0;
+      meansGM[2] = Y0;
+      meansGM[3] = Yp0;
+      meansGM[4] = T0;
+      meansGM[5] = 1;
+	
+      // set sigma matrix for generation
+      sigmaGM[0][0] = opt.sigma11;
+      sigmaGM[0][1] = opt.sigma12;
+      sigmaGM[0][2] = opt.sigma13;
+      sigmaGM[0][3] = opt.sigma14;
+      sigmaGM[0][4] = opt.sigma15;
+      sigmaGM[0][5] = opt.sigma16;
+
+      sigmaGM[1][1] = opt.sigma22;
+      sigmaGM[1][2] = opt.sigma23;
+      sigmaGM[1][3] = opt.sigma24;
+      sigmaGM[1][4] = opt.sigma25;
+      sigmaGM[1][5] = opt.sigma26;
+
+      sigmaGM[2][2] = opt.sigma33;
+      sigmaGM[2][3] = opt.sigma34;
+      sigmaGM[2][4] = opt.sigma35;
+      sigmaGM[2][5] = opt.sigma36;
+
+      sigmaGM[3][3] = opt.sigma44;
+      sigmaGM[3][4] = opt.sigma45;
+      sigmaGM[3][5] = opt.sigma46;
+
+      sigmaGM[4][4] = opt.sigma55;
+      sigmaGM[4][5] = opt.sigma56;
+
+      sigmaGM[5][5] = opt.sigma66;
+
+      // Set gauss sigmas for consistency 
+      
+
+      // Set sigma T 
+      SetSigmaT(sqrt(opt.sigma55));
+       
+      // Set energy spread
+      SetEnergySpread(sqrt(opt.sigma66));
+      
+      // make gaussian generator 
+      GaussMultiGen = new CLHEP::RandMultiGauss(*CLHEP::HepRandom::getTheEngine(),
+						meansGM,sigmaGM);   
+
+#ifdef DEBUG
+      G4cout<< "BDSBunch::SetOptions> case _GAUSSIAN_MATRIX break " << G4endl;      
+#endif      					       
+
+      break;
+    }
     
   case _RING:
     {
       rMin = opt.Rmin;
       rMax = opt.Rmax;
-      energySpread = opt.sigmaE;
+      SetEnergySpread(opt.sigmaE);
       break;
     } 
     
@@ -145,7 +211,7 @@ void BDSBunch::SetOptions(struct Options& opt)
       shelly = opt.shellY;
       shellxp = opt.shellXp;
       shellyp = opt.shellYp;
-      energySpread = opt.sigmaE;
+      SetEnergySpread(opt.sigmaE);
       break;
     }
     
@@ -155,7 +221,7 @@ void BDSBunch::SetOptions(struct Options& opt)
 #ifdef DEBUG 
       G4cout<< "BDSBunch : " <<"GUINEAPIG_BUNCH: skipping "<<nlinesIgnore<<"  lines"<<G4endl;
 #endif
-      _skip(nlinesIgnore * 6);
+      skip(nlinesIgnore * 6);
       break;
     } 
     
@@ -165,7 +231,7 @@ void BDSBunch::SetOptions(struct Options& opt)
 #ifdef DEBUG 
       G4cout<< "BDSBunch : " <<"GUINEAPIG_SLAC: skipping "<<nlinesIgnore<<"  lines"<<G4endl;
 #endif
-      _skip(nlinesIgnore * 6);
+      skip(nlinesIgnore * 6);
       break;
     } 
 
@@ -175,7 +241,7 @@ void BDSBunch::SetOptions(struct Options& opt)
 #ifdef DEBUG 
       G4cout<< "BDSBunch : " <<"GUINEAPIG_PAIRS: skipping "<<nlinesIgnore<<"  lines"<<G4endl;
 #endif
-      _skip(nlinesIgnore * 7);
+      skip(nlinesIgnore * 7);
       break;
     }
     
@@ -185,7 +251,7 @@ void BDSBunch::SetOptions(struct Options& opt)
 #ifdef DEBUG 
       G4cout<< "BDSBunch : " <<"CAIN: skipping "<<nlinesIgnore<<"  lines"<<G4endl;
 #endif
-      _skip(nlinesIgnore * 14);
+      skip(nlinesIgnore * 14);
       break;
     } 
     //else
@@ -210,7 +276,7 @@ void BDSBunch::SetOptions(struct Options& opt)
 	  unparsed_str = unparsed_str.substr(pos+1);
 #ifdef DEBUG 
           G4cout<< "BDSBunch : " <<"token ->"<<token<<G4endl;
-	  G4cout << "BDSBunch : token.substr(0,1) -> " << token.substr(0,1) << G4endl;
+	  G4cout<< "BDSBunch : token.substr(0,1) -> " << token.substr(0,1) << G4endl;
 	  G4cout<< "BDSBunch : " <<"unparsed_str ->"<<unparsed_str<<G4endl;
           G4cout<< "BDSBunch : " <<"pos ->"<<pos<<G4endl;
 #endif
@@ -519,7 +585,9 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 {
 
 #ifdef DEBUG 
-  G4cout<< "BDSBunch : " <<"Twiss: "<<betaX<<" "<<betaY<<" "<<alphaX<<" "<<alphaY<<" "<<emitX<<" "<<emitY<<G4endl;
+  G4cout<< "BDSBunch::GetNextParticle> Twiss : " << betaX  << " " << betaY  << " " 
+	                                         << alphaX << " " << alphaY << " "
+	                                         << emitX  << " " << emitY  << G4endl;
 #endif
   if(verboseStep) G4cout<< "BDSBunch : " <<"distribution type: "<<distribType<<G4endl;
 
@@ -551,15 +619,13 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
   if(BDSGlobalConstants::Instance()->DoTwiss() && partId<nptwiss)
     {
       // temp numbers - to be replaced by parsed parameters
-      
+
       
       G4double sigx = sqrt(betaX*emitX);
       G4double sigxp= sqrt(emitX / betaX);
       
       G4double sigy = sqrt(betaY*emitY);
       G4double sigyp= sqrt(emitY / betaY);
-      
-      G4double pi = 2.*asin(1.);
       
       partId++;
       
@@ -602,6 +668,22 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
  
  
   switch(distribType){
+  case _REFERENCE: 
+    {
+      x0 = (X0 + 0.0) * m;
+      y0 = (Y0 + 0.0) * m;
+      z0 = (Z0 + 0.0) * m;
+      xp = (Xp0 + 0.0)*rad;
+      yp = (Yp0 + 0.0)*rad;
+      if (Zp0<0)
+        zp = -sqrt(1.-xp*xp -yp*yp);
+      else
+        zp = sqrt(1.-xp*xp -yp*yp);      
+      t  = 0.0; 
+      E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy();
+      weight = 1.0;
+      break;
+    }
   case _GAUSSIAN:
     {
       G4double phiX= twopi * G4UniformRand();
@@ -704,7 +786,41 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * (1 + energySpread * GaussGen->shoot());
       break;
     }
-case _RING:
+  case _GAUSSIAN_MATRIX :
+    {
+#ifdef DEBUG 
+      G4cout<< "BDSBunch::GetNextParticle> V0 : " << X0 << " " << Xp0 << " " << Y0 << " " << Yp0 << " " << T0 << G4endl;
+#endif
+
+      CLHEP::HepVector v = GaussMultiGen->fire();
+      x0 = v[0]*m;
+      xp = v[1]*rad;
+      y0 = v[2]*m;
+      yp = v[3]*rad;
+      t  = v[4];
+      z0 = Z0*m + t*c_light;
+      E  = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * v[5];
+      
+      if (Zp0<0)
+        zp = -sqrt(1.-xp*xp -yp*yp);
+      else
+        zp =  sqrt(1.-xp*xp -yp*yp);
+
+#ifdef DEBUG 
+      G4cout<< "BDSBunch::GetNextParticle>" << " GAUSSIAN_MATRIX : "<<G4endl
+            <<" x0= "<<x0<<" m"<<G4endl
+            <<" y0= "<<y0<<" m"<<G4endl
+            <<" z0= "<<z0<<" m"<<G4endl
+            <<" t= "<<t<<" s"<<G4endl
+            <<" xp= "<<xp<<G4endl
+            <<" yp= "<<yp<<G4endl
+            <<" zp= "<<zp<<G4endl
+            <<" E= "<<E<<G4endl;
+#endif
+      break;
+    }
+
+  case _RING:
     {
 #ifdef DEBUG 
       G4cout<< "BDSBunch : " <<"RING: "<<G4endl
@@ -743,17 +859,17 @@ case _RING:
       
 #ifdef DEBUG 
       G4cout<< "BDSBunch : " <<"SHELL: " 
-            <<" X0= "<<X0<<" m"<<G4endl
-            <<" Y0= "<<Y0<<" m"<<G4endl
-           <<" Z0= "<<Z0<<" m"<<G4endl
-            <<" T0= "<<T0<<" s"<<G4endl
-            <<" Xp0= "<<Xp0<<G4endl
-            <<" Yp0= "<<Yp0<<G4endl
-            <<" Zp0= "<<Zp0<<G4endl
-            <<" shellX= "<<shellx<<" m"<<G4endl
-            <<" shellY= "<<shelly<<" m"<<G4endl
-            <<" shellXp= "<<shellxp<<G4endl
-            <<" shellYp= "<<shellyp<<G4endl
+            <<" X0= " <<X0<<" m"<<G4endl
+            <<" Y0= " <<Y0<<" m"<<G4endl
+	    <<" Z0= " <<Z0<<" m"<<G4endl
+            <<" T0= " <<T0<<" s"<<G4endl
+            <<" Xp0= " <<Xp0<<G4endl
+            <<" Yp0= " <<Yp0<<G4endl
+            <<" Zp0= " <<Zp0<<G4endl
+            <<" shellX= " <<shellx<<" m"<<G4endl
+            <<" shellY= " <<shelly<<" m"<<G4endl
+            <<" shellXp= " <<shellxp<<G4endl
+            <<" shellYp= " <<shellyp<<G4endl
             <<" relative energy spread= "<<energySpread<<G4endl;
 #endif
       
@@ -827,7 +943,7 @@ case _RING:
       else{
         InputBunchFile.clear();
         InputBunchFile.seekg(0);
-        _skip(nlinesIgnore * 6);
+        skip(nlinesIgnore * 6);
         GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
       }
       break;
@@ -872,7 +988,7 @@ case _RING:
       G4int type;
       G4int gen;
       G4int pos;
-      G4double weight;
+      G4double weight; // JS: weight overwrites output parameter!
       G4double part_mass;
       G4double px,py,pz;
       G4double sx;
@@ -1034,9 +1150,9 @@ case _RING:
 #ifdef DEBUG 
       G4cout<< "BDSBunch : " <<"UDEF_BUNCH: skipping "<<nlinesIgnore<<"  lines"<<G4endl;
 #endif
-      _skip(nlinesIgnore * fields.size());
+      skip((G4int)(nlinesIgnore * fields.size()));
      
-      list<struct Doublet>::iterator it;
+      std::list<struct Doublet>::iterator it;
      for(it=fields.begin();it!=fields.end();it++)
        {
 #ifdef DEBUG 
@@ -1221,31 +1337,3 @@ void BDSBunch::SetBetaY(double val)
 {
   betaY = val;
 }
-
-template <typename Type> G4bool  BDSBunch::ReadValue(Type &value){
-  InputBunchFile>>value; 
-  if (InputBunchFile.eof()){ //If the end of the file is reached go back to the beginning of the file.
-#ifdef DEBUG
-    G4cout << "BDSBunch.cc> End of file reached. Returning to beginning of file." << G4endl;
-#endif
-    CloseBunchFile();
-    OpenBunchFile();
-    InputBunchFile>>value; 
-  } 
-
-  return !InputBunchFile.eof();
-}
-
-void BDSBunch::OpenBunchFile(){
-  InputBunchFile.open(inputfile);
-  if(!InputBunchFile.good()){ 
-    G4cerr<<"Cannot open bunch file "<<inputfile<<G4endl; exit(1); 
-  } 
-}
-
-void BDSBunch::CloseBunchFile(){
-  InputBunchFile.close();
-}
-
-
-#undef DEBUG

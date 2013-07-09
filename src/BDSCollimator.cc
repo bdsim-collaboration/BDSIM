@@ -34,6 +34,11 @@ BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
   BDSAcceleratorComponent(aName,
 			  aLength,bpRad,xAper,yAper,
 			  SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial),
+  itsPhysiComp(NULL), itsPhysiComp2(NULL), itsSolidLogVol(NULL), itsTempSolidLogVol(NULL),
+  itsInnerLogVol(NULL), itsInnerSolid(NULL), itsOuterSolid(NULL), itsSolid(NULL), itsSoilTube(NULL),
+  itsTunnelTube(NULL),  itsInnerTunnelTube(NULL), itsInnerTunnelLogicalVolume(NULL),
+  itsSoilTunnelLogicalVolume(NULL), itsTunnelUserLimits(NULL), itsSoilTunnelUserLimits(NULL),
+  itsInnerTunnelUserLimits(NULL), itsUserLimits(NULL), itsVisAttributes(NULL), itsEqRhs(NULL),
   itsCollimatorMaterial(CollimatorMaterial), itsOuterR(outR)
 {
   if(type==_RCOL) itsType="rcol";
@@ -92,6 +97,7 @@ G4VisAttributes* BDSCollimator::SetVisAttributes()
   itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
+
 
 void BDSCollimator::BuildInnerCollimator()
 {
@@ -164,7 +170,7 @@ void BDSCollimator::BuildInnerCollimator()
     G4cout << "BDSCollimator: placing aperture" << G4endl;
     itsPhysiComp2 = 
       new G4PVPlacement(
-			nullRotationMatrix,  // no rotation
+			nullRotationMatrix0,  // no rotation
 			nullThreeVector,     // its position
 			itsInnerLogVol,      // its logical volume
 			itsName+"_inner_phys", // its name
@@ -184,22 +190,21 @@ void BDSCollimator::BuildInnerCollimator()
 
 BDSCollimator::~BDSCollimator()
 {
-  if(itsVisAttributes) delete itsVisAttributes;
-  if(itsUserLimits) delete itsUserLimits;
-  if(itsInnerTunnelUserLimits) delete itsInnerTunnelUserLimits;
-  if(itsTunnelUserLimits) delete itsTunnelUserLimits;
-  if(itsSoilTunnelUserLimits) delete itsSoilTunnelUserLimits;
+  delete itsVisAttributes;
+  //   delete itsUserLimits;
+  //   delete itsInnerTunnelUserLimits;
+  //   delete itsTunnelUserLimits;
+  //   delete itsSoilTunnelUserLimits;
 
-  if(itsMarkerLogicalVolume)delete itsMarkerLogicalVolume;
-  if(itsSolidLogVol)delete itsSolidLogVol;
-  if(itsInnerLogVol)delete itsInnerLogVol;
+  //  delete itsSolidLogVol;
+  //  delete itsInnerLogVol;
 
-  if(itsPhysiComp) delete itsPhysiComp;
-  if(itsPhysiComp2) delete itsPhysiComp2;
+  //  delete itsPhysiComp;
+  //  delete itsPhysiComp2;
 
-  if(itsSoilTube) delete itsSoilTube;
-  if(itsTunnelTube) delete itsTunnelTube;
-  if(itsInnerTunnelTube) delete itsInnerTunnelTube;
-  if(itsInnerTunnelLogicalVolume) delete itsInnerTunnelLogicalVolume;
-  if(itsSoilTunnelLogicalVolume) delete itsSoilTunnelLogicalVolume;
+  //   delete itsSoilTube;
+  //   delete itsTunnelTube;
+  //   delete itsInnerTunnelTube;
+  //   delete itsInnerTunnelLogicalVolume;
+  //   delete itsSoilTunnelLogicalVolume;
 }

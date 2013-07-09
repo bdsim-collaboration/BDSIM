@@ -51,8 +51,6 @@ private:
   G4LogicalVolume* itsCoarseInnerLogicalVolume;
   G4VisAttributes* SetVisAttributes();
   
-  
-  G4UserLimits* itsUserLimits;
   G4VisAttributes* itsVisAttributes;
   
   G4ThreeVector itsPos;

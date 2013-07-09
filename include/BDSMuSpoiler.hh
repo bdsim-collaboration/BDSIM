@@ -7,8 +7,8 @@
 #ifndef BDSMuSpoiler_h
 #define BDSMuSpoiler_h 1
 
-#include"globals.hh"
-#include"BDSAcceleratorComponent.hh"
+#include "globals.hh"
+#include "BDSAcceleratorComponent.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "BDSMaterials.hh"
 #include "G4LogicalVolume.hh"
@@ -17,7 +17,7 @@
 #include "G4VisAttributes.hh"
 
 #include "G4Box.hh"
-#include "BDSEnergyCounterSD.hh"
+//#include "BDSEnergyCounterSD.hh"
 #include "BDSMuSpoilerMagField.hh"
 #include "G4FieldManager.hh"
 
@@ -72,7 +72,7 @@ private:
   G4Mag_UsualEqRhs* itsEqRhs;
 
 private:
-  BDSEnergyCounterSD* itsEnergyCounterSD;
+  //  BDSEnergyCounterSD* itsEnergyCounterSD;
   G4double itsBeampipeRadius;
   G4double itsInnerRadius;
   G4double itsOuterRadius;

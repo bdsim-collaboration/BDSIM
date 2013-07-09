@@ -1,4 +1,3 @@
-
 //  
 //   BDSIM, (C) 2001-2007
 //   
@@ -17,9 +16,12 @@
 //     28 Mar 2006 by Agapov v.0.2
 //     15 Dec 2005 by Agapov beta
 //
+
 //=================================================================
 
+#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSDebug.hh"
 
 #include "BDSDetectorConstruction.hh"
 
@@ -38,10 +40,6 @@
 #include "G4PropagatorInField.hh"
 #include "G4SDManager.hh"
 #include "G4RunManager.hh"
-#include "G4ScoringBox.hh"
-#include "G4ScoringManager.hh"
-#include "G4PSCellFlux3D.hh"
-#include "BDSScoreWriter.hh"
 
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
@@ -98,7 +96,6 @@
 #include "G4VSampler.hh"
 #include "G4GeometrySampler.hh"
 #include "G4IStore.hh"
-
  
 using namespace std;
 
@@ -145,7 +142,6 @@ extern BDSOutput* bdsOutput;
 extern G4bool verbose;
 extern G4bool outline;
 
-#define DEBUG 1
 #ifdef DEBUG
 bool debug = true;
 #else
@@ -156,8 +152,17 @@ bool debug = false;
 
 
 
-BDSDetectorConstruction::BDSDetectorConstruction()
+BDSDetectorConstruction::BDSDetectorConstruction():
+  itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
+  solidWorld(NULL),logicWorld(NULL),physiWorld(NULL),
+  magField(NULL),BDSUserLimits(NULL),BDSSensitiveDetector(NULL),
+  itsIStore(NULL)
 {  
+  verbose    = BDSExecOptions::Instance()->GetVerbose();
+  outline    = BDSExecOptions::Instance()->GetOutline();
+  gflash     = BDSExecOptions::Instance()->GetGFlash();
+  gflashemax = BDSExecOptions::Instance()->GetGFlashEMax();
+  gflashemin = BDSExecOptions::Instance()->GetGFlashEMin();
   
   //initialize world siye vector
   itsWorldSize.push_back(0);
@@ -195,13 +200,18 @@ BDSDetectorConstruction::BDSDetectorConstruction()
   theParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*GeV);
   theParticleBoundsVac->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),0*GeV);
 
-  G4cout << "BDSDetectorConstruction: theParticleBounds - min E - electron: " << theParticleBounds->GetMinEneToParametrise(*G4Electron::ElectronDefinition())/GeV<< " GeV" << G4endl;
-  G4cout << "BDSDetectorConstruction: theParticleBounds - max E - electron: " << theParticleBounds->GetMaxEneToParametrise(*G4Electron::ElectronDefinition())/GeV<< G4endl;
-  G4cout << "BDSDetectorConstruction: theParticleBounds - kill E - electron: " << theParticleBounds->GetEneToKill(*G4Electron::ElectronDefinition())/GeV<< G4endl;
-
-G4cout << "BDSDetectorConstruction: theParticleBounds - min E - positron: " << theParticleBounds->GetMinEneToParametrise(*G4Positron::PositronDefinition())/GeV<< G4endl;
-G4cout << "BDSDetectorConstruction: theParticleBounds - max E - positron: " << theParticleBounds->GetMaxEneToParametrise(*G4Positron::PositronDefinition())/GeV<< G4endl;
-G4cout << "BDSDetectorConstruction: theParticleBounds - kill E - positron: " << theParticleBounds->GetEneToKill(*G4Positron::PositronDefinition())/GeV<< G4endl;
+  G4cout << __METHOD_NAME__ << "theParticleBounds - min E - electron: " 
+	 << theParticleBounds->GetMinEneToParametrise(*G4Electron::ElectronDefinition())/GeV<< " GeV" << G4endl;
+  G4cout << __METHOD_NAME__ << "theParticleBounds - max E - electron: " 
+	 << theParticleBounds->GetMaxEneToParametrise(*G4Electron::ElectronDefinition())/GeV<< G4endl;
+  G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - electron: " 
+	 << theParticleBounds->GetEneToKill(*G4Electron::ElectronDefinition())/GeV<< G4endl;
+  G4cout << __METHOD_NAME__ << "theParticleBounds - min E - positron: " 
+	 << theParticleBounds->GetMinEneToParametrise(*G4Positron::PositronDefinition())/GeV<< G4endl;
+  G4cout << __METHOD_NAME__ << "theParticleBounds - max E - positron: " 
+	 << theParticleBounds->GetMaxEneToParametrise(*G4Positron::PositronDefinition())/GeV<< G4endl;
+  G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - positron: " 
+	 << theParticleBounds->GetEneToKill(*G4Positron::PositronDefinition())/GeV<< G4endl;
 
   theHitMaker          = new GFlashHitMaker();                    // Makes the EnergieSpots 
 
@@ -236,7 +246,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 
 
 }
-
 
 
 G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& beamline_list)
@@ -361,8 +370,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
   // set global magnetic field first
   //
   SetMagField(0.0); // necessary to set a global field; so chose zero
+
   
-  //
+  
   // convert the parsed element list to list of BDS elements
   //
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
@@ -521,28 +531,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
   WorldUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   logicWorld->SetUserLimits(WorldUserLimits);
 #endif
-
-
-  G4cout <<"Creating scoring mesh..." << G4endl;
-  //register the parallel world to the detector, and register its scoring mesh to the scoring manager...
-  //Scoring mesh
-  /*
-
-  G4ScoringBox* scoringMesh = new G4ScoringBox("scoringMesh");
-  G4ScoringManager::GetScoringManager()->RegisterScoringMesh(scoringMesh);
-  G4int nSegments[]={251, 251, 251};
-  scoringMesh->SetNumberOfSegments(nSegments);
-  //G4double size[]={400*cm,400*cm,4000*cm};
-  G4double lZ=GetWorldSizeZ()/2.0;
-  G4double size[]={BDSGlobalConstants::Instance()->GetTunnelRadius()*1.5,BDSGlobalConstants::Instance()->GetTunnelRadius()*1.5,lZ};
-  G4double pos[]={0.,0.,lZ};
-  scoringMesh->SetSize(size);
-  scoringMesh->SetCenterPosition(pos);  
-  G4PSCellFlux3D* primitiveScorer=new G4PSCellFlux3D("cellFluxScorer");
-  scoringMesh->SetPrimitiveScorer(primitiveScorer);
-  G4ScoringManager::GetScoringManager()->CloseCurrentMesh();
-
-  */
 
 
   G4cout<<"Creating regions..."<<G4endl;
@@ -1030,110 +1018,5 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
   delete precisionRegion;
   gFlashRegion.clear();
 }
-
-
-
-  //Set up geometric importance sampling.
-//  G4GeometrySampler importanceSampler(physiWorld,"electron");
-//  importanceSampler.SetParallel(false);
-//  G4VIStore* BDSDetectorConstruction:: = new G4IStore(*physiWorld);
-//  istore->AddImportanceGeometryCell(1, *physiWorld);
-  //importanceSampler.PrepareImportanceSampling(istore);
-  //  importanceSampler.Configure();
-G4VIStore *BDSDetectorConstruction::CreateImportanceStore(){
-//Create a geometry sampler  
-  G4GeometrySampler* itsGeometrySampler = new G4GeometrySampler(GetWorldVolume(),"electron");
-  itsGeometrySampler->SetParallel(false);
-
-
-   if (!fPhysicalVolumeVector.size())
-    {
-      G4Exception("B01-DetectorConstruction: no physical volumes created yet!", "-1", FatalException, "");
-    }
-  
-  // creating and filling the importance store
-  
-  G4IStore *itsIStore = new G4IStore(*physiWorld);
-  
-  G4double imp =1.0;
-  G4int n=1;
-  itsIStore->AddImportanceGeometryCell(1,  *physiWorld);
-  
-  for (std::vector<G4VPhysicalVolume *>::iterator
-	 it =  fPhysicalVolumeVector.begin();
-       it != fPhysicalVolumeVector.end(); it++)
-    {
-    	  G4cout << "Going to assign importance: " << imp << ", to volume: "
-		 << (*it)->GetName() << G4endl;
-	  itsIStore->AddImportanceGeometryCell(imp, *(*it), (*it)->GetCopyNo());
- 	  n++;
-	  imp=imp+1.0;
-    }
-
-
-
-  //  for(  list<BDSAcceleratorComponent*>::const_iterator iBeam=theBeamline->begin();iBeam!=theBeamline->end();iBeam++){
-  // itsIStore->AddImportanceGeometryCell(imp, *fPhysicalVolumeVector.at(0));
-  //
-  //  vector<G4VPhysicalVolume*> MultiplePhysicalVolumes = BDSBeamline::Instance()->currentItem()->GetMultiplePhysicalVolumes();
-  //  for (G4int i=0;i<MultiplePhysicalVolumes.size(); i++)
-  //    {
-  //G4cout << "Going to assign importance: " << imp << ", to accelerator component: "
-  //	       << MultiplePhysicalVolumes.at(i)->GetName() << G4endl;
-  //	G4cout << "Adding importance geometry cell: " << MultiplePhysicalVolumes.at(i)->GetName() << G4endl;       
-  //	itsIStore->AddImportanceGeometryCell(imp, *MultiplePhysicalVolumes.at(i));
-  //  }
-  //  imp++;
-  // }
-
-  return itsIStore;
-}
-
-G4double* BDSDetectorConstruction::GetWorldSize(){
-  int s=3;
-  G4double* ret = new G4double[s];
-  for(int i=0; i<s; i++){
-    ret[i]=itsWorldSize[i];
-  }
-  return ret;
-}
-
-G4double BDSDetectorConstruction::GetWorldSizeX(){
-  return itsWorldSize[0];
-}
-
-G4double BDSDetectorConstruction::GetWorldSizeY(){
-  return itsWorldSize[1];
-}
-
-G4double BDSDetectorConstruction::GetWorldSizeZ(){
-  return itsWorldSize[2];
-}
-
-void BDSDetectorConstruction::SetWorldSize(G4double* val){
-  int sExpected = 3;
-  int s=sizeof(val)/sizeof(val[0]);
-  if(s!=sExpected){
-    std::cerr << "Error: BDSDetectorConstruction::SetWorldSize(G4double*) expects an array of size " << sExpected << ". Exiting." << std::endl;
-    exit(1);
-  }
-  for(int i=0; i<s; i++){
-    itsWorldSize[i]=val[i];
-  }
-}
-
-void BDSDetectorConstruction::SetWorldSizeX(G4double val){
-  itsWorldSize[0]=val;
-}
-
-void BDSDetectorConstruction::SetWorldSizeY(G4double val){
-  itsWorldSize[1]=val;
-}
-
-void BDSDetectorConstruction::SetWorldSizeZ(G4double val){
-  itsWorldSize[2]=val;
-}
-
-
 
 //=================================================================

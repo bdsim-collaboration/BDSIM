@@ -2,7 +2,7 @@ include options.gmad
 
 beam,  particle="e-",
        energy=1.282 * GeV,
-       nparticles=1e+10,
+       !nparticles=1e+10,
        distrType="gauss",
 !       sigmaX=0.002*mm,
  !      sigmaY=0.002*mm,

@@ -1,0 +1,6 @@
+include options.gmad
+include beam.gmad
+include lattice.gmad;
+
+option, ngenerate=10000;
+

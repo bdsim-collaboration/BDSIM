@@ -43,7 +43,7 @@ class BDSLaserCompton : public G4VeEnergyLoss
   
   ~BDSLaserCompton();
 
-#if G4VERSION_NUMBER > 899  
+#if G4VERSION > 8  
 //  virtual void PrintInfo();
 #endif
 
@@ -68,15 +68,15 @@ protected:
 				G4double KineticEnergy, 
 				const G4Material* aMaterial);
 
-  virtual G4double SecondaryEnergyThreshold(size_t index);
+  //  virtual G4double SecondaryEnergyThreshold(size_t index);
 
 protected:
-#if G4VERSION_NUMBER > 899
-  G4bool isInitialised;  
-  const G4ParticleDefinition* particle;
+  //#if G4VERSION_NUMBER > 899
+  //  G4bool isInitialised;  
+  //  const G4ParticleDefinition* particle;
 
 //  virtual void InitialiseEnergyLossProcess(const G4ParticleDefinition*, const G4ParticleDefinition*);
-#endif
+//#endif
   
 private:
   
@@ -84,14 +84,14 @@ private:
   
   BDSLaserCompton(const BDSLaserCompton&);
 
-  const std::vector<G4double>* secondaryEnergyCuts;
+  //  const std::vector<G4double>* secondaryEnergyCuts;
   
 private:
   G4double itsLaserWavelength;
   G4ThreeVector itsLaserDirection;
   G4double itsLaserEnergy;
   BDSComptonEngine* itsComptonEngine;
-  G4Material* itsLastMaterial;
+  //  G4Material* itsLastMaterial;
 
 };
 inline G4bool BDSLaserCompton::IsApplicable(
@@ -102,10 +102,10 @@ inline G4bool BDSLaserCompton::IsApplicable(
 }
 
 inline G4double BDSLaserCompton::GetMeanFreePath(const G4Track& track,
-						 G4double,
+						 G4double PreviousStepSize,
 						 G4ForceCondition* ForceCondition)
 {
-  if( track.GetMaterial()==BDSMaterials::Instance()->GetMaterial("LaserVac") &&
+  if( track.GetMaterial()==theMaterials->GetMaterial("LaserVac") &&
       FireLaserCompton ) {
     *ForceCondition=Forced;
   }
@@ -125,9 +125,9 @@ inline void BDSLaserCompton::SetLaserWavelength(G4double aWavelength)
 inline G4double BDSLaserCompton::GetLaserWavelength()
 {return itsLaserWavelength;}
 
-inline G4double BDSLaserCompton::SecondaryEnergyThreshold(size_t index)
-{
-  return (*secondaryEnergyCuts)[index];
-}
+// inline G4double BDSLaserCompton::SecondaryEnergyThreshold(size_t index)
+// {
+//   return (*secondaryEnergyCuts)[index];
+// }
 
 #endif

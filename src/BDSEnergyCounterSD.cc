@@ -3,6 +3,7 @@
    Last modified 24.7.2002
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
+#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 
 #include "BDSEnergyCounterSD.hh"
@@ -23,15 +24,17 @@
 
 #include "G4RunManager.hh"
 #include "G4Version.hh"
-#include<string>
+
+#include <string>
 
 extern G4int event_number;
-extern G4bool verbose;
 
 
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
-:G4VSensitiveDetector(name)
+  :G4VSensitiveDetector(name),BDSEnergyCounterCollection(NULL),
+   enrg(0.0),xpos(0.0),ypos(0.0),zpos(0.0)
 {
+  verbose = BDSExecOptions::Instance()->GetVerbose();
   itsName = name;
   collectionName.insert("EC_"+name);
   #define NMAXCOPY 5
@@ -39,7 +42,9 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
 }
 
 BDSEnergyCounterSD::~BDSEnergyCounterSD()
-{delete [] HitID;}
+{
+  delete [] HitID;
+}
 
 void BDSEnergyCounterSD::Initialize(G4HCofThisEvent*)
 {
@@ -63,7 +68,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 #endif
   if (enrg==0.) return false;      
   
-
+  
   G4int nCopy=aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();
 #ifdef DEBUG
   if(nCopy>0){
@@ -77,14 +82,14 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 	aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName()<<G4endl;
       G4Exception("Killing program in BDSEnergyCounterSD::ProcessHits", "-1", FatalException, "");
     }
-
+  
   // Get Translation and Rotation of Sampler Volume w.r.t the World Volume
   // as described in Geant4 FAQ's: http://geant4.cern.ch/support/faq.shtml
-  G4AffineTransform tf=(aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
-  G4ThreeVector pos = aStep->GetTrack()->GetPosition();
-  G4ThreeVector momDir= aStep->GetTrack()->GetMomentumDirection();
+  G4AffineTransform tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
+  G4ThreeVector pos    = aStep->GetTrack()->GetPosition();
+  G4ThreeVector momDir = aStep->GetTrack()->GetMomentumDirection();
 
-  G4ThreeVector LocalPosition = tf.TransformPoint(pos);
+  G4ThreeVector LocalPosition  = tf.TransformPoint(pos);
   G4ThreeVector LocalDirection = tf.TransformAxis(momDir);
 
   //  xpos=LocalPosition.x();
@@ -95,26 +100,29 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   zpos=0.5*(aStep->GetPreStepPoint()->GetPosition().z()
   	    + aStep->GetPostStepPoint()->GetPosition().z());
   
-    xpos=0.5*(aStep->GetPreStepPoint()->GetPosition().x()
-      + aStep->GetPostStepPoint()->GetPosition().x());
+  xpos=0.5*(aStep->GetPreStepPoint()->GetPosition().x()
+	    + aStep->GetPostStepPoint()->GetPosition().x());
   
-    ypos=0.5*(aStep->GetPreStepPoint()->GetPosition().y()
+  ypos=0.5*(aStep->GetPreStepPoint()->GetPosition().y()
   	    + aStep->GetPostStepPoint()->GetPosition().y());
   
-   if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) G4cout << "BDSEnergyCounterSD: Current Volume: " << 	aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() <<"\tEvent: " << event_number << "\tEnergy: " << enrg/GeV << "GeV\tPosition: " << zpos/m <<"m"<< G4endl;
-
-   /*
-   cout << "E = " << enrg << endl;
-   cout << "x = " << xpos << endl;
-   cout << "y = " << ypos << endl;
-   cout << "z = " << zpos << endl;
-   cout << "vol1 = " << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() << endl;
-   cout << "vol2 = " << aStep->GetTrack()->GetVolume()->GetName() << endl;
-   */
+  if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) {
+    G4cout << "BDSEnergyCounterSD: Current Volume: " << 	aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() 
+	   <<"\tEvent: " << event_number << "\tEnergy: " << enrg/GeV << "GeV\tPosition: " << zpos/m <<"m"<< G4endl;
+  }
+  
+  /*
+    G4cout << "E = " << enrg << G4endl;
+    G4cout << "x = " << xpos << G4endl;
+    G4cout << "y = " << ypos << G4endl;
+    G4cout << "z = " << zpos << G4endl;
+    G4cout << "vol1 = " << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() << G4endl;
+    G4cout << "vol2 = " << aStep->GetTrack()->GetVolume()->GetName() << G4endl;
+  */
 
    G4double weight = aStep->GetTrack()->GetWeight();
    if (weight == 0){
-     cerr << "Error: BDSEnergyCounterSD: weight = 0" << endl;
+     G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << endl;
      exit(1);
    }
    int ptype = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
@@ -166,10 +174,10 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
     {
       G4cerr<<" BDSEnergyCounterSD: nCopy too large: nCopy="<<nCopy<<
 	"NMAXCOPY="<<NMAXCOPY<<" Volume="<< volName;
-
+      
       G4Exception("Killing program in BDSEnergyCounterSD::ProcessHits", "-1", FatalException, "");
     }
-
+  
   // Get Translation and Rotation of Sampler Volume w.r.t the World Volume
   // as described in Geant4 FAQ's: http://geant4.cern.ch/support/faq.shtml
   G4AffineTransform tf=(aSpot->GetTouchableHandle()->GetHistory()->GetTopTransform());
@@ -184,7 +192,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
   
   G4double weight = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetWeight();
   if (weight == 0){
-    cerr << "Error: BDSEnergyCounterSD: weight = 0" << endl;
+    G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl;
     exit(1);
   }
   int ptype = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetDefinition()->GetPDGEncoding();
@@ -202,6 +210,10 @@ void BDSEnergyCounterSD::EndOfEvent(G4HCofThisEvent*HCE)
 {
   G4int HCID = GetCollectionID(0); 
   HCE->AddHitsCollection( HCID, BDSEnergyCounterCollection );
+  
+  //  G4SDManager *SDman = G4SDManager::GetSDpointer();
+  //  G4int HCID         = SDMan->GetCollectionID(itsName);
+  //  HCE->AddHitsCollection( HCID, BDSEnergyCounterCollection);  
 }
 
 void BDSEnergyCounterSD::clear()

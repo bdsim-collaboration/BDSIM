@@ -81,11 +81,11 @@ G4VParticleChange* GammaConversion_LPB_v2::PostStepDoIt(const G4Track& track, co
   G4int multiplicity = 2;
 
   //System to control degree of biasing used
-  G4bool fActive = true;
-  G4double fBiasFraction = BDSGlobalConstants::Instance()->GetLPBFraction();
-  if(fBiasFraction < CLHEP::RandFlat::shoot()){
-    fActive = false;
-  }
+  // G4bool fActive = true;
+  // G4double fBiasFraction = BDSGlobalConstants::Instance()->GetLPBFraction();
+  // if(fBiasFraction < CLHEP::RandFlat::shoot()){
+  //   fActive = false;
+  // }
 
   //Obtain initial parent weight
   G4double initialWeight = track.GetWeight();

@@ -9,5 +9,5 @@
 
 #include "BDSRMatrix.hh"
 
-BDSRMatrix::BDSRMatrix()
+BDSRMatrix::BDSRMatrix():r11(0.0),r12(0.0),r21(0.0),r22(0.0)
   {;}

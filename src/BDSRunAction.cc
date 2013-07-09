@@ -7,6 +7,7 @@
 //==========================================================
 //==========================================================
 
+#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSRunAction.hh"
@@ -29,13 +30,12 @@
 #include <unistd.h> // for sleep, will not work on windows?
 #endif
 
-extern G4int nptwiss;
-
 
 //==========================================================
 
 BDSRunAction::BDSRunAction()
 {
+  nptwiss = BDSExecOptions::Instance()->GetNPTwiss();
 }
 
 //==========================================================
@@ -65,7 +65,7 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
 
   if(BDSGlobalConstants::Instance()->getWaitingForDump()) // synchronization with placet
     {
-      G4cout<<"last event reached! dumping"<<G4endl;
+      G4cout<<"BDSRunAction::EnfOfRunAction> last event reached! dumping"<<G4endl;
       
       G4StackManager* SM = G4EventManager::GetEventManager()->GetStackManager();
       

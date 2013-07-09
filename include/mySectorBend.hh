@@ -1,24 +1,14 @@
 #ifndef mySectorBend_h
 #define mySectorBend_h 
 
-#include "globals.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-#include "BDSHelixStepper.hh"
-
-#include "myQuadStepper.hh"
-
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4UniformMagField.hh"
-#include "G4PVPlacement.hh"               
-
 #include "BDSMultipole.hh"
-#include "BDSSbendMagField.hh"
-#include "G4Mag_EqRhs.hh"
+#include "globals.hh"
+
+class myQuadStepper;
+class BDSSbendMagField;
+class G4Mag_EqRhs;
+class G4VPhysicalVolume;
+class G4VisAttributes;
 
 class mySectorBend :public BDSMultipole
 {
@@ -36,6 +26,9 @@ protected:
 private:
   G4double itsBField;
   G4double itsBGrad;
+  G4VPhysicalVolume* itsPhysiInnerSB;
+  G4VPhysicalVolume* itsPhysiCompSB;
+  G4VPhysicalVolume* itsPhysiCompSBOuter;
 
   void BuildBPFieldAndStepper();
   void BuildSBMarkerLogicalVolume();

@@ -70,7 +70,9 @@ public:
   void ConstructDecay();
 
 private:
-    std::vector<G4String>  paraWorldName;
+  G4bool verbose;
+
+  std::vector<G4String>  paraWorldName;
 };
 
 #endif

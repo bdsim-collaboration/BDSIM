@@ -1,0 +1,30 @@
+include ATF2lat_BX10BY1m.gmad;
+include options.gmad
+
+beam,  particle="e-",
+       energy=1.5405110 * GeV,
+       distrType="gauss",
+       sigmaX=0.002*mm,
+       sigmaY=0.002*mm,
+!       sigmaXp=0.02*0.005,
+!       sigmaYp=0.02*0.004;
+       sigmaXp=0.09*0.005,
+       sigmaYp=0.09*0.004;
+!       sigmaXp=0.01,
+!       sigmaYp=0.01;
+
+
+all  : line = (atfdr, ext, ff, post);
+atf2 : line = (iex,ext,ff,post);
+
+use ,period=atf2;
+
+sample, range = iex;
+sample, range = aqm14ff;
+sample, range = aqm16ff;
+sample, range = ip;
+
+option, ngenerate=1000;
+option, nperfile =999;
+
+!print, line;

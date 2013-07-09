@@ -10,6 +10,5 @@
 
 #include "BDSParticle.hh"
 
-BDSParticle::BDSParticle(){;}
-
-
+BDSParticle::BDSParticle():energy(0.0),wgt(0.0),y(0.0),yp(0.0),x(0.0),xp(0.0)
+{;}

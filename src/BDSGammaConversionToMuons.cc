@@ -20,7 +20,7 @@ BDSGammaConversionToMuons::BDSGammaConversionToMuons(const G4String& processName
     G4ProcessType type):G4VDiscreteProcess (processName, type),
     LowestEnergyLimit (4*G4MuonPlus::MuonPlus()->GetPDGMass()), // 4*Mmuon
     HighestEnergyLimit(1e21*eV), // ok to 1e21eV=1e12GeV, then LPM suppression
-    CrossSecFactor(1.)
+    MeanFreePath(-1.0),CrossSecFactor(1.)
 { }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.....

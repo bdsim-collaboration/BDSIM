@@ -35,11 +35,18 @@ BDSMuSpoiler::BDSMuSpoiler (G4String& aName,G4double aLength,G4double bpRad,
   BDSAcceleratorComponent(aName,
 			 aLength,bpRad,bpRad,bpRad,
                           SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial),
+  itsPhysiComp(NULL),itsPhysiCompSoil(NULL),itsPhysiComp2(NULL),itsPhysiInnerBP(NULL),
+  itsPhysiBP(NULL),itsSolidLogVol(NULL),itsInnerLogVol(NULL),itsBeampipeLogicalVolume(NULL),
+  itsInnerBPLogicalVolume(NULL),itsBPTube(NULL),itsInnerBPTube(NULL),itsSoilTube(NULL),
+  itsTunnelTube(NULL),itsInnerTunnelTube(NULL),itsInnerTunnelLogicalVolume(NULL),
+  itsSoilTunnelLogicalVolume(NULL),itsTunnelUserLimits(NULL),itsSoilTunnelUserLimits(NULL),
+  itsInnerTunnelUserLimits(NULL),itsVisAttributes(NULL),itsBPVisAttributes(NULL),
+  itsEqRhs(NULL),
   itsBeampipeRadius(bpRad),
   itsInnerRadius(rInner),
   itsOuterRadius(rOuter),
-  itsBField(aBField)
-
+  itsBField(aBField),
+  itsMagField(NULL),itsFieldMgr(NULL)
 {
   G4double minInnRad =  itsBeampipeRadius + BDSGlobalConstants::Instance()->GetBeampipeThickness() + BDSGlobalConstants::Instance()->GetLengthSafety()/2.0;
   if( itsInnerRadius < minInnRad ){
@@ -268,35 +275,33 @@ G4VisAttributes* BDSMuSpoiler::SetBPVisAttributes()
 
 BDSMuSpoiler::~BDSMuSpoiler()
 {
-  if(itsVisAttributes) delete itsVisAttributes;
-  if(itsBPVisAttributes) delete itsBPVisAttributes;
-  if(itsUserLimits) delete itsUserLimits;
+  delete itsVisAttributes;
+  delete itsBPVisAttributes;
 
-  if(itsInnerTunnelUserLimits) delete itsInnerTunnelUserLimits;
-  if(itsTunnelUserLimits) delete itsTunnelUserLimits;
-  if(itsSoilTunnelUserLimits) delete itsSoilTunnelUserLimits;
+//   delete itsInnerTunnelUserLimits;
+//   delete itsTunnelUserLimits;
+//   delete itsSoilTunnelUserLimits;
 
-  if(itsMarkerLogicalVolume)delete itsMarkerLogicalVolume;
-  if(itsSolidLogVol)delete itsSolidLogVol;
-  if(itsInnerLogVol)delete itsInnerLogVol;
-  if(itsBeampipeLogicalVolume) delete itsBeampipeLogicalVolume;
-  if(itsInnerBPLogicalVolume) delete itsInnerBPLogicalVolume;
+//   delete itsSolidLogVol;
+//   delete itsInnerLogVol;
+//   delete itsBeampipeLogicalVolume;
+//   delete itsInnerBPLogicalVolume;
   
-  if(itsBPTube) delete itsBPTube;
-  if(itsInnerBPTube) delete itsInnerBPTube;
+//   delete itsBPTube;
+//   delete itsInnerBPTube;
 
-  if(itsPhysiComp) delete itsPhysiComp;
-  if(itsPhysiComp2) delete itsPhysiComp2;
-  if(itsPhysiInnerBP) delete itsPhysiInnerBP;
-  if(itsPhysiBP) delete itsPhysiBP;
-  if(itsPhysiCompSoil) delete itsPhysiCompSoil;
+  //  delete itsPhysiComp;
+  //  delete itsPhysiComp2;
+  //  delete itsPhysiInnerBP;
+  //  delete itsPhysiBP;
+  //  delete itsPhysiCompSoil;
 
-  if(itsMagField) delete itsMagField;
-  if(itsFieldMgr) delete itsFieldMgr;
+  delete itsMagField;
+  delete itsFieldMgr;
 
-  if(itsSoilTube) delete itsSoilTube;
-  if(itsTunnelTube) delete itsTunnelTube;
-  if(itsInnerTunnelTube) delete itsInnerTunnelTube;
-  if(itsInnerTunnelLogicalVolume) delete itsInnerTunnelLogicalVolume;
-  if(itsSoilTunnelLogicalVolume) delete itsSoilTunnelLogicalVolume;
+//   delete itsSoilTube;
+//   delete itsTunnelTube;
+//   delete itsInnerTunnelTube;
+//   delete itsInnerTunnelLogicalVolume;
+//   delete itsSoilTunnelLogicalVolume;
 }

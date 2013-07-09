@@ -16,7 +16,7 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4Box.hh"
-#include "BDSEnergyCounterSD.hh"
+//#include "BDSEnergyCounterSD.hh"
 
 class BDSSpoiler :public BDSAcceleratorComponent
 {
@@ -38,13 +38,12 @@ private:
   G4LogicalVolume* itsSolidLogVol;
   G4LogicalVolume* itsInnerLogVol;
                     
-  G4UserLimits* itsUserLimits;
   G4VisAttributes* itsVisAttributes;
   G4Mag_UsualEqRhs* itsEqRhs;
 
 private:
   G4Material* itsSpoilerMaterial;
-  BDSEnergyCounterSD* itsEnergyCounterSD;
+  //  BDSEnergyCounterSD* itsEnergyCounterSD;
 };
 
 #endif

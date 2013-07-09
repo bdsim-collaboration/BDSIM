@@ -4,7 +4,7 @@
    Copyright (c) 2004 by J.C.Carter.  ALL RIGHTS RESERVED. 
 */
 
-#include "BDSGlobalConstants.hh" 
+#include "BDSGlobalConstants.hh" // must be first in include list
 #include "BDSElement.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
@@ -66,7 +66,8 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap,
 			  aName,
 			  aLength,bpRad,0,0,
 			  SetVisAttributes(), aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*m, aTunnelOffsetX*m, aTunnelCavityMaterial, aPrecisionRegion),
-  itsField(NULL), itsMagField(NULL)
+  fChordFinder(NULL), itsFStepper(NULL), itsFEquation(NULL), itsEqRhs(NULL), 
+  itsField(NULL), itsMagField(NULL), itsUniformMagField(NULL)
 {
   itsFieldVolName="";
   itsFieldIsUniform=false;
@@ -77,7 +78,7 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap,
   CalculateLengths();
 
   // WARNING: ALign in and out will only apply to the first instance of the
-  //          element. Subsequent copies will have no alignement set.
+  //          element. Subsequent copies will have no alignment set.
   align_in_volume = NULL;
   align_out_volume = NULL;
 
@@ -328,6 +329,8 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       // build the magnetic field manager and transportation
       BuildMagField(true);
     }
+    delete ggmad;
+    ggmad = 0;
   }
   else if(gFormat=="lcdd") {
 #ifdef USE_LCDD
@@ -368,7 +371,8 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     vector<G4LogicalVolume*> SensComps = LCDD->SensitiveComponents;
     for(G4int id=0; id<(G4int)SensComps.size(); id++)
       SetMultipleSensitiveVolumes(SensComps[id]);
-
+    //    delete LCDD;
+    //    LCDD = 0;
 #else
     G4cout << "LCDD support not selected during BDSIM configuration" << G4endl;
     G4Exception("Please re-compile BDSIM with USE_LCDD flag in Makefile", "-1", FatalException, "");
@@ -423,11 +427,15 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 	    BuildMagField(true);
 	  }
       }
+    // delete Mokka;
+    // Mokka = 0;
   }
   else if(gFormat=="gdml") {
 #ifdef USE_GDML
     GDML = new BDSGeometryGDML(gFile);
     GDML->Construct(itsMarkerLogicalVolume);
+    delete GDML;
+    GDML = 0;
 #else
     G4cout << "GDML support not selected during BDSIM configuration" << G4endl;
     G4Exception("Please re-compile BDSIM with USE_GDML flag in Makefile", "-1", FatalException, "");
@@ -693,9 +701,7 @@ void BDSElement::AlignComponent(G4ThreeVector& TargetPos,
 
 BDSElement::~BDSElement()
 {
-
   delete itsVisAttributes;
-  delete itsMarkerLogicalVolume;
   delete fChordFinder;
   delete itsFStepper;
   delete itsFEquation;

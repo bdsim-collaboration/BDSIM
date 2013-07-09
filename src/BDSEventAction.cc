@@ -11,11 +11,14 @@
 
 //======================================================
 //======================================================
+#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSEventAction.hh"
 
 #include <ctime> 
+#include <list>
+#include <map>
 #include <vector>
 #include <algorithm>
 
@@ -55,7 +58,7 @@
 typedef std::map<G4String,int> LogVolCountMap;
 extern LogVolCountMap* LogVolCount;
 
-typedef list<BDSEnergyCounterSD*>  ECList;
+typedef std::list<BDSEnergyCounterSD*>  ECList;
 extern ECList* theECList;
 
 extern G4double BDSeBremFireDist;
@@ -69,27 +72,22 @@ G4double htot;
 G4int event_number;
 G4bool FireLaserCompton;
 
-
 extern BDSOutput* bdsOutput;
-extern G4String outputFilename;
-extern G4bool isBatch;
-
-
-extern G4bool verbose;      // run options
-extern G4bool verboseStep;
-extern G4bool verboseEvent;
-extern G4int verboseEventNumber;
-extern G4bool isBatch;
-
-extern G4int nptwiss;
-
 
 //======================================================
 
-BDSEventAction::BDSEventAction()
-:SamplerCollID_plane(-1),SamplerCollID_cylin(-1),
-LWCalorimeterCollID(-1),drawFlag("all")
+BDSEventAction::BDSEventAction():
+  SamplerCollID_plane(-1),SamplerCollID_cylin(-1),
+  LWCalorimeterCollID(-1),drawFlag("all"),
+  Traj(NULL),trajEndPoint(NULL)
 { 
+  verbose            = BDSExecOptions::Instance()->GetVerbose();
+  verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
+  verboseEvent       = BDSExecOptions::Instance()->GetVerboseEvent();
+  verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
+  isBatch            = BDSExecOptions::Instance()->GetBatch();
+  nptwiss            = BDSExecOptions::Instance()->GetNPTwiss();
+
   if(isBatch) printModulo=10;
   else printModulo=1;
   
@@ -104,14 +102,15 @@ LWCalorimeterCollID(-1),drawFlag("all")
 
 BDSEventAction::~BDSEventAction()
 {
-  delete Traj;
-  delete trajEndPoint;
+//   delete Traj;
+//   delete trajEndPoint;
 }
 
 //======================================================
 
 void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 { 
+  G4cout<<"BDSEventAction::BeginOfEventAction>"<<G4endl;
 #ifdef DEBUG
   G4cout<<"BDSEventAction : processing begin of event action"<<G4endl;
 #endif
@@ -240,6 +239,7 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   G4cout<<"BDSEventAction : storing energy loss histograms"<<G4endl;
 #endif
 
+#if 1
   for(iEC=theECList->begin();iEC!=theECList->end();iEC++)
     {
       G4String name=(*iEC)->GetCollectionName(0);
@@ -251,36 +251,34 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 	  BDSEnergyCounter_HC=
 	    (BDSEnergyCounterHitsCollection*)(HCE->GetHC(BDSEnergyCounter_ID));
 	
-	  if(BDSEnergyCounter_HC) bdsOutput->WriteEnergyLoss(BDSEnergyCounter_HC);
-	 
+	  if(BDSEnergyCounter_HC) 
+	    bdsOutput.WriteEnergyLoss(BDSEnergyCounter_HC);
 	}
     }
+#endif
 
-
-  // if 0 events per ntuples - set max allowed events per ntuples  
-
+  // if events per ntuples not set (default 0) - only write out at end 
   int evntsPerNtuple = BDSGlobalConstants::Instance()->GetNumberOfEventsPerNtuple();
-
-  if(evntsPerNtuple>0)
-    if ((event_number+1)% evntsPerNtuple == 0 && 
-		event_number+1 != BDSGlobalConstants::Instance()->GetNumberToGenerate())
-      {
+  if( (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0) || 
+	(event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate())
+    {
 #ifdef DEBUG 
-        G4cout<<"writing to file "<<G4endl;
+      G4cout<<"writing to file "<<G4endl;
 #endif
-	// notify the output about the event end
-	// this can be used for splitting output files etc.
-        //	bdsOutput->Commit(itsOutputFileNumber++);
-	bdsOutput->Commit();
-#ifdef DEBUG
-        G4cout<<"done"<<G4endl;
-#endif
+      // notify the output about the event end
+      // this can be used for splitting output files etc.
+      //	bdsOutput->Commit(itsOutputFileNumber++);
+      if((event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate()) {
+	bdsOutput->Write(); // write last file
+      } else {
+	bdsOutput->Commit(); // write and open new file
       }
-
-
-
+#ifdef DEBUG
+      G4cout<<"done"<<G4endl;
+#endif
+    }
+  
   // Save interesting trajectories
-
   
   G4TrajectoryContainer* TrajCont=evt->GetTrajectoryContainer();
 

@@ -29,7 +29,8 @@ extern LogVolMap* LogVol;
 
 BDSRfCavity::BDSRfCavity (G4String aName,G4double aLength, G4double bpRad, 
 			  G4double grad, G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName ,aLength, bpRad, bpRad, SetVisAttributes(), aTunnelMaterial, aMaterial)
+  BDSMultipole(aName ,aLength, bpRad, bpRad, SetVisAttributes(), aTunnelMaterial, aMaterial),
+  itsStepper(NULL),itsField(NULL),fChordFinder(NULL),fStepper(NULL),fIntgrDriver(NULL),fieldManager(NULL)
 {
   itsGrad = grad;
   itsType = "rfcavity";
@@ -109,7 +110,7 @@ void BDSRfCavity::BuildMarkerFieldAndStepper()
 
   fieldManager->SetDetectorField(itsField );
 
-  if(fChordFinder) delete fChordFinder;
+  delete fChordFinder;
 
   fIntgrDriver = new G4MagInt_Driver(fMinStep,
                                      fStepper,
@@ -128,11 +129,7 @@ void BDSRfCavity::BuildMarkerFieldAndStepper()
 
 BDSRfCavity::~BDSRfCavity()
 {
-  if(itsVisAttributes) delete itsVisAttributes;
-  if(itsMarkerLogicalVolume) delete itsMarkerLogicalVolume;
-  if(itsOuterLogicalVolume) delete itsOuterLogicalVolume;
-  if(itsPhysiComp) delete itsPhysiComp;
-  if(itsField) delete itsField;
-  //if(itsEqRhs) delete itsEqRhs;
-  if(itsStepper) delete itsStepper;
+  delete itsVisAttributes;
+  delete itsField;
+  delete itsStepper;
 }

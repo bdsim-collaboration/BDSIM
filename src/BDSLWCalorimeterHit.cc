@@ -17,11 +17,6 @@ BDSLWCalorimeterHit::BDSLWCalorimeterHit(G4int nCopy, G4double anEnergy,G4int nE
   :itsEnergy(anEnergy),itsCopyNumber(nCopy),itsEventNo(nEvent)
 {;}
 
-
-BDSLWCalorimeterHit::BDSLWCalorimeterHit()
-{;}
-
-
 BDSLWCalorimeterHit::~BDSLWCalorimeterHit()
 {;}
 

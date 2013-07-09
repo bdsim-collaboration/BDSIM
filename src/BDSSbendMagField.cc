@@ -4,6 +4,7 @@
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 
+#include <limits>
 #include "BDSGlobalConstants.hh"
 #include "G4UniformMagField.hh"
 #include "globals.hh"
@@ -28,6 +29,7 @@ BDSSbendMagField::BDSSbendMagField(const G4ThreeVector& aField,
 	" aField="<<aField/tesla<<G4endl;
 #endif
     } else {
+    itsLocalRadius = std::numeric_limits<double>::max();
 #ifdef DEBUG
     G4double B_inferred=0;
     G4cout<<"B_inferred="<<B_inferred/tesla<<
@@ -39,4 +41,4 @@ BDSSbendMagField::BDSSbendMagField(const G4ThreeVector& aField,
 BDSSbendMagField::~BDSSbendMagField()
 {}
 
-#undef DEBUG
+

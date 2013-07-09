@@ -173,7 +173,7 @@ BDSRK4Stepper::AdvanceHelix( const G4double  yIn[],
 //   G4cout<<G4endl;
 
 
-  itsDist = 0;
+//  itsDist = 0;
   
   return;
 
@@ -240,5 +240,6 @@ void BDSRK4Stepper::Stepper( const G4double yInput[],
 
 G4double BDSRK4Stepper::DistChord()   const 
 {
-  return itsDist;
+  //  return itsDist;
+  return 0.0;
 }

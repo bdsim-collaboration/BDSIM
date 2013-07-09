@@ -14,7 +14,8 @@ extern G4double BDSLocalRadiusOfCurvature;
 extern G4int event_number;
 
 BDSHelixStepper::BDSHelixStepper(G4Mag_EqRhs *EqRhs)
-  : G4MagIntegratorStepper(EqRhs,6)  // integrate over 6 variables only !!
+  : G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
+    itsBField(0.0), itsDist(0.0)
 {
   its_EqRhs = EqRhs;
 }

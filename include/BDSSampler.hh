@@ -35,10 +35,11 @@ private:
   G4VisAttributes* SetVisAttributes();
 
   // field related objects:
-  G4UserLimits* itsUserLimits;
   G4VisAttributes* itsVisAttributes;
 
+  /// id of sampler
   int nThisSampler;
+  /// number of total Samplers
   static int nSamplers;
 };
 

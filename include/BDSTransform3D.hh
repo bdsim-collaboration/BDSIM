@@ -34,7 +34,6 @@ private:
   G4VisAttributes* SetVisAttributes();
   
   G4VisAttributes* itsVisAttributes;
-  G4UserLimits* itsUserLimits;
   G4PVPlacement* itsPhysiComp;
 
 };

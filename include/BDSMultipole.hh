@@ -106,7 +106,6 @@ public:
   void SetEndOuterRadius(G4double outR);
 
 protected:
-
   G4LogicalVolume* itsBeampipeLogicalVolume;
   G4LogicalVolume* itsInnerBPLogicalVolume;
 
@@ -120,7 +119,7 @@ protected:
   G4LogicalVolume* itsLowerInnerBeamPipeLogicalVolume;
   //-----------------------------
 
-    G4VisAttributes* itsVisAttributes;
+  G4VisAttributes* itsVisAttributes;
   G4UserLimits* itsUserLimits;
   G4UserLimits* itsBeampipeUserLimits;
   G4VPhysicalVolume* itsPhysiComp;
@@ -139,7 +138,6 @@ protected:   // these might need to be accessed from the child classes
   G4int itsNPoles;
   G4MagneticField* itsOuterMagField;
 
-  G4RotationMatrix* itsSegRot;
   G4ThreeVector itsSegPos;
   G4double itsStartOuterR;
   G4double itsEndOuterR;

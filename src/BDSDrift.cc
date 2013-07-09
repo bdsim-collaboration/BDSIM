@@ -29,11 +29,12 @@ extern LogVolMap* LogVol;
 
 BDSDrift::BDSDrift (G4String aName, G4double aLength, 
                     std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta, G4double aperX, G4double aperY, G4String tunnelMaterial, G4bool aperset, G4double aper, G4double tunnelOffsetX, G4double phiAngleIn, G4double phiAngleOut):
-  BDSMultipole(aName, aLength, aper, aper, SetVisAttributes(),  blmLocZ, blmLocTheta, tunnelMaterial, "", aperX, aperY, 0, 0, tunnelOffsetX, phiAngleIn, phiAngleOut)
+  BDSMultipole(aName, aLength, aper, aper, SetVisAttributes(),  blmLocZ, blmLocTheta, tunnelMaterial, "", aperX, aperY, 0, 0, tunnelOffsetX, phiAngleIn, phiAngleOut),
+  itsStartOuterR(0.0),itsEndOuterR(0.0),itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
 {
   if(!aperset){
-    itsStartOuterR=aperX + itsBeampipeThickness;
-    itsEndOuterR=aperY + itsBeampipeThickness;
+    itsStartOuterR=aperX + BDSGlobalConstants::Instance()->GetBeampipeThickness();
+    itsEndOuterR=aperY + BDSGlobalConstants::Instance()->GetBeampipeThickness();
     SetStartOuterRadius(itsStartOuterR);
     SetEndOuterRadius(itsEndOuterR);
   }
@@ -90,9 +91,6 @@ BDSDrift::BDSDrift (G4String aName, G4double aLength,
     }
 }
 
-
-
-
 G4VisAttributes* BDSDrift::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0,1,0)); //useless
@@ -108,16 +106,14 @@ void BDSDrift::BuildBpFieldAndStepper(){
 
 void BDSDrift::BuildBLMs(){
   itsBlmLocationR = std::max(itsStartOuterR, itsEndOuterR) - itsBpRadius;
-  BDSAcceleratorComponent::BuildBLMs();
+  BDSAcceleratorComponent::BuildBLMs(); // resets itsBlmLocationR! -- JS
 }
 
 BDSDrift::~BDSDrift()
 {
-  if(itsVisAttributes) delete itsVisAttributes;
-  if(itsMarkerLogicalVolume) delete itsMarkerLogicalVolume;
-  if(itsOuterLogicalVolume) delete itsOuterLogicalVolume;
-  if(itsPhysiComp) delete itsPhysiComp;
-  //if(itsField) delete itsField;
-  //if(itsEqRhs) delete itsEqRhs;
-  //if(itsStepper) delete itsStepper;
+  delete itsVisAttributes;
+//   //  delete itsPhysiComp;
+  delete itsMagField;
+  delete itsEqRhs;
+  delete itsStepper;
 }

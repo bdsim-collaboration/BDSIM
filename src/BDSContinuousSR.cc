@@ -9,6 +9,7 @@ Last modified 15.11.2005 by Ilya Agapov
 //  Synchrotron radiation energy loss process
 //
 
+#include <list>
 
 
 

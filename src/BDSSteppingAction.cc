@@ -19,6 +19,7 @@
 //
 //====================================================
 
+#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSSteppingAction.hh"
@@ -69,19 +70,17 @@ extern G4int event_number;
 
 extern G4double initial_x,initial_xp,initial_y,initial_yp,initial_z,initial_E;
 
-extern G4bool verbose;      // run options
-extern G4bool verboseStep;
-extern G4bool verboseEvent;
-extern G4int verboseEventNumber;
-extern G4bool isBatch;
-
-extern G4int nptwiss;
-
 //static G4LogicalVolume* LastLogVol;
 //====================================================
 
 BDSSteppingAction::BDSSteppingAction()
 { 
+  verbose           = BDSExecOptions::Instance()->GetVerbose();     
+  verboseStep       = BDSExecOptions::Instance()->GetVerboseStep();     
+  verboseEvent      = BDSExecOptions::Instance()->GetVerboseEvent();     
+  verboseEventNumber= BDSExecOptions::Instance()->GetVerboseEventNumber();
+  nptwiss           = BDSExecOptions::Instance()->GetNPTwiss();
+
   //  itsZposTolerance=1.e-11*m;
   itsZposTolerance=1.e-4*m;
   itsPosKick=1.e-11*m;
@@ -161,7 +160,7 @@ void BDSSteppingAction::UserSteppingAction(const G4Step* ThisStep)
 	      SM->TransferStackedTracks(fPostpone, fUrgent);
 	      if(verbose) G4cout << "\nMean Energy: " << (postponedEnergy/nptwiss)/GeV << G4endl;
 
-	      list<BDSAcceleratorComponent*>::const_iterator iBeam;
+	      std::list<BDSAcceleratorComponent*>::const_iterator iBeam;
 	      G4String type="";	      
 	      for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
 		{ 
@@ -200,7 +199,7 @@ void BDSSteppingAction::UserSteppingAction(const G4Step* ThisStep)
   if((verboseStep || verboseEventNumber == event_number) && (!BDSGlobalConstants::Instance()->GetSynchRescale()) )
     {
 	int ID=ThisStep->GetTrack()->GetTrackID();
-
+	int G4precision = G4cout.precision();
 	G4cout.precision(10);
 	G4cout<<"This volume="<< ThisStep->GetTrack()->GetVolume()->GetName()<<G4endl;
 	
@@ -233,6 +232,9 @@ void BDSSteppingAction::UserSteppingAction(const G4Step* ThisStep)
 	    GetProcessDefinedStep() );
 
        	  if(proc)G4cout<<" pre-step process="<<proc->GetProcessName()<<G4endl<<G4endl;
+
+	  // set precision back
+	  G4cout.precision(G4precision);
     }
 
 

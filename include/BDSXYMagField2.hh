@@ -7,8 +7,6 @@
 #include <vector>
 #include <cmath>
 
-using namespace std;
-
 class BDSXYMagField2
 #ifndef STANDALONE
 // : public G4MagneticField
@@ -17,9 +15,9 @@ class BDSXYMagField2
 {
   
   // Storage space for the table
-  vector< vector< double > > xField;
-  vector< vector< double > > yField;
-  vector< vector< double > > zField;
+  std::vector< std::vector< double > > xField;
+  std::vector< std::vector< double > > yField;
+  std::vector< std::vector< double > > zField;
   // The dimensions of the table
   int nx,ny; 
   // The physical limits of the defined region

@@ -38,6 +38,13 @@ public:
   void SetDrawFlag   (G4String val)  {drawFlag = val;};
  
 private:
+  G4bool verbose;
+  G4bool verboseStep;
+  G4bool verboseEvent;
+  G4int  verboseEventNumber;
+  G4bool isBatch;
+  G4int  nptwiss;
+
   G4int                       SamplerCollID_plane;                
   G4int                       SamplerCollID_cylin;                
   G4int                       LWCalorimeterCollID;
@@ -55,8 +62,8 @@ private:
   std::vector<G4VTrajectory*> interestingTrajectories;
   
 
-  list<BDSAcceleratorComponent*>::const_iterator iBeam;
-  list<BDSEnergyCounterSD*>::const_iterator iEC;
+  std::list<BDSAcceleratorComponent*>::const_iterator iBeam;
+  std::list<BDSEnergyCounterSD*>::const_iterator iEC;
 
   BDSAcceleratorComponent* LastComp;
   

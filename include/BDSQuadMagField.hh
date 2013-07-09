@@ -25,8 +25,6 @@ public:  // with description
 private:
   G4Navigator* QuadNavigator;
   G4double itsBGrad;
-  G4bool hasBeenScaled;
-
 };
 
 inline void BDSQuadMagField::SetBGrad(G4double aBGrad)

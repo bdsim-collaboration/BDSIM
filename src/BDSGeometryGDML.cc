@@ -25,8 +25,11 @@ extern G4RotationMatrix* RotY90;
 extern BDSOutput* bdsOutput;
 //extern BDSGlobalConstants* BDSGlobalConstants::Instance();
 
-BDSGeometryGDML::BDSGeometryGDML(G4String GDMLfile){
+BDSGeometryGDML::BDSGeometryGDML(G4String GDMLfile):itsMarkerVol(NULL){
   itsGDMLfile = GDMLfile;
+}
+
+BDSGeometryGDML::~BDSGeometryGDML(){
 }
 
 void BDSGeometryGDML::Construct(G4LogicalVolume *marker){
@@ -57,6 +60,5 @@ void BDSGeometryGDML::Construct(G4LogicalVolume *marker){
                     itsMarkerVol,
                     false,
                     0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-
-  }
+}
 #endif

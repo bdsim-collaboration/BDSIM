@@ -1,19 +1,29 @@
+#include "BDSExecOptions.hh"
 #include "BDSOutput.hh"
 #include "BDSSamplerSD.hh"
-#include "G4ScoringManager.hh"
-
 #include <ctime>
 
-extern G4String outputFilename;
+// extern G4String outputFilename;
 
 BDSOutput::BDSOutput():outputFileNumber(1)
 {
   format = _ASCII; // default - write an ascii file
+#ifdef USE_ROOT
+  theRootOutputFile = NULL;
+  EnergyLossHisto = NULL;
+  PrecisionRegionEnergyLossTree = NULL;
+  EnergyLossTree = NULL;
+#endif
 }
 
-BDSOutput::BDSOutput(int fmt):outputFileNumber(1)
+BDSOutput::BDSOutput(BDSOutputFormat fmt):format(fmt),outputFileNumber(1)
 {
-  format = fmt;
+#ifdef USE_ROOT
+  theRootOutputFile = NULL;
+  EnergyLossHisto = NULL;
+  PrecisionRegionEnergyLossTree = NULL;
+  EnergyLossTree = NULL;
+#endif
 }
 
 BDSOutput::~BDSOutput()
@@ -22,22 +32,24 @@ BDSOutput::~BDSOutput()
     of.close();
 #ifdef USE_ROOT
   if(format==_ROOT){
-    theRootOutputFile->Close();
-    delete theRootOutputFile;
+    if (theRootOutputFile && theRootOutputFile->IsOpen()) {
+      // theRootOutputFile->Write();
+      theRootOutputFile->Close();
+      delete theRootOutputFile;
+    }
   }
 #endif
 }
 
-
-void BDSOutput::SetFormat(G4int val)
+void BDSOutput::SetFormat(BDSOutputFormat val)
 {
   format = val;
   time_t tm = time(NULL);
 
   if( format == _ASCII)
     {
-      G4String filename = outputFilename+".txt";
-      G4cout<<"output format ASCII, filename: "<<filename<<G4endl;
+      G4String filename = BDSExecOptions::Instance()->GetOutputFilename()+".txt";
+      G4cout << __METHOD_NAME__ << "Output format ASCII, filename: "<<filename<<G4endl;
       of.open(filename);
       of<<"### BDSIM output created "<<ctime(&tm)<<" ####"<<G4endl;
       of<<"# PT E[GeV] X[mum] Y[mum] Z[m] Xp[rad] Yp[rad]  "<<G4endl;
@@ -56,7 +68,7 @@ void BDSOutput::Init(G4int FileNum)
   if(format != _ROOT) return;
 
   // set up the root file
-  _filename = outputFilename + "_" 
+  G4String _filename = BDSExecOptions::Instance()->GetOutputFilename() + "_" 
     + BDSGlobalConstants::Instance()->StringFromInt(FileNum) + ".root";
   
   G4cout<<"Setting up new file: "<<_filename<<G4endl;
@@ -147,9 +159,9 @@ void BDSOutput::Init(G4int FileNum)
     {
       //G4cout<<"BDSOutput::storing trajectories set"<<G4endl;
       TTree* TrajTree = new TTree("Trajectories", "Trajectories");
-      TrajTree->Branch("x",&x,"x/F");
-      TrajTree->Branch("y",&y,"y/F");
-      TrajTree->Branch("z",&z,"z/F");
+      TrajTree->Branch("x",&x,"x (mum)/F");
+      TrajTree->Branch("y",&y,"y (mum)/F");
+      TrajTree->Branch("z",&z,"z (m)/F");
       TrajTree->Branch("part",&part,"part/I");
     }
 
@@ -162,7 +174,7 @@ void BDSOutput::Init(G4int FileNum)
   wmax=std::max(wmax,bs);
 
   EnergyLossHisto = new TH1F("ElossHisto", "Energy Loss",nBins,0.,zMax/m);
-  EnergyLossTree=new TTree("ElossTree", "Energy Loss");
+  EnergyLossTree= new TTree("ElossTree", "Energy Loss");
   EnergyLossTree->Branch("z",&z_el,"z (m)/F");
   EnergyLossTree->Branch("E",&E_el,"E (GeV)/F");
 
@@ -182,7 +194,7 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
   if( format == _ASCII) {
     
     //of<<"#hits (PDGtype  E[GeV],x[micron],y[micron],z[m],x'[rad],y'[rad]):"<<G4endl;
-    
+    int G4precision = G4cout.precision();
     G4cout.precision(15);
     
     for (G4int i=0; i<hc->entries(); i++)
@@ -206,6 +218,9 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
 //    of<<G4endl; // remove whitespace in output file when no events hit sampler
       of.flush();
     //of<<"end of hits collection"<<G4endl;
+      
+      // set precision back
+      G4cout.precision(G4precision);
   }
  
   if( format == _ROOT) {
@@ -273,7 +288,7 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
 G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> TrajVec){
   //  G4cout<<"a trajectory stored..."<<G4endl;
   
-  G4int tID;
+  //  G4int tID;
   G4TrajectoryPoint* TrajPoint;
   G4ThreeVector TrajPos;
   
@@ -296,7 +311,7 @@ G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> TrajVec){
 	{
 	  G4Trajectory* Traj=(G4Trajectory*)(*iT);
 	  
-	  tID=Traj->GetTrackID();	      
+	  //	  tID=Traj->GetTrackID();	      
 	  part = Traj->GetPDGEncoding();
 	  
 	  for(G4int j=0; j<Traj->GetPointEntries(); j++)
@@ -326,7 +341,7 @@ G4int BDSOutput::WriteTrajectory(TrajectoryVector* TrajVec)
 {
 //  G4cout<<"a trajectory stored..."<<G4endl;
   
-  G4int tID;
+//  G4int tID;
   G4TrajectoryPoint* TrajPoint;
   G4ThreeVector TrajPos;
 
@@ -349,7 +364,7 @@ G4int BDSOutput::WriteTrajectory(TrajectoryVector* TrajVec)
 	{
 	  G4Trajectory* Traj=(G4Trajectory*)(*iT);
 	  
-	  tID=Traj->GetTrackID();	      
+	  //	  tID=Traj->GetTrackID();	      
 	  part = Traj->GetPDGEncoding();
 	  
 	  for(G4int j=0; j<Traj->GetPointEntries(); j++)
@@ -417,7 +432,7 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
     for (G4int i=0;i<n_hit;i++)
       {
         G4double Energy=(*hc)[i]->GetEnergy();
-	G4double Zpos=(*hc)[i]->GetZ();;
+	G4double Zpos=(*hc)[i]->GetZ();
 	G4int partID = (*hc)[i]->GetPartID();
 	G4double weight = (*hc)[i]->GetWeight();
 
@@ -425,11 +440,9 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 
       }
       of.flush();
- }
+  }
 
 }
-
-
 
 // write some comments to the output file
 // only for ASCII output
@@ -459,8 +472,6 @@ void BDSOutput::Write()
 	//Dump all other quantities to file...
 	theRootOutputFile->Write();
 	theRootOutputFile->Close();
-	//Dump the scoring mesh quantities to the file...
-	G4ScoringManager::GetScoringManager()->DumpQuantityToFile("scoringMesh","cellFluxScorer","cellFlux");
 	delete theRootOutputFile;
       }
   }

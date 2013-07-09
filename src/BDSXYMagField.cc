@@ -12,13 +12,31 @@ G4double GetNearestValue(vector<struct XYFieldRecord> fieldValues, G4double x, G
 			 G4double &bx,G4double &by, G4double &bz);
 
 BDSXYMagField::BDSXYMagField(G4String fname) :
-  nX(0), nY(0), itsFileName(fname)
+  Bx(NULL), By(NULL), Bz(NULL), xHalf(0.0), yHalf(0.0), nX(0), nY(0), itsFileName(fname)
 {
 }
 
 BDSXYMagField::~BDSXYMagField()
 {
-  // release the b-map memory 
+  // release the b-map memory
+  if (Bx) {
+    for(int i=0;i<nX;i++) {
+      delete[] Bx[i];
+    }
+    delete[] Bx;
+  }
+  if (By) {
+    for(int i=0;i<nX;i++) {
+      delete[] By[i];
+    }
+    delete[] By;
+  }
+  if (Bz) {
+    for(int i=0;i<nX;i++) {
+      delete[] Bz[i];
+    }
+    delete[] Bz;
+  }
 }
 
 G4bool  BDSXYMagField::DoesFieldChangeEnergy() const
@@ -91,8 +109,8 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 
   //determine mesh step - minimum distance between measurement points
   
-  double hx=xmax, hxold=xmax, hxmax=0;
-  double hy=ymax, hyold=ymax, hymax=0;
+  double hx=xmax, hxold=xmax; //, hxmax=0;
+  double hy=ymax, hyold=ymax; //, hymax=0;
 
   xHalf = xmax / 2;
   yHalf = ymax / 2;
@@ -114,7 +132,7 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 	}
     }
   
-  hxmax = hx; hymax = hy;
+  //  hxmax = hx; hymax = hy;
 
   G4cout<<"h ="<<hx<<":"<<hy<<":"<<G4endl;
   G4cout<<"xmax ="<<xmax<<":"<<ymax<<":"<<G4endl;
@@ -187,7 +205,7 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 
 void BDSXYMagField::GetFieldValue(const G4double Point[4], G4double *Bfield ) const
 {
-  G4double bx=0, by=0, bz;
+  G4double bx=0., by=0., bz=0.;
   G4int i=0,j=0;
 
   G4ThreeVector local;

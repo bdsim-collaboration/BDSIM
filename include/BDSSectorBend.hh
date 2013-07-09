@@ -70,10 +70,9 @@ private:
   BDSSbendMagField* itsMagField;
   G4Mag_EqRhs* itsEqRhs;
 
-  G4int itsNSegments;
-  G4double itsSegmentLength;
-  G4double itsSegmentAngle;
+  // G4int itsNSegments;
+  // G4double itsSegmentLength;
+  // G4double itsSegmentAngle;
 };
-
 
 #endif

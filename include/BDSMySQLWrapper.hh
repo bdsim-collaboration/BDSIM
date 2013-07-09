@@ -17,8 +17,6 @@
 #include <fstream>
 #include <vector>
 
-//using namespace std;
-
 class BDSMySQLWrapper 
 {
 public:
@@ -36,7 +34,7 @@ protected:
 private:
   // Data Members for Class Attributes
 
-  ifstream ifs;
+  std::ifstream ifs;
   
   G4String CurrentTableName;
   G4String InsertTableName;

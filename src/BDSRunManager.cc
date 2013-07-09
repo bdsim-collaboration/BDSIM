@@ -13,6 +13,7 @@
 //
 
 #include "BDSGlobalConstants.hh"
+#include "BDSExecOptions.hh"
 #include "G4Timer.hh"
 
 #include "BDSRunManager.hh"
@@ -22,17 +23,17 @@
 #include "BDSDump.hh"
 #include "BDSWorld.hh"
 
-#include "G4ScoringManager.hh"
-
 extern G4int nptwiss;
 
 BDSRunManager* BDSRunManager::fRunManager = 0;
 
-BDSRunManager* BDSRunManager::GetRunManager()
-{ return fRunManager; }
+BDSRunManager* BDSRunManager::GetRunManager() { 
+  return fRunManager; 
+}
 
-BDSRunManager::BDSRunManager(){ 
+BDSRunManager::BDSRunManager() { 
   fRunManager = this;
+  nptwiss     = BDSExecOptions::Instance()->GetNPTwiss();
 }
 
 BDSRunManager::~BDSRunManager(){
@@ -40,6 +41,13 @@ BDSRunManager::~BDSRunManager(){
 
 void BDSRunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
 {
+  // Print seed to try and recreate an event in a run
+  G4cout << __METHOD_NAME__ << "> Random number generator's seed=" 
+         << CLHEP::HepRandom::getTheSeed() << G4endl;
+  // Print generator full state to output 
+  G4cout << __METHOD_NAME__ << "Random number generator's state: " << G4endl;
+  CLHEP::HepRandom::saveFullState(G4cout);
+
   G4bool cond = ConfirmBeamOnCondition();
   G4StackManager* SM;
   SM = G4EventManager::GetEventManager()->GetStackManager();
@@ -47,9 +55,6 @@ void BDSRunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
   if(cond)
   {
     numberOfEventToBeProcessed = n_event;
-    ConstructScoringWorlds(); //This is in order to be able to use the scoring mesh (why is this in G4RunManager::BeamOn() ? This does not seem to be a logical place to put such a method...
-    //Debug - get number of mesh
-    cout << "BDSRunManager::BeamOn() - number of scoring meshes: " << this->GetNumberOfMesh() << endl;
     RunInitialization();
 
     if(BDSDump::GetNumberOfDumps()!=0){
@@ -94,7 +99,11 @@ void BDSRunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
 
 void BDSRunManager::DoEventLoop(G4int n_event,const char* macroFile,G4int n_select)
 {
-  //G4StateManager* stateManager = G4StateManager::GetStateManager();
+  // Print seed to try and recreate an event in a run 
+  G4cout << __METHOD_NAME__ << "Random number generator's seed=" 
+         << CLHEP::HepRandom::getTheSeed() << G4endl;
+
+ //G4StateManager* stateManager = G4StateManager::GetStateManager();
 
   if(verboseLevel>0) 
   { timer->Start(); }
@@ -112,7 +121,15 @@ void BDSRunManager::DoEventLoop(G4int n_event,const char* macroFile,G4int n_sele
   G4int i_event;
   for( i_event=0; i_event<n_event; i_event++ )
   {
+    G4cout << __METHOD_NAME__ << "event="<<i_event<<G4endl;
 
+    // Print seed to try and recreate an event in a run
+    G4cout << __METHOD_NAME__ << "Random number generator's seed=" 
+	   << CLHEP::HepRandom::getTheSeed() << G4endl;
+    // Print generator full state to output 
+    G4cout << __METHOD_NAME__ << "Random number generator's state: " << G4endl;
+    CLHEP::HepRandom::saveFullState(G4cout);
+    G4cout.flush();
 
     //    stateManager->SetNewState(EventProc);
 
@@ -123,7 +140,6 @@ void BDSRunManager::DoEventLoop(G4int n_event,const char* macroFile,G4int n_sele
     eventManager->ProcessOneEvent(currentEvent);
 
     AnalyzeEvent(currentEvent);
-    UpdateScoring(); //Update the scoring in the scoring meshes...
 
     //    if(i_event<n_select) G4UImanager::GetUIpointer()->ApplyCommand(msg);
 
@@ -150,10 +166,4 @@ void BDSRunManager::DoEventLoop(G4int n_event,const char* macroFile,G4int n_sele
   }
 }
 
-int BDSRunManager::GetNumberOfMesh(){
-  G4ScoringManager* ScM = G4ScoringManager::GetScoringManagerIfExist();
-  if(!ScM) return 0;
-  G4int nPar = ScM->GetNumberOfMesh();
-  return nPar;
-}
 

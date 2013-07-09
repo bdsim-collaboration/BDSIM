@@ -12,4 +12,4 @@
 #include "globals.hh"
 #include "BDSSpline_tab_entry.hh"
 
-BDSSpline_tab_entry::BDSSpline_tab_entry(){;}
+BDSSpline_tab_entry::BDSSpline_tab_entry():x(0.0),y(0.0),y2(0.0){;}

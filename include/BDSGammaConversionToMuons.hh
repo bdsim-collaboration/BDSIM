@@ -129,7 +129,7 @@ class BDSGammaConversionToMuons : public G4VDiscreteProcess
      G4double LowestEnergyLimit ;     // low  energy limit of the tables
      G4double HighestEnergyLimit ;    // high energy limit of the tables
 
-     G4double fminimalEnergy;         // minimalEnergy of produced particles
+     // G4double fminimalEnergy;         // minimalEnergy of produced particles
 
      G4double MeanFreePath;           // actual MeanFreePath (current medium)
      G4double CrossSecFactor;         // factor to artificially increase

@@ -16,6 +16,7 @@
 //
 
 #include "BDSGlobalConstants.hh" 
+#include "BDSDebug.hh"
 
 #include "BDSQuadrupole.hh"
 #include "G4Box.hh"
@@ -51,15 +52,16 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
                              std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
 			     G4String aTunnelMaterial, G4String aMaterial, G4String spec):
   BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
-  itsBGrad(bGrad)
+  itsBGrad(bGrad),
+  itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
 {
 #ifdef DEBUG 
-  G4cout<<"BDSQUADRUPOLE : SPEC : "<<spec<<G4endl;
+  G4cout<< __METHOD_NAME__ << "spec=" << spec << G4endl;
 #endif
   // get specific quadrupole type
   G4String qtype = getParameterValueString(spec, "type");
 #ifdef DEBUG 
-  G4cout<<"qtype : "<<qtype<<G4endl;
+  G4cout<< __METHOD_NAME__ << "qtype="<<qtype<<G4endl;
 #endif
 
   SetOuterRadius(outR);
@@ -698,12 +700,7 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
 BDSQuadrupole::~BDSQuadrupole()
 {
   delete itsVisAttributes;
-  delete itsMarkerLogicalVolume;
-  delete itsOuterLogicalVolume;
-  delete itsPhysiComp;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;
 }
-
-

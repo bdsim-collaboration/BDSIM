@@ -40,7 +40,9 @@ BDSLWCalorimeter::BDSLWCalorimeter (G4String& aName,G4double aLength,
   BDSAcceleratorComponent(
 			 aName,
 			 aLength,aBpRad,0,0,
-			 SetVisAttributes(),aTunnelMaterial)
+			 SetVisAttributes(),aTunnelMaterial),
+  itsBPFieldMgr(NULL),
+  itsVisAttributes(NULL)
 {
   LWCalorimeterLogicalVolume();
   BuildCal(aLength);
@@ -115,7 +117,7 @@ void BDSLWCalorimeter::BuildCal(G4double aLength)
   BDSLWCalorimeterSD* SensDet=new BDSLWCalorimeterSD(itsName);
   SDMan->AddNewDetector(SensDet);
   
-  itsLWCalLogicalVolume->SetSensitiveDetector(SensDet);
+  itsLWCalLogicalVolume->SetSensitiveDetector(SensDet);    
 }
 void BDSLWCalorimeter::BuildBeampipe(G4double aLength)
 {
@@ -141,12 +143,11 @@ void BDSLWCalorimeter::BuildBeampipe(G4double aLength)
 			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			itsName+"_bmp_Inner_log");
   
-  G4VPhysicalVolume* PhysiInner;
-  PhysiInner =  new G4PVPlacement(
-				  (G4RotationMatrix*)0,	 // rotation
-				  (G4ThreeVector)0,      // at (0,0,0)
-		      itsInnerBPLogicalVolume, // its logical volume
-		      itsName+"_InnerBmp",     // its name
+  itsPhysiInner = new G4PVPlacement(
+		      (G4RotationMatrix*)0,     // rotation
+		      (G4ThreeVector)0,         // at (0,0,0)
+		      itsInnerBPLogicalVolume,  // its logical volume
+		      itsName+"_InnerBmp",      // its name
 		      itsBeampipeLogicalVolume, // its mother  volume
 		      false,		       // no boolean operation
 				  0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		       // copy number
@@ -155,15 +156,14 @@ void BDSLWCalorimeter::BuildBeampipe(G4double aLength)
    G4RotationMatrix* Rot=NULL;
    if(itsAngle!=0)Rot=RotY90;
   
-   G4VPhysicalVolume* PhysiComp;
-   PhysiComp = new G4PVPlacement(
-		       Rot,			     // rotation
-		       (G4ThreeVector)0,	                     // at (0,0,0)
+   itsPhysiComp = new G4PVPlacement(
+		       Rot,                       // rotation
+		       (G4ThreeVector)0,          // at (0,0,0)
 		       itsBeampipeLogicalVolume,  // its logical volume
-		       itsName+"_bmp",	     // its name
-		       itsMarkerLogicalVolume,     // its mother  volume
-		       false,		     // no boolean operation
-		       0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		             // copy number
+		       itsName+"_bmp",            // its name
+		       itsMarkerLogicalVolume,    // its mother  volume
+		       false,	                  // no boolean operation
+		       0, BDSGlobalConstants::Instance()->GetCheckOverlaps()); // copy number
 #ifndef NOUSERLIMITS
    itsBeampipeUserLimits =
      new G4UserLimits("beampipe cuts",DBL_MAX,DBL_MAX,DBL_MAX,
@@ -192,7 +192,7 @@ void BDSLWCalorimeter::BuildBeampipe(G4double aLength)
    
    itsMarkerLogicalVolume->
      SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
-   
+  
 }
 
 G4VisAttributes* BDSLWCalorimeter::SetVisAttributes()
@@ -203,9 +203,8 @@ G4VisAttributes* BDSLWCalorimeter::SetVisAttributes()
 
 BDSLWCalorimeter::~BDSLWCalorimeter()
 {
-  if(itsVisAttributes) delete itsVisAttributes;
-  if(itsUserLimits) delete itsUserLimits;
-  if(itsBPTube) delete itsBPTube;
-  if(itsLWCal) delete itsLWCal;
-  if(itsBeampipeLogicalVolume) delete itsBeampipeLogicalVolume;
+  delete itsVisAttributes;
+  //  delete itsBPTube;
+  //  delete itsLWCal;
+  //  delete itsBeampipeLogicalVolume;
 }

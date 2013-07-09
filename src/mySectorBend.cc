@@ -32,7 +32,9 @@ mySectorBend::mySectorBend(G4String aName,G4double aLength,
 			   G4double bField, G4double angle, G4double outR,
 			   G4double tilt,  G4double bGrad, 
 			   G4String aMaterial):
-  BDSMultipole(aName,aLength,bpRad,FeRad,SetVisAttributes(),"",aMaterial,0,0,angle)
+  BDSMultipole(aName,aLength,bpRad,FeRad,SetVisAttributes(),"",aMaterial,0,0,angle),
+  itsPhysiInnerSB(NULL),itsPhysiCompSB(NULL),itsPhysiCompSBOuter(NULL),
+  itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
 {
 
   if (outR==0) 
@@ -273,8 +275,7 @@ void mySectorBend::BuildSBBeampipe()
   // 3) position the logical volumes inside the mother volume (the marker)
   //
 
-  G4VPhysicalVolume* PhysiInner;
-  PhysiInner = 
+  itsPhysiInnerSB = 
     new G4PVPlacement(
 		      (G4RotationMatrix*)0,		       // no rotation
 		      (G4ThreeVector)0,                       // no translation
@@ -284,16 +285,15 @@ void mySectorBend::BuildSBBeampipe()
 		      false,		       // no boolean operation
 		      0, true);		       // copy number
 
-  G4VPhysicalVolume* PhysiComp;
-  PhysiComp = 
+  itsPhysiCompSB = 
     new G4PVPlacement(
-		      (G4RotationMatrix*)0,		       // no rotation
-		      (G4ThreeVector)0,                       // no translation
+		      (G4RotationMatrix*)0,    // no rotation
+		      (G4ThreeVector)0,        // no translation
 		      itsBeampipeLogicalVolume,// its logical volume
 		      itsName+"_bmp",	       // its name
 		      itsMarkerLogicalVolume,  // its mother  volume
-		      false,		       // no boolean operation
-		      0, true);		             // copy number
+		      false,	               // no boolean operation
+		      0, true);	               // copy number
 #ifndef NOUSERLIMITS
   itsBeampipeUserLimits =
     new G4UserLimits("beampipe cuts",DBL_MAX,DBL_MAX,DBL_MAX,
@@ -363,8 +363,7 @@ void mySectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
                           itsName+"_outer");
     }
 
-  G4VPhysicalVolume* itsPhysiComp;
-  itsPhysiComp =
+  itsPhysiCompSBOuter =
     new G4PVPlacement(
                       (G4RotationMatrix*)0,                        // no rotation
                       (G4ThreeVector)0,                        // no translation
@@ -372,7 +371,7 @@ void mySectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
                       itsName+"_solid",         // its name
                       itsMarkerLogicalVolume,   // its mother  volume
                       false,                    // no boolean operation
-                      0, true);                       // copy number
+                      0, true);                 // copy number
 #ifndef NOUSERLIMITS
   itsOuterUserLimits =
     new G4UserLimits("multipole cut",itsLength,DBL_MAX,DBL_MAX,
@@ -385,9 +384,6 @@ void mySectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
 mySectorBend::~mySectorBend()
 {
   delete itsVisAttributes;
-  delete itsMarkerLogicalVolume;
-  delete itsOuterLogicalVolume;
-  delete itsPhysiComp;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

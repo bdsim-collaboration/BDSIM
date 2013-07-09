@@ -34,49 +34,50 @@
 class BDSDriftStepper : public G4MagIntegratorStepper
 {
 
-  public:  // with description
-
-    BDSDriftStepper(G4Mag_EqRhs *EqRhs);
-
-    ~BDSDriftStepper();
-
-      void Stepper( const G4double y[],
-		  const G4double dydx[],
-		  const G4double h,
-		  G4double yout[],
-		  G4double yerr[]  );
-      // The stepper for the Runge Kutta integration.
-      // The stepsize is fixed, equal to h.
-      // Integrates ODE starting values y[0 to 6]
-      // Outputs yout[] and its estimated error yerr[].
- 
-
-     void StepperName();
-
-     G4double DistChord()const;
+public:  // with description
+  
+  BDSDriftStepper(G4Mag_EqRhs *EqRhs);
+  
+  ~BDSDriftStepper();
+  
+  void Stepper( const G4double y[],
+		const G4double dydx[],
+		const G4double h,
+		G4double yout[],
+		G4double yerr[]  );
+  // The stepper for the Runge Kutta integration.
+  // The stepsize is fixed, equal to h.
+  // Integrates ODE starting values y[0 to 6]
+  // Outputs yout[] and its estimated error yerr[].
+  
+  
+  void StepperName();
+  
+  G4double DistChord()const;
   /*
-   void DumbStepper( const G4double yInput[],
-		     G4ThreeVector Bfld,
-		     G4double hstep,
-		     G4double yOut[]);
-
+    void DumbStepper( const G4double yInput[],
+    G4ThreeVector Bfld,
+    G4double hstep,
+    G4double yOut[]);
+    
   */
-  public: // without description
+public: // without description
   
     G4int IntegratorOrder()const { return 2; }
 
-  protected:
-    //  --- Methods used to implement all the derived classes -----
-
-    void AdvanceHelix( const G4double  yIn[],
-                       G4ThreeVector Bfld,
-		       G4double  h,
-		       G4double  yDrift[]);    // output 
-      // A first order Step along a drift inside the field.
-
-  private:
+protected:
   
-
+  //  --- Methods used to implement all the derived classes -----
+  
+  void AdvanceHelix( const G4double  yIn[],
+		     G4ThreeVector Bfld,
+		     G4double  h,
+		     G4double  yDrift[]);    // output 
+  // A first order Step along a drift inside the field.
+  
+private:
+  
+  
 };
 
 

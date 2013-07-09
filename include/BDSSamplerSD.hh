@@ -37,13 +37,14 @@ public:
   
 private:
   BDSSamplerHitsCollection *SamplerCollection;
-  G4Navigator* StepperNavigator;
-  G4bool StoreHit;
-  G4int nStepsInSampler;
-  G4int maxNStepsInSampler;
+  G4Navigator              *StepperNavigator;
+  G4bool                    StoreHit;
+  // G4int nStepsInSampler;
+  // G4int maxNStepsInSampler;
   
   G4String itsType;
   G4String itsCollectionName;
+  G4int    itsHCID;
 
 };
 

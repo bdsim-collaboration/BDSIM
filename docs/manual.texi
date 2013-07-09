@@ -1,21 +1,22 @@
 \input texinfo @c -*-texinfo-*-
-@c %**staart of header0.4
+@c %**start of header0.4
 @setfilename bdsim.info
 @settitle BDSIM User's Manual v0.6-dev
-@set lastupdate May 4, 2011
+@set lastupdate @today{}
 @set revision 0.6-dev
 @c %**end of header
 
 @setchapternewpage off
 
 @c @copying
-@c Copyright @copyright{} 2004-2007 Royal Holloway University London.
+@c Copyright @copyright{} 2004-2013 Royal Holloway, University of London.
 @c @end copying
 
 
 @titlepage
 @title BDSIM User's Manual v0.6-dev
-@author L. C. Deacon, I. Agapov, S. Malton
+@author I. Agapov, S. T. Boogert, L. C. Deacon, 
+@author S. Malton, L. Nevay, J.Snuverink
 @author revision @value{revision}, last updated @value{lastupdate}
 @end titlepage
 @setcontentsaftertitlepage
@@ -25,10 +26,10 @@
 
 
 @node Top, Intro, (dir), (dir)
-@top BDSIM v0.5 User's Manual
+@top BDSIM v0.6 User's Manual
 
 
-This file is updated automatically from @file{manual.texi} last updated on
+This file is updated automatically from @file{manual.texi}, last updated on
 @value{lastupdate}.
 
 
@@ -56,12 +57,12 @@ This file is updated automatically from @file{manual.texi} last updated on
 @node Intro, Installation, Top, Top
 @chapter About BDSIM
 
-BDSIM is a Geant4 (@ref{1}) extension toolkit for simulation of particle
+BDSIM is a Geant4 (@cite{1}) extension toolkit for simulation of particle
 transport in accelerator beamlines.
 It provides a collection of classes representing typical accelerator
 components, a collection of physics processes for fast tracking, procedures of
 ``on the fly'' geometry construction and interfacing to ROOT analysis 
-(@ref{2}). 
+(@cite{2}).
  
 
 @c cccccccccccccccccccccccccccccccccccccccccc
@@ -72,10 +73,12 @@ components, a collection of physics processes for fast tracking, procedures of
 @chapter Obtaining, Installing and Running
 
 
-@code{BDSIM} can be downloaded from @uref{http://ilc.pp.rhul.ac.uk/bdsim.html}.
-This site also contains some information on planned releases and other issues.
-Alternatively, a development version is accessible under
-@uref{http://cvs.pp.rhul.ac.uk}. 
+@code{BDSIM} can be downloaded from @*
+@uref{https://twiki.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BdSim}.
+This site also contains information on documentation, projects and installation.
+Alternatively, a development version is from the SVN repository, instructions are at
+@uref{https://twiki.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BDsimInstall}.
+
 Download the tarball and extract the source code. Make sure Geant4 is installed
 and appropriate environment variables defined.
 Then go through the configuration procedure by running the @code{./configure}
@@ -118,14 +121,14 @@ where the options are
 --outline=<file>     : print geometry/optics info to <file>
 --outline_type=<fmt> : type of outline format
                        where fmt = optics | survey
- --materials         : list materials included in bdsim by default
+ --materials         : list materials included in BDSIM by default
 @end example
 
 
 
 
 To run bdsim one first has to define the beamline geometry in a file which is
-then passed to bdsim via the @code{--file} command line option, for example
+then passes to bdsim via the @code{--file} command line option, for example
 
 @example
 bdsim --file=line.gmad --output=root --batch
@@ -150,7 +153,7 @@ The next section describes how to do it in more detail.
 
 The beamline, beam properties and physics processes are specified in the input
 file written in the GMAD language which is a variation of MAD-X language
-(@ref{3}) extended to handle sophisticated geometry and parameters relevant
+(@ref{MAD}) extended to handle sophisticated geometry and parameters relevant
 to radiation transport.
 GMAD is described in this section.
 Examples of input files can be found in the @code{BDSIM} distribution in the
@@ -354,7 +357,7 @@ for example
 
 
 All elements except @code{marker}, @code{element}, @code{ecol}, and @code{rcol}
-are by default modeled with an inner cylindrical beampipe and an outer 
+are modeled by default with an inner cylindrical beampipe and an outer 
 cylindrical volume. (FOR MAD COMPATIBILITY @code{sbend} SHOULD BE A TORUS).
 The beampipe outer radius and thickness are defined by the 
 global @code{beampipeRadius} and @code{beampipeThickness}
@@ -384,7 +387,7 @@ qq:q,k1=0.2;
 @node coordinate-system
 @subsection Coordinate system
 
-The usual accelerator coordinate system is assumed (see @ref{3}).
+The usual accelerator coordinate system is assumed (see @cite{3}).
 
 @node units
 @subsection Units
@@ -603,7 +606,7 @@ Attributes:
 @item @code{l} - length [m] (default 0)
 @item @code{k3} - normal octupole coefficient
 k3 = @math{1/(B \rho)} @math{d^3 B_y / dx^3} [m@math{^{-4}}]
-Positive @code{k3} means horisontal focusing of positively charged particles. (default 0)
+Positive @code{k3} means horizontal focusing of positively charged particles. (default 0)
 @item @code{ks3} - skew octupole coefficient
 ks3 = @math{1/(B \rho)} @math{d^3 B_y / dx^3} [m@math{^{-4}}]
 where (x,y) is now a coordinate system rotated by 30 degrees around s with respect to the normal one.(default 0). 
@@ -676,7 +679,7 @@ Attributes:
 
 @itemize @bullet 
 @item @code{l} - length [m] (default 0)
-@item @code{xsize} - horisontal aperture [m] (default set to @code{boxSize})
+@item @code{xsize} - horizontal aperture [m] (default set to @code{boxSize})
 @item @code{ysize} - vertical aperture [m] (default set to @code{boxSize})
 @item @code{outR} - external extent [m] in x and y of the collimator (default set to @code{boxSize})
 @item @code{material} - collimator material (default set to ``Graphite'')
@@ -701,7 +704,7 @@ Attributes:
 
 @itemize @bullet 
 @item @code{l} - length [m] (default 0)
-@item @code{xsize} - horisontal aperture [m] (default set to @code{boxSize})
+@item @code{xsize} - horizontal aperture [m] (default set to @code{boxSize})
 @item @code{ysize} - vertical aperture [m] (default set to @code{boxSize})
 @item @code{outR} - limits external extent [m] in x and y of the collimator (default set to @code{boxSize})
 @item @code{material} - collimator material (default set to ``Graphite'')
@@ -1203,6 +1206,7 @@ The following options influence the geometry:
 The following options influence the tracking:
 
 @multitable @columnfractions .3 .7
+@item @code{maximumTrackingTime}  @tab maximum tracking time for entire simulation
 @item @code{deltaChord }          @tab chord finder precision
 @item @code{deltaIntersection }   @tab boundary intersection precision
 @item @code{chordStepMinimum }    @tab minimum step size
@@ -1258,11 +1262,11 @@ The following options influence the generation:
 
 
 The following options influence the output
-@multitable @columnfractions .3 .7
-@item @code{elossHistoBinWidth }    @tab bin width in metres for the energy loss histogram
-@item @code{sensitiveBeamlineComponents } @tab if set, energy losses in beamline components are recorded in the energy loss histogram. Set by default
-@item @code{sensitiveBeamPipe } @tab if set, energy losses in the beam pipe are recorded in the energy loss histogram. Set by default
-@item @code{sensitiveBLMs } @tab if set, energy losses in the beam loss monitors are recorded in the energy loss histogram. Set by default
+@multitable @columnfractions .4 .6
+@item @code{elossHistoBinWidth}    @tab bin width in metres for the energy loss histogram
+@item @code{sensitiveBeamlineComponents} @tab if set, energy losses in beamline components are recorded in the energy loss histogram. Set by default
+@item @code{sensitiveBeamPipe} @tab if set, energy losses in the beam pipe are recorded in the energy loss histogram. Set by default
+@item @code{sensitiveBLMs} @tab if set, energy losses in the beam loss monitors are recorded in the energy loss histogram. Set by default
 @item @code{storeTrajectory} @tab if set, the trajectories are stored in the root file
 @item @code{storeMuonTrajectories} @tab if set, the muon trajectories are stored in the root file
 @item @code{storeNeutronTrajectories} @tab if set, the neutron trajectories are stored in the root file
@@ -1316,18 +1320,30 @@ has been chosen:
 @item @code{Zp0} - Directional flag: Zp0 < 0 points the particle back up the beamline
 @item @code{T0} - Global time offset [s]
 @end itemize
+
+@item @code{distrType}=''reference'': a reference orbit particle, which has the offsets in the global options so 
+@itemize @bullet
+@item @code{X0} - Offset of distribution centre in @code{x}[m]
+@item @code{Y0} - Offset of distribution centre in @code{y}[m]
+@item @code{Z0} - Offset of distribution centre in @code{z}[m]
+@item @code{Xp0} - Angular offset from nominal axis in @code{x-z} plane
+@item @code{Yp0} - Angular offset from nominal @code{z} axis in @code{y-z} plane
+@item @code{Zp0} - Directional flag: Zp0 < 0 points the particle back up the beamline
+@item @code{T0} - Global time offset [s]
+@end itemize
+
 @item @code{distrType}=''gauss'': a gaussian in @code{x}, @code{x'}, @code{y},
       @code{y'}, energy and time, with given widths:
 @itemize @bullet
 @item @code{sigmaX} - RMS of @code{x} distribution in [m]
 @item @code{sigmaXp} - RMS of @code{x'} distribution in [rad]
-@item @code{sigmaY} - RMS of @code{y'} distribution in [m]
+@item @code{sigmaY} - RMS of @code{y} distribution in [m]
 @item @code{sigmaYp} - RMS of @code{y'} distribution in [rad]
 @item @code{sigmaE} - RMS of energy distribution divided by nominal beam kinetic energy
 @item @code{sigmaT} - RMS of time distribution in [s]
 @end itemize
 
-@item @code{distrType}=''gausstwiss'': a gaussian bunch defined by twiss parameters @ref{4}, emittance, energy and time:
+@item @code{distrType}=''gausstwiss'': a gaussian bunch defined by twiss parameters @cite{4}, emittance, energy and time:
 @itemize @bullet
 @item @code{betx} - @math{\beta_x} in [m]
 @item @code{bety} - @math{\beta_y} in [m]
@@ -1339,8 +1355,15 @@ has been chosen:
 @item @code{sigmaT} - RMS of time distribution in [s]
 @end itemize
 
+@item @code{distrType}=''gaussmatrix'': a gaussian bunch defined by @math{N(N-1)/2} elements of sigma matrix, 
+this overwrites @code{sigmaX}, @code{sigmaXp}, @code{sigmaY}, @code{sigmaYp}, @code{sigmaE} and @code{sigmaT} 
+variables if they have been defined previously. It will also recalculate the Twiss parameters. 
+@itemize @bullet
+@item @code{sigmaMN} - @math{\sigma_{MN}} in [m] where @code{M} range between @code{1} and @code{6} and @code{N} 
+ranges between @code{M} and @code{6}
+@end itemize 
 
-@item @code{distrType}=''eshell'': a thin elliptic shell in @code{x,x'} and @code{y,y'} with given semiaxes:
+@item @code{distrType}=''eshell'': an infinitely thin elliptic shell (locus) in @code{x,x'} and @code{y,y'} with given semiaxes:
 @itemize @bullet
 @item @code{shellX}
 @item @code{shellXp}
@@ -1406,7 +1429,7 @@ be used:
 @code{csample, range=<element>, r=r0, l=l0;}
 
 Samplers output the following parameters at the specified location:
-@multitable @columnfractions 0.1 0.4 0.1 0.4
+@multitable @columnfractions 0.1 0.35 0.15 0.4
 @item E  @tab Energy[GeV] @tab E0 @tab Energy at last scatter[Gev]
 @item X  @tab Global X position @tab s @tab path length
 @item Y  @tab Global Y position @tab t @tab time of flight
@@ -1526,7 +1549,7 @@ To display help menu
 
 @code{/help};
 
-For more details see @ref{1}.
+For more details see @cite{1}.
 
 @c float Figure, fig1
 @c caption{ An screenshot with an example BDSIM visualization }
@@ -1548,7 +1571,7 @@ magnets is provided. More detailed description of the physics is given below.
 @section physicsList option
 
 Depending on for what sort of problem @code{BDSIM} is used, different sorts of physics processes should be turned on. 
-This processes are groupes into so called ``physics lists''. The physics list is specified by the @code{physicsList} 
+This processes are grouped into so called ``physics lists''. The physics list is specified by the @code{physicsList} 
 option in the input file, e.g.
 
 @example
@@ -1560,7 +1583,7 @@ option, physicsList="em_standard";
 
 
 
-Several predefined physics lists are available. Some physics lists allow biasing and re-weighting for some processes e.g. muon production. To set the amount of biasing see @ref{option}. Further details of the QGSP, FTFP and BERT hadronic physics lists can be found in @ref{5}. 
+Several predefined physics lists are available. Some physics lists allow biasing and re-weighting for some processes e.g. muon production. To set the amount of biasing see @ref{option}. Further details of the QGSP, FTFP and BERT hadronic physics lists can be found in @cite{5}. 
 
 @multitable @columnfractions .3 .7
 @item @code{standard}          @tab transportation of primary particles only
@@ -1592,8 +1615,7 @@ to the boundary of the ``logical volume'' it is currently in (which could be, e.
 boundary between two adjacent elements) or by the mean free path of the activated processes. Then the particle is pushed
 to the new position and secondaries are generated if necessary. Each volume has an associated transportation algorithm.
 For an on-energy particle travelling close to the optical axis of a quadrupole, dipole or a drift, standard matrix transportation 
-algorithms are used @ref{4}. For multipoles of higher orders and for off-axis/energy particles Runge-Kutta methods are used.
-
+algorithms are used @cite{4}. For multipoles of higher orders and for off-axis/energy particles Runge-Kutta methods are used.
 
 
 @section Tracking accuracy
@@ -1857,8 +1879,6 @@ will incorrectly record hits at @code{mark1[1]} in the sampler attached to
 @code{mark1[2]}. To avoid this, samplers should be attached to uniquely named 
 elements.
 
-There is a known issue with ROOT output using ROOT versions higher than 5.10. 
-To use ROOT output, BDSIM should be compiled with ROOT version 5.10 or lower.
 
 There is a known issue with the @var{z} parameter output to samplers. As 
 particle data is output at the z location of the sampler, when the global 
@@ -1870,7 +1890,7 @@ the bunch, please use the parameter @var{s} instead.
 @c cccccccccccccccccccccccccccccccccccccccccc
 
 @node References, , Known Issues, Top
-@chapter References
+@unnumbered References
 
 @itemize @w{}
 
@@ -1880,11 +1900,11 @@ Geant4 User's Guide, @uref{http://geant4.cern.ch/support/userdocuments.shtml}
 
 @anchor{2}
 @item [2] 
-Root User's Guide, @uref{http://root.cern.ch/root/doc/RootDoc.html}
+Root User's Guide, @uref{http://root.cern.ch/drupal/content/users-guide}
 
 @anchor{3}
 @item [3]
-MAD-X User's Guide, @uref{http://mad.home.cern.ch/mad/uguide.html}
+MAD-X User's Guide, @* @uref{http://madx.web.cern.ch/madx/madX/doc/usrguide/uguide.html}
 
 @anchor{4}
 @item [4]

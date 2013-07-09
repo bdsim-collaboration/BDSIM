@@ -5,8 +5,8 @@
 #ifndef BDSCollimator_h
 #define BDSCollimator_h 
 
-#include"globals.hh"
-#include"BDSAcceleratorComponent.hh"
+#include "globals.hh"
+#include "BDSAcceleratorComponent.hh"
 #include "BDSMaterials.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
@@ -17,9 +17,10 @@
 #include "G4EllipticalTube.hh"
 #include "G4VSolid.hh"
 #include "G4SubtractionSolid.hh"
-#include "BDSEnergyCounterSD.hh"
+//#include "BDSEnergyCounterSD.hh"
 
 #include "parser/gmad.h" // for type definitions
+
 
 class BDSCollimator :public BDSAcceleratorComponent
 {
@@ -66,7 +67,7 @@ private:
 
 private:
   G4Material* itsCollimatorMaterial;
-  BDSEnergyCounterSD* itsEnergyCounterSD;
+  //BDSEnergyCounterSD* itsEnergyCounterSD;
   G4double itsOuterR;
 };
 

@@ -32,8 +32,6 @@
 #include <vector>
 #include "BDSMagFieldSQL.hh"
 
-//using namespace std;
-
 class BDSClassicalRK4;
 
 class BDSGeometrySQL
@@ -95,12 +93,14 @@ private:
   void PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4LogicalVolume*> VOL_LIST);
 
   G4double itsMarkerLength;
-  ifstream ifs;
+  std::ifstream ifs;
   G4LogicalVolume* itsMarkerVol;
   std::vector<BDSMySQLTable*> itsSQLTable;
   BDSMagFieldSQL* itsMagField;
   BDSSamplerSD* SensDet;
   G4UserLimits* itsUserLimits;
+
+void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
 
 void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
 

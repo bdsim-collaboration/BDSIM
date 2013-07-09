@@ -61,7 +61,7 @@ void BDSComptonEngine::PerformCompton()
       G4double r1=G4UniformRand();
       G4double r2=G4UniformRand();
       if(r1>costh)costh=r1;
-      if(r2>costh)costh=r2;;
+      if(r2>costh)costh=r2;
       if(G4UniformRand()<0.5)costh=-costh;
     }
   
@@ -214,7 +214,7 @@ void BDSComptonEngine::PerformHighEnergyCompton()
   
   G4LorentzVector GamInCM;
   G4LorentzVector ElInCM;
-   G4double costh, costh2,sinth,sinth2;
+  G4double costh, costh2,sinth,sinth2;
   
   //Boost the electon and gamma to the cm frame
   G4ThreeVector Boost=(itsIncomingEl+itsIncomingGam)/(itsIncomingEl.e()+itsIncomingGam.e());
@@ -226,7 +226,7 @@ void BDSComptonEngine::PerformHighEnergyCompton()
   G4ThreeVector CMGammaDir= GamInCM.vect().unit();
   
   G4double e_cms=GamInCM.e()+ElInCM.e();
-  G4double s=pow(e_cms,2);
+  G4double s=pow(e_cms,2); // overrides CLHEP::s
   G4double eps= s*(1e-6 );
   G4double t_max=0;
   G4double t_min=-s+eps;
@@ -313,5 +313,3 @@ void BDSComptonEngine::PerformHighEnergyCompton()
   itsScatteredGam *= BoostFromCM;
   itsScatteredEl *= BoostFromCM;
 }
-
-

@@ -33,11 +33,14 @@ public:
   ~BDSDump();
 
   static int GetNumberOfDumps();
+  /// separate counter used in BDSRunManager
   static int nUsedDumps;
 
 protected:
 
 private:
+  G4int nptwiss;
+
   void DumpLogicalVolume();
   G4VisAttributes* SetVisAttributes();
 
@@ -45,6 +48,7 @@ private:
   G4UserLimits* itsUserLimits;
   G4VisAttributes* itsVisAttributes;
 
+  /// number of total Dumps
   static int nDumps;
 };
 

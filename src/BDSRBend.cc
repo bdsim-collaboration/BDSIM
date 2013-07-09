@@ -35,7 +35,11 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
                    G4double tilt, G4double bGrad, 
                    G4String aTunnelMaterial, G4String aMaterial):
   BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
-	       0, 0, angle)
+	       0, 0, angle),
+  markerSolidVolume(NULL),rbendRectangleSolidVolume(NULL),rbendRectangleLogicalVolume(NULL),
+  middleBeampipeLogicalVolume(NULL),middleInnerBPLogicalVolume(NULL),endsBeampipeLogicalVolume(NULL),
+  endsInnerBPLogicalVolume(NULL),endsBeampipeUserLimits(NULL),endsInnerBeampipeUserLimits(NULL),
+  innerBeampipeVisAtt(NULL),beampipeVisAtt(NULL),itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
 {
   SetOuterRadius(outR);
   itsTilt=tilt;
@@ -52,7 +56,7 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
 				 + fabs(cos(itsAngle/2))*outR*tan(itsAngle/2)/2)
 				);
   
-  std::cout << "BDSRBend>> rbend itsMagFieldLength = " << itsMagFieldLength << std::endl;   
+  G4cout << "BDSRBend>> rbend itsMagFieldLength = " << itsMagFieldLength << G4endl;
 
   if (!(*LogVolCount)[itsName])
     {
@@ -596,21 +600,17 @@ BDSRBend::~BDSRBend()
   delete itsVisAttributes;
   delete innerBeampipeVisAtt;
   delete beampipeVisAtt;
-  delete itsVisAttributes;
-  delete itsMarkerLogicalVolume;
-  delete rbendRectangleLogicalVolume;
-  delete middleBeampipeLogicalVolume;
-  delete middleInnerBPLogicalVolume;
-  delete endsBeampipeLogicalVolume;
-  delete endsInnerBPLogicalVolume;
-  delete itsBeampipeUserLimits;
-  delete endsBeampipeUserLimits;
-  delete endsInnerBeampipeUserLimits;
-  delete itsOuterLogicalVolume;
-  delete itsPhysiComp;
+//   delete markerSolidVolume;
+//   delete rbendRectangleSolidVolume;
+//   delete rbendRectangleLogicalVolume;
+//   delete middleBeampipeLogicalVolume;
+//   delete middleInnerBPLogicalVolume;
+//   delete endsBeampipeLogicalVolume;
+//   delete endsInnerBPLogicalVolume;
+//   delete itsBeampipeUserLimits;
+//   delete endsBeampipeUserLimits;
+//   delete endsInnerBeampipeUserLimits;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;
-  delete rbendRectangleSolidVolume;
-  if (markerSolidVolume) delete markerSolidVolume;
 }

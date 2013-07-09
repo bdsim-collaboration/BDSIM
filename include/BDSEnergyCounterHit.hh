@@ -52,11 +52,10 @@ private:
   G4double itsY;
   G4double itsZ;
   G4double itsWeight;
-  //   G4String itsName
   G4int itsCopyNumber;
   G4int itsPartID;
   G4String itsName;
-  G4bool itsPrecisionRegion; //Wether or not the hit is in the precision region
+  G4bool itsPrecisionRegion; //Whether or not the hit is in the precision region
 };
 
 inline G4double BDSEnergyCounterHit::GetEnergy()

@@ -16,8 +16,7 @@
 
 G4Allocator<BDSSamplerHit> BDSSamplerHitAllocator;
 
-BDSSamplerHit::BDSSamplerHit()
-{;}
+//BDSSamplerHit::BDSSamplerHit(){;}
 
 BDSSamplerHit::BDSSamplerHit(G4String aName,
 			     G4double init_mom,
@@ -44,6 +43,9 @@ BDSSamplerHit::BDSSamplerHit(G4String aName,
    itsX(x), itsXPrime(xPrime),
    itsY(y), itsYPrime(yPrime),
    itsZ(z), itsZPrime(zPrime),
+   itsGlobalX(0.0), itsGlobalXPrime(0.0),
+   itsGlobalY(0.0), itsGlobalYPrime(0.0),
+   itsGlobalZ(0.0), itsGlobalZPrime(0.0),
    itsT(t),
    itsS(s),
    itsWeight(weight),

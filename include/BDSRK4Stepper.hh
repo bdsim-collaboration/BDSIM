@@ -36,7 +36,7 @@ public:
     
   void StepperName();
   
-  void SetVolLength(G4double aVolLength);
+  //  void SetVolLength(G4double aVolLength);
   
   
   G4int IntegratorOrder()const { return 4; }
@@ -57,17 +57,17 @@ private:
   
     G4EquationOfMotion* itsEqRhs;
   //    G4ThreeVector itsInitialPoint, itsFinalPoint, itsMidPoint,itsDistVec;
-  G4double itsDist;
+  //  G4double itsDist;
   
-  G4double itsVolLength;
+  //  G4double itsVolLength;
   
-  G4double *yt, *dydx, *dydxt, *dydxm, *dydxr, *yTemp, *yIn;
+  G4double *yt, *dydxt, *dydxm, *yTemp, *yIn;
 
 };
 
-inline  void BDSRK4Stepper::SetVolLength(G4double aVolLength)
-{itsVolLength=aVolLength;
-}
+// inline  void BDSRK4Stepper::SetVolLength(G4double aVolLength)
+// {itsVolLength=aVolLength;}
+
 inline void BDSRK4Stepper::StepperName()
 {G4cout<<"BDSRK4Stepper"<<G4endl;}
 

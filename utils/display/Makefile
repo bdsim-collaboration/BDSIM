@@ -8,7 +8,7 @@ ifeq ($(ARCH),macosx)
 LIBFILES = libBDS.so libBDS.dylib
 SOFLAGS  = -O -bundle -undefined dynamic_lookup
 ifndef ROOTSYS
-ROOTSYS       = /sw/
+ROOTSYS       = /opt/local
 endif
 else
 LIBFILES = libBDS.so

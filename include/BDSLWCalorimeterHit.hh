@@ -14,22 +14,20 @@
 
 class BDSLWCalorimeterHit :public G4VHit
 {
-  public:
-   BDSLWCalorimeterHit();
+public:
   BDSLWCalorimeterHit(G4int nCopy, G4double Energy=0, G4int nEvent=0);
-
 
   ~BDSLWCalorimeterHit();
 
-   BDSLWCalorimeterHit(const BDSLWCalorimeterHit& right);
-   const BDSLWCalorimeterHit& operator=(const BDSLWCalorimeterHit& right);
-
-   inline void* operator new(size_t) ;
-   inline void operator delete(void *aHit);
+  BDSLWCalorimeterHit(const BDSLWCalorimeterHit& right);
+  const BDSLWCalorimeterHit& operator=(const BDSLWCalorimeterHit& right);
+  
+  inline void* operator new(size_t) ;
+  inline void operator delete(void *aHit);
    
-  private:
-   G4double itsEnergy;
-   G4int itsCopyNumber;
+private:
+  G4double itsEnergy;
+  G4int itsCopyNumber;
   G4int itsEventNo;
 
 public:

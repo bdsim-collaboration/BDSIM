@@ -5,14 +5,19 @@
 #ifndef BDSBunch_h
 #define BDSBunch_h 
 
+// BDSIM
 #include "parser/gmad.h"
-#include "Randomize.hh"
 #include "globals.hh"
-#include <fstream>
 
-#if CLHEP_VERSION > 8 
-using namespace CLHEP;
-#endif
+// CLHEP vector
+#include "Randomize.hh"
+#include "CLHEP/Matrix/Vector.h" 
+#include "CLHEP/Matrix/SymMatrix.h"
+#include "CLHEP/RandomObjects/RandMultiGauss.h"
+
+// C++ 
+#include <fstream>
+#include <list>
 
 // CLHEP < 1.9
 //class RandGauss;
@@ -65,8 +70,8 @@ public:
   G4double GetBetaX();
   G4double GetBetaY();
 
-
-  void SetSigmaT(double);  // set initial bunch distribution parameters in Gaussian case 
+  // set initial bunch distribution parameters in Gaussian case 
+  void SetSigmaT(double);  
   void SetSigmaX(double); 
   void SetSigmaY(double); 
   void SetSigmaXp(double);
@@ -86,9 +91,21 @@ public:
   void SetBetaX(double);
   void SetBetaY(double);
 
+  void SetEnergySpread(double);
+  
   std::ifstream fifoReader;
 
 private:
+  // options
+  G4bool verbose;
+  G4bool verboseStep;
+  G4bool verboseEvent;
+  G4bool verboseEventNumber;
+  G4int  nptwiss;
+
+  // distribution type
+  int distribType;
+
   // distribution centre
   G4double X0;
   G4double Y0;
@@ -113,6 +130,7 @@ private:
   // parameters for the elliptic shell distribution
   G4double shellx, shelly, shellxp, shellyp;
   
+  // twiss parameters
   G4double betaX;
   G4double betaY;
   G4double alphaX;
@@ -120,27 +138,32 @@ private:
   G4double emitX;
   G4double emitY;
 
-  int distribType;
+  // sigma matrix parameters 
+  CLHEP::HepVector    meansGM;
+  CLHEP::HepSymMatrix sigmaGM;
+
+  // energy spread
   G4double energySpread;
 
-  list<struct Doublet> fields;
+  std::list<struct Doublet> fields;
 
   // input filename
   G4String inputfile;
   G4int nlinesIgnore;
+  void skip(G4int nvalues);
   std::ifstream InputBunchFile;
   template <typename Type> G4bool ReadValue(Type &value);
   void OpenBunchFile();
   void CloseBunchFile();
 
  // Gaussian Random number generator:
-  RandGauss* GaussGen;
-  RandFlat* FlatGen;
-  
+  CLHEP::RandGauss*      GaussGen;
+  CLHEP::RandFlat*       FlatGen;
+  CLHEP::RandMultiGauss* GaussMultiGen;
+
+
   // event number for phase for ellipse for SR rescaling
   G4int partId;
-
-  G4int ignoreLines; // number of lines to ignore from opt
 };
 
 #endif

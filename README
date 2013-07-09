@@ -4,23 +4,27 @@ General Information
 BDSIM version 0.6_dev, Geant4 toolkit for radiation transport in accelerators
 
 The official web site is:
-	http://www.pp.rhul.ac.uk/twiki/bin/view/JAI/simulation
+        http://www.rhul.ac.uk/physics/research/particlephysics/johnadamsinstitute/bdsim.aspx
+
+The official twiki site is 
+	https://twiki.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BdSim
 
 The official Geant4 web site is:
 	http://geant4.web.cern.ch/geant4/
 
 
+Written by G.A. Blair (g.blair@rhul.ac.uk)
+
 Maintained by Lawrence Deacon (l.deacon@cern.ch),
-and G.A.Blair (g.blair@rhul.ac.uk)
+and Jochem Snuverink (jochem.snuverink@rhul.ac.uk)
+and Stewart Boogert (stewart.boogert@rhul.ac.uk) 
 
-This development version x.x.2011
-
-
+This development version x.x.2013
 
 History
-===================
+==================
 
-v0.6-dev : x.x.11
+v0.6-dev : x.x.13
 v0.5 : 30.05.08
 v0.4 : 25.02.08
 v0.3 : 26.01.07
@@ -36,19 +40,21 @@ System requirements:
 
 tested on:
     os: Linux (Scientific Linux Cern 5, kernel release 2.6.18-238.9.1.el5), 
-    architecture: x86_64,	
-    compiler: gcc 4.4.3
+    architecture: x86_64
+    compiler: gcc 4.x
    
 mandatory:
-    Geant version greater then Geant4.8.0.
-    This version of BDSIM has been successfully compiled and run with Geant 4.9.4.p01.
+    Geant version greater than Geant4.8.0, smaller than 4.9.5
+    This version of BDSIM has been successfully compiled and run with Geant 4.9.4.p04.
+
+    CLHEP (recommended version 2.1.0.1)
 
 optional: 
-    OpenGL (Mesa), ROOT 4.x (5.x<=10)  
-    This version of BDSIM has been successfully compiled and run with ROOT 5.26.00b
+    OpenGL (Mesa), ROOT 4.x, 5.x  
+    This version of BDSIM has been successfully compiled and run with ROOT 5.34/05
    
 
-to compile:
+to compile, see https://twiki.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BDsimInstall
 
    %  ./configure
    %  make

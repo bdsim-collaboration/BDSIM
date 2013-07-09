@@ -11,8 +11,8 @@ Last modified 30.10.2007 by Steve Malton
 
 #include <fstream>
 #include <string>
-#include <list>
 #include <set>
+//#include <list>
 #include <deque>
 
 #include "G4ParticleTable.hh"
@@ -26,12 +26,6 @@ Last modified 30.10.2007 by Steve Malton
 //#include "G4Track.hh"
 
 #include "parser/gmad.h"
-
-using std::istream;
-using std::ostream;
-using std::ifstream;
-using std::ofstream;
-using std::list;
 
 struct strCmp {
   G4bool operator()( const G4String s1, const G4String s2 ) {
@@ -75,7 +69,7 @@ public:
   G4bool GetCheckOverlaps();
 
   G4bool DoTwiss();
-  void SetDoTwiss(G4bool val); 
+  void   SetDoTwiss(G4bool val); 
 
 
   G4double GetMinimumEpsilonStep();
@@ -83,8 +77,8 @@ public:
   G4double GetMaxTime();
   G4double GetDeltaOneStep();
 
-  void SetLogFile(ofstream & os);
-  void StripHeader(istream& is);
+  void SetLogFile(std::ofstream & os);
+  void StripHeader(std::istream& is);
 
   G4String StringFromInt(G4int anInt);
   G4String StringFromDigit(G4int anInt);
@@ -93,10 +87,10 @@ public:
   void SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
 
   G4String GetParticleName();
-  void SetParticleName(G4String aParticleName);
+  void     SetParticleName(G4String aParticleName);
 
   G4double GetLPBFraction();
-  void SetLPBFraction(G4double val);
+  void     SetLPBFraction(G4double val);
 
   G4double GetElossHistoBinWidth();
   G4double GetElossHistoTransBinWidth(); //The transverse (x,y) bin width
@@ -125,12 +119,12 @@ public:
   G4bool GetUseEMLPB();
   G4bool GetUseHadLPB();
 
-//Booleans determining which types of components are sensitive
+  // Booleans determining which types of components are sensitive
   G4bool GetSensitiveComponents();
   G4bool GetSensitiveBeamPipe();
   G4bool GetSensitiveBLMs();
  
-  void SetTotalS(G4double TotalS);
+  void     SetTotalS(G4double TotalS);
   G4double GetTotalS();  
 
   G4double GetComponentBoxSize();
@@ -141,14 +135,14 @@ public:
   G4bool   GetBuildTunnelFloor(); 
   G4bool   GetShowTunnel(); 
   G4double GetTunnelRadius(); 
-  void SetTunnelRadius(G4double rad); 
+  void     SetTunnelRadius(G4double radius); 
   G4double GetTunnelThickness(); 
   G4double GetTunnelSoilThickness(); 
   G4double GetTunnelFloorOffset(); 
   G4double GetTunnelOffsetX(); 
   G4double GetTunnelOffsetY(); 
 
-  //Beam loss monitors
+  // Beam loss monitors
   G4double GetBlmRad();
   G4double GetBlmLength();
 
@@ -172,10 +166,10 @@ public:
   G4double GetProdCutPositrons();
   G4double GetProdCutPositronsP();
 
-  //Environment variables
+  // Environment variables
   G4String GetBDSIMHOME();
 
-  // physical processes etc.
+  // Physical processes etc.
 
   G4String GetPhysListName();
   void SetPhysListName(G4String val);
@@ -194,19 +188,19 @@ public:
   G4double GetLaserwireWavelength();
   G4ThreeVector GetLaserwireDir();
 
-  //use map to generate multiple laserwires with independent wavelength 
-  //and direction
-  G4double GetLaserwireWavelength(G4String aName); 
+  // Use map to generate multiple laserwires with independent wavelength 
+  // and direction
+  G4double      GetLaserwireWavelength(G4String aName); 
   G4ThreeVector GetLaserwireDir(G4String aName); 
-  void SetLaserwireWavelength(G4String aName, G4double aWavelength);
-  void SetLaserwireDir(G4String aName, G4ThreeVector aDirection);
+  void          SetLaserwireWavelength(G4String aName, G4double aWavelength);
+  void          SetLaserwireDir(G4String aName, G4ThreeVector aDirection);
 
   G4bool GetLaserwireTrackPhotons();
   G4bool GetLaserwireTrackElectrons();
 
   G4bool GetTurnOnCerenkov();
 
-  G4bool GetStoreMuonTrajectories();
+  G4bool   GetStoreMuonTrajectories();
   G4double GetTrajCutGTZ();
   G4double GetTrajCutLTR();
 
@@ -221,7 +215,7 @@ public:
 
   G4double GetLengthSafety();
 
-  ofstream GetEventOutput();
+  std::ofstream GetEventOutput();
 
   G4long GetRandomSeed();
   G4bool GetUseBatch();
@@ -231,41 +225,41 @@ public:
 
   G4int GetEventNumberOffset();
 
-  // Internally transmitted variables:
+
 
   G4FieldManager* GetZeroFieldManager();
 
-  G4bool GetUseSynchPrimaryGen();
+  G4bool   GetUseSynchPrimaryGen();
   G4double GetSynchPrimaryAngle();
   G4double GetSynchPrimaryLength();
 
   // AI : for placet synchronization
-  void setWaitingForDump(G4bool flag);
+  void   setWaitingForDump(G4bool flag);
   G4bool getWaitingForDump();
 
-  void setDumping(G4bool flag);
+  void   setDumping(G4bool flag);
   G4bool getDumping();
 
-  void setReading(G4bool flag);
+  void   setReading(G4bool flag);
   G4bool getReading();
 
-  void setReadFromStack(G4bool flag);
+  void   setReadFromStack(G4bool flag);
   G4bool getReadFromStack();
 
   G4String GetFifo();
-  void SetFifo(G4String fileName);
+  void    SetFifo(G4String fileName);
 
   G4AffineTransform GetDumpTransform();
-  void SetDumpTransform(G4AffineTransform tf);
+  void              SetDumpTransform(G4AffineTransform tf);
 
   G4String GetRefVolume();
-  G4int GetRefCopyNo();
+  G4int    GetRefCopyNo();
 
   const G4AffineTransform* GetRefTransform();
-  void SetRefTransform(G4AffineTransform& aTransform);
+  void                     SetRefTransform(G4AffineTransform& aTransform);
 
   // SPM : temp filestream for placet to read and write
-  ofstream fileDump;
+  std::ofstream fileDump;
   // ifstream fileRead; replaced with FILE* fifo in code for consistency with Placet. SPM
 
   std::deque<tmpParticle> holdingQueue;
@@ -275,7 +269,6 @@ public:
   G4bool isReference;
 
 protected:
-
   BDSGlobalConstants(struct Options&);
 
 
@@ -291,8 +284,8 @@ private:
   //PI
   G4double PI;
   // Data Members for Class Attributes
-  ifstream ifs;
-  ostream* log;
+  std::ifstream ifs;
+  std::ostream* log;
   // initial bunch parameters
   G4String itsParticleName;
   G4ParticleDefinition* itsBeamParticleDefinition;
@@ -454,7 +447,7 @@ inline G4double BDSGlobalConstants::GetDeltaOneStep()
   return itsDeltaOneStep;
 }
 
-inline void BDSGlobalConstants::SetLogFile(ofstream & os)
+inline void BDSGlobalConstants::SetLogFile(std::ofstream & os)
 {
   log=&os;
 }
@@ -585,8 +578,8 @@ inline G4bool BDSGlobalConstants::GetBuildTunnelFloor()
 inline G4double BDSGlobalConstants::GetTunnelRadius()
 {return itsTunnelRadius;}
 
-inline void BDSGlobalConstants::SetTunnelRadius(G4double rad)
-{itsTunnelRadius=rad;}
+inline void BDSGlobalConstants::SetTunnelRadius(G4double radius)
+{itsTunnelRadius=radius;}
 
 inline G4double BDSGlobalConstants::GetTunnelThickness()
 {return itsTunnelThickness;}

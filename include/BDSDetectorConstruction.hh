@@ -14,7 +14,7 @@ Last modified 15.11.2005 by Ilya Agapov
 #include "globals.hh"
 
 #include "BDSWorld.hh"
-#include"BDSMaterials.hh"
+#include "BDSMaterials.hh"
 #include "BDSBeamline.hh"
 
 #include "parser/gmad.h"
@@ -39,7 +39,6 @@ class G4VPhysicalVolume;
 class G4Material;
 class G4UniformMagField;
 class BDSCalorimeterSD;
-//class BDSMagField;
 class G4UserLimits;
 class G4VSensitiveDetector;
 
@@ -55,23 +54,23 @@ public:
   ~BDSDetectorConstruction();
 
 public:
-
+     
   G4VPhysicalVolume* Construct();
   void SetMagField(const G4double afield);
   void UpdateGeometry();
 
   G4VIStore* CreateImportanceStore();
-  inline G4IStore* GetIStore(){
-    return itsIStore;
-  }
+  // inline G4IStore* GetIStore(){
+  //   return itsIStore;
+  // }
 
   inline G4VPhysicalVolume* GetWorldVolume(){
     return physiWorld;
   }
 
-  inline G4GeometrySampler* GetGeometrySampler(){
-    return itsGeometrySampler;
-  }
+  // inline G4GeometrySampler* GetGeometrySampler(){
+  //   return itsGeometrySampler;
+  // }
 
 public:
 
@@ -81,11 +80,19 @@ public:
   G4double GetWorldSizeZ();
   
 private:
+  G4bool verbose;
+  G4bool outline;
+
   void SetWorldSize(G4double*);
   void SetWorldSizeX(G4double);
   void SetWorldSizeY(G4double);
   void SetWorldSizeZ(G4double);
 
+
+  G4int    gflash;
+  G4double gflashemax;
+  G4double gflashemin;
+    
   G4GeometrySampler* itsGeometrySampler;
 
   G4Region* precisionRegion;
@@ -93,7 +100,7 @@ private:
 
   BDSWorld* _world;
 
-  G4Box*            solidWorld;    //pointer to the solid World 
+  G4Box*             solidWorld;    //pointer to the solid World 
   G4LogicalVolume*   logicWorld;    //pointer to the logical World
   G4VPhysicalVolume* physiWorld;    //pointer to the physical World
   vector<G4double> itsWorldSize;
@@ -117,7 +124,6 @@ private:
   std::vector<BDSShowerModel*> theFastShowerModel;
   std::vector<G4Region*> gFlashRegion;
 
-  
 };
 
 #endif

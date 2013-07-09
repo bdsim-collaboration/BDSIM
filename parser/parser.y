@@ -1925,10 +1925,10 @@ csample_options : VARIABLE '=' aexpr
                 | VARIABLE '=' STR
                   {
 		    if(ECHO_GRAMMAR) printf("csample_opt -> %s =  %s \n",$1->name,$3);
-		    if(execute)
-		      {
-			;//set_value($1->name,string($3));
-		      }
+		    /* if(execute) */
+		    /*   { */
+		    /* 	;//set_value($1->name,string($3)); */
+		    /*   } */
 		  }   
                 | VARIABLE '=' aexpr ',' csample_options
                   {
@@ -1946,8 +1946,7 @@ csample_options : VARIABLE '=' aexpr
                 | VARIABLE '=' STR ',' csample_options
                   {
 		    if(ECHO_GRAMMAR) printf("csample_opt -> %s =  %s \n",$1->name,$3);
-		    if(execute)
-		      ;//set_value($1->name,string($3));
+		    // if(execute) //set_value($1->name,string($3));
 		  }   
                 | sample_options ',' csample_options
                   {

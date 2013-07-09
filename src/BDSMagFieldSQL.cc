@@ -47,9 +47,9 @@ BDSMagFieldSQL::BDSMagFieldSQL(const G4String& aFieldFile,
 			       std::map<G4String, G4double> aSextVolBgrad,
 			       std::map<G4String, G4double> aOctVolBgrad,
 			       std::map<G4String, G4ThreeVector> aUniformFieldVolField, G4bool aHasNPoleFields, G4bool aHasUniformField)
-  :itsHasNPoleFields(aHasNPoleFields),itsHasUniformField(aHasUniformField),ifs(aFieldFile.c_str()),
+  :itsHasNPoleFields(aHasNPoleFields),itsHasUniformField(aHasUniformField),itsHasFieldMap(false),ifs(aFieldFile.c_str()),
    itsMarkerLength(aMarkerLength), FieldFile(aFieldFile), itsUniformFieldVolField(aUniformFieldVolField),
-   itsQuadVolBgrad(aQuadVolBgrad), itsSextVolBgrad(aSextVolBgrad), itsOctVolBgrad(aOctVolBgrad)
+   itsQuadVolBgrad(aQuadVolBgrad), itsSextVolBgrad(aSextVolBgrad), itsOctVolBgrad(aOctVolBgrad), itsdz(0.0)
 {
   //Define alternate navigator (see geant4 application developers manual section 4.1.8.2)
   itsIRNavigator=new G4Navigator();
@@ -78,7 +78,7 @@ void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
   //  G4TouchableHistory* aTouchable = itsIRNavigator->CreateTouchableHistory();
   G4TouchableHistoryHandle aTouchable = itsIRNavigator->CreateTouchableHistoryHandle();
   const G4AffineTransform GlobalToMarker=aTouchable->GetHistory()->GetTransform(1);
-  const G4AffineTransform MarkerToGlobal=GlobalToMarker.Inverse();
+  //  const G4AffineTransform MarkerToGlobal=GlobalToMarker.Inverse();
   RLocalR=GlobalToMarker.TransformPoint(GlobalR);
   
   if( fabs(RLocalR.z()) > fabs(itsMarkerLength/2) ){
@@ -224,9 +224,9 @@ void BDSMagFieldSQL::Prepare(G4VPhysicalVolume *referenceVolume)
       G4cout << "Loading SQL Field Map file: " << FieldFile << G4endl;
     
     if(FieldFile.contains("inverse")) itsMarkerLength*=-1;
-    double temp_z;
-    double temp_Bz;
-    double temp_solB;
+    double temp_z=0.0;
+    double temp_Bz=0.0;
+    double temp_solB=0.0;
     while(!ifs.eof()){
       if(FieldFile.contains("SiD"))
 	ifs >> temp_z >> temp_Bz >> temp_solB;

@@ -11,8 +11,6 @@
 #ifndef BDSXYMagField_h
 #define BDSXYMagField_h
 
-//using namespace std;
-
 struct XYFieldRecord {
   G4double x;
   G4double y;

@@ -11,6 +11,7 @@
 #ifndef BDSMultipoleMagField_h
 #define BDSMultipoleMagField_h
 
+#include <list>
 #include "G4Types.hh"
 #include "G4MagneticField.hh"
 
@@ -18,7 +19,7 @@ class BDSMultipoleMagField : public G4MagneticField
 {
 public:  // with description
 
-  BDSMultipoleMagField(list<G4double> knl, list<G4double> ksl);
+  BDSMultipoleMagField(std::list<G4double> knl, std::list<G4double> ksl);
   virtual ~BDSMultipoleMagField();
   // Constructor and destructor. No actions.
 
@@ -28,8 +29,8 @@ public:  // with description
 
 public:
   
-  list<G4double> bn; // field normal coefficients = kn * Brho
-  list<G4double> bs; // field skew coefficients = ks * Brho
+  std::list<G4double> bn; // field normal coefficients = kn * Brho
+  std::list<G4double> bs; // field skew coefficients = ks * Brho
 
 };
 

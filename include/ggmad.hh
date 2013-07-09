@@ -23,7 +23,7 @@ public:
   void Construct(G4LogicalVolume *marker);
 
 private:
-  ifstream inputf;
+  std::ifstream inputf;
   G4String getWord();
   void getParameter(G4double& x, G4String name, G4String lastToken);
   void getParameter(G4String& lval, G4String name, G4String lastToken);

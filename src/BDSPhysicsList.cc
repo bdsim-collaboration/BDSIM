@@ -10,6 +10,7 @@
 //
 
 
+#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSPhysicsList.hh"
 
@@ -80,8 +81,10 @@
 #include "G4MuPairProduction.hh"
 #if G4VERSION_NUMBER < 950
 #include "G4MuonNucleusProcess.hh"
-#else
-#include "G4MuNuclearInteraction.hh"
+#elif G4VERSION_NUMBER < 953
+#include "G4MuNuclearInteraction.hh"*/
+#else 
+#include "G4MuonVDNuclearModel.hh"
 #endif
 
 //ions
@@ -189,23 +192,26 @@
 #include "G4ShortLivedConstructor.hh"
 
 
-extern G4bool verbose;
+
 
 BDSPhysicsList::BDSPhysicsList():  G4VUserPhysicsList()
 {
+  verbose = BDSExecOptions::Instance()->GetVerbose();
+
   // construct particles
 
   //defaultCutValue = 0.7*mm;  
   defaultCutValue = BDSGlobalConstants::Instance()->GetDefaultRangeCut()*m;  
   SetDefaultCutValue(BDSGlobalConstants::Instance()->GetDefaultRangeCut()*m);
 
-  G4cout<<"Charged Thresholdcut="<<BDSGlobalConstants::Instance()->GetThresholdCutCharged()/GeV<<" GeV"<<G4endl;
-  G4cout<<"Photon Thresholdcut="<<BDSGlobalConstants::Instance()->GetThresholdCutPhotons()/GeV<<" GeV"<<G4endl;
-  G4cout<<"Default range cut="<<BDSGlobalConstants::Instance()->GetDefaultRangeCut()/m<<" m"<<G4endl;
+  G4cout  << __METHOD_NAME__ << "Charged Thresholdcut=" 
+	  << BDSGlobalConstants::Instance()->GetThresholdCutCharged()/GeV<<" GeV"<<G4endl;
+  G4cout  << __METHOD_NAME__ << "Photon Thresholdcut=" 
+	  << BDSGlobalConstants::Instance()->GetThresholdCutPhotons()/GeV<<" GeV"<<G4endl;
+  G4cout  << __METHOD_NAME__ << "Default range cut=" 
+	  << BDSGlobalConstants::Instance()->GetDefaultRangeCut()/m<<" m"<<G4endl;
 
-
-  SetVerboseLevel(1);
-   
+  SetVerboseLevel(1);   
 }
 
 BDSPhysicsList::~BDSPhysicsList()
@@ -214,6 +220,10 @@ BDSPhysicsList::~BDSPhysicsList()
 
 void BDSPhysicsList::ConstructProcess()
 { 
+#if DEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif 
+
   bool plistFound=false;
   //standard physics lists
   if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP"){
@@ -281,12 +291,12 @@ void BDSPhysicsList::ConstructProcess()
   //Synchrotron radiation
   if(BDSGlobalConstants::Instance()->GetSynchRadOn()) {
 #ifdef DEBUG
-    G4cout << "BDSPhysics list: synch. rad. is turned on" << G4endl;
+    G4cout << __METHOD_NAME__ << "synch. rad. is turned on" << G4endl;
 #endif
     ConstructSR();
   } else {
 #ifdef DEBUG
-    G4cout << "BDSPhysics list: synch. rad. is turned OFF!" << G4endl;
+    G4cout << __METHOD_NAME__ << "synch. rad. is turned OFF!" << G4endl;
 #endif
   }
   //Particle decay
@@ -382,7 +392,7 @@ void BDSPhysicsList::ConstructProcess()
       }
       
       if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_FTFP_BERT_muon"){
-	G4cout << "BDSPhysicsList: Using hadronic_FTFP_BERT_muon" << G4endl;
+	G4cout << __METHOD_NAME__ << "Using hadronic_FTFP_BERT_muon" << G4endl;
 	ConstructEM();
 	ConstructMuon();
 	HadronPhysicsFTFP_BERT *myHadPhysList = new HadronPhysicsFTFP_BERT;
@@ -481,13 +491,19 @@ void BDSPhysicsList::ConstructParticle()
   BDSGlobalConstants::Instance()->SetBeamKineticEnergy(BDSGlobalConstants::Instance()->GetBeamTotalEnergy() - 
                                    BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() );
   
-  G4cout<<"Beam properties:"<<G4endl;
-  G4cout<<"     Particle : "<<BDSGlobalConstants::Instance()->GetParticleDefinition()->GetParticleName()<<G4endl;
-  G4cout<<"     Mass : "<<BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass()/GeV<< " GeV"<<G4endl;
-  G4cout<<"     Charge : "<<BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge()<< " e"<<G4endl;
-  G4cout<<"     Total Energy : "<< BDSGlobalConstants::Instance()->GetBeamTotalEnergy()/GeV<<" GeV"<<G4endl;
-  G4cout<<"     Kinetic Energy : "<< BDSGlobalConstants::Instance()->GetBeamKineticEnergy()/GeV<<" GeV"<<G4endl;
-  G4cout<<"     Momentum : "<< BDSGlobalConstants::Instance()->GetBeamMomentum()/GeV<<" GeV"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Beam properties:"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Particle : " 
+	 << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetParticleName()<<G4endl;
+  G4cout << __METHOD_NAME__ << "Mass : " 
+	 << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass()/GeV<< " GeV"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Charge : " 
+	 << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge()<< " e"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Total Energy : "
+	 << BDSGlobalConstants::Instance()->GetBeamTotalEnergy()/GeV<<" GeV"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Kinetic Energy : "
+	 << BDSGlobalConstants::Instance()->GetBeamKineticEnergy()/GeV<<" GeV"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Momentum : "
+	 << BDSGlobalConstants::Instance()->GetBeamMomentum()/GeV<<" GeV"<<G4endl;
 }
 
 #include "G4Region.hh"
@@ -495,7 +511,7 @@ void BDSPhysicsList::ConstructParticle()
 void BDSPhysicsList::SetCuts()
 {
   if (verbose){
-    G4cout << "BDSPhysicsList:: setting cuts\n";
+    G4cout << __METHOD_NAME__ << " setting cuts\n";
     
   }
   
@@ -668,7 +684,7 @@ void BDSPhysicsList::ConstructMultipleScattering(){
       pmanager->AddProcess(new G4hMultipleScattering,-1, 1,1);
 #else
       pmanager->AddProcess(new G4MultipleScattering,-1, 1,1);
-#endif
+#endif 
     }
   }
 }
@@ -710,7 +726,7 @@ void BDSPhysicsList::ConstructMuon()
       gammaconversiontomuon_xsbias->SetEnhanceFactor(BDSGlobalConstants::Instance()->GetGammaToMuFe());
       pmanager->AddDiscreteProcess(gammaconversiontomuon_xsbias);
 #ifdef DEBUG
-      G4cout << "BDSPhysicsList> GammaToMuFe = " << BDSGlobalConstants::Instance()->GetGammaToMuFe() << G4endl;
+      G4cout << __METHOD_NAME__ << "GammaToMuFe = " << BDSGlobalConstants::Instance()->GetGammaToMuFe() << G4endl;
 #endif
     } else if (particleName == "e+") {
       //positron
@@ -731,7 +747,7 @@ void BDSPhysicsList::ConstructMuon()
       annihitomupair_xsbias->SetEnhanceFactor(BDSGlobalConstants::Instance()->GetAnnihiToMuFe());
       pmanager->AddDiscreteProcess(annihitomupair_xsbias); 
 #ifdef DEBUG
-      G4cout << "BDSPhysicsList> AnnihiToMuFe = " << BDSGlobalConstants::Instance()->GetAnnihiToMuFe() << G4endl;
+      G4cout << __METHOD_NAME__ << "AnnihiToMuFe = " << BDSGlobalConstants::Instance()->GetAnnihiToMuFe() << G4endl;
 #endif    
     } else if( particleName == "mu+" || 
                particleName == "mu-"    ) {
@@ -1525,67 +1541,3 @@ void BDSPhysicsList::ConstructSR()
   }
   return; 
 }
-
-
-#include "G4ParallelWorldScoringProcess.hh"
-void BDSPhysicsList::AddScoringProcess(){
-
-  G4int npw = paraWorldName.size();
-  for ( G4int i = 0; i < npw; i++){
-    G4ParallelWorldScoringProcess* theParallelWorldScoringProcess
-      = new G4ParallelWorldScoringProcess("ParaWorldScoringProc");
-    theParallelWorldScoringProcess->SetParallelWorld(paraWorldName[i]);
-
-    theParticleIterator->reset();
-    while( (*theParticleIterator)() ){
-      G4ParticleDefinition* particle = theParticleIterator->value();
-      if ( !particle->IsShortLived() ){
-	G4ProcessManager* pmanager = particle->GetProcessManager();
-	pmanager->AddProcess(theParallelWorldScoringProcess);
-	pmanager->SetProcessOrderingToLast(theParallelWorldScoringProcess,idxAtRest);
-	pmanager->SetProcessOrdering(theParallelWorldScoringProcess,idxAlongStep,1);
-	pmanager->SetProcessOrderingToLast(theParallelWorldScoringProcess,idxPostStep);
-      }
-    }
-  }
-
-}
-
-#include "G4FastSimulationManagerProcess.hh"
-/*
-void BDSPhysicsList::AddParameterisation()
-{
-  G4FastSimulationManagerProcess*
-    theFastSimulationManagerProcess = new G4FastSimulationManagerProcess();
-  theParticleIterator->reset();
-  while( (*theParticleIterator)() )
-    {
-      G4ParticleDefinition* particle = theParticleIterator->value();
-      G4ProcessManager* pmanager = particle->GetProcessManager();
-      pmanager->AddProcess(theFastSimulationManagerProcess, -1, 0, 0);
-    }
-}
-*/
-
-void BDSPhysicsList::AddParameterisation()
-{
-  G4FastSimulationManagerProcess*
-    theFastSimulationManagerProcess =
-    new G4FastSimulationManagerProcess();
-  G4cout << "FastSimulationManagerProcess" <<G4endl;
-  theParticleIterator->reset();
-  //G4cout<<"---"<<G4endl;                                                                                                                                              
-  while( (*theParticleIterator)() ){
-    //G4cout<<"+++"<<G4endl;                                                                                                                                            
-
-    G4ParticleDefinition* particle = theParticleIterator->value();
-    // G4cout<<"--- particle "<<particle->GetParticleName()<<G4endl;                                                                                                    
-    G4ProcessManager* pmanager = particle->GetProcessManager();
-    // The fast simulation process becomes a discrete process only since 9.0:                                                                                                 
-    pmanager->AddDiscreteProcess(theFastSimulationManagerProcess);
-  }
-}
-
-
-
-

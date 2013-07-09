@@ -35,6 +35,7 @@ public:
                
 
 private:
+  G4bool verbose;
   G4String itsName;
   BDSEnergyCounterHitsCollection *BDSEnergyCounterCollection;
   G4int* HitID;

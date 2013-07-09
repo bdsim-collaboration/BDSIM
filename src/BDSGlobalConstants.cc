@@ -5,17 +5,17 @@ Last modified 23.10.2007 by Steve Malton
 **/
 #include "BDSGlobalConstants.hh"
 #include "../parser/getEnv.h"
+#include "BDSDebug.hh"
 #include "G4UniformMagField.hh"
 #include "G4ParticleTypes.hh"
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
 #include <cstdlib>
-#include <assert.h>
-#include<string>
-#include<stack>
-#include<cmath>
 
-using namespace std;
+#include <assert.h>
+#include <string>
+#include <stack>
+#include <cmath>
 
 BDSGlobalConstants* BDSGlobalConstants::_instance = 0;
 
@@ -26,7 +26,8 @@ BDSGlobalConstants* BDSGlobalConstants::Instance(){
   return _instance;
 }
 
-BDSGlobalConstants::BDSGlobalConstants(struct Options& opt)
+BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
+  log(NULL), itsBeamParticleDefinition(NULL)
 {
   //environment variables
   itsBDSIMHOME=(G4String)getEnv("BDSIMHOME");
@@ -76,20 +77,20 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt)
   //Fraction of events with leading particle biasing.
   itsBeampipeRadius = opt.beampipeRadius * m;
   if(itsBeampipeRadius == 0){
-    cerr << "BDSGlobalConstants> Error: option \"beampipeRadius\" must be greater than 0" <<  endl;
+    G4cerr << __METHOD_NAME__ << "Error: option \"beampipeRadius\" must be greater than 0" <<  G4endl;
     exit(1);
   }
   itsBeampipeThickness = opt.beampipeThickness * m;
   itsComponentBoxSize = opt.componentBoxSize *m;
   if (itsComponentBoxSize < (itsBeampipeThickness + itsBeampipeRadius)){
-    cerr << "BDSGlobalConstants> Error: option \"boxSize\" must be greater than the sum of \"beampipeRadius\" and \"beamPipeThickness\" " << endl;
+    G4cerr << __METHOD_NAME__ << "Error: option \"boxSize\" must be greater than the sum of \"beampipeRadius\" and \"beamPipeThickness\" " << G4endl;
     exit(1);
   }
   itsBuildTunnel = opt.buildTunnel;
   itsBuildTunnelFloor = opt.buildTunnelFloor;  
   itsTunnelRadius = opt.tunnelRadius * m;
   if (itsTunnelRadius < itsComponentBoxSize/2){
-    cerr << "BDSGlobalConstants> Error: option \"tunnelRadius\" must be grater than \"boxSize\"/2 " << endl;
+    G4cerr << __METHOD_NAME__ << "> Error: option \"tunnelRadius\" must be grater than \"boxSize\"/2 " << G4endl;
     exit(1);
   }
   itsTunnelThickness = opt.tunnelThickness * m; //Tunnel geometry options read from file
@@ -120,7 +121,8 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt)
   itsDeltaIntersection= opt.deltaIntersection * m;
   itsMinimumEpsilonStep = opt.minimumEpsilonStep;
   itsMaximumEpsilonStep = opt.maximumEpsilonStep;
-  itsMaxTime=1e-4*s;
+  //  itsMaxTime = opt.maximumTrackingTime;
+  itsMaxTime=2e-4*s;
   itsDeltaOneStep = opt.deltaOneStep * m;
   doTwiss = opt.doTwiss;
   itsDoPlanckScattering = opt.doPlanckScattering;
@@ -131,7 +133,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt)
   itsDecayOn = opt.decayOn;
   itsSynchRescale = opt.synchRescale; // rescale due to synchrotron
   itsSynchTrackPhotons= opt.synchTrackPhotons;
-  G4cout << "BDSGlobalConstants::Instance() synchTrackphotons = " << itsSynchTrackPhotons << G4endl;
+  G4cout << __METHOD_NAME__ << "synchTrackphotons = " << itsSynchTrackPhotons << G4endl;
   itsSynchLowX = opt.synchLowX;
   itsSynchLowGamE = opt.synchLowGamE * GeV;  // lowest gamma energy
   itsSynchPhotonMultiplicity = opt.synchPhotonMultiplicity;
@@ -173,8 +175,9 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt)
   itsIncludeIronMagFields = opt.includeIronMagFields;
   zeroMagField = new G4UniformMagField(G4ThreeVector());
   itsZeroFieldManager=new G4FieldManager();
-  itsZeroFieldManager->SetDetectorField(zeroMagField);
-  itsZeroFieldManager->CreateChordFinder(zeroMagField);
+  itsZeroFieldManager->SetDetectorField(magField);
+  itsZeroFieldManager->CreateChordFinder(magField);
+   
 }
 
 // a robust compiler-invariant method to convert from integer to G4String

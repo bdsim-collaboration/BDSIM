@@ -19,8 +19,6 @@
 #include <string>
 #include <cstring>
 
-using namespace std;
-
 // types of elements
 
 enum {
@@ -70,16 +68,18 @@ enum {
 };
 
 enum {
-  _GAUSSIAN = 0,
-  _RING = 1,
-  _SQUARE = 2,
-  _CIRCLE = 3,
-  _GUINEAPIG_BUNCH = 4,
-  _GUINEAPIG_PAIRS = 5,
-  _GUINEAPIG_SLAC = 6,
-  _CAIN = 7,
-  _ESHELL = 8,
-  _GAUSSIAN_TWISS = 9,
+  _REFERENCE = 0,
+  _GAUSSIAN = 1,
+  _RING = 2,
+  _SQUARE = 3,
+  _CIRCLE = 4,
+  _GUINEAPIG_BUNCH = 5,
+  _GUINEAPIG_PAIRS = 6,
+  _GUINEAPIG_SLAC = 7,
+  _CAIN = 8,
+  _ESHELL = 9,
+  _GAUSSIAN_TWISS = 10,
+  _GAUSSIAN_MATRIX = 11,
   _UDEF = 32
 };
 
@@ -87,6 +87,7 @@ enum {
 
 struct Options {
 
+  // list of pyhysics processes 
   std::string physicsList;
 
   // beam parameters
@@ -102,13 +103,29 @@ struct Options {
   double defaultRangeCut;
   double ffact;
   double beamEnergy;
+
+  // initial beam centroid
   double X0, Y0, Z0;
   double Xp0, Yp0, Zp0;
-  double T0, sigmaT;
+  double T0; 
+  
+  // bunch length
+  double sigmaT;
+
+  // initial twiss parameters
+  double betx, bety, alfx, alfy, emitx, emity; 
 
   // for the gaussian beam distribution
   double sigmaX, sigmaXp, sigmaY, sigmaYp;
 
+  // for the gaussian sigma matrix distribution
+  double sigma11, sigma12, sigma13, sigma14, sigma15, sigma16;
+  double          sigma22, sigma23, sigma24, sigma25, sigma26;
+  double                   sigma33, sigma34, sigma35, sigma36;
+  double                            sigma44, sigma45, sigma46;
+  double                                     sigma55, sigma56;
+  double                                              sigma66;
+  
   // for the elliptic shell distribution
   double shellX, shellXp, shellY, shellYp;
 
@@ -117,94 +134,103 @@ struct Options {
 
   // for the gaussian, elliptic shell, ring distributions
   double sigmaE;
- 
-  double betx, bety, alfx, alfy, emitx, emity; // initial twiss parameters
-  int doTwiss;
-  int doPlanckScattering;
-  int checkOverlaps;
+
+  // bdsim options 
+  int       doTwiss;
+  int       doPlanckScattering;
+  int       checkOverlaps;
+  int       numberOfEventsPerNtuple;
+  unsigned long int eventNumberOffset;
+
+  // for element specification
+  double xsize, ysize;
+
   int numberOfEventsPerNtuple;
   unsigned long int eventNumberOffset;
-  double vacuumPressure;
-  double planckScatterFe;
+  int backgroundScaleFactor;
 
   // default geometry parameters
-  double componentBoxSize;
-  double tunnelRadius;
-  double beampipeRadius;
-  double beampipeThickness;
+  double    componentBoxSize;
+  double    tunnelRadius;
+  double    beampipeRadius;
+  double    beampipeThickness;
   std::string pipeMaterial;
   std::string vacMaterial;
   std::string tunnelMaterial;
   std::string tunnelCavityMaterial;
   std::string soilMaterial;
 
-  int includeIronMagFields;
+  int      includeIronMagFields;
 
   // tunnel geometry parameters
-  int buildTunnel;
-  int buildTunnelFloor;
-  int showTunnel;
-  double tunnelOffsetX;
-  double tunnelOffsetY;
-  double samplerDiameter;
-   double tunnelThickness;
-  double tunnelSoilThickness;
-  double tunnelFloorOffset;
+  int      buildTunnel;
+  int      buildTunnelFloor;
+  int      showTunnel;
+  double   tunnelOffsetX;
+  double   tunnelOffsetY;
+  double   samplerDiameter;
+  double   tunnelThickness;
+  double   tunnelSoilThickness;
+  double   tunnelFloorOffset;
   
   //Geometry biasing
-  int geometryBias;
+  int      geometryBias;
 
   //BLM geometry
-  double blmRad;
-  double blmLength;
+  double   blmRad;
+  double   blmLength;
 
   //Cross section biasing parameters
-  double gammaToMuFe;
-  double annihiToMuFe;
-  double eeToHadronsFe;
+  double   gammaToMuFe;
+  double   annihiToMuFe;
+  double   eeToHadronsFe;
  
-  int useEMLPB;
-  int useHadLPB;
+  int      useEMLPB;
+  int      useHadLPB;
 
-  int sensitiveBeamlineComponents, sensitiveBeamPipe, sensitiveBLMs;
+  int      sensitiveBeamlineComponents;
+  int      sensitiveBeamPipe;
+  int      sensitiveBLMs;
+ 
+  double   LPBFraction;
 
-  double LPBFraction;
-
-  double thresholdCutCharged;
-  double thresholdCutPhotons;
+  double   thresholdCutCharged;
+  double   thresholdCutPhotons;
   
-  double prodCutPhotons;
-  double prodCutPhotonsP;
-  double prodCutElectrons;
-  double prodCutElectronsP;
-  double prodCutPositrons;
-  double prodCutPositronsP;
+  double   prodCutPhotons;
+  double   prodCutPhotonsP;
+  double   prodCutElectrons;
+  double   prodCutElectronsP;
+  double   prodCutPositrons;
+  double   prodCutPositronsP;
 
-  double deltaChord;
-  double chordStepMinimum;
-  double deltaIntersection;
-  double minimumEpsilonStep;
-  double maximumEpsilonStep;
-  double deltaOneStep;
-  int turnOnCerenkov;
-  int synchRadOn;
-  int decayOn;
-  int synchRescale;
-  int synchTrackPhotons;
-  double synchLowX;
-  double synchLowGamE;
-  int synchPhotonMultiplicity;
-  int synchMeanFreeFactor;
-  double lengthSafety;
+  // Tracking related parameters 
+  double    maximumTrackingTime;
+  double   deltaChord;
+  double   chordStepMinimum;
+  double   deltaIntersection;
+  double   minimumEpsilonStep;
+  double   maximumEpsilonStep;
+  double   deltaOneStep;
+  int      turnOnCerenkov;
+  int      synchRadOn;
+  int      decayOn;
+  int      synchRescale;
+  int      synchTrackPhotons;
+  double   synchLowX;
+  double   synchLowGamE;
+  int      synchPhotonMultiplicity;
+  int      synchMeanFreeFactor;
+  double   lengthSafety;
   long int randomSeed;
 
-  int useTimer;
-  int storeMuonTrajectories;
-  double trajCutGTZ;
-  double trajCutLTR;
-  int storeNeutronTrajectories;
-  int storeTrajectory;
-  int stopTracks;
+  int      useTimer;
+  int      storeMuonTrajectories;
+  double   trajCutGTZ;
+  double   trajCutLTR;
+  int      storeNeutronTrajectories;
+  int      storeTrajectory;
+  int      stopTracks;
 
   std::string fifo; // fifo for BDSIM-placet
   std::string refvolume; //initial starting volume
@@ -278,6 +304,7 @@ struct Parameters {
 
   std::list<double> knl;           // multipole expansion coefficients
   std::list<double> ksl;           // skew multipole expansion
+  
   int knlset; int kslset;
 
   //List of beam loss monitor locations
@@ -331,6 +358,7 @@ struct Parameters {
 
   // twiss parameters
   
+
   // for external geometry and field definition files
   char geometry[256]; int geomset;
   char bmap[256]; int bmapset;
@@ -454,4 +482,48 @@ int gmad_parser(FILE *f);
 int gmad_parser(std::string name);
 
 
+/** Python interface **/ 
+extern "C" {   
+  int    gmad_parser_c(char *name);
+
+  /* Interface to extern std::list<Element> beamline_list */
+  int    get_nelements(); // Length of list
+  short  get_type(int);   // Type of element 
+  char*  get_name(int);   // Name of element
+  double get_length(int); // Length of element
+  double get_angle(int);  // Angle of element
+
+  /* Interface to extern Options options*/
+  /*
+  char*  get_physicsList();
+  char*  get_particleName();
+  char*  get_distribType();
+  char*  get_distribFile();
+  int    get_numberToGenerate();
+  
+  double get_sigmaX();
+  double get_sigmaY();
+  double get_sigmaXp();
+  double get_sigmaYp();
+  double get_sigmaE();
+  
+  double get_shellX();
+  double get_shellY();
+  double get_shellXp();
+  double get_shellYp();
+  
+  double get_rMin();
+  double get_rMax();
+ 
+  double get_betx();
+  double get_bety();
+  double get_alfx();
+  double get_alfy();
+  double get_emitx();
+  double get_emity();
+   
+  */
+  
+  
+}
 #endif

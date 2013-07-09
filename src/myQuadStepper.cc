@@ -14,8 +14,9 @@ extern G4double BDSLocalRadiusOfCurvature;
 extern G4int event_number;
 
 myQuadStepper::myQuadStepper(G4Mag_EqRhs *EqRhs)
-  : G4MagIntegratorStepper(EqRhs,6)  // integrate over 6 variables only !!
-                                       // position & velocity
+  : G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
+                                      // position & velocity
+    itsLength(0.0),itsAngle(0.0),itsBGrad(0.0),itsBField(0.0),itsDist(0.0)
 {
   fPtrMagEqOfMot = EqRhs;
 }

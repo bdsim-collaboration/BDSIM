@@ -35,24 +35,24 @@ class G4UIcmdWithoutParameter;
 
 class BDSDetectorMessenger: public G4UImessenger
 {
-  public:
-    BDSDetectorMessenger(BDSDetectorConstruction* );
-   ~BDSDetectorMessenger();
-    
-    void SetNewValue(G4UIcommand*, G4String);
-    
-  private:
-    BDSDetectorConstruction* BDSDetector;
-    
-    G4UIdirectory*             BDSdetDir;
+public:
+  BDSDetectorMessenger(BDSDetectorConstruction* );
+  ~BDSDetectorMessenger();
+  
+  void SetNewValue(G4UIcommand*, G4String);
+  
+private:
+  BDSDetectorConstruction* BDSDetector;    
+
+  //    G4UIdirectory*             BDSdetDir;
   //    G4UIcmdWithAString*        AbsMaterCmd;
   //    G4UIcmdWithAString*        GapMaterCmd;
   //    G4UIcmdWithADoubleAndUnit* AbsThickCmd;
   //    G4UIcmdWithADoubleAndUnit* GapThickCmd;
   //    G4UIcmdWithADoubleAndUnit* SizeYZCmd;
   //    G4UIcmdWithAnInteger*      NbLayersCmd;    
-      G4UIcmdWithADoubleAndUnit* MagFieldCmd;
-    G4UIcmdWithoutParameter*   UpdateCmd;
+  //    G4UIcmdWithADoubleAndUnit* MagFieldCmd;
+  //    G4UIcmdWithoutParameter*   UpdateCmd;
 };
 
 #endif

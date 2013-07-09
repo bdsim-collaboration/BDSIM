@@ -33,8 +33,7 @@ BDSStackingAction::~BDSStackingAction()
 {
 }
 
-G4ClassificationOfNewTrack 
-BDSStackingAction::ClassifyNewTrack(const G4Track * aTrack)
+G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * aTrack)
 {
   G4ClassificationOfNewTrack classification = fUrgent;
 
@@ -61,7 +60,7 @@ BDSStackingAction::ClassifyNewTrack(const G4Track * aTrack)
     }
   
   if(BDSGlobalConstants::Instance()->GetStopTracks()) // if tracks killed after interaction
-      {
+    {
       
       // kill secondary electrons
       
@@ -76,7 +75,7 @@ BDSStackingAction::ClassifyNewTrack(const G4Track * aTrack)
 	  // if we are in the twiss module - aperture hit is suspicious
 	  if( BDSGlobalConstants::Instance()->DoTwiss() ) 
 	    G4cout<<"WARNING : Electron "<<aTrack->GetParentID()<<" outside of aperture, twiss results will be incorrect"<<
-	      G4endl;;
+	      G4endl;
 
 	}
       

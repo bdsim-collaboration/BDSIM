@@ -42,7 +42,8 @@ extern G4RotationMatrix* RotY90;
 extern BDSOutput* bdsOutput;
 //extern BDSGlobalConstants* BDSGlobalConstants::Instance();
 
-BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile)
+BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):
+  itsMarkerVol(NULL),itsMagField(NULL),itsUniformMagField(NULL)
 {
 #ifndef NOUSERLIMITS
   itsUserLimits = new G4UserLimits();
@@ -132,6 +133,7 @@ BDSGeometryLCDD::~BDSGeometryLCDD()
 {
   delete itsUniformMagField;
   delete itsMagField;
+  delete itsUserLimits;
 }
 
 void BDSGeometryLCDD::Construct(G4LogicalVolume *marker)
@@ -525,7 +527,7 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 
 	  formula = parseStrChar(xmlGetProp(cur,(const xmlChar*)"formula"));	   
 	   
-	  if(!BDSMaterials::Instance()->CheckElement(formula)){
+	  if(!theMaterials->CheckElement(formula)){
 	    if(!xmlStrcmp(tempcur->name, (const xmlChar *)"atom")){
 	      type = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"type"));	 
 	      if (strcmp("A",type)){
@@ -536,7 +538,7 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	      Z = parseDblChar(xmlGetProp(cur,(const xmlChar*)"Z"));	   
 	       
 	      value = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"value"));	   
-	      BDSMaterials::Instance()->AddElement(name, formula, Z, value*unit/(g/mole)); 
+	      theMaterials->AddElement(name, formula, Z, value*unit/(g/mole)); 
 	    } else {
 	       G4Exception("BDSGeometryLCDD.cc: not an atom, not currently implemented in BDSIM", "-1", FatalException, "");  
 	    }
@@ -552,7 +554,7 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	   G4double value(0), unit(1);
 	   
 	   name = parseStrChar(xmlGetProp(cur,(const xmlChar*)"name"));	   
-	   if(BDSMaterials::Instance()->CheckMaterial(name)){
+	   if(theMaterials->CheckMaterial(name)){
 	     G4cout << "Warning: BDSGeometryLCDD.cc: material " << name << " already defined in BDSMaterials.cc" << endl; 
 	   } else {
 
@@ -654,12 +656,12 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 #ifdef DEBUG
 	     G4cout << "Size of weights: " << weights.size() << G4endl;
 #endif
-	     BDSMaterials::Instance()->AddMaterial(name, value*unit/(g/cm3), kStateSolid, 300, 1, components, weights);
+	     theMaterials->AddMaterial(name, value*unit/(g/cm3), kStateSolid, 300, 1, components, weights);
 	     } else if(fractions.size()>0){
 #ifdef DEBUG
 	     G4cout << "Size of fractions: " << fractions.size() << G4endl;
 #endif
-	     BDSMaterials::Instance()->AddMaterial(name, value*unit/(g/cm3), kStateSolid, 300, 1, components, fractions);
+	     theMaterials->AddMaterial(name, value*unit/(g/cm3), kStateSolid, 300, 1, components, fractions);
 	     } else G4Exception("BDSGeometry LCDD: Ill defined material fractions - list of fractions and weights empty.", "-1", FatalException, "");
 
 	 }
@@ -784,7 +786,7 @@ void BDSGeometryLCDD::parseVOLUME(xmlNodePtr cur)
   if(materialref!="" && solidref!="")
     {
       G4LogicalVolume* alogvol = new G4LogicalVolume(GetSolidByName(solidref),
-						     BDSMaterials::Instance()->GetMaterial(materialref),
+						     theMaterials->GetMaterial(materialref),
 						     volume_name);
 #ifndef NOUSERLIMITS
       alogvol->SetUserLimits(itsUserLimits);

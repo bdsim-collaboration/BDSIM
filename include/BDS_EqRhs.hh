@@ -30,8 +30,8 @@ public: // with description
 protected:
   BDSSbendMagField* itsField;
 
-private:
-  G4double LocalRadius;
+// private:
+//   G4double LocalRadius;
 };
 
 inline G4double BDS_EqRhs::GetLocalRadius()
@@ -39,9 +39,9 @@ inline G4double BDS_EqRhs::GetLocalRadius()
   return itsField->GetLocalRadius();
 }
 
-inline void BDS_EqRhs::EvaluateRhsGivenB( const  G4double y[],
-					  const  G4double B[3],
-					  G4double dydx[] ) const
+inline void BDS_EqRhs::EvaluateRhsGivenB( const  G4double /*y*/[],
+					  const  G4double /*B*/[3],
+					  G4double /*dydx*/[] ) const
 {;}
 
 #endif /* BDSEQRHS_DEF */
