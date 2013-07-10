@@ -29,7 +29,6 @@ if($ENV{VERBOSE})
 	message(STATUS "FLEX_SCANNER_OUTPUTS ${FLEX_SCANNER_OUTPUTS}")
 endif()
 
-#add_library(gmadShared SHARED gmad.cc getEnv.cc)
+add_library(gmadShared SHARED gmad.cc getEnv.cc)
 
-#bdsim_install_targets(gmad gmadShared)
-bdsim_install_targets(gmad)
+bdsim_install_targets(gmad gmadShared)
