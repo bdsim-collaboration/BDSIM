@@ -17,6 +17,7 @@ BDSExecOptions::BDSExecOptions() {
   outline             = false;
   outlineFilename     = "outline.dat";
   outlineFormat       = "";
+  fifoFilename        = "";
 
   gflash      = 0;
   gflashemax  = 10000;
@@ -27,19 +28,17 @@ BDSExecOptions::BDSExecOptions() {
   verbose       = false;
   verboseEvent  = false;
   verboseStep   = false;
+  verboseEventNumber   = -1;
   batch         = false; 
-  outline       = false;
   listMaterials = false;
   
   verboseRunLevel      = 0;
   verboseEventLevel    = 0;
   verboseTrackingLevel = 0;
   verboseSteppingLevel = 0;
+}
 
-  verbose              = false;
-  verboseEvent         = false;
-  verboseStep          = false;
-  verboseEventNumber   = -1;
+BDSExecOptions::~BDSExecOptions() {
 }
 
 /** <Parse the command line options>
