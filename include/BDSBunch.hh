@@ -93,8 +93,6 @@ public:
 
   void SetEnergySpread(double);
   
-  std::ifstream fifoReader;
-
 private:
   // options
   G4bool verbose;
