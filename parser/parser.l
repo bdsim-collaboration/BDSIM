@@ -19,14 +19,14 @@
 #include <cstring>
 #include "parser.tab.h"
 #include "sym_table.h"
-#include "getEnv.h"
+//#include "getEnv.h"
 
 #define MAXFILENAMELENGTH 200
 
   
 using namespace std;
 
-string sBDSHOME = (string)getEnv("BDSIMHOME");
+//string sBDSHOME = (string)getEnv("BDSIMHOME");
  
 int match_var(char *name);
 struct symtab * symlook(char *s);
@@ -149,7 +149,8 @@ dump  { return DUMP; }
 
 <incl>[ \t]*  // eat the whitespace
 <incl>[^ \t\n;]+ {
-string filename = sBDSHOME+(string)yytext;
+//string filename = sBDSHOME+(string)yytext;
+string filename = (string)yytext;
   printf("parser> reading file %s \n",(char*)filename.c_str());//yytext
   if( include_stack_ptr >= MAX_INCLUDE_DEPTH )
     {

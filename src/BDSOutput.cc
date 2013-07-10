@@ -32,11 +32,11 @@ BDSOutput::~BDSOutput()
     of.close();
 #ifdef USE_ROOT
   if(format==_ROOT){
-    if (theRootOutputFile && theRootOutputFile->IsOpen()) {
-      // theRootOutputFile->Write();
-      theRootOutputFile->Close();
-      delete theRootOutputFile;
-    }
+    //    if (theRootOutputFile && theRootOutputFile->IsOpen()) {
+      //      theRootOutputFile->Close();
+      //// theRootOutputFile->Write();
+      //delete theRootOutputFile;
+    //    }
   }
 #endif
 }
