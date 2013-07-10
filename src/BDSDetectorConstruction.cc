@@ -391,7 +391,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
     }
     G4cout << "done." << G4endl;
   }
-  
+  delete theComponentFactory;
+  theComponentFactory = NULL;
+
   if (verbose || debug) G4cout << "size of beamline element list: "<< beamline_list.size() << G4endl;
   if (verbose || debug) G4cout << "size of theBeamline: "<< BDSBeamline::Instance()->size() << G4endl;
     
