@@ -41,12 +41,15 @@ $(LIBNAME) : $(OBJ)
 
 # gmad parser
 
-parser : parser.cc gmad.h $(LIBNAME)
-	$(CC) parser.cc -g -o parser -L. -lgmad 
+parser : parser.cc gmad.h getEnv.h $(LIBNAME)
+	$(CC) parser.cc -g -o parser -L. -lgmad -lgetEnv
 
 
 gmad.o :gmad.cc gmad.h
 	$(CC) -Wall -fPIC -g -c gmad.cc
+
+getEnv.o :getEnv.cc getEnv.h
+	$(CC) -Wall -fPIC -g -c getEnv.cc
 
 lex.yy.o : lex.yy.c parser.tab.c parser.tab.h sym_table.h
 	$(CC) -Wall -fPIC -g -c  lex.yy.c
