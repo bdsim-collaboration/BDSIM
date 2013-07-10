@@ -81,7 +81,8 @@ class Loader :
         self.loadLib()
     
     def loadLib(self) :
-        self._parserLibFileName = "/Users/sboogert/Physics/general/acc/bdsim/bdsim-mac/parser/libgmadShared.dylib"
+        self._parserLibFileName = "libgmadShared.dylib"
+        # self._parserLibFileName = "/Users/sboogert/Physics/general/acc/bdsim/bdsim-mac/parser/libgmadShared.dylib"
         # self._parserLibFileName = "/Users/nevay/physics/reps/bdsim-build/parser/libgmadShared.dylib"
         self._parserLib = _ctypes.cdll.LoadLibrary(self._parserLibFileName)
         

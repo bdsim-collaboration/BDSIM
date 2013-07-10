@@ -6,7 +6,7 @@ find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
 # suppress warnings
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 if($ENV{VERBOSE})
 	message(STATUS "PARSER CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
@@ -29,6 +29,6 @@ if($ENV{VERBOSE})
 	message(STATUS "FLEX_SCANNER_OUTPUTS ${FLEX_SCANNER_OUTPUTS}")
 endif()
 
-add_library(gmadShared SHARED gmad.cc getEnv.cc)
+add_library(gmadShared SHARED gmad.cc getEnv.cc ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
 
 bdsim_install_targets(gmad gmadShared)
