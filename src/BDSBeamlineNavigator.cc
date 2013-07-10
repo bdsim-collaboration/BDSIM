@@ -21,6 +21,17 @@ BDSBeamlineNavigator::BDSBeamlineNavigator(){
 }
 
 BDSBeamlineNavigator::~BDSBeamlineNavigator(){
+  delete _localX;
+  delete _localY;
+  delete _localZ;
+  delete _rotationLocal;
+  delete _rotationGlobal;
+  delete _rotation;
+  delete _position;
+  delete _positionStart;
+  delete _positionEnd;
+  delete _positionFromCurrentCenter;
+  delete _zHalfAngle;
 }
 
 void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
