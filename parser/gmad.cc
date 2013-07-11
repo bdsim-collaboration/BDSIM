@@ -19,8 +19,8 @@ extern int yyparse();
 extern FILE *yyin;
 extern char* yyfilename;
 
-extern int add_func(char *name, double (*func)(double));
-extern int add_var(char *name, double val,int is_rserved = 0);
+extern int add_func(const char *name, double (*func)(double));
+extern int add_var(const char *name, double val,int is_rserved = 0);
 
 // aux. parser lists - to clear
 extern list<struct Element> element_list;
@@ -201,19 +201,11 @@ int get_nelements()
   return beamline_list.size();
 }  
 
-char* get_name(int i) 
+const char* get_name(int i) 
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
   return it->name;
-}
-
-int get_name(int i, char *name) 
-{
-  std::list<Element>::iterator it = beamline_list.begin();
-  std::advance(it, i);
-  strcpy(name,it->name);
-  return 0;
 }
 
 short get_type(int i) 

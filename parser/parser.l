@@ -29,9 +29,9 @@ using namespace std;
 //string sBDSHOME = (string)getEnv("BDSIMHOME");
  
 int match_var(char *name);
-struct symtab * symlook(char *s);
+struct symtab * symlook(const char *s);
 extern struct symtab *symtab;
-extern int yyerror(char *s);
+extern int yyerror(const char *s);
 
 #ifdef _WIN32
 #include <io.h>
@@ -203,7 +203,7 @@ string filename = (string)yytext;
 %%
 
 
-struct symtab * symlook(char *s)
+struct symtab * symlook(const char *s)
 {
   struct symtab *sp;
   for( sp=symtab;sp<&symtab[NSYMS];sp++) {
