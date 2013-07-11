@@ -38,8 +38,6 @@ public:
   void     SetOutlineFilename(G4String s)       {outlineFilename = s;}
   G4String GetOutlineFormat()                   {return outlineFormat;}
   void     SetOutlineFormat(G4String s)         {outlineFormat = s;}
-  G4String GetFifoFilename()                    {return fifoFilename;}
-  void     SetFifoFilename(G4String s)          {fifoFilename = s;}
 
   G4int    GetGFlash()               {return gflash;}
   void     SetGFlash(G4bool b)       {gflash = b;}
@@ -76,7 +74,6 @@ private :
   G4bool          outline;
   G4String        outlineFilename;
   G4String        outlineFormat;
-  G4String        fifoFilename;  
 
   G4int    gflash;
   G4double gflashemax;

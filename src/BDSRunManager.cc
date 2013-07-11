@@ -15,6 +15,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSExecOptions.hh"
 #include "G4Timer.hh"
+#include "CLHEP/Random/Random.h"
 
 #include "BDSRunManager.hh"
 #include "G4StateManager.hh"
@@ -22,7 +23,6 @@
 
 #include "BDSDump.hh"
 #include "BDSWorld.hh"
-
 
 BDSRunManager* BDSRunManager::fRunManager = 0;
 
@@ -77,22 +77,6 @@ void BDSRunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
       BDSGlobalConstants::Instance()->setReadFromStack(false);
     }
     BDSGlobalConstants::Instance()->referenceQueue.clear();
-
-    while(BDSDump::nUsedDumps < BDSDump::GetNumberOfDumps())
-    {
-      int token;
-      FILE* fifo = fopen(BDSGlobalConstants::Instance()->GetFifo(),"w");
-      fprintf(fifo,"# nparticles = 0\n");
-      printf("# nparticles read from fifo = 0\n");
-      fclose(fifo);
-
-      fifo = fopen(BDSGlobalConstants::Instance()->GetFifo(),"r");
-      fscanf(fifo,"# nparticles = %i",&token);
-      fclose(fifo);
-
-      BDSDump::nUsedDumps++;
-    }
-    BDSDump::nUsedDumps=0;
   }
 }
 

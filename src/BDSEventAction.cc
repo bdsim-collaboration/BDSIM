@@ -13,7 +13,7 @@
 //======================================================
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
-
+#include "BDSDebug.hh"
 #include "BDSEventAction.hh"
 
 #include <ctime> 
@@ -73,6 +73,8 @@ G4int event_number;
 G4bool FireLaserCompton;
 
 extern BDSOutput* bdsOutput;
+
+#define DEBUG 1
 
 //======================================================
 
@@ -251,17 +253,22 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 	  BDSEnergyCounter_HC=
 	    (BDSEnergyCounterHitsCollection*)(HCE->GetHC(BDSEnergyCounter_ID));
 	
-	  if(BDSEnergyCounter_HC) 
+	  if(BDSEnergyCounter_HC) {
 	    bdsOutput->WriteEnergyLoss(BDSEnergyCounter_HC);
+	  }
 	}
     }
+  G4cout << __METHOD_NAME__ << " finished writing energy loss." << G4endl;
 #endif
-
+  
   // if events per ntuples not set (default 0) - only write out at end 
+  G4cout << __METHOD_NAME__ << " getting number of events per ntuple..." << G4endl;
   int evntsPerNtuple = BDSGlobalConstants::Instance()->GetNumberOfEventsPerNtuple();
+  G4cout << __METHOD_NAME__ << " finished getting number of events per ntuple." << G4endl;
   if( (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0) || 
-	(event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate())
+      (event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate())
     {
+      G4cout << __METHOD_NAME__ << " writing out events." << G4endl;
 #ifdef DEBUG 
       G4cout<<"writing to file "<<G4endl;
 #endif

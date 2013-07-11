@@ -17,7 +17,6 @@ BDSExecOptions::BDSExecOptions() {
   outline             = false;
   outlineFilename     = "outline.dat";
   outlineFormat       = "";
-  fifoFilename        = "";
 
   gflash      = 0;
   gflashemax  = 10000;
@@ -64,7 +63,6 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 					{ "gflashemin", 1, 0, 0 },
 					{ "output", 1, 0, 0 },
 					{ "outfile", 1, 0, 0 },
-					{ "fifo", 1, 0, 0 },
 					{ "batch", 0, 0, 0 },
 					{ "materials", 0, 0, 0 },
 					{ 0, 0, 0, 0 }};
@@ -139,11 +137,6 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 	}
       }
       if( !strcmp(LongOptions[OptionIndex].name , "outfile") ) {
-	if(optarg) {
-	  outputFilename=optarg;
-	}
-      }
-      if( !strcmp(LongOptions[OptionIndex].name , "fifo") ) {
 	if(optarg) {
 	  outputFilename=optarg;
 	}

@@ -408,12 +408,9 @@ G4int BDSOutput::WriteTrajectory(TrajectoryVector* TrajVec)
 
 void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 {
-
   if( format == _ROOT) {
 #ifdef USE_ROOT
-  
     G4int n_hit = hc->entries();
-    
     for (G4int i=0;i<n_hit;i++)
       {
 	//all regions fill the energy loss tree....
@@ -433,13 +430,12 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 	  strcpy(volumeName_el_p,temp.c_str());
 	  PrecisionRegionEnergyLossTree->Fill();
 	}
-
+	
       }
 #endif
   }
 
  if( format == _ASCII) {
-  
     G4int n_hit = hc->entries();
 
     for (G4int i=0;i<n_hit;i++)
@@ -450,11 +446,9 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 	G4double weight = (*hc)[i]->GetWeight();
 
 	ofEloss<< Zpos/m<<"  "<<Energy/GeV<<"  "<<partID<<"  " <<weight<<G4endl;
-
       }
-      ofEloss.flush();
-  }
-
+    ofEloss.flush();
+ }
 }
 
 // write some comments to the output file
@@ -482,11 +476,15 @@ void BDSOutput::Write()
   if(format == _ROOT){
     if(theRootOutputFile->IsOpen())
       {
+	G4cout << __METHOD_NAME__ << " writing to root file..." << G4endl;
 	//Dump all other quantities to file...
 	theRootOutputFile->Write();
-	theRootOutputFile->Close();
-	delete theRootOutputFile;
-	theRootOutputFile=NULL;
+	//	G4cout << __METHOD_NAME__ << " closing root file..." << G4endl;
+	//	theRootOutputFile->Close();
+	//	G4cout << __METHOD_NAME__ << " deteting root file..." << G4endl;
+	//	delete theRootOutputFile;
+	//	G4cout << __METHOD_NAME__ << " setting root file to NULL..." << G4endl;
+	//	theRootOutputFile=NULL;
       }
   }
 #endif

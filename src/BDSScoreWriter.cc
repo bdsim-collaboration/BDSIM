@@ -28,7 +28,7 @@ BDSScoreWriter::~BDSScoreWriter() {
 	;
 }
 
-void BDSScoreWriter::DumpQuantityToFile(G4String & psName, G4String & fileName, G4String & option) {
+void BDSScoreWriter::DumpQuantityToFile(const G4String & psName, G4String & fileName, const G4String & option) {
   time_t rawtime;
   struct tm * timeinfo;
   time ( &rawtime );
@@ -53,7 +53,7 @@ void BDSScoreWriter::DumpQuantityToFile(G4String & psName, G4String & fileName, 
 
 
 
-void BDSScoreWriter::DumpQuantityToFile(G4String & psName, TFile* tFile, G4String & option) {
+void BDSScoreWriter::DumpQuantityToFile(const G4String & psName, TFile* tFile, const G4String & option) {
 
 	//
   if(verboseLevel > 0) {

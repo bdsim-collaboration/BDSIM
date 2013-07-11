@@ -167,6 +167,8 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   isReading = false;
   isReadFromStack = false;
   itsFifo = opt.fifo;
+  G4cout << __METHOD_NAME__ << "itsFifo = " << itsFifo << G4endl;
+  G4cout << __METHOD_NAME__ << "GetFifo() = " << GetFifo() << G4endl;
   itsRefVolume = opt.refvolume;
   itsRefCopyNo = opt.refcopyno;
   isReference = 0;

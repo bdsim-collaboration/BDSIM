@@ -21,9 +21,9 @@ BDSDriftStepper::BDSDriftStepper(G4Mag_EqRhs *EqRhs)
 
 
 void BDSDriftStepper::AdvanceHelix( const G4double  yIn[],
-                                   G4ThreeVector Bfld,
-				   G4double  h,
-				   G4double  yDrift[])
+				    G4ThreeVector /*Bfld*/,
+				    G4double  h,
+				    G4double  yDrift[])
 {
   G4ThreeVector positionMove, endTangent;
 

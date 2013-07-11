@@ -48,17 +48,13 @@ BDSDump::BDSDump (G4String aName,G4double aLength, G4String aTunnelMaterial):
   itsVisAttributes(NULL)
 {
   nptwiss = BDSExecOptions::Instance()->GetNPTwiss();
-  
   SetName("Dump_"+BDSGlobalConstants::Instance()->StringFromInt(nDumps)+"_"+itsName);
   DumpLogicalVolume();
   const int nParticles = nptwiss;
   BDSGlobalConstants::Instance()->referenceQueue.push_back(new G4double[nParticles]);
   ++nDumps;
   //G4int nDumps=(*LogVolCount)[itsName];
-
   //BDSRoot->SetDumpNumber(nDumps);
-
- 
 }
 
 int BDSDump::GetNumberOfDumps()
@@ -76,7 +72,7 @@ void BDSDump::DumpLogicalVolume()
     {
 
       G4double SampTransSize;
-      SampTransSize=2.*BDSGlobalConstants::Instance()->GetTunnelRadius();
+      SampTransSize=BDSGlobalConstants::Instance()->GetSamplerDiameter()/2.0;
 
       itsMarkerLogicalVolume=
 	new G4LogicalVolume(
@@ -96,13 +92,13 @@ void BDSDump::DumpLogicalVolume()
       itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
       // Sensitive Detector:
-      if(true)
+      if(nDumps==0)
 	{
 	  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
 	  BDSDumpSensDet=new BDSDumpSD(itsName,"plane");
 	  SDMan->AddNewDetector(BDSDumpSensDet);
-          itsMarkerLogicalVolume->SetSensitiveDetector(BDSDumpSensDet);
 	}
+      itsMarkerLogicalVolume->SetSensitiveDetector(BDSDumpSensDet);
     }
   else
     {
