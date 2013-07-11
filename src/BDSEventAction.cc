@@ -74,6 +74,8 @@ G4bool FireLaserCompton;
 
 extern BDSOutput* bdsOutput;
 
+#define DEBUG 1
+
 //======================================================
 
 BDSEventAction::BDSEventAction():
@@ -256,11 +258,11 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 	}
     }
 #endif
-
+  
   // if events per ntuples not set (default 0) - only write out at end 
   int evntsPerNtuple = BDSGlobalConstants::Instance()->GetNumberOfEventsPerNtuple();
   if( (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0) || 
-	(event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate())
+      (event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate())
     {
 #ifdef DEBUG 
       G4cout<<"writing to file "<<G4endl;

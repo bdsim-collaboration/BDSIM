@@ -393,14 +393,13 @@ G4int BDSOutput::WriteTrajectory(TrajectoryVector* TrajVec)
 
 void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 {
-
   if( format == _ROOT) {
 #ifdef USE_ROOT
-  
     G4int n_hit = hc->entries();
-    
+    G4cout << __METHOD_NAME__ << " number of hits in hits collection = " << n_hit << G4endl;
     for (G4int i=0;i<n_hit;i++)
       {
+	G4cout << __METHOD_NAME__ << " filling tree with hit # " << i << G4endl;
 	//all regions fill the energy loss tree....
         E_el=(*hc)[i]->GetEnergy()/GeV;
 	z_el=(*hc)[i]->GetEnergyWeightedZ()*10*(1e-6)/(cm*E_el);
@@ -408,6 +407,7 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 	EnergyLossTree->Fill();
 
 	if((*hc)[i]->GetPrecisionRegion()){ //Only the precision region fills this tree, preserving every hit, its position and weight, instead of summing weighted energy in each beam line component.
+	  G4cout << __METHOD_NAME__ << " filling precision tree with hit # " << i << G4endl;
 	  weight_el_p=(*hc)[i]->GetWeight();
 	  E_el_p=((*hc)[i]->GetEnergy()/GeV)/weight_el_p;
 	  x_el_p=((*hc)[i]->GetEnergyWeightedX()/(cm*1e5*E_el_p))/weight_el_p;
@@ -418,13 +418,12 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 	  strcpy(volumeName_el_p,temp.c_str());
 	  PrecisionRegionEnergyLossTree->Fill();
 	}
-
+	
       }
 #endif
   }
 
  if( format == _ASCII) {
-  
     G4int n_hit = hc->entries();
     
     of<<"#Energy loss: Z[m] E[GeV] partID weight"<<G4endl;
@@ -440,8 +439,8 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 
       }
       of.flush();
-  }
-
+ }
+ G4cout << __METHOD_NAME__ << " finished." << G4endl;
 }
 
 // write some comments to the output file

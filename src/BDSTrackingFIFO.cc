@@ -17,6 +17,7 @@ BDSTrackingFIFO::~BDSTrackingFIFO(){
 
 void BDSTrackingFIFO::doFifo(){
   //If there is no fifo filename specified, do nothing
+  G4cout << __METHOD_NAME__ << " _filename = " << _filename << G4endl;
   if(_filename.length()==0){
     G4cout << "FIFO filename length is 0, not doing FIFO." << G4endl;
     return;
