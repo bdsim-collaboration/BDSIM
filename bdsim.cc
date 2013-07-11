@@ -61,14 +61,16 @@
 #include "G4GeometryTolerance.hh"
 #include "G4ScoringManager.hh"
 
+#include "CLHEP/Random/Random.h"
+
 #include "BDSGeometryInterface.hh"
 
 #include "BDSOutput.hh" 
 #include "BDSBunch.hh"
 #include "BDSMaterials.hh"
-#ifdef USE_ROOT
-#include "BDSScoreWriter.hh"
-#endif
+//#ifdef USE_ROOT
+//#include "BDSScoreWriter.hh"
+//#endif
 
 #include "parser/gmad.h"  // GMAD parser
 

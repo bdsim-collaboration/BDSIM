@@ -1,7 +1,6 @@
 //XSBias with artificially scaled cross section
 
 #include "BDSXSBias.hh"
-#include "CLHEP/Random/Random.h"
 #include "BDSGlobalConstants.hh"
 #include "G4SteppingManager.hh"
 
