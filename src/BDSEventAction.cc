@@ -238,7 +238,7 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #ifdef DEBUG 
   G4cout<<"BDSEventAction : storing energy loss histograms"<<G4endl;
 #endif
-
+  
 #if 1
   for(iEC=theECList->begin();iEC!=theECList->end();iEC++)
     {

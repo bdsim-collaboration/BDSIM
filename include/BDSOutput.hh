@@ -75,6 +75,7 @@ private:
   G4String _filename;
   G4int format;
   std::ofstream of;
+  std::ofstream ofEloss;
   int outputFileNumber;
 
 //#ifdef USE_ROOT
