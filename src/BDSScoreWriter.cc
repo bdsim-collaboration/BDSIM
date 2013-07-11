@@ -1,3 +1,5 @@
+#ifdef USE_ROOT
+
 #include "BDSScoreWriter.hh"
 
 #include "G4MultiFunctionalDetector.hh"
@@ -174,4 +176,4 @@ void BDSScoreWriter::DumpQuantityToFile(G4String & psName, TFile* tFile, G4Strin
   }
 }
 
-
+#endif // USE_ROOT
