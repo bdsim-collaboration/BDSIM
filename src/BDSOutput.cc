@@ -28,8 +28,10 @@ BDSOutput::BDSOutput(BDSOutputFormat fmt):format(fmt),outputFileNumber(1)
 
 BDSOutput::~BDSOutput()
 {
-  if(format==_ASCII)
+  if(format==_ASCII){
     of.close();
+    ofEloss.close();
+  }
 #ifdef USE_ROOT
   if(format==_ROOT){
     if (theRootOutputFile && theRootOutputFile->IsOpen()) {
@@ -52,7 +54,12 @@ void BDSOutput::SetFormat(BDSOutputFormat val)
       G4cout << __METHOD_NAME__ << "Output format ASCII, filename: "<<filename<<G4endl;
       of.open(filename);
       of<<"### BDSIM output created "<<ctime(&tm)<<" ####"<<G4endl;
-      of<<"# PT E[GeV] X[mum] Y[mum] Z[m] Xp[rad] Yp[rad]  "<<G4endl;
+      of<<"# PT E[GeV] X[mum] Y[mum] Z[m] Xp[rad] Yp[rad]  NEvent Weight ParentID TrackID"<<G4endl;
+      G4String filenameEloss = BDSExecOptions::Instance()->GetOutputFilename()+".eloss.txt";
+      G4cout << __METHOD_NAME__ << "Eloss output format ASCII, filename: "<<filenameEloss<<G4endl;
+      ofEloss.open(filenameEloss);
+      ofEloss<<"### BDSIM eloss output created "<<ctime(&tm)<<" ####"<<G4endl;
+      ofEloss<<"#Energy loss: Z[m] E[GeV] partID weight"<<G4endl;
 
     }
   if( format == _ROOT)
@@ -212,6 +219,14 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
 	  <<(*hc)[i]->GetXPrime() / radian
 	  <<" "
 	  <<(*hc)[i]->GetYPrime() / radian
+	  <<" "
+	  <<(*hc)[i]->GetEventNo() 
+	  <<" "
+	  <<(*hc)[i]->GetWeight()
+	  <<" "
+	  <<(*hc)[i]->GetParentID()
+	  <<" "
+	  <<(*hc)[i]->GetTrackID()
 	  <<G4endl;
       }
     
@@ -426,9 +441,7 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
  if( format == _ASCII) {
   
     G4int n_hit = hc->entries();
-    
-    of<<"#Energy loss: Z[m] E[GeV] partID weight"<<G4endl;
-   
+
     for (G4int i=0;i<n_hit;i++)
       {
         G4double Energy=(*hc)[i]->GetEnergy();
@@ -436,10 +449,10 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 	G4int partID = (*hc)[i]->GetPartID();
 	G4double weight = (*hc)[i]->GetWeight();
 
-	of<< Zpos/m<<"  "<<Energy/GeV<<"  "<<partID<<"  " <<weight<<G4endl;
+	ofEloss<< Zpos/m<<"  "<<Energy/GeV<<"  "<<partID<<"  " <<weight<<G4endl;
 
       }
-      of.flush();
+      ofEloss.flush();
   }
 
 }
