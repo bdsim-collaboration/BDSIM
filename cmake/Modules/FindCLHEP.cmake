@@ -18,8 +18,10 @@ if (NOT CLHEP_INCLUDE_DIR)
 endif()
 
 #libraries:
-if (CLHEP_LIBRARY_DIR)
-    # YIL simple array with all libraries:
+if (CLHEP_INCLUDE_DIR)
+    FIND_LIBRARY(CLHEP_LIBRARIES NAMES CLHEP PATHS "${CLHEP_INCLUDE_DIR}/../lib")
+elseif (CLHEP_LIBRARY_DIR)
+    # YIL simple array with all libraries
     if(APPLE)
         file(GLOB CLHEP_LIBRARIES ${CLHEP_LIBRARY_DIR}/libCLHEP*.dylib)
     else()
