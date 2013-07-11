@@ -165,8 +165,8 @@ if (NOT Geant4_FOUND)
       if(APPLE)
          message(STATUS "WARNING NO MACOS GEANT4 LIBRARIES AVAILABLE ON AFS")
       else()
-         set(Geant4_INCLUDE_DIRS /afs/cern.ch/sw/lcg/external/geant4/9.4.p01/share/include)
-         set(Geant4_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/geant4/9.4.p01/x86_64-slc5-gcc43/lib)
+         set(Geant4_INCLUDE_DIRS /afs/cern.ch/sw/lcg/external/geant4/9.5.p01/share/include)
+         set(Geant4_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/geant4/9.5.p01/x86_64-slc5-gcc43/lib)
    	endif()
    endif()
    find_package(Geant4 REQUIRED)
@@ -220,15 +220,33 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # set compiler flags
-set(WFLAGS "-Wall -Wextra -Wno-write-strings")
+set(WFLAGS "-Wall -Wextra")
 set(CMAKE_FLAGS "${CMAKE_FLAGS} ${CLHEP_DEFINITIONS}  ${WFLAGS}")
 set(BDSIM_FLAGS "${CMAKE_FLAGS} ${VIS_FLAGS} -DCLHEP_VERSION=${CLHEP_VERSION} -DG4VERSION=${G4_MAJOR_VERSION} -DG4MINORVERSION=${G4_MINOR_VERSION} ${BDSIM_FLAGS}")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${BDSIM_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BDSIM_FLAGS}")
 
+if($ENV{VERBOSE})
+	message(STATUS "BDSIM_FLAGS ${BDSIM_FLAGS}")
+	message(STATUS "CMAKE_C_FLAGS ${CMAKE_C_FLAGS}")
+	message(STATUS "CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
+endif()
+
+#-----------------------------------------------------------------------
+# macro BDSIM_COLLATE_APPLICATION_SOURCES(source_dest_var)
+#
+macro(BDSIM_COLLATE_APPLICATION_SOURCES source_dest_var)
+  file(GLOB_RECURSE 
+    ${source_dest_var} 
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.hh 
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.cc
+    )
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+endmacro()
+
 # source files
-GEANT4_COLLATE_APPLICATION_SOURCES(bdsim_sources)
+BDSIM_COLLATE_APPLICATION_SOURCES(bdsim_sources)
 if(NOT USE_LCDD)
        list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryLCDD.cc)
 endif()

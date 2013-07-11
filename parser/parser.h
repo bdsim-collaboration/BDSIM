@@ -30,7 +30,7 @@
 
 //double pow(double x, double y) {return exp( y * log(x));}
 
-int yyerror(char *);
+int yyerror(const char *);
 
 extern FILE* yyin;
 extern int yylex();
@@ -425,17 +425,17 @@ std::list<struct Element> beamline_list;
 std::list<struct Element> material_list;
 std::list<struct Element> atom_list;
 
-char* current_line = "";
-char* current_start = "";
-char* current_end = "";
+const char* current_line = "";
+const char* current_start = "";
+const char* current_end = "";
 
 struct symtab *symtab; 
 
-extern struct symtab * symlook(char *s);
+extern struct symtab * symlook(const char *s);
 
-std::list<struct Element>::iterator element_lookup(char *name);
-std::list<struct Element>::iterator element_lookup(char *name, std::list<struct Element>& el);
-int write_table(struct Parameters pars,char* name, int type, std::list<struct Element> *lst=NULL);
+std::list<struct Element>::iterator element_lookup(const char *name);
+std::list<struct Element>::iterator element_lookup(const char *name, std::list<struct Element>& el);
+int write_table(struct Parameters pars,const char* name, int type, std::list<struct Element> *lst=NULL);
 int expand_line(char *name, char *start, char *end);
 void print(std::list<struct Element> l, int ident=0);
 
@@ -455,7 +455,7 @@ void quit()
   exit(0);
 }
 
-int write_table(struct Parameters params,char* name, int type, std::list<struct Element> *lst)
+int write_table(struct Parameters params,const char* name, int type, std::list<struct Element> *lst)
 {
 #ifdef DEBUG 
   printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%d, lset = %d\n", params.k1, params.k2, params.k3, type, params.lset);
@@ -828,7 +828,7 @@ int write_table(struct Parameters params,char* name, int type, std::list<struct 
 
 }
 
-int expand_line(char *name, char *start, char* end)
+int expand_line(const char *name, const char *start, const char* end)
 {
   std::list<struct Element>::const_iterator iterNULL = element_list.end(); //bugfix for gcc 4.1.2 - cannot compare iterator to int(NULL). SPM
   std::list<struct Element>::iterator it;
@@ -1010,7 +1010,7 @@ if((*it).type == _LINE)
   
 }
 
-std::list<struct Element>::iterator element_lookup(char *name)
+std::list<struct Element>::iterator element_lookup(const char *name)
 {
    std::list<struct Element>::iterator it;
 
@@ -1022,7 +1022,7 @@ std::list<struct Element>::iterator element_lookup(char *name)
    return element_list.end();
 }
 
-std::list<struct Element>::iterator element_lookup(char *name,std::list<struct Element>& el)
+std::list<struct Element>::iterator element_lookup(const char *name,std::list<struct Element>& el)
 {
    std::list<struct Element>::iterator it;
 
@@ -1155,7 +1155,7 @@ void add_dump(char *name, char *before, int before_count)
 }
 
 // insert beam gas                                             
-void add_gas(char *name, const char *before, int before_count,  const char* material)
+void add_gas(const char *name, const char *before, int before_count,  const char* material)
 {
   printf("gas %s will be inserted into %s number %d\n",material,before,before_count);
   struct Element e;
@@ -1550,14 +1550,14 @@ double property_lookup(char *element_name, char *property_name)
 // ******************************************************
 
 
-int add_func(char *name, double (*func)(double))
+int add_func(const char *name, double (*func)(double))
 {
   struct symtab *sp=symlook(name);
   sp->funcptr=func;
   return 0;
 }
 
-int add_var(char *name, double value, int is_reserved = 0)
+int add_var(const char *name, double value, int is_reserved = 0)
 {
   struct symtab *sp=symlook(name);
   sp->value=value;

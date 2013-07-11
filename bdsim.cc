@@ -66,8 +66,9 @@
 #include "BDSOutput.hh" 
 #include "BDSBunch.hh"
 #include "BDSMaterials.hh"
+#ifdef USE_ROOT
 #include "BDSScoreWriter.hh"
-
+#endif
 
 #include "parser/gmad.h"  // GMAD parser
 
