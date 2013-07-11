@@ -1,6 +1,9 @@
 #ifndef BDSScoreWriter_h
 #define BDSScoreWriter_h 1
 
+// based on ROOT
+#ifdef USE_ROOT
+
 #include "globals.hh"
 #include "G4VScoreWriter.hh"
 #include "TFile.h"
@@ -36,6 +39,6 @@ public:
 	G4double fFireAngle;
 };
 
+#endif // USE_ROOT
+
 #endif
-
-
