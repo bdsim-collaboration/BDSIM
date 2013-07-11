@@ -44,7 +44,7 @@ G4VParticleChange* BDSBackScatterBias::PostStepDoIt(
 #endif
   G4double w =  pChange->GetParentWeight();
   G4double ws = w / eFactor;
-  G4double survivalProb = w - ws;
+  //  G4double survivalProb = w - ws;
   
 #ifdef DEBUG
   G4cout << "BDSBackScatterBias::PostStepDoit Getting number of secondaries" << G4endl;

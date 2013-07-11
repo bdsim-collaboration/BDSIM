@@ -120,7 +120,7 @@ void BDSRegions::buildGFlashRegion(){
  _gFlashHitMaker = new GFlashHitMaker();                    // Makes the EnergieSpots 
 }
 
-void BDSRegions::buildGFlashRegion(BDSAcceleratorComponent* var){
+void BDSRegions::buildGFlashRegion(BDSAcceleratorComponent* /*var*/){
 
   /*
   vector<G4LogicalVolume*> MultipleSensVols = var->GetMultipleSensitiveVolumes();
