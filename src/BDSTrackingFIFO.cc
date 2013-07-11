@@ -9,12 +9,18 @@
 
 BDSTrackingFIFO::BDSTrackingFIFO(){
   _fifo=NULL;
+  _filename=BDSGlobalConstants::Instance()->GetFifo();
 }
 
 BDSTrackingFIFO::~BDSTrackingFIFO(){
 }
 
 void BDSTrackingFIFO::doFifo(){
+  //If there is no fifo filename specified, do nothing
+  if(_filename.length()==0){
+    G4cout << "FIFO filename length is 0, not doing FIFO." << G4endl;
+    return;
+  }
   if(BDSGlobalConstants::Instance()->getWaitingForDump()) // synchronization with placet
     {
       G4cout<< __METHOD_NAME__ <<G4endl;
@@ -157,19 +163,19 @@ void BDSTrackingFIFO::finishRead(){
 }
 
 void BDSTrackingFIFO::openForWriting(){
-  openForWriting(BDSGlobalConstants::Instance()->GetFifo());
-}
-
-void BDSTrackingFIFO::openForWriting(std::string filename){
-  _fifo = fopen(filename.c_str(),"w");
+  open("w");
 }
 
 void BDSTrackingFIFO::openForReading(){
-  openForWriting(BDSGlobalConstants::Instance()->GetFifo());
+  open("r");
 }
 
-void BDSTrackingFIFO::openForReading(std::string filename){
-  _fifo = fopen(filename.c_str(),"r");
+void BDSTrackingFIFO::open(const char* mode){
+  _fifo = fopen(_filename.c_str(),mode);
+  if(!_fifo){
+    std::string errorMessage = __METHOD_NAME__ + " unable to open file: " + _filename + " in mode " + mode;
+    G4Exception(errorMessage.c_str(), "-1", FatalException, "");
+  }
 }
 
 void BDSTrackingFIFO::close(){

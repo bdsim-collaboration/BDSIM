@@ -18,9 +18,8 @@ private:
   void finishWrite();
   void finishRead();
   void openForWriting();
-  void openForWriting(std::string filename);
   void openForReading();
-  void openForReading(std::string filename);
+  void open(const char* mode);
   void close();
   std::string _filename;
   FILE* _fifo;
