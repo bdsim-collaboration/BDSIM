@@ -107,7 +107,7 @@ if (Geant4_FOUND)
         OUTPUT_VARIABLE Geant4_VERSION
         OUTPUT_STRIP_TRAILING_WHITESPACE)
   else ()
-     set(Geant4_VERSION 9.9.9)
+     set(Geant4_VERSION "UNKNOWN")
   endif()
   unset(_G4_CONFIG CACHE)
   if (NOT Geant4_FIND_QUIETLY)
