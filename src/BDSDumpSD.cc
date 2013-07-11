@@ -55,6 +55,7 @@ void BDSDumpSD::Initialize(G4HCofThisEvent*)
 
 G4bool BDSDumpSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
+  G4cout << __METHOD_NAME__  <<G4endl;
   G4Track* theTrack=aStep->GetTrack();
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   
@@ -91,7 +92,10 @@ G4bool BDSDumpSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
       G4cout << __METHOD_NAME__ <<"Dump: postponing track..."<<G4endl;
 #endif
       BDSGlobalConstants::Instance()->setWaitingForDump(true);
-      theTrack->SetTrackStatus(fPostponeToNextEvent);
+      //Don't postpone to next event if this is the last event.
+      //      if(G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID()!=(BDSGlobalConstants::Instance()->GetNumberToGenerate()-1)){
+	theTrack->SetTrackStatus(fPostponeToNextEvent);
+	//      }
       
       G4AffineTransform tf(aStep->GetPreStepPoint()->GetTouchableHandle()->
 			   GetHistory()->GetTopTransform().Inverse());

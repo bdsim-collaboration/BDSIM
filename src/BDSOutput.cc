@@ -482,11 +482,15 @@ void BDSOutput::Write()
   if(format == _ROOT){
     if(theRootOutputFile->IsOpen())
       {
+	G4cout << __METHOD_NAME__ << " writing to root file..." << G4endl;
 	//Dump all other quantities to file...
 	theRootOutputFile->Write();
-	theRootOutputFile->Close();
-	delete theRootOutputFile;
-	theRootOutputFile=NULL;
+	//	G4cout << __METHOD_NAME__ << " closing root file..." << G4endl;
+	//	theRootOutputFile->Close();
+	//	G4cout << __METHOD_NAME__ << " deteting root file..." << G4endl;
+	//	delete theRootOutputFile;
+	//	G4cout << __METHOD_NAME__ << " setting root file to NULL..." << G4endl;
+	//	theRootOutputFile=NULL;
       }
   }
 #endif

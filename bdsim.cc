@@ -119,10 +119,6 @@ int main(int argc,char** argv) {
 #endif  
 
   //  BDSGlobals = new BDSGlobalConstants(options);
-  if (BDSExecOptions::Instance()->GetFifoFilename()) {
-    //    BDSGlobals->SetFifo(fifoName);
-    BDSGlobalConstants::Instance()->SetFifo(BDSExecOptions::Instance()->GetFifoFilename());
-  }
 
 #ifdef DEBUG
   G4cout << __FUNCTION__ << "> Setting bunch options." << G4endl;

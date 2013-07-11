@@ -9,7 +9,7 @@
 
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
-
+#include "BDSDebug.hh"
 #include "BDSRunAction.hh"
 #include "BDSRunManager.hh"
 #include "BDSDump.hh"
@@ -30,6 +30,7 @@
 #include <unistd.h> // for sleep, will not work on windows?
 #endif
 
+#define DEBUG 1
 
 //==========================================================
 
@@ -84,9 +85,12 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
       }
       tmpT /= nptwiss;
 
-      FILE* fifo = fopen(BDSGlobalConstants::Instance()->GetFifo(),"w");
-      fprintf(fifo,"# nparticles = %i\n",(int)BDSGlobalConstants::Instance()->transformedQueue.size());
+      G4cout<< __METHOD_NAME__ << " opening fifo <" << BDSGlobalConstants::Instance()->GetFifo() <<"> for writing... " <<G4endl;
 
+      FILE* fifo = fopen(BDSGlobalConstants::Instance()->GetFifo(),"w");
+      G4cout<< __METHOD_NAME__ << " finished. Writing header to fifo... " <<G4endl;
+      fprintf(fifo,"# nparticles = %i\n",(int)BDSGlobalConstants::Instance()->transformedQueue.size());
+      G4cout<< __METHOD_NAME__ << " finished." <<G4endl;
 
 #ifdef DEBUG
       G4cout << "reftime = " << tmpT << G4endl;
