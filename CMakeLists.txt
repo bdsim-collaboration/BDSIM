@@ -39,7 +39,7 @@ if(UNIX)
     endif()
 
     if($ENV{VERBOSE})
-         message(STATUS "UNIX SYSTEM VERSION ${CMAKE_SYSTEM})
+         message(STATUS "UNIX SYSTEM VERSION ${CMAKE_SYSTEM}")
     endif()
 endif()
 
@@ -67,7 +67,7 @@ include_directories(${CLHEP_INCLUDE_DIR})
 
 # ROOT
 if ($ENV{ROOTSYS})
-   message(STATUS Use ROOTSYS from environment: $ENV{ROOTSYS})
+   message(STATUS "Use ROOTSYS from environment: $ENV{ROOTSYS}")
 elseif(USE_AFS)
    # add ROOT afs library to PATH (only in cmake)
    if (APPLE)
@@ -78,6 +78,7 @@ elseif(USE_AFS)
        elseif (RHL6)
           set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.09/x86_64-slc6-gcc43-opt/root")
       endif()
+    endif()
 endif()
 
 if(USE_ROOT)
