@@ -15,6 +15,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSExecOptions.hh"
 #include "G4Timer.hh"
+#include "CLHEP/Random/Random.h"
 
 #include "BDSRunManager.hh"
 #include "G4StateManager.hh"
@@ -22,7 +23,6 @@
 
 #include "BDSDump.hh"
 #include "BDSWorld.hh"
-
 
 BDSRunManager* BDSRunManager::fRunManager = 0;
 

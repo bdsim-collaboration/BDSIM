@@ -16,22 +16,24 @@ BDSTrackingFIFO::~BDSTrackingFIFO(){
 }
 
 void BDSTrackingFIFO::doFifo(){
-  //If there is no fifo filename specified, do nothing
-  G4cout << __METHOD_NAME__ << " _filename = " << _filename << G4endl;
-  if(_filename.length()==0){
-    G4cout << "FIFO filename length is 0, not doing FIFO." << G4endl;
-    return;
+  if(BDSDump::nUsedDumps < BDSDump::GetNumberOfDumps()){
+    //If there is no fifo filename specified, do nothing
+    G4cout << __METHOD_NAME__ << " _filename = " << _filename << G4endl;
+    if(_filename.length()==0){
+      G4cout << "FIFO filename length is 0, not doing FIFO." << G4endl;
+      return;
+    }
+    if(BDSGlobalConstants::Instance()->getWaitingForDump()) // synchronization with placet
+      {
+	G4cout<< __METHOD_NAME__ <<G4endl;
+	writeToFifo();
+	readFromFifo();
+      }else{
+      G4Exception("Read from fifo failed: bad file name\n", "-1", FatalException, "");
+      exit(1);
+    }
+    BDSDump::nUsedDumps++;
   }
-  if(BDSGlobalConstants::Instance()->getWaitingForDump()) // synchronization with placet
-    {
-      G4cout<< __METHOD_NAME__ <<G4endl;
-      writeToFifo();
-      readFromFifo();
-    }else{
-    G4Exception("Read from fifo failed: bad file name\n", "-1", FatalException, "");
-    exit(1);
-  }
-  BDSDump::nUsedDumps++;
 }
 
 void BDSTrackingFIFO::writeToFifo(){

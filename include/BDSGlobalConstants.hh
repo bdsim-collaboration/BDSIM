@@ -247,7 +247,6 @@ public:
   G4bool getReadFromStack();
 
   G4String GetFifo();
-  void    SetFifo(G4String fileName);
 
   G4AffineTransform GetDumpTransform();
   void              SetDumpTransform(G4AffineTransform tf);
@@ -864,7 +863,6 @@ inline void BDSGlobalConstants::setReadFromStack(G4bool flag) { isReadFromStack 
 inline G4bool BDSGlobalConstants::getReadFromStack() { return isReadFromStack; }
 
 inline G4String BDSGlobalConstants::GetFifo() {return itsFifo;}
-inline void BDSGlobalConstants::SetFifo(G4String aFileName) {itsFifo = aFileName;}
 
 inline G4AffineTransform BDSGlobalConstants::GetDumpTransform() {return itsDumpTransform;}
 inline void BDSGlobalConstants::SetDumpTransform(G4AffineTransform tf)

@@ -411,10 +411,8 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
   if( format == _ROOT) {
 #ifdef USE_ROOT
     G4int n_hit = hc->entries();
-    G4cout << __METHOD_NAME__ << " number of hits in hits collection = " << n_hit << G4endl;
     for (G4int i=0;i<n_hit;i++)
       {
-	G4cout << __METHOD_NAME__ << " filling tree with hit # " << i << G4endl;
 	//all regions fill the energy loss tree....
         E_el=(*hc)[i]->GetEnergy()/GeV;
 	z_el=(*hc)[i]->GetEnergyWeightedZ()*10*(1e-6)/(cm*E_el);
@@ -422,7 +420,6 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 	EnergyLossTree->Fill();
 
 	if((*hc)[i]->GetPrecisionRegion()){ //Only the precision region fills this tree, preserving every hit, its position and weight, instead of summing weighted energy in each beam line component.
-	  G4cout << __METHOD_NAME__ << " filling precision tree with hit # " << i << G4endl;
 	  weight_el_p=(*hc)[i]->GetWeight();
 	  E_el_p=((*hc)[i]->GetEnergy()/GeV)/weight_el_p;
 	  x_el_p=((*hc)[i]->GetEnergyWeightedX()/(cm*1e5*E_el_p))/weight_el_p;
@@ -479,11 +476,15 @@ void BDSOutput::Write()
   if(format == _ROOT){
     if(theRootOutputFile->IsOpen())
       {
+	G4cout << __METHOD_NAME__ << " writing to root file..." << G4endl;
 	//Dump all other quantities to file...
 	theRootOutputFile->Write();
-	theRootOutputFile->Close();
-	delete theRootOutputFile;
-	theRootOutputFile=NULL;
+	//	G4cout << __METHOD_NAME__ << " closing root file..." << G4endl;
+	//	theRootOutputFile->Close();
+	//	G4cout << __METHOD_NAME__ << " deteting root file..." << G4endl;
+	//	delete theRootOutputFile;
+	//	G4cout << __METHOD_NAME__ << " setting root file to NULL..." << G4endl;
+	//	theRootOutputFile=NULL;
       }
   }
 #endif

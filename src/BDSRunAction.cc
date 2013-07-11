@@ -9,7 +9,7 @@
 
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
-
+#include "BDSDebug.hh"
 #include "BDSRunAction.hh"
 #include "BDSRunManager.hh"
 #include "BDSDump.hh"
@@ -32,6 +32,7 @@
 #include <unistd.h> // for sleep, will not work on windows?
 #endif
 
+#define DEBUG 1
 
 //==========================================================
 
