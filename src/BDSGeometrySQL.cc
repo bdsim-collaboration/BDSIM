@@ -1022,6 +1022,8 @@ void BDSGeometrySQL::BuildPCLTube(BDSMySQLTable* aSQLTable)
       aperX = 100.*mm;
       aperYUp = 50.*mm;
       aperYDown = 200.*mm;
+      aperDy = 0.*mm;
+      thickness = BDSGlobalConstants::Instance()->GetBeampipeThickness();
       length = 200.0*mm;
       VisRed = VisGreen = VisBlue = 0.;
       VisType = "S";
