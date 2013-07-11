@@ -51,10 +51,10 @@ endif()
    else()
       set(Geant4_LIBRARY_NAMES libG4FR.so libG4GMocren.so libG4OpenGL.so libG4RayTracer.so libG4Tree.so libG4VRML.so libG4digits_hits.so libG4error_propagation.so libG4event.so libG4geometry.so libG4gl2ps.so libG4global.so libG4graphics_reps.so libG4intercoms.so libG4interfaces.so libG4materials.so libG4modeling.so libG4parmodels.so libG4particles.so libG4persistency.so libG4physicslists.so libG4processes.so libG4readout.so libG4run.so libG4track.so libG4tracking.so libG4visHepRep.so libG4visXXX.so libG4vis_management.so libG4zlib.so)
    endif()
-   # remove G4zlib, which is somehow not there on SLC5 - LXPLUS
-   #if (LXPLUS AND USE_AFS AND RHL5)
-   #   list(REMOVE_ITEM Geant4_LIBRARY_NAMES libG4zlib.so)
-   #endif()
+   # remove G4zlib, which is somehow not there on SLC5 - LXPLUS, Geant4 9.5
+   if (LXPLUS AND USE_AFS AND RHL5)
+      list(REMOVE_ITEM Geant4_LIBRARY_NAMES libG4zlib.so)
+   endif()
    foreach (library_temp ${Geant4_LIBRARY_NAMES})
       # special way to unset Geant4_LIBRARY_temp
       set(Geant4_LIBRARY_temp ${library_temp}-NOTFOUND)
