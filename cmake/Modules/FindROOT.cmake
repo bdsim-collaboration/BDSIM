@@ -7,13 +7,26 @@
 # ROOT_LIBRARY_DIR    PATH to the library directory 
 
 MESSAGE(STATUS "Looking for ROOT...")
-find_program(ROOT_CONFIG_EXECUTABLE root-config PATHS ${ROOTSYS}/bin)
+
+if(EXISTS "${ROOTSYS}/bin/root-config")
+  set(ROOT_CONFIG_EXECUTABLE "${ROOTSYS}/bin/root-config")
+else()
+  if($ENV{VERBOSE})
+       message(STATUS "root-config not found in ROOTSYS, trying default PATHS")
+  endif()
+  find_program(ROOT_CONFIG_EXECUTABLE root-config)
+endif()
 
 if(NOT ROOT_CONFIG_EXECUTABLE)
   set(ROOT_FOUND FALSE)
   MESSAGE(STATUS "root-config not found in PATH")
+
 else()    
   set(ROOT_FOUND TRUE)
+
+  if($ENV{VERBOSE})
+        message(STATUS "root-config found... ${ROOT_CONFIG_EXECUTABLE}")
+  endif()
 
   execute_process(
     COMMAND ${ROOT_CONFIG_EXECUTABLE} --prefix 
