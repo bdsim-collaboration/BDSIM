@@ -5,7 +5,7 @@
 
 class BDSTunnelCavitySectionBuilder{
 public:
-  ~BDSTunnelCavitySectionBuilder();
+  virtual ~BDSTunnelCavitySectionBuilder();
   BDSTunnelCavitySectionBuilder();
   
   void createNewTunnelCavitySection(BDSAcceleratorComponent* var);

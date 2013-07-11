@@ -30,8 +30,8 @@ public:
 	G4String getFireAngle() {return fFireAngle;};
 public:
 	// store a quantity into a file
-  void DumpQuantityToFile(G4String & psName, G4String & fileName, G4String & option);
-  void DumpQuantityToFile(G4String & psName, TFile* tFile, G4String & option);
+        void DumpQuantityToFile(const G4String & psName, G4String & fileName, const G4String & option);
+        void DumpQuantityToFile(const G4String & psName, TFile* tFile, const G4String & option);
 	char fStartTime[50];
 	char fEndTime[50];
 

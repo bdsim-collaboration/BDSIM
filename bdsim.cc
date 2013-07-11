@@ -61,14 +61,16 @@
 #include "G4GeometryTolerance.hh"
 #include "G4ScoringManager.hh"
 
+#include "CLHEP/Random/Random.h"
+
 #include "BDSGeometryInterface.hh"
 
 #include "BDSOutput.hh" 
 #include "BDSBunch.hh"
 #include "BDSMaterials.hh"
-#ifdef USE_ROOT
-#include "BDSScoreWriter.hh"
-#endif
+//#ifdef USE_ROOT
+//#include "BDSScoreWriter.hh"
+//#endif
 
 #include "parser/gmad.h"  // GMAD parser
 
@@ -438,13 +440,14 @@ int main(int argc,char** argv) {
       G4UImanager* UIManager = G4UImanager::GetUIpointer();  
 
 #ifdef G4UI_USE
+      delete session;
       G4UIExecutive* session = new G4UIExecutive(argc, argv);
 #ifdef G4VIS_USE
       UIManager->ApplyCommand("/control/execute " + BDSExecOptions::Instance()->GetVisMacroFilename());    
 #endif
       session->SessionStart();
-      delete session;
 #endif
+      delete session;
 
 #ifdef G4VIS_USE
 #ifdef DEBUG 

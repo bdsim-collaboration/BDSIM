@@ -77,8 +77,8 @@ BDSSynchrotronRadiation::IsApplicable(const G4ParticleDefinition& particle)
 
 inline G4double 
 BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
-					G4double PreviousStepSize,
-					G4ForceCondition* ForceCondition)
+					 G4double /*PreviousStepSize*/,
+					 G4ForceCondition* ForceCondition)
 {  
   *ForceCondition = NotForced ;
 

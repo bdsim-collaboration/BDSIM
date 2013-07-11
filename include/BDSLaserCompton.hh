@@ -102,7 +102,7 @@ inline G4bool BDSLaserCompton::IsApplicable(
 }
 
 inline G4double BDSLaserCompton::GetMeanFreePath(const G4Track& track,
-						 G4double PreviousStepSize,
+						 G4double /*PreviousStepSize*/,
 						 G4ForceCondition* ForceCondition)
 {
   if( track.GetMaterial()==BDSMaterials::Instance()->GetMaterial("LaserVac") &&
