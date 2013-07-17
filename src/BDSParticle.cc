@@ -3,7 +3,7 @@
    Last modified 24.7.2002
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
-// BDSExtractBunch.hh
+// BDSParticle.hh
 // Bunch format interfacing to PLACET output file
 // G.A.Blair (RHUL) 10.12.01
 // adapted from code supplied by D.Schulte (CERN)
