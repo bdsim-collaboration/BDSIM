@@ -10,6 +10,7 @@
 BDSTrackingFIFO::BDSTrackingFIFO(){
   _fifo=NULL;
   _filename=BDSGlobalConstants::Instance()->GetFifo();
+  _tmpT=0.0;
 }
 
 BDSTrackingFIFO::~BDSTrackingFIFO(){
