@@ -957,13 +957,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 	G4cout<<"placing components\n: geometry format - "<<gFormat<<G4endl<<
 	  "file - "<<GFile<<G4endl;
 	
-	GGmadDriver *ggmad;
-	
 	if(gFormat=="gmad") {
 	 
-	  ggmad = new GGmadDriver(GFile);
-	  ggmad->Construct(logicWorld);
-
+	  GGmadDriver ggmad(GFile);
+	  ggmad.Construct(logicWorld);
 	  
 	} else  G4cerr<<"Tunnel won't be build! "<<endl;
       }

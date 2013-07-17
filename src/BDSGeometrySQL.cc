@@ -1099,7 +1099,7 @@ void BDSGeometrySQL::BuildPCLTube(BDSMySQLTable* aSQLTable)
       aPCLTubeVol->SetVisAttributes(VisAtt);
 
       VOL_LIST.push_back(aPCLTubeVol);
-
+      delete aPCLTubeBuilder;
     }
   PlaceComponents(aSQLTable, VOL_LIST);
 }
