@@ -47,7 +47,6 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
   G4Trd *aTrd;
 
   G4LogicalVolume *lvol;
-  G4VPhysicalVolume* PhysiComp;
 
   G4VisAttributes *visAttr = new G4VisAttributes(true, G4Colour(0.2,0.2,0.2));
   visAttr->SetForceSolid(true);
@@ -104,7 +103,7 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    rot->rotateY(2*pi*theta/360.);
 	    rot->rotateZ(2*pi*psi/360.);
 
-	    PhysiComp = 
+	    // G4VPhysicalVolume* PhysiComp =
 	    new G4PVPlacement(
 	      rot,		       // rotation
 	      G4ThreeVector(x0,y0,z0), // at (x0,y0,z0)
@@ -171,16 +170,15 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    rot->rotateY(2*pi*theta/360.);
 	    rot->rotateZ(2*pi*psi/360.);
 
-
-	    PhysiComp = 
-	      new G4PVPlacement(
-				rot,			     // rotation
-				G4ThreeVector(x0,y0,z0),     // at (0,0,0)
-				lvol,  // its logical volume
-				"vol_"+G4String(count),	     // its name
-				marker,     // its mother  volume
-				false,		     // no boolean operation
-				0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		   
+	    // G4VPhysicalVolume* PhysiComp =
+	    new G4PVPlacement(
+			      rot,			     // rotation
+			      G4ThreeVector(x0,y0,z0),     // at (0,0,0)
+			      lvol,  // its logical volume
+			      "vol_"+G4String(count),	     // its name
+			      marker,     // its mother  volume
+			      false,		     // no boolean operation
+			      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
 	    
 	    count++;
 	    
@@ -246,15 +244,15 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    rot->rotateY(2*pi*theta/360.);
 	    rot->rotateZ(2*pi*psi/360.);
 
-	    PhysiComp = 
-	      new G4PVPlacement(
-				rot,			     // rotation
-				G4ThreeVector(x0,y0,z0),     // at (0,0,0)
-				lvol,  // its logical volume
-				"vol_"+G4String(count),	     // its name
-				marker,     // its mother  volume
-				false,		     // no boolean operation
-				0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		   
+	    // G4VPhysicalVolume* PhysiComp =
+	    new G4PVPlacement(
+			      rot,			     // rotation
+			      G4ThreeVector(x0,y0,z0),     // at (0,0,0)
+			      lvol,  // its logical volume
+			      "vol_"+G4String(count),	     // its name
+			      marker,     // its mother  volume
+			      false,		     // no boolean operation
+			      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
 	    
 	    count++;
 	    
@@ -308,15 +306,15 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    rot->rotateZ(2*pi*psi/360.);
 	    
 	    
-	    PhysiComp = 
-	      new G4PVPlacement(
-				rot,			     // rotation
-				G4ThreeVector(x0,y0,z0),     // at (0,0,0)
-				lvol,  // its logical volume
-				"vol_"+G4String(count),	     // its name
-				marker,     // its mother  volume
-				false,		     // no boolean operation
-				0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		   
+	    // G4VPhysicalVolume* PhysiComp =
+	    new G4PVPlacement(
+			      rot,			     // rotation
+			      G4ThreeVector(x0,y0,z0),     // at (0,0,0)
+			      lvol,  // its logical volume
+			      "vol_"+G4String(count),	     // its name
+			      marker,     // its mother  volume
+			      false,		     // no boolean operation
+			      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
 	    
 	    count++;
 	    
