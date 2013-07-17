@@ -271,10 +271,12 @@ endif()
 # macro BDSIM_COLLATE_APPLICATION_SOURCES(source_dest_var)
 #
 macro(BDSIM_COLLATE_APPLICATION_SOURCES source_dest_var)
-  file(GLOB_RECURSE 
+  file(GLOB 
     ${source_dest_var} 
-    ${CMAKE_CURRENT_SOURCE_DIR}/*.hh 
-    ${CMAKE_CURRENT_SOURCE_DIR}/*.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/bdsim.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/BDS*.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ggmad.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/myQuadStepper.cc
     )
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 endmacro()
