@@ -127,8 +127,8 @@ protected:   // these might need to be accessed from the child classes
   G4ChordFinder* itsChordFinder;
   G4MagneticField* itsOuterMagField;
 
-  G4double itsStartOuterR;
-  G4double itsEndOuterR;
+  // G4double itsStartOuterR;
+  // G4double itsEndOuterR;
 
 private:
   /// constructor initialisation

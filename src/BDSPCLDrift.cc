@@ -239,8 +239,7 @@ G4VisAttributes* BDSPCLDrift::SetVisAttributes()
 }
 
 void BDSPCLDrift::BuildBLMs(){
-  itsBlmLocationR = std::max(itsStartOuterR, itsEndOuterR) - itsBpRadius;
-  BDSAcceleratorComponent::BuildBLMs(); // resets itsBlmLocationR! -- JS
+  BDSAcceleratorComponent::BuildBLMs();
 }
 
 BDSPCLDrift::~BDSPCLDrift()
