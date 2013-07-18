@@ -78,17 +78,9 @@ BDSMultipole::BDSMultipole( G4String aName,
 			 aMaterial,
 			 angle),
   itsInnerIronRadius(aInnerIronRadius)
-{  
-  CalculateLengths();
+{
+  ConstructorInit();
   SetBeampipeThickness(beampipeThicknessSet, beampipeThickness); 
-  itsPhysiComp=NULL; 
-  itsPhysiInner=NULL;
-  itsBPFieldMgr=NULL;
-  itsBeampipeLogicalVolume=NULL;
-  itsChordFinder=NULL;
-  itsBeampipeUserLimits=NULL;
-  itsOuterFieldMgr=NULL;
-  itsOuterMagField=NULL;
 }
 
 BDSMultipole::BDSMultipole( G4String aName, 
@@ -127,18 +119,10 @@ BDSMultipole::BDSMultipole( G4String aName,
 			 tunnelOffsetX),
   itsInnerIronRadius(aInnerIronRadius)
 {
-  CalculateLengths();
+  ConstructorInit();
   BDSAcceleratorComponent::itsPhiAngleIn=phiAngleIn;
   BDSAcceleratorComponent::itsPhiAngleOut=phiAngleOut;
   SetBeampipeThickness(beampipeThicknessSet, beampipeThickness); 
-  itsPhysiComp=NULL; 
-  itsPhysiInner=NULL;
-  itsBPFieldMgr=NULL;
-  itsBeampipeLogicalVolume=NULL;
-  itsChordFinder=NULL;
-  itsBeampipeUserLimits=NULL;
-  itsOuterFieldMgr=NULL;
-  itsOuterMagField=NULL;
 }
 
 BDSMultipole::BDSMultipole( G4String aName, 
@@ -172,8 +156,28 @@ BDSMultipole::BDSMultipole( G4String aName,
 			 tunnelOffsetX),
   itsInnerIronRadius(aInnerIronRadius)
 {
-  CalculateLengths();
+  ConstructorInit();
   SetBeampipeThickness(beampipeThicknessSet, beampipeThickness); 
+}
+
+void BDSMultipole::ConstructorInit(){
+  CalculateLengths();
+
+  itsBeampipeLogicalVolume=NULL;
+  itsInnerBPLogicalVolume=NULL;
+
+  itsVisAttributes=NULL;
+  itsBeampipeUserLimits=NULL;
+  itsPhysiComp=NULL; 
+  itsPhysiInner=NULL;
+  itsBPFieldMgr=NULL;
+  itsOuterFieldMgr=NULL;
+
+  itsBeampipeSolid=NULL;
+  itsInnerBeampipeSolid=NULL;
+
+  itsChordFinder=NULL;
+  itsOuterMagField=NULL;
 }
 
 void BDSMultipole::SetBeampipeThickness(G4bool set, G4double val){
@@ -757,7 +761,6 @@ void BDSMultipole::BuildOuterFieldManager(G4int nPoles, G4double poleField,
 {
   if(nPoles<=0 || nPoles>10 || nPoles%2 !=0)
     G4Exception("BDSMultipole: Invalid number of poles", "-1", FatalException, "");
-  itsNPoles=nPoles;
   itsOuterFieldMgr=NULL;
   if (poleField==0) return;
 

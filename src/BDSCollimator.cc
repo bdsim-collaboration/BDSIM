@@ -191,20 +191,5 @@ void BDSCollimator::BuildInnerCollimator()
 BDSCollimator::~BDSCollimator()
 {
   delete itsVisAttributes;
-  //   delete itsUserLimits;
-  //   delete itsInnerTunnelUserLimits;
-  //   delete itsTunnelUserLimits;
-  //   delete itsSoilTunnelUserLimits;
-
-  //  delete itsSolidLogVol;
-  //  delete itsInnerLogVol;
-
-  //  delete itsPhysiComp;
-  //  delete itsPhysiComp2;
-
-  //   delete itsSoilTube;
-  //   delete itsTunnelTube;
-  //   delete itsInnerTunnelTube;
-  //   delete itsInnerTunnelLogicalVolume;
-  //   delete itsSoilTunnelLogicalVolume;
+  delete itsUserLimits;
 }

@@ -14,8 +14,7 @@
 
 class BDSEnergyCounterHit :public G4VHit
 {
-  public:
-  BDSEnergyCounterHit();
+public:
   BDSEnergyCounterHit(G4int nCopy, G4double Energy=0, G4double x=0, G4double y=0, G4double z=0, G4String name="", G4int partID=0, G4double weight=1, G4bool precisionRegion=false);
 
   ~BDSEnergyCounterHit();
@@ -44,6 +43,9 @@ class BDSEnergyCounterHit :public G4VHit
   inline G4bool GetPrecisionRegion();
   
 private:
+  /// private default constructor (not implemented)
+  BDSEnergyCounterHit();
+
   G4double itsEnergy;
   G4double itsEnergyWeightedX;
   G4double itsEnergyWeightedY;

@@ -109,18 +109,8 @@ protected:
   G4LogicalVolume* itsBeampipeLogicalVolume;
   G4LogicalVolume* itsInnerBPLogicalVolume;
 
-  //=======For the PCL drift=====
-  G4LogicalVolume* itsUpperBeamPipeLogicalVolume;
-  G4LogicalVolume* itsMiddleBeamPipeLogicalVolume;
-  G4LogicalVolume* itsLowerBeamPipeLogicalVolume;
-
-  G4LogicalVolume* itsUpperInnerBeamPipeLogicalVolume;
-  G4LogicalVolume* itsMiddleInnerBeamPipeLogicalVolume;
-  G4LogicalVolume* itsLowerInnerBeamPipeLogicalVolume;
   //-----------------------------
-
   G4VisAttributes* itsVisAttributes;
-  G4UserLimits* itsUserLimits;
   G4UserLimits* itsBeampipeUserLimits;
   G4VPhysicalVolume* itsPhysiComp;
   G4VPhysicalVolume* itsPhysiInner;
@@ -135,14 +125,14 @@ protected:   // these might need to be accessed from the child classes
   G4VSolid* itsInnerBeampipeSolid;
 
   G4ChordFinder* itsChordFinder;
-  G4int itsNPoles;
   G4MagneticField* itsOuterMagField;
 
-  G4ThreeVector itsSegPos;
   G4double itsStartOuterR;
   G4double itsEndOuterR;
 
 private:
+  /// constructor initialisation
+  void ConstructorInit();
 
   void SetBeampipeThickness(G4bool, G4double);
 

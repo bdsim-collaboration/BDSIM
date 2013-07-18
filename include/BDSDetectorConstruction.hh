@@ -98,7 +98,7 @@ private:
   G4Region* precisionRegion;
   G4Region* gasRegion;
 
-  BDSWorld* _world;
+  //  BDSWorld* _world;
 
   G4Box*             solidWorld;    //pointer to the solid World 
   G4LogicalVolume*   logicWorld;    //pointer to the logical World

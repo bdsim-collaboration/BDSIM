@@ -22,7 +22,6 @@
 #include "G4FieldManager.hh"
 #include "G4ChordFinder.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
 
@@ -45,7 +44,6 @@ private:
   G4VisAttributes* SetVisAttributes();
 
   // field related objects:
-  G4UserLimits* itsUserLimits;
   G4VisAttributes* itsVisAttributes;
 
   /// number of total Dumps
