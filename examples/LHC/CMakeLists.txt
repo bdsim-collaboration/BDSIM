@@ -2,4 +2,4 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURC
 
 set(TESTING_ARGS "--batch")
 
-simple_testing(LHC "--file=lhc.gmad" "")
+simple_testing(LHC_LONG "--file=lhc.gmad" "")
