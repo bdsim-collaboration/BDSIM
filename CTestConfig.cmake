@@ -10,7 +10,7 @@ set(CTEST_DROP_METHOD "http")
 set(CTEST_DROP_SITE "ylevinse.web.cern.ch/ylevinse")
 set(CTEST_DROP_LOCATION "/cdash/submit.php?project=BDSIM")
 set(CTEST_DROP_SITE_CDASH TRUE)
-set(CTEST_UPDATE_COMMAND "svn")
-#set(UPDATE_TYPE "cvs")
 
-#add_test(NAME LHC1 COMMAND ${binary} --file=job_inj450_B1_blm.gmad --batch WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/examples/lhc/injection/B1/)
+find_program(CTEST_GIT_COMMAND NAMES git)
+set(CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}")
+
