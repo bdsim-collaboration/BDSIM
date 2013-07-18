@@ -33,6 +33,8 @@ BDSBeamline::~BDSBeamline(){
   }
   _componentList.clear();
 
+  // todo: clear other lists
+
   delete _localX;
   delete _localY;
   delete _localZ;
@@ -107,7 +109,10 @@ void BDSBeamline::doNavigation(){
     // bend trapezoids defined along z-axis
     _rotation->rotateY(-twopi/4-angle/2); 						
   } else {
-    if (lastItem()->GetMarkerLogicalVolume()->GetSolid()->GetName().contains("trapezoid") ){
+    // to prevent crash on Transform3D:
+    if (lastItem()->GetMarkerLogicalVolume() && 
+	lastItem()->GetMarkerLogicalVolume()->GetSolid() && 
+	lastItem()->GetMarkerLogicalVolume()->GetSolid()->GetName().contains("trapezoid") ) {
       _rotation->rotateY(-twopi/4); //Drift trapezoids defined along z axis 
     }
   }
@@ -135,8 +140,9 @@ void BDSBeamline::addComponent(BDSAcceleratorComponent* var){
   G4cout << "BDSBeamline: Set current item. " << G4endl;
   //Do the navigation
   doNavigation();
-    G4cout << "Printing name. " << G4endl;
-  G4cout << "BDSBeamline: " << Instance()->lastItem()->GetName() << G4endl;
+
+  G4cout << "Printing name. " << G4endl;
+  G4cout << "BDSBeamline: " << lastItem()->GetName() << G4endl;
   //Update the reference transform
   setRefTransform(var);
 }
@@ -169,6 +175,7 @@ BDSAcceleratorComponent* BDSBeamline::currentItem(){
 }
 
 BDSAcceleratorComponent* BDSBeamline::lastItem(){
+  if (_componentList.empty()) return NULL;
   _iterLastComponent=_componentList.end();
   _iterLastComponent--;
   return *_iterLastComponent;
