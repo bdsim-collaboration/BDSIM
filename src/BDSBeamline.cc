@@ -109,8 +109,9 @@ void BDSBeamline::doNavigation(){
     // bend trapezoids defined along z-axis
     _rotation->rotateY(-twopi/4-angle/2); 						
   } else {
-    // to prevent crash on Transform3D:
-    if (lastItem()->GetMarkerLogicalVolume() && 
+    // Transform3D has no Volumes:
+    if (lastItem()->GetType() != "transform3d" && 
+	lastItem()->GetMarkerLogicalVolume() && 
 	lastItem()->GetMarkerLogicalVolume()->GetSolid() && 
 	lastItem()->GetMarkerLogicalVolume()->GetSolid()->GetName().contains("trapezoid") ) {
       _rotation->rotateY(-twopi/4); //Drift trapezoids defined along z axis 

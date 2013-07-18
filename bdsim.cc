@@ -19,9 +19,10 @@
 #include "BDSExecOptions.hh"     // executable command line options 
 #include "BDSGlobalConstants.hh" //  global parameters
 
-#include "G4UImanager.hh"        // G4 session managers
 #include "G4UIterminal.hh"
+#ifdef G4UI_USE_TCSH
 #include "G4UItcsh.hh"
+#endif
 #include "G4GeometryManager.hh"
 
 #include "Randomize.hh"
@@ -31,6 +32,9 @@
 #endif
 
 #ifdef G4UI_USE
+#ifdef G4VIS_USE
+#include "G4UImanager.hh"        // G4 session managers
+#endif
 #include "G4UIExecutive.hh"
 #endif
 
@@ -436,13 +440,12 @@ int main(int argc,char** argv) {
       visManager->Initialize();
 #endif
   
-      // get the pointer to the User Interface manager 
-      G4UImanager* UIManager = G4UImanager::GetUIpointer();  
-
 #ifdef G4UI_USE
       delete session;
       G4UIExecutive* session = new G4UIExecutive(argc, argv);
 #ifdef G4VIS_USE
+      // get the pointer to the User Interface manager 
+      G4UImanager* UIManager = G4UImanager::GetUIpointer();  
       UIManager->ApplyCommand("/control/execute " + BDSExecOptions::Instance()->GetVisMacroFilename());    
 #endif
       session->SessionStart();

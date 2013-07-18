@@ -44,7 +44,7 @@ private:
   
   G4String itsType;
   G4String itsCollectionName;
-  G4int    itsHCID;
+  //G4int    itsHCID;
 
 };
 

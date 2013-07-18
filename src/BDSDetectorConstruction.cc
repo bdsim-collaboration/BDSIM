@@ -164,7 +164,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   gflashemax = BDSExecOptions::Instance()->GetGFlashEMax();
   gflashemin = BDSExecOptions::Instance()->GetGFlashEMin();
   
-  //initialize world siye vector
+  //initialize world size vector
   itsWorldSize.push_back(0);
   itsWorldSize.push_back(1);
   itsWorldSize.push_back(2);
