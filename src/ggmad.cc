@@ -36,8 +36,7 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
   // G4double FieldX, FieldY, FieldZ;
   // FieldX = FieldY = FieldZ = 0.0;
 
-  G4Material *theMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
-
+  G4Material *theMaterial;
   G4Box *aBox;
   G4Tubs *aTubs;
   G4Cons *aCons;
