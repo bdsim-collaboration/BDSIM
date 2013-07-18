@@ -122,6 +122,9 @@ void BDSPCLDrift::BuildBeampipe(G4String materialName){
   inner_solid = innerTube->GetSolid();
   outer_solid = outerTube->GetSolid();
 
+  delete innerTube;
+  delete outerTube;
+
 #ifdef DEBUG
   G4cout << "BDSPCLDrift.cc: Making logical..." << G4endl;
 #endif
