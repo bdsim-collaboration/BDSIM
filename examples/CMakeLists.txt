@@ -1,7 +1,7 @@
 add_subdirectory(3d)
 add_subdirectory(ATF2)
 add_subdirectory(ATF2_old)
-add_subdirectory(Components)
+add_subdirectory(Components_DB)
 add_subdirectory(ggmad)
 add_subdirectory(hadronicTarget)
 add_subdirectory(Laser-Wire)
