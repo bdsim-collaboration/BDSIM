@@ -25,7 +25,6 @@
 
 #include "Randomize.hh"
 
-//#include "BDSExtract.hh"
 #include "BDSBunch.hh"
 
 #include<iostream>

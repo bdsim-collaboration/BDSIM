@@ -284,6 +284,7 @@ void BDSPhysicsList::ConstructProcess()
   if(BDSGlobalConstants::Instance()->GetDoPlanckScattering()){
     BDSPlanckScatterBuilder* psbuild = new BDSPlanckScatterBuilder();
     psbuild->Build();
+    // psbuild is leaked. This can't be deleted as its BDSPlanckScatterProcess is registered
   }
   //A flag to switch on hadronic lead particle biasing
   if (BDSGlobalConstants::Instance()->GetUseHadLPB() ){

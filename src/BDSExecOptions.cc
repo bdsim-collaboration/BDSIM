@@ -218,24 +218,24 @@ void BDSExecOptions::Usage() {
 
 void BDSExecOptions::Print() {
   G4cout << __METHOD_NAME__ << G4endl;
-  G4cout << __METHOD_NAME__ << inputFilename       << G4endl;
-  G4cout << __METHOD_NAME__ << visMacroFilename    << G4endl;
-  G4cout << __METHOD_NAME__ << outputFilename      << G4endl;
-  G4cout << __METHOD_NAME__ << outputFormat        << G4endl;
-  G4cout << __METHOD_NAME__ << outlineFilename     << G4endl;
-  G4cout << __METHOD_NAME__ << gflash              << G4endl;
-  G4cout << __METHOD_NAME__ << gflashemin          << G4endl;  
-  G4cout << __METHOD_NAME__ << gflashemax          << G4endl;
-  G4cout << __METHOD_NAME__ << verbose             << G4endl;
-  G4cout << __METHOD_NAME__ << verboseEvent        << G4endl;  
-  G4cout << __METHOD_NAME__ << verboseStep         << G4endl;  
-  G4cout << __METHOD_NAME__ << batch               << G4endl;
-  G4cout << __METHOD_NAME__ << outline             << G4endl;
-  G4cout << __METHOD_NAME__ << listMaterials       << G4endl;
-  G4cout << __METHOD_NAME__ << verboseRunLevel     << G4endl;  
-  G4cout << __METHOD_NAME__ << verboseEventLevel   << G4endl;
-  G4cout << __METHOD_NAME__ << verboseTrackingLevel<< G4endl;  
-  G4cout << __METHOD_NAME__ << verboseSteppingLevel<< G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " inputFilename: "       << std::setw(15) << inputFilename       << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " visMacroFilename: "    << std::setw(15) << visMacroFilename    << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " outputFilename: "      << std::setw(15) << outputFilename      << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " outputFormat: "        << std::setw(15) << outputFormat        << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " outlineFilename: "     << std::setw(15) << outlineFilename     << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " gflash: "              << std::setw(15) << gflash              << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " gflashemin: "          << std::setw(15) << gflashemin          << G4endl;  
+  G4cout << __METHOD_NAME__ << std::setw(23) << " gflashemax: "          << std::setw(15) << gflashemax          << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " verbose: "             << std::setw(15) << verbose             << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " verboseEvent: "        << std::setw(15) << verboseEvent        << G4endl;  
+  G4cout << __METHOD_NAME__ << std::setw(23) << " verboseStep: "         << std::setw(15) << verboseStep         << G4endl;  
+  G4cout << __METHOD_NAME__ << std::setw(23) << " batch: "               << std::setw(15) << batch               << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " outline: "             << std::setw(15) << outline             << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " listMaterials: "       << std::setw(15) << listMaterials       << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " verboseRunLevel: "     << std::setw(15) << verboseRunLevel     << G4endl;  
+  G4cout << __METHOD_NAME__ << std::setw(23) << " verboseEventLevel: "   << std::setw(15) << verboseEventLevel   << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " verboseTrackingLevel: "<< std::setw(15) << verboseTrackingLevel<< G4endl;  
+  G4cout << __METHOD_NAME__ << std::setw(23) << " verboseSteppingLevel: "<< std::setw(15) << verboseSteppingLevel<< G4endl;
 
   return;
 }

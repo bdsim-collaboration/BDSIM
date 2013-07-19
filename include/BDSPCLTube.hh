@@ -1,4 +1,13 @@
+#ifndef __BDSPCLTUBE_H
+#define __BDSPCLTUBE_H
+
 #include "G4VSolid.hh"
+
+/** 
+ * @brief PostCollisionLine Tube
+ * 
+ * @author Lawrence Deacon <l.deacon@cern.ch>>
+ */
 
 class BDSPCLTube
 {
@@ -25,3 +34,5 @@ private:
 
 
 };
+
+#endif

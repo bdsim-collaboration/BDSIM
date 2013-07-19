@@ -18,7 +18,6 @@
 #include "G4Cons.hh"
 #include "G4Tubs.hh"
 #include "G4EllipticalTube.hh"
-#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "BDSMySQLTable.hh"
 #include "G4VPhysicalVolume.hh"
@@ -98,7 +97,6 @@ private:
   std::vector<BDSMySQLTable*> itsSQLTable;
   BDSMagFieldSQL* itsMagField;
   BDSSamplerSD* SensDet;
-  G4UserLimits* itsUserLimits;
 
 void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
 

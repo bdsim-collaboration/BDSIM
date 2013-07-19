@@ -975,9 +975,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 
 
 	// GDML geometry format instantitation.
-
-
-
       }
       
     }

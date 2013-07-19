@@ -205,7 +205,10 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 
 void BDSXYMagField::GetFieldValue(const G4double Point[4], G4double *Bfield ) const
 {
-  G4double bx=0., by=0., bz=0.;
+  G4double bx=0., by=0.;
+#if DEBUG
+  G4double bz=0.;
+#endif
   G4int i=0,j=0;
 
   G4ThreeVector local;
@@ -213,7 +216,6 @@ void BDSXYMagField::GetFieldValue(const G4double Point[4], G4double *Bfield ) co
   if( (nX <= 0) || (nY<=0) )
     {
       G4cerr<<"BDSXYMagField::GetFieldValue> Error: no mesh"<<G4endl;
-      bx = by = 0;
     }
   else
     {
@@ -226,20 +228,19 @@ void BDSXYMagField::GetFieldValue(const G4double Point[4], G4double *Bfield ) co
       i = (G4int)(nX/2.0 + nX * local[0] / (2.0 * xHalf));
       j = (G4int)(nY/2.0 + nY * local[1] / (2.0 * yHalf));
 
-      if( (i>=nX) || (j>=nY) || (i<0) || (j<0)){
-	bx=0;
-	by=0;
-	bz=0;
+      if( (i>=nX) || (j>=nY) || (i<0) || (j<0)){ 
+	// outside mesh dimensions
+	// 0 field
       } else {
+	bx = Bx[i][j];
+	by = By[i][j];
 #if DEBUG
+	bz = Bz[i][j];
 	G4cout << "Bx[" << i << "][" << j << "]=" << Bx[i][j] << G4endl;
 	G4cout << "By[" << i << "][" << j << "]=" << By[i][j] << G4endl;
 	G4cout << "Bz[" << i << "][" << j << "]=" << Bz[i][j] << G4endl;
 	G4cout << "nX = " << nX << ", nY = " << nY << G4endl;
 #endif
-	bx = Bx[i][j];
-	by = By[i][j];
-	bz = Bz[i][j];
       }
     }
 

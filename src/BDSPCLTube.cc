@@ -206,9 +206,4 @@ G4VSolid* BDSPCLTube::GetSolid(){
 
 BDSPCLTube::~BDSPCLTube()
 {
-  delete upper_solid;
-  delete middle_solid;
-  delete lower_solid;
-  delete temp_solid;
-  delete solid;
 }

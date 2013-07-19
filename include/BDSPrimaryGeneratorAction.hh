@@ -16,8 +16,6 @@
 #include <fstream>
 #include "BDSSynchrotronRadiation.hh"
 
-//#include "BDSGen5Shell.hh"
-
 class G4ParticleGun;
 class G4Event;
 class BDSDetectorConstruction;
@@ -46,8 +44,6 @@ private:
   
   std::ifstream InputBunchFile;
   std::ifstream ExtractBunchFile;
-
-  //  BDSGen5Shell* itsBDSGen5Shell;
 
   G4double logXfactor;
   G4double logYfactor;

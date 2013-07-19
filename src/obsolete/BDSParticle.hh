@@ -3,12 +3,23 @@
    Last modified 24.7.2002
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
-// BDSExtractBunch.hh
+// BDSParticle.hh
 // Bunch format interfacing to PLACET output file
 // G.A.Blair (RHUL) 10.12.01
 // adapted from code supplied by D.Schulte (CERN)
 
-#include "BDSParticle.hh"
+#ifndef BDSParticle_h
+#define BDSParticle_h 1
 
-BDSParticle::BDSParticle():energy(0.0),wgt(0.0),y(0.0),yp(0.0),x(0.0),xp(0.0)
-{;}
+#include "globals.hh"
+
+class BDSParticle
+{
+public:
+  BDSParticle();
+  G4double energy,wgt,y,yp;
+  G4double x,xp;
+};
+
+
+#endif
