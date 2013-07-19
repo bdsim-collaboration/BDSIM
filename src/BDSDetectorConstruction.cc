@@ -93,6 +93,9 @@
 #include "parser/gmad.h"
 #include "ggmad.hh"
 
+// GDML interface
+#include "BDSGeometryGDML.hh"
+
 #include "G4VSampler.hh"
 #include "G4GeometrySampler.hh"
 #include "G4IStore.hh"
@@ -958,14 +961,23 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 	  "file - "<<GFile<<G4endl;
 	
 	GGmadDriver *ggmad;
+	BDSGeometryGDML *gGDML;
 	
 	if(gFormat=="gmad") {
 	 
 	  ggmad = new GGmadDriver(GFile);
 	  ggmad->Construct(logicWorld);
+ 
+	} else if(gFormat=="gdml") {
+	  gGDML = new BDSGeometryGDML(GFile);
+	  gGDML->Construct(logicWorld);
+	} else  G4cerr<< "Tunnel won't be build! Incorrect Geometry format:  " << gFormat <<endl;
 
-	  
-	} else  G4cerr<<"Tunnel won't be build! "<<endl;
+
+	// GDML geometry format instantitation.
+
+
+
       }
       
     }
