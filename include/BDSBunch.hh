@@ -105,21 +105,21 @@ private:
   int distribType;
 
   // distribution centre
-  G4double X0;
-  G4double Y0;
-  G4double Z0;
+  G4double X0; // (m)
+  G4double Y0; // (m)
+  G4double Z0; // (m)
   G4double T0;
 
-  G4double Xp0;
-  G4double Yp0;
-  G4double Zp0;
+  G4double Xp0; // (rad)
+  G4double Yp0; // (rad)
+  G4double Zp0; // (rad)
 
   // parameters for Gaussian distribution
   G4double sigmaX; // sigmas for Gaussian bunches (m)
   G4double sigmaY;
   G4double sigmaT;
-  G4double sigmaXp;
-  G4double sigmaYp;
+  G4double sigmaXp; // (rad)
+  G4double sigmaYp; // (rad)
   
   // parameters for ring distribution
   G4double rMin;
