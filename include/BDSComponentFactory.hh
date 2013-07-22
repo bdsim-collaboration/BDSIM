@@ -1,9 +1,10 @@
 #ifndef __BDSCOMPONENTFACTORY_
 #define __BDSCOMPONENTFACTORY_
 
+#include <list>
+#include "globals.hh"
 #include "parser/gmad.h"
 #include "BDSAcceleratorComponent.hh"
-#include <list>
 
 class BDSComponentFactory{
 public:

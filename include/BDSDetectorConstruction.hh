@@ -17,8 +17,6 @@ Last modified 15.11.2005 by Ilya Agapov
 #include "BDSMaterials.hh"
 #include "BDSBeamline.hh"
 
-#include "parser/gmad.h"
-
 #include "G4Region.hh"
 
 #include "G4IStore.hh"

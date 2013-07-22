@@ -1,7 +1,10 @@
 #ifndef __BDSBEAMLINE_H
 #define __BDSBEAMLINE_H
 
-#include "parser/gmad.h"
+#include <list>
+
+#include "globals.hh"
+
 #include "BDSAcceleratorComponent.hh"
 
 class BDSBeamline{

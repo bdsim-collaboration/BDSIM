@@ -67,22 +67,6 @@ enum {
   _MOKKA = 1
 };
 
-enum {
-  _REFERENCE = 0,
-  _GAUSSIAN = 1,
-  _RING = 2,
-  _SQUARE = 3,
-  _CIRCLE = 4,
-  _GUINEAPIG_BUNCH = 5,
-  _GUINEAPIG_PAIRS = 6,
-  _GUINEAPIG_SLAC = 7,
-  _CAIN = 8,
-  _ESHELL = 9,
-  _GAUSSIAN_TWISS = 10,
-  _GAUSSIAN_MATRIX = 11,
-  _UDEF = 32
-};
-
 // options passed with option and beam command
 
 struct Options {
