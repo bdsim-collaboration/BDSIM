@@ -57,7 +57,6 @@
 #include "BDSEnergyCounterSD.hh"
 
 // elements
-//#include "BDSBeamPipe.hh"
 #include "BDSDrift.hh"
 #include "BDSPCLDrift.hh"
 #include "BDSSectorBend.hh"
@@ -65,7 +64,6 @@
 #include "BDSKicker.hh"
 #include "BDSQuadrupole.hh"
 #include "BDSSextupole.hh"
-//#include "BDSSkewSextupole.hh"
 #include "BDSOctupole.hh"
 #include "BDSDecapole.hh"
 #include "BDSTMultipole.hh"
@@ -81,16 +79,13 @@
 #include "BDSElement.hh"
 #include "BDSComponentOffset.hh"
 #include "BDSCollimator.hh"
-//#include "BDSRealisticCollimator.hh"
 // output interface
 #include "BDSOutput.hh"
 #include "BDSComponentFactory.hh"
 
-//#include "BDSMultipoleOuterMagField.hh"
 #include "G4MagneticField.hh"
 
 // GMAD interface
-#include "parser/gmad.h"
 #include "ggmad.hh"
 
 #include "G4VSampler.hh"

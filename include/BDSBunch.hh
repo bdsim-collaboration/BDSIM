@@ -5,31 +5,21 @@
 #ifndef BDSBunch_h
 #define BDSBunch_h 
 
-// BDSIM
-#include "parser/gmad.h"
+// GEANT4 types
 #include "globals.hh"
 
-// CLHEP vector
-#include "Randomize.hh"
+// CLHEP
 #include "CLHEP/Matrix/Vector.h" 
 #include "CLHEP/Matrix/SymMatrix.h"
-#include "CLHEP/RandomObjects/RandMultiGauss.h"
+namespace CLHEP {
+  class RandGauss;
+  class RandFlat;
+  class RandMultiGauss;
+}
 
 // C++ 
 #include <fstream>
 #include <list>
-
-// CLHEP < 1.9
-//class RandGauss;
-//class RandFlat;
-
-
-struct Doublet {
-
-  G4String name;
-  G4double unit; // relative to SI units, i.e. mm=0.001 etc.
-
-};
 
 class BDSBunch {
 
@@ -142,6 +132,11 @@ private:
 
   // energy spread
   G4double energySpread;
+
+  struct Doublet {
+    G4String name;
+    G4double unit; // relative to SI units, i.e. mm=0.001 etc.
+  };
 
   std::list<struct Doublet> fields;
 

@@ -4,7 +4,8 @@ Last modified 23.10.2007 by Steve Malton
 
 **/
 #include "BDSGlobalConstants.hh"
-#include "../parser/getEnv.h"
+#include "parser/gmad.h"
+//#include "../parser/getEnv.h"
 #include "BDSDebug.hh"
 #include "G4UniformMagField.hh"
 #include "G4ParticleTypes.hh"

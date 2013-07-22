@@ -1,13 +1,17 @@
-#include "BDSGlobalConstants.hh"
 #include "BDSBunch.hh"
+
 #include <iostream>
-#include "globals.hh"
 #include <cmath>
 #include <cstdlib>
 
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSBunch.hh"
+#include "parser/gmad.h"
+
+// CLHEP from Geant4
+#include "Randomize.hh"
+// CLHEP
+#include "CLHEP/RandomObjects/RandMultiGauss.h"
 
 #define DEBUG 1 
 
@@ -288,7 +292,7 @@ void BDSBunch::SetOptions(struct Options& opt)
       G4String unparsed_str = opt.distribType; 
       G4int pos = unparsed_str.find(":");
       
-      struct Doublet sd;
+      struct BDSBunch::Doublet sd;
       
       while(pos > 0)
 	{
@@ -1168,7 +1172,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 #endif
       skip((G4int)(nlinesIgnore * fields.size()));
      
-      std::list<struct Doublet>::iterator it;
+      std::list<struct BDSBunch::Doublet>::iterator it;
      for(it=fields.begin();it!=fields.end();it++)
        {
 #ifdef DEBUG 

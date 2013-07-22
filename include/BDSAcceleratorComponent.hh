@@ -26,6 +26,8 @@
 #include "BDSGlobalConstants.hh" 
 
 #include <cstring>
+#include <list>
+#include <vector> 
 #include "G4LogicalVolume.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
@@ -42,8 +44,6 @@
 #include "G4AssemblyVolume.hh"
 #include "G4CSGSolid.hh"
 #include "G4Tubs.hh"
-
-#include <vector> 
 
 
 class BDSAcceleratorComponent 

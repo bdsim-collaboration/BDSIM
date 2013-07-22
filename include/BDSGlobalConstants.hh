@@ -12,7 +12,6 @@ Last modified 30.10.2007 by Steve Malton
 #include <fstream>
 #include <string>
 #include <set>
-//#include <list>
 #include <deque>
 
 #include "G4ParticleTable.hh"
@@ -23,9 +22,8 @@ Last modified 30.10.2007 by Steve Malton
 #include "G4FieldManager.hh"
 #include "G4String.hh"
 #include "G4AffineTransform.hh"
-//#include "G4Track.hh"
 
-#include "parser/gmad.h"
+struct Options;
 
 struct strCmp {
   G4bool operator()( const G4String s1, const G4String s2 ) {

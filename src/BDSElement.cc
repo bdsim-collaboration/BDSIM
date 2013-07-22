@@ -33,6 +33,7 @@
 #include "G4CashKarpRKF45.hh"
 
 // geometry drivers
+#include "parser/gmad.h"
 #include "ggmad.hh"
 #include "BDSGeometrySQL.hh"
 
