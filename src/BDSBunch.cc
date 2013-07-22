@@ -765,7 +765,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
             // <<" X0= "<<X0<<" m"<<G4endl
             // <<" Y0= "<<Y0<<" m"<<G4endl
             // <<" Z0= "<<Z0<<" m"<<G4endl
-	    <<" T0= "<<T0<<" s"<<G4endl
+            <<" T0= "<<T0<<" s"<<G4endl
             // <<" Xp0= "<<Xp0<<G4endl
             // <<" Yp0= "<<Yp0<<G4endl
             // <<" Zp0= "<<Zp0<<G4endl
