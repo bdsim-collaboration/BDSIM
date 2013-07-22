@@ -27,6 +27,13 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 endif()
 message(STATUS "Build Type   ${CMAKE_BUILD_TYPE}")
 
+set(CMAKE_C_ORIG_FLAGS "${CMAKE_C_FLAGS}")
+set(CMAKE_CXX_ORIG_FLAGS "${CMAKE_CXX_FLAGS}")
+if($ENV{VERBOSE})
+	message(STATUS "CMAKE_C_ORIG_FLAGS ${CMAKE_C_ORIG_FLAGS}")
+	message(STATUS "CMAKE_CXX_ORIG_FLAGS ${CMAKE_CXX_ORIG_FLAGS}")
+endif()
+
 # Check for Scientific Linux
 if(UNIX)
     if("${CMAKE_SYSTEM}" MATCHES "el5")
@@ -254,12 +261,12 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # set compiler flags
-set(WFLAGS "-Wall -Wextra")
+set(WFLAGS "-Wall -Wextra -pedantic -Wno-long-long -Wpointer-arith -Woverloaded-virtual")
 set(CMAKE_FLAGS "${CMAKE_FLAGS} ${CLHEP_DEFINITIONS}  ${WFLAGS}")
 set(BDSIM_FLAGS "${CMAKE_FLAGS} ${VIS_FLAGS} -DCLHEP_VERSION=${CLHEP_VERSION} -DG4VERSION=${G4_MAJOR_VERSION} -DG4MINORVERSION=${G4_MINOR_VERSION} ${BDSIM_FLAGS}")
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${BDSIM_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BDSIM_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_ORIG_FLAGS} ${BDSIM_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_ORIG_FLAGS} ${BDSIM_FLAGS}")
 
 if($ENV{VERBOSE})
 	message(STATUS "BDSIM_FLAGS ${BDSIM_FLAGS}")
