@@ -161,6 +161,33 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   magField(NULL),BDSUserLimits(NULL),BDSSensitiveDetector(NULL),
   itsIStore(NULL)
 {  
+
+
+
+
+G4cout<<"**********************************************************"<<G4endl;
+          G4cout<<"**********************************************************"<<G4endl;
+	  G4cout<<"**********************************************************"<<G4endl;
+	  G4cout<<"**********************************************************"<<G4endl;
+	  G4cout<<"**********************************************************"<<G4endl;
+	  G4cout<<"**********************************************************"<<G4endl;
+	  G4cout<<"**********************************************************"<<G4endl;
+	  G4cout<<"**********************************************************"<<G4endl;
+	  //G4cout<< geometry <<G4endl;
+	  G4cout<<"**********************************************************"<<G4endl;
+	  G4cout<<"**********************************************************"<<G4endl;
+	  G4cout<<"**********************************************************"<<G4endl;
+	  G4cout<<"**********************************************************"<<G4endl;
+	  G4cout<<"**********************************************************"<<G4endl;
+	  G4cout<<"**********************************************************"<<G4endl;
+	  G4cout<<"**********************************************************"<<G4endl;
+	  G4cout<<"**********************************************************"<<G4endl;
+
+
+
+
+
+
   verbose    = BDSExecOptions::Instance()->GetVerbose();
   outline    = BDSExecOptions::Instance()->GetOutline();
   gflash     = BDSExecOptions::Instance()->GetGFlash();
@@ -241,18 +268,12 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   if (verbose || debug) G4cout << "-->starting BDS construction \n"<<G4endl;
 
   return ConstructBDS(beamline_list);
-
-
-
-
-
-
-
 }
 
 
 G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& beamline_list)
 {
+G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
   //
   // set default output formats:
   //
@@ -933,7 +954,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 	
       }
     }
-
+  G4cout << "DEBUG_DB: Does this even run?" << G4endl;
   // construct tunnel
   for(it = beamline_list.begin();it!=beamline_list.end();it++)
     {
@@ -954,7 +975,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 	
 	else {
 	  gFormat = geometry.substr(0,pos);
-	  GFile = geometry.substr(pos+1,geometry.length() - pos); 
+	  GFile = geometry.substr(pos+1,geometry.length() - pos);
 	}
 	
 	G4cout<<"placing components\n: geometry format - "<<gFormat<<G4endl<<
@@ -964,11 +985,11 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 	BDSGeometryGDML *gGDML;
 	
 	if(gFormat=="gmad") {
-	 
+	  G4cout << "gmad geometry description: Loading..." << G4endl;
 	  ggmad = new GGmadDriver(GFile);
 	  ggmad->Construct(logicWorld);
- 
 	} else if(gFormat=="gdml") {
+	  G4cout << "GDML geometry description: Loading..." << G4endl;
 	  gGDML = new BDSGeometryGDML(GFile);
 	  gGDML->Construct(logicWorld);
 	} else  G4cerr<< "Tunnel won't be build! Incorrect Geometry format:  " << gFormat <<endl;

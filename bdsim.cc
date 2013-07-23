@@ -73,6 +73,7 @@
 //#endif
 
 #include "parser/gmad.h"  // GMAD parser
+#include "parser/gdml.h"  // GDML parser
 
 
 
@@ -102,10 +103,10 @@ int main(int argc,char** argv) {
   // Parse lattice file
   //
   G4cout << __FUNCTION__ << "> Using input file : "<< BDSExecOptions::Instance()->GetInputFilename()<<G4endl;
-  if( gmad_parser(BDSExecOptions::Instance()->GetInputFilename()) == -1)
-    {
-      G4cout << __FUNCTION__ << "> Can't open input file "
-	     << BDSExecOptions::Instance()->GetInputFilename()<<G4endl;
+  if( gmad_parser(BDSExecOptions::Instance()->GetInputFilename()) != -1) {}
+  else if(gdml_parser(BDSExecOptions::Instance()->GetInputFilename()) != -1) {}
+  else {
+      G4cout << __FUNCTION__ << "> Can't open input file " << BDSExecOptions::Instance()->GetInputFilename()<<G4endl;
       exit(1);
     }
 

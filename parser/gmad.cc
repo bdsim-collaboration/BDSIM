@@ -166,9 +166,7 @@ int gmad_parser(FILE *f)
   cout << "gmad_parser> finished" << endl;
 #endif
 
-  fclose(f);
-
-  return 0;
+  return fclose(f);
 }
 
 int gmad_parser(string name)
@@ -183,9 +181,7 @@ int gmad_parser(string name)
   yyfilename = new char[MAXFILENAMELENGTH];
   strncpy(yyfilename,name.c_str(),MAXFILENAMELENGTH);
 
-  gmad_parser(f);
-
-  return 0;
+  return gmad_parser(f);
 }
 
 
