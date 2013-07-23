@@ -148,7 +148,7 @@ int gmad_parser(FILE *f)
     }
 
 #ifdef DEBUG
-  cout << "gmad_parser> finished to parsing file" << endl;
+  cout << "gmad_parser> finished parsing file" << endl;
 #endif
 
   // clear temporary stuff

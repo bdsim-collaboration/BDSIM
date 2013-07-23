@@ -160,33 +160,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   solidWorld(NULL),logicWorld(NULL),physiWorld(NULL),
   magField(NULL),BDSUserLimits(NULL),BDSSensitiveDetector(NULL),
   itsIStore(NULL)
-{  
-
-
-
-
-G4cout<<"**********************************************************"<<G4endl;
-          G4cout<<"**********************************************************"<<G4endl;
-	  G4cout<<"**********************************************************"<<G4endl;
-	  G4cout<<"**********************************************************"<<G4endl;
-	  G4cout<<"**********************************************************"<<G4endl;
-	  G4cout<<"**********************************************************"<<G4endl;
-	  G4cout<<"**********************************************************"<<G4endl;
-	  G4cout<<"**********************************************************"<<G4endl;
-	  //G4cout<< geometry <<G4endl;
-	  G4cout<<"**********************************************************"<<G4endl;
-	  G4cout<<"**********************************************************"<<G4endl;
-	  G4cout<<"**********************************************************"<<G4endl;
-	  G4cout<<"**********************************************************"<<G4endl;
-	  G4cout<<"**********************************************************"<<G4endl;
-	  G4cout<<"**********************************************************"<<G4endl;
-	  G4cout<<"**********************************************************"<<G4endl;
-	  G4cout<<"**********************************************************"<<G4endl;
-
-
-
-
-
+{
 
   verbose    = BDSExecOptions::Instance()->GetVerbose();
   outline    = BDSExecOptions::Instance()->GetOutline();
@@ -956,9 +930,17 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
     }
   G4cout << "DEBUG_DB: Does this even run?" << G4endl;
   // construct tunnel
+  G4int count_DB=0;
   for(it = beamline_list.begin();it!=beamline_list.end();it++)
     {
-      
+      G4cout << "DEBUG_DB: looping over beamline list" << G4endl;
+      G4cout << "DEBUG_DB: geometry name - " << (*it).name << G4endl;
+      G4cout << "DEBUG_DB: geometry type - " << (*it).type << G4endl;
+      G4cout << "DEBUG_DB: geometry length - " << (*it).l << G4endl;
+      G4cout << "DEBUG_DB: geometry angle - " << (*it).angle << G4endl;
+      G4cout << "DEBUG_DB: geometry file - " << (*it).geometryFile << G4endl;
+      count_DB++;
+
       if((*it).type==_TUNNEL ) {
 	G4cout<<"BUILDING TUNNEL : "<<(*it).l<<"  "<<(*it).name<<G4endl;
 	
@@ -999,6 +981,7 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
       }
       
     }
+  G4cout << "Number of beamline elements: " << count_DB << G4endl;
   
   // free the parser list
   beamline_list.clear();

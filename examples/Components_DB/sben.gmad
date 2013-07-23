@@ -1,78 +1,12 @@
-start: marker;
-d1a: drift, l=0.05;
-m1a: marker;
-d1b: drift, l=0.05;
-m1b: marker;
-d1c: drift, l=0.05;
-m1c: marker;
-d1d: drift, l=0.05;
-m1d: marker;
-d1e: drift, l=0.05;
-m1e: marker;
-d1f: drift, l=0.05;
-m1f: marker;
-d1g: drift, l=0.05;
-m1g: marker;
-d1h: drift, l=0.05;
-m1h: marker;
-d1i: drift, l=0.05;
-m1i: marker;
-d1j: drift, l=0.05;
-m1j: marker;
+d1a: drift, l=0.5;
 
+lhcbvelo: element, l=10.0, geometry="gdml:GDML/lhcbvelo.gdml";
 
-e1: sbend, l=1.0, angle=-0.1;
-
-
-m2a: marker;
-d2a: drift, l=0.05;
-m2b: marker;
-d2b: drift, l=0.05;
-m2c: marker;
-d2c: drift, l=0.05;
-m2d: marker;
-d2d: drift, l=0.05;
-m2e: marker;
-d2e: drift, l=0.05;
-m2f: marker;
-d2f: drift, l=0.05;
-m2g: marker;
-d2g: drift, l=0.05;
-m2h: marker;
-d2h: drift, l=0.05;
-m2i: marker;
-d2i: drift, l=0.05;
-m2j: marker;
-d2j: drift, l=0.05;
-
-e2: sbend, l=1.0, angle=0.1;
-
-
-m3a: marker;
-d3a: drift, l=0.05;
-m3b: marker;
-d3b: drift, l=0.05;
-m3c: marker;
-d3c: drift, l=0.05;
-m3d: marker;
-d3d: drift, l=0.05;
-m3e: marker;
-d3e: drift, l=0.05;
-m3f: marker;
-d3f: drift, l=0.05;
-m3g: marker;
-d3g: drift, l=0.05;
-m3h: marker;
-d3h: drift, l=0.05;
-m3i: marker;
-d3i: drift, l=0.05;
-m3j: marker;
-d3j: drift, l=0.05;
-finish: marker;
+d2a: drift, l=0.5;
 
 
 
-lat : line = (start,d1a,m1a,d1b,m1b,d1c,m1c,d1d,m1d,d1e,m1e,d1f,m1f,d1g,m1g,d1h,m1h,d1i,m1i,d1j,m1j,e1,m2a,d2a,m2b,d2b,m2c,d2c,m2d,d2d,m2e,d2e,m2f,d2f,m2g,d2g,m2h,d2h,m2i,d2i,m2j,d2j,e2,m3a,d3a,m3b,d3b,m3c,d3c,m3d,d3d,m3e,d3e,m3f,d3f,m3g,d3g,m3h,d3h,m3i,d3i,m3j,d3j,finish);
-com : line = (e1,e2);
+lat : line = (d1,lhcbvelo,d2);
+com : line = (lhcbvelo);
 
 
