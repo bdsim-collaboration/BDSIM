@@ -56,16 +56,26 @@ endif()
       list(REMOVE_ITEM Geant4_LIBRARY_NAMES libG4zlib.so)
    endif()
    foreach (library_temp ${Geant4_LIBRARY_NAMES})
+
       # special way to unset Geant4_LIBRARY_temp
       set(Geant4_LIBRARY_temp ${library_temp}-NOTFOUND)
+
       FIND_LIBRARY(Geant4_LIBRARY_temp NAMES ${library_temp} PATHS ${Geant4_LIBRARY_DIR} PATH_SUFFIXES geant4 Geant4)
+
       # prevent trailing space character
       if (DEFINED Geant4_LIBRARIES)
-          set(Geant4_LIBRARIES "${Geant4_LIBRARIES};${Geant4_LIBRARY_temp}")
+          if (NOT ${Geant4_LIBRARY_temp} STREQUAL Geant4_LIBRARY_temp-NOTFOUND)
+              set(Geant4_LIBRARIES "${Geant4_LIBRARIES};${Geant4_LIBRARY_temp}")
+          else()
+              message(STATUS "WARNING ${library_temp} NOT FOUND")
+          endif()
       else()
           set(Geant4_LIBRARIES "${Geant4_LIBRARY_temp}")
       endif()
+
       #message(STATUS "library_temp: ${library_temp} ${Geant4_LIBRARY_temp}")
+      #message(STATUS "Geant4_LIBRARIES: ${Geant4_LIBRARIES}")
+
    endforeach()
    unset(Geant4_LIBRARY_temp CACHE)
    #message(STATUS "Geant4_LIBRARY_NAMES: ${Geant4_LIBRARY_NAMES}")

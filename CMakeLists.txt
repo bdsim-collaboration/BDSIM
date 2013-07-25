@@ -46,10 +46,12 @@ if(UNIX)
     endif()
     if("$ENV{HOSTNAME}" MATCHES "lxplus" OR "$ENV{HOSTNAME}" MATCHES "lxfssl")
         set(LXPLUS TRUE)
+    else
+        set(LXPLUS FALSE)
     endif()
     if($ENV{VERBOSE})
          message(STATUS "UNIX System Version: ${CMAKE_SYSTEM}")
-         message(STATUS "ON LXPLUS: ${LXPLUS}")
+         message(STATUS "ON LXPLUS... - ${LXPLUS}")
     endif()
 endif()
 
