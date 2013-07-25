@@ -46,7 +46,7 @@ if(UNIX)
     endif()
     if("$ENV{HOSTNAME}" MATCHES "lxplus" OR "$ENV{HOSTNAME}" MATCHES "lxfssl")
         set(LXPLUS TRUE)
-    else
+    else()
         set(LXPLUS FALSE)
     endif()
     if($ENV{VERBOSE})
