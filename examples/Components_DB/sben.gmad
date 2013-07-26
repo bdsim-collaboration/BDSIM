@@ -1,8 +1,9 @@
-d1a: drift, l=0.5;
+d1: drift, l=0.5;
 
-lhcbvelo: element, l=10.0, geometry="gdml:GDML/lhcbvelo.gdml";
+!lhcbhcal: element, l=1.0, geometry="gdml:GDML/lhcbhcal.gdml";
+lhcbvelo: element, l=2.0, geometry="gdml:GDML/lhcbvelo.gdml";
 
-d2a: drift, l=0.5;
+d2: drift, l=0.5;
 
 
 

@@ -18,9 +18,9 @@
 # to the current scene (omittable)
 /vis/sceneHandler/attach
 
-/vis/viewer/set/background white
-/vis/viewer/set/viewpointThetaPhi 45 45 
-/vis/viewer/pan -0.2 -0.2 m
+# /vis/viewer/set/background white
+/vis/viewer/set/viewpointThetaPhi 75 75 
+/vis/viewer/pan -0.5 -0.5 m
 /vis/viewer/zoom 6
 
 # /vis/viewer/scaleTo 1 200 1

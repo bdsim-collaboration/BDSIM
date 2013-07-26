@@ -780,8 +780,8 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
 		  if((MultipleSensVols.at(i)->GetRegion() != precisionRegion) && (BDSBeamline::Instance()->currentItem()->GetType()==_ELEMENT)){//If not in the precision region....
 		    //		    if(MultipleSensVols[i]->GetMaterial()->GetState()!=kStateGas){ //If the region material state is not gas, associate with a parameterisation
 		    G4cout << "...adding " << MultipleSensVols[i]->GetName() << " to gFlashRegion" << G4endl;
-		    /**********************************************                                                                                                                       
-		     * Initialise shower model                                                                                                                                          
+		    /**********************************************                                                                                                             *          
+		     * Initialise shower model                                                                                                                                  *        
 		     ***********************************************/
 		    G4String rname = "gFlashRegion_" + MultipleSensVols[i]->GetName();
 		    gFlashRegion.push_back(new G4Region(rname.c_str()));
@@ -928,19 +928,9 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
 	
       }
     }
-  G4cout << "DEBUG_DB: Does this even run?" << G4endl;
-  // construct tunnel
-  G4int count_DB=0;
+   // construct tunnel
   for(it = beamline_list.begin();it!=beamline_list.end();it++)
     {
-      G4cout << "DEBUG_DB: looping over beamline list" << G4endl;
-      G4cout << "DEBUG_DB: geometry name - " << (*it).name << G4endl;
-      G4cout << "DEBUG_DB: geometry type - " << (*it).type << G4endl;
-      G4cout << "DEBUG_DB: geometry length - " << (*it).l << G4endl;
-      G4cout << "DEBUG_DB: geometry angle - " << (*it).angle << G4endl;
-      G4cout << "DEBUG_DB: geometry file - " << (*it).geometryFile << G4endl;
-      count_DB++;
-
       if((*it).type==_TUNNEL ) {
 	G4cout<<"BUILDING TUNNEL : "<<(*it).l<<"  "<<(*it).name<<G4endl;
 	
@@ -974,15 +964,11 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
 	  G4cout << "GDML geometry description: Loading..." << G4endl;
 	  gGDML = new BDSGeometryGDML(GFile);
 	  gGDML->Construct(logicWorld);
-	} else  G4cerr<< "Tunnel won't be build! Incorrect Geometry format:  " << gFormat <<endl;
-
-
-	// GDML geometry format instantitation.
+	} else  G4cerr<< "Tunnel won't be build! Incorrect Geometry format:  " << gFormat << G4endl;
       }
       
     }
-  G4cout << "Number of beamline elements: " << count_DB << G4endl;
-  
+
   // free the parser list
   beamline_list.clear();
 
