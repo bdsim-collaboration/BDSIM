@@ -25,6 +25,7 @@ BDSWorld::BDSWorld(){
 }
 
 BDSWorld::~BDSWorld(){
+  delete _size;
   /*
   delete _solidVolume;
 		  //		    gFlashRegion.back()->SetUserLimits(new G4UserLimits(var->GetLength()/10.0));
