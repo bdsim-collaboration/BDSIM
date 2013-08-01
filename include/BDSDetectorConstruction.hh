@@ -17,8 +17,6 @@ Last modified 15.11.2005 by Ilya Agapov
 #include "BDSMaterials.hh"
 #include "BDSBeamline.hh"
 
-#include "parser/gmad.h"
-
 #include "G4Region.hh"
 
 #include "G4IStore.hh"
@@ -98,7 +96,7 @@ private:
   G4Region* precisionRegion;
   G4Region* gasRegion;
 
-  BDSWorld* _world;
+  //  BDSWorld* _world;
 
   G4Box*             solidWorld;    //pointer to the solid World 
   G4LogicalVolume*   logicWorld;    //pointer to the logical World

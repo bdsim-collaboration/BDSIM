@@ -102,15 +102,14 @@ void BDSLWCalorimeter::BuildCal(G4double aLength)
   G4RotationMatrix* Rot=NULL;
   if(itsAngle!=0)Rot=RotY90;
  
-  G4VPhysicalVolume* PhysiLWCal;
-  PhysiLWCal = new G4PVPlacement(
-		      Rot,			     // rotation
-		      G4ThreeVector(BDSGlobalConstants::Instance()->GetLWCalOffset(),0.,0.),
-		      itsLWCalLogicalVolume,  // its logical volume
-		      itsName+"_cal",	     // its name
-		      itsMarkerLogicalVolume,     // its mother  volume
-		      false,		     // no boolean operation
-		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		             // copy number
+  itsPhysiLWCal = new G4PVPlacement(
+		    Rot,                     // rotation
+		    G4ThreeVector(BDSGlobalConstants::Instance()->GetLWCalOffset(),0.,0.),
+		    itsLWCalLogicalVolume,   // its logical volume
+		    itsName+"_cal",	     // its name
+		    itsMarkerLogicalVolume,  // its mother  volume
+		    false,		     // no boolean operation
+		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps()); // copy number
   
   // Sensitive Detector:
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
@@ -205,7 +204,4 @@ G4VisAttributes* BDSLWCalorimeter::SetVisAttributes()
 BDSLWCalorimeter::~BDSLWCalorimeter()
 {
   delete itsVisAttributes;
-  //  delete itsBPTube;
-  //  delete itsLWCal;
-  //  delete itsBeampipeLogicalVolume;
 }

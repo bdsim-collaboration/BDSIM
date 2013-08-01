@@ -6,17 +6,15 @@
 #include "globals.hh"
 
 #include "BDSWorld.hh"
-#include"BDSMaterials.hh"
+#include "BDSMaterials.hh"
 #include "BDSBeamline.hh"
-
-#include "parser/gmad.h"
 
 #include "G4Region.hh"
 
 #include "G4IStore.hh"
 #include "G4GeometrySampler.hh"
 
-//GFlash parameterisation                                                                                                                                                     
+//GFlash parameterisation
 #include "GFlashHomoShowerParameterisation.hh"
 #include "G4FastSimulationManager.hh"
 #include "BDSShowerModel.hh"

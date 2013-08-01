@@ -59,8 +59,8 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent*)
   SamplerCollection = new BDSSamplerHitsCollection(SensitiveDetectorName,itsCollectionName);
 
   // Record the collection ID for later
-  G4SDManager *SDman = G4SDManager::GetSDMpointer();
-  itsHCID = SDman->GetCollectionID(itsCollectionName);
+  //  G4SDManager *SDman = G4SDManager::GetSDMpointer();
+  //  itsHCID = SDman->GetCollectionID(itsCollectionName);
 
 }
 

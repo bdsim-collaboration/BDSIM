@@ -53,6 +53,8 @@ char* yyfilename;
 
 %s ERROR
 
+%option nounput
+
 %%
 
 [\t ]+     //ignore whitespaces

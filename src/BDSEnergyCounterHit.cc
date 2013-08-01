@@ -32,11 +32,6 @@ BDSEnergyCounterHit::  BDSEnergyCounterHit(G4int nCopy, G4double Energy, G4doubl
   */
 }
 
-
-BDSEnergyCounterHit::BDSEnergyCounterHit()
-{;}
-
-
 BDSEnergyCounterHit::~BDSEnergyCounterHit()
 {;}
 

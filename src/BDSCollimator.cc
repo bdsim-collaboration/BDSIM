@@ -74,7 +74,7 @@ BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
       G4VisAttributes* VisAtt1 =
         new G4VisAttributes(G4Colour(0., 0., 0.));
       VisAtt1->SetForceSolid(true);
-      itsInnerLogVol->SetVisAttributes(VisAtt1);
+      if (itsInnerLogVol) itsInnerLogVol->SetVisAttributes(VisAtt1);
 
       (*LogVolCount)[itsName]=1;
       (*LogVol)[itsName]=itsMarkerLogicalVolume;
@@ -191,20 +191,5 @@ void BDSCollimator::BuildInnerCollimator()
 BDSCollimator::~BDSCollimator()
 {
   delete itsVisAttributes;
-  //   delete itsUserLimits;
-  //   delete itsInnerTunnelUserLimits;
-  //   delete itsTunnelUserLimits;
-  //   delete itsSoilTunnelUserLimits;
-
-  //  delete itsSolidLogVol;
-  //  delete itsInnerLogVol;
-
-  //  delete itsPhysiComp;
-  //  delete itsPhysiComp2;
-
-  //   delete itsSoilTube;
-  //   delete itsTunnelTube;
-  //   delete itsInnerTunnelTube;
-  //   delete itsInnerTunnelLogicalVolume;
-  //   delete itsSoilTunnelLogicalVolume;
+  delete itsUserLimits;
 }

@@ -17,6 +17,7 @@ BDSWorld* BDSWorld::Instance(){
 */
 
 BDSWorld::BDSWorld(){
+  _size = new G4ThreeVector(0.,0.,0.);
   _material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetSoilMaterialName()),
   build();
   G4cout << "BDSWorld - placing" << G4endl;

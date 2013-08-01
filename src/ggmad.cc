@@ -7,9 +7,7 @@
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Cons.hh"
-#include "G4Torus.hh"
 #include "G4Trd.hh"
-#include "G4Trap.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -38,8 +36,7 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
   // G4double FieldX, FieldY, FieldZ;
   // FieldX = FieldY = FieldZ = 0.0;
 
-  G4Material *theMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
-
+  G4Material *theMaterial;
   G4Box *aBox;
   G4Tubs *aTubs;
   G4Cons *aCons;
@@ -47,7 +44,6 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
   G4Trd *aTrd;
 
   G4LogicalVolume *lvol;
-  G4VPhysicalVolume* PhysiComp;
 
   G4VisAttributes *visAttr = new G4VisAttributes(true, G4Colour(0.2,0.2,0.2));
   visAttr->SetForceSolid(true);
@@ -104,7 +100,7 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    rot->rotateY(2*pi*theta/360.);
 	    rot->rotateZ(2*pi*psi/360.);
 
-	    PhysiComp = 
+	    // G4VPhysicalVolume* PhysiComp =
 	    new G4PVPlacement(
 	      rot,		       // rotation
 	      G4ThreeVector(x0,y0,z0), // at (x0,y0,z0)
@@ -171,16 +167,15 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    rot->rotateY(2*pi*theta/360.);
 	    rot->rotateZ(2*pi*psi/360.);
 
-
-	    PhysiComp = 
-	      new G4PVPlacement(
-				rot,			     // rotation
-				G4ThreeVector(x0,y0,z0),     // at (0,0,0)
-				lvol,  // its logical volume
-				"vol_"+G4String(count),	     // its name
-				marker,     // its mother  volume
-				false,		     // no boolean operation
-				0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		   
+	    // G4VPhysicalVolume* PhysiComp =
+	    new G4PVPlacement(
+			      rot,			     // rotation
+			      G4ThreeVector(x0,y0,z0),     // at (0,0,0)
+			      lvol,  // its logical volume
+			      "vol_"+G4String(count),	     // its name
+			      marker,     // its mother  volume
+			      false,		     // no boolean operation
+			      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
 	    
 	    count++;
 	    
@@ -246,15 +241,15 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    rot->rotateY(2*pi*theta/360.);
 	    rot->rotateZ(2*pi*psi/360.);
 
-	    PhysiComp = 
-	      new G4PVPlacement(
-				rot,			     // rotation
-				G4ThreeVector(x0,y0,z0),     // at (0,0,0)
-				lvol,  // its logical volume
-				"vol_"+G4String(count),	     // its name
-				marker,     // its mother  volume
-				false,		     // no boolean operation
-				0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		   
+	    // G4VPhysicalVolume* PhysiComp =
+	    new G4PVPlacement(
+			      rot,			     // rotation
+			      G4ThreeVector(x0,y0,z0),     // at (0,0,0)
+			      lvol,  // its logical volume
+			      "vol_"+G4String(count),	     // its name
+			      marker,     // its mother  volume
+			      false,		     // no boolean operation
+			      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
 	    
 	    count++;
 	    
@@ -308,15 +303,15 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    rot->rotateZ(2*pi*psi/360.);
 	    
 	    
-	    PhysiComp = 
-	      new G4PVPlacement(
-				rot,			     // rotation
-				G4ThreeVector(x0,y0,z0),     // at (0,0,0)
-				lvol,  // its logical volume
-				"vol_"+G4String(count),	     // its name
-				marker,     // its mother  volume
-				false,		     // no boolean operation
-				0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		   
+	    // G4VPhysicalVolume* PhysiComp =
+	    new G4PVPlacement(
+			      rot,			     // rotation
+			      G4ThreeVector(x0,y0,z0),     // at (0,0,0)
+			      lvol,  // its logical volume
+			      "vol_"+G4String(count),	     // its name
+			      marker,     // its mother  volume
+			      false,		     // no boolean operation
+			      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
 	    
 	    count++;
 	    
@@ -337,7 +332,7 @@ G4String GGmadDriver::getWord()
 
   while (inputf.good())     // loop while extraction from file is possible
   {
-    c = inputf.get();       // get character from file
+    inputf.get(c);       // get character from file
 
     // return char tokens 
     if(c=='=') return G4String(c);
@@ -349,7 +344,7 @@ G4String GGmadDriver::getWord()
   while (inputf.good())     // loop while extraction from file is possible
   {
     str += c;
-    c = inputf.get();       // get character from file
+    inputf.get(c);       // get character from file
     if( (c == ' ' ) || (c == '\t' )|| (c == ',' )|| (c == '\n' )|| (c == '=' ) ) 
       {
 	inputf.putback(c);
@@ -390,61 +385,3 @@ void GGmadDriver::getParameter(G4String& lval, G4String name, G4String lastToken
 	}
     }
 }
-
-/*
-void GetMaterial(G4Material *&theMaterial, G4String material)
-{
-  if(material=="\"Al\"" || material=="Al") 
-    { 
-      theMaterial = BDSMaterials::Instance()->LCAluminium;
-      return;
-    }
-  
-  if(material=="\"W\"" || material=="W") 
-    { 
-      theMaterial = BDSMaterials::Instance()->LCTungsten;
-      return;
-    }
-  if(material=="\"Iron\""|| material=="Iron") 
-    { 
-      theMaterial = BDSMaterials::Instance()->LCIron;
-      return;
-    }
-  if(material=="\"Copper\"" || material=="Copper") 
-    { 
-      theMaterial = BDSMaterials::Instance()->LCCopper;
-      return;
-    }
-  
-  if(material=="\"Ti\"" || material=="Ti") 
-    { 
-      theMaterial = BDSMaterials::Instance()->LCTitanium;
-      return;
-    }
-  if(material=="\"Graphite\"" || material=="Graphite") 
-    { 
-      theMaterial = BDSMaterials::Instance()->LCGraphite;
-      return;
-    }
-
-  if(material=="\"Lead\"" || material=="Lead")
-    {
-      theMaterial = BDSMaterials::Instance()->LCLead;
-      return;
-    }
-
-  if(material=="\"Concrete\"" || material=="Concrete")
-    {
-      theMaterial = BDSMaterials::Instance()->LCConcrete;
-      return;
-    }
-  if(material=="\"Soil\"" || material=="Soil")
-    {
-      theMaterial = BDSMaterials::Instance()->LCSoil;
-      return;
-    }
-
-
-  theMaterial = BDSMaterials::Instance()->LCVacuum; // default is vacuum
-}
-*/

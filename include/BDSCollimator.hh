@@ -17,10 +17,6 @@
 #include "G4EllipticalTube.hh"
 #include "G4VSolid.hh"
 #include "G4SubtractionSolid.hh"
-//#include "BDSEnergyCounterSD.hh"
-
-#include "parser/gmad.h" // for type definitions
-
 
 class BDSCollimator :public BDSAcceleratorComponent
 {

@@ -6,7 +6,7 @@ find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
 # suppress warnings
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare")
 
 if($ENV{VERBOSE})
 	message(STATUS "PARSER CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")

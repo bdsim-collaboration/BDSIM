@@ -27,6 +27,13 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 endif()
 message(STATUS "Build Type   ${CMAKE_BUILD_TYPE}")
 
+set(CMAKE_C_ORIG_FLAGS "${CMAKE_C_FLAGS}")
+set(CMAKE_CXX_ORIG_FLAGS "${CMAKE_CXX_FLAGS}")
+if($ENV{VERBOSE})
+	message(STATUS "CMAKE_C_ORIG_FLAGS ${CMAKE_C_ORIG_FLAGS}")
+	message(STATUS "CMAKE_CXX_ORIG_FLAGS ${CMAKE_CXX_ORIG_FLAGS}")
+endif()
+
 # Check for Scientific Linux
 if(UNIX)
     if("${CMAKE_SYSTEM}" MATCHES "el5")
@@ -37,12 +44,14 @@ if(UNIX)
     if(RHL5 OR RHL6)
         set(RHL TRUE)
     endif()
-    if("$ENV{HOSTNAME}" MATCHES "lxplus")
+    if("$ENV{HOSTNAME}" MATCHES "lxplus" OR "$ENV{HOSTNAME}" MATCHES "lxfssl")
         set(LXPLUS TRUE)
+    else()
+        set(LXPLUS FALSE)
     endif()
     if($ENV{VERBOSE})
          message(STATUS "UNIX System Version: ${CMAKE_SYSTEM}")
-         message(STATUS "ON LXPLUS: ${LXPLUS}")
+         message(STATUS "ON LXPLUS... - ${LXPLUS}")
     endif()
 endif()
 
@@ -82,7 +91,7 @@ elseif(USE_AFS)
    if (APPLE)
    	set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.07/x86_64-mac106-gcc42-opt/root")
     elseif (RHL5)
-        set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.09/x86_64-slc5-gcc43-opt/root")
+        set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.07/x86_64-slc5-gcc43-opt/root")
     elseif (RHL6)
         set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.09/x86_64-slc6-gcc46-opt/root")
     endif()
@@ -254,12 +263,12 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # set compiler flags
-set(WFLAGS "-Wall -Wextra")
+set(WFLAGS "-Wall -Wextra -pedantic -Wno-long-long -Wpointer-arith -Woverloaded-virtual")
 set(CMAKE_FLAGS "${CMAKE_FLAGS} ${CLHEP_DEFINITIONS}  ${WFLAGS}")
 set(BDSIM_FLAGS "${CMAKE_FLAGS} ${VIS_FLAGS} -DCLHEP_VERSION=${CLHEP_VERSION} -DG4VERSION=${G4_MAJOR_VERSION} -DG4MINORVERSION=${G4_MINOR_VERSION} ${BDSIM_FLAGS}")
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${BDSIM_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BDSIM_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_ORIG_FLAGS} ${BDSIM_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_ORIG_FLAGS} ${BDSIM_FLAGS}")
 
 if($ENV{VERBOSE})
 	message(STATUS "BDSIM_FLAGS ${BDSIM_FLAGS}")
@@ -271,10 +280,12 @@ endif()
 # macro BDSIM_COLLATE_APPLICATION_SOURCES(source_dest_var)
 #
 macro(BDSIM_COLLATE_APPLICATION_SOURCES source_dest_var)
-  file(GLOB_RECURSE 
+  file(GLOB 
     ${source_dest_var} 
-    ${CMAKE_CURRENT_SOURCE_DIR}/*.hh 
-    ${CMAKE_CURRENT_SOURCE_DIR}/*.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/bdsim.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/BDS*.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ggmad.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/myQuadStepper.cc
     )
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 endmacro()

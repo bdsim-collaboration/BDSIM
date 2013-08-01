@@ -1,7 +1,10 @@
 #ifndef __BDSBEAMLINE_H
 #define __BDSBEAMLINE_H
 
-#include "parser/gmad.h"
+#include <list>
+
+#include "globals.hh"
+
 #include "BDSAcceleratorComponent.hh"
 
 class BDSBeamline{
@@ -63,7 +66,7 @@ private:
   std::list <G4ThreeVector*> _positionStartList;
   std::list <G4ThreeVector*> _positionEndList;
   std::list <G4ThreeVector*> _positionFromCurrentCenterList;
-  std::list <G4double> _positionSList; //Position along the curvilinear coordiante "s"
+  std::list <G4double> _positionSList; //Position along the curvilinear coordinate "s"
 
   std::list<G4RotationMatrix*>::const_iterator  _iterRotation;
   std::list<G4RotationMatrix*>::const_iterator  _iterRotationGlobal;
