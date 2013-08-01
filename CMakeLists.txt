@@ -117,8 +117,8 @@ if(USE_AFS)
       set(XercesC_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.0/x86_64-slc5-gcc43-opt/include)
       set(XercesC_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.0/x86_64-slc5-gcc43-opt/lib)
    elseif(RHL6)
-      set(XercesC_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.0/x86_64-slc6-gcc46-opt/include)
-      set(XercesC_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.0/x86_64-slc6-gcc46-opt/lib)
+      set(XercesC_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc6-gcc46-opt/include)
+      set(XercesC_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc6-gcc46-opt/lib)
    endif()
 endif()
 
@@ -302,6 +302,7 @@ add_executable(bdsimexec bdsim.cc)
 set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
 target_link_libraries(bdsimexec bdsim gmad)
 target_link_libraries(bdsim ${CLHEP_LIBRARIES})
+target_link_libraries(bdsim ${XercesC_LIBRARIES})
 target_link_libraries(bdsim ${Geant4_LIBRARIES})
 
 # Hack for QT libraries on SLC5-LXPLUS
@@ -310,9 +311,6 @@ if(USE_AFS AND RHL5 AND LXPLUS)
    file(GLOB QT_LIBRARIES ${QT_LIBRARY_DIR}/*.so)
    target_link_libraries(bdsim ${QT_LIBRARIES})
 endif()
-
-# xercesc library:
-target_link_libraries(bdsim ${XercesC_LIBRARIES})
 
 if(USE_ROOT)
     target_link_libraries(bdsim ${ROOT_LIBRARIES_GLOB})
