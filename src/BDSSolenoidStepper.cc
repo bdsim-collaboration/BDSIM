@@ -19,9 +19,7 @@
 #include "G4ThreeVector.hh"
 #include "G4TransportationManager.hh"
 
-using std::max;
 extern G4double BDSLocalRadiusOfCurvature;
-extern G4int event_number;
 
 BDSSolenoidStepper::BDSSolenoidStepper(G4Mag_EqRhs *EqRhs)
   : G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
@@ -242,7 +240,6 @@ void BDSSolenoidStepper::Stepper( const G4double yInput[],
 
   for(G4int i=0;i<nvar;i++) yErr[i]=0;
   AdvanceHelix(yInput,(G4ThreeVector)0,hstep,yOut);
-  return ;
 }
 
 G4double BDSSolenoidStepper::DistChord()   const 

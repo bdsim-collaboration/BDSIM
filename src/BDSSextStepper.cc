@@ -21,8 +21,6 @@
 
 extern G4double BDSLocalRadiusOfCurvature;
 
-extern G4int event_number;
-
 BDSSextStepper::BDSSextStepper(G4Mag_EqRhs *EqRhs)
   : G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
                                       // position & velocity
@@ -188,8 +186,6 @@ void BDSSextStepper::Stepper( const G4double yInput[],
   AdvanceHelix(yIn, (G4ThreeVector)0, h, yTemp); 
   
   for(i=0;i<nvar;i++) yErr[i] = yOut[i] - yTemp[i] ;
-  
-  return ;
 }
 
 G4double BDSSextStepper::DistChord()   const 

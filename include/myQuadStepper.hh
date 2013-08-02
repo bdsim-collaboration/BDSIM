@@ -19,13 +19,13 @@ public:  // with description
   
   ~myQuadStepper();
   
-  void Stepper( const G4double y[],
-		const G4double dydx[],
-		const G4double h,
-		G4double yout[],
-		G4double yerr[]  );
+  virtual void Stepper( const G4double y[],
+			const G4double dydx[],
+			const G4double h,
+			G4double yout[],
+			G4double yerr[]  );
   
-  G4double DistChord()   const;
+  virtual G4double DistChord()   const;
   // Estimate maximum distance of curved solution and chord ... 
   
   void SetBGrad(G4double aBfield);
@@ -38,7 +38,7 @@ public:  // with description
   
 public: // without description
   
-  G4int IntegratorOrder()const { return 2; }
+  virtual G4int IntegratorOrder()const { return 2; }
   G4double itsLength;
   G4double itsAngle;
 protected:

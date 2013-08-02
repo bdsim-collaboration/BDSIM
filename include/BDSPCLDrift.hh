@@ -52,10 +52,10 @@ private:
   G4VisAttributes* itsBeampipeVisAtt;
   G4VisAttributes* itsInnerBeampipeVisAtt;
 
-  G4UserLimits* itsBeampipeUserLimits;
-  G4UserLimits* itsInnerBeampipeUserLimits;
+  //  G4UserLimits* itsBeampipeUserLimits;
+  //  G4UserLimits* itsInnerBeampipeUserLimits;
 
-  //field related objects
+  /// field related objects
   void BuildBpFieldAndStepper();
   BDSDriftStepper* itsStepper;
   BDSMagField* itsMagField;

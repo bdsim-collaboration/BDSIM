@@ -80,7 +80,6 @@ void BDSDriftStepper::Stepper( const G4double yInput[],
    //     G4cout<<"yOut="<<yOut[0]<<" "<< yOut[1]<<" "<<yOut[2]<<G4endl;
 
    //   G4cout<<"hstep="<<hstep<<G4endl;
-   return ;
 }
 
 G4double BDSDriftStepper::DistChord()   const 

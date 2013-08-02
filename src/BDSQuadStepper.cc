@@ -20,7 +20,6 @@
 
 using std::max;
 extern G4double BDSLocalRadiusOfCurvature;
-extern G4int event_number;
 
 BDSQuadStepper::BDSQuadStepper(G4Mag_EqRhs *EqRhs)
   : G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
@@ -344,7 +343,6 @@ void BDSQuadStepper::Stepper( const G4double yInput[],
       
       for(i=0;i<nvar;i++) yErr[i] = yOut[i] - yTemp[i] ;
     }
-  return;
 }
 
 G4double BDSQuadStepper::DistChord()   const 
