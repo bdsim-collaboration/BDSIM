@@ -76,7 +76,7 @@ components, a collection of physics processes for fast tracking, procedures of
 @code{BDSIM} can be downloaded from @*
 @uref{https://twiki.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BdSim}.
 This site also contains information on documentation, projects and installation.
-Alternatively, a development version is from the SVN repository, instructions are at
+Alternatively, a development version is from the Git repository, instructions are at
 @uref{https://twiki.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BDsimInstall}.
 
 Download the tarball and extract the source code. Make sure Geant4 is installed
