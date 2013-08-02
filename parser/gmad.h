@@ -189,7 +189,7 @@ struct Options {
   double   prodCutPositronsP;
 
   // Tracking related parameters 
-  double    maximumTrackingTime;
+  double   maximumTrackingTime; // maximum tracking time per volume [s]
   double   deltaChord;
   double   chordStepMinimum;
   double   deltaIntersection;
