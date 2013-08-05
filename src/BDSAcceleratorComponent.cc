@@ -101,7 +101,10 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
   itsPhi = 0;
   itsTheta = 0;
   itsPsi = 0;
+  itsK1 = 0.0; itsK2 = 0.0; itsK3 = 0.0;
   itsTilt = 0;
+  itsPhiAngleIn = 0.0;
+  itsPhiAngleOut = 0.0;
   itsOuterR=0;
   itsMagScaleFactor = 1;
   itsBlmLocationR=0;
@@ -152,6 +155,8 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
   VisAtt5=NULL;
   itsBLMSolid=NULL;
   itsBlmOuterSolid=NULL;
+  itsSPos = 0.0;
+  itsCopyNumber = 0;
   itsBDSEnergyCounter=NULL;
   itsSensitiveVolume=NULL;  
 }

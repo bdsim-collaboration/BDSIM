@@ -140,10 +140,6 @@ public:
   
   void SetCopyNumber(G4int nCopy);
   
-  void SetBDSEnergyCounterID(G4int anID);
-  
-  G4int GetBDSEnergyCounterID();
-  
   void SetSensitiveVolume(G4LogicalVolume* aLogVol);
   
   G4LogicalVolume* GetSensitiveVolume();
@@ -167,12 +163,12 @@ public:
   G4UserLimits* GetInnerBPUserLimits();
   G4UserLimits* GetUserLimits();
 
-  G4double GetZLower();
-  G4double GetZUpper();
-  void SetZLower(G4double aZLower);
-  void SetZUpper(G4double aZUpper);
-  void AddSynchEnergyLoss(G4double SynchEnergyLoss);
-  G4double GetSynchEnergyLoss();
+  // G4double GetZLower();
+  // G4double GetZUpper();
+  // void SetZLower(G4double aZLower);
+  // void SetZUpper(G4double aZUpper);
+  // void AddSynchEnergyLoss(G4double SynchEnergyLoss);
+  // G4double GetSynchEnergyLoss();
   
   BDSAcceleratorComponent();
   void BuildOuterFieldManager();
@@ -254,7 +250,7 @@ protected:
 
   //Values related to BLM placement and geometry
   G4double itsBlmLocationR;
-  G4double itsBlmRadius;
+  //  G4double itsBlmRadius;
 
   G4String itsName;
   G4double itsLength;
@@ -358,15 +354,15 @@ private:
   G4double itsSPos;
   G4int itsCopyNumber;
   BDSEnergyCounterSD* itsBDSEnergyCounter;
-  G4int itsCollectionID;
+  //  G4int itsCollectionID;
   G4LogicalVolume* itsSensitiveVolume;
   std::vector<G4LogicalVolume*> itsMultipleSensitiveVolumes;
   std::vector<G4LogicalVolume*> itsGFlashVolumes;
   //A vector containing the physical volumes in the accelerator component- to be used for geometric importance sampling etc.
   std::vector<G4VPhysicalVolume*> itsMultiplePhysicalVolumes;
-  G4double itsZLower;
-  G4double itsZUpper;
-  G4double itsSynchEnergyLoss;
+  //  G4double itsZLower;
+  //  G4double itsZUpper;
+  //  G4double itsSynchEnergyLoss;
 
 };
 
@@ -505,12 +501,6 @@ inline void
 BDSAcceleratorComponent::SetBDSEnergyCounter(BDSEnergyCounterSD* anBDSEnergyCounter)
 {itsBDSEnergyCounter=anBDSEnergyCounter;}
 
-inline void BDSAcceleratorComponent::SetBDSEnergyCounterID(G4int anID)
-{itsCollectionID=anID;}
-
-inline G4int BDSAcceleratorComponent::GetBDSEnergyCounterID()
-{return itsCollectionID;}
-
 inline  
 void BDSAcceleratorComponent::SetSensitiveVolume(G4LogicalVolume* aLogVol)
 {itsSensitiveVolume=aLogVol;}
@@ -536,24 +526,24 @@ inline void BDSAcceleratorComponent::SetMultiplePhysicalVolumes(G4VPhysicalVolum
 inline  std::vector<G4VPhysicalVolume*> BDSAcceleratorComponent::GetMultiplePhysicalVolumes()
 {return itsMultiplePhysicalVolumes;}
 
-inline  G4double BDSAcceleratorComponent::GetZLower()
-{return itsZLower;}
+// inline  G4double BDSAcceleratorComponent::GetZLower()
+// {return itsZLower;}
 
-inline  G4double BDSAcceleratorComponent::GetZUpper()
-{return itsZUpper;}
+// inline  G4double BDSAcceleratorComponent::GetZUpper()
+// {return itsZUpper;}
 
-inline  void BDSAcceleratorComponent::SetZLower(G4double aZLower)
-{itsZLower=aZLower;}
+// inline  void BDSAcceleratorComponent::SetZLower(G4double aZLower)
+// {itsZLower=aZLower;}
 
-inline  void BDSAcceleratorComponent::SetZUpper(G4double aZUpper)
-{itsZUpper=aZUpper;}
+// inline  void BDSAcceleratorComponent::SetZUpper(G4double aZUpper)
+// {itsZUpper=aZUpper;}
 
-inline void 
-BDSAcceleratorComponent::AddSynchEnergyLoss(G4double SynchEnergyLoss)
-{itsSynchEnergyLoss+=SynchEnergyLoss;}
+// inline void 
+// BDSAcceleratorComponent::AddSynchEnergyLoss(G4double SynchEnergyLoss)
+// {itsSynchEnergyLoss+=SynchEnergyLoss;}
 
-inline  G4double BDSAcceleratorComponent::GetSynchEnergyLoss()
-{return itsSynchEnergyLoss;}
+// inline  G4double BDSAcceleratorComponent::GetSynchEnergyLoss()
+// {return itsSynchEnergyLoss;}
 
 inline  G4UserLimits* BDSAcceleratorComponent::GetUserLimits(){
   return itsUserLimits;
