@@ -211,8 +211,13 @@ if (NOT Geant4_FOUND)
           set(Geant4_VERSION 9.6.2)
        endif()
    endif()
-   # Module mode, now has to find it
-   find_package(Geant4 REQUIRED COMPONENTS ui_all vis_all PATHS ${Geant4_DIR})
+   # Module mode, now should find it for 9.5 and newer
+   find_package(Geant4 COMPONENTS ui_all vis_all PATHS ${Geant4_DIR})
+   # For versions of Geant4 (9.4 and older), last option:
+   if (NOT Geant4_FOUND)
+       # ui_all and vis_all options not implemented in own FindGeant4.cmake
+       find_package(Geant4 REQUIRED ui_all vis_all)
+   endif()
    # Local UseGeant4.cmake
    set(Geant4_USE_FILE UseGeant4.cmake)
    include(${Geant4_USE_FILE})
