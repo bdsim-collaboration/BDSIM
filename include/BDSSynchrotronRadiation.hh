@@ -57,8 +57,8 @@ protected:
 
 private:
 
+  // assignment and copy constructor not implemented nor used
   BDSSynchrotronRadiation & operator=(const BDSSynchrotronRadiation &right);
-     
   BDSSynchrotronRadiation(const BDSSynchrotronRadiation&);
 
   G4double nExpConst;
