@@ -6,11 +6,6 @@
 
 #include "BDSEnergyCounterHit.hh"
 #include "G4ios.hh"
-#include "G4VVisManager.hh"
-#include "G4Colour.hh"
-#include "G4VisAttributes.hh"
-#include "G4LogicalVolume.hh"
-#include <iostream>
 
 G4Allocator<BDSEnergyCounterHit> BDSEnergyCounterHitAllocator;
 
@@ -34,38 +29,3 @@ BDSEnergyCounterHit::  BDSEnergyCounterHit(G4int nCopy, G4double Energy, G4doubl
 
 BDSEnergyCounterHit::~BDSEnergyCounterHit()
 {;}
-
-BDSEnergyCounterHit::BDSEnergyCounterHit(const BDSEnergyCounterHit &right):G4VHit()
-{
-  itsEnergy = right.itsEnergy;
-  itsEnergyWeightedX = right.itsEnergyWeightedX;
-  itsEnergyWeightedY = right.itsEnergyWeightedY;
-  itsEnergyWeightedZ = right.itsEnergyWeightedZ;
-  itsX = right.itsX;
-  itsY = right.itsY;
-  itsZ = right.itsZ;
-  itsWeight = right.itsWeight;
-  itsCopyNumber = right.itsCopyNumber;
-  itsPartID = right.itsPartID;
-  itsName = right.itsName;
-  itsPrecisionRegion = right.itsPrecisionRegion;
-}
-
-const BDSEnergyCounterHit& BDSEnergyCounterHit::operator=(const BDSEnergyCounterHit &right)
-{
-  itsEnergy = right.itsEnergy;
-  itsEnergyWeightedX = right.itsEnergyWeightedX;
-  itsEnergyWeightedY = right.itsEnergyWeightedY;
-  itsEnergyWeightedZ = right.itsEnergyWeightedZ;
-  itsX = right.itsX;
-  itsY = right.itsY;
-  itsZ = right.itsZ;
-  itsWeight = right.itsWeight;
-  itsCopyNumber = right.itsCopyNumber;
-  itsPartID = right.itsPartID;
-  itsName = right.itsName;
-  itsPrecisionRegion = right.itsPrecisionRegion;
-  return *this;
-}
-
-
