@@ -440,16 +440,16 @@ int main(int argc,char** argv) {
       visManager = new BDSVisManager;
       visManager->Initialize();
 #endif
-  
+ 
 #ifdef G4UI_USE
-      delete session;
-      G4UIExecutive* session = new G4UIExecutive(argc, argv);
+      G4UIExecutive* session2 = new G4UIExecutive(argc, argv);
 #ifdef G4VIS_USE
       // get the pointer to the User Interface manager 
       G4UImanager* UIManager = G4UImanager::GetUIpointer();  
       UIManager->ApplyCommand("/control/execute " + BDSExecOptions::Instance()->GetVisMacroFilename());    
 #endif
-      session->SessionStart();
+      session2->SessionStart();
+      delete session2;
 #endif
       delete session;
 
