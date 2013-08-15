@@ -9,6 +9,7 @@
 #include <cmath>
 #include <string>
 #include <cstring>
+#include <cfloat>
 
 using namespace std;
 
@@ -78,7 +79,7 @@ void init()
 
   // Default Values for Options (the rest are set to 0)
 
-  options.maximumTrackingTime = 1e-4;
+  options.maximumTrackingTime = DBL_MAX;
   options.vacuumPressure = 1e-12;
   options.planckScatterFe = 1.0;
   options.doPlanckScattering=0;
