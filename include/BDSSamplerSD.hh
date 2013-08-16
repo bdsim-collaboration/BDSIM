@@ -12,7 +12,6 @@
 
 #include "G4VSensitiveDetector.hh"
 #include "BDSSamplerHit.hh"
-#include "G4Navigator.hh"
 #include "G4TransportationManager.hh"
 
 class G4Step;
@@ -37,7 +36,6 @@ public:
   
 private:
   BDSSamplerHitsCollection *SamplerCollection;
-  G4Navigator              *StepperNavigator;
   G4bool                    StoreHit;
   // G4int nStepsInSampler;
   // G4int maxNStepsInSampler;
