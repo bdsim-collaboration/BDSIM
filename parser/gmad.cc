@@ -9,6 +9,7 @@
 #include <cmath>
 #include <string>
 #include <cstring>
+#include <cfloat>
 
 using namespace std;
 

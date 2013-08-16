@@ -498,7 +498,7 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
 #endif
     itsEqRhs = new G4Mag_UsualEqRhs(itsMagField);
     if( (itsMagField->GetHasUniformField())&!(itsMagField->GetHasNPoleFields() || itsMagField->GetHasFieldMap())){
-      //    itsFStepper = new G4ExactHelixStepper(itsEqRhs); 
+      //itsFStepper = new G4ExactHelixStepper(itsEqRhs); 
       itsFStepper = new G4HelixMixedStepper(itsEqRhs,6); 
     } else {
       //        itsFStepper = new G4HelixMixedStepper(itsEqRhs,6); 
