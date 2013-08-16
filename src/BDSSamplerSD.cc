@@ -8,7 +8,7 @@
 */
 
 #include "BDSGlobalConstants.hh" 
-
+#include "BDSExecOptions.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSamplerHit.hh"
 #include "G4VPhysicalVolume.hh"
@@ -143,9 +143,9 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
       G4String pName=theTrack->GetDefinition()->GetParticleName();
       
 #ifdef DEBUG
-      G4cout << "BDSSamplerSD> Particle name: " << pName << G4endl;  
-      G4cout << "BDSSamplerSD> PDG encoding: " << PDGtype << G4endl;  
-      G4cout << "BDSSamplerSD> TrackID: " << TrackID << G4endl;  
+      G4cout << __METHOD_NAME__ << "BDSSamplerSD> Particle name: " << pName << G4endl;  
+      G4cout << __METHOD_NAME__ << "BDSSamplerSD> PDG encoding: " << PDGtype << G4endl;  
+      G4cout << __METHOD_NAME__ << "BDSSamplerSD> TrackID: " << TrackID << G4endl;  
 #endif
 
       G4ThreeVector vtx=theTrack->GetVertexPosition();
@@ -216,22 +216,23 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
       smpHit->SetType(itsType);
 
 #ifdef DEBUG
-      G4cout << "BDSSamplerSD> Sampler : " << SampName << G4endl;
-      G4cout << "BDSSamplerSD> Storing hit: E, x, y, z, xPrime, yPrime" << G4endl;
-      G4cout << "BDSSamplerSD> " << energy <<" "  << x << " " << y << " " << z << " " << xPrime << " " << yPrime << G4endl;
-      G4cout << "BDSSamplerSD> Storing hit: E, x, y, z, xPrime, yPrime" << G4endl;
-      G4cout << "BDSSamplerSD> " << energy <<" "  << pos.x() << " " << pos.y() << " " << pos.z() << " " << xPrime << " " << yPrime << G4endl;
-      G4cout << "BDSSamplerSD> entries in hits collection before inserting hit: " << SamplerCollection->entries() << G4endl;
+      G4cout << __METHOD_NAME__ << " Sampler : " << SampName << G4endl;
+      G4cout << __METHOD_NAME__ << " Storing hit: E, x, y, z, xPrime, yPrime" << G4endl;
+      G4cout << __METHOD_NAME__ << " " << energy <<" "  << x << " " << y << " " << z << " " << xPrime << " " << yPrime << G4endl;
+      G4cout << __METHOD_NAME__ << " Storing hit: E, x, y, z, xPrime, yPrime" << G4endl;
+      G4cout << __METHOD_NAME__ << " " << energy <<" "  << pos.x() << " " << pos.y() << " " << pos.z() << " " << xPrime << " " << yPrime << G4endl;
+      G4cout << __METHOD_NAME__ << " entries in hits collection before inserting hit: " << SamplerCollection->entries() << G4endl;
 #endif
       SamplerCollection->insert(smpHit);
 #ifdef DEBUG
-      G4cout << "BDSSamplerSD> entries in hits collection after inserting hit: " << SamplerCollection->entries() << G4endl;
+      G4cout << __METHOD_NAME__ << " entries in hits collection after inserting hit: " << SamplerCollection->entries() << G4endl;
 #endif
       //      nStepsInSampler=0;
       return true;
 
     }
   }
+  StoreHit=true;
   return false;
 }
 

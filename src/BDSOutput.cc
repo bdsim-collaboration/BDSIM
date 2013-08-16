@@ -9,6 +9,9 @@ BDSOutput::BDSOutput():outputFileNumber(1)
 {
   format = _ASCII; // default - write an ascii file
 #ifdef USE_ROOT
+#ifdef DEBUG
+  G4cout << __METHOD_NAME__ << " - USE_ROOT is defined." << G4endl;
+#endif
   theRootOutputFile = NULL;
   EnergyLossHisto = NULL;
   PrecisionRegionEnergyLossTree = NULL;
@@ -19,6 +22,9 @@ BDSOutput::BDSOutput():outputFileNumber(1)
 BDSOutput::BDSOutput(BDSOutputFormat fmt):format(fmt),outputFileNumber(1)
 {
 #ifdef USE_ROOT
+#ifdef DEBUG
+  G4cout << __METHOD_NAME__ << " - USE_ROOT is defined." << G4endl;
+#endif
   theRootOutputFile = NULL;
   EnergyLossHisto = NULL;
   PrecisionRegionEnergyLossTree = NULL;
@@ -237,14 +243,15 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
       // set precision back
       G4cout.precision(G4precision);
   }
- 
+  
   if( format == _ROOT) {
 #ifdef USE_ROOT
     G4String name;
-
-
+    
+    G4cout << __METHOD_NAME__ << " hc->endtries() = " << hc->entries() << G4endl;
     for (G4int i=0; i<hc->entries(); i++)
       {
+	G4cout << __METHOD_NAME__ << " filling tree with entry number " << i << G4endl;
 	//if ((*hc)[i]->GetType()=="plane") 
 	//name="samp";
 	//else if ((*hc)[i]->GetType()=="cylinder")
@@ -288,13 +295,17 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
 	nev=(*hc)[i]->GetEventNo(); 
 	pID=(*hc)[i]->GetParentID(); 
 	track_id=(*hc)[i]->GetTrackID();
-	
+
 #ifdef DEBUG
-	if(track_id==1){
-	  G4cout << "BDSOutput::WriteHits> primary particles:" << (*hc)[i]->GetName() << " " << nev << G4endl; 
-	}
+	G4cout << __METHOD_NAME__ << "z=" << (*hc)[i]->GetZ() / m << "\n" <<
+	  "track_id=" << (*hc)[i]->GetTrackID() << G4endl;
+	G4cout << __METHOD_NAME__ << " - filling tree: " << sTree->GetName();
+	G4cout << " # entries before fill = " << sTree->GetEntries() << G4endl;
 #endif
 	sTree->Fill();
+#ifdef DEBUG
+	G4cout << " # entries after fill = " << sTree->GetEntries() << G4endl;
+#endif
       }
 #endif
   }
@@ -479,12 +490,12 @@ void BDSOutput::Write()
 	G4cout << __METHOD_NAME__ << " writing to root file..." << G4endl;
 	//Dump all other quantities to file...
 	theRootOutputFile->Write();
-	//	G4cout << __METHOD_NAME__ << " closing root file..." << G4endl;
-	//	theRootOutputFile->Close();
-	//	G4cout << __METHOD_NAME__ << " deteting root file..." << G4endl;
-	//	delete theRootOutputFile;
-	//	G4cout << __METHOD_NAME__ << " setting root file to NULL..." << G4endl;
-	//	theRootOutputFile=NULL;
+	G4cout << __METHOD_NAME__ << " closing root file..." << G4endl;
+	theRootOutputFile->Close();
+	G4cout << __METHOD_NAME__ << " deteting root file..." << G4endl;
+	delete theRootOutputFile;
+	G4cout << __METHOD_NAME__ << " setting root file to NULL..." << G4endl;
+	theRootOutputFile=NULL;
       }
   }
 #endif
