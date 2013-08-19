@@ -74,7 +74,6 @@ G4bool FireLaserCompton;
 
 extern BDSOutput* bdsOutput;
 
-#define DEBUG 1
 
 //======================================================
 
@@ -205,11 +204,19 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   
   if(SamplerCollID_plane>=0)
     SampHC = (BDSSamplerHitsCollection*)(HCE->GetHC(SamplerCollID_plane));
-
-  if(SampHC)bdsOutput->WriteHits(SampHC);
-
+  
+  if(SampHC){
+#ifdef DEBUG
+    G4cout << __METHOD_NAME__ << " - planar hits collection found. Writing hits." << G4endl;
+#endif
+    bdsOutput->WriteHits(SampHC);
+  } else {
+#ifdef DEBUG
+    G4cout << __METHOD_NAME__ << " - no planar hits collection found. Not writing hits." << G4endl;
+#endif
+  }
   SampHC=NULL;
-
+  
   // are there any cylindrical samplers?
   // if so, record the hits
 
