@@ -121,6 +121,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsMinimumEpsilonStep = opt.minimumEpsilonStep;
   itsMaximumEpsilonStep = opt.maximumEpsilonStep;
   itsMaxTime = opt.maximumTrackingTime * s;
+  
   itsDeltaOneStep = opt.deltaOneStep * m;
   doTwiss = opt.doTwiss;
   itsDoPlanckScattering = opt.doPlanckScattering;

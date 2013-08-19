@@ -14,7 +14,6 @@
 //     28 Mar 2006 by Agapov v.0.2
 //     
 //
-#define G4UI_USE 1
 
 #include "BDSDebug.hh" 
 #include "BDSExecOptions.hh"     // executable command line options 
