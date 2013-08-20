@@ -20,7 +20,7 @@ extern FILE *yyin;
 extern char* yyfilename;
 
 extern int add_func(const char *name, double (*func)(double));
-extern int add_var(const char *name, double val,int is_rserved = 0);
+extern int add_var(const char *name, double val,int is_reserved = 0);
 
 // aux. parser lists - to clear
 extern list<struct Element> element_list;
@@ -30,6 +30,14 @@ void init()
 {
 
   symtab = new struct symtab[NSYMS];
+  // member initialisation as members are used to check if symtab is already assigned and its type.
+  for(struct symtab* sp=symtab;sp<&symtab[NSYMS];sp++) {
+    sp->is_reserved=0;
+    sp->type=0;
+    sp->name=NULL;
+    sp->funcptr=NULL;
+    sp->value=0.0;
+  }
 
   // embedded arithmetical functions
   add_func("sqrt",sqrt);
