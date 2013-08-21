@@ -19,11 +19,8 @@ public:
 
   ~BDSEnergyCounterHit();
 
-   BDSEnergyCounterHit(const BDSEnergyCounterHit& right);
-   const BDSEnergyCounterHit& operator=(const BDSEnergyCounterHit& right);
-
-   inline void* operator new(size_t) ;
-   inline void operator delete(void *aHit);
+  inline void* operator new(size_t) ;
+  inline void operator delete(void *aHit);
 
   inline G4double GetEnergy();
   inline G4int GetCopyNumber();

@@ -3,15 +3,15 @@
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 
+#include <limits>
+
 #include "BDSGlobalConstants.hh" 
 #include "myQuadStepper.hh"
 #include "G4ThreeVector.hh"
 #include "G4LineSection.hh"
 #include "G4TransportationManager.hh"
 
-using std::max;
 extern G4double BDSLocalRadiusOfCurvature;
-extern G4int event_number;
 
 myQuadStepper::myQuadStepper(G4Mag_EqRhs *EqRhs)
   : G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
@@ -87,24 +87,24 @@ void myQuadStepper::AdvanceHelix( const G4double  yIn[],
   else if ( fPtrMagEqOfMot->FCof()==0) R=DBL_MAX;
 
   
-      G4double Theta   = h/R;
+  G4double Theta   = h/R;
 
-      G4double CosT_ov_2, SinT_ov_2, CosT, SinT;
-      CosT_ov_2=cos(Theta/2);
-      SinT_ov_2=sin(Theta/2);
-
-      CosT=(CosT_ov_2*CosT_ov_2)- (SinT_ov_2*SinT_ov_2);
-      SinT=2*CosT_ov_2*SinT_ov_2;
-
-      BDSLocalRadiusOfCurvature=R;
-
-      itsDist=fabs(R)*(1.-CosT_ov_2);
-
-      G4ThreeVector dPos=R*(SinT*vhat + (1-CosT)*vnorm);
- 	
-      itsFinalPoint=LocalR+dPos;
-      itsFinalDir=CosT*vhat +SinT*vnorm;
-
+  G4double CosT_ov_2, SinT_ov_2, CosT, SinT;
+  CosT_ov_2=cos(Theta/2);
+  SinT_ov_2=sin(Theta/2);
+  
+  CosT=(CosT_ov_2*CosT_ov_2)- (SinT_ov_2*SinT_ov_2);
+  SinT=2*CosT_ov_2*SinT_ov_2;
+  
+  BDSLocalRadiusOfCurvature=R;
+  
+  itsDist=fabs(R)*(1.-CosT_ov_2);
+  
+  G4ThreeVector dPos=R*(SinT*vhat + (1-CosT)*vnorm);
+  
+  itsFinalPoint=LocalR+dPos;
+  itsFinalDir=CosT*vhat +SinT*vnorm;
+  
 
   G4ThreeVector GlobalTangent;
 
@@ -122,9 +122,8 @@ void myQuadStepper::AdvanceHelix( const G4double  yIn[],
   yOut[5] = GlobalTangent.z();
 
   
-
   G4double kappa= - fPtrMagEqOfMot->FCof()* ( itsBGrad) /InitMag; // was ist das? 
-  if(fabs(kappa)<1.e-12) return; // no gradient
+  if(fabs(kappa)<std::numeric_limits<double>::epsilon()) return; // no gradient 
 
   G4double x1,x1p,y1,y1p,z1p;
   //G4double z1;
@@ -174,7 +173,7 @@ void myQuadStepper::AdvanceHelix( const G4double  yIn[],
       Y21= fabs(kappa)*Y12;
       Y22= Y11;
     }
-  else if (kappa<0)
+  else // if (kappa<0)
     {
       X11= cosh(rootKh);
       X12= sinh(rootKh)/rootK;
@@ -186,17 +185,17 @@ void myQuadStepper::AdvanceHelix( const G4double  yIn[],
       Y21= -fabs(kappa)*Y12;
       Y22= Y11;
     }
-  else
-    {
-      X11 = 1;
-      X12 = 0;
-      X21 = 0;
-      X22 = 1;
-      Y11 = 1;
-      Y12 = 0;
-      Y21 = 0;
-      Y22 = 1;
-    }
+  // else // should not happen as already returned in that case
+  //   {
+  //     X11 = 1;
+  //     X12 = 0;
+  //     X21 = 0;
+  //     X22 = 1;
+  //     Y11 = 1;
+  //     Y12 = 0;
+  //     Y21 = 0;
+  //     Y22 = 1;
+  //   }
 
   x1      = X11*x0 + X12*xp;    
   x1p= X21*x0 + X22*xp;
@@ -240,7 +239,7 @@ void myQuadStepper::AdvanceHelix( const G4double  yIn[],
   yOut[4] = GlobalTangent.y();
   yOut[5] = GlobalTangent.z();
 
-}    
+}
 
 
 void myQuadStepper::Stepper( const G4double yInput[],
@@ -255,15 +254,13 @@ void myQuadStepper::Stepper( const G4double yInput[],
 
   AdvanceHelix(yInput,(G4ThreeVector)0,hstep,yOut);
 
-  return ;
 }
 
 G4double myQuadStepper::DistChord()   const 
 {
-
-return itsDist;
+  return itsDist;
   // This is a class method that gives distance of Mid 
-  //  from the Chord between the Initial and Final points.
+  // from the Chord between the Initial and Final points.
 }
 
 myQuadStepper::~myQuadStepper()

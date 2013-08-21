@@ -52,6 +52,125 @@ extern G4RotationMatrix* RotXM90;
 extern G4RotationMatrix* RotYM90X90;
 extern G4RotationMatrix* RotYM90XM90;
 
+BDSAcceleratorComponent::BDSAcceleratorComponent (
+			G4String& aName,G4double aLength, 
+			G4double aBpRadius,G4double aXAper,G4double aYAper, 
+			G4VisAttributes* aVisAtt,
+                        G4String aTunnelMaterial,
+                        G4String aMaterial,G4double angle,
+			G4double XOffset, G4double YOffset,G4double ZOffset, G4double tunnelRadius, G4double tunnelOffsetX,G4String aTunnelCavityMaterial, G4int aPrecisionRegion):
+  itsName(aName),itsLength(aLength),itsBpRadius(aBpRadius),
+  itsXAper(aXAper),itsYAper(aYAper),itsAngle(angle),
+  itsMaterial(aMaterial),itsVisAttributes(aVisAtt),itsTunnelMaterial(aTunnelMaterial),
+  itsXOffset(XOffset),itsYOffset(YOffset), itsZOffset(ZOffset), itsTunnelRadius(tunnelRadius), itsTunnelOffsetX(tunnelOffsetX),itsTunnelCavityMaterial(aTunnelCavityMaterial), itsPrecisionRegion(aPrecisionRegion)
+{
+  ConstructorInit();
+}
+
+BDSAcceleratorComponent::BDSAcceleratorComponent (
+			G4String& aName,G4double aLength, 
+			G4double aBpRadius,G4double aXAper,G4double aYAper, 
+			G4VisAttributes* aVisAtt,
+			std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
+                        G4String aTunnelMaterial,
+                        G4String aMaterial,G4double angle,
+			G4double XOffset, G4double YOffset,G4double ZOffset, G4double tunnelRadius, G4double tunnelOffsetX, G4String aTunnelCavityMaterial, G4int aPrecisionRegion):
+  itsName(aName),itsLength(aLength),itsBpRadius(aBpRadius),
+  itsXAper(aXAper),itsYAper(aYAper),itsAngle(angle),
+  itsMaterial(aMaterial),itsVisAttributes(aVisAtt), itsBlmLocZ(blmLocZ), itsBlmLocTheta(blmLocTheta),
+  itsTunnelMaterial(aTunnelMaterial),
+  itsXOffset(XOffset),itsYOffset(YOffset), itsZOffset(ZOffset), itsTunnelRadius(tunnelRadius), itsTunnelOffsetX(tunnelOffsetX), itsTunnelCavityMaterial(aTunnelCavityMaterial), itsPrecisionRegion(aPrecisionRegion)
+{
+  if (itsBlmLocZ.size() != itsBlmLocTheta.size()){
+    G4cerr << "BDSAcceleratorComponent: error, lists blmLocZ and blmLocTheta are of unequal size" << G4endl;
+    G4cerr << "blmLocZ.size() = " << blmLocZ.size() << G4endl;
+    G4cerr << "blmLocTheta.size() = " << blmLocTheta.size() << G4endl;
+    exit(1);
+  }
+  ConstructorInit();
+}
+
+inline void BDSAcceleratorComponent::ConstructorInit(){
+  //  itsInnerBeampipeUserLimits =new G4UserLimits();
+#ifndef NOUSERLIMITS
+  itsUserLimits = new G4UserLimits();
+  itsUserLimits->SetMaxAllowedStep(itsLength);
+  itsUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  itsUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+#endif
+  itsPhi = 0;
+  itsTheta = 0;
+  itsPsi = 0;
+  itsK1 = 0.0; itsK2 = 0.0; itsK3 = 0.0;
+  itsTilt = 0;
+  itsPhiAngleIn = 0.0;
+  itsPhiAngleOut = 0.0;
+  itsOuterR=0;
+  itsMagScaleFactor = 1;
+  itsBlmLocationR=0;
+  if (itsTunnelRadius<=BDSGlobalConstants::Instance()->GetLengthSafety()){
+    itsTunnelRadius=BDSGlobalConstants::Instance()->GetTunnelRadius();
+  }
+  CalculateLengths();
+  itsOuterLogicalVolume=NULL;
+  itsMarkerLogicalVolume=NULL;
+  itsTunnelLogicalVolume=NULL;
+  itsTunnelFloorLogicalVolume=NULL;
+  itsRotation=NULL;
+  itsOuterStepper=NULL;
+  itsOuterUserLimits=NULL;
+  itsMarkerUserLimits=NULL;
+  itsInnerBeampipeUserLimits=NULL;
+  itsInnerMostLogicalVolume=NULL;
+  itsMarkerSolidVolume=NULL;
+  itsTunnelSolid=NULL;
+  itsSoilSolid=NULL;
+  itsInnerTunnelSolid=NULL;
+  itsTunnelCavity=NULL;
+  itsLargerTunnelCavity=NULL;
+  itsTunnelFloor=NULL;
+  itsLargerInnerTunnelSolid=NULL;
+  itsTunnelMinusCavity=NULL;
+  itsTunnelSizedBlock=NULL;
+  itsBLMLogicalVolume=NULL;
+  itsBlmCaseLogicalVolume=NULL;
+  itsSoilTunnelLogicalVolume=NULL;
+  itsTunnelCavityLogicalVolume=NULL;
+  itsTunnelMinusCavityLogicalVolume=NULL;
+  itsTunnelPhysiInner=NULL;
+  itsTunnelPhysiComp=NULL;
+  itsTunnelFloorPhysiComp=NULL;
+  itsTunnelPhysiCompSoil=NULL;
+  itsTunnelUserLimits=NULL;
+  itsSoilTunnelUserLimits=NULL;
+  itsInnerTunnelUserLimits=NULL;
+
+  nullRotationMatrix=NULL;
+  tunnelRot=NULL;
+  VisAtt=NULL;
+  VisAtt1=NULL;
+  VisAtt2=NULL;
+  VisAtt3=NULL;
+  VisAtt4=NULL;
+  VisAtt5=NULL;
+  itsBLMSolid=NULL;
+  itsBlmOuterSolid=NULL;
+  itsSPos = 0.0;
+  itsCopyNumber = 0;
+  itsBDSEnergyCounter=NULL;
+  itsSensitiveVolume=NULL;  
+}
+
+BDSAcceleratorComponent::~BDSAcceleratorComponent ()
+{
+  delete VisAtt;
+  delete VisAtt1;
+  delete VisAtt2;
+  delete VisAtt3;
+  delete VisAtt4;
+  delete VisAtt5;
+}
+
 void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)
 {//do nothing by default
   return;
@@ -63,9 +182,6 @@ void BDSAcceleratorComponent::CalculateLengths(){
   itsYLength = std::max(itsYLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
   
 }
-
-
-
 
 void BDSAcceleratorComponent::SynchRescale(G4double)
 {
@@ -84,16 +200,6 @@ void BDSAcceleratorComponent::AlignComponent(G4ThreeVector& TargetPos,
   itsRotation=TargetRot;
   itsPosition=TargetPos;
   return;
-}
-
-BDSAcceleratorComponent::~BDSAcceleratorComponent ()
-{
-  delete VisAtt;
-  delete VisAtt1;
-  delete VisAtt2;
-  delete VisAtt3;
-  delete VisAtt4;
-  delete VisAtt5;
 }
 
 void BDSAcceleratorComponent::BuildTunnel()

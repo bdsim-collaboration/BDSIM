@@ -77,6 +77,7 @@ void BDSLWCalorimeter::LWCalorimeterLogicalVolume()
 #ifndef NOUSERLIMITS
       itsOuterUserLimits =new G4UserLimits();
       itsOuterUserLimits->SetMaxAllowedStep(itsLength);
+      itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
       itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
 
@@ -174,10 +175,12 @@ void BDSLWCalorimeter::BuildBeampipe(G4double aLength)
 		      BDSGlobalConstants::Instance()->GetThresholdCutCharged());
    
    itsBeampipeUserLimits->SetMaxAllowedStep(itsLength);
+   itsBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
    
    itsBeampipeLogicalVolume->SetUserLimits(itsBeampipeUserLimits);
    
    itsInnerBeampipeUserLimits->SetMaxAllowedStep(itsLength);
+   itsInnerBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
    
    itsInnerBPLogicalVolume->SetUserLimits(itsInnerBeampipeUserLimits);
 #endif

@@ -22,9 +22,6 @@ Last modified 15.11.2005 by Ilya Agapov
 #include "BDSBeamline.hh"
 
 
-extern G4int event_number;
-
-
 BDSContinuousSR::BDSContinuousSR(const G4String& processName)
   : G4VDiscreteProcess(processName)
      // initialization

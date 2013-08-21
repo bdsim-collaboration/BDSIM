@@ -10,7 +10,6 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
 #include "G4SubtractionSolid.hh"
-#include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
 #include "G4SDManager.hh"
 #include "G4UserLimits.hh"
@@ -166,20 +165,20 @@ void BDSMuSpoiler::BuildMuSpoiler()
 
 #ifndef NOUSERLIMITS
   G4UserLimits* AbsUserLimits =
-    new G4UserLimits(DBL_MAX,DBL_MAX,DBL_MAX,
+    new G4UserLimits(DBL_MAX,DBL_MAX,BDSGlobalConstants::Instance()->GetMaxTime(),
 		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
 
   AbsUserLimits->SetMaxAllowedStep(itsLength);
   itsInnerLogVol->SetUserLimits(AbsUserLimits);
 
   itsSolidLogVol->
-    SetUserLimits(new G4UserLimits(DBL_MAX,DBL_MAX,DBL_MAX,
+    SetUserLimits(new G4UserLimits(DBL_MAX,DBL_MAX,BDSGlobalConstants::Instance()->GetMaxTime(),
 				       BDSGlobalConstants::Instance()->GetThresholdCutCharged()));
 
   itsInnerBPLogicalVolume->SetUserLimits(AbsUserLimits);
 
   itsBeampipeLogicalVolume->
-    SetUserLimits(new G4UserLimits(DBL_MAX,DBL_MAX,DBL_MAX,
+    SetUserLimits(new G4UserLimits(DBL_MAX,DBL_MAX,BDSGlobalConstants::Instance()->GetMaxTime(),
 				       BDSGlobalConstants::Instance()->GetThresholdCutCharged()));
 #endif
   itsSolidLogVol->SetVisAttributes(itsVisAttributes);

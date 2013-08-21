@@ -9,14 +9,8 @@
 
 #include "BDSSamplerHit.hh"
 #include "G4ios.hh"
-#include "G4VVisManager.hh"
-#include "G4Colour.hh"
-#include "G4VisAttributes.hh"
-#include "G4LogicalVolume.hh"
 
 G4Allocator<BDSSamplerHit> BDSSamplerHitAllocator;
-
-//BDSSamplerHit::BDSSamplerHit(){;}
 
 BDSSamplerHit::BDSSamplerHit(G4String aName,
 			     G4double init_mom,
@@ -57,83 +51,3 @@ BDSSamplerHit::BDSSamplerHit(G4String aName,
 
 BDSSamplerHit::~BDSSamplerHit()
 {;}
-
-BDSSamplerHit::BDSSamplerHit(const BDSSamplerHit &right):G4VHit()
-{
-  itsName=right.itsName;
-
-  itsInit_Mom = right.itsInit_Mom;
-  itsInit_X = right.itsInit_X;
-  itsInit_XPrime = right.itsInit_XPrime;
-  itsInit_Y = right.itsInit_Y;
-  itsInit_YPrime = right.itsInit_YPrime;
-  itsInit_Z = right.itsInit_Z;
-  itsInit_ZPrime = right.itsInit_ZPrime;
-  itsInit_T = right.itsInit_T;
-
-  itsMom = right.itsMom;
-  itsX = right.itsX;
-  itsXPrime = right.itsXPrime;
-  itsY = right.itsY;
-  itsYPrime = right.itsYPrime;
-  itsZ = right.itsZ;
-  itsZPrime = right.itsZPrime;
-  itsT = right.itsT;
-
-  itsGlobalX = right.itsGlobalX;
-  itsGlobalXPrime = right.itsGlobalXPrime;
-  itsGlobalY = right.itsGlobalY;
-  itsGlobalYPrime = right.itsGlobalYPrime;
-  itsGlobalZ = right.itsGlobalZ;
-  itsGlobalZPrime = right.itsGlobalZPrime;
-
-  itsS = right.itsS;
-
-  itsWeight = right.itsWeight;
-  itsPDGtype=right.itsPDGtype;
-  itsEventNo=right.itsEventNo;
-  itsParentID=right.itsParentID;
-  itsTrackID=right.itsTrackID;
-  itsSampType=right.itsSampType;
-}
-
-const BDSSamplerHit& BDSSamplerHit::operator=(const BDSSamplerHit &right)
-{
-  itsName= right.itsName;
-
-  itsInit_Mom = right.itsInit_Mom;
-  itsInit_X = right.itsInit_X;
-  itsInit_XPrime = right.itsInit_XPrime;
-  itsInit_Y = right.itsInit_Y;
-  itsInit_YPrime = right.itsInit_YPrime;
-  itsInit_Z = right.itsInit_Z;
-  itsInit_ZPrime = right.itsInit_ZPrime;
-  itsInit_T = right.itsInit_T;
-
-  itsMom = right.itsMom;
-  itsX = right.itsX;
-  itsXPrime = right.itsXPrime;
-  itsY = right.itsY;
-  itsYPrime = right.itsYPrime;
-  itsZ = right.itsZ;
-  itsZPrime = right.itsZPrime;
-  itsT = right.itsT;
-
-  itsGlobalX = right.itsGlobalX;
-  itsGlobalXPrime = right.itsGlobalXPrime;
-  itsGlobalY = right.itsGlobalY;
-  itsGlobalYPrime = right.itsGlobalYPrime;
-  itsGlobalZ = right.itsGlobalZ;
-  itsGlobalZPrime = right.itsGlobalZPrime;
-
-  itsS = right.itsS;
-
-  itsWeight = right.itsWeight;
-  itsPDGtype=right.itsPDGtype;
-  itsEventNo=right.itsEventNo;
-  itsParentID=right.itsParentID;
-  itsTrackID=right.itsTrackID;
-  itsSampType=right.itsSampType;
-
-  return *this;
-}

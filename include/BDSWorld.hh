@@ -1,7 +1,6 @@
 #ifndef __BDSWORLD_H
 #define __BDSWORLD_H
 
-#include "BDSWorld.hh"
 #include "G4VSolid.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"

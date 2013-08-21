@@ -57,7 +57,6 @@ private:
   G4UserLimits* itsSoilTunnelUserLimits;
   G4UserLimits* itsInnerTunnelUserLimits;
                     
-  G4UserLimits* itsUserLimits;
   G4VisAttributes* itsVisAttributes;
   G4Mag_UsualEqRhs* itsEqRhs;
 

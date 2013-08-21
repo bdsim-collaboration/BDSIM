@@ -9,9 +9,6 @@
 #include <cmath>
 #include <string>
 #include <cstring>
-#include <cfloat>
-
-using namespace std;
 
 extern struct Parameters params;
 extern struct symtab *symtab;
@@ -21,16 +18,24 @@ extern FILE *yyin;
 extern char* yyfilename;
 
 extern int add_func(const char *name, double (*func)(double));
-extern int add_var(const char *name, double val,int is_rserved = 0);
+extern int add_var(const char *name, double val,int is_reserved = 0);
 
 // aux. parser lists - to clear
-extern list<struct Element> element_list;
-extern list<struct Element> tmp_list;
+extern std::list<struct Element> element_list;
+extern std::list<struct Element> tmp_list;
 
 void init()
 {
 
   symtab = new struct symtab[NSYMS];
+  // member initialisation as members are used to check if symtab is already assigned and its type.
+  for(struct symtab* sp=symtab;sp<&symtab[NSYMS];sp++) {
+    sp->is_reserved=0;
+    sp->type=0;
+    sp->name=NULL;
+    sp->funcptr=NULL;
+    sp->value=0.0;
+  }
 
   // embedded arithmetical functions
   add_func("sqrt",sqrt);
@@ -79,7 +84,7 @@ void init()
 
   // Default Values for Options (the rest are set to 0)
 
-  options.maximumTrackingTime = DBL_MAX;
+  options.maximumTrackingTime = 1.0;
   options.vacuumPressure = 1e-12;
   options.planckScatterFe = 1.0;
   options.doPlanckScattering=0;
@@ -140,7 +145,7 @@ int gmad_parser(FILE *f)
   yyin=f; 
 
 #ifdef DEBUG
-  cout << "gmad_parser> beginning to parse file" << endl;
+  std::cout << "gmad_parser> beginning to parse file" << std::endl;
 #endif
 
   while(!feof(yyin))
@@ -149,13 +154,13 @@ int gmad_parser(FILE *f)
     }
 
 #ifdef DEBUG
-  cout << "gmad_parser> finished to parsing file" << endl;
+  std::cout << "gmad_parser> finished to parsing file" << std::endl;
 #endif
 
   // clear temporary stuff
 
 #ifdef DEBUG
-  cout << "gmad_parser> clearing temporary lists" << endl;
+  std::cout << "gmad_parser> clearing temporary lists" << std::endl;
 #endif
   element_list.clear();
   tmp_list.clear();
@@ -164,7 +169,7 @@ int gmad_parser(FILE *f)
   symtab = 0;
 
 #ifdef DEBUG
-  cout << "gmad_parser> finished" << endl;
+  std::cout << "gmad_parser> finished" << std::endl;
 #endif
 
   fclose(f);
@@ -172,10 +177,10 @@ int gmad_parser(FILE *f)
   return 0;
 }
 
-int gmad_parser(string name)
+int gmad_parser(std::string name)
 {
 #ifdef DEBUG
-  cout << "gmad_parser> opening file" << endl;
+  std::cout << "gmad_parser> opening file" << std::endl;
 #endif
   FILE *f = fopen(name.c_str(),"r");
 

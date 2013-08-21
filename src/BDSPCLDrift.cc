@@ -39,8 +39,7 @@ BDSPCLDrift::BDSPCLDrift (G4String aName, G4double aLength,
   itsYAperUp(aperYUp), itsYAperDown(aperYDown), itsDyAper(aperDy),
   outer_solid(NULL),inner_solid(NULL),itsOuterBeamPipeLogicalVolume(NULL),
   itsInnerBeamPipeLogicalVolume(NULL),itsPhysiInner(NULL),itsPhysiOuter(NULL),
-  itsBeampipeVisAtt(NULL),itsInnerBeampipeVisAtt(NULL),itsBeampipeUserLimits(NULL),
-  itsInnerBeampipeUserLimits(NULL),
+  itsBeampipeVisAtt(NULL),itsInnerBeampipeVisAtt(NULL),
   itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
 {
   itsType="pcldrift";
@@ -189,9 +188,11 @@ void BDSPCLDrift::BuildBeampipe(G4String materialName){
 #ifndef NOUSERLIMITS
   itsBeampipeUserLimits =  new G4UserLimits("beampipe cuts");
   itsBeampipeUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  itsBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
 
   itsInnerBeampipeUserLimits =  new G4UserLimits("inner beampipe cuts");
-  itsInnerBeampipeUserLimits->SetUserMinEkine( BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  itsInnerBeampipeUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  itsInnerBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
 
   G4double stepfactor = 5;
 

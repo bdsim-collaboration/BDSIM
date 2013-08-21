@@ -18,7 +18,6 @@
 class BDSSamplerHit :public G4VHit
 {
 public:
-  //BDSSamplerHit();
   BDSSamplerHit(G4String aName,
 		G4double init_mom,
 		G4double init_x, G4double init_xPrime, 
@@ -36,9 +35,6 @@ public:
 		G4int ParentID, G4int TrackID);
 
   ~BDSSamplerHit();
-  
-  BDSSamplerHit(const BDSSamplerHit& right);
-  const BDSSamplerHit& operator=(const BDSSamplerHit& right);
   
   inline void* operator new(size_t) ;
   inline void operator delete(void *aHit);
