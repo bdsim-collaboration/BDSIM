@@ -34,6 +34,7 @@ public:
 public:
   virtual void   BeginOfEventAction(const G4Event*);
   virtual void   EndOfEventAction(const G4Event*);
+  void AddPrimaryHits(G4Event* event){
   
   void SetDrawFlag   (G4String val)  {drawFlag = val;};
  

@@ -231,15 +231,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 
 
   if (verbose || debug) G4cout << "-->starting BDS construction \n"<<G4endl;
-
+  //Add the input sampler to the list of output sampler names
+  //  bdsOutput->SampName.push_back((G4String)"input");
+  //construct bds
   return ConstructBDS(beamline_list);
-
-
-
-
-
-
-
 }
 
 

@@ -74,6 +74,43 @@ void BDSOutput::SetFormat(BDSOutputFormat val)
     }
 }
 
+void BDSOutput::BuildSamplerTree(G4String name){
+  TTree* SamplerTree = new TTree(name, "Sampler output");
+  
+  SamplerTree->Branch("E0",&E0,"E0 (GeV)/F");
+  SamplerTree->Branch("x0",&x0,"x0 (mum)/F");
+  SamplerTree->Branch("y0",&y0,"y0 (mum)/F");
+  SamplerTree->Branch("z0",&z0,"z0 (m)/F");
+  SamplerTree->Branch("xp0",&xp0,"xp0 (rad)/F");
+  SamplerTree->Branch("yp0",&yp0,"yp0 (rad)/F");
+  SamplerTree->Branch("zp0",&zp0,"zp0 (rad)/F");
+  SamplerTree->Branch("t0",&t0,"t0 (ns)/F");
+  
+  SamplerTree->Branch("E",&E,"E (GeV)/F");
+  SamplerTree->Branch("x",&x,"x (mum)/F");
+  SamplerTree->Branch("y",&y,"y (mum)/F");
+  SamplerTree->Branch("z",&z,"z (m)/F");
+  SamplerTree->Branch("xp",&xp,"xp (rad)/F");
+  SamplerTree->Branch("yp",&yp,"yp (rad)/F");
+  SamplerTree->Branch("zp",&zp,"zp (rad)/F");
+  SamplerTree->Branch("t",&t,"t (ns)/F");
+  
+  SamplerTree->Branch("X",&X,"X (mum)/F");
+  SamplerTree->Branch("Y",&Y,"Y (mum)/F");
+  SamplerTree->Branch("Z",&Z,"Z (m)/F");
+  SamplerTree->Branch("Xp",&Xp,"Xp (rad)/F");
+  SamplerTree->Branch("Yp",&Yp,"Yp (rad)/F");
+  SamplerTree->Branch("Zp",&Zp,"Zp (rad)/F");
+  
+  SamplerTree->Branch("s",&s,"s (m)/F");
+  
+  SamplerTree->Branch("weight",&weight,"weight/F");
+  SamplerTree->Branch("partID",&part,"partID/I");
+  SamplerTree->Branch("nEvent",&nev,"nEvent/I");
+  SamplerTree->Branch("parentID",&pID,"parentID/I");
+  SamplerTree->Branch("trackID",&track_id,"trackID/I");
+}
+
 // output initialization (ROOT only)
 void BDSOutput::Init(G4int FileNum)
 {
@@ -88,83 +125,18 @@ void BDSOutput::Init(G4int FileNum)
   theRootOutputFile=new TFile(_filename,"RECREATE", "BDS output file");
 
   //build sampler tree
+  BuildSamplerTree("input");
   for(G4int i=0;i<BDSSampler::GetNSamplers();i++)
     {
       //G4String name="samp"+BDSGlobalConstants::Instance()->StringFromInt(i+1);
       G4String name=SampName[i];
-      TTree* SamplerTree = new TTree(name, "Sampler output");
-      
-      SamplerTree->Branch("E0",&E0,"E0 (GeV)/F");
-      SamplerTree->Branch("x0",&x0,"x0 (mum)/F");
-      SamplerTree->Branch("y0",&y0,"y0 (mum)/F");
-      SamplerTree->Branch("z0",&z0,"z0 (m)/F");
-      SamplerTree->Branch("xp0",&xp0,"xp0 (rad)/F");
-      SamplerTree->Branch("yp0",&yp0,"yp0 (rad)/F");
-      SamplerTree->Branch("zp0",&zp0,"zp0 (rad)/F");
-      SamplerTree->Branch("t0",&t0,"t0 (ns)/F");
-
-      SamplerTree->Branch("E",&E,"E (GeV)/F");
-      SamplerTree->Branch("x",&x,"x (mum)/F");
-      SamplerTree->Branch("y",&y,"y (mum)/F");
-      SamplerTree->Branch("z",&z,"z (m)/F");
-      SamplerTree->Branch("xp",&xp,"xp (rad)/F");
-      SamplerTree->Branch("yp",&yp,"yp (rad)/F");
-      SamplerTree->Branch("zp",&zp,"zp (rad)/F");
-      SamplerTree->Branch("t",&t,"t (ns)/F");
-
-      SamplerTree->Branch("X",&X,"X (mum)/F");
-      SamplerTree->Branch("Y",&Y,"Y (mum)/F");
-      SamplerTree->Branch("Z",&Z,"Z (m)/F");
-      SamplerTree->Branch("Xp",&Xp,"Xp (rad)/F");
-      SamplerTree->Branch("Yp",&Yp,"Yp (rad)/F");
-      SamplerTree->Branch("Zp",&Zp,"Zp (rad)/F");
-
-      SamplerTree->Branch("s",&s,"s (m)/F");
-
-      SamplerTree->Branch("weight",&weight,"weight/F");
-      SamplerTree->Branch("partID",&part,"partID/I");
-      SamplerTree->Branch("nEvent",&nev,"nEvent/I");
-      SamplerTree->Branch("parentID",&pID,"parentID/I");
-      SamplerTree->Branch("trackID",&track_id,"trackID/I");
+      BuildSamplerTree(name);
     }
   for(G4int i=0;i<BDSSamplerCylinder::GetNSamplers();i++)
     {
       //G4String name="samp"+BDSGlobalConstants::Instance()->StringFromInt(i+1);
       G4String name=CSampName[i];
-      TTree* SamplerTree = new TTree(name, "Sampler output");
-      
-      SamplerTree->Branch("E0",&E0,"E0 (GeV)/F");
-      SamplerTree->Branch("x0",&x0,"x0 (mum)/F");
-      SamplerTree->Branch("y0",&y0,"y0 (mum)/F");
-      SamplerTree->Branch("z0",&z0,"z0 (m)/F");
-      SamplerTree->Branch("xp0",&xp0,"xp0 (rad)/F");
-      SamplerTree->Branch("yp0",&yp0,"yp0 (rad)/F");
-      SamplerTree->Branch("zp0",&zp0,"zp0 (rad)/F");
-      SamplerTree->Branch("t0",&t0,"t0 (ns)/F");
-
-      SamplerTree->Branch("E",&E,"E (GeV)/F");
-      SamplerTree->Branch("x",&x,"x (mum)/F");
-      SamplerTree->Branch("y",&y,"y (mum)/F");
-      SamplerTree->Branch("z",&z,"z (m)/F");
-      SamplerTree->Branch("xp",&xp,"xp (rad)/F");
-      SamplerTree->Branch("yp",&yp,"yp (rad)/F");
-      SamplerTree->Branch("zp",&zp,"zp (rad)/F");
-      SamplerTree->Branch("t",&t,"t (ns)/F");
-
-      SamplerTree->Branch("X",&X,"X (mum)/F");
-      SamplerTree->Branch("Y",&Y,"Y (mum)/F");
-      SamplerTree->Branch("Z",&Z,"Z (m)/F");
-      SamplerTree->Branch("Xp",&Xp,"Xp (rad)/F");
-      SamplerTree->Branch("Yp",&Yp,"Yp (rad)/F");
-      SamplerTree->Branch("Zp",&Zp,"Zp (rad)/F");
-
-      SamplerTree->Branch("s",&s,"s (m)/F");
-
-      SamplerTree->Branch("weight",&weight,"weight/F");
-      SamplerTree->Branch("partID",&part,"partID/I");
-      SamplerTree->Branch("nEvent",&nev,"nEvent/I");
-      SamplerTree->Branch("parentID",&pID,"parentID/I");
-      SamplerTree->Branch("trackID",&track_id,"trackID/I");
+      BuildSamplerTree(name);
     }
 
   if(BDSGlobalConstants::Instance()->GetStoreTrajectory() || BDSGlobalConstants::Instance()->GetStoreMuonTrajectories() || BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories()) 
@@ -202,46 +174,92 @@ void BDSOutput::Init(G4int FileNum)
 #endif // USE_ROOT
 }
 
+void BDSOutput::WriteAsciiHit(G4int PDGType, G4double Mom, G4double X, G4double Y, G4double S, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID){
+  of<<PDGType
+    <<" "
+    <<Mom/GeV
+    <<" "
+    <<X/micrometer
+    <<" "
+    <<Y/micrometer
+    <<" "
+    <<S / m
+    <<" "
+    <<XPrime / radian
+    <<" "
+    <<YPrime / radian
+    <<" "
+    <<EventNo 
+    <<" "
+    <<Weight
+    <<" "
+    <<ParentID
+    <<" "
+    <<TrackID
+    <<G4endl;
+}
+
+void BDSOutput::WriteRootHit(G4String Name, G4double   InitMom, G4double    InitX, G4double    InitY, G4double     InitZ, G4double     InitXPrime, G4double    InitYPrime, G4double InitZPrime, G4double  InitT, G4double  Mom, G4double X, G4double Y, G4double Z, G4double XPrime, G4double YPrime, G4double ZPrime, G4double T, G4double GlobalX, G4double GlobalY, G4double GlobalZ, G4double GlobalXPrime, G4double GlobalYPrime, G4double GlobalZPrime, G4double S, G4double Weight, G4int  PDGtype, G4int  EventNo, G4int   ParentID,G4int  TrackID){
+
+  TTree* sTree=(TTree*)gDirectory->Get(Name);
+  if(!sTree) G4Exception("BDSOutput: ROOT Sampler not found!", "-1", FatalException, "");
+  E0=InitMom / GeV;
+  x0=InitX / micrometer;
+  y0=InitY / micrometer;
+  z0=InitZ / m;
+  xp0=InitXPrime / radian;
+  yp0=InitYPrime / radian;
+  zp0=InitZPrime / radian;
+  t0=InitT / ns;
+  E=Mom / GeV;
+  //Edep=Edep / GeV;
+  x=X / micrometer;
+  y=Y / micrometer;
+  z=Z / m;
+  xp=XPrime / radian;
+  yp=YPrime / radian;
+  zp=ZPrime / radian;
+  t=T / ns;
+  X=GlobalX / m;
+  Y=GlobalY / m;
+  Z=GlobalZ / m;
+  Xp=GlobalXPrime / radian;
+  Yp=GlobalYPrime / radian;
+  Zp=GlobalZPrime / radian;
+  s=S / m;
+  weight=Weight;
+  part=PDGtype; 
+  nev=EventNo; 
+  pID=ParentID; 
+  track_id=TrackID;
+  sTree->Fill();
+}
+
 void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
 {
   if( format == _ASCII) {
-    
-    //of<<"#hits (PDGtype  E[GeV],x[micron],y[micron],z[m],x'[rad],y'[rad]):"<<G4endl;
     int G4precision = G4cout.precision();
     G4cout.precision(15);
     
     for (G4int i=0; i<hc->entries(); i++)
       {
-	of<<(*hc)[i]->GetPDGtype()
-	  <<" "
-	  <<(*hc)[i]->GetMom()/GeV
-	  <<" "
-	  <<(*hc)[i]->GetX()/micrometer
-	  <<" "
-	  <<(*hc)[i]->GetY()/micrometer
-	  <<" "
-	  <<(*hc)[i]->GetS() / m
-	  <<" "
-	  <<(*hc)[i]->GetXPrime() / radian
-	  <<" "
-	  <<(*hc)[i]->GetYPrime() / radian
-	  <<" "
-	  <<(*hc)[i]->GetEventNo() 
-	  <<" "
-	  <<(*hc)[i]->GetWeight()
-	  <<" "
-	  <<(*hc)[i]->GetParentID()
-	  <<" "
-	  <<(*hc)[i]->GetTrackID()
-	  <<G4endl;
+	WriteAsciiHit(
+		      (*hc)[i]->GetPDGtype(),
+		      (*hc)[i]->GetMom(),
+		      (*hc)[i]->GetX(),
+		      (*hc)[i]->GetY(),
+		      (*hc)[i]->GetS(),
+		      (*hc)[i]->GetXPrime(),
+		      (*hc)[i]->GetYPrime(),
+		      (*hc)[i]->GetEventNo(),
+		      (*hc)[i]->GetWeight(),
+		      (*hc)[i]->GetParentID(),
+		      (*hc)[i]->GetTrackID()
+		      );
       }
-    
-//    of<<G4endl; // remove whitespace in output file when no events hit sampler
-      of.flush();
-    //of<<"end of hits collection"<<G4endl;
-      
-      // set precision back
-      G4cout.precision(G4precision);
+    of.flush();
+    // set precision back
+    G4cout.precision(G4precision);
   }
   
   if( format == _ROOT) {
@@ -251,63 +269,40 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
     G4cout << __METHOD_NAME__ << " hc->endtries() = " << hc->entries() << G4endl;
     for (G4int i=0; i<hc->entries(); i++)
       {
-	G4cout << __METHOD_NAME__ << " filling tree with entry number " << i << G4endl;
-	//if ((*hc)[i]->GetType()=="plane") 
-	//name="samp";
-	//else if ((*hc)[i]->GetType()=="cylinder")
-	//name ="cyln";
-	//name="samp" + BDSGlobalConstants::Instance()->StringFromInt((*hc)[i]->GetNumber());
-	
-	TTree* sTree=(TTree*)gDirectory->Get((*hc)[i]->GetName());
-	
-	if(!sTree) G4Exception("BDSOutput: ROOT Sampler not found!", "-1", FatalException, "");
-	
-	E0=(*hc)[i]->GetInitMom() / GeV;
-	x0=(*hc)[i]->GetInitX() / micrometer;
-	y0=(*hc)[i]->GetInitY() / micrometer;
-	z0=(*hc)[i]->GetInitZ() / m;
-	xp0=(*hc)[i]->GetInitXPrime() / radian;
-	yp0=(*hc)[i]->GetInitYPrime() / radian;
-	zp0=(*hc)[i]->GetInitZPrime() / radian;
-	t0=(*hc)[i]->GetInitT() / ns;
-	
-	E=(*hc)[i]->GetMom() / GeV;
-	//Edep=(*hc)[i]->GetEdep() / GeV;
-	x=(*hc)[i]->GetX() / micrometer;
-	y=(*hc)[i]->GetY() / micrometer;
-	z=(*hc)[i]->GetZ() / m;
-	xp=(*hc)[i]->GetXPrime() / radian;
-	yp=(*hc)[i]->GetYPrime() / radian;
-	zp=(*hc)[i]->GetZPrime() / radian;
-	t=(*hc)[i]->GetT() / ns;
-	
-	X=(*hc)[i]->GetGlobalX() / m;
-	Y=(*hc)[i]->GetGlobalY() / m;
-	Z=(*hc)[i]->GetGlobalZ() / m;
-	Xp=(*hc)[i]->GetGlobalXPrime() / radian;
-	Yp=(*hc)[i]->GetGlobalYPrime() / radian;
-	Zp=(*hc)[i]->GetGlobalZPrime() / radian;
-	
-	s=(*hc)[i]->GetS() / m;
-	
-	weight=(*hc)[i]->GetWeight();
-	part=(*hc)[i]->GetPDGtype(); 
-	nev=(*hc)[i]->GetEventNo(); 
-	pID=(*hc)[i]->GetParentID(); 
-	track_id=(*hc)[i]->GetTrackID();
-
-#ifdef DEBUG
-	G4cout << __METHOD_NAME__ << "z=" << (*hc)[i]->GetZ() / m << "\n" <<
-	  "track_id=" << (*hc)[i]->GetTrackID() << G4endl;
-	G4cout << __METHOD_NAME__ << " - filling tree: " << sTree->GetName();
-	G4cout << " # entries before fill = " << sTree->GetEntries() << G4endl;
-#endif
-	sTree->Fill();
-#ifdef DEBUG
-	G4cout << " # entries after fill = " << sTree->GetEntries() << G4endl;
-#endif
+	G4String name = (*hc)[i]->GetName();
+	G4cout << "Writing hit to sampler " << name << G4endl;
+	WriteRootHit((*hc)[i]->GetName(),
+		     (*hc)[i]->GetInitMom(),
+		     (*hc)[i]->GetInitX(),
+		     (*hc)[i]->GetInitY(),
+		     (*hc)[i]->GetInitZ(),
+		     (*hc)[i]->GetInitXPrime(),
+		     (*hc)[i]->GetInitYPrime(),
+		     (*hc)[i]->GetInitZPrime(),
+		     (*hc)[i]->GetInitT(),
+		     (*hc)[i]->GetMom(),
+		     (*hc)[i]->GetX(),
+		     (*hc)[i]->GetY(),
+		     (*hc)[i]->GetZ(),
+		     (*hc)[i]->GetXPrime(),
+		     (*hc)[i]->GetYPrime(),
+		     (*hc)[i]->GetZPrime(),
+		     (*hc)[i]->GetT(),
+		     (*hc)[i]->GetGlobalX(),
+		     (*hc)[i]->GetGlobalY(),
+		     (*hc)[i]->GetGlobalZ(),
+		     (*hc)[i]->GetGlobalXPrime(),
+		     (*hc)[i]->GetGlobalYPrime(),
+		     (*hc)[i]->GetGlobalZPrime(),
+		     (*hc)[i]->GetS(),
+		     (*hc)[i]->GetWeight(),
+		     (*hc)[i]->GetPDGtype(), 
+		     (*hc)[i]->GetEventNo(), 
+		     (*hc)[i]->GetParentID(), 
+		     (*hc)[i]->GetTrackID()
+		     );
       }
-#endif
+#endif //USE_ROOT
   }
 }
 

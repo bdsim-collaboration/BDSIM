@@ -37,8 +37,9 @@
 #include "G4ios.hh"
 #include "G4UnitsTable.hh"
 #include "Randomize.hh"
-
 #include "G4ChordFinder.hh"
+#include "G4PrimaryVertex.hh"
+#include "G4PrimaryParticle.hh"
 
 #include "BDSSampler.hh"
 #include "BDSSamplerHit.hh"
@@ -343,6 +344,33 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #ifdef DEBUG 
  G4cout<<"BDSEventAction : end of event action done"<<G4endl;
 #endif
-  }
+}
+
+void BDSEventAction::AddPrimaryHits(G4Event* event){
+  G4HCofThisEvent* HCE = evt->GetHCofThisEvent();                                                  
+  //Save the primary particle as a hit 
+  G4PrimaryVertex* primaryVertex= G4RunManager::GetRunManager()->GetCurrentEvent()->GetPrimaryVertex();
+  G4PrimaryParticle* primaryParticle=primaryVertex->GetPrimary();
+  G4ThreeVector momDir = primaryParticle->GetMomentumDirection();
+  G4double E = primaryParticle->GetTotalEnergy();
+  G4double x0 = primaryVertex->GetX0();
+  G4double xp = momDir.x();
+  G4double y0 = primaryVertex->GetY0();
+  G4double yp = momDir.y();
+  G4double z0 = primaryVertex->GetZ0();
+  G4double zp = momDir.z();
+  G4double t = primaryVertex->GetT0();
+  G4double weight = primaryParticle->GetWeight();
+  G4int PDGType=primaryParticle->GetPDGCode();
+  G4int nEvent = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+  G4String samplerName="primariesSampler";
+  G4String collectionName="Sampler_plane";
+  BDSSamplerHitsCollection* PrimariesHitsCollection = new BDSSamplerHitsCollection(samplerName,collectionName);
+  PrimariesHitsCollection->insert(new BDSSamplerHit(samplerName, E, x0, xp, y0, yp, z0, zp, t, E, x0, xp, y0, yp, z0, zp, t, z0, weight, PDGType, nEvent, 0, 1));
+  G4SDManager * SDman = G4SDManager::GetSDMpointer();
+  G4int HCID = SDman->GetCollectionID(collectionName);
+  HCE->AddHitsCollection(HCID, PrimariesHitsCollection );
+}
+
 
 //======================================================
