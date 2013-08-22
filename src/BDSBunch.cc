@@ -811,17 +811,17 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       yp = Yp0 * rad;
       z0 = Z0 * m + (T0 - envelopeT * (1.-2.*FlatGen->shoot())) * c_light * s;
 
-      if(envelopeX !=0) x0  += envelopeX * FlatGen->shoot() * m;
-      if(envelopeY !=0) y0  += envelopeY * FlatGen->shoot() * m;
-      if(envelopeXp !=0) xp += envelopeXp * FlatGen->shoot() * rad;
-      if(envelopeYp !=0) yp += envelopeYp * FlatGen->shoot() * rad;
+      if(envelopeX !=0) x0  += envelopeX * (1-2*FlatGen->shoot()) * m;
+      if(envelopeY !=0) y0  += envelopeY * (1-2*FlatGen->shoot()) * m;
+      if(envelopeXp !=0) xp += envelopeXp * (1-2*FlatGen->shoot()) * rad;
+      if(envelopeYp !=0) yp += envelopeYp * (1-2*FlatGen->shoot()) * rad;
 
       if (Zp0<0)
         zp = -sqrt(1.-xp*xp -yp*yp);
       else
         zp = sqrt(1.-xp*xp -yp*yp);
       t = 0;
-      E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * (1 + energySpread * FlatGen->shoot());
+      E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * (1 + energySpread * (1-2*FlatGen->shoot()));
 
 #ifdef DEBUG 
       G4cout<< "BDSBunch : " <<"SQUARE: "<<G4endl

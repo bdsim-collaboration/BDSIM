@@ -30,14 +30,13 @@ class BDSEventAction : public G4UserEventAction
 public:
   BDSEventAction();
   virtual ~BDSEventAction();
-
+  
 public:
   virtual void   BeginOfEventAction(const G4Event*);
   virtual void   EndOfEventAction(const G4Event*);
-  void AddPrimaryHits(G4Event* event){
-  
+  void AddPrimaryHits(const G4Event* event);
   void SetDrawFlag   (G4String val)  {drawFlag = val;};
- 
+    
 private:
   G4bool verbose;
   G4bool verboseStep;
@@ -48,10 +47,11 @@ private:
 
   G4int                       SamplerCollID_plane;                
   G4int                       SamplerCollID_cylin;                
+  G4int                       SamplerCollID_primaries;                
   G4int                       LWCalorimeterCollID;
   //    G4int                       EnergyCounterCollID;                
   G4String                    drawFlag;
-
+  
   G4int printModulo;
   G4int itsOutputFileNumber;
   G4int itsRecordSize;
@@ -67,8 +67,7 @@ private:
   std::list<BDSEnergyCounterSD*>::const_iterator iEC;
 
   BDSAcceleratorComponent* LastComp;
-  
-};
+  };
 
 #endif
 

@@ -215,12 +215,6 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   initial_E=totalE;
   // weight
   initial_weight=weight;
-
-  //Save the primary particle as a hit
-  G4int PDGType=BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGEncoding();
-  G4int nEvent=anEvent->GetEventID();
-  G4String samplerName="input";
-  itsSamplerHitsCollection->insert(new BDSSamplerHit(samplerName, E, x0, xp, y0, yp, z0, zp, t, E, x0, xp, y0, yp, z0, zp, t, z0, weight, PDGType, nEvent, 0, 1));
 }
 
 //===================================================

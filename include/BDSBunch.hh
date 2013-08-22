@@ -60,6 +60,22 @@ public:
   G4double GetBetaX();
   G4double GetBetaY();
 
+  // get initial bunch distribution parameters in square/circle case 
+  double GetEnvelopeT();  
+  double GetEnvelopeX(); 
+  double GetEnvelopeY(); 
+  double GetEnvelopeXp();
+  double GetEnvelopeYp();
+  double GetEnvelopeE();
+
+  // set initial bunch distribution parameters in square/circle case 
+  void SetEnvelopeX(double); 
+  void SetEnvelopeY(double); 
+  void SetEnvelopeXp(double);
+  void SetEnvelopeYp(double);
+  void SetEnvelopeE(double);
+  void SetEnvelopeT(double);
+
   // set initial bunch distribution parameters in Gaussian case 
   void SetSigmaT(double);  
   void SetSigmaX(double); 
@@ -103,6 +119,14 @@ private:
   G4double Xp0; // (rad)
   G4double Yp0; // (rad)
   G4double Zp0; // (rad)
+
+  // parameters for square/circle distribution
+  G4double envelopeX; // envelopes for Gaussian bunches (m)
+  G4double envelopeY;
+  G4double envelopeT;
+  G4double envelopeXp; // (rad)
+  G4double envelopeYp; // (rad)
+  G4double envelopeE; 
 
   // parameters for Gaussian distribution
   G4double sigmaX; // sigmas for Gaussian bunches (m)

@@ -42,6 +42,7 @@
 #include "G4PrimaryParticle.hh"
 
 #include "BDSSampler.hh"
+#include "BDSSamplerSD.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSEnergyCounterHit.hh"
 
@@ -96,7 +97,7 @@ BDSEventAction::BDSEventAction():
   itsOutputFileNumber=1;
   
   itsRecordSize=1024;
-    
+  
   LastComp=NULL;
 }
 
@@ -195,6 +196,17 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #ifdef DEBUG 
   G4cout<<"BDSEventAction : storing hits"<<G4endl;
 #endif
+
+
+  //Record the primary events
+  AddPrimaryHits(evt);
+  /*
+  G4cout << __METHOD_NAME__ << "Getting primaries hits collection..." << G4endl;
+  SampHC = (BDSSamplerHitsCollection*)(HCE->GetHC(SamplerCollID_primaries));  
+  G4cout << __METHOD_NAME__ << "Writing hits..." << G4endl;
+  bdsOutput->WriteHits(SampHC);
+  G4cout << __METHOD_NAME__ << "Finished writing hits." << G4endl;
+  */
 
   // are there any planar samplers?
   // if so, record the hits for each sampler 
@@ -346,7 +358,8 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #endif
 }
 
-void BDSEventAction::AddPrimaryHits(G4Event* event){
+void BDSEventAction::AddPrimaryHits(const G4Event* evt){
+  G4cout << __METHOD_NAME__ << G4endl;
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();                                                  
   //Save the primary particle as a hit 
   G4PrimaryVertex* primaryVertex= G4RunManager::GetRunManager()->GetCurrentEvent()->GetPrimaryVertex();
@@ -361,15 +374,21 @@ void BDSEventAction::AddPrimaryHits(G4Event* event){
   G4double zp = momDir.z();
   G4double t = primaryVertex->GetT0();
   G4double weight = primaryParticle->GetWeight();
-  G4int PDGType=primaryParticle->GetPDGCode();
+  G4int PDGType=primaryParticle->GetPDGcode();
   G4int nEvent = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-  G4String samplerName="primariesSampler";
-  G4String collectionName="Sampler_plane";
+  G4String samplerName="primaries";
+  bdsOutput->WritePrimary(samplerName, E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent);
+
+  /*
+  G4String collectionName="primaries";
   BDSSamplerHitsCollection* PrimariesHitsCollection = new BDSSamplerHitsCollection(samplerName,collectionName);
   PrimariesHitsCollection->insert(new BDSSamplerHit(samplerName, E, x0, xp, y0, yp, z0, zp, t, E, x0, xp, y0, yp, z0, zp, t, z0, weight, PDGType, nEvent, 0, 1));
   G4SDManager * SDman = G4SDManager::GetSDMpointer();
-  G4int HCID = SDman->GetCollectionID(collectionName);
-  HCE->AddHitsCollection(HCID, PrimariesHitsCollection );
+  //  SDman->AddNewDetector(new BDSSamplerSD(samplerName,collectionName));
+  SamplerCollID_primaries  = SDman->GetCollectionID(collectionName);
+  HCE->AddHitsCollection(SamplerCollID_primaries, PrimariesHitsCollection );
+  */
+  G4cout << __METHOD_NAME__ << " finished" << G4endl;
 }
 
 

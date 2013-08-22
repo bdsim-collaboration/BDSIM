@@ -41,9 +41,9 @@ BDSOutput::~BDSOutput()
 #ifdef USE_ROOT
   if(format==_ROOT){
     if (theRootOutputFile && theRootOutputFile->IsOpen()) {
-      theRootOutputFile->Close();
-      //// theRootOutputFile->Write();
-      delete theRootOutputFile;
+      theRootOutputFile->Write();
+      //      theRootOutputFile->Close();
+      //      delete theRootOutputFile;
     }
   }
 #endif
@@ -125,11 +125,15 @@ void BDSOutput::Init(G4int FileNum)
   theRootOutputFile=new TFile(_filename,"RECREATE", "BDS output file");
 
   //build sampler tree
-  BuildSamplerTree("input");
+  G4String primariesSamplerName="primaries";
+  G4cout << __METHOD_NAME__ << " building sampler tree named: " << primariesSamplerName << G4endl;
+  BuildSamplerTree(primariesSamplerName);
   for(G4int i=0;i<BDSSampler::GetNSamplers();i++)
     {
+      G4cout << __METHOD_NAME__ << " building sampler tree number: " << i << G4endl;
       //G4String name="samp"+BDSGlobalConstants::Instance()->StringFromInt(i+1);
       G4String name=SampName[i];
+      G4cout << __METHOD_NAME__ << " named: " << name << G4endl;
       BuildSamplerTree(name);
     }
   for(G4int i=0;i<BDSSamplerCylinder::GetNSamplers();i++)
@@ -235,6 +239,16 @@ void BDSOutput::WriteRootHit(G4String Name, G4double   InitMom, G4double    Init
   sTree->Fill();
 }
 
+void BDSOutput::WritePrimary(G4String samplerName, G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double zp,G4double t,G4double weight,G4int PDGType, G4int nEvent){
+#ifdef USE_ROOT
+  bdsOutput->WriteRootHit(samplerName, E, x0, y0, z0, xp, yp, zp, t, E, x0, y0, z0, xp, yp, zp, t, x, y, z, xp, yp, zp, z, weight, PDGType, nEvent, 0, 1);
+#endif
+  
+  if( format == _ASCII) {
+    bdsOutput->WriteAsciiHit(PDGType, E, x0, y0, z0, xp, yp, nEvent, weight, 0, 1);
+  }
+}
+
 void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
 {
   if( format == _ASCII) {
@@ -265,13 +279,12 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
   if( format == _ROOT) {
 #ifdef USE_ROOT
     G4String name;
-    
     G4cout << __METHOD_NAME__ << " hc->endtries() = " << hc->entries() << G4endl;
     for (G4int i=0; i<hc->entries(); i++)
       {
 	G4String name = (*hc)[i]->GetName();
 	G4cout << "Writing hit to sampler " << name << G4endl;
-	WriteRootHit((*hc)[i]->GetName(),
+	WriteRootHit(name,
 		     (*hc)[i]->GetInitMom(),
 		     (*hc)[i]->GetInitX(),
 		     (*hc)[i]->GetInitY(),
