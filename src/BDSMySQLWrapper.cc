@@ -14,6 +14,7 @@
 #include "BDSMaterials.hh"
 #include "BDSMySQLWrapper.hh"
 #include "BDSMySQLTable.hh"
+#include "BDSExecOptions.hh"
 
 using namespace std;
 
@@ -111,6 +112,7 @@ G4int BDSMySQLWrapper::ReadComponent()
 {
 #define  _READ(value) if(!(ifs>>value)) return 0;
 
+
 #define CMD_CREATE   "CREATE"
 #define CMD_TABLE    "TABLE"
 #define CMD_INSERT   "INSERT"
@@ -128,25 +130,32 @@ G4int BDSMySQLWrapper::ReadComponent()
   
   char buffer[255];
   _READ(input);
+  G4cout << __METHOD_NAME__ << " reading input: " << input << G4endl;
   if(input.contains("#")){// This is a comment line  
     ifs.getline(buffer,255);
+    G4cout << __METHOD_NAME__ << " returning 0..." << G4endl;
     return 0;
   }
 
   // not using these commands yet...
-  if(input==CMD_DROP) return 0;
-  else if(input==CMD_DATABASE) return 0;
-  else if(input==CMD_IF) return 0;
-  else if(input==CMD_EXISTS) return 0;
-  else if(input==CMD_USE) return 0;
+  if(input==CMD_DROP) {   G4cout << __METHOD_NAME__ << " returning 0..." << G4endl; return 0;}
+  else if(input==CMD_DATABASE) {   G4cout << __METHOD_NAME__ << " returning 0..." << G4endl; return 0;}
+  else if(input==CMD_IF) {   G4cout << __METHOD_NAME__ << " returning 0..." << G4endl; return 0;}
+  else if(input==CMD_EXISTS) {   G4cout << __METHOD_NAME__ << " returning 0..." << G4endl; return 0;}
+  else if(input==CMD_USE) {   G4cout << __METHOD_NAME__ << " returning 0..." << G4endl; return 0;}
 
   else if(input==CMD_CREATE)
     {
       _READ(input);
-      if(input==CMD_DATABASE) return 0;
+      G4cout << __METHOD_NAME__ << " reading input: " << input << G4endl;
+      if(input==CMD_DATABASE) {
+	G4cout << __METHOD_NAME__ << " returning 0..." << G4endl;
+	return 0;
+      }
       else if(input==CMD_TABLE)
 	{
 	  _READ(CurrentTableName);
+	  G4cout << __METHOD_NAME__ << " reading CurrentTableName: " << CurrentTableName << G4endl;
 	  ifs.getline(buffer,255); // dumping rest of line.
 	  table.push_back(new BDSMySQLTable(CurrentTableName));
 	  tableN++;
@@ -154,9 +163,11 @@ G4int BDSMySQLWrapper::ReadComponent()
 	  do
 	    {
 	      _READ(varname);
+	      G4cout << __METHOD_NAME__ << " reading varname: " << varname << G4endl;
 	      if(!varname.contains(";"))
 		{
 		  _READ(vartype);
+		  G4cout << __METHOD_NAME__ << " reading vartype: " << vartype << G4endl;
 		  if(vartype.contains("DOUBLE")) vartype="DOUBLE";
 		  else if(vartype.contains("VARCHAR")) vartype="STRING";
 		  else if(vartype.contains("INTEGER")) vartype="INTEGER";
@@ -166,20 +177,22 @@ G4int BDSMySQLWrapper::ReadComponent()
 	    }
 	  while (!varname.contains(";")); // skipping to end of SQL table creation
 	}
-      return 0;
+      {   G4cout << __METHOD_NAME__ << " returning 0..." << G4endl; return 0;}
     }
   
   else if(input==CMD_INSERT)
     {
       _READ(input);
+      G4cout << __METHOD_NAME__ << " reading input: " << input << G4endl;
       if(input==CMD_INTO)
 	{
 	  _READ(InsertTableName);
-	  
+	  G4cout << __METHOD_NAME__ << " reading InsertTableName: " << InsertTableName << G4endl;	  
+
 	  _READ(input);
+	  G4cout << __METHOD_NAME__ << " reading input: " << input << G4endl;	  
 	  if(input==CMD_VALUES)
 	    {
-	      
 	      for(G4int j=0; j<(G4int)table.size(); j++)
 		{
 		  if(table[j]->GetName()==InsertTableName)
@@ -187,8 +200,12 @@ G4int BDSMySQLWrapper::ReadComponent()
 		      for(G4int k=0; k<table[j]->GetNVariables(); k++)
 			{
 			  _READ(input);
+			  G4cout << __METHOD_NAME__ << " reading input: " << input << G4endl;	  
 			  //G4cout << "Input: " << input << "\t";
-			  if(input=="(") _READ(input);
+			  if(input=="(") {
+			    _READ(input)
+			      G4cout << __METHOD_NAME__ << " reading input: " << input << G4endl;	  
+			  }
 			  if(input.contains("(")) input = StripFirst(input);
 			  if(input.contains(");")) input = StripEnd(input);
 
@@ -225,8 +242,10 @@ G4int BDSMySQLWrapper::ReadComponent()
 
 		}
 	    }
-	}
+	} else {
+	G4cout << __METHOD_NAME__ << " input: " << input << " does not equal command " << CMD_INTO << G4endl;
+      }
       return 1;
     }
-  else return 0;
+  else {   G4cout << __METHOD_NAME__ << " returning 0..." << G4endl; return 0;}
 }

@@ -129,7 +129,6 @@ public:
 protected:
   
 private:
-
   G4int itsNVariables;
   G4String itsTableName;
   std::vector<BDSMySQLVariable*> itsVar;

@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include "BDSMaterials.hh"
 #include "BDSMySQLTable.hh"
+#include "BDSExecOptions.hh"
 
 using namespace std;
 
