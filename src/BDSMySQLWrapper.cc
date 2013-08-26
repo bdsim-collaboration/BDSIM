@@ -100,7 +100,7 @@ void BDSMySQLWrapper::CreateTable(){
     //Get next variable, skipping blanks.
     do{
       _NEXTINPUT
-	} while(Token() == "");
+	} while((EmptyToken()) || (EndOfLine()));
     varname=Token();
     G4cout << __METHOD_NAME__ << " reading varname: " << varname << G4endl;
     if (varname.contains(";")) return; //Semicolon indicates end of table.
@@ -141,10 +141,10 @@ void BDSMySQLWrapper::Values() {
   for(G4int j=0; j<(G4int)table.size(); j++){
     if(table[j]->GetName()==InsertTableName){
       for(G4int k=0; k<table[j]->GetNVariables(); k++){
-	_NEXT
+	_NEXTINPUT
 	  //Skip first bracket...
 	while (Token()=="(") {
-	  _NEXT
+	  _NEXTINPUT
 	}
 	if (Token()==")") {
 	  std::stringstream excptnSstrm;
@@ -188,6 +188,10 @@ bool BDSMySQLWrapper::EndTokens(){
 
 bool BDSMySQLWrapper::EndOfLine(){
   return((*_tokens_iter)=="\n");
+}
+
+bool BDSMySQLWrapper::EmptyToken(){
+  return((*_tokens_iter)=="");
 }
 
 string BDSMySQLWrapper::Token(){

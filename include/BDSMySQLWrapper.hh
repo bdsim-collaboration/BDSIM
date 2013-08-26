@@ -73,6 +73,7 @@ private:
   bool EndTokens();
   string Token();
   bool EndOfLine();
+  bool EmptyToken();
   void ProceedToEndOfLine();
   G4int ParseComponent();
   //Methods for carrying out the various instructions:
