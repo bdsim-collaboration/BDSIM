@@ -29,7 +29,6 @@
 
 extern G4bool outline;
 
-#define DEBUG 1
 #ifdef DEBUG
 bool debug1 = true;
 #else

@@ -38,6 +38,8 @@ public:
   G4String GetVarType();
   G4String GetName();
 
+  void Print();
+
   ~BDSMySQLVariable(){};
   
 protected:
@@ -126,13 +128,20 @@ public:
   BDSMySQLVariable* GetVariable(G4String aVarName);
   BDSMySQLVariable* GetVariable(G4int aVarN);
 
+  void Print();
+
 protected:
   
 private:
   G4int itsNVariables;
   G4String itsTableName;
   std::vector<BDSMySQLVariable*> itsVar;
-  
+
+  //A list of valid variable types (STRING, DOUBLE, INTEGER...)
+  void SetValidVarTypes();
+  std::vector<G4String> _validVarTypes;
+  //To check is a var type is valid...
+  G4bool isValidVarType(G4String);
 };
 
 inline G4String BDSMySQLTable::GetName()

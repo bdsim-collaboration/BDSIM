@@ -32,7 +32,6 @@
 #include <unistd.h> // for sleep, will not work on windows?
 #endif
 
-#define DEBUG 1
 
 //==========================================================
 

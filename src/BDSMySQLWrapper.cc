@@ -16,73 +16,16 @@
 #include "BDSMySQLTable.hh"
 #include "BDSExecOptions.hh"
 
-using namespace std;
+#include<iostream>
+#include<boost/tokenizer.hpp>
 
 #include"globals.hh"
 #include<string>
 #include<vector>
+#include<sstream>
 
-void Log(const G4String& tag, int depth, ostream& os)
-{
-  static const char* tab = "----|";
-  while(depth--) os<<tab;
-  os<<' '<<tag<<endl;
-}
-
-void StripHeader(istream& is)
-{
-  //Need to read the first 6 lines of the SQL file
-  char buffer[256];
-  for (int i=0; i<6; i++)
-    is.getline(buffer,256);
-}
-
-inline G4String StripQuotes(const G4String& text)
-{
-  if(text=="") return text;
-  return text.substr(1,text.length()-2);
-}
-
-inline vector<G4String> StripComma(const G4String& text)
-{
-  vector<G4String> strippedtext;
-  G4String comma_text = text;
-  if(text==',')
-    {
-      return strippedtext;
-    }
-  
-  G4int length = comma_text.length();
-  G4int curr=0;
-  while(comma_text.contains(','))
-    {
-      curr = comma_text.first(',');
-      //G4cout << "Init: " << comma_text << G4endl;
-      if(curr!=0) strippedtext.push_back(comma_text.substr(0,curr));
-      //if(curr!=0) G4cout << "Res: " << comma_text.substr(0,curr) << G4endl;
-
-      if(curr+1>=length) 
-	{
-	  comma_text="";
-	  break;
-	}
-      else comma_text = comma_text.substr(curr+1,length);
-    }
-  if(comma_text.length()>0) strippedtext.push_back(comma_text);
-  //if(comma_text.length()>0) G4cout << "Res: " << comma_text << G4endl;
-  return strippedtext;
-
-}
-inline G4String StripFirst(const G4String& text)
-{
-  if(text=="") return text;
-  return text.substr(1,text.length());
-}
-inline G4String StripEnd(const G4String& text)
-{
-  if(text=="") return text;
-  return text.substr(0,text.length()-2);
-}
+using namespace std;
+using namespace boost;
 
 BDSMySQLWrapper::BDSMySQLWrapper (const G4String& SQLFileName)
   : ifs(SQLFileName.c_str()), ComponentN(0), tableN(-1)
@@ -92,160 +35,219 @@ BDSMySQLWrapper::BDSMySQLWrapper (const G4String& SQLFileName)
   else G4cout<<"BDSMySQLWrapper constructor: Unable to load SQL file: "<<SQLFileName<<G4endl;
 }
 
-vector<BDSMySQLTable*> BDSMySQLWrapper::ConstructTable ()
-{
-  // reset the stream pointer
-  ifs.seekg(0);
-  ComponentN=0;
-  tableN=-1;
-  while(ifs) ComponentN+=ReadComponent();
-  ifs.close();
-  return table;
-}
-
-
 BDSMySQLWrapper::~BDSMySQLWrapper()
 {
 }
 
-G4int BDSMySQLWrapper::ReadComponent()
+vector<BDSMySQLTable*> BDSMySQLWrapper::ConstructTable ()
 {
-#define  _READ(value) if(!(ifs>>value)) return 0;
+  TokenizeFile();
+  BeginTokens();
+  ComponentN=0;
+  tableN=-1;
+  while(NextToken()){
+    ParseComponent();
+  }
+  return table;
+}
+
+void BDSMySQLWrapper::TokenizeFile(){
+  string line;
+  string token;
+  typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+  boost::char_separator<char> sep(", ",";()\n");
+  while(ReadLine(line)){
+    tokenizer tokens(line, sep);
+    for(tokenizer::iterator tok_iter=tokens.begin(); tok_iter != tokens.end(); ++tok_iter){
+      token = *tok_iter;
+      RemoveQuotesFromLine(token);
+      RemoveWhitespace(token);
+      _tokens.push_back(token);
+    }
+  }
+}
+
+G4int BDSMySQLWrapper::ParseComponent()
+{
+  // not using these commands yet...
+  if(Token()==CMD_DROP) { return 0;}
+  else if(Token()==CMD_DATABASE) { return 0;}
+  else if(Token()==CMD_IF) { return 0;}
+  else if(Token()==CMD_EXISTS) { return 0;}
+  else if(Token()==CMD_USE) { return 0;}
+  //The following commands are used...
+  else if(Token()==CMD_CREATE) {Create(); return 0;}
+  else if(Token()==CMD_INSERT) {Insert(); ComponentN++; return 0;}
+  return 0;
+}
 
 
-#define CMD_CREATE   "CREATE"
-#define CMD_TABLE    "TABLE"
-#define CMD_INSERT   "INSERT"
-#define CMD_INTO     "INTO"
-#define CMD_VALUES   "VALUES"
-#define CMD_DROP     "DROP"
-#define CMD_DATABASE "DATABASE"
-#define CMD_USE      "USE"
-#define CMD_IF       "IF"
-#define CMD_EXISTS   "EXISTS"
+void BDSMySQLWrapper::CreateDatabase(){
+}
 
-  G4String input;
+void BDSMySQLWrapper::CreateTable(){
   G4String varname;
   G4String vartype;
+
+  _NEXTINPUT
+    CurrentTableName=Token();
+  G4cout << __METHOD_NAME__ << " reading CurrentTableName: " << CurrentTableName << G4endl;
+  ProceedToEndOfLine();
+  table.push_back(new BDSMySQLTable(CurrentTableName));
+  tableN++;
   
-  char buffer[255];
-  _READ(input);
-  G4cout << __METHOD_NAME__ << " reading input: " << input << G4endl;
-  if(input.contains("#")){// This is a comment line  
-    ifs.getline(buffer,255);
-    G4cout << __METHOD_NAME__ << " returning 0..." << G4endl;
-    return 0;
+  while((!varname.contains(";")) && (!vartype.contains(";"))){
+    //Get next variable, skipping blanks.
+    do{
+      _NEXTINPUT
+	} while(Token() == "");
+    varname=Token();
+    G4cout << __METHOD_NAME__ << " reading varname: " << varname << G4endl;
+    if (varname.contains(";")) return; //Semicolon indicates end of table.
+    _NEXTINPUT
+      vartype=Token();
+    G4cout << __METHOD_NAME__ << " reading vartype: " << vartype << G4endl;
+    if (vartype.contains(";")) return; //Semicolon indicates end of table.
+    if(vartype.contains("DOUBLE")) vartype="DOUBLE";
+    else if(vartype.contains("VARCHAR")) vartype="STRING";
+    else if(vartype.contains("INTEGER")) vartype="INTEGER";
+    table[tableN]->AddVariable(varname,vartype);
+    ProceedToEndOfLine();
   }
-
-  // not using these commands yet...
-  if(input==CMD_DROP) {   G4cout << __METHOD_NAME__ << " returning 0..." << G4endl; return 0;}
-  else if(input==CMD_DATABASE) {   G4cout << __METHOD_NAME__ << " returning 0..." << G4endl; return 0;}
-  else if(input==CMD_IF) {   G4cout << __METHOD_NAME__ << " returning 0..." << G4endl; return 0;}
-  else if(input==CMD_EXISTS) {   G4cout << __METHOD_NAME__ << " returning 0..." << G4endl; return 0;}
-  else if(input==CMD_USE) {   G4cout << __METHOD_NAME__ << " returning 0..." << G4endl; return 0;}
-
-  else if(input==CMD_CREATE)
-    {
-      _READ(input);
-      G4cout << __METHOD_NAME__ << " reading input: " << input << G4endl;
-      if(input==CMD_DATABASE) {
-	G4cout << __METHOD_NAME__ << " returning 0..." << G4endl;
-	return 0;
-      }
-      else if(input==CMD_TABLE)
-	{
-	  _READ(CurrentTableName);
-	  G4cout << __METHOD_NAME__ << " reading CurrentTableName: " << CurrentTableName << G4endl;
-	  ifs.getline(buffer,255); // dumping rest of line.
-	  table.push_back(new BDSMySQLTable(CurrentTableName));
-	  tableN++;
-
-	  do
-	    {
-	      _READ(varname);
-	      G4cout << __METHOD_NAME__ << " reading varname: " << varname << G4endl;
-	      if(!varname.contains(";"))
-		{
-		  _READ(vartype);
-		  G4cout << __METHOD_NAME__ << " reading vartype: " << vartype << G4endl;
-		  if(vartype.contains("DOUBLE")) vartype="DOUBLE";
-		  else if(vartype.contains("VARCHAR")) vartype="STRING";
-		  else if(vartype.contains("INTEGER")) vartype="INTEGER";
-		  table[tableN]->AddVariable(varname,vartype);
-		  ifs.getline(buffer,255); // dumping rest of line
-		}
-	    }
-	  while (!varname.contains(";")); // skipping to end of SQL table creation
-	}
-      {   G4cout << __METHOD_NAME__ << " returning 0..." << G4endl; return 0;}
-    }
-  
-  else if(input==CMD_INSERT)
-    {
-      _READ(input);
-      G4cout << __METHOD_NAME__ << " reading input: " << input << G4endl;
-      if(input==CMD_INTO)
-	{
-	  _READ(InsertTableName);
-	  G4cout << __METHOD_NAME__ << " reading InsertTableName: " << InsertTableName << G4endl;	  
-
-	  _READ(input);
-	  G4cout << __METHOD_NAME__ << " reading input: " << input << G4endl;	  
-	  if(input==CMD_VALUES)
-	    {
-	      for(G4int j=0; j<(G4int)table.size(); j++)
-		{
-		  if(table[j]->GetName()==InsertTableName)
-		    {
-		      for(G4int k=0; k<table[j]->GetNVariables(); k++)
-			{
-			  _READ(input);
-			  G4cout << __METHOD_NAME__ << " reading input: " << input << G4endl;	  
-			  //G4cout << "Input: " << input << "\t";
-			  if(input=="(") {
-			    _READ(input)
-			      G4cout << __METHOD_NAME__ << " reading input: " << input << G4endl;	  
-			  }
-			  if(input.contains("(")) input = StripFirst(input);
-			  if(input.contains(");")) input = StripEnd(input);
-
-			  if(input.contains(","))
-			    {
-			      vector<G4String> vctInput = StripComma(input);
-			      if(vctInput.size()==0) k--;
-			      for(G4int i=0; i<(G4int)vctInput.size(); i++)
-				{
-				  //G4cout << "Res: " << vctInput[i] << G4endl;
-				  if(table[j]->GetVariable(k)->GetVarType()=="DOUBLE")
-				    table[j]->GetVariable(k)->AddValue(atof(vctInput[i])*mm);
-				  else if(table[j]->GetVariable(k)->GetVarType()=="STRING")
-				    table[j]->GetVariable(k)->AddValue(StripQuotes(vctInput[i]));
-				  else if(table[j]->GetVariable(k)->GetVarType()=="INTEGER")
-				    table[j]->GetVariable(k)->AddValue(atoi(vctInput[i]));
-				  if(i!=(G4int)vctInput.size()-1) k++;
-				}
-			    }
-			  else
-			    {
-			      //G4cout << "Res: " << input << G4endl;
-			      if(table[j]->GetVariable(k)->GetVarType()=="DOUBLE")
-				table[j]->GetVariable(k)->AddValue(atof(input)*mm);
-			      else if(table[j]->GetVariable(k)->GetVarType()=="STRING")
-				table[j]->GetVariable(k)->AddValue(StripQuotes(input));
-			      else if(table[j]->GetVariable(k)->GetVarType()=="INTEGER")
-				table[j]->GetVariable(k)->AddValue(atoi(input));
-
-			    }
-			  
-			}
-		    }
-
-		}
-	    }
-	} else {
-	G4cout << __METHOD_NAME__ << " input: " << input << " does not equal command " << CMD_INTO << G4endl;
-      }
-      return 1;
-    }
-  else {   G4cout << __METHOD_NAME__ << " returning 0..." << G4endl; return 0;}
 }
+
+
+void BDSMySQLWrapper::Create(){
+  _NEXT
+    G4cout << __METHOD_NAME__ << " reading input: " << Token() << G4endl;
+  if(Token()==CMD_DATABASE) {CreateDatabase();}
+  else if(Token()==CMD_TABLE) {CreateTable();}
+}
+
+void BDSMySQLWrapper::Insert(){
+  _NEXT
+    G4cout << __METHOD_NAME__ << " reading input: " << Token() << G4endl;
+  if(Token()==CMD_INTO){InsertInto();}
+}
+
+void BDSMySQLWrapper::InsertInto() {
+  _NEXT
+    InsertTableName=Token();
+  _NEXT
+    if(Token()==CMD_VALUES){Values();}
+}
+ 
+void BDSMySQLWrapper::Values() {
+  for(G4int j=0; j<(G4int)table.size(); j++){
+    if(table[j]->GetName()==InsertTableName){
+      for(G4int k=0; k<table[j]->GetNVariables(); k++){
+	_NEXT
+	  //Skip first bracket...
+	while (Token()=="(") {
+	  _NEXT
+	}
+	if (Token()==")") {
+	  std::stringstream excptnSstrm;
+	  excptnSstrm<<__METHOD_NAME__<< " - expected " << table[j]->GetNVariables() << " values for insertion into table " << InsertTableName << "\n";
+	  G4Exception(excptnSstrm.str().c_str(), "-1", FatalException, "");
+	  return;
+	}
+	G4cout << __METHOD_NAME__ << " inserting value " << Token() << G4endl;
+	if(table[j]->GetVariable(k)->GetVarType()=="DOUBLE")
+	  table[j]->GetVariable(k)->AddValue(atof(Token().c_str())*mm);
+	else if(table[j]->GetVariable(k)->GetVarType()=="STRING")
+	  table[j]->GetVariable(k)->AddValue(Token().c_str());
+	else if(table[j]->GetVariable(k)->GetVarType()=="INTEGER")
+	  table[j]->GetVariable(k)->AddValue(atoi(Token().c_str()));
+      }
+    }
+  }
+}
+
+void BDSMySQLWrapper::BeginTokens(){
+  _tokens_iter=_tokens.begin();
+}
+
+bool BDSMySQLWrapper::NextToken(){
+  ++_tokens_iter;
+  if(!EndTokens()) return 0;
+  return 1;
+}
+
+bool BDSMySQLWrapper::NextInputToken(){
+  G4int returnVal;
+  do{
+    returnVal=NextToken();
+  } while (EndOfLine());
+  return returnVal;;
+}
+
+bool BDSMySQLWrapper::EndTokens(){
+  return(_tokens_iter!=_tokens.end());
+}
+
+bool BDSMySQLWrapper::EndOfLine(){
+  return((*_tokens_iter)=="\n");
+}
+
+string BDSMySQLWrapper::Token(){
+  return *_tokens_iter;
+}
+
+void BDSMySQLWrapper::ProceedToEndOfLine(){
+  G4cout << __METHOD_NAME__ << G4endl;
+  while(!EndOfLine()){
+    _NEXT
+      G4cout << __METHOD_NAME__ << " " << Token() << G4endl;
+  }
+  G4cout << __METHOD_NAME__ << " finished." << G4endl;
+}
+
+bool BDSMySQLWrapper::ReadLine(string& value){
+  //returns non zero if unsuccessful
+  char buffer[512];
+  bool result = ifs.getline(buffer,512);
+  value=buffer;
+  RemoveCommentsFromLine(value);
+  //Put back the new line character
+  value += ' ';
+  value += '\n';
+  return result;
+}
+
+void BDSMySQLWrapper::RemoveCommentsFromLine(string& value){
+  //Strip all characters after and including '#'
+  unsigned pos = value.find('#');
+  string uncommented = value.substr(0,pos);
+  value=uncommented;
+}
+
+void BDSMySQLWrapper::RemoveQuotesFromLine(string& value){
+  //Strip all "
+  value.erase (std::remove(value.begin(), value.end(), '\"'), value.end());
+}
+
+
+void BDSMySQLWrapper::RemoveWhitespace(G4String& val){
+  std::string s = val;
+  RemoveWhitespace(s);
+  val=(G4String)s;
+}
+
+void BDSMySQLWrapper::RemoveWhitespace(std::string& val){
+  val.erase( std::remove_if( val.begin(), val.end(), ::isblank ), val.end() );
+}
+
+/*
+void Log(const G4String& tag, int depth, ostream& os)
+{
+  static const char* tab = "----|";
+  while(depth--) os<<tab;
+  os<<' '<<tag<<endl;
+}
+*/
+
+
+
+
+ 

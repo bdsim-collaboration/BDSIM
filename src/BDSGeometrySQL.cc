@@ -86,7 +86,7 @@ void BDSGeometrySQL::BuildSQLObjects(G4String file)
 
   for (G4int i=0; i<(G4int)itsSQLTable.size(); i++)
     {
-
+      itsSQLTable[i]->Print();
       _TableName = itsSQLTable[i]->GetName();
       G4cout << __METHOD_NAME__ << " i = " << i << ", TableName = " << _TableName << G4endl;
       G4int pos = _TableName.find("_");
