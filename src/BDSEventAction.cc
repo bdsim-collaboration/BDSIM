@@ -358,9 +358,9 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #endif
 }
 
-void BDSEventAction::AddPrimaryHits(const G4Event* evt){
+void BDSEventAction::AddPrimaryHits(const G4Event* /*evt*/){
   G4cout << __METHOD_NAME__ << G4endl;
-  G4HCofThisEvent* HCE = evt->GetHCofThisEvent();                                                  
+  //  G4HCofThisEvent* HCE = evt->GetHCofThisEvent();                                                  
   //Save the primary particle as a hit 
   G4PrimaryVertex* primaryVertex= G4RunManager::GetRunManager()->GetCurrentEvent()->GetPrimaryVertex();
   G4PrimaryParticle* primaryParticle=primaryVertex->GetPrimary();

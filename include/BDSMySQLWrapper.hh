@@ -31,26 +31,24 @@
 #define CMD_IF       "IF"
 #define CMD_EXISTS   "EXISTS"
 
-using namespace std;
-
 class BDSMySQLWrapper 
 {
 public:
   BDSMySQLWrapper (const G4String& SQLFileName);
   ~BDSMySQLWrapper();
   
-  vector<BDSMySQLTable*> ConstructTable();
+  std::vector<BDSMySQLTable*> ConstructTable();
 
   G4int GetComponentN() {return ComponentN;}
  
-  vector<BDSMySQLTable*> table;
+  std::vector<BDSMySQLTable*> table;
 
 protected:
   
 private:
   // Data Members for Class Attributes
 
-  ifstream ifs;
+  std::ifstream ifs;
   
   G4String CurrentTableName;
   G4String InsertTableName;
@@ -58,20 +56,20 @@ private:
 
   G4int tableN;
 
-  bool ReadLine(string&);
-  void RemoveCommentsFromLine(string& value);
-  void RemoveQuotesFromLine(string& value);
+  bool ReadLine(std::string&);
+  void RemoveCommentsFromLine(std::string& value);
+  void RemoveQuotesFromLine(std::string& value);
   void RemoveWhitespace(std::string&);
   void RemoveWhitespace(G4String&);
   void TokenizeFile();
-  vector<string> _tokens;
-  vector<string>::iterator _tokens_iter;
+  std::vector<std::string> _tokens;
+  std::vector<std::string>::iterator _tokens_iter;
 
   void BeginTokens();
   bool NextToken();
   bool NextInputToken();
   bool EndTokens();
-  string Token();
+  std::string Token();
   bool EndOfLine();
   bool EmptyToken();
   void ProceedToEndOfLine();
