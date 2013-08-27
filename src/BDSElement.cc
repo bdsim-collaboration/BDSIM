@@ -49,6 +49,8 @@
 
 using namespace std;
 
+#define DEBUG 1
+
 //============================================================
 
 typedef std::map<G4String,int> LogVolCountMap;
@@ -494,30 +496,21 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
 
   if(!itsFieldIsUniform){
 #ifdef DEBUG
-    G4cout << "BDSElement.cc> Building non-uniform magnetic field..." << endl;
+    G4cout << "BDSElement.cc> Building magnetic field..." << endl;
 #endif
     itsEqRhs = new G4Mag_UsualEqRhs(itsMagField);
     if( (itsMagField->GetHasUniformField())&!(itsMagField->GetHasNPoleFields() || itsMagField->GetHasFieldMap())){
-      //itsFStepper = new G4ExactHelixStepper(itsEqRhs); 
-      itsFStepper = new G4HelixMixedStepper(itsEqRhs,6); 
+      itsFStepper = new G4ClassicalRK4(itsEqRhs); 
     } else {
-      //        itsFStepper = new G4HelixMixedStepper(itsEqRhs,6); 
-      itsFStepper = new G4HelixImplicitEuler(itsEqRhs); 
-      //    itsFStepper = new G4HelixSimpleRunge(itsEqRhs);
-      //    itsFStepper = new G4HelixHeum(itsEqRhs);
-      //    itsFStepper = new G4ClassicalRK4(itsEqRhs);
+      itsFStepper = new G4ClassicalRK4(itsEqRhs); 
     }
-    //    //  itsFStepper = new G4HelixSimpleRunge(itsEqRhs); 
-    //  itsFStepper = new G4HelixExplicitEuler(itsEqRhs); 
     fieldManager->SetDetectorField(itsMagField );
   } else {
 #ifdef DEBUG
     G4cout << "BDSElement.cc> Building uniform magnetic field..." << endl;
 #endif
     itsEqRhs = new G4Mag_UsualEqRhs(itsUniformMagField);
-    //    itsFStepper = new G4HelixImplicitEuler(itsEqRhs); 
-    //  itsFStepper = new G4CashKarpRKF45(itsEqRhs); 
-    itsFStepper = new G4HelixMixedStepper(itsEqRhs, 6); 
+    itsFStepper = new G4ClassicalRK4(itsEqRhs); 
     fieldManager->SetDetectorField(itsUniformMagField );
   }
 

@@ -58,12 +58,12 @@ private:
 
   G4int tableN;
 
-  bool ReadLine(string&);
+  void ReadLine();
   void RemoveCommentsFromLine(string& value);
   void RemoveQuotesFromLine(string& value);
   void RemoveWhitespace(std::string&);
   void RemoveWhitespace(G4String&);
-  void TokenizeFile();
+  void TokenizeLine();
   vector<string> _tokens;
   vector<string>::iterator _tokens_iter;
 
@@ -84,8 +84,10 @@ private:
   void InsertInto();
   void Values();
 
+  std::string _currentLine;
+  bool _startOfFile;
 
-  
+
 };
 
 #endif

@@ -93,25 +93,27 @@ void BDSGeometrySQL::BuildSQLObjects(G4String file)
       G4String ObjectType = _TableName.substr(pos+1,_TableName.length() - pos);
       G4String::caseCompare cmpmode = G4String::ignoreCase;
       _NVariables = itsSQLTable[i]->GetVariable(0)->GetNVariables();
-      for(G4int k=0; k<_NVariables; k++)
-	{
-	  SetCommonParams(itsSQLTable[i], k);
-	  G4LogicalVolume* logVol;
-	  if(ObjectType.compareTo("CONE",cmpmode)==0) logVol = BuildCone(itsSQLTable[i],k);
-	  else if(ObjectType.compareTo("ELLIPTICALCONE",cmpmode)==0) logVol = BuildEllipticalCone(itsSQLTable[i],k);
-	  else if(ObjectType.compareTo("POLYCONE",cmpmode)==0) logVol = BuildPolyCone(itsSQLTable[i],k);
-	  else if(ObjectType.compareTo("BOX",cmpmode)==0) logVol = BuildBox(itsSQLTable[i],k);
-	  else if(ObjectType.compareTo("TRAP",cmpmode)==0) logVol =  BuildTrap(itsSQLTable[i],k);
-	  else if(ObjectType.compareTo("TORUS",cmpmode)==0) logVol = BuildTorus(itsSQLTable[i],k);
-	  else if(ObjectType.compareTo("SAMPLER",cmpmode)==0) logVol = BuildSampler(itsSQLTable[i],k);
-	  else if(ObjectType.compareTo("TUBE",cmpmode)==0) logVol =  BuildTube(itsSQLTable[i],k);
-	  else if(ObjectType.compareTo("ELLIPTICALTUBE",cmpmode)==0) logVol =  BuildEllipticalTube(itsSQLTable[i],k);
-	  else if(ObjectType.compareTo("PCLTUBE",cmpmode)==0) logVol =  BuildPCLTube(itsSQLTable[i],k);
-
-	  //Set the user limits and visual attributes
-	  SetLogVolAtt(logVol, _lengthUserLimit);
-	  VOL_LIST.push_back(logVol);
+      for(G4int k=0; k<_NVariables; k++){
+	SetCommonParams(itsSQLTable[i], k);
+	G4LogicalVolume* logVol;
+	if(ObjectType.compareTo("CONE",cmpmode)==0) logVol = BuildCone(itsSQLTable[i],k);
+	else if(ObjectType.compareTo("ELLIPTICALCONE",cmpmode)==0) logVol = BuildEllipticalCone(itsSQLTable[i],k);
+	else if(ObjectType.compareTo("POLYCONE",cmpmode)==0) logVol = BuildPolyCone(itsSQLTable[i],k);
+	else if(ObjectType.compareTo("BOX",cmpmode)==0) logVol = BuildBox(itsSQLTable[i],k);
+	else if(ObjectType.compareTo("TRAP",cmpmode)==0) logVol =  BuildTrap(itsSQLTable[i],k);
+	else if(ObjectType.compareTo("TORUS",cmpmode)==0) logVol = BuildTorus(itsSQLTable[i],k);
+	else if(ObjectType.compareTo("SAMPLER",cmpmode)==0) logVol = BuildSampler(itsSQLTable[i],k);
+	else if(ObjectType.compareTo("TUBE",cmpmode)==0) logVol =  BuildTube(itsSQLTable[i],k);
+	else if(ObjectType.compareTo("ELLIPTICALTUBE",cmpmode)==0) logVol =  BuildEllipticalTube(itsSQLTable[i],k);
+	else if(ObjectType.compareTo("PCLTUBE",cmpmode)==0) logVol =  BuildPCLTube(itsSQLTable[i],k);
+	else {
+	  G4cerr << __METHOD_NAME__ << ObjectType << " not known" << G4endl;
+	  exit(1);
 	}
+	//Set the user limits and visual attributes
+	SetLogVolAtt(logVol, _lengthUserLimit);
+	VOL_LIST.push_back(logVol);
+      }
       PlaceComponents(itsSQLTable[i], VOL_LIST);
     }
 }
@@ -138,6 +140,7 @@ void BDSGeometrySQL::SetCommonParams(BDSMySQLTable* aSQLTable, G4int k){
     _Material = aSQLTable->GetVariable("MATERIAL")->GetStrValue(k);
   if(aSQLTable->GetVariable("NAME")!=NULL)
     _Name = aSQLTable->GetVariable("NAME")->GetStrValue(k);
+  if(_Name=="_SQL") _Name = _TableName+BDSGlobalConstants::Instance()->StringFromInt(k) + "_SQL";
   if(_Name=="") _Name = _TableName+BDSGlobalConstants::Instance()->StringFromInt(k);
   _Name = itsMarkerVol->GetName()+"_"+_Name;
   G4cout << __METHOD_NAME__ << " k = " << k << ", _Name = " << _Name << G4endl;
@@ -156,6 +159,7 @@ void BDSGeometrySQL::SetPlacementParams(BDSMySQLTable* aSQLTable, G4int k){
       _SetSensitive=0;
       _MagType = "";
       _FieldX = _FieldY = _FieldZ = 0.0;
+      _Name="";
       if(aSQLTable->GetVariable("PARENTNAME")!=NULL)
 	_PARENTNAME = aSQLTable->GetVariable("PARENTNAME")->GetStrValue(k);
       if(aSQLTable->GetVariable("POSX")!=NULL)
@@ -196,16 +200,14 @@ void BDSGeometrySQL::SetPlacementParams(BDSMySQLTable* aSQLTable, G4int k){
 	_InheritStyle = aSQLTable->GetVariable("INHERITSTYLE")->GetStrValue(k);
       if(aSQLTable->GetVariable("PARAMETERISATION")!=NULL)
 	_Parameterisation = aSQLTable->GetVariable("PARAMETERISATION")->GetStrValue(k);
+      if(_PARENTNAME=="") _PosZ-=itsMarkerLength/2; //Move definition of PosZ to front of element
+      _PARENTNAME=itsMarkerVol->GetName()+"_"+_PARENTNAME;
       if(aSQLTable->GetVariable("NAME")!=NULL)
 	_Name = aSQLTable->GetVariable("NAME")->GetStrValue(k);
-
       if(_Name=="_SQL") _Name = _TableName+BDSGlobalConstants::Instance()->StringFromInt(k) + "_SQL";
       if(_Name=="") _Name = _TableName+BDSGlobalConstants::Instance()->StringFromInt(k);
       _Name = itsMarkerVol->GetName()+"_"+_Name;
       G4cout << __METHOD_NAME__ << " k = " << k << ", _Name = " << _Name << G4endl;
-
-      if(_PARENTNAME=="") _PosZ-=itsMarkerLength/2; //Move definition of PosZ to front of element
-      _PARENTNAME=itsMarkerVol->GetName()+"_"+_PARENTNAME;
 }
 
 G4VisAttributes* BDSGeometrySQL::VisAtt(){
