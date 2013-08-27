@@ -163,6 +163,9 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
 
 BDSAcceleratorComponent::~BDSAcceleratorComponent ()
 {
+#ifndef NOUSERLIMITS
+  delete itsUserLimits;
+#endif
   delete VisAtt;
   delete VisAtt1;
   delete VisAtt2;

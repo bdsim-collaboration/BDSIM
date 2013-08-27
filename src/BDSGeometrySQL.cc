@@ -687,7 +687,8 @@ G4LogicalVolume* BDSGeometrySQL::BuildPCLTube(BDSMySQLTable* aSQLTable, G4int k)
   
   BDSPCLTube* aPCLTubeBuilder = new BDSPCLTube(aperX, aperYUp, aperYDown, aperDy, thickness, length, _Name+"_PCLTube");
   G4VSolid* aPCLTube = aPCLTubeBuilder->GetSolid();
-  
+  delete aPCLTubeBuilder;
+
   G4LogicalVolume* aPCLTubeVol = 
     new G4LogicalVolume(aPCLTube,
 			BDSMaterials::Instance()->GetMaterial(_Material),
