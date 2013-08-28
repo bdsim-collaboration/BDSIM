@@ -31,6 +31,8 @@ BDSMySQLWrapper::BDSMySQLWrapper (const G4String& SQLFileName)
   : ifs(SQLFileName.c_str()), ComponentN(0), tableN(-1)
   
 {
+  _startOfFile=true;
+  BeginTokens();
   if(ifs) G4cout<<"BDSMySQLWrapper contructor: Loading SQL Filename="<<SQLFileName<<G4endl;
   else G4cout<<"BDSMySQLWrapper constructor: Unable to load SQL file: "<<SQLFileName<<G4endl;
 }
@@ -41,8 +43,6 @@ BDSMySQLWrapper::~BDSMySQLWrapper()
 
 vector<BDSMySQLTable*> BDSMySQLWrapper::ConstructTable ()
 {
-  TokenizeFile();
-  BeginTokens();
   ComponentN=0;
   tableN=-1;
   while(NextToken()){
@@ -51,21 +51,43 @@ vector<BDSMySQLTable*> BDSMySQLWrapper::ConstructTable ()
   return table;
 }
 
-void BDSMySQLWrapper::TokenizeFile(){
-  string line;
+void BDSMySQLWrapper::TokenizeLine(){
   string token;
-  typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+  _tokens.clear();
+  typedef boost::tokenizer<boost::char_separator<char> > tokenizer;  
   boost::char_separator<char> sep(", ",";()\n");
-  while(ReadLine(line)){
-    tokenizer tokens(line, sep);
-    for(tokenizer::iterator tok_iter=tokens.begin(); tok_iter != tokens.end(); ++tok_iter){
-      token = *tok_iter;
-      RemoveQuotesFromLine(token);
-      RemoveWhitespace(token);
-      _tokens.push_back(token);
-    }
+  tokenizer tok(_currentLine, sep);
+  for(tokenizer::iterator tok_iter=tok.begin(); tok_iter != tok.end(); ++tok_iter){
+    token = *tok_iter;
+    RemoveQuotesFromLine(token);
+    RemoveWhitespace(token);
+    _tokens.push_back(token);
+    G4cout << __METHOD_NAME__ << " - token: = <" << token << ">" << G4endl;
   }
+  BeginTokens();
 }
+
+bool BDSMySQLWrapper::NextToken(){
+  string line;
+  ++_tokens_iter;
+  if(_startOfFile){
+    --_tokens_iter;
+  }
+  if(_startOfFile || EndTokens()){
+    if(ifs.good()){
+      ReadLine();
+      TokenizeLine();
+      G4cout << __METHOD_NAME__ << " - Token() = " << Token() << G4endl;
+    }else{
+      return false;
+    }
+  } else {
+    G4cout << __METHOD_NAME__ << " - Token() = " << Token() << G4endl;
+  }
+  return true;
+}
+
+
 
 G4int BDSMySQLWrapper::ParseComponent()
 {
@@ -147,10 +169,10 @@ void BDSMySQLWrapper::Values() {
 	  _NEXTINPUT
 	}
 	if (Token()==")") {
-	  std::stringstream excptnSstrm;
-	  excptnSstrm<<__METHOD_NAME__<< " - expected " << table[j]->GetNVariables() << " values for insertion into table " << InsertTableName << "\n";
-	  G4Exception(excptnSstrm.str().c_str(), "-1", FatalException, "");
-	  return;
+	  //	  std::stringstream excptnSstrm;
+	  //	  excptnSstrm<<__METHOD_NAME__<< " - expected " << table[j]->GetNVariables() << " values for insertion into table " << InsertTableName << "\n";
+	  //	  G4Exception(excptnSstrm.str().c_str(), "-1", FatalException, "");
+	  //	  return;
 	}
 	G4cout << __METHOD_NAME__ << " inserting value " << Token() << G4endl;
 	if(table[j]->GetVariable(k)->GetVarType()=="DOUBLE")
@@ -168,22 +190,20 @@ void BDSMySQLWrapper::BeginTokens(){
   _tokens_iter=_tokens.begin();
 }
 
-bool BDSMySQLWrapper::NextToken(){
-  ++_tokens_iter;
-  if(!EndTokens()) return 0;
-  return 1;
-}
-
 bool BDSMySQLWrapper::NextInputToken(){
-  G4int returnVal;
-  do{
-    returnVal=NextToken();
-  } while (EndOfLine());
-  return returnVal;;
+  if(ifs.good()){
+    bool status;
+    do{
+      status=NextToken();
+    } while (EndOfLine());
+    return status;
+  } else {
+    return false;
+  }
 }
 
 bool BDSMySQLWrapper::EndTokens(){
-  return(_tokens_iter!=_tokens.end());
+  return(_tokens_iter==_tokens.end());
 }
 
 bool BDSMySQLWrapper::EndOfLine(){
@@ -207,16 +227,18 @@ void BDSMySQLWrapper::ProceedToEndOfLine(){
   G4cout << __METHOD_NAME__ << " finished." << G4endl;
 }
 
-bool BDSMySQLWrapper::ReadLine(string& value){
+void BDSMySQLWrapper::ReadLine(){
+  _currentLine.clear();
+  _startOfFile=false;
   //returns non zero if unsuccessful
   char buffer[512];
-  bool result = ifs.getline(buffer,512);
-  value=buffer;
-  RemoveCommentsFromLine(value);
+  ifs.getline(buffer,512);
+  _currentLine=buffer;
+  RemoveCommentsFromLine(_currentLine);
   //Put back the new line character
-  value += ' ';
-  value += '\n';
-  return result;
+  _currentLine += ' ';
+  _currentLine += '\n';
+  G4cout << __METHOD_NAME__ << " - _currentLine = " << _currentLine << G4endl;
 }
 
 void BDSMySQLWrapper::RemoveCommentsFromLine(string& value){
