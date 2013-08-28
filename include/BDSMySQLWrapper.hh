@@ -62,8 +62,8 @@ private:
   void RemoveWhitespace(std::string&);
   void RemoveWhitespace(G4String&);
   void TokenizeLine();
-  vector<std::string> _tokens;
-  vector<std::string>::iterator _tokens_iter;
+  std::vector<std::string> _tokens;
+  std::vector<std::string>::iterator _tokens_iter;
 
   void BeginTokens();
   bool NextToken();
