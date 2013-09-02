@@ -38,7 +38,7 @@ PROJECT_NUMBER         =
 # for a project that appears at the top of each page and should give viewer
 # a quick idea about the purpose of the project. Keep the description short.
 
-PROJECT_BRIEF          =
+PROJECT_BRIEF          = "BDSIM is a Geant4 extension toolkit for simulation of particle transport in accelerator beamlines."
 
 # With the PROJECT_LOGO tag one can specify an logo or icon that is
 # included in the documentation. The maximum height of the logo should not
@@ -403,7 +403,7 @@ INTERNAL_DOCS          = NO
 # in case and if your file system supports case sensitive file names. Windows
 # and Mac users are advised to set this option to NO.
 
-CASE_SENSE_NAMES       = NO
+CASE_SENSE_NAMES       = YES
 
 # If the HIDE_SCOPE_NAMES tag is set to NO (the default) then Doxygen
 # will show members with their full class and namespace scopes in the
@@ -1653,7 +1653,7 @@ INCLUDED_BY_GRAPH      = YES
 # the time of a run. So in most cases it will be better to enable call graphs
 # for selected functions only using the \callgraph command.
 
-CALL_GRAPH             = NO
+CALL_GRAPH             = YES
 
 # If the CALLER_GRAPH and HAVE_DOT tags are set to YES then
 # doxygen will generate a caller dependency graph for every global function
@@ -1661,7 +1661,7 @@ CALL_GRAPH             = NO
 # the time of a run. So in most cases it will be better to enable caller
 # graphs for selected functions only using the \callergraph command.
 
-CALLER_GRAPH           = NO
+CALLER_GRAPH           = YES
 
 # If the GRAPHICAL_HIERARCHY and HAVE_DOT tags are set to YES then doxygen
 # will generate a graphical hierarchy of all classes instead of a textual one.
