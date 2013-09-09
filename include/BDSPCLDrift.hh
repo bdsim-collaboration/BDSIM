@@ -35,9 +35,9 @@ public:
 protected:
 
 private:
+  G4VisAttributes* SetVisAttributes();
   void BuildBLMs();
   void BuildBeampipe(G4String materialName = "");
-  G4VisAttributes* SetVisAttributes();
   G4double itsYAperUp, itsYAperDown, itsDyAper;
 
   G4VSolid* outer_solid;

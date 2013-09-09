@@ -141,13 +141,13 @@ void BDSPCLDrift::BuildBeampipe(G4String materialName){
   //
   // set visualization attributes
   //
-  itsInnerBeampipeVisAtt =  new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));
+  itsInnerBeampipeVisAtt =  new G4VisAttributes(G4Colour(0.1, 0.1, 0.1));
   itsInnerBeampipeVisAtt->SetVisibility(true);
   itsInnerBeampipeVisAtt->SetForceSolid(true);
 
-  itsBeampipeVisAtt = new G4VisAttributes(G4Colour(0.4, 0.4, 0.4));
-  itsBeampipeVisAtt->SetForceWireframe(true);
-  itsBeampipeVisAtt->SetVisibility(false);
+  itsBeampipeVisAtt = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));
+  itsBeampipeVisAtt->SetForceSolid(true);
+  itsBeampipeVisAtt->SetVisibility(true);
 
   itsOuterBeamPipeLogicalVolume->SetVisAttributes(itsBeampipeVisAtt);
   itsInnerBeamPipeLogicalVolume->SetVisAttributes(itsInnerBeampipeVisAtt);
@@ -231,16 +231,14 @@ void BDSPCLDrift::BuildBpFieldAndStepper(){
   itsStepper = new BDSDriftStepper(itsEqRhs);
 }
 
-G4VisAttributes* BDSPCLDrift::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(0,1,0)); //useless
-  itsVisAttributes->SetVisibility(false);
-  itsVisAttributes->SetForceWireframe(true);
-  return itsVisAttributes;
-}
-
 void BDSPCLDrift::BuildBLMs(){
   BDSAcceleratorComponent::BuildBLMs();
+}
+
+G4VisAttributes* BDSPCLDrift::SetVisAttributes()
+{
+  itsVisAttributes=new G4VisAttributes(G4Colour(0.5,0.5,0.5));
+  return itsVisAttributes;
 }
 
 BDSPCLDrift::~BDSPCLDrift()
