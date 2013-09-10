@@ -57,12 +57,16 @@ void BDSOutput::SetFormat(BDSOutputFormat val)
   if( format == _ASCII)
     {
       G4String filename = BDSExecOptions::Instance()->GetOutputFilename()+".txt";
+#ifdef DEBUG
       G4cout << __METHOD_NAME__ << "Output format ASCII, filename: "<<filename<<G4endl;
+#endif
       of.open(filename);
       of<<"### BDSIM output created "<<ctime(&tm)<<" ####"<<G4endl;
       of<<"# PT E[GeV] X[mum] Y[mum] Z[m] Xp[rad] Yp[rad]  NEvent Weight ParentID TrackID"<<G4endl;
       G4String filenameEloss = BDSExecOptions::Instance()->GetOutputFilename()+".eloss.txt";
+#ifdef DEBUG
       G4cout << __METHOD_NAME__ << "Eloss output format ASCII, filename: "<<filenameEloss<<G4endl;
+#endif
       ofEloss.open(filenameEloss);
       ofEloss<<"### BDSIM eloss output created "<<ctime(&tm)<<" ####"<<G4endl;
       ofEloss<<"#Energy loss: Z[m] E[GeV] partID weight"<<G4endl;
@@ -126,14 +130,20 @@ void BDSOutput::Init(G4int FileNum)
 
   //build sampler tree
   G4String primariesSamplerName="primaries";
+#ifdef DEBUG
   G4cout << __METHOD_NAME__ << " building sampler tree named: " << primariesSamplerName << G4endl;
+#endif
   BuildSamplerTree(primariesSamplerName);
   for(G4int i=0;i<BDSSampler::GetNSamplers();i++)
     {
+#ifdef DEBUG
       G4cout << __METHOD_NAME__ << " building sampler tree number: " << i << G4endl;
+#endif
       //G4String name="samp"+BDSGlobalConstants::Instance()->StringFromInt(i+1);
       G4String name=SampName[i];
+#ifdef DEBUG
       G4cout << __METHOD_NAME__ << " named: " << name << G4endl;
+#endif
       BuildSamplerTree(name);
     }
   for(G4int i=0;i<BDSSamplerCylinder::GetNSamplers();i++)
@@ -146,7 +156,6 @@ void BDSOutput::Init(G4int FileNum)
   if(BDSGlobalConstants::Instance()->GetStoreTrajectory() || BDSGlobalConstants::Instance()->GetStoreMuonTrajectories() || BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories()) 
     // create a tree with trajectories
     {
-      //G4cout<<"BDSOutput::storing trajectories set"<<G4endl;
       TTree* TrajTree = new TTree("Trajectories", "Trajectories");
       TrajTree->Branch("x",&x,"x (mum)/F");
       TrajTree->Branch("y",&y,"y (mum)/F");
@@ -281,11 +290,15 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
   if( format == _ROOT) {
 #ifdef USE_ROOT
     G4String name;
+#ifdef DEBUG
     G4cout << __METHOD_NAME__ << " hc->endtries() = " << hc->entries() << G4endl;
+#endif
     for (G4int i=0; i<hc->entries(); i++)
       {
 	G4String name = (*hc)[i]->GetName();
+#ifdef DEBUG
 	G4cout << "Writing hit to sampler " << name << G4endl;
+#endif
 	WriteRootHit(name,
 		     (*hc)[i]->GetInitMom(),
 		     (*hc)[i]->GetInitX(),
@@ -322,7 +335,6 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
 }
 
 G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> TrajVec){
-  //  G4cout<<"a trajectory stored..."<<G4endl;
   
   //  G4int tID;
   G4TrajectoryPoint* TrajPoint;
@@ -364,7 +376,7 @@ G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> TrajVec){
 		TrajTree->Fill();
 #endif
               
-	      //G4cout<<"TrajPos="<<TrajPos<<G4endl;
+	     
 	    }
 	}
     }
@@ -374,9 +386,7 @@ G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> TrajVec){
 
 // write a trajectory to a root/ascii file
 G4int BDSOutput::WriteTrajectory(TrajectoryVector* TrajVec)
-{
-//  G4cout<<"a trajectory stored..."<<G4endl;
-  
+{  
 //  G4int tID;
   G4TrajectoryPoint* TrajPoint;
   G4ThreeVector TrajPos;
@@ -416,8 +426,6 @@ G4int BDSOutput::WriteTrajectory(TrajectoryVector* TrajVec)
 	      if( format == _ROOT) 
 		TrajTree->Fill();
 #endif
-
-	      //G4cout<<"TrajPos="<<TrajPos<<G4endl;
 	    }
 	}
     }
@@ -497,14 +505,13 @@ void BDSOutput::Write()
   if(format == _ROOT){
     if(theRootOutputFile->IsOpen())
       {
+#ifdef DEBUG
 	G4cout << __METHOD_NAME__ << " writing to root file..." << G4endl;
+#endif
 	//Dump all other quantities to file...
 	theRootOutputFile->Write();
-	//	G4cout << __METHOD_NAME__ << " closing root file..." << G4endl;
 	theRootOutputFile->Close();
-	//	G4cout << __METHOD_NAME__ << " deleting root file..." << G4endl;
 	delete theRootOutputFile;
-	//	G4cout << __METHOD_NAME__ << " setting root file to NULL..." << G4endl;
 	theRootOutputFile=NULL;
       }
   }

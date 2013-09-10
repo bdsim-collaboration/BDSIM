@@ -127,23 +127,35 @@ void BDSBeamline::doNavigation(){
   _positionSList.push_back(_s_total);
   _rotationList.push_back(new G4RotationMatrix(*_rotation));
   _rotationGlobalList.push_back(new G4RotationMatrix(*_rotationGlobal));
+#ifdef DEBUG
   G4cout << "BDSBeamline::addComponent: finished." << G4endl;
+#endif
 
   printNavigation();
 }
 
 void BDSBeamline::addComponent(BDSAcceleratorComponent* var){
   //Add component to the beamline
+#ifdef DEBUG
   G4cout << "BDSBeamline: adding component " << G4endl;
+#endif
   _componentList.push_back(var);
+#ifdef DEBUG
   G4cout << "BDSBeamline: finished adding component. Setting as current item. " << G4endl;
+#endif
   _iterComponent=_componentList.end();
+#ifdef DEBUG
   G4cout << "BDSBeamline: Set current item. " << G4endl;
+#endif
   //Do the navigation
   doNavigation();
 
+#ifdef DEBUG
   G4cout << "Printing name. " << G4endl;
+#endif
+#ifdef DEBUG
   G4cout << "BDSBeamline: " << lastItem()->GetName() << G4endl;
+#endif
   //Update the reference transform
   setRefTransform(var);
 }
@@ -151,7 +163,9 @@ void BDSBeamline::addComponent(BDSAcceleratorComponent* var){
 void BDSBeamline::setRefTransform(BDSAcceleratorComponent* var){
   if(BDSGlobalConstants::Instance()->GetRefVolume()==var->GetName() && 
      BDSGlobalConstants::Instance()->GetRefCopyNo()==var->GetCopyNumber()){
+#ifdef DEBUG
     G4cout << "Setting new transform" <<G4endl;
+#endif
     G4AffineTransform tf(rotationGlobal(),*positionStart());
     BDSGlobalConstants::Instance()->SetRefTransform(tf);
   }
@@ -167,8 +181,12 @@ void BDSBeamline::print(){
 }
 
 void BDSBeamline::printNavigation(){
+#ifdef DEBUG
   G4cout << "BDSBeamline: _position = " << *_position << G4endl;
+#endif
+#ifdef DEBUG
   G4cout << "BDSBeamline: _rotation = " << *_rotation << G4endl;
+#endif
 }
 
 BDSAcceleratorComponent* BDSBeamline::currentItem(){
