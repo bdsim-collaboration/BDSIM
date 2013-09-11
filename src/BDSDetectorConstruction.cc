@@ -195,6 +195,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   theParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*GeV);
   theParticleBoundsVac->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),0*GeV);
 
+#ifdef DEBUG
   G4cout << __METHOD_NAME__ << "theParticleBounds - min E - electron: " 
 	 << theParticleBounds->GetMinEneToParametrise(*G4Electron::ElectronDefinition())/GeV<< " GeV" << G4endl;
   G4cout << __METHOD_NAME__ << "theParticleBounds - max E - electron: " 
@@ -207,6 +208,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
 	 << theParticleBounds->GetMaxEneToParametrise(*G4Positron::PositronDefinition())/GeV<< G4endl;
   G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - positron: " 
 	 << theParticleBounds->GetEneToKill(*G4Positron::PositronDefinition())/GeV<< G4endl;
+#endif
 
   theHitMaker          = new GFlashHitMaker();                    // Makes the EnergieSpots 
 
@@ -231,15 +233,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 
 
   if (verbose || debug) G4cout << "-->starting BDS construction \n"<<G4endl;
-
+  //Add the input sampler to the list of output sampler names
+  //  bdsOutput->SampName.push_back((G4String)"input");
+  //construct bds
   return ConstructBDS(beamline_list);
-
-
-
-
-
-
-
 }
 
 
@@ -249,6 +246,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
   // set default output formats:
   //
   G4cout.precision(10);
+
   
   
   //
@@ -374,9 +372,13 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
   for(it = beamline_list.begin();it!=beamline_list.end();it++){
+#ifdef DEBUG
     G4cout << "BDSDetectorConstruction creating component..." << G4endl;
+#endif
     BDSAcceleratorComponent* temp = theComponentFactory->createComponent(it, beamline_list);
+#ifdef DEBUG
     G4cout << "pushing onto back of beamline..." << G4endl;
+#endif
     if(temp){
       BDSBeamline::Instance()->addComponent(temp);
       //For the outline file...
@@ -384,7 +386,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
       BDSBeamline::Instance()->currentItem()->SetK2((*it).k2);
       BDSBeamline::Instance()->currentItem()->SetK3((*it).k3);
     }
+#ifdef DEBUG
     G4cout << "done." << G4endl;
+#endif
   }
   delete theComponentFactory;
   theComponentFactory = NULL;
@@ -530,7 +534,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 #endif
 
 
+#ifdef DEBUG
   G4cout<<"Creating regions..."<<G4endl;
+#endif
   
   precisionRegion = new G4Region("precisionRegion");
    
@@ -776,14 +782,18 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 		if(gflash){
 		  if((MultipleSensVols.at(i)->GetRegion() != precisionRegion) && (BDSBeamline::Instance()->currentItem()->GetType()==_ELEMENT)){//If not in the precision region....
 		    //		    if(MultipleSensVols[i]->GetMaterial()->GetState()!=kStateGas){ //If the region material state is not gas, associate with a parameterisation
+#ifdef DEBUG
 		    G4cout << "...adding " << MultipleSensVols[i]->GetName() << " to gFlashRegion" << G4endl;
+#endif
 		    /**********************************************                                                                                                                       
 		     * Initialise shower model                                                                                                                                          
 		     ***********************************************/
 		    G4String rname = "gFlashRegion_" + MultipleSensVols[i]->GetName();
 		    gFlashRegion.push_back(new G4Region(rname.c_str()));
 		    G4String mname = "fastShowerModel" + rname;
+#ifdef DEBUG
 		    G4cout << "...making parameterisation..." << G4endl;
+#endif
 		    theFastShowerModel.push_back(new BDSShowerModel(mname.c_str(),gFlashRegion.back()));
 		    theParameterisation.push_back(new GFlashHomoShowerParameterisation(BDSMaterials::Instance()->GetMaterial(MultipleSensVols[i]->GetMaterial()->GetName().c_str()))); 
 		    theFastShowerModel.back()->SetParameterisation(*theParameterisation.back());
@@ -879,10 +889,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 
 #ifdef DEBUG
 	G4cout<<"Placing PHYSICAL COMPONENT..."<< G4endl;
-#endif	
-
 	G4cout << "BDSDetectorConstruction : rotateComponent = " << *rotateComponent << G4endl;
 	G4cout << "BDSDetectorConstruction : TargetPos        = " << TargetPos << G4endl;
+#endif	
+
 	G4PVPlacement* PhysiComponentPlace = 
 	  new G4PVPlacement(
 			    rotateComponent,  // its rotation
@@ -931,7 +941,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
     {
       
       if((*it).type==_TUNNEL ) {
+#ifdef DEBUG
 	G4cout<<"BUILDING TUNNEL : "<<(*it).l<<"  "<<(*it).name<<G4endl;
+#endif
 	
 	G4String gFormat="",  GFile="";
 	G4String geometry = (*it).geometryFile;
@@ -949,8 +961,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 	  GFile = geometry.substr(pos+1,geometry.length() - pos); 
 	}
 	
+#ifdef DEBUG
 	G4cout<<"placing components\n: geometry format - "<<gFormat<<G4endl<<
 	  "file - "<<GFile<<G4endl;
+#endif
 	
 	if(gFormat=="gmad") {
 	 

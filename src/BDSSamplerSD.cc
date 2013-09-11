@@ -23,7 +23,6 @@
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 
-#include "G4Navigator.hh"
 #include "G4AffineTransform.hh"
 
 #include "G4RunManager.hh"
@@ -42,7 +41,7 @@ extern G4double
 
 
 BDSSamplerSD::BDSSamplerSD(G4String name, G4String type)
-  :G4VSensitiveDetector(name),SamplerCollection(NULL),StepperNavigator(NULL),
+  :G4VSensitiveDetector(name),SamplerCollection(NULL),
    itsType(type)
 {
   itsCollectionName="Sampler_"+type;

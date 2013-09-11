@@ -89,6 +89,7 @@ void BDSDump::DumpLogicalVolume()
       itsOuterUserLimits =new G4UserLimits();
       itsOuterUserLimits->SetMaxAllowedStep(itsLength);
       itsOuterUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+      itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
       itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
       // Sensitive Detector:

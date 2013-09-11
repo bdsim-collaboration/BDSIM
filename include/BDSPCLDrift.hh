@@ -35,9 +35,9 @@ public:
 protected:
 
 private:
+  G4VisAttributes* SetVisAttributes();
   void BuildBLMs();
   void BuildBeampipe(G4String materialName = "");
-  G4VisAttributes* SetVisAttributes();
   G4double itsYAperUp, itsYAperDown, itsDyAper;
 
   G4VSolid* outer_solid;
@@ -52,10 +52,10 @@ private:
   G4VisAttributes* itsBeampipeVisAtt;
   G4VisAttributes* itsInnerBeampipeVisAtt;
 
-  G4UserLimits* itsBeampipeUserLimits;
-  G4UserLimits* itsInnerBeampipeUserLimits;
+  //  G4UserLimits* itsBeampipeUserLimits;
+  //  G4UserLimits* itsInnerBeampipeUserLimits;
 
-  //field related objects
+  /// field related objects
   void BuildBpFieldAndStepper();
   BDSDriftStepper* itsStepper;
   BDSMagField* itsMagField;

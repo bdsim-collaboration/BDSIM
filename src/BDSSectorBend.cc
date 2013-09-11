@@ -242,8 +242,8 @@ void BDSSectorBend::BuildBPFieldAndStepper()
 
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
   
-  itsStepper = new myQuadStepper(itsEqRhs); // note the - sign...
-  itsStepper->SetBField(-itsBField);
+  itsStepper = new myQuadStepper(itsEqRhs);
+  itsStepper->SetBField(-itsBField); // note the - sign...
   itsStepper->SetBGrad(itsBGrad);
 }
 
@@ -411,11 +411,13 @@ void BDSSectorBend::BuildSBBeampipe()
   //
   // set user limits for stepping, tracking and propagation in B field
   //
+#ifndef NOUSERLIMITS
   itsBeampipeUserLimits =
     new G4UserLimits("beampipe cuts",DBL_MAX,DBL_MAX,DBL_MAX,
   		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   G4double maxStepFactor=0.5;
   itsBeampipeUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
+  itsBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   itsBeampipeLogicalVolume->SetUserLimits(itsBeampipeUserLimits);
   
   G4double maxStepFactorIn=0.5;
@@ -423,7 +425,9 @@ void BDSSectorBend::BuildSBBeampipe()
     new G4UserLimits("inner beampipe cuts",DBL_MAX,DBL_MAX,DBL_MAX,
   		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   itsInnerBeampipeUserLimits->SetMaxAllowedStep(itsLength*maxStepFactorIn);
+  itsInnerBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   itsInnerBPLogicalVolume->SetUserLimits(itsInnerBeampipeUserLimits);
+#endif
 
   //
   // set magnetic field inside beampipe
@@ -525,13 +529,17 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
                       false,                  // no boolean operation
                       0, BDSGlobalConstants::Instance()->GetCheckOverlaps());                     // copy number
 
-SetMultiplePhysicalVolumes(itsPhysiComp);
- G4double  maxStepFactor=0.5;
+  SetMultiplePhysicalVolumes(itsPhysiComp);
+  G4double  maxStepFactor=0.5;
+
+#ifndef NOUSERLIMITS
   itsOuterUserLimits =
     new G4UserLimits("multipole cut",DBL_MAX,DBL_MAX,DBL_MAX,
                      BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   itsOuterUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
+  itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
+#endif
 }
 
 BDSSectorBend::~BDSSectorBend()

@@ -20,7 +20,6 @@
 #include "G4TransportationManager.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
-extern G4int event_number;
 
 BDSSkewSextStepper::BDSSkewSextStepper(G4Mag_EqRhs *EqRhs)
   : G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
@@ -174,9 +173,6 @@ void BDSSkewSextStepper::Stepper( const G4double yInput[],
    for(i=0;i<nvar;i++) yErr[i]=0;
 
    AdvanceHelix(yInput,(G4ThreeVector)0,hstep,yOut);
-
-
-   return ;
 }
 
 G4double BDSSkewSextStepper::DistChord()   const 

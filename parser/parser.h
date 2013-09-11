@@ -1282,6 +1282,14 @@ void set_value(std::string name, double value )
   if(name == "sigmaXp" ) { options.sigmaXp = value; return; }
   if(name == "sigmaYp" ) { options.sigmaYp = value; return; }
 
+  // options for beam distrType="square" or distrType="circle"
+  if(name == "envelopeX" ) { options.envelopeX = value; return; }
+  if(name == "envelopeY" ) { options.envelopeY = value; return; }
+  if(name == "envelopeXp" ) { options.envelopeXp = value; return; }
+  if(name == "envelopeYp" ) { options.envelopeYp = value; return; }
+  if(name == "envelopeT" ) { options.envelopeT = value; return; }
+  if(name == "envelopeE" ) { options.envelopeE = value; return; }
+
   // options for beam distrType="gaussmatrix"
   if(name == "sigma11" ) { options.sigma11 = value; return; }
   if(name == "sigma12" ) { options.sigma12 = value; return; }

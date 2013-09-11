@@ -15,7 +15,7 @@ USE CARBON_FOIL;
 
 
 CREATE TABLE foil_box (
-		PARENTNAME		VARCHAR(32),
+    PARENTNAME    VARCHAR(32),
     PosX          DOUBLE(10,3), #
     PosY          DOUBLE(10,3), #
     PosZ          DOUBLE(10,3), #

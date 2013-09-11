@@ -61,9 +61,9 @@ class BDSPlanckScatter : public G4VeEnergyLoss
 
   private:
 
-     BDSPlanckScatter & operator=(const BDSPlanckScatter &right);
-     
-     BDSPlanckScatter(const BDSPlanckScatter&);
+  // assignment and copy constructor not implemented nor used
+  BDSPlanckScatter & operator=(const BDSPlanckScatter &right);
+  BDSPlanckScatter(const BDSPlanckScatter&);
 
   //     const std::vector<G4double>* secondaryEnergyCuts;
 

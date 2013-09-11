@@ -37,12 +37,10 @@
 
 extern G4double initial_x,initial_xp,initial_y,initial_yp,initial_z,initial_E;
 
-#define DEBUG 1
 
 BDSDumpSD::BDSDumpSD(G4String name, G4String type):
   G4VSensitiveDetector(name),
-  SamplerCollection(NULL),StepperNavigator(NULL),
-  StoreHit(true),itsType(type)
+  itsType(type)
 {
 }
 

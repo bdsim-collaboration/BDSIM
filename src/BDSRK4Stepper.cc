@@ -235,7 +235,6 @@ void BDSRK4Stepper::Stepper( const G4double yInput[],
   
   //G4cout<<G4endl;
 
-  return;
 }
 
 G4double BDSRK4Stepper::DistChord()   const 

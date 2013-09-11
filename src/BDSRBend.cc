@@ -236,8 +236,8 @@ void BDSRBend::BuildBPFieldAndStepper()
 
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
   
-  itsStepper = new myQuadStepper(itsEqRhs); // note the - sign...
-  itsStepper->SetBField(-itsBField);
+  itsStepper = new myQuadStepper(itsEqRhs);
+  itsStepper->SetBField(-itsBField); // note the - sign...
   itsStepper->SetBGrad(itsBGrad);
 }
 
@@ -484,6 +484,7 @@ void BDSRBend::BuildRBBeampipe()
   SetMultiplePhysicalVolumes(PhysiInnerEnds);
   SetMultiplePhysicalVolumes(PhysiCompEnds);
   
+#ifndef NOUSERLIMITS
   //
   // set user limits for stepping, tracking and propagation in B field
   //
@@ -491,8 +492,8 @@ void BDSRBend::BuildRBBeampipe()
     new G4UserLimits("beampipe cuts",DBL_MAX,DBL_MAX,DBL_MAX,
   		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   itsBeampipeUserLimits->SetMaxAllowedStep(itsMagFieldLength);
+  itsBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   middleBeampipeLogicalVolume->SetUserLimits(itsBeampipeUserLimits);
-
 
   G4double endsMaxAllowedStep = itsMagFieldLength;
 
@@ -500,19 +501,23 @@ void BDSRBend::BuildRBBeampipe()
     new G4UserLimits("beampipe ends cuts",DBL_MAX,DBL_MAX,DBL_MAX,
   		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   endsBeampipeUserLimits->SetMaxAllowedStep(endsMaxAllowedStep);
+  endsBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   endsBeampipeLogicalVolume->SetUserLimits(endsBeampipeUserLimits);
   
   itsInnerBeampipeUserLimits =
     new G4UserLimits("inner beampipe cuts",DBL_MAX,DBL_MAX,DBL_MAX,
   		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   itsInnerBeampipeUserLimits->SetMaxAllowedStep(itsMagFieldLength);
+  itsInnerBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   middleInnerBPLogicalVolume->SetUserLimits(itsInnerBeampipeUserLimits);
 
   endsInnerBeampipeUserLimits =
     new G4UserLimits("inner beampipe ends cuts",DBL_MAX,DBL_MAX,DBL_MAX,
   		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   endsInnerBeampipeUserLimits->SetMaxAllowedStep(endsMaxAllowedStep);
+  endsInnerBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   endsInnerBPLogicalVolume->SetUserLimits(endsInnerBeampipeUserLimits);
+#endif
 
   //
   // set visualization attributes
@@ -588,11 +593,13 @@ void BDSRBend::BuildRBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 
   SetMultiplePhysicalVolumes(itsPhysiComp);
 
+#ifndef NOUSERLIMITS
   itsOuterUserLimits =
-    new G4UserLimits("multipole cut",DBL_MAX,DBL_MAX,DBL_MAX,
+    new G4UserLimits("multipole cut",DBL_MAX,DBL_MAX,BDSGlobalConstants::Instance()->GetMaxTime(),
                      BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   itsOuterUserLimits->SetMaxAllowedStep(itsMagFieldLength);
   itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
+#endif
 }
 
 BDSRBend::~BDSRBend()

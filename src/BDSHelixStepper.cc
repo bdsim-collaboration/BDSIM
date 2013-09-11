@@ -11,7 +11,6 @@
 #include "G4TransportationManager.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
-extern G4int event_number;
 
 BDSHelixStepper::BDSHelixStepper(G4Mag_EqRhs *EqRhs)
   : G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
@@ -128,7 +127,6 @@ void BDSHelixStepper::Stepper( const G4double yInput[],
 
   for(G4int i=0;i<nvar;i++) yErr[i]=0;
   AdvanceHelix(yInput,hstep,yOut);
-  return ;
 }
 
 G4double BDSHelixStepper::DistChord()   const 

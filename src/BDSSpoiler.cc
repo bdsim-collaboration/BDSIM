@@ -13,7 +13,6 @@
 #include "G4TransportationManager.hh"
 
 #include "G4SDManager.hh"
-#include "G4UserLimits.hh"
 
 #include <map>
 
@@ -105,7 +104,7 @@ void BDSSpoiler::BuildInnerSpoiler()
 
 #ifndef NOUSERLIMITS
   itsSolidLogVol->
-    SetUserLimits(new G4UserLimits(DBL_MAX,DBL_MAX,DBL_MAX,
+    SetUserLimits(new G4UserLimits(DBL_MAX,DBL_MAX,BDSGlobalConstants::Instance()->GetMaxTime(),
 				   BDSGlobalConstants::Instance()-> GetThresholdCutCharged()));
 #endif
   itsPhysiComp = 

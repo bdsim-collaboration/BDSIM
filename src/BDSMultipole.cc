@@ -345,12 +345,14 @@ void BDSMultipole::BuildBeampipe(G4String materialName)
 
   itsBeampipeUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
   itsBeampipeUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  itsBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   itsBeampipeLogicalVolume->SetUserLimits(itsBeampipeUserLimits);
   
   G4double maxStepFactorIn=0.5;
 
   itsInnerBeampipeUserLimits->SetMaxAllowedStep(itsLength*maxStepFactorIn);
   itsInnerBeampipeUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  itsInnerBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   itsInnerBPLogicalVolume->SetUserLimits(itsInnerBeampipeUserLimits);
 #endif
   
@@ -478,6 +480,7 @@ void BDSMultipole::BuildBeampipe(G4double startAper,
       itsBeampipeUserLimits = new G4UserLimits("beampipe cuts");
       itsBeampipeUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
       itsBeampipeUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
+      itsBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
       
       itsBeampipeLogicalVolume->SetUserLimits(itsBeampipeUserLimits);
       itsInnerBPLogicalVolume->SetUserLimits(itsBeampipeUserLimits);
@@ -784,17 +787,11 @@ void BDSMultipole::BuildOuterFieldManager(G4int nPoles, G4double poleField,
 
 BDSMultipole::~BDSMultipole()
 {
-//   //  delete itsPhysiComp; 
-//   //  delete itsPhysiInner;
   delete itsBPFieldMgr;
-//   delete itsBeampipeLogicalVolume;
   delete itsChordFinder;
-//   delete itsOuterFieldMgr;
-//   delete itsOuterMagField;
 #ifndef NOUSERLIMITS
   delete itsOuterUserLimits;
   delete itsMarkerUserLimits;
   delete itsBeampipeUserLimits;
-  delete itsInnerBeampipeUserLimits;
 #endif
 }

@@ -6,6 +6,7 @@
 
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSOutput.hh"
 #include "parser/gmad.h"
 
 // CLHEP from Geant4
@@ -13,7 +14,6 @@
 // CLHEP
 #include "CLHEP/RandomObjects/RandMultiGauss.h"
 
-#define DEBUG 1 
 
 // distribution type
 
@@ -54,6 +54,7 @@ BDSBunch::BDSBunch():
   // Instantiate vector and matrix for gaussian sigma matrix generation
   meansGM = CLHEP::HepVector(6);
   sigmaGM = CLHEP::HepSymMatrix(6);
+
 }
 
 BDSBunch::~BDSBunch()
@@ -136,8 +137,8 @@ void BDSBunch::SetOptions(struct Options& opt)
       SetSigmaY(0.0);
       SetSigmaXp(0.0);
       SetSigmaYp(0.0);
-      SetSigmaT(opt.sigmaT);
-      SetEnergySpread(opt.sigmaE);          
+      SetSigmaT(0.0);
+      SetEnergySpread(0.0);          
       break;
     }
 
@@ -149,6 +150,17 @@ void BDSBunch::SetOptions(struct Options& opt)
       SetSigmaYp(opt.sigmaYp);
       SetSigmaT(opt.sigmaT);
       SetEnergySpread(opt.sigmaE);
+      break;
+    } 
+
+  case _SQUARE:
+    {
+      SetEnvelopeX(opt.envelopeX); 
+      SetEnvelopeY(opt.envelopeY);
+      SetEnvelopeXp(opt.envelopeXp);
+      SetEnvelopeYp(opt.envelopeYp);
+      SetEnvelopeT(opt.envelopeT);
+      SetEnergySpread(opt.envelopeE);
       break;
     } 
 
@@ -544,6 +556,33 @@ void BDSBunch::SetOptions(struct Options& opt)
   return;  
 }
 
+// get initial bunch distribution parameters in square/circle case 
+G4double BDSBunch::GetEnvelopeT() 
+{
+  return envelopeT;
+} 
+
+G4double BDSBunch::GetEnvelopeX()
+{
+
+  return envelopeX;
+}
+ 
+G4double BDSBunch::GetEnvelopeY()
+{
+  return envelopeY;
+} 
+
+G4double BDSBunch::GetEnvelopeXp()
+{
+  return envelopeXp;
+}
+
+G4double BDSBunch::GetEnvelopeYp()
+{
+  return envelopeYp;
+}
+
 // get initial bunch distribution parameters in Gaussian case 
 G4double BDSBunch::GetSigmaT() 
 {
@@ -746,6 +785,57 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
             <<" sigmaXp= "<<sigmaXp<<G4endl
             <<" sigmaYp= "<<sigmaYp<<G4endl
             <<" sigmaT= "<<sigmaT<<"s"<<G4endl
+            <<" relative energy spread= "<<energySpread<<G4endl
+
+	    <<G4endl
+            <<" x0= "<<x0<<" m"<<G4endl
+            <<" y0= "<<y0<<" m"<<G4endl
+            <<" z0= "<<z0<<" m"<<G4endl
+            <<" t= "<<t<<" s"<<G4endl
+            <<" xp= "<<xp<<G4endl
+            <<" yp= "<<yp<<G4endl
+            <<" zp= "<<zp<<G4endl
+            <<" E= "<<E<<G4endl;
+#endif
+
+
+      break;
+    }
+  case _SQUARE:
+    {
+      x0 = X0 * m;
+      y0 = Y0 * m;
+      z0 = Z0 * m;
+      xp = Xp0 * rad;
+      yp = Yp0 * rad;
+      z0 = Z0 * m + (T0 - envelopeT * (1.-2.*FlatGen->shoot())) * c_light * s;
+
+      if(envelopeX !=0) x0  += envelopeX * (1-2*FlatGen->shoot()) * m;
+      if(envelopeY !=0) y0  += envelopeY * (1-2*FlatGen->shoot()) * m;
+      if(envelopeXp !=0) xp += envelopeXp * (1-2*FlatGen->shoot()) * rad;
+      if(envelopeYp !=0) yp += envelopeYp * (1-2*FlatGen->shoot()) * rad;
+
+      if (Zp0<0)
+        zp = -sqrt(1.-xp*xp -yp*yp);
+      else
+        zp = sqrt(1.-xp*xp -yp*yp);
+      t = 0;
+      E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * (1 + energySpread * (1-2*FlatGen->shoot()));
+
+#ifdef DEBUG 
+      G4cout<< "BDSBunch : " <<"SQUARE: "<<G4endl
+            <<" X0= "<<X0<<" m"<<G4endl
+            <<" Y0= "<<Y0<<" m"<<G4endl
+            <<" Z0= "<<Z0<<" m"<<G4endl
+            <<" T0= "<<T0<<" s"<<G4endl
+            <<" Xp0= "<<Xp0<<G4endl
+            <<" Yp0= "<<Yp0<<G4endl
+            <<" Zp0= "<<Zp0<<G4endl
+            <<" envelopeX= "<<envelopeX<<" m"<<G4endl
+            <<" envelopeY= "<<envelopeY<<" m"<<G4endl
+            <<" envelopeXp= "<<envelopeXp<<G4endl
+            <<" envelopeYp= "<<envelopeYp<<G4endl
+            <<" envelopeT= "<<envelopeT<<"s"<<G4endl
             <<" relative energy spread= "<<energySpread<<G4endl
 
 	    <<G4endl
@@ -1282,6 +1372,32 @@ G4double BDSBunch::GetBetaY()
 
 
 
+// set initial bunch distribution parameters in square/circle case 
+void BDSBunch::SetEnvelopeT(double val) 
+{
+  envelopeT= val;
+} 
+
+void BDSBunch::SetEnvelopeX(double val)
+{ 
+  envelopeX = val;
+}
+ 
+void BDSBunch::SetEnvelopeY(double val)
+{
+  envelopeY = val;
+} 
+
+void BDSBunch::SetEnvelopeXp(double val)
+{
+  envelopeXp = val;
+}
+
+void BDSBunch::SetEnvelopeYp(double val)
+{
+  envelopeYp = val;
+}
+
 // set initial bunch distribution parameters in Gaussian case 
 void BDSBunch::SetSigmaT(double val) 
 {
@@ -1388,3 +1504,5 @@ void BDSBunch::OpenBunchFile(){
 void BDSBunch::CloseBunchFile(){
   InputBunchFile.close();
 }
+
+//Stores input beam as a "sampler hit" to be be later saved to the output file.

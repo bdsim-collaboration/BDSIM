@@ -71,7 +71,7 @@ void BDSPCLTube::BuildHollow(){
    middle_solid =new G4SubtractionSolid(itsName+"middle_solid",
 						new G4Box(itsName+"_middle_solid_a",
 							  itsSizeX+itsThickness,
-							  itsSizeDy/2.0+1*um,
+							  itsSizeDy/2.0,//+1mu
 							  itsLength/2.0),
 						new G4Box(itsName+"_middle_solid_b",
 							  itsSizeX,

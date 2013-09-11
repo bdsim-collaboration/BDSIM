@@ -102,6 +102,9 @@ struct Options {
   // for the gaussian beam distribution
   double sigmaX, sigmaXp, sigmaY, sigmaYp;
 
+  // for the circle/square beam distribution
+  double envelopeX, envelopeXp, envelopeY, envelopeYp, envelopeT, envelopeE;
+
   // for the gaussian sigma matrix distribution
   double sigma11, sigma12, sigma13, sigma14, sigma15, sigma16;
   double          sigma22, sigma23, sigma24, sigma25, sigma26;
@@ -189,7 +192,7 @@ struct Options {
   double   prodCutPositronsP;
 
   // Tracking related parameters 
-  double    maximumTrackingTime;
+  double   maximumTrackingTime; // maximum tracking time per volume [s]
   double   deltaChord;
   double   chordStepMinimum;
   double   deltaIntersection;

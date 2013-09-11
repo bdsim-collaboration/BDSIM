@@ -140,10 +140,6 @@ public:
   
   void SetCopyNumber(G4int nCopy);
   
-  void SetBDSEnergyCounterID(G4int anID);
-  
-  G4int GetBDSEnergyCounterID();
-  
   void SetSensitiveVolume(G4LogicalVolume* aLogVol);
   
   G4LogicalVolume* GetSensitiveVolume();
@@ -167,12 +163,12 @@ public:
   G4UserLimits* GetInnerBPUserLimits();
   G4UserLimits* GetUserLimits();
 
-  G4double GetZLower();
-  G4double GetZUpper();
-  void SetZLower(G4double aZLower);
-  void SetZUpper(G4double aZUpper);
-  void AddSynchEnergyLoss(G4double SynchEnergyLoss);
-  G4double GetSynchEnergyLoss();
+  // G4double GetZLower();
+  // G4double GetZUpper();
+  // void SetZLower(G4double aZLower);
+  // void SetZUpper(G4double aZUpper);
+  // void AddSynchEnergyLoss(G4double SynchEnergyLoss);
+  // G4double GetSynchEnergyLoss();
   
   BDSAcceleratorComponent();
   void BuildOuterFieldManager();
@@ -254,7 +250,7 @@ protected:
 
   //Values related to BLM placement and geometry
   G4double itsBlmLocationR;
-  G4double itsBlmRadius;
+  //  G4double itsBlmRadius;
 
   G4String itsName;
   G4double itsLength;
@@ -293,6 +289,9 @@ protected:
   G4ThreeVector itsPosition;
   //  BDSBeamPipe* itsBeamPipe;
   G4MagIntegratorStepper*  itsOuterStepper;
+  /// generic user limits
+  G4UserLimits* itsUserLimits;
+  /// specific user limits
   G4UserLimits* itsOuterUserLimits;
   G4UserLimits* itsMarkerUserLimits;
   G4UserLimits* itsInnerBeampipeUserLimits;
@@ -301,12 +300,12 @@ protected:
   G4String itsTunnelCavityMaterial;
   G4int itsPrecisionRegion;
 
-  //Marker solid
+  /// Marker solid
   G4VSolid* itsMarkerSolidVolume;
 
 
 
-  //Solid shapes used in building tunnel
+  /// Solid shapes used in building tunnel
   G4VSolid* itsTunnelSolid;
   G4VSolid* itsSoilSolid;
   G4VSolid* itsInnerTunnelSolid;
@@ -317,27 +316,24 @@ protected:
   G4VSolid *itsTunnelMinusCavity;
   G4CSGSolid* itsTunnelSizedBlock;
 
-  //BLM logical volumes
+  /// BLM logical volumes
   G4LogicalVolume* itsBLMLogicalVolume;
   G4LogicalVolume* itsBlmCaseLogicalVolume;
-  //BLM physical volumes
+  /// BLM physical volumes
   std::vector<G4VPhysicalVolume*> itsBLMPhysiComp;
-  //Tunnel logical volumes
+  /// Tunnel logical volumes
   G4LogicalVolume* itsSoilTunnelLogicalVolume;
   G4LogicalVolume* itsTunnelCavityLogicalVolume;
   G4LogicalVolume*  itsTunnelMinusCavityLogicalVolume;
-  //Tunnel physical volumes
+  /// Tunnel physical volumes
   G4VPhysicalVolume* itsTunnelPhysiInner;
   G4VPhysicalVolume* itsTunnelPhysiComp;
   G4VPhysicalVolume* itsTunnelFloorPhysiComp;
   G4VPhysicalVolume* itsTunnelPhysiCompSoil;
-  //Tunnel user limits
+  /// Tunnel user limits
   G4UserLimits* itsTunnelUserLimits;
   G4UserLimits* itsSoilTunnelUserLimits;
   G4UserLimits* itsInnerTunnelUserLimits;
-
-
-
 
 
 
@@ -358,119 +354,19 @@ private:
   G4double itsSPos;
   G4int itsCopyNumber;
   BDSEnergyCounterSD* itsBDSEnergyCounter;
-  G4int itsCollectionID;
+  //  G4int itsCollectionID;
   G4LogicalVolume* itsSensitiveVolume;
   std::vector<G4LogicalVolume*> itsMultipleSensitiveVolumes;
   std::vector<G4LogicalVolume*> itsGFlashVolumes;
   //A vector containing the physical volumes in the accelerator component- to be used for geometric importance sampling etc.
   std::vector<G4VPhysicalVolume*> itsMultiplePhysicalVolumes;
-  G4double itsZLower;
-  G4double itsZUpper;
-  G4double itsSynchEnergyLoss;
+  //  G4double itsZLower;
+  //  G4double itsZUpper;
+  //  G4double itsSynchEnergyLoss;
 
 };
 
 // Class BDSAcceleratorComponent 
-
-
-
-inline BDSAcceleratorComponent::BDSAcceleratorComponent (
-			G4String& aName,G4double aLength, 
-			G4double aBpRadius,G4double aXAper,G4double aYAper, 
-			G4VisAttributes* aVisAtt,
-                        G4String aTunnelMaterial,
-                        G4String aMaterial,G4double angle,
-			G4double XOffset, G4double YOffset,G4double ZOffset, G4double tunnelRadius, G4double tunnelOffsetX,G4String aTunnelCavityMaterial, G4int aPrecisionRegion):
-  itsName(aName),itsLength(aLength),itsBpRadius(aBpRadius),
-  itsXAper(aXAper),itsYAper(aYAper),itsAngle(angle),
-  itsMaterial(aMaterial),itsVisAttributes(aVisAtt),itsTunnelMaterial(aTunnelMaterial),
-  itsXOffset(XOffset),itsYOffset(YOffset), itsZOffset(ZOffset), itsTunnelRadius(tunnelRadius), itsTunnelOffsetX(tunnelOffsetX),itsTunnelCavityMaterial(aTunnelCavityMaterial), itsPrecisionRegion(aPrecisionRegion)
-{
-  ConstructorInit();
-}
-
-inline BDSAcceleratorComponent::BDSAcceleratorComponent (
-			G4String& aName,G4double aLength, 
-			G4double aBpRadius,G4double aXAper,G4double aYAper, 
-			G4VisAttributes* aVisAtt,
-			std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-                        G4String aTunnelMaterial,
-                        G4String aMaterial,G4double angle,
-			G4double XOffset, G4double YOffset,G4double ZOffset, G4double tunnelRadius, G4double tunnelOffsetX, G4String aTunnelCavityMaterial, G4int aPrecisionRegion):
-  itsName(aName),itsLength(aLength),itsBpRadius(aBpRadius),
-  itsXAper(aXAper),itsYAper(aYAper),itsAngle(angle),
-  itsMaterial(aMaterial),itsVisAttributes(aVisAtt), itsBlmLocZ(blmLocZ), itsBlmLocTheta(blmLocTheta),
-  itsTunnelMaterial(aTunnelMaterial),
-  itsXOffset(XOffset),itsYOffset(YOffset), itsZOffset(ZOffset), itsTunnelRadius(tunnelRadius), itsTunnelOffsetX(tunnelOffsetX), itsTunnelCavityMaterial(aTunnelCavityMaterial), itsPrecisionRegion(aPrecisionRegion)
-{
-  if (itsBlmLocZ.size() != itsBlmLocTheta.size()){
-    G4cerr << "BDSAcceleratorComponent: error, lists blmLocZ and blmLocTheta are of unequal size" << G4endl;
-    G4cerr << "blmLocZ.size() = " << blmLocZ.size() << G4endl;
-    G4cerr << "blmLocTheta.size() = " << blmLocTheta.size() << G4endl;
-    exit(1);
-  }
-  ConstructorInit();
-}
-
-inline void BDSAcceleratorComponent::ConstructorInit(){
-  itsInnerBeampipeUserLimits =new G4UserLimits();
-  itsPhi = 0;
-  itsTheta = 0;
-  itsPsi = 0;
-  itsTilt = 0;
-  itsOuterR=0;
-  itsMagScaleFactor = 1;
-  itsBlmLocationR=0;
-  if (itsTunnelRadius<=BDSGlobalConstants::Instance()->GetLengthSafety()){
-    itsTunnelRadius=BDSGlobalConstants::Instance()->GetTunnelRadius();
-  }
-  CalculateLengths();
-  itsOuterLogicalVolume=NULL;
-  itsMarkerLogicalVolume=NULL;
-  itsTunnelLogicalVolume=NULL;
-  itsTunnelFloorLogicalVolume=NULL;
-  itsRotation=NULL;
-  itsOuterStepper=NULL;
-  itsOuterUserLimits=NULL;
-  itsMarkerUserLimits=NULL;
-  itsInnerBeampipeUserLimits=NULL;
-  itsInnerMostLogicalVolume=NULL;
-  itsMarkerSolidVolume=NULL;
-  itsTunnelSolid=NULL;
-  itsSoilSolid=NULL;
-  itsInnerTunnelSolid=NULL;
-  itsTunnelCavity=NULL;
-  itsLargerTunnelCavity=NULL;
-  itsTunnelFloor=NULL;
-  itsLargerInnerTunnelSolid=NULL;
-  itsTunnelMinusCavity=NULL;
-  itsTunnelSizedBlock=NULL;
-  itsBLMLogicalVolume=NULL;
-  itsBlmCaseLogicalVolume=NULL;
-  itsSoilTunnelLogicalVolume=NULL;
-  itsTunnelCavityLogicalVolume=NULL;
-  itsTunnelMinusCavityLogicalVolume=NULL;
-  itsTunnelPhysiInner=NULL;
-  itsTunnelPhysiComp=NULL;
-  itsTunnelFloorPhysiComp=NULL;
-  itsTunnelPhysiCompSoil=NULL;
-  itsTunnelUserLimits=NULL;
-  itsSoilTunnelUserLimits=NULL;
-  itsInnerTunnelUserLimits=NULL;
-
-  nullRotationMatrix=NULL;
-  tunnelRot=NULL;
-  VisAtt=NULL;
-  VisAtt1=NULL;
-  VisAtt2=NULL;
-  VisAtt3=NULL;
-  VisAtt4=NULL;
-  VisAtt5=NULL;
-  itsBLMSolid=NULL;
-  itsBlmOuterSolid=NULL;
-  itsBDSEnergyCounter=NULL;
-  itsSensitiveVolume=NULL;  
-}
 
 inline G4double BDSAcceleratorComponent::GetLength ()
 {return itsLength;}
@@ -605,12 +501,6 @@ inline void
 BDSAcceleratorComponent::SetBDSEnergyCounter(BDSEnergyCounterSD* anBDSEnergyCounter)
 {itsBDSEnergyCounter=anBDSEnergyCounter;}
 
-inline void BDSAcceleratorComponent::SetBDSEnergyCounterID(G4int anID)
-{itsCollectionID=anID;}
-
-inline G4int BDSAcceleratorComponent::GetBDSEnergyCounterID()
-{return itsCollectionID;}
-
 inline  
 void BDSAcceleratorComponent::SetSensitiveVolume(G4LogicalVolume* aLogVol)
 {itsSensitiveVolume=aLogVol;}
@@ -636,27 +526,27 @@ inline void BDSAcceleratorComponent::SetMultiplePhysicalVolumes(G4VPhysicalVolum
 inline  std::vector<G4VPhysicalVolume*> BDSAcceleratorComponent::GetMultiplePhysicalVolumes()
 {return itsMultiplePhysicalVolumes;}
 
-inline  G4double BDSAcceleratorComponent::GetZLower()
-{return itsZLower;}
+// inline  G4double BDSAcceleratorComponent::GetZLower()
+// {return itsZLower;}
 
-inline  G4double BDSAcceleratorComponent::GetZUpper()
-{return itsZUpper;}
+// inline  G4double BDSAcceleratorComponent::GetZUpper()
+// {return itsZUpper;}
 
-inline  void BDSAcceleratorComponent::SetZLower(G4double aZLower)
-{itsZLower=aZLower;}
+// inline  void BDSAcceleratorComponent::SetZLower(G4double aZLower)
+// {itsZLower=aZLower;}
 
-inline  void BDSAcceleratorComponent::SetZUpper(G4double aZUpper)
-{itsZUpper=aZUpper;}
+// inline  void BDSAcceleratorComponent::SetZUpper(G4double aZUpper)
+// {itsZUpper=aZUpper;}
 
-inline void 
-BDSAcceleratorComponent::AddSynchEnergyLoss(G4double SynchEnergyLoss)
-{itsSynchEnergyLoss+=SynchEnergyLoss;}
+// inline void 
+// BDSAcceleratorComponent::AddSynchEnergyLoss(G4double SynchEnergyLoss)
+// {itsSynchEnergyLoss+=SynchEnergyLoss;}
 
-inline  G4double BDSAcceleratorComponent::GetSynchEnergyLoss()
-{return itsSynchEnergyLoss;}
+// inline  G4double BDSAcceleratorComponent::GetSynchEnergyLoss()
+// {return itsSynchEnergyLoss;}
 
 inline  G4UserLimits* BDSAcceleratorComponent::GetUserLimits(){
-  return GetInnerBPUserLimits();
+  return itsUserLimits;
 }
 
 inline  G4UserLimits* BDSAcceleratorComponent::GetInnerBPUserLimits()

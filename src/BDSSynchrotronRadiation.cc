@@ -27,9 +27,6 @@
 
 #include "BDSAcceleratorComponent.hh"
 
-
-extern G4int event_number;
-
 BDSSynchrotronRadiation::BDSSynchrotronRadiation(const G4String& processName)
   : G4VDiscreteProcess(processName)
     // initialization

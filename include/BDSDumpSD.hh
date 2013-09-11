@@ -39,11 +39,7 @@ public:
   void DrawAll();
   void PrintAll();
   
-private:
-  BDSSamplerHitsCollection *SamplerCollection;
-  G4Navigator* StepperNavigator;
-  G4bool StoreHit;
-  
+private:  
   G4String itsType;
   G4String itsCollectionName;
   static G4int nCounter;

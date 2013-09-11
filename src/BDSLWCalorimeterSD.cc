@@ -30,7 +30,7 @@ extern G4double initial_x,initial_xp,initial_y,initial_yp,initial_z,initial_E;
 
 BDSLWCalorimeterSD::BDSLWCalorimeterSD(G4String name)
   :G4VSensitiveDetector(name),itsTotalEnergy(0.0),itsCopyNumber(-1),
-   LWCalorimeterCollection(NULL),StoreHit(true)
+   LWCalorimeterCollection(NULL)
 {
   collectionName.insert("LWCalorimeterCollection");
 }

@@ -11,7 +11,7 @@ USE CRYO2;
 
 
 CREATE TABLE TUBE_CONE (
-		PARENTNAME		VARCHAR(32),  #
+    PARENTNAME    VARCHAR(32),  #
     POSX          DOUBLE(10,3), #
     POSY          DOUBLE(10,3), #
     POSZ          DOUBLE(10,3), #
@@ -28,7 +28,7 @@ CREATE TABLE TUBE_CONE (
     ROTTHETA      DOUBLE(10,3), #
     ROTPHI        DOUBLE(10,3), #
     MATERIAL      VARCHAR(32),  # MATERIAL, CGA LITERAL NAME
-  NAME          VARCHAR(32)   # NAME OF SOLID, LOGICAL, AND PHYSICAL VOLUME
+    NAME          VARCHAR(32)   # NAME OF SOLID, LOGICAL, AND PHYSICAL VOLUME
 );
 
 
@@ -36,7 +36,7 @@ CREATE TABLE TUBE_CONE (
 
 
 CREATE TABLE ablock_box (
-		PARENTNAME		VARCHAR(32),
+    PARENTNAME    VARCHAR(32),
     PosX          DOUBLE(10,3), #
     PosY          DOUBLE(10,3), #
     PosZ          DOUBLE(10,3), #
@@ -51,7 +51,7 @@ CREATE TABLE ablock_box (
     Name          VARCHAR(32)   # name of solid, logical, and physical volume
 );
 CREATE TABLE cavity_POLYCONE (
-		PARENTNAME		VARCHAR(32),  #
+    PARENTNAME    VARCHAR(32),  #
     POSX          DOUBLE(10,3), #
     POSY          DOUBLE(10,3), #
     POSZ          DOUBLE(10,3), #

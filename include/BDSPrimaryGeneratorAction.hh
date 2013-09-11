@@ -15,6 +15,7 @@
 #include "globals.hh"
 #include <fstream>
 #include "BDSSynchrotronRadiation.hh"
+#include "BDSSamplerHit.hh"
 
 class G4ParticleGun;
 class G4Event;
@@ -51,6 +52,7 @@ private:
   G4double itsSynchCritEng;
   BDSSynchrotronRadiation* itsBDSSynchrotronRadiation;
 
+  BDSSamplerHitsCollection *itsSamplerHitsCollection;
 };
 
 #endif

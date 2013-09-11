@@ -212,6 +212,7 @@ BDSPhysicsList::BDSPhysicsList():  G4VUserPhysicsList()
   G4cout  << __METHOD_NAME__ << "Default range cut=" 
 	  << BDSGlobalConstants::Instance()->GetDefaultRangeCut()/m<<" m"<<G4endl;
 
+  //This is the GEANT4 physics list verbose level.
   SetVerboseLevel(1);   
 }
 

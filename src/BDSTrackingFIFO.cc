@@ -183,5 +183,6 @@ void BDSTrackingFIFO::open(const char* mode){
 }
 
 void BDSTrackingFIFO::close(){
-  fclose(_fifo);
+  if(_fifo) fclose(_fifo);
+  _fifo=NULL;
 }

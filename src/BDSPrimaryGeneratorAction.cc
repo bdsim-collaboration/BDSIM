@@ -11,8 +11,9 @@
 //==================================================================
 #include "BDSGlobalConstants.hh" // must be first in include list
 #include "BDSPrimaryGeneratorAction.hh"
-
+#include "BDSOutput.hh"
 #include "BDSDetectorConstruction.hh"
+#include "BDSSamplerHit.hh"
 
 #include "G4Event.hh"
 #include "G4ParticleGun.hh"
@@ -30,6 +31,7 @@
 #include<iostream>
 
 extern BDSBunch bdsBunch;
+extern BDSOutput* bdsOutput;
 
 //===================================================
 // Keep initial point in phase space for diagnostics
@@ -44,7 +46,6 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(
 					      BDSDetectorConstruction* BDSDC)
   :BDSDetector(BDSDC), itsBDSSynchrotronRadiation(NULL)
 {
- 
   particleGun  = new G4ParticleGun(1); // 1-particle gun
 
   // initialize with default values... 
@@ -56,8 +57,8 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(
 #ifdef DEBUG
   G4cout << "BDSPrimaryGeneratorAction.cc: Primary particle is " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetParticleName() << G4endl;
   G4cout << "BDSPrimaryGeneratorAction.cc: Setting particle definition for gun..." << G4endl;
-  particleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->
-				     FindParticle("e-"));
+  //  particleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->
+  //				     FindParticle("e-"));
   G4cout << "BDSPrimaryGeneratorAction.cc: Setting synch rad..." << G4endl;
 #endif
   
@@ -84,6 +85,9 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(
   particleGun->SetParticleEnergy(BDSGlobalConstants::Instance()->GetBeamKineticEnergy());
   particleGun->SetParticleTime(0);
   weight = 1;
+
+  //Set up the hits collection for storing the primaries
+  itsSamplerHitsCollection = new BDSSamplerHitsCollection((G4String)"inputSampler",(G4String)"inputCollection");
 }
 
 //===================================================
@@ -106,8 +110,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   if(!BDSGlobalConstants::Instance()->getReadFromStack()){
     bdsBunch.GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight); // get next starting point
-  }
-  else if(BDSGlobalConstants::Instance()->holdingQueue.size()!=0){
+  }  else if(BDSGlobalConstants::Instance()->holdingQueue.size()!=0){
     tmpParticle holdingParticle = BDSGlobalConstants::Instance()->holdingQueue.front();
     tmpParticle outputParticle  = BDSGlobalConstants::Instance()->outputQueue.front();
     x0 = outputParticle.x; //
@@ -213,7 +216,6 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // weight
   initial_weight=weight;
 }
-
 
 //===================================================
 
