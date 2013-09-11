@@ -135,7 +135,7 @@ find_package(XercesC)
 
 # GDML (on by default)
 if(XercesC_FOUND)
-     option( USE_GDML "Include GDML support."  ON )
+    option( USE_GDML "Include GDML support."  ON )
 else()
     option( USE_GDML "Include GDML support."  OFF )
 endif()
@@ -145,7 +145,7 @@ if(USE_GDML)
     message(STATUS "GDML support ON")
 endif()
 
-# LCDD (on by default if xml libraries are found, todo fix for AFS!)
+# LCDD (on by default if xml libraries are found)
 
 #include XML directory
 find_path(XML2_INCLUDE_DIR NAMES libxml2)
