@@ -51,8 +51,6 @@ extern LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
-extern BDSMaterials* theMaterials;
-
 extern G4RotationMatrix* RotY90;
 extern G4RotationMatrix* RotYM90;
 //============================================================

@@ -61,16 +61,10 @@
 
 #include "G4Timer.hh"
 
-extern BDSMaterials* theMaterials;
-
-extern G4double BDS_Threshold_Energy;
 extern G4double BDSLocalRadiusOfCurvature;
 
 extern G4int event_number;
 
-extern G4double initial_x,initial_xp,initial_y,initial_yp,initial_z,initial_E;
-
-//static G4LogicalVolume* LastLogVol;
 //====================================================
 
 BDSSteppingAction::BDSSteppingAction()

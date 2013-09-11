@@ -48,11 +48,6 @@
 #include "/usr/include/libxml2/libxml/parser.h"
 #include "/usr/include/libxml2/libxml/xpath.h"
 
-
-extern BDSMaterials* theMaterials;
-
-class BDSClassicalRK4;
-
 struct POS_REF{
   G4String name;
   G4ThreeVector value;
