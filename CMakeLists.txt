@@ -212,7 +212,7 @@ if (NOT Geant4_FOUND)
        endif()
    endif()
    # Module mode, now should find it for 9.5 and newer
-   find_package(Geant4 COMPONENTS ui_all vis_all PATHS ${Geant4_DIR})
+   find_package(Geant4 QUIET COMPONENTS ui_all vis_all PATHS ${Geant4_DIR})
    # For versions of Geant4 (9.4 and older), last option:
    if (NOT Geant4_FOUND)
        # ui_all and vis_all options not implemented in own FindGeant4.cmake
@@ -255,8 +255,8 @@ if (Geant4_VERSION AND NOT "${Geant4_VERSION}" MATCHES "UNKNOWN")
   string(SUBSTRING ${Geant4_VERSION} 0 1 G4_MAJOR_VERSION)
   string(SUBSTRING ${Geant4_VERSION} 2 1 G4_MINOR_VERSION) 
   string(SUBSTRING ${Geant4_VERSION} 4 1 G4_PATCH_LEVEL)
+  message(STATUS "G4_VERSION: ${Geant4_VERSION}")
   if($ENV{VERBOSE})
-    message(STATUS "G4_VERSION: ${Geant4_VERSION}")
     message(STATUS "G4_MAJOR_VERSION: ${G4_MAJOR_VERSION}")
     message(STATUS "G4_MINOR_VERSION: ${G4_MINOR_VERSION}")
     message(STATUS "G4_PATCH_LEVEL: ${G4_PATCH_LEVEL}")
