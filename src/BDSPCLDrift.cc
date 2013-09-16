@@ -17,8 +17,6 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
-#include "G4CashKarpRKF45.hh"
-#include "G4ExactHelixStepper.hh"
 #include "G4UnionSolid.hh"
 
 #include <map>

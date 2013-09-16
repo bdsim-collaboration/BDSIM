@@ -27,10 +27,6 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
-#include "G4HelixMixedStepper.hh"
-#include "G4HelixImplicitEuler.hh"
-#include "G4SimpleRunge.hh"
-#include "G4CashKarpRKF45.hh"
 
 #include <map>
 

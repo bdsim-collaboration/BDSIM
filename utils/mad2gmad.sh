@@ -4,7 +4,7 @@
 
 usage="Usage : mad2gmad [options] \n
        Options: \n
-           -o    - add standrd option command "
+           -o    - add standard option command "
 
 while getopts "haf:o:" options; do
   case $options in
