@@ -370,7 +370,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
   }
   else if(gFormat=="mokka") {
 #ifdef DEBUG
-    G4cout << "BDSElement.cc: loading geometry sql file: BDSGeometrySQL(" << gFile << "," << itsLength << ")" << G4endl,
+    G4cout << "BDSElement.cc: loading geometry sql file: BDSGeometrySQL(" << gFile << "," << itsLength << ")" << G4endl;
 #endif
     BDSGeometrySQL *Mokka = new BDSGeometrySQL(gFile,itsLength);
     Mokka->Construct(itsMarkerLogicalVolume);
