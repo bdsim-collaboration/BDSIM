@@ -7,8 +7,8 @@
 set(CTEST_PROJECT_NAME "BDSIM")
 set(CTEST_NIGHTLY_START_TIME "00:00:00 CET")
 set(CTEST_DROP_METHOD "http")
-set(CTEST_DROP_SITE "ylevinse.web.cern.ch/ylevinse")
-set(CTEST_DROP_LOCATION "/cdash/submit.php?project=BDSIM")
+set(CTEST_DROP_SITE "abp-cdash.web.cern.ch/abp-cdash/")
+set(CTEST_DROP_LOCATION "submit.php?project=BDSIM")
 set(CTEST_DROP_SITE_CDASH TRUE)
 
 find_program(CTEST_GIT_COMMAND NAMES git)
