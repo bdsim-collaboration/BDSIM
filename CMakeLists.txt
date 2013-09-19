@@ -25,6 +25,14 @@ endif()
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     add_definitions("-g -DDEBUG")
 endif()
+if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
+    if(NOT CMAKE_COMPILER_IS_GNUCXX)
+         message(WARNING "DebugCoverage only works with gcc compiler")
+    endif()
+    add_definitions("-g -DDEBUG")
+    add_definitions("--coverage")
+endif()
+
 message(STATUS "Build Type   ${CMAKE_BUILD_TYPE}")
 
 set(CMAKE_C_ORIG_FLAGS "${CMAKE_C_FLAGS}")
@@ -340,6 +348,10 @@ endif()
 
 if(USE_LCDD)
     target_link_libraries(bdsim ${XML_LIBRARIES})
+endif()
+
+if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
+    target_link_libraries(bdsim gcov)
 endif()
 
 get_target_property(binaryname bdsimexec OUTPUT_NAME)

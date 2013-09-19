@@ -8,6 +8,13 @@ find_package(FLEX REQUIRED)
 # suppress warnings
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-value")
 
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DDEBUG")
+endif()
+if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DDEBUG --coverage")
+endif()
+
 if($ENV{VERBOSE})
 	message(STATUS "PARSER CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
 endif()
