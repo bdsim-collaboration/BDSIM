@@ -47,7 +47,7 @@ private:
 
   G4int                       SamplerCollID_plane;                
   G4int                       SamplerCollID_cylin;                
-  G4int                       SamplerCollID_primaries;                
+  //    G4int                       SamplerCollID_primaries;                
   G4int                       LWCalorimeterCollID;
   //    G4int                       EnergyCounterCollID;                
   G4String                    drawFlag;

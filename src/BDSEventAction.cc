@@ -16,7 +16,6 @@
 #include "BDSDebug.hh"
 #include "BDSEventAction.hh"
 
-#include <ctime> 
 #include <list>
 #include <map>
 #include <vector>
@@ -31,15 +30,14 @@
 #include "G4VHitsCollection.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4Trajectory.hh"
-#include "G4VVisManager.hh"
 #include "G4SDManager.hh"
-#include "G4UImanager.hh"
 #include "G4ios.hh"
 #include "G4UnitsTable.hh"
 #include "Randomize.hh"
 #include "G4ChordFinder.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4PrimaryParticle.hh"
+#include "G4Version.hh"
 
 #include "BDSSampler.hh"
 #include "BDSSamplerSD.hh"
@@ -54,8 +52,6 @@
 #include "BDSAcceleratorComponent.hh"
 
 #include "BDSOutput.hh"
-
-#include "BDSRunManager.hh"
 
 typedef std::map<G4String,int> LogVolCountMap;
 extern LogVolCountMap* LogVolCount;
@@ -367,14 +363,19 @@ void BDSEventAction::AddPrimaryHits(const G4Event* /*evt*/){
   //Save the primary particle as a hit 
   G4PrimaryVertex* primaryVertex= G4RunManager::GetRunManager()->GetCurrentEvent()->GetPrimaryVertex();
   G4PrimaryParticle* primaryParticle=primaryVertex->GetPrimary();
+#if G4VERSION_NUMBER > 950
   G4ThreeVector momDir = primaryParticle->GetMomentumDirection();
   G4double E = primaryParticle->GetTotalEnergy();
-  G4double x0 = primaryVertex->GetX0();
   G4double xp = momDir.x();
-  G4double y0 = primaryVertex->GetY0();
   G4double yp = momDir.y();
-  G4double z0 = primaryVertex->GetZ0();
   G4double zp = momDir.z();
+#else
+  // implementation for older G4 versions to be fixed!
+  G4double E=0.0, xp=0.0, yp=0.0, zp=0.0;
+#endif
+  G4double x0 = primaryVertex->GetX0();
+  G4double y0 = primaryVertex->GetY0();
+  G4double z0 = primaryVertex->GetZ0();
   G4double t = primaryVertex->GetT0();
   G4double weight = primaryParticle->GetWeight();
   G4int PDGType=primaryParticle->GetPDGcode();
