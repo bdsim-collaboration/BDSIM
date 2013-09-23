@@ -186,10 +186,13 @@ struct Options {
   
   double   prodCutPhotons;
   double   prodCutPhotonsP;
+  double   prodCutPhotonsA;
   double   prodCutElectrons;
   double   prodCutElectronsP;
+  double   prodCutElectronsA;
   double   prodCutPositrons;
   double   prodCutPositronsP;
+  double   prodCutPositronsA;
 
   // Tracking related parameters 
   double   maximumTrackingTime; // maximum tracking time per volume [s]

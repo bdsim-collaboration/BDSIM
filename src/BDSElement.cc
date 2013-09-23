@@ -16,21 +16,17 @@
 #include "G4PVPlacement.hh"
 #include "G4UserLimits.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "BDSHelixStepper.hh"
 #include "BDSQuadStepper.hh"
 #include "BDSOctStepper.hh"
 #include "BDSSextStepper.hh"
-#include "G4HelixImplicitEuler.hh"
-#include "G4HelixExplicitEuler.hh"
-#include "G4HelixMixedStepper.hh"
-#include "G4HelixSimpleRunge.hh"
-#include "G4HelixHeum.hh"
-#include "G4SimpleRunge.hh"
+#include "G4SimpleHeum.hh"
+#include "G4NystromRK4.hh"
 #include "G4ExactHelixStepper.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "BDS3DMagField.hh"
 #include "BDSXYMagField2.hh"
 #include "G4CashKarpRKF45.hh"
+#include "G4CachedMagneticField.hh"
 
 // geometry drivers
 #include "parser/gmad.h"
@@ -333,13 +329,18 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 #ifdef DEBUG
       G4cout << "BDSElement.cc> Making BDS3DMagField..." << G4endl;
 #endif
+      
       itsMagField = new BDS3DMagField(bFile, 0);
+      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*cm);
+      
       BuildMagField(true);
     }else if(bFormat=="XY"){
 #ifdef DEBUG
       G4cout << "BDSElement.cc> Making BDSXYMagField2..." << G4endl;
 #endif
       itsMagField = new BDSXYMagField2(bFile);
+      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*cm);
+
       // build the magnetic field manager and transportation
       BuildMagField(true);
     }
@@ -359,6 +360,8 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     SetMultipleSensitiveVolumes(itsMarkerLogicalVolume);
     if(bFormat=="XY"){
       itsMagField = new BDSXYMagField(bFile);
+      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*cm);
+
       // build the magnetic field manager and transportation
       BuildMagField(true);
     } else if ( bFormat == "mokka" ){
@@ -377,6 +380,8 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 	itsUniformMagField=LCDD->GetUniformField();
       }else{
 	itsMagField=LCDD->GetField();
+	itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*cm);
+	
       }
       itsFieldVolName=LCDD->GetFieldVolName();
       BuildMagField(true);
@@ -419,12 +424,16 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       G4cout << "BDSElement.cc> Making BDS3DMagField..." << G4endl;
 #endif
       itsMagField = new BDS3DMagField(bFile, 0);
+      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*cm);
+      
       BuildMagField(true);
     } else if(bFormat=="XY"){
 #ifdef DEBUG
       G4cout << "BDSElement.cc> Making BDSXYMagField2..." << G4endl;
 #endif
       itsMagField = new BDSXYMagField2(bFile);
+      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*cm);
+      
       // build the magnetic field manager and transportation
       BuildMagField(true);
     } else if(bFormat=="mokka" || bFormat=="none")
@@ -441,7 +450,8 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 					     Mokka->UniformFieldVolField,
 					     Mokka->nPoleField,
 					     Mokka->HasUniformField);
-	    
+	    itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*cm);
+
 	    
 	    // build the magnetic field manager and transportation
 	    BuildMagField(true);
@@ -488,19 +498,19 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
 #ifdef DEBUG
     G4cout << "BDSElement.cc> Building magnetic field..." << endl;
 #endif
-    itsEqRhs = new G4Mag_UsualEqRhs(itsMagField);
+    itsEqRhs = new G4Mag_UsualEqRhs(itsCachedMagField);
     if( (itsMagField->GetHasUniformField())&!(itsMagField->GetHasNPoleFields() || itsMagField->GetHasFieldMap())){
-      itsFStepper = new G4ClassicalRK4(itsEqRhs); 
+      itsFStepper = new G4NystromRK4(itsEqRhs); 
     } else {
-      itsFStepper = new G4ClassicalRK4(itsEqRhs); 
+      itsFStepper = new G4NystromRK4(itsEqRhs);
     }
-    fieldManager->SetDetectorField(itsMagField );
+    fieldManager->SetDetectorField(itsCachedMagField );
   } else {
 #ifdef DEBUG
     G4cout << "BDSElement.cc> Building uniform magnetic field..." << endl;
 #endif
     itsEqRhs = new G4Mag_UsualEqRhs(itsUniformMagField);
-    itsFStepper = new G4ClassicalRK4(itsEqRhs); 
+    itsFStepper = new G4NystromRK4(itsEqRhs); 
     fieldManager->SetDetectorField(itsUniformMagField );
   }
 
@@ -543,6 +553,7 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
 {
   if(!itsMagField) return;
   itsMagField->Prepare(referenceVolume);
+  itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*cm);
 }
 
 // Rotates and positions the marker volume before it is placed in

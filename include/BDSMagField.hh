@@ -3,6 +3,7 @@
 */
 
 #include "G4MagneticField.hh"
+#include "G4CachedMagneticField.hh"
 #include "globals.hh"
 #include "G4RotationMatrix.hh"
 #include "G4VPhysicalVolume.hh"

@@ -159,10 +159,13 @@ public:
 
   G4double GetProdCutPhotons();
   G4double GetProdCutPhotonsP();
+  G4double GetProdCutPhotonsA();
   G4double GetProdCutElectrons();
   G4double GetProdCutElectronsP();
+  G4double GetProdCutElectronsA();
   G4double GetProdCutPositrons();
   G4double GetProdCutPositronsP();
+  G4double GetProdCutPositronsA();
 
   // Environment variables
   G4String GetBDSIMHOME();
@@ -333,10 +336,13 @@ private:
   G4double itsThresholdCutPhotons;
   G4double itsProdCutPhotons;
   G4double itsProdCutPhotonsP;
+  G4double itsProdCutPhotonsA;
   G4double itsProdCutElectrons;
   G4double itsProdCutElectronsP;
+  G4double itsProdCutElectronsA;
   G4double itsProdCutPositrons;
   G4double itsProdCutPositronsP;
+  G4double itsProdCutPositronsA;
   G4String itsBDSIMHOME;
   G4String itsPhysListName;
   G4bool itsSynchRadOn;
@@ -645,14 +651,20 @@ inline G4double BDSGlobalConstants::GetProdCutPhotons()
 {return itsProdCutPhotons;}
 inline G4double BDSGlobalConstants::GetProdCutPhotonsP() 
 {return itsProdCutPhotonsP;}
+inline G4double BDSGlobalConstants::GetProdCutPhotonsA() 
+{return itsProdCutPhotonsA;}
 inline G4double BDSGlobalConstants::GetProdCutElectrons() 
 {return itsProdCutElectrons;}
 inline G4double BDSGlobalConstants::GetProdCutElectronsP() 
 {return itsProdCutElectronsP;}
+inline G4double BDSGlobalConstants::GetProdCutElectronsA() 
+{return itsProdCutElectronsA;}
 inline G4double BDSGlobalConstants::GetProdCutPositrons() 
 {return itsProdCutPositrons;}
 inline G4double BDSGlobalConstants::GetProdCutPositronsP() 
 {return itsProdCutPositronsP;}
+inline G4double BDSGlobalConstants::GetProdCutPositronsA() 
+{return itsProdCutPositronsA;}
 
 
 //inline G4double BDSGlobalConstants::GetWorldSizeZ() 

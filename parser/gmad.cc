@@ -116,6 +116,9 @@ void init()
   options.prodCutPositronsP=7e-4;
   options.prodCutElectronsP=7e-4;
   options.prodCutPhotonsP=7e-4;
+  options.prodCutPositronsA=1;
+  options.prodCutElectronsA=1;
+  options.prodCutPhotonsA=1;
 
   //Beam loss monitors geometry
   options.blmRad = 0.05;
