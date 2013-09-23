@@ -150,6 +150,7 @@ bool debug = false;
 
 BDSDetectorConstruction::BDSDetectorConstruction():
   itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
+  approximationRegion(NULL),
   solidWorld(NULL),logicWorld(NULL),physiWorld(NULL),
   magField(NULL),BDSUserLimits(NULL),BDSSensitiveDetector(NULL),
   itsIStore(NULL)
@@ -556,6 +557,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 #ifndef NOUSERLIMITS
   precisionRegion->SetUserLimits(WorldUserLimits);
 #endif
+
   // world
 
   physiWorld = new G4PVPlacement((G4RotationMatrix*)0,		// no rotation
