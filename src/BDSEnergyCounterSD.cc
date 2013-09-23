@@ -4,6 +4,7 @@
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 #include "BDSExecOptions.hh"
+#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 
 #include "BDSEnergyCounterSD.hh"
@@ -129,7 +130,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
    G4String volName = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
    G4String regionName = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetRegion()->GetName();
    G4bool precisionRegion=false;
-   if (regionName == (G4String)"precisionRegion") {
+   if (regionName.contains((G4String)"precisionRegion")) {
      precisionRegion=true;
    }
    

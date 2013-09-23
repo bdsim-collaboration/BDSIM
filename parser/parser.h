@@ -1424,10 +1424,13 @@ void set_value(std::string name, double value )
 
   if(name == "prodCutPhotons" ) { options.prodCutPhotons = value; return; }
   if(name == "prodCutPhotonsP" ) { options.prodCutPhotonsP = value; return; }
+  if(name == "prodCutPhotonsA" ) { options.prodCutPhotonsA = value; return; }
   if(name == "prodCutElectrons" ) { options.prodCutElectrons = value; return; }
   if(name == "prodCutElectronsP" ) { options.prodCutElectronsP = value; return; }
+  if(name == "prodCutElectronsA" ) { options.prodCutElectronsA = value; return; }
   if(name == "prodCutPositrons" ) { options.prodCutPositrons = value; return; }
   if(name == "prodCutPositronsP" ) { options.prodCutPositronsP = value; return; }
+  if(name == "prodCutPositronsA" ) { options.prodCutPositronsA = value; return; }
 
   // twiss parameters
   if(name == "betx" ) { options.betx = value; return; }

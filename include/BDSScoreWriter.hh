@@ -5,6 +5,7 @@
 #ifdef USE_ROOT
 
 #include "globals.hh"
+#include "G4Version.hh"
 #include "G4VScoreWriter.hh"
 #include "TFile.h"
 #include "TTree.h"
@@ -29,8 +30,13 @@ public:
 	G4String getMaterial() {return fMaterial;};
 	G4String getFireAngle() {return fFireAngle;};
 public:
-	// store a quantity into a file
-        void DumpQuantityToFile(const G4String & psName, G4String & fileName, const G4String & option);
+        /// store a quantity into a file
+#if G4VERSION_NUMBER < 960
+        virtual void DumpQuantityToFile(G4String & psName, G4String & fileName, G4String & option);
+#else
+        virtual void DumpQuantityToFile(const G4String & psName, const G4String & fileName, const G4String & option);
+#endif
+
         void DumpQuantityToFile(const G4String & psName, TFile* tFile, const G4String & option);
 	char fStartTime[50];
 	char fEndTime[50];

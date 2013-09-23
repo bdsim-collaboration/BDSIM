@@ -111,10 +111,13 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsThresholdCutPhotons = opt.thresholdCutPhotons * GeV;
   itsProdCutPhotons = opt.prodCutPhotons * m;
   itsProdCutPhotonsP = opt.prodCutPhotonsP * m;
+  itsProdCutPhotonsA = opt.prodCutPhotonsA * m;
   itsProdCutElectrons = opt.prodCutElectrons * m;
   itsProdCutElectronsP = opt.prodCutElectronsP * m;
+  itsProdCutElectronsA = opt.prodCutElectronsA * m;
   itsProdCutPositrons = opt.prodCutPositrons * m;
   itsProdCutPositronsP = opt.prodCutPositronsP * m;
+  itsProdCutPositronsA = opt.prodCutPositronsA * m;
   itsDeltaChord = opt.deltaChord * m;
   itsChordStepMinimum = opt.chordStepMinimum * m;
   itsDeltaIntersection= opt.deltaIntersection * m;
