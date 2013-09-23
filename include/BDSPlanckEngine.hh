@@ -11,7 +11,9 @@
 #include "Randomize.hh" 
 #include "G4Version.hh"
 #if G4VERSION_NUMBER > 899
+#if G4VERSION_NUMBER < 1000
 #include "G4VeLowEnergyLoss.hh"
+#endif
 #else
 #include "G4VeEnergyLoss.hh"
 #endif
@@ -23,6 +25,8 @@
 #include "G4OrderedTable.hh" 
 #include "G4PhysicsTable.hh"
 #include "G4PhysicsLogVector.hh"
+
+using namespace CLHEP;
  
 class BDSPlanckEngine  
 { 

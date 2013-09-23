@@ -9,6 +9,7 @@
 //    Physics lists
 //
 
+#include <iomanip>   
 
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
@@ -28,16 +29,21 @@
 #include "G4Material.hh"
 #include "G4MaterialTable.hh"
 #include "G4ios.hh"
-#include <iomanip>   
 #include "QGSP_BERT.hh"
 #include "QGSP_BERT_HP.hh"
+#if G4VERSION_NUMBER < 1000
 #include "HadronPhysicsQGSP_BERT.hh"
 #include "HadronPhysicsQGSP_BERT_HP.hh"
 #include "HadronPhysicsFTFP_BERT.hh"
+#include "HadronPhysicsLHEP.hh"
+#else
+#include "G4HadronPhysicsQGSP_BERT.hh"
+#include "G4HadronPhysicsQGSP_BERT_HP.hh"
+#include "G4HadronPhysicsFTFP_BERT.hh"
+#endif
 #include "G4Decay.hh"
 #include "G4eeToHadrons.hh"
 
-#include "HadronPhysicsLHEP.hh"
 #include "G4EmStandardPhysics.hh"
 #include "G4EmLivermorePhysics.hh"
 
@@ -154,8 +160,10 @@
 #include "G4QGSMFragmentation.hh"
 #include "G4ExcitedStringDecay.hh"
 
+#if G4VERSION_NUMBER < 1000
 #include "G4GammaNuclearReaction.hh"
 #include "G4ElectroNuclearReaction.hh"
+#endif
 #include "G4PhotoNuclearProcess.hh"
 #include "G4ElectronNuclearProcess.hh"
 #include "G4PositronNuclearProcess.hh"
@@ -364,7 +372,11 @@ void BDSPhysicsList::ConstructProcess()
       
       if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_QGSP_BERT") {
 	ConstructEM();
+#if G4VERSION_NUMBER < 1000
 	G4VPhysicsConstructor* hadPhysList = new HadronPhysicsQGSP_BERT("hadron");
+#else
+	G4VPhysicsConstructor* hadPhysList = new G4HadronPhysicsQGSP_BERT("hadron");
+#endif
 	hadPhysList -> ConstructProcess();
 	return;
       }
@@ -372,14 +384,22 @@ void BDSPhysicsList::ConstructProcess()
       if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_QGSP_BERT_muon") {
 	ConstructEM();
 	ConstructMuon();
+#if G4VERSION_NUMBER < 1000
 	G4VPhysicsConstructor* hadPhysList = new HadronPhysicsQGSP_BERT("hadron");
+#else
+	G4VPhysicsConstructor* hadPhysList = new G4HadronPhysicsQGSP_BERT("hadron");
+#endif
 	hadPhysList -> ConstructProcess();
 	return;
       }
       
       if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_FTFP_BERT"){
 	ConstructEM();
+#if G4VERSION_NUMBER < 1000
 	HadronPhysicsFTFP_BERT *myHadPhysList = new HadronPhysicsFTFP_BERT;
+#else
+	G4HadronPhysicsFTFP_BERT *myHadPhysList = new G4HadronPhysicsFTFP_BERT;
+#endif
 	myHadPhysList->ConstructProcess();
 	return;
       }
@@ -389,7 +409,11 @@ void BDSPhysicsList::ConstructProcess()
 	ConstructMuon();
 	ConstructHadronic();
 	//      ConstructPhotolepton_Hadron();
+#if G4VERSION_NUMBER < 1000
 	HadronPhysicsQGSP_BERT_HP *myHadPhysList = new HadronPhysicsQGSP_BERT_HP;
+#else
+	G4HadronPhysicsQGSP_BERT_HP *myHadPhysList = new G4HadronPhysicsQGSP_BERT_HP;
+#endif
 	myHadPhysList->ConstructProcess();
 	return;
       }
@@ -398,7 +422,11 @@ void BDSPhysicsList::ConstructProcess()
 	G4cout << __METHOD_NAME__ << "Using hadronic_FTFP_BERT_muon" << G4endl;
 	ConstructEM();
 	ConstructMuon();
+#if G4VERSION_NUMBER < 1000
 	HadronPhysicsFTFP_BERT *myHadPhysList = new HadronPhysicsFTFP_BERT;
+#else
+	G4HadronPhysicsFTFP_BERT *myHadPhysList = new G4HadronPhysicsFTFP_BERT;
+#endif
 	myHadPhysList->ConstructProcess();
 	
 	return;
@@ -1436,7 +1464,7 @@ void BDSPhysicsList::ConstructPhotolepton_Hadron(){
 
 void BDSPhysicsList::ConstructHadronic()
 {
-
+#if G4VERSION_NUMBER < 1000
   G4NeutronBuilder* theNeutrons=new G4NeutronBuilder;
   G4LHEPNeutronBuilder * theLHEPNeutron;
   theNeutrons->RegisterMe(theLHEPNeutron=new G4LHEPNeutronBuilder);
@@ -1464,7 +1492,6 @@ void BDSPhysicsList::ConstructHadronic()
   G4PositronNuclearProcess * thePositronNuclearProcess;
   G4ElectroNuclearReaction * theElectroReaction;
   G4GammaNuclearReaction * theGammaReaction;  
-  
   G4TheoFSGenerator * theModel;
   G4GeneratorPrecompoundInterface * theCascade;
   G4QGSModel< G4GammaParticipants > * theStringModel;
@@ -1476,7 +1503,6 @@ void BDSPhysicsList::ConstructHadronic()
   theElectronNuclearProcess = new G4ElectronNuclearProcess;
   thePositronNuclearProcess = new G4PositronNuclearProcess;
   theElectroReaction = new G4ElectroNuclearReaction;
-
   theModel = new G4TheoFSGenerator;
   
   theStringModel = new G4QGSModel< G4GammaParticipants >;
@@ -1505,6 +1531,7 @@ void BDSPhysicsList::ConstructHadronic()
   aProcMan = G4Positron::Positron()->GetProcessManager();
   thePositronNuclearProcess->RegisterMe(theElectroReaction);
   aProcMan->AddDiscreteProcess(thePositronNuclearProcess);
+#endif
 }
 
 void BDSPhysicsList::ConstructSR()

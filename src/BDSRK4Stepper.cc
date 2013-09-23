@@ -7,6 +7,8 @@
 
 extern G4double BDSLocalRadiusOfCurvature;
 
+using namespace CLHEP;
+
 BDSRK4Stepper::BDSRK4Stepper(G4EquationOfMotion* EqRhs, G4int nvar) :
   G4MagIntegratorStepper(EqRhs,nvar)
 {
