@@ -16,17 +16,10 @@
 #include "G4PVPlacement.hh"
 #include "G4UserLimits.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "BDSQuadStepper.hh"
-#include "BDSOctStepper.hh"
-#include "BDSSextStepper.hh"
-#include "G4SimpleHeum.hh"
-#include "G4NystromRK4.hh"
-#include "G4ExactHelixStepper.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "BDS3DMagField.hh"
 #include "BDSXYMagField2.hh"
-#include "G4CashKarpRKF45.hh"
-#include "G4CachedMagneticField.hh"
+#include "G4ClassicalRK4.hh"
 
 // geometry drivers
 #include "parser/gmad.h"
@@ -301,19 +294,8 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
   // different drivers may interpret the fieldmap differently
   // so a field map without geometry is not allowed
 
-  GGmadDriver *ggmad;
-  BDSGeometrySQL *Mokka;
-
-#ifdef USE_LCDD
-  BDSGeometryLCDD *LCDD;
-#endif
-#ifdef USE_GDML
-  BDSGeometryGDML *GDML;
-#endif
-
   if(gFormat=="gmad") {
-    
-    ggmad = new GGmadDriver(gFile);
+    GGmadDriver *ggmad = new GGmadDriver(gFile);
     ggmad->Construct(itsMarkerLogicalVolume);
 
     // set sensitive volumes
@@ -345,11 +327,10 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       BuildMagField(true);
     }
     delete ggmad;
-    ggmad = 0;
   }
   else if(gFormat=="lcdd") {
 #ifdef USE_LCDD
-    LCDD = new BDSGeometryLCDD(gFile);
+    BDSGeometryLCDD *LCDD = new BDSGeometryLCDD(gFile);
     //Make marker visible (temp debug)
     G4VisAttributes* VisAttLCDD = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
     VisAttLCDD->SetForceSolid(true);  
@@ -390,18 +371,17 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     vector<G4LogicalVolume*> SensComps = LCDD->SensitiveComponents;
     for(G4int id=0; id<(G4int)SensComps.size(); id++)
       SetMultipleSensitiveVolumes(SensComps[id]);
-    //    delete LCDD;
-    //    LCDD = 0;
+    delete LCDD;
 #else
     G4cout << "LCDD support not selected during BDSIM configuration" << G4endl;
-    G4Exception("Please re-compile BDSIM with USE_LCDD flag in Makefile", "-1", FatalException, "");
+    G4Exception("Please re-compile BDSIM with USE_LCDD flag", "-1", FatalException, "");
 #endif
   }
   else if(gFormat=="mokka") {
 #ifdef DEBUG
-    G4cout << "BDSElement.cc: loading geometry sql file: BDSGeometrySQL(" << gFile << "," << itsLength << ")" << G4endl,
+    G4cout << "BDSElement.cc: loading geometry sql file: BDSGeometrySQL(" << gFile << "," << itsLength << ")" << G4endl;
 #endif
-    Mokka = new BDSGeometrySQL(gFile,itsLength);
+    BDSGeometrySQL *Mokka = new BDSGeometrySQL(gFile,itsLength);
     Mokka->Construct(itsMarkerLogicalVolume);
     for(unsigned int i=0; i<Mokka->GetMultiplePhysicalVolumes().size(); i++){
       SetMultiplePhysicalVolumes(Mokka->GetMultiplePhysicalVolumes().at(i));
@@ -457,18 +437,16 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 	    BuildMagField(true);
 	  }
       }
-    // delete Mokka;
-    // Mokka = 0;
+    delete Mokka;
   }
   else if(gFormat=="gdml") {
 #ifdef USE_GDML
-    GDML = new BDSGeometryGDML(gFile);
+    BDSGeometryGDML *GDML = new BDSGeometryGDML(gFile);
     GDML->Construct(itsMarkerLogicalVolume);
     delete GDML;
-    GDML = 0;
 #else
     G4cout << "GDML support not selected during BDSIM configuration" << G4endl;
-    G4Exception("Please re-compile BDSIM with USE_GDML flag in Makefile", "-1", FatalException, "");
+    G4Exception("Please re-compile BDSIM with USE_GDML flag", "-1", FatalException, "");
 #endif
   }
   else {
