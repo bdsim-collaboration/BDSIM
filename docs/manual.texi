@@ -373,7 +373,7 @@ element) by a cylinder with inner radius equal to the beampipe outer radius and
 with outer radius given by default by the global @code{boxSize} option, which
 can usually be overridden with the ``outR'' option.
 
-In Geant4 it is possible to drife different ``regions'' each with their own production cuts and user limits.
+In Geant4 it is possible to drive different ``regions'' each with their own production cuts and user limits.
 In BDSIM three different regions exist, each with their own user defined production cuts (see @ref{Physics}). 
 These are the default region, the precision region and the approximation region. Beamline elements 
 can be set to the precision region by setting the attribute @code{precisionRegion} equal to 1. For example:
