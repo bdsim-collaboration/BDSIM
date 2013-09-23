@@ -150,7 +150,6 @@ bool debug = false;
 
 BDSDetectorConstruction::BDSDetectorConstruction():
   itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
-  approximationRegion(NULL),
   solidWorld(NULL),logicWorld(NULL),physiWorld(NULL),
   magField(NULL),BDSUserLimits(NULL),BDSSensitiveDetector(NULL),
   itsIStore(NULL)
