@@ -49,9 +49,9 @@ BDSComponentFactory::BDSComponentFactory(){
   _brho = BDSGlobalConstants::Instance()->GetFFact()*( _momentum / (0.299792458 * _charge));
   
   // rigidity (in Geant4 units)
-  _brho *= (tesla*m);
+  _brho *= (CLHEP::tesla*m);
 
-  if (verbose || debug1) G4cout << "Rigidity (Brho) : "<< fabs(_brho)/(tesla*m) << " T*m"<<G4endl;
+  if (verbose || debug1) G4cout << "Rigidity (Brho) : "<< fabs(_brho)/(CLHEP::tesla*m) << " T*m"<<G4endl;
   //
   // beampipe default outer radius (if not overridden by "aper" option)
   //
@@ -466,14 +466,14 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
   }
   
   if(_element.B != 0){
-    _bField = _element.B * tesla;
+    _bField = _element.B * CLHEP::tesla;
     G4double rho = _brho/_bField;
     _element.angle  = - 2.0*asin(magFieldLength/2.0/rho);
   }
   else{
     _element.angle *= -1;
     _bField = - 2 * _brho * sin(_element.angle/2.0) / magFieldLength;
-    _element.B = _bField/tesla;
+    _element.B = _bField/CLHEP::tesla;
   }
   
   // synch factor??
@@ -550,7 +550,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
   // CHECK SIGNS OF B, B', ANGLE
   if(_element.B != 0){
     // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
-    _bField = _element.B * tesla;
+    _bField = _element.B * CLHEP::tesla;
     G4double rho = _brho/_bField;
     //_element.angle  = - _bField * length / brho;
     _element.angle  = - 2.0*asin(length/2.0/rho);
@@ -562,7 +562,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
     G4double arclength = 0.5*magFieldLength * _element.angle / sin(_element.angle/2.0);
     // B = Brho/rho = Brho/(arc length/angle)
     _bField = - _brho * _element.angle / arclength;
-    _element.B = _bField/tesla;
+    _element.B = _bField/CLHEP::tesla;
   }
   
   // synch factor???
@@ -618,13 +618,13 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
   //
   if(_element.B != 0){
     // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
-    _bField = _element.B * tesla;
+    _bField = _element.B * CLHEP::tesla;
     _element.angle  = -_bField * length / _brho;
   }
   else{
     // B = Brho/rho = Brho/(arc length/angle)
     _bField = - _brho * _element.angle / length;
-    _element.B = _bField/tesla;
+    _element.B = _bField/CLHEP::tesla;
   }
   
   // synch factor??
@@ -686,13 +686,13 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
   //
   if(_element.B != 0){
     // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
-    _bField = _element.B * tesla;
+    _bField = _element.B * CLHEP::tesla;
     _element.angle  = -_bField * length / _brho;
   }
   else{
     // B = Brho/rho = Brho/(arc length/angle)
     _bField = - _brho * _element.angle / length;
-    _element.B = _bField/tesla;
+    _element.B = _bField/CLHEP::tesla;
   }
   // synch factor???
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
@@ -799,8 +799,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole(){
                << " name= " << _element.name
                << " l= " << _element.l << "m"
                << " k2= " << _element.k2 << "m^-3"
-               << " brho= " << fabs(_brho)/(tesla*m) << "T*m"
-               << " B''= " << _bDoublePrime/(tesla/(m*m)) << "T/m^2"
+               << " brho= " << fabs(_brho)/(CLHEP::tesla*m) << "T*m"
+               << " B''= " << _bDoublePrime/(CLHEP::tesla/(m*m)) << "T/m^2"
                << " tilt= " << _element.tilt << "rad"
                << " aper= " << aper/m << "m"
                << " outR= " << _element.outR << "m"
@@ -855,8 +855,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole(){
                << " name= " << _element.name
                << " l= " << _element.l << "m"
                << " k3= " << _element.k3 << "m^-4"
-               << " brho= " << fabs(_brho)/(tesla*m) << "T*m"
-               << " B'''= " << _bTriplePrime/(tesla/(m*m*m)) << "T/m^3"
+               << " brho= " << fabs(_brho)/(CLHEP::tesla*m) << "T*m"
+               << " B'''= " << _bTriplePrime/(CLHEP::tesla/(m*m*m)) << "T/m^3"
                << " tilt= " << _element.tilt << "rad"
                << " aper= " << aper/m << "m"
                << " outR= " << _element.outR << "m"
@@ -1038,12 +1038,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 	// brho is in Geant4 units, but ks is not -> multiply ks by m^-1
 	G4double _bField;
         if(_element.B != 0){
-          _bField = _element.B * tesla;
+          _bField = _element.B * CLHEP::tesla;
           _element.ks  = (_bField/_brho) / m;
         }
         else{
 	  _bField = (_element.ks/m) * _brho;
-	  _element.B = _bField/tesla;
+	  _element.B = _bField/CLHEP::tesla;
         }
 
 #ifdef DEBUG 
@@ -1051,8 +1051,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
                << " name= " << _element.name
                << " l= " << _element.l << "m"
                << " ks= " << _element.ks << "m^-1"
-               << " brho= " << fabs(_brho)/(tesla*m) << "T*m"
-               << " B= " << _bField/tesla << "T"
+               << " brho= " << fabs(_brho)/(CLHEP::tesla*m) << "T*m"
+               << " B= " << _bField/CLHEP::tesla << "T"
                << " aper= " << aper/m << "m"
                << " outR= " << _element.outR << "m"
                << " FeRad= " << _FeRad/m << "m"
@@ -1166,7 +1166,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 #endif
         G4String name = _element.name;
         G4double length = _element.l*m;
-        G4double _bField = _element.B * tesla;
+        G4double _bField = _element.B * CLHEP::tesla;
         G4double beamPipeRadius;
         //        if(_element.aperSet){
         beamPipeRadius = _element.aper*m;
@@ -1182,7 +1182,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
         G4double outerRadius = _element.outR*m;
         
 #ifdef DEBUG
-        G4cout << "BDSMuSpoiler: " << name << " " << length/m << " " << outerRadius/m << " " << innerRadius/m << " " << _bField/tesla << " " << beamPipeRadius/m << G4endl;
+        G4cout << "BDSMuSpoiler: " << name << " " << length/m << " " << outerRadius/m << " " << innerRadius/m << " " << _bField/CLHEP::tesla << " " << beamPipeRadius/m << G4endl;
 #endif
 
         return (new BDSMuSpoiler(name,

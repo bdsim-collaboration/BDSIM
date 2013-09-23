@@ -346,7 +346,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       // build the magnetic field manager and transportation
       BuildMagField(true);
     } else if ( bFormat == "mokka" ){
-      G4ThreeVector uniField = G4ThreeVector(0,3.5*tesla,0);
+      G4ThreeVector uniField = G4ThreeVector(0,3.5*CLHEP::tesla,0);
       std::vector<G4ThreeVector> uniFieldVect;
       uniFieldVect.push_back(uniField);
       std::vector<G4double> nulld;

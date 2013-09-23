@@ -265,25 +265,25 @@ void BDSAcceleratorComponent::BuildTunnel()
                              0,
                              itsTunnelRadius+BDSGlobalConstants::Instance()->GetTunnelThickness(),
                              (itsLength-BDSGlobalConstants::Instance()->GetLengthSafety())/2.0,
-                             0,twopi*radian);
+                             0,CLHEP::twopi*CLHEP::radian);
    
    itsSoilSolid=new G4Tubs(itsName+"_tun_soil_solid",
                            itsTunnelRadius+BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetLengthSafety(),
                            itsTunnelRadius+BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness(),	
                            (itsLength-BDSGlobalConstants::Instance()->GetLengthSafety())/2.0,
-                           0,twopi*radian);
+                           0,CLHEP::twopi*CLHEP::radian);
    
    itsInnerTunnelSolid=new G4Tubs(itsName+"_inner_tun_solid",
                                   0.,
                                   itsTunnelRadius,
                                   (itsLength-BDSGlobalConstants::Instance()->GetLengthSafety())/2,
-                                  0,twopi*radian);
+                                  0,CLHEP::twopi*CLHEP::radian);
    
    itsLargerInnerTunnelSolid=new G4Tubs(itsName+"_inner_tun_solid",
 					0.,
 					itsTunnelRadius+BDSGlobalConstants::Instance()->GetLengthSafety(),
 					(itsLength-BDSGlobalConstants::Instance()->GetLengthSafety()),
-					0,twopi*radian);
+					0,CLHEP::twopi*CLHEP::radian);
    
    tunnelTrans.setX(itsTunnelOffsetX);
    tunnelTrans.setY(BDSGlobalConstants::Instance()->GetTunnelOffsetY());
@@ -349,7 +349,7 @@ void BDSAcceleratorComponent::BuildTunnel()
                                                         0,
                                                         itsTunnelRadius+BDSGlobalConstants::Instance()->GetTunnelThickness(),
                                                         tunHalfLen,
-                                                        0,twopi*radian),			    
+                                                        0,CLHEP::twopi*CLHEP::radian),			    
                                              itsMarkerLogicalVolume->GetSolid(),
 					     RotYM90,
                                              nullThreeVector
@@ -364,7 +364,7 @@ void BDSAcceleratorComponent::BuildTunnel()
                                                       itsTunnelRadius+BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetLengthSafety(),
                                                       itsTunnelRadius+BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness(),
                                                       tunHalfLen,
-                                                      0,twopi*radian),
+                                                      0,CLHEP::twopi*CLHEP::radian),
                                            itsMarkerLogicalVolume->GetSolid(),
                                            RotYM90,
                                            nullThreeVector
@@ -378,7 +378,7 @@ void BDSAcceleratorComponent::BuildTunnel()
                                                            0.,
                                                            itsTunnelRadius,
                                                            tunHalfLen,
-                                                           0,twopi*radian),
+                                                           0,CLHEP::twopi*CLHEP::radian),
                                                 itsMarkerLogicalVolume->GetSolid(),
                                                 RotYM90,
                                                 nullThreeVector
@@ -390,7 +390,7 @@ void BDSAcceleratorComponent::BuildTunnel()
                                           0.,
                                           itsTunnelRadius+BDSGlobalConstants::Instance()->GetLengthSafety(),
                                           2*tunHalfLen,
-                                          0,twopi*radian);
+                                          0,CLHEP::twopi*CLHEP::radian);
                                                        
     
     floorOffsetThreeVector = G4ThreeVector(0,-blockSize-BDSGlobalConstants::Instance()->GetTunnelFloorOffset(),0);
@@ -639,13 +639,13 @@ void BDSAcceleratorComponent::BuildBLMs()
      itsBLMSolid = new G4Tubs(itsName + "_BLM_sol_" + index,
 				      0,
 				      BDSGlobalConstants::Instance()->GetBlmRad(),
-				      localLength/2, 0, twopi*radian);
+				      localLength/2, 0, CLHEP::twopi*CLHEP::radian);
      
      
      itsBlmOuterSolid = new G4Tubs(itsName + "_Blm_outCase_sol_" + index, 
 					   0,
 					   BDSGlobalConstants::Instance()->GetBlmRad() + blmCaseThickness,
-					   localLength/2 + blmCaseThickness, 0, twopi*radian);
+					   localLength/2 + blmCaseThickness, 0, CLHEP::twopi*CLHEP::radian);
      
      G4SubtractionSolid *itsBlmCaseSolid = new G4SubtractionSolid(itsName + "_blm_case_subsolid_" + index,
 								  itsBlmOuterSolid,
@@ -673,9 +673,9 @@ void BDSAcceleratorComponent::BuildBLMs()
        assemblyBlms->AddPlacedVolume(itsBlmCaseLogicalVolume,blmTr3d);
    }  
    if (itsType=="sbend" || itsType=="rbend"){
-     blmRot.setTheta(twopi/4.0);
-     blmRot.setPsi(-twopi/4.0);
-     blmRot.setPhi(twopi/4.0);
+     blmRot.setTheta(CLHEP::twopi/4.0);
+     blmRot.setPsi(-CLHEP::twopi/4.0);
+     blmRot.setPhi(CLHEP::twopi/4.0);
    } else {
      blmRot.setTheta(0.0);
      blmRot.setPsi(0.0);
