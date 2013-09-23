@@ -19,7 +19,7 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDS3DMagField.hh"
 #include "BDSXYMagField2.hh"
-#include "G4ClassicalRK4.hh"
+#include "G4NystromRK4.hh"
 
 // geometry drivers
 #include "parser/gmad.h"
