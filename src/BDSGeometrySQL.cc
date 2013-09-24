@@ -17,6 +17,8 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4UserLimits.hh"
+#include "G4ProductionCuts.hh"
+#include "G4RegionStore.hh"
 #include "BDSMySQLWrapper.hh"
 #include "BDSMaterials.hh"
 #include "G4SDManager.hh"
@@ -53,6 +55,30 @@ BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength):
   HasFields = false;
   nPoleField = 0;
   HasUniformField = false;
+
+  //Set up the precision region
+  G4String pRegName="precisionRegionSQL";
+  _precisionRegionSQL = G4RegionStore::GetInstance()->FindOrCreateRegion(pRegName);
+  //  if(!_precisionRegionSQL->IsModified()){
+    G4ProductionCuts* theProductionCuts = new G4ProductionCuts();
+    if(BDSGlobalConstants::Instance()->GetProdCutPhotonsP()>0)
+      theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsP(),G4ProductionCuts::GetIndex("gamma"));
+    if(BDSGlobalConstants::Instance()->GetProdCutElectronsP()>0)
+      theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutElectronsP(),G4ProductionCuts::GetIndex("e-"));
+    if(BDSGlobalConstants::Instance()->GetProdCutPositronsP()>0)
+      theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsP(),G4ProductionCuts::GetIndex("e+"));
+    _precisionRegionSQL->SetProductionCuts(theProductionCuts);
+    //  }
+  //Set up the approximation region
+  G4String vRegName="approximationRegionSQL";
+  _approximationRegionSQL = G4RegionStore::GetInstance()->FindOrCreateRegion(vRegName);
+  //  if(!_approximationRegionSQL->IsModified()){
+    G4ProductionCuts* approxProductionCuts = new G4ProductionCuts();
+    approxProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsA(),G4ProductionCuts::GetIndex("gamma"));
+    approxProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutElectronsA(),G4ProductionCuts::GetIndex("e-"));
+    approxProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsA(),G4ProductionCuts::GetIndex("e+"));
+    _approximationRegionSQL->SetProductionCuts(approxProductionCuts);
+    //  }
 }
 
 BDSGeometrySQL::~BDSGeometrySQL(){
@@ -131,10 +157,12 @@ void BDSGeometrySQL::BuildSQLObjects(G4String file)
 void BDSGeometrySQL::SetCommonParams(BDSMySQLTable* aSQLTable, G4int k){
   //Defaults
   _VisRed = _VisGreen = _VisBlue = 0.5;
-  _VisAlpha = 0.2;
+  _VisAlpha = 0.5;
   _VisType = "S";
   _Material = "VACUUM";
   _Name="";
+  _PrecisionRegion=0;
+  _ApproximationRegion=0;
 
   if(aSQLTable->GetVariable("RED")!=NULL)
     _VisRed = aSQLTable->GetVariable("RED")->GetDblValue(k);
@@ -148,6 +176,10 @@ void BDSGeometrySQL::SetCommonParams(BDSMySQLTable* aSQLTable, G4int k){
     _VisType = aSQLTable->GetVariable("VISATT")->GetStrValue(k);
   if(aSQLTable->GetVariable("MATERIAL")!=NULL)
     _Material = aSQLTable->GetVariable("MATERIAL")->GetStrValue(k);
+  if(aSQLTable->GetVariable("PRECISIONREGION")!=NULL)
+    _PrecisionRegion = aSQLTable->GetVariable("PRECISIONREGION")->GetIntValue(k);
+  if(aSQLTable->GetVariable("APPROXIMATIONREGION")!=NULL)
+    _ApproximationRegion = aSQLTable->GetVariable("APPROXIMATIONREGION")->GetIntValue(k);
   if(aSQLTable->GetVariable("NAME")!=NULL)
     _Name = aSQLTable->GetVariable("NAME")->GetStrValue(k);
   if(_Name=="_SQL") _Name = _TableName+BDSGlobalConstants::Instance()->StringFromInt(k) + "_SQL";
@@ -255,6 +287,18 @@ void BDSGeometrySQL::SetLogVolAtt(G4LogicalVolume* logVol, G4double k){
 #ifndef NOUSERLIMITS
   logVol->SetUserLimits(UserLimits(k));
 #endif
+  SetLogVolRegion(logVol);
+}
+
+void BDSGeometrySQL::SetLogVolRegion(G4LogicalVolume* logVol){
+  if(_PrecisionRegion){
+    logVol->SetRegion(_precisionRegionSQL);
+    _precisionRegionSQL->AddRootLogicalVolume(logVol);
+  }
+  if(_ApproximationRegion){
+    logVol->SetRegion(_approximationRegionSQL);
+    _approximationRegionSQL->AddRootLogicalVolume(logVol);
+  }
 }
 
 G4LogicalVolume* BDSGeometrySQL::BuildCone(BDSMySQLTable* aSQLTable, G4int k)

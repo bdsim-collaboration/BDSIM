@@ -152,8 +152,8 @@ The next section describes how to do it in more detail.
 @end menu
 
 The beamline, beam properties and physics processes are specified in the input
-file written in the GMAD language which is a variation of MAD-X language
-(@ref{MAD}) extended to handle sophisticated geometry and parameters relevant
+file written in the GMAD language which is a variation of MAD-X language 
+extended to handle sophisticated geometry and parameters relevant
 to radiation transport.
 GMAD is described in this section.
 Examples of input files can be found in the @code{BDSIM} distribution in the
@@ -372,6 +372,23 @@ The outer volume is represented (with the exception of the @code{drift}
 element) by a cylinder with inner radius equal to the beampipe outer radius and
 with outer radius given by default by the global @code{boxSize} option, which
 can usually be overridden with the ``outR'' option.
+
+In Geant4 it is possible to drive different ``regions'' each with their own production cuts and user limits.
+In BDSIM three different regions exist, each with their own user defined production cuts (see @ref{Physics}). 
+These are the default region, the precision region and the approximation region. Beamline elements 
+can be set to the precision region by setting the attribute @code{precisionRegion} equal to 1. For example:
+
+@example
+
+d1: drift, l=1*m, precisionRegion=1;
+
+@end example
+
+creates a @code{drift} element in the precision region. Elements in the precision region also retain detailed
+information about energy deposition (every individual hit is stored rather than binned into a histogram).
+
+The third and final region is the ``approximation region''. Volumes within the ``mokka'' 
+defined elements can be assigned to this region (see @ref{Geometry}).
 
 An already defined element can be used as a new element type. The child element
 will have the attributes of the parent. 
@@ -1232,12 +1249,15 @@ The following options influence the physics:
 @item @code{srLowX}              @tab sets lowest energy of SR to X*E_critical
 @item @code{srLowGamE}           @tab lowest energy of propagating SR photons
 @item @code{srMultiplicity}         @tab a factor multiplying the number of synchrotron radiation photons
-@item @code{prodCutPhotons}      @tab standard overall production cuts for photons
-@item @code{prodCutPhotonsP}     @tab precision production cuts for photons in @code{element}
-@item @code{prodCutElectrons}    @tab standard overall production cuts for electrons
-@item @code{prodCutElectronsP}   @tab precision production cuts for electrons in @code{element}
-@item @code{prodCutPositrons}    @tab standard overall production cuts for positrons
-@item @code{prodCutPositronsP}   @tab precision production cuts for positrons in @code{element}
+@item @code{prodCutPhotons}      @tab standard overall production cuts for photons (default 0.7 mm)
+@item @code{prodCutPhotonsP}     @tab precision production cuts for photons in the precision region (default 0.7 mm)
+@item @code{prodCutPhotonsA}     @tab precision production cuts for photons in the approximation region (default 1 m)
+@item @code{prodCutElectrons}    @tab standard overall production cuts for electrons (default 0.7 mm)
+@item @code{prodCutElectronsP}   @tab precision production cuts for electrons in the precision region (default 0.7 mm)
+@item @code{prodCutElectronsA}   @tab precision production cuts for electrons in the approximation region (default 1 m)
+@item @code{prodCutPositrons}    @tab standard overall production cuts for positrons (default 0.7 mm)
+@item @code{prodCutPositronsP}   @tab precision production cuts for positrons in the precision region (default 0.7 mm)
+@item @code{prodCutPositronsA}   @tab precision production cuts for positrons in the approximation region (default 1 m)
 @item @code{turnOnCerenkov}      @tab if set, Cerenkov radiation is turned on
 @item @code{defaultRangeCut}     @tab the default predicted range at which a particle is cut. Default is 0.7mm
 @item @code{gammaToMuFe}         @tab the cross section enhancement factor for the gamma to muon process

@@ -29,6 +29,7 @@
 #include "G4GeometryManager.hh"
 #include "G4Region.hh"
 #include "G4ProductionCuts.hh"
+#include "G4LogicalVolumeStore.hh"
 
 #include "G4Tubs.hh"
 #include "G4Box.hh"
@@ -555,6 +556,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 #ifndef NOUSERLIMITS
   precisionRegion->SetUserLimits(WorldUserLimits);
 #endif
+
   // world
 
   physiWorld = new G4PVPlacement((G4RotationMatrix*)0,		// no rotation

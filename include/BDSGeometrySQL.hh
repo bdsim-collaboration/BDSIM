@@ -31,6 +31,7 @@
 #include <vector>
 #include <vector>
 #include "BDSMagFieldSQL.hh"
+#include "G4Region.hh"
 
 class BDSGeometrySQL
 {
@@ -96,10 +97,14 @@ private:
   G4int _align_in;
   G4int _align_out;
   G4int _SetSensitive;
+  G4int _PrecisionRegion;
+  G4int _ApproximationRegion;
   G4double _FieldX, _FieldY, _FieldZ;
 
   G4double _lengthUserLimit;
 
+  G4Region* _precisionRegionSQL;
+  G4Region* _approximationRegionSQL;
 
   void BuildSQLObjects(G4String file);
   void SetCommonParams(BDSMySQLTable*,G4int);
@@ -107,6 +112,7 @@ private:
   G4VisAttributes* VisAtt();
   G4UserLimits* UserLimits(G4double);
   void SetLogVolAtt(G4LogicalVolume*, G4double);
+  void SetLogVolRegion(G4LogicalVolume*);
   G4LogicalVolume* BuildCone(BDSMySQLTable* aSQLTable, G4int k);
   G4LogicalVolume* BuildEllipticalCone(BDSMySQLTable* aSQLTable, G4int k);
   G4LogicalVolume* BuildPolyCone(BDSMySQLTable* aSQLTable, G4int k);

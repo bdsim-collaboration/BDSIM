@@ -78,9 +78,6 @@
 
 #include "parser/gmad.h"  // GMAD parser
 
-
-//#define DEBUG 1
-
 //=======================================================
 // Global variables 
 BDSOutput*    bdsOutput;         // output interface
