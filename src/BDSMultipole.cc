@@ -220,11 +220,11 @@ void BDSMultipole::BuildBeampipe(G4String materialName)
     
 #ifdef DEBUG 
     G4cout << __METHOD_NAME__ << "Outer pipe :"
-	   << " r= " << itsBpRadius/m << " m"
-	   << " l= " << itsLength/(2.)/m << " m"
+	   << " r= " << itsBpRadius/CLHEP::m << " m"
+	   << " l= " << itsLength/(2.)/CLHEP::m << " m"
 	   << G4endl;
-    G4cout << __METHOD_NAME__ << "Drift aperX: " << this->GetAperX()/m << " m" << G4endl;
-    G4cout << __METHOD_NAME__ << "Drift aperY: " << this->GetAperY()/m << " m" << G4endl;
+    G4cout << __METHOD_NAME__ << "Drift aperX: " << this->GetAperX()/CLHEP::m << " m" << G4endl;
+    G4cout << __METHOD_NAME__ << "Drift aperY: " << this->GetAperY()/CLHEP::m << " m" << G4endl;
 #endif
     
     
@@ -412,9 +412,9 @@ void BDSMultipole::BuildBeampipe(G4double startAper,
   
 #ifdef DEBUG 
   G4cout << __METHOD_NAME__ << "Outer pipe :"
-	 << " start r= " << startAper/m << " m"
-	 << " end r= " << endAper/m << " m"
-	 << " l= " << itsLength/(2.)/m << " m"
+	 << " start r= " << startAper/CLHEP::m << " m"
+	 << " end r= " << endAper/CLHEP::m << " m"
+	 << " l= " << itsLength/(2.)/CLHEP::m << " m"
 	 << G4endl;
 #endif
   
@@ -424,12 +424,12 @@ void BDSMultipole::BuildBeampipe(G4double startAper,
 			      endAper-BDSGlobalConstants::Instance()->GetBeampipeThickness(),
 			      endAper,
 			      itsLength/(2.),
-			      0,twopi*radian);
+			      0,CLHEP::twopi*CLHEP::radian);
       
 #ifdef DEBUG 
   G4cout << __METHOD_NAME__ << "Inner pipe :"
-	 << " r= " << (itsBpRadius-BDSGlobalConstants::Instance()->GetBeampipeThickness() )/m << " m"
-	 << " l= " << itsLength/(2.)/m << " m"
+	 << " r= " << (itsBpRadius-BDSGlobalConstants::Instance()->GetBeampipeThickness() )/CLHEP::m << " m"
+	 << " l= " << itsLength/(2.)/CLHEP::m << " m"
 	 << G4endl;
 #endif
       
@@ -439,7 +439,7 @@ void BDSMultipole::BuildBeampipe(G4double startAper,
 				       0.,
 				       endAper-BDSGlobalConstants::Instance()->GetBeampipeThickness(),
 				       itsLength/2-BDSGlobalConstants::Instance()->GetLengthSafety(),
-				       0,twopi*radian);
+				       0,CLHEP::twopi*CLHEP::radian);
       
     itsBeampipeLogicalVolume=	
       new G4LogicalVolume(itsBeampipeSolid,
@@ -648,15 +648,15 @@ void BDSMultipole::BuildDefaultOuterLogicalVolume(G4double aLength,
 
 #ifdef DEBUG 
   G4cout << __METHOD_NAME__ << "Outer volume inner radius :"
-         << " r= " << (itsInnerIronRadius)/m << " m"
-         << " l= " << aLength/2./m << " m"
+         << " r= " << (itsInnerIronRadius)/CLHEP::m << " m"
+         << " l= " << aLength/2./CLHEP::m << " m"
          << G4endl;
 #endif
 
 #ifdef DEBUG 
   G4cout << __METHOD_NAME__ << "Outer radius :"
-         << " r= " << outerRadius/m << " m"
-         << " l= " << aLength/2./m << " m"
+         << " r= " << outerRadius/CLHEP::m << " m"
+         << " l= " << aLength/2./CLHEP::m << " m"
          << G4endl;
 #endif
 
@@ -671,7 +671,7 @@ void BDSMultipole::BuildDefaultOuterLogicalVolume(G4double aLength,
                                                             itsInnerIronRadius+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,
                                                             outerRadius,
                                                             aLength/2-BDSGlobalConstants::Instance()->GetLengthSafety(),
-                                                            0,twopi*radian),
+                                                            0,CLHEP::twopi*CLHEP::radian),
                                                  new G4EllipticalTube(itsName+"_outer_solid_tmp_2",
                                                                       this->GetAperX()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,
                                                                       this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,
@@ -721,11 +721,11 @@ void BDSMultipole::BuildEllipticalOuterLogicalVolume(G4double aLength,
 			       0,
 			       outerRadius,
 			       aLength/2-BDSGlobalConstants::Instance()->GetLengthSafety(),
-			       0,twopi*radian);
+			       0,CLHEP::twopi*CLHEP::radian);
 
   G4EllipticalTube* etube_tmp= new G4EllipticalTube(itsName+"_etube_tmp",
-                                                    this->GetAperX()+1*nm,
-                                                    this->GetAperY()+1*nm,
+                                                    this->GetAperX()+1*CLHEP::nm,
+                                                    this->GetAperY()+1*CLHEP::nm,
                                                     aLength/2-BDSGlobalConstants::Instance()->GetLengthSafety());
   
  

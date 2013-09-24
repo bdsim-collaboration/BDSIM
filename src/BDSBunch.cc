@@ -1329,7 +1329,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 	 //}
        }
      //Add the global offset Z
-     z0=z0+Z0*m;
+     z0=z0+Z0*CLHEP::m;
      break;
     }
   default:

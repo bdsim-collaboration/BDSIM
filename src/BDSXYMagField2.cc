@@ -6,8 +6,8 @@ BDSXYMagField2::BDSXYMagField2( const char* filename )
   :invertX(false),invertY(false)
 {    
  
-  double lenUnit= m;
-  double fieldUnit= tesla; 
+  double lenUnit= CLHEP::m;
+  double fieldUnit= CLHEP::tesla; 
   G4cout << "\n-----------------------------------------------------------"
 	 << "\n      Magnetic field"
 	 << "\n-----------------------------------------------------------";
@@ -71,9 +71,9 @@ BDSXYMagField2::BDSXYMagField2( const char* filename )
   // G4cout << " Read values of field from file " << filename << G4endl; 
   G4cout << " ---> assumed the order:  x, y, Bx, By, Bz "
 	 << "\n ---> Min values x,y: " 
-	 << minx/cm << " " << miny/cm << " cm "
+	 << minx/CLHEP::cm << " " << miny/CLHEP::cm << " cm "
 	 << "\n ---> Max values x,y: " 
-	 << maxx/cm << " " << maxy/cm << " " << G4endl;
+	 << maxx/CLHEP::cm << " " << maxy/CLHEP::cm << " " << G4endl;
 
 
   // Should really check that the limits are not the wrong way around.
@@ -82,14 +82,14 @@ BDSXYMagField2::BDSXYMagField2( const char* filename )
 
   G4cout << "\nAfter reordering if neccesary"  
 	 << "\n ---> Min values x,y: " 
-	 << minx/cm << " " << miny/cm << " cm "
+	 << minx/CLHEP::cm << " " << miny/CLHEP::cm << " cm "
 	 << " \n ---> Max values x,y: " 
-	 << maxx/cm << " " << maxy/cm << " cm ";
+	 << maxx/CLHEP::cm << " " << maxy/CLHEP::cm << " cm ";
 
   dx = maxx - minx;
   dy = maxy - miny;
   G4cout << "\n ---> Dif values x,y (range): " 
-	 << dx/cm << " " << dy/cm << " " << " cm"
+	 << dx/CLHEP::cm << " " << dy/CLHEP::cm << " " << " cm"
 	 << "\n-----------------------------------------------------------" << G4endl;
 }
 

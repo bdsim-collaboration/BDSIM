@@ -67,11 +67,11 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(
       itsBDSSynchrotronRadiation=new BDSSynchrotronRadiation("tmpSynRad");
       G4double R=BDSGlobalConstants::Instance()->GetSynchPrimaryLength()/
 	BDSGlobalConstants::Instance()->GetSynchPrimaryAngle();   
-      itsSynchCritEng=3./2.*hbarc/pow(electron_mass_c2,3)*
+      itsSynchCritEng=3./2.*CLHEP::hbarc/pow(CLHEP::electron_mass_c2,3)*
 	pow(BDSGlobalConstants::Instance()->GetBeamKineticEnergy(),3)/R;
 #ifdef DEBUG
       G4cout<<" BDSPrimaryGeneratorAction:  Critical Energy="<<
-	itsSynchCritEng/keV<<" keV"<<G4endl;
+	itsSynchCritEng/CLHEP::keV<<" keV"<<G4endl;
 #endif
       particleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->
 					 FindParticle("gamma"));
@@ -81,7 +81,7 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(
   G4cout << "Setting momentum..." << G4endl;
 #endif
   particleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
-  particleGun->SetParticlePosition(G4ThreeVector(0.*cm,0.*cm,0.*cm));
+  particleGun->SetParticlePosition(G4ThreeVector(0.*CLHEP::cm,0.*CLHEP::cm,0.*CLHEP::cm));
   particleGun->SetParticleEnergy(BDSGlobalConstants::Instance()->GetBeamKineticEnergy());
   particleGun->SetParticleTime(0);
   weight = 1;
@@ -196,9 +196,9 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 #ifdef DEBUG
   G4cout
     << "BDSPrimaryGeneratorAction: " << G4endl
-    << "  position= " << particleGun->GetParticlePosition()/m<<" m"<<G4endl
-    << "  kinetic energy= " << E/GeV << " GeV" << G4endl
-    << "  total energy= " << totalE/GeV << " GeV" << G4endl
+    << "  position= " << particleGun->GetParticlePosition()/CLHEP::m<<" m"<<G4endl
+    << "  kinetic energy= " << E/CLHEP::GeV << " GeV" << G4endl
+    << "  total energy= " << totalE/CLHEP::GeV << " GeV" << G4endl
     << "  momentum direction= " << PartMomDir << G4endl
     << "  weight= " << anEvent->GetPrimaryVertex()->GetWeight() << G4endl;
 #endif

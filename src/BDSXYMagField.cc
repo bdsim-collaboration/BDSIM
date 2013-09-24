@@ -124,10 +124,10 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 	  G4cout<<(*it).x<<" "<<(*it).y<<" "<<" "<<(*it).Bx<<G4endl;
 #endif
 	  hxold = fabs((*it).x - (*itt).x);
-	  if( (hxold > 1.0e-11*m)&&(hxold<hx) ) hx = hxold;
+	  if( (hxold > 1.0e-11*CLHEP::m)&&(hxold<hx) ) hx = hxold;
 	  
 	  hyold = fabs((*it).y - (*itt).y);
-	  if( (hyold > 1.0e-11*m)&&(hyold<hy) ) hy = hyold;
+	  if( (hyold > 1.0e-11*CLHEP::m)&&(hyold<hy) ) hy = hyold;
 	  
 	}
     }

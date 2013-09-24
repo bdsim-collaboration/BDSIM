@@ -61,65 +61,65 @@ BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):
   // define some standard constants
   CONST_REF aconst;
   aconst.name="pi";
-  aconst.value=pi;
+  aconst.value=CLHEP::pi;
   CONST_LIST.push_back(aconst);
 
   aconst.name="TWOPI";
-  aconst.value=twopi;
+  aconst.value=CLHEP::twopi;
   CONST_LIST.push_back(aconst);
 
   
   aconst.name="HALFPI";
-  aconst.value=halfpi;
+  aconst.value=CLHEP::halfpi;
   CONST_LIST.push_back(aconst);
 
   // define units using mm and radians =1 and tesla as =0.001
   aconst.name="radian";
-  aconst.value=radian;
+  aconst.value=CLHEP::radian;
   CONST_LIST.push_back(aconst);
 
   aconst.name="degree";
-  aconst.value=degree;
+  aconst.value=CLHEP::degree;
   CONST_LIST.push_back(aconst);
   
   aconst.name="mm";
-  aconst.value=mm;
+  aconst.value=CLHEP::mm;
   CONST_LIST.push_back(aconst);
   
   aconst.name="cm";
-  aconst.value=cm;
+  aconst.value=CLHEP::cm;
   CONST_LIST.push_back(aconst);
   
   aconst.name="m";
-  aconst.value=m;
+  aconst.value=CLHEP::m;
   CONST_LIST.push_back(aconst);
 
   aconst.name="cm2";
-  aconst.value=cm2;
+  aconst.value=CLHEP::cm2;
   CONST_LIST.push_back(aconst);
 
   aconst.name="cm3";
-  aconst.value=cm3;
+  aconst.value=CLHEP::cm3;
   CONST_LIST.push_back(aconst);
 
   aconst.name="tesla";
-  aconst.value=tesla;
+  aconst.value=CLHEP::tesla;
   CONST_LIST.push_back(aconst);
 
   aconst.name="g";
-  aconst.value=g;
+  aconst.value=CLHEP::g;
   CONST_LIST.push_back(aconst);
 
   aconst.name="kg";
-  aconst.value=kg;
+  aconst.value=CLHEP::kg;
   CONST_LIST.push_back(aconst);
 
   aconst.name="mol";
-  aconst.value=mole;
+  aconst.value=CLHEP::mole;
   CONST_LIST.push_back(aconst);
 
   aconst.name="mole";
-  aconst.value=mole;
+  aconst.value=CLHEP::mole;
   CONST_LIST.push_back(aconst);
 #ifdef DEBUG
   G4cout << "BDSGeometryLCDD CONST_LIST defined units: " <<  G4endl;
@@ -538,7 +538,7 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	      Z = parseDblChar(xmlGetProp(cur,(const xmlChar*)"Z"));	   
 	       
 	      value = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"value"));	   
-	      BDSMaterials::Instance()->AddElement(name, formula, Z, value*unit/(g/mole)); 
+	      BDSMaterials::Instance()->AddElement(name, formula, Z, value*unit/(CLHEP::g/CLHEP::mole)); 
 	    } else {
 	       G4Exception("BDSGeometryLCDD.cc: not an atom, not currently implemented in BDSIM", "-1", FatalException, "");  
 	    }
@@ -656,12 +656,12 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 #ifdef DEBUG
 	     G4cout << "Size of weights: " << weights.size() << G4endl;
 #endif
-	     BDSMaterials::Instance()->AddMaterial(name, value*unit/(g/cm3), kStateSolid, 300, 1, components, weights);
+	     BDSMaterials::Instance()->AddMaterial(name, value*unit/(CLHEP::g/CLHEP::cm3), kStateSolid, 300, 1, components, weights);
 	     } else if(fractions.size()>0){
 #ifdef DEBUG
 	     G4cout << "Size of fractions: " << fractions.size() << G4endl;
 #endif
-	     BDSMaterials::Instance()->AddMaterial(name, value*unit/(g/cm3), kStateSolid, 300, 1, components, fractions);
+	     BDSMaterials::Instance()->AddMaterial(name, value*unit/(CLHEP::g/CLHEP::cm3), kStateSolid, 300, 1, components, fractions);
 	     } else G4Exception("BDSGeometry LCDD: Ill defined material fractions - list of fractions and weights empty.", "-1", FatalException, "");
 
 	 }

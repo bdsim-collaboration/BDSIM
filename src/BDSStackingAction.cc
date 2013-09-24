@@ -144,21 +144,21 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       G4cout << "LocalDir: mom = " << LocalDirection << G4endl;
 #endif
       
-      G4double x=LocalPosition.x()/micrometer;
-      G4double y=LocalPosition.y()/micrometer;
-      G4double z=LocalPosition.z()/micrometer;
-      G4double xPrime=LocalDirection.x()/(1e-6*radian);
-      G4double yPrime=LocalDirection.y()/(1e-6*radian);
+      G4double x=LocalPosition.x()/CLHEP::micrometer;
+      G4double y=LocalPosition.y()/CLHEP::micrometer;
+      G4double z=LocalPosition.z()/CLHEP::micrometer;
+      G4double xPrime=LocalDirection.x()/(1e-6*CLHEP::radian);
+      G4double yPrime=LocalDirection.y()/(1e-6*CLHEP::radian);
       G4double t=aTrack->GetGlobalTime();
       
       BDSGlobalConstants::Instance()->fileDump.precision(15);
       // TODO : dump the file
-      //        BDSGlobalConstants::Instance()->fileDump << aTrack->GetTotalEnergy()/GeV << "\t"
+      //        BDSGlobalConstants::Instance()->fileDump << aTrack->GetTotalEnergy()/CLHEP::GeV << "\t"
       //<< x << "\t" << y << "\t" << z << "\t"
       //<< xPrime << "\t" << yPrime << "\t" << t <<"\n"; // SPM
 #ifdef DEBUG
       printf("Out: %.15f %.15f %.15f %.15f %.15f %.15f %f\n",
-	     aTrack->GetTotalEnergy()/GeV,x,y,z,xPrime,yPrime,t);
+	     aTrack->GetTotalEnergy()/CLHEP::GeV,x,y,z,xPrime,yPrime,t);
 #endif
       tmpParticle outputParticle, transformedParticle;
       if(aTrack->GetDefinition()->GetPDGEncoding()==-11)
@@ -179,7 +179,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       transformedParticle.xp=xPrime;
       transformedParticle.yp=yPrime;
       transformedParticle.t=t;
-      transformedParticle.E=aTrack->GetTotalEnergy()/GeV;
+      transformedParticle.E=aTrack->GetTotalEnergy()/CLHEP::GeV;
       transformedParticle.parentID=aTrack->GetParentID();
       
       BDSGlobalConstants::Instance()->outputQueue.push_back(outputParticle);

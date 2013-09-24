@@ -125,7 +125,7 @@ BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
 	  InitMag=Rot*InitMag; 
 
 
-	  G4double Rlocal=(InitMag.z()/GeV)/(0.299792458 * Blocal/tesla) *m;
+	  G4double Rlocal=(InitMag.z()/CLHEP::GeV)/(0.299792458 * Blocal/CLHEP::tesla) *CLHEP::m;
 	  
 	  MeanFreePath=
 	    fabs(Rlocal)/(track.GetTotalEnergy()*nExpConst);

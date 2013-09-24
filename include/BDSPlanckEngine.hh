@@ -55,7 +55,7 @@ private:
 inline void BDSPlanckEngine::SetTemperature(G4double aTemperature)
 {
  itsTemperature=aTemperature;
- kT=k_Boltzmann* itsTemperature;
+ kT=CLHEP::k_Boltzmann* itsTemperature;
 }
 
 inline G4double BDSPlanckEngine::PlanckSpectrum(G4double x)
