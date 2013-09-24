@@ -229,18 +229,18 @@ void BDSAcceleratorComponent::BuildTunnel()
 
 #ifdef DEBUG
   G4cout << "Soil :"
-         << " r= " << (itsTunnelRadius+BDSGlobalConstants::Instance()->GetTunnelThickness())/m + BDSGlobalConstants::Instance()->GetTunnelSoilThickness()/m<< " m"
-         << " l= " << itsLength/m << " m"
+         << " r= " << (itsTunnelRadius+BDSGlobalConstants::Instance()->GetTunnelThickness())/CLHEP::m + BDSGlobalConstants::Instance()->GetTunnelSoilThickness()/CLHEP::m<< " m"
+         << " l= " << itsLength/CLHEP::m << " m"
          << " material = " << soilMaterialName << " m"
          << G4endl;
   G4cout << "Outer tunnel :"
-         << " r= " << (itsTunnelRadius+BDSGlobalConstants::Instance()->GetTunnelThickness())/m << " m"
-         << " l= " << itsLength/m << " m"
+         << " r= " << (itsTunnelRadius+BDSGlobalConstants::Instance()->GetTunnelThickness())/CLHEP::m << " m"
+         << " l= " << itsLength/CLHEP::m << " m"
          << " material = " << tunnelMaterialName << " m"
          << G4endl;
   G4cout << "Inner tunnel :"
-         << " r= " << itsTunnelRadius/m << " m"
-         << " l= " << itsLength/m << " m"
+         << " r= " << itsTunnelRadius/CLHEP::m << " m"
+         << " l= " << itsLength/CLHEP::m << " m"
          << G4endl;
 #endif
 
@@ -587,21 +587,21 @@ void BDSAcceleratorComponent::BuildBLMs()
    VisAtt5->SetForceSolid(true);
 
    //set case thickness
-   blmCaseThickness = 1e-20*m;
+   blmCaseThickness = 1e-20*CLHEP::m;
 
    itsBlmLocationR = itsBlmLocationR + BDSGlobalConstants::Instance()->GetBlmRad() + BDSGlobalConstants::Instance()->GetLengthSafety() +itsBpRadius + blmCaseThickness;
    
 #ifdef DEBUG
-   G4cout << "BDSAcceleratorComponent::BuildBLMs() itsBlmLocationRadius = " << itsBlmLocationR/mm << " mm" << G4endl;
+   G4cout << "BDSAcceleratorComponent::BuildBLMs() itsBlmLocationRadius = " << itsBlmLocationR/CLHEP::mm << " mm" << G4endl;
 #endif
    
    G4double localLength;
    
    //Make sure BLM length can never exceed component length
 #ifdef DEBUG
-   G4cout << "BLM length = " << BDSGlobalConstants::Instance()->GetBlmLength()/m << " m" << G4endl;
-   G4cout << "BLM radius = " << BDSGlobalConstants::Instance()->GetBlmRad()/m << " m" << G4endl;
-   G4cout << "Component length = " << itsLength/m << " m" << G4endl;
+   G4cout << "BLM length = " << BDSGlobalConstants::Instance()->GetBlmLength()/CLHEP::m << " m" << G4endl;
+   G4cout << "BLM radius = " << BDSGlobalConstants::Instance()->GetBlmRad()/CLHEP::m << " m" << G4endl;
+   G4cout << "Component length = " << itsLength/CLHEP::m << " m" << G4endl;
 #endif
    if(BDSGlobalConstants::Instance()->GetBlmLength()>=(itsLength-BDSGlobalConstants::Instance()->GetLengthSafety())){
      G4cout << itsName << "Warning: BLM longer than element. Setting BLM length to element length." << G4endl;
@@ -700,12 +700,12 @@ void BDSAcceleratorComponent::BuildGate()
   G4Material *gateMaterial;
 
   //Set basic variables
-  G4double gateX = 0.05*m;
-  G4double gateY = 1.0*m;
-  G4double gateZ = 0.63*0.99*m;//1.5*m;
-  G4double gateXOffset = 3*m;
+  G4double gateX = 0.05*CLHEP::m;
+  G4double gateY = 1.0*CLHEP::m;
+  G4double gateZ = 0.63*0.99*CLHEP::m;//1.5*m;
+  G4double gateXOffset = 3*CLHEP::m;
   G4double gateYOffset = -BDSGlobalConstants::Instance()->GetTunnelFloorOffset()/2 + gateY/2;
-  G4double gateZOffset = -4.095*m; //Shifted along z 4.095m from centre of dipole
+  G4double gateZOffset = -4.095*CLHEP::m; //Shifted along z 4.095m from centre of dipole
   gateMaterial = BDSMaterials::Instance()->GetMaterial("iron");
   
   //Set position and rotation of gate
