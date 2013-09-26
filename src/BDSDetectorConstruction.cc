@@ -556,6 +556,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 #ifndef NOUSERLIMITS
   precisionRegion->SetUserLimits(WorldUserLimits);
 #endif
+
   // world
 
   physiWorld = new G4PVPlacement((G4RotationMatrix*)0,		// no rotation
