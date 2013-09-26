@@ -1160,7 +1160,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
         G4cout << "---->creating muspoiler,"
                << " name= " << _element.name 
                << " length= " << _element.l
-               << "B= " << _element.B
+               << " B= " << _element.B
                << " tunnel material " << _element.tunnelMaterial
                << G4endl;
 #endif
