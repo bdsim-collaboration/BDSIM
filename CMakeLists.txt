@@ -334,13 +334,6 @@ target_link_libraries(bdsim ${CLHEP_LIBRARIES})
 target_link_libraries(bdsim ${XercesC_LIBRARIES})
 target_link_libraries(bdsim ${Geant4_LIBRARIES})
 
-# Hack for QT libraries on SLC5-LXPLUS
-if(USE_AFS AND RHL5 AND LXPLUS)
-   set(QT_LIBRARY_DIR "/afs/cern.ch/sw/lcg/external/qt/4.6.3p2/x86_64-slc5-gcc43-opt/lib")
-   file(GLOB QT_LIBRARIES ${QT_LIBRARY_DIR}/*.so)
-   target_link_libraries(bdsim ${QT_LIBRARIES})
-endif()
-
 if(USE_ROOT)
     target_link_libraries(bdsim ${ROOT_LIBRARIES_GLOB})
     target_link_libraries(bdsim ${ROOT_LIBRARIES})
