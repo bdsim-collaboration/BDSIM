@@ -26,8 +26,6 @@
 #include "G4PhysicsTable.hh"
 #include "G4PhysicsLogVector.hh"
 
-using namespace CLHEP;
-
 class BDSComptonEngine  
 { 
   public:

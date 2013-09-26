@@ -23,8 +23,6 @@ Last modified 30.10.2007 by Steve Malton
 #include "G4String.hh"
 #include "G4AffineTransform.hh"
 
-using namespace CLHEP;
-
 struct Options;
 
 struct strCmp {
