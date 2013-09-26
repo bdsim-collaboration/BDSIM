@@ -101,7 +101,7 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
 	  // Magnetic flux from a pole is divided in two directions
 	  BFldIron/=2.;
 	  
-	  BuildOuterFieldManager(2, BFldIron,pi/2);
+	  BuildOuterFieldManager(2, BFldIron,CLHEP::halfpi);
 	}
 
       //
@@ -177,7 +177,7 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
 	      // Magnetic flux from a pole is divided in two directions
 	      BFldIron/=2.;
 
-	      BuildOuterFieldManager(2, BFldIron,pi/2);
+	      BuildOuterFieldManager(2, BFldIron,CLHEP::halfpi);
 	    }
 	  //When is SynchRescale(factor) called?
 	  
@@ -257,8 +257,8 @@ void BDSSectorBend::BuildSBMarkerLogicalVolume()
   G4double transverseSize=2*std::max(xLength, yLength);
 
 #ifdef DEBUG 
-  G4cout<<"marker volume : x/y="<<transverseSize/m<<
-    " m, l= "<<  (itsLength)/2/m <<" m"<<G4endl;
+  G4cout<<"marker volume : x/y="<<transverseSize/CLHEP::m<<
+    " m, l= "<<  (itsLength)/2/CLHEP::m <<" m"<<G4endl;
 #endif
 
   G4double xHalfLengthPlus, xHalfLengthMinus;
@@ -490,7 +490,7 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
                                                            itsOuterR,          // outer R
                                                            tubLen,             // length
                                                            0,                  // starting phi
-                                                           twopi * rad ),      // delta phi
+                                                           CLHEP::twopi * CLHEP::rad ),      // delta phi
                                                 new G4EllipticalTube(itsName+"_pipe_outer_tmp_2",
                                                                      this->GetAperX()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0, 
                                                                      this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,          

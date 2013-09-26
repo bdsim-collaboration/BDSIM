@@ -7,10 +7,10 @@
 BDS3DMagField::BDS3DMagField( const char* filename, double zOffset ) 
   :fZoffset(zOffset),invertX(false),invertY(false),invertZ(false)
 {    
-  fZoffset = -250*cm;
-  zOffset = -250*cm;
-  double lenUnit= m;
-  double fieldUnit= tesla; 
+  fZoffset = -250*CLHEP::cm;
+  zOffset = -250*CLHEP::cm;
+  double lenUnit= CLHEP::m;
+  double fieldUnit= CLHEP::tesla; 
   G4cout << "\n-----------------------------------------------------------"
 	 << "\n      Magnetic field"
 	 << "\n-----------------------------------------------------------";
@@ -81,10 +81,10 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
   // G4cout << " Read values of field from file " << filename << G4endl; 
   G4cout << " ---> assumed the order:  x, y, z, Bx, By, Bz "
 	 << "\n ---> Min values x,y,z: " 
-	 << minx/cm << " " << miny/cm << " " << minz/cm << " cm "
+	 << minx/CLHEP::cm << " " << miny/CLHEP::cm << " " << minz/CLHEP::cm << " cm "
 	 << "\n ---> Max values x,y,z: " 
-	 << maxx/cm << " " << maxy/cm << " " << maxz/cm << " cm "
-	 << "\n ---> The field will be offset by " << zOffset/cm << " cm " << G4endl;
+	 << maxx/CLHEP::cm << " " << maxy/CLHEP::cm << " " << maxz/CLHEP::cm << " cm "
+	 << "\n ---> The field will be offset by " << zOffset/CLHEP::cm << " cm " << G4endl;
 
   // Should really check that the limits are not the wrong way around.
   if (maxx < minx) {std::swap(maxx,minx); invertX = true;} 
@@ -92,15 +92,15 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
   if (maxz < minz) {std::swap(maxz,minz); invertZ = true;} 
   G4cout << "\nAfter reordering if neccesary"  
 	 << "\n ---> Min values x,y,z: " 
-	 << minx/cm << " " << miny/cm << " " << minz/cm << " cm "
+	 << minx/CLHEP::cm << " " << miny/CLHEP::cm << " " << minz/CLHEP::cm << " cm "
 	 << " \n ---> Max values x,y,z: " 
-	 << maxx/cm << " " << maxy/cm << " " << maxz/cm << " cm ";
+	 << maxx/CLHEP::cm << " " << maxy/CLHEP::cm << " " << maxz/CLHEP::cm << " cm ";
 
   dx = maxx - minx;
   dy = maxy - miny;
   dz = maxz - minz;
   G4cout << "\n ---> Dif values x,y,z (range): " 
-	 << dx/cm << " " << dy/cm << " " << dz/cm << " cm in z "
+	 << dx/CLHEP::cm << " " << dy/CLHEP::cm << " " << dz/CLHEP::cm << " cm in z "
 	 << "\n-----------------------------------------------------------" << G4endl;
 }
 

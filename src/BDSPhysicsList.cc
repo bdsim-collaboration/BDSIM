@@ -1,4 +1,3 @@
-      
 //   BDSIM, (C) 2001-2007 
 //    
 //   version 0.4 
@@ -209,16 +208,16 @@ BDSPhysicsList::BDSPhysicsList():  G4VUserPhysicsList()
 
   // construct particles
 
-  //defaultCutValue = 0.7*mm;  
-  defaultCutValue = BDSGlobalConstants::Instance()->GetDefaultRangeCut()*m;  
-  SetDefaultCutValue(BDSGlobalConstants::Instance()->GetDefaultRangeCut()*m);
+  //defaultCutValue = 0.7*CLHEP::mm;  
+  defaultCutValue = BDSGlobalConstants::Instance()->GetDefaultRangeCut()*CLHEP::m;  
+  SetDefaultCutValue(BDSGlobalConstants::Instance()->GetDefaultRangeCut()*CLHEP::m);
 
   G4cout  << __METHOD_NAME__ << "Charged Thresholdcut=" 
-	  << BDSGlobalConstants::Instance()->GetThresholdCutCharged()/GeV<<" GeV"<<G4endl;
+	  << BDSGlobalConstants::Instance()->GetThresholdCutCharged()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout  << __METHOD_NAME__ << "Photon Thresholdcut=" 
-	  << BDSGlobalConstants::Instance()->GetThresholdCutPhotons()/GeV<<" GeV"<<G4endl;
+	  << BDSGlobalConstants::Instance()->GetThresholdCutPhotons()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout  << __METHOD_NAME__ << "Default range cut=" 
-	  << BDSGlobalConstants::Instance()->GetDefaultRangeCut()/m<<" m"<<G4endl;
+	  << BDSGlobalConstants::Instance()->GetDefaultRangeCut()/CLHEP::m<<" m"<<G4endl;
 
   //This is the GEANT4 physics list verbose level.
   SetVerboseLevel(1);   
@@ -526,15 +525,15 @@ void BDSPhysicsList::ConstructParticle()
   G4cout << __METHOD_NAME__ << "Particle : " 
 	 << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetParticleName()<<G4endl;
   G4cout << __METHOD_NAME__ << "Mass : " 
-	 << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass()/GeV<< " GeV"<<G4endl;
+	 << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass()/CLHEP::GeV<< " GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Charge : " 
 	 << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge()<< " e"<<G4endl;
   G4cout << __METHOD_NAME__ << "Total Energy : "
-	 << BDSGlobalConstants::Instance()->GetBeamTotalEnergy()/GeV<<" GeV"<<G4endl;
+	 << BDSGlobalConstants::Instance()->GetBeamTotalEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Kinetic Energy : "
-	 << BDSGlobalConstants::Instance()->GetBeamKineticEnergy()/GeV<<" GeV"<<G4endl;
+	 << BDSGlobalConstants::Instance()->GetBeamKineticEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Momentum : "
-	 << BDSGlobalConstants::Instance()->GetBeamMomentum()/GeV<<" GeV"<<G4endl;
+	 << BDSGlobalConstants::Instance()->GetBeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
 }
 
 #include "G4Region.hh"
@@ -857,7 +856,7 @@ void BDSPhysicsList::ConstructEM_Low_Energy()
 #if G4VERSION_NUMBER > 949
   //Applicability range for Livermore models                                                                                                                                
   //for higher energies, the Standard models are used                                                                                                                       
-  G4double highEnergyLimit = 1*GeV;
+  G4double highEnergyLimit = 1*CLHEP::GeV;
 #endif
 
   theParticleIterator->reset();
@@ -1114,7 +1113,7 @@ void BDSPhysicsList::ConstructHad()
         theHandler->SetFermiModel(theFermiBreakUp);
         theHandler->SetMultiFragmentation(theMF);
         theHandler->SetMaxAandZForFermiBreakUp(12, 6);
-        theHandler->SetMinEForMultiFrag(3*MeV);
+        theHandler->SetMinEForMultiFrag(3*CLHEP::MeV);
 	
     // Pre equilibrium stage 
     G4PreCompoundModel * thePreEquilib = new G4PreCompoundModel(theHandler);
@@ -1131,8 +1130,8 @@ void BDSPhysicsList::ConstructHad()
     theStringModel = new G4FTFModel;
     theTheoModel->SetTransport(theCascade);
     theTheoModel->SetHighEnergyGenerator(theStringModel);
-    theTheoModel->SetMinEnergy(19*GeV);
-    theTheoModel->SetMaxEnergy(100*TeV);
+    theTheoModel->SetMinEnergy(19*CLHEP::GeV);
+    theTheoModel->SetMaxEnergy(100*CLHEP::TeV);
 
       G4VLongitudinalStringDecay * theFragmentation = new G4QGSMFragmentation;
       G4ExcitedStringDecay * theStringDecay = new G4ExcitedStringDecay(theFragmentation);
@@ -1445,10 +1444,10 @@ void BDSPhysicsList::ConstructPhotolepton_Hadron(){
   G4ProcessManager * aProcMan = 0;
   
   aProcMan = G4Gamma::Gamma()->GetProcessManager();
-  theGammaReaction->SetMaxEnergy(3.5*GeV);
+  theGammaReaction->SetMaxEnergy(3.5*CLHEP::GeV);
   thePhotoNuclearProcess->RegisterMe(theGammaReaction);
-  theModel->SetMinEnergy(3.*GeV);
-  theModel->SetMaxEnergy(100*TeV);
+  theModel->SetMinEnergy(3.*CLHEP::GeV);
+  theModel->SetMaxEnergy(100*CLHEP::TeV);
   thePhotoNuclearProcess->RegisterMe(theModel);
   aProcMan->AddDiscreteProcess(thePhotoNuclearProcess);
 
@@ -1517,10 +1516,10 @@ void BDSPhysicsList::ConstructHadronic()
   G4ProcessManager * aProcMan = 0;
   
   aProcMan = G4Gamma::Gamma()->GetProcessManager();
-  theGammaReaction->SetMaxEnergy(3.5*GeV);
+  theGammaReaction->SetMaxEnergy(3.5*CLHEP::GeV);
   thePhotoNuclearProcess->RegisterMe(theGammaReaction);
-  theModel->SetMinEnergy(3.*GeV);
-  theModel->SetMaxEnergy(100*TeV);
+  theModel->SetMinEnergy(3.*CLHEP::GeV);
+  theModel->SetMaxEnergy(100*CLHEP::TeV);
   thePhotoNuclearProcess->RegisterMe(theModel);
   aProcMan->AddDiscreteProcess(thePhotoNuclearProcess);
 

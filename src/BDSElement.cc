@@ -55,7 +55,7 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap,
   BDSAcceleratorComponent(
 			  aName,
 			  aLength,bpRad,0,0,
-			  SetVisAttributes(), aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*m, aTunnelOffsetX*m, aTunnelCavityMaterial, aPrecisionRegion),
+			  SetVisAttributes(), aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*CLHEP::m, aTunnelOffsetX*CLHEP::m, aTunnelCavityMaterial, aPrecisionRegion),
   fChordFinder(NULL), itsFStepper(NULL), itsFEquation(NULL), itsEqRhs(NULL), 
   itsField(NULL), itsMagField(NULL), itsUniformMagField(NULL)
 {
@@ -123,8 +123,8 @@ void BDSElement::BuildElementMarkerLogicalVolume(){
 
 
 #ifdef DEBUG 
-  G4cout<<"marker volume : x/y="<<elementSize/m<<
-    " m, l= "<<  (itsLength)/2/m <<" m"<<G4endl;
+  G4cout<<"marker volume : x/y="<<elementSize/CLHEP::m<<
+    " m, l= "<<  (itsLength)/2/CLHEP::m <<" m"<<G4endl;
 #endif
 
 
@@ -313,7 +313,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 #endif
       
       itsMagField = new BDS3DMagField(bFile, 0);
-      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*cm);
+      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::cm);
       
       BuildMagField(true);
     }else if(bFormat=="XY"){
@@ -321,7 +321,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       G4cout << "BDSElement.cc> Making BDSXYMagField2..." << G4endl;
 #endif
       itsMagField = new BDSXYMagField2(bFile);
-      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*cm);
+      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::cm);
 
       // build the magnetic field manager and transportation
       BuildMagField(true);
@@ -341,12 +341,12 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     SetMultipleSensitiveVolumes(itsMarkerLogicalVolume);
     if(bFormat=="XY"){
       itsMagField = new BDSXYMagField(bFile);
-      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*cm);
+      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::cm);
 
       // build the magnetic field manager and transportation
       BuildMagField(true);
     } else if ( bFormat == "mokka" ){
-      G4ThreeVector uniField = G4ThreeVector(0,3.5*tesla,0);
+      G4ThreeVector uniField = G4ThreeVector(0,3.5*CLHEP::tesla,0);
       std::vector<G4ThreeVector> uniFieldVect;
       uniFieldVect.push_back(uniField);
       std::vector<G4double> nulld;
@@ -361,7 +361,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 	itsUniformMagField=LCDD->GetUniformField();
       }else{
 	itsMagField=LCDD->GetField();
-	itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*cm);
+	itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::cm);
 	
       }
       itsFieldVolName=LCDD->GetFieldVolName();
@@ -404,7 +404,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       G4cout << "BDSElement.cc> Making BDS3DMagField..." << G4endl;
 #endif
       itsMagField = new BDS3DMagField(bFile, 0);
-      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*cm);
+      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::cm);
       
       BuildMagField(true);
     } else if(bFormat=="XY"){
@@ -412,7 +412,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       G4cout << "BDSElement.cc> Making BDSXYMagField2..." << G4endl;
 #endif
       itsMagField = new BDSXYMagField2(bFile);
-      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*cm);
+      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::cm);
       
       // build the magnetic field manager and transportation
       BuildMagField(true);
@@ -430,7 +430,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 					     Mokka->UniformFieldVolField,
 					     Mokka->nPoleField,
 					     Mokka->HasUniformField);
-	    itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*cm);
+	    itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::cm);
 
 	    
 	    // build the magnetic field manager and transportation
@@ -531,7 +531,7 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
 {
   if(!itsMagField) return;
   itsMagField->Prepare(referenceVolume);
-  itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*cm);
+  itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::cm);
 }
 
 // Rotates and positions the marker volume before it is placed in

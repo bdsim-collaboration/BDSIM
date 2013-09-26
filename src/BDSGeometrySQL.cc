@@ -313,8 +313,8 @@ G4LogicalVolume* BDSGeometrySQL::BuildCone(BDSMySQLTable* aSQLTable, G4int k)
   
   //Defaults
   sphi =0.0;
-  dphi = twopi*radian;
-  length = rOuterStart = rOuterEnd = 10.*mm;
+  dphi = CLHEP::twopi*CLHEP::radian;
+  length = rOuterStart = rOuterEnd = 10.*CLHEP::mm;
   rInnerStart = rInnerEnd = 0.0;
   
   if(aSQLTable->GetVariable("LENGTH")!=NULL)
@@ -357,7 +357,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildEllipticalCone(BDSMySQLTable* aSQLTable, G
   G4double pzTopCut = 0;
   
   //Defaults
-  lengthZ = 10.*mm;
+  lengthZ = 10.*CLHEP::mm;
   
   if(aSQLTable->GetVariable("LENGTHZ")!=NULL)
     lengthZ = aSQLTable->GetVariable("LENGTHZ")->GetDblValue(k);
@@ -394,7 +394,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildPolyCone(BDSMySQLTable* aSQLTable, G4int k
   
   //Defaults
   sphi = 0.0;
-  dphi = twopi*radian;
+  dphi = CLHEP::twopi*CLHEP::radian;
   numZplanes = 0;
   
   if(aSQLTable->GetVariable("NZPLANES")!=NULL)
@@ -458,7 +458,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildBox(BDSMySQLTable* aSQLTable, G4int k)
   G4double lengthY;
   G4double lengthZ;
 
-  lengthX = lengthY = lengthZ = 10.*mm;
+  lengthX = lengthY = lengthZ = 10.*CLHEP::mm;
   
   if(aSQLTable->GetVariable("LENGTHX")!=NULL)
     lengthX = aSQLTable->GetVariable("LENGTHX")->GetDblValue(k);
@@ -536,11 +536,11 @@ G4LogicalVolume* BDSGeometrySQL::BuildTorus(BDSMySQLTable* aSQLTable, G4int k)
   G4double dphi;
   
   //Defaults
-  rSwept = 20.*mm;
-  rOuter = 10.*mm;
+  rSwept = 20.*CLHEP::mm;
+  rOuter = 10.*CLHEP::mm;
   rInner = 0.0;
   sphi = 0.0;
-  dphi=2*pi*radian;
+  dphi=2*CLHEP::pi*CLHEP::radian;
   
   if(aSQLTable->GetVariable("RINNER")!=NULL)
     rInner = aSQLTable->GetVariable("RINNER")->GetDblValue(k);
@@ -580,7 +580,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildSampler(BDSMySQLTable* aSQLTable, G4int k)
   G4double rOuterEnd;
   
   //Defaults
-  length = rOuterStart = rOuterEnd = 10.*mm;
+  length = rOuterStart = rOuterEnd = 10.*CLHEP::mm;
   rInnerStart = rInnerEnd = 0.0;
   
   if(aSQLTable->GetVariable("LENGTH")!=NULL)
@@ -610,7 +610,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildSampler(BDSMySQLTable* aSQLTable, G4int k)
 				rOuterEnd,
 				length/2,
 				0,
-				twopi*radian);
+				CLHEP::twopi*CLHEP::radian);
 
   G4LogicalVolume* aSamplerVol = 
     new G4LogicalVolume(aSampler,
@@ -643,11 +643,11 @@ G4LogicalVolume* BDSGeometrySQL::BuildTube(BDSMySQLTable* aSQLTable, G4int k)
   G4double dphi;
   
   //Defaults 
-  length = 100.*mm;
-  rOuter = 10.*mm;
+  length = 100.*CLHEP::mm;
+  rOuter = 10.*CLHEP::mm;
   rInner = 0.0;
   sphi = 0.0;
-  dphi=2*pi*radian;
+  dphi=2*CLHEP::pi*CLHEP::radian;
   
   if(aSQLTable->GetVariable("RINNER")!=NULL)
     rInner = aSQLTable->GetVariable("RINNER")->GetDblValue(k);
@@ -683,9 +683,9 @@ G4LogicalVolume* BDSGeometrySQL::BuildEllipticalTube(BDSMySQLTable* aSQLTable, G
   G4double lengthZ;
   
   //Defaults 
-  lengthX = 100.*mm;
-  lengthY = 50.*mm;
-  lengthZ = 200.*mm;
+  lengthX = 100.*CLHEP::mm;
+  lengthY = 50.*CLHEP::mm;
+  lengthZ = 200.*CLHEP::mm;
 
   if(aSQLTable->GetVariable("LENGTHX")!=NULL)
     lengthX = aSQLTable->GetVariable("LENGTHX")->GetDblValue(k);
@@ -727,12 +727,12 @@ G4LogicalVolume* BDSGeometrySQL::BuildPCLTube(BDSMySQLTable* aSQLTable, G4int k)
   G4double length;
   
   //Defaults 
-  aperX = 100.*mm;
-  aperYUp = 50.*mm;
-  aperYDown = 200.*mm;
-  aperDy = 0.*mm;
+  aperX = 100.*CLHEP::mm;
+  aperYUp = 50.*CLHEP::mm;
+  aperYDown = 200.*CLHEP::mm;
+  aperDy = 0.*CLHEP::mm;
   thickness = BDSGlobalConstants::Instance()->GetBeampipeThickness();
-  length = 200.0*mm;
+  length = 200.0*CLHEP::mm;
   
   if(aSQLTable->GetVariable("APERX")!=NULL)
     aperX = aSQLTable->GetVariable("APERX")->GetDblValue(k);
@@ -913,7 +913,7 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, vector<G4LogicalV
 
 //      G4double P0 = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
 //      G4double brho=
-//	sqrt(pow(P0,2)- pow(electron_mass_c2,2))/(0.299792458 * (GeV/(tesla*m)));
+//	sqrt(pow(P0,2)- pow(electron_mass_c2,2))/(0.299792458 * (CLHEP::GeV/(CLHEP::tesla*CLHEP::m)));
 
       // compute magnetic rigidity brho
       // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * |charge(e)|)
@@ -923,35 +923,35 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, vector<G4LogicalV
       // momentum (in GeV/c)   
       G4double momentum = BDSGlobalConstants::Instance()->GetBeamMomentum();
       // rigidity (in T*m)
-      G4double brho = ( (momentum/GeV) / (0.299792458 * charge));
+      G4double brho = ( (momentum/CLHEP::GeV) / (0.299792458 * charge));
       // rigidity (in Geant4 units)
-      brho *= (tesla*m);
+      brho *= (CLHEP::tesla*CLHEP::m);
 
       if(_MagType.compareTo("QUAD",cmpmode)==0)
 	{
 	  HasFields = true;
 	  nPoleField = 1;
-	  QuadBgrad.push_back(- brho * _K1 / (m*m));
+	  QuadBgrad.push_back(- brho * _K1 / CLHEP::m2);
 	  Quadvol.push_back(PhysiComp->GetName());
-	  QuadVolBgrad[PhysiComp->GetName()]=(- brho * _K1 / (m*m));
+	  QuadVolBgrad[PhysiComp->GetName()]=(- brho * _K1 / CLHEP::m2);
 	}
 
       if(_MagType.compareTo("SEXT",cmpmode)==0)
 	{
 	  HasFields = true;
 	  nPoleField = 2;
-	  SextBgrad.push_back(- brho * _K2 / (m*m*m));
+	  SextBgrad.push_back(- brho * _K2 / CLHEP::m3);
 	  Sextvol.push_back(PhysiComp->GetName());
-	  SextVolBgrad[PhysiComp->GetName()]=(- brho * _K2 / (m*m*m));
+	  SextVolBgrad[PhysiComp->GetName()]=(- brho * _K2 / CLHEP::m3);
 	}
 
       if(_MagType.compareTo("OCT",cmpmode)==0)
 	{
 	  HasFields = true;
 	  nPoleField = 3;
-	  OctBgrad.push_back(- brho * _K3 / (m*m*m*m));
+	  OctBgrad.push_back(- brho * _K3 / (CLHEP::m2*CLHEP::m2));
 	  Octvol.push_back(PhysiComp->GetName());
-	  OctVolBgrad[PhysiComp->GetName()]=(- brho * _K3 / (m*m*m*m));
+	  OctVolBgrad[PhysiComp->GetName()]=(- brho * _K3 / (CLHEP::m2*CLHEP::m2));
 	}
 
       if(_FieldX || _FieldY || _FieldZ) //if any vols have non-zero field components
@@ -961,9 +961,9 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, vector<G4LogicalV
 #ifdef DEBUG
 	  G4cout << "BDSGeometrySQL> volume " << PhysiComp->GetName() << " has the following uniform field: " << _FieldX << " " << _FieldY << " " << _FieldZ << " " << endl;
 #endif
-	  UniformField.push_back(G4ThreeVector(_FieldX*tesla,_FieldY*tesla,_FieldZ*tesla));
+	  UniformField.push_back(G4ThreeVector(_FieldX*CLHEP::tesla,_FieldY*CLHEP::tesla,_FieldZ*CLHEP::tesla));
 	  Fieldvol.push_back(PhysiComp->GetName());
-	  UniformFieldVolField[PhysiComp->GetName()]=G4ThreeVector(_FieldX*tesla,_FieldY*tesla,_FieldZ*tesla);
+	  UniformFieldVolField[PhysiComp->GetName()]=G4ThreeVector(_FieldX*CLHEP::tesla,_FieldY*CLHEP::tesla,_FieldZ*CLHEP::tesla);
 	}
   }
 }

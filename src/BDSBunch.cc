@@ -368,8 +368,8 @@ void BDSBunch::SetOptions(struct Options& opt)
 	      if(fmt=="ms") sd.unit=1.e-3;
 	      if(fmt=="mus") sd.unit=1.e-6;
 	      if(fmt=="ns") sd.unit=1.e-9;
-	      if(fmt=="mm/c") sd.unit=(mm/c_light)/s;
-	      if(fmt=="nm/c") sd.unit=(nm/c_light)/s;
+	      if(fmt=="mm/c") sd.unit=(CLHEP::mm/CLHEP::c_light)/CLHEP::s;
+	      if(fmt=="nm/c") sd.unit=(CLHEP::nm/CLHEP::c_light)/CLHEP::s;
               
 	      fields.push_back(sd);
 	      
@@ -614,12 +614,12 @@ G4double BDSBunch::GetSigmaYp()
 
 G4double BDSBunch::GetNextX()
 {
-  return sigmaX * GaussGen->shoot() * m;
+  return sigmaX * GaussGen->shoot() * CLHEP::m;
 } 
 
 G4double BDSBunch::GetNextY()
 {
-  return sigmaY * GaussGen->shoot() * m;
+  return sigmaY * GaussGen->shoot() * CLHEP::m;
 }
 
 G4double BDSBunch::GetNextZ()
@@ -661,8 +661,8 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
   // Rescale must be at the top of GetNextParticle
 
   if(BDSGlobalConstants::Instance()->isReference && partId<nptwiss){
-    G4double phiX= twopi * G4UniformRand();
-    G4double phiY= twopi * G4UniformRand();
+    G4double phiX= CLHEP::twopi * G4UniformRand();
+    G4double phiY= CLHEP::twopi * G4UniformRand();
     //    G4double ex=-log(G4UniformRand())*emitX;
     //    G4double ey=-log(G4UniformRand())*emitY;
     G4double ex=std::abs(GaussGen->shoot()*emitX);
@@ -671,7 +671,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
     xp=sqrt(2*ex/betaX)*(cos(phiX)-alphaX*sin(phiX));
     y0=sqrt(2*ey*betaY)*sin(phiY);
     yp=sqrt(2*ey/betaY)*(cos(phiY)-alphaY*sin(phiY)); 
-    z0 = Z0 * m + (T0 - sigmaT * (1.-2.*GaussGen->shoot())) * c_light * s;
+    z0 = Z0 * CLHEP::m + (T0 - sigmaT * (1.-2.*GaussGen->shoot())) * CLHEP::c_light * CLHEP::s;
     if (Zp0<0)
       zp = -sqrt(1.-xp*xp -yp*yp);
     else
@@ -698,9 +698,9 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       G4double phase_factor = 1 / ( (nptwiss/2.) - 1.0 );
       if(partId<=nptwiss/2) //primary - xx' ellipse
 	{
-	  x0 = sigx * cos(partId* 2 * pi*phase_factor);
-	  xp = -sigxp * ( -1*alphaX * cos(partId * 2 * pi*phase_factor )
-			  + sin(partId * 2 * pi*phase_factor ) );
+	  x0 = sigx * cos(partId* 2 * CLHEP::pi*phase_factor);
+	  xp = -sigxp * ( -1*alphaX * cos(partId * 2 * CLHEP::pi*phase_factor )
+			  + sin(partId * 2 * CLHEP::pi*phase_factor ) );
 	  y0 = 0;
 	  yp = 0;
 	}
@@ -708,15 +708,15 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 	{
 	  x0 = 0;
 	  xp = 0;
-	  y0 = sigy * cos( (partId-nptwiss/2)*2*pi*phase_factor);
-	  yp = -sigyp * ( -1*alphaY * cos( (partId-nptwiss/2) * 2 * pi*phase_factor)
-			  + sin( (partId-nptwiss/2) * 2 * pi*phase_factor) );
+	  y0 = sigy * cos( (partId-nptwiss/2)*2*CLHEP::pi*phase_factor);
+	  yp = -sigyp * ( -1*alphaY * cos( (partId-nptwiss/2) * 2 * CLHEP::pi*phase_factor)
+			  + sin( (partId-nptwiss/2) * 2 * CLHEP::pi*phase_factor) );
 	}
       //tmp - check units of above equations!!
-      x0*=m;
-      y0*=m;
-      xp*=radian;
-      yp*=radian;
+      x0*=CLHEP::m;
+      y0*=CLHEP::m;
+      xp*=CLHEP::radian;
+      yp*=CLHEP::radian;
       
       E = BDSGlobalConstants::Instance()->GetBeamTotalEnergy() - BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
       zp = sqrt(1-xp*xp-yp*yp);
@@ -724,9 +724,9 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       z0=0;
       
 #ifdef DEBUG
-	G4cout << "x: " << x0/micrometer << " xp: " << xp/radian << G4endl;
-	G4cout << "y: " << y0/micrometer << " yp: " << yp/radian << G4endl;
-	G4cout << "z: " << z0/micrometer << " zp: " << zp/radian << G4endl;
+	G4cout << "x: " << x0/CLHEP::micrometer << " xp: " << xp/CLHEP::radian << G4endl;
+	G4cout << "y: " << y0/CLHEP::micrometer << " yp: " << yp/CLHEP::radian << G4endl;
+	G4cout << "z: " << z0/CLHEP::micrometer << " zp: " << zp/CLHEP::radian << G4endl;
 #endif
         return;
     } //end doTwiss && partId<nptwiss
@@ -736,11 +736,11 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
   switch(distribType){
   case _REFERENCE: 
     {
-      x0 = (X0 + 0.0) * m;
-      y0 = (Y0 + 0.0) * m;
-      z0 = (Z0 + 0.0) * m;
-      xp = (Xp0 + 0.0)*rad;
-      yp = (Yp0 + 0.0)*rad;
+      x0 = (X0 + 0.0) * CLHEP::m;
+      y0 = (Y0 + 0.0) * CLHEP::m;
+      z0 = (Z0 + 0.0) * CLHEP::m;
+      xp = (Xp0 + 0.0)* CLHEP::rad;
+      yp = (Yp0 + 0.0)* CLHEP::rad;
       if (Zp0<0)
         zp = -sqrt(1.-xp*xp -yp*yp);
       else
@@ -752,17 +752,17 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
     }
   case _GAUSSIAN:
     {
-      x0 = X0 * m;
-      y0 = Y0 * m;
-      z0 = Z0 * m;
-      xp = Xp0 * rad;
-      yp = Yp0 * rad;
-      z0 = Z0 * m + (T0 - sigmaT * (1.-2.*GaussGen->shoot())) * c_light * s;
+      x0 = X0 * CLHEP::m;
+      y0 = Y0 * CLHEP::m;
+      z0 = Z0 * CLHEP::m;
+      xp = Xp0 * CLHEP::rad;
+      yp = Yp0 * CLHEP::rad;
+      z0 = Z0 * CLHEP::m + (T0 - sigmaT * (1.-2.*GaussGen->shoot())) * CLHEP::c_light * CLHEP::s;
 
-      if(sigmaX !=0) x0  += sigmaX * GaussGen->shoot() * m;
-      if(sigmaY !=0) y0  += sigmaY * GaussGen->shoot() * m;
-      if(sigmaXp !=0) xp += sigmaXp * GaussGen->shoot() * rad;
-      if(sigmaYp !=0) yp += sigmaYp * GaussGen->shoot() * rad;
+      if(sigmaX !=0) x0  += sigmaX * GaussGen->shoot() * CLHEP::m;
+      if(sigmaY !=0) y0  += sigmaY * GaussGen->shoot() * CLHEP::m;
+      if(sigmaXp !=0) xp += sigmaXp * GaussGen->shoot() * CLHEP::rad;
+      if(sigmaYp !=0) yp += sigmaYp * GaussGen->shoot() * CLHEP::rad;
 
       if (Zp0<0)
         zp = -sqrt(1.-xp*xp -yp*yp);
@@ -803,17 +803,17 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
     }
   case _SQUARE:
     {
-      x0 = X0 * m;
-      y0 = Y0 * m;
-      z0 = Z0 * m;
-      xp = Xp0 * rad;
-      yp = Yp0 * rad;
-      z0 = Z0 * m + (T0 - envelopeT * (1.-2.*FlatGen->shoot())) * c_light * s;
+      x0 = X0 * CLHEP::m;
+      y0 = Y0 * CLHEP::m;
+      z0 = Z0 * CLHEP::m;
+      xp = Xp0 * CLHEP::rad;
+      yp = Yp0 * CLHEP::rad;
+      z0 = Z0 * CLHEP::m + (T0 - envelopeT * (1.-2.*FlatGen->shoot())) * CLHEP::c_light * CLHEP::s;
 
-      if(envelopeX !=0) x0  += envelopeX * (1-2*FlatGen->shoot()) * m;
-      if(envelopeY !=0) y0  += envelopeY * (1-2*FlatGen->shoot()) * m;
-      if(envelopeXp !=0) xp += envelopeXp * (1-2*FlatGen->shoot()) * rad;
-      if(envelopeYp !=0) yp += envelopeYp * (1-2*FlatGen->shoot()) * rad;
+      if(envelopeX !=0) x0  += envelopeX * (1-2*FlatGen->shoot()) * CLHEP::m;
+      if(envelopeY !=0) y0  += envelopeY * (1-2*FlatGen->shoot()) * CLHEP::m;
+      if(envelopeXp !=0) xp += envelopeXp * (1-2*FlatGen->shoot()) * CLHEP::rad;
+      if(envelopeYp !=0) yp += envelopeYp * (1-2*FlatGen->shoot()) * CLHEP::rad;
 
       if (Zp0<0)
         zp = -sqrt(1.-xp*xp -yp*yp);
@@ -876,17 +876,17 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       if (betaX==0) G4cerr << __METHOD_NAME__ << "WARNING betaX equal to 0, xp NaN, division by zero! " << G4endl;
       if (betaY==0) G4cerr << __METHOD_NAME__ << "WARNING betaY equal to 0, yp NaN, division by zero! " << G4endl;
 
-      G4double phiX= twopi * G4UniformRand();
-      G4double phiY= twopi * G4UniformRand();
+      G4double phiX= CLHEP::twopi * G4UniformRand();
+      G4double phiY= CLHEP::twopi * G4UniformRand();
       //      G4double ex=-log(G4UniformRand())*emitX;
       //      G4double ey=-log(G4UniformRand())*emitY;
       G4double ex=std::abs(GaussGen->shoot()*emitX);
       G4double ey=std::abs(GaussGen->shoot()*emitY);
-      x0=sqrt(2*ex*betaX)*sin(phiX)*m;
-      xp=sqrt(2*ex/betaX)*(cos(phiX)-alphaX*sin(phiX))*rad;
-      y0=sqrt(2*ey*betaY)*sin(phiY)*m;
-      yp=sqrt(2*ey/betaY)*(cos(phiY)-alphaY*sin(phiY))*rad;
-      z0 = Z0 * m + (T0 - sigmaT * (1.-2.*GaussGen->shoot())) * c_light * s;
+      x0=sqrt(2*ex*betaX)*sin(phiX)*CLHEP::m;
+      xp=sqrt(2*ex/betaX)*(cos(phiX)-alphaX*sin(phiX))*CLHEP::rad;
+      y0=sqrt(2*ey*betaY)*sin(phiY)*CLHEP::m;
+      yp=sqrt(2*ey/betaY)*(cos(phiY)-alphaY*sin(phiY))*CLHEP::rad;
+      z0 = Z0 * CLHEP::m + (T0 - sigmaT * (1.-2.*GaussGen->shoot())) * CLHEP::c_light * CLHEP::s;
 
       if (Zp0<0)
         zp = -sqrt(1.-xp*xp -yp*yp);
@@ -903,12 +903,12 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 #endif
 
       CLHEP::HepVector v = GaussMultiGen->fire();
-      x0 = v[0]*m;
-      xp = v[1]*rad;
-      y0 = v[2]*m;
-      yp = v[3]*rad;
+      x0 = v[0]*CLHEP::m;
+      xp = v[1]*CLHEP::rad;
+      y0 = v[2]*CLHEP::m;
+      yp = v[3]*CLHEP::rad;
       t  = v[4];
-      z0 = Z0*m + t*c_light;
+      z0 = Z0*CLHEP::m + t*CLHEP::c_light;
       E  = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * v[5];
       
       if (Zp0<0)
@@ -948,18 +948,18 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
      
      
      r = ( rMin + (rMax - rMin) *  rand() / RAND_MAX );
-     phi = 2 * pi * rand() / RAND_MAX;
+     phi = 2 * CLHEP::pi * rand() / RAND_MAX;
      
-     x0 = ( X0 + r * sin(phi) ) * m;
-     y0 = ( Y0 + r * cos(phi) ) * m;
-     z0 = Z0 * m;
-     xp = Xp0 * rad;
-     yp = Yp0 * rad;
+     x0 = ( X0 + r * sin(phi) ) * CLHEP::m;
+     y0 = ( Y0 + r * cos(phi) ) * CLHEP::m;
+     z0 = Z0 * CLHEP::m;
+     xp = Xp0 * CLHEP::rad;
+     yp = Yp0 * CLHEP::rad;
      if (Zp0<0)
        zp = -sqrt(1.-xp*xp -yp*yp);
      else
        zp = sqrt(1.-xp*xp -yp*yp);
-     t = T0 * s;
+     t = T0 * CLHEP::s;
      E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy()
        * (1 + energySpread/2. * (1. -2. * FlatGen->shoot()));
      break;
@@ -983,23 +983,23 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
             <<" relative energy spread= "<<energySpread<<G4endl;
 #endif
       
-      phi = 2 * pi * FlatGen->shoot();
+      phi = 2 * CLHEP::pi * FlatGen->shoot();
       
-      x0 = (X0 + sin(phi) * shellx) * m;
+      x0 = (X0 + sin(phi) * shellx) * CLHEP::m;
       xp = Xp0 + cos(phi) * shellxp;
       
-      phi = 2 * pi * FlatGen->shoot();
+      phi = 2 * CLHEP::pi * FlatGen->shoot();
       
-      y0 = (Y0 + sin(phi) * shelly) * m;
+      y0 = (Y0 + sin(phi) * shelly) * CLHEP::m;
       yp = Yp0 + cos(phi) * shellyp;
       
-      z0 = Z0 * m;
+      z0 = Z0 * CLHEP::m;
       if (Zp0<0)
         zp = -sqrt(1.-xp*xp -yp*yp);
       else
         zp = sqrt(1.-xp*xp -yp*yp);
       
-      t = T0 * s;
+      t = T0 * CLHEP::s;
       E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy()
         * (1 + energySpread/2. * (1. -2. * FlatGen->shoot()));
       break;
@@ -1015,12 +1015,12 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
          ReadValue(xp);
          ReadValue(yp);
 	 
-         E*=GeV;
-         x0*= micrometer;
-         y0*= micrometer;
-         z0*= micrometer;
-         xp*=1.e-6*radian;
-         yp*=1.e-6*radian;
+         E*=CLHEP::GeV;
+         x0*= CLHEP::micrometer;
+         y0*= CLHEP::micrometer;
+         z0*= CLHEP::micrometer;
+         xp*=1.e-6*CLHEP::radian;
+         yp*=1.e-6*CLHEP::radian;
          zp=sqrt(1.-xp*xp -yp*yp);  
          t=0; 
          // use the Kinetic energy:
@@ -1038,12 +1038,12 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
           ReadValue(x0);
           ReadValue(y0);
           
-          E*=GeV;
-          x0*= nanometer;
-          y0*= nanometer;
-          z0*= micrometer;
-          xp*=radian;
-          yp*=radian;
+          E*=CLHEP::GeV;
+          x0*= CLHEP::nanometer;
+          y0*= CLHEP::nanometer;
+          z0*= CLHEP::micrometer;
+          xp*=CLHEP::radian;
+          yp*=CLHEP::radian;
           zp=sqrt(1.-xp*xp -yp*yp);  
           t=0; 
 	  weight=1;
@@ -1074,13 +1074,13 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
           if(E<0) BDSGlobalConstants::Instance()->SetParticleDefinition(G4ParticleTable::
                                                     GetParticleTable()
                                                     ->FindParticle("e+"));
-          E=fabs(E)*GeV;
-          x0*= nanometer;
-          y0*= nanometer;
-          z0*= nanometer;
-          xp*=radian;
-          yp*=radian;
-          zp*=radian;
+          E=fabs(E)*CLHEP::GeV;
+          x0*= CLHEP::nanometer;
+          y0*= CLHEP::nanometer;
+          z0*= CLHEP::nanometer;
+          xp*= CLHEP::radian;
+          yp*= CLHEP::radian;
+          zp*= CLHEP::radian;
 	  // Using the sign of the pair file zp
 	  // but calculating zp more accurately
           if(zp<0) zp = -sqrt(1-(xp*xp+yp*yp));
@@ -1204,37 +1204,37 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
                                               GetParticleTable()
                                               ->FindParticle("e+"));
           
-          t*= m/c_light;
-          x0*= m;
-          y0*= m;
-          z0*= m;
-          E*=eV;
-          px*=eV/c_light;
-          py*=eV/c_light;
-          pz*=eV/c_light;
+          t*= CLHEP::m/CLHEP::c_light;
+          x0*= CLHEP::m;
+          y0*= CLHEP::m;
+          z0*= CLHEP::m;
+          E*=CLHEP::eV;
+          px*=CLHEP::eV/CLHEP::c_light;
+          py*=CLHEP::eV/CLHEP::c_light;
+          pz*=CLHEP::eV/CLHEP::c_light;
           
           part_mass = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
           // use the Kinetic energy:
           E-=part_mass;
           
           // calculate the momentum direction needed for BDSPrimaryGenerator
-          xp = px*c_light / sqrt(E*E + 2*E*part_mass);
-          yp = py*c_light / sqrt(E*E + 2*E*part_mass);
-          zp = pz*c_light / sqrt(E*E + 2*E*part_mass);
+          xp = px*CLHEP::c_light / sqrt(E*E + 2*E*part_mass);
+          yp = py*CLHEP::c_light / sqrt(E*E + 2*E*part_mass);
+          zp = pz*CLHEP::c_light / sqrt(E*E + 2*E*part_mass);
           
 #ifdef DEBUG 
           G4cout << "Bunch input was: " << G4endl;
           G4cout << type << "\t"
                  << gen << "\t"
                  << weight << "\t"
-                 << t/m << "\t"
-                 << x0/m << "\t"
-                 << y0/m << "\t"
-                 << z0/m << "\t"
-                 << E/eV << "\t"
-                 << px/(eV/c_light) << "\t"
-                 << py/(eV/c_light) << "\t"
-                 << pz/(eV/c_light) << "\t"
+                 << t/CLHEP::m << "\t"
+                 << x0/CLHEP::m << "\t"
+                 << y0/CLHEP::m << "\t"
+                 << z0/CLHEP::m << "\t"
+                 << E/CLHEP::eV << "\t"
+                 << px/(CLHEP::eV/CLHEP::c_light) << "\t"
+                 << py/(CLHEP::eV/CLHEP::c_light) << "\t"
+                 << pz/(CLHEP::eV/CLHEP::c_light) << "\t"
                  << sx << "\t"
                  << sy << "\t"
                  << sz << "\t"
@@ -1268,7 +1268,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 #ifdef DEBUG 
          G4cout<< "BDSBunch : " <<it->name<<"  ->  "<<it->unit<<G4endl;
 #endif
-         if(it->name=="E") { ReadValue(E); E *= ( GeV * it->unit ); 
+         if(it->name=="E") { ReadValue(E); E *= ( CLHEP::GeV * it->unit ); 
 #ifdef DEBUG 
          G4cout << "******** Particle Mass = " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() << G4endl;
          G4cout << "******** Particle Total Energy = " << E << G4endl;
@@ -1279,27 +1279,27 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 	 G4cout<< "BDSBunch : " << E <<G4endl;
 #endif
          }
-         if(it->name=="t") { ReadValue(t); t *= ( s * it->unit ); tdef = true; }
-         if(it->name=="x") { ReadValue(x0); x0 *= ( m * it->unit ); 
+         if(it->name=="t") { ReadValue(t); t *= ( CLHEP::s * it->unit ); tdef = true; }
+         if(it->name=="x") { ReadValue(x0); x0 *= ( CLHEP::m * it->unit ); 
 #ifdef DEBUG 
            G4cout<< "BDSBunch : " << x0 <<G4endl;
 #endif
          }
          if(it->name=="y") { 
-           ReadValue(y0); y0 *= ( m * it->unit ); 
+           ReadValue(y0); y0 *= ( CLHEP::m * it->unit ); 
 #ifdef DEBUG 
            G4cout<< "BDSBunch : " << y0 <<G4endl;
 #endif
          }
          if(it->name=="z") { 
-           ReadValue(z0); z0 *= ( m * it->unit ); 
+           ReadValue(z0); z0 *= ( CLHEP::m * it->unit ); 
 #ifdef DEBUG 
            G4cout<< "BDSBunch : " << z0 <<G4endl;
 #endif
          }
-         if(it->name=="xp") { ReadValue(xp); xp *= ( radian * it->unit ); }
-         if(it->name=="yp") { ReadValue(yp); yp *= ( radian * it->unit ); }
-         if(it->name=="zp") { ReadValue(zp); zp *= ( radian * it->unit ); zpdef = true;}
+         if(it->name=="xp") { ReadValue(xp); xp *= ( CLHEP::radian * it->unit ); }
+         if(it->name=="yp") { ReadValue(yp); yp *= ( CLHEP::radian * it->unit ); }
+         if(it->name=="zp") { ReadValue(zp); zp *= ( CLHEP::radian * it->unit ); zpdef = true;}
          if(it->name=="pt") {
            ReadValue(type);
            if(InputBunchFile.good()){
@@ -1329,7 +1329,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 	 //}
        }
      //Add the global offset Z
-     z0=z0+Z0*m;
+     z0=z0+Z0*CLHEP::m;
      break;
     }
   default:

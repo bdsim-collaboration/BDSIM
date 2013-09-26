@@ -91,7 +91,7 @@ BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
   if(track.GetTotalEnergy()<BDSGlobalConstants::Instance()->GetThresholdCutCharged())
     return DBL_MAX;
   /*
-  G4double SynchOnZPos = (7.184+4.0) * m;
+  G4double SynchOnZPos = (7.184+4.0) * CLHEP::m;
   if(track.GetPosition().z() + BDSGlobalConstants::Instance()->GetWorldSizeZ() < SynchOnZPos)
     return DBL_MAX;
   */
@@ -125,7 +125,7 @@ BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
 	  InitMag=Rot*InitMag; 
 
 
-	  G4double Rlocal=(InitMag.z()/GeV)/(0.299792458 * Blocal/tesla) *m;
+	  G4double Rlocal=(InitMag.z()/CLHEP::GeV)/(0.299792458 * Blocal/CLHEP::tesla) *CLHEP::m;
 	  
 	  MeanFreePath=
 	    fabs(Rlocal)/(track.GetTotalEnergy()*nExpConst);
@@ -138,8 +138,8 @@ BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
 #ifdef DEBUG
           G4cout<<"*****************SR*************************"<<G4endl;
           G4cout<<"Track momentum: "<<InitMag<<G4endl;
-          G4cout<<"Blocal="<<Blocal/tesla<<"  Rlocal="<<Rlocal/m<<G4endl;
-          G4cout<<track.GetVolume()->GetName()<<" mfp="<<MeanFreePath/m<<G4endl;
+          G4cout<<"Blocal="<<Blocal/CLHEP::tesla<<"  Rlocal="<<Rlocal/CLHEP::m<<G4endl;
+          G4cout<<track.GetVolume()->GetName()<<" mfp="<<MeanFreePath/CLHEP::m<<G4endl;
           G4cout<<"********************************************"<<G4endl;
 #endif
 
