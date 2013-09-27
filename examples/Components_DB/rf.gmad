@@ -1,5 +1,5 @@
 d1: drift, l=0.5;
-rf1 : rfcavity,l=5*m, gradient = 10 * MV / m;
+rf1 : rfcavity, l=5*m, gradient = 10 * MV / m;
 d2: drift, l=0.5;
 
 lat : line = (d1,rf1,d2);
