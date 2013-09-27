@@ -36,7 +36,7 @@ enum {
   _ELEMENT = 10,
   _LINE = 11,
   _REV_LINE= -11, //for line inversion in sublines
-  _COLLIMATOR = 12,
+  _COLLIMATOR = 12, // obsolete?
   _ECOL = 13,
   _MUSPOILER = 62,
   _RCOL = 14,

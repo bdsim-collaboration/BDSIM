@@ -583,18 +583,18 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.l = params.l;
     
     if(params.k0set) {
-      if(VERBOSE)
+      //      if(VERBOSE)
 	printf("Warning: k0 will not be set for element %s of type QUADRUPOLE\n",name);
     }
     if(params.k1set) {
       e.k1 = params.k1;
     }
     if(params.k2set) {
-      if(VERBOSE)
+      //      if(VERBOSE)
 	printf("Warning: k2 will not be set for element %s of type QUADRUPOLE\n",name);
     }
     if(params.k3set) {
-      if(VERBOSE)
+      //      if(VERBOSE)
 	printf("Warning: k3 will not be set for element %s of type QUADRUPOLE\n",name);
     }
     if(params.tiltset) {
@@ -612,18 +612,18 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.l = params.l;
     
     if(params.k0set) {
-      if(VERBOSE)
+      //      if(VERBOSE)
 	printf("Warning: k0 will not be set for element %s of type SEXTUPOLE\n",name);
     }
     if(params.k1set) {
-      if(VERBOSE)
+      //      if(VERBOSE)
 	printf("Warning: k1 will not be set for element %s of type SEXTUPOLE\n",name);
     }
     if(params.k2set) {
       e.k2 = params.k2;
     }
     if(params.k3set) {
-      if(VERBOSE)
+      //      if(VERBOSE)
 	printf("Warning: k3 will not be set for element %s of type SEXTUPOLE\n",name);
     }
     if(params.tiltset) {
@@ -640,15 +640,15 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.l = params.l;
     
     if(params.k0set) {
-      if(VERBOSE)
+      //      if(VERBOSE)
 	printf("Warning: k0 will not be set for element %s of type OCTUPOLE\n",name);
     }
     if(params.k1set) {
-      if(VERBOSE)
+      //      if(VERBOSE)
 	printf("Warning: k1 will not be set for element %s of type OCTUPOLE\n",name);
     }
     if(params.k2set) {
-      if(VERBOSE)
+      //      if(VERBOSE)
 	printf("Warning: k2 will not be set for element %s of type OCTUPOLE\n",name);
     }
     if(params.k3set) {
@@ -672,19 +672,19 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     if(params.kslset)
       e.ksl = params.ksl;
     if(params.k0set) {
-      if(VERBOSE)
+      //      if(VERBOSE)
 	printf("Warning: k0 will not be set for element %s of type MULTIPOLE\n",name);
     }
     if(params.k1set) {
-      if(VERBOSE)
+      //      if(VERBOSE)
 	printf("Warning: k1 will not be set for element %s of type MULTIPOLE\n",name);
     }
     if(params.k2set) {
-      if(VERBOSE)
+      //      if(VERBOSE)
 	printf("Warning: k2 will not be set for element %s of type MULTIPOLE\n",name);
     }
     if(params.k3set) {
-      if(VERBOSE)
+      //      if(VERBOSE)
 	printf("Warning: k3 will not be set for element %s of type MULTIPOLE\n",name);
     }
     if(params.tiltset) {
@@ -935,12 +935,12 @@ if((*it).type == _LINE)
 #endif
 
 		    } else  // element of undefined type - neglecting
-		      {
-			if(VERBOSE)
-			  printf("Warning : Expanding line %s : element %s has not been \
+		    {
+		      //		      if(VERBOSE)
+		      printf("Warning : Expanding line %s : element %s has not been \
                                defined , skipping \n",name,(*it).name);
-			beamline_list.erase(it--);
-		      }
+		      beamline_list.erase(it--);
+		    }
 		  
 		} else  // element - keep as it is 
 		  {

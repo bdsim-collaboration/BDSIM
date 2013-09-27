@@ -230,11 +230,24 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     G4cout << "BDSComponentFactory  - creating transform3d" << G4endl;
 #endif
     return createTransform3D(); break;  
+    // common types, but nothing to do here
+  case _MARKER:
+  case _LINE:
+  case _REV_LINE:
+  case _MATERIAL:
+  case _ATOM:
+  case _SEQUENCE:
+  case _GAS:
+  case _TUNNEL:
+  case _COLLIMATOR:
+    return NULL;
+    break;
   default:
 #ifdef DEBUG
     G4cout << "BDSComponentFactory: type: " << _element.type << G4endl; 
 #endif
-    //    G4Exception("Error: BDSComponentFactory: type not found.", "-1", FatalErrorInArgument, "");   
+    G4Exception("Error: BDSComponentFactory: type not found.", "-1", FatalErrorInArgument, "");   
+    exit(1);
     return NULL;
     break;
   }
