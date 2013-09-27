@@ -1,4 +1,4 @@
-include sben.gmad;
+include vkick.gmad;
 include options.gmad;
 include elec.gmad;
 

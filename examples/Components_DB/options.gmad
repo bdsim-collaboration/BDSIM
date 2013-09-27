@@ -13,4 +13,4 @@ option, beampipeRadius = 10 * cm,
 
 
 option,physicsList="standard";
-option,ngenerate=10;
+option,ngenerate=1000;

@@ -32,6 +32,8 @@ else()
 endif()
 
 if($ENV{VERBOSE})
+    message(STATUS "XercesC_INCLUDE_DIR: ${XercesC_INCLUDE_DIR}")
+    message(STATUS "XercesC_LIBRARY_DIR: ${XercesC_LIBRARY_DIR}")
     message(STATUS "XercesC_LIBRARIES: ${XercesC_LIBRARIES}")
 endif()
 

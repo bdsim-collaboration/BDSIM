@@ -1,4 +1,4 @@
-include sben.gmad;
+include oct.gmad;
 include options.gmad;
 include elec.gmad;
 
