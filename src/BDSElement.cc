@@ -57,7 +57,7 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap,
 			  aLength,bpRad,0,0,
 			  SetVisAttributes(), aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*CLHEP::m, aTunnelOffsetX*CLHEP::m, aTunnelCavityMaterial, aPrecisionRegion),
   fChordFinder(NULL), itsFStepper(NULL), itsFEquation(NULL), itsEqRhs(NULL), 
-  itsField(NULL), itsMagField(NULL), itsUniformMagField(NULL)
+  itsField(NULL), itsMagField(NULL), itsCachedMagField(NULL), itsUniformMagField(NULL)
 {
   itsFieldVolName="";
   itsFieldIsUniform=false;
@@ -527,7 +527,7 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
 // creates a field mesh in the reference frame of a physical volume
 // from  b-field map value list 
 // has to be called after the component is placed in the geometry
-    void BDSElement::PrepareField(G4VPhysicalVolume *referenceVolume)
+void BDSElement::PrepareField(G4VPhysicalVolume *referenceVolume)
 {
   if(!itsMagField) return;
   itsMagField->Prepare(referenceVolume);
