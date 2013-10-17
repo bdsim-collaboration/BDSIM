@@ -1,0 +1,5 @@
+Code conventions 
+
+1) Internal data members (or methods) have leading _ 
+2) class names starting lower case, capital on each new word
+3) method names starting lower case, capital on each new word
