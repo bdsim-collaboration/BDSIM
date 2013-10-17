@@ -94,15 +94,16 @@ class AsciiFormat:
         self.dataarray = _np.array([])
 
     def Read(self,filepath):
-        with open(filepath,'r') as fileobject:
-            datalist = []
-            for i, line in enumerate(fileobject):
-                if i < 2:
-                    pass
-                elif i == 2:
-                    self._ParseKeys(line)
-                else:
-                    datalist.append(map(float,line.split()))
+        #with open(filepath,'r') as fileobject:
+        fileobject = open(filepath,'r')
+        datalist = []
+        for i, line in enumerate(fileobject):
+            if i < 2:
+                pass
+            elif i == 2:
+                self._ParseKeys(line)
+            else:
+                datalist.append(map(float,line.split()))
         self.dataarray = _np.array(datalist)
         for i,key in enumerate(self.keys):
             self.data[key] = list(self.dataarray[:,i])
