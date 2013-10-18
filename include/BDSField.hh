@@ -34,8 +34,13 @@ public:
 
 public:
 
-  G4RotationMatrix rotation;
   G4ThreeVector translation;
+  G4RotationMatrix Rotation() const;
+
+private:
+
+  G4RotationMatrix* rotation;
+
   
 };
 

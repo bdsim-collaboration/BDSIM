@@ -38,8 +38,12 @@ public:
   virtual G4bool GetHasUniformField();
   virtual G4bool GetHasFieldMap();
 
-  G4RotationMatrix rotation;
+  G4RotationMatrix Rotation() const;
   G4ThreeVector translation;
+
+private:
+  G4RotationMatrix* rotation;
+  
   
 };
 
