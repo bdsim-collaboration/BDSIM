@@ -171,7 +171,7 @@ void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
 	LocalB.setY(fieldBrr_r*(RLocalR.y()));
 	LocalB.setZ(fieldBzz);
 	// Now rotate to give BField on Global Reference Frame
-	LocalB.transform(rotation.inverse());
+	LocalB.transform(Rotation().inverse());
       }
     //LocalB=G4ThreeVector(0.,0.,0.); //turn Bfield from Solenoid off
   }

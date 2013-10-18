@@ -42,10 +42,15 @@ void BDSField::Prepare(G4VPhysicalVolume*)
 
 void BDSField::SetOriginRotation(G4RotationMatrix rot)
 {
-  rotation = rot;
+  delete rotation;
+  rotation = new G4RotationMatrix(rot);
 }
 
 void BDSField::SetOriginTranslation(G4ThreeVector trans)
 {
   translation = trans;
+}
+
+G4RotationMatrix BDSField::Rotation() const{
+  return *rotation;
 }

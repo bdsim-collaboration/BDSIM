@@ -87,6 +87,8 @@ void BDSMaterials::Initialise()
   tmpElement = new G4Element
     (name="Oxygen"     , symbol="O" , z=  8., a=  16.00*g/mole); elements[symbol] = tmpElement;
 
+  tmpElement = new G4Element("Yttrium", symbol="Y", z=39 , a=88.906*g/mole); elements[symbol] = tmpElement;
+
   tmpElement = new G4Element
     (name="Aluminium"  , symbol="Al", z= 13., a=  26.98*g/mole); elements[symbol] = tmpElement;
 
@@ -461,6 +463,40 @@ void BDSMaterials::Initialise()
   fsMaterialPropertiesTable->AddProperty("RINDEX",FusedSilica_Energy,FusedSilica_RIND,FusedSilica_NUMENTRIES);
   tmpMaterial->SetMaterialPropertiesTable(fsMaterialPropertiesTable);
   materials[name] = tmpMaterial; 
+
+  //scintillator materials
+  //YAG
+  tmpMaterial = new G4Material(name="YAG", density=4.56*g/cm3, 3);
+  tmpMaterial->AddElement(elements["Y"],3);
+  tmpMaterial->AddElement(elements["Al"],5);
+  tmpMaterial->AddElement(elements["O"],12);
+  materials[name] = tmpMaterial;
+
+  //PET (Dacron)
+  G4NistManager* nistManager = G4NistManager::Instance();
+  tmpMaterial = nistManager->FindOrBuildMaterial("G4_DACRON",true,true);
+  name="PET";
+  G4MaterialPropertiesTable* mptPET = new G4MaterialPropertiesTable();
+  mptPET->AddConstProperty("RINDEX",1.570);
+  tmpMaterial->SetMaterialPropertiesTable(mptPET);
+  materials[name]=tmpMaterial;
+
+  //Cellulose
+  tmpMaterial = nistManager->FindOrBuildMaterial("G4_CELLULOSE_CELLOPHANE",true,true);
+  name="Cellulose";
+  G4MaterialPropertiesTable* mptCellulose = new G4MaterialPropertiesTable();
+  mptCellulose->AddConstProperty("RINDEX",1.532);
+  tmpMaterial->SetMaterialPropertiesTable(mptCellulose);
+  materials[name] = tmpMaterial;
+
+
+  //Polyurethane
+  tmpMaterial = new G4Material(name="Polyurethane", density=1.05*g/cm3, 4);
+  tmpMaterial->AddElement(elements["C"],6);
+  tmpMaterial->AddElement(elements["H"],10);
+  tmpMaterial->AddElement(elements["N"],2);
+  tmpMaterial->AddElement(elements["O"],4);
+  materials[name]=tmpMaterial;
 
   // liquid materials
 

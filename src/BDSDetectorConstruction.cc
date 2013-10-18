@@ -165,6 +165,9 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   itsWorldSize.push_back(1);
   itsWorldSize.push_back(2);
 
+  //initialize global rotation matrix
+  _globalRotation = new G4RotationMatrix();
+
 // create commands for interactive definition of the beamline  
   G4double pi_ov_2 = asin(1.);
 
@@ -602,7 +605,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
   localY = G4ThreeVector(0.,1.,0.);
   localZ = G4ThreeVector(0.,0.,1.);
   
-  G4RotationMatrix globalRotation;
   
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     { 
@@ -631,15 +633,15 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 	  rlast(1) += BDSBeamline::Instance()->currentItem()->GetYOffset(); 
 	  rlast(2) += BDSBeamline::Instance()->currentItem()->GetZOffset(); 
 
-	  globalRotation.rotate(psi,localZ);
+	  _globalRotation->rotate(psi,localZ);
 	  localX.rotate(psi,localZ);
 	  localY.rotate(psi,localZ);
 
-	  globalRotation.rotate(phi,localY);
+	  _globalRotation->rotate(phi,localY);
 	  localX.rotate(phi,localY);
 	  localZ.rotate(phi,localY);
 	  
-	  globalRotation.rotate(theta,localX);
+	  _globalRotation->rotate(theta,localX);
 	  localY.rotate(theta,localX);
 	  localZ.rotate(theta,localX);
 	  	  	  
@@ -652,7 +654,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
       // tilted bends influence reference frame, otherwise just local tilt
       if(BDSBeamline::Instance()->currentItem()->GetType() == "sbend" || BDSBeamline::Instance()->currentItem()->GetType() == "rbend" )
 	{
-	  globalRotation.rotate(tilt,localZ);
+	  _globalRotation->rotate(tilt,localZ);
 	  localX.rotate(tilt,localZ);
 	  localY.rotate(tilt,localZ);
 	}
@@ -693,7 +695,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 	}
 
       // rotate to the previous reference frame
-      rotateComponent->transform(globalRotation);
+      rotateComponent->transform(*_globalRotation);
 
       rotateComponent->invert();
 
@@ -703,12 +705,12 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
       // bends transform the coordinate system
       if( BDSBeamline::Instance()->currentItem()->GetType() == "sbend" || BDSBeamline::Instance()->currentItem()->GetType() == "rbend")
 	{
-	  globalRotation.rotate(angle,localY);
+	  _globalRotation->rotate(angle,localY);
 	  localX.rotate(angle,localY);
 	  localZ.rotate(angle,localY);
 	  
 	  
-	  globalRotation.rotate(theta,localX);
+	  _globalRotation->rotate(theta,localX);
 	  localY.rotate(theta,localX);
 	  localZ.rotate(theta,localX);
 	  
@@ -882,7 +884,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 	BDSBeamline::Instance()->currentItem()->AlignComponent(//TargetPos,
 				 rlast,
 				 rotateComponent,
-				 globalRotation,
+				 *_globalRotation,
 				 rtot,
 				 rlast,
 				 localX,
@@ -920,7 +922,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 #ifdef DEBUG 
           G4cout << "Setting new transform" <<G4endl;
 #endif
-	  G4AffineTransform tf(globalRotation,TargetPos-G4ThreeVector(0,0,length/2));
+	  G4AffineTransform tf(*_globalRotation,TargetPos-G4ThreeVector(0,0,length/2));
 	  BDSGlobalConstants::Instance()->SetRefTransform(tf);
         }
 
