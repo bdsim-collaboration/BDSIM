@@ -43,7 +43,6 @@ void BDSField::Prepare(G4VPhysicalVolume*)
 
 void BDSField::SetOriginRotation(G4RotationMatrix rot)
 {
-  delete rotation;
   rotation = new G4RotationMatrix(rot);
 }
 
