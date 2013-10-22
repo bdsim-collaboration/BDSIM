@@ -144,7 +144,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
   solidWorld(NULL),logicWorld(NULL),physiWorld(NULL),
   magField(NULL),BDSUserLimits(NULL),BDSSensitiveDetector(NULL),
-  itsIStore(NULL)
+  itsIStore(NULL),_globalRotation(NULL)
 {  
   verbose    = BDSExecOptions::Instance()->GetVerbose();
   outline    = BDSExecOptions::Instance()->GetOutline();
@@ -1006,6 +1006,8 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
 
   delete precisionRegion;
   gFlashRegion.clear();
+
+  delete _globalRotation;
 }
 
 //=================================================================

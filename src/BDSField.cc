@@ -5,12 +5,13 @@
 #include "globals.hh"
 #include "BDSField.hh"
 
-BDSField::BDSField()
+BDSField::BDSField():rotation(NULL)
 {
 }
 
 BDSField::~BDSField()
-{ 
+{
+  delete rotation;
 }
 
 G4bool   BDSField::DoesFieldChangeEnergy() const
