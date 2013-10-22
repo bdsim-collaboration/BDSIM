@@ -53,8 +53,8 @@ extern LogVolMap* LogVol;
 
 extern BDSMaterials* theMaterials;
 
-extern G4RotationMatrix* RotY90;
-extern G4RotationMatrix* RotYM90;
+
+
 //============================================================
 
 BDSMultipole::BDSMultipole( G4String aName, 
@@ -249,7 +249,7 @@ void BDSMultipole::BuildBeampipe(G4String materialName)
                                             largerInnerBeampipeSolid_tmp);
   
   } else {
-    RotY=RotY90;
+    RotY=BDSGlobalConstants::Instance()->RotY90();
   //
   // compute some geometrical parameters
   //
@@ -291,14 +291,14 @@ void BDSMultipole::BuildBeampipe(G4String materialName)
     new G4IntersectionSolid(itsName+"_pipe_outer",
 			    pipeTubsEnv,
  			    itsMarkerSolidVolume,
-			    RotYM90,
+			    BDSGlobalConstants::Instance()->RotYM90(),
 			    (G4ThreeVector)0);
   
   itsInnerBeampipeSolid =
     new G4IntersectionSolid(itsName+"_pipe_inner",
 			    pipeInnerEnv, 
  			    itsMarkerSolidVolume,
-			    RotYM90,
+			    BDSGlobalConstants::Instance()->RotYM90(),
 			    (G4ThreeVector)0);
   
   }

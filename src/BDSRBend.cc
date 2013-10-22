@@ -23,8 +23,6 @@ extern LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
-extern G4RotationMatrix* RotY90;
-extern G4RotationMatrix* RotYM90;
 
 //============================================================
 
@@ -342,56 +340,56 @@ void BDSRBend::BuildRBBeampipe()
     new G4IntersectionSolid(itsName+"_pipe_outer",
 			    pipeTubsEnv,
  			    markerSolidVolume,
-			    RotYM90,
+			    BDSGlobalConstants::Instance()->RotYM90(),
 			    (G4ThreeVector)0);
   
   G4IntersectionSolid *pipeInner =
     new G4IntersectionSolid(itsName+"_pipe_inner",
 			    pipeInnerEnv, 
  			    markerSolidVolume,
-			    RotYM90,
+			    BDSGlobalConstants::Instance()->RotYM90(),
 			    (G4ThreeVector)0);
 
   G4IntersectionSolid *pipeMiddleTubs =
     new G4IntersectionSolid(itsName+"_pipe_middle_outer",
 			    pipeTubsEnv,
  			    rbendRectangleSolidVolume,
-			    RotYM90,
+			    BDSGlobalConstants::Instance()->RotYM90(),
 			    (G4ThreeVector)0);
   
   G4IntersectionSolid *pipeMiddleInner =
     new G4IntersectionSolid(itsName+"_pipe_middle_inner",
 			    pipeInnerEnv, 
  			    rbendRectangleSolidVolume,
-			    RotYM90,
+			    BDSGlobalConstants::Instance()->RotYM90(),
 			    (G4ThreeVector)0);
 
   G4SubtractionSolid *pipeEndsTubsTmp =
     new G4SubtractionSolid(itsName+"_pipe_ends_outer_tmp",
 			    pipeTubsEnv,
  			    rbendRectangleSolidVolume,
-			    RotYM90,
+			    BDSGlobalConstants::Instance()->RotYM90(),
 			    (G4ThreeVector)0);
   
   G4SubtractionSolid *pipeEndsInnerTmp =
     new G4SubtractionSolid(itsName+"_pipe_ends_inner_tmp",
 			    pipeInnerEnv, 
  			    rbendRectangleSolidVolume,
-			    RotYM90,
+			    BDSGlobalConstants::Instance()->RotYM90(),
 			    (G4ThreeVector)0);
 
   G4IntersectionSolid *pipeEndsTubs =
     new G4IntersectionSolid(itsName+"_pipe_ends_outer",
 			    pipeEndsTubsTmp,
  			    markerSolidVolume,
-			    RotYM90,
+			    BDSGlobalConstants::Instance()->RotYM90(),
 			    (G4ThreeVector)0);
   
   G4IntersectionSolid *pipeEndsInner =
     new G4IntersectionSolid(itsName+"_pipe_ends_inner",
 			    pipeEndsInnerTmp, 
  			    markerSolidVolume,
-			    RotYM90,
+			    BDSGlobalConstants::Instance()->RotYM90(),
 			    (G4ThreeVector)0);
 
   itsBeampipeLogicalVolume=	
@@ -436,7 +434,7 @@ void BDSRBend::BuildRBBeampipe()
   G4VPhysicalVolume* PhysiInner;
   PhysiInner = 
     new G4PVPlacement(
-		      RotY90,		       // rotation
+		      BDSGlobalConstants::Instance()->RotY90(),		       // rotation
 		      (G4ThreeVector)0,	               // at (0,0,0)
 		      middleInnerBPLogicalVolume, // its logical volume
 		      itsName+"_InnerBmp",     // its name
@@ -448,7 +446,7 @@ void BDSRBend::BuildRBBeampipe()
   G4VPhysicalVolume* PhysiComp;
   PhysiComp =
     new G4PVPlacement(
-		      RotY90,		        // rotation
+		      BDSGlobalConstants::Instance()->RotY90(),		        // rotation
 		      (G4ThreeVector)0,	                // at (0,0,0)
 		      middleBeampipeLogicalVolume, // its logical volume
 		      itsName+"_bmp",	        // its name
@@ -460,7 +458,7 @@ void BDSRBend::BuildRBBeampipe()
   G4VPhysicalVolume* PhysiInnerEnds;
   PhysiInnerEnds = 
     new G4PVPlacement(
-		      RotY90,		       // rotation
+		      BDSGlobalConstants::Instance()->RotY90(),		       // rotation
 		      (G4ThreeVector)0,               // at (0,0,0)
 		      endsInnerBPLogicalVolume, // its logical volume
 		      itsName+"_InnerBmp",     // its name
@@ -471,7 +469,7 @@ void BDSRBend::BuildRBBeampipe()
   G4VPhysicalVolume* PhysiCompEnds;
   PhysiCompEnds =
     new G4PVPlacement(
-		      RotY90,		        // rotation
+		      BDSGlobalConstants::Instance()->RotY90(),		        // rotation
 		      (G4ThreeVector)0,	                // at (0,0,0)
 		      endsBeampipeLogicalVolume, // its logical volume
 		      itsName+"_bmp",	        // its name
@@ -563,7 +561,7 @@ void BDSRBend::BuildRBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
     new G4IntersectionSolid(itsName+"_solid",
 			    magTubsEnv,
 			    rbendRectangleSolidVolume,
-			    RotYM90,
+			    BDSGlobalConstants::Instance()->RotYM90(),
 			    (G4ThreeVector)0); 
 
   if(OuterMaterialIsVacuum)
@@ -583,7 +581,7 @@ void BDSRBend::BuildRBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 
   itsPhysiComp =
     new G4PVPlacement(
-                      RotY90,                 // rotation
+                      BDSGlobalConstants::Instance()->RotY90(),                 // rotation
                       (G4ThreeVector)0,                      // at (0,0,0)
                       itsOuterLogicalVolume,  // its logical volume
                       itsName+"_solid",       // its name

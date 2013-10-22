@@ -45,13 +45,6 @@
 #include "G4Transform3D.hh"
 
 
-extern G4RotationMatrix* RotY90;
-extern G4RotationMatrix* RotYM90;
-extern G4RotationMatrix* RotX90;
-extern G4RotationMatrix* RotXM90;
-extern G4RotationMatrix* RotYM90X90;
-extern G4RotationMatrix* RotYM90XM90;
-
 BDSAcceleratorComponent::BDSAcceleratorComponent (
 			G4String& aName,G4double aLength, 
 			G4double aBpRadius,G4double aXAper,G4double aYAper, 
@@ -351,7 +344,7 @@ void BDSAcceleratorComponent::BuildTunnel()
                                                         tunHalfLen,
                                                         0,twopi*radian),			    
                                              itsMarkerLogicalVolume->GetSolid(),
-					     RotYM90,
+					     BDSGlobalConstants::Instance()->RotYM90(),
                                              nullThreeVector
                                              ); 
 #ifdef DEBUG
@@ -366,7 +359,7 @@ void BDSAcceleratorComponent::BuildTunnel()
                                                       tunHalfLen,
                                                       0,twopi*radian),
                                            itsMarkerLogicalVolume->GetSolid(),
-                                           RotYM90,
+                                           BDSGlobalConstants::Instance()->RotYM90(),
                                            nullThreeVector
                                            ); 
 #ifdef DEBUG   
@@ -380,7 +373,7 @@ void BDSAcceleratorComponent::BuildTunnel()
                                                            tunHalfLen,
                                                            0,twopi*radian),
                                                 itsMarkerLogicalVolume->GetSolid(),
-                                                RotYM90,
+                                                BDSGlobalConstants::Instance()->RotYM90(),
                                                 nullThreeVector
                                                 ); 
 #ifdef DEBUG

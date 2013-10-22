@@ -20,7 +20,7 @@
 #include "BDSMaterials.hh"
 #include "G4NistManager.hh"
 
-
+#define DEBUG 1
 using namespace std;
 
 BDSMaterials* BDSMaterials::_instance = 0;
@@ -527,6 +527,7 @@ void BDSMaterials::Initialise()
   pressure = 1.0*atmosphere;
   //Air
   density = (STP_Temperature/temperature) * (pressure/(1.*atmosphere))* 30*g/(22.4e-3*m3) ;
+  //  G4cout << "Air: temperature = " << temperature/kelvin << " kelvin, pressure = " << pressure/atmosphere << " atm, density = " << density/(g/m3) << " g/m3" << G4endl;
   tmpMaterial = new G4Material
     (name="air", density, 2, kStateGas, temperature, pressure);
   tmpMaterial->AddElement(elements["O"], fractionmass=0.2);
