@@ -1,5 +1,6 @@
 /* BDSIM code.   
-  
+A scintillator screen.
+Work in progress.  
 */
 
 #ifndef BDSScintillatorScreen_h
@@ -35,6 +36,11 @@ private:
   void BuildScintillatorMaterial();
   void BuildScintillatorCompound();
   void BuildScintillatorOpticalProperties();
+  void BuildFrontLayer();
+  void BuildScintillatorLayer();
+  void BuildBaseLayer();
+  void BuildBackLayer();
+  void BuildOpticalSurfaces();
   
 
   // Geometrical objects:
@@ -43,10 +49,10 @@ private:
   G4VPhysicalVolume* itsBaseLayerPhys;
   G4VPhysicalVolume* itsBackLayerPhys;
 
-  G4VLogicalVolume* itsFrontLayerLog;
-  G4VLogicalVolume* itsScintillatorLayerLog;
-  G4VLogicalVolume* itsBaseLayerLog;
-  G4VLogicalVolume* itsBackLayerLog;
+  G4LogicalVolume* itsFrontLayerLog;
+  G4LogicalVolume* itsScintillatorLayerLog;
+  G4LogicalVolume* itsBaseLayerLog;
+  G4LogicalVolume* itsBackLayerLog;
 
   G4VSolid* itsFrontLayerSolid;
   G4VSolid* itsScintillatorLayerSolid;
@@ -63,11 +69,12 @@ private:
   G4Mag_UsualEqRhs* itsEqRhs;
   
 private:
+  G4MaterialPropertiesTable* _mptScintillatorMaterial;
 
-  G4Material* itsFrontLayerMaterial;
-  G4Material* itsScintillatorLayerMaterial;
-  G4Material* itsBaseLayerMaterial;
-  G4Material* itsBackLayerMaterial;
+  G4Material* _frontLayerMaterial;
+  G4Material* _scintillatorLayerMaterial;
+  G4Material* _baseLayerMaterial;
+  G4Material* _backLayerMaterial;
   //BDSEnergyCounterSD* itsEnergyCounterSD;
   G4double itsOuterR;
 

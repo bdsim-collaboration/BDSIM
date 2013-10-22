@@ -12,14 +12,20 @@
 # 
 # Currently not supporting static libraries..
 
+set(CLHEP_INCLUDE_DIR $ENV{CLHEP_INCLUDE_DIR})
+
 # include directory:
 if (NOT CLHEP_INCLUDE_DIR)
-  find_path(CLHEP_INCLUDE_DIR NAMES CLHEP clhep)
+  find_path(CLHEP_INCLUDE_DIR clhep-2.0.3.3/include NAMES CLHEP clhep)
+  message(STATUS "CLHEP_INCLUDE_DIR=" ${CLHEP_INCLUDE_DIR})	
 endif()
 
 #libraries:
+message(STATUS "CLHEP_INCLUDE_DIR=" ${CLHEP_INCLUDE_DIR})	
+
 if (CLHEP_INCLUDE_DIR)
-    set(CLHEP_LIBRARY_DIR "${CLHEP_INCLUDE_DIR}/../lib")
+    set(CLHEP_LIBRARY_DIR "${CLHEP_INCLUDE_DIR}/../lib")	
+    message(STATUS "${CLHEP_LIBRARY_DIR}=${${CLHEP_LIBRARY_DIR}}")
     find_library(CLHEP_LIBRARIES NAMES CLHEP HINTS "${CLHEP_LIBRARY_DIR}")
 else()
     find_library(CLHEP_LIBRARIES NAMES CLHEP PATH_SUFFIXES clhep CLHEP)
