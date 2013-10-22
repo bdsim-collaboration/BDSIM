@@ -41,7 +41,6 @@ void BDSMagField::Prepare(G4VPhysicalVolume*)
 
 void BDSMagField::SetOriginRotation(G4RotationMatrix rot)
 {
-  delete rotation;
   rotation = new G4RotationMatrix(rot);
 }
 
