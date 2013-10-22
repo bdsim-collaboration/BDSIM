@@ -5,12 +5,13 @@
 #include "globals.hh"
 #include "BDSMagField.hh"
 
-BDSMagField::BDSMagField()
+BDSMagField::BDSMagField():rotation(NULL)
 {
 }
 
 BDSMagField::~BDSMagField()
-{ 
+{
+  delete rotation;
 }
 
 G4bool BDSMagField::GetHasNPoleFields(){return 0;}
