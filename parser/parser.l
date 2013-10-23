@@ -96,6 +96,7 @@ tunnel { return TUNNEL; }
 matdef { return MATERIAL; }
 atom { return ATOM; }
 laser { return LASER; }
+screen { return SCREEN; }
 
 line       { return LINE; } 
 

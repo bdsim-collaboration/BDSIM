@@ -45,6 +45,8 @@ enum {
   _RBEND=17,
   _ATOM = 18,
   _SEQUENCE = 19,
+
+  _SCREEN = 21,
     
   _VKICK=31,
   _HKICK=32,

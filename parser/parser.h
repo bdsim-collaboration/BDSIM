@@ -107,6 +107,8 @@ const char *typestr(int type) {
     return "element";
   case _TRANSFORM3D :
     return "transform3d";
+  case _SCREEN :
+    return "screen";
   default:
     return "none";
   }
@@ -818,8 +820,16 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.geometryFile = std::string(params.geometry);
     break;
 
+  case _SCREEN:
+    e.type = _SCREEN;
+    e.l = params.l;
+    break;
+
+
   default:
     break;  
+
+
   }
 
   element_list.push_back(e);
@@ -1184,7 +1194,7 @@ void print(std::list<struct Element> l, int ident)
 
       switch((*it).type) {
       case _DRIFT:
-	  case _PCLDRIFT:
+      case _PCLDRIFT:
       case _SBEND:
       case _RBEND:
       case _QUAD:
@@ -1213,6 +1223,9 @@ void print(std::list<struct Element> l, int ident)
 	printf("B map file : %s\n",(*it).bmapFile.c_str());
 	//printf("E map driver : %s\n",(*it).geometryFile);
 	//printf("E map file : %s\n",(*it).geometryFile);
+	break;
+
+      case _SCREEN:
 	break;
 
       case _CSAMPLER:

@@ -29,9 +29,11 @@ extern LogVolMap* LogVol;
 
 //============================================================
 
-BDSScintillatorScreen::BDSScintillatorScreen (G4String aName):
-  BDSAcceleratorComponent()
+BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double aLength):
+  BDSAcceleratorComponent(aName, aLength, 0, 0, 0, SetVisAttributes())
 {
+  itsType="screen";
+
   if ( (*LogVolCount)[itsName]==0)
     {
       ComputeDimensions();
@@ -40,7 +42,7 @@ BDSScintillatorScreen::BDSScintillatorScreen (G4String aName):
 	BuildTunnel();
       }
       BuildScintillatorScreen();
-      SetVisAttributes();
+      //      SetVisAttributes();
       
       (*LogVolCount)[itsName]=1;
       (*LogVol)[itsName]=GetMarkerLogicalVolume();
@@ -52,49 +54,71 @@ BDSScintillatorScreen::BDSScintillatorScreen (G4String aName):
     }  
 }
 
-void BDSScintillatorScreen::SetVisAttributes()
+G4VisAttributes* BDSScintillatorScreen::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.3,0.4,0.2));
   itsVisAttributes->SetForceSolid(true);
+  itsVisAttributes->SetForceSolid(true);
+
+  _visAttFront=new G4VisAttributes(G4Colour(1.0,0.0,0.0,0.5));
+  _visAttScint=new G4VisAttributes(G4Colour(0.0,1.0,0.0,0.5));
+  _visAttBase =new G4VisAttributes(G4Colour(0.3,0.3,0.3,0.5));
+
+  _visAttFront->SetForceSolid(true);
+  _visAttScint->SetForceSolid(true);
+  _visAttBase->SetForceSolid(true);
+
+  return itsVisAttributes;
 }
 
 void BDSScintillatorScreen::BuildFrontLayer(){
   //The cellulose protective layerx
-  G4Box* celluloseFront_box = new G4Box("CelluloseFront",_xLength,_yLength,_frontThickness);
-  G4LogicalVolume* celluloseFront_log= new G4LogicalVolume(celluloseFront_box,BDSMaterials::Instance()->GetMaterial("Cellulose"),"CelluloseFront",0,0,0);
+  itsFrontLayerSolid  = new G4Box("CelluloseFront",_screenWidth/2.0,_screenHeight/2.0,_frontThickness/2.0);
+  itsFrontLayerLog = new G4LogicalVolume(itsFrontLayerSolid,BDSMaterials::Instance()->GetMaterial("Cellulose"),"CelluloseFront",0,0,0);
+  itsFrontLayerLog->SetVisAttributes(_visAttFront);
   G4double dispZ=_frontThickness/2.0-_totalThickness/2.0;
-  G4VPhysicalVolume* itsFrontLayerPhys = new G4PVPlacement(0,G4ThreeVector(0,0,dispZ),celluloseFront_log,"ScreenCelluloseFront",
-							     GetMarkerLogicalVolume(),false,0);
+  itsFrontLayerPhys = new G4PVPlacement(
+					0,
+					G4ThreeVector(0,0,dispZ),
+					itsFrontLayerLog,
+					"ScreenCelluloseFrontPhys",
+					itsMarkerLogicalVolume,
+					false,
+					0,
+					BDSGlobalConstants::Instance()->GetCheckOverlaps()
+					);                 
 }
 
 void BDSScintillatorScreen::BuildScintillatorLayer(){
 // The phosphor layer
 //   
-  G4double dispZ=(_frontThickness+_scintillatorThickness)/2.0-_totalThickness/2.0;
-  G4Box* phosphorLayer_box = new G4Box("PhosphorLayer",_xLength,_yLength,_scintillatorThickness);
-  G4LogicalVolume* phosphorLayer_log= new G4LogicalVolume(phosphorLayer_box,_scintillatorLayerMaterial,"PhosphorLayer",0,0,0);
+  G4double dispZ=_frontThickness+(_scintillatorThickness)/2.0-_totalThickness/2.0;
+  itsScintillatorLayerSolid = new G4Box("PhosphorLayer",_screenWidth/2.0,_screenHeight/2.0,_scintillatorThickness/2.0);
+  itsScintillatorLayerLog = new G4LogicalVolume(itsScintillatorLayerSolid,_scintillatorLayerMaterial,"PhosphorLayer",0,0,0);
 
-G4VPhysicalVolume* itsScintillatorLayerPhys=  new G4PVPlacement(0,G4ThreeVector(0,0,dispZ),phosphorLayer_log,"ScreenPhosphorLayer",
-		    GetMarkerLogicalVolume(),false,0);
+  itsScintillatorLayerLog->SetVisAttributes(_visAttScint);
+  itsScintillatorLayerPhys=  new G4PVPlacement(0,G4ThreeVector(0,0,dispZ),itsScintillatorLayerLog,"ScreenPhosphorLayer",
+					       itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
 }
 
 void BDSScintillatorScreen::BuildBaseLayer(){
   //The PET backing layer
-  G4double dispZ=(_frontThickness+_scintillatorThickness+_baseThickness)/2.0-_totalThickness/2.0;
-  G4Box* PETLayer_box = new G4Box("PETLayer",_xLength,_yLength,_baseThickness);
-  G4LogicalVolume* PETLayer_log= new G4LogicalVolume(PETLayer_box,BDSMaterials::Instance()->GetMaterial("PET"),"PETLayer",0,0,0);
+  G4double dispZ=_scintillatorThickness+_frontThickness+_baseThickness/2.0-_totalThickness/2.0;
+  itsBaseLayerSolid = new G4Box("PETLayer",_screenWidth/2.0,_screenHeight/2.0,_baseThickness/2.0);
+  itsBaseLayerLog = new G4LogicalVolume(itsBaseLayerSolid,BDSMaterials::Instance()->GetMaterial("PET"),"PETLayer",0,0,0);
   
-  G4VPhysicalVolume* itsBaseLayerPhys =  new G4PVPlacement(0,G4ThreeVector(0,0,dispZ),PETLayer_log,"ScreenPETLayer",
-		    GetMarkerLogicalVolume(),false,0);
+  itsBaseLayerLog->SetVisAttributes(_visAttBase);
+  itsBaseLayerPhys =  new G4PVPlacement(0,G4ThreeVector(0,0,dispZ),itsBaseLayerLog,"ScreenPETLayer",
+					itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
 }
 
 void BDSScintillatorScreen::BuildBackLayer(){
-  G4double dispZ=(_frontThickness+_scintillatorThickness+_baseThickness+_backThickness)/2.0-_totalThickness/2.0;
-  G4Box* celluloseBack_box = new G4Box("CelluloseBack",_xLength,_yLength,_backThickness);
-  G4LogicalVolume* celluloseBack_log= new G4LogicalVolume(celluloseBack_box,BDSMaterials::Instance()->GetMaterial("Cellulose"),"CelluloseBack",0,0,0);
-
-  new G4PVPlacement(0,G4ThreeVector(0,0,dispZ),celluloseBack_log,"ScreenCelluloseBack",
-		    GetMarkerLogicalVolume(),false,0);
+  G4double dispZ=_frontThickness+_scintillatorThickness+_baseThickness+_backThickness/2.0-_totalThickness/2.0;
+  itsBackLayerSolid = new G4Box("CelluloseBack",_screenWidth/2.0,_screenHeight/2.0,_backThickness/2.0);
+  itsBackLayerLog = new G4LogicalVolume(itsBackLayerSolid,BDSMaterials::Instance()->GetMaterial("Cellulose"),"CelluloseBack",0,0,0);
+  itsBackLayerLog->SetVisAttributes(_visAttFront);
+  itsBackLayerPhys = new G4PVPlacement(0,G4ThreeVector(0,0,dispZ),itsBackLayerLog,"ScreenCelluloseBack",
+				       itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
 }
 
 void BDSScintillatorScreen::BuildOpticalSurfaces(){
@@ -102,12 +126,12 @@ void BDSScintillatorScreen::BuildOpticalSurfaces(){
   //Mirrored surface between the phosphor and the PET backing.
   G4OpticalSurface* OpSurface=new G4OpticalSurface("OpSurface");
   G4LogicalBorderSurface* Surface = new 
-    G4LogicalBorderSurface("phosphor_PET_surface", itsFrontLayerPhys, itsBaseLayerPhys, OpSurface);
+    G4LogicalBorderSurface("phosphor_PET_surface", itsScintillatorLayerPhys, itsBaseLayerPhys, OpSurface);
   G4double sigma_alpha=1.0;
   //TiO2 particles provide the reflectivity in the PET layer hence dielectric-metal
   OpSurface -> SetType(dielectric_metal);
   OpSurface -> SetModel(unified);
-  OpSurface -> SetFinish(polished);
+  OpSurface -> SetFinish(ground);
   OpSurface -> SetSigmaAlpha(sigma_alpha);
   G4MaterialPropertiesTable* SMPT = new G4MaterialPropertiesTable();
   SMPT->AddConstProperty("REFLECTIVITY",0.8);
@@ -129,10 +153,11 @@ void BDSScintillatorScreen::BuildOpticalSurfaces(){
   OpSurface2->SetMaterialPropertiesTable(SMPT2);
 
   //Surface between the cellulose and the experimental hall.
+  
   /*
   G4OpticalSurface* OpSurface3=new G4OpticalSurface("OpSurface3");
   G4LogicalBorderSurface* Surface3 = new 
-    G4LogicalBorderSurface("cellulose_hall_surface", itsFrontLayerPhys, expHall_phys, OpSurface3);
+    G4LogicalBorderSurface("cellulose_hall_surface", itsFrontLayerPhys, itsMarkerPhysicalVolume, OpSurface3);
   OpSurface3 -> SetType(dielectric_dielectric);
   OpSurface3 -> SetModel(unified);
   OpSurface3 -> SetFinish(ground);
@@ -148,6 +173,7 @@ void BDSScintillatorScreen::BuildOpticalSurfaces(){
 void BDSScintillatorScreen::BuildScintillatorScreen()
 {
   BuildScintillatorMaterial();
+  
   BuildFrontLayer();
   BuildScintillatorLayer();
   BuildBaseLayer();
@@ -222,12 +248,16 @@ void BDSScintillatorScreen::BuildScintillatorOpticalProperties(){
 
 
 void BDSScintillatorScreen::ComputeDimensions(){
+  /*
   _xLength = _yLength = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
   _xLength = std::max(_xLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
   _yLength = std::max(_yLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
+  */
 
-  _screenWidth=1*m;
-  _screenHeight=3*cm;
+  _xLength=_yLength=10*m;
+
+  _screenWidth=3*m;
+  _screenHeight=30*cm;
   _screenAngle=0; //Degrees.
   
   _frontThickness=13*um;
@@ -240,18 +270,25 @@ void BDSScintillatorScreen::ComputeDimensions(){
     _scintillatorThickness+
     _baseThickness+
     _backThickness;
-
-  itsLength=_frontThickness+_scintillatorThickness+_baseThickness+_backThickness;
 }
 
 void BDSScintillatorScreen::BuildMarkerVolume(){
+  itsMarkerSolidVolume=new G4Box( itsName+"_marker_log",
+				  _xLength,
+				  _yLength,
+				  itsLength/2.0); //z half length 
+
   itsMarkerLogicalVolume=new G4LogicalVolume
-    (new G4Box( itsName+"_marker_log",
-                _xLength,
-		_yLength,
-		(itsLength+BDSGlobalConstants::Instance()->GetLengthSafety())/2), //z half length 
+    (itsMarkerSolidVolume, 
      BDSMaterials::Instance()->GetMaterial("vacuum"),
      itsName+"_log");
+#ifndef NOUSERLIMITS
+  G4double maxStepFactor=0.5;
+  itsMarkerUserLimits =  new G4UserLimits();
+  itsMarkerUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
+  itsMarkerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  itsMarkerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
+#endif
 }
 
 
