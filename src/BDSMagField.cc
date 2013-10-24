@@ -5,12 +5,13 @@
 #include "globals.hh"
 #include "BDSMagField.hh"
 
-BDSMagField::BDSMagField()
+BDSMagField::BDSMagField():rotation(NULL)
 {
 }
 
 BDSMagField::~BDSMagField()
-{ 
+{
+  delete rotation;
 }
 
 G4bool BDSMagField::GetHasNPoleFields(){return 0;}
@@ -41,7 +42,11 @@ void BDSMagField::Prepare(G4VPhysicalVolume*)
 
 void BDSMagField::SetOriginRotation(G4RotationMatrix rot)
 {
-  rotation = rot;
+  rotation = new G4RotationMatrix(rot);
+}
+
+G4RotationMatrix BDSMagField::Rotation() const{
+  return *rotation;
 }
 
 void BDSMagField::SetOriginTranslation(G4ThreeVector trans)

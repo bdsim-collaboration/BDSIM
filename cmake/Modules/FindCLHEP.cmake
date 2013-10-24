@@ -19,7 +19,7 @@ endif()
 
 #libraries:
 if (CLHEP_INCLUDE_DIR)
-    set(CLHEP_LIBRARY_DIR "${CLHEP_INCLUDE_DIR}/../lib")
+    set(CLHEP_LIBRARY_DIR "${CLHEP_INCLUDE_DIR}/../lib")	
     find_library(CLHEP_LIBRARIES NAMES CLHEP HINTS "${CLHEP_LIBRARY_DIR}")
 else()
     find_library(CLHEP_LIBRARIES NAMES CLHEP PATH_SUFFIXES clhep CLHEP)

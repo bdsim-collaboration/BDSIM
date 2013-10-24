@@ -33,7 +33,7 @@ extern LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
-extern G4RotationMatrix* RotY90;
+
 //============================================================
 
 BDSLWCalorimeter::BDSLWCalorimeter (G4String& aName,G4double aLength,
@@ -101,7 +101,7 @@ void BDSLWCalorimeter::BuildCal(G4double aLength)
 					    BDSMaterials::Instance()->GetMaterial("LeadTungstate"),
 					    itsName+"_cal_logical");
   G4RotationMatrix* Rot=NULL;
-  if(itsAngle!=0)Rot=RotY90;
+  if(itsAngle!=0)Rot=BDSGlobalConstants::Instance()->RotY90();
  
   itsPhysiLWCal = new G4PVPlacement(
 		    Rot,                     // rotation
@@ -155,7 +155,7 @@ void BDSLWCalorimeter::BuildBeampipe(G4double aLength)
   
   
    G4RotationMatrix* Rot=NULL;
-   if(itsAngle!=0)Rot=RotY90;
+   if(itsAngle!=0)Rot=BDSGlobalConstants::Instance()->RotY90();
   
    itsPhysiComp = new G4PVPlacement(
 		       Rot,                       // rotation

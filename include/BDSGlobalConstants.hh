@@ -378,7 +378,24 @@ private:
   G4int itsEventNumberOffset;
   G4FieldManager* itsZeroFieldManager;
 
+private:
+  void InitRotationMatrices();
+
+  G4RotationMatrix* _RotY90;
+  G4RotationMatrix* _RotYM90;
+  G4RotationMatrix* _RotX90;
+  G4RotationMatrix* _RotXM90;
+  G4RotationMatrix* _RotYM90X90;
+  G4RotationMatrix* _RotYM90XM90;
+
 public:
+  G4RotationMatrix* RotY90() const;
+  G4RotationMatrix* RotYM90() const;
+  G4RotationMatrix* RotX90() const;
+  G4RotationMatrix* RotXM90() const;
+  G4RotationMatrix* RotYM90X90() const;
+  G4RotationMatrix* RotYM90XM90() const;
+
   G4double GetLWCalWidth();
   G4double GetLWCalOffset();
   G4String GetPipeMaterialName();

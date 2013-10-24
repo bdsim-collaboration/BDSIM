@@ -3,7 +3,7 @@
 #include "G4ThreeVector.hh"
 #include "G4RotationMatrix.hh"
 
-extern G4RotationMatrix* RotYM90;
+
 
 BDSAngleTunnelCavitySectionBuilder::BDSAngleTunnelCavitySectionBuilder(){
 }
@@ -30,7 +30,7 @@ void BDSAngleTunnelCavitySectionBuilder::build(){
 								  halfLen,
 								  0,CLHEP::twopi*CLHEP::radian),			    
 						       _tunnelCavitySection->acceleratorComponent()->GetMarkerLogicalVolume()->GetSolid(),
-						       RotYM90,
+						       BDSGlobalConstants::Instance()->RotYM90(),
 						      (G4ThreeVector)0
 						       )
 			       );

@@ -21,8 +21,6 @@ typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
 
-extern G4RotationMatrix* RotY90;
-extern G4RotationMatrix* RotYM90;
 
 //============================================================
 
@@ -362,14 +360,14 @@ void BDSSectorBend::BuildSBBeampipe()
     new G4IntersectionSolid(itsName+"_pipe_outer",
 			    pipeTubsEnv,
  			    itsMarkerSolidVolume,
-			    RotYM90,
+			    BDSGlobalConstants::Instance()->RotYM90(),
 			    (G4ThreeVector)0);
   
   G4IntersectionSolid *pipeInner =
     new G4IntersectionSolid(itsName+"_pipe_inner",
 			    pipeInnerEnv, 
  			    itsMarkerSolidVolume,
-			    RotYM90,
+			    BDSGlobalConstants::Instance()->RotYM90(),
 			    (G4ThreeVector)0);
 
   itsBeampipeLogicalVolume=	
@@ -385,7 +383,7 @@ void BDSSectorBend::BuildSBBeampipe()
   G4VPhysicalVolume* PhysiInner;
   PhysiInner = 
     new G4PVPlacement(
-		      RotY90,		       // rotation
+		      BDSGlobalConstants::Instance()->RotY90(),		       // rotation
 		      (G4ThreeVector)0,	               // at (0,0,0)
 		      itsInnerBPLogicalVolume, // its logical volume
 		      itsName+"_InnerBmp",     // its name
@@ -398,7 +396,7 @@ void BDSSectorBend::BuildSBBeampipe()
   G4VPhysicalVolume* PhysiComp;
   PhysiComp =
     new G4PVPlacement(
-		      RotY90,		        // rotation
+		      BDSGlobalConstants::Instance()->RotY90(),		        // rotation
 		      (G4ThreeVector)0,	                // at (0,0,0)
 		      itsBeampipeLogicalVolume, // its logical volume
 		      itsName+"_bmp",	        // its name
@@ -501,7 +499,7 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
     new G4IntersectionSolid(itsName+"_solid",
 			    magTubsEnv,
 			    itsMarkerSolidVolume,
-			    RotYM90,
+			    BDSGlobalConstants::Instance()->RotYM90(),
 			    (G4ThreeVector)0); 
 
   if(OuterMaterialIsVacuum)
@@ -521,7 +519,7 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 
   itsPhysiComp =
     new G4PVPlacement(
-                      RotY90,                 // rotation
+                      BDSGlobalConstants::Instance()->RotY90(),                 // rotation
                       (G4ThreeVector)0,                      // at (0,0,0)
                       itsOuterLogicalVolume,  // its logical volume
                       itsName+"_solid",       // its name

@@ -36,7 +36,7 @@ using namespace std;
 
 extern BDSSamplerSD* BDSSamplerSensDet;
 
-extern G4RotationMatrix* RotY90;
+
 extern BDSOutput* bdsOutput;
 //extern BDSGlobalConstants* BDSGlobalConstants::Instance();
 
@@ -773,26 +773,26 @@ G4RotationMatrix* BDSGeometrySQL::RotateComponent(G4double psi,G4double phi,G4do
   rotateComponent = new G4RotationMatrix;
   if(psi==0 && phi==0 && theta==0) return rotateComponent;
 
-  G4RotationMatrix LocalRotation;
-  G4ThreeVector localX = G4ThreeVector(1.,0.,0.);
-  G4ThreeVector localY = G4ThreeVector(0.,1.,0.);
-  G4ThreeVector localZ = G4ThreeVector(0.,0.,1.);
+  G4RotationMatrix* LocalRotation = new G4RotationMatrix;
+  G4ThreeVector* localX = new G4ThreeVector(1.,0.,0.);
+  G4ThreeVector* localY = new G4ThreeVector(0.,1.,0.);
+  G4ThreeVector* localZ = new G4ThreeVector(0.,0.,1.);
   
-  LocalRotation.rotate(psi,localZ);
-  localX.rotate(psi,localZ);
-  localY.rotate(psi,localZ);
-  
-  
-  LocalRotation.rotate(phi,localY);
-  localX.rotate(phi,localY);
-  localZ.rotate(phi,localY);
+  LocalRotation->rotate(psi,*localZ);
+  localX->rotate(psi,*localZ);
+  localY->rotate(psi,*localZ);
   
   
-  LocalRotation.rotate(theta,localX);
-  localY.rotate(theta,localX);
-  localZ.rotate(theta,localX);
+  LocalRotation->rotate(phi,*localY);
+  localX->rotate(phi,*localY);
+  localZ->rotate(phi,*localY);
   
-  rotateComponent->transform(LocalRotation);
+  
+  LocalRotation->rotate(theta,*localX);
+  localY->rotate(theta,*localX);
+  localZ->rotate(theta,*localX);
+  
+  rotateComponent->transform(*LocalRotation);
   rotateComponent->invert();
   
   return rotateComponent;
