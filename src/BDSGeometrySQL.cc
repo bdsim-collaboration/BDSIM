@@ -31,6 +31,7 @@
 #include <cstdlib>
 #include "G4ClassicalRK4.hh"
 #include <cstring>
+#include "parser/getEnv.h"
 
 using namespace std;
 
@@ -47,7 +48,10 @@ BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength):
 #ifdef DEBUG
   G4cout << "BDSGeometrySQL constructor: loading SQL file " << DBfile << G4endl;
 #endif
-  ifs.open(DBfile.c_str());
+  G4String sBDSPATH = getEnv("BDSIMPATH");
+  G4String slash = "/";
+  G4String fullPath = sBDSPATH + slash + DBfile;
+  ifs.open(fullPath.c_str());
   G4String exceptionString = "Unable to load SQL database file: " + DBfile;
   if(!ifs) G4Exception(exceptionString.c_str(), "-1", FatalException, "");
   align_in_volume = NULL;  //default alignment (does nothing)
@@ -94,7 +98,11 @@ void BDSGeometrySQL::Construct(G4LogicalVolume *marker)
   while (ifs>>file)
     {
       if(file.contains("#")) ifs.getline(buffer,1000); // This is a comment line
-      else BuildSQLObjects(file);
+      else{
+	G4String sBDSPATH = getEnv("BDSIMPATH");
+	G4String slash = "/";
+	G4String fullPath = sBDSPATH + slash + file;
+	BuildSQLObjects(fullPath);}
     }
   
   // Close Geomlist file

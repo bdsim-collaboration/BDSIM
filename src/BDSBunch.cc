@@ -106,7 +106,7 @@ void BDSBunch::SetOptions(struct Options& opt)
     distribType = (*iter).second;
   else {
     distribType = _UDEF;
-    G4cerr << "WARNING bunch distribution type UNKNOWN: " << opt.distribType << G4endl;
+    G4cerr << "WARNING bunch distribution type UNKNOWN or USER DEFINED: " << opt.distribType << G4endl;
   }
 #ifdef DEBUG 
   G4cout<< "BDSBunch::SetOptions> distrType : "<<opt.distribType<<G4endl;

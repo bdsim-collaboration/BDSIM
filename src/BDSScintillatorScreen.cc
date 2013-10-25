@@ -87,6 +87,7 @@ void BDSScintillatorScreen::BuildFrontLayer(){
 					0,
 					BDSGlobalConstants::Instance()->GetCheckOverlaps()
 					);                 
+  SetMultiplePhysicalVolumes(itsFrontLayerPhys);
 }
 
 void BDSScintillatorScreen::BuildScintillatorLayer(){
@@ -99,6 +100,7 @@ void BDSScintillatorScreen::BuildScintillatorLayer(){
   itsScintillatorLayerLog->SetVisAttributes(_visAttScint);
   itsScintillatorLayerPhys=  new G4PVPlacement(0,G4ThreeVector(0,0,dispZ),itsScintillatorLayerLog,"ScreenPhosphorLayer",
 					       itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+  SetMultiplePhysicalVolumes(itsScintillatorLayerPhys);
 }
 
 void BDSScintillatorScreen::BuildBaseLayer(){
@@ -110,6 +112,7 @@ void BDSScintillatorScreen::BuildBaseLayer(){
   itsBaseLayerLog->SetVisAttributes(_visAttBase);
   itsBaseLayerPhys =  new G4PVPlacement(0,G4ThreeVector(0,0,dispZ),itsBaseLayerLog,"ScreenPETLayer",
 					itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+  SetMultiplePhysicalVolumes(itsBaseLayerPhys);
 }
 
 void BDSScintillatorScreen::BuildBackLayer(){
@@ -119,6 +122,7 @@ void BDSScintillatorScreen::BuildBackLayer(){
   itsBackLayerLog->SetVisAttributes(_visAttFront);
   itsBackLayerPhys = new G4PVPlacement(0,G4ThreeVector(0,0,dispZ),itsBackLayerLog,"ScreenCelluloseBack",
 				       itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+  SetMultiplePhysicalVolumes(itsBackLayerPhys);
 }
 
 void BDSScintillatorScreen::BuildOpticalSurfaces(){
@@ -173,20 +177,11 @@ void BDSScintillatorScreen::BuildOpticalSurfaces(){
 void BDSScintillatorScreen::BuildScintillatorScreen()
 {
   BuildScintillatorMaterial();
-  
-  BuildFrontLayer();
   BuildScintillatorLayer();
-  BuildBaseLayer();
-  BuildBackLayer();
-  BuildOpticalSurfaces();
   
   if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
     SetSensitiveVolume(itsScintillatorLayerLog);
-  }
-  SetMultiplePhysicalVolumes(itsFrontLayerPhys);
-  SetMultiplePhysicalVolumes(itsScintillatorLayerPhys);
-  SetMultiplePhysicalVolumes(itsBaseLayerPhys);
-  SetMultiplePhysicalVolumes(itsBackLayerPhys);
+  } 
   G4cout << "BDSScintillatorScreen: finished building geometry" << G4endl;
 }
 
@@ -196,6 +191,10 @@ void BDSScintillatorScreen::BuildScintillatorMaterial(){
 }
 
 void BDSScintillatorScreen::BuildScintillatorCompound(){
+  //Crystal YAG
+  _scintillatorLayerMaterial = BDSMaterials::Instance()->GetMaterial("YAG");
+
+  /*
   //Scintillator grains sudpended in a polyurethane elastomer with a specific fill factor
   G4double fill_factor=0.5; //i.e. fraction by volume
   G4double yag_screen_density=fill_factor*BDSMaterials::Instance()->GetMaterial("YAG")->GetDensity()+(1-fill_factor)*BDSMaterials::Instance()->GetMaterial("Polyurethane")->GetDensity();
@@ -204,6 +203,7 @@ void BDSScintillatorScreen::BuildScintillatorCompound(){
   _scintillatorLayerMaterial = new G4Material("ScintillatorMaterial", yag_screen_density, 2);
   _scintillatorLayerMaterial->AddMaterial(BDSMaterials::Instance()->GetMaterial("YAG"), yag_fraction_by_mass);
   _scintillatorLayerMaterial->AddMaterial(BDSMaterials::Instance()->GetMaterial("Polyurethane"), pur_fraction_by_mass);
+  */
 }
 
 void BDSScintillatorScreen::BuildScintillatorOpticalProperties(){
@@ -227,13 +227,14 @@ void BDSScintillatorScreen::BuildScintillatorOpticalProperties(){
     { 0, 0.25, 2.0, 14.0, 13.0, 7.0, 4.0, 2.0, 0.0 };
   
   _mptScintillatorMaterial = new G4MaterialPropertiesTable();
-  _mptScintillatorMaterial->AddProperty("FASTCOMPONENT",PhotonEnergyScintillatorMaterial, scintFastScintillatorMaterial, nEntries);
-  //->SetSpline(true);
+  _mptScintillatorMaterial->AddProperty("FASTCOMPONENT",PhotonEnergyScintillatorMaterial, scintFastScintillatorMaterial, nEntries)->SetSpline(true);
   _mptScintillatorMaterial->AddProperty("RINDEX",PhotonEnergyScintillatorMaterial, RefractiveIndexScintillatorMaterial, nEntries);
   _mptScintillatorMaterial->AddConstProperty("SCINTILLATIONYIELD",8000./MeV); //Approximately correct
   _mptScintillatorMaterial->AddConstProperty("RESOLUTIONSCALE",2.0); //Check this
   _mptScintillatorMaterial->AddConstProperty("FASTTIMECONSTANT",70.*ns); //Approximately correct
   _mptScintillatorMaterial->AddConstProperty("YIELDRATIO",1.0);
+
+  /*The below is required for mie scattering
   G4double scatteringLength=2.17*um;
   G4double anisotropyFactor=0.800;
   _mptScintillatorMaterial->AddConstProperty("MIEHG",scatteringLength);
@@ -243,6 +244,7 @@ void BDSScintillatorScreen::BuildScintillatorOpticalProperties(){
   //Absoroption length is irrelevant as the screen should be pretty thin
   //  _mptScintillatorMaterial->AddProperty("ABSLENGTH",    PhotonEnergy, Absorption1,     nEntries)
   //    ->SetSpline(true);
+  */
   
   _scintillatorLayerMaterial->SetMaterialPropertiesTable(_mptScintillatorMaterial);
 }
@@ -261,9 +263,9 @@ void BDSScintillatorScreen::ComputeDimensions(){
   _screenHeight=3*cm;
   _screenAngle=0; //Degrees.
   
-  _frontThickness=13*um;
-  _baseThickness=275*um;
-  _backThickness=13*um;
+  _frontThickness=0;//13*um;
+  _baseThickness=0;//275*um;
+  _backThickness=0;//13*um;
   
   _totalThickness =  
     _frontThickness+

@@ -152,8 +152,7 @@ dump  { return DUMP; }
 
 <incl>[ \t]*  // eat the whitespace
 <incl>[^ \t\n;]+ {
-//string filename = sBDSPATH+(string)yytext;
-string filename = (string)yytext;
+string filename = sBDSPATH+(string)yytext;
   printf("parser> reading file %s \n",(char*)filename.c_str());//yytext
   if( include_stack_ptr >= MAX_INCLUDE_DEPTH )
     {
