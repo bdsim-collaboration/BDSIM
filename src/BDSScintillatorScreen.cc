@@ -33,7 +33,7 @@ BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double aLength, 
   BDSAcceleratorComponent(aName, aLength, 0, 0, 0, SetVisAttributes()),_scintillatorThickness(tScint)
 {
   itsType="screen";
-
+  SetName(aName);
   if ( (*LogVolCount)[itsName]==0)
     {
       ComputeDimensions();
@@ -227,7 +227,8 @@ void BDSScintillatorScreen::BuildScintillatorOpticalProperties(){
     { 0, 0.25, 2.0, 14.0, 13.0, 7.0, 4.0, 2.0, 0.0 };
   
   _mptScintillatorMaterial = new G4MaterialPropertiesTable();
-  _mptScintillatorMaterial->AddProperty("FASTCOMPONENT",PhotonEnergyScintillatorMaterial, scintFastScintillatorMaterial, nEntries)->SetSpline(true);
+  _mptScintillatorMaterial->AddProperty("FASTCOMPONENT",PhotonEnergyScintillatorMaterial, scintFastScintillatorMaterial, nEntries);
+  //->SetSpline(true);
   _mptScintillatorMaterial->AddProperty("RINDEX",PhotonEnergyScintillatorMaterial, RefractiveIndexScintillatorMaterial, nEntries);
   _mptScintillatorMaterial->AddConstProperty("SCINTILLATIONYIELD",8000./MeV); //Approximately correct
   _mptScintillatorMaterial->AddConstProperty("RESOLUTIONSCALE",2.0); //Check this
