@@ -87,7 +87,7 @@ void BDSMaterials::Initialise()
   tmpElement = new G4Element
     (name="Oxygen"     , symbol="O" , z=  8., a=  16.00*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
-  tmpElement = new G4Element("Yttrium", symbol="Y", z=39 , a=88.906*g/mole); elements[symbol] = tmpElement;
+  tmpElement = new G4Element("Yttrium", symbol="Y", z=39 , a=88.906*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
   tmpElement = new G4Element
     (name="Aluminium"  , symbol="Al", z= 13., a=  26.98*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
@@ -466,7 +466,7 @@ void BDSMaterials::Initialise()
 
   //scintillator materials
   //YAG
-  tmpMaterial = new G4Material(name="YAG", density=4.56*g/cm3, 3);
+  tmpMaterial = new G4Material(name="YAG", density=4.56*CLHEP::g/CLHEP::cm3, 3);
   tmpMaterial->AddElement(elements["Y"],3);
   tmpMaterial->AddElement(elements["Al"],5);
   tmpMaterial->AddElement(elements["O"],12);
@@ -491,7 +491,7 @@ void BDSMaterials::Initialise()
 
 
   //Polyurethane
-  tmpMaterial = new G4Material(name="Polyurethane", density=1.05*g/cm3, 4);
+  tmpMaterial = new G4Material(name="Polyurethane", density=1.05*CLHEP::g/CLHEP::cm3, 4);
   tmpMaterial->AddElement(elements["C"],6);
   tmpMaterial->AddElement(elements["H"],10);
   tmpMaterial->AddElement(elements["N"],2);
