@@ -237,7 +237,7 @@ struct Element {
   const char * name;
 
   double inR; double bpRad; // inner radius and beam pipe radius of muon spoiler  
-  double l,ks,k0,k1,k2,k3,angle,beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut;
+  double l,ks,k0,k1,k2,k3,angle,beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut, tscint;
   double xdir, ydir, zdir, waveLength; // for laser wire and 3d transforms
   double flatlength,taperlength; //for realistic collimators
   double gradient; // for rf cavities
@@ -293,6 +293,8 @@ struct Parameters {
   double k2; int k2set;   // sextupole
   double k3; int k3set;   // octupole
   double ks; int ksset;   // solenoid
+
+  double tscint; int tscintset; //thickness of scintillating part of screen
 
   std::list<double> knl;           // multipole expansion coefficients
   std::list<double> ksl;           // skew multipole expansion
@@ -380,6 +382,7 @@ struct Parameters {
 
     l=0; lset = 0;
     r = 0; rset = 0;
+    tscint = 0.0003; tscintset = 0;
 
     // materials' parameters
     A = 0; Aset = 0; //g*mol^-1

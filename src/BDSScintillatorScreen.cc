@@ -29,8 +29,8 @@ extern LogVolMap* LogVol;
 
 //============================================================
 
-BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double aLength):
-  BDSAcceleratorComponent(aName, aLength, 0, 0, 0, SetVisAttributes())
+BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double aLength, G4double tScint):
+  BDSAcceleratorComponent(aName, aLength, 0, 0, 0, SetVisAttributes()),_scintillatorThickness(tScint)
 {
   itsType="screen";
 
@@ -256,12 +256,11 @@ void BDSScintillatorScreen::ComputeDimensions(){
 
   _xLength=_yLength=10*m;
 
-  _screenWidth=3*m;
-  _screenHeight=30*cm;
+  _screenWidth=1*m;
+  _screenHeight=3*cm;
   _screenAngle=0; //Degrees.
   
   _frontThickness=13*um;
-  _scintillatorThickness=300*um;
   _baseThickness=275*um;
   _backThickness=13*um;
   

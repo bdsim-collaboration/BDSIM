@@ -1239,7 +1239,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
                << " l=" << _element.l/m<<"m"
                << G4endl;
 #endif
-	return (new BDSScintillatorScreen( _element.name, _element.l*m));
+	  return (new BDSScintillatorScreen( _element.name, _element.l*m, 0.1*mm));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){

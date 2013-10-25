@@ -24,9 +24,9 @@
 #include <iostream>
 
 #include "gmad.h"
-//#include "getEnv.h"
+#include "getEnv.h"
 
-//std::string sBDSIMHOME = getEnv("BDSIMHOME");
+std::string sBDSIMPATH = getEnv("BDSIMPATH");
 
 //double pow(double x, double y) {return exp( y * log(x));}
 
@@ -300,6 +300,8 @@ void inherit_properties(struct Element e)
   if(!params.hgapset) { params.hgap = e.hgap; params.hgapset = 1; }
   if(!params.flatlengthset) { params.flatlength = e.flatlength; params.flatlengthset = 1; }
   if(!params.taperlengthset) { params.taperlength = e.taperlength; params.taperlengthset = 1; }
+
+  if(!params.tscintset) { params.tscint = e.tscint; params.tscintset = 1; }
 
   //materials
   if(!params.Aset) { params.A = e.A; params.Aset = 1; }
@@ -823,6 +825,7 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   case _SCREEN:
     e.type = _SCREEN;
     e.l = params.l;
+    e.tscint = params.tscint;
     break;
 
 
@@ -1491,9 +1494,7 @@ void set_value(std::string name, std::string value )
   //
   if(name == "particle") { options.particleName = value; return; }
   if(name == "distrType" ) { options.distribType = value; return; }
-  //  if(name == "distrFile" ) { options.distribFile = sBDSIMHOME+value; return; }  
-  if(name == "distrFile" ) { options.distribFile = value; return; }  
-
+  if(name == "distrFile" ) { options.distribFile = sBDSIMPATH+value; return; }  
 
   //
   // string options for the "option" command
