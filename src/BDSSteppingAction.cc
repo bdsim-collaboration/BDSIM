@@ -252,7 +252,7 @@ G4String pName=ThisStep->GetTrack()->GetDefinition()->GetParticleName();
      {
        ThisStep->GetTrack()->SetTrackStatus(fStopAndKill);
      }
- } else if(pName=="e-"||pName=="e+"){
+ } else if(pName=="e-"||pName=="e+" || pName == "mu-" || pName == "mu+"){
    if(ThisStep->GetTrack()->GetKineticEnergy()<BDSGlobalConstants::Instance()->GetThresholdCutCharged())
      {
        ThisStep->GetTrack()->SetTrackStatus(fStopAndKill);
