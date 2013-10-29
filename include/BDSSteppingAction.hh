@@ -63,7 +63,9 @@ private:
   std::vector<G4ThreeVector> r;
   std::vector<G4ThreeVector> rp;
   
-
+  //Kinetic energy threshold cut.
+  G4double _thresholdCutCharged;
+  G4double _thresholdCutPhotons;
  };
 
 #endif

@@ -29,6 +29,7 @@
 #include "G4MaterialTable.hh"
 #include "G4ios.hh"
 #include <iomanip>   
+#include "LHEP.hh"
 #include "QGSP_BERT.hh"
 #include "QGSP_BERT_HP.hh"
 #include "HadronPhysicsQGSP_BERT.hh"
@@ -240,7 +241,11 @@ void BDSPhysicsList::ConstructProcess()
 
   bool plistFound=false;
   //standard physics lists
-  if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP"){
+  if(BDSGlobalConstants::Instance()->GetPhysListName() == "LHEP"){
+    LHEP* physList = new LHEP;
+    physList->ConstructProcess();
+    plistFound=true;
+  }else if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP"){
     QGSP_BERT_HP* physList = new QGSP_BERT_HP;
     physList->ConstructProcess();
     plistFound=true;
@@ -990,7 +995,7 @@ void BDSPhysicsList::ConstructEM_Low_Energy()
       #else 
         pmanager->AddProcess(new G4MultipleScattering,-1, 1,1);
       #endif
-      pmanager->AddProcess(new G4MuIonisation,      -1, 2,2);
+	pmanager->AddProcess(new G4MuIonisation,      -1, 2,2);
       pmanager->AddProcess(new G4MuBremsstrahlung,  -1, 3,3);
       pmanager->AddProcess(new G4MuPairProduction,  -1, 4,4);       
 

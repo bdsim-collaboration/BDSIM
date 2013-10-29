@@ -88,6 +88,9 @@ BDSSteppingAction::BDSSteppingAction()
   postponedEnergy=0;
   SetTrackLength(0);
   SetTrackLengthInWorldRegion(0);
+
+  _thresholdCutCharged=BDSGlobalConstants::Instance()->GetThresholdCutCharged();
+  _thresholdCutPhotons=BDSGlobalConstants::Instance()->GetThresholdCutPhotons();
 }
 
 //====================================================
@@ -248,12 +251,12 @@ G4String pName=ThisStep->GetTrack()->GetDefinition()->GetParticleName();
 
 // this cuts apply to default region
  if(pName=="gamma"){
-   if(ThisStep->GetTrack()->GetKineticEnergy()<BDSGlobalConstants::Instance()->GetThresholdCutPhotons())
+   if(ThisStep->GetTrack()->GetKineticEnergy()<_thresholdCutPhotons)
      {
        ThisStep->GetTrack()->SetTrackStatus(fStopAndKill);
      }
  } else if(pName=="e-"||pName=="e+" || pName == "mu-" || pName == "mu+"){
-   if(ThisStep->GetTrack()->GetKineticEnergy()<BDSGlobalConstants::Instance()->GetThresholdCutCharged())
+   if(ThisStep->GetTrack()->GetKineticEnergy()<_thresholdCutCharged)
      {
        ThisStep->GetTrack()->SetTrackStatus(fStopAndKill);
      }

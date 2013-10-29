@@ -22,7 +22,7 @@ Work in progress.
 class BDSScintillatorScreen :public BDSAcceleratorComponent
 {
 public:
-  BDSScintillatorScreen(G4String aName, G4double aLength=0.3*mm, G4double tScint=0.3*mm);
+  BDSScintillatorScreen(G4String aName, G4double tScint, G4double angle);
   ~BDSScintillatorScreen();
 
 protected:
@@ -81,6 +81,8 @@ private:
   G4double _screenWidth;
   G4double _screenHeight;
   G4double _screenAngle;
+
+  G4RotationMatrix* _screenRotationMatrix;
   
   G4double _frontThickness;
   G4double _scintillatorThickness;

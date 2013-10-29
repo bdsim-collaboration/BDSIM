@@ -29,11 +29,16 @@ extern LogVolMap* LogVol;
 
 //============================================================
 
-BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double aLength, G4double tScint):
-  BDSAcceleratorComponent(aName, aLength, 0, 0, 0, SetVisAttributes()),_scintillatorThickness(tScint)
+BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double tScint, G4double angle):
+  BDSAcceleratorComponent(aName, tScint, 0, 0, 0, SetVisAttributes()),_scintillatorThickness(tScint)
 {
+  //Set the rotation of the screen
+  _screenRotationMatrix = new G4RotationMatrix();
+  _screenRotationMatrix->setPhi(_screenAngle);
+
   itsType="screen";
   SetName(aName);
+  _screenAngle=angle;
   if ( (*LogVolCount)[itsName]==0)
     {
       ComputeDimensions();
@@ -78,7 +83,7 @@ void BDSScintillatorScreen::BuildFrontLayer(){
   itsFrontLayerLog->SetVisAttributes(_visAttFront);
   G4double dispZ=_frontThickness/2.0-_totalThickness/2.0;
   itsFrontLayerPhys = new G4PVPlacement(
-					0,
+					_screenRotationMatrix,
 					G4ThreeVector(0,0,dispZ),
 					itsFrontLayerLog,
 					"ScreenCelluloseFrontPhys",
@@ -98,7 +103,7 @@ void BDSScintillatorScreen::BuildScintillatorLayer(){
   itsScintillatorLayerLog = new G4LogicalVolume(itsScintillatorLayerSolid,_scintillatorLayerMaterial,"PhosphorLayer",0,0,0);
 
   itsScintillatorLayerLog->SetVisAttributes(_visAttScint);
-  itsScintillatorLayerPhys=  new G4PVPlacement(0,G4ThreeVector(0,0,dispZ),itsScintillatorLayerLog,"ScreenPhosphorLayer",
+  itsScintillatorLayerPhys=  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ),itsScintillatorLayerLog,"ScreenPhosphorLayer",
 					       itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   SetMultiplePhysicalVolumes(itsScintillatorLayerPhys);
 }
@@ -110,7 +115,7 @@ void BDSScintillatorScreen::BuildBaseLayer(){
   itsBaseLayerLog = new G4LogicalVolume(itsBaseLayerSolid,BDSMaterials::Instance()->GetMaterial("PET"),"PETLayer",0,0,0);
   
   itsBaseLayerLog->SetVisAttributes(_visAttBase);
-  itsBaseLayerPhys =  new G4PVPlacement(0,G4ThreeVector(0,0,dispZ),itsBaseLayerLog,"ScreenPETLayer",
+  itsBaseLayerPhys =  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ),itsBaseLayerLog,"ScreenPETLayer",
 					itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   SetMultiplePhysicalVolumes(itsBaseLayerPhys);
 }
@@ -120,7 +125,7 @@ void BDSScintillatorScreen::BuildBackLayer(){
   itsBackLayerSolid = new G4Box("CelluloseBack",_screenWidth/2.0,_screenHeight/2.0,_backThickness/2.0);
   itsBackLayerLog = new G4LogicalVolume(itsBackLayerSolid,BDSMaterials::Instance()->GetMaterial("Cellulose"),"CelluloseBack",0,0,0);
   itsBackLayerLog->SetVisAttributes(_visAttFront);
-  itsBackLayerPhys = new G4PVPlacement(0,G4ThreeVector(0,0,dispZ),itsBackLayerLog,"ScreenCelluloseBack",
+  itsBackLayerPhys = new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ),itsBackLayerLog,"ScreenCelluloseBack",
 				       itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   SetMultiplePhysicalVolumes(itsBackLayerPhys);
 }
@@ -261,8 +266,8 @@ void BDSScintillatorScreen::ComputeDimensions(){
 
   _screenWidth=1*m;
   _screenHeight=3*cm;
-  _screenAngle=0; //Degrees.
-  
+
+  //Length due to the screen thickness
   _frontThickness=0;//13*um;
   _baseThickness=0;//275*um;
   _backThickness=0;//13*um;
@@ -272,6 +277,11 @@ void BDSScintillatorScreen::ComputeDimensions(){
     _scintillatorThickness+
     _baseThickness+
     _backThickness;
+
+  //Compute the marker volume length according to the screen thickness and width.
+  G4double z_wid = _screenWidth * std::tan(_screenAngle);//Length due to the screen width and angle
+  G4double z_thi = _totalThickness * std::cos(_screenAngle);//Length due to the screen thickness
+  itsLength = z_wid + z_thi;
 }
 
 void BDSScintillatorScreen::BuildMarkerVolume(){
