@@ -29,7 +29,7 @@ public:
 
   // aux members
 
-  void SetOriginRotation(G4RotationMatrix rot);
+  void SetOriginRotation(G4RotationMatrix* rot);
   void SetOriginTranslation(G4ThreeVector trans);
 
 public:
