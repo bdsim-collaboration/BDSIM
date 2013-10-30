@@ -11,7 +11,6 @@ BDSField::BDSField():rotation(NULL)
 
 BDSField::~BDSField()
 {
-  delete rotation;
 }
 
 G4bool   BDSField::DoesFieldChangeEnergy() const
@@ -41,9 +40,9 @@ void BDSField::Prepare(G4VPhysicalVolume*)
   // default - do nothing
 }
 
-void BDSField::SetOriginRotation(G4RotationMatrix rot)
+void BDSField::SetOriginRotation(G4RotationMatrix* rot)
 {
-  rotation = new G4RotationMatrix(rot);
+  rotation = rot;
 }
 
 void BDSField::SetOriginTranslation(G4ThreeVector trans)
