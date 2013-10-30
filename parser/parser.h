@@ -26,8 +26,6 @@
 #include "gmad.h"
 #include "getEnv.h"
 
-std::string sBDSIMPATH = getEnv("BDSIMPATH");
-
 //double pow(double x, double y) {return exp( y * log(x));}
 
 int yyerror(const char *);
@@ -1494,7 +1492,7 @@ void set_value(std::string name, std::string value )
   //
   if(name == "particle") { options.particleName = value; return; }
   if(name == "distrType" ) { options.distribType = value; return; }
-  if(name == "distrFile" ) { options.distribFile = sBDSIMPATH+value; return; }  
+  if(name == "distrFile" ) { options.distribFile = getEnv("BDSIMPATH")+value; return; }  
 
   //
   // string options for the "option" command
