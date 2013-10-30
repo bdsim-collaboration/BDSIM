@@ -49,8 +49,7 @@ BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength):
   G4cout << "BDSGeometrySQL constructor: loading SQL file " << DBfile << G4endl;
 #endif
   G4String sBDSPATH = getEnv("BDSIMPATH");
-  G4String slash = "/";
-  G4String fullPath = sBDSPATH + slash + DBfile;
+  G4String fullPath = sBDSPATH + DBfile;
   ifs.open(fullPath.c_str());
   G4String exceptionString = "Unable to load SQL database file: " + DBfile;
   if(!ifs) G4Exception(exceptionString.c_str(), "-1", FatalException, "");
@@ -100,8 +99,7 @@ void BDSGeometrySQL::Construct(G4LogicalVolume *marker)
       if(file.contains("#")) ifs.getline(buffer,1000); // This is a comment line
       else{
 	G4String sBDSPATH = getEnv("BDSIMPATH");
-	G4String slash = "/";
-	G4String fullPath = sBDSPATH + slash + file;
+	G4String fullPath = sBDSPATH + file;
 	BuildSQLObjects(fullPath);}
     }
   

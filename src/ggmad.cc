@@ -19,8 +19,7 @@
 GGmadDriver::GGmadDriver(G4String file)
 {
   G4String sBDSPATH = getEnv("BDSIMPATH");
-  G4String slash = "/";
-  G4String fullPath = sBDSPATH + slash + file;
+  G4String fullPath = sBDSPATH + file;
   G4cout << __METHOD_NAME__ << "> reading file : " << fullPath << G4endl;
   inputf.open(fullPath);
   if(!inputf.good()) {G4cerr<<"ggmad driver: error  opening input file "<<fullPath<<G4endl; exit(1);}
