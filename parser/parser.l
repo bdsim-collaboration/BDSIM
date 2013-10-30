@@ -26,8 +26,6 @@
   
 using namespace std;
 
-string sBDSPATH = (string)getEnv("BDSIMPATH");
- 
 int match_var(char *name);
 struct symtab * symlook(const char *s);
 extern struct symtab *symtab;
@@ -152,7 +150,7 @@ dump  { return DUMP; }
 
 <incl>[ \t]*  // eat the whitespace
 <incl>[^ \t\n;]+ {
-string filename = sBDSPATH+(string)yytext;
+string filename = (string)getEnv("BDSIMPATH")+(string)yytext;
   printf("parser> reading file %s \n",(char*)filename.c_str());//yytext
   if( include_stack_ptr >= MAX_INCLUDE_DEPTH )
     {
