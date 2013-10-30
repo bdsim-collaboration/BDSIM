@@ -852,8 +852,10 @@ void BDSPhysicsList::ConstructOptical()
   G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
   theScintillationProcess->AddSaturation(emSaturation);
 
+#if G4VERSIONNUMBER < 960
   G4OpticalSurfaceModel themodel = unified;
   theBoundaryProcess->SetModel(themodel);
+#endif
 
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){
