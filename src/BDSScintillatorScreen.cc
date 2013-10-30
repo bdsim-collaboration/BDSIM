@@ -227,7 +227,11 @@ void BDSScintillatorScreen::BuildScintillatorOpticalProperties(){
     { 0, 0.25, 2.0, 14.0, 13.0, 7.0, 4.0, 2.0, 0.0 };
   
   _mptScintillatorMaterial = new G4MaterialPropertiesTable();
+#if G4VERSIONNUMBER < 940
+  _mptScintillatorMaterial->AddProperty("FASTCOMPONENT",PhotonEnergyScintillatorMaterial, scintFastScintillatorMaterial, nEntries);
+#else
   _mptScintillatorMaterial->AddProperty("FASTCOMPONENT",PhotonEnergyScintillatorMaterial, scintFastScintillatorMaterial, nEntries)->SetSpline(true);
+#endif
   _mptScintillatorMaterial->AddProperty("RINDEX",PhotonEnergyScintillatorMaterial, RefractiveIndexScintillatorMaterial, nEntries);
   _mptScintillatorMaterial->AddConstProperty("SCINTILLATIONYIELD",8000./MeV); //Approximately correct
   _mptScintillatorMaterial->AddConstProperty("RESOLUTIONSCALE",2.0); //Check this
