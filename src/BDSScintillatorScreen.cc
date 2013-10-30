@@ -17,6 +17,7 @@ Work in progress.
 
 #include "G4SDManager.hh"
 #include "G4UserLimits.hh"
+#include "G4Version.hh"
 #include "parser/gmad.h"
 #include <map>
 
