@@ -5,6 +5,8 @@
 
 // extern G4String outputFilename;
 
+
+
 BDSOutput::BDSOutput():outputFileNumber(1)
 {
   format = _ASCII; // default - write an ascii file
@@ -291,7 +293,7 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
 #ifdef USE_ROOT
     G4String name;
 #ifdef DEBUG
-    G4cout << __METHOD_NAME__ << " hc->endtries() = " << hc->entries() << G4endl;
+    G4cout << __METHOD_NAME__ << " hc->entries() = " << hc->entries() << G4endl;
 #endif
     for (G4int i=0; i<hc->entries(); i++)
       {

@@ -9,6 +9,7 @@ Work in progress.
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "BDSMaterials.hh"
+#include "BDSSamplerSD.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
 
@@ -33,6 +34,7 @@ private:
   G4VisAttributes* SetVisAttributes();
   void ComputeDimensions();
   void BuildMarkerVolume();
+  void BuildCameraScoringPlane();
   void BuildScintillatorMaterial();
   void BuildScintillatorCompound();
   void BuildScintillatorOpticalProperties();
@@ -48,16 +50,21 @@ private:
   G4VPhysicalVolume* itsScintillatorLayerPhys;
   G4VPhysicalVolume* itsBaseLayerPhys;
   G4VPhysicalVolume* itsBackLayerPhys;
+  G4VPhysicalVolume* itsCameraScoringPlanePhys;
 
   G4LogicalVolume* itsFrontLayerLog;
   G4LogicalVolume* itsScintillatorLayerLog;
   G4LogicalVolume* itsBaseLayerLog;
   G4LogicalVolume* itsBackLayerLog;
+  G4LogicalVolume* itsCameraScoringPlaneLog;
 
   G4VSolid* itsFrontLayerSolid;
   G4VSolid* itsScintillatorLayerSolid;
   G4VSolid* itsBaseLayerSolid;
   G4VSolid* itsBackLayerSolid;
+  G4VSolid* itsCameraScoringPlaneSolid;
+
+
 
   G4LogicalVolume* itsInnerTunnelLogicalVolume;
   G4LogicalVolume* itsSoilTunnelLogicalVolume;
@@ -90,12 +97,18 @@ private:
   G4double _backThickness;
   G4double _totalThickness;
 
+  //scoring plane
+  G4double _scoringPlaneThickness;
+
   G4double _xLength;
   G4double _yLength;
 
   G4VisAttributes* _visAttFront;
   G4VisAttributes* _visAttScint;
   G4VisAttributes* _visAttBase;
+
+  G4String _scoringPlaneName;
+  G4String _samplerName;
 };
 
 #endif

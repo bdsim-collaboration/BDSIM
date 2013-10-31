@@ -73,6 +73,8 @@ public:
   std::vector <G4String> SampName;
   std::vector <G4String> CSampName;
 
+  std::vector <G4String> CameraName;
+
   void WritePrimary(G4String, G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int, G4int);
 
 

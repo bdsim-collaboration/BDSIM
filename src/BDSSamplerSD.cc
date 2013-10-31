@@ -40,11 +40,11 @@ extern G4double
   initial_E, initial_t;
 
 
-BDSSamplerSD::BDSSamplerSD(G4String name, G4String type)
+BDSSamplerSD::BDSSamplerSD(G4String name, G4String type, G4String ident)
   :G4VSensitiveDetector(name),SamplerCollection(NULL),
    itsType(type)
 {
-  itsCollectionName="Sampler_"+type;
+  itsCollectionName="Sampler_"+type+ident;
   collectionName.insert(itsCollectionName);
 }
 
@@ -64,6 +64,9 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent*)
 
 G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
+#ifdef DEBUG
+  G4cout << __METHOD_NAME__ << "processing hits for sensitive detector name " << SensitiveDetectorName << G4endl;  
+#endif
   G4Track* theTrack = aStep->GetTrack();
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   //  G4StepPoint* postStepPoint = aStep->GetPostStepPoint();

@@ -823,14 +823,14 @@ void BDSPhysicsList::ConstructDecay()
 
 void BDSPhysicsList::ConstructOptical()
 {
-  if(!BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){ //Otherwise, it is already initialised
-    theCerenkovProcess           = new G4Cerenkov("Cerenkov");
-  }
+  //  if(!BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){ //Otherwise, it is already initialised
+  //    theCerenkovProcess           = new G4Cerenkov("Cerenkov");
+  //  }
   theScintillationProcess      = new G4Scintillation("Scintillation");
-  theAbsorptionProcess         = new G4OpAbsorption();
-  theRayleighScatteringProcess = new G4OpRayleigh();
-  theMieHGScatteringProcess    = new G4OpMieHG();
-  theBoundaryProcess           = new G4OpBoundaryProcess();
+  //  theAbsorptionProcess         = new G4OpAbsorption();
+  //  theRayleighScatteringProcess = new G4OpRayleigh();
+  //  theMieHGScatteringProcess    = new G4OpMieHG();
+  // theBoundaryProcess           = new G4OpBoundaryProcess();
 
 //  theCerenkovProcess->DumpPhysicsTable();
 //  theScintillationProcess->DumpPhysicsTable();
@@ -838,23 +838,23 @@ void BDSPhysicsList::ConstructOptical()
 
   SetVerboseLevel(1);
   
-  if(!BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){ //Otherwise, it is already initialised
-    theCerenkovProcess->SetMaxNumPhotonsPerStep(20);
-    theCerenkovProcess->SetMaxBetaChangePerStep(10.0);
-    theCerenkovProcess->SetTrackSecondariesFirst(true);
-  }
+  //  if(!BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){ //Otherwise, it is already initialised
+  //    theCerenkovProcess->SetMaxNumPhotonsPerStep(20);
+  //    theCerenkovProcess->SetMaxBetaChangePerStep(10.0);
+  //    theCerenkovProcess->SetTrackSecondariesFirst(true);
+  //  }
   
   theScintillationProcess->SetScintillationYieldFactor(1.);
   theScintillationProcess->SetTrackSecondariesFirst(true);
 
   // Use Birks Correction in the Scintillation process
 
-  G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
-  theScintillationProcess->AddSaturation(emSaturation);
+  //  G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
+  //  theScintillationProcess->AddSaturation(emSaturation);
 
 #if G4VERSIONNUMBER < 960
-  G4OpticalSurfaceModel themodel = unified;
-  theBoundaryProcess->SetModel(themodel);
+  //  G4OpticalSurfaceModel themodel = unified;
+  //  theBoundaryProcess->SetModel(themodel);
 #endif
 
   theParticleIterator->reset();
@@ -862,24 +862,24 @@ void BDSPhysicsList::ConstructOptical()
     G4ParticleDefinition* particle = theParticleIterator->value();
     G4ProcessManager* pmanager = particle->GetProcessManager();
     G4String particleName = particle->GetParticleName();
-    if(!BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){ //Otherwise, it is already initialised
-      if (theCerenkovProcess->IsApplicable(*particle)) {
-	pmanager->AddProcess(theCerenkovProcess);
-	pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
-      }
-    }
+    //    if(!BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){ //Otherwise, it is already initialised
+      //      if (theCerenkovProcess->IsApplicable(*particle)) {
+      //	pmanager->AddProcess(theCerenkovProcess);
+      //	pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
+      //      }
+    //    }
     if (theScintillationProcess->IsApplicable(*particle)) {
       pmanager->AddProcess(theScintillationProcess);
       pmanager->SetProcessOrderingToLast(theScintillationProcess, idxAtRest);
       pmanager->SetProcessOrderingToLast(theScintillationProcess, idxPostStep);
     }
-    if (particleName == "opticalphoton") {
-      G4cout << " AddDiscreteProcess to OpticalPhoton " << G4endl;
-      pmanager->AddDiscreteProcess(theAbsorptionProcess);
-      pmanager->AddDiscreteProcess(theRayleighScatteringProcess);
-      pmanager->AddDiscreteProcess(theMieHGScatteringProcess);
-      pmanager->AddDiscreteProcess(theBoundaryProcess);
-    }
+    //    if (particleName == "opticalphoton") {
+      //      G4cout << " AddDiscreteProcess to OpticalPhoton " << G4endl;
+      //      pmanager->AddDiscreteProcess(theAbsorptionProcess);
+      //      pmanager->AddDiscreteProcess(theRayleighScatteringProcess);
+      //      pmanager->AddDiscreteProcess(theMieHGScatteringProcess);
+      //      pmanager->AddDiscreteProcess(theBoundaryProcess);
+    //    }
   }
 }
 

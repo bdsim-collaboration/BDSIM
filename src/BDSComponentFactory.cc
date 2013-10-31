@@ -1239,7 +1239,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
                << " l=" << _element.l/m<<"m"
                << G4endl;
 #endif
-	return (new BDSScintillatorScreen( _element.name, 0.1*mm, 0.78539816339*rad)); //Name, scintillator thickness, angle in radians
+	return (new BDSScintillatorScreen( _element.name, 0.1*mm, -0.78539816339*rad)); //Name, scintillator thickness, angle in radians
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){

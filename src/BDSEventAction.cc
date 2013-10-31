@@ -149,6 +149,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
      {   
        SamplerCollID_cylin = G4SDManager::GetSDMpointer()->GetCollectionID("Sampler_cylinder"); 
      }
+
    
    //if( bdsOutput->GetLWCalorimeterNumber() > 0 )
    {
@@ -217,8 +218,9 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     G4cout << __METHOD_NAME__ << " - no planar hits collection found. Not writing hits." << G4endl;
 #endif
   }
+
   SampHC=NULL;
-  
+
   // are there any cylindrical samplers?
   // if so, record the hits
 
