@@ -40,11 +40,11 @@ extern G4double
   initial_E, initial_t;
 
 
-BDSSamplerSD::BDSSamplerSD(G4String name, G4String type, G4String ident)
+BDSSamplerSD::BDSSamplerSD(G4String name, G4String type)
   :G4VSensitiveDetector(name),SamplerCollection(NULL),
    itsType(type)
 {
-  itsCollectionName="Sampler_"+type+ident;
+  itsCollectionName="Sampler_"+type;
   collectionName.insert(itsCollectionName);
 }
 
@@ -55,7 +55,6 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent*)
 {
   // Create Sampler hits collection
   SamplerCollection = new BDSSamplerHitsCollection(SensitiveDetectorName,itsCollectionName);
-
   // Record the collection ID for later
   //  G4SDManager *SDman = G4SDManager::GetSDMpointer();
   //  itsHCID = SDman->GetCollectionID(itsCollectionName);

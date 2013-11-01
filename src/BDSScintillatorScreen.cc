@@ -17,6 +17,7 @@ Work in progress.
 #include "G4TransportationManager.hh"
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
+#include "BDSDebug.hh"
 
 #include "G4SDManager.hh"
 #include "G4UserLimits.hh"
@@ -108,8 +109,6 @@ void BDSScintillatorScreen::BuildCameraScoringPlane(){
   G4String ident="_camera";
   _samplerName = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_scoringPlaneName);
   
-  G4cout << "__METHOD_NAME__" << "samplerName = " << _samplerName << G4endl;
-
   //Build and place the volume...
   itsCameraScoringPlaneSolid = new G4Box("CameraScoringPlaneSolid",itsLength/2.0,_yLength/2.0,_scoringPlaneThickness/2.0);
   itsCameraScoringPlaneLog = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog",0,0,0);
@@ -129,7 +128,7 @@ void BDSScintillatorScreen::BuildCameraScoringPlane(){
   itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
   //SPM bdsOutput->nSamplers++;
   BDSSampler::AddExternalSampler();
-  bdsOutput->SampName.push_back(_samplerName);
+  bdsOutput->SampName.push_back(_samplerName+"_1");
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
   G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
@@ -231,7 +230,6 @@ void BDSScintillatorScreen::BuildScintillatorScreen()
   if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
     SetSensitiveVolume(itsScintillatorLayerLog);
   } 
-  G4cout << "BDSScintillatorScreen: finished building geometry" << G4endl;
 }
 
 void BDSScintillatorScreen::BuildScintillatorMaterial(){
@@ -268,7 +266,6 @@ void BDSScintillatorScreen::BuildScintillatorOpticalProperties(){
   G4double deltaEnergy=(energyMax-energyMin)/(dNEntries2-1.0);
   G4double energy=energyMin;
   for(G4int i=0; i<nEntries; energy += deltaEnergy, i++){
-    G4cout << energy << G4endl;
     PhotonEnergyScintillatorMaterial[i]=energy;
   }
   G4double RefractiveIndexScintillatorMaterial[nEntries] = //Approximately correct, but check for different wavelengths

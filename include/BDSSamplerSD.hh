@@ -22,7 +22,7 @@ class BDSSamplerSD : public G4VSensitiveDetector
 {
   
 public:
-  BDSSamplerSD(G4String name, G4String type, G4String ident="");
+  BDSSamplerSD(G4String name, G4String type);
   ~BDSSamplerSD();
   
   void SetType(G4String aType);

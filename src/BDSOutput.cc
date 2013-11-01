@@ -1,4 +1,5 @@
 #include "BDSExecOptions.hh"
+#include "BDSDebug.hh"
 #include "BDSOutput.hh"
 #include "BDSSamplerSD.hh"
 #include <ctime>
@@ -217,7 +218,8 @@ void BDSOutput::WriteAsciiHit(G4int PDGType, G4double Mom, G4double X, G4double 
 void BDSOutput::WriteRootHit(G4String Name, G4double   InitMom, G4double    InitX, G4double    InitY, G4double     InitZ, G4double     InitXPrime, G4double    InitYPrime, G4double InitZPrime, G4double  InitT, G4double  Mom, G4double X, G4double Y, G4double Z, G4double XPrime, G4double YPrime, G4double ZPrime, G4double T, G4double GlobalX, G4double GlobalY, G4double GlobalZ, G4double GlobalXPrime, G4double GlobalYPrime, G4double GlobalZPrime, G4double S, G4double Weight, G4int  PDGtype, G4int  EventNo, G4int   ParentID,G4int  TrackID){
 
   TTree* sTree=(TTree*)gDirectory->Get(Name);
-  if(!sTree) G4Exception("BDSOutput: ROOT Sampler not found!", "-1", FatalException, "");
+  TString errorMessage = __METHOD_NAME__ + "TTress Sampler \"" + Name + " not found.";
+  if(!sTree) G4Exception(errorMessage, "-1", FatalException, "");
   E0=InitMom / GeV;
   x0=InitX / micrometer;
   y0=InitY / micrometer;
