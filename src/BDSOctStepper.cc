@@ -187,7 +187,6 @@ void BDSOctStepper::Stepper( const G4double yInput[],
   
   for(i=0;i<nvar;i++) yErr[i] = yOut[i] - yTemp[i] ;
 
-  return ;
 }
 
 G4double BDSOctStepper::DistChord()   const 

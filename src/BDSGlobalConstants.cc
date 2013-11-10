@@ -4,7 +4,8 @@ Last modified 23.10.2007 by Steve Malton
 
 **/
 #include "BDSGlobalConstants.hh"
-#include "../parser/getEnv.h"
+#include "parser/gmad.h"
+//#include "../parser/getEnv.h"
 #include "BDSDebug.hh"
 #include "G4UniformMagField.hh"
 #include "G4ParticleTypes.hh"
@@ -110,17 +111,20 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsThresholdCutPhotons = opt.thresholdCutPhotons * GeV;
   itsProdCutPhotons = opt.prodCutPhotons * m;
   itsProdCutPhotonsP = opt.prodCutPhotonsP * m;
+  itsProdCutPhotonsA = opt.prodCutPhotonsA * m;
   itsProdCutElectrons = opt.prodCutElectrons * m;
   itsProdCutElectronsP = opt.prodCutElectronsP * m;
+  itsProdCutElectronsA = opt.prodCutElectronsA * m;
   itsProdCutPositrons = opt.prodCutPositrons * m;
   itsProdCutPositronsP = opt.prodCutPositronsP * m;
+  itsProdCutPositronsA = opt.prodCutPositronsA * m;
   itsDeltaChord = opt.deltaChord * m;
   itsChordStepMinimum = opt.chordStepMinimum * m;
   itsDeltaIntersection= opt.deltaIntersection * m;
   itsMinimumEpsilonStep = opt.minimumEpsilonStep;
   itsMaximumEpsilonStep = opt.maximumEpsilonStep;
-  //  itsMaxTime = opt.maximumTrackingTime;
-  itsMaxTime=2e-4*s;
+  itsMaxTime = opt.maximumTrackingTime * s;
+  
   itsDeltaOneStep = opt.deltaOneStep * m;
   doTwiss = opt.doTwiss;
   itsDoPlanckScattering = opt.doPlanckScattering;
@@ -177,7 +181,52 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsZeroFieldManager=new G4FieldManager();
   itsZeroFieldManager->SetDetectorField(zeroMagField);
   itsZeroFieldManager->CreateChordFinder(zeroMagField);
+
+  InitRotationMatrices();
    
+}
+
+void BDSGlobalConstants::InitRotationMatrices(){
+  _RotY90=new G4RotationMatrix();
+  _RotYM90=new G4RotationMatrix();
+  _RotX90=new G4RotationMatrix();
+  _RotXM90=new G4RotationMatrix();
+  _RotYM90X90=new G4RotationMatrix();
+  _RotYM90XM90=new G4RotationMatrix();
+  G4double pi_ov_2 = asin(1.);
+  _RotY90->rotateY(pi_ov_2);
+  _RotYM90->rotateY(-pi_ov_2);
+  _RotX90->rotateX(pi_ov_2);
+  _RotXM90->rotateX(-pi_ov_2);
+  _RotYM90X90->rotateY(-pi_ov_2);
+  _RotYM90X90->rotateX( pi_ov_2);
+  _RotYM90XM90->rotateY(-pi_ov_2);
+  _RotYM90XM90->rotateX(-pi_ov_2);
+}
+
+//Methods to get the rotation matrices
+G4RotationMatrix* BDSGlobalConstants::RotY90() const{
+  return _RotY90;
+}
+
+G4RotationMatrix* BDSGlobalConstants::RotYM90() const{
+  return _RotYM90;
+}
+
+G4RotationMatrix* BDSGlobalConstants::RotX90() const{
+  return _RotX90;
+}
+
+G4RotationMatrix* BDSGlobalConstants::RotXM90() const{
+  return _RotXM90;
+}
+
+G4RotationMatrix* BDSGlobalConstants::RotYM90X90() const{
+  return _RotYM90X90;
+}
+
+G4RotationMatrix* BDSGlobalConstants::RotYM90XM90() const{
+  return _RotYM90XM90;
 }
 
 // a robust compiler-invariant method to convert from integer to G4String

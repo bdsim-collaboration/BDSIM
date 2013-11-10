@@ -19,9 +19,6 @@ public:
 
   ~BDSLWCalorimeterHit();
 
-  BDSLWCalorimeterHit(const BDSLWCalorimeterHit& right);
-  const BDSLWCalorimeterHit& operator=(const BDSLWCalorimeterHit& right);
-  
   inline void* operator new(size_t) ;
   inline void operator delete(void *aHit);
    

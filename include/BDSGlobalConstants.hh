@@ -12,7 +12,6 @@ Last modified 30.10.2007 by Steve Malton
 #include <fstream>
 #include <string>
 #include <set>
-//#include <list>
 #include <deque>
 
 #include "G4ParticleTable.hh"
@@ -23,9 +22,8 @@ Last modified 30.10.2007 by Steve Malton
 #include "G4FieldManager.hh"
 #include "G4String.hh"
 #include "G4AffineTransform.hh"
-//#include "G4Track.hh"
 
-#include "parser/gmad.h"
+struct Options;
 
 struct strCmp {
   G4bool operator()( const G4String s1, const G4String s2 ) {
@@ -161,10 +159,13 @@ public:
 
   G4double GetProdCutPhotons();
   G4double GetProdCutPhotonsP();
+  G4double GetProdCutPhotonsA();
   G4double GetProdCutElectrons();
   G4double GetProdCutElectronsP();
+  G4double GetProdCutElectronsA();
   G4double GetProdCutPositrons();
   G4double GetProdCutPositronsP();
+  G4double GetProdCutPositronsA();
 
   // Environment variables
   G4String GetBDSIMHOME();
@@ -335,10 +336,13 @@ private:
   G4double itsThresholdCutPhotons;
   G4double itsProdCutPhotons;
   G4double itsProdCutPhotonsP;
+  G4double itsProdCutPhotonsA;
   G4double itsProdCutElectrons;
   G4double itsProdCutElectronsP;
+  G4double itsProdCutElectronsA;
   G4double itsProdCutPositrons;
   G4double itsProdCutPositronsP;
+  G4double itsProdCutPositronsA;
   G4String itsBDSIMHOME;
   G4String itsPhysListName;
   G4bool itsSynchRadOn;
@@ -374,7 +378,24 @@ private:
   G4int itsEventNumberOffset;
   G4FieldManager* itsZeroFieldManager;
 
+private:
+  void InitRotationMatrices();
+
+  G4RotationMatrix* _RotY90;
+  G4RotationMatrix* _RotYM90;
+  G4RotationMatrix* _RotX90;
+  G4RotationMatrix* _RotXM90;
+  G4RotationMatrix* _RotYM90X90;
+  G4RotationMatrix* _RotYM90XM90;
+
 public:
+  G4RotationMatrix* RotY90() const;
+  G4RotationMatrix* RotYM90() const;
+  G4RotationMatrix* RotX90() const;
+  G4RotationMatrix* RotXM90() const;
+  G4RotationMatrix* RotYM90X90() const;
+  G4RotationMatrix* RotYM90XM90() const;
+
   G4double GetLWCalWidth();
   G4double GetLWCalOffset();
   G4String GetPipeMaterialName();
@@ -647,14 +668,20 @@ inline G4double BDSGlobalConstants::GetProdCutPhotons()
 {return itsProdCutPhotons;}
 inline G4double BDSGlobalConstants::GetProdCutPhotonsP() 
 {return itsProdCutPhotonsP;}
+inline G4double BDSGlobalConstants::GetProdCutPhotonsA() 
+{return itsProdCutPhotonsA;}
 inline G4double BDSGlobalConstants::GetProdCutElectrons() 
 {return itsProdCutElectrons;}
 inline G4double BDSGlobalConstants::GetProdCutElectronsP() 
 {return itsProdCutElectronsP;}
+inline G4double BDSGlobalConstants::GetProdCutElectronsA() 
+{return itsProdCutElectronsA;}
 inline G4double BDSGlobalConstants::GetProdCutPositrons() 
 {return itsProdCutPositrons;}
 inline G4double BDSGlobalConstants::GetProdCutPositronsP() 
 {return itsProdCutPositronsP;}
+inline G4double BDSGlobalConstants::GetProdCutPositronsA() 
+{return itsProdCutPositronsA;}
 
 
 //inline G4double BDSGlobalConstants::GetWorldSizeZ() 

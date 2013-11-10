@@ -36,8 +36,6 @@ public:
 
 private:
   BDSLWCalorimeterHitsCollection *LWCalorimeterCollection;
-  //  G4Navigator* StepperNavigator;
-  G4bool StoreHit;
 
 };
 

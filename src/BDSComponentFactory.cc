@@ -26,10 +26,10 @@
 #include "BDSComponentOffset.hh"
 #include "BDSCollimator.hh"
 //#include "BDSRealisticCollimator.hh"
+#include "BDSScintillatorScreen.hh"
 
 extern G4bool outline;
 
-#define DEBUG 1
 #ifdef DEBUG
 bool debug1 = true;
 #else
@@ -51,6 +51,7 @@ BDSComponentFactory::BDSComponentFactory(){
   
   // rigidity (in Geant4 units)
   _brho *= (tesla*m);
+
   if (verbose || debug1) G4cout << "Rigidity (Brho) : "<< fabs(_brho)/(tesla*m) << " T*m"<<G4endl;
   //
   // beampipe default outer radius (if not overridden by "aper" option)
@@ -77,103 +78,168 @@ BDSComponentFactory::~BDSComponentFactory(){
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createComponent(std::list<struct Element>::iterator elementIter, std::list<struct Element>& beamline_list){
+#ifdef DEBUG
   G4cout << "BDSComponentFactory::createComponent() making iterators" << G4endl;  
+#endif
   _elementIter = elementIter;
   _previousElementIter = elementIter; 
   _nextElementIter= elementIter; 
   if(_elementIter != beamline_list.begin()){
+#ifdef DEBUG
     G4cout << "BDSComponentFactory::createComponent() moving to previous element" << G4endl;  
+#endif
     _previousElementIter--;
   } 
 
   _nextElementIter++;
   if(_nextElementIter == beamline_list.end()){
+#ifdef DEBUG
     G4cout << "BDSComponentFactory::createComponent() at the end, not moving to next element" << G4endl;  
+#endif
     _nextElementIter--;
   } 
+#ifdef DEBUG
   G4cout << "BDSComponentFactory::createComponent() creating and returning component..." << G4endl;  
+#endif
   return createComponent(*_elementIter, *_previousElementIter, *_nextElementIter);
 }
 
 									 
 BDSAcceleratorComponent* BDSComponentFactory::createComponent(Element aElement, Element previousElement, Element nextElement){
+#ifdef DEBUG
   G4cout << "BDSComponentFactory::createComponent() creating element..." << G4endl;  
+#endif
   _element = aElement;
+#ifdef DEBUG
   G4cout << "BDSComponentFactory::createComponent() creating previous element..." << G4endl;  
+#endif
   _previousElement = previousElement;  
+#ifdef DEBUG
   G4cout << "BDSComponentFactory::createComponent() creating next element..." << G4endl;  
+#endif
   _nextElement = nextElement;
   return createComponent();
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
+#ifdef DEBUG
   G4cout << "BDSComponentFactory::createComponent() element name = " << _element.name << G4endl;  
+#endif
   switch(_element.type){
   case _SAMPLER:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating sampler" << G4endl;
+#endif
     return createSampler(); break;
   case _DRIFT:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating drift" << G4endl;
+#endif
     return createDrift(); break; 
   case _PCLDRIFT:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating pcl drift" << G4endl;
+#endif
     return createPCLDrift(); break; 
   case _RF:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating rf" << G4endl;
+#endif
     return createRF(); break; 
   case _SBEND:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating sbend" << G4endl;
+#endif
     return createSBend(); break; 
   case _RBEND:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating rbend" << G4endl;
+#endif
     return createRBend(); break; 
   case _HKICK:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating hkick" << G4endl;
+#endif
     return createHKick(); break; 
   case _VKICK:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating vkick" << G4endl;
+#endif
     return createVKick(); break; 
   case _QUAD:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating quadrupole" << G4endl;
+#endif
     return createQuad(); break; 
   case _SEXTUPOLE:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating sextupole" << G4endl;
+#endif
     return createSextupole(); break; 
   case _OCTUPOLE:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating octupole" << G4endl;
+#endif
     return createOctupole(); break; 
   case _MULT:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating multipole" << G4endl;
+#endif
     return createMultipole(); break; 
   case _ELEMENT:    
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating element" << G4endl;
+#endif
     return createElement(); break; 
   case _CSAMPLER:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating csampler" << G4endl;
+#endif
     return createCSampler(); break; 
   case _DUMP:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating dump" << G4endl;
+#endif
     return createDump(); break; 
   case _SOLENOID:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating solenoid" << G4endl;
+#endif
     return createSolenoid(); break; 
   case _ECOL:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating ecol" << G4endl;
+#endif
     return createECol(); break; 
   case _RCOL:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating rcol" << G4endl;
+#endif
     return createRCol(); break; 
   case _MUSPOILER:    
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating muspoiler" << G4endl;
+#endif
     return createMuSpoiler(); break; 
   case _LASER:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating laser" << G4endl;
+#endif
     return createLaser(); break; 
+  case _SCREEN:
+#ifdef DEBUG
+    G4cout << "BDSComponentFactory  - creating screen" << G4endl;
+#endif
+    return createScreen(); break; 
   case _TRANSFORM3D:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating transform3d" << G4endl;
+#endif
     return createTransform3D(); break;  
   default:
+#ifdef DEBUG
     G4cout << "BDSComponentFactory: type: " << _element.type << G4endl; 
+#endif
     //    G4Exception("Error: BDSComponentFactory: type not found.", "-1", FatalErrorInArgument, "");   
     return NULL;
     break;
@@ -1100,7 +1166,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
         G4cout << "---->creating muspoiler,"
                << " name= " << _element.name 
                << " length= " << _element.l
-               << "B= " << _element.B
+               << " B= " << _element.B
                << " tunnel material " << _element.tunnelMaterial
                << G4endl;
 #endif
@@ -1121,7 +1187,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
         //        }
         G4double outerRadius = _element.outR*m;
         
+#ifdef DEBUG
         G4cout << "BDSMuSpoiler: " << name << " " << length/m << " " << outerRadius/m << " " << innerRadius/m << " " << _bField/tesla << " " << beamPipeRadius/m << G4endl;
+#endif
 
         return (new BDSMuSpoiler(name,
                                                length,
@@ -1160,6 +1228,18 @@ BDSAcceleratorComponent* BDSComponentFactory::createLaser(){
 						_element.waveLength,
 						direction) );
 	
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
+  if(_element.l == 0) _element.l = 1e-8;
+	
+#ifdef DEBUG 
+        G4cout << "---->creating Screen,"
+               << " name= "<< _element.name
+               << " l=" << _element.l/m<<"m"
+               << G4endl;
+#endif
+	  return (new BDSScintillatorScreen( _element.name, _element.l*m, 0.1*mm));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){

@@ -19,6 +19,7 @@
 #include "G4Tubs.hh"
 #include "G4EllipticalTube.hh"
 #include "G4VisAttributes.hh"
+#include "G4UserLimits.hh"
 #include "BDSMySQLTable.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4MagIntegratorStepper.hh"
@@ -30,6 +31,7 @@
 #include <vector>
 #include <vector>
 #include "BDSMagFieldSQL.hh"
+#include "G4Region.hh"
 
 class BDSClassicalRK4;
 
@@ -73,18 +75,56 @@ public:
   std::vector<G4LogicalVolume*> GetGFlashComponents();
 
 private:
+  G4int _NVariables;
+  G4double _VisRed; 
+  G4double _VisGreen;
+  G4double _VisBlue;
+  G4double _VisAlpha;
+  G4String _VisType;
+  G4String _Material;
+  G4String _TableName;
+  G4String _Name;
+
+  G4double _PosX;
+  G4double _PosY;
+  G4double _PosZ;
+  G4double _RotPsi;
+  G4double _RotTheta;
+  G4double _RotPhi;
+  G4double _K1,_K2,_K3,_K4;
+  G4String _PARENTNAME;
+  G4String _InheritStyle;
+  G4String _Parameterisation;
+  G4String _MagType;
+  G4int _align_in;
+  G4int _align_out;
+  G4int _SetSensitive;
+  G4int _PrecisionRegion;
+  G4int _ApproximationRegion;
+  G4double _FieldX, _FieldY, _FieldZ;
+
+  G4double _lengthUserLimit;
+
+  G4Region* _precisionRegionSQL;
+  G4Region* _approximationRegionSQL;
 
   void BuildSQLObjects(G4String file);
-  void BuildCone(BDSMySQLTable* aSQLTable);
-  void BuildEllipticalCone(BDSMySQLTable* aSQLTable);
-  void BuildPolyCone(BDSMySQLTable* aSQLTable);
-  void BuildBox(BDSMySQLTable* aSQLTable);
-  void BuildTrap(BDSMySQLTable* aSQLTable);
-  void BuildTorus(BDSMySQLTable* aSQLTable);
-  void BuildSampler(BDSMySQLTable* aSQLTable);
-  void BuildTube(BDSMySQLTable* aSQLTable);
-  void BuildEllipticalTube(BDSMySQLTable* aSQLTable);
-  void BuildPCLTube(BDSMySQLTable* aSQLTable);
+  void SetCommonParams(BDSMySQLTable*,G4int);
+  void SetPlacementParams(BDSMySQLTable*,G4int);
+  G4VisAttributes* VisAtt();
+  G4UserLimits* UserLimits(G4double);
+  void SetLogVolAtt(G4LogicalVolume*, G4double);
+  void SetLogVolRegion(G4LogicalVolume*);
+  G4LogicalVolume* BuildCone(BDSMySQLTable* aSQLTable, G4int k);
+  G4LogicalVolume* BuildEllipticalCone(BDSMySQLTable* aSQLTable, G4int k);
+  G4LogicalVolume* BuildPolyCone(BDSMySQLTable* aSQLTable, G4int k);
+  G4LogicalVolume* BuildBox(BDSMySQLTable* aSQLTable, G4int k);
+  G4LogicalVolume* BuildTrap(BDSMySQLTable* aSQLTable, G4int k);
+  G4LogicalVolume* BuildTorus(BDSMySQLTable* aSQLTable, G4int k);
+  G4LogicalVolume* BuildSampler(BDSMySQLTable* aSQLTable, G4int k);
+  G4LogicalVolume* BuildTube(BDSMySQLTable* aSQLTable, G4int k);
+  G4LogicalVolume* BuildEllipticalTube(BDSMySQLTable* aSQLTable, G4int k);
+  G4LogicalVolume* BuildPCLTube(BDSMySQLTable* aSQLTable, G4int k);
   G4RotationMatrix* RotateComponent(G4double psi,
 				    G4double phi,
 				    G4double theta);

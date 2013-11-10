@@ -1,15 +1,37 @@
-#include "BDSGlobalConstants.hh"
 #include "BDSBunch.hh"
+
 #include <iostream>
-#include "globals.hh"
 #include <cmath>
 #include <cstdlib>
 
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSBunch.hh"
+#include "BDSOutput.hh"
+#include "parser/gmad.h"
 
-#define DEBUG 1 
+// CLHEP from Geant4
+#include "Randomize.hh"
+// CLHEP
+#include "CLHEP/RandomObjects/RandMultiGauss.h"
+
+
+// distribution type
+
+enum {
+  _REFERENCE = 0,
+  _GAUSSIAN = 1,
+  _RING = 2,
+  _SQUARE = 3,
+  _CIRCLE = 4,
+  _GUINEAPIG_BUNCH = 5,
+  _GUINEAPIG_PAIRS = 6,
+  _GUINEAPIG_SLAC = 7,
+  _CAIN = 8,
+  _ESHELL = 9,
+  _GAUSSIAN_TWISS = 10,
+  _GAUSSIAN_MATRIX = 11,
+  _UDEF = 32
+};
 
 BDSBunch::BDSBunch():  
   distribType(-1),X0(0.0),Y0(0.0),Z0(0.0),T0(0.0),Xp0(0.0),Yp0(0.0),Zp0(1.0),
@@ -32,6 +54,7 @@ BDSBunch::BDSBunch():
   // Instantiate vector and matrix for gaussian sigma matrix generation
   meansGM = CLHEP::HepVector(6);
   sigmaGM = CLHEP::HepSymMatrix(6);
+
 }
 
 BDSBunch::~BDSBunch()
@@ -81,6 +104,10 @@ void BDSBunch::SetOptions(struct Options& opt)
   iter = distType.find(opt.distribType);
   if(iter!=distType.end()) 
     distribType = (*iter).second;
+  else {
+    distribType = _UDEF;
+    G4cerr << "WARNING bunch distribution type UNKNOWN or USER DEFINED: " << opt.distribType << G4endl;
+  }
 #ifdef DEBUG 
   G4cout<< "BDSBunch::SetOptions> distrType : "<<opt.distribType<<G4endl;
 #endif
@@ -110,8 +137,8 @@ void BDSBunch::SetOptions(struct Options& opt)
       SetSigmaY(0.0);
       SetSigmaXp(0.0);
       SetSigmaYp(0.0);
-      SetSigmaT(opt.sigmaT);
-      SetEnergySpread(opt.sigmaE);          
+      SetSigmaT(0.0);
+      SetEnergySpread(0.0);          
       break;
     }
 
@@ -123,6 +150,17 @@ void BDSBunch::SetOptions(struct Options& opt)
       SetSigmaYp(opt.sigmaYp);
       SetSigmaT(opt.sigmaT);
       SetEnergySpread(opt.sigmaE);
+      break;
+    } 
+
+  case _SQUARE:
+    {
+      SetEnvelopeX(opt.envelopeX); 
+      SetEnvelopeY(opt.envelopeY);
+      SetEnvelopeXp(opt.envelopeXp);
+      SetEnvelopeYp(opt.envelopeYp);
+      SetEnvelopeT(opt.envelopeT);
+      SetEnergySpread(opt.envelopeE);
       break;
     } 
 
@@ -256,6 +294,7 @@ void BDSBunch::SetOptions(struct Options& opt)
     } 
     //else
     //assuming the format is "field[unit]:field[unit]:..." - User Defined
+  case _UDEF:
   default:
     {
       distribType = _UDEF; 
@@ -265,7 +304,7 @@ void BDSBunch::SetOptions(struct Options& opt)
       G4String unparsed_str = opt.distribType; 
       G4int pos = unparsed_str.find(":");
       
-      struct Doublet sd;
+      struct BDSBunch::Doublet sd;
       
       while(pos > 0)
 	{
@@ -517,6 +556,33 @@ void BDSBunch::SetOptions(struct Options& opt)
   return;  
 }
 
+// get initial bunch distribution parameters in square/circle case 
+G4double BDSBunch::GetEnvelopeT() 
+{
+  return envelopeT;
+} 
+
+G4double BDSBunch::GetEnvelopeX()
+{
+
+  return envelopeX;
+}
+ 
+G4double BDSBunch::GetEnvelopeY()
+{
+  return envelopeY;
+} 
+
+G4double BDSBunch::GetEnvelopeXp()
+{
+  return envelopeXp;
+}
+
+G4double BDSBunch::GetEnvelopeYp()
+{
+  return envelopeYp;
+}
+
 // get initial bunch distribution parameters in Gaussian case 
 G4double BDSBunch::GetSigmaT() 
 {
@@ -686,25 +752,17 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
     }
   case _GAUSSIAN:
     {
-      G4double phiX= twopi * G4UniformRand();
-      G4double phiY= twopi * G4UniformRand();
-      //      G4double ex=-log(G4UniformRand())*emitX;
-      //      G4double ey=-log(G4UniformRand())*emitY;
-      G4double ex=std::abs(GaussGen->shoot()*emitX);
-      G4double ey=std::abs(GaussGen->shoot()*emitY);
-      x0=sqrt(2*ex*betaX)*sin(phiX)*m;
-      xp=sqrt(2*ex/betaX)*(cos(phiX)-alphaX*sin(phiX))*rad;
-      y0=sqrt(2*ey*betaY)*sin(phiY)*m;
-      yp=sqrt(2*ey/betaY)*(cos(phiY)-alphaY*sin(phiY))*rad;      
+      x0 = X0 * m;
+      y0 = Y0 * m;
+      z0 = Z0 * m;
+      xp = Xp0 * rad;
+      yp = Yp0 * rad;
       z0 = Z0 * m + (T0 - sigmaT * (1.-2.*GaussGen->shoot())) * c_light * s;
-     
-      if(sigmaX !=0) x0 = (X0 + sigmaX * GaussGen->shoot()) * m;
-      if(sigmaY !=0) y0 = (Y0 + sigmaY * GaussGen->shoot()) * m;
-      if(sigmaXp !=0) xp = Xp0 + sigmaXp * GaussGen->shoot();
-      if(sigmaYp !=0) yp = Yp0 + sigmaYp * GaussGen->shoot();
 
-  
-      z0 = Z0 * m + (T0 - sigmaT * (1.-2.*GaussGen->shoot())) * c_light * s;
+      if(sigmaX !=0) x0  += sigmaX * GaussGen->shoot() * m;
+      if(sigmaY !=0) y0  += sigmaY * GaussGen->shoot() * m;
+      if(sigmaXp !=0) xp += sigmaXp * GaussGen->shoot() * rad;
+      if(sigmaYp !=0) yp += sigmaYp * GaussGen->shoot() * rad;
 
       if (Zp0<0)
         zp = -sqrt(1.-xp*xp -yp*yp);
@@ -712,8 +770,6 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
         zp = sqrt(1.-xp*xp -yp*yp);
       t = 0;
       E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * (1 + energySpread * GaussGen->shoot());
-
-
 
 #ifdef DEBUG 
       G4cout<< "BDSBunch : " <<"GAUSSIAN: "<<G4endl
@@ -745,10 +801,29 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 
       break;
     }
-  case _GAUSSIAN_TWISS:
+  case _SQUARE:
     {
+      x0 = X0 * m;
+      y0 = Y0 * m;
+      z0 = Z0 * m;
+      xp = Xp0 * rad;
+      yp = Yp0 * rad;
+      z0 = Z0 * m + (T0 - envelopeT * (1.-2.*FlatGen->shoot())) * c_light * s;
+
+      if(envelopeX !=0) x0  += envelopeX * (1-2*FlatGen->shoot()) * m;
+      if(envelopeY !=0) y0  += envelopeY * (1-2*FlatGen->shoot()) * m;
+      if(envelopeXp !=0) xp += envelopeXp * (1-2*FlatGen->shoot()) * rad;
+      if(envelopeYp !=0) yp += envelopeYp * (1-2*FlatGen->shoot()) * rad;
+
+      if (Zp0<0)
+        zp = -sqrt(1.-xp*xp -yp*yp);
+      else
+        zp = sqrt(1.-xp*xp -yp*yp);
+      t = 0;
+      E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * (1 + energySpread * (1-2*FlatGen->shoot()));
+
 #ifdef DEBUG 
-      G4cout<<"GAUSSIAN_TWISS: "<<G4endl
+      G4cout<< "BDSBunch : " <<"SQUARE: "<<G4endl
             <<" X0= "<<X0<<" m"<<G4endl
             <<" Y0= "<<Y0<<" m"<<G4endl
             <<" Z0= "<<Z0<<" m"<<G4endl
@@ -756,6 +831,38 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
             <<" Xp0= "<<Xp0<<G4endl
             <<" Yp0= "<<Yp0<<G4endl
             <<" Zp0= "<<Zp0<<G4endl
+            <<" envelopeX= "<<envelopeX<<" m"<<G4endl
+            <<" envelopeY= "<<envelopeY<<" m"<<G4endl
+            <<" envelopeXp= "<<envelopeXp<<G4endl
+            <<" envelopeYp= "<<envelopeYp<<G4endl
+            <<" envelopeT= "<<envelopeT<<"s"<<G4endl
+            <<" relative energy spread= "<<energySpread<<G4endl
+
+	    <<G4endl
+            <<" x0= "<<x0<<" m"<<G4endl
+            <<" y0= "<<y0<<" m"<<G4endl
+            <<" z0= "<<z0<<" m"<<G4endl
+            <<" t= "<<t<<" s"<<G4endl
+            <<" xp= "<<xp<<G4endl
+            <<" yp= "<<yp<<G4endl
+            <<" zp= "<<zp<<G4endl
+            <<" E= "<<E<<G4endl;
+#endif
+
+
+      break;
+    }
+  case _GAUSSIAN_TWISS:
+    {
+#ifdef DEBUG 
+      G4cout<<"GAUSSIAN_TWISS: "<<G4endl
+            // <<" X0= "<<X0<<" m"<<G4endl
+            // <<" Y0= "<<Y0<<" m"<<G4endl
+            // <<" Z0= "<<Z0<<" m"<<G4endl
+            <<" T0= "<<T0<<" s"<<G4endl
+            // <<" Xp0= "<<Xp0<<G4endl
+            // <<" Yp0= "<<Yp0<<G4endl
+            // <<" Zp0= "<<Zp0<<G4endl
             <<" alphaX= "<<alphaX<<" m"<<G4endl
             <<" alphaY= "<<alphaY<<" m"<<G4endl
             <<" betaX= "<<betaX<<G4endl
@@ -765,6 +872,9 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
             <<" sigmaT= "<<sigmaT<<"s"<<G4endl
             <<" relative energy spread= "<<energySpread<<G4endl;
 #endif
+
+      if (betaX==0) G4cerr << __METHOD_NAME__ << "WARNING betaX equal to 0, xp NaN, division by zero! " << G4endl;
+      if (betaY==0) G4cerr << __METHOD_NAME__ << "WARNING betaY equal to 0, yp NaN, division by zero! " << G4endl;
 
       G4double phiX= twopi * G4UniformRand();
       G4double phiY= twopi * G4UniformRand();
@@ -843,8 +953,8 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
      x0 = ( X0 + r * sin(phi) ) * m;
      y0 = ( Y0 + r * cos(phi) ) * m;
      z0 = Z0 * m;
-     xp = Xp0;
-     yp = Yp0;
+     xp = Xp0 * rad;
+     yp = Yp0 * rad;
      if (Zp0<0)
        zp = -sqrt(1.-xp*xp -yp*yp);
      else
@@ -1152,7 +1262,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 #endif
       skip((G4int)(nlinesIgnore * fields.size()));
      
-      std::list<struct Doublet>::iterator it;
+      std::list<struct BDSBunch::Doublet>::iterator it;
      for(it=fields.begin();it!=fields.end();it++)
        {
 #ifdef DEBUG 
@@ -1262,6 +1372,32 @@ G4double BDSBunch::GetBetaY()
 
 
 
+// set initial bunch distribution parameters in square/circle case 
+void BDSBunch::SetEnvelopeT(double val) 
+{
+  envelopeT= val;
+} 
+
+void BDSBunch::SetEnvelopeX(double val)
+{ 
+  envelopeX = val;
+}
+ 
+void BDSBunch::SetEnvelopeY(double val)
+{
+  envelopeY = val;
+} 
+
+void BDSBunch::SetEnvelopeXp(double val)
+{
+  envelopeXp = val;
+}
+
+void BDSBunch::SetEnvelopeYp(double val)
+{
+  envelopeYp = val;
+}
+
 // set initial bunch distribution parameters in Gaussian case 
 void BDSBunch::SetSigmaT(double val) 
 {
@@ -1368,3 +1504,5 @@ void BDSBunch::OpenBunchFile(){
 void BDSBunch::CloseBunchFile(){
   InputBunchFile.close();
 }
+
+//Stores input beam as a "sampler hit" to be be later saved to the output file.

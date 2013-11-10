@@ -17,6 +17,7 @@ BDSWorld* BDSWorld::Instance(){
 */
 
 BDSWorld::BDSWorld(){
+  _size = new G4ThreeVector(0.,0.,0.);
   _material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetSoilMaterialName()),
   build();
   G4cout << "BDSWorld - placing" << G4endl;
@@ -24,6 +25,7 @@ BDSWorld::BDSWorld(){
 }
 
 BDSWorld::~BDSWorld(){
+  delete _size;
   /*
   delete _solidVolume;
 		  //		    gFlashRegion.back()->SetUserLimits(new G4UserLimits(var->GetLength()/10.0));

@@ -1,9 +1,10 @@
 #ifndef __BDSCOMPONENTFACTORY_
 #define __BDSCOMPONENTFACTORY_
 
+#include <list>
+#include "globals.hh"
 #include "parser/gmad.h"
 #include "BDSAcceleratorComponent.hh"
-#include <list>
 
 class BDSComponentFactory{
 public:
@@ -55,6 +56,7 @@ private:
   BDSAcceleratorComponent* createRCol();
   BDSAcceleratorComponent* createMuSpoiler();
   BDSAcceleratorComponent* createLaser();
+  BDSAcceleratorComponent* createScreen();
   BDSAcceleratorComponent* createTransform3D();
 };
 #endif

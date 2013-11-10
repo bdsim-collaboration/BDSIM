@@ -24,9 +24,7 @@
 #include <iostream>
 
 #include "gmad.h"
-//#include "getEnv.h"
-
-//std::string sBDSIMHOME = getEnv("BDSIMHOME");
+#include "getEnv.h"
 
 //double pow(double x, double y) {return exp( y * log(x));}
 
@@ -107,6 +105,8 @@ const char *typestr(int type) {
     return "element";
   case _TRANSFORM3D :
     return "transform3d";
+  case _SCREEN :
+    return "screen";
   default:
     return "none";
   }
@@ -298,6 +298,8 @@ void inherit_properties(struct Element e)
   if(!params.hgapset) { params.hgap = e.hgap; params.hgapset = 1; }
   if(!params.flatlengthset) { params.flatlength = e.flatlength; params.flatlengthset = 1; }
   if(!params.taperlengthset) { params.taperlength = e.taperlength; params.taperlengthset = 1; }
+
+  if(!params.tscintset) { params.tscint = e.tscint; params.tscintset = 1; }
 
   //materials
   if(!params.Aset) { params.A = e.A; params.Aset = 1; }
@@ -818,8 +820,17 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.geometryFile = std::string(params.geometry);
     break;
 
+  case _SCREEN:
+    e.type = _SCREEN;
+    e.l = params.l;
+    e.tscint = params.tscint;
+    break;
+
+
   default:
     break;  
+
+
   }
 
   element_list.push_back(e);
@@ -1184,7 +1195,7 @@ void print(std::list<struct Element> l, int ident)
 
       switch((*it).type) {
       case _DRIFT:
-	  case _PCLDRIFT:
+      case _PCLDRIFT:
       case _SBEND:
       case _RBEND:
       case _QUAD:
@@ -1213,6 +1224,9 @@ void print(std::list<struct Element> l, int ident)
 	printf("B map file : %s\n",(*it).bmapFile.c_str());
 	//printf("E map driver : %s\n",(*it).geometryFile);
 	//printf("E map file : %s\n",(*it).geometryFile);
+	break;
+
+      case _SCREEN:
 	break;
 
       case _CSAMPLER:
@@ -1281,6 +1295,14 @@ void set_value(std::string name, double value )
   if(name == "sigmaY" ) { options.sigmaY = value; return; }
   if(name == "sigmaXp" ) { options.sigmaXp = value; return; }
   if(name == "sigmaYp" ) { options.sigmaYp = value; return; }
+
+  // options for beam distrType="square" or distrType="circle"
+  if(name == "envelopeX" ) { options.envelopeX = value; return; }
+  if(name == "envelopeY" ) { options.envelopeY = value; return; }
+  if(name == "envelopeXp" ) { options.envelopeXp = value; return; }
+  if(name == "envelopeYp" ) { options.envelopeYp = value; return; }
+  if(name == "envelopeT" ) { options.envelopeT = value; return; }
+  if(name == "envelopeE" ) { options.envelopeE = value; return; }
 
   // options for beam distrType="gaussmatrix"
   if(name == "sigma11" ) { options.sigma11 = value; return; }
@@ -1416,10 +1438,13 @@ void set_value(std::string name, double value )
 
   if(name == "prodCutPhotons" ) { options.prodCutPhotons = value; return; }
   if(name == "prodCutPhotonsP" ) { options.prodCutPhotonsP = value; return; }
+  if(name == "prodCutPhotonsA" ) { options.prodCutPhotonsA = value; return; }
   if(name == "prodCutElectrons" ) { options.prodCutElectrons = value; return; }
   if(name == "prodCutElectronsP" ) { options.prodCutElectronsP = value; return; }
+  if(name == "prodCutElectronsA" ) { options.prodCutElectronsA = value; return; }
   if(name == "prodCutPositrons" ) { options.prodCutPositrons = value; return; }
   if(name == "prodCutPositronsP" ) { options.prodCutPositronsP = value; return; }
+  if(name == "prodCutPositronsA" ) { options.prodCutPositronsA = value; return; }
 
   // twiss parameters
   if(name == "betx" ) { options.betx = value; return; }
@@ -1467,9 +1492,7 @@ void set_value(std::string name, std::string value )
   //
   if(name == "particle") { options.particleName = value; return; }
   if(name == "distrType" ) { options.distribType = value; return; }
-  //  if(name == "distrFile" ) { options.distribFile = sBDSIMHOME+value; return; }  
-  if(name == "distrFile" ) { options.distribFile = value; return; }  
-
+  if(name == "distrFile" ) { options.distribFile = getEnv("BDSIMPATH")+value; return; }  
 
   //
   // string options for the "option" command

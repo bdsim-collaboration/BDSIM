@@ -10,8 +10,6 @@
 #include <string>
 #include <cstring>
 
-using namespace std;
-
 extern struct Parameters params;
 extern struct symtab *symtab;
 extern int yyparse();
@@ -20,16 +18,24 @@ extern FILE *yyin;
 extern char* yyfilename;
 
 extern int add_func(const char *name, double (*func)(double));
-extern int add_var(const char *name, double val,int is_rserved = 0);
+extern int add_var(const char *name, double val,int is_reserved = 0);
 
 // aux. parser lists - to clear
-extern list<struct Element> element_list;
-extern list<struct Element> tmp_list;
+extern std::list<struct Element> element_list;
+extern std::list<struct Element> tmp_list;
 
 void init()
 {
 
   symtab = new struct symtab[NSYMS];
+  // member initialisation as members are used to check if symtab is already assigned and its type.
+  for(struct symtab* sp=symtab;sp<&symtab[NSYMS];sp++) {
+    sp->is_reserved=0;
+    sp->type=0;
+    sp->name=NULL;
+    sp->funcptr=NULL;
+    sp->value=0.0;
+  }
 
   // embedded arithmetical functions
   add_func("sqrt",sqrt);
@@ -78,7 +84,7 @@ void init()
 
   // Default Values for Options (the rest are set to 0)
 
-  options.maximumTrackingTime = 1e-4;
+  options.maximumTrackingTime = 0.1;
   options.vacuumPressure = 1e-12;
   options.planckScatterFe = 1.0;
   options.doPlanckScattering=0;
@@ -110,6 +116,9 @@ void init()
   options.prodCutPositronsP=7e-4;
   options.prodCutElectronsP=7e-4;
   options.prodCutPhotonsP=7e-4;
+  options.prodCutPositronsA=1;
+  options.prodCutElectronsA=1;
+  options.prodCutPhotonsA=1;
 
   //Beam loss monitors geometry
   options.blmRad = 0.05;
@@ -139,7 +148,7 @@ int gmad_parser(FILE *f)
   yyin=f; 
 
 #ifdef DEBUG
-  cout << "gmad_parser> beginning to parse file" << endl;
+  std::cout << "gmad_parser> beginning to parse file" << std::endl;
 #endif
 
   while(!feof(yyin))
@@ -148,13 +157,13 @@ int gmad_parser(FILE *f)
     }
 
 #ifdef DEBUG
-  cout << "gmad_parser> finished parsing file" << endl;
+  std::cout << "gmad_parser> finished to parsing file" << std::endl;
 #endif
 
   // clear temporary stuff
 
 #ifdef DEBUG
-  cout << "gmad_parser> clearing temporary lists" << endl;
+  std::cout << "gmad_parser> clearing temporary lists" << std::endl;
 #endif
   element_list.clear();
   tmp_list.clear();
@@ -163,16 +172,18 @@ int gmad_parser(FILE *f)
   symtab = 0;
 
 #ifdef DEBUG
-  cout << "gmad_parser> finished" << endl;
+  std::cout << "gmad_parser> finished" << std::endl;
 #endif
 
-  return fclose(f);
+  fclose(f);
+
+  return 0;
 }
 
-int gmad_parser(string name)
+int gmad_parser(std::string name)
 {
 #ifdef DEBUG
-  cout << "gmad_parser> opening file" << endl;
+  std::cout << "gmad_parser> opening file" << std::endl;
 #endif
   FILE *f = fopen(name.c_str(),"r");
 
@@ -181,7 +192,9 @@ int gmad_parser(string name)
   yyfilename = new char[MAXFILENAMELENGTH];
   strncpy(yyfilename,name.c_str(),MAXFILENAMELENGTH);
 
-  return gmad_parser(f);
+  gmad_parser(f);
+
+  return 0;
 }
 
 

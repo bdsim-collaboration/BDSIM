@@ -45,6 +45,8 @@ enum {
   _RBEND=17,
   _ATOM = 18,
   _SEQUENCE = 19,
+
+  _SCREEN = 21,
     
   _VKICK=31,
   _HKICK=32,
@@ -65,22 +67,6 @@ const char *typestr(int type);
 enum {
   _GMAD = 0,
   _MOKKA = 1
-};
-
-enum {
-  _REFERENCE = 0,
-  _GAUSSIAN = 1,
-  _RING = 2,
-  _SQUARE = 3,
-  _CIRCLE = 4,
-  _GUINEAPIG_BUNCH = 5,
-  _GUINEAPIG_PAIRS = 6,
-  _GUINEAPIG_SLAC = 7,
-  _CAIN = 8,
-  _ESHELL = 9,
-  _GAUSSIAN_TWISS = 10,
-  _GAUSSIAN_MATRIX = 11,
-  _UDEF = 32
 };
 
 // options passed with option and beam command
@@ -117,6 +103,9 @@ struct Options {
 
   // for the gaussian beam distribution
   double sigmaX, sigmaXp, sigmaY, sigmaYp;
+
+  // for the circle/square beam distribution
+  double envelopeX, envelopeXp, envelopeY, envelopeYp, envelopeT, envelopeE;
 
   // for the gaussian sigma matrix distribution
   double sigma11, sigma12, sigma13, sigma14, sigma15, sigma16;
@@ -199,13 +188,16 @@ struct Options {
   
   double   prodCutPhotons;
   double   prodCutPhotonsP;
+  double   prodCutPhotonsA;
   double   prodCutElectrons;
   double   prodCutElectronsP;
+  double   prodCutElectronsA;
   double   prodCutPositrons;
   double   prodCutPositronsP;
+  double   prodCutPositronsA;
 
   // Tracking related parameters 
-  double    maximumTrackingTime;
+  double   maximumTrackingTime; // maximum tracking time per volume [s]
   double   deltaChord;
   double   chordStepMinimum;
   double   deltaIntersection;
@@ -245,7 +237,7 @@ struct Element {
   const char * name;
 
   double inR; double bpRad; // inner radius and beam pipe radius of muon spoiler  
-  double l,ks,k0,k1,k2,k3,angle,beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut;
+  double l,ks,k0,k1,k2,k3,angle,beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut, tscint;
   double xdir, ydir, zdir, waveLength; // for laser wire and 3d transforms
   double flatlength,taperlength; //for realistic collimators
   double gradient; // for rf cavities
@@ -301,6 +293,8 @@ struct Parameters {
   double k2; int k2set;   // sextupole
   double k3; int k3set;   // octupole
   double ks; int ksset;   // solenoid
+
+  double tscint; int tscintset; //thickness of scintillating part of screen
 
   std::list<double> knl;           // multipole expansion coefficients
   std::list<double> ksl;           // skew multipole expansion
@@ -388,6 +382,7 @@ struct Parameters {
 
     l=0; lset = 0;
     r = 0; rset = 0;
+    tscint = 0.0003; tscintset = 0;
 
     // materials' parameters
     A = 0; Aset = 0; //g*mol^-1

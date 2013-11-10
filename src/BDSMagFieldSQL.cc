@@ -171,7 +171,7 @@ void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
 	LocalB.setY(fieldBrr_r*(RLocalR.y()));
 	LocalB.setZ(fieldBzz);
 	// Now rotate to give BField on Global Reference Frame
-	LocalB.transform(rotation.inverse());
+	LocalB.transform(Rotation().inverse());
       }
     //LocalB=G4ThreeVector(0.,0.,0.); //turn Bfield from Solenoid off
   }
@@ -258,6 +258,6 @@ void BDSMagFieldSQL::Prepare(G4VPhysicalVolume *referenceVolume)
       itsBr_over_r.push_back(0.5 * itsdBz_by_dz[itsdBz_by_dz.size()-1] );
     }
   
-  SetOriginRotation(*(referenceVolume->GetFrameRotation()));
+  SetOriginRotation(*referenceVolume->GetFrameRotation());
   SetOriginTranslation(referenceVolume->GetFrameTranslation());
 }

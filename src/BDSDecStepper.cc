@@ -150,7 +150,6 @@ void BDSDecStepper::Stepper( const G4double yInput[],
   G4int i;
   for(i=0;i<nvar;i++) yErr[i]=0;
   AdvanceHelix(yInput,(G4ThreeVector)0,hstep,yOut);
-  return ;
 }
 
 G4double BDSDecStepper::DistChord()   const 

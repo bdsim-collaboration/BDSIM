@@ -33,7 +33,7 @@ extern LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
-extern G4RotationMatrix* RotY90;
+
 //============================================================
 
 BDSLWCalorimeter::BDSLWCalorimeter (G4String& aName,G4double aLength,
@@ -77,6 +77,7 @@ void BDSLWCalorimeter::LWCalorimeterLogicalVolume()
 #ifndef NOUSERLIMITS
       itsOuterUserLimits =new G4UserLimits();
       itsOuterUserLimits->SetMaxAllowedStep(itsLength);
+      itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
       itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
 
@@ -100,10 +101,9 @@ void BDSLWCalorimeter::BuildCal(G4double aLength)
 					    BDSMaterials::Instance()->GetMaterial("LeadTungstate"),
 					    itsName+"_cal_logical");
   G4RotationMatrix* Rot=NULL;
-  if(itsAngle!=0)Rot=RotY90;
+  if(itsAngle!=0)Rot=BDSGlobalConstants::Instance()->RotY90();
  
-  /* G4VPhysicalVolume* PhysiLWCal = */
-  new G4PVPlacement(
+  itsPhysiLWCal = new G4PVPlacement(
 		    Rot,                     // rotation
 		    G4ThreeVector(BDSGlobalConstants::Instance()->GetLWCalOffset(),0.,0.),
 		    itsLWCalLogicalVolume,   // its logical volume
@@ -155,7 +155,7 @@ void BDSLWCalorimeter::BuildBeampipe(G4double aLength)
   
   
    G4RotationMatrix* Rot=NULL;
-   if(itsAngle!=0)Rot=RotY90;
+   if(itsAngle!=0)Rot=BDSGlobalConstants::Instance()->RotY90();
   
    itsPhysiComp = new G4PVPlacement(
 		       Rot,                       // rotation
@@ -175,10 +175,12 @@ void BDSLWCalorimeter::BuildBeampipe(G4double aLength)
 		      BDSGlobalConstants::Instance()->GetThresholdCutCharged());
    
    itsBeampipeUserLimits->SetMaxAllowedStep(itsLength);
+   itsBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
    
    itsBeampipeLogicalVolume->SetUserLimits(itsBeampipeUserLimits);
    
    itsInnerBeampipeUserLimits->SetMaxAllowedStep(itsLength);
+   itsInnerBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
    
    itsInnerBPLogicalVolume->SetUserLimits(itsInnerBeampipeUserLimits);
 #endif
@@ -205,7 +207,4 @@ G4VisAttributes* BDSLWCalorimeter::SetVisAttributes()
 BDSLWCalorimeter::~BDSLWCalorimeter()
 {
   delete itsVisAttributes;
-  //  delete itsBPTube;
-  //  delete itsLWCal;
-  //  delete itsBeampipeLogicalVolume;
 }

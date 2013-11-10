@@ -28,7 +28,12 @@ BDSScoreWriter::~BDSScoreWriter() {
 	;
 }
 
-void BDSScoreWriter::DumpQuantityToFile(const G4String & psName, G4String & fileName, const G4String & option) {
+#if G4VERSION_NUMBER < 960
+void BDSScoreWriter::DumpQuantityToFile(G4String & psName, G4String & /*fileName*/, G4String & option)
+#else
+void BDSScoreWriter::DumpQuantityToFile(const G4String & psName, const G4String & /*fileName*/, const G4String & option)
+#endif
+{
   time_t rawtime;
   struct tm * timeinfo;
   time ( &rawtime );
@@ -37,9 +42,10 @@ void BDSScoreWriter::DumpQuantityToFile(const G4String & psName, G4String & file
   strftime (fStartTime,50,"%Y-%m-%d-%H-%M-%S",timeinfo);
   std::ostringstream s;
   s << fFireAngle;
-  fileName = fMaterial + "_" + s.str() + "_score_"+ fStartTime + ".root";
+  // use own file name
+  G4String fName = fMaterial + "_" + s.str() + "_score_"+ fStartTime + ".root";
   
-  TFile* rootFile = new TFile(fileName,"RECREATE");
+  TFile* rootFile = new TFile(fName,"RECREATE");
   if(!rootFile) {
     G4cout << " HistoManager::book :" 
 	   << " problem creating the ROOT TFile "

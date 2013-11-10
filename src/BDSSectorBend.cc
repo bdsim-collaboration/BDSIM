@@ -21,8 +21,6 @@ typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
 
-extern G4RotationMatrix* RotY90;
-extern G4RotationMatrix* RotYM90;
 
 //============================================================
 
@@ -242,8 +240,8 @@ void BDSSectorBend::BuildBPFieldAndStepper()
 
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
   
-  itsStepper = new myQuadStepper(itsEqRhs); // note the - sign...
-  itsStepper->SetBField(-itsBField);
+  itsStepper = new myQuadStepper(itsEqRhs);
+  itsStepper->SetBField(-itsBField); // note the - sign...
   itsStepper->SetBGrad(itsBGrad);
 }
 
@@ -362,14 +360,14 @@ void BDSSectorBend::BuildSBBeampipe()
     new G4IntersectionSolid(itsName+"_pipe_outer",
 			    pipeTubsEnv,
  			    itsMarkerSolidVolume,
-			    RotYM90,
+			    BDSGlobalConstants::Instance()->RotYM90(),
 			    (G4ThreeVector)0);
   
   G4IntersectionSolid *pipeInner =
     new G4IntersectionSolid(itsName+"_pipe_inner",
 			    pipeInnerEnv, 
  			    itsMarkerSolidVolume,
-			    RotYM90,
+			    BDSGlobalConstants::Instance()->RotYM90(),
 			    (G4ThreeVector)0);
 
   itsBeampipeLogicalVolume=	
@@ -385,7 +383,7 @@ void BDSSectorBend::BuildSBBeampipe()
   G4VPhysicalVolume* PhysiInner;
   PhysiInner = 
     new G4PVPlacement(
-		      RotY90,		       // rotation
+		      BDSGlobalConstants::Instance()->RotY90(),		       // rotation
 		      (G4ThreeVector)0,	               // at (0,0,0)
 		      itsInnerBPLogicalVolume, // its logical volume
 		      itsName+"_InnerBmp",     // its name
@@ -398,7 +396,7 @@ void BDSSectorBend::BuildSBBeampipe()
   G4VPhysicalVolume* PhysiComp;
   PhysiComp =
     new G4PVPlacement(
-		      RotY90,		        // rotation
+		      BDSGlobalConstants::Instance()->RotY90(),		        // rotation
 		      (G4ThreeVector)0,	                // at (0,0,0)
 		      itsBeampipeLogicalVolume, // its logical volume
 		      itsName+"_bmp",	        // its name
@@ -411,11 +409,13 @@ void BDSSectorBend::BuildSBBeampipe()
   //
   // set user limits for stepping, tracking and propagation in B field
   //
+#ifndef NOUSERLIMITS
   itsBeampipeUserLimits =
     new G4UserLimits("beampipe cuts",DBL_MAX,DBL_MAX,DBL_MAX,
   		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   G4double maxStepFactor=0.5;
   itsBeampipeUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
+  itsBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   itsBeampipeLogicalVolume->SetUserLimits(itsBeampipeUserLimits);
   
   G4double maxStepFactorIn=0.5;
@@ -423,7 +423,9 @@ void BDSSectorBend::BuildSBBeampipe()
     new G4UserLimits("inner beampipe cuts",DBL_MAX,DBL_MAX,DBL_MAX,
   		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   itsInnerBeampipeUserLimits->SetMaxAllowedStep(itsLength*maxStepFactorIn);
+  itsInnerBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   itsInnerBPLogicalVolume->SetUserLimits(itsInnerBeampipeUserLimits);
+#endif
 
   //
   // set magnetic field inside beampipe
@@ -497,7 +499,7 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
     new G4IntersectionSolid(itsName+"_solid",
 			    magTubsEnv,
 			    itsMarkerSolidVolume,
-			    RotYM90,
+			    BDSGlobalConstants::Instance()->RotYM90(),
 			    (G4ThreeVector)0); 
 
   if(OuterMaterialIsVacuum)
@@ -517,7 +519,7 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 
   itsPhysiComp =
     new G4PVPlacement(
-                      RotY90,                 // rotation
+                      BDSGlobalConstants::Instance()->RotY90(),                 // rotation
                       (G4ThreeVector)0,                      // at (0,0,0)
                       itsOuterLogicalVolume,  // its logical volume
                       itsName+"_solid",       // its name
@@ -525,13 +527,17 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
                       false,                  // no boolean operation
                       0, BDSGlobalConstants::Instance()->GetCheckOverlaps());                     // copy number
 
-SetMultiplePhysicalVolumes(itsPhysiComp);
- G4double  maxStepFactor=0.5;
+  SetMultiplePhysicalVolumes(itsPhysiComp);
+  G4double  maxStepFactor=0.5;
+
+#ifndef NOUSERLIMITS
   itsOuterUserLimits =
     new G4UserLimits("multipole cut",DBL_MAX,DBL_MAX,DBL_MAX,
                      BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   itsOuterUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
+  itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
+#endif
 }
 
 BDSSectorBend::~BDSSectorBend()

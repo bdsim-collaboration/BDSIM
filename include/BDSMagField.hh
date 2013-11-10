@@ -3,6 +3,7 @@
 */
 
 #include "G4MagneticField.hh"
+#include "G4CachedMagneticField.hh"
 #include "globals.hh"
 #include "G4RotationMatrix.hh"
 #include "G4VPhysicalVolume.hh"
@@ -29,6 +30,7 @@ public:
 
   // aux members
 
+  void SetOriginRotation(G4RotationMatrix *rot);
   void SetOriginRotation(G4RotationMatrix rot);
   void SetOriginTranslation(G4ThreeVector trans);
 
@@ -37,8 +39,12 @@ public:
   virtual G4bool GetHasUniformField();
   virtual G4bool GetHasFieldMap();
 
-  G4RotationMatrix rotation;
+  G4RotationMatrix Rotation() const;
   G4ThreeVector translation;
+
+private:
+  G4RotationMatrix* rotation;
+  
   
 };
 

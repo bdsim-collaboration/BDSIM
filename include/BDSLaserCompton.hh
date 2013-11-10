@@ -80,8 +80,8 @@ protected:
   
 private:
   
+  // assignment and copy constructor not implemented nor used
   BDSLaserCompton & operator=(const BDSLaserCompton &right);
-  
   BDSLaserCompton(const BDSLaserCompton&);
 
   //  const std::vector<G4double>* secondaryEnergyCuts;

@@ -5,12 +5,12 @@
 #include "globals.hh"
 #include "BDSField.hh"
 
-BDSField::BDSField()
+BDSField::BDSField():rotation(NULL)
 {
 }
 
 BDSField::~BDSField()
-{ 
+{
 }
 
 G4bool   BDSField::DoesFieldChangeEnergy() const
@@ -40,7 +40,7 @@ void BDSField::Prepare(G4VPhysicalVolume*)
   // default - do nothing
 }
 
-void BDSField::SetOriginRotation(G4RotationMatrix rot)
+void BDSField::SetOriginRotation(G4RotationMatrix* rot)
 {
   rotation = rot;
 }
@@ -48,4 +48,8 @@ void BDSField::SetOriginRotation(G4RotationMatrix rot)
 void BDSField::SetOriginTranslation(G4ThreeVector trans)
 {
   translation = trans;
+}
+
+G4RotationMatrix BDSField::Rotation() const{
+  return *rotation;
 }

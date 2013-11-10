@@ -57,8 +57,8 @@ protected:
 
 private:
 
+  // assignment and copy constructor not implemented nor used
   BDSContinuousSR & operator=(const BDSContinuousSR &right);
-     
   BDSContinuousSR(const BDSContinuousSR&);
 
   G4double nExpConst;

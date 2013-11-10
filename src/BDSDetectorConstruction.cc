@@ -29,6 +29,7 @@
 #include "G4GeometryManager.hh"
 #include "G4Region.hh"
 #include "G4ProductionCuts.hh"
+#include "G4LogicalVolumeStore.hh"
 
 #include "G4Tubs.hh"
 #include "G4Box.hh"
@@ -57,7 +58,6 @@
 #include "BDSEnergyCounterSD.hh"
 
 // elements
-//#include "BDSBeamPipe.hh"
 #include "BDSDrift.hh"
 #include "BDSPCLDrift.hh"
 #include "BDSSectorBend.hh"
@@ -65,7 +65,6 @@
 #include "BDSKicker.hh"
 #include "BDSQuadrupole.hh"
 #include "BDSSextupole.hh"
-//#include "BDSSkewSextupole.hh"
 #include "BDSOctupole.hh"
 #include "BDSDecapole.hh"
 #include "BDSTMultipole.hh"
@@ -81,20 +80,14 @@
 #include "BDSElement.hh"
 #include "BDSComponentOffset.hh"
 #include "BDSCollimator.hh"
-//#include "BDSRealisticCollimator.hh"
 // output interface
 #include "BDSOutput.hh"
 #include "BDSComponentFactory.hh"
 
-//#include "BDSMultipoleOuterMagField.hh"
 #include "G4MagneticField.hh"
 
 // GMAD interface
-#include "parser/gmad.h"
 #include "ggmad.hh"
-
-// GDML interface
-#include "BDSGeometryGDML.hh"
 
 #include "G4VSampler.hh"
 #include "G4GeometrySampler.hh"
@@ -159,34 +152,31 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
   solidWorld(NULL),logicWorld(NULL),physiWorld(NULL),
   magField(NULL),BDSUserLimits(NULL),BDSSensitiveDetector(NULL),
-  itsIStore(NULL)
-{
-
+  itsIStore(NULL),_globalRotation(NULL)
+{  
   verbose    = BDSExecOptions::Instance()->GetVerbose();
   outline    = BDSExecOptions::Instance()->GetOutline();
   gflash     = BDSExecOptions::Instance()->GetGFlash();
   gflashemax = BDSExecOptions::Instance()->GetGFlashEMax();
   gflashemin = BDSExecOptions::Instance()->GetGFlashEMin();
   
-  //initialize world siye vector
+  //initialize world size vector
   itsWorldSize.push_back(0);
   itsWorldSize.push_back(1);
   itsWorldSize.push_back(2);
+
+  //initialize global rotation matrix
+  _globalRotation = new G4RotationMatrix();
 
 // create commands for interactive definition of the beamline  
   G4double pi_ov_2 = asin(1.);
 
   RotY90->rotateY(pi_ov_2);
-
   RotYM90->rotateY(-pi_ov_2);
-
   RotX90->rotateX(pi_ov_2);
-
   RotXM90->rotateX(-pi_ov_2);
-
   RotYM90X90->rotateY(-pi_ov_2);
   RotYM90X90->rotateX( pi_ov_2);
-
   RotYM90XM90->rotateY(-pi_ov_2);
   RotYM90XM90->rotateX(-pi_ov_2);
 
@@ -204,6 +194,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   theParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*GeV);
   theParticleBoundsVac->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),0*GeV);
 
+#ifdef DEBUG
   G4cout << __METHOD_NAME__ << "theParticleBounds - min E - electron: " 
 	 << theParticleBounds->GetMinEneToParametrise(*G4Electron::ElectronDefinition())/GeV<< " GeV" << G4endl;
   G4cout << __METHOD_NAME__ << "theParticleBounds - max E - electron: " 
@@ -216,6 +207,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
 	 << theParticleBounds->GetMaxEneToParametrise(*G4Positron::PositronDefinition())/GeV<< G4endl;
   G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - positron: " 
 	 << theParticleBounds->GetEneToKill(*G4Positron::PositronDefinition())/GeV<< G4endl;
+#endif
 
   theHitMaker          = new GFlashHitMaker();                    // Makes the EnergieSpots 
 
@@ -240,18 +232,20 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 
 
   if (verbose || debug) G4cout << "-->starting BDS construction \n"<<G4endl;
-
+  //Add the input sampler to the list of output sampler names
+  //  bdsOutput->SampName.push_back((G4String)"input");
+  //construct bds
   return ConstructBDS(beamline_list);
 }
 
 
 G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& beamline_list)
 {
-G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
   //
   // set default output formats:
   //
   G4cout.precision(10);
+
   
   
   //
@@ -377,9 +371,13 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
 
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
   for(it = beamline_list.begin();it!=beamline_list.end();it++){
+#ifdef DEBUG
     G4cout << "BDSDetectorConstruction creating component..." << G4endl;
+#endif
     BDSAcceleratorComponent* temp = theComponentFactory->createComponent(it, beamline_list);
+#ifdef DEBUG
     G4cout << "pushing onto back of beamline..." << G4endl;
+#endif
     if(temp){
       BDSBeamline::Instance()->addComponent(temp);
       //For the outline file...
@@ -387,7 +385,9 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
       BDSBeamline::Instance()->currentItem()->SetK2((*it).k2);
       BDSBeamline::Instance()->currentItem()->SetK3((*it).k3);
     }
+#ifdef DEBUG
     G4cout << "done." << G4endl;
+#endif
   }
   delete theComponentFactory;
   theComponentFactory = NULL;
@@ -533,7 +533,9 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
 #endif
 
 
+#ifdef DEBUG
   G4cout<<"Creating regions..."<<G4endl;
+#endif
   
   precisionRegion = new G4Region("precisionRegion");
    
@@ -552,6 +554,7 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
 #ifndef NOUSERLIMITS
   precisionRegion->SetUserLimits(WorldUserLimits);
 #endif
+
   // world
 
   physiWorld = new G4PVPlacement((G4RotationMatrix*)0,		// no rotation
@@ -597,7 +600,6 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
   localY = G4ThreeVector(0.,1.,0.);
   localZ = G4ThreeVector(0.,0.,1.);
   
-  G4RotationMatrix globalRotation;
   
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     { 
@@ -626,15 +628,15 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
 	  rlast(1) += BDSBeamline::Instance()->currentItem()->GetYOffset(); 
 	  rlast(2) += BDSBeamline::Instance()->currentItem()->GetZOffset(); 
 
-	  globalRotation.rotate(psi,localZ);
+	  _globalRotation->rotate(psi,localZ);
 	  localX.rotate(psi,localZ);
 	  localY.rotate(psi,localZ);
 
-	  globalRotation.rotate(phi,localY);
+	  _globalRotation->rotate(phi,localY);
 	  localX.rotate(phi,localY);
 	  localZ.rotate(phi,localY);
 	  
-	  globalRotation.rotate(theta,localX);
+	  _globalRotation->rotate(theta,localX);
 	  localY.rotate(theta,localX);
 	  localZ.rotate(theta,localX);
 	  	  	  
@@ -647,7 +649,7 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
       // tilted bends influence reference frame, otherwise just local tilt
       if(BDSBeamline::Instance()->currentItem()->GetType() == "sbend" || BDSBeamline::Instance()->currentItem()->GetType() == "rbend" )
 	{
-	  globalRotation.rotate(tilt,localZ);
+	  _globalRotation->rotate(tilt,localZ);
 	  localX.rotate(tilt,localZ);
 	  localY.rotate(tilt,localZ);
 	}
@@ -688,7 +690,7 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
 	}
 
       // rotate to the previous reference frame
-      rotateComponent->transform(globalRotation);
+      rotateComponent->transform(*_globalRotation);
 
       rotateComponent->invert();
 
@@ -698,12 +700,12 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
       // bends transform the coordinate system
       if( BDSBeamline::Instance()->currentItem()->GetType() == "sbend" || BDSBeamline::Instance()->currentItem()->GetType() == "rbend")
 	{
-	  globalRotation.rotate(angle,localY);
+	  _globalRotation->rotate(angle,localY);
 	  localX.rotate(angle,localY);
 	  localZ.rotate(angle,localY);
 	  
 	  
-	  globalRotation.rotate(theta,localX);
+	  _globalRotation->rotate(theta,localX);
 	  localY.rotate(theta,localX);
 	  localZ.rotate(theta,localX);
 	  
@@ -779,14 +781,18 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
 		if(gflash){
 		  if((MultipleSensVols.at(i)->GetRegion() != precisionRegion) && (BDSBeamline::Instance()->currentItem()->GetType()==_ELEMENT)){//If not in the precision region....
 		    //		    if(MultipleSensVols[i]->GetMaterial()->GetState()!=kStateGas){ //If the region material state is not gas, associate with a parameterisation
+#ifdef DEBUG
 		    G4cout << "...adding " << MultipleSensVols[i]->GetName() << " to gFlashRegion" << G4endl;
-		    /**********************************************                                                                                                             *          
-		     * Initialise shower model                                                                                                                                  *        
+#endif
+		    /**********************************************                                                                                                                       
+		     * Initialise shower model                                                                                                                                          
 		     ***********************************************/
 		    G4String rname = "gFlashRegion_" + MultipleSensVols[i]->GetName();
 		    gFlashRegion.push_back(new G4Region(rname.c_str()));
 		    G4String mname = "fastShowerModel" + rname;
+#ifdef DEBUG
 		    G4cout << "...making parameterisation..." << G4endl;
+#endif
 		    theFastShowerModel.push_back(new BDSShowerModel(mname.c_str(),gFlashRegion.back()));
 		    theParameterisation.push_back(new GFlashHomoShowerParameterisation(BDSMaterials::Instance()->GetMaterial(MultipleSensVols[i]->GetMaterial()->GetName().c_str()))); 
 		    theFastShowerModel.back()->SetParameterisation(*theParameterisation.back());
@@ -873,7 +879,7 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
 	BDSBeamline::Instance()->currentItem()->AlignComponent(//TargetPos,
 				 rlast,
 				 rotateComponent,
-				 globalRotation,
+				 *_globalRotation,
 				 rtot,
 				 rlast,
 				 localX,
@@ -882,10 +888,10 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
 
 #ifdef DEBUG
 	G4cout<<"Placing PHYSICAL COMPONENT..."<< G4endl;
-#endif	
-
 	G4cout << "BDSDetectorConstruction : rotateComponent = " << *rotateComponent << G4endl;
 	G4cout << "BDSDetectorConstruction : TargetPos        = " << TargetPos << G4endl;
+#endif	
+
 	G4PVPlacement* PhysiComponentPlace = 
 	  new G4PVPlacement(
 			    rotateComponent,  // its rotation
@@ -911,7 +917,7 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
 #ifdef DEBUG 
           G4cout << "Setting new transform" <<G4endl;
 #endif
-	  G4AffineTransform tf(globalRotation,TargetPos-G4ThreeVector(0,0,length/2));
+	  G4AffineTransform tf(*_globalRotation,TargetPos-G4ThreeVector(0,0,length/2));
 	  BDSGlobalConstants::Instance()->SetRefTransform(tf);
         }
 
@@ -928,11 +934,15 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
 	
       }
     }
-   // construct tunnel
+
+  // construct tunnel
   for(it = beamline_list.begin();it!=beamline_list.end();it++)
     {
+      
       if((*it).type==_TUNNEL ) {
+#ifdef DEBUG
 	G4cout<<"BUILDING TUNNEL : "<<(*it).l<<"  "<<(*it).name<<G4endl;
+#endif
 	
 	G4String gFormat="",  GFile="";
 	G4String geometry = (*it).geometryFile;
@@ -947,28 +957,24 @@ G4cout << "DEBUG_DB: constructor with beamline_list element." << G4endl;
 	
 	else {
 	  gFormat = geometry.substr(0,pos);
-	  GFile = geometry.substr(pos+1,geometry.length() - pos);
+	  GFile = geometry.substr(pos+1,geometry.length() - pos); 
 	}
 	
+#ifdef DEBUG
 	G4cout<<"placing components\n: geometry format - "<<gFormat<<G4endl<<
 	  "file - "<<GFile<<G4endl;
-	
-	GGmadDriver *ggmad;
-	BDSGeometryGDML *gGDML;
+#endif
 	
 	if(gFormat=="gmad") {
-	  G4cout << "gmad geometry description: Loading..." << G4endl;
-	  ggmad = new GGmadDriver(GFile);
-	  ggmad->Construct(logicWorld);
-	} else if(gFormat=="gdml") {
-	  G4cout << "GDML geometry description: Loading..." << G4endl;
-	  gGDML = new BDSGeometryGDML(GFile);
-	  gGDML->Construct(logicWorld);
-	} else  G4cerr<< "Tunnel won't be build! Incorrect Geometry format:  " << gFormat << G4endl;
+	 
+	  GGmadDriver ggmad(GFile);
+	  ggmad.Construct(logicWorld);
+	  
+	} else  G4cerr<<"Tunnel won't be build! "<<endl;
       }
       
     }
-
+  
   // free the parser list
   beamline_list.clear();
 
@@ -1018,6 +1024,8 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
 
   delete precisionRegion;
   gFlashRegion.clear();
+
+  delete _globalRotation;
 }
 
 //=================================================================

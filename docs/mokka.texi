@@ -253,6 +253,15 @@ Variable type: @code{DOUBLE(10,3)}
 
       These are optional parameters. They can be used to apply a uniform field to any volume, with default units of Tesla. Note that if there is a solenoid field present throughout the enitre @code{element} then this uniform field will act in addition to the solenoid field.
 
+
+@item @code{APPROXIMATIONREGION} 
+
+
+Variable type: @code{INTEGER(11)}
+
+This optional parameter, when set to @code{1}, assigns the colume to the approximation region, which has its own
+user defined electromagnetic production cuts (see @ref{Physics}, @ref{Physical elements}). 
+
 @end itemize
 
 

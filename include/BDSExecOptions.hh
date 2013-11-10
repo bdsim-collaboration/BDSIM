@@ -53,6 +53,7 @@ public:
   G4bool   GetVerboseEvent()         {return verboseEvent;}
   G4bool   GetVerboseStep()          {return verboseStep;}
   G4int    GetVerboseEventNumber()   {return verboseEventNumber;}
+  void     SetVerboseEventNumber(G4int val)   {verboseEventNumber = val;}
   G4bool   GetBatch()                {return batch;}
 
   G4int    GetVerboseRunLevel()      {return verboseRunLevel;}

@@ -17,10 +17,6 @@
 #include "G4EllipticalTube.hh"
 #include "G4VSolid.hh"
 #include "G4SubtractionSolid.hh"
-//#include "BDSEnergyCounterSD.hh"
-
-#include "parser/gmad.h" // for type definitions
-
 
 class BDSCollimator :public BDSAcceleratorComponent
 {
@@ -61,7 +57,6 @@ private:
   G4UserLimits* itsSoilTunnelUserLimits;
   G4UserLimits* itsInnerTunnelUserLimits;
                     
-  G4UserLimits* itsUserLimits;
   G4VisAttributes* itsVisAttributes;
   G4Mag_UsualEqRhs* itsEqRhs;
 

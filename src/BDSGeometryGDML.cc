@@ -1,4 +1,4 @@
-//#ifdef USE_GDML
+#ifdef USE_GDML
 #include "BDSGlobalConstants.hh"
 #include "BDSGeometryGDML.hh"
 #include "G4SDManager.hh"
@@ -21,6 +21,7 @@ using namespace std;
 
 extern BDSSamplerSD* BDSSamplerSensDet;
 
+extern G4RotationMatrix* RotY90;
 extern BDSOutput* bdsOutput;
 //extern BDSGlobalConstants* BDSGlobalConstants::Instance();
 
@@ -60,4 +61,4 @@ void BDSGeometryGDML::Construct(G4LogicalVolume *marker){
                     false,
                     0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
 }
-//#endif
+#endif

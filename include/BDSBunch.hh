@@ -5,31 +5,21 @@
 #ifndef BDSBunch_h
 #define BDSBunch_h 
 
-// BDSIM
-#include "parser/gmad.h"
+// GEANT4 types
 #include "globals.hh"
 
-// CLHEP vector
-#include "Randomize.hh"
+// CLHEP
 #include "CLHEP/Matrix/Vector.h" 
 #include "CLHEP/Matrix/SymMatrix.h"
-#include "CLHEP/RandomObjects/RandMultiGauss.h"
+namespace CLHEP {
+  class RandGauss;
+  class RandFlat;
+  class RandMultiGauss;
+}
 
 // C++ 
 #include <fstream>
 #include <list>
-
-// CLHEP < 1.9
-//class RandGauss;
-//class RandFlat;
-
-
-struct Doublet {
-
-  G4String name;
-  G4double unit; // relative to SI units, i.e. mm=0.001 etc.
-
-};
 
 class BDSBunch {
 
@@ -70,6 +60,22 @@ public:
   G4double GetBetaX();
   G4double GetBetaY();
 
+  // get initial bunch distribution parameters in square/circle case 
+  double GetEnvelopeT();  
+  double GetEnvelopeX(); 
+  double GetEnvelopeY(); 
+  double GetEnvelopeXp();
+  double GetEnvelopeYp();
+  double GetEnvelopeE();
+
+  // set initial bunch distribution parameters in square/circle case 
+  void SetEnvelopeX(double); 
+  void SetEnvelopeY(double); 
+  void SetEnvelopeXp(double);
+  void SetEnvelopeYp(double);
+  void SetEnvelopeE(double);
+  void SetEnvelopeT(double);
+
   // set initial bunch distribution parameters in Gaussian case 
   void SetSigmaT(double);  
   void SetSigmaX(double); 
@@ -105,21 +111,29 @@ private:
   int distribType;
 
   // distribution centre
-  G4double X0;
-  G4double Y0;
-  G4double Z0;
+  G4double X0; // (m)
+  G4double Y0; // (m)
+  G4double Z0; // (m)
   G4double T0;
 
-  G4double Xp0;
-  G4double Yp0;
-  G4double Zp0;
+  G4double Xp0; // (rad)
+  G4double Yp0; // (rad)
+  G4double Zp0; // (rad)
+
+  // parameters for square/circle distribution
+  G4double envelopeX; // envelopes for Gaussian bunches (m)
+  G4double envelopeY;
+  G4double envelopeT;
+  G4double envelopeXp; // (rad)
+  G4double envelopeYp; // (rad)
+  G4double envelopeE; 
 
   // parameters for Gaussian distribution
   G4double sigmaX; // sigmas for Gaussian bunches (m)
   G4double sigmaY;
   G4double sigmaT;
-  G4double sigmaXp;
-  G4double sigmaYp;
+  G4double sigmaXp; // (rad)
+  G4double sigmaYp; // (rad)
   
   // parameters for ring distribution
   G4double rMin;
@@ -142,6 +156,11 @@ private:
 
   // energy spread
   G4double energySpread;
+
+  struct Doublet {
+    G4String name;
+    G4double unit; // relative to SI units, i.e. mm=0.001 etc.
+  };
 
   std::list<struct Doublet> fields;
 

@@ -21,12 +21,11 @@
 #include "G4UniformMagField.hh"
 #include "BDSField.hh"
 #include "BDSMagField.hh"
+#include "G4CachedMagneticField.hh"
 #include "BDSXYMagField.hh"
 
 #include "G4EqMagElectricField.hh"
-#include "G4ClassicalRK4.hh"
 #include "BDSRK4Stepper.hh"
-
 
 class BDSElement :public BDSAcceleratorComponent
 {
@@ -67,6 +66,7 @@ private:
 
   BDSField *itsField;
   BDSMagField *itsMagField;
+  G4CachedMagneticField *itsCachedMagField;
   G4UniformMagField *itsUniformMagField;
   G4double itsOuterR;
   // Volume to align incoming beamline on inside the marker volume
