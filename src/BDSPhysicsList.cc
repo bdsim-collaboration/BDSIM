@@ -801,26 +801,14 @@ void BDSPhysicsList::ConstructOptical()
   theRayleighScatteringProcess = new G4OpRayleigh();
   theMieHGScatteringProcess    = new G4OpMieHG();
   theBoundaryProcess           = new G4OpBoundaryProcess();
-  
-  G4cout << "Dumping scintillation physics table." << G4endl;
-  theScintillationProcess->DumpPhysicsTable();
-  G4cout << "Dumping rayleigh scattering physics table." << G4endl;
-  theRayleighScatteringProcess->DumpPhysicsTable();
-  
-  G4cout << "Setting verbose level." << G4endl;
+
   SetVerboseLevel(1);
-  
-  G4cout << "Setting scintillation yield factor." << G4endl;
   theScintillationProcess->SetScintillationYieldFactor(1.);
-  G4cout << "Setting scintillation track secondaries first." << G4endl;
   theScintillationProcess->SetTrackSecondariesFirst(true);
-  
-  G4cout << "Setting birks correction." << G4endl;
   // Use Birks Correction in the Scintillation process
   G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
   theScintillationProcess->AddSaturation(emSaturation);
-  
-  G4cout << "Setting optical surface model." << G4endl;
+
 #if G4VERSIONNUMBER < 960
   G4OpticalSurfaceModel themodel = unified;
   theBoundaryProcess->SetModel(themodel);
@@ -831,7 +819,6 @@ void BDSPhysicsList::ConstructOptical()
     G4ParticleDefinition* particle = theParticleIterator->value();
     G4ProcessManager* pmanager = particle->GetProcessManager();
     G4String particleName = particle->GetParticleName();
-    G4cout << particleName << G4endl;
     if(bCerOn){
       if (theCerenkovProcess->IsApplicable(*particle)) {
 #if G4VERSION_NUMBER > 909
