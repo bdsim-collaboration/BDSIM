@@ -840,7 +840,7 @@ void BDSPhysicsList::ConstructOptical()
       pmanager->AddDiscreteProcess(theRayleighScatteringProcess);
       pmanager->AddDiscreteProcess(theMieHGScatteringProcess);
       bool bOptBoundProcOn=false;
-      if(boptBoundProcOn){
+      if(bOptBoundProcOn){
 	pmanager->AddDiscreteProcess(theBoundaryProcess);
       }
     }
