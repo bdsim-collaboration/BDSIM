@@ -21,6 +21,7 @@ Work in progress.
 
 #include "G4SDManager.hh"
 #include "G4UserLimits.hh"
+#include "G4Version.hh"
 #include "parser/gmad.h"
 #include <map>
 
@@ -297,6 +298,7 @@ void BDSScintillatorScreen::BuildScintillatorScreen()
   if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
     SetSensitiveVolume(itsScintillatorLayerLog);
   } 
+  G4cout << "BDSScintillatorScreen: finished building geometry" << G4endl;
 }
 
 void BDSScintillatorScreen::BuildScintillatorMaterial(){
