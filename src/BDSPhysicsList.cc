@@ -836,10 +836,10 @@ void BDSPhysicsList::ConstructOptical()
     }
     if (particleName == "opticalphoton") {
       G4cout << " AddDiscreteProcess to OpticalPhoton " << G4endl;
-      pmanager->AddDiscreteProcess(theAbsorptionProcess);
-      pmanager->AddDiscreteProcess(theRayleighScatteringProcess);
-      pmanager->AddDiscreteProcess(theMieHGScatteringProcess);
-      pmanager->AddDiscreteProcess(theBoundaryProcess);
+      //      pmanager->AddDiscreteProcess(theAbsorptionProcess);
+      //      pmanager->AddDiscreteProcess(theRayleighScatteringProcess);
+      //      pmanager->AddDiscreteProcess(theMieHGScatteringProcess);
+      //      pmanager->AddDiscreteProcess(theBoundaryProcess);
     }
   }
 }
