@@ -790,8 +790,8 @@ void BDSPhysicsList::ConstructOptical()
   bool bCerOn=BDSGlobalConstants::Instance()->GetTurnOnCerenkov();
   if(bCerOn){
     theCerenkovProcess = new G4Cerenkov("Cerenkov");
-    theCerenkovProcess->SetMaxNumPhotonsPerStep(20);
-    theCerenkovProcess->SetMaxBetaChangePerStep(10.0);
+    //    theCerenkovProcess->SetMaxNumPhotonsPerStep(20);
+    //    theCerenkovProcess->SetMaxBetaChangePerStep(10.0);
     theCerenkovProcess->SetTrackSecondariesFirst(true);
     theCerenkovProcess->DumpPhysicsTable();
   }
