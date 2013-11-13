@@ -1,0 +1,1327 @@
+*
+*
+*       Fluka Element DataBase
+*        MATERIAL DEFINITIONS
+*
+*
+* *******************************
+*
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+...
+* to overwrite a pre-defined FLUKA material, you must specify in WHAT(4)
+* its original number, otherwise its name will be referred to the lower
+* matching number in your material list
+*
+* *******************************
+*
+* PLEASE READ CAREFULLY
+*
+*  Keep this file clean. Don't add here compounds related to any material budget
+*
+*  Keep it commented, expecially if you use non standard materials (differerent
+*  density, isotope and neutron x-section). Write a small comment of where you get
+*  those parameters so that future users will be able to understand why that
+*  particular configuration was used.
+*
+*
+*  Avoid to redefine the implicit fluka materials such as:
+*
+*
+*  Fluka name  Fluka number    Common name                 A        Z    Density
+*
+*  - BLCKHOLE         1       Blackhole or External Vacuum   0        0    0
+*  - VACUUM           2       Vacuum or Internal Vacuum      0        0    0
+*  - HYDROGEN         3       Hydrogen                      1.00794   1.   0.0000837
+*  - HELIUM           4       Helium                        4.002602  2.   0.000166
+*  - BERYLLIU         5       Beryllium                     9.012182  4.   1.848
+*  - CARBON           6       Carbon                       12.0107    6.   2.000
+*  - NITROGEN         7       Nitrogen                     14.0067    7.   0.00117
+*  - OXYGEN           8       Oxygen                       15.9994    8.   0.00133
+*  - SODIUM          19       Sodium                       22.989770 11.   0.971
+*  - MAGNESIU         9       Magnesium                    24.3050   12.   1.740
+*  - ALUMINUM        10       Aluminium                    26.981538 13.   2.699
+*  - SILICON         14       Silicon                      28.0855   14.   2.329
+*  - ARGON           20       Argon                        39.948    18.   0.00166
+*  - CALCIUM         21       Calcium                      40.078    20.   1.550
+*  - TITANIUM        24       Titanium                     47.867    22.   4.540
+*  - IRON            11       Iron                         55.845    26.   7.874
+*  - NICKEL          25       Nickel                       58.6934   28.   8.902
+*  - COPPER          12       Copper                       63.546    29.   8.960
+*  - SILVER          13       Silver                      107.8682   47.  10.500
+*  - TIN             22       Tin                         118.710    50.   7.310
+*  - TANTALUM        18       Tantalum                    180.9479   73.  16.654
+*  - TUNGSTEN        23       Tungsten                    183.84     74.  19.300
+*  - GOLD            15       Gold                        196.96655  79.  19.320
+*  - MERCURY         16       Mercury                     200.59     80.  13.546
+*  - LEAD            17       Lead                        207.2      82.  11.350
+*
+*
+* SINGLE ELEMENT MATERIALS
+* ************************
+*
+*
+*
+* Hydrogen
+*
+* Free gas natural Hydrogen at 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         1.0   1.00794 0.0000837                              H_87K
+LOW-MAT        H_87K       1.0      -2.0      87.0                    HYDROGEN
+*
+*
+* Definition of the different types of HELIUM used in the elements
+* TO BE CHECKED
+*
+* Liquid Helium liquid at 4K
+*  - Density @ P = 1 atm, T = 4 K
+*  - Neutron x-sect @ 4K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         2.0  4.002602   0.12206                              LHe_4K
+LOW-MAT       LHe_4K       2.0      -2.0       4.0                    HELIUM
+*
+*
+*
+* Liquid Helium liquid at 1.9K
+*  - Density @ P = 1 atm, T = 1.9 K
+*  - Neutron x-sect @ 4K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         2.0  4.002602    0.1472                              LHe_1.9K
+LOW-MAT     LHe_1.9K       2.0      -2.0       4.0                    HELIUM
+*
+*
+*
+* Saturated Low Pressure HeII Vapour Helium + LHe at 1.9K
+* (25% liquid - 75% saturated vapour)
+* WARNING check density !!!!
+*  - Density @ P = 1 atm, T = 1.9 K
+*  - Neutron x-sect @ 4K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         2.0  4.002602   0.03125                              vHe_1.9K
+LOW-MAT     vHe_1.9K       2.0      -2.0       4.0                    HELIUM
+*
+*
+*
+* Boron
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         5.0               2.340                              BORON
+*
+*
+* Boron @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         5.0               2.340                              B_87K
+LOW-MAT        B_87K       5.0      -2.0      87.0                    BORON
+*
+*
+* Carbon element for composites (implicitly defined... )
+*  - Neutron x-sect of free carbon gas
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+*MATERIAL         6.0                 2.0                              CARBON
+LOW-MAT       CARBON       6.0      -2.0     296.0                    CARBON
+*
+*
+* Carbon
+*  - Density @ NTP
+*  - Neutron x-sect of free carbon gas @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         6.0                 2.0                              C_87K
+LOW-MAT        C_87K       6.0      -2.0      87.0                    CARBON
+*
+*
+* Carbon Carbon composite:
+*  i.e. Phase 1 collimators
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         6.0                1.77                              CARBONCO
+LOW-MAT     CARBONCO       6.0      -3.0     296.0                    CARBON
+*
+*
+* Graphite
+*  i.e. Injection line TEDs
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         6.0                 1.8                              GRAPHITE
+LOW-MAT     GRAPHITE       6.0      -3.0     296.0                    CARBON
+*
+*
+* Graphite R4550 Steinemann carbon
+*  i.e. TCDQ
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         6.0                1.83                              GRAR4550
+LOW-MAT     GRAR4550       6.0      -3.0     296.0                    CARBON
+*
+*
+* Carbon-Composite different densities, no specific name provided
+*  (as of now, June 2012, used in the proposed new TCDQ)
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         6.0                1.85                              CC_1_85
+LOW-MAT      CC_1_85       6.0      -3.0     296.0                    CARBON
+MATERIAL         6.0                1.75                              CC_1_75
+LOW-MAT      CC_1_75       6.0      -3.0     296.0                    CARBON
+* A.Mereghetti, 2012-10-25:
+* the following material is the one actually used in the TCDS in IR6
+* see TCDS2004.pdf and TCDS2005.pdf in fedb/documents/materials/
+MATERIAL         6.0                1.40                              CC_1_40
+LOW-MAT      CC_1_40       6.0      -3.0     296.0                    CARBON
+*
+*
+* Nitrogen (implicitly defined)
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+*MATERIAL         7.0                                                  NITROGEN
+*LOW-MAT     NITROGEN       7.0      -2.0     296.0                    NITROGEN
+*
+* Nitrogen @ 87K
+*  - Density of LN2
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         7.0               0.808                              N_87K
+LOW-MAT        N_87K       7.0      -2.0      87.0                    NITROGEN
+*
+*
+* Oxygen  @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         8.0             0.00133                              O_87K
+LOW-MAT        O_87K       8.0      16.0      87.0                    OXYGEN
+*
+*
+* Fluorine
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         9.0   18.9984  0.001696                              FLUORINE
+*
+*
+* Sodium  @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        11.0               0.971                              Na_87K
+LOW-MAT       Na_87K      11.0      23.0      87.0                    SODIUM
+*
+*
+* Magnesium  @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        12.0               1.740                              Mg_87K
+LOW-MAT       Mg_87K      12.0      -2.0      87.0                    MAGNESIU
+*
+*
+* Aluminium @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        13.0               2.699                              Al_87K
+LOW-MAT       Al_87K      13.0      27.0      87.0                    ALUMINUM
+*
+*
+*
+* Aluminium @ 4K
+*  - Density @ NTP
+*  - Neutron x-sect @ 4K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        13.0               2.699                              Al_4K
+LOW-MAT        Al_4K      13.0      27.0       4.0                    ALUMINUM
+*
+*
+*
+* Silicon @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        14.0               2.329                              Si_87K
+LOW-MAT       Si_87K      14.0      -2.0      87.0                    SILICON
+*
+*
+* Phosphor
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        15.0                1.82                              PHOSPHO
+*
+*
+* Phosphor @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        15.0                1.82                              P_87K
+LOW-MAT        P_87K      15.0      31.0      87.0                    PHOSPHO
+*
+*
+* Sulfur
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        16.0                2.07                              SULFUR
+*
+*
+* Sulfur @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        16.0                2.07                              S_87K
+LOW-MAT        S_87K      16.0      -2.0      87.0                    SULFUR
+*
+*
+* Potassium
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        19.0               0.862                              POTASSIU
+*
+*
+* Potassium @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        19.0               0.862                              K_87K
+LOW-MAT        K_87K      19.0      -2.0      87.0                    POTASSIU
+*
+*
+* Calcium @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        20.0                1.55                              Ca_87K
+LOW-MAT       Ca_87K      20.0      -2.0      87.0                    CALCIUM
+*
+*
+* Titanium @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        22.0                4.54                              Ti_87K
+LOW-MAT       Ti_87K      22.0      -2.0      87.0                    TITANIUM
+*
+*
+* Vanadium
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        23.0   50.9415      6.11                              VANADIUM
+*
+*
+* Chromium
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        24.0                7.19                              CHROMIUM
+LOW-MAT     CHROMIUM      24.0      -2.0     296.0                    CHROMIUM
+*
+*
+* Chromium @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        24.0                7.19                              Cr_87K
+LOW-MAT       Cr_87K      24.0      -2.0      87.0                    CHROMIUM
+*
+*
+* Manganes
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        25.0                7.43                              MANGANES
+LOW-MAT     MANGANES      25.0      55.0     296.0                    MANGANES
+*
+*
+* Manganes @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        25.0                7.43                              Mn_87K
+LOW-MAT       Mn_87K      25.0      55.0      87.0                    MANGANES
+*
+*
+* Iron for shielding
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        26.0               7.874                              IRONS
+LOW-MAT        IRONS      26.0       -8.     296.0                    IRON
+*
+*
+* Iron - Pure iron (Self Shielded)
+*  - Self Shielded Neutron x-sect @ 296K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        26.0               7.874                              IRONSS
+LOW-MAT       IRONSS      26.0       -4.     296.0                    IRON
+*
+*
+* Iron - Pure iron for compounds @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        26.0               7.874                              Fe_87K
+LOW-MAT       Fe_87K      26.0       -2.      87.0                    IRON
+*
+*
+* Iron - Pure iron (Self Shielded)
+*  - Density @ NTP
+*  - Self Shielded Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        26.0               7.874                              Fe_87KSS
+LOW-MAT     Fe_87KSS      26.0       -4.      87.0                    IRON
+*
+*
+* Cobalt
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        27.0                 8.9                              COBALT
+*
+*
+* Cobalt
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        27.0                 8.9                              Co_87K
+LOW-MAT       Co_87K      27.0      59.0      87.0                    COBALT
+*
+*
+* Nickel @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        28.0               8.902                              Ni_87K
+LOW-MAT       Ni_87K      28.0       -2.      87.0                    NICKEL
+*
+*
+* Pure copper (Self Shielded)
+*  - Self Shielded Neutron x-sect @ 296K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        29.0                8.96                              COPPERSS
+LOW-MAT     COPPERSS      29.0      -4.0     296.0                    COPPER
+*
+*
+* Pure copper @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        29.0                8.96                              Cu_87K
+LOW-MAT       Cu_87K      29.0      -2.0      87.0                    COPPER
+*
+*
+* Pure copper (Self Shielded) @ 87K
+*  - Density @ NTP
+*  - Self Shielded Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        29.0                8.96                              Cu_87KSS
+LOW-MAT     Cu_87KSS      29.0      -4.0      87.0                    COPPER
+*
+*
+* Pure copper @ 4K
+*  - Density @ NTP
+*  - Neutron x-sect @ 4K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        29.0                8.96                              Cu_4K
+LOW-MAT        Cu_4K      29.0      -2.0       4.0                    COPPER
+*
+*
+* Pure copper (Self Shielded) @ 4K
+*  - Density @ NTP
+*  - Self Shielded Neutron x-sect @ 4K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        29.0                8.96                              Cu_4KSS
+LOW-MAT      Cu_4KSS      29.0      -4.0       4.0                    COPPER
+*
+*
+* Pure ZINC
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        30.0                7.14                              ZINC
+*
+*
+* Pure ZINC
+*  - Density @ NTP
+*  - Self Shielded Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        30.0                7.14                              Zn_87K
+LOW-MAT       Zn_87K      30.0      -2.0      87.0                    ZINC
+*
+*
+* Arsenic
+* NB: LOW-MAT card is for isotope 75, since it is the only one stable!
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        33.0   74.9216      5.73                              ARSENIC
+*
+*
+* Pure Stronzium
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        38.0     87.62      2.63                              STRONTIU
+*
+*
+* Zirconium
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        40.0                6.51                              ZIRCONIU
+*
+*
+* Niobium
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        41.0                8.57                              NIOBIUM
+*
+*
+* Niobium @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        41.0                8.57                              Nb_87K
+LOW-MAT       Nb_87K      41.0      93.0      87.0                    NIOBIUM
+*
+*
+* Molybden
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        42.0               10.22                              MOLYBDEN
+*
+*
+* Molybden @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        42.0               10.22                              Mo_87K
+LOW-MAT       Mo_87K      42.0      -2.0      87.0                    MOLYBDEN
+*
+*
+* Cadmium
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        48.0   112.411      8.65                              CADMIUM
+*
+*
+* Tin @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        50.0               7.310                              Sn_87K
+LOW-MAT       Sn_87K      50.0      -2.0      87.0                    TIN
+*
+*
+* Antimony
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        51.0   121.760     6.691                              ANTIMONY
+*
+*
+* Barium
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        56.0    137.34       3.5                              BARIUM
+*
+*
+*
+* Europium
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        63.0   151.964     5.244                              EUROPIUM
+*
+*
+* Tantalum @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        73.0              16.654                              Ta_87K
+LOW-MAT       Ta_87K      73.0     181.0      87.0                    TANTALUM
+*
+*
+* Lead @ 87K
+*  - Density @ NTP
+*  - Neutron x-sect @ 87K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        82.0              11.350                              Pb_87K
+LOW-MAT       Pb_87K      82.0      -2.0      87.0                    LEAD
+*
+*
+* Bismuth
+* NB: LOW-MAT card is for isotope 209, since it is the only one stable!
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL        83.0 208.98038     9.747                              BISMUTH
+*
+*
+*
+* USER COMPOUNDS:
+*
+* List of pre-defined ICRU compounds
+* ----------------------------------
+*
+*       Fluka name     Common name
+*       ----------     -----------
+*       WATER          Water
+*       POLYSTYR       Polystyrene
+*       PLASCINT       Plastic scintillator
+*       PMMA           Polymethyl methacrylate, Plexiglas, Lucite, Perspex
+*       BONECOMP       Compact bone
+*       BONECORT       Cortical bone
+*       MUSCLESK       Skeletal muscle
+*       MUSCLEST       Striated muscle
+*       ADTISSUE       Adipose tissue
+* 	KAPTON         Kapton polyimide film
+* 	POLYETHY       Polyethylene
+* 	AIR            Dry air at NTP conditions
+*
+*
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                             2.0                              EARTHBOH
+COMPOUND      -0.006  HYDROGEN     -0.03    CARBON      -0.5    OXYGENEARTHBOH
+COMPOUND       -0.01    SODIUM    -0.005  MAGNESIU     -0.03  ALUMINUMEARTHBOH
+COMPOUND        -0.2   SILICON     -0.01  POTASSIU    -0.195   CALCIUMEARTHBOH
+COMPOUND      -0.014      IRON                                        EARTHBOH
+*
+*
+*
+* OXYDES
+* ******
+*
+*
+* Al2O3 or ALUMINA Aluminum Oxide (alpha) for glidcop
+*        The density of aluminum oxide will vary by 5% according to the
+*        method of preparation. old density in IR1/IR5 was 3.6....
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            3.98                              Al2O3
+COMPOUND         2.0  ALUMINUM       3.0    OXYGEN                    Al2O3
+*
+*
+* SiO2: dry sand;
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            1.92                              SiO2
+COMPOUND         1.0   SILICON       2.0    OXYGEN                    SiO2
+*
+*
+* SiO2: quartz;
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            2.65                              QUARTZ
+COMPOUND         1.0   SILICON       2.0    OXYGEN                    QUARTZ
+*
+*
+* MgO
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            3.58                              MgO
+COMPOUND         1.0  MAGNESIU       1.0    OXYGEN                    MgO
+*
+*
+* K2O
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            2.35                              K2O
+COMPOUND         2.0  POTASSIU       1.0    OXYGEN                    K2O
+*
+*
+* B2O3
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            2.46                              B2O3
+COMPOUND         2.0     BORON       3.0    OXYGEN                    B2O3
+*
+*
+*
+* SHIELDING MATERIALS:
+* ********************
+*
+* Concrete: Below is EMPA (1) Concrete, with STRONTIUm and EUROPIUM added....
+*           NOTABENE: It overwrites the standard configuration
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            2.42                              CONCRETE
+COMPOUND      -0.006  HYDROGEN   -0.0562    CARBON -0.492875    OXYGENCONCRETE
+COMPOUND    -0.00453    SODIUM  -0.00663  MAGNESIU  -0.02063  ALUMINUMCONCRETE
+COMPOUND    -0.18867   SILICON  -0.00656  POTASSIU  -0.20091   CALCIUMCONCRETE
+COMPOUND    -0.01118      IRON  -0.00048   PHOSPHO  -0.00012    SULFURCONCRETE
+COMPOUND    -0.00347  TITANIUM -0.000387  MANGANES -0.000241      ZINCCONCRETE
+COMPOUND    -7.4E-05  ZIRCONIU -0.000179    BARIUM -0.000464      LEADCONCRETE
+COMPOUND    -0.00399  STRONTIU  -4.2E-07  EUROPIUM                    CONCRETE
+*
+*
+MATERIAL                            2.35                              CERNCONC
+COMPOUND      -0.006  HYDROGEN    -0.030    CARBON    -0.500    OXYGENCERNCONC
+COMPOUND      -0.010    SODIUM    -0.005  MAGNESIU    -0.030  ALUMINUMCERNCONC
+COMPOUND      -0.200   SILICON    -0.010  POTASSIU    -0.195   CALCIUMCERNCONC
+COMPOUND      -0.014      IRON                                        CERNCONC
+*
+* Magnets material Mixture of Concrete + Steel (low carbon)
+MATERIAL                           3.836                              MAGNET
+COMPOUND      -0.445  CERNCONC    -0.555      IRON                    MAGNET
+*
+* SIPOREX Concrete (light concrete)
+*  VB: Chemical composition unknown, as the desity is about  0.55gr/cm3
+*  I assume it's about 25% of concrete and 75% of air
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                       .58780125                              SIPOREX
+COMPOUND       -0.25 -CONCRETE     -0.75      -AIR                    SIPOREX
+*
+*
+* Cast Pig Iron (for large shielding blocks )
+* Compount (wt) Iron 94% - Carbon 4% - Silicon 2%
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                             7.2                              CASTIRON
+COMPOUND       -0.94     IRONS     -0.04    CARBON     -0.02   SILICONCASTIRON
+*
+*
+* material for the 'coulasse' of the TIDH.11795 (drawing 8034.2.118.O.H)
+* vonroll-casting.ch states the equivalence of the original material (DIN 1691 GG20)
+*                    with other standards;
+* http://www.vonroll-casting.ch/public/De/02.Technologie%20%20Fertigung/02.Werkstoffe/Werkstoffe%20Eisenguss.en.pdf;
+* nevertheless, the composition by M.Brugger (GG20 in CERF) is implemented:
+*  NB: this is a MEASURED composition!
+* density at NTP
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            7.65                              GG20
+COMPOUND        -2.8    CARBON     -0.08  ALUMINUM      -1.8   SILICONGG20
+COMPOUND        -0.4    SULFUR      -1.1   PHOSPHO     -0.75  MANGANESGG20
+COMPOUND       -0.04    COPPER     -0.05    NICKEL     -0.06  CHROMIUMGG20
+COMPOUND       -0.01  MOLYBDEN     -0.01  TUNGSTEN     -0.09  VANADIUMGG20
+COMPOUND       -0.06  TITANIUM     -0.01   NIOBIUM     -0.03    COBALTGG20
+COMPOUND       -0.02   ARSENIC    -92.69      IRON                    GG20
+*
+*
+*
+*
+*
+*
+* BLM's materials (used by several elements)
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                             7.7                              BLM.STEE
+COMPOUND     -0.8632      IRON   -0.1114  CHROMIUM   -0.0253    NICKELBLM.STEE
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL         7.0    14.007  0.001287                              BLM.NITR
+LOW-MAT     BLM.NITR       7.0      -2.0     296.0                    NITROGEN
+MAT-PROP         1.1                      BLM.NITR
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+*
+*
+* INSULATORS AND THERMAL SHIELDS
+* ******************************
+*
+* G10 material (insulation in-between coil regions)
+* (density unchanged... object dimension must be at NTP)
+* WARNING !!! Assumed to be "COLD"
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            1.85                              G10
+COMPOUND     -0.0071     H_87K     -0.53     O_87K     -0.27    Si_87KG10
+COMPOUND      -0.191    Ca_87K                                        G10
+*
+*
+* G11 material (insulation in-between coil regions)
+* (density unchanged... object dimension must be at NTP)
+* !! WARNING !! Assumed to be "COLD"
+* !! WARNING !! Same as G10 for the moment... to be replaced with the correct
+*               composition
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            1.85                              G11
+COMPOUND     -0.0071  HYDROGEN     -0.53     O_87K     -0.27    Si_87KG11
+COMPOUND      -0.191    Ca_87K                                        G11
+*
+*
+* KAPTON @ 87 degrees (density unchanged... object dimension must be at NTP)
+*  - Density @ NTP
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            1.42                              KAPTO87K
+COMPOUND   -0.026362     H_87K -0.691133     C_87K  -0.07327     N_87KKAPTO87K
+COMPOUND   -0.209235     O_87K                                        KAPTO87K
+*
+*
+* Cold Polyethylene (density unchanged... object dimension must be at NTP)
+*  - Density @ NTP
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            0.94                              POLYE87K
+COMPOUND         2.0  HYDROGEN       1.0     C_87K                    POLYE87K
+*
+*
+* Polyethylene Terephtalate (MYLAR) for the thermal shield
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                             1.4                              MYLAR
+COMPOUND   -0.041959  HYDROGEN -0.625017    CARBON -0.333025    OXYGENMYLAR
+*
+*
+* ALU + MYLAR: composition of the thermal shield in mass fraction (10+90)
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            1.53                              ALUMYLAR
+COMPOUND        -0.9     MYLAR      -0.1  ALUMINUM                    ALUMYLAR
+*
+*
+* Epoxy Glue
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            1.43                              EPOXYG
+COMPOUND    -0.03435  HYDROGEN  -0.37345    CARBON  -0.21852    OXYGENEPOXYG
+COMPOUND    -0.12105    SODIUM  -0.14737   SILICON  -0.10526   CALCIUMEPOXYG
+*
+* WARNING!!! What density for "cold" epoxy?
+*
+* "COLD" Epoxy Glue
+*  - Density @ NTP
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            1.43                              EPOXY87K
+COMPOUND    -0.03435     H_87K  -0.37345     C_87K  -0.21852     O_87KEPOXY87K
+COMPOUND    -0.12105    Na_87K  -0.14737    Si_87K  -0.10526    Ca_87KEPOXY87K
+*
+*
+*
+* SER300 bisphenol-A resin (C_44, O_8, H_49 ) + Jeffamine D400 hardner (C_21, O_6, N_2, H_46)
+*   molecular portions: 1 x SER300 + 2 x Jeffamine D400
+*   taken as another example of epoxy resin;
+* composition as received from P.Fessia for old Ph2 Upgrade;
+* typical density of 1.3 g cm-3 from:
+*   http://en.allexperts.com/q/Composite-Materials-2430/fiberglass-1.htm
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                             1.3                              EPOXY_P2
+COMPOUND       141.0  HYDROGEN      86.0    CARBON       4.0  NITROGENEPOXY_P2
+COMPOUND        20.0    OXYGEN                                        EPOXY_P2
+*
+*
+* Ethylene propylene (for SPS...)
+* data taken from CERN-79-04.pdf yellow report
+* kind of standard material, i.e. no additives considered at present
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            0.86                              ETHYPROP
+COMPOUND         3.0  HYDROGEN       5.0    CARBON                    ETHYPROP
+*
+*
+*
+* S2 fiber glass taken as another example of fiber glass:
+*   65% SiO2, 10% MgO, 25% Al2O3
+* composition as received from P.Fessia for old Ph2 Upgrade;
+* typical density of 2.6 g cm-3 from:
+*   http://en.allexperts.com/q/Composite-Materials-2430/fiberglass-1.htm
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                             2.6                              S2FIBGLS
+COMPOUND       -65.0      SiO2     -10.0       MgO     -25.0     Al2O3S2FIBGLS
+*
+*
+*
+* P.Fessia's resin + fiber glass as example of insulator;
+*   40% resin+hardner, 60% glass fiber
+* composition as received from P.Fessia for old Ph2 Upgrade;
+* typical density of 1.8 g cm-3 (as from e-mail by L.Bottura)
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                             1.8                              INSUL_P2
+COMPOUND       -60.0  S2FIBGLS     -40.0  EPOXY_P2                    INSUL_P2
+*
+*
+*
+* MACOR, an example of mica-glass, from:
+*     http://www.corning.com/docs/specialtymaterials/pisheets/Macor.pdf
+* as suggested in:
+*     http://www.sciencedirect.com/science/article/pii/S0022309301009097
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            2.52                              MACOR
+COMPOUND       -46.0      SiO2     -17.0       MgO     -16.0     Al2O3MACOR
+COMPOUND       -10.0       K2O      -7.0      B2O3      -4.0  FLUORINEMACOR
+*
+*
+* polyruthene:
+* THIS IS JUST AN EXAMPLE!!! (from wikipedia, btw...)
+* density taken from:
+*   http://www.efunda.com/materials/polymers/properties/polymer_datasheet.cfm?MajorID=PU&MinorID=3
+* they give 1.12 - 1.24    -> average taken: 1.18
+*  _                                                               _
+* |            H       H        H       H                           |
+* |             \     /	         \     /	                    |
+* |   O          C = C     H      C = C         O       H   H       |
+* |   ||       /      \    |    /      \        ||      |   |       |
+* | - C - N - C        C - C - C        C - N - C - O - C - C - O - |
+* |       |    \\     //   |    \\     //   |	        |   |       |
+* |       H     C - C      H     C - C      H	        H   H       |
+* |            /     \	        /     \	                            |
+* |_          H       H        H       H                           _|_n
+*
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            1.18                              POLYURET
+COMPOUND        16.0  HYDROGEN      17.0    CARBON       2.0  NITROGENPOLYURET
+COMPOUND         4.0    OXYGEN                                        POLYURET
+*
+*
+*
+*
+*
+* CERAMICS
+* ********
+*
+* crystalline, hot pressed hBN, pure material;
+* density as received from F.Maciariello, 2012-09-26;
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            2.25                              hBNpure
+COMPOUND         1.0     BORON       1.0  NITROGEN                    hBNpure
+*
+* BN 5000 from Sintek Keramik (UK) Ltd., hot pressed hBN
+* Density and composition from manufacturer data sheet (provided by O. Aberle)
+*   -> see fedb/documents/materials/BN5000.pdf
+* NB: mass fractions: the actual density of hBNpure is not used in order
+*     to compute atom contents of hBNpure in the present compound (see note 5
+*     in the FLUKA manual);
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7...
+MATERIAL                           1.925                              BN5000
+COMPOUND       -92.9   hBNpure      -0.2      SiO2      -4.0    OXYGENBN5000
+COMPOUND        -0.4      B2O3      -2.5   CALCIUM                    BN5000
+*
+*
+* METAL ALLOYS
+* ************
+*
+*
+* IC BUS BAR SUPERCONDUCTING CABLE INNER
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                          7.5497                              NbTiBBin
+COMPOUND       -0.35     Cu_4K     -0.06    Nb_87K     -0.05    Ti_87KNbTiBBin
+COMPOUND      -0.324    Sn_87K    -0.216    Pb_87K                    NbTiBBin
+*
+* IC BUS BAR SUPERCONDUCTING CABLE UPPER
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                          6.5160                              NbTiBBup
+COMPOUND       -0.74     Cu_4K     -0.12    Nb_87K     -0.10    Ti_87KNbTiBBup
+COMPOUND       -0.04  KAPTO87K                                        NbTiBBup
+*
+* dedicated material definition for the coil of MQI (3 models):
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                         5.08451                              MQI_COND
+COMPOUND   -0.450121   -C10100 -0.155252    -WATER -0.309519 -S2FIBGLSMQI_COND
+COMPOUND   -0.085109 -POLYURET                                        MQI_COND
+*
+*
+* SUPERCONDUCTING Nb3Sn CABLE
+* Atomic fractions according to a mail of Luca Bottura on 07/08/2009
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                           8.804                              Nb3Sn
+COMPOUND       0.692     Cu_4K     0.248    Nb_87K     0.048    Sn_87KNb3Sn
+COMPOUND       0.012    Ta_87K                                        Nb3Sn
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+* Cable compound taking into account the azimuthal insulator
+* Volume fraction from geometrical calculation starting from
+* https://espace.cern.ch/HiLumi/WP3/Shared%20Documents/triplet_str_cabl_coi.jpg
+* replaced kapton with G10 after talk to P. Ferracin (14/03/2012)
+MATERIAL                           7.954                              Nb3Sn.c1
+COMPOUND      -0.878    -Nb3Sn    -0.122      -G10                    Nb3Sn.c1
+*
+* C510 PHOSPHOR BRONZE (MQXF wedges)
+MATERIAL                          8.8576                              C510
+COMPOUND        0.05    Sn_87K     0.002     P_87K     0.948     Cu_4KC510
+*
+* Ti 6Al-4V (MQXF poles)
+MATERIAL                            4.43                              Ti-6-4
+COMPOUND       -0.06  ALUMINUM      -0.9  TITANIUM     -0.04  VANADIUMTi-6-4
+*
+*
+* Materials present in the coils of Inner Triplet correctors accordining to
+* EDMS No. 102688 table 1
+*
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+* Polyvinyl alcohol (cable insulator, C2-H4-O)
+MATERIAL                            1.25                              PVA
+COMPOUND         2.0     C_87K       4.0  HYDROGEN       1.0     O_87KPVA
+*
+* superconductor NbTi with Ti = 47% by weight
+MATERIAL                          6.0471                              NbTi
+COMPOUND       -53.0    Nb_87K     -47.0    Ti_87K                    NbTi
+*
+* naked superconductor NbTi wire with Cu/SC volume ratio (>= 4.0 and <4.8)
+MATERIAL                          8.4206                              NbTi.1
+COMPOUND        -1.0     -NbTi      -4.4    -Cu_4K                    NbTi.1
+*
+* naked superconductor NbTi wire with Cu/SC volume ratio (>= 1.6 and <1.9)
+MATERIAL                          7.9008                              NbTi.2
+COMPOUND        -1.0     -NbTi     -1.75    -Cu_4K                    NbTi.2
+*
+* insulated superconductor wire No. 1 (fraction by volume)
+MATERIAL                          6.5789                              NbTi.w1
+COMPOUND        -1.0   -NbTi.1     -1.75      -PVA                    NbTi.w1
+*
+* insulated superconductor wire No. 2 (fraction by volume)
+MATERIAL                          6.7921                              NbTi.w2
+COMPOUND        -1.0   -NbTi.1     -1.75      -PVA                    NbTi.w2
+*
+* insulated superconductor wire No. 3 (fraction by volume)
+MATERIAL                          6.2740                              NbTi.w3
+COMPOUND        -1.0   -NbTi.2     -1.75      -PVA                    NbTi.w3
+*
+* insulated superconductor wire No. 4 (fraction by volume)
+MATERIAL                          6.6541                              NbTi.w4
+COMPOUND        -1.0   -NbTi.2     -1.75      -PVA                    NbTi.w4
+*
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+* HL-LHC superferric corrector NbTi cable:
+* naked superconductor NbTi wire with Cu/SC volume ratio = 1.5:1.0
+MATERIAL                          7.7948                              NbTi_1.5
+COMPOUND        -1.0     -NbTi      -1.5    -Cu_4K                    NbTi_1.5
+* cyano-esther, chemical formula C4H5NO2
+MATERIAL                           1.123                              CyanoEst
+COMPOUND         4.0     C_87K       5.0  HYDROGEN       1.0     N_87KCyanoEst
+COMPOUND         2.0     O_87K                                        CyanoEst
+* CTD 422-B: 60% cyano-esther, 40% epoxy resin
+MATERIAL                          1.2458                              CTD_422B
+COMPOUND        -0.6 -CyanoEst      -0.4 -EPOXY87K                    CTD_422B
+* insulated NbTi superconductor wire: filling factor NbTi = 0.907
+* rest made of CTD 422-B; polyimide insulator component neglected
+MATERIAL                          7.1858                              NbTi_SF
+COMPOUND      -0.907 -NbTi_1.5    -0.093 -CTD_422B                    NbTi_SF
+*
+*
+* Aluminum alloys
+* ***************
+*
+*
+* AA 5086 - Alluminium alloy [%-wt]
+* Si-0.4, Fe-0.5, Cu-0.1, Mn-0.2/0.7, Mg-3.5/4.5, Zn-0.25, Cr-0.05/0.25, Ti-0.15, Al-remainder.
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            2.65                              AA5086
+COMPOUND     -0.9405  ALUMINUM    -0.004   SILICON    -0.005      IRONAA5086
+COMPOUND      -0.001    COPPER    -0.004  MANGANES   -0.0025      ZINCAA5086
+COMPOUND     -0.0015  CHROMIUM   -0.0015  TITANIUM     -0.04  MAGNESIUAA5086
+*
+* AA 5086 - Alluminium alloy (cold) [%-wt]
+* Si-0.4, Fe-0.5, Cu-0.1, Mn-0.2/0.7, Mg-3.5/4.5, Zn-0.25, Cr-0.05/0.25, Ti-0.15, Al-remainder.
+*  - Density @ NTP
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            2.65                              cAA5086
+COMPOUND     -0.9405     Al_4K    -0.004    Si_87K    -0.005    Fe_87KcAA5086
+COMPOUND      -0.001     Cu_4K    -0.004    Mn_87K   -0.0025    Zn_87KcAA5086
+COMPOUND     -0.0015    Cr_87K   -0.0015    Ti_87K     -0.04    Mg_87KcAA5086
+*
+* AA 5754 (nickname: Al Mg3)
+* from http://www.welding-alloys.com/index.php?id=610
+* according to:
+*   http://mdmetric.com/tech/alumcomp.htm
+*   the international name of this alloy is AA5754
+* chemical composition:
+*  Si	Fe	Cu	Mn	Mg	Cr	Zn	Ti	Be	Al
+*  0.40	0.40	0.10	0.501	2.6-3.6	0.301	0.20	0.15	0.0003	Rem.
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            2.68                              AA5754
+COMPOUND        -0.4   SILICON      -0.4      IRON      -0.1    COPPERAA5754
+COMPOUND      -0.501  MANGANES      -3.6  MAGNESIU    -0.301  CHROMIUMAA5754
+COMPOUND        -0.2      ZINC     -0.15  TITANIUM   -0.0003  BERYLLIUAA5754
+COMPOUND    -94.3477  ALUMINUM                                        AA5754
+*
+*
+* AA 6081
+*    nickname: Al Mg Si1, code LNI
+*    as stated in: http://www.lni.ch/tubepro01.php?MENU=menutubepro02&PNUM=30901
+* composition taken from:
+*    http://www.matweb.com/search/datasheet.aspx?matguid=70dc6c0b2b21412ea0f7ce2b4cec72e4&ckck=1
+*    in case of ranges, the maximum value is taken
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            2.70                              AA6081
+COMPOUND       -96.4  ALUMINUM      -1.1   SILICON      -0.5      IRONAA6081
+COMPOUND        -0.1    COPPER     -0.45  MANGANES      -0.2      ZINCAA6081
+COMPOUND        -0.1  CHROMIUM     -0.15  TITANIUM      -1.0  MAGNESIUAA6081
+*
+*
+* AA 6082 - Alluminium alloy [%-wt] @ room temperature
+* material for the 'Bloc absorbeur' of the TIDH.11795 (drawing 8034.43.0004.0)
+* NB: niemet.de states the equivalence between the material in the drawing (AlMgSi1)
+*     and the present alloy:
+*     AlMgSi1 = 6082 (Al alloy grade according to EN standards)
+*     http://www.niemet.de/en/products/rods/aluminium.html
+* composition taken from:
+*     www.alcoa.com/adip/catalog/pdf/Extruded_Alloy_6082.pdf
+* in case of ranges, the maximum value is taken
+* 1.0 lb./in^3 * 453.6 g/lb / ( 2.54 cm / in )^3
+* Si-0.7/1.3, Fe-0.5, Cu-0.1, Mn-0.4/1.0, Mg-0.6/1.2, Zn-0.2, Cr-0.25, Ti-0.1, Al-remainder.
+* density at NTP;
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                           2.685                              AA6082
+COMPOUND     -0.9535  ALUMINUM    -0.013   SILICON    -0.005      IRONAA6082
+COMPOUND      -0.001    COPPER     -0.01  MANGANES    -0.002      ZINCAA6082
+COMPOUND     -0.0025  CHROMIUM    -0.001  TITANIUM    -0.012  MAGNESIUAA6082
+*
+* Other Possible definition of Alu EN/AW 6082
+* from www.cosmosaluminium.gr/pdf/alloy_data_sheet_6082.pdf
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+*MATERIAL                             2.7                              AA6082
+*COMPOUND       -0.01   SILICON     -.005      IRON    -0.001    COPPERAA6082
+*COMPOUND       -.006  MANGANES     -.009  MAGNESIU    -.0025  CHROMIUMAA6082
+*COMPOUND      -0.002      ZINC    -0.001  TITANIUM    -.9635          AA6082
+*
+*
+*
+*
+* Copper alloys
+* *************
+*
+* material for the absorber of TIDVG: commercial Cu OFE
+*   (drawing 8034.41.0071.0 and 8034.41.0072.0)
+* very detailed chemical composition from:
+*     http://www.weldaloy.com/downloads/C10100-Properties.pdf
+*     it may be useful in case of activation studies...
+* C10100 (Cu OFE - Oxygen-Free Electronic) Copper [ppm-wt] @ room temperature
+* NB: - since the sum of the impurities is <100ppm, self-shielded Cu is used!!
+*     - materials not included, due to a lack in the LOW-MAT library:
+*       Selenium (3ppm) and Tellurium (3ppm)
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            8.94                              C10100
+COMPOUND        -4.0  ANTIMONY      -5.0   ARSENIC      -5.0    OXYGENC10100
+COMPOUND        -3.0   PHOSPHO      -1.0   BISMUTH      -1.0   CADMIUMC10100
+COMPOUND       -10.0      IRON      -5.0      LEAD      -0.5  MANGANESC10100
+COMPOUND       -10.0    NICKEL     -25.0    SILVER     -15.0    SULFURC10100
+COMPOUND        -2.0       TIN      -1.0      ZINC -999912.5  COPPERSSC10100
+*
+*
+* Copper alloy CuBe 17410 for the Interconnect RF Contact Development
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                             8.8                              C17410
+COMPOUND      -0.991    COPPER   -0.0031  BERYLLIU  -0.00500    COBALTC17410
+COMPOUND     -0.0004  ALUMINUM   -0.0003      IRON   -0.0002    NICKELC17410
+*
+*
+* Copper alloy hard-brass
+* composition according to:
+* http://www.ansoniacb.com/CDA%20Files/C35300.htm
+* PS: flair gives: 62.0% Cu, 35.0% Zn, 3.0% Pb;
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            8.47                              C35300
+COMPOUND      -0.615    COPPER    -0.365      ZINC     -0.02      LEADC35300
+*
+*
+* typical bronze (from flair):
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            8.82                              BRONZE
+COMPOUND       -0.89    COPPER     -0.09       TIN     -0.02      LEADBRONZE
+*
+*
+* VB WRONG!!!! This is Glidcop to be changed in the lhc_TC**
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                             8.9                              CU_AL
+COMPOUND       -0.99    COPPER     -0.01  ALUMINUM                    CU_AL
+*
+*
+* GLIDCP15: Glidcop 15 (Cu 99.85%, Al2O3 0.15%)
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                             8.9                              GLIDCP15
+COMPOUND      -.9985    COPPER   -0.0015     Al2O3                    GLIDCP15
+*
+*
+* CuNiFeMn: CopperNickel Iron Manganes alloy
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            8.87                              CuNiFeMn
+COMPOUND      -0.875    COPPER       -.1    NICKEL     -.015      IRONCuNiFeMn
+COMPOUND       -0.01  MANGANES                                        CuNiFeMn
+*
+*
+* CUDIAM: Copper-Diamond
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            5.42                              CUDIAM
+COMPOUND       -0.35    COPPER     -0.65    CARBON                    CUDIAM
+*
+*
+* Silicon_: Silicon-carbide
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            3.16                              SiC
+COMPOUND         1.0    CARBON       1.0   SILICON                    SiC
+*
+*
+* Inermet 180: Real material for tungsten jaw collimators
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            18.0                              INERM180
+COMPOUND       -0.95  TUNGSTEN    -0.035    NICKEL    -0.015    COPPERINERM180
+*
+*
+*
+*
+* STEELS
+* ******
+*
+* Fe360 construction steel
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            7.87                              Fe360ST
+COMPOUND     -0.9858    IRONSS  -0.00130    NICKEL  -0.00150    CARBONFe360ST
+COMPOUND    -0.00520  MANGANES  -0.00200   SILICON  -0.00250    COPPERFe360ST
+COMPOUND    -0.00170  CHROMIUM                                        Fe360ST
+*
+*
+* Fe360 construction steel (cold)
+*  - Density @ NTP
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            7.87                              cFe360ST
+COMPOUND     -0.9858  Fe_87KSS  -0.00130    Ni_87K  -0.00150     C_87KcFe360ST
+COMPOUND    -0.00520    Mn_87K  -0.00200    Si_87K  -0.00250     Cu_4KcFe360ST
+COMPOUND    -0.00170    Cr_87K                                        cFe360ST
+*
+*
+* Low Carbon Steel for the yokes (Warm)
+* Old name YOKE_FE
+*
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            7.87                              LowCSTL
+COMPOUND    -0.98200    IRONSS  -0.01000    NICKEL  -0.00100    CARBONLowCSTL
+COMPOUND    -0.00400  MANGANES  -0.00100   SILICON  -0.00200    COPPERLowCSTL
+*
+*
+* Low Carbon Steel for the yokes (Cold)
+* Old name YOKE_FE
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            7.87                              cLowCSTL
+COMPOUND    -0.98200  Fe_87KSS  -0.01000    Ni_87K  -0.00100     C_87KcLowCSTL
+COMPOUND    -0.00400    Mn_87K  -0.00100    Si_87K  -0.00200     Cu_4KcLowCSTL
+*
+*
+* Low carbon steel for the MQ and MB vacuum vessel
+* Old name MILD_ST
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                           7.798                              MildSTL
+COMPOUND    -0.00200    CARBON  -0.00500  MANGANES  -0.00150   SILICONMildSTL
+COMPOUND    -0.99150      IRON                                        MildSTL
+*
+*
+* Stainless Steels:
+* *****************
+*
+* AISI Steels
+* name SS3[xx][L][N]
+*              |  `--> Nitrogen enriched
+*              `-----> Low Carbon
+*
+* SS304L:  AISI304L Stainless Steel
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            8.02                              SS304L
+COMPOUND    -0.67145      IRON    -0.185  CHROMIUM   -0.1125    NICKELSS304L
+COMPOUND       -0.02  MANGANES     -0.01   SILICON  -0.00045   PHOSPHOSS304L
+COMPOUND     -0.0003    SULFUR   -0.0003    CARBON                    SS304L
+*
+*
+* SS316L:  AISI316L Stainless Steel
+* (used in MBXC, MCXB, MCXS, MQXD and MQXS
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                             8.0                              SS316L
+COMPOUND    -0.61395      IRON    -0.185  CHROMIUM     -0.14    NICKELSS316L
+COMPOUND       -0.03  MOLYBDEN     -0.02  MANGANES     -0.01   SILICONSS316L
+COMPOUND    -0.00045   PHOSPHO   -0.0003    SULFUR   -0.0003    CARBONSS316L
+*
+*
+* SS316LN:  AISI316LN Stainless Steel (cryogenic steel)
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            8.03                              SS316LN
+COMPOUND    -0.65093      IRON   -0.1700  CHROMIUM  -0.12000    NICKELSS316LN
+COMPOUND    -0.02500  MOLYBDEN   -0.0200  MANGANES  -0.00750   SILICONSS316LN
+COMPOUND    -0.00150  TITANIUM   -0.0014  NITROGEN  -0.00100   NIOBIUMSS316LN
+COMPOUND    -0.00100    COPPER   -0.0005    COBALT  -0.00045   PHOSPHOSS316LN
+COMPOUND    -0.00030    CARBON   -0.0003    SULFUR  -0.00010  TANTALUMSS316LN
+COMPOUND    -0.00002     BORON                                        SS316LN
+*
+*
+* SS317LN: Steel SS 317LN
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                             7.9                              SS317LN
+COMPOUND     -0.6868      IRON    -2.E-4    CARBON     -0.17  CHROMIUMSS317LN
+COMPOUND      -0.032  MOLYBDEN     -0.11    NICKEL    -0.001  NITROGENSS317LN
+*
+*
+*
+* STEEL done with Cryogenic compounds
+*
+* SS304L:  AISI304L Stainless Steel
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            8.02                              cSS304L
+COMPOUND    -0.67145    Fe_87K    -0.185    Cr_87K   -0.1125    Ni_87KcSS304L
+COMPOUND       -0.02    Mn_87K     -0.01    Si_87K  -0.00045     P_87KcSS304L
+COMPOUND     -0.0003     S_87K   -0.0003     C_87K                    cSS304L
+*
+*
+* SS316L:  AISI316L Stainless Steel
+* (used in MBXC, MCXB, MCXS, MQXD and MQXS
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                             8.0                              cSS316L
+COMPOUND    -0.61395    Fe_87K    -0.185    Cr_87K     -0.14    Ni_87KcSS316L
+COMPOUND       -0.03    Mo_87K     -0.02    Mn_87K     -0.01    Si_87KcSS316L
+COMPOUND    -0.00045     P_87K   -0.0003     S_87K   -0.0003     C_87KcSS316L
+*
+*
+* SS316LN:  AISI316LN Stainless Steel (cryogenic steel)
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            8.03                              cSS316LN
+COMPOUND    -0.65093    Fe_87K   -0.1700    Cr_87K  -0.12000    Ni_87KcSS316LN
+COMPOUND    -0.02500    Mo_87K   -0.0200    Mn_87K  -0.00750    Si_87KcSS316LN
+COMPOUND    -0.00150    Ti_87K   -0.0014     N_87K  -0.00100    Nb_87KcSS316LN
+COMPOUND    -0.00100     Cu_4K   -0.0005    Co_87K  -0.00045     P_87KcSS316LN
+COMPOUND    -0.00030     C_87K   -0.0003     S_87K  -0.00010    Ta_87KcSS316LN
+COMPOUND    -0.00002     B_87K                                        cSS316LN
+*
+*
+* SS317LN: Steel SS 317LN
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                             7.9                              cSS317LN
+COMPOUND     -0.6868    Fe_87K    -2.E-4     C_87K     -0.17    Cr_87KcSS317LN
+COMPOUND      -0.032    Mo_87K     -0.11    Ni_87K    -0.001     N_87KcSS317LN
+*
+*
+* Austenic Steel YUS130S (for the collared coils of the MB/MQ cryogenic magnets)
+* from LHC Project Reports 537 and 892
+* WARNING !!! Assumed to be "COLD"
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            7.78                              YUS130S
+COMPOUND    -0.63198  Fe_87KSS   -0.1777    Cr_87K   -0.0661    Ni_87KYUS130S
+COMPOUND     -0.0009    Mo_87K    -0.115    Mn_87K   -0.0042    Si_87KYUS130S
+COMPOUND    -0.00022     P_87K  -0.00004     S_87K  -0.00086     C_87KYUS130S
+COMPOUND      -0.003     N_87K                                        YUS130S
+*
+*
+* Austenic Steel P506 (for the cryogenic magnets beam screen)
+* from CERN-EST-2000-006-SM
+* WARNING !!! Assumed to be "COLD"
+* WARNING: Density from YUS130S, could not find proper value
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            7.78                              P506
+COMPOUND   -0.564315    Fe_87K   -0.1918    Cr_87K   -0.1090    Ni_87KP506
+COMPOUND     -0.0086    Mo_87K   -0.1205    Mn_87K   -0.0023    Si_87KP506
+COMPOUND    -0.00005     P_87K  -0.00001     S_87K  -0.00012     C_87KP506
+COMPOUND   -0.000005     B_87K   -0.0033     N_87K                    P506
+*
+*
+* Austenic Steel KHMN30L
+* from CERN-EST-2000-006-SM
+* WARNING !!! Assumed to be "COLD"
+* WARNING: Density from YUS130S, could not find proper value
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            7.78                              KHMN30L
+COMPOUND    -0.63654    Fe_87K    -0.067    Cr_87K   -0.0082    Ni_87KKHMN30L
+COMPOUND      -0.001     N_87K     -0.28    Mn_87K    -0.006    Si_87KKHMN30L
+COMPOUND    -0.00022     P_87K  -0.00004     S_87K    -0.001     C_87KKHMN30L
+*
+*
+*
+* ### Coils ###
+* Material: computed with script from A.Mereghetti
+*           using same input as for MBRC (D2) cable,
+*           (JM calculation, cable twisting, wedges not considered, Kapton
+*           not subtracted)
+* used for D1 coils
+* renamed MBX for common use to CL19 == RHIC coil at 1.9 K
+*
+MATERIAL                        6.130147                              CL19
+COMPOUND   -0.478660    -Cu_4K -0.099449   -Ni_87K -0.166474   -Ti_87KCL19
+COMPOUND   -0.101667 -LHe_1.9K -0.153751 -KAPTO87K                    CL19
+*
+*
+*
+* 31/03/2009, A.Mereghetti
+* MBRC (D2) cable material, new python script + D.Bocian input
+* (JM calculation + cable twisting)
+* wedges NOT considered
+* WARNING!!! Compound defined with relative volumes must be converted in mass
+*            fraction
+* used for D2 and D3 coils that are at 4.5 K
+* renamed for common use to CL45 == RHIC coil at 4.5 K
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                          6.1276                              CL45
+COMPOUND   -0.478660    -Cu_4K -0.099449   -Ni_87K -0.166474   -Ti_87KCL45
+COMPOUND   -0.101667   -LHe_4K -0.153751 -KAPTO87K                    CL45
+*
+*
+* ###  D1 and D3 common coil insulator (Spacer) ###
+* Material: Fiberglass reinforced phenolic compound
+* References: RHIC Design Manual,
+*             M Anerella et al., The RHIC magnet system, NIM A 499 (2003) 280.
+* Composition is not exactly known, but based on some guesses
+* used for D1 and D3 coils
+* renamed MBX for common use to CL == RHIC coil
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            1.09                              CL_PF
+COMPOUND         6.0  HYDROGEN       6.0     C_87K       1.0     O_87KCL_PF
+MATERIAL                             2.6                              CL_FG
+COMPOUND       -65.0      SiO2     -10.0       MgO     -25.0     Al2O3CL_FG
+MATERIAL                             1.8                              CL_INS
+COMPOUND       -60.0     CL_FG     -40.0     CL_PF                    CL_INS
+*
+*
+* Ferrite
+* *******
+* from A.Lechner, about kicker in LHC IR2
+* Material: NiZn ferrite (8C11), with a density of 5.2g/cm3,
+*           composition Ni_(1-x)Zn_xFe2O4, with x between 0.5 and 0.6,
+*           from M. Barnes.
+*           (cf. LHCMKIMA0056: NiZn ferrite)
+MATERIAL                             5.2                              NIZNFER2
+COMPOUND        0.45    NICKEL      0.55      ZINC       2.0      IRONNIZNFER2
+COMPOUND         4.0    OXYGEN                                        NIZNFER2
+*
+* C.Adorisio, 25-11-2011
+* tentative material to simulate racks (in UJs) as simple RPP (on internal structure)
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                             0.5                              IROAIR
+COMPOUND       -0.25      IRON     -0.25  GRAPHITE      -0.5       AIRIROAIR
+*
+*
+*
+*
+* Nickel Alloys
+* *************
+*
+*
+* A.Mereghetti, 01-02-2012
+* INCONEL600: material definition from rrocca model of TI8, supervised by Y.Kadi
+*          /home2/rrocca/TCDI/TI8
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+MATERIAL                            8.19                              INCON600
+COMPOUND      -0.525    NICKEL     -0.01    COBALT     -0.19  CHROMIUMINCON600
+COMPOUND       -0.03  MOLYBDEN     -0.17      IRON     -0.05  TANTALUMINCON600
+COMPOUND     -0.0035   SILICON   -0.0035  MAGNESIU    -0.009  TITANIUMINCON600
+COMPOUND      -0.006  ALUMINUM    -0.003    COPPER                    INCON600

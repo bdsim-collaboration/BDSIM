@@ -1,0 +1,35 @@
+* -*- fluka -*-
+*
+* Element: MBRS
+*
+*
+* #######################################################################
+* ###
+* ###   simplified FLUKA model of MBRS (BNL separation dipole)
+* ###   is always interconnected to LU (undulator)
+* ###
+* ###   Design is the same as for D1 (MBX)
+* ###   neglected: beam screen, holes in cold mass, shape of coils
+* ###              cold bore insulation, thermal shielding
+* ###
+* ###   R. Kwee, 2012-08-09
+* ###
+* ###   Mechanical length (end volume-end volume): 10.13 m
+* ###   Cryostat   length (end volume-end volume):  9.64 m
+* ###   Magnetic   length (end volume-end volume):  9.45 m
+* ###
+* ###
+* #######################################################################
+*
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7..
+ASSIGNMA    cSS316LN   MBRS_bp
+ASSIGNMA      LHe_4K   MBRS_cb
+ASSIGNMA     SS316LN  MBRS_st3
+ASSIGNMA      VACUUM   MBRS_ma                            1.
+ASSIGNMA    cLowCSTL  MBRS_st0
+ASSIGNMA     Fe360ST  MBRS_st1
+ASSIGNMA      SS304L  MBRS_st2
+ASSIGNMA        CL45   MBRS_cl
+ASSIGNMA         AIR   MBRS_fi
+ASSIGNMA      HELIUM   MBRS_he
+ASSIGNMA      VACUUM   MBRS_va
