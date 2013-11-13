@@ -620,16 +620,6 @@ void BDSPhysicsList::ConstructEMMisc()
         pmanager->AddProcess(ebremsstrahlung,   -1, 3,3);     
       }
             
-      if(BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){
-#if G4VERSION_NUMBER > 909
-        G4Cerenkov* theCerenkovProcess = new G4Cerenkov;
-        pmanager->AddProcess(theCerenkovProcess);
-        pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
-#else
-        pmanager->AddProcess(new G4Cerenkov,          -1, 5,-1);
-#endif
-      }
-      
     } else if (particleName == "e+") {
       //positron
       pmanager->AddProcess(new G4eIonisation,       -1, 2,2);
@@ -649,29 +639,11 @@ void BDSPhysicsList::ConstructEMMisc()
         pmanager->AddProcess(new G4eBremsstrahlung,   -1, 3,3);
       }
       pmanager->AddProcess(new G4eplusAnnihilation,  0,-1,4);
-      if(BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){      
-#if G4VERSION_NUMBER > 909
-        G4Cerenkov* theCerenkovProcess = new G4Cerenkov;
-        pmanager->AddProcess(theCerenkovProcess);
-        pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
-#else
-        pmanager->AddProcess(new G4Cerenkov,          -1, 5,-1);
-#endif 
-      }
     } else if ((!particle->IsShortLived()) &&
 	       (particle->GetPDGCharge() != 0.0) && 
 	       (particle->GetParticleName() != "chargedgeantino")) {
       //all others charged particles except geantino
       pmanager->AddProcess(new G4hIonisation,       -1, 2,2);
-           if(BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){
-#if  G4VERSION_NUMBER > 909
-        G4Cerenkov* theCerenkovProcess = new G4Cerenkov;
-        pmanager->AddProcess(theCerenkovProcess);
-        pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
-#else
-        pmanager->AddProcess(new G4Cerenkov,          -1, 3,-1);
-#endif
-      }
     }
   }
 }
@@ -782,14 +754,6 @@ void BDSPhysicsList::ConstructMuon()
       pmanager->AddProcess(new G4MuIonisation,      -1, 2,2);
       pmanager->AddProcess(new G4MuBremsstrahlung,  -1, 3,3);
       pmanager->AddProcess(new G4MuPairProduction,  -1, 4,4);
-      if(BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){
-#if  G4VERSION_NUMBER > 909
-        G4Cerenkov* theCerenkovProcess = new G4Cerenkov;
-        pmanager->AddProcess(theCerenkovProcess);
-        pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
-#else
-        pmanager->AddProcess(new G4Cerenkov,          -1, 5,-1);
-#endif
 #if G4VERSION_NUMBER < 950
         pmanager->AddDiscreteProcess(new G4MuonNucleusProcess);     
 #elif G4VERSION_NUMBER < 953
@@ -797,10 +761,10 @@ void BDSPhysicsList::ConstructMuon()
 #else 
 	/*	pmanager->AddDiscreteProcess(new G4MuonVDNuclearModel); */
 #endif
-      }
     }
   }
 }
+
    
 
 void BDSPhysicsList::ConstructDecay()
@@ -823,63 +787,65 @@ void BDSPhysicsList::ConstructDecay()
 
 void BDSPhysicsList::ConstructOptical()
 {
-  //  if(!BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){ //Otherwise, it is already initialised
-  //    theCerenkovProcess           = new G4Cerenkov("Cerenkov");
-  //  }
-  theScintillationProcess      = new G4Scintillation("Scintillation");
-  //  theAbsorptionProcess         = new G4OpAbsorption();
-  //  theRayleighScatteringProcess = new G4OpRayleigh();
-  //  theMieHGScatteringProcess    = new G4OpMieHG();
-  // theBoundaryProcess           = new G4OpBoundaryProcess();
-
-//  theCerenkovProcess->DumpPhysicsTable();
-//  theScintillationProcess->DumpPhysicsTable();
-//  theRayleighScatteringProcess->DumpPhysicsTable();
-
-  SetVerboseLevel(1);
+  bool bCerOn=BDSGlobalConstants::Instance()->GetTurnOnCerenkov();
+  if(bCerOn){
+    theCerenkovProcess = new G4Cerenkov("Cerenkov");
+    theCerenkovProcess->SetMaxNumPhotonsPerStep(20);
+    theCerenkovProcess->SetMaxBetaChangePerStep(10.0);
+    theCerenkovProcess->SetTrackSecondariesFirst(true);
+    theCerenkovProcess->DumpPhysicsTable();
+  }
   
-  //  if(!BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){ //Otherwise, it is already initialised
-  //    theCerenkovProcess->SetMaxNumPhotonsPerStep(20);
-  //    theCerenkovProcess->SetMaxBetaChangePerStep(10.0);
-  //    theCerenkovProcess->SetTrackSecondariesFirst(true);
-  //  }
+  theScintillationProcess      = new G4Scintillation("Scintillation");
+  theAbsorptionProcess         = new G4OpAbsorption();
+  theRayleighScatteringProcess = new G4OpRayleigh();
+  theMieHGScatteringProcess    = new G4OpMieHG();
+  theBoundaryProcess           = new G4OpBoundaryProcess();
+  
+  theScintillationProcess->DumpPhysicsTable();
+  theRayleighScatteringProcess->DumpPhysicsTable();
+  
+  SetVerboseLevel(1);
   
   theScintillationProcess->SetScintillationYieldFactor(1.);
   theScintillationProcess->SetTrackSecondariesFirst(true);
-
+  
   // Use Birks Correction in the Scintillation process
-
-  //  G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
-  //  theScintillationProcess->AddSaturation(emSaturation);
-
+  G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
+  theScintillationProcess->AddSaturation(emSaturation);
+  
 #if G4VERSIONNUMBER < 960
-  //  G4OpticalSurfaceModel themodel = unified;
-  //  theBoundaryProcess->SetModel(themodel);
+  G4OpticalSurfaceModel themodel = unified;
+  theBoundaryProcess->SetModel(themodel);
 #endif
-
+  
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){
     G4ParticleDefinition* particle = theParticleIterator->value();
     G4ProcessManager* pmanager = particle->GetProcessManager();
     G4String particleName = particle->GetParticleName();
-    //    if(!BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){ //Otherwise, it is already initialised
-      //      if (theCerenkovProcess->IsApplicable(*particle)) {
-      //	pmanager->AddProcess(theCerenkovProcess);
-      //	pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
-      //      }
-    //    }
+    if(bCerOn){
+      if (theCerenkovProcess->IsApplicable(*particle)) {
+#if G4VERSION_NUMBER > 909
+      	pmanager->AddProcess(theCerenkovProcess);
+	pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
+#else
+        pmanager->AddProcess(new G4Cerenkov,          -1, 5,-1);
+#endif
+      }
+    }
     if (theScintillationProcess->IsApplicable(*particle)) {
       pmanager->AddProcess(theScintillationProcess);
       pmanager->SetProcessOrderingToLast(theScintillationProcess, idxAtRest);
       pmanager->SetProcessOrderingToLast(theScintillationProcess, idxPostStep);
     }
-    //    if (particleName == "opticalphoton") {
-      //      G4cout << " AddDiscreteProcess to OpticalPhoton " << G4endl;
-      //      pmanager->AddDiscreteProcess(theAbsorptionProcess);
-      //      pmanager->AddDiscreteProcess(theRayleighScatteringProcess);
-      //      pmanager->AddDiscreteProcess(theMieHGScatteringProcess);
-      //      pmanager->AddDiscreteProcess(theBoundaryProcess);
-    //    }
+    if (particleName == "opticalphoton") {
+      G4cout << " AddDiscreteProcess to OpticalPhoton " << G4endl;
+      pmanager->AddDiscreteProcess(theAbsorptionProcess);
+      pmanager->AddDiscreteProcess(theRayleighScatteringProcess);
+      pmanager->AddDiscreteProcess(theMieHGScatteringProcess);
+      pmanager->AddDiscreteProcess(theBoundaryProcess);
+    }
   }
 }
 

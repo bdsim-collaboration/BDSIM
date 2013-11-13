@@ -602,6 +602,8 @@ parameters:
                     else
 		  if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence
 		    else
+                  if(!strcmp($1->name,"tscint")) { params.tscint = $3; params.tscintset = 1;} // thickness for a scintillator screen 
+		    else
                   if(VERBOSE) printf("Warning : unknown parameter %s\n",$1->name);
 		  
 		}
@@ -860,6 +862,11 @@ parameters:
 			 strcpy(params.tunnelCavityMaterial, $3);
 		       }
 		   else 
+		   if(!strcmp($1->name,"scintmaterial")) 
+		     { strcpy(params.scintmaterial, $3); 
+		       params.scintmaterialset = 1;
+		     } // material for a scintillator screen 
+		    else
 		   if(!strcmp($1->name,"spec")) 
 		       {
 			 params.specset = 1;

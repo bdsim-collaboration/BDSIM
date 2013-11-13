@@ -46,7 +46,7 @@ void BDSMaterials::Initialise()
 
   //G4double abundance;
   G4double fractionmass;
-  //G4int ncomponents;
+ //G4int ncomponents;
   G4double temperature, pressure;
 
   //
@@ -470,10 +470,104 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddElement(elements["Y"],3);
   tmpMaterial->AddElement(elements["Al"],5);
   tmpMaterial->AddElement(elements["O"],12);
+  G4double birks = 0.08*mm/MeV; 
+  tmpMaterial->GetIonisation()->SetBirksConstant(birks);
+  G4MaterialPropertiesTable* mpt_YAG = new G4MaterialPropertiesTable();
+  const int nEntries3=60;
+  const G4int nEntries = 9;
+  G4double PhotonEnergyYAG[nEntries];
+  G4double dNEntries2=(G4double)nEntries;
+  G4double energyMin=1.91*eV;
+  G4double energyMax=2.76*eV;
+  G4double deltaEnergy=(energyMax-energyMin)/(dNEntries2-1.0);
+  G4double energy=energyMin;
+  for(G4int i=0; i<nEntries; energy += deltaEnergy, i++){
+    PhotonEnergyYAG[i]=energy;
+  }
+  G4double RefractiveIndexYAG[nEntries] = //Approximately correct, but check for different wavelengths
+    { 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82,
+      1.82, 1.82 };
+  G4double scintFastYAG[nEntries] = //Approximately correct
+    { 0, 0.25, 2.0, 14.0, 13.0, 7.0, 4.0, 2.0, 0.0 };
+  const G4int nEntries2 = 32;
+  G4double PhotonEnergy[nEntries2] =
+    { 2.034*eV, 2.068*eV, 2.103*eV, 2.139*eV,
+      2.177*eV, 2.216*eV, 2.256*eV, 2.298*eV,
+      2.341*eV, 2.386*eV, 2.433*eV, 2.481*eV,
+      2.532*eV, 2.585*eV, 2.640*eV, 2.697*eV,
+      2.757*eV, 2.820*eV, 2.885*eV, 2.954*eV,
+      3.026*eV, 3.102*eV, 3.181*eV, 3.265*eV,
+      3.353*eV, 3.446*eV, 3.545*eV, 3.649*eV,
+      3.760*eV, 3.877*eV, 4.002*eV, 4.136*eV };
+#if G4VERSIONNUMBER < 950
+  mpt_YAG->AddProperty("FASTCOMPONENT",PhotonEnergyYAG, scintFastYAG, nEntries);
+#else
+  mpt_YAG->AddProperty("FASTCOMPONENT",PhotonEnergyYAG, scintFastYAG, nEntries)->SetSpline(true);
+#endif
+  mpt_YAG->AddProperty("RINDEX",PhotonEnergyYAG, RefractiveIndexYAG, nEntries);
+  mpt_YAG->AddConstProperty("SCINTILLATIONYIELD",8000./MeV); //Approximately correct
+  mpt_YAG->AddConstProperty("RESOLUTIONSCALE",2.0); //Check this
+  mpt_YAG->AddConstProperty("FASTTIMECONSTANT",70.*ns); //Approximately correct
+  mpt_YAG->AddConstProperty("YIELDRATIO",1.0);
+  tmpMaterial->SetMaterialPropertiesTable(mpt_YAG);
   materials[name] = tmpMaterial;
 
-  //PET (Dacron)
+  //UPS-923A  - see http://www.amcrys-h.com/
   G4NistManager* nistManager = G4NistManager::Instance();
+  //Define the material properties (copy from NIST table of materials).
+  G4Material* polystyrene = nistManager->FindOrBuildMaterial("G4_POLYSTYRENE",true,true);
+  tmpMaterial = new G4Material(name="ups923a",density=polystyrene->GetDensity(),1);
+  tmpMaterial->AddMaterial(polystyrene,1);
+  tmpMaterial->SetName(name.c_str());
+  //Define the optical properties.
+  const G4int ups923a_numentries = 67;
+  
+  G4double ups923a_PhotonEnergy[ups923a_numentries]   = {
+    3.35,    3.31,    3.28,    3.26,    3.25,    3.23,    3.23,
+    3.22,    3.21,    3.19,    3.18,    3.17,    3.16,    3.15,
+    3.14,    3.14,    3.13,    3.11,    3.1,    3.09,    3.09,
+    3.08,    3.07,    3.04,    3.02,    3.02,    3.01,    2.99,
+    2.98,    2.97,    2.97,    2.95,    2.95,    2.93,    2.93,
+    2.92,    2.92,    2.91,    2.89,    2.88,    2.87,    2.86,
+    2.85,    2.83,    2.81,    2.8,    2.79,    2.78,    2.76,
+    2.74,    2.72,    2.71,    2.68,    2.66,    2.64,    2.62,
+    2.61,    2.58,    2.55,    2.53,    2.5,    2.48,    2.46,
+    2.44,    2.41,    2.38,    2.35  };      
+  
+  G4double ups923a_emission[ups923a_numentries]   = {
+    0,    0.04,    0.11,    0.2,    0.3,    0.4,    0.52,
+    0.62,    0.67,    0.68,    0.67,    0.62,    0.53,    0.48,
+    0.44,    0.42,    0.4,    0.41,    0.42,    0.51,    0.46,
+    0.57,    0.67,    0.78,    0.91,    0.93,    0.95,    0.96,
+    0.94,    0.91,    0.85,    0.76,    0.67,    0.61,    0.57,
+    0.55,    0.52,    0.51,    0.52,    0.54,    0.57,    0.58,
+    0.6,    0.6,    0.59,    0.58,    0.55,    0.48,    0.42,
+    0.37,    0.33,    0.31,    0.29,    0.28,    0.26,    0.24,
+    0.2,    0.17,    0.12,    0.09,    0.08,    0.07,
+    0.06,    0.04,    0.02,    0.01,    0.01  };
+  
+  G4MaterialPropertiesTable* ups923a_mt = new G4MaterialPropertiesTable();
+  ups923a_mt->AddConstProperty("RESOLUTIONSCALE",2.0); //Check this
+  ups923a_mt->AddConstProperty("FASTTIMECONSTANT",3.3*ns);
+  ups923a_mt->AddConstProperty("YIELDRATIO",1.0);
+  //Birk's constant
+  birks = (0.014/1.06)*cm/MeV; 
+  tmpMaterial->GetIonisation()->SetBirksConstant(birks);
+#if G4VERSIONNUMBER < 950
+  ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy, ups923a_emission, ups923a_numentries);
+#else
+  ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy, ups923a_emission, ups923a_numentries)->SetSpline(true);
+#endif
+  ups923a_mt->AddConstProperty("RINDEX", 1.06);
+  ups923a_mt->AddConstProperty("ABSLENGTH", 1*m);
+  G4double scintYieldAnthracene=14200; //Anthracene yield per 1 MeV
+  G4double scintYieldUPS923A=scintYieldAnthracene*0.60;//60% of anthracene
+  ups923a_mt->AddConstProperty("SCINTILLATIONYIELD",scintYieldUPS923A/MeV);
+  tmpMaterial->SetMaterialPropertiesTable(ups923a_mt);
+  //Put into the materials array.
+  materials[name]=tmpMaterial;
+
+  //PET (Dacron)
   tmpMaterial = nistManager->FindOrBuildMaterial("G4_DACRON",true,true);
   name="pet";
   const G4int Pet_NUMENTRIES = 3; //Number of entries in the material properties table

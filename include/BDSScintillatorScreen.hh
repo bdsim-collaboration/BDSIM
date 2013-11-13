@@ -23,7 +23,7 @@ Work in progress.
 class BDSScintillatorScreen :public BDSAcceleratorComponent
 {
 public:
-  BDSScintillatorScreen(G4String aName, G4double tScint, G4double angle);
+  BDSScintillatorScreen(G4String aName, G4double tScint, G4double angle, G4String scintMaterial);
   ~BDSScintillatorScreen();
 
 protected:
@@ -35,6 +35,7 @@ private:
   void ComputeDimensions();
   void BuildMarkerVolume();
   void BuildCameraScoringPlane();
+  void BuildScreenScoringPlane();
   void BuildScintillatorMaterial();
   void BuildScintillatorCompound();
   void BuildScintillatorOpticalProperties();
@@ -51,18 +52,21 @@ private:
   G4VPhysicalVolume* itsBaseLayerPhys;
   G4VPhysicalVolume* itsBackLayerPhys;
   G4VPhysicalVolume* itsCameraScoringPlanePhys;
+  G4VPhysicalVolume* itsScreenScoringPlanePhys;
 
   G4LogicalVolume* itsFrontLayerLog;
   G4LogicalVolume* itsScintillatorLayerLog;
   G4LogicalVolume* itsBaseLayerLog;
   G4LogicalVolume* itsBackLayerLog;
   G4LogicalVolume* itsCameraScoringPlaneLog;
+  G4LogicalVolume* itsScreenScoringPlaneLog;
 
   G4VSolid* itsFrontLayerSolid;
   G4VSolid* itsScintillatorLayerSolid;
   G4VSolid* itsBaseLayerSolid;
   G4VSolid* itsBackLayerSolid;
   G4VSolid* itsCameraScoringPlaneSolid;
+  G4VSolid* itsScreenScoringPlaneSolid;
 
 
 
@@ -76,8 +80,6 @@ private:
   G4Mag_UsualEqRhs* itsEqRhs;
   
 private:
-  G4MaterialPropertiesTable* _mptScintillatorMaterial;
-
   G4Material* _frontLayerMaterial;
   G4Material* _scintillatorLayerMaterial;
   G4Material* _baseLayerMaterial;
@@ -96,6 +98,7 @@ private:
   G4double _baseThickness;
   G4double _backThickness;
   G4double _totalThickness;
+  G4double _screenThickness;
 
   //scoring plane
   G4double _scoringPlaneThickness;
@@ -106,8 +109,11 @@ private:
   G4VisAttributes* _visAttFront;
   G4VisAttributes* _visAttScint;
   G4VisAttributes* _visAttBase;
+  G4VisAttributes* _visAttSampler;
 
   G4String _scoringPlaneName;
+  G4String _screenScoringPlaneName;
+  G4String _screenSamplerName;
   G4String _samplerName;
 };
 

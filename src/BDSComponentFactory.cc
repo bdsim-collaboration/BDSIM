@@ -30,6 +30,8 @@
 
 extern G4bool outline;
 
+#define DEBUG 1
+
 #ifdef DEBUG
 bool debug1 = true;
 #else
@@ -1236,10 +1238,13 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
 #ifdef DEBUG 
         G4cout << "---->creating Screen,"
                << " name= "<< _element.name
-               << " l=" << _element.l/m<<"m"
+               << " l=" << _element.l<<"m"
+               << " tscint=" << _element.tscint<<"m"
+               << " angle=" << _element.angle<<"m"
+               << " scintmaterial=" << "ups923a"//_element.scintmaterial
                << G4endl;
 #endif
-	return (new BDSScintillatorScreen( _element.name, 0.1*mm, -0.78539816339*rad)); //Name, scintillator thickness, angle in radians
+     return (new BDSScintillatorScreen( _element.name, _element.tscint*m, (_element.angle-0.78539816339)*rad, "ups923a")); //Name, scintillator thickness, angle in radians (relative to -45 degrees)
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){

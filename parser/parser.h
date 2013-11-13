@@ -181,9 +181,10 @@ void flush(struct Element& e )
       material;
   */
 
-  //e.material = "";
+  e.tscint=0.0001;
   e.spec = "";
   e.material="";
+  e.scintmaterial="YAG";
   e.tunnelMaterial="";
   e.tunnelCavityMaterial="Air";
   e.tunnelRadius=0;
@@ -258,7 +259,8 @@ void copy_properties(std::list<struct Element>::iterator dest, std::list<struct 
   (*dest).precisionRegion = (*src).precisionRegion;
 
   (*dest).material = (*src).material;
-
+  (*dest).scintmaterial = (*src).scintmaterial;
+  (*dest).tscint = (*src).tscint;
   (*dest).tunnelMaterial = (*src).tunnelMaterial;
   (*dest).tunnelCavityMaterial = (*src).tunnelCavityMaterial;
 
@@ -266,6 +268,8 @@ void copy_properties(std::list<struct Element>::iterator dest, std::list<struct 
   (*dest).tunnelOffsetX = (*src).tunnelOffsetX;
 
   (*dest).spec = (*src).spec;
+
+  
 
   return;
 } 
@@ -338,6 +342,7 @@ void inherit_properties(struct Element e)
 
   if(!params.specset) { strncpy(params.spec,e.spec.c_str(),1024); params.specset = 1; }
   if(!params.materialset) { strncpy(params.material,e.spec.c_str(),64); params.materialset = 1; }
+  if(!params.scintmaterialset) { strncpy(params.scintmaterial,e.scintmaterial.c_str(),64); params.scintmaterialset = 1; }
   if(!params.tunnelmaterialset) { strncpy(params.tunnelMaterial,e.spec.c_str(),64); params.tunnelmaterialset = 1; }
   if(!params.tunnelcavitymaterialset) { strncpy(params.tunnelCavityMaterial,e.spec.c_str(),64); params.tunnelcavitymaterialset = 1; }
   if(!params.tunnelRadiusset) { params.tunnelRadius = e.tunnelRadius; params.tunnelRadiusset = 1; }
@@ -823,7 +828,9 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   case _SCREEN:
     e.type = _SCREEN;
     e.l = params.l;
+    e.angle = params.angle;
     e.tscint = params.tscint;
+    e.scintmaterial = params.scintmaterial;  
     break;
 
 
@@ -1556,6 +1563,7 @@ double property_lookup(char *element_name, char *property_name)
    if(!strcmp(property_name,"hgap")) return (*it).hgap;
    if(!strcmp(property_name,"flatlength")) return (*it).flatlength;
    if(!strcmp(property_name,"taperlength")) return (*it).taperlength;
+   if(!strcmp(property_name,"tscint")) return (*it).tscint;
 
    if(!strcmp(property_name,"A")) return (*it).A;
    if(!strcmp(property_name,"Z")) return (*it).Z;
