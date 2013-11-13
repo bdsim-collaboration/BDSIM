@@ -558,7 +558,7 @@ void BDSMaterials::Initialise()
 #else
   ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy, ups923a_emission, ups923a_numentries)->SetSpline(true);
 #endif
-  ups923a_mt->AddConstProperty("RINDEX", 1.06);
+  ups923a_mt->AddConstProperty("RINDEX", 1.52);
   ups923a_mt->AddConstProperty("ABSLENGTH", 1*m);
   G4double scintYieldAnthracene=14200; //Anthracene yield per 1 MeV
   G4double scintYieldUPS923A=scintYieldAnthracene*0.60;//60% of anthracene
