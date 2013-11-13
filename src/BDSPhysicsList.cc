@@ -787,7 +787,7 @@ void BDSPhysicsList::ConstructDecay()
 
 void BDSPhysicsList::ConstructOptical()
 {
-  bool bCerOn=false;//BDSGlobalConstants::Instance()->GetTurnOnCerenkov();
+  bool bCerOn=BDSGlobalConstants::Instance()->GetTurnOnCerenkov();
   if(bCerOn){
     theCerenkovProcess = new G4Cerenkov("Cerenkov");
     theCerenkovProcess->SetMaxNumPhotonsPerStep(20);
