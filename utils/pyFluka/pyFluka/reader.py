@@ -1,5 +1,8 @@
+import flukaCubit as fc 
+
 class reader :
     def __init__(self, fileName) : 
+        # need to relabel this body Dict 
         self.geoDict  = {'RPP':['name','xmin','xmax','ymin','ymax','zmin','zmax'],
                          'BOX':['name','vx','vy','vz','hx1','hy1','hz1','hx2','hy2','hz2','hx3','hy3','hz3'],
                          'SPH':['name','vx','vy','vz','r'],
@@ -24,11 +27,22 @@ class reader :
                          'YEC':['name','ax','az','lx','lz'],
                          'ZEC':['name','ax','ay','lx','ly'],
                          'QUA':['name','axx','ayy','azz','axy','axz','ayz','ax','ay','az','a0']}
+        # fluka cmd dict 
+        self.cmdDict = {'*':[]} 
+
         self.bodyDict = {}
         self.regiDict = {}
+        self.rotnDict = {}
 
-        self.readFlukaGeometry(fileName)
-        
+#        self.readFlukaGeometry(fileName)
+        f = open(fileName) 
+        self.readFile = f.read()
+        self.readFlukaGeometryToken()
+        self.readFlukaRegion()
+        self.readFlukaRotnToken()
+
+        f.close()
+
     def readTranformations(self,fileName) :
         f = open(fileName) 
         
@@ -46,31 +60,107 @@ class reader :
 
         f.close()
 
-    def lineTransCheck(self, line) :
-        pass
+    def readFlukaGeometryToken(self) :        
+        rfs = self.readFile.split()
 
-    def lineTypeCheck(self,line) : 
-        # split line 
-        t = line.split() 
-        if len(t) <= 0 : 
-            return 
-        try : 
-            geoDictInd = self.geoDict.keys().index(t[0]) 
-            geoType    = self.geoDict.keys()[geoDictInd]
-            print geoType, len(t), len(self.geoDict[geoType])
-            data = []
+        translat = [0., 0., 0.] 
+        transform = '' 
+
+        for i in range(0,len(rfs),1) : 
+            # ########################
+            # Get the transform associated with the geometric object 
+            # ########################
+            if rfs[i] == '$start_translat' : 
+                translat = [float(rfs[i+1]), float(rfs[i+2]), float(rfs[i+3])]
+            if rfs[i] == '$start_transform' : 
+                transform = rfs[i+1]
+            if rfs[i] == '$end_translat' :
+                translat = [0., 0., 0.] 
+            if rfs[i] == '$end_transform' : 
+                transform = ''
+            try : 
+                geoDictInd = self.geoDict.keys().index(rfs[i])
+                geoType    = self.geoDict.keys()[geoDictInd]
+#                print geoType, len(self.geoDict[geoType])
+                data = []
             
-            name = t[1]
-            data.append(geoType)
-            for i in range(2,len(self.geoDict[geoType]),1) : 
-                data.append(float(t[i]))
-            self.bodyDict[name] = data
-        except ValueError :
-            return
+                name = rfs[i+1]
+                data.append(geoType)
+                for j in range(i+2,i+len(self.geoDict[geoType])+1,1) : 
+                    data.append(float(rfs[j]))
+                self.bodyDict[name] = [data,translat,transform]
+            except ValueError :
+                continue
 
-    
-    
-    
+    def readFlukaRotnToken(self) : 
+        rfs = self.readFile.split() 
 
+        for i in range(0,len(rfs),1) : 
+            if rfs[i] == 'ROT-DEFI' :
+                rdata = []
+                for j in range(0,6,1) : 
+                    rdata.append(float(rfs[i+j+1]))
+                self.rotnDict[rfs[i+7]] = rdata
             
+    def readFlukaRegion(self) :
+        '''Does a seach for a leading 'END' token to 'GEOEND' to find regions''' 
+
+        rfs = self.readFile.split('\n')
+
+        geoBegin = False
+        iRegion  = -1
+        regionDef = '' 
+        regionName = '' 
+
+        for l in rfs : 
+            t = l.split() 
+            if len(t) ==  0 : 
+                continue 
+            if l[0] == '*' : 
+                continue
+            if l[0] == '#' : 
+                continue 
+            if l[0] == '$' : 
+                continue
+            if t[0] == 'LATTICE' : 
+                continue
+            if t[0] == 'END' :
+                geoBegin = True
+                continue
+            if t[0] == 'GEOEND' : 
+                geoBegin = False
+
+
+
+            if geoBegin : 
+                try : 
+                    self.geoDict.keys().index(t[0])
+                    continue 
+                except ValueError :
+                    if l[0:3] != '   ' : 
+                        iRegion = iRegion+1 
+
+                        # remove the init case 
+                        if regionName != '' : 
+                            self.regiDict[regionName] = regionDef
+
+                        regionName = t[0] 
+                        regionDef  = l 
+#                        print regionName+':'+l
+                    else : 
+#                        print regionName+':'+l
+                        regionDef = regionDef+l
+
+    def makeCubitFile(self, region) : 
+        geo = self.regiDict[region] 
+        t = geo.split() 
+
+
+        for i in range(2,len(t),1) : 
+            print t[i]
+            name = t[i][1:]
+            data = self.bodyDict[name] 
+            v1 = fc.createJou(t[i][1:]+'.jou')
+            v1.MakeModel(fc.RCC(data[0]))
+            v1.export(name+'.stl')
 
