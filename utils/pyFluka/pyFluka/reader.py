@@ -161,6 +161,11 @@ class reader :
             name = t[i][1:]
             data = self.bodyDict[name] 
             v1 = fc.createJou(t[i][1:]+'.jou')
-            v1.MakeModel(fc.RCC(data[0]))
+            if data[0][0] == 'RPP' :                 
+                v1.MakeModel(fc.RPP(data[0][1:]))                
+            elif data[0][0] == 'RCC' : 
+                v1.MakeModel(fc.RCC(data[0][1:]))                
+                
             v1.export(name+'.stl')
-
+            
+#            os./Applications/Cubit.app/Contents/MacOS/cubitcl -input TAS_BODY.jou -nographics -nojournal -batch
