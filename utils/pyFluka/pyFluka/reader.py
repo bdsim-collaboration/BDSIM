@@ -1,4 +1,5 @@
 import flukaCubit as fc 
+import os
 
 class reader :
     def __init__(self, fileName) : 
@@ -155,17 +156,40 @@ class reader :
         geo = self.regiDict[region] 
         t = geo.split() 
 
+        f = open('region.jou','w') 
+
+        bodyOpList   = [] 
+        bodyList    = []
 
         for i in range(2,len(t),1) : 
-            print t[i]
-            name = t[i][1:]
+            op     = t[i][0]
+            name   = t[i][1:]
+            bodyOpList.append(op)
+            bodyList.append(name)
+
             data = self.bodyDict[name] 
-            v1 = fc.createJou(t[i][1:]+'.jou')
-            if data[0][0] == 'RPP' :                 
-                v1.MakeModel(fc.RPP(data[0][1:]))                
+            jouFile = name+'.jou'
+            stlFile = name+'.stl'
+
+            v1 = fc.createJou(jouFile)
+            if data[0][0] == 'RPP' :             
+                v1.MakeModel(fc.RPP(data[0][1:]))
+                v1.MakeModel(fc.translation(data[1]))
             elif data[0][0] == 'RCC' : 
-                v1.MakeModel(fc.RCC(data[0][1:]))                
-                
-            v1.export(name+'.stl')
+                v1.MakeModel(fc.RCC(data[0][1:]))    
+                v1.MakeModel(fc.translation(data[1]))            
             
-#            os./Applications/Cubit.app/Contents/MacOS/cubitcl -input TAS_BODY.jou -nographics -nojournal -batch
+            print data[1]
+        
+            v1.export(stlFile)
+            v1.close()
+
+            print jouFile
+
+            # make 
+            os.system('/Applications/Cubit.app/Contents/MacOS/cubitcl -input '+jouFile+' -nographics -nojournal -batch > /dev/null')
+
+            f.write('import stl "/Users/sboogert/Dropbox/Physics/general/acc/bdsim/bdsim-git/utils/pyFluka/pyFluka/'+stlFile+'" merge\n')
+        f.close()
+
+        
