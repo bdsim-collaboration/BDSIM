@@ -37,8 +37,8 @@ extern LogVolMap* LogVol;
 
 //============================================================
 
-BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double tScint, G4double angle, G4String scintMaterial):
-  BDSAcceleratorComponent(aName, tScint, 0, 0, 0, SetVisAttributes()),_scintillatorThickness(tScint),_scintillatorLayerMaterial(BDSMaterials::Instance()->GetMaterial(scintMaterial.data())),_screenAngle(angle)
+BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double tScint, G4double angle, G4String scintMaterial, G4String airMaterial):
+  BDSAcceleratorComponent(aName, tScint, 0, 0, 0, SetVisAttributes()),_scintillatorThickness(tScint),_scintillatorLayerMaterial(BDSMaterials::Instance()->GetMaterial(scintMaterial.data())),_airMaterial(BDSMaterials::Instance()->GetMaterial(airMaterial.data())),_screenAngle(angle)
 {
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
@@ -383,7 +383,7 @@ void BDSScintillatorScreen::BuildMarkerVolume(){
 
   itsMarkerLogicalVolume=new G4LogicalVolume
     (itsMarkerSolidVolume, 
-     BDSMaterials::Instance()->GetMaterial("vacuum"),
+     _airMaterial,
      itsName+"_log");
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;

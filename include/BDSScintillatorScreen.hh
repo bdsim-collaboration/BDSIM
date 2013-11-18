@@ -23,7 +23,7 @@ Work in progress.
 class BDSScintillatorScreen :public BDSAcceleratorComponent
 {
 public:
-  BDSScintillatorScreen(G4String aName, G4double tScint, G4double angle, G4String scintMaterial);
+  BDSScintillatorScreen(G4String aName, G4double tScint, G4double angle, G4String scintMaterial, G4String airMaterial);
   ~BDSScintillatorScreen();
 
 protected:
@@ -85,6 +85,7 @@ private:
   G4Material* _baseLayerMaterial;
   G4Material* _backLayerMaterial;
   //BDSEnergyCounterSD* itsEnergyCounterSD;
+  G4Material* _airMaterial;
   G4double itsOuterR;
 
   G4double _screenWidth;

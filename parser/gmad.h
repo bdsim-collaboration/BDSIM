@@ -245,7 +245,7 @@ struct Element {
   double phi, theta, psi; // for 3d transforms
   double tunnelRadius;
   double tunnelOffsetX;
-  std::string scintmaterial;
+  std::string scintmaterial, airmaterial;
 
   std::list<double> knl;
   std::list<double> ksl;
@@ -297,6 +297,7 @@ struct Parameters {
 
   double tscint; int tscintset; //thickness of scintillating part of screen
   char scintmaterial[256]; int scintmaterialset;
+  char airmaterial[256]; int airmaterialset;
 
   std::list<double> knl;           // multipole expansion coefficients
   std::list<double> ksl;           // skew multipole expansion
@@ -386,6 +387,7 @@ struct Parameters {
     r = 0; rset = 0;
     tscint = 0.0001; tscintset = 0;
     scintmaterialset=0;
+    airmaterialset=0;
 
     // materials' parameters
     A = 0; Aset = 0; //g*mol^-1
@@ -461,6 +463,7 @@ struct Parameters {
 
     strcpy(material,""); materialset = 0;
     strcpy(scintmaterial,""); scintmaterialset = 0;
+    strcpy(airmaterial,""); airmaterialset = 0;
     strcpy(tunnelMaterial,""); tunnelmaterialset = 0;
     strcpy(tunnelCavityMaterial,""); tunnelcavitymaterialset = 0;
     strcpy(spec,""); specset = 0;

@@ -1242,9 +1242,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
                << " tscint=" << _element.tscint<<"m"
                << " angle=" << _element.angle<<"m"
                << " scintmaterial=" << "ups923a"//_element.scintmaterial
+               << " airmaterial=" << "air"//_element.airmaterial
                << G4endl;
 #endif
-     return (new BDSScintillatorScreen( _element.name, _element.tscint*m, (_element.angle-0.78539816339)*rad, "ups923a")); //Name, scintillator thickness, angle in radians (relative to -45 degrees)
+	return (new BDSScintillatorScreen( _element.name, _element.tscint*m, (_element.angle-0.78539816339)*rad, "ups923a","air")); //Name, scintillator thickness, angle in radians (relative to -45 degrees)
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){

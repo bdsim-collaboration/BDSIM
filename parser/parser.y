@@ -866,6 +866,11 @@ parameters:
 		     { strcpy(params.scintmaterial, $3); 
 		       params.scintmaterialset = 1;
 		     } // material for a scintillator screen 
+		   else
+		   if(!strcmp($1->name,"airmaterial")) 
+		     { strcpy(params.airmaterial, $3); 
+		       params.airmaterialset = 1;
+		     } // material for air around scintillator screen 
 		    else
 		   if(!strcmp($1->name,"spec")) 
 		       {
