@@ -30,9 +30,10 @@ BDSCCDCamera::BDSCCDCamera ()
 }
 
 void BDSCCDCamera::defaultDimensions(){
+  G4double lensAssemblyLength = 4.4*mm + 2.2*mm + 15*mm;
   _size.setX(110.7*mm);
   _size.setY(137.2*mm);
-  _size.setZ(231.0*mm);
+  _size.setZ(231.0*mm+lensAssemblyLength);
 }
 
 void BDSCCDCamera::build(){
@@ -73,33 +74,53 @@ void BDSCCDCamera::buildCCDChip(){
 }
 
 void BDSCCDCamera::placeComponents(){
+  placeObjectLens();
+  placeImageLens();
+  placeCCDChip();
 }
 
-
-void BDSCCDCamera::buildPixels(){
-  G4ThreeVector pos, offset;
-  offset.setZ(0);
-  offset.setX(-_size.x()/2.0+_pixel->size().x());
-  offset.setX(_size.y()/2.0+_pixel->size().y());
-  pos.setZ(0);
-  G4int copyNumber=0;
-  for (int i=0; i<_nPixels.x(); i++){
-    for(int j=0; j<_nPixels.y(); j++, copyNumber++){
-      pos.setX(offset.x()+i*_pixel->size().x());
-      pos.setY(offset.y()-j*_pixel->size().y());
-      new G4PVPlacement(0,
-			pos,
-			_pixel->log(),
-			_pixel->name()+"_phys",
-			_log,
-			true,
-			copyNumber,
-			BDSGlobalConstants::Instance()->GetCheckOverlaps()
-			);
-    }
-  }
+void BDSCCDCamera::placeObjectLens(){
+  G4ThreeVector placementVec;
+  placementVec.setX(0);
+  placementVec.setY(0);
+  placementVec.setZ(-_size.z()/2.0+_objectLens->centreThickness()/2.0);
+  new G4PVPlacement(0,
+		    placementVec,
+		    _objectLens->log(),
+		    _objectLens->name()+"_phys",
+		    _log,
+		    false,
+		    0,
+		    true);
 }
-
+void BDSCCDCamera::placeImageLens(){
+  G4ThreeVector placementVec;
+  placementVec.setX(0);
+  placementVec.setY(0);
+  placementVec.setZ(-_size.z()/2.0+_objectLens->centreThickness()/2.0+15*mm);
+  new G4PVPlacement(0,
+		    placementVec,
+		    _objectLens->log(),
+		    _objectLens->name()+"_phys",
+		    _log,
+		    false,
+		    0,
+		    true);
+}
+void BDSCCDCamera::placeCCDChip(){
+  G4ThreeVector placementVec;
+  placementVec.setX(0);
+  placementVec.setY(0);
+  placementVec.setZ(-_size.z()/2.0+_objectLens->centreThickness()/2.0+15*mm+15*mm);
+  new G4PVPlacement(0,
+		    placementVec,
+		    _objectLens->log(),
+		    _objectLens->name()+"_phys",
+		    _log,
+		    false,
+		    0,
+		    true);
+}
 
 BDSCCDCamera::~BDSCCDCamera()
 {
