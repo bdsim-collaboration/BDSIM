@@ -15,6 +15,8 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
 #include "BDSEventAction.hh"
+#include "BDSCCDPixelSD.hh"
+#include "BDSCCDPixelHit.hh"
 
 #include <list>
 #include <map>
@@ -268,6 +270,28 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 	    bdsOutput->WriteEnergyLoss(BDSEnergyCounter_HC);
 	  }
 	}
+    }
+#ifdef DEBUG
+  G4cout << __METHOD_NAME__ << " finished writing energy loss." << G4endl;
+#endif
+
+
+
+#ifdef DEBUG 
+  G4cout<<"BDSEventAction : CCD camera hits histograms"<<G4endl;
+#endif
+  
+  BDSCCDPixelHitsCollection* BDSCCDCamera_HC=NULL;
+  G4String name="CCDPixel";
+  G4int BDSCCDCamera_ID= G4SDManager::GetSDMpointer()->GetCollectionID(name);
+  if(BDSCCDCamera_ID>=0)
+    {
+      BDSCCDCamera_HC=
+	(BDSCCDPixelHitsCollection*)(evt->GetHCofThisEvent()->GetHC(BDSCCDCamera_ID));
+      
+      if(BDSCCDCamera_HC) {
+	bdsOutput->WriteCCDHits(BDSCCDCamera_HC);
+	  }
     }
 #ifdef DEBUG
   G4cout << __METHOD_NAME__ << " finished writing energy loss." << G4endl;
