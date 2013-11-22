@@ -23,6 +23,9 @@ public:
   ~BDSLens();
   G4LogicalVolume* log();
   G4String name();
+  inline G4double centreThickness(){return _centreThickness;}
+  inline G4double diameter(){return _diameter;}
+  inline G4double rho(){return _rho;} //Radius of curvature
 
 private:
   void build();
@@ -31,7 +34,6 @@ private:
   G4double _diameter;
   G4double _rho; //radius of curvature
   G4double _centreThickness;
-  G4double _edgeThickness;
   G4String _name;
   // Geometrical objects:
   G4LogicalVolume* _log;

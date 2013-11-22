@@ -16,6 +16,7 @@
 #include "G4SubtractionSolid.hh"
 #include "G4TwoVector.hh"
 #include "BDSCCDChip.hh"
+#include "BDSLens.hh"
 
 class BDSCCDCamera 
 {
@@ -24,15 +25,20 @@ public:
   ~BDSCCDCamera();
   G4LogicalVolume* log();
   G4String name();
-  build();
-  buildMotherVolume();
-  buildCCDChip();
-  buildObjectLen();
-  buildImageLens();
+  inline G4ThreeVector size(){return _size;}
 
 private:
+  void defaultDimensions();
   void build();
+  void buildMotherVolume();
+  void buildCCDChip();
+  void buildObjectLens();
+  void buildImageLens();
   void visAtt();
+  void placeComponents();
+  void placeCCDChip();
+  void placeObjectLens();
+  void placeImageLens();
 
   G4ThreeVector _size;
   G4String _name;
@@ -42,7 +48,7 @@ private:
   G4LogicalVolume* _log;
   G4VSolid* _solid;
   G4VisAttributes* _visAtt;
-  BDSCCDChip* _ccdchip;
+  BDSCCDChip* _ccdChip;
   BDSLens* _objectLens;
   BDSLens* _imageLens;
 };

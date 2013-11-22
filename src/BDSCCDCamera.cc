@@ -60,17 +60,17 @@ void BDSCCDCamera::buildObjectLens(){
   _objectLens = new BDSLens(_name+"ObjectLens",25.4*mm, 1029.8*mm,2.2*mm); //Focal length 1m lens (Thorlabs LB1409-A)
 }
 void BDSCCDCamera::buildImageLens(){
-  _imageLensnew new BDSLens(_name+"ObjectLens",12.7*mm, 14.6*mm, 4.7*mm); //Focal length 15mm lens (Thorlabs LB1092-A) (magnification factor = 66.4)
+  _imageLens = new BDSLens(_name+"ObjectLens",12.7*mm, 14.6*mm, 4.7*mm); //Focal length 15mm lens (Thorlabs LB1092-A) (magnification factor = 66.4)
 }
 void BDSCCDCamera::buildCCDChip(){
   G4ThreeVector pixelSize;
-  G4ThreeVector nPixels;
+  G4TwoVector nPixels;
   pixelSize.setX(13.5e-3*mm);
   pixelSize.setY(13.5e-3*mm);
   pixelSize.setZ(13.5e-3*mm); //Assume that the pixels are cubes for the moment.
   nPixels.setX(2048);
   nPixels.setY(512);
-  _ccdChip = new BDSCCDChip(_name+"_CCDChip", pixelSize, nPixels);
+  _ccdChip = new BDSCCDChip((G4String)(_name+"_CCDChip"), pixelSize, nPixels);
 }
 
 void BDSCCDCamera::placeComponents(){
@@ -93,6 +93,7 @@ void BDSCCDCamera::placeObjectLens(){
 		    0,
 		    true);
 }
+
 void BDSCCDCamera::placeImageLens(){
   G4ThreeVector placementVec;
   placementVec.setX(0);
