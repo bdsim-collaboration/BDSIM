@@ -1,3 +1,4 @@
+import pylab as pl
 import flukaCubit as fc 
 import os
 
@@ -152,33 +153,60 @@ class reader :
 #                        print regionName+':'+l
                         regionDef = regionDef+l
 
-    def makeCubitFile(self, region) : 
+    def makeCubit(self) : 
+        f = open('cubit.jou','w') 
+        
+        for reg in self.regiDict.keys() : 
+            self.makeCubitRegion(reg)
+            f.write('play "/Users/sboogert/Dropbox/Physics/general/acc/bdsim/bdsim-git/utils/pyFluka/pyFluka/'+reg+'.jou"\n')
+            
+        f.close()
+
+    def makeCubitRegion(self, region) : 
         geo = self.regiDict[region] 
         t = geo.split() 
 
-        f = open('region.jou','w') 
+        f = open(region+'.jou','w') 
 
-        bodyOpList   = [] 
+        transList   = []
+        bodyOpList  = [] 
         bodyList    = []
 
-        for i in range(2,len(t),1) : 
+        for i in range(3,len(t),1) : 
+            if t[i] == '|' : 
+                continue 
             op     = t[i][0]
             name   = t[i][1:]
+            data   = self.bodyDict[name] 
+            vdata  = data[0][1:]
+            type   = data[0][0]
+            trans  = data[1]
+
             bodyOpList.append(op)
             bodyList.append(name)
+            transList.append(trans)
 
-            data = self.bodyDict[name] 
+            print name,type,vdata,trans
+
             jouFile = name+'.jou'
             stlFile = name+'.stl'
 
             v1 = fc.createJou(jouFile)
-            if data[0][0] == 'RPP' :             
-                v1.MakeModel(fc.RPP(data[0][1:]))
-                v1.MakeModel(fc.translation(data[1]))
-            elif data[0][0] == 'RCC' : 
-                v1.MakeModel(fc.RCC(data[0][1:]))    
-                v1.MakeModel(fc.translation(data[1]))            
-            
+            pr = fc.Primitives() 
+
+            if type == 'RPP' :             
+                v1.MakeModel(pr.RPP(vdata))
+                v1.MakeModel(pr.translation(trans))
+            elif type == 'RCC' : 
+                v1.MakeModel(pr.RCC(vdata))    
+                v1.MakeModel(pr.translation(trans))            
+            elif type == 'XYP' : 
+                v1.MakeModel(pr.XYP(vdata))
+                v1.MakeModel(pr.translation(trans))
+            elif type == 'ZCC' : 
+                v1.MakeModel(pr.ZCC(vdata))
+                v1.MakeModel(pr.translation(trans))                
+                
             print data[1]
         
             v1.export(stlFile)
@@ -188,8 +216,9 @@ class reader :
 
             # make 
             os.system('/Applications/Cubit.app/Contents/MacOS/cubitcl -input '+jouFile+' -nographics -nojournal -batch > /dev/null')
-
             f.write('import stl "/Users/sboogert/Dropbox/Physics/general/acc/bdsim/bdsim-git/utils/pyFluka/pyFluka/'+stlFile+'" merge\n')
         f.close()
 
+        transList = pl.array(transList)
+        
         
