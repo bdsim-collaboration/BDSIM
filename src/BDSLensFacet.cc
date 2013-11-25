@@ -40,6 +40,7 @@ void BDSLensFacet::visAtt()
 }
 
 void BDSLensFacet::build(){
+  G4cout << "Building G4Trap with dimensions: " << _size.x() << " " << _size.y()<< " " <<  _totalHeight << " " <<  _baseHeight << G4endl;
   _solid = new G4Trap((_name+"solid").c_str(), _size.x(), _size.y(), _totalHeight, _baseHeight);
   _log = new G4LogicalVolume(_solid,BDSMaterials::Instance()->GetMaterial(_material),(_name+"_log").c_str(),0,0,0);
   visAtt();
