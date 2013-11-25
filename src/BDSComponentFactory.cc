@@ -248,7 +248,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
 #ifdef DEBUG
     G4cout << "BDSComponentFactory: type: " << _element.type << G4endl; 
 #endif
-    G4Exception("Error: BDSComponentFactory: type not found.", "-1", FatalErrorInArgument, "");   
+    //    G4Exception("Error: BDSComponentFactory: type not found.", "-1", FatalErrorInArgument, "");   
     return NULL;
     break;
   }
