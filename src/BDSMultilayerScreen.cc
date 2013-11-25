@@ -38,7 +38,6 @@ void BDSMultilayerScreen::screenLayer(BDSScreenLayer* layer){
 }
 
 G4LogicalVolume* BDSMultilayerScreen::log(){
-  build();
   return _log;
 }
 
@@ -48,21 +47,23 @@ void BDSMultilayerScreen::build(){
 }
 
 void BDSMultilayerScreen::buildMotherVolume(){
-  delete _solid; //Delete these if they already exist.
-  delete _log;
   computeDimensions();
   _solid  = new G4Box((_name+"_solid").c_str(),_size.x()/2.0,_size.y()/2.0,_size.z()/2.0);
   _log = new G4LogicalVolume(_solid,BDSMaterials::Instance()->GetMaterial("vacuum"),(_name+"_log").c_str(),0,0,0);
 }
 
 void BDSMultilayerScreen::computeDimensions(){
+  G4cout << "Compute dimensions..." << G4endl;
+  G4cout << "...z size..." << G4endl;
   G4double temp=0;
   for(int i=0; i<_screenLayers.size(); i++){
+    G4cout << "..adding z size for layer number " << i << G4endl;
     temp += _screenLayers[i]->size().z();
     //Compute the total z thickness.
   }
   _size.setZ(temp);
   //Compute the z positions of all the layers.
+  G4cout << "...z positions..." << G4endl;
   G4double pos;
   for(int i=0; i<_screenLayers.size(); i++){
     pos = -_size.z()/2.0 + _screenLayers[i]->size().z()/2.0; //Position each layer after the previous one.
@@ -71,6 +72,7 @@ void BDSMultilayerScreen::computeDimensions(){
     }
     _screenLayerZPos.push_back(pos);
   }
+  G4cout << "...finsished." << G4endl;
 }
 
 void BDSMultilayerScreen::placeLayers(){

@@ -31,6 +31,8 @@ public:
   inline BDSScreenLayer* screenLayer(G4int layer){return _screenLayers[layer];}
   BDSScreenLayer* screenLayer(G4String layer);
   inline G4double nLayers(){return _screenLayers.size();}
+  void build();
+
 
 private:
   G4TwoVector _xysize;
@@ -43,7 +45,6 @@ private:
   std::vector<G4double> _screenLayerZPos;
   void computeDimensions();
   void buildMotherVolume();
-  void build();
   void placeLayers();
 };
 
