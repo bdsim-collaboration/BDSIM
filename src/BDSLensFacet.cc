@@ -27,7 +27,7 @@ BDSLensFacet::BDSLensFacet (G4String name, G4TwoVector size, G4double angle, G4d
 
 void BDSLensFacet::computeDimensions(){
   G4double aSmallNumber=1e-20;
-  if(_baseHeight==0) {_baseHeight=aSmallNumber}
+  if(_baseHeight==0) {_baseHeight=aSmallNumber;}
   _totalHeight = _baseHeight + _size.x()*tan(_angle);
   //phi, theta, psi rotation such that the base is perp. to the z direction.
   _rotation = new G4RotationMatrix(0, BDSGlobalConstants::Instance()->GetPI()/2.0,0); 
