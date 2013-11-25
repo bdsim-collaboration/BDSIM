@@ -46,7 +46,7 @@ void BDSScreenLayer::buildGroove(){
 
 void BDSScreenLayer::buildScreen(){
   _solid  = new G4Box((_name+"_solid").c_str(),_size.x()/2.0,_size.y()/2.0,_size.z()/2.0);
-  _log = new G4LogicalVolume(_solid,BDSMaterials::Instance()->GetMaterial("Silicon"),(_name+"_log").c_str(),0,0,0);
+  _log = new G4LogicalVolume(_solid,BDSMaterials::Instance()->GetMaterial(_material),(_name+"_log").c_str(),0,0,0);
   cutGrooves();
 }
 
