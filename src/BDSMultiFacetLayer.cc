@@ -62,7 +62,7 @@ void BDSMultiFacetLayer::placeFacets(){
 		      _log,
 		      true,
 		      i,
-		      true);
+		      false);
   }
 }
 

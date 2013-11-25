@@ -73,7 +73,7 @@ void BDSScreenLayer::cutGroove(G4double xPosition){
 		    _log,
 		    true,
 		    _nGrooves,
-		    true
+		    false
 		    );
   _nGrooves++; //Increment the counter for the number of grooves in the screen.
 }
