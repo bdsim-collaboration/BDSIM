@@ -36,7 +36,7 @@ void BDSAwakeMultilayerScreen::frontLayer(){
   
   BDSLensFacet* facet = new BDSLensFacet("afacet",G4TwoVector(1*mm-_gapWidth,3*cm),33.0*BDSGlobalConstants::Instance()->GetPI()/180.0,
 					 0,"PET");
-  screenLayer(new BDSMultiFacetLayer((G4String)"multiFacetLayer", facet, _gapWidth,1000));
+  screenLayer(new BDSMultiFacetLayer((G4String)"multiFacetLayer", facet, _gapWidth,10));
 }
 
 void BDSAwakeMultilayerScreen::surfaces(){
