@@ -513,9 +513,8 @@ void BDSMaterials::Initialise()
   materials[name] = tmpMaterial;
 
   //UPS-923A  - see http://www.amcrys-h.com/
-  G4NistManager* nistManager = G4NistManager::Instance();
   //Define the material properties (copy from NIST table of materials).
-  G4Material* polystyrene = nistManager->FindOrBuildMaterial("G4_POLYSTYRENE",true,true);
+  G4Material* polystyrene = G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYSTYRENE",true,true);
   tmpMaterial = new G4Material(name="ups923a",density=polystyrene->GetDensity(),1);
   tmpMaterial->AddMaterial(polystyrene,1);
   tmpMaterial->SetName(name.c_str());
@@ -568,7 +567,7 @@ void BDSMaterials::Initialise()
   materials[name]=tmpMaterial;
 
   //PET (Dacron)
-  tmpMaterial = nistManager->FindOrBuildMaterial("G4_DACRON",true,true);
+  tmpMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_DACRON",true,true);
   name="pet";
   const G4int Pet_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Pet_RIND[Pet_NUMENTRIES] = {1.570,1.570,1.570};//Assume constant refractive index.
@@ -579,7 +578,7 @@ void BDSMaterials::Initialise()
   materials[name]=tmpMaterial;
 
   //Cellulose
-  tmpMaterial = nistManager->FindOrBuildMaterial("G4_CELLULOSE_CELLOPHANE",true,true);
+  tmpMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_CELLULOSE_CELLOPHANE",true,true);
   name="cellulose";
   const G4int Cellulose_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Cellulose_RIND[Cellulose_NUMENTRIES] = {1.532,1.532,1.532};//Assume constant refractive index.
@@ -596,6 +595,38 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddElement(elements["H"],10);
   tmpMaterial->AddElement(elements["N"],2);
   tmpMaterial->AddElement(elements["O"],4);
+  materials[name]=tmpMaterial;
+
+  //Gadolinium oxysulphate Gd_2 O_2 S
+  G4Material* GOS = G4NistManager::Instance()->FindOrBuildMaterial("G4_GADOLINIUM_OXYSULFIDE",true,true);
+
+  //Ganolinium oxysulphate in a polyurethane elastomer 
+  G4double fill_factor=0.5;
+  G4double lanex_density=fill_factor*GOS->GetDensity()+(1-fill_factor)*GetMaterial("polyurethane")->GetDensity();
+  G4double gos_fraction_by_mass=fill_factor*GOS->GetDensity()/lanex_density;
+  G4double pur_fraction_by_mass=1-gos_fraction_by_mass;
+  tmpMaterial = new G4Material(name="lanexScintLayerMaterial", density=lanex_density, 2);
+  tmpMaterial->AddMaterial(GOS, gos_fraction_by_mass);
+  tmpMaterial->AddMaterial(GetMaterial("polyurethane"), pur_fraction_by_mass);
+  G4MaterialPropertiesTable* mptLanex = new G4MaterialPropertiesTable();
+  const G4int nentLanex=2;
+  G4double rindex=(1.82+1.50)/2.0;
+  G4double energytab[]={2.239*eV, 2.241*eV};
+  G4double rindextab[]={rindex, rindex};
+  G4double emitspec[]={1.0, 1.0};
+  G4double abslen[]={1.0*m, 1.0*m};
+  G4double mieScatteringLength[]={60.3e-3*mm, 60.3e-3*mm};
+  mptLanex->AddProperty("RINDEX",energytab, rindextab, nentLanex); //Average refractive index of bulk material
+  mptLanex->AddProperty("ABSLENGTH", energytab, abslen, nentLanex);
+  mptLanex->AddProperty("FASTCOMPONENT",energytab, emitspec, nentLanex);
+  mptLanex->AddConstProperty("SCINTILLATIONYIELD",2.94e4/MeV);
+  mptLanex->AddConstProperty("RESOLUTIONSCALE",1.0);
+  mptLanex->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
+  mptLanex->AddConstProperty("MIEHG", 60.3e-3*mm);
+  mptLanex->AddConstProperty("MIEHG_FORWARD", 0.911);
+  mptLanex->AddConstProperty("MIEHG_BACKWARD", 0.911);
+  mptLanex->AddConstProperty("MIEHG_FORWARD_RATIO", 0.99999999);
+  tmpMaterial->SetMaterialPropertiesTable(mptLanex);
   materials[name]=tmpMaterial;
 
   // liquid materials
@@ -830,8 +861,7 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)
 #ifdef DEBUG
     G4cout << "Using NIST material " << aMaterial << G4endl;
 #endif
-    G4NistManager* nistManager = G4NistManager::Instance();
-    return nistManager->FindOrBuildMaterial(aMaterial, true, true);
+    return G4NistManager::Instance()->FindOrBuildMaterial(aMaterial, true, true);
   } else {
     aMaterial.toLower();
     map<G4String,G4Material*>::iterator iter = materials.find(aMaterial);
@@ -855,8 +885,7 @@ G4Element* BDSMaterials::GetElement(G4String aSymbol)
 #ifdef DEBUG
     G4cout << "Using NIST material " << aSymbol << G4endl;
 #endif
-    G4NistManager* nistManager = G4NistManager::Instance();
-    return nistManager->FindOrBuildElement(aSymbol, true);
+    return G4NistManager::Instance()->FindOrBuildElement(aSymbol, true);
   } else {
     map<G4String,G4Element*>::iterator iter = elements.find(aSymbol);
     if(iter != elements.end()) return (*iter).second;
@@ -952,9 +981,8 @@ void BDSMaterials::ListMaterials(){
   G4cout << "WeightIron" << G4endl;
   G4cout << "****************************" << G4endl;
   G4cout << "Available nist materials are:" << G4endl;
-  G4NistManager* nistManager = G4NistManager::Instance();
   G4String list="all";
-  nistManager->ListMaterials(list);
+  G4NistManager::Instance()->ListMaterials(list);
 }
 
 BDSMaterials::~BDSMaterials(){

@@ -3,37 +3,58 @@
 #include "BDSLensFacet.hh"
 #include "BDSMultiFacetLayer.hh"
 #include "BDSGlobalConstants.hh"
+#include "G4OpticalSurface.hh"
+#include "G4LogicalBorderSurface.hh"
 
 BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen():
   BDSMultilayerScreen(G4TwoVector(1*m,3*cm),(G4String)"AwakeMultilayerScreen")
 {
-  addLayers();
+  layers();
 }
 
 
 BDSAwakeMultilayerScreen::~BDSAwakeMultilayerScreen(){
 }
 
-void BDSAwakeMultilayerScreen::addLayers(){
+void BDSAwakeMultilayerScreen::layers(){
   _gapWidth=1*um;
   _gapSpacing=1*mm;
-  addBackingLayer();
-  addScintillatorLayer();
-  addFrontLayer();
+  backingLayer();
+  scintillatorLayer();
+  frontLayer();
 }
 
-
-void BDSAwakeMultilayerScreen::addBackingLayer(){
-  addScreenLayer(new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),300*um),(G4String)"backingLayer",(G4String)"PET",0,0));
+void BDSAwakeMultilayerScreen::backingLayer(){
+  screenLayer(new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),300*um),(G4String)"backingLayer","PET",0,0));
 }
 
-void BDSAwakeMultilayerScreen::addScintillatorLayer(){
-  addScreenLayer(new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),300*um),(G4String)"scintillatorLayer","lanex",_gapWidth,_gapSpacing));
+void BDSAwakeMultilayerScreen::scintillatorLayer(){
+  screenLayer(new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),300*um),(G4String)"scintillatorLayer","lanexScintLayerMaterial",_gapWidth,_gapSpacing));
 }
 
-void BDSAwakeMultilayerScreen::addFrontLayer(){
+void BDSAwakeMultilayerScreen::frontLayer(){
   
   BDSLensFacet* facet = new BDSLensFacet("afacet",G4TwoVector(1*mm-_gapWidth,3*cm),33.0*BDSGlobalConstants::Instance()->GetPI()/180.0,
-					 0,(G4String)"PET");
-  addScreenLayer(new BDSMultiFacetLayer((G4String)"multiFacetLayer", facet, _gapWidth,1000));
+					 0,"PET");
+  screenLayer(new BDSMultiFacetLayer((G4String)"multiFacetLayer", facet, _gapWidth,1000));
 }
+
+void BDSAwakeMultilayerScreen::surfaces(){
+
+}
+
+void BDSAwakeMultilayerScreen::reflectiveSurface(){
+  G4OpticalSurface* OpSurface=new G4OpticalSurface("OpSurface");
+  G4LogicalBorderSurface* Surface = new 
+    G4LogicalBorderSurface("phosphor_PET_surface", screenLayer(1)->phys(), screenLayer(0)->phys(), OpSurface);
+  G4double sigma_alpha=1.0;
+  OpSurface -> SetType(dielectric_metal);
+  OpSurface -> SetModel(unified);
+  OpSurface -> SetFinish(ground);
+  OpSurface -> SetSigmaAlpha(sigma_alpha);
+  G4MaterialPropertiesTable* SMPT = new G4MaterialPropertiesTable();
+  SMPT->AddConstProperty("REFLECTIVITY",0.8);
+  SMPT->AddConstProperty("RINDEX",1.5750);
+  OpSurface->SetMaterialPropertiesTable(SMPT);
+}
+

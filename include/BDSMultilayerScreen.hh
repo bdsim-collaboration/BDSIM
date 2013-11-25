@@ -26,9 +26,10 @@ public:
   inline G4LogicalVolume* log();
   inline G4String name(){return _name;}
   inline G4ThreeVector size(){return _size;}
-  void addScreenLayer(G4double thickness, G4String material, G4String name, G4double grooveWidth, G4double grooveSpatialFrequency);
-  void addScreenLayer(BDSScreenLayer* layer);
-  inline BDSScreenLayer* screenLayer(G4int layer){return _screenLayers[layer]};
+  void screenLayer(G4double thickness, G4String material, G4String name, G4double grooveWidth, G4double grooveSpatialFrequency);
+  void screenLayer(BDSScreenLayer* layer);
+  inline BDSScreenLayer* screenLayer(G4int layer){return _screenLayers[layer];}
+  BDSScreenLayer* screenLayer(G4String layer);
 
 private:
   G4TwoVector _xysize;

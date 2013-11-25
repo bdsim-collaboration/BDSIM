@@ -24,11 +24,14 @@ public:
   inline G4LogicalVolume* log(){return _log;}
   inline G4String name(){return _name;}
   inline G4ThreeVector size(){return _size;}
+  void phys(G4PVPlacement* phys);
+  inline G4PVPlacement* phys(){return _phys;}
 
 protected:
   BDSScreenLayer();
   G4String _name;
   G4LogicalVolume* _log;
+  G4PVPlacement* _phys;
   G4VSolid* _solid;
   G4ThreeVector _size;
 

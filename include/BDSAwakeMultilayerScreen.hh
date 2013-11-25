@@ -8,11 +8,12 @@ public:
   BDSAwakeMultilayerScreen();
   ~BDSAwakeMultilayerScreen();
 private:
-  void addLayers();
-  void addBackingLayer();
-  void addScintillatorLayer();
-  void addFrontLayer();
-  void addReflectiveSurface();
+  void layers();
+  void backingLayer();
+  void scintillatorLayer();
+  void frontLayer();
+  void surfaces();
+  void reflectiveSurface();
   G4double _gapWidth;
   G4double _gapSpacing;
 };

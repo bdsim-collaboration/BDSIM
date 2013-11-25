@@ -86,5 +86,13 @@ void BDSScreenLayer::visAtt()
   }
 }
 
+void BDSScreenLayer::phys(G4PVPlacement* phys){
+  if(phys->GetLogicalVolume() != log()){
+    G4cerr << "BDSScreenLayer - error: physical volume placement does not match logical volume. Exiting." << G4endl;
+    exit(1);
+  }
+  _phys=phys;
+}
+
 BDSScreenLayer::~BDSScreenLayer(){
 }

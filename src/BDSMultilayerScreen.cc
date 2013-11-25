@@ -28,12 +28,12 @@ BDSMultilayerScreen::BDSMultilayerScreen (G4TwoVector xysize, G4String name):
   _log=NULL;
 }
 
-void BDSMultilayerScreen::addScreenLayer(G4double thickness, G4String material, G4String name, G4double grooveWidth, G4double grooveSpatialFrequency){
+void BDSMultilayerScreen::screenLayer(G4double thickness, G4String material, G4String name, G4double grooveWidth, G4double grooveSpatialFrequency){
   G4ThreeVector layerSize(_xysize.x(), _xysize.y(), thickness);
-  addScreenLayer(new BDSScreenLayer(layerSize,_name+"_"+name ,material,grooveWidth,grooveSpatialFrequency));
+  screenLayer(new BDSScreenLayer(layerSize,_name+"_"+name ,material,grooveWidth,grooveSpatialFrequency));
 }
 
-void BDSMultilayerScreen::addScreenLayer(BDSScreenLayer* layer){
+void BDSMultilayerScreen::screenLayer(BDSScreenLayer* layer){
   _screenLayers.push_back(layer);
 }
 
@@ -81,17 +81,30 @@ void BDSMultilayerScreen::placeLayers(){
 
   for(int i=0; i<_screenLayers.size(); i++){
     pos.setZ(_screenLayerZPos[i]);
-    new G4PVPlacement((G4RotationMatrix*)NULL,  //Create a new physical volume placement for each groove in the screen.
-		      pos,
-		      _screenLayers[i]->log(),
-		      (G4String)(_name+"_"+_screenLayers[i]->name()),
-		      _log,
-		      true,
-		      i,
-		      true
-		      );
+    _screenLayers[i]->phys(new G4PVPlacement((G4RotationMatrix*)NULL,  //Create a new physical volume placement for each groove in the screen.
+					     pos,
+					     _screenLayers[i]->log(),
+					     (G4String)(_name+"_"+_screenLayers[i]->name()),
+					     _log,
+					     false,
+					     0,
+					     true
+					     )
+			   );
   }
 }
+
+
+BDSScreenLayer* BDSMultilayerScreen::screenLayer(G4String layer){
+  for(int i=0; i<_screenLayers.size(); i++){
+    if(_screenLayers[i]->name()==layer){
+      return _screenLayers[i];
+    }
+  }
+  G4cerr << "BDSMultiLayer - error: screen layer \"" << layer << "\" not found. Exiting." << G4endl;
+  exit(1);
+}
+
 
 BDSMultilayerScreen::~BDSMultilayerScreen(){
 }
