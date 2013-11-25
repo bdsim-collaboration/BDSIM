@@ -43,7 +43,7 @@ BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName):
 {
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
-  _screenAngle=166.1*BDSGlobalConstants::Instance()->GetPI()/180.0;
+  _screenAngle=45*BDSGlobalConstants::Instance()->GetPI()/180.0;
   _screenRotationMatrix->rotateY(_screenAngle);
 
   itsType="awakescreen";
