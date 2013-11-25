@@ -25,11 +25,15 @@ void BDSAwakeMultilayerScreen::layers(){
 }
 
 void BDSAwakeMultilayerScreen::backingLayer(){
+  G4cout << "Making backing layer..." << G4endl;
   screenLayer(new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),300*um),(G4String)"backingLayer","PET",0,0));
+  G4cout << "finished." << G4endl;
 }
 
 void BDSAwakeMultilayerScreen::scintillatorLayer(){
+  G4cout << "Making backing layer..." << G4endl;
   screenLayer(new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),300*um),(G4String)"scintillatorLayer","lanexScintLayerMaterial",_gapWidth,_gapSpacing));
+  G4cout << "finished." << G4endl;
 }
 
 void BDSAwakeMultilayerScreen::frontLayer(){
