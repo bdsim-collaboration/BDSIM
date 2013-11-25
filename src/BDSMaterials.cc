@@ -605,7 +605,7 @@ void BDSMaterials::Initialise()
   G4double lanex_density=fill_factor*GOS->GetDensity()+(1-fill_factor)*GetMaterial("polyurethane")->GetDensity();
   G4double gos_fraction_by_mass=fill_factor*GOS->GetDensity()/lanex_density;
   G4double pur_fraction_by_mass=1-gos_fraction_by_mass;
-  tmpMaterial = new G4Material(name="lanexScintLayerMaterial", density=lanex_density, 2);
+  tmpMaterial = new G4Material(name="lanexscintlayermaterial", density=lanex_density, 2);
   tmpMaterial->AddMaterial(GOS, gos_fraction_by_mass);
   tmpMaterial->AddMaterial(GetMaterial("polyurethane"), pur_fraction_by_mass);
   G4MaterialPropertiesTable* mptLanex = new G4MaterialPropertiesTable();
