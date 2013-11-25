@@ -53,8 +53,9 @@ void BDSMultiFacetLayer::buildScreen(){
 
 void BDSMultiFacetLayer::placeFacets(){
   //Place the facets in the mother volume at the locations in _facetPos.
+  
   for(int i=0; i<_nFacets; i++){
-    new G4PVPlacement(0,
+    new G4PVPlacement(_facet->rotation(), //The facet (trapezoid) must be rotated into the correct coordinate system (z normal to base).
 		      _facetPos[i],
 		      _facet->log(),
 		      _facet->name(),

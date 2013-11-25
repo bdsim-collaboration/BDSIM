@@ -23,13 +23,14 @@ class BDSMultilayerScreen
 public:
   BDSMultilayerScreen(G4TwoVector xysize, G4String name); //X-Y size
   ~BDSMultilayerScreen();
-  inline G4LogicalVolume* log();
+  G4LogicalVolume* log();
   inline G4String name(){return _name;}
   inline G4ThreeVector size(){return _size;}
   void screenLayer(G4double thickness, G4String material, G4String name, G4double grooveWidth, G4double grooveSpatialFrequency);
   void screenLayer(BDSScreenLayer* layer);
   inline BDSScreenLayer* screenLayer(G4int layer){return _screenLayers[layer];}
   BDSScreenLayer* screenLayer(G4String layer);
+  inline G4double nLayers(){return _screenLayers.size();}
 
 private:
   G4TwoVector _xysize;

@@ -18,6 +18,9 @@
 
 
 //============================================================
+BDSScreenLayer::BDSScreenLayer(){
+}
+
 BDSScreenLayer::BDSScreenLayer (G4ThreeVector size, G4String name, G4String material, G4double grooveWidth, G4double grooveSpatialFrequency):
   _size(size), _name(name+"_ScreenLayer"),_material(material),_grooveWidth(grooveWidth),_grooveSpatialFrequency(grooveSpatialFrequency)
 {

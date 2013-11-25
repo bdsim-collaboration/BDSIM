@@ -107,6 +107,8 @@ const char *typestr(int type) {
     return "transform3d";
   case _SCREEN :
     return "screen";
+  case _AWAKESCREEN :
+    return "awakescreen";
   default:
     return "none";
   }
@@ -837,6 +839,10 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.airmaterial = params.airmaterial;  
     break;
 
+  case _AWAKESCREEN:
+    e.type = _AWAKESCREEN;
+    break;
+
 
   default:
     break;  
@@ -1238,6 +1244,9 @@ void print(std::list<struct Element> l, int ident)
 	break;
 
       case _SCREEN:
+	break;
+
+      case _AWAKESCREEN:
 	break;
 
       case _CSAMPLER:

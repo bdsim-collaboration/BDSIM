@@ -16,6 +16,6 @@ private:
   void reflectiveSurface();
   G4double _gapWidth;
   G4double _gapSpacing;
-};
+ };
 
 #endif

@@ -43,7 +43,7 @@
 %token <dval> NUMBER
 %token <symp> VARIABLE VECVAR FUNC 
 %token <str> STR
-%token MARKER ELEMENT DRIFT PCLDRIFT RF DIPOLE RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE MULTIPOLE SCREEN
+%token MARKER ELEMENT DRIFT PCLDRIFT RF DIPOLE RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token SOLENOID COLLIMATOR RCOL ECOL LINE SEQUENCE SPOILER ABSORBER LASER TRANSFORM3D MUSPOILER
 %token VKICK HKICK KICK
 %token PERIOD APERTURE FILENAME GAS PIPE TUNNEL MATERIAL ATOM
@@ -281,6 +281,15 @@ decl : VARIABLE ':' marker
 	   params.flush();
 	 }
        }
+     | VARIABLE ':' awakescreen
+       {
+	 if(execute) {
+	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : awakescreen\n",$1->name);
+	   // check parameters and write into element table
+	   write_table(params,$1->name,_AWAKESCREEN);
+	   params.flush();
+	 }
+       }
      | VARIABLE ':' transform3d
        {
 	 if(execute)
@@ -434,6 +443,9 @@ laser : LASER ',' parameters
 ;
 
 screen : SCREEN ',' parameters
+;
+
+awakescreen : AWAKESCREEN
 ;
 
 transform3d : TRANSFORM3D ',' parameters

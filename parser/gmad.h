@@ -47,6 +47,8 @@ enum {
   _SEQUENCE = 19,
 
   _SCREEN = 21,
+
+  _AWAKESCREEN = 22,
     
   _VKICK=31,
   _HKICK=32,

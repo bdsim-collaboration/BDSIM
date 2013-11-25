@@ -27,6 +27,7 @@
 #include "BDSCollimator.hh"
 //#include "BDSRealisticCollimator.hh"
 #include "BDSScintillatorScreen.hh"
+#include "BDSAwakeScintillatorScreen.hh"
 
 extern G4bool outline;
 
@@ -233,6 +234,11 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     G4cout << "BDSComponentFactory  - creating screen" << G4endl;
 #endif
     return createScreen(); break; 
+  case _AWAKESCREEN:
+#ifdef DEBUG
+    G4cout << "BDSComponentFactory  - creating awake screen" << G4endl;
+#endif
+    return createAwakeScreen(); break; 
   case _TRANSFORM3D:
 #ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating transform3d" << G4endl;
@@ -242,7 +248,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
 #ifdef DEBUG
     G4cout << "BDSComponentFactory: type: " << _element.type << G4endl; 
 #endif
-    //    G4Exception("Error: BDSComponentFactory: type not found.", "-1", FatalErrorInArgument, "");   
+    G4Exception("Error: BDSComponentFactory: type not found.", "-1", FatalErrorInArgument, "");   
     return NULL;
     break;
   }
@@ -1246,6 +1252,16 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
                << G4endl;
 #endif
 	return (new BDSScintillatorScreen( _element.name, _element.tscint*m, (_element.angle-0.78539816339)*rad, "ups923a","vacuum")); //Name, scintillator thickness, angle in radians (relative to -45 degrees)
+}
+
+
+BDSAcceleratorComponent* BDSComponentFactory::createAwakeScreen(){
+	
+#ifdef DEBUG 
+        G4cout << "---->creating Awake Screen,"
+               << G4endl;
+#endif
+	return (new BDSAwakeScintillatorScreen(_element.name)); //Name
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){
