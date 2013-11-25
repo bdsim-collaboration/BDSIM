@@ -18,10 +18,11 @@ BDSAwakeMultilayerScreen::~BDSAwakeMultilayerScreen(){
 
 void BDSAwakeMultilayerScreen::layers(){
   _gapWidth=1*um;
-  _gapSpacing=100*mm;
+  _gapSpacing=1*mm;
   backingLayer();
   scintillatorLayer();
   frontLayer();
+  surfaces();
 }
 
 void BDSAwakeMultilayerScreen::backingLayer(){
@@ -40,11 +41,11 @@ void BDSAwakeMultilayerScreen::frontLayer(){
   
   BDSLensFacet* facet = new BDSLensFacet("afacet",G4TwoVector(1*mm-_gapWidth,3*cm),33.0*BDSGlobalConstants::Instance()->GetPI()/180.0,
 					 0,"PET");
-  screenLayer(new BDSMultiFacetLayer((G4String)"multiFacetLayer", facet, _gapWidth,10));
+  screenLayer(new BDSMultiFacetLayer((G4String)"multiFacetLayer", facet, _gapWidth,1000));
 }
 
 void BDSAwakeMultilayerScreen::surfaces(){
-
+  reflectiveSurface();
 }
 
 void BDSAwakeMultilayerScreen::reflectiveSurface(){
