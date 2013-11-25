@@ -20,9 +20,9 @@ void BDSAwakeMultilayerScreen::layers(){
   _gapWidth=1*um;
   _gapSpacing=1*mm;
   backingLayer();
-  scintillatorLayer();
-  frontLayer();
-  surfaces();
+  //  scintillatorLayer();
+  //  frontLayer();
+  //  surfaces();
 }
 
 void BDSAwakeMultilayerScreen::backingLayer(){
