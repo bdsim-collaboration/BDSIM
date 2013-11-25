@@ -51,11 +51,12 @@ void BDSScreenLayer::buildScreen(){
 }
 
 void BDSScreenLayer::cutGrooves(){
-
-  for(G4double xPosition=-_size.x()/2.0+_grooveWidth/2.0;
-      xPosition<((_size.x()/2.0)-_grooveWidth/2.0);
-      xPosition+=_grooveSpatialFrequency){
-    cutGroove(xPosition);
+  if(_grooveWidth>0){
+    for(G4double xPosition=-_size.x()/2.0+_grooveWidth/2.0;
+	xPosition<((_size.x()/2.0)-_grooveWidth/2.0);
+	xPosition+=_grooveSpatialFrequency){
+      cutGroove(xPosition);
+    }
   }
 }
 
