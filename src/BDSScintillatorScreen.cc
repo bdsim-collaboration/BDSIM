@@ -243,8 +243,8 @@ void BDSScintillatorScreen::BuildOpticalSurfaces(){
   //Add the optical surfaces.
   //Mirrored surface between the phosphor and the PET backing.
   G4OpticalSurface* OpSurface=new G4OpticalSurface("OpSurface");
-  G4LogicalBorderSurface* Surface = new 
-    G4LogicalBorderSurface("phosphor_PET_surface", itsScintillatorLayerPhys, itsBaseLayerPhys, OpSurface);
+  /*G4LogicalBorderSurface* Surface = */
+  new G4LogicalBorderSurface("phosphor_PET_surface", itsScintillatorLayerPhys, itsBaseLayerPhys, OpSurface);
   G4double sigma_alpha=1.0;
   //TiO2 particles provide the reflectivity in the PET layer hence dielectric-metal
   OpSurface -> SetType(dielectric_metal);
@@ -259,8 +259,8 @@ void BDSScintillatorScreen::BuildOpticalSurfaces(){
 
   //Surface between the phosphor and the cellulose front.
   G4OpticalSurface* OpSurface2=new G4OpticalSurface("OpSurface2");
-  G4LogicalBorderSurface* Surface2 = new 
-    G4LogicalBorderSurface("phosphor_cellulose_surface", itsScintillatorLayerPhys, itsFrontLayerPhys, OpSurface2);
+  /*G4LogicalBorderSurface* Surface2 = */ 
+  new G4LogicalBorderSurface("phosphor_cellulose_surface", itsScintillatorLayerPhys, itsFrontLayerPhys, OpSurface2);
   OpSurface2 -> SetType(dielectric_dielectric);
   OpSurface2 -> SetModel(unified);
   OpSurface2 -> SetFinish(ground);
