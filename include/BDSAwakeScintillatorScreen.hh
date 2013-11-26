@@ -20,6 +20,7 @@ Work in progress.
 #include "G4VSolid.hh"
 #include "G4SubtractionSolid.hh"
 #include "BDSAwakeMultilayerScreen.hh"
+#include "BDSCCDCamera.hh"
 
 class BDSAwakeScintillatorScreen :public BDSAcceleratorComponent
 {
@@ -31,6 +32,8 @@ protected:
 
 private:
   void Build();
+  void BuildCamera();
+  void PlaceCamera();
   void BuildScreen();
   void PlaceScreen();
   void BuildAwakeScintillatorScreenTunnel();
@@ -92,7 +95,8 @@ private:
   G4String _samplerName;
 
   BDSAwakeMultilayerScreen* _mlScreen;
- G4double _screenAngle;
+  G4double _screenAngle;
+  BDSCCDCamera* _camera;
 
 };
 

@@ -8,6 +8,7 @@ Work in progress.
 #include "BDSSampler.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSOutput.hh"
+#include "BDSCCDCamera.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -43,7 +44,7 @@ BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName):
 {
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
-  _screenAngle=-45*BDSGlobalConstants::Instance()->GetPI()/180.0;
+  _screenAngle=76.1*BDSGlobalConstants::Instance()->GetPI()/180.0;
   _screenRotationMatrix->rotateY(_screenAngle);
 
   itsType="awakescreen";
@@ -156,40 +157,44 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
 
 void BDSAwakeScintillatorScreen::Build(){
       BuildScreen();
+      BuildCamera();	
       ComputeDimensions();
       BuildMarkerVolume();
-      BuildScreenScoringPlane();
-      BuildCameraScoringPlane();
+      //      BuildScreenScoringPlane();
+      //      BuildCameraScoringPlane();
       PlaceScreen();
+      PlaceCamera();
       if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
 	BuildTunnel();
       }
+}
+
+void BDSAwakeScintillatorScreen::BuildCamera(){
+  //  _camera=new BDSCCDCamera();
+}
+void BDSAwakeScintillatorScreen::PlaceCamera(){
+
 }
 
 void BDSAwakeScintillatorScreen::BuildScreen()
 {
   G4cout << "Building BDSAwakeMultilayerScreen...." << G4endl;
   _mlScreen = new BDSAwakeMultilayerScreen();
+  
   G4cout << "finished." << G4endl;
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-    for(int i=0; i<_mlScreen->nLayers(); i++){
-      SetSensitiveVolume(_mlScreen[i].log());
-    }
-  } 
+  //  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
+  //    for(int i=0; i<_mlScreen->nLayers(); i++){
+  //      SetSensitiveVolume(_mlScreen[i].log());
+  //    }
+  //  } 
   G4cout << "BDSAwakeScintillatorScreen: finished building geometry" << G4endl;
 }
 
 void BDSAwakeScintillatorScreen::PlaceScreen(){
-  new G4PVPlacement(
-		    _screenRotationMatrix,
-		    G4ThreeVector(0,0,0),
-		    _mlScreen->log(),
-		    "multilayerScreen",
-		    itsMarkerLogicalVolume,
-		    false,
-		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
-		    );                 
+  _mlScreen->place(_screenRotationMatrix,
+		   G4ThreeVector(0,0,0),
+		   itsMarkerLogicalVolume
+		   );
 }
 
 void BDSAwakeScintillatorScreen::ComputeDimensions(){
@@ -203,7 +208,7 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   //The scoring plane...
   _scoringPlaneThickness=1*um;
 
-  _screenThickness = _mlScreen->size().z();
+  _screenThickness = 10*_mlScreen->size().z();
   
   _totalThickness =  
     _screenThickness + _scoringPlaneThickness;

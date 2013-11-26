@@ -294,9 +294,9 @@ void BDSScintillatorScreen::BuildScintillatorScreen()
   BuildScintillatorLayer();
   BuildScreenScoringPlane();
   BuildCameraScoringPlane();
-    
+  
   if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-    SetSensitiveVolume(itsScintillatorLayerLog);
+      SetSensitiveVolume(itsScintillatorLayerLog);
   } 
   G4cout << "BDSScintillatorScreen: finished building geometry" << G4endl;
 }

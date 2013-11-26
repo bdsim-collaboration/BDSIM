@@ -18,7 +18,7 @@
 #include "G4UserLimits.hh"
 #include "G4Version.hh"
 #include "parser/gmad.h"
-
+#include "BDSDebug.hh"
 
 //============================================================
 BDSLens::BDSLens (G4String name, G4double diameter, G4double rho, G4double centreThickness):
@@ -42,7 +42,7 @@ void BDSLens::build(){
   G4ThreeVector transVec;
   transVec.setZ(2*_rho-_centreThickness);
   _solid = new G4IntersectionSolid(_name+"_solid", sideA, sideB, (G4RotationMatrix*)NULL,transVec);
-  _log = new G4LogicalVolume(_solid,BDSMaterials::Instance()->GetMaterial("N-BK7"),(_name+"_log").c_str(),0,0,0);
+  _log = new G4LogicalVolume(_solid,BDSMaterials::Instance()->GetMaterial("yag"),(_name+"_log").c_str(),0,0,0);
   visAtt();
 }
 

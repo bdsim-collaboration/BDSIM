@@ -26,11 +26,11 @@ BDSLensFacet::BDSLensFacet (G4String name, G4TwoVector size, G4double angle, G4d
 }
 
 void BDSLensFacet::computeDimensions(){
-  G4double aSmallNumber=1e-20;
+  G4double aSmallNumber=1e-9;
   if(_baseHeight==0) {_baseHeight=aSmallNumber;}
   _totalHeight = _baseHeight + _size.x()*tan(_angle);
   //phi, theta, psi rotation such that the base is perp. to the z direction.
-  _rotation = new G4RotationMatrix(BDSGlobalConstants::Instance()->GetPI()/2.0,0,0); 
+  _rotation = new G4RotationMatrix(0,BDSGlobalConstants::Instance()->GetPI()/2.0,0); 
 }
 
 
@@ -43,8 +43,8 @@ void BDSLensFacet::visAtt()
 
 void BDSLensFacet::build(){
   G4cout << "Building G4Trap with dimensions: " << _size.x() << " " << _size.y()<< " " <<  _totalHeight << " " <<  _baseHeight << G4endl;
-  _solid = new G4Trap((_name+"solid").c_str(), _size.x(), _size.y(), _totalHeight, _totalHeight);//_baseHeight);
-  _log = new G4LogicalVolume(_solid,BDSMaterials::Instance()->GetMaterial(_material),(_name+"_log").c_str(),0,0,0);
+  _solid = new G4Trap((_name+"solid").c_str(), _size.x(), _size.y(), _totalHeight, _baseHeight);
+ _log = new G4LogicalVolume(_solid,BDSMaterials::Instance()->GetMaterial(_material),(_name+"_log").c_str(),0,0,0);
   visAtt();
 }
 

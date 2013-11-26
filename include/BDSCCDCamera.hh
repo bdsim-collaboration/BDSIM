@@ -26,6 +26,8 @@ public:
   G4LogicalVolume* log();
   G4String name();
   inline G4ThreeVector size(){return _size;}
+  inline void phys(G4PVPlacement* phys){_phys=phys;}
+  inline G4PVPlacement* phys(){return _phys;}
 
 private:
   void defaultDimensions();
@@ -51,6 +53,7 @@ private:
   BDSCCDChip* _ccdChip;
   BDSLens* _objectLens;
   BDSLens* _imageLens;
+  G4PVPlacement* _phys;
 };
 
 #endif

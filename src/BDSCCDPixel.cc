@@ -24,10 +24,10 @@ BDSCCDPixel::BDSCCDPixel (G4ThreeVector size, G4String name):
   _size(size), _name(name+"_CCDPixel")
 {
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-  BDSCCDPixelSensDet=new BDSCCDPixelSD(_name);
-  SDMan->AddNewDetector(BDSCCDPixelSensDet);
+  _sensDet=new BDSCCDPixelSD(_name);
+  SDMan->AddNewDetector(_sensDet);
   build();
-  _log->SetSensitiveDetector(BDSCCDPixelSensDet);
+  _log->SetSensitiveDetector(_sensDet);
 }
 
 

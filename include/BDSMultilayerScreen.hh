@@ -32,7 +32,10 @@ public:
   BDSScreenLayer* screenLayer(G4String layer);
   inline G4double nLayers(){return _screenLayers.size();}
   void build();
-
+  inline void phys(G4PVPlacement* phys){_phys = phys;}
+  inline G4PVPlacement* phys(){return _phys;}
+  virtual void place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol);
+  void reflectiveSurface(G4int layer1, G4int layer2);
 
 private:
   G4TwoVector _xysize;
@@ -40,12 +43,14 @@ private:
   G4ThreeVector _size;
   // Geometrical objects:
   G4LogicalVolume* _log;
+  G4PVPlacement* _phys;
   G4VSolid* _solid;
   std::vector<BDSScreenLayer*> _screenLayers;
   std::vector<G4double> _screenLayerZPos;
   void computeDimensions();
   void buildMotherVolume();
   void placeLayers();
+
 };
 
 #endif

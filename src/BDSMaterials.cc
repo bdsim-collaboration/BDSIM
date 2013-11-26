@@ -450,11 +450,11 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddElement(elements["O"], 4);
   materials[name] = tmpMaterial; 
 
-	tmpMaterial = new G4Material 
-		(name="FusedSilica", density=1.032*g/cm3, 2, kStateSolid);
-	tmpMaterial->AddElement(elements["O"],2);
-	tmpMaterial->AddElement(elements["Si"],1);
-	const G4int FusedSilica_NUMENTRIES = 3; //Number of entries in the material properties table
+  tmpMaterial = new G4Material 
+    (name="fusedsilica", density=1.032*g/cm3, 2, kStateSolid);
+  tmpMaterial->AddElement(elements["O"],2);
+  tmpMaterial->AddElement(elements["Si"],1);
+  const G4int FusedSilica_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double FusedSilica_RIND[FusedSilica_NUMENTRIES]={1.49,1.49,1.49};
   G4double FusedSilica_AbsLength[FusedSilica_NUMENTRIES]={420.*cm,420.*cm,420.*cm};
   G4double FusedSilica_Energy[FusedSilica_NUMENTRIES] = {2.0*eV,7.0*eV,7.14*eV};
@@ -463,7 +463,7 @@ void BDSMaterials::Initialise()
   fsMaterialPropertiesTable->AddProperty("RINDEX",FusedSilica_Energy,FusedSilica_RIND,FusedSilica_NUMENTRIES);
   tmpMaterial->SetMaterialPropertiesTable(fsMaterialPropertiesTable);
   materials[name] = tmpMaterial; 
-
+  
   //scintillator materials
   //YAG
   tmpMaterial = new G4Material(name="yag", density=4.56*g/cm3, 3);
@@ -499,7 +499,7 @@ void BDSMaterials::Initialise()
       3.026*eV, 3.102*eV, 3.181*eV, 3.265*eV,
       3.353*eV, 3.446*eV, 3.545*eV, 3.649*eV,
       3.760*eV, 3.877*eV, 4.002*eV, 4.136*eV };
-#if G4VERSIONNUMBER < 950
+#if G4VERSION_NUMBER < 950
   mpt_YAG->AddProperty("FASTCOMPONENT",PhotonEnergyYAG, scintFastYAG, nEntries);
 #else
   mpt_YAG->AddProperty("FASTCOMPONENT",PhotonEnergyYAG, scintFastYAG, nEntries)->SetSpline(true);
@@ -552,7 +552,7 @@ void BDSMaterials::Initialise()
   //Birk's constant
   birks = (0.014/1.06)*cm/MeV; 
   tmpMaterial->GetIonisation()->SetBirksConstant(birks);
-#if G4VERSIONNUMBER < 950
+#if G4VERSION_NUMBER < 950
   ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy, ups923a_emission, ups923a_numentries);
 #else
   ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy, ups923a_emission, ups923a_numentries)->SetSpline(true);
@@ -614,7 +614,7 @@ void BDSMaterials::Initialise()
   G4double energytab[]={2.239*eV, 2.241*eV};
   G4double rindextab[]={rindex, rindex};
   G4double emitspec[]={1.0, 1.0};
-  G4double abslen[]={1.0*m, 1.0*m};
+  G4double abslen[]={4.1e-1*mm, 4.1e-1*mm};
   G4double mieScatteringLength[]={60.3e-3*mm, 60.3e-3*mm};
   mptLanex->AddProperty("RINDEX",energytab, rindextab, nentLanex); //Average refractive index of bulk material
   mptLanex->AddProperty("ABSLENGTH", energytab, abslen, nentLanex);
@@ -625,8 +625,9 @@ void BDSMaterials::Initialise()
   mptLanex->AddConstProperty("MIEHG", 60.3e-3*mm);
   mptLanex->AddConstProperty("MIEHG_FORWARD", 0.911);
   mptLanex->AddConstProperty("MIEHG_BACKWARD", 0.911);
-  mptLanex->AddConstProperty("MIEHG_FORWARD_RATIO", 0.99999999);
+  mptLanex->AddConstProperty("MIEHG_FORWARD_RATIO", 1.0);
   tmpMaterial->SetMaterialPropertiesTable(mptLanex);
+  tmpMaterial->GetIonisation()->SetBirksConstant(0.126*mm/MeV); 
   materials[name]=tmpMaterial;
 
   // liquid materials

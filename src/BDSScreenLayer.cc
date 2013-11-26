@@ -22,9 +22,10 @@ BDSScreenLayer::BDSScreenLayer(){
 }
 
 BDSScreenLayer::BDSScreenLayer (G4ThreeVector size, G4String name, G4String material, G4double grooveWidth, G4double grooveSpatialFrequency):
-  _size(size), _name(name+"_ScreenLayer"),_material(material),_grooveWidth(grooveWidth),_grooveSpatialFrequency(grooveSpatialFrequency)
+  _size(size), _name(name),_material(material),_grooveWidth(grooveWidth),_grooveSpatialFrequency(grooveSpatialFrequency)
 {
   _nGrooves=0; //Counter for the number of grooves etched into the screen.
+  _color=G4Colour(0.1,0.8,0.1,0.3);
   build();
 }
 
@@ -80,7 +81,7 @@ void BDSScreenLayer::cutGroove(G4double xPosition){
 
 void BDSScreenLayer::visAtt()
 {
-  G4VisAttributes* visAtt=new G4VisAttributes(G4Colour(0.8,0.2,0.0,0.3));
+  G4VisAttributes* visAtt=new G4VisAttributes(_color);
   visAtt->SetForceSolid(true);
   G4VisAttributes* visAttGroove=new G4VisAttributes(G4Colour(0.0,0.0,0.0));
   visAttGroove->SetForceSolid(true);
@@ -96,6 +97,84 @@ void BDSScreenLayer::phys(G4PVPlacement* phys){
     exit(1);
   }
   _phys=phys;
+}
+
+void BDSScreenLayer::color(G4Color col){
+  _color=col;
+  visAtt();
+}
+
+void BDSScreenLayer::backInternalMirror(){
+  _internalMirror = new InternalMirror(InternalMirror::_BACK, _size,_material,_log,_phys);
+}
+
+void BDSScreenLayer::frontInternalMirror(){
+  _internalMirror = new InternalMirror(InternalMirror::_FRONT,_size,_material,_log,_phys);
+}
+
+BDSScreenLayer::InternalMirror::~InternalMirror(){
+}
+
+BDSScreenLayer::InternalMirror::InternalMirror(){
+  _thickness=1e-9*m; 
+}
+
+BDSScreenLayer::InternalMirror::InternalMirror(G4int varside, G4ThreeVector size, G4String material, G4LogicalVolume* motherLog, G4PVPlacement* motherPhys):_side(varside),_motherSize(size),_motherMaterial(material),_motherLog(motherLog),_motherPhys(motherPhys)
+{
+  InternalMirror();
+  compute();
+  geom();
+  place();
+  optical();
+}
+
+void BDSScreenLayer::InternalMirror::geom(){
+  _solid  = new G4Box("internalMirrorSolid",_motherSize.x()/2.0,_motherSize.y()/2.0,_thickness);
+  _log = new G4LogicalVolume(_solid,BDSMaterials::Instance()->GetMaterial("titanium"),"internalMirrorLog",0,0,0);
+}
+
+void BDSScreenLayer::InternalMirror::place(){
+  _phys=new G4PVPlacement((G4RotationMatrix*)NULL,  //Create a new physical volume placement for each groove in the screen.
+			  G4ThreeVector(0,0,_pos),
+			  _log,
+			  "internalMirrorPhys",
+			  _motherLog,
+			  false,
+			  0,
+			  true
+			  );
+}
+
+void BDSScreenLayer::InternalMirror::optical(){
+  G4OpticalSurface* OpSurface=new G4OpticalSurface("OpSurface");
+  G4LogicalBorderSurface* LogSurface = new
+    G4LogicalBorderSurface("LogSurface", _motherPhys, _phys, OpSurface);
+  //  G4LogicalSkinSurface* LogSurface  = new G4LogicalSkinSurface("LogSurface",screenLayer(1)->log(),OpSurface);
+  OpSurface -> SetType(dielectric_metal);
+  OpSurface -> SetModel(unified);
+  OpSurface -> SetFinish(polished);
+  G4MaterialPropertiesTable* SMPT = new G4MaterialPropertiesTable();
+  SMPT->AddConstProperty("REFLECTIVITY",0.8);
+  //  SMPT->AddConstProperty("RINDEX",1.5750);
+  OpSurface->SetMaterialPropertiesTable(SMPT);
+}
+
+void BDSScreenLayer::InternalMirror::compute(){
+  G4double sign=0;
+  try{
+    if(_side==_BACK){
+      sign = 1;
+    }else if(_side==_FRONT){
+      sign = -1;
+    }else{
+      throw 1;
+    }
+  }catch(int e){
+    G4cerr<< "BDSScreenLayer::computInternalMirror - exception number " << e << " occured. Exiting." << G4endl;
+    exit(e);
+  }
+  
+  G4double _pos = sign*(_motherSize.z()/2.0-_thickness/2.0);
 }
 
 BDSScreenLayer::~BDSScreenLayer(){

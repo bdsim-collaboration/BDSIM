@@ -7,12 +7,16 @@ class BDSAwakeMultilayerScreen : public BDSMultilayerScreen{
 public:
   BDSAwakeMultilayerScreen();
   ~BDSAwakeMultilayerScreen();
+  void surfaces();
+  void place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol);
+
 private:
+  typedef BDSMultilayerScreen super;
   void layers();
-  void backingLayer();
+  void backLayer();
+  void substrateLayer();
   void scintillatorLayer();
   void frontLayer();
-  void surfaces();
   void reflectiveSurface();
   G4double _gapWidth;
   G4double _gapSpacing;

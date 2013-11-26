@@ -15,6 +15,7 @@
 #include "G4VSolid.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4TwoVector.hh"
+#include "G4Color.hh"
 
 class BDSScreenLayer 
 {
@@ -26,6 +27,9 @@ public:
   inline G4ThreeVector size(){return _size;}
   void phys(G4PVPlacement* phys);
   inline G4PVPlacement* phys(){return _phys;}
+  void color(G4Color col);
+  void backInternalMirror();
+  void frontInternalMirror();
 
 protected:
   BDSScreenLayer();
@@ -36,6 +40,30 @@ protected:
   G4ThreeVector _size;
 
 private:
+  class InternalMirror{
+  public:
+    InternalMirror(G4int varside, G4ThreeVector size, G4String material, G4LogicalVolume* motherLog, G4PVPlacement* motherPhys);
+    ~InternalMirror();
+    void geom();
+    void compute();
+    void place();
+    void optical();
+    enum sides{_BACK, _FRONT};
+
+  private:
+    InternalMirror();
+    G4int _side;
+    G4VSolid* _solid;
+    G4LogicalVolume* _log;
+    G4PVPlacement* _phys;
+    G4LogicalVolume* _motherLog;
+    G4PVPlacement* _motherPhys;
+    G4ThreeVector _motherSize;
+    G4String _motherMaterial;
+    G4double _thickness;
+    G4double _pos;
+  };
+  InternalMirror* _internalMirror;
   virtual void build();
   void buildGroove();
   virtual void buildScreen();
@@ -51,6 +79,8 @@ private:
   G4double _grooveWidth;
   G4double _grooveSpatialFrequency;
   G4int _nGrooves;
+  G4Color _color;
+
 };
 
 #endif

@@ -15,6 +15,7 @@
 #include "G4VSolid.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4TwoVector.hh"
+#include "BDSCCDPixelSD.hh"
 
 class BDSCCDPixel 
 {
@@ -37,6 +38,7 @@ private:
   G4LogicalVolume* _log;
   G4VSolid* _solid;
   G4VisAttributes* _visAtt;
+  BDSCCDPixelSD* _sensDet;
 };
 
 #endif

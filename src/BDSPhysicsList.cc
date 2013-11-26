@@ -809,7 +809,7 @@ void BDSPhysicsList::ConstructOptical()
   G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
   theScintillationProcess->AddSaturation(emSaturation);
 
-#if G4VERSIONNUMBER < 960
+#if G4VERSION_NUMBER < 960
   G4OpticalSurfaceModel themodel = unified;
   theBoundaryProcess->SetModel(themodel);
 #endif
@@ -839,7 +839,7 @@ void BDSPhysicsList::ConstructOptical()
       pmanager->AddDiscreteProcess(theAbsorptionProcess);
       pmanager->AddDiscreteProcess(theRayleighScatteringProcess);
       pmanager->AddDiscreteProcess(theMieHGScatteringProcess);
-      bool bOptBoundProcOn=false;
+      bool bOptBoundProcOn=true;
       if(bOptBoundProcOn){
 	pmanager->AddDiscreteProcess(theBoundaryProcess);
       }

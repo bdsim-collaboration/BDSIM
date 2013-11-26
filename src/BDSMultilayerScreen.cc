@@ -50,6 +50,9 @@ void BDSMultilayerScreen::buildMotherVolume(){
   computeDimensions();
   _solid  = new G4Box((_name+"_solid").c_str(),_size.x()/2.0,_size.y()/2.0,_size.z()/2.0);
   _log = new G4LogicalVolume(_solid,BDSMaterials::Instance()->GetMaterial("vacuum"),(_name+"_log").c_str(),0,0,0);
+  G4VisAttributes* visAtt = new G4VisAttributes(G4Color(0.0,0.0,1.0,0.3));
+  visAtt->SetForceWireframe(true);
+  _log->SetVisAttributes(visAtt);
 }
 
 void BDSMultilayerScreen::computeDimensions(){
@@ -64,12 +67,10 @@ void BDSMultilayerScreen::computeDimensions(){
   _size.setZ(temp);
   //Compute the z positions of all the layers.
   G4cout << "...z positions..." << G4endl;
-  G4double pos;
-  for(int i=0; i<_screenLayers.size(); i++){
-    pos = -_size.z()/2.0 + _screenLayers[i]->size().z()/2.0; //Position each layer after the previous one.
-    for(int j=0; j<i; j++){
-      pos += _screenLayers[i]->size().z();
-    }
+  G4double pos = _screenLayers[0]->size().z()/2.0 -1.0*_size.z()/2.0; //Position each layer after the previous one.
+  _screenLayerZPos.push_back(pos);
+  for(int i=1; i<_screenLayers.size(); i++){
+    pos += (_screenLayers[i-1]->size().z()+_screenLayers[i]->size().z())/2.0;
     _screenLayerZPos.push_back(pos);
   }
   G4cout << "...finsished." << G4endl;
@@ -98,15 +99,42 @@ void BDSMultilayerScreen::placeLayers(){
 
 
 BDSScreenLayer* BDSMultilayerScreen::screenLayer(G4String layer){
-  for(int i=0; i<_screenLayers.size(); i++){
-    if(_screenLayers[i]->name()==layer){
-      return _screenLayers[i];
+  for(G4int i=0; i<_screenLayers.size(); i++){
+    if(screenLayer(i)->name()==layer){
+      screenLayer(i);
     }
   }
   G4cerr << "BDSMultiLayer - error: screen layer \"" << layer << "\" not found. Exiting." << G4endl;
   exit(1);
 }
 
+
+void BDSMultilayerScreen::place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol){
+  phys(new G4PVPlacement(
+			 rot,
+			 pos,
+			 _log,
+			 "multilayerScreen",
+			 motherVol,
+			 false,
+			 0,
+			 true
+			 ));                 
+}
+
+void BDSMultilayerScreen::reflectiveSurface(G4int layer1, G4int layer2){
+  G4OpticalSurface* OpSurface=new G4OpticalSurface("OpSurface");
+  G4LogicalBorderSurface* LogSurface = new
+    G4LogicalBorderSurface("LogSurface", screenLayer(layer1)->phys(), screenLayer(layer2)->phys(), OpSurface);
+  //  G4LogicalSkinSurface* LogSurface  = new G4LogicalSkinSurface("LogSurface",screenLayer(1)->log(),OpSurface);
+  OpSurface -> SetType(dielectric_metal);
+  OpSurface -> SetModel(unified);
+  OpSurface -> SetFinish(polished);
+  G4MaterialPropertiesTable* SMPT = new G4MaterialPropertiesTable();
+  SMPT->AddConstProperty("REFLECTIVITY",0.8);
+  //  SMPT->AddConstProperty("RINDEX",1.5750);
+  OpSurface->SetMaterialPropertiesTable(SMPT);
+}
 
 BDSMultilayerScreen::~BDSMultilayerScreen(){
 }
