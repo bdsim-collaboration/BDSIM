@@ -1,25 +1,9 @@
-"""
-Survey() - survey a gmad lattice, plot element coords
-Loader() - load a gmad file using the comipled bdsim parser
-
-"""
-
 import ctypes as _ctypes
 import ctypes as __ctypes
 import numpy as _np
 import matplotlib.pyplot as _plt
 
-
-class Survey:
-    """
-    Survey - load a gmad lattice and have a look
-
-    Example:
-    a = Survey()
-    a.Load('mylattice.gmad')
-    a.Plot()
-    
-    """
+class Survey : 
     def __init__(self) : 
         self._x_current = 0 
         self._y_current = 0
@@ -30,9 +14,9 @@ class Survey:
         self._y_coords  = []
         self._lentotal  = 0
 
-    def Load(self, fileName) : 
+    def load(self, fileName) : 
         self._file = Loader() 
-        self._file.Load(fileName) 
+        self._file.load(fileName) 
         
         nelement = self._file._parserLib.get_nelements()
         
@@ -41,10 +25,10 @@ class Survey:
             length = self._file._parserLib.get_length(i)
             angle  = self._file._parserLib.get_angle(i)
             self._names.append(name)
-            self.Step(angle,length)
+            self.step(angle,length)
             i += 1    
                
-    def Step(self,angle,length):
+    def step(self,angle,length):
         self._theta += angle
         dx    = length * _np.cos(self._theta)
         dy    = length * _np.sin(self._theta)
@@ -58,13 +42,13 @@ class Survey:
         self._x_coords.append(x_new)
         self._y_coords.append(y_new)        
 
-    def FinalDiff(self):
+    def finalDiff(self):
         dx = self._beamline[-1][0][1] - self._x_current
         dy = self._beamline[-1][1][1] - self._y_current
         print 'Final dx ',dx
         print 'Final dy ',dy
         
-    def Plot(self) : 
+    def plot(self) : 
         _plt.figure()
         _plt.plot(self._x_coords,self._y_coords,'b.')
         _plt.plot(self._x_coords,self._y_coords,'b-')
@@ -72,19 +56,19 @@ class Survey:
         _plt.ylabel('Y (m)')
         _plt.show()
 
-    def CompareMadX(self, fileName) : 
+    def compareMadX(self, fileName) : 
         import pymadx as _pymadx
         
         mxs = _pymadx.Survey()
-        mxs.Load(fileName) 
+        mxs.load(fileName) 
 
-        self.Plot()
+        self.plot()
 
         _plt.plot(mxs._x_coords,mxs._y_coords,'rx')
         _plt.plot(mxs._x_coords,mxs._y_coords,'r-')
         _plt.show()        
         
-    def FindClosestElement(self, coord) : 
+    def findClosestElement(self, coord) : 
         arr = _np.arange(0,len(self._x_coords),1) 
         xdiff = _np.array(self._x_coords)-coord[0]
         ydiff = _np.array(self._y_coords)-coord[1]
@@ -92,19 +76,11 @@ class Survey:
         print arr[d == min(d)]
             
 
-class Loader:
-    """
-    Loader - bare bones loader for gmad files
-    
-    Uses compiled bdsim library
-
-    NOTE - currently uses absolute path - need to fix
-
-    """
+class Loader :
     def __init__(self) :
-        self.LoadLib()
+        self.loadLib()
     
-    def LoadLib(self) :
+    def loadLib(self) :
         self._parserLibFileName = "libgmadShared.dylib"
         # self._parserLibFileName = "/Users/sboogert/Physics/general/acc/bdsim/bdsim-mac/parser/libgmadShared.dylib"
         # self._parserLibFileName = "/Users/nevay/physics/reps/bdsim-build/parser/libgmadShared.dylib"
@@ -119,10 +95,10 @@ class Loader:
         self._parserLib.get_angle.restype   = _ctypes.c_double
         self._parserLib.get_angle.argtypes  = [_ctypes.c_int]
         
-    def Load(self, fileName) :
+    def load(self, fileName) :
         self._parserLib.gmad_parser_c(fileName)
     
-    def GetElement(self, i) : 
+    def getElement(self, i) : 
         name   = self._parserLib.get_name(i) 
         type   = self._parserLib.get_type(i) 
         length = self._parserLib.get_length(i)
@@ -136,21 +112,21 @@ class Loader:
         
         return d
 
-    def ParseLattice(self) : 
+    def parseLattice(self) : 
         '''Parse entire lattice to python''' 
         nelement = self._parserLib.get_nelements()
         self._lattice = [] 
         suml = 0 
         for i in range(0,nelement,1) : 
-            d = self.GetElement(i) 
+            d = self.getElement(i) 
             d['suml'] = suml 
             self._lattice.append(d)
             suml += d['length']
         
-    def GetElementByName(self, name) :
+    def getElementByName(self, name) :
         pass
 
-    def PrintToScreen(self) :
+    def printToScreen(self) :
         '''Print entire lattice to screen''' 
         nelement = self._parserLib.get_nelements()
 
@@ -161,7 +137,7 @@ class Loader:
             angle  = self._parserLib.get_angle(i)
             print i,name,type,length,angle        
     
-    def PrintZeroLength(self) : 
+    def printZeroLength(self) : 
         '''Print elements with zero length with s location''' 
         
         nelement = self._parserLib.get_nelements()

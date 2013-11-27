@@ -1,34 +1,17 @@
-# pybdsim - python tools for bdsim
-# Version 1.0
-# L. Nevay, S.T.Boogert
-# laurie.nevay@rhul.ac.uk
+#pybdsim
 
+import BeamTester
 import Builder
-import Data
-import Gmad
-import Plot
+import ComponentTester
+import Tester
+import analysis
+import outputLoader
 
-import _General
-
-from Analysis import Analysis
-
-__all__ = ['Builder','Data','Gmad','Plot']
+all = ['BeamTester','Builder','ComponentTester','Tester','analysis','outputLoader']
 
 """
-pybdsim - python tools for bdsim
+A future doc string describing the different modules within
+pybdsim
 
-dependencies:
-package     - minimum version required
-numpy       - 1.7.1
-matplotlib  - 1.3.0
-
-Modules:
-Builder - create generic accelerators for bdsim
-Data    - read the bdsim output formats
-Gmad    - create bdsim input files - lattices & options
-Plot    - some nice plots for data
-
-Classes:
-Analysis - encapsulates functions & plots for a single file 
-
+sorry still to be completed...
 """
