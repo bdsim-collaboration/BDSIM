@@ -6,6 +6,7 @@ Loader() - load a gmad file using the comipled bdsim parser
 
 import ctypes as _ctypes
 import ctypes as __ctypes
+from ctypes.util import find_library as _find_library
 import numpy as _np
 import matplotlib.pyplot as _plt
 
@@ -102,13 +103,46 @@ class Loader:
 
     """
     def __init__(self) :
-        self.LoadLib()
+        self._LoadLib()
     
-    def LoadLib(self) :
-        self._parserLibFileName = "libgmadShared.dylib"
-        # self._parserLibFileName = "/Users/sboogert/Physics/general/acc/bdsim/bdsim-mac/parser/libgmadShared.dylib"
-        # self._parserLibFileName = "/Users/nevay/physics/reps/bdsim-build/parser/libgmadShared.dylib"
-        self._parserLib = _ctypes.cdll.LoadLibrary(self._parserLibFileName)
+    def _LoadLib(self):
+        libname = 'gmadShared'
+        libpath = '/usr/local/lib'
+
+        test1,test2,test3 = False, False, False
+        
+        #test1 - try general find function
+        libpatht1 = _find_library(libname)
+        if libpatht1 != None:
+            test1 = True
+        
+        #test2 - try /opt/local/lib/libgmadShared.so
+        try:
+            fulllibname = 'lib'+libname+'.so'
+            self._parserLib = _ctypes.cdll.LoadLibrary('/usr/local/lib/'+fulllibname)
+            test2 = True
+        except OSError:
+            pass
+        
+        #test3 - try /opt/local/lib/libgmadShared.dylib
+        try:
+            fulllibname = 'lib'+libname+'.dylib'
+            self._parserLib = _ctypes.cdll.LoadLibrary('/usr/local/lib/'+fulllibname)
+            test3 = True
+        except OSError:
+            pass
+
+        if [test1,test2,test3].count(True) == 0:
+            print 'LoadLib - cannot find libgmadShared - check paths'
+            raise OSError('LoadLib - cannot find libgmadShared - check paths')
+        elif test1 == True:
+            self._parserLib = libpatht1
+        else:
+            pass
+
+        #self._parserLibFileName = "libgmadShared.dylib"
+        #self._libpath           = '/usr/local/lib/'
+        #self._parserLib = _ctypes.cdll.LoadLibrary(self._libpath+self._parserLibFileName)
         
         self._parserLib.get_name.restype    = _ctypes.c_char_p
         self._parserLib.get_name.argtypes   = [_ctypes.c_int]
