@@ -56,17 +56,17 @@ class Analysis:
         
         self.keysgrouped = list(_np.sort(self.datagrouped.keys()))
 
-#    def GenerateSigmas(self):
-#        if hasattr(self,'datagrouped') == False:
-#            self.GroupBy()
-#        
-#        z = self.keysgrouped
-#        sx,sy = [],[]
-#
-#        for i in range(len(self.keysgrouped)):
-#            sx.append(_np.std(self.datagrouped[self.keysgrouped[i]]['X']))
-#            sy.append(_np.std(self.datagrouped[self.keysgrouped[i]]['Y']))
-#        self.simpledata = {'sx':sx,'sy':sy,'z':z}
+    def GenerateSigmas(self):
+        if hasattr(self,'datagrouped') == False:
+            self.GroupBy()
+        
+        z = self.keysgrouped
+        sx,sy = [],[]
+
+        for i in range(len(self.keysgrouped)):
+            sx.append(_np.std(self.datagrouped[self.keysgrouped[i]]['X']))
+            sy.append(_np.std(self.datagrouped[self.keysgrouped[i]]['Y']))
+        self.simpledata = {'sx':sx,'sy':sy,'z':z}
 
     def SortBy(self,variable='Z'):
         pass
