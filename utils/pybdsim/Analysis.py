@@ -1,4 +1,13 @@
-import Data
+# pybdsim.Analysis - analysis scripts for bdsim output
+# Version 1.0
+# L. Nevay, S.T.Boogert
+# laurie.nevay@rhul.ac.uk
+
+#this module does not feature directly in the pybdsim import
+#but instead acts as a holder for the analysis class to
+#keep the __init__ file very clean.
+
+from Data import Data
 import numpy as _np
 
 class Analysis:
@@ -14,7 +23,7 @@ class Analysis:
 
     """
     def __init__(self,filepath):
-        a = Data.Data()
+        a = Data()
         a.Read(filepath)
         self.filepath  = a.filepath
         self.filename  = a.filename

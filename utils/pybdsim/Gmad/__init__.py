@@ -3,6 +3,13 @@
 # L.Nevay
 # laurie.nevay@rhul.ac.uk
 
+"""
+pybdsim.Gmad - a subpackage of pybdsim that allows the 
+creation and parsing of gmad files - the input file
+format for bdsim.
+
+"""
+
 import Lattice
 import Options
 

@@ -1,13 +1,27 @@
-# Data Loader for pybdsim
-import numpy as _np
+# pybdsim.Data - output data loader for pybdsim
+# Version 1.0
+# L. Nevay, S.T.Boogert
+# laurie.nevay@rhul.ac.uk
 
+"""
+Output
+
+Read bdsim output
+
+Classes:
+Data - read various output files
+
+
+"""
+
+import numpy as _np
 
 class Data:
     """
-    class to read bdsim data format
+    class to read bdsim output data format
 
     example usage
-    a = Data()
+    a = Output()
     a.Read(filepath)
     a.data
     a.units
@@ -20,10 +34,10 @@ class Data:
         self.units = []
 
     def __call__(self):
-        print 'pybdsim.Data.Data instance'
+        print 'pybdsim.Data instance'
 
     def __repr__(self):
-        print 'pybdsim.Data.Data instance'
+        print 'pybdsim.Data instance'
         if len(self.keys) > 0:
             print 'containting the following data'
             print 'Name\tUnits'
@@ -68,7 +82,7 @@ class Data:
         knownfiletypes = ['txt','root']
         format = filepath.split('.')[-1]
         if format not in knownfiletypes:
-            print 'pybdsim>Data>Load> unknown format'
+            print 'pybdsim.Data.Load - unknown format'
         elif format == 'txt':
             a = AsciiFormat()
             a.Read(filepath)
@@ -82,7 +96,7 @@ class Data:
             self.data  = a.data
             self.units = a.units
         else:
-            print 'pybdsim>Data>Load> unknown format'
+            print 'pybdsim.Data.Load -  unknown format'
 
 class AsciiFormat:
     def __init__(self):

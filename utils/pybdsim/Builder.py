@@ -1,3 +1,18 @@
+# pybdsim.Builder - tools to build bdsim lattices
+# Version 1.0
+# L. Nevay, S.T.Boogert
+# laurie.nevay@rhul.ac.uk
+
+"""
+Builder
+
+Build generic machines for bdsim. You can create a lattice
+using one of the predefined simple lattices or by adding
+many pieces together of your own design. Finally, output
+the gmad files required.
+
+"""
+
 import pylab as pl 
 
 class MachineRep(list):

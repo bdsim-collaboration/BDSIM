@@ -3,16 +3,6 @@
 # L. Nevay, S.T.Boogert
 # laurie.nevay@rhul.ac.uk
 
-import Builder
-import Data
-import Gmad
-import Plot
-
-import _General
-
-from Analysis import Analysis
-
-__all__ = ['Builder','Data','Gmad','Plot']
 
 """
 pybdsim - python tools for bdsim
@@ -33,3 +23,13 @@ Analysis - encapsulates functions & plots for a single file
 
 """
 
+import Builder
+import Data
+import Gmad
+import Plot
+
+import _General
+
+from Analysis import Analysis
+
+__all__ = ['Builder','Data','Gmad','Plot']
