@@ -11,7 +11,7 @@ BDSBeamline* BDSBeamline::Instance(){
 
 }
 
-BDSBeamline::BDSBeamline(){
+BDSBeamline::BDSBeamline():_s_local(0.0),_s_total(0.0){
   _localX = new G4ThreeVector(1,0,0);
   _localY = new G4ThreeVector(0,1,0);
   _localZ = new G4ThreeVector(0,0,1);
@@ -258,7 +258,7 @@ G4ThreeVector* BDSBeamline::positionFromCurrentCenter(){
 }
 
 G4double BDSBeamline::positionS(){
-  return _positionS;
+  return *_iterPositionS;
 }
 
 G4double BDSBeamline::s_total(){

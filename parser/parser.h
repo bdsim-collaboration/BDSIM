@@ -35,7 +35,7 @@ extern int yylex();
 
 
 const int MAX_EXPAND_ITERATIONS = 50;
-const int MAX_MULTIPOLE_ORDER = 5;
+//const int MAX_MULTIPOLE_ORDER = 5;
 
 const int _undefined = 0;
 

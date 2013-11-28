@@ -170,7 +170,6 @@ public:
   // void AddSynchEnergyLoss(G4double SynchEnergyLoss);
   // G4double GetSynchEnergyLoss();
   
-  BDSAcceleratorComponent();
   void BuildOuterFieldManager();
 
   // in case a mapped field is provided creates a field mesh in global coordinates
@@ -193,9 +192,11 @@ public:
   G4double getParameterValue(G4String spec, G4String name) const;
   G4String getParameterValueString(G4String spec, G4String name) const;
 
-  // constructor
-  BDSAcceleratorComponent (G4String& aName, G4double aLength);
+private:
+  /// private default constructor
+  BDSAcceleratorComponent();
 
+public:
   BDSAcceleratorComponent (
 			  G4String& aName, 
 			  G4double aLength,
