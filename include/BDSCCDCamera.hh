@@ -23,8 +23,8 @@ class BDSCCDCamera
 public:
   BDSCCDCamera();
   ~BDSCCDCamera();
-  G4LogicalVolume* log();
-  G4String name();
+  inline G4LogicalVolume* log(){return _log;}
+  inline G4String name(){return _name;}
   inline G4ThreeVector size(){return _size;}
   inline void phys(G4PVPlacement* phys){_phys=phys;}
   inline G4PVPlacement* phys(){return _phys;}
@@ -32,12 +32,14 @@ public:
 private:
   void defaultDimensions();
   void build();
+  void buildCavity();
   void buildMotherVolume();
   void buildCCDChip();
   void buildObjectLens();
   void buildImageLens();
   void visAtt();
   void placeComponents();
+  void placeCavity();
   void placeCCDChip();
   void placeObjectLens();
   void placeImageLens();
@@ -54,6 +56,9 @@ private:
   BDSLens* _objectLens;
   BDSLens* _imageLens;
   G4PVPlacement* _phys;
+  G4double _cavityLength;
+  G4LogicalVolume* _cavityLog;
+  G4PVPlacement* _cavityPhys;
 };
 
 #endif

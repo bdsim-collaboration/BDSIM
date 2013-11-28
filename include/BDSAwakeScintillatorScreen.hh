@@ -81,9 +81,6 @@ private:
   G4double _screenWidth;
   G4double _scoringPlaneThickness;
 
-  G4double _xLength;
-  G4double _yLength;
-
   G4VisAttributes* _visAttFront;
   G4VisAttributes* _visAttScint;
   G4VisAttributes* _visAttBase;
@@ -98,6 +95,7 @@ private:
   G4double _screenAngle;
   BDSCCDCamera* _camera;
 
+  G4double _cameraScreenDist;
 };
 
 #endif

@@ -26,6 +26,8 @@ Work in progress.
 #include "parser/gmad.h"
 #include <map>
 #include "BDSAwakeMultilayerScreen.hh"
+//#include "UltraFresnelLens.hh"
+//#include "UltraFresnelLensParameterisation.hh"
 
 extern BDSSamplerSD* BDSSamplerSensDet;
 extern BDSOutput* bdsOutput;
@@ -67,8 +69,7 @@ BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName):
 G4VisAttributes* BDSAwakeScintillatorScreen::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.3,0.4,0.2));
-  itsVisAttributes->SetForceSolid(true);
-  itsVisAttributes->SetForceSolid(true);
+  itsVisAttributes->SetForceWireframe(true);
 
   _visAttFront=new G4VisAttributes(G4Colour(1.0,0.0,0.0,0.5));
   _visAttScint=new G4VisAttributes(G4Colour(0.0,1.0,0.0,0.5));
@@ -92,10 +93,10 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   _samplerName = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_scoringPlaneName);
   
   //Build and place the volume...
-  itsCameraScoringPlaneSolid = new G4Box("CameraScoringPlaneSolid",itsLength/2.0,_yLength/2.0,_scoringPlaneThickness/2.0);
+  itsCameraScoringPlaneSolid = new G4Box("CameraScoringPlaneSolid",itsLength/2.0,itsYLength/2.0,_scoringPlaneThickness/2.0);
   itsCameraScoringPlaneLog = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog",0,0,0);
   itsCameraScoringPlaneLog->SetVisAttributes(_visAttScint);
-  G4double dispX=-_xLength/2.0+_scoringPlaneThickness/2.0;
+  G4double dispX=-itsXLength/2.0+_scoringPlaneThickness/2.0;
   G4double dispY=0;
   G4double dispZ=0;
   new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),G4ThreeVector(dispX,dispY,dispZ),itsCameraScoringPlaneLog,_samplerName,
@@ -118,6 +119,27 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   itsCameraScoringPlaneLog->SetUserLimits(itsScoringPlaneUserLimits);
 #endif
 }
+
+//void BDSAwakeScintillatorScreen::BuildFresnelLens(){
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////                                                    
+  /*
+  G4cout << "#                                                    #" << G4endl ;
+  G4cout << "#           Building the Fresnel lens ...            #" << G4endl ;
+  G4cout << "#                                                    #" << G4endl ;
+
+  G4double      LensDiameter        = 457*mm ; // Size of the optical active area of the lens.                                                                
+  G4int      LensNumOfGrooves    = 13 ;
+  //G4int      LensNumOfGrooves    = 129 ;                                                                                                                    
+  //G4int      LensNumOfGrooves    = 1287 ;                                                                                                                   
+
+  G4double      LensBorderThickness = 2.8*mm ;     // Thickness of the border area.                                                                           
+  G4double      LensFocalLength     = 441.973*mm ; // This parameter depends on the lens geometry, etc !!                                                     
+  G4Material   *LensMaterial        = G4Material::GetMaterial(name = "Acrylic") ;
+  G4ThreeVector LensPosition        = UVscopePosition+G4ThreeVector(0.0*mm,0.0*mm,UVscopeHeight/2.0-UVscopeBaffle) ;
+
+  UltraFresnelLens *FresnelLens = new UltraFresnelLens(LensDiameter,LensNumOfGrooves,LensMaterial,_log) ;
+  */
+//}
 
 
 void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
@@ -170,10 +192,18 @@ void BDSAwakeScintillatorScreen::Build(){
 }
 
 void BDSAwakeScintillatorScreen::BuildCamera(){
-  //  _camera=new BDSCCDCamera();
+  _camera=new BDSCCDCamera();
 }
 void BDSAwakeScintillatorScreen::PlaceCamera(){
-
+  _camera->phys(new G4PVPlacement(_screenRotationMatrix,
+				  G4ThreeVector(-1*_cameraScreenDist*sin(_screenAngle),0,1*_cameraScreenDist*cos(_screenAngle)),
+				  _camera->log(),
+				  _camera->name()+"_phys",
+				  itsMarkerLogicalVolume,
+				  false,
+				  0,
+				  true)
+		);
 }
 
 void BDSAwakeScintillatorScreen::BuildScreen()
@@ -198,9 +228,11 @@ void BDSAwakeScintillatorScreen::PlaceScreen(){
 }
 
 void BDSAwakeScintillatorScreen::ComputeDimensions(){
-  //  _xLength = _yLength = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
-  //  _xLength = std::max(_xLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
-  //  _yLength = std::max(_yLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
+  //  itsXLength = itsYLength = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
+  //  itsXLength = std::max(itsXLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
+  //  itsYLength = std::max(itsYLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
+
+  _cameraScreenDist=(1.0)*m;
 
   _screenWidth=_mlScreen->size().x();
   _screenHeight=_mlScreen->size().y();
@@ -208,31 +240,36 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   //The scoring plane...
   _scoringPlaneThickness=1*um;
 
-  _screenThickness = 10*_mlScreen->size().z();
+  _screenThickness = _mlScreen->size().z();
   
   _totalThickness =  
     _screenThickness + _scoringPlaneThickness;
   
+  
+  G4double thi=_totalThickness+2*_cameraScreenDist+2*_camera->size().z()+2*_scoringPlaneThickness;
   //Compute the marker volume length according to the screen thickness and width.
   G4double z_wid = _screenWidth * std::sin(std::abs(_screenAngle));//Length due to the screen width and angle
   G4double z_thi = _totalThickness * std::cos(_screenAngle);//Length due to the screen thickness
   G4double x_wid = _screenWidth * std::cos(std::abs(_screenAngle));//Length due to the screen width and angle
-  G4double x_thi = _totalThickness * std::sin(_screenAngle);//Length due to the screen thickness
+  G4double x_thi = thi * std::sin(_screenAngle);//Length due to the screen thickness
   itsLength = (z_wid + z_thi);
-  _xLength = x_wid +x_thi + 2*_scoringPlaneThickness;
-  _yLength = _screenHeight;
+  itsXLength = (x_wid +x_thi);
+  itsYLength = std::max(_screenHeight,_camera->size().y());
 }
 
 void BDSAwakeScintillatorScreen::BuildMarkerVolume(){
-  itsMarkerSolidVolume=new G4Box( itsName+"_marker_log",
-				  _xLength,
-				  _yLength,
+  itsMarkerSolidVolume=new G4Box( itsName+"_marker_solid",
+				  itsXLength/2.0,
+				  itsYLength/2.0,
 				  itsLength/2.0); //z half length 
 
   itsMarkerLogicalVolume=new G4LogicalVolume
     (itsMarkerSolidVolume, 
      BDSMaterials::Instance()->GetMaterial("vacuum"),
-     itsName+"_log");
+     itsName+"_marker_log");
+  G4VisAttributes* visAtt = new G4VisAttributes(G4Color(0,1,0));
+  visAtt->SetForceWireframe(true);
+  itsMarkerLogicalVolume->SetVisAttributes(visAtt);
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
   itsMarkerUserLimits =  new G4UserLimits();

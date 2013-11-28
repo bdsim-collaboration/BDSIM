@@ -41,11 +41,13 @@ void BDSAwakeMultilayerScreen::substrateLayer(){
 
 void BDSAwakeMultilayerScreen::scintillatorLayer(){
   G4cout << "Making backing layer..." << G4endl;
-  BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),300*um),(G4String)"scintillatorLayer","lanexScintLayerMaterial",0,0);
+  //Was 300 microns - tryin 10 microns...
+  BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),300*um),(G4String)"scintillatorLayer","lanexScintLayerMaterial",_gapWidth,_gapSpacing);
   sl->color(G4Color(0.0,1.0,0.0,0.3));
   screenLayer(sl);
   G4cout << "finished." << G4endl;
 }
+
 
 void BDSAwakeMultilayerScreen::frontLayer(){
   BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),13*um),(G4String)"frontLayer","cellulose",0,0);
@@ -53,12 +55,15 @@ void BDSAwakeMultilayerScreen::frontLayer(){
   screenLayer(sl);
 }
 
-//void BDSAwakeMultilayerScreen::frontLayer(){
+
+/*
+void BDSAwakeMultilayerScreen::frontLayer(){
   
-  //  BDSLensFacet* facet = new BDSLensFacet("afacet",G4TwoVector(100*mm-_gapWidth,3*cm),33.0*BDSGlobalConstants::Instance()->GetPI()/180.0,
-  //					 0,"PET");
-  //  screenLayer(new BDSMultiFacetLayer((G4String)"multiFacetLayer", facet, _gapWidth,10));
-//}
+  BDSLensFacet* facet = new BDSLensFacet("afacet",G4TwoVector(1*mm-_gapWidth,3*cm),33.0*BDSGlobalConstants::Instance()->GetPI()/180.0,
+  					 0,"PET");
+  screenLayer(new BDSMultiFacetLayer((G4String)"multiFacetLayer", facet, _gapWidth,1000));
+}
+*/
 
 void BDSAwakeMultilayerScreen::surfaces(){
   reflectiveSurface();

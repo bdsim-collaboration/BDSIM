@@ -16,4 +16,12 @@ inline std::string methodName(const std::string& prettyFunction)
 #define __METHOD_NAME__ methodName(__PRETTY_FUNCTION__)
 
 
+inline std::string methodEnd(const std::string& prettyFunction)
+{
+  return methodName(prettyFunction) + "- end of method.";
+}
+#define __METHOD_END__ methodEnd(__PRETTY_FUNCTION__)
+
+
+
 #endif

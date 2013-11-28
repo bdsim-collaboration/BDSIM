@@ -281,17 +281,19 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   G4cout<<"BDSEventAction : CCD camera hits histograms"<<G4endl;
 #endif
   
-  BDSCCDPixelHitsCollection* BDSCCDCamera_HC=NULL;
+  BDSCCDPixelHitsCollection* BDSCCDPixel_HC=NULL;
   G4String name="CCDPixel";
-  G4int BDSCCDCamera_ID= G4SDManager::GetSDMpointer()->GetCollectionID(name);
-  if(BDSCCDCamera_ID>=0)
+  G4int BDSCCDPixel_ID= G4SDManager::GetSDMpointer()->GetCollectionID(name);
+  if(BDSCCDPixel_ID>=0)
     {
-      BDSCCDCamera_HC=
-	(BDSCCDPixelHitsCollection*)(evt->GetHCofThisEvent()->GetHC(BDSCCDCamera_ID));
+      BDSCCDPixel_HC=
+	(BDSCCDPixelHitsCollection*)(evt->GetHCofThisEvent()->GetHC(BDSCCDPixel_ID));
       
-      if(BDSCCDCamera_HC) {
-	bdsOutput->WriteCCDHits(BDSCCDCamera_HC);
-	  }
+      if(BDSCCDPixel_HC) {
+	G4cout << __METHOD_NAME__ << " - writing CCD hits..." << G4endl;
+	bdsOutput->WriteCCDHits(BDSCCDPixel_HC);
+	G4cout << __METHOD_NAME__ << " - finished writing CCD hits " << G4endl;
+      }
     }
 #ifdef DEBUG
   G4cout << __METHOD_NAME__ << " finished writing energy loss." << G4endl;

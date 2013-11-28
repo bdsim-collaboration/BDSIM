@@ -463,6 +463,21 @@ void BDSMaterials::Initialise()
   fsMaterialPropertiesTable->AddProperty("RINDEX",FusedSilica_Energy,FusedSilica_RIND,FusedSilica_NUMENTRIES);
   tmpMaterial->SetMaterialPropertiesTable(fsMaterialPropertiesTable);
   materials[name] = tmpMaterial; 
+
+  //n-bk7
+  tmpMaterial = new G4Material 
+    (name="n-bk7", density=1.032*g/cm3, 2, kStateSolid);
+  tmpMaterial->AddElement(elements["O"],2);
+  tmpMaterial->AddElement(elements["Si"],1);
+  const G4int N_Bk7_NUMENTRIES = 3; //Number of entries in the material properties table
+  G4double N_Bk7_RIND[N_Bk7_NUMENTRIES]={1.51680,1.51680,1.51680};
+  G4double N_Bk7_AbsLength[N_Bk7_NUMENTRIES]={420.*cm,420.*cm,420.*cm};
+  G4double N_Bk7_Energy[N_Bk7_NUMENTRIES] = {2.0*eV,7.0*eV,7.14*eV};
+  G4MaterialPropertiesTable* nbk7MaterialPropertiesTable= new G4MaterialPropertiesTable();
+  nbk7MaterialPropertiesTable->AddProperty("ABSLENGTH",N_Bk7_Energy,N_Bk7_AbsLength,N_Bk7_NUMENTRIES);
+  nbk7MaterialPropertiesTable->AddProperty("RINDEX",N_Bk7_Energy,N_Bk7_RIND,N_Bk7_NUMENTRIES);
+  tmpMaterial->SetMaterialPropertiesTable(nbk7MaterialPropertiesTable);
+  materials[name] = tmpMaterial; 
   
   //scintillator materials
   //YAG
@@ -619,7 +634,8 @@ void BDSMaterials::Initialise()
   mptLanex->AddProperty("RINDEX",energytab, rindextab, nentLanex); //Average refractive index of bulk material
   mptLanex->AddProperty("ABSLENGTH", energytab, abslen, nentLanex);
   mptLanex->AddProperty("FASTCOMPONENT",energytab, emitspec, nentLanex);
-  mptLanex->AddConstProperty("SCINTILLATIONYIELD",2.94e4/MeV);
+  G4double scintScalingFactor=1;
+  mptLanex->AddConstProperty("SCINTILLATIONYIELD",scintScalingFactor*2.94e4/MeV);
   mptLanex->AddConstProperty("RESOLUTIONSCALE",1.0);
   mptLanex->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
   mptLanex->AddConstProperty("MIEHG", 60.3e-3*mm);

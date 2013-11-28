@@ -178,7 +178,7 @@ void BDSOutput::Init(G4int FileNum)
   EnergyLossTree= new TTree("ElossTree", "Energy Loss");
   EnergyLossTree->Branch("z",&z_el,"z (m)/F");
   EnergyLossTree->Branch("E",&E_el,"E (GeV)/F");
-  CCDCameraHisto = new TH1F("CCDCameraHisto", "CCD Camera Hits",nBins,0.,zMax/m);
+  CCDCameraHisto = new TH1F("CCDCameraHisto", "CCD Camera Hits",2048,0,2048);
 
   PrecisionRegionEnergyLossTree= new TTree("PrecisionRegionElossTree", "Energy Loss");//"x:y:z:E:partID:parentID:weight:volumeName");
   PrecisionRegionEnergyLossTree->Branch("x",&x_el_p,"x (m)/F");
@@ -489,8 +489,10 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 void BDSOutput::WriteCCDHits(BDSCCDPixelHitsCollection* hc)
 {
   if( format == _ROOT) {
+    G4cout << __METHOD_NAME__ << G4endl;
 #ifdef USE_ROOT
     G4int n_hit = hc->entries();
+    G4cout << __METHOD_NAME__ << " - n_hit = " << n_hit << G4endl;
     for (G4int i=0;i<n_hit;i++)
       {
 	//get hits
@@ -503,6 +505,7 @@ void BDSOutput::WriteCCDHits(BDSCCDPixelHitsCollection* hc)
 
  if( format == _ASCII) {
  }
+ G4cout << __METHOD_END__ << G4endl;
 }
 
 // write some comments to the output file

@@ -35,8 +35,7 @@ void BDSMultiFacetLayer::computeDimensions(){
   //Compute positions of the facets relative to the mother volume.
   G4double x=0,y=0,z=0;
   for(double i=0; i<_nFacets; i++){
-    x=(i+0.5)*_facet->size().x()-_size.x()/2.0;
-    x+=i*_gapWidth; //The width of the gaps between the facets.
+    x=(i+0.5)*_facet->size().x()-_size.x()/2.0+i*_gapWidth;
     _facetPos.push_back(G4ThreeVector(x,y,z));
   }
 }

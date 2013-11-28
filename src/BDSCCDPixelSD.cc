@@ -21,6 +21,8 @@
 
 #include "G4SDManager.hh"
 
+#define DEBUG 1
+
 BDSCCDPixelSD::BDSCCDPixelSD(G4String name)
   :G4VSensitiveDetector(name),CCDPixelCollection(NULL)
 {
@@ -34,7 +36,7 @@ BDSCCDPixelSD::~BDSCCDPixelSD()
 void BDSCCDPixelSD::Initialize(G4HCofThisEvent*)
 {
   // Create CCDPixel hits collection
-  CCDPixelCollection = new BDSCCDPixelHitsCollection(SensitiveDetectorName,_collectionName);
+  CCDPixelCollection = new BDSCCDPixelHitsCollection(SensitiveDetectorName,collectionName[0]);
 }
 
 G4bool BDSCCDPixelSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
@@ -42,18 +44,18 @@ G4bool BDSCCDPixelSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 #ifdef DEBUG
   G4cout << __METHOD_NAME__ << "processing hits for sensitive detector name " << SensitiveDetectorName << G4endl;  
 #endif
+  G4TouchableHistory* hist = (G4TouchableHistory*) 
+    (aStep->GetPreStepPoint()->GetTouchable());
   G4Track* theTrack = aStep->GetTrack();
   //only store a hit for optical photons.
   if(theTrack->GetDefinition()->GetPDGEncoding() != 0) return false;
-  G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   //Do not store hit if the particle is not on the boundary 
-  if(preStepPoint->GetStepStatus()!=fGeomBoundary) return false;
+  if(aStep->GetPreStepPoint()->GetStepStatus()!=fGeomBoundary) return false;
   
-  G4int nCCDPixel=theTrack->GetVolume()->GetCopyNo();
+  G4int nCCDPixel=hist->GetVolume()->GetCopyNo();
   G4double weight=theTrack->GetWeight();
   
 #ifdef DEBUG
-  G4cout << __METHOD_NAME__ << " CCDPixel : " << SampName << G4endl;
   G4cout << __METHOD_NAME__ << " Storing hit: nCCDPixel weight" << G4endl;
   G4cout << __METHOD_NAME__ << " " << nCCDPixel <<" "  << weight << G4endl;
 #endif
@@ -72,7 +74,7 @@ G4bool BDSCCDPixelSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 void BDSCCDPixelSD::EndOfEvent(G4HCofThisEvent*HCE)
 {
   G4SDManager * SDman = G4SDManager::GetSDMpointer();
-  G4int HCID = SDman->GetCollectionID(_collectionName);
+  G4int HCID = SDman->GetCollectionID(collectionName[0]);
   HCE->AddHitsCollection(HCID, CCDPixelCollection );
 }
 
