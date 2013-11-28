@@ -9,6 +9,7 @@
 
 from Data import Data
 import numpy as _np
+import Plot
 
 class Analysis:
     """
@@ -31,6 +32,9 @@ class Analysis:
         self.dataarray = a.dataarray
         self.keys      = a.keys
         self.units     = a.units
+        self.plots     = []
+        self._plottitle = self.filename.split('.')[0]
+        self.ndata     = len(self.data['X'])
         
     def GroupBy(self,variable='Z'):
         """
@@ -79,6 +83,25 @@ class Analysis:
 
     def SortBy(self,variable='Z'):
         pass
+
+    def PlotXXp(self):
+        p1 = Plot.PlotXY(self.data['X'],self.data['Xp'],'X (m)','Xp (rad)',self._plottitle)
+        self.plots.append(p1)
+
+    def PlotYYp(self):
+        p1 = Plot.PlotXY(self.data['Y'],self.data['Yp'],'Y (m)','Yp (rad)',self._plottitle)
+        self.plots.append(p1)
+
+    def PlotSingleVariable(self,variable,xlabel='',ylabel=''):
+        p1 = Plot.PlotY(self.data[variable],xlabel,ylabel,self._plottitle)
+        self.plots.append(p1)
+
+    def ControlPlotAll(self):
+        p1 = Plot.ControlPlot(self.data,self._plottitle)
+        self.plots.append(p1)
         
+    def PlotEnergyHist(self,nbins=20,**kwargs):
+        p1 = Plot.Histogram(self.data['E'],'Energy (GeV)',self._plottitle,nbins,**kwargs)
+        self.plots.append(p1)
 
     
