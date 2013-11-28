@@ -670,7 +670,7 @@ number of parameters.
 @node rf
 @subsection @code{rf}
 
-@code{rf} defines an rf cavity. Attributes:
+@code{rfcavity} defines an rf cavity. Attributes:
 @itemize @bullet 
 @item @code{l} - length [m] (default 0)
 @item @code{gradient} - field gradient [MV / m]
@@ -681,7 +681,7 @@ Example :
 
 @example
 
-@code{rf1 : rf,l=5*m, gradient = 10 * MV / m; }
+@code{rf1 : rfcavity,l=5*m, gradient = 10 * MV / m; }
 
 @end example
 
@@ -706,7 +706,7 @@ Example :
 
 @example
 
-@code{col1 : rcol,l=0.4*m, xsize=2*mm, ysize=1*mm, material="W"}
+@code{col1 : rcol,l=0.4*m, xsize=2*mm, ysize=1*mm, material="G4_W"}
 
 @end example
 

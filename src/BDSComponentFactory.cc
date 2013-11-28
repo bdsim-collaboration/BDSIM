@@ -26,6 +26,7 @@
 #include "BDSComponentOffset.hh"
 #include "BDSCollimator.hh"
 //#include "BDSRealisticCollimator.hh"
+#include "BDSScintillatorScreen.hh"
 
 extern G4bool outline;
 
@@ -225,6 +226,11 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     G4cout << "BDSComponentFactory  - creating laser" << G4endl;
 #endif
     return createLaser(); break; 
+  case _SCREEN:
+#ifdef DEBUG
+    G4cout << "BDSComponentFactory  - creating screen" << G4endl;
+#endif
+    return createScreen(); break; 
   case _TRANSFORM3D:
 #ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating transform3d" << G4endl;
@@ -1235,6 +1241,18 @@ BDSAcceleratorComponent* BDSComponentFactory::createLaser(){
 						_element.waveLength,
 						direction) );
 	
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
+  if(_element.l == 0) _element.l = 1e-8;
+	
+#ifdef DEBUG 
+        G4cout << "---->creating Screen,"
+               << " name= "<< _element.name
+               << " l=" << _element.l/m<<"m"
+               << G4endl;
+#endif
+	  return (new BDSScintillatorScreen( _element.name, _element.l*m, 0.1*mm));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){

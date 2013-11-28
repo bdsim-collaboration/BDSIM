@@ -66,8 +66,13 @@
 #else
 #include "G4MultipleScattering.hh"
 #endif
+//Optical processes
 #include "G4Cerenkov.hh"
-
+#include "G4Scintillation.hh"
+#include "G4OpAbsorption.hh"
+#include "G4OpRayleigh.hh"
+#include "G4OpMieHG.hh"
+#include "G4OpBoundaryProcess.hh"
 #include "G4CoulombScattering.hh"
 
 // e
@@ -197,6 +202,13 @@
 
 BDSPhysicsList::BDSPhysicsList():  G4VUserPhysicsList()
 {
+  theCerenkovProcess           = NULL;
+  theScintillationProcess      = NULL;
+  theAbsorptionProcess         = NULL;
+  theRayleighScatteringProcess = NULL;
+  theMieHGScatteringProcess    = NULL;
+  theBoundaryProcess           = NULL;
+
   verbose = BDSExecOptions::Instance()->GetVerbose();
 
   // construct particles
@@ -304,6 +316,8 @@ void BDSPhysicsList::ConstructProcess()
   }
   //Particle decay
   if(BDSGlobalConstants::Instance()->GetDecayOn()) ConstructDecay();
+  //Optical processes
+  ConstructOptical();
   //============================================
   
   if(!plistFound){ //Search BDSIM physics lists
@@ -797,6 +811,69 @@ void BDSPhysicsList::ConstructDecay()
       pmanager -> AddProcess(theDecayProcess);
       pmanager -> SetProcessOrdering(theDecayProcess, idxPostStep);
       pmanager -> SetProcessOrdering(theDecayProcess, idxAtRest);
+    }
+  }
+}
+
+
+void BDSPhysicsList::ConstructOptical()
+{
+  if(!BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){ //Otherwise, it is already initialised
+    theCerenkovProcess           = new G4Cerenkov("Cerenkov");
+  }
+  theScintillationProcess      = new G4Scintillation("Scintillation");
+  theAbsorptionProcess         = new G4OpAbsorption();
+  theRayleighScatteringProcess = new G4OpRayleigh();
+  theMieHGScatteringProcess    = new G4OpMieHG();
+  theBoundaryProcess           = new G4OpBoundaryProcess();
+
+//  theCerenkovProcess->DumpPhysicsTable();
+//  theScintillationProcess->DumpPhysicsTable();
+//  theRayleighScatteringProcess->DumpPhysicsTable();
+
+  SetVerboseLevel(1);
+  
+  if(!BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){ //Otherwise, it is already initialised
+    theCerenkovProcess->SetMaxNumPhotonsPerStep(20);
+    theCerenkovProcess->SetMaxBetaChangePerStep(10.0);
+    theCerenkovProcess->SetTrackSecondariesFirst(true);
+  }
+  
+  theScintillationProcess->SetScintillationYieldFactor(1.);
+  theScintillationProcess->SetTrackSecondariesFirst(true);
+
+  // Use Birks Correction in the Scintillation process
+
+  G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
+  theScintillationProcess->AddSaturation(emSaturation);
+
+#if G4VERSION_NUMBER < 960
+  G4OpticalSurfaceModel themodel = unified;
+  theBoundaryProcess->SetModel(themodel);
+#endif
+
+  theParticleIterator->reset();
+  while( (*theParticleIterator)() ){
+    G4ParticleDefinition* particle = theParticleIterator->value();
+    G4ProcessManager* pmanager = particle->GetProcessManager();
+    G4String particleName = particle->GetParticleName();
+    if(!BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){ //Otherwise, it is already initialised
+      if (theCerenkovProcess->IsApplicable(*particle)) {
+	pmanager->AddProcess(theCerenkovProcess);
+	pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
+      }
+    }
+    if (theScintillationProcess->IsApplicable(*particle)) {
+      pmanager->AddProcess(theScintillationProcess);
+      pmanager->SetProcessOrderingToLast(theScintillationProcess, idxAtRest);
+      pmanager->SetProcessOrderingToLast(theScintillationProcess, idxPostStep);
+    }
+    if (particleName == "opticalphoton") {
+      G4cout << " AddDiscreteProcess to OpticalPhoton " << G4endl;
+      pmanager->AddDiscreteProcess(theAbsorptionProcess);
+      pmanager->AddDiscreteProcess(theRayleighScatteringProcess);
+      pmanager->AddDiscreteProcess(theMieHGScatteringProcess);
+      pmanager->AddDiscreteProcess(theBoundaryProcess);
     }
   }
 }

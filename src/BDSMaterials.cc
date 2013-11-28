@@ -20,7 +20,7 @@
 #include "BDSMaterials.hh"
 #include "G4NistManager.hh"
 
-
+#define DEBUG 1
 using namespace std;
 
 BDSMaterials* BDSMaterials::_instance = 0;
@@ -86,6 +86,8 @@ void BDSMaterials::Initialise()
 
   tmpElement = new G4Element
     (name="Oxygen"     , symbol="O" , z=  8., a=  16.00*g/mole); elements[symbol] = tmpElement;
+
+  tmpElement = new G4Element("Yttrium", symbol="Y", z=39 , a=88.906*g/mole); elements[symbol] = tmpElement;
 
   tmpElement = new G4Element
     (name="Aluminium"  , symbol="Al", z= 13., a=  26.98*g/mole); elements[symbol] = tmpElement;
@@ -462,6 +464,46 @@ void BDSMaterials::Initialise()
   tmpMaterial->SetMaterialPropertiesTable(fsMaterialPropertiesTable);
   materials[name] = tmpMaterial; 
 
+  //scintillator materials
+  //YAG
+  tmpMaterial = new G4Material(name="yag", density=4.56*g/cm3, 3);
+  tmpMaterial->AddElement(elements["Y"],3);
+  tmpMaterial->AddElement(elements["Al"],5);
+  tmpMaterial->AddElement(elements["O"],12);
+  materials[name] = tmpMaterial;
+
+  //PET (Dacron)
+  G4NistManager* nistManager = G4NistManager::Instance();
+  tmpMaterial = nistManager->FindOrBuildMaterial("G4_DACRON",true,true);
+  name="pet";
+  const G4int Pet_NUMENTRIES = 3; //Number of entries in the material properties table
+  G4double Pet_RIND[Pet_NUMENTRIES] = {1.570,1.570,1.570};//Assume constant refractive index.
+  G4double Pet_Energy[Pet_NUMENTRIES] = {2.0*eV,7.0*eV,7.14*eV}; //The energies.
+  G4MaterialPropertiesTable*  petMaterialPropertiesTable=new G4MaterialPropertiesTable();
+  petMaterialPropertiesTable->AddProperty("RINDEX",Pet_Energy, Pet_RIND, Pet_NUMENTRIES);
+  tmpMaterial->SetMaterialPropertiesTable(petMaterialPropertiesTable);
+  materials[name]=tmpMaterial;
+
+  //Cellulose
+  tmpMaterial = nistManager->FindOrBuildMaterial("G4_CELLULOSE_CELLOPHANE",true,true);
+  name="cellulose";
+  const G4int Cellulose_NUMENTRIES = 3; //Number of entries in the material properties table
+  G4double Cellulose_RIND[Cellulose_NUMENTRIES] = {1.532,1.532,1.532};//Assume constant refractive index.
+  G4double Cellulose_Energy[Cellulose_NUMENTRIES] = {2.0*eV,7.0*eV,7.14*eV}; //The energies.
+  G4MaterialPropertiesTable*  celluloseMaterialPropertiesTable=new G4MaterialPropertiesTable();
+  celluloseMaterialPropertiesTable->AddProperty("RINDEX",Cellulose_Energy, Cellulose_RIND, Cellulose_NUMENTRIES);
+  tmpMaterial->SetMaterialPropertiesTable(celluloseMaterialPropertiesTable);
+  materials[name] = tmpMaterial;
+
+
+  //Polyurethane
+  tmpMaterial = new G4Material(name="polyurethane", density=1.05*g/cm3, 4);
+  tmpMaterial->AddElement(elements["C"],6);
+  tmpMaterial->AddElement(elements["H"],10);
+  tmpMaterial->AddElement(elements["N"],2);
+  tmpMaterial->AddElement(elements["O"],4);
+  materials[name]=tmpMaterial;
+
   // liquid materials
 
   tmpMaterial = new G4Material
@@ -491,6 +533,7 @@ void BDSMaterials::Initialise()
   pressure = 1.0*atmosphere;
   //Air
   density = (STP_Temperature/temperature) * (pressure/(1.*atmosphere))* 30*g/(22.4e-3*m3) ;
+  //  G4cout << "Air: temperature = " << temperature/kelvin << " kelvin, pressure = " << pressure/atmosphere << " atm, density = " << density/(g/m3) << " g/m3" << G4endl;
   tmpMaterial = new G4Material
     (name="air", density, 2, kStateGas, temperature, pressure);
   tmpMaterial->AddElement(elements["O"], fractionmass=0.2);
@@ -545,6 +588,13 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddElement(elements["C"], fractionmass=0.221);
   tmpMaterial->AddElement(elements["O"], fractionmass=0.297);
   materials[name] = tmpMaterial; 
+
+  const G4int Vac_NUMENTRIES = 3; //Number of entries in the material properties table
+  G4double Vac_RIND[Vac_NUMENTRIES] = {1.000,1.000,1.000};//Assume refractive index = 1 in a vacuum.
+  G4double Vac_Energy[Vac_NUMENTRIES] = {2.0*eV,7.0*eV,7.14*eV}; //The energies.
+  G4MaterialPropertiesTable*  vacMaterialPropertiesTable=new G4MaterialPropertiesTable();
+  vacMaterialPropertiesTable->AddProperty("RINDEX",Vac_Energy, Vac_RIND, Vac_NUMENTRIES);
+  tmpMaterial->SetMaterialPropertiesTable(vacMaterialPropertiesTable);
 
   tmpMaterial = new G4Material
     (name="laservac"      , density, 1, kStateGas, temperature, pressure);

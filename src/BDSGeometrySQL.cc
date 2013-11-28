@@ -31,12 +31,13 @@
 #include <cstdlib>
 #include "G4ClassicalRK4.hh"
 #include <cstring>
+#include "parser/getEnv.h"
 
 using namespace std;
 
 extern BDSSamplerSD* BDSSamplerSensDet;
 
-extern G4RotationMatrix* RotY90;
+
 extern BDSOutput* bdsOutput;
 //extern BDSGlobalConstants* BDSGlobalConstants::Instance();
 
@@ -47,7 +48,9 @@ BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength):
 #ifdef DEBUG
   G4cout << "BDSGeometrySQL constructor: loading SQL file " << DBfile << G4endl;
 #endif
-  ifs.open(DBfile.c_str());
+  G4String sBDSPATH = getEnv("BDSIMPATH");
+  G4String fullPath = sBDSPATH + DBfile;
+  ifs.open(fullPath.c_str());
   G4String exceptionString = "Unable to load SQL database file: " + DBfile;
   if(!ifs) G4Exception(exceptionString.c_str(), "-1", FatalException, "");
   align_in_volume = NULL;  //default alignment (does nothing)
@@ -82,7 +85,6 @@ BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength):
 }
 
 BDSGeometrySQL::~BDSGeometrySQL(){
-  delete rotateComponent;
 }
 
 void BDSGeometrySQL::Construct(G4LogicalVolume *marker)
@@ -94,7 +96,10 @@ void BDSGeometrySQL::Construct(G4LogicalVolume *marker)
   while (ifs>>file)
     {
       if(file.contains("#")) ifs.getline(buffer,1000); // This is a comment line
-      else BuildSQLObjects(file);
+      else{
+	G4String sBDSPATH = getEnv("BDSIMPATH");
+	G4String fullPath = sBDSPATH + file;
+	BuildSQLObjects(fullPath);}
     }
   
   // Close Geomlist file
@@ -773,26 +778,26 @@ G4RotationMatrix* BDSGeometrySQL::RotateComponent(G4double psi,G4double phi,G4do
   rotateComponent = new G4RotationMatrix;
   if(psi==0 && phi==0 && theta==0) return rotateComponent;
 
-  G4RotationMatrix LocalRotation;
-  G4ThreeVector localX = G4ThreeVector(1.,0.,0.);
-  G4ThreeVector localY = G4ThreeVector(0.,1.,0.);
-  G4ThreeVector localZ = G4ThreeVector(0.,0.,1.);
+  G4RotationMatrix* LocalRotation = new G4RotationMatrix;
+  G4ThreeVector* localX = new G4ThreeVector(1.,0.,0.);
+  G4ThreeVector* localY = new G4ThreeVector(0.,1.,0.);
+  G4ThreeVector* localZ = new G4ThreeVector(0.,0.,1.);
   
-  LocalRotation.rotate(psi,localZ);
-  localX.rotate(psi,localZ);
-  localY.rotate(psi,localZ);
-  
-  
-  LocalRotation.rotate(phi,localY);
-  localX.rotate(phi,localY);
-  localZ.rotate(phi,localY);
+  LocalRotation->rotate(psi,*localZ);
+  localX->rotate(psi,*localZ);
+  localY->rotate(psi,*localZ);
   
   
-  LocalRotation.rotate(theta,localX);
-  localY.rotate(theta,localX);
-  localZ.rotate(theta,localX);
+  LocalRotation->rotate(phi,*localY);
+  localX->rotate(phi,*localY);
+  localZ->rotate(phi,*localY);
   
-  rotateComponent->transform(LocalRotation);
+  
+  LocalRotation->rotate(theta,*localX);
+  localY->rotate(theta,*localX);
+  localZ->rotate(theta,*localX);
+  
+  rotateComponent->transform(*LocalRotation);
   rotateComponent->invert();
   
   return rotateComponent;
