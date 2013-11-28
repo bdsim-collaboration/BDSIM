@@ -233,9 +233,12 @@ def CreateDipoleRing(filename, ndipole=60, dlength=1.0, clength=10.0, samplers='
     a = Machine()
     dangle = Decimal(2.0*math.pi / float(ndipole))
     driftlength = clength - dlength
-    for i in range(0,ndipole,1):
+    a.AddDipole(length=dlength/2.0, angle=dangle/Decimal(2.0))
+    a.AddDrift(length=driftlength)
+    for i in range(1,ndipole,1):
         a.AddDipole(length=dlength, angle=dangle)
         a.AddDrift(length=driftlength)
+    a.AddDipole(length=dlength/2.0, angle=dangle/Decimal(2.0))
     a.SetSamplers(samplers)
     a.WriteLattice(filename)
 
