@@ -7,7 +7,7 @@
 #but instead acts as a holder for the analysis class to
 #keep the __init__ file very clean.
 
-from Data import Data
+import Data
 import numpy as _np
 import Plot
 
@@ -24,14 +24,15 @@ class Analysis:
 
     """
     def __init__(self,filepath):
-        a = Data()
-        a.Read(filepath)
-        self.filepath  = a.filepath
-        self.filename  = a.filename
-        self.data      = a.data
-        self.dataarray = a.dataarray
-        self.keys      = a.keys
-        self.units     = a.units
+        self.data = Data.Load(filepath)
+        #a = Data()
+        #a.Read(filepath)
+        self.filepath = filepath
+        self.filename = filepath.split('/')[-1]
+        #self.data      = a.data
+        #self.dataarray = a.dataarray
+        #self.keys      = a.keys
+        #self.units     = a.units
         self.plots     = []
         self._plottitle = self.filename.split('.')[0]
         self.ndata     = len(self.data['X'])
@@ -58,15 +59,13 @@ class Analysis:
 
         #remove the variable from the subset
         #find it's index in keys list
-        indexofvariabletoremove = self.keys.index(variable)
+        indexofvariabletoremove = self.data.keyslist.index(variable)
         for value in uniquevalues:
             mask      = _np.round(self.data[variable],2) == value
-            dcopy     = _np.delete(self.dataarray,indexofvariabletoremove,axis=1)[mask]
-            variables = list(_np.delete(self.keys,indexofvariabletoremove))
-            dcopydict = dict(zip(variables,[dcopy[:,i] for i in range(_np.shape(dcopy)[1])]))
+            dcopy     = self.data.array[mask]
+            dcopydict = dict(zip(self.data.keyslist,[dcopy[:,i] for i in range(_np.shape(dcopy)[1])]))
             dcopydict['nparticles'] = _np.shape(dcopy)[0]
             self.datagrouped[value] = dcopydict
-        
         self.keysgrouped = list(_np.sort(self.datagrouped.keys()))
 
     def GenerateSigmas(self):
@@ -85,11 +84,11 @@ class Analysis:
         pass
 
     def PlotXXp(self):
-        p1 = Plot.PlotXY(self.data['X'],self.data['Xp'],'X (m)','Xp (rad)',self._plottitle)
+        p1 = Plot.PlotXY(self.data['X'],self.data['Xp'],'X ('+self.data.units['X']+')','Xp ('+self.data.units['Xp']+')',self._plottitle)
         self.plots.append(p1)
 
     def PlotYYp(self):
-        p1 = Plot.PlotXY(self.data['Y'],self.data['Yp'],'Y (m)','Yp (rad)',self._plottitle)
+        p1 = Plot.PlotXY(self.data['Y'],self.data['Yp'],'Y ('+self.data.units['Y']+')','Yp ('+self.data.units['Y']+')',self._plottitle)
         self.plots.append(p1)
 
     def PlotSingleVariable(self,variable,xlabel='',ylabel=''):
@@ -101,7 +100,7 @@ class Analysis:
         self.plots.append(p1)
         
     def PlotEnergyHist(self,nbins=20,**kwargs):
-        p1 = Plot.Histogram(self.data['E'],'Energy (GeV)',self._plottitle,nbins,**kwargs)
+        p1 = Plot.Histogram(self.data['E'],'Energy ('+self.data.units['E']+')',self._plottitle,nbins,**kwargs)
         self.plots.append(p1)
 
     
