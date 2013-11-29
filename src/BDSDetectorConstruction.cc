@@ -92,7 +92,6 @@
 #include "G4VSampler.hh"
 #include "G4GeometrySampler.hh"
 #include "G4IStore.hh"
-
  
 using namespace std;
 
@@ -122,6 +121,14 @@ LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 LogVolMap* LogVol;
 
+G4RotationMatrix* RotY90=new G4RotationMatrix();
+G4RotationMatrix* RotYM90=new G4RotationMatrix();
+
+G4RotationMatrix* RotX90=new G4RotationMatrix();
+G4RotationMatrix* RotXM90=new G4RotationMatrix();
+
+G4RotationMatrix* RotYM90X90=new G4RotationMatrix();
+G4RotationMatrix* RotYM90XM90=new G4RotationMatrix();
 
 //G4Navigator* StepperNavigator;
 //G4Navigator* QuadNavigator;
@@ -162,6 +169,16 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   _globalRotation = new G4RotationMatrix();
 
 // create commands for interactive definition of the beamline  
+  G4double pi_ov_2 = asin(1.);
+
+  RotY90->rotateY(pi_ov_2);
+  RotYM90->rotateY(-pi_ov_2);
+  RotX90->rotateX(pi_ov_2);
+  RotXM90->rotateX(-pi_ov_2);
+  RotYM90X90->rotateY(-pi_ov_2);
+  RotYM90X90->rotateX( pi_ov_2);
+  RotYM90XM90->rotateY(-pi_ov_2);
+  RotYM90XM90->rotateX(-pi_ov_2);
 
   // GlashStuff                                                                                                                                                         
   theParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                

@@ -1,0 +1,177 @@
+***********************************************************************
+TITLE
+ my testpipe
+* --------------------------------------------------------------------------------
+* Set the defaults for physics
+* --------------------------------------------------------------------------------
+GLOBAL        5000.0       0.0       0.0       0.0       1.0
+DEFAULTS                                                              NEW-DEFA
+** OPTION
+SCORE         ENERGY  EM-ENRGY
+*
+*
+*#define beambeam
+#define beamgas
+*#define singlebeam
+*
+*
+* --------------------------------------------------------------------------------
+* Define the beam characteristics
+* --------------------------------------------------------------------------------
+* Max momentum
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7...
+BEAM          4000.0                                                  PROTON
+* use default direction of beam in positive z-axis
+*BEAMPOS          0.0       0.0       0.0       0.0       0.0
+FREE
+BEAMPOS 0.0 0.0 -10. 0.999998765031 0.0
+*BEAMPOS 0.0 0.0 0.0 0.0 0.0
+FIXED
+*
+* --------------------------------------------------------------------------------
+#if singlebeam
+*
+* max cme momentum for DPMJET
+PHYSICS       3000.0                                                  LIMITS
+#endif
+* --------------------------------------------------------------------------------
+#if beambeam
+*
+* new SPECSOURce card: generation of debris from pp interactions at 7.0 TeV
+*     what(1) = lab momentum for proton #1 and #2 (GeV/c)             
+*     what(2) = half crossing angle (rad) (must be between 0 and PI/2)
+*     what(3) = azimuthal angle (deg) defining the crossing plane     
+*     what(4) = not used                                              
+*     what(5) = not used                                              
+*     what(6) = not used                                              
+* - continuation card:
+*     what(7) = sigma_x (cm) for the Gaussian sampling of the         
+*               interaction position around XBEAM                     
+*     what(8) = sigma_y (cm) for the Gaussian sampling of the         
+*               interaction position around YBEAM                     
+*     what(9) = sigma_z (cm) for the Gaussian sampling of the         
+*               interaction position around ZBEAM                     
+*     what(10)= sampling limit, in sigma, applying along x, y, and z  
+*             =< 0 ignored (no limit)                                 
+*     XBEAM, YBEAM, and ZBEAM are defined in the BEAMPOS card        
+SPECSOUR      7000.0 0.0001425      90.0       0.0       0.0       0.0CROSSSYM
+SPECSOUR         0.0       0.0      5.34      10.0       0.0       0.0&
+*
+*
+*
+#endif
+* --------------------------------------------------------------------------------
+#if beamgas
+*
+* Beam-gas interaction source initialization
+* WHAT(1): z_max for the longitudinal sampling of the beam gas
+*          ( z_min is given by the BEAMPOS card )
+* WAHT(2): material number where to force the interaction
+*          3.0 = Hydrogen
+SOURCE        1010.0       3.0
+*
+#endif
+* --------------------------------------------------------------------------------
+* Geometry
+* --------------------------------------------------------------------------------
+*
+GEOBEGIN                                                              COMBNAME
+    0    0                                                            COMBNAME
+* Black body
+SPH blkbody    0.0 0.0 0.0 100000.0
+* Void sphere
+SPH void       0.0 0.0 0.0 10000000.0
+RCC body1      0.0 140.0 590.0 0.0 0.0 200.0 25.
+RCC body2      0.0 140.0 590.0 0.0 0.0 200.0 10.
+RCC body3      0.0 110.0 630.0 0.0 120.0 0.0 10.0
+RCC body4      0.0 110.0 630.0 0.0 120.0 0.0 25.0
+PLA body5      0.0 -100.0 0.0 0.0 140.0 590.0
+PLA body6      0.0 0.0 -30.0 0.0 140.0 630.0
+RPP body7      -50.0 50.0 -50.0 100.0 1010.0 1110.0
+ZCC body8      0.0 0.0 8.98
+ZCC body9      0.0 0.0 9.0
+RPP body12     -110.0 120.0 -100.0 400.0 -100.0 1350.0
+RPP body10     -50.0 50.0 40.0 100.0 870.0 930.0
+RPP body11     -50.0 50.0 -50.0 50.0 190.0 450.0
+END
+* Black hole
+BLKBODY      5 +blkbody -void
+               | +void -body12
+               | -blkbody
+REG1         5 +body4 +body5 -body1 -body3
+               | +body1 +body6 -body2 -body4
+               | +body1 +body4 -body2 -body5
+               | +body1 +body4 +body5 -body3 -body6
+               | +body1 +body4 +body6 -body2 -body3
+               | +body1 +body2 +body4 -body3 -body5 -body6
+REG2         5 +body2 +body6
+               | +body4 -body1 -body5
+               | +body1 -body4 -body6
+               | +body3 +body5
+               | +body2 +body3 -body5 -body6    
+               | +body12 -body1 -body2 -body3 -body4 -body7 -body9 -body10
+MAGN         5 +body8 +body11
+BPvac        5 +body8 +body12 -body1 -body2 -body3 -body4 -body7 -body10 -body11
+
+* target
+REG3         5 +body7
+REG4         5 +body9 +body12 -body7 -body8
+REG5         5 +body10
+END
+GEOEND
+*
+* --------------------------------------------------------------------------------
+* Material
+* --------------------------------------------------------------------------------
+*
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7..
+ASSIGNMA    BLCKHOLE   BLKBODY
+ASSIGNMA    NITROGEN      REG1
+ASSIGNMA         AIR      REG2
+ASSIGNMA      VACUUM      REG3
+ASSIGNMA      COPPER      REG4
+ASSIGNMA      HELIUM      REG5
+ASSIGNMA      VACUUM      MAGN                           1.0
+ASSIGNMA      VACUUM     BPvac
+* luigi
+**MGNFIELD        10.0    0.0001      0.01       0.0       0.0       0.0
+MGNFIELD        10.0    0.0001      0.01       0.0       0.5       0.0
+STEPSIZE         1.0       3.0        1.  @LASTREG
+*
+*MGNFIELD         1.0     0.001                           0.1
+*STEPSIZE         5.0      10.0       1.0  @LASTREG
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7...
+RANDOMIZ         1.0  4162310.
+*
+* Number of primaries
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7...
+START            1.0
+* --------------------------------------------------------------------------
+* SCORING Defs
+* --------------------------------------------------------------------------
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7..
+USERWEIG          0.        0.        4.        0.        0.        0.
+USERDUMP        100.                  2.                              trackfile
+*  Fluences and currents will be multiplied by a value returned by
+*  function FLUSCW according to the logic written by the user.
+*  The function will be called only for detectors to which the present
+*  score applies.
+*
+*...+....1....+....2....+....3....+....4....+....5....+....6....+....7....+.
+USRTRACK        -1.0  ALL-PART     -83.0      REG5       1.0     250.0all-r1
+USRTRACK     1.0E+04   1.0E-14                                        &        
+*...+....1....+....2....+....3....+....4....+....5....+....6....+....7....+.
+USRTRACK        -1.0   NEUTRON     -83.0      REG5       1.0     250.0neu-r1
+USRTRACK     1.0E+04   1.0E-14                                        &        
+*...+....1....+....2....+....3....+....4....+....5....+....6....+....7....+.
+USRTRACK        -1.0   NEUTRON     -83.0      REG5       1.0     250.0thn-r1
+USRTRACK     1.0E+04   1.0E-14                                        &        
+*
+*...+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+USRBIN          10.0  HADGT20M     -31.0      50.0      50.0    1300.0heh-t1
+USRBIN         -50.0     -50.0     800.0     100.0     100.0      50.0&
+*
+*...+....1....+....2....+....3....+....4....+....5....+....6....+....7....+..
+USRBIN          10.0   NEUTRON     -31.0      50.0      50.0    1300.0neu-t1
+USRBIN         -50.0     -50.0     800.0     100.0     100.0      50.0&
+STOP
