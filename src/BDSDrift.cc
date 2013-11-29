@@ -6,7 +6,6 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSDrift.hh"
-#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"

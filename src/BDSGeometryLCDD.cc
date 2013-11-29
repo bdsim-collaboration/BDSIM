@@ -5,7 +5,6 @@
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Cons.hh"
-#include "G4Torus.hh"
 #include "G4Polycone.hh"
 #include "G4Polyhedra.hh"
 #include "G4SubtractionSolid.hh"
@@ -17,13 +16,9 @@
 #include "BDSMySQLWrapper.hh"
 #include "BDSMaterials.hh"
 #include "BDSSamplerSD.hh"
-#include "G4SDManager.hh"
-#include "BDSSamplerSD.hh"
 #include "BDSOutput.hh"
 #include "BDSDetectorSolenoidMagField.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "G4EqMagElectricField.hh"
-#include "G4NystromRK4.hh"
 #include "G4ChordFinder.hh"
 #include "G4TessellatedSolid.hh"
 #include "G4UniformMagField.hh"
@@ -31,7 +26,6 @@
 #include <vector>
 #include <map>
 #include <cstdlib>
-#include "G4ClassicalRK4.hh"
 #include <cstring>
 
 using namespace std;

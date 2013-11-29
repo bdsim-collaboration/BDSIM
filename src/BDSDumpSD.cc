@@ -30,9 +30,8 @@
 #include "G4Navigator.hh"
 #include "G4AffineTransform.hh"
 
-#include "G4RunManager.hh"
-
-#include "G4SDManager.hh"
+//#include "G4RunManager.hh"
+//#include "G4SDManager.hh"
 
 BDSDumpSD::BDSDumpSD(G4String name, G4String type):
   G4VSensitiveDetector(name),

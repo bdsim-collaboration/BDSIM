@@ -12,7 +12,6 @@
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
 
-#include "G4SDManager.hh"
 #include "G4UserLimits.hh"
 #include "parser/gmad.h"
 #include <map>

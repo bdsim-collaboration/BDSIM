@@ -19,7 +19,6 @@
 #include "BDSDebug.hh"
 
 #include "BDSQuadrupole.hh"
-#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Trd.hh"
 #include "G4VisAttributes.hh"
