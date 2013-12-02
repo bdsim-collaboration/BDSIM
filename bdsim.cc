@@ -1,7 +1,7 @@
 //  
-//   BDSIM, (C) 2001-2008 
+//   BDSIM, (C) 2001-2013 
 //   
-//   version 0.5-dev
+//   version 0.6
 //  
 //
 //
