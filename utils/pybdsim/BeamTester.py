@@ -1,3 +1,7 @@
+# NOTE 'Tester' was moved to pygmad/Options.py
+# this will need to be finished and updated appropriately
+# before being included in pybdsim
+
 import Tester as _Tester 
 
 class BeamTester(_Tester.Tester) : 

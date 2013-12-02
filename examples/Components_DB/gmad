@@ -1,31 +1,8 @@
 include sben.gmad;
-include options.gmad;
+include options.gmad;	
 include elec.gmad;
 
 use, period=lat;
-
-sample, range=start;
-sample, range=m1a;
-sample, range=m1b;
-sample, range=m1c;
-sample, range=m1d;
-sample, range=m1e;
-sample, range=m1f;
-sample, range=m1g;
-sample, range=m1h;
-sample, range=m1i;
-sample, range=m1j;
-sample, range=m2a;
-sample, range=m2b;
-sample, range=m2c;
-sample, range=m2d;
-sample, range=m2e;
-sample, range=m2f;
-sample, range=m2g;
-sample, range=m2h;
-sample, range=m2i;
-sample, range=m2j;
-sample, range=finish;
 
 option, ngenerate=1000;
 
