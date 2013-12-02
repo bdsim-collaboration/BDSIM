@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6.4)
+cmake_minimum_required(VERSION 2.8)
 
 project(BDSIM) 
 
@@ -183,14 +183,41 @@ if(USE_LCDD)
     message(STATUS "LCDD support ON")
 endif()
 
-
 # Try first with Geant4 built-in Config (versions 9.5 and higher should have it):
 if ($ENV{VERBOSE})
    set(Geant4_CONFIG_DEBUG TRUE)
 endif()
 
-# Search for Geant4 CONFIG mode
-find_package(Geant4 QUIET COMPONENTS ui_all vis_all CONFIG PATHS ${Geant4_PREFIX})
+# Search for Geant4 CONFIG mode, if prefix given search that path only.
+if (NOT ${Geant4_PREFIX} STREQUAL "")
+   if($ENV{VERBOSE})
+      message(STATUS "Geant4 prefix: ${Geant4_PREFIX}")
+   endif()
+   find_package(Geant4 QUIET COMPONENTS ui_all vis_all CONFIG PATHS ${Geant4_PREFIX} NO_DEFAULT_PATH)
+else()
+   if($ENV{VERBOSE})
+      message(STATUS "No Geant4 prefix, searching default paths")
+   endif()
+   find_package(Geant4 QUIET COMPONENTS ui_all vis_all CONFIG)
+endif()
+
+if (NOT Geant4_FOUND AND USE_AFS)
+   # Use AFS directory
+   if(APPLE)
+      message(STATUS "WARNING NO MACOS GEANT4 LIBRARIES AVAILABLE ON AFS")
+   elseif(RHL5)
+      set(Geant4_INCLUDE_DIRS /afs/cern.ch/sw/lcg/external/geant4/9.6.p02/share/include)
+      set(Geant4_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/geant4/9.6.p02/x86_64-slc5-gcc43-opt/lib64)
+      set(Geant4_DIR /afs/cern.ch/sw/lcg/external/geant4/9.6.p02/x86_64-slc5-gcc43-opt/lib64/Geant4-9.6.2)
+      set(Geant4_VERSION 9.6.2)
+   elseif(RHL6)
+      set(Geant4_INCLUDE_DIRS /afs/cern.ch/sw/lcg/external/geant4/9.6.p02/share/include)
+      set(Geant4_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/geant4/9.6.p02/x86_64-slc6-gcc46-opt/lib64)
+      set(Geant4_DIR /afs/cern.ch/sw/lcg/external/geant4/9.6.p02/x86_64-slc6-gcc46-opt/lib64/Geant4-9.6.2)
+      set(Geant4_VERSION 9.6.2)
+   endif()
+   find_package(Geant4 QUIET COMPONENTS ui_all vis_all PATHS ${Geant4_DIR} NO_DEFAULT_PATH)
+endif()
 
 if (Geant4_FOUND)
       include(${Geant4_USE_FILE})
@@ -204,29 +231,11 @@ if (Geant4_FOUND)
 endif()
 
 if (NOT Geant4_FOUND)
-   # Use own module (for versions 9.4 and lower)
-   if (USE_AFS)
-       if(APPLE)
-          message(STATUS "WARNING NO MACOS GEANT4 LIBRARIES AVAILABLE ON AFS")
-       elseif(RHL5)
-          set(Geant4_INCLUDE_DIRS /afs/cern.ch/sw/lcg/external/geant4/9.6.p02/share/include)
-          set(Geant4_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/geant4/9.6.p02/x86_64-slc5-gcc43-opt/lib64)
-          set(Geant4_DIR /afs/cern.ch/sw/lcg/external/geant4/9.6.p02/x86_64-slc5-gcc43-opt/lib64/Geant4-9.6.2)
-          set(Geant4_VERSION 9.6.2)
-       elseif(RHL6)
-          set(Geant4_INCLUDE_DIRS /afs/cern.ch/sw/lcg/external/geant4/9.6.p02/share/include)
-          set(Geant4_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/geant4/9.6.p02/x86_64-slc6-gcc46-opt/lib64)
-          set(Geant4_DIR /afs/cern.ch/sw/lcg/external/geant4/9.6.p02/x86_64-slc6-gcc46-opt/lib64/Geant4-9.6.2)
-          set(Geant4_VERSION 9.6.2)
-       endif()
-   endif()
-   # Module mode, now should find it for 9.5 and newer
-   find_package(Geant4 QUIET COMPONENTS ui_all vis_all PATHS ${Geant4_DIR})
-   # For versions of Geant4 (9.4 and older), last option:
-   if (NOT Geant4_FOUND)
-       # ui_all and vis_all options not implemented in own FindGeant4.cmake
-       find_package(Geant4 REQUIRED ui_all vis_all)
-   endif()
+   # Module mode, should have found Geant4 already for 9.5 and newer
+   # own module for versions of Geant4 (9.4 and older), last option:
+   # ui_all and vis_all options not implemented in own FindGeant4.cmake
+   find_package(Geant4 MODULE REQUIRED ui_all vis_all)
+
    # Local UseGeant4.cmake
    set(Geant4_USE_FILE UseGeant4.cmake)
    include(${Geant4_USE_FILE})
@@ -332,6 +341,7 @@ set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_V
 target_link_libraries(bdsimexec bdsim gmad)
 target_link_libraries(bdsim ${CLHEP_LIBRARIES})
 target_link_libraries(bdsim ${XercesC_LIBRARIES})
+#link_directories(${Geant4_LIBRARY_DIR})
 target_link_libraries(bdsim ${Geant4_LIBRARIES})
 
 if(USE_ROOT)
