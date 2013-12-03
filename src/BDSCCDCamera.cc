@@ -100,7 +100,7 @@ void BDSCCDCamera::buildObjectLens(){
 void BDSCCDCamera::buildImageLens(){
   G4cout << __METHOD_NAME__ << G4endl;
   //  _imageLens = new BDSLens(_name+"ImageLens",12.7*mm, 14.6*mm, 4.7*mm); //Focal length 15mm lens (Thorlabs LB1092-A) (magnification factor = 66.4)
-  _imageLens = new BDSLens(_name+"ImageLens",25.4*mm, 24.5*mm, 9.0*mm); //Focal length 25.4mm lens (Thorlabs LB1761-A)(back focal length 22.2mm)
+  _imageLens = new BDSLens(_name+"ImageLens",25.4*mm, 25.5*mm, 9.0*mm); //Focal length 25.4mm lens (Thorlabs LB1761-A)(back focal length 22.2mm)
   G4cout << __METHOD_END__ << G4endl;
 }
 void BDSCCDCamera::buildCCDChip(){

@@ -800,16 +800,20 @@ void BDSPhysicsList::ConstructOptical()
   
   theScintillationProcess      = new G4Scintillation("Scintillation");
   if(BDSGlobalConstants::Instance()->GetTurnOnOpticalAbsorption()){
-  theAbsorptionProcess         = new G4OpAbsorption();
+    theAbsorptionProcess         = new G4OpAbsorption();
   }
   if(BDSGlobalConstants::Instance()->GetTurnOnRayleighScattering()){
-  theRayleighScatteringProcess = new G4OpRayleigh();
+    theRayleighScatteringProcess = new G4OpRayleigh();
   }
   if(BDSGlobalConstants::Instance()->GetTurnOnMieScattering()){
-  theMieHGScatteringProcess    = new G4OpMieHG();
+    theMieHGScatteringProcess    = new G4OpMieHG();
   }
   if(BDSGlobalConstants::Instance()->GetTurnOnOpticalSurface()){
-  theBoundaryProcess           = new G4OpBoundaryProcess();
+    theBoundaryProcess           = new G4OpBoundaryProcess();
+#if G4VERSION_NUMBER < 960
+    G4OpticalSurfaceModel themodel = unified;
+    theBoundaryProcess->SetModel(themodel);
+#endif
   }
 
   SetVerboseLevel(1);
@@ -819,10 +823,6 @@ void BDSPhysicsList::ConstructOptical()
   G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
   theScintillationProcess->AddSaturation(emSaturation);
 
-#if G4VERSION_NUMBER < 960
-  G4OpticalSurfaceModel themodel = unified;
-  theBoundaryProcess->SetModel(themodel);
-#endif
   
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){
@@ -849,8 +849,7 @@ void BDSPhysicsList::ConstructOptical()
       pmanager->AddDiscreteProcess(theAbsorptionProcess);
       pmanager->AddDiscreteProcess(theRayleighScatteringProcess);
       pmanager->AddDiscreteProcess(theMieHGScatteringProcess);
-      bool bOptBoundProcOn=true;
-      if(bOptBoundProcOn){
+      if(BDSGlobalConstants::Instance()->GetTurnOnOpticalSurface()){
 	pmanager->AddDiscreteProcess(theBoundaryProcess);
       }
     }

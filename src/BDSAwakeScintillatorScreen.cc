@@ -179,7 +179,7 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
 
 void BDSAwakeScintillatorScreen::Build(){
       BuildScreen();
-      //      BuildCamera();	
+      BuildCamera();	
       ComputeDimensions();
       BuildMarkerVolume();
       //      BuildScreenScoringPlane();
