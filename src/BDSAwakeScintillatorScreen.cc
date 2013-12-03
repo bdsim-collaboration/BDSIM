@@ -209,7 +209,7 @@ void BDSAwakeScintillatorScreen::PlaceCamera(){
 void BDSAwakeScintillatorScreen::BuildScreen()
 {
   G4cout << "Building BDSAwakeMultilayerScreen...." << G4endl;
-  _mlScreen = new BDSAwakeMultilayerScreen();
+  _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness);
   
   G4cout << "finished." << G4endl;
   //  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){

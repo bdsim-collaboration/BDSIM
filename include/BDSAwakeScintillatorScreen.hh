@@ -96,6 +96,8 @@ private:
   BDSCCDCamera* _camera;
 
   G4double _cameraScreenDist;
+  G4double _thickness;
+  G4String _material;
 };
 
 #endif

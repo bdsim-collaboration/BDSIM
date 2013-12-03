@@ -186,8 +186,8 @@ void flush(struct Element& e )
   e.tscint=0.0001;
   e.spec = "";
   e.material="";
-  e.scintmaterial="YAG";
-  e.airmaterial="";
+  e.scintmaterial="lanex";
+  e.airmaterial="air";
   e.tunnelMaterial="";
   e.tunnelCavityMaterial="Air";
   e.tunnelRadius=0;

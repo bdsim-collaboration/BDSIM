@@ -20,6 +20,8 @@ private:
   void reflectiveSurface();
   G4double _gapWidth;
   G4double _gapSpacing;
+  G4double _thickness;
+  G4String _material;
  };
 
 #endif

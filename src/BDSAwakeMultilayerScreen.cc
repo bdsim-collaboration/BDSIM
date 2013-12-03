@@ -7,8 +7,8 @@
 #include "G4LogicalBorderSurface.hh"
 #include "G4LogicalSkinSurface.hh"
 
-BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen():
-  BDSMultilayerScreen(G4TwoVector(1*m,3*cm),(G4String)"AwakeMultilayerScreen")
+BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material, G4double thickness):
+  BDSMultilayerScreen(G4TwoVector(1*m,3*cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(thickness)
 {
   layers();
 }
@@ -41,8 +41,7 @@ void BDSAwakeMultilayerScreen::substrateLayer(){
 
 void BDSAwakeMultilayerScreen::scintillatorLayer(){
   G4cout << "Making backing layer..." << G4endl;
-  //Was 300 microns - tryin 10 microns...
-  BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),300*um),(G4String)"scintillatorLayer","lanexScintLayerMaterial",_gapWidth,_gapSpacing);
+  BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),_thickness),(G4String)"scintillatorLayer",_material,_gapWidth,_gapSpacing);
   sl->color(G4Color(0.0,1.0,0.0,0.3));
   screenLayer(sl);
   G4cout << "finished." << G4endl;
