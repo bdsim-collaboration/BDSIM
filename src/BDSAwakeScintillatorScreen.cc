@@ -41,8 +41,8 @@ extern LogVolMap* LogVol;
 
 //============================================================
 
-BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName):
-  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0, SetVisAttributes())
+BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness):
+  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0, SetVisAttributes()),_material(material), _thickness(thickness)
 {
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();

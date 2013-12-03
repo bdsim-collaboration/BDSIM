@@ -5,7 +5,7 @@
 
 class BDSAwakeMultilayerScreen : public BDSMultilayerScreen{
 public:
-  BDSAwakeMultilayerScreen();
+  BDSAwakeMultilayerScreen(G4String material, G4double thickness);
   ~BDSAwakeMultilayerScreen();
   void surfaces();
   void place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol);
