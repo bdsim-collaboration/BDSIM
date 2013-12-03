@@ -649,23 +649,21 @@ void BDSMaterials::Initialise()
   //Medex (larger grained lanex)
   G4double medex_fill_factor=0.5;
   G4double medex_density=fill_factor*GOS->GetDensity()+(1-fill_factor)*GetMaterial("polyurethane")->GetDensity();
-  G4double gos_fraction_by_mass=fill_factor*GOS->GetDensity()/medex_density;
-  G4double pur_fraction_by_mass=1-gos_fraction_by_mass;
+  G4double medex_gos_fraction_by_mass=fill_factor*GOS->GetDensity()/medex_density;
+  G4double medex_pur_fraction_by_mass=1-medex_gos_fraction_by_mass;
   tmpMaterial = new G4Material(name="medexscintlayermaterial", density=medex_density, 2);
-  tmpMaterial->AddMaterial(GOS, gos_fraction_by_mass);
-  tmpMaterial->AddMaterial(GetMaterial("polyurethane"), pur_fraction_by_mass);
+  tmpMaterial->AddMaterial(GOS, medex_gos_fraction_by_mass);
+  tmpMaterial->AddMaterial(GetMaterial("polyurethane"), medex_pur_fraction_by_mass);
   G4MaterialPropertiesTable* mptMedex = new G4MaterialPropertiesTable();
   const G4int nentMedex=2;
-  G4double rindex=(1.82+1.50)/2.0;
-  G4double energytab[]={2.239*eV, 2.241*eV};
-  G4double rindextab[]={rindex, rindex};
-  G4double emitspec[]={1.0, 1.0};
-  G4double abslen[]={1.5*mm, 1.5*mm};
-  G4double mieScatteringLength[]={230e-3*mm, 230e-3*mm};
-  mptMedex->AddProperty("RINDEX",energytab, rindextab, nentMedex); //Average refractive index of bulk material
-  mptMedex->AddProperty("ABSLENGTH", energytab, abslen, nentMedex);
-  mptMedex->AddProperty("FASTCOMPONENT",energytab, emitspec, nentMedex);
-  G4double scintScalingFactor=1;
+  G4double medexRindex=(1.82+1.50)/2.0;
+  G4double medexEnergytab[]={2.239*eV, 2.241*eV};
+  G4double medexRindextab[]={rindex, rindex};
+  G4double medexEmitspec[]={1.0, 1.0};
+  G4double medexAbslen[]={1.5*mm, 1.5*mm};
+  mptMedex->AddProperty("RINDEX",energytab, medexRindextab, nentMedex); //Average refractive index of bulk material
+  mptMedex->AddProperty("ABSLENGTH", energytab, medexAbslen, nentMedex);
+  mptMedex->AddProperty("FASTCOMPONENT",energytab, medexEmitspec, nentMedex);
   mptMedex->AddConstProperty("SCINTILLATIONYIELD",scintScalingFactor*2.94e4/MeV);
   mptMedex->AddConstProperty("RESOLUTIONSCALE",1.0);
   mptMedex->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
