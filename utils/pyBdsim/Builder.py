@@ -90,7 +90,7 @@ class Machine(list):
        
     def WriteLattice(self, filename):
         #check filename
-        if filename[-4:] != '.gmad':
+        if filename[-5:] != '.gmad':
             filename += '.gmad'
         #check if file already exists
         filename = _General.CheckFileExists(filename)
