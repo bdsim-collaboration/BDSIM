@@ -25,3 +25,7 @@ def CheckFileExists(filename):
 def Chunks(l, n):
     """ Yield successive n-sized chunks from l.    """
     return [l[i:i+n] for i in range(0,len(l),n)]
+
+def NearestEvenInteger(number):
+    number = int(number)
+    return number + number%2

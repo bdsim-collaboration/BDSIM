@@ -78,11 +78,12 @@ class Machine(list):
         self.samplers      = []
         self.totallength   = Decimal(0.0)
         self._elementindex = int(0)
+        self._maxindexpow  = 5 
 
     def append(self, object):
         if type(object) == Element:
-            object.name = object.name + '_' + str(self._elementindex).zfill(5)
-            object['name'] = object['name'] + '_' + str(self._elementindex).zfill(5)
+            object.name = object.name + '_' + str(self._elementindex).zfill(self._maxindexpow)
+            object['name'] = object['name'] + '_' + str(self._elementindex).zfill(self._maxindexpow)
         list.append(self,object)
         self.nelements     += 1
         self.totallength   += object.length
@@ -185,23 +186,61 @@ class Machine(list):
     def AddECol(self,name='ec',length=0.1,xsize=0.1,ysize=0.1,**kwargs):
         self.append(Element(name,'ecol',length,xsize=xsize,ysize=ysize,**kwargs))
 
-    def AddFodoCell(self,name='fodo',magnetlength=0.1,driftlength=1.0,kabs=1.0,**kwargs):
-        fodo = [Element(name,'drift',driftlength/2.0),
-                Element(name+'_a','quadrupole',magnetlength,k2=kabs,**kwargs),
-                Element(name,'drift',driftlength),
-                Element(name+'_b','quadrupole',magnetlength,k2=-1.0*kabs,**kwargs),
-                Element(name,'drift',driftlength),
-                Element(name+'_c','quadrupole',magnetlength,k2=kabs,**kwargs),
-                Element(name,'drift',driftlength),
-                Element(name+'_d','quadrupole',magnetlength,k2=-1.0*kabs,**kwargs),
-                Element(name,'drift',driftlength/2.0)
-                ]
-        self.extend(fodo)
+    def AddFodoCell(self,basename='fodo',magnetlength=1.0,driftlength=4.0,kabs=1.0,**kwargs):
+        """
+        AddFodoCell(basename,magnetlength,driftlength,kabs,**kwargs)
+        basename     - the basename for the fodo cell beam line elements
+        magnetlength - length of magnets in metres
+        driftlength  - length of drift segment in metres
+        kabs         - the absolute value of the quadrupole strength - alternates between magnets
 
-    def AddFodoCells(self,basename='fodo',magnetlength=0.1,driftlength=0.1,kabs=1.0,ncells=2,**kwargs):
+        **kwargs are other parameters for bdsim - ie material='W'
+        """
+        self.append(Element(basename+'_qf','quadrupole',magnetlength,k1=kabs,**kwargs))
+        self.append(Element(basename,'drift',driftlength))
+        self.append(Element(basename+'_qd','quadrupole',magnetlength,k1=-1.0*kabs,**kwargs))
+        self.append(Element(basename,'drift',driftlength))
+
+    def AddFodoCellSplitDrift(self,basename='fodo',magnetlength=1.0,driftlength=4.0,kabs=1.0,nsplits=10,**kwargs):
+        """
+        AddFodoCellSplitDrift(basename,magnetlength,driftlength,kabs,nsplits,**kwargs)
+        basename - the basename for the fodo cell beam line elements
+        magnetlength - length of magnets in metres
+        driftlength  - length of drift segment in metres
+        kabs         - the absolute value of the quadrupole strength - alternates between magnets
+        nsplits      - number of segments drift length is split into 
+
+        Will add qf quadrupole of strength +kabs, then drift of l=driftlength split into 
+        nsplit segments followed by a qd quadrupole of strength -kabs and the same pattern
+        of drift segments.
+        
+        nsplits will be cast to an even integer for symmetry purposes.
+
+        **kwargs are other parameters for bdsim - ie aper=0.2
+        """
+        nsplits = _General.NearestEvenInteger(nsplits)
+        splitdriftlength = driftlength / float(nsplits)
+        maxn    = int(len(str(nsplits)))
+        self.append(Element(basename+'_qf','quadrupole',magnetlength,k1=kabs,**kwargs))
+        for i in range(nsplits):
+            self.append(Element(basename+'_d'+str(i).zfill(maxn),'drift',splitdriftlength))
+        self.append(Element(basename+'_qd','quadrupole',magnetlength,k1=-1.0*kabs,**kwargs))
+        for i in range(nsplits):
+            self.append(Element(basename+'_d'+str(i).zfill(maxn),'drift',splitdriftlength))
+
+    def AddFodoCells(self,basename='fodo',magnetlength=1.0,driftlength=4.0,kabs=1.0,ncells=2,**kwargs):
         ncells = int(ncells)
+        maxn   = int(len(str(ncells)))
         for i in range(ncells):
-            self.AddFodoCell(basename,magnetlength,driftlength,kabs,**kwargs)
+            cellname = basename+'_'+str(i).zfill(maxn)
+            self.AddFodoCell(cellname,magnetlength,driftlength,kabs,**kwargs)
+
+    def AddFodoCellSplitDrifts(self,basename='fodo',magnetlength=1.0,driftlength=4.0,kabs=1.0,nsplits=10,ncells=2,**kwargs):
+        ncells = int(ncells)
+        maxn   = int(len(str(ncells)))
+        for i in range(ncells):
+            cellname = basename+'_'+str(i).zfill(maxn)
+            self.AddFodoCellSplitDrift(cellname,magnetlength,driftlength,kabs,nsplits=10,**kwargs)
             
     def SetSamplers(self,command='first'):
         """
