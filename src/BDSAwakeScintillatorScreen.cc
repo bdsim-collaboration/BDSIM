@@ -179,13 +179,13 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
 
 void BDSAwakeScintillatorScreen::Build(){
       BuildScreen();
-      BuildCamera();	
+      //      BuildCamera();	
       ComputeDimensions();
       BuildMarkerVolume();
       //      BuildScreenScoringPlane();
       //      BuildCameraScoringPlane();
       PlaceScreen();
-      PlaceCamera();
+      //      PlaceCamera();
       if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
 	BuildTunnel();
       }
