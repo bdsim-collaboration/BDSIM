@@ -242,97 +242,15 @@ def CreateDipoleRing(filename, ndipole=60, dlength=1.0, clength=10.0, samplers='
     a.SetSamplers(samplers)
     a.WriteLattice(filename)
 
-def CreateDipoleFodoRing(self):
+def CreateDipoleFodoRing():
     pass
 
-def CreateFodoLine(self,ncells):
-    pass
+def CreateFodoLine(filename, ncells=10, driftlength=4.0, magnetlength=1.0, kabs=1.0, samplers='all',**kwargs):
+    ncells = int(ncells)
+    a = Machine()
+    a.AddFodoCellSplitDrifts(magnetlength=magnetlength,driftlength=driftlength,kabs=kabs,nsplits=10,ncells=ncells,**kwargs)
+    a.SetSamplers(samplers)
+    a.WriteLattice(filename)
 
-
-def DipoleRing(ndipole = 60, ldipole = 1.0, clength = 10.0, cell = []) : 
-    """
-    Build a ring composed of dipoles and drifts. Ideal for general
-    testing purposes.
-    
-    Uses sector bend magnets - 'sbend'
-
-    ndipole : number of dipole magnets
-    ldipole : length of dipole 
-    clength : length of other components
-    cell    : components and specificiations of each dipole cell
-
-    Note, a high number of elements is suggested. The default here
-    is 60. With a low number, the vacuum dipole stepper will be
-    perfectly correct, but the chord through the magnet may
-    intercept the beam pipe in stepping through and the tracking
-    will be affected or stop.
-
-    Also, note that with very closely spaced elements, geometry
-    errors may occur.
-
-    Both of these faults are under revision Dec 2013.
-    
-    """
-
-    line = []
-    
-    for i in range(0,ndipole,1) : 
-        name = 'dipole.'+str(i)
-        type = 'sbend' 
-        angl = 2*math.pi/ndipole
-        leng = ldipole         
-        line.append([name,type,leng,angl])
-
-        name = 'drift.'+str(i)
-        type = 'drift' 
-        leng = clength-ldipole
-        line.append([name,type,leng])
-        
-#        name = 'quadrupole.'+str(i)
-#        line.append([name,'quadrupole',0.5,0.2])
-
-    totalbl = 0.0
-    totall  = 0.0 
-    for e in line : 
-        # total bending length
-        if e[1] == 'sbend' : 
-            totalbl += e[2]
-            
-        # sum all component lengths
-        totall += e[2]
-
-        print e
-
-    print 'RingBuilder> total bength length',totalbl
-    print 'RingBuilder> total length',totall
-
-
-    f = open("RandomRing.gmad","w")
-
-    # write components
-    for e in line : 
-        wl = ''
-        if e[1] == 'sbend' : 
-            wl = '{0} : {1}, l={2}, angle={3};\n'.format(e[0],e[1],e[2],e[3])
-        elif e[1] == 'drift' : 
-            wl = '{0} : {1}, l={2};\n'.format(e[0],e[1],e[2])         
-        elif e[1] == 'quadrupole' : 
-            wl = '{0} : {1}, l={2}, k={3};\n'.format(e[0],e[1],e[2],e[3])
-        f.write(wl)
-
-    # write line  
-    l = ''
-    last = False 
-    for e in line :
-        if e == line[-1] : 
-            last = True
-
-        l += e[0]
-        if not last : 
-            l += ','
-
-    l = 'lat : line = ('+l+');\n'
-    
-    f.write(l)
-        
-    f.close()
+def SuggestFodoK(magnetlength,driftlength):
+    return 1.0 / (magnetlength*(magnetlength + driftlength))
