@@ -1283,6 +1283,11 @@ void print(struct Options opt)
   std::cout<<"n macroparticles : "<<opt.numberToGenerate<<std::endl;
   std::cout<<"sigmaX           : "<<opt.sigmaX<<std::endl;
   std::cout<<"Cerenkov on               : "<<opt.turnOnCerenkov<<std::endl;
+  std::cout<<"optical absorption on: "<<opt.turnOnOpticalAbsorption <<std::endl;
+  std::cout<<"mie scattering on: "<<opt.turnOnMieScattering <<std::endl;
+  std::cout<<"rayleigh scattering on: "<<opt.turnOnRayleighScattering <<std::endl;
+  std::cout<<"optical surface on: "<<opt.turnOnOpticalSurface <<std::endl;
+  std::cout<<"birks saturation on: "<<opt.turnOnBirksSaturation <<std::endl;
 }
 
 
@@ -1427,6 +1432,22 @@ void set_value(std::string name, double value )
   // physics processes
   if(name == "turnOnCerenkov") {
       options.turnOnCerenkov = (int)value; return;
+  }
+
+  if(name == "turnOnOpticalAbsorption") {
+      options.turnOnOpticalAbsorption = (int)value; return;
+  }
+  if(name == "turnOnMieScattering") {
+      options.turnOnMieScattering = (int)value; return;
+  }
+  if(name == "turnOnRayleighScattering") {
+      options.turnOnRayleighScattering = (int)value; return;
+  }
+  if(name == "turnOnOpticalSurface") {
+      options.turnOnOpticalSurface = (int)value; return;
+  }
+  if(name == "turnOnBirksSaturation") {
+      options.turnOnBirksSaturation = (int)value; return;
   }
 
   if(name == "srRescale") {

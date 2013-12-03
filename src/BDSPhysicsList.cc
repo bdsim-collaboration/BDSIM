@@ -788,6 +788,8 @@ void BDSPhysicsList::ConstructDecay()
 void BDSPhysicsList::ConstructOptical()
 {
   bool bCerOn=BDSGlobalConstants::Instance()->GetTurnOnCerenkov();
+
+
   if(bCerOn){
     theCerenkovProcess = new G4Cerenkov("Cerenkov");
     theCerenkovProcess->SetMaxNumPhotonsPerStep(20);
@@ -797,10 +799,18 @@ void BDSPhysicsList::ConstructOptical()
   }
   
   theScintillationProcess      = new G4Scintillation("Scintillation");
+  if(BDSGlobalConstants::Instance()->GetTurnOnOpticalAbsorption()){
   theAbsorptionProcess         = new G4OpAbsorption();
+  }
+  if(BDSGlobalConstants::Instance()->GetTurnOnRayleighScattering()){
   theRayleighScatteringProcess = new G4OpRayleigh();
+  }
+  if(BDSGlobalConstants::Instance()->GetTurnOnMieScattering()){
   theMieHGScatteringProcess    = new G4OpMieHG();
+  }
+  if(BDSGlobalConstants::Instance()->GetTurnOnOpticalSurface()){
   theBoundaryProcess           = new G4OpBoundaryProcess();
+  }
 
   SetVerboseLevel(1);
   theScintillationProcess->SetScintillationYieldFactor(1.);

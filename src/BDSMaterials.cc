@@ -615,7 +615,7 @@ void BDSMaterials::Initialise()
   //Gadolinium oxysulphate Gd_2 O_2 S
   G4Material* GOS = G4NistManager::Instance()->FindOrBuildMaterial("G4_GADOLINIUM_OXYSULFIDE",true,true);
 
-  //Ganolinium oxysulphate in a polyurethane elastomer 
+  //Ganolinium oxysulphate in a polyurethane elastomer (lanex)
   G4double fill_factor=0.5;
   G4double lanex_density=fill_factor*GOS->GetDensity()+(1-fill_factor)*GetMaterial("polyurethane")->GetDensity();
   G4double gos_fraction_by_mass=fill_factor*GOS->GetDensity()/lanex_density;
@@ -638,12 +638,42 @@ void BDSMaterials::Initialise()
   mptLanex->AddConstProperty("SCINTILLATIONYIELD",scintScalingFactor*2.94e4/MeV);
   mptLanex->AddConstProperty("RESOLUTIONSCALE",1.0);
   mptLanex->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
-  mptLanex->AddConstProperty("MIEHG", 60.3e-3*mm);
-  mptLanex->AddConstProperty("MIEHG_FORWARD", 0.911);
-  mptLanex->AddConstProperty("MIEHG_BACKWARD", 0.911);
+  mptLanex->AddConstProperty("MIEHG", 54e-3*mm);
+  mptLanex->AddConstProperty("MIEHG_FORWARD", 0.91);
+  mptLanex->AddConstProperty("MIEHG_BACKWARD", 0.91);
   mptLanex->AddConstProperty("MIEHG_FORWARD_RATIO", 1.0);
   tmpMaterial->SetMaterialPropertiesTable(mptLanex);
-  tmpMaterial->GetIonisation()->SetBirksConstant(0.126*mm/MeV); 
+  materials[name]=tmpMaterial;
+
+
+  //Medex (larger grained lanex)
+  G4double medex_fill_factor=0.5;
+  G4double medex_density=fill_factor*GOS->GetDensity()+(1-fill_factor)*GetMaterial("polyurethane")->GetDensity();
+  G4double gos_fraction_by_mass=fill_factor*GOS->GetDensity()/medex_density;
+  G4double pur_fraction_by_mass=1-gos_fraction_by_mass;
+  tmpMaterial = new G4Material(name="medexscintlayermaterial", density=medex_density, 2);
+  tmpMaterial->AddMaterial(GOS, gos_fraction_by_mass);
+  tmpMaterial->AddMaterial(GetMaterial("polyurethane"), pur_fraction_by_mass);
+  G4MaterialPropertiesTable* mptMedex = new G4MaterialPropertiesTable();
+  const G4int nentMedex=2;
+  G4double rindex=(1.82+1.50)/2.0;
+  G4double energytab[]={2.239*eV, 2.241*eV};
+  G4double rindextab[]={rindex, rindex};
+  G4double emitspec[]={1.0, 1.0};
+  G4double abslen[]={1.5*mm, 1.5*mm};
+  G4double mieScatteringLength[]={230e-3*mm, 230e-3*mm};
+  mptMedex->AddProperty("RINDEX",energytab, rindextab, nentMedex); //Average refractive index of bulk material
+  mptMedex->AddProperty("ABSLENGTH", energytab, abslen, nentMedex);
+  mptMedex->AddProperty("FASTCOMPONENT",energytab, emitspec, nentMedex);
+  G4double scintScalingFactor=1;
+  mptMedex->AddConstProperty("SCINTILLATIONYIELD",scintScalingFactor*2.94e4/MeV);
+  mptMedex->AddConstProperty("RESOLUTIONSCALE",1.0);
+  mptMedex->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
+  mptMedex->AddConstProperty("MIEHG", 230e-3*mm);
+  mptMedex->AddConstProperty("MIEHG_FORWARD", 0.93);
+  mptMedex->AddConstProperty("MIEHG_BACKWARD", 0.93);
+  mptMedex->AddConstProperty("MIEHG_FORWARD_RATIO", 1.0);
+  tmpMaterial->SetMaterialPropertiesTable(mptMedex);
   materials[name]=tmpMaterial;
 
   // liquid materials

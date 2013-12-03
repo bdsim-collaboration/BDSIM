@@ -127,6 +127,11 @@ void init()
   options.sensitiveBeamPipe = 1;
   options.sensitiveBLMs = 1;
   options.turnOnCerenkov = 1;
+  options.turnOnOpticalAbsorption = 1;
+  options.turnOnMieScattering = 1;
+  options.turnOnRayleighScattering = 1;
+  options.turnOnOpticalSurface = 1;
+  options.turnOnBirksSaturation = 1;
   options.decayOn = 1;
   //  options.synchRadOn = 0;
   //tracking options

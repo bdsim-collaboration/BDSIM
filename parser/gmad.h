@@ -206,7 +206,12 @@ struct Options {
   double   minimumEpsilonStep;
   double   maximumEpsilonStep;
   double   deltaOneStep;
-  int      turnOnCerenkov;
+  int turnOnCerenkov ;
+  int turnOnOpticalAbsorption ;
+  int turnOnMieScattering ;
+  int turnOnRayleighScattering ;
+  int turnOnOpticalSurface ;
+  int turnOnBirksSaturation ;
   int      synchRadOn;
   int      decayOn;
   int      synchRescale;
