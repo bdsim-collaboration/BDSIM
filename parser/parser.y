@@ -445,7 +445,7 @@ laser : LASER ',' parameters
 screen : SCREEN ',' parameters
 ;
 
-awakescreen : AWAKESCREEN
+awakescreen : AWAKESCREEN ',' parameters
 ;
 
 transform3d : TRANSFORM3D ',' parameters
