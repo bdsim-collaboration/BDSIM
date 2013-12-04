@@ -20,7 +20,7 @@
 #include "BDSMaterials.hh"
 #include "G4NistManager.hh"
 
-#define DEBUG 1
+//#define DEBUG 1
 using namespace std;
 
 BDSMaterials* BDSMaterials::_instance = 0;
