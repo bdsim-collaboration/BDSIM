@@ -196,10 +196,11 @@ class Machine(list):
 
         **kwargs are other parameters for bdsim - ie material='W'
         """
-        self.append(Element(basename+'_qf','quadrupole',magnetlength,k1=kabs,**kwargs))
+        self.append(Element(basename+'_qfa','quadrupole',magnetlength/2.0,k1=kabs,**kwargs))
         self.append(Element(basename,'drift',driftlength))
         self.append(Element(basename+'_qd','quadrupole',magnetlength,k1=-1.0*kabs,**kwargs))
         self.append(Element(basename,'drift',driftlength))
+        self.append(Element(basename+'_qfb','quadrupole',magnetlength/2.0,k1=kabs,**kwargs))
 
     def AddFodoCellSplitDrift(self,basename='fodo',magnetlength=1.0,driftlength=4.0,kabs=1.0,nsplits=10,**kwargs):
         """
@@ -221,21 +222,22 @@ class Machine(list):
         nsplits = _General.NearestEvenInteger(nsplits)
         splitdriftlength = driftlength / float(nsplits)
         maxn    = int(len(str(nsplits)))
-        self.append(Element(basename+'_qf','quadrupole',magnetlength,k1=kabs,**kwargs))
+        self.append(Element(basename+'_qfa','quadrupole',magnetlength/2.0,k1=kabs,**kwargs))
         for i in range(nsplits):
             self.append(Element(basename+'_d'+str(i).zfill(maxn),'drift',splitdriftlength))
         self.append(Element(basename+'_qd','quadrupole',magnetlength,k1=-1.0*kabs,**kwargs))
         for i in range(nsplits):
             self.append(Element(basename+'_d'+str(i).zfill(maxn),'drift',splitdriftlength))
+        self.append(Element(basename+'_qfb','quadrupole',magnetlength/2.0,k1=kabs,**kwargs))
 
-    def AddFodoCells(self,basename='fodo',magnetlength=1.0,driftlength=4.0,kabs=1.0,ncells=2,**kwargs):
+    def AddFodoCellMultiple(self,basename='fodo',magnetlength=1.0,driftlength=4.0,kabs=1.0,ncells=2,**kwargs):
         ncells = int(ncells)
         maxn   = int(len(str(ncells)))
         for i in range(ncells):
             cellname = basename+'_'+str(i).zfill(maxn)
             self.AddFodoCell(cellname,magnetlength,driftlength,kabs,**kwargs)
 
-    def AddFodoCellSplitDrifts(self,basename='fodo',magnetlength=1.0,driftlength=4.0,kabs=1.0,nsplits=10,ncells=2,**kwargs):
+    def AddFodoCellSplitDriftMultiple(self,basename='fodo',magnetlength=1.0,driftlength=4.0,kabs=1.0,nsplits=10,ncells=2,**kwargs):
         ncells = int(ncells)
         maxn   = int(len(str(ncells)))
         for i in range(ncells):
@@ -284,10 +286,11 @@ def CreateDipoleRing(filename, ndipole=60, dlength=1.0, clength=10.0, samplers='
 def CreateDipoleFodoRing():
     pass
 
-def CreateFodoLine(filename, ncells=10, driftlength=4.0, magnetlength=1.0, kabs=1.0, samplers='all',**kwargs):
+def CreateFodoLine(filename, ncells=10, driftlength=4.0, magnetlength=1.0, samplers='all',**kwargs):
     ncells = int(ncells)
-    a = Machine()
-    a.AddFodoCellSplitDrifts(magnetlength=magnetlength,driftlength=driftlength,kabs=kabs,nsplits=10,ncells=ncells,**kwargs)
+    a      = Machine()
+    k1     = SuggestFodoK(magnetlength,driftlength)
+    a.AddFodoCellSplitDriftMultiple(magnetlength=magnetlength,driftlength=driftlength,kabs=k1,nsplits=10,ncells=ncells,**kwargs)
     a.SetSamplers(samplers)
     a.WriteLattice(filename)
 
