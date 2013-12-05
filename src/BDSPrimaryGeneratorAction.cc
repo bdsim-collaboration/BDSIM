@@ -111,17 +111,17 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if(!BDSGlobalConstants::Instance()->getReadFromStack()){
     bdsBunch.GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight); // get next starting point
   }  else if(BDSGlobalConstants::Instance()->holdingQueue.size()!=0){
-    tmpParticle holdingParticle = BDSGlobalConstants::Instance()->holdingQueue.front();
-    tmpParticle outputParticle  = BDSGlobalConstants::Instance()->outputQueue.front();
-    x0 = outputParticle.x; //
-    y0 = outputParticle.y; //
-    z0 = outputParticle.z; //
-    t  = holdingParticle.t;  //
-    xp = holdingParticle.xp;
-    yp = holdingParticle.yp;
-    zp = holdingParticle.zp;
-    E  = holdingParticle.E;
-    weight = holdingParticle.weight;
+    BDSParticle holdingParticle = BDSGlobalConstants::Instance()->holdingQueue.front();
+    BDSParticle outputParticle  = BDSGlobalConstants::Instance()->outputQueue.front();
+    x0 = outputParticle.GetX(); //
+    y0 = outputParticle.GetY(); //
+    z0 = outputParticle.GetZ(); //
+    t  = holdingParticle.GetTime();  //
+    xp = holdingParticle.GetXp();
+    yp = holdingParticle.GetYp();
+    zp = holdingParticle.GetZp();
+    E  = holdingParticle.GetEnergy();
+    weight = holdingParticle.GetWeight();
 
     //flag for secondaries from previous runs
     //    if(outputParticle.parentID != 0)

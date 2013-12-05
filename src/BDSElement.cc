@@ -632,11 +632,11 @@ void BDSElement::AlignComponent(G4ThreeVector& TargetPos,
 		 << align_out_volume->GetName() << G4endl;
 #endif
 	  G4RotationMatrix Trot = *TargetRot;
-	  G4RotationMatrix trackedRot;
+	  G4RotationMatrix* trackedRot = new G4RotationMatrix();
 	  G4RotationMatrix outRot = *(align_out_volume->GetFrameRotation());
-	  trackedRot.transform(outRot.inverse());
-	  trackedRot.transform(Trot.inverse());
-	  globalRotation = trackedRot;
+	  trackedRot->transform(outRot.inverse());
+	  trackedRot->transform(Trot.inverse());
+	  globalRotation = *trackedRot;
 
 	  G4ThreeVector outPos = align_out_volume->GetFrameTranslation();
 	  G4ThreeVector diff = outPos;

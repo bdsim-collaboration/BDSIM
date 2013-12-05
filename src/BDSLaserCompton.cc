@@ -50,11 +50,11 @@ G4VParticleChange* BDSLaserCompton::PostStepDoIt(const G4Track& trackData,
  // ensure that Laserwire can only occur once in an event
  G4cout << "FireLaserCompton == " << FireLaserCompton << G4endl;
  if(!FireLaserCompton){
-	 #if G4VERSION_NUMBER > 899
+#if G4VERSION_NUMBER > 899
    return G4VDiscreteProcess::PostStepDoIt(trackData,stepData);
-   #else
-	 return G4VContinuousDiscreteProcess::PostStepDoIt(trackData,stepData);
-	 #endif
+#else
+   return G4VContinuousDiscreteProcess::PostStepDoIt(trackData,stepData);
+#endif
  }
  G4Material* aMaterial=trackData.GetMaterial() ;
  
@@ -92,7 +92,7 @@ G4VParticleChange* BDSLaserCompton::PostStepDoIt(const G4Track& trackData,
 	 aParticleChange.SetNumberOfSecondaries(1);
 	 aParticleChange.AddSecondary(aGamma); 
 	 if(!BDSGlobalConstants::Instance()->GetLaserwireTrackElectrons())
-	 	   {
+	   {
 #if G4VERSION_NUMBER > 699
 	     aParticleChange.ProposeEnergy( 0. );
 	     aParticleChange.ProposeLocalEnergyDeposit (0.);

@@ -1,7 +1,7 @@
 //  
-//   BDSIM, (C) 2001-2008 
+//   BDSIM, (C) 2001-2013 
 //   
-//   version 0.5-dev
+//   version 0.6
 //  
 //
 //
@@ -19,6 +19,7 @@
 #include "BDSExecOptions.hh"     // executable command line options 
 #include "BDSGlobalConstants.hh" //  global parameters
 
+#include "G4UImanager.hh"        // G4 session managers
 #include "G4UIterminal.hh"
 #ifdef G4UI_USE_TCSH
 #include "G4UItcsh.hh"
@@ -77,6 +78,7 @@
 //#endif
 
 #include "parser/gmad.h"  // GMAD parser
+
 
 
 

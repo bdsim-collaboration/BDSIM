@@ -11,7 +11,6 @@ BDSMagField::BDSMagField():rotation(NULL)
 
 BDSMagField::~BDSMagField()
 {
-  delete rotation;
 }
 
 G4bool BDSMagField::GetHasNPoleFields(){return 0;}
@@ -38,6 +37,11 @@ void BDSMagField::GetFieldValue(const G4double[4],G4double *Bfield ) const
 void BDSMagField::Prepare(G4VPhysicalVolume*)
 {
   // default - do nothing
+}
+
+void BDSMagField::SetOriginRotation(G4RotationMatrix* rot)
+{
+  rotation = rot;
 }
 
 void BDSMagField::SetOriginRotation(G4RotationMatrix rot)

@@ -23,25 +23,13 @@ Last modified 30.10.2007 by Steve Malton
 #include "G4String.hh"
 #include "G4AffineTransform.hh"
 
+#include "BDSParticle.hh"
+
 struct Options;
 
 struct strCmp {
   G4bool operator()( const G4String s1, const G4String s2 ) {
     return  strcmp(s1,s2) < 0;}
-};
-
-struct tmpParticle {
-  G4double E;
-  G4double x;
-  G4double y;
-  G4double z;
-  G4double t;
-  G4double xp;
-  G4double yp;
-  G4double zp;
-  G4double weight;
-  G4int trackID;
-  G4int parentID;
 };
 
 /*
@@ -262,10 +250,11 @@ public:
   std::ofstream fileDump;
   // ifstream fileRead; replaced with FILE* fifo in code for consistency with Placet. SPM
 
-  std::deque<tmpParticle> holdingQueue;
-  std::deque<tmpParticle> outputQueue;
-  std::deque<tmpParticle> transformedQueue;
+  std::deque<BDSParticle> holdingQueue;
+  std::deque<BDSParticle> outputQueue;
+  std::deque<BDSParticle> transformedQueue;
   std::deque<G4double*> referenceQueue;
+  /// particles are reference bunches
   G4bool isReference;
 
 protected:

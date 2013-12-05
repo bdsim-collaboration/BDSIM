@@ -194,6 +194,8 @@ public:
   G4String getParameterValueString(G4String spec, G4String name) const;
 
   // constructor
+  BDSAcceleratorComponent (G4String& aName, G4double aLength);
+
   BDSAcceleratorComponent (
 			  G4String& aName, 
 			  G4double aLength,

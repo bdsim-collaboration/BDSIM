@@ -45,6 +45,12 @@
 #include "G4Transform3D.hh"
 
 
+BDSAcceleratorComponent::BDSAcceleratorComponent (G4String& aName, G4double aLength):
+  itsName(aName), itsLength(aLength)
+{
+  ConstructorInit();
+}
+
 BDSAcceleratorComponent::BDSAcceleratorComponent (
 			G4String& aName,G4double aLength, 
 			G4double aBpRadius,G4double aXAper,G4double aYAper, 

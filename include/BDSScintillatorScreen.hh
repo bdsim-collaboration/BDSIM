@@ -22,7 +22,7 @@ Work in progress.
 class BDSScintillatorScreen :public BDSAcceleratorComponent
 {
 public:
-  BDSScintillatorScreen(G4String aName);
+  BDSScintillatorScreen(G4String aName, G4double aLength=0.3*mm, G4double tScint=0.3*mm);
   ~BDSScintillatorScreen();
 
 protected:
@@ -30,7 +30,7 @@ protected:
 private:
   void BuildScintillatorScreen();
   void BuildScintillatorScreenTunnel();
-  void SetVisAttributes();
+  G4VisAttributes* SetVisAttributes();
   void ComputeDimensions();
   void BuildMarkerVolume();
   void BuildScintillatorMaterial();
@@ -90,6 +90,10 @@ private:
 
   G4double _xLength;
   G4double _yLength;
+
+  G4VisAttributes* _visAttFront;
+  G4VisAttributes* _visAttScint;
+  G4VisAttributes* _visAttBase;
 };
 
 #endif

@@ -29,7 +29,7 @@ SET_SOURCE_FILES_PROPERTIES( parser.tab.c lex.yy.c PROPERTIES LANGUAGE CXX )
 # You can also use file globbing, but that can cause confusion
 # when we have old makefiles and cmake next to each other.
 # Reason is old makefiles creates parser.cc/lex.yy.cc in source folder..
-add_library(gmad STATIC gmad.cc ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+add_library(gmad STATIC gmad.cc getEnv.cc ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
 
 if($ENV{VERBOSE})
 	message(STATUS "BISON_PARSER_OUTPUTS ${BISON_PARSER_OUTPUTS}") 

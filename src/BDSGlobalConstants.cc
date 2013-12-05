@@ -175,7 +175,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   G4cout << __METHOD_NAME__ << "GetFifo() = " << GetFifo() << G4endl;
   itsRefVolume = opt.refvolume;
   itsRefCopyNo = opt.refcopyno;
-  isReference = 0;
+  isReference = false;
   itsIncludeIronMagFields = opt.includeIronMagFields;
   zeroMagField = new G4UniformMagField(G4ThreeVector());
   itsZeroFieldManager=new G4FieldManager();

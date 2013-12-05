@@ -258,6 +258,6 @@ void BDSMagFieldSQL::Prepare(G4VPhysicalVolume *referenceVolume)
       itsBr_over_r.push_back(0.5 * itsdBz_by_dz[itsdBz_by_dz.size()-1] );
     }
   
-  SetOriginRotation(*(referenceVolume->GetFrameRotation()));
+  SetOriginRotation(*referenceVolume->GetFrameRotation());
   SetOriginTranslation(referenceVolume->GetFrameTranslation());
 }

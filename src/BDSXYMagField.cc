@@ -5,6 +5,7 @@
 #include "globals.hh"
 #include "BDSXYMagField.hh"
 #include <fstream>
+#include "CLHEP/Vector/Rotation.h"
 
 using namespace std;
 
@@ -87,7 +88,7 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
       exit(1);
     }
   
-  const G4RotationMatrix* Rot=referenceVolume->GetFrameRotation();
+  const G4RotationMatrix* Rot= referenceVolume->GetFrameRotation();
   const G4ThreeVector Trans=referenceVolume->GetFrameTranslation();
   
   G4ThreeVector B;
@@ -425,7 +426,7 @@ G4double GetNearestValue(vector<struct XYFieldRecord> fieldValues, G4double x, G
 
 //   AllocateMesh(nX,nY);
   
-//   SetOriginRotation(*Rot);
+//   SetOriginRotation(Rot);
 //   SetOriginTranslation(Trans);
   
 //   itsField->AllocateMesh(nX,nY,nZ);
