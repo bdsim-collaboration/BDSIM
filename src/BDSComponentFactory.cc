@@ -1233,12 +1233,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
   if(_element.l == 0) _element.l = 1e-8;
 	
 #ifdef DEBUG 
-        G4cout << "---->creating Screen,"
-               << " name= "<< _element.name
-               << " l=" << _element.l/m<<"m"
-               << G4endl;
+  G4cout << "---->creating Screen,"
+	 << " name= "<< _element.name
+	 << " l=" << _element.l/m<<"m"
+	 << G4endl;
 #endif
-	  return (new BDSScintillatorScreen( _element.name, _element.l*m, 0.1*mm));
+  return (new BDSScintillatorScreen( _element.name, _element.l*CLHEP::m, 0.1*CLHEP::mm));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){

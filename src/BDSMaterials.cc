@@ -478,7 +478,7 @@ void BDSMaterials::Initialise()
   name="pet";
   const G4int Pet_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Pet_RIND[Pet_NUMENTRIES] = {1.570,1.570,1.570};//Assume constant refractive index.
-  G4double Pet_Energy[Pet_NUMENTRIES] = {2.0*eV,7.0*eV,7.14*eV}; //The energies.
+  G4double Pet_Energy[Pet_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
   G4MaterialPropertiesTable*  petMaterialPropertiesTable=new G4MaterialPropertiesTable();
   petMaterialPropertiesTable->AddProperty("RINDEX",Pet_Energy, Pet_RIND, Pet_NUMENTRIES);
   tmpMaterial->SetMaterialPropertiesTable(petMaterialPropertiesTable);
@@ -489,7 +489,7 @@ void BDSMaterials::Initialise()
   name="cellulose";
   const G4int Cellulose_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Cellulose_RIND[Cellulose_NUMENTRIES] = {1.532,1.532,1.532};//Assume constant refractive index.
-  G4double Cellulose_Energy[Cellulose_NUMENTRIES] = {2.0*eV,7.0*eV,7.14*eV}; //The energies.
+  G4double Cellulose_Energy[Cellulose_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
   G4MaterialPropertiesTable*  celluloseMaterialPropertiesTable=new G4MaterialPropertiesTable();
   celluloseMaterialPropertiesTable->AddProperty("RINDEX",Cellulose_Energy, Cellulose_RIND, Cellulose_NUMENTRIES);
   tmpMaterial->SetMaterialPropertiesTable(celluloseMaterialPropertiesTable);
@@ -591,7 +591,7 @@ void BDSMaterials::Initialise()
 
   const G4int Vac_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Vac_RIND[Vac_NUMENTRIES] = {1.000,1.000,1.000};//Assume refractive index = 1 in a vacuum.
-  G4double Vac_Energy[Vac_NUMENTRIES] = {2.0*eV,7.0*eV,7.14*eV}; //The energies.
+  G4double Vac_Energy[Vac_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
   G4MaterialPropertiesTable*  vacMaterialPropertiesTable=new G4MaterialPropertiesTable();
   vacMaterialPropertiesTable->AddProperty("RINDEX",Vac_Energy, Vac_RIND, Vac_NUMENTRIES);
   tmpMaterial->SetMaterialPropertiesTable(vacMaterialPropertiesTable);
