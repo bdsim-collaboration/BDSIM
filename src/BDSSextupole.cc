@@ -78,8 +78,8 @@ BDSSextupole::BDSSextupole(G4String aName, G4double aLength,
 	  G4double Bfield[3];
 
 	  //coordinate in GetFieldValue
-	  polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(pi/6);
-	  polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(pi/6);
+	  polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(CLHEP::pi/6);
+	  polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(CLHEP::pi/6);
 	  polePos[2]=0.;
 	  polePos[3]=-999.;//flag to use polePos rather than local track
 
@@ -93,7 +93,7 @@ BDSSextupole::BDSSextupole(G4String aName, G4double aLength,
 	  // Magnetic flux from a pole is divided in two directions
 	  BFldIron/=2.;
 
-	  BuildOuterFieldManager(6, BFldIron,pi/6);
+	  BuildOuterFieldManager(6, BFldIron,CLHEP::pi/6);
 	}
       //Build the beam loss monitors
       BuildBLMs();
@@ -152,8 +152,8 @@ BDSSextupole::BDSSextupole(G4String aName, G4double aLength,
 	      G4double Bfield[3];
 	      
 	      //coordinate in GetFieldValue
-	      polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(pi/6);
-	      polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(pi/6);
+	      polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(CLHEP::pi/6);
+	      polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(CLHEP::pi/6);
 	      polePos[2]=0.;
 	      polePos[3]=-999.;//flag to use polePos rather than local track
 
@@ -167,7 +167,7 @@ BDSSextupole::BDSSextupole(G4String aName, G4double aLength,
 	      // Magnetic flux from a pole is divided in two directions
 	      BFldIron/=2.;
 	      
-	      BuildOuterFieldManager(6, BFldIron,pi/6);
+	      BuildOuterFieldManager(6, BFldIron,CLHEP::pi/6);
 	    }
 	  //When is SynchRescale(factor) called?
 

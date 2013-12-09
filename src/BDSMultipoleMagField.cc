@@ -32,15 +32,15 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
   // charge (in |e| units)
   G4double charge = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge();
   // momentum (in GeV/c)
-  G4double momentum = (BDSGlobalConstants::Instance()->GetBeamMomentum())/GeV;
+  G4double momentum = (BDSGlobalConstants::Instance()->GetBeamMomentum())/CLHEP::GeV;
   // rigidity (in T*m)
   G4double brho = ( momentum / (0.299792458 * fabs(charge)));
   // rigidity (in Geant4 units)
-  brho *= (tesla*m);
+  brho *= (CLHEP::tesla*CLHEP::m);
 #ifdef DEBUG 
     G4cout<<"beam charge="<<charge<<"e"<<G4endl;
     G4cout<<"beam momentum="<<momentum<<"GeV/c"<<G4endl;
-    G4cout<<"rigidity="<<brho/(tesla*m)<<"T*m"<<G4endl;
+    G4cout<<"rigidity="<<brho/(CLHEP::tesla*CLHEP::m)<<"T*m"<<G4endl;
 #endif
 
   // convert strengths Kn from BDSIM units (m^-n) to Geant4 internal units
@@ -60,8 +60,8 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
       G4cout<<"Kn : "<<(*it )<<"m^-"<<n<<G4endl;
       G4cout<<"Ks : "<<(*its)<<"m^-"<<n<<G4endl;
 #endif
-      (*it) *= brho/pow(m,n);
-      (*its) *= brho/pow(m,n);
+      (*it) *= brho/pow(CLHEP::m,n);
+      (*its) *= brho/pow(CLHEP::m,n);
 #ifdef DEBUG 
       G4cout<<2*n<<"-pole field coefficients:"<<G4endl;
       G4cout<<"Bn : "<<(*it )<<"T/m^"<<n-1<<G4endl;
@@ -81,14 +81,14 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
     
     testf<<"x(cm) y(cm) Bx(T) By(T) Bz(T) "<<G4endl;
     
-    for(G4double x=-1*cm;x<1*cm;x+=0.1*mm)
-    for(G4double y=-1*cm;y<1*cm;y+=0.1*mm){
+    for(G4double x=-1*CLHEP::cm;x<1*CLHEP::cm;x+=0.1*CLHEP::mm)
+    for(G4double y=-1*CLHEP::cm;y<1*CLHEP::cm;y+=0.1*CLHEP::mm){
     pt[0]= x;
     pt[1]= y;
     pt[2]= pt[3]=0;
 	GetFieldValue(pt,b);
-	testf<<x/cm<<" "<<y/cm<<" "
-        <<b[0]/tesla<<" "<<b[1]/tesla<<" "<<b[2]/tesla<<G4endl;
+	testf<<x/CLHEP::cm<<" "<<y/CLHEP::cm<<" "
+        <<b[0]/CLHEP::tesla<<" "<<b[1]/CLHEP::tesla<<" "<<b[2]/CLHEP::tesla<<G4endl;
         }
         #endif
   */
@@ -101,7 +101,7 @@ void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
 {
 #ifdef DEBUG
   G4cout<<"Called GetFieldValue at position (in global coordinates): ("
-        <<Point[0]/cm<<" "<<Point[1]/cm<<" "<<Point[2]/cm
+        <<Point[0]/CLHEP::cm<<" "<<Point[1]/CLHEP::cm<<" "<<Point[2]/CLHEP::cm
         <<")cm"<<G4endl;
 #endif
 
@@ -121,7 +121,7 @@ void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
 
 #ifdef DEBUG
   G4cout<<"Current position in local coordinates: ("
-        <<LocalR[0]/cm<<" "<<LocalR[1]/cm<<" "<<LocalR[2]/cm
+        <<LocalR[0]/CLHEP::cm<<" "<<LocalR[1]/CLHEP::cm<<" "<<LocalR[2]/CLHEP::cm
         <<") cm"<<G4endl;
 #endif
  
@@ -143,11 +143,11 @@ void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
 
   G4double r = sqrt(LocalR[0]*LocalR[0] + LocalR[1]*LocalR[1]);
   G4double phi;
-  if(fabs(r)>1.e-11*m) phi = atan2(LocalR[1],LocalR[0]);
+  if(fabs(r)>1.e-11*CLHEP::m) phi = atan2(LocalR[1],LocalR[0]);
   else phi = 0; // don't care
 
 #ifdef DEBUG 
-  G4cout<<"In local coordinates, r= "<<r/m<<"m, phi="<<phi<<"rad"<<G4endl;
+  G4cout<<"In local coordinates, r= "<<r/CLHEP::m<<"m, phi="<<phi<<"rad"<<G4endl;
 #endif
 
   G4int order=0;
@@ -178,8 +178,8 @@ void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
 #ifdef DEBUG 
   G4cout<<"order="<<order<<G4endl;
   G4cout<<"In local coordinates:"<<G4endl
-        <<"Br="<<br/tesla<<"T, Bphi="<<bphi/tesla<<"T, "
-        <<"Bx="<<LocalBField[0]/tesla<<"T, By="<<LocalBField[1]/tesla<<"T"
+        <<"Br="<<br/CLHEP::tesla<<"T, Bphi="<<bphi/CLHEP::tesla<<"T, "
+        <<"Bx="<<LocalBField[0]/CLHEP::tesla<<"T, By="<<LocalBField[1]/CLHEP::tesla<<"T"
         <<G4endl;
 #endif
 

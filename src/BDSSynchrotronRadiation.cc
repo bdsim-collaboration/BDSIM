@@ -31,8 +31,8 @@ BDSSynchrotronRadiation::BDSSynchrotronRadiation(const G4String& processName)
   : G4VDiscreteProcess(processName)
     // initialization
 {
-  nExpConst=5*fine_structure_const/(2*sqrt(3.0))/electron_mass_c2;
-  CritEngFac=3./2.*hbarc/pow(electron_mass_c2,3);
+  nExpConst=5*CLHEP::fine_structure_const/(2*sqrt(3.0))/CLHEP::electron_mass_c2;
+  CritEngFac=3./2.*CLHEP::hbarc/pow(CLHEP::electron_mass_c2,3);
   MeanFreePathCounter = 0; //Presumably this should be initialized to zero? LCD 18/4/11
 } 
 
@@ -127,7 +127,7 @@ G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nParticle charge != 0.0" << G4e
             G4cout  << "BDSSynchrotronRadiation::PostStepDoIt\nSynchPhotonMultiplicity" << G4endl;
 #endif
             //if(fabs(R)==0)
-	    G4double R=(aDynamicParticle->GetTotalMomentum()/GeV)/
+	    G4double R=(aDynamicParticle->GetTotalMomentum()/CLHEP::GeV)/
 	      (0.299792458*particleCharge*perpB);
 	    GamEnergy=SynGenC(BDSGlobalConstants::Instance()->GetSynchLowX())*
 	      CritEngFac*pow(eEnergy,3)/fabs(R);
@@ -347,8 +347,8 @@ G4double BDSSynchrotronRadiation::SynRadC(G4double x)
        a=z*b-a+.06239591359332750793;
        G4double p;
        p=.5*z*a-b    +1.06552390798340693166;
-       G4double const pihalf=pi/2.;
-       synrad=p*sqrt(pihalf/x)/exp(x);
+       //       G4double const pihalf=pi/2.;
+       synrad=p*sqrt(CLHEP::halfpi/x)/exp(x);
      }
   }
   return synrad;

@@ -158,7 +158,7 @@ void BDSSteppingAction::UserSteppingAction(const G4Step* ThisStep)
 	  if(SM->GetNPostponedTrack()== nptwiss-1)
 	    {
 	      SM->TransferStackedTracks(fPostpone, fUrgent);
-	      if(verbose) G4cout << "\nMean Energy: " << (postponedEnergy/nptwiss)/GeV << G4endl;
+	      if(verbose) G4cout << "\nMean Energy: " << (postponedEnergy/nptwiss)/CLHEP::GeV << G4endl;
 
 	      std::list<BDSAcceleratorComponent*>::const_iterator iBeam;
 	      G4String type="";	      
@@ -171,10 +171,10 @@ void BDSSteppingAction::UserSteppingAction(const G4Step* ThisStep)
 		      if(verbose) G4cout << "Element Type: " << type << G4endl;
 		      G4double old_P0 = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
 		      G4double old_brho = 
-			sqrt(pow(old_P0,2)- pow(electron_mass_c2,2))/(0.299792458 * (GeV/(tesla*m)));
+			sqrt(pow(old_P0,2)- pow(CLHEP::electron_mass_c2,2))/(0.299792458 * (CLHEP::GeV/(CLHEP::tesla*CLHEP::m)));
 		      G4double new_P0 = postponedEnergy/nptwiss;
 		      G4double new_brho = 
-			sqrt(pow(new_P0,2)- pow(electron_mass_c2,2))/(0.299792458 * (GeV/(tesla*m)));
+			sqrt(pow(new_P0,2)- pow(CLHEP::electron_mass_c2,2))/(0.299792458 * (CLHEP::GeV/(CLHEP::tesla*CLHEP::m)));
 		      
 		      if(BDSGlobalConstants::Instance()->GetSynchRescale()) 
 			{
@@ -208,11 +208,11 @@ void BDSSteppingAction::UserSteppingAction(const G4Step* ThisStep)
 	
 	G4cout<<"ID="<<ID<<" part="<<
 	  ThisStep->GetTrack()->GetDefinition()->GetParticleName()<<
-	  "Energy="<<ThisStep->GetTrack()->GetTotalEnergy()/GeV<<
+	  "Energy="<<ThisStep->GetTrack()->GetTotalEnergy()/CLHEP::GeV<<
 	  " mom Px="
-	      <<ThisStep->GetTrack()->GetMomentum()[0]/GeV<<
-	  " Py="<<ThisStep->GetTrack()->GetMomentum()[1]/GeV<<
-	  " Pz="<<ThisStep->GetTrack()->GetMomentum()[2]/GeV<<" vol="<<
+	      <<ThisStep->GetTrack()->GetMomentum()[0]/CLHEP::GeV<<
+	  " Py="<<ThisStep->GetTrack()->GetMomentum()[1]/CLHEP::GeV<<
+	  " Pz="<<ThisStep->GetTrack()->GetMomentum()[2]/CLHEP::GeV<<" vol="<<
 	  ThisStep->GetTrack()->GetVolume()->GetName()<<G4endl;
 	
 	G4cout<<" Global Position="<<ThisStep->GetTrack()->GetPosition()<<G4endl;

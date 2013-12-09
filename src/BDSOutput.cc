@@ -166,14 +166,14 @@ void BDSOutput::Init(G4int FileNum)
     }
 
   // build energy loss histogram
-  G4int nBins = G4int(zMax/(BDSGlobalConstants::Instance()->GetElossHistoBinWidth()*m));
+  G4int nBins = G4int(zMax/(BDSGlobalConstants::Instance()->GetElossHistoBinWidth()*CLHEP::m));
   G4double wx=(BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelOffsetX())*2;
   G4double wy=(BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelOffsetY())*2;
   G4double bs=BDSGlobalConstants::Instance()->GetComponentBoxSize();
   G4double wmax=std::max(wx,wy);
   wmax=std::max(wmax,bs);
 
-  EnergyLossHisto = new TH1F("ElossHisto", "Energy Loss",nBins,0.,zMax/m);
+  EnergyLossHisto = new TH1F("ElossHisto", "Energy Loss",nBins,0.,zMax/CLHEP::m);
   EnergyLossTree= new TTree("ElossTree", "Energy Loss");
   EnergyLossTree->Branch("z",&z_el,"z (m)/F");
   EnergyLossTree->Branch("E",&E_el,"E (GeV)/F");
@@ -192,17 +192,17 @@ void BDSOutput::Init(G4int FileNum)
 void BDSOutput::WriteAsciiHit(G4int PDGType, G4double Mom, G4double X, G4double Y, G4double S, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID){
   of<<PDGType
     <<" "
-    <<Mom/GeV
+    <<Mom/CLHEP::GeV
     <<" "
-    <<X/micrometer
+    <<X/CLHEP::micrometer
     <<" "
-    <<Y/micrometer
+    <<Y/CLHEP::micrometer
     <<" "
-    <<S / m
+    <<S / CLHEP::m
     <<" "
-    <<XPrime / radian
+    <<XPrime / CLHEP::radian
     <<" "
-    <<YPrime / radian
+    <<YPrime / CLHEP::radian
     <<" "
     <<EventNo 
     <<" "
@@ -219,30 +219,30 @@ void BDSOutput::WriteRootHit(G4String Name, G4double   InitMom, G4double    Init
 
   TTree* sTree=(TTree*)gDirectory->Get(Name);
   if(!sTree) G4Exception("BDSOutput: ROOT Sampler not found!", "-1", FatalException, "");
-  E0=InitMom / GeV;
-  x0=InitX / micrometer;
-  y0=InitY / micrometer;
-  z0=InitZ / m;
-  xp0=InitXPrime / radian;
-  yp0=InitYPrime / radian;
-  zp0=InitZPrime / radian;
-  t0=InitT / ns;
-  E=Mom / GeV;
-  //Edep=Edep / GeV;
-  x=X / micrometer;
-  y=Y / micrometer;
-  z=Z / m;
-  xp=XPrime / radian;
-  yp=YPrime / radian;
-  zp=ZPrime / radian;
-  t=T / ns;
-  X=GlobalX / m;
-  Y=GlobalY / m;
-  Z=GlobalZ / m;
-  Xp=GlobalXPrime / radian;
-  Yp=GlobalYPrime / radian;
-  Zp=GlobalZPrime / radian;
-  s=S / m;
+  E0=InitMom / CLHEP::GeV;
+  x0=InitX / CLHEP::micrometer;
+  y0=InitY / CLHEP::micrometer;
+  z0=InitZ / CLHEP::m;
+  xp0=InitXPrime / CLHEP::radian;
+  yp0=InitYPrime / CLHEP::radian;
+  zp0=InitZPrime / CLHEP::radian;
+  t0=InitT / CLHEP::ns;
+  E=Mom / CLHEP::GeV;
+  //Edep=Edep / CLHEP::GeV;
+  x=X / CLHEP::micrometer;
+  y=Y / CLHEP::micrometer;
+  z=Z / CLHEP::m;
+  xp=XPrime / CLHEP::radian;
+  yp=YPrime / CLHEP::radian;
+  zp=ZPrime / CLHEP::radian;
+  t=T / CLHEP::ns;
+  X=GlobalX / CLHEP::m;
+  Y=GlobalY / CLHEP::m;
+  Z=GlobalZ / CLHEP::m;
+  Xp=GlobalXPrime / CLHEP::radian;
+  Yp=GlobalYPrime / CLHEP::radian;
+  Zp=GlobalZPrime / CLHEP::radian;
+  s=S / CLHEP::m;
   weight=Weight;
   part=PDGtype; 
   nev=EventNo; 
@@ -371,9 +371,9 @@ G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> &TrajVec){
 	      TrajPoint=(G4TrajectoryPoint*)Traj->GetPoint(j);
 	      TrajPos=TrajPoint->GetPosition();
 	      
-	      x = TrajPos.x() / m;
-	      y = TrajPos.y() / m;
-	      z = TrajPos.z() / m;
+	      x = TrajPos.x() / CLHEP::m;
+	      y = TrajPos.y() / CLHEP::m;
+	      z = TrajPos.z() / CLHEP::m;
 
 	      if( format == _ROOT) 
 		TrajTree->Fill();
@@ -395,17 +395,17 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
     for (G4int i=0;i<n_hit;i++)
       {
 	//all regions fill the energy loss tree....
-        E_el=(*hc)[i]->GetEnergy()/GeV;
-	z_el=(*hc)[i]->GetEnergyWeightedZ()*10*(1e-6)/(cm*E_el);
+        E_el=(*hc)[i]->GetEnergy()/CLHEP::GeV;
+	z_el=(*hc)[i]->GetEnergyWeightedZ()*10*(1e-6)/(CLHEP::cm*E_el);
 	EnergyLossHisto->Fill(z_el,E_el);
 	EnergyLossTree->Fill();
 
 	if((*hc)[i]->GetPrecisionRegion()){ //Only the precision region fills this tree, preserving every hit, its position and weight, instead of summing weighted energy in each beam line component.
 	  weight_el_p=(*hc)[i]->GetWeight();
-	  E_el_p=((*hc)[i]->GetEnergy()/GeV)/weight_el_p;
-	  x_el_p=((*hc)[i]->GetEnergyWeightedX()/(cm*1e5*E_el_p))/weight_el_p;
-	  y_el_p=((*hc)[i]->GetEnergyWeightedY()*10/(cm*E_el_p))/weight_el_p;
-	  z_el_p=((*hc)[i]->GetEnergyWeightedZ()*10*(1e-6)/(cm*E_el_p))/weight_el_p;
+	  E_el_p=((*hc)[i]->GetEnergy()/CLHEP::GeV)/weight_el_p;
+	  x_el_p=((*hc)[i]->GetEnergyWeightedX()/(CLHEP::cm*1e5*E_el_p))/weight_el_p;
+	  y_el_p=((*hc)[i]->GetEnergyWeightedY()*10/(CLHEP::cm*E_el_p))/weight_el_p;
+	  z_el_p=((*hc)[i]->GetEnergyWeightedZ()*10*(1e-6)/(CLHEP::cm*E_el_p))/weight_el_p;
 	  part_el_p=(*hc)[i]->GetPartID();
 	  G4String temp = (*hc)[i]->GetName()+'\0';
 	  strcpy(volumeName_el_p,temp.c_str());
@@ -426,7 +426,7 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 	G4int partID = (*hc)[i]->GetPartID();
 	G4double weight = (*hc)[i]->GetWeight();
 
-	ofEloss<< Zpos/m<<"  "<<Energy/GeV<<"  "<<partID<<"  " <<weight<<G4endl;
+	ofEloss<< Zpos/CLHEP::m<<"  "<<Energy/CLHEP::GeV<<"  "<<partID<<"  " <<weight<<G4endl;
       }
     ofEloss.flush();
  }

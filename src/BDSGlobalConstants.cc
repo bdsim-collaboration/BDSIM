@@ -70,62 +70,62 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
  itsElossHistoTransBinWidth=opt.elossHistoTransBinWidth;
   itsFFact=opt.ffact;
   itsParticleName=G4String(opt.particleName);
-  itsBeamTotalEnergy = opt.beamEnergy * GeV;
-  itsVacuumPressure = opt.vacuumPressure*bar;
+  itsBeamTotalEnergy = opt.beamEnergy * CLHEP::GeV;
+  itsVacuumPressure = opt.vacuumPressure*CLHEP::bar;
   itsPlanckScatterFe = opt.planckScatterFe;
   //Fraction of events with leading particle biasing.
-  itsBeampipeRadius = opt.beampipeRadius * m;
+  itsBeampipeRadius = opt.beampipeRadius * CLHEP::m;
   if(itsBeampipeRadius == 0){
     G4cerr << __METHOD_NAME__ << "Error: option \"beampipeRadius\" must be greater than 0" <<  G4endl;
     exit(1);
   }
-  itsBeampipeThickness = opt.beampipeThickness * m;
-  itsComponentBoxSize = opt.componentBoxSize *m;
+  itsBeampipeThickness = opt.beampipeThickness * CLHEP::m;
+  itsComponentBoxSize = opt.componentBoxSize * CLHEP::m;
   if (itsComponentBoxSize < (itsBeampipeThickness + itsBeampipeRadius)){
     G4cerr << __METHOD_NAME__ << "Error: option \"boxSize\" must be greater than the sum of \"beampipeRadius\" and \"beamPipeThickness\" " << G4endl;
     exit(1);
   }
   itsBuildTunnel = opt.buildTunnel;
   itsBuildTunnelFloor = opt.buildTunnelFloor;  
-  itsTunnelRadius = opt.tunnelRadius * m;
+  itsTunnelRadius = opt.tunnelRadius * CLHEP::m;
   if (itsTunnelRadius < itsComponentBoxSize/2){
     G4cerr << __METHOD_NAME__ << "> Error: option \"tunnelRadius\" must be grater than \"boxSize\"/2 " << G4endl;
     exit(1);
   }
-  itsTunnelThickness = opt.tunnelThickness * m; //Tunnel geometry options read from file
-  itsTunnelSoilThickness = opt.tunnelSoilThickness * m;
-  itsTunnelFloorOffset = opt.tunnelFloorOffset * m;
-  itsTunnelOffsetX = opt.tunnelOffsetX * m;
-  itsTunnelOffsetY = opt.tunnelOffsetY * m;
+  itsTunnelThickness = opt.tunnelThickness * CLHEP::m; //Tunnel geometry options read from file
+  itsTunnelSoilThickness = opt.tunnelSoilThickness * CLHEP::m;
+  itsTunnelFloorOffset = opt.tunnelFloorOffset * CLHEP::m;
+  itsTunnelOffsetX = opt.tunnelOffsetX * CLHEP::m;
+  itsTunnelOffsetY = opt.tunnelOffsetY * CLHEP::m;
   //Beam loss monitor (BLM) geometry
-  itsBlmRad = opt.blmRad * m;
-  itsBlmLength = opt.blmLength *m;
+  itsBlmRad = opt.blmRad * CLHEP::m;
+  itsBlmLength = opt.blmLength * CLHEP::m;
   //Sampler geometry - default diameter is the tunnel diameter
   if(opt.samplerDiameter==0){
     itsSamplerDiameter=2*itsTunnelRadius;
   } else {
-    itsSamplerDiameter = opt.samplerDiameter * m;
+    itsSamplerDiameter = opt.samplerDiameter * CLHEP::m;
   }
-  itsSamplerLength = 1E-8 * m;
-  itsThresholdCutCharged = opt.thresholdCutCharged * GeV;
-  itsThresholdCutPhotons = opt.thresholdCutPhotons * GeV;
-  itsProdCutPhotons = opt.prodCutPhotons * m;
-  itsProdCutPhotonsP = opt.prodCutPhotonsP * m;
-  itsProdCutPhotonsA = opt.prodCutPhotonsA * m;
-  itsProdCutElectrons = opt.prodCutElectrons * m;
-  itsProdCutElectronsP = opt.prodCutElectronsP * m;
-  itsProdCutElectronsA = opt.prodCutElectronsA * m;
-  itsProdCutPositrons = opt.prodCutPositrons * m;
-  itsProdCutPositronsP = opt.prodCutPositronsP * m;
-  itsProdCutPositronsA = opt.prodCutPositronsA * m;
-  itsDeltaChord = opt.deltaChord * m;
-  itsChordStepMinimum = opt.chordStepMinimum * m;
-  itsDeltaIntersection= opt.deltaIntersection * m;
+  itsSamplerLength = 1E-8 * CLHEP::m;
+  itsThresholdCutCharged = opt.thresholdCutCharged * CLHEP::GeV;
+  itsThresholdCutPhotons = opt.thresholdCutPhotons * CLHEP::GeV;
+  itsProdCutPhotons = opt.prodCutPhotons * CLHEP::m;
+  itsProdCutPhotonsP = opt.prodCutPhotonsP * CLHEP::m;
+  itsProdCutPhotonsA = opt.prodCutPhotonsA * CLHEP::m;
+  itsProdCutElectrons = opt.prodCutElectrons * CLHEP::m;
+  itsProdCutElectronsP = opt.prodCutElectronsP * CLHEP::m;
+  itsProdCutElectronsA = opt.prodCutElectronsA * CLHEP::m;
+  itsProdCutPositrons = opt.prodCutPositrons * CLHEP::m;
+  itsProdCutPositronsP = opt.prodCutPositronsP * CLHEP::m;
+  itsProdCutPositronsA = opt.prodCutPositronsA * CLHEP::m;
+  itsDeltaChord = opt.deltaChord * CLHEP::m;
+  itsChordStepMinimum = opt.chordStepMinimum * CLHEP::m;
+  itsDeltaIntersection= opt.deltaIntersection * CLHEP::m;
   itsMinimumEpsilonStep = opt.minimumEpsilonStep;
   itsMaximumEpsilonStep = opt.maximumEpsilonStep;
-  itsMaxTime = opt.maximumTrackingTime * s;
+  itsMaxTime = opt.maximumTrackingTime * CLHEP::s;
   
-  itsDeltaOneStep = opt.deltaOneStep * m;
+  itsDeltaOneStep = opt.deltaOneStep * CLHEP::m;
   doTwiss = opt.doTwiss;
   itsDoPlanckScattering = opt.doPlanckScattering;
   itsCheckOverlaps = opt.checkOverlaps;
@@ -137,7 +137,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsSynchTrackPhotons= opt.synchTrackPhotons;
   G4cout << __METHOD_NAME__ << "synchTrackphotons = " << itsSynchTrackPhotons << G4endl;
   itsSynchLowX = opt.synchLowX;
-  itsSynchLowGamE = opt.synchLowGamE * GeV;  // lowest gamma energy
+  itsSynchLowGamE = opt.synchLowGamE * CLHEP::GeV;  // lowest gamma energy
   itsSynchPhotonMultiplicity = opt.synchPhotonMultiplicity;
   itsSynchMeanFreeFactor = opt.synchMeanFreeFactor;
   //Synchrotron primary generator
@@ -162,7 +162,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   //G4cout<<"STOREA TRAJ = "<< itsStoreTrajectory<<G4endl;
   stopTracks = opt.stopTracks; 
   // defaults - parameters of the laserwire process
-  itsLaserwireWavelength = 0.532 * micrometer;
+  itsLaserwireWavelength = 0.532 * CLHEP::micrometer;
   itsLaserwireDir = G4ThreeVector(1,0,0);
   itsLaserwireTrackPhotons = 1;
   itsLaserwireTrackElectrons = 1;

@@ -213,8 +213,8 @@ void BDSScintillatorScreen::BuildScintillatorOpticalProperties(){
   const G4int nEntries = 9;
   G4double PhotonEnergyScintillatorMaterial[nEntries];
   G4double dNEntries2=(G4double)nEntries;
-  G4double energyMin=1.91*eV;
-  G4double energyMax=2.76*eV;
+  G4double energyMin=1.91*CLHEP::eV;
+  G4double energyMax=2.76*CLHEP::eV;
   G4double deltaEnergy=(energyMax-energyMin)/(dNEntries2-1.0);
   G4double energy=energyMin;
   for(G4int i=0; i<nEntries; energy += deltaEnergy, i++){
@@ -235,13 +235,13 @@ void BDSScintillatorScreen::BuildScintillatorOpticalProperties(){
   _mptScintillatorMaterial->AddProperty("FASTCOMPONENT",PhotonEnergyScintillatorMaterial, scintFastScintillatorMaterial, nEntries)->SetSpline(true);
 #endif
   _mptScintillatorMaterial->AddProperty("RINDEX",PhotonEnergyScintillatorMaterial, RefractiveIndexScintillatorMaterial, nEntries);
-  _mptScintillatorMaterial->AddConstProperty("SCINTILLATIONYIELD",8000./MeV); //Approximately correct
+  _mptScintillatorMaterial->AddConstProperty("SCINTILLATIONYIELD",8000./CLHEP::MeV); //Approximately correct
   _mptScintillatorMaterial->AddConstProperty("RESOLUTIONSCALE",2.0); //Check this
-  _mptScintillatorMaterial->AddConstProperty("FASTTIMECONSTANT",70.*ns); //Approximately correct
+  _mptScintillatorMaterial->AddConstProperty("FASTTIMECONSTANT",70.*CLHEP::ns); //Approximately correct
   _mptScintillatorMaterial->AddConstProperty("YIELDRATIO",1.0);
 
   /*The below is required for mie scattering
-  G4double scatteringLength=2.17*um;
+  G4double scatteringLength=2.17*CLHEP::um;
   G4double anisotropyFactor=0.800;
   _mptScintillatorMaterial->AddConstProperty("MIEHG",scatteringLength);
   _mptScintillatorMaterial->AddConstProperty("MIEHG_FORWARD",anisotropyFactor); 
@@ -263,15 +263,15 @@ void BDSScintillatorScreen::ComputeDimensions(){
   _yLength = std::max(_yLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
   */
 
-  _xLength=_yLength=10*m;
+  _xLength=_yLength=10*CLHEP::m;
 
-  _screenWidth=1*m;
-  _screenHeight=3*cm;
+  _screenWidth=1*CLHEP::m;
+  _screenHeight=3*CLHEP::cm;
   _screenAngle=0; //Degrees.
   
-  _frontThickness=0;//13*um;
-  _baseThickness=0;//275*um;
-  _backThickness=0;//13*um;
+  _frontThickness=0;//13*CLHEP::um;
+  _baseThickness=0;//275*CLHEP::um;
+  _backThickness=0;//13*CLHEP::um;
   
   _totalThickness =  
     _frontThickness+

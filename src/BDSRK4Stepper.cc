@@ -94,13 +94,13 @@ BDSRK4Stepper::AdvanceHelix( const G4double  yIn[],
 
   G4double Bmag = (BVec.cross(pVec.unit())).mag();
   
-  BDSLocalRadiusOfCurvature = (itsMomentum/GeV) / (0.299792458*Bmag/tesla)*m;
+  BDSLocalRadiusOfCurvature = (itsMomentum/CLHEP::GeV) / (0.299792458*Bmag/CLHEP::tesla)*CLHEP::m;
 
 #ifdef DEBUG 
-  G4cout<<" Pos = ("<<Pos[0]/mm<<" "<<Pos[1]/mm<<" " <<Pos[2]/mm<<") mm"<<G4endl;
-  G4cout<<" Mtm = ("<<pIn[0]/GeV<<" "<<pIn[1]/GeV<<" " <<pIn[2]/GeV<<") GeV"<<G4endl;
-  G4cout<<" BField = ("<<BField[0]/tesla<<" "<<BField[1]/tesla<<" "<<BField[2]/tesla<<") T"<<G4endl;
-  G4cout<<" Local curvature radius = "<<BDSLocalRadiusOfCurvature/m<<" m"<<G4endl;
+  G4cout<<" Pos = ("<<Pos[0]/CLHEP::mm<<" "<<Pos[1]/CLHEP::mm<<" " <<Pos[2]/CLHEP::mm<<") mm"<<G4endl;
+  G4cout<<" Mtm = ("<<pIn[0]/CLHEP::GeV<<" "<<pIn[1]/CLHEP::GeV<<" " <<pIn[2]/CLHEP::GeV<<") GeV"<<G4endl;
+  G4cout<<" BField = ("<<BField[0]/CLHEP::tesla<<" "<<BField[1]/CLHEP::tesla<<" "<<BField[2]/CLHEP::tesla<<") T"<<G4endl;
+  G4cout<<" Local curvature radius = "<<BDSLocalRadiusOfCurvature/CLHEP::m<<" m"<<G4endl;
 #endif
 
 

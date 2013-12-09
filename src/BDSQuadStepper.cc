@@ -44,17 +44,17 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
   G4double kappa = - fPtrMagEqOfMot->FCof()*itsBGrad/InitPMag;
 
 #ifdef DEBUG
-  G4double charge = (fPtrMagEqOfMot->FCof())/c_light;
-  G4cout << "BDSQuadStepper: step= " << h/m << " m" << G4endl
-         << " x= " << yIn[0]/m << "m" << G4endl
-         << " y= " << yIn[1]/m << "m" << G4endl
-         << " z= " << yIn[2]/m << "m" << G4endl
-         << " px= " << yIn[3]/GeV << "GeV/c" << G4endl
-         << " py= " << yIn[4]/GeV << "GeV/c" << G4endl
-         << " pz= " << yIn[5]/GeV << "GeV/c" << G4endl
-         << " q= " << charge/eplus << "e" << G4endl
-         << " dBy/dx= " << itsBGrad/(tesla/m) << "T/m" << G4endl
-         << " k= " << kappa/(1./(m*m)) << "m^-2" << G4endl
+  G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
+  G4cout << "BDSQuadStepper: step= " << h/CLHEP::m << " m" << G4endl
+         << " x= " << yIn[0]/CLHEP::m << "m" << G4endl
+         << " y= " << yIn[1]/CLHEP::m << "m" << G4endl
+         << " z= " << yIn[2]/CLHEP::m << "m" << G4endl
+         << " px= " << yIn[3]/CLHEP::GeV << "GeV/c" << G4endl
+         << " py= " << yIn[4]/CLHEP::GeV << "GeV/c" << G4endl
+         << " pz= " << yIn[5]/CLHEP::GeV << "GeV/c" << G4endl
+         << " q= " << charge/CLHEP::eplus << "e" << G4endl
+         << " dBy/dx= " << itsBGrad/(CLHEP::tesla/CLHEP::m) << "T/m" << G4endl
+         << " k= " << kappa/(1./CLHEP::m2) << "m^-2" << G4endl
          << G4endl; 
 #endif
 
@@ -93,9 +93,9 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
 
 #ifdef DEBUG
       G4cout << "BDSQuadStepper: initial point in local coordinates:" << G4endl
-             << " x= " << LocalR[0]/m << "m" << G4endl
-             << " y= " << LocalR[1]/m << "m" << G4endl
-             << " z= " << LocalR[2]/m << "m" << G4endl
+             << " x= " << LocalR[0]/CLHEP::m << "m" << G4endl
+             << " y= " << LocalR[1]/CLHEP::m << "m" << G4endl
+             << " z= " << LocalR[2]/CLHEP::m << "m" << G4endl
              << " x'= " << LocalRp[0] << G4endl
              << " y'= " << LocalRp[1] << G4endl
              << " z'= " << LocalRp[2] << G4endl
@@ -122,7 +122,7 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
        // determine effective curvature 
       G4double R_1 = LocalRpp.mag();
 #ifdef DEBUG 
-      G4cout << " curvature= " << R_1*m << "m^-1" << G4endl;
+      G4cout << " curvature= " << R_1*CLHEP::m << "m^-1" << G4endl;
 #endif
       if(R_1>0.)
 	{
@@ -278,9 +278,9 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
 
 #ifdef DEBUG 
       G4cout << "BDSQuadStepper: final point in local coordinates:" << G4endl
-             << " x= " << LocalR[0]/m << "m" << G4endl
-             << " y= " << LocalR[1]/m << "m" << G4endl
-             << " z= " << LocalR[2]/m << "m" << G4endl
+             << " x= " << LocalR[0]/CLHEP::m << "m" << G4endl
+             << " y= " << LocalR[1]/CLHEP::m << "m" << G4endl
+             << " z= " << LocalR[2]/CLHEP::m << "m" << G4endl
              << " x'= " << LocalRp[0] << G4endl
              << " y'= " << LocalRp[1] << G4endl
              << " z'= " << LocalRp[2] << G4endl

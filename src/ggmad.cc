@@ -99,9 +99,9 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    // place into mother volume
 
 	    G4RotationMatrix *rot = new G4RotationMatrix;
-	    rot->rotateX(2*pi*phi/360.);
-	    rot->rotateY(2*pi*theta/360.);
-	    rot->rotateZ(2*pi*psi/360.);
+	    rot->rotateX(CLHEP::twopi*phi/360.);
+	    rot->rotateY(CLHEP::twopi*theta/360.);
+	    rot->rotateZ(CLHEP::twopi*psi/360.);
 
 	    // G4VPhysicalVolume* PhysiComp =
 	    new G4PVPlacement(
@@ -156,7 +156,7 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 			       rmax, // outer R
 			       z, //z
 			       phi0,//phi 0 
-			       2 * pi * dphi / 360  ); //delta phi
+			       CLHEP::twopi * dphi / 360  ); //delta phi
 	    
 	    lvol = new G4LogicalVolume(aTubs,
 				       theMaterial,
@@ -166,9 +166,9 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    // place into mother volume
 	    
 	    G4RotationMatrix *rot = new G4RotationMatrix;
-	    rot->rotateX(2*pi*phi/360.);
-	    rot->rotateY(2*pi*theta/360.);
-	    rot->rotateZ(2*pi*psi/360.);
+	    rot->rotateX(CLHEP::twopi*phi/360.);
+	    rot->rotateY(CLHEP::twopi*theta/360.);
+	    rot->rotateZ(CLHEP::twopi*psi/360.);
 
 	    // G4VPhysicalVolume* PhysiComp =
 	    new G4PVPlacement(
@@ -228,7 +228,7 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 			       rmax2,
 			       z, //z
 			       phi0,//phi 0 
-			       2 * pi * dphi / 360  ); //delta phi
+			       CLHEP::twopi * dphi / 360  ); //delta phi
 	    
 	    lvol = new G4LogicalVolume(aCons,
 				       theMaterial,
@@ -240,9 +240,9 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    // place into mother volume
 
 	    G4RotationMatrix *rot = new G4RotationMatrix;
-	    rot->rotateX(2*pi*phi/360.);
-	    rot->rotateY(2*pi*theta/360.);
-	    rot->rotateZ(2*pi*psi/360.);
+	    rot->rotateX(CLHEP::twopi*phi/360.);
+	    rot->rotateY(CLHEP::twopi*theta/360.);
+	    rot->rotateZ(CLHEP::twopi*psi/360.);
 
 	    // G4VPhysicalVolume* PhysiComp =
 	    new G4PVPlacement(
@@ -301,9 +301,9 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    // place into mother volume
 
 	    G4RotationMatrix *rot = new G4RotationMatrix;
-	    rot->rotateX(2*pi*phi/360.);
-	    rot->rotateY(2*pi*theta/360.);
-	    rot->rotateZ(2*pi*psi/360.);
+	    rot->rotateX(CLHEP::twopi*phi/360.);
+	    rot->rotateY(CLHEP::twopi*theta/360.);
+	    rot->rotateZ(CLHEP::twopi*psi/360.);
 	    
 	    
 	    // G4VPhysicalVolume* PhysiComp =

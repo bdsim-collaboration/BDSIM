@@ -60,10 +60,10 @@ void BDSSamplerCylinder::SamplerCylinderLogicalVolume()
 
       itsMarkerLogicalVolume=
 	new G4LogicalVolume(new G4Tubs(itsName+"_body",
-				       itsRadius-1.e-6*m,
+				       itsRadius-1.e-6*CLHEP::m,
 				       itsRadius,
 				       itsLength/2,
-				       0,twopi*radian),
+				       0,CLHEP::twopi*CLHEP::radian),
 			    BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			    itsName);
       
