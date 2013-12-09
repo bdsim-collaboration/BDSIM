@@ -1116,11 +1116,16 @@ void BDSPhysicsList::ConstructLaserWire()
 #include "G4AntiOmegaMinusInelasticProcess.hh"
 
 // Low-energy Models
-
+#if G4VERSION_NUMBER < 1000
 #include "G4LElastic.hh"
-#include "G4LFission.hh"
 #include "G4LCapture.hh"
+#else
+#include "G4HadronElastic.hh"
+#include "G4NeutronRadCapture.hh"
+#endif
+#include "G4LFission.hh"
 
+#if G4VERSION_NUMBER < 1000
 #include "G4LEPionPlusInelastic.hh"
 #include "G4LEPionMinusInelastic.hh"
 #include "G4LEKaonPlusInelastic.hh"
@@ -1146,6 +1151,10 @@ void BDSPhysicsList::ConstructLaserWire()
 #include "G4LEAlphaInelastic.hh"
 #include "G4LEOmegaMinusInelastic.hh"
 #include "G4LEAntiOmegaMinusInelastic.hh"
+#else
+#include "G4CascadeInterface.hh"
+#include "G4BinaryLightIonReaction.hh"
+#endif
 
 // -- generator models
 #include "G4TheoFSGenerator.hh"
@@ -1156,7 +1165,6 @@ void BDSPhysicsList::ConstructLaserWire()
 #include "G4StatMF.hh"
 #include "G4GeneratorPrecompoundInterface.hh"
 #include "G4Fancy3DNucleus.hh"
-#include "G4LEProtonInelastic.hh"
 #include "G4StringModel.hh"
 #include "G4PreCompoundModel.hh"
 #include "G4FTFModel.hh"
@@ -1217,10 +1225,21 @@ void BDSPhysicsList::ConstructHad()
 // done with the generator model (most of the above is also available as default)
    G4HadronElasticProcess* theElasticProcess = 
                                     new G4HadronElasticProcess;
+#if G4VERSION_NUMBER < 1000
    G4LElastic* theElasticModel = new G4LElastic;
+#else
+   G4HadronElastic* theElasticModel = new G4HadronElastic;
+#endif
    theElasticProcess->RegisterMe(theElasticModel);
    G4HadronElasticProcess* theElasticProcess1 = 
                                     new G4HadronElasticProcess;
+
+   // low energy inelastic scattering models for versions 4.10
+#if G4VERSION_NUMBER > 999
+   G4CascadeInterface* theInelasticModel = new G4CascadeInterface();
+   G4BinaryLightIonReaction* theInelasticIonModel = new G4BinaryLightIonReaction();
+#endif
+
    theParticleIterator->reset();
    while ((*theParticleIterator)()) {
       G4ParticleDefinition* particle = theParticleIterator->value();
@@ -1231,8 +1250,10 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4PionPlusInelasticProcess* theInelasticProcess = 
                                 new G4PionPlusInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEPionPlusInelastic* theInelasticModel = 
                                 new G4LEPionPlusInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1241,8 +1262,10 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4PionMinusInelasticProcess* theInelasticProcess = 
                                 new G4PionMinusInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEPionMinusInelastic* theInelasticModel = 
                                 new G4LEPionMinusInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1251,7 +1274,9 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4KaonPlusInelasticProcess* theInelasticProcess = 
                                   new G4KaonPlusInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEKaonPlusInelastic* theInelasticModel = new G4LEKaonPlusInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1260,8 +1285,10 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4KaonZeroSInelasticProcess* theInelasticProcess = 
                              new G4KaonZeroSInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEKaonZeroSInelastic* theInelasticModel = 
                              new G4LEKaonZeroSInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1270,8 +1297,10 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4KaonZeroLInelasticProcess* theInelasticProcess = 
                              new G4KaonZeroLInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEKaonZeroLInelastic* theInelasticModel = 
                              new G4LEKaonZeroLInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1280,8 +1309,10 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4KaonMinusInelasticProcess* theInelasticProcess = 
                                  new G4KaonMinusInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEKaonMinusInelastic* theInelasticModel = 
                                  new G4LEKaonMinusInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1290,7 +1321,9 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4ProtonInelasticProcess* theInelasticProcess = 
                                     new G4ProtonInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEProtonInelastic* theInelasticModel = new G4LEProtonInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1299,8 +1332,10 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4AntiProtonInelasticProcess* theInelasticProcess = 
                                 new G4AntiProtonInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEAntiProtonInelastic* theInelasticModel = 
                                 new G4LEAntiProtonInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1308,13 +1343,19 @@ void BDSPhysicsList::ConstructHad()
       else if (particleName == "neutron") {
          
           // elastic scattering
+#if G4VERSION_NUMBER < 1000
          G4LElastic* theElasticModel1 = new G4LElastic;
+#else
+	 G4HadronElastic* theElasticModel1 = new G4HadronElastic;
+#endif
          theElasticProcess1->RegisterMe(theElasticModel1);
          pmanager->AddDiscreteProcess(theElasticProcess1);
           // inelastic scattering
          G4NeutronInelasticProcess* theInelasticProcess = 
                                     new G4NeutronInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LENeutronInelastic* theInelasticModel = new G4LENeutronInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1327,7 +1368,11 @@ void BDSPhysicsList::ConstructHad()
          // capture
          G4HadronCaptureProcess* theCaptureProcess =
                                     new G4HadronCaptureProcess;
+#if G4VERSION_NUMBER < 1000
          G4LCapture* theCaptureModel = new G4LCapture;
+#else
+	 G4NeutronRadCapture* theCaptureModel = new G4NeutronRadCapture;
+#endif
          theCaptureProcess->RegisterMe(theCaptureModel);
          pmanager->AddDiscreteProcess(theCaptureProcess);
       }  
@@ -1335,8 +1380,10 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4AntiNeutronInelasticProcess* theInelasticProcess = 
                                new G4AntiNeutronInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEAntiNeutronInelastic* theInelasticModel = 
                                new G4LEAntiNeutronInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
 	 theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1345,7 +1392,9 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4LambdaInelasticProcess* theInelasticProcess = 
                                     new G4LambdaInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LELambdaInelastic* theInelasticModel = new G4LELambdaInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1354,8 +1403,10 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4AntiLambdaInelasticProcess* theInelasticProcess = 
                                 new G4AntiLambdaInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEAntiLambdaInelastic* theInelasticModel = 
                                 new G4LEAntiLambdaInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1364,8 +1415,10 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4SigmaPlusInelasticProcess* theInelasticProcess = 
                                  new G4SigmaPlusInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LESigmaPlusInelastic* theInelasticModel = 
                                  new G4LESigmaPlusInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1374,8 +1427,10 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4SigmaMinusInelasticProcess* theInelasticProcess = 
                                  new G4SigmaMinusInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LESigmaMinusInelastic* theInelasticModel = 
                                  new G4LESigmaMinusInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1384,8 +1439,10 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4AntiSigmaPlusInelasticProcess* theInelasticProcess = 
                              new G4AntiSigmaPlusInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEAntiSigmaPlusInelastic* theInelasticModel = 
                                  new G4LEAntiSigmaPlusInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1394,8 +1451,10 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4AntiSigmaMinusInelasticProcess* theInelasticProcess = 
                             new G4AntiSigmaMinusInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEAntiSigmaMinusInelastic* theInelasticModel = 
                                  new G4LEAntiSigmaMinusInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1404,8 +1463,10 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4XiZeroInelasticProcess* theInelasticProcess = 
                             new G4XiZeroInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEXiZeroInelastic* theInelasticModel = 
                                  new G4LEXiZeroInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1414,8 +1475,10 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4XiMinusInelasticProcess* theInelasticProcess = 
                             new G4XiMinusInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEXiMinusInelastic* theInelasticModel = 
                                  new G4LEXiMinusInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1424,8 +1487,10 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4AntiXiZeroInelasticProcess* theInelasticProcess = 
                             new G4AntiXiZeroInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEAntiXiZeroInelastic* theInelasticModel = 
                                  new G4LEAntiXiZeroInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1434,8 +1499,10 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4AntiXiMinusInelasticProcess* theInelasticProcess = 
                             new G4AntiXiMinusInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEAntiXiMinusInelastic* theInelasticModel = 
                                  new G4LEAntiXiMinusInelastic;
+#endif
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
@@ -1444,9 +1511,13 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4DeuteronInelasticProcess* theInelasticProcess = 
                             new G4DeuteronInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEDeuteronInelastic* theInelasticModel = 
                                  new G4LEDeuteronInelastic;
          theInelasticProcess->RegisterMe(theInelasticModel);
+#else
+         theInelasticProcess->RegisterMe(theInelasticIonModel);
+#endif
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
       }
@@ -1454,9 +1525,13 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4TritonInelasticProcess* theInelasticProcess = 
                             new G4TritonInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LETritonInelastic* theInelasticModel = 
                                  new G4LETritonInelastic;
          theInelasticProcess->RegisterMe(theInelasticModel);
+#else
+	 theInelasticProcess->RegisterMe(theInelasticIonModel);
+#endif
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
       }
@@ -1464,14 +1539,19 @@ void BDSPhysicsList::ConstructHad()
          pmanager->AddDiscreteProcess(theElasticProcess);
          G4AlphaInelasticProcess* theInelasticProcess = 
                             new G4AlphaInelasticProcess("inelastic");
+#if G4VERSION_NUMBER < 1000
          G4LEAlphaInelastic* theInelasticModel = 
                                  new G4LEAlphaInelastic;
          theInelasticProcess->RegisterMe(theInelasticModel);
+#else
+	 theInelasticProcess->RegisterMe(theInelasticIonModel);
+#endif
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
       }
       else if (particleName == "omega-") {
          pmanager->AddDiscreteProcess(theElasticProcess);
+#if G4VERSION_NUMBER < 1000
          G4OmegaMinusInelasticProcess* theInelasticProcess = 
                             new G4OmegaMinusInelasticProcess("inelastic");
          G4LEOmegaMinusInelastic* theInelasticModel = 
@@ -1479,9 +1559,11 @@ void BDSPhysicsList::ConstructHad()
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
+#endif
       }
       else if (particleName == "anti_omega-") {
          pmanager->AddDiscreteProcess(theElasticProcess);
+#if G4VERSION_NUMBER < 1000
          G4AntiOmegaMinusInelasticProcess* theInelasticProcess = 
                             new G4AntiOmegaMinusInelasticProcess("inelastic");
          G4LEAntiOmegaMinusInelastic* theInelasticModel = 
@@ -1489,6 +1571,7 @@ void BDSPhysicsList::ConstructHad()
          theInelasticProcess->RegisterMe(theInelasticModel);
          theInelasticProcess->RegisterMe(theTheoModel);
          pmanager->AddDiscreteProcess(theInelasticProcess);
+#endif
       }
    }
 }
