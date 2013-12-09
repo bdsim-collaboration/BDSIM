@@ -78,6 +78,7 @@ void BDSOutput::SetFormat(BDSOutputFormat val)
     }
 }
 
+#ifdef USE_ROOT
 void BDSOutput::BuildSamplerTree(G4String name){
   TTree* SamplerTree = new TTree(name, "Sampler output");
   
@@ -114,6 +115,7 @@ void BDSOutput::BuildSamplerTree(G4String name){
   SamplerTree->Branch("parentID",&pID,"parentID/I");
   SamplerTree->Branch("trackID",&track_id,"trackID/I");
 }
+#endif
 
 // output initialization (ROOT only)
 void BDSOutput::Init(G4int FileNum)
@@ -212,6 +214,7 @@ void BDSOutput::WriteAsciiHit(G4int PDGType, G4double Mom, G4double X, G4double 
     <<G4endl;
 }
 
+#ifdef USE_ROOT
 void BDSOutput::WriteRootHit(G4String Name, G4double   InitMom, G4double    InitX, G4double    InitY, G4double     InitZ, G4double     InitXPrime, G4double    InitYPrime, G4double InitZPrime, G4double  InitT, G4double  Mom, G4double X, G4double Y, G4double Z, G4double XPrime, G4double YPrime, G4double ZPrime, G4double T, G4double GlobalX, G4double GlobalY, G4double GlobalZ, G4double GlobalXPrime, G4double GlobalYPrime, G4double GlobalZPrime, G4double S, G4double Weight, G4int  PDGtype, G4int  EventNo, G4int   ParentID,G4int  TrackID){
 
   TTree* sTree=(TTree*)gDirectory->Get(Name);
@@ -247,6 +250,7 @@ void BDSOutput::WriteRootHit(G4String Name, G4double   InitMom, G4double    Init
   track_id=TrackID;
   sTree->Fill();
 }
+#endif
 
 void BDSOutput::WritePrimary(G4String samplerName, G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double zp,G4double t,G4double weight,G4int PDGType, G4int nEvent){
 #ifdef USE_ROOT
@@ -334,13 +338,15 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
   }
 }
 
-G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> TrajVec){
+/// write a trajectory to a root/ascii file
+// TODO: ASCII file not implemented - JS
+G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> &TrajVec){
   
+#ifdef USE_ROOT
   //  G4int tID;
   G4TrajectoryPoint* TrajPoint;
   G4ThreeVector TrajPos;
   
-#ifdef USE_ROOT
   TTree* TrajTree;
     
   G4String name = "Trajectories";
@@ -348,8 +354,6 @@ G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> TrajVec){
   TrajTree=(TTree*)gDirectory->Get(name);
 
   if(TrajTree == NULL) { G4cerr<<"TrajTree=NULL"<<G4endl; return -1;}
-#endif
-  
   
   if(TrajVec.size())
     {
@@ -370,65 +374,13 @@ G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> TrajVec){
 	      x = TrajPos.x() / m;
 	      y = TrajPos.y() / m;
 	      z = TrajPos.z() / m;
-              
-#ifdef USE_ROOT
+
 	      if( format == _ROOT) 
 		TrajTree->Fill();
-#endif
-              
-	     
 	    }
 	}
     }
-  
-  return 0;
-}
-
-// write a trajectory to a root/ascii file
-G4int BDSOutput::WriteTrajectory(TrajectoryVector* TrajVec)
-{  
-//  G4int tID;
-  G4TrajectoryPoint* TrajPoint;
-  G4ThreeVector TrajPos;
-
-#ifdef USE_ROOT
-  TTree* TrajTree;
-    
-  G4String name = "Trajectories";
-      
-  TrajTree=(TTree*)gDirectory->Get(name);
-
-  if(TrajTree == NULL) { G4cerr<<"TrajTree=NULL"<<G4endl; return -1;}
 #endif
-
-
-  if(TrajVec)
-    {
-      TrajectoryVector::iterator iT;
-      
-      for(iT=TrajVec->begin();iT<TrajVec->end();iT++)
-	{
-	  G4Trajectory* Traj=(G4Trajectory*)(*iT);
-	  
-	  //	  tID=Traj->GetTrackID();	      
-	  part = Traj->GetPDGEncoding();
-	  
-	  for(G4int j=0; j<Traj->GetPointEntries(); j++)
-	    {
-	      TrajPoint=(G4TrajectoryPoint*)Traj->GetPoint(j);
-	      TrajPos=TrajPoint->GetPosition();
-	      
-	      x = TrajPos.x() / m;
-	      y = TrajPos.y() / m;
-	      z = TrajPos.z() / m;
-
-#ifdef USE_ROOT
-	      if( format == _ROOT) 
-		TrajTree->Fill();
-#endif
-	    }
-	}
-    }
   
   return 0;
 }

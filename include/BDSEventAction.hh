@@ -59,7 +59,6 @@ private:
   G4VTrajectory* Traj;
   G4VTrajectoryPoint* trajEndPoint;
   G4ThreeVector trajEndPointThreeVector;
-  //  G4TrajectoryContainer* interestingTrajectories;
   std::vector<G4VTrajectory*> interestingTrajectories;
   
 
