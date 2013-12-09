@@ -855,8 +855,8 @@ parameters:
 		       {
 			 //ignore the "type attribute for the moment"
 		       }
-		   else
-		   if(!strcmp($1->name,"material")) 
+		     else
+		       if(!strcmp($1->name,"material")) 
 		       {
 			 params.materialset = 1;
 			 strcpy(params.material, $3);
@@ -875,13 +875,15 @@ parameters:
 		       }
 		   else 
 		   if(!strcmp($1->name,"scintmaterial")) 
-		     { strcpy(params.scintmaterial, $3); 
+		     {
 		       params.scintmaterialset = 1;
+		       strcpy(params.scintmaterial, $3); 
 		     } // material for a scintillator screen 
 		   else
 		   if(!strcmp($1->name,"airmaterial")) 
-		     { strcpy(params.airmaterial, $3); 
+		     {
 		       params.airmaterialset = 1;
+		       strcpy(params.airmaterial, $3); 
 		     } // material for air around scintillator screen 
 		    else
 		   if(!strcmp($1->name,"spec")) 
@@ -933,6 +935,18 @@ parameters:
                          {	 
                            params.materialset = 1;
                            strcpy(params.material, $3);
+                         }
+                       else
+			 if(!strcmp($1->name,"scintmaterial")) 
+			   {	 
+			     params.scintmaterialset = 1;
+			     strcpy(params.scintmaterial, $3);
+			   }
+			 else
+			   if(!strcmp($1->name,"airmaterial")) 
+			     {	 
+			       params.airmaterialset = 1;
+			       strcpy(params.airmaterial, $3);
                          }
                        else
                          if(!strcmp($1->name,"tunnelMaterial")) 

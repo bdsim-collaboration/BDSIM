@@ -345,11 +345,11 @@ void inherit_properties(struct Element e)
   if(!params.blmLocThetaset) { params.blmLocTheta = e.blmLocTheta; params.blmLocThetaset = 1; }
 
   if(!params.specset) { strncpy(params.spec,e.spec.c_str(),1024); params.specset = 1; }
-  if(!params.materialset) { strncpy(params.material,e.spec.c_str(),64); params.materialset = 1; }
+  if(!params.materialset) { strncpy(params.material,e.material.c_str(),64); params.materialset = 1; }
   if(!params.scintmaterialset) { strncpy(params.scintmaterial,e.scintmaterial.c_str(),64); params.scintmaterialset = 1; }
   if(!params.airmaterialset) { strncpy(params.airmaterial,e.airmaterial.c_str(),64); params.airmaterialset = 1; }
-  if(!params.tunnelmaterialset) { strncpy(params.tunnelMaterial,e.spec.c_str(),64); params.tunnelmaterialset = 1; }
-  if(!params.tunnelcavitymaterialset) { strncpy(params.tunnelCavityMaterial,e.spec.c_str(),64); params.tunnelcavitymaterialset = 1; }
+  if(!params.tunnelmaterialset) { strncpy(params.tunnelMaterial,e.tunnelMaterial.c_str(),64); params.tunnelmaterialset = 1; }
+  if(!params.tunnelcavitymaterialset) { strncpy(params.tunnelCavityMaterial,e.tunnelCavityMaterial.c_str(),64); params.tunnelcavitymaterialset = 1; }
   if(!params.tunnelRadiusset) { params.tunnelRadius = e.tunnelRadius; params.tunnelRadiusset = 1; }
   if(!params.tunnelOffsetXset) { params.tunnelOffsetX = e.tunnelOffsetX; params.tunnelOffsetXset = 1; }
   if(!params.precisionRegionset) { params.precisionRegion = e.precisionRegion; params.precisionRegionset = 1; }
@@ -835,12 +835,15 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.l = params.l;
     e.angle = params.angle;
     e.tscint = params.tscint;
-    e.scintmaterial = params.scintmaterial;  
+    e.scintmaterial = std::string(params.scintmaterial);
     e.airmaterial = params.airmaterial;  
     break;
 
   case _AWAKESCREEN:
     e.type = _AWAKESCREEN;
+    e.scintmaterial = std::string(params.scintmaterial);
+    std::cout << "scintmaterial: " << e.scintmaterial << " " <<  params.scintmaterial << std::endl;
+    e.tscint = params.tscint;
     break;
 
 

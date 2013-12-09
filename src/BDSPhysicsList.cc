@@ -788,6 +788,7 @@ void BDSPhysicsList::ConstructDecay()
 void BDSPhysicsList::ConstructOptical()
 {
   bool bCerOn=BDSGlobalConstants::Instance()->GetTurnOnCerenkov();
+  bool bBirksOn=BDSGlobalConstants::Instance()->GetTurnOnBirksSaturation();
 
 
   if(bCerOn){
@@ -820,8 +821,10 @@ void BDSPhysicsList::ConstructOptical()
   theScintillationProcess->SetScintillationYieldFactor(1.);
   theScintillationProcess->SetTrackSecondariesFirst(true);
   // Use Birks Correction in the Scintillation process
-  G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
-  theScintillationProcess->AddSaturation(emSaturation);
+  if(bBirksOn){
+    G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
+    theScintillationProcess->AddSaturation(emSaturation);
+  }
 
   
   theParticleIterator->reset();

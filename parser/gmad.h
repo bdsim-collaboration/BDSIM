@@ -393,8 +393,6 @@ struct Parameters {
     l=0; lset = 0;
     r = 0; rset = 0;
     tscint = 0.0001; tscintset = 0;
-    scintmaterialset=0;
-    airmaterialset=0;
 
     // materials' parameters
     A = 0; Aset = 0; //g*mol^-1
