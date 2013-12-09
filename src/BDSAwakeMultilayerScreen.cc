@@ -18,7 +18,7 @@ BDSAwakeMultilayerScreen::~BDSAwakeMultilayerScreen(){
 }
 
 void BDSAwakeMultilayerScreen::layers(){
-  _gapWidth=1e-3*mm;
+  _gapWidth=0*1e-3*mm;
   _gapSpacing=1*mm;
   backLayer();
   substrateLayer();
