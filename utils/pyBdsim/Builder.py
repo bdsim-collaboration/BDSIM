@@ -110,9 +110,9 @@ class Machine(list):
             if e.category == 'marker':
                 linetowrite = e.name + ' : ' + e.category
             else:
-                linetowrite = e.name + ' : ' + e.category+', l=' + format(e.length,'.15g') + '*m'
+                linetowrite = e.name + ' : ' + e.category+', l=%(LENGTH).15f *m' % {'LENGTH':e.length}
             for parameter in  e.keysextra():
-                linetowrite = linetowrite + ', ' + str(parameter) + '=' + format(e[parameter],'.15g')
+                linetowrite = linetowrite + ', ' + str(parameter) + '=%(NUMBER).15f' % {'NUMBER':e[parameter]}
             linetowrite = linetowrite + ';\n'
             f.write(linetowrite)
             elementnames.append(e.name)
