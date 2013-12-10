@@ -41,15 +41,15 @@ class Element(dict):
         dict.__init__(self)
         self.name        = str(name)
         self.category    = str(category)
-        self.length      = Decimal(length)
+        self.length      = Decimal(str(length))
         self['name']     = self.name
         self['category'] = self.category
         self['length']   = self.length
         self._keysextra = []
         for key,value in kwargs.iteritems():
             if type(value) != str:
-                self[key] = Decimal(value)
-                setattr(self,key,Decimal(value))
+                self[key] = Decimal(str(value))
+                setattr(self,key,Decimal(str(value)))
             else:
                 self[key] = value
                 setattr(self,key,value)
@@ -76,7 +76,7 @@ class Machine(list):
         list.__init__(self)
         self.nelements     = int(0)
         self.samplers      = []
-        self.totallength   = Decimal(0.0)
+        self.totallength   = Decimal(str(0.0))
         self._elementindex = int(0)
         self._maxindexpow  = 5 
 
@@ -272,20 +272,47 @@ def CreateDipoleRing(filename, ndipole=60, dlength=1.0, clength=10.0, samplers='
     if dlength > (0.9*clength):
         raise Warning("Dipole length > 90% of cell length - geometry errors may occur")
     a = Machine()
-    dangle = Decimal(2.0*math.pi / float(ndipole))
+    dangle = Decimal(str(2.0*math.pi / float(ndipole)))
     driftlength = clength - dlength
-    a.AddDipole(length=dlength/2.0, angle=dangle/Decimal(2.0))
+    a.AddDipole(length=dlength/2.0, angle=dangle/Decimal(2))
     a.AddDrift(length=driftlength)
     for i in range(1,ndipole,1):
         a.AddDipole(length=dlength, angle=dangle)
         a.AddDrift(length=driftlength)
-    a.AddDipole(length=dlength/2.0, angle=dangle/Decimal(2.0))
+    a.AddDipole(length=dlength/2.0, angle=dangle/Decimal(2))
     a.SetSamplers(samplers)
     a.WriteLattice(filename)
 
-def CreateDipoleFodoRing():
-    pass
-
+def CreateDipoleFodoRing(filename, ncells=60, circumference=200.0, samplers='first'):
+    a       = Machine()
+    cangle  = Decimal(str(2.0*math.pi / ncells))
+    clength = Decimal(str(float(circumference) / ncells))
+    #dipole = 0.7 of cell, quads=0.2, drift=0.1, two dipoles
+    #dipole:
+    dl  = clength * Decimal(str(0.7)) * Decimal(str(0.5))
+    da  = cangle/Decimal(2.0)
+    #quadrupole:
+    ql  = clength * Decimal('0.2') * Decimal('0.5')
+    k1  = SuggestFodoK(ql,dl)
+    #drift:
+    drl = clength * Decimal('0.1') * Decimal('0.25')
+    #naming
+    nplaces  = len(str(ncells))
+    basename = 'dfodo_'
+    for i in range(ncells):
+        cellname = basename + str(i).zfill(nplaces)
+        a.AddQuadrupole(cellname+'_qd_a',ql/Decimal('2.0'),k1)
+        a.AddDrift(cellname+'_dr_a',drl)
+        a.AddDipole(cellname+'_dp_a','sbend',dl,da)
+        a.AddDrift(cellname+'_dr_b',drl)
+        a.AddQuadrupole(cellname+'_qf_b',ql,k1*Decimal('-1.0'))
+        a.AddDrift(cellname+'_dr_c',drl)
+        a.AddDipole(cellname+'_dp_b','sbend',dl,da)
+        a.AddDrift(cellname+'_dr_d',drl)
+        a.AddQuadrupole(cellname+'_qd_c',ql/Decimal('2.0'),k1)
+    a.SetSamplers(samplers)
+    a.WriteLattice(filename)
+    
 def CreateFodoLine(filename, ncells=10, driftlength=4.0, magnetlength=1.0, samplers='all',**kwargs):
     ncells = int(ncells)
     a      = Machine()
@@ -295,4 +322,4 @@ def CreateFodoLine(filename, ncells=10, driftlength=4.0, magnetlength=1.0, sampl
     a.WriteLattice(filename)
 
 def SuggestFodoK(magnetlength,driftlength):
-    return 1.0 / (magnetlength*(magnetlength + driftlength))
+                return Decimal(1) / (Decimal(str(magnetlength))*(Decimal(str(magnetlength)) + Decimal(str(driftlength))))
