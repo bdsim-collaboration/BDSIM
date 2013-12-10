@@ -106,7 +106,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   } else {
     itsSamplerDiameter = opt.samplerDiameter * CLHEP::m;
   }
-  itsSamplerLength = 1E-8 * CLHEP::m;
+  itsSamplerLength = 4E-8 * CLHEP::m;
   itsThresholdCutCharged = opt.thresholdCutCharged * CLHEP::GeV;
   itsThresholdCutPhotons = opt.thresholdCutPhotons * CLHEP::GeV;
   itsProdCutPhotons = opt.prodCutPhotons * CLHEP::m;
