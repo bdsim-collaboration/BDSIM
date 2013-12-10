@@ -1,4 +1,4 @@
-d1: pcldrift, l=0.5, aperX=1*cm,aperY=1*cm;
+d1: pcldrift, l=0.5,aperDy=1*mm, aperX=1*cm,aperY=1*cm;
 
 lat : line = (d1);
 

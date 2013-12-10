@@ -1208,23 +1208,27 @@ BDSAcceleratorComponent* BDSComponentFactory::createLaser(){
 #ifdef DEBUG 
         G4cout << "---->creating Laser,"
                << " name= "<< _element.name
-               << " l=" << _element.l/CLHEP::m<<"m"
-               << " lambda= " << _element.waveLength/CLHEP::m << "m"
-               << " xSigma= " << _element.xsize/CLHEP::m << "m"
-               << " ySigma= " << _element.ysize/CLHEP::m << "m"
+               << " l=" << _element.l <<"m"
+               << " lambda= " << _element.waveLength << "m"
+               << " xSigma= " << _element.xsize << "m"
+               << " ySigma= " << _element.ysize << "m"
                << " xdir= " << _element.xdir
                << " ydir= " << _element.ydir
                << " zdir= " << _element.zdir
                << G4endl;
 #endif
+
+        G4double length = _element.l*CLHEP::m;
+        G4double lambda = _element.waveLength*CLHEP::m;
+
 	
 	G4ThreeVector direction = 
 	  G4ThreeVector(_element.xdir,_element.ydir,_element.zdir);
 	G4ThreeVector position  = G4ThreeVector(0,0,0);
 	
 	 return (new BDSLaserWire( _element.name,
-						_element.l,
-						_element.waveLength,
+						length,
+						lambda,
 						direction) );
 	
 }
@@ -1235,7 +1239,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
 #ifdef DEBUG 
   G4cout << "---->creating Screen,"
 	 << " name= "<< _element.name
-	 << " l=" << _element.l/m<<"m"
+	 << " l=" << _element.l <<"m"
 	 << G4endl;
 #endif
   return (new BDSScintillatorScreen( _element.name, _element.l*CLHEP::m, 0.1*CLHEP::mm));

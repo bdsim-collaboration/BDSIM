@@ -122,12 +122,6 @@ int main(int argc,char** argv) {
   //
 
 #ifdef DEBUG
-  G4cout << __FUNCTION__ << "> Setting global constants." << G4endl;
-#endif  
-
-  //  BDSGlobals = new BDSGlobalConstants(options);
-
-#ifdef DEBUG
   G4cout << __FUNCTION__ << "> Setting bunch options." << G4endl;
 #endif  
 
@@ -216,7 +210,7 @@ int main(int argc,char** argv) {
   G4double worldMaximumExtent=1000*m;
   // This sets the tolerances for the geometry (1e-11 times this value)
   G4GeometryManager::GetInstance()->SetWorldMaximumExtent(worldMaximumExtent); 
-  G4cout << __FUNCTION__ << "> Geometry toleranceswith worldMaximumExtent=" 
+  G4cout << __FUNCTION__ << "> Geometry tolerances with worldMaximumExtent=" 
 	 << worldMaximumExtent/m << "m: surface: " 
 	 << theGeometryTolerance->GetSurfaceTolerance() 
 	 << " angular: " << theGeometryTolerance->GetAngularTolerance() 
