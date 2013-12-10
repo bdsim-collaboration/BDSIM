@@ -86,7 +86,7 @@
 // Global variables 
 BDSOutput*    bdsOutput;         // output interface
 BDSBunch      bdsBunch;          // bunch information 
-BDSSamplerSD* BDSSamplerSensDet; // sampler???
+BDSSamplerSD* BDSSamplerSensDet; // sampler
 //=======================================================
 
 //=======================================================

@@ -36,11 +36,8 @@
 
 using namespace std;
 
-extern BDSSamplerSD* BDSSamplerSensDet;
-
 extern G4RotationMatrix* RotY90;
 extern BDSOutput* bdsOutput;
-//extern BDSGlobalConstants* BDSGlobalConstants::Instance();
 
 BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):
   itsMarkerVol(NULL),itsMagField(NULL),itsUniformMagField(NULL)

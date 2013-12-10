@@ -3,8 +3,6 @@
 #include "BDSSamplerSD.hh"
 #include <ctime>
 
-// extern G4String outputFilename;
-
 BDSOutput::BDSOutput():outputFileNumber(1)
 {
   format = _ASCII; // default - write an ascii file

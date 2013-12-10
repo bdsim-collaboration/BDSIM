@@ -19,8 +19,6 @@
 
 using namespace std;
 
-extern BDSSamplerSD* BDSSamplerSensDet;
-
 extern G4RotationMatrix* RotY90;
 extern BDSOutput* bdsOutput;
 //extern BDSGlobalConstants* BDSGlobalConstants::Instance();
