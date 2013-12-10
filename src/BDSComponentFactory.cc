@@ -267,9 +267,18 @@ BDSAcceleratorComponent* BDSComponentFactory::createDrift(){
   double aper(0), aperX(0), aperY(0);
   _element.phiAngleIn=0;
 
+  if(_element.l < BDSGlobalConstants::Instance()->GetLengthSafety()) // skip too short elements
+    {
+      G4cerr << "---->NOT creating Drift,"
+             << " name= " << _element.name
+             << ", TOO SHORT LENGTH:"
+             << " l= " << _element.l << "m"
+             << G4endl;
+      return NULL;
+    }
 
   if( _element.aper > 0 ) aper = _element.aper * CLHEP::m; //Set if aper specified for element
-  if( _element.aperX > 0 ) aperX = _element.aperX * CLHEP::m; //Set if aperX specified for elemen
+  if( _element.aperX > 0 ) aperX = _element.aperX * CLHEP::m; //Set if aperX specified for element
   if( _element.aperY > 0 ) aperY = _element.aperY * CLHEP::m; //Set if aperY specified for element
   if( (aperX>0) || (aperY>0)){  //aperX or aperY override aper, aper set to the largest of aperX or aperY
     aper=std::max(_element.aperX,_element.aperY);
@@ -282,40 +291,34 @@ BDSAcceleratorComponent* BDSComponentFactory::createDrift(){
       aper=BDSGlobalConstants::Instance()->GetBeampipeRadius()/CLHEP::m;
     }
     
-    if(_element.l > BDSGlobalConstants::Instance()->GetLengthSafety()) // skip too short elements                                                                                                         
-      {
 #ifdef DEBUG
-	G4cout << "---->creating Drift,"
-	       << " name= " << _element.name
-	       << " l= " << _element.l << "m"
-	       << " aperX= " << aperX << "m"
-	       << " aperY= " << aperY << "m"
-	       << " aper = " << aper << "m"
-	       << " phiAngleIn= " << _element.phiAngleIn 
-	       << " phiAngleOut= " << _element.phiAngleOut 
-	       << G4endl;
+    G4cout << "---->creating Drift,"
+	   << " name= " << _element.name
+	   << " l= " << _element.l << "m"
+	   << " aperX= " << aperX << "m"
+	   << " aperY= " << aperY << "m"
+	   << " aper = " << aper << "m"
+	   << " phiAngleIn= " << _element.phiAngleIn 
+	   << " phiAngleOut= " << _element.phiAngleOut 
+	   << G4endl;
 #endif
 	
-	//Create the phiAngleIn using BDSTransform3D
-	
-	
-	
-	G4bool aperset=true;
-	if(!(_element.tunnelOffsetX)<1e6){
-	  return (new BDSDrift( _element.name,
-					      _element.l*CLHEP::m,
-					      _element.blmLocZ,
-					      _element.blmLocTheta,
-					      aperX, aperY, _element.tunnelMaterial, aperset, aper, BDSGlobalConstants::Instance()->GetTunnelOffsetX(), _element.phiAngleIn, _element.phiAngleOut));
-	} else {
-	  return (new BDSDrift( _element.name,
-					      _element.l*CLHEP::m,
-					      _element.blmLocZ,
-					      _element.blmLocTheta,
-					      aperX, aperY, _element.tunnelMaterial, aperset, aper,_element.tunnelOffsetX*CLHEP::m, _element.phiAngleIn, _element.phiAngleOut) );
-	}
-	
-      }
+    //Create the phiAngleIn using BDSTransform3D
+    
+    G4bool aperset=true;
+    if(!(_element.tunnelOffsetX)<1e6){
+      return (new BDSDrift( _element.name,
+			    _element.l*CLHEP::m,
+			    _element.blmLocZ,
+			    _element.blmLocTheta,
+			    aperX, aperY, _element.tunnelMaterial, aperset, aper, BDSGlobalConstants::Instance()->GetTunnelOffsetX(), _element.phiAngleIn, _element.phiAngleOut));
+    } else {
+      return (new BDSDrift( _element.name,
+			    _element.l*CLHEP::m,
+			    _element.blmLocZ,
+			    _element.blmLocTheta,
+			    aperX, aperY, _element.tunnelMaterial, aperset, aper,_element.tunnelOffsetX*CLHEP::m, _element.phiAngleIn, _element.phiAngleOut) );
+    }
   } else {
     //Taper circular beam pipe between elements.                                                                                                                        
     _driftStartAper = _bpRad;
@@ -326,35 +329,27 @@ BDSAcceleratorComponent* BDSComponentFactory::createDrift(){
     if((_nextElement.type!=_ECOL)&&(_nextElement.type!=_RCOL)&&(_nextElement.type!=_MUSPOILER)){
       if( _nextElement.aper > 1.e-10*CLHEP::m ) _driftEndAper = _nextElement.aper * CLHEP::m;
     }
-    if(_element.l > 0){// skip zero-length elements                                                                                                         
+
 #ifdef DEBUG
-      G4cout << "---->creating Drift,"
-               << " name= " << _element.name
-               << " l= " << _element.l << "m"
-               << " startAper= " << _bpRad/CLHEP::m << "m"
-               << " endAper= " << _bpRad/CLHEP::m << "m"
-               << G4endl;
+    G4cout << "---->creating Drift,"
+	   << " name= " << _element.name
+	   << " l= " << _element.l << "m"
+	   << " startAper= " << _bpRad/CLHEP::m << "m"
+	   << " endAper= " << _bpRad/CLHEP::m << "m"
+	   << G4endl;
 #endif
-	if(!(_element.tunnelOffsetX<1e6)){
-	  return (new BDSDrift( _element.name,
-				_element.l*CLHEP::m,
-				_element.blmLocZ,
-				_element.blmLocTheta,
-				_driftStartAper, _driftEndAper, _element.tunnelMaterial, false));
-	} else {
-	  return (new BDSDrift( _element.name,
-				_element.l*CLHEP::m,
-				_element.blmLocZ,
-				_element.blmLocTheta,
-				_driftStartAper, _driftEndAper, _element.tunnelMaterial, false, 0, _element.tunnelOffsetX ) );
-	}
+    if(!(_element.tunnelOffsetX<1e6)){
+      return (new BDSDrift( _element.name,
+			    _element.l*CLHEP::m,
+			    _element.blmLocZ,
+			    _element.blmLocTheta,
+			    _driftStartAper, _driftEndAper, _element.tunnelMaterial, false));
     } else {
-      G4cerr << "---->NOT creating Drift,"
-             << " name= " << _element.name
-             << ", TOO SHORT LENGTH:"
-             << " l= " << _element.l << "m"
-             << G4endl;
-      return NULL;
+      return (new BDSDrift( _element.name,
+			    _element.l*CLHEP::m,
+			    _element.blmLocZ,
+			    _element.blmLocTheta,
+			    _driftStartAper, _driftEndAper, _element.tunnelMaterial, false, 0, _element.tunnelOffsetX ) );
     }
   }
   G4cerr << "NOT creating drift..." << G4endl;
@@ -486,11 +481,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   _bPrime = - _brho * (_element.k1 / CLHEP::m2) * _synch_factor;
-  //Should keep the correct geometry, therefore keep dipole withe zero angle.
-  if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
-    return (new BDSDrift( _element.name,
-					_element.l*CLHEP::m, _element.blmLocZ, _element.blmLocTheta,
-					aper, aper, _element.tunnelMaterial ) );
+  //Should keep the correct geometry, therefore keep dipole with zero angle.
+  if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) { // not possible due to check earlier - JS
+    return createDrift();
+    //return (new BDSDrift( _element.name,
+    //					_element.l*CLHEP::m, _element.blmLocZ, _element.blmLocTheta,
+    //					aper, aper, _element.tunnelMaterial ) );
   }
   else {
     /*
@@ -578,11 +574,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
   _bPrime = - _brho * (_element.k1 / CLHEP::m2) * _synch_factor;
   
   if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
-    return (new BDSDrift( _element.name,
-					length,                                            
-					_element.blmLocZ,
-					_element.blmLocTheta,
-					aper, aper, _element.tunnelMaterial ) );
+    return createDrift();
+    // return (new BDSDrift( _element.name,
+    // 					length,
+    // 					_element.blmLocZ,
+    // 					_element.blmLocTheta,
+    // 					aper, aper, _element.tunnelMaterial ) );
   }
   else {
     return (new BDSRBend( _element.name,
@@ -648,11 +645,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
 	   << " aper= " << aper/CLHEP::m << "m"
 	   << " tunnel material " << _element.tunnelMaterial
 	   << G4endl;
-    return (new BDSDrift( _element.name,
-					length,
-					_element.blmLocZ,
-					_element.blmLocTheta,
-					aper, aper, _element.tunnelMaterial ) );
+    return createDrift();
+    // return (new BDSDrift( _element.name,
+    // 					length,
+    // 					_element.blmLocZ,
+    // 					_element.blmLocTheta,
+    // 					aper, aper, _element.tunnelMaterial ) );
   } 
   else {
     return (new BDSKicker( _element.name,
@@ -675,8 +673,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
   //
   G4double aper = _bpRad;
   if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  G4double 
-    _FeRad = aper;
+  G4double _FeRad = aper;
   
   if( _element.outR < aper/CLHEP::m)
     {
@@ -715,12 +712,13 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
 	   << " aper= " << aper/CLHEP::m << "m"
 	   << " tunnel material " << _element.tunnelMaterial
 	   << G4endl;
-    
-    return (new BDSDrift( _element.name,
-					_element.l * CLHEP::m,
-					_element.blmLocZ,
-					_element.blmLocTheta,
-                                               aper, aper, _element.tunnelMaterial ) );
+
+    return createDrift();
+    // return (new BDSDrift( _element.name,
+    // 					_element.l * CLHEP::m,
+    // 					_element.blmLocZ,
+    // 					_element.blmLocTheta,
+    //                                            aper, aper, _element.tunnelMaterial ) );
   } 
   
   return (new BDSKicker( _element.name,
