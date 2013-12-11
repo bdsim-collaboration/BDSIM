@@ -90,55 +90,8 @@ class Machine(list):
         self._elementindex += 1
        
     def WriteLattice(self, filename):
-        #check filename
-        if filename[-5:] != '.gmad':
-            filename += '.gmad'
-        #check if file already exists
-        filename = _General.CheckFileExists(filename)
-        f = open(filename,"w")
-
-        # write some comments
-        f.write('! ' + time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime()) + '\n')
-        f.write('! pybdsim.Builder Lattice \n')
-        f.write('! number of elements = ' + str(self.nelements) + '\n')
-        f.write('! total length       = ' + str(self.totallength) + ' m\n\n')
-        f.write('! COMPONENT DEFINITION\n\n')
-
-        # write components
-        elementnames = []
-        for e in self:
-            if e.category == 'marker':
-                linetowrite = e.name + ' : ' + e.category
-            else:
-                linetowrite = e.name + ' : ' + e.category+', l=%(LENGTH).15f *m' % {'LENGTH':e.length}
-            for parameter in  e.keysextra():
-                linetowrite = linetowrite + ', ' + str(parameter) + '=%(NUMBER).15f' % {'NUMBER':e[parameter]}
-            linetowrite = linetowrite + ';\n'
-            f.write(linetowrite)
-            elementnames.append(e.name)
-
-        # write lattice lines
-        linelist = []
-        ti = 0
-        for ministring in _General.Chunks(elementnames,100):
-            stw2 = 'l'+str(ti)+': line = ('+', '.join(ministring)+');\n'
-            f.write(stw2)
-            linelist.append('l'+str(ti))
-            ti += 1
-        
-        f.write('\n! LATTICE DEFINITION\n\n')
-        # need to define the period before making sampler planes
-        f.write('lattice: line = ('+', '.join(linelist)+');\n')
-        f.write('use, period=lattice;\n') 
-        # now do the sampler planes
-
-        f.write('\n! SAMPLER DEFINITION\n\n')
-        for s in self.samplers:
-            f.write('sample, range=' + str(s) + ';\n')
-        
-        f.close()
-        print 'Machine lattice written to',filename
- 
+        WriteLattice(self,filename)
+    
     def AddMarker(self,name='mk'):
         self.append(Element(name,'marker',0.0))
     
@@ -323,3 +276,56 @@ def CreateFodoLine(filename, ncells=10, driftlength=4.0, magnetlength=1.0, sampl
 
 def SuggestFodoK(magnetlength,driftlength):
                 return Decimal(1) / (Decimal(str(magnetlength))*(Decimal(str(magnetlength)) + Decimal(str(driftlength))))
+
+def WriteLattice(machine, filename):
+    if type(machine) != Machine:
+        raise TypeError("Not machine instance")
+    #check filename
+    if filename[-5:] != '.gmad':
+        filename += '.gmad'
+    #check if file already exists
+    filename = _General.CheckFileExists(filename)
+    f = open(filename,"w")
+
+    # write some comments
+    f.write('! ' + time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime()) + '\n')
+    f.write('! pybdsim.Builder Lattice \n')
+    f.write('! number of elements = ' + str(machine.nelements) + '\n')
+    f.write('! total length       = ' + str(machine.totallength) + ' m\n\n')
+    f.write('! COMPONENT DEFINITION\n\n')
+    
+    # write components
+    elementnames = []
+    for e in machine:
+        if e.category == 'marker':
+            linetowrite = e.name+' : '+ e.category
+        else:
+            linetowrite = e.name+' : '+e.category+', l=%(LENGTH).15f *m' %{'LENGTH':e.length}
+        for parameter in  e.keysextra():
+            linetowrite = linetowrite+', '+str(parameter)+'=%(NUMBER).15f' %{'NUMBER':e[parameter]}
+        linetowrite = linetowrite + ';\n'
+        f.write(linetowrite)
+        elementnames.append(e.name)
+
+    # write lattice lines
+    linelist = []
+    ti = 0
+    for ministring in _General.Chunks(elementnames,100):
+        stw2 = 'l'+str(ti)+': line = ('+', '.join(ministring)+');\n'
+        f.write(stw2)
+        linelist.append('l'+str(ti))
+        ti += 1
+        
+    f.write('\n! LATTICE DEFINITION\n\n')
+    # need to define the period before making sampler planes
+    f.write('lattice: line = ('+', '.join(linelist)+');\n')
+    f.write('use, period=lattice;\n') 
+    # now do the sampler planes
+
+    f.write('\n! SAMPLER DEFINITION\n\n')
+    for s in machine.samplers:
+        f.write('sample, range=' + str(s) + ';\n')
+        
+    f.close()
+    print 'Machine lattice written to',filename
+ 
