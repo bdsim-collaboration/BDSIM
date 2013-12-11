@@ -220,35 +220,65 @@ class Machine(list):
                 if e.category == command:
                     self.samplers.append(e.name)
 
-def CreateDipoleRing(filename, ndipole=60, dlength=1.0, clength=10.0, samplers='first'):
-    ndipole = int(ndipole)
-    if dlength > (0.9*clength):
-        raise Warning("Dipole length > 90% of cell length - geometry errors may occur")
-    a = Machine()
-    dangle = Decimal(str(2.0*math.pi / float(ndipole)))
+# General scripts below this point
+
+def CreateDipoleRing(filename, ncells=60, circumference=100.0, dfraction=0.1, samplers='first'):
+    """
+    Create a ring composed solely of dipoles
+    filename
+    ncells        - number of cells, each containing 1 dipole and a drift
+    circumference - in metres
+    dfraction     - the fraction of dipoles in each cell (0.0<dfraction<1.0)
+    samplers      - 'first', 'last' or 'all'
+    
+    """
+    ncells = int(ncells)
+    if dfraction > 1.0:
+        raise Warning("Fraction of dipoles must be less than 1.0 -> setting to 0.9")
+        dfraction = 0.9
+    if dfraction < 0.0:
+        raise Warning("Fraction of dipoles must be greater than 1.0 -> setting to 0.1")
+        dfraction = 0.1
+    a           = Machine()
+    dangle      = Decimal(str(2.0*math.pi / ncells))
+    clength     = Decimal(str(float(circumference) / ncells))
+    dlength     = clength * Decimal(str(dfraction))
     driftlength = clength - dlength
-    a.AddDipole(length=dlength/2.0, angle=dangle/Decimal(2))
+    a.AddDipole(length=dlength/Decimal(2), angle=dangle/Decimal(2))
     a.AddDrift(length=driftlength)
-    for i in range(1,ndipole,1):
+    for i in range(1,ncells,1):
         a.AddDipole(length=dlength, angle=dangle)
         a.AddDrift(length=driftlength)
-    a.AddDipole(length=dlength/2.0, angle=dangle/Decimal(2))
+    a.AddDipole(length=dlength/Decimal(2), angle=dangle/Decimal(2))
     a.SetSamplers(samplers)
     a.WriteLattice(filename)
 
 def CreateDipoleFodoRing(filename, ncells=60, circumference=200.0, samplers='first'):
+    """
+    Create a ring composed of fodo cells with 2 dipoles per fodo cell.
+
+    filename
+    ncells         - number of fodo+dipole cells to create
+    circumference  - circumference of machine in metres
+    samplers       - 'first','last' or 'all'
+    
+    Hard coded to produce the following cell fractions:
+    50% dipoles
+    20% quadrupoles
+    30% beam pipe / drift
+    """
     a       = Machine()
     cangle  = Decimal(str(2.0*math.pi / ncells))
     clength = Decimal(str(float(circumference) / ncells))
-    #dipole = 0.7 of cell, quads=0.2, drift=0.1, two dipoles
+    #dipole = 0.5 of cell, quads=0.2, drift=0.3, two dipoles
     #dipole:
-    dl  = clength * Decimal(str(0.7)) * Decimal(str(0.5))
+    dl  = clength * Decimal(str(0.5)) * Decimal(str(0.5))
     da  = cangle/Decimal(2.0)
     #quadrupole:
     ql  = clength * Decimal('0.2') * Decimal('0.5')
-    k1  = SuggestFodoK(ql,dl)
+    k1  = Decimal(str(SuggestFodoK(ql,dl)))
     #drift:
-    drl = clength * Decimal('0.1') * Decimal('0.25')
+    drl = clength * Decimal('0.3') * Decimal('0.25')
     #naming
     nplaces  = len(str(ncells))
     basename = 'dfodo_'
@@ -267,6 +297,16 @@ def CreateDipoleFodoRing(filename, ncells=60, circumference=200.0, samplers='fir
     a.WriteLattice(filename)
     
 def CreateFodoLine(filename, ncells=10, driftlength=4.0, magnetlength=1.0, samplers='all',**kwargs):
+    """
+    Create a FODO lattice with ncells.
+
+    ncells       - number of fodo cells
+    driftlength  - length of drift segment in between magnets
+    magnetlength - length of quadrupoles
+    samplers     - 'all','first' or 'last'
+    **kwargs     - kwargs to supply to quadrupole constructor
+
+    """
     ncells = int(ncells)
     a      = Machine()
     k1     = SuggestFodoK(magnetlength,driftlength)
@@ -275,7 +315,14 @@ def CreateFodoLine(filename, ncells=10, driftlength=4.0, magnetlength=1.0, sampl
     a.WriteLattice(filename)
 
 def SuggestFodoK(magnetlength,driftlength):
-                return Decimal(1) / (Decimal(str(magnetlength))*(Decimal(str(magnetlength)) + Decimal(str(driftlength))))
+    """
+    SuggestFodoK(magnetlength,driftlength)
+
+    returns k1 (float) value for matching into next quad in a FODO cell.
+    f = 1/(k1 * magnetlength) = driftlength -> solve for k1
+
+    """
+    return 1.0 / (float(magnetlength)*(float(magnetlength) + float(driftlength)))
 
 def WriteLattice(machine, filename):
     if type(machine) != Machine:
