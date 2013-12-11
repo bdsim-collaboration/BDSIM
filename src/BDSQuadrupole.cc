@@ -143,11 +143,15 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
       // define sensitive volumes for hit generation
       //
       if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
+#ifdef DEBUG
         G4cout << "BDSQuadrupole.cc:> setting sensitive beam pipe" << G4endl;
+#endif
         SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
       }
       if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
+#ifdef DEBUG
         G4cout << "BDSQuadrupole.cc:> setting sensitive outer volume" << G4endl;
+#endif
         SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
       }
       //
@@ -226,11 +230,15 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
 	  // define sensitive volumes for hit generation
 	  //
           if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-            G4cout << "BDSQuadrupole.cc:> setting sensitive beampipe 2" << G4endl;            
+#ifdef DEBUG
+            G4cout << "BDSQuadrupole.cc:> setting sensitive beampipe 2" << G4endl;
+#endif
             SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
           }
           if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-            G4cout << "BDSQuadrupole.cc:> setting sensitive outer volume 2" << G4endl;           
+#ifdef DEBUG
+            G4cout << "BDSQuadrupole.cc:> setting sensitive outer volume 2" << G4endl;
+#endif
             SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
           }
 		  

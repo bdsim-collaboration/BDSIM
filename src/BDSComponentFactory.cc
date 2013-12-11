@@ -439,10 +439,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
   
   if( _element.outR < aper/CLHEP::m)
     {
-      G4cerr << _element.name << ": outer radius smaller than aperture: "
+#ifdef DEBUG
+      G4cout << _element.name << ": outer radius smaller than aperture: "
 	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cerr << _element.name << ": setting outer radius to default = "
+      G4cout << _element.name << ": setting outer radius to default = "
 	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
+#endif
       _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
     }
   
@@ -530,10 +532,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
   
   if( _element.outR < aper/CLHEP::m)
     {
-      G4cerr << _element.name << ": outer radius smaller than aperture: "
+#ifdef DEBUG
+      G4cout << _element.name << ": outer radius smaller than aperture: "
 	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cerr << _element.name << ": setting outer radius to default = "
+      G4cout << _element.name << ": setting outer radius to default = "
 	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
+#endif
       _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
     }
   
@@ -608,10 +612,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
   
   if( _element.outR < aper/CLHEP::m)
     {
-      G4cerr << _element.name << ": outer radius smaller than aperture: "
+#ifdef DEBUG
+      G4cout << _element.name << ": outer radius smaller than aperture: "
 	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cerr << _element.name << ": setting outer radius to default = "
+      G4cout << _element.name << ": setting outer radius to default = "
 	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
+#endif
       _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
     }
   
@@ -677,10 +683,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
   
   if( _element.outR < aper/CLHEP::m)
     {
-      G4cerr << _element.name << ": outer radius smaller than aperture: "
+#ifdef DEBUG
+      G4cout << _element.name << ": outer radius smaller than aperture: "
 	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cerr << _element.name << ": setting outer radius to default = "
+      G4cout << _element.name << ": setting outer radius to default = "
 	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
+#endif
       _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
     }
   G4double length = _element.l*CLHEP::m;
@@ -743,10 +751,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createQuad(){
   _FeRad = aper;
   if( _element.outR < aper/CLHEP::m)
     {
-      G4cerr << _element.name << ": outer radius smaller than aperture: "
+#ifdef DEBUG
+      G4cout << _element.name << ": outer radius smaller than aperture: "
 	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cerr << _element.name << ": setting outer radius to default = "
+      G4cout << _element.name << ": setting outer radius to default = "
 	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
+#endif
       _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
     }
   
@@ -782,10 +792,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole(){
 
 	if( _element.outR < aper/CLHEP::m)
 	  {
-	    G4cerr << _element.name << ": outer radius smaller than aperture: "
+#ifdef DEBUG
+	    G4cout << _element.name << ": outer radius smaller than aperture: "
 		   << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-	    G4cerr << _element.name << ": setting outer radius to default = "
+	    G4cout << _element.name << ": setting outer radius to default = "
 		   << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
+#endif
 	    _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
 	  }
 
@@ -838,10 +850,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole(){
 
 	if( _element.outR < aper/CLHEP::m)
 	  {
-	    G4cerr << _element.name << ": outer radius smaller than aperture: "
+#ifdef DEBUG
+	    G4cout << _element.name << ": outer radius smaller than aperture: "
 		   << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-	    G4cerr << _element.name << ": setting outer radius to default = "
+	    G4cout << _element.name << ": setting outer radius to default = "
 		   << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
+#endif
 	    _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
 	  }
 
@@ -895,10 +909,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole(){
   
   if( _element.outR < aper/CLHEP::m)
     {
-      G4cerr << _element.name << ": outer radius smaller than aperture: "
+#ifdef DEBUG
+      G4cout << _element.name << ": outer radius smaller than aperture: "
 	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cerr << _element.name << ": setting outer radius to default = "
+      G4cout << _element.name << ": setting outer radius to default = "
 	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
+#endif
       _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
     }
   
@@ -975,10 +991,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 /* Fix for element volume overlaps - do not set default outR!
 	if( _element.outR < aper/CLHEP::m)
 	  {
-	    G4cerr << _element.name << ": outer radius smaller than aperture: "
+#ifdef DEBUG
+	    G4cout << _element.name << ": outer radius smaller than aperture: "
 		   << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-	    G4cerr << _element.name << ": setting outer radius to default = "
+	    G4cout << _element.name << ": setting outer radius to default = "
 		   << "aper+22*cm"<<G4endl;
+#endif
 	    _element.outR = 0.22;
 	  }
 */
@@ -1027,10 +1045,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 
 	if( _element.outR < aper/CLHEP::m)
 	  {
-	    G4cerr << _element.name << ": outer radius smaller than aperture: "
+#ifdef DEBUG
+	    G4cout << _element.name << ": outer radius smaller than aperture: "
 		   << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-	    G4cerr << _element.name << ": setting outer radius to default = "
+	    G4cout << _element.name << ": setting outer radius to default = "
 		   << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
+#endif
 	    _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
 	  }
 
