@@ -20,6 +20,8 @@
 #include "BDS3DMagField.hh"
 #include "BDSXYMagField2.hh"
 #include "G4NystromRK4.hh"
+#include "G4ClassicalRK4.hh"
+#include "G4HelixImplicitEuler.hh"
 #include "myQuadStepper.hh"
 
 // geometry drivers
@@ -52,13 +54,13 @@ extern LogVolMap* LogVol;
 //============================================================
 
 BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap,
-		       G4double aLength, G4double bpRad, G4double outR, G4String aTunnelMaterial, G4double aTunnelRadius, G4double aTunnelOffsetX, G4String aTunnelCavityMaterial, G4int aPrecisionRegion):
+		       G4double aLength, G4double bpRad, G4double outR, G4String aTunnelMaterial, G4double aTunnelRadius, G4double aTunnelOffsetX, G4String aTunnelCavityMaterial, G4int aPrecisionRegion, G4double fieldZOffset):
   BDSAcceleratorComponent(
 			  aName,
 			  aLength,bpRad,0,0,
 			  SetVisAttributes(), aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*m, aTunnelOffsetX*m, aTunnelCavityMaterial, aPrecisionRegion),
   fChordFinder(NULL), itsFStepper(NULL), itsFEquation(NULL), itsEqRhs(NULL), 
-  itsField(NULL), itsMagField(NULL), itsCachedMagField(NULL), itsUniformMagField(NULL)
+  itsField(NULL), itsMagField(NULL), itsCachedMagField(NULL), itsUniformMagField(NULL), itsFieldZOffset(fieldZOffset)
 {
   itsFieldVolName="";
   itsFieldIsUniform=false;
@@ -315,7 +317,6 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       
       itsMagField = new BDS3DMagField(bFile, 0);
       itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*um);
-      
       BuildMagField(true);
     }else if(bFormat=="XY"){
 #ifdef DEBUG
@@ -404,7 +405,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 #ifdef DEBUG
       G4cout << "BDSElement.cc> Making BDS3DMagField..." << G4endl;
 #endif
-      itsMagField = new BDS3DMagField(bFile, 0);
+      itsMagField = new BDS3DMagField(bFile, itsFieldZOffset);
       itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*um);
       
       BuildMagField(true);
@@ -477,19 +478,19 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
 #ifdef DEBUG
     G4cout << "BDSElement.cc> Building magnetic field..." << endl;
 #endif
-    itsEqRhs = new G4Mag_UsualEqRhs(itsCachedMagField);
+    itsEqRhs = new G4Mag_UsualEqRhs(itsMagField);
     if( (itsMagField->GetHasUniformField())&!(itsMagField->GetHasNPoleFields() || itsMagField->GetHasFieldMap())){
-      itsFStepper = new G4NystromRK4(itsEqRhs); 
+      itsFStepper = new G4HelixImplicitEuler(itsEqRhs); 
     } else {
-      itsFStepper = new G4NystromRK4(itsEqRhs);
+      itsFStepper = new G4HelixImplicitEuler(itsEqRhs);
     }
-    fieldManager->SetDetectorField(itsCachedMagField );
+    fieldManager->SetDetectorField(itsMagField );
   } else {
 #ifdef DEBUG
     G4cout << "BDSElement.cc> Building uniform magnetic field..." << endl;
 #endif
     itsEqRhs = new G4Mag_UsualEqRhs(itsUniformMagField);
-    itsFStepper = new G4NystromRK4(itsEqRhs); 
+    itsFStepper = new G4HelixImplicitEuler(itsEqRhs); 
     fieldManager->SetDetectorField(itsUniformMagField );
   }
 

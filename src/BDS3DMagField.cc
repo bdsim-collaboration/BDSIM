@@ -4,12 +4,12 @@
 #include "BDSGlobalConstants.hh"
 #include "BDS3DMagField.hh"
 
+
+
 BDS3DMagField::BDS3DMagField( const char* filename, double zOffset ) 
   :fZoffset(zOffset),invertX(false),invertY(false),invertZ(false)
 {    
-  fZoffset = -250*cm;
-  zOffset = -250*cm;
-  double lenUnit= m;
+  _lenUnit= m;
   double fieldUnit= tesla; 
   G4cout << "\n-----------------------------------------------------------"
 	 << "\n      Magnetic field"
@@ -59,10 +59,11 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
     for (iy=0; iy<ny; iy++) {
       for (iz=0; iz<nz; iz++) {
         file >> xval >> yval >> zval >> bx >> by >> bz;
+	G4cout << "Read: " << xval << " " << yval << " " << zval << " " << bx << " " << by << " " << bz << G4endl;
         if ( ix==0 && iy==0 && iz==0 ) {
-          minx = xval * lenUnit;
-          miny = yval * lenUnit;
-          minz = zval * lenUnit;
+          minx = xval * _lenUnit;
+          miny = yval * _lenUnit;
+          minz = zval * _lenUnit;
         }
         xField[ix][iy][iz] = bx * fieldUnit;
         yField[ix][iy][iz] = by * fieldUnit;
@@ -72,9 +73,9 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
   }
   file.close();
 
-  maxx = xval * lenUnit;
-  maxy = yval * lenUnit;
-  maxz = zval * lenUnit;
+  maxx = xval * _lenUnit;
+  maxy = yval * _lenUnit;
+  maxz = zval * _lenUnit;
 
   G4cout << "\n ---> ... done reading " << G4endl;
 
@@ -108,41 +109,64 @@ void BDS3DMagField::GetFieldValue(const double point[4],
 				      double *Bfield ) const
 {
 
-  double x = point[0];
-  double y = point[1];
-  double z = point[2] + fZoffset;
+  G4ThreeVector local;
+
+  local[0] = point[0] - translation[0];
+  local[1] = point[1] - translation[1];
+  local[2] = point[2] + translation[2] + fZoffset;
+
+  local *= Rotation();
+
+#ifdef DEBUG
+  G4cout << "translation x,y,z = " << 
+    translation[0]/cm << ", " <<
+    translation[1]/cm << ", " <<
+    translation[2]/cm << ", " <<
+    " cm" << G4endl;
+    G4cout << "x = " << local[0]/cm << " cm" << G4endl;
+    G4cout << "y = " << local[1]/cm << " cm" << G4endl;
+    G4cout << "z = " << local[2]/cm << " cm" << G4endl;
+    G4cout << "minx = " << minx/cm << " cm" << G4endl;
+    G4cout << "miny = " << miny/cm << " cm" << G4endl;
+    G4cout << "minz = " << minz/cm << " cm" << G4endl;
+    G4cout << "maxx = " << maxx/cm << " cm" << G4endl;
+    G4cout << "maxy = " << maxy/cm << " cm" << G4endl;
+    G4cout << "maxz = " << maxz/cm << " cm" << G4endl;
+#endif
 
   double signy=1;
   double signz=1;
 
   //Mirror in x=0 plane and z=0 plane
-  if( x < 0 ){
+  /*
+  if( local[0] < 0 ){
 #ifdef DEBUG
-    G4cout << "x = " << x << ". Mirroring in x=0 plane." << G4endl;
+    G4cout << "x = " << local[0]/cm << " cm. Mirroring in x=0 plane." << G4endl;
 #endif
-    x *= -1;
+    local[0] *= -1;
     signy = -1;
     signz = -1;
   }
 
-  if( z <0 ){
+  if( local[2] <0 ){
 #ifdef DEBUG
-    G4cout << "z = " << z << ". Mirroring in z=0 plane." << G4endl;
+    G4cout << "z = " << local[2]/cm << " cm. Mirroring in z=0 plane." << G4endl;
 #endif
-    z *= -1;
+    local[2] *= -1;
     signz = -1;
   }
-  
+  */
+
   // Check that the point is within the defined region 
-  if ( x>=minx && x<=maxx &&
-       y>=miny && y<=maxy && 
-       z>=minz && z<=maxz ) {
+  if ( local[0]>=minx && local[0]<=maxx &&
+       local[1]>=miny && local[1]<=maxy && 
+       local[2]>=minz && local[2]<=maxz ) {
     
     // Position of given point within region, normalized to the range
     // [0,1]
-    double xfraction = (x - minx) / dx;
-    double yfraction = (y - miny) / dy; 
-    double zfraction = (z - minz) / dz;
+    double xfraction = (local[0] - minx) / dx;
+    double yfraction = (local[1] - miny) / dy; 
+    double zfraction = (local[2] - minz) / dz;
 
     if (invertX) { xfraction = 1 - xfraction;}
     if (invertY) { yfraction = 1 - yfraction;}
@@ -210,5 +234,19 @@ void BDS3DMagField::GetFieldValue(const double point[4],
     Bfield[1] = 0.0;
     Bfield[2] = 0.0;
   }
+
+#ifdef DEBUG
+  G4cout << "Bfield x,y,z = " << 
+    Bfield[0]/tesla << " " <<
+    Bfield[1]/tesla << " " <<
+    Bfield[2]/tesla <<
+    G4endl;
+#endif
 }
 
+void BDS3DMagField::Prepare(G4VPhysicalVolume *referenceVolume){
+  const G4RotationMatrix* Rot= referenceVolume->GetFrameRotation();
+  const G4ThreeVector Trans=referenceVolume->GetFrameTranslation();
+  SetOriginRotation(*Rot);
+  SetOriginTranslation(Trans);
+}

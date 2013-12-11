@@ -136,6 +136,7 @@ void flush(struct Element& e )
   e.k2 = 0;
   e.k3 = 0;
   e.angle = 0;
+  e.fieldZOffset = 0;
   e.phiAngleIn = 0;
   e.phiAngleOut = 0;
   e.tilt = 0;
@@ -205,6 +206,7 @@ void copy_properties(std::list<struct Element>::iterator dest, std::list<struct 
   (*dest).l = (*src).l;
 
   (*dest).angle = (*src).angle; 
+  (*dest).fieldZOffset = (*src).fieldZOffset; 
   (*dest).phiAngleIn = (*src).phiAngleIn; 
   (*dest).phiAngleOut = (*src).phiAngleOut; 
   (*dest).xsize = (*src).xsize; 
@@ -258,7 +260,8 @@ void copy_properties(std::list<struct Element>::iterator dest, std::list<struct 
 
   (*dest).geometryFile = (*src).geometryFile;
 
-  (*dest).bmapFile = (*src).bmapFile;
+  (*dest).bmapFile = (*src).bmapFile;  
+  (*dest).fieldZOffset = (*src).fieldZOffset;
   (*dest).precisionRegion = (*src).precisionRegion;
 
   (*dest).material = (*src).material;
@@ -291,6 +294,7 @@ void inherit_properties(struct Element e)
   if(!params.k2set) { params.k2 = e.k2; params.k2set = 1; }
   if(!params.k3set) { params.k3 = e.k3; params.k3set = 1; }
   if(!params.angleset) { params.angle = e.angle; params.angleset = 1; }
+  if(!params.fieldZOffsetset) { params.fieldZOffset = e.fieldZOffset; params.fieldZOffsetset = 1; }
   if(!params.phiAngleInset) { params.phiAngleIn = e.phiAngleIn; params.phiAngleInset = 1; }
   if(!params.phiAngleOutset) { params.phiAngleOut = e.phiAngleOut; params.phiAngleOutset = 1; }
   if(!params.xsizeset) { params.xsize = e.xsize; params.xsizeset = 1; }
@@ -776,6 +780,8 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
       e.blmLocZ = params.blmLocZ;
     if(params.blmLocThetaset)
       e.blmLocTheta = params.blmLocTheta;
+    if(params.fieldZOffsetset)
+      e.fieldZOffset = params.fieldZOffset;
     break;
 
   case _LINE:
@@ -1242,6 +1248,7 @@ void print(std::list<struct Element> l, int ident)
       case _ELEMENT:
 	printf("\ngeometry file : %s\n",(*it).geometryFile.c_str());
 	printf("B map file : %s\n",(*it).bmapFile.c_str());
+	printf("Field Z offset : %.10g\n",(*it).fieldZOffset);
 	//printf("E map driver : %s\n",(*it).geometryFile);
 	//printf("E map file : %s\n",(*it).geometryFile);
 	break;
@@ -1574,6 +1581,7 @@ double property_lookup(char *element_name, char *property_name)
    if(!strcmp(property_name,"k2")) return (*it).k2;
    if(!strcmp(property_name,"k3")) return (*it).k3;
    if(!strcmp(property_name,"angle")) return (*it).angle;
+   if(!strcmp(property_name,"fieldZOffset")) return (*it).fieldZOffset;
    if(!strcmp(property_name,"phiAngleIn")) return (*it).phiAngleIn;
    if(!strcmp(property_name,"phiAngleOut")) return (*it).phiAngleOut;
    if(!strcmp(property_name,"beampipeThickness")) return (*it).beampipeThickness;

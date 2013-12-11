@@ -530,6 +530,8 @@ parameters:
 		    else 
 		  if(!strcmp($1->name,"angle")) { params.angle = $3; params.angleset = 1;} // dipole bending angle
 		  else
+		  if(!strcmp($1->name,"fieldZOffset")) { params.fieldZOffset = $3; params.fieldZOffsetset = 1;} // dipole bending fieldZOffset
+		  else
 		  if(!strcmp($1->name,"phiAngleIn")) { params.phiAngleIn = $3; params.phiAngleInset = 1;} // element incoming angle
 		  else
 		  if(!strcmp($1->name,"phiAngleOut")) { params.phiAngleOut = $3; params.phiAngleOutset = 1;} // element outgoing angle
@@ -760,6 +762,8 @@ parameters:
 		  if(!strcmp($1->name,"k3")) { params.k3 = $3; params.k3set = 1;} // octupole coef.
 		    else 
 		      if(!strcmp($1->name,"angle")) { params.angle = $3; params.angleset = 1;} // dipole bending angle
+		      else
+		      if(!strcmp($1->name,"fieldZOffset")) { params.fieldZOffset = $3; params.fieldZOffsetset = 1;} // dipole bending fieldZOffset
 		      else
 			if(!strcmp($1->name,"phiAngleIn")) { params.phiAngleIn = $3; params.phiAngleInset = 1;} // element incoming angle
 			else

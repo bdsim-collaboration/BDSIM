@@ -42,7 +42,7 @@
 #include <map>
 #include <string>
 
-// #define DEBUG 1
+
 //============================================================
 
 typedef std::map<G4String,int> LogVolCountMap;

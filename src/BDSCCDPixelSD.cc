@@ -21,7 +21,7 @@
 
 #include "G4SDManager.hh"
 
-#define DEBUG 1
+
 
 BDSCCDPixelSD::BDSCCDPixelSD(G4String name)
   :G4VSensitiveDetector(name),CCDPixelCollection(NULL)

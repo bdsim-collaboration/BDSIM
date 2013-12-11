@@ -31,7 +31,7 @@
 
 extern G4bool outline;
 
-#define DEBUG 1
+
 
 #ifdef DEBUG
 bool debug1 = true;
@@ -1002,6 +1002,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
                << " tunnel material " << _element.tunnelMaterial
                << " tunnel cavity material " << _element.tunnelCavityMaterial
                << " precision region " << _element.precisionRegion
+               << " field z offset " << _element.fieldZOffset
                << G4endl;
 #endif
 
@@ -1012,7 +1013,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 						_element.bmapFile,
 						_element.l * m,
 						aper,
-						_element.outR * m , _element.tunnelMaterial, _element.tunnelRadius, _element.tunnelOffsetX, _element.tunnelCavityMaterial, _element.precisionRegion ));
+				  _element.outR * m , _element.tunnelMaterial, _element.tunnelRadius, _element.tunnelOffsetX, _element.tunnelCavityMaterial, _element.precisionRegion,_element.fieldZOffset ));
 	} 
 	else {
 	  return (new BDSElement( _element.name,
@@ -1020,7 +1021,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 						_element.bmapFile,
 						_element.l * m,
 						aper,
-						_element.outR * m , _element.tunnelMaterial, _element.tunnelRadius, (G4double)0, _element.tunnelCavityMaterial, _element.precisionRegion));
+				  _element.outR * m , _element.tunnelMaterial, _element.tunnelRadius, (G4double)0, _element.tunnelCavityMaterial, _element.precisionRegion, _element.fieldZOffset));
 	}
 	
 
