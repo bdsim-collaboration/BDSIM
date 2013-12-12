@@ -467,6 +467,11 @@ int main(int argc,char** argv) {
 #endif
   delete bdsOutput;
 
+#ifdef DEBUG
+  G4cout << __FUNCTION__ << "> BDSBeamline deleting..."<<G4endl;
+#endif
+  delete BDSBeamline::Instance();
+
 #ifdef DEBUG 
   G4cout << __FUNCTION__ << "> BDSGlobalConstants::Instance() deleting..."<<G4endl;
 #endif

@@ -46,6 +46,8 @@ BDSBeamline::~BDSBeamline(){
   delete _positionEnd;
   delete _positionFromCurrentCenter;
   delete _zHalfAngle;
+
+  _instance = 0;
 }
 
 void BDSBeamline::doNavigation(){
