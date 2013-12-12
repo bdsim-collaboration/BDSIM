@@ -116,6 +116,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
   double signz=1;
 
   //Mirror in x=0 plane and z=0 plane
+  /*
   if( x < 0 ){
 #ifdef DEBUG
     G4cout << "x = " << x << ". Mirroring in x=0 plane." << G4endl;
@@ -132,7 +133,8 @@ void BDS3DMagField::GetFieldValue(const double point[4],
     z *= -1;
     signz = -1;
   }
-  
+  */
+
   // Check that the point is within the defined region 
   if ( x>=minx && x<=maxx &&
        y>=miny && y<=maxy && 
