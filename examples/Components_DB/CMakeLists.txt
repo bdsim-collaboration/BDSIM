@@ -10,6 +10,9 @@ set(TESTING_ARGS "--batch")
 simple_testing(Component-ECollimator "--file=ecolTest.gmad" "")
 
 set(TESTING_ARGS "--batch")
+simple_testing(Component-GDML "--file=gdmlTest.gmad" "")
+
+set(TESTING_ARGS "--batch")
 simple_testing(Component-HKick "--file=hkickTest.gmad" "")
 
 set(TESTING_ARGS "--batch")
