@@ -237,7 +237,8 @@ public:
 
 
 
-  G4VisAttributes* GetVisAttributes()const;
+  G4VisAttributes* GetVisAttributes()const; // get visual attributes
+  virtual G4VisAttributes* SetVisAttributes(); // set and return visual attributes
   G4LogicalVolume* itsOuterLogicalVolume;
   G4LogicalVolume* itsMarkerLogicalVolume;
   G4LogicalVolume* itsTunnelLogicalVolume;
@@ -287,7 +288,7 @@ protected:
   G4double itsTheta;
   G4double itsPsi;
   G4double itsK1, itsK2, itsK3;
-  G4RotationMatrix* itsRotation;
+  G4RotationMatrix* itsRotation; // rotation matrix (not used)
   G4ThreeVector itsPosition;
   //  BDSBeamPipe* itsBeamPipe;
   G4MagIntegratorStepper*  itsOuterStepper;
@@ -483,6 +484,9 @@ SetInnerMostLogicalVolume(G4LogicalVolume* aLogVol)
 
 inline G4VisAttributes* BDSAcceleratorComponent::GetVisAttributes() const
 {return itsVisAttributes;}
+
+inline G4VisAttributes* BDSAcceleratorComponent::SetVisAttributes()
+{itsVisAttributes=NULL; return itsVisAttributes;}
 
 inline BDSEnergyCounterSD* BDSAcceleratorComponent::GetBDSEnergyCounter() const
 {return itsBDSEnergyCounter;}

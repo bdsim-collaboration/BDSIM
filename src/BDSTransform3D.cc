@@ -40,7 +40,7 @@ BDSTransform3D::BDSTransform3D(G4String aName, G4double x,G4double y,G4double z,
 			  x, // x offset
 			  y, // y offset
 			  z), // z offset
-  itsVisAttributes(NULL),itsPhysiComp(NULL)
+  itsPhysiComp(NULL)
 {
   SetTheta(theta);
   SetPsi(psi);
@@ -72,6 +72,4 @@ G4VisAttributes* BDSTransform3D::SetVisAttributes()
 
 BDSTransform3D::~BDSTransform3D()
 {
-  delete itsVisAttributes;
-  //  delete itsPhysiComp;
 }

@@ -44,8 +44,7 @@ BDSDump::BDSDump (G4String aName,G4double aLength, G4String aTunnelMaterial):
   BDSAcceleratorComponent(
 			 aName,
 			 aLength,0,0,0,
-			 SetVisAttributes(), aTunnelMaterial),
-  itsVisAttributes(NULL)
+			 SetVisAttributes(), aTunnelMaterial)
 {
   nptwiss = BDSExecOptions::Instance()->GetNPTwiss();
   SetName("Dump_"+BDSGlobalConstants::Instance()->StringFromInt(nDumps)+"_"+itsName);
@@ -117,6 +116,5 @@ G4VisAttributes* BDSDump::SetVisAttributes()
 
 BDSDump::~BDSDump()
 {
-  delete itsVisAttributes;
   nDumps--;
 }

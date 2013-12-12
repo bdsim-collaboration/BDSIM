@@ -243,13 +243,6 @@ G4VisAttributes* BDSPCLDrift::SetVisAttributes()
 
 BDSPCLDrift::~BDSPCLDrift()
 {
-  delete itsVisAttributes;
-//   delete outer_solid;
-//   delete inner_solid;
-//   delete itsOuterBeamPipeLogicalVolume;
-//   delete itsInnerBeamPipeLogicalVolume;
-//   delete itsPhysiOuter;
-//   delete itsPhysiInner;
   delete itsBeampipeVisAtt;
   delete itsInnerBeampipeVisAtt;
   delete itsMagField;

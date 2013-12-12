@@ -41,7 +41,7 @@ BDSSamplerCylinder (G4String aName,G4double aLength,G4double aRadius):
 			 aName,
 			 aLength,0,0,0,
 			 SetVisAttributes()),
-  itsRadius(aRadius),itsVisAttributes(NULL)
+  itsRadius(aRadius)
 {
   nThisSampler = nSamplers + 1;
   SetName("CSampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
@@ -96,6 +96,5 @@ G4VisAttributes* BDSSamplerCylinder::SetVisAttributes()
 
 BDSSamplerCylinder::~BDSSamplerCylinder()
 {
-  delete itsVisAttributes;
   --nSamplers;
 }

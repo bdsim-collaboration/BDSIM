@@ -117,8 +117,6 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
       //
       // set visualization attributes
       //
-      itsVisAttributes=SetVisAttributes();
-      itsVisAttributes->SetForceSolid(true);
       itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
       //
@@ -188,8 +186,6 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
 	  //
 	  // set visualization attributes
 	  //
-	  itsVisAttributes=SetVisAttributes();
-	  itsVisAttributes->SetForceSolid(true);
 	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
 	  //
@@ -223,6 +219,7 @@ void BDSRBend::SynchRescale(G4double factor)
 G4VisAttributes* BDSRBend::SetVisAttributes()
 {
   itsVisAttributes = new G4VisAttributes(G4Colour(0,0,1)); //blue
+  itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
 
@@ -602,16 +599,8 @@ void BDSRBend::BuildRBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 
 BDSRBend::~BDSRBend()
 {
-  delete itsVisAttributes;
   delete innerBeampipeVisAtt;
   delete beampipeVisAtt;
-//   delete markerSolidVolume;
-//   delete rbendRectangleSolidVolume;
-//   delete rbendRectangleLogicalVolume;
-//   delete middleBeampipeLogicalVolume;
-//   delete middleInnerBPLogicalVolume;
-//   delete endsBeampipeLogicalVolume;
-//   delete endsInnerBPLogicalVolume;
 //   delete itsBeampipeUserLimits;
 //   delete endsBeampipeUserLimits;
 //   delete endsInnerBeampipeUserLimits;

@@ -166,7 +166,6 @@ void BDSMultipole::ConstructorInit(){
   itsBeampipeLogicalVolume=NULL;
   itsInnerBPLogicalVolume=NULL;
 
-  itsVisAttributes=NULL;
   itsBeampipeUserLimits=NULL;
   itsPhysiComp=NULL; 
   itsPhysiInner=NULL;

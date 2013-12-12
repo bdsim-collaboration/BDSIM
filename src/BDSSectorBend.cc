@@ -118,9 +118,7 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
       //
       // set visualization attributes
       //
-      itsVisAttributes=SetVisAttributes();
-      
-	 itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
+      itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
       
       //
       // append marker logical volume to volume map
@@ -188,8 +186,6 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
 	  //
 	  // set visualization attributes
 	  //
-	  itsVisAttributes=SetVisAttributes();
-	  itsVisAttributes->SetForceSolid(true);
 	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 	  
 	  //
@@ -203,8 +199,6 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
 	  // use already defined marker volume
 	  //
 	  itsMarkerLogicalVolume=(*LogVol)[itsName];
-	  itsVisAttributes=SetVisAttributes();
-	  itsVisAttributes->SetForceSolid(true);
 	}      
     }
 
@@ -542,7 +536,6 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 
 BDSSectorBend::~BDSSectorBend()
 {
-  delete itsVisAttributes;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

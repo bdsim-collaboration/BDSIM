@@ -143,7 +143,6 @@ void BDSSkewSextupole::BuildBPFieldAndStepper()
 
 BDSSkewSextupole::~BDSSkewSextupole()
 {
-  delete itsVisAttributes;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

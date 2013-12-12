@@ -63,8 +63,6 @@ BDSRfCavity::BDSRfCavity (G4String aName,G4double aLength, G4double bpRad,
       //
       // set visualization attributes
       //
-      itsVisAttributes=SetVisAttributes();
-      itsVisAttributes->SetForceSolid(true);
       itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
       //
@@ -85,6 +83,7 @@ BDSRfCavity::BDSRfCavity (G4String aName,G4double aLength, G4double bpRad,
 G4VisAttributes* BDSRfCavity::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.25,0.25,0.5));
+  itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
 
@@ -129,7 +128,6 @@ void BDSRfCavity::BuildMarkerFieldAndStepper()
 
 BDSRfCavity::~BDSRfCavity()
 {
-  delete itsVisAttributes;
   delete itsField;
   delete itsStepper;
 }

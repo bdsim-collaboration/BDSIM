@@ -43,7 +43,6 @@ BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double aLength, 
 	BuildTunnel();
       }
       BuildScintillatorScreen();
-      //      SetVisAttributes();
       
       (*LogVolCount)[itsName]=1;
       (*LogVol)[itsName]=GetMarkerLogicalVolume();
@@ -58,7 +57,6 @@ BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double aLength, 
 G4VisAttributes* BDSScintillatorScreen::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.3,0.4,0.2));
-  itsVisAttributes->SetForceSolid(true);
   itsVisAttributes->SetForceSolid(true);
 
   _visAttFront=new G4VisAttributes(G4Colour(1.0,0.0,0.0,0.5));
@@ -302,5 +300,4 @@ void BDSScintillatorScreen::BuildMarkerVolume(){
 
 BDSScintillatorScreen::~BDSScintillatorScreen()
 {
-  delete itsVisAttributes;
 }

@@ -113,6 +113,5 @@ G4VisAttributes* BDSSampler::SetVisAttributes()
 
 BDSSampler::~BDSSampler()
 {
-  delete itsVisAttributes;
   --nSamplers;
 }

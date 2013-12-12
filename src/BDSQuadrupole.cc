@@ -157,8 +157,6 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
       //
       // set visualization attributes
       //
-      itsVisAttributes=SetVisAttributes();
-      itsVisAttributes->SetForceSolid(true);
       itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
       //
@@ -245,8 +243,6 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
 	  //
 	  // set visualization attributes
 	  //
-	  itsVisAttributes=SetVisAttributes();
-	  itsVisAttributes->SetForceSolid(true);
 	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 	  
 	  //
@@ -276,6 +272,7 @@ void BDSQuadrupole::SynchRescale(G4double factor)
 G4VisAttributes* BDSQuadrupole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(1,0,0));
+  itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
 
@@ -493,7 +490,6 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
 
 BDSQuadrupole::~BDSQuadrupole()
 {
-  delete itsVisAttributes;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

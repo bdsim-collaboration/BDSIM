@@ -110,8 +110,6 @@ BDSSextupole::BDSSextupole(G4String aName, G4double aLength,
       //
       // set visualization attributes
       //
-      itsVisAttributes=SetVisAttributes();
-      itsVisAttributes->SetForceSolid(true);
       itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
       //
@@ -184,8 +182,6 @@ BDSSextupole::BDSSextupole(G4String aName, G4double aLength,
 	  //
 	  // set visualization attributes
 	  //
-	  itsVisAttributes=SetVisAttributes();
-	  itsVisAttributes->SetForceSolid(true);
 	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 	  
 	  //
@@ -215,6 +211,7 @@ void BDSSextupole::SynchRescale(G4double factor)
 G4VisAttributes* BDSSextupole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(1,1,0));
+  itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
 
@@ -231,7 +228,6 @@ void BDSSextupole::BuildBPFieldAndStepper()
 
 BDSSextupole::~BDSSextupole()
 {
-  delete itsVisAttributes;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

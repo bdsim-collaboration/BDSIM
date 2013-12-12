@@ -93,8 +93,6 @@ BDSKicker::BDSKicker(G4String aName, G4double aLength,
       //
       // set visualization attributes
       //
-      itsVisAttributes=SetVisAttributes();
-      itsVisAttributes->SetForceSolid(true);
       itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
       //
@@ -122,6 +120,7 @@ BDSKicker::BDSKicker(G4String aName, G4double aLength,
 G4VisAttributes* BDSKicker::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0,0,1));
+  itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
 
@@ -141,7 +140,6 @@ void BDSKicker::BuildBPFieldAndStepper()
 
 BDSKicker::~BDSKicker()
 {
-  delete itsVisAttributes;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

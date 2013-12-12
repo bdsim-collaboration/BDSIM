@@ -109,8 +109,6 @@ BDSOctupole::BDSOctupole(G4String aName, G4double aLength,
       //
       // set visualization attributes
       //
-      itsVisAttributes=SetVisAttributes();
-      itsVisAttributes->SetForceSolid(true);
       itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
       //
@@ -182,8 +180,6 @@ BDSOctupole::BDSOctupole(G4String aName, G4double aLength,
 	  //
 	  // set visualization attributes
 	  //
-	  itsVisAttributes=SetVisAttributes();
-	  itsVisAttributes->SetForceSolid(true);
 	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 	  
 	  //
@@ -213,6 +209,7 @@ void BDSOctupole::SynchRescale(G4double factor)
 G4VisAttributes* BDSOctupole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0,1,1));
+  itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
 
@@ -228,7 +225,6 @@ void BDSOctupole::BuildBPFieldAndStepper()
 
 BDSOctupole::~BDSOctupole()
 {
-  delete itsVisAttributes;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

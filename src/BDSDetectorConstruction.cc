@@ -1026,6 +1026,10 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
   gFlashRegion.clear();
 
   delete _globalRotation;
+
+  delete theHitMaker;
+  delete theParticleBounds;
+  delete theParticleBoundsVac;
 }
 
 //=================================================================

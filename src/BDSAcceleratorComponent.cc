@@ -46,7 +46,7 @@
 
 
 BDSAcceleratorComponent::BDSAcceleratorComponent (G4String& aName, G4double aLength):
-  itsName(aName), itsLength(aLength)
+  itsName(aName), itsLength(aLength), itsVisAttributes(NULL)
 {
   ConstructorInit();
 }
@@ -162,6 +162,7 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
 
 BDSAcceleratorComponent::~BDSAcceleratorComponent ()
 {
+  delete itsVisAttributes;
 #ifndef NOUSERLIMITS
   delete itsUserLimits;
 #endif

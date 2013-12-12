@@ -154,8 +154,6 @@ BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength,
       //
       // set visualization attributes
       //
-      itsVisAttributes=SetVisAttributes();
-      itsVisAttributes->SetForceSolid(true);
       itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
       
       //
@@ -177,6 +175,7 @@ BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength,
 G4VisAttributes* BDSTMultipole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.1,0.4,0.2));
+  itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
 
@@ -191,7 +190,6 @@ void BDSTMultipole::BuildBPFieldAndStepper()
 
 BDSTMultipole::~BDSTMultipole()
 {
-  delete itsVisAttributes;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

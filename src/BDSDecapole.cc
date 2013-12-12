@@ -102,8 +102,6 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
       //
       // set visualization attributes
       //
-      itsVisAttributes=SetVisAttributes();
-      itsVisAttributes->SetForceSolid(true);
       itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
       //
@@ -119,7 +117,7 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
 	{
 	  // with synchrotron radiation, the rescaled magnetic field
 	  // means elements with the same name must have different
-	  //logical volumes, becuase they have different fields
+	  //logical volumes, because they have different fields
 	  itsName+=BDSGlobalConstants::Instance()->StringFromInt((*LogVolCount)[itsName]);
 
 	  //
@@ -175,8 +173,6 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
 	  //
 	  // set visualization attributes
 	  //
-	  itsVisAttributes=SetVisAttributes();
-	  itsVisAttributes->SetForceSolid(true);
 	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 	  
 	  //
@@ -206,6 +202,7 @@ void BDSDecapole::SynchRescale(G4double factor)
 G4VisAttributes* BDSDecapole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0,0,1)); //green
+  itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
 
@@ -221,7 +218,6 @@ void BDSDecapole::BuildBPFieldAndStepper()
 
 BDSDecapole::~BDSDecapole()
 {
-  delete itsVisAttributes;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;
