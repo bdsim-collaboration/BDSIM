@@ -71,12 +71,12 @@ void myQuadStepper::AdvanceHelix( const G4double  yIn[],
     {
       G4double B[3];
       fPtrMagEqOfMot->GetFieldValue(yIn, B);
-      R=-(InitMag/GeV)/(0.299792458 * B[1]/tesla) *m;
+      R=-(InitMag/CLHEP::GeV)/(0.299792458 * B[1]/CLHEP::tesla) * CLHEP::m;
     }
   else
     {
       if(itsBField!=0)
-	R=-(InitMag/GeV)/(0.299792458 * itsBField/tesla) * m;
+	R=-(InitMag/CLHEP::GeV)/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
       else
 	R=DBL_MAX;
     }
@@ -129,7 +129,7 @@ void myQuadStepper::AdvanceHelix( const G4double  yIn[],
   //G4double z1;
   
   G4double NomEnergy = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
-  G4double NomR = -(NomEnergy/GeV)/(0.299792458 * itsBField/tesla) * m;
+  G4double NomR = -(NomEnergy/CLHEP::GeV)/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
 
   G4double NominalPath = sqrt(NomR*NomR - LocalR.z()*LocalR.z()) - fabs(NomR)*cos(itsAngle/2);
   

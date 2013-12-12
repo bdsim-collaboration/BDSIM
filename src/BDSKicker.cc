@@ -33,7 +33,7 @@ BDSKicker::BDSKicker(G4String aName, G4double aLength,
   itsBGrad=bGrad;
   if (tilt==0)
     itsType="hkick";
-  else if (tilt==pi/2)
+  else if (tilt==CLHEP::pi/2)
     itsType="vkick";
   else
     itsType="kick";

@@ -144,43 +144,34 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       G4cout << "LocalDir: mom = " << LocalDirection << G4endl;
 #endif
       
-      G4double x=LocalPosition.x()/micrometer;
-      G4double y=LocalPosition.y()/micrometer;
-      G4double z=LocalPosition.z()/micrometer;
-      G4double xPrime=LocalDirection.x()/(1e-6*radian);
-      G4double yPrime=LocalDirection.y()/(1e-6*radian);
+      G4double x=LocalPosition.x()/CLHEP::micrometer;
+      G4double y=LocalPosition.y()/CLHEP::micrometer;
+      G4double z=LocalPosition.z()/CLHEP::micrometer;
+      G4double xPrime=LocalDirection.x()/(1e-6*CLHEP::radian);
+      G4double yPrime=LocalDirection.y()/(1e-6*CLHEP::radian);
+      G4double zPrime=LocalDirection.z()/(1e-6*CLHEP::radian);
       G4double t=aTrack->GetGlobalTime();
-      
+      G4double weight=aTrack->GetWeight();
+      G4int    trackID=aTrack->GetTrackID();
+      G4int    parentID=aTrack->GetParentID();
+
       BDSGlobalConstants::Instance()->fileDump.precision(15);
       // TODO : dump the file
-      //        BDSGlobalConstants::Instance()->fileDump << aTrack->GetTotalEnergy()/GeV << "\t"
+      //        BDSGlobalConstants::Instance()->fileDump << aTrack->GetTotalEnergy()/CLHEP::GeV << "\t"
       //<< x << "\t" << y << "\t" << z << "\t"
       //<< xPrime << "\t" << yPrime << "\t" << t <<"\n"; // SPM
 #ifdef DEBUG
-      printf("Out: %.15f %.15f %.15f %.15f %.15f %.15f %f\n",
-	     aTrack->GetTotalEnergy()/GeV,x,y,z,xPrime,yPrime,t);
+      printf("Out: %.15f %.15f %.15f %.15f %.15f %.15f %.15f %f\n",
+	     aTrack->GetTotalEnergy()/CLHEP::GeV,x,y,z,xPrime,yPrime,zPrime,t);
 #endif
-      tmpParticle outputParticle, transformedParticle;
+      G4double energy;
+      // negative energy for positrons
       if(aTrack->GetDefinition()->GetPDGEncoding()==-11)
-	outputParticle.E=-(aTrack->GetTotalEnergy());
-      else outputParticle.E=aTrack->GetTotalEnergy();
-      outputParticle.xp=momDir.x();
-      outputParticle.yp=momDir.y();
-      outputParticle.x=initialPos.x();
-      outputParticle.y=initialPos.y();
-      outputParticle.z=initialPos.z();
-      outputParticle.t=t;
-      outputParticle.trackID=aTrack->GetTrackID();
-      outputParticle.parentID=aTrack->GetParentID();
+	energy=-(aTrack->GetTotalEnergy());
+      else energy=aTrack->GetTotalEnergy();
       
-      transformedParticle.x=x;
-      transformedParticle.y=y;
-      transformedParticle.z=z;
-      transformedParticle.xp=xPrime;
-      transformedParticle.yp=yPrime;
-      transformedParticle.t=t;
-      transformedParticle.E=aTrack->GetTotalEnergy()/GeV;
-      transformedParticle.parentID=aTrack->GetParentID();
+      BDSParticle outputParticle(initialPos,momDir,energy,t,weight,trackID,parentID);
+      BDSParticle transformedParticle(x,y,z,xPrime,yPrime,zPrime,aTrack->GetTotalEnergy()/CLHEP::GeV,t,weight,trackID,parentID);
       
       BDSGlobalConstants::Instance()->outputQueue.push_back(outputParticle);
       BDSGlobalConstants::Instance()->transformedQueue.push_back(transformedParticle);

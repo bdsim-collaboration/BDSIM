@@ -95,7 +95,7 @@ void BDSRfCavity::BuildMarkerFieldAndStepper()
   G4int nvar = 8;
 
   // set up the magnetic field and stepper
-  G4ThreeVector Efield(0.,0.,itsGrad * megavolt / m);
+  G4ThreeVector Efield(0.,0.,itsGrad * CLHEP::megavolt / CLHEP::m);
   itsField=new G4UniformElectricField(Efield);
 
   G4EqMagElectricField* fEquation = new G4EqMagElectricField(itsField);

@@ -26,7 +26,7 @@ BDSLaserCompton::BDSLaserCompton(const G4String& processName)
 
   //	if(itsLaserWavelength<=0.)
   //	 {G4Exception("BDSLaserCompton: Invalid Wavelength");}
-  // itsLaserEnergy=twopi*hbarc/itsLaserWavelength;
+  // itsLaserEnergy=CLHEP::twopi*CLHEP::hbarc/itsLaserWavelength;
  // point laserwire in x:     P_x        Py Pz   E
  //G4LorentzVector Laser4mom(itsLaserEnergy,0,0,itsLaserEnergy);
  //itsComptonEngine=new BDSComptonEngine(Laser4mom);
@@ -50,11 +50,11 @@ G4VParticleChange* BDSLaserCompton::PostStepDoIt(const G4Track& trackData,
  // ensure that Laserwire can only occur once in an event
  G4cout << "FireLaserCompton == " << FireLaserCompton << G4endl;
  if(!FireLaserCompton){
-	 #if G4VERSION_NUMBER > 899
+#if G4VERSION_NUMBER > 899
    return G4VDiscreteProcess::PostStepDoIt(trackData,stepData);
-   #else
-	 return G4VContinuousDiscreteProcess::PostStepDoIt(trackData,stepData);
-	 #endif
+#else
+   return G4VContinuousDiscreteProcess::PostStepDoIt(trackData,stepData);
+#endif
  }
  G4Material* aMaterial=trackData.GetMaterial() ;
  
@@ -66,7 +66,7 @@ G4VParticleChange* BDSLaserCompton::PostStepDoIt(const G4Track& trackData,
      //G4cout << "&&&&&" << itsLaserDirection << "&&&&&\n";
      if(itsLaserWavelength<=0.)
        {G4Exception("BDSLaserCompton::PostStepDoIt - Invalid Wavelength", "-1", FatalException, "");}
-     itsLaserEnergy=twopi*hbarc/itsLaserWavelength;
+     itsLaserEnergy=CLHEP::twopi*CLHEP::hbarc/itsLaserWavelength;
      // point laserwire in x:     P_x        Py Pz   E
      G4LorentzVector Laser4mom(itsLaserEnergy*itsLaserDirection.unit(),itsLaserEnergy);
      
@@ -92,7 +92,7 @@ G4VParticleChange* BDSLaserCompton::PostStepDoIt(const G4Track& trackData,
 	 aParticleChange.SetNumberOfSecondaries(1);
 	 aParticleChange.AddSecondary(aGamma); 
 	 if(!BDSGlobalConstants::Instance()->GetLaserwireTrackElectrons())
-	 	   {
+	   {
 #if G4VERSION_NUMBER > 699
 	     aParticleChange.ProposeEnergy( 0. );
 	     aParticleChange.ProposeLocalEnergyDeposit (0.);
@@ -121,7 +121,7 @@ G4VParticleChange* BDSLaserCompton::PostStepDoIt(const G4Track& trackData,
 
     
      G4double NewKinEnergy=
-       itsComptonEngine->GetScatteredElectron().e()-electron_mass_c2;
+       itsComptonEngine->GetScatteredElectron().e()-CLHEP::electron_mass_c2;
      
      //  G4double NewKinEnergy=0; // tmp to track photon only
      

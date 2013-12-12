@@ -126,13 +126,13 @@ void BDSLWCalorimeter::BuildBeampipe(G4double aLength)
   itsBPTube=new G4Tubs(itsName+"_tube",
 		       0.,itsBpRadius,
 		       aLength/2,
-		       0,twopi*radian);
+		       0,CLHEP::twopi*CLHEP::radian);
   
   itsInnerBPTube=new G4Tubs(itsName+"_InnerTube",
 			    0.,
 			    itsBpRadius-BDSGlobalConstants::Instance()->GetBeampipeThickness(),
 			    aLength/2,
-			    0,twopi*radian);
+			    0,CLHEP::twopi*CLHEP::radian);
   itsBeampipeLogicalVolume=	
     new G4LogicalVolume(itsBPTube,
 			//			BDSMaterials::Instance()->("Iron"),

@@ -35,9 +35,9 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
 				       G4double  yOut[])
 {
   //
-  // Compute charge of particle (FCof = particleCharge*eplus*c_light)
+  // Compute charge of particle (FCof = particleCharge*CLHEP::eplus*CLHEP::c_light)
   //
-  G4double charge = (fPtrMagEqOfMot->FCof())/c_light;
+  G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
 
   
   //
@@ -55,16 +55,16 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
 
 
 #ifdef DEBUG 
-  G4cout << "BDSSolenoidStepper: step= " << h/m << " m" << G4endl;
+  G4cout << "BDSSolenoidStepper: step= " << h/CLHEP::m << " m" << G4endl;
   G4cout << "BDSSolenoidStepper: initial point in global coordinates:" << G4endl
-         << " x= " << yIn[0]/m << "m" << G4endl
-         << " y= " << yIn[1]/m << "m" << G4endl
-         << " z= " << yIn[2]/m << "m" << G4endl
-         << " px= " << yIn[3]/GeV << "GeV/c" << G4endl
-         << " py= " << yIn[4]/GeV << "GeV/c" << G4endl
-         << " pz= " << yIn[5]/GeV << "GeV/c" << G4endl
-         << " q= " << charge/eplus << "e" << G4endl
-         << " B= " << Bz/tesla << "T" << G4endl
+         << " x= " << yIn[0]/CLHEP::m << "m" << G4endl
+         << " y= " << yIn[1]/CLHEP::m << "m" << G4endl
+         << " z= " << yIn[2]/CLHEP::m << "m" << G4endl
+         << " px= " << yIn[3]/CLHEP::GeV << "GeV/c" << G4endl
+         << " py= " << yIn[4]/CLHEP::GeV << "GeV/c" << G4endl
+         << " pz= " << yIn[5]/CLHEP::GeV << "GeV/c" << G4endl
+         << " q= " << charge/CLHEP::eplus << "e" << G4endl
+         << " B= " << Bz/CLHEP::tesla << "T" << G4endl
          << G4endl; 
 #endif
 
@@ -92,9 +92,9 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
 
 #ifdef DEBUG
   G4cout << "BDSSolenoidStepper: initial point in local coordinates:" << G4endl
-         << " x= " << LocalR[0]/m << "m" << G4endl
-         << " y= " << LocalR[1]/m << "m" << G4endl
-         << " z= " << LocalR[2]/m << "m" << G4endl
+         << " x= " << LocalR[0]/CLHEP::m << "m" << G4endl
+         << " y= " << LocalR[1]/CLHEP::m << "m" << G4endl
+         << " z= " << LocalR[2]/CLHEP::m << "m" << G4endl
          << " x'= " << LocalRp[0] << G4endl
          << " y'= " << LocalRp[1] << G4endl
          << " z'= " << LocalRp[2] << G4endl
@@ -107,12 +107,12 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
   //
   G4double R;
   if (Bz!=0)
-    R = -(InitPMag*LocalRp.perp()/GeV)/(0.299792458 * Bz/tesla) * m;
+    R = -(InitPMag*LocalRp.perp()/CLHEP::GeV)/(0.299792458 * Bz/CLHEP::tesla) * CLHEP::m;
   else
     R=DBL_MAX;
 
   // include the sign of the charge of the particles
-  // FCof = particleCharge*eplus*c_light
+  // FCof = particleCharge*CLHEP::eplus*CLHEP::c_light
   if( charge<0 ) R*=-1.;
   else if ( charge==0 ) R=DBL_MAX;
 
@@ -128,7 +128,7 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
       // compute pitch of helix
       //
       G4double pitch;
-      pitch = fabs(2*pi*R*LocalRp[2]/LocalRp.perp());
+      pitch = fabs(2*CLHEP::pi*R*LocalRp[2]/LocalRp.perp());
 
       //
       // compute center of helix
@@ -140,17 +140,17 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
       //
       // compute step length in z and theta (h is the helix arc length)
       //
-      G4double dz = h / sqrt(1. + pow(2.*pi*R/pitch,2));
-      G4double dtheta = 2*pi*dz/pitch*R/fabs(R);
+      G4double dz = h / sqrt(1. + pow(2.*CLHEP::pi*R/pitch,2));
+      G4double dtheta = 2*CLHEP::pi*dz/pitch*R/fabs(R);
       
 #ifdef DEBUG 
       G4cout << "Parameters of helix: " << G4endl
-             << " R= " << R/m << " m" << G4endl
-             << " pitch= " << pitch/m << " m" <<G4endl
-             << " center= " << center/m << " m"<<G4endl
-             << " step length= " << h/m << " m"<<G4endl
-             << " step dz= " << dz/m << " m"<<G4endl
-             << " step dtheta= " << dtheta/radian << " rad"<<G4endl;
+             << " R= " << R/CLHEP::m << " m" << G4endl
+             << " pitch= " << pitch/CLHEP::m << " m" <<G4endl
+             << " center= " << center/CLHEP::m << " m"<<G4endl
+             << " step length= " << h/CLHEP::m << " m"<<G4endl
+             << " step dz= " << dz/CLHEP::m << " m"<<G4endl
+             << " step dtheta= " << dtheta/CLHEP::radian << " rad"<<G4endl;
 #endif
 
 
@@ -175,11 +175,11 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
       // compute max distance between chord from yIn to yOut and helix
       //
       G4double Ang = fabs(dtheta);
-      if(Ang<=pi){
+      if(Ang<=CLHEP::pi){
 	itsDist = fabs(R)*(1 - cos(0.5*Ang));
       } else
-	if(Ang<twopi){
-	  itsDist = fabs(R)*(1 + cos(pi-0.5*Ang));
+	if(Ang<CLHEP::twopi){
+	  itsDist = fabs(R)*(1 + cos(CLHEP::pi-0.5*Ang));
 	} else
 	  itsDist = 2*fabs(R);
     }      
@@ -192,9 +192,9 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
   
 #ifdef DEBUG 
   G4cout << "BDSSolenoidStepper: final point in local coordinates:" << G4endl
-         << " x= " << itsFinalR[0]/m << "m" << G4endl
-         << " y= " << itsFinalR[1]/m << "m" << G4endl
-         << " z= " << itsFinalR[2]/m << "m" << G4endl
+         << " x= " << itsFinalR[0]/CLHEP::m << "m" << G4endl
+         << " y= " << itsFinalR[1]/CLHEP::m << "m" << G4endl
+         << " z= " << itsFinalR[2]/CLHEP::m << "m" << G4endl
          << " x'= " << itsFinalRp[0] << G4endl
          << " y'= " << itsFinalRp[1] << G4endl
          << " z'= " << itsFinalRp[2] << G4endl
@@ -219,12 +219,12 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
 
 #ifdef DEBUG 
   G4cout << "BDSSolenoidStepper: final point in global coordinates:" << G4endl
-         << " x= " << yOut[0]/m << "m" << G4endl
-         << " y= " << yOut[1]/m << "m" << G4endl
-         << " z= " << yOut[2]/m << "m" << G4endl
-         << " px= " << yOut[3]/GeV << "GeV/c" << G4endl
-         << " py= " << yOut[4]/GeV << "GeV/c" << G4endl
-         << " pz= " << yOut[5]/GeV << "GeV/c" << G4endl
+         << " x= " << yOut[0]/CLHEP::m << "m" << G4endl
+         << " y= " << yOut[1]/CLHEP::m << "m" << G4endl
+         << " z= " << yOut[2]/CLHEP::m << "m" << G4endl
+         << " px= " << yOut[3]/CLHEP::GeV << "GeV/c" << G4endl
+         << " py= " << yOut[4]/CLHEP::GeV << "GeV/c" << G4endl
+         << " pz= " << yOut[5]/CLHEP::GeV << "GeV/c" << G4endl
          << G4endl; 
 #endif
 }    

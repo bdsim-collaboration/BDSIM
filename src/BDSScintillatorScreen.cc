@@ -243,8 +243,8 @@ void BDSScintillatorScreen::BuildOpticalSurfaces(){
   //Add the optical surfaces.
   //Mirrored surface between the phosphor and the PET backing.
   G4OpticalSurface* OpSurface=new G4OpticalSurface("OpSurface");
-  G4LogicalBorderSurface* Surface = new 
-    G4LogicalBorderSurface("phosphor_PET_surface", itsScintillatorLayerPhys, itsBaseLayerPhys, OpSurface);
+  /*G4LogicalBorderSurface* Surface = */
+  new G4LogicalBorderSurface("phosphor_PET_surface", itsScintillatorLayerPhys, itsBaseLayerPhys, OpSurface);
   G4double sigma_alpha=1.0;
   //TiO2 particles provide the reflectivity in the PET layer hence dielectric-metal
   OpSurface -> SetType(dielectric_metal);
@@ -259,8 +259,8 @@ void BDSScintillatorScreen::BuildOpticalSurfaces(){
 
   //Surface between the phosphor and the cellulose front.
   G4OpticalSurface* OpSurface2=new G4OpticalSurface("OpSurface2");
-  G4LogicalBorderSurface* Surface2 = new 
-    G4LogicalBorderSurface("phosphor_cellulose_surface", itsScintillatorLayerPhys, itsFrontLayerPhys, OpSurface2);
+  /*G4LogicalBorderSurface* Surface2 = */ 
+  new G4LogicalBorderSurface("phosphor_cellulose_surface", itsScintillatorLayerPhys, itsFrontLayerPhys, OpSurface2);
   OpSurface2 -> SetType(dielectric_dielectric);
   OpSurface2 -> SetModel(unified);
   OpSurface2 -> SetFinish(ground);
@@ -324,7 +324,7 @@ void BDSScintillatorScreen::BuildScintillatorOpticalProperties(){
   //Fill the material properties table of the _scintillatorLayerMaterial
 
   /*The below is required for mie scattering
-  G4double scatteringLength=2.17*um;
+  G4double scatteringLength=2.17*CLHEP::um;
   G4double anisotropyFactor=0.800;
   _mptScintillatorMaterial->AddConstProperty("MIEHG",scatteringLength);
   _mptScintillatorMaterial->AddConstProperty("MIEHG_FORWARD",anisotropyFactor); 
@@ -345,16 +345,16 @@ void BDSScintillatorScreen::ComputeDimensions(){
   //  _xLength = std::max(_xLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
   //  _yLength = std::max(_yLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
 
-  _screenWidth=1*m;
-  _screenHeight=3*cm;
+  _screenWidth=1*CLHEP::m;
+  _screenHeight=3*CLHEP::cm;
 
   //Length due to the screen thickness
-  _frontThickness=0;//13*um;
-  _baseThickness=0;//275*um;
-  _backThickness=0;//13*um;
+  _frontThickness=0;//13*CLHEP::um;
+  _baseThickness=0;//275*CLHEP::um;
+  _backThickness=0;//13*CLHEP::um;
 
   //The scoring plane...
-  _scoringPlaneThickness=1*um;
+  _scoringPlaneThickness=1*CLHEP::um;
   
   _totalThickness =  
     _frontThickness+

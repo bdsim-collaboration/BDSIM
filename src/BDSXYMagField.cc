@@ -125,10 +125,10 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 	  G4cout<<(*it).x<<" "<<(*it).y<<" "<<" "<<(*it).Bx<<G4endl;
 #endif
 	  hxold = fabs((*it).x - (*itt).x);
-	  if( (hxold > 1.0e-11*m)&&(hxold<hx) ) hx = hxold;
+	  if( (hxold > 1.0e-11*CLHEP::m)&&(hxold<hx) ) hx = hxold;
 	  
 	  hyold = fabs((*it).y - (*itt).y);
-	  if( (hyold > 1.0e-11*m)&&(hyold<hy) ) hy = hyold;
+	  if( (hyold > 1.0e-11*CLHEP::m)&&(hyold<hy) ) hy = hyold;
 	  
 	}
     }
@@ -172,9 +172,9 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 
 
 	if(dist < tol) {
-	  SetBx(i,j,bx * tesla);
-	  SetBy(i,j,by * tesla);
-	  SetBz(i,j,bz * tesla);
+	  SetBx(i,j,bx * CLHEP::tesla);
+	  SetBy(i,j,by * CLHEP::tesla);
+	  SetBz(i,j,bz * CLHEP::tesla);
 	  
 	} else {
 	  SetBx(i,j,0.);
@@ -512,11 +512,11 @@ G4double GetNearestValue(vector<struct XYFieldRecord> fieldValues, G4double x, G
 // 	   //G4cout<<"writing values..."<<i<<" "<<j<<" "<<k<<G4endl;
 // 	   //G4cout<<"x"<<G4endl;
 	   
-// 	   itsField->SetBx(i,j,k,bxmean * tesla);
+// 	   itsField->SetBx(i,j,k,bxmean * CLHEP::tesla);
 	   
-// 	   itsField->SetBy(i,j,k,bymean * tesla);
+// 	   itsField->SetBy(i,j,k,bymean * CLHEP::tesla);
 	   
-// 	   itsField->SetBz(i,j,k,bzmean * tesla);
+// 	   itsField->SetBz(i,j,k,bzmean * CLHEP::tesla);
 
 	   
 

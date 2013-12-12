@@ -99,13 +99,13 @@ void BDSPCLDrift::BuildBeampipe(G4String materialName){
 
 #ifdef DEBUG 
   G4cout << "Outer pipe :"
-         << " r= " << itsBpRadius/m << " m"
-         << " l= " << itsLength/(2.)/m << " m"
+         << " r= " << itsBpRadius/CLHEP::m << " m"
+         << " l= " << itsLength/(2.)/CLHEP::m << " m"
          << G4endl;
-  G4cout << "PCLDrift aperX: " << itsXAper/m << " m" << G4endl;
-  G4cout << "PCLDrift aperYUp: " << itsYAperUp/m << " m" << G4endl;
-  G4cout << "PCLDrift aperYDown: " << itsYAperDown/m << " m" << G4endl;
-  G4cout << "PCLDrift Dy: " << itsDyAper/m << " m" << G4endl;
+  G4cout << "PCLDrift aperX: " << itsXAper/CLHEP::m << " m" << G4endl;
+  G4cout << "PCLDrift aperYUp: " << itsYAperUp/CLHEP::m << " m" << G4endl;
+  G4cout << "PCLDrift aperYDown: " << itsYAperDown/CLHEP::m << " m" << G4endl;
+  G4cout << "PCLDrift Dy: " << itsDyAper/CLHEP::m << " m" << G4endl;
 #endif
 
 
