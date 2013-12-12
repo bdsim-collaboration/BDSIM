@@ -31,7 +31,7 @@ class BDSElement :public BDSAcceleratorComponent
 {
 public:
   BDSElement(G4String aName, G4String geometry, G4String bmap, G4double aLength, 
-             G4double bpRad, G4double outR, G4String aTunnelMaterial="", G4double tunnelRadius=0., G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(), G4String aTunnelCavityMaterial="Air", int aPrecisionRegion=0);
+             G4double bpRad, G4double outR, G4String aTunnelMaterial="", G4double tunnelRadius=0., G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(), G4String aTunnelCavityMaterial="Air", int aPrecisionRegion=0, G4double fieldZOffset=0);
   ~BDSElement();
 
   void BuildElementMarkerLogicalVolume();

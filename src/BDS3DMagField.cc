@@ -4,11 +4,14 @@
 #include "BDSGlobalConstants.hh"
 #include "BDS3DMagField.hh"
 
+
+
+
 BDS3DMagField::BDS3DMagField( const char* filename, double zOffset ) 
   :fZoffset(zOffset),invertX(false),invertY(false),invertZ(false)
 {    
-  fZoffset = -250*CLHEP::cm;
-  zOffset = -250*CLHEP::cm;
+
+
   double lenUnit= CLHEP::m;
   double fieldUnit= CLHEP::tesla; 
   G4cout << "\n-----------------------------------------------------------"
@@ -108,9 +111,28 @@ void BDS3DMagField::GetFieldValue(const double point[4],
 				      double *Bfield ) const
 {
 
-  double x = point[0];
-  double y = point[1];
-  double z = point[2] + fZoffset;
+  G4ThreeVector local;
+
+  local[0] = point[0]-translation[0];
+  local[1] = point[1]-translation[1];
+  local[2] = point[2]+translation[2]+fZoffset;
+
+#ifdef DEBUG
+  G4cout  << "local (field frame of reference): " 
+	  << local[0]/CLHEP::m << " " 
+	  << local[1]/CLHEP::m << " " 
+	  << local[2]/CLHEP::m << G4endl;
+
+  G4cout  << "global: " 
+	  << point[0]/CLHEP::m << " " 
+	  << point[1]/CLHEP::m << " " 
+	  << point[2]/CLHEP::m << G4endl;
+
+  G4cout  << "translation: " 
+	  << translation[0]/CLHEP::m << " " 
+	  << translation[1]/CLHEP::m << " " 
+	  << translation[2]/CLHEP::m << G4endl;
+#endif
 
   double signy=1;
   double signz=1;
@@ -136,15 +158,15 @@ void BDS3DMagField::GetFieldValue(const double point[4],
   */
 
   // Check that the point is within the defined region 
-  if ( x>=minx && x<=maxx &&
-       y>=miny && y<=maxy && 
-       z>=minz && z<=maxz ) {
+  if ( local[0]>=minx && local[0]<=maxx &&
+       local[1]>=miny && local[1]<=maxy && 
+       local[2]>=minz && local[2]<=maxz ) {
     
     // Position of given point within region, normalized to the range
     // [0,1]
-    double xfraction = (x - minx) / dx;
-    double yfraction = (y - miny) / dy; 
-    double zfraction = (z - minz) / dz;
+    double xfraction = (local[0] - minx) / dx;
+    double yfraction = (local[1] - miny) / dy; 
+    double zfraction = (local[2] - minz) / dz;
 
     if (invertX) { xfraction = 1 - xfraction;}
     if (invertY) { yfraction = 1 - yfraction;}
@@ -214,3 +236,9 @@ void BDS3DMagField::GetFieldValue(const double point[4],
   }
 }
 
+void BDS3DMagField::Prepare(G4VPhysicalVolume *referenceVolume){
+  const G4RotationMatrix* Rot= referenceVolume->GetFrameRotation();
+  const G4ThreeVector Trans=referenceVolume->GetFrameTranslation();
+  SetOriginRotation(*Rot);
+  SetOriginTranslation(Trans);
+}

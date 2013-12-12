@@ -26,6 +26,7 @@ class BDS3DMagField
   double dx, dy, dz;
   double fZoffset;
   bool invertX, invertY, invertZ;
+  void Prepare(G4VPhysicalVolume *referenceVolume);
 
 public:
   BDS3DMagField(const char* filename, double zOffset );

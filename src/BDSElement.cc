@@ -52,7 +52,7 @@ extern LogVolMap* LogVol;
 //============================================================
 
 BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap,
-		       G4double aLength, G4double bpRad, G4double outR, G4String aTunnelMaterial, G4double aTunnelRadius, G4double aTunnelOffsetX, G4String aTunnelCavityMaterial, G4int aPrecisionRegion):
+		       G4double aLength, G4double bpRad, G4double outR, G4String aTunnelMaterial, G4double aTunnelRadius, G4double aTunnelOffsetX, G4String aTunnelCavityMaterial, G4int aPrecisionRegion, G4double fieldZOffset):
   BDSAcceleratorComponent(
 			  aName,
 			  aLength,bpRad,0,0,
@@ -403,7 +403,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 #ifdef DEBUG
       G4cout << "BDSElement.cc> Making BDS3DMagField..." << G4endl;
 #endif
-      itsMagField = new BDS3DMagField(bFile, 0);
+      itsMagField = new BDS3DMagField(bFile,0);
       itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::um);
       
       BuildMagField(true);
