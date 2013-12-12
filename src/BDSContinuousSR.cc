@@ -19,7 +19,6 @@ Last modified 15.11.2005 by Ilya Agapov
 #include "G4UnitsTable.hh"
 
 #include "BDSAcceleratorComponent.hh"
-#include "BDSBeamline.hh"
 
 
 BDSContinuousSR::BDSContinuousSR(const G4String& processName)

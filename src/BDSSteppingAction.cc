@@ -54,13 +54,6 @@
 #include "G4Region.hh"
 #include "BDSAcceleratorComponent.hh"
 
-#include "BDSQuadStepper.hh"
-#include "BDSSextStepper.hh"
-#include "BDSOctStepper.hh"
-#include "myQuadStepper.hh"
-
-#include "G4Timer.hh"
-
 extern G4double BDSLocalRadiusOfCurvature;
 
 extern G4int event_number;

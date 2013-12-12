@@ -18,8 +18,8 @@
 #include "CLHEP/Random/Random.h"
 
 #include "BDSRunManager.hh"
-#include "G4StateManager.hh"
-#include "G4UImanager.hh"
+//#include "G4StateManager.hh"
+//#include "G4UImanager.hh"
 
 #include "BDSDump.hh"
 #include "BDSWorld.hh"

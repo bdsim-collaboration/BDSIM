@@ -8,7 +8,6 @@
 #include "BDSGlobalConstants.hh"
 #include "G4UniformMagField.hh"
 #include "globals.hh"
-#include "geomdefs.hh"
 #include "BDSSbendMagField.hh"
 
 BDSSbendMagField::BDSSbendMagField(const G4ThreeVector& aField,

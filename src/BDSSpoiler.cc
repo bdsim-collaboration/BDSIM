@@ -12,8 +12,6 @@
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
 
-#include "G4SDManager.hh"
-
 #include <map>
 
 //============================================================
