@@ -976,6 +976,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
     }
   
   // free the parser list
+  for(it = beamline_list.begin();it!=beamline_list.end();it++) {
+    delete (*it).lst;
+  }
   beamline_list.clear();
 
   if(verbose || debug) G4cout<<"end placement, size="<<BDSBeamline::Instance()->size()<<G4endl;

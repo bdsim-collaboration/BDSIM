@@ -473,10 +473,12 @@ int main(int argc,char** argv) {
   delete BDSBeamline::Instance();
 
 #ifdef DEBUG 
-  G4cout << __FUNCTION__ << "> BDSGlobalConstants::Instance() deleting..."<<G4endl;
+  G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
 #endif
+  delete BDSExecOptions::Instance();
   delete BDSGlobalConstants::Instance();
-  
+  delete BDSMaterials::Instance();
+
 #ifdef DEBUG 
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif

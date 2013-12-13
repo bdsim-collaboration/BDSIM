@@ -874,8 +874,8 @@ BDSMaterials::~BDSMaterials(){
     delete (*eIter).second;
   elements.clear();
 
-  delete tmpMaterial;
-  delete tmpElement;
   delete airMaterialPropertiesTable;
   delete fsMaterialPropertiesTable;
+  
+  _instance = 0;
 }
