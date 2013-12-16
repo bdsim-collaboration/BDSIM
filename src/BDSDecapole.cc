@@ -73,8 +73,8 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
 	  G4double Bfield[3];
 
 	  //coordinate in GetFieldValue
-	  polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(pi/10);
-	  polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(pi/10);
+	  polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(CLHEP::pi/10);
+	  polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(CLHEP::pi/10);
 	  polePos[2]=0.;
 	  polePos[3]=-999.;//flag to use polePos rather than local track
 
@@ -88,7 +88,7 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
 	  // Magnetic flux from a pole is divided in two directions
 	  BFldIron/=2.;
 
-	  BuildOuterFieldManager(10, BFldIron,pi/10);
+	  BuildOuterFieldManager(10, BFldIron,CLHEP::pi/10);
 	}
       //Build the beam loss monitors
       BuildBLMs();
@@ -101,8 +101,6 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
       //
       // set visualization attributes
       //
-      itsVisAttributes=SetVisAttributes();
-      itsVisAttributes->SetForceSolid(true);
       itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
       //
@@ -118,7 +116,7 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
 	{
 	  // with synchrotron radiation, the rescaled magnetic field
 	  // means elements with the same name must have different
-	  //logical volumes, becuase they have different fields
+	  //logical volumes, because they have different fields
 	  itsName+=BDSGlobalConstants::Instance()->StringFromInt((*LogVolCount)[itsName]);
 
 	  //
@@ -143,8 +141,8 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
 	      G4double Bfield[3];
 	      
 	      //coordinate in GetFieldValue
-	      polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(pi/10);
-	      polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(pi/10);
+	      polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(CLHEP::pi/10);
+	      polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(CLHEP::pi/10);
 	      polePos[2]=0.;
 	      polePos[3]=-999.;//flag to use polePos rather than local track
 
@@ -158,7 +156,7 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
 	      // Magnetic flux from a pole is divided in two directions
 	      BFldIron/=2.;
 	      
-	      BuildOuterFieldManager(10, BFldIron,pi/10);
+	      BuildOuterFieldManager(10, BFldIron,CLHEP::pi/10);
 	    }
 	  //When is SynchRescale(factor) called?
 
@@ -174,8 +172,6 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
 	  //
 	  // set visualization attributes
 	  //
-	  itsVisAttributes=SetVisAttributes();
-	  itsVisAttributes->SetForceSolid(true);
 	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 	  
 	  //
@@ -205,6 +201,7 @@ void BDSDecapole::SynchRescale(G4double factor)
 G4VisAttributes* BDSDecapole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0,0,1)); //green
+  itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
 
@@ -220,7 +217,6 @@ void BDSDecapole::BuildBPFieldAndStepper()
 
 BDSDecapole::~BDSDecapole()
 {
-  delete itsVisAttributes;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

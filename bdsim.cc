@@ -1,7 +1,7 @@
 //  
-//   BDSIM, (C) 2001-2008 
+//   BDSIM, (C) 2001-2013 
 //   
-//   version 0.5-dev
+//   version 0.6
 //  
 //
 //
@@ -19,6 +19,7 @@
 #include "BDSExecOptions.hh"     // executable command line options 
 #include "BDSGlobalConstants.hh" //  global parameters
 
+#include "G4UImanager.hh"        // G4 session managers
 #include "G4UIterminal.hh"
 #ifdef G4UI_USE_TCSH
 #include "G4UItcsh.hh"
@@ -81,7 +82,7 @@
 // Global variables 
 BDSOutput*    bdsOutput;         // output interface
 BDSBunch      bdsBunch;          // bunch information 
-BDSSamplerSD* BDSSamplerSensDet; // sampler???
+BDSSamplerSD* BDSSamplerSensDet; // sampler
 //=======================================================
 
 //=======================================================
@@ -115,12 +116,6 @@ int main(int argc,char** argv) {
   // file via the gmad parser to the BDSGlobalConstants and 
   // to the BDSBunch instances
   //
-
-#ifdef DEBUG
-  G4cout << __FUNCTION__ << "> Setting global constants." << G4endl;
-#endif  
-
-  //  BDSGlobals = new BDSGlobalConstants(options);
 
 #ifdef DEBUG
   G4cout << __FUNCTION__ << "> Setting bunch options." << G4endl;
@@ -211,7 +206,7 @@ int main(int argc,char** argv) {
   G4double worldMaximumExtent=1000*m;
   // This sets the tolerances for the geometry (1e-11 times this value)
   G4GeometryManager::GetInstance()->SetWorldMaximumExtent(worldMaximumExtent); 
-  G4cout << __FUNCTION__ << "> Geometry toleranceswith worldMaximumExtent=" 
+  G4cout << __FUNCTION__ << "> Geometry tolerances with worldMaximumExtent=" 
 	 << worldMaximumExtent/m << "m: surface: " 
 	 << theGeometryTolerance->GetSurfaceTolerance() 
 	 << " angular: " << theGeometryTolerance->GetAngularTolerance() 
@@ -468,11 +463,18 @@ int main(int argc,char** argv) {
 #endif
   delete bdsOutput;
 
-#ifdef DEBUG 
-  G4cout << __FUNCTION__ << "> BDSGlobalConstants::Instance() deleting..."<<G4endl;
+#ifdef DEBUG
+  G4cout << __FUNCTION__ << "> BDSBeamline deleting..."<<G4endl;
 #endif
+  delete BDSBeamline::Instance();
+
+#ifdef DEBUG 
+  G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
+#endif
+  delete BDSExecOptions::Instance();
   delete BDSGlobalConstants::Instance();
-  
+  delete BDSMaterials::Instance();
+
 #ifdef DEBUG 
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif

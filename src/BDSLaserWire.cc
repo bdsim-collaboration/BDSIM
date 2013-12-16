@@ -30,7 +30,7 @@ G4double aWavelength, G4ThreeVector aDirection):
     aName,
     aLength,0,0,0,
     SetVisAttributes()),
-  itsVisAttributes(NULL),itsLaserCompton(NULL),
+  itsLaserCompton(NULL),
   itsLaserDirection(aDirection),itsLaserWavelength(aWavelength)
 {
   LaserWireLogicalVolume();
@@ -61,7 +61,6 @@ void BDSLaserWire::LaserWireLogicalVolume()
       (*LogVolCount)[itsName]++;
       itsMarkerLogicalVolume=(*LogVol)[itsName];
     }
-  itsVisAttributes=this->SetVisAttributes();
   itsMarkerLogicalVolume->SetVisAttributes(itsVisAttributes);
 }
 
@@ -75,6 +74,5 @@ G4VisAttributes* BDSLaserWire::SetVisAttributes()
 
 BDSLaserWire::~BDSLaserWire()
 {
-  delete itsVisAttributes;
   delete itsLaserCompton;
 }

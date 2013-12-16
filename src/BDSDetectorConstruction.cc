@@ -81,7 +81,6 @@
 #include "G4VSampler.hh"
 #include "G4GeometrySampler.hh"
 #include "G4IStore.hh"
-
  
 using namespace std;
 
@@ -111,6 +110,14 @@ LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 LogVolMap* LogVol;
 
+G4RotationMatrix* RotY90=new G4RotationMatrix();
+G4RotationMatrix* RotYM90=new G4RotationMatrix();
+
+G4RotationMatrix* RotX90=new G4RotationMatrix();
+G4RotationMatrix* RotXM90=new G4RotationMatrix();
+
+G4RotationMatrix* RotYM90X90=new G4RotationMatrix();
+G4RotationMatrix* RotYM90XM90=new G4RotationMatrix();
 
 //G4Navigator* StepperNavigator;
 //G4Navigator* QuadNavigator;
@@ -151,34 +158,44 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   _globalRotation = new G4RotationMatrix();
 
 // create commands for interactive definition of the beamline  
+  G4double pi_ov_2 = asin(1.);
+
+  RotY90->rotateY(pi_ov_2);
+  RotYM90->rotateY(-pi_ov_2);
+  RotX90->rotateX(pi_ov_2);
+  RotXM90->rotateX(-pi_ov_2);
+  RotYM90X90->rotateY(-pi_ov_2);
+  RotYM90X90->rotateX( pi_ov_2);
+  RotYM90XM90->rotateY(-pi_ov_2);
+  RotYM90XM90->rotateX(-pi_ov_2);
 
   // GlashStuff                                                                                                                                                         
   theParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
-  theParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*GeV);
-  theParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*GeV);
+  theParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*CLHEP::GeV);
+  theParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*CLHEP::GeV);
   theParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   
-  theParticleBounds->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),gflashemax*GeV);
-  theParticleBounds->SetMinEneToParametrise(*G4Positron::PositronDefinition(),gflashemin*GeV);
+  theParticleBounds->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),gflashemax*CLHEP::GeV);
+  theParticleBounds->SetMinEneToParametrise(*G4Positron::PositronDefinition(),gflashemin*CLHEP::GeV);
   theParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
 
   theParticleBoundsVac  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
-  theParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*GeV);
-  theParticleBoundsVac->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),0*GeV);
+  theParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*CLHEP::GeV);
+  theParticleBoundsVac->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),0*CLHEP::GeV);
 
 #ifdef DEBUG
   G4cout << __METHOD_NAME__ << "theParticleBounds - min E - electron: " 
-	 << theParticleBounds->GetMinEneToParametrise(*G4Electron::ElectronDefinition())/GeV<< " GeV" << G4endl;
+	 << theParticleBounds->GetMinEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< " GeV" << G4endl;
   G4cout << __METHOD_NAME__ << "theParticleBounds - max E - electron: " 
-	 << theParticleBounds->GetMaxEneToParametrise(*G4Electron::ElectronDefinition())/GeV<< G4endl;
+	 << theParticleBounds->GetMaxEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
   G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - electron: " 
-	 << theParticleBounds->GetEneToKill(*G4Electron::ElectronDefinition())/GeV<< G4endl;
+	 << theParticleBounds->GetEneToKill(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
   G4cout << __METHOD_NAME__ << "theParticleBounds - min E - positron: " 
-	 << theParticleBounds->GetMinEneToParametrise(*G4Positron::PositronDefinition())/GeV<< G4endl;
+	 << theParticleBounds->GetMinEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
   G4cout << __METHOD_NAME__ << "theParticleBounds - max E - positron: " 
-	 << theParticleBounds->GetMaxEneToParametrise(*G4Positron::PositronDefinition())/GeV<< G4endl;
+	 << theParticleBounds->GetMaxEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
   G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - positron: " 
-	 << theParticleBounds->GetEneToKill(*G4Positron::PositronDefinition())/GeV<< G4endl;
+	 << theParticleBounds->GetEneToKill(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
 #endif
 
   theHitMaker          = new GFlashHitMaker();                    // Makes the EnergieSpots 
@@ -197,9 +214,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 
   gasRegion = new G4Region("gasRegion");
   G4ProductionCuts* theGasProductionCuts = new G4ProductionCuts();
-  theGasProductionCuts->SetProductionCut(1*m,G4ProductionCuts::GetIndex("gamma"));
-  theGasProductionCuts->SetProductionCut(1*m,G4ProductionCuts::GetIndex("e-"));
-  theGasProductionCuts->SetProductionCut(1*m,G4ProductionCuts::GetIndex("e+"));
+  theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("gamma"));
+  theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("e-"));
+  theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("e+"));
   gasRegion->SetProductionCuts(theGasProductionCuts);
 
 
@@ -460,23 +477,23 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
   
   G4String LocalName="World";
   
-  SetWorldSizeX(1.5*( 2*std::max(fabs( rmin(0) ),fabs( rmax(0) ) ) ) *mm);
-  SetWorldSizeY(1.5*( 2*std::max(fabs(rmin(1)),fabs(rmax(1))) ) *mm);
-  SetWorldSizeZ(1.5*(fabs(rmin(2)) + fabs(rmax(2))) *mm);
+  SetWorldSizeX(1.5*( 2*std::max(fabs( rmin(0) ),fabs( rmax(0) ) ) ) *CLHEP::mm);
+  SetWorldSizeY(1.5*( 2*std::max(fabs(rmin(1)),fabs(rmax(1))) ) *CLHEP::mm);
+  SetWorldSizeZ(1.5*(fabs(rmin(2)) + fabs(rmax(2))) *CLHEP::mm);
 
   if(verbose || debug)
     {
       
-      G4cout<<"minX="<<rmin(0)/m<<" m"<<" maxX="<<rmax(0)/m<<" m"<<G4endl;
-      G4cout<<"minY="<<rmin(1)/m<<" m"<<" maxY="<<rmax(1)/m<<" m"<<G4endl;
-      G4cout<<"minZ="<<rmin(2)/m<<" m"<<" maxZ="<<rmax(2)/m<<" m"<<G4endl;
+      G4cout<<"minX="<<rmin(0)/CLHEP::m<<" m"<<" maxX="<<rmax(0)/CLHEP::m<<" m"<<G4endl;
+      G4cout<<"minY="<<rmin(1)/CLHEP::m<<" m"<<" maxY="<<rmax(1)/CLHEP::m<<" m"<<G4endl;
+      G4cout<<"minZ="<<rmin(2)/CLHEP::m<<" m"<<" maxZ="<<rmax(2)/CLHEP::m<<" m"<<G4endl;
 
-      G4cout<<"itsWorldSizeX = "<<GetWorldSizeX()/m<<G4endl;
-      G4cout<<"itsWorldSizeY = "<<GetWorldSizeY()/m<<G4endl;
-      G4cout<<"itsWorldSizeZ = "<<GetWorldSizeZ()/m<<G4endl;
+      G4cout<<"itsWorldSizeX = "<<GetWorldSizeX()/CLHEP::m<<G4endl;
+      G4cout<<"itsWorldSizeY = "<<GetWorldSizeY()/CLHEP::m<<G4endl;
+      G4cout<<"itsWorldSizeZ = "<<GetWorldSizeZ()/CLHEP::m<<G4endl;
       
-      G4cout<<"box size="<<BDSGlobalConstants::Instance()->GetComponentBoxSize()/m<<" m"<<G4endl;
-      G4cout<<"s_tot="<<s_tot/m<<" m"<<G4endl;
+      G4cout<<"box size="<<BDSGlobalConstants::Instance()->GetComponentBoxSize()/CLHEP::m<<" m"<<G4endl;
+      G4cout<<"s_tot="<<s_tot/CLHEP::m<<" m"<<G4endl;
     }
 
   bdsOutput->zMax=s_tot;
@@ -498,7 +515,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
   // G4StepLimiter process enabled)
 #ifndef NOUSERLIMITS
   G4UserLimits* WorldUserLimits =new G4UserLimits();
-  WorldUserLimits->SetMaxAllowedStep(10*m);
+  WorldUserLimits->SetMaxAllowedStep(10*CLHEP::m);
   WorldUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   WorldUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   logicWorld->SetUserLimits(WorldUserLimits);
@@ -551,7 +568,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
   G4cout.precision(15);
   
 #ifdef DEBUG 
-  G4cout<<"total length="<<s_tot/m<<"m"<<G4endl;
+  G4cout<<"total length="<<s_tot/CLHEP::m<<"m"<<G4endl;
 #endif
   
   // reset counters:
@@ -682,10 +699,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 	  localZ.rotate(theta,localX);
 	  
 	  // bend trapezoids defined along z-axis
-	  rotateComponent->rotateY(-twopi/4-angle/2); 						
+	  rotateComponent->rotateY(-CLHEP::twopi/4-angle/2); 						
 	} else {
 	if (BDSBeamline::Instance()->currentItem()->GetMarkerLogicalVolume()->GetSolid()->GetName().contains("trapezoid") ){
-	  rotateComponent->rotateY(-twopi/4); //Drift trapezoids defined along z axis 
+	  rotateComponent->rotateY(-CLHEP::twopi/4); //Drift trapezoids defined along z axis 
 	}
       }
     
@@ -948,6 +965,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
     }
   
   // free the parser list
+  for(it = beamline_list.begin();it!=beamline_list.end();it++) {
+    delete (*it).lst;
+  }
   beamline_list.clear();
 
   if(verbose || debug) G4cout<<"end placement, size="<<BDSBeamline::Instance()->size()<<G4endl;
@@ -998,6 +1018,10 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
   gFlashRegion.clear();
 
   delete _globalRotation;
+
+  delete theHitMaker;
+  delete theParticleBounds;
+  delete theParticleBoundsVac;
 }
 
 //=================================================================

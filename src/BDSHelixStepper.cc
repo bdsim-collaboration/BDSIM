@@ -57,11 +57,11 @@ void BDSHelixStepper::AdvanceHelix( const G4double  yIn[],
     {
       G4double B[3];
       its_EqRhs->GetFieldValue(yIn, B);
-      R=-(InitMag/GeV)/(0.299792458 * B[1]/tesla) *m;
+      R=-(InitMag/CLHEP::GeV)/(0.299792458 * B[1]/CLHEP::tesla) *CLHEP::m;
     }
   else
     {
-      R=-(InitMag/GeV)/(0.299792458 * itsBField/tesla) * m;
+      R=-(InitMag/CLHEP::GeV)/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
     }
 
  // include the sign of the charge of the particles

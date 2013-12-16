@@ -14,7 +14,6 @@
 #include "BDSLWCalorimeter.hh"
 #include "BDSLWCalorimeterHit.hh"
 
-#include "G4TrajectoryContainer.hh"
 #include "G4Trajectory.hh"
 
 #include <fstream>
@@ -42,22 +41,21 @@ public:
   BDSOutput(BDSOutputFormat format);
 
   void SetFormat(BDSOutputFormat format);
-  void BuildSamplerTree(G4String name);
   void Init(G4int FileNum);
   ~BDSOutput();
 
   void WriteHits(BDSSamplerHitsCollection*);
   void WriteEnergyLoss(BDSEnergyCounterHitsCollection*);
-  G4int WriteTrajectory(TrajectoryVector* TrajVec);
-  G4int WriteTrajectory(std::vector<G4VTrajectory*> TrajVec);
+  G4int WriteTrajectory(std::vector<G4VTrajectory*> &TrajVec);
 
   void Echo(G4String str);
 
   G4int Commit(); //G4int FileNum);   // close the event
   void Write();           // close the event
-  // for root output
 
+  // for root output
 #ifdef USE_ROOT
+  void BuildSamplerTree(G4String name);
   TFile* theRootOutputFile;
   //  TTree *theLWCalorimeterTree;
 
@@ -69,7 +67,6 @@ public:
 
   G4int nSamplers;
   G4double zMax, transMax; //Maximum values of longitudinal and transverse global position
-  //BDSSamplerSD* BDSSamplerSensDet;
   std::vector <G4String> SampName;
   std::vector <G4String> CSampName;
 
@@ -83,7 +80,7 @@ private:
   std::ofstream ofEloss;
   int outputFileNumber;
 
-//#ifdef USE_ROOT
+#ifdef USE_ROOT
   float x0,xp0,y0,yp0,z0,zp0,E0,t0;
   float x,xp,y,yp,z,zp,E,Edep,t;
   float X,Xp,Y,Yp,Z,Zp,s,weight,EWeightZ;
@@ -92,9 +89,9 @@ private:
   float x_el_p,y_el_p,z_el_p,E_el_p;
   int part_el_p,pID_el_p, weight_el_p;
   char volumeName_el_p[100];
-//#endif
 
   void WriteRootHit(G4String Name, G4double InitMom, G4double InitX, G4double InitY, G4double InitZ, G4double InitXPrime, G4double InitYPrime, G4double InitZPrime, G4double InitT, G4double Mom, G4double X, G4double Y, G4double Z, G4double XPrime, G4double YPrime, G4double ZPrime, G4double T, G4double GlobalX, G4double GlobalY, G4double GlobalZ, G4double GlobalXPrime, G4double GlobalYPrime, G4double GlobalZPrime, G4double S, G4double Weight, G4int PDGtype, G4int EventNo, G4int ParentID, G4int TrackID);
+#endif
   
   void WriteAsciiHit(G4int PDGType, G4double Mom, G4double  X, G4double  Y, G4double  S, G4double  XPrime, G4double  YPrime, G4int EventNo, G4double  Weight, G4int  ParentID, G4int  TrackID);
 

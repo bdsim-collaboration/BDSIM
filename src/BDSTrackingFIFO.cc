@@ -43,21 +43,23 @@ void BDSTrackingFIFO::writeToFifo(){
 #ifdef DEBUG
   G4cout << "reftime = " << _tmpT << G4endl;
 #endif
-  std::deque<tmpParticle>::iterator iter;
+  std::deque<BDSParticle>::iterator iter;
   for(iter=BDSGlobalConstants::Instance()->transformedQueue.begin();
       iter!=BDSGlobalConstants::Instance()->transformedQueue.end();iter++)
     {
-      (*iter).x -= ((*iter).t-_tmpT)*(*iter).xp*c_light/micrometer;
-      (*iter).y -= ((*iter).t-_tmpT)*(*iter).yp*c_light/micrometer;
-      (*iter).z -= ((*iter).t-_tmpT)*c_light/micrometer;
+      (*iter).itsPosition -= G4ThreeVector(
+	      ((*iter).GetTime()-_tmpT)*(*iter).GetXp()*CLHEP::c_light/CLHEP::micrometer,
+	      ((*iter).GetTime()-_tmpT)*(*iter).GetYp()*CLHEP::c_light/CLHEP::micrometer,
+	      ((*iter).GetTime()-_tmpT)*CLHEP::c_light/CLHEP::micrometer);
+
       fprintf(_fifo,"%.15f %.15f %.15f %.15f %.15f %.15f %.15f\n",
-	      (*iter).E,
-	      (*iter).x,
-	      (*iter).y,
-	      (*iter).z,
-	      (*iter).xp,
-	      (*iter).yp,
-	      (*iter).t);
+	      (*iter).GetEnergy(),
+	      (*iter).GetX(),
+	      (*iter).GetY(),
+	      (*iter).GetZ(),
+	      (*iter).GetXp(),
+	      (*iter).GetYp(),
+	      (*iter).GetTime());
     }
   finishWrite();
 }
@@ -105,41 +107,33 @@ void BDSTrackingFIFO::readFromFifo(){
 #ifdef DEBUG
       printf("In : %.15f %.15f %.15f %.15f %.15f %.15f %.15f\n",E,x,y,z,xp,yp,t);
 #endif
-      xp *= 1e-6*radian;
-      yp *= 1e-6*radian;
-      zp = sqrt(1-xp*xp-yp*yp)*radian;
+      xp *= 1e-6*CLHEP::radian;
+      yp *= 1e-6*CLHEP::radian;
+      zp = sqrt(1-xp*xp-yp*yp)*CLHEP::radian;
       
-      pos = G4ThreeVector(x,y,z)*micrometer;
+      pos = G4ThreeVector(x,y,z)*CLHEP::micrometer;
       momDir = G4ThreeVector(xp,yp,zp);
       
       LocalPosition = tf.TransformPoint(pos);
       LocalDirection = tf.TransformAxis(momDir);
       G4double refTime = (_tmpT-t); // all t0=0 so remove /2
       
-      LocalPosition -= LocalDirection*c_light*refTime;
-      ///	  t = -z/c_light;
-      LocalPosition += LocalDirection.unit()*1e-4*micrometer; // temp fix for recirculation in dump volume
+      LocalPosition -= LocalDirection*CLHEP::c_light*refTime;
+      ///	  t = -z/CLHEP::c_light;
+      LocalPosition += LocalDirection.unit()*1e-4*CLHEP::micrometer; // temp fix for recirculation in dump volume
       
 #ifdef DEBUG
-          G4cout << "Stacking: Pos = " << pos << G4endl;
-          G4cout << "LocalPos: Pos = " << LocalPosition << G4endl;
-          G4cout << "Stacking: mom = " << momDir << G4endl;
-          G4cout << "LocalDir: mom = " << LocalDirection << G4endl;
+      G4cout << "Stacking: Pos = " << pos << G4endl;
+      G4cout << "LocalPos: Pos = " << LocalPosition << G4endl;
+      G4cout << "Stacking: mom = " << momDir << G4endl;
+      G4cout << "LocalDir: mom = " << LocalDirection << G4endl;
 #endif
-	  tmpParticle holdingParticle;
-	  holdingParticle.E = E*GeV - BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
-	  holdingParticle.t = t;
-	  holdingParticle.xp = LocalDirection.x();
-	  holdingParticle.yp = LocalDirection.y();
-	  holdingParticle.zp = LocalDirection.z();
-	  
-	  holdingParticle.x = LocalPosition.x();
-	  holdingParticle.y = LocalPosition.y();
-	  holdingParticle.z = LocalPosition.z();
-	  
-	  BDSGlobalConstants::Instance()->holdingQueue.push_back(holdingParticle);
+      G4double energy = E*CLHEP::GeV - BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
+      BDSParticle holdingParticle(LocalPosition,LocalDirection,energy,t,1,0,0);
+				  
+      BDSGlobalConstants::Instance()->holdingQueue.push_back(holdingParticle);
 #ifdef DEBUG 
-          G4cout << "Read particle number " << i << G4endl;
+      G4cout << "Read particle number " << i << G4endl;
 #endif
     }
     sleep(1);

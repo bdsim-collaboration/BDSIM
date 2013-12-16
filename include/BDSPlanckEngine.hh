@@ -11,7 +11,9 @@
 #include "Randomize.hh" 
 #include "G4Version.hh"
 #if G4VERSION_NUMBER > 899
+#if G4VERSION_NUMBER < 1000
 #include "G4VeLowEnergyLoss.hh"
+#endif
 #else
 #include "G4VeEnergyLoss.hh"
 #endif
@@ -55,7 +57,7 @@ private:
 inline void BDSPlanckEngine::SetTemperature(G4double aTemperature)
 {
  itsTemperature=aTemperature;
- kT=k_Boltzmann* itsTemperature;
+ kT=CLHEP::k_Boltzmann* itsTemperature;
 }
 
 inline G4double BDSPlanckEngine::PlanckSpectrum(G4double x)

@@ -36,7 +36,7 @@ BDSMuSpoiler::BDSMuSpoiler (G4String& aName,G4double aLength,G4double bpRad,
   itsInnerBPLogicalVolume(NULL),itsBPTube(NULL),itsInnerBPTube(NULL),itsSoilTube(NULL),
   itsTunnelTube(NULL),itsInnerTunnelTube(NULL),itsInnerTunnelLogicalVolume(NULL),
   itsSoilTunnelLogicalVolume(NULL),itsTunnelUserLimits(NULL),itsSoilTunnelUserLimits(NULL),
-  itsInnerTunnelUserLimits(NULL),itsVisAttributes(NULL),itsBPVisAttributes(NULL),
+  itsInnerTunnelUserLimits(NULL),itsBPVisAttributes(NULL),
   itsEqRhs(NULL),
   itsBeampipeRadius(bpRad),
   itsInnerRadius(rInner),
@@ -51,7 +51,6 @@ BDSMuSpoiler::BDSMuSpoiler (G4String& aName,G4double aLength,G4double bpRad,
   }
 
   itsType="muspoiler";
-  SetVisAttributes();
   SetBPVisAttributes();
   if ( (*LogVolCount)[itsName]==0)
     {
@@ -62,8 +61,8 @@ BDSMuSpoiler::BDSMuSpoiler (G4String& aName,G4double aLength,G4double bpRad,
   xLength = yLength = std::max(xLength,totalTunnelRadius);
 
 #ifdef DEBUG 
-  G4cout<<"marker volume : x/y="<<xLength/m<<
-    " m, l= "<<  (itsLength+BDSGlobalConstants::Instance()->GetLengthSafety())/2/m <<" m"<<G4endl;
+  G4cout<<"marker volume : x/y="<<xLength/CLHEP::m<<
+    " m, l= "<<  (itsLength+BDSGlobalConstants::Instance()->GetLengthSafety())/2/CLHEP::m <<" m"<<G4endl;
 #endif
 
   itsMarkerLogicalVolume=new G4LogicalVolume
@@ -105,7 +104,7 @@ void BDSMuSpoiler::BuildMuSpoiler()
 				   itsInnerRadius+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,
 				   itsOuterRadius-BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,
 				   itsLength/2-BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,
-				   0,twopi*radian),
+				   0,CLHEP::twopi*CLHEP::radian),
 			BDSMaterials::Instance()->GetMaterial("Iron"), 
 			itsName+"_solid");
 
@@ -114,7 +113,7 @@ void BDSMuSpoiler::BuildMuSpoiler()
 				   0.,
 				   itsInnerRadius,
 				   itsLength/2,
-				   0,twopi*radian),
+				   0,CLHEP::twopi*CLHEP::radian),
 			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			itsName+"_inner");
 
@@ -124,8 +123,8 @@ void BDSMuSpoiler::BuildMuSpoiler()
 
 #ifdef DEBUG 
   G4cout << "Outer pipe :"
-         << " r= " << itsBpRadius/m << " m"
-         << " l= " << itsLength/(2.)/m << " m"
+         << " r= " << itsBpRadius/CLHEP::m << " m"
+         << " l= " << itsLength/(2.)/CLHEP::m << " m"
          << G4endl;
 #endif
 
@@ -133,13 +132,13 @@ void BDSMuSpoiler::BuildMuSpoiler()
 		       itsBpRadius+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,
 		       itsBpRadius+BDSGlobalConstants::Instance()->GetBeampipeThickness(),
 		       itsLength/(2.),
-		       0,twopi*radian);
+		       0,CLHEP::twopi*CLHEP::radian);
 
 #ifdef DEBUG
   G4cout << "Inner pipe :"
-         << " r= " << (itsBpRadius-BDSGlobalConstants::Instance()->GetBeampipeThickness() )/m
+         << " r= " << (itsBpRadius-BDSGlobalConstants::Instance()->GetBeampipeThickness() )/CLHEP::m
          << " m"
-         << " l= " << itsLength/(2.)/m << " m"
+         << " l= " << itsLength/(2.)/CLHEP::m << " m"
          << G4endl;
 #endif
   
@@ -147,7 +146,7 @@ void BDSMuSpoiler::BuildMuSpoiler()
 				0.,
 				itsBpRadius,
 			    itsLength/2 - BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,
-				0,twopi*radian);
+				0,CLHEP::twopi*CLHEP::radian);
 
   itsBeampipeLogicalVolume=	
     new G4LogicalVolume(itsBPTube,
@@ -271,18 +270,12 @@ G4VisAttributes* BDSMuSpoiler::SetBPVisAttributes()
 
 BDSMuSpoiler::~BDSMuSpoiler()
 {
-  delete itsVisAttributes;
   delete itsBPVisAttributes;
 
 //   delete itsInnerTunnelUserLimits;
 //   delete itsTunnelUserLimits;
 //   delete itsSoilTunnelUserLimits;
 
-//   delete itsSolidLogVol;
-//   delete itsInnerLogVol;
-//   delete itsBeampipeLogicalVolume;
-//   delete itsInnerBPLogicalVolume;
-  
 //   delete itsBPTube;
 //   delete itsInnerBPTube;
 

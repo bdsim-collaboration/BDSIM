@@ -51,11 +51,11 @@ void BDSDriftStepper::AdvanceHelix( const G4double  yIn[],
 	{
 	  int G4precision = G4cout.precision();
 	  G4cout.precision(10);
-	  G4cout<<" h="<<h/m<<G4endl;
-	  G4cout<<"xIn="<<yIn[0]/m<<" yIn="<<yIn[1]/m<<
-	    " zIn="<<yIn[2]/m<<" v0="<<v0<<G4endl;
-	  G4cout<<"xOut="<<yDrift[0]/m<<" yOut="<<yDrift[1]/m<<
-	    "zOut="<<yDrift[2]/m<<G4endl;
+	  G4cout<<" h="<<h/CLHEP::m<<G4endl;
+	  G4cout<<"xIn="<<yIn[0]/CLHEP::m<<" yIn="<<yIn[1]/CLHEP::m<<
+	    " zIn="<<yIn[2]/CLHEP::m<<" v0="<<v0<<G4endl;
+	  G4cout<<"xOut="<<yDrift[0]/CLHEP::m<<" yOut="<<yDrift[1]/CLHEP::m<<
+	    "zOut="<<yDrift[2]/CLHEP::m<<G4endl;
 	  // set precision back
 	  G4cout.precision(G4precision);
 	}

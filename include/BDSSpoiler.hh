@@ -38,7 +38,6 @@ private:
   G4LogicalVolume* itsSolidLogVol;
   G4LogicalVolume* itsInnerLogVol;
                     
-  G4VisAttributes* itsVisAttributes;
   G4Mag_UsualEqRhs* itsEqRhs;
 
 private:

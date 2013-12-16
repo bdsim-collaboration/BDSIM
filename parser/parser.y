@@ -525,7 +525,7 @@ parameters:
 		  else
 		  if(!strcmp($1->name,"phiAngleOut")) { params.phiAngleOut = $3; params.phiAngleOutset = 1;} // element outgoing angle
 		  else
-		   if(!strcmp($1->name,"beampipeThickness") ||!strcmp($1->name,"beampipeThickness") ) 
+		   if(!strcmp($1->name,"beampipeThickness") ) 
 		      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
 		    else
 		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
@@ -676,7 +676,7 @@ parameters:
 	       if(execute) 
 		 {
 #ifdef DEBUG 
-                   printf("VARIABLE (%s) = vecexpr\n",$1->name);
+                   printf("VARIABLE (%s) = vecexpr (%d)\n",$1->name,$3->size);
 #endif
 		   if(!strcmp($1->name,"knl")) 
 		     {
@@ -759,6 +759,9 @@ parameters:
 		    else
 		  if(!strcmp($1->name,"phiAngleOut")) { params.phiAngleOut = $3; params.phiAngleOutset = 1;} // element outgoing angle
 		    else
+		  if(!strcmp($1->name,"beampipeThickness") ) 
+			      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
+		    else
 		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
 			      { params.aper = $3; params.aperset = 1;}
 		    else
@@ -767,11 +770,19 @@ parameters:
 		    else
 		  if(!strcmp($1->name,"aperY") ||!strcmp($1->name,"apertureY") ) 
 			      { params.aperY = $3; params.aperYset = 1;}
-		    else
-		  if(!strcmp($1->name,"beampipeThickness") ||!strcmp($1->name,"beampipeThickness") ) 
-			      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
 		  else
-		    if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
+		  if(!strcmp($1->name,"aperYUp") ||!strcmp($1->name,"apertureYUp") ) 
+		      { params.aperYUp = $3; params.aperYUpset = 1;}
+		    else
+		  if(!strcmp($1->name,"aperYDown") ||!strcmp($1->name,"apertureYDown") ) 
+		      { params.aperYDown = $3; params.aperYDownset = 1;}
+		    else
+		  if(!strcmp($1->name,"aperDy") ||!strcmp($1->name,"apertureDy") ) 
+		    { params.aperDy = $3; params.aperDyset = 1;}
+		    else
+		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
+		    else
+                  if(!strcmp($1->name,"inR") ) { params.inR = $3; params.inRset = 1;}
 		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
@@ -818,14 +829,18 @@ parameters:
 		  if(!strcmp($1->name,"T")) {params.temper = $3; params.temperset = 1;}  // temperature
 		    else
 		  if(!strcmp($1->name,"P")) {params.pressure = $3; params.pressureset = 1;}  // pressure
-		  //else
-		  //  if(!strcmp($1->name,"state")) {params.state = $3; params.stateset = 1;}  // state
 		    else
 		  if(!strcmp($1->name,"waveLength")) {params.waveLength = $3; params.waveLengthset = 1;}
-		    else {
+		    else
+		  if(!strcmp($1->name,"taperlength")) {params.taperlength = $3; params.taperlengthset = 1;}
+		    else
+		  if(!strcmp($1->name,"flatlength")) {params.flatlength = $3; params.flatlengthset = 1;}
+                    else
+		  if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence
+		  else {
 		      //                  if(VERBOSE)
 		      printf("Warning : unknown parameter %s\n",$1->name);
-		    }
+		  }
 		}
 	    }
           | VARIABLE '=' STR ',' parameters
@@ -898,7 +913,7 @@ parameters:
 	       if(execute) 
 		 {
 #ifdef DEBUG 
-                   printf("VARIABLE (%s) = str\n",$1->name);
+                   printf("VARIABLE (%s) = str (%s)\n",$1->name,$3);
 #endif
 		   if(!strcmp($1->name,"geometry")) 
 		     {

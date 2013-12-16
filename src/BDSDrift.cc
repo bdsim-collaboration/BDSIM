@@ -109,7 +109,6 @@ void BDSDrift::BuildBLMs(){
 
 BDSDrift::~BDSDrift()
 {
-  delete itsVisAttributes;
 //   //  delete itsPhysiComp;
   delete itsMagField;
   delete itsEqRhs;

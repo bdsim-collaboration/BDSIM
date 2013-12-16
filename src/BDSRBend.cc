@@ -99,7 +99,7 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
 	  // Magnetic flux from a pole is divided in two directions
 	  BFldIron/=2.;
 	  
-	  BuildOuterFieldManager(2, BFldIron,pi/2);
+	  BuildOuterFieldManager(2, BFldIron,CLHEP::pi/2);
 	}
       BuildBLMs();
       //
@@ -115,8 +115,6 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
       //
       // set visualization attributes
       //
-      itsVisAttributes=SetVisAttributes();
-      itsVisAttributes->SetForceSolid(true);
       itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
       //
@@ -172,7 +170,7 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
 	      // Magnetic flux from a pole is divided in two directions
 	      BFldIron/=2.;
 
-	      BuildOuterFieldManager(2, BFldIron,pi/2);
+	      BuildOuterFieldManager(2, BFldIron,CLHEP::pi/2);
 	    }
 	  //When is SynchRescale(factor) called?
 	  
@@ -186,8 +184,6 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
 	  //
 	  // set visualization attributes
 	  //
-	  itsVisAttributes=SetVisAttributes();
-	  itsVisAttributes->SetForceSolid(true);
 	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
 	  //
@@ -221,6 +217,7 @@ void BDSRBend::SynchRescale(G4double factor)
 G4VisAttributes* BDSRBend::SetVisAttributes()
 {
   itsVisAttributes = new G4VisAttributes(G4Colour(0,0,1)); //blue
+  itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
 
@@ -325,14 +322,14 @@ void BDSRBend::BuildRBBeampipe()
 				   itsBpRadius+bpThickness,             // outer R
 				   tubLen,                  // length
 				   0,                       // starting phi
-				   twopi * rad );           // delta phi
+				   CLHEP::twopi * CLHEP::rad );           // delta phi
   
   G4Tubs *pipeInnerEnv = new G4Tubs(itsName+"_pipe_inner_env",
 				    0,                       // inner R
 				    itsBpRadius, // outer R
 				    tubLen,                  // length
 				    0,                       // starting phi
-				    twopi * rad );           // delta phi
+				    CLHEP::twopi * CLHEP::rad );           // delta phi
 
   G4IntersectionSolid *pipeTubs =
     new G4IntersectionSolid(itsName+"_pipe_outer",
@@ -553,7 +550,7 @@ void BDSRBend::BuildRBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 	       itsOuterR,          // outer R
 	       tubLen,             // length
 	       0,                  // starting phi
-	       twopi * rad );      // delta phi
+	       CLHEP::twopi * CLHEP::rad );      // delta phi
   
   G4IntersectionSolid *magTubs =
     new G4IntersectionSolid(itsName+"_solid",
@@ -600,16 +597,8 @@ void BDSRBend::BuildRBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 
 BDSRBend::~BDSRBend()
 {
-  delete itsVisAttributes;
   delete innerBeampipeVisAtt;
   delete beampipeVisAtt;
-//   delete markerSolidVolume;
-//   delete rbendRectangleSolidVolume;
-//   delete rbendRectangleLogicalVolume;
-//   delete middleBeampipeLogicalVolume;
-//   delete middleInnerBPLogicalVolume;
-//   delete endsBeampipeLogicalVolume;
-//   delete endsInnerBPLogicalVolume;
 //   delete itsBeampipeUserLimits;
 //   delete endsBeampipeUserLimits;
 //   delete endsInnerBeampipeUserLimits;

@@ -30,7 +30,7 @@ BDSSpoiler::BDSSpoiler (G4String& aName,G4double aLength,G4double bpRad,
 			 aLength,bpRad,xAper,yAper,
 			 SetVisAttributes()),
   itsPhysiComp(NULL), itsPhysiComp2(NULL), itsSolidLogVol(NULL), 
-  itsInnerLogVol(NULL), itsVisAttributes(NULL), itsEqRhs(NULL), 
+  itsInnerLogVol(NULL), itsEqRhs(NULL), 
   itsSpoilerMaterial(SpoilerMaterial)
 {
   
@@ -115,11 +115,4 @@ void BDSSpoiler::BuildInnerSpoiler()
 
 BDSSpoiler::~BDSSpoiler()
 {
-  delete itsVisAttributes;
-
-  //  delete itsSolidLogVol;
-  //  delete itsInnerLogVol;
-
-  //delete itsPhysiComp;
-  //delete itsPhysiComp2;
 }

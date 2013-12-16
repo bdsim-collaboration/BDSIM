@@ -38,6 +38,7 @@ BDSExecOptions::BDSExecOptions() {
 }
 
 BDSExecOptions::~BDSExecOptions() {
+  _instance = 0;
 }
 
 /** <Parse the command line options>

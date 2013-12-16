@@ -19,26 +19,26 @@ BDSPlanckScatter::BDSPlanckScatter():G4VeEnergyLoss("PlanckScatt")
 {
 
   // TODO: change to appropriate definition!!!
-  itsTemperature = 300 * kelvin;
+  itsTemperature = 300 * CLHEP::kelvin;
 
   if(itsTemperature<=0.){G4Exception("BDSPlanckScatter: Invalid Temperature", "-1", FatalException, "");}
   itsPlanckEngine=new BDSPlanckEngine(itsTemperature);
   itsComptonEngine=new BDSComptonEngine();
 
   // Thomspson cross sec (to be replaced below with Compton)
-  G4double sigma_T=0.6652*barn;
+  G4double sigma_T=0.6652*CLHEP::barn;
   
-  G4double AvPhotonEnergy=2.7*k_Boltzmann*itsTemperature;
+  G4double AvPhotonEnergy=2.7*CLHEP::k_Boltzmann*itsTemperature;
   
   G4double w= BDSGlobalConstants::Instance()->GetBeamTotalEnergy()*AvPhotonEnergy/
-    pow( electron_mass_c2,2);
+    pow( CLHEP::electron_mass_c2,2);
   
   G4double sigma=sigma_T*3/4*(
 			      (1+w)/pow(w,3)*( 2*w*(1+w)/(1+2*w) -log(1+2*w))
 			      + log(1+2*w)/(2*w)
 			      - (1+3*w)/pow((1+2*w),2) );
   
-  G4double photon_density = pow((itsTemperature/295.15),3)*5.329e14*pow(m,-3);
+  G4double photon_density = pow((itsTemperature/295.15),3)*5.329e14*pow(CLHEP::m,-3);
   itsPlanckMeanFreePath=1/(photon_density*sigma);
   
   // include scaling so that statistics are more reasonable:
@@ -81,7 +81,7 @@ G4VParticleChange* BDSPlanckScatter::PostStepDoIt(const G4Track& trackData,
   // Update the incident particle 
   //
   G4double NewKinEnergy=
-    itsComptonEngine->GetScatteredElectron().e()-electron_mass_c2;
+    itsComptonEngine->GetScatteredElectron().e()-CLHEP::electron_mass_c2;
   
   G4LorentzVector ScatEl=itsComptonEngine->GetScatteredElectron();
   
