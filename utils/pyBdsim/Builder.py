@@ -325,54 +325,123 @@ def SuggestFodoK(magnetlength,driftlength):
     return 1.0 / (float(magnetlength)*(float(magnetlength) + float(driftlength)))
 
 def WriteLattice(machine, filename):
+    """
+    WriteLattice(machineclassinstance,filenamestring)
+
+    Write a lattice to disk.  This writes several files to make the
+    machine, namely:
+    
+    filename_components_XX.gmad - component files (max 10k per file)
+    filename_lattice.gmad       - lattice definition
+    filename_samplers_XX.gmad   - sampler definitions (max 10k per file)
+    filename_options.gmad       - options (TO BE IMPLEMENTED)
+    filename.gmad          - suitable main file with all sub files in correct order
+
+    these are prefixed with the basefile name / path
+
+    """
     if type(machine) != Machine:
         raise TypeError("Not machine instance")
+
+    #check machine length
+    #to avoid parser problems with too long text files
+    maxlinesperfile = 20000 #number of machine elements defined in 1 gmad file
+    elementsperline = 100 #number of machine elements per bdsim line (not text line)
+    
+    #split machine into chunks - can be just one if only one...
+    machinechunks   = _General.Chunks(machine,maxlinesperfile)
+
+    #do the same with the samplers - remember nsamplers may not = nelements
+    if len(machine.samplers) == 0:
+        samplersexist = False
+    else:
+        samplersexist = True
+    if samplersexist:
+        samplerchunks = _General.Chunks(machine.samplers,maxlinesperfile)
+    
     #check filename
     if filename[-5:] != '.gmad':
         filename += '.gmad'
     #check if file already exists
     filename = _General.CheckFileExists(filename)
-    f = open(filename,"w")
+    basefilename = filename[:-5]
 
-    # write some comments
-    f.write('! ' + time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime()) + '\n')
-    f.write('! pybdsim.Builder Lattice \n')
-    f.write('! number of elements = ' + str(machine.nelements) + '\n')
-    f.write('! total length       = ' + str(machine.totallength) + ' m\n\n')
-    f.write('! COMPONENT DEFINITION\n\n')
+    #prepare names
+    maxn    = len(str(len(machinechunks)))
+    files   = []
+    fn_comp = [basefilename+'_components_'+str(n).zfill(maxn)+'.gmad' for n in range(len(machinechunks))]
+    if samplersexist:
+        fn_samp = [basefilename+'_samplers___'+str(n).zfill(maxn)+'.gmad' for n in range(len(samplerchunks))]
+    timestring = '! ' + time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime()) + '\n'
     
-    # write components
+    #write component files
     elementnames = []
-    for e in machine:
-        if e.category == 'marker':
-            linetowrite = e.name+' : '+ e.category
-        else:
-            linetowrite = e.name+' : '+e.category+', l=%(LENGTH).15f *m' %{'LENGTH':e.length}
-        for parameter in  e.keysextra():
-            linetowrite = linetowrite+', '+str(parameter)+'=%(NUMBER).15f' %{'NUMBER':e[parameter]}
-        linetowrite = linetowrite + ';\n'
-        f.write(linetowrite)
-        elementnames.append(e.name)
+    for filenumber,cfn in enumerate(fn_comp):
+        f = open(cfn,'w')
+        files.append(cfn)
+        f.write(timestring)
+        f.write('! pybdsim.Builder Lattice \n')
+        f.write('! COMPONENT DEFINITION - File number '+str(filenumber+1)+'/'+str(len(fn_comp))+'\n\n')
+        for e in machinechunks[filenumber]:
+            if e.category == 'marker':
+                linetowrite = e.name+' : '+ e.category
+            else:
+                linetowrite = e.name+' : '+e.category+', l=%(LENGTH).15f *m' %{'LENGTH':e.length}
+            for parameter in  e.keysextra():
+                linetowrite = linetowrite+', '+str(parameter)+'=%(NUMBER).15f' %{'NUMBER':e[parameter]}
+            linetowrite = linetowrite + ';\n'
+            f.write(linetowrite)
+            elementnames.append(e.name)
+        f.close()
 
-    # write lattice lines
+    #write lattice lines
+    latfn = basefilename + '_lines______' + '_'*maxn + '.gmad'
+    f = open(latfn,'w')
+    files.append(latfn)
+    f.write(timestring)
+    f.write('! pybdsim.Builder Lattice \n')
+    f.write('! LATTICE DEFINITION\n\n')
     linelist = []
     ti = 0
-    for ministring in _General.Chunks(elementnames,100):
-        stw2 = 'l'+str(ti)+': line = ('+', '.join(ministring)+');\n'
+    for line in _General.Chunks(elementnames,elementsperline):
+        stw2 = 'l'+str(ti)+': line = ('+', '.join(line)+');\n'
         f.write(stw2)
         linelist.append('l'+str(ti))
         ti += 1
-        
-    f.write('\n! LATTICE DEFINITION\n\n')
     # need to define the period before making sampler planes
     f.write('lattice: line = ('+', '.join(linelist)+');\n')
-    f.write('use, period=lattice;\n') 
-    # now do the sampler planes
-
-    f.write('\n! SAMPLER DEFINITION\n\n')
-    for s in machine.samplers:
-        f.write('sample, range=' + str(s) + ';\n')
-        
+    f.write('use, period=lattice;\n')
     f.close()
-    print 'Machine lattice written to',filename
- 
+
+    #write samplers
+    if samplersexist:
+        for filenumber,sfn in enumerate(fn_samp):
+            f = open(sfn,'w')
+            files.append(sfn)
+            f.write(timestring)
+            f.write('! pybdsim.Builder Lattice \n')
+            f.write('! SAMPLER DEFINITION - File number '+str(filenumber+1)+'/'+str(filenumber+1)+'\n\n')
+            for s in samplerchunks[filenumber]:
+                f.write('sample, range=' + str(s) + ';\n')
+            f.close()
+
+    # WRITE MACHINE OPTIONS
+    # YET TO BE IMPLMENTED
+
+    # write main file
+    mainfn = basefilename + '.gmad'
+    f = open(mainfn,'w')
+    f.write(timestring)
+    f.write('! pybdsim.Builder Lattice \n')
+    f.write('! number of elements = ' + str(machine.nelements) + '\n')
+    f.write('! total length       = ' + str(machine.totallength) + ' m\n\n')
+    
+    for fn in files:
+        f.write('include '+fn+';\n')
+    f.close()
+
+    #user feedback
+    print 'Lattice written to:'
+    for fn in files:
+        print(fn)
+    print 'All included in main file: \n',mainfn
