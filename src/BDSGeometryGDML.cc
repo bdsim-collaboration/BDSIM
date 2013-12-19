@@ -2,7 +2,6 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSGeometryGDML.hh"
 #include "BDSMaterials.hh"
-#include "BDSSamplerSD.hh"
 #include "BDSOutput.hh"
 #include "G4GDMLParser.hh"
 #include "G4LogicalVolume.hh"
