@@ -9,8 +9,8 @@ Symbol table for numeric variables and functions
 #define _DOUBLE 1
 #define _ARRAY 2
  
-#define NSYMS 65532
- 
+#define NSYMS 131072
+
 struct symtab {
   int is_reserved;
   int type;
