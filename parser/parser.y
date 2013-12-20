@@ -344,8 +344,8 @@ decl : VARIABLE ':' marker
 	   {
 	     if(ECHO_GRAMMAR) printf("edit : VARIABLE parameters   -- %s \n",$1->name);
 	     list<struct Element>::iterator it = element_lookup($1->name);
-	     list<struct Element>::iterator iterNULL = element_list.end();
-	     if(it == iterNULL)
+	     list<struct Element>::iterator iterEnd = element_list.end();
+	     if(it == iterEnd)
 	       {
 		 //if(VERBOSE) 
 		 printf("type %s has not been defined\n",$1->name);
@@ -455,8 +455,8 @@ extension : VARIABLE ',' parameters
 		{	 
 		  if(ECHO_GRAMMAR) printf("extension : VARIABLE parameters   -- %s \n",$1->name);
 		  list<struct Element>::iterator it = element_lookup($1->name);
-		  list<struct Element>::iterator iterNULL = element_list.end();
-		  if(it == iterNULL)
+		  list<struct Element>::iterator iterEnd = element_list.end();
+		  if(it == iterEnd)
 		    {
 		      //		      if(VERBOSE) 
 		      printf("type %s has not been defined\n",$1->name);
@@ -479,8 +479,8 @@ newinstance : VARIABLE
 		{	 
 		  if(ECHO_GRAMMAR) printf("newinstance : VARIABLE -- %s \n",$1->name);
 		  list<struct Element>::iterator it = element_lookup($1->name);
-		  list<struct Element>::iterator iterNULL = element_list.end();
-		  if(it == iterNULL)
+		  list<struct Element>::iterator iterEnd = element_list.end();
+		  if(it == iterEnd)
 		    {
 		      // if(VERBOSE)
 		      printf("type %s has not been defined\n",$1->name);
@@ -1873,14 +1873,14 @@ command : STOP             { if(execute) quit(); }
 		params.flush();
 	      }
           }
-        | BETA0 ',' option_parameters // beta 0 (is a synonim of option, for clarity)
+        | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
           {
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> BETA0\n");
 	      }
           }
-        | TWISS ',' option_parameters // twiss (again, is a synonim of option, for clarity)
+        | TWISS ',' option_parameters // twiss (again, is a synonym of option, for clarity)
           {
 	    if(execute)
 	      {

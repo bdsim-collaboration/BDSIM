@@ -18,6 +18,7 @@
 #include <cstring>
 #include <cmath>
 #include <list>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -162,7 +163,7 @@ void flush(struct Element& e )
   e.ydir = 0;
   e.zdir = 0;
 
-  e.name = NULL;
+  e.name = "";
   e.type = _NONE;
 
   e.A = 0;
@@ -431,14 +432,15 @@ const char* current_line = "";
 const char* current_start = "";
 const char* current_end = "";
 
-struct symtab *symtab; 
+//struct symtab *symtab; 
+std::map<std::string, struct symtab*> symtab_map;
 
 extern struct symtab * symlook(const char *s);
 
-std::list<struct Element>::iterator element_lookup(const char *name);
-std::list<struct Element>::iterator element_lookup(const char *name, std::list<struct Element>& el);
+std::list<struct Element>::iterator element_lookup(std::string name);
+std::list<struct Element>::iterator element_lookup(std::string name, std::list<struct Element>& el);
 int write_table(struct Parameters pars,const char* name, int type, std::list<struct Element> *lst=NULL);
-int expand_line(char *name, char *start, char *end);
+int expand_line(const char *name, const char *start, const char *end);
 void print(std::list<struct Element> l, int ident=0);
 
 // *********************
@@ -465,7 +467,7 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   struct Element e;
   flush(e);
   // common parameters for all elements
-  e.name = name;
+  e.name = std::string(name);
   e.lst = NULL;
   e.aper = params.aper;
   e.aperX = params.aperX;
@@ -826,26 +828,23 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.tscint = params.tscint;
     break;
 
-
   default:
     break;  
-
 
   }
 
   element_list.push_back(e);
 
   return 0;
-
 }
 
-int expand_line(const char *name, const char *start, const char* end)
+int expand_line(const char *charname, const char *start, const char* end)
 {
-  std::list<struct Element>::const_iterator iterNULL = element_list.end(); //bugfix for gcc 4.1.2 - cannot compare iterator to int(NULL). SPM
+  std::list<struct Element>::const_iterator iterEnd = element_list.end();
   std::list<struct Element>::iterator it;
   
   struct Element e;
-  
+  std::string name = std::string(charname);
   it = element_lookup(name);
   
 //  if( (it!=NULL) && ((*it).type == _LINE || (*it).type == _REV_LINE) ) 
@@ -866,7 +865,7 @@ int expand_line(const char *name, const char *start, const char* end)
       
       beamline_list.push_back(e);
       
-      if(VERBOSE) printf("expanding line %s, range = %s/%s\n",name,start,end);
+      if(VERBOSE) printf("expanding line %s, range = %s/%s\n",charname,start,end);
       
       if(!(*it).lst) return 0; //list empty
 
@@ -878,13 +877,13 @@ int expand_line(const char *name, const char *start, const char* end)
       // copy the list into the resulting list
       switch((*it).type){
 	case _LINE:
-          beamline_list.insert(beamline_list.end(),(*it).lst->begin(),(*it).lst->end());
+          beamline_list.insert(beamline_list.end(),sit,eit);
           break;
 	case _REV_LINE:
           beamline_list.insert(beamline_list.end(),(*it).lst->rbegin(),(*it).lst->rend());
 	  break;
 	default:
-          beamline_list.insert(beamline_list.end(),(*it).lst->begin(),(*it).lst->end());
+          beamline_list.insert(beamline_list.end(),sit,eit);
 	}
       bool is_expanded = false;
       
@@ -908,12 +907,12 @@ int expand_line(const char *name, const char *start, const char* end)
 		  // lookup the line in main list
 		  std::list<struct Element>::iterator tmpit = element_lookup((*it).name);
 
-		  if( (tmpit != iterNULL) && ( (*tmpit).lst != NULL) ) { // sublist found and not empty
+		  if( (tmpit != iterEnd) && ( (*tmpit).lst != NULL) ) { // sublist found and not empty
 		    
 #ifdef DEBUG
                     printf("inserting sequence for %s - %s ...",(*it).name,(*tmpit).name);
 #endif
-if((*it).type == _LINE)
+		    if((*it).type == _LINE)
 		      beamline_list.insert(it,(*tmpit).lst->begin(),(*tmpit).lst->end());
 		    else if((*it).type == _REV_LINE){
 		      //iterate over list and invert any sublines contained within. SPM
@@ -934,7 +933,7 @@ if((*it).type == _LINE)
 		    // delete the list pointer
 		    beamline_list.erase(it--);
 		    
-		  } else if ( tmpit != iterNULL ) // entry points to a scalar element type -
+		  } else if ( tmpit != iterEnd ) // entry points to a scalar element type -
 		    //transfer properties from the main list
 		    { 
 #ifdef DEBUG 
@@ -949,7 +948,7 @@ if((*it).type == _LINE)
 		    {
 		      //		      if(VERBOSE)
 		      printf("Warning : Expanding line %s : element %s has not been \
-                               defined , skipping \n",name,(*it).name);
+                               defined , skipping \n",charname,(*it).name.c_str());
 		      beamline_list.erase(it--);
 		    }
 		  
@@ -963,7 +962,7 @@ if((*it).type == _LINE)
 	  if( iteration > MAX_EXPAND_ITERATIONS )
 	    {
 	      printf("Error : Line expansion of '%s' seems to loop, \
-                     \n possible recursive line definition,quitting \n",name);
+                     \n possible recursive line definition,quitting \n",charname);
 	      exit(0);
 	    }
 	  
@@ -977,9 +976,9 @@ if((*it).type == _LINE)
 
       if( (start!=NULL)) // determine the start element
 	{
-	  sit = element_lookup(start,beamline_list);
+	  sit = element_lookup(std::string(start),beamline_list);
 	  
-	  if(sit==iterNULL)
+	  if(sit==beamline_list.end())
 	    {
 	      sit = beamline_list.begin();
 	    }
@@ -992,15 +991,9 @@ if((*it).type == _LINE)
 
       if( (end!=NULL)) // determine the end element
 	{
-	  eit = element_lookup(end,beamline_list);
-	  
-	  if(eit==iterNULL)
-	    {
-	      eit = beamline_list.end();
-	    }
-	  
-	  if(!strcmp(end,"#e")) eit = beamline_list.end();	  
-
+	  eit = element_lookup(std::string(end),beamline_list);
+	  	  
+	  if(!strcmp(end,"#e")) eit = beamline_list.end();
 
 	  beamline_list.erase(++eit,beamline_list.end());
 	}
@@ -1009,40 +1002,40 @@ if((*it).type == _LINE)
       // insert the tunnel if present
 
       it = element_lookup("tunnel");
-      if(it!=iterNULL)
+      if(it!=iterEnd)
 	beamline_list.push_back(*it);
       
       return 0;
     }
   
   
-  printf("line '%s' not found",name);
+  printf("line '%s' not found",charname);
   return 1;
   
 }
 
-std::list<struct Element>::iterator element_lookup(const char *name)
+std::list<struct Element>::iterator element_lookup(std::string name)
 {
    std::list<struct Element>::iterator it;
 
-   for(it=element_list.begin();it!=element_list.end();it++)
+   for(it=element_list.begin();it!=element_list.end();++it)
      {
-       if(!strcmp((*it).name,name) )
+       if((*it).name == name )
 	 return it;
      }
    return element_list.end();
 }
 
-std::list<struct Element>::iterator element_lookup(const char *name,std::list<struct Element>& el)
+std::list<struct Element>::iterator element_lookup(std::string name,std::list<struct Element>& el)
 {
    std::list<struct Element>::iterator it;
 
    for(it=el.begin();it!=el.end();it++)
      {
-       if(!strcmp((*it).name,name) )
+       if((*it).name == name )
 	 return it;
      }
-   return element_list.end();
+   return el.end();
 }
 
 
@@ -1054,7 +1047,7 @@ void add_sampler(char *name, char *before, int before_count)
 #endif
   std::list<struct Element>::iterator it;
 
-  int element_count = 1;  // count from 1 like in goddam FORTRAN -- for range parsing
+  int element_count = 1;  // count from 1 like in FORTRAN -- for range parsing
   struct Element e;
   e.type = _SAMPLER;
   e.name = name;
@@ -1066,7 +1059,7 @@ void add_sampler(char *name, char *before, int before_count)
       std::cout<<"-->"<<(*it).name<<std::endl;
 #endif
 
-      if( !strcmp((*it).name, before)) 
+      if( (*it).name == std::string(before)) 
 	{
 
 	  if( before_count == element_count)
@@ -1077,7 +1070,6 @@ void add_sampler(char *name, char *before, int before_count)
 
 	  element_count++;
 	}
-
     }
 
   std::cout<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
@@ -1093,7 +1085,7 @@ void add_csampler(char *name, char *before, int before_count, double length, dou
 
   std::list<struct Element>::iterator it;
 
-  int element_count = 1;  // count from 1 like in goddam FORTRAN -- for range parsing
+  int element_count = 1;  // count from 1 like in FORTRAN -- for range parsing
   struct Element e;
   e.type = _CSAMPLER;
   e.l = length;
@@ -1107,7 +1099,7 @@ void add_csampler(char *name, char *before, int before_count, double length, dou
       std::cout<<"-->"<<(*it).name<<std::endl;
 #endif
 
-      if( !strcmp((*it).name, before)) 
+      if( (*it).name == std::string(before)) 
 	{
 
 	  if( before_count == element_count)
@@ -1134,7 +1126,7 @@ void add_dump(char *name, char *before, int before_count)
 
   std::list<struct Element>::iterator it;
 
-  int element_count = 1;  // count from 1 like in goddam FORTRAN -- for range parsing
+  int element_count = 1;  // count from 1 like in FORTRAN -- for range parsing
   struct Element e;
   e.type = _DUMP;
   e.name = name;
@@ -1146,7 +1138,7 @@ void add_dump(char *name, char *before, int before_count)
       std::cout<<"-->"<<(*it).name<<std::endl;
 #endif
 
-      if( !strcmp((*it).name, before))
+      if( (*it).name == std::string(before)) 
         {
 
           if( before_count == element_count)
@@ -1191,7 +1183,7 @@ void print(std::list<struct Element> l, int ident)
       for(int i=0;i<ident;i++)
 	printf("--");
 
-      printf("->%s : %s",(*it).name,typestr((*it).type));
+      printf("->%s : %s",(*it).name.c_str(),typestr((*it).type));
 
       switch((*it).type) {
       case _DRIFT:
@@ -1517,10 +1509,10 @@ void set_value(std::string name, std::string value )
 
 double property_lookup(char *element_name, char *property_name)
 {
-   std::list<struct Element>::iterator it = element_lookup(element_name);
-   std::list<struct Element>::const_iterator iterNULL = element_list.end();
+   std::list<struct Element>::iterator it = element_lookup(std::string(element_name));
+   std::list<struct Element>::const_iterator iterEnd = element_list.end();
 
-   if(it == iterNULL) return 0;
+   if(it == iterEnd) return 0;
    
    if(!strcmp(property_name,"l")) return (*it).l;
    if(!strcmp(property_name,"B")) return (*it).B;

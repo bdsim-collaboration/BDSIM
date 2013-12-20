@@ -14,21 +14,20 @@
 
 %{
   
-#include <iostream>
+#include <cstdio>
+#include <map>
 #include <string>
 #include <cstring>
+#include <iostream>
 #include "parser.tab.h"
 #include "sym_table.h"
 #include "getEnv.h"
 
 #define MAXFILENAMELENGTH 200
 
-  
-using namespace std;
-
 int match_var(char *name);
 struct symtab * symlook(const char *s);
-extern struct symtab *symtab;
+extern std::map<std::string, struct symtab*> symtab_map;
 extern int yyerror(const char *s);
 
 #ifdef _WIN32
@@ -150,7 +149,7 @@ dump  { return DUMP; }
 
 <incl>[ \t]*  // eat the whitespace
 <incl>[^ \t\n;]+ {
-string filename = (string)getEnv("BDSIMPATH")+(string)yytext;
+std::string filename = (std::string)getEnv("BDSIMPATH")+(std::string)yytext;
   printf("parser> reading file %s \n",(char*)filename.c_str());//yytext
   if( include_stack_ptr >= MAX_INCLUDE_DEPTH )
     {
@@ -205,11 +204,16 @@ string filename = (string)getEnv("BDSIMPATH")+(string)yytext;
 
 struct symtab * symlook(const char *s)
 {
-  struct symtab *sp;
-  for( sp=symtab;sp<&symtab[NSYMS];sp++) {
-    if(sp->name && !strcmp(sp->name,s)) return sp;
-    if(!sp->name) {sp->name=strdup(s); return sp;}
+  std::string sstring = std::string(s);
+  std::map<std::string,symtab*>::iterator it = symtab_map.find(sstring);
+  if (it!=symtab_map.end()) {
+     return (*it).second;
+  } else {
+    struct symtab* sp = new symtab(s);
+    std::pair<std::map<std::string,symtab*>::iterator,bool> ret = symtab_map.insert(std::make_pair(sstring,sp));
+     return (*(ret.first)).second;
   }
+
   yyerror("too many symbols");
   exit(1);
 }

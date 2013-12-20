@@ -7,11 +7,11 @@
 #include "sym_table.h"
 
 #include <cmath>
+#include <map>
 #include <string>
 #include <cstring>
 
 extern struct Parameters params;
-extern struct symtab *symtab;
 extern int yyparse();
 
 extern FILE *yyin;
@@ -23,20 +23,10 @@ extern int add_var(const char *name, double val,int is_reserved = 0);
 // aux. parser lists - to clear
 extern std::list<struct Element> element_list;
 extern std::list<struct Element> tmp_list;
+extern std::map<std::string, struct symtab*> symtab_map;
 
 void init()
 {
-
-  symtab = new struct symtab[NSYMS];
-  // member initialisation as members are used to check if symtab is already assigned and its type.
-  for(struct symtab* sp=symtab;sp<&symtab[NSYMS];sp++) {
-    sp->is_reserved=0;
-    sp->type=0;
-    sp->name=NULL;
-    sp->funcptr=NULL;
-    sp->value=0.0;
-  }
-
   // embedded arithmetical functions
   add_func("sqrt",sqrt);
   add_func("cos",cos);
@@ -167,9 +157,11 @@ int gmad_parser(FILE *f)
 #endif
   element_list.clear();
   tmp_list.clear();
-  
-  delete[] symtab;
-  symtab = 0;
+  std::map<std::string,symtab*>::iterator it;
+  for(it=symtab_map.begin();it!=symtab_map.end();++it) {
+    delete (*it).second;
+  }
+  symtab_map.clear();
 
 #ifdef DEBUG
   std::cout << "gmad_parser> finished" << std::endl;
@@ -201,7 +193,7 @@ int gmad_parser(std::string name)
 /** Python interface **/ 
 int gmad_parser_c(char *name) 
 {
-  gmad_parser(name);
+  gmad_parser(std::string(name));
   return 0;
 }
 
@@ -214,7 +206,7 @@ const char* get_name(int i)
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
-  return it->name;
+  return (it->name).c_str();
 }
 
 short get_type(int i) 

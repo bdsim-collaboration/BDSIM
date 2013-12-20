@@ -234,7 +234,7 @@ struct Options {
 struct Element {
   short type;
   int precisionRegion;
-  const char * name;
+  std::string name;
 
   double inR; double bpRad; // inner radius and beam pipe radius of muon spoiler  
   double l,ks,k0,k1,k2,k3,angle,beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut, tscint; // l in meter
