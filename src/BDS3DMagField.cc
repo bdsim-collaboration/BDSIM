@@ -6,8 +6,6 @@
 
 
 
-<<<<<<< HEAD
-
 BDS3DMagField::BDS3DMagField( const char* filename, double zOffset ) 
   :fZoffset(zOffset),invertX(false),invertY(false),invertZ(false)
 {    
@@ -15,13 +13,7 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
 
   double lenUnit= CLHEP::m;
   double fieldUnit= CLHEP::tesla; 
-=======
-BDS3DMagField::BDS3DMagField( const char* filename, double zOffset ) 
-  :fZoffset(zOffset),invertX(false),invertY(false),invertZ(false)
-{    
-  _lenUnit= m;
-  double fieldUnit= tesla; 
->>>>>>> processFlags
+
   G4cout << "\n-----------------------------------------------------------"
 	 << "\n      Magnetic field"
 	 << "\n-----------------------------------------------------------";
@@ -122,27 +114,6 @@ void BDS3DMagField::GetFieldValue(const double point[4],
 
   G4ThreeVector local;
 
-<<<<<<< HEAD
-  local[0] = point[0]-translation[0];
-  local[1] = point[1]-translation[1];
-  local[2] = point[2]+translation[2]+fZoffset;
-
-#ifdef DEBUG
-  G4cout  << "local (field frame of reference): " 
-	  << local[0]/CLHEP::m << " " 
-	  << local[1]/CLHEP::m << " " 
-	  << local[2]/CLHEP::m << G4endl;
-
-  G4cout  << "global: " 
-	  << point[0]/CLHEP::m << " " 
-	  << point[1]/CLHEP::m << " " 
-	  << point[2]/CLHEP::m << G4endl;
-
-  G4cout  << "translation: " 
-	  << translation[0]/CLHEP::m << " " 
-	  << translation[1]/CLHEP::m << " " 
-	  << translation[2]/CLHEP::m << G4endl;
-=======
   local[0] = point[0] - translation[0];
   local[1] = point[1] - translation[1];
   local[2] = point[2] + translation[2] + fZoffset;
@@ -164,7 +135,6 @@ void BDS3DMagField::GetFieldValue(const double point[4],
     G4cout << "maxx = " << maxx/cm << " cm" << G4endl;
     G4cout << "maxy = " << maxy/cm << " cm" << G4endl;
     G4cout << "maxz = " << maxz/cm << " cm" << G4endl;
->>>>>>> processFlags
 #endif
 
   double signy=1;
@@ -172,11 +142,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
 
   //Mirror in x=0 plane and z=0 plane
   /*
-<<<<<<< HEAD
-  if( x < 0 ){
-=======
   if( local[0] < 0 ){
->>>>>>> processFlags
 #ifdef DEBUG
     G4cout << "x = " << local[0]/cm << " cm. Mirroring in x=0 plane." << G4endl;
 #endif

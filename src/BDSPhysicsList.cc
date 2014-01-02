@@ -854,14 +854,6 @@ void BDSPhysicsList::ConstructOptical()
     theScintillationProcess->AddSaturation(emSaturation);
   }
 
-<<<<<<< HEAD
-#if G4VERSION_NUMBER < 960
-  G4OpticalSurfaceModel themodel = unified;
-  theBoundaryProcess->SetModel(themodel);
-#endif
-=======
-  
->>>>>>> processFlags
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){
     G4ParticleDefinition* particle = theParticleIterator->value();

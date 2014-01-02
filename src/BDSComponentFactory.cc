@@ -31,11 +31,6 @@
 
 extern G4bool outline;
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> processFlags
 #ifdef DEBUG
 bool debug1 = true;
 #else
@@ -1031,11 +1026,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 						_element.bmapFile,
 						_element.l * CLHEP::m,
 						aper,
-<<<<<<< HEAD
-						_element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, _element.tunnelOffsetX, _element.tunnelCavityMaterial, _element.precisionRegion ));
-=======
-				  _element.outR * m , _element.tunnelMaterial, _element.tunnelRadius, _element.tunnelOffsetX, _element.tunnelCavityMaterial, _element.precisionRegion,_element.fieldZOffset ));
->>>>>>> processFlags
+	    _element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, _element.tunnelOffsetX, _element.tunnelCavityMaterial, _element.precisionRegion,_element.fieldZOffset ));
 	} 
 	else {
 	  return (new BDSElement( _element.name,
@@ -1043,14 +1034,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 						_element.bmapFile,
 						_element.l * CLHEP::m,
 						aper,
-<<<<<<< HEAD
-						_element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, (G4double)0, _element.tunnelCavityMaterial, _element.precisionRegion));
-=======
-				  _element.outR * m , _element.tunnelMaterial, _element.tunnelRadius, (G4double)0, _element.tunnelCavityMaterial, _element.precisionRegion, _element.fieldZOffset));
->>>>>>> processFlags
+	    _element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, (G4double)0, _element.tunnelCavityMaterial, _element.precisionRegion, _element.fieldZOffset));
 	}
-	
-
 }
 
   BDSAcceleratorComponent* BDSComponentFactory::createSolenoid(){

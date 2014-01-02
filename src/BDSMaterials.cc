@@ -20,11 +20,6 @@
 #include "BDSMaterials.hh"
 #include "G4NistManager.hh"
 
-<<<<<<< HEAD
-//#define DEBUG 1
-=======
-
->>>>>>> processFlags
 using namespace std;
 
 BDSMaterials* BDSMaterials::_instance = 0;
@@ -454,19 +449,12 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddElement(elements["O"], 4);
   materials[name] = tmpMaterial; 
 
-<<<<<<< HEAD
-	tmpMaterial = new G4Material 
-		(name="FusedSilica", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
-	tmpMaterial->AddElement(elements["O"],2);
-	tmpMaterial->AddElement(elements["Si"],1);
-	const G4int FusedSilica_NUMENTRIES = 3; //Number of entries in the material properties table
-=======
+  
   tmpMaterial = new G4Material 
-    (name="fusedsilica", density=1.032*g/cm3, 2, kStateSolid);
+    (name="FusedSilica", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
   tmpMaterial->AddElement(elements["O"],2);
   tmpMaterial->AddElement(elements["Si"],1);
   const G4int FusedSilica_NUMENTRIES = 3; //Number of entries in the material properties table
->>>>>>> processFlags
   G4double FusedSilica_RIND[FusedSilica_NUMENTRIES]={1.49,1.49,1.49};
   G4double FusedSilica_AbsLength[FusedSilica_NUMENTRIES]={420.*CLHEP::cm,420.*CLHEP::cm,420.*CLHEP::cm};
   G4double FusedSilica_Energy[FusedSilica_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV};

@@ -316,11 +316,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 #endif
       
       itsMagField = new BDS3DMagField(bFile, 0);
-<<<<<<< HEAD
       itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::um);
-=======
-      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*um);
->>>>>>> processFlags
       BuildMagField(true);
     }else if(bFormat=="XY"){
 #ifdef DEBUG
@@ -409,14 +405,9 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 #ifdef DEBUG
       G4cout << "BDSElement.cc> Making BDS3DMagField..." << G4endl;
 #endif
-<<<<<<< HEAD
-      itsMagField = new BDS3DMagField(bFile,0);
-      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::um);
-=======
       itsMagField = new BDS3DMagField(bFile, itsFieldZOffset);
-      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*um);
->>>>>>> processFlags
-      
+      itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::um);
+
       BuildMagField(true);
     } else if(bFormat=="XY"){
 #ifdef DEBUG

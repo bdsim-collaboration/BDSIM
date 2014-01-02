@@ -340,7 +340,7 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
 
 /// write a trajectory to a root/ascii file
 // TODO: ASCII file not implemented - JS
-G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> &TrajVec){
+G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> TrajVec){
   
 #ifdef USE_ROOT
   //  G4int tID;
