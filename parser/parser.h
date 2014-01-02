@@ -107,6 +107,8 @@ const char *typestr(int type) {
     return "transform3d";
   case _SCREEN :
     return "screen";
+  case _AWAKESCREEN :
+    return "awakescreen";
   default:
     return "none";
   }
@@ -134,6 +136,7 @@ void flush(struct Element& e )
   e.k2 = 0;
   e.k3 = 0;
   e.angle = 0;
+  e.fieldZOffset = 0;
   e.phiAngleIn = 0;
   e.phiAngleOut = 0;
   e.tilt = 0;
@@ -184,8 +187,8 @@ void flush(struct Element& e )
   e.tscint=0.0001;
   e.spec = "";
   e.material="";
-  e.scintmaterial="YAG";
-  e.airmaterial="";
+  e.scintmaterial="lanex";
+  e.airmaterial="air";
   e.tunnelMaterial="";
   e.tunnelCavityMaterial="Air";
   e.tunnelRadius=0;
@@ -203,6 +206,7 @@ void copy_properties(std::list<struct Element>::iterator dest, std::list<struct 
   (*dest).l = (*src).l;
 
   (*dest).angle = (*src).angle; 
+  (*dest).fieldZOffset = (*src).fieldZOffset; 
   (*dest).phiAngleIn = (*src).phiAngleIn; 
   (*dest).phiAngleOut = (*src).phiAngleOut; 
   (*dest).xsize = (*src).xsize; 
@@ -256,7 +260,8 @@ void copy_properties(std::list<struct Element>::iterator dest, std::list<struct 
 
   (*dest).geometryFile = (*src).geometryFile;
 
-  (*dest).bmapFile = (*src).bmapFile;
+  (*dest).bmapFile = (*src).bmapFile;  
+  (*dest).fieldZOffset = (*src).fieldZOffset;
   (*dest).precisionRegion = (*src).precisionRegion;
 
   (*dest).material = (*src).material;
@@ -289,6 +294,7 @@ void inherit_properties(struct Element e)
   if(!params.k2set) { params.k2 = e.k2; params.k2set = 1; }
   if(!params.k3set) { params.k3 = e.k3; params.k3set = 1; }
   if(!params.angleset) { params.angle = e.angle; params.angleset = 1; }
+  if(!params.fieldZOffsetset) { params.fieldZOffset = e.fieldZOffset; params.fieldZOffsetset = 1; }
   if(!params.phiAngleInset) { params.phiAngleIn = e.phiAngleIn; params.phiAngleInset = 1; }
   if(!params.phiAngleOutset) { params.phiAngleOut = e.phiAngleOut; params.phiAngleOutset = 1; }
   if(!params.xsizeset) { params.xsize = e.xsize; params.xsizeset = 1; }
@@ -343,11 +349,11 @@ void inherit_properties(struct Element e)
   if(!params.blmLocThetaset) { params.blmLocTheta = e.blmLocTheta; params.blmLocThetaset = 1; }
 
   if(!params.specset) { strncpy(params.spec,e.spec.c_str(),1024); params.specset = 1; }
-  if(!params.materialset) { strncpy(params.material,e.spec.c_str(),64); params.materialset = 1; }
+  if(!params.materialset) { strncpy(params.material,e.material.c_str(),64); params.materialset = 1; }
   if(!params.scintmaterialset) { strncpy(params.scintmaterial,e.scintmaterial.c_str(),64); params.scintmaterialset = 1; }
   if(!params.airmaterialset) { strncpy(params.airmaterial,e.airmaterial.c_str(),64); params.airmaterialset = 1; }
-  if(!params.tunnelmaterialset) { strncpy(params.tunnelMaterial,e.spec.c_str(),64); params.tunnelmaterialset = 1; }
-  if(!params.tunnelcavitymaterialset) { strncpy(params.tunnelCavityMaterial,e.spec.c_str(),64); params.tunnelcavitymaterialset = 1; }
+  if(!params.tunnelmaterialset) { strncpy(params.tunnelMaterial,e.tunnelMaterial.c_str(),64); params.tunnelmaterialset = 1; }
+  if(!params.tunnelcavitymaterialset) { strncpy(params.tunnelCavityMaterial,e.tunnelCavityMaterial.c_str(),64); params.tunnelcavitymaterialset = 1; }
   if(!params.tunnelRadiusset) { params.tunnelRadius = e.tunnelRadius; params.tunnelRadiusset = 1; }
   if(!params.tunnelOffsetXset) { params.tunnelOffsetX = e.tunnelOffsetX; params.tunnelOffsetXset = 1; }
   if(!params.precisionRegionset) { params.precisionRegion = e.precisionRegion; params.precisionRegionset = 1; }
@@ -774,6 +780,8 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
       e.blmLocZ = params.blmLocZ;
     if(params.blmLocThetaset)
       e.blmLocTheta = params.blmLocTheta;
+    if(params.fieldZOffsetset)
+      e.fieldZOffset = params.fieldZOffset;
     break;
 
   case _LINE:
@@ -833,8 +841,15 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.l = params.l;
     e.angle = params.angle;
     e.tscint = params.tscint;
-    e.scintmaterial = params.scintmaterial;  
+    e.scintmaterial = std::string(params.scintmaterial);
     e.airmaterial = params.airmaterial;  
+    break;
+
+  case _AWAKESCREEN:
+    e.type = _AWAKESCREEN;
+    e.scintmaterial = std::string(params.scintmaterial);
+    std::cout << "scintmaterial: " << e.scintmaterial << " " <<  params.scintmaterial << std::endl;
+    e.tscint = params.tscint;
     break;
 
 
@@ -1233,11 +1248,15 @@ void print(std::list<struct Element> l, int ident)
       case _ELEMENT:
 	printf("\ngeometry file : %s\n",(*it).geometryFile.c_str());
 	printf("B map file : %s\n",(*it).bmapFile.c_str());
+	printf("Field Z offset : %.10g\n",(*it).fieldZOffset);
 	//printf("E map driver : %s\n",(*it).geometryFile);
 	//printf("E map file : %s\n",(*it).geometryFile);
 	break;
 
       case _SCREEN:
+	break;
+
+      case _AWAKESCREEN:
 	break;
 
       case _CSAMPLER:
@@ -1274,6 +1293,11 @@ void print(struct Options opt)
   std::cout<<"n macroparticles : "<<opt.numberToGenerate<<std::endl;
   std::cout<<"sigmaX           : "<<opt.sigmaX<<std::endl;
   std::cout<<"Cerenkov on               : "<<opt.turnOnCerenkov<<std::endl;
+  std::cout<<"optical absorption on: "<<opt.turnOnOpticalAbsorption <<std::endl;
+  std::cout<<"mie scattering on: "<<opt.turnOnMieScattering <<std::endl;
+  std::cout<<"rayleigh scattering on: "<<opt.turnOnRayleighScattering <<std::endl;
+  std::cout<<"optical surface on: "<<opt.turnOnOpticalSurface <<std::endl;
+  std::cout<<"birks saturation on: "<<opt.turnOnBirksSaturation <<std::endl;
 }
 
 
@@ -1420,6 +1444,22 @@ void set_value(std::string name, double value )
       options.turnOnCerenkov = (int)value; return;
   }
 
+  if(name == "turnOnOpticalAbsorption") {
+      options.turnOnOpticalAbsorption = (int)value; return;
+  }
+  if(name == "turnOnMieScattering") {
+      options.turnOnMieScattering = (int)value; return;
+  }
+  if(name == "turnOnRayleighScattering") {
+      options.turnOnRayleighScattering = (int)value; return;
+  }
+  if(name == "turnOnOpticalSurface") {
+      options.turnOnOpticalSurface = (int)value; return;
+  }
+  if(name == "turnOnBirksSaturation") {
+      options.turnOnBirksSaturation = (int)value; return;
+  }
+
   if(name == "srRescale") {
       options.synchRescale = (int)value; return;
   }
@@ -1541,6 +1581,7 @@ double property_lookup(char *element_name, char *property_name)
    if(!strcmp(property_name,"k2")) return (*it).k2;
    if(!strcmp(property_name,"k3")) return (*it).k3;
    if(!strcmp(property_name,"angle")) return (*it).angle;
+   if(!strcmp(property_name,"fieldZOffset")) return (*it).fieldZOffset;
    if(!strcmp(property_name,"phiAngleIn")) return (*it).phiAngleIn;
    if(!strcmp(property_name,"phiAngleOut")) return (*it).phiAngleOut;
    if(!strcmp(property_name,"beampipeThickness")) return (*it).beampipeThickness;

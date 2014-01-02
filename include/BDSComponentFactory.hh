@@ -57,6 +57,7 @@ private:
   BDSAcceleratorComponent* createMuSpoiler();
   BDSAcceleratorComponent* createLaser();
   BDSAcceleratorComponent* createScreen();
+  BDSAcceleratorComponent* createAwakeScreen();
   BDSAcceleratorComponent* createTransform3D();
 };
 #endif

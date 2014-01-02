@@ -47,6 +47,8 @@ enum {
   _SEQUENCE = 19,
 
   _SCREEN = 21,
+
+  _AWAKESCREEN = 22,
     
   _VKICK=31,
   _HKICK=32,
@@ -204,7 +206,12 @@ struct Options {
   double   minimumEpsilonStep;
   double   maximumEpsilonStep;
   double   deltaOneStep;
-  int      turnOnCerenkov;
+  int turnOnCerenkov ;
+  int turnOnOpticalAbsorption ;
+  int turnOnMieScattering ;
+  int turnOnRayleighScattering ;
+  int turnOnOpticalSurface ;
+  int turnOnBirksSaturation ;
   int      synchRadOn;
   int      decayOn;
   int      synchRescale;
@@ -237,7 +244,7 @@ struct Element {
   const char * name;
 
   double inR; double bpRad; // inner radius and beam pipe radius of muon spoiler  
-  double l,ks,k0,k1,k2,k3,angle,beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut, tscint; // l in meter
+  double l,ks,k0,k1,k2,k3,angle,beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut, tscint, fieldZOffset;
   double xdir, ydir, zdir, waveLength; // for laser wire and 3d transforms
   double flatlength,taperlength; //for realistic collimators
   double gradient; // for rf cavities
@@ -271,6 +278,9 @@ struct Element {
   std::string material;
   std::string tunnelMaterial;
   std::string tunnelCavityMaterial;
+  
+
+
 
   std::string spec;  // arbitrary specification to pass to beamline builder
   
@@ -321,6 +331,7 @@ struct Parameters {
   double r; int rset; //radius, i.e cylindrical sampler
   
   double angle; int angleset;   // bending angle
+  double fieldZOffset; int fieldZOffsetset;   // offset of the 3D magnetic field
   double phiAngleIn; int phiAngleInset;   // incoming bending angle for element
   double phiAngleOut; int phiAngleOutset;   // outgoing bending angle for element
   double beampipeThickness; int beampipeThicknessset;  
@@ -405,6 +416,7 @@ struct Parameters {
     flatlength = 0; flatlengthset = 0;
     taperlength = 0; taperlengthset = 0;
     angle = 0; angleset = 0;
+    fieldZOffset = 0; fieldZOffsetset = 0;
     phiAngleIn = 0; phiAngleInset = 0;
     phiAngleOut = 0; phiAngleOutset = 0;
     xsize = 0; xsizeset = 0;

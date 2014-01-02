@@ -27,9 +27,15 @@
 #include "BDSCollimator.hh"
 //#include "BDSRealisticCollimator.hh"
 #include "BDSScintillatorScreen.hh"
+#include "BDSAwakeScintillatorScreen.hh"
 
 extern G4bool outline;
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> processFlags
 #ifdef DEBUG
 bool debug1 = true;
 #else
@@ -231,6 +237,11 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     G4cout << "BDSComponentFactory  - creating screen" << G4endl;
 #endif
     return createScreen(); break; 
+  case _AWAKESCREEN:
+#ifdef DEBUG
+    G4cout << "BDSComponentFactory  - creating awake screen" << G4endl;
+#endif
+    return createAwakeScreen(); break; 
   case _TRANSFORM3D:
 #ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating transform3d" << G4endl;
@@ -1009,6 +1020,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
                << " tunnel material " << _element.tunnelMaterial
                << " tunnel cavity material " << _element.tunnelCavityMaterial
                << " precision region " << _element.precisionRegion
+               << " field z offset " << _element.fieldZOffset
                << G4endl;
 #endif
 
@@ -1019,7 +1031,11 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 						_element.bmapFile,
 						_element.l * CLHEP::m,
 						aper,
+<<<<<<< HEAD
 						_element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, _element.tunnelOffsetX, _element.tunnelCavityMaterial, _element.precisionRegion ));
+=======
+				  _element.outR * m , _element.tunnelMaterial, _element.tunnelRadius, _element.tunnelOffsetX, _element.tunnelCavityMaterial, _element.precisionRegion,_element.fieldZOffset ));
+>>>>>>> processFlags
 	} 
 	else {
 	  return (new BDSElement( _element.name,
@@ -1027,7 +1043,11 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 						_element.bmapFile,
 						_element.l * CLHEP::m,
 						aper,
+<<<<<<< HEAD
 						_element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, (G4double)0, _element.tunnelCavityMaterial, _element.precisionRegion));
+=======
+				  _element.outR * m , _element.tunnelMaterial, _element.tunnelRadius, (G4double)0, _element.tunnelCavityMaterial, _element.precisionRegion, _element.fieldZOffset));
+>>>>>>> processFlags
 	}
 	
 
@@ -1265,6 +1285,16 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
                << G4endl;
 #endif
 	return (new BDSScintillatorScreen( _element.name, _element.tscint*CLHEP::m, (_element.angle-0.78539816339)*CLHEP::rad, "ups923a","vacuum")); //Name, scintillator thickness, angle in radians (relative to -45 degrees)
+}
+
+
+BDSAcceleratorComponent* BDSComponentFactory::createAwakeScreen(){
+	
+#ifdef DEBUG 
+        G4cout << "---->creating Awake Screen,"
+               << G4endl;
+#endif
+	return (new BDSAwakeScintillatorScreen(_element.name, _element.scintmaterial, _element.tscint)); //Name
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){

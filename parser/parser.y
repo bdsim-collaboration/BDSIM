@@ -43,7 +43,7 @@
 %token <dval> NUMBER
 %token <symp> VARIABLE VECVAR FUNC 
 %token <str> STR
-%token MARKER ELEMENT DRIFT PCLDRIFT RF DIPOLE RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE MULTIPOLE SCREEN
+%token MARKER ELEMENT DRIFT PCLDRIFT RF DIPOLE RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token SOLENOID COLLIMATOR RCOL ECOL LINE SEQUENCE SPOILER ABSORBER LASER TRANSFORM3D MUSPOILER
 %token VKICK HKICK KICK
 %token PERIOD APERTURE FILENAME GAS PIPE TUNNEL MATERIAL ATOM
@@ -281,6 +281,15 @@ decl : VARIABLE ':' marker
 	   params.flush();
 	 }
        }
+     | VARIABLE ':' awakescreen
+       {
+	 if(execute) {
+	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : awakescreen\n",$1->name);
+	   // check parameters and write into element table
+	   write_table(params,$1->name,_AWAKESCREEN);
+	   params.flush();
+	 }
+       }
      | VARIABLE ':' transform3d
        {
 	 if(execute)
@@ -436,6 +445,9 @@ laser : LASER ',' parameters
 screen : SCREEN ',' parameters
 ;
 
+awakescreen : AWAKESCREEN ',' parameters
+;
+
 transform3d : TRANSFORM3D ',' parameters
 ;
 
@@ -517,6 +529,8 @@ parameters:
 		  if(!strcmp($1->name,"k3")) { params.k3 = $3; params.k3set = 1;} // octupole coef.
 		    else 
 		  if(!strcmp($1->name,"angle")) { params.angle = $3; params.angleset = 1;} // dipole bending angle
+		  else
+		  if(!strcmp($1->name,"fieldZOffset")) { params.fieldZOffset = $3; params.fieldZOffsetset = 1;} // dipole bending fieldZOffset
 		  else
 		  if(!strcmp($1->name,"phiAngleIn")) { params.phiAngleIn = $3; params.phiAngleInset = 1;} // element incoming angle
 		  else
@@ -747,6 +761,7 @@ parameters:
 		    else 
 		  if(!strcmp($1->name,"k3")) { params.k3 = $3; params.k3set = 1;} // octupole coef.
 		    else 
+<<<<<<< HEAD
 		  if(!strcmp($1->name,"angle")) { params.angle = $3; params.angleset = 1;} // dipole bending angle
 		    else
 		  if(!strcmp($1->name,"phiAngleIn")) { params.phiAngleIn = $3; params.phiAngleInset = 1;} // element incoming angle
@@ -756,6 +771,16 @@ parameters:
 		  if(!strcmp($1->name,"beampipeThickness") ) 
 			      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
 		    else
+=======
+		      if(!strcmp($1->name,"angle")) { params.angle = $3; params.angleset = 1;} // dipole bending angle
+		      else
+		      if(!strcmp($1->name,"fieldZOffset")) { params.fieldZOffset = $3; params.fieldZOffsetset = 1;} // dipole bending fieldZOffset
+		      else
+			if(!strcmp($1->name,"phiAngleIn")) { params.phiAngleIn = $3; params.phiAngleInset = 1;} // element incoming angle
+			else
+		      if(!strcmp($1->name,"phiAngleOut")) { params.phiAngleOut = $3; params.phiAngleOutset = 1;} // element outgoing angle
+		      else
+>>>>>>> processFlags
 		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
 			      { params.aper = $3; params.aperset = 1;}
 		    else
@@ -859,8 +884,8 @@ parameters:
 		       {
 			 //ignore the "type attribute for the moment"
 		       }
-		   else
-		   if(!strcmp($1->name,"material")) 
+		     else
+		       if(!strcmp($1->name,"material")) 
 		       {
 			 params.materialset = 1;
 			 strcpy(params.material, $3);
@@ -879,13 +904,15 @@ parameters:
 		       }
 		   else 
 		   if(!strcmp($1->name,"scintmaterial")) 
-		     { strcpy(params.scintmaterial, $3); 
+		     {
 		       params.scintmaterialset = 1;
+		       strcpy(params.scintmaterial, $3); 
 		     } // material for a scintillator screen 
 		   else
 		   if(!strcmp($1->name,"airmaterial")) 
-		     { strcpy(params.airmaterial, $3); 
+		     {
 		       params.airmaterialset = 1;
+		       strcpy(params.airmaterial, $3); 
 		     } // material for air around scintillator screen 
 		    else
 		   if(!strcmp($1->name,"spec")) 
@@ -937,6 +964,18 @@ parameters:
                          {	 
                            params.materialset = 1;
                            strcpy(params.material, $3);
+                         }
+                       else
+			 if(!strcmp($1->name,"scintmaterial")) 
+			   {	 
+			     params.scintmaterialset = 1;
+			     strcpy(params.scintmaterial, $3);
+			   }
+			 else
+			   if(!strcmp($1->name,"airmaterial")) 
+			     {	 
+			       params.airmaterialset = 1;
+			       strcpy(params.airmaterial, $3);
                          }
                        else
                          if(!strcmp($1->name,"tunnelMaterial")) 

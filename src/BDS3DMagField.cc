@@ -6,6 +6,7 @@
 
 
 
+<<<<<<< HEAD
 
 BDS3DMagField::BDS3DMagField( const char* filename, double zOffset ) 
   :fZoffset(zOffset),invertX(false),invertY(false),invertZ(false)
@@ -14,6 +15,13 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
 
   double lenUnit= CLHEP::m;
   double fieldUnit= CLHEP::tesla; 
+=======
+BDS3DMagField::BDS3DMagField( const char* filename, double zOffset ) 
+  :fZoffset(zOffset),invertX(false),invertY(false),invertZ(false)
+{    
+  _lenUnit= m;
+  double fieldUnit= tesla; 
+>>>>>>> processFlags
   G4cout << "\n-----------------------------------------------------------"
 	 << "\n      Magnetic field"
 	 << "\n-----------------------------------------------------------";
@@ -62,10 +70,11 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
     for (iy=0; iy<ny; iy++) {
       for (iz=0; iz<nz; iz++) {
         file >> xval >> yval >> zval >> bx >> by >> bz;
+	G4cout << "Read: " << xval << " " << yval << " " << zval << " " << bx << " " << by << " " << bz << G4endl;
         if ( ix==0 && iy==0 && iz==0 ) {
-          minx = xval * lenUnit;
-          miny = yval * lenUnit;
-          minz = zval * lenUnit;
+          minx = xval * _lenUnit;
+          miny = yval * _lenUnit;
+          minz = zval * _lenUnit;
         }
         xField[ix][iy][iz] = bx * fieldUnit;
         yField[ix][iy][iz] = by * fieldUnit;
@@ -75,9 +84,9 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
   }
   file.close();
 
-  maxx = xval * lenUnit;
-  maxy = yval * lenUnit;
-  maxz = zval * lenUnit;
+  maxx = xval * _lenUnit;
+  maxy = yval * _lenUnit;
+  maxz = zval * _lenUnit;
 
   G4cout << "\n ---> ... done reading " << G4endl;
 
@@ -113,6 +122,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
 
   G4ThreeVector local;
 
+<<<<<<< HEAD
   local[0] = point[0]-translation[0];
   local[1] = point[1]-translation[1];
   local[2] = point[2]+translation[2]+fZoffset;
@@ -132,6 +142,29 @@ void BDS3DMagField::GetFieldValue(const double point[4],
 	  << translation[0]/CLHEP::m << " " 
 	  << translation[1]/CLHEP::m << " " 
 	  << translation[2]/CLHEP::m << G4endl;
+=======
+  local[0] = point[0] - translation[0];
+  local[1] = point[1] - translation[1];
+  local[2] = point[2] + translation[2] + fZoffset;
+
+  local *= Rotation();
+
+#ifdef DEBUG
+  G4cout << "translation x,y,z = " << 
+    translation[0]/cm << ", " <<
+    translation[1]/cm << ", " <<
+    translation[2]/cm << ", " <<
+    " cm" << G4endl;
+    G4cout << "x = " << local[0]/cm << " cm" << G4endl;
+    G4cout << "y = " << local[1]/cm << " cm" << G4endl;
+    G4cout << "z = " << local[2]/cm << " cm" << G4endl;
+    G4cout << "minx = " << minx/cm << " cm" << G4endl;
+    G4cout << "miny = " << miny/cm << " cm" << G4endl;
+    G4cout << "minz = " << minz/cm << " cm" << G4endl;
+    G4cout << "maxx = " << maxx/cm << " cm" << G4endl;
+    G4cout << "maxy = " << maxy/cm << " cm" << G4endl;
+    G4cout << "maxz = " << maxz/cm << " cm" << G4endl;
+>>>>>>> processFlags
 #endif
 
   double signy=1;
@@ -139,20 +172,24 @@ void BDS3DMagField::GetFieldValue(const double point[4],
 
   //Mirror in x=0 plane and z=0 plane
   /*
+<<<<<<< HEAD
   if( x < 0 ){
+=======
+  if( local[0] < 0 ){
+>>>>>>> processFlags
 #ifdef DEBUG
-    G4cout << "x = " << x << ". Mirroring in x=0 plane." << G4endl;
+    G4cout << "x = " << local[0]/cm << " cm. Mirroring in x=0 plane." << G4endl;
 #endif
-    x *= -1;
+    local[0] *= -1;
     signy = -1;
     signz = -1;
   }
 
-  if( z <0 ){
+  if( local[2] <0 ){
 #ifdef DEBUG
-    G4cout << "z = " << z << ". Mirroring in z=0 plane." << G4endl;
+    G4cout << "z = " << local[2]/cm << " cm. Mirroring in z=0 plane." << G4endl;
 #endif
-    z *= -1;
+    local[2] *= -1;
     signz = -1;
   }
   */
@@ -234,6 +271,14 @@ void BDS3DMagField::GetFieldValue(const double point[4],
     Bfield[1] = 0.0;
     Bfield[2] = 0.0;
   }
+
+#ifdef DEBUG
+  G4cout << "Bfield x,y,z = " << 
+    Bfield[0]/tesla << " " <<
+    Bfield[1]/tesla << " " <<
+    Bfield[2]/tesla <<
+    G4endl;
+#endif
 }
 
 void BDS3DMagField::Prepare(G4VPhysicalVolume *referenceVolume){

@@ -22,7 +22,7 @@
 #include "G4TrajectoryContainer.hh"
 #include <list>
 #include <vector>
-
+#include "BDSCCDPixelSD.hh"
 
 
 class BDSEventAction : public G4UserEventAction
@@ -64,6 +64,7 @@ private:
 
   std::list<BDSAcceleratorComponent*>::const_iterator iBeam;
   std::list<BDSEnergyCounterSD*>::const_iterator iEC;
+  std::list<BDSCCDPixelSD*>::const_iterator iCCD;
 
   BDSAcceleratorComponent* LastComp;
   };

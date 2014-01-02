@@ -816,6 +816,9 @@ void BDSPhysicsList::ConstructDecay()
 void BDSPhysicsList::ConstructOptical()
 {
   bool bCerOn=BDSGlobalConstants::Instance()->GetTurnOnCerenkov();
+  bool bBirksOn=BDSGlobalConstants::Instance()->GetTurnOnBirksSaturation();
+
+
   if(bCerOn){
     theCerenkovProcess = new G4Cerenkov("Cerenkov");
     theCerenkovProcess->SetMaxNumPhotonsPerStep(20);
@@ -825,22 +828,40 @@ void BDSPhysicsList::ConstructOptical()
   }
   
   theScintillationProcess      = new G4Scintillation("Scintillation");
-  theAbsorptionProcess         = new G4OpAbsorption();
-  theRayleighScatteringProcess = new G4OpRayleigh();
-  theMieHGScatteringProcess    = new G4OpMieHG();
-  theBoundaryProcess           = new G4OpBoundaryProcess();
+  if(BDSGlobalConstants::Instance()->GetTurnOnOpticalAbsorption()){
+    theAbsorptionProcess         = new G4OpAbsorption();
+  }
+  if(BDSGlobalConstants::Instance()->GetTurnOnRayleighScattering()){
+    theRayleighScatteringProcess = new G4OpRayleigh();
+  }
+  if(BDSGlobalConstants::Instance()->GetTurnOnMieScattering()){
+    theMieHGScatteringProcess    = new G4OpMieHG();
+  }
+  if(BDSGlobalConstants::Instance()->GetTurnOnOpticalSurface()){
+    theBoundaryProcess           = new G4OpBoundaryProcess();
+#if G4VERSION_NUMBER < 960
+    G4OpticalSurfaceModel themodel = unified;
+    theBoundaryProcess->SetModel(themodel);
+#endif
+  }
 
   SetVerboseLevel(1);
   theScintillationProcess->SetScintillationYieldFactor(1.);
   theScintillationProcess->SetTrackSecondariesFirst(true);
   // Use Birks Correction in the Scintillation process
-  G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
-  theScintillationProcess->AddSaturation(emSaturation);
+  if(bBirksOn){
+    G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
+    theScintillationProcess->AddSaturation(emSaturation);
+  }
 
+<<<<<<< HEAD
 #if G4VERSION_NUMBER < 960
   G4OpticalSurfaceModel themodel = unified;
   theBoundaryProcess->SetModel(themodel);
 #endif
+=======
+  
+>>>>>>> processFlags
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){
     G4ParticleDefinition* particle = theParticleIterator->value();
@@ -863,11 +884,16 @@ void BDSPhysicsList::ConstructOptical()
     }
     if (particleName == "opticalphoton") {
       G4cout << " AddDiscreteProcess to OpticalPhoton " << G4endl;
-      pmanager->AddDiscreteProcess(theAbsorptionProcess);
-      pmanager->AddDiscreteProcess(theRayleighScatteringProcess);
-      pmanager->AddDiscreteProcess(theMieHGScatteringProcess);
-      bool bOptBoundProcOn=false;
-      if(bOptBoundProcOn){
+      if(BDSGlobalConstants::Instance()->GetTurnOnOpticalAbsorption()){
+	pmanager->AddDiscreteProcess(theAbsorptionProcess);
+      }
+      if(BDSGlobalConstants::Instance()->GetTurnOnRayleighScattering()){
+	pmanager->AddDiscreteProcess(theRayleighScatteringProcess);
+      }
+      if(BDSGlobalConstants::Instance()->GetTurnOnMieScattering()){
+	pmanager->AddDiscreteProcess(theMieHGScatteringProcess);
+      }
+      if(BDSGlobalConstants::Instance()->GetTurnOnOpticalSurface()){
 	pmanager->AddDiscreteProcess(theBoundaryProcess);
       }
     }

@@ -95,6 +95,7 @@ matdef { return MATERIAL; }
 atom { return ATOM; }
 laser { return LASER; }
 screen { return SCREEN; }
+awakescreen { return AWAKESCREEN; }
 
 line       { return LINE; } 
 
