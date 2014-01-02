@@ -49,7 +49,7 @@ public:
   void WriteHits(BDSSamplerHitsCollection*);
   void WriteEnergyLoss(BDSEnergyCounterHitsCollection*);
   void WriteCCDHits(BDSCCDPixelHitsCollection*);
-  G4int WriteTrajectory(TrajectoryVector* TrajVec);
+  //  G4int WriteTrajectory(TrajectoryVector* TrajVec);
   G4int WriteTrajectory(std::vector<G4VTrajectory*> TrajVec);
 
   void Echo(G4String str);
