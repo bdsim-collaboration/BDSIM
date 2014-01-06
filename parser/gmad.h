@@ -419,7 +419,7 @@ struct Parameters {
 
     precisionRegion = 0; precisionRegionset = 0;
 
-    beampipeThickness = 0;
+    beampipeThickness = 0; beampipeThicknessset = 0;
     aper = 0; aperset = 0;
     outR = 0; outRset = 0;
     tilt = 0; tiltset = 0;
