@@ -437,7 +437,6 @@ std::map<std::string, struct symtab*> symtab_map;
 
 extern struct symtab * symlook(const char *s);
 
-std::list<struct Element>::iterator element_lookup(std::string name);
 std::list<struct Element>::iterator element_lookup(std::string name, std::list<struct Element>& el);
 int write_table(struct Parameters pars,const char* name, int type, std::list<struct Element> *lst=NULL);
 int expand_line(const char *name, const char *start, const char *end);
@@ -845,7 +844,7 @@ int expand_line(const char *charname, const char *start, const char* end)
   
   struct Element e;
   std::string name = std::string(charname);
-  it = element_lookup(name);
+  it = element_lookup(name, element_list);
   
 //  if( (it!=NULL) && ((*it).type == _LINE || (*it).type == _REV_LINE) ) 
   if((*it).type == _LINE || (*it).type == _REV_LINE ) 
@@ -905,7 +904,7 @@ int expand_line(const char *charname, const char *start, const char* end)
 		{
 		  is_expanded = false;
 		  // lookup the line in main list
-		  std::list<struct Element>::iterator tmpit = element_lookup((*it).name);
+		  std::list<struct Element>::iterator tmpit = element_lookup((*it).name,element_list);
 
 		  if( (tmpit != iterEnd) && ( (*tmpit).lst != NULL) ) { // sublist found and not empty
 		    
@@ -1001,7 +1000,7 @@ int expand_line(const char *charname, const char *start, const char* end)
 
       // insert the tunnel if present
 
-      it = element_lookup("tunnel");
+      it = element_lookup("tunnel",element_list);
       if(it!=iterEnd)
 	beamline_list.push_back(*it);
       
@@ -1012,18 +1011,6 @@ int expand_line(const char *charname, const char *start, const char* end)
   printf("line '%s' not found",charname);
   return 1;
   
-}
-
-std::list<struct Element>::iterator element_lookup(std::string name)
-{
-   std::list<struct Element>::iterator it;
-
-   for(it=element_list.begin();it!=element_list.end();++it)
-     {
-       if((*it).name == name )
-	 return it;
-     }
-   return element_list.end();
 }
 
 std::list<struct Element>::iterator element_lookup(std::string name,std::list<struct Element>& el)
@@ -1509,7 +1496,7 @@ void set_value(std::string name, std::string value )
 
 double property_lookup(char *element_name, char *property_name)
 {
-   std::list<struct Element>::iterator it = element_lookup(std::string(element_name));
+   std::list<struct Element>::iterator it = element_lookup(std::string(element_name),element_list);
    std::list<struct Element>::const_iterator iterEnd = element_list.end();
 
    if(it == iterEnd) return 0;
