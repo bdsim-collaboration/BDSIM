@@ -77,7 +77,7 @@ BDSComponentFactory::BDSComponentFactory(){
 BDSComponentFactory::~BDSComponentFactory(){
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createComponent(std::list<struct Element>::iterator elementIter, std::list<struct Element>& beamline_list){
+BDSAcceleratorComponent* BDSComponentFactory::createComponent(std::list<struct Element>::iterator elementIter, ElementList& beamline_list){
 #ifdef DEBUG
   G4cout << "BDSComponentFactory::createComponent() making iterators" << G4endl;  
 #endif

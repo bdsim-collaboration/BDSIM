@@ -10,7 +10,7 @@ class BDSComponentFactory{
 public:
   BDSComponentFactory();
   ~BDSComponentFactory();
-  BDSAcceleratorComponent* createComponent(std::list<struct Element>::iterator elementIter, std::list<struct Element>& beamline_list);
+  BDSAcceleratorComponent* createComponent(std::list<struct Element>::iterator elementIter, ElementList& beamline_list);
   BDSAcceleratorComponent* createComponent(Element aElement, Element previousElement, Element nextElement);
   BDSAcceleratorComponent* createComponent();
   

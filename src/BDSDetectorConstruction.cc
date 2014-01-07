@@ -228,7 +228,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 }
 
 
-G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& beamline_list)
+G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_list)
 {
   //
   // set default output formats:

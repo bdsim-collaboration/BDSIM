@@ -116,6 +116,74 @@ struct Parameters params;
 struct Options options;
 struct Element element;
 
+void Element::print(int & ident)const{
+  for(int i=0;i<ident;i++)
+    printf("--");
+
+  printf("->%s : %s",name.c_str(),typestr(type));
+
+  std::list<double>::const_iterator it;
+  switch(type) {
+  case _DRIFT:
+  case _PCLDRIFT:
+  case _SBEND:
+  case _RBEND:
+  case _QUAD:
+  case _SEXTUPOLE:
+  case _OCTUPOLE:
+    printf(", l=%.10g, k0=%.10g, k1=%.10g, k2=%.10g, k3=%.10g, angle=%.10g,tilt=%.10g ",
+	   l,k0,k1,k2,k3,angle,tilt);
+    break;
+    
+  case _SOLENOID:
+    printf(", l=%.10g, ks=%.10g ", l, ks);
+    break;
+    
+  case _MULT:
+    printf(" , knl={");
+    for(it=knl.begin();it!=knl.end();++it)
+      printf("%.10g, ",(*it));
+    printf("},  ksl={");
+    for(it=ksl.begin();it!=ksl.end();++it)
+      printf("%.10g, ",(*it));
+    printf("}");
+    break;
+    
+  case _ELEMENT:
+    printf("\ngeometry file : %s\n",geometryFile.c_str());
+    printf("B map file : %s\n",bmapFile.c_str());
+    //printf("E map driver : %s\n",geometryFile);
+    //printf("E map file : %s\n",geometryFile);
+    break;
+    
+  case _SCREEN:
+    break;
+    
+  case _CSAMPLER:
+    printf(" length=%.10g, radius=%.10g",l, r);
+    break;
+    
+  case _TRANSFORM3D:
+    printf(" xdir=%.10g, ydir=%.10g, zdir=%.10g,  phi=%.10g, theta=%.10g,psi=%.10g",
+	   xdir, ydir, zdir, phi, theta, psi);
+    break;
+  case _MATERIAL:
+    printf(" A=%.10g, Z=%.10g, density=%.10g,  temper=%.10g, pressure=%.10g",
+	   A, Z, density, temper, pressure);
+    break;
+  default:
+    break;
+  }
+  
+  printf("\n");
+  
+  if(lst != NULL)
+    {
+      ::print(*lst,++ident);
+      ident--;
+    }
+}
+
 void print(struct Parameters pars)
 {
   printf("printing parameters:\n");
@@ -419,12 +487,12 @@ void set_vector(std::list<int>& dst, struct Array *src)
 
 
 // list of all encountered elements
-std::list<struct Element> element_list;
+ElementList element_list;
 
 // temporary list
 std::list<struct Element> tmp_list;
 
-std::list<struct Element> beamline_list;
+ElementList beamline_list;
 std::list<struct Element> material_list;
 std::list<struct Element> atom_list;
 
@@ -437,10 +505,10 @@ std::map<std::string, struct symtab*> symtab_map;
 
 extern struct symtab * symlook(const char *s);
 
-std::list<struct Element>::iterator element_lookup(std::string name, std::list<struct Element>& el);
 int write_table(struct Parameters pars,const char* name, int type, std::list<struct Element> *lst=NULL);
 int expand_line(const char *name, const char *start, const char *end);
-void print(std::list<struct Element> l, int ident=0);
+void print(std::list<struct Element>, int ident=0);
+void print(ElementList l, int ident=0);
 
 // *********************
 // functions
@@ -844,187 +912,171 @@ int expand_line(const char *charname, const char *start, const char* end)
   
   struct Element e;
   std::string name = std::string(charname);
-  it = element_lookup(name, element_list);
+  it = element_list.find(name);
+
+  if (it==element_list.end()) {
+    printf("line '%s' not found\n",charname);
+    return 1;
+  }
+  if((*it).type != _LINE && (*it).type != _REV_LINE ) {
+    printf("'%s' is not a line\n",charname);
+  }
+
+  // delete the previous beamline
   
-//  if( (it!=NULL) && ((*it).type == _LINE || (*it).type == _REV_LINE) ) 
-  if((*it).type == _LINE || (*it).type == _REV_LINE ) 
-
+  beamline_list.clear();
+  
+  // expand the desired beamline
+  
+  e.type = (*it).type;
+  e.name = name;
+  e.l = 0;
+  e.lst = NULL;
+  
+  beamline_list.push_back(e);
+  
+  if(VERBOSE) printf("expanding line %s, range = %s/%s\n",charname,start,end);
+  
+  if(!(*it).lst) return 0; //list empty
+  
+  
+  // first expand the whole range 
+  std::list<struct Element>::iterator sit = (*it).lst->begin();
+  std::list<struct Element>::iterator eit = (*it).lst->end();
+  
+  // copy the list into the resulting list
+  switch((*it).type){
+  case _LINE:
+    beamline_list.insert(beamline_list.end(),sit,eit);
+    break;
+  case _REV_LINE:
+    beamline_list.insert(beamline_list.end(),(*it).lst->rbegin(),(*it).lst->rend());
+    break;
+  default:
+    beamline_list.insert(beamline_list.end(),sit,eit);
+  }
+  bool is_expanded = false;
+  
+  // insert material entries.
+  // TODO:::
+  
+  
+  // parse starting from the second element until the list is expanded
+  int iteration = 0;
+  while(!is_expanded)
     {
-      
-      // delete the previous beamline
-      
-      beamline_list.clear();
-      
-      // expand the desired beamline
-      
-      e.type = (*it).type;
-      e.name = name;
-      e.l = 0;
-      e.lst = NULL;
-      
-      beamline_list.push_back(e);
-      
-      if(VERBOSE) printf("expanding line %s, range = %s/%s\n",charname,start,end);
-      
-      if(!(*it).lst) return 0; //list empty
-
-      
-      // first expand the whole range 
-      std::list<struct Element>::iterator sit = (*it).lst->begin();
-      std::list<struct Element>::iterator eit = (*it).lst->end();
-
-      // copy the list into the resulting list
-      switch((*it).type){
-	case _LINE:
-          beamline_list.insert(beamline_list.end(),sit,eit);
-          break;
-	case _REV_LINE:
-          beamline_list.insert(beamline_list.end(),(*it).lst->rbegin(),(*it).lst->rend());
-	  break;
-	default:
-          beamline_list.insert(beamline_list.end(),sit,eit);
-	}
-      bool is_expanded = false;
-      
-      // insert material entries.
-      // TODO:::
-
-
-      // parse starting from the second element until the list is expanded
-      int iteration = 0;
-      while(!is_expanded)
-        {
-	  is_expanded = true;
-	  for(it = ++beamline_list.begin();it!=beamline_list.end();it++ )
+      is_expanded = true;
+      for(it = ++beamline_list.begin();it!=beamline_list.end();it++ )
+	{
+#ifdef DEBUG 
+	  printf("%s , %s \n",(*it).name,typestr((*it).type));
+#endif
+	  if((*it).type == _LINE || (*it).type == _REV_LINE)  // list - expand further	  
 	    {
-#ifdef DEBUG 
-              printf("%s , %s \n",(*it).name,typestr((*it).type));
-#endif
-	      if((*it).type == _LINE || (*it).type == _REV_LINE)  // list - expand further	  
-		{
-		  is_expanded = false;
-		  // lookup the line in main list
-		  std::list<struct Element>::iterator tmpit = element_lookup((*it).name,element_list);
-
-		  if( (tmpit != iterEnd) && ( (*tmpit).lst != NULL) ) { // sublist found and not empty
-		    
-#ifdef DEBUG
-                    printf("inserting sequence for %s - %s ...",(*it).name,(*tmpit).name);
-#endif
-		    if((*it).type == _LINE)
-		      beamline_list.insert(it,(*tmpit).lst->begin(),(*tmpit).lst->end());
-		    else if((*it).type == _REV_LINE){
-		      //iterate over list and invert any sublines contained within. SPM
-		      std::list<struct Element> tmpList;
-		      tmpList.insert(tmpList.end(),(*tmpit).lst->begin(),(*tmpit).lst->end());
-		      for(std::list<struct Element>::iterator 
-			itLineInverter = tmpList.begin();
-			itLineInverter != tmpList.end(); itLineInverter++){
-			  if((*itLineInverter).type == _LINE ||
-			    (*itLineInverter).type == _REV_LINE)
-			      (*itLineInverter).type *= -1;}
-		      beamline_list.insert(it,tmpList.rbegin(),tmpList.rend());
-		    }
-#ifdef DEBUG 
- printf("inserted\n");
-#endif
-		    
-		    // delete the list pointer
-		    beamline_list.erase(it--);
-		    
-		  } else if ( tmpit != iterEnd ) // entry points to a scalar element type -
-		    //transfer properties from the main list
-		    { 
-#ifdef DEBUG 
-                      printf("keeping element...%s\n",(*it).name);
-#endif
-		      copy_properties(it,tmpit);
-#ifdef DEBUG 
-                      printf("done\n");
-#endif
-
-		    } else  // element of undefined type - neglecting
-		    {
-		      //		      if(VERBOSE)
-		      printf("Warning : Expanding line %s : element %s has not been \
-                               defined , skipping \n",charname,(*it).name.c_str());
-		      beamline_list.erase(it--);
-		    }
-		  
-		} else  // element - keep as it is 
-		  {
-		    // do nothing
-		  }
+	      is_expanded = false;
+	      // lookup the line in main list
+	      std::list<struct Element>::iterator tmpit = element_list.find((*it).name);
 	      
-	    }
-	  iteration++;
-	  if( iteration > MAX_EXPAND_ITERATIONS )
+	      if( (tmpit != iterEnd) && ( (*tmpit).lst != NULL) ) { // sublist found and not empty
+		
+#ifdef DEBUG
+		printf("inserting sequence for %s - %s ...",(*it).name,(*tmpit).name);
+#endif
+		if((*it).type == _LINE)
+		  beamline_list.insert(it,(*tmpit).lst->begin(),(*tmpit).lst->end());
+		else if((*it).type == _REV_LINE){
+		  //iterate over list and invert any sublines contained within. SPM
+		  std::list<struct Element> tmpList;
+		  tmpList.insert(tmpList.end(),(*tmpit).lst->begin(),(*tmpit).lst->end());
+		  for(std::list<struct Element>::iterator 
+		      itLineInverter = tmpList.begin();
+		      itLineInverter != tmpList.end(); itLineInverter++){
+		    if((*itLineInverter).type == _LINE ||
+		       (*itLineInverter).type == _REV_LINE)
+		      (*itLineInverter).type *= -1;}
+		  beamline_list.insert(it,tmpList.rbegin(),tmpList.rend());
+		}
+#ifdef DEBUG
+		printf("inserted\n");
+#endif
+		
+		// delete the list pointer
+		beamline_list.erase(it--);
+		
+	      } else if ( tmpit != iterEnd ) // entry points to a scalar element type -
+		//transfer properties from the main list
+		{ 
+#ifdef DEBUG 
+		  printf("keeping element...%s\n",(*it).name);
+#endif
+		  copy_properties(it,tmpit);
+#ifdef DEBUG 
+		  printf("done\n");
+#endif
+		  
+		} else  // element of undefined type - neglecting
+		{
+		  //		      if(VERBOSE)
+		  printf("Warning : Expanding line %s : element %s has not been \
+                               defined , skipping \n",charname,(*it).name.c_str());
+		  beamline_list.erase(it--);
+		}
+	      
+	    } else  // element - keep as it is 
 	    {
-	      printf("Error : Line expansion of '%s' seems to loop, \
+	      // do nothing
+	    }
+	  
+	}
+      iteration++;
+      if( iteration > MAX_EXPAND_ITERATIONS )
+	{
+	  printf("Error : Line expansion of '%s' seems to loop, \
                      \n possible recursive line definition,quitting \n",charname);
-	      exit(0);
-	    }
-	  
-	}// while
-      
-      
-      // leave only the desired range
-      //
-      // rule - from first occurence of 'start' till first 'end' coming after 'start'
-
-
-      if( (start!=NULL)) // determine the start element
-	{
-	  sit = element_lookup(std::string(start),beamline_list);
-	  
-	  if(sit==beamline_list.end())
-	    {
-	      sit = beamline_list.begin();
-	    }
-	  
-	  if(!strcmp(start,"#s")) sit = beamline_list.begin(); 
-	  
-	  beamline_list.erase(beamline_list.begin(),sit);
-
+	  exit(0);
 	}
-
-      if( (end!=NULL)) // determine the end element
-	{
-	  eit = element_lookup(std::string(end),beamline_list);
-	  	  
-	  if(!strcmp(end,"#e")) eit = beamline_list.end();
-
-	  beamline_list.erase(++eit,beamline_list.end());
-	}
-
-
-      // insert the tunnel if present
-
-      it = element_lookup("tunnel",element_list);
-      if(it!=iterEnd)
-	beamline_list.push_back(*it);
       
-      return 0;
+    }// while
+  
+  
+  // leave only the desired range
+  //
+  // rule - from first occurence of 'start' till first 'end' coming after 'start'
+  
+  
+  if( (start!=NULL)) // determine the start element
+    {
+      sit = beamline_list.find(std::string(start));
+      
+      if(sit==beamline_list.end())
+	{
+	  sit = beamline_list.begin();
+	}
+      
+      if(!strcmp(start,"#s")) sit = beamline_list.begin(); 
+      
+      beamline_list.erase(beamline_list.begin(),sit);
+      
+    }
+  
+  if( (end!=NULL)) // determine the end element
+    {
+      eit = beamline_list.find(std::string(end));
+      
+      if(!strcmp(end,"#e")) eit = beamline_list.end();
+      
+      beamline_list.erase(++eit,beamline_list.end());
     }
   
   
-  printf("line '%s' not found",charname);
-  return 1;
+  // insert the tunnel if present
   
+  it = element_list.find("tunnel");
+  if(it!=iterEnd)
+    beamline_list.push_back(*it);
+  
+  return 0;
 }
-
-std::list<struct Element>::iterator element_lookup(std::string name,std::list<struct Element>& el)
-{
-   std::list<struct Element>::iterator it;
-
-   for(it=el.begin();it!=el.end();it++)
-     {
-       if((*it).name == name )
-	 return it;
-     }
-   return el.end();
-}
-
 
 // insert a sampler into beamline_list
 void add_sampler(char *name, char *before, int before_count)
@@ -1032,47 +1084,27 @@ void add_sampler(char *name, char *before, int before_count)
 #ifdef DEBUG 
   std::cout<<"inserting sampler before "<<before<<"["<<before_count<<"]"<<std::endl;
 #endif
-  std::list<struct Element>::iterator it;
 
-  int element_count = 1;  // count from 1 like in FORTRAN -- for range parsing
   struct Element e;
   e.type = _SAMPLER;
   e.name = name;
   e.lst = NULL;
 
-  for(it = beamline_list.begin();it != beamline_list.end(); ++it)
-    {
-#ifdef DEBUG 
-      std::cout<<"-->"<<(*it).name<<std::endl;
-#endif
-
-      if( (*it).name == std::string(before)) 
-	{
-
-	  if( before_count == element_count)
-	    {
-	      beamline_list.insert(it,e);
-	      return;
-	    }
-
-	  element_count++;
-	}
-    }
-
-  std::cout<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-
+  std::list<struct Element>::iterator it = beamline_list.find(std::string(before),before_count);
+  if (it==beamline_list.end()) {
+    std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
+    return;
+  }
+  beamline_list.insert(it,e);
 }
 
 // insert a cylindrical sampler into beamline_list
 void add_csampler(char *name, char *before, int before_count, double length, double rad)
 {
 #ifdef DEBUG 
-  std::cout<<"inserting sampler before "<<before<<"["<<before_count<<"]"<<std::endl;
+  std::cout<<"inserting csampler before "<<before<<"["<<before_count<<"]"<<std::endl;
 #endif
 
-  std::list<struct Element>::iterator it;
-
-  int element_count = 1;  // count from 1 like in FORTRAN -- for range parsing
   struct Element e;
   e.type = _CSAMPLER;
   e.l = length;
@@ -1080,28 +1112,12 @@ void add_csampler(char *name, char *before, int before_count, double length, dou
   e.name = name;
   e.lst = NULL;
 
-  for(it = beamline_list.begin();it != beamline_list.end(); ++it)
-    {
-#ifdef DEBUG 
-      std::cout<<"-->"<<(*it).name<<std::endl;
-#endif
-
-      if( (*it).name == std::string(before)) 
-	{
-
-	  if( before_count == element_count)
-	    {
-	      beamline_list.insert(it,e);
-	      return;
-	    }
-
-	  element_count++;
-	}
-
-    }
-
-  std::cout<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-
+  std::list<struct Element>::iterator it = beamline_list.find(std::string(before),before_count);
+  if (it==beamline_list.end()) {
+    std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
+    return;
+  }
+  beamline_list.insert(it,e);
 }
 
 // insert a beam dumper into beamline_list
@@ -1111,37 +1127,17 @@ void add_dump(char *name, char *before, int before_count)
   std::cout<<"inserting dump before "<<before<<"["<<before_count<<"]"<<std::endl;
 #endif
 
-  std::list<struct Element>::iterator it;
-
-  int element_count = 1;  // count from 1 like in FORTRAN -- for range parsing
   struct Element e;
   e.type = _DUMP;
   e.name = name;
   e.lst = NULL;
 
-  for(it = beamline_list.begin();it != beamline_list.end(); ++it)
-    {
-#ifdef DEBUG 
-      std::cout<<"-->"<<(*it).name<<std::endl;
-#endif
-
-      if( (*it).name == std::string(before)) 
-        {
-
-          if( before_count == element_count)
-            {
-              beamline_list.insert(it,e);
-              return;
-            }
-
-
-          element_count++;
-        }
-
-    }
-
-  std::cout<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-
+  std::list<struct Element>::iterator it = beamline_list.find(std::string(before),before_count);
+  if (it==beamline_list.end()) {
+    std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
+    return;
+  }
+  beamline_list.insert(it,e);
 }
 
 // insert beam gas                                             
@@ -1156,81 +1152,23 @@ void add_gas(const char *name, const char *before, int before_count,  const char
  
 }
 
-
 void print(std::list<struct Element> l, int ident)
 {
-
   if(VERBOSE) if(ident == 0) printf("using line %s\n",current_line);
 
-  std::list<struct Element>::iterator it;
-  std::list<double>::iterator it2;
-
-  for(it=l.begin();it!=l.end();it++)
+  for(std::list<struct Element>::iterator it=l.begin();it!=l.end();it++)
     {
-      for(int i=0;i<ident;i++)
-	printf("--");
+      (*it).print(ident);
+    }
+}
 
-      printf("->%s : %s",(*it).name.c_str(),typestr((*it).type));
+void print(ElementList l, int ident)
+{
+  if(VERBOSE) if(ident == 0) printf("using line %s\n",current_line);
 
-      switch((*it).type) {
-      case _DRIFT:
-      case _PCLDRIFT:
-      case _SBEND:
-      case _RBEND:
-      case _QUAD:
-      case _SEXTUPOLE:
-      case _OCTUPOLE:
-	printf(", l=%.10g, k0=%.10g, k1=%.10g, k2=%.10g, k3=%.10g, angle=%.10g,tilt=%.10g ",
-	       (*it).l,(*it).k0,(*it).k1,(*it).k2,(*it).k3,(*it).angle,(*it).tilt);
-	break;
-
-      case _SOLENOID:
-	printf(", l=%.10g, ks=%.10g ", (*it).l, (*it).ks);
-	break;
-
-      case _MULT:
-	printf(" , knl={");
-	for(it2=(*it).knl.begin();it2!=(*it).knl.end();it2++)
-	  printf("%.10g, ",(*it2));
-	printf("},  ksl={");
-	for(it2=(*it).ksl.begin();it2!=(*it).ksl.end();it2++)
-	  printf("%.10g, ",(*it2));
-	printf("}");
-	break;
-
-      case _ELEMENT:
-	printf("\ngeometry file : %s\n",(*it).geometryFile.c_str());
-	printf("B map file : %s\n",(*it).bmapFile.c_str());
-	//printf("E map driver : %s\n",(*it).geometryFile);
-	//printf("E map file : %s\n",(*it).geometryFile);
-	break;
-
-      case _SCREEN:
-	break;
-
-      case _CSAMPLER:
-	printf(" length=%.10g, radius=%.10g",(*it).l, (*it).r);
-	break;
-
-      case _TRANSFORM3D:
-	printf(" xdir=%.10g, ydir=%.10g, zdir=%.10g,  phi=%.10g, theta=%.10g,psi=%.10g",
-	       (*it).xdir, (*it).ydir, (*it).zdir, (*it).phi, (*it).theta, (*it).psi);
-	break;
-      case _MATERIAL:
-	printf(" A=%.10g, Z=%.10g, density=%.10g,  temper=%.10g, pressure=%.10g",
-	       (*it).A, (*it).Z, (*it).density, (*it).temper, (*it).pressure);
-	break;
-      default:
-	break;
-      }
-
-      printf("\n");
-
-      if((*it).lst != NULL)
-	{
-	  print(*(*it).lst,++ident);
-	  ident--;
-	}
+  for(std::list<struct Element>::iterator it=l.begin();it!=l.end();it++)
+    {
+      (*it).print(ident);
     }
 }
 
@@ -1496,10 +1434,13 @@ void set_value(std::string name, std::string value )
 
 double property_lookup(char *element_name, char *property_name)
 {
-   std::list<struct Element>::iterator it = element_lookup(std::string(element_name),element_list);
+   std::list<struct Element>::iterator it = element_list.find(std::string(element_name));
    std::list<struct Element>::const_iterator iterEnd = element_list.end();
 
-   if(it == iterEnd) return 0;
+   if(it == iterEnd) {
+     std::cerr << "parser.h> Error: unknown element \"" << element_name << "\". Returning 0." << std::endl; 
+     return 0;
+   }
    
    if(!strcmp(property_name,"l")) return (*it).l;
    if(!strcmp(property_name,"B")) return (*it).B;

@@ -343,7 +343,7 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     if(ECHO_GRAMMAR) printf("edit : VARIABLE parameters   -- %s \n",$1->name);
-	     list<struct Element>::iterator it = element_lookup($1->name, element_list);
+	     list<struct Element>::iterator it = element_list.find($1->name);
 	     list<struct Element>::iterator iterEnd = element_list.end();
 	     if(it == iterEnd)
 	       {
@@ -454,7 +454,7 @@ extension : VARIABLE ',' parameters
 	      if(execute)
 		{	 
 		  if(ECHO_GRAMMAR) printf("extension : VARIABLE parameters   -- %s \n",$1->name);
-		  list<struct Element>::iterator it = element_lookup($1->name, element_list);
+		  list<struct Element>::iterator it = element_list.find($1->name);
 		  list<struct Element>::iterator iterEnd = element_list.end();
 		  if(it == iterEnd)
 		    {
@@ -478,7 +478,7 @@ newinstance : VARIABLE
 	      if(execute)
 		{	 
 		  if(ECHO_GRAMMAR) printf("newinstance : VARIABLE -- %s \n",$1->name);
-		  list<struct Element>::iterator it = element_lookup($1->name,element_list);
+		  list<struct Element>::iterator it = element_list.find($1->name);
 		  list<struct Element>::iterator iterEnd = element_list.end();
 		  if(it == iterEnd)
 		    {
