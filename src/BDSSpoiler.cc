@@ -12,20 +12,14 @@
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
 
-#include "G4SDManager.hh"
-
 #include <map>
 
 //============================================================
-//typedef std::map<G4String,MagFieldFunction*> PhysFieldMap;
-//extern PhysFieldMap* MagFieldMap;
-
 typedef std::map<G4String,int> LogVolCountMap;
 extern LogVolCountMap* LogVolCount;
 
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
-//extern G4double BDS_Threshold_Energy;
 extern BDSMaterials* theMaterials;
 //============================================================
 

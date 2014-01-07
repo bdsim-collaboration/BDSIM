@@ -30,8 +30,6 @@
 #include <string>
 #include "G4Box.hh"
 #include "G4Tubs.hh"
-#include "G4Cons.hh"
-#include "G4Torus.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -40,16 +38,8 @@
 #include "G4TransportationManager.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4IntersectionSolid.hh"
-#include "G4UnionSolid.hh"
 #include "G4AssemblyVolume.hh"
 #include "G4Transform3D.hh"
-
-
-BDSAcceleratorComponent::BDSAcceleratorComponent (G4String& aName, G4double aLength):
-  itsName(aName), itsLength(aLength), itsVisAttributes(NULL)
-{
-  ConstructorInit();
-}
 
 BDSAcceleratorComponent::BDSAcceleratorComponent (
 			G4String& aName,G4double aLength, 

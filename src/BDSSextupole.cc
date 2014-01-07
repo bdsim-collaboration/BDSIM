@@ -10,15 +10,12 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSSextupole.hh"
-#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
-#include "G4HelixImplicitEuler.hh"
-#include "G4CashKarpRKF45.hh"
 
 #include <map>
 
@@ -30,7 +27,6 @@ extern LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
-extern BDSMaterials* theMaterials;
 //============================================================
 
 BDSSextupole::BDSSextupole(G4String aName, G4double aLength, 

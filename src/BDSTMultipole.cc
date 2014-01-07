@@ -36,7 +36,6 @@ extern LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
-extern BDSMaterials* theMaterials;
 //============================================================
 
 BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength, 

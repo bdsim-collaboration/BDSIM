@@ -9,9 +9,7 @@
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
-#include "G4SubtractionSolid.hh"
 #include "G4TransportationManager.hh"
-#include "G4SDManager.hh"
 #include "G4UserLimits.hh"
 #include "G4Tubs.hh"
 
@@ -24,7 +22,6 @@ extern LogVolCountMap* LogVolCount;
 
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
-//extern G4double BDS_Threshold_Energy;
 //============================================================
 
 BDSMuSpoiler::BDSMuSpoiler (G4String& aName,G4double aLength,G4double bpRad,

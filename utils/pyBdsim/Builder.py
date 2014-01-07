@@ -250,7 +250,7 @@ class Machine(list):
         command is a string and one of:
         first - only the first element in the lattice
         last  - only the last element in the lattice
-        all   - all elementss
+        all   - all elements
         category - only elements of that category
         """
         if command == 'first':

@@ -16,7 +16,6 @@
 
 #include "globals.hh"
 #include "G4ParticleDefinition.hh"
-#include "G4ParticleWithCuts.hh"
 #include "G4ProcessManager.hh"
 #include "G4ProcessVector.hh"
 #include "G4ParticleTypes.hh"

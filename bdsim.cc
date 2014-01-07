@@ -62,9 +62,8 @@
 #include "G4TrackingManager.hh"
 #include "G4SteppingManager.hh"
 #include "G4GeometrySampler.hh"
-#include "G4ImportanceAlgorithm.hh"
+//#include "G4ImportanceAlgorithm.hh"
 #include "G4GeometryTolerance.hh"
-#include "G4ScoringManager.hh"
 
 #include "CLHEP/Random/Random.h"
 
@@ -78,9 +77,6 @@
 //#endif
 
 #include "parser/gmad.h"  // GMAD parser
-
-
-
 
 //=======================================================
 // Global variables 

@@ -1,9 +1,9 @@
 \input texinfo @c -*-texinfo-*-
 @c %**start of header0.4
 @setfilename bdsim.info
-@settitle BDSIM User's Manual v0.6-dev
+@settitle BDSIM User's Manual v0.6
 @set lastupdate @today{}
-@set revision 0.6-dev
+@set revision 0.6
 @c %**end of header
 
 @setchapternewpage off
@@ -14,7 +14,7 @@
 
 
 @titlepage
-@title BDSIM User's Manual v0.6-dev
+@title BDSIM User's Manual v0.6
 @author I. Agapov, S. T. Boogert, L. C. Deacon, 
 @author S. Malton, L. Nevay, J.Snuverink
 @author revision @value{revision}, last updated @value{lastupdate}
@@ -127,8 +127,8 @@ where the options are
 
 
 
-To run bdsim one first has to define the beamline geometry in a file which is
-then passes to bdsim via the @code{--file} command line option, for example
+To run BDSIM one first has to define the beamline geometry in a file which is
+then passes to BDSIM via the @code{--file} command line option, for example
 
 @example
 bdsim --file=line.gmad --output=root --batch
@@ -270,7 +270,7 @@ Available binary operators are: @code{+}, @code{-}, @code{*}, @code{/},
 
 Available unary operators are: @code{+}, @code{-}
 
-Available boolean operators are: @code{<}, @code{>}, @code{<=}, @code{>=},
+Available Boolean operators are: @code{<}, @code{>}, @code{<=}, @code{>=},
 @code{<>}, @code{==}
 
 Available functions @footnote{see add_func(..) in @code{parser/gmad.cc}} are:
@@ -456,9 +456,9 @@ There are some predefined numerical values@footnote{see add_var(..) in @code{par
 @c @item mp     @tab proton rest mass - DOESN'T SEEM TO BE IMPLEMENTED IN parser/gmad.cc
 @item GeV    @tab 1              @tab m      @tab 1             
 @item eV     @tab @math{10^{-9}} @tab cm     @tab @math{10^{-2}}
-@item KeV    @tab @math{10^{-6}} @tab mm     @tab @math{10^{-3}}
-@item MeV    @tab @math{10^{-3}} @tab um     @tab @math{10^(-6)}
-@item TeV    @tab @math{10^3}    @tab nm     @tab @math{10^(-9)}
+@item keV    @tab @math{10^{-6}} @tab mm     @tab @math{10^{-3}}
+@item MeV    @tab @math{10^{-3}} @tab um     @tab @math{10^{-6}}
+@item TeV    @tab @math{10^3}    @tab nm     @tab @math{10^{-9}}
 @item MV     @tab 1              @tab s      @tab 1             
 @item Tesla  @tab 1              @tab ms     @tab @math{10^{-3}}
 @item rad    @tab 1              @tab us     @tab @math{10^{-6}}
@@ -466,7 +466,7 @@ There are some predefined numerical values@footnote{see add_var(..) in @code{par
 @item clight @tab @math{2.99792458*10^8}
 @end multitable
 
-for example, one can write either 100*eV or 0.1*KeV when energy constants 
+for example, one can write either 100*eV or 0.1*keV when energy constants 
 are concerned.
 
 @node marker
@@ -740,7 +740,7 @@ Example :
 
 @subsection @code{muspoiler}
 
-@code{muspoiler} defines a muon spoiler, which is a rotationally megnetised iron cylinder with an inner radius, outer radius, magnetic field strength and length. 
+@code{muspoiler} defines a muon spoiler, which is a rotationally magnetised iron cylinder with an inner radius, outer radius, magnetic field strength and length. 
 Attributes:
 
 @itemize @bullet 
@@ -1179,7 +1179,7 @@ For more details see the file @code{src/BDSMaterials.cc} or run the command
 @end menu
 
 The execution control is performed in the GMAD input file through @code{option} and @code{sample}
-commands. How the results are recorded is controlledby the @code{sample} command.
+commands. How the results are recorded is controlled by the @code{sample} command.
 When the visualization is turned on, it is also controlled through Geant4 command prompt
 @*
 
@@ -1470,8 +1470,8 @@ Samplers output the following parameters at the specified location:
 
 @node dump
 @subsection @code{dump}
-Used in conjuction with @code{option,fifo=<filename>} to output the bunch 
-distribution at a given point. If the specified output file is a fifo, the 
+Used in conjunction with @code{option,fifo=<filename>} to output the bunch 
+distribution at a given point. If the specified output file is a FIFO, the 
 distribution can be modified by an external program before being piped back in 
 to continue tracking. This is useful for including 
 multi-particle effects such as wakefields at given points in the lattice.
@@ -1556,7 +1556,7 @@ via the @code{vis_mac} switch.
 
 @end example
 
-In interactive mode all the Geant4 interactive comamnds are available. For instance, to fire 100 particles type 
+In interactive mode all the Geant4 interactive commands are available. For instance, to fire 100 particles type 
 
 @code{/run/beamOn 100}
 

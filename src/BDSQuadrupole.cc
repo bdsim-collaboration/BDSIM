@@ -19,7 +19,6 @@
 #include "BDSDebug.hh"
 
 #include "BDSQuadrupole.hh"
-#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Trd.hh"
 #include "G4VisAttributes.hh"
@@ -27,10 +26,6 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
-#include "G4HelixMixedStepper.hh"
-#include "G4HelixImplicitEuler.hh"
-#include "G4SimpleRunge.hh"
-#include "G4CashKarpRKF45.hh"
 
 #include <map>
 

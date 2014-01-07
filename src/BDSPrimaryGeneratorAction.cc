@@ -19,8 +19,6 @@
 #include "G4ParticleGun.hh"
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
-#include "G4EventManager.hh"
-#include "G4StackManager.hh"
 #include "G4Track.hh"
 #include "G4Trajectory.hh"
 

@@ -77,7 +77,7 @@ BDSComponentFactory::BDSComponentFactory(){
 BDSComponentFactory::~BDSComponentFactory(){
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createComponent(std::list<struct Element>::iterator elementIter, std::list<struct Element>& beamline_list){
+BDSAcceleratorComponent* BDSComponentFactory::createComponent(std::list<struct Element>::iterator elementIter, ElementList& beamline_list){
 #ifdef DEBUG
   G4cout << "BDSComponentFactory::createComponent() making iterators" << G4endl;  
 #endif
@@ -236,11 +236,24 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     G4cout << "BDSComponentFactory  - creating transform3d" << G4endl;
 #endif
     return createTransform3D(); break;  
+    // common types, but nothing to do here
+  case _MARKER:
+  case _LINE:
+  case _REV_LINE:
+  case _MATERIAL:
+  case _ATOM:
+  case _SEQUENCE:
+  case _GAS:
+  case _TUNNEL:
+  case _COLLIMATOR:
+    return NULL;
+    break;
   default:
 #ifdef DEBUG
     G4cout << "BDSComponentFactory: type: " << _element.type << G4endl; 
 #endif
-    //    G4Exception("Error: BDSComponentFactory: type not found.", "-1", FatalErrorInArgument, "");   
+    G4Exception("Error: BDSComponentFactory: type not found.", "-1", FatalErrorInArgument, "");   
+    exit(1);
     return NULL;
     break;
   }
@@ -468,58 +481,58 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
     _element.angle=1e-7 * CLHEP::rad;
   }
   
+  G4double bField;
   if(_element.B != 0){
-    _bField = _element.B * CLHEP::tesla;
-    G4double rho = _brho/_bField;
+    bField = _element.B * CLHEP::tesla;
+    G4double rho = _brho/bField;
     _element.angle  = - 2.0*asin(magFieldLength/2.0/rho);
   }
   else{
     _element.angle *= -1;
-    _bField = - 2 * _brho * sin(_element.angle/2.0) / magFieldLength;
-    _element.B = _bField/CLHEP::tesla;
+    bField = - 2 * _brho * sin(_element.angle/2.0) / magFieldLength;
+    _element.B = bField/CLHEP::tesla;
   }
   
   // synch factor??
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  _bPrime = - _brho * (_element.k1 / CLHEP::m2) * _synch_factor;
-  //Should keep the correct geometry, therefore keep dipole with zero angle.
+  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2) * _synch_factor;
+  //Should keep the correct geometry, therefore keep dipole withe zero angle.
   if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) { // not possible due to check earlier - JS
     return createDrift();
     //return (new BDSDrift( _element.name,
     //					_element.l*CLHEP::m, _element.blmLocZ, _element.blmLocTheta,
     //					aper, aper, _element.tunnelMaterial ) );
   }
-  else {
+
     /*
       return (new BDSRBend( _element.name,
       _element.l*CLHEP::m,
       aper,
       _FeRad,
-      _bField,
+      bField,
       _element.angle,
       _element.outR * CLHEP::m,
       _element.blmLocZ,
       _element.blmLocTheta,
       _element.tilt * CLHEP::rad,
-      _bPrime,
+      bPrime,
       _element.material ) );
       
     */
-    return (new BDSSectorBend( _element.name,
-					     length,
-					     aper,
-					     _FeRad,
-					     _bField,
-					     _element.angle,
-					     _element.outR * CLHEP::m,
-					     _element.blmLocZ,
-					     _element.blmLocTheta,
-					     _element.tilt,
-					     _bPrime,
-					     _element.tunnelMaterial,
-					     _element.material, _element.aperX*CLHEP::m, _element.aperY*CLHEP::m ) );
-  }
+  return (new BDSSectorBend( _element.name,
+			     length,
+			     aper,
+			     _FeRad,
+			     bField,
+			     _element.angle,
+			     _element.outR * CLHEP::m,
+			     _element.blmLocZ,
+			     _element.blmLocTheta,
+			     _element.tilt,
+			     bPrime,
+			     _element.tunnelMaterial,
+			     _element.material, _element.aperX*CLHEP::m, _element.aperY*CLHEP::m ) );
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
@@ -554,11 +567,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
   //
   
   // CHECK SIGNS OF B, B', ANGLE
+  G4double bField;
   if(_element.B != 0){
     // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
-    _bField = _element.B * CLHEP::tesla;
-    G4double rho = _brho/_bField;
-    //_element.angle  = - _bField * length / brho;
+    bField = _element.B * CLHEP::tesla;
+    G4double rho = _brho/bField;
+    //_element.angle  = - bField * length / brho;
     _element.angle  = - 2.0*asin(length/2.0/rho);
   }
   else{
@@ -567,15 +581,15 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
     //            = (geometrical length/(2.0*sin(angle/2))*angle
     G4double arclength = 0.5*magFieldLength * _element.angle / sin(_element.angle/2.0);
     // B = Brho/rho = Brho/(arc length/angle)
-    _bField = - _brho * _element.angle / arclength;
-    _element.B = _bField/CLHEP::tesla;
+    bField = - _brho * _element.angle / arclength;
+    _element.B = bField/CLHEP::tesla;
   }
   
   // synch factor???
   
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  _bPrime = - _brho * (_element.k1 / CLHEP::m2) * _synch_factor;
+  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2) * _synch_factor;
   
   if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
     return createDrift();
@@ -585,21 +599,20 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
     // 					_element.blmLocTheta,
     // 					aper, aper, _element.tunnelMaterial ) );
   }
-  else {
-    return (new BDSRBend( _element.name,
-					length,
-					aper,
-					_FeRad,
-					_bField,
-					_element.angle,
-					_element.outR * CLHEP::m,
-					_element.blmLocZ,
-					_element.blmLocTheta,
-					_element.tilt * CLHEP::rad,
-					_bPrime,
-					_element.tunnelMaterial,
-					_element.material ) );
-  }
+
+  return (new BDSRBend( _element.name,
+			length,
+			aper,
+			_FeRad,
+			bField,
+			_element.angle,
+			_element.outR * CLHEP::m,
+			_element.blmLocZ,
+			_element.blmLocTheta,
+			_element.tilt * CLHEP::rad,
+			bPrime,
+			_element.tunnelMaterial,
+			_element.material ) );
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
@@ -625,21 +638,22 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
   //
   // magnetic field
   //
+  G4double bField;
   if(_element.B != 0){
     // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
-    _bField = _element.B * CLHEP::tesla;
-    _element.angle  = -_bField * length / _brho;
+    bField = _element.B * CLHEP::tesla;
+    _element.angle  = -bField * length / _brho;
   }
   else{
     // B = Brho/rho = Brho/(arc length/angle)
-    _bField = - _brho * _element.angle / length;
-    _element.B = _bField/CLHEP::tesla;
+    bField = - _brho * _element.angle / length;
+    _element.B = bField/CLHEP::tesla;
   }
   
   // synch factor??
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  _bPrime = - _brho * (_element.k1 / CLHEP::m2) * _synch_factor;
+  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2) * _synch_factor;
   
   if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
     G4cerr << "---->NOT creating Hkick,"
@@ -658,19 +672,18 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
     // 					_element.blmLocTheta,
     // 					aper, aper, _element.tunnelMaterial ) );
   } 
-  else {
-    return (new BDSKicker( _element.name,
-					 length,
-					 aper,
-					 _FeRad,
-					 _bField,
-					 _element.angle,
-					 _element.outR * CLHEP::m,
-					 _element.tilt * CLHEP::rad,
-					 _bPrime,
-					 _element.tunnelMaterial,
-					 _element.material ) );
-  }
+
+  return (new BDSKicker( _element.name,
+			 length,
+			 aper,
+			 _FeRad,
+			 bField,
+			 _element.angle,
+			 _element.outR * CLHEP::m,
+			 _element.tilt * CLHEP::rad,
+			 bPrime,
+			 _element.tunnelMaterial,
+			 _element.material ) );
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
@@ -695,20 +708,21 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
   //
   // magnetic field
   //
+  G4double bField;
   if(_element.B != 0){
     // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
-    _bField = _element.B * CLHEP::tesla;
-    _element.angle  = -_bField * length / _brho;
+    bField = _element.B * CLHEP::tesla;
+    _element.angle  = -bField * length / _brho;
   }
   else{
     // B = Brho/rho = Brho/(arc length/angle)
-    _bField = - _brho * _element.angle / length;
-    _element.B = _bField/CLHEP::tesla;
+    bField = - _brho * _element.angle / length;
+    _element.B = bField/CLHEP::tesla;
   }
   // synch factor???
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  _bPrime = - _brho * (_element.k1 / CLHEP::m2) * _synch_factor;
+  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2) * _synch_factor;
   
   if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
     G4cerr << "---->NOT creating Vkick,"
@@ -728,16 +742,16 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
     // 					_element.blmLocTheta,
     //                                            aper, aper, _element.tunnelMaterial ) );
   } 
-  
+
   return (new BDSKicker( _element.name,
 			 _element.l * CLHEP::m,
 			 aper,
 			 _FeRad,
-			 _bField,
+			 bField,
 			 _element.angle,
 			 _element.outR * CLHEP::m,
 			 (_element.tilt+CLHEP::pi/2)*CLHEP::rad,
-			 _bPrime,
+			 bPrime,
 			 _element.tunnelMaterial,
 			 _element.material ) );
 }
@@ -765,22 +779,21 @@ BDSAcceleratorComponent* BDSComponentFactory::createQuad(){
 	//
 	// B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
 	// Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  _bPrime = - _brho * (_element.k1 / CLHEP::m2) * _synch_factor;
+  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2) * _synch_factor;
   
-        return (new BDSQuadrupole( _element.name,
-						 _element.l * CLHEP::m,
-						 aper,
-						 _FeRad,
-						 _bPrime, 
-						 _element.tilt * CLHEP::rad,
-                                                 _element.outR * CLHEP::m, 
-                                                 _element.blmLocZ,
-                                                 _element.blmLocTheta,
-                                                 _element.tunnelMaterial,
-						 _element.material,
-						 _element.spec ) );
-	
-  }  
+  return (new BDSQuadrupole( _element.name,
+			     _element.l * CLHEP::m,
+			     aper,
+			     _FeRad,
+			     bPrime, 
+			     _element.tilt * CLHEP::rad,
+			     _element.outR * CLHEP::m,
+			     _element.blmLocZ,
+			     _element.blmLocTheta,
+			     _element.tunnelMaterial,
+			     _element.material,
+			     _element.spec ) );
+}  
   
 BDSAcceleratorComponent* BDSComponentFactory::createSextupole(){
 	//
@@ -807,7 +820,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole(){
 
 	// B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
 	// brho is in Geant4 units, but k2 is not -> multiply k2 by m^-3
-	_bDoublePrime = - _brho * (_element.k2 / CLHEP::m3) * _synch_factor;
+	G4double bDoublePrime = - _brho * (_element.k2 / CLHEP::m3) * _synch_factor;
 
 #ifdef DEBUG 
         G4cout << "---->creating Sextupole,"
@@ -815,7 +828,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole(){
                << " l= " << _element.l << "m"
                << " k2= " << _element.k2 << "m^-3"
                << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
-               << " B''= " << _bDoublePrime/(CLHEP::tesla/CLHEP::m2) << "T/m^2"
+               << " B''= " << bDoublePrime/(CLHEP::tesla/CLHEP::m2) << "T/m^2"
                << " tilt= " << _element.tilt << "rad"
                << " aper= " << aper/CLHEP::m << "m"
                << " outR= " << _element.outR << "m"
@@ -829,7 +842,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole(){
 						_element.l * CLHEP::m,
 						aper,
 						_FeRad,
-						_bDoublePrime,
+						bDoublePrime,
 						_element.tilt * CLHEP::rad,
 						_element.outR * CLHEP::m,
                                                  _element.blmLocZ,
@@ -865,7 +878,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole(){
 
 	// B''' = d^3By/dx^3 = Brho * (1/Brho d^3By/dx^3) = Brho * k3
 	// brho is in Geant4 units, but k3 is not -> multiply k3 by m^-4
-	_bTriplePrime = - _brho * (_element.k3 / (CLHEP::m3*CLHEP::m)) * _synch_factor;
+	G4double bTriplePrime = - _brho * (_element.k3 / (CLHEP::m3*CLHEP::m)) * _synch_factor;
 
 #ifdef DEBUG 
         G4cout << "---->creating Octupole,"
@@ -873,7 +886,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole(){
                << " l= " << _element.l << "m"
                << " k3= " << _element.k3 << "m^-4"
                << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
-               << " B'''= " << _bTriplePrime/(CLHEP::tesla/CLHEP::m3) << "T/m^3"
+               << " B'''= " << bTriplePrime/(CLHEP::tesla/CLHEP::m3) << "T/m^3"
                << " tilt= " << _element.tilt << "rad"
                << " aper= " << aper/CLHEP::m << "m"
                << " outR= " << _element.outR << "m"
@@ -887,7 +900,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole(){
 					       _element.l * CLHEP::m,
 					       aper,
 					       _FeRad,
-					       _bTriplePrime,
+					       bTriplePrime,
 					       _element.tilt * CLHEP::rad,
 					       _element.outR * CLHEP::m,
 					       _element.blmLocZ,
@@ -1033,7 +1046,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 
 }
 
-  BDSAcceleratorComponent* BDSComponentFactory::createSolenoid(){
+BDSAcceleratorComponent* BDSComponentFactory::createSolenoid(){
 
 	//
 	// geometry
@@ -1059,14 +1072,14 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 	//
 	// B = B/Brho * Brho = ks * Brho
 	// brho is in Geant4 units, but ks is not -> multiply ks by m^-1
-	G4double _bField;
+	G4double bField;
         if(_element.B != 0){
-          _bField = _element.B * CLHEP::tesla;
-          _element.ks  = (_bField/_brho) / CLHEP::m;
+          bField = _element.B * CLHEP::tesla;
+          _element.ks  = (bField/_brho) / CLHEP::m;
         }
         else{
-	  _bField = (_element.ks/CLHEP::m) * _brho;
-	  _element.B = _bField/CLHEP::tesla;
+	  bField = (_element.ks/CLHEP::m) * _brho;
+	  _element.B = bField/CLHEP::tesla;
         }
 
 #ifdef DEBUG 
@@ -1075,7 +1088,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
                << " l= " << _element.l << "m"
                << " ks= " << _element.ks << "m^-1"
                << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
-               << " B= " << _bField/CLHEP::tesla << "T"
+               << " B= " << bField/CLHEP::tesla << "T"
                << " aper= " << aper/CLHEP::m << "m"
                << " outR= " << _element.outR << "m"
                << " FeRad= " << _FeRad/CLHEP::m << "m"
@@ -1087,7 +1100,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 					       _element.l * CLHEP::m,
 					       aper,
 					       _FeRad,
-					       _bField,
+					       bField,
 					       _element.outR*CLHEP::m,
                                                 _element.blmLocZ,
                                                 _element.blmLocTheta,
@@ -1097,7 +1110,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 	
 }
 
-  BDSAcceleratorComponent* BDSComponentFactory::createECol(){
+BDSAcceleratorComponent* BDSComponentFactory::createECol(){
 
 	G4Material* theMaterial;
 	if(_element.material != "")
@@ -1130,7 +1143,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
   }
 
 
-  BDSAcceleratorComponent* BDSComponentFactory::createRCol(){
+BDSAcceleratorComponent* BDSComponentFactory::createRCol(){
 
 	G4Material* theMaterial;
 	if(_element.material != "")
@@ -1174,10 +1187,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
                                                  _element.blmLocTheta,
                                                   _element.tunnelMaterial) );
       
-  }
+}
 
 
-  BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
+BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
 
 #ifdef DEBUG 
         G4cout << "---->creating muspoiler,"
@@ -1189,7 +1202,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 #endif
         G4String name = _element.name;
         G4double length = _element.l*CLHEP::m;
-        G4double _bField = _element.B * CLHEP::tesla;
+        G4double bField = _element.B * CLHEP::tesla;
         G4double beamPipeRadius;
         //        if(_element.aperSet){
         beamPipeRadius = _element.aper*CLHEP::m;
@@ -1205,7 +1218,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
         G4double outerRadius = _element.outR*CLHEP::m;
         
 #ifdef DEBUG
-        G4cout << "BDSMuSpoiler: " << name << " " << length/CLHEP::m << " " << outerRadius/CLHEP::m << " " << innerRadius/CLHEP::m << " " << _bField/CLHEP::tesla << " " << beamPipeRadius/CLHEP::m << G4endl;
+        G4cout << "BDSMuSpoiler: " << name << " " << length/CLHEP::m << " " << outerRadius/CLHEP::m << " " << innerRadius/CLHEP::m << " " << bField/CLHEP::tesla << " " << beamPipeRadius/CLHEP::m << G4endl;
 #endif
 
         return (new BDSMuSpoiler(name,
@@ -1213,7 +1226,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
                                                beamPipeRadius,
                                                innerRadius,
                                                outerRadius,
-                                               _bField, 
+                                               bField, 
                                                _element.blmLocZ,
                                                _element.blmLocTheta,
                                                _element.tunnelMaterial));
@@ -1287,5 +1300,3 @@ BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){
 	
       
 }
-
-

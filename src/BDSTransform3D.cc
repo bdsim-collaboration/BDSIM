@@ -22,7 +22,6 @@ extern LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
-extern BDSMaterials* theMaterials;
 //============================================================
 
 BDSTransform3D::BDSTransform3D(G4String aName, G4double x,G4double y,G4double z,

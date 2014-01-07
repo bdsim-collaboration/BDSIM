@@ -29,7 +29,6 @@
 #include <vector>
 #include <map>
 #include <cstdlib>
-#include "G4ClassicalRK4.hh"
 #include <cstring>
 #include "parser/getEnv.h"
 

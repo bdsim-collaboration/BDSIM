@@ -61,25 +61,14 @@
 #include "BDSDrift.hh"
 #include "BDSPCLDrift.hh"
 #include "BDSSectorBend.hh"
-#include "BDSRBend.hh"
-#include "BDSKicker.hh"
 #include "BDSQuadrupole.hh"
-#include "BDSSextupole.hh"
-#include "BDSOctupole.hh"
-#include "BDSDecapole.hh"
 #include "BDSTMultipole.hh"
 #include "BDSRfCavity.hh"
-#include "BDSSolenoid.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerCylinder.hh"
-#include "BDSDump.hh"
 #include "BDSLaserWire.hh"
 #include "BDSLWCalorimeter.hh"
-#include "BDSMuSpoiler.hh"
-#include "BDSTransform3D.hh"
 #include "BDSElement.hh"
-#include "BDSComponentOffset.hh"
-#include "BDSCollimator.hh"
 // output interface
 #include "BDSOutput.hh"
 #include "BDSComponentFactory.hh"
@@ -239,7 +228,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 }
 
 
-G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& beamline_list)
+G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_list)
 {
   //
   // set default output formats:

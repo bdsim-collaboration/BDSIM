@@ -17,7 +17,7 @@ public: // with description
   BDSXSBias(const G4String& aName =  "X-",
                  G4ProcessType   aType = fNotDefined );
 
-  //  copy constructor copys the name but does not copy the 
+  //  copy constructor copies the name but does not copy the 
   //  physics table (0 pointer is assigned)
   BDSXSBias(const BDSXSBias &right);
 

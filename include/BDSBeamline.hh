@@ -54,7 +54,7 @@ private:
   G4ThreeVector* _positionStart;
   G4ThreeVector* _positionEnd;
   G4ThreeVector* _positionFromCurrentCenter;
-  G4double _positionS;//Position along the curvilinear coordiante "s"
+  //  G4double _positionS;//Position along the curvilinear coordiante "s"
   G4ThreeVector* _zHalfAngle;
   G4RotationMatrix* _rotationLocal;
   G4RotationMatrix* _rotationGlobal;

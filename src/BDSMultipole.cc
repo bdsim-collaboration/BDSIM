@@ -20,11 +20,9 @@
 #include "BDSMultipole.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
-#include "G4Trd.hh"
 #include "G4Trap.hh"
 #include "G4EllipticalTube.hh"
 #include "G4Cons.hh"
-#include "G4Torus.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -32,7 +30,6 @@
 #include "G4TransportationManager.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4IntersectionSolid.hh"
-#include "G4UnionSolid.hh"
 
 #include "G4MagIntegratorStepper.hh"
 
@@ -51,9 +48,8 @@ extern LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
-extern BDSMaterials* theMaterials;
-
-
+extern G4RotationMatrix* RotY90;
+extern G4RotationMatrix* RotYM90;
 
 //============================================================
 

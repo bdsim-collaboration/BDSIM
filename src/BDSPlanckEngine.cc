@@ -8,7 +8,6 @@
 
 #include "BDSPlanckEngine.hh"
 #include "G4ios.hh"
-#include "G4UnitsTable.hh"
 #include "Randomize.hh" 
 
  
@@ -87,5 +86,3 @@ G4LorentzVector BDSPlanckEngine::PerformPlanck()
  
  return itsFourMom;
 }
-
-

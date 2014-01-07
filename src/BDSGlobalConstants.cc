@@ -8,7 +8,6 @@ Last modified 23.10.2007 by Steve Malton
 //#include "../parser/getEnv.h"
 #include "BDSDebug.hh"
 #include "G4UniformMagField.hh"
-#include "G4ParticleTypes.hh"
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
 #include <cstdlib>
