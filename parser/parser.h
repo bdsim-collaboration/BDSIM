@@ -969,7 +969,7 @@ int expand_line(const char *charname, const char *start, const char* end)
       for(it = ++beamline_list.begin();it!=beamline_list.end();it++ )
 	{
 #ifdef DEBUG 
-	  printf("%s , %s \n",(*it).name,typestr((*it).type));
+	  printf("%s , %s \n",(*it).name.c_str(),typestr((*it).type));
 #endif
 	  if((*it).type == _LINE || (*it).type == _REV_LINE)  // list - expand further	  
 	    {
@@ -980,7 +980,7 @@ int expand_line(const char *charname, const char *start, const char* end)
 	      if( (tmpit != iterEnd) && ( (*tmpit).lst != NULL) ) { // sublist found and not empty
 		
 #ifdef DEBUG
-		printf("inserting sequence for %s - %s ...",(*it).name,(*tmpit).name);
+		printf("inserting sequence for %s - %s ...",(*it).name.c_str(),(*tmpit).name.c_str());
 #endif
 		if((*it).type == _LINE)
 		  beamline_list.insert(it,(*tmpit).lst->begin(),(*tmpit).lst->end());
@@ -1007,7 +1007,7 @@ int expand_line(const char *charname, const char *start, const char* end)
 		//transfer properties from the main list
 		{ 
 #ifdef DEBUG 
-		  printf("keeping element...%s\n",(*it).name);
+		  printf("keeping element...%s\n",(*it).name.c_str());
 #endif
 		  copy_properties(it,tmpit);
 #ifdef DEBUG 
@@ -1016,9 +1016,7 @@ int expand_line(const char *charname, const char *start, const char* end)
 		  
 		} else  // element of undefined type - neglecting
 		{
-		  //		      if(VERBOSE)
-		  printf("Warning : Expanding line %s : element %s has not been \
-                               defined , skipping \n",charname,(*it).name.c_str());
+		  printf("Warning : Expanding line %s : element %s has not been defined , skipping \n",charname,(*it).name.c_str());
 		  beamline_list.erase(it--);
 		}
 	      
