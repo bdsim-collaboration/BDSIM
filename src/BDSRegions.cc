@@ -1,6 +1,7 @@
 #include "G4Electron.hh"
 #include "G4Positron.hh"
 
+#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
@@ -56,10 +57,6 @@
 #include "G4Material.hh"
 #include "BDSEnergyCounterSD.hh"
 
-extern G4int gflash;
-extern G4double gflashemax;
-extern G4double gflashemin;
-
 BDSRegions::BDSRegions(){
   buildRegions();
 }
@@ -94,7 +91,9 @@ void BDSRegions::buildPrecisionRegion(){
 }
 
 void BDSRegions::buildGFlashRegion(){
-  _gFlashParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
+  G4double gflashemax = BDSExecOptions::Instance()->GetGFlashEMax();
+  G4double gflashemin = BDSExecOptions::Instance()->GetGFlashEMin();
+  _gFlashParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                
   _gFlashParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*CLHEP::GeV);
   _gFlashParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*CLHEP::GeV);
   _gFlashParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());

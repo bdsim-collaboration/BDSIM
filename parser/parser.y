@@ -18,9 +18,6 @@
 
   int execute = 1;
   int element_count = 1; // for samplers , ranges etc.
-#ifdef __cplusplus
-  using namespace std;
-#endif
 
 %}
 
@@ -297,8 +294,8 @@ decl : VARIABLE ':' marker
 	   {
 	     // create entry in the main table and add pointer to the parsed sequence
 	     if(ECHO_GRAMMAR) printf("VARIABLE : LINE %s\n",$1->name);
-	     //  list<struct Element>* tmp_list = new list<struct Element>;
-	     write_table(params,$1->name,_LINE,new list<struct Element>(tmp_list));
+	     //  std::list<struct Element>* tmp_list = new list<struct Element>;
+	     write_table(params,$1->name,_LINE,new std::list<struct Element>(tmp_list));
 	     // write_table(params,$1->name,_LINE,tmp_list);
 	      tmp_list.erase(tmp_list.begin(), tmp_list.end());
 	      tmp_list.~list<struct Element>();
@@ -310,7 +307,7 @@ decl : VARIABLE ':' marker
 	   {
              // create entry in the main table and add pointer to the parsed sequence
 	     if(ECHO_GRAMMAR) printf("VARIABLE : SEQUENCE %s\n",$1->name);
-	     write_table(params,$1->name,_SEQUENCE,new list<struct Element>(tmp_list));
+	     write_table(params,$1->name,_SEQUENCE,new std::list<struct Element>(tmp_list));
 	     tmp_list.erase(tmp_list.begin(), tmp_list.end());
 	   }
        }
@@ -343,8 +340,8 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     if(ECHO_GRAMMAR) printf("edit : VARIABLE parameters   -- %s \n",$1->name);
-	     list<struct Element>::iterator it = element_list.find($1->name);
-	     list<struct Element>::iterator iterEnd = element_list.end();
+	     std::list<struct Element>::iterator it = element_list.find($1->name);
+	     std::list<struct Element>::iterator iterEnd = element_list.end();
 	     if(it == iterEnd)
 	       {
 		 //if(VERBOSE) 
@@ -454,8 +451,8 @@ extension : VARIABLE ',' parameters
 	      if(execute)
 		{	 
 		  if(ECHO_GRAMMAR) printf("extension : VARIABLE parameters   -- %s \n",$1->name);
-		  list<struct Element>::iterator it = element_list.find($1->name);
-		  list<struct Element>::iterator iterEnd = element_list.end();
+		  std::list<struct Element>::iterator it = element_list.find($1->name);
+		  std::list<struct Element>::iterator iterEnd = element_list.end();
 		  if(it == iterEnd)
 		    {
 		      //		      if(VERBOSE) 
@@ -478,8 +475,8 @@ newinstance : VARIABLE
 	      if(execute)
 		{	 
 		  if(ECHO_GRAMMAR) printf("newinstance : VARIABLE -- %s \n",$1->name);
-		  list<struct Element>::iterator it = element_list.find($1->name);
-		  list<struct Element>::iterator iterEnd = element_list.end();
+		  std::list<struct Element>::iterator it = element_list.find($1->name);
+		  std::list<struct Element>::iterator iterEnd = element_list.end();
 		  if(it == iterEnd)
 		    {
 		      // if(VERBOSE)
@@ -1414,7 +1411,7 @@ expr : aexpr
 	     if(INTERACTIVE) {
 	       if($1->type == _ARRAY)
 		 {
-		   for(list<double>::iterator it = $1->array.begin();
+		   for(std::list<double>::iterator it = $1->array.begin();
 		       it!=$1->array.end();it++)
 		     printf ("\t%.10g", (*it));
 		   printf("\n");
@@ -1521,7 +1518,7 @@ vecexpr :   VECVAR
 	      $$->data = new double[$1->array.size()];
 	      $$->size = $1->array.size();
 	      //array_list.push_back($$);
-	      list<double>::iterator it;
+	      std::list<double>::iterator it;
 	      int i = 0;
 	      for(it=$1->array.begin();it!=$1->array.end();it++)
 		{
@@ -1743,7 +1740,7 @@ vectnum : '{' numbers '}'
       
 	        //array_list.push_back(a);
       
-	        list<double>::iterator it;
+	        std::list<double>::iterator it;
 		int i=0;      
 	        for(it=_tmparray.begin();it!=_tmparray.end();it++)
 	  	{
@@ -1751,7 +1748,7 @@ vectnum : '{' numbers '}'
 		}
     	        _tmparray.erase(_tmparray.begin(),_tmparray.end());
 
-	        list<char*>::iterator lIter;
+	        std::list<char*>::iterator lIter;
 	        for(lIter = _tmpstring.begin(); lIter != _tmpstring.end(); lIter++)
 	          $$->symbols.push_back(*lIter);
 
@@ -1767,7 +1764,7 @@ vectstr : '[' letters ']'
 	    $$ = new struct Array;
 	    $$->size = _tmpstring.size();
 
-	    list<char*>::iterator iter;
+	    std::list<char*>::iterator iter;
 	    for(iter = _tmpstring.begin(); iter != _tmpstring.end(); iter++)
 	      $$->symbols.push_back(*iter);
 
@@ -1821,7 +1818,7 @@ command : STOP             { if(execute) quit(); }
 	      {
 		printf("\t");
 		
-		list<double>::iterator it;
+		std::list<double>::iterator it;
 		for(it=$3->array.begin();it!=$3->array.end();it++)
 		  {
 		    printf("  %.10g ",(*it));
@@ -2124,12 +2121,12 @@ beam_parameters :
                 | VARIABLE '=' STR ',' beam_parameters
                   {
 		    if(execute)
-		      set_value($1->name,string($3));
+		      set_value($1->name,std::string($3));
 		  }   
                 | VARIABLE '=' STR
                   {
 		    if(execute)
-		      set_value($1->name,string($3));
+		      set_value($1->name,std::string($3));
 		  }   
 ;
 

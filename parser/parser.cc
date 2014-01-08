@@ -8,11 +8,9 @@
 #include <cstdio>
 #include <iostream>
 
-using namespace std;
-
 int main(int argc, char *argv[])
 {
-  cout<<endl;
+  std::cout<<std::endl;
   if(argc<2) return -1;
   gmad_parser(argv[1]);
 }

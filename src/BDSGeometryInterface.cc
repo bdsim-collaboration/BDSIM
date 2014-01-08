@@ -9,7 +9,9 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 
-using namespace std;
+#include <fstream>
+
+using std::setw;
 
 BDSGeometryInterface::BDSGeometryInterface(G4String filename):
   itsFileName(filename)
@@ -20,7 +22,7 @@ BDSGeometryInterface::~BDSGeometryInterface()
 
 void BDSGeometryInterface::Optics()
 {
-  ofstream optics;
+  std::ofstream optics;
   
   G4cout << "Generating Optics file to: " << itsFileName << " ..." << G4endl;
 
@@ -53,8 +55,8 @@ void BDSGeometryInterface::Optics()
 	}
       else aper_type=2; // circular is default
       
-      optics.setf(ios::fixed, ios::floatfield);
-      optics.setf(ios::showpoint);
+      optics.setf(std::ios::fixed, std::ios::floatfield);
+      optics.setf(std::ios::showpoint);
       
       optics.precision(8);
       
@@ -80,7 +82,7 @@ void BDSGeometryInterface::Optics()
 
 void BDSGeometryInterface::Survey()
 {
-  ofstream survey;
+  std::ofstream survey;
 
   G4cout << "Generating Survey: " << itsFileName << " ..." << G4endl;
 
@@ -139,8 +141,8 @@ void BDSGeometryInterface::Survey()
       else
 	phi = theta = psi = 0.0;
       
-      survey.setf(ios::fixed, ios::floatfield);
-      survey.setf(ios::showpoint);
+      survey.setf(std::ios::fixed, std::ios::floatfield);
+      survey.setf(std::ios::showpoint);
       
       survey.precision(7);
       

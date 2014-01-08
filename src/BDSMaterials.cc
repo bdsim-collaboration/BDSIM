@@ -20,8 +20,10 @@
 #include "BDSMaterials.hh"
 #include "G4NistManager.hh"
 
+#include <list>
+#include <map>
+
 //#define DEBUG 1
-using namespace std;
 
 BDSMaterials* BDSMaterials::_instance = 0;
 
@@ -642,13 +644,13 @@ void BDSMaterials::AddMaterial(G4String aName, G4double itsZ, G4double itsA, G4d
 
 void BDSMaterials::AddMaterial(G4String aName, G4double itsDensity, G4State itsState,
 G4double itsTemp, G4double itsPressure,
-list<const char*> itsComponents, list<G4double> itsComponentsFractions)
+std::list<const char*> itsComponents, std::list<G4double> itsComponentsFractions)
 {
   aName.toLower();
   G4Material* tmpMaterial = new G4Material(aName, itsDensity*CLHEP::g/CLHEP::cm3, 
 		(G4int)itsComponents.size(),itsState, itsTemp*CLHEP::kelvin, itsPressure*CLHEP::atmosphere);
-  list<const char*>::iterator sIter;
-  list<G4double>::iterator dIter;
+  std::list<const char*>::iterator sIter;
+  std::list<G4double>::iterator dIter;
   for(sIter = itsComponents.begin(), dIter = itsComponentsFractions.begin();
       sIter != itsComponents.end();
       sIter++, dIter++)
@@ -672,13 +674,13 @@ list<const char*> itsComponents, list<G4double> itsComponentsFractions)
 
 void BDSMaterials::AddMaterial(G4String aName, G4double itsDensity, G4State itsState,
 G4double itsTemp, G4double itsPressure,      
-list<const char*> itsComponents, list<G4int> itsComponentsWeights)       
+std::list<const char*> itsComponents, std::list<G4int> itsComponentsWeights)       
 {
   aName.toLower();
   G4Material*  tmpMaterial = new G4Material(aName, itsDensity*CLHEP::g/CLHEP::cm3, 
      (G4int)itsComponents.size(),itsState, itsTemp*CLHEP::kelvin, itsPressure*CLHEP::atmosphere);
-  list<const char*>::iterator sIter;
-  list<G4int>::iterator iIter;
+  std::list<const char*>::iterator sIter;
+  std::list<G4int>::iterator iIter;
   for(sIter = itsComponents.begin(), iIter = itsComponentsWeights.begin(); 
 	sIter != itsComponents.end();
 	sIter++, iIter++)
@@ -740,7 +742,7 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)
     return nistManager->FindOrBuildMaterial(aMaterial, true, true);
   } else {
     aMaterial.toLower();
-    map<G4String,G4Material*>::iterator iter = materials.find(aMaterial);
+    std::map<G4String,G4Material*>::iterator iter = materials.find(aMaterial);
     if(iter != materials.end()) return (*iter).second;
     else{
       G4String exceptionString = "BDSMaterials::GetMaterial - Material "+aMaterial+" not known. Aborting.";
@@ -764,7 +766,7 @@ G4Element* BDSMaterials::GetElement(G4String aSymbol)
     G4NistManager* nistManager = G4NistManager::Instance();
     return nistManager->FindOrBuildElement(aSymbol, true);
   } else {
-    map<G4String,G4Element*>::iterator iter = elements.find(aSymbol);
+    std::map<G4String,G4Element*>::iterator iter = elements.find(aSymbol);
     if(iter != elements.end()) return (*iter).second;
     else{
       G4String exceptionString="BDSMaterials::GetElement - Element "+aSymbol+" not known. Aborting.";
@@ -782,14 +784,14 @@ G4Element* BDSMaterials::GetElement(const char* aSymbol)
 G4bool BDSMaterials::CheckMaterial(G4String aMaterial)
 {
   aMaterial.toLower();
-  map<G4String,G4Material*>::iterator iter = materials.find(aMaterial);
+  std::map<G4String,G4Material*>::iterator iter = materials.find(aMaterial);
   if(iter != materials.end()) return true;
   else return false;
 }
 
 G4bool BDSMaterials::CheckElement(G4String aSymbol)
 {
-  map<G4String,G4Element*>::iterator iter = elements.find(aSymbol);
+  std::map<G4String,G4Element*>::iterator iter = elements.find(aSymbol);
   if(iter != elements.end()) return true;
   else return false;
 }
@@ -864,12 +866,12 @@ void BDSMaterials::ListMaterials(){
 }
 
 BDSMaterials::~BDSMaterials(){
-  map<G4String,G4Material*>::iterator mIter;
+  std::map<G4String,G4Material*>::iterator mIter;
   for(mIter = materials.begin(); mIter!=materials.end(); mIter++)
     delete (*mIter).second;
   materials.clear();
 
-  map<G4String,G4Element*>::iterator eIter;
+  std::map<G4String,G4Element*>::iterator eIter;
   for(eIter = elements.begin(); eIter!=elements.end(); eIter++)
     delete (*eIter).second;
   elements.clear();
