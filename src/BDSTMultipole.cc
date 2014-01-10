@@ -11,7 +11,6 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSTMultipole.hh"
-#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
@@ -19,11 +18,8 @@
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
 
-#include "BDSQuadMagField.hh"
-#include "BDSQuadStepper.hh"
 #include "BDSMultipoleMagField.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "BDSRK4Stepper.hh"
 #include "G4HelixImplicitEuler.hh"
 
 #include <map>

@@ -61,7 +61,6 @@
 #include "BDSDrift.hh"
 #include "BDSPCLDrift.hh"
 #include "BDSSectorBend.hh"
-#include "BDSQuadrupole.hh"
 #include "BDSTMultipole.hh"
 #include "BDSRfCavity.hh"
 #include "BDSSampler.hh"

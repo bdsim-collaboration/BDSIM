@@ -24,6 +24,7 @@
 #include "G4ios.hh"
 #include "G4UnitsTable.hh"
 #include "G4PropagatorInField.hh"
+#include "Randomize.hh" 
 
 #include "BDSAcceleratorComponent.hh"
 

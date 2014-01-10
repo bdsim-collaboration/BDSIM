@@ -23,9 +23,6 @@ public:
 public:
   void BeginOfRunAction(const G4Run*);
   void EndOfRunAction(const G4Run*);
-  
-private:
-  G4int nptwiss;
 };
 
 #endif

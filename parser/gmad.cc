@@ -27,6 +27,7 @@ extern std::map<std::string, struct symtab*> symtab_map;
 
 void init()
 {
+  const int reserved = 1;
   // embedded arithmetical functions
   add_func("sqrt",sqrt);
   add_func("cos",cos);
@@ -40,35 +41,35 @@ void init()
   add_func("abs",fabs);
  
 
-  add_var("pi",4.0*atan(1),_RESERVED);
+  add_var("pi",4.0*atan(1),reserved);
 
-  add_var("TeV",1e+3,_RESERVED);
-  add_var("GeV",1.0 ,_RESERVED);
-  add_var("MeV",1e-3,_RESERVED);
-  add_var("KeV",1e-6,_RESERVED);
-  add_var("eV" ,1e-9,_RESERVED);
+  add_var("TeV",1e+3,reserved);
+  add_var("GeV",1.0 ,reserved);
+  add_var("MeV",1e-3,reserved);
+  add_var("KeV",1e-6,reserved);
+  add_var("eV" ,1e-9,reserved);
 
-  add_var("MV",1.0,_RESERVED);
+  add_var("MV",1.0,reserved);
 
-  add_var("Tesla",1.0,_RESERVED);
+  add_var("Tesla",1.0,reserved);
 
-  add_var("m"  ,1.0 ,_RESERVED);
-  add_var("cm" ,1e-2,_RESERVED);
-  add_var("mm" ,1e-3,_RESERVED);
-  add_var("um",1e-6,_RESERVED);
-  add_var("mum",1e-6,_RESERVED);
-  add_var("nm" ,1e-9,_RESERVED);
+  add_var("m"  ,1.0 ,reserved);
+  add_var("cm" ,1e-2,reserved);
+  add_var("mm" ,1e-3,reserved);
+  add_var("um",1e-6,reserved);
+  add_var("mum",1e-6,reserved);
+  add_var("nm" ,1e-9,reserved);
 
-  add_var("s"  ,1.0  ,_RESERVED);
-  add_var("ms" ,1.e-3,_RESERVED);
-  add_var("us",1.e-6,_RESERVED);
-  add_var("ns" ,1.e-9,_RESERVED);
+  add_var("s"  ,1.0  ,reserved);
+  add_var("ms" ,1.e-3,reserved);
+  add_var("us",1.e-6,reserved);
+  add_var("ns" ,1.e-9,reserved);
 
-  add_var("rad" ,1.0  ,_RESERVED);
-  add_var("mrad",1.e-3,_RESERVED);
+  add_var("rad" ,1.0  ,reserved);
+  add_var("mrad",1.e-3,reserved);
 
 
-  add_var("clight",2.99792458e+8,_RESERVED);
+  add_var("clight",2.99792458e+8,reserved);
 
   params.flush();
 
@@ -244,6 +245,7 @@ int gmad_parser(FILE *f)
 
 int gmad_parser(std::string name)
 {
+  const int maxfilenamelength = 200;
 #ifdef DEBUG
   std::cout << "gmad_parser> opening file" << std::endl;
 #endif
@@ -251,8 +253,8 @@ int gmad_parser(std::string name)
 
   if(f==NULL) return -1;
 
-  yyfilename = new char[MAXFILENAMELENGTH];
-  strncpy(yyfilename,name.c_str(),MAXFILENAMELENGTH);
+  yyfilename = new char[maxfilenamelength];
+  strncpy(yyfilename,name.c_str(),maxfilenamelength);
 
   gmad_parser(f);
 

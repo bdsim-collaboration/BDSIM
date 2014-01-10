@@ -1,7 +1,6 @@
 //XSBias with artificially scaled cross section
 
 #include "BDSXSBias.hh"
-#include "BDSGlobalConstants.hh"
 #include "G4SteppingManager.hh"
 
 

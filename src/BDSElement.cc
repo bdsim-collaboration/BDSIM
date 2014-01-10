@@ -20,7 +20,6 @@
 #include "BDS3DMagField.hh"
 #include "BDSXYMagField2.hh"
 #include "G4NystromRK4.hh"
-#include "myQuadStepper.hh"
 
 // geometry drivers
 #include "parser/gmad.h"

@@ -342,6 +342,9 @@ protected:
 
 
 private:
+  /// assignment and copy constructor not implemented nor used
+  BDSAcceleratorComponent& operator=(const BDSAcceleratorComponent&);
+  BDSAcceleratorComponent(BDSAcceleratorComponent&);
   /// constructor initialisation
   void ConstructorInit();
 

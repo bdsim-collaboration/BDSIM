@@ -26,8 +26,6 @@
 #endif
 #include "G4GeometryManager.hh"
 
-#include "Randomize.hh"
-
 #ifdef G4VIS_USE
 #include "BDSVisManager.hh"
 #endif
@@ -200,15 +198,15 @@ int main(int argc,char** argv) {
   // Set the geometry tolerance
   static G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
   G4cout << __FUNCTION__ << "> Default geometry tolerances: surface " 
-	 << theGeometryTolerance->GetSurfaceTolerance() << " " 
+	 << theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m << " m " 
 	 << theGeometryTolerance->GetAngularTolerance() << " " 
 	 << theGeometryTolerance->GetRadialTolerance()  << " " <<G4endl;
-  G4double worldMaximumExtent=1000*m;
+  G4double worldMaximumExtent=1000*CLHEP::m;
   // This sets the tolerances for the geometry (1e-11 times this value)
   G4GeometryManager::GetInstance()->SetWorldMaximumExtent(worldMaximumExtent); 
   G4cout << __FUNCTION__ << "> Geometry tolerances with worldMaximumExtent=" 
-	 << worldMaximumExtent/m << "m: surface: " 
-	 << theGeometryTolerance->GetSurfaceTolerance() 
+	 << worldMaximumExtent/CLHEP::m << " m: surface: " 
+	 << theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m << " m " 
 	 << " angular: " << theGeometryTolerance->GetAngularTolerance() 
 	 << " radial: " << theGeometryTolerance->GetRadialTolerance() << " " <<G4endl;
   

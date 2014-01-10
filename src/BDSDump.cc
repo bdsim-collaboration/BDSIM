@@ -36,7 +36,6 @@ typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 extern BDSOutput* bdsOutput;
 BDSDumpSD* BDSDumpSensDet;
-extern G4int nptwiss;
 
 //============================================================
 
@@ -46,10 +45,9 @@ BDSDump::BDSDump (G4String aName,G4double aLength, G4String aTunnelMaterial):
 			 aLength,0,0,0,
 			 SetVisAttributes(), aTunnelMaterial)
 {
-  nptwiss = BDSExecOptions::Instance()->GetNPTwiss();
   SetName("Dump_"+BDSGlobalConstants::Instance()->StringFromInt(nDumps)+"_"+itsName);
   DumpLogicalVolume();
-  const int nParticles = nptwiss;
+  const int nParticles = BDSExecOptions::Instance()->GetNPTwiss();
   BDSGlobalConstants::Instance()->referenceQueue.push_back(new G4double[nParticles]);
   ++nDumps;
   //G4int nDumps=(*LogVolCount)[itsName];

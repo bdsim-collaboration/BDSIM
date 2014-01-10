@@ -36,6 +36,7 @@ public:
 
 private: 
   BDSBeamline();
+
   static BDSBeamline* _instance;
   std::list <BDSAcceleratorComponent*> _componentList;
 
@@ -43,7 +44,9 @@ private:
   std::list<BDSAcceleratorComponent*>::const_iterator _iterLastComponent;
   void setRefTransform(BDSAcceleratorComponent* var);
 
-
+  /// assignment and copy constructor not implemented nor used
+  BDSBeamline& operator=(const BDSBeamline&);
+  BDSBeamline(BDSBeamline&);
 
   //Navigation 
   void doNavigation();
