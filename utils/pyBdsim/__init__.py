@@ -24,6 +24,7 @@ Analysis - encapsulates functions & plots for a single file
 """
 
 import Builder
+import Constants
 import Data
 #import Gmad
 import Plot
