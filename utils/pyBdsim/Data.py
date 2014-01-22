@@ -17,9 +17,25 @@ Data - read various output files
 import numpy as _np
 
 class AsciiData(dict):
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         dict.__init__(self)
+        self._Update(*args, **kwargs)
+        self._UpdateKeys()
         self.units = {}
+        
+    def _Update(self, *args, **kwargs):
+        for k,v in dict(*args,**kwargs).iteritems():
+            self[k] = v
+    
+    def SetUnits(self,unitsdict):
+        self.unitsdict = unitsdict
+        
+    def _UpdateKeys(self):
+        self.keyslist = self.keys()
+
+    def __setitem__(self,key,value):
+        dict.__setitem__(self,key,value)
+        self._UpdateKeys()
 
 def Load(filepath):
     knownfiletypes = ['txt','root']
@@ -64,10 +80,8 @@ def _LoadAscii(filepath):
     del datalist
     for i,key in enumerate(keys):
         data[key] = list(dataarray[:,i])
-    data.units    = dict(zip(keys,units))
-    data.keyslist = keys
-    data.array    = dataarray
-    return data
+    data.SetUnits(dict(zip(keys,units)))
+    return data,dataarray
     
 def _LoadRoot(filepath):
     data = RootData()
@@ -75,3 +89,6 @@ def _LoadRoot(filepath):
     #stuff here
     f.close()
     return data
+
+
+class Event
