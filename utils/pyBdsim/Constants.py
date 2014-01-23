@@ -10,3 +10,16 @@ PDGid = {
     -13   : ('Positive Muon',r'\mu^{+}'),
     13    : ('Negative Muon',r'\mu^{-}')
 }
+
+PDGname = {}
+for k,v in PDGid.iteritems():
+    PDGname[v[0]] = k
+    PDGname[v[0].lower()] = k
+
+def GetPDGInd(particlename):
+    if particlename in PDGname:
+        return PDGname[particlename]
+    elif particlename.lower() in PDGname:
+        return PDGname[particlename.lower()]
+    else:
+        raise ValueError("Unknown particle type")

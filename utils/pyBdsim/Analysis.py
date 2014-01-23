@@ -10,6 +10,7 @@
 import Data
 import numpy as _np
 import Plot
+import Constants
 
 class Analysis:
     """
@@ -24,7 +25,7 @@ class Analysis:
 
     """
     def __init__(self,filepath):
-        self.data,self.dataarray = Data.Load(filepath)
+        self.data,self.dataarray = Data.LoadOld(filepath)
         #a = Data()
         #a.Read(filepath)
         self.filepath = filepath
@@ -104,3 +105,4 @@ class Analysis:
         self.plots.append(p1)
 
     
+
