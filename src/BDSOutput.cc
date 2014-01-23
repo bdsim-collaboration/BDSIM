@@ -33,7 +33,9 @@ BDSOutput::BDSOutput(BDSOutputFormat fmt):format(fmt),outputFileNumber(1)
 BDSOutput::~BDSOutput()
 {
   if(format==_ASCII){
+    of.flush();
     of.close();
+    ofEloss.flush();
     ofEloss.close();
   }
 #ifdef USE_ROOT
