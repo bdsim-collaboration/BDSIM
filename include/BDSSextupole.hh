@@ -18,9 +18,6 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4PVPlacement.hh"               
-#include "G4HelixMixedStepper.hh"
-#include "G4HelixImplicitEuler.hh"
-#include "G4CashKarpRKF45.hh"
 
 #include "BDSMultipole.hh"
 #include "BDSSextMagField.hh"

@@ -10,8 +10,8 @@
   extern char* yyfilename;
 
   const int ECHO_GRAMMAR = 0; // print grammar rule expansion (for debugging)
-  const int VERBOSE = 0; // print warnings and errors
-  const int VERBOSE_EXPAND = 0; // print the process of line expansion 
+  const int VERBOSE = 0; // print more output
+  //  const int VERBOSE_EXPAND = 0; // print the process of line expansion 
   const int INTERACTIVE = 0; // print output of commands (like in interactive mode)
 
 #include "parser.h"
@@ -343,11 +343,12 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     if(ECHO_GRAMMAR) printf("edit : VARIABLE parameters   -- %s \n",$1->name);
-	     list<struct Element>::iterator it = element_lookup($1->name);
-	     list<struct Element>::iterator iterNULL = element_list.end();
-	     if(it == iterNULL)
+	     list<struct Element>::iterator it = element_list.find($1->name);
+	     list<struct Element>::iterator iterEnd = element_list.end();
+	     if(it == iterEnd)
 	       {
-		 if(VERBOSE) printf("type %s has not been defined\n",$1->name);
+		 //if(VERBOSE) 
+		 printf("type %s has not been defined\n",$1->name);
 	       }
 	     else
 	       {
@@ -453,11 +454,12 @@ extension : VARIABLE ',' parameters
 	      if(execute)
 		{	 
 		  if(ECHO_GRAMMAR) printf("extension : VARIABLE parameters   -- %s \n",$1->name);
-		  list<struct Element>::iterator it = element_lookup($1->name);
-		  list<struct Element>::iterator iterNULL = element_list.end();
-		  if(it == iterNULL)
+		  list<struct Element>::iterator it = element_list.find($1->name);
+		  list<struct Element>::iterator iterEnd = element_list.end();
+		  if(it == iterEnd)
 		    {
-		      if(VERBOSE) printf("type %s has not been defined\n",$1->name);
+		      //		      if(VERBOSE) 
+		      printf("type %s has not been defined\n",$1->name);
 		      $$ = _NONE;
 		    }
 		  else
@@ -476,11 +478,12 @@ newinstance : VARIABLE
 	      if(execute)
 		{	 
 		  if(ECHO_GRAMMAR) printf("newinstance : VARIABLE -- %s \n",$1->name);
-		  list<struct Element>::iterator it = element_lookup($1->name);
-		  list<struct Element>::iterator iterNULL = element_list.end();
-		  if(it == iterNULL)
+		  list<struct Element>::iterator it = element_list.find($1->name);
+		  list<struct Element>::iterator iterEnd = element_list.end();
+		  if(it == iterEnd)
 		    {
-		      if(VERBOSE) printf("type %s has not been defined\n",$1->name);
+		      // if(VERBOSE)
+		      printf("type %s has not been defined\n",$1->name);
 		      $$ = _NONE;
 		    }
 		  else
@@ -522,7 +525,7 @@ parameters:
 		  else
 		  if(!strcmp($1->name,"phiAngleOut")) { params.phiAngleOut = $3; params.phiAngleOutset = 1;} // element outgoing angle
 		  else
-		   if(!strcmp($1->name,"beampipeThickness") ||!strcmp($1->name,"beampipeThickness") ) 
+		   if(!strcmp($1->name,"beampipeThickness") ) 
 		      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
 		    else
 		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
@@ -601,9 +604,10 @@ parameters:
 		  if(!strcmp($1->name,"flatlength")) {params.flatlength = $3; params.flatlengthset = 1;}
                     else
 		  if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence
-		    else
-                  if(VERBOSE) printf("Warning : unknown parameter %s\n",$1->name);
-		  
+		    else {
+		      //                  if(VERBOSE)
+		      printf("Warning : unknown parameter %s\n",$1->name);
+		    }
 		}
 	    }
            | VARIABLE '=' vecexpr ',' parameters
@@ -661,8 +665,10 @@ parameters:
                          set_vector(params.componentsFractions,$3);
                          delete[] $3->data;
                        }
-		     else 	  
-		       if(VERBOSE) printf("unknown parameter %s\n",$1->name);
+		    else {
+		      //                  if(VERBOSE)
+		      printf("Warning : unknown parameter %s\n",$1->name);
+		    }
 		 }
 	     }         
            | VARIABLE '=' vecexpr
@@ -670,7 +676,7 @@ parameters:
 	       if(execute) 
 		 {
 #ifdef DEBUG 
-                   printf("VARIABLE (%s) = vecexpr\n",$1->name);
+                   printf("VARIABLE (%s) = vecexpr (%d)\n",$1->name,$3->size);
 #endif
 		   if(!strcmp($1->name,"knl")) 
 		     {
@@ -720,8 +726,10 @@ parameters:
                          set_vector(params.componentsFractions,$3);
                          delete[] $3->data;
                        }
-		   else 	  
-		     if(VERBOSE) printf("unknown parameter %s\n",$1->name);
+		     else {
+		       //                  if(VERBOSE)
+		       printf("Warning : unknown parameter %s\n",$1->name);
+		     }
 		 }         
 	     }
           | VARIABLE '=' aexpr
@@ -745,24 +753,36 @@ parameters:
 		    else 
 		  if(!strcmp($1->name,"k3")) { params.k3 = $3; params.k3set = 1;} // octupole coef.
 		    else 
-		      if(!strcmp($1->name,"angle")) { params.angle = $3; params.angleset = 1;} // dipole bending angle
-		      else
-			if(!strcmp($1->name,"phiAngleIn")) { params.phiAngleIn = $3; params.phiAngleInset = 1;} // element incoming angle
-			else
-		      if(!strcmp($1->name,"phiAngleOut")) { params.phiAngleOut = $3; params.phiAngleOutset = 1;} // element outgoing angle
-		      else
+		  if(!strcmp($1->name,"angle")) { params.angle = $3; params.angleset = 1;} // dipole bending angle
+		    else
+		  if(!strcmp($1->name,"phiAngleIn")) { params.phiAngleIn = $3; params.phiAngleInset = 1;} // element incoming angle
+		    else
+		  if(!strcmp($1->name,"phiAngleOut")) { params.phiAngleOut = $3; params.phiAngleOutset = 1;} // element outgoing angle
+		    else
+		  if(!strcmp($1->name,"beampipeThickness") ) 
+			      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
+		    else
 		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
 			      { params.aper = $3; params.aperset = 1;}
+		    else
 		  if(!strcmp($1->name,"aperX") ||!strcmp($1->name,"apertureX") ) 
 			      { params.aperX = $3; params.aperXset = 1;}
+		    else
 		  if(!strcmp($1->name,"aperY") ||!strcmp($1->name,"apertureY") ) 
 			      { params.aperY = $3; params.aperYset = 1;}
 		  else
-		 
-		  if(!strcmp($1->name,"beampipeThickness") ||!strcmp($1->name,"beampipeThickness") ) 
-			      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
-		  else
+		  if(!strcmp($1->name,"aperYUp") ||!strcmp($1->name,"apertureYUp") ) 
+		      { params.aperYUp = $3; params.aperYUpset = 1;}
+		    else
+		  if(!strcmp($1->name,"aperYDown") ||!strcmp($1->name,"apertureYDown") ) 
+		      { params.aperYDown = $3; params.aperYDownset = 1;}
+		    else
+		  if(!strcmp($1->name,"aperDy") ||!strcmp($1->name,"apertureDy") ) 
+		    { params.aperDy = $3; params.aperDyset = 1;}
+		    else
 		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
+		    else
+                  if(!strcmp($1->name,"inR") ) { params.inR = $3; params.inRset = 1;}
 		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
@@ -809,13 +829,18 @@ parameters:
 		  if(!strcmp($1->name,"T")) {params.temper = $3; params.temperset = 1;}  // temperature
 		    else
 		  if(!strcmp($1->name,"P")) {params.pressure = $3; params.pressureset = 1;}  // pressure
-		  //else
-		  //  if(!strcmp($1->name,"state")) {params.state = $3; params.stateset = 1;}  // state
 		    else
 		  if(!strcmp($1->name,"waveLength")) {params.waveLength = $3; params.waveLengthset = 1;}
 		    else
-		  if(VERBOSE) printf("Warning : unknown parameter %s\n",$1->name);
-		  
+		  if(!strcmp($1->name,"taperlength")) {params.taperlength = $3; params.taperlengthset = 1;}
+		    else
+		  if(!strcmp($1->name,"flatlength")) {params.flatlength = $3; params.flatlengthset = 1;}
+                    else
+		  if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence
+		  else {
+		      //                  if(VERBOSE)
+		      printf("Warning : unknown parameter %s\n",$1->name);
+		  }
 		}
 	    }
           | VARIABLE '=' STR ',' parameters
@@ -877,8 +902,10 @@ parameters:
                          params.stateset = 1;
                          strcpy(params.state, $3);
                        }
-		   else 
-		   if(VERBOSE) printf("unknown parameter %s\n",$1->name);
+		    else {
+		      //                  if(VERBOSE)
+		      printf("Warning : unknown parameter %s\n",$1->name);
+		    }
 		 }
 	     }         
            | VARIABLE '=' STR
@@ -886,7 +913,7 @@ parameters:
 	       if(execute) 
 		 {
 #ifdef DEBUG 
-                   printf("VARIABLE (%s) = str\n",$1->name);
+                   printf("VARIABLE (%s) = str (%s)\n",$1->name,$3);
 #endif
 		   if(!strcmp($1->name,"geometry")) 
 		     {
@@ -940,8 +967,10 @@ parameters:
                          params.stateset = 1;
                          strcpy(params.state, $3);
                        }
-		   else 
-		   if(VERBOSE) printf("unknown parameter %s\n",$1->name);
+		    else {
+		      //                  if(VERBOSE)
+		      printf("Warning : unknown parameter %s\n",$1->name);
+		    }
 		 }         
 	     }
 
@@ -1423,8 +1452,10 @@ aexpr :  NUMBER               { $$ = $1;                         }
 	     }
 	   else
 	     {
-	       if(VERBOSE) printf("vector dimensions do not match");
-	       $$ = _undefined;
+	       // if(VERBOSE) 
+	       printf("vector dimensions do not match");
+	       exit(1);
+	       // $$ = _undefined;
 	     }
          } 
        // boolean stuff
@@ -1842,14 +1873,14 @@ command : STOP             { if(execute) quit(); }
 		params.flush();
 	      }
           }
-        | BETA0 ',' option_parameters // beta 0 (is a synonim of option, for clarity)
+        | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
           {
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> BETA0\n");
 	      }
           }
-        | TWISS ',' option_parameters // twiss (again, is a synonim of option, for clarity)
+        | TWISS ',' option_parameters // twiss (again, is a synonym of option, for clarity)
           {
 	    if(execute)
 	      {
@@ -1930,8 +1961,11 @@ csample_options : VARIABLE '=' aexpr
 		      {
 			if( !strcmp($1->name,"r") ) params.r = $3;
 			else if (!strcmp($1->name,"l") ) params.l = $3;
-			else if(VERBOSE) 
-			  printf("Warning : CSAMPLER: unknown parameter %s \n",$1->name);
+			else {
+			  //                  if(VERBOSE)
+			  printf("Warning : CSAMPLER: unknown parameter %s\n",$1->name);
+			  exit(1);
+			}
 		      }
 		  }   
                 | VARIABLE '=' STR
@@ -1950,8 +1984,11 @@ csample_options : VARIABLE '=' aexpr
 		      {
 			if( !strcmp($1->name,"r") ) params.r = $3;
 			else if (!strcmp($1->name,"l") ) params.l = $3;
-			else if(VERBOSE) 
-			  printf("Warning : CSAMPLER: unknown parameter %s at line\n",$1->name);
+			else {
+			  //                  if(VERBOSE)
+			  printf("Warning : CSAMPLER: unknown parameter %s\n",$1->name);
+			  exit(1);
+			}
 		      }
 
 		  }   
@@ -1980,8 +2017,11 @@ gas_options : VARIABLE '=' aexpr
 		      {
 			if( !strcmp($1->name,"r") ) params.r = $3;
 			else if (!strcmp($1->name,"l") ) params.l = $3;
-			else if(VERBOSE) 
-			  printf("Warning : GAS: unknown parameter %s \n",$1->name);
+			else {
+			  //                  if(VERBOSE)
+			  printf("Warning : GAS: unknown parameter %s\n",$1->name);
+			  exit(1);
+			}
 		      }
 		  }   
                 | VARIABLE '=' STR
@@ -2005,8 +2045,11 @@ gas_options : VARIABLE '=' aexpr
 		      {
 			if( !strcmp($1->name,"r") ) params.r = $3;
 			else if (!strcmp($1->name,"l") ) params.l = $3;
-			else if(VERBOSE) 
-			  printf("Warning : GAS: unknown parameter %s at line\n",$1->name);
+			else {
+			  //                  if(VERBOSE)
+			  printf("Warning : GAS: unknown parameter %s\n",$1->name);
+			  exit(1);
+			}
 		      }
 
 		  }   

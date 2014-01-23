@@ -12,7 +12,6 @@
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
 
-#include "G4SDManager.hh"
 #include "G4UserLimits.hh"
 #include "parser/gmad.h"
 #include <map>
@@ -38,7 +37,7 @@ BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
   itsInnerLogVol(NULL), itsInnerSolid(NULL), itsOuterSolid(NULL), itsSolid(NULL), itsSoilTube(NULL),
   itsTunnelTube(NULL),  itsInnerTunnelTube(NULL), itsInnerTunnelLogicalVolume(NULL),
   itsSoilTunnelLogicalVolume(NULL), itsTunnelUserLimits(NULL), itsSoilTunnelUserLimits(NULL),
-  itsInnerTunnelUserLimits(NULL), itsVisAttributes(NULL), itsEqRhs(NULL),
+  itsInnerTunnelUserLimits(NULL), itsEqRhs(NULL),
   itsCollimatorMaterial(CollimatorMaterial), itsOuterR(outR)
 {
   if(type==_RCOL) itsType="rcol";
@@ -68,7 +67,7 @@ BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
       BuildInnerCollimator();
       BuildBLMs();
 
-      itsSolidLogVol->SetVisAttributes(SetVisAttributes());
+      itsSolidLogVol->SetVisAttributes(itsVisAttributes);
 
       // visual attributes
       G4VisAttributes* VisAtt1 =
@@ -186,5 +185,4 @@ void BDSCollimator::BuildInnerCollimator()
 
 BDSCollimator::~BDSCollimator()
 {
-  delete itsVisAttributes;
 }

@@ -15,7 +15,9 @@
 
 #include <iostream>
 #include <cstdio>
+#include <iterator>
 #include <list>
+#include <map>
 #include <string>
 #include <cstring>
 
@@ -36,7 +38,7 @@ enum {
   _ELEMENT = 10,
   _LINE = 11,
   _REV_LINE= -11, //for line inversion in sublines
-  _COLLIMATOR = 12,
+  _COLLIMATOR = 12, // obsolete?
   _ECOL = 13,
   _MUSPOILER = 62,
   _RCOL = 14,
@@ -234,10 +236,10 @@ struct Options {
 struct Element {
   short type;
   int precisionRegion;
-  const char * name;
+  std::string name;
 
   double inR; double bpRad; // inner radius and beam pipe radius of muon spoiler  
-  double l,ks,k0,k1,k2,k3,angle,beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut, tscint;
+  double l,ks,k0,k1,k2,k3,angle,beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut, tscint; // l in meter
   double xdir, ydir, zdir, waveLength; // for laser wire and 3d transforms
   double flatlength,taperlength; //for realistic collimators
   double gradient; // for rf cavities
@@ -276,9 +278,11 @@ struct Element {
   // in case the element is a list itself (line)
   std::list <Element> *lst;
 
-  
+  // print method
+  void print(int &ident)const;
 };
 
+extern void print(std::list<Element> l, int ident);
 
 // parameters - used in the parser
 
@@ -419,7 +423,7 @@ struct Parameters {
 
     precisionRegion = 0; precisionRegionset = 0;
 
-    beampipeThickness = 0;
+    beampipeThickness = 0; beampipeThicknessset = 0;
     aper = 0; aperset = 0;
     outR = 0; outRset = 0;
     tilt = 0; tiltset = 0;
@@ -464,8 +468,77 @@ struct Parameters {
   
 };
 
+/**
+ * @brief Element List with Efficient Lookup
+ * 
+ * This class keeps a list of Elements
+ * It has efficient lookup on an Element's name (log n) by having a multimap 
+ *
+ * Used for beamline
+ *
+ * If needed it is fairly easy to template Element
+ *
+ * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
+ */
 
-extern std::list<Element> beamline_list;
+class ElementList {
+
+ public:
+  /// for ease of reading
+  // chosen not to distinguish between non-const and const cases
+  typedef std::list<Element>::iterator ElementListIterator;
+  //typedef std::list<Element>::InputIterator ElementListInputIterator;
+  typedef std::multimap<std::string, ElementListIterator>::iterator ElementMapIterator;
+
+  /// insert options (classic list inserts):
+  /// inputiterator templated to account for reverse iterators
+  template <typename ElementListInputIterator>
+  ElementListIterator insert (ElementListInputIterator position, const Element& val);
+  template <typename ElementListInputIterator>
+  void insert (ElementListIterator position, ElementListInputIterator first, ElementListInputIterator last);
+  void push_back(Element& el);
+  
+  /// size of list
+  int size()const;
+  /// empty
+  void clear();
+  /// erase element
+  ElementListIterator erase (ElementListIterator position);
+  ElementListIterator erase (ElementListIterator first, ElementListIterator last);
+  /// begin/end iterator:
+  ElementListIterator begin();
+  ElementListIterator end();
+
+  /// lookup method, returns iterator of list pointing to Element with name
+  // TOOD: better list of iterators?
+  ElementListIterator find(std::string name,unsigned int count=1);
+
+ private:
+  /// the Element list
+  std::list<Element> itsList;
+  /// multimap for name lookup
+  std::multimap<std::string, ElementListIterator> itsMap;
+};
+
+/// template definitions need to be in header
+template <typename ElementListInputIterator>
+ElementList::ElementListIterator ElementList::insert(ElementListInputIterator position, const Element& val) {
+  // insert in list
+  ElementListIterator it = itsList.insert(position,val);
+  // insert iterator in map with key name
+  itsMap.insert(std::pair<std::string,ElementListIterator>(val.name,it));
+  return it;
+}
+
+template <typename ElementListInputIterator>
+void ElementList::insert(ElementListIterator position, ElementListInputIterator first, ElementListInputIterator last) {
+  for (;first!=last; ++first) {
+    // insert one by one before position
+    ElementList::insert(position,*first);
+  }
+}
+
+extern ElementList beamline_list;
 extern std::list<Element> material_list;
 extern std::list<Element> atom_list;
 
@@ -476,12 +549,11 @@ int gmad_parser(FILE *f);
 
 int gmad_parser(std::string name);
 
-
 /** Python interface **/ 
 extern "C" {   
   int    gmad_parser_c(char *name);
 
-  /* Interface to extern std::list<Element> beamline_list */
+  /* Interface to extern ElementList beamline_list */
   int    get_nelements(); // Length of list
   short  get_type(int);   // Type of element 
   const char*  get_name(int);   // Name of element

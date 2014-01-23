@@ -28,7 +28,7 @@ BDSTunnelCavity::~BDSTunnelCavity(){
   delete _solidVolume;
   delete _logicalVolume;
   delete _physicalVolume;
-  delete _instance;
+  _instance = 0;
 }
 
 void BDSTunnelCavity::build(){

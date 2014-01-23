@@ -12,20 +12,14 @@
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
 
-#include "G4SDManager.hh"
-
 #include <map>
 
 //============================================================
-//typedef std::map<G4String,MagFieldFunction*> PhysFieldMap;
-//extern PhysFieldMap* MagFieldMap;
-
 typedef std::map<G4String,int> LogVolCountMap;
 extern LogVolCountMap* LogVolCount;
 
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
-//extern G4double BDS_Threshold_Energy;
 extern BDSMaterials* theMaterials;
 //============================================================
 
@@ -36,7 +30,7 @@ BDSSpoiler::BDSSpoiler (G4String& aName,G4double aLength,G4double bpRad,
 			 aLength,bpRad,xAper,yAper,
 			 SetVisAttributes()),
   itsPhysiComp(NULL), itsPhysiComp2(NULL), itsSolidLogVol(NULL), 
-  itsInnerLogVol(NULL), itsVisAttributes(NULL), itsEqRhs(NULL), 
+  itsInnerLogVol(NULL), itsEqRhs(NULL), 
   itsSpoilerMaterial(SpoilerMaterial)
 {
   
@@ -121,11 +115,4 @@ void BDSSpoiler::BuildInnerSpoiler()
 
 BDSSpoiler::~BDSSpoiler()
 {
-  delete itsVisAttributes;
-
-  //  delete itsSolidLogVol;
-  //  delete itsInnerLogVol;
-
-  //delete itsPhysiComp;
-  //delete itsPhysiComp2;
 }

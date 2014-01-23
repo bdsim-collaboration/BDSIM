@@ -170,7 +170,6 @@ public:
   // void AddSynchEnergyLoss(G4double SynchEnergyLoss);
   // G4double GetSynchEnergyLoss();
   
-  BDSAcceleratorComponent();
   void BuildOuterFieldManager();
 
   // in case a mapped field is provided creates a field mesh in global coordinates
@@ -193,9 +192,11 @@ public:
   G4double getParameterValue(G4String spec, G4String name) const;
   G4String getParameterValueString(G4String spec, G4String name) const;
 
-  // constructor
-  BDSAcceleratorComponent (G4String& aName, G4double aLength);
+private:
+  /// private default constructor
+  BDSAcceleratorComponent();
 
+public:
   BDSAcceleratorComponent (
 			  G4String& aName, 
 			  G4double aLength,
@@ -237,7 +238,8 @@ public:
 
 
 
-  G4VisAttributes* GetVisAttributes()const;
+  G4VisAttributes* GetVisAttributes()const; // get visual attributes
+  virtual G4VisAttributes* SetVisAttributes(); // set and return visual attributes
   G4LogicalVolume* itsOuterLogicalVolume;
   G4LogicalVolume* itsMarkerLogicalVolume;
   G4LogicalVolume* itsTunnelLogicalVolume;
@@ -287,7 +289,7 @@ protected:
   G4double itsTheta;
   G4double itsPsi;
   G4double itsK1, itsK2, itsK3;
-  G4RotationMatrix* itsRotation;
+  G4RotationMatrix* itsRotation; // rotation matrix (not used)
   G4ThreeVector itsPosition;
   //  BDSBeamPipe* itsBeamPipe;
   G4MagIntegratorStepper*  itsOuterStepper;
@@ -483,6 +485,9 @@ SetInnerMostLogicalVolume(G4LogicalVolume* aLogVol)
 
 inline G4VisAttributes* BDSAcceleratorComponent::GetVisAttributes() const
 {return itsVisAttributes;}
+
+inline G4VisAttributes* BDSAcceleratorComponent::SetVisAttributes()
+{itsVisAttributes=NULL; return itsVisAttributes;}
 
 inline BDSEnergyCounterSD* BDSAcceleratorComponent::GetBDSEnergyCounter() const
 {return itsBDSEnergyCounter;}

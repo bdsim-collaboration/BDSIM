@@ -23,7 +23,7 @@
 #include "G4Navigator.hh"
 #include "G4AffineTransform.hh"
 
-#include "G4RunManager.hh"
+//#include "G4RunManager.hh"
 #include "G4Version.hh"
 
 #include <string>
@@ -109,7 +109,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   
   if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) {
     G4cout << "BDSEnergyCounterSD: Current Volume: " << 	aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() 
-	   <<"\tEvent: " << event_number << "\tEnergy: " << enrg/GeV << "GeV\tPosition: " << zpos/m <<"m"<< G4endl;
+	   <<"\tEvent: " << event_number << "\tEnergy: " << enrg/CLHEP::GeV << "GeV\tPosition: " << zpos/CLHEP::m <<"m"<< G4endl;
   }
   
   /*
@@ -189,7 +189,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
   xpos=pos.x();
   ypos=pos.y();
   
-  if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) G4cout << "BDSEnergyCounterSD: Current Volume: " <<  volName <<"\tEvent: " << event_number << "\tEnergy: " << enrg/GeV << "GeV\tPosition: " << zpos/m <<"m"<< G4endl;
+  if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) G4cout << "BDSEnergyCounterSD: Current Volume: " <<  volName <<"\tEvent: " << event_number << "\tEnergy: " << enrg/CLHEP::GeV << "GeV\tPosition: " << zpos/CLHEP::m <<"m"<< G4endl;
   
   G4double weight = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetWeight();
   if (weight == 0){

@@ -5,7 +5,6 @@
 */
 #include "BDSGlobalConstants.hh" 
 #include "BDSSamplerCylinder.hh"
-#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
@@ -41,7 +40,7 @@ BDSSamplerCylinder (G4String aName,G4double aLength,G4double aRadius):
 			 aName,
 			 aLength,0,0,0,
 			 SetVisAttributes()),
-  itsRadius(aRadius),itsVisAttributes(NULL)
+  itsRadius(aRadius)
 {
   nThisSampler = nSamplers + 1;
   SetName("CSampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
@@ -60,10 +59,10 @@ void BDSSamplerCylinder::SamplerCylinderLogicalVolume()
 
       itsMarkerLogicalVolume=
 	new G4LogicalVolume(new G4Tubs(itsName+"_body",
-				       itsRadius-1.e-6*m,
+				       itsRadius-1.e-6*CLHEP::m,
 				       itsRadius,
 				       itsLength/2,
-				       0,twopi*radian),
+				       0,CLHEP::twopi*CLHEP::radian),
 			    BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			    itsName);
       
@@ -96,6 +95,5 @@ G4VisAttributes* BDSSamplerCylinder::SetVisAttributes()
 
 BDSSamplerCylinder::~BDSSamplerCylinder()
 {
-  delete itsVisAttributes;
   --nSamplers;
 }

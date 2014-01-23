@@ -10,16 +10,12 @@
 #include "BDSDriftStepper.hh"
 #include "BDSPCLTube.hh"
 
-#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
-#include "G4CashKarpRKF45.hh"
-#include "G4ExactHelixStepper.hh"
-#include "G4UnionSolid.hh"
 
 #include <map>
 
@@ -99,13 +95,13 @@ void BDSPCLDrift::BuildBeampipe(G4String materialName){
 
 #ifdef DEBUG 
   G4cout << "Outer pipe :"
-         << " r= " << itsBpRadius/m << " m"
-         << " l= " << itsLength/(2.)/m << " m"
+         << " r= " << itsBpRadius/CLHEP::m << " m"
+         << " l= " << itsLength/(2.)/CLHEP::m << " m"
          << G4endl;
-  G4cout << "PCLDrift aperX: " << itsXAper/m << " m" << G4endl;
-  G4cout << "PCLDrift aperYUp: " << itsYAperUp/m << " m" << G4endl;
-  G4cout << "PCLDrift aperYDown: " << itsYAperDown/m << " m" << G4endl;
-  G4cout << "PCLDrift Dy: " << itsDyAper/m << " m" << G4endl;
+  G4cout << "PCLDrift aperX: " << itsXAper/CLHEP::m << " m" << G4endl;
+  G4cout << "PCLDrift aperYUp: " << itsYAperUp/CLHEP::m << " m" << G4endl;
+  G4cout << "PCLDrift aperYDown: " << itsYAperDown/CLHEP::m << " m" << G4endl;
+  G4cout << "PCLDrift Dy: " << itsDyAper/CLHEP::m << " m" << G4endl;
 #endif
 
 
@@ -243,13 +239,6 @@ G4VisAttributes* BDSPCLDrift::SetVisAttributes()
 
 BDSPCLDrift::~BDSPCLDrift()
 {
-  delete itsVisAttributes;
-//   delete outer_solid;
-//   delete inner_solid;
-//   delete itsOuterBeamPipeLogicalVolume;
-//   delete itsInnerBeamPipeLogicalVolume;
-//   delete itsPhysiOuter;
-//   delete itsPhysiInner;
   delete itsBeampipeVisAtt;
   delete itsInnerBeampipeVisAtt;
   delete itsMagField;

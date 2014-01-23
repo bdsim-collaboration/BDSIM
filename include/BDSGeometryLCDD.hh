@@ -48,12 +48,6 @@
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
 
-//#include "/usr/include/libxml2/libxml/xmlmemory.h"
-//#include "/usr/include/libxml2/libxml/parser.h"
-//#include "/usr/include/libxml2/libxml/xpath.h"
-
-extern BDSMaterials* theMaterials;
-
 struct POS_REF{
   G4String name;
   G4ThreeVector value;

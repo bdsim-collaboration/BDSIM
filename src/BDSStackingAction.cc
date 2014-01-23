@@ -144,12 +144,12 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       G4cout << "LocalDir: mom = " << LocalDirection << G4endl;
 #endif
       
-      G4double x=LocalPosition.x()/micrometer;
-      G4double y=LocalPosition.y()/micrometer;
-      G4double z=LocalPosition.z()/micrometer;
-      G4double xPrime=LocalDirection.x()/(1e-6*radian);
-      G4double yPrime=LocalDirection.y()/(1e-6*radian);
-      G4double zPrime=LocalDirection.z()/(1e-6*radian);
+      G4double x=LocalPosition.x()/CLHEP::micrometer;
+      G4double y=LocalPosition.y()/CLHEP::micrometer;
+      G4double z=LocalPosition.z()/CLHEP::micrometer;
+      G4double xPrime=LocalDirection.x()/(1e-6*CLHEP::radian);
+      G4double yPrime=LocalDirection.y()/(1e-6*CLHEP::radian);
+      G4double zPrime=LocalDirection.z()/(1e-6*CLHEP::radian);
       G4double t=aTrack->GetGlobalTime();
       G4double weight=aTrack->GetWeight();
       G4int    trackID=aTrack->GetTrackID();
@@ -157,12 +157,12 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
 
       BDSGlobalConstants::Instance()->fileDump.precision(15);
       // TODO : dump the file
-      //        BDSGlobalConstants::Instance()->fileDump << aTrack->GetTotalEnergy()/GeV << "\t"
+      //        BDSGlobalConstants::Instance()->fileDump << aTrack->GetTotalEnergy()/CLHEP::GeV << "\t"
       //<< x << "\t" << y << "\t" << z << "\t"
       //<< xPrime << "\t" << yPrime << "\t" << t <<"\n"; // SPM
 #ifdef DEBUG
       printf("Out: %.15f %.15f %.15f %.15f %.15f %.15f %.15f %f\n",
-	     aTrack->GetTotalEnergy()/GeV,x,y,z,xPrime,yPrime,zPrime,t);
+	     aTrack->GetTotalEnergy()/CLHEP::GeV,x,y,z,xPrime,yPrime,zPrime,t);
 #endif
       G4double energy;
       // negative energy for positrons
@@ -171,7 +171,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       else energy=aTrack->GetTotalEnergy();
       
       BDSParticle outputParticle(initialPos,momDir,energy,t,weight,trackID,parentID);
-      BDSParticle transformedParticle(x,y,z,xPrime,yPrime,zPrime,aTrack->GetTotalEnergy()/GeV,t,weight,trackID,parentID);
+      BDSParticle transformedParticle(x,y,z,xPrime,yPrime,zPrime,aTrack->GetTotalEnergy()/CLHEP::GeV,t,weight,trackID,parentID);
       
       BDSGlobalConstants::Instance()->outputQueue.push_back(outputParticle);
       BDSGlobalConstants::Instance()->transformedQueue.push_back(transformedParticle);

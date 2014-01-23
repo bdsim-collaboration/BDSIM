@@ -141,7 +141,7 @@ void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
   if(itsHasFieldMap){
     if(itsMarkerLength>0) RLocalR.setZ(RLocalR.z()+itsMarkerLength/2);
     else RLocalR.setZ( -(RLocalR.z()+fabs(itsMarkerLength)/2) + fabs(itsMarkerLength));
-    G4double tempz = RLocalR.z()/cm;
+    G4double tempz = RLocalR.z()/CLHEP::cm;
     if(tempz<0)  //Mokka region resets Z to be positive at starting from one
       //Edge of the region
       {
@@ -199,7 +199,7 @@ void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
   LocalB.rotateY(10e-3); //to track from incoming beamline perspective
   // this needs the be the crossing angle plus any marker rotation applied
   // for IR solenoid case
-  G4cout << RLocalR.x()/m << " "<<RLocalR.y()/m << " "<<RLocalR.z()/m << " "<< LocalB.x()/tesla << " " << LocalB.y()/tesla << " " << LocalB.z()/tesla << G4endl;
+  G4cout << RLocalR.x()/CLHEP::m << " "<<RLocalR.y()/CLHEP::m << " "<<RLocalR.z()/CLHEP::m << " "<< LocalB.x()/CLHEP::tesla << " " << LocalB.y()/CLHEP::tesla << " " << LocalB.z()/CLHEP::tesla << G4endl;
 #endif
   //  delete aTouchable;
   //  aTouchable = NULL;
@@ -237,8 +237,8 @@ void BDSMagFieldSQL::Prepare(G4VPhysicalVolume *referenceVolume)
       if(FieldFile.contains("TESLA"))
 	ifs >> temp_z >> temp_Bz;
       
-      itsZ.push_back(temp_z*m);
-      itsBz.push_back(temp_Bz*tesla);
+      itsZ.push_back(temp_z*CLHEP::m);
+      itsBz.push_back(temp_Bz*CLHEP::tesla);
     }
     
     itsdz = itsZ[1] - itsZ[0];

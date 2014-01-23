@@ -15,7 +15,7 @@ BDSMultipoleOuterMagField::BDSMultipoleOuterMagField(G4int nPoles,
 						     G4double aField,
 						     G4double aPhiOffset)
   :itsNPoles(nPoles),itsIronField(aField),itsPhiOffset(aPhiOffset)
-{itsSectorPhi=twopi/G4double(nPoles);
+{itsSectorPhi=CLHEP::twopi/G4double(nPoles);
 // G4cout<<" BDSMultipoleOuterMagField: itsIronField="<<itsIronField/tesla<<G4endl;
 }
 
@@ -41,13 +41,13 @@ void BDSMultipoleOuterMagField::GetFieldValue(const G4double *Point,
   G4double phi = LocalR.phi()-itsPhiOffset;
   // extra term for dipoles, because of rotation required during positioning
   // of trapezoids
-  if (itsNPoles==2)phi+=pi;
+  if (itsNPoles==2)phi+=CLHEP::pi;
 
   // define sectors relative to the y-axis
-  phi=pi/2-phi;
+  phi=CLHEP::halfpi-phi;
 
-  if(phi<0)phi+=twopi;
-  if(phi>twopi)phi-=twopi;
+  if(phi<0)phi+=CLHEP::twopi;
+  if(phi>CLHEP::twopi)phi-=CLHEP::twopi;
 
   G4int nSector=G4int(phi/itsSectorPhi);
 

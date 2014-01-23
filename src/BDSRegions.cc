@@ -95,25 +95,25 @@ void BDSRegions::buildPrecisionRegion(){
 
 void BDSRegions::buildGFlashRegion(){
   _gFlashParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
-  _gFlashParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*GeV);
-  _gFlashParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*GeV);
+  _gFlashParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*CLHEP::GeV);
+  _gFlashParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*CLHEP::GeV);
   _gFlashParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   
-  _gFlashParticleBounds->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),gflashemax*GeV);
-  _gFlashParticleBounds->SetMinEneToParametrise(*G4Positron::PositronDefinition(),gflashemin*GeV);
+  _gFlashParticleBounds->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),gflashemax*CLHEP::GeV);
+  _gFlashParticleBounds->SetMinEneToParametrise(*G4Positron::PositronDefinition(),gflashemin*CLHEP::GeV);
   _gFlashParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
 
   _gFlashParticleBoundsVac  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
-  _gFlashParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*GeV);
-  _gFlashParticleBoundsVac->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),0*GeV);
+  _gFlashParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*CLHEP::GeV);
+  _gFlashParticleBoundsVac->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),0*CLHEP::GeV);
 
-  G4cout << "BDSRegions:buildGFlashRegion() -  _gFlashParticleBounds - min E - electron: " << _gFlashParticleBounds->GetMinEneToParametrise(*G4Electron::ElectronDefinition())/GeV<< " GeV" << G4endl;
-  G4cout << "BDSRegions:buildGFlashRegion() -  _gFlashParticleBounds - max E - electron: " << _gFlashParticleBounds->GetMaxEneToParametrise(*G4Electron::ElectronDefinition())/GeV<< G4endl;
-  G4cout << "BDSRegions:buildGFlashRegion() -  _gFlashParticleBounds - kill E - electron: " << _gFlashParticleBounds->GetEneToKill(*G4Electron::ElectronDefinition())/GeV<< G4endl;
+  G4cout << "BDSRegions:buildGFlashRegion() -  _gFlashParticleBounds - min E - electron: " << _gFlashParticleBounds->GetMinEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< " GeV" << G4endl;
+  G4cout << "BDSRegions:buildGFlashRegion() -  _gFlashParticleBounds - max E - electron: " << _gFlashParticleBounds->GetMaxEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
+  G4cout << "BDSRegions:buildGFlashRegion() -  _gFlashParticleBounds - kill E - electron: " << _gFlashParticleBounds->GetEneToKill(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
 
-  G4cout << "BDSRegions:buildGFlashRegion() -  _gFlashParticleBounds - min E - positron: " << _gFlashParticleBounds->GetMinEneToParametrise(*G4Positron::PositronDefinition())/GeV<< G4endl;
-  G4cout << "BDSRegions:buildGFlashRegion() -  _gFlashParticleBounds - max E - positron: " << _gFlashParticleBounds->GetMaxEneToParametrise(*G4Positron::PositronDefinition())/GeV<< G4endl;
-  G4cout << "BDSRegions:buildGFlashRegion() -  _gFlashParticleBounds - kill E - positron: " << _gFlashParticleBounds->GetEneToKill(*G4Positron::PositronDefinition())/GeV<< G4endl;
+  G4cout << "BDSRegions:buildGFlashRegion() -  _gFlashParticleBounds - min E - positron: " << _gFlashParticleBounds->GetMinEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
+  G4cout << "BDSRegions:buildGFlashRegion() -  _gFlashParticleBounds - max E - positron: " << _gFlashParticleBounds->GetMaxEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
+  G4cout << "BDSRegions:buildGFlashRegion() -  _gFlashParticleBounds - kill E - positron: " << _gFlashParticleBounds->GetEneToKill(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
 
  _gFlashHitMaker = new GFlashHitMaker();                    // Makes the EnergieSpots 
 }
@@ -158,8 +158,8 @@ void BDSRegions::buildGFlashRegion(BDSAcceleratorComponent* /*var*/){
 void BDSRegions::buildGasRegion(){
   _gasRegion = new G4Region("gasRegion");
   _gasProductionCuts = new G4ProductionCuts();
-  _gasProductionCuts->SetProductionCut(1*m,G4ProductionCuts::GetIndex("gamma"));
-  _gasProductionCuts->SetProductionCut(1*m,G4ProductionCuts::GetIndex("e-"));
-  _gasProductionCuts->SetProductionCut(1*m,G4ProductionCuts::GetIndex("e+"));
+  _gasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("gamma"));
+  _gasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("e-"));
+  _gasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("e+"));
   _gasRegion->SetProductionCuts(_gasProductionCuts);
 }

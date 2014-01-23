@@ -3,8 +3,6 @@
 #include "BDSSamplerSD.hh"
 #include <ctime>
 
-// extern G4String outputFilename;
-
 BDSOutput::BDSOutput():outputFileNumber(1)
 {
   format = _ASCII; // default - write an ascii file
@@ -78,6 +76,7 @@ void BDSOutput::SetFormat(BDSOutputFormat val)
     }
 }
 
+#ifdef USE_ROOT
 void BDSOutput::BuildSamplerTree(G4String name){
   TTree* SamplerTree = new TTree(name, "Sampler output");
   
@@ -114,6 +113,7 @@ void BDSOutput::BuildSamplerTree(G4String name){
   SamplerTree->Branch("parentID",&pID,"parentID/I");
   SamplerTree->Branch("trackID",&track_id,"trackID/I");
 }
+#endif
 
 // output initialization (ROOT only)
 void BDSOutput::Init(G4int FileNum)
@@ -164,14 +164,14 @@ void BDSOutput::Init(G4int FileNum)
     }
 
   // build energy loss histogram
-  G4int nBins = G4int(zMax/(BDSGlobalConstants::Instance()->GetElossHistoBinWidth()*m));
+  G4int nBins = G4int(zMax/(BDSGlobalConstants::Instance()->GetElossHistoBinWidth()*CLHEP::m));
   G4double wx=(BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelOffsetX())*2;
   G4double wy=(BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelOffsetY())*2;
   G4double bs=BDSGlobalConstants::Instance()->GetComponentBoxSize();
   G4double wmax=std::max(wx,wy);
   wmax=std::max(wmax,bs);
 
-  EnergyLossHisto = new TH1F("ElossHisto", "Energy Loss",nBins,0.,zMax/m);
+  EnergyLossHisto = new TH1F("ElossHisto", "Energy Loss",nBins,0.,zMax/CLHEP::m);
   EnergyLossTree= new TTree("ElossTree", "Energy Loss");
   EnergyLossTree->Branch("z",&z_el,"z (m)/F");
   EnergyLossTree->Branch("E",&E_el,"E (GeV)/F");
@@ -190,17 +190,17 @@ void BDSOutput::Init(G4int FileNum)
 void BDSOutput::WriteAsciiHit(G4int PDGType, G4double Mom, G4double X, G4double Y, G4double S, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID){
   of<<PDGType
     <<" "
-    <<Mom/GeV
+    <<Mom/CLHEP::GeV
     <<" "
-    <<X/micrometer
+    <<X/CLHEP::micrometer
     <<" "
-    <<Y/micrometer
+    <<Y/CLHEP::micrometer
     <<" "
-    <<S / m
+    <<S / CLHEP::m
     <<" "
-    <<XPrime / radian
+    <<XPrime / CLHEP::radian
     <<" "
-    <<YPrime / radian
+    <<YPrime / CLHEP::radian
     <<" "
     <<EventNo 
     <<" "
@@ -212,34 +212,35 @@ void BDSOutput::WriteAsciiHit(G4int PDGType, G4double Mom, G4double X, G4double 
     <<G4endl;
 }
 
+#ifdef USE_ROOT
 void BDSOutput::WriteRootHit(G4String Name, G4double   InitMom, G4double    InitX, G4double    InitY, G4double     InitZ, G4double     InitXPrime, G4double    InitYPrime, G4double InitZPrime, G4double  InitT, G4double  Mom, G4double X, G4double Y, G4double Z, G4double XPrime, G4double YPrime, G4double ZPrime, G4double T, G4double GlobalX, G4double GlobalY, G4double GlobalZ, G4double GlobalXPrime, G4double GlobalYPrime, G4double GlobalZPrime, G4double S, G4double Weight, G4int  PDGtype, G4int  EventNo, G4int   ParentID,G4int  TrackID){
 
   TTree* sTree=(TTree*)gDirectory->Get(Name);
   if(!sTree) G4Exception("BDSOutput: ROOT Sampler not found!", "-1", FatalException, "");
-  E0=InitMom / GeV;
-  x0=InitX / micrometer;
-  y0=InitY / micrometer;
-  z0=InitZ / m;
-  xp0=InitXPrime / radian;
-  yp0=InitYPrime / radian;
-  zp0=InitZPrime / radian;
-  t0=InitT / ns;
-  E=Mom / GeV;
-  //Edep=Edep / GeV;
-  x=X / micrometer;
-  y=Y / micrometer;
-  z=Z / m;
-  xp=XPrime / radian;
-  yp=YPrime / radian;
-  zp=ZPrime / radian;
-  t=T / ns;
-  X=GlobalX / m;
-  Y=GlobalY / m;
-  Z=GlobalZ / m;
-  Xp=GlobalXPrime / radian;
-  Yp=GlobalYPrime / radian;
-  Zp=GlobalZPrime / radian;
-  s=S / m;
+  E0=InitMom / CLHEP::GeV;
+  x0=InitX / CLHEP::micrometer;
+  y0=InitY / CLHEP::micrometer;
+  z0=InitZ / CLHEP::m;
+  xp0=InitXPrime / CLHEP::radian;
+  yp0=InitYPrime / CLHEP::radian;
+  zp0=InitZPrime / CLHEP::radian;
+  t0=InitT / CLHEP::ns;
+  E=Mom / CLHEP::GeV;
+  //Edep=Edep / CLHEP::GeV;
+  x=X / CLHEP::micrometer;
+  y=Y / CLHEP::micrometer;
+  z=Z / CLHEP::m;
+  xp=XPrime / CLHEP::radian;
+  yp=YPrime / CLHEP::radian;
+  zp=ZPrime / CLHEP::radian;
+  t=T / CLHEP::ns;
+  X=GlobalX / CLHEP::m;
+  Y=GlobalY / CLHEP::m;
+  Z=GlobalZ / CLHEP::m;
+  Xp=GlobalXPrime / CLHEP::radian;
+  Yp=GlobalYPrime / CLHEP::radian;
+  Zp=GlobalZPrime / CLHEP::radian;
+  s=S / CLHEP::m;
   weight=Weight;
   part=PDGtype; 
   nev=EventNo; 
@@ -247,6 +248,7 @@ void BDSOutput::WriteRootHit(G4String Name, G4double   InitMom, G4double    Init
   track_id=TrackID;
   sTree->Fill();
 }
+#endif
 
 void BDSOutput::WritePrimary(G4String samplerName, G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double zp,G4double t,G4double weight,G4int PDGType, G4int nEvent){
 #ifdef USE_ROOT
@@ -334,13 +336,15 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
   }
 }
 
-G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> TrajVec){
+/// write a trajectory to a root/ascii file
+// TODO: ASCII file not implemented - JS
+G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> &TrajVec){
   
+#ifdef USE_ROOT
   //  G4int tID;
   G4TrajectoryPoint* TrajPoint;
   G4ThreeVector TrajPos;
   
-#ifdef USE_ROOT
   TTree* TrajTree;
     
   G4String name = "Trajectories";
@@ -348,8 +352,6 @@ G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> TrajVec){
   TrajTree=(TTree*)gDirectory->Get(name);
 
   if(TrajTree == NULL) { G4cerr<<"TrajTree=NULL"<<G4endl; return -1;}
-#endif
-  
   
   if(TrajVec.size())
     {
@@ -367,68 +369,16 @@ G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> TrajVec){
 	      TrajPoint=(G4TrajectoryPoint*)Traj->GetPoint(j);
 	      TrajPos=TrajPoint->GetPosition();
 	      
-	      x = TrajPos.x() / m;
-	      y = TrajPos.y() / m;
-	      z = TrajPos.z() / m;
-              
-#ifdef USE_ROOT
+	      x = TrajPos.x() / CLHEP::m;
+	      y = TrajPos.y() / CLHEP::m;
+	      z = TrajPos.z() / CLHEP::m;
+
 	      if( format == _ROOT) 
 		TrajTree->Fill();
-#endif
-              
-	     
 	    }
 	}
     }
-  
-  return 0;
-}
-
-// write a trajectory to a root/ascii file
-G4int BDSOutput::WriteTrajectory(TrajectoryVector* TrajVec)
-{  
-//  G4int tID;
-  G4TrajectoryPoint* TrajPoint;
-  G4ThreeVector TrajPos;
-
-#ifdef USE_ROOT
-  TTree* TrajTree;
-    
-  G4String name = "Trajectories";
-      
-  TrajTree=(TTree*)gDirectory->Get(name);
-
-  if(TrajTree == NULL) { G4cerr<<"TrajTree=NULL"<<G4endl; return -1;}
 #endif
-
-
-  if(TrajVec)
-    {
-      TrajectoryVector::iterator iT;
-      
-      for(iT=TrajVec->begin();iT<TrajVec->end();iT++)
-	{
-	  G4Trajectory* Traj=(G4Trajectory*)(*iT);
-	  
-	  //	  tID=Traj->GetTrackID();	      
-	  part = Traj->GetPDGEncoding();
-	  
-	  for(G4int j=0; j<Traj->GetPointEntries(); j++)
-	    {
-	      TrajPoint=(G4TrajectoryPoint*)Traj->GetPoint(j);
-	      TrajPos=TrajPoint->GetPosition();
-	      
-	      x = TrajPos.x() / m;
-	      y = TrajPos.y() / m;
-	      z = TrajPos.z() / m;
-
-#ifdef USE_ROOT
-	      if( format == _ROOT) 
-		TrajTree->Fill();
-#endif
-	    }
-	}
-    }
   
   return 0;
 }
@@ -443,17 +393,17 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
     for (G4int i=0;i<n_hit;i++)
       {
 	//all regions fill the energy loss tree....
-        E_el=(*hc)[i]->GetEnergy()/GeV;
-	z_el=(*hc)[i]->GetEnergyWeightedZ()*10*(1e-6)/(cm*E_el);
+        E_el=(*hc)[i]->GetEnergy()/CLHEP::GeV;
+	z_el=(*hc)[i]->GetEnergyWeightedZ()*10*(1e-6)/(CLHEP::cm*E_el);
 	EnergyLossHisto->Fill(z_el,E_el);
 	EnergyLossTree->Fill();
 
 	if((*hc)[i]->GetPrecisionRegion()){ //Only the precision region fills this tree, preserving every hit, its position and weight, instead of summing weighted energy in each beam line component.
 	  weight_el_p=(*hc)[i]->GetWeight();
-	  E_el_p=((*hc)[i]->GetEnergy()/GeV)/weight_el_p;
-	  x_el_p=((*hc)[i]->GetEnergyWeightedX()/(cm*1e5*E_el_p))/weight_el_p;
-	  y_el_p=((*hc)[i]->GetEnergyWeightedY()*10/(cm*E_el_p))/weight_el_p;
-	  z_el_p=((*hc)[i]->GetEnergyWeightedZ()*10*(1e-6)/(cm*E_el_p))/weight_el_p;
+	  E_el_p=((*hc)[i]->GetEnergy()/CLHEP::GeV)/weight_el_p;
+	  x_el_p=((*hc)[i]->GetEnergyWeightedX()/(CLHEP::cm*1e5*E_el_p))/weight_el_p;
+	  y_el_p=((*hc)[i]->GetEnergyWeightedY()*10/(CLHEP::cm*E_el_p))/weight_el_p;
+	  z_el_p=((*hc)[i]->GetEnergyWeightedZ()*10*(1e-6)/(CLHEP::cm*E_el_p))/weight_el_p;
 	  part_el_p=(*hc)[i]->GetPartID();
 	  G4String temp = (*hc)[i]->GetName()+'\0';
 	  strcpy(volumeName_el_p,temp.c_str());
@@ -474,7 +424,7 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 	G4int partID = (*hc)[i]->GetPartID();
 	G4double weight = (*hc)[i]->GetWeight();
 
-	ofEloss<< Zpos/m<<"  "<<Energy/GeV<<"  "<<partID<<"  " <<weight<<G4endl;
+	ofEloss<< Zpos/CLHEP::m<<"  "<<Energy/CLHEP::GeV<<"  "<<partID<<"  " <<weight<<G4endl;
       }
     ofEloss.flush();
  }

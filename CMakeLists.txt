@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.6.4)
 
 project(BDSIM) 
 
@@ -234,7 +234,13 @@ if (NOT Geant4_FOUND)
    # Module mode, should have found Geant4 already for 9.5 and newer
    # own module for versions of Geant4 (9.4 and older), last option:
    # ui_all and vis_all options not implemented in own FindGeant4.cmake
-   find_package(Geant4 MODULE REQUIRED ui_all vis_all)
+
+   # MODULE keyword not defined in versions 2.6
+   if (${CMAKE_MAJOR_VERSION} GREATER 1 AND ${CMAKE_MINOR_VERSION} GREATER 7)
+      find_package(Geant4 MODULE REQUIRED ui_all vis_all)
+   else()
+      find_package(Geant4 REQUIRED ui_all vis_all)
+   endif()
 
    # Local UseGeant4.cmake
    set(Geant4_USE_FILE UseGeant4.cmake)

@@ -197,7 +197,7 @@ void BDSMySQLWrapper::Values() {
 	G4cout << __METHOD_NAME__ << " inserting value " << Token() << G4endl;
 #endif
 	if(table[j]->GetVariable(k)->GetVarType()=="DOUBLE")
-	  table[j]->GetVariable(k)->AddValue(atof(Token().c_str())*mm);
+	  table[j]->GetVariable(k)->AddValue(atof(Token().c_str())*CLHEP::mm);
 	else if(table[j]->GetVariable(k)->GetVarType()=="STRING")
 	  table[j]->GetVariable(k)->AddValue(Token().c_str());
 	else if(table[j]->GetVariable(k)->GetVarType()=="INTEGER")

@@ -7,11 +7,11 @@
 #include "sym_table.h"
 
 #include <cmath>
+#include <map>
 #include <string>
 #include <cstring>
 
 extern struct Parameters params;
-extern struct symtab *symtab;
 extern int yyparse();
 
 extern FILE *yyin;
@@ -21,22 +21,12 @@ extern int add_func(const char *name, double (*func)(double));
 extern int add_var(const char *name, double val,int is_reserved = 0);
 
 // aux. parser lists - to clear
-extern std::list<struct Element> element_list;
+extern ElementList element_list;
 extern std::list<struct Element> tmp_list;
+extern std::map<std::string, struct symtab*> symtab_map;
 
 void init()
 {
-
-  symtab = new struct symtab[NSYMS];
-  // member initialisation as members are used to check if symtab is already assigned and its type.
-  for(struct symtab* sp=symtab;sp<&symtab[NSYMS];sp++) {
-    sp->is_reserved=0;
-    sp->type=0;
-    sp->name=NULL;
-    sp->funcptr=NULL;
-    sp->value=0.0;
-  }
-
   // embedded arithmetical functions
   add_func("sqrt",sqrt);
   add_func("cos",cos);
@@ -140,6 +130,76 @@ void init()
 
 }
 
+void ElementList::push_back(Element& el) {
+  // insert at back of list (insert() instead of push_back() to get iterator for map):
+  ElementListIterator it = itsList.insert(end(),el);
+  itsMap.insert(std::pair<std::string,ElementListIterator>(el.name,it));
+}
+
+int ElementList::size()const {
+  return itsList.size();
+}
+
+void ElementList::clear() {
+  itsList.clear();
+  itsMap.clear();
+}
+
+ElementList::ElementListIterator ElementList::erase(ElementListIterator it) {
+
+  // find entry in map to erase:
+  std::string name = (*it).name;
+  if (itsMap.count(name) == 1) {
+    itsMap.erase(name);
+  }
+  else { // more than one entry with same name 
+    std::pair<ElementMapIterator,ElementMapIterator> ret = itsMap.equal_range(name);
+    for (ElementMapIterator emit = ret.first; emit!=ret.second; ++emit) {
+      if ((*emit).second == it) // valid comparison? if not, how to find correct element?
+      {
+	itsMap.erase(emit);
+	break;
+      }
+    }
+  }
+  return itsList.erase(it);
+}
+
+ElementList::ElementListIterator ElementList::erase(ElementListIterator first, ElementListIterator last) {
+  ElementListIterator it=first;
+  while (it!=last) {
+    // erase one by one
+    it = erase(it);
+  }
+  return it;
+}
+
+ElementList::ElementListIterator ElementList::begin() {
+  return itsList.begin();
+}
+
+ElementList::ElementListIterator ElementList::end() {
+  return itsList.end();
+}
+
+ElementList::ElementListIterator ElementList::find(std::string name,unsigned int count) {
+  if (count==1) {
+    ElementMapIterator emit = itsMap.find(name);
+    if (emit==itsMap.end()) return itsList.end();
+    return (*emit).second;
+  } else {
+    // if count > 1
+    std::pair<ElementMapIterator,ElementMapIterator> ret = itsMap.equal_range(name);
+    int i=1;
+    for (ElementMapIterator emit = ret.first; emit!=ret.second; ++emit, i++) {
+      if (i==count) {
+	return (*emit).second;
+      }
+    }
+    return itsList.end();
+  }
+}
+
 int gmad_parser(FILE *f)
 {
 
@@ -167,9 +227,11 @@ int gmad_parser(FILE *f)
 #endif
   element_list.clear();
   tmp_list.clear();
-  
-  delete[] symtab;
-  symtab = 0;
+  std::map<std::string,symtab*>::iterator it;
+  for(it=symtab_map.begin();it!=symtab_map.end();++it) {
+    delete (*it).second;
+  }
+  symtab_map.clear();
 
 #ifdef DEBUG
   std::cout << "gmad_parser> finished" << std::endl;
@@ -201,7 +263,7 @@ int gmad_parser(std::string name)
 /** Python interface **/ 
 int gmad_parser_c(char *name) 
 {
-  gmad_parser(name);
+  gmad_parser(std::string(name));
   return 0;
 }
 
@@ -214,7 +276,7 @@ const char* get_name(int i)
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
-  return it->name;
+  return (it->name).c_str();
 }
 
 short get_type(int i) 

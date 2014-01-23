@@ -12,13 +12,10 @@
 #include "BDSDebug.hh"
 #include "BDSRunAction.hh"
 #include "BDSRunManager.hh"
-#include "BDSDump.hh"
-#include "BDSBeamline.hh"
 
 #include "G4Run.hh"
-#include "G4StateManager.hh"
-#include "G4UImanager.hh"
-#include "G4VVisManager.hh"
+//#include "G4UImanager.hh"
+//#include "G4VVisManager.hh"
 #include "G4ios.hh"
 
 #include "BDSAcceleratorComponent.hh"

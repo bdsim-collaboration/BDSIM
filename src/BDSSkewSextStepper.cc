@@ -16,7 +16,6 @@
 //
 #include "BDSSkewSextStepper.hh"
 #include "G4ThreeVector.hh"
-#include "G4LineSection.hh"
 #include "G4TransportationManager.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;

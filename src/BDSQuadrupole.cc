@@ -19,7 +19,6 @@
 #include "BDSDebug.hh"
 
 #include "BDSQuadrupole.hh"
-#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Trd.hh"
 #include "G4VisAttributes.hh"
@@ -27,10 +26,6 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
-#include "G4HelixMixedStepper.hh"
-#include "G4HelixImplicitEuler.hh"
-#include "G4SimpleRunge.hh"
-#include "G4CashKarpRKF45.hh"
 
 #include <map>
 
@@ -120,8 +115,8 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
 	  G4double Bfield[3];
 
 	  //coordinate in GetFieldValue
-	  polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(pi/4);
-	  polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(pi/4);
+	  polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(CLHEP::pi/4);
+	  polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(CLHEP::pi/4);
 	  polePos[2]=0.;
 	  polePos[3]=-999.;//flag to use polePos rather than local track
 
@@ -135,7 +130,7 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
 	  // Magnetic flux from a pole is divided in two directions
 	  BFldIron/=2.;
 
-	  BuildOuterFieldManager(4, BFldIron,pi/4);
+	  BuildOuterFieldManager(4, BFldIron,CLHEP::pi/4);
 	}
       //Build the beam loss monitors
       BuildBLMs();
@@ -143,18 +138,20 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
       // define sensitive volumes for hit generation
       //
       if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
+#ifdef DEBUG
         G4cout << "BDSQuadrupole.cc:> setting sensitive beam pipe" << G4endl;
+#endif
         SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
       }
       if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
+#ifdef DEBUG
         G4cout << "BDSQuadrupole.cc:> setting sensitive outer volume" << G4endl;
+#endif
         SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
       }
       //
       // set visualization attributes
       //
-      itsVisAttributes=SetVisAttributes();
-      itsVisAttributes->SetForceSolid(true);
       itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
       //
@@ -203,8 +200,8 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
 	      G4double Bfield[3];
 	      
 	      //coordinate in GetFieldValue
-	      polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(pi/4);
-	      polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(pi/4);
+	      polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(CLHEP::pi/4);
+	      polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(CLHEP::pi/4);
 	      polePos[2]=0.;
 	      polePos[3]=-999.;//flag to use polePos rather than local track
 
@@ -218,7 +215,7 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
 	      // Magnetic flux from a pole is divided in two directions
 	      BFldIron/=2.;
 	      
-	      BuildOuterFieldManager(4, BFldIron,pi/4);
+	      BuildOuterFieldManager(4, BFldIron,CLHEP::pi/4);
 	    }
 	  //When is SynchRescale(factor) called?
 
@@ -226,19 +223,21 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
 	  // define sensitive volumes for hit generation
 	  //
           if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-            G4cout << "BDSQuadrupole.cc:> setting sensitive beampipe 2" << G4endl;            
+#ifdef DEBUG
+            G4cout << "BDSQuadrupole.cc:> setting sensitive beampipe 2" << G4endl;
+#endif
             SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
           }
           if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-            G4cout << "BDSQuadrupole.cc:> setting sensitive outer volume 2" << G4endl;           
+#ifdef DEBUG
+            G4cout << "BDSQuadrupole.cc:> setting sensitive outer volume 2" << G4endl;
+#endif
             SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
           }
 		  
 	  //
 	  // set visualization attributes
 	  //
-	  itsVisAttributes=SetVisAttributes();
-	  itsVisAttributes->SetForceSolid(true);
 	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 	  
 	  //
@@ -268,6 +267,7 @@ void BDSQuadrupole::SynchRescale(G4double factor)
 G4VisAttributes* BDSQuadrupole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(1,0,0));
+  itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
 
@@ -293,7 +293,7 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
 				   itsInnerIronRadius,
 				   outerRadius * sqrt(2.0),
 				   itsLength/2,
-				   0,twopi*radian),
+				   0,CLHEP::twopi*CLHEP::radian),
 			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			itsName+"_outer");
   
@@ -303,14 +303,14 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
 				   itsInnerIronRadius,
 				   outerRadius * sqrt(2.0),
 				   itsLength/2,
-				   0,pi/ 2 *radian),
+				   0,CLHEP::pi/ 2 *CLHEP::radian),
 			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			itsName+"_outer");
   
   // pole 
   G4double poleR = itsBpRadius;
-  G4double phiStart = -pi / 4;
-  G4double dPhi = pi / 2;
+  G4double phiStart = -CLHEP::pi / 4;
+  G4double dPhi = CLHEP::pi / 2;
 
   G4LogicalVolume* lPole = 
     new G4LogicalVolume(new G4Tubs(itsName+"_pole",
@@ -324,7 +324,7 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
 
   G4RotationMatrix* rotPole = new G4RotationMatrix;
   //rotPole = NULL;
-  rotPole->rotateZ(3.*pi / 4.);
+  rotPole->rotateZ(3.*CLHEP::pi / 4.);
 
   G4double xPole = (poleR + itsBpRadius) / sqrt(2.0);
   G4double yPole = (poleR + itsBpRadius) / sqrt(2.0);
@@ -370,8 +370,8 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
 
       G4RotationMatrix* rotYoke = new G4RotationMatrix;
       //rotYoke = NULL;
-      rotYoke->rotateX( - pi / 2.);
-      rotYoke->rotateY(  pi / 4.);
+      rotYoke->rotateX( - CLHEP::pi / 2.);
+      rotYoke->rotateY(  CLHEP::pi / 4.);
 
       G4double xYoke = (poleR - poleR * cos(dPhi / 2) + itsBpRadius + rYoke/2) / sqrt(2.0);
       G4double yYoke = (poleR - poleR * cos(dPhi / 2) + itsBpRadius + rYoke/2) / sqrt(2.0);
@@ -415,7 +415,7 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
 
 
   G4RotationMatrix* rotQ2= new  G4RotationMatrix;
-  rotQ2->rotateZ( pi / 2.);
+  rotQ2->rotateZ( CLHEP::pi / 2.);
 
   G4VPhysicalVolume* itsPhysiQuadrant2;
   itsPhysiQuadrant2 = new G4PVPlacement(
@@ -428,7 +428,7 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
 		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());                    // copy number
 
   G4RotationMatrix* rotQ3= new  G4RotationMatrix;
-  rotQ3->rotateZ( pi );
+  rotQ3->rotateZ( CLHEP::pi );
   
   G4VPhysicalVolume* itsPhysiQuadrant3;
   itsPhysiQuadrant3 = new G4PVPlacement(
@@ -442,7 +442,7 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
 
 
   G4RotationMatrix* rotQ4= new  G4RotationMatrix;
-  rotQ4->rotateZ( 3. * pi / 2.);
+  rotQ4->rotateZ( 3. * CLHEP::pi / 2.);
   
   G4VPhysicalVolume* itsPhysiQuadrant4;
   itsPhysiQuadrant4 = new G4PVPlacement(
@@ -455,7 +455,7 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
 		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());                     // copy number
 
 
-  //rotQ->rotateZ( pi / 4.);
+  //rotQ->rotateZ( CLHEP::pi / 4.);
 
 
   // insert the outer volume into the marker volume
@@ -485,7 +485,6 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
 
 BDSQuadrupole::~BDSQuadrupole()
 {
-  delete itsVisAttributes;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

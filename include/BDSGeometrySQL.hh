@@ -33,8 +33,6 @@
 #include "BDSMagFieldSQL.hh"
 #include "G4Region.hh"
 
-class BDSClassicalRK4;
-
 class BDSGeometrySQL
 {
 public:
@@ -138,7 +136,7 @@ private:
   BDSMagFieldSQL* itsMagField;
   BDSSamplerSD* SensDet;
 
-void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
+  void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
 
 protected:
 };

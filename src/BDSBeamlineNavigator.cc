@@ -3,7 +3,7 @@
 #include "G4AffineTransform.hh"
 #include "G4RotationMatrix.hh"
 
-BDSBeamlineNavigator::BDSBeamlineNavigator(){
+BDSBeamlineNavigator::BDSBeamlineNavigator():_s_local(0.0),_s_total(0.0){
   _localX = new G4ThreeVector(1,0,0);
   _localY = new G4ThreeVector(0,1,0);
   _localZ = new G4ThreeVector(0,0,1);
@@ -17,7 +17,7 @@ BDSBeamlineNavigator::BDSBeamlineNavigator(){
   _positionEnd = new G4ThreeVector(0,0,0);
   _positionFromCurrentCenter = new G4ThreeVector(0,0,0);
   _zHalfAngle = new G4ThreeVector(0,0,0); 
-    
+  
 }
 
 BDSBeamlineNavigator::~BDSBeamlineNavigator(){
@@ -103,11 +103,11 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
     _localY->rotate(theta,*_localX);
     _localZ->rotate(theta,*_localX);
     // bend trapezoids defined along z-axis
-    _rotation->rotateY(-twopi/4-angle/2); 						
+    _rotation->rotateY(-CLHEP::twopi/4-angle/2); 						
   } else {
     if (var->GetMarkerLogicalVolume()->GetSolid()->GetName().contains("trapezoid") ){
       G4cout << "BDSBeamlineNavigator::addComponent: trapezoid rotate" << G4endl;
-      _rotation->rotateY(-twopi/4); //Drift trapezoids defined along z axis 
+      _rotation->rotateY(-CLHEP::twopi/4); //Drift trapezoids defined along z axis 
     }
   }
 

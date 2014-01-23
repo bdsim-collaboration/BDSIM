@@ -34,9 +34,6 @@ private:
   void SamplerLogicalVolume();
   G4VisAttributes* SetVisAttributes();
 
-  // field related objects:
-  G4VisAttributes* itsVisAttributes;
-
   /// id of sampler
   int nThisSampler;
   /// number of total Samplers

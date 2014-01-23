@@ -28,7 +28,7 @@ void BDSAngleTunnelCavitySectionBuilder::build(){
 								  0,
 								  _tunnelCavitySection->radius()+BDSGlobalConstants::Instance()->GetTunnelThickness(),
 								  halfLen,
-								  0,twopi*radian),			    
+								  0,CLHEP::twopi*CLHEP::radian),			    
 						       _tunnelCavitySection->acceleratorComponent()->GetMarkerLogicalVolume()->GetSolid(),
 						       BDSGlobalConstants::Instance()->RotYM90(),
 						      (G4ThreeVector)0

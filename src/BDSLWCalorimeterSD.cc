@@ -25,9 +25,6 @@
 #include "G4RunManager.hh"
 #include <vector>
 
-extern G4double initial_x,initial_xp,initial_y,initial_yp,initial_z,initial_E;
-
-
 BDSLWCalorimeterSD::BDSLWCalorimeterSD(G4String name)
   :G4VSensitiveDetector(name),itsTotalEnergy(0.0),itsCopyNumber(-1),
    LWCalorimeterCollection(NULL)
@@ -65,7 +62,7 @@ G4bool BDSLWCalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 #ifdef DEBUG 
   G4cout << "Its Copy Number is: " << itsCopyNumber << G4endl; 
   G4cout << "The Volumer here is: " << aStep->GetTrack()->GetVolume()->GetName() << G4endl;
-  G4cout<<"edep="<<aStep->GetTotalEnergyDeposit()/GeV<<"Total so far="<<itsTotalEnergy/GeV<< " for event: " << G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID() << G4endl;
+  G4cout<<"edep="<<aStep->GetTotalEnergyDeposit()/CLHEP::GeV<<"Total so far="<<itsTotalEnergy/CLHEP::GeV<< " for event: " << G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID() << G4endl;
 #endif
   return true;
   

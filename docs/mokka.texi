@@ -1,4 +1,4 @@
-As well as using the gmad format to describe user-defined physical geometry it is also possible to use a Mokka style format. This format is currently in the form of a dumped MySQL database format - although future versions of BDSIM will also support online querying of MySQL databases. Note that throughout any of the Mokka files, a @code{#} may be used to represent a commented line. There are three key stages, which are detailed in the following sections, that are required to setting up the Mokka geometry:
+As well as using the GMAD format to describe user-defined physical geometry it is also possible to use a Mokka style format. This format is currently in the form of a dumped MySQL database format - although future versions of BDSIM will also support online querying of MySQL databases. Note that throughout any of the Mokka files, a @code{#} may be used to represent a commented line. There are three key stages, which are detailed in the following sections, that are required to setting up the Mokka geometry:
 
 @itemize
 @item Describing the geometry
@@ -146,7 +146,7 @@ Variable type: @code{VARCHAR(32)}
 Variable type: @code{VARCHAR(32)}
 
 
-      This is an optional parameter to be used with @code{PARENTNAME}. If set to ``SUBTRACT`` then the instead of placing the volume within the parent volume as an inherited object, it will be subtracted from the parent volume in a boolean solid operation. The default for this value is set to ```` - which sets to the usual mother/daughter volume inheritance.
+      This is an optional parameter to be used with @code{PARENTNAME}. If set to ``SUBTRACT`` then the instead of placing the volume within the parent volume as an inherited object, it will be subtracted from the parent volume in a Boolean solid operation. The default for this value is set to ```` - which sets to the usual mother/daughter volume inheritance.
 
 
 
@@ -188,7 +188,7 @@ Variable type: @code{VARCHAR(32)}
 Variable type: @code{DOUBLE(10,3)}
 
 
-      This is an optional parameter. If set to a value other than zero, in conjuction with @code{MAGTYPE} set to ``QUAD'' then a quadrupole field with this @code{K1} value will be set up within the object. Default is set to zero.
+      This is an optional parameter. If set to a value other than zero, in conjunction with @code{MAGTYPE} set to ``QUAD'' then a quadrupole field with this @code{K1} value will be set up within the object. Default is set to zero.
 
 
 @item @code{K2} 
@@ -197,7 +197,7 @@ Variable type: @code{DOUBLE(10,3)}
 Variable type: @code{DOUBLE(10,3)}
 
 
-      This is an optional parameter. If set to a value other than zero, in conjuction with @code{MAGTYPE} set to ``SEXT'' then a sextupole field with this @code{K2} value will be set up within the object. Default is set to zero.
+      This is an optional parameter. If set to a value other than zero, in conjunction with @code{MAGTYPE} set to ``SEXT'' then a sextupole field with this @code{K2} value will be set up within the object. Default is set to zero.
 
 @item @code{K3} 
 
@@ -205,7 +205,7 @@ Variable type: @code{DOUBLE(10,3)}
 Variable type: @code{DOUBLE(10,3)}
 
 
-      This is an optional parameter. If set to a value other than zero, in conjuction with @code{MAGTYPE} set to ``OCT'' then a sextupole field with this @code{K3} value will be set up within the object. Default is set to zero.
+      This is an optional parameter. If set to a value other than zero, in conjunction with @code{MAGTYPE} set to ``OCT'' then a sextupole field with this @code{K3} value will be set up within the object. Default is set to zero.
 
 @item @code{POSX, POSY, POSZ} 
 
@@ -222,7 +222,7 @@ Variable type: @code{DOUBLE(10,3)}
 Variable type: @code{DOUBLE(10,3)}
 
 
-      These are optional parameters. They are the Euler angles in radians used to rotate the obejct before it is placed. The default is set to zero for each angle.
+      These are optional parameters. They are the Euler angles in radians used to rotate the object before it is placed. The default is set to zero for each angle.
 
 
 
@@ -251,7 +251,7 @@ Variable type: @code{VARCHAR(32)}
 Variable type: @code{DOUBLE(10,3)}
 
 
-      These are optional parameters. They can be used to apply a uniform field to any volume, with default units of Tesla. Note that if there is a solenoid field present throughout the enitre @code{element} then this uniform field will act in addition to the solenoid field.
+      These are optional parameters. They can be used to apply a uniform field to any volume, with default units of Tesla. Note that if there is a solenoid field present throughout the entire @code{element} then this uniform field will act in addition to the solenoid field.
 
 
 @item @code{APPROXIMATIONREGION} 
@@ -284,7 +284,7 @@ Variable type: @code{DOUBLE(10,3)}
 
 @subsubsection 'Trapezoid' Solid Types
 
-Append @code{_TRAP} to the table name in order to make use of the G4Trd solid type - which is deined as a trapezoid with the X and Y dimensions varying along z functions. The following table parameters are specific to the trapezoid solid:
+Append @code{_TRAP} to the table name in order to make use of the G4Trd solid type - which is defined as a trapezoid with the X and Y dimensions varying along z functions. The following table parameters are specific to the trapezoid solid:
 
 @itemize @bullet
 
@@ -560,7 +560,7 @@ where @code{v} is between @code{0} and @code{2*PI} and @code{u} between @code{0}
 
 @subsection Creating a geometry list
 
-A geometry list is a simple file consisting of a list of filenames that contain geometry descriptions. This is the file that should be passed to the GMAD file when defining the mokka element. An example of a geometry list containing 'boxes.sql' and 'cones.sql' would be:
+A geometry list is a simple file consisting of a list of file names that contain geometry descriptions. This is the file that should be passed to the GMAD file when defining the Mokka element. An example of a geometry list containing 'boxes.sql' and 'cones.sql' would be:
 
 @code{#  '#' symbols can be used for commenting out an entire line}
 
@@ -570,7 +570,7 @@ A geometry list is a simple file consisting of a list of filenames that contain 
 
 @code{/directory/cones.sql}
 
-@subsection Defining a Mokka element in the gmad file
+@subsection Defining a Mokka element in the GMAD file
 
 The Mokka element can be defined by the following command:
 
