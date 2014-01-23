@@ -93,10 +93,11 @@ def _LoadRoot(filepath):
     
 def _LoadAscii2(filepath):
     data = BDSAsciiData()
-    with open(filepath,'r') as f:
-        for i, line in enumerate(f):
-            if i > 3:
-                data.append(tuple(map(float,line.split())))
+    f = open(filepath,'r')
+    for i, line in enumerate(f):
+        if i > 3:
+            data.append(tuple(map(float,line.split())))
+    f.close()
     data._MakeSamplerIndex()
     return data
 
