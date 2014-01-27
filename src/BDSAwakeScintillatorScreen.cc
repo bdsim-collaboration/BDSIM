@@ -46,7 +46,7 @@ BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String
 {
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
-  _screenAngle=-45*BDSGlobalConstants::Instance()->GetPI()/180.0;
+  _screenAngle=0*BDSGlobalConstants::Instance()->GetPI()/180.0;
   _screenRotationMatrix->rotateY(_screenAngle);
 
   itsType="awakescreen";
@@ -259,8 +259,8 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
 
 void BDSAwakeScintillatorScreen::BuildMarkerVolume(){
   itsMarkerSolidVolume=new G4Box( itsName+"_marker_solid",
-				  itsXLength/2.0,
-				  itsYLength/2.0,
+				  2*itsXLength/2.0,
+				  2*itsYLength/2.0,
 				  itsLength/2.0); //z half length 
 
   itsMarkerLogicalVolume=new G4LogicalVolume
