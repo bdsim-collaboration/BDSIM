@@ -36,6 +36,7 @@ public:
   inline G4PVPlacement* phys(){return _phys;}
   virtual void place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol);
   void reflectiveSurface(G4int layer1, G4int layer2);
+  void roughSurface(G4int layer1, G4int layer2);
 
 private:
   G4TwoVector _xysize;

@@ -451,7 +451,7 @@ void BDSMaterials::Initialise()
 
   
   tmpMaterial = new G4Material 
-    (name="FusedSilica", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
+    (name="fusedsilica", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
   tmpMaterial->AddElement(elements["O"],2);
   tmpMaterial->AddElement(elements["Si"],1);
   const G4int FusedSilica_NUMENTRIES = 3; //Number of entries in the material properties table

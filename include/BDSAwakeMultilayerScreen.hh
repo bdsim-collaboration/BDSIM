@@ -18,6 +18,7 @@ private:
   void scintillatorLayer();
   void frontLayer();
   void reflectiveSurface();
+  void roughSurface();
   G4double _gapWidth;
   G4double _gapSpacing;
   G4double _thickness;

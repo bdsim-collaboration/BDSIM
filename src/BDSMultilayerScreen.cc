@@ -136,5 +136,31 @@ void BDSMultilayerScreen::reflectiveSurface(G4int layer1, G4int layer2){
   OpSurface->SetMaterialPropertiesTable(SMPT);
 }
 
+
+void BDSMultilayerScreen::roughSurface(G4int layer1, G4int layer2){
+  G4OpticalSurface* OpSurface=new G4OpticalSurface("OpSurface");
+  OpSurface->SetType(dielectric_dielectric);
+  OpSurface->SetFinish(ground);
+  OpSurface->SetModel(unified);
+
+  G4LogicalBorderSurface* LogSurface = new
+    G4LogicalBorderSurface("LogSurface", screenLayer(layer1)->phys(), screenLayer(layer2)->phys(), OpSurface);
+
+  G4double sigma_alpha=0.7;
+  OpSurface -> SetSigmaAlpha(sigma_alpha);
+  G4MaterialPropertiesTable* SMPT = new G4MaterialPropertiesTable();
+  SMPT->AddConstProperty("REFLECTIVITY",0.0);
+  G4double rIndex=1.0;
+  G4MaterialPropertyVector* rIndex_vector;
+  G4MaterialPropertiesTable* mpt_layer2=screenLayer(layer2)->log()->GetMaterial()->GetMaterialPropertiesTable();
+  if(mpt_layer2->ConstPropertyExists("RINDEX")){
+    rIndex=mpt_layer2->GetConstProperty("RINDEX");
+    SMPT->AddConstProperty("RINDEX",rIndex);
+  } else {
+    SMPT->AddProperty("RINDEX",mpt_layer2->GetProperty("RINDEX"));
+  }
+  OpSurface->SetMaterialPropertiesTable(SMPT);
+}
+
 BDSMultilayerScreen::~BDSMultilayerScreen(){
 }
