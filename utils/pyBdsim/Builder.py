@@ -41,15 +41,15 @@ class Element(dict):
         dict.__init__(self)
         self.name        = str(name)
         self.category    = str(category)
-        self.length      = Decimal(length)
+        self.length      = Decimal(str(length))
         self['name']     = self.name
         self['category'] = self.category
         self['length']   = self.length
         self._keysextra = []
         for key,value in kwargs.iteritems():
             if type(value) != str:
-                self[key] = Decimal(value)
-                setattr(self,key,Decimal(value))
+                self[key] = Decimal(str(value))
+                setattr(self,key,Decimal(str(value)))
             else:
                 self[key] = value
                 setattr(self,key,value)
@@ -76,7 +76,7 @@ class Machine(list):
         list.__init__(self)
         self.nelements     = int(0)
         self.samplers      = []
-        self.totallength   = Decimal(0.0)
+        self.totallength   = Decimal(str(0.0))
         self._elementindex = int(0)
         self._maxindexpow  = 5 
 
@@ -90,55 +90,8 @@ class Machine(list):
         self._elementindex += 1
        
     def WriteLattice(self, filename):
-        #check filename
-        if filename[-5:] != '.gmad':
-            filename += '.gmad'
-        #check if file already exists
-        filename = _General.CheckFileExists(filename)
-        f = open(filename,"w")
-
-        # write some comments
-        f.write('! ' + time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime()) + '\n')
-        f.write('! pybdsim.Builder Lattice \n')
-        f.write('! number of elements = ' + str(self.nelements) + '\n')
-        f.write('! total length       = ' + str(self.totallength) + ' m\n\n')
-        f.write('! COMPONENT DEFINITION\n\n')
-
-        # write components
-        elementnames = []
-        for e in self:
-            if e.category == 'marker':
-                linetowrite = e.name + ' : ' + e.category
-            else:
-                linetowrite = e.name + ' : ' + e.category+', l=' + format(e.length,'.15g') + '*m'
-            for parameter in  e.keysextra():
-                linetowrite = linetowrite + ', ' + str(parameter) + '=' + format(e[parameter],'.15g')
-            linetowrite = linetowrite + ';\n'
-            f.write(linetowrite)
-            elementnames.append(e.name)
-
-        # write lattice lines
-        linelist = []
-        ti = 0
-        for ministring in _General.Chunks(elementnames,100):
-            stw2 = 'l'+str(ti)+': line = ('+', '.join(ministring)+');\n'
-            f.write(stw2)
-            linelist.append('l'+str(ti))
-            ti += 1
-        
-        f.write('\n! LATTICE DEFINITION\n\n')
-        # need to define the period before making sampler planes
-        f.write('lattice: line = ('+', '.join(linelist)+');\n')
-        f.write('use, period=lattice;\n') 
-        # now do the sampler planes
-
-        f.write('\n! SAMPLER DEFINITION\n\n')
-        for s in self.samplers:
-            f.write('sample, range=' + str(s) + ';\n')
-        
-        f.close()
-        print 'Machine lattice written to',filename
- 
+        WriteLattice(self,filename)
+    
     def AddMarker(self,name='mk'):
         self.append(Element(name,'marker',0.0))
     
@@ -267,26 +220,93 @@ class Machine(list):
                 if e.category == command:
                     self.samplers.append(e.name)
 
-def CreateDipoleRing(filename, ndipole=60, dlength=1.0, clength=10.0, samplers='first'):
-    ndipole = int(ndipole)
-    if dlength > (0.9*clength):
-        raise Warning("Dipole length > 90% of cell length - geometry errors may occur")
-    a = Machine()
-    dangle = Decimal(2.0*math.pi / float(ndipole))
+# General scripts below this point
+
+def CreateDipoleRing(filename, ncells=60, circumference=100.0, dfraction=0.1, samplers='first'):
+    """
+    Create a ring composed solely of dipoles
+    filename
+    ncells        - number of cells, each containing 1 dipole and a drift
+    circumference - in metres
+    dfraction     - the fraction of dipoles in each cell (0.0<dfraction<1.0)
+    samplers      - 'first', 'last' or 'all'
+    
+    """
+    ncells = int(ncells)
+    if dfraction > 1.0:
+        raise Warning("Fraction of dipoles must be less than 1.0 -> setting to 0.9")
+        dfraction = 0.9
+    if dfraction < 0.0:
+        raise Warning("Fraction of dipoles must be greater than 1.0 -> setting to 0.1")
+        dfraction = 0.1
+    a           = Machine()
+    dangle      = Decimal(str(2.0*math.pi / ncells))
+    clength     = Decimal(str(float(circumference) / ncells))
+    dlength     = clength * Decimal(str(dfraction))
     driftlength = clength - dlength
-    a.AddDipole(length=dlength/2.0, angle=dangle/Decimal(2.0))
+    a.AddDipole(length=dlength/Decimal(2), angle=dangle/Decimal(2))
     a.AddDrift(length=driftlength)
-    for i in range(1,ndipole,1):
+    for i in range(1,ncells,1):
         a.AddDipole(length=dlength, angle=dangle)
         a.AddDrift(length=driftlength)
-    a.AddDipole(length=dlength/2.0, angle=dangle/Decimal(2.0))
+    a.AddDipole(length=dlength/Decimal(2), angle=dangle/Decimal(2))
     a.SetSamplers(samplers)
     a.WriteLattice(filename)
 
-def CreateDipoleFodoRing():
-    pass
+def CreateDipoleFodoRing(filename, ncells=60, circumference=200.0, samplers='first'):
+    """
+    Create a ring composed of fodo cells with 2 dipoles per fodo cell.
 
+    filename
+    ncells         - number of fodo+dipole cells to create
+    circumference  - circumference of machine in metres
+    samplers       - 'first','last' or 'all'
+    
+    Hard coded to produce the following cell fractions:
+    50% dipoles
+    20% quadrupoles
+    30% beam pipe / drift
+    """
+    a       = Machine()
+    cangle  = Decimal(str(2.0*math.pi / ncells))
+    clength = Decimal(str(float(circumference) / ncells))
+    #dipole = 0.5 of cell, quads=0.2, drift=0.3, two dipoles
+    #dipole:
+    dl  = clength * Decimal(str(0.5)) * Decimal(str(0.5))
+    da  = cangle/Decimal(2.0)
+    #quadrupole:
+    ql  = clength * Decimal('0.2') * Decimal('0.5')
+    k1  = Decimal(str(SuggestFodoK(ql,dl)))
+    #drift:
+    drl = clength * Decimal('0.3') * Decimal('0.25')
+    #naming
+    nplaces  = len(str(ncells))
+    basename = 'dfodo_'
+    for i in range(ncells):
+        cellname = basename + str(i).zfill(nplaces)
+        a.AddQuadrupole(cellname+'_qd_a',ql/Decimal('2.0'),k1)
+        a.AddDrift(cellname+'_dr_a',drl)
+        a.AddDipole(cellname+'_dp_a','sbend',dl,da)
+        a.AddDrift(cellname+'_dr_b',drl)
+        a.AddQuadrupole(cellname+'_qf_b',ql,k1*Decimal('-1.0'))
+        a.AddDrift(cellname+'_dr_c',drl)
+        a.AddDipole(cellname+'_dp_b','sbend',dl,da)
+        a.AddDrift(cellname+'_dr_d',drl)
+        a.AddQuadrupole(cellname+'_qd_c',ql/Decimal('2.0'),k1)
+    a.SetSamplers(samplers)
+    a.WriteLattice(filename)
+    
 def CreateFodoLine(filename, ncells=10, driftlength=4.0, magnetlength=1.0, samplers='all',**kwargs):
+    """
+    Create a FODO lattice with ncells.
+
+    ncells       - number of fodo cells
+    driftlength  - length of drift segment in between magnets
+    magnetlength - length of quadrupoles
+    samplers     - 'all','first' or 'last'
+    **kwargs     - kwargs to supply to quadrupole constructor
+
+    """
     ncells = int(ncells)
     a      = Machine()
     k1     = SuggestFodoK(magnetlength,driftlength)
@@ -295,4 +315,133 @@ def CreateFodoLine(filename, ncells=10, driftlength=4.0, magnetlength=1.0, sampl
     a.WriteLattice(filename)
 
 def SuggestFodoK(magnetlength,driftlength):
-    return 1.0 / (magnetlength*(magnetlength + driftlength))
+    """
+    SuggestFodoK(magnetlength,driftlength)
+
+    returns k1 (float) value for matching into next quad in a FODO cell.
+    f = 1/(k1 * magnetlength) = driftlength -> solve for k1
+
+    """
+    return 1.0 / (float(magnetlength)*(float(magnetlength) + float(driftlength)))
+
+def WriteLattice(machine, filename):
+    """
+    WriteLattice(machineclassinstance,filenamestring)
+
+    Write a lattice to disk.  This writes several files to make the
+    machine, namely:
+    
+    filename_components_XX.gmad - component files (max 10k per file)
+    filename_lattice.gmad       - lattice definition
+    filename_samplers_XX.gmad   - sampler definitions (max 10k per file)
+    filename_options.gmad       - options (TO BE IMPLEMENTED)
+    filename.gmad          - suitable main file with all sub files in correct order
+
+    these are prefixed with the basefile name / path
+
+    """
+    if type(machine) != Machine:
+        raise TypeError("Not machine instance")
+
+    #check machine length
+    #to avoid parser problems with too long text files
+    maxlinesperfile = 20000 #number of machine elements defined in 1 gmad file
+    elementsperline = 100 #number of machine elements per bdsim line (not text line)
+    
+    #split machine into chunks - can be just one if only one...
+    machinechunks   = _General.Chunks(machine,maxlinesperfile)
+
+    #do the same with the samplers - remember nsamplers may not = nelements
+    if len(machine.samplers) == 0:
+        samplersexist = False
+    else:
+        samplersexist = True
+    if samplersexist:
+        samplerchunks = _General.Chunks(machine.samplers,maxlinesperfile)
+    
+    #check filename
+    if filename[-5:] != '.gmad':
+        filename += '.gmad'
+    #check if file already exists
+    filename = _General.CheckFileExists(filename)
+    basefilename = filename[:-5]
+
+    #prepare names
+    maxn    = len(str(len(machinechunks)))
+    files   = []
+    fn_comp = [basefilename+'_components_'+str(n).zfill(maxn)+'.gmad' for n in range(len(machinechunks))]
+    if samplersexist:
+        fn_samp = [basefilename+'_samplers___'+str(n).zfill(maxn)+'.gmad' for n in range(len(samplerchunks))]
+    timestring = '! ' + time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime()) + '\n'
+    
+    #write component files
+    elementnames = []
+    for filenumber,cfn in enumerate(fn_comp):
+        f = open(cfn,'w')
+        files.append(cfn)
+        f.write(timestring)
+        f.write('! pybdsim.Builder Lattice \n')
+        f.write('! COMPONENT DEFINITION - File number '+str(filenumber+1)+'/'+str(len(fn_comp))+'\n\n')
+        for e in machinechunks[filenumber]:
+            if e.category == 'marker':
+                linetowrite = e.name+' : '+ e.category
+            else:
+                linetowrite = e.name+' : '+e.category+', l=%(LENGTH).15f *m' %{'LENGTH':e.length}
+            for parameter in  e.keysextra():
+                linetowrite = linetowrite+', '+str(parameter)+'=%(NUMBER).15f' %{'NUMBER':e[parameter]}
+            linetowrite = linetowrite + ';\n'
+            f.write(linetowrite)
+            elementnames.append(e.name)
+        f.close()
+
+    #write lattice lines
+    latfn = basefilename + '_lines______' + '_'*maxn + '.gmad'
+    f = open(latfn,'w')
+    files.append(latfn)
+    f.write(timestring)
+    f.write('! pybdsim.Builder Lattice \n')
+    f.write('! LATTICE DEFINITION\n\n')
+    linelist = []
+    ti = 0
+    for line in _General.Chunks(elementnames,elementsperline):
+        stw2 = 'l'+str(ti)+': line = ('+', '.join(line)+');\n'
+        f.write(stw2)
+        linelist.append('l'+str(ti))
+        ti += 1
+    # need to define the period before making sampler planes
+    f.write('lattice: line = ('+', '.join(linelist)+');\n')
+    f.write('use, period=lattice;\n')
+    f.close()
+
+    #write samplers
+    if samplersexist:
+        for filenumber,sfn in enumerate(fn_samp):
+            f = open(sfn,'w')
+            files.append(sfn)
+            f.write(timestring)
+            f.write('! pybdsim.Builder Lattice \n')
+            f.write('! SAMPLER DEFINITION - File number '+str(filenumber+1)+'/'+str(filenumber+1)+'\n\n')
+            for s in samplerchunks[filenumber]:
+                f.write('sample, range=' + str(s) + ';\n')
+            f.close()
+
+    # WRITE MACHINE OPTIONS
+    # YET TO BE IMPLMENTED
+
+    # write main file
+    mainfn = basefilename + '.gmad'
+    f = open(mainfn,'w')
+    f.write(timestring)
+    f.write('! pybdsim.Builder Lattice \n')
+    f.write('! number of elements = ' + str(machine.nelements) + '\n')
+    f.write('! total length       = ' + str(machine.totallength) + ' m\n\n')
+    
+    for fn in files:
+        f.write('include '+fn+';\n')
+    f.close()
+
+    #user feedback
+    print 'Lattice written to:'
+    for fn in files:
+        print(fn)
+    print 'All included in main file: \n',mainfn

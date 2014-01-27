@@ -10,6 +10,7 @@
 import Data
 import numpy as _np
 import Plot
+import Constants
 
 class Analysis:
     """
@@ -24,7 +25,7 @@ class Analysis:
 
     """
     def __init__(self,filepath):
-        self.data = Data.Load(filepath)
+        self.data,self.dataarray = Data.LoadOld(filepath)
         #a = Data()
         #a.Read(filepath)
         self.filepath = filepath
@@ -52,7 +53,7 @@ class Analysis:
         1.202: similar but different number of particles maybe
         ... etc
         """
-        self.datagrouped = {}
+        self.datagrouped = Data.AsciiData()
         
         #find unique values of variable
         uniquevalues = sorted(list(set(_np.round(self.data[variable],2))))
@@ -62,8 +63,8 @@ class Analysis:
         indexofvariabletoremove = self.data.keyslist.index(variable)
         for value in uniquevalues:
             mask      = _np.round(self.data[variable],2) == value
-            dcopy     = self.data.array[mask]
-            dcopydict = dict(zip(self.data.keyslist,[dcopy[:,i] for i in range(_np.shape(dcopy)[1])]))
+            dcopy     = self.dataarray[mask]
+            dcopydict = Data.AsciiData(zip(self.data.keyslist,[dcopy[:,i] for i in range(_np.shape(dcopy)[1])]))
             dcopydict['nparticles'] = _np.shape(dcopy)[0]
             self.datagrouped[value] = dcopydict
         self.keysgrouped = list(_np.sort(self.datagrouped.keys()))
@@ -104,3 +105,4 @@ class Analysis:
         self.plots.append(p1)
 
     
+
