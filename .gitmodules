@@ -1,0 +1,3 @@
+[submodule "utils/pybdsim"]
+	path = utils/pybdsim
+	url = https://bitbucket.org/nevay/pybdsim.git
