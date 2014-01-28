@@ -1298,6 +1298,7 @@ void print(struct Options opt)
   std::cout<<"rayleigh scattering on: "<<opt.turnOnRayleighScattering <<std::endl;
   std::cout<<"optical surface on: "<<opt.turnOnOpticalSurface <<std::endl;
   std::cout<<"birks saturation on: "<<opt.turnOnBirksSaturation <<std::endl;
+  std::cout<<"scintillation yield factor: "<<opt.scintYieldFactor <<std::endl;
 }
 
 
@@ -1458,6 +1459,10 @@ void set_value(std::string name, double value )
   }
   if(name == "turnOnBirksSaturation") {
       options.turnOnBirksSaturation = (int)value; return;
+  }
+
+  if(name == "scintYieldFactor"){
+    options.scintYieldFactor = value; return;
   }
 
   if(name == "srRescale") {

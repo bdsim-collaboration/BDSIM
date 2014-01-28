@@ -439,7 +439,9 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 void BDSOutput::WriteCCDHits(BDSCCDPixelHitsCollection* hc)
 {
   if( format == _ROOT) {
+#ifdef DEBUG
     G4cout << __METHOD_NAME__ << G4endl;
+#endif
 #ifdef USE_ROOT
     G4int n_hit = hc->entries();
     G4cout << __METHOD_NAME__ << " - n_hit = " << n_hit << G4endl;
@@ -455,7 +457,9 @@ void BDSOutput::WriteCCDHits(BDSCCDPixelHitsCollection* hc)
 
  if( format == _ASCII) {
  }
+#ifdef DEBUG
  G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
 // write some comments to the output file

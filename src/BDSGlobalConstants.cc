@@ -135,6 +135,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsTurnOnRayleighScattering = opt.turnOnRayleighScattering;
   itsTurnOnOpticalSurface = opt.turnOnOpticalSurface;
   itsTurnOnBirksSaturation = opt.turnOnBirksSaturation;
+  itsScintYieldFactor=opt.scintYieldFactor;
   itsSynchRadOn = opt.synchRadOn;
   G4cout << "BDSGlobalConstants::Instance() synchRadOn = " << itsSynchRadOn << G4endl;
   itsDecayOn = opt.decayOn;

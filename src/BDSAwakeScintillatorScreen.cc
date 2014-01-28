@@ -46,7 +46,7 @@ BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String
 {
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
-  _screenAngle=0*BDSGlobalConstants::Instance()->GetPI()/180.0;
+  _screenAngle=-45*BDSGlobalConstants::Instance()->GetPI()/180.0;
   _screenRotationMatrix->rotateY(_screenAngle);
 
   itsType="awakescreen";
@@ -146,29 +146,39 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
   G4String tmp = "_screenScoringPlane";
   _screenScoringPlaneName=itsName+tmp;
   int nThisSampler= BDSSampler::GetNSamplers() + 1;
-  G4String ident="_camera";
+  G4String ident="_screen";
   _screenSamplerName = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_screenScoringPlaneName);
+  _screenSamplerName2 = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_screenScoringPlaneName+"_2");
   
   //Build and place the volume...
   itsScreenScoringPlaneSolid = new G4Box("ScreenScoringPlaneSolid",_screenWidth/2.0,_screenHeight/2.0,_scoringPlaneThickness/2.0);
   itsScreenScoringPlaneLog = new G4LogicalVolume(itsScreenScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"ScreenScoringPlaneLog",0,0,0);
   itsScreenScoringPlaneLog->SetVisAttributes(_visAttSampler);
+  itsScreenScoringPlaneLog2 = new G4LogicalVolume(itsScreenScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"ScreenScoringPlaneLog2",0,0,0);
+  itsScreenScoringPlaneLog2->SetVisAttributes(_visAttSampler);
   G4double dispX=0;
   G4double dispY=0;
-  G4double dispZ=sqrt(2)*(-_screenThickness/2.0- _scoringPlaneThickness/2.0);
+  G4double dispZ=2*std::cos(_screenAngle)*(_screenThickness/2.0+_scoringPlaneThickness/2.0);
   new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ),itsScreenScoringPlaneLog,_screenSamplerName,
+		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+
+  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,-dispZ),itsScreenScoringPlaneLog2,_screenSamplerName2,
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   
   (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;
+  (*LogVol)[_screenSamplerName2]=itsScreenScoringPlaneLog2;
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   if(BDSSampler::GetNSamplers()==0){
     BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
     SDMan->AddNewDetector(BDSSamplerSensDet);
   }
   itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
+  itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSamplerSensDet);
   //SPM bdsOutput->nSamplers++;
   BDSSampler::AddExternalSampler();
   bdsOutput->SampName.push_back(_screenSamplerName+"_1");
+  BDSSampler::AddExternalSampler();
+  bdsOutput->SampName.push_back(_screenSamplerName2+"_1");
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
   G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
@@ -182,7 +192,7 @@ void BDSAwakeScintillatorScreen::Build(){
       BuildCamera();	
       ComputeDimensions();
       BuildMarkerVolume();
-      //      BuildScreenScoringPlane();
+      BuildScreenScoringPlane();
       //      BuildCameraScoringPlane();
       PlaceScreen();
       //      PlaceCamera();
@@ -243,7 +253,7 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   _screenThickness = _mlScreen->size().z();
   
   _totalThickness =  
-    _screenThickness + _scoringPlaneThickness;
+    _screenThickness + 2*_scoringPlaneThickness;
   
   
   G4double thi=_totalThickness+2*_cameraScreenDist+2*_camera->size().z()+2*_scoringPlaneThickness;
@@ -251,16 +261,17 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   G4double z_wid = _screenWidth * std::sin(std::abs(_screenAngle));//Length due to the screen width and angle
   G4double z_thi = _totalThickness * std::cos(_screenAngle);//Length due to the screen thickness
   G4double x_wid = _screenWidth * std::cos(std::abs(_screenAngle));//Length due to the screen width and angle
-  G4double x_thi = thi * std::sin(_screenAngle);//Length due to the screen thickness
-  itsLength = (z_wid + z_thi);
+  G4double x_thi = thi * std::sin(std::abs(_screenAngle));//Length due to the screen thickness
+  itsLength  = (z_wid + z_thi);
   itsXLength = (x_wid +x_thi);
   itsYLength = std::max(_screenHeight,_camera->size().y());
+  std::cout << __METHOD_NAME__ << " " << itsLength << " " << itsXLength << " " << itsYLength << std::endl;
 }
 
 void BDSAwakeScintillatorScreen::BuildMarkerVolume(){
   itsMarkerSolidVolume=new G4Box( itsName+"_marker_solid",
-				  2*itsXLength/2.0,
-				  2*itsYLength/2.0,
+				  itsXLength/2.0,
+				  itsYLength/2.0,
 				  itsLength/2.0); //z half length 
 
   itsMarkerLogicalVolume=new G4LogicalVolume

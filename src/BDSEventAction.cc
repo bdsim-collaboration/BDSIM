@@ -290,9 +290,13 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 	(BDSCCDPixelHitsCollection*)(evt->GetHCofThisEvent()->GetHC(BDSCCDPixel_ID));
       
       if(BDSCCDPixel_HC) {
+#ifdef DEBUG
 	G4cout << __METHOD_NAME__ << " - writing CCD hits..." << G4endl;
+#endif
 	bdsOutput->WriteCCDHits(BDSCCDPixel_HC);
+#ifdef DEBUG
 	G4cout << __METHOD_NAME__ << " - finished writing CCD hits " << G4endl;
+#endif
       }
     }
 #ifdef DEBUG

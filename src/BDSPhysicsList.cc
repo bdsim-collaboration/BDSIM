@@ -846,7 +846,7 @@ void BDSPhysicsList::ConstructOptical()
   }
 
   SetVerboseLevel(1);
-  theScintillationProcess->SetScintillationYieldFactor(1.);
+  theScintillationProcess->SetScintillationYieldFactor(BDSGlobalConstants::Instance()->GetScintYieldFactor());
   theScintillationProcess->SetTrackSecondariesFirst(true);
   // Use Birks Correction in the Scintillation process
   if(bBirksOn){

@@ -212,6 +212,7 @@ struct Options {
   int turnOnRayleighScattering ;
   int turnOnOpticalSurface ;
   int turnOnBirksSaturation ;
+  double scintYieldFactor;
   int      synchRadOn;
   int      decayOn;
   int      synchRescale;

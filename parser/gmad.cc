@@ -132,6 +132,7 @@ void init()
   options.turnOnRayleighScattering = 1;
   options.turnOnOpticalSurface = 1;
   options.turnOnBirksSaturation = 1;
+  options.scintYieldFactor = 1.0;
   options.decayOn = 1;
   //  options.synchRadOn = 0;
   //tracking options

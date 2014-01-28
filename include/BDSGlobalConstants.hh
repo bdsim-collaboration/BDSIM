@@ -194,6 +194,8 @@ public:
   G4bool GetTurnOnOpticalSurface();
   G4bool GetTurnOnBirksSaturation();
 
+  G4double GetScintYieldFactor();
+
   G4bool   GetStoreMuonTrajectories();
   G4double GetTrajCutGTZ();
   G4double GetTrajCutLTR();
@@ -360,6 +362,7 @@ private:
   G4bool itsTurnOnRayleighScattering;
   G4bool itsTurnOnOpticalSurface;
   G4bool itsTurnOnBirksSaturation;
+  G4double itsScintYieldFactor;
   G4bool doTwiss;
   G4bool itsDoPlanckScattering;
   G4bool itsCheckOverlaps;
@@ -789,6 +792,9 @@ inline G4bool BDSGlobalConstants::GetTurnOnOpticalSurface()
 {return itsTurnOnOpticalSurface;}
 inline G4bool BDSGlobalConstants::GetTurnOnBirksSaturation()
 {return itsTurnOnBirksSaturation;}
+
+inline G4double BDSGlobalConstants::GetScintYieldFactor()
+{return itsScintYieldFactor;}
 
 inline G4bool BDSGlobalConstants::GetIncludeIronMagFields()
 {return itsIncludeIronMagFields;}
