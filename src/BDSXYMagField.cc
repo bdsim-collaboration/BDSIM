@@ -77,7 +77,7 @@ G4int BDSXYMagField::ReadFile(G4String fname)
 void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 {
 #ifdef DEBUG
-  G4cout<<"BDSElement:: create XY field mesh"<<G4endl;
+  G4cout<<"BDSXYMagField:: create XY field mesh"<<G4endl;
 #endif
   ReadFile(itsFileName);
 
@@ -350,7 +350,7 @@ G4double GetNearestValue(std::vector<struct XYFieldRecord> fieldValues, G4double
 // // create a field mesh in the "world" coordinates from list of field values
 // void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 // {
-//   G4cout<<"BDSElement:: create XY field mesh"<<G4endl;
+//   G4cout<<"BDSXYMagField:: create XY field mesh"<<G4endl;
   
 //   const G4RotationMatrix* Rot=referenceVolume->GetFrameRotation();
 //   const G4ThreeVector Trans=referenceVolume->GetFrameTranslation();

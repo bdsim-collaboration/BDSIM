@@ -212,7 +212,7 @@ void BDSMagFieldSQL::Prepare(G4VPhysicalVolume *referenceVolume)
     itsHasFieldMap=false;
   } else {
     itsHasFieldMap=true;
-    G4cout<<"BDSElement:: creating SQL field map"<<G4endl;
+    G4cout<<"BDSMagFieldSQL:: creating SQL field map"<<G4endl;
     
     if(!ifs)
       {

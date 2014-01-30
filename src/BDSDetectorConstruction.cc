@@ -19,6 +19,10 @@
 
 //=================================================================
 
+#include <list>
+#include <map>
+#include <vector>
+
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
@@ -46,28 +50,17 @@
 #include "G4Colour.hh"
 #include "globals.hh"
 #include "G4ios.hh"
-#include <list>
-#include <map>
-#include <vector>
-#include "BDSAcceleratorComponent.hh"
 
 #include "G4Navigator.hh"
 #include "G4UniformMagField.hh"
 
+#include "G4Electron.hh"
+#include "G4Positron.hh"
 #include "G4Material.hh"
+
+#include "BDSAcceleratorComponent.hh"
 #include "BDSEnergyCounterSD.hh"
 
-// elements
-#include "BDSDrift.hh"
-#include "BDSPCLDrift.hh"
-#include "BDSSectorBend.hh"
-#include "BDSTMultipole.hh"
-#include "BDSRfCavity.hh"
-#include "BDSSampler.hh"
-#include "BDSSamplerCylinder.hh"
-#include "BDSLaserWire.hh"
-#include "BDSLWCalorimeter.hh"
-#include "BDSElement.hh"
 // output interface
 #include "BDSOutput.hh"
 #include "BDSComponentFactory.hh"
