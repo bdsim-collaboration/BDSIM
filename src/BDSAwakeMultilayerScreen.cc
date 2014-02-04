@@ -8,7 +8,7 @@
 #include "G4LogicalSkinSurface.hh"
 
 BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material, G4double thickness):
-  BDSMultilayerScreen(G4TwoVector(2*m,3*cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(1000*thickness)
+  BDSMultilayerScreen(G4TwoVector(1*m,3*cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(1000*thickness)
 {
   layers();
 }
