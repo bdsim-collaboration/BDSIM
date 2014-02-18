@@ -127,15 +127,15 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   G4cout << "#           Building the Fresnel lens ...            #" << G4endl ;
   G4cout << "#                                                    #" << G4endl ;
 
-  G4double      LensDiameter        = 457*mm ; // Size of the optical active area of the lens.                                                                
+  G4double      LensDiameter        = 457*CLHEP::mm ; // Size of the optical active area of the lens.                                                                
   G4int      LensNumOfGrooves    = 13 ;
   //G4int      LensNumOfGrooves    = 129 ;                                                                                                                    
   //G4int      LensNumOfGrooves    = 1287 ;                                                                                                                   
 
-  G4double      LensBorderThickness = 2.8*mm ;     // Thickness of the border area.                                                                           
-  G4double      LensFocalLength     = 441.973*mm ; // This parameter depends on the lens geometry, etc !!                                                     
+  G4double      LensBorderThickness = 2.8*CLHEP::mm ;     // Thickness of the border area.                                                                           
+  G4double      LensFocalLength     = 441.973*CLHEP::mm ; // This parameter depends on the lens geometry, etc !!                                                     
   G4Material   *LensMaterial        = G4Material::GetMaterial(name = "Acrylic") ;
-  G4ThreeVector LensPosition        = UVscopePosition+G4ThreeVector(0.0*mm,0.0*mm,UVscopeHeight/2.0-UVscopeBaffle) ;
+  G4ThreeVector LensPosition        = UVscopePosition+G4ThreeVector(0.0*CLHEP::mm,0.0*CLHEP::mm,UVscopeHeight/2.0-UVscopeBaffle) ;
 
   UltraFresnelLens *FresnelLens = new UltraFresnelLens(LensDiameter,LensNumOfGrooves,LensMaterial,_log) ;
   */
@@ -242,13 +242,13 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   //  itsXLength = std::max(itsXLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
   //  itsYLength = std::max(itsYLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
 
-  _cameraScreenDist=(1.0)*m;
+  _cameraScreenDist=(1.0)*CLHEP::m;
 
   _screenWidth=_mlScreen->size().x();
   _screenHeight=_mlScreen->size().y();
 
   //The scoring plane...
-  _scoringPlaneThickness=1*um;
+  _scoringPlaneThickness=1*CLHEP::um;
 
   _screenThickness = _mlScreen->size().z();
   

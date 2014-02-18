@@ -39,7 +39,7 @@ void BDSLens::visAtt()
 
 void BDSLens::build(){
   G4cout << __METHOD_NAME__ << G4endl;
-  G4Tubs* tube = new G4Tubs(_name+"_tempTube", _diameter, _rho,_rho,0,twopi*radian);
+  G4Tubs* tube = new G4Tubs(_name+"_tempTube", _diameter, _rho,_rho,0,CLHEP::twopi*CLHEP::radian);
   G4SubtractionSolid* sideA = new G4SubtractionSolid(_name+"_sideA",new G4Orb(_name+"_tempOrbA",_rho),tube);
   G4SubtractionSolid* sideB = new G4SubtractionSolid(_name+"_sideB",new G4Orb(_name+"_tempOrbB",_rho),tube);
 
@@ -51,7 +51,7 @@ void BDSLens::build(){
   G4IntersectionSolid* intersectionA = new G4IntersectionSolid(_name+"_intersectionA", sideA, sideB, (G4RotationMatrix*)NULL,transVec);
   transVec.setZ(-1*_rho+_centreThickness/2.0);
   //  _solid = new G4IntersectionSolid(_name+"_solid", new G4Box(_name+"tempBox",_diameter/2.0,_diameter/2.0,_centreThickness/2.0), intersectionA,(G4RotationMatrix*)NULL,transVec);
-  _solid = new G4IntersectionSolid(_name+"_solid", new G4Tubs(_name+"tempTube2",0,_diameter/2.0,_centreThickness/2.0,0,twopi*radian), intersectionA,(G4RotationMatrix*)NULL,transVec);
+  _solid = new G4IntersectionSolid(_name+"_solid", new G4Tubs(_name+"tempTube2",0,_diameter/2.0,_centreThickness/2.0,0,CLHEP::twopi*CLHEP::radian), intersectionA,(G4RotationMatrix*)NULL,transVec);
   _log = new G4LogicalVolume(_solid,BDSMaterials::Instance()->GetMaterial("n-bk7"),(_name+"_log").c_str(),0,0,0);
   visAtt();
 }
