@@ -124,16 +124,17 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
    if(BDSGlobalConstants::Instance()->DoTwiss())
      {
        if(event_number==0) {
-         if(!BDSGlobalConstants::Instance()->GetSynchRescale()) G4cout << "\n---> Calculating Twiss Parameters"<<G4endl;
-         if(BDSGlobalConstants::Instance()->GetSynchRescale()) G4cout<<"\n---> Calculating Twiss Parameters and Rescaling magnets" <<G4endl;
+	 G4cout << "\n---> Calculating Twiss Parameters";
+         if(BDSGlobalConstants::Instance()->GetSynchRescale())
+	   G4cout<<" and Rescaling magnets" <<G4endl;
+	 G4cout <<G4endl;
        }
      }
    else
      {
        if (BDSGlobalConstants::Instance()->isReference==false && (event_number+1)%printModulo ==0)
          {
-           G4cout << "\n---> Begin of event: " << event_number ;
-           G4cout << G4endl;
+           G4cout << "\n---> Begin of event: " << event_number << G4endl;
          }
      }
    
@@ -151,10 +152,10 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
      }
    
    //if( bdsOutput->GetLWCalorimeterNumber() > 0 )
-   {
+   //   {
      //if (LWCalorimeterCollID==-1) 
      //LWCalorimeterCollID = G4SDManager::GetSDMpointer()->GetCollectionID("LWCalorimeterCollection");
-   }
+   //   }
    FireLaserCompton=true;
    
 #ifdef DEBUG

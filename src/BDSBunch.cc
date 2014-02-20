@@ -661,6 +661,9 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
   // Rescale must be at the top of GetNextParticle
 
   if(BDSGlobalConstants::Instance()->isReference && partId<nptwiss){
+    if (betaX==0) {G4cerr << __METHOD_NAME__ << "WARNING betaX equal to 0, xp NaN, division by zero! " << G4endl; exit(1);}
+    if (betaY==0) {G4cerr << __METHOD_NAME__ << "WARNING betaY equal to 0, yp NaN, division by zero! " << G4endl; exit(1);}
+    
     G4double phiX= CLHEP::twopi * G4UniformRand();
     G4double phiY= CLHEP::twopi * G4UniformRand();
     //    G4double ex=-log(G4UniformRand())*emitX;
@@ -684,8 +687,10 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
   
   if(BDSGlobalConstants::Instance()->DoTwiss() && partId<nptwiss)
     {
-      // temp numbers - to be replaced by parsed parameters
+      if (betaX==0) {G4cerr << __METHOD_NAME__ << "WARNING betaX equal to 0, xp NaN, division by zero! " << G4endl; exit(1);}
+      if (betaY==0) {G4cerr << __METHOD_NAME__ << "WARNING betaY equal to 0, yp NaN, division by zero! " << G4endl; exit(1);}
 
+      // temp numbers - to be replaced by parsed parameters
       
       G4double sigx = sqrt(betaX*emitX);
       G4double sigxp= sqrt(emitX / betaX);
@@ -873,8 +878,8 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
             <<" relative energy spread= "<<energySpread<<G4endl;
 #endif
 
-      if (betaX==0) G4cerr << __METHOD_NAME__ << "WARNING betaX equal to 0, xp NaN, division by zero! " << G4endl;
-      if (betaY==0) G4cerr << __METHOD_NAME__ << "WARNING betaY equal to 0, yp NaN, division by zero! " << G4endl;
+      if (betaX==0) {G4cerr << __METHOD_NAME__ << "WARNING betaX equal to 0, xp NaN, division by zero! " << G4endl; exit(1);}
+      if (betaY==0) {G4cerr << __METHOD_NAME__ << "WARNING betaY equal to 0, yp NaN, division by zero! " << G4endl; exit(1);}
 
       G4double phiX= CLHEP::twopi * G4UniformRand();
       G4double phiY= CLHEP::twopi * G4UniformRand();

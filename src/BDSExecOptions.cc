@@ -191,7 +191,7 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 
 void BDSExecOptions::Usage() {
   G4cout<<"bdsim : version 0.6.0"<<G4endl;
-  G4cout<<"        (C) 2001-2013 Royal Holloway University London"<<G4endl;
+  G4cout<<"        (C) 2001-2014 Royal Holloway University London"<<G4endl;
   G4cout<<"        http://www.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BdSim"<<G4endl;
   G4cout<<G4endl;
 
