@@ -328,9 +328,9 @@ int main(int argc,char** argv) {
   //
   if(BDSGlobalConstants::Instance()->DoTwiss())
     {
-
-      G4cout<<"do twiss"<<G4endl;
-      
+#ifdef DEBUG
+      G4cout << __METHOD_NAME__ << "Do Twiss"<<G4endl;
+#endif
       // disable SR process if present - analytical formulae used in rescaling
       G4ProcessManager *pManager = G4Electron::Electron()->GetProcessManager(); 	 
       G4ProcessVector *procVec=pManager->GetProcessList(); 	 
