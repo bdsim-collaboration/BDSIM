@@ -69,7 +69,7 @@ BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
 
       itsSolidLogVol->SetVisAttributes(itsVisAttributes);
 
-      // visual attributes
+      //visual attributes      
       G4VisAttributes* VisAtt1 =
         new G4VisAttributes(G4Colour(0., 0., 0.));
       VisAtt1->SetForceSolid(true);
@@ -106,7 +106,9 @@ void BDSCollimator::BuildInnerCollimator()
   if(itsYAper <= 0) itsYAper = DBL_MIN;//BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
 
   if( (itsXAper>0) && (itsYAper>0) ){
+#ifdef DEBUG
     G4cout << "BDSCollimator: building aperture" << G4endl;
+#endif
     if(itsType == "rcol")
       {
 	itsInnerSolid=new G4Box(itsName+"_inner",
@@ -162,7 +164,9 @@ void BDSCollimator::BuildInnerCollimator()
 		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		     // copy number  
 
   if( (itsXAper>0) && (itsYAper>0) ){
+#ifdef DEBUG
     G4cout << "BDSCollimator: placing aperture" << G4endl;
+#endif
     itsPhysiComp2 = 
       new G4PVPlacement(
 			nullRotationMatrix,  // no rotation
@@ -179,7 +183,9 @@ void BDSCollimator::BuildInnerCollimator()
     SetSensitiveVolume(itsSolidLogVol);
   }
   SetMultiplePhysicalVolumes(itsPhysiComp);
+#ifdef DEBUG
   G4cout << "BDSCollimator: finished building geometry" << G4endl;
+#endif
 }
 
 
