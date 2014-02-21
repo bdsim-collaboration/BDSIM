@@ -99,11 +99,19 @@ void BDSTrackingFIFO::readFromFifo(){
   G4ThreeVector LocalPosition;
   G4ThreeVector LocalDirection;	
   if(_fifo != NULL){
-    fscanf(_fifo,"# nparticles = %i",&token);
+    int filled_items = fscanf(_fifo,"# nparticles = %i",&token);
+    if (filled_items!=1) {
+      G4cerr << __METHOD_NAME__ <<  "file " << _filename << " empty?" << G4endl;
+      exit(1);
+    }
     G4cout << "# nparticles read from fifo = " << token << G4endl;
     for(int i=0; i< token;i++){
-      fscanf(_fifo,"%lf %lf %lf %lf %lf %lf %lf",
-	     &E,&x,&y,&z,&xp,&yp,&t);
+      filled_items = fscanf(_fifo,"%lf %lf %lf %lf %lf %lf %lf",
+			    &E,&x,&y,&z,&xp,&yp,&t);
+      if (filled_items!=7) {
+	G4cerr << __METHOD_NAME__ <<  "file " << _filename << " not in right format" << G4endl;
+	exit(1);
+      }
 #ifdef DEBUG
       printf("In : %.15f %.15f %.15f %.15f %.15f %.15f %.15f\n",E,x,y,z,xp,yp,t);
 #endif

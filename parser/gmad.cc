@@ -190,7 +190,7 @@ ElementList::ElementListIterator ElementList::find(std::string name,unsigned int
   } else {
     // if count > 1
     std::pair<ElementMapIterator,ElementMapIterator> ret = itsMap.equal_range(name);
-    int i=1;
+    unsigned int i=1;
     for (ElementMapIterator emit = ret.first; emit!=ret.second; ++emit, i++) {
       if (i==count) {
 	return (*emit).second;

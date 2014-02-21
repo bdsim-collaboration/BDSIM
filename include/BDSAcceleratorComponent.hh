@@ -533,25 +533,6 @@ inline void BDSAcceleratorComponent::SetMultiplePhysicalVolumes(G4VPhysicalVolum
 inline  std::vector<G4VPhysicalVolume*> BDSAcceleratorComponent::GetMultiplePhysicalVolumes()
 {return itsMultiplePhysicalVolumes;}
 
-// inline  G4double BDSAcceleratorComponent::GetZLower()
-// {return itsZLower;}
-
-// inline  G4double BDSAcceleratorComponent::GetZUpper()
-// {return itsZUpper;}
-
-// inline  void BDSAcceleratorComponent::SetZLower(G4double aZLower)
-// {itsZLower=aZLower;}
-
-// inline  void BDSAcceleratorComponent::SetZUpper(G4double aZUpper)
-// {itsZUpper=aZUpper;}
-
-// inline void 
-// BDSAcceleratorComponent::AddSynchEnergyLoss(G4double SynchEnergyLoss)
-// {itsSynchEnergyLoss+=SynchEnergyLoss;}
-
-// inline  G4double BDSAcceleratorComponent::GetSynchEnergyLoss()
-// {return itsSynchEnergyLoss;}
-
 inline  G4UserLimits* BDSAcceleratorComponent::GetUserLimits(){
   return itsUserLimits;
 }
