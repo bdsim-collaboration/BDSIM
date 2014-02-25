@@ -41,7 +41,7 @@ extern G4double
 
 
 BDSSamplerSD::BDSSamplerSD(G4String name, G4String type)
-  :G4VSensitiveDetector(name),SamplerCollection(NULL),
+  :G4VSensitiveDetector(name),itsHCID(-1),SamplerCollection(NULL),
    itsType(type)
 {
   itsCollectionName="Sampler_"+type;
@@ -51,15 +51,15 @@ BDSSamplerSD::BDSSamplerSD(G4String name, G4String type)
 BDSSamplerSD::~BDSSamplerSD()
 {;}
 
-void BDSSamplerSD::Initialize(G4HCofThisEvent*)
+void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
 {
   // Create Sampler hits collection
   SamplerCollection = new BDSSamplerHitsCollection(SensitiveDetectorName,itsCollectionName);
 
-  // Record the collection ID for later
-  //  G4SDManager *SDman = G4SDManager::GetSDMpointer();
-  //  itsHCID = SDman->GetCollectionID(itsCollectionName);
-
+  // Record id for use in EventAction to save time
+  if (itsHCID < 0){
+    itsHCID = G4SDManager::GetSDMpointer()->GetCollectionID(itsCollectionName);}
+  HCE->AddHitsCollection(itsHCID,SamplerCollection);
 }
 
 G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
@@ -230,15 +230,11 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   return true;
 }
 
-void BDSSamplerSD::EndOfEvent(G4HCofThisEvent*HCE)
+void BDSSamplerSD::EndOfEvent(G4HCofThisEvent* /*HCE*/)
 {
-  G4SDManager * SDman = G4SDManager::GetSDMpointer();
-  G4int HCID = SDman->GetCollectionID(itsCollectionName);
-  HCE->AddHitsCollection(HCID, SamplerCollection );
-
-  //  HCE->AddHitsCollection(itsHCID, SamplerCollection );
-
-
+  //G4SDManager * SDman = G4SDManager::GetSDMpointer();
+  //G4int HCID = SDman->GetCollectionID(itsCollectionName);
+  //HCE->AddHitsCollection(HCID, SamplerCollection );
 }
 
 void BDSSamplerSD::clear(){} 

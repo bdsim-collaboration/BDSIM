@@ -110,56 +110,50 @@ BDSEventAction::~BDSEventAction()
 void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 { 
 #ifdef DEBUG
-  G4cout<<"BDSEventAction::BeginOfEventAction>"<<G4endl;
-#endif
-
-#ifdef DEBUG
-  G4cout<<"BDSEventAction : processing begin of event action"<<G4endl;
+  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << __METHOD_NAME__ << " processing begin of event action" << G4endl;
 #endif
 
   event_number = evt->GetEventID();
   htot=0.;
-
   
-   if(BDSGlobalConstants::Instance()->DoTwiss())
-     {
-       if(event_number==0) {
-	 G4cout << "\n---> Calculating Twiss Parameters";
-         if(BDSGlobalConstants::Instance()->GetSynchRescale())
-	   G4cout<<" and Rescaling magnets" <<G4endl;
-	 G4cout <<G4endl;
-       }
-     }
-   else
-     {
-       if (BDSGlobalConstants::Instance()->isReference==false && (event_number+1)%printModulo ==0)
-         {
-           G4cout << "\n---> Begin of event: " << event_number << G4endl;
-         }
-     }
+  if(BDSGlobalConstants::Instance()->DoTwiss())
+    {
+      if(event_number==0) {
+	G4cout << "\n---> Calculating Twiss Parameters";
+	if(BDSGlobalConstants::Instance()->GetSynchRescale())
+	  G4cout<<" and Rescaling magnets" <<G4endl;
+      }
+    }
+  else
+    {
+      if (BDSGlobalConstants::Instance()->isReference==false && (event_number+1)%printModulo ==0)
+	{
+	  G4cout << "\n---> Begin of event: " << event_number << G4endl;
+	}
+    }
+  
+  if(verboseEvent) G4cout << __METHOD_NAME__ << "event #"<<event_number<<G4endl ;
    
-   if(verboseEvent) G4cout<<"Begin of event: "<<event_number<<G4endl ;
+  if( BDSSampler::GetNSamplers() > 0)
+    {   
+      SamplerCollID_plane = G4SDManager::GetSDMpointer()->GetCollectionID("Sampler_plane");
+    }
    
+  if( BDSSamplerCylinder::GetNSamplers() > 0 )
+    {   
+      SamplerCollID_cylin = G4SDManager::GetSDMpointer()->GetCollectionID("Sampler_cylinder"); 
+    }
    
-   if( BDSSampler::GetNSamplers() > 0)
-     {   
-       SamplerCollID_plane = G4SDManager::GetSDMpointer()->GetCollectionID("Sampler_plane");
-     }
-   
-   if( BDSSamplerCylinder::GetNSamplers() > 0 )
-     {   
-       SamplerCollID_cylin = G4SDManager::GetSDMpointer()->GetCollectionID("Sampler_cylinder"); 
-     }
-   
-   //if( bdsOutput->GetLWCalorimeterNumber() > 0 )
-   //   {
-     //if (LWCalorimeterCollID==-1) 
-     //LWCalorimeterCollID = G4SDManager::GetSDMpointer()->GetCollectionID("LWCalorimeterCollection");
-   //   }
-   FireLaserCompton=true;
+  //if( bdsOutput->GetLWCalorimeterNumber() > 0 )
+  //   {
+  //if (LWCalorimeterCollID==-1) 
+  //LWCalorimeterCollID = G4SDManager::GetSDMpointer()->GetCollectionID("LWCalorimeterCollection");
+  //   }
+  FireLaserCompton=true;
    
 #ifdef DEBUG
-   G4cout<<"BDSEventAction : begin of event action done"<<G4endl;
+  G4cout << __METHOD_NAME__ << "begin of event action done"<<G4endl;
 #endif
 }
 
@@ -179,16 +173,10 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  G4EventManager::GetEventManager()->GetStackManager()->clear();
 	}
     }
-
- 
   if(verboseEvent || verboseEventNumber == event_number){
-    G4cout<<"processing end of event"<<G4endl;
+  G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;
   }
   
-  BDSEnergyCounterHitsCollection* BDSEnergyCounter_HC=NULL;
-  
-  //BDSLWCalorimeterHitsCollection* LWCalHC=NULL;
-
 #ifdef DEBUG 
   G4cout<<"BDSEventAction : storing hits"<<G4endl;
 #endif
@@ -239,9 +227,9 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   // 
   //  G4cout<<"BDSEventAction : processing laserwire calorimeter hits collection"<<G4endl;
   //
+  //BDSLWCalorimeterHitsCollection* LWCalHC=NULL;
   // if(LWCalorimeterCollID>=0) 
   //   LWCalHC=(BDSLWCalorimeterHitsCollection*)(evt->GetHCofThisEvent()->GetHC(LWCalorimeterCollID));
-
   // if (LWCalHC) bdsOutput->WriteHits(SampHC);
 
 
@@ -251,23 +239,15 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   G4cout<<"BDSEventAction : storing energy loss histograms"<<G4endl;
 #endif
   
-
-  for(iEC=theECList->begin();iEC!=theECList->end();iEC++)
+  BDSEnergyCounterHitsCollection* BDSEnergyCounter_HC=NULL;
+  for(iEC=theECList->begin();iEC!=theECList->end();++iEC)
     {
       G4String name=(*iEC)->GetCollectionName(0);
-      
-      G4int BDSEnergyCounter_ID= G4SDManager::GetSDMpointer()->GetCollectionID(name);
-      
-      if(BDSEnergyCounter_ID>=0)
-	{
-	  BDSEnergyCounter_HC=
-	    (BDSEnergyCounterHitsCollection*)(evt->GetHCofThisEvent()->GetHC(BDSEnergyCounter_ID));
-	
-	  if(BDSEnergyCounter_HC) {
-	    bdsOutput->WriteEnergyLoss(BDSEnergyCounter_HC);
-	  }
-	}
+      BDSEnergyCounter_HC=
+	(BDSEnergyCounterHitsCollection*)(evt->GetHCofThisEvent()->GetHC((*iEC)->itsHCID));
+      if(BDSEnergyCounter_HC) {bdsOutput->WriteEnergyLoss(BDSEnergyCounter_HC);}
     }
+
 #ifdef DEBUG
   G4cout << __METHOD_NAME__ << " finished writing energy loss." << G4endl;
 #endif

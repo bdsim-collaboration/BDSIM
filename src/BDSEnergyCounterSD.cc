@@ -25,6 +25,7 @@
 
 //#include "G4RunManager.hh"
 #include "G4Version.hh"
+#include "G4SDManager.hh"
 
 #include <string>
 
@@ -32,7 +33,7 @@ extern G4int event_number;
 
 
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
-  :G4VSensitiveDetector(name),BDSEnergyCounterCollection(NULL),
+  :G4VSensitiveDetector(name),itsHCID(-1),BDSEnergyCounterCollection(NULL),
    enrg(0.0),xpos(0.0),ypos(0.0),zpos(0.0)
 {
   verbose = BDSExecOptions::Instance()->GetVerbose();
@@ -47,11 +48,14 @@ BDSEnergyCounterSD::~BDSEnergyCounterSD()
   delete [] HitID;
 }
 
-void BDSEnergyCounterSD::Initialize(G4HCofThisEvent*)
+void BDSEnergyCounterSD::Initialize(G4HCofThisEvent*HCE)
 {
   BDSEnergyCounterCollection = new BDSEnergyCounterHitsCollection
     (SensitiveDetectorName,collectionName[0]); 
   for(G4int i=0; i<NMAXCOPY;i++)HitID[i]=-1;
+  if (itsHCID < 0){
+    itsHCID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);}
+  HCE->AddHitsCollection(itsHCID,BDSEnergyCounterCollection);
 }
 
 G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
@@ -207,14 +211,20 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
 }
 
 
-void BDSEnergyCounterSD::EndOfEvent(G4HCofThisEvent*HCE)
+void BDSEnergyCounterSD::EndOfEvent(G4HCofThisEvent* /*HCE*/)
 {
-  G4int HCID = GetCollectionID(0); 
-  HCE->AddHitsCollection( HCID, BDSEnergyCounterCollection );
-  
-  //  G4SDManager *SDman = G4SDManager::GetSDpointer();
-  //  G4int HCID         = SDMan->GetCollectionID(itsName);
-  //  HCE->AddHitsCollection( HCID, BDSEnergyCounterCollection);  
+  //This is the old way:
+  //G4int HCID = GetCollectionID(0);
+  //G4cout << HCID << G4endl;
+  //  HCE->AddHitsCollection(HCID,BDSEnergyCounterCollection);
+  //but this takes >90% simulation time for large lattice (10k elements)
+  //use initialisation in constructor to -1
+  //this is much faster and moved to initialiser
+  /*
+  G4SDManager *SDman = G4SDManager::GetSDpointer();
+  G4int HCID         = SDMan->GetCollectionID(itsName);
+  HCE->AddHitsCollection(HCID, BDSEnergyCounterCollection);  
+  */
 }
 
 void BDSEnergyCounterSD::clear()
