@@ -82,12 +82,12 @@ private:
 
 #ifdef USE_ROOT
   float x0,xp0,y0,yp0,z0,zp0,E0,t0;
-  float x,xp,y,yp,z,zp,E,Edep,t;
-  float X,Xp,Y,Yp,Z,Zp,s,weight,EWeightZ;
-  int part,nev, pID, theID, track_id;
+  float x,xp,y,yp,z,zp,E,t; //Edep;
+  float X,Xp,Y,Yp,Z,Zp,s,weight; //,EWeightZ;
+  int part,nev, pID, track_id;
   float z_el,E_el;
   float x_el_p,y_el_p,z_el_p,E_el_p;
-  int part_el_p,pID_el_p, weight_el_p;
+  int part_el_p, weight_el_p;
   char volumeName_el_p[100];
 
   void WriteRootHit(G4String Name, G4double InitMom, G4double InitX, G4double InitY, G4double InitZ, G4double InitXPrime, G4double InitYPrime, G4double InitZPrime, G4double InitT, G4double Mom, G4double X, G4double Y, G4double Z, G4double XPrime, G4double YPrime, G4double ZPrime, G4double T, G4double GlobalX, G4double GlobalY, G4double GlobalZ, G4double GlobalXPrime, G4double GlobalYPrime, G4double GlobalZPrime, G4double S, G4double Weight, G4int PDGtype, G4int EventNo, G4int ParentID, G4int TrackID);

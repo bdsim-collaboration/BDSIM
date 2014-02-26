@@ -33,21 +33,20 @@ public:
   
 private:
   G4ParticleGun*              particleGun;	  //pointer a to G4 service class
-  BDSDetectorConstruction*    BDSDetector;  //pointer to the geometry
   
   G4double weight;
  
   // beam data:
-  G4double beta_x,sig_z,KineticEnergy,
-    gamma,beta_y,sig_dp,emit_x,emit_y,charge;
+  //  G4double beta_x,sig_z,KineticEnergy,
+  // gamma,beta_y,sig_dp,emit_x,emit_y,charge;
 
-  G4double sig_x,sig_xp,sig_y,sig_yp,sig_t;
+  //  G4double sig_x,sig_xp,sig_y,sig_yp,sig_t;
   
   std::ifstream InputBunchFile;
   std::ifstream ExtractBunchFile;
 
-  G4double logXfactor;
-  G4double logYfactor;
+  // G4double logXfactor;
+  // G4double logYfactor;
 
   G4double itsSynchCritEng;
   BDSSynchrotronRadiation* itsBDSSynchrotronRadiation;

@@ -503,7 +503,7 @@ void BDSPhysicsList::ConstructParticle()
     G4MesonConstructor mConstructor;
     mConstructor.ConstructParticle();
     
-    // barions
+    // baryons
     G4BaryonConstructor bConstructor;
     bConstructor.ConstructParticle();
     
@@ -511,7 +511,7 @@ void BDSPhysicsList::ConstructParticle()
     G4IonConstructor iConstructor;
     iConstructor.ConstructParticle();
     
-    //  Construct  resonaces and quarks
+    //  Construct resonances and quarks
     G4ShortLivedConstructor pShortLivedConstructor;
     pShortLivedConstructor.ConstructParticle();
   }

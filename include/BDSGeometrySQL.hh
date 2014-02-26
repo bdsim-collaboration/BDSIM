@@ -133,8 +133,8 @@ private:
   std::ifstream ifs;
   G4LogicalVolume* itsMarkerVol;
   std::vector<BDSMySQLTable*> itsSQLTable;
-  BDSMagFieldSQL* itsMagField;
-  BDSSamplerSD* SensDet;
+  //  BDSMagFieldSQL* itsMagField;
+  //  BDSSamplerSD* SensDet;
 
   void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
 

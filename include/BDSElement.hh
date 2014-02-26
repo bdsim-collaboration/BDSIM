@@ -64,7 +64,6 @@ private:
   G4EqMagElectricField* itsFEquation;
   G4Mag_UsualEqRhs* itsEqRhs;
 
-  BDSField *itsField;
   BDSMagField *itsMagField;
   G4CachedMagneticField *itsCachedMagField;
   G4UniformMagField *itsUniformMagField;

@@ -38,7 +38,7 @@ private:
   G4LogicalVolume* itsSolidLogVol;
   G4LogicalVolume* itsInnerLogVol;
                     
-  G4Mag_UsualEqRhs* itsEqRhs;
+  //  G4Mag_UsualEqRhs* itsEqRhs;
 
 private:
   G4Material* itsSpoilerMaterial;

@@ -40,9 +40,8 @@ G4double
   initial_E, initial_t,
   initial_weight;
 
-BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(
-					      BDSDetectorConstruction* BDSDC)
-  :BDSDetector(BDSDC), itsBDSSynchrotronRadiation(NULL)
+BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSDetectorConstruction* /*BDSDC*/)
+  :itsBDSSynchrotronRadiation(NULL)
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
 
@@ -102,7 +101,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   //this function is called at the begining of event
 
-  G4double x0, y0, z0, xp, yp, zp, t, E;
+  G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0;
 
   particleGun->SetParticleDefinition(BDSGlobalConstants::Instance()->GetParticleDefinition());
 

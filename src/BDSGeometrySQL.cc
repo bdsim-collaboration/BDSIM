@@ -41,7 +41,7 @@ extern BDSOutput* bdsOutput;
 //extern BDSGlobalConstants* BDSGlobalConstants::Instance();
 
 BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength):
-  rotateComponent(NULL),itsMarkerVol(NULL),itsMagField(NULL),SensDet(NULL)
+  rotateComponent(NULL),itsMarkerVol(NULL)
 {
   itsMarkerLength = markerlength;
 #ifdef DEBUG

@@ -30,8 +30,7 @@ BDSSpoiler::BDSSpoiler (G4String& aName,G4double aLength,G4double bpRad,
 			 aLength,bpRad,xAper,yAper,
 			 SetVisAttributes()),
   itsPhysiComp(NULL), itsPhysiComp2(NULL), itsSolidLogVol(NULL), 
-  itsInnerLogVol(NULL), itsEqRhs(NULL), 
-  itsSpoilerMaterial(SpoilerMaterial)
+  itsInnerLogVol(NULL), itsSpoilerMaterial(SpoilerMaterial)
 {
   
   if ( (*LogVolCount)[itsName]==0)

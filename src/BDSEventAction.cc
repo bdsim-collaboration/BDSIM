@@ -77,8 +77,7 @@ extern BDSOutput* bdsOutput;
 
 BDSEventAction::BDSEventAction():
   SamplerCollID_plane(-1),SamplerCollID_cylin(-1),
-  LWCalorimeterCollID(-1),drawFlag("all"),
-  Traj(NULL),trajEndPoint(NULL)
+  drawFlag("all"),Traj(NULL),trajEndPoint(NULL)
 { 
   verbose            = BDSExecOptions::Instance()->GetVerbose();
   verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
