@@ -20,7 +20,6 @@
 #include "BDS3DMagField.hh"
 #include "BDSXYMagField2.hh"
 #include "G4NystromRK4.hh"
-#include "myQuadStepper.hh"
 
 // geometry drivers
 #include "parser/gmad.h"
@@ -36,8 +35,7 @@
 #endif
 
 #include <map>
-
-using namespace std;
+#include <vector>
 
 //============================================================
 
@@ -247,7 +245,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     G4int pos = geometry.find(":");
     gFormat="none";
     if(pos<0) { 
-      G4cerr<<"WARNING: invalid geometry reference format : "<<geometry<<endl;
+      G4cerr<<"WARNING: invalid geometry reference format : "<<geometry<<G4endl;
     }
     else {
       gFormat = geometry.substr(0,pos);
@@ -271,7 +269,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
   if(bmap != ""){
     G4int pos = bmap.find(":");
     if(pos<0) {
-      G4cerr<<"WARNING: invalid B map reference format : "<<bmap<<endl; 
+      G4cerr<<"WARNING: invalid B map reference format : "<<bmap<<G4endl;
     }
     else {
       bFormat = bmap.substr(0,pos);
@@ -368,7 +366,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       BuildMagField(true);
     }
 
-    vector<G4LogicalVolume*> SensComps = LCDD->SensitiveComponents;
+    std::vector<G4LogicalVolume*> SensComps = LCDD->SensitiveComponents;
     for(G4int id=0; id<(G4int)SensComps.size(); id++)
       SetMultipleSensitiveVolumes(SensComps[id]);
     delete LCDD;
@@ -387,11 +385,11 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       SetMultiplePhysicalVolumes(Mokka->GetMultiplePhysicalVolumes().at(i));
     }
 
-    vector<G4LogicalVolume*> SensComps = Mokka->SensitiveComponents;
+    std::vector<G4LogicalVolume*> SensComps = Mokka->SensitiveComponents;
     for(G4int id=0; id<(G4int)SensComps.size(); id++)
       SetMultipleSensitiveVolumes(SensComps[id]);
 
-    vector<G4LogicalVolume*> GFlashComps =Mokka->itsGFlashComponents;
+    std::vector<G4LogicalVolume*> GFlashComps =Mokka->itsGFlashComponents;
     for(G4int id=0; id<(G4int)GFlashComps.size(); id++)
       SetGFlashVolumes(GFlashComps[id]);
 
@@ -474,7 +472,7 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
 
   if(!itsFieldIsUniform){
 #ifdef DEBUG
-    G4cout << "BDSElement.cc> Building magnetic field..." << endl;
+    G4cout << "BDSElement.cc> Building magnetic field..." << G4endl;
 #endif
     itsEqRhs = new G4Mag_UsualEqRhs(itsCachedMagField);
     if( (itsMagField->GetHasUniformField())&!(itsMagField->GetHasNPoleFields() || itsMagField->GetHasFieldMap())){
@@ -485,7 +483,7 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
     fieldManager->SetDetectorField(itsCachedMagField );
   } else {
 #ifdef DEBUG
-    G4cout << "BDSElement.cc> Building uniform magnetic field..." << endl;
+    G4cout << "BDSElement.cc> Building uniform magnetic field..." << G4endl;
 #endif
     itsEqRhs = new G4Mag_UsualEqRhs(itsUniformMagField);
     itsFStepper = new G4NystromRK4(itsEqRhs); 
@@ -493,7 +491,7 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
   }
 
 #ifdef DEBUG
-  G4cout << "BDSElement.cc> Setting stepping accuracy parameters..." << endl;
+  G4cout << "BDSElement.cc> Setting stepping accuracy parameters..." << G4endl;
 #endif
   
   if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0){
@@ -519,7 +517,7 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
   fieldManager->SetChordFinder( fChordFinder ); 
   
 #ifdef DEBUG
-  G4cout << "BDSElement.cc> Setting the logical volume " << itsMarkerLogicalVolume->GetName() << " field manager... force to all daughters = " << forceToAllDaughters << endl;
+  G4cout << "BDSElement.cc> Setting the logical volume " << itsMarkerLogicalVolume->GetName() << " field manager... force to all daughters = " << forceToAllDaughters << G4endl;
 #endif
   itsMarkerLogicalVolume->SetFieldManager(fieldManager,forceToAllDaughters);
 }

@@ -27,7 +27,11 @@ public:
   bool isDone();
   void next();
 
-private:
+private:  
+  /// assignment and copy constructor not implemented nor used
+  BDSBeamlineNavigator& operator=(const BDSBeamlineNavigator&);
+  BDSBeamlineNavigator(BDSBeamlineNavigator&);
+
   G4ThreeVector* _localX; 
   G4ThreeVector* _localY; 
   G4ThreeVector* _localZ; 

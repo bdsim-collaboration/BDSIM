@@ -11,7 +11,6 @@
 #include "BDSSextupole.hh"
 //#include "BDSSkewSextupole.hh"
 #include "BDSOctupole.hh"
-#include "BDSDecapole.hh"
 #include "BDSTMultipole.hh"
 #include "BDSRfCavity.hh"
 #include "BDSSolenoid.hh"
@@ -23,7 +22,6 @@
 #include "BDSMuSpoiler.hh"
 #include "BDSTransform3D.hh"
 #include "BDSElement.hh"
-#include "BDSComponentOffset.hh"
 #include "BDSCollimator.hh"
 //#include "BDSRealisticCollimator.hh"
 #include "BDSScintillatorScreen.hh"
@@ -105,7 +103,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(std::list<struct E
 }
 
 									 
-BDSAcceleratorComponent* BDSComponentFactory::createComponent(Element aElement, Element previousElement, Element nextElement){
+BDSAcceleratorComponent* BDSComponentFactory::createComponent(Element& aElement, Element& previousElement, Element& nextElement){
 #ifdef DEBUG
   G4cout << "BDSComponentFactory::createComponent() creating element..." << G4endl;  
 #endif

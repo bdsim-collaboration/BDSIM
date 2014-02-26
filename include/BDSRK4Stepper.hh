@@ -51,6 +51,9 @@ public:
   // A first order Step along a quad inside the field.
   
 private:
+  /// assignment and copy constructor not implemented nor used
+  BDSRK4Stepper& operator=(const BDSRK4Stepper&);
+  BDSRK4Stepper(BDSRK4Stepper&);
   
   G4ThreeVector yInitial, yMidPoint, yFinal;
   // Data stored in order to find the chord.

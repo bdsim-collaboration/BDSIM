@@ -34,7 +34,6 @@
 
 BDSRunAction::BDSRunAction()
 {
-  nptwiss = BDSExecOptions::Instance()->GetNPTwiss();
 }
 
 //==========================================================

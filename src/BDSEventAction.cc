@@ -84,7 +84,6 @@ BDSEventAction::BDSEventAction():
   verboseEvent       = BDSExecOptions::Instance()->GetVerboseEvent();
   verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
   isBatch            = BDSExecOptions::Instance()->GetBatch();
-  nptwiss            = BDSExecOptions::Instance()->GetNPTwiss();
 
   if(isBatch) printModulo=10;
   else printModulo=1;
@@ -166,7 +165,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   
   if(BDSGlobalConstants::Instance()->DoTwiss())
     {
-      if(event_number==nptwiss-1)
+      if(event_number==BDSExecOptions::Instance()->GetNPTwiss()-1)
 	{
 	  G4cout << "\n---> Done" <<G4endl;
 	  G4EventManager::GetEventManager()->GetStackManager()->clear();

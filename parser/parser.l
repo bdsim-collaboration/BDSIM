@@ -23,7 +23,7 @@
 #include "sym_table.h"
 #include "getEnv.h"
 
-#define MAXFILENAMELENGTH 200
+const int maxfilenamelength = 200;
 
 int match_var(char *name);
 struct symtab * symlook(const char *s);
@@ -35,10 +35,10 @@ extern int yyerror(const char *s);
 #define YY_NO_UNISTD_H 1
 #endif
 
-#define MAX_INCLUDE_DEPTH 10
-YY_BUFFER_STATE include_stack[MAX_INCLUDE_DEPTH];
-char include_filename_stack[MAX_INCLUDE_DEPTH][MAXFILENAMELENGTH];
-int include_linenum_stack[MAX_INCLUDE_DEPTH];
+const int max_include_depth = 10;
+YY_BUFFER_STATE include_stack[max_include_depth];
+char include_filename_stack[max_include_depth][maxfilenamelength];
+int include_linenum_stack[max_include_depth];
 int include_stack_ptr = 0;
 
 int line_num = 1;
@@ -151,9 +151,9 @@ dump  { return DUMP; }
 <incl>[^ \t\n;]+ {
 std::string filename = (std::string)getEnv("BDSIMPATH")+(std::string)yytext;
   printf("parser> reading file %s \n",(char*)filename.c_str());//yytext
-  if( include_stack_ptr >= MAX_INCLUDE_DEPTH )
+  if( include_stack_ptr >= max_include_depth )
     {
-      fprintf(stderr , "Error : Include depth exceeds %d\n",MAX_INCLUDE_DEPTH);
+      fprintf(stderr , "Error : Include depth exceeds %d\n",max_include_depth);
       exit(1);
     }
   else
@@ -165,10 +165,10 @@ std::string filename = (std::string)getEnv("BDSIMPATH")+(std::string)yytext;
           // save info to the stack and load new buffer
           include_linenum_stack[include_stack_ptr] = line_num;
           line_num = 1;
-          strncpy(include_filename_stack[include_stack_ptr], yyfilename, MAXFILENAMELENGTH);
-          strncpy(yyfilename,(char*)filename.c_str(),MAXFILENAMELENGTH); //yytext
+          strncpy(include_filename_stack[include_stack_ptr], yyfilename, maxfilenamelength);
+          strncpy(yyfilename,(char*)filename.c_str(),maxfilenamelength); //yytext
 	  include_stack[include_stack_ptr++] = YY_CURRENT_BUFFER;
-          strncpy(include_filename_stack[include_stack_ptr], yyfilename, MAXFILENAMELENGTH);
+          strncpy(include_filename_stack[include_stack_ptr], yyfilename, maxfilenamelength);
 	  yy_switch_to_buffer(yy_create_buffer( yyin, YY_BUF_SIZE ) );
 	  //printf("done saving to stack\n");
     	}
@@ -192,7 +192,7 @@ std::string filename = (std::string)getEnv("BDSIMPATH")+(std::string)yytext;
       //printf("switching to previous buffer with %s\n", include_filename_stack[include_stack_ptr]);
       yy_delete_buffer(YY_CURRENT_BUFFER);
       yy_switch_to_buffer(include_stack[include_stack_ptr]);
-      strncpy( yyfilename, include_filename_stack[include_stack_ptr], MAXFILENAMELENGTH) ;
+      strncpy( yyfilename, include_filename_stack[include_stack_ptr], maxfilenamelength) ;
       line_num = include_linenum_stack[include_stack_ptr];
       
     }

@@ -79,6 +79,10 @@ public:
   G4double GetWorldSizeZ();
   
 private:
+  /// assignment and copy constructor not implemented nor used
+  BDSDetectorConstruction& operator=(const BDSDetectorConstruction&);
+  BDSDetectorConstruction(BDSDetectorConstruction&);
+
   G4bool verbose;
   G4bool outline;
 

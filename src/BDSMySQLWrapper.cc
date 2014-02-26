@@ -24,9 +24,6 @@
 #include<vector>
 #include<sstream>
 
-using namespace std;
-using namespace boost;
-
 BDSMySQLWrapper::BDSMySQLWrapper (const G4String& SQLFileName)
   : ifs(SQLFileName.c_str()), ComponentN(0), tableN(-1)
   
@@ -44,7 +41,7 @@ BDSMySQLWrapper::~BDSMySQLWrapper()
 {
 }
 
-vector<BDSMySQLTable*> BDSMySQLWrapper::ConstructTable ()
+std::vector<BDSMySQLTable*> BDSMySQLWrapper::ConstructTable ()
 {
   ComponentN=0;
   tableN=-1;
@@ -55,7 +52,7 @@ vector<BDSMySQLTable*> BDSMySQLWrapper::ConstructTable ()
 }
 
 void BDSMySQLWrapper::TokenizeLine(){
-  string token;
+  std::string token;
   _tokens.clear();
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;  
   boost::char_separator<char> sep(", ",";()\n");
@@ -73,7 +70,7 @@ void BDSMySQLWrapper::TokenizeLine(){
 }
 
 bool BDSMySQLWrapper::NextToken(){
-  string line;
+  std::string line;
   ++_tokens_iter;
   if(_startOfFile){
     --_tokens_iter;
@@ -235,7 +232,7 @@ bool BDSMySQLWrapper::EmptyToken(){
   return((*_tokens_iter)=="");
 }
 
-string BDSMySQLWrapper::Token(){
+std::string BDSMySQLWrapper::Token(){
   return *_tokens_iter;
 }
 
@@ -270,14 +267,14 @@ void BDSMySQLWrapper::ReadLine(){
 #endif
 }
 
-void BDSMySQLWrapper::RemoveCommentsFromLine(string& value){
+void BDSMySQLWrapper::RemoveCommentsFromLine(std::string& value){
   //Strip all characters after and including '#'
   unsigned pos = value.find('#');
-  string uncommented = value.substr(0,pos);
+  std::string uncommented = value.substr(0,pos);
   value=uncommented;
 }
 
-void BDSMySQLWrapper::RemoveQuotesFromLine(string& value){
+void BDSMySQLWrapper::RemoveQuotesFromLine(std::string& value){
   //Strip all "
   value.erase (std::remove(value.begin(), value.end(), '\"'), value.end());
 }

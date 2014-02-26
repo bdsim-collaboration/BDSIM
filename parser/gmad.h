@@ -9,10 +9,6 @@
 #ifndef _GMAD_H
 #define _GMAD_H
 
-#define MAXFILENAMELENGTH 200
-
-#define _RESERVED 1
-
 #include <iostream>
 #include <cstdio>
 #include <iterator>

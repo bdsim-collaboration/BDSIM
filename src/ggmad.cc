@@ -1,5 +1,4 @@
 #include "BDSGlobalConstants.hh" 
-#include "BDSElement.hh"
 #include "BDSDebug.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "ggmad.hh"

@@ -38,7 +38,6 @@ extern LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
-extern G4RotationMatrix* RotY90;
 //============================================================
 
 BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength, 

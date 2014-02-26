@@ -1,7 +1,6 @@
 //BackScatterBias - particles being backscattered are split
 
 #include "BDSBackScatterBias.hh"
-#include "BDSGlobalConstants.hh"
 #include "G4SteppingManager.hh"
 
 

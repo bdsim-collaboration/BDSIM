@@ -32,7 +32,6 @@ BDSRunManager* BDSRunManager::GetRunManager() {
 
 BDSRunManager::BDSRunManager() { 
   fRunManager = this;
-  nptwiss     = BDSExecOptions::Instance()->GetNPTwiss();
 }
 
 BDSRunManager::~BDSRunManager(){
@@ -52,6 +51,7 @@ void BDSRunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
     if(BDSDump::GetNumberOfDumps()!=0){
       // Run reference bunch for dumps
       BDSGlobalConstants::Instance()->isReference=true;
+      G4int nptwiss     = BDSExecOptions::Instance()->GetNPTwiss();
       DoEventLoop(nptwiss,macroFile,0);
       BDSGlobalConstants::Instance()->isReference=false;
     }
