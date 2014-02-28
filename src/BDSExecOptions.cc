@@ -1,5 +1,7 @@
 #include "BDSExecOptions.hh"
 
+#include "BDSMaterials.cc"
+
 BDSExecOptions* BDSExecOptions::_instance=0;
 
 BDSExecOptions* BDSExecOptions::Instance(){
@@ -13,7 +15,7 @@ BDSExecOptions::BDSExecOptions() {
   inputFilename       = "optics.mad";
   visMacroFilename    = "vis.mac";
   outputFilename      = "output";
-  outputFormat        = _ASCII;
+  outputFormat        = BDSOutputFormat::_ASCII;
   outline             = false;
   outlineFilename     = "outline.dat";
   outlineFormat       = "";
@@ -122,14 +124,14 @@ void BDSExecOptions::Parse(int argc, char **argv) {
       }
       if( !strcmp(LongOptions[OptionIndex].name , "output") ) {
 	if(optarg) {
-	  if(!strcmp(optarg,"ascii") || !strcmp(optarg,"ASCII")) outputFormat=_ASCII;
-	  else if (!strcmp(optarg,"root") || !strcmp(optarg,"ROOT")) outputFormat=_ROOT;
+	  if(!strcmp(optarg,"ascii") || !strcmp(optarg,"ASCII")) outputFormat=BDSOutputFormat::_ASCII;
+	  else if (!strcmp(optarg,"root") || !strcmp(optarg,"ROOT")) outputFormat=BDSOutputFormat::_ROOT;
 	  else {
 	    G4cerr<<"unknown output format "<<optarg<<G4endl;
 	    exit(1);
 	  }
 #ifndef USE_ROOT
-	  if (outputFormat == _ROOT) {
+	  if (outputFormat == BDSOutputFormat::_ROOT) {
 	    G4cerr << "ERROR outputFormat root, but BDSIM not configured with ROOT support!" << G4endl;
 	    G4cerr << "Use ascii instead, or recompile with ROOT!" << G4endl;
 	    exit(1);

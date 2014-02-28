@@ -22,6 +22,7 @@
 #include "G4NystromRK4.hh"
 
 // geometry drivers
+#include "parser/enums.h"
 #include "parser/gmad.h"
 #include "ggmad.hh"
 #include "BDSGeometrySQL.hh"

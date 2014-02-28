@@ -4,15 +4,9 @@
 #ifndef BDSOutput_h
 #define BDSOutput_h 
 
-#include "BDSGlobalConstants.hh"
-#include "BDSSampler.hh"
 #include "BDSSamplerHit.hh"
-#include "BDSSamplerSD.hh"
-#include "BDSSamplerCylinder.hh"
+#include "BDSTypeSafeEnum.hh"
 #include "BDSEnergyCounterHit.hh"
-
-#include "BDSLWCalorimeter.hh"
-#include "BDSLWCalorimeterHit.hh"
 
 #include "G4Trajectory.hh"
 
@@ -22,17 +16,20 @@
 #ifdef USE_ROOT
 #include "TROOT.h"
 #include "TH1F.h"
-#include "TNtuple.h"
 #include "TFile.h"
 #include "TTree.h"
-#include "TH3F.h"
+//#include "TH3F.h"
 #endif
 
-enum BDSOutputFormat {
-  _ASCII = 0,
-  _ROOT = 1
-  //, _ASCII_ROOT = 2
+struct BDSOutputFormatDef {
+  enum type {
+    _ASCII = 0,
+    _ROOT = 1
+    //, _ASCII_ROOT = 2
+  };
 };
+
+typedef BDSTypeSafeEnum<BDSOutputFormatDef,int> BDSOutputFormat;
 
 class BDSOutput {
 

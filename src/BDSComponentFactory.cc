@@ -25,6 +25,7 @@
 #include "BDSCollimator.hh"
 //#include "BDSRealisticCollimator.hh"
 #include "BDSScintillatorScreen.hh"
+#include "parser/enums.h"
 
 extern G4bool outline;
 

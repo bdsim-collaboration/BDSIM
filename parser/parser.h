@@ -24,6 +24,7 @@
 
 #include <iostream>
 
+#include "enums.h"
 #include "gmad.h"
 #include "getEnv.h"
 

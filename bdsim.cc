@@ -45,18 +45,19 @@
 #include <getopt.h>
 
 
-#include "BDSDetectorConstruction.hh"   // Geant4 includes
+#include "BDSDetectorConstruction.hh"   
+#include "BDSEventAction.hh"
 #include "BDSPhysicsList.hh"
 #include "QGSP_BERT.hh"
 #include "QGSP_BERT_HP.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRunAction.hh"
-#include "BDSEventAction.hh"
+#include "BDSSamplerSD.hh"
 #include "BDSSteppingAction.hh"
 #include "BDSStackingAction.hh"
 #include "BDSUserTrackingAction.hh"
 #include "BDSRunManager.hh"
-#include "G4EventManager.hh"
+#include "G4EventManager.hh" // Geant4 includes
 #include "G4TrackingManager.hh"
 #include "G4SteppingManager.hh"
 #include "G4GeometrySampler.hh"

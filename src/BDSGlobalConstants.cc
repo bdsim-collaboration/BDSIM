@@ -5,7 +5,6 @@ Last modified 23.10.2007 by Steve Malton
 **/
 #include "BDSGlobalConstants.hh"
 #include "parser/gmad.h"
-//#include "../parser/getEnv.h"
 #include "BDSDebug.hh"
 #include "G4UniformMagField.hh"
 #include "G4ParticleTable.hh"
@@ -14,7 +13,6 @@ Last modified 23.10.2007 by Steve Malton
 
 #include <assert.h>
 #include <string>
-#include <stack>
 #include <cmath>
 
 BDSGlobalConstants* BDSGlobalConstants::_instance = 0;

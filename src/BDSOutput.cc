@@ -1,11 +1,12 @@
-#include "BDSExecOptions.hh"
 #include "BDSOutput.hh"
-#include "BDSSamplerSD.hh"
+#include "BDSExecOptions.hh"
+#include "BDSSampler.hh"
+#include "BDSSamplerCylinder.hh"
 #include <ctime>
 
 BDSOutput::BDSOutput():outputFileNumber(1)
 {
-  format = _ASCII; // default - write an ascii file
+  format = BDSOutputFormat::_ASCII; // default - write an ascii file
 #ifdef USE_ROOT
 #ifdef DEBUG
   G4cout << __METHOD_NAME__ << " - USE_ROOT is defined." << G4endl;
@@ -32,14 +33,14 @@ BDSOutput::BDSOutput(BDSOutputFormat fmt):format(fmt),outputFileNumber(1)
 
 BDSOutput::~BDSOutput()
 {
-  if(format==_ASCII){
+  if(format==BDSOutputFormat::_ASCII){
     of.flush();
     of.close();
     ofEloss.flush();
     ofEloss.close();
   }
 #ifdef USE_ROOT
-  if(format==_ROOT){
+  if(format==BDSOutputFormat::_ROOT){
     if (theRootOutputFile && theRootOutputFile->IsOpen()) {
       theRootOutputFile->Write();
       //      theRootOutputFile->Close();
@@ -54,7 +55,7 @@ void BDSOutput::SetFormat(BDSOutputFormat val)
   format = val;
   time_t tm = time(NULL);
 
-  if( format == _ASCII)
+  if( format == BDSOutputFormat::_ASCII)
     {
       G4String filename = BDSExecOptions::Instance()->GetOutputFilename()+".txt";
 #ifdef DEBUG
@@ -72,7 +73,7 @@ void BDSOutput::SetFormat(BDSOutputFormat val)
       ofEloss<<"#Energy loss: Z[m] E[GeV] partID weight"<<G4endl;
 
     }
-  if( format == _ROOT)
+  if( format == BDSOutputFormat::_ROOT)
     {
       G4cout<<"output format ROOT"<<G4endl;
     }
@@ -121,7 +122,7 @@ void BDSOutput::BuildSamplerTree(G4String name){
 void BDSOutput::Init(G4int FileNum)
 {
 #ifdef USE_ROOT
-  if(format != _ROOT) return;
+  if(format != BDSOutputFormat::_ROOT) return;
 
   // set up the root file
   G4String _filename = BDSExecOptions::Instance()->GetOutputFilename() + "_" 
@@ -254,19 +255,19 @@ void BDSOutput::WriteRootHit(G4String Name, G4double   InitMom, G4double    Init
 
 void BDSOutput::WritePrimary(G4String samplerName, G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double zp,G4double t,G4double weight,G4int PDGType, G4int nEvent){
 #ifdef USE_ROOT
-  if( format == _ROOT) {
+  if( format == BDSOutputFormat::_ROOT) {
     bdsOutput->WriteRootHit(samplerName, E, x0, y0, z0, xp, yp, zp, t, E, x0, y0, z0, xp, yp, zp, t, x, y, z, xp, yp, zp, z, weight, PDGType, nEvent, 0, 1);
   }
 #endif
   
-  if( format == _ASCII) {
+  if( format == BDSOutputFormat::_ASCII) {
     bdsOutput->WriteAsciiHit(PDGType, E, x0, y0, z0, xp, yp, nEvent, weight, 0, 1);
   }
 }
 
 void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
 {
-  if( format == _ASCII) {
+  if( format == BDSOutputFormat::_ASCII) {
     int G4precision = G4cout.precision();
     G4cout.precision(15);
     
@@ -291,7 +292,7 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
     G4cout.precision(G4precision);
   }
   
-  if( format == _ROOT) {
+  if( format == BDSOutputFormat::_ROOT) {
 #ifdef USE_ROOT
     G4String name;
 #ifdef DEBUG
@@ -375,7 +376,7 @@ G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> &TrajVec){
 	      y = TrajPos.y() / CLHEP::m;
 	      z = TrajPos.z() / CLHEP::m;
 
-	      if( format == _ROOT) 
+	      if( format == BDSOutputFormat::_ROOT) 
 		TrajTree->Fill();
 	    }
 	}
@@ -389,7 +390,7 @@ G4int BDSOutput::WriteTrajectory(std::vector<G4VTrajectory*> &TrajVec){
 
 void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 {
-  if( format == _ROOT) {
+  if( format == BDSOutputFormat::_ROOT) {
 #ifdef USE_ROOT
     G4int n_hit = hc->entries();
     for (G4int i=0;i<n_hit;i++)
@@ -416,7 +417,7 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 #endif
   }
 
- if( format == _ASCII) {
+ if( format == BDSOutputFormat::_ASCII) {
     G4int n_hit = hc->entries();
 
     for (G4int i=0;i<n_hit;i++)
@@ -436,7 +437,7 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 // only for ASCII output
 void BDSOutput::Echo(G4String str)
 {
-  if(format == _ASCII)  of<<"#"<<str<<G4endl;
+  if(format == BDSOutputFormat::_ASCII)  of<<"#"<<str<<G4endl;
   else // default
     G4cout<<"#"<<str<<G4endl;
 }
@@ -454,7 +455,7 @@ G4int BDSOutput::Commit()
 void BDSOutput::Write()
 {
 #ifdef USE_ROOT
-  if(format == _ROOT){
+  if(format == BDSOutputFormat::_ROOT){
     if(theRootOutputFile->IsOpen())
       {
 #ifdef DEBUG

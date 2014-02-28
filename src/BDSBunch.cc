@@ -7,6 +7,7 @@
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutput.hh"
+#include "parser/enums.h"
 #include "parser/gmad.h"
 
 // CLHEP from Geant4
@@ -16,22 +17,23 @@
 
 
 // distribution type
-
-enum {
-  _REFERENCE = 0,
-  _GAUSSIAN = 1,
-  _RING = 2,
-  _SQUARE = 3,
-  _CIRCLE = 4,
-  _GUINEAPIG_BUNCH = 5,
-  _GUINEAPIG_PAIRS = 6,
-  _GUINEAPIG_SLAC = 7,
-  _CAIN = 8,
-  _ESHELL = 9,
-  _GAUSSIAN_TWISS = 10,
-  _GAUSSIAN_MATRIX = 11,
-  _UDEF = 32
-};
+namespace {
+  enum {
+    _REFERENCE = 0,
+    _GAUSSIAN = 1,
+    _RING = 2,
+    _SQUARE = 3,
+    _CIRCLE = 4,
+    _GUINEAPIG_BUNCH = 5,
+    _GUINEAPIG_PAIRS = 6,
+    _GUINEAPIG_SLAC = 7,
+    _CAIN = 8,
+    _ESHELL = 9,
+    _GAUSSIAN_TWISS = 10,
+    _GAUSSIAN_MATRIX = 11,
+    _UDEF = 32
+  };
+}
 
 BDSBunch::BDSBunch():  
   distribType(-1),X0(0.0),Y0(0.0),Z0(0.0),T0(0.0),Xp0(0.0),Yp0(0.0),Zp0(1.0),

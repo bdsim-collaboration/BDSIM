@@ -72,7 +72,10 @@
 #include "G4VSampler.hh"
 #include "G4GeometrySampler.hh"
 #include "G4IStore.hh"
- 
+
+#include "parser/enums.h"
+#include "parser/gmad.h"
+
 //====================================
 
 //typedef list<BDSAcceleratorComponent*>  BDSBeamline;

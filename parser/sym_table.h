@@ -6,9 +6,11 @@ Symbol table for numeric variables and functions
 #include <cstring>
 #include <list>
 
-#define _INT 0
-#define _DOUBLE 1
-#define _ARRAY 2
+enum {
+  _INT=0,
+  _DOUBLE=1,
+  _ARRAY=2
+};
  
 struct symtab {
   int is_reserved;
