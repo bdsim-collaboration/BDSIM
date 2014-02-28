@@ -36,7 +36,7 @@ public: // with description
   
 private:
   /// assignment constructor not implemented nor used
-  BDSXSBias& operator=(const BDSXSBias);
+  BDSXSBias& operator=(const BDSXSBias&);
 
   G4double eFactor; // enhancement factor to the cross-setion
 

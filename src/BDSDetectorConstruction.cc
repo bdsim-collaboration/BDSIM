@@ -23,17 +23,16 @@
 #include <map>
 #include <vector>
 
+#include "BDSDetectorConstruction.hh"
+
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
-
-#include "BDSDetectorConstruction.hh"
 
 #include "G4UserLimits.hh"
 #include "G4GeometryManager.hh"
 #include "G4Region.hh"
 #include "G4ProductionCuts.hh"
-#include "G4LogicalVolumeStore.hh"
 
 #include "G4Tubs.hh"
 #include "G4Box.hh"

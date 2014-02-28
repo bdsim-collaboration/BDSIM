@@ -36,7 +36,7 @@ public: // with description
   
 private:
   /// assignment constructor not implemented nor used
-  BDSBackScatterBias& operator=(const BDSBackScatterBias);
+  BDSBackScatterBias& operator=(const BDSBackScatterBias&);
 
   G4double eFactor; // enhancement factor to the cross-setion
 

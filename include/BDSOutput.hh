@@ -37,6 +37,7 @@ enum BDSOutputFormat {
 class BDSOutput {
 
 public: 
+
   BDSOutput(); // default constructor
   BDSOutput(BDSOutputFormat format);
 
@@ -75,7 +76,7 @@ public:
 
 private:
   G4String _filename;
-  G4int format;
+  BDSOutputFormat format;
   std::ofstream of;
   std::ofstream ofEloss;
   int outputFileNumber;

@@ -1,19 +1,17 @@
+#include "BDSRegions.hh"
+
 #include "G4Electron.hh"
 #include "G4Positron.hh"
 
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-#include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 
-#include "BDSWorld.hh"
+//#include "BDSWorld.hh"
 #include "BDSMaterials.hh"
 #include "BDSBeamline.hh"
 
 #include "G4Region.hh"
-
-#include "G4IStore.hh"
-#include "G4GeometrySampler.hh"
 
 //GFlash parameterisation
 #include "GFlashHomoShowerParameterisation.hh"
@@ -21,30 +19,20 @@
 #include "BDSShowerModel.hh"
 #include "GFlashHitMaker.hh"
 #include "GFlashParticleBounds.hh"
-#include "BDSRegions.hh"
 
 #include "G4UserLimits.hh"
 #include "G4Region.hh"
 #include "G4ProductionCuts.hh"
 
 #include "G4Tubs.hh"
-#include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4UniformMagField.hh"
 #include "G4TransportationManager.hh"
-#include "G4PropagatorInField.hh"
-#include "G4SDManager.hh"
-#include "G4RunManager.hh"
-#include "G4ScoringBox.hh"
-#include "G4ScoringManager.hh"
-#include "G4PSCellFlux3D.hh"
-#include "BDSScoreWriter.hh"
 
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
-#include "globals.hh"
 #include "G4ios.hh"
 #include <iostream>
 #include <list>
