@@ -102,8 +102,6 @@ void BDSSteppingAction::SetTrackLength(G4double dvalue){
 
 //====================================================
 
-extern G4double htot;
-
 void BDSSteppingAction::UserSteppingAction(const G4Step* ThisStep)
 { 
 

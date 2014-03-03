@@ -45,8 +45,8 @@
 #include "BDSSamplerHit.hh"
 #include "BDSEnergyCounterHit.hh"
 
-#include "BDSLWCalorimeter.hh"
-#include "BDSLWCalorimeterHit.hh"
+// #include "BDSLWCalorimeter.hh"
+// #include "BDSLWCalorimeterHit.hh"
 
 #include "BDSSynchrotronRadiation.hh"
 
@@ -60,19 +60,10 @@ extern LogVolCountMap* LogVolCount;
 typedef std::list<BDSEnergyCounterSD*>  ECList;
 extern ECList* theECList;
 
-extern G4double BDSeBremFireDist;
-extern G4double BDSeBremZMin,BDSeBremZMax;
-
-// link to G4eBremsstrahlung.cc and G4GammaConversion.cc for muon studies
-extern G4bool BDSeBremsFiredThisEvent;
-extern G4double BDSeBremFireDist;
-
-G4double htot;
-G4int event_number;
-G4bool FireLaserCompton;
+G4int event_number; // event number, used for checking on printing verboseEventNumber
+G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
 
 extern BDSOutput* bdsOutput;
-
 
 //======================================================
 
@@ -114,7 +105,6 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #endif
 
   event_number = evt->GetEventID();
-  htot=0.;
   
   if(BDSGlobalConstants::Instance()->DoTwiss())
     {

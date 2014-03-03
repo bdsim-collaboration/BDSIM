@@ -24,23 +24,18 @@ Last modified 15.11.2005 by Ilya Agapov
 
 //GFlash parameterisation                                                                                                                                                     
 #include "GFlashHomoShowerParameterisation.hh"
-#include "G4FastSimulationManager.hh"
 #include "BDSShowerModel.hh"
 #include "GFlashHitMaker.hh"
 #include "GFlashParticleBounds.hh"
 
 
 class G4Box;
-class G4Tubs;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
-class G4Material;
 class G4UniformMagField;
-class BDSCalorimeterSD;
 class G4UserLimits;
 class G4VSensitiveDetector;
 
-class G4Navigator;
 class ElementList;
 
 //==============================================================
