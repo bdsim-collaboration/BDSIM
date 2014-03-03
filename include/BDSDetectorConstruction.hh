@@ -84,7 +84,6 @@ private:
   BDSDetectorConstruction(BDSDetectorConstruction&);
 
   G4bool verbose;
-  G4bool outline;
 
   void SetWorldSize(G4double*);
   void SetWorldSizeX(G4double);

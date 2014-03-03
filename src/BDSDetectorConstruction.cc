@@ -34,7 +34,6 @@
 #include "G4Region.hh"
 #include "G4ProductionCuts.hh"
 
-#include "G4Tubs.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -78,8 +77,6 @@
 
 //====================================
 
-//typedef list<BDSAcceleratorComponent*>  BDSBeamline;
-
 typedef std::list<BDSEnergyCounterSD*>  ECList;
 ECList* theECList;
 
@@ -87,9 +84,6 @@ ECList* theECList;
 // SYNCHROTRON RAD ***
 G4double BDSLocalRadiusOfCurvature=DBL_MAX;// Used in Mean Free Path calc.
 //--------------------------
-
-G4Material* aMaterial;
-extern G4double NumSpoilerRadLen;
 
 typedef std::map<G4String,int> LogVolCountMap;
 LogVolCountMap* LogVolCount;
@@ -99,8 +93,6 @@ LogVolMap* LogVol;
 
 //=========================================
 extern BDSOutput* bdsOutput;
-extern G4bool verbose;
-extern G4bool outline;
 
 #ifdef DEBUG
 bool debug = true;
@@ -119,7 +111,6 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   itsIStore(NULL),_globalRotation(NULL)
 {  
   verbose    = BDSExecOptions::Instance()->GetVerbose();
-  outline    = BDSExecOptions::Instance()->GetOutline();
   gflash     = BDSExecOptions::Instance()->GetGFlash();
   gflashemax = BDSExecOptions::Instance()->GetGFlashEMax();
   gflashemin = BDSExecOptions::Instance()->GetGFlashEMin();
@@ -686,7 +677,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	(*LogVolCount)[LogVolName]++;
 
 
-	// add the wolume to one of the regions
+	// add the volume to one of the regions
 	if(BDSBeamline::Instance()->currentItem()->GetPrecisionRegion())
 	  {
 #ifdef DEBUG
@@ -969,13 +960,18 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
 { 
   LogVolCount->clear();
   delete LogVolCount;
-
+  LogVolCount = NULL;
+  
   LogVolMap::iterator iter;
   for(iter=LogVol->begin();iter!=LogVol->end();iter++){
     delete (*iter).second;
   }
   LogVol->clear();
   delete LogVol;
+  LogVol = NULL;
+
+  delete theECList;
+  theECList = NULL;
 
   delete precisionRegion;
   gFlashRegion.clear();
