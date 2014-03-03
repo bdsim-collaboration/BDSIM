@@ -318,7 +318,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createDrift(){
     //Create the phiAngleIn using BDSTransform3D
     
     G4bool aperset=true;
-    if(!(_element.tunnelOffsetX)<1e6){
+    if(!(_element.tunnelOffsetX<1e6)){
       return (new BDSDrift( _element.name,
 			    _element.l*CLHEP::m,
 			    _element.blmLocZ,
