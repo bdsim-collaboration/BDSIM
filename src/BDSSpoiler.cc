@@ -5,6 +5,8 @@
 */
 #include "BDSGlobalConstants.hh" 
 #include "BDSSpoiler.hh"
+#include "BDSMaterials.hh"
+
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -20,7 +22,6 @@ extern LogVolCountMap* LogVolCount;
 
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
-extern BDSMaterials* theMaterials;
 //============================================================
 
 BDSSpoiler::BDSSpoiler (G4String& aName,G4double aLength,G4double bpRad,
@@ -41,7 +42,7 @@ BDSSpoiler::BDSSpoiler (G4String& aName,G4double aLength,G4double bpRad,
 				      BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
 				      BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
 				      itsLength/2),
-			    theMaterials->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			    BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			    itsName);
       BuildInnerSpoiler();
 
@@ -78,7 +79,7 @@ void BDSSpoiler::BuildInnerSpoiler()
 				  itsXAper,
 				  itsYAper,
 				  itsLength/2),
-			theMaterials->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			itsName+"_inner");
   
   itsPhysiComp2 = 
