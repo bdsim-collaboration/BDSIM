@@ -190,8 +190,10 @@ void BDSOutput::Init(G4int FileNum)
 #endif // USE_ROOT
 }
 
-void BDSOutput::WriteAsciiHit(G4int PDGType, G4double Mom, G4double X, G4double Y, G4double S, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID){
-  of<<PDGType
+void BDSOutput::WriteAsciiHit(G4String samplerName, G4int PDGType, G4double Mom, G4double X, G4double Y, G4double S, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID){
+  of<<samplerName
+    <<" "
+    <<PDGType
     <<" "
     <<Mom/CLHEP::GeV
     <<" "
@@ -261,7 +263,7 @@ void BDSOutput::WritePrimary(G4String samplerName, G4double E,G4double x0,G4doub
 #endif
   
   if( format == BDSOutputFormat::_ASCII) {
-    bdsOutput->WriteAsciiHit(PDGType, E, x0, y0, z0, xp, yp, nEvent, weight, 0, 1);
+    bdsOutput->WriteAsciiHit(samplerName, PDGType, E, x0, y0, z0, xp, yp, nEvent, weight, 0, 1);
   }
 }
 
@@ -274,6 +276,7 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
     for (G4int i=0; i<hc->entries(); i++)
       {
 	WriteAsciiHit(
+		      (*hc)[i]->GetName(),
 		      (*hc)[i]->GetPDGtype(),
 		      (*hc)[i]->GetMom(),
 		      (*hc)[i]->GetX(),
