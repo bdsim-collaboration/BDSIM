@@ -63,7 +63,7 @@ void BDSOutput::SetFormat(BDSOutputFormat val)
 #endif
       of.open(filename);
       of<<"### BDSIM output created "<<ctime(&tm)<<" ####"<<G4endl;
-      of<<"# PT E[GeV] X[mum] Y[mum] Z[m] Xp[rad] Yp[rad]  NEvent Weight ParentID TrackID"<<G4endl;
+      of<<"# SamplerName pT E[GeV] X[mum] Y[mum] Z[m] Xp[rad] Yp[rad]  NEvent Weight ParentID TrackID"<<G4endl;
       G4String filenameEloss = BDSExecOptions::Instance()->GetOutputFilename()+".eloss.txt";
 #ifdef DEBUG
       G4cout << __METHOD_NAME__ << "Eloss output format ASCII, filename: "<<filenameEloss<<G4endl;
