@@ -14,7 +14,6 @@
 
 #include "G4UserLimits.hh"
 #include "parser/enums.h"
-#include "parser/gmad.h"
 #include <map>
 
 //============================================================

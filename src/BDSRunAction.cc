@@ -9,7 +9,6 @@
 
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
-#include "BDSDebug.hh"
 #include "BDSRunAction.hh"
 #include "BDSRunManager.hh"
 
@@ -18,10 +17,7 @@
 //#include "G4VVisManager.hh"
 #include "G4ios.hh"
 
-#include "BDSAcceleratorComponent.hh"
-#include <list>
 #include <fstream>
-#include <string>
 
 #include "BDSTrackingFIFO.hh"
 

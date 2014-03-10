@@ -11,7 +11,6 @@
 //==================================================================
 #include "BDSGlobalConstants.hh" // must be first in include list
 #include "BDSPrimaryGeneratorAction.hh"
-#include "BDSOutput.hh"
 #include "BDSDetectorConstruction.hh"
 #include "BDSSamplerHit.hh"
 
@@ -29,7 +28,6 @@
 #include<iostream>
 
 extern BDSBunch bdsBunch;
-extern BDSOutput* bdsOutput;
 
 //===================================================
 // Keep initial point in phase space for diagnostics

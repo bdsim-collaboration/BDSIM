@@ -28,7 +28,7 @@ class BDSTypeSafeEnum : public def
  
 public:
  
-  BDSTypeSafeEnum() {}
+  BDSTypeSafeEnum() : val() {}
   BDSTypeSafeEnum(type v) : val(v) {}
   type underlying() const { return val; }
  

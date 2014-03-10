@@ -6,8 +6,6 @@
 
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSOutput.hh"
-#include "parser/enums.h"
 #include "parser/gmad.h"
 
 // CLHEP from Geant4

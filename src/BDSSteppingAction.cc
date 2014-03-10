@@ -27,14 +27,8 @@
 #include <iostream>
 #include "G4Track.hh"
 
-#include"G4TransportationManager.hh"
-
-#include"G4StepPoint.hh"
-#include "G4RotationMatrix.hh"
 #include "G4AffineTransform.hh"
 
-#include "BDSMaterials.hh"
-#include "G4Material.hh"
 #include "G4VSensitiveDetector.hh"
 #include "Randomize.hh"
 
@@ -42,16 +36,10 @@
 
 //#include "BDSNeutronTrackInfo.hh"
 
-#include "G4VUserTrackInformation.hh"
-
 #include "G4VProcess.hh"
 
-#include "G4MagneticField.hh"
 #include "G4EventManager.hh"
 #include "G4StackManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4MagIntegratorDriver.hh"
-#include "G4Region.hh"
 #include "BDSAcceleratorComponent.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
