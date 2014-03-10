@@ -14,7 +14,6 @@
 
 #include "BDSDumpSD.hh"
 #include "BDSDump.hh"
-#include "BDSSamplerHit.hh"
 #include "BDSDebug.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4LogicalVolume.hh"
