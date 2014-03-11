@@ -441,7 +441,7 @@ void BDSOutput::WriteCCDHits(BDSCCDPixelHitsCollection* hc)
   if( format == _ROOT) {
 #ifdef USE_ROOT
     G4int n_hit = hc->entries();
-    G4cout << __METHOD_NAME__ << " - n_hit = " << n_hit << G4endl;
+    //    G4cout << __METHOD_NAME__ << " - n_hit = " << n_hit << G4endl;
     for (G4int i=0;i<n_hit;i++)
       {
 	//get hits

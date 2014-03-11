@@ -110,6 +110,10 @@ void BDSMaterials::Initialise()
     (name="Zirkonium"   , symbol="Zr", z= 40., a=  91.224*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
   tmpElement = new G4Element
+    (name="Rubidium"   , symbol="Rb", z= 37., a=  85.4678*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
+
+
+  tmpElement = new G4Element
     (name="Strontium"   , symbol="Sr", z= 38., a=  87.62*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
   tmpElement = new G4Element
@@ -723,6 +727,14 @@ void BDSMaterials::Initialise()
     (name="carbonmonoxide", density, 2, kStateGas, temperature, pressure);
   tmpMaterial->AddElement(elements["C"], 1);
   tmpMaterial->AddElement(elements["O"], 1);
+  materials[name] = tmpMaterial; 
+
+  //Awake plasma - rubidium at density of 7e14 atoms/cm3 
+  G4double numberDensity = 7.0e14/CLHEP::cm3;
+  a = 85.4678*CLHEP::g/CLHEP::mole;
+  density = a*numberDensity;
+  tmpMaterial =  new G4Material
+    (name="awakeplasma", 37., a, density);
   materials[name] = tmpMaterial; 
 
   //Carbon monoxide beam pipe gas

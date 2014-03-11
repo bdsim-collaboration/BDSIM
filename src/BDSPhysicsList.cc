@@ -193,6 +193,11 @@
 #include "G4NeutrinoMu.hh"
 #include "G4AntiNeutrinoMu.hh"
 
+#include "G4TauPlus.hh"
+#include "G4TauMinus.hh"
+#include "G4NeutrinoTau.hh"
+#include "G4AntiNeutrinoTau.hh"
+
 #include "G4Electron.hh"
 #include "G4Positron.hh"
 #include "G4NeutrinoE.hh"
@@ -500,11 +505,15 @@ void BDSPhysicsList::ConstructParticle()
     G4Positron::PositronDefinition();
     G4MuonPlus::MuonPlusDefinition();
     G4MuonMinus::MuonMinusDefinition();
+    G4TauPlus::TauPlusDefinition();
+    G4TauMinus::TauMinusDefinition();
     
     G4NeutrinoE::NeutrinoEDefinition();
     G4AntiNeutrinoE::AntiNeutrinoEDefinition();
     G4NeutrinoMu::NeutrinoMuDefinition();
     G4AntiNeutrinoMu::AntiNeutrinoMuDefinition();  
+    G4NeutrinoTau::NeutrinoTauDefinition();
+    G4AntiNeutrinoTau::AntiNeutrinoTauDefinition();  
     
     // mesons
     G4MesonConstructor mConstructor;

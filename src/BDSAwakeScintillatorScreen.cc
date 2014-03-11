@@ -158,7 +158,7 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
   itsScreenScoringPlaneLog2->SetVisAttributes(_visAttSampler);
   G4double dispX=0;
   G4double dispY=0;
-  G4double dispZ=2*std::cos(_screenAngle)*(_screenThickness/2.0+_scoringPlaneThickness/2.0);
+  G4double dispZ=2*std::cos(std::abs(_screenAngle))*(_screenThickness/2.0+_scoringPlaneThickness/2.0);
   new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ),itsScreenScoringPlaneLog,_screenSamplerName,
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
 
@@ -259,7 +259,7 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   G4double thi=_totalThickness+2*_cameraScreenDist+2*_camera->size().z()+2*_scoringPlaneThickness;
   //Compute the marker volume length according to the screen thickness and width.
   G4double z_wid = _screenWidth * std::sin(std::abs(_screenAngle));//Length due to the screen width and angle
-  G4double z_thi = _totalThickness * std::cos(_screenAngle);//Length due to the screen thickness
+  G4double z_thi = _totalThickness * std::cos(std::abs(_screenAngle));//Length due to the screen thickness
   G4double x_wid = _screenWidth * std::cos(std::abs(_screenAngle));//Length due to the screen width and angle
   G4double x_thi = thi * std::sin(std::abs(_screenAngle));//Length due to the screen thickness
   itsLength  = (z_wid + z_thi);
