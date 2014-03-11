@@ -16,6 +16,7 @@
 #include <cstdlib>
 #include <cstddef>
 #include <cmath>
+#include <map>
 
 #include "BDSMultipole.hh"
 #include "G4Box.hh"
@@ -35,9 +36,6 @@
 
 #include "BDSMultipoleOuterMagField.hh"
 #include "G4MagneticField.hh"
-
-#include <map>
-#include <string>
 
 // #define DEBUG 1
 //============================================================

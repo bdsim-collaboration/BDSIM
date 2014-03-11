@@ -14,9 +14,8 @@
 #include "BDSMultipoleMagField.hh"
 
 #include "G4Navigator.hh"
+#include "G4ParticleDefinition.hh"
 #include "G4TransportationManager.hh"
-
-//std::ofstream testf;
 
 BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4double> ks)
 {

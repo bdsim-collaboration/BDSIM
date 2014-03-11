@@ -9,21 +9,19 @@ Last modified 30.10.2007 by Steve Malton
 #ifndef BDSGlobalConstants_h
 #define BDSGlobalConstants_h 
 
-#include <fstream>
-#include <string>
-#include <set>
+//#include <fstream>
 #include <deque>
+#include <map>
 
-#include "G4ParticleTable.hh"
-#include "G4ParticleDefinition.hh"
-#include "G4UniformMagField.hh"
 #include "G4ThreeVector.hh"
-#include "globals.hh"
-#include "G4FieldManager.hh"
 #include "G4String.hh"
 #include "G4AffineTransform.hh"
 
 #include "BDSParticle.hh"
+
+class G4FieldManager;
+class G4ParticleDefinition;
+class G4UniformMagField;
 
 struct Options;
 

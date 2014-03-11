@@ -8,6 +8,8 @@
 #include "BDSGlobalConstants.hh"
 #include "parser/gmad.h"
 
+#include "G4ParticleTable.hh"
+
 // CLHEP from Geant4
 #include "Randomize.hh"
 // CLHEP

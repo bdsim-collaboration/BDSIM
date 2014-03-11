@@ -27,8 +27,6 @@
 #include "G4Version.hh"
 #include "G4SDManager.hh"
 
-#include <string>
-
 extern G4int event_number;
 
 
