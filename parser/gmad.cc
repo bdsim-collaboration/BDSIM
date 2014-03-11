@@ -75,6 +75,11 @@ void init()
 
   // Default Values for Options
 
+  options.physicsList = "standard";
+  options.particleName = "";
+  options.distribType = "";
+  options.distribFile = "";
+
   options.numberToGenerate = 1;
   options.nlinesIgnore = 0;
   options.elossHistoBinWidth = 1.0;
@@ -115,6 +120,12 @@ void init()
   options.tunnelRadius = 0.0;
   options.beampipeRadius = 0.0;
   options.beampipeThickness = 0.0;
+
+  options.pipeMaterial = "StainlessSteel";
+  options.vacMaterial = "Vacuum";
+  options.tunnelMaterial = "concrete";
+  options.tunnelCavityMaterial = "Air";
+  options.soilMaterial = "soil";
 
   options.includeIronMagFields = 0;
 
@@ -186,8 +197,9 @@ void init()
   options.storeTrajectory = 0;
   options.stopTracks = 0;
 
+  options.fifo = "";
+  options.refvolume = "";
   options.refcopyno = 0;
-
 }
 
 void ElementList::push_back(Element& el) {
