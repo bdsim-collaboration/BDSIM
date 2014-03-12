@@ -261,7 +261,9 @@ int main(int argc,char** argv) {
 #endif
   runManager->SetUserAction(new BDSPrimaryGeneratorAction(detector));
 
-  
+
+
+  G4TransportationManager::GetTransportationManager()->GetPropagatorInField()->SetLargestAcceptableStep(1*cm);
 
   //
   // Initialize G4 kernel
