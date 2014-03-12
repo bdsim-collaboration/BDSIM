@@ -1036,6 +1036,7 @@ void BDSMaterials::ListMaterials(){
   G4cout << "Vanadium" << G4endl;
   G4cout << "Water" << G4endl;
   G4cout << "WeightIron" << G4endl;
+  G4cout << "AwakePlasma" << G4endl;
   G4cout << "****************************" << G4endl;
   G4cout << "Available nist materials are:" << G4endl;
   G4String list="all";
