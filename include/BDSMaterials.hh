@@ -62,10 +62,11 @@ protected:
   std::map<G4String,G4Element*>  elements; //SPM
 private:
   static BDSMaterials* _instance;
-  G4Material* tmpMaterial;
-  G4Element* tmpElement;
   G4MaterialPropertiesTable* airMaterialPropertiesTable;
+  G4MaterialPropertiesTable* celluloseMaterialPropertiesTable;
   G4MaterialPropertiesTable* fsMaterialPropertiesTable;
+  G4MaterialPropertiesTable* petMaterialPropertiesTable;
+  G4MaterialPropertiesTable* vacMaterialPropertiesTable;
 
 };
 

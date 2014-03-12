@@ -23,8 +23,6 @@
 #include <list>
 #include <map>
 
-//#define DEBUG 1
-
 BDSMaterials* BDSMaterials::_instance = 0;
 
 BDSMaterials* BDSMaterials::Instance(){
@@ -68,7 +66,7 @@ void BDSMaterials::Initialise()
   G4cout << "tesla= " << CLHEP::tesla << G4endl;
 #endif
   
-  tmpElement = new G4Element
+  G4Element* tmpElement = new G4Element
     (name="Hydrogen"   , symbol="H" , z=  1., a=   1.00*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
   tmpElement = new G4Element
@@ -181,7 +179,7 @@ void BDSMaterials::Initialise()
 
   // solid materials
 
-  tmpMaterial = new G4Material
+  G4Material* tmpMaterial = new G4Material
     (name="aluminium"     , density=  2.700*CLHEP::g/CLHEP::cm3, 1, kStateSolid);
   tmpMaterial->AddElement(elements["Al"],1);
   materials[name] = tmpMaterial; 
@@ -481,7 +479,7 @@ void BDSMaterials::Initialise()
   const G4int Pet_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Pet_RIND[Pet_NUMENTRIES] = {1.570,1.570,1.570};//Assume constant refractive index.
   G4double Pet_Energy[Pet_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
-  G4MaterialPropertiesTable*  petMaterialPropertiesTable=new G4MaterialPropertiesTable();
+  petMaterialPropertiesTable=new G4MaterialPropertiesTable();
   petMaterialPropertiesTable->AddProperty("RINDEX",Pet_Energy, Pet_RIND, Pet_NUMENTRIES);
   tmpMaterial->SetMaterialPropertiesTable(petMaterialPropertiesTable);
   materials[name]=tmpMaterial;
@@ -492,7 +490,7 @@ void BDSMaterials::Initialise()
   const G4int Cellulose_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Cellulose_RIND[Cellulose_NUMENTRIES] = {1.532,1.532,1.532};//Assume constant refractive index.
   G4double Cellulose_Energy[Cellulose_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
-  G4MaterialPropertiesTable*  celluloseMaterialPropertiesTable=new G4MaterialPropertiesTable();
+  celluloseMaterialPropertiesTable=new G4MaterialPropertiesTable();
   celluloseMaterialPropertiesTable->AddProperty("RINDEX",Cellulose_Energy, Cellulose_RIND, Cellulose_NUMENTRIES);
   tmpMaterial->SetMaterialPropertiesTable(celluloseMaterialPropertiesTable);
   materials[name] = tmpMaterial;
@@ -594,7 +592,7 @@ void BDSMaterials::Initialise()
   const G4int Vac_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Vac_RIND[Vac_NUMENTRIES] = {1.000,1.000,1.000};//Assume refractive index = 1 in a vacuum.
   G4double Vac_Energy[Vac_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
-  G4MaterialPropertiesTable*  vacMaterialPropertiesTable=new G4MaterialPropertiesTable();
+  vacMaterialPropertiesTable=new G4MaterialPropertiesTable();
   vacMaterialPropertiesTable->AddProperty("RINDEX",Vac_Energy, Vac_RIND, Vac_NUMENTRIES);
   tmpMaterial->SetMaterialPropertiesTable(vacMaterialPropertiesTable);
 
@@ -877,7 +875,10 @@ BDSMaterials::~BDSMaterials(){
   elements.clear();
 
   delete airMaterialPropertiesTable;
+  delete celluloseMaterialPropertiesTable;
   delete fsMaterialPropertiesTable;
-  
+  delete petMaterialPropertiesTable;
+  delete vacMaterialPropertiesTable;  
+
   _instance = 0;
 }
