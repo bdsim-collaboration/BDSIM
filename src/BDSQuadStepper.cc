@@ -137,6 +137,9 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
 	  // check for paraxial approximation:
 	  if((fabs(zp)>0.99)&&(fabs(kappa)<1.e-6))
 	    {
+	      #ifdef DEBUG
+	      G4cout << "paraxial approximation being used" << G4endl;
+	      #endif
 	      G4double rootK=sqrt(fabs(kappa*zp));
 	      G4double rootKh=rootK*h*zp;
 	      G4double X11,X12,X21,X22;
