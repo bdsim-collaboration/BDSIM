@@ -49,6 +49,8 @@ BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String
   _screenAngle=-45*BDSGlobalConstants::Instance()->GetPI()/180.0;
   _screenRotationMatrix->rotateY(_screenAngle);
 
+  _vacRotationMatrix = new G4RotationMatrix();
+
   itsType="awakescreen";
   SetName(aName);
   if ( (*LogVolCount)[itsName]==0)
@@ -192,6 +194,7 @@ void BDSAwakeScintillatorScreen::Build(){
       BuildCamera();	
       ComputeDimensions();
       BuildMarkerVolume();
+      //      BuildVacuumChamber1();
       BuildScreenScoringPlane();
       //      BuildCameraScoringPlane();
       PlaceScreen();
@@ -262,8 +265,9 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   G4double z_thi = _totalThickness * std::cos(std::abs(_screenAngle));//Length due to the screen thickness
   G4double x_wid = _screenWidth * std::cos(std::abs(_screenAngle));//Length due to the screen width and angle
   G4double x_thi = thi * std::sin(std::abs(_screenAngle));//Length due to the screen thickness
-  itsLength  = (z_wid + z_thi);
-  itsXLength = (x_wid +x_thi);
+  G4double x_vac_chamber=7*cm;
+  itsLength  = (z_wid + z_thi);  
+  itsXLength = (x_wid +x_thi+2*x_vac_chamber);
   itsYLength = std::max(_screenHeight,_camera->size().y());
   std::cout << __METHOD_NAME__ << " " << itsLength << " " << itsXLength << " " << itsYLength << std::endl;
 }
@@ -288,6 +292,45 @@ void BDSAwakeScintillatorScreen::BuildMarkerVolume(){
   itsMarkerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   itsMarkerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
 #endif
+}
+
+void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
+  G4double windowHeight=70*mm;
+  G4double mylarThickness=0.3*mm;
+  G4double kevlarThickness=0.05*mm;
+
+  G4double vacuumHeight=70*mm;
+  G4double vacuumWidth=70*mm;
+  G4double vacuumLength=itsLength;
+
+  //  G4VSolid* windowSolid = new G4Box("windowSolid",70/2.0
+
+  G4double dispZ=0;
+  //  G4double dispX=-itsXLength/2.0 + vacuumWidth;
+  G4double dispX=0;
+
+  G4VSolid* vacuumSolid = new G4Box("vacuumSolid",vacuumWidth/2.0, vacuumHeight/2.0, vacuumLength/2.0);
+  G4LogicalVolume* vacuumLog = new G4LogicalVolume(vacuumSolid, BDSMaterials::Instance()->GetMaterial("lead"), "vacuumLog",0,0,0);
+  new G4PVPlacement(_vacRotationMatrix, 
+		    G4ThreeVector(dispX,0,dispZ), 
+		    vacuumLog, 
+		    "awakeScreenVacuumPV", 
+		    itsMarkerLogicalVolume, 
+		    false, 
+		    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
+		    );
+
+  G4VisAttributes* vacVisAttributes=new G4VisAttributes(G4Colour(0.3,0.0,0.4));
+  vacVisAttributes->SetForceWireframe(true);
+  vacuumLog->SetVisAttributes(vacVisAttributes);
+
+
+
+}
+
+void BDSAwakeScintillatorScreen::BuildVacuumChamber2(){
+
 }
 
 

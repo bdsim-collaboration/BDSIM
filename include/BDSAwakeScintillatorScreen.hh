@@ -37,6 +37,8 @@ private:
   void BuildScreen();
   void PlaceScreen();
   void BuildAwakeScintillatorScreenTunnel();
+  void BuildVacuumChamber1();
+  void BuildVacuumChamber2();
   G4VisAttributes* SetVisAttributes();
   void ComputeDimensions();
   void BuildMarkerVolume();
@@ -74,6 +76,7 @@ private:
   G4double itsOuterR;
 
   G4RotationMatrix* _screenRotationMatrix;
+  G4RotationMatrix* _vacRotationMatrix;
 
   //scoring plane
   G4double _totalThickness;
