@@ -47,9 +47,6 @@ public:
   ~BDSGlobalConstants();
   
 
- 
-  G4double GetPI();
-
   G4bool GetDoPlanckScattering();
 
   G4bool GetCheckOverlaps();
@@ -62,9 +59,6 @@ public:
   G4double GetMaximumEpsilonStep();
   G4double GetMaxTime();
   G4double GetDeltaOneStep();
-
-  void SetLogFile(std::ofstream & os);
-  void StripHeader(std::istream& is);
 
   G4String StringFromInt(G4int anInt);
   G4String StringFromDigit(G4int anInt);
@@ -204,10 +198,7 @@ public:
 
   G4double GetLengthSafety();
 
-  std::ofstream GetEventOutput();
-
   G4long GetRandomSeed();
-  G4bool GetUseBatch();
   G4int GetNumberToGenerate();
 
   G4int GetNumberOfEventsPerNtuple();
@@ -247,7 +238,7 @@ public:
   void                     SetRefTransform(G4AffineTransform& aTransform);
 
   // SPM : temp filestream for placet to read and write
-  std::ofstream fileDump;
+  //  std::ofstream fileDump;
   // ifstream fileRead; replaced with FILE* fifo in code for consistency with Placet. SPM
 
   std::deque<BDSParticle> holdingQueue;
@@ -270,11 +261,7 @@ private:
   G4double itsElossHistoTransBinWidth;
   G4double itsDefaultRangeCut;
   G4double itsFFact;
-  //PI
-  G4double PI;
-  // Data Members for Class Attributes
-  std::ifstream ifs;
-  std::ostream* log;
+
   // initial bunch parameters
   G4String itsParticleName;
   G4ParticleDefinition* itsBeamParticleDefinition;
@@ -360,7 +347,6 @@ private:
   G4bool itsStoreNeutronTrajectories;
   G4bool itsIncludeIronMagFields;
   G4double itsLengthSafety;
-  G4bool itsUseBatch;
   G4long itsRandomSeed;
   G4int itsNumberToGenerate;
   G4int itsNumberOfEventsPerNtuple;
@@ -431,11 +417,6 @@ inline G4double BDSGlobalConstants::GetFFact(){
   return itsFFact;
 }
 
-inline G4double BDSGlobalConstants::GetPI()
-{
-  return PI;
-}
-
 inline G4double BDSGlobalConstants::GetMinimumEpsilonStep()
 {
   return itsMinimumEpsilonStep;
@@ -455,12 +436,6 @@ inline G4double BDSGlobalConstants::GetDeltaOneStep()
 {
   return itsDeltaOneStep;
 }
-
-inline void BDSGlobalConstants::SetLogFile(std::ofstream & os)
-{
-  log=&os;
-}
-
 
 inline G4double BDSGlobalConstants::GetBeamKineticEnergy()
 {
@@ -794,8 +769,6 @@ inline void BDSGlobalConstants::SetStopTracks(G4bool val)
 
 inline G4long BDSGlobalConstants::GetRandomSeed()
 {return itsRandomSeed;}
-inline  G4bool BDSGlobalConstants::GetUseBatch()
-{return itsUseBatch;}
 inline G4int BDSGlobalConstants::GetNumberToGenerate()
 {return itsNumberToGenerate;}
 

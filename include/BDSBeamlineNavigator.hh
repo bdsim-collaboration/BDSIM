@@ -1,6 +1,7 @@
 #ifndef __BDSBEAMLINENAVIGATOR_H
 #define __BDSBEAMLINENAVIGATOR_H
 
+#include "G4Transform3D.hh"
 #include "G4ThreeVector.hh"
 #include "G4RotationMatrix.hh"
 

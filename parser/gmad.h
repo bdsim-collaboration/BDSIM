@@ -86,7 +86,7 @@ struct Options {
   // for element specification
   double xsize, ysize;
 
-  int backgroundScaleFactor;
+  //  int backgroundScaleFactor;
 
   // default geometry parameters
   double    componentBoxSize;

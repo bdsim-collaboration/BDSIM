@@ -41,7 +41,6 @@
 
 #include "BDSSampler.hh"
 #include "BDSSamplerCylinder.hh"
-#include "BDSSamplerSD.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSEnergyCounterHit.hh"
 

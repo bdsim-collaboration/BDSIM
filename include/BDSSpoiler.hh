@@ -7,9 +7,8 @@
 #ifndef BDSSpoiler_h
 #define BDSSpoiler_h 1
 
-#include"globals.hh"
-#include"BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
+#include "globals.hh"
+#include "BDSAcceleratorComponent.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
 

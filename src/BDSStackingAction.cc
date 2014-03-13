@@ -155,7 +155,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       G4int    trackID=aTrack->GetTrackID();
       G4int    parentID=aTrack->GetParentID();
 
-      BDSGlobalConstants::Instance()->fileDump.precision(15);
+      // BDSGlobalConstants::Instance()->fileDump.precision(15);
       // TODO : dump the file
       //        BDSGlobalConstants::Instance()->fileDump << aTrack->GetTotalEnergy()/CLHEP::GeV << "\t"
       //<< x << "\t" << y << "\t" << z << "\t"

@@ -1,6 +1,7 @@
 #include "BDSExecOptions.hh"
 
-#include "BDSMaterials.cc"
+#include "BDSMaterials.hh"
+#include "BDSOutput.hh"
 
 BDSExecOptions* BDSExecOptions::_instance=0;
 

@@ -25,46 +25,25 @@ BDSGlobalConstants* BDSGlobalConstants::Instance(){
 }
 
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
-  log(NULL), itsBeamParticleDefinition(NULL)
+  itsBeamParticleDefinition(NULL)
 {
-  PI = 4.0 * atan(1.0);
-  // defaults:
-  if(opt.physicsList == "") 
-    itsPhysListName = "standard";
-  else
-    itsPhysListName = opt.physicsList;
-  if(opt.pipeMaterial == "") 
-    itsPipeMaterial = "StainlessSteel";
-  else
-    itsPipeMaterial = opt.pipeMaterial;
-  if(opt.vacMaterial == "") 
-    itsVacMaterial = "Vacuum";
-  else
-    itsVacMaterial = opt.vacMaterial;
+  itsPhysListName = opt.physicsList;
+  itsPipeMaterial = opt.pipeMaterial;
+  itsVacMaterial = opt.vacMaterial;
+  itsTunnelMaterialName = opt.tunnelMaterial;
+  itsTunnelCavityMaterialName = opt.tunnelCavityMaterial;
+  itsSoilMaterialName = opt.soilMaterial;
 
- if(opt.tunnelMaterial == "") 
-    itsTunnelMaterialName = "concrete";
-  else
-    itsTunnelMaterialName = opt.tunnelMaterial;
- if(opt.tunnelCavityMaterial == "") 
-    itsTunnelCavityMaterialName = "Air";
-  else
-    itsTunnelCavityMaterialName = opt.tunnelCavityMaterial;
- if(opt.soilMaterial == "") 
-    itsSoilMaterialName = "soil";
-  else
-    itsSoilMaterialName = opt.soilMaterial;
-
- itsSampleDistRandomly = true;
- itsGeometryBias = opt.geometryBias;
-
- itsShowTunnel=opt.showTunnel;
- itsSensitiveComponents=opt.sensitiveBeamlineComponents;
- itsSensitiveBeamPipe=opt.sensitiveBeamPipe;
- itsSensitiveBLMs=opt.sensitiveBLMs;
- itsDefaultRangeCut=opt.defaultRangeCut;
- itsElossHistoBinWidth=opt.elossHistoBinWidth; //Longitudinal and transverse energy loss histogram bin widths
- itsElossHistoTransBinWidth=opt.elossHistoTransBinWidth;
+  itsSampleDistRandomly = true;
+  itsGeometryBias = opt.geometryBias;
+  
+  itsShowTunnel=opt.showTunnel;
+  itsSensitiveComponents=opt.sensitiveBeamlineComponents;
+  itsSensitiveBeamPipe=opt.sensitiveBeamPipe;
+  itsSensitiveBLMs=opt.sensitiveBLMs;
+  itsDefaultRangeCut=opt.defaultRangeCut;
+  itsElossHistoBinWidth=opt.elossHistoBinWidth; //Longitudinal and transverse energy loss histogram bin widths
+  itsElossHistoTransBinWidth=opt.elossHistoTransBinWidth;
   itsFFact=opt.ffact;
   itsParticleName=G4String(opt.particleName);
   itsBeamTotalEnergy = opt.beamEnergy * CLHEP::GeV;
