@@ -895,7 +895,9 @@ void BDSPhysicsList::ConstructOptical()
       pmanager->SetProcessOrderingToLast(theScintillationProcess, idxPostStep);
     }
     if (particleName == "opticalphoton") {
+#ifdef DEBUG
       G4cout << " AddDiscreteProcess to OpticalPhoton " << G4endl;
+#endif
       pmanager->AddDiscreteProcess(theAbsorptionProcess);
       pmanager->AddDiscreteProcess(theRayleighScatteringProcess);
       pmanager->AddDiscreteProcess(theMieHGScatteringProcess);
