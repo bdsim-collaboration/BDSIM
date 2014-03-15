@@ -63,7 +63,7 @@ void BDSOutput::SetFormat(BDSOutputFormat val)
 #endif
       of.open(filename);
       of<<"### BDSIM output created "<<ctime(&tm)<<" ####"<<G4endl;
-      of<<"# SamplerName pT E[GeV] X[mum] Y[mum] Z[m] Xp[rad] Yp[rad]  NEvent Weight ParentID TrackID"<<G4endl;
+      of<<"# PT E[GeV] X[mum] Y[mum] Z[m] Xp[rad] Yp[rad]  NEvent Weight ParentID TrackID"<<G4endl;
       G4String filenameEloss = BDSExecOptions::Instance()->GetOutputFilename()+".eloss.txt";
 #ifdef DEBUG
       G4cout << __METHOD_NAME__ << "Eloss output format ASCII, filename: "<<filenameEloss<<G4endl;
@@ -190,10 +190,8 @@ void BDSOutput::Init(G4int FileNum)
 #endif // USE_ROOT
 }
 
-void BDSOutput::WriteAsciiHit(G4String samplerName, G4int PDGType, G4double Mom, G4double X, G4double Y, G4double S, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID){
-  of<<samplerName
-    <<" "
-    <<PDGType
+void BDSOutput::WriteAsciiHit(G4int PDGType, G4double Mom, G4double X, G4double Y, G4double S, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID){
+  of<<PDGType
     <<" "
     <<Mom/CLHEP::GeV
     <<" "
@@ -263,7 +261,7 @@ void BDSOutput::WritePrimary(G4String samplerName, G4double E,G4double x0,G4doub
 #endif
   
   if( format == BDSOutputFormat::_ASCII) {
-    bdsOutput->WriteAsciiHit(samplerName, PDGType, E, x0, y0, z0, xp, yp, nEvent, weight, 0, 1);
+    bdsOutput->WriteAsciiHit(PDGType, E, x0, y0, z0, xp, yp, nEvent, weight, 0, 1);
   }
 }
 
@@ -276,7 +274,6 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
     for (G4int i=0; i<hc->entries(); i++)
       {
 	WriteAsciiHit(
-		      (*hc)[i]->GetName(),
 		      (*hc)[i]->GetPDGtype(),
 		      (*hc)[i]->GetMom(),
 		      (*hc)[i]->GetX(),
