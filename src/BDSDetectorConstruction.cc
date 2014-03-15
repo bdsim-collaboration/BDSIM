@@ -961,18 +961,18 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
 { 
   LogVolCount->clear();
   delete LogVolCount;
-  LogVolCount = NULL;
+  //LogVolCount = NULL;
   
-  LogVolMap::iterator iter;
-  for(iter=LogVol->begin();iter!=LogVol->end();iter++){
-    delete (*iter).second;
-  }
+  //LogVolMap::iterator iter;
+  //for(iter=LogVol->begin();iter!=LogVol->end();iter++){
+  //  delete (*iter).second;
+  // }
   LogVol->clear();
   delete LogVol;
-  LogVol = NULL;
+  //LogVol = NULL;
 
   delete theECList;
-  theECList = NULL;
+  //theECList = NULL;
 
   delete precisionRegion;
   gFlashRegion.clear();
