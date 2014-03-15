@@ -543,6 +543,13 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   localY = G4ThreeVector(0.,1.,0.);
   localZ = G4ThreeVector(0.,0.,1.);
   
+  //you only need a single instance of your sensitive detector class
+  //attach to as many logical volumes as you want
+  //note each new sensitive detector invokes a slow string compare
+  //while registering with sd manager.  ok if only a few SD types.
+  BDSEnergyCounterSD* ECounter=new BDSEnergyCounterSD("base_ec");
+  SDman->AddNewDetector(ECounter); //can be slow 
+  theECList->push_back(ECounter);
   
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     { 
@@ -697,13 +704,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 
 	if(SensVol)
 	  {
-	    BDSEnergyCounterSD* ECounter=new BDSEnergyCounterSD(LogVolName);
+	    //use already defined instance of Ecounter sd
 	    BDSBeamline::Instance()->currentItem()->SetBDSEnergyCounter(ECounter);
 	    SensVol->SetSensitiveDetector(ECounter);
-	    SDman->AddNewDetector(ECounter);
-	    theECList->push_back(ECounter);
 	  }
-
 
 #ifdef DEBUG
 	G4cout<<"SETTING UP MULTIPLE SENSITIVE VOLUMES..."<< G4endl;
@@ -714,12 +718,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	  {
 	    for(G4int i=0; i<(G4int)MultipleSensVols.size(); i++)
 	      {
-		BDSEnergyCounterSD* ECounter=
-		  new BDSEnergyCounterSD(LogVolName+BDSGlobalConstants::Instance()->StringFromInt(i));
+		//use already defined instance of Ecounter sd
 		BDSBeamline::Instance()->currentItem()->SetBDSEnergyCounter(ECounter);
-		MultipleSensVols.at(i)->SetSensitiveDetector(ECounter);
-		SDman->AddNewDetector(ECounter);
-		theECList->push_back(ECounter);	     
+		MultipleSensVols.at(i)->SetSensitiveDetector(ECounter);	     
 		
 		if(gflash){
 		  if((MultipleSensVols.at(i)->GetRegion() != precisionRegion) && (BDSBeamline::Instance()->currentItem()->GetType()==_ELEMENT)){//If not in the precision region....
