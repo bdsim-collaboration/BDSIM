@@ -158,15 +158,16 @@ int main(int argc,char** argv) {
   CLHEP::HepRandom::setTheSeed(seed);
 
   // Print generator full state to output 
-  G4cout << __FUNCTION__ << "Random number generator's state: " << G4endl;
+  G4cout << __FUNCTION__ << "> Random number generator's state: " << G4endl << G4endl;
   CLHEP::HepRandom::saveFullState(G4cout);
+  G4cout << G4endl;
 
 #ifdef DEBUG
   G4cout << __FUNCTION__ << "> Seed from BDSGlobalConstants=" 
 	 << BDSGlobalConstants::Instance()->GetRandomSeed() << G4endl;
 #endif
-
-  G4cout << __FUNCTION__ << "> Random number generator's seed=" 
+ 
+  G4cout << __FUNCTION__ << "> Random number generator's seed = "
 	 << CLHEP::HepRandom::getTheSeed() << G4endl;
 
 
@@ -205,16 +206,15 @@ int main(int argc,char** argv) {
   G4double worldMaximumExtent=1000*CLHEP::m;
   // This sets the tolerances for the geometry (1e-11 times this value)
   G4GeometryManager::GetInstance()->SetWorldMaximumExtent(worldMaximumExtent); 
-  G4cout << __FUNCTION__ << "> Geometry tolerances with worldMaximumExtent=" 
-	 << worldMaximumExtent/CLHEP::m << " m: surface: " 
-	 << theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m << " m " 
-	 << " angular: " << theGeometryTolerance->GetAngularTolerance() 
-	 << " radial: " << theGeometryTolerance->GetRadialTolerance() << " " <<G4endl;
-  
-  
-#ifdef DEBUG 
-  G4cout << __FUNCTION__ << "> Constructing detector"<<G4endl;
+#ifdef DEBUG
+  G4cout<<__FUNCTION__<<"> Geometry Toleranes: " << G4endl;
+  G4cout<<__FUNCTION__<<std::setw(23)<<" World Maximum Extent: "<<std::setw(15)<<worldMaximumExtent/CLHEP::m<<" m"<<G4endl;
+  G4cout<<__FUNCTION__<<std::setw(23)<<" Surface: "             <<std::setw(15)<<theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m<< " m"<<G4endl;
+  G4cout<<__FUNCTION__<<std::setw(23)<<" Angular: "             <<std::setw(15)<<theGeometryTolerance->GetAngularTolerance()<<G4endl;
+  G4cout<<__FUNCTION__<<std::setw(23)<<" Radial: "              <<std::setw(15)<<theGeometryTolerance->GetRadialTolerance()<<G4endl;
 #endif
+  
+  G4cout << __FUNCTION__ << "> Constructing the accelerator"<<G4endl;
   BDSDetectorConstruction* detector = new BDSDetectorConstruction();
  
 #ifdef DEBUG 
