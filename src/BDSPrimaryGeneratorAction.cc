@@ -19,7 +19,6 @@
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4Track.hh"
-#include "G4Trajectory.hh"
 
 #include "Randomize.hh"
 

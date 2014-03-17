@@ -18,7 +18,6 @@
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
 #include "BDSOutput.hh"
 #include "BDSDumpSD.hh"
