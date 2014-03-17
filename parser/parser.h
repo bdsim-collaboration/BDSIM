@@ -24,11 +24,13 @@
 
 #include <iostream>
 
+#include "element.h"
+#include "elementlist.h"
 #include "enums.h"
-#include "gmad.h"
 #include "getEnv.h"
-
-//double pow(double x, double y) {return exp( y * log(x));}
+#include "gmad.h"
+#include "options.h"
+#include "parameters.h"
 
 int yyerror(const char *);
 
@@ -39,10 +41,34 @@ extern int yylex();
 const int MAX_EXPAND_ITERATIONS = 50;
 //const int MAX_MULTIPOLE_ORDER = 5;
 
-const int _undefined = 0;
+//const int _undefined = 0;
 
 std::list<double> _tmparray;  // for reading of arrays
 std::list<char*> _tmpstring;
+
+struct Parameters params;
+struct Options options;
+struct Element element;
+
+
+// list of all encountered elements
+ElementList element_list;
+
+// temporary list
+std::list<struct Element> tmp_list;
+
+ElementList beamline_list;
+std::list<struct Element> material_list;
+std::list<struct Element> atom_list;
+
+const char* current_line = "";
+const char* current_start = "";
+const char* current_end = "";
+
+//struct symtab *symtab; 
+std::map<std::string, struct symtab*> symtab_map;
+
+extern struct symtab * symlook(const char *s);
 
 // representation of arrays used in tokens
 struct Array {
@@ -50,140 +76,6 @@ struct Array {
   double *data;
   int size;
 };
-
-const char *typestr(int type) {
-  switch(type){
-  case _MARKER : 
-    return "marker";
-  case _DRIFT :
-    return "drift";
-  case _PCLDRIFT :
-    return "pcldrift";
-  case _RF :
-   return "rf";
-  case _SBEND : 
-    return "sbend";
-  case _RBEND :
-    return "rbend";
-  case _QUAD :
-    return "quadrupole";
-  case _SEXTUPOLE :
-    return "sextupole";
-  case _OCTUPOLE :
-    return "octupole";
-  case _MULT :
-    return "multipole";
-  case _SOLENOID : 
-    return "solenoid";
-  case _ECOL : 
-    return "ecol";
-  case _MUSPOILER : 
-    return "muspoiler";
-  case _VKICK :
-    return "vkick";
-  case _HKICK :
-    return "hkick";
-  case _RCOL : 
-    return "rcol";
-  case _LINE :
-    return "line";
-  case _REV_LINE :
-    return "rev_line";
-  case _SAMPLER :
-    return "sampler";
-  case _CSAMPLER:
-    return "csampler";
-  case _GAS:
-    return "gas";
-  case _TUNNEL:
-    return "tunnel";
-  case _MATERIAL:
-    return "material";
-  case _ATOM:
-    return "atom";
-  case _LASER:
-    return "laser";
-  case _ELEMENT :
-    return "element";
-  case _TRANSFORM3D :
-    return "transform3d";
-  case _SCREEN :
-    return "screen";
-  default:
-    return "none";
-  }
-}
-struct Parameters params;
-struct Options options;
-struct Element element;
-
-void Element::print(int & ident)const{
-  for(int i=0;i<ident;i++)
-    printf("--");
-
-  printf("->%s : %s",name.c_str(),typestr(type));
-
-  std::list<double>::const_iterator it;
-  switch(type) {
-  case _DRIFT:
-  case _PCLDRIFT:
-  case _SBEND:
-  case _RBEND:
-  case _QUAD:
-  case _SEXTUPOLE:
-  case _OCTUPOLE:
-    printf(", l=%.10g, k0=%.10g, k1=%.10g, k2=%.10g, k3=%.10g, angle=%.10g,tilt=%.10g ",
-	   l,k0,k1,k2,k3,angle,tilt);
-    break;
-    
-  case _SOLENOID:
-    printf(", l=%.10g, ks=%.10g ", l, ks);
-    break;
-    
-  case _MULT:
-    printf(" , knl={");
-    for(it=knl.begin();it!=knl.end();++it)
-      printf("%.10g, ",(*it));
-    printf("},  ksl={");
-    for(it=ksl.begin();it!=ksl.end();++it)
-      printf("%.10g, ",(*it));
-    printf("}");
-    break;
-    
-  case _ELEMENT:
-    printf("\ngeometry file : %s\n",geometryFile.c_str());
-    printf("B map file : %s\n",bmapFile.c_str());
-    //printf("E map driver : %s\n",geometryFile);
-    //printf("E map file : %s\n",geometryFile);
-    break;
-    
-  case _SCREEN:
-    break;
-    
-  case _CSAMPLER:
-    printf(" length=%.10g, radius=%.10g",l, r);
-    break;
-    
-  case _TRANSFORM3D:
-    printf(" xdir=%.10g, ydir=%.10g, zdir=%.10g,  phi=%.10g, theta=%.10g,psi=%.10g",
-	   xdir, ydir, zdir, phi, theta, psi);
-    break;
-  case _MATERIAL:
-    printf(" A=%.10g, Z=%.10g, density=%.10g,  temper=%.10g, pressure=%.10g",
-	   A, Z, density, temper, pressure);
-    break;
-  default:
-    break;
-  }
-  
-  printf("\n");
-  
-  if(lst != NULL)
-    {
-      ::print(*lst,++ident);
-      ident--;
-    }
-}
 
 void print(struct Parameters pars)
 {
@@ -259,7 +151,7 @@ void flush(struct Element& e )
   e.tunnelRadius=0;
   e.tunnelOffsetX=1e6;
 }
-
+/*
 void copy_properties(std::list<struct Element>::iterator dest, std::list<struct Element>::iterator src)
 {
 
@@ -339,6 +231,7 @@ void copy_properties(std::list<struct Element>::iterator dest, std::list<struct 
 
   return;
 } 
+*/
 
 void inherit_properties(struct Element e)
 {
@@ -485,26 +378,6 @@ void set_vector(std::list<int>& dst, struct Array *src)
   std::cout << std::endl;
 #endif
 }
-
-
-// list of all encountered elements
-ElementList element_list;
-
-// temporary list
-std::list<struct Element> tmp_list;
-
-ElementList beamline_list;
-std::list<struct Element> material_list;
-std::list<struct Element> atom_list;
-
-const char* current_line = "";
-const char* current_start = "";
-const char* current_end = "";
-
-//struct symtab *symtab; 
-std::map<std::string, struct symtab*> symtab_map;
-
-extern struct symtab * symlook(const char *s);
 
 int write_table(struct Parameters pars,const char* name, int type, std::list<struct Element> *lst=NULL);
 int expand_line(const char *name, const char *start, const char *end);
@@ -1010,7 +883,10 @@ int expand_line(const char *charname, const char *start, const char* end)
 #ifdef DEBUG 
 		  printf("keeping element...%s\n",(*it).name.c_str());
 #endif
-		  copy_properties(it,tmpit);
+		  // copy properties
+		  //		  copy_properties(it,tmpit);
+		  // better use default assign operator:
+		  (*it) = (*tmpit);
 #ifdef DEBUG 
 		  printf("done\n");
 #endif
@@ -1149,16 +1025,6 @@ void add_gas(const char *name, const char *before, int before_count,  const char
   e.lst = NULL;
   element_list.insert(beamline_list.end(),e);
  
-}
-
-void print(std::list<struct Element> l, int ident)
-{
-  if(VERBOSE) if(ident == 0) printf("using line %s\n",current_line);
-
-  for(std::list<struct Element>::iterator it=l.begin();it!=l.end();it++)
-    {
-      (*it).print(ident);
-    }
 }
 
 void print(ElementList l, int ident)

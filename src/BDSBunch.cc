@@ -6,7 +6,8 @@
 
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-#include "parser/gmad.h"
+//#include "parser/gmad.h"
+#include "parser/options.h"
 
 #include "G4ParticleTable.hh"
 
@@ -14,7 +15,6 @@
 #include "Randomize.hh"
 // CLHEP
 #include "CLHEP/RandomObjects/RandMultiGauss.h"
-
 
 // distribution type
 namespace {
@@ -1107,7 +1107,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       G4int type;
       G4int gen;
       G4int pos;
-      G4double weight; // JS: weight overwrites output parameter!
+      //      G4double weight; // JS: weight overwrites output parameter!
       G4double part_mass;
       G4double px,py,pz;
       G4double sx;

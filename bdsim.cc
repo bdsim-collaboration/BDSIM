@@ -76,6 +76,7 @@
 //#endif
 
 #include "parser/gmad.h"  // GMAD parser
+#include "parser/options.h"
 
 //=======================================================
 // Global variables 
@@ -86,6 +87,7 @@ BDSSamplerSD* BDSSamplerSensDet; // sampler
 
 //=======================================================
 
+extern Options options;
 
 int main(int argc,char** argv) {
 
@@ -187,9 +189,6 @@ int main(int argc,char** argv) {
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
 
-#ifdef DEBUG 
-  G4cout<<"constructing phys list"<<G4endl;
-#endif 
   BDSPhysicsList* PhysList=new BDSPhysicsList;
   runManager->SetUserInitialization(PhysList);
   
@@ -207,7 +206,7 @@ int main(int argc,char** argv) {
   // This sets the tolerances for the geometry (1e-11 times this value)
   G4GeometryManager::GetInstance()->SetWorldMaximumExtent(worldMaximumExtent); 
 #ifdef DEBUG
-  G4cout<<__FUNCTION__<<"> Geometry Toleranes: " << G4endl;
+  G4cout<<__FUNCTION__<<"> Geometry Tolerances: " << G4endl;
   G4cout<<__FUNCTION__<<std::setw(23)<<" World Maximum Extent: "<<std::setw(15)<<worldMaximumExtent/CLHEP::m<<" m"<<G4endl;
   G4cout<<__FUNCTION__<<std::setw(23)<<" Surface: "             <<std::setw(15)<<theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m<< " m"<<G4endl;
   G4cout<<__FUNCTION__<<std::setw(23)<<" Angular: "             <<std::setw(15)<<theGeometryTolerance->GetAngularTolerance()<<G4endl;

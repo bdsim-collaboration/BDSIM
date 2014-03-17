@@ -5,11 +5,14 @@ Last modified 23.10.2007 by Steve Malton
 **/
 #include "BDSGlobalConstants.hh"
 #include "parser/gmad.h"
+#include "parser/options.h"
 #include "BDSDebug.hh"
 #include "G4FieldManager.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4UniformMagField.hh"
 #include <cstdlib>
+
+extern Options options;
 
 BDSGlobalConstants* BDSGlobalConstants::_instance = 0;
 

@@ -21,6 +21,9 @@ namespace CLHEP {
 #include <fstream>
 #include <list>
 
+// gmad
+struct Options;
+
 class BDSBunch {
 
 public: 

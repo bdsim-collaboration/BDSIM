@@ -1,3 +1,6 @@
+#ifndef __ENUMS_H
+#define __ENUMS_H
+
 // types of elements
 
 enum {
@@ -39,8 +42,12 @@ enum {
   _TRANSFORM3D = 61
 };
 
+const char *typestr(int type);
+
 // geometry and field formats
 /* enum { */
 /*   _GMAD = 0, */
 /*   _MOKKA = 1 */
 /* }; */
+
+#endif

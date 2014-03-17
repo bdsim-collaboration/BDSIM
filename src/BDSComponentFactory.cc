@@ -25,6 +25,7 @@
 //#include "BDSRealisticCollimator.hh"
 #include "BDSScintillatorScreen.hh"
 #include "parser/enums.h"
+#include "parser/elementlist.h"
 
 #ifdef DEBUG
 bool debug1 = true;

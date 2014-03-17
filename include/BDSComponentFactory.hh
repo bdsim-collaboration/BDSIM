@@ -3,8 +3,11 @@
 
 #include <list>
 #include "globals.hh"
+#include "parser/element.h"
 #include "parser/gmad.h"
 #include "BDSAcceleratorComponent.hh"
+
+class ElementList; 
 
 class BDSComponentFactory{
 public:
