@@ -6,6 +6,7 @@
 #include <limits>
 
 #include "BDSGlobalConstants.hh" 
+#include "BDSExecOptions.hh"
 #include "myQuadStepper.hh"
 #include "G4ThreeVector.hh"
 #include "G4TransportationManager.hh"
@@ -26,8 +27,20 @@ void myQuadStepper::AdvanceHelix( const G4double  yIn[],
 				  G4double  h,
 				  G4double  yOut[])
 {
-  //G4cout<<"myQuadStepper: advancing through "<<h/m<<"  m "<<
-  //"x="<<yIn[0] /m<<" y="<<yIn[1]/m<<" z="<<yIn[2]/m<<G4endl; 
+#ifdef DEBUG
+  G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
+  G4cout << "BDSQuadStepper: step= " << h/CLHEP::m << " m" << G4endl
+         << " x= " << yIn[0]/CLHEP::m << "m" << G4endl
+         << " y= " << yIn[1]/CLHEP::m << "m" << G4endl
+         << " z= " << yIn[2]/CLHEP::m << "m" << G4endl
+         << " px= " << yIn[3]/CLHEP::GeV << "GeV/c" << G4endl
+         << " py= " << yIn[4]/CLHEP::GeV << "GeV/c" << G4endl
+         << " pz= " << yIn[5]/CLHEP::GeV << "GeV/c" << G4endl
+         << " q= " << charge/CLHEP::eplus << "e" << G4endl
+    //         << " dBy/dx= " << itsBGrad/(CLHEP::tesla/CLHEP::m) << "T/m" << G4endl
+    //         << " k= " << kappa/(1./CLHEP::m2) << "m^-2" << G4endl
+         << G4endl; 
+#endif
 
   const G4double *pIn = yIn+3;
   G4ThreeVector v0= G4ThreeVector( pIn[0], pIn[1], pIn[2]);  

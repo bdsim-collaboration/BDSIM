@@ -795,16 +795,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
             <<" sigmaYp= "<<sigmaYp<<G4endl
             <<" sigmaT= "<<sigmaT<<"s"<<G4endl
             <<" relative energy spread= "<<energySpread<<G4endl
-
-	    <<G4endl
-            <<" x0= "<<x0<<" m"<<G4endl
-            <<" y0= "<<y0<<" m"<<G4endl
-            <<" z0= "<<z0<<" m"<<G4endl
-            <<" t= "<<t<<" s"<<G4endl
-            <<" xp= "<<xp<<G4endl
-            <<" yp= "<<yp<<G4endl
-            <<" zp= "<<zp<<G4endl
-            <<" E= "<<E<<G4endl;
+	    <<G4endl;
 #endif
 
 
@@ -846,16 +837,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
             <<" envelopeYp= "<<envelopeYp<<G4endl
             <<" envelopeT= "<<envelopeT<<"s"<<G4endl
             <<" relative energy spread= "<<energySpread<<G4endl
-
-	    <<G4endl
-            <<" x0= "<<x0<<" m"<<G4endl
-            <<" y0= "<<y0<<" m"<<G4endl
-            <<" z0= "<<z0<<" m"<<G4endl
-            <<" t= "<<t<<" s"<<G4endl
-            <<" xp= "<<xp<<G4endl
-            <<" yp= "<<yp<<G4endl
-            <<" zp= "<<zp<<G4endl
-            <<" E= "<<E<<G4endl;
+	    <<G4endl;
 #endif
 
 
@@ -926,15 +908,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
         zp =  sqrt(1.-xp*xp -yp*yp);
 
 #ifdef DEBUG 
-      G4cout<< "BDSBunch::GetNextParticle>" << " GAUSSIAN_MATRIX : "<<G4endl
-            <<" x0= "<<x0<<" m"<<G4endl
-            <<" y0= "<<y0<<" m"<<G4endl
-            <<" z0= "<<z0<<" m"<<G4endl
-            <<" t= "<<t<<" s"<<G4endl
-            <<" xp= "<<xp<<G4endl
-            <<" yp= "<<yp<<G4endl
-            <<" zp= "<<zp<<G4endl
-            <<" E= "<<E<<G4endl;
+      G4cout<< "BDSBunch::GetNextParticle>" << " GAUSSIAN_MATRIX : "<<G4endl;
 #endif
       break;
     }
@@ -1107,7 +1081,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       G4int type;
       G4int gen;
       G4int pos;
-      //      G4double weight; // JS: weight overwrites output parameter!
+      //      G4double weight; // JS: weight shadows output parameter!
       G4double part_mass;
       G4double px,py,pz;
       G4double sx;
@@ -1323,11 +1297,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
                }
            }
          }
-	 if(it->name=="weight") {ReadValue(weight);
-#ifdef DEBUG 
-	   G4cout<< "BDSBunch : " << weight <<G4endl;
-#endif
-	 }
+	 if(it->name=="weight") ReadValue(weight);
 
 	 // compute zp from xp and yp if it hasn't been read from file
 	 if (!zpdef) zp=sqrt(1.-xp*xp -yp*yp);
@@ -1346,6 +1316,21 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       G4Exception("BDSBunch: Unknown distribution file type!", "-1", FatalErrorInArgument, "");
     }
   }
+
+#ifdef DEBUG
+  // particle properties
+  G4cout << __METHOD_NAME__ <<G4endl
+	 <<" x0 = "<<x0<<" m"<<G4endl
+	 <<" y0 = "<<y0<<" m"<<G4endl
+	 <<" z0 = "<<z0<<" m"<<G4endl
+	 <<" t = "<<t<<" s"<<G4endl
+	 <<" xp = "<<xp<<G4endl
+	 <<" yp = "<<yp<<G4endl
+	 <<" zp = "<<zp<<G4endl
+	 <<" E = "<<E<< " MeV"<<G4endl
+	 <<" weight= "<<weight<<G4endl;
+#endif
+
 }
 
 
