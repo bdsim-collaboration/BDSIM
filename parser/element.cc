@@ -1,6 +1,9 @@
 #include "element.h"
 #include "enums.h"
 
+// extern const char* current_line;
+// extern const int VERBOSE;
+
 namespace {
 void print(std::list<struct Element> l, int ident)
 {
@@ -17,7 +20,7 @@ void Element::print(int & ident)const{
   for(int i=0;i<ident;i++)
     printf("--");
 
-  //  printf("->%s : %s",name.c_str(),typestr(type));
+  printf("->%s : %s",name.c_str(),typestr(type));
 
   std::list<double>::const_iterator it;
   switch(type) {
