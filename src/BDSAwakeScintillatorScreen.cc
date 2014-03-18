@@ -265,11 +265,29 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   G4double z_thi = _totalThickness * std::cos(std::abs(_screenAngle));//Length due to the screen thickness
   G4double x_wid = _screenWidth * std::cos(std::abs(_screenAngle));//Length due to the screen width and angle
   G4double x_thi = thi * std::sin(std::abs(_screenAngle));//Length due to the screen thickness
-  G4double x_vac_chamber=7*cm;
+  
+  //Vacuum chamber dimensions.
+  _vacKevlarThickness=0.3*mm;
+  _vacMylarThickness=0.05*mm;
+  _vacThickness=2*mm;
+  _vacInnerWidth=7*cm;
+  _vacInnerHeight=7*cm;
+  _vacWidth=7*cm+_vacKevlarThickness+_vacMylarThickness+_vacThickness;
+  _vacHeight=7*cm+2*_vacThickness;
+  _vacDispX=-((sqrt(2.0)/2.0)/2.0)*m-_vacWidth/2.0-0.15*mm;
+
   itsLength  = (z_wid + z_thi);  
-  itsXLength = (x_wid +x_thi+2*x_vac_chamber);
+  itsXLength = (x_wid +x_thi+2*_vacWidth);
   itsYLength = std::max(_screenHeight,_camera->size().y());
   std::cout << __METHOD_NAME__ << " " << itsLength << " " << itsXLength << " " << itsYLength << std::endl;
+
+
+  _vacLength=itsLength;
+
+  
+
+
+
 }
 
 void BDSAwakeScintillatorScreen::BuildMarkerVolume(){
@@ -280,7 +298,7 @@ void BDSAwakeScintillatorScreen::BuildMarkerVolume(){
 
   itsMarkerLogicalVolume=new G4LogicalVolume
     (itsMarkerSolidVolume, 
-     BDSMaterials::Instance()->GetMaterial("vacuum"),
+     BDSMaterials::Instance()->GetMaterial("air"),
      itsName+"_marker_log");
   G4VisAttributes* visAtt = new G4VisAttributes(G4Color(0,1,0));
   visAtt->SetForceWireframe(true);
@@ -301,9 +319,10 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
 					 _vacHeight/2.0, 
 					 _vacLength/2.0);
 
+
   G4VSolid* vacuumSolid = new G4Box("vacuumSolid",_vacInnerWidth/2.0, _vacInnerHeight/2.0, _vacLength/2.0);
 
-  G4LogicalVolume* vacuumOuterLog = new G4LogicalVolume(vacuumOuterSolid, BDSMaterials::Instance()->GetMaterial("steel"), "vacuumLog",0,0,0);
+  G4LogicalVolume* vacuumOuterLog = new G4LogicalVolume(vacuumOuterSolid, BDSMaterials::Instance()->GetMaterial("iron"), "vacuumOuterLog",0,0,0);
 
   new G4PVPlacement(_vacRotationMatrix, 
 		    G4ThreeVector(_vacDispX,0,0), 
@@ -315,10 +334,11 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
 		    );
 
-  G4LogicalVolume* vacuumLog = new G4LogicalVolume(vacuumOuterSolid, BDSMaterials::Instance()->GetMaterial("vacuum"), "vacuumLog",0,0,0);
+  G4LogicalVolume* vacuumLog = new G4LogicalVolume(vacuumSolid, BDSMaterials::Instance()->GetMaterial("vacuum"), "vacuumLog",0,0,0);
 
-  new G4PVPlacement(_vacRotationMatrix, 
-		    G4ThreeVector(0,_vacThickness/2.0-(_vacMylarThickness+_vacKevlarThickness)/2.0,0), 
+ 
+  new G4PVPlacement(new G4RotationMatrix(), 
+		    G4ThreeVector(_vacThickness/2.0-(_vacMylarThickness+_vacKevlarThickness)/2.0,0,0), 
 		    vacuumLog, 
 		    "awakeScreenVacuumPV", 
 		    vacuumOuterLog, 
@@ -326,21 +346,56 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
 		    0,
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
 		    );
+ 
 
-  G4VSolid* vacuumWindowSolid = new G4Box("vacuumWindowSolid",_vacMylarThickness+_vacKevlarThickness/2.0, _vacInnerHeight/2.0, _vacLength/2.0);
+  G4VSolid* vacuumWindowSolid = new G4Box("vacuumWindowSolid",(_vacMylarThickness+_vacKevlarThickness)/2.0, _vacInnerHeight/2.0, _vacLength/2.0);
   G4LogicalVolume* vacuumWindowLog = new G4LogicalVolume(vacuumWindowSolid, BDSMaterials::Instance()->GetMaterial("vacuum"), "vacuumWindowLog",0,0,0);
 
   G4VSolid* kevlarWindowSolid = new G4Box("kevlarWindowSolid",_vacKevlarThickness/2.0, _vacInnerHeight/2.0, _vacLength/2.0);
-  G4LogicalVolume* kevlarWindowLog = new G4LogicalVolume(vacuumWindowSolid, BDSMaterials::Instance()->GetMaterial("kevlar"), "kevlarWindowLog",0,0,0);
+  G4LogicalVolume* kevlarWindowLog = new G4LogicalVolume(kevlarWindowSolid, BDSMaterials::Instance()->GetMaterial("G4_KEVLAR"), "kevlarWindowLog",0,0,0);
 
   G4VSolid* mylarWindowSolid = new G4Box("mylarWindowSolid",_vacMylarThickness/2.0, _vacInnerHeight/2.0, _vacLength/2.0);
-  G4LogicalVolume* mylarWindowLog = new G4LogicalVolume(vacuumWindowSolid, BDSMaterials::Instance()->GetMaterial("mylar"), "mylarWindowLog",0,0,0);
+  G4LogicalVolume* mylarWindowLog = new G4LogicalVolume(mylarWindowSolid, BDSMaterials::Instance()->GetMaterial("G4_MYLAR"), "mylarWindowLog",0,0,0);
 
+  new G4PVPlacement(new G4RotationMatrix(), 
+		    G4ThreeVector(_vacWidth/2.0-(_vacMylarThickness+_vacKevlarThickness)/2.0,0,0), 
+		    vacuumWindowLog, 
+		    "awakeScreenVacuumWindowPV", 
+		    vacuumOuterLog, 
+		    false, 
+		    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
+		    );
   
-  
-  G4VisAttributes* vacVisAttributes=new G4VisAttributes(G4Colour(0.3,0.0,0.4));
+  new G4PVPlacement(new G4RotationMatrix(), 
+		    G4ThreeVector((_vacKevlarThickness+_vacMylarThickness)/2.0 - _vacKevlarThickness/2.0,0,0), 
+		    kevlarWindowLog, 
+		    "awakeScreenKevlarVacuumWindowPV", 
+		    vacuumWindowLog, 
+		    false, 
+		    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
+		    );
+
+  new G4PVPlacement(new G4RotationMatrix(), 
+		    G4ThreeVector(-(_vacKevlarThickness+_vacMylarThickness)/2.0 + _vacMylarThickness/2.0,0,0), 
+		    mylarWindowLog, 
+		    "awakeScreenMylarVacuumWindowPV", 
+		    vacuumWindowLog, 
+		    false, 
+		    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
+		    );
+
+  G4VisAttributes* vacVisAttributes=new G4VisAttributes(G4Colour(0.3,0.0,0.4,0.5));
   vacVisAttributes->SetForceWireframe(true);
-  vacuumLog->SetVisAttributes(vacVisAttributes);
+  vacVisAttributes->SetVisibility(true);
+  vacuumOuterLog->SetVisAttributes(vacVisAttributes);
+
+  G4VisAttributes* winVisAttributes=new G4VisAttributes(G4Colour(1.0,0.0,0.0,0.5));
+  winVisAttributes->SetForceSolid(true);
+  winVisAttributes->SetVisibility(true);
+  vacuumWindowLog->SetVisAttributes(winVisAttributes);
 
 
 
