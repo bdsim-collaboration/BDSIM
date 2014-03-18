@@ -23,7 +23,6 @@
 
 // geometry drivers
 #include "parser/enums.h"
-#include "parser/gmad.h"
 #include "ggmad.hh"
 #include "BDSGeometrySQL.hh"
 

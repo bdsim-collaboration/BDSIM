@@ -9,13 +9,8 @@
 #ifndef _GMAD_H
 #define _GMAD_H
 
-#include <iostream>
 #include <cstdio>
-#include <iterator>
-#include <list>
-#include <map>
 #include <string>
-#include <cstring>
 
 // parse the input file and construct beamline_list and options 
 int gmad_parser(FILE *f);

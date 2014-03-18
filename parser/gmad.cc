@@ -10,6 +10,8 @@
 #include "sym_table.h"
 
 #include <cmath>
+#include <iostream>
+#include <list>
 #include <map>
 #include <string>
 #include <cstring>
