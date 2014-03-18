@@ -72,6 +72,7 @@
 #include "G4GeometrySampler.hh"
 #include "G4IStore.hh"
 
+#include "parser/element.h"
 #include "parser/elementlist.h"
 #include "parser/enums.h"
 #include "parser/gmad.h"

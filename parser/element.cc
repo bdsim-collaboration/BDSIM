@@ -1,6 +1,8 @@
 #include "element.h"
 #include "enums.h"
 
+#include <cstdio>
+
 // extern const char* current_line;
 // extern const int VERBOSE;
 
