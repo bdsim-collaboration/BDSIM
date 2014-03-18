@@ -194,7 +194,7 @@ void BDSAwakeScintillatorScreen::Build(){
       BuildCamera();	
       ComputeDimensions();
       BuildMarkerVolume();
-      //      BuildVacuumChamber1();
+      BuildVacuumChamber1();
       BuildScreenScoringPlane();
       //      BuildCameraScoringPlane();
       PlaceScreen();
@@ -270,6 +270,18 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   itsXLength = (x_wid +x_thi+2*x_vac_chamber);
   itsYLength = std::max(_screenHeight,_camera->size().y());
   std::cout << __METHOD_NAME__ << " " << itsLength << " " << itsXLength << " " << itsYLength << std::endl;
+
+  //Vacuum chamber dimensions
+  _vacWindowHeight=70*CLHEP::mm;
+  _vacMylarThickness=0.3*CLHEP::mm;
+  _vacKevlarThickness=0.05*CLHEP::mm;
+  _vacInnerHeight=70*CLHEP::mm;
+  _vacHeight=_vacInnerHeight+2*_vacThickness;
+  _vacInnerWidth=70*CLHEP::mm;
+  _vacWidth=_vacInnerWidth + _vacThickness + _vacMylarThickness + _vacKevlarThickness;
+  _vacLength=itsLength;
+  _vacDispX=-x_wid/2.0 - _vacWidth/2.0;
+  _vacThickness=2*CLHEP::mm;
 }
 
 void BDSAwakeScintillatorScreen::BuildMarkerVolume(){
@@ -295,38 +307,51 @@ void BDSAwakeScintillatorScreen::BuildMarkerVolume(){
 }
 
 void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
-  G4double windowHeight=70*mm;
-  G4double mylarThickness=0.3*mm;
-  G4double kevlarThickness=0.05*mm;
 
-  G4double vacuumHeight=70*mm;
-  G4double vacuumWidth=70*mm;
-  G4double vacuumLength=itsLength;
+  G4VSolid* vacuumOuterSolid = new G4Box("vacuumSolid",_vacWidth/2.0,
+					 _vacHeight/2.0, 
+					 _vacLength/2.0);
 
-  //  G4VSolid* windowSolid = new G4Box("windowSolid",70/2.0
+  G4VSolid* vacuumSolid = new G4Box("vacuumSolid",_vacInnerWidth/2.0, _vacInnerHeight/2.0, _vacLength/2.0);
 
-  G4double dispZ=0;
-  //  G4double dispX=-itsXLength/2.0 + vacuumWidth;
-  G4double dispX=0;
+  G4LogicalVolume* vacuumOuterLog = new G4LogicalVolume(vacuumOuterSolid, BDSMaterials::Instance()->GetMaterial("steel"), "vacuumLog",0,0,0);
 
-  G4VSolid* vacuumSolid = new G4Box("vacuumSolid",vacuumWidth/2.0, vacuumHeight/2.0, vacuumLength/2.0);
-  G4LogicalVolume* vacuumLog = new G4LogicalVolume(vacuumSolid, BDSMaterials::Instance()->GetMaterial("lead"), "vacuumLog",0,0,0);
   new G4PVPlacement(_vacRotationMatrix, 
-		    G4ThreeVector(dispX,0,dispZ), 
-		    vacuumLog, 
-		    "awakeScreenVacuumPV", 
+		    G4ThreeVector(_vacDispX,0,0), 
+		    vacuumOuterLog, 
+		    "awakeScreenOuterVacuumPV", 
 		    itsMarkerLogicalVolume, 
 		    false, 
 		    0,
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
 		    );
 
+  G4LogicalVolume* vacuumLog = new G4LogicalVolume(vacuumOuterSolid, BDSMaterials::Instance()->GetMaterial("vacuum"), "vacuumLog",0,0,0);
+
+  new G4PVPlacement(_vacRotationMatrix, 
+		    G4ThreeVector(0,_vacThickness/2.0-(_vacMylarThickness+_vacKevlarThickness)/2.0,0), 
+		    vacuumLog, 
+		    "awakeScreenVacuumPV", 
+		    vacuumOuterLog, 
+		    false, 
+		    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
+		    );
+
+  G4VSolid* vacuumWindowSolid = new G4Box("vacuumWindowSolid",_vacMylarThickness+_vacKevlarThickness/2.0, _vacInnerHeight/2.0, _vacLength/2.0);
+  G4LogicalVolume* vacuumWindowLog = new G4LogicalVolume(vacuumWindowSolid, BDSMaterials::Instance()->GetMaterial("vacuum"), "vacuumWindowLog",0,0,0);
+
+  G4VSolid* kevlarWindowSolid = new G4Box("kevlarWindowSolid",_vacKevlarThickness/2.0, _vacInnerHeight/2.0, _vacLength/2.0);
+  G4LogicalVolume* kevlarWindowLog = new G4LogicalVolume(vacuumWindowSolid, BDSMaterials::Instance()->GetMaterial("kevlar"), "kevlarWindowLog",0,0,0);
+
+  G4VSolid* mylarWindowSolid = new G4Box("mylarWindowSolid",_vacMylarThickness/2.0, _vacInnerHeight/2.0, _vacLength/2.0);
+  G4LogicalVolume* mylarWindowLog = new G4LogicalVolume(vacuumWindowSolid, BDSMaterials::Instance()->GetMaterial("mylar"), "mylarWindowLog",0,0,0);
+
+  
+  
   G4VisAttributes* vacVisAttributes=new G4VisAttributes(G4Colour(0.3,0.0,0.4));
   vacVisAttributes->SetForceWireframe(true);
   vacuumLog->SetVisAttributes(vacVisAttributes);
-
-
-
 }
 
 void BDSAwakeScintillatorScreen::BuildVacuumChamber2(){
