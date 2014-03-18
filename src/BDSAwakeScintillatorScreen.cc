@@ -194,7 +194,7 @@ void BDSAwakeScintillatorScreen::Build(){
       BuildCamera();	
       ComputeDimensions();
       BuildMarkerVolume();
-      //      BuildVacuumChamber1();
+      BuildVacuumChamber1();
       BuildScreenScoringPlane();
       //      BuildCameraScoringPlane();
       PlaceScreen();
@@ -321,10 +321,12 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
 		    );
 
-  G4VisAttributes* vacVisAttributes=new G4VisAttributes(G4Colour(0.3,0.0,0.4));
-  vacVisAttributes->SetForceWireframe(true);
+  G4VisAttributes* vacVisAttributes=new G4VisAttributes(G4Colour(0.3,0.0,0.4,0.4));
+  vacVisAttributes->SetForceSolid(true);
   vacuumLog->SetVisAttributes(vacVisAttributes);
-
+  G4VisAttributes* winVisAttributes=new G4VisAttributes(G4Colour(0.1,0.7,0.1,0.4));
+  winVisAttributes->SetForceSolid(true);
+  vacuumLog->SetVisAttributes(vacVisAttributes);
 
 
 }
