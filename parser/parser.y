@@ -350,7 +350,7 @@ decl : VARIABLE ':' marker
 	     else
 	       {
 		 // inherit properties from the base type
-		 inherit_properties(*it);
+		 params.inherit_properties(*it);
 	       }
 		
 	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, typestr((*it).type));
@@ -463,7 +463,7 @@ extension : VARIABLE ',' parameters
 		    {
 		      // inherit properties from the base type
 		      $$ = (*it).type;
-		      inherit_properties(*it);
+		      params.inherit_properties(*it);
 		    }
 		  
 		}
@@ -487,7 +487,7 @@ newinstance : VARIABLE
 		    {
 		      // inherit properties from the base type
 		      $$ = (*it).type;
-		      inherit_properties(*it);
+		      params.inherit_properties(*it);
 		    }
 		  
 		}
@@ -1465,7 +1465,7 @@ aexpr :  NUMBER               { $$ = $1;                         }
         | VARIABLE '[' VARIABLE ']' 
           { 
 	    if(ECHO_GRAMMAR) printf("aexpr-> %s [ %s ]\n ",$1->name, $3->name); 
-	    $$ = property_lookup($1->name,$3->name);
+	    $$ = property_lookup(element_list,$1->name,$3->name);
 	  }// element attributes
  ; 
 
@@ -1801,9 +1801,9 @@ letters :
 
 command : STOP             { if(execute) quit(); }
         | BEAM ',' beam_parameters
-        | PRINT            { if(execute) print( element_list ); }
-        | PRINT ',' LINE   { if(execute) print( beamline_list); }
-        | PRINT ',' OPTION { if(execute) print(options); }
+        | PRINT            { if(execute) element_list.print(); }
+        | PRINT ',' LINE   { if(execute) beamline_list.print(); }
+        | PRINT ',' OPTION { if(execute) options.print(); }
         | PRINT ',' VARIABLE 
           {
 	    if(execute)
@@ -1881,7 +1881,7 @@ command : STOP             { if(execute) quit(); }
           {
 	    if(execute)
 	      {
-		set_value("doTwiss",1);
+		options.set_value("doTwiss",1);
 		if(ECHO_GRAMMAR) printf("command -> TWISS\n");
 	      }
           }
@@ -1970,7 +1970,7 @@ csample_options : VARIABLE '=' aexpr
 		    if(ECHO_GRAMMAR) printf("csample_opt -> %s =  %s \n",$1->name,$3);
 		    /* if(execute) */
 		    /*   { */
-		    /* 	;//set_value($1->name,string($3)); */
+		    /* 	;//options.set_value($1->name,string($3)); */
 		    /*   } */
 		  }   
                 | VARIABLE '=' aexpr ',' csample_options
@@ -1992,7 +1992,7 @@ csample_options : VARIABLE '=' aexpr
                 | VARIABLE '=' STR ',' csample_options
                   {
 		    if(ECHO_GRAMMAR) printf("csample_opt -> %s =  %s \n",$1->name,$3);
-		    // if(execute) //set_value($1->name,string($3));
+		    // if(execute) //options.set_value($1->name,string($3));
 		  }   
                 | sample_options ',' csample_options
                   {
@@ -2031,7 +2031,7 @@ gas_options : VARIABLE '=' aexpr
 			    strcpy(params.material ,$3);
 			    params.materialset = 1;
 			  }
-			//set_value($1->name,string($3));
+			//options.set_value($1->name,string($3));
 		      }
 		  }   
                 | VARIABLE '=' aexpr ',' gas_options
@@ -2088,22 +2088,22 @@ option_parameters :
                   | VARIABLE '=' aexpr ',' option_parameters
                     {
 		      if(execute)
-			set_value($1->name,$3);
+			options.set_value($1->name,$3);
 		    }   
                   | VARIABLE '=' aexpr
                     {
 		      if(execute)
-			set_value($1->name,$3);
+			options.set_value($1->name,$3);
 		    } 
                   | VARIABLE '=' STR ',' option_parameters
                     {
 		      if(execute)
-			set_value($1->name,std::string($3));
+			options.set_value($1->name,std::string($3));
 		    }   
                   | VARIABLE '=' STR
                     {
 		      if(execute)
-			set_value($1->name,std::string($3));
+			options.set_value($1->name,std::string($3));
 		    }   
 ;
 
@@ -2111,22 +2111,22 @@ beam_parameters :
                 | VARIABLE '=' aexpr ',' beam_parameters
                   {
 		    if(execute)
-		      set_value($1->name,$3);
+		      options.set_value($1->name,$3);
 		  }   
                 | VARIABLE '=' aexpr
                   {
 		    if(execute)
-		      set_value($1->name,$3);
+		      options.set_value($1->name,$3);
 		  }   
                 | VARIABLE '=' STR ',' beam_parameters
                   {
 		    if(execute)
-		      set_value($1->name,std::string($3));
+		      options.set_value($1->name,std::string($3));
 		  }   
                 | VARIABLE '=' STR
                   {
 		    if(execute)
-		      set_value($1->name,std::string($3));
+		      options.set_value($1->name,std::string($3));
 		  }   
 ;
 

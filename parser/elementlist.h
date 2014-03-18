@@ -52,6 +52,9 @@ class ElementList {
   // TOOD: better list of iterators?
   ElementListIterator find(std::string name,unsigned int count=1);
 
+  /// print method
+  void print(int ident=0);
+
  private:
   /// the Element list
   std::list<Element> itsList;
