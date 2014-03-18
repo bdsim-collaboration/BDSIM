@@ -730,11 +730,12 @@ void BDSMaterials::Initialise()
   materials[name] = tmpMaterial; 
 
   //Awake plasma - rubidium at density of 7e14 atoms/cm3 
-  G4double numberDensity = 7.0e14/CLHEP::cm3;
+  //  G4double numberDensity = 7.0e14/CLHEP::cm3;
   a = 85.4678*CLHEP::g/CLHEP::mole;
-  density = a*numberDensity;
+  density = 1e-7*CLHEP::g/CLHEP::cm3;
+  //density = a*numberDensity;
   tmpMaterial =  new G4Material
-    (name="awakeplasma", 37., a, density);
+    (name="awakeplasma", z=37., a, density);
   materials[name] = tmpMaterial; 
 
   //Carbon monoxide beam pipe gas
