@@ -194,7 +194,7 @@ void BDSAwakeScintillatorScreen::Build(){
       BuildCamera();	
       ComputeDimensions();
       BuildMarkerVolume();
-      BuildVacuumChamber1();
+      //      BuildVacuumChamber1();
       BuildScreenScoringPlane();
       //      BuildCameraScoringPlane();
       PlaceScreen();
@@ -298,7 +298,7 @@ void BDSAwakeScintillatorScreen::BuildMarkerVolume(){
 
   itsMarkerLogicalVolume=new G4LogicalVolume
     (itsMarkerSolidVolume, 
-     BDSMaterials::Instance()->GetMaterial("air"),
+     BDSMaterials::Instance()->GetMaterial("vacuum"),
      itsName+"_marker_log");
   G4VisAttributes* visAtt = new G4VisAttributes(G4Color(0,1,0));
   visAtt->SetForceWireframe(true);
