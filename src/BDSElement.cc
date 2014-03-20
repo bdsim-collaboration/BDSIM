@@ -514,7 +514,7 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
   G4MagInt_Driver* fIntgrDriver = new G4MagInt_Driver(BDSGlobalConstants::Instance()->GetChordStepMinimum(),
 						      itsFStepper, 
 						      itsFStepper->GetNumberOfVariables() );
-  fChordFinder = new G4ChordFinder(fIntgrDriver, 1e-9*CLHEP::m);
+  fChordFinder = new G4ChordFinder(fIntgrDriver);
   
   fChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
   
