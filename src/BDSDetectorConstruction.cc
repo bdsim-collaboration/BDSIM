@@ -427,8 +427,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 
     }
     
-  BDSGlobalConstants::Instance()->SetTotalS(s_tot);
-  
   // -----------------------------------
   
   // determine the world size

@@ -48,7 +48,6 @@ private:
   // G4double logXfactor;
   // G4double logYfactor;
 
-  G4double itsSynchCritEng;
   BDSSynchrotronRadiation* itsBDSSynchrotronRadiation;
 
   BDSSamplerHitsCollection *itsSamplerHitsCollection;

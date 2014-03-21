@@ -61,7 +61,7 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSDetectorConstruction* /*
       itsBDSSynchrotronRadiation=new BDSSynchrotronRadiation("tmpSynRad");
       G4double R=BDSGlobalConstants::Instance()->GetSynchPrimaryLength()/
 	BDSGlobalConstants::Instance()->GetSynchPrimaryAngle();   
-      itsSynchCritEng=3./2.*CLHEP::hbarc/pow(CLHEP::electron_mass_c2,3)*
+      G4double SynchCritEng=3./2.*CLHEP::hbarc/pow(CLHEP::electron_mass_c2,3)*
 	pow(BDSGlobalConstants::Instance()->GetBeamKineticEnergy(),3)/R;
 #ifdef DEBUG
       G4cout<<" BDSPrimaryGeneratorAction:  Critical Energy="<<

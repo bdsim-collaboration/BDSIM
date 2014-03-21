@@ -22,7 +22,7 @@ BDSGlobalConstants* BDSGlobalConstants::Instance(){
 }
 
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
-  itsBeamParticleDefinition(NULL)
+  itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0)
 {
   itsPhysListName = opt.physicsList;
   itsPipeMaterial = opt.pipeMaterial;
@@ -117,8 +117,6 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsSynchLowGamE = opt.synchLowGamE * CLHEP::GeV;  // lowest gamma energy
   itsSynchPhotonMultiplicity = opt.synchPhotonMultiplicity;
   itsSynchMeanFreeFactor = opt.synchMeanFreeFactor;
-  //Synchrotron primary generator
-  itsSynchPrimaryGen = false; //XXX check what this is 19/4/11
   itsLengthSafety = opt.lengthSafety;
   itsNumberToGenerate = opt.numberToGenerate;
   itsNumberOfEventsPerNtuple = opt.numberOfEventsPerNtuple;
@@ -162,7 +160,16 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsZeroFieldManager->CreateChordFinder(zeroMagField);
 
   InitRotationMatrices();
-   
+  
+  // options that are never used (no set method):
+  itsLWCalWidth = 0.0;
+  itsLWCalOffset = 0.0;
+  itsMagnetPoleRadius = 0.0;
+  itsMagnetPoleSize = 0.0;
+  //Synchrotron primary generator
+  itsSynchPrimaryGen = false; //XXX check what this is 19/4/11
+  itsSynchPrimaryAngle = 0.0;
+  itsSynchPrimaryLength = 0.0;
 }
 
 void BDSGlobalConstants::InitRotationMatrices(){

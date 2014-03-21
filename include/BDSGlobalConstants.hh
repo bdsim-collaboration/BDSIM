@@ -102,9 +102,6 @@ public:
   G4bool GetSensitiveBeamPipe();
   G4bool GetSensitiveBLMs();
  
-  void     SetTotalS(G4double TotalS);
-  G4double GetTotalS();  
-
   G4double GetComponentBoxSize();
   G4double GetMagnetPoleSize();
   G4double GetMagnetPoleRadius();
@@ -300,7 +297,6 @@ private:
   G4double itsBlmLength;
   G4double itsBeampipeRadius; 
   G4double itsBeampipeThickness; 
-  G4double itsTotalS;
   G4double itsSamplerDiameter;
   G4double itsSamplerLength;
   G4double itsDeltaIntersection;
@@ -650,11 +646,6 @@ inline G4double BDSGlobalConstants::GetProdCutPositronsA()
 //{return itsWorldSizeZ;}
 //inline void BDSGlobalConstants::SetWorldSizeZ(G4double WorldSizeZ) 
 //{itsWorldSizeZ=WorldSizeZ;}
-
-inline G4double BDSGlobalConstants::GetTotalS() 
-{return itsTotalS;}
-inline void BDSGlobalConstants::SetTotalS(G4double TotalS) 
-{itsTotalS=TotalS;}
 
 // inline void BDSGlobalConstants::SetVerticalComponentOffset(G4double VerticalComponentOffset)
 // {itsVerticalComponentOffset=VerticalComponentOffset;}
