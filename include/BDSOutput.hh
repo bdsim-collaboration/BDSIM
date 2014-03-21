@@ -46,8 +46,6 @@ public:
   void WriteEnergyLoss(BDSEnergyCounterHitsCollection*);
   G4int WriteTrajectory(std::vector<G4VTrajectory*> &TrajVec);
 
-  void Echo(G4String str);
-
   G4int Commit(); //G4int FileNum);   // close the event
   void Write();           // close the event
 
@@ -63,7 +61,6 @@ public:
   TTree *EnergyLossTree;
 #endif
 
-  G4int nSamplers;
   G4double zMax, transMax; //Maximum values of longitudinal and transverse global position
   std::vector <G4String> SampName;
   std::vector <G4String> CSampName;

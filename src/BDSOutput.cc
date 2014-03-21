@@ -433,15 +433,6 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
  }
 }
 
-// write some comments to the output file
-// only for ASCII output
-void BDSOutput::Echo(G4String str)
-{
-  if(format == BDSOutputFormat::_ASCII)  of<<"#"<<str<<G4endl;
-  else // default
-    G4cout<<"#"<<str<<G4endl;
-}
-
 //G4int BDSOutput::Commit(G4int FileNum)
 G4int BDSOutput::Commit()
 {
