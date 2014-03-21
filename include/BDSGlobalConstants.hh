@@ -204,9 +204,9 @@ public:
 
   G4FieldManager* GetZeroFieldManager();
 
-  G4bool   GetUseSynchPrimaryGen();
-  G4double GetSynchPrimaryAngle();
-  G4double GetSynchPrimaryLength();
+  // G4bool   GetUseSynchPrimaryGen();
+  // G4double GetSynchPrimaryAngle();
+  // G4double GetSynchPrimaryLength();
 
   // AI : for placet synchronization
   void   setWaitingForDump(G4bool flag);
@@ -381,9 +381,9 @@ private:
   G4String itsTunnelMaterialName;  //tunnel material
   G4String itsTunnelCavityMaterialName;  //tunnel cavity material
   G4String itsSoilMaterialName;  //material around tunnel
-  G4bool itsSynchPrimaryGen;
-  G4double itsSynchPrimaryAngle;
-  G4double itsSynchPrimaryLength;
+  // G4bool itsSynchPrimaryGen;
+  // G4double itsSynchPrimaryAngle;
+  // G4double itsSynchPrimaryLength;
   G4bool isWaitingForDump;
   G4bool isDumping;
   G4bool isReading;
@@ -795,12 +795,12 @@ inline G4String BDSGlobalConstants::GetTunnelMaterialName()
 inline G4String BDSGlobalConstants::GetTunnelCavityMaterialName()
 {return itsTunnelCavityMaterialName;}
 
-inline G4bool BDSGlobalConstants::GetUseSynchPrimaryGen()
-{return itsSynchPrimaryGen;}
-inline G4double BDSGlobalConstants::GetSynchPrimaryAngle()
-{return itsSynchPrimaryAngle;}
-inline G4double BDSGlobalConstants::GetSynchPrimaryLength()
-{return itsSynchPrimaryLength;}
+// inline G4bool BDSGlobalConstants::GetUseSynchPrimaryGen()
+// {return itsSynchPrimaryGen;}
+// inline G4double BDSGlobalConstants::GetSynchPrimaryAngle()
+// {return itsSynchPrimaryAngle;}
+// inline G4double BDSGlobalConstants::GetSynchPrimaryLength()
+// {return itsSynchPrimaryLength;}
 
 inline G4bool BDSGlobalConstants::DoTwiss() 
 {return doTwiss;}

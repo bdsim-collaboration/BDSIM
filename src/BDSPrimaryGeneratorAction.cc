@@ -50,26 +50,26 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSDetectorConstruction* /*
 
 #ifdef DEBUG
   G4cout << "BDSPrimaryGeneratorAction.cc: Primary particle is " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetParticleName() << G4endl;
-  G4cout << "BDSPrimaryGeneratorAction.cc: Setting particle definition for gun..." << G4endl;
+  //  G4cout << "BDSPrimaryGeneratorAction.cc: Setting particle definition for gun..." << G4endl;
   //  particleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->
   //				     FindParticle("e-"));
-  G4cout << "BDSPrimaryGeneratorAction.cc: Setting synch rad..." << G4endl;
 #endif
   
-  if(BDSGlobalConstants::Instance()->GetUseSynchPrimaryGen()) // synchrotron radiation generator
-    {
-      itsBDSSynchrotronRadiation=new BDSSynchrotronRadiation("tmpSynRad");
-      G4double R=BDSGlobalConstants::Instance()->GetSynchPrimaryLength()/
-	BDSGlobalConstants::Instance()->GetSynchPrimaryAngle();   
-      G4double SynchCritEng=3./2.*CLHEP::hbarc/pow(CLHEP::electron_mass_c2,3)*
-	pow(BDSGlobalConstants::Instance()->GetBeamKineticEnergy(),3)/R;
-#ifdef DEBUG
-      G4cout<<" BDSPrimaryGeneratorAction:  Critical Energy="<<
-	itsSynchCritEng/CLHEP::keV<<" keV"<<G4endl;
-#endif
-      particleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->
-					 FindParticle("gamma"));
-    }
+//   if(BDSGlobalConstants::Instance()->GetUseSynchPrimaryGen()) // synchrotron radiation generator
+//     {
+//       itsBDSSynchrotronRadiation=new BDSSynchrotronRadiation("tmpSynRad");
+// #ifdef DEBUG
+//       G4cout << "BDSPrimaryGeneratorAction.cc: Setting synch rad..." << G4endl;
+//       G4double R=BDSGlobalConstants::Instance()->GetSynchPrimaryLength()/
+// 	BDSGlobalConstants::Instance()->GetSynchPrimaryAngle();   
+//       G4double SynchCritEng=3./2.*CLHEP::hbarc/pow(CLHEP::electron_mass_c2,3)*
+// 	pow(BDSGlobalConstants::Instance()->GetBeamKineticEnergy(),3)/R;
+//       G4cout<<" BDSPrimaryGeneratorAction:  Critical Energy="<<
+// 	SynchCritEng/CLHEP::keV<<" keV"<<G4endl;
+// #endif
+//       particleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->
+// 					 FindParticle("gamma"));
+//     }
   
 #ifdef DEBUG
   G4cout << "Setting momentum..." << G4endl;

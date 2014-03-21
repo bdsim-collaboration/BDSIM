@@ -166,10 +166,10 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsLWCalOffset = 0.0;
   itsMagnetPoleRadius = 0.0;
   itsMagnetPoleSize = 0.0;
-  //Synchrotron primary generator
-  itsSynchPrimaryGen = false; //XXX check what this is 19/4/11
-  itsSynchPrimaryAngle = 0.0;
-  itsSynchPrimaryLength = 0.0;
+  // //Synchrotron primary generator
+  // itsSynchPrimaryGen = false; //XXX check what this is 19/4/11
+  // itsSynchPrimaryAngle = 0.0;
+  // itsSynchPrimaryLength = 0.0;
 }
 
 void BDSGlobalConstants::InitRotationMatrices(){
