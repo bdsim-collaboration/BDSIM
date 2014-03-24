@@ -480,9 +480,9 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
 #endif
     itsEqRhs = new G4Mag_UsualEqRhs(itsMagField);
     if( (itsMagField->GetHasUniformField())&!(itsMagField->GetHasNPoleFields() || itsMagField->GetHasFieldMap())){
-      itsFStepper = new G4HelixImplicitEuler(itsEqRhs); 
+      itsFStepper = new G4ClassicalRK4(itsEqRhs); 
     } else {
-      itsFStepper = new G4HelixImplicitEuler(itsEqRhs);
+      itsFStepper = new G4ClassicalRK4(itsEqRhs);
     }
     fieldManager->SetDetectorField(itsMagField );
   } else {
@@ -490,7 +490,7 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
     G4cout << "BDSElement.cc> Building uniform magnetic field..." << endl;
 #endif
     itsEqRhs = new G4Mag_UsualEqRhs(itsUniformMagField);
-    itsFStepper = new G4HelixImplicitEuler(itsEqRhs); 
+    itsFStepper = new G4ClassicalRK4(itsEqRhs); 
     fieldManager->SetDetectorField(itsUniformMagField );
   }
 
