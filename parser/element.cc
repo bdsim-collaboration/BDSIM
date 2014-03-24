@@ -23,7 +23,7 @@ namespace {
   }
 }
 
-Element::Element() {
+Element::Element():lst(NULL) {
   flush();
 }
 

@@ -38,10 +38,10 @@ struct Parameters {
 
 
   ///For MADX style sequences
-  double at; int atset;///"at" and "from" define position in beam line
-  char from[256]; int fromset;
-  char refer[64]; int referset;
-  double absp; int abspset;///pos. from beg. of line
+  /* double at; int atset;///"at" and "from" define position in beam line */
+  /* char from[256]; int fromset; */
+  /* char refer[64]; int referset; */
+  /* double absp; int abspset;///pos. from beg. of line */
   
   /// placement, geometrical sizes etc.
 
@@ -83,7 +83,7 @@ struct Parameters {
   /// for external geometry and field definition files
   char geometry[256]; int geomset;
   char bmap[256]; int bmapset;
-  char emap[256];
+  //  char emap[256]; int emapset;
   char material[256]; int materialset;
   char tunnelMaterial[256]; int tunnelmaterialset;
   char tunnelCavityMaterial[256]; int tunnelcavitymaterialset;

@@ -53,11 +53,13 @@ void Parameters::flush() {
   beampipeThickness = 0; beampipeThicknessset = 0;
   aper = 0; aperset = 0;
   outR = 0; outRset = 0;
+  inR = 0; inRset = 0;
+  bpRad = 0; bpRadset = 0;
   tilt = 0; tiltset = 0;
 
   aperX = 0; aperXset = 0;
   aperY = 0; aperYset = 0;
-  aperYUp = 0; aperYUp = 0;
+  aperYUp = 0; aperYUpset = 0;
   aperYDown = 0; aperYDownset = 0;
   aperDy=0; aperDyset = 0;
 

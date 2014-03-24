@@ -168,6 +168,7 @@ struct Options {
   std::string refvolume; ///initial starting volume
   int refcopyno; ///initial starting volume copy number
 
+  /// print some properties
   void print()const;
 
   /// set methods by property name

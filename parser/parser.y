@@ -599,8 +599,8 @@ parameters:
 		  if(!strcmp($1->name,"taperlength")) {params.taperlength = $3; params.taperlengthset = 1;}
 		    else
 		  if(!strcmp($1->name,"flatlength")) {params.flatlength = $3; params.flatlengthset = 1;}
-                    else
-		  if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence
+                  /*   else */
+		  /* if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence */
 		    else {
 		      //                  if(VERBOSE)
 		      printf("Warning : unknown parameter %s\n",$1->name);
@@ -832,8 +832,8 @@ parameters:
 		  if(!strcmp($1->name,"taperlength")) {params.taperlength = $3; params.taperlengthset = 1;}
 		    else
 		  if(!strcmp($1->name,"flatlength")) {params.flatlength = $3; params.flatlengthset = 1;}
-                    else
-		  if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence
+                  /*   else */
+		  /* if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence */
 		  else {
 		      //                  if(VERBOSE)
 		      printf("Warning : unknown parameter %s\n",$1->name);
