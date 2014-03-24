@@ -771,9 +771,9 @@ void add_dump(char *name, char *before, int before_count)
 }
 
 // insert beam gas                                             
-void add_gas(const char *name, const char *before, int before_count,  const char* material)
+void add_gas(const char *name, const char *before, int before_count, std::string material)
 {
-  printf("gas %s will be inserted into %s number %d\n",material,before,before_count);
+  printf("gas %s will be inserted into %s number %d\n",material.c_str(),before,before_count);
   struct Element e;
   e.type = _GAS;
   e.name = name;

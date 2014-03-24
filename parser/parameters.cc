@@ -1,8 +1,8 @@
 #include "parameters.h"
 
 #include <cstdio>
-#include <cstring>
 #include <list>
+#include <string>
 
 #include "element.h"
 
@@ -21,8 +21,8 @@ void Parameters::flush() {
   density = 0; densityset = 0; //g*cm-3
   temper = 300; temperset = 0; //kelvin
   pressure = 1; pressureset = 0; //atm
-  strcpy(state,"solid"); stateset = 0; // "solid", "liquid", or "gas"
-  strcpy(symbol,""); symbolset = 0;
+  state = "solid"; stateset = 0; // "solid", "liquid", or "gas"
+  symbol = ""; symbolset = 0;
   componentsset = 0; componentsFractionsset = 0; componentsWeightsset = 0;
   components.erase(components.begin(),components.end());
   componentsFractions.erase(componentsFractions.begin(),componentsFractions.end());
@@ -85,14 +85,14 @@ void Parameters::flush() {
   //precisionRegion
   precisionRegion = 0; precisionRegionset=0;
 
-  strcpy(geometry,"");  geomset = 0;
+  geometry = "";  geomset = 0;
 
-  strcpy(bmap,""); bmapset = 0;
+  bmap = ""; bmapset = 0;
 
-  strcpy(material,""); materialset = 0;
-  strcpy(tunnelMaterial,""); tunnelmaterialset = 0;
-  strcpy(tunnelCavityMaterial,""); tunnelcavitymaterialset = 0;
-  strcpy(spec,""); specset = 0;
+  material = ""; materialset = 0;
+  tunnelMaterial = ""; tunnelmaterialset = 0;
+  tunnelCavityMaterial = ""; tunnelcavitymaterialset = 0;
+  spec = ""; specset = 0;
 }
 
 void Parameters::inherit_properties(struct Element& e)
@@ -132,8 +132,8 @@ void Parameters::inherit_properties(struct Element& e)
   if(!densityset) { density = e.density; densityset = 1; }
   if(!temperset) { temper = e.temper; temperset = 1; }
   if(!pressureset) { pressure = e.pressure; pressureset = 1; }
-  if(!stateset) { strncpy(state, e.state.c_str(),64); stateset = 1; }
-  if(!symbolset) { strncpy(symbol, e.symbol.c_str(),64); symbolset = 1; }
+  if(!stateset) { state = e.state; stateset = 1; }
+  if(!symbolset) { symbol = e.symbol; symbolset = 1; }
   if(!componentsset) 
     { components = e.components; componentsset = 1; }
   if(!componentsWeightsset) 
@@ -161,10 +161,10 @@ void Parameters::inherit_properties(struct Element& e)
   if(!blmLocZset) { blmLocZ = e.blmLocZ; blmLocZset = 1; }
   if(!blmLocThetaset) { blmLocTheta = e.blmLocTheta; blmLocThetaset = 1; }
 
-  if(!specset) { strncpy(spec,e.spec.c_str(),1024); specset = 1; }
-  if(!materialset) { strncpy(material,e.spec.c_str(),64); materialset = 1; }
-  if(!tunnelmaterialset) { strncpy(tunnelMaterial,e.spec.c_str(),64); tunnelmaterialset = 1; }
-  if(!tunnelcavitymaterialset) { strncpy(tunnelCavityMaterial,e.spec.c_str(),64); tunnelcavitymaterialset = 1; }
+  if(!specset) { spec = e.spec; specset = 1; }
+  if(!materialset) { material = e.spec; materialset = 1; }
+  if(!tunnelmaterialset) { tunnelMaterial = e.spec; tunnelmaterialset = 1; }
+  if(!tunnelcavitymaterialset) { tunnelCavityMaterial = e.spec; tunnelcavitymaterialset = 1; }
   if(!tunnelRadiusset) { tunnelRadius = e.tunnelRadius; tunnelRadiusset = 1; }
   if(!tunnelOffsetXset) { tunnelOffsetX = e.tunnelOffsetX; tunnelOffsetXset = 1; }
   if(!precisionRegionset) { precisionRegion = e.precisionRegion; precisionRegionset = 1; }

@@ -850,13 +850,13 @@ parameters:
 		   if(!strcmp($1->name,"geometry")) 
 		     {
 		       params.geomset = 1;
-		       strcpy(params.geometry, $3);
+		       params.geometry = $3;
 		     } 
 		   else
 		     if(!strcmp($1->name,"bmap")) 
 		       {
 			 params.geomset = 1;
-			 strcpy(params.bmap, $3);
+			 params.bmap = $3;
 		       }
 		   else 
 		     if(!strcmp($1->name,"type")) 
@@ -867,37 +867,37 @@ parameters:
 		   if(!strcmp($1->name,"material")) 
 		       {
 			 params.materialset = 1;
-			 strcpy(params.material, $3);
+			 params.material = $3;
 		       }
 		   else
 		   if(!strcmp($1->name,"tunnelMaterial")) 
 		       {
 			 params.tunnelmaterialset = 1;
-			 strcpy(params.tunnelMaterial, $3);
+			 params.tunnelMaterial = $3;
 		       }
 		   else 
 		   if(!strcmp($1->name,"tunnelCavityMaterial")) 
 		       {
 			 params.tunnelcavitymaterialset = 1;
-			 strcpy(params.tunnelCavityMaterial, $3);
+			 params.tunnelCavityMaterial = $3;
 		       }
 		   else 
 		   if(!strcmp($1->name,"spec")) 
 		       {
 			 params.specset = 1;
-			 strcpy(params.spec, $3);
+			 params.spec = $3;
 		       }
                    else 
                    if(!strcmp($1->name,"symbol"))
                        {
                          params.symbolset = 1;
-                         strcpy(params.symbol, $3);
+                         params.symbol = $3;
                        }
 		   else 
                    if(!strcmp($1->name,"state"))
                        {
                          params.stateset = 1;
-                         strcpy(params.state, $3);
+                         params.state = $3;
                        }
 		    else {
 		      //                  if(VERBOSE)
@@ -915,13 +915,13 @@ parameters:
 		   if(!strcmp($1->name,"geometry")) 
 		     {
 		       params.geomset = 1;
-		       strcpy(params.geometry, $3);
+		       params.geometry = $3;
 		     } 
 		   else
 		     if(!strcmp($1->name,"bmap")) 
 		       {
 			 params.geomset = 1;
-			 strcpy(params.bmap, $3);
+			 params.bmap = $3;
 		       }
 		     else 
 		     if(!strcmp($1->name,"type")) 
@@ -932,37 +932,37 @@ parameters:
                        if(!strcmp($1->name,"material")) 
                          {	 
                            params.materialset = 1;
-                           strcpy(params.material, $3);
+                           params.material = $3;
                          }
                        else
                          if(!strcmp($1->name,"tunnelMaterial")) 
 		       {	 
 			 params.tunnelmaterialset = 1;
-			 strcpy(params.tunnelMaterial, $3);
+			 params.tunnelMaterial = $3;
 		       }
 			 else
                          if(!strcmp($1->name,"tunnelCavityMaterial")) 
 		       {	 
 			 params.tunnelcavitymaterialset = 1;
-			 strcpy(params.tunnelCavityMaterial, $3);
+			 params.tunnelCavityMaterial = $3;
 		       }
                      else
                    if(!strcmp($1->name,"spec")) 
 		       {
 			 params.specset = 1;
-			 strcpy(params.spec, $3);
+			 params.spec = $3;
 		       }
 		   else 
                    if(!strcmp($1->name,"symbol"))
                        {
                          params.symbolset = 1;
-                         strcpy(params.symbol, $3);
+                         params.symbol = $3;
                        }
 		   else 
                    if(!strcmp($1->name,"state"))
                        {
                          params.stateset = 1;
-                         strcpy(params.state, $3);
+                         params.state = $3;
                        }
 		    else {
 		      //                  if(VERBOSE)
@@ -2028,7 +2028,7 @@ gas_options : VARIABLE '=' aexpr
 		      {
 			if( !strcmp($1->name,"material") ) 
 			  {
-			    strcpy(params.material ,$3);
+			    params.material = $3;
 			    params.materialset = 1;
 			  }
 			//options.set_value($1->name,string($3));
@@ -2057,7 +2057,7 @@ gas_options : VARIABLE '=' aexpr
 		      {
 			  if( !strcmp($1->name,"material") ) 
 			    {
-			      strcpy(params.material ,$3);
+			      params.material = $3;
 			      params.materialset = 1;
 			    }
 		      }

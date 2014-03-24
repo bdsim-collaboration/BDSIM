@@ -1,8 +1,8 @@
 #ifndef __PARAMETERS_H
 #define __PARAMETERS_H
 
-#include <cstring>
 #include <list>
+#include <string>
 
 struct Element;
 
@@ -81,15 +81,15 @@ struct Parameters {
   double tilt; int tiltset;   /// tilt
 
   /// for external geometry and field definition files
-  char geometry[256]; int geomset;
-  char bmap[256]; int bmapset;
-  //  char emap[256]; int emapset;
-  char material[256]; int materialset;
-  char tunnelMaterial[256]; int tunnelmaterialset;
-  char tunnelCavityMaterial[256]; int tunnelcavitymaterialset;
+  std::string geometry; int geomset;
+  std::string bmap; int bmapset;
+  //  std::string emap; int emapset;
+  std::string material; int materialset;
+  std::string tunnelMaterial; int tunnelmaterialset;
+  std::string tunnelCavityMaterial; int tunnelcavitymaterialset;
 
   /// string to pass a custom type specification
-  char spec[1024]; int specset;
+  std::string spec; int specset;
 
   /// material properties
   double A; int Aset;
@@ -97,8 +97,8 @@ struct Parameters {
   double density; int densityset;
   double temper; int temperset;
   double pressure; int pressureset;
-  char state[64]; int stateset;
-  char symbol[64]; int symbolset;
+  std::string state; int stateset;
+  std::string symbol; int symbolset;
   std::list<const char*> components; int componentsset;
   std::list<double> componentsFractions; int componentsFractionsset;
   std::list<int> componentsWeights; int componentsWeightsset;
