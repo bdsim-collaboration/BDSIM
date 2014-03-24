@@ -194,7 +194,7 @@ void BDSAwakeScintillatorScreen::Build(){
       BuildCamera();	
       ComputeDimensions();
       BuildMarkerVolume();
-      //      BuildVacuumChamber1();
+      BuildVacuumChamber1();
       BuildScreenScoringPlane();
       //      BuildCameraScoringPlane();
       PlaceScreen();
@@ -270,10 +270,10 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   _vacKevlarThickness=0.3*mm;
   _vacMylarThickness=0.05*mm;
   _vacThickness=2*mm;
-  _vacInnerWidth=7*cm;
-  _vacInnerHeight=7*cm;
-  _vacWidth=7*cm+_vacKevlarThickness+_vacMylarThickness+_vacThickness;
-  _vacHeight=7*cm+2*_vacThickness;
+  _vacInnerWidth=4*cm;
+  _vacInnerHeight=4*cm;
+  _vacWidth=4*cm+_vacKevlarThickness+_vacMylarThickness+_vacThickness;
+  _vacHeight=4*cm+2*_vacThickness;
   _vacDispX=-((sqrt(2.0)/2.0)/2.0)*m-_vacWidth/2.0-0.15*mm;
 
   itsLength  = (z_wid + z_thi);  
