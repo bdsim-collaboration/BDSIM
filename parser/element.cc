@@ -104,6 +104,9 @@ void Element::flush() {
   k2 = 0;
   k3 = 0;
   angle = 0;
+  xsize = 0;
+  ysize = 0;
+  r = 0;
   phiAngleIn = 0;
   phiAngleOut = 0;
   tilt = 0;
@@ -134,6 +137,7 @@ void Element::flush() {
 
   name = "";
   type = _NONE;
+  precisionRegion = 0;
 
   A = 0;
   Z = 0;
