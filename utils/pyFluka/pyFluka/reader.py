@@ -153,30 +153,22 @@ class reader :
 #                        print regionName+':'+l
                         regionDef = regionDef+l
 
-    def makeCubit(self) : 
-        f = open('cubit.jou','w') 
-        
-        for reg in self.regiDict.keys() : 
-            self.makeCubitRegion(reg)
-            f.write('play "/Users/sboogert/Dropbox/Physics/general/acc/bdsim/bdsim-git/utils/pyFluka/pyFluka/'+reg+'.jou"\n')
-            
-        f.close()
-
-    def makeCubitRegion(self, region) : 
+    def makeCubitFile(self, region) : 
         geo = self.regiDict[region] 
         t = geo.split() 
 
-        f = open(region+'.jou','w') 
+        f = open('region.jou','w') 
 
         transList   = []
         bodyOpList  = [] 
         bodyList    = []
 
+        v1 = fc.createJou('main.jou')
         for i in range(3,len(t),1) : 
-            if t[i] == '|' : 
-                continue 
             op     = t[i][0]
             name   = t[i][1:]
+            if name=='':
+               continue 
             data   = self.bodyDict[name] 
             vdata  = data[0][1:]
             type   = data[0][0]
@@ -188,10 +180,10 @@ class reader :
 
             print name,type,vdata,trans
 
-            jouFile = name+'.jou'
             stlFile = name+'.stl'
+            satFile = name+'.sat'
 
-            v1 = fc.createJou(jouFile)
+            #v1 = fc.createJou(jouFile)
             pr = fc.Primitives() 
 
             if type == 'RPP' :             
@@ -209,16 +201,114 @@ class reader :
                 
             print data[1]
         
-            v1.export(stlFile)
-            v1.close()
+            #v1.exportSTL(stlFile)
+            v1.exportSAT(satFile)
 
-            print jouFile
 
             # make 
-            os.system('/Applications/Cubit.app/Contents/MacOS/cubitcl -input '+jouFile+' -nographics -nojournal -batch > /dev/null')
-            f.write('import stl "/Users/sboogert/Dropbox/Physics/general/acc/bdsim/bdsim-git/utils/pyFluka/pyFluka/'+stlFile+'" merge\n')
+            #f.write('import stl "/Users/robertainsworth/bdsim/utils/pyFluka/pyFluka/'+stlFile+'" merge\n')
+            f.write('import acis "/Users/robertainsworth/bdsim/utils/pyFluka/pyFluka/'+satFile+'" attributes_on separate_bodies\n')
+        v1.close()
         f.close()
+        os.system('/Applications/Cubit-13.1/Cubit.app/Contents/MacOS/cubitcl -input main.jou -nographics -nojournal -batch > /dev/null')
 
         transList = pl.array(transList)
+
+    def makeFinal(self):
+        i=1
+        fin = fc.createJou('final.jou')
+        for reg in self.regiDict.keys():
+            #fin.f.write('import acis "/Users/robertainsworth/bdsim/utils/pyFluka/pyFluka/'+reg+'.sat" attributes_on separate_bodies\n')
+            fin.f.write('import acis "/Users/robertainsworth/bdsim/utils/pyFluka/pyFluka/'+reg+'.sat" attributes_on\n')
+            fin.f.write('body '+str(i)+' name "'+reg+'"\n')
+            i+=1
+        fin.close()
+
+    def makeGeometry(self):
+        for reg in self.regiDict.keys():
+           print 'building region: '+reg
+           SRL,SROL=self.makeCubitBodies(reg)
+           self.makeCubitRegions(reg,SRL,SROL)
         
+    def makeCubitBodies(self, region) : 
+        geo = self.regiDict[region] 
+        t = geo.split() 
+
+        transList   = []
+        bodyOpList  = [] 
+        bodyList    = []
+        subRegionList=[]
+        subRegionOpList=[]
+
+        v1 = fc.createJou('main.jou')
+        for i in range(3,len(t),1) : 
+            op     = t[i][0]
+            name   = t[i][1:]
+            if name=='':
+                subRegionList.append(bodyList)    
+                subRegionOpList.append(bodyOpList)
+                bodyOpList=[]
+                bodyList=[]
+                continue 
+            data   = self.bodyDict[name] 
+            vdata  = data[0][1:]
+            type   = data[0][0]
+            trans  = data[1]
+
+            bodyOpList.append(op)
+            bodyList.append(name)
+            transList.append(trans)
+
+            #print name,type,vdata,trans
+            #print data, bodyOpList 
+            stlFile = name+'.stl'
+            satFile = name+'.sat'
+
+            pr = fc.Primitives() 
+
+            if type == 'RPP' :             
+                v1.MakeModel(pr.RPP(vdata))
+                v1.MakeModel(pr.translation(trans))
+            elif type == 'RCC' : 
+                v1.MakeModel(pr.RCC(vdata))    
+                v1.MakeModel(pr.translation(trans))            
+            elif type == 'XYP' : 
+                v1.MakeModel(pr.XYP(vdata))
+                v1.MakeModel(pr.translation(trans))
+            elif type == 'ZCC' : 
+                v1.MakeModel(pr.ZCC(vdata))
+                v1.MakeModel(pr.translation(trans))                
+            elif type == 'PLA' : 
+                v1.MakeModel(pr.PLA(vdata))
+                v1.MakeModel(pr.translation(trans))                
+   
         
+            #v1.exportSTL(stlFile)
+            v1.exportSAT(satFile)
+
+        v1.close()
+        subRegionList.append(bodyList)    
+        subRegionOpList.append(bodyOpList)    
+        os.system('/Applications/Cubit-13.1/Cubit.app/Contents/MacOS/cubitcl -input main.jou -nographics -nojournal -batch > /dev/null')
+        transList = pl.array(transList)
+        return subRegionList,subRegionOpList
+
+    def makeCubitRegions(self,region,subRegionList,subRegionOpList):
+        regJ = fc.createJou('region.jou')
+        for i in xrange(len(subRegionList)):
+            for j in xrange(len(subRegionList[i])):
+                satFile=subRegionList[i][j]+'.sat'
+                regJ.f.write('import acis "/Users/robertainsworth/bdsim/utils/pyFluka/pyFluka/'+satFile+'" attributes_on separate_bodies\n')
+                regJ.f.write('volume '+str(j+1)+' name "'+subRegionList[i][j]+'"\n')
+            for j in xrange(1,len(subRegionList[i])):
+                if subRegionOpList[i][j]=='+':
+                    regJ.f.write('intersect '+subRegionList[i][j]+' '+subRegionList[i][0]+'\n')
+                elif subRegionOpList[i][j]=='-':
+                    regJ.f.write('subtract '+subRegionList[i][j]+' from '+subRegionList[i][0]+'\n')
+            regJ.exportSAT('subRegion'+str(i+1)+'.sat')
+        for i in xrange(len(subRegionList)):
+            regJ.f.write('import acis "/Users/robertainsworth/bdsim/utils/pyFluka/pyFluka/subRegion'+str(i+1)+'.sat" attributes_on separate_bodies\n')
+        regJ.f.write('unite all\n')
+        regJ.exportSAT(region+'.sat')
+        regJ.close()
+        os.system('/Applications/Cubit-13.1/Cubit.app/Contents/MacOS/cubitcl -input region.jou -nographics -nojournal -batch > /dev/null')
