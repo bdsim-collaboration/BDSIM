@@ -1864,28 +1864,28 @@ beam,  particle="e-",
 @node Known Issues, References, Bunch description formats, Top
 @appendix Known Issues
 
-A bug is present where a sampler attached to a bending magnet (RBend/SBend) will
-cause the magnetic field to fail to be set. The reference frame rotates 
-correctly but the particle trajectory does not follow. To work around this 
-issue, samplers should be attached to a marker rather than directly to the 
-magnet. For example:
+@c A bug is present where a sampler attached to a bending magnet (RBend/SBend) will
+@c cause the magnetic field to fail to be set. The reference frame rotates 
+@c correctly but the particle trajectory does not follow. To work around this 
+@c issue, samplers should be attached to a marker rather than directly to the 
+@c magnet. For example:
 
-@example
-@code{dip: sbend,l=1*m, angle=0.1;}
-@code{temp: line=(dip);}
-@code{use, period=temp;}
-@code{sample, range=dip;}
-@end example
+@c @example
+@c @code{dip: sbend,l=1*m, angle=0.1;}
+@c @code{temp: line=(dip);}
+@c @code{use, period=temp;}
+@c @code{sample, range=dip;}
+@c @end example
 
-should be replaced by:
+@c should be replaced by:
 
-@example
-@code{dip: sbend,l=1*m, angle=0.1;}
-@code{dipMark: marker;}
-@code{temp: line=(dipMark,dip);}
-@code{use, period=temp;}
-@code{sample, range=dipMark;}
-@end example
+@c @example
+@c @code{dip: sbend,l=1*m, angle=0.1;}
+@c @code{dipMark: marker;}
+@c @code{temp: line=(dipMark,dip);}
+@c @code{use, period=temp;}
+@c @code{sample, range=dipMark;}
+@c @end example
 
 Samplers attached to multiple instances of the same element incorrectly 
 register hits only from the first instance in all such samplers. For example:
