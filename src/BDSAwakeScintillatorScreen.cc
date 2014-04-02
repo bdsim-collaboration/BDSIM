@@ -275,7 +275,7 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   //  itsXLength = std::max(itsXLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
   //  itsYLength = std::max(itsYLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
 
-  _cameraScreenDist=(4.0)*CLHEP::m;
+  _cameraScreenDist=(2.0)*CLHEP::m;
 
   _screenWidth=_mlScreen->size().x();
   _screenHeight=_mlScreen->size().y();
