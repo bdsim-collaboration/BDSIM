@@ -83,6 +83,9 @@ G4VisAttributes* BDSAwakeScintillatorScreen::SetVisAttributes()
   _visAttScint->SetForceSolid(true);
   _visAttBase->SetForceSolid(true);
   _visAttSampler->SetForceSolid(true);
+  _visAttSampler->SetVisibility(true);
+
+
 
   return itsVisAttributes;
 }
@@ -93,18 +96,34 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   int nThisSampler= BDSSampler::GetNSamplers() + 1;
   G4String ident="_camera";
   _samplerName = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_scoringPlaneName);
+  _samplerName2 = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_scoringPlaneName+"_2");
   
   //Build and place the volume...
-  itsCameraScoringPlaneSolid = new G4Box("CameraScoringPlaneSolid",itsLength/2.0,itsYLength/2.0,_scoringPlaneThickness/2.0);
+  itsCameraScoringPlaneSolid = new G4Box("CameraScoringPlaneSolid",100*CLHEP::mm/2.0,100*CLHEP::mm/2.0,_scoringPlaneThickness/2.0);
   itsCameraScoringPlaneLog = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog",0,0,0);
-  itsCameraScoringPlaneLog->SetVisAttributes(_visAttScint);
-  G4double dispX=-itsXLength/2.0+_scoringPlaneThickness/2.0;
+  itsCameraScoringPlaneLog->SetVisAttributes(_visAttSampler);
+
+  G4double dispX=_cameraScreenDist-_scoringPlaneThickness/2.0;
   G4double dispY=0;
   G4double dispZ=0;
+
   new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),G4ThreeVector(dispX,dispY,dispZ),itsCameraScoringPlaneLog,_samplerName,
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   
+  itsCameraScoringPlaneLog2 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog2",0,0,0);
+  itsCameraScoringPlaneLog2->SetVisAttributes(_visAttSampler);
+
+  G4double dispX2=0;
+  G4double dispY2=0;
+  //  G4double dispZ2=_cameraScreenDist-_scoringPlaneThickness/2.0;
+  G4double dispZ2=1*CLHEP::cm-_scoringPlaneThickness/2.0;
+
+  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX2,dispY2,dispZ2),itsCameraScoringPlaneLog2,_samplerName2,
+		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+  
+  
   (*LogVol)[_samplerName]=itsCameraScoringPlaneLog;
+  (*LogVol)[_samplerName2]=itsCameraScoringPlaneLog2;
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   if(BDSSampler::GetNSamplers()==0){
     BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
@@ -114,6 +133,8 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   //SPM bdsOutput->nSamplers++;
   BDSSampler::AddExternalSampler();
   bdsOutput->SampName.push_back(_samplerName+"_1");
+  BDSSampler::AddExternalSampler();
+  bdsOutput->SampName.push_back(_samplerName2+"_1");
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
   G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
@@ -167,18 +188,24 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
   new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,-dispZ),itsScreenScoringPlaneLog2,_screenSamplerName2,
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   
-  (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;
+  //---Removing downstream sampler
+  //---  (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;
+  //---
   (*LogVol)[_screenSamplerName2]=itsScreenScoringPlaneLog2;
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   if(BDSSampler::GetNSamplers()==0){
     BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
     SDMan->AddNewDetector(BDSSamplerSensDet);
   }
-  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
+  //---Removing downstream sampler
+  //---  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
+  //---
   itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSamplerSensDet);
   //SPM bdsOutput->nSamplers++;
-  BDSSampler::AddExternalSampler();
-  bdsOutput->SampName.push_back(_screenSamplerName+"_1");
+  //---Removing downstream sampler
+  //---BDSSampler::AddExternalSampler();
+  //---bdsOutput->SampName.push_back(_screenSamplerName+"_1");
+  //---
   BDSSampler::AddExternalSampler();
   bdsOutput->SampName.push_back(_screenSamplerName2+"_1");
 #ifndef NOUSERLIMITS
@@ -196,7 +223,7 @@ void BDSAwakeScintillatorScreen::Build(){
       BuildMarkerVolume();
       BuildVacuumChamber1();
       BuildScreenScoringPlane();
-      //      BuildCameraScoringPlane();
+      BuildCameraScoringPlane();
       PlaceScreen();
       //      PlaceCamera();
       if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
@@ -235,7 +262,7 @@ void BDSAwakeScintillatorScreen::BuildScreen()
 
 void BDSAwakeScintillatorScreen::PlaceScreen(){
   _mlScreen->place(_screenRotationMatrix,
-		   G4ThreeVector(0,0,0),
+		   G4ThreeVector(0,0,-_cameraScreenDist/2.0),
 		   itsMarkerLogicalVolume
 		   );
 }
@@ -245,7 +272,7 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   //  itsXLength = std::max(itsXLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
   //  itsYLength = std::max(itsYLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
 
-  _cameraScreenDist=(1.0)*CLHEP::m;
+  _cameraScreenDist=(2.0)*CLHEP::m;
 
   _screenWidth=_mlScreen->size().x();
   _screenHeight=_mlScreen->size().y();
@@ -276,7 +303,7 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   _vacHeight=4*cm+2*_vacThickness;
   _vacDispX=-((sqrt(2.0)/2.0)/2.0)*m-_vacWidth/2.0-0.15*mm;
 
-  itsLength  = (z_wid + z_thi);  
+  itsLength  = z_wid + z_thi + _cameraScreenDist;  
   itsXLength = (x_wid +x_thi+2*_vacWidth);
   itsYLength = std::max(_screenHeight,_camera->size().y());
   std::cout << __METHOD_NAME__ << " " << itsLength << " " << itsXLength << " " << itsYLength << std::endl;
@@ -325,7 +352,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
   G4LogicalVolume* vacuumOuterLog = new G4LogicalVolume(vacuumOuterSolid, BDSMaterials::Instance()->GetMaterial("iron"), "vacuumOuterLog",0,0,0);
 
   new G4PVPlacement(_vacRotationMatrix, 
-		    G4ThreeVector(_vacDispX,0,0), 
+		    G4ThreeVector(_vacDispX,0,-_cameraScreenDist/2.0), 
 		    vacuumOuterLog, 
 		    "awakeScreenOuterVacuumPV", 
 		    itsMarkerLogicalVolume, 
@@ -338,7 +365,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
 
  
   new G4PVPlacement(new G4RotationMatrix(), 
-		    G4ThreeVector(_vacThickness/2.0-(_vacMylarThickness+_vacKevlarThickness)/2.0,0,0), 
+		    G4ThreeVector(_vacThickness/2.0-(_vacMylarThickness+_vacKevlarThickness)/2.0,0,-_cameraScreenDist/2.0), 
 		    vacuumLog, 
 		    "awakeScreenVacuumPV", 
 		    vacuumOuterLog, 
@@ -358,7 +385,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
   G4LogicalVolume* mylarWindowLog = new G4LogicalVolume(mylarWindowSolid, BDSMaterials::Instance()->GetMaterial("G4_MYLAR"), "mylarWindowLog",0,0,0);
 
   new G4PVPlacement(new G4RotationMatrix(), 
-		    G4ThreeVector(_vacWidth/2.0-(_vacMylarThickness+_vacKevlarThickness)/2.0,0,0), 
+		    G4ThreeVector(_vacWidth/2.0-(_vacMylarThickness+_vacKevlarThickness)/2.0,0,-_cameraScreenDist/2.0), 
 		    vacuumWindowLog, 
 		    "awakeScreenVacuumWindowPV", 
 		    vacuumOuterLog, 
@@ -368,7 +395,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
 		    );
   
   new G4PVPlacement(new G4RotationMatrix(), 
-		    G4ThreeVector((_vacKevlarThickness+_vacMylarThickness)/2.0 - _vacKevlarThickness/2.0,0,0), 
+		    G4ThreeVector((_vacKevlarThickness+_vacMylarThickness)/2.0 - _vacKevlarThickness/2.0,0,-_cameraScreenDist/2.0), 
 		    kevlarWindowLog, 
 		    "awakeScreenKevlarVacuumWindowPV", 
 		    vacuumWindowLog, 
@@ -378,7 +405,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
 		    );
 
   new G4PVPlacement(new G4RotationMatrix(), 
-		    G4ThreeVector(-(_vacKevlarThickness+_vacMylarThickness)/2.0 + _vacMylarThickness/2.0,0,0), 
+		    G4ThreeVector(-(_vacKevlarThickness+_vacMylarThickness)/2.0 + _vacMylarThickness/2.0,0,-_cameraScreenDist/2.0), 
 		    mylarWindowLog, 
 		    "awakeScreenMylarVacuumWindowPV", 
 		    vacuumWindowLog, 

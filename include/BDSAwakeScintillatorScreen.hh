@@ -58,6 +58,7 @@ private:
   G4VPhysicalVolume* itsCameraScoringPlanePhys;
   G4VPhysicalVolume* itsScreenScoringPlanePhys;
   G4LogicalVolume* itsCameraScoringPlaneLog;
+  G4LogicalVolume* itsCameraScoringPlaneLog2;
   G4LogicalVolume* itsScreenScoringPlaneLog;
   G4LogicalVolume* itsScreenScoringPlaneLog2;
   G4VSolid* itsCameraScoringPlaneSolid;
@@ -108,6 +109,7 @@ private:
   G4String _screenSamplerName;
   G4String _screenSamplerName2;
   G4String _samplerName;
+  G4String _samplerName2;
 
   BDSAwakeMultilayerScreen* _mlScreen;
   G4double _screenAngle;
