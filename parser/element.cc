@@ -109,6 +109,7 @@ void Element::flush() {
   r = 0;
   phiAngleIn = 0;
   phiAngleOut = 0;
+  tscint = 0;
   tilt = 0;
   phi = 0;
   psi = 0;
