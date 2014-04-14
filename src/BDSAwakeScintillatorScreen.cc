@@ -280,15 +280,14 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
     BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
     SDMan->AddNewDetector(BDSSamplerSensDet);
   }
-  //---Removing downstream sampler
-  //---  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
-  //---
+
+  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
+  
   itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSamplerSensDet);
   //SPM bdsOutput->nSamplers++;
-  //---Removing downstream sampler
-  //---BDSSampler::AddExternalSampler();
-  //---bdsOutput->SampName.push_back(_screenSamplerName+"_1");
-  //---
+  BDSSampler::AddExternalSampler();
+  bdsOutput->SampName.push_back(_screenSamplerName+"_1");
+  
   BDSSampler::AddExternalSampler();
   bdsOutput->SampName.push_back(_screenSamplerName2+"_1");
 #ifndef NOUSERLIMITS
@@ -304,7 +303,7 @@ void BDSAwakeScintillatorScreen::Build(){
       BuildCamera();	
       ComputeDimensions();
       BuildMarkerVolume();
-      BuildVacuumChamber1();
+      //      BuildVacuumChamber1();
       BuildScreenScoringPlane();
       BuildCameraScoringPlane();
       PlaceScreen();
