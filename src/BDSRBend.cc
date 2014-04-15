@@ -319,8 +319,8 @@ void BDSRBend::BuildRBBeampipe()
   // build beampipe
   //
   G4Tubs *pipeTubsEnv = new G4Tubs(itsName+"_pipe_outer_env",
-				   itsBpRadius+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0, // inner R
-				   itsBpRadius+bpThickness,             // outer R
+				   itsBpRadius, // inner R
+				   itsBpRadius+bpThickness+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,             // outer R
 				   tubLen,                  // length
 				   0,                       // starting phi
 				   CLHEP::twopi * CLHEP::rad );           // delta phi
@@ -547,8 +547,8 @@ void BDSRBend::BuildRBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
   
   G4Tubs *magTubsEnv =
     new G4Tubs(itsName+"_solid_env",
-	       itsInnerIronRadius+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0, // inner R + overlap safety
-	       itsOuterR,          // outer R
+	       itsInnerIronRadius, // inner R + overlap safety
+	       itsOuterR+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,          // outer R
 	       tubLen,             // length
 	       0,                  // starting phi
 	       CLHEP::twopi * CLHEP::rad );      // delta phi
