@@ -61,6 +61,8 @@ public:
   G4int    GetVerboseTrackingLevel() {return verboseTrackingLevel;}
   G4int    GetVerboseSteppingLevel() {return verboseSteppingLevel;}
 
+  G4bool   GetCircular()             {return circular;}
+
 
 protected : 
   BDSExecOptions();
@@ -94,6 +96,7 @@ private :
   G4int  verboseTrackingLevel;
   G4int  verboseSteppingLevel;
 
+  G4bool circular;
 
 };
 
