@@ -168,6 +168,9 @@ struct Options {
   std::string refvolume; ///initial starting volume
   int refcopyno; ///initial starting volume copy number
 
+  // Ring parameters
+  int      nturns;
+
   /// print some properties
   void print()const;
 

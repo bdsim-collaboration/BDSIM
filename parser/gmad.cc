@@ -210,6 +210,9 @@ void init()
   options.fifo = "";
   options.refvolume = "";
   options.refcopyno = 0;
+
+  // ring options
+  options.nturns = 1;
 }
 }
 

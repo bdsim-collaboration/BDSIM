@@ -203,6 +203,7 @@ public:
   G4int    GetTurnNumber();
   void     IncrementTurnNumber();
   void     ResetTurnNumber();
+  G4int    GetNTurns();
 
 protected:
   BDSGlobalConstants(struct Options&);
@@ -332,6 +333,7 @@ private:
   G4int    itsRefCopyNo;
   G4AffineTransform itsRefTransform;
   G4int    itsTurnNumber;
+  G4int    itsNTurns;
 };
 
 inline G4double BDSGlobalConstants::GetElossHistoBinWidth()
@@ -728,11 +730,14 @@ inline void BDSGlobalConstants::SetRefTransform(G4AffineTransform& aTransform)
 inline G4int BDSGlobalConstants::GetTurnNumber()
 {return itsTurnNumber;}
 
-inline void BDSGlobalConstants::IncrementTurnNumber()
+inline void  BDSGlobalConstants::IncrementTurnNumber()
 {itsTurnNumber += 1;}
 
-inline void BDSGlobalConstants::ResetTurnNumber()
+inline void  BDSGlobalConstants::ResetTurnNumber()
 {itsTurnNumber = 0;}
+
+inline G4int BDSGlobalConstants::GetNTurns()
+{return itsNTurns;}
 
 // UNUSED INLINE FUNCTIONS
 
