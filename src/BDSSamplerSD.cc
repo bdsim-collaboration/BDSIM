@@ -82,12 +82,10 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4int ParentID = theTrack->GetParentID();
   //time since track creation
   G4double t = theTrack->GetGlobalTime();
-  //total track energy
-  
-  
-  G4double energy = theTrack->GetKineticEnergy()+ 
-    theTrack->GetDefinition()->GetPDGMass();
-  
+  //total track energy 
+  G4double energy = theTrack->GetKineticEnergy()+theTrack->GetDefinition()->GetPDGMass();
+  //Turn Number
+  G4int TurnNumber = BDSGlobalConstants::Instance()->GetTurnNumber();  
   
   //current particle position (global)
   G4ThreeVector pos = theTrack->GetPosition();
@@ -204,7 +202,11 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 			t,
 			s,
 			weight,
-			PDGtype,nEvent, ParentID, TrackID);
+			PDGtype,
+			nEvent, 
+			ParentID, 
+			TrackID,
+			TurnNumber);
   smpHit->SetGlobalX(pos.x());
   smpHit->SetGlobalY(pos.y());
   smpHit->SetGlobalZ(pos.z());

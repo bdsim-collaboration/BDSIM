@@ -162,6 +162,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       PartMomDir = LocalMomDir;
     }
 
+    BDSGlobalConstants::Instance()->ResetTurnNumber();
     particleGun->SetParticlePosition(PartPosition);
     particleGun->SetParticleEnergy(E);
     particleGun->SetParticleMomentumDirection(PartMomDir);
@@ -198,15 +199,15 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 #endif
 
   // save initial values outside scope for entry into the samplers:
-  initial_x=x0;
-  initial_xp=xp;
-  initial_y=y0;
-  initial_yp=yp;
-  initial_t=t;
-  initial_z=z0;
-  initial_zp=zp;
+  initial_x  = x0;
+  initial_xp = xp;
+  initial_y  = y0;
+  initial_yp = yp;
+  initial_t  = t;
+  initial_z  = z0;
+  initial_zp = zp;
   // total energy is used elsewhere:
-  initial_E=totalE;
+  initial_E  = totalE;
   // weight
   initial_weight=weight;
 }
