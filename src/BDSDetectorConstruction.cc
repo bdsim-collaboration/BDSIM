@@ -366,7 +366,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   // define geometry scope
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     {
-
 #ifdef DEBUG 
       G4cout << BDSBeamline::Instance()->currentItem()->GetName() << "  "
              << BDSBeamline::Instance()->currentItem()->GetLength() << "  "
