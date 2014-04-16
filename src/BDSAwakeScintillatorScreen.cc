@@ -41,12 +41,11 @@ extern LogVolMap* LogVol;
 
 //============================================================
 
-BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness):
-  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0, SetVisAttributes()),_material(material), _thickness(thickness)
+BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*BDSGlobalConstants::Instance()->GetPI()/180.0):
+  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0, SetVisAttributes()),_material(material), _thickness(thickness), _screenAngle(angle)
 {
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
-  _screenAngle=-45*BDSGlobalConstants::Instance()->GetPI()/180.0;
   _screenRotationMatrix->rotateY(_screenAngle);
 
   _vacRotationMatrix = new G4RotationMatrix();
@@ -271,24 +270,24 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
   new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ2),itsScreenScoringPlaneLog2,_screenSamplerName2,
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   
-  //---Removing downstream sampler
-  //---  (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;
-  //---
+ 
+  (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;
+  
   (*LogVol)[_screenSamplerName2]=itsScreenScoringPlaneLog2;
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   if(BDSSampler::GetNSamplers()==0){
     BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
     SDMan->AddNewDetector(BDSSamplerSensDet);
   }
-  //---Removing downstream sampler
-  //---  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
-  //---
+ 
+    itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
+ 
   itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSamplerSensDet);
   //SPM bdsOutput->nSamplers++;
-  //---Removing downstream sampler
-  //---BDSSampler::AddExternalSampler();
-  //---bdsOutput->SampName.push_back(_screenSamplerName+"_1");
-  //---
+  
+  BDSSampler::AddExternalSampler();
+  bdsOutput->SampName.push_back(_screenSamplerName+"_1");
+  
   BDSSampler::AddExternalSampler();
   bdsOutput->SampName.push_back(_screenSamplerName2+"_1");
 #ifndef NOUSERLIMITS
@@ -304,9 +303,9 @@ void BDSAwakeScintillatorScreen::Build(){
       BuildCamera();	
       ComputeDimensions();
       BuildMarkerVolume();
-      BuildVacuumChamber1();
+      //      BuildVacuumChamber1();
       BuildScreenScoringPlane();
-      BuildCameraScoringPlane();
+      //      BuildCameraScoringPlane();
       PlaceScreen();
       //      PlaceCamera();
       if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
