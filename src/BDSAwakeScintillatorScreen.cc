@@ -41,13 +41,12 @@ extern LogVolMap* LogVol;
 
 //============================================================
 
-BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness):
-  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0, SetVisAttributes()),_material(material), _thickness(thickness)
+BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*BDSGlobalConstants::Instance()->GetPI()/180.0):
+  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0, SetVisAttributes()),_material(material), _thickness(thickness), _screenAngle(angle)
 {
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
-  _screenAngle=-45*BDSGlobalConstants::Instance()->GetPI()/180.0;
-  _screenRotationMatrix->rotateY(_screenAngle);
+    _screenRotationMatrix->rotateY(_screenAngle);
 
   _vacRotationMatrix = new G4RotationMatrix();
 
@@ -280,14 +279,15 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
     BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
     SDMan->AddNewDetector(BDSSamplerSensDet);
   }
-
-  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
-  
+  //---Removing downstream sampler
+  //---  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
+  //---
   itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSamplerSensDet);
   //SPM bdsOutput->nSamplers++;
-  BDSSampler::AddExternalSampler();
-  bdsOutput->SampName.push_back(_screenSamplerName+"_1");
-  
+  //---Removing downstream sampler
+  //---BDSSampler::AddExternalSampler();
+  //---bdsOutput->SampName.push_back(_screenSamplerName+"_1");
+  //---
   BDSSampler::AddExternalSampler();
   bdsOutput->SampName.push_back(_screenSamplerName2+"_1");
 #ifndef NOUSERLIMITS
@@ -305,7 +305,7 @@ void BDSAwakeScintillatorScreen::Build(){
       BuildMarkerVolume();
       //      BuildVacuumChamber1();
       BuildScreenScoringPlane();
-      BuildCameraScoringPlane();
+      //      BuildCameraScoringPlane();
       PlaceScreen();
       //      PlaceCamera();
       if(BDSGlobalConstants::Instance()->GetBuildTunnel()){

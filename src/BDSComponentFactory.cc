@@ -1279,7 +1279,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createAwakeScreen(){
         G4cout << "---->creating Awake Screen,"
                << G4endl;
 #endif
-	return (new BDSAwakeScintillatorScreen(_element.name, _element.scintmaterial, _element.tscint)); //Name
+	return (new BDSAwakeScintillatorScreen(_element.name, _element.scintmaterial, _element.tscint, _element.angle)); //Name
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){
