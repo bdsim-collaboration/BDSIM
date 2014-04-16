@@ -633,8 +633,8 @@ void BDSMaterials::Initialise()
   G4double energytab[]={2.239*eV, 2.241*eV};
   G4double rindextab[]={rindex, rindex};
   G4double emitspec[]={1.0, 1.0};
-  G4double abslen[]={70*mm, 70*mm};
-  G4double mieScatteringLength[]={60.3e-3*mm, 60.3e-3*mm};
+  G4double abslen[]={70*CLHEP::cm, 70*CLHEP::cm};
+  G4double mieScatteringLength[]={60.3e-3*CLHEP::mm, 60.3e-3*CLHEP::mm};
   mptLanex->AddProperty("RINDEX",energytab, rindextab, nentLanex); //Average refractive index of bulk material
   mptLanex->AddProperty("ABSLENGTH", energytab, abslen, nentLanex);
   mptLanex->AddProperty("FASTCOMPONENT",energytab, emitspec, nentLanex);
@@ -642,7 +642,7 @@ void BDSMaterials::Initialise()
   mptLanex->AddConstProperty("SCINTILLATIONYIELD",scintScalingFactor*2.94e4/MeV);
   mptLanex->AddConstProperty("RESOLUTIONSCALE",1.0);
   mptLanex->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
-  mptLanex->AddConstProperty("MIEHG", 54e-3*mm);
+  mptLanex->AddConstProperty("MIEHG", 54e-3*CLHEP::mm);
   mptLanex->AddConstProperty("MIEHG_FORWARD", 0.91);
   mptLanex->AddConstProperty("MIEHG_BACKWARD", 0.91);
   mptLanex->AddConstProperty("MIEHG_FORWARD_RATIO", 1.0);
@@ -664,14 +664,14 @@ void BDSMaterials::Initialise()
   G4double medexEnergytab[]={2.239*eV, 2.241*eV};
   G4double medexRindextab[]={rindex, rindex};
   G4double medexEmitspec[]={1.0, 1.0};
-  G4double medexAbslen[]={70*mm, 70*mm};
+  G4double medexAbslen[]={70*CLHEP::mm, 70*CLHEP::mm};
   mptMedex->AddProperty("RINDEX",energytab, medexRindextab, nentMedex); //Average refractive index of bulk material
   mptMedex->AddProperty("ABSLENGTH", energytab, medexAbslen, nentMedex);
   mptMedex->AddProperty("FASTCOMPONENT",energytab, medexEmitspec, nentMedex);
   mptMedex->AddConstProperty("SCINTILLATIONYIELD",scintScalingFactor*2.94e4/MeV);
   mptMedex->AddConstProperty("RESOLUTIONSCALE",1.0);
   mptMedex->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
-  mptMedex->AddConstProperty("MIEHG", 230e-3*mm);
+  mptMedex->AddConstProperty("MIEHG", 230e-3*CLHEP::mm);
   mptMedex->AddConstProperty("MIEHG_FORWARD", 0.93);
   mptMedex->AddConstProperty("MIEHG_BACKWARD", 0.93);
   mptMedex->AddConstProperty("MIEHG_FORWARD_RATIO", 1.0);

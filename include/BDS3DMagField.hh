@@ -26,7 +26,7 @@ class BDS3DMagField
   double dx, dy, dz;
   double fZoffset;
   bool invertX, invertY, invertZ;
-  double _lenUnit;
+  double _lenUnit, _fieldUnit;
   void Prepare(G4VPhysicalVolume *referenceVolume);
   
 public:

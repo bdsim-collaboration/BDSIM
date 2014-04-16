@@ -4,15 +4,15 @@
 #include "BDSGlobalConstants.hh"
 #include "BDS3DMagField.hh"
 
-
+#define DEBUG
 
 BDS3DMagField::BDS3DMagField( const char* filename, double zOffset ) 
   :fZoffset(zOffset),invertX(false),invertY(false),invertZ(false)
 {    
 
 
-  double lenUnit= CLHEP::m;
-  double fieldUnit= CLHEP::tesla; 
+  _lenUnit= CLHEP::cm;
+  _fieldUnit= CLHEP::tesla; 
 
   G4cout << "\n-----------------------------------------------------------"
 	 << "\n      Magnetic field"
@@ -68,9 +68,9 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
           miny = yval * _lenUnit;
           minz = zval * _lenUnit;
         }
-        xField[ix][iy][iz] = bx * fieldUnit;
-        yField[ix][iy][iz] = by * fieldUnit;
-        zField[ix][iy][iz] = bz * fieldUnit;
+        xField[ix][iy][iz] = bx * _fieldUnit;
+        yField[ix][iy][iz] = by * _fieldUnit;
+        zField[ix][iy][iz] = bz * _fieldUnit;
       }
     }
   }
@@ -121,20 +121,17 @@ void BDS3DMagField::GetFieldValue(const double point[4],
   local *= Rotation();
 
 #ifdef DEBUG
-  G4cout << "translation x,y,z = " << 
-    translation[0]/cm << ", " <<
-    translation[1]/cm << ", " <<
-    translation[2]/cm << ", " <<
-    " cm" << G4endl;
-    G4cout << "x = " << local[0]/cm << " cm" << G4endl;
-    G4cout << "y = " << local[1]/cm << " cm" << G4endl;
-    G4cout << "z = " << local[2]/cm << " cm" << G4endl;
-    G4cout << "minx = " << minx/cm << " cm" << G4endl;
-    G4cout << "miny = " << miny/cm << " cm" << G4endl;
-    G4cout << "minz = " << minz/cm << " cm" << G4endl;
-    G4cout << "maxx = " << maxx/cm << " cm" << G4endl;
-    G4cout << "maxy = " << maxy/cm << " cm" << G4endl;
-    G4cout << "maxz = " << maxz/cm << " cm" << G4endl;
+  G4cout <<  "BDS3DMagField::GetFieldValue" << G4endl;
+  G4cout << "point x       = " << point[0]/cm << " cm" << G4endl;
+  G4cout << "point y       = " << point[1]/cm << " cm" << G4endl;
+  G4cout << "point z       = " << point[2]/cm << " cm" << G4endl;
+  G4cout << "translation x = " << translation[0]/cm << " cm" << G4endl;
+  G4cout << "translation y = " << translation[1]/cm << " cm" << G4endl;
+  G4cout << "translation z = " << translation[2]/cm << " cm" << G4endl;
+  G4cout << "fZOffset = " << fZoffset/CLHEP::cm << " cm" << G4endl;
+  G4cout << "local x       = " << local[0]/cm << " cm" << G4endl;
+  G4cout << "local y       = " << local[1]/cm << " cm" << G4endl;
+  G4cout << "local z       = " << local[2]/cm << " cm" << G4endl;
 #endif
 
   double signy=1;
@@ -240,9 +237,9 @@ void BDS3DMagField::GetFieldValue(const double point[4],
 
 #ifdef DEBUG
   G4cout << "Bfield x,y,z = " << 
-    Bfield[0]/tesla << " " <<
-    Bfield[1]/tesla << " " <<
-    Bfield[2]/tesla <<
+    Bfield[0]/_fieldUnit << " " <<
+    Bfield[1]/_fieldUnit << " " <<
+    Bfield[2]/_fieldUnit <<
     G4endl;
 #endif
 }

@@ -263,7 +263,7 @@ int main(int argc,char** argv) {
 
 
 
-  G4TransportationManager::GetTransportationManager()->GetPropagatorInField()->SetLargestAcceptableStep(1*CLHEP::m);
+  G4TransportationManager::GetTransportationManager()->GetPropagatorInField()->SetLargestAcceptableStep(1*CLHEP::cm);
 
   //
   // Initialize G4 kernel
