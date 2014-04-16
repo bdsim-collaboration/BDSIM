@@ -202,6 +202,14 @@ BDSAcceleratorComponent* BDSBeamline::lastItem(){
   return *_iterLastComponent;
 }
 
+BDSAcceleratorComponent* BDSBeamline::lastItem2(){
+  return _componentList.back();
+}
+
+G4bool BDSBeamline::isLast(){
+  return (*_iterComponent == _componentList.back());
+}
+
 G4int BDSBeamline::size(){
   return _componentList.size();
 }

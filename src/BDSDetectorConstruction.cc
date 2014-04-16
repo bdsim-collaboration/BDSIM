@@ -58,6 +58,7 @@
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSTerminatorSD.hh"
 
 // output interface
 #include "BDSOutput.hh"
@@ -319,7 +320,18 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 #ifdef DEBUG
     G4cout << "BDSDetectorConstruction creating component..." << G4endl;
 #endif
-    BDSAcceleratorComponent* temp = theComponentFactory->createComponent(it, beamline_list);
+    BDSAcceleratorComponent* temp = 0;
+    if (next(it) == beamline_list.end())
+      {
+      G4cout << "end of line" << G4endl;
+      // && (BDSExecOptions::Instance()->GetCircular()))
+	temp = theComponentFactory->createTerminator();
+      }
+    else
+      {
+	G4cout << "not end of line" << G4endl;
+	temp = theComponentFactory->createComponent(it, beamline_list);
+      }
 #ifdef DEBUG
     G4cout << "pushing onto back of beamline..." << G4endl;
 #endif
@@ -548,8 +560,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   //attach to as many logical volumes as you want
   //note each new sensitive detector invokes a slow string compare
   //while registering with sd manager.  ok if only a few SD types.
-  BDSEnergyCounterSD* ECounter=new BDSEnergyCounterSD("base_ec");
-  SDman->AddNewDetector(ECounter); //can be slow 
+  BDSEnergyCounterSD* ECounter    = new BDSEnergyCounterSD("base_ec");
+  //BDSTerminatorSD*    TurnCounter = new BDSTerminatorSD("ring_counter");
+  SDman->AddNewDetector(ECounter);
+  //SDman->AddNewDetector(TurnCounter);
   theECList->push_back(ECounter);
   
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())

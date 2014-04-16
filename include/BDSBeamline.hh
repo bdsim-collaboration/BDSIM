@@ -18,6 +18,8 @@ public:
   void printNavigation();
   BDSAcceleratorComponent* currentItem();
   BDSAcceleratorComponent* lastItem();
+  BDSAcceleratorComponent* lastItem2();
+  G4bool isLast();
   void first();
   bool isDone();
   void next();
