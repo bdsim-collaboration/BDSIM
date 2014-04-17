@@ -37,11 +37,11 @@ void BDSTerminatorSD::Initialize(G4HCofThisEvent* HCE)
 G4bool BDSTerminatorSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
   
-#ifdef DEBUG
+  //#ifdef DEBUG
   G4cout << "Number of turns to take: " << BDSGlobalConstants::Instance()->GetNTurns() << G4endl;
   G4cout << "Number of turns taken:   " << BDSGlobalConstants::Instance()->GetTurnNumber() << G4endl;
   G4cout << "Incrementing turn number " << G4endl;
-#endif
+  //#endif
   BDSGlobalConstants::Instance()->IncrementTurnNumber();
   return true;
 }
