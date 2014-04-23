@@ -4,19 +4,13 @@ Last modified 23.10.2007 by Steve Malton
 
 **/
 #include "BDSGlobalConstants.hh"
-#include "parser/gmad.h"
-//#include "../parser/getEnv.h"
+#include "parser/options.h"
 #include "BDSDebug.hh"
+#include "G4FieldManager.hh"
 #include "G4UniformMagField.hh"
-#include "G4ParticleTypes.hh"
-#include "G4ParticleTable.hh"
-#include "G4ParticleDefinition.hh"
 #include <cstdlib>
 
-#include <assert.h>
-#include <string>
-#include <stack>
-#include <cmath>
+extern Options options;
 
 BDSGlobalConstants* BDSGlobalConstants::_instance = 0;
 
@@ -28,46 +22,26 @@ BDSGlobalConstants* BDSGlobalConstants::Instance(){
 }
 
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
-  log(NULL), itsBeamParticleDefinition(NULL)
+  itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0)
 {
   PI = 4.0 * atan(1.0);
-  // defaults:
-  if(opt.physicsList == "") 
-    itsPhysListName = "standard";
-  else
-    itsPhysListName = opt.physicsList;
-  if(opt.pipeMaterial == "") 
-    itsPipeMaterial = "StainlessSteel";
-  else
-    itsPipeMaterial = opt.pipeMaterial;
-  if(opt.vacMaterial == "") 
-    itsVacMaterial = "Vacuum";
-  else
-    itsVacMaterial = opt.vacMaterial;
+  itsPhysListName = opt.physicsList;
+  itsPipeMaterial = opt.pipeMaterial;
+  itsVacMaterial = opt.vacMaterial;
+  itsTunnelMaterialName = opt.tunnelMaterial;
+  itsTunnelCavityMaterialName = opt.tunnelCavityMaterial;
+  itsSoilMaterialName = opt.soilMaterial;
 
- if(opt.tunnelMaterial == "") 
-    itsTunnelMaterialName = "concrete";
-  else
-    itsTunnelMaterialName = opt.tunnelMaterial;
- if(opt.tunnelCavityMaterial == "") 
-    itsTunnelCavityMaterialName = "Air";
-  else
-    itsTunnelCavityMaterialName = opt.tunnelCavityMaterial;
- if(opt.soilMaterial == "") 
-    itsSoilMaterialName = "soil";
-  else
-    itsSoilMaterialName = opt.soilMaterial;
-
- itsSampleDistRandomly = true;
- itsGeometryBias = opt.geometryBias;
-
- itsShowTunnel=opt.showTunnel;
- itsSensitiveComponents=opt.sensitiveBeamlineComponents;
- itsSensitiveBeamPipe=opt.sensitiveBeamPipe;
- itsSensitiveBLMs=opt.sensitiveBLMs;
- itsDefaultRangeCut=opt.defaultRangeCut;
- itsElossHistoBinWidth=opt.elossHistoBinWidth; //Longitudinal and transverse energy loss histogram bin widths
- itsElossHistoTransBinWidth=opt.elossHistoTransBinWidth;
+  itsSampleDistRandomly = true;
+  itsGeometryBias = opt.geometryBias;
+  
+  itsShowTunnel=opt.showTunnel;
+  itsSensitiveComponents=opt.sensitiveBeamlineComponents;
+  itsSensitiveBeamPipe=opt.sensitiveBeamPipe;
+  itsSensitiveBLMs=opt.sensitiveBLMs;
+  itsDefaultRangeCut=opt.defaultRangeCut;
+  itsElossHistoBinWidth=opt.elossHistoBinWidth; //Longitudinal and transverse energy loss histogram bin widths
+  itsElossHistoTransBinWidth=opt.elossHistoTransBinWidth;
   itsFFact=opt.ffact;
   itsParticleName=G4String(opt.particleName);
   itsBeamTotalEnergy = opt.beamEnergy * CLHEP::GeV;
@@ -146,8 +120,6 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsSynchLowGamE = opt.synchLowGamE * CLHEP::GeV;  // lowest gamma energy
   itsSynchPhotonMultiplicity = opt.synchPhotonMultiplicity;
   itsSynchMeanFreeFactor = opt.synchMeanFreeFactor;
-  //Synchrotron primary generator
-  itsSynchPrimaryGen = false; //XXX check what this is 19/4/11
   itsLengthSafety = opt.lengthSafety;
   itsNumberToGenerate = opt.numberToGenerate;
   itsNumberOfEventsPerNtuple = opt.numberOfEventsPerNtuple;
@@ -177,8 +149,10 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   isReading = false;
   isReadFromStack = false;
   itsFifo = opt.fifo;
+#ifdef DEBUG
   G4cout << __METHOD_NAME__ << "itsFifo = " << itsFifo << G4endl;
   G4cout << __METHOD_NAME__ << "GetFifo() = " << GetFifo() << G4endl;
+#endif
   itsRefVolume = opt.refvolume;
   itsRefCopyNo = opt.refcopyno;
   isReference = false;
@@ -189,7 +163,16 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsZeroFieldManager->CreateChordFinder(zeroMagField);
 
   InitRotationMatrices();
-   
+  
+  // options that are never used (no set method):
+  itsLWCalWidth = 0.0;
+  itsLWCalOffset = 0.0;
+  itsMagnetPoleRadius = 0.0;
+  itsMagnetPoleSize = 0.0;
+  // //Synchrotron primary generator
+  // itsSynchPrimaryGen = false; //XXX check what this is 19/4/11
+  // itsSynchPrimaryAngle = 0.0;
+  // itsSynchPrimaryLength = 0.0;
 }
 
 void BDSGlobalConstants::InitRotationMatrices(){
@@ -274,4 +257,5 @@ BDSGlobalConstants::~BDSGlobalConstants()
 {  
   delete itsZeroFieldManager;
   delete zeroMagField;
+  _instance = 0;
 }

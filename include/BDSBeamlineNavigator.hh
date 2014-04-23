@@ -1,6 +1,7 @@
 #ifndef __BDSBEAMLINENAVIGATOR_H
 #define __BDSBEAMLINENAVIGATOR_H
 
+#include "G4Transform3D.hh"
 #include "G4ThreeVector.hh"
 #include "G4RotationMatrix.hh"
 
@@ -27,7 +28,11 @@ public:
   bool isDone();
   void next();
 
-private:
+private:  
+  /// assignment and copy constructor not implemented nor used
+  BDSBeamlineNavigator& operator=(const BDSBeamlineNavigator&);
+  BDSBeamlineNavigator(BDSBeamlineNavigator&);
+
   G4ThreeVector* _localX; 
   G4ThreeVector* _localY; 
   G4ThreeVector* _localZ; 

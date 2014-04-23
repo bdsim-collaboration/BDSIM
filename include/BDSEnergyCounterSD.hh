@@ -32,9 +32,13 @@ public:
   void clear();
   void DrawAll();
   void PrintAll();
-               
+  G4int itsHCID;
 
 private:
+  /// assignment and copy constructor not implemented nor used
+  BDSEnergyCounterSD& operator=(const BDSEnergyCounterSD&);
+  BDSEnergyCounterSD(BDSEnergyCounterSD&);
+
   G4bool verbose;
   G4String itsName;
   BDSEnergyCounterHitsCollection *BDSEnergyCounterCollection;

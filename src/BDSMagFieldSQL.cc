@@ -14,11 +14,10 @@
 #include "G4TouchableHistoryHandle.hh"
 #include "G4TouchableHistory.hh"
 #include "G4NavigationHistory.hh"
-#include <string>
-#include <vector>
+#include <list>
 #include <map>
 
-using namespace std;
+using std::list;
 
 #if 0
 BDSMagFieldSQL::BDSMagFieldSQL(const G4String& aFieldFile,
@@ -213,7 +212,7 @@ void BDSMagFieldSQL::Prepare(G4VPhysicalVolume *referenceVolume)
     itsHasFieldMap=false;
   } else {
     itsHasFieldMap=true;
-    G4cout<<"BDSElement:: creating SQL field map"<<G4endl;
+    G4cout<<"BDSMagFieldSQL:: creating SQL field map"<<G4endl;
     
     if(!ifs)
       {

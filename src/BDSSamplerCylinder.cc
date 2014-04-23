@@ -5,12 +5,10 @@
 */
 #include "BDSGlobalConstants.hh" 
 #include "BDSSamplerCylinder.hh"
-#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
 
 #include <map>
@@ -41,7 +39,7 @@ BDSSamplerCylinder (G4String aName,G4double aLength,G4double aRadius):
 			 aName,
 			 aLength,0,0,0,
 			 SetVisAttributes()),
-  itsRadius(aRadius),itsVisAttributes(NULL)
+  itsRadius(aRadius)
 {
   nThisSampler = nSamplers + 1;
   SetName("CSampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
@@ -96,6 +94,5 @@ G4VisAttributes* BDSSamplerCylinder::SetVisAttributes()
 
 BDSSamplerCylinder::~BDSSamplerCylinder()
 {
-  delete itsVisAttributes;
   --nSamplers;
 }

@@ -42,8 +42,7 @@ BDSLWCalorimeter::BDSLWCalorimeter (G4String& aName,G4double aLength,
 			 aName,
 			 aLength,aBpRad,0,0,
 			 SetVisAttributes(),aTunnelMaterial),
-  itsBPFieldMgr(NULL),
-  itsVisAttributes(NULL)
+  itsBPFieldMgr(NULL)
 {
   LWCalorimeterLogicalVolume();
   BuildCal(aLength);
@@ -206,5 +205,4 @@ G4VisAttributes* BDSLWCalorimeter::SetVisAttributes()
 
 BDSLWCalorimeter::~BDSLWCalorimeter()
 {
-  delete itsVisAttributes;
 }

@@ -20,18 +20,15 @@
 
 #include <list>
 #include <sstream>
-#include <string>
 #include <cmath>
 
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSMaterials.hh"
-#include <string>
 #include "G4Box.hh"
 #include "G4Tubs.hh"
-#include "G4Cons.hh"
-#include "G4Torus.hh"
+#include "G4Colour.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -40,16 +37,8 @@
 #include "G4TransportationManager.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4IntersectionSolid.hh"
-#include "G4UnionSolid.hh"
 #include "G4AssemblyVolume.hh"
 #include "G4Transform3D.hh"
-
-
-BDSAcceleratorComponent::BDSAcceleratorComponent (G4String& aName, G4double aLength):
-  itsName(aName), itsLength(aLength)
-{
-  ConstructorInit();
-}
 
 BDSAcceleratorComponent::BDSAcceleratorComponent (
 			G4String& aName,G4double aLength, 
@@ -162,6 +151,7 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
 
 BDSAcceleratorComponent::~BDSAcceleratorComponent ()
 {
+  delete itsVisAttributes;
 #ifndef NOUSERLIMITS
   delete itsUserLimits;
 #endif
@@ -214,7 +204,7 @@ void BDSAcceleratorComponent::BuildTunnel()
     return;
   }
 
-  std::string tunnelMaterialName;
+  G4String tunnelMaterialName;
   if(itsTunnelMaterial!=""){
     tunnelMaterialName=itsTunnelMaterial;
   } else {
@@ -222,7 +212,7 @@ void BDSAcceleratorComponent::BuildTunnel()
   }
   G4Material *tunnelMaterial=BDSMaterials::Instance()->GetMaterial(tunnelMaterialName);
   
-  std::string soilMaterialName =BDSGlobalConstants::Instance()->GetSoilMaterialName();
+  G4String soilMaterialName =BDSGlobalConstants::Instance()->GetSoilMaterialName();
   G4Material *soilMaterial=BDSMaterials::Instance()->GetMaterial(soilMaterialName);
 
 
@@ -452,7 +442,7 @@ void BDSAcceleratorComponent::BuildTunnel()
   G4cout << "Building tunnel cavity logical volume" << G4endl;
 #endif
 
-  std::string tunnelCavityMaterialName;
+  G4String tunnelCavityMaterialName;
   if(itsTunnelCavityMaterial!=""){
     tunnelCavityMaterialName=itsTunnelCavityMaterial;
   } else {
@@ -617,7 +607,7 @@ void BDSAcceleratorComponent::BuildBLMs()
      G4cout << "Building BLM " << i << G4endl; 
 #endif
      G4double indexInt = (G4double)i;
-     std::string index;
+     G4String index;
      std::stringstream out;
      out << indexInt;
      index = out.str();

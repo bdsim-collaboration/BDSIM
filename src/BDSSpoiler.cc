@@ -5,6 +5,8 @@
 */
 #include "BDSGlobalConstants.hh" 
 #include "BDSSpoiler.hh"
+#include "BDSMaterials.hh"
+
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -12,21 +14,14 @@
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
 
-#include "G4SDManager.hh"
-
 #include <map>
 
 //============================================================
-//typedef std::map<G4String,MagFieldFunction*> PhysFieldMap;
-//extern PhysFieldMap* MagFieldMap;
-
 typedef std::map<G4String,int> LogVolCountMap;
 extern LogVolCountMap* LogVolCount;
 
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
-//extern G4double BDS_Threshold_Energy;
-extern BDSMaterials* theMaterials;
 //============================================================
 
 BDSSpoiler::BDSSpoiler (G4String& aName,G4double aLength,G4double bpRad,
@@ -36,8 +31,7 @@ BDSSpoiler::BDSSpoiler (G4String& aName,G4double aLength,G4double bpRad,
 			 aLength,bpRad,xAper,yAper,
 			 SetVisAttributes()),
   itsPhysiComp(NULL), itsPhysiComp2(NULL), itsSolidLogVol(NULL), 
-  itsInnerLogVol(NULL), itsVisAttributes(NULL), itsEqRhs(NULL), 
-  itsSpoilerMaterial(SpoilerMaterial)
+  itsInnerLogVol(NULL), itsSpoilerMaterial(SpoilerMaterial)
 {
   
   if ( (*LogVolCount)[itsName]==0)
@@ -48,7 +42,7 @@ BDSSpoiler::BDSSpoiler (G4String& aName,G4double aLength,G4double bpRad,
 				      BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
 				      BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
 				      itsLength/2),
-			    theMaterials->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			    BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			    itsName);
       BuildInnerSpoiler();
 
@@ -85,7 +79,7 @@ void BDSSpoiler::BuildInnerSpoiler()
 				  itsXAper,
 				  itsYAper,
 				  itsLength/2),
-			theMaterials->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			itsName+"_inner");
   
   itsPhysiComp2 = 
@@ -121,11 +115,4 @@ void BDSSpoiler::BuildInnerSpoiler()
 
 BDSSpoiler::~BDSSpoiler()
 {
-  delete itsVisAttributes;
-
-  //  delete itsSolidLogVol;
-  //  delete itsInnerLogVol;
-
-  //delete itsPhysiComp;
-  //delete itsPhysiComp2;
 }

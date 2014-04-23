@@ -33,7 +33,7 @@ BDSWorld::~BDSWorld(){
 b
   delete _logicalVolume;
   delete _physicalVolume;
-  delete _instance;
+  _instance = 0;
   */
 }
 

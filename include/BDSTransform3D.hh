@@ -33,8 +33,7 @@ private:
   
   G4VisAttributes* SetVisAttributes();
   
-  G4VisAttributes* itsVisAttributes;
-  G4PVPlacement* itsPhysiComp;
+  //  G4PVPlacement* itsPhysiComp;
 
 };
 

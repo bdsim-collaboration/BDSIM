@@ -20,7 +20,8 @@
 #include "BDSMaterials.hh"
 #include "G4NistManager.hh"
 
-using namespace std;
+#include <list>
+#include <map>
 
 BDSMaterials* BDSMaterials::_instance = 0;
 
@@ -65,7 +66,7 @@ void BDSMaterials::Initialise()
   G4cout << "tesla= " << CLHEP::tesla << G4endl;
 #endif
   
-  tmpElement = new G4Element
+  G4Element* tmpElement = new G4Element
     (name="Hydrogen"   , symbol="H" , z=  1., a=   1.00*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
   tmpElement = new G4Element
@@ -182,7 +183,7 @@ void BDSMaterials::Initialise()
 
   // solid materials
 
-  tmpMaterial = new G4Material
+  G4Material* tmpMaterial = new G4Material
     (name="aluminium"     , density=  2.700*CLHEP::g/CLHEP::cm3, 1, kStateSolid);
   tmpMaterial->AddElement(elements["Al"],1);
   materials[name] = tmpMaterial; 
@@ -591,7 +592,7 @@ void BDSMaterials::Initialise()
   const G4int Pet_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Pet_RIND[Pet_NUMENTRIES] = {1.570,1.570,1.570};//Assume constant refractive index.
   G4double Pet_Energy[Pet_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
-  G4MaterialPropertiesTable*  petMaterialPropertiesTable=new G4MaterialPropertiesTable();
+  petMaterialPropertiesTable=new G4MaterialPropertiesTable();
   petMaterialPropertiesTable->AddProperty("RINDEX",Pet_Energy, Pet_RIND, Pet_NUMENTRIES);
   tmpMaterial->SetMaterialPropertiesTable(petMaterialPropertiesTable);
   materials[name]=tmpMaterial;
@@ -602,7 +603,7 @@ void BDSMaterials::Initialise()
   const G4int Cellulose_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Cellulose_RIND[Cellulose_NUMENTRIES] = {1.532,1.532,1.532};//Assume constant refractive index.
   G4double Cellulose_Energy[Cellulose_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
-  G4MaterialPropertiesTable*  celluloseMaterialPropertiesTable=new G4MaterialPropertiesTable();
+  celluloseMaterialPropertiesTable=new G4MaterialPropertiesTable();
   celluloseMaterialPropertiesTable->AddProperty("RINDEX",Cellulose_Energy, Cellulose_RIND, Cellulose_NUMENTRIES);
   tmpMaterial->SetMaterialPropertiesTable(celluloseMaterialPropertiesTable);
   materials[name] = tmpMaterial;
@@ -775,7 +776,7 @@ void BDSMaterials::Initialise()
   const G4int Vac_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Vac_RIND[Vac_NUMENTRIES] = {1.000,1.000,1.000};//Assume refractive index = 1 in a vacuum.
   G4double Vac_Energy[Vac_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
-  G4MaterialPropertiesTable*  vacMaterialPropertiesTable=new G4MaterialPropertiesTable();
+  vacMaterialPropertiesTable=new G4MaterialPropertiesTable();
   vacMaterialPropertiesTable->AddProperty("RINDEX",Vac_Energy, Vac_RIND, Vac_NUMENTRIES);
   tmpMaterial->SetMaterialPropertiesTable(vacMaterialPropertiesTable);
 
@@ -825,13 +826,13 @@ void BDSMaterials::AddMaterial(G4String aName, G4double itsZ, G4double itsA, G4d
 
 void BDSMaterials::AddMaterial(G4String aName, G4double itsDensity, G4State itsState,
 G4double itsTemp, G4double itsPressure,
-list<const char*> itsComponents, list<G4double> itsComponentsFractions)
+std::list<const char*> itsComponents, std::list<G4double> itsComponentsFractions)
 {
   aName.toLower();
   G4Material* tmpMaterial = new G4Material(aName, itsDensity*CLHEP::g/CLHEP::cm3, 
 		(G4int)itsComponents.size(),itsState, itsTemp*CLHEP::kelvin, itsPressure*CLHEP::atmosphere);
-  list<const char*>::iterator sIter;
-  list<G4double>::iterator dIter;
+  std::list<const char*>::iterator sIter;
+  std::list<G4double>::iterator dIter;
   for(sIter = itsComponents.begin(), dIter = itsComponentsFractions.begin();
       sIter != itsComponents.end();
       sIter++, dIter++)
@@ -855,13 +856,13 @@ list<const char*> itsComponents, list<G4double> itsComponentsFractions)
 
 void BDSMaterials::AddMaterial(G4String aName, G4double itsDensity, G4State itsState,
 G4double itsTemp, G4double itsPressure,      
-list<const char*> itsComponents, list<G4int> itsComponentsWeights)       
+std::list<const char*> itsComponents, std::list<G4int> itsComponentsWeights)       
 {
   aName.toLower();
   G4Material*  tmpMaterial = new G4Material(aName, itsDensity*CLHEP::g/CLHEP::cm3, 
      (G4int)itsComponents.size(),itsState, itsTemp*CLHEP::kelvin, itsPressure*CLHEP::atmosphere);
-  list<const char*>::iterator sIter;
-  list<G4int>::iterator iIter;
+  std::list<const char*>::iterator sIter;
+  std::list<G4int>::iterator iIter;
   for(sIter = itsComponents.begin(), iIter = itsComponentsWeights.begin(); 
 	sIter != itsComponents.end();
 	sIter++, iIter++)
@@ -922,7 +923,7 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)
     return G4NistManager::Instance()->FindOrBuildMaterial(aMaterial, true, true);
   } else {
     aMaterial.toLower();
-    map<G4String,G4Material*>::iterator iter = materials.find(aMaterial);
+    std::map<G4String,G4Material*>::iterator iter = materials.find(aMaterial);
     if(iter != materials.end()) return (*iter).second;
     else{
       G4String exceptionString = "BDSMaterials::GetMaterial - Material "+aMaterial+" not known. Aborting.";
@@ -945,7 +946,7 @@ G4Element* BDSMaterials::GetElement(G4String aSymbol)
 #endif
     return G4NistManager::Instance()->FindOrBuildElement(aSymbol, true);
   } else {
-    map<G4String,G4Element*>::iterator iter = elements.find(aSymbol);
+    std::map<G4String,G4Element*>::iterator iter = elements.find(aSymbol);
     if(iter != elements.end()) return (*iter).second;
     else{
       G4String exceptionString="BDSMaterials::GetElement - Element "+aSymbol+" not known. Aborting.";
@@ -963,14 +964,14 @@ G4Element* BDSMaterials::GetElement(const char* aSymbol)
 G4bool BDSMaterials::CheckMaterial(G4String aMaterial)
 {
   aMaterial.toLower();
-  map<G4String,G4Material*>::iterator iter = materials.find(aMaterial);
+  std::map<G4String,G4Material*>::iterator iter = materials.find(aMaterial);
   if(iter != materials.end()) return true;
   else return false;
 }
 
 G4bool BDSMaterials::CheckElement(G4String aSymbol)
 {
-  map<G4String,G4Element*>::iterator iter = elements.find(aSymbol);
+  std::map<G4String,G4Element*>::iterator iter = elements.find(aSymbol);
   if(iter != elements.end()) return true;
   else return false;
 }
@@ -1045,18 +1046,21 @@ void BDSMaterials::ListMaterials(){
 }
 
 BDSMaterials::~BDSMaterials(){
-  map<G4String,G4Material*>::iterator mIter;
+  std::map<G4String,G4Material*>::iterator mIter;
   for(mIter = materials.begin(); mIter!=materials.end(); mIter++)
     delete (*mIter).second;
   materials.clear();
 
-  map<G4String,G4Element*>::iterator eIter;
+  std::map<G4String,G4Element*>::iterator eIter;
   for(eIter = elements.begin(); eIter!=elements.end(); eIter++)
     delete (*eIter).second;
   elements.clear();
 
-  delete tmpMaterial;
-  delete tmpElement;
   delete airMaterialPropertiesTable;
+  delete celluloseMaterialPropertiesTable;
   delete fsMaterialPropertiesTable;
+  delete petMaterialPropertiesTable;
+  delete vacMaterialPropertiesTable;  
+
+  _instance = 0;
 }

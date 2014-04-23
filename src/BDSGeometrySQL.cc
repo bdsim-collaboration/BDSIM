@@ -27,22 +27,17 @@
 #include "BDSOutput.hh"
 #include "BDSPCLTube.hh"
 #include <vector>
-#include <map>
 #include <cstdlib>
-#include "G4ClassicalRK4.hh"
 #include <cstring>
 #include "parser/getEnv.h"
 
-using namespace std;
-
 extern BDSSamplerSD* BDSSamplerSensDet;
-
 
 extern BDSOutput* bdsOutput;
 //extern BDSGlobalConstants* BDSGlobalConstants::Instance();
 
 BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength):
-  rotateComponent(NULL),itsMarkerVol(NULL),itsMagField(NULL),SensDet(NULL)
+  rotateComponent(NULL),itsMarkerVol(NULL)
 {
   itsMarkerLength = markerlength;
 #ifdef DEBUG
@@ -804,7 +799,7 @@ G4RotationMatrix* BDSGeometrySQL::RotateComponent(G4double psi,G4double phi,G4do
 }
 
 
-void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, vector<G4LogicalVolume*> VOL_LIST)
+void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4LogicalVolume*> VOL_LIST)
 {
   G4String::caseCompare cmpmode = G4String::ignoreCase;
   for(G4int k=0; k<_NVariables; k++) // Now run through and place according to
@@ -964,7 +959,7 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, vector<G4LogicalV
 	  HasFields = true;
 	  HasUniformField=true;
 #ifdef DEBUG
-	  G4cout << "BDSGeometrySQL> volume " << PhysiComp->GetName() << " has the following uniform field: " << _FieldX << " " << _FieldY << " " << _FieldZ << " " << endl;
+	  G4cout << "BDSGeometrySQL> volume " << PhysiComp->GetName() << " has the following uniform field: " << _FieldX << " " << _FieldY << " " << _FieldZ << " " << G4endl;
 #endif
 	  UniformField.push_back(G4ThreeVector(_FieldX*CLHEP::tesla,_FieldY*CLHEP::tesla,_FieldZ*CLHEP::tesla));
 	  Fieldvol.push_back(PhysiComp->GetName());

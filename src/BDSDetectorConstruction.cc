@@ -19,19 +19,21 @@
 
 //=================================================================
 
+#include <list>
+#include <map>
+#include <vector>
+
+#include "BDSDetectorConstruction.hh"
+
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
-
-#include "BDSDetectorConstruction.hh"
 
 #include "G4UserLimits.hh"
 #include "G4GeometryManager.hh"
 #include "G4Region.hh"
 #include "G4ProductionCuts.hh"
-#include "G4LogicalVolumeStore.hh"
 
-#include "G4Tubs.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -46,40 +48,17 @@
 #include "G4Colour.hh"
 #include "globals.hh"
 #include "G4ios.hh"
-#include <iostream>
-#include <list>
-#include <map>
-#include "BDSAcceleratorComponent.hh"
 
 #include "G4Navigator.hh"
 #include "G4UniformMagField.hh"
 
+#include "G4Electron.hh"
+#include "G4Positron.hh"
 #include "G4Material.hh"
+
+#include "BDSAcceleratorComponent.hh"
 #include "BDSEnergyCounterSD.hh"
 
-// elements
-#include "BDSDrift.hh"
-#include "BDSPCLDrift.hh"
-#include "BDSSectorBend.hh"
-#include "BDSRBend.hh"
-#include "BDSKicker.hh"
-#include "BDSQuadrupole.hh"
-#include "BDSSextupole.hh"
-#include "BDSOctupole.hh"
-#include "BDSDecapole.hh"
-#include "BDSTMultipole.hh"
-#include "BDSRfCavity.hh"
-#include "BDSSolenoid.hh"
-#include "BDSSampler.hh"
-#include "BDSSamplerCylinder.hh"
-#include "BDSDump.hh"
-#include "BDSLaserWire.hh"
-#include "BDSLWCalorimeter.hh"
-#include "BDSMuSpoiler.hh"
-#include "BDSTransform3D.hh"
-#include "BDSElement.hh"
-#include "BDSComponentOffset.hh"
-#include "BDSCollimator.hh"
 // output interface
 #include "BDSOutput.hh"
 #include "BDSComponentFactory.hh"
@@ -92,28 +71,21 @@
 #include "G4VSampler.hh"
 #include "G4GeometrySampler.hh"
 #include "G4IStore.hh"
- 
-using namespace std;
+
+#include "parser/element.h"
+#include "parser/elementlist.h"
+#include "parser/enums.h"
+#include "parser/gmad.h"
 
 //====================================
 
-//typedef list<BDSAcceleratorComponent*>  BDSBeamline;
-
-typedef list<BDSEnergyCounterSD*>  ECList;
+typedef std::list<BDSEnergyCounterSD*>  ECList;
 ECList* theECList;
-
-//extern BDSGlobalConstants* BDSGlobalConstants::Instance();
-extern G4int gflash;
-extern G4double gflashemax;
-extern G4double gflashemin;
 
 //--------------------------
 // SYNCHROTRON RAD ***
 G4double BDSLocalRadiusOfCurvature=DBL_MAX;// Used in Mean Free Path calc.
 //--------------------------
-
-G4Material* aMaterial;
-extern G4double NumSpoilerRadLen;
 
 typedef std::map<G4String,int> LogVolCountMap;
 LogVolCountMap* LogVolCount;
@@ -121,22 +93,8 @@ LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 LogVolMap* LogVol;
 
-G4RotationMatrix* RotY90=new G4RotationMatrix();
-G4RotationMatrix* RotYM90=new G4RotationMatrix();
-
-G4RotationMatrix* RotX90=new G4RotationMatrix();
-G4RotationMatrix* RotXM90=new G4RotationMatrix();
-
-G4RotationMatrix* RotYM90X90=new G4RotationMatrix();
-G4RotationMatrix* RotYM90XM90=new G4RotationMatrix();
-
-//G4Navigator* StepperNavigator;
-//G4Navigator* QuadNavigator;
-
 //=========================================
 extern BDSOutput* bdsOutput;
-extern G4bool verbose;
-extern G4bool outline;
 
 #ifdef DEBUG
 bool debug = true;
@@ -155,7 +113,6 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   itsIStore(NULL),_globalRotation(NULL)
 {  
   verbose    = BDSExecOptions::Instance()->GetVerbose();
-  outline    = BDSExecOptions::Instance()->GetOutline();
   gflash     = BDSExecOptions::Instance()->GetGFlash();
   gflashemax = BDSExecOptions::Instance()->GetGFlashEMax();
   gflashemin = BDSExecOptions::Instance()->GetGFlashEMin();
@@ -167,18 +124,6 @@ BDSDetectorConstruction::BDSDetectorConstruction():
 
   //initialize global rotation matrix
   _globalRotation = new G4RotationMatrix();
-
-// create commands for interactive definition of the beamline  
-  G4double pi_ov_2 = asin(1.);
-
-  RotY90->rotateY(pi_ov_2);
-  RotYM90->rotateY(-pi_ov_2);
-  RotX90->rotateX(pi_ov_2);
-  RotXM90->rotateX(-pi_ov_2);
-  RotYM90X90->rotateY(-pi_ov_2);
-  RotYM90X90->rotateX( pi_ov_2);
-  RotYM90XM90->rotateY(-pi_ov_2);
-  RotYM90XM90->rotateX(-pi_ov_2);
 
   // GlashStuff                                                                                                                                                         
   theParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
@@ -239,7 +184,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 }
 
 
-G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& beamline_list)
+G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_list)
 {
   //
   // set default output formats:
@@ -251,7 +196,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
   //
   // convert the parsed atom list to list of Geant4 G4Elements
   //
-  list<struct Element>::iterator it;
+  std::list<struct Element>::iterator it;
 
 
   if (verbose || debug) G4cout << "parsing the atom list..."<< G4endl;
@@ -392,8 +337,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
   delete theComponentFactory;
   theComponentFactory = NULL;
 
-  if (verbose || debug) G4cout << "size of beamline element list: "<< beamline_list.size() << G4endl;
-  if (verbose || debug) G4cout << "size of theBeamline: "<< BDSBeamline::Instance()->size() << G4endl;
+#ifdef DEBUG
+  G4cout << __METHOD_NAME__ << "size of beamline element list: "<< beamline_list.size() << G4endl;
+#endif
+  G4cout << __METHOD_NAME__ << "size of theBeamline: "<< BDSBeamline::Instance()->size() << G4endl;
     
   //
   // construct the component list
@@ -401,7 +348,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 
   if (verbose || debug) G4cout << "now constructing geometry" << G4endl;
   
-  list<BDSAcceleratorComponent*>::const_iterator iBeam;
+  std::list<BDSAcceleratorComponent*>::const_iterator iBeam;
   
   G4ThreeVector rtot = G4ThreeVector(0.,0.,0.);   // world dimension
   G4ThreeVector rlast = G4ThreeVector(0.,0.,0.);  // edge of last element coordinates
@@ -480,8 +427,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 
     }
     
-  BDSGlobalConstants::Instance()->SetTotalS(s_tot);
-  
   // -----------------------------------
   
   // determine the world size
@@ -600,6 +545,13 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
   localY = G4ThreeVector(0.,1.,0.);
   localZ = G4ThreeVector(0.,0.,1.);
   
+  //you only need a single instance of your sensitive detector class
+  //attach to as many logical volumes as you want
+  //note each new sensitive detector invokes a slow string compare
+  //while registering with sd manager.  ok if only a few SD types.
+  BDSEnergyCounterSD* ECounter=new BDSEnergyCounterSD("base_ec");
+  SDman->AddNewDetector(ECounter); //can be slow 
+  theECList->push_back(ECounter);
   
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     { 
@@ -734,7 +686,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 	(*LogVolCount)[LogVolName]++;
 
 
-	// add the wolume to one of the regions
+	// add the volume to one of the regions
 	if(BDSBeamline::Instance()->currentItem()->GetPrecisionRegion())
 	  {
 #ifdef DEBUG
@@ -754,29 +706,23 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 
 	if(SensVol)
 	  {
-	    BDSEnergyCounterSD* ECounter=new BDSEnergyCounterSD(LogVolName);
+	    //use already defined instance of Ecounter sd
 	    BDSBeamline::Instance()->currentItem()->SetBDSEnergyCounter(ECounter);
 	    SensVol->SetSensitiveDetector(ECounter);
-	    SDman->AddNewDetector(ECounter);
-	    theECList->push_back(ECounter);
 	  }
-
 
 #ifdef DEBUG
 	G4cout<<"SETTING UP MULTIPLE SENSITIVE VOLUMES..."<< G4endl;
 #endif	
-	vector<G4LogicalVolume*> MultipleSensVols = BDSBeamline::Instance()->currentItem()->GetMultipleSensitiveVolumes();
+	std::vector<G4LogicalVolume*> MultipleSensVols = BDSBeamline::Instance()->currentItem()->GetMultipleSensitiveVolumes();
 	if( ( BDSBeamline::Instance()->currentItem()->GetType()!="sampler" && BDSBeamline::Instance()->currentItem()->GetType()!="csampler" )
 	    && MultipleSensVols.size()>0)
 	  {
 	    for(G4int i=0; i<(G4int)MultipleSensVols.size(); i++)
 	      {
-		BDSEnergyCounterSD* ECounter=
-		  new BDSEnergyCounterSD(LogVolName+BDSGlobalConstants::Instance()->StringFromInt(i));
+		//use already defined instance of Ecounter sd
 		BDSBeamline::Instance()->currentItem()->SetBDSEnergyCounter(ECounter);
-		MultipleSensVols.at(i)->SetSensitiveDetector(ECounter);
-		SDman->AddNewDetector(ECounter);
-		theECList->push_back(ECounter);	     
+		MultipleSensVols.at(i)->SetSensitiveDetector(ECounter);	     
 		
 		if(gflash){
 		  if((MultipleSensVols.at(i)->GetRegion() != precisionRegion) && (BDSBeamline::Instance()->currentItem()->GetType()==_ELEMENT)){//If not in the precision region....
@@ -904,7 +850,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 			    BDSGlobalConstants::Instance()->GetCheckOverlaps());	      //overlap checking
 
 	  fPhysicalVolumeVector.push_back(PhysiComponentPlace);
-	  vector<G4VPhysicalVolume*> MultiplePhysicalVolumes = BDSBeamline::Instance()->currentItem()->GetMultiplePhysicalVolumes();
+	  std::vector<G4VPhysicalVolume*> MultiplePhysicalVolumes = BDSBeamline::Instance()->currentItem()->GetMultiplePhysicalVolumes();
 	  for (unsigned int i=0;i<MultiplePhysicalVolumes.size(); i++) fPhysicalVolumeVector.push_back(MultiplePhysicalVolumes.at(i));
 					    
 
@@ -951,7 +897,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 	G4int pos = geometry.find(":");
 	
 	if(pos<0) { 
-	  G4cerr<<"WARNING: invalid geometry reference format : "<<geometry<<endl;
+	  G4cerr<<"WARNING: invalid geometry reference format : "<<geometry<<G4endl;
 	  gFormat="none";
 	}
 	
@@ -970,12 +916,15 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
 	  GGmadDriver ggmad(GFile);
 	  ggmad.Construct(logicWorld);
 	  
-	} else  G4cerr<<"Tunnel won't be build! "<<endl;
+	} else  G4cerr<<"Tunnel won't be build! "<<G4endl;
       }
       
     }
   
   // free the parser list
+  for(it = beamline_list.begin();it!=beamline_list.end();it++) {
+    delete (*it).lst;
+  }
   beamline_list.clear();
 
   if(verbose || debug) G4cout<<"end placement, size="<<BDSBeamline::Instance()->size()<<G4endl;
@@ -1014,18 +963,27 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
 { 
   LogVolCount->clear();
   delete LogVolCount;
-
-  LogVolMap::iterator iter;
-  for(iter=LogVol->begin();iter!=LogVol->end();iter++){
-    delete (*iter).second;
-  }
+  //LogVolCount = NULL;
+  
+  //LogVolMap::iterator iter;
+  //for(iter=LogVol->begin();iter!=LogVol->end();iter++){
+  //  delete (*iter).second;
+  // }
   LogVol->clear();
   delete LogVol;
+  //LogVol = NULL;
+
+  delete theECList;
+  //theECList = NULL;
 
   delete precisionRegion;
   gFlashRegion.clear();
 
   delete _globalRotation;
+
+  delete theHitMaker;
+  delete theParticleBounds;
+  delete theParticleBoundsVac;
 }
 
 //=================================================================

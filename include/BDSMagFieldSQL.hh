@@ -7,10 +7,10 @@
 #ifndef BDSMagFieldSQL_h
 #define BDSMagFieldSQL_h 
 
+#include <fstream>
 #include <iostream>
 #include <list>
 #include <map>
-#include <string>
 #include <vector>
 
 #include "G4Types.hh"

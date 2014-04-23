@@ -47,7 +47,6 @@ private:
   G4VSolid* itsOuterSolid;
   G4SubtractionSolid* itsSolid;
 
-
   G4Tubs* itsSoilTube;
   G4Tubs* itsTunnelTube;
   G4Tubs* itsInnerTunnelTube;
@@ -56,8 +55,7 @@ private:
   G4UserLimits* itsTunnelUserLimits;
   G4UserLimits* itsSoilTunnelUserLimits;
   G4UserLimits* itsInnerTunnelUserLimits;
-                    
-  G4VisAttributes* itsVisAttributes;
+  
   G4Mag_UsualEqRhs* itsEqRhs;
 
 private:

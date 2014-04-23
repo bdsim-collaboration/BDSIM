@@ -1,18 +1,17 @@
+#include "BDSRegions.hh"
+
 #include "G4Electron.hh"
 #include "G4Positron.hh"
 
+#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-#include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 
-#include "BDSWorld.hh"
+//#include "BDSWorld.hh"
 #include "BDSMaterials.hh"
 #include "BDSBeamline.hh"
 
 #include "G4Region.hh"
-
-#include "G4IStore.hh"
-#include "G4GeometrySampler.hh"
 
 //GFlash parameterisation
 #include "GFlashHomoShowerParameterisation.hh"
@@ -20,30 +19,20 @@
 #include "BDSShowerModel.hh"
 #include "GFlashHitMaker.hh"
 #include "GFlashParticleBounds.hh"
-#include "BDSRegions.hh"
 
 #include "G4UserLimits.hh"
 #include "G4Region.hh"
 #include "G4ProductionCuts.hh"
 
 #include "G4Tubs.hh"
-#include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4UniformMagField.hh"
 #include "G4TransportationManager.hh"
-#include "G4PropagatorInField.hh"
-#include "G4SDManager.hh"
-#include "G4RunManager.hh"
-#include "G4ScoringBox.hh"
-#include "G4ScoringManager.hh"
-#include "G4PSCellFlux3D.hh"
-#include "BDSScoreWriter.hh"
 
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
-#include "globals.hh"
 #include "G4ios.hh"
 #include <iostream>
 #include <list>
@@ -55,10 +44,6 @@
 
 #include "G4Material.hh"
 #include "BDSEnergyCounterSD.hh"
-
-extern G4int gflash;
-extern G4double gflashemax;
-extern G4double gflashemin;
 
 BDSRegions::BDSRegions(){
   buildRegions();
@@ -94,7 +79,9 @@ void BDSRegions::buildPrecisionRegion(){
 }
 
 void BDSRegions::buildGFlashRegion(){
-  _gFlashParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
+  G4double gflashemax = BDSExecOptions::Instance()->GetGFlashEMax();
+  G4double gflashemin = BDSExecOptions::Instance()->GetGFlashEMin();
+  _gFlashParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                
   _gFlashParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*CLHEP::GeV);
   _gFlashParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*CLHEP::GeV);
   _gFlashParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());

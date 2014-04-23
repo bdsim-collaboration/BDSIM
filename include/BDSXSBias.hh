@@ -17,7 +17,7 @@ public: // with description
   BDSXSBias(const G4String& aName =  "X-",
                  G4ProcessType   aType = fNotDefined );
 
-  //  copy constructor copys the name but does not copy the 
+  //  copy constructor copies the name but does not copy the 
   //  physics table (0 pointer is assigned)
   BDSXSBias(const BDSXSBias &right);
 
@@ -35,6 +35,8 @@ public: // with description
 				  );
   
 private:
+  /// assignment constructor not implemented nor used
+  BDSXSBias& operator=(const BDSXSBias&);
 
   G4double eFactor; // enhancement factor to the cross-setion
 

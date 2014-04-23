@@ -1,27 +1,15 @@
 #ifdef USE_GDML
 #include "BDSGlobalConstants.hh"
 #include "BDSGeometryGDML.hh"
-#include "G4SDManager.hh"
 #include "BDSMaterials.hh"
-#include "BDSSamplerSD.hh"
-#include "G4SDManager.hh"
-#include "BDSSamplerSD.hh"
-#include "BDSOutput.hh"
+#include "G4Colour.hh"
 #include "G4GDMLParser.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
+#include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
-#include <vector>
-#include <map>
 #include <cstdlib>
-#include "G4ClassicalRK4.hh"
 #include <cstring>
-
-using namespace std;
-
-extern G4RotationMatrix* RotY90;
-extern BDSOutput* bdsOutput;
-//extern BDSGlobalConstants* BDSGlobalConstants::Instance();
 
 BDSGeometryGDML::BDSGeometryGDML(G4String GDMLfile):itsMarkerVol(NULL){
   itsGDMLfile = GDMLfile;

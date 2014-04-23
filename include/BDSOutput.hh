@@ -7,13 +7,12 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerHit.hh"
-#include "BDSCCDPixelHit.hh"
-#include "BDSSamplerSD.hh"
-#include "BDSSamplerCylinder.hh"
+#include "BDSTypeSafeEnum.hh"
 #include "BDSEnergyCounterHit.hh"
 
 #include "BDSLWCalorimeter.hh"
 #include "BDSLWCalorimeterHit.hh"
+#include "BDSCCDPixelHit.hh"
 
 #include "G4TrajectoryContainer.hh"
 #include "G4Trajectory.hh"
@@ -27,18 +26,23 @@
 #include "TNtuple.h"
 #include "TFile.h"
 #include "TTree.h"
-#include "TH3F.h"
+
 #endif
 
-enum BDSOutputFormat {
-  _ASCII = 0,
-  _ROOT = 1
-  //, _ASCII_ROOT = 2
+struct BDSOutputFormatDef {
+  enum type {
+    _ASCII = 0,
+    _ROOT = 1
+    //, _ASCII_ROOT = 2
+  };
 };
+
+typedef BDSTypeSafeEnum<BDSOutputFormatDef,int> BDSOutputFormat;
 
 class BDSOutput {
 
 public: 
+
   BDSOutput(); // default constructor
   BDSOutput(BDSOutputFormat format);
 
@@ -51,8 +55,6 @@ public:
   void WriteCCDHits(BDSCCDPixelHitsCollection*);
   //  G4int WriteTrajectory(TrajectoryVector* TrajVec);
   G4int WriteTrajectory(std::vector<G4VTrajectory*> TrajVec);
-
-  void Echo(G4String str);
 
   G4int Commit(); //G4int FileNum);   // close the event
   void Write();           // close the event
@@ -82,19 +84,19 @@ public:
 
 private:
   G4String _filename;
-  G4int format;
+  BDSOutputFormat format;
   std::ofstream of;
   std::ofstream ofEloss;
   int outputFileNumber;
 
 #ifdef USE_ROOT
   float x0,xp0,y0,yp0,z0,zp0,E0,t0;
-  float x,xp,y,yp,z,zp,E,Edep,t;
-  float X,Xp,Y,Yp,Z,Zp,s,weight,EWeightZ;
-  int part,nev, pID, theID, track_id;
+  float x,xp,y,yp,z,zp,E,t; //Edep;
+  float X,Xp,Y,Yp,Z,Zp,s,weight; //,EWeightZ;
+  int part,nev, pID, track_id;
   float z_el,E_el;
   float x_el_p,y_el_p,z_el_p,E_el_p;
-  int part_el_p,pID_el_p, weight_el_p;
+  int part_el_p, weight_el_p;
   char volumeName_el_p[100];
   float weight_ccd;
   int npixel_ccd;

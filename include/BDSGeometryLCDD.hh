@@ -48,12 +48,6 @@
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
 
-//#include "/usr/include/libxml2/libxml/xmlmemory.h"
-//#include "/usr/include/libxml2/libxml/parser.h"
-//#include "/usr/include/libxml2/libxml/xpath.h"
-
-extern BDSMaterials* theMaterials;
-
 struct POS_REF{
   G4String name;
   G4ThreeVector value;
@@ -119,6 +113,9 @@ public:
   G4bool StrToFloat(const char* str, G4int start, G4int end, G4double& f);
 
 private:
+  /// assignment and copy constructor not implemented nor used
+  BDSGeometryLCDD& operator=(const BDSGeometryLCDD&);
+  BDSGeometryLCDD(BDSGeometryLCDD&);
 #ifndef NOUSERLIMITS
   G4UserLimits* itsUserLimits;
 #endif

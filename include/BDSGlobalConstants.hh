@@ -9,21 +9,19 @@ Last modified 30.10.2007 by Steve Malton
 #ifndef BDSGlobalConstants_h
 #define BDSGlobalConstants_h 
 
-#include <fstream>
-#include <string>
-#include <set>
+//#include <fstream>
 #include <deque>
+#include <map>
 
-#include "G4ParticleTable.hh"
-#include "G4ParticleDefinition.hh"
-#include "G4UniformMagField.hh"
 #include "G4ThreeVector.hh"
-#include "globals.hh"
-#include "G4FieldManager.hh"
 #include "G4String.hh"
 #include "G4AffineTransform.hh"
 
 #include "BDSParticle.hh"
+
+class G4FieldManager;
+class G4ParticleDefinition;
+class G4UniformMagField;
 
 struct Options;
 
@@ -46,8 +44,6 @@ public:
   static BDSGlobalConstants* Instance();
   ~BDSGlobalConstants();
   
-
- 
   G4double GetPI();
 
   G4bool GetDoPlanckScattering();
@@ -62,9 +58,6 @@ public:
   G4double GetMaximumEpsilonStep();
   G4double GetMaxTime();
   G4double GetDeltaOneStep();
-
-  void SetLogFile(std::ofstream & os);
-  void StripHeader(std::istream& is);
 
   G4String StringFromInt(G4int anInt);
   G4String StringFromDigit(G4int anInt);
@@ -110,9 +103,6 @@ public:
   G4bool GetSensitiveBeamPipe();
   G4bool GetSensitiveBLMs();
  
-  void     SetTotalS(G4double TotalS);
-  G4double GetTotalS();  
-
   G4double GetComponentBoxSize();
   G4double GetMagnetPoleSize();
   G4double GetMagnetPoleRadius();
@@ -211,10 +201,7 @@ public:
 
   G4double GetLengthSafety();
 
-  std::ofstream GetEventOutput();
-
   G4long GetRandomSeed();
-  G4bool GetUseBatch();
   G4int GetNumberToGenerate();
 
   G4int GetNumberOfEventsPerNtuple();
@@ -225,9 +212,9 @@ public:
 
   G4FieldManager* GetZeroFieldManager();
 
-  G4bool   GetUseSynchPrimaryGen();
-  G4double GetSynchPrimaryAngle();
-  G4double GetSynchPrimaryLength();
+  // G4bool   GetUseSynchPrimaryGen();
+  // G4double GetSynchPrimaryAngle();
+  // G4double GetSynchPrimaryLength();
 
   // AI : for placet synchronization
   void   setWaitingForDump(G4bool flag);
@@ -254,7 +241,7 @@ public:
   void                     SetRefTransform(G4AffineTransform& aTransform);
 
   // SPM : temp filestream for placet to read and write
-  std::ofstream fileDump;
+  //  std::ofstream fileDump;
   // ifstream fileRead; replaced with FILE* fifo in code for consistency with Placet. SPM
 
   std::deque<BDSParticle> holdingQueue;
@@ -277,11 +264,7 @@ private:
   G4double itsElossHistoTransBinWidth;
   G4double itsDefaultRangeCut;
   G4double itsFFact;
-  //PI
   G4double PI;
-  // Data Members for Class Attributes
-  std::ifstream ifs;
-  std::ostream* log;
   // initial bunch parameters
   G4String itsParticleName;
   G4ParticleDefinition* itsBeamParticleDefinition;
@@ -322,7 +305,6 @@ private:
   G4double itsBlmLength;
   G4double itsBeampipeRadius; 
   G4double itsBeampipeThickness; 
-  G4double itsTotalS;
   G4double itsSamplerDiameter;
   G4double itsSamplerLength;
   G4double itsDeltaIntersection;
@@ -373,7 +355,6 @@ private:
   G4bool itsStoreNeutronTrajectories;
   G4bool itsIncludeIronMagFields;
   G4double itsLengthSafety;
-  G4bool itsUseBatch;
   G4long itsRandomSeed;
   G4int itsNumberToGenerate;
   G4int itsNumberOfEventsPerNtuple;
@@ -414,9 +395,9 @@ private:
   G4String itsTunnelMaterialName;  //tunnel material
   G4String itsTunnelCavityMaterialName;  //tunnel cavity material
   G4String itsSoilMaterialName;  //material around tunnel
-  G4bool itsSynchPrimaryGen;
-  G4double itsSynchPrimaryAngle;
-  G4double itsSynchPrimaryLength;
+  // G4bool itsSynchPrimaryGen;
+  // G4double itsSynchPrimaryAngle;
+  // G4double itsSynchPrimaryLength;
   G4bool isWaitingForDump;
   G4bool isDumping;
   G4bool isReading;
@@ -449,6 +430,7 @@ inline G4double BDSGlobalConstants::GetPI()
   return PI;
 }
 
+
 inline G4double BDSGlobalConstants::GetMinimumEpsilonStep()
 {
   return itsMinimumEpsilonStep;
@@ -468,12 +450,6 @@ inline G4double BDSGlobalConstants::GetDeltaOneStep()
 {
   return itsDeltaOneStep;
 }
-
-inline void BDSGlobalConstants::SetLogFile(std::ofstream & os)
-{
-  log=&os;
-}
-
 
 inline G4double BDSGlobalConstants::GetBeamKineticEnergy()
 {
@@ -691,11 +667,6 @@ inline G4double BDSGlobalConstants::GetProdCutPositronsA()
 //inline void BDSGlobalConstants::SetWorldSizeZ(G4double WorldSizeZ) 
 //{itsWorldSizeZ=WorldSizeZ;}
 
-inline G4double BDSGlobalConstants::GetTotalS() 
-{return itsTotalS;}
-inline void BDSGlobalConstants::SetTotalS(G4double TotalS) 
-{itsTotalS=TotalS;}
-
 // inline void BDSGlobalConstants::SetVerticalComponentOffset(G4double VerticalComponentOffset)
 // {itsVerticalComponentOffset=VerticalComponentOffset;}
 // inline void BDSGlobalConstants::SetHorizontalComponentOffset(G4double HorizontalComponentOffset)
@@ -820,8 +791,6 @@ inline void BDSGlobalConstants::SetStopTracks(G4bool val)
 
 inline G4long BDSGlobalConstants::GetRandomSeed()
 {return itsRandomSeed;}
-inline  G4bool BDSGlobalConstants::GetUseBatch()
-{return itsUseBatch;}
 inline G4int BDSGlobalConstants::GetNumberToGenerate()
 {return itsNumberToGenerate;}
 
@@ -859,12 +828,12 @@ inline G4String BDSGlobalConstants::GetTunnelMaterialName()
 inline G4String BDSGlobalConstants::GetTunnelCavityMaterialName()
 {return itsTunnelCavityMaterialName;}
 
-inline G4bool BDSGlobalConstants::GetUseSynchPrimaryGen()
-{return itsSynchPrimaryGen;}
-inline G4double BDSGlobalConstants::GetSynchPrimaryAngle()
-{return itsSynchPrimaryAngle;}
-inline G4double BDSGlobalConstants::GetSynchPrimaryLength()
-{return itsSynchPrimaryLength;}
+// inline G4bool BDSGlobalConstants::GetUseSynchPrimaryGen()
+// {return itsSynchPrimaryGen;}
+// inline G4double BDSGlobalConstants::GetSynchPrimaryAngle()
+// {return itsSynchPrimaryAngle;}
+// inline G4double BDSGlobalConstants::GetSynchPrimaryLength()
+// {return itsSynchPrimaryLength;}
 
 inline G4bool BDSGlobalConstants::DoTwiss() 
 {return doTwiss;}

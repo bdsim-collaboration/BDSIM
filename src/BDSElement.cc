@@ -25,7 +25,7 @@
 #include "myQuadStepper.hh"
 
 // geometry drivers
-#include "parser/gmad.h"
+#include "parser/enums.h"
 #include "ggmad.hh"
 #include "BDSGeometrySQL.hh"
 
@@ -38,10 +38,7 @@
 #endif
 
 #include <map>
-
-#define DEBUG
-
-using namespace std;
+#include <vector>
 
 //============================================================
 
@@ -62,7 +59,7 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap,
 			  aLength,bpRad,0,0,
 			  SetVisAttributes(), aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*CLHEP::m, aTunnelOffsetX*CLHEP::m, aTunnelCavityMaterial, aPrecisionRegion),
   fChordFinder(NULL), itsFStepper(NULL), itsFEquation(NULL), itsEqRhs(NULL), 
-  itsField(NULL), itsMagField(NULL), itsCachedMagField(NULL), itsUniformMagField(NULL), itsFieldZOffset(fieldZOffset)
+   itsMagField(NULL), itsCachedMagField(NULL), itsUniformMagField(NULL), itsFieldZOffset(fieldZOffset)
 {
   itsFieldVolName="";
   itsFieldIsUniform=false;
@@ -251,7 +248,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     G4int pos = geometry.find(":");
     gFormat="none";
     if(pos<0) { 
-      G4cerr<<"WARNING: invalid geometry reference format : "<<geometry<<endl;
+      G4cerr<<"WARNING: invalid geometry reference format : "<<geometry<<G4endl;
     }
     else {
       gFormat = geometry.substr(0,pos);
@@ -275,7 +272,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
   if(bmap != ""){
     G4int pos = bmap.find(":");
     if(pos<0) {
-      G4cerr<<"WARNING: invalid B map reference format : "<<bmap<<endl; 
+      G4cerr<<"WARNING: invalid B map reference format : "<<bmap<<G4endl;
     }
     else {
       bFormat = bmap.substr(0,pos);
@@ -372,7 +369,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       BuildMagField(true);
     }
 
-    vector<G4LogicalVolume*> SensComps = LCDD->SensitiveComponents;
+    std::vector<G4LogicalVolume*> SensComps = LCDD->SensitiveComponents;
     for(G4int id=0; id<(G4int)SensComps.size(); id++)
       SetMultipleSensitiveVolumes(SensComps[id]);
     delete LCDD;
@@ -391,11 +388,11 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       SetMultiplePhysicalVolumes(Mokka->GetMultiplePhysicalVolumes().at(i));
     }
 
-    vector<G4LogicalVolume*> SensComps = Mokka->SensitiveComponents;
+    std::vector<G4LogicalVolume*> SensComps = Mokka->SensitiveComponents;
     for(G4int id=0; id<(G4int)SensComps.size(); id++)
       SetMultipleSensitiveVolumes(SensComps[id]);
 
-    vector<G4LogicalVolume*> GFlashComps =Mokka->itsGFlashComponents;
+    std::vector<G4LogicalVolume*> GFlashComps =Mokka->itsGFlashComponents;
     for(G4int id=0; id<(G4int)GFlashComps.size(); id++)
       SetGFlashVolumes(GFlashComps[id]);
 
@@ -478,7 +475,7 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
 
   if(!itsFieldIsUniform){
 #ifdef DEBUG
-    G4cout << "BDSElement.cc> Building magnetic field..." << endl;
+    G4cout << "BDSElement.cc> Building magnetic field..." << G4endl;
 #endif
     itsEqRhs = new G4Mag_UsualEqRhs(itsMagField);
     if( (itsMagField->GetHasUniformField())&!(itsMagField->GetHasNPoleFields() || itsMagField->GetHasFieldMap())){
@@ -489,7 +486,7 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
     fieldManager->SetDetectorField(itsMagField );
   } else {
 #ifdef DEBUG
-    G4cout << "BDSElement.cc> Building uniform magnetic field..." << endl;
+    G4cout << "BDSElement.cc> Building uniform magnetic field..." << G4endl;
 #endif
     itsEqRhs = new G4Mag_UsualEqRhs(itsUniformMagField);
     itsFStepper = new G4ClassicalRK4(itsEqRhs); 
@@ -497,7 +494,7 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
   }
 
 #ifdef DEBUG
-  G4cout << "BDSElement.cc> Setting stepping accuracy parameters..." << endl;
+  G4cout << "BDSElement.cc> Setting stepping accuracy parameters..." << G4endl;
 #endif
   
   if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0){
@@ -523,7 +520,7 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
   fieldManager->SetChordFinder( fChordFinder ); 
   
 #ifdef DEBUG
-  G4cout << "BDSElement.cc> Setting the logical volume " << itsMarkerLogicalVolume->GetName() << " field manager... force to all daughters = " << forceToAllDaughters << endl;
+  G4cout << "BDSElement.cc> Setting the logical volume " << itsMarkerLogicalVolume->GetName() << " field manager... force to all daughters = " << forceToAllDaughters << G4endl;
 #endif
   itsMarkerLogicalVolume->SetFieldManager(fieldManager,forceToAllDaughters);
 }
@@ -636,11 +633,11 @@ void BDSElement::AlignComponent(G4ThreeVector& TargetPos,
 		 << align_out_volume->GetName() << G4endl;
 #endif
 	  G4RotationMatrix Trot = *TargetRot;
-	  G4RotationMatrix* trackedRot = new G4RotationMatrix();
+	  G4RotationMatrix trackedRot;
 	  G4RotationMatrix outRot = *(align_out_volume->GetFrameRotation());
-	  trackedRot->transform(outRot.inverse());
-	  trackedRot->transform(Trot.inverse());
-	  globalRotation = *trackedRot;
+	  trackedRot.transform(outRot.inverse());
+	  trackedRot.transform(Trot.inverse());
+	  globalRotation = trackedRot;
 
 	  G4ThreeVector outPos = align_out_volume->GetFrameTranslation();
 	  G4ThreeVector diff = outPos;
@@ -669,7 +666,6 @@ void BDSElement::AlignComponent(G4ThreeVector& TargetPos,
 
 BDSElement::~BDSElement()
 {
-  delete itsVisAttributes;
   delete fChordFinder;
   delete itsFStepper;
   delete itsFEquation;

@@ -16,6 +16,7 @@
 #include "G4SubtractionSolid.hh"
 #include "G4TwoVector.hh"
 #include "G4Color.hh"
+#include "G4PVPlacement.hh"
 
 class BDSScreenLayer 
 {

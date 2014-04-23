@@ -11,7 +11,6 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSTMultipole.hh"
-#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
@@ -19,11 +18,8 @@
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
 
-#include "BDSQuadMagField.hh"
-#include "BDSQuadStepper.hh"
 #include "BDSMultipoleMagField.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "BDSRK4Stepper.hh"
 #include "G4HelixImplicitEuler.hh"
 
 #include <map>
@@ -36,7 +32,6 @@ extern LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
-extern BDSMaterials* theMaterials;
 //============================================================
 
 BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength, 
@@ -154,8 +149,6 @@ BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength,
       //
       // set visualization attributes
       //
-      itsVisAttributes=SetVisAttributes();
-      itsVisAttributes->SetForceSolid(true);
       itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
       
       //
@@ -177,6 +170,7 @@ BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength,
 G4VisAttributes* BDSTMultipole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.1,0.4,0.2));
+  itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
 
@@ -191,7 +185,6 @@ void BDSTMultipole::BuildBPFieldAndStepper()
 
 BDSTMultipole::~BDSTMultipole()
 {
-  delete itsVisAttributes;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

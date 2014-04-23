@@ -10,15 +10,12 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSSextupole.hh"
-#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
-#include "G4HelixImplicitEuler.hh"
-#include "G4CashKarpRKF45.hh"
 
 #include <map>
 
@@ -30,7 +27,6 @@ extern LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
-extern BDSMaterials* theMaterials;
 //============================================================
 
 BDSSextupole::BDSSextupole(G4String aName, G4double aLength, 
@@ -110,8 +106,6 @@ BDSSextupole::BDSSextupole(G4String aName, G4double aLength,
       //
       // set visualization attributes
       //
-      itsVisAttributes=SetVisAttributes();
-      itsVisAttributes->SetForceSolid(true);
       itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
       //
@@ -184,8 +178,6 @@ BDSSextupole::BDSSextupole(G4String aName, G4double aLength,
 	  //
 	  // set visualization attributes
 	  //
-	  itsVisAttributes=SetVisAttributes();
-	  itsVisAttributes->SetForceSolid(true);
 	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 	  
 	  //
@@ -215,6 +207,7 @@ void BDSSextupole::SynchRescale(G4double factor)
 G4VisAttributes* BDSSextupole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(1,1,0));
+  itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
 
@@ -231,7 +224,6 @@ void BDSSextupole::BuildBPFieldAndStepper()
 
 BDSSextupole::~BDSSextupole()
 {
-  delete itsVisAttributes;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

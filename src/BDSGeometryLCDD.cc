@@ -3,9 +3,9 @@
 #include "BDSGeometryLCDD.hh"
 #include "BDSSbendMagField.hh"
 #include "G4Box.hh"
+#include "G4Colour.hh"
 #include "G4Tubs.hh"
 #include "G4Cons.hh"
-#include "G4Torus.hh"
 #include "G4Polycone.hh"
 #include "G4Polyhedra.hh"
 #include "G4SubtractionSolid.hh"
@@ -17,27 +17,15 @@
 #include "BDSMySQLWrapper.hh"
 #include "BDSMaterials.hh"
 #include "BDSSamplerSD.hh"
-#include "G4SDManager.hh"
-#include "BDSSamplerSD.hh"
-#include "BDSOutput.hh"
 #include "BDSDetectorSolenoidMagField.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "G4EqMagElectricField.hh"
-#include "G4NystromRK4.hh"
 #include "G4ChordFinder.hh"
 #include "G4TessellatedSolid.hh"
 #include "G4UniformMagField.hh"
 
-#include <vector>
-#include <map>
 #include <cstdlib>
-#include "G4ClassicalRK4.hh"
 #include <cstring>
-
-using namespace std;
-
-extern G4RotationMatrix* RotY90;
-extern BDSOutput* bdsOutput;
+#include <list>
 
 BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):
   itsMarkerVol(NULL),itsMagField(NULL),itsUniformMagField(NULL)
@@ -540,7 +528,7 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	       G4Exception("BDSGeometryLCDD.cc: not an atom, not currently implemented in BDSIM", "-1", FatalException, "");  
 	    }
 	  } else {
-	    G4cout << "Warning: BDSGeometryLCDD.cc: element " << formula << " already defined in BDSMaterials.cc" << endl; 
+	    G4cout << "Warning: BDSGeometryLCDD.cc: element " << formula << " already defined in BDSMaterials.cc" << G4endl;
 	  }
 	}
       else if ((!xmlStrcmp(cur->name, (const xmlChar *)"material")))
@@ -552,7 +540,7 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	   
 	   name = parseStrChar(xmlGetProp(cur,(const xmlChar*)"name"));	   
 	   if(BDSMaterials::Instance()->CheckMaterial(name)){
-	     G4cout << "Warning: BDSGeometryLCDD.cc: material " << name << " already defined in BDSMaterials.cc" << endl; 
+	     G4cout << "Warning: BDSGeometryLCDD.cc: material " << name << " already defined in BDSMaterials.cc" << G4endl;
 	   } else {
 
 	     G4int numFractions = 0;
@@ -624,8 +612,8 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	       tempcur = tempcur->next;
 	     }
 
-	     list<const char*>::iterator sIter;
-	     list<G4String>::iterator stIter;
+	     std::list<const char*>::iterator sIter;
+	     std::list<G4String>::iterator stIter;
 
 	     //for(sIter = components.begin(), stIter = stComponents.begin();
 	     //	 sIter != components.end(), stIter!= stComponents.end();

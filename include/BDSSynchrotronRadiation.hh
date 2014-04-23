@@ -6,7 +6,6 @@
 
 #include "G4ios.hh" 
 #include "globals.hh"
-#include "Randomize.hh" 
 #include "G4VDiscreteProcess.hh"
 #include "G4Track.hh"
 #include "G4Step.hh"
@@ -18,7 +17,6 @@
 #include "G4PhysicsLogVector.hh"
 #include "BDSComptonEngine.hh"
 #include "BDSMaterials.hh"
-#include "Randomize.hh"
 
 #include "G4ChordFinder.hh"
 #include "G4FieldManager.hh"

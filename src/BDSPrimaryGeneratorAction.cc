@@ -11,7 +11,6 @@
 //==================================================================
 #include "BDSGlobalConstants.hh" // must be first in include list
 #include "BDSPrimaryGeneratorAction.hh"
-#include "BDSOutput.hh"
 #include "BDSDetectorConstruction.hh"
 #include "BDSSamplerHit.hh"
 
@@ -19,10 +18,7 @@
 #include "G4ParticleGun.hh"
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
-#include "G4EventManager.hh"
-#include "G4StackManager.hh"
 #include "G4Track.hh"
-#include "G4Trajectory.hh"
 
 #include "Randomize.hh"
 
@@ -31,7 +27,6 @@
 #include<iostream>
 
 extern BDSBunch bdsBunch;
-extern BDSOutput* bdsOutput;
 
 //===================================================
 // Keep initial point in phase space for diagnostics
@@ -42,9 +37,8 @@ G4double
   initial_E, initial_t,
   initial_weight;
 
-BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(
-					      BDSDetectorConstruction* BDSDC)
-  :BDSDetector(BDSDC), itsBDSSynchrotronRadiation(NULL)
+BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSDetectorConstruction* /*BDSDC*/)
+  :itsBDSSynchrotronRadiation(NULL)
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
 
@@ -56,26 +50,26 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(
 
 #ifdef DEBUG
   G4cout << "BDSPrimaryGeneratorAction.cc: Primary particle is " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetParticleName() << G4endl;
-  G4cout << "BDSPrimaryGeneratorAction.cc: Setting particle definition for gun..." << G4endl;
+  //  G4cout << "BDSPrimaryGeneratorAction.cc: Setting particle definition for gun..." << G4endl;
   //  particleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->
   //				     FindParticle("e-"));
-  G4cout << "BDSPrimaryGeneratorAction.cc: Setting synch rad..." << G4endl;
 #endif
   
-  if(BDSGlobalConstants::Instance()->GetUseSynchPrimaryGen()) // synchrotron radiation generator
-    {
-      itsBDSSynchrotronRadiation=new BDSSynchrotronRadiation("tmpSynRad");
-      G4double R=BDSGlobalConstants::Instance()->GetSynchPrimaryLength()/
-	BDSGlobalConstants::Instance()->GetSynchPrimaryAngle();   
-      itsSynchCritEng=3./2.*CLHEP::hbarc/pow(CLHEP::electron_mass_c2,3)*
-	pow(BDSGlobalConstants::Instance()->GetBeamKineticEnergy(),3)/R;
-#ifdef DEBUG
-      G4cout<<" BDSPrimaryGeneratorAction:  Critical Energy="<<
-	itsSynchCritEng/CLHEP::keV<<" keV"<<G4endl;
-#endif
-      particleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->
-					 FindParticle("gamma"));
-    }
+//   if(BDSGlobalConstants::Instance()->GetUseSynchPrimaryGen()) // synchrotron radiation generator
+//     {
+//       itsBDSSynchrotronRadiation=new BDSSynchrotronRadiation("tmpSynRad");
+// #ifdef DEBUG
+//       G4cout << "BDSPrimaryGeneratorAction.cc: Setting synch rad..." << G4endl;
+//       G4double R=BDSGlobalConstants::Instance()->GetSynchPrimaryLength()/
+// 	BDSGlobalConstants::Instance()->GetSynchPrimaryAngle();   
+//       G4double SynchCritEng=3./2.*CLHEP::hbarc/pow(CLHEP::electron_mass_c2,3)*
+// 	pow(BDSGlobalConstants::Instance()->GetBeamKineticEnergy(),3)/R;
+//       G4cout<<" BDSPrimaryGeneratorAction:  Critical Energy="<<
+// 	SynchCritEng/CLHEP::keV<<" keV"<<G4endl;
+// #endif
+//       particleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->
+// 					 FindParticle("gamma"));
+//     }
   
 #ifdef DEBUG
   G4cout << "Setting momentum..." << G4endl;
@@ -104,7 +98,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   //this function is called at the begining of event
 
-  G4double x0, y0, z0, xp, yp, zp, t, E;
+  G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0;
 
   particleGun->SetParticleDefinition(BDSGlobalConstants::Instance()->GetParticleDefinition());
 

@@ -1,20 +1,20 @@
 \input texinfo @c -*-texinfo-*-
 @c %**start of header0.4
 @setfilename bdsim.info
-@settitle BDSIM User's Manual v0.6-dev
+@settitle BDSIM User's Manual v0.6
 @set lastupdate @today{}
-@set revision 0.6-dev
+@set revision 0.6
 @c %**end of header
 
 @setchapternewpage off
 
 @c @copying
-@c Copyright @copyright{} 2004-2013 Royal Holloway, University of London.
+@c Copyright @copyright{} 2004-2014 Royal Holloway, University of London.
 @c @end copying
 
 
 @titlepage
-@title BDSIM User's Manual v0.6-dev
+@title BDSIM User's Manual v0.6
 @author I. Agapov, S. T. Boogert, L. C. Deacon, 
 @author S. Malton, L. Nevay, J.Snuverink
 @author revision @value{revision}, last updated @value{lastupdate}
@@ -112,11 +112,14 @@ where the options are
 --outfile=<file>     : output file name. Will be appended with _N
                        where N = 0, 1, 2, 3... etc.
 --vis_mac=<file>     : visualization macro script, default vis.mac
+--gflash=N            : whether or not to turn on gFlash fast shower parameterisation. Default 0.
+--gflashemax=N        : maximum energy for gflash shower parameterisation in GeV. Default 10000.
+--gflashemin=N        : minimum energy for gflash shower parameterisation in GeV. Default 0.1.
 --help               : display this message
 --verbose            : display general parameters before run
 --verbose_event      : display information for every event
---verbose_step=N     : display tracking information after each step
---verbose_event_num  : display tracking information for event number N
+--verbose_step       : display tracking information after each step
+--verbose_event_num=N : display tracking information for event number N
 --batch              : batch mode - no graphics
 --outline=<file>     : print geometry/optics info to <file>
 --outline_type=<fmt> : type of outline format
@@ -125,10 +128,8 @@ where the options are
 @end example
 
 
-
-
-To run bdsim one first has to define the beamline geometry in a file which is
-then passes to bdsim via the @code{--file} command line option, for example
+To run BDSIM one first has to define the beamline geometry in a file which is
+then passes to BDSIM via the @code{--file} command line option, for example
 
 @example
 bdsim --file=line.gmad --output=root --batch
@@ -270,7 +271,7 @@ Available binary operators are: @code{+}, @code{-}, @code{*}, @code{/},
 
 Available unary operators are: @code{+}, @code{-}
 
-Available boolean operators are: @code{<}, @code{>}, @code{<=}, @code{>=},
+Available Boolean operators are: @code{<}, @code{>}, @code{<=}, @code{>=},
 @code{<>}, @code{==}
 
 Available functions @footnote{see add_func(..) in @code{parser/gmad.cc}} are:
@@ -312,6 +313,7 @@ Available functions @footnote{see add_func(..) in @code{parser/gmad.cc}} are:
 * line::
 * matdef::
 * laser::
+* gas::
 * spec keyword::
 * Element number::
 * Element attributes::
@@ -456,9 +458,9 @@ There are some predefined numerical values@footnote{see add_var(..) in @code{par
 @c @item mp     @tab proton rest mass - DOESN'T SEEM TO BE IMPLEMENTED IN parser/gmad.cc
 @item GeV    @tab 1              @tab m      @tab 1             
 @item eV     @tab @math{10^{-9}} @tab cm     @tab @math{10^{-2}}
-@item KeV    @tab @math{10^{-6}} @tab mm     @tab @math{10^{-3}}
-@item MeV    @tab @math{10^{-3}} @tab um     @tab @math{10^(-6)}
-@item TeV    @tab @math{10^3}    @tab nm     @tab @math{10^(-9)}
+@item keV    @tab @math{10^{-6}} @tab mm     @tab @math{10^{-3}}
+@item MeV    @tab @math{10^{-3}} @tab um     @tab @math{10^{-6}}
+@item TeV    @tab @math{10^3}    @tab nm     @tab @math{10^{-9}}
 @item MV     @tab 1              @tab s      @tab 1             
 @item Tesla  @tab 1              @tab ms     @tab @math{10^{-3}}
 @item rad    @tab 1              @tab us     @tab @math{10^{-6}}
@@ -466,7 +468,7 @@ There are some predefined numerical values@footnote{see add_var(..) in @code{par
 @item clight @tab @math{2.99792458*10^8}
 @end multitable
 
-for example, one can write either 100*eV or 0.1*KeV when energy constants 
+for example, one can write either 100*eV or 0.1*keV when energy constants 
 are concerned.
 
 @node marker
@@ -740,7 +742,7 @@ Example :
 
 @subsection @code{muspoiler}
 
-@code{muspoiler} defines a muon spoiler, which is a rotationally megnetised iron cylinder with an inner radius, outer radius, magnetic field strength and length. 
+@code{muspoiler} defines a muon spoiler, which is a rotationally magnetised iron cylinder with an inner radius, outer radius, magnetic field strength and length. 
 Attributes:
 
 @itemize @bullet 
@@ -1031,6 +1033,7 @@ volume of the drift section. Attributes:
 @end example
 @*
 
+@node gas
 @subsection @code{gas}
 To be implemented in v0.5
 
@@ -1179,7 +1182,7 @@ For more details see the file @code{src/BDSMaterials.cc} or run the command
 @end menu
 
 The execution control is performed in the GMAD input file through @code{option} and @code{sample}
-commands. How the results are recorded is controlledby the @code{sample} command.
+commands. How the results are recorded is controlled by the @code{sample} command.
 When the visualization is turned on, it is also controlled through Geant4 command prompt
 @*
 
@@ -1470,8 +1473,8 @@ Samplers output the following parameters at the specified location:
 
 @node dump
 @subsection @code{dump}
-Used in conjuction with @code{option,fifo=<filename>} to output the bunch 
-distribution at a given point. If the specified output file is a fifo, the 
+Used in conjunction with @code{option,fifo=<filename>} to output the bunch 
+distribution at a given point. If the specified output file is a FIFO, the 
 distribution can be modified by an external program before being piped back in 
 to continue tracking. This is useful for including 
 multi-particle effects such as wakefields at given points in the lattice.
@@ -1556,7 +1559,7 @@ via the @code{vis_mac} switch.
 
 @end example
 
-In interactive mode all the Geant4 interactive comamnds are available. For instance, to fire 100 particles type 
+In interactive mode all the Geant4 interactive commands are available. For instance, to fire 100 particles type 
 
 @code{/run/beamOn 100}
 
@@ -1861,28 +1864,28 @@ beam,  particle="e-",
 @node Known Issues, References, Bunch description formats, Top
 @appendix Known Issues
 
-A bug is present where a sampler attached to a bending magnet (RBend/SBend) will
-cause the magnetic field to fail to be set. The reference frame rotates 
-correctly but the particle trajectory does not follow. To work around this 
-issue, samplers should be attached to a marker rather than directly to the 
-magnet. For example:
+@c A bug is present where a sampler attached to a bending magnet (RBend/SBend) will
+@c cause the magnetic field to fail to be set. The reference frame rotates 
+@c correctly but the particle trajectory does not follow. To work around this 
+@c issue, samplers should be attached to a marker rather than directly to the 
+@c magnet. For example:
 
-@example
-@code{dip: sbend,l=1*m, angle=0.1;}
-@code{temp: line=(dip);}
-@code{use, period=temp;}
-@code{sample, range=dip;}
-@end example
+@c @example
+@c @code{dip: sbend,l=1*m, angle=0.1;}
+@c @code{temp: line=(dip);}
+@c @code{use, period=temp;}
+@c @code{sample, range=dip;}
+@c @end example
 
-should be replaced by:
+@c should be replaced by:
 
-@example
-@code{dip: sbend,l=1*m, angle=0.1;}
-@code{dipMark: marker;}
-@code{temp: line=(dipMark,dip);}
-@code{use, period=temp;}
-@code{sample, range=dipMark;}
-@end example
+@c @example
+@c @code{dip: sbend,l=1*m, angle=0.1;}
+@c @code{dipMark: marker;}
+@c @code{temp: line=(dipMark,dip);}
+@c @code{use, period=temp;}
+@c @code{sample, range=dipMark;}
+@c @end example
 
 Samplers attached to multiple instances of the same element incorrectly 
 register hits only from the first instance in all such samplers. For example:

@@ -4,7 +4,7 @@
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 
-#ifndef BDSRfCabity_h
+#ifndef BDSRfCavity_h
 #define BDSRfCavity_h
 
 #include"globals.hh"

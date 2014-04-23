@@ -33,8 +33,6 @@
 #include "BDSMagFieldSQL.hh"
 #include "G4Region.hh"
 
-class BDSClassicalRK4;
-
 class BDSGeometrySQL
 {
 public:
@@ -135,10 +133,10 @@ private:
   std::ifstream ifs;
   G4LogicalVolume* itsMarkerVol;
   std::vector<BDSMySQLTable*> itsSQLTable;
-  BDSMagFieldSQL* itsMagField;
-  BDSSamplerSD* SensDet;
+  //  BDSMagFieldSQL* itsMagField;
+  //  BDSSamplerSD* SensDet;
 
-void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
+  void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
 
 protected:
 };

@@ -16,8 +16,6 @@
 #include "BDSMySQLTable.hh"
 #include "BDSExecOptions.hh"
 
-using namespace std;
-
 #include"globals.hh"
 #include<string>
 #include<vector>
@@ -97,7 +95,7 @@ BDSMySQLTable::~BDSMySQLTable()
 
 void BDSMySQLVariable::Print(){
   G4cout << __METHOD_NAME__ << G4endl;
-  string varType=GetVarType();
+  std::string varType=GetVarType();
   G4cout << GetName() << " " << GetVarType() << " " << G4endl;;
   for(int i=0; i<GetNVariables(); i++){
     if(varType=="DOUBLE") G4cout << GetDblValue(i) << G4endl;

@@ -21,6 +21,9 @@ namespace CLHEP {
 #include <fstream>
 #include <list>
 
+// gmad
+struct Options;
+
 class BDSBunch {
 
 public: 
@@ -104,7 +107,7 @@ private:
   G4bool verbose;
   G4bool verboseStep;
   G4bool verboseEvent;
-  G4bool verboseEventNumber;
+  G4int  verboseEventNumber;
   G4int  nptwiss;
 
   // distribution type

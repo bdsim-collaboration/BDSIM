@@ -9,7 +9,6 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSSkewSextupole.hh"
-#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
@@ -27,7 +26,6 @@ extern LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
-extern BDSMaterials* theMaterials;
 //============================================================
 
 BDSSkewSextupole::BDSSkewSextupole(G4String& aName,G4double aLength, 
@@ -143,7 +141,6 @@ void BDSSkewSextupole::BuildBPFieldAndStepper()
 
 BDSSkewSextupole::~BDSSkewSextupole()
 {
-  delete itsVisAttributes;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

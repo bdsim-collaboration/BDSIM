@@ -12,9 +12,8 @@
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
 
-#include "G4SDManager.hh"
 #include "G4UserLimits.hh"
-#include "parser/gmad.h"
+#include "parser/enums.h"
 #include <map>
 
 //============================================================
@@ -38,7 +37,7 @@ BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
   itsInnerLogVol(NULL), itsInnerSolid(NULL), itsOuterSolid(NULL), itsSolid(NULL), itsSoilTube(NULL),
   itsTunnelTube(NULL),  itsInnerTunnelTube(NULL), itsInnerTunnelLogicalVolume(NULL),
   itsSoilTunnelLogicalVolume(NULL), itsTunnelUserLimits(NULL), itsSoilTunnelUserLimits(NULL),
-  itsInnerTunnelUserLimits(NULL), itsVisAttributes(NULL), itsEqRhs(NULL),
+  itsInnerTunnelUserLimits(NULL), itsEqRhs(NULL),
   itsCollimatorMaterial(CollimatorMaterial), itsOuterR(outR)
 {
   if(type==_RCOL) itsType="rcol";
@@ -68,9 +67,9 @@ BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
       BuildInnerCollimator();
       BuildBLMs();
 
-      itsSolidLogVol->SetVisAttributes(SetVisAttributes());
+      itsSolidLogVol->SetVisAttributes(itsVisAttributes);
 
-      // visual attributes
+      //visual attributes      
       G4VisAttributes* VisAtt1 =
         new G4VisAttributes(G4Colour(0., 0., 0.));
       VisAtt1->SetForceSolid(true);
@@ -107,7 +106,9 @@ void BDSCollimator::BuildInnerCollimator()
   if(itsYAper <= 0) itsYAper = DBL_MIN;//BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
 
   if( (itsXAper>0) && (itsYAper>0) ){
+#ifdef DEBUG
     G4cout << "BDSCollimator: building aperture" << G4endl;
+#endif
     if(itsType == "rcol")
       {
 	itsInnerSolid=new G4Box(itsName+"_inner",
@@ -163,7 +164,9 @@ void BDSCollimator::BuildInnerCollimator()
 		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		     // copy number  
 
   if( (itsXAper>0) && (itsYAper>0) ){
+#ifdef DEBUG
     G4cout << "BDSCollimator: placing aperture" << G4endl;
+#endif
     itsPhysiComp2 = 
       new G4PVPlacement(
 			nullRotationMatrix,  // no rotation
@@ -180,11 +183,12 @@ void BDSCollimator::BuildInnerCollimator()
     SetSensitiveVolume(itsSolidLogVol);
   }
   SetMultiplePhysicalVolumes(itsPhysiComp);
+#ifdef DEBUG
   G4cout << "BDSCollimator: finished building geometry" << G4endl;
+#endif
 }
 
 
 BDSCollimator::~BDSCollimator()
 {
-  delete itsVisAttributes;
 }

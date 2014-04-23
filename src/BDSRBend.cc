@@ -2,11 +2,9 @@
 
 #include "BDSRBend.hh"
 #include "G4Tubs.hh"
-#include "G4Box.hh"
 #include "G4Trd.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4SubtractionSolid.hh"
-#include "G4UnionSolid.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -53,8 +51,9 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
 				((itsLength/itsAngle)*sin(itsAngle/2)
 				 + fabs(cos(itsAngle/2))*outR*tan(itsAngle/2)/2)
 				);
-  
+#ifdef DEBUG
   G4cout << "BDSRBend>> rbend itsMagFieldLength = " << itsMagFieldLength << G4endl;
+#endif
 
   if (!(*LogVolCount)[itsName])
     {
@@ -117,8 +116,6 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
       //
       // set visualization attributes
       //
-      itsVisAttributes=SetVisAttributes();
-      itsVisAttributes->SetForceSolid(true);
       itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
       //
@@ -188,8 +185,6 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
 	  //
 	  // set visualization attributes
 	  //
-	  itsVisAttributes=SetVisAttributes();
-	  itsVisAttributes->SetForceSolid(true);
 	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
 	  //
@@ -223,6 +218,7 @@ void BDSRBend::SynchRescale(G4double factor)
 G4VisAttributes* BDSRBend::SetVisAttributes()
 {
   itsVisAttributes = new G4VisAttributes(G4Colour(0,0,1)); //blue
+  itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
 
@@ -323,8 +319,8 @@ void BDSRBend::BuildRBBeampipe()
   // build beampipe
   //
   G4Tubs *pipeTubsEnv = new G4Tubs(itsName+"_pipe_outer_env",
-				   itsBpRadius+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0, // inner R
-				   itsBpRadius+bpThickness,             // outer R
+				   itsBpRadius, // inner R
+				   itsBpRadius+bpThickness+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,             // outer R
 				   tubLen,                  // length
 				   0,                       // starting phi
 				   CLHEP::twopi * CLHEP::rad );           // delta phi
@@ -551,8 +547,8 @@ void BDSRBend::BuildRBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
   
   G4Tubs *magTubsEnv =
     new G4Tubs(itsName+"_solid_env",
-	       itsInnerIronRadius+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0, // inner R + overlap safety
-	       itsOuterR,          // outer R
+	       itsInnerIronRadius, // inner R + overlap safety
+	       itsOuterR+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,          // outer R
 	       tubLen,             // length
 	       0,                  // starting phi
 	       CLHEP::twopi * CLHEP::rad );      // delta phi
@@ -602,16 +598,8 @@ void BDSRBend::BuildRBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 
 BDSRBend::~BDSRBend()
 {
-  delete itsVisAttributes;
   delete innerBeampipeVisAtt;
   delete beampipeVisAtt;
-//   delete markerSolidVolume;
-//   delete rbendRectangleSolidVolume;
-//   delete rbendRectangleLogicalVolume;
-//   delete middleBeampipeLogicalVolume;
-//   delete middleInnerBPLogicalVolume;
-//   delete endsBeampipeLogicalVolume;
-//   delete endsInnerBPLogicalVolume;
 //   delete itsBeampipeUserLimits;
 //   delete endsBeampipeUserLimits;
 //   delete endsInnerBeampipeUserLimits;

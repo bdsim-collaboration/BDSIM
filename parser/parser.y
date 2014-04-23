@@ -10,17 +10,14 @@
   extern char* yyfilename;
 
   const int ECHO_GRAMMAR = 0; // print grammar rule expansion (for debugging)
-  const int VERBOSE = 0; // print warnings and errors
-  const int VERBOSE_EXPAND = 0; // print the process of line expansion 
+  const int VERBOSE = 0; // print more output
+  //  const int VERBOSE_EXPAND = 0; // print the process of line expansion 
   const int INTERACTIVE = 0; // print output of commands (like in interactive mode)
 
 #include "parser.h"
 
   int execute = 1;
   int element_count = 1; // for samplers , ranges etc.
-#ifdef __cplusplus
-  using namespace std;
-#endif
 
 %}
 
@@ -306,8 +303,8 @@ decl : VARIABLE ':' marker
 	   {
 	     // create entry in the main table and add pointer to the parsed sequence
 	     if(ECHO_GRAMMAR) printf("VARIABLE : LINE %s\n",$1->name);
-	     //  list<struct Element>* tmp_list = new list<struct Element>;
-	     write_table(params,$1->name,_LINE,new list<struct Element>(tmp_list));
+	     //  std::list<struct Element>* tmp_list = new list<struct Element>;
+	     write_table(params,$1->name,_LINE,new std::list<struct Element>(tmp_list));
 	     // write_table(params,$1->name,_LINE,tmp_list);
 	      tmp_list.erase(tmp_list.begin(), tmp_list.end());
 	      tmp_list.~list<struct Element>();
@@ -319,7 +316,7 @@ decl : VARIABLE ':' marker
 	   {
              // create entry in the main table and add pointer to the parsed sequence
 	     if(ECHO_GRAMMAR) printf("VARIABLE : SEQUENCE %s\n",$1->name);
-	     write_table(params,$1->name,_SEQUENCE,new list<struct Element>(tmp_list));
+	     write_table(params,$1->name,_SEQUENCE,new std::list<struct Element>(tmp_list));
 	     tmp_list.erase(tmp_list.begin(), tmp_list.end());
 	   }
        }
@@ -352,16 +349,17 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     if(ECHO_GRAMMAR) printf("edit : VARIABLE parameters   -- %s \n",$1->name);
-	     list<struct Element>::iterator it = element_lookup($1->name);
-	     list<struct Element>::iterator iterNULL = element_list.end();
-	     if(it == iterNULL)
+	     std::list<struct Element>::iterator it = element_list.find($1->name);
+	     std::list<struct Element>::iterator iterEnd = element_list.end();
+	     if(it == iterEnd)
 	       {
-		 if(VERBOSE) printf("type %s has not been defined\n",$1->name);
+		 //if(VERBOSE) 
+		 printf("type %s has not been defined\n",$1->name);
 	       }
 	     else
 	       {
 		 // inherit properties from the base type
-		 inherit_properties(*it);
+		 params.inherit_properties(*it);
 	       }
 		
 	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, typestr((*it).type));
@@ -465,18 +463,19 @@ extension : VARIABLE ',' parameters
 	      if(execute)
 		{	 
 		  if(ECHO_GRAMMAR) printf("extension : VARIABLE parameters   -- %s \n",$1->name);
-		  list<struct Element>::iterator it = element_lookup($1->name);
-		  list<struct Element>::iterator iterNULL = element_list.end();
-		  if(it == iterNULL)
+		  std::list<struct Element>::iterator it = element_list.find($1->name);
+		  std::list<struct Element>::iterator iterEnd = element_list.end();
+		  if(it == iterEnd)
 		    {
-		      if(VERBOSE) printf("type %s has not been defined\n",$1->name);
+		      //		      if(VERBOSE) 
+		      printf("type %s has not been defined\n",$1->name);
 		      $$ = _NONE;
 		    }
 		  else
 		    {
 		      // inherit properties from the base type
 		      $$ = (*it).type;
-		      inherit_properties(*it);
+		      params.inherit_properties(*it);
 		    }
 		  
 		}
@@ -488,18 +487,19 @@ newinstance : VARIABLE
 	      if(execute)
 		{	 
 		  if(ECHO_GRAMMAR) printf("newinstance : VARIABLE -- %s \n",$1->name);
-		  list<struct Element>::iterator it = element_lookup($1->name);
-		  list<struct Element>::iterator iterNULL = element_list.end();
-		  if(it == iterNULL)
+		  std::list<struct Element>::iterator it = element_list.find($1->name);
+		  std::list<struct Element>::iterator iterEnd = element_list.end();
+		  if(it == iterEnd)
 		    {
-		      if(VERBOSE) printf("type %s has not been defined\n",$1->name);
+		      // if(VERBOSE)
+		      printf("type %s has not been defined\n",$1->name);
 		      $$ = _NONE;
 		    }
 		  else
 		    {
 		      // inherit properties from the base type
 		      $$ = (*it).type;
-		      inherit_properties(*it);
+		      params.inherit_properties(*it);
 		    }
 		  
 		}
@@ -677,8 +677,10 @@ parameters:
                          set_vector(params.componentsFractions,$3);
                          delete[] $3->data;
                        }
-		     else 	  
-		       if(VERBOSE) printf("unknown parameter %s\n",$1->name);
+		    else {
+		      //                  if(VERBOSE)
+		      printf("Warning : unknown parameter %s\n",$1->name);
+		    }
 		 }
 	     }         
            | VARIABLE '=' vecexpr
@@ -736,8 +738,10 @@ parameters:
                          set_vector(params.componentsFractions,$3);
                          delete[] $3->data;
                        }
-		   else 	  
-		     if(VERBOSE) printf("unknown parameter %s\n",$1->name);
+		     else {
+		       //                  if(VERBOSE)
+		       printf("Warning : unknown parameter %s\n",$1->name);
+		     }
 		 }         
 	     }
           | VARIABLE '=' aexpr
@@ -846,11 +850,12 @@ parameters:
 		  if(!strcmp($1->name,"taperlength")) {params.taperlength = $3; params.taperlengthset = 1;}
 		    else
 		  if(!strcmp($1->name,"flatlength")) {params.flatlength = $3; params.flatlengthset = 1;}
-                    else
-		  if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence
-		    else
-		  if(VERBOSE) printf("Warning : unknown parameter %s\n",$1->name);
-		  
+                  /*   else */
+		  /* if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence */
+		  else {
+		      //                  if(VERBOSE)
+		      printf("Warning : unknown parameter %s\n",$1->name);
+		  }
 		}
 	    }
           | VARIABLE '=' STR ',' parameters
@@ -863,13 +868,13 @@ parameters:
 		   if(!strcmp($1->name,"geometry")) 
 		     {
 		       params.geomset = 1;
-		       strcpy(params.geometry, $3);
+		       params.geometry = $3;
 		     } 
 		   else
 		     if(!strcmp($1->name,"bmap")) 
 		       {
 			 params.geomset = 1;
-			 strcpy(params.bmap, $3);
+			 params.bmap = $3;
 		       }
 		   else 
 		     if(!strcmp($1->name,"type")) 
@@ -880,52 +885,54 @@ parameters:
 		       if(!strcmp($1->name,"material")) 
 		       {
 			 params.materialset = 1;
-			 strcpy(params.material, $3);
+			 params.material = $3;
 		       }
 		   else
 		   if(!strcmp($1->name,"tunnelMaterial")) 
 		       {
 			 params.tunnelmaterialset = 1;
-			 strcpy(params.tunnelMaterial, $3);
+			 params.tunnelMaterial = $3;
 		       }
 		   else 
 		   if(!strcmp($1->name,"tunnelCavityMaterial")) 
 		       {
 			 params.tunnelcavitymaterialset = 1;
-			 strcpy(params.tunnelCavityMaterial, $3);
+			 params.tunnelCavityMaterial = $3;
 		       }
 		   else 
 		   if(!strcmp($1->name,"scintmaterial")) 
 		     {
 		       params.scintmaterialset = 1;
-		       strcpy(params.scintmaterial, $3); 
+		       params.scintmaterial = $3; 
 		     } // material for a scintillator screen 
 		   else
 		   if(!strcmp($1->name,"airmaterial")) 
 		     {
 		       params.airmaterialset = 1;
-		       strcpy(params.airmaterial, $3); 
+		       params.airmaterial = $3; 
 		     } // material for air around scintillator screen 
 		    else
 		   if(!strcmp($1->name,"spec")) 
 		       {
 			 params.specset = 1;
-			 strcpy(params.spec, $3);
+			 params.spec = $3;
 		       }
                    else 
                    if(!strcmp($1->name,"symbol"))
                        {
                          params.symbolset = 1;
-                         strcpy(params.symbol, $3);
+                         params.symbol = $3;
                        }
 		   else 
                    if(!strcmp($1->name,"state"))
                        {
                          params.stateset = 1;
-                         strcpy(params.state, $3);
+                         params.state = $3;
                        }
-		   else 
-		   if(VERBOSE) printf("unknown parameter %s\n",$1->name);
+		    else {
+		      //                  if(VERBOSE)
+		      printf("Warning : unknown parameter %s\n",$1->name);
+		    }
 		 }
 	     }         
            | VARIABLE '=' STR
@@ -938,13 +945,13 @@ parameters:
 		   if(!strcmp($1->name,"geometry")) 
 		     {
 		       params.geomset = 1;
-		       strcpy(params.geometry, $3);
+		       params.geometry = $3;
 		     } 
 		   else
 		     if(!strcmp($1->name,"bmap")) 
 		       {
 			 params.geomset = 1;
-			 strcpy(params.bmap, $3);
+			 params.bmap = $3;
 		       }
 		     else 
 		     if(!strcmp($1->name,"type")) 
@@ -955,52 +962,54 @@ parameters:
                        if(!strcmp($1->name,"material")) 
                          {	 
                            params.materialset = 1;
-                           strcpy(params.material, $3);
+                           params.material = $3;
                          }
                        else
 			 if(!strcmp($1->name,"scintmaterial")) 
 			   {	 
 			     params.scintmaterialset = 1;
-			     strcpy(params.scintmaterial, $3);
+			     params.scintmaterial = $3;
 			   }
 			 else
 			   if(!strcmp($1->name,"airmaterial")) 
 			     {	 
 			       params.airmaterialset = 1;
-			       strcpy(params.airmaterial, $3);
+			       params.airmaterial = $3;
                          }
                        else
                          if(!strcmp($1->name,"tunnelMaterial")) 
 		       {	 
 			 params.tunnelmaterialset = 1;
-			 strcpy(params.tunnelMaterial, $3);
+			 params.tunnelMaterial = $3;
 		       }
 			 else
                          if(!strcmp($1->name,"tunnelCavityMaterial")) 
 		       {	 
 			 params.tunnelcavitymaterialset = 1;
-			 strcpy(params.tunnelCavityMaterial, $3);
+			 params.tunnelCavityMaterial = $3;
 		       }
                      else
                    if(!strcmp($1->name,"spec")) 
 		       {
 			 params.specset = 1;
-			 strcpy(params.spec, $3);
+			 params.spec = $3;
 		       }
 		   else 
                    if(!strcmp($1->name,"symbol"))
                        {
                          params.symbolset = 1;
-                         strcpy(params.symbol, $3);
+                         params.symbol = $3;
                        }
 		   else 
                    if(!strcmp($1->name,"state"))
                        {
                          params.stateset = 1;
-                         strcpy(params.state, $3);
+                         params.state = $3;
                        }
-		   else 
-		   if(VERBOSE) printf("unknown parameter %s\n",$1->name);
+		    else {
+		      //                  if(VERBOSE)
+		      printf("Warning : unknown parameter %s\n",$1->name);
+		    }
 		 }         
 	     }
 
@@ -1444,7 +1453,7 @@ expr : aexpr
 	     if(INTERACTIVE) {
 	       if($1->type == _ARRAY)
 		 {
-		   for(list<double>::iterator it = $1->array.begin();
+		   for(std::list<double>::iterator it = $1->array.begin();
 		       it!=$1->array.end();it++)
 		     printf ("\t%.10g", (*it));
 		   printf("\n");
@@ -1482,8 +1491,10 @@ aexpr :  NUMBER               { $$ = $1;                         }
 	     }
 	   else
 	     {
-	       if(VERBOSE) printf("vector dimensions do not match");
-	       $$ = _undefined;
+	       // if(VERBOSE) 
+	       printf("vector dimensions do not match");
+	       exit(1);
+	       // $$ = _undefined;
 	     }
          } 
        // boolean stuff
@@ -1496,7 +1507,7 @@ aexpr :  NUMBER               { $$ = $1;                         }
         | VARIABLE '[' VARIABLE ']' 
           { 
 	    if(ECHO_GRAMMAR) printf("aexpr-> %s [ %s ]\n ",$1->name, $3->name); 
-	    $$ = property_lookup($1->name,$3->name);
+	    $$ = property_lookup(element_list,$1->name,$3->name);
 	  }// element attributes
  ; 
 
@@ -1549,7 +1560,7 @@ vecexpr :   VECVAR
 	      $$->data = new double[$1->array.size()];
 	      $$->size = $1->array.size();
 	      //array_list.push_back($$);
-	      list<double>::iterator it;
+	      std::list<double>::iterator it;
 	      int i = 0;
 	      for(it=$1->array.begin();it!=$1->array.end();it++)
 		{
@@ -1771,7 +1782,7 @@ vectnum : '{' numbers '}'
       
 	        //array_list.push_back(a);
       
-	        list<double>::iterator it;
+	        std::list<double>::iterator it;
 		int i=0;      
 	        for(it=_tmparray.begin();it!=_tmparray.end();it++)
 	  	{
@@ -1779,7 +1790,7 @@ vectnum : '{' numbers '}'
 		}
     	        _tmparray.erase(_tmparray.begin(),_tmparray.end());
 
-	        list<char*>::iterator lIter;
+	        std::list<char*>::iterator lIter;
 	        for(lIter = _tmpstring.begin(); lIter != _tmpstring.end(); lIter++)
 	          $$->symbols.push_back(*lIter);
 
@@ -1795,7 +1806,7 @@ vectstr : '[' letters ']'
 	    $$ = new struct Array;
 	    $$->size = _tmpstring.size();
 
-	    list<char*>::iterator iter;
+	    std::list<char*>::iterator iter;
 	    for(iter = _tmpstring.begin(); iter != _tmpstring.end(); iter++)
 	      $$->symbols.push_back(*iter);
 
@@ -1832,9 +1843,9 @@ letters :
 
 command : STOP             { if(execute) quit(); }
         | BEAM ',' beam_parameters
-        | PRINT            { if(execute) print( element_list ); }
-        | PRINT ',' LINE   { if(execute) print( beamline_list); }
-        | PRINT ',' OPTION { if(execute) print(options); }
+        | PRINT            { if(execute) element_list.print(); }
+        | PRINT ',' LINE   { if(execute) beamline_list.print(); }
+        | PRINT ',' OPTION { if(execute) options.print(); }
         | PRINT ',' VARIABLE 
           {
 	    if(execute)
@@ -1849,7 +1860,7 @@ command : STOP             { if(execute) quit(); }
 	      {
 		printf("\t");
 		
-		list<double>::iterator it;
+		std::list<double>::iterator it;
 		for(it=$3->array.begin();it!=$3->array.end();it++)
 		  {
 		    printf("  %.10g ",(*it));
@@ -1901,18 +1912,18 @@ command : STOP             { if(execute) quit(); }
 		params.flush();
 	      }
           }
-        | BETA0 ',' option_parameters // beta 0 (is a synonim of option, for clarity)
+        | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
           {
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> BETA0\n");
 	      }
           }
-        | TWISS ',' option_parameters // twiss (again, is a synonim of option, for clarity)
+        | TWISS ',' option_parameters // twiss (again, is a synonym of option, for clarity)
           {
 	    if(execute)
 	      {
-		set_value("doTwiss",1);
+		options.set_value("doTwiss",1);
 		if(ECHO_GRAMMAR) printf("command -> TWISS\n");
 	      }
           }
@@ -1989,8 +2000,11 @@ csample_options : VARIABLE '=' aexpr
 		      {
 			if( !strcmp($1->name,"r") ) params.r = $3;
 			else if (!strcmp($1->name,"l") ) params.l = $3;
-			else if(VERBOSE) 
-			  printf("Warning : CSAMPLER: unknown parameter %s \n",$1->name);
+			else {
+			  //                  if(VERBOSE)
+			  printf("Warning : CSAMPLER: unknown parameter %s\n",$1->name);
+			  exit(1);
+			}
 		      }
 		  }   
                 | VARIABLE '=' STR
@@ -1998,7 +2012,7 @@ csample_options : VARIABLE '=' aexpr
 		    if(ECHO_GRAMMAR) printf("csample_opt -> %s =  %s \n",$1->name,$3);
 		    /* if(execute) */
 		    /*   { */
-		    /* 	;//set_value($1->name,string($3)); */
+		    /* 	;//options.set_value($1->name,string($3)); */
 		    /*   } */
 		  }   
                 | VARIABLE '=' aexpr ',' csample_options
@@ -2009,15 +2023,18 @@ csample_options : VARIABLE '=' aexpr
 		      {
 			if( !strcmp($1->name,"r") ) params.r = $3;
 			else if (!strcmp($1->name,"l") ) params.l = $3;
-			else if(VERBOSE) 
-			  printf("Warning : CSAMPLER: unknown parameter %s at line\n",$1->name);
+			else {
+			  //                  if(VERBOSE)
+			  printf("Warning : CSAMPLER: unknown parameter %s\n",$1->name);
+			  exit(1);
+			}
 		      }
 
 		  }   
                 | VARIABLE '=' STR ',' csample_options
                   {
 		    if(ECHO_GRAMMAR) printf("csample_opt -> %s =  %s \n",$1->name,$3);
-		    // if(execute) //set_value($1->name,string($3));
+		    // if(execute) //options.set_value($1->name,string($3));
 		  }   
                 | sample_options ',' csample_options
                   {
@@ -2039,8 +2056,11 @@ gas_options : VARIABLE '=' aexpr
 		      {
 			if( !strcmp($1->name,"r") ) params.r = $3;
 			else if (!strcmp($1->name,"l") ) params.l = $3;
-			else if(VERBOSE) 
-			  printf("Warning : GAS: unknown parameter %s \n",$1->name);
+			else {
+			  //                  if(VERBOSE)
+			  printf("Warning : GAS: unknown parameter %s\n",$1->name);
+			  exit(1);
+			}
 		      }
 		  }   
                 | VARIABLE '=' STR
@@ -2050,10 +2070,10 @@ gas_options : VARIABLE '=' aexpr
 		      {
 			if( !strcmp($1->name,"material") ) 
 			  {
-			    strcpy(params.material ,$3);
+			    params.material = $3;
 			    params.materialset = 1;
 			  }
-			//set_value($1->name,string($3));
+			//options.set_value($1->name,string($3));
 		      }
 		  }   
                 | VARIABLE '=' aexpr ',' gas_options
@@ -2064,8 +2084,11 @@ gas_options : VARIABLE '=' aexpr
 		      {
 			if( !strcmp($1->name,"r") ) params.r = $3;
 			else if (!strcmp($1->name,"l") ) params.l = $3;
-			else if(VERBOSE) 
-			  printf("Warning : GAS: unknown parameter %s at line\n",$1->name);
+			else {
+			  //                  if(VERBOSE)
+			  printf("Warning : GAS: unknown parameter %s\n",$1->name);
+			  exit(1);
+			}
 		      }
 
 		  }   
@@ -2076,7 +2099,7 @@ gas_options : VARIABLE '=' aexpr
 		      {
 			  if( !strcmp($1->name,"material") ) 
 			    {
-			      strcpy(params.material ,$3);
+			      params.material = $3;
 			      params.materialset = 1;
 			    }
 		      }
@@ -2107,22 +2130,22 @@ option_parameters :
                   | VARIABLE '=' aexpr ',' option_parameters
                     {
 		      if(execute)
-			set_value($1->name,$3);
+			options.set_value($1->name,$3);
 		    }   
                   | VARIABLE '=' aexpr
                     {
 		      if(execute)
-			set_value($1->name,$3);
+			options.set_value($1->name,$3);
 		    } 
                   | VARIABLE '=' STR ',' option_parameters
                     {
 		      if(execute)
-			set_value($1->name,std::string($3));
+			options.set_value($1->name,std::string($3));
 		    }   
                   | VARIABLE '=' STR
                     {
 		      if(execute)
-			set_value($1->name,std::string($3));
+			options.set_value($1->name,std::string($3));
 		    }   
 ;
 
@@ -2130,22 +2153,22 @@ beam_parameters :
                 | VARIABLE '=' aexpr ',' beam_parameters
                   {
 		    if(execute)
-		      set_value($1->name,$3);
+		      options.set_value($1->name,$3);
 		  }   
                 | VARIABLE '=' aexpr
                   {
 		    if(execute)
-		      set_value($1->name,$3);
+		      options.set_value($1->name,$3);
 		  }   
                 | VARIABLE '=' STR ',' beam_parameters
                   {
 		    if(execute)
-		      set_value($1->name,string($3));
+		      options.set_value($1->name,std::string($3));
 		  }   
                 | VARIABLE '=' STR
                   {
 		    if(execute)
-		      set_value($1->name,string($3));
+		      options.set_value($1->name,std::string($3));
 		  }   
 ;
 

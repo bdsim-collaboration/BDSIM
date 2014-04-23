@@ -42,8 +42,6 @@ private:
   G4VisAttributes* SetVisAttributes();
   void LWCalorimeterLogicalVolume();
 
-  // field related objects:
-  G4VisAttributes* itsVisAttributes;
 };
 
 #endif

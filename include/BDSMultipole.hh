@@ -110,7 +110,6 @@ protected:
   G4LogicalVolume* itsInnerBPLogicalVolume;
 
   //-----------------------------
-  G4VisAttributes* itsVisAttributes;
   G4UserLimits* itsBeampipeUserLimits;
   G4VPhysicalVolume* itsPhysiComp;
   G4VPhysicalVolume* itsPhysiInner;

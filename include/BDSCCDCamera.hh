@@ -15,6 +15,7 @@
 #include "G4VSolid.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4TwoVector.hh"
+#include "G4PVPlacement.hh"
 #include "BDSCCDChip.hh"
 #include "BDSLens.hh"
 

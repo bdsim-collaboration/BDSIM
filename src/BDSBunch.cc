@@ -6,35 +6,39 @@
 
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSOutput.hh"
-#include "parser/gmad.h"
+//#include "parser/gmad.h"
+#include "parser/options.h"
+
+#include "G4ParticleTable.hh"
 
 // CLHEP from Geant4
 #include "Randomize.hh"
 // CLHEP
 #include "CLHEP/RandomObjects/RandMultiGauss.h"
 
-
 // distribution type
-
-enum {
-  _REFERENCE = 0,
-  _GAUSSIAN = 1,
-  _RING = 2,
-  _SQUARE = 3,
-  _CIRCLE = 4,
-  _GUINEAPIG_BUNCH = 5,
-  _GUINEAPIG_PAIRS = 6,
-  _GUINEAPIG_SLAC = 7,
-  _CAIN = 8,
-  _ESHELL = 9,
-  _GAUSSIAN_TWISS = 10,
-  _GAUSSIAN_MATRIX = 11,
-  _UDEF = 32
-};
+namespace {
+  enum {
+    _REFERENCE = 0,
+    _GAUSSIAN = 1,
+    _RING = 2,
+    _SQUARE = 3,
+    _CIRCLE = 4,
+    _GUINEAPIG_BUNCH = 5,
+    _GUINEAPIG_PAIRS = 6,
+    _GUINEAPIG_SLAC = 7,
+    _CAIN = 8,
+    _ESHELL = 9,
+    _GAUSSIAN_TWISS = 10,
+    _GAUSSIAN_MATRIX = 11,
+    _UDEF = 32
+  };
+}
 
 BDSBunch::BDSBunch():  
   distribType(-1),X0(0.0),Y0(0.0),Z0(0.0),T0(0.0),Xp0(0.0),Yp0(0.0),Zp0(1.0),
+  envelopeX(0.0),envelopeY(0.0),envelopeT(0.0),
+  envelopeXp(0.0),envelopeYp(0.0),envelopeE(0.0),
   sigmaX(0.0),sigmaY(0.0),sigmaT(0.0),sigmaXp(0.0),sigmaYp(0.0),
   rMin(0.0),rMax(0.0),shellx(0.0),shelly(0.0),shellxp(0.0),shellyp(0.0),
   betaX(0.0),betaY(0.0),alphaX(0.0),alphaY(0.0),emitX(0.0),emitY(0.0),
@@ -661,6 +665,9 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
   // Rescale must be at the top of GetNextParticle
 
   if(BDSGlobalConstants::Instance()->isReference && partId<nptwiss){
+    if (betaX==0) {G4cerr << __METHOD_NAME__ << "WARNING betaX equal to 0, xp NaN, division by zero! " << G4endl; exit(1);}
+    if (betaY==0) {G4cerr << __METHOD_NAME__ << "WARNING betaY equal to 0, yp NaN, division by zero! " << G4endl; exit(1);}
+    
     G4double phiX= CLHEP::twopi * G4UniformRand();
     G4double phiY= CLHEP::twopi * G4UniformRand();
     //    G4double ex=-log(G4UniformRand())*emitX;
@@ -684,8 +691,10 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
   
   if(BDSGlobalConstants::Instance()->DoTwiss() && partId<nptwiss)
     {
-      // temp numbers - to be replaced by parsed parameters
+      if (betaX==0) {G4cerr << __METHOD_NAME__ << "WARNING betaX equal to 0, xp NaN, division by zero! " << G4endl; exit(1);}
+      if (betaY==0) {G4cerr << __METHOD_NAME__ << "WARNING betaY equal to 0, yp NaN, division by zero! " << G4endl; exit(1);}
 
+      // temp numbers - to be replaced by parsed parameters
       
       G4double sigx = sqrt(betaX*emitX);
       G4double sigxp= sqrt(emitX / betaX);
@@ -786,16 +795,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
             <<" sigmaYp= "<<sigmaYp<<G4endl
             <<" sigmaT= "<<sigmaT<<"s"<<G4endl
             <<" relative energy spread= "<<energySpread<<G4endl
-
-	    <<G4endl
-            <<" x0= "<<x0<<" m"<<G4endl
-            <<" y0= "<<y0<<" m"<<G4endl
-            <<" z0= "<<z0<<" m"<<G4endl
-            <<" t= "<<t<<" s"<<G4endl
-            <<" xp= "<<xp<<G4endl
-            <<" yp= "<<yp<<G4endl
-            <<" zp= "<<zp<<G4endl
-            <<" E= "<<E<<G4endl;
+	    <<G4endl;
 #endif
 
 
@@ -837,16 +837,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
             <<" envelopeYp= "<<envelopeYp<<G4endl
             <<" envelopeT= "<<envelopeT<<"s"<<G4endl
             <<" relative energy spread= "<<energySpread<<G4endl
-
-	    <<G4endl
-            <<" x0= "<<x0<<" m"<<G4endl
-            <<" y0= "<<y0<<" m"<<G4endl
-            <<" z0= "<<z0<<" m"<<G4endl
-            <<" t= "<<t<<" s"<<G4endl
-            <<" xp= "<<xp<<G4endl
-            <<" yp= "<<yp<<G4endl
-            <<" zp= "<<zp<<G4endl
-            <<" E= "<<E<<G4endl;
+	    <<G4endl;
 #endif
 
 
@@ -873,8 +864,8 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
             <<" relative energy spread= "<<energySpread<<G4endl;
 #endif
 
-      if (betaX==0) G4cerr << __METHOD_NAME__ << "WARNING betaX equal to 0, xp NaN, division by zero! " << G4endl;
-      if (betaY==0) G4cerr << __METHOD_NAME__ << "WARNING betaY equal to 0, yp NaN, division by zero! " << G4endl;
+      if (betaX==0) {G4cerr << __METHOD_NAME__ << "WARNING betaX equal to 0, xp NaN, division by zero! " << G4endl; exit(1);}
+      if (betaY==0) {G4cerr << __METHOD_NAME__ << "WARNING betaY equal to 0, yp NaN, division by zero! " << G4endl; exit(1);}
 
       G4double phiX= CLHEP::twopi * G4UniformRand();
       G4double phiY= CLHEP::twopi * G4UniformRand();
@@ -917,15 +908,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
         zp =  sqrt(1.-xp*xp -yp*yp);
 
 #ifdef DEBUG 
-      G4cout<< "BDSBunch::GetNextParticle>" << " GAUSSIAN_MATRIX : "<<G4endl
-            <<" x0= "<<x0<<" m"<<G4endl
-            <<" y0= "<<y0<<" m"<<G4endl
-            <<" z0= "<<z0<<" m"<<G4endl
-            <<" t= "<<t<<" s"<<G4endl
-            <<" xp= "<<xp<<G4endl
-            <<" yp= "<<yp<<G4endl
-            <<" zp= "<<zp<<G4endl
-            <<" E= "<<E<<G4endl;
+      G4cout<< "BDSBunch::GetNextParticle>" << " GAUSSIAN_MATRIX : "<<G4endl;
 #endif
       break;
     }
@@ -1098,7 +1081,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       G4int type;
       G4int gen;
       G4int pos;
-      G4double weight; // JS: weight overwrites output parameter!
+      //      G4double weight; // JS: weight shadows output parameter!
       G4double part_mass;
       G4double px,py,pz;
       G4double sx;
@@ -1314,11 +1297,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
                }
            }
          }
-	 if(it->name=="weight") {ReadValue(weight);
-#ifdef DEBUG 
-	   G4cout<< "BDSBunch : " << weight <<G4endl;
-#endif
-	 }
+	 if(it->name=="weight") ReadValue(weight);
 
 	 // compute zp from xp and yp if it hasn't been read from file
 	 if (!zpdef) zp=sqrt(1.-xp*xp -yp*yp);
@@ -1337,6 +1316,21 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       G4Exception("BDSBunch: Unknown distribution file type!", "-1", FatalErrorInArgument, "");
     }
   }
+
+#ifdef DEBUG
+  // particle properties
+  G4cout << __METHOD_NAME__ <<G4endl
+	 <<" x0 = "<<x0<<" m"<<G4endl
+	 <<" y0 = "<<y0<<" m"<<G4endl
+	 <<" z0 = "<<z0<<" m"<<G4endl
+	 <<" t = "<<t<<" s"<<G4endl
+	 <<" xp = "<<xp<<G4endl
+	 <<" yp = "<<yp<<G4endl
+	 <<" zp = "<<zp<<G4endl
+	 <<" E = "<<E<< " MeV"<<G4endl
+	 <<" weight= "<<weight<<G4endl;
+#endif
+
 }
 
 

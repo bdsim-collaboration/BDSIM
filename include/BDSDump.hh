@@ -38,13 +38,9 @@ public:
 protected:
 
 private:
-  G4int nptwiss;
 
   void DumpLogicalVolume();
   G4VisAttributes* SetVisAttributes();
-
-  // field related objects:
-  G4VisAttributes* itsVisAttributes;
 
   /// number of total Dumps
   static int nDumps;

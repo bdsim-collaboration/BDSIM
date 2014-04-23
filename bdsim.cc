@@ -1,5 +1,5 @@
 //  
-//   BDSIM, (C) 2001-2013 
+//   BDSIM, (C) 2001-2014 
 //   
 //   version 0.6
 //  
@@ -26,8 +26,6 @@
 #endif
 #include "G4GeometryManager.hh"
 
-#include "Randomize.hh"
-
 #ifdef G4VIS_USE
 #include "BDSVisManager.hh"
 #endif
@@ -47,24 +45,24 @@
 #include <getopt.h>
 
 
-#include "BDSDetectorConstruction.hh"   // Geant4 includes
+#include "BDSDetectorConstruction.hh"   
+#include "BDSEventAction.hh"
 #include "BDSPhysicsList.hh"
 #include "QGSP_BERT.hh"
 #include "QGSP_BERT_HP.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRunAction.hh"
-#include "BDSEventAction.hh"
+#include "BDSSamplerSD.hh"
 #include "BDSSteppingAction.hh"
 #include "BDSStackingAction.hh"
 #include "BDSUserTrackingAction.hh"
 #include "BDSRunManager.hh"
-#include "G4EventManager.hh"
+#include "G4EventManager.hh" // Geant4 includes
 #include "G4TrackingManager.hh"
 #include "G4SteppingManager.hh"
 #include "G4GeometrySampler.hh"
-#include "G4ImportanceAlgorithm.hh"
+//#include "G4ImportanceAlgorithm.hh"
 #include "G4GeometryTolerance.hh"
-#include "G4ScoringManager.hh"
 
 #include "CLHEP/Random/Random.h"
 
@@ -78,9 +76,7 @@
 //#endif
 
 #include "parser/gmad.h"  // GMAD parser
-
-
-
+#include "parser/options.h"
 
 //=======================================================
 // Global variables 
@@ -91,6 +87,7 @@ BDSSamplerSD* BDSSamplerSensDet; // sampler
 
 //=======================================================
 
+extern Options options;
 
 int main(int argc,char** argv) {
 
@@ -163,15 +160,16 @@ int main(int argc,char** argv) {
   CLHEP::HepRandom::setTheSeed(seed);
 
   // Print generator full state to output 
-  G4cout << __FUNCTION__ << "Random number generator's state: " << G4endl;
+  G4cout << __FUNCTION__ << "> Random number generator's state: " << G4endl << G4endl;
   CLHEP::HepRandom::saveFullState(G4cout);
+  G4cout << G4endl;
 
 #ifdef DEBUG
   G4cout << __FUNCTION__ << "> Seed from BDSGlobalConstants=" 
 	 << BDSGlobalConstants::Instance()->GetRandomSeed() << G4endl;
 #endif
-
-  G4cout << __FUNCTION__ << "> Random number generator's seed=" 
+ 
+  G4cout << __FUNCTION__ << "> Random number generator's seed = "
 	 << CLHEP::HepRandom::getTheSeed() << G4endl;
 
 
@@ -191,9 +189,6 @@ int main(int argc,char** argv) {
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
 
-#ifdef DEBUG 
-  G4cout<<"constructing phys list"<<G4endl;
-#endif 
   BDSPhysicsList* PhysList=new BDSPhysicsList;
   runManager->SetUserInitialization(PhysList);
   
@@ -204,22 +199,21 @@ int main(int argc,char** argv) {
   // Set the geometry tolerance
   static G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
   G4cout << __FUNCTION__ << "> Default geometry tolerances: surface " 
-	 << theGeometryTolerance->GetSurfaceTolerance() << " " 
+	 << theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m << " m " 
 	 << theGeometryTolerance->GetAngularTolerance() << " " 
 	 << theGeometryTolerance->GetRadialTolerance()  << " " <<G4endl;
-  G4double worldMaximumExtent=1000*m;
+  G4double worldMaximumExtent=1000*CLHEP::m;
   // This sets the tolerances for the geometry (1e-11 times this value)
   G4GeometryManager::GetInstance()->SetWorldMaximumExtent(worldMaximumExtent); 
-  G4cout << __FUNCTION__ << "> Geometry tolerances with worldMaximumExtent=" 
-	 << worldMaximumExtent/m << "m: surface: " 
-	 << theGeometryTolerance->GetSurfaceTolerance() 
-	 << " angular: " << theGeometryTolerance->GetAngularTolerance() 
-	 << " radial: " << theGeometryTolerance->GetRadialTolerance() << " " <<G4endl;
-  
-  
-#ifdef DEBUG 
-  G4cout << __FUNCTION__ << "> Constructing detector"<<G4endl;
+#ifdef DEBUG
+  G4cout<<__FUNCTION__<<"> Geometry Tolerances: " << G4endl;
+  G4cout<<__FUNCTION__<<std::setw(23)<<" World Maximum Extent: "<<std::setw(15)<<worldMaximumExtent/CLHEP::m<<" m"<<G4endl;
+  G4cout<<__FUNCTION__<<std::setw(23)<<" Surface: "             <<std::setw(15)<<theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m<< " m"<<G4endl;
+  G4cout<<__FUNCTION__<<std::setw(23)<<" Angular: "             <<std::setw(15)<<theGeometryTolerance->GetAngularTolerance()<<G4endl;
+  G4cout<<__FUNCTION__<<std::setw(23)<<" Radial: "              <<std::setw(15)<<theGeometryTolerance->GetRadialTolerance()<<G4endl;
 #endif
+  
+  G4cout << __FUNCTION__ << "> Constructing the accelerator"<<G4endl;
   BDSDetectorConstruction* detector = new BDSDetectorConstruction();
  
 #ifdef DEBUG 
@@ -334,9 +328,9 @@ int main(int argc,char** argv) {
   //
   if(BDSGlobalConstants::Instance()->DoTwiss())
     {
-
-      G4cout<<"do twiss"<<G4endl;
-      
+#ifdef DEBUG
+      G4cout << __METHOD_NAME__ << "Do Twiss"<<G4endl;
+#endif
       // disable SR process if present - analytical formulae used in rescaling
       G4ProcessManager *pManager = G4Electron::Electron()->GetProcessManager(); 	 
       G4ProcessVector *procVec=pManager->GetProcessList(); 	 
@@ -469,11 +463,18 @@ int main(int argc,char** argv) {
 #endif
   delete bdsOutput;
 
-#ifdef DEBUG 
-  G4cout << __FUNCTION__ << "> BDSGlobalConstants::Instance() deleting..."<<G4endl;
+#ifdef DEBUG
+  G4cout << __FUNCTION__ << "> BDSBeamline deleting..."<<G4endl;
 #endif
+  delete BDSBeamline::Instance();
+
+#ifdef DEBUG 
+  G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
+#endif
+  delete BDSExecOptions::Instance();
   delete BDSGlobalConstants::Instance();
-  
+  delete BDSMaterials::Instance();
+
 #ifdef DEBUG 
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif

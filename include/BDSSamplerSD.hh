@@ -33,10 +33,11 @@ public:
   void clear();
   void DrawAll();
   void PrintAll();
+  int itsHCID;
   
 private:
   BDSSamplerHitsCollection *SamplerCollection;
-  G4bool                    StoreHit;
+  // G4bool StoreHit;
   // G4int nStepsInSampler;
   // G4int maxNStepsInSampler;
   

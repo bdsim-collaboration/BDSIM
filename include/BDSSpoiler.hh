@@ -7,9 +7,8 @@
 #ifndef BDSSpoiler_h
 #define BDSSpoiler_h 1
 
-#include"globals.hh"
-#include"BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
+#include "globals.hh"
+#include "BDSAcceleratorComponent.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
 
@@ -38,8 +37,7 @@ private:
   G4LogicalVolume* itsSolidLogVol;
   G4LogicalVolume* itsInnerLogVol;
                     
-  G4VisAttributes* itsVisAttributes;
-  G4Mag_UsualEqRhs* itsEqRhs;
+  //  G4Mag_UsualEqRhs* itsEqRhs;
 
 private:
   G4Material* itsSpoilerMaterial;

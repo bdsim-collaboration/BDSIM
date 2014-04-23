@@ -10,16 +10,12 @@
 #include "BDSDriftStepper.hh"
 #include "BDSPCLTube.hh"
 
-#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
-#include "G4CashKarpRKF45.hh"
-#include "G4ExactHelixStepper.hh"
-#include "G4UnionSolid.hh"
 
 #include <map>
 
@@ -243,13 +239,6 @@ G4VisAttributes* BDSPCLDrift::SetVisAttributes()
 
 BDSPCLDrift::~BDSPCLDrift()
 {
-  delete itsVisAttributes;
-//   delete outer_solid;
-//   delete inner_solid;
-//   delete itsOuterBeamPipeLogicalVolume;
-//   delete itsInnerBeamPipeLogicalVolume;
-//   delete itsPhysiOuter;
-//   delete itsPhysiInner;
   delete itsBeampipeVisAtt;
   delete itsInnerBeampipeVisAtt;
   delete itsMagField;

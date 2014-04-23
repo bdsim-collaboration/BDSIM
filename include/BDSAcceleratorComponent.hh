@@ -30,18 +30,14 @@
 #include <vector> 
 #include "G4LogicalVolume.hh"
 #include "G4VisAttributes.hh"
-#include "G4LogicalVolume.hh"
 #include "globals.hh"
 //#include "BDSBeamPipe.hh"
 #include "BDSEnergyCounterSD.hh"
 
 #include "G4MagneticField.hh"
-#include "G4Mag_EqRhs.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4FieldManager.hh"
 #include "G4UserLimits.hh"
-#include "G4PVPlacement.hh"
-#include "G4AssemblyVolume.hh"
 #include "G4CSGSolid.hh"
 #include "G4Tubs.hh"
 
@@ -54,15 +50,11 @@ public:
 
   //name
   const G4String GetName () const;
-  void SetName(G4String aName);
 
   //type 
   const G4String GetType () const;
-  void SetType(G4String aType);
 
   G4int GetPrecisionRegion() const; //0 = no precision region, 1 = precision region 1, 2 = precision region 2.
-  void SetPrecisionRegion(G4int aPrecisionRegion);
-  
 
   //
   //    Geometry features    
@@ -76,7 +68,6 @@ public:
   G4double GetAngle ();
 
   // geometry length of the component.
-  void SetLength(G4double aLength); 
   virtual G4double GetLength ();
   virtual G4double GetZLength ();
   virtual G4double GetXLength ();
@@ -87,13 +78,8 @@ public:
   G4double GetPhiAngleOut (); //polar angle out
 
   G4double GetPhi (); //polar angle with respect to original frame
-  void SetPhi (G4double val);
-
   G4double GetTheta (); //azimuthal angle with respect to original frame
-  void SetTheta(G4double val);
-
   G4double GetPsi (); //azimuthal angle with respect to original frame
-  void SetPsi(G4double val);
 
   G4double GetXOffset();  // frame offset 
   G4double GetYOffset();
@@ -109,21 +95,16 @@ public:
   G4double GetK2();
   G4double GetK3();
 
-  //Set is only for Outline readout purposes - doesn't change magnet strengths
+  ///Set is only for Outline readout purposes - doesn't change magnet strengths
   void SetK1(G4double K1);
   void SetK2(G4double K2);
   void SetK3(G4double K3);
 
   G4RotationMatrix* GetRotation();
   G4ThreeVector GetPosition();
-  void SetPosition(G4ThreeVector);
   
   G4double GetTilt();  // component tilt 
   
-  
-  
-
-
   G4LogicalVolume* GetMarkerLogicalVolume() const;
 
   G4LogicalVolume* GetTunnelLogicalVolume() const;
@@ -170,7 +151,6 @@ public:
   // void AddSynchEnergyLoss(G4double SynchEnergyLoss);
   // G4double GetSynchEnergyLoss();
   
-  BDSAcceleratorComponent();
   void BuildOuterFieldManager();
 
   // in case a mapped field is provided creates a field mesh in global coordinates
@@ -193,9 +173,11 @@ public:
   G4double getParameterValue(G4String spec, G4String name) const;
   G4String getParameterValueString(G4String spec, G4String name) const;
 
-  // constructor
-  BDSAcceleratorComponent (G4String& aName, G4double aLength);
+private:
+  /// private default constructor
+  BDSAcceleratorComponent();
 
+public:
   BDSAcceleratorComponent (
 			  G4String& aName, 
 			  G4double aLength,
@@ -237,7 +219,8 @@ public:
 
 
 
-  G4VisAttributes* GetVisAttributes()const;
+  G4VisAttributes* GetVisAttributes()const; // get visual attributes
+  virtual G4VisAttributes* SetVisAttributes(); // set and return visual attributes
   G4LogicalVolume* itsOuterLogicalVolume;
   G4LogicalVolume* itsMarkerLogicalVolume;
   G4LogicalVolume* itsTunnelLogicalVolume;
@@ -245,6 +228,14 @@ public:
 
 
 protected:
+
+  /// set methods, protected
+  void SetName(G4String aName);
+  void SetType(G4String aType);
+
+  void SetPhi (G4double val);
+  void SetTheta(G4double val);
+  void SetPsi(G4double val);
 
   //Calculate dimensions used for the marker volume etc.
   void CalculateLengths();
@@ -287,7 +278,7 @@ protected:
   G4double itsTheta;
   G4double itsPsi;
   G4double itsK1, itsK2, itsK3;
-  G4RotationMatrix* itsRotation;
+  G4RotationMatrix* itsRotation; // rotation matrix (not used)
   G4ThreeVector itsPosition;
   //  BDSBeamPipe* itsBeamPipe;
   G4MagIntegratorStepper*  itsOuterStepper;
@@ -340,6 +331,9 @@ protected:
 
 
 private:
+  /// assignment and copy constructor not implemented nor used
+  BDSAcceleratorComponent& operator=(const BDSAcceleratorComponent&);
+  BDSAcceleratorComponent(BDSAcceleratorComponent&);
   /// constructor initialisation
   void ConstructorInit();
 
@@ -450,9 +444,6 @@ inline G4RotationMatrix* BDSAcceleratorComponent::GetRotation()
 inline G4ThreeVector BDSAcceleratorComponent::GetPosition()
 { return itsPosition;}
 
-inline void BDSAcceleratorComponent::SetPosition(G4ThreeVector pos)
-{ itsPosition = pos;}
-
 inline const G4String BDSAcceleratorComponent::GetName () const
 {return itsName;}
 
@@ -468,9 +459,6 @@ inline void BDSAcceleratorComponent::SetType (G4String aType)
 inline G4int BDSAcceleratorComponent::GetPrecisionRegion () const
 {return itsPrecisionRegion;}
 
-inline void BDSAcceleratorComponent::SetPrecisionRegion (G4int aPrecisionRegion)
-{itsPrecisionRegion=aPrecisionRegion;}
-
 inline G4LogicalVolume* BDSAcceleratorComponent::GetMarkerLogicalVolume() const
 {return itsMarkerLogicalVolume;}
 
@@ -483,6 +471,9 @@ SetInnerMostLogicalVolume(G4LogicalVolume* aLogVol)
 
 inline G4VisAttributes* BDSAcceleratorComponent::GetVisAttributes() const
 {return itsVisAttributes;}
+
+inline G4VisAttributes* BDSAcceleratorComponent::SetVisAttributes()
+{itsVisAttributes=NULL; return itsVisAttributes;}
 
 inline BDSEnergyCounterSD* BDSAcceleratorComponent::GetBDSEnergyCounter() const
 {return itsBDSEnergyCounter;}
@@ -527,25 +518,6 @@ inline void BDSAcceleratorComponent::SetMultiplePhysicalVolumes(G4VPhysicalVolum
 
 inline  std::vector<G4VPhysicalVolume*> BDSAcceleratorComponent::GetMultiplePhysicalVolumes()
 {return itsMultiplePhysicalVolumes;}
-
-// inline  G4double BDSAcceleratorComponent::GetZLower()
-// {return itsZLower;}
-
-// inline  G4double BDSAcceleratorComponent::GetZUpper()
-// {return itsZUpper;}
-
-// inline  void BDSAcceleratorComponent::SetZLower(G4double aZLower)
-// {itsZLower=aZLower;}
-
-// inline  void BDSAcceleratorComponent::SetZUpper(G4double aZUpper)
-// {itsZUpper=aZUpper;}
-
-// inline void 
-// BDSAcceleratorComponent::AddSynchEnergyLoss(G4double SynchEnergyLoss)
-// {itsSynchEnergyLoss+=SynchEnergyLoss;}
-
-// inline  G4double BDSAcceleratorComponent::GetSynchEnergyLoss()
-// {return itsSynchEnergyLoss;}
 
 inline  G4UserLimits* BDSAcceleratorComponent::GetUserLimits(){
   return itsUserLimits;

@@ -36,6 +36,7 @@ public:
 
 private: 
   BDSBeamline();
+
   static BDSBeamline* _instance;
   std::list <BDSAcceleratorComponent*> _componentList;
 
@@ -43,7 +44,9 @@ private:
   std::list<BDSAcceleratorComponent*>::const_iterator _iterLastComponent;
   void setRefTransform(BDSAcceleratorComponent* var);
 
-
+  /// assignment and copy constructor not implemented nor used
+  BDSBeamline& operator=(const BDSBeamline&);
+  BDSBeamline(BDSBeamline&);
 
   //Navigation 
   void doNavigation();
@@ -54,7 +57,7 @@ private:
   G4ThreeVector* _positionStart;
   G4ThreeVector* _positionEnd;
   G4ThreeVector* _positionFromCurrentCenter;
-  G4double _positionS;//Position along the curvilinear coordiante "s"
+  //  G4double _positionS;//Position along the curvilinear coordinate "s"
   G4ThreeVector* _zHalfAngle;
   G4RotationMatrix* _rotationLocal;
   G4RotationMatrix* _rotationGlobal;

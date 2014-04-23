@@ -1,0 +1,6 @@
+[submodule "utils/pybdsim"]
+	path = utils/pybdsim
+	url = https://bitbucket.org/nevay/pybdsim.git
+[submodule "utils/pyfluka"]
+	path = utils/pyfluka
+	url = https://bitbucket.org/nevay/pyfluka.git

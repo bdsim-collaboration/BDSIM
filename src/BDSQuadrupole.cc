@@ -19,7 +19,6 @@
 #include "BDSDebug.hh"
 
 #include "BDSQuadrupole.hh"
-#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Trd.hh"
 #include "G4VisAttributes.hh"
@@ -27,10 +26,6 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
-#include "G4HelixMixedStepper.hh"
-#include "G4HelixImplicitEuler.hh"
-#include "G4SimpleRunge.hh"
-#include "G4CashKarpRKF45.hh"
 
 #include <map>
 
@@ -43,7 +38,6 @@ extern LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
-extern G4RotationMatrix* RotY90;
 //============================================================
 
 BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength, 
@@ -157,8 +151,6 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
       //
       // set visualization attributes
       //
-      itsVisAttributes=SetVisAttributes();
-      itsVisAttributes->SetForceSolid(true);
       itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
       //
@@ -245,8 +237,6 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
 	  //
 	  // set visualization attributes
 	  //
-	  itsVisAttributes=SetVisAttributes();
-	  itsVisAttributes->SetForceSolid(true);
 	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 	  
 	  //
@@ -276,6 +266,7 @@ void BDSQuadrupole::SynchRescale(G4double factor)
 G4VisAttributes* BDSQuadrupole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(1,0,0));
+  itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
 
@@ -493,7 +484,6 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
 
 BDSQuadrupole::~BDSQuadrupole()
 {
-  delete itsVisAttributes;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

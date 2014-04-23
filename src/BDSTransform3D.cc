@@ -4,7 +4,6 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSTransform3D.hh"
-#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
@@ -22,7 +21,6 @@ extern LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
-extern BDSMaterials* theMaterials;
 //============================================================
 
 BDSTransform3D::BDSTransform3D(G4String aName, G4double x,G4double y,G4double z,
@@ -39,8 +37,7 @@ BDSTransform3D::BDSTransform3D(G4String aName, G4double x,G4double y,G4double z,
 			  0, // angle
 			  x, // x offset
 			  y, // y offset
-			  z), // z offset
-  itsVisAttributes(NULL),itsPhysiComp(NULL)
+			  z) // z offset
 {
   SetTheta(theta);
   SetPsi(psi);
@@ -72,6 +69,4 @@ G4VisAttributes* BDSTransform3D::SetVisAttributes()
 
 BDSTransform3D::~BDSTransform3D()
 {
-  delete itsVisAttributes;
-  //  delete itsPhysiComp;
 }

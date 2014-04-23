@@ -24,7 +24,6 @@
 #include "BDSSolenoidStepper.hh"
 #include "G4HelixImplicitEuler.hh"
 
-#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
@@ -41,7 +40,6 @@ extern LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
-extern BDSMaterials* theMaterials;
 //============================================================
 
 BDSSolenoid::BDSSolenoid(G4String aName, G4double aLength, 
@@ -94,8 +92,6 @@ BDSSolenoid::BDSSolenoid(G4String aName, G4double aLength,
       //
       // set visualization attributes
       //
-      itsVisAttributes=SetVisAttributes();
-      itsVisAttributes->SetForceSolid(true);
       itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
       //
@@ -150,8 +146,6 @@ BDSSolenoid::BDSSolenoid(G4String aName, G4double aLength,
 	  //
 	  // set visualization attributes
 	  //
-	  itsVisAttributes=new G4VisAttributes(G4Colour(1.,0.,0.)); //red
-	  itsVisAttributes->SetForceSolid(true);
 	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 	  
 	  //
@@ -185,6 +179,7 @@ void BDSSolenoid::SynchRescale(G4double factor)
 G4VisAttributes* BDSSolenoid::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(1.,0.,0.)); //red
+  itsVisAttributes->SetForceSolid(true);
   return itsVisAttributes;
 }
 
@@ -209,7 +204,6 @@ void BDSSolenoid::BuildBPFieldAndStepper()
 
 BDSSolenoid::~BDSSolenoid()
 {
-  delete itsVisAttributes;
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

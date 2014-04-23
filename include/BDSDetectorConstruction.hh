@@ -24,23 +24,19 @@ Last modified 15.11.2005 by Ilya Agapov
 
 //GFlash parameterisation                                                                                                                                                     
 #include "GFlashHomoShowerParameterisation.hh"
-#include "G4FastSimulationManager.hh"
 #include "BDSShowerModel.hh"
 #include "GFlashHitMaker.hh"
 #include "GFlashParticleBounds.hh"
 
 
 class G4Box;
-class G4Tubs;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
-class G4Material;
 class G4UniformMagField;
-class BDSCalorimeterSD;
 class G4UserLimits;
 class G4VSensitiveDetector;
 
-class G4Navigator;
+class ElementList;
 
 //==============================================================
 
@@ -78,8 +74,11 @@ public:
   G4double GetWorldSizeZ();
   
 private:
+  /// assignment and copy constructor not implemented nor used
+  BDSDetectorConstruction& operator=(const BDSDetectorConstruction&);
+  BDSDetectorConstruction(BDSDetectorConstruction&);
+
   G4bool verbose;
-  G4bool outline;
 
   void SetWorldSize(G4double*);
   void SetWorldSizeX(G4double);
@@ -106,7 +105,7 @@ private:
 
   void DefineMaterials();
 
-  G4VPhysicalVolume* ConstructBDS(std::list<struct Element>& beamline_list);
+  G4VPhysicalVolume* ConstructBDS(ElementList& beamline_list);
   G4UniformMagField* magField;      //pointer to the magnetic field
   G4UserLimits* BDSUserLimits;
 

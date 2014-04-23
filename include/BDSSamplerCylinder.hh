@@ -31,9 +31,6 @@ private:
   G4VisAttributes* SetVisAttributes();
   G4double itsRadius;
 
-  // field related objects:
-  G4VisAttributes* itsVisAttributes;
-
   /// id of sampler
   int nThisSampler;
   /// number of total Samplers

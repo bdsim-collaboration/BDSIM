@@ -5,11 +5,10 @@
 #include "globals.hh"
 #include "BDSXYMagField.hh"
 #include <fstream>
+#include <vector>
 #include "CLHEP/Vector/Rotation.h"
 
-using namespace std;
-
-G4double GetNearestValue(vector<struct XYFieldRecord> fieldValues, G4double x, G4double y,
+G4double GetNearestValue(std::vector<struct XYFieldRecord> fieldValues, G4double x, G4double y,
 			 G4double &bx,G4double &by, G4double &bz);
 
 BDSXYMagField::BDSXYMagField(G4String fname) :
@@ -52,7 +51,7 @@ G4int BDSXYMagField::ReadFile(G4String fname)
 #endif
   struct XYFieldRecord rec;
   
-  ifstream bmapif;
+  std::ifstream bmapif;
   bmapif.open(fname);
 
   while(bmapif.good())
@@ -78,7 +77,7 @@ G4int BDSXYMagField::ReadFile(G4String fname)
 void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 {
 #ifdef DEBUG
-  G4cout<<"BDSElement:: create XY field mesh"<<G4endl;
+  G4cout<<"BDSXYMagField:: create XY field mesh"<<G4endl;
 #endif
   ReadFile(itsFileName);
 
@@ -96,7 +95,7 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
   
   // determine mesh physical dimensions
   
-  vector<struct XYFieldRecord>::iterator it, itt;
+  std::vector<struct XYFieldRecord>::iterator it, itt;
   
 
   double xmax=0, ymax=0;
@@ -188,7 +187,7 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
   
   G4cout<<"writing test file"<<G4endl;
   
-  ofstream testf("btest.dat");
+  std::ofstream testf("btest.dat");
   
   for(int i=0; i<nX;i++)
     for(int j=0;j<nY;j++)
@@ -196,7 +195,7 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 	testf<<i<<" "<<j<<" "" "<<
 	  GetBx(i,j)<<" "<<
 	  GetBy(i,j)<<" "<<
-	  GetBz(i,j)<<endl;
+	  GetBz(i,j)<<std::endl;
       }
   
   testf.close();
@@ -324,10 +323,10 @@ G4double BDSXYMagField::GetBz(int i,int j)
 }
 
 
-G4double GetNearestValue(vector<struct XYFieldRecord> fieldValues, G4double x, G4double y,
+G4double GetNearestValue(std::vector<struct XYFieldRecord> fieldValues, G4double x, G4double y,
 			 G4double &bx,G4double &by, G4double &bz)
 {
-  vector<struct XYFieldRecord>::iterator it;
+  std::vector<struct XYFieldRecord>::iterator it;
 
   G4double dist = 10.e+10;
 
@@ -351,7 +350,7 @@ G4double GetNearestValue(vector<struct XYFieldRecord> fieldValues, G4double x, G
 // // create a field mesh in the "world" coordinates from list of field values
 // void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 // {
-//   G4cout<<"BDSElement:: create XY field mesh"<<G4endl;
+//   G4cout<<"BDSXYMagField:: create XY field mesh"<<G4endl;
   
 //   const G4RotationMatrix* Rot=referenceVolume->GetFrameRotation();
 //   const G4ThreeVector Trans=referenceVolume->GetFrameTranslation();
@@ -362,7 +361,7 @@ G4double GetNearestValue(vector<struct XYFieldRecord> fieldValues, G4double x, G
 //   // mesh physical dimensions
 
 
-//   vector<struct XYFieldRecord>::iterator it, itt;
+//   std::vector<struct XYFieldRecord>::iterator it, itt;
 
 
 //   double xmax=0, ymax=0;
@@ -440,8 +439,8 @@ G4double GetNearestValue(vector<struct XYFieldRecord> fieldValues, G4double x, G
 //   G4cout<<"rmax ="<<rmax<<G4endl;
 
 //   G4double x, y, z;
-//   vector<struct FieldRecord> vals;
-//   vector<double> rs;
+//   std::vector<struct FieldRecord> vals;
+//   std::vector<double> rs;
 
 //   for(int i=0; i<nX;i++)
 //      for(int j=0;j<nY;j++)

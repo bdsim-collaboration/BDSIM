@@ -9,7 +9,9 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 
-using namespace std;
+#include <fstream>
+
+using std::setw;
 
 BDSGeometryInterface::BDSGeometryInterface(G4String filename):
   itsFileName(filename)
@@ -20,13 +22,14 @@ BDSGeometryInterface::~BDSGeometryInterface()
 
 void BDSGeometryInterface::Optics()
 {
-  ofstream optics;
+  std::ofstream optics;
   
   G4cout << "Generating Optics file to: " << itsFileName << " ..." << G4endl;
 
   optics.open(itsFileName);
 
-  optics << setw(10) << "Type" 
+  optics << std::left
+	 << setw(10) << "Type"
          << setw(10) << "Name" 
 	 << setw(10) << "Length[m]" 
 	 << setw(10) << "S [m]" 
@@ -53,24 +56,24 @@ void BDSGeometryInterface::Optics()
 	}
       else aper_type=2; // circular is default
       
-      optics.setf(ios::fixed, ios::floatfield);
-      optics.setf(ios::showpoint);
+      optics.setf(std::ios::fixed, std::ios::floatfield);
+      optics.setf(std::ios::showpoint);
       
       optics.precision(8);
       
-      optics << setw(10) 
-	     << BDSBeamline::Instance()->currentItem()->GetType() << " "
-	     << BDSBeamline::Instance()->currentItem()->GetName() << " "
-	     << BDSBeamline::Instance()->currentItem()->GetLength()/CLHEP::m  << " "
-	     << BDSBeamline::Instance()->positionS()/CLHEP::m  << " "
-	     << BDSBeamline::Instance()->currentItem()->GetAngle()   << " "
-	     << BDSBeamline::Instance()->currentItem()->GetK1()   << " "
-	     << BDSBeamline::Instance()->currentItem()->GetK2()   << " "
-	     << BDSBeamline::Instance()->currentItem()->GetK3()   << " "
-	     << BDSBeamline::Instance()->currentItem()->GetTilt() << " "
-	     << BDSBeamline::Instance()->currentItem()->GetAperX()/CLHEP::m   << " "
-	     << BDSBeamline::Instance()->currentItem()->GetAperY()/CLHEP::m   << " "
-	     << aper_type   << " "
+      optics << std::left 
+	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetType() << " "
+	     << setw(40) << BDSBeamline::Instance()->currentItem()->GetName() << " "
+	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetLength()/CLHEP::m  << " "
+	     << setw(10) << BDSBeamline::Instance()->positionS()/CLHEP::m  << " "
+	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetAngle()   << " "
+	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetK1()   << " "
+	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetK2()   << " "
+	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetK3()   << " "
+	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetTilt() << " "
+	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetAperX()/CLHEP::m   << " "
+	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetAperY()/CLHEP::m   << " "
+	     << setw(10) << aper_type   << " "
 	     << G4endl;
 	}
       optics.close();
@@ -80,13 +83,14 @@ void BDSGeometryInterface::Optics()
 
 void BDSGeometryInterface::Survey()
 {
-  ofstream survey;
+  std::ofstream survey;
 
   G4cout << "Generating Survey: " << itsFileName << " ..." << G4endl;
 
   survey.open(itsFileName);
-  survey << setw(10) << "Type" << " "
-	 << setw(10) << "Name" << " "
+  survey << std::left 
+	 << setw(10) << "Type" << " "
+	 << setw(40) << "Name" << " "
 	 << setw(10) << "Length[m]" << " "
 	 << setw(10) << "Arc len[m]" << " "
 	 << setw(10) << "X [m]" << " "
@@ -139,13 +143,14 @@ void BDSGeometryInterface::Survey()
       else
 	phi = theta = psi = 0.0;
       
-      survey.setf(ios::fixed, ios::floatfield);
-      survey.setf(ios::showpoint);
+      survey.setf(std::ios::fixed, std::ios::floatfield);
+      survey.setf(std::ios::showpoint);
       
       survey.precision(7);
       
-      survey << setw(10) << BDSBeamline::Instance()->currentItem()->GetType() << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetName() << " "
+      survey << std::left
+	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetType() << " "
+	     << setw(40) << BDSBeamline::Instance()->currentItem()->GetName() << " "
 	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetLength()/CLHEP::m  << " "
 	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetArcLength()/CLHEP::m  << " "
 	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetPosition().x()/CLHEP::m  << " "
