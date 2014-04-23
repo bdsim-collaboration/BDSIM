@@ -27,16 +27,14 @@ drift2: drift, l=3;
 startl: marker;
 endl: marker;
 
-msb1b: marker;
-msb1e: marker;
-mrb1b: marker;
-mrb1e: marker;
+!msb1b: marker;
+!msb1e: marker;
+!mrb1b: marker;
+!mrb1e: marker;
 startl: marker;
 endl: marker;
 
 !myLine: line = (startl, drift1, leadTarget, myField, drift1, msb1b, sbend1, msb1e, drift2, mrb1b, rbend1, mrb1e, drift1, endl);
-
-
 
 myLine: line = (startl,leadTarget,endl);
 
@@ -45,11 +43,11 @@ use ,period=myLine;
 sample, range = startl;
 sample, range = endl;
 
-sample, range = msb1b;
-sample, range = msb1e;
+!sample, range = msb1b;
+!sample, range = msb1e;
 
-sample, range = mrb1b;
-sample, range = mrb1b;
+!sample, range = mrb1b;
+!sample, range = mrb1b;
 
 option,ngenerate=51, nperfile=50;
 

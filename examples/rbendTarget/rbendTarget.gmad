@@ -37,8 +37,8 @@ drift2: drift, l=3000;
 
 msb1b: marker;
 msb1e: marker;
-mrb1b: marker;
-mrb1e: marker;
+!mrb1b: marker;
+!mrb1e: marker;
 startl: marker;
 endl: marker;
 
@@ -56,8 +56,8 @@ sample, range = endl;
 sample, range = msb1b;
 sample, range = msb1e;
 
-sample, range = mrb1b;
-sample, range = mrb1b;
+!sample, range = mrb1b;
+!sample, range = mrb1e;
 
 option, ngenerate=11, nperfile=10;
 
