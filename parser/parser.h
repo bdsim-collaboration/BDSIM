@@ -723,7 +723,7 @@ void add_sampler(char *name, char *before, int before_count)
   std::list<struct Element>::iterator it = beamline_list.find(std::string(before),before_count);
   if (it==beamline_list.end()) {
     std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-    return;
+    exit(1);
   }
   beamline_list.insert(it,e);
 }
@@ -745,7 +745,7 @@ void add_csampler(char *name, char *before, int before_count, double length, dou
   std::list<struct Element>::iterator it = beamline_list.find(std::string(before),before_count);
   if (it==beamline_list.end()) {
     std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-    return;
+    exit(1);
   }
   beamline_list.insert(it,e);
 }
@@ -765,7 +765,7 @@ void add_dump(char *name, char *before, int before_count)
   std::list<struct Element>::iterator it = beamline_list.find(std::string(before),before_count);
   if (it==beamline_list.end()) {
     std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-    return;
+    exit(1);
   }
   beamline_list.insert(it,e);
 }
