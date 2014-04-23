@@ -8,6 +8,7 @@
 #include "BDSMaterials.hh"
 #include "BDSTerminator.hh"
 #include "BDSTerminatorSD.hh"
+#include "BDSTerminatorUserLimits.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -38,38 +39,28 @@ BDSTerminator::BDSTerminator(G4String aName, G4double aLength):
 
 void BDSTerminator::TerminatorLogicalVolume()
 {
-  //if(!(*LogVolCount)[itsName])
-  //  {
-      G4Box* terminatorBox = new G4Box(itsName+"_solid",
-				       BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				       BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				       itsLength/2.0);
-      itsMarkerLogicalVolume =new G4LogicalVolume(terminatorBox,
-						  BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
-						  itsName);
+  //Bascially a copy of BDSSampler but with different sensitive detector added
+  G4Box* terminatorBox = new G4Box(itsName+"_solid",
+				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
+				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
+				   itsLength/2.0);
+  itsMarkerLogicalVolume =new G4LogicalVolume(terminatorBox,
+					      BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+					      itsName);
+  
+  (*LogVolCount)[itsName]=1;
+  (*LogVol)[itsName]=itsMarkerLogicalVolume;
 
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
-
-      //OLD CODE BELOW - perhaps where to put in user limits logic
-      //#ifndef NOUSERLIMITS
-      //itsOuterUserLimits =new G4UserLimits();
-      //double stepFactor=0.5;
-      //itsOuterUserLimits->SetMaxAllowedStep(itsLength*stepFactor);
-      //itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
-      //#endif
-
-      G4SDManager* SDMan    = G4SDManager::GetSDMpointer();
-      G4VSensitiveDetector* theTerminator  = new BDSTerminatorSD(itsName);
-      SDMan->AddNewDetector(theTerminator);
-      itsMarkerLogicalVolume->SetSensitiveDetector(theTerminator);
-      //  }
-  /*  else
-    {
-      (*LogVolCount)[itsName]++;
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-      itsMarkerLogicalVolume->SetSensitiveDetector(theTerminator);
-      }*/
+  // SENSITIVE DETECTOR
+  G4SDManager* SDMan    = G4SDManager::GetSDMpointer();
+  G4VSensitiveDetector* theTerminator  = new BDSTerminatorSD(itsName);
+  SDMan->AddNewDetector(theTerminator);
+  itsMarkerLogicalVolume->SetSensitiveDetector(theTerminator);
+  
+  // USER LIMITS - the logic of killing particles on last turn
+  itsMarkerLogicalVolume->SetUserLimits(new BDSTerminatorUserLimits(DBL_MAX,DBL_MAX,DBL_MAX,0.,0.));
+  //these are default G4UserLimit values so everything will normally be tracked
+  //BDSTerminatorUserLimits has the logic inside it to respond to turn number
 }
 
 G4VisAttributes* BDSTerminator::SetVisAttributes()
