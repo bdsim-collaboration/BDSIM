@@ -26,16 +26,9 @@ class G4UniformMagField;
 struct Options;
 
 struct strCmp {
-  G4bool operator()( const G4String s1, const G4String s2 ) {
-    return  strcmp(s1,s2) < 0;}
+  G4bool operator()( const G4String s1, const G4String s2 ) const {
+    return strcmp(s1,s2) < 0;}
 };
-
-/*
-struct trackSort : public binary_function<G4Track*, G4Track*, G4bool>{
-  G4bool operator()(G4Track* a, G4Track* b){
-  return a->GetPosition().z() < b->GetPosition().z();}
-};
-*/
 
 class BDSGlobalConstants 
 {
