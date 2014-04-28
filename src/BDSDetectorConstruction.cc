@@ -326,9 +326,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
     if(temp){
       BDSBeamline::Instance()->addComponent(temp);
       //For the outline file...
-      BDSBeamline::Instance()->currentItem()->SetK1((*it).k1);
-      BDSBeamline::Instance()->currentItem()->SetK2((*it).k2);
-      BDSBeamline::Instance()->currentItem()->SetK3((*it).k3);
+      BDSBeamline::Instance()->lastItem()->SetK1((*it).k1);
+      BDSBeamline::Instance()->lastItem()->SetK2((*it).k2);
+      BDSBeamline::Instance()->lastItem()->SetK3((*it).k3);
     }
 #ifdef DEBUG
     G4cout << "done." << G4endl;
