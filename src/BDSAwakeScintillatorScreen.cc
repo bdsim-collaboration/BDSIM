@@ -273,7 +273,7 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
   //---Removing downstream sampler
   //---  (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;
   //---
-  (*LogVol)[_screenSamplerName2]=itsScreenScoringPlaneLog2;
+(*LogVol)[_screenSamplerName2]=itsScreenScoringPlaneLog2;
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   if(BDSSampler::GetNSamplers()==0){
     BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
