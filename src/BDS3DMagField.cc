@@ -4,7 +4,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDS3DMagField.hh"
 
-#define DEBUG
+
 
 BDS3DMagField::BDS3DMagField( const char* filename, double zOffset ) 
   :fZoffset(zOffset),invertX(false),invertY(false),invertZ(false)
