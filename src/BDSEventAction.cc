@@ -259,7 +259,7 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   
   BDSCCDPixelHitsCollection* BDSCCDPixel_HC=NULL;
   G4String name="CCDPixel";
-  G4int BDSCCDPixel_ID= G4SDManager::GetSDMpointer()->GetCollectionID(name);
+  //  G4int BDSCCDPixel_ID= G4SDManager::GetSDMpointer()->GetCollectionID(name);
   if(BDSCCDPixel_ID>=0)
     {
       BDSCCDPixel_HC=
