@@ -23,8 +23,8 @@ d1: drift,l=0.00000000000001*mm;
 segmentation: drift, l=12478.4*mm;
 
 mk1: marker;
-mk2: marker;
-mk3: marker;
+!mk2: marker;
+!mk3: marker;
 
 cryoModule: element, l=12.4784*m, geometry="mokka:cryo1_geomlist.sql";
 !cryoModule : drift, l=12.4784*m;
@@ -65,8 +65,8 @@ test2 : line = (laser1,modb1,mk1);
 !use,period=mod1;
 use,period=test2;
 sample, range=mk1;
-sample, range=mk2;
-sample, range=mk3;
+!sample, range=mk2;
+!sample, range=mk3;
 
 option, ngenerate=1000, physicsList="lw",randomSeed=-1;
 
