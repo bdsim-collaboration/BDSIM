@@ -31,31 +31,27 @@ void BDSThresholdCutSteppingAction::UserSteppingAction(const G4Step* ThisStep)
 { 
   // -------------  kill tracks according to cuts -------------------
 
-  G4String pName=ThisStep->GetTrack()->GetDefinition()->GetParticleName();
- 
+  // G4String pName=ThisStep->GetTrack()->GetDefinition()->GetParticleName();
+  // better with PDG numbers (faster)
+  G4int pdgNr = ThisStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
+
   //#ifndef NOSTEPPERCUT
 
   // this cuts apply to default region
-  if(pName=="gamma"){
+  //  if(pName=="gamma"){
+  if (pdgNr == 22) {
     if(ThisStep->GetTrack()->GetKineticEnergy()<BDSGlobalConstants::Instance()->GetThresholdCutPhotons())
       {
 	ThisStep->GetTrack()->SetTrackStatus(fStopAndKill);
       }
-  } else if(pName=="e-"||pName=="e+"){
+    //  } else if(pName=="e-"||pName=="e+"){
+  } else if (abs(pdgNr) == 11) {
     if(ThisStep->GetTrack()->GetKineticEnergy()<BDSGlobalConstants::Instance()->GetThresholdCutCharged())
       {
 	ThisStep->GetTrack()->SetTrackStatus(fStopAndKill);
       }
   }
   //#endif
-
-  //Kill all neutrinos - should go to BDSUserTrackingAction? - JS
-  G4bool killNeutrinos = true;
-  if( killNeutrinos ){
-    if( pName=="nu_e" || pName=="nu_mu" || pName=="nu_tau" || pName=="anti_nu_e" || pName=="anti_nu_mu" || pName=="anti_nu_tau" ){
-      ThisStep->GetTrack()->SetTrackStatus(fStopAndKill);
-    }
-  }
 }
   
 //====================================================

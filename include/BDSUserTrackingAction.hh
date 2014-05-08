@@ -39,9 +39,7 @@ public:
   BDSUserTrackingAction(){;};
   ~BDSUserTrackingAction();
    
-  void PreUserTrackingAction(const G4Track*);
-
-private:
+  virtual void PreUserTrackingAction(const G4Track*);
 
 };
 

@@ -37,7 +37,6 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
 {
   G4ClassificationOfNewTrack classification = fUrgent;
 
-
 #ifdef DEBUG 
   G4cout<<"StackingAction: ClassifyNewtrack "<<aTrack->GetTrackID()<<
     " "<<aTrack->GetDefinition()->GetParticleName()<<G4endl;
@@ -51,32 +50,28 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
   G4cout<<"Number of event : "<<
     G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEvent()<<G4endl;
 #endif
-  
-  if(BDSGlobalConstants::Instance()->DoTwiss())
-    {
-      if((aTrack->GetParentID() <= 0) &&
-         (aTrack->GetTrackStatus()==fPostponeToNextEvent) )
-	classification = fPostpone;
+
+  //Kill all neutrinos
+  G4bool killNeutrinos = true;
+  if( killNeutrinos ){
+    G4int pdgNr = aTrack->GetParticleDefinition()->GetPDGEncoding();
+    if( abs(pdgNr) == 12 || abs(pdgNr) == 14 || abs(pdgNr) == 16) {
+      return fKill;
     }
+  }
   
   if(BDSGlobalConstants::Instance()->GetStopTracks()) // if tracks killed after interaction
     {
-      
       // kill secondary electrons
       
       if( (aTrack->GetParentID() > 0) && 
 	  (aTrack->GetDefinition() == G4Electron::ElectronDefinition() ) )
 	{
-          
-	  
-	  classification = fKill;
-	  //classification = fUrgent;
-
 	  // if we are in the twiss module - aperture hit is suspicious
-	  if( BDSGlobalConstants::Instance()->DoTwiss() ) 
-	    G4cout<<"WARNING : Electron "<<aTrack->GetParentID()<<" outside of aperture, twiss results will be incorrect"<<
-	      G4endl;
-
+	  if( BDSGlobalConstants::Instance()->DoTwiss() ) {
+	    G4cout<<"WARNING : Electron "<<aTrack->GetParentID()<<" outside of aperture, twiss results will be incorrect"<< G4endl;
+	  }
+	  return fKill;
 	}
       
       // kill secondary photons
@@ -84,7 +79,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       if( (aTrack->GetParentID() > 0) && 
 	  (aTrack->GetDefinition() == G4Gamma::GammaDefinition() ) )
 	{
-	  classification = fKill;
+	  return fKill;
 	}
       
       // kill secondary positrons
@@ -92,12 +87,10 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       if( (aTrack->GetParentID() > 0) && 
 	  (aTrack->GetDefinition() == G4Positron::PositronDefinition() ) )
 	{
-	  classification = fKill;
-
 	  // if we are in the twiss module - aperture hit is suspicious
-	  if( BDSGlobalConstants::Instance()->DoTwiss() ) 
-	    G4cout<<"WARNING : Positron outside of aperture, twiss results will be incorrect"<<
-	      G4endl;
+	  if( BDSGlobalConstants::Instance()->DoTwiss() ) {
+	    G4cout<<"WARNING : Positron outside of aperture, twiss results will be incorrect"<<G4endl;}
+	  return fKill;
 	}
 
       // kill secondary protons/antiprotons
@@ -106,14 +99,13 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
 	  ( (aTrack->GetDefinition() == G4Proton::ProtonDefinition() ) ||
 	    (aTrack->GetDefinition() == G4AntiProton::AntiProtonDefinition()) ) )
 	{
-	  classification = fKill;
-	  
 	  // if we are in the twiss module - aperture hit is suspicious
-	  if( BDSGlobalConstants::Instance()->DoTwiss() ) 
+	  if( BDSGlobalConstants::Instance()->DoTwiss() ) {
 	    G4cout<<"WARNING : Proton outside of aperture, twiss results will be incorrect"<<
 	      G4endl;
+	  }
+	  return fKill;
 	}
-      
     }
 
   if(BDSGlobalConstants::Instance()->getWaitingForDump()) // if waiting for placet synchronization
@@ -122,6 +114,13 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       if( aTrack->GetTrackStatus()==fPostponeToNextEvent )
 	classification = fPostpone;
      }
+
+  if(BDSGlobalConstants::Instance()->DoTwiss())
+    {
+      if((aTrack->GetParentID() <= 0) &&
+         (aTrack->GetTrackStatus()==fPostponeToNextEvent) )
+	classification = fPostpone;
+    }
   
   if(BDSGlobalConstants::Instance()->getDumping()) // in the process of dumping
     {

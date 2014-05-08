@@ -246,7 +246,10 @@ int main(int argc,char** argv) {
   if((BDSExecOptions::Instance()->GetVerboseStep() || BDSExecOptions::Instance()->GetVerboseEventNumber() != -1) && (!BDSGlobalConstants::Instance()->GetSynchRescale()) ) {
     runManager->SetUserAction(new BDSVerboseSteppingAction);
   }
-  runManager->SetUserAction(new BDSThresholdCutSteppingAction);
+
+  if (BDSGlobalConstants::Instance()->GetThresholdCutPhotons() > 0 || BDSGlobalConstants::Instance()->GetThresholdCutCharged() > 0) {
+    runManager->SetUserAction(new BDSThresholdCutSteppingAction);
+  }
 
 #ifdef DEBUG 
   G4cout << __FUNCTION__ << "> User action - trackingaction"<<G4endl;
