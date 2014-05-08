@@ -634,7 +634,7 @@ void BDSMaterials::Initialise()
   G4double energytab[]={2.239*eV, 2.241*eV};
   G4double rindextab[]={rindex, rindex};
   G4double emitspec[]={1.0, 1.0};
-  G4double abslen[]={70*CLHEP::cm, 70*CLHEP::cm};
+  G4double abslen[]={7*CLHEP::cm, 7*CLHEP::cm};
   G4double mieScatteringLength[]={60.3e-3*CLHEP::mm, 60.3e-3*CLHEP::mm};
   mptLanex->AddProperty("RINDEX",energytab, rindextab, nentLanex); //Average refractive index of bulk material
   mptLanex->AddProperty("ABSLENGTH", energytab, abslen, nentLanex);
