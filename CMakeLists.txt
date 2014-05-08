@@ -22,18 +22,21 @@ if(NOT CMAKE_BUILD_TYPE)
        "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel DebugProf DebugCoverage."
        FORCE)
 endif()
+
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    add_definitions("-g -DDEBUG")
-endif()
-if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
+    add_definitions("-g -O0 -DDEBUG")
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
     if(NOT CMAKE_COMPILER_IS_GNUCXX)
          message(WARNING "DebugCoverage only works with gcc compiler")
     endif()
-    add_definitions("-g -DDEBUG")
+    add_definitions("-g -O0 -DDEBUG")
     add_definitions("--coverage")
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "None")
+    # if specifically None optimise
+    set(CMAKE_CXX_FLAGS "-O3 -ffast-math -DNDEBUG")
 endif()
 
-message(STATUS "Build Type   ${CMAKE_BUILD_TYPE}")
+message(STATUS "Build Type ${CMAKE_BUILD_TYPE}")
 
 set(CMAKE_C_ORIG_FLAGS "${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_ORIG_FLAGS "${CMAKE_CXX_FLAGS}")
