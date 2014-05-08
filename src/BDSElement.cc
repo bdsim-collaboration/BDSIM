@@ -18,7 +18,8 @@
 #include "G4Mag_UsualEqRhs.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "BDS3DMagField.hh"
-#include "BDSXYMagField2.hh"
+#include "BDSXYMagField.hh"
+#include "BDSMagFieldSQL.hh"
 #include "G4NystromRK4.hh"
 
 // geometry drivers
@@ -315,10 +316,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::um);
       BuildMagField(true);
     }else if(bFormat=="XY"){
-#ifdef DEBUG
-      G4cout << "BDSElement.cc> Making BDSXYMagField2..." << G4endl;
-#endif
-      itsMagField = new BDSXYMagField2(bFile);
+      itsMagField = new BDSXYMagField(bFile);
       itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::um);
 
       // build the magnetic field manager and transportation
@@ -406,10 +404,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       
       BuildMagField(true);
     } else if(bFormat=="XY"){
-#ifdef DEBUG
-      G4cout << "BDSElement.cc> Making BDSXYMagField2..." << G4endl;
-#endif
-      itsMagField = new BDSXYMagField2(bFile);
+      itsMagField = new BDSXYMagField(bFile);
       itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::um);
       
       // build the magnetic field manager and transportation

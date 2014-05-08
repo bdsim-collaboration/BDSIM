@@ -418,11 +418,10 @@ int main(int argc,char** argv) {
   //   defined by the user in the gmad input file
   //
 
-  G4UIsession* session=0;
-  G4VisManager* visManager=0;
- 
   if(!BDSExecOptions::Instance()->GetBatch())   // Interactive mode
     {
+      G4UIsession* session=0;
+      G4VisManager* visManager=0;
 #ifdef G4UI_USE_TCSH
       session = new G4UIterminal(new G4UItcsh);
 #else
