@@ -22,7 +22,10 @@ public:
   ~BDSSamplerCylinder();
 
   static int GetNSamplers();
-  static void AddExternalSampler();
+  static void AddExternalSampler(G4String outputName);
+
+  /// names of samplers for output
+  static std::vector <G4String> outputNames;
 
 protected:
 

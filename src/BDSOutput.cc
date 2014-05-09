@@ -142,8 +142,7 @@ void BDSOutput::Init(G4int FileNum)
 #ifdef DEBUG
       G4cout << __METHOD_NAME__ << " building sampler tree number: " << i << G4endl;
 #endif
-      //G4String name="samp"+BDSGlobalConstants::Instance()->StringFromInt(i+1);
-      G4String name=SampName[i];
+      G4String name=BDSSampler::outputNames[i];
 #ifdef DEBUG
       G4cout << __METHOD_NAME__ << " named: " << name << G4endl;
 #endif
@@ -152,7 +151,7 @@ void BDSOutput::Init(G4int FileNum)
   for(G4int i=0;i<BDSSamplerCylinder::GetNSamplers();i++)
     {
       //G4String name="samp"+BDSGlobalConstants::Instance()->StringFromInt(i+1);
-      G4String name=CSampName[i];
+      G4String name=BDSSamplerCylinder::outputNames[i];
       BuildSamplerTree(name);
     }
 

@@ -31,6 +31,8 @@ extern LogVolMap* LogVol;
 
 extern BDSSamplerSD* BDSSamplerSensDet;
 
+std::vector <G4String> BDSSampler::outputNames;
+
 //extern BDSOutput* bdsOutput;
 //============================================================
 
@@ -38,7 +40,7 @@ int BDSSampler::nSamplers = 0;
 
 int BDSSampler::GetNSamplers() { return nSamplers; }
 
-void BDSSampler::AddExternalSampler() { nSamplers++; }
+void BDSSampler::AddExternalSampler(G4String name) { nSamplers++; outputNames.push_back(name); }
 
 BDSSampler::BDSSampler (G4String aName,G4double aLength):
   BDSAcceleratorComponent(

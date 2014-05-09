@@ -41,8 +41,8 @@ public:
 private:  
   G4String itsType;
   G4String itsCollectionName;
-  static G4int nCounter;
-  static G4int trackCounter;
+  static unsigned int nCounter;
+  static unsigned int trackCounter;
   static G4String lastVolume;
 };
 

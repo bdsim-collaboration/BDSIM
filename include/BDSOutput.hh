@@ -52,9 +52,6 @@ public:
 #endif
 
   G4double zMax, transMax; //Maximum values of longitudinal and transverse global position
-  std::vector <G4String> SampName;
-  std::vector <G4String> CSampName;
-
   void WritePrimary(G4String, G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int, G4int);
 
 

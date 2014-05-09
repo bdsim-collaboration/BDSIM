@@ -23,7 +23,7 @@ extern LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
-
+std::vector <G4String> BDSSamplerCylinder::outputNames;
 
 //============================================================
 
@@ -31,7 +31,7 @@ int BDSSamplerCylinder::nSamplers = 0;
 
 int BDSSamplerCylinder::GetNSamplers() { return nSamplers; }
 
-void BDSSamplerCylinder::AddExternalSampler() { nSamplers++; }
+void BDSSamplerCylinder::AddExternalSampler(G4String name) { nSamplers++; outputNames.push_back(name); }
 
 BDSSamplerCylinder::
 BDSSamplerCylinder (G4String aName,G4double aLength,G4double aRadius):

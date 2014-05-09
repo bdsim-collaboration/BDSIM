@@ -61,7 +61,10 @@
 
 // output interface
 #include "BDSOutput.hh"
+
 #include "BDSComponentFactory.hh"
+#include "BDSSampler.hh"
+#include "BDSSamplerCylinder.hh"
 
 #include "G4MagneticField.hh"
 
@@ -608,7 +611,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
       else 
 	rotateComponent->rotateZ(tilt);
     
-      // define center of bended elements from the previos coordinate frame
+      // define center of bended elements from the previous coordinate frame
       G4ThreeVector zHalfAngle = localZ; 
 
       if( BDSBeamline::Instance()->currentItem()->GetType() == "sbend" || BDSBeamline::Instance()->currentItem()->GetType() == "rbend"  )
@@ -778,19 +781,17 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	//      }
 
 	
-	
+	// count and store sampler names. Should go into constructors!
   
+	LocalName=BDSBeamline::Instance()->currentItem()->GetName()+"_phys";
 	if(BDSBeamline::Instance()->currentItem()->GetType()=="sampler") {
-	  LocalName=BDSBeamline::Instance()->currentItem()->GetName()+"_phys";
-	  bdsOutput->SampName.push_back(LocalName + "_" + BDSGlobalConstants::Instance()->StringFromInt(nCopy+1));
+	  BDSSampler::outputNames.push_back(LocalName + "_" + BDSGlobalConstants::Instance()->StringFromInt(nCopy+1));
 	} 
 	else if(BDSBeamline::Instance()->currentItem()->GetType()=="csampler") {
-	  LocalName=BDSBeamline::Instance()->currentItem()->GetName()+"_phys";
-	  bdsOutput->CSampName.push_back(LocalName + "_" + BDSGlobalConstants::Instance()->StringFromInt(nCopy+1));
+	  BDSSamplerCylinder::outputNames.push_back(LocalName + "_" + BDSGlobalConstants::Instance()->StringFromInt(nCopy+1));
 	} else {
 	  //it would be nice to set correctly names also for other elements...
 	  //but need to count them!
-	  LocalName=BDSBeamline::Instance()->currentItem()->GetName()+"_phys";
 	}
 
 	/*
