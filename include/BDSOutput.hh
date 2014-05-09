@@ -4,9 +4,9 @@
 #ifndef BDSOutput_h
 #define BDSOutput_h 
 
-#include "BDSSamplerHit.hh"
-#include "BDSTypeSafeEnum.hh"
 #include "BDSEnergyCounterHit.hh"
+#include "BDSOutputFormat.hh"
+#include "BDSSamplerHit.hh"
 
 #include "G4Trajectory.hh"
 
@@ -20,16 +20,6 @@
 #include "TTree.h"
 //#include "TH3F.h"
 #endif
-
-struct BDSOutputFormatDef {
-  enum type {
-    _ASCII = 0,
-    _ROOT = 1
-    //, _ASCII_ROOT = 2
-  };
-};
-
-typedef BDSTypeSafeEnum<BDSOutputFormatDef,int> BDSOutputFormat;
 
 class BDSOutput {
 

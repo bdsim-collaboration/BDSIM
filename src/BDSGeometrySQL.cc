@@ -1,3 +1,4 @@
+#include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSGeometrySQL.hh"

@@ -1,7 +1,10 @@
 #include "BDSExecOptions.hh"
 
+#include <iomanip>
+
+#include "BDSDebug.hh"
 #include "BDSMaterials.hh"
-#include "BDSOutput.hh"
+#include "BDSOutputFormat.hh"
 
 BDSExecOptions* BDSExecOptions::_instance=0;
 

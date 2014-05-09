@@ -21,6 +21,7 @@
 #include "G4UserLimits.hh"
 #include "BDSOutput.hh"
 #include "BDSDumpSD.hh"
+#include "BDSMaterials.hh"
 #include "G4SDManager.hh"
 
 //#include"MagFieldFunction.hh"

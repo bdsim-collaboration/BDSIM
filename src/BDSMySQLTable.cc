@@ -9,16 +9,16 @@
 */
 
 
+#include <cstdlib>
+#include <string>
+#include <vector>
+
+#include "BDSMySQLTable.hh"
+#include "BDSDebug.hh"
+#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 
-#include <cstdlib>
 #include "BDSMaterials.hh"
-#include "BDSMySQLTable.hh"
-#include "BDSExecOptions.hh"
-
-#include"globals.hh"
-#include<string>
-#include<vector>
 
 BDSMySQLTable::BDSMySQLTable (G4String aTableName)
 {

@@ -16,7 +16,7 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
-#include "BDSOutput.hh"
+//#include "BDSOutput.hh"
 #include "BDSSamplerSD.hh"
 #include "G4SDManager.hh"
 
@@ -31,7 +31,7 @@ extern LogVolMap* LogVol;
 
 extern BDSSamplerSD* BDSSamplerSensDet;
 
-extern BDSOutput* bdsOutput;
+//extern BDSOutput* bdsOutput;
 //============================================================
 
 int BDSSampler::nSamplers = 0;
