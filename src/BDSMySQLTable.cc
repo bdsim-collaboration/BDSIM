@@ -15,10 +15,6 @@
 
 #include "BDSMySQLTable.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
-#include "BDSGlobalConstants.hh" 
-
-#include "BDSMaterials.hh"
 
 BDSMySQLTable::BDSMySQLTable (G4String aTableName)
 {

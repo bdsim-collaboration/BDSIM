@@ -10,7 +10,7 @@
 #include "G4TrackingManager.hh"
 #include "G4Track.hh"
 
-#include "BDSNeutronTrackInfo.hh"
+//#include "BDSNeutronTrackInfo.hh"
 
 void BDSUserTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
 {
