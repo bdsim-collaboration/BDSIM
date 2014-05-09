@@ -57,12 +57,12 @@ This file is updated automatically from @file{manual.texi}, last updated on
 @node Intro, Installation, Top, Top
 @chapter About BDSIM
 
-BDSIM is a Geant4 (@cite{1}) extension toolkit for simulation of particle
+BDSIM is a Geant4 [@cite{1}] extension toolkit for simulation of particle
 transport in accelerator beamlines.
 It provides a collection of classes representing typical accelerator
 components, a collection of physics processes for fast tracking, procedures of
 ``on the fly'' geometry construction and interfacing to ROOT analysis 
-(@cite{2}).
+[@cite{2}].
  
 
 @c cccccccccccccccccccccccccccccccccccccccccc
@@ -406,7 +406,7 @@ qq:q,k1=0.2;
 @node coordinate-system
 @subsection Coordinate system
 
-The usual accelerator coordinate system is assumed (see @cite{3}).
+The usual accelerator coordinate system is assumed, see [@cite{3}].
 
 @node units
 @subsection Units
@@ -1201,7 +1201,7 @@ The following options influence the geometry:
 @item @code{beampipeThickness} @tab default beampipe thickness [m]
 @item @code{pipeMaterial} @tab default beampipe material
 @item @code{boxSize} @tab default accelerator component size [m]
-@item @code{vacMaterial} @tab the beam pipe gas material (default ``Vacuum'', which is composed of 48.2\% H, 22.1\% C and 29.7 \% O, and has a temperature of 300K)
+@item @code{vacMaterial} @tab the beam pipe gas material (default ``Vacuum'', which is composed of 48.2% H, 22.1% C and 29.7% O, and has a temperature of 300K)
 @item @code{vacuumPressure} @tab the pressure of the beam pipe gas in bar (default 1e-12)
 @item @code{buildTunnel} @tab whether to build a tunnel (default=0)
 @item @code{buildTunnelFloor} @tab whether to add a floor to the tunnel (default=0)
@@ -1366,7 +1366,7 @@ has been chosen:
 @item @code{sigmaT} - RMS of time distribution in [s]
 @end itemize
 
-@item @code{distrType}=''gausstwiss'': a gaussian bunch defined by twiss parameters @cite{4}, emittance, energy and time:
+@item @code{distrType}=''gausstwiss'': a gaussian bunch defined by twiss parameters [@cite{4}], emittance, energy and time:
 @itemize @bullet
 @item @code{betx} - @math{\beta_x} in [m]
 @item @code{bety} - @math{\beta_y} in [m]
@@ -1572,7 +1572,7 @@ To display help menu
 
 @code{/help};
 
-For more details see @cite{1}.
+For more details see [@cite{1}].
 
 @c float Figure, fig1
 @c caption{ An screenshot with an example BDSIM visualization }
@@ -1606,7 +1606,7 @@ option, physicsList="em_standard";
 
 
 
-Several predefined physics lists are available. Some physics lists allow biasing and re-weighting for some processes e.g. muon production. To set the amount of biasing see @ref{option}. Further details of the QGSP, FTFP and BERT hadronic physics lists can be found in @cite{5}. 
+Several predefined physics lists are available. Some physics lists allow biasing and re-weighting for some processes e.g. muon production. To set the amount of biasing see @ref{option}. Further details of the QGSP, FTFP and BERT hadronic physics lists can be found in [@cite{5}]. 
 
 @multitable @columnfractions .3 .7
 @item @code{standard}          @tab transportation of primary particles only
@@ -1638,7 +1638,7 @@ to the boundary of the ``logical volume'' it is currently in (which could be, e.
 boundary between two adjacent elements) or by the mean free path of the activated processes. Then the particle is pushed
 to the new position and secondaries are generated if necessary. Each volume has an associated transportation algorithm.
 For an on-energy particle travelling close to the optical axis of a quadrupole, dipole or a drift, standard matrix transportation 
-algorithms are used @cite{4}. For multipoles of higher orders and for off-axis/energy particles Runge-Kutta methods are used.
+algorithms are used [@cite{4}]. For multipoles of higher orders and for off-axis/energy particles Runge-Kutta methods are used.
 
 
 @section Tracking accuracy
