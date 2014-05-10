@@ -7,24 +7,14 @@
 //==========================================================
 //==========================================================
 
-#include "BDSExecOptions.hh"
-#include "BDSGlobalConstants.hh" 
 #include "BDSRunAction.hh"
-#include "BDSRunManager.hh"
 
 #include "G4Run.hh"
 //#include "G4UImanager.hh"
 //#include "G4VVisManager.hh"
 #include "G4ios.hh"
 
-#include <fstream>
-
 #include "BDSTrackingFIFO.hh"
-
-#if defined(__unix__) || defined(__linux__) || defined(__APPLE__)
-#include <unistd.h> // for sleep, will not work on windows?
-#endif
-
 
 //==========================================================
 
