@@ -270,7 +270,8 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
   new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ2),itsScreenScoringPlaneLog2,_screenSamplerName2,
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   
-  (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;
+  //--
+  //  (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;
   
 (*LogVol)[_screenSamplerName2]=itsScreenScoringPlaneLog2;
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
@@ -279,11 +280,13 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
     SDMan->AddNewDetector(BDSSamplerSensDet);
   }
   
-  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
+  //--
+  //  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
   itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSamplerSensDet);
   //SPM bdsOutput->nSamplers++;
-  BDSSampler::AddExternalSampler();
-  bdsOutput->SampName.push_back(_screenSamplerName+"_1");
+  //--
+  //  BDSSampler::AddExternalSampler();
+  //  bdsOutput->SampName.push_back(_screenSamplerName+"_1");
   BDSSampler::AddExternalSampler();
   bdsOutput->SampName.push_back(_screenSamplerName2+"_1");
 #ifndef NOUSERLIMITS
@@ -301,7 +304,7 @@ void BDSAwakeScintillatorScreen::Build(){
       BuildMarkerVolume();
       //      BuildVacuumChamber1();
       BuildScreenScoringPlane();
-      //      BuildCameraScoringPlane();
+      BuildCameraScoringPlane();
       PlaceScreen();
       //      PlaceCamera();
       if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
@@ -350,7 +353,8 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   //  itsXLength = std::max(itsXLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
   //  itsYLength = std::max(itsYLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
 
-  _cameraScreenDist=(4.0)*CLHEP::m;
+  //  _cameraScreenDist=(4.0)*CLHEP::m;
+  _cameraScreenDist=4*213*CLHEP::mm;
 
   _screenWidth=_mlScreen->size().x();
   _screenHeight=_mlScreen->size().y();
