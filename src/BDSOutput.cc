@@ -1,4 +1,5 @@
 #include "BDSOutput.hh"
+#include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerCylinder.hh"

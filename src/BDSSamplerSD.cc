@@ -9,6 +9,7 @@
 
 #include "BDSGlobalConstants.hh" 
 #include "BDSExecOptions.hh"
+#include "BDSDebug.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSamplerHit.hh"
 #include "G4VPhysicalVolume.hh"
