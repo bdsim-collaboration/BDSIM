@@ -270,24 +270,20 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
   new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ2),itsScreenScoringPlaneLog2,_screenSamplerName2,
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   
-  //---Removing downstream sampler
-  //---  (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;
-  //---
+  (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;
+  
 (*LogVol)[_screenSamplerName2]=itsScreenScoringPlaneLog2;
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   if(BDSSampler::GetNSamplers()==0){
     BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
     SDMan->AddNewDetector(BDSSamplerSensDet);
   }
-  //---Removing downstream sampler
-  //---  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
-  //---
+  
+  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
   itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSamplerSensDet);
   //SPM bdsOutput->nSamplers++;
-  //---Removing downstream sampler
-  //---BDSSampler::AddExternalSampler();
-  //---bdsOutput->SampName.push_back(_screenSamplerName+"_1");
-  //---
+  BDSSampler::AddExternalSampler();
+  bdsOutput->SampName.push_back(_screenSamplerName+"_1");
   BDSSampler::AddExternalSampler();
   bdsOutput->SampName.push_back(_screenSamplerName2+"_1");
 #ifndef NOUSERLIMITS
