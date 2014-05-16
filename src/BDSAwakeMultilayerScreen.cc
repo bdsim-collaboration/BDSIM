@@ -35,13 +35,13 @@ void BDSAwakeMultilayerScreen::shieldingLayer(){
 }
 
 void BDSAwakeMultilayerScreen::backLayer(){
-  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),13*um),(G4String)"backingLayer","cellulose",0,0);
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),10*um),(G4String)"backingLayer","cellulose",0,0);
   sl->color(G4Color(0.5,0.0,0.5,0.3));
   screenLayer(sl);
 }
 
 void BDSAwakeMultilayerScreen::substrateLayer(){
-  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),275*um),(G4String)"substrateLayer","PET",0,0);
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),178*um),(G4String)"substrateLayer","PET",0,0);
   sl->color(G4Color(1.0,0.0,0.0,0.3));
   screenLayer(sl);
 }
@@ -56,7 +56,7 @@ void BDSAwakeMultilayerScreen::scintillatorLayer(){
 
 
 void BDSAwakeMultilayerScreen::frontLayer(){
-  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),13*um),(G4String)"frontLayer","cellulose",0,0);
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),5*um),(G4String)"frontLayer","cellulose",0,0);
   sl->color(G4Color(0.5,0.0,0.5,0.3));
   screenLayer(sl);
 }
