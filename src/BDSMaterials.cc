@@ -640,7 +640,7 @@ void BDSMaterials::Initialise()
   mptLanex->AddProperty("ABSLENGTH", energytab, abslen, nentLanex);
   mptLanex->AddProperty("FASTCOMPONENT",energytab, emitspec, nentLanex);
   G4double scintScalingFactor=1;
-  mptLanex->AddConstProperty("SCINTILLATIONYIELD",scintScalingFactor*2.94e4/MeV);
+  mptLanex->AddConstProperty("SCINTILLATIONYIELD",7.8e4/MeV);
   mptLanex->AddConstProperty("RESOLUTIONSCALE",1.0);
   mptLanex->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
   mptLanex->AddConstProperty("MIEHG", 54e-3*CLHEP::mm);
