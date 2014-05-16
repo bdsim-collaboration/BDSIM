@@ -13,7 +13,7 @@ public:
 private:
   typedef BDSMultilayerScreen super;
   void layers();
-  void sheildingLayer();
+  void shieldingLayer();
   void backLayer();
   void substrateLayer();
   void scintillatorLayer();
