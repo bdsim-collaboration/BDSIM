@@ -20,11 +20,18 @@ BDSAwakeMultilayerScreen::~BDSAwakeMultilayerScreen(){
 void BDSAwakeMultilayerScreen::layers(){
   _gapWidth=0*1e-3*mm;
   _gapSpacing=1*mm;
+  shieldingLayer();
   backLayer();
   substrateLayer();
   scintillatorLayer();
   frontLayer();
   build();
+}
+
+void BDSAwakeMultilayerScreen::shieldingLayer(){
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),100*um),(G4String)"shieldingLayer","G4_Al",0,0);
+  sl->color(G4Color(0.8,0.8,0.8,0.3));
+  screenLayer(sl);
 }
 
 void BDSAwakeMultilayerScreen::backLayer(){
