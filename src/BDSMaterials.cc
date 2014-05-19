@@ -630,7 +630,7 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddMaterial(GetMaterial("polyurethane"), pur_fraction_by_mass);
   G4MaterialPropertiesTable* mptLanex = new G4MaterialPropertiesTable();
   const G4int nentLanex=2;
-  G4double rindex=(1.82+1.50)/2.0;
+  G4double rindex=1.50;//(1.82+1.50)/2.0;
   G4double energytab[]={2.239*eV, 2.241*eV};
   G4double rindextab[]={rindex, rindex};
   G4double emitspec[]={1.0, 1.0};
