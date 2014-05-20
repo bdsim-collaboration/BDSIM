@@ -668,6 +668,7 @@ void BDSMaterials::Initialise()
   G4double mieHgTimeConst=1.0*CLHEP::ns;
   mptGOSLanex->AddProperty("FASTCOMPONENT",energyGOSLanexTab, emitspecGOSLanex, nentGOSLanex);
   mptGOSLanex->AddConstProperty("SCINTILLATIONYIELD",8.9e4/MeV); //Intrinisic scintilation yield of GOS
+  mptGOSLanex->AddConstProperty("RESOLUTIONSCALE", 1.0);
   mptGOSLanex->AddConstProperty("FASTTIMECONSTANT", mieHgTimeConst);
   mptGOSLanex->AddConstProperty("MIEHG", mieScatteringLengthGOSLanex);
   mptGOSLanex->AddConstProperty("MIEHG_FORWARD", gosLanexMiehgForward);

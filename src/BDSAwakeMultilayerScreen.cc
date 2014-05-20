@@ -23,7 +23,9 @@ void BDSAwakeMultilayerScreen::layers(){
   shieldingLayer();
   backLayer();
   substrateLayer();
+  binderLayerBack();
   scintillatorLayer();
+  binderLayerFront();
   frontLayer();
   build();
 }
@@ -53,7 +55,7 @@ void BDSAwakeMultilayerScreen::binderLayerBack(){
 }
 
 void BDSAwakeMultilayerScreen::scintillatorLayer(){
-  BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),_thickness/2.0),(G4String)"scintillatorLayer","gos_lanex",_gapWidth,_gapSpacing);
+  BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),_thickness/2.0),(G4String)"scintillatorLayer","lanex",_gapWidth,_gapSpacing);
   sl->color(G4Color(0.0,1.0,0.0,0.3));
   screenLayer(sl);
   G4cout << "finished." << G4endl;
@@ -87,12 +89,12 @@ void BDSAwakeMultilayerScreen::surfaces(){
 }
 
 void BDSAwakeMultilayerScreen::reflectiveSurface(){
-  BDSMultilayerScreen::reflectiveSurface(2,1);
+  BDSMultilayerScreen::reflectiveSurface(3,2);
 }
 
 void BDSAwakeMultilayerScreen::roughSurface(){
   //A rough surface between the scintillator layer and the cellulose layer (due to the phosphor grains)
-  BDSMultilayerScreen::roughSurface(2,3);
+  //  BDSMultilayerScreen::roughSurface(2,3);
 }
 
 
