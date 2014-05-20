@@ -10,7 +10,7 @@
 BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material, G4double thickness):
   BDSMultilayerScreen(G4TwoVector(1*m,3*cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(1000*thickness)
 {
-  _nScintLayers=10;
+  _nScintLayers=1;
   layers();
 }
 

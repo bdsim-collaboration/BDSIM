@@ -660,7 +660,7 @@ void BDSMaterials::Initialise()
   G4double energyGOSLanexTab[]={2.239*eV, 2.241*eV};
   G4double rindexGOSLanexTab[]={rindexGOSLanex, rindexGOSLanex};
   G4double emitspecGOSLanex[]={1.0, 1.0};
-  G4double abslenGOSLanex[]={7*CLHEP::mm, 7*CLHEP::mm};
+  G4double abslenGOSLanex[]={70*CLHEP::cm, 70*CLHEP::cm};
   G4double mieScatteringLengthGOSLanex=60.3*CLHEP::um;
   G4double gosLanexMiehgForward=0.911;
   G4double gosLanexMiehgBackward=0.911;
