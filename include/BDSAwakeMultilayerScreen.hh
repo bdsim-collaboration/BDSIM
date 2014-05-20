@@ -16,8 +16,7 @@ private:
   void shieldingLayer();
   void backLayer();
   void substrateLayer();
-  void binderLayerBack();
-  void binderLayerFront();
+  void binderLayer();
   void scintillatorLayer();
   void frontLayer();
   void reflectiveSurface();
@@ -26,6 +25,7 @@ private:
   G4double _gapSpacing;
   G4double _thickness;
   G4String _material;
+  G4double _nScintLayers;
  };
 
 #endif
