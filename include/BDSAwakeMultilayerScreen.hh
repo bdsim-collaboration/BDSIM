@@ -16,6 +16,8 @@ private:
   void shieldingLayer();
   void backLayer();
   void substrateLayer();
+  void binderLayerBack();
+  void binderLayerFront();
   void scintillatorLayer();
   void frontLayer();
   void reflectiveSurface();

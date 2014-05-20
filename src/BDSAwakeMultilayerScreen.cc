@@ -46,14 +46,24 @@ void BDSAwakeMultilayerScreen::substrateLayer(){
   screenLayer(sl);
 }
 
+void BDSAwakeMultilayerScreen::binderLayerBack(){
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),_thickness/4.0),(G4String)"binderLayerBack","pet_lanex",0,0);
+  sl->color(G4Color(1.0,0.0,0.0,0.3));
+  screenLayer(sl);
+}
+
 void BDSAwakeMultilayerScreen::scintillatorLayer(){
-  G4cout << "Making backing layer..." << G4endl;
-  BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),_thickness),(G4String)"scintillatorLayer",_material,_gapWidth,_gapSpacing);
+  BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),_thickness/2.0),(G4String)"scintillatorLayer","gos_lanex",_gapWidth,_gapSpacing);
   sl->color(G4Color(0.0,1.0,0.0,0.3));
   screenLayer(sl);
   G4cout << "finished." << G4endl;
 }
 
+void BDSAwakeMultilayerScreen::binderLayerFront(){
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),_thickness/4.0),(G4String)"binderLayerFront","pet_lanex",0,0);
+  sl->color(G4Color(1.0,0.0,0.0,0.3));
+  screenLayer(sl);
+}
 
 void BDSAwakeMultilayerScreen::frontLayer(){
   BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),5*um),(G4String)"frontLayer","cellulose",0,0);
