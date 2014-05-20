@@ -24,7 +24,7 @@ void BDSAwakeMultilayerScreen::layers(){
   shieldingLayer();
   backLayer();
   substrateLayer();
-  for(int i+0; i<_nScintLayers; i++){
+  for(int i=0; i<_nScintLayers; i++){
     binderLayer();
     scintillatorLayer();
   }
@@ -52,7 +52,7 @@ void BDSAwakeMultilayerScreen::substrateLayer(){
 }
 
 void BDSAwakeMultilayerScreen::binderLayer(){
-  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),(_thickness/2.0)/(_nScintLayers+1.0),(G4String)"binderLayerBack","pet_lanex",0,0);
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),(_thickness/2.0)/(_nScintLayers+1.0)),(G4String)"binderLayerBack","pet_lanex",0,0);
   sl->color(G4Color(1.0,0.0,0.0,0.3));
   screenLayer(sl);
 }
