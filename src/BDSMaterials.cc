@@ -665,7 +665,7 @@ void BDSMaterials::Initialise()
   G4double gosLanexMiehgForward=0.911;
   G4double gosLanexMiehgBackward=0.911;
   G4double gosLanexMiehgForwardRatio=1.0;
-  G4double mieHgTimeconst=1.0*CLHEP::ns;
+  G4double mieHgTimeConst=1.0*CLHEP::ns;
   mptGOSLanex->AddProperty("FASTCOMPONENT",energyGOSLanexTab, emitspecGOSLanex, nentGOSLanex);
   mptGOSLanex->AddConstProperty("SCINTILLATIONYIELD",8.9e4/MeV); //Intrinisic scintilation yield of GOS
   mptGOSLanex->AddConstProperty("FASTTIMECONSTANT", mieHgTimeConst);
@@ -756,8 +756,7 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddElement(elements["O"], fractionmass=0.2);
   tmpMaterial->AddElement(elements["N"], fractionmass=0.8);
   const G4int Air_NUMENTRIES = 3; //Number of entries in the material properties table
-  G4dou
-ND[Air_NUMENTRIES] = {1.000292,1.000292,1.000292};//Source: NPL Tables of Physical & Chemical Constants. Refractive indices at different energies.
+  G4double Air_RIND[Air_NUMENTRIES] = {1.000292,1.000292,1.000292};//Source: NPL Tables of Physical & Chemical Constants. Refractive indices at different energies.
   G4double Air_Energy[Air_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
   airMaterialPropertiesTable=new G4MaterialPropertiesTable();
   airMaterialPropertiesTable->AddProperty("RINDEX",Air_Energy, Air_RIND, Air_NUMENTRIES);
