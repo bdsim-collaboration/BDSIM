@@ -14,6 +14,7 @@
 
 #include "BDSGlobalConstants.hh"
 #include "BDSStackingAction.hh"
+#include "BDSPhotonCounter.hh"
 #include "G4SDManager.hh"
 #include "G4RunManager.hh"
 #include "G4Run.hh"
@@ -36,8 +37,9 @@ BDSStackingAction::~BDSStackingAction()
 G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * aTrack)
 {
   G4ClassificationOfNewTrack classification = fUrgent;
-
-
+  
+  countPhoton(aTrack);
+  
 #ifdef DEBUG 
   G4cout<<"StackingAction: ClassifyNewtrack "<<aTrack->GetTrackID()<<
     " "<<aTrack->GetDefinition()->GetParticleName()<<G4endl;
@@ -192,6 +194,9 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
   return classification;
 }
 
+void BDSStackingAction::countPhoton(const G4Track* aTrack){
+  BDSPhotonCounter::Instance()->countPhoton(aTrack);
+}
 
 void BDSStackingAction::NewStage()
 {

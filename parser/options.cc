@@ -13,6 +13,11 @@ void Options::print() const {
   std::cout<<"n macroparticles : "<<numberToGenerate<<std::endl;
   std::cout<<"sigmaX           : "<<sigmaX<<std::endl;
   std::cout<<"Cerenkov on               : "<<turnOnCerenkov<<std::endl;
+  std::cout<<"Optical absorption on      : " << turnOnOpticalAbsorption <<std::endl;
+  std::cout<<"Mie scattering on      : " << turnOnMieScattering <<std::endl;
+  std::cout<<"Rayleigh scatering on      : " << turnOnRayleighScattering <<std::endl;
+  std::cout<<"Optical surface on      : " << turnOnOpticalSurface <<std::endl;
+  std::cout<<"Birks saturation on      : " << turnOnBirksSaturation <<std::endl;
 }
 
 void Options::set_value(std::string name, double value )

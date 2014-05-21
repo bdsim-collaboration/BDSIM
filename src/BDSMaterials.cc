@@ -660,16 +660,17 @@ void BDSMaterials::Initialise()
   G4double energyGOSLanexTab[]={2.239*eV, 2.241*eV};
   G4double rindexGOSLanexTab[]={rindexGOSLanex, rindexGOSLanex};
   G4double emitspecGOSLanex[]={1.0, 1.0};
-  G4double abslenGOSLanex[]={70*CLHEP::cm, 70*CLHEP::cm};
+  G4double abslenGOSLanex[]={7*CLHEP::mm, 7*CLHEP::mm};
   G4double mieScatteringLengthGOSLanex=60.3*CLHEP::um;
   G4double gosLanexMiehgForward=0.911;
   G4double gosLanexMiehgBackward=0.911;
-  G4double gosLanexMiehgForwardRatio=1.0;
+  G4double gosLanexMiehgForwardRatio=0.5;
   G4double mieHgTimeConst=1.0*CLHEP::ns;
   mptGOSLanex->AddProperty("FASTCOMPONENT",energyGOSLanexTab, emitspecGOSLanex, nentGOSLanex);
   mptGOSLanex->AddConstProperty("SCINTILLATIONYIELD",8.9e4/MeV); //Intrinisic scintilation yield of GOS
   mptGOSLanex->AddConstProperty("RESOLUTIONSCALE", 1.0);
   mptGOSLanex->AddConstProperty("FASTTIMECONSTANT", mieHgTimeConst);
+  mptGOSLanex->AddConstProperty("YIELDRATIO", 1.0);
   mptGOSLanex->AddConstProperty("MIEHG", mieScatteringLengthGOSLanex);
   mptGOSLanex->AddConstProperty("MIEHG_FORWARD", gosLanexMiehgForward);
   mptGOSLanex->AddConstProperty("MIEHG_BACKWARD", gosLanexMiehgBackward);

@@ -26,6 +26,7 @@ private:
   G4double _thickness;
   G4String _material;
   G4double _nScintLayers;
+  G4double _fillFactor;
  };
 
 #endif

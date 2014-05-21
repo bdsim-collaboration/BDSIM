@@ -11,6 +11,7 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSRunAction.hh"
 #include "BDSRunManager.hh"
+#include "BDSPhotonCounter.hh"
 
 #include "G4Run.hh"
 //#include "G4UImanager.hh"
@@ -60,5 +61,7 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   BDSTrackingFIFO* fifo = new BDSTrackingFIFO();
   fifo->doFifo();
   G4cout << "### Run " << aRun->GetRunID() << " end." << G4endl;
+  G4cout << "Number of optical photons produced in run = " << BDSPhotonCounter::Instance()->nPhotons() << G4endl;
+  G4cout << "Total energy of optical photons produced in run = " << BDSPhotonCounter::Instance()->energy()/CLHEP::GeV << " GeV" << G4endl;
 }
 //==========================================================
