@@ -16,7 +16,7 @@
 //     28 Mar 2006 by Agapov v.0.2
 //     15 Dec 2005 by Agapov beta
 //
-
+#define DEBUG 1
 //=================================================================
 
 #include <list>
@@ -306,13 +306,16 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   //
   // set global magnetic field first
   //
+  if (debug) G4cout << "Setting magnetic field..." << G4endl;
   SetMagField(0.0); // necessary to set a global field; so chose zero
-
+  if (debug) G4cout << ".. finished setting magnetic field." << G4endl;
   
   
   // convert the parsed element list to list of BDS elements
   //
+  G4cout << "Constructing component factory..." << G4endl;
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
+  G4cout << "Finished constructing component factory..." << G4endl;
 
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
   for(it = beamline_list.begin();it!=beamline_list.end();it++){

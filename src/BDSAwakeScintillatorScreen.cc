@@ -274,7 +274,7 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   
   //--
-  //  (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;
+    (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;
   
 (*LogVol)[_screenSamplerName2]=itsScreenScoringPlaneLog2;
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
@@ -284,12 +284,14 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
   }
   
   //--
-  //  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
+  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
+  //-----------
   itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSamplerSensDet);
   //SPM bdsOutput->nSamplers++;
   //--
-  //  BDSSampler::AddExternalSampler();
-  //  bdsOutput->SampName.push_back(_screenSamplerName+"_1");
+  BDSSampler::AddExternalSampler();
+  bdsOutput->SampName.push_back(_screenSamplerName+"_1");
+  //----------
   BDSSampler::AddExternalSampler();
   bdsOutput->SampName.push_back(_screenSamplerName2+"_1");
 #ifndef NOUSERLIMITS

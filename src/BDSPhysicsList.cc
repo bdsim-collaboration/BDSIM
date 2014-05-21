@@ -156,6 +156,7 @@
 #include "G4StepLimiter.hh"
 #include "G4UserSpecialCuts.hh"
 
+#include "G4OpticalPhysics.hh"
 
 //
 // Hadronic
@@ -252,7 +253,8 @@ void BDSPhysicsList::ConstructProcess()
 #if DEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif 
-
+  //  G4OpticalPhysics* opticalPhysics = new G4OpticalPhysics();
+  //  opticalPhysics->ConstructProcess();
   bool plistFound=false;
   //standard physics lists
   if(BDSGlobalConstants::Instance()->GetPhysListName() == "LHEP"){
@@ -288,30 +290,40 @@ void BDSPhysicsList::ConstructProcess()
     physList->ConstructProcess();
     plistFound=true;
   }else if(BDSGlobalConstants::Instance()->GetPhysListName() == "penelope"){
+    G4VPhysicsConstructor* hadPhysList = new HadronPhysicsQGSP_BERT("hadron");
+    hadPhysList->ConstructProcess();
     G4EmPenelopePhysics* physList = new G4EmPenelopePhysics;
+    physList->ConstructProcess();
+    plistFound=true;
+  }else if(BDSGlobalConstants::Instance()->GetPhysListName() == "G4EmStandard"){
+    G4EmStandardPhysics* physList = new G4EmStandardPhysics;
     physList->ConstructProcess();
     plistFound=true;
   }
 
 
+
   if(!plistFound){
-    //Need to add transportation if non-standard physics list
+    //Need to add transportation and userspecialcuts and step limiter if non-standard physics list
     AddTransportation();
-  }
-  
-  //Apply the following in all cases - step limiter etc.
-  theParticleIterator->reset();
-  while( (*theParticleIterator)() ){
-    G4ParticleDefinition* particle = theParticleIterator->value();
-    if((particle->GetParticleName()=="gamma")||(particle->GetParticleName()=="e-")||(particle->GetParticleName()=="e+")){
-      particle->SetApplyCutsFlag(true);
-    }
-    G4ProcessManager *pmanager = particle->GetProcessManager();
-    pmanager->AddProcess(new G4StepLimiter,-1,-1,1);
 #ifndef NOUSERSPECIALCUTS
-    pmanager->AddDiscreteProcess(new G4UserSpecialCuts);
+    theParticleIterator->reset();
+    while( (*theParticleIterator)() ){
+      G4ParticleDefinition* particle = theParticleIterator->value();
+      if((particle->GetParticleName()=="gamma")||(particle->GetParticleName()=="e-")||(particle->GetParticleName()=="e+")){
+	particle->SetApplyCutsFlag(true);
+      }
+
+      G4ProcessManager *pmanager = particle->GetProcessManager();
+      
+      pmanager->AddProcess(new G4StepLimiter,-1,-1,1);
+      
+      pmanager->AddDiscreteProcess(new G4UserSpecialCuts);
+    }
 #endif
   }
+  
+  
   
   //===========================================
   //Some options
@@ -478,6 +490,8 @@ void BDSPhysicsList::ConstructProcess()
 
 void BDSPhysicsList::ConstructParticle()
 {
+  //  G4OpticalPhysics* opticalPhysics = new G4OpticalPhysics();
+  //  opticalPhysics->ConstructParticle();
   //standard physics lists
   if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP"){
     QGSP_BERT_HP* physList = new QGSP_BERT_HP;
@@ -594,8 +608,7 @@ void BDSPhysicsList::SetCuts()
   
 
     
-  if(1)
-    DumpCutValuesTable(); 
+  DumpCutValuesTable(); 
 
 }
 
