@@ -44,6 +44,9 @@ extern LogVolMap* LogVol;
 BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*BDSGlobalConstants::Instance()->GetPI()/180.0):
   BDSAcceleratorComponent(aName, 1.0, 0, 0, 0, SetVisAttributes()),_material(material), _thickness(thickness), _screenAngle(angle)
 {
+  //Set as part of precision region (for energy loss monitoring)
+  itsPrecisionRegion=1;
+
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
     _screenRotationMatrix->rotateY(_screenAngle);
@@ -310,6 +313,7 @@ void BDSAwakeScintillatorScreen::Build(){
       if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
 	BuildTunnel();
       }
+      SetMultipleSensitiveVolumes(itsMarkerLogicalVolume);
 }
 
 void BDSAwakeScintillatorScreen::BuildCamera(){

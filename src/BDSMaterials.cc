@@ -634,8 +634,7 @@ void BDSMaterials::Initialise()
   G4double energytab[]={2.239*eV, 2.241*eV};
   G4double rindextab[]={rindex, rindex};
   G4double emitspec[]={1.0, 1.0};
-  G4double abslen[]={70*CLHEP::mm, 70*CLHEP::mm};
-  G4double mieScatteringLength[]={60.3e-3*CLHEP::mm, 60.3e-3*CLHEP::mm};
+  G4double abslen[]={7*CLHEP::mm, 7*CLHEP::mm};
   mptLanex->AddProperty("RINDEX",energytab, rindextab, nentLanex); //Average refractive index of bulk material
   mptLanex->AddProperty("ABSLENGTH", energytab, abslen, nentLanex);
   mptLanex->AddProperty("FASTCOMPONENT",energytab, emitspec, nentLanex);
@@ -643,10 +642,28 @@ void BDSMaterials::Initialise()
   mptLanex->AddConstProperty("SCINTILLATIONYIELD",7.8e4/MeV);
   mptLanex->AddConstProperty("RESOLUTIONSCALE",1.0);
   mptLanex->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
-  mptLanex->AddConstProperty("MIEHG", 54e-3*CLHEP::mm);
+  mptLanex->AddConstProperty("MIEHG", 60.3e-3*CLHEP::mm);
   mptLanex->AddConstProperty("MIEHG_FORWARD", 0.91);
   mptLanex->AddConstProperty("MIEHG_BACKWARD", 0.91);
   mptLanex->AddConstProperty("MIEHG_FORWARD_RATIO", 1.0);
+  tmpMaterial->SetMaterialPropertiesTable(mptLanex);
+  materials[name]=tmpMaterial;
+
+  //Ganolinium oxysulphate in a polyurethane elastomer (lanex) - version 2
+  tmpMaterial = new G4Material(name="lanex2", density=lanex_density, 2);
+  tmpMaterial->AddMaterial(GOS, gos_fraction_by_mass);
+  tmpMaterial->AddMaterial(GetMaterial("polyurethane"), pur_fraction_by_mass);
+  G4MaterialPropertiesTable* mptLanex2 = new G4MaterialPropertiesTable();
+  mptLanex2->AddProperty("RINDEX",energytab, rindextab, nentLanex); //Average refractive index of bulk material
+  mptLanex2->AddProperty("ABSLENGTH", energytab, abslen, nentLanex);
+  mptLanex2->AddProperty("FASTCOMPONENT",energytab, emitspec, nentLanex);
+  mptLanex2->AddConstProperty("SCINTILLATIONYIELD",8.9e4/MeV);
+  mptLanex2->AddConstProperty("RESOLUTIONSCALE",1.0);
+  mptLanex2->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
+  mptLanex2->AddConstProperty("MIEHG", 60.3e-3*CLHEP::mm);
+  mptLanex2->AddConstProperty("MIEHG_FORWARD", 0.91);
+  mptLanex2->AddConstProperty("MIEHG_BACKWARD", 0.91);
+  mptLanex2->AddConstProperty("MIEHG_FORWARD_RATIO", 0.5);
   tmpMaterial->SetMaterialPropertiesTable(mptLanex);
   materials[name]=tmpMaterial;
 

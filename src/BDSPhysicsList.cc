@@ -47,6 +47,7 @@
 
 #include "G4EmStandardPhysics.hh"
 #include "G4EmLivermorePhysics.hh"
+#include "G4EmPenelopePhysics.hh"
 
 //#include "IonPhysics.hh"
 
@@ -284,6 +285,10 @@ void BDSPhysicsList::ConstructProcess()
     plistFound=true;
   } else if(BDSGlobalConstants::Instance()->GetPhysListName() == "livermore"){
     G4EmLivermorePhysics* physList = new G4EmLivermorePhysics;
+    physList->ConstructProcess();
+    plistFound=true;
+  }else if(BDSGlobalConstants::Instance()->GetPhysListName() == "penelope"){
+    G4EmPenelopePhysics* physList = new G4EmPenelopePhysics;
     physList->ConstructProcess();
     plistFound=true;
   }
