@@ -29,7 +29,6 @@ public:
   BDSOutput(BDSOutputFormat format);
 
   void SetFormat(BDSOutputFormat format);
-  void Init(G4int FileNum);
   ~BDSOutput();
 
   void WriteHits(BDSSamplerHitsCollection*);
@@ -39,8 +38,20 @@ public:
   G4int Commit(); //G4int FileNum);   // close the event
   void Write();           // close the event
 
-  // for root output
+  G4double zMax, transMax; //Maximum values of longitudinal and transverse global position
+  void WritePrimary(G4String, G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int, G4int);
+
+private:
+  void Init(G4int FileNum);
+
+  G4String _filename;
+  BDSOutputFormat format;
+  std::ofstream of;
+  std::ofstream ofEloss;
+  int outputFileNumber;
+
 #ifdef USE_ROOT
+  // for root output
   void BuildSamplerTree(G4String name);
   TFile* theRootOutputFile;
   //  TTree *theLWCalorimeterTree;
@@ -49,20 +60,7 @@ public:
   //  TH3F *EnergyLossHisto3d;
   TTree *PrecisionRegionEnergyLossTree;
   TTree *EnergyLossTree;
-#endif
 
-  G4double zMax, transMax; //Maximum values of longitudinal and transverse global position
-  void WritePrimary(G4String, G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int, G4int);
-
-
-private:
-  G4String _filename;
-  BDSOutputFormat format;
-  std::ofstream of;
-  std::ofstream ofEloss;
-  int outputFileNumber;
-
-#ifdef USE_ROOT
   float x0,xp0,y0,yp0,z0,zp0,E0,t0;
   float x,xp,y,yp,z,zp,E,t; //Edep;
   float X,Xp,Y,Yp,Z,Zp,s,weight; //,EWeightZ;

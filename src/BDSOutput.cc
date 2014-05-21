@@ -16,6 +16,8 @@ BDSOutput::BDSOutput():outputFileNumber(1)
   EnergyLossHisto = NULL;
   PrecisionRegionEnergyLossTree = NULL;
   EnergyLossTree = NULL;
+  Init(0); // activate the output - setting the first filename to 
+           // be appended with _0
 #endif
 }
 
@@ -29,6 +31,8 @@ BDSOutput::BDSOutput(BDSOutputFormat fmt):format(fmt),outputFileNumber(1)
   EnergyLossHisto = NULL;
   PrecisionRegionEnergyLossTree = NULL;
   EnergyLossTree = NULL;
+  Init(0); // activate the output - setting the first filename to 
+           // be appended with _0
 #endif
 }
 

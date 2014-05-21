@@ -324,9 +324,6 @@ int main(int argc,char** argv) {
     return 1;
   }
 
-  bdsOutput->Init(0); // activate the output - setting the first filename to 
-                     // be appended with _0
-
   //
   // Write survey file
   //

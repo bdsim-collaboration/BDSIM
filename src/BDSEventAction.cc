@@ -79,8 +79,6 @@ BDSEventAction::BDSEventAction():
   if(isBatch) printModulo=10;
   else printModulo=1;
   
-  itsOutputFileNumber=1;
-  
   itsRecordSize=1024;
   
   LastComp=NULL;
@@ -261,7 +259,6 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #endif
       // notify the output about the event end
       // this can be used for splitting output files etc.
-      //	bdsOutput->Commit(itsOutputFileNumber++);
       if((event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate()) {
 	bdsOutput->Write(); // write last file
       } else {
