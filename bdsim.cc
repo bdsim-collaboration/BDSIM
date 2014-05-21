@@ -43,7 +43,7 @@
 #include <ctime>
 #include <unistd.h>
 #include <getopt.h>
-
+#include <signal.h>
 
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
@@ -91,6 +91,20 @@ BDSSamplerSD* BDSSamplerSensDet; // sampler
 
 extern Options options;
 
+void BDS_handle_aborts(int signal_number) {
+  /** 
+      Try to catch exit signals. This is not guaranteed to work.
+      Main goal is to close output stream / files.
+  */
+
+  std::cout << "BDSIM is about to crash or was interrupted! " << std::endl;
+  std::cout << "With signal: " << strsignal(signal_number) << std::endl;
+  std::cout << "Trying to write and close output file" << std::endl;
+  bdsOutput->Write();
+  std::cout << "Ave, Imperator, morituri te salutant!" << std::endl;
+  exit(1);
+}
+
 int main(int argc,char** argv) {
 
   /* Executable command line options reader object */
@@ -137,6 +151,11 @@ int main(int argc,char** argv) {
   bdsOutput->SetFormat(BDSExecOptions::Instance()->GetOutputFormat());
   G4cout.precision(10);
 
+  // catch aborts to close output stream/file. perhaps not all are needed.
+  signal(SIGABRT, &BDS_handle_aborts); // aborts
+  signal(SIGTERM, &BDS_handle_aborts); // termination requests
+  signal(SIGSEGV, &BDS_handle_aborts); // segfaults
+  signal(SIGINT, &BDS_handle_aborts); // interrupts
 
   //
   // initialize random number generator

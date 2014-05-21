@@ -447,7 +447,7 @@ void BDSOutput::Write()
 {
 #ifdef USE_ROOT
   if(format == BDSOutputFormat::_ROOT){
-    if(theRootOutputFile->IsOpen())
+    if(theRootOutputFile && theRootOutputFile->IsOpen())
       {
 #ifdef DEBUG
 	G4cout << __METHOD_NAME__ << " writing to root file..." << G4endl;
