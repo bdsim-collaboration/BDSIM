@@ -133,10 +133,10 @@ void BDSMultilayerScreen::reflectiveSurface(G4int layer1, G4int layer2){
   OpSurface -> SetSigmaAlpha(0.7855);
   G4MaterialPropertiesTable* SMPT = new G4MaterialPropertiesTable();
   SMPT->AddConstProperty("REFLECTIVITY",0.8);
-  SMPT->AddConstantProperty("SPECULARLOBECONSTANT",1.0);
-  SMPT->AddConstantProperty("SPECULARSPIKECONSTANT",0.0);
-  SMPT->AddConstantProperty("BACKSCATTERCONSTANT",0.0);
-  SMPT->AddConstantProperty("EFFICIENCY",0.0);
+  SMPT->AddConstProperty("SPECULARLOBECONSTANT",1.0);
+  SMPT->AddConstProperty("SPECULARSPIKECONSTANT",0.0);
+  SMPT->AddConstProperty("BACKSCATTERCONSTANT",0.0);
+  SMPT->AddConstProperty("EFFICIENCY",0.0);
   //  SMPT->AddConstProperty("RINDEX",1.5750);
   OpSurface->SetMaterialPropertiesTable(SMPT);
 }
