@@ -83,7 +83,7 @@ void BDSAwakeMultilayerScreen::frontLayer(){
 
 void BDSAwakeMultilayerScreen::surfaces(){
   reflectiveSurface();
-  //  roughSurface();
+  roughSurface();
 }
 
 void BDSAwakeMultilayerScreen::reflectiveSurface(){
@@ -92,7 +92,7 @@ void BDSAwakeMultilayerScreen::reflectiveSurface(){
 
 void BDSAwakeMultilayerScreen::roughSurface(){
   //A rough surface between the scintillator layer and the cellulose layer (due to the phosphor grains)
-  //  BDSMultilayerScreen::roughSurface(2,3);
+  BDSMultilayerScreen::roughSurface(23,24);
 }
 
 
