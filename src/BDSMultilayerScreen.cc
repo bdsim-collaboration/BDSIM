@@ -129,15 +129,22 @@ void BDSMultilayerScreen::reflectiveSurface(G4int layer1, G4int layer2){
   //  G4LogicalSkinSurface* LogSurface  = new G4LogicalSkinSurface("LogSurface",screenLayer(1)->log(),OpSurface);
   OpSurface -> SetType(dielectric_metal);
   OpSurface -> SetModel(unified);
-  OpSurface -> SetFinish(ground);
-  OpSurface -> SetSigmaAlpha(0.7);
+  OpSurface -> SetFinish(polished);
+
+  
+  
   G4MaterialPropertiesTable* SMPT = new G4MaterialPropertiesTable();
   SMPT->AddConstProperty("REFLECTIVITY",0.8);
+  
+  /*
+  OpSurface -> SetSigmaAlpha(0.7);
   SMPT->AddConstProperty("SPECULARLOBECONSTANT",1.0);
   SMPT->AddConstProperty("SPECULARSPIKECONSTANT",0.0);
   SMPT->AddConstProperty("BACKSCATTERCONSTANT",0.0);
   SMPT->AddConstProperty("EFFICIENCY",0.0);
   //  SMPT->AddConstProperty("RINDEX",1.5750);
+  */
+
   OpSurface->SetMaterialPropertiesTable(SMPT);
 }
 
