@@ -30,9 +30,11 @@ void BDSAwakeMultilayerScreen::layers(){
   shieldingLayer();
   backLayer();
   substrateLayer();
-  backBinderLayer();
-  backScintillatorLayer();
-  for(int i=1; i<(_nScintLayers-1); i++){
+  if(_firstLayerThickness>0){
+    backBinderLayer();
+    backScintillatorLayer();
+  }
+  for(int i=0; i<(_nScintLayers-1); i++){
     binderLayer();
     scintillatorLayer();
   }
