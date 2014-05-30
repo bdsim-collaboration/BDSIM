@@ -697,6 +697,25 @@ void BDSMaterials::Initialise()
   tmpMaterial->SetMaterialPropertiesTable(mptGOSLanex);
   materials[name]=tmpMaterial;
 
+  //Same as gos_lanex but refractive index = 1
+  tmpMaterial = new G4Material(name="gos_ri1", density=gos_lanex_density, 1);
+  tmpMaterial->AddMaterial(GOS, 1.0);
+  G4MaterialPropertiesTable* mptGOSLanexRi1 = new G4MaterialPropertiesTable();
+  G4double rindexGOSLanexRi1Tab[]={1.0, 1.0};
+  mptGOSLanexRi1->AddProperty("FASTCOMPONENT",energyGOSLanexTab, emitspecGOSLanex, nentGOSLanex);
+  mptGOSLanexRi1->AddConstProperty("SCINTILLATIONYIELD",8.9e4/MeV); //Intrinisic scintilation yield of GOS
+  mptGOSLanexRi1->AddConstProperty("RESOLUTIONSCALE", 1.0);
+  mptGOSLanexRi1->AddConstProperty("FASTTIMECONSTANT", mieHgTimeConst);
+  mptGOSLanexRi1->AddConstProperty("YIELDRATIO", 1.0);
+  mptGOSLanexRi1->AddConstProperty("MIEHG", mieScatteringLengthGOSLanex);
+  mptGOSLanexRi1->AddConstProperty("MIEHG_FORWARD", gosLanexMiehgForward);
+  mptGOSLanexRi1->AddConstProperty("MIEHG_BACKWARD", gosLanexMiehgBackward);
+  mptGOSLanexRi1->AddConstProperty("MIEHG_FORWARD_RATIO", gosLanexMiehgForwardRatio);
+  mptGOSLanexRi1->AddProperty("RINDEX",energyGOSLanexTab, rindexGOSLanexRi1Tab, nentGOSLanex); //Average refractive index of bulk material
+  mptGOSLanexRi1->AddProperty("ABSLENGTH", energyGOSLanexTab, abslenGOSLanex, nentGOSLanex);
+  tmpMaterial->SetMaterialPropertiesTable(mptGOSLanexRi1);
+  materials[name]=tmpMaterial;
+
   //pet_lanex - PET with the bulk optical transport properties of lanex particles suspended in an elastomer but the atomic, density and scintillation properties of PET
   G4double pet_lanex_density=GetMaterial("polyurethane")->GetDensity();
   tmpMaterial = new G4Material(name="pet_lanex", density=pet_lanex_density, 1);
