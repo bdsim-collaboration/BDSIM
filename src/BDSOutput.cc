@@ -5,9 +5,9 @@
 #include "BDSSamplerCylinder.hh"
 #include <ctime>
 
-BDSOutput::BDSOutput():outputFileNumber(1)
+BDSOutput::BDSOutput(BDSOutputFormat fmt):outputFileNumber(0)
 {
-  format = BDSOutputFormat::_ASCII; // default - write an ascii file
+  SetFormat(fmt);
 #ifdef USE_ROOT
 #ifdef DEBUG
   G4cout << __METHOD_NAME__ << " - USE_ROOT is defined." << G4endl;
@@ -16,23 +16,7 @@ BDSOutput::BDSOutput():outputFileNumber(1)
   EnergyLossHisto = NULL;
   PrecisionRegionEnergyLossTree = NULL;
   EnergyLossTree = NULL;
-  Init(0); // activate the output - setting the first filename to 
-           // be appended with _0
-#endif
-}
-
-BDSOutput::BDSOutput(BDSOutputFormat fmt):format(fmt),outputFileNumber(1)
-{
-#ifdef USE_ROOT
-#ifdef DEBUG
-  G4cout << __METHOD_NAME__ << " - USE_ROOT is defined." << G4endl;
-#endif
-  theRootOutputFile = NULL;
-  EnergyLossHisto = NULL;
-  PrecisionRegionEnergyLossTree = NULL;
-  EnergyLossTree = NULL;
-  Init(0); // activate the output - setting the first filename to 
-           // be appended with _0
+  Init(); // activate the output
 #endif
 }
 
@@ -124,14 +108,14 @@ void BDSOutput::BuildSamplerTree(G4String name){
 #endif
 
 // output initialization (ROOT only)
-void BDSOutput::Init(G4int FileNum)
+void BDSOutput::Init()
 {
 #ifdef USE_ROOT
   if(format != BDSOutputFormat::_ROOT) return;
 
   // set up the root file
   G4String _filename = BDSExecOptions::Instance()->GetOutputFilename() + "_" 
-    + BDSGlobalConstants::Instance()->StringFromInt(FileNum) + ".root";
+    + BDSGlobalConstants::Instance()->StringFromInt(outputFileNumber) + ".root";
   
   G4cout<<"Setting up new file: "<<_filename<<G4endl;
   theRootOutputFile=new TFile(_filename,"RECREATE", "BDS output file");
@@ -171,14 +155,14 @@ void BDSOutput::Init(G4int FileNum)
     }
 
   // build energy loss histogram
-  G4int nBins = G4int(zMax/(BDSGlobalConstants::Instance()->GetElossHistoBinWidth()*CLHEP::m));
+  G4int nBins = G4int(BDSGlobalConstants::Instance()->GetZMax()/(BDSGlobalConstants::Instance()->GetElossHistoBinWidth()*CLHEP::m));
   G4double wx=(BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelOffsetX())*2;
   G4double wy=(BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelOffsetY())*2;
   G4double bs=BDSGlobalConstants::Instance()->GetComponentBoxSize();
   G4double wmax=std::max(wx,wy);
   wmax=std::max(wmax,bs);
 
-  EnergyLossHisto = new TH1F("ElossHisto", "Energy Loss",nBins,0.,zMax/CLHEP::m);
+  EnergyLossHisto = new TH1F("ElossHisto", "Energy Loss",nBins,0.,BDSGlobalConstants::Instance()->GetZMax()/CLHEP::m);
   EnergyLossTree= new TTree("ElossTree", "Energy Loss");
   EnergyLossTree->Branch("z",&z_el,"z (m)/F");
   EnergyLossTree->Branch("E",&E_el,"E (GeV)/F");
@@ -437,12 +421,12 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
  }
 }
 
-//G4int BDSOutput::Commit(G4int FileNum)
 G4int BDSOutput::Commit()
 {
 #ifdef USE_ROOT
   Write();
-  Init(outputFileNumber++);
+  outputFileNumber++;
+  Init();
 #endif
   return 0;
 }

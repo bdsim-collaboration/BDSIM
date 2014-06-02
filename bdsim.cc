@@ -141,23 +141,6 @@ int main(int argc,char** argv) {
   bdsBunch.SetOptions(options);
 
   //
-  // set default output formats:
-  //
-#ifdef DEBUG
-  G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
-#endif  
-
-  bdsOutput = new BDSOutput();
-  bdsOutput->SetFormat(BDSExecOptions::Instance()->GetOutputFormat());
-  G4cout.precision(10);
-
-  // catch aborts to close output stream/file. perhaps not all are needed.
-  signal(SIGABRT, &BDS_handle_aborts); // aborts
-  signal(SIGTERM, &BDS_handle_aborts); // termination requests
-  signal(SIGSEGV, &BDS_handle_aborts); // segfaults
-  signal(SIGINT, &BDS_handle_aborts); // interrupts
-
-  //
   // initialize random number generator
   //
 
@@ -242,7 +225,6 @@ int main(int argc,char** argv) {
 #endif
   runManager->SetUserInitialization(detector);
 
-
   //
   // set user action classes
   //
@@ -323,6 +305,22 @@ int main(int argc,char** argv) {
     G4cerr << "bdsim.cc: error - geometry not closed." << G4endl;
     return 1;
   }
+
+  //
+  // set default output formats:
+  //
+#ifdef DEBUG
+  G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
+#endif  
+
+  bdsOutput = new BDSOutput(BDSExecOptions::Instance()->GetOutputFormat());
+  G4cout.precision(10);
+
+  // catch aborts to close output stream/file. perhaps not all are needed.
+  signal(SIGABRT, &BDS_handle_aborts); // aborts
+  signal(SIGTERM, &BDS_handle_aborts); // termination requests
+  signal(SIGSEGV, &BDS_handle_aborts); // segfaults
+  signal(SIGINT, &BDS_handle_aborts); // interrupts
 
   //
   // Write survey file

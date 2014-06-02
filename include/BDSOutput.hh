@@ -25,10 +25,8 @@ class BDSOutput {
 
 public: 
 
-  BDSOutput(); // default constructor
   BDSOutput(BDSOutputFormat format);
 
-  void SetFormat(BDSOutputFormat format);
   ~BDSOutput();
 
   void WriteHits(BDSSamplerHitsCollection*);
@@ -38,16 +36,18 @@ public:
   G4int Commit(); //G4int FileNum);   // close the event
   void Write();           // close the event
 
-  G4double zMax, transMax; //Maximum values of longitudinal and transverse global position
   void WritePrimary(G4String, G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int, G4int);
 
 private:
-  void Init(G4int FileNum);
+  BDSOutput(); // default constructor, not used
+  void SetFormat(BDSOutputFormat format);
+  void Init();
 
   G4String _filename;
   BDSOutputFormat format;
   std::ofstream of;
   std::ofstream ofEloss;
+  /// number of output file
   int outputFileNumber;
 
 #ifdef USE_ROOT
