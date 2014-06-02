@@ -79,8 +79,6 @@ BDSEventAction::BDSEventAction():
   if(isBatch) printModulo=10;
   else printModulo=1;
   
-  itsOutputFileNumber=1;
-  
   itsRecordSize=1024;
   
   LastComp=NULL;
@@ -162,7 +160,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	}
     }
   if(verboseEvent || verboseEventNumber == event_number){
-  G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;
+    G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;
   }
   
 #ifdef DEBUG 
@@ -249,8 +247,18 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #ifdef DEBUG
   G4cout << __METHOD_NAME__ << " finished getting number of events per ntuple." << G4endl;
 #endif
-  if( (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0) || 
-      (event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate())
+
+  // if doTwiss write out at end
+  if( BDSGlobalConstants::Instance()->DoTwiss() && (event_number==BDSExecOptions::Instance()->GetNPTwiss()-1)) {
+    bdsOutput->Commit(); // write and open new file
+  }
+  
+  if( !BDSGlobalConstants::Instance()->DoTwiss() && 
+      (
+       (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0) || 
+       (event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate()
+       )
+      )
     {
 #ifdef DEBUG
       G4cout << __METHOD_NAME__ << " writing out events." << G4endl;
@@ -261,7 +269,6 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #endif
       // notify the output about the event end
       // this can be used for splitting output files etc.
-      //	bdsOutput->Commit(itsOutputFileNumber++);
       if((event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate()) {
 	bdsOutput->Write(); // write last file
       } else {

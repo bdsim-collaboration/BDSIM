@@ -17,7 +17,7 @@
 macro(_run_test test_name args)
     # If loop can be removed when we no longer support cmake 2.6...
     if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER 2.7)
-       add_test(NAME ${test_name} COMMAND ${binary} "${args}" ${TESTING_ARGS})
+       add_test(NAME ${test_name} COMMAND ${binary} ${args} ${TESTING_PERM_ARGS} ${TESTING_ARGS})
     else()
        add_test(${test_name} "${binary}" "${args}" ${TESTING_ARGS})
     endif()

@@ -59,9 +59,6 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSEnergyCounterSD.hh"
 
-// output interface
-#include "BDSOutput.hh"
-
 #include "BDSComponentFactory.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerCylinder.hh"
@@ -97,7 +94,6 @@ typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 LogVolMap* LogVol;
 
 //=========================================
-extern BDSOutput* bdsOutput;
 
 #ifdef DEBUG
 bool debug = true;
@@ -180,8 +176,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 
 
   if (verbose || debug) G4cout << "-->starting BDS construction \n"<<G4endl;
-  //Add the input sampler to the list of output sampler names
-  //  bdsOutput->SampName.push_back((G4String)"input");
   //construct bds
   return ConstructBDS(beamline_list);
 }
@@ -455,8 +449,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
       G4cout<<"s_tot="<<s_tot/CLHEP::m<<" m"<<G4endl;
     }
 
-  bdsOutput->zMax=s_tot;
-  bdsOutput->transMax=std::max(GetWorldSizeX(), GetWorldSizeY());
+  BDSGlobalConstants::Instance()->SetZMax(s_tot);
 
   solidWorld = new G4Box("World", GetWorldSizeX(), GetWorldSizeY(), GetWorldSizeZ());
     

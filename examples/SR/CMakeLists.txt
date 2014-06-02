@@ -1,4 +1,1 @@
-execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-set(TESTING_ARGS "--batch")
-
 simple_testing(SR "--file=line.gmad" "")
