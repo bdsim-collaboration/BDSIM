@@ -11,6 +11,7 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include <fstream>
 
 // Header file for the classes stored in the TTree if any.
 
@@ -18,80 +19,102 @@
 
 class Sampler {
 public :
-   TTree          *fChain;   //!pointer to the analyzed TTree or TChain
-   Int_t           fCurrent; //!current Tree number in a TChain
-
-   // Declaration of leaf types
-   Float_t         E0;
-   Float_t         x0;
-   Float_t         y0;
-   Float_t         z0;
-   Float_t         xp0;
-   Float_t         yp0;
-   Float_t         zp0;
-   Float_t         t0;
-   Float_t         E;
-   Float_t         x;
-   Float_t         y;
-   Float_t         z;
-   Float_t         xp;
-   Float_t         yp;
-   Float_t         zp;
-   Float_t         t;
-   Float_t         X;
-   Float_t         Y;
-   Float_t         Z;
-   Float_t         Xp;
-   Float_t         Yp;
-   Float_t         Zp;
-   Float_t         s;
-   Float_t         weight;
-   Int_t           partID;
-   Int_t           nEvent;
-   Int_t           parentID;
-   Int_t           trackID;
-   Int_t           turnnumber;
-
-   // List of branches
-   TBranch        *b_E0 ; // (GeV);   //!
-   TBranch        *b_x0 ; // (mum);   //!
-   TBranch        *b_y0 ; // (mum);   //!
-   TBranch        *b_z0 ; // (m);   //!
-   TBranch        *b_xp0 ; // (rad);   //!
-   TBranch        *b_yp0 ; // (rad);   //!
-   TBranch        *b_zp0 ; // (rad);   //!
-   TBranch        *b_t0 ; // (ns);   //!
-   TBranch        *b_E ; // (GeV);   //!
-   TBranch        *b_x ; // (mum);   //!
-   TBranch        *b_y ; // (mum);   //!
-   TBranch        *b_z ; // (m);   //!
-   TBranch        *b_xp ; // (rad);   //!
-   TBranch        *b_yp ; // (rad);   //!
-   TBranch        *b_zp ; // (rad);   //!
-   TBranch        *b_t ; // (ns);   //!
-   TBranch        *b_X ; // (mum);   //!
-   TBranch        *b_Y ; // (mum);   //!
-   TBranch        *b_Z ; // (m);   //!
-   TBranch        *b_Xp ; // (rad);   //!
-   TBranch        *b_Yp ; // (rad);   //!
-   TBranch        *b_Zp ; // (rad);   //!
-   TBranch        *b_s ; // (m);   //!
-   TBranch        *b_weight;   //!
-   TBranch        *b_partID;   //!
-   TBranch        *b_nEvent;   //!
-   TBranch        *b_parentID;   //!
-   TBranch        *b_trackID;   //!
-   TBranch        *b_turnnumber;   //!
-
-   Sampler(TTree *tree=0);
-   virtual ~Sampler();
-   virtual Int_t    Cut(Long64_t entry);
-   virtual Int_t    GetEntry(Long64_t entry);
-   virtual Long64_t LoadTree(Long64_t entry);
-   virtual void     Init(TTree *tree);
-   virtual void     CalculateOpticalFunctions();
-   virtual Bool_t   Notify();
-   virtual void     Show(Long64_t entry = -1);
+  TTree          *fChain;   //!pointer to the analyzed TTree or TChain
+  Int_t           fCurrent; //!current Tree number in a TChain
+  
+  // Declaration of leaf types
+  Float_t         E0;
+  Float_t         x0;
+  Float_t         y0;
+  Float_t         z0;
+  Float_t         xp0;
+  Float_t         yp0;
+  Float_t         zp0;
+  Float_t         t0;
+  Float_t         E;
+  Float_t         x;
+  Float_t         y;
+  Float_t         z;
+  Float_t         xp;
+  Float_t         yp;
+  Float_t         zp;
+  Float_t         t;
+  Float_t         X;
+  Float_t         Y;
+  Float_t         Z;
+  Float_t         Xp;
+  Float_t         Yp;
+  Float_t         Zp;
+  Float_t         s;
+  Float_t         weight;
+  Int_t           partID;
+  Int_t           nEvent;
+  Int_t           parentID;
+  Int_t           trackID;
+  Int_t           turnnumber;
+  
+  // List of branches
+  TBranch        *b_E0 ; // (GeV);   //!
+  TBranch        *b_x0 ; // (mum);   //!
+  TBranch        *b_y0 ; // (mum);   //!
+  TBranch        *b_z0 ; // (m);   //!
+  TBranch        *b_xp0 ; // (rad);   //!
+  TBranch        *b_yp0 ; // (rad);   //!
+  TBranch        *b_zp0 ; // (rad);   //!
+  TBranch        *b_t0 ; // (ns);   //!
+  TBranch        *b_E ; // (GeV);   //!
+  TBranch        *b_x ; // (mum);   //!
+  TBranch        *b_y ; // (mum);   //!
+  TBranch        *b_z ; // (m);   //!
+  TBranch        *b_xp ; // (rad);   //!
+  TBranch        *b_yp ; // (rad);   //!
+  TBranch        *b_zp ; // (rad);   //!
+  TBranch        *b_t ; // (ns);   //!
+  TBranch        *b_X ; // (mum);   //!
+  TBranch        *b_Y ; // (mum);   //!
+  TBranch        *b_Z ; // (m);   //!
+  TBranch        *b_Xp ; // (rad);   //!
+  TBranch        *b_Yp ; // (rad);   //!
+  TBranch        *b_Zp ; // (rad);   //!
+  TBranch        *b_s ; // (m);   //!
+  TBranch        *b_weight;   //!
+  TBranch        *b_partID;   //!
+  TBranch        *b_nEvent;   //!
+  TBranch        *b_parentID;   //!
+  TBranch        *b_trackID;   //!
+  TBranch        *b_turnnumber;   //!
+  
+  // My Data Members
+  // sums - initialised to zero as that's what they start at
+  double x_s;  
+  double y_s;    
+  double xp_s;   
+  double yp_s;   
+  double E_s;    
+  double EE_s;   
+  double xx_s;   
+  double xxp_s;  
+  double xpxp_s; 
+  double xpE_s;  
+  double xE_s;   
+  double yy_s;   
+  double yyp_s;  
+  double ypyp_s; 
+  double ypE_s;  
+  double yE_s;   
+  double emitt_x, emitt_y;
+  double beta_x, beta_y, alph_x, alph_y, disp_x, disp_xp, disp_y, disp_yp;
+  
+  Sampler(TTree *tree=0);
+  virtual ~Sampler();
+  virtual Int_t    Cut(Long64_t entry);
+  virtual Int_t    GetEntry(Long64_t entry);
+  virtual Long64_t LoadTree(Long64_t entry);
+  virtual void     Init(TTree *tree);
+  virtual void     CalculateOpticalFunctions();
+  virtual Bool_t   Notify();
+  virtual void     Show(Long64_t entry = -1);
+  virtual void     AppendOpticalData(std::ofstream *ofs);
 };
 
 #endif
@@ -110,6 +133,24 @@ Sampler::Sampler(TTree *tree) : fChain(0)
 
    }
    Init(tree);
+   
+   //initialise sums
+   x_s    = 0;
+   y_s    = 0;
+   xp_s   = 0;
+   yp_s   = 0;
+   E_s    = 0;
+   EE_s   = 0;
+   xx_s   = 0;
+   xxp_s  = 0;
+   xpxp_s = 0;
+   xpE_s  = 0;
+   xE_s   = 0;
+   yy_s   = 0;
+   yyp_s  = 0;
+   ypyp_s = 0;
+   ypE_s  = 0;
+   yE_s   = 0;
 }
 
 Sampler::~Sampler()
@@ -210,5 +251,22 @@ Int_t Sampler::Cut(Long64_t entry)
 // returns -1 otherwise.
    return 1;
 }
+
+void Sampler::AppendOpticalData(std::ofstream *output)
+{
+  *output << s       << "\t";
+  *output << beta_x  << "\t";
+  *output << beta_y  << "\t";
+  *output << alph_x  << "\t";
+  *output << alph_y  << "\t";
+  *output << disp_x  << "\t";
+  *output << disp_xp << "\t";
+  *output << disp_y  << "\t";
+  *output << disp_yp << "\t";
+  *output << emitt_x << "\t";
+  *output << emitt_y << "\n";
+}
+
+
 #endif // #ifdef Sampler_cxx
 

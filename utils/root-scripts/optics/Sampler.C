@@ -4,9 +4,8 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <iostream>
+#include <fstream>
 #include <cmath>
-
-using namespace std;
 
 void Sampler::CalculateOpticalFunctions()
 {
@@ -34,29 +33,7 @@ void Sampler::CalculateOpticalFunctions()
 //    fChain->GetEntry(jentry);       //read all branches
 //by  b_branchname->GetEntry(ientry); //read only this branch
    if (fChain == 0) return;
-
    Long64_t nentries = fChain->GetEntriesFast();
-
-   //define your variables here
-   
-   //s denotes sum
-   double x_s    = 0;
-   double y_s    = 0;
-   double z_s    = 0;
-   double xp_s   = 0;
-   double yp_s   = 0;
-   double E_s    = 0;
-   double EE_s   = 0;
-   double xx_s   = 0;
-   double xxp_s  = 0;
-   double xpxp_s = 0;
-   double xpE_s  = 0;
-   double xE_s   = 0;
-   double yy_s   = 0;
-   double yyp_s  = 0;
-   double ypyp_s = 0;
-   double ypE_s  = 0;
-   double yE_s   = 0;
 
    //loop over events in branch
    Long64_t nbytes = 0, nb = 0;
@@ -72,24 +49,24 @@ void Sampler::CalculateOpticalFunctions()
      
      //your function here
      x_s    += x;
-     //cout << x_s << endl;
      y_s    += y;
-     z_s    += z;
      xp_s   += xp;
      yp_s   += yp;
      E_s    += E;
      EE_s   += E*E;
      xx_s   += x*x;
-     xxp_s  += x*xp;
-     xpxp_s += xp*xp;
-     xpE_s  += xp*E;
+     xxp_s  += x*xp*1e6;
+     xpxp_s += xp*1e6*xp*1e6;
+     xpE_s  += xp*1e6*E;
      xE_s   += x*E;
      yy_s   += y*y;
-     yyp_s  += y*yp;
-     ypyp_s += yp*yp;
-     ypE_s  += yp*E;
+     yyp_s  += y*yp*1e6;
+     ypyp_s += yp*1e6*yp*1e6;
+     ypE_s  += yp*1e6*E;
      yE_s   += y*E;
    }
+   
+   //Calculate moments using the sums
    
    xx_s   -= x_s*x_s;
    xxp_s  -= x_s*xp_s;
@@ -98,12 +75,14 @@ void Sampler::CalculateOpticalFunctions()
    yyp_s  -= y_s*yp_s; 
    ypyp_s -= yp_s*yp_s;
 
-   //cout << "xx_s" << xx_s << endl;
-   
-   double emitt_x = sqrt(xx_s*xpxp_s - xxp_s*xxp_s);
-   double emitt_y = sqrt(yy_s*ypyp_s - yyp_s*yyp_s);
-
-   double beta_x, beta_y, alph_x, alph_y, disp_x, disp_xp, disp_y, disp_yp;
+   /*
+   std::cout << "xx_s   " << xx_s   << std::endl;
+   std::cout << "xpxp_s " << xpxp_s << std::endl;
+   std::cout << "xxp_s  " << xxp_s  << std::endl;
+   std::cout << "emit   " << xx_s*xpxp_s - xxp_s*xxp_s <<std::endl;
+   */
+   emitt_x = sqrt(fabs(xx_s*xpxp_s - xxp_s*xxp_s));
+   emitt_y = sqrt(fabs(yy_s*ypyp_s - yyp_s*yyp_s));
    
    beta_x  =  xx_s  / emitt_x;
    beta_y  =  yy_s  / emitt_y;
@@ -115,17 +94,19 @@ void Sampler::CalculateOpticalFunctions()
    disp_y  = (yE_s  - (y_s  * E_s)) / (EE_s - (E_s * E_s));
    disp_yp = (ypE_s - (yp_s * E_s)) / (EE_s - (E_s * E_s));
 
-   cout << "B(x): " << disp_x  << endl;
-   cout << "B(y): " << disp_x  << endl;
-   cout << "A(x): " << disp_x  << endl;
-   cout << "A(y): " << disp_x  << endl;
-   cout << endl;
-   cout << "E(x): " << emitt_x << endl;
-   cout << "E(y): " << emitt_y << endl;
-   cout << endl;
-   cout << "D(x): " << disp_x  << endl;
-   cout << "D(x): " << disp_x  << endl;
-   cout << "D(x): " << disp_x  << endl;
-   cout << "D(x): " << disp_x  << endl;
-
+   /*
+   std::cout << "B(x): " << beta_x   << std::endl;
+   std::cout << "B(y): " << beta_y   << std::endl;
+   std::cout << "A(x): " << alph_x   << std::endl;
+   std::cout << "A(y): " << alph_y   << std::endl;
+   std::cout << std::endl;
+   std::cout << "E(x): " << emitt_x  << std::endl;
+   std::cout << "E(y): " << emitt_y  << std::endl;
+   std::cout << std::endl;
+   std::cout << "D(x): " << disp_x   << std::endl;
+   std::cout << "D(x): " << disp_xp  << std::endl;
+   std::cout << "D(x): " << disp_y   << std::endl;
+   std::cout << "D(x): " << disp_yp  << std::endl;
+   */
 }
+
