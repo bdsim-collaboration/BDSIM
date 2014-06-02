@@ -1,3 +1,9 @@
+set(TESTING_PERM_ARGS --batch)
+
+if (USE_ROOT)
+   set(TESTING_PERM_ARGS ${TESTING_PERM_ARGS} --output=root)
+endif()
+
 add_subdirectory(3d)
 add_subdirectory(ATF2)
 add_subdirectory(ATF2_old)
