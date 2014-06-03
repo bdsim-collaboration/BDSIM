@@ -30,7 +30,7 @@ void BDSAwakeMultilayerScreen::layers(){
   shieldingLayer();
   backLayer();
   substrateLayer();
-  if(_firstLayerThickness>0){
+  if(_firstLayerThickness>1e-9*CLHEP::m){
     backBinderLayer();
     backScintillatorLayer();
   }
