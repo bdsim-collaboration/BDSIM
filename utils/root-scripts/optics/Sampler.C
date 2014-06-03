@@ -34,7 +34,7 @@ void Sampler::CalculateOpticalFunctions()
 //by  b_branchname->GetEntry(ientry); //read only this branch
    if (fChain == 0) return;
    Long64_t nentries = fChain->GetEntriesFast();
-
+   
    //loop over events in branch
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -45,13 +45,16 @@ void Sampler::CalculateOpticalFunctions()
      //cuts here
      
      // cut for primaries only
-     //if (trackID != parentID) continue;
+     if (partID != 2212) continue;
+     // cut for second turn particles
+     if (s > 26580.0) continue;
      
      //your function here
+     wgt    += 1.0;
      x_s    += x;
      y_s    += y;
-     xp_s   += xp;
-     yp_s   += yp;
+     xp_s   += xp*1e6;
+     yp_s   += yp*1e6;
      E_s    += E;
      EE_s   += E*E;
      xx_s   += x*x;
@@ -65,7 +68,24 @@ void Sampler::CalculateOpticalFunctions()
      ypE_s  += yp*1e6*E;
      yE_s   += y*E;
    }
-   
+   x_s  /= wgt;
+   y_s  /= wgt;
+   xp_s /= wgt;
+   yp_s /= wgt;
+   E_s  /= wgt;
+   EE_s /= wgt;
+   xx_s /= wgt;
+   xxp_s /= wgt;
+   xpE_s /= wgt;
+   xE_s  /= wgt;
+   yy_s  /= wgt;
+   yyp_s /= wgt;
+   ypyp_s /= wgt;
+   ypE_s /= wgt;
+   yE_s /= wgt;
+
+
+
    //Calculate moments using the sums
    
    xx_s   -= x_s*x_s;
@@ -81,8 +101,8 @@ void Sampler::CalculateOpticalFunctions()
    std::cout << "xxp_s  " << xxp_s  << std::endl;
    std::cout << "emit   " << xx_s*xpxp_s - xxp_s*xxp_s <<std::endl;
    */
-   emitt_x = sqrt(fabs(xx_s*xpxp_s - xxp_s*xxp_s));
-   emitt_y = sqrt(fabs(yy_s*ypyp_s - yyp_s*yyp_s));
+   emitt_x = sqrt(xx_s*xpxp_s - xxp_s*xxp_s);
+   emitt_y = sqrt(yy_s*ypyp_s - yyp_s*yyp_s);
    
    beta_x  =  xx_s  / emitt_x;
    beta_y  =  yy_s  / emitt_y;
