@@ -14,7 +14,7 @@ BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material, G4double t
   _fillFactor=0.5;
   _layerThickness=_dgrain*_fillFactor;
   _binderLayerThickness=_dgrain*(1-_fillFactor);
-  _nScintLayers=_thickness/((_layerThickness+_binderLayerThickness)/2.0);
+  _nScintLayers=_thickness/(_layerThickness+_binderLayerThickness);
   _firstLayerThickness = _layerThickness*(_nScintLayers-floor(_nScintLayers));
   _firstBinderLayerThickness = _binderLayerThickness*(_nScintLayers-floor(_nScintLayers));
   layers();
@@ -34,7 +34,7 @@ void BDSAwakeMultilayerScreen::layers(){
     backBinderLayer();
     backScintillatorLayer();
   }
-  for(int i=0; i<(_nScintLayers-1); i++){
+  for(int i=0; i<(floor(_nScintLayers)-1); i++){
     binderLayer();
     scintillatorLayer();
   }
