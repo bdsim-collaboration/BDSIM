@@ -86,6 +86,7 @@ public :
   
   // My Data Members
   // sums - initialised to zero as that's what they start at
+  double wgt;
   double x_s;  
   double y_s;    
   double xp_s;   
@@ -135,6 +136,7 @@ Sampler::Sampler(TTree *tree) : fChain(0)
    Init(tree);
    
    //initialise sums
+   wgt    = 0; //weight already used in data
    x_s    = 0;
    y_s    = 0;
    xp_s   = 0;
