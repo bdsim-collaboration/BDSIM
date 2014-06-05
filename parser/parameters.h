@@ -25,6 +25,7 @@ struct Parameters {
   double ks; int ksset;   /// solenoid
 
   double tscint; int tscintset; ///thickness of scintillating part of screen
+  double twindow; int twindowset; ///thickness of window
 
   std::list<double> knl;           /// multipole expansion coefficients
   std::list<double> ksl;           /// skew multipole expansion
@@ -106,6 +107,7 @@ struct Parameters {
   int  fieldZOffsetset;
   double  fieldZOffset;
   std::string  scintmaterial;  int scintmaterialset;
+  std::string  windowmaterial;  int windowmaterialset;
   std::string  airmaterial;  int airmaterialset;
 
   double at;

@@ -8,8 +8,8 @@
 #include "G4LogicalBorderSurface.hh"
 #include "G4LogicalSkinSurface.hh"
 
-BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double dgrain):
-  BDSMultilayerScreen(G4TwoVector(1*m,3*cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(1000*thickness), _dgrain(dgrain)
+BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double dgrain, G4double windowThickness, G4String windowMaterial):
+  BDSMultilayerScreen(G4TwoVector(1*m,3*cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(thickness), _dgrain(dgrain), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
 {
   _fillFactor=0.5;
   _layerThickness=_dgrain;
@@ -28,7 +28,7 @@ BDSAwakeMultilayerScreen::~BDSAwakeMultilayerScreen(){
 void BDSAwakeMultilayerScreen::layers(){
   _gapWidth=0*1e-3*mm;
   _gapSpacing=1*mm;
-  shieldingLayer();
+  windowLayer();
   backLayer();
   substrateLayer();
   if(_firstLayerThickness>1e-9){
@@ -47,8 +47,8 @@ void BDSAwakeMultilayerScreen::layers(){
 }
 
 
-void BDSAwakeMultilayerScreen::shieldingLayer(){
-  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),100*um),(G4String)"shieldingLayer","G4_Al",0,0);
+void BDSAwakeMultilayerScreen::windowLayer(){
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),_windowThickness),(G4String)"windowLayer",_windowMaterial.data(),0,0);
   sl->color(G4Color(0.8,0.8,0.8,0.3));
   screenLayer(sl);
 }

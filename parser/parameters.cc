@@ -14,6 +14,7 @@ void Parameters::flush() {
   l=0; lset = 0;
   r = 0; rset = 0;
   tscint = 0.0003; tscintset = 0;
+  twindow = 0.0001; twindowset = 0;
 
   // materials' parameters
   A = 0; Aset = 0; //g*mol^-1
@@ -91,6 +92,7 @@ void Parameters::flush() {
 
   material = ""; materialset = 0;
   scintmaterial = ""; scintmaterialset = 0;
+  windowmaterial = ""; windowmaterialset = 0;
   airmaterial = ""; airmaterialset = 0;
   tunnelMaterial = ""; tunnelmaterialset = 0;
   tunnelCavityMaterial = ""; tunnelcavitymaterialset = 0;
@@ -127,6 +129,7 @@ void Parameters::inherit_properties(struct Element& e)
   if(!taperlengthset) { taperlength = e.taperlength; taperlengthset = 1; }
 
   if(!tscintset) { tscint = e.tscint; tscintset = 1; }
+  if(!twindowset) { twindow = e.twindow; tscintset = 1; }
 
   //materials
   if(!Aset) { A = e.A; Aset = 1; }
@@ -166,6 +169,7 @@ void Parameters::inherit_properties(struct Element& e)
   if(!specset) { spec = e.spec; specset = 1; }
   if(!materialset) { material = e.spec; materialset = 1; }
   if(!scintmaterialset) { scintmaterial = e.spec; scintmaterialset = 1; }
+  if(!windowmaterialset) { windowmaterial = e.spec; windowmaterialset = 1; }
   if(!airmaterialset) { airmaterial = e.spec; airmaterialset = 1; }
   if(!tunnelmaterialset) { tunnelMaterial = e.spec; tunnelmaterialset = 1; }
   if(!tunnelcavitymaterialset) { tunnelCavityMaterial = e.spec; tunnelcavitymaterialset = 1; }

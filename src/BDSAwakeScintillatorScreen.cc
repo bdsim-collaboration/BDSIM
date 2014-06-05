@@ -41,8 +41,8 @@ extern LogVolMap* LogVol;
 
 //============================================================
 
-BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*BDSGlobalConstants::Instance()->GetPI()/180.0):
-  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0, SetVisAttributes()),_material(material), _thickness(thickness), _screenAngle(angle)
+BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*BDSGlobalConstants::Instance()->GetPI()/180.0, G4double windowThickness=0, G4String windowMaterial=""):
+  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0, SetVisAttributes()),_material(material), _thickness(thickness), _screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
 {
   //Set as part of precision region (for energy loss monitoring)
   itsPrecisionRegion=1;
@@ -337,7 +337,7 @@ void BDSAwakeScintillatorScreen::BuildScreen()
 {
   G4cout << "Building BDSAwakeMultilayerScreen...." << G4endl;
   G4double grainSize = 10*1e-6*CLHEP::m;
-  _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness,grainSize);
+  _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, grainSize, _windowThickness, _windowMaterial);
   
   G4cout << "finished." << G4endl;
   //  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){

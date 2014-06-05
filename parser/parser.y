@@ -617,6 +617,8 @@ parameters:
 		  if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence
 		    else
                   if(!strcmp($1->name,"tscint")) { params.tscint = $3; params.tscintset = 1;} // thickness for a scintillator screen 
+		  else
+                  if(!strcmp($1->name,"twindow")) { params.twindow = $3; params.twindow = 1;} // thickness for a scintillator screen window 
 		    else
                   if(VERBOSE) printf("Warning : unknown parameter %s\n",$1->name);
 		  
@@ -906,6 +908,12 @@ parameters:
 		       params.scintmaterial = $3; 
 		     } // material for a scintillator screen 
 		   else
+		   if(!strcmp($1->name,"windowmaterial")) 
+		     {
+		       params.windowmaterialset = 1;
+		       params.windowmaterial = $3; 
+		     } // material for a scintillator screen window
+		   else
 		   if(!strcmp($1->name,"airmaterial")) 
 		     {
 		       params.airmaterialset = 1;
@@ -969,6 +977,11 @@ parameters:
 			   {	 
 			     params.scintmaterialset = 1;
 			     params.scintmaterial = $3;
+			   }
+			 if(!strcmp($1->name,"windowmaterial")) 
+			   {	 
+			     params.windowmaterialset = 1;
+			     params.windowmaterial = $3;
 			   }
 			 else
 			   if(!strcmp($1->name,"airmaterial")) 

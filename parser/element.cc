@@ -110,6 +110,7 @@ void Element::flush() {
   phiAngleIn = 0;
   phiAngleOut = 0;
   tscint = 0;
+  twindow = 0;
   tilt = 0;
   phi = 0;
   psi = 0;
@@ -157,6 +158,8 @@ void Element::flush() {
   */
 
   //material = "";
+  scintmaterial = "";
+  windowmaterial = "";
   spec = "";
   material="";
   tunnelMaterial="";
