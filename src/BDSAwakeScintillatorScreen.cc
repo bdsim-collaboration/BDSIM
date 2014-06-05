@@ -308,7 +308,7 @@ void BDSAwakeScintillatorScreen::Build(){
       ComputeDimensions();
       BuildMarkerVolume();
       //      BuildVacuumChamber1();
-      //      BuildScreenScoringPlane();
+      BuildScreenScoringPlane();
       //      BuildCameraScoringPlane();
       PlaceScreen();
       //      PlaceCamera();
