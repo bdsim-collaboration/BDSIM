@@ -308,8 +308,8 @@ void BDSAwakeScintillatorScreen::Build(){
       ComputeDimensions();
       BuildMarkerVolume();
       //      BuildVacuumChamber1();
-      BuildScreenScoringPlane();
-      BuildCameraScoringPlane();
+      //      BuildScreenScoringPlane();
+      //      BuildCameraScoringPlane();
       PlaceScreen();
       //      PlaceCamera();
       if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
