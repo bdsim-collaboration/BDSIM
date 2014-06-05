@@ -16,7 +16,7 @@
 //     28 Mar 2006 by Agapov v.0.2
 //     15 Dec 2005 by Agapov beta
 //
-#define DEBUG 1
+
 //=================================================================
 
 #include <list>

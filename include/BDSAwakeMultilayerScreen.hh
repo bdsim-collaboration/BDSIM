@@ -20,7 +20,8 @@ private:
   void backBinderLayer();
   void scintillatorLayer();
   void backScintillatorLayer();
-  void frontScintillatorLayer();
+  void frontScintillatorLayer1();
+  void frontScintillatorLayer2();
   void frontLayer();
   void reflectiveSurface();
   void roughSurface();
