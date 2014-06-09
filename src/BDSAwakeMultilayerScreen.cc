@@ -48,9 +48,11 @@ void BDSAwakeMultilayerScreen::layers(){
 
 
 void BDSAwakeMultilayerScreen::windowLayer(){
-  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),_windowThickness),(G4String)"windowLayer",_windowMaterial.data(),0,0);
-  sl->color(G4Color(0.8,0.8,0.8,0.3));
-  screenLayer(sl);
+  if(_windowThickness>0){
+    BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),_windowThickness),(G4String)"windowLayer",_windowMaterial.data(),0,0);
+    sl->color(G4Color(0.8,0.8,0.8,0.3));
+    screenLayer(sl);
+  }
 }
 
 void BDSAwakeMultilayerScreen::backLayer(){

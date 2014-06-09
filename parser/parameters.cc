@@ -14,7 +14,7 @@ void Parameters::flush() {
   l=0; lset = 0;
   r = 0; rset = 0;
   tscint = 0.0003; tscintset = 0;
-  twindow = 0.0001; twindowset = 0;
+  twindow = 0.0; twindowset = 0;
 
   // materials' parameters
   A = 0; Aset = 0; //g*mol^-1
@@ -129,7 +129,7 @@ void Parameters::inherit_properties(struct Element& e)
   if(!taperlengthset) { taperlength = e.taperlength; taperlengthset = 1; }
 
   if(!tscintset) { tscint = e.tscint; tscintset = 1; }
-  if(!twindowset) { twindow = e.twindow; tscintset = 1; }
+  if(!twindowset) { twindow = e.twindow; twindowset = 1; }
 
   //materials
   if(!Aset) { A = e.A; Aset = 1; }
