@@ -45,9 +45,9 @@ void Sampler::CalculateOpticalFunctions()
      //cuts here
      
      // cut for primaries only
-     if (partID != 2212) continue;
+     //if (partID != 2212) continue;
      // cut for second turn particles
-     if (s > 26580.0) continue;
+     //if (s > 26580.0) continue;
      
      //your function here
      wgt    += 1.0;

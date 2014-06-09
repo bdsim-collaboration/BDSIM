@@ -22,4 +22,9 @@ def Plot(data,keys):
 
     plt.plot(data[:,s],abs(data[:,beta_x]),label=r'$\beta_{x}$')
     plt.plot(data[:,s],abs(data[:,beta_y]),label=r'$\beta_{y}$')
+    
+    plt.xlim(0,np.max(data[:,s]))
+    plt.ylim(0,2000)
+
+    plt.legend()
 
