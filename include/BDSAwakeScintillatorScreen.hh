@@ -91,17 +91,25 @@ private:
   G4double _scoringPlaneThickness;
 
   //Vacuum chamber dimensions
+  G4int _vacChambType;
   G4double _vacWindowHeight;
   G4double _vacMylarThickness;
   G4double _vacKevlarThickness;
   G4double _vacThickness;
-  G4double _vacHeight;
   G4double _vacInnerHeight;
-  G4double _vacWidth;
   G4double _vacInnerWidth;
+  G4double _vacHeight;
   G4double _vacLength;
-  G4double _vacDispX;
 
+  G4double _vacWidth1;
+  G4double _vacDispX1;
+  G4double _vacDispY1;
+  G4double _vacDispZ1;
+
+  G4double _vacWidth2;
+  G4double _vacDispX2;
+  G4double _vacDispY2;
+  G4double _vacDispZ2;
 
   G4VisAttributes* _visAttFront;
   G4VisAttributes* _visAttScint;

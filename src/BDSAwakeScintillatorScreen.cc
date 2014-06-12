@@ -29,6 +29,8 @@ Work in progress.
 //#include "UltraFresnelLens.hh"
 //#include "UltraFresnelLensParameterisation.hh"
 
+#include "G4Trap.hh"
+
 extern BDSSamplerSD* BDSSamplerSensDet;
 extern BDSOutput* bdsOutput;
 
@@ -44,6 +46,7 @@ extern LogVolMap* LogVol;
 BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*BDSGlobalConstants::Instance()->GetPI()/180.0, G4double windowThickness=0, G4String windowMaterial=""):
   BDSAcceleratorComponent(aName, 1.0, 0, 0, 0, SetVisAttributes()),_material(material), _thickness(thickness), _screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
 {
+  _vacChambType=2;
   //Set as part of precision region (for energy loss monitoring)
   itsPrecisionRegion=1;
 
@@ -307,9 +310,12 @@ void BDSAwakeScintillatorScreen::Build(){
       BuildCamera();	
       ComputeDimensions();
       BuildMarkerVolume();
-      //      BuildVacuumChamber1();
+      BuildVacuumChamber1();
+      if(_vacChambType==2){
+	BuildVacuumChamber2();
+      }
       BuildScreenScoringPlane();
-      //      BuildCameraScoringPlane();
+      BuildCameraScoringPlane();
       PlaceScreen();
       //      PlaceCamera();
       if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
@@ -384,20 +390,35 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   G4double x_thi = _totalThickness * std::sin(std::abs(_screenAngle));//Length due to the screen thickness
   
   //Vacuum chamber dimensions.
-  _vacKevlarThickness=0.3*mm;
-  _vacMylarThickness=0.05*mm;
   _vacThickness=2*mm;
   _vacInnerWidth=4*cm;
-  _vacInnerHeight=4*cm;
-  _vacWidth=4*cm+_vacKevlarThickness+_vacMylarThickness+_vacThickness;
-  _vacHeight=4*cm+2*_vacThickness;
-  _vacDispX=-((sqrt(2.0)/2.0)/2.0)*m-_vacWidth/2.0-0.15*mm;
+  _vacInnerHeight=7*cm;
+  _vacHeight=_vacInnerHeight+2*_vacThickness;
+  
+  _vacWidth2=x_wid+x_thi;
+  _vacDispX2=-_vacWidth2/4.0;
+  
+  if(_vacChambType==2){
+    _vacKevlarThickness=1e-30;
+    _vacMylarThickness=1e-30;
+    
+  }else{
+    _vacKevlarThickness=0.3*mm;
+    _vacMylarThickness=0.05*mm;
+  }
+  
+  _vacWidth1=_vacInnerWidth+_vacKevlarThickness+_vacMylarThickness+_vacThickness;
+  _vacDispX1=-((sqrt(2.0)/2.0)/2.0)*m-_vacWidth1/2.0-0.15*mm;
+
+
 
   itsLength  = z_wid + z_thi +_cameraScreenDist;  
-  itsXLength = (x_wid +x_thi+2*_vacWidth)+2*_cameraScreenDist;
+  itsXLength = (x_wid +x_thi+2*_vacWidth1)+2*_cameraScreenDist;
   itsYLength = std::max(_screenHeight,_camera->size().y());
   itsYLength = std::max(itsYLength,50*CLHEP::cm);
   std::cout << __METHOD_NAME__ << " " << itsLength << " " << itsXLength << " " << itsYLength << std::endl;
+
+  _vacDispZ2=(-itsLength)/2.0+(_vacWidth2)/2.0;
 
 
   _vacLength=itsLength;
@@ -433,7 +454,7 @@ void BDSAwakeScintillatorScreen::BuildMarkerVolume(){
 void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
 
 
-  G4VSolid* vacuumOuterSolid = new G4Box("vacuumSolid",_vacWidth/2.0,
+  G4VSolid* vacuumOuterSolid = new G4Box("vacuumSolid",_vacWidth1/2.0,
 					 _vacHeight/2.0, 
 					 _vacLength/2.0);
 
@@ -443,7 +464,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
   G4LogicalVolume* vacuumOuterLog = new G4LogicalVolume(vacuumOuterSolid, BDSMaterials::Instance()->GetMaterial("iron"), "vacuumOuterLog",0,0,0);
 
   new G4PVPlacement(_vacRotationMatrix, 
-		    G4ThreeVector(_vacDispX,0,0), 
+		    G4ThreeVector(_vacDispX1,0,0), 
 		    vacuumOuterLog, 
 		    "awakeScreenOuterVacuumPV", 
 		    itsMarkerLogicalVolume, 
@@ -476,7 +497,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
   G4LogicalVolume* mylarWindowLog = new G4LogicalVolume(mylarWindowSolid, BDSMaterials::Instance()->GetMaterial("G4_MYLAR"), "mylarWindowLog",0,0,0);
 
   new G4PVPlacement(new G4RotationMatrix(), 
-		    G4ThreeVector(_vacWidth/2.0-(_vacMylarThickness+_vacKevlarThickness)/2.0,0,0), 
+		    G4ThreeVector(_vacWidth1/2.0-(_vacMylarThickness+_vacKevlarThickness)/2.0,0,0), 
 		    vacuumWindowLog, 
 		    "awakeScreenVacuumWindowPV", 
 		    vacuumOuterLog, 
@@ -520,6 +541,74 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
 }
 
 void BDSAwakeScintillatorScreen::BuildVacuumChamber2(){
+
+
+
+  G4VSolid* vacuumOuterSolid = new G4Trap("vacuumOuterSolid",
+					  _vacWidth2/2.0,
+					  1.0*(-acos(0.0)+atan(2.0)),
+					  0,
+					  _vacThickness/2.0,
+					  1e-30,1e-30,
+					  0,
+					  _vacThickness/2.0,
+					  _vacWidth2/2.0, _vacWidth2/2.0,
+					  0);
+
+  G4VSolid* vacuumInnerSolid = new G4Trap("vacuumInnerSolid",
+					  _vacWidth2/2.0,
+					  1.0*(-acos(0.0)+atan(2.0)),
+					  0,
+					  _vacInnerHeight/2.0,
+					  1e-30,1e-30,
+					  0,
+					  _vacInnerHeight/2.0,
+					  _vacWidth2/2.0, _vacWidth2/2.0,
+					  0);
+
+
+  G4LogicalVolume* vacuumOuterLog = new G4LogicalVolume(vacuumOuterSolid, BDSMaterials::Instance()->GetMaterial("iron"), "vacuumOuterLog",0,0,0);
+
+  G4LogicalVolume* vacuumInnerLog = new G4LogicalVolume(vacuumInnerSolid, BDSMaterials::Instance()->GetMaterial("vacuum"), "vacuumInnerLog",0,0,0);
+
+  _vacRotationMatrix->rotateY(BDSGlobalConstants::Instance()->GetPI());
+
+  new G4PVPlacement(_vacRotationMatrix, 
+		    G4ThreeVector(_vacDispX2,(_vacHeight+_vacThickness)/2.0,_vacDispZ2), 
+		    vacuumOuterLog, 
+		    "awakeScreenUpperVacuumPV", 
+		    itsMarkerLogicalVolume, 
+		    false, 
+		    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
+		    );
+
+  new G4PVPlacement(_vacRotationMatrix, 
+		    G4ThreeVector(_vacDispX2,-(_vacHeight+_vacThickness)/2.0,_vacDispZ2), 
+		    vacuumOuterLog, 
+		    "awakeScreenLowerVacuumPV", 
+		    itsMarkerLogicalVolume, 
+		    false, 
+		    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
+		    );
+
+  new G4PVPlacement(_vacRotationMatrix, 
+		    G4ThreeVector(_vacDispX2,0,_vacDispZ2), 
+		    vacuumInnerLog, 
+		    "awakeScreenInnerVacuumPV", 
+		    itsMarkerLogicalVolume, 
+		    false, 
+		    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
+		    );
+
+
+  G4VisAttributes* vacVisAttributes=new G4VisAttributes(G4Colour(0.3,0.0,0.4,0.5));
+  vacVisAttributes->SetForceWireframe(true);
+  vacVisAttributes->SetVisibility(true);
+  vacuumOuterLog->SetVisAttributes(vacVisAttributes);
+  vacuumInnerLog->SetVisAttributes(vacVisAttributes);
 
 }
 
