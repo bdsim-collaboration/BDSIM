@@ -14,7 +14,7 @@ void Parameters::flush() {
   l=0; lset = 0;
   r = 0; rset = 0;
   tscint = 0.0003; tscintset = 0;
-  twindow = 0.0; twindowset = 0;
+  twindow = 0; twindowset = 0;
 
   // materials' parameters
   A = 0; Aset = 0; //g*mol^-1
@@ -92,7 +92,7 @@ void Parameters::flush() {
 
   material = ""; materialset = 0;
   scintmaterial = ""; scintmaterialset = 0;
-  windowmaterial = ""; windowmaterialset = 0;
+  windowmaterial = "vacuum"; windowmaterialset = 0;
   airmaterial = ""; airmaterialset = 0;
   tunnelMaterial = ""; tunnelmaterialset = 0;
   tunnelCavityMaterial = ""; tunnelcavitymaterialset = 0;
