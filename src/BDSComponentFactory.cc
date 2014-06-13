@@ -1277,6 +1277,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createAwakeScreen(){
 	
 #ifdef DEBUG 
         G4cout << "---->creating Awake Screen,"
+	       << "twindow = " << _element.twindow*1e3/CLHEP::um << " um"
+	       << "tscint = " << _element.tscint*1e3/CLHEP::um << " um"
+	       << "windowmaterial = " << _element.windowmaterial << " um"
+	       << "scintmaterial = " << _element.scintmaterial << " um"
                << G4endl;
 #endif
 	return (new BDSAwakeScintillatorScreen(_element.name, _element.scintmaterial, _element.tscint*1e3, _element.angle, _element.twindow*1e3, _element.windowmaterial)); //Name
