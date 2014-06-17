@@ -19,10 +19,8 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4UniformMagField.hh"
-#include "BDSField.hh"
 #include "BDSMagField.hh"
 #include "G4CachedMagneticField.hh"
-#include "BDSXYMagField.hh"
 
 #include "G4EqMagElectricField.hh"
 #include "BDSRK4Stepper.hh"

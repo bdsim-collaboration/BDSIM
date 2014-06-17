@@ -12,6 +12,7 @@
 #ifndef BDSMySQLTable_h
 #define BDSMySQLTable_h 1
 
+#include "globals.hh"
 #include <vector>
 
 class BDSMySQLVariable

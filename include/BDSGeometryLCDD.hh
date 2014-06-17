@@ -27,7 +27,6 @@
 #include "G4Trd.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
-#include "BDSMySQLTable.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4MagIntegratorStepper.hh"
@@ -38,7 +37,7 @@
 #include <fstream>
 #include <vector>
 #include <map>
-#include "BDSMagFieldSQL.hh"
+#include "BDSMagField.hh"
 #include "G4TessellatedSolid.hh"
 #include "G4TriangularFacet.hh"
 #include "G4QuadrangularFacet.hh"

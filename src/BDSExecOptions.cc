@@ -1,7 +1,10 @@
 #include "BDSExecOptions.hh"
 
+#include <iomanip>
+
+#include "BDSDebug.hh"
 #include "BDSMaterials.hh"
-#include "BDSOutput.hh"
+#include "BDSOutputFormat.hh"
 
 BDSExecOptions* BDSExecOptions::_instance=0;
 
@@ -74,16 +77,22 @@ void BDSExecOptions::Parse(int argc, char **argv) {
   int OptionIndex = 0;
   int c;
  
-  for(;;) {      
+  for(;;) {
     OptionIndex = 0;
   
+    // see e.g. http://linux.die.net/man/3/getopt
     c = getopt_long(argc, argv, "Vv",
 		    LongOptions, &OptionIndex );
-      
+    
     if ( c == -1 ) // end of options list
       break;
-      
+    
     switch (c) {
+    case '?': // unrecognised option
+      G4cout << "invalid option for command " << argv[0] << G4endl << G4endl << G4endl;
+      Usage();
+      exit(1);
+      break;
     case 0:
       if( !strcmp(LongOptions[OptionIndex].name , "help") ) {
 	Usage();
@@ -188,7 +197,7 @@ void BDSExecOptions::Parse(int argc, char **argv) {
       
     default:
       break;
-    }      
+    }
   } 
 }
 

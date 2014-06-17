@@ -69,23 +69,22 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
   _zHalfAngle->setY(_localZ->y());
   _zHalfAngle->setZ(_localZ->z());
   G4cout << "BDSBeamlineNavigator::addComponent: doing _zHalfAngle" << G4endl;
-  if( var->GetType() == "sbend" || var->GetType() == "rbend"  )
+  if( var->GetType() == "sbend" || var->GetType() == "rbend"  ) {
     G4cout << "BDSBeamlineNavigator::addComponent: bend half angle" << G4endl;
     _zHalfAngle->rotate(angle/2,*_localY);
-
+  }
   
   // target position - advance the coordinates
 
-    G4cout << "BDSBeamlineNavigator::addComponent: advancing coordinates" << G4endl;
+  G4cout << "BDSBeamlineNavigator::addComponent: advancing coordinates" << G4endl;
 
-    *_positionStart = (*_positionEnd);
-    *_position = (*_positionEnd) + (*_zHalfAngle) * ( length/2 );  // The target position is the centre of the component.
-    *_positionEnd = (*_position) + (*_zHalfAngle) * ( length/2 );  // The end position of the component.
-    *_positionFromCurrentCenter = (*_position) - (*_positionEnd)/2.0; //The position of the beam line component from the centre of the CURRENT beam line
+  *_positionStart = (*_positionEnd);
+  *_position = (*_positionEnd) + (*_zHalfAngle) * ( length/2 );  // The target position is the centre of the component.
+  *_positionEnd = (*_position) + (*_zHalfAngle) * ( length/2 );  // The end position of the component.
+  *_positionFromCurrentCenter = (*_position) - (*_positionEnd)/2.0; //The position of the beam line component from the centre of the CURRENT beam line
   
-
   // rotate to the previous reference frame
- G4cout << "BDSBeamlineNavigator::addComponent: rotating" << G4endl;
+  G4cout << "BDSBeamlineNavigator::addComponent: rotating" << G4endl;
   _rotation->transform(*_rotationGlobal);
   _rotation->invert();
   // recompute global rotation

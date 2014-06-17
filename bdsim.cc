@@ -43,7 +43,7 @@
 #include <ctime>
 #include <unistd.h>
 #include <getopt.h>
-
+#include <signal.h>
 
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
@@ -54,7 +54,9 @@
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRunAction.hh"
 #include "BDSSamplerSD.hh"
-#include "BDSSteppingAction.hh"
+#include "BDSThresholdCutSteppingAction.hh"
+#include "BDSTwissSteppingAction.hh"
+#include "BDSVerboseSteppingAction.hh"
 #include "BDSStackingAction.hh"
 #include "BDSUserTrackingAction.hh"
 #include "BDSRunManager.hh"
@@ -89,7 +91,21 @@ BDSSamplerSD* BDSSamplerSensDet; // sampler
 //=======================================================
 
 extern Options options;
-#define DEBUG 1
+
+void BDS_handle_aborts(int signal_number) {
+  /** 
+      Try to catch exit signals. This is not guaranteed to work.
+      Main goal is to close output stream / files.
+  */
+
+  std::cout << "BDSIM is about to crash or was interrupted! " << std::endl;
+  std::cout << "With signal: " << strsignal(signal_number) << std::endl;
+  std::cout << "Trying to write and close output file" << std::endl;
+  bdsOutput->Write();
+  std::cout << "Ave, Imperator, morituri te salutant!" << std::endl;
+  exit(1);
+}
+
 int main(int argc,char** argv) {
 
   /* Executable command line options reader object */
@@ -124,18 +140,6 @@ int main(int argc,char** argv) {
 #endif  
 
   bdsBunch.SetOptions(options);
-
-  //
-  // set default output formats:
-  //
-#ifdef DEBUG
-  G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
-#endif  
-
-  bdsOutput = new BDSOutput();
-  bdsOutput->SetFormat(BDSExecOptions::Instance()->GetOutputFormat());
-  G4cout.precision(10);
-
 
   //
   // initialize random number generator
@@ -239,7 +243,16 @@ int main(int argc,char** argv) {
 #ifdef DEBUG 
   G4cout << __FUNCTION__ << "> User action - steppingaction"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSSteppingAction);
+  if(BDSGlobalConstants::Instance()->DoTwiss()){
+    runManager->SetUserAction(new BDSTwissSteppingAction);
+  }
+  if((BDSExecOptions::Instance()->GetVerboseStep() || BDSExecOptions::Instance()->GetVerboseEventNumber() != -1) && (!BDSGlobalConstants::Instance()->GetSynchRescale()) ) {
+    runManager->SetUserAction(new BDSVerboseSteppingAction);
+  }
+
+  if (BDSGlobalConstants::Instance()->GetThresholdCutPhotons() > 0 || BDSGlobalConstants::Instance()->GetThresholdCutCharged() > 0) {
+    runManager->SetUserAction(new BDSThresholdCutSteppingAction);
+  }
 
 #ifdef DEBUG 
   G4cout << __FUNCTION__ << "> User action - trackingaction"<<G4endl;
@@ -256,9 +269,7 @@ int main(int argc,char** argv) {
 #endif
   runManager->SetUserAction(new BDSPrimaryGeneratorAction(detector));
 
-
-
-  G4TransportationManager::GetTransportationManager()->GetPropagatorInField()->SetLargestAcceptableStep(1*CLHEP::cm);
+  
 
   //
   // Initialize G4 kernel
@@ -297,8 +308,21 @@ int main(int argc,char** argv) {
     return 1;
   }
 
-  bdsOutput->Init(0); // activate the output - setting the first filename to 
-                     // be appended with _0
+  //
+  // set default output formats:
+  //
+#ifdef DEBUG
+  G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
+#endif  
+
+  bdsOutput = new BDSOutput(BDSExecOptions::Instance()->GetOutputFormat());
+  G4cout.precision(10);
+
+  // catch aborts to close output stream/file. perhaps not all are needed.
+  signal(SIGABRT, &BDS_handle_aborts); // aborts
+  signal(SIGTERM, &BDS_handle_aborts); // termination requests
+  signal(SIGSEGV, &BDS_handle_aborts); // segfaults
+  signal(SIGINT, &BDS_handle_aborts); // interrupts
 
   //
   // Write survey file
@@ -410,11 +434,11 @@ int main(int argc,char** argv) {
   //   defined by the user in the gmad input file
   //
 
-  G4UIsession* session=0;
-  G4VisManager* visManager=0;
  
-  if(!BDSExecOptions::Instance()->GetBatch())   // Interactive mode
+if(!BDSExecOptions::Instance()->GetBatch())   // Interactive mode
     {
+      G4UIsession* session=0;
+      G4VisManager* visManager=0;
 #ifdef G4UI_USE_TCSH
       session = new G4UIterminal(new G4UItcsh);
 #else

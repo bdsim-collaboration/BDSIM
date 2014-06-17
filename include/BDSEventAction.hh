@@ -52,7 +52,6 @@ private:
   G4String                    drawFlag;
   
   G4int printModulo;
-  G4int itsOutputFileNumber;
   G4int itsRecordSize;
 
   G4VTrajectory* Traj;

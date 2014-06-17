@@ -10,13 +10,10 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSSampler.hh"
 #include "G4Box.hh"
-#include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
-#include "BDSOutput.hh"
+//#include "BDSOutput.hh"
 #include "BDSSamplerSD.hh"
 #include "G4SDManager.hh"
 
@@ -31,14 +28,16 @@ extern LogVolMap* LogVol;
 
 extern BDSSamplerSD* BDSSamplerSensDet;
 
-extern BDSOutput* bdsOutput;
+std::vector <G4String> BDSSampler::outputNames;
+
+//extern BDSOutput* bdsOutput;
 //============================================================
 
 int BDSSampler::nSamplers = 0;
 
 int BDSSampler::GetNSamplers() { return nSamplers; }
 
-void BDSSampler::AddExternalSampler() { nSamplers++; }
+void BDSSampler::AddExternalSampler(G4String name) { nSamplers++; outputNames.push_back(name); }
 
 BDSSampler::BDSSampler (G4String aName,G4double aLength):
   BDSAcceleratorComponent(

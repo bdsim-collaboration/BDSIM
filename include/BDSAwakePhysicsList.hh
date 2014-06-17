@@ -4,6 +4,7 @@
 #include "G4VModularPhysicsList.hh"
 #include "G4OpticalPhysics.hh"
 #include "G4EmPenelopePhysics.hh"
+#include "BDSDebug.hh"
 
 class BDSAwakePhysicsList: public G4VModularPhysicsList
 {

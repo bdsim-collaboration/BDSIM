@@ -56,7 +56,7 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
   } while ( buffer[1]!='0');
   
   // Read in the data
-  double xval,yval,zval,bx,by,bz;
+  double xval=0.0,yval=0.0,zval=0.0,bx,by,bz;
   //  double permeability; // Not used in this example.
   for (ix=0; ix<nx; ix++) {
     for (iy=0; iy<ny; iy++) {

@@ -1,3 +1,4 @@
+#include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSGeometrySQL.hh"
@@ -24,7 +25,6 @@
 #include "G4SDManager.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSampler.hh"
-#include "BDSOutput.hh"
 #include "BDSPCLTube.hh"
 #include <vector>
 #include <cstdlib>
@@ -33,7 +33,6 @@
 
 extern BDSSamplerSD* BDSSamplerSensDet;
 
-extern BDSOutput* bdsOutput;
 //extern BDSGlobalConstants* BDSGlobalConstants::Instance();
 
 BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength):
@@ -625,10 +624,8 @@ G4LogicalVolume* BDSGeometrySQL::BuildSampler(BDSMySQLTable* aSQLTable, G4int k)
     SDMan->AddNewDetector(BDSSamplerSensDet);
   }
   aSamplerVol->SetSensitiveDetector(BDSSamplerSensDet);
-  //SPM bdsOutput->nSamplers++;
-  BDSSampler::AddExternalSampler();
-  bdsOutput->SampName.push_back(BDSGlobalConstants::Instance()->StringFromInt(
-									      BDSSampler::GetNSamplers())+"_"+_Name+"_1");
+
+  BDSSampler::AddExternalSampler(BDSGlobalConstants::Instance()->StringFromInt(BDSSampler::GetNSamplers())+"_"+_Name+"_1");
   
   return aSamplerVol;
 }

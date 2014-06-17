@@ -1,5 +1,5 @@
 //Based on the Geant4 example examples/advanced/purging_magnet/src/PurgMagTabulatedField3D.cc
-#include "G4MagneticField.hh"
+//#include "G4MagneticField.hh"
 #include "G4ios.hh"
 #include "BDSMagField.hh"
 

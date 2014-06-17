@@ -233,6 +233,9 @@ public:
   const G4AffineTransform* GetRefTransform();
   void                     SetRefTransform(G4AffineTransform& aTransform);
 
+  G4double GetZMax();
+  void SetZMax(G4double);
+
   // SPM : temp filestream for placet to read and write
   //  std::ofstream fileDump;
   // ifstream fileRead; replaced with FILE* fifo in code for consistency with Placet. SPM
@@ -240,6 +243,7 @@ public:
   std::deque<BDSParticle> holdingQueue;
   std::deque<BDSParticle> outputQueue;
   std::deque<BDSParticle> transformedQueue;
+  /// queue to store global times of reference bunches in BDSDumps
   std::deque<G4double*> referenceQueue;
   /// particles are reference bunches
   G4bool isReference;
@@ -400,6 +404,8 @@ private:
   G4String itsRefVolume;
   G4int itsRefCopyNo;
   G4AffineTransform itsRefTransform;
+  /// beamline length
+  G4double itsZMax;
 };
 
 inline G4double BDSGlobalConstants::GetElossHistoBinWidth(){
@@ -878,6 +884,9 @@ inline G4int BDSGlobalConstants::GetRefCopyNo() { return itsRefCopyNo; }
 inline const G4AffineTransform* BDSGlobalConstants::GetRefTransform() { return &itsRefTransform; }
 inline void BDSGlobalConstants::SetRefTransform(G4AffineTransform& aTransform)
 {itsRefTransform=aTransform;}
+
+inline G4double BDSGlobalConstants::GetZMax() {return itsZMax;}
+inline void BDSGlobalConstants::SetZMax(G4double zm){itsZMax=zm;}
 
 #endif
 

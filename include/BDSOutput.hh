@@ -4,17 +4,12 @@
 #ifndef BDSOutput_h
 #define BDSOutput_h 
 
-#include "BDSGlobalConstants.hh"
-#include "BDSSampler.hh"
+#include "BDSEnergyCounterHit.hh"
+#include "BDSOutputFormat.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSTypeSafeEnum.hh"
 #include "BDSEnergyCounterHit.hh"
-
-#include "BDSLWCalorimeter.hh"
-#include "BDSLWCalorimeterHit.hh"
 #include "BDSCCDPixelHit.hh"
-
-#include "G4TrajectoryContainer.hh"
 #include "G4Trajectory.hh"
 
 #include <fstream>
@@ -23,44 +18,36 @@
 #ifdef USE_ROOT
 #include "TROOT.h"
 #include "TH1F.h"
-#include "TNtuple.h"
 #include "TFile.h"
 #include "TTree.h"
 
+
 #endif
-
-struct BDSOutputFormatDef {
-  enum type {
-    _ASCII = 0,
-    _ROOT = 1
-    //, _ASCII_ROOT = 2
-  };
-};
-
-typedef BDSTypeSafeEnum<BDSOutputFormatDef,int> BDSOutputFormat;
 
 class BDSOutput {
 
 public: 
 
-  BDSOutput(); // default constructor
   BDSOutput(BDSOutputFormat format);
 
-  void SetFormat(BDSOutputFormat format);
-  void Init(G4int FileNum);
   ~BDSOutput();
 
   void WriteHits(BDSSamplerHitsCollection*);
-  void WriteEnergyLoss(BDSEnergyCounterHitsCollection*);
   void WriteCCDHits(BDSCCDPixelHitsCollection*);
-  //  G4int WriteTrajectory(TrajectoryVector* TrajVec);
-  G4int WriteTrajectory(std::vector<G4VTrajectory*> TrajVec);
+  void WriteEnergyLoss(BDSEnergyCounterHitsCollection*);
+  G4int WriteTrajectory(std::vector<G4VTrajectory*> &TrajVec);
 
   G4int Commit(); //G4int FileNum);   // close the event
   void Write();           // close the event
+  void WritePrimary(G4String, G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int, G4int);
 
-  // for root output
+private:
+  BDSOutput(); // default constructor, not used
+  void SetFormat(BDSOutputFormat format);
+  void Init();
+
 #ifdef USE_ROOT
+  // for root output
   void BuildSamplerTree(G4String name);
   TFile* theRootOutputFile;
   //  TTree *theLWCalorimeterTree;
@@ -72,14 +59,10 @@ public:
   TH1F *CCDCameraHisto;
 #endif
 
-  G4int nSamplers;
   G4double zMax, transMax; //Maximum values of longitudinal and transverse global position
   std::vector <G4String> SampName;
   std::vector <G4String> CSampName;
 
-  std::vector <G4String> CameraName;
-
-  void WritePrimary(G4String, G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int, G4int);
 
 
 private:
@@ -98,8 +81,6 @@ private:
   float x_el_p,y_el_p,z_el_p,E_el_p;
   int part_el_p, weight_el_p;
   char volumeName_el_p[100];
-  float weight_ccd;
-  int npixel_ccd;
 
   void WriteRootHit(G4String Name, G4double InitMom, G4double InitX, G4double InitY, G4double InitZ, G4double InitXPrime, G4double InitYPrime, G4double InitZPrime, G4double InitT, G4double Mom, G4double X, G4double Y, G4double Z, G4double XPrime, G4double YPrime, G4double ZPrime, G4double T, G4double GlobalX, G4double GlobalY, G4double GlobalZ, G4double GlobalXPrime, G4double GlobalYPrime, G4double GlobalZPrime, G4double S, G4double Weight, G4int PDGtype, G4int EventNo, G4int ParentID, G4int TrackID);
 #endif

@@ -139,11 +139,8 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
   itsCameraScoringPlaneLog2->SetSensitiveDetector(BDSSamplerSensDet);
   //SPM bdsOutput->nSamplers++;
-  BDSSampler::AddExternalSampler();
-  bdsOutput->SampName.push_back(_samplerName+"_1");
-  BDSSampler::AddExternalSampler();
-  bdsOutput->SampName.push_back(_samplerName2+"_1");
-
+  BDSSampler::AddExternalSampler(_samplerName+"_1");
+  BDSSampler::AddExternalSampler(_samplerName2+"_1");
 
   _samplerName3 = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_scoringPlaneName+"_3");
   _samplerName4 = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_scoringPlaneName+"_4");
@@ -176,12 +173,8 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   (*LogVol)[_samplerName4]=itsCameraScoringPlaneLog4;
   itsCameraScoringPlaneLog3->SetSensitiveDetector(BDSSamplerSensDet);
   itsCameraScoringPlaneLog4->SetSensitiveDetector(BDSSamplerSensDet);
-  BDSSampler::AddExternalSampler();
-  bdsOutput->SampName.push_back(_samplerName3+"_1");
-  BDSSampler::AddExternalSampler();
-  bdsOutput->SampName.push_back(_samplerName4+"_1");
-
-
+  BDSSampler::AddExternalSampler(_samplerName3+"_1");
+  BDSSampler::AddExternalSampler(_samplerName4+"_1");
 
   _samplerName5 = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_scoringPlaneName+"_5");
   _samplerName6 = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_scoringPlaneName+"_6");
@@ -214,13 +207,8 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   (*LogVol)[_samplerName6]=itsCameraScoringPlaneLog6;
   itsCameraScoringPlaneLog5->SetSensitiveDetector(BDSSamplerSensDet);
   itsCameraScoringPlaneLog6->SetSensitiveDetector(BDSSamplerSensDet);
-  BDSSampler::AddExternalSampler();
-  bdsOutput->SampName.push_back(_samplerName5+"_1");
-  BDSSampler::AddExternalSampler();
-  bdsOutput->SampName.push_back(_samplerName6+"_1");
-
-
-
+  BDSSampler::AddExternalSampler(_samplerName5+"_1");
+  BDSSampler::AddExternalSampler(_samplerName6+"_1");
 
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
@@ -292,11 +280,9 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
   itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSamplerSensDet);
   //SPM bdsOutput->nSamplers++;
   //--
-  BDSSampler::AddExternalSampler();
-  bdsOutput->SampName.push_back(_screenSamplerName+"_1");
+  BDSSampler::AddExternalSampler(_screenSamplerName+"_1");
   //----------
-  BDSSampler::AddExternalSampler();
-  bdsOutput->SampName.push_back(_screenSamplerName2+"_1");
+  BDSSampler::AddExternalSampler(_screenSamplerName2+"_1");
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
   G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();

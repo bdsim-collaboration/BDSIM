@@ -9,6 +9,7 @@
 
 #include "G4UserRunAction.hh"
 #include "globals.hh"
+#include "time.h"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -23,6 +24,10 @@ public:
 public:
   void BeginOfRunAction(const G4Run*);
   void EndOfRunAction(const G4Run*);
+
+private:
+  time_t starttime;
+  time_t stoptime;
 };
 
 #endif

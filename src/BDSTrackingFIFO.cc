@@ -1,4 +1,7 @@
 #include "BDSTrackingFIFO.hh"
+
+#include <cstdio>
+
 #include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
 #include "BDSDump.hh"
@@ -6,6 +9,10 @@
 
 #include "G4StackManager.hh"
 #include "G4EventManager.hh"
+
+#if defined(__unix__) || defined(__linux__) || defined(__APPLE__)
+#include <unistd.h> // for sleep, will not work on windows?
+#endif
 
 BDSTrackingFIFO::BDSTrackingFIFO(){
   _fifo=NULL;

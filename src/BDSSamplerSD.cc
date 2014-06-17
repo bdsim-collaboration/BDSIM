@@ -20,7 +20,7 @@
 #include "G4VTouchable.hh"
 #include "G4TouchableHistory.hh"
 #include "G4ios.hh"
-#include "G4RotationMatrix.hh"
+//#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 
 #include "G4AffineTransform.hh"
@@ -55,6 +55,7 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
 {
   // Create Sampler hits collection
   SamplerCollection = new BDSSamplerHitsCollection(SensitiveDetectorName,itsCollectionName);
+
   // Record id for use in EventAction to save time
   if (itsHCID < 0){
     itsHCID = G4SDManager::GetSDMpointer()->GetCollectionID(itsCollectionName);}
@@ -77,7 +78,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   if(BDSGlobalConstants::Instance()->DoTwiss() || BDSGlobalConstants::Instance()->isReference) return false;
   //Do not store hit if the particle is not on the boundary 
   if(preStepPoint->GetStepStatus()!=fGeomBoundary) return false;
-  
+
   //unique ID of track
   G4int TrackID = theTrack->GetTrackID();
   //unique ID of track's mother
