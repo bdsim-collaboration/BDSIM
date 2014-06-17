@@ -42,7 +42,7 @@ typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
 //============================================================
-
+#define DEBUG 1
 BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*BDSGlobalConstants::Instance()->GetPI()/180.0, G4double windowThickness=0, G4String windowMaterial=""):
   BDSAcceleratorComponent(aName, 1.0, 0, 0, 0, SetVisAttributes()),_material(material), _thickness(thickness), _screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
 {
@@ -341,8 +341,10 @@ void BDSAwakeScintillatorScreen::BuildScreen()
 }
 
 void BDSAwakeScintillatorScreen::PlaceScreen(){
+  double zOffset = 0;//_totalThickness*cos(_screenAngle)/2.0;
+  double xOffset = -_totalThickness*sin(_screenAngle)/2.0;
   _mlScreen->place(_screenRotationMatrix,
-		   G4ThreeVector(0,0,-_cameraScreenDist/2.0),
+		   G4ThreeVector(xOffset,0,-_cameraScreenDist/2.0+zOffset),
 		   itsMarkerLogicalVolume
 		   );
 }
@@ -381,7 +383,7 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   _vacInnerHeight=7*cm;
   _vacHeight=_vacInnerHeight+2*_vacThickness;
   
-  _vacWidth2=x_wid+x_thi;
+  _vacWidth2=x_wid;
   _vacDispX2=-_vacWidth2/4.0;
   
   if(_vacChambType==2){
@@ -427,6 +429,7 @@ void BDSAwakeScintillatorScreen::BuildMarkerVolume(){
      itsName+"_marker_log");
   G4VisAttributes* visAtt = new G4VisAttributes(G4Color(0,1,0));
   visAtt->SetForceWireframe(true);
+  visAtt->SetVisibility(true);
   itsMarkerLogicalVolume->SetVisAttributes(visAtt);
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
