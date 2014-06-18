@@ -87,7 +87,7 @@ void BDSMultilayerScreen::placeLayers(){
     _screenLayers[i]->phys(new G4PVPlacement((G4RotationMatrix*)NULL,  //Create a new physical volume placement for each groove in the screen.
 					     pos,
 					     _screenLayers[i]->log(),
-					     (G4String)(_name+"_"+_screenLayers[i]->name()),
+					     (G4String)(_screenLayers[i]->name()),
 					     _log,
 					     false,
 					     0,

@@ -190,9 +190,8 @@ void BDSScreenLayer::InternalMirror::compute(){
 }
 
 void BDSScreenLayer::sampler(){ //Make this layer a sampler scoring plane
-  G4int nThisSampler = BDSSampler::GetNSamplers() + 1; //Get the number of this sampler.
-  G4String samplerName = "Sampler_" + BDSGlobalConstants::Instance()->StringFromInt(nThisSampler) + "_" + _name;
-  (*LogVol)[samplerName] = _log;//Add to the map of logical volumes.
+  (*LogVol)[_name] = _log;//Add to the map of logical volumes.
+  G4String samplerName = _name + "_1";
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
 
   if(BDSSampler::GetNSamplers()==0){

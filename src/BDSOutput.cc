@@ -10,6 +10,7 @@
 #include "BDSTypeSafeEnum.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSCCDPixelHit.hh"
+#include "BDSDebug.hh"
 #include "G4Trajectory.hh"
 
 #include <fstream>

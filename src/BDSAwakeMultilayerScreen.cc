@@ -7,6 +7,7 @@
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
 #include "G4LogicalSkinSurface.hh"
+#include "BDSSampler.cc"
 
 BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double dgrain, G4double windowThickness, G4String windowMaterial):
   BDSMultilayerScreen(G4TwoVector(1*m,3*cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(thickness), _dgrain(dgrain), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
@@ -30,7 +31,7 @@ void BDSAwakeMultilayerScreen::layers(){
   _gapSpacing=1*mm;
   preWindowSampler();
   windowLayer();
-  //  preScreenSampler();
+  preScreenSampler();
   backLayer();
    substrateLayer();
   if(_firstLayerThickness>1e-9){
@@ -45,17 +46,30 @@ void BDSAwakeMultilayerScreen::layers(){
   frontScintillatorLayer1();
   frontScintillatorLayer2();
   frontLayer();
-  //  postScreenSampler();
+  postScreenSampler();
   build();
 }
 
-void BDSAwakeMultilayerScreen::preWindowSampler(){
-  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),1*CLHEP::um),(G4String)"presWindowSampler","vacuum",0,0);
-    sl->color(G4Color(1.0,0.0,0.0,0.3));
-    sl->sampler();
-    screenLayer(sl);
+void BDSAwakeMultilayerScreen::sampler(G4String name){
+  G4int nThisSampler = BDSSampler::GetNSamplers()+1;
+  G4String samplerName = "Sampler_" + BDSGlobalConstants::Instance()->StringFromInt(nThisSampler) + "_" + name;
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),1*CLHEP::um),samplerName,"vacuum",0,0);
+  sl->color(G4Color(1.0,0.0,0.0,0.3));
+  sl->sampler();
+  screenLayer(sl);
 }
 
+void BDSAwakeMultilayerScreen::preWindowSampler(){
+  sampler((G4String)"preWindowSampler");
+}
+
+void BDSAwakeMultilayerScreen::preScreenSampler(){
+  sampler((G4String)"preScreenSampler");
+}
+
+void BDSAwakeMultilayerScreen::postScreenSampler(){
+  sampler((G4String)"postScreenSampler");
+}
 
 void BDSAwakeMultilayerScreen::windowLayer(){
   if(_windowThickness>0){
@@ -64,6 +78,7 @@ void BDSAwakeMultilayerScreen::windowLayer(){
     screenLayer(sl);
   }
 }
+
 
 void BDSAwakeMultilayerScreen::backLayer(){
   BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),10*um),(G4String)"backingLayer","cellulose",0,0);
