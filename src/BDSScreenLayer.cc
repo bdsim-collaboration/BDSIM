@@ -16,8 +16,20 @@
 #include "G4Version.hh"
 #include "parser/gmad.h"
 
+#include "BDSOutput.hh"
+
+extern BDSSamplerSD* BDSSamplerSensDet;
+extern BDSOutput* bdsOutput;
 
 //============================================================
+typedef std::map<G4String,int> LogVolCountMap;
+extern LogVolCountMap* LogVolCount;
+
+typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
+extern LogVolMap* LogVol;
+
+//============================================================
+
 BDSScreenLayer::BDSScreenLayer(){
 }
 
@@ -176,6 +188,29 @@ void BDSScreenLayer::InternalMirror::compute(){
   
   G4double _pos = sign*(_motherSize.z()/2.0-_thickness/2.0);
 }
+
+void BDSScreenLayer::sampler(){ //Make this layer a sampler scoring plane
+  G4int nThisSampler = BDSSampler::GetNSamplers() + 1; //Get the number of this sampler.
+  G4String samplerName = "Sampler_" + BDSGlobalConstants::Instance()->StringFromInt(nThisSampler) + "_" + _name;
+  (*LogVol)[samplerName] = _log;//Add to the map of logical volumes.
+  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
+
+  if(BDSSampler::GetNSamplers()==0){
+    BDSSamplerSensDet = new BDSSamplerSD(samplerName, "plane");
+    SDMan->AddNewDetector(BDSSamplerSensDet);
+  }
+  _log->SetSensitiveDetector(BDSSamplerSensDet);
+  BDSSampler::AddExternalSampler(samplerName);
+
+#ifndef NOUSERLIMITS
+  G4double maxStepFactor=0.5;
+  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
+  itsScoringPlaneUserLimits->SetMaxAllowedStep(_size.z()*maxStepFactor);
+  _log->SetUserLimits(itsScoringPlaneUserLimits);
+#endif
+}
+
+
 
 BDSScreenLayer::~BDSScreenLayer(){
 }

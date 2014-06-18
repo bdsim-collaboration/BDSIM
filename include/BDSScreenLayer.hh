@@ -5,6 +5,7 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSMaterials.hh"
 #include "BDSSamplerSD.hh"
+#include "BDSSampler.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
 
@@ -31,6 +32,7 @@ public:
   void color(G4Color col);
   void backInternalMirror();
   void frontInternalMirror();
+  void sampler(); //make this plane a sampling plane
 
 protected:
   BDSScreenLayer();
