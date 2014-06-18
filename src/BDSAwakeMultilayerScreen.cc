@@ -28,9 +28,11 @@ BDSAwakeMultilayerScreen::~BDSAwakeMultilayerScreen(){
 void BDSAwakeMultilayerScreen::layers(){
   _gapWidth=0*1e-3*mm;
   _gapSpacing=1*mm;
+  preWindowSampler();
   windowLayer();
+  //  preScreenSampler();
   backLayer();
-  substrateLayer();
+   substrateLayer();
   if(_firstLayerThickness>1e-9){
     backBinderLayer();
     backScintillatorLayer();
@@ -43,7 +45,15 @@ void BDSAwakeMultilayerScreen::layers(){
   frontScintillatorLayer1();
   frontScintillatorLayer2();
   frontLayer();
+  //  postScreenSampler();
   build();
+}
+
+void BDSAwakeMultilayerScreen::preWindowSampler(){
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),1*CLHEP::um),(G4String)"presWindowSampler","vacuum",0,0);
+    sl->color(G4Color(1.0,0.0,0.0,0.3));
+    sl->sampler();
+    screenLayer(sl);
 }
 
 

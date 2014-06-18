@@ -89,7 +89,7 @@ BDSSamplerSD* BDSSamplerSensDet; // sampler
 //=======================================================
 
 //=======================================================
-
+#define DEBUG 1
 extern Options options;
 
 void BDS_handle_aborts(int signal_number) {
@@ -489,9 +489,9 @@ if(!BDSExecOptions::Instance()->GetBatch())   // Interactive mode
   delete bdsOutput;
 
 #ifdef DEBUG
-  G4cout << __FUNCTION__ << "> BDSBeamline deleting..."<<G4endl;
+  //  G4cout << __FUNCTION__ << "> BDSBeamline deleting..."<<G4endl;
 #endif
-  delete BDSBeamline::Instance();
+  //  delete BDSBeamline::Instance();
 
 #ifdef DEBUG 
   G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;

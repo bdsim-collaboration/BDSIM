@@ -13,6 +13,7 @@ public:
 private:
   typedef BDSMultilayerScreen super;
   void layers();
+  void preWindowSampler();
   void windowLayer();
   void backLayer();
   void substrateLayer();
