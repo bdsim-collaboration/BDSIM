@@ -192,6 +192,11 @@ public:
   void     setReadFromStack(G4bool flag);
   G4bool   getReadFromStack();
   G4String GetFifo();
+  G4int    GetTurnsTaken();
+  void     IncrementTurnNumber();
+  void     ResetTurnNumber();
+  G4int    GetTurnsToTake();
+  void     SetTurnsToTake(G4int TurnsToTake);
 
   G4AffineTransform GetDumpTransform();
   void              SetDumpTransform(G4AffineTransform tf);
@@ -368,6 +373,8 @@ private:
   G4AffineTransform itsRefTransform;
   G4int    itsTurnsTaken;
   G4int    itsTurnsToTake;
+  // beamline length
+  G4double itsZMax;
 };
 
 inline G4double BDSGlobalConstants::GetElossHistoBinWidth()
@@ -826,6 +833,9 @@ inline G4int BDSGlobalConstants::GetTurnsToTake()
 
 inline void  BDSGlobalConstants::SetTurnsToTake(G4int TurnsToTake)
 {itsTurnsToTake = TurnsToTake;}
+
+inline G4double BDSGlobalConstants::GetZMax() {return itsZMax;}
+inline void BDSGlobalConstants::SetZMax(G4double zm){itsZMax=zm;}
 
 // UNUSED INLINE FUNCTIONS
 
