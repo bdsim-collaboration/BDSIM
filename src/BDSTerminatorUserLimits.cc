@@ -15,6 +15,7 @@ of the ring after a certain number of turns.
 #include "BDSTerminatorUserLimits.hh"
 #include "G4UserLimits.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSExecOptions.hh"
 
 // basic inheritance - just use everything normally from G4UserLimits but 
 // replace one function in inherited class
@@ -29,7 +30,9 @@ BDSTerminatorUserLimits::BDSTerminatorUserLimits(G4double ustepMax,
 		 utimeMax,
 		 uekinMin,
 		 urangMin), keeprunningEK(0.0), stoprunningEK(DBL_MAX)
-{;}
+{
+  verbose = BDSExecOptions::Instance()->GetVerbose();
+}
 
 BDSTerminatorUserLimits::BDSTerminatorUserLimits(const G4String& type,
 						 G4double ustepMax,
@@ -43,16 +46,18 @@ BDSTerminatorUserLimits::BDSTerminatorUserLimits(const G4String& type,
 	       utimeMax,
 	       uekinMin,
 	       urangMin), keeprunningEK(0.0), stoprunningEK(DBL_MAX)
-{;}
+{
+  verbose = BDSExecOptions::Instance()->GetVerbose();
+}
 
 inline G4double BDSTerminatorUserLimits::GetUserMinEkine(const G4Track&)
 {
   // does the number of turns passed == number of turns to take
-if (BDSGlobalConstants::Instance()->GetTurnNumber() == BDSGlobalConstants::Instance()->GetNTurns())
+if (BDSGlobalConstants::Instance()->GetTurnsTaken() == BDSGlobalConstants::Instance()->GetTurnsToTake())
     {
-      //#ifdef DEBUG
-      G4cout << "Requested number of turns completed - stopping all particles" << G4endl;
-      //#endif
+      if (verbose){
+	G4cout << "Requested number of turns completed - stopping all particles" << G4endl;
+      }
       return stoprunningEK;
     } // yes - stop: return DBL_MAX eV so no particles will be tracked
   else

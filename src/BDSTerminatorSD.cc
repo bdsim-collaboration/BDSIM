@@ -20,7 +20,7 @@
 BDSTerminatorSD::BDSTerminatorSD(G4String name)
   :G4VSensitiveDetector(name), itsHCID(-1)
 {
-  itsverbose  = BDSExecOptions::Instance()->GetVerbose();
+  verbose  = BDSExecOptions::Instance()->GetVerbose();
   collectionName.insert("Terminator_"+name);
 }
 
@@ -31,18 +31,31 @@ void BDSTerminatorSD::Initialize(G4HCofThisEvent* HCE)
 {
   if (itsHCID < 0)
     {itsHCID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);}
-  BDSGlobalConstants::Instance()->ResetTurnNumber();						
+  BDSGlobalConstants::Instance()->ResetTurnNumber();
+  //we don't actually use HCE here as we don't need to log any of the particle info
 }
 
 G4bool BDSTerminatorSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
   
-  //#ifdef DEBUG
-  G4cout << "Number of turns to take: " << BDSGlobalConstants::Instance()->GetNTurns() << G4endl;
-  G4cout << "Number of turns taken:   " << BDSGlobalConstants::Instance()->GetTurnNumber() << G4endl;
-  G4cout << "Incrementing turn number " << G4endl;
-  //#endif
-  BDSGlobalConstants::Instance()->IncrementTurnNumber();
+  if (verbose){
+    G4cout << "Number of turns to take: " << BDSGlobalConstants::Instance()->GetTurnsToTake() << G4endl;
+    G4cout << "Number of turns taken:   " << BDSGlobalConstants::Instance()->GetTurnsTaken() << G4endl;
+    G4cout << "Incrementing turn number " << G4endl;
+  }
+  theTrack = aStep->GetTrack();
+  if (theTrack->GetParentID() == 0){
+    //this is a primary track
+    //should only increment turn number for primaries
+    #ifdef DEBUG
+    G4cout << __METHOD_NAME__ << " primary particle - incrementing turn number" << G4endl;
+    #endif
+    BDSGlobalConstants::Instance()->IncrementTurnNumber();
+  }
+  #ifdef DEBUG
+  else
+    {G4cout << __METHOD_NAME__ << " secondary particle - not incrementing turn number" << G4endl;}
+  #endif
   return true;
 }
 

@@ -224,7 +224,7 @@ void BDSExecOptions::Usage() {
 	<<"--outline_type=<fmt>  : type of outline format"<<G4endl
 	<<"                        where fmt = optics | survey"<<G4endl
 	<<"--materials           : list materials included in bdsim by default"<<G4endl
-	<<"--circular            : assume circular machine - symplectic tracking plus turn control"<<G4endl;
+	<<"--circular            : assume circular machine - turn control"<<G4endl;
 }
 
 void BDSExecOptions::Print() {

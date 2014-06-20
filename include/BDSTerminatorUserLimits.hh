@@ -35,6 +35,7 @@ public:
   // where we only set the limit to E=0 eV on the
   // last turn
   virtual G4double GetUserMinEkine(const G4Track&);
+  G4bool verbose;
 
 protected:
   G4double keeprunningEK; // minimum energy particle must have to keep going
