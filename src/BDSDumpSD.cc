@@ -13,7 +13,6 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSDumpSD.hh"
-#include "BDSDump.hh"
 #include "BDSDebug.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4LogicalVolume.hh"
@@ -70,7 +69,8 @@ G4bool BDSDumpSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 	     << " Time: " << referenceTime << G4endl;
 #endif
       
-      if(nCounter==BDSDump::GetNumberOfDumps()){
+      if(nCounter==BDSGlobalConstants::Instance()->referenceQueue.size()){ 
+	// ( BDSDump::GetNumberOfDumps() )
 	nCounter=0;
 	++trackCounter;
 	lastVolume="";
@@ -107,9 +107,9 @@ void BDSDumpSD::DrawAll(){}
 
 void BDSDumpSD::PrintAll(){} 
 
-G4int BDSDumpSD::nCounter = 0; 
+unsigned int BDSDumpSD::nCounter = 0; 
 
-G4int BDSDumpSD::trackCounter = 0; 
+unsigned int BDSDumpSD::trackCounter = 0; 
 
 G4String BDSDumpSD::lastVolume = "";
 

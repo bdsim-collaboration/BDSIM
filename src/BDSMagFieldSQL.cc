@@ -119,7 +119,7 @@ void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
 	    NPoleB.setX((3*LocalR.x()*LocalR.x()*LocalR.y() - 
 			 LocalR.y()*LocalR.y()*LocalR.y())*iter->second/6.);
 	    NPoleB.setY((LocalR.x()*LocalR.x()*LocalR.x() -
-			 LocalR.x()*LocalR.y()*LocalR.y())*iter->second/6.);
+			 3*LocalR.x()*LocalR.y()*LocalR.y())*iter->second/6.); // changed formula, factor 3 added. 16/5/14 - JS, to be double checked
 	  } 
 	}
       }

@@ -9,12 +9,8 @@
 
 #include "globals.hh"
 #include "G4UserStackingAction.hh"
-#include "G4ThreeVector.hh"
 
 class G4Track;
-
-
-class BDSStackingActionMessenger;
 
 class BDSStackingAction : public G4UserStackingAction
 {

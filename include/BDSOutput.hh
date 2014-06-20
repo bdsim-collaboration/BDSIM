@@ -4,6 +4,8 @@
 #ifndef BDSOutput_h
 #define BDSOutput_h 
 
+#include "BDSEnergyCounterHit.hh"
+#include "BDSOutputFormat.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSTypeSafeEnum.hh"
 #include "BDSEnergyCounterHit.hh"
@@ -65,7 +67,7 @@ public:
   std::vector <G4String> SampName;
   std::vector <G4String> CSampName;
 
-  void WritePrimary(G4String, G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int, G4int, G4int);
+  void WritePrimary(G4String, G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int, G4int);
 
 
 private:
@@ -84,7 +86,6 @@ private:
   float x_el_p,y_el_p,z_el_p,E_el_p;
   int part_el_p, weight_el_p;
   char volumeName_el_p[100];
-  int turnnumber;
 
   void WriteRootHit(G4String Name, G4double InitMom, G4double InitX, G4double InitY, G4double InitZ, G4double InitXPrime, G4double InitYPrime, G4double InitZPrime, G4double InitT, G4double Mom, G4double X, G4double Y, G4double Z, G4double XPrime, G4double YPrime, G4double ZPrime, G4double T, G4double GlobalX, G4double GlobalY, G4double GlobalZ, G4double GlobalXPrime, G4double GlobalYPrime, G4double GlobalZPrime, G4double S, G4double Weight, G4int PDGtype, G4int EventNo, G4int ParentID, G4int TrackID, G4int TurnsTaken);
 #endif

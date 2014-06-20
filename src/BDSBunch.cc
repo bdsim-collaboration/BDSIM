@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cstdlib>
 
+#include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 //#include "parser/gmad.h"

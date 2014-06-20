@@ -60,9 +60,9 @@
 #include "BDSEnergyCounterSD.hh"
 #include "BDSTerminatorSD.hh"
 
-// output interface
-#include "BDSOutput.hh"
 #include "BDSComponentFactory.hh"
+#include "BDSSampler.hh"
+#include "BDSSamplerCylinder.hh"
 
 #include "G4MagneticField.hh"
 
@@ -95,7 +95,6 @@ typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 LogVolMap* LogVol;
 
 //=========================================
-extern BDSOutput* bdsOutput;
 
 #ifdef DEBUG
 bool debug = true;
@@ -178,8 +177,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 
 
   if (verbose || debug) G4cout << "-->starting BDS construction \n"<<G4endl;
-  //Add the input sampler to the list of output sampler names
-  //  bdsOutput->SampName.push_back((G4String)"input");
   //construct bds
   return ConstructBDS(beamline_list);
 }
@@ -338,9 +335,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
     if(temp){
       BDSBeamline::Instance()->addComponent(temp);
       //For the outline file...
-      BDSBeamline::Instance()->currentItem()->SetK1((*it).k1);
-      BDSBeamline::Instance()->currentItem()->SetK2((*it).k2);
-      BDSBeamline::Instance()->currentItem()->SetK3((*it).k3);
+      BDSBeamline::Instance()->lastItem()->SetK1((*it).k1);
+      BDSBeamline::Instance()->lastItem()->SetK2((*it).k2);
+      BDSBeamline::Instance()->lastItem()->SetK3((*it).k3);
     }
 #ifdef DEBUG
     G4cout << "done." << G4endl;
@@ -463,8 +460,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
       G4cout<<"s_tot="<<s_tot/CLHEP::m<<" m"<<G4endl;
     }
 
-  bdsOutput->zMax=s_tot;
-  bdsOutput->transMax=std::max(GetWorldSizeX(), GetWorldSizeY());
+  BDSGlobalConstants::Instance()->SetZMax(s_tot);
 
   solidWorld = new G4Box("World", GetWorldSizeX(), GetWorldSizeY(), GetWorldSizeZ());
     
@@ -621,7 +617,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
       else 
 	rotateComponent->rotateZ(tilt);
     
-      // define center of bended elements from the previos coordinate frame
+      // define center of bended elements from the previous coordinate frame
       G4ThreeVector zHalfAngle = localZ; 
 
       if( BDSBeamline::Instance()->currentItem()->GetType() == "sbend" || BDSBeamline::Instance()->currentItem()->GetType() == "rbend"  )
@@ -791,19 +787,17 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	//      }
 
 	
-	
+	// count and store sampler names. Should go into constructors!
   
+	LocalName=BDSBeamline::Instance()->currentItem()->GetName()+"_phys";
 	if(BDSBeamline::Instance()->currentItem()->GetType()=="sampler") {
-	  LocalName=BDSBeamline::Instance()->currentItem()->GetName()+"_phys";
-	  bdsOutput->SampName.push_back(LocalName + "_" + BDSGlobalConstants::Instance()->StringFromInt(nCopy+1));
+	  BDSSampler::outputNames.push_back(LocalName + "_" + BDSGlobalConstants::Instance()->StringFromInt(nCopy+1));
 	} 
 	else if(BDSBeamline::Instance()->currentItem()->GetType()=="csampler") {
-	  LocalName=BDSBeamline::Instance()->currentItem()->GetName()+"_phys";
-	  bdsOutput->CSampName.push_back(LocalName + "_" + BDSGlobalConstants::Instance()->StringFromInt(nCopy+1));
+	  BDSSamplerCylinder::outputNames.push_back(LocalName + "_" + BDSGlobalConstants::Instance()->StringFromInt(nCopy+1));
 	} else {
 	  //it would be nice to set correctly names also for other elements...
 	  //but need to count them!
-	  LocalName=BDSBeamline::Instance()->currentItem()->GetName()+"_phys";
 	}
 
 	/*
@@ -1020,18 +1014,6 @@ G4double BDSDetectorConstruction::GetWorldSizeY(){
 
 G4double BDSDetectorConstruction::GetWorldSizeZ(){
   return itsWorldSize[2];
-}
-
-void BDSDetectorConstruction::SetWorldSize(G4double* val){
-  int sExpected = 3;
-  int s=sizeof(val)/sizeof(val[0]);
-  if(s!=sExpected){
-    std::cerr << "Error: BDSDetectorConstruction::SetWorldSize(G4double*) expects an array of size " << sExpected << ". Exiting." << std::endl;
-    exit(1);
-  }
-  for(int i=0; i<s; i++){
-    itsWorldSize[i]=val[i];
-  }
 }
 
 void BDSDetectorConstruction::SetWorldSizeX(G4double val){

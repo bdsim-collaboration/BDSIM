@@ -9,9 +9,9 @@
 
 #include <getopt.h>
 
+#include "G4String.hh"
 #include "G4Types.hh"
-#include "BDSDebug.hh"
-#include "BDSOutput.hh"
+#include "BDSOutputFormat.hh"
 
 class BDSExecOptions
 {

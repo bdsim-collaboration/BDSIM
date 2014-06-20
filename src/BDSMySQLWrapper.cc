@@ -9,12 +9,11 @@
 */
 
 #include "BDSGlobalConstants.hh" 
+#include "BDSDebug.hh"
 
 #include <cstdlib>
-#include "BDSMaterials.hh"
 #include "BDSMySQLWrapper.hh"
 #include "BDSMySQLTable.hh"
-#include "BDSExecOptions.hh"
 
 #include<iostream>
 #include<boost/tokenizer.hpp>

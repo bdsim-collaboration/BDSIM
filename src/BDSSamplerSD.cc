@@ -9,6 +9,7 @@
 
 #include "BDSGlobalConstants.hh" 
 #include "BDSExecOptions.hh"
+#include "BDSDebug.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSamplerHit.hh"
 #include "G4VPhysicalVolume.hh"
@@ -20,7 +21,7 @@
 #include "G4VTouchable.hh"
 #include "G4TouchableHistory.hh"
 #include "G4ios.hh"
-#include "G4RotationMatrix.hh"
+//#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 
 #include "G4AffineTransform.hh"
@@ -64,7 +65,9 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
 
 G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
-  G4Track* theTrack = aStep->GetTrack();
+  //Do not store hit if particles is "twiss" or "reference"
+  if(BDSGlobalConstants::Instance()->DoTwiss() || BDSGlobalConstants::Instance()->isReference) return false;
+
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   //  G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
   //  // tmp - only store muons
@@ -75,7 +78,8 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   if(BDSGlobalConstants::Instance()->DoTwiss() || BDSGlobalConstants::Instance()->isReference) return false;
   //Do not store hit if the particle is not on the boundary 
   if(preStepPoint->GetStepStatus()!=fGeomBoundary) return false;
-  
+
+  G4Track* theTrack = aStep->GetTrack();
   //unique ID of track
   G4int TrackID = theTrack->GetTrackID();
   //unique ID of track's mother
