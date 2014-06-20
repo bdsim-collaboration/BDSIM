@@ -27,7 +27,8 @@ public:
   G4int  itsHCID;
 
 private:
-  G4bool itsverbose;
+  G4bool verbose;
+  G4Track* theTrack;
 };
 
 #endif
