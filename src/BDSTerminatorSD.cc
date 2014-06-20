@@ -27,7 +27,7 @@ BDSTerminatorSD::BDSTerminatorSD(G4String name)
 BDSTerminatorSD::~BDSTerminatorSD()
 {;}
 
-void BDSTerminatorSD::Initialize(G4HCofThisEvent* HCE)
+void BDSTerminatorSD::Initialize(G4HCofThisEvent* /*HCE*/)
 {
   if (itsHCID < 0)
     {itsHCID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);}
@@ -60,7 +60,7 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 }
 
 
-void BDSTerminatorSD::EndOfEvent(G4HCofThisEvent* HCE)
+void BDSTerminatorSD::EndOfEvent(G4HCofThisEvent* /*HCE*/)
 {
   BDSGlobalConstants::Instance()->ResetTurnNumber();
 }
