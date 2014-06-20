@@ -350,8 +350,8 @@ void BDSEventAction::AddPrimaryHits(const G4Event* /*evt*/){
   G4int PDGType=primaryParticle->GetPDGcode();
   G4int nEvent = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   G4String samplerName="primaries";
-  G4int turnNumber = BDSGlobalConstants::Instance()->GetTurnNumber();
-  bdsOutput->WritePrimary(samplerName, E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnNumber);
+  G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  bdsOutput->WritePrimary(samplerName, E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
 
 #ifdef DEBUG
   G4cout << __METHOD_NAME__ << " finished" << G4endl;

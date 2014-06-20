@@ -9,7 +9,7 @@
 
 G4Allocator<BDSEnergyCounterHit> BDSEnergyCounterHitAllocator;
 
-BDSEnergyCounterHit::BDSEnergyCounterHit(G4int nCopy, G4double Energy, G4double x, G4double y, G4double z, G4String name, G4int partID, G4double weight, G4bool precisionRegion, G4int TurnNumber):
+BDSEnergyCounterHit::BDSEnergyCounterHit(G4int nCopy, G4double Energy, G4double x, G4double y, G4double z, G4String name, G4int partID, G4double weight, G4bool precisionRegion, G4int TurnsTaken):
   itsEnergy(Energy*weight), itsEnergyWeightedX(x*Energy*weight), itsEnergyWeightedY(y*Energy*weight), itsEnergyWeightedZ(z*Energy*weight),
   itsX(x), itsY(y), itsZ(z),
   itsWeight(weight),
@@ -17,7 +17,7 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int nCopy, G4double Energy, G4double 
   itsPartID(partID),
   itsName(name),
   itsPrecisionRegion(precisionRegion),
-  itsTurnNumber(TurnNumber)
+  itsTurnsTaken(TurnsTaken)
 {
   /*
   G4cout << "BDSEnergyCounterHit> E = " << itsEnergy << G4endl;

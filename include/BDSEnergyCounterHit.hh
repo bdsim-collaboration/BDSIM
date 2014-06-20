@@ -15,7 +15,7 @@
 class BDSEnergyCounterHit :public G4VHit
 {
 public:
-  BDSEnergyCounterHit(G4int nCopy, G4double Energy=0, G4double x=0, G4double y=0, G4double z=0, G4String name="", G4int partID=0, G4double weight=1, G4bool precisionRegion=false, G4int TurnNumber=0);
+  BDSEnergyCounterHit(G4int nCopy, G4double Energy=0, G4double x=0, G4double y=0, G4double z=0, G4String name="", G4int partID=0, G4double weight=1, G4bool precisionRegion=false, G4int TurnsTaken=1);
 
   ~BDSEnergyCounterHit();
 
@@ -38,7 +38,7 @@ public:
   inline G4double GetWeight(); 
   inline void     SetWeight(G4double weight);
   inline G4bool   GetPrecisionRegion();
-  inline G4int    GetTurnNumber();
+  inline G4int    GetTurnsTaken();
   
 private:
   /// private default constructor (not implemented)
@@ -56,7 +56,7 @@ private:
   G4int    itsPartID;
   G4String itsName;
   G4bool   itsPrecisionRegion; //Whether or not the hit is in the precision region
-  G4int    itsTurnNumber;
+  G4int    itsTurnsTaken;
 };
 
 inline G4double BDSEnergyCounterHit::GetEnergy()
@@ -125,8 +125,8 @@ inline void BDSEnergyCounterHit::operator delete(void *aHit)
  BDSEnergyCounterHitAllocator.FreeSingle((BDSEnergyCounterHit*) aHit);
 }
 
-inline G4int BDSEnergyCounterHit::GetTurnNumber()
-{return itsTurnNumber;}
+inline G4int BDSEnergyCounterHit::GetTurnsTaken()
+{return itsTurnsTaken;}
 
 #endif
 

@@ -200,10 +200,11 @@ public:
   G4String GetSoilMaterialName();
   G4String GetTunnelMaterialName();
   G4String GetTunnelCavityMaterialName();
-  G4int    GetTurnNumber();
+  G4int    GetTurnsTaken();
   void     IncrementTurnNumber();
   void     ResetTurnNumber();
-  G4int    GetNTurns();
+  G4int    GetTurnsToTake();
+  void     SetTurnsToTake(G4int TurnsToTake);
 
 protected:
   BDSGlobalConstants(struct Options&);
@@ -332,8 +333,8 @@ private:
   G4String itsRefVolume;
   G4int    itsRefCopyNo;
   G4AffineTransform itsRefTransform;
-  G4int    itsTurnNumber;
-  G4int    itsNTurns;
+  G4int    itsTurnsTaken;
+  G4int    itsTurnsToTake;
 };
 
 inline G4double BDSGlobalConstants::GetElossHistoBinWidth()
@@ -727,17 +728,20 @@ inline const G4AffineTransform* BDSGlobalConstants::GetRefTransform()
 inline void BDSGlobalConstants::SetRefTransform(G4AffineTransform& aTransform)
 {itsRefTransform=aTransform;}
 
-inline G4int BDSGlobalConstants::GetTurnNumber()
-{return itsTurnNumber;}
+inline G4int BDSGlobalConstants::GetTurnsTaken()
+{return itsTurnsTaken;}
 
 inline void  BDSGlobalConstants::IncrementTurnNumber()
-{itsTurnNumber += 1;}
+{itsTurnsTaken += 1;}
 
 inline void  BDSGlobalConstants::ResetTurnNumber()
-{itsTurnNumber = 0;}
+{itsTurnsTaken = 1;}
 
-inline G4int BDSGlobalConstants::GetNTurns()
-{return itsNTurns;}
+inline G4int BDSGlobalConstants::GetTurnsToTake()
+{return itsTurnsToTake;}
+
+inline void  BDSGlobalConstants::SetTurnsToTake(G4int TurnsToTake)
+{itsTurnsToTake = TurnsToTake;}
 
 // UNUSED INLINE FUNCTIONS
 

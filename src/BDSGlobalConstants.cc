@@ -158,12 +158,11 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsZeroFieldManager=new G4FieldManager();
   itsZeroFieldManager->SetDetectorField(zeroMagField);
   itsZeroFieldManager->CreateChordFinder(zeroMagField);
-  itsTurnNumber = 0;
+  itsTurnsTaken = 1; //counting from 1
   if(opt.nturns < 1)
-    {itsNTurns = 1;}
+    {SetTurnsToTake(1);}
   else
-    {itsNTurns = opt.nturns;}
-  
+    {SetTurnsToTake(opt.nturns);}  
   InitRotationMatrices();
   
   // options that are never used (no set method):

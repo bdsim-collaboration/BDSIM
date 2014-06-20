@@ -27,7 +27,7 @@ BDSSamplerHit::BDSSamplerHit(G4String aName,
 			     G4double weight,
 			     G4int PDGtype, G4int nEvent,
 			     G4int ParentID, G4int TrackID,
-			     G4int TurnNumber)
+			     G4int TurnsTaken)
 :itsName(aName),
   itsInit_Mom(init_mom),
   itsInit_X(init_x), itsInit_XPrime(init_xPrime),
@@ -48,7 +48,7 @@ BDSSamplerHit::BDSSamplerHit(G4String aName,
   itsEventNo(nEvent),
   itsParentID(ParentID),
   itsTrackID(TrackID),
-  itsTurnNumber(TurnNumber)
+  itsTurnsTaken(TurnsTaken)
 {;}
 
 BDSSamplerHit::~BDSSamplerHit()
