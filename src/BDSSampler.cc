@@ -39,7 +39,7 @@ int BDSSampler::GetNSamplers() { return nSamplers; }
 
 void BDSSampler::AddExternalSampler(G4String name) { nSamplers++; outputNames.push_back(name); }
 
-BDSSampler::BDSSampler (G4String aName,G4double aLength):
+BDSSampler::BDSSampler (G4String aName, G4double aLength):
   BDSAcceleratorComponent(
 			 aName,
 			 aLength,0,0,0,
@@ -51,18 +51,13 @@ BDSSampler::BDSSampler (G4String aName,G4double aLength):
   SamplerLogicalVolume();
   nSamplers++;
   //G4int nSamplers=(*LogVolCount)[itsName];
-  //BDSRoot->SetSamplerNumber(nSamplers);
-
- 
+  //BDSRoot->SetSamplerNumber(nSamplers); 
 }
-
 
 void BDSSampler::SamplerLogicalVolume()
 {
   if(!(*LogVolCount)[itsName])
     {
-
-
       itsMarkerLogicalVolume=
 	new G4LogicalVolume(
 			    new G4Box(itsName+"_solid",

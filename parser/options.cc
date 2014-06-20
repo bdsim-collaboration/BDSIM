@@ -226,6 +226,10 @@ void Options::set_value(std::string name, double value )
 
   // options for neutrons
   if(name=="refcopyno") { refcopyno = (int) value; return; }
+  
+  // option for rings
+  if(name=="nturns") {nturns = (int) value; return; }
+  
   std::cerr << "Error: parser> unkown option \"" << name << "\"" << std::endl; 
   exit(1);
 }

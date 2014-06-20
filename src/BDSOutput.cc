@@ -52,14 +52,14 @@ void BDSOutput::SetFormat(BDSOutputFormat val)
 #endif
       of.open(filename);
       of<<"### BDSIM output created "<<ctime(&tm)<<" ####"<<G4endl;
-      of<<"# PT E[GeV] X[mum] Y[mum] Z[m] Xp[rad] Yp[rad]  NEvent Weight ParentID TrackID"<<G4endl;
+      of<<"# PT E[GeV] X[mum] Y[mum] Z[m] Xp[rad] Yp[rad]  NEvent Weight ParentID TrackID Turn"<<G4endl;
       G4String filenameEloss = BDSExecOptions::Instance()->GetOutputFilename()+".eloss.txt";
 #ifdef DEBUG
       G4cout << __METHOD_NAME__ << "Eloss output format ASCII, filename: "<<filenameEloss<<G4endl;
 #endif
       ofEloss.open(filenameEloss);
       ofEloss<<"### BDSIM eloss output created "<<ctime(&tm)<<" ####"<<G4endl;
-      ofEloss<<"#Energy loss: Z[m] E[GeV] partID weight"<<G4endl;
+      ofEloss<<"#Energy loss: Z[m] E[GeV] PartID Weight Turn"<<G4endl;
 
     }
   if( format == BDSOutputFormat::_ROOT)
@@ -104,6 +104,7 @@ void BDSOutput::BuildSamplerTree(G4String name){
   SamplerTree->Branch("nEvent",&nev,"nEvent/I");
   SamplerTree->Branch("parentID",&pID,"parentID/I");
   SamplerTree->Branch("trackID",&track_id,"trackID/I");
+  SamplerTree->Branch("turnnumber",&turnnumber,"turnnumber/I");
 }
 #endif
 
@@ -175,10 +176,11 @@ void BDSOutput::Init()
   PrecisionRegionEnergyLossTree->Branch("weight",&weight_el_p,"weight/F");
   PrecisionRegionEnergyLossTree->Branch("partID",&part_el_p,"partID/I");
   PrecisionRegionEnergyLossTree->Branch("volumeName",&volumeName_el_p,"volumeName/C");
+  PrecisionRegionEnergyLossTree->Branch("turnnumber",&turnnumber,"turnnumber/I");
 #endif // USE_ROOT
 }
 
-void BDSOutput::WriteAsciiHit(G4int PDGType, G4double Mom, G4double X, G4double Y, G4double S, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID){
+void BDSOutput::WriteAsciiHit(G4int PDGType, G4double Mom, G4double X, G4double Y, G4double S, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID, G4int TurnsTaken){
   of<<PDGType
     <<" "
     <<Mom/CLHEP::GeV
@@ -200,11 +202,13 @@ void BDSOutput::WriteAsciiHit(G4int PDGType, G4double Mom, G4double X, G4double 
     <<ParentID
     <<" "
     <<TrackID
+    <<" "
+    <<TurnsTaken
     <<G4endl;
 }
 
 #ifdef USE_ROOT
-void BDSOutput::WriteRootHit(G4String Name, G4double   InitMom, G4double    InitX, G4double    InitY, G4double     InitZ, G4double     InitXPrime, G4double    InitYPrime, G4double InitZPrime, G4double  InitT, G4double  Mom, G4double X, G4double Y, G4double Z, G4double XPrime, G4double YPrime, G4double ZPrime, G4double T, G4double GlobalX, G4double GlobalY, G4double GlobalZ, G4double GlobalXPrime, G4double GlobalYPrime, G4double GlobalZPrime, G4double S, G4double Weight, G4int  PDGtype, G4int  EventNo, G4int   ParentID,G4int  TrackID){
+void BDSOutput::WriteRootHit(G4String Name, G4double   InitMom, G4double    InitX, G4double    InitY, G4double     InitZ, G4double     InitXPrime, G4double    InitYPrime, G4double InitZPrime, G4double  InitT, G4double  Mom, G4double X, G4double Y, G4double Z, G4double XPrime, G4double YPrime, G4double ZPrime, G4double T, G4double GlobalX, G4double GlobalY, G4double GlobalZ, G4double GlobalXPrime, G4double GlobalYPrime, G4double GlobalZPrime, G4double S, G4double Weight, G4int  PDGtype, G4int  EventNo, G4int   ParentID,G4int  TrackID, G4int TurnsTaken){
 
   TTree* sTree=(TTree*)gDirectory->Get(Name);
   if(!sTree) G4Exception("BDSOutput: ROOT Sampler not found!", "-1", FatalException, "");
@@ -237,19 +241,20 @@ void BDSOutput::WriteRootHit(G4String Name, G4double   InitMom, G4double    Init
   nev=EventNo; 
   pID=ParentID; 
   track_id=TrackID;
+  turnnumber=TurnsTaken;
   sTree->Fill();
 }
 #endif
 
-void BDSOutput::WritePrimary(G4String samplerName, G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double zp,G4double t,G4double weight,G4int PDGType, G4int nEvent){
+void BDSOutput::WritePrimary(G4String samplerName, G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double zp,G4double t,G4double weight,G4int PDGType, G4int nEvent, G4int TurnsTaken){
 #ifdef USE_ROOT
   if( format == BDSOutputFormat::_ROOT) {
-    bdsOutput->WriteRootHit(samplerName, E, x0, y0, z0, xp, yp, zp, t, E, x0, y0, z0, xp, yp, zp, t, x, y, z, xp, yp, zp, z, weight, PDGType, nEvent, 0, 1);
+    bdsOutput->WriteRootHit(samplerName, E, x0, y0, z0, xp, yp, zp, t, E, x0, y0, z0, xp, yp, zp, t, x, y, z, xp, yp, zp, z, weight, PDGType, nEvent, 0, 1, TurnsTaken);
   }
 #endif
   
   if( format == BDSOutputFormat::_ASCII) {
-    bdsOutput->WriteAsciiHit(PDGType, E, x0, y0, z0, xp, yp, nEvent, weight, 0, 1);
+    bdsOutput->WriteAsciiHit(PDGType, E, x0, y0, z0, xp, yp, nEvent, weight, 0, 1, TurnsTaken);
   }
 }
 
@@ -272,7 +277,8 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
 		      (*hc)[i]->GetEventNo(),
 		      (*hc)[i]->GetWeight(),
 		      (*hc)[i]->GetParentID(),
-		      (*hc)[i]->GetTrackID()
+		      (*hc)[i]->GetTrackID(),
+		      (*hc)[i]->GetTurnsTaken()
 		      );
       }
     of.flush();
@@ -320,7 +326,8 @@ void BDSOutput::WriteHits(BDSSamplerHitsCollection *hc)
 		     (*hc)[i]->GetPDGtype(), 
 		     (*hc)[i]->GetEventNo(), 
 		     (*hc)[i]->GetParentID(), 
-		     (*hc)[i]->GetTrackID()
+		     (*hc)[i]->GetTrackID(),
+		     (*hc)[i]->GetTurnsTaken()
 		     );
       }
 #endif //USE_ROOT
@@ -396,6 +403,7 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 	  y_el_p=((*hc)[i]->GetEnergyWeightedY()*10/(CLHEP::cm*E_el_p))/weight_el_p;
 	  z_el_p=((*hc)[i]->GetEnergyWeightedZ()*10*(1e-6)/(CLHEP::cm*E_el_p))/weight_el_p;
 	  part_el_p=(*hc)[i]->GetPartID();
+	  turnnumber=(*hc)[i]->GetTurnsTaken();
 	  G4String temp = (*hc)[i]->GetName()+'\0';
 	  strcpy(volumeName_el_p,temp.c_str());
 	  PrecisionRegionEnergyLossTree->Fill();
@@ -410,12 +418,12 @@ void BDSOutput::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 
     for (G4int i=0;i<n_hit;i++)
       {
-        G4double Energy=(*hc)[i]->GetEnergy();
-	G4double Zpos=(*hc)[i]->GetZ();
-	G4int partID = (*hc)[i]->GetPartID();
-	G4double weight = (*hc)[i]->GetWeight();
-
-	ofEloss<< Zpos/CLHEP::m<<"  "<<Energy/CLHEP::GeV<<"  "<<partID<<"  " <<weight<<G4endl;
+        G4double Energy     = (*hc)[i]->GetEnergy();
+	G4double Zpos       = (*hc)[i]->GetZ();
+	G4int    partID     = (*hc)[i]->GetPartID();
+	G4double weight     = (*hc)[i]->GetWeight();
+	G4int    turnnumber = (*hc)[i]->GetTurnsTaken();
+	ofEloss << Zpos/CLHEP::m << "  " << Energy/CLHEP::GeV << "  " << partID << "  " << weight << turnnumber << G4endl;
       }
     ofEloss.flush();
  }

@@ -112,35 +112,20 @@ public:
   BDSEnergyCounterSD* GetBDSEnergyCounter() const;
   
   void SetBDSEnergyCounter( BDSEnergyCounterSD* anBDSEnergyCounter);
-  
   G4int GetCopyNumber() const;
-  
   G4double GetSPos() const;
-  
   void SetSPos(G4double spos);
-  
   void SetCopyNumber(G4int nCopy);
-  
   void SetSensitiveVolume(G4LogicalVolume* aLogVol);
-  
   G4LogicalVolume* GetSensitiveVolume();
-
   void SetMultipleSensitiveVolumes(G4LogicalVolume* aLogVol);
-
   std::vector<G4LogicalVolume*> GetMultipleSensitiveVolumes();
-
   void SetGFlashVolumes(G4LogicalVolume* aLogVol);
-
   std::vector<G4LogicalVolume*> GetGFlashVolumes();
-
   void SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
-
   std::vector<G4VPhysicalVolume*> GetMultiplePhysicalVolumes();
-
   void SetInnerMostLogicalVolume(G4LogicalVolume* aLogVol);
-  
   G4LogicalVolume* GetInnerMostLogicalVolume() const;
-  
   G4UserLimits* GetInnerBPUserLimits();
   G4UserLimits* GetUserLimits();
 

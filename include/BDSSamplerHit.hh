@@ -32,7 +32,8 @@ public:
 		G4double s,
 		G4double weight,
 		G4int PDGtype, G4int nEvent,
-		G4int ParentID, G4int TrackID);
+		G4int ParentID, G4int TrackID,
+		G4int TurnsTaken);
 
   ~BDSSamplerHit();
   
@@ -87,6 +88,7 @@ private:
   G4int itsEventNo;
   G4int itsParentID;
   G4int itsTrackID;
+  G4int itsTurnsTaken;
   G4String itsSampType;
   
 public:
@@ -233,6 +235,9 @@ public:
 
   inline G4int GetTrackID() const
     {return itsTrackID;}
+
+  inline G4int GetTurnsTaken() const
+  {return itsTurnsTaken;}
 };
 
 typedef G4THitsCollection<BDSSamplerHit> BDSSamplerHitsCollection;

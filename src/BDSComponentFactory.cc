@@ -24,6 +24,7 @@
 #include "BDSCollimator.hh"
 //#include "BDSRealisticCollimator.hh"
 #include "BDSScintillatorScreen.hh"
+#include "BDSTerminator.hh"
 #include "parser/enums.h"
 #include "parser/elementlist.h"
 
@@ -233,6 +234,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     G4cout << "BDSComponentFactory  - creating transform3d" << G4endl;
 #endif
     return createTransform3D(); break;  
+
     // common types, but nothing to do here
   case _MARKER:
   case _LINE:
@@ -1278,4 +1280,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){
 			      _element.theta *CLHEP::rad,
 			      _element.psi *CLHEP::rad ) );
 	
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::createTerminator(){
+  return (new BDSTerminator(_element.name, BDSGlobalConstants::Instance()->GetSamplerLength()));
 }

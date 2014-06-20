@@ -12,10 +12,13 @@
 #include "BDSDebug.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSamplerHit.hh"
+#include "G4VPhysicalVolume.hh"
+#include "G4LogicalVolume.hh"
 #include "G4Track.hh"
 #include "G4Step.hh"
 #include "G4StepPoint.hh"
 #include "G4ParticleDefinition.hh"
+#include "G4VTouchable.hh"
 #include "G4TouchableHistory.hh"
 #include "G4ios.hh"
 //#include "G4RotationMatrix.hh"
@@ -71,6 +74,8 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   //     G4String pName=theTrack->GetDefinition()->GetParticleName();
   //    if(pName=="mu+"||pName=="mu-")
   // 	{ // tm
+  //Do not store hit if particles is "twiss" or "reference"
+  if(BDSGlobalConstants::Instance()->DoTwiss() || BDSGlobalConstants::Instance()->isReference) return false;
   //Do not store hit if the particle is not on the boundary 
   if(preStepPoint->GetStepStatus()!=fGeomBoundary) return false;
 
@@ -81,10 +86,10 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4int ParentID = theTrack->GetParentID();
   //time since track creation
   G4double t = theTrack->GetGlobalTime();
-  //total track energy
-  
-  G4double energy = theTrack->GetKineticEnergy()+ 
-    theTrack->GetDefinition()->GetPDGMass();
+  //total track energy 
+  G4double energy = theTrack->GetKineticEnergy()+theTrack->GetDefinition()->GetPDGMass();
+  //Turn Number
+  G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();  
   
   //current particle position (global)
   G4ThreeVector pos = theTrack->GetPosition();
@@ -201,7 +206,11 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 			t,
 			s,
 			weight,
-			PDGtype,nEvent, ParentID, TrackID);
+			PDGtype,
+			nEvent, 
+			ParentID, 
+			TrackID,
+			turnstaken);
   smpHit->SetGlobalX(pos.x());
   smpHit->SetGlobalY(pos.y());
   smpHit->SetGlobalZ(pos.z());

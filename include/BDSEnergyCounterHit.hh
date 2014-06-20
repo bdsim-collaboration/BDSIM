@@ -15,7 +15,7 @@
 class BDSEnergyCounterHit :public G4VHit
 {
 public:
-  BDSEnergyCounterHit(G4int nCopy, G4double Energy=0, G4double x=0, G4double y=0, G4double z=0, G4String name="", G4int partID=0, G4double weight=1, G4bool precisionRegion=false);
+  BDSEnergyCounterHit(G4int nCopy, G4double Energy=0, G4double x=0, G4double y=0, G4double z=0, G4String name="", G4int partID=0, G4double weight=1, G4bool precisionRegion=false, G4int TurnsTaken=1);
 
   ~BDSEnergyCounterHit();
 
@@ -23,21 +23,22 @@ public:
   inline void operator delete(void *aHit);
 
   inline G4double GetEnergy();
-  inline G4int GetCopyNumber();
+  inline G4int    GetCopyNumber();
   inline G4String GetName();
-  inline void SetEnergy(G4double Energy);
-  inline void AddEnergy(G4double Energy, G4double weight);
-  inline void AddEnergyWeightedPosition(G4double Energy, G4double xpos, G4double ypos, G4double zpos, G4double weight);
+  inline void     SetEnergy(G4double Energy);
+  inline void     AddEnergy(G4double Energy, G4double weight);
+  inline void     AddEnergyWeightedPosition(G4double Energy, G4double xpos, G4double ypos, G4double zpos, G4double weight);
   inline G4double GetZ(); 
   inline G4double GetX(); 
   inline G4double GetY(); 
   inline G4double GetEnergyWeightedY(); 
   inline G4double GetEnergyWeightedZ(); 
   inline G4double GetEnergyWeightedX(); 
-  inline G4int GetPartID(); 
+  inline G4int    GetPartID(); 
   inline G4double GetWeight(); 
-  inline void SetWeight(G4double weight);
-  inline G4bool GetPrecisionRegion();
+  inline void     SetWeight(G4double weight);
+  inline G4bool   GetPrecisionRegion();
+  inline G4int    GetTurnsTaken();
   
 private:
   /// private default constructor (not implemented)
@@ -51,10 +52,11 @@ private:
   G4double itsY;
   G4double itsZ;
   G4double itsWeight;
-  G4int itsCopyNumber;
-  G4int itsPartID;
+  G4int    itsCopyNumber;
+  G4int    itsPartID;
   G4String itsName;
-  G4bool itsPrecisionRegion; //Whether or not the hit is in the precision region
+  G4bool   itsPrecisionRegion; //Whether or not the hit is in the precision region
+  G4int    itsTurnsTaken;
 };
 
 inline G4double BDSEnergyCounterHit::GetEnergy()
@@ -67,9 +69,7 @@ inline G4double BDSEnergyCounterHit::GetY()
 {return itsY;}
 
 inline G4double BDSEnergyCounterHit::GetZ()
-{
-  return itsZ;
-}
+{return itsZ;}
 
 inline G4double BDSEnergyCounterHit::GetEnergyWeightedX()
 {return itsEnergyWeightedX;}
@@ -78,21 +78,13 @@ inline G4double BDSEnergyCounterHit::GetEnergyWeightedY()
 {return itsEnergyWeightedY;}
 
 inline G4double BDSEnergyCounterHit::GetEnergyWeightedZ()
-{
-  return itsEnergyWeightedZ;
-}
+{return itsEnergyWeightedZ;}
 
 inline G4double BDSEnergyCounterHit::GetWeight()
-{
-  return itsWeight;
-}
+{return itsWeight;}
 
 inline G4bool BDSEnergyCounterHit::GetPrecisionRegion()
-{
-  return itsPrecisionRegion;
-}
-
-
+{return itsPrecisionRegion;}
 
 inline G4int BDSEnergyCounterHit::GetCopyNumber()
 {return itsCopyNumber;}
@@ -132,6 +124,9 @@ inline void BDSEnergyCounterHit::operator delete(void *aHit)
 {
  BDSEnergyCounterHitAllocator.FreeSingle((BDSEnergyCounterHit*) aHit);
 }
+
+inline G4int BDSEnergyCounterHit::GetTurnsTaken()
+{return itsTurnsTaken;}
 
 #endif
 

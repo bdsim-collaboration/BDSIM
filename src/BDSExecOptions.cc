@@ -41,6 +41,8 @@ BDSExecOptions::BDSExecOptions() {
   verboseEventLevel    = 0;
   verboseTrackingLevel = 0;
   verboseSteppingLevel = 0;
+  
+  circular      = false;
 }
 
 BDSExecOptions::~BDSExecOptions() {
@@ -72,6 +74,7 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 					{ "outfile", 1, 0, 0 },
 					{ "batch", 0, 0, 0 },
 					{ "materials", 0, 0, 0 },
+					{ "circular", 0, 0, 0},
 					{ 0, 0, 0, 0 }};
   
   int OptionIndex = 0;
@@ -193,6 +196,9 @@ void BDSExecOptions::Parse(int argc, char **argv) {
       if( !strcmp(LongOptions[OptionIndex].name, "materials") ) {
 	BDSMaterials::ListMaterials();
       }
+      if( !strcmp(LongOptions[OptionIndex].name, "circular")  ) {
+	circular = true;
+      }
       break;
       
     default:
@@ -226,7 +232,8 @@ void BDSExecOptions::Usage() {
 	<<"--outline=<file>      : print geometry info to <file>"<<G4endl
 	<<"--outline_type=<fmt>  : type of outline format"<<G4endl
 	<<"                        where fmt = optics | survey"<<G4endl
-	<<"--materials           : list materials included in bdsim by default"<<G4endl;
+	<<"--materials           : list materials included in bdsim by default"<<G4endl
+	<<"--circular            : assume circular machine - turn control"<<G4endl;
 }
 
 void BDSExecOptions::Print() {
@@ -249,6 +256,7 @@ void BDSExecOptions::Print() {
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseEventLevel: "   << std::setw(15) << verboseEventLevel   << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseTrackingLevel: "<< std::setw(15) << verboseTrackingLevel<< G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseSteppingLevel: "<< std::setw(15) << verboseSteppingLevel<< G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " circular: "            << std::setw(15) << circular            << G4endl;
 
   return;
 }
