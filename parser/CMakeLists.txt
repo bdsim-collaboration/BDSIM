@@ -1,9 +1,12 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.6.4)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
+
+# Suppress policy CMP0042 warning (as of cmake 3.0.0)
+cmake_policy(SET CMP0042 OLD)
 
 # suppress warnings
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-value")
