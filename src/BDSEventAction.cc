@@ -51,7 +51,7 @@
 
 #include "BDSAcceleratorComponent.hh"
 
-#include "BDSOutput.hh"
+#include "BDSOutputBase.hh"
 
 typedef std::map<G4String,int> LogVolCountMap;
 extern LogVolCountMap* LogVolCount;
@@ -61,8 +61,6 @@ extern ECList* theECList;
 
 G4int event_number; // event number, used for checking on printing verboseEventNumber
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
-
-extern BDSOutput* bdsOutput;
 
 //======================================================
 
