@@ -109,7 +109,7 @@ void BDS_handle_aborts(int signal_number) {
 int main(int argc,char** argv) {
 
   //Set the largest step a particle can take in a field.
-  G4TransportationManager::GetTransportationManager()->GetPropagatorInField()->SetLargestAcceptableStep(10*cm);
+  G4TransportationManager::GetTransportationManager()->GetPropagatorInField()->SetLargestAcceptableStep(1*CLHEP::m);
 
   /* Executable command line options reader object */
   BDSExecOptions *bdsOptions = BDSExecOptions::Instance();
