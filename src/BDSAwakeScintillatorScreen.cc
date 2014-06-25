@@ -379,7 +379,7 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   
   //Vacuum chamber dimensions.
   _vacThickness=2*mm;
-  _vacInnerWidth=4*cm;
+  _vacInnerWidth=7*cm;
   _vacInnerHeight=7*cm;
   _vacHeight=_vacInnerHeight+2*_vacThickness;
   
