@@ -13,7 +13,6 @@
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4UserLimits.hh"
-//#include "BDSOutput.hh"
 #include "BDSSamplerSD.hh"
 #include "G4SDManager.hh"
 
@@ -30,7 +29,6 @@ extern BDSSamplerSD* BDSSamplerSensDet;
 
 std::vector <G4String> BDSSampler::outputNames;
 
-//extern BDSOutput* bdsOutput;
 //============================================================
 
 int BDSSampler::nSamplers = 0;
@@ -76,12 +74,10 @@ void BDSSampler::SamplerLogicalVolume()
       itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
      // Sensitive Detector:
-//SPM G4cout << "Sampler.cc Nsamplers " << bdsOutput->nSamplers << G4endl;
 #ifdef DEBUG
       G4cout << "BDSSampler.cc Nsamplers " << nSamplers << G4endl;
 #endif
 
-//SPM if(bdsOutput->nSamplers==0)
       if(nSamplers==0)
 	{
 	  G4SDManager* SDMan = G4SDManager::GetSDMpointer();

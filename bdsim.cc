@@ -70,7 +70,9 @@
 
 #include "BDSGeometryInterface.hh"
 
-#include "BDSOutput.hh" 
+#include "BDSOutputBase.hh" 
+#include "BDSOutputASCII.hh" 
+#include "BDSOutputROOT.hh" 
 #include "BDSBunch.hh"
 #include "BDSMaterials.hh"
 //#ifdef USE_ROOT
@@ -82,9 +84,9 @@
 
 //=======================================================
 // Global variables 
-BDSOutput*    bdsOutput;         // output interface
-BDSBunch      bdsBunch;          // bunch information 
-BDSSamplerSD* BDSSamplerSensDet; // sampler
+BDSOutputBase* bdsOutput;         // output interface
+BDSBunch       bdsBunch;          // bunch information 
+BDSSamplerSD*  BDSSamplerSensDet; // sampler
 //=======================================================
 
 //=======================================================
@@ -313,7 +315,13 @@ int main(int argc,char** argv) {
   G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
 #endif  
 
-  bdsOutput = new BDSOutput(BDSExecOptions::Instance()->GetOutputFormat());
+  if (BDSExecOptions::Instance()->GetOutputFormat() == BDSOutputFormat::_ASCII) {
+    bdsOutput = new BDSOutputASCII();
+  } else if (BDSExecOptions::Instance()->GetOutputFormat() == BDSOutputFormat::_ROOT) {
+#ifdef USE_ROOT
+    bdsOutput = new BDSOutputROOT();
+#endif
+  }
   G4cout.precision(10);
 
   // catch aborts to close output stream/file. perhaps not all are needed.
