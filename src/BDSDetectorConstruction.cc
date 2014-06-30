@@ -58,7 +58,7 @@
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSEnergyCounterSD.hh"
-#include "BDSTerminatorSD.hh"
+//#include "BDSTerminatorSD.hh"
 
 #include "BDSComponentFactory.hh"
 #include "BDSSampler.hh"

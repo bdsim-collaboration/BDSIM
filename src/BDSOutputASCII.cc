@@ -1,8 +1,6 @@
 #include "BDSOutputASCII.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
-#include "BDSSampler.hh"
-//#include "BDSSamplerCylinder.hh"
 #include <ctime>
 
 BDSOutputASCII::BDSOutputASCII():BDSOutputBase()

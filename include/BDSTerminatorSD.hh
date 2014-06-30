@@ -28,7 +28,6 @@ public:
 
 private:
   G4bool verbose;
-  G4Track* theTrack;
 };
 
 #endif

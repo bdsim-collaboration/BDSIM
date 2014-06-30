@@ -5,7 +5,6 @@
 #include "BDSExecOptions.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerCylinder.hh"
-#include <ctime>
 
 BDSOutputROOT::BDSOutputROOT():BDSOutputBase()
 {
@@ -280,7 +279,7 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 	part_el_p=(*hc)[i]->GetPartID();
 	turnnumber=(*hc)[i]->GetTurnsTaken();
 	G4String temp = (*hc)[i]->GetName()+'\0';
-	strcpy(volumeName_el_p,temp.c_str());
+	strncpy(volumeName_el_p,temp.c_str(),sizeof(volumeName_el_p));
 	PrecisionRegionEnergyLossTree->Fill();
       }
     }
