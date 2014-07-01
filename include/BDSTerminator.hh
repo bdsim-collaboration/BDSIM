@@ -19,7 +19,8 @@ private:
 
   //id of this sampler / terminator
   G4int nThisSampler;
-  G4int nSamplers;
+  /// total number of terminators
+  static G4int nSamplers;
 
   G4VisAttributes* SetVisAttributes();
 };

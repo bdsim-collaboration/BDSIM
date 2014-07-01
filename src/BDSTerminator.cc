@@ -24,6 +24,8 @@ extern LogVolCountMap* LogVolCount;
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
+int BDSTerminator::nSamplers=0;
+
 BDSTerminator::BDSTerminator(G4String aName, G4double aLength):
   BDSAcceleratorComponent(
 			 aName,
