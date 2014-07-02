@@ -33,7 +33,7 @@ void BDSAwakeMultilayerScreen::layers(){
   windowLayer();
   preScreenSampler();
   backLayer();
-   substrateLayer();
+  substrateLayer();
   if(_firstLayerThickness>1e-9){
     backBinderLayer();
     backScintillatorLayer();
