@@ -39,6 +39,7 @@ void BDSAwakePhysicsList::ConfigurePhysics(){
   _opticalPhysics->Configure(kBoundary, globals->GetTurnOnOpticalSurface());///< Boundary process index                                   
   _opticalPhysics->Configure(kWLS, true);///< Wave Length Shifting process index                       
     //    _opticalPhysics->Configure(kNoProcess,      globals->GetTurnOn< Number of processes, no selected process
+  _opticalPhysics->SetScintillationYieldFactor(globals->GetScintYieldFactor());
 }
 
 void BDSAwakePhysicsList::Register(){
