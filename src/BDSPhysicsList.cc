@@ -40,14 +40,9 @@
 #include "G4HadronPhysicsQGSP_BERT_HP.hh"
 #include "G4HadronPhysicsFTFP_BERT.hh"
 #endif
-#include "G4Decay.hh"
 #include "G4eeToHadrons.hh"
 
-#include "G4EmStandardPhysics.hh"
 #include "G4EmLivermorePhysics.hh"
-
-//#include "IonPhysics.hh"
-
 
 // physics processes
 
@@ -1101,15 +1096,9 @@ void BDSPhysicsList::ConstructLaserWire()
 // -- generator models
 #include "G4TheoFSGenerator.hh"
 #include "G4ExcitationHandler.hh"
-#include "G4Evaporation.hh"
-#include "G4CompetitiveFission.hh"
-#include "G4FermiBreakUp.hh"
-#include "G4StatMF.hh"
 #include "G4GeneratorPrecompoundInterface.hh"
-#include "G4Fancy3DNucleus.hh"
 #include "G4StringModel.hh"
 #include "G4PreCompoundModel.hh"
-#include "G4FTFModel.hh"
 #include "G4QGSMFragmentation.hh"
 #include "G4ExcitedStringDecay.hh"
 
@@ -1117,20 +1106,13 @@ void BDSPhysicsList::ConstructHadronic()
 {
 #if G4VERSION_NUMBER < 1000
   G4NeutronBuilder* theNeutrons=new G4NeutronBuilder;
-  //  G4LHEPNeutronBuilder * theLHEPNeutron;
-  theNeutrons->RegisterMe(/*theLHEPNeutron=*/new G4LHEPNeutronBuilder);
+  theNeutrons->RegisterMe(new G4LHEPNeutronBuilder);
 
-  G4ProtonBuilder * thePro;
-  //  G4LHEPProtonBuilder * theLHEPPro;
+  G4ProtonBuilder * thePro=new G4ProtonBuilder;
+  thePro->RegisterMe(new G4LHEPProtonBuilder);
 
-  thePro=new G4ProtonBuilder;
-  thePro->RegisterMe(/*theLHEPPro=*/new G4LHEPProtonBuilder);
-
-  G4PiKBuilder * thePiK;
-  //  G4LHEPPiKBuilder * theLHEPPiK;
-
-  thePiK=new G4PiKBuilder;
-  thePiK->RegisterMe(/*theLHEPPiK=*/new G4LHEPPiKBuilder);
+  G4PiKBuilder * thePiKnew G4PiKBuilder;
+  thePiK->RegisterMe(new G4LHEPPiKBuilder);
 
   theNeutrons->Build();
   thePro->Build();
@@ -1138,29 +1120,18 @@ void BDSPhysicsList::ConstructHadronic()
 
   // Photonuclear processes
 
-  G4PhotoNuclearProcess * thePhotoNuclearProcess;
-  G4ElectronNuclearProcess * theElectronNuclearProcess;
-  G4PositronNuclearProcess * thePositronNuclearProcess;
-  G4ElectroNuclearReaction * theElectroReaction;
-  G4GammaNuclearReaction * theGammaReaction;  
-  G4TheoFSGenerator * theModel;
-  G4GeneratorPrecompoundInterface * theCascade;
-  G4QGSModel< G4GammaParticipants > * theStringModel;
-  //  G4QGSMFragmentation * theFragmentation;
-  G4ExcitedStringDecay * theStringDecay;
-
-  thePhotoNuclearProcess = new G4PhotoNuclearProcess;
-  theGammaReaction = new G4GammaNuclearReaction;
-  theElectronNuclearProcess = new G4ElectronNuclearProcess;
-  thePositronNuclearProcess = new G4PositronNuclearProcess;
-  theElectroReaction = new G4ElectroNuclearReaction;
-  theModel = new G4TheoFSGenerator;
+  G4PhotoNuclearProcess * thePhotoNuclearProcess = new G4PhotoNuclearProcess;
+  G4GammaNuclearReaction * theGammaReaction = new G4GammaNuclearReaction;
+  G4ElectronNuclearProcess * theElectronNuclearProcess = new G4ElectronNuclearProcess;
+  G4PositronNuclearProcess * thePositronNuclearProcess = new G4PositronNuclearProcess;
+  G4ElectroNuclearReaction * theElectroReaction = new G4ElectroNuclearReaction;
+  G4TheoFSGenerator * theModel = new G4TheoFSGenerator;
   
-  theStringModel = new G4QGSModel< G4GammaParticipants >;
-  theStringDecay = new G4ExcitedStringDecay(/*theFragmentation=*/new G4QGSMFragmentation);
+  G4QGSModel< G4GammaParticipants > * theStringModel = new G4QGSModel< G4GammaParticipants >;
+  G4ExcitedStringDecay * theStringDecay = new G4ExcitedStringDecay(/*theFragmentation=*/new G4QGSMFragmentation);
   theStringModel->SetFragmentationModel(theStringDecay);
   
-  theCascade = new G4GeneratorPrecompoundInterface;
+  G4GeneratorPrecompoundInterface * theCascade = new G4GeneratorPrecompoundInterface;
   
   theModel->SetTransport(theCascade);
   theModel->SetHighEnergyGenerator(theStringModel);
@@ -1182,6 +1153,9 @@ void BDSPhysicsList::ConstructHadronic()
   aProcMan = G4Positron::Positron()->GetProcessManager();
   thePositronNuclearProcess->RegisterMe(theElectroReaction);
   aProcMan->AddDiscreteProcess(thePositronNuclearProcess);
+#else
+  
+
 #endif
 }
 
