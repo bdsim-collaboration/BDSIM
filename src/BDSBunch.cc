@@ -16,7 +16,7 @@
 #include "Randomize.hh"
 // CLHEP
 #include "CLHEP/RandomObjects/RandMultiGauss.h"
-
+#define DEBUG 1
 // distribution type
 namespace {
   enum {
@@ -1273,29 +1273,32 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       skip((G4int)(nlinesIgnore * fields.size()));
      
       std::list<struct BDSBunch::Doublet>::iterator it;
-     for(it=fields.begin();it!=fields.end();it++)
-       {
+      for(it=fields.begin();it!=fields.end();it++)
+	{
 #ifdef DEBUG 
-         G4cout<< "BDSBunch : " <<it->name<<"  ->  "<<it->unit<<G4endl;
+	  G4cout<< "BDSBunch : " <<it->name<<"  ->  "<<it->unit<<G4endl;
 #endif
-         if(it->name=="E") { ReadValue(E); E *= ( CLHEP::GeV * it->unit ); 
+	  if(it->name=="E") { 
+	    ReadValue(E); E *= ( CLHEP::GeV * it->unit ); 
 #ifdef DEBUG 
-         G4cout << "******** Particle Mass = " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() << G4endl;
-         G4cout << "******** Particle Total Energy = " << E << G4endl;
-         E-=BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
-         G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
-	 
-	 G4cout<< "BDSBunch : " << E <<G4endl;
+	    G4cout << "******** Particle Mass = " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() << G4endl;
+	   G4cout << "******** Particle Total Energy = " << E << G4endl;
 #endif
-         }
+	   E-=BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
+#ifdef DEBUG 
+	   G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
+	   G4cout<< "BDSBunch : " << E <<G4endl;
+#endif
+	  }
 	 G4double P=0;
-         if(it->name=="P") { ReadValue(P); P *= ( CLHEP::GeV * it->unit ); //Paticle momentum
-#ifdef DEBUG 
+         if(it->name=="P") { 
+	   ReadValue(P); P *= ( CLHEP::GeV * it->unit ); //Paticle momentum
 	   G4double particleMass = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
-	   G4cout << "******** Particle Mass = " << particleMass << G4endl;
 	   G4double totalEnergy = sqrt(P*P + particleMass*particleMass);
-	   G4cout << "******** Particle Total Energy = " << totalEnergy << G4endl;
 	   E = totalEnergy - particleMass;
+#ifdef DEBUG 
+	   G4cout << "******** Particle Mass = " << particleMass << G4endl;
+	   G4cout << "******** Particle Total Energy = " << totalEnergy << G4endl;
 	   G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
 	   G4cout<< "BDSBunch : " << E <<G4endl;
 #endif
