@@ -1256,11 +1256,22 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 #ifdef DEBUG 
          G4cout << "******** Particle Mass = " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() << G4endl;
          G4cout << "******** Particle Total Energy = " << E << G4endl;
-         
          E-=BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
          G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
 	 
 	 G4cout<< "BDSBunch : " << E <<G4endl;
+#endif
+         }
+	 G4double P=0;
+         if(it->name=="P") { ReadValue(P); P *= ( CLHEP::GeV * it->unit ); //Paticle momentum
+#ifdef DEBUG 
+	   G4double particleMass = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
+	   G4cout << "******** Particle Mass = " << particleMass << G4endl;
+	   G4double totalEnergy = sqrt(P*P + particleMass*particleMass);
+	   G4cout << "******** Particle Total Energy = " << totalEnergy << G4endl;
+	   E = totalEnergy - particleMass;
+	   G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
+	   G4cout<< "BDSBunch : " << E <<G4endl;
 #endif
          }
          if(it->name=="t") { ReadValue(t); t *= ( CLHEP::s * it->unit ); tdef = true; }
