@@ -350,6 +350,32 @@ void BDSBunch::SetOptions(struct Options& opt)
 	      
 	      fields.push_back(sd);
 	    }
+	  } else if(token.substr(0,1)=="P") {
+#ifdef DEBUG 
+	    G4cout<< "BDSBunch : " <<"P!"<<G4endl;
+#endif
+	    G4String rest = token.substr(1);
+#ifdef DEBUG 
+	    G4cout<< "BDSBunch : " <<"rest ->"<<rest<<G4endl;
+#endif
+	    G4int pos1 = rest.find("[");
+	    G4int pos2 = rest.find("]");
+	    if(pos1 < 0 || pos2 < 0) {
+	      G4cerr<<"unit format wrong!!!"<<G4endl;
+	    } else {
+	      G4String fmt = rest.substr(pos1+1,pos2-1);
+#ifdef DEBUG 
+	      G4cout<< "BDSBunch : " <<"fmt ->"<<fmt<<G4endl;
+#endif
+	      sd.name = "P"; 
+              
+	      if(fmt=="GeV") sd.unit=1;
+	      if(fmt=="MeV") sd.unit=1.e-3;
+	      if(fmt=="KeV") sd.unit=1.e-6;
+	      if(fmt=="eV") sd.unit=1.e-9;
+	      
+	      fields.push_back(sd);
+	    }
 	  } else if(token.substr(0,1)=="t") {
 #ifdef DEBUG 
 	    G4cout<< "BDSBunch : " <<"t!"<<G4endl;
