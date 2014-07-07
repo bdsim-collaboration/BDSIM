@@ -27,7 +27,7 @@
 #include<iostream>
 
 extern BDSBunch bdsBunch;
-#define DEBUG 1
+
 //===================================================
 // Keep initial point in phase space for diagnostics
 G4double

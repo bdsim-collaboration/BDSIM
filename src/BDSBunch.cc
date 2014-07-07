@@ -16,7 +16,7 @@
 #include "Randomize.hh"
 // CLHEP
 #include "CLHEP/RandomObjects/RandMultiGauss.h"
-#define DEBUG 1
+
 // distribution type
 namespace {
   enum {
