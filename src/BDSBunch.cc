@@ -1256,8 +1256,9 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 #ifdef DEBUG 
          G4cout << "******** Particle Mass = " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() << G4endl;
          G4cout << "******** Particle Total Energy = " << E << G4endl;
-         
+#endif
          E-=BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
+#ifdef DEBUG
          G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
 	 
 	 G4cout<< "BDSBunch : " << E <<G4endl;
