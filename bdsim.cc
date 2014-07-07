@@ -197,7 +197,7 @@ int main(int argc,char** argv) {
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
 
-  BDSAwakePhysicsList* PhysList=new BDSAwakePhysicsList;
+  BDSPhysicsList* PhysList=new BDSPhysicsList;
   runManager->SetUserInitialization(PhysList);
   
 #ifdef DEBUG 
