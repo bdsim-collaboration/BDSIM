@@ -1347,7 +1347,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 	 // use the Kinetic energy:
 	 //          if(BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGEncoding() != 22){
 	 //}
-       }
+	}
      //Add the global offset Z
      z0=z0+Z0*CLHEP::m;
      break;
