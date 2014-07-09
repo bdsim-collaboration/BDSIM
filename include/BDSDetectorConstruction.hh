@@ -123,11 +123,5 @@ private:
   G4RotationMatrix* _globalRotation;
 };
 
-template <typename Iter>
-Iter next(Iter iter)
-{
-    return ++iter;
-}
-
 #endif
 

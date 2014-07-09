@@ -40,14 +40,9 @@
 #include "G4HadronPhysicsQGSP_BERT_HP.hh"
 #include "G4HadronPhysicsFTFP_BERT.hh"
 #endif
-#include "G4Decay.hh"
 #include "G4eeToHadrons.hh"
 
-#include "G4EmStandardPhysics.hh"
 #include "G4EmLivermorePhysics.hh"
-
-//#include "IonPhysics.hh"
-
 
 // physics processes
 
@@ -64,13 +59,9 @@
 #include "BDSGammaConversion_LPB.hh" //added by M.D. Salt, R.B. Appleby, 15/10/09
 
 // charged particles
-#if G4VERSION_NUMBER > 819
 #include "G4eMultipleScattering.hh"
 #include "G4MuMultipleScattering.hh"
 #include "G4hMultipleScattering.hh"
-#else
-#include "G4MultipleScattering.hh"
-#endif
 //Optical processes
 #include "G4Cerenkov.hh"
 #include "G4Scintillation.hh"
@@ -643,13 +634,9 @@ void BDSPhysicsList::ConstructEMMisc()
       }
             
       if(BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){
-#if G4VERSION_NUMBER > 909
         G4Cerenkov* theCerenkovProcess = new G4Cerenkov;
         pmanager->AddProcess(theCerenkovProcess);
         pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
-#else
-        pmanager->AddProcess(new G4Cerenkov,          -1, 5,-1);
-#endif
       }
       
     } else if (particleName == "e+") {
@@ -672,13 +659,9 @@ void BDSPhysicsList::ConstructEMMisc()
       }
       pmanager->AddProcess(new G4eplusAnnihilation,  0,-1,4);
       if(BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){      
-#if G4VERSION_NUMBER > 909
         G4Cerenkov* theCerenkovProcess = new G4Cerenkov;
         pmanager->AddProcess(theCerenkovProcess);
         pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
-#else
-        pmanager->AddProcess(new G4Cerenkov,          -1, 5,-1);
-#endif 
       }
     } else if ((!particle->IsShortLived()) &&
 	       (particle->GetPDGCharge() != 0.0) && 
@@ -686,13 +669,9 @@ void BDSPhysicsList::ConstructEMMisc()
       //all others charged particles except geantino
       pmanager->AddProcess(new G4hIonisation,       -1, 2,2);
            if(BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){
-#if  G4VERSION_NUMBER > 909
         G4Cerenkov* theCerenkovProcess = new G4Cerenkov;
         pmanager->AddProcess(theCerenkovProcess);
         pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
-#else
-        pmanager->AddProcess(new G4Cerenkov,          -1, 3,-1);
-#endif
       }
     }
   }
@@ -706,29 +685,17 @@ void BDSPhysicsList::ConstructMultipleScattering(){
     G4String particleName = particle->GetParticleName();
     if (particleName == "e-") {
       //electron
-#if G4VERSION_NUMBER>919
       pmanager->AddProcess(new G4eMultipleScattering,-1, 1,1);
-#else
-      pmanager->AddProcess(new G4MultipleScattering,-1, 1,1);
-#endif
       
     } else if (particleName == "e+") {
       
-#if G4VERSION_NUMBER>919
       pmanager->AddProcess(new G4eMultipleScattering,-1, 1,1);
-#else
-      pmanager->AddProcess(new G4MultipleScattering,-1, 1,1);
-#endif
     } else if ((!particle->IsShortLived()) &&
 	       (particle->GetPDGCharge() != 0.0) && 
 	       (particle->GetParticleName() != "chargedgeantino")) {
       
       //all others charged particles except geantino
-#if G4VERSION_NUMBER>919
       pmanager->AddProcess(new G4hMultipleScattering,-1, 1,1);
-#else
-      pmanager->AddProcess(new G4MultipleScattering,-1, 1,1);
-#endif 
     }
   }
 }
@@ -796,22 +763,14 @@ void BDSPhysicsList::ConstructMuon()
     } else if( particleName == "mu+" || 
                particleName == "mu-"    ) {
       //muon  
-#if  G4VERSION_NUMBER>919
       pmanager->AddProcess(new G4MuMultipleScattering,-1, 1,1);
-#else 
-      pmanager->AddProcess(new G4MultipleScattering,-1, 1,1);
-#endif
       pmanager->AddProcess(new G4MuIonisation,      -1, 2,2);
       pmanager->AddProcess(new G4MuBremsstrahlung,  -1, 3,3);
       pmanager->AddProcess(new G4MuPairProduction,  -1, 4,4);
       if(BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){
-#if  G4VERSION_NUMBER > 909
         G4Cerenkov* theCerenkovProcess = new G4Cerenkov;
         pmanager->AddProcess(theCerenkovProcess);
         pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
-#else
-        pmanager->AddProcess(new G4Cerenkov,          -1, 5,-1);
-#endif
 #if G4VERSION_NUMBER < 950
         pmanager->AddDiscreteProcess(new G4MuonNucleusProcess);     
 #elif G4VERSION_NUMBER < 953
@@ -918,11 +877,7 @@ void BDSPhysicsList::ConstructMerlin()
     
     if (particleName == "e-") {
       //electron
-#if G4VERSION_NUMBER>919
       pmanager->AddProcess(new G4eMultipleScattering,-1, 1,1);
-#else 
-      pmanager->AddProcess(new G4MultipleScattering,-1, 1,1);
-#endif
       pmanager->AddProcess(new G4eIonisation,       -1, 2,2);
       pmanager->AddProcess(new G4eBremsstrahlung,   -1, 3,3);      
     } 
@@ -981,11 +936,7 @@ void BDSPhysicsList::ConstructEM_Low_Energy()
 #endif
       
     } else if (particleName == "e-") {
-      #if G4VERSION_NUMBER>919
         pmanager->AddProcess(new G4eMultipleScattering,-1, 1,1);
-      #else
-        pmanager->AddProcess(new G4MultipleScattering,-1, 1,1);
-      #endif
 #if G4VERSION_NUMBER < 950
 	pmanager->AddProcess(new G4LowEnergyIonisation,        -1, 2,2);
 	pmanager->AddProcess(new G4LowEnergyBremsstrahlung,    -1, 3,3);
@@ -1006,31 +957,19 @@ void BDSPhysicsList::ConstructEM_Low_Energy()
 #endif
 	    
     } else if (particleName == "e+") {
-      #if G4VERSION_NUMBER>919
         pmanager->AddProcess(new G4eMultipleScattering,-1, 1,1);
-      #else 
-        pmanager->AddProcess(new G4MultipleScattering,-1, 1,1);
-      #endif
 	pmanager->AddProcess(new G4eIonisation,        -1, 2,2);
 	pmanager->AddProcess(new G4eBremsstrahlung,    -1, 3,3);
 	pmanager->AddProcess(new G4eplusAnnihilation,   0,-1,4);
     } else if( particleName == "mu+" || 
                particleName == "mu-"    ) {
-      #if G4VERSION_NUMBER>919
         pmanager->AddProcess(new G4MuMultipleScattering,-1, 1,1);
-      #else 
-        pmanager->AddProcess(new G4MultipleScattering,-1, 1,1);
-      #endif
-      pmanager->AddProcess(new G4MuIonisation,      -1, 2,2);
-      pmanager->AddProcess(new G4MuBremsstrahlung,  -1, 3,3);
-      pmanager->AddProcess(new G4MuPairProduction,  -1, 4,4);       
+        pmanager->AddProcess(new G4MuIonisation,      -1, 2,2);
+        pmanager->AddProcess(new G4MuBremsstrahlung,  -1, 3,3);
+        pmanager->AddProcess(new G4MuPairProduction,  -1, 4,4);       
 
     } else if (particleName == "GenericIon") {
-      #if G4VERSION_NUMBER>919
         pmanager->AddProcess(new G4hMultipleScattering,-1, 1,1);
-      #else 
-        pmanager->AddProcess(new G4MultipleScattering,-1, 1,1);
-#endif
 #if G4VERSION_NUMBER < 950
 	pmanager->AddProcess(new G4hLowEnergyIonisation,       -1,2,2);
       //      pmanager->AddProcess(new G4ionIonisation,      -1, 2,2);
@@ -1043,11 +982,7 @@ void BDSPhysicsList::ConstructEM_Low_Energy()
 	       (particle->GetPDGCharge() != 0.0) && 
 	       (particle->GetParticleName() != "chargedgeantino")) {
 
-      #if G4VERSION_NUMBER>919
         pmanager->AddProcess(new G4hMultipleScattering,-1, 1,1);
-      #else 
-        pmanager->AddProcess(new G4MultipleScattering,-1, 1,1);
-      #endif
 #if G4VERSION_NUMBER < 950
       pmanager->AddProcess(new G4hLowEnergyIonisation,       -1,2,2);
 #else
@@ -1161,486 +1096,23 @@ void BDSPhysicsList::ConstructLaserWire()
 // -- generator models
 #include "G4TheoFSGenerator.hh"
 #include "G4ExcitationHandler.hh"
-#include "G4Evaporation.hh"
-#include "G4CompetitiveFission.hh"
-#include "G4FermiBreakUp.hh"
-#include "G4StatMF.hh"
 #include "G4GeneratorPrecompoundInterface.hh"
-#include "G4Fancy3DNucleus.hh"
 #include "G4StringModel.hh"
 #include "G4PreCompoundModel.hh"
-#include "G4FTFModel.hh"
 #include "G4QGSMFragmentation.hh"
 #include "G4ExcitedStringDecay.hh"
-
-//
-// ConstructHad()
-//
-// Makes discrete physics processes for the hadrons, at present limited
-// to those particles with GHEISHA interactions (INTRC > 0).
-// The processes are: Elastic scattering, Inelastic scattering,
-// Fission (for neutron only), and Capture (neutron).
-//
-// F.W.Jones  06-JUL-1998
-//
-
-void BDSPhysicsList::ConstructHad()
-{
-    // this will be the model class for high energies
-    G4TheoFSGenerator * theTheoModel = new G4TheoFSGenerator;
-       
-    // all models for treatment of thermal nucleus 
-    G4Evaporation * theEvaporation = new G4Evaporation;
-    G4FermiBreakUp * theFermiBreakUp = new G4FermiBreakUp;
-    G4StatMF * theMF = new G4StatMF;
-
-    // Evaporation logic
-    G4ExcitationHandler * theHandler = new G4ExcitationHandler;
-        theHandler->SetEvaporation(theEvaporation);
-        theHandler->SetFermiModel(theFermiBreakUp);
-        theHandler->SetMultiFragmentation(theMF);
-        theHandler->SetMaxAandZForFermiBreakUp(12, 6);
-        theHandler->SetMinEForMultiFrag(3*CLHEP::MeV);
-	
-    // Pre equilibrium stage 
-    G4PreCompoundModel * thePreEquilib = new G4PreCompoundModel(theHandler);
-
-    
-    // a no-cascade generator-precompound interaface
-    G4GeneratorPrecompoundInterface * theCascade = new G4GeneratorPrecompoundInterface;
-            theCascade->SetDeExcitation(thePreEquilib);  
-	
-    // here come the high energy parts
-    // the string model; still not quite according to design - Explicite use of the forseen interfaces 
-    // will be tested and documented in this program by beta-02 at latest.
-    G4VPartonStringModel * theStringModel;
-    theStringModel = new G4FTFModel;
-    theTheoModel->SetTransport(theCascade);
-    theTheoModel->SetHighEnergyGenerator(theStringModel);
-    theTheoModel->SetMinEnergy(19*CLHEP::GeV);
-    theTheoModel->SetMaxEnergy(100*CLHEP::TeV);
-
-      G4VLongitudinalStringDecay * theFragmentation = new G4QGSMFragmentation;
-      G4ExcitedStringDecay * theStringDecay = new G4ExcitedStringDecay(theFragmentation);
-      theStringModel->SetFragmentationModel(theStringDecay);
-
-// done with the generator model (most of the above is also available as default)
-   G4HadronElasticProcess* theElasticProcess = 
-                                    new G4HadronElasticProcess;
-#if G4VERSION_NUMBER < 1000
-   G4LElastic* theElasticModel = new G4LElastic;
-#else
-   G4HadronElastic* theElasticModel = new G4HadronElastic;
-#endif
-   theElasticProcess->RegisterMe(theElasticModel);
-   G4HadronElasticProcess* theElasticProcess1 = 
-                                    new G4HadronElasticProcess;
-
-   // low energy inelastic scattering models for versions 4.10
-#if G4VERSION_NUMBER > 999
-   G4CascadeInterface* theInelasticModel = new G4CascadeInterface();
-   G4BinaryLightIonReaction* theInelasticIonModel = new G4BinaryLightIonReaction();
-#endif
-
-   theParticleIterator->reset();
-   while ((*theParticleIterator)()) {
-      G4ParticleDefinition* particle = theParticleIterator->value();
-      G4ProcessManager* pmanager = particle->GetProcessManager();
-      G4String particleName = particle->GetParticleName();
-     
-      if (particleName == "pi+") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4PionPlusInelasticProcess* theInelasticProcess = 
-                                new G4PionPlusInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEPionPlusInelastic* theInelasticModel = 
-                                new G4LEPionPlusInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "pi-") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4PionMinusInelasticProcess* theInelasticProcess = 
-                                new G4PionMinusInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEPionMinusInelastic* theInelasticModel = 
-                                new G4LEPionMinusInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "kaon+") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4KaonPlusInelasticProcess* theInelasticProcess = 
-                                  new G4KaonPlusInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEKaonPlusInelastic* theInelasticModel = new G4LEKaonPlusInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "kaon0S") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4KaonZeroSInelasticProcess* theInelasticProcess = 
-                             new G4KaonZeroSInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEKaonZeroSInelastic* theInelasticModel = 
-                             new G4LEKaonZeroSInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "kaon0L") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4KaonZeroLInelasticProcess* theInelasticProcess = 
-                             new G4KaonZeroLInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEKaonZeroLInelastic* theInelasticModel = 
-                             new G4LEKaonZeroLInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "kaon-") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4KaonMinusInelasticProcess* theInelasticProcess = 
-                                 new G4KaonMinusInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEKaonMinusInelastic* theInelasticModel = 
-                                 new G4LEKaonMinusInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "proton") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4ProtonInelasticProcess* theInelasticProcess = 
-                                    new G4ProtonInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEProtonInelastic* theInelasticModel = new G4LEProtonInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "anti_proton") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4AntiProtonInelasticProcess* theInelasticProcess = 
-                                new G4AntiProtonInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEAntiProtonInelastic* theInelasticModel = 
-                                new G4LEAntiProtonInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "neutron") {
-         
-          // elastic scattering
-#if G4VERSION_NUMBER < 1000
-         G4LElastic* theElasticModel1 = new G4LElastic;
-#else
-	 G4HadronElastic* theElasticModel1 = new G4HadronElastic;
-#endif
-         theElasticProcess1->RegisterMe(theElasticModel1);
-         pmanager->AddDiscreteProcess(theElasticProcess1);
-          // inelastic scattering
-         G4NeutronInelasticProcess* theInelasticProcess = 
-                                    new G4NeutronInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LENeutronInelastic* theInelasticModel = new G4LENeutronInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-          // fission
-         G4HadronFissionProcess* theFissionProcess =
-                                    new G4HadronFissionProcess;
-         G4LFission* theFissionModel = new G4LFission;
-         theFissionProcess->RegisterMe(theFissionModel);
-         pmanager->AddDiscreteProcess(theFissionProcess);
-         // capture
-         G4HadronCaptureProcess* theCaptureProcess =
-                                    new G4HadronCaptureProcess;
-#if G4VERSION_NUMBER < 1000
-         G4LCapture* theCaptureModel = new G4LCapture;
-#else
-	 G4NeutronRadCapture* theCaptureModel = new G4NeutronRadCapture;
-#endif
-         theCaptureProcess->RegisterMe(theCaptureModel);
-         pmanager->AddDiscreteProcess(theCaptureProcess);
-      }  
-      else if (particleName == "anti_neutron") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4AntiNeutronInelasticProcess* theInelasticProcess = 
-                               new G4AntiNeutronInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEAntiNeutronInelastic* theInelasticModel = 
-                               new G4LEAntiNeutronInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-	 theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "lambda") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4LambdaInelasticProcess* theInelasticProcess = 
-                                    new G4LambdaInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LELambdaInelastic* theInelasticModel = new G4LELambdaInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "anti_lambda") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4AntiLambdaInelasticProcess* theInelasticProcess = 
-                                new G4AntiLambdaInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEAntiLambdaInelastic* theInelasticModel = 
-                                new G4LEAntiLambdaInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "sigma+") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4SigmaPlusInelasticProcess* theInelasticProcess = 
-                                 new G4SigmaPlusInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LESigmaPlusInelastic* theInelasticModel = 
-                                 new G4LESigmaPlusInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "sigma-") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4SigmaMinusInelasticProcess* theInelasticProcess = 
-                                 new G4SigmaMinusInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LESigmaMinusInelastic* theInelasticModel = 
-                                 new G4LESigmaMinusInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "anti_sigma+") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4AntiSigmaPlusInelasticProcess* theInelasticProcess = 
-                             new G4AntiSigmaPlusInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEAntiSigmaPlusInelastic* theInelasticModel = 
-                                 new G4LEAntiSigmaPlusInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "anti_sigma-") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4AntiSigmaMinusInelasticProcess* theInelasticProcess = 
-                            new G4AntiSigmaMinusInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEAntiSigmaMinusInelastic* theInelasticModel = 
-                                 new G4LEAntiSigmaMinusInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "xi0") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4XiZeroInelasticProcess* theInelasticProcess = 
-                            new G4XiZeroInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEXiZeroInelastic* theInelasticModel = 
-                                 new G4LEXiZeroInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "xi-") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4XiMinusInelasticProcess* theInelasticProcess = 
-                            new G4XiMinusInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEXiMinusInelastic* theInelasticModel = 
-                                 new G4LEXiMinusInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "anti_xi0") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4AntiXiZeroInelasticProcess* theInelasticProcess = 
-                            new G4AntiXiZeroInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEAntiXiZeroInelastic* theInelasticModel = 
-                                 new G4LEAntiXiZeroInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "anti_xi-") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4AntiXiMinusInelasticProcess* theInelasticProcess = 
-                            new G4AntiXiMinusInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEAntiXiMinusInelastic* theInelasticModel = 
-                                 new G4LEAntiXiMinusInelastic;
-#endif
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "deuteron") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4DeuteronInelasticProcess* theInelasticProcess = 
-                            new G4DeuteronInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEDeuteronInelastic* theInelasticModel = 
-                                 new G4LEDeuteronInelastic;
-         theInelasticProcess->RegisterMe(theInelasticModel);
-#else
-         theInelasticProcess->RegisterMe(theInelasticIonModel);
-#endif
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "triton") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4TritonInelasticProcess* theInelasticProcess = 
-                            new G4TritonInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LETritonInelastic* theInelasticModel = 
-                                 new G4LETritonInelastic;
-         theInelasticProcess->RegisterMe(theInelasticModel);
-#else
-	 theInelasticProcess->RegisterMe(theInelasticIonModel);
-#endif
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "alpha") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-         G4AlphaInelasticProcess* theInelasticProcess = 
-                            new G4AlphaInelasticProcess("inelastic");
-#if G4VERSION_NUMBER < 1000
-         G4LEAlphaInelastic* theInelasticModel = 
-                                 new G4LEAlphaInelastic;
-         theInelasticProcess->RegisterMe(theInelasticModel);
-#else
-	 theInelasticProcess->RegisterMe(theInelasticIonModel);
-#endif
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-      }
-      else if (particleName == "omega-") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-#if G4VERSION_NUMBER < 1000
-         G4OmegaMinusInelasticProcess* theInelasticProcess = 
-                            new G4OmegaMinusInelasticProcess("inelastic");
-         G4LEOmegaMinusInelastic* theInelasticModel = 
-                                 new G4LEOmegaMinusInelastic;
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-#endif
-      }
-      else if (particleName == "anti_omega-") {
-         pmanager->AddDiscreteProcess(theElasticProcess);
-#if G4VERSION_NUMBER < 1000
-         G4AntiOmegaMinusInelasticProcess* theInelasticProcess = 
-                            new G4AntiOmegaMinusInelasticProcess("inelastic");
-         G4LEAntiOmegaMinusInelastic* theInelasticModel = 
-                                 new G4LEAntiOmegaMinusInelastic;
-         theInelasticProcess->RegisterMe(theInelasticModel);
-         theInelasticProcess->RegisterMe(theTheoModel);
-         pmanager->AddDiscreteProcess(theInelasticProcess);
-#endif
-      }
-   }
-}
-
-/*
-void BDSPhysicsList::ConstructPhotolepton_Hadron(){
-  G4TheoFSGenerator * theModel;
-  G4GeneratorPrecompoundInterface * theCascade;
-  G4QGSModel< G4GammaParticipants > * theStringModel;
-  G4QGSMFragmentation * theFragmentation;
-  G4ExcitedStringDecay * theStringDecay;
-
-  G4PhotoNuclearProcess * thePhotoNuclearProcess;
-  G4ElectronNuclearProcess * theElectronNuclearProcess;
-  G4PositronNuclearProcess * thePositronNuclearProcess;
-  G4ElectroNuclearReaction * theElectroReaction;
-  G4GammaNuclearReaction * theGammaReaction;  
-
-  theModel = new G4TheoFSGenerator;
-  
-  theStringModel = new G4QGSModel< G4GammaParticipants >;
-  theStringDecay = new G4ExcitedStringDecay(theFragmentation=new G4QGSMFragmentation);
-  theStringModel->SetFragmentationModel(theStringDecay);
-  
-  theCascade = new G4GeneratorPrecompoundInterface;
-  
-  theModel->SetTransport(theCascade);
-  theModel->SetHighEnergyGenerator(theStringModel);
-
-  G4ProcessManager * aProcMan = 0;
-  
-  aProcMan = G4Gamma::Gamma()->GetProcessManager();
-  theGammaReaction->SetMaxEnergy(3.5*CLHEP::GeV);
-  thePhotoNuclearProcess->RegisterMe(theGammaReaction);
-  theModel->SetMinEnergy(3.*CLHEP::GeV);
-  theModel->SetMaxEnergy(100*CLHEP::TeV);
-  thePhotoNuclearProcess->RegisterMe(theModel);
-  aProcMan->AddDiscreteProcess(thePhotoNuclearProcess);
-
-  aProcMan = G4Electron::Electron()->GetProcessManager();
-  theElectronNuclearProcess->RegisterMe(theElectroReaction);
-  aProcMan->AddDiscreteProcess(theElectronNuclearProcess);
-  
-  aProcMan = G4Positron::Positron()->GetProcessManager();
-  thePositronNuclearProcess->RegisterMe(theElectroReaction);
-  aProcMan->AddDiscreteProcess(thePositronNuclearProcess);
-}
-*/
 
 void BDSPhysicsList::ConstructHadronic()
 {
 #if G4VERSION_NUMBER < 1000
   G4NeutronBuilder* theNeutrons=new G4NeutronBuilder;
-  //  G4LHEPNeutronBuilder * theLHEPNeutron;
-  theNeutrons->RegisterMe(/*theLHEPNeutron=*/new G4LHEPNeutronBuilder);
+  theNeutrons->RegisterMe(new G4LHEPNeutronBuilder);
 
-  G4ProtonBuilder * thePro;
-  //  G4LHEPProtonBuilder * theLHEPPro;
+  G4ProtonBuilder * thePro=new G4ProtonBuilder;
+  thePro->RegisterMe(new G4LHEPProtonBuilder);
 
-  thePro=new G4ProtonBuilder;
-  thePro->RegisterMe(/*theLHEPPro=*/new G4LHEPProtonBuilder);
-
-  G4PiKBuilder * thePiK;
-  //  G4LHEPPiKBuilder * theLHEPPiK;
-
-  thePiK=new G4PiKBuilder;
-  thePiK->RegisterMe(/*theLHEPPiK=*/new G4LHEPPiKBuilder);
+  G4PiKBuilder * thePiK=new G4PiKBuilder;
+  thePiK->RegisterMe(new G4LHEPPiKBuilder);
 
   theNeutrons->Build();
   thePro->Build();
@@ -1648,29 +1120,18 @@ void BDSPhysicsList::ConstructHadronic()
 
   // Photonuclear processes
 
-  G4PhotoNuclearProcess * thePhotoNuclearProcess;
-  G4ElectronNuclearProcess * theElectronNuclearProcess;
-  G4PositronNuclearProcess * thePositronNuclearProcess;
-  G4ElectroNuclearReaction * theElectroReaction;
-  G4GammaNuclearReaction * theGammaReaction;  
-  G4TheoFSGenerator * theModel;
-  G4GeneratorPrecompoundInterface * theCascade;
-  G4QGSModel< G4GammaParticipants > * theStringModel;
-  //  G4QGSMFragmentation * theFragmentation;
-  G4ExcitedStringDecay * theStringDecay;
-
-  thePhotoNuclearProcess = new G4PhotoNuclearProcess;
-  theGammaReaction = new G4GammaNuclearReaction;
-  theElectronNuclearProcess = new G4ElectronNuclearProcess;
-  thePositronNuclearProcess = new G4PositronNuclearProcess;
-  theElectroReaction = new G4ElectroNuclearReaction;
-  theModel = new G4TheoFSGenerator;
+  G4PhotoNuclearProcess * thePhotoNuclearProcess = new G4PhotoNuclearProcess;
+  G4GammaNuclearReaction * theGammaReaction = new G4GammaNuclearReaction;
+  G4ElectronNuclearProcess * theElectronNuclearProcess = new G4ElectronNuclearProcess;
+  G4PositronNuclearProcess * thePositronNuclearProcess = new G4PositronNuclearProcess;
+  G4ElectroNuclearReaction * theElectroReaction = new G4ElectroNuclearReaction;
+  G4TheoFSGenerator * theModel = new G4TheoFSGenerator;
   
-  theStringModel = new G4QGSModel< G4GammaParticipants >;
-  theStringDecay = new G4ExcitedStringDecay(/*theFragmentation=*/new G4QGSMFragmentation);
+  G4QGSModel< G4GammaParticipants > * theStringModel = new G4QGSModel< G4GammaParticipants >;
+  G4ExcitedStringDecay * theStringDecay = new G4ExcitedStringDecay(/*theFragmentation=*/new G4QGSMFragmentation);
   theStringModel->SetFragmentationModel(theStringDecay);
   
-  theCascade = new G4GeneratorPrecompoundInterface;
+  G4GeneratorPrecompoundInterface * theCascade = new G4GeneratorPrecompoundInterface;
   
   theModel->SetTransport(theCascade);
   theModel->SetHighEnergyGenerator(theStringModel);
@@ -1692,6 +1153,9 @@ void BDSPhysicsList::ConstructHadronic()
   aProcMan = G4Positron::Positron()->GetProcessManager();
   thePositronNuclearProcess->RegisterMe(theElectroReaction);
   aProcMan->AddDiscreteProcess(thePositronNuclearProcess);
+#else
+  
+
 #endif
 }
 

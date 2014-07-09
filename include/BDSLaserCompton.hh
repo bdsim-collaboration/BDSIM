@@ -9,12 +9,7 @@
 #include "G4ios.hh" 
 #include "globals.hh"
 #include "Randomize.hh" 
-#include "G4Version.hh"
-#if G4VERSION_NUMBER > 899
 #include "G4VDiscreteProcess.hh"
-#else
-#include "G4VeEnergyLoss.hh"
-#endif
 #include "G4VPhysicsConstructor.hh"
 #include "G4Track.hh"
 #include "G4Step.hh"
@@ -31,21 +26,13 @@
 // flag initiated in BDSEventAction
 extern G4bool FireLaserCompton;
 
-#if G4VERSION_NUMBER > 899
 class BDSLaserCompton : public G4VDiscreteProcess
-#else
-class BDSLaserCompton : public G4VeEnergyLoss
-#endif
 { 
   public:
    
   BDSLaserCompton(const G4String& processName = "eLaser");
   
   ~BDSLaserCompton();
-
-#if G4VERSION > 8  
-//  virtual void PrintInfo();
-#endif
 
   G4bool IsApplicable(const G4ParticleDefinition&);
   
@@ -69,14 +56,6 @@ protected:
 				const G4Material* aMaterial);
 
   //  virtual G4double SecondaryEnergyThreshold(size_t index);
-
-protected:
-  //#if G4VERSION_NUMBER > 899
-  //  G4bool isInitialised;  
-  //  const G4ParticleDefinition* particle;
-
-//  virtual void InitialiseEnergyLossProcess(const G4ParticleDefinition*, const G4ParticleDefinition*);
-//#endif
   
 private:
   
@@ -86,7 +65,6 @@ private:
 
   //  const std::vector<G4double>* secondaryEnergyCuts;
   
-private:
   G4double itsLaserWavelength;
   G4ThreeVector itsLaserDirection;
   G4double itsLaserEnergy;

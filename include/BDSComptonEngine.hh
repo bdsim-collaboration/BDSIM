@@ -9,13 +9,8 @@
 #include "G4ios.hh" 
 #include "globals.hh"
 #include "Randomize.hh" 
-#include "G4Version.hh"
 
-#if G4VERSION_NUMBER > 899
 #include "G4VEnergyLossProcess.hh"
-#else
-#include "G4VeEnergyLoss.hh"
-#endif
 
 #include "G4Track.hh"
 #include "G4Step.hh"
