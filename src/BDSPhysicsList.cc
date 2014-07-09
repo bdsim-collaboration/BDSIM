@@ -1111,7 +1111,7 @@ void BDSPhysicsList::ConstructHadronic()
   G4ProtonBuilder * thePro=new G4ProtonBuilder;
   thePro->RegisterMe(new G4LHEPProtonBuilder);
 
-  G4PiKBuilder * thePiKnew G4PiKBuilder;
+  G4PiKBuilder * thePiK=new G4PiKBuilder;
   thePiK->RegisterMe(new G4LHEPPiKBuilder);
 
   theNeutrons->Build();

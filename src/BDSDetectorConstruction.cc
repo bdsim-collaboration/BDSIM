@@ -104,7 +104,13 @@ bool debug = false;
 
 //=================================================================
 
-
+namespace {
+  template <typename Iter>
+  Iter next(Iter iter)
+  {
+    return ++iter;
+  }
+}
 
 BDSDetectorConstruction::BDSDetectorConstruction():
   itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
@@ -318,7 +324,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
     G4cout << "BDSDetectorConstruction creating component..." << G4endl;
 #endif
     BDSAcceleratorComponent* temp = 0;
-    if ((next(it) == beamline_list.end()) && (BDSExecOptions::Instance()->GetCircular()))
+    if ((::next(it) == beamline_list.end()) && (BDSExecOptions::Instance()->GetCircular()))
       {
 #ifdef DEBUG
 	G4cout << "Circular machine - this is the last element - creating terminator" << G4endl;
