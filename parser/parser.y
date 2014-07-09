@@ -603,7 +603,7 @@ parameters:
 		  /* if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence */
 		    else {
 		      //                  if(VERBOSE)
-		      printf("Warning : unknown parameter %s\n",$1->name);
+		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
 		    }
 		}
 	    }
@@ -664,7 +664,7 @@ parameters:
                        }
 		    else {
 		      //                  if(VERBOSE)
-		      printf("Warning : unknown parameter %s\n",$1->name);
+		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
 		    }
 		 }
 	     }         
@@ -725,7 +725,7 @@ parameters:
                        }
 		     else {
 		       //                  if(VERBOSE)
-		       printf("Warning : unknown parameter %s\n",$1->name);
+		       printf("Warning : unknown parameter : \"%s\"\n",$1->name);
 		     }
 		 }         
 	     }
@@ -836,7 +836,7 @@ parameters:
 		  /* if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence */
 		  else {
 		      //                  if(VERBOSE)
-		      printf("Warning : unknown parameter %s\n",$1->name);
+		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
 		  }
 		}
 	    }
@@ -901,7 +901,7 @@ parameters:
                        }
 		    else {
 		      //                  if(VERBOSE)
-		      printf("Warning : unknown parameter %s\n",$1->name);
+		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
 		    }
 		 }
 	     }         
@@ -966,7 +966,7 @@ parameters:
                        }
 		    else {
 		      //                  if(VERBOSE)
-		      printf("Warning : unknown parameter %s\n",$1->name);
+		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
 		    }
 		 }         
 	     }
@@ -1960,7 +1960,7 @@ csample_options : VARIABLE '=' aexpr
 			else if (!strcmp($1->name,"l") ) params.l = $3;
 			else {
 			  //                  if(VERBOSE)
-			  printf("Warning : CSAMPLER: unknown parameter %s\n",$1->name);
+			  printf("Warning : CSAMPLER: unknown parameter : \"%s\"\n",$1->name);
 			  exit(1);
 			}
 		      }
@@ -1983,7 +1983,7 @@ csample_options : VARIABLE '=' aexpr
 			else if (!strcmp($1->name,"l") ) params.l = $3;
 			else {
 			  //                  if(VERBOSE)
-			  printf("Warning : CSAMPLER: unknown parameter %s\n",$1->name);
+			  printf("Warning : CSAMPLER: unknown parameter : \"%s\"\n",$1->name);
 			  exit(1);
 			}
 		      }
@@ -2016,7 +2016,7 @@ gas_options : VARIABLE '=' aexpr
 			else if (!strcmp($1->name,"l") ) params.l = $3;
 			else {
 			  //                  if(VERBOSE)
-			  printf("Warning : GAS: unknown parameter %s\n",$1->name);
+			  printf("Warning : GAS: unknown parameter : \"%s\"\n",$1->name);
 			  exit(1);
 			}
 		      }
@@ -2044,7 +2044,7 @@ gas_options : VARIABLE '=' aexpr
 			else if (!strcmp($1->name,"l") ) params.l = $3;
 			else {
 			  //                  if(VERBOSE)
-			  printf("Warning : GAS: unknown parameter %s\n",$1->name);
+			  printf("Warning : GAS: unknown parameter : \"%s\"\n",$1->name);
 			  exit(1);
 			}
 		      }
