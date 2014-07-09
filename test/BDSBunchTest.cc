@@ -8,8 +8,6 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSBunch.hh"
 
-
-
 extern Options options;
 
 int main(void) {
