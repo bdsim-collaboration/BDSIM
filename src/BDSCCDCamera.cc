@@ -31,10 +31,10 @@ BDSCCDCamera::BDSCCDCamera ()
 }
 
 void BDSCCDCamera::defaultDimensions(){
-  _cavityLength = 40*mm;
-  _size.setX(110.7*mm);
-  _size.setY(137.2*mm);
-  _size.setZ(231.0*mm+_cavityLength);
+  _cavityLength = 40*CLHEP::mm;
+  _size.setX(110.7*CLHEP::mm);
+  _size.setY(137.2*CLHEP::mm);
+  _size.setZ(231.0*CLHEP::mm+_cavityLength);
 }
 
 void BDSCCDCamera::build(){
@@ -67,7 +67,7 @@ void BDSCCDCamera::buildCavity(){
   //  G4double ySize=std::max(_objectLens->diameter(),_imageLens->diameter());
   //  ySize=std::max(ySize,_ccdChip->size().y());
  
-  G4Tubs* cavityTubs = new G4Tubs("CCDCameraCavity_solid",0,_objectLens->diameter()/2.0,_cavityLength/2.0,0,twopi*rad);
+  G4Tubs* cavityTubs = new G4Tubs("CCDCameraCavity_solid",0,_objectLens->diameter()/2.0,_cavityLength/2.0,0,CLHEP::twopi*CLHEP::rad);
   _cavityLog = new G4LogicalVolume(				   
 				   cavityTubs,     
 				   BDSMaterials::Instance()->GetMaterial("vacuum"),
@@ -93,14 +93,14 @@ void BDSCCDCamera::placeCavity(){
 void BDSCCDCamera::buildObjectLens(){
   G4cout << __METHOD_NAME__ << G4endl;
   G4double factor =1.0;
-  _objectLens = new BDSLens(_name+"ObjectLens",factor*25.4*mm, 1029.8*mm,factor*2.2*mm); //Focal length 1m lens (Thorlabs LB1409-A)
+  _objectLens = new BDSLens(_name+"ObjectLens",factor*25.4*CLHEP::mm, 1029.8*CLHEP::mm,factor*2.2*CLHEP::mm); //Focal length 1m lens (Thorlabs LB1409-A)
   G4cout << __METHOD_END__ << G4endl;
 }
 
 void BDSCCDCamera::buildImageLens(){
   G4cout << __METHOD_NAME__ << G4endl;
-  //  _imageLens = new BDSLens(_name+"ImageLens",12.7*mm, 14.6*mm, 4.7*mm); //Focal length 15mm lens (Thorlabs LB1092-A) (magnification factor = 66.4)
-  _imageLens = new BDSLens(_name+"ImageLens",25.4*mm, 25.5*mm, 9.0*mm); //Focal length 25.4mm lens (Thorlabs LB1761-A)(back focal length 22.2mm)
+  //  _imageLens = new BDSLens(_name+"ImageLens",12.7*CLHEP::mm, 14.6*CLHEP::mm, 4.7*CLHEP::mm); //Focal length 15CLHEP::mm lens (Thorlabs LB1092-A) (magnification factor = 66.4)
+  _imageLens = new BDSLens(_name+"ImageLens",25.4*CLHEP::mm, 25.5*CLHEP::mm, 9.0*CLHEP::mm); //Focal length 25.4CLHEP::mm lens (Thorlabs LB1761-A)(back focal length 22.2CLHEP::mm)
   G4cout << __METHOD_END__ << G4endl;
 }
 void BDSCCDCamera::buildCCDChip(){
@@ -108,9 +108,9 @@ void BDSCCDCamera::buildCCDChip(){
   G4ThreeVector pixelSize;
   G4TwoVector nPixels;
 
-  pixelSize.setX(13.5e-3*mm);
-  pixelSize.setY(13.5e-3*mm*512);
-  pixelSize.setZ(13.5e-3*mm); //Assume that the pixels are cubes for the moment.
+  pixelSize.setX(13.5e-3*CLHEP::mm);
+  pixelSize.setY(13.5e-3*CLHEP::mm*512);
+  pixelSize.setZ(13.5e-3*CLHEP::mm); //Assume that the pixels are cubes for the moment.
   nPixels.setX(2048);
   nPixels.setY(1);
 
@@ -146,7 +146,7 @@ void BDSCCDCamera::placeImageLens(){
   G4ThreeVector placementVec;
   placementVec.setX(0);
   placementVec.setY(0);
-  placementVec.setZ(_cavityLength/2.0-_imageLens->centreThickness()/2.0-22.2*mm);
+  placementVec.setZ(_cavityLength/2.0-_imageLens->centreThickness()/2.0-22.2*CLHEP::mm);
   new G4PVPlacement(0,
 		    placementVec,
 		    _imageLens->log(),

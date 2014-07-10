@@ -30,10 +30,11 @@
 #include "G4MaterialTable.hh"
 #include "G4ios.hh"
 #include <iomanip>   
-#include "LHEP.hh"
+
 #include "QGSP_BERT.hh"
 #include "QGSP_BERT_HP.hh"
 #if G4VERSION_NUMBER < 1000
+#include "LHEP.hh"
 #include "HadronPhysicsQGSP_BERT.hh"
 #include "HadronPhysicsQGSP_BERT_HP.hh"
 #include "HadronPhysicsFTFP_BERT.hh"
@@ -258,11 +259,14 @@ void BDSPhysicsList::ConstructProcess()
   //  opticalPhysics->ConstructProcess();
   bool plistFound=false;
   //standard physics lists
+#if G4VERSION_NUMBER < 1000
   if(BDSGlobalConstants::Instance()->GetPhysListName() == "LHEP"){
     LHEP* physList = new LHEP;
     physList->ConstructProcess();
     plistFound=true;
-  }else if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP"){
+  }else 
+#endif
+if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP"){
     QGSP_BERT_HP* physList = new QGSP_BERT_HP;
     physList->ConstructProcess();
     plistFound=true;
@@ -291,8 +295,6 @@ void BDSPhysicsList::ConstructProcess()
     physList->ConstructProcess();
     plistFound=true;
   }else if(BDSGlobalConstants::Instance()->GetPhysListName() == "penelope"){
-    G4VPhysicsConstructor* hadPhysList = new HadronPhysicsQGSP_BERT("hadron");
-    hadPhysList->ConstructProcess();
     G4EmPenelopePhysics* physList = new G4EmPenelopePhysics;
     physList->ConstructProcess();
     plistFound=true;
@@ -368,7 +370,7 @@ void BDSPhysicsList::ConstructProcess()
 	  ConstructEM();
   	  return;
 	}
-
+      
       if(BDSGlobalConstants::Instance()->GetPhysListName() == "em_single_scatter") 
 	{
 	  ConstructEMSingleScatter();
@@ -1182,7 +1184,6 @@ void BDSPhysicsList::ConstructLaserWire()
 #include "G4StatMF.hh"
 #include "G4GeneratorPrecompoundInterface.hh"
 #include "G4Fancy3DNucleus.hh"
-#include "G4LEProtonInelastic.hh"
 #include "G4StringModel.hh"
 #include "G4PreCompoundModel.hh"
 #include "G4FTFModel.hh"
