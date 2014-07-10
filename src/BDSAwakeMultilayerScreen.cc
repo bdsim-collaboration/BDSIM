@@ -10,7 +10,7 @@
 #include "BDSSampler.hh"
 
 BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double dgrain, G4double windowThickness, G4String windowMaterial):
-  BDSMultilayerScreen(G4TwoVector(1*m,3*cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(thickness), _dgrain(dgrain), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
+  BDSMultilayerScreen(G4TwoVector(1*CLHEP::m,3*CLHEP::cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(thickness), _dgrain(dgrain), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
 {
   _fillFactor=0.5;
   _layerThickness=_dgrain;
@@ -27,8 +27,8 @@ BDSAwakeMultilayerScreen::~BDSAwakeMultilayerScreen(){
 }
 
 void BDSAwakeMultilayerScreen::layers(){
-  _gapWidth=0*1e-3*mm;
-  _gapSpacing=1*mm;
+  _gapWidth=0*1e-3*CLHEP::mm;
+  _gapSpacing=1*CLHEP::mm;
   preWindowSampler();
   windowLayer();
   preScreenSampler();
@@ -81,13 +81,13 @@ void BDSAwakeMultilayerScreen::windowLayer(){
 
 
 void BDSAwakeMultilayerScreen::backLayer(){
-  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),10*um),(G4String)"backingLayer","cellulose",0,0);
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),10*CLHEP::um),(G4String)"backingLayer","cellulose",0,0);
   sl->color(G4Color(0.5,0.0,0.5,0.3));
   screenLayer(sl);
 }
 
 void BDSAwakeMultilayerScreen::substrateLayer(){
-  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),178*um),(G4String)"substrateLayer","PET",0,0);
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),178*CLHEP::um),(G4String)"substrateLayer","PET",0,0);
   sl->color(G4Color(1.0,0.0,0.0,0.3));
   screenLayer(sl);
 }
@@ -134,7 +134,7 @@ void BDSAwakeMultilayerScreen::backScintillatorLayer(){
 
 
 void BDSAwakeMultilayerScreen::frontLayer(){
-  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),5*um),(G4String)"frontLayer","cellulose",0,0);
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),5*CLHEP::um),(G4String)"frontLayer","cellulose",0,0);
   sl->color(G4Color(0.5,0.0,0.5,0.3));
   screenLayer(sl);
 }

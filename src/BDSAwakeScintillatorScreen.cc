@@ -378,9 +378,9 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   G4double x_thi = _totalThickness * std::sin(std::abs(_screenAngle));//Length due to the screen thickness
   
   //Vacuum chamber dimensions.
-  _vacThickness=2*mm;
-  _vacInnerWidth=7*cm;
-  _vacInnerHeight=7*cm;
+  _vacThickness=2*CLHEP::mm;
+  _vacInnerWidth=7*CLHEP::cm;
+  _vacInnerHeight=7*CLHEP::cm;
   _vacHeight=_vacInnerHeight+2*_vacThickness;
   
   _vacWidth2=x_wid;
@@ -391,12 +391,12 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
     _vacMylarThickness=1e-30;
     
   }else{
-    _vacKevlarThickness=0.3*mm;
-    _vacMylarThickness=0.05*mm;
+    _vacKevlarThickness=0.3*CLHEP::mm;
+    _vacMylarThickness=0.05*CLHEP::mm;
   }
   
   _vacWidth1=_vacInnerWidth+_vacKevlarThickness+_vacMylarThickness+_vacThickness;
-  _vacDispX1=-((sqrt(2.0)/2.0)/2.0)*m-_vacWidth1/2.0-0.15*mm;
+  _vacDispX1=-((sqrt(2.0)/2.0)/2.0)*CLHEP::m-_vacWidth1/2.0-0.15*CLHEP::mm;
 
 
 

@@ -471,13 +471,13 @@ void BDSMaterials::Initialise()
 
   //n-bk7
   tmpMaterial = new G4Material 
-    (name="n-bk7", density=1.032*g/cm3, 2, kStateSolid);
+    (name="n-bk7", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
   tmpMaterial->AddElement(elements["O"],2);
   tmpMaterial->AddElement(elements["Si"],1);
   const G4int N_Bk7_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double N_Bk7_RIND[N_Bk7_NUMENTRIES]={1.51680,1.51680,1.51680};
-  G4double N_Bk7_AbsLength[N_Bk7_NUMENTRIES]={420.*cm,420.*cm,420.*cm};
-  G4double N_Bk7_Energy[N_Bk7_NUMENTRIES] = {2.0*eV,7.0*eV,7.14*eV};
+  G4double N_Bk7_AbsLength[N_Bk7_NUMENTRIES]={420.*CLHEP::cm,420.*CLHEP::cm,420.*CLHEP::cm};
+  G4double N_Bk7_Energy[N_Bk7_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV};
   G4MaterialPropertiesTable* nbk7MaterialPropertiesTable= new G4MaterialPropertiesTable();
   nbk7MaterialPropertiesTable->AddProperty("ABSLENGTH",N_Bk7_Energy,N_Bk7_AbsLength,N_Bk7_NUMENTRIES);
   nbk7MaterialPropertiesTable->AddProperty("RINDEX",N_Bk7_Energy,N_Bk7_RIND,N_Bk7_NUMENTRIES);
@@ -490,15 +490,15 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddElement(elements["Y"],3);
   tmpMaterial->AddElement(elements["Al"],5);
   tmpMaterial->AddElement(elements["O"],12);
-  G4double birks = 0.08*mm/MeV; 
+  G4double birks = 0.08*CLHEP::mm/CLHEP::MeV; 
   tmpMaterial->GetIonisation()->SetBirksConstant(birks);
   G4MaterialPropertiesTable* mpt_YAG = new G4MaterialPropertiesTable();
   const int nEntries3=60;
   const G4int nEntries = 9;
   G4double PhotonEnergyYAG[nEntries];
   G4double dNEntries2=(G4double)nEntries;
-  G4double energyMin=1.91*eV;
-  G4double energyMax=2.76*eV;
+  G4double energyMin=1.91*CLHEP::eV;
+  G4double energyMax=2.76*CLHEP::eV;
   G4double deltaEnergy=(energyMax-energyMin)/(dNEntries2-1.0);
   G4double energy=energyMin;
   for(G4int i=0; i<nEntries; energy += deltaEnergy, i++){
@@ -511,23 +511,23 @@ void BDSMaterials::Initialise()
     { 0, 0.25, 2.0, 14.0, 13.0, 7.0, 4.0, 2.0, 0.0 };
   const G4int nEntries2 = 32;
   G4double PhotonEnergy[nEntries2] =
-    { 2.034*eV, 2.068*eV, 2.103*eV, 2.139*eV,
-      2.177*eV, 2.216*eV, 2.256*eV, 2.298*eV,
-      2.341*eV, 2.386*eV, 2.433*eV, 2.481*eV,
-      2.532*eV, 2.585*eV, 2.640*eV, 2.697*eV,
-      2.757*eV, 2.820*eV, 2.885*eV, 2.954*eV,
-      3.026*eV, 3.102*eV, 3.181*eV, 3.265*eV,
-      3.353*eV, 3.446*eV, 3.545*eV, 3.649*eV,
-      3.760*eV, 3.877*eV, 4.002*eV, 4.136*eV };
+    { 2.034*CLHEP::eV, 2.068*CLHEP::eV, 2.103*CLHEP::eV, 2.139*CLHEP::eV,
+      2.177*CLHEP::eV, 2.216*CLHEP::eV, 2.256*CLHEP::eV, 2.298*CLHEP::eV,
+      2.341*CLHEP::eV, 2.386*CLHEP::eV, 2.433*CLHEP::eV, 2.481*CLHEP::eV,
+      2.532*CLHEP::eV, 2.585*CLHEP::eV, 2.640*CLHEP::eV, 2.697*CLHEP::eV,
+      2.757*CLHEP::eV, 2.820*CLHEP::eV, 2.885*CLHEP::eV, 2.954*CLHEP::eV,
+      3.026*CLHEP::eV, 3.102*CLHEP::eV, 3.181*CLHEP::eV, 3.265*CLHEP::eV,
+      3.353*CLHEP::eV, 3.446*CLHEP::eV, 3.545*CLHEP::eV, 3.649*CLHEP::eV,
+      3.760*CLHEP::eV, 3.877*CLHEP::eV, 4.002*CLHEP::eV, 4.136*CLHEP::eV };
 #if G4VERSION_NUMBER < 950
   mpt_YAG->AddProperty("FASTCOMPONENT",PhotonEnergyYAG, scintFastYAG, nEntries);
 #else
   mpt_YAG->AddProperty("FASTCOMPONENT",PhotonEnergyYAG, scintFastYAG, nEntries)->SetSpline(true);
 #endif
   mpt_YAG->AddProperty("RINDEX",PhotonEnergyYAG, RefractiveIndexYAG, nEntries);
-  mpt_YAG->AddConstProperty("SCINTILLATIONYIELD",8000./MeV); //Approximately correct
+  mpt_YAG->AddConstProperty("SCINTILLATIONYIELD",8000./CLHEP::MeV); //Approximately correct
   mpt_YAG->AddConstProperty("RESOLUTIONSCALE",2.0); //Check this
-  mpt_YAG->AddConstProperty("FASTTIMECONSTANT",70.*ns); //Approximately correct
+  mpt_YAG->AddConstProperty("FASTTIMECONSTANT",70.*CLHEP::ns); //Approximately correct
   mpt_YAG->AddConstProperty("YIELDRATIO",1.0);
   tmpMaterial->SetMaterialPropertiesTable(mpt_YAG);
   materials[name] = tmpMaterial;
@@ -567,10 +567,10 @@ void BDSMaterials::Initialise()
   
   G4MaterialPropertiesTable* ups923a_mt = new G4MaterialPropertiesTable();
   ups923a_mt->AddConstProperty("RESOLUTIONSCALE",2.0); //Check this
-  ups923a_mt->AddConstProperty("FASTTIMECONSTANT",3.3*ns);
+  ups923a_mt->AddConstProperty("FASTTIMECONSTANT",3.3*CLHEP::ns);
   ups923a_mt->AddConstProperty("YIELDRATIO",1.0);
   //Birk's constant
-  birks = (0.014/1.06)*cm/MeV; 
+  birks = (0.014/1.06)*CLHEP::cm/CLHEP::MeV; 
   tmpMaterial->GetIonisation()->SetBirksConstant(birks);
 #if G4VERSION_NUMBER < 950
   ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy, ups923a_emission, ups923a_numentries);
@@ -578,10 +578,10 @@ void BDSMaterials::Initialise()
   ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy, ups923a_emission, ups923a_numentries)->SetSpline(true);
 #endif
   ups923a_mt->AddConstProperty("RINDEX", 1.52);
-  ups923a_mt->AddConstProperty("ABSLENGTH", 1*m);
-  G4double scintYieldAnthracene=14200; //Anthracene yield per 1 MeV
+  ups923a_mt->AddConstProperty("ABSLENGTH", 1*CLHEP::m);
+  G4double scintYieldAnthracene=14200; //Anthracene yield per 1 CLHEP::MeV
   G4double scintYieldUPS923A=scintYieldAnthracene*0.60;//60% of anthracene
-  ups923a_mt->AddConstProperty("SCINTILLATIONYIELD",scintYieldUPS923A/MeV);
+  ups923a_mt->AddConstProperty("SCINTILLATIONYIELD",scintYieldUPS923A/CLHEP::MeV);
   tmpMaterial->SetMaterialPropertiesTable(ups923a_mt);
   //Put into the materials array.
   materials[name]=tmpMaterial;
@@ -631,7 +631,7 @@ void BDSMaterials::Initialise()
   G4MaterialPropertiesTable* mptLanex = new G4MaterialPropertiesTable();
   const G4int nentLanex=2;
   G4double rindex=1.50;//(1.82+1.50)/2.0;
-  G4double energytab[]={2.239*eV, 2.241*eV};
+  G4double energytab[]={2.239*CLHEP::eV, 2.241*CLHEP::eV};
   G4double rindextab[]={rindex, rindex};
   G4double emitspec[]={1.0, 1.0};
   G4double abslen[]={7*CLHEP::mm, 7*CLHEP::mm};
@@ -639,9 +639,9 @@ void BDSMaterials::Initialise()
   mptLanex->AddProperty("ABSLENGTH", energytab, abslen, nentLanex);
   mptLanex->AddProperty("FASTCOMPONENT",energytab, emitspec, nentLanex);
   G4double scintScalingFactor=1;
-  mptLanex->AddConstProperty("SCINTILLATIONYIELD",7.8e4/MeV);
+  mptLanex->AddConstProperty("SCINTILLATIONYIELD",7.8e4/CLHEP::MeV);
   mptLanex->AddConstProperty("RESOLUTIONSCALE",1.0);
-  mptLanex->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
+  mptLanex->AddConstProperty("FASTTIMECONSTANT", 1.*CLHEP::ns);
   mptLanex->AddConstProperty("MIEHG", 60.3e-3*CLHEP::mm);
   mptLanex->AddConstProperty("MIEHG_FORWARD", 0.91);
   mptLanex->AddConstProperty("MIEHG_BACKWARD", 0.91);
@@ -657,9 +657,9 @@ void BDSMaterials::Initialise()
   mptLanex2->AddProperty("RINDEX",energytab, rindextab, nentLanex); //Average refractive index of bulk material
   mptLanex2->AddProperty("ABSLENGTH", energytab, abslen, nentLanex);
   mptLanex2->AddProperty("FASTCOMPONENT",energytab, emitspec, nentLanex);
-  mptLanex2->AddConstProperty("SCINTILLATIONYIELD",8.9e4/MeV);
+  mptLanex2->AddConstProperty("SCINTILLATIONYIELD",8.9e4/CLHEP::MeV);
   mptLanex2->AddConstProperty("RESOLUTIONSCALE",1.0);
-  mptLanex2->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
+  mptLanex2->AddConstProperty("FASTTIMECONSTANT", 1.*CLHEP::ns);
   mptLanex2->AddConstProperty("MIEHG", 60.3e-3*CLHEP::mm);
   mptLanex2->AddConstProperty("MIEHG_FORWARD", 0.91);
   mptLanex2->AddConstProperty("MIEHG_BACKWARD", 0.91);
@@ -674,7 +674,7 @@ void BDSMaterials::Initialise()
   G4MaterialPropertiesTable* mptGOSLanex = new G4MaterialPropertiesTable();
   const G4int nentGOSLanex=2;
   G4double rindexGOSLanex=1.50;
-  G4double energyGOSLanexTab[]={2.239*eV, 2.241*eV};
+  G4double energyGOSLanexTab[]={2.239*CLHEP::eV, 2.241*CLHEP::eV};
   G4double rindexGOSLanexTab[]={rindexGOSLanex, rindexGOSLanex};
   G4double emitspecGOSLanex[]={1.0, 1.0};
   G4double abslenGOSLanex[]={7*CLHEP::mm, 7*CLHEP::mm};
@@ -684,7 +684,7 @@ void BDSMaterials::Initialise()
   G4double gosLanexMiehgForwardRatio=0.5;
   G4double mieHgTimeConst=1.0*CLHEP::ns;
   mptGOSLanex->AddProperty("FASTCOMPONENT",energyGOSLanexTab, emitspecGOSLanex, nentGOSLanex);
-  mptGOSLanex->AddConstProperty("SCINTILLATIONYIELD",8.9e4/MeV); //Intrinisic scintilation yield of GOS
+  mptGOSLanex->AddConstProperty("SCINTILLATIONYIELD",8.9e4/CLHEP::MeV); //Intrinisic scintilation yield of GOS
   mptGOSLanex->AddConstProperty("RESOLUTIONSCALE", 1.0);
   mptGOSLanex->AddConstProperty("FASTTIMECONSTANT", mieHgTimeConst);
   mptGOSLanex->AddConstProperty("YIELDRATIO", 1.0);
@@ -703,7 +703,7 @@ void BDSMaterials::Initialise()
   G4MaterialPropertiesTable* mptGOSLanexRi1 = new G4MaterialPropertiesTable();
   G4double rindexGOSLanexRi1Tab[]={1.0, 1.0};
   mptGOSLanexRi1->AddProperty("FASTCOMPONENT",energyGOSLanexTab, emitspecGOSLanex, nentGOSLanex);
-  mptGOSLanexRi1->AddConstProperty("SCINTILLATIONYIELD",8.9e4/MeV); //Intrinisic scintilation yield of GOS
+  mptGOSLanexRi1->AddConstProperty("SCINTILLATIONYIELD",8.9e4/CLHEP::MeV); //Intrinisic scintilation yield of GOS
   mptGOSLanexRi1->AddConstProperty("RESOLUTIONSCALE", 1.0);
   mptGOSLanexRi1->AddConstProperty("FASTTIMECONSTANT", mieHgTimeConst);
   mptGOSLanexRi1->AddConstProperty("YIELDRATIO", 1.0);
@@ -742,16 +742,16 @@ void BDSMaterials::Initialise()
   G4MaterialPropertiesTable* mptMedex = new G4MaterialPropertiesTable();
   const G4int nentMedex=2;
   G4double medexRindex=(1.82+1.50)/2.0;
-  G4double medexEnergytab[]={2.239*eV, 2.241*eV};
+  G4double medexEnergytab[]={2.239*CLHEP::eV, 2.241*CLHEP::eV};
   G4double medexRindextab[]={rindex, rindex};
   G4double medexEmitspec[]={1.0, 1.0};
   G4double medexAbslen[]={7*CLHEP::mm, 7*CLHEP::mm};
   mptMedex->AddProperty("RINDEX",energytab, medexRindextab, nentMedex); //Average refractive index of bulk material
   mptMedex->AddProperty("ABSLENGTH", energytab, medexAbslen, nentMedex);
   mptMedex->AddProperty("FASTCOMPONENT",energytab, medexEmitspec, nentMedex);
-  mptMedex->AddConstProperty("SCINTILLATIONYIELD",scintScalingFactor*2.94e4/MeV);
+  mptMedex->AddConstProperty("SCINTILLATIONYIELD",scintScalingFactor*2.94e4/CLHEP::MeV);
   mptMedex->AddConstProperty("RESOLUTIONSCALE",1.0);
-  mptMedex->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
+  mptMedex->AddConstProperty("FASTTIMECONSTANT", 1.*CLHEP::ns);
   mptMedex->AddConstProperty("MIEHG", 230e-3*CLHEP::mm);
   mptMedex->AddConstProperty("MIEHG_FORWARD", 0.93);
   mptMedex->AddConstProperty("MIEHG_BACKWARD", 0.93);
