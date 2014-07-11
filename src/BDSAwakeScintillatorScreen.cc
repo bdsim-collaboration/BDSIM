@@ -296,9 +296,10 @@ void BDSAwakeScintillatorScreen::Build(){
       BuildCamera();	
       ComputeDimensions();
       BuildMarkerVolume();
-      BuildVacuumChamber1();
       if(_vacChambType==2){
 	BuildVacuumChamber2();
+      } else {
+      BuildVacuumChamber1();
       }
       //      BuildScreenScoringPlane();
       BuildCameraScoringPlane();
