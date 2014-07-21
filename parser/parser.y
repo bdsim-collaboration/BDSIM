@@ -576,7 +576,7 @@ parameters:
 		  else
 		  if(!strcmp($1->name,"tunnelOffsetX")) { params.tunnelOffsetX = $3; params.tunnelOffsetXset = 1;} // tunnel offset
 		  else
-		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = $3; params.precisionRegionset = 1;} // tunnel offset
+		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;} // tunnel offset
 		    else
 		  if(!strcmp($1->name,"e1")) {;}  //
                     else
@@ -809,7 +809,7 @@ parameters:
 		  else
 		  if(!strcmp($1->name,"tunnelOffsetX")) { params.tunnelOffsetX = $3; params.tunnelOffsetXset = 1;} // tunnel offset
 		    else
-		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = $3; params.precisionRegionset = 1;} // tunnel offset
+		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;} // tunnel offset
 		    else
 		  if(!strcmp($1->name,"e1")) {;}  //
                     else

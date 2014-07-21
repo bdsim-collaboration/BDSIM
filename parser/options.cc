@@ -166,11 +166,11 @@ void Options::set_value(std::string name, double value )
     synchTrackPhotons = (int)value; return;
   }
 
-  if(name == "useEMLPB") { useEMLPB = value; return; }
-  if(name == "useHadLPB") { useHadLPB = value; return; }
-  if(name == "sensitiveBeamlineComponents") { sensitiveBeamlineComponents = value; return; }
-  if(name == "sensitiveBeamPipe") { sensitiveBeamPipe = value; return; }
-  if(name == "sensitiveBLMs") { sensitiveBLMs = value; return; }
+  if(name == "useEMLPB") { useEMLPB = (int)value; return; }
+  if(name == "useHadLPB") { useHadLPB = (int)value; return; }
+  if(name == "sensitiveBeamlineComponents") { sensitiveBeamlineComponents = (int)value; return; }
+  if(name == "sensitiveBeamPipe") { sensitiveBeamPipe = (int)value; return; }
+  if(name == "sensitiveBLMs") { sensitiveBLMs = (int)value; return; }
   if(name == "LPBFraction") { LPBFraction = value; return; }
   if(name == "annihiToMuFe") { annihiToMuFe = value; return; }
   if(name == "gammaToMuFe") { gammaToMuFe = value; return; }
