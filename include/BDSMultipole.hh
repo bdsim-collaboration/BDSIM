@@ -30,18 +30,6 @@
 class BDSMultipole :public BDSAcceleratorComponent
 {
 public:
-  
-  BDSMultipole( G4String aName, 
-		G4double aLength,
-		G4double aBpRadius,
-		G4double aInnerIronRadius,
-		G4VisAttributes* aVisAtt,
-		G4String aMaterial = "",
-		G4double aXAper=0.,
-		G4double aYAper=0.,
-		G4double angle=0.,
-		G4bool beampipeThicknessSet=false,
-		G4double beampipeThickness=-1);
 
   //Contructor for components with tunnel material added
   BDSMultipole( G4String aName, 
