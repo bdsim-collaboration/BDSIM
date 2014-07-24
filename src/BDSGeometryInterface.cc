@@ -10,6 +10,8 @@
 #include "BDSBeamline.hh"
 
 #include <fstream>
+#include <iomanip>
+#include <iostream>
 
 using std::setw;
 
