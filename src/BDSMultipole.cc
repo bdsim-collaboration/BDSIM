@@ -57,7 +57,7 @@ BDSMultipole::BDSMultipole( G4String aName,
 			    G4double aXAper,
 			    G4double aYAper,
 			    G4double angle,
-			    G4bool beampipeThicknessSet,
+			    G4bool   beampipeThicknessSet,
 			    G4double beampipeThickness):
   BDSAcceleratorComponent(
 			 aName, 
