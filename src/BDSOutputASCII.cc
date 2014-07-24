@@ -1,27 +1,54 @@
 #include "BDSOutputASCII.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
-#include <ctime>
+//#include <ctime>
+#include "time.h"
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <iomanip>
 
 BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
 {
-  time_t tm = time(NULL);
+  time_t currenttime;
+  time(&currenttime);
+  std::string timestring = asctime(localtime(&currenttime));
+  timestring = timestring.substr(0,timestring.size()-1);
 
   filename = BDSExecOptions::Instance()->GetOutputFilename()+".txt";
 #ifdef DEBUG
-  G4cout << __METHOD_NAME__ << "Output format ASCII, filename: "<<filename<<G4endl;
+  G4cout << __METHOD_NAME__ << "Output format ASCII, filename: " << filename << G4endl;
 #endif
   of.open(filename);
-  of<<"### BDSIM output created "<<ctime(&tm)<<" ####"<<G4endl;
-  of<<"# PT E[GeV] X[mum] Y[mum] Z[m] Xp[rad] Yp[rad] NEvent Weight ParentID TrackID Turn"<<G4endl;
+  of << "### BDSIM output - created "<< timestring << G4endl;
+  of << std::left << std::setprecision(10) << std::fixed
+     << std::setw(6)  << "PDGID"    << " "
+     << std::setw(15) << "E[GeV]"   << " "
+     << std::setw(15) << "X[mum"    << " "
+     << std::setw(15) << "Y[mum]"   << " "
+     << std::setw(15) << "S[m]"     << " "
+     << std::setw(15) << "Xp[rad]"  << " "
+     << std::setw(15) << "Yp[rad]"  << " "
+     << std::setw(6)  << "NEvent"   << " "
+     << std::setw(15) << "Weight"   << " "
+     << std::setw(5)  << "ParentID" << " "
+     << std::setw(5)  << "TrackID"  << " "
+     << std::setw(5)  << "Turn"
+     << G4endl;  
+  
   G4String filenameEloss = BDSExecOptions::Instance()->GetOutputFilename()+".eloss.txt";
 #ifdef DEBUG
-  G4cout << __METHOD_NAME__ << "Eloss output format ASCII, filename: "<<filenameEloss<<G4endl;
+  G4cout << __METHOD_NAME__ << "Eloss output format ASCII, filename: " << filenameEloss << G4endl;
 #endif
   ofEloss.open(filenameEloss);
-  ofEloss<<"### BDSIM eloss output created "<<ctime(&tm)<<" ####"<<G4endl;
-  ofEloss<<"#Energy loss: Z[m] E[GeV] PartID Weight Turn"<<G4endl;
-
+  ofEloss << "### BDSIM energy loss output - created "<< timestring <<G4endl;
+  ofEloss << std::left << std::setprecision(5) << std::fixed
+	  << std::setw(12) << "Z[m]"     << " "
+	  << std::setw(12) << "E[GeV]"   << " "
+	  << std::setw(6)  << "PDGID"    << " "
+	  << std::setw(5)  << "Weight"   << " "
+	  << std::setw(5)  << "Turn"
+	  << G4endl;
 }
 
 BDSOutputASCII::~BDSOutputASCII()
@@ -36,31 +63,22 @@ BDSOutputASCII::~BDSOutputASCII()
   }
 }
 
-void BDSOutputASCII::WriteAsciiHit(G4int PDGType, G4double Mom, G4double X, G4double Y, G4double S, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID, G4int TurnsTaken){
-  of<<PDGType
-    <<" "
-    <<Mom/CLHEP::GeV
-    <<" "
-    <<X/CLHEP::micrometer
-    <<" "
-    <<Y/CLHEP::micrometer
-    <<" "
-    <<S / CLHEP::m
-    <<" "
-    <<XPrime / CLHEP::radian
-    <<" "
-    <<YPrime / CLHEP::radian
-    <<" "
-    <<EventNo 
-    <<" "
-    <<Weight
-    <<" "
-    <<ParentID
-    <<" "
-    <<TrackID
-    <<" "
-    <<TurnsTaken
-    <<G4endl;
+void BDSOutputASCII::WriteAsciiHit(G4int PDGType, G4double Mom, G4double X, G4double Y, G4double S, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID, G4int TurnsTaken)
+{
+  of << std::left << std::setprecision(10) << std::fixed
+     << std::setw(6)  << PDGType              << " "
+     << std::setw(15) << Mom/CLHEP::GeV       << " "
+     << std::setw(15) << X/CLHEP::micrometer  << " "
+     << std::setw(15) << Y/CLHEP::micrometer  << " "
+     << std::setw(15) << S/CLHEP::m           << " "
+     << std::setw(15) << XPrime/CLHEP::radian << " "
+     << std::setw(15) << YPrime/CLHEP::radian << " "
+     << std::setw(6)  << EventNo              << " "
+     << std::setw(15) << Weight               << " "
+     << std::setw(5)  << ParentID             << " "
+     << std::setw(5)  << TrackID              << " "
+     << std::setw(5)  << TurnsTaken
+     << G4endl;
 }
 
 void BDSOutputASCII::WritePrimary(G4String /*samplerName*/, G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double /*zp*/,G4double /*t*/,G4double weight,G4int PDGType, G4int nEvent, G4int TurnsTaken){
@@ -68,10 +86,7 @@ void BDSOutputASCII::WritePrimary(G4String /*samplerName*/, G4double E,G4double 
 }
 
 void BDSOutputASCII::WriteHits(BDSSamplerHitsCollection *hc)
-{
-  int G4precision = G4cout.precision();
-  G4cout.precision(15);
-  
+{  
   for (G4int i=0; i<hc->entries(); i++)
     {
       WriteAsciiHit(
@@ -90,8 +105,6 @@ void BDSOutputASCII::WriteHits(BDSSamplerHitsCollection *hc)
 		    );
     }
   of.flush();
-  // set precision back
-  G4cout.precision(G4precision);
 }
 
 /// write a trajectory to a root/ascii file
@@ -113,7 +126,13 @@ void BDSOutputASCII::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
       G4double weight     = (*hc)[i]->GetWeight();
       G4int    turnnumber = (*hc)[i]->GetTurnsTaken();
 
-      ofEloss << Zpos/CLHEP::m << "  " << Energy/CLHEP::GeV << "  " << partID << "  " << weight << turnnumber << G4endl;
+      ofEloss << std::left << std::setprecision(5) << std::fixed
+	      << std::setw(12) << Zpos/CLHEP::m     << " "
+	      << std::setw(12) << Energy/CLHEP::GeV << " "
+	      << std::setw(6)  << partID            << " "
+	      << std::setw(5)  << weight            << " "
+	      << std::setw(5)  << turnnumber
+	      << G4endl;
     }
   ofEloss.flush();
 }
