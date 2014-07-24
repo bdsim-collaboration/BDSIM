@@ -13,10 +13,12 @@ class BDSComponentFactory{
 public:
   BDSComponentFactory();
   ~BDSComponentFactory();
+  
   BDSAcceleratorComponent* createComponent(std::list<struct Element>::iterator elementIter, ElementList& beamline_list);
   BDSAcceleratorComponent* createComponent(Element& aElement, Element& previousElement, Element& nextElement);
   BDSAcceleratorComponent* createComponent();
   BDSAcceleratorComponent* createTerminator();
+
 private:
   G4bool   verbose;
   
@@ -29,13 +31,12 @@ private:
   G4String _driftName ;
   G4double _driftStartAper, _driftEndAper;
   std::list<struct Element>::iterator _elementIter, _previousElementIter, _nextElementIter;
-  
-  
   std::list<BDSAcceleratorComponent*> itsBeamline;
   Element _element, _previousElement, _nextElement;
   BDSAcceleratorComponent* createSampler();
   BDSAcceleratorComponent* createCSampler();
   BDSAcceleratorComponent* createDump();
+  BDSAcceleratorComponent* createTeleporter();
   BDSAcceleratorComponent* createDrift();
   BDSAcceleratorComponent* createPCLDrift();
   BDSAcceleratorComponent* createRF();
