@@ -58,6 +58,7 @@
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSTeleporter.hh"
 //#include "BDSTerminatorSD.hh"
 
 #include "BDSComponentFactory.hh"
@@ -304,7 +305,15 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   //
   SetMagField(0.0); // necessary to set a global field; so chose zero
 
-    
+  // before we deal with the beamline - check if it's a circular machine
+  // and if so add a teleporter element to the end of the beamline list
+  // teleporter used to account for offsets in the end of the lattice
+  if (BDSExecOptions::Instance()->GetCircular()){
+    CalculateAndSetTeleporterOffset();
+    CalculateAndSetTeleporterLength();
+    AddTeleporterToEndOfBeamline(&beamline_list);
+  }
+  
   // convert the parsed element list to list of BDS elements
   //
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();

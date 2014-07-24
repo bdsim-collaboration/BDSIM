@@ -25,6 +25,7 @@
 //#include "BDSRealisticCollimator.hh"
 #include "BDSScintillatorScreen.hh"
 #include "BDSTerminator.hh"
+#include "BDSTeleporter.hh"
 #include "parser/enums.h"
 #include "parser/elementlist.h"
 
@@ -129,6 +130,11 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     G4cout << "BDSComponentFactory  - creating sampler" << G4endl;
 #endif
     return createSampler(); break;
+  case _TELEPORTER:
+#ifdef DEBUG
+    G4cout << "BDSComponentFactory  - creating teleporter" << G4endl;
+#endif
+    return createTeleporter(); break; 
   case _DRIFT:
 #ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating drift" << G4endl;
@@ -275,6 +281,26 @@ BDSAcceleratorComponent* BDSComponentFactory::createDump(){
 		       BDSGlobalConstants::Instance()->GetSamplerLength(),_element.tunnelMaterial ));
 }
 
+BDSAcceleratorComponent* BDSComponentFactory::createTeleporter(){
+  G4double teleporterlength = BDSGlobalConstants::Instance()->GetTeleporterLength();
+  if(teleporterlength < BDSGlobalConstants::Instance()->GetLengthSafety()){
+      G4cerr << "---->NOT creating Teleport,"
+             << " name = " << _element.name
+             << ", TOO SHORT LENGTH:"
+             << " l = " << teleporterlength << "m"
+             << G4endl;
+      return NULL;
+    }
+  else {
+    return (new BDSTeleporter( _element.name,           //name
+			       teleporterlength,        //length
+			       _element.aperX*CLHEP::m, // apertureX
+			       _element.aperY*CLHEP::m, // apertureY
+			       _element.phiAngleIn,     // phiAngleIn
+			       _element.phiAngleOut));  // phiAngleOut
+  }
+}
+
 BDSAcceleratorComponent* BDSComponentFactory::createDrift(){
   G4double aper(0), aperX(0), aperY(0);
   G4bool aperset = false;
@@ -363,8 +389,14 @@ BDSAcceleratorComponent* BDSComponentFactory::createDrift(){
 			_element.l*CLHEP::m,
 			_element.blmLocZ,
 			_element.blmLocTheta,
-			aperX, aperY, _element.tunnelMaterial, aperset, aper,tunnelOffsetX, phiAngleIn, phiAngleOut) );
-
+			aperX, 
+			aperY, 
+			_element.tunnelMaterial, 
+			aperset, 
+			aper,
+			tunnelOffsetX, 
+			phiAngleIn, 
+			phiAngleOut));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createPCLDrift(){
