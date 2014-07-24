@@ -15,7 +15,10 @@ extern G4int event_number;
 BDSDriftStepper::BDSDriftStepper(G4Mag_EqRhs *EqRhs)
    : G4MagIntegratorStepper(EqRhs,6)  // integrate over 6 variables only !!
                                        // position & velocity
-{}
+{
+  verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
+  verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
+}
 
 
 void BDSDriftStepper::AdvanceHelix( const G4double  yIn[],
@@ -44,8 +47,8 @@ void BDSDriftStepper::AdvanceHelix( const G4double  yIn[],
 
 
       // dump step information for particular event
-      G4bool verboseStep       = BDSExecOptions::Instance()->GetVerboseStep();
-      G4int verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
+      //G4bool verboseStep       = BDSExecOptions::Instance()->GetVerboseStep();
+      //G4int verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
       if(verboseStep && verboseEventNumber == event_number)
 	{
 	  int G4precision = G4cout.precision();
