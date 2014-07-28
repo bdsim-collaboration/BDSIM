@@ -766,7 +766,7 @@ inline void BDSGeometryLCDD::BuildPolyhedra(xmlNodePtr cur)
   SOLID_LIST.push_back(new G4Polyhedra((parseStrChar(xmlGetProp(cur,(const xmlChar*)"name"))),
 				       parseDblChar(xmlGetProp(cur,(const xmlChar*)"startphi")),
 				       parseDblChar(xmlGetProp(cur,(const xmlChar*)"deltaphi")),
-				       parseDblChar(xmlGetProp(cur,(const xmlChar*)"numsides")),
+				       (G4int)parseDblChar(xmlGetProp(cur,(const xmlChar*)"numsides")),
 				       numZPlanes,
 				       zPlanes,
 				       rInner,

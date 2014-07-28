@@ -67,6 +67,7 @@ BDSMultipole::BDSMultipole( G4String aName,
 			 aYAper,
 			 aVisAtt,
 			 aMaterial,
+			 "",
 			 angle),
   itsInnerIronRadius(aInnerIronRadius)
 {

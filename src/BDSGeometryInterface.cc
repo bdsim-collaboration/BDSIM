@@ -29,18 +29,18 @@ void BDSGeometryInterface::Optics()
   optics.open(itsFileName);
 
   optics << std::left
-	 << setw(10) << "Type"
-         << setw(10) << "Name" 
-	 << setw(10) << "Length[m]" 
-	 << setw(10) << "S [m]" 
-	 << setw(10) << "Angle[rad]" 
-	 << setw(10) << "K1 [m^-2]" 
-	 << setw(10) << "K2 [m^-3]" 
-	 << setw(10) << "K3 [m^-4]"
-	 << setw(10) << "TILT"
-	 << setw(10) << "AperX [m]"
-	 << setw(10) << "AperY [m]"
-	 << setw(10) << "Aper_Type"
+	 << setw(15) << "Type"
+         << setw(40) << "Name" 
+	 << setw(15) << "Length [m]" 
+	 << setw(15) << "S [m]" 
+	 << setw(15) << "Angle [rad]" 
+	 << setw(15) << "K1 [m^-2]" 
+	 << setw(15) << "K2 [m^-3]" 
+	 << setw(15) << "K3 [m^-4]"
+	 << setw(15) << "TILT"
+	 << setw(15) << "AperX [m]"
+	 << setw(15) << "AperY [m]"
+	 << setw(15) << "Aper_Type"
 	 << G4endl;
 
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
@@ -62,18 +62,18 @@ void BDSGeometryInterface::Optics()
       optics.precision(8);
       
       optics << std::left 
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetType() << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetType() << " "
 	     << setw(40) << BDSBeamline::Instance()->currentItem()->GetName() << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetLength()/CLHEP::m  << " "
-	     << setw(10) << BDSBeamline::Instance()->positionS()/CLHEP::m  << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetAngle()   << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetK1()   << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetK2()   << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetK3()   << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetTilt() << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetAperX()/CLHEP::m   << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetAperY()/CLHEP::m   << " "
-	     << setw(10) << aper_type   << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetLength()/CLHEP::m  << " "
+	     << setw(15) << BDSBeamline::Instance()->positionS()/CLHEP::m  << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetAngle()   << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetK1()   << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetK2()   << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetK3()   << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetTilt() << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetAperX()/CLHEP::m   << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetAperY()/CLHEP::m   << " "
+	     << setw(15) << aper_type   << " "
 	     << G4endl;
 	}
       optics.close();
@@ -89,23 +89,23 @@ void BDSGeometryInterface::Survey()
 
   survey.open(itsFileName);
   survey << std::left 
-	 << setw(10) << "Type" << " "
-	 << setw(40) << "Name" << " "
-	 << setw(10) << "Length[m]" << " "
-	 << setw(10) << "Arc len[m]" << " "
-	 << setw(10) << "X [m]" << " "
-	 << setw(10) << "Y [m]" << " "
-	 << setw(10) << "Z [m]" << " "
-	 << setw(10) << "Phi [rad]" << " "
-	 << setw(10) << "Theta [rad]"
-	 << setw(10) << "Psi [rad]" << " "
-	 << setw(10) << "AperX [m]" << " "
-	 << setw(10) << "AperY [m]" << " "
-	 << setw(10) << "Aper_Type" << " " 
-	 << setw(10) << "Angle[rad]" << " "
-	 << setw(10) << "K1 [m^-2]" << " " 
-	 << setw(10) << "K2 [m^-3]" << " " 
-	 << setw(10) << "K3 [m^-4]" << " "
+	 << setw(15) << "Type        " << " "
+	 << setw(40) << "Name        " << " "
+	 << setw(15) << "Length [m]  " << " "
+	 << setw(15) << "Arc_len [m] " << " "
+	 << setw(15) << "X [m]       " << " "
+	 << setw(15) << "Y [m]       " << " "
+	 << setw(15) << "Z [m]       " << " "
+	 << setw(15) << "Phi [rad]   " << " "
+	 << setw(15) << "Theta [rad] "
+	 << setw(15) << "Psi [rad]   " << " "
+	 << setw(15) << "AperX [m]   " << " "
+	 << setw(15) << "AperY [m]   " << " "
+	 << setw(15) << "Aper_Type   " << " " 
+	 << setw(15) << "Angle [rad] " << " "
+	 << setw(15) << "K1 [m^-2]   " << " " 
+	 << setw(15) << "K2 [m^-3]   " << " " 
+	 << setw(15) << "K3 [m^-4]   " << " "
 
 	 << G4endl;
   
@@ -149,23 +149,23 @@ void BDSGeometryInterface::Survey()
       survey.precision(7);
       
       survey << std::left
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetType() << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetType() << " "
 	     << setw(40) << BDSBeamline::Instance()->currentItem()->GetName() << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetLength()/CLHEP::m  << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetArcLength()/CLHEP::m  << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetPosition().x()/CLHEP::m  << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetPosition().y()/CLHEP::m  << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetPosition().z()/CLHEP::m  << " "
-	     << setw(10) << phi/CLHEP::radian  << " "
-	     << setw(10) << theta/CLHEP::radian  << " "
-	     << setw(10) << psi/CLHEP::radian  << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetAperX()/CLHEP::m   << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetAperY()/CLHEP::m   << " "
-	     << setw(10) << aper_type  << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetAngle()   << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetK1()   << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetK2()   << " "
-	     << setw(10) << BDSBeamline::Instance()->currentItem()->GetK3()   << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetLength()/CLHEP::m  << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetArcLength()/CLHEP::m  << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetPosition().x()/CLHEP::m  << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetPosition().y()/CLHEP::m  << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetPosition().z()/CLHEP::m  << " "
+	     << setw(15) << phi/CLHEP::radian  << " "
+	     << setw(15) << theta/CLHEP::radian  << " "
+	     << setw(15) << psi/CLHEP::radian  << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetAperX()/CLHEP::m   << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetAperY()/CLHEP::m   << " "
+	     << setw(15) << aper_type  << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetAngle()   << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetK1()   << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetK2()   << " "
+	     << setw(15) << BDSBeamline::Instance()->currentItem()->GetK3()   << " "
 	     << G4endl;
       length+=BDSBeamline::Instance()->currentItem()->GetLength()/CLHEP::m;
       arc_length+=BDSBeamline::Instance()->currentItem()->GetArcLength()/CLHEP::m;
