@@ -1,0 +1,4 @@
+class BDSGuineaPig {
+  BDSGuineaPig();
+  ~BDSGuineaPig();  
+};
