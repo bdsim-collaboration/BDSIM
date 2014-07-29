@@ -45,7 +45,7 @@ void BDSGeometryInterface::Optics()
 
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     { 
-      G4int aper_type; //1 = rect, 2 = circ, 3 = elispe
+      G4int aper_type; //1 = rect, 2 = circ, 3 = ellipse
       if(BDSBeamline::Instance()->currentItem()->GetType() == "rcol" ) //RCOL
 	aper_type=1;
       else if(BDSBeamline::Instance()->currentItem()->GetType() == "ecol") //ECOL
@@ -113,10 +113,10 @@ void BDSGeometryInterface::Survey()
   G4double arc_length(0.0);
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     { 
-      G4int aper_type; //1 = rect, 2 = circ, 3 = elispe
-      if(BDSBeamline::Instance()->currentItem()->GetType() == 14 ) //RCOL
+      G4int aper_type; //1 = rect, 2 = circ, 3 = ellipse
+      if(BDSBeamline::Instance()->currentItem()->GetType() == "rcol" ) //RCOL
 	aper_type=1;
-      else if(BDSBeamline::Instance()->currentItem()->GetType() == 13) //ECOL
+      else if(BDSBeamline::Instance()->currentItem()->GetType() == "ecol" ) //ECOL
 	if(BDSBeamline::Instance()->currentItem()->GetAperX()==BDSBeamline::Instance()->currentItem()->GetAperY()) 
 	  aper_type=2;
 	else aper_type=3;
