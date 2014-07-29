@@ -1,5 +1,6 @@
 #include "BDSBeamline.hh"
 #include "G4AffineTransform.hh"
+#include "BDSDebug.hh"
 
 BDSBeamline* BDSBeamline::_instance = 0;
 
@@ -51,6 +52,9 @@ BDSBeamline::~BDSBeamline(){
 }
 
 void BDSBeamline::doNavigation(){
+#ifdef DEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   //Reset the local rotation matrix
   *_rotationLocal = G4RotationMatrix();
   _s_local   = lastItem()->GetArcLength();
