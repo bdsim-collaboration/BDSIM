@@ -29,6 +29,8 @@
 #include "parser/enums.h"
 #include "parser/elementlist.h"
 
+#include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
+
 #ifdef DEBUG
 bool debug1 = true;
 #else
@@ -130,11 +132,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     G4cout << "BDSComponentFactory  - creating sampler" << G4endl;
 #endif
     return createSampler(); break;
-  case _TELEPORTER:
-#ifdef DEBUG
-    G4cout << "BDSComponentFactory  - creating teleporter" << G4endl;
-#endif
-    return createTeleporter(); break; 
   case _DRIFT:
 #ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating drift" << G4endl;
@@ -239,7 +236,17 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
 #ifdef DEBUG
     G4cout << "BDSComponentFactory  - creating transform3d" << G4endl;
 #endif
-    return createTransform3D(); break;  
+    return createTransform3D(); break;
+  case _TELEPORTER:
+#ifdef DEBUG
+    G4cout << "BDSComponentFactory  - creating teleporter" << G4endl;
+#endif
+    return createTeleporter(); break;
+  case _TERMINATOR:
+#ifdef DEBUG
+    G4cout << "BDSComponentFactory  - creating terminator" << G4endl;
+#endif
+    return createTerminator(); break;
 
     // common types, but nothing to do here
   case _MARKER:
@@ -282,20 +289,34 @@ BDSAcceleratorComponent* BDSComponentFactory::createDump(){
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTeleporter(){
+  // This relies on things being added to the beamline immediately
+  // after they've been created
+  CalculateAndSetTeleporterDelta(BDSBeamline::Instance());
   G4double teleporterlength = BDSGlobalConstants::Instance()->GetTeleporterLength();
   if(teleporterlength < BDSGlobalConstants::Instance()->GetLengthSafety()){
-      G4cerr << "---->NOT creating Teleport,"
+      G4cerr << "---->NOT creating Teleporter, "
              << " name = " << _element.name
-             << ", TOO SHORT LENGTH:"
+             << ", LENGTH TOO SHORT:"
              << " l = " << teleporterlength << "m"
              << G4endl;
       return NULL;
     }
   else {
-    return (new BDSTeleporter( _element.name,           //name
+#ifdef DEBUG
+    G4cout << "---->creating Teleporter,"
+	   << " name        = " << _element.name
+	   << " l           = " << teleporterlength/CLHEP::m << "m"
+	   << " aper        = " << BDSGlobalConstants::Instance()->GetBeampipeRadius()/CLHEP::m << "m"
+	   << " phiAngleIn  = " << _element.phiAngleIn 
+	   << " phiAngleOut = " << _element.phiAngleOut 
+	   << G4endl;
+#endif
+
+
+    return( new BDSTeleporter( _element.name,           //name
 			       teleporterlength,        //length
-			       _element.aperX*CLHEP::m, // apertureX
-			       _element.aperY*CLHEP::m, // apertureY
+			       BDSGlobalConstants::Instance()->GetBeampipeRadius()/CLHEP::m, // apertureX
+			       BDSGlobalConstants::Instance()->GetBeampipeRadius()/CLHEP::m, // apertureY
 			       _element.phiAngleIn,     // phiAngleIn
 			       _element.phiAngleOut));  // phiAngleOut
   }
@@ -1315,5 +1336,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTerminator(){
-  return (new BDSTerminator(_element.name, BDSGlobalConstants::Instance()->GetSamplerLength()));
+  return (new BDSTerminator(_element.name, 
+			    BDSGlobalConstants::Instance()->GetSamplerLength()
+			    ));
 }

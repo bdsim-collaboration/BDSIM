@@ -17,8 +17,7 @@ public:
   BDSAcceleratorComponent* createComponent(std::list<struct Element>::iterator elementIter, ElementList& beamline_list);
   BDSAcceleratorComponent* createComponent(Element& aElement, Element& previousElement, Element& nextElement);
   BDSAcceleratorComponent* createComponent();
-  BDSAcceleratorComponent* createTerminator();
-
+ 
 private:
   G4bool   verbose;
   
@@ -36,7 +35,6 @@ private:
   BDSAcceleratorComponent* createSampler();
   BDSAcceleratorComponent* createCSampler();
   BDSAcceleratorComponent* createDump();
-  BDSAcceleratorComponent* createTeleporter();
   BDSAcceleratorComponent* createDrift();
   BDSAcceleratorComponent* createPCLDrift();
   BDSAcceleratorComponent* createRF();
@@ -56,5 +54,9 @@ private:
   BDSAcceleratorComponent* createLaser();
   BDSAcceleratorComponent* createScreen();
   BDSAcceleratorComponent* createTransform3D();
+  // for each of them - special cases need only for ring logic
+  BDSAcceleratorComponent* createTerminator();
+  BDSAcceleratorComponent* createTeleporter();
+
 };
 #endif
