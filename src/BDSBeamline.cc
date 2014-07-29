@@ -206,6 +206,10 @@ BDSAcceleratorComponent* BDSBeamline::lastItem2(){
   return _componentList.back();
 }
 
+BDSAcceleratorComponent* BDSBeamline::firstItem(){
+  return _componentList.front();
+}
+
 G4bool BDSBeamline::isLast(){
   return (*_iterComponent == _componentList.back());
 }
@@ -273,4 +277,12 @@ G4double BDSBeamline::positionS(){
 
 G4double BDSBeamline::s_total(){
   return _s_total;
+}
+
+G4ThreeVector* BDSBeamline::GetLastPosition(){
+  return _positionEndList.back();
+}
+
+G4ThreeVector* BDSBeamline::GetFirstPosition(){
+  return _positionStartList.front();
 }
