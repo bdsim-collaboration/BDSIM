@@ -15,6 +15,8 @@
 #include "G4VisAttributes.hh"
 #include "G4UserLimits.hh"
 #include "G4SDManager.hh"
+#include "BDSDebug.hh"
+#include "parser/enums.h"
 
 #include <map>
 
@@ -74,4 +76,19 @@ G4VisAttributes* BDSTerminator::SetVisAttributes()
 BDSTerminator::~BDSTerminator()
 {
   --nSamplers;
+}
+
+void AddTerminatorToEndOfBeamline(ElementList* beamline_list)
+{
+
+#ifdef DEBUG
+  G4cout << __METHOD_NAME__ << ": adding terminator element to end of beamline" << G4endl;
+#endif
+  //based on void add_sampler in parser.h
+  //create basic element with type teleporter and put on end
+  struct Element e;
+  e.type = _TERMINATOR;
+  e.name = "Terminator";
+  e.lst  = NULL; 
+  beamline_list->push_back(e);
 }

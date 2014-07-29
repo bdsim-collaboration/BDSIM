@@ -8,6 +8,7 @@
 #define BDSTerminator_h
 
 #include "BDSAcceleratorComponent.hh"
+#include "parser/elementlist.h"
 
 class BDSTerminator : public BDSAcceleratorComponent
 {
@@ -24,5 +25,7 @@ private:
 
   G4VisAttributes* SetVisAttributes();
 };
+
+void AddTerminatorToEndOfBeamline(ElementList* beamline_list);
 
 #endif
