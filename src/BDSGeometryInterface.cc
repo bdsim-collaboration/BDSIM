@@ -122,26 +122,13 @@ void BDSGeometryInterface::Survey()
 	else aper_type=3;
       else aper_type=1;
       
-      G4double phi, theta, psi;
+      G4double phi=0.0, theta=0.0, psi=0.0;
       if(BDSBeamline::Instance()->currentItem()->GetRotation())
 	{
-	  // sort out rounding errors where zz -> 1.000001, etc.
-	  if(fabs(BDSBeamline::Instance()->currentItem()->GetRotation()->zz())>1)
-	    {
-	      G4ThreeVector newZ = BDSBeamline::Instance()->currentItem()->GetRotation()->rowZ();
-	      newZ.setZ(1.0);
-	      BDSBeamline::Instance()->currentItem()->GetRotation()->setRows(BDSBeamline::Instance()->currentItem()->GetRotation()->rowX(),
-					       BDSBeamline::Instance()->currentItem()->GetRotation()->rowY(),
-					       newZ);
-	    }
-	  
 	  phi = BDSBeamline::Instance()->currentItem()->GetRotation()->getPhi();
 	  theta = BDSBeamline::Instance()->currentItem()->GetRotation()->getTheta();
 	  psi = BDSBeamline::Instance()->currentItem()->GetRotation()->getPsi();
-	  
 	}
-      else
-	phi = theta = psi = 0.0;
       
       survey.setf(std::ios::fixed, std::ios::floatfield);
       survey.setf(std::ios::showpoint);
