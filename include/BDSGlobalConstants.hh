@@ -209,8 +209,8 @@ public:
 
   G4double GetZMax();
   void     SetZMax(G4double);
-  G4ThreeVector GetTeleporterOffset();
-  void          SetTeleporterOffset(G4ThreeVector newteleporteroffset);
+  G4ThreeVector GetTeleporterDelta();
+  void          SetTeleporterDelta(G4ThreeVector newteleporterdelta);
   void          SetTeleporterLength(G4double newteleporterlength);
   G4double      GetTeleporterLength();  
 
@@ -379,7 +379,7 @@ private:
   G4int    itsTurnsTaken;
   G4int    itsTurnsToTake;
   // Teleporter offset corrections
-  G4ThreeVector teleporteroffset;
+  G4ThreeVector teleporterdelta;
   G4double      teleporterlength;
   // beamline length
   G4double itsZMax;
@@ -845,11 +845,11 @@ inline void  BDSGlobalConstants::SetTurnsToTake(G4int TurnsToTake)
 inline G4double BDSGlobalConstants::GetZMax() {return itsZMax;}
 inline void BDSGlobalConstants::SetZMax(G4double zm){itsZMax=zm;}
 
-inline G4ThreeVector BDSGlobalConstants::GetTeleporterOffset()
-{return teleporteroffset;}
+inline G4ThreeVector BDSGlobalConstants::GetTeleporterDelta()
+{return teleporterdelta;}
 
-inline void BDSGlobalConstants::SetTeleporterOffset(G4ThreeVector newteleporteroffset)
-{teleporteroffset = newteleporteroffset;}
+inline void BDSGlobalConstants::SetTeleporterDelta(G4ThreeVector newteleporterdelta)
+{teleporterdelta = newteleporterdelta;}
 
 inline void BDSGlobalConstants::SetTeleporterLength(G4double newteleporterlength)
 {teleporterlength = newteleporterlength;}

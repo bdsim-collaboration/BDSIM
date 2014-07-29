@@ -171,7 +171,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsLWCalOffset      = 0.0;
   itsMagnetPoleRadius = 0.0;
   itsMagnetPoleSize   = 0.0;
-  teleporteroffset    = G4ThreeVector(0.,0.,0.);
+  teleporterdelta     = G4ThreeVector(0.,0.,0.);
   teleporterlength    = 0.0;
   // //Synchrotron primary generator
   // itsSynchPrimaryGen = false; //XXX check what this is 19/4/11
