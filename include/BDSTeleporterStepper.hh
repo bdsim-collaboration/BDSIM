@@ -3,10 +3,9 @@
 
 #include "globals.hh" //G4 types and exceptions
 #include "G4MagIntegratorStepper.hh"
-//#include "G4MagHelicalStepper.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
-//#include "G4Navigator.hh"
+#include <vector>
 
 class BDSTeleporterStepper : public G4MagIntegratorStepper
 {
@@ -36,6 +35,9 @@ private:
   G4bool verboseStep;
   G4int  verboseEventNumber;
   G4int  nvar;
+  std::vector<G4int> turnnumberrecord;
+  G4int  turnstaken;
+  G4ThreeVector teleporterdelta;
 };
 
 inline void BDSTeleporterStepper::StepperName()
