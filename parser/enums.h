@@ -36,7 +36,8 @@ enum {
   _GAS         = 51,
   _TUNNEL      = 52,
   _TRANSFORM3D = 61,
-  _TELEPORTER  = 99
+  _TELEPORTER  = 98,
+  _TERMINATOR  = 99
 };
 
 const char *typestr(int type);

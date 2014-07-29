@@ -59,7 +59,7 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSEnergyCounterSD.hh"
 #include "BDSTeleporter.hh"
-//#include "BDSTerminatorSD.hh"
+#include "BDSTerminator.hh"
 
 #include "BDSComponentFactory.hh"
 #include "BDSSampler.hh"
@@ -299,21 +299,23 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   }
   if (verbose || debug) G4cout << "size of material list: "<< material_list.size() << G4endl;
 
-
   //
   // set global magnetic field first
   //
   SetMagField(0.0); // necessary to set a global field; so chose zero
-
-  // before we deal with the beamline - check if it's a circular machine
-  // and if so add a teleporter element to the end of the beamline list
-  // teleporter used to account for offsets in the end of the lattice
-  if (BDSExecOptions::Instance()->GetCircular()){
-    CalculateAndSetTeleporterOffset();
-    CalculateAndSetTeleporterLength();
-    AddTeleporterToEndOfBeamline(&beamline_list);
-  }
   
+  // Special ring machine bits
+  // Add teleporter to account for slight ring offset
+  // Add terminator to do ring turn counting logic
+  // Both only in case of a circular machine
+  if (BDSExecOptions::Instance()->GetCircular()) {
+#ifdef DEBUG
+    G4cout << "Circular machine - this is the last element - creating terminator & teleporter" << G4endl;
+#endif
+    AddTeleporterToEndOfBeamline(&beamline_list);
+    AddTerminatorToEndOfBeamline(&beamline_list);
+  }
+
   // convert the parsed element list to list of BDS elements
   //
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
@@ -343,18 +345,27 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 #endif
   }
 
-  // Add terminator in case of circular machine
+  
+  /*
   if (BDSExecOptions::Instance()->GetCircular()) {
 #ifdef DEBUG
-    G4cout << "Circular machine - this is the last element - creating terminator" << G4endl;
+    G4cout << "Circular machine - this is the last element - creating terminator & teleporter" << G4endl;
 #endif
-    BDSAcceleratorComponent* temp = theComponentFactory->createTerminator();
-    if(temp){
-      BDSBeamline::Instance()->addComponent(temp);
+    CalculateAndSetTeleporterDelta(BDSBeamline::Instance());
+    BDSAcceleratorComponent* teleporter  = theComponentFactory->createTeleporter();
+    if(teleporter){
+      BDSBeamline::Instance()->addComponent(teleporter);
     } else {
-      G4cout << "WARNING Terminator not created " << (*it).name << G4endl;
+      G4cout << "WARNING Teleporter not created " << G4endl;
+    }
+    BDSAcceleratorComponent* terminator = theComponentFactory->createTerminator();
+    if(terminator){
+      BDSBeamline::Instance()->addComponent(terminator);
+    } else {
+      G4cout << "WARNING Terminator not created " << G4endl;
     }
   }
+  */
   
   delete theComponentFactory;
   theComponentFactory = NULL;
@@ -578,7 +589,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     { 
       //BDSBeamline::Instance()->currentItem()->SetZLower(rtot.z());
-       
+#ifdef DEBUG
+      G4cout << G4endl;
+#endif
       G4double angle=BDSBeamline::Instance()->currentItem()->GetAngle();
       G4double theta=BDSBeamline::Instance()->currentItem()->GetTheta();
       G4double psi = BDSBeamline::Instance()->currentItem()->GetPsi();
@@ -952,12 +965,12 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   if(verbose || debug) G4cout<<"Detector Construction done"<<G4endl; 
 
 #ifdef DEBUG 
-    G4cout << *(G4Material::GetMaterialTable()) << G4endl;
+  G4cout << *(G4Material::GetMaterialTable()) << G4endl;
 #endif
 
-    if(verbose || debug) G4cout<<"Finished listing materials, returning physiWorld"<<G4endl; 
-
-    return physiWorld;
+  if(verbose || debug) G4cout<<"Finished listing materials, returning physiWorld"<<G4endl; 
+  
+  return physiWorld;
 }
 
 //=================================================================
