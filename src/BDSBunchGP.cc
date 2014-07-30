@@ -1,8 +1,8 @@
-#include "BDSGuineaPig.hh"
+#include "BDSBunchGP.hh"
 
 // https://savannah.cern.ch/projects/guinea-pig
 // http://svnweb.cern.ch/world/wsvn/clicsw/
 
-BDSGuineaPig::BDSGuineaPig() {}
+BDSBunchGP::BDSBunchGP() {}
 
-BDSGuineaPig::~BDSGuineaPig() {}
+BDSBunchGP::~BDSBunchGP() {}
