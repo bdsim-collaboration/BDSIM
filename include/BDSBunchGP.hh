@@ -1,4 +1,4 @@
 class BDSGuineaPig {
   BDSGuineaPig();
-  ~BDSGuineaPig();  
+  ~BDSGuineaPig();
 };
