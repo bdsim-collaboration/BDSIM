@@ -18,6 +18,7 @@ struct Parameters {
 
   double B;  int Bset;    /// magnetic field
   double l;  int lset;    /// length
+  double bmapZOffset; int bmapZOffsetset; //offset of the field map magnet field
   double k0; int k0set;   /// dipole 
   double k1; int k1set;   /// quadrupole
   double k2; int k2set;   /// sextupole
@@ -104,8 +105,6 @@ struct Parameters {
   std::list<double> componentsFractions; int componentsFractionsset;
   std::list<int> componentsWeights; int componentsWeightsset;
 
-  int  fieldZOffsetset;
-  double  fieldZOffset;
   std::string  scintmaterial;  int scintmaterialset;
   std::string  windowmaterial;  int windowmaterialset;
   std::string  airmaterial;  int airmaterialset;

@@ -97,6 +97,7 @@ void Element::print(int & ident)const{
 
 void Element::flush() {
   l = 0;
+  bmapZOffset = 0;
   B = 0;
   ks = 0;
   k0 = 0;
@@ -162,6 +163,9 @@ void Element::flush() {
   windowmaterial = "";
   spec = "";
   material="";
+  scintmaterial="";
+  windowmaterial="";
+  airmaterial="";
   tunnelMaterial="";
   tunnelCavityMaterial="Air";
   tunnelRadius=0;
@@ -170,6 +174,7 @@ void Element::flush() {
 
 double Element::property_lookup(char* property_name)const{
   if(!strcmp(property_name,"l")) return l;
+  if(!strcmp(property_name,"bmapZOffset")) return bmapZOffset;
   if(!strcmp(property_name,"B")) return B;
   if(!strcmp(property_name,"ks")) return ks;
   if(!strcmp(property_name,"k0")) return k0;

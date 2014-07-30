@@ -515,6 +515,8 @@ parameters:
                   printf("parameters, VARIABLE(%s) = aexpr(%.10g)\n",$1->name,$3);
 #endif
 		  if(!strcmp($1->name,"l")) { params.l = $3; params.lset = 1;} // length
+		  else
+		  if(!strcmp($1->name,"bmapZOffset")) { params.bmapZOffset = $3; params.bmapZOffsetset = 1;} // field map z offset
 		    else
 	          if(!strcmp($1->name,"B")) { params.B = $3; params.Bset = 1;} // dipole field
 		    else 
@@ -529,8 +531,6 @@ parameters:
 		  if(!strcmp($1->name,"k3")) { params.k3 = $3; params.k3set = 1;} // octupole coef.
 		    else 
 		  if(!strcmp($1->name,"angle")) { params.angle = $3; params.angleset = 1;} // dipole bending angle
-		  else
-		  if(!strcmp($1->name,"fieldZOffset")) { params.fieldZOffset = $3; params.fieldZOffsetset = 1;} // dipole bending fieldZOffset
 		  else
 		  if(!strcmp($1->name,"phiAngleIn")) { params.phiAngleIn = $3; params.phiAngleInset = 1;} // element incoming angle
 		  else
@@ -754,6 +754,8 @@ parameters:
                   printf("VARIABLE (%s) = aexpr(%.10g)\n",$1->name,$3);
 #endif
 		  if(!strcmp($1->name,"l")) { params.l = $3; params.lset = 1;} // length
+		  else
+		  if(!strcmp($1->name,"bmapZOffset")) { params.bmapZOffset = $3; params.bmapZOffsetset = 1;} // length
 		    else
 		  if(!strcmp($1->name,"B")) { params.B = $3; params.Bset = 1;} // dipole field 
 		    else 
@@ -768,8 +770,6 @@ parameters:
 		  if(!strcmp($1->name,"k3")) { params.k3 = $3; params.k3set = 1;} // octupole coef.
 		    else 
 		      if(!strcmp($1->name,"angle")) { params.angle = $3; params.angleset = 1;} // dipole bending angle
-		      else
-		      if(!strcmp($1->name,"fieldZOffset")) { params.fieldZOffset = $3; params.fieldZOffsetset = 1;} // dipole bending fieldZOffset
 		      else
 			if(!strcmp($1->name,"phiAngleIn")) { params.phiAngleIn = $3; params.phiAngleInset = 1;} // element incoming angle
 			else

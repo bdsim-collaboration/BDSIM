@@ -464,8 +464,8 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
       e.blmLocZ = params.blmLocZ;
     if(params.blmLocThetaset)
       e.blmLocTheta = params.blmLocTheta;
-    if(params.fieldZOffsetset)
-      e.fieldZOffset = params.fieldZOffset;
+    if(params.bmapZOffsetset)
+      e.bmapZOffset = params.bmapZOffset;
     break;
 
   case _LINE:
