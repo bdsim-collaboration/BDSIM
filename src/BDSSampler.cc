@@ -97,7 +97,12 @@ void BDSSampler::SamplerLogicalVolume()
 
 G4VisAttributes* BDSSampler::SetVisAttributes()
 {
-  itsVisAttributes=new G4VisAttributes(G4Colour(1,1,1));
+  itsVisAttributes=new G4VisAttributes(G4Colour(0.5,0.6,0.7));
+#if defined DEBUG
+  itsVisAttributes->SetVisibility(true);
+#else
+  itsVisAttributes->SetVisibility(false);
+#endif
   return itsVisAttributes;
 }
 

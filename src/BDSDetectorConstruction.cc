@@ -711,10 +711,15 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	G4LogicalVolume* LocalLogVol=BDSBeamline::Instance()->currentItem()->GetMarkerLogicalVolume();
 	
 	G4String LogVolName=LocalLogVol->GetName();
-	//--test
-	G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
+	// Set visualisation options for marker volumes - perhaps should be in base class..
+	G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0, 0.4));
 	VisAtt1->SetForceSolid(true);  
+	// Set visible only if debug build, otherwise hidden
+#if defined DEBUG
+	VisAtt1->SetVisibility(true);
+#else
 	VisAtt1->SetVisibility(false);
+#endif
 	LocalLogVol->SetVisAttributes(VisAtt1);
 	//------------
 	int nCopy=(*LogVolCount)[LogVolName]-1;
