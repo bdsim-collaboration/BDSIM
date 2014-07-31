@@ -40,7 +40,7 @@ public:
   ~BDSDrift();
 
 protected:
-  virtual void BuildBpFieldAndStepper();
+  void BuildBpFieldAndStepper();
   //field related objects
   G4MagIntegratorStepper* itsStepper;
   //BDSDriftStepper* itsStepper;
