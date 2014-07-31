@@ -170,7 +170,8 @@ public:
 			  G4double aXAper,
 			  G4double aYAper,
                           G4VisAttributes* aVisAtt,
-                          std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
+                          std::list<G4double> blmLocZ, 
+			  std::list<G4double> blmLocTheta,
                           G4String aTunnelMaterial = "",
 			  G4String aMaterial = "",
 			  G4double phi=0.,  // polar angle (used in hor. bends)
