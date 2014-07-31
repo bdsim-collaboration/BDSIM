@@ -39,8 +39,8 @@ void BDSBunchCircle::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   yp = Yp0 * CLHEP::rad;
   z0 = Z0 * CLHEP::m + (T0 - envelopeT * (1.-2.*FlatGen->shoot())) * CLHEP::c_light * CLHEP::s;
 
-  G4double phiR  = FlatGen->shoot()*2*pi;
-  G4double phiRp = FlatGen->shoot()*2*pi;
+  G4double phiR  = FlatGen->shoot()*2*CLHEP::pi;
+  G4double phiRp = FlatGen->shoot()*2*CLHEP::pi;
   G4double r     = FlatGen->shoot()*envelopeR;
   G4double rp    = FlatGen->shoot()*envelopeRp; 
 
