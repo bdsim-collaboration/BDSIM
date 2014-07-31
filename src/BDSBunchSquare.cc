@@ -7,11 +7,15 @@ BDSBunchSquare::BDSBunchSquare() :
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
 
-BDSBunchSquare::BDSBunchSquare(G4double envelopeXIn, G4double envelopeYIn,
+BDSBunchSquare::BDSBunchSquare(G4double envelopeXIn,  G4double envelopeYIn,
 			       G4double envelopeXpIn, G4double envelopeYpIn,
-			       G4double envelopeTIn, G4double envelopeEIn) : 
-  BDSBunchInterface(), envelopeX(envelopeXIn), envelopeY(envelopeYIn), 
-  envelopeXp(envelopeXpIn), envelopeYp(envelopeYpIn), envelopeT(envelopeTIn), envelopeE(envelopeEIn)
+			       G4double envelopeTIn,  G4double envelopeEIn,
+			       G4double X0In,         G4double Y0In,         G4double Z0In,   G4double T0In, 
+			       G4double Xp0In,        G4double Yp0In,        G4double Zp0In) :  
+  BDSBunchInterface(X0In,Y0In,Z0In,T0In,Xp0In,Yp0In,Zp0In,0.0,0.0), 
+  envelopeX(envelopeXIn), envelopeY(envelopeYIn), 
+  envelopeXp(envelopeXpIn), envelopeYp(envelopeYpIn), 
+  envelopeT(envelopeTIn), envelopeE(envelopeEIn)
 {
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
@@ -51,7 +55,7 @@ void BDSBunchSquare::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   else
     zp = sqrt(1.-xp*xp -yp*yp);
   t = 0;
-  E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * (1 + sigmaE * (1-2*FlatGen->shoot()));
+  E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * (1 + envelopeE * (1-2*FlatGen->shoot()));
 
   weight = 1.0;
   return; 

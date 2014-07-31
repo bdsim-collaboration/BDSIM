@@ -5,7 +5,7 @@ BDSBunchRing::BDSBunchRing() :
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
 }
 
-BDSBunchRing::BDSBunchRing(G4double rMinIn, G4double rMaxIn,
+BDSBunchRing::BDSBunchRing(G4double rMinIn,   G4double rMaxIn,
 			   G4double X0In,     G4double Y0In,       G4double Z0In,   G4double T0In, 
 			   G4double Xp0In,    G4double Yp0In,      G4double Zp0In,			     
 			   G4double sigmaTIn, G4double sigmaEIn) :
