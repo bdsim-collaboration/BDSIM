@@ -53,11 +53,11 @@ BDSDrift::BDSDrift (G4String aName,
 	       tunnelOffsetX, 
 	       phiAngleIn, 
 	       phiAngleOut),
-  itsStartOuterR(0.0),
-  itsEndOuterR(0.0),
   itsStepper(NULL),
   itsMagField(NULL),
-  itsEqRhs(NULL)
+  itsEqRhs(NULL),
+  itsStartOuterR(0.0),
+  itsEndOuterR(0.0)
 {
   if(!aperset){
     itsStartOuterR=aperX + BDSGlobalConstants::Instance()->GetBeampipeThickness();
