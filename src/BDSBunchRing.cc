@@ -15,6 +15,7 @@ BDSBunchRing::~BDSBunchRing() {
 }
 
 void BDSBunchRing::SetOptions(struct Options& opt) {
+  BDSBunchInterface::SetOptions(opt);
   SetRMin(opt.Rmin);  
   SetRMax(opt.Rmax);  
 }

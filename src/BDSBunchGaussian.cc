@@ -6,6 +6,27 @@ BDSBunchGaussian::BDSBunchGaussian() : BDSBunchInterface() {
   GaussMultiGen = NULL;
 }
 
+BDSBunchGaussian::BDSBunchGaussian(G4double sigmaXIn, G4double sigmaYIn, G4double sigmaXpIn, G4double sigmaYpIn, 
+				   G4double X0In,     G4double Y0In,     G4double Z0In,      G4double T0In,
+				   G4double Xp0In,    G4double Yp0In,    G4double Zp0In, 
+				   G4double sigmaTIn, G4double sigmaEIn) :
+  BDSBunchInterface(X0In,Y0In, Z0In, T0In, Xp0In, Yp0In, Zp0In, sigmaTIn, sigmaEIn), 
+  sigmaX(sigmaXIn), sigmaY(sigmaYIn), sigmaXp(sigmaXpIn), sigmaYp(sigmaYpIn)
+{
+  meansGM = CLHEP::HepVector(6);
+  sigmaGM = CLHEP::HepSymMatrix(6);
+  GaussMultiGen = NULL;
+}
+
+BDSBunchGaussian::BDSBunchGaussian(G4double *sigma, 
+				   G4double X0In,     G4double Y0In,  G4double Z0In,  G4double T0In,
+				   G4double Xp0In,    G4double Yp0In, G4double Zp0In, 
+				   G4double sigmaTIn, G4double sigmaEIn) {
+  meansGM = CLHEP::HepVector(6);
+  sigmaGM = CLHEP::HepSymMatrix(6);
+  GaussMultiGen = NULL;
+}
+
 BDSBunchGaussian::~BDSBunchGaussian() {
   delete GaussMultiGen;
 }

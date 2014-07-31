@@ -1,17 +1,14 @@
 #include "BDSBunchCircle.hh"
 
 BDSBunchCircle::BDSBunchCircle() :
-  BDSBunchInterface(), envelopeX(0.0), envelopeY(0.0), 
-  envelopeXp(0.0), envelopeYp(0.0), envelopeT(0.0), envelopeE(0.0)
+  BDSBunchInterface(), envelopeR(0.0), envelopeRp(0.0), envelopeT(0.0), envelopeE(0.0)
 {
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
 
-BDSBunchCircle::BDSBunchCircle(G4double envelopeXIn, G4double envelopeYIn,
-			       G4double envelopeXpIn, G4double envelopeYpIn,
+BDSBunchCircle::BDSBunchCircle(G4double envelopeRIn, G4double envelopeRpIn,
 			       G4double envelopeTIn, G4double envelopeEIn) : 
-  BDSBunchInterface(), envelopeX(envelopeXIn), envelopeY(envelopeYIn), 
-  envelopeXp(envelopeXpIn), envelopeYp(envelopeYpIn), envelopeT(envelopeTIn), envelopeE(envelopeEIn)
+  BDSBunchInterface(), envelopeR(envelopeRIn), envelopeRp(envelopeRpIn), envelopeT(envelopeTIn), envelopeE(envelopeEIn)
 {
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
@@ -22,10 +19,8 @@ BDSBunchCircle::~BDSBunchCircle()
 }
 
 void BDSBunchCircle::SetOptions(struct Options &opt) {
-  SetEnvelopeX(opt.envelopeX); 
-  SetEnvelopeY(opt.envelopeY);
-  SetEnvelopeXp(opt.envelopeXp);
-  SetEnvelopeYp(opt.envelopeYp);
+  SetEnvelopeR(opt.envelopeX); 
+  SetEnvelopeRp(opt.envelopeXp);
   SetEnvelopeT(opt.envelopeT);
   SetEnvelopeE(opt.envelopeE);
   return; 
@@ -40,18 +35,23 @@ void BDSBunchCircle::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   xp = Xp0 * CLHEP::rad;
   yp = Yp0 * CLHEP::rad;
   z0 = Z0 * CLHEP::m + (T0 - envelopeT * (1.-2.*FlatGen->shoot())) * CLHEP::c_light * CLHEP::s;
-  
-  if(envelopeX !=0) x0  += envelopeX * (1-2*FlatGen->shoot()) * CLHEP::m;
-  if(envelopeY !=0) y0  += envelopeY * (1-2*FlatGen->shoot()) * CLHEP::m;
-  if(envelopeXp !=0) xp += envelopeXp * (1-2*FlatGen->shoot()) * CLHEP::rad;
-  if(envelopeYp !=0) yp += envelopeYp * (1-2*FlatGen->shoot()) * CLHEP::rad;
+
+  G4double phiR  = FlatGen->shoot()*2*pi;
+  G4double phiRp = FlatGen->shoot()*2*pi;
+  G4double r     = FlatGen->shoot()*envelopeR;
+  G4double rp    = FlatGen->shoot()*envelopeRp; 
+
+  x0 += cos(phiR) * r * CLHEP::m;
+  y0 += sin(phiR) * r * CLHEP::m;
+  xp += cos(phiRp) * rp * CLHEP::rad;
+  yp += sin(phiRp) * rp * CLHEP::rad;
   
   if (Zp0<0)
     zp = -sqrt(1.-xp*xp -yp*yp);
   else
     zp = sqrt(1.-xp*xp -yp*yp);
-  t = 0;
-  E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * (1 + sigmaE * (1-2*FlatGen->shoot()));
+  t = 0.0;
+  E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * (1 + envelopeE * (1-2*FlatGen->shoot()));
 
   weight = 1.0;
   return; 
