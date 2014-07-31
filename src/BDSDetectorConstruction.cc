@@ -104,8 +104,6 @@ bool debug = false;
 
 //=================================================================
 
-
-
 BDSDetectorConstruction::BDSDetectorConstruction():
   itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
   solidWorld(NULL),logicWorld(NULL),physiWorld(NULL),
@@ -306,29 +304,20 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   //
   SetMagField(0.0); // necessary to set a global field; so chose zero
 
-  
-  
+    
   // convert the parsed element list to list of BDS elements
   //
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
 
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
   for(it = beamline_list.begin();it!=beamline_list.end();it++){
+
 #ifdef DEBUG
-    G4cout << "BDSDetectorConstruction creating component..." << G4endl;
+    G4cout << "BDSDetectorConstruction creating component " << (*it).name << G4endl;
 #endif
-    BDSAcceleratorComponent* temp = 0;
-    if ((next(it) == beamline_list.end()) && (BDSExecOptions::Instance()->GetCircular()))
-      {
-#ifdef DEBUG
-	G4cout << "Circular machine - this is the last element - creating terminator" << G4endl;
-#endif
-	temp = theComponentFactory->createTerminator();
-      }
-    else
-      {
-	temp = theComponentFactory->createComponent(it, beamline_list);
-      }
+
+    BDSAcceleratorComponent* temp = theComponentFactory->createComponent(it, beamline_list);
+
 #ifdef DEBUG
     G4cout << "pushing onto back of beamline..." << G4endl;
 #endif
@@ -339,10 +328,25 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
       BDSBeamline::Instance()->lastItem()->SetK2((*it).k2);
       BDSBeamline::Instance()->lastItem()->SetK3((*it).k3);
     }
+
 #ifdef DEBUG
     G4cout << "done." << G4endl;
 #endif
   }
+
+  // Add terminator in case of circular machine
+  if (BDSExecOptions::Instance()->GetCircular()) {
+#ifdef DEBUG
+    G4cout << "Circular machine - this is the last element - creating terminator" << G4endl;
+#endif
+    BDSAcceleratorComponent* temp = theComponentFactory->createTerminator();
+    if(temp){
+      BDSBeamline::Instance()->addComponent(temp);
+    } else {
+      G4cout << "WARNING Terminator not created " << (*it).name << G4endl;
+    }
+  }
+  
   delete theComponentFactory;
   theComponentFactory = NULL;
 

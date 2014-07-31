@@ -41,33 +41,79 @@
 #include "G4Transform3D.hh"
 
 BDSAcceleratorComponent::BDSAcceleratorComponent (
-			G4String& aName,G4double aLength, 
-			G4double aBpRadius,G4double aXAper,G4double aYAper, 
-			G4VisAttributes* aVisAtt,
-                        G4String aTunnelMaterial,
-                        G4String aMaterial,G4double angle,
-			G4double XOffset, G4double YOffset,G4double ZOffset, G4double tunnelRadius, G4double tunnelOffsetX,G4String aTunnelCavityMaterial, G4int aPrecisionRegion):
-  itsName(aName),itsLength(aLength),itsBpRadius(aBpRadius),
-  itsXAper(aXAper),itsYAper(aYAper),itsAngle(angle),
-  itsMaterial(aMaterial),itsVisAttributes(aVisAtt),itsTunnelMaterial(aTunnelMaterial),
-  itsXOffset(XOffset),itsYOffset(YOffset), itsZOffset(ZOffset), itsTunnelRadius(tunnelRadius), itsTunnelOffsetX(tunnelOffsetX),itsTunnelCavityMaterial(aTunnelCavityMaterial), itsPrecisionRegion(aPrecisionRegion)
+						  G4String& aName,
+						  G4double aLength, 
+						  G4double aBpRadius,
+						  G4double aXAper,
+						  G4double aYAper, 
+						  G4VisAttributes* aVisAtt,
+						  G4String aTunnelMaterial,
+						  G4String aMaterial,
+						  G4double angle,
+						  G4double XOffset, 
+						  G4double YOffset,
+						  G4double ZOffset, 
+						  G4double tunnelRadius, 
+						  G4double tunnelOffsetX,
+						  G4String aTunnelCavityMaterial,
+						  G4int aPrecisionRegion):
+  itsName(aName),
+  itsLength(aLength),
+  itsBpRadius(aBpRadius),
+  itsXAper(aXAper),
+  itsYAper(aYAper),
+  itsAngle(angle),
+  itsMaterial(aMaterial),
+  itsVisAttributes(aVisAtt),
+  itsTunnelMaterial(aTunnelMaterial),
+  itsXOffset(XOffset),
+  itsYOffset(YOffset), 
+  itsZOffset(ZOffset), 
+  itsTunnelRadius(tunnelRadius), 
+  itsTunnelOffsetX(tunnelOffsetX),
+  itsTunnelCavityMaterial(aTunnelCavityMaterial), 
+  itsPrecisionRegion(aPrecisionRegion)
 {
   ConstructorInit();
 }
 
 BDSAcceleratorComponent::BDSAcceleratorComponent (
-			G4String& aName,G4double aLength, 
-			G4double aBpRadius,G4double aXAper,G4double aYAper, 
-			G4VisAttributes* aVisAtt,
-			std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-                        G4String aTunnelMaterial,
-                        G4String aMaterial,G4double angle,
-			G4double XOffset, G4double YOffset,G4double ZOffset, G4double tunnelRadius, G4double tunnelOffsetX, G4String aTunnelCavityMaterial, G4int aPrecisionRegion):
-  itsName(aName),itsLength(aLength),itsBpRadius(aBpRadius),
-  itsXAper(aXAper),itsYAper(aYAper),itsAngle(angle),
-  itsMaterial(aMaterial),itsVisAttributes(aVisAtt), itsBlmLocZ(blmLocZ), itsBlmLocTheta(blmLocTheta),
+						  G4String& aName,
+						  G4double aLength, 
+						  G4double aBpRadius,
+						  G4double aXAper,
+						  G4double aYAper, 
+						  G4VisAttributes* aVisAtt,
+						  std::list<G4double> blmLocZ, 
+						  std::list<G4double> blmLocTheta,
+						  G4String aTunnelMaterial,
+						  G4String aMaterial,
+						  G4double angle,
+						  G4double XOffset, 
+						  G4double YOffset,
+						  G4double ZOffset, 
+						  G4double tunnelRadius, 
+						  G4double tunnelOffsetX, 
+						  G4String aTunnelCavityMaterial, 
+						  G4int aPrecisionRegion):
+  itsName(aName),
+  itsLength(aLength),
+  itsBpRadius(aBpRadius),
+  itsXAper(aXAper),
+  itsYAper(aYAper),
+  itsAngle(angle),
+  itsMaterial(aMaterial),
+  itsVisAttributes(aVisAtt), 
+  itsBlmLocZ(blmLocZ), 
+  itsBlmLocTheta(blmLocTheta),
   itsTunnelMaterial(aTunnelMaterial),
-  itsXOffset(XOffset),itsYOffset(YOffset), itsZOffset(ZOffset), itsTunnelRadius(tunnelRadius), itsTunnelOffsetX(tunnelOffsetX), itsTunnelCavityMaterial(aTunnelCavityMaterial), itsPrecisionRegion(aPrecisionRegion)
+  itsXOffset(XOffset),
+  itsYOffset(YOffset), 
+  itsZOffset(ZOffset), 
+  itsTunnelRadius(tunnelRadius), 
+  itsTunnelOffsetX(tunnelOffsetX), 
+  itsTunnelCavityMaterial(aTunnelCavityMaterial), 
+  itsPrecisionRegion(aPrecisionRegion)
 {
   if (itsBlmLocZ.size() != itsBlmLocTheta.size()){
     G4cerr << "BDSAcceleratorComponent: error, lists blmLocZ and blmLocTheta are of unequal size" << G4endl;

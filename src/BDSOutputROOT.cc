@@ -271,7 +271,7 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
       EnergyLossTree->Fill();
       
       if((*hc)[i]->GetPrecisionRegion()){ //Only the precision region fills this tree, preserving every hit, its position and weight, instead of summing weighted energy in each beam line component.
-	weight_el_p=(*hc)[i]->GetWeight();
+	weight_el_p=(G4int)(*hc)[i]->GetWeight();
 	E_el_p=((*hc)[i]->GetEnergy()/CLHEP::GeV)/weight_el_p;
 	x_el_p=((*hc)[i]->GetEnergyWeightedX()/(CLHEP::cm*1e5*E_el_p))/weight_el_p;
 	y_el_p=((*hc)[i]->GetEnergyWeightedY()*10/(CLHEP::cm*E_el_p))/weight_el_p;

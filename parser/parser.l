@@ -22,6 +22,7 @@
 #include "parser.tab.h"
 #include "sym_table.h"
 #include "getEnv.h"
+#include <unistd.h>
 
 const int maxfilenamelength = 200;
 
@@ -149,8 +150,25 @@ dump  { return DUMP; }
 
 <incl>[ \t]*  // eat the whitespace
 <incl>[^ \t\n;]+ {
-std::string filename = (std::string)getEnv("BDSIMPATH")+(std::string)yytext;
-  printf("parser> reading file %s \n",(char*)filename.c_str());//yytext
+
+//this is perhaps unnecessary now...
+//std::string filename = (std::string)getEnv("BDSIMPATH")+(std::string)yytext;
+
+//get main filename and get the path part only
+std::string mainfilename = (std::string)yyfilename;
+std::string basefilepath = "";
+std::string::size_type found = mainfilename.rfind("/");//find the last '/'
+if (found != std::string::npos){
+  //if we found a '/' get the path before that and prepend to included files
+  basefilepath += mainfilename.substr(0,found);
+  basefilepath += "/";
+}
+
+//get current working directory and build up include filenames
+char cwdchars[maxfilenamelength];
+std::string cwd = (std::string)getcwd(cwdchars, sizeof(cwdchars));
+std::string includefilename = cwd + "/" + basefilepath + (std::string)yytext;
+printf("parser> reading file %s \n",(char*)includefilename.c_str());//yytext
   if( include_stack_ptr >= max_include_depth )
     {
       fprintf(stderr , "Error : Include depth exceeds %d\n",max_include_depth);
@@ -158,7 +176,7 @@ std::string filename = (std::string)getEnv("BDSIMPATH")+(std::string)yytext;
     }
   else
     {
-      yyin = fopen((char*)filename.c_str(), "r"); //yytext
+      yyin = fopen((char*)includefilename.c_str(), "r"); //yytext
       if(yyin)
 	{
           //printf("saving to stack buffer n %d, file %s\n",include_stack_ptr,yyfilename );
@@ -166,7 +184,7 @@ std::string filename = (std::string)getEnv("BDSIMPATH")+(std::string)yytext;
           include_linenum_stack[include_stack_ptr] = line_num;
           line_num = 1;
           strncpy(include_filename_stack[include_stack_ptr], yyfilename, maxfilenamelength);
-          strncpy(yyfilename,(char*)filename.c_str(),maxfilenamelength); //yytext
+          strncpy(yyfilename,(char*)includefilename.c_str(),maxfilenamelength); //yytext
 	  include_stack[include_stack_ptr++] = YY_CURRENT_BUFFER;
           strncpy(include_filename_stack[include_stack_ptr], yyfilename, maxfilenamelength);
 	  yy_switch_to_buffer(yy_create_buffer( yyin, YY_BUF_SIZE ) );
@@ -174,7 +192,7 @@ std::string filename = (std::string)getEnv("BDSIMPATH")+(std::string)yytext;
     	}
       else
 	{
-	  fprintf(stderr, "Error : can't open %s\n", (char*)filename.c_str()); //yytext
+	  fprintf(stderr, "Error : can't open %s\n", (char*)includefilename.c_str()); //yytext
 	  exit(1);
 	}
     }
