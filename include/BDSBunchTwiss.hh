@@ -45,12 +45,12 @@ public :
   G4double GetEmitX()  {return emitX;}
   G4double GetEmitY()  {return emitY;}
 
-  void     SetBetaX(double newBetaX) {betaX = newBetaX;}
-  void     SetBetaY(double newBetaY) {betaY = newBetaY;}
+  void     SetBetaX(double newBetaX) {betaX    = newBetaX;}
+  void     SetBetaY(double newBetaY) {betaY    = newBetaY;}
   void     SetAlphaX(double newAlphaX) {alphaX = newAlphaX;}
-  void     SetAlphaY(double newAlphaY) {alphaX = newAlphaY;}
-  void     SetEmitX(double newEmitX) {betaX = newEmitX;}
-  void     SetEmitY(double newEmitY) {betaX = newEmitY;}   
+  void     SetAlphaY(double newAlphaY) {alphaY = newAlphaY;}
+  void     SetEmitX(double newEmitX)   {emitX  = newEmitX;}
+  void     SetEmitY(double newEmitY)   {emitY  = newEmitY;}   
 };
 
 #endif
