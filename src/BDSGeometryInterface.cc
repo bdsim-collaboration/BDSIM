@@ -45,7 +45,7 @@ void BDSGeometryInterface::Optics()
 
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     { 
-      G4int aper_type; //1 = rect, 2 = circ, 3 = elispe
+      G4int aper_type; //1 = rect, 2 = circ, 3 = ellipse
       if(BDSBeamline::Instance()->currentItem()->GetType() == "rcol" ) //RCOL
 	aper_type=1;
       else if(BDSBeamline::Instance()->currentItem()->GetType() == "ecol") //ECOL
@@ -113,35 +113,22 @@ void BDSGeometryInterface::Survey()
   G4double arc_length(0.0);
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     { 
-      G4int aper_type; //1 = rect, 2 = circ, 3 = elispe
-      if(BDSBeamline::Instance()->currentItem()->GetType() == 14 ) //RCOL
+      G4int aper_type; //1 = rect, 2 = circ, 3 = ellipse
+      if(BDSBeamline::Instance()->currentItem()->GetType() == "rcol" ) //RCOL
 	aper_type=1;
-      else if(BDSBeamline::Instance()->currentItem()->GetType() == 13) //ECOL
+      else if(BDSBeamline::Instance()->currentItem()->GetType() == "ecol" ) //ECOL
 	if(BDSBeamline::Instance()->currentItem()->GetAperX()==BDSBeamline::Instance()->currentItem()->GetAperY()) 
 	  aper_type=2;
 	else aper_type=3;
       else aper_type=1;
       
-      G4double phi, theta, psi;
+      G4double phi=0.0, theta=0.0, psi=0.0;
       if(BDSBeamline::Instance()->currentItem()->GetRotation())
 	{
-	  // sort out rounding errors where zz -> 1.000001, etc.
-	  if(fabs(BDSBeamline::Instance()->currentItem()->GetRotation()->zz())>1)
-	    {
-	      G4ThreeVector newZ = BDSBeamline::Instance()->currentItem()->GetRotation()->rowZ();
-	      newZ.setZ(1.0);
-	      BDSBeamline::Instance()->currentItem()->GetRotation()->setRows(BDSBeamline::Instance()->currentItem()->GetRotation()->rowX(),
-					       BDSBeamline::Instance()->currentItem()->GetRotation()->rowY(),
-					       newZ);
-	    }
-	  
 	  phi = BDSBeamline::Instance()->currentItem()->GetRotation()->getPhi();
 	  theta = BDSBeamline::Instance()->currentItem()->GetRotation()->getTheta();
 	  psi = BDSBeamline::Instance()->currentItem()->GetRotation()->getPsi();
-	  
 	}
-      else
-	phi = theta = psi = 0.0;
       
       survey.setf(std::ios::fixed, std::ios::floatfield);
       survey.setf(std::ios::showpoint);
