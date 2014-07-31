@@ -2,7 +2,6 @@
 #define BDSBunchGaussian_h 
 
 #include "BDSBunchInterface.hh"
-#include "BDSGlobalConstants.hh"
 #include "Randomize.hh"
 #include "CLHEP/Matrix/Vector.h" 
 #include "CLHEP/Matrix/SymMatrix.h"

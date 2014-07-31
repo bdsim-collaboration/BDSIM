@@ -32,3 +32,21 @@ void BDSBunchInterface::SetOptions(struct Options& opt) {
   else
     Zp0 = sqrt(1.-Xp0*Xp0-Yp0*Yp0);
 }
+
+void BDSBunchInterface::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
+					G4double& xp, G4double& yp, G4double& zp,
+					G4double& t , G4double&  E, G4double& weight) {
+  x0 = (X0 + 0.0) * CLHEP::m;
+  y0 = (Y0 + 0.0) * CLHEP::m;
+  z0 = (Z0 + 0.0) * CLHEP::m;
+  xp = (Xp0 + 0.0)* CLHEP::rad;
+  yp = (Yp0 + 0.0)* CLHEP::rad;
+  if (Zp0<0)
+    zp = -sqrt(1.-xp*xp -yp*yp);
+  else
+    zp = sqrt(1.-xp*xp -yp*yp);      
+  t  = 0.0; 
+  E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy();
+  weight = 1.0;
+  return;
+}

@@ -2,7 +2,6 @@
 #define BDSBunchRing_h 
 
 #include "BDSBunchInterface.hh"
-#include "BDSGlobalConstants.hh"
 #include "Randomize.hh"
 
 namespace CLHEP {
@@ -17,7 +16,10 @@ protected :
 
 public: 
   BDSBunchRing(); 
-  BDSBunchRing(G4double rMin, G4double rMax);
+  BDSBunchRing(G4double rMin, G4double rMax,
+	       G4double X0,     G4double Y0,    G4double Z0,   G4double T0, 
+	       G4double Xp0,    G4double Yp0,   G4double Zp0,
+	       G4double sigmaT, G4double sigmaE);
   ~BDSBunchRing(); 
   void SetOptions(struct Options& opt);
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

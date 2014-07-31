@@ -2,7 +2,6 @@
 #define BDSBunchTwiss_h 
 
 #include "BDSBunchInterface.hh"
-#include "BDSGlobalConstants.hh"
 #include "Randomize.hh"
 
 namespace CLHEP {
