@@ -9,6 +9,7 @@ Last modified 23.10.2007 by Steve Malton
 #include "G4FieldManager.hh"
 #include "G4UniformMagField.hh"
 #include <cstdlib>
+#include "G4ThreeVector.hh"
 
 extern Options options;
 
@@ -166,10 +167,12 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   InitRotationMatrices();
   
   // options that are never used (no set method):
-  itsLWCalWidth = 0.0;
-  itsLWCalOffset = 0.0;
+  itsLWCalWidth       = 0.0;
+  itsLWCalOffset      = 0.0;
   itsMagnetPoleRadius = 0.0;
-  itsMagnetPoleSize = 0.0;
+  itsMagnetPoleSize   = 0.0;
+  teleporterdelta     = G4ThreeVector(0.,0.,0.);
+  teleporterlength    = 0.0;
   // //Synchrotron primary generator
   // itsSynchPrimaryGen = false; //XXX check what this is 19/4/11
   // itsSynchPrimaryAngle = 0.0;
@@ -177,12 +180,12 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
 }
 
 void BDSGlobalConstants::InitRotationMatrices(){
-  _RotY90=new G4RotationMatrix();
-  _RotYM90=new G4RotationMatrix();
-  _RotX90=new G4RotationMatrix();
-  _RotXM90=new G4RotationMatrix();
-  _RotYM90X90=new G4RotationMatrix();
-  _RotYM90XM90=new G4RotationMatrix();
+  _RotY90       = new G4RotationMatrix();
+  _RotYM90      = new G4RotationMatrix();
+  _RotX90       = new G4RotationMatrix();
+  _RotXM90      = new G4RotationMatrix();
+  _RotYM90X90   = new G4RotationMatrix();
+  _RotYM90XM90  = new G4RotationMatrix();
   G4double pi_ov_2 = asin(1.);
   _RotY90->rotateY(pi_ov_2);
   _RotYM90->rotateY(-pi_ov_2);

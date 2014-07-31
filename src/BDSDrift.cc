@@ -25,10 +25,39 @@ extern LogVolMap* LogVol;
 
 //============================================================
 
-BDSDrift::BDSDrift (G4String aName, G4double aLength, 
-                    std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta, G4double aperX, G4double aperY, G4String tunnelMaterial, G4bool aperset, G4double aper, G4double tunnelOffsetX, G4double phiAngleIn, G4double phiAngleOut):
-  BDSMultipole(aName, aLength, aper, aper, SetVisAttributes(),  blmLocZ, blmLocTheta, tunnelMaterial, "", aperX, aperY, 0, 0, tunnelOffsetX, phiAngleIn, phiAngleOut),
-  itsStartOuterR(0.0),itsEndOuterR(0.0),itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
+BDSDrift::BDSDrift (G4String aName, 
+		    G4double aLength, 
+                    std::list<G4double> blmLocZ, 
+		    std::list<G4double> blmLocTheta, 
+		    G4double aperX, 
+		    G4double aperY, 
+		    G4String tunnelMaterial, 
+		    G4bool   aperset, 
+		    G4double aper, 
+		    G4double tunnelOffsetX, 
+		    G4double phiAngleIn, 
+		    G4double phiAngleOut):
+  BDSMultipole(aName, 
+	       aLength, 
+	       aper, 
+	       aper, 
+	       SetVisAttributes(), 
+	       blmLocZ, 
+	       blmLocTheta, 
+	       tunnelMaterial, 
+	       "", 
+	       aperX, 
+	       aperY, 
+	       0, 
+	       0, 
+	       tunnelOffsetX, 
+	       phiAngleIn, 
+	       phiAngleOut),
+  itsStepper(NULL),
+  itsMagField(NULL),
+  itsEqRhs(NULL),
+  itsStartOuterR(0.0),
+  itsEndOuterR(0.0)
 {
   if(!aperset){
     itsStartOuterR=aperX + BDSGlobalConstants::Instance()->GetBeampipeThickness();
@@ -97,9 +126,9 @@ G4VisAttributes* BDSDrift::SetVisAttributes()
 
 void BDSDrift::BuildBpFieldAndStepper(){
     // set up the magnetic field and stepper
-  itsMagField=new BDSMagField(); //Zero magnetic field.
-  itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
-  itsStepper=new BDSDriftStepper(itsEqRhs);
+  itsMagField = new BDSMagField(); //Zero magnetic field.
+  itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
+  itsStepper  = new BDSDriftStepper(itsEqRhs);
 }
 
 void BDSDrift::BuildBLMs(){
