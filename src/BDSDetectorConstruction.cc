@@ -161,20 +161,17 @@ BDSDetectorConstruction::BDSDetectorConstruction():
 
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 {
-  theECList=new ECList;
+  theECList   = new ECList;
+  LogVolCount = new LogVolCountMap();
+  LogVol      = new LogVolMap();
+  gasRegion   = new G4Region("gasRegion");
 
-  LogVolCount=new LogVolCountMap();
-
-  LogVol=new LogVolMap();
-
-  gasRegion = new G4Region("gasRegion");
   G4ProductionCuts* theGasProductionCuts = new G4ProductionCuts();
   theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("gamma"));
   theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("e-"));
   theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("e+"));
   gasRegion->SetProductionCuts(theGasProductionCuts);
-
-
+  
   if (verbose || debug) G4cout << "-->starting BDS construction \n"<<G4endl;
   //construct bds
   return ConstructBDS(beamline_list);
@@ -208,7 +205,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   }
 
   // convert the parsed element list to list of BDS elements
-  //
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
 
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
@@ -235,28 +231,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
     G4cout << "done." << G4endl;
 #endif
   }
-
-  
-  /*
-  if (BDSExecOptions::Instance()->GetCircular()) {
-#ifdef DEBUG
-    G4cout << "Circular machine - this is the last element - creating terminator & teleporter" << G4endl;
-#endif
-    CalculateAndSetTeleporterDelta(BDSBeamline::Instance());
-    BDSAcceleratorComponent* teleporter  = theComponentFactory->createTeleporter();
-    if(teleporter){
-      BDSBeamline::Instance()->addComponent(teleporter);
-    } else {
-      G4cout << "WARNING Teleporter not created " << G4endl;
-    }
-    BDSAcceleratorComponent* terminator = theComponentFactory->createTerminator();
-    if(terminator){
-      BDSBeamline::Instance()->addComponent(terminator);
-    } else {
-      G4cout << "WARNING Terminator not created " << G4endl;
-    }
-  }
-  */
   
   delete theComponentFactory;
   theComponentFactory = NULL;
@@ -265,11 +239,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   G4cout << __METHOD_NAME__ << "size of beamline element list: "<< beamline_list.size() << G4endl;
 #endif
   G4cout << __METHOD_NAME__ << "size of theBeamline: "<< BDSBeamline::Instance()->size() << G4endl;
-    
-  //
+  
   // construct the component list
-  //
-
   if (verbose || debug) G4cout << "now constructing geometry" << G4endl;
   
   std::list<BDSAcceleratorComponent*>::const_iterator iBeam;
@@ -347,13 +318,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	  rmax(i) = std::max(rextentmax(i),rmax(i));
 	  rmin(i) = std::min(rextentmin(i),rmin(i));
 	}
-
     }
-    
-  // -----------------------------------
-  
-  // determine the world size
-  
+
+  // determine the world size  
   G4String LocalName="World";
   
   SetWorldSizeX(1.5*( 2*std::max(fabs( rmin(0) ),fabs( rmax(0) ) ) ) *CLHEP::mm);
@@ -441,9 +408,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 
   G4bool use_graphics=true;
   G4ThreeVector TargetPos;
-
-  // set default output formats:
-  G4cout.precision(15);
   
 #ifdef DEBUG 
   G4cout<<"total length="<<s_tot/CLHEP::m<<"m"<<G4endl;
