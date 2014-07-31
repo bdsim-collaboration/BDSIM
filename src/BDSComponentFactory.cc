@@ -306,19 +306,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createTeleporter(){
     G4cout << "---->creating Teleporter,"
 	   << " name        = " << _element.name
 	   << " l           = " << teleporterlength/CLHEP::m << "m"
-	   << " aper        = " << BDSGlobalConstants::Instance()->GetBeampipeRadius()/CLHEP::m << "m"
-	   << " phiAngleIn  = " << _element.phiAngleIn 
-	   << " phiAngleOut = " << _element.phiAngleOut 
 	   << G4endl;
 #endif
 
 
     return( new BDSTeleporter( _element.name,           //name
-			       teleporterlength,        //length
-			       BDSGlobalConstants::Instance()->GetBeampipeRadius()/CLHEP::m, // apertureX
-			       BDSGlobalConstants::Instance()->GetBeampipeRadius()/CLHEP::m, // apertureY
-			       _element.phiAngleIn,     // phiAngleIn
-			       _element.phiAngleOut));  // phiAngleOut
+			       teleporterlength ));        //length
   }
 }
 

@@ -2,39 +2,37 @@
 #define BDSTeleporter_h 1
 
 #include "BDSTeleporterStepper.hh"
+#include "G4VisAttributes.hh"
+#include "G4ChordFinder.hh"
+#include "G4FieldManager.hh"
+#include "G4MagIntegratorStepper.hh"
+#include "BDSMagField.hh"
+#include "G4Mag_UsualEqRhs.hh"
 //#include "globals.hh"
 //#include "BDSGlobalConstants.hh"
-#include "parser/elementlist.h"
-#include "BDSDrift.hh"
+//#include "BDSDrift.hh"
 #include "BDSBeamline.hh"
+#include "parser/elementlist.h"
 
-class BDSTeleporter: public BDSDrift
+class BDSTeleporter: public BDSAcceleratorComponent
 {
 public:
   BDSTeleporter(G4String name,
-		  G4double length,
-		  G4double apertureX,
-		  G4double apertureY,
-		  G4double phiAngleIn,
-		G4double phiAngleOut);
-    /*BDSDrift(name,
-	       length,
-	       std::list<G4double>(), //blmLocZ,
-	       std::list<G4double>(), //blmLocTheta,
-	       apertureX,
-	       apertureY,
-	       "",     //Tunnel Material
-	       true,  //Aperture set
-	       0.0,    //Similar to drift in componentfactory
-	       0.0,    //Tunnel Offset X
-	       phiAngleIn,
-	       phiAngleOut)*/
-  
+		G4double length);  
   ~BDSTeleporter(){};
 
-  //protected:
+protected:
+  G4ChordFinder*          itsChordFinder;
+  G4FieldManager*         itsFieldManager;
+  G4MagIntegratorStepper* itsStepper;
+  BDSMagField*            itsMagField;
+  G4Mag_UsualEqRhs*       itsEqRhs;
+
 private:
-  virtual void BuildBpFieldAndStepper();
+  void CreateTeleporterLogicalVolume();
+  void CreateBFieldAndStepper();
+  void CreateFieldManager(G4MagIntegratorStepper* stepper,G4MagneticField* field);
+  G4VisAttributes* SetVisAttributes();
 };
 
 void CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline);
