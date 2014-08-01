@@ -38,11 +38,11 @@ void BDSTerminatorSD::Initialize(G4HCofThisEvent* /*HCE*/)
 G4bool BDSTerminatorSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
   
-  if (verbose){
-    G4cout << "Number of turns to take: " << BDSGlobalConstants::Instance()->GetTurnsToTake() << G4endl;
-    G4cout << "Number of turns taken:   " << BDSGlobalConstants::Instance()->GetTurnsTaken() << G4endl;
-    G4cout << "Incrementing turn number " << G4endl;
-  }
+  //if (verbose){
+  G4cout << "Number of turns to take: " << BDSGlobalConstants::Instance()->GetTurnsToTake() << G4endl;
+  G4cout << "Number of turns taken:   " << BDSGlobalConstants::Instance()->GetTurnsTaken() << G4endl;
+  G4cout << "Incrementing turn number " << G4endl;
+  //}
   G4Track* theTrack = aStep->GetTrack();
   if (theTrack->GetParentID() == 0){
     //this is a primary track
