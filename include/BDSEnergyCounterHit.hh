@@ -48,7 +48,7 @@ public:
   inline void     SetWeight(G4double weight);
   inline G4bool   GetPrecisionRegion();
   inline G4int    GetTurnsTaken();
-  inline void     SetTurnsTaken(G4double turnstaken);
+  inline void     SetTurnsTaken(G4int turnstaken);
   
 private:
   /// private default constructor (not implemented)
@@ -138,7 +138,7 @@ inline void BDSEnergyCounterHit::operator delete(void *aHit)
 inline G4int BDSEnergyCounterHit::GetTurnsTaken()
 {return itsTurnsTaken;}
 
-inline void  BDSEnergyCounterHit::SetTurnsTaken(G4double turnstaken)
+inline void  BDSEnergyCounterHit::SetTurnsTaken(G4int turnstaken)
 {itsTurnsTaken = turnstaken;}
 
 #endif
