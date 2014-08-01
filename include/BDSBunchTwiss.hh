@@ -25,7 +25,7 @@ private :
   CLHEP::RandFlat  *FlatGen;  
   
 public : 
-
+  BDSBunchTwiss();
   BDSBunchTwiss(G4double betaX,  G4double betaY, 
 		G4double alphaX, G4double alphaY,
 		G4double emitX,  G4double emitY,

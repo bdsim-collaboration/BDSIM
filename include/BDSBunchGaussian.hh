@@ -29,8 +29,8 @@ protected :
 public :
   BDSBunchGaussian();
   BDSBunchGaussian(G4double sigmaX, G4double sigmaY, G4double sigmaXp, G4double sigmaYp, 
-		   G4double X0,     G4double Y0,  G4double Z0,  G4double T0,
-		   G4double Xp0,    G4double Yp0, G4double Zp0, 
+		   G4double X0,     G4double Y0,     G4double Z0,  G4double T0,
+		   G4double Xp0,    G4double Yp0,    G4double Zp0, 
 		   G4double sigmaT, G4double sigmaE);
   BDSBunchGaussian(G4double *sigma, 
 		   G4double X0,     G4double Y0,  G4double Z0,  G4double T0,
@@ -39,8 +39,8 @@ public :
   ~BDSBunchGaussian();
   void SetOptions(struct Options& opt); 
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-			       G4double& xp, G4double& yp, G4double& zp,
-			       G4double& t , G4double&  E, G4double& weight);  
+		       G4double& xp, G4double& yp, G4double& zp,
+		       G4double& t , G4double&  E, G4double& weight);  
 
   G4double GetSigmaX()  {return sigmaX;}
   G4double GetSigmaY()  {return sigmaY;}

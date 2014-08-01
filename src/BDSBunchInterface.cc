@@ -17,6 +17,9 @@ BDSBunchInterface::BDSBunchInterface(G4double X0In, G4double Y0In, G4double Z0In
   Xp0(Xp0In), Yp0(Yp0In), Zp0(Zp0In), sigmaT(sigmaTIn), sigmaE(sigmaEIn)
 {}
 
+BDSBunchInterface::~BDSBunchInterface() {
+}
+
 void BDSBunchInterface::SetOptions(struct Options& opt) {
   X0 = opt.X0;
   Y0 = opt.Y0;

@@ -24,6 +24,7 @@ public :
   BDSBunchInterface(G4double X0,     G4double Y0,     G4double Z0, G4double T0,
 		    G4double Xp0,    G4double Yp0,    G4double Zp0, 
 		    G4double sigmaT, G4double sigmaE);
+  virtual ~BDSBunchInterface();
   virtual void SetOptions(struct Options& opt); 
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 			       G4double& xp, G4double& yp, G4double& zp,

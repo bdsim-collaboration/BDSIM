@@ -1,5 +1,10 @@
 #include "BDSBunchTwiss.hh"
 
+BDSBunchTwiss::BDSBunchTwiss() :
+  BDSBunchInterface(), betaX(0.0), betaY(0.0), alphaX(0.0), alphaY(0.0), emitX(0.0), emitY(0.0)
+{}
+
+
 BDSBunchTwiss::BDSBunchTwiss(G4double betaXIn,  G4double betaYIn, 
 			     G4double alphaXIn, G4double alphaYIn,
 			     G4double emitXIn,  G4double emitYIn,
