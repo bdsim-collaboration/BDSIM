@@ -51,8 +51,8 @@ void BDSTeleporterStepper::AdvanceHelix( const G4double  yIn[],
       // accelerator is built along z axis
       // bends bend normally in x axis
       // for a flat machine, the delta.y() should be <10^-9 ie rounding error 
-      yOut[0] = yIn[0] + teleporterdelta.x();
-      yOut[1] = yIn[1] + teleporterdelta.y();
+      yOut[0] = yIn[0] - teleporterdelta.x();
+      yOut[1] = yIn[1] - teleporterdelta.y();
       yOut[2] = yIn[2] + h; // move it along the step length
       yOut[3] = yIn[3];
       yOut[4] = yIn[4];
