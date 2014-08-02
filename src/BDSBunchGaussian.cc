@@ -76,6 +76,8 @@ BDSBunchGaussian::BDSBunchGaussian(G4double *sigma,
   sigmaGM[5][5] = sigma[20];
 
   // Create multi dim gaussian
+  if(GaussMultiGen != NULL) 
+    delete GaussMultiGen;
   GaussMultiGen = new CLHEP::RandMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM); 
 }
 

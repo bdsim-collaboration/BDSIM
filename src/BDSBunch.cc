@@ -12,7 +12,7 @@ BDSBunch::BDSBunch() {
   bdsBunch    = new BDSBunchInterface(); 
 }
 
-BDSBunch::BDSBunch(std::string distribType, G4double *params) {
+BDSBunch::BDSBunch(std::string distribType, G4double *params) {  
 }
 
 BDSBunch::~BDSBunch() {
@@ -21,6 +21,9 @@ BDSBunch::~BDSBunch() {
 
 void BDSBunch::SetOptions(struct Options& opt) {
   // check options and construct corrrect bdsBunchInterface
+  if(bdsBunch != NULL) 
+    delete bdsBunch 
+
   if (opt.distribType == "reference") 
     bdsBunch = new BDSBunchInterface();
   else if(opt.distribType == "gauss" || opt.distribType == "gaussmatrix") 

@@ -15,6 +15,9 @@ int main(void) {
   // Number of particles to generate for test 
   int nparticle = 5;
 
+  // fill options from file 
+  gmad_parser();
+
   options.beampipeRadius   = 10;
   options.componentBoxSize = 11;
   options.tunnelRadius     = 12;
