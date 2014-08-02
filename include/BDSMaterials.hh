@@ -70,4 +70,6 @@ private:
 
 };
 
+void PrepareRequiredMaterials();
+
 #endif
