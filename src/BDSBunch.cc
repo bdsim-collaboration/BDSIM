@@ -22,7 +22,7 @@ BDSBunch::~BDSBunch() {
 void BDSBunch::SetOptions(struct Options& opt) {
   // check options and construct corrrect bdsBunchInterface
   if(bdsBunch != NULL) 
-    delete bdsBunch 
+    delete bdsBunch;
 
   if (opt.distribType == "reference") 
     bdsBunch = new BDSBunchInterface();
