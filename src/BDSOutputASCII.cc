@@ -24,15 +24,15 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
   of << std::left << std::setprecision(10) << std::fixed
      << std::setw(6)  << "PDGID"    << " "
      << std::setw(15) << "E[GeV]"   << " "
-     << std::setw(15) << "X[mum"    << " "
+     << std::setw(15) << "X[mum]"   << " "
      << std::setw(15) << "Y[mum]"   << " "
-     << std::setw(15) << "S[m]"     << " "
+     << std::setw(20) << "S[m]"     << " "
      << std::setw(15) << "Xp[rad]"  << " "
      << std::setw(15) << "Yp[rad]"  << " "
      << std::setw(6)  << "NEvent"   << " "
      << std::setw(15) << "Weight"   << " "
-     << std::setw(5)  << "ParentID" << " "
-     << std::setw(5)  << "TrackID"  << " "
+     << std::setw(9)  << "ParentID" << " "
+     << std::setw(8)  << "TrackID"  << " "
      << std::setw(5)  << "Turn"
      << G4endl;  
   
@@ -46,8 +46,8 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
 	  << std::setw(12) << "Z[m]"     << " "
 	  << std::setw(12) << "E[GeV]"   << " "
 	  << std::setw(6)  << "PDGID"    << " "
-	  << std::setw(5)  << "Weight"   << " "
-	  << std::setw(5)  << "Turn"
+	  << std::setw(7)  << "Weight"   << " "
+	  << std::setw(6)  << "Turn"
 	  << G4endl;
 }
 
@@ -70,13 +70,13 @@ void BDSOutputASCII::WriteAsciiHit(G4int PDGType, G4double Mom, G4double X, G4do
      << std::setw(15) << Mom/CLHEP::GeV       << " "
      << std::setw(15) << X/CLHEP::micrometer  << " "
      << std::setw(15) << Y/CLHEP::micrometer  << " "
-     << std::setw(15) << S/CLHEP::m           << " "
+     << std::setw(20) << S/CLHEP::m           << " "
      << std::setw(15) << XPrime/CLHEP::radian << " "
      << std::setw(15) << YPrime/CLHEP::radian << " "
      << std::setw(6)  << EventNo              << " "
      << std::setw(15) << Weight               << " "
-     << std::setw(5)  << ParentID             << " "
-     << std::setw(5)  << TrackID              << " "
+     << std::setw(9)  << ParentID             << " "
+     << std::setw(8)  << TrackID              << " "
      << std::setw(5)  << TurnsTaken
      << G4endl;
 }
@@ -130,8 +130,8 @@ void BDSOutputASCII::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 	      << std::setw(12) << Zpos/CLHEP::m     << " "
 	      << std::setw(12) << Energy/CLHEP::GeV << " "
 	      << std::setw(6)  << partID            << " "
-	      << std::setw(5)  << weight            << " "
-	      << std::setw(5)  << turnnumber
+	      << std::setw(7)  << weight            << " "
+	      << std::setw(6)  << turnnumber
 	      << G4endl;
     }
   ofEloss.flush();
