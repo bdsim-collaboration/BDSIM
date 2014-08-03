@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <fstream>
 
 #include "G4ParticleTable.hh"
 #include "G4Electron.hh"
@@ -34,7 +35,6 @@ int main(void) {
 	    << "BDSBunchTest> centre : " << options.Xp0 << " " << options.Xp0 << " " << options.Zp0 << "\n"
 	    << "BDSBunchTest> centre : " << options.T0  << "\n";
 
-
   // From BDSPhysicsList.cc
   G4Electron::ElectronDefinition();
   G4Proton::ProtonDefinition();
@@ -44,7 +44,11 @@ int main(void) {
   BDSGlobalConstants::Instance()->SetBeamMomentum(sqrt(pow(BDSGlobalConstants::Instance()->GetBeamTotalEnergy(),2)-pow(BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass(),2)));  
   BDSGlobalConstants::Instance()->SetBeamKineticEnergy(BDSGlobalConstants::Instance()->GetBeamTotalEnergy()-BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass());
 
+  // Set options for bunch
   bdsBunch.SetOptions(options);
+
+  // open output file 
+  std::ofstream of("BDSBunchTestOutput.txt");    
 
   // Generate nparticle particles 
   double x0, y0, z0, xp, yp, zp, t, E, weight;
@@ -54,5 +58,13 @@ int main(void) {
 	      << x0 << " " << y0 << " " << z0 << " " << xp << " "
               << yp << " " << zp << " " << t  << " " << E << " " 
 	      << weight << std::endl;
+    of << i  << " " 
+       << x0 << " " << y0 << " " << z0 << " " << xp << " "
+       << yp << " " << zp << " " << t  << " " << E << " " 
+       << weight << std::endl;    
   }    
+
+  // close output file
+  of.close();
+
 }

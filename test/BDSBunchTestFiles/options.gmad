@@ -14,4 +14,3 @@ option, beampipeRadius = 10 * cm,
 	stopTracks = 0;
 
 option,physicsList="em_standard";
-option,ngenerate=1;

@@ -1,4 +1,3 @@
-beam,  particle="proton",
+beam,  particle="e-",
        energy=1.0 * GeV,
-       distrType="reference",
-
+       distrType="reference";

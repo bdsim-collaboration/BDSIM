@@ -1,5 +1,6 @@
 #include "BDSBunchGaussian.hh"
 #include <string.h>
+#include <iostream>
 
 BDSBunchGaussian::BDSBunchGaussian() : BDSBunchInterface() {
   meansGM = CLHEP::HepVector(6);
@@ -26,10 +27,12 @@ BDSBunchGaussian::BDSBunchGaussian(G4double sigmaXIn, G4double sigmaYIn, G4doubl
   meansGM[5] = 1;
 
   // Fill sigmas 
-  sigmaGM[0][0] = sigmaX; 
-  sigmaGM[1][1] = sigmaXp; 
-  sigmaGM[2][2] = sigmaY; 
-  sigmaGM[3][3] = sigmaYp; 
+  sigmaGM[0][0] = pow(sigmaX,2); 
+  sigmaGM[1][1] = pow(sigmaXp,2); 
+  sigmaGM[2][2] = pow(sigmaY,2); 
+  sigmaGM[3][3] = pow(sigmaYp,2);
+  sigmaGM[4][4] = pow(sigmaT,2); 
+  sigmaGM[5][6] = pow(sigmaE,2);
 
   // Create multi dim gaussian generator
   GaussMultiGen = new CLHEP::RandMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM); 
@@ -102,7 +105,7 @@ void BDSBunchGaussian::SetOptions(struct Options& opt) {
   meansGM[4]    = T0;
   meansGM[5]    = 1;
       
-  if(strcmp(opt.distribType.data(),"gauss") == 0) {
+  if(strcmp(opt.distribType.data(),"gaussmatrix") == 0) {
     sigmaGM[0][0] = opt.sigma11; 
     sigmaGM[0][1] = opt.sigma12;
     sigmaGM[0][2] = opt.sigma13;
@@ -125,12 +128,15 @@ void BDSBunchGaussian::SetOptions(struct Options& opt) {
     sigmaGM[4][5] = opt.sigma56;  
     sigmaGM[5][5] = opt.sigma66;
   }
-  else if (strcmp(opt.distribType.data(),"gaussmatrix") == 0) 
+  else if (strcmp(opt.distribType.data(),"gauss") == 0) 
   {    
-    sigmaGM[0][0] = opt.sigmaX; 
-    sigmaGM[1][1] = opt.sigmaXp; 
-    sigmaGM[2][2] = opt.sigmaY; 
-    sigmaGM[3][3] = opt.sigmaYp;       
+    sigmaGM[0][0] = pow(opt.sigmaX,2); 
+    sigmaGM[1][1] = pow(opt.sigmaXp,2); 
+    sigmaGM[2][2] = pow(opt.sigmaY,2); 
+    sigmaGM[3][3] = pow(opt.sigmaYp,2);       
+    sigmaGM[4][4] = pow(opt.sigmaT,2); 
+    sigmaGM[5][5] = pow(opt.sigmaE,2);
+    std::cout << opt.sigmaX << " " << opt.sigmaY << " " << opt.sigmaXp << " " << opt.sigmaYp << " " << opt.sigmaT <<  " " << opt.sigmaE << std::endl;
   }
 
   if(GaussMultiGen != NULL) delete GaussMultiGen;
@@ -142,11 +148,12 @@ void BDSBunchGaussian::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 				       G4double& xp, G4double& yp, G4double& zp,
 				       G4double& t , G4double&  E, G4double& weight) {
   CLHEP::HepVector v = GaussMultiGen->fire();
-  x0 = v[0]*CLHEP::m;
-  xp = v[1]*CLHEP::rad;
-  y0 = v[2]*CLHEP::m;
-  yp = v[3]*CLHEP::rad;
+  x0 = v[0];
+  xp = v[1];
+  y0 = v[2];
+  yp = v[3];
   t  = v[4];
+  zp = 0.0;
   z0 = Z0*CLHEP::m + t*CLHEP::c_light;
   E  = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * v[5];
   
