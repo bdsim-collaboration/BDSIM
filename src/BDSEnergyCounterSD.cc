@@ -31,8 +31,13 @@ extern G4int event_number;
 
 
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
-  :G4VSensitiveDetector(name),itsHCID(-1),BDSEnergyCounterCollection(NULL),
-   enrg(0.0),xpos(0.0),ypos(0.0),zpos(0.0)
+  :G4VSensitiveDetector(name),
+   itsHCID(-1),
+   BDSEnergyCounterCollection(NULL),
+   enrg(0.0),
+   xpos(0.0),
+   ypos(0.0),
+   zpos(0.0)
 {
   verbose = BDSExecOptions::Instance()->GetVerbose();
   itsName = name;
@@ -109,9 +114,13 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   ypos=0.5*(aStep->GetPreStepPoint()->GetPosition().y()
   	    + aStep->GetPostStepPoint()->GetPosition().y());
   
-  if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) {
-    G4cout << "BDSEnergyCounterSD: Current Volume: " << 	aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() 
-	   <<"\tEvent: " << event_number << "\tEnergy: " << enrg/CLHEP::GeV << "GeV\tPosition: " << zpos/CLHEP::m <<"m"<< G4endl;
+  if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) 
+    {
+    G4cout << "BDSEnergyCounterSD: Current Volume: " 
+	   << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() 
+	   << "\tEvent:  " << event_number 
+	   << "\tEnergy: " << enrg/CLHEP::GeV 
+	   << "GeV\tPosition: " << zpos/CLHEP::m <<" m"<< G4endl;
   }
   
   /*
@@ -128,22 +137,31 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
      G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl;
      exit(1);
    }
-   int ptype = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
-   G4String volName = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
+   G4int    ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
+   G4String volName    = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
    G4String regionName = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetRegion()->GetName();
-   G4bool precisionRegion=false;
+   G4bool precisionRegion = false;
    if (regionName.contains((G4String)"precisionRegion")) {
      precisionRegion=true;
    }
+   G4int turnstaken    = BDSGlobalConstants::Instance()->GetTurnsTaken();
    
-   
-   if ((HitID[nCopy]==-1) || precisionRegion){
-       //|| (volName.contains("INTDMP"))){ 
-     //if (HitID[nCopy]==-1){ 
-     
-     BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,enrg,xpos,ypos,zpos,volName, ptype, weight, precisionRegion);
-     HitID[nCopy]= BDSEnergyCounterCollection->insert(ECHit)-1; 
-   } else {
+   if ((HitID[nCopy]==-1) || precisionRegion)
+     {
+       BDSEnergyCounterHit* ECHit 
+	 = new BDSEnergyCounterHit(nCopy,
+				   enrg,
+				   xpos,
+				   ypos,
+				   zpos,
+				   volName, 
+				   ptype, 
+				   weight, 
+				   precisionRegion,
+				   turnstaken);
+       HitID[nCopy]= BDSEnergyCounterCollection->insert(ECHit)-1; 
+     } 
+   else {
      //     (*BDSEnergyCounterCollection)[HitID[nCopy]]-> AddEnergy(enrg);
      //     (*BDSEnergyCounterCollection)[HitID[nCopy]]-> AddPos(xpos, ypos, zpos);
      (*BDSEnergyCounterCollection)[HitID[nCopy]]-> AddEnergyWeightedPosition(enrg, xpos, ypos, zpos, weight);
@@ -152,7 +170,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
    if(BDSGlobalConstants::Instance()->GetStopTracks())
      aStep->GetTrack()->SetTrackStatus(fStopAndKill);
 
-  
   return true;
 }
 
@@ -199,8 +216,20 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
     exit(1);
   }
   int ptype = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetDefinition()->GetPDGEncoding();
+
+  G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
   if (HitID[nCopy]==-1){
-    BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,enrg,xpos,ypos,zpos,volName, ptype, weight, 0);
+    BDSEnergyCounterHit* ECHit = 
+      new BDSEnergyCounterHit(nCopy,
+			      enrg,
+			      xpos,
+			      ypos,
+			      zpos,
+			      volName, 
+			      ptype, 
+			      weight, 
+			      0,
+			      turnstaken);
     HitID[nCopy]= BDSEnergyCounterCollection->insert(ECHit)-1;
   } else {
     (*BDSEnergyCounterCollection)[HitID[nCopy]]-> AddEnergyWeightedPosition(enrg, xpos, ypos, zpos, weight);

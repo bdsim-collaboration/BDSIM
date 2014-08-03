@@ -112,18 +112,19 @@ void CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
   G4ThreeVector* lastitemposition   = thebeamline->GetLastPosition();
   G4ThreeVector* firstitemposition  = thebeamline->GetFirstPosition();
   G4ThreeVector  delta              = *lastitemposition/CLHEP::m - *firstitemposition/CLHEP::m;
-  G4cout << __METHOD_NAME__ << "Calculating Teleporter delta" << G4endl;
+#ifdef DEBUG
+  G4cout << "Calculating Teleporter delta" << G4endl;
   G4cout << "last item position  : " << *lastitemposition/CLHEP::m << G4endl;
   G4cout << "first item position : " << *firstitemposition/CLHEP::m << G4endl;
-  G4cout << "delta               : " << delta << G4endl;
+#endif
+  G4cout << "Teleport delta      : " << delta << G4endl;
   BDSGlobalConstants::Instance()->SetTeleporterDelta(delta*CLHEP::m);
   
   // calculate length of teleporter
   // beamline is built along z and sbend deflects in x
   // setting length here ensures that length is always the z difference
   G4double teleporterlength       = fabs(delta.z()*CLHEP::m) - 1e-8*CLHEP::m;
-  G4cout << __METHOD_NAME__ << " Calculating teleporter length" << G4endl;
-  G4cout << __METHOD_NAME__ << " Length : " << teleporterlength/CLHEP::m << " m" << G4endl;
+  G4cout << "Calculated teleporter length : " << teleporterlength/CLHEP::m << " m" << G4endl;
   BDSGlobalConstants::Instance()->SetTeleporterLength(teleporterlength);
 }
 

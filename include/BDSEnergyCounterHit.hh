@@ -15,7 +15,16 @@
 class BDSEnergyCounterHit :public G4VHit
 {
 public:
-  BDSEnergyCounterHit(G4int nCopy, G4double Energy=0, G4double x=0, G4double y=0, G4double z=0, G4String name="", G4int partID=0, G4double weight=1, G4bool precisionRegion=false, G4int TurnsTaken=1);
+  BDSEnergyCounterHit(G4int    nCopy, 
+		      G4double Energy=0, 
+		      G4double x=0, 
+		      G4double y=0, 
+		      G4double z=0, 
+		      G4String name="", 
+		      G4int    partID=0, 
+		      G4double weight=1, 
+		      G4bool   precisionRegion=false, 
+		      G4int    TurnsTaken=1);
 
   ~BDSEnergyCounterHit();
 
@@ -39,6 +48,7 @@ public:
   inline void     SetWeight(G4double weight);
   inline G4bool   GetPrecisionRegion();
   inline G4int    GetTurnsTaken();
+  inline void     SetTurnsTaken(G4int turnstaken);
   
 private:
   /// private default constructor (not implemented)
@@ -127,6 +137,9 @@ inline void BDSEnergyCounterHit::operator delete(void *aHit)
 
 inline G4int BDSEnergyCounterHit::GetTurnsTaken()
 {return itsTurnsTaken;}
+
+inline void  BDSEnergyCounterHit::SetTurnsTaken(G4int turnstaken)
+{itsTurnsTaken = turnstaken;}
 
 #endif
 
