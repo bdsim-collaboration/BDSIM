@@ -136,7 +136,6 @@ void BDSBunchGaussian::SetOptions(struct Options& opt) {
     sigmaGM[3][3] = pow(opt.sigmaYp,2);       
     sigmaGM[4][4] = pow(opt.sigmaT,2); 
     sigmaGM[5][5] = pow(opt.sigmaE,2);
-    std::cout << opt.sigmaX << " " << opt.sigmaY << " " << opt.sigmaXp << " " << opt.sigmaYp << " " << opt.sigmaT <<  " " << opt.sigmaE << std::endl;
   }
 
   if(GaussMultiGen != NULL) delete GaussMultiGen;

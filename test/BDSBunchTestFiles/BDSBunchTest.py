@@ -11,7 +11,7 @@ class BDSBunchTester :
             print distrib
     
 
-class BDSBunchOutputPlotter : 
+class BDSBunchOutput : 
     def __init__(self) : 
         self.d  = _np.loadtxt("BDSBunchTestOutput.txt") 
         self.x  = self.d[:,1]

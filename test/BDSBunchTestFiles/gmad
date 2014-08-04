@@ -1,4 +1,4 @@
-include 2_Gauss.gmad
+include 4_Square.gmad
 include options.gmad
 include fodo.gmad;
 

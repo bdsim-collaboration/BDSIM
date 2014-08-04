@@ -48,7 +48,7 @@ int main(void) {
   bdsBunch.SetOptions(options);
 
   // open output file 
-  std::ofstream of("BDSBunchTestOutput.txt");    
+  std::ofstream of("./BDSBunchTestFiles/BDSBunchTestOutput.txt");    
 
   // Generate nparticle particles 
   double x0, y0, z0, xp, yp, zp, t, E, weight;

@@ -26,6 +26,7 @@ BDSBunchSquare::~BDSBunchSquare()
 }
 
 void BDSBunchSquare::SetOptions(struct Options &opt) {
+  SBDSBunchInterface::SetOptions(opt)
   SetEnvelopeX(opt.envelopeX); 
   SetEnvelopeY(opt.envelopeY);
   SetEnvelopeXp(opt.envelopeXp);
