@@ -1,4 +1,6 @@
 #include "BDSBunchUserFile.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4ParticleTable.hh"
 
 BDSBunchUserFile::BDSBunchUserFile(){
   ParseFileFormat();
@@ -300,6 +302,10 @@ void BDSBunchUserFile::ParseFileFormat(){
   return;
 }
 
+void BDSBunchUserFile::skip(G4int nvalues){
+  G4double dummy_val;
+  for(G4int i=0;i<nvalues;i++) ReadValue(dummy_val);
+}
 
 void BDSBunchUserFile::SetOptions(struct Options &opt) {
   BDSBunchInterface::SetOptions(opt);

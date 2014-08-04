@@ -10,6 +10,7 @@ private:
   void ParseFileFormat();
   void OpenBunchFile();
   void CloseBunchFile();
+  void skip(G4int nvalues);
   std::ifstream InputBunchFile;
   template <typename Type> G4bool ReadValue(Type &value);
   struct Doublet {
