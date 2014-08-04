@@ -23,8 +23,8 @@ public:
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);  
   
-  G4double GetDistibFile() {return distribFile;}
-  G4double GetBunchFormat() {return bunchFormat;}
+  G4String GetDistibFile() {return distribFile;}
+  G4String GetBunchFormat() {return bunchFormat;}
 };
 
 #endif

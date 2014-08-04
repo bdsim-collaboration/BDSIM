@@ -40,7 +40,7 @@ void BDSBunch::SetOptions(struct Options& opt) {
     bdsBunch = new BDSBunchEShell();
   else if(opt.distribType == "gausstwiss") 
     bdsBunch = new BDSBunchTwiss();
-  else if(opt.distribType("userfile")){
+  else if(opt.distribType == "userfile"){
     bdsBunch = new BDSBunchUserFile();
   }
   else if(opt.distribType.find("old") != -1) { 
