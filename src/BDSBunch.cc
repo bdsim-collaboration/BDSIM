@@ -2,6 +2,7 @@
 #include "BDSBunchGaussian.hh"
 #include "BDSBunchSquare.hh"
 #include "BDSBunchCircle.hh"
+#include "BDSBunchRing.hh"
 #include "BDSBunchEShell.hh"
 #include "BDSBunchTwiss.hh"
 #include "BDSBunchOld.hh"
