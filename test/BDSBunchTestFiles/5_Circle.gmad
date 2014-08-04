@@ -1,6 +1,6 @@
 beam,  particle="e-",
        energy=1.0 * GeV,
-       distrType="square",
+       distrType="circle",
        envelopeX  = 0.002*mm, 
        envelopeY  = 0.002*mm, 
        envelopeXp = 0.09*0.005,

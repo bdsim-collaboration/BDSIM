@@ -32,6 +32,8 @@ void BDSBunch::SetOptions(struct Options& opt) {
     bdsBunch = new BDSBunchSquare();
   else if(opt.distribType == "circle") 
     bdsBunch = new BDSBunchCircle();
+  else if(opt.distribType == "ring") 
+    bdsBunch = new BDSBunchRing();
   else if(opt.distribType == "eshell") 
     bdsBunch = new BDSBunchEShell();
   else if(opt.distribType == "gausstwiss") 

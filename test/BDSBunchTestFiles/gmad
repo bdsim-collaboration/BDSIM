@@ -1,4 +1,4 @@
-include 4_Square.gmad
+include 6_EShell.gmad
 include options.gmad
 include fodo.gmad;
 

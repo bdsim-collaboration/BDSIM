@@ -39,6 +39,7 @@ class BDSBunchOutput :
     def plotPhaseSpace(self) : 
         f = _pl.figure(1)
 
+        _pl.clf()
         _pl.subplot(3,3,1) 
         _pl.hist(self.x)
 
@@ -66,3 +67,49 @@ class BDSBunchOutput :
         _pl.subplot(3,3,9) 
         _pl.hist(self.w)
         
+        
+        f = _pl.figure(2)
+        _pl.clf()
+
+        _pl.subplot(6,6,1)
+        _pl.plot(self.x,self.x,"+")
+        _pl.subplot(6,6,2)
+        _pl.plot(self.x,self.y,"+")
+        _pl.subplot(6,6,3)
+        _pl.plot(self.x,self.z,"+")
+        _pl.subplot(6,6,4)
+        _pl.plot(self.x,self.xp,"+")        
+        _pl.subplot(6,6,5)
+        _pl.plot(self.x,self.yp,"+")
+        _pl.subplot(6,6,6)
+        _pl.plot(self.x,self.zp,"+")
+
+        _pl.subplot(6,6,7)
+        _pl.plot(self.y,self.x,"+")
+        _pl.subplot(6,6,8)
+        _pl.plot(self.y,self.y,"+")
+        _pl.subplot(6,6,9)
+        _pl.plot(self.y,self.z,"+")
+        _pl.subplot(6,6,10)
+        _pl.plot(self.y,self.xp,"+")        
+        _pl.subplot(6,6,11)
+        _pl.plot(self.y,self.yp,"+")
+        _pl.subplot(6,6,12)
+        _pl.plot(self.y,self.zp,"+")
+
+        _pl.subplot(6,6,13)
+        _pl.plot(self.z,self.x,"+")
+        _pl.subplot(6,6,14)
+        _pl.plot(self.z,self.y,"+")
+        _pl.subplot(6,6,15)
+        _pl.plot(self.z,self.z,"+")
+        _pl.subplot(6,6,16)
+        _pl.plot(self.z,self.xp,"+")        
+        _pl.subplot(6,6,17)
+        _pl.plot(self.z,self.yp,"+")
+        _pl.subplot(6,6,18)
+        _pl.plot(self.z,self.zp,"+")
+
+
+        
+

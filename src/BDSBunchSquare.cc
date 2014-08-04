@@ -26,7 +26,7 @@ BDSBunchSquare::~BDSBunchSquare()
 }
 
 void BDSBunchSquare::SetOptions(struct Options &opt) {
-  SBDSBunchInterface::SetOptions(opt)
+  BDSBunchInterface::SetOptions(opt);
   SetEnvelopeX(opt.envelopeX); 
   SetEnvelopeY(opt.envelopeY);
   SetEnvelopeXp(opt.envelopeXp);
@@ -46,8 +46,8 @@ void BDSBunchSquare::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   yp = Yp0 * CLHEP::rad;
   z0 = Z0 * CLHEP::m + (T0 - envelopeT * (1.-2.*FlatGen->shoot())) * CLHEP::c_light * CLHEP::s;
   
-  if(envelopeX !=0) x0  += envelopeX * (1-2*FlatGen->shoot()) * CLHEP::m;
-  if(envelopeY !=0) y0  += envelopeY * (1-2*FlatGen->shoot()) * CLHEP::m;
+  if(envelopeX !=0) x0  += envelopeX  * (1-2*FlatGen->shoot()) * CLHEP::m;
+  if(envelopeY !=0) y0  += envelopeY  * (1-2*FlatGen->shoot()) * CLHEP::m;
   if(envelopeXp !=0) xp += envelopeXp * (1-2*FlatGen->shoot()) * CLHEP::rad;
   if(envelopeYp !=0) yp += envelopeYp * (1-2*FlatGen->shoot()) * CLHEP::rad;
   
