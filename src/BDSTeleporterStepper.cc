@@ -13,12 +13,14 @@ BDSTeleporterStepper::BDSTeleporterStepper(G4Mag_EqRhs *EqRhs)
    : G4MagIntegratorStepper(EqRhs,6)  // integrate over 6 variables only !!
                                        // position & velocity
 {
+#ifdef DEBUG
+  G4cout << "BDSTeleporterStepper Constructor " << G4endl;
+#endif
   verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
   verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
   nvar               = 6;
   turnnumberrecord.push_back((G4int)-1);
   teleporterdelta    = BDSGlobalConstants::Instance()->GetTeleporterDelta();
-  G4cout << "BDSTeleporterStepper Constructor " << G4endl;
 }
 
 
