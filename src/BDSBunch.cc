@@ -39,10 +39,15 @@ void BDSBunch::SetOptions(struct Options& opt) {
     bdsBunch = new BDSBunchEShell();
   else if(opt.distribType == "gausstwiss") 
     bdsBunch = new BDSBunchTwiss();
-  else if(opt.distribType.find("old") != 0) { 
-    bdsBunch = new BDSBunchOld();
+  else if(opt.distribType.find("old") != -1) { 
     // remove old from distribType and set distribType again 
+    std::cout << "Old BDSBunch" << std::endl;
+    opt.distribType = opt.distribType.substr(3,opt.distribType.length());
+    bdsBunch = new BDSBunchOld();    
   }   
+  else {
+    std::cout << "distribType not found" << std::endl;
+  }
   bdsBunch->SetOptions(opt);
   return;
 }
