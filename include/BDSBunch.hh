@@ -10,13 +10,12 @@
 
 class BDSBunch {
 
-protected: 
+protected:
   std::string        distribType; 
   BDSBunchInterface *bdsBunch; 
   
 public:
   BDSBunch(); 
-  BDSBunch(std::string distribType, G4double *params);
   ~BDSBunch(); 
   void SetOptions(struct Options& opt);
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

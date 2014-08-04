@@ -1,6 +1,25 @@
 #include "BDSBunchGaussian.hh"
+#include "BDSDebug.hh" 
 #include <string.h>
-#include <iostream>
+
+/// helper method
+namespace {
+  /// check if matrix is positive definite
+  bool isPositiveDefinite(CLHEP::HepSymMatrix& S)
+  {
+    CLHEP::HepSymMatrix temp (S); // Since diagonalize does not take a const s
+                                  // we have to copy S.
+    CLHEP::HepMatrix U = diagonalize ( &temp ); // S = U Sdiag U.T()
+    CLHEP::HepSymMatrix D = S.similarityT(U);   // D = U.T() S U = Sdiag
+    for (int i = 1; i <= S.num_row(); i++) {
+      double s2 = D(i,i);
+      if ( s2 <= 0 ) {
+	return false;
+      }
+    }
+    return true;
+  }
+}
 
 BDSBunchGaussian::BDSBunchGaussian() : BDSBunchInterface() {
   meansGM = CLHEP::HepVector(6);
@@ -35,7 +54,7 @@ BDSBunchGaussian::BDSBunchGaussian(G4double sigmaXIn, G4double sigmaYIn, G4doubl
   sigmaGM[5][6] = pow(sigmaE,2);
 
   // Create multi dim gaussian generator
-  GaussMultiGen = new CLHEP::RandMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM); 
+  CreateMultiGauss();
 }
 
 BDSBunchGaussian::BDSBunchGaussian(G4double *sigma, 
@@ -79,9 +98,7 @@ BDSBunchGaussian::BDSBunchGaussian(G4double *sigma,
   sigmaGM[5][5] = sigma[20];
 
   // Create multi dim gaussian
-  if(GaussMultiGen != NULL) 
-    delete GaussMultiGen;
-  GaussMultiGen = new CLHEP::RandMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM); 
+  CreateMultiGauss();
 }
 
 BDSBunchGaussian::~BDSBunchGaussian() {
@@ -95,8 +112,6 @@ void BDSBunchGaussian::SetOptions(struct Options& opt) {
   SetSigmaY(opt.sigmaY);
   SetSigmaXp(opt.sigmaXp);
   SetSigmaYp(opt.sigmaYp);
-
-  BDSBunchInterface::SetOptions(opt);
   
   meansGM[0]    = X0;
   meansGM[1]    = Xp0;
@@ -138,6 +153,46 @@ void BDSBunchGaussian::SetOptions(struct Options& opt) {
     sigmaGM[5][5] = pow(opt.sigmaE,2);
   }
 
+  CreateMultiGauss();
+  return;
+}
+
+void BDSBunchGaussian::CreateMultiGauss() {
+  /// check if sigma matrix is positive definite
+  /// if not add small offset and cout warning
+  
+  if (!isPositiveDefinite(sigmaGM)) {
+    G4cout << __METHOD_NAME__ << "WARNING bunch generator sigma matrix is not positive definite" << G4endl;
+    G4cout << sigmaGM << G4endl;
+    G4cout << __METHOD_NAME__ << "adding a small error to zero diagonal elements" << G4endl;
+
+    double small_error = 1e-12;
+    
+    for (int i=0; i<6; i++) {
+      if (sigmaGM[i][i]==0) {
+	sigmaGM[i][i] += small_error;
+      }
+    }
+    
+    if (!isPositiveDefinite(sigmaGM)) {
+      G4cout << __METHOD_NAME__ << "WARNING bunch generator sigma matrix is still not positive definite" << G4endl;
+      G4cout << sigmaGM << G4endl;
+      G4cout << __METHOD_NAME__ << "adding a small error to all elements" << G4endl;
+      for (int i=0; i<6; i++) {
+	for (int j=0; j<6; j++) {
+	  if (sigmaGM[i][j]==0) {
+	    sigmaGM[i][j] += small_error;
+	  }
+	}
+      }
+      if (!isPositiveDefinite(sigmaGM)) {
+	G4cout << __METHOD_NAME__ << "ERROR bunch generator sigma matrix is still not positive definite, giving up" << G4endl;
+	G4cout << sigmaGM << G4endl;
+	exit(1);
+      }
+    }
+  }
+ 
   if(GaussMultiGen != NULL) delete GaussMultiGen;
   GaussMultiGen = new CLHEP::RandMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM); 
   return;

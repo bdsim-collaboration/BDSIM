@@ -14,6 +14,10 @@ namespace CLHEP {
 }
 
 class BDSBunchGaussian : public BDSBunchInterface {
+private:
+  /// Create multidimensional Gaussian random number generator
+  void CreateMultiGauss();
+ 
 protected : 
   G4double sigmaX;
   G4double sigmaY;
