@@ -304,7 +304,7 @@ void BDSBunchUserFile::ParseFileFormat(){
 void BDSBunchUserFile::SetOptions(struct Options &opt) {
   BDSBunchInterface::SetOptions(opt);
   SetDistribFile((G4String)opt.distribFile); 
-  SetBunchFormat((G4String)opt.bunchFormat); 
+  SetBunchFormat((G4String)opt.distribFileFormat); 
   SetNLinesIgnore(opt.nlinesIgnore);
   return; 
 }

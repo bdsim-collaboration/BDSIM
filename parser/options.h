@@ -20,6 +20,7 @@ struct Options {
   std::string particleName;
   std::string distribType;
   std::string distribFile;
+  std::string distribFileFormat;
 
   int numberToGenerate;
   int nlinesIgnore; /// ignore first lines in the input bunch file

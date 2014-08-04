@@ -245,6 +245,7 @@ void Options::set_value(std::string name, std::string value )
   if(name == "particle") { particleName = value; return; }
   if(name == "distrType" ) { distribType = value; return; }
   if(name == "distrFile" ) { distribFile = getEnv("BDSIMPATH")+value; return; }
+  if(name == "distrFileFormat" ) { distribFileFormat = value; return; }
 
   //
   // string options for the "option" command
