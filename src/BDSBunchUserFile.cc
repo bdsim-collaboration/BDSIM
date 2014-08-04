@@ -304,7 +304,7 @@ BDSBunchUserFile::ParseFileFormat(){
 void BDSBunchUserFile::SetOptions(struct Options &opt) {
   BDSBunchInterface::SetOptions(opt);
   SetDistribFile(opt.distribFile); 
-  SetFormatDescription(opt.bunchFormat); 
+  SetFormatDescription(opt.distribFileFormat); 
   return; 
 }
 
