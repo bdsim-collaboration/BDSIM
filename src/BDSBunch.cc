@@ -6,6 +6,7 @@
 #include "BDSBunchEShell.hh"
 #include "BDSBunchTwiss.hh"
 #include "BDSBunchOld.hh"
+#include "BDSBunchUserFile.hh"
 
 BDSBunch::BDSBunch() {
   // Construct default reference type 
@@ -39,6 +40,9 @@ void BDSBunch::SetOptions(struct Options& opt) {
     bdsBunch = new BDSBunchEShell();
   else if(opt.distribType == "gausstwiss") 
     bdsBunch = new BDSBunchTwiss();
+  else if(opt.distribType("userfile")){
+    bdsBunch = new BDSBunchUserFile();
+  }
   else if(opt.distribType.find("old") != -1) { 
     // remove old from distribType and set distribType again 
     std::cout << "Old BDSBunch" << std::endl;
