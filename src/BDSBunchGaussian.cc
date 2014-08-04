@@ -32,7 +32,7 @@ BDSBunchGaussian::BDSBunchGaussian(G4double sigmaXIn, G4double sigmaYIn, G4doubl
   sigmaGM[2][2] = pow(sigmaY,2); 
   sigmaGM[3][3] = pow(sigmaYp,2);
   sigmaGM[4][4] = pow(sigmaT,2); 
-  sigmaGM[5][6] = pow(sigmaE,2);
+  sigmaGM[5][5] = pow(sigmaE,2);
 
   // Create multi dim gaussian generator
   GaussMultiGen = new CLHEP::RandMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM); 
