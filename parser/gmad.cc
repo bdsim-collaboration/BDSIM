@@ -89,6 +89,7 @@ void init()
   options.particleName = "";
   options.distribType = "";
   options.distribFile = "";
+  options.distribFileFormat = "";
 
   options.numberToGenerate = 1;
   options.nlinesIgnore = 0;
