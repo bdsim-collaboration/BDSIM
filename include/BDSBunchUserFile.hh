@@ -2,6 +2,8 @@
 #define BDSBunchUserFile_h 
 
 #include "BDSBunchInterface.hh"
+#include <fstream>
+#include <list>
 
 class BDSBunchUserFile : public BDSBunchInterface { 
 private:
@@ -10,10 +12,19 @@ private:
   void CloseBunchFile();
   std::ifstream InputBunchFile;
   template <typename Type> G4bool ReadValue(Type &value);
+  struct Doublet {
+    G4String name;
+    G4double unit; // relative to SI units, i.e. mm=0.001 etc.
+  };
+  std::list<struct Doublet> fields;
+  void SetDistribFile(G4String val) {distribFile=val;}
+  void SetBunchFormat(G4String val) {bunchFormat=val;}
+  void SetNLinesIgnore(G4int val) {nlinesIgnore=val;}
 
 protected : 
   G4String distribFile;
   G4String bunchFormat;
+  G4int nlinesIgnore;
   
 public: 
   BDSBunchUserFile();
@@ -25,6 +36,7 @@ public:
   
   G4String GetDistibFile() {return distribFile;}
   G4String GetBunchFormat() {return bunchFormat;}
+  G4int GetNLinesIgnore() {return nlinesIgnore;}
 };
 
 #endif

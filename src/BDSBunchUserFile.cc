@@ -9,7 +9,7 @@ BDSBunchUserFile::~BDSBunchUserFile(){
   CloseBunchFile();
 }
 
-void BDSBunch::OpenBunchFile(){
+void BDSBunchUserFile::OpenBunchFile(){
   InputBunchFile.open(distribFile);
   if(!InputBunchFile.good()){ 
     G4cerr<<"Cannot open bunch file "<< distribFile <<G4endl; 
@@ -17,16 +17,16 @@ void BDSBunch::OpenBunchFile(){
   } 
 }
 
-void BDSBunch::CloseBunchFile(){
+void BDSBunchUserFile::CloseBunchFile(){
   InputBunchFile.close();
 }
 
 
-BDSBunchUserFile::ParseFileFormat(){
+void BDSBunchUserFile::ParseFileFormat(){
   G4String unparsed_str = bunchFormat;
   G4int pos = unparsed_str.find(":");
   
-  struct BDSBunch::Doublet sd;
+  struct BDSBunchUserFile::Doublet sd;
   
   while(pos > 0){
     pos = unparsed_str.find(":");
@@ -303,8 +303,9 @@ BDSBunchUserFile::ParseFileFormat(){
 
 void BDSBunchUserFile::SetOptions(struct Options &opt) {
   BDSBunchInterface::SetOptions(opt);
-  SetDistribFile(opt.distribFile); 
-  SetFormatDescription(opt.bunchFormat); 
+  SetDistribFile((G4String)opt.distribFile); 
+  SetBunchFormat((G4String)opt.bunchFormat); 
+  SetNLinesIgnore(opt.nlinesIgnore);
   return; 
 }
 
@@ -326,7 +327,7 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 #endif
   skip((G4int)(nlinesIgnore * fields.size()));
   
-  std::list<struct BDSBunch::Doublet>::iterator it;
+  std::list<struct BDSBunchUserFile::Doublet>::iterator it;
   for(it=fields.begin();it!=fields.end();it++)
     {
 #ifdef DEBUG 
