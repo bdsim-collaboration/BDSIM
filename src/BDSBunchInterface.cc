@@ -1,5 +1,30 @@
 #include "BDSBunchInterface.hh"
 
+#include "BDSDebug.hh" 
+
+#include "CLHEP/Matrix/Vector.h" 
+#include "CLHEP/Matrix/SymMatrix.h"
+#include "CLHEP/RandomObjects/RandMultiGauss.h"
+
+/// helper method
+namespace {
+  /// check if matrix is positive definite
+  bool isPositiveDefinite(CLHEP::HepSymMatrix& S)
+  {
+    CLHEP::HepSymMatrix temp (S); // Since diagonalize does not take a const s
+                                  // we have to copy S.
+    CLHEP::HepMatrix U = diagonalize ( &temp ); // S = U Sdiag U.T()
+    CLHEP::HepSymMatrix D = S.similarityT(U);   // D = U.T() S U = Sdiag
+    for (int i = 1; i <= S.num_row(); i++) {
+      double s2 = D(i,i);
+      if ( s2 <= 0 ) {
+	return false;
+      }
+    }
+    return true;
+  }
+}
+
 BDSBunchInterface::BDSBunchInterface() : 
   X0(0.0), Y0(0.0), Z0(0.0), T0(0.0), 
   Xp0(0.0), Yp0(0.0), Zp0(0.0), sigmaT(0.0), sigmaE(0.0)
@@ -52,4 +77,43 @@ void BDSBunchInterface::GetNextParticle(G4double& x0, G4double& y0, G4double& z0
   E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy();
   weight = 1.0;
   return;
+}
+
+CLHEP::RandMultiGauss* BDSBunchInterface::CreateMultiGauss(CLHEP::HepRandomEngine & anEngine, const CLHEP::HepVector & mu, CLHEP::HepSymMatrix & sigma) {
+  /// check if sigma matrix is positive definite
+  /// if not add small offset and cout warning
+  
+  if (!isPositiveDefinite(sigma)) {
+    G4cout << __METHOD_NAME__ << "WARNING bunch generator sigma matrix is not positive definite" << G4endl;
+    G4cout << sigma << G4endl;
+    G4cout << __METHOD_NAME__ << "adding a small error to zero diagonal elements" << G4endl;
+
+    double small_error = 1e-12;
+    
+    for (int i=0; i<6; i++) {
+      if (sigma[i][i]==0) {
+	sigma[i][i] += small_error;
+      }
+    }
+    
+    if (!isPositiveDefinite(sigma)) {
+      G4cout << __METHOD_NAME__ << "WARNING bunch generator sigma matrix is still not positive definite" << G4endl;
+      G4cout << sigma << G4endl;
+      G4cout << __METHOD_NAME__ << "adding a small error to all elements" << G4endl;
+      for (int i=0; i<6; i++) {
+	for (int j=0; j<6; j++) {
+	  if (sigma[i][j]==0) {
+	    sigma[i][j] += small_error;
+	  }
+	}
+      }
+      if (!isPositiveDefinite(sigma)) {
+	G4cout << __METHOD_NAME__ << "ERROR bunch generator sigma matrix is still not positive definite, giving up" << G4endl;
+	G4cout << sigma << G4endl;
+	exit(1);
+      }
+    }
+  }
+ 
+  return new CLHEP::RandMultiGauss(anEngine,mu,sigma); 
 }

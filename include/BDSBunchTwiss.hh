@@ -3,10 +3,14 @@
 
 #include "BDSBunchInterface.hh"
 #include "Randomize.hh"
+#include "CLHEP/Matrix/Vector.h" 
+#include "CLHEP/Matrix/SymMatrix.h"
+#include "CLHEP/RandomObjects/RandMultiGauss.h"
 
 namespace CLHEP {
   class RandGauss;
   class RandFlat;
+  class RandMultiGauss;
 }
 
 class BDSBunchTwiss : public BDSBunchInterface {
@@ -19,11 +23,18 @@ private :
   G4double alphaY;
   G4double emitX;
   G4double emitY; 
-
+  G4double gammaX;
+  G4double gammaY;
+  
   /* Random number generators */
   CLHEP::RandGauss *GaussGen;
   CLHEP::RandFlat  *FlatGen;  
-  
+  CLHEP::RandMultiGauss* GaussMultiGen;  
+
+  /* Gaussian generator */
+  CLHEP::HepVector    meansGM;
+  CLHEP::HepSymMatrix sigmaGM;
+
 public : 
   BDSBunchTwiss();
   BDSBunchTwiss(G4double betaX,  G4double betaY, 
@@ -35,6 +46,7 @@ public :
 
   ~BDSBunchTwiss();
   void SetOptions(struct Options &opt); 
+  void CommonConstruction();
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);  

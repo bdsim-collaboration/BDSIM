@@ -5,6 +5,13 @@
 #include "parser/options.h"
 #include "BDSGlobalConstants.hh"
 
+namespace CLHEP {
+  class HepRandomEngine;
+  class HepSymMatrix;
+  class HepVector;
+  class RandMultiGauss;
+}
+
 class BDSBunchInterface { 
 protected : 
   // Centre of distributions
@@ -17,6 +24,11 @@ protected :
   G4double Zp0;
   G4double sigmaT; 
   G4double sigmaE;
+
+  /// Create multidimensional Gaussian random number generator
+  // for Twiss and Gauss, could be moved elsewhere
+  // can change sigma matrix to make non-definite
+  CLHEP::RandMultiGauss* CreateMultiGauss(CLHEP::HepRandomEngine & anEngine, const CLHEP::HepVector & mu, CLHEP::HepSymMatrix & sigma);
 
 public : 
   BDSBunchInterface();

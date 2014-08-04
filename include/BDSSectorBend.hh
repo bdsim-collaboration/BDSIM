@@ -22,7 +22,6 @@
 #include "globals.hh"
 #include "BDSMaterials.hh"
 #include "G4LogicalVolume.hh"
-#include "BDSHelixStepper.hh"
 #include "myQuadStepper.hh"
 
 #include "G4FieldManager.hh"

@@ -1,4 +1,4 @@
-include 9_OldReference.gmad
+include 9_UserFileTest.gmad
 include options.gmad
 include fodo.gmad;
 

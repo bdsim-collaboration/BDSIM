@@ -62,10 +62,12 @@ int main(int argc,char** argv) {
   double x0, y0, z0, xp, yp, zp, t, E, weight;
   for(int i=0;i<options.numberToGenerate;i++) { 
     bdsBunch.GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
-    std::cout << i  << " " 
-	      << x0 << " " << y0 << " " << z0 << " " << xp << " "
-              << yp << " " << zp << " " << t  << " " << E << " " 
-	      << weight << std::endl;
+    if(i% 1000 == 0 ) {
+      std::cout << i  << " " 
+		<< x0 << " " << y0 << " " << z0 << " " << xp << " "
+		<< yp << " " << zp << " " << t  << " " << E << " " 
+		<< weight << std::endl;
+    }
     of << i  << " " 
        << x0 << " " << y0 << " " << z0 << " " << xp << " "
        << yp << " " << zp << " " << t  << " " << E << " " 
