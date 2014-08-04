@@ -15,11 +15,19 @@
 
 extern Options options;
 
-int main(void) {
+int main(int argc,char** argv) {
   BDSBunch bdsBunch;
 
+  // default filename
+  std::string filename = "./BDSBunchTestFiles/gmad";
+
+  /// first argument is gmad file
+  if (argc>1){
+    filename = argv[1];
+  }
+
   // fill options from file 
-  gmad_parser("./BDSBunchTestFiles/gmad");
+  gmad_parser(filename);
 
   BDSGlobalConstants::Instance();
 
@@ -66,5 +74,5 @@ int main(void) {
 
   // close output file
   of.close();
-
+  return 0;
 }

@@ -10,6 +10,7 @@
 #include "sym_table.h"
 
 #include <cmath>
+#include <cstdlib>
 #include <iostream>
 #include <list>
 #include <map>
@@ -266,7 +267,11 @@ int gmad_parser(std::string name)
 #endif
   FILE *f = fopen(name.c_str(),"r");
 
-  if(f==NULL) return -1;
+  if(f==NULL) {
+
+    std::cerr << "gmad_parser> Can't open input file " << name << std::endl;
+    exit(1);
+  }
 
   yyfilename = new char[maxfilenamelength];
   strncpy(yyfilename,name.c_str(),maxfilenamelength);
