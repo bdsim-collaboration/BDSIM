@@ -221,11 +221,6 @@ void BDSAcceleratorComponent::CalculateLengths(){
   
 }
 
-void BDSAcceleratorComponent::SynchRescale(G4double)
-{
-  return;
-}
-
 void BDSAcceleratorComponent::AlignComponent(G4ThreeVector& TargetPos,
 					     G4RotationMatrix *TargetRot, 
 					     G4RotationMatrix&,

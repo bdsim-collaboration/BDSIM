@@ -66,7 +66,6 @@ struct Options {
   double sigmaE;
 
   /// bdsim options 
-  int       doTwiss;
   int       doPlanckScattering;
   int       checkOverlaps;
   int       numberOfEventsPerNtuple;
@@ -148,7 +147,6 @@ struct Options {
   int      turnOnCerenkov;
   int      synchRadOn;
   int      decayOn;
-  int      synchRescale;
   int      synchTrackPhotons;
   double   synchLowX;
   double   synchLowGamE;

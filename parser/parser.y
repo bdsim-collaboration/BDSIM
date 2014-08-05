@@ -1877,14 +1877,6 @@ command : STOP             { if(execute) quit(); }
 		if(ECHO_GRAMMAR) printf("command -> BETA0\n");
 	      }
           }
-        | TWISS ',' option_parameters // twiss (again, is a synonym of option, for clarity)
-          {
-	    if(execute)
-	      {
-		options.set_value("doTwiss",1);
-		if(ECHO_GRAMMAR) printf("command -> TWISS\n");
-	      }
-          }
         | DUMP ',' sample_options //  options for beam dump 
           {                                                   
             if(execute)                                       

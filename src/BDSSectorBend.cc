@@ -129,93 +129,13 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
   else
     {
       (*LogVolCount)[itsName]++;
-      if(BDSGlobalConstants::Instance()->GetSynchRadOn()&& BDSGlobalConstants::Instance()->GetSynchRescale())
-	{
-	  // with synchrotron radiation, the rescaled magnetic field
-	  // means elements with the same name must have different
-	  // logical volumes, because they have different fields
-	  itsName+=BDSGlobalConstants::Instance()->StringFromInt((*LogVolCount)[itsName]);
-
-	  //
-	  // build external volume
-	  // 
-	  BuildSBMarkerLogicalVolume();
-	  
-	  //
-	  // build beampipe (geometry + magnetic field)
-	  //
-	  BuildBPFieldAndStepper();
-	  BuildBPFieldMgr(itsStepper,itsMagField);
-	  BuildSBBeampipe();
-
-	  //
-	  // build magnet (geometry + magnetic field)
-	  //
-	  BuildSBOuterLogicalVolume();
-	  if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
-	    {
-	      G4double polePos[4];
-	      G4double Bfield[3];
-	      
-	      //coordinate in GetFieldValue
-	      polePos[0]=0.;
-	      polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius();
-	      polePos[2]=0.;
-	      polePos[3]=-999.;//flag to use polePos rather than local track
-	      
-	      itsMagField->GetFieldValue(polePos,Bfield);
-	      G4double BFldIron=
-		sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1])*
-		BDSGlobalConstants::Instance()->GetMagnetPoleSize()/
-		(BDSGlobalConstants::Instance()->GetComponentBoxSize()/2-
-		 BDSGlobalConstants::Instance()->GetMagnetPoleRadius());
-	      
-	      // Magnetic flux from a pole is divided in two directions
-	      BFldIron/=2.;
-
-	      BuildOuterFieldManager(2, BFldIron,CLHEP::halfpi);
-	    }
-	  //When is SynchRescale(factor) called?
-	  
-	  //
-	  // define sensitive volumes for hit generation
-	  //
-	  SetSensitiveVolume(itsBeampipeLogicalVolume);// for synchrotron
-	  //SetSensitiveVolume(itsOuterLogicalVolume);// for laserwire
-	  
-	  //
-	  // set visualization attributes
-	  //
-	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
-	  
-	  //
-	  // append marker logical volume to volume map
-	  //
-	  (*LogVol)[itsName]=itsMarkerLogicalVolume;
-	}
-      else
-	{
 	  //
 	  // use already defined marker volume
 	  //
 	  itsMarkerLogicalVolume=(*LogVol)[itsName];
-	}      
     }
 
   BuildBLMs();
-}
-
-void BDSSectorBend::SynchRescale(G4double factor)
-{
-  // rescale B field and gradient by same factor
-  itsStepper->SetBGrad(itsBGrad*factor);
-  itsStepper->SetBField(-itsBField*factor);
-  // note that there are no methods to set the BDSSBendMagField as this
-  // class does not do anything with the BFields.
-  // not true when I will use Geant4 propagation
-#ifdef DEBUG
-  G4cout << "Sbend " << itsName << " has been scaled" << G4endl;
-#endif
 }
 
 G4VisAttributes* BDSSectorBend::SetVisAttributes()

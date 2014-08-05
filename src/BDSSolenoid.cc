@@ -103,79 +103,13 @@ BDSSolenoid::BDSSolenoid(G4String aName, G4double aLength,
   else
     {
       (*LogVolCount)[itsName]++;
-      if(BDSGlobalConstants::Instance()->GetSynchRadOn()&& BDSGlobalConstants::Instance()->GetSynchRescale())
-	{
-	  // with synchrotron radiation, the rescaled magnetic field
-	  // means elements with the same name must have different
-	  //logical volumes, becuase they have different fields
-	  itsName+=BDSGlobalConstants::Instance()->StringFromInt((*LogVolCount)[itsName]);
-
-	  //
-	  // build external volume
-	  // 
-	  BuildDefaultMarkerLogicalVolume();
-
-	  //
-	  // build beampipe (geometry + magnetic field)
-	  //
-	  BuildBPFieldAndStepper();
-	  BuildBPFieldMgr(itsStepper,itsMagField);
-	  BuildBeampipe();
-
-	  //
-	  // build magnet (geometry + magnetic field)
-	  //
-	  BuildDefaultOuterLogicalVolume(itsLength);
-	  if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
-	    {
-	      G4cerr<<"IncludeIronMagFields option not implemented for solenoid class"<<G4endl;
-	    }
-	  //When is SynchRescale(factor) called?
-
-	  //
-	  // define sensitive volumes for hit generation
-	  //
-          if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-            SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-          }
-          if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-            SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-          }
-          
-	  
-	  //
-	  // set visualization attributes
-	  //
-	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
-	  
-	  //
-	  // append marker logical volume to volume map
-	  //
-	  (*LogVol)[itsName]=itsMarkerLogicalVolume;
-	}
-      else
-	{
 	  //
 	  // use already defined marker volume
 	  //
 	  itsMarkerLogicalVolume=(*LogVol)[itsName];
-	}      
     }
 }
   
-void BDSSolenoid::SynchRescale(G4double factor)
-{
-#ifdef _USE_GEANT4_STEPPER_
-  itsMagField->SetBField(factor*itsBField);
-#else
-  itsStepper->SetBField(factor*itsBField);
-  itsMagField->SetFieldValue(G4ThreeVector(0.0,0.0,factor*itsBField));
-#endif
-#ifdef DEBUG 
-  G4cout << "Solenoid " << itsName << " has been scaled" << G4endl;
-#endif
-}
-
 G4VisAttributes* BDSSolenoid::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(1.,0.,0.)); //red

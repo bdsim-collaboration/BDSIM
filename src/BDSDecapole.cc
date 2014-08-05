@@ -112,90 +112,11 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
   else
     {
       (*LogVolCount)[itsName]++;
-      if(BDSGlobalConstants::Instance()->GetSynchRadOn()&& BDSGlobalConstants::Instance()->GetSynchRescale())
-	{
-	  // with synchrotron radiation, the rescaled magnetic field
-	  // means elements with the same name must have different
-	  //logical volumes, because they have different fields
-	  itsName+=BDSGlobalConstants::Instance()->StringFromInt((*LogVolCount)[itsName]);
-
-	  //
-	  // build external volume
-	  // 
-	  BuildDefaultMarkerLogicalVolume();
-
-	  //
-	  // build beampipe (geometry + magnetic field)
-	  //
-	  BuildBPFieldAndStepper();
-	  BuildBPFieldMgr(itsStepper,itsMagField);
-	  BuildBeampipe();
-
-	  //
-	  // build magnet (geometry + magnetic field)
-	  //
-	  BuildDefaultOuterLogicalVolume(itsLength);
-	  if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
-	    {
-	      G4double polePos[4];
-	      G4double Bfield[3];
-	      
-	      //coordinate in GetFieldValue
-	      polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(CLHEP::pi/10);
-	      polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(CLHEP::pi/10);
-	      polePos[2]=0.;
-	      polePos[3]=-999.;//flag to use polePos rather than local track
-
-	      itsMagField->GetFieldValue(polePos,Bfield);
-	      G4double BFldIron=
-		sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1])*
-		BDSGlobalConstants::Instance()->GetMagnetPoleSize()/
-		(BDSGlobalConstants::Instance()->GetComponentBoxSize()/2-
-		 BDSGlobalConstants::Instance()->GetMagnetPoleRadius());
-
-	      // Magnetic flux from a pole is divided in two directions
-	      BFldIron/=2.;
-	      
-	      BuildOuterFieldManager(10, BFldIron,CLHEP::pi/10);
-	    }
-	  //When is SynchRescale(factor) called?
-
-	  //
-	  // define sensitive volumes for hit generation
-	  //
-          if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-            SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-          }
-          if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-            SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-	  }
-	  //
-	  // set visualization attributes
-	  //
-	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
-	  
-	  //
-	  // append marker logical volume to volume map
-	  //
-	  (*LogVol)[itsName]=itsMarkerLogicalVolume;
-	}
-      else
-	{
-	  //
-	  // use already defined marker volume
-	  //
-	  itsMarkerLogicalVolume=(*LogVol)[itsName];
-	}      
+      //
+      // use already defined marker volume
+      //
+      itsMarkerLogicalVolume=(*LogVol)[itsName];
     }
-}
-
-void BDSDecapole::SynchRescale(G4double factor)
-{
-  itsStepper->SetBQuadPrime(factor*itsBQuadPrime);
-  itsMagField->SetBQuadPrime(factor*itsBQuadPrime);
-#ifdef DEBUG
-  G4cout << "Dec " << itsName << " has been scaled" << G4endl;
-#endif
 }
 
 G4VisAttributes* BDSDecapole::SetVisAttributes()

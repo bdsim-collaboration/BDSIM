@@ -84,38 +84,7 @@ BDSSkewSextupole::BDSSkewSextupole(G4String& aName,G4double aLength,
   else
     {
       (*LogVolCount)[itsName]++;
-      if(BDSGlobalConstants::Instance()->GetSynchRadOn()&& BDSGlobalConstants::Instance()->GetSynchRescale())
-	{
-	  // with synchrotron radiation, the rescaled magnetic field
-	  // means elements with the same name must have different
-	  //logical volumes, becuase they have different fields
-	  itsName+=BDSGlobalConstants::Instance()->StringFromInt((*LogVolCount)[itsName]);
-	  BuildBPFieldAndStepper();
-	  BuildBPFieldMgr(itsStepper,itsMagField);
-	  BuildDefaultMarkerLogicalVolume();
-	  
-          if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-            BuildTunnel();
-          }
-          BuildBeampipe();
-	  BuildDefaultOuterLogicalVolume(itsLength);
-
-          //Build the beam loss monitors
-          BuildBLMs();
-
-          if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-            SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-          }
-          if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-            SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-          }
-
-	  (*LogVol)[itsName]=itsMarkerLogicalVolume;
-	}
-      else
-	{
 	  itsMarkerLogicalVolume=(*LogVol)[itsName];
-	}      
     }
   
 }

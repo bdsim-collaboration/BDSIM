@@ -79,19 +79,12 @@ void myQuadStepper::AdvanceHelix( const G4double  yIn[],
    
   G4double R;
   
-   if(BDSGlobalConstants::Instance()->GetSynchRescale())
-    {
-      G4double B[3];
-      fPtrMagEqOfMot->GetFieldValue(yIn, B);
-      R=-(InitMag/CLHEP::GeV)/(0.299792458 * B[1]/CLHEP::tesla) * CLHEP::m;
-    }
+
+  if(itsBField!=0)
+    R=-(InitMag/CLHEP::GeV)/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
   else
-    {
-      if(itsBField!=0)
-	R=-(InitMag/CLHEP::GeV)/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
-      else
-	R=DBL_MAX;
-    }
+    R=DBL_MAX;
+
 
  // include the sign of the charge of the particles
 

@@ -117,7 +117,6 @@ void init()
   options.Rmin=0.0, options.Rmax=0.0;
   options.sigmaE=0.0;
 
-  options.doTwiss = 0;
   options.doPlanckScattering=0;
   options.checkOverlaps=0;
   options.numberOfEventsPerNtuple=0;
@@ -192,7 +191,6 @@ void init()
   options.turnOnCerenkov = 1;
   options.synchRadOn = 0;
   options.decayOn = 1;
-  options.synchRescale = 0;
   options.synchTrackPhotons = 0;
   options.synchLowX = 0.0;
   options.synchLowGamE = 0.0;

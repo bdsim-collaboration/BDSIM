@@ -104,14 +104,12 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsMaxTime = opt.maximumTrackingTime * CLHEP::s;
   
   itsDeltaOneStep = opt.deltaOneStep * CLHEP::m;
-  doTwiss = opt.doTwiss;
   itsDoPlanckScattering = opt.doPlanckScattering;
   itsCheckOverlaps = opt.checkOverlaps;
   itsTurnOnCerenkov = opt.turnOnCerenkov;
   itsSynchRadOn = opt.synchRadOn;
   G4cout << "BDSGlobalConstants::Instance() synchRadOn = " << itsSynchRadOn << G4endl;
   itsDecayOn = opt.decayOn;
-  itsSynchRescale = opt.synchRescale; // rescale due to synchrotron
   itsSynchTrackPhotons= opt.synchTrackPhotons;
   G4cout << __METHOD_NAME__ << "synchTrackphotons = " << itsSynchTrackPhotons << G4endl;
   itsSynchLowX = opt.synchLowX;

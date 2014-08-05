@@ -49,8 +49,6 @@ public:
   
   G4bool   GetDoPlanckScattering();
   G4bool   GetCheckOverlaps();
-  G4bool   DoTwiss();
-  void     SetDoTwiss(G4bool val); 
   G4double GetMinimumEpsilonStep();
   G4double GetMaximumEpsilonStep();
   G4double GetMaxTime();
@@ -144,8 +142,6 @@ public:
   void     SetPhysListName(G4String val);
   G4bool   GetSynchRadOn();
   G4bool   GetDecayOn();
-  G4bool   GetSynchRescale();
-  void     SetSynchRescale(G4bool srRescale);
   G4bool   GetSynchTrackPhotons();
   void     SetSynchTrackPhotons(G4bool srTrackPhotons);
   G4double GetSynchLowX();
@@ -308,7 +304,6 @@ private:
   G4String itsPhysListName;
   G4bool   itsSynchRadOn;
   G4bool   itsDecayOn;
-  G4bool   itsSynchRescale;
   G4bool   itsSynchTrackPhotons;
   G4double itsSynchLowX;
   G4double itsSynchLowGamE;
@@ -322,7 +317,6 @@ private:
   G4bool   itsLaserwireTrackPhotons;
   G4bool   itsLaserwireTrackElectrons;
   G4bool   itsTurnOnCerenkov;
-  G4bool   doTwiss;
   G4bool   itsDoPlanckScattering;
   G4bool   itsCheckOverlaps;
   G4bool   itsStoreMuonTrajectories;
@@ -643,12 +637,6 @@ inline G4bool BDSGlobalConstants::GetSynchRadOn()
 inline G4bool BDSGlobalConstants::GetDecayOn()
 {return itsDecayOn;}
 
-inline G4bool BDSGlobalConstants::GetSynchRescale()
-{return itsSynchRescale;}
-
-inline void BDSGlobalConstants::SetSynchRescale(G4bool srRescale)
-{itsSynchRescale = srRescale;}
-
 inline G4bool BDSGlobalConstants::GetSynchTrackPhotons()
 {return itsSynchTrackPhotons ;}
 
@@ -765,12 +753,6 @@ inline G4String BDSGlobalConstants::GetTunnelCavityMaterialName()
 // {return itsSynchPrimaryAngle;}
 // inline G4double BDSGlobalConstants::GetSynchPrimaryLength()
 // {return itsSynchPrimaryLength;}
-
-inline G4bool BDSGlobalConstants::DoTwiss() 
-{return doTwiss;}
-
-inline void BDSGlobalConstants::SetDoTwiss(G4bool val) 
-{doTwiss = val;}
 
 inline G4bool BDSGlobalConstants::GetDoPlanckScattering() 
 {return itsDoPlanckScattering;}
