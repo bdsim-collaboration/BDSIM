@@ -5,3 +5,4 @@ set_target_properties(BDSBunchTest PROPERTIES OUTPUT_NAME "BDSBunchTest" VERSION
 target_link_libraries(BDSBunchTest bdsim gmad)
 
 add_subdirectory(BDSBunchTestFiles)
+add_subdirectory(BDSTrackingTestFiles)
