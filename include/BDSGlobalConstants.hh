@@ -12,12 +12,15 @@ Last modified 30.10.2007 by Steve Malton
 //#include <fstream>
 #include <deque>
 #include <map>
+#include <tr1/unordered_map>
 
 #include "G4ThreeVector.hh"
 #include "G4String.hh"
 #include "G4AffineTransform.hh"
 
 #include "BDSParticle.hh"
+#include "G4LogicalVolume.hh"
+#include "BDSLogicalVolumeInfo.hh"
 
 class G4FieldManager;
 class G4ParticleDefinition;
@@ -212,8 +215,17 @@ public:
   G4ThreeVector GetTeleporterDelta();
   void          SetTeleporterDelta(G4ThreeVector newteleporterdelta);
   void          SetTeleporterLength(G4double newteleporterlength);
-  G4double      GetTeleporterLength();  
+  G4double      GetTeleporterLength(); 
 
+  // for general info about a logical volume - extendable data class
+  // nominally used to get s position for energy loss
+  // get the info for a given logical volume pointer
+  BDSLogicalVolumeInfo* GetLogicalVolumeInfo(G4LogicalVolume* logvolpointer);
+  // get a pointer to the map of log vol infos
+  std::tr1::unordered_map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* LogicalVolumeInfo(); 
+  // add a new set of info to the map
+  void AddLogicalVolumeInfo(G4LogicalVolume* logvolpointer, BDSLogicalVolumeInfo* bdslogvolinfo);
+  
   // SPM : temp filestream for placet to read and write
   //  std::ofstream fileDump;
   // ifstream fileRead; replaced with FILE* fifo in code for consistency with Placet. SPM
@@ -383,6 +395,8 @@ private:
   G4double      teleporterlength;
   // beamline length
   G4double itsZMax;
+  // logical volume info
+  std::tr1::unordered_map<G4LogicalVolume* , BDSLogicalVolumeInfo*> logicalvolumeinfo;
 };
 
 inline G4double BDSGlobalConstants::GetElossHistoBinWidth()
@@ -856,6 +870,15 @@ inline void BDSGlobalConstants::SetTeleporterLength(G4double newteleporterlength
 
 inline G4double BDSGlobalConstants::GetTeleporterLength()
 {return teleporterlength;}
+
+inline BDSLogicalVolumeInfo* BDSGlobalConstants::GetLogicalVolumeInfo(G4LogicalVolume* logvolpointer)
+{return logicalvolumeinfo[logvolpointer];}
+
+inline void BDSGlobalConstants::AddLogicalVolumeInfo(G4LogicalVolume* logvolpointer, BDSLogicalVolumeInfo* logvolinfo)
+{logicalvolumeinfo[logvolpointer] = logvolinfo;}
+
+inline std::tr1::unordered_map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* BDSGlobalConstants::LogicalVolumeInfo()
+{return &logicalvolumeinfo;}
 
 // UNUSED INLINE FUNCTIONS
 
