@@ -180,10 +180,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 
 
 G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_list)
-{
-  // set default output formats:
-  G4cout.precision(10);
-  
+{  
   std::list<struct Element>::iterator it;
 
   // prepare materials for this run

@@ -1,7 +1,7 @@
 beam,  particle="e-",
        energy = 1*GeV,
        distrType  = "userfile",
-       distrFile  = "9_UserFile.dat",
+       distrFile  = "BDSBunchTestFiles/9_UserFile.dat",
        distrFileFormat = "x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:E[MeV]";
 
 nlinesIgnore = 0;

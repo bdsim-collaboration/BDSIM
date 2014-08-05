@@ -279,7 +279,7 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 	part_el_p=(*hc)[i]->GetPartID();
 	turnnumber=(*hc)[i]->GetTurnsTaken();
 	G4String temp = (*hc)[i]->GetName()+'\0';
-	strncpy(volumeName_el_p,temp.c_str(),sizeof(volumeName_el_p));
+	strncpy(volumeName_el_p,temp.c_str(),sizeof(volumeName_el_p)-1);
 	PrecisionRegionEnergyLossTree->Fill();
       }
     }

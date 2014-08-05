@@ -36,10 +36,10 @@ public:
 
   void AddParameterisation();
   
-  void ConstructParticle();
-  void ConstructProcess();
+  virtual void ConstructParticle();
+  virtual void ConstructProcess();
 
-  void SetCuts();
+  virtual void SetCuts();
 
   // construct particular physics list processes
 
@@ -70,12 +70,21 @@ private:
 
   std::vector<G4String>  paraWorldName;
 
-    G4Cerenkov*          theCerenkovProcess;
-    G4Scintillation*     theScintillationProcess;
-    G4OpAbsorption*      theAbsorptionProcess;
-    G4OpRayleigh*        theRayleighScatteringProcess;
-    G4OpMieHG*           theMieHGScatteringProcess;
-    G4OpBoundaryProcess* theBoundaryProcess;
+  G4Cerenkov*          theCerenkovProcess;
+  G4Scintillation*     theScintillationProcess;
+  G4OpAbsorption*      theAbsorptionProcess;
+  G4OpRayleigh*        theRayleighScatteringProcess;
+  G4OpMieHG*           theMieHGScatteringProcess;
+  G4OpBoundaryProcess* theBoundaryProcess;
+
+  /// physics lists
+  // standard physics list
+  G4VPhysicsConstructor* theStandardPhysList;
+  // BDSIM physics lists
+  G4VPhysicsConstructor* theBDSIMPhysList;
+  // hadronic physics lists
+  G4VPhysicsConstructor* theHadPhysList1;
+  G4VPhysicsConstructor* theHadPhysList2;
 };
 
 #endif
