@@ -1,5 +1,7 @@
 simple_testing(Component-CSampler "--file=csamplerTest.gmad" "")
  
+simple_testing(Component-Decapole "--file=decaTest.gmad" "")
+ 
 simple_testing(Component-Drift "--file=driftTest.gmad" "")
 
 simple_testing(Component-ECollimator "--file=ecolTest.gmad" "")
