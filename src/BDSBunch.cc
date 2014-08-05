@@ -14,9 +14,6 @@ BDSBunch::BDSBunch() {
   bdsBunch    = new BDSBunchInterface(); 
 }
 
-BDSBunch::BDSBunch(std::string distribType, G4double *params) {  
-}
-
 BDSBunch::~BDSBunch() {
   delete bdsBunch;
 }
@@ -43,14 +40,15 @@ void BDSBunch::SetOptions(struct Options& opt) {
   else if(opt.distribType == "userfile"){
     bdsBunch = new BDSBunchUserFile(opt);
   }
-  else if(opt.distribType.find("old") != -1) { 
+  else if(opt.distribType.find("old") != std::string::npos) { 
     // remove old from distribType and set distribType again 
-    std::cout << "Old BDSBunch" << std::endl;
+    G4cout << "Old BDSBunch" << G4endl;
     opt.distribType = opt.distribType.substr(3,opt.distribType.length());
     bdsBunch = new BDSBunchOld();    
   }   
   else {
-    std::cout << "distribType not found" << std::endl;
+    G4cerr << "distribType not found " << opt.distribType << G4endl;
+    exit(1);
   }
   bdsBunch->SetOptions(opt);
   return;

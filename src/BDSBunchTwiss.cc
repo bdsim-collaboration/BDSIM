@@ -4,9 +4,9 @@ BDSBunchTwiss::BDSBunchTwiss() :
   BDSBunchInterface(), betaX(0.0), betaY(0.0), alphaX(0.0), alphaY(0.0), emitX(0.0), emitY(0.0), gammaX(0.0), gammaY(0.0)
 {
   GaussGen = new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
-  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());    
+  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
+  GaussMultiGen = NULL;   
 }
-
 
 BDSBunchTwiss::BDSBunchTwiss(G4double betaXIn,  G4double betaYIn, 
 			     G4double alphaXIn, G4double alphaYIn,
@@ -16,6 +16,10 @@ BDSBunchTwiss::BDSBunchTwiss(G4double betaXIn,  G4double betaYIn,
 			     G4double sigmaTIn, G4double sigmaEIn) : 
   BDSBunchInterface(X0In,Y0In,Z0In,T0In,Xp0In,Yp0In,Zp0In,sigmaTIn,sigmaEIn), betaX(betaXIn), betaY(betaYIn), alphaX(alphaXIn), alphaY(alphaYIn), emitX(emitXIn), emitY(emitYIn)
 {
+  GaussGen = new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
+  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
+  GaussMultiGen = NULL;
+
   sigmaT = sigmaTIn; 
   sigmaE = sigmaEIn;
   gammaX = (1.0+alphaX*alphaX)/betaX;
@@ -25,12 +29,9 @@ BDSBunchTwiss::BDSBunchTwiss(G4double betaXIn,  G4double betaYIn,
 }
 
 BDSBunchTwiss::~BDSBunchTwiss() {
-  if(GaussGen != NULL) 
-    delete GaussGen;
-  if(FlatGen != NULL) 
-    delete FlatGen;
-  if(GaussMultiGen != NULL) 
-    delete GaussMultiGen;
+  delete GaussGen;
+  delete FlatGen;
+  delete GaussMultiGen;
 }
 
 void BDSBunchTwiss::SetOptions(struct Options& opt) {
@@ -50,9 +51,7 @@ void BDSBunchTwiss::SetOptions(struct Options& opt) {
   return;
 }
 
-void BDSBunchTwiss::CommonConstruction() { 
-  GaussGen = new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
-  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
+void BDSBunchTwiss::CommonConstruction() {
 
   meansGM = CLHEP::HepVector(6);
 
@@ -77,9 +76,10 @@ void BDSBunchTwiss::CommonConstruction() {
   sigmaGM[3][3] =  emitY*gammaY; 
   sigmaGM[4][4] =  pow(sigmaT,2); 
   sigmaGM[5][5] =  pow(sigmaE,2);
-   
-  GaussMultiGen = new CLHEP::RandMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM); 
-  
+
+  if (GaussMultiGen) delete GaussMultiGen;
+  GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
+
   return;
 }
 

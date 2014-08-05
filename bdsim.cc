@@ -122,13 +122,8 @@ int main(int argc,char** argv) {
   // Parse lattice file
   //
   G4cout << __FUNCTION__ << "> Using input file : "<< bdsOptions->GetInputFilename()<<G4endl;
-  if( gmad_parser(bdsOptions->GetInputFilename()) == -1)
-    {
-      G4cout << __FUNCTION__ << "> Can't open input file "
-	     << bdsOptions->GetInputFilename()<<G4endl;
-      exit(1);
-    }
-
+  
+  gmad_parser(bdsOptions->GetInputFilename());
 
   //
   // pass the run control and beam options read from the lattice

@@ -10,10 +10,10 @@
 namespace CLHEP {
   class RandGauss;
   class RandFlat;
-  class RandMultiGauss;
 }
 
 class BDSBunchGaussian : public BDSBunchInterface {
+ 
 protected : 
   G4double sigmaX;
   G4double sigmaY;

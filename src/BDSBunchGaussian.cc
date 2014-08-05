@@ -1,6 +1,5 @@
 #include "BDSBunchGaussian.hh"
 #include <string.h>
-#include <iostream>
 
 BDSBunchGaussian::BDSBunchGaussian() : BDSBunchInterface() {
   meansGM = CLHEP::HepVector(6);
@@ -35,7 +34,8 @@ BDSBunchGaussian::BDSBunchGaussian(G4double sigmaXIn, G4double sigmaYIn, G4doubl
   sigmaGM[5][5] = pow(sigmaE,2);
 
   // Create multi dim gaussian generator
-  GaussMultiGen = new CLHEP::RandMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM); 
+  if (GaussMultiGen) delete GaussMultiGen;
+  GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
 }
 
 BDSBunchGaussian::BDSBunchGaussian(G4double *sigma, 
@@ -79,9 +79,8 @@ BDSBunchGaussian::BDSBunchGaussian(G4double *sigma,
   sigmaGM[5][5] = sigma[20];
 
   // Create multi dim gaussian
-  if(GaussMultiGen != NULL) 
-    delete GaussMultiGen;
-  GaussMultiGen = new CLHEP::RandMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM); 
+  if (GaussMultiGen) delete GaussMultiGen;
+  GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
 }
 
 BDSBunchGaussian::~BDSBunchGaussian() {
@@ -95,8 +94,6 @@ void BDSBunchGaussian::SetOptions(struct Options& opt) {
   SetSigmaY(opt.sigmaY);
   SetSigmaXp(opt.sigmaXp);
   SetSigmaYp(opt.sigmaYp);
-
-  BDSBunchInterface::SetOptions(opt);
   
   meansGM[0]    = X0;
   meansGM[1]    = Xp0;
@@ -138,8 +135,8 @@ void BDSBunchGaussian::SetOptions(struct Options& opt) {
     sigmaGM[5][5] = pow(opt.sigmaE,2);
   }
 
-  if(GaussMultiGen != NULL) delete GaussMultiGen;
-  GaussMultiGen = new CLHEP::RandMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM); 
+  if (GaussMultiGen) delete GaussMultiGen;
+  GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
   return;
 }
 
