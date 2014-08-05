@@ -15,7 +15,6 @@
 #include "G4ios.hh"
 #include "time.h"
 
-#include "BDSTrackingFIFO.hh"
 
 //==========================================================
 
@@ -51,10 +50,6 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 
 void BDSRunAction::EndOfRunAction(const G4Run* aRun)
 {
-  //Do the fifo at the end of the run.
-  BDSTrackingFIFO* fifo = new BDSTrackingFIFO();
-  fifo->doFifo();
-
   //Get the current time
   stoptime = time(NULL);
 

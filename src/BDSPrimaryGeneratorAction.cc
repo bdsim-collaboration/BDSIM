@@ -134,7 +134,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
            (int)BDSGlobalConstants::Instance()->holdingQueue.size(),x0,y0,z0,xp,yp,zp,t,E);
 #endif
   }
-  else if(!BDSGlobalConstants::Instance()->isReference) G4Exception("No new particles to fire...\n", "-1", FatalException, "");
+  else G4Exception("No new particles to fire...\n", "-1", FatalException, "");
 
   if(E==0) G4cout << "Particle energy is 0! This will not be tracked." << G4endl;
 
@@ -143,32 +143,6 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   G4ThreeVector LocalPos;
   G4ThreeVector LocalMomDir;
-
-  if(!BDSGlobalConstants::Instance()->isReference){
-    PartMomDir=G4ThreeVector(xp,yp,zp);
-    PartPosition=G4ThreeVector(x0,y0,z0);
-
-    if(BDSGlobalConstants::Instance()->GetRefVolume()!=""){
-      const G4AffineTransform* tf = BDSGlobalConstants::Instance()->GetRefTransform();
-      LocalPos = tf->TransformPoint(PartPosition);
-      LocalMomDir = tf->TransformAxis(PartMomDir);
-#ifdef DEBUG 
-      G4cout << PartPosition << G4endl;
-      G4cout << PartMomDir << G4endl;
-      G4cout << LocalPos << G4endl;
-      G4cout << LocalMomDir << G4endl;
-#endif
-      PartPosition = LocalPos;
-      PartMomDir = LocalMomDir;
-    }
-
-    BDSGlobalConstants::Instance()->ResetTurnNumber();
-    particleGun->SetParticlePosition(PartPosition);
-    particleGun->SetParticleEnergy(E);
-    particleGun->SetParticleMomentumDirection(PartMomDir);
-    particleGun->SetParticleTime(t);
-  }
-
 
   particleGun->GeneratePrimaryVertex(anEvent);
 

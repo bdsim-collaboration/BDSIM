@@ -28,8 +28,6 @@ BDSExecOptions::BDSExecOptions() {
   gflashemax  = 10000;
   gflashemin  = 0.1;
 
-  nptwiss     = 200;
-
   verbose       = false;
   verboseEvent  = false;
   verboseStep   = false;

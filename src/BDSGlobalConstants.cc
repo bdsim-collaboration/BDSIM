@@ -153,7 +153,6 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
 #endif
   itsRefVolume = opt.refvolume;
   itsRefCopyNo = opt.refcopyno;
-  isReference = false;
   itsIncludeIronMagFields = opt.includeIronMagFields;
   zeroMagField = new G4UniformMagField(G4ThreeVector());
   itsZeroFieldManager=new G4FieldManager();

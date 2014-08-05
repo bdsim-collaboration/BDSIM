@@ -233,10 +233,6 @@ public:
   std::deque<BDSParticle> holdingQueue;
   std::deque<BDSParticle> outputQueue;
   std::deque<BDSParticle> transformedQueue;
-  /// queue to store global times of reference bunches in BDSDumps
-  std::deque<G4double*> referenceQueue;
-  /// particles are reference bunches
-  G4bool isReference;
 
 protected:
   BDSGlobalConstants(struct Options&);

@@ -49,14 +49,6 @@ void BDSRunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
     numberOfEventToBeProcessed = n_event;
     RunInitialization();
 
-    if(BDSDump::GetNumberOfDumps()!=0){
-      // Run reference bunch for dumps
-      BDSGlobalConstants::Instance()->isReference=true;
-      G4int nptwiss     = BDSExecOptions::Instance()->GetNPTwiss();
-      DoEventLoop(nptwiss,macroFile,0);
-      BDSGlobalConstants::Instance()->isReference=false;
-    }
-
     if(n_event>0) DoEventLoop(n_event,macroFile,n_select);
     RunTermination();
     while(!BDSGlobalConstants::Instance()->holdingQueue.empty()){
@@ -70,7 +62,6 @@ void BDSRunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
 
       BDSGlobalConstants::Instance()->setReadFromStack(false);
     }
-    BDSGlobalConstants::Instance()->referenceQueue.clear();
   }
 }
 
