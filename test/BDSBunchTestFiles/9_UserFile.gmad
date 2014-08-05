@@ -1,9 +1,7 @@
 beam,  particle="e-",
-       energy=1.0 * GeV,
-       distrType="eshell",
-       envelopeX  = 0.002*mm, 
-       envelopeY  = 0.002*mm, 
-       envelopeXp = 0.09*0.005,
-       envelopeYp = 0.09*0.005,
-       envelopeT  = 1e-9;
-       envelopeE  = 1e-5;
+       energy = 1*GeV,
+       distrType  = "userfile",
+       distrFile  = "BDSBunchTestFiles/9_UserFile.dat",
+       distrFileFormat = "x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:E[MeV]";
+
+nlinesIgnore = 0;

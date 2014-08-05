@@ -40,8 +40,8 @@ int main(int argc,char** argv) {
 
   // Print options for reference orbit 
   std::cout << "BDSBunchTest> centre : " << options.X0  << " " << options.Y0  << " " << options.Z0 << "\n" 
-	    << "BDSBunchTest> centre : " << options.Xp0 << " " << options.Xp0 << " " << options.Zp0 << "\n"
-	    << "BDSBunchTest> centre : " << options.T0  << "\n";
+	    << "BDSBunchTest> angle : " << options.Xp0 << " " << options.Xp0 << " " << options.Zp0 << "\n"
+	    << "BDSBunchTest> time : " << options.T0  << "\n";
 
   // From BDSPhysicsList.cc
   G4Electron::ElectronDefinition();
