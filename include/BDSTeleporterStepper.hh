@@ -29,8 +29,6 @@ protected:
 		    G4double h,
 		    G4double yDrift[]);
 
-  //BDSTeleporterStepper* itsStepper;
-
 private:
   G4bool verboseStep;
   G4int  verboseEventNumber;

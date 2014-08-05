@@ -4,11 +4,12 @@
 *.o
 *.so
 
-# Logs and databases #
-######################
+# Logs and Output #
+###################
 *.log
 *.txt
 *.bak
+*.root
 
 # Temporary editor files #
 ##########################
