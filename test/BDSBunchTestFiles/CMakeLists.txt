@@ -1,0 +1,12 @@
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+ 
+simple_testing(1_Reference "1_ReferenceTest.gmad" "")
+simple_testing(2_Gauss "2_GaussTest.gmad" "")
+simple_testing(3_GaussMatrix "3_GaussMatrixTest.gmad" "")
+simple_testing(4_Square "4_SquareTest.gmad" "")
+simple_testing(5_Circle "5_CircleTest.gmad" "")
+simple_testing(6_EShell "6_EShellTest.gmad" "")
+simple_testing(7_Ring "7_RingTest.gmad" "")
+simple_testing(8_GaussTwiss "8_GaussTwissTest.gmad" "")
+simple_testing(9_Userfile "9_UserfileTest.gmad" "")
+simple_testing(10_OldReference "10_OldReferenceTest.gmad" "")

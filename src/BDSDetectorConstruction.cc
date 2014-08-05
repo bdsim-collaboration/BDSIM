@@ -259,7 +259,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 
   G4double s_tot = 0; // position along the beamline
 
-  // define geometry scope
+  // define geometry scope - to calculate world dimensions
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     {
 #ifdef DEBUG 
