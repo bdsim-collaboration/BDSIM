@@ -480,8 +480,7 @@ inline void
 BDSAcceleratorComponent::SetBDSEnergyCounter(BDSEnergyCounterSD* anBDSEnergyCounter)
 {itsBDSEnergyCounter=anBDSEnergyCounter;}
 
-inline  
-void BDSAcceleratorComponent::SetSensitiveVolume(G4LogicalVolume* aLogVol)
+inline  void BDSAcceleratorComponent::SetSensitiveVolume(G4LogicalVolume* aLogVol)
 {itsSensitiveVolume=aLogVol;}
 
 inline  G4LogicalVolume* BDSAcceleratorComponent::GetSensitiveVolume()
