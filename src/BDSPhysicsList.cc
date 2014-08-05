@@ -38,6 +38,7 @@
 #else
 #include "G4HadronPhysicsQGSP_BERT.hh"
 #include "G4HadronPhysicsQGSP_BERT_HP.hh"
+#include "G4HadronPhysicsQGSP_BIC_HP.hh"
 #include "G4HadronPhysicsFTFP_BERT.hh"
 #endif
 #include "G4eeToHadrons.hh"
@@ -207,6 +208,11 @@ BDSPhysicsList::BDSPhysicsList():  G4VUserPhysicsList()
   theMieHGScatteringProcess    = NULL;
   theBoundaryProcess           = NULL;
 
+  theStandardPhysList          = NULL;
+  theBDSIMPhysList             = NULL;
+  theHadPhysList1              = NULL;
+  theHadPhysList2              = NULL;
+
   verbose = BDSExecOptions::Instance()->GetVerbose();
 
   // construct particles
@@ -228,6 +234,10 @@ BDSPhysicsList::BDSPhysicsList():  G4VUserPhysicsList()
 
 BDSPhysicsList::~BDSPhysicsList()
 {
+  delete theStandardPhysList;
+  delete theBDSIMPhysList;
+  delete theHadPhysList1;
+  delete theHadPhysList2;
 }
 
 void BDSPhysicsList::ConstructProcess()
@@ -239,26 +249,46 @@ void BDSPhysicsList::ConstructProcess()
   bool plistFound=false;
   //standard physics lists
   if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP"){
-    QGSP_BERT_HP* physList = new QGSP_BERT_HP;
-    physList->ConstructProcess();
+#if G4VERSION_NUMBER < 1000
+    theStandardPhysList = new HadronPhysicsQGSP_BERT_HP();
+#else
+    theStandardPhysList = new G4HadronPhysicsQGSP_BERT_HP();
+#endif
+    theStandardPhysList->ConstructProcess();
     plistFound=true;
   } else if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT"){
-    QGSP_BERT* physList = new QGSP_BERT;
-    physList->ConstructProcess();
+#if G4VERSION_NUMBER < 1000
+    theStandardPhysList = new HadronPhysicsQGSP_BERT();
+#else
+    theStandardPhysList = new G4HadronPhysicsQGSP_BERT();
+#endif
+    theStandardPhysList->ConstructProcess();
     plistFound=true;
   } else if (BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP_muon"){ //Modified standard physics lists
-    QGSP_BERT_HP* physList = new QGSP_BERT_HP;
-    physList->ConstructProcess();
+#if G4VERSION_NUMBER < 1000
+    theStandardPhysList = new HadronPhysicsQGSP_BERT_HP();
+#else
+    theStandardPhysList = new G4HadronPhysicsQGSP_BERT_HP();
+#endif
+    theStandardPhysList->ConstructProcess();
     ConstructMuon();
     plistFound=true;
   } else if (BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_muon"){
-    QGSP_BERT* physList = new QGSP_BERT;
-    physList->ConstructProcess();
+#if G4VERSION_NUMBER < 1000
+    theStandardPhysList = new HadronPhysicsQGSP_BERT();
+#else
+    theStandardPhysList = new G4HadronPhysicsQGSP_BERT();
+#endif
+    theStandardPhysList->ConstructProcess();
     ConstructMuon();
     plistFound=true;
   } else if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP_muon_em_low"){
-    QGSP_BERT_HP* physList = new QGSP_BERT_HP;
-    physList->ConstructProcess();
+#if G4VERSION_NUMBER < 1000
+    theStandardPhysList = new HadronPhysicsQGSP_BERT_HP();
+#else
+    theStandardPhysList = new G4HadronPhysicsQGSP_BERT_HP();
+#endif
+    theStandardPhysList->ConstructProcess();
     ConstructMuon();
     ConstructEM_Low_Energy();
     plistFound=true;
@@ -267,7 +297,6 @@ void BDSPhysicsList::ConstructProcess()
     physList->ConstructProcess();
     plistFound=true;
   }
-
 
   if(!plistFound){
     //Need to add transportation if non-standard physics list
@@ -318,157 +347,129 @@ void BDSPhysicsList::ConstructProcess()
   ConstructOptical();
   //============================================
   
-  if(!plistFound){ //Search BDSIM physics lists
-    if (BDSGlobalConstants::Instance()->GetPhysListName() != "standard"){ // register physics processes here
-      
-      //Always add parameterisation
-      AddParameterisation();
+  if(!plistFound) return;
+  //Search BDSIM physics lists
+  
+  if (BDSGlobalConstants::Instance()->GetPhysListName() == "standard") return;
 
-      // standard e+/e-/gamma electromagnetic interactions
-      if(BDSGlobalConstants::Instance()->GetPhysListName() == "em_standard") 
-	{
-	  ConstructEM();
-  	  return;
-	}
-
-      if(BDSGlobalConstants::Instance()->GetPhysListName() == "em_single_scatter") 
-	{
-	  ConstructEMSingleScatter();
-  	  return;
-	}
+  // register physics processes here
       
-      if(BDSGlobalConstants::Instance()->GetPhysListName() == "merlin") 
-	{
-	  ConstructMerlin();
-	  return;
-	}
+  //Always add parameterisation
+  AddParameterisation();
       
-      // low energy em processes
-      if(BDSGlobalConstants::Instance()->GetPhysListName() == "em_low") 
-	{
-	  ConstructEM_Low_Energy();
-	  return;
-	}
-      
-      // standard electromagnetic + muon
-      if(BDSGlobalConstants::Instance()->GetPhysListName() == "em_muon") 
-	{
-	  ConstructEM();
-	  ConstructMuon();
-	  return;
-	}
-      // standard hadronic - photo-nuclear etc.
-      if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_standard") 
-	{
-	  ConstructEM();
-	  ConstructHadronic();
-	  return;
-	}
-      
-      // standard electromagnetic + muon + hadronic
-      if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_muon") 
-	{
-	  ConstructEM();
-	  ConstructMuon();
-	  ConstructHadronic();
-	  return;
-	}
-      
-      if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_QGSP_BERT") {
-	ConstructEM();
-#if G4VERSION_NUMBER < 1000
-	G4VPhysicsConstructor* hadPhysList = new HadronPhysicsQGSP_BERT("hadron");
-#else
-	G4VPhysicsConstructor* hadPhysList = new G4HadronPhysicsQGSP_BERT("hadron");
-#endif
-	hadPhysList -> ConstructProcess();
-	return;
-      }
-      
-      if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_QGSP_BERT_muon") {
-	ConstructEM();
-	ConstructMuon();
-#if G4VERSION_NUMBER < 1000
-	G4VPhysicsConstructor* hadPhysList = new HadronPhysicsQGSP_BERT("hadron");
-#else
-	G4VPhysicsConstructor* hadPhysList = new G4HadronPhysicsQGSP_BERT("hadron");
-#endif
-	hadPhysList -> ConstructProcess();
-	return;
-      }
-      
-      if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_FTFP_BERT"){
-	ConstructEM();
-#if G4VERSION_NUMBER < 1000
-	HadronPhysicsFTFP_BERT *myHadPhysList = new HadronPhysicsFTFP_BERT;
-#else
-	G4HadronPhysicsFTFP_BERT *myHadPhysList = new G4HadronPhysicsFTFP_BERT;
-#endif
-	myHadPhysList->ConstructProcess();
-	return;
-      }
-      
-      if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_QGSP_BERT_HP_muon"){
-	ConstructEM();
-	ConstructMuon();
-	ConstructHadronic();
-	//      ConstructPhotolepton_Hadron();
-#if G4VERSION_NUMBER < 1000
-	HadronPhysicsQGSP_BERT_HP *myHadPhysList = new HadronPhysicsQGSP_BERT_HP;
-#else
-	G4HadronPhysicsQGSP_BERT_HP *myHadPhysList = new G4HadronPhysicsQGSP_BERT_HP;
-#endif
-	myHadPhysList->ConstructProcess();
-	return;
-      }
-      
-      if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_FTFP_BERT_muon"){
-	G4cout << __METHOD_NAME__ << "Using hadronic_FTFP_BERT_muon" << G4endl;
-	ConstructEM();
-	ConstructMuon();
-#if G4VERSION_NUMBER < 1000
-	HadronPhysicsFTFP_BERT *myHadPhysList = new HadronPhysicsFTFP_BERT;
-#else
-	G4HadronPhysicsFTFP_BERT *myHadPhysList = new G4HadronPhysicsFTFP_BERT;
-#endif
-	myHadPhysList->ConstructProcess();
-	
-	return;
-      }
-      // physics list for laser wire - standard em stuff +
-      // weighted compton scattering from laser wire
-      if(BDSGlobalConstants::Instance()->GetPhysListName() == "lw") {
-	ConstructEM();
-	ConstructLaserWire();
-	return;
-      } 
-      //default - standard (only transportation)
-      G4cerr<<"WARNING : Unknown physics list "<<BDSGlobalConstants::Instance()->GetPhysListName()<<
-	"  using transportation only (standard) "<<G4endl;
-      return;
+  // standard e+/e-/gamma electromagnetic interactions
+  if(BDSGlobalConstants::Instance()->GetPhysListName() == "em_standard") 
+    {
+      ConstructEM();
     }
+  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "em_single_scatter") 
+    {
+      ConstructEMSingleScatter();
+    }
+  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "merlin") 
+    {
+      ConstructMerlin();
+    }
+      
+  // low energy em processes
+  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "em_low") 
+    {
+      ConstructEM_Low_Energy();
+    }
+      
+  // standard electromagnetic + muon
+  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "em_muon") 
+    {
+      ConstructEM();
+      ConstructMuon();
+    }
+  // standard hadronic - photo-nuclear etc.
+  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_standard") 
+    {
+      ConstructEM();
+      ConstructHadronic();
+    }
+      
+  // standard electromagnetic + muon + hadronic
+  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_muon") 
+    {
+      ConstructEM();
+      ConstructMuon();
+      ConstructHadronic();
+    }
+  
+  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_QGSP_BERT") {
+    ConstructEM();
+#if G4VERSION_NUMBER < 1000
+    theBDSIMPhysList = new HadronPhysicsQGSP_BERT("hadron");
+#else
+    theBDSIMPhysList = new G4HadronPhysicsQGSP_BERT("hadron");
+#endif
+    theBDSIMPhysList->ConstructProcess();
+  }
+  
+  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_QGSP_BERT_muon") {
+    ConstructEM();
+    ConstructMuon();
+#if G4VERSION_NUMBER < 1000
+    theBDSIMPhysList = new HadronPhysicsQGSP_BERT("hadron");
+#else
+    theBDSIMPhysList = new G4HadronPhysicsQGSP_BERT("hadron");
+#endif
+    theBDSIMPhysList->ConstructProcess();
+  }
+  
+  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_FTFP_BERT"){
+    ConstructEM();
+#if G4VERSION_NUMBER < 1000
+    theBDSIMPhysList = new HadronPhysicsFTFP_BERT;
+#else
+    theBDSIMPhysList = new G4HadronPhysicsFTFP_BERT;
+#endif
+    theBDSIMPhysList->ConstructProcess();
+  }
+  
+  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_QGSP_BERT_HP_muon"){
+    ConstructEM();
+    ConstructMuon();
+    ConstructHadronic();
+    //      ConstructPhotolepton_Hadron();
+#if G4VERSION_NUMBER < 1000
+    theBDSIMPhysList = new HadronPhysicsQGSP_BERT_HP;
+#else
+    theBDSIMPhysList = new G4HadronPhysicsQGSP_BERT_HP;
+#endif
+    theBDSIMPhysList->ConstructProcess();
+  }
+      
+  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_FTFP_BERT_muon"){
+    G4cout << __METHOD_NAME__ << "Using hadronic_FTFP_BERT_muon" << G4endl;
+    ConstructEM();
+    ConstructMuon();
+#if G4VERSION_NUMBER < 1000
+    theBDSIMPhysList = new HadronPhysicsFTFP_BERT;
+#else
+    theBDSIMPhysList = new G4HadronPhysicsFTFP_BERT;
+#endif
+    theBDSIMPhysList->ConstructProcess();
+  }
+  // physics list for laser wire - standard em stuff +
+  // weighted compton scattering from laser wire
+  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "lw") {
+    ConstructEM();
+    ConstructLaserWire();
   }
 
+  //default - standard (only transportation)
+  G4cerr<<"WARNING : Unknown physics list "<<BDSGlobalConstants::Instance()->GetPhysListName()<<
+    "  using transportation only (standard) "<<G4endl;
 }
 
 void BDSPhysicsList::ConstructParticle()
 {
   //standard physics lists
-  if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP"){
-    QGSP_BERT_HP* physList = new QGSP_BERT_HP;
-    physList->ConstructParticle();
-  } else if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT"){
-    QGSP_BERT* physList = new QGSP_BERT;
-    physList->ConstructParticle();
-  } else if (BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP_muon"){
-    QGSP_BERT_HP* physList = new QGSP_BERT_HP;
-    physList->ConstructParticle();
-  } else if (BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_muon"){
-    QGSP_BERT* physList = new QGSP_BERT;
-    physList->ConstructParticle();
-  } else if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP_muon_em_low"){
-    QGSP_BERT_HP* physList = new QGSP_BERT_HP;
-    physList->ConstructParticle();
+  if (theStandardPhysList) {
+    theStandardPhysList->ConstructParticle();
   } else {
     // pseudo-particles
     G4Geantino::GeantinoDefinition();
@@ -1046,15 +1047,11 @@ void BDSPhysicsList::ConstructLaserWire()
 #include "G4XiMinusInelasticProcess.hh"
 #include "G4AntiXiZeroInelasticProcess.hh"
 #include "G4AntiXiMinusInelasticProcess.hh"
-#include "G4DeuteronInelasticProcess.hh"
-#include "G4TritonInelasticProcess.hh"
-#include "G4AlphaInelasticProcess.hh"
 #include "G4OmegaMinusInelasticProcess.hh"
 #include "G4AntiOmegaMinusInelasticProcess.hh"
 
 // Low-energy Models
 #if G4VERSION_NUMBER < 1000
-#include "G4LElastic.hh"
 #include "G4LCapture.hh"
 #else
 #include "G4HadronElastic.hh"
@@ -1083,9 +1080,6 @@ void BDSPhysicsList::ConstructLaserWire()
 #include "G4LEXiMinusInelastic.hh"
 #include "G4LEAntiXiZeroInelastic.hh"
 #include "G4LEAntiXiMinusInelastic.hh"
-#include "G4LEDeuteronInelastic.hh"
-#include "G4LETritonInelastic.hh"
-#include "G4LEAlphaInelastic.hh"
 #include "G4LEOmegaMinusInelastic.hh"
 #include "G4LEAntiOmegaMinusInelastic.hh"
 #else
@@ -1154,7 +1148,32 @@ void BDSPhysicsList::ConstructHadronic()
   thePositronNuclearProcess->RegisterMe(theElectroReaction);
   aProcMan->AddDiscreteProcess(thePositronNuclearProcess);
 #else
-  
+    /*
+    From (14-7-14)
+    http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/useCases.shtml  
+
+    LHC neutron fluxes
+
+    The Simulation of neutron fluxes needs, in addition to the simulation of hadronic showers, a transport for low energy neutron down to thermal energies. Recommended: QGSP_BERT_HP, QGSP_BIC_HP
+    
+    Linear collider neutron fluxes
+
+    Recommended: QGSP_BERT_HP, QGSP_BIC_HP
+
+    Shielding applications (all energies)
+
+    Recommended: QGSP_BERT_HP, QGSP_BIC_HP, QGSP_INCLXX, Shielding
+  */
+
+  /* based on these recommendations QGSP_BERT_HP, QGSP_BIC_HP are chosen 
+     with QGSP_INCLXX and Shielding perhaps optional for certain studies
+   */
+
+  theHadPhysList1 = new G4HadronPhysicsQGSP_BERT_HP();
+  theHadPhysList1->ConstructProcess();
+
+  theHadPhysList2 = new G4HadronPhysicsQGSP_BIC_HP();
+  theHadPhysList2->ConstructProcess();
 
 #endif
 }
