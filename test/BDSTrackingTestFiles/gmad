@@ -1,5 +1,6 @@
-include 8_GaussTwiss.gmad
 include options.gmad
-include fodo.gmad;
+include beam.gmad
+include BDSQuadrupole.gmad
+include latt.gmad;
 
-option, ngenerate=1000;
+option, ngenerate=10000;
