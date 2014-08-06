@@ -1,6 +1,7 @@
 beam,  particle="e-",
        energy=1.0 * GeV,
        distrType="gauss",
+       T0      = -5e-9,
        sigmaX  = 0.002*mm,
        sigmaY  = 0.002*mm,
        sigmaXp = 1e-10,

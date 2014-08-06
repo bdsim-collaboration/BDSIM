@@ -24,10 +24,9 @@ class SamplerManager {
   void Init();
   void PrintTrees(); 
   void PrintFiles();
-  void MakeSingleTree(); 
+  void MakeSingleSimpleTree(); 
 
  private:
-  TFile  *file;  
   std::vector<TString>  fileNames;
   std::vector<TString>  treeNames; 
   std::vector<TFile*>   files;

@@ -24,20 +24,20 @@ void Sampler::Loop()
 //
 //       To read only selected branches, Insert statements like:
 // METHOD1:
-//    fChain->SetBranchStatus("*",0);  // disable all branches
-//    fChain->SetBranchStatus("branchname",1);  // activate branchname
+//    fChainIn->SetBranchStatus("*",0);  // disable all branches
+//    fChainIn->SetBranchStatus("branchname",1);  // activate branchname
 // METHOD2: replace line
-//    fChain->GetEntry(jentry);       //read all branches
+//    fChainIn->GetEntry(jentry);       //read all branches
 //by  b_branchname->GetEntry(ientry); //read only this branch
-   if (fChain == 0) return;
+   if (fChainIn == 0) return;
 
-   Long64_t nentries = fChain->GetEntriesFast();
+   Long64_t nentries = fChainIn->GetEntriesFast();
 
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;
-      nb = fChain->GetEntry(jentry);   nbytes += nb;
+      nb = fChainIn->GetEntry(jentry);   nbytes += nb;
       // if (Cut(ientry) < 0) continue;
    }
 }

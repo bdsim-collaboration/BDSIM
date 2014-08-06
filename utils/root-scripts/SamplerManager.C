@@ -70,7 +70,7 @@ void SamplerManager::PrintFiles() {
   }  
 }
 
-void SamplerManager::MakeSingleTree() {
+void SamplerManager::MakeSingleSimpleTree() {
   for(std::vector<TChain*>::iterator it = chains.begin(); it != chains.end(); it++) { 
     std::cout << (*it)->GetEntries() << std::endl;
   }
@@ -79,8 +79,26 @@ void SamplerManager::MakeSingleTree() {
     Sampler *s = new Sampler(chains[i]);
     samplers.push_back(s);
  }
-    
-  for(int i=0;i<(int)chains[0]->GetEntries();i++) { 
-    
+  
+  // Make tree 
+  TFile *file = new TFile("test.root","RECREATE");
+  TTree *tree = new TTree("SimpleSingle","Simple single tree with same number primaries"); 
+
+  // loop over samplers and make output branches 
+  int i = 0;
+  for(std::vector<Sampler*>::iterator it = samplers.begin();it != samplers.end();it++) {
+    (*it)->InitOut(tree,i,treeNames[i]);
+    i++;
+  } 
+
+  // loop over all events and trees 
+  for(i=0;i<chains[0]->GetEntries();i++) {
+    for(std::vector<Sampler*>::iterator it = samplers.begin();it != samplers.end();it++) {
+      (*it)->GetEntry(i);
+    }
+    tree->Fill(); 
   }
+  
+  tree->Write();
+  file->Close();
 }
