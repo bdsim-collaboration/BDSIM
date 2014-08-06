@@ -330,7 +330,6 @@ macro(BDSIM_COLLATE_APPLICATION_SOURCES source_dest_var)
     ${CMAKE_CURRENT_SOURCE_DIR}/bdsim.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/BDS*.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ggmad.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/myQuadStepper.cc
     )
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 endmacro()

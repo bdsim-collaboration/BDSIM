@@ -22,7 +22,6 @@
 //#include "G4StateManager.hh"
 //#include "G4UImanager.hh"
 
-#include "BDSDump.hh"
 #include "BDSWorld.hh"
 
 BDSRunManager* BDSRunManager::fRunManager = 0;

@@ -7,7 +7,6 @@
 class BDSLogicalVolumeInfo
 {
 public:
-  BDSLogicalVolumeInfo();
   BDSLogicalVolumeInfo(G4double SPosIn);
   BDSLogicalVolumeInfo(G4String NameIn, G4double SPosIn);
   ~BDSLogicalVolumeInfo();
@@ -31,6 +30,8 @@ public:
   {return spos;}
 
 private:
+  BDSLogicalVolumeInfo();
+
   G4String name;
   G4double spos;
 

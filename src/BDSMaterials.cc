@@ -643,15 +643,16 @@ void BDSMaterials::AddMaterial(G4String aName, G4double itsZ, G4double itsA, G4d
   }
 }
 
-void BDSMaterials::AddMaterial(G4String aName, G4double itsDensity, G4State itsState,
+template <typename Type> void BDSMaterials::AddMaterial(
+G4String aName, G4double itsDensity, G4State itsState,
 G4double itsTemp, G4double itsPressure,
-std::list<const char*> itsComponents, std::list<G4double> itsComponentsFractions)
+std::list<const char*> itsComponents, std::list<Type> itsComponentsFractions)
 {
   aName.toLower();
   G4Material* tmpMaterial = new G4Material(aName, itsDensity*CLHEP::g/CLHEP::cm3, 
 		(G4int)itsComponents.size(),itsState, itsTemp*CLHEP::kelvin, itsPressure*CLHEP::atmosphere);
   std::list<const char*>::iterator sIter;
-  std::list<G4double>::iterator dIter;
+  typename std::list<Type>::iterator dIter;
   for(sIter = itsComponents.begin(), dIter = itsComponentsFractions.begin();
       sIter != itsComponents.end();
       sIter++, dIter++)
@@ -670,36 +671,6 @@ std::list<const char*> itsComponents, std::list<G4double> itsComponentsFractions
   }else{
     G4String exceptionString = "Material "+aName+" already exists\n";
     G4Exception(exceptionString.c_str(), "-1", FatalException, "");  
-  }
-}
-
-void BDSMaterials::AddMaterial(G4String aName, G4double itsDensity, G4State itsState,
-G4double itsTemp, G4double itsPressure,      
-std::list<const char*> itsComponents, std::list<G4int> itsComponentsWeights)       
-{
-  aName.toLower();
-  G4Material*  tmpMaterial = new G4Material(aName, itsDensity*CLHEP::g/CLHEP::cm3, 
-     (G4int)itsComponents.size(),itsState, itsTemp*CLHEP::kelvin, itsPressure*CLHEP::atmosphere);
-  std::list<const char*>::iterator sIter;
-  std::list<G4int>::iterator iIter;
-  for(sIter = itsComponents.begin(), iIter = itsComponentsWeights.begin(); 
-	sIter != itsComponents.end();
-	sIter++, iIter++)
-  {
-#ifdef DEBUG
-    G4cout << "BDSMaterials::AddMaterial - Adding element: " << (G4String)*sIter << G4endl;
-#endif
-    if(CheckElement((G4String)*sIter)){
-      tmpMaterial->AddElement(GetElement((G4String)*sIter),(*iIter));
-    } else tmpMaterial->AddMaterial(GetMaterial((G4String)*sIter),(*iIter));
-  }     
-  if(materials.insert(make_pair(aName,tmpMaterial)).second){
-#ifdef DEBUG
-    G4cout << "New material : " << aName << " added to material table" << G4endl;
-#endif
-  }else{
-    G4String exceptionString = "Material "+aName+" already exists\n";
-    G4Exception(exceptionString.c_str(), "-1", FatalException, "");
   }
 }
 

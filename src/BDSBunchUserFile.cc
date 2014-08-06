@@ -2,10 +2,6 @@
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
 
-
-BDSBunchUserFile::BDSBunchUserFile(){ //Should never be called.
-}
-
 BDSBunchUserFile::BDSBunchUserFile(struct Options &opt){
   SetOptions(opt);
   ParseFileFormat();

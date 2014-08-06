@@ -2,22 +2,22 @@
    Author: Grahame A. Blair, Royal Holloway, Univ. of London.
 */
 
-#ifndef myQUADSTEPPER_HH
-#define myQUADSTEPPER_HH
+#ifndef BDSDipoleStepper_HH
+#define BDSDipoleStepper_HH
 #include "globals.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 #include "G4Navigator.hh"
 
-class myQuadStepper : public G4MagIntegratorStepper
+class BDSDipoleStepper : public G4MagIntegratorStepper
 {
 
 public:  // with description
   
-  myQuadStepper(G4Mag_EqRhs *EqRhs);
+  BDSDipoleStepper(G4Mag_EqRhs *EqRhs);
   
-  ~myQuadStepper();
+  ~BDSDipoleStepper();
   
   virtual void Stepper( const G4double y[],
 			const G4double dydx[],
@@ -64,30 +64,30 @@ private:
   
 };
 
-inline  void myQuadStepper::SetBGrad(G4double aBGrad)
+inline  void BDSDipoleStepper::SetBGrad(G4double aBGrad)
 {
   itsBGrad=aBGrad;
 }
 
-inline  void myQuadStepper::SetBField(G4double aBField)
+inline  void BDSDipoleStepper::SetBField(G4double aBField)
 {
   itsBField=aBField;
 }
-inline  void myQuadStepper::SetLength(G4double aLength)
+inline  void BDSDipoleStepper::SetLength(G4double aLength)
 {
   itsLength=aLength;
 }
-inline  void myQuadStepper::SetAngle(G4double aAngle)
+inline  void BDSDipoleStepper::SetAngle(G4double aAngle)
 {
   itsAngle=aAngle;
 }
 
-inline G4double myQuadStepper::GetBGrad()
+inline G4double BDSDipoleStepper::GetBGrad()
 {
   return itsBGrad;
 }
 
-inline void myQuadStepper::StepperName()
-{G4cout<<"myQuadStepper"<<G4endl;}
+inline void BDSDipoleStepper::StepperName()
+{G4cout<<"BDSDipoleStepper"<<G4endl;}
 
 #endif 

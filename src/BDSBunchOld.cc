@@ -44,11 +44,6 @@ BDSBunchOld::BDSBunchOld():
   betaX(0.0),betaY(0.0),alphaX(0.0),alphaY(0.0),emitX(0.0),emitY(0.0),
   energySpread(0.0),nlinesIgnore(0),partId(0)
 { 
-  verbose            = BDSExecOptions::Instance()->GetVerbose();
-  verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
-  verboseEvent       = BDSExecOptions::Instance()->GetVerboseEvent();
-  verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
-
   // Instantiate random number generators
   GaussGen = new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
@@ -656,8 +651,8 @@ void BDSBunchOld::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
   G4cout<< "BDSBunchOld::GetNextParticle> Twiss : " << betaX  << " " << betaY  << " " 
 	<< alphaX << " " << alphaY << " "
 	<< emitX  << " " << emitY  << G4endl;
+  G4cout<< "BDSBunchOld : " <<"distribution type: "<<distribType<<G4endl;
 #endif
-  if(verboseStep) G4cout<< "BDSBunchOld : " <<"distribution type: "<<distribType<<G4endl;
   
   double r, phi;
  

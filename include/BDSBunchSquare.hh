@@ -38,7 +38,7 @@ public:
   G4double GetEnvelopeYp(){return envelopeYp;}
   G4double GetEnvelopeT() {return envelopeT;}
   G4double GetEnvelopeE() {return envelopeE;}
-
+protected:
   void SetEnvelopeX(G4double envelopeXIn)  {envelopeX = envelopeXIn;}
   void SetEnvelopeY(G4double envelopeYIn)  {envelopeY = envelopeYIn;}
   void SetEnvelopeXp(G4double envelopeXpIn){envelopeXp= envelopeXpIn;}
