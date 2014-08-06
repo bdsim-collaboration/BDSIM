@@ -2,8 +2,6 @@
 #include "globals.hh"
 #include "G4String.hh"
 
-BDSLogicalVolumeInfo::BDSLogicalVolumeInfo(){;}
-
 BDSLogicalVolumeInfo::BDSLogicalVolumeInfo(G4double SPosIn)
 {
   SetSPos(SPosIn);

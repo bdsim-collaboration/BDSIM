@@ -607,7 +607,7 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	       } else if (!xmlStrcmp(tempcur->name, (const xmlChar *)"composite")){
 		 components.push_back((G4String)parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref")).c_str()); 
 		 stComponents.push_back((G4String)parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref"))); 
-		 weights.push_back(parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"n")));
+		 weights.push_back((G4int)parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"n")));
 	       }
 	       tempcur = tempcur->next;
 	     }
@@ -639,21 +639,21 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 
 	     if (weights.size()>0){
 #ifdef DEBUG
-	     G4cout << "Size of weights: " << weights.size() << G4endl;
+	       G4cout << "Size of weights: " << weights.size() << G4endl;
 #endif
-	     BDSMaterials::Instance()->AddMaterial(name, value*unit/(CLHEP::g/CLHEP::cm3), kStateSolid, 300, 1, components, weights);
+	       BDSMaterials::Instance()->AddMaterial(name, value*unit/(CLHEP::g/CLHEP::cm3), kStateSolid, 300, 1, components, weights);
 	     } else if(fractions.size()>0){
 #ifdef DEBUG
-	     G4cout << "Size of fractions: " << fractions.size() << G4endl;
+	       G4cout << "Size of fractions: " << fractions.size() << G4endl;
 #endif
-	     BDSMaterials::Instance()->AddMaterial(name, value*unit/(CLHEP::g/CLHEP::cm3), kStateSolid, 300, 1, components, fractions);
+	       BDSMaterials::Instance()->AddMaterial(name, value*unit/(CLHEP::g/CLHEP::cm3), kStateSolid, 300, 1, components, fractions);
 	     } else G4Exception("BDSGeometry LCDD: Ill defined material fractions - list of fractions and weights empty.", "-1", FatalException, "");
 
+	   }
 	 }
-    }
       cur = cur->next;
-}
-return;
+    }
+  return;
 }
 
 
