@@ -7,6 +7,7 @@ class TRKElement {
   double size_y;                  // height of component 
   double size_x;                  // width  of component 
   TRKApertureInterface *aperture; // aperture of element
+  TRKPlacement         *placement;// location of element
 
 public :
   TRKElement();

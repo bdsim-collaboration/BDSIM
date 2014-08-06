@@ -3,8 +3,13 @@
 
 class TRKTrackingInterface {
 public : 
+  TRKTrackingInterface();
+  ~TRKTrackingInterface(); 
   virtual void Track() = 0;
   
+private: 
+  // type of tracking 
+
 };
 
 
