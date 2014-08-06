@@ -154,7 +154,7 @@ void BDSSectorBend::BuildBPFieldAndStepper()
 
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
   
-  itsStepper = new myQuadStepper(itsEqRhs);
+  itsStepper = new BDSDipoleStepper(itsEqRhs);
   itsStepper->SetBField(-itsBField); // note the - sign...
   itsStepper->SetBGrad(itsBGrad);
 }
