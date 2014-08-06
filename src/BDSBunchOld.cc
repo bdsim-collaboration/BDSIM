@@ -48,7 +48,6 @@ BDSBunchOld::BDSBunchOld():
   verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
   verboseEvent       = BDSExecOptions::Instance()->GetVerboseEvent();
   verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
-  nptwiss            = BDSExecOptions::Instance()->GetNPTwiss();
 
   // Instantiate random number generators
   GaussGen = new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
@@ -649,97 +648,18 @@ G4double BDSBunchOld::GetNextT()
 }
 
 void BDSBunchOld::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
-			       G4double& xp,G4double& yp,G4double& zp,
-			       G4double& t, G4double& E, G4double &weight)
+				  G4double& xp,G4double& yp,G4double& zp,
+				  G4double& t, G4double& E, G4double &weight)
 {
-
+  
 #ifdef DEBUG 
   G4cout<< "BDSBunchOld::GetNextParticle> Twiss : " << betaX  << " " << betaY  << " " 
-	                                         << alphaX << " " << alphaY << " "
-	                                         << emitX  << " " << emitY  << G4endl;
+	<< alphaX << " " << alphaY << " "
+	<< emitX  << " " << emitY  << G4endl;
 #endif
   if(verboseStep) G4cout<< "BDSBunchOld : " <<"distribution type: "<<distribType<<G4endl;
-
+  
   double r, phi;
-  // Rescale must be at the top of GetNextParticle
-
-  if(BDSGlobalConstants::Instance()->isReference && partId<nptwiss){
-    if (betaX==0) {G4cerr << __METHOD_NAME__ << "WARNING betaX equal to 0, xp NaN, division by zero! " << G4endl; exit(1);}
-    if (betaY==0) {G4cerr << __METHOD_NAME__ << "WARNING betaY equal to 0, yp NaN, division by zero! " << G4endl; exit(1);}
-    
-    G4double phiX= CLHEP::twopi * G4UniformRand();
-    G4double phiY= CLHEP::twopi * G4UniformRand();
-    //    G4double ex=-log(G4UniformRand())*emitX;
-    //    G4double ey=-log(G4UniformRand())*emitY;
-    G4double ex=std::abs(GaussGen->shoot()*emitX);
-    G4double ey=std::abs(GaussGen->shoot()*emitY);
-    x0=sqrt(2*ex*betaX)*sin(phiX);
-    xp=sqrt(2*ex/betaX)*(cos(phiX)-alphaX*sin(phiX));
-    y0=sqrt(2*ey*betaY)*sin(phiY);
-    yp=sqrt(2*ey/betaY)*(cos(phiY)-alphaY*sin(phiY)); 
-    z0 = Z0 * CLHEP::m + (T0 - sigmaT * (1.-2.*GaussGen->shoot())) * CLHEP::c_light * CLHEP::s;
-    if (Zp0<0)
-      zp = -sqrt(1.-xp*xp -yp*yp);
-    else
-      zp = sqrt(1.-xp*xp -yp*yp);
-    t = 0; 
-    E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy();
-    ++partId;
-    return;
-  }
-  
-  if(BDSGlobalConstants::Instance()->DoTwiss() && partId<nptwiss)
-    {
-      if (betaX==0) {G4cerr << __METHOD_NAME__ << "WARNING betaX equal to 0, xp NaN, division by zero! " << G4endl; exit(1);}
-      if (betaY==0) {G4cerr << __METHOD_NAME__ << "WARNING betaY equal to 0, yp NaN, division by zero! " << G4endl; exit(1);}
-
-      // temp numbers - to be replaced by parsed parameters
-      
-      G4double sigx = sqrt(betaX*emitX);
-      G4double sigxp= sqrt(emitX / betaX);
-      
-      G4double sigy = sqrt(betaY*emitY);
-      G4double sigyp= sqrt(emitY / betaY);
-      
-      partId++;
-      
-      G4double phase_factor = 1 / ( (nptwiss/2.) - 1.0 );
-      if(partId<=nptwiss/2) //primary - xx' ellipse
-	{
-	  x0 = sigx * cos(partId* 2 * CLHEP::pi*phase_factor);
-	  xp = -sigxp * ( -1*alphaX * cos(partId * 2 * CLHEP::pi*phase_factor )
-			  + sin(partId * 2 * CLHEP::pi*phase_factor ) );
-	  y0 = 0;
-	  yp = 0;
-	}
-      else if(partId<=nptwiss) //primary - yy' ellipse
-	{
-	  x0 = 0;
-	  xp = 0;
-	  y0 = sigy * cos( (partId-nptwiss/2)*2*CLHEP::pi*phase_factor);
-	  yp = -sigyp * ( -1*alphaY * cos( (partId-nptwiss/2) * 2 * CLHEP::pi*phase_factor)
-			  + sin( (partId-nptwiss/2) * 2 * CLHEP::pi*phase_factor) );
-	}
-      //tmp - check units of above equations!!
-      x0*=CLHEP::m;
-      y0*=CLHEP::m;
-      xp*=CLHEP::radian;
-      yp*=CLHEP::radian;
-      
-      E = BDSGlobalConstants::Instance()->GetBeamTotalEnergy() - BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
-      zp = sqrt(1-xp*xp-yp*yp);
-      t=0;
-      z0=0;
-      
-#ifdef DEBUG
-	G4cout << "x: " << x0/CLHEP::micrometer << " xp: " << xp/CLHEP::radian << G4endl;
-	G4cout << "y: " << y0/CLHEP::micrometer << " yp: " << yp/CLHEP::radian << G4endl;
-	G4cout << "z: " << z0/CLHEP::micrometer << " zp: " << zp/CLHEP::radian << G4endl;
-#endif
-        return;
-    } //end doTwiss && partId<nptwiss
-  
- 
  
   switch(distribType){
   case _REFERENCE: 

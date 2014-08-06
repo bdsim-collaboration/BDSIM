@@ -1,5 +1,5 @@
-include 9_UserFileTest.gmad
+include 9_UserFile.gmad
 include options.gmad
 include fodo.gmad;
 
-option, ngenerate=1000;
+option, ngenerate=10;

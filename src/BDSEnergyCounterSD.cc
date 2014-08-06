@@ -27,6 +27,8 @@
 #include "G4Version.hh"
 #include "G4SDManager.hh"
 
+#include <map>
+
 extern G4int event_number;
 
 
@@ -140,6 +142,53 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
    G4int    ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
    G4String volName    = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
    G4String regionName = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetRegion()->GetName();
+   
+   
+   G4VPhysicalVolume* thephsvol = aStep->GetPreStepPoint()->GetPhysicalVolume();
+   G4cout << "physical volume pointer " << thephsvol << G4endl;
+   G4cout << "physical volume name    " << thephsvol->GetName() << G4endl;
+   G4LogicalVolume* thevolume = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();
+   G4cout << "logical  volume pointer " << thevolume << G4endl;
+   G4cout << "logical  volume name    " << thevolume->GetName() << G4endl;
+   
+   typedef std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>::iterator it_type;
+   
+   it_type search = BDSGlobalConstants::Instance()->LogicalVolumeInfo()->find(thevolume);
+   G4double eloss_spos;
+   if (search == BDSGlobalConstants::Instance()->LogicalVolumeInfo()->end()){
+  //this means that the logical volume pointer doesn't exist in the map 
+  //checking this prevents segfaults
+  eloss_spos = -1.0*CLHEP::m; // set to unreal s position to identify and not fail
+}
+   else {
+     //G4cout <<"found it and find eloss position" << G4endl;
+  eloss_spos = BDSGlobalConstants::Instance()->GetLogicalVolumeInfo(thevolume)->GetSPos();
+  G4ThreeVector prestepposition = aStep->GetPreStepPoint()->GetPosition();
+  G4ThreeVector posstepposition = aStep->GetPostStepPoint()->GetPosition();
+  G4ThreeVector prestepposlocal = tf.TransformPoint(prestepposition);
+  G4ThreeVector posstepposlocal = tf.TransformPoint(posstepposition);
+  //G4cout << "local position " << localposition << G4endl;
+  eloss_spos += prestepposlocal.z();
+}
+
+   //std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* themap = BDSGlobalConstants::Instance()->LogicalVolumeInfo();
+
+
+  //G4double sposref = BDSGlobalConstants::Instance()->GetLogicalVolumeInfo(thevolume)->GetSPos();
+  //G4cout << "spos of eloss : " << sposref/CLHEP::m << G4endl;
+
+  //G4ThreeVector trialposb = aStep->GetPreStepPoint()->GetPosition();
+  // G4ThreeVector trialposa = aStep->GetPostStepPoint()->GetPosition();
+  //G4cout << "before : " << trialposb/CLHEP::m << G4endl;
+  //G4cout << "after  : " << trialposa/CLHEP::m << G4endl;
+  //G4ThreeVector prestepposition = aStep->GetTrack()->GetPosition();
+  //G4ThreeVector localposition   = tf.TransformPoint(prestepposition)/CLHEP::m;
+  //G4cout << "local position " << localposition << G4endl;
+   //   G4double eloss_spos = sposref + localposition.z();
+   
+   // G4cout << "final calcualted s pos of eloss : " << eloss_spos/CLHEP::m << G4endl;
+   //G4cout << "energy " << enrg << G4endl;
+
    G4bool precisionRegion = false;
    if (regionName.contains((G4String)"precisionRegion")) {
      precisionRegion=true;

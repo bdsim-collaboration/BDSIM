@@ -100,21 +100,10 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #endif
 
   event_number = evt->GetEventID();
-  
-  if(BDSGlobalConstants::Instance()->DoTwiss())
+
+  if ((event_number+1)%printModulo ==0)
     {
-      if(event_number==0) {
-	G4cout << "\n---> Calculating Twiss Parameters";
-	if(BDSGlobalConstants::Instance()->GetSynchRescale())
-	  G4cout<<" and Rescaling magnets" <<G4endl;
-      }
-    }
-  else
-    {
-      if (BDSGlobalConstants::Instance()->isReference==false && (event_number+1)%printModulo ==0)
-	{
-	  G4cout << "\n---> Begin of event: " << event_number << G4endl;
-	}
+      G4cout << "\n---> Begin of event: " << event_number << G4endl;
     }
   
   if(verboseEvent) G4cout << __METHOD_NAME__ << "event #"<<event_number<<G4endl ;
@@ -149,14 +138,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   G4cout<<"BDSEventAction : processing end of event action"<<G4endl;
 #endif
   
-  if(BDSGlobalConstants::Instance()->DoTwiss())
-    {
-      if(event_number==BDSExecOptions::Instance()->GetNPTwiss()-1)
-	{
-	  G4cout << "\n---> Done" <<G4endl;
-	  G4EventManager::GetEventManager()->GetStackManager()->clear();
-	}
-    }
   if(verboseEvent || verboseEventNumber == event_number){
     G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;
   }
@@ -246,16 +227,10 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   G4cout << __METHOD_NAME__ << " finished getting number of events per ntuple." << G4endl;
 #endif
 
-  // if doTwiss write out at end
-  if( BDSGlobalConstants::Instance()->DoTwiss() && (event_number==BDSExecOptions::Instance()->GetNPTwiss()-1)) {
-    bdsOutput->Commit(); // write and open new file
-  }
   
-  if( !BDSGlobalConstants::Instance()->DoTwiss() && 
-      (
-       (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0) || 
-       (event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate()
-       )
+  if( 
+     (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0) || 
+     (event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate()
       )
     {
 #ifdef DEBUG

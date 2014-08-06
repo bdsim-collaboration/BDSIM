@@ -54,7 +54,6 @@
 #include "BDSRunAction.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSThresholdCutSteppingAction.hh"
-#include "BDSTwissSteppingAction.hh"
 #include "BDSVerboseSteppingAction.hh"
 #include "BDSStackingAction.hh"
 #include "BDSUserTrackingAction.hh"
@@ -238,10 +237,7 @@ int main(int argc,char** argv) {
 #ifdef DEBUG 
   G4cout << __FUNCTION__ << "> User action - steppingaction"<<G4endl;
 #endif
-  if(BDSGlobalConstants::Instance()->DoTwiss()){
-    runManager->SetUserAction(new BDSTwissSteppingAction);
-  }
-  if((BDSExecOptions::Instance()->GetVerboseStep() || BDSExecOptions::Instance()->GetVerboseEventNumber() != -1) && (!BDSGlobalConstants::Instance()->GetSynchRescale()) ) {
+  if(BDSExecOptions::Instance()->GetVerboseStep()) {
     runManager->SetUserAction(new BDSVerboseSteppingAction);
   }
 
@@ -346,94 +342,6 @@ int main(int argc,char** argv) {
 #endif
     delete BDSGI;
   }
-
-
-  // Track nptwiss particles for beta functions 
-  // and SR Rescaling. SR rescaling is adjusting the magnet fields according to
-  // k-values considering the beam energy loss due to SR
-  //
-  if(BDSGlobalConstants::Instance()->DoTwiss())
-    {
-#ifdef DEBUG
-      G4cout << __METHOD_NAME__ << "Do Twiss"<<G4endl;
-#endif
-      // disable SR process if present - analytical formulae used in rescaling
-      G4ProcessManager *pManager = G4Electron::Electron()->GetProcessManager(); 	 
-      G4ProcessVector *procVec=pManager->GetProcessList(); 	 
-      G4int nProc=pManager->GetProcessListLength(); 	 
-      
-      
-      for(G4int iProc=0;iProc<nProc;iProc++) 	 
-	{ 	 
-	  G4String pName=(*procVec)[iProc]->GetProcessName(); 	 
-	  if(pName=="BDSSynchRad")  	 
-	    { 	 
-	      G4cout << __FUNCTION__ << "> Disabling SR"<<G4endl;
-	      pManager->SetProcessActivation(iProc, false);
-
-	    } 	 
-
-	  if(pName=="contSR")  	 
-	    { 	 
-	      G4cout << __FUNCTION__ << "> Enabling constSR"<<G4endl;
-	      pManager->SetProcessActivation(iProc, true);
-	      
-	    } 	 
-	}
-
-      // do not need secondaries whatsoever
-      BDSGlobalConstants::Instance()->SetStopTracks(true);
-
-      runManager->BeamOn(BDSExecOptions::Instance()->GetNPTwiss());
-
-      // Clear Stack
-      G4EventManager::GetEventManager()->GetStackManager()->ClearPostponeStack();
-      
-      // turn  SR back on
-      BDSGlobalConstants::Instance()->SetSynchTrackPhotons(options.synchTrackPhotons);
-
-      //restore the stoptracks flag
-      BDSGlobalConstants::Instance()->SetStopTracks(options.stopTracks);
-
-      for(G4int iProc=0;iProc<nProc;iProc++) 	 
-	{ 	 
-	  G4String pName=(*procVec)[iProc]->GetProcessName(); 	 
-	  if(pName=="BDSSynchRad")  	 
-	    { 	 
-	      G4cout<< __FUNCTION__ << "> Enabling SR"<<G4endl;
-	      pManager->SetProcessActivation(iProc, true);
-	      
-	    } 	 
-
-	  if(pName=="contSR")  	 
-	    { 	 
-	      G4cout<<"Disabling constSR"<<G4endl;
-	      pManager->SetProcessActivation(iProc, false);
-	      
-	    } 	 
-
-	}
-
-      G4cout<<"done"<<G4endl;
-    
-    }
-  
-  // now turn off SR Rescaling 
-  BDSGlobalConstants::Instance()->SetDoTwiss(false);
-  BDSGlobalConstants::Instance()->SetSynchRescale(false);
-
-
-  //
-  // Start the simulation
-  // If not running in batch:
-  //   1) start interactive session
-  //   2) if visualisation requested, initialise visual manager
-  //   3) execute visualisation macro (defined with option --vis_mac)
-  //   4) wait for user input
-  // else 
-  //   generate and track the particles of the bunch as 
-  //   defined by the user in the gmad input file
-  //
 
   if(!BDSExecOptions::Instance()->GetBatch())   // Interactive mode
     {

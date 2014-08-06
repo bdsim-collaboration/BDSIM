@@ -60,6 +60,7 @@
 #include "BDSEnergyCounterSD.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTerminator.hh"
+#include "BDSLogicalVolumeInfo.hh"
 
 #include "BDSComponentFactory.hh"
 #include "BDSSampler.hh"
@@ -179,10 +180,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 
 
 G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_list)
-{
-  // set default output formats:
-  G4cout.precision(10);
-  
+{  
   std::list<struct Element>::iterator it;
 
   // prepare materials for this run
@@ -579,7 +577,21 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	//------------
 	int nCopy=(*LogVolCount)[LogVolName]-1;
 	(*LogVolCount)[LogVolName]++;
-
+	
+	/*
+	// now register the spos and other info of this sensitive volume in global map
+	// used by energy counter sd to get spos of that logical volume at histogram time
+	BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
+	BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( thecurrentitem->GetName(),
+								  thecurrentitem->GetSPos() );
+	BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(SensVol,theinfo);
+	*/
+	// now register the spos and other info of this sensitive volume in global map
+	    // used by energy counter sd to get spos of that logical volume at histogram time
+	    BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
+	    BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( LogVolName,
+								 thecurrentitem->GetSPos() );
+	    BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(LocalLogVol,theinfo);
 
 	// add the volume to one of the regions
 	if(BDSBeamline::Instance()->currentItem()->GetPrecisionRegion())
@@ -604,6 +616,12 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	    //use already defined instance of Ecounter sd
 	    BDSBeamline::Instance()->currentItem()->SetBDSEnergyCounter(ECounter);
 	    SensVol->SetSensitiveDetector(ECounter);
+	    //register any volume that an ECounter is attaached to
+	    BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
+	    BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( thecurrentitem->GetName(),
+								      thecurrentitem->GetSPos() );
+	    BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(SensVol,theinfo);
+	    
 	  }
 
 #ifdef DEBUG
@@ -617,7 +635,13 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	      {
 		//use already defined instance of Ecounter sd
 		BDSBeamline::Instance()->currentItem()->SetBDSEnergyCounter(ECounter);
-		MultipleSensVols.at(i)->SetSensitiveDetector(ECounter);	     
+		MultipleSensVols.at(i)->SetSensitiveDetector(ECounter);	
+		//register any volume that an ECounter is attaached to
+		BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
+		BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( MultipleSensVols.at(i)->GetName(),
+									  thecurrentitem->GetSPos() );
+		BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(MultipleSensVols.at(i),theinfo);
+		//G4cout << "multiplesensvols["<<i<<"] - name : "<<MultipleSensVols.at(i)->GetName() << G4endl;
 		
 		if(gflash){
 		  if((MultipleSensVols.at(i)->GetRegion() != precisionRegion) && (BDSBeamline::Instance()->currentItem()->GetType()==_ELEMENT)){//If not in the precision region....
@@ -774,6 +798,32 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
       }
     }
 
+#ifdef DEBUG
+  // check of logvolinfo
+  // LN TEST
+  typedef std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>::iterator it_type;
+  std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* themap = BDSGlobalConstants::Instance()->LogicalVolumeInfo();
+  //for (it_type iterator = themap->begin(); iterator != themap->end(); iterator++){
+    //G4cout << "pointer : " << iterator->first << "\tname : " << iterator->second->GetName() << "\t" 
+    //	   << iterator->second->GetSPos()/CLHEP::m << G4endl;
+  //}
+  G4cout << themap->size() << G4endl;
+
+  //LN TEST of spos
+  for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
+    {
+      G4double currentspos = BDSBeamline::Instance()->currentItem()->GetSPos();
+      G4String currentname = BDSBeamline::Instance()->currentItem()->GetName();
+      G4cout << "name : " << currentname << "\t" 
+	     << "spos : " << currentspos/CLHEP::m << " m" <<G4endl
+	     << "length   : " << BDSBeamline::Instance()->currentItem()->GetLength()/CLHEP::m << " m" << G4endl
+	     << "xlength  : " << BDSBeamline::Instance()->currentItem()->GetXLength()/CLHEP::m << " m" << G4endl
+	     << "ylength  : " << BDSBeamline::Instance()->currentItem()->GetYLength()/CLHEP::m << " m" << G4endl
+	     << "zlength  : " << BDSBeamline::Instance()->currentItem()->GetZLength()/CLHEP::m << " m" << G4endl
+	     << G4endl;
+    }
+  
+#endif
   // construct tunnel
   for(it = beamline_list.begin();it!=beamline_list.end();it++)
     {

@@ -50,36 +50,9 @@ G4bool BDSDumpSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4Track* theTrack=aStep->GetTrack();
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   
-  // postpone the track
-  //  if(theTrack->GetParentID() == 0){
   //Check if the particle is on the boundary 
   if(preStepPoint->GetStepStatus()==fGeomBoundary){
-    if(BDSGlobalConstants::Instance()->isReference){
-      G4double referenceTime = theTrack->GetGlobalTime();
-#ifdef DEBUG 
-      G4cout << __METHOD_NAME__  << "refTime= " << referenceTime <<G4endl;
-      G4cout << __METHOD_NAME__  << theTrack->GetVolume()->GetName() << G4endl;
-#endif
-      if(lastVolume!=theTrack->GetVolume()->GetName())
-	BDSGlobalConstants::Instance()->referenceQueue.at(nCounter++)[trackCounter] = referenceTime;
-      
-#ifdef DEBUG 
-      G4cout << __METHOD_NAME__  << "Track: " << trackCounter
-	     << " Dump : " << nCounter 
-	     << " Time: " << referenceTime << G4endl;
-#endif
-      
-      if(nCounter==BDSGlobalConstants::Instance()->referenceQueue.size()){ 
-	// ( BDSDump::GetNumberOfDumps() )
-	nCounter=0;
-	++trackCounter;
-	lastVolume="";
-      }
-      
-      lastVolume = theTrack->GetVolume()->GetName();
-      //    theTrack->SetGlobalTime(0);
-    }
-    else if(abs(theTrack->GetDefinition()->GetPDGEncoding()) == 11){
+    if(abs(theTrack->GetDefinition()->GetPDGEncoding()) == 11){
 #ifdef DEBUG
       G4cout << __METHOD_NAME__ <<"Dump: postponing track..."<<G4endl;
 #endif

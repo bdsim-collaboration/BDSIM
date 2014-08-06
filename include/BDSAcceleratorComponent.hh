@@ -140,7 +140,6 @@ public:
 
   // in case a mapped field is provided creates a field mesh in global coordinates
   virtual void PrepareField(G4VPhysicalVolume *referenceVolume); 
-  virtual void SynchRescale(G4double factor); 
 
   // in case a component requires specific alignment (e.g. SQL/BDSElement)
   virtual void AlignComponent(G4ThreeVector& TargetPos, 
@@ -480,8 +479,7 @@ inline void
 BDSAcceleratorComponent::SetBDSEnergyCounter(BDSEnergyCounterSD* anBDSEnergyCounter)
 {itsBDSEnergyCounter=anBDSEnergyCounter;}
 
-inline  
-void BDSAcceleratorComponent::SetSensitiveVolume(G4LogicalVolume* aLogVol)
+inline  void BDSAcceleratorComponent::SetSensitiveVolume(G4LogicalVolume* aLogVol)
 {itsSensitiveVolume=aLogVol;}
 
 inline  G4LogicalVolume* BDSAcceleratorComponent::GetSensitiveVolume()

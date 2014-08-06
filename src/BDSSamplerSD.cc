@@ -65,17 +65,12 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
 
 G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
-  //Do not store hit if particles is "twiss" or "reference"
-  if(BDSGlobalConstants::Instance()->DoTwiss() || BDSGlobalConstants::Instance()->isReference) return false;
-
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   //  G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
   //  // tmp - only store muons
   //     G4String pName=theTrack->GetDefinition()->GetParticleName();
   //    if(pName=="mu+"||pName=="mu-")
   // 	{ // tm
-  //Do not store hit if particles is "twiss" or "reference"
-  if(BDSGlobalConstants::Instance()->DoTwiss() || BDSGlobalConstants::Instance()->isReference) return false;
   //Do not store hit if the particle is not on the boundary 
   if(preStepPoint->GetStepStatus()!=fGeomBoundary) return false;
 

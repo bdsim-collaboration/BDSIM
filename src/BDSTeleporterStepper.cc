@@ -20,6 +20,7 @@ BDSTeleporterStepper::BDSTeleporterStepper(G4Mag_EqRhs *EqRhs)
   verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
   nvar               = 6;
   turnnumberrecord.push_back((G4int)-1);
+  turnstaken         = 0;
   teleporterdelta    = BDSGlobalConstants::Instance()->GetTeleporterDelta();
 }
 

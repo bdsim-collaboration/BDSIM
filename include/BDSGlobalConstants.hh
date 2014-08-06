@@ -18,6 +18,8 @@ Last modified 30.10.2007 by Steve Malton
 #include "G4AffineTransform.hh"
 
 #include "BDSParticle.hh"
+#include "G4LogicalVolume.hh"
+#include "BDSLogicalVolumeInfo.hh"
 
 class G4FieldManager;
 class G4ParticleDefinition;
@@ -46,8 +48,6 @@ public:
   
   G4bool   GetDoPlanckScattering();
   G4bool   GetCheckOverlaps();
-  G4bool   DoTwiss();
-  void     SetDoTwiss(G4bool val); 
   G4double GetMinimumEpsilonStep();
   G4double GetMaximumEpsilonStep();
   G4double GetMaxTime();
@@ -141,8 +141,6 @@ public:
   void     SetPhysListName(G4String val);
   G4bool   GetSynchRadOn();
   G4bool   GetDecayOn();
-  G4bool   GetSynchRescale();
-  void     SetSynchRescale(G4bool srRescale);
   G4bool   GetSynchTrackPhotons();
   void     SetSynchTrackPhotons(G4bool srTrackPhotons);
   G4double GetSynchLowX();
@@ -212,8 +210,17 @@ public:
   G4ThreeVector GetTeleporterDelta();
   void          SetTeleporterDelta(G4ThreeVector newteleporterdelta);
   void          SetTeleporterLength(G4double newteleporterlength);
-  G4double      GetTeleporterLength();  
+  G4double      GetTeleporterLength(); 
 
+  // for general info about a logical volume - extendable data class
+  // nominally used to get s position for energy loss
+  // get the info for a given logical volume pointer
+  BDSLogicalVolumeInfo* GetLogicalVolumeInfo(G4LogicalVolume* logvolpointer);
+  // get a pointer to the map of log vol infos
+  std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* LogicalVolumeInfo(); 
+  // add a new set of info to the map
+  void AddLogicalVolumeInfo(G4LogicalVolume* logvolpointer, BDSLogicalVolumeInfo* bdslogvolinfo);
+  
   // SPM : temp filestream for placet to read and write
   //  std::ofstream fileDump;
   // ifstream fileRead; replaced with FILE* fifo in code for consistency with Placet. SPM
@@ -221,10 +228,6 @@ public:
   std::deque<BDSParticle> holdingQueue;
   std::deque<BDSParticle> outputQueue;
   std::deque<BDSParticle> transformedQueue;
-  /// queue to store global times of reference bunches in BDSDumps
-  std::deque<G4double*> referenceQueue;
-  /// particles are reference bunches
-  G4bool isReference;
 
 protected:
   BDSGlobalConstants(struct Options&);
@@ -300,7 +303,6 @@ private:
   G4String itsPhysListName;
   G4bool   itsSynchRadOn;
   G4bool   itsDecayOn;
-  G4bool   itsSynchRescale;
   G4bool   itsSynchTrackPhotons;
   G4double itsSynchLowX;
   G4double itsSynchLowGamE;
@@ -314,7 +316,6 @@ private:
   G4bool   itsLaserwireTrackPhotons;
   G4bool   itsLaserwireTrackElectrons;
   G4bool   itsTurnOnCerenkov;
-  G4bool   doTwiss;
   G4bool   itsDoPlanckScattering;
   G4bool   itsCheckOverlaps;
   G4bool   itsStoreMuonTrajectories;
@@ -383,6 +384,8 @@ private:
   G4double      teleporterlength;
   // beamline length
   G4double itsZMax;
+  // logical volume info
+  std::map<G4LogicalVolume* , BDSLogicalVolumeInfo*> logicalvolumeinfo;
 };
 
 inline G4double BDSGlobalConstants::GetElossHistoBinWidth()
@@ -633,12 +636,6 @@ inline G4bool BDSGlobalConstants::GetSynchRadOn()
 inline G4bool BDSGlobalConstants::GetDecayOn()
 {return itsDecayOn;}
 
-inline G4bool BDSGlobalConstants::GetSynchRescale()
-{return itsSynchRescale;}
-
-inline void BDSGlobalConstants::SetSynchRescale(G4bool srRescale)
-{itsSynchRescale = srRescale;}
-
 inline G4bool BDSGlobalConstants::GetSynchTrackPhotons()
 {return itsSynchTrackPhotons ;}
 
@@ -756,12 +753,6 @@ inline G4String BDSGlobalConstants::GetTunnelCavityMaterialName()
 // inline G4double BDSGlobalConstants::GetSynchPrimaryLength()
 // {return itsSynchPrimaryLength;}
 
-inline G4bool BDSGlobalConstants::DoTwiss() 
-{return doTwiss;}
-
-inline void BDSGlobalConstants::SetDoTwiss(G4bool val) 
-{doTwiss = val;}
-
 inline G4bool BDSGlobalConstants::GetDoPlanckScattering() 
 {return itsDoPlanckScattering;}
 
@@ -856,6 +847,15 @@ inline void BDSGlobalConstants::SetTeleporterLength(G4double newteleporterlength
 
 inline G4double BDSGlobalConstants::GetTeleporterLength()
 {return teleporterlength;}
+
+inline BDSLogicalVolumeInfo* BDSGlobalConstants::GetLogicalVolumeInfo(G4LogicalVolume* logvolpointer)
+{return logicalvolumeinfo[logvolpointer];}
+
+inline void BDSGlobalConstants::AddLogicalVolumeInfo(G4LogicalVolume* logvolpointer, BDSLogicalVolumeInfo* logvolinfo)
+{logicalvolumeinfo[logvolpointer] = logvolinfo;}
+
+inline std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* BDSGlobalConstants::LogicalVolumeInfo()
+{return &logicalvolumeinfo;}
 
 // UNUSED INLINE FUNCTIONS
 

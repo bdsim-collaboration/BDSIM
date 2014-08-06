@@ -45,8 +45,6 @@ BDSDump::BDSDump (G4String aName,G4double aLength, G4String aTunnelMaterial):
 {
   SetName("Dump_"+BDSGlobalConstants::Instance()->StringFromInt(nDumps)+"_"+itsName);
   DumpLogicalVolume();
-  const int nParticles = BDSExecOptions::Instance()->GetNPTwiss();
-  BDSGlobalConstants::Instance()->referenceQueue.push_back(new G4double[nParticles]);
   ++nDumps;
   //G4int nDumps=(*LogVolCount)[itsName];
   //BDSRoot->SetDumpNumber(nDumps);

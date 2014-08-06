@@ -158,10 +158,6 @@ void Options::set_value(std::string name, double value )
       turnOnCerenkov = (int)value; return;
   }
 
-  if(name == "srRescale") {
-      synchRescale = (int)value; return;
-  }
-
   if(name == "srTrackPhotons") {
     synchTrackPhotons = (int)value; return;
   }
@@ -202,7 +198,6 @@ void Options::set_value(std::string name, double value )
   if(name == "alfy" ) { alfy = value; return; }
   if(name == "emitx" ) { emitx = value; return; }
   if(name == "emity" ) { emity = value; return; }
-  if(name == "doTwiss" ) { doTwiss = (int) value; return; }
   if(name == "doPlanckScattering" ) { doPlanckScattering = (int) value; return; }
   if(name == "checkOverlaps" ) { checkOverlaps = (int) value; return; }
 
