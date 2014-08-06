@@ -37,18 +37,18 @@ void BDSBunchUserFile::ParseFileFormat(){
     
     
     unparsed_str = unparsed_str.substr(pos+1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
     G4cout<< "BDSBunch : " <<"token -> "<<token<<G4endl;
     G4cout<< "BDSBunch : token.substr(0,1) -> " << token.substr(0,1) << G4endl;
     G4cout<< "BDSBunch : " <<"unparsed_str -> "<<unparsed_str<<G4endl;
     G4cout<< "BDSBunch : " <<"pos -> "<<pos<<G4endl;
 #endif
     if(token.substr(0,1)=="E") {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"E!"<<G4endl;
 #endif
       G4String rest = token.substr(1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"rest ->"<<rest<<G4endl;
 #endif
       G4int pos1 = rest.find("[");
@@ -57,7 +57,7 @@ void BDSBunchUserFile::ParseFileFormat(){
 	G4cerr<<"unit format wrong!!!"<<G4endl;
       } else {
 	G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	G4cout<< "BDSBunch : " <<"fmt ->"<<fmt<<G4endl;
 #endif
 	      sd.name = "E"; 
@@ -70,11 +70,11 @@ void BDSBunchUserFile::ParseFileFormat(){
 	      fields.push_back(sd);
       }
     } else if(token.substr(0,1)=="P") {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"P!"<<G4endl;
 #endif
       G4String rest = token.substr(1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"rest ->"<<rest<<G4endl;
 #endif
       G4int pos1 = rest.find("[");
@@ -83,7 +83,7 @@ void BDSBunchUserFile::ParseFileFormat(){
 	G4cerr<<"unit format wrong!!!"<<G4endl;
       } else {
 	G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	G4cout<< "BDSBunch : " <<"fmt ->"<<fmt<<G4endl;
 #endif
 	sd.name = "P"; 
@@ -96,11 +96,11 @@ void BDSBunchUserFile::ParseFileFormat(){
 	fields.push_back(sd);
       }
     } else if(token.substr(0,1)=="t") {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"t!"<<G4endl;
 #endif
       G4String rest = token.substr(1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"rest ->"<<rest<<G4endl;
 #endif
       G4int pos1 = rest.find("[");
@@ -109,7 +109,7 @@ void BDSBunchUserFile::ParseFileFormat(){
 	G4cerr<<"unit format wrong!!!"<<G4endl;
       } else {
 	G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	G4cout<< "BDSBunch : " <<"fmt ->"<<fmt<<G4endl;
 #endif
 	sd.name = "t"; 
@@ -125,11 +125,11 @@ void BDSBunchUserFile::ParseFileFormat(){
 	
       }
     } else if( (token.substr(0,1)=="x") && (token.substr(1,1)!="p") ) {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"x!"<<G4endl;
 #endif
       G4String rest = token.substr(1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"rest ->"<<rest<<G4endl;
 #endif
       G4int pos1 = rest.find("[");
@@ -138,7 +138,7 @@ void BDSBunchUserFile::ParseFileFormat(){
 	G4cerr<<"unit format wrong!!!"<<G4endl;
       } else {
 	G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	G4cout<< "BDSBunch : " <<"fmt ->"<<fmt<<G4endl;
 #endif
 	sd.name="x";
@@ -153,11 +153,11 @@ void BDSBunchUserFile::ParseFileFormat(){
 	
       }
     }else if(token.substr(0,1)=="y" && token.substr(1,1)!="p" ) {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"y!"<<G4endl;
 #endif
       G4String rest = token.substr(1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"rest ->"<<rest<<G4endl;
 #endif
       G4int pos1 = rest.find("[");
@@ -166,7 +166,7 @@ void BDSBunchUserFile::ParseFileFormat(){
 	G4cerr<<"unit format wrong!!!"<<G4endl;
       } else {
 	G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	G4cout<< "BDSBunch : " <<"fmt ->"<<fmt<<G4endl;
 #endif
 	sd.name="y";
@@ -180,11 +180,11 @@ void BDSBunchUserFile::ParseFileFormat(){
 	fields.push_back(sd);
       }
     }else if(token.substr(0,1)=="z" && token.substr(1,1)!="p" ) {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"z!"<<G4endl;
 #endif
       G4String rest = token.substr(1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"rest ->"<<rest<<G4endl;
 #endif
       G4int pos1 = rest.find("[");
@@ -193,7 +193,7 @@ void BDSBunchUserFile::ParseFileFormat(){
 	G4cerr<<"unit format wrong!!!"<<G4endl;
       } else {
 	G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	G4cout<< "BDSBunch : " <<"fmt ->"<<fmt<<G4endl;
 #endif
 	sd.name="z";
@@ -207,11 +207,11 @@ void BDSBunchUserFile::ParseFileFormat(){
 	fields.push_back(sd);
       }
     } else if(token.substr(0,2)=="xp") {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"xp!"<<G4endl;
 #endif
       G4String rest = token.substr(2);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"rest ->"<<rest<<G4endl;
 #endif
       G4int pos1 = rest.find("[");
@@ -220,7 +220,7 @@ void BDSBunchUserFile::ParseFileFormat(){
 	G4cerr<<"unit format wrong!!!"<<G4endl;
       } else {
 	G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	G4cout<< "BDSBunch : " <<"fmt ->"<<fmt<<G4endl;
 #endif
 	sd.name="xp";
@@ -233,11 +233,11 @@ void BDSBunchUserFile::ParseFileFormat(){
 	
       }
     }else if(token.substr(0,2)=="yp") {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"yp!"<<G4endl;
 #endif
       G4String rest = token.substr(2);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"rest ->"<<rest<<G4endl;
 #endif
       G4int pos1 = rest.find("[");
@@ -246,7 +246,7 @@ void BDSBunchUserFile::ParseFileFormat(){
 	G4cerr<<"unit format wrong!!!"<<G4endl;
       } else {
 	G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	G4cout<< "BDSBunch : " <<"fmt ->"<<fmt<<G4endl;
 #endif
 	sd.name="yp";
@@ -258,11 +258,11 @@ void BDSBunchUserFile::ParseFileFormat(){
 	fields.push_back(sd);
       }
     } else if(token.substr(0,2)=="zp") {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"zp!"<<G4endl;
 #endif
       G4String rest = token.substr(2);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"rest ->"<<rest<<G4endl;
 #endif
       G4int pos1 = rest.find("[");
@@ -271,7 +271,7 @@ void BDSBunchUserFile::ParseFileFormat(){
 	G4cerr<<"unit format wrong!!!"<<G4endl;
       } else {
 	G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	G4cout<< "BDSBunch : " <<"fmt ->"<<fmt<<G4endl;
 #endif
 	sd.name="zp";
@@ -283,14 +283,14 @@ void BDSBunchUserFile::ParseFileFormat(){
 	fields.push_back(sd);
       }
     }else if(token.substr(0,2)=="pt") {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"pt!"<<G4endl;
 #endif
       sd.name="pt";
       sd.unit=1;
       fields.push_back(sd);
     } else if(token.substr(0,1)=="w") {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<"weight!"<<G4endl;
 #endif
       sd.name="weight";
@@ -298,7 +298,7 @@ void BDSBunchUserFile::ParseFileFormat(){
       fields.push_back(sd);
     } else if (token.substr(0,1)=="-") {
       // skip
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : skip token " <<G4endl;
 #endif
       sd.name="skip";
@@ -337,7 +337,7 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   G4int type;
   
   //Skip the a number of lines defined by the user option.
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<< "BDSBunch : " <<"UDEF_BUNCH: skipping "<<nlinesIgnore<<"  lines"<<G4endl;
 #endif
   skip((G4int)(nlinesIgnore * fields.size()));
@@ -345,17 +345,17 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   std::list<struct BDSBunchUserFile::Doublet>::iterator it;
   for(it=fields.begin();it!=fields.end();it++)
     {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunch : " <<it->name<<"  ->  "<<it->unit<<G4endl;
 #endif
       if(it->name=="E") { 
 	ReadValue(E); E *= ( CLHEP::GeV * it->unit ); 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	G4cout << "******** Particle Mass = " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() << G4endl;
 	G4cout << "******** Particle Total Energy = " << E << G4endl;
 #endif
 	E-=BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
 	G4cout<< "BDSBunch : " << E <<G4endl;
 #endif
@@ -366,7 +366,7 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 	G4double particleMass = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
 	G4double totalEnergy = sqrt(P*P + particleMass*particleMass);
 	E = totalEnergy - particleMass;
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	G4cout << "******** Particle Mass = " << particleMass << G4endl;
 	G4cout << "******** Particle Total Energy = " << totalEnergy << G4endl;
 	G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
@@ -375,19 +375,19 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
       }
       else if(it->name=="t") { ReadValue(t); t *= ( CLHEP::s * it->unit ); tdef = true; }
       else if(it->name=="x") { ReadValue(x0); x0 *= ( CLHEP::m * it->unit ); 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	G4cout<< "BDSBunch : " << x0 <<G4endl;
 #endif
       }
       else if(it->name=="y") { 
 	ReadValue(y0); y0 *= ( CLHEP::m * it->unit ); 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	G4cout<< "BDSBunch : " << y0 <<G4endl;
 #endif
       }
       else if(it->name=="z") { 
 	ReadValue(z0); z0 *= ( CLHEP::m * it->unit ); 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	G4cout<< "BDSBunch : " << z0 <<G4endl;
 #endif
       }
@@ -427,7 +427,7 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 template <typename Type> G4bool  BDSBunchUserFile::ReadValue(Type &value){
   InputBunchFile>>value; 
   if (InputBunchFile.eof()){ //If the end of the file is reached go back to the beginning of the file.
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSBunch.cc> End of file reached. Returning to beginning of file." << G4endl;
 #endif
     CloseBunchFile();

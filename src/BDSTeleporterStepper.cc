@@ -13,7 +13,7 @@ BDSTeleporterStepper::BDSTeleporterStepper(G4Mag_EqRhs *EqRhs)
    : G4MagIntegratorStepper(EqRhs,6)  // integrate over 6 variables only !!
                                        // position & velocity
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSTeleporterStepper Constructor " << G4endl;
 #endif
   verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
@@ -40,7 +40,7 @@ void BDSTeleporterStepper::AdvanceHelix( const G4double  yIn[],
   turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
   
   
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << " Telporter Stepper" << G4endl;
   G4cout << "turnstaken " << turnstaken << G4endl;
 #endif

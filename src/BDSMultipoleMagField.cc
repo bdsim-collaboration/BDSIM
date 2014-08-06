@@ -20,7 +20,7 @@
 BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4double> ks)
 {
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
     G4cout<<"Creating BDSMultipoleMagField"<<G4endl;
     G4cout<<"size="<<kn.size()<<G4endl;
 #endif
@@ -36,7 +36,7 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
   G4double brho = ( momentum / (0.299792458 * fabs(charge)));
   // rigidity (in Geant4 units)
   brho *= (CLHEP::tesla*CLHEP::m);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
     G4cout<<"beam charge="<<charge<<"e"<<G4endl;
     G4cout<<"beam momentum="<<momentum<<"GeV/c"<<G4endl;
     G4cout<<"rigidity="<<brho/(CLHEP::tesla*CLHEP::m)<<"T*m"<<G4endl;
@@ -54,14 +54,14 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
   for(it=bn.begin(), its=bs.begin();it!=bn.end();it++, its++)
     {
       n++;
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<<2*n<<"-pole strengths:"<<G4endl;
       G4cout<<"Kn : "<<(*it )<<"m^-"<<n<<G4endl;
       G4cout<<"Ks : "<<(*its)<<"m^-"<<n<<G4endl;
 #endif
       (*it) *= brho/pow(CLHEP::m,n);
       (*its) *= brho/pow(CLHEP::m,n);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<<2*n<<"-pole field coefficients:"<<G4endl;
       G4cout<<"Bn : "<<(*it )<<"T/m^"<<n-1<<G4endl;
       G4cout<<"Bs : "<<(*its)<<"T/m^"<<n-1<<G4endl;
@@ -70,7 +70,7 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
 
   // write field map to debug file
   /*
-    #ifdef DEBUG 
+    #ifdef BDSDEBUG 
     G4cout<<"Writing field map to file field.txt"<<G4endl;
     
     testf.open("field.txt");
@@ -98,7 +98,7 @@ BDSMultipoleMagField::~BDSMultipoleMagField(){}
 void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
 		       G4double *Bfield ) const
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout<<"Called GetFieldValue at position (in global coordinates): ("
         <<Point[0]/CLHEP::cm<<" "<<Point[1]/CLHEP::cm<<" "<<Point[2]/CLHEP::cm
         <<")cm"<<G4endl;
@@ -118,7 +118,7 @@ void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
   G4AffineTransform GlobalAffine=MulNavigator->GetGlobalToLocalTransform();
   LocalR=GlobalAffine.TransformPoint(GlobalR); 
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout<<"Current position in local coordinates: ("
         <<LocalR[0]/CLHEP::cm<<" "<<LocalR[1]/CLHEP::cm<<" "<<LocalR[2]/CLHEP::cm
         <<") cm"<<G4endl;
@@ -145,7 +145,7 @@ void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
   if(fabs(r)>1.e-11*CLHEP::m) phi = atan2(LocalR[1],LocalR[0]);
   else phi = 0; // don't care
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<<"In local coordinates, r= "<<r/CLHEP::m<<"m, phi="<<phi<<"rad"<<G4endl;
 #endif
 
@@ -174,7 +174,7 @@ void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
   LocalBField[1]=( br*sin(phi)+bphi*cos(phi) );
   LocalBField[2]=0;
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<<"order="<<order<<G4endl;
   G4cout<<"In local coordinates:"<<G4endl
         <<"Br="<<br/CLHEP::tesla<<"T, Bphi="<<bphi/CLHEP::tesla<<"T, "

@@ -106,7 +106,7 @@ void BDSCollimator::BuildInnerCollimator()
   if(itsYAper <= 0) itsYAper = DBL_MIN;//BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
 
   if( (itsXAper>0) && (itsYAper>0) ){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSCollimator: building aperture" << G4endl;
 #endif
     if(itsType == "rcol")
@@ -164,7 +164,7 @@ void BDSCollimator::BuildInnerCollimator()
 		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		     // copy number  
 
   if( (itsXAper>0) && (itsYAper>0) ){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSCollimator: placing aperture" << G4endl;
 #endif
     itsPhysiComp2 = 
@@ -183,7 +183,7 @@ void BDSCollimator::BuildInnerCollimator()
     SetSensitiveVolume(itsSolidLogVol);
   }
   SetMultiplePhysicalVolumes(itsPhysiComp);
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSCollimator: finished building geometry" << G4endl;
 #endif
 }

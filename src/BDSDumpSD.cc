@@ -53,7 +53,7 @@ G4bool BDSDumpSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   //Check if the particle is on the boundary 
   if(preStepPoint->GetStepStatus()==fGeomBoundary){
     if(abs(theTrack->GetDefinition()->GetPDGEncoding()) == 11){
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ <<"Dump: postponing track..."<<G4endl;
 #endif
       BDSGlobalConstants::Instance()->setWaitingForDump(true);

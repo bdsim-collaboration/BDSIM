@@ -81,7 +81,7 @@ BDSTerminator::~BDSTerminator()
 void AddTerminatorToEndOfBeamline(ElementList* beamline_list)
 {
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << ": adding terminator element to end of beamline" << G4endl;
 #endif
   //based on void add_sampler in parser.h

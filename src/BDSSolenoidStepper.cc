@@ -47,7 +47,7 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
   Bz = itsBField;
 
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "BDSSolenoidStepper: step= " << h/CLHEP::m << " m" << G4endl;
   G4cout << "BDSSolenoidStepper: initial point in global coordinates:" << G4endl
          << " x= " << yIn[0]/CLHEP::m << "m" << G4endl
@@ -83,7 +83,7 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
   G4ThreeVector LocalR = GlobalAffine.TransformPoint(GlobalR); 
   G4ThreeVector LocalRp = GlobalAffine.TransformAxis(GlobalRp);
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSSolenoidStepper: initial point in local coordinates:" << G4endl
          << " x= " << LocalR[0]/CLHEP::m << "m" << G4endl
          << " y= " << LocalR[1]/CLHEP::m << "m" << G4endl
@@ -136,7 +136,7 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
       G4double dz = h / sqrt(1. + pow(2.*CLHEP::pi*R/pitch,2));
       G4double dtheta = 2*CLHEP::pi*dz/pitch*R/fabs(R);
       
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout << "Parameters of helix: " << G4endl
              << " R= " << R/CLHEP::m << " m" << G4endl
              << " pitch= " << pitch/CLHEP::m << " m" <<G4endl
@@ -183,7 +183,7 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
       itsDist=0.;
     }
   
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "BDSSolenoidStepper: final point in local coordinates:" << G4endl
          << " x= " << itsFinalR[0]/CLHEP::m << "m" << G4endl
          << " y= " << itsFinalR[1]/CLHEP::m << "m" << G4endl
@@ -210,7 +210,7 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
   yOut[4] = GlobalP.y();
   yOut[5] = GlobalP.z();
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "BDSSolenoidStepper: final point in global coordinates:" << G4endl
          << " x= " << yOut[0]/CLHEP::m << "m" << G4endl
          << " y= " << yOut[1]/CLHEP::m << "m" << G4endl

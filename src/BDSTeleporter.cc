@@ -32,7 +32,7 @@ BDSTeleporter::BDSTeleporter(G4String name,
 			  0,
 			  SetVisAttributes())
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " Constructing Teleporter of length: " 
 	 << length/CLHEP::m << " m" << G4endl;
 #endif
@@ -60,7 +60,7 @@ void BDSTeleporter::CreateTeleporterLogicalVolume()
   
 void BDSTeleporter::CreateBFieldAndStepper()
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSTeleporter Build Stepper & Field " << G4endl;
 #endif
   // set up the magnetic field and stepper
@@ -97,7 +97,7 @@ G4VisAttributes* BDSTeleporter::SetVisAttributes()
 {
   //make it visible if debug build and invisible otherwise
   itsVisAttributes = new G4VisAttributes(G4Colour(0.852,0.438,0.836,0.5));
-#if defined DEBUG
+#if defined BDSDEBUG
   itsVisAttributes->SetVisibility(true);
 #else
   itsVisAttributes->SetVisibility(false);
@@ -112,7 +112,7 @@ void CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
   G4ThreeVector* lastitemposition   = thebeamline->GetLastPosition();
   G4ThreeVector* firstitemposition  = thebeamline->GetFirstPosition();
   G4ThreeVector  delta              = *lastitemposition/CLHEP::m - *firstitemposition/CLHEP::m;
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Calculating Teleporter delta" << G4endl;
   G4cout << "last item position  : " << *lastitemposition/CLHEP::m << G4endl;
   G4cout << "first item position : " << *firstitemposition/CLHEP::m << G4endl;
@@ -133,7 +133,7 @@ void CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
 
 void AddTeleporterToEndOfBeamline(ElementList* beamline_list)
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << ": adding teleporter element to end of beamline" << G4endl;
 #endif
   //based on void add_sampler in parser.h

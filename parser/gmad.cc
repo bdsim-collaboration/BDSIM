@@ -222,7 +222,7 @@ int gmad_parser(FILE *f)
 
   yyin=f; 
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "gmad_parser> beginning to parse file" << std::endl;
 #endif
 
@@ -231,13 +231,13 @@ int gmad_parser(FILE *f)
       yyparse();
     }
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "gmad_parser> finished to parsing file" << std::endl;
 #endif
 
   // clear temporary stuff
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "gmad_parser> clearing temporary lists" << std::endl;
 #endif
   element_list.clear();
@@ -248,7 +248,7 @@ int gmad_parser(FILE *f)
   }
   symtab_map.clear();
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "gmad_parser> finished" << std::endl;
 #endif
 
@@ -260,7 +260,7 @@ int gmad_parser(FILE *f)
 int gmad_parser(std::string name)
 {
   const int maxfilenamelength = 200;
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "gmad_parser> opening file" << std::endl;
 #endif
   FILE *f = fopen(name.c_str(),"r");
