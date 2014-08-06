@@ -9,7 +9,6 @@
 #include "BDSKicker.hh"
 #include "BDSQuadrupole.hh"
 #include "BDSSextupole.hh"
-//#include "BDSSkewSextupole.hh"
 #include "BDSOctupole.hh"
 #include "BDSTMultipole.hh"
 #include "BDSRfCavity.hh"
