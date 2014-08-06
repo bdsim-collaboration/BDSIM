@@ -133,7 +133,7 @@ BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
 	  if(MeanFreePathCounter==BDSGlobalConstants::Instance()->GetSynchMeanFreeFactor())
 	    MeanFreePathCounter=0;
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
           G4cout<<"*****************SR*************************"<<G4endl;
           G4cout<<"Track momentum: "<<InitMag<<G4endl;
           G4cout<<"Blocal="<<Blocal/CLHEP::tesla<<"  Rlocal="<<Rlocal/CLHEP::m<<G4endl;

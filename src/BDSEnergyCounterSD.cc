@@ -73,14 +73,14 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 #endif
   else
     enrg = aStep->GetTotalEnergyDeposit();
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSEnergyCounterSD> enrg = " << enrg << G4endl;
 #endif
   if (enrg==0.) return false;      
   
   
   G4int nCopy=aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();
-#ifdef DEBUG
+#ifdef BDSDEBUG
   if(nCopy>0){
     G4cout << "BDSEnergyCounterSD::ProcessHits> nCopy = " << nCopy << G4endl;
   }
@@ -227,14 +227,14 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
 { 
   enrg = aSpot->GetEnergySpot()->GetEnergy();
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSEnergyCounterSD>gflash enrg = " << enrg << G4endl;
 #endif
   if (enrg==0.) return false;      
   G4VPhysicalVolume* pCurrentVolume = aSpot->GetTouchableHandle()->GetVolume();
   G4String volName =  pCurrentVolume->GetName();
   G4int nCopy=pCurrentVolume->GetCopyNo();
-#ifdef DEBUG
+#ifdef BDSDEBUG
   if(nCopy>0){
     G4cout << "BDSEnergyCounterSD::ProcessHits>gFlash nCopy = " << nCopy << G4endl;
   }

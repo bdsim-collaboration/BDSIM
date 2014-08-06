@@ -20,7 +20,7 @@ BDSSbendMagField::BDSSbendMagField(const G4ThreeVector& aField,
       //    itsLocalRadius=length/angle;
       itsLocalRadius=-length/angle;// minus sign for correct machine convention
       // check for synchrotron radiation factors
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4double B_inferred= 
         (BDSGlobalConstants::Instance()->GetBeamMomentum()/CLHEP::GeV)/
         (0.299792458 * (CLHEP::GeV/CLHEP::tesla/CLHEP::m)*itsLocalRadius/CLHEP::m);
@@ -29,7 +29,7 @@ BDSSbendMagField::BDSSbendMagField(const G4ThreeVector& aField,
 #endif
     } else {
     itsLocalRadius = std::numeric_limits<double>::max();
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4double B_inferred=0;
     G4cout<<"B_inferred="<<B_inferred/CLHEP::tesla<<
       " aField="<<aField/CLHEP::tesla<<G4endl;

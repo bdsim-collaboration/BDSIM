@@ -168,7 +168,7 @@ void BDSSectorBend::BuildSBMarkerLogicalVolume()
 
   G4double transverseSize=2*std::max(xLength, yLength);
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<<"marker volume : x/y="<<transverseSize/CLHEP::m<<
     " m, l= "<<  (itsLength)/2/CLHEP::m <<" m"<<G4endl;
 #endif

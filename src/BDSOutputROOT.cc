@@ -74,17 +74,17 @@ void BDSOutputROOT::Init()
 
   //build sampler tree
   G4String primariesSamplerName="primaries";
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " building sampler tree named: " << primariesSamplerName << G4endl;
 #endif
   BuildSamplerTree(primariesSamplerName);
   for(G4int i=0;i<BDSSampler::GetNSamplers();i++)
     {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " building sampler tree number: " << i << G4endl;
 #endif
       G4String name=BDSSampler::outputNames[i];
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " named: " << name << G4endl;
 #endif
       BuildSamplerTree(name);
@@ -174,13 +174,13 @@ void BDSOutputROOT::WritePrimary(G4String samplerName, G4double E,G4double x0,G4
 void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 {
   G4String name;
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " hc->endtries() = " << hc->entries() << G4endl;
 #endif
   for (G4int i=0; i<hc->entries(); i++)
     {
       G4String name = (*hc)[i]->GetName();
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << "Writing hit to sampler " << name << G4endl;
 #endif
       WriteRootHit(name,
@@ -296,7 +296,7 @@ void BDSOutputROOT::Write()
 {
   if(theRootOutputFile && theRootOutputFile->IsOpen())
     {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " writing to root file..." << G4endl;
 #endif
       //Dump all other quantities to file...

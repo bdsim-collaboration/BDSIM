@@ -499,7 +499,7 @@ parameters:
             {
 	      if(execute)
 		{
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                   printf("parameters, VARIABLE(%s) = aexpr(%.10g)\n",$1->name,$3);
 #endif
 		  if(!strcmp($1->name,"l")) { params.l = $3; params.lset = 1;} // length
@@ -611,7 +611,7 @@ parameters:
              {
 	       if(execute) 
 		 {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                    printf("params,VARIABLE (%s) = vecexpr (%d)\n",$1->name,$3->size);
 #endif
                    if(!strcmp($1->name,"knl")) 
@@ -672,7 +672,7 @@ parameters:
              {
 	       if(execute) 
 		 {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                    printf("VARIABLE (%s) = vecexpr (%d)\n",$1->name,$3->size);
 #endif
 		   if(!strcmp($1->name,"knl")) 
@@ -733,7 +733,7 @@ parameters:
             {
 	      if(execute)
 		{
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                   printf("VARIABLE (%s) = aexpr(%.10g)\n",$1->name,$3);
 #endif
 		  if(!strcmp($1->name,"l")) { params.l = $3; params.lset = 1;} // length
@@ -844,7 +844,7 @@ parameters:
              {
 	       if(execute) 
 		 {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                    printf("params,VARIABLE (%s) = str (%s)\n",$1->name,$3);
 #endif
 		   if(!strcmp($1->name,"geometry")) 
@@ -909,7 +909,7 @@ parameters:
              {
 	       if(execute) 
 		 {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                    printf("VARIABLE (%s) = str (%s)\n",$1->name,$3);
 #endif
 		   if(!strcmp($1->name,"geometry")) 
@@ -992,7 +992,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched sequence element, %s\n",$1->name);
 #endif
 		    // add to temporary element sequence
@@ -1009,7 +1009,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched sequence element, %s * %d \n",$1->name,(int)$3);
 #endif
 		    // add to temporary element sequence
@@ -1027,7 +1027,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched sequence element, %s * %d \n",$3->name,(int)$1);
 #endif
                     // add to temporary element sequence
@@ -1045,7 +1045,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s\n",$1->name);
 #endif
                     // add to temporary element sequence
@@ -1062,7 +1062,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s * %d\n",$1->name,(int)$3);
 #endif
                     // add to temporary element sequence
@@ -1080,7 +1080,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s * %d\n",$3->name,(int)$1);
 #endif
                     // add to temporary element sequence
@@ -1098,7 +1098,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s\n",$2->name);
 #endif
                     // add to temporary element sequence
@@ -1115,7 +1115,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s\n",$2->name);
 #endif
                     // add to temporary element sequence
@@ -1135,7 +1135,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched sequence element, %s\n",$1->name);
 #endif
                     // add to temporary element sequence
@@ -1152,7 +1152,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched sequence element, %s * %d \n",$1->name,(int)$3);
 #endif
                     // add to temporary element sequence
@@ -1170,7 +1170,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched sequence element, %s * %d \n",$3->name,(int)$1);
 #endif
 		    // add to temporary element sequence
@@ -1188,7 +1188,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s\n",$1->name);
 #endif
                     // add to temporary element sequence
@@ -1205,7 +1205,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s * %d\n",$1->name,(int)$3);
 #endif
 		    // add to temporary element sequence
@@ -1223,7 +1223,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s * %d\n",$3->name,(int)$1);
 #endif
                     // add to temporary element sequence
@@ -1241,7 +1241,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s\n",$2->name);
 #endif
                     // add to temporary element sequence
@@ -1258,7 +1258,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s\n",$2->name);
 #endif
                     // add to temporary element sequence
@@ -1278,7 +1278,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched sequence element, %s\n",$1->name);
 #endif
 		    // add to temporary element sequence
@@ -1295,7 +1295,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched sequence element, %s * %d \n",$1->name,(int)$3);
 #endif
 		    // add to temporary element sequence
@@ -1313,7 +1313,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched sequence element, %s * %d \n",$3->name,(int)$1);
 #endif
                     // add to temporary element sequence
@@ -1331,7 +1331,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s\n",$1->name);
 #endif
                     // add to temporary element sequence
@@ -1348,7 +1348,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s * %d\n",$1->name,(int)$3);
 #endif
 		    // add to temporary element sequence
@@ -1366,7 +1366,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s * %d\n",$3->name,(int)$1);
 #endif
                     // add to temporary element sequence

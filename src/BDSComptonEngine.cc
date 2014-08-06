@@ -236,7 +236,7 @@ void BDSComptonEngine::PerformHighEnergyCompton()
   G4double r1=0;
   G4double r2=0;
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "e_cms = " << e_cms << ", r2 = " << r2 << G4endl;
   
   G4cout << "Gamma CM E = " << GamInCM.e() << G4endl;
@@ -256,13 +256,13 @@ void BDSComptonEngine::PerformHighEnergyCompton()
     r2=G4UniformRand();
     t = pow(s+t_max,r1)*pow(s+t_min,1.-r1)-s;
     w = 0.5*(pow((s+t)/s,2)+1);
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "r1 = " << r1 << ", r2 = " << r2 << G4endl;
     G4cout << "s= " << s << ", t = " << t << ", w = " << w << ", w_max = " << w_max << G4endl;
 #endif
   }
   while(r2>(w/w_max));
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Finished: t = " << t << ", w = " << w << ", w_max = " << w_max << G4endl;
 #endif
 

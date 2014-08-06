@@ -47,7 +47,7 @@ BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength,
   itsTilt=tilt;
   itsType="multipole";
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   if (akn.size()>0){
     G4cout<<"Building multipole of order "<<akn.size()<<G4endl;
   } else {
@@ -85,7 +85,7 @@ BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength,
   kn = akn;
   ks = aks;
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   int order = 0;
   G4cout<<"M: kn={ ";
   std::list<double>::iterator kit;

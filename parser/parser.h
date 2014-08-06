@@ -80,11 +80,11 @@ void set_vector(std::list<double>& dst, struct Array *src)
 {
   for(int i=0; i< src->size;i++){
     dst.push_back(src->data[i]);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
     std::cout << src->data[i] << " ";
 #endif
   }
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   std::cout << std::endl;
 #endif
 }
@@ -94,11 +94,11 @@ void set_vector(std::list<char*>& dst, struct Array *src)
 {
   for(int i=0; i< src->size;i++){
     dst.push_back(src->symbols[i]);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
     std::cout << src->symbols[i] << " ";
 #endif
   }
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   std::cout << std::endl;
 #endif
 }
@@ -107,11 +107,11 @@ void set_vector(std::list<const char*>& dst, struct Array *src)
 {
   for(int i=0; i< src->size;i++){
     dst.push_back(src->symbols[i]);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
     std::cout << src->symbols[i] << " ";
 #endif
   }
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   std::cout << std::endl;
 #endif
 }
@@ -120,11 +120,11 @@ void set_vector(std::list<std::string>& dst, struct Array *src)
 {
   for(int i=0; i< src->size;i++){
     dst.push_back((std::string)src->symbols[i]);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
     std::cout << (std::string)src->symbols[i] << " ";
 #endif
   }
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   std::cout << std::endl;
 #endif
 }
@@ -134,11 +134,11 @@ void set_vector(std::list<int>& dst, struct Array *src)
 {
   for(int i=0; i< src->size;i++){
     dst.push_back((int)(src->data[i]));
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
     std::cout << (int)(src->data[i]) << " ";
 #endif
   }
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   std::cout << std::endl;
 #endif
 }
@@ -158,7 +158,7 @@ void quit()
 
 int write_table(struct Parameters params,const char* name, int type, std::list<struct Element> *lst)
 {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%d, lset = %d\n", params.k1, params.k2, params.k3, type, params.lset);
 #endif
   struct Element e;
@@ -597,7 +597,7 @@ int expand_line(const char *charname, const char *start, const char* end)
       is_expanded = true;
       for(it = ++beamline_list.begin();it!=beamline_list.end();it++ )
 	{
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	  printf("%s , %s \n",(*it).name.c_str(),typestr((*it).type));
 #endif
 	  if((*it).type == _LINE || (*it).type == _REV_LINE)  // list - expand further	  
@@ -608,7 +608,7 @@ int expand_line(const char *charname, const char *start, const char* end)
 	      
 	      if( (tmpit != iterEnd) && ( (*tmpit).lst != NULL) ) { // sublist found and not empty
 		
-#ifdef DEBUG
+#ifdef BDSDEBUG
 		printf("inserting sequence for %s - %s ...",(*it).name.c_str(),(*tmpit).name.c_str());
 #endif
 		if((*it).type == _LINE)
@@ -625,7 +625,7 @@ int expand_line(const char *charname, const char *start, const char* end)
 		      (*itLineInverter).type *= -1;}
 		  beamline_list.insert(it,tmpList.rbegin(),tmpList.rend());
 		}
-#ifdef DEBUG
+#ifdef BDSDEBUG
 		printf("inserted\n");
 #endif
 		
@@ -635,14 +635,14 @@ int expand_line(const char *charname, const char *start, const char* end)
 	      } else if ( tmpit != iterEnd ) // entry points to a scalar element type -
 		//transfer properties from the main list
 		{ 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 		  printf("keeping element...%s\n",(*it).name.c_str());
 #endif
 		  // copy properties
 		  //		  copy_properties(it,tmpit);
 		  // better use default assign operator:
 		  (*it) = (*tmpit);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 		  printf("done\n");
 #endif
 		  
@@ -711,7 +711,7 @@ int expand_line(const char *charname, const char *start, const char* end)
 // insert a sampler into beamline_list
 void add_sampler(char *name, char *before, int before_count)
 {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   std::cout<<"inserting sampler before "<<before<<"["<<before_count<<"]"<<std::endl;
 #endif
 
@@ -731,7 +731,7 @@ void add_sampler(char *name, char *before, int before_count)
 // insert a cylindrical sampler into beamline_list
 void add_csampler(char *name, char *before, int before_count, double length, double rad)
 {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   std::cout<<"inserting csampler before "<<before<<"["<<before_count<<"]"<<std::endl;
 #endif
 
@@ -753,7 +753,7 @@ void add_csampler(char *name, char *before, int before_count, double length, dou
 // insert a beam dumper into beamline_list
 void add_dump(char *name, char *before, int before_count)
 {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   std::cout<<"inserting dump before "<<before<<"["<<before_count<<"]"<<std::endl;
 #endif
 

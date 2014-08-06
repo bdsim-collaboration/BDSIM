@@ -36,7 +36,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
 {
   G4ClassificationOfNewTrack classification = fUrgent;
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<<"StackingAction: ClassifyNewtrack "<<aTrack->GetTrackID()<<
     " "<<aTrack->GetDefinition()->GetParticleName()<<G4endl;
   G4StackManager* SM = G4EventManager::GetEventManager()->GetStackManager();
@@ -104,7 +104,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
 
   if(BDSGlobalConstants::Instance()->getDumping()) // in the process of dumping
     {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout<<"reclassifying track "<<aTrack->GetTrackID()<<G4endl;
       G4cout<<"r= "<<aTrack->GetPosition()<<G4endl;
 #endif
@@ -116,7 +116,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       G4ThreeVector LocalPosition=tf.TransformPoint(transformedPos);
       G4ThreeVector LocalDirection=tf.TransformAxis(momDir);
       
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << "Stacking: Pos = " << transformedPos << G4endl;
       G4cout << "LocalPos: Pos = " << LocalPosition << G4endl;
       G4cout << "Stacking: mom = " << momDir << G4endl;
@@ -139,7 +139,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       //        BDSGlobalConstants::Instance()->fileDump << aTrack->GetTotalEnergy()/CLHEP::GeV << "\t"
       //<< x << "\t" << y << "\t" << z << "\t"
       //<< xPrime << "\t" << yPrime << "\t" << t <<"\n"; // SPM
-#ifdef DEBUG
+#ifdef BDSDEBUG
       printf("Out: %.15f %.15f %.15f %.15f %.15f %.15f %.15f %f\n",
 	     aTrack->GetTotalEnergy()/CLHEP::GeV,x,y,z,xPrime,yPrime,zPrime,t);
 #endif
@@ -176,7 +176,7 @@ void BDSStackingAction::NewStage()
 {
   // urgent stack empty, looking into the waiting stack
  
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout<<"StackingAction: New stage"<<G4endl;
 #endif
 

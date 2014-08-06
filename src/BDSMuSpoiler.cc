@@ -60,7 +60,7 @@ BDSMuSpoiler::BDSMuSpoiler (G4String& aName,G4double aLength,G4double bpRad,
   xLength = yLength = std::max(itsOuterRadius,BDSGlobalConstants::Instance()->GetComponentBoxSize()/2);
   xLength = yLength = std::max(xLength,totalTunnelRadius);
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<<"marker volume : x/y="<<xLength/CLHEP::m<<
     " m, l= "<<  (itsLength+BDSGlobalConstants::Instance()->GetLengthSafety())/2/CLHEP::m <<" m"<<G4endl;
 #endif
@@ -121,7 +121,7 @@ void BDSMuSpoiler::BuildMuSpoiler()
 
   // build beampipe
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "Outer pipe :"
          << " r= " << itsBpRadius/CLHEP::m << " m"
          << " l= " << itsLength/(2.)/CLHEP::m << " m"
@@ -134,7 +134,7 @@ void BDSMuSpoiler::BuildMuSpoiler()
 		       itsLength/(2.),
 		       0,CLHEP::twopi*CLHEP::radian);
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Inner pipe :"
          << " r= " << (itsBpRadius-BDSGlobalConstants::Instance()->GetBeampipeThickness() )/CLHEP::m
          << " m"

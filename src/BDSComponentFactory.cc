@@ -30,7 +30,7 @@
 
 #include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
 bool debug1 = true;
 #else
 bool debug1 = false;
@@ -78,14 +78,14 @@ BDSComponentFactory::~BDSComponentFactory(){
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createComponent(std::list<struct Element>::iterator elementIter, ElementList& beamline_list){
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSComponentFactory::createComponent() making iterators" << G4endl;  
 #endif
   _elementIter = elementIter;
   _previousElementIter = elementIter; 
   _nextElementIter= elementIter; 
   if(_elementIter != beamline_list.begin()){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory::createComponent() moving to previous element" << G4endl;  
 #endif
     _previousElementIter--;
@@ -93,12 +93,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(std::list<struct E
 
   _nextElementIter++;
   if(_nextElementIter == beamline_list.end()){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory::createComponent() at the end, not moving to next element" << G4endl;  
 #endif
     _nextElementIter--;
   } 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSComponentFactory::createComponent() creating and returning component..." << G4endl;  
 #endif
   return createComponent(*_elementIter, *_previousElementIter, *_nextElementIter);
@@ -106,15 +106,15 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(std::list<struct E
 
 									 
 BDSAcceleratorComponent* BDSComponentFactory::createComponent(Element& aElement, Element& previousElement, Element& nextElement){
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSComponentFactory::createComponent() creating element..." << G4endl;  
 #endif
   _element = aElement;
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSComponentFactory::createComponent() creating previous element..." << G4endl;  
 #endif
   _previousElement = previousElement;  
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSComponentFactory::createComponent() creating next element..." << G4endl;  
 #endif
   _nextElement = nextElement;
@@ -122,127 +122,127 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(Element& aElement,
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSComponentFactory::createComponent() element name = " << _element.name << G4endl;  
 #endif
   switch(_element.type){
   case _SAMPLER:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating sampler" << G4endl;
 #endif
     return createSampler(); break;
   case _DRIFT:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating drift" << G4endl;
 #endif
     return createDrift(); break; 
   case _PCLDRIFT:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating pcl drift" << G4endl;
 #endif
     return createPCLDrift(); break; 
   case _RF:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating rf" << G4endl;
 #endif
     return createRF(); break; 
   case _SBEND:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating sbend" << G4endl;
 #endif
     return createSBend(); break; 
   case _RBEND:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating rbend" << G4endl;
 #endif
     return createRBend(); break; 
   case _HKICK:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating hkick" << G4endl;
 #endif
     return createHKick(); break; 
   case _VKICK:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating vkick" << G4endl;
 #endif
     return createVKick(); break; 
   case _QUAD:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating quadrupole" << G4endl;
 #endif
     return createQuad(); break; 
   case _SEXTUPOLE:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating sextupole" << G4endl;
 #endif
     return createSextupole(); break; 
   case _OCTUPOLE:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating octupole" << G4endl;
 #endif
     return createOctupole(); break; 
   case _MULT:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating multipole" << G4endl;
 #endif
     return createMultipole(); break; 
   case _ELEMENT:    
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating element" << G4endl;
 #endif
     return createElement(); break; 
   case _CSAMPLER:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating csampler" << G4endl;
 #endif
     return createCSampler(); break; 
   case _DUMP:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating dump" << G4endl;
 #endif
     return createDump(); break; 
   case _SOLENOID:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating solenoid" << G4endl;
 #endif
     return createSolenoid(); break; 
   case _ECOL:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating ecol" << G4endl;
 #endif
     return createECol(); break; 
   case _RCOL:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating rcol" << G4endl;
 #endif
     return createRCol(); break; 
   case _MUSPOILER:    
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating muspoiler" << G4endl;
 #endif
     return createMuSpoiler(); break; 
   case _LASER:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating laser" << G4endl;
 #endif
     return createLaser(); break; 
   case _SCREEN:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating screen" << G4endl;
 #endif
     return createScreen(); break; 
   case _TRANSFORM3D:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating transform3d" << G4endl;
 #endif
     return createTransform3D(); break;
   case _TELEPORTER:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating teleporter" << G4endl;
 #endif
     return createTeleporter(); break;
   case _TERMINATOR:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating terminator" << G4endl;
 #endif
     return createTerminator(); break;
@@ -260,7 +260,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     return NULL;
     break;
   default:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory: type: " << _element.type << G4endl; 
 #endif
     G4Exception("Error: BDSComponentFactory: type not found.", "-1", FatalErrorInArgument, "");   
@@ -301,7 +301,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createTeleporter(){
       return NULL;
     }
   else {
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "---->creating Teleporter,"
 	   << " name        = " << _element.name
 	   << " l           = " << teleporterlength/CLHEP::m << "m"
@@ -351,7 +351,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createDrift(){
       aper=BDSGlobalConstants::Instance()->GetBeampipeRadius()/CLHEP::m;
     }
     
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "---->creating Drift,"
 	   << " name= " << _element.name
 	   << " l= " << _element.l << "m"
@@ -381,7 +381,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createDrift(){
       if( _nextElement.aper > 1.e-10*CLHEP::m ) _driftEndAper = _nextElement.aper * CLHEP::m;
     }
     
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "---->creating Drift,"
 	   << " name= " << _element.name
 	   << " l= " << _element.l << "m"
@@ -493,7 +493,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
   
   if( _element.outR < aper/CLHEP::m)
     {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << _element.name << ": outer radius smaller than aperture: "
 	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
       G4cout << _element.name << ": setting outer radius to default = "
@@ -586,7 +586,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
   
   if( _element.outR < aper/CLHEP::m)
     {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << _element.name << ": outer radius smaller than aperture: "
 	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
       G4cout << _element.name << ": setting outer radius to default = "
@@ -666,7 +666,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
   
   if( _element.outR < aper/CLHEP::m)
     {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << _element.name << ": outer radius smaller than aperture: "
 	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
       G4cout << _element.name << ": setting outer radius to default = "
@@ -737,7 +737,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
   
   if( _element.outR < aper/CLHEP::m)
     {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << _element.name << ": outer radius smaller than aperture: "
 	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
       G4cout << _element.name << ": setting outer radius to default = "
@@ -806,7 +806,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createQuad(){
   _FeRad = aper;
   if( _element.outR < aper/CLHEP::m)
     {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << _element.name << ": outer radius smaller than aperture: "
 	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
       G4cout << _element.name << ": setting outer radius to default = "
@@ -846,7 +846,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole(){
   
   if( _element.outR < aper/CLHEP::m)
     {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << _element.name << ": outer radius smaller than aperture: "
 	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
       G4cout << _element.name << ": setting outer radius to default = "
@@ -863,7 +863,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole(){
   // brho is in Geant4 units, but k2 is not -> multiply k2 by m^-3
   G4double bDoublePrime = - _brho * (_element.k2 / CLHEP::m3) * _synch_factor;
   
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "---->creating Sextupole,"
 	 << " name= " << _element.name
 	 << " l= " << _element.l << "m"
@@ -903,7 +903,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole(){
   
   if( _element.outR < aper/CLHEP::m)
     {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << _element.name << ": outer radius smaller than aperture: "
 	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
       G4cout << _element.name << ": setting outer radius to default = "
@@ -920,7 +920,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole(){
   // brho is in Geant4 units, but k3 is not -> multiply k3 by m^-4
   G4double bTriplePrime = - _brho * (_element.k3 / (CLHEP::m3*CLHEP::m)) * _synch_factor;
   
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "---->creating Octupole,"
 	 << " name= " << _element.name
 	 << " l= " << _element.l << "m"
@@ -961,7 +961,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole(){
   
   if( _element.outR < aper/CLHEP::m)
     {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << _element.name << ": outer radius smaller than aperture: "
 	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
       G4cout << _element.name << ": setting outer radius to default = "
@@ -970,7 +970,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole(){
       _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
     }
   
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "---->creating Multipole,"
 	 << " name= " << _element.name
 	 << " l= " << _element.l << "m"
@@ -988,31 +988,31 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole(){
   //
   std::list<double>::iterator kit;
   
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << " knl={ ";
 #endif
   for(kit=(_element.knl).begin();kit!=(_element.knl).end();kit++)
     {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<<(*kit)<<", ";
 #endif
       (*kit) /= _element.l; 
     }
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "}";
 #endif
   
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << " ksl={ ";
 #endif
   for(kit=(_element.ksl).begin();kit!=(_element.ksl).end();kit++)
     {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<<(*kit)<<" ";
 #endif
       (*kit) /= _element.l; 
     }
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "}" << G4endl;
 #endif
   
@@ -1042,7 +1042,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
   /* Fix for element volume overlaps - do not set default outR!
 	if( _element.outR < aper/CLHEP::m)
 	{
-	#ifdef DEBUG
+	#ifdef BDSDEBUG
 	G4cout << _element.name << ": outer radius smaller than aperture: "
 	<< "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
 	G4cout << _element.name << ": setting outer radius to default = "
@@ -1051,7 +1051,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 	_element.outR = 0.22;
 	}
   */
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "---->creating Element,"
 	 << " name= " << _element.name
 	 << " l= " << _element.l << "m"
@@ -1088,7 +1088,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid(){
   
   if( _element.outR < aper/CLHEP::m)
     {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << _element.name << ": outer radius smaller than aperture: "
 	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
       G4cout << _element.name << ": setting outer radius to default = "
@@ -1112,7 +1112,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid(){
     _element.B = bField/CLHEP::tesla;
   }
   
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "---->creating Solenoid,"
 	 << " name= " << _element.name
 	 << " l= " << _element.l << "m"
@@ -1147,7 +1147,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createECol(){
   else
     theMaterial = BDSMaterials::Instance()->GetMaterial( "Graphite" );
   
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "---->creating Ecol,"
 	 << " name= " << _element.name 
 	 << " xaper= " << _element.xsize <<"m"
@@ -1179,7 +1179,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRCol(){
   else
     theMaterial = BDSMaterials::Instance()->GetMaterial( "Graphite" );
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "---->creating Rcol,"
 	 << " name= " << _element.name 
 	 << " xaper= " << _element.xsize <<"m"
@@ -1219,7 +1219,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRCol(){
 
 BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "---->creating muspoiler,"
 	 << " name= " << _element.name 
 	 << " length= " << _element.l
@@ -1244,7 +1244,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
   //        }
   G4double outerRadius = _element.outR*CLHEP::m;
         
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSMuSpoiler: " << name << " " << length/CLHEP::m << " " << outerRadius/CLHEP::m << " " << innerRadius/CLHEP::m << " " << bField/CLHEP::tesla << " " << beamPipeRadius/CLHEP::m << G4endl;
 #endif
 
@@ -1263,7 +1263,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
 BDSAcceleratorComponent* BDSComponentFactory::createLaser(){
   if(_element.l == 0) _element.l = 1e-8;
 	
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "---->creating Laser,"
 	 << " name= "<< _element.name
 	 << " l=" << _element.l <<"m"
@@ -1294,7 +1294,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createLaser(){
 BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
   if(_element.l == 0) _element.l = 1e-8;
 	
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "---->creating Screen,"
 	 << " name= "<< _element.name
 	 << " l=" << _element.l <<"m"
@@ -1305,7 +1305,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
 
 BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){
 	
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "---->creating Transform3d,"
 	 << " name= " << _element.name
 	 << " xdir= " << _element.xdir/CLHEP::m << "m"
