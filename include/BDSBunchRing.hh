@@ -28,6 +28,7 @@ public:
 
   G4double GetRMin() {return rMin;}
   G4double GetRMax() {return rMax;}
+protected:
   void SetRMin(G4double rMinIn) { rMin = rMinIn;}
   void SetRMax(G4double rMaxIn) { rMax = rMaxIn;}
   

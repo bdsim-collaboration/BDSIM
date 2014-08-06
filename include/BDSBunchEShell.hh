@@ -36,6 +36,7 @@ public:
   G4double GetShellY() {return shellY;}
   G4double GetShellYp() {return shellYp;}
 
+protected:
   void SetShellX(G4double shellXIn)   { shellX  = shellXIn;}
   void SetShellXp(G4double shellXpIn) { shellXp = shellXpIn;}
   void SetShellY(G4double shellYIn)   { shellY  = shellYIn;}

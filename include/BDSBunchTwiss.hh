@@ -57,6 +57,7 @@ public :
   G4double GetEmitX()  {return emitX;}
   G4double GetEmitY()  {return emitY;}
 
+private:
   void     SetBetaX(double newBetaX) {betaX    = newBetaX;}
   void     SetBetaY(double newBetaY) {betaY    = newBetaY;}
   void     SetAlphaX(double newAlphaX) {alphaX = newAlphaX;}

@@ -48,6 +48,7 @@ public :
   G4double GetSigmaYp() {return sigmaYp;}
   G4double GetSigma(G4int i, G4int j) {return sigmaGM[i][j];}
   
+protected:
   void SetSigmaX(G4double sigmaXIn) {sigmaX = sigmaXIn;}
   void SetSigmaY(G4double sigmaYIn) {sigmaY = sigmaYIn;}
   void SetSigmaXp(G4double sigmaXpIn) {sigmaXp = sigmaXpIn;}
