@@ -12,7 +12,6 @@ Last modified 30.10.2007 by Steve Malton
 //#include <fstream>
 #include <deque>
 #include <map>
-#include <tr1/unordered_map>
 
 #include "G4ThreeVector.hh"
 #include "G4String.hh"
@@ -218,7 +217,7 @@ public:
   // get the info for a given logical volume pointer
   BDSLogicalVolumeInfo* GetLogicalVolumeInfo(G4LogicalVolume* logvolpointer);
   // get a pointer to the map of log vol infos
-  std::tr1::unordered_map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* LogicalVolumeInfo(); 
+  std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* LogicalVolumeInfo(); 
   // add a new set of info to the map
   void AddLogicalVolumeInfo(G4LogicalVolume* logvolpointer, BDSLogicalVolumeInfo* bdslogvolinfo);
   
@@ -386,7 +385,7 @@ private:
   // beamline length
   G4double itsZMax;
   // logical volume info
-  std::tr1::unordered_map<G4LogicalVolume* , BDSLogicalVolumeInfo*> logicalvolumeinfo;
+  std::map<G4LogicalVolume* , BDSLogicalVolumeInfo*> logicalvolumeinfo;
 };
 
 inline G4double BDSGlobalConstants::GetElossHistoBinWidth()
@@ -855,7 +854,7 @@ inline BDSLogicalVolumeInfo* BDSGlobalConstants::GetLogicalVolumeInfo(G4LogicalV
 inline void BDSGlobalConstants::AddLogicalVolumeInfo(G4LogicalVolume* logvolpointer, BDSLogicalVolumeInfo* logvolinfo)
 {logicalvolumeinfo[logvolpointer] = logvolinfo;}
 
-inline std::tr1::unordered_map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* BDSGlobalConstants::LogicalVolumeInfo()
+inline std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* BDSGlobalConstants::LogicalVolumeInfo()
 {return &logicalvolumeinfo;}
 
 // UNUSED INLINE FUNCTIONS
