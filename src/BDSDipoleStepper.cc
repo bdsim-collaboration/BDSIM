@@ -29,7 +29,7 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
 {
 #ifdef DEBUG
   G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
-  G4cout << "BDSQuadStepper: step= " << h/CLHEP::m << " m" << G4endl
+  G4cout << "BDSDipoleStepper: step= " << h/CLHEP::m << " m" << G4endl
          << " x= " << yIn[0]/CLHEP::m << "m" << G4endl
          << " y= " << yIn[1]/CLHEP::m << "m" << G4endl
          << " z= " << yIn[2]/CLHEP::m << "m" << G4endl

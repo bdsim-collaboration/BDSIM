@@ -23,7 +23,6 @@
 #include "G4CachedMagneticField.hh"
 
 #include "G4EqMagElectricField.hh"
-#include "BDSRK4Stepper.hh"
 
 class BDSElement :public BDSAcceleratorComponent
 {
