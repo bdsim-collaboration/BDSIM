@@ -1,2 +1,2 @@
 clean : 
-	rm -rf AutoDict* *.so *.d *~ 
+	rm -rf AutoDict* *.so *.d *~ *.root 

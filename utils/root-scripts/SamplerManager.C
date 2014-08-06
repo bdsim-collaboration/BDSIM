@@ -71,9 +71,6 @@ void SamplerManager::PrintFiles() {
 }
 
 void SamplerManager::MakeSingleSimpleTree() {
-  for(std::vector<TChain*>::iterator it = chains.begin(); it != chains.end(); it++) { 
-    std::cout << (*it)->GetEntries() << std::endl;
-  }
 
   for(int i=0;i<(int)chains.size();i++) { 
     Sampler *s = new Sampler(chains[i]);
