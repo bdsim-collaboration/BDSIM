@@ -22,7 +22,8 @@
 #include "globals.hh"
 #include "BDSMaterials.hh"
 #include "G4LogicalVolume.hh"
-#include "BDSDipoleStepper.hh"
+#include "BDSHelixStepper.hh"
+#include "myQuadStepper.hh"
 
 #include "G4FieldManager.hh"
 #include "G4ChordFinder.hh"
@@ -61,11 +62,12 @@ private:
   void BuildSBMarkerLogicalVolume();
   void BuildSBBeampipe();
   void BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+  void BuildSBDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
 
   G4VisAttributes* SetVisAttributes();
 
   // field related objects:
-  BDSDipoleStepper* itsStepper;
+  myQuadStepper* itsStepper;
   BDSSbendMagField* itsMagField;
   G4Mag_EqRhs* itsEqRhs;
 

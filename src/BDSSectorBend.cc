@@ -1,9 +1,13 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSSectorBend.hh"
+#include "G4Polyhedra.hh"
+#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Trd.hh"
 #include "G4IntersectionSolid.hh"
+#include "G4UnionSolid.hh"
+#include "G4SubtractionSolid.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -77,7 +81,8 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
       //
       
 
-      BuildSBOuterLogicalVolume();
+      //BuildSBOuterLogicalVolume();
+      BuildSBDefaultOuterLogicalVolume();
       if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
 	{
 	  G4double polePos[4];
@@ -119,7 +124,7 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
       // set visualization attributes
       //
       itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
-      
+	
       //
       // append marker logical volume to volume map
       //
@@ -129,13 +134,94 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
   else
     {
       (*LogVolCount)[itsName]++;
+      if(BDSGlobalConstants::Instance()->GetSynchRadOn()&& BDSGlobalConstants::Instance()->GetSynchRescale())
+	{
+	  // with synchrotron radiation, the rescaled magnetic field
+	  // means elements with the same name must have different
+	  // logical volumes, because they have different fields
+	  itsName+=BDSGlobalConstants::Instance()->StringFromInt((*LogVolCount)[itsName]);
+
+	  //
+	  // build external volume
+	  // 
+	  BuildSBMarkerLogicalVolume();
+	  
+	  //
+	  // build beampipe (geometry + magnetic field)
+	  //
+	  BuildBPFieldAndStepper();
+	  BuildBPFieldMgr(itsStepper,itsMagField);
+	  BuildSBBeampipe();
+
+	  //
+	  // build magnet (geometry + magnetic field)
+	  //
+	  //BuildSBOuterLogicalVolume();
+	  BuildSBDefaultOuterLogicalVolume();
+	  if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
+	    {
+	      G4double polePos[4];
+	      G4double Bfield[3];
+	      
+	      //coordinate in GetFieldValue
+	      polePos[0]=0.;
+	      polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius();
+	      polePos[2]=0.;
+	      polePos[3]=-999.;//flag to use polePos rather than local track
+	      
+	      itsMagField->GetFieldValue(polePos,Bfield);
+	      G4double BFldIron=
+		sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1])*
+		BDSGlobalConstants::Instance()->GetMagnetPoleSize()/
+		(BDSGlobalConstants::Instance()->GetComponentBoxSize()/2-
+		 BDSGlobalConstants::Instance()->GetMagnetPoleRadius());
+	      
+	      // Magnetic flux from a pole is divided in two directions
+	      BFldIron/=2.;
+
+	      BuildOuterFieldManager(2, BFldIron,CLHEP::halfpi);
+	    }
+	  //When is SynchRescale(factor) called?
+	  
+	  //
+	  // define sensitive volumes for hit generation
+	  //
+	  SetSensitiveVolume(itsBeampipeLogicalVolume);// for synchrotron
+	  //SetSensitiveVolume(itsOuterLogicalVolume);// for laserwire
+	  
+	  //
+	  // set visualization attributes
+	  //
+	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
+	  
+	  //
+	  // append marker logical volume to volume map
+	  //
+	  (*LogVol)[itsName]=itsMarkerLogicalVolume;
+	}
+      else
+	{
 	  //
 	  // use already defined marker volume
 	  //
 	  itsMarkerLogicalVolume=(*LogVol)[itsName];
+	}      
     }
 
   BuildBLMs();
+}
+
+void BDSSectorBend::SynchRescale(G4double factor)
+{
+  // rescale B field and gradient by same factor
+  itsStepper->SetBGrad(itsBGrad*factor);
+  itsStepper->SetBField(-itsBField*factor);
+  // note that there are no methods to set the BDSSBendMagField as this
+  // class does not do anything with the BFields.
+  // not true when I will use Geant4 propagation
+#ifdef DEBUG
+  G4cout << "Sbend " << itsName << " has been scaled" << G4endl;
+#endif
 }
 
 G4VisAttributes* BDSSectorBend::SetVisAttributes()
@@ -154,7 +240,7 @@ void BDSSectorBend::BuildBPFieldAndStepper()
 
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
   
-  itsStepper = new BDSDipoleStepper(itsEqRhs);
+  itsStepper = new myQuadStepper(itsEqRhs);
   itsStepper->SetBField(-itsBField); // note the - sign...
   itsStepper->SetBGrad(itsBGrad);
 }
@@ -360,6 +446,8 @@ void BDSSectorBend::BuildSBBeampipe()
   VisAtt1->SetVisibility(true);
   VisAtt1->SetForceSolid(true);
   itsBeampipeLogicalVolume->SetVisAttributes(VisAtt1);
+
+
 }
 
 
@@ -373,7 +461,11 @@ G4double BDSSectorBend::GetArcLength()
     return (itsLength * (0.5*itsAngle) / sin(0.5*itsAngle));
 }
 
-void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//					Cylindrical geometry						//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void BDSSectorBend::BuildSBDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 
   G4Material* material;
   
@@ -404,7 +496,7 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
                                                            itsOuterR,          // outer R
                                                            tubLen,             // length
                                                            0,                  // starting phi
-                                                           CLHEP::twopi * CLHEP::rad ),      // delta phi
+                                                           twopi * rad ),      // delta phi
                                                 new G4EllipticalTube(itsName+"_pipe_outer_tmp_2",
                                                                      this->GetAperX()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0, 
                                                                      this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,          
@@ -455,6 +547,310 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
   itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
 }
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//					Detailed geometry						//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
+
+  G4Material* material;
+  
+  if(itsMaterial != "")
+    material = BDSMaterials::Instance()->GetMaterial(itsMaterial);
+  else
+    material = BDSMaterials::Instance()->GetMaterial("Iron");
+  
+  G4double xHalfLengthPlus, xHalfLengthMinus, tubLen;
+  if(itsAngle != 0){
+    xHalfLengthMinus = (itsLength/itsAngle)*sin(itsAngle/2)
+      - fabs(cos(itsAngle/2)) * BDSGlobalConstants::Instance()->GetComponentBoxSize() * tan(itsAngle/2)/2
+      - BDSGlobalConstants::Instance()->GetLengthSafety()/2;
+
+    xHalfLengthPlus = (itsLength/itsAngle)*sin(itsAngle/2)
+    + fabs(cos(itsAngle/2)) * BDSGlobalConstants::Instance()->GetComponentBoxSize() * tan(itsAngle/2)/2
+      - BDSGlobalConstants::Instance()->GetLengthSafety()/2;
+    
+    tubLen = std::max(xHalfLengthPlus,xHalfLengthMinus);
+  } else {
+    tubLen = (itsLength-BDSGlobalConstants::Instance()->GetLengthSafety())/2.0;
+  }
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  G4VSolid *magTubsEnv = new G4SubtractionSolid(itsName+"_solid_env",
+                                                new G4Tubs(itsName+"_solid_tmp_1",
+                                                           itsInnerIronRadius + BDSGlobalConstants::Instance()->GetLengthSafety()/2.0, // inner R + overlap safety
+                                                           itsOuterR,          // outer R
+                                                           tubLen,             // length
+                                                           0,                  // starting phi
+                                                           CLHEP::twopi * CLHEP::rad ),      // delta phi
+                                                new G4EllipticalTube(itsName+"_pipe_outer_tmp_2",
+                                                                     this->GetAperX()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0, 
+                                                                     this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,          
+                                                                     tubLen*2)
+                                                );
+  
+  
+  ///////////////////////////////////////////////////
+
+  G4Material* air  = G4Material::GetMaterial("G4_AIR");
+  G4double worldLength = 2*m;
+
+  G4cout << "worldLength " << worldLength;
+
+  // Definitions of Solids, Logical Volumes, Physical Volumes
+  // World
+
+  G4Box* worldS
+    = new G4Box("world",                                    //its name
+                worldLength/2,worldLength/2,worldLength/2); //its size
+  G4LogicalVolume* worldLV
+    = new G4LogicalVolume(
+                 worldS,   //its solid
+                 air,      //its material
+                 "World"); //its name
+  
+  //  Must place the World Physical volume unrotated at (0,0,0).
+  // 
+
+/*
+  G4VPhysicalVolume* worldPV
+    = new G4PVPlacement(
+                 0,               // no rotation
+                 G4ThreeVector(), // at (0,0,0)
+                 worldLV,         // its logical volume
+                 "World",         // its name
+                 0,               // its mother  volume
+                 false,           // no boolean operations
+                 0,               // copy number
+                 BDSGlobalConstants::Instance()->GetCheckOverlaps()); // checking overlaps 
+*/
+ 
+
+// =========== Inputs ================= //
+
+  // magnet parameters
+
+  double mag_inradius = 192*mm; // inner radius
+  double mag_extradius = 400*mm; // external radius
+
+
+  // ==================================== //
+
+
+  // Defining external shape using polyhedra
+
+  double zplanepos [2] = {0,tubLen};
+  double pipelength [2] = {-2.0*cm,tubLen+2.0*cm};
+  double rinner [2] = {mag_inradius, mag_inradius};
+  double router [2] = {mag_extradius, mag_extradius};
+
+  G4Polyhedra* polyShape = new G4Polyhedra("polyShape", 0.*deg, 360.*deg, 4, 2, zplanepos, rinner, router);
+
+  ///////////////////////////////////////////////////
+
+  // Coils
+
+  double coil_size_x = 8.0*cm;
+  double coil_size_y = 4.0*cm;
+
+  G4VSolid* Coil = new G4Box("Coil",coil_size_x,coil_size_y,tubLen/2.0);
+
+  G4LogicalVolume* CoilLV = 
+    new G4LogicalVolume(Coil,             //its solid
+                        material,   //its material
+                        "CoilLV");        //its name
+   
+    /////////////////////////////////////////////////////
+    
+    // Beampipe
+  
+  double beampipe_rinner [2] = {0.0, 0.0};
+  double beampipe_router [2] = {this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness(), this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness()};
+
+  G4Polyhedra* Beampipe = new G4Polyhedra("Beampipe", 0.*deg, 360.*deg, 4, 2, pipelength, beampipe_rinner, beampipe_router);
+  G4LogicalVolume* BeampipeLV = 
+    new G4LogicalVolume(Beampipe,             //its solid
+                        material,   //its material
+                        "BeampipeLV");        //its name
+
+  // Iron yoke subtracting beampipe
+
+  G4LogicalVolume* shieldLV = 
+    new G4LogicalVolume(   new G4SubtractionSolid(
+			   "Shield", polyShape, Beampipe, 0, 
+			   G4ThreeVector((mag_extradius+mag_inradius)/2.0*cos(pi/4.0),
+					 (mag_extradius+mag_inradius)/2.0*sin(pi/4.0),0.)),             //its solid
+                        material,   //its material
+                        "shieldLV");        //its name
+
+   ////////////////////////////////////////////////////
+
+  G4ThreeVector positionQuad = G4ThreeVector(0,0,0);
+  
+  // Place the external shape in the mother volume
+
+  G4RotationMatrix* rm = new G4RotationMatrix();
+  rm->rotateZ(360.0/2.0/4.0*deg);
+  G4ThreeVector uz = G4ThreeVector(-35.*cm,0.,0.); 
+
+  new G4PVPlacement(rm,             //rotation,
+		    uz,             //position
+		    shieldLV,            //its logical volume
+		    "poleShield",               //its name
+		    worldLV,             //its mother  volume
+		    false,                 //no boolean operation
+		    0,                     //copy number
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());       // checking ove
+  /*
+  G4ThreeVector uz2 = G4ThreeVector(mag_extradius+mag_inradius,0.,0.); 
+  
+  G4RotationMatrix* rm2 = new G4RotationMatrix();
+  rm2->rotateZ(225.0*deg);
+  new G4PVPlacement(rm2,             //rotation,
+		    uz2,             //position
+		    shieldLV,            //its logical volume
+		    "poleShield",               //its name
+		    worldLV,             //its mother  volume
+		    false,                 //no boolean operation
+		    0,                     //copy number
+		    fCheckOverlaps);       // checking ove
+
+  */ 
+  // Coil placement
+  //rm->rotateX(0.0*deg);
+
+
+   ////////////////////////////////////////////////////////////////////////
+
+  double magnet_shift = -35.*CLHEP::cm; // displace magnet to center ir with respect to the beampipe
+
+  double coil_pos_x = mag_inradius-coil_size_x;
+  double coil_pos_y = mag_inradius-coil_size_y;
+
+  G4ThreeVector positionCoil1 = G4ThreeVector(coil_pos_x + magnet_shift,coil_pos_y,tubLen/2.0);
+  
+  new G4PVPlacement(0,             //rotation,
+		    positionCoil1,             //position
+		    CoilLV,            //its logical volume
+		    "Coil",               //its name
+		    worldLV,             //its mother  volume
+		    false,                 //no boolean operation
+		    0,                     //copy number
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());       // checking ove
+
+   G4ThreeVector positionCoil2 = G4ThreeVector(coil_pos_x + magnet_shift,-coil_pos_y,tubLen/2.0);
+  
+  new G4PVPlacement(0,             //rotation,
+		    positionCoil2,             //position
+		    CoilLV,            //its logical volume
+		    "Coil",               //its name
+		    worldLV,             //its mother  volume
+		    false,                 //no boolean operation
+		    0,                     //copy number
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());       // checking ove
+
+
+  double coil_pos_x2 = mag_extradius+coil_size_x;
+  double coil_pos_y2 = mag_inradius-coil_size_y;
+
+  G4ThreeVector positionCoil3 = G4ThreeVector(coil_pos_x2 + magnet_shift,coil_pos_y2,tubLen/2.0);
+  
+  new G4PVPlacement(0,             //rotation,
+		    positionCoil3,             //position
+		    CoilLV,            //its logical volume
+		    "Coil",               //its name
+		    worldLV,             //its mother  volume
+		    false,                 //no boolean operation
+		    0,                     //copy number
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());       // checking ove
+
+ G4ThreeVector positionCoil4 = G4ThreeVector(coil_pos_x2 + magnet_shift,-coil_pos_y2,tubLen/2.0);
+  
+  new G4PVPlacement(0,             //rotation,
+		    positionCoil4,             //position
+		    CoilLV,            //its logical volume
+		    "Coil",               //its name
+		    worldLV,             //its mother  volume
+		    false,                 //no boolean operation
+		    0,                     //copy number
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());       // checking ove
+
+  ///////////////////////////////////////////////////////////////////////////////////////////
+
+  G4VisAttributes* magnetVisAtt = new G4VisAttributes(G4Colour(0.4, 0.4, 0.4));
+
+  BeampipeLV ->SetVisAttributes(magnetVisAtt);
+  
+  // color-coding for the pole
+  G4VisAttributes* VisAtt = 
+    new G4VisAttributes(G4Colour(0.,0.,1.));
+  VisAtt->SetForceSolid(true);
+  CoilLV->SetVisAttributes(VisAtt);
+  shieldLV->SetVisAttributes(VisAtt);
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+  G4RotationMatrix* rm2 = new G4RotationMatrix();
+  rm2->rotateZ(45.0*deg);
+
+  G4IntersectionSolid *magTubs =
+    new G4IntersectionSolid(itsName+"_solid",
+			    magTubsEnv,
+			    itsMarkerSolidVolume,
+			    BDSGlobalConstants::Instance()->RotYM90(),
+			    (G4ThreeVector)0); 
+
+  if(OuterMaterialIsVacuum)
+    {
+      itsOuterLogicalVolume = 
+	new G4LogicalVolume(magTubs,
+			    BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			    itsName+"_outer");
+    }
+  else
+    {
+      itsOuterLogicalVolume=
+	new G4LogicalVolume(magTubs,
+			    material,
+			    itsName+"_outer");
+    }
+
+  G4ThreeVector worldposition = G4ThreeVector(0.,0.,0.);
+
+
+  itsPhysiComp =
+    new G4PVPlacement(
+                      BDSGlobalConstants::Instance()->RotY90(),                 // rotation
+                      worldposition,                      // at (0,0,0)
+                      //itsOuterLogicalVolume,  // its logical volume
+		      worldLV,
+                      itsName+"_solid",       // its name
+                      itsMarkerLogicalVolume, // its mother  volume
+                      false,                  // no boolean operation
+                      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());                     // copy number
+
+  SetMultiplePhysicalVolumes(itsPhysiComp);
+  G4double  maxStepFactor=0.5;
+
+#ifndef NOUSERLIMITS
+  itsOuterUserLimits =
+    new G4UserLimits("multipole cut",DBL_MAX,DBL_MAX,DBL_MAX,
+                     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  itsOuterUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
+  itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
+#endif
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 BDSSectorBend::~BDSSectorBend()
 {
