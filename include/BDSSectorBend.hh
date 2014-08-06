@@ -22,8 +22,7 @@
 #include "globals.hh"
 #include "BDSMaterials.hh"
 #include "G4LogicalVolume.hh"
-#include "BDSHelixStepper.hh"
-#include "myQuadStepper.hh"
+#include "BDSDipoleStepper.hh"
 
 #include "G4FieldManager.hh"
 #include "G4ChordFinder.hh"
@@ -67,7 +66,7 @@ private:
   G4VisAttributes* SetVisAttributes();
 
   // field related objects:
-  myQuadStepper* itsStepper;
+  BDSDipoleStepper* itsStepper;
   BDSSbendMagField* itsMagField;
   G4Mag_EqRhs* itsEqRhs;
 
