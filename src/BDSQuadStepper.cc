@@ -43,7 +43,7 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
   G4double InitPMag = GlobalP.mag();
   G4double kappa = - fPtrMagEqOfMot->FCof()*itsBGrad/InitPMag;
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
   G4cout << "BDSQuadStepper: step= " << h/CLHEP::m << " m" << G4endl
          << " x= " << yIn[0]/CLHEP::m << "m" << G4endl
@@ -91,7 +91,7 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
       G4ThreeVector LocalR=GlobalAffine.TransformPoint(GlobalR); 
       G4ThreeVector LocalRp=GlobalAffine.TransformAxis(InitMomDir);
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << "BDSQuadStepper: initial point in local coordinates:" << G4endl
              << " x= " << LocalR[0]/CLHEP::m << "m" << G4endl
              << " y= " << LocalR[1]/CLHEP::m << "m" << G4endl
@@ -121,7 +121,7 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
 
        // determine effective curvature 
       G4double R_1 = LocalRpp.mag();
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout << " curvature= " << R_1*CLHEP::m << "m^-1" << G4endl;
 #endif
       if(R_1>0.)
@@ -137,7 +137,7 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
 	  // check for paraxial approximation:
 	  if((fabs(zp)>0.99)&&(fabs(kappa)<1.e-6))
 	    {
-	      #ifdef DEBUG
+	      #ifdef BDSDEBUG
 	      G4cout << "paraxial approximation being used" << G4endl;
 	      #endif
 	      G4double rootK=sqrt(fabs(kappa*zp));
@@ -279,7 +279,7 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
 	  itsDist=0.;
 	}
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout << "BDSQuadStepper: final point in local coordinates:" << G4endl
              << " x= " << LocalR[0]/CLHEP::m << "m" << G4endl
              << " y= " << LocalR[1]/CLHEP::m << "m" << G4endl

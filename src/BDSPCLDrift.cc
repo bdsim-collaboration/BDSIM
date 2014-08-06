@@ -93,7 +93,7 @@ void BDSPCLDrift::BuildBeampipe(G4String materialName){
   
   // build beampipe
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "Outer pipe :"
          << " r= " << itsBpRadius/CLHEP::m << " m"
          << " l= " << itsLength/(2.)/CLHEP::m << " m"
@@ -120,7 +120,7 @@ void BDSPCLDrift::BuildBeampipe(G4String materialName){
   delete innerTube;
   delete outerTube;
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSPCLDrift.cc: Making logical..." << G4endl;
 #endif
 
@@ -148,7 +148,7 @@ void BDSPCLDrift::BuildBeampipe(G4String materialName){
   itsOuterBeamPipeLogicalVolume->SetVisAttributes(itsBeampipeVisAtt);
   itsInnerBeamPipeLogicalVolume->SetVisAttributes(itsInnerBeampipeVisAtt);
 
-#ifdef DEBUG  
+#ifdef BDSDEBUG  
   G4cout << "BDSPCLDrift.cc: Placing..." << G4endl;
 #endif
 
@@ -215,7 +215,7 @@ void BDSPCLDrift::BuildBeampipe(G4String materialName){
   itsMarkerLogicalVolume->
     SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
   
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSPCLDrift.cc: Finished making beam pipe..." << G4endl;
 #endif
 }

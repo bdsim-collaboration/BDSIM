@@ -46,7 +46,7 @@ G4bool  BDSXYMagField::DoesFieldChangeEnergy() const
 
 G4int BDSXYMagField::ReadFile(G4String fname)
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout<<"reading file "<<fname<<G4endl;
 #endif
   struct XYFieldRecord rec;
@@ -59,14 +59,14 @@ G4int BDSXYMagField::ReadFile(G4String fname)
       bmapif>>rec.x>>rec.y>>rec.Bx>>rec.By>>rec.Bz; 
       
       if(!bmapif.good()) break;
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<<"read: "<<rec.x<<" "<<rec.y<<" "<<rec.Bx<<" "<<rec.By<<" "<<rec.Bz<<" "<<G4endl;
 #endif
       itsFieldValues.push_back(rec);
     }
   
   bmapif.close();
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout<<"done"<<G4endl;
 #endif
   return 0;
@@ -76,7 +76,7 @@ G4int BDSXYMagField::ReadFile(G4String fname)
 // create a field mesh in the "world" coordinates from list of field values
 void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout<<"BDSXYMagField:: create XY field mesh"<<G4endl;
 #endif
   ReadFile(itsFileName);
@@ -120,7 +120,7 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
       
       for(itt=itsFieldValues.begin();itt!=itsFieldValues.end();itt++)
 	{
-#ifdef DEBUG
+#ifdef BDSDEBUG
 	  G4cout<<(*it).x<<" "<<(*it).y<<" "<<" "<<(*it).Bx<<G4endl;
 #endif
 	  hxold = fabs((*it).x - (*itt).x);
@@ -206,7 +206,7 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 void BDSXYMagField::GetFieldValue(const G4double Point[4], G4double *Bfield ) const
 {
   G4double bx=0., by=0.;
-#if DEBUG
+#if BDSDEBUG
   G4double bz=0.;
 #endif
   G4int i=0,j=0;
@@ -234,7 +234,7 @@ void BDSXYMagField::GetFieldValue(const G4double Point[4], G4double *Bfield ) co
       } else {
 	bx = Bx[i][j];
 	by = By[i][j];
-#if DEBUG
+#if BDSDEBUG
 	bz = Bz[i][j];
 	G4cout << "Bx[" << i << "][" << j << "]=" << Bx[i][j] << G4endl;
 	G4cout << "By[" << i << "][" << j << "]=" << By[i][j] << G4endl;
@@ -253,7 +253,7 @@ void BDSXYMagField::GetFieldValue(const G4double Point[4], G4double *Bfield ) co
   Bfield[4] = 0;
   Bfield[5] = 0;
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout<<" field value requested : "<<Point[0]<<" , "<<Point[1]<<" , "<<Point[2]<<" , "<<Point[3]<<" : "<<
     i<<" , "<<j<<" , "<<"    "<<local[0]<<" "<<local[1]<<" "<<local[2]<<" "<<bx<<" "<<by<<" "<<bz<<G4endl;
 #endif

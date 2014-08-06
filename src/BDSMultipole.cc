@@ -176,11 +176,11 @@ void BDSMultipole::BuildBeampipe(G4String materialName)
   G4RotationMatrix* RotY;
 
   if((itsPhiAngleIn==0)&&(itsPhiAngleOut==0)){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << "Building ordinary beam pipe (not trapezoid) " << G4endl;
 #endif
     RotY=NULL; // no rotation
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
     G4cout << __METHOD_NAME__ << "Outer pipe :"
 	   << " r= " << itsBpRadius/CLHEP::m << " m"
 	   << " l= " << itsLength/(2.)/CLHEP::m << " m"
@@ -371,7 +371,7 @@ void BDSMultipole::BuildBeampipe(G4double startAper,
   
   // build beampipe
   
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Outer pipe :"
 	 << " start r= " << startAper/CLHEP::m << " m"
 	 << " end r= " << endAper/CLHEP::m << " m"
@@ -387,7 +387,7 @@ void BDSMultipole::BuildBeampipe(G4double startAper,
 			      itsLength/(2.),
 			      0,CLHEP::twopi*CLHEP::radian);
       
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Inner pipe :"
 	 << " r= " << (itsBpRadius-BDSGlobalConstants::Instance()->GetBeampipeThickness() )/CLHEP::m << " m"
 	 << " l= " << itsLength/(2.)/CLHEP::m << " m"
@@ -607,14 +607,14 @@ void BDSMultipole::BuildDefaultOuterLogicalVolume(G4double aLength,
   G4double outerRadius = itsOuterR;
   if(itsOuterR==0) outerRadius = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Outer volume inner radius :"
          << " r= " << (itsInnerIronRadius)/CLHEP::m << " m"
          << " l= " << aLength/2./CLHEP::m << " m"
          << G4endl;
 #endif
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Outer radius :"
          << " r= " << outerRadius/CLHEP::m << " m"
          << " l= " << aLength/2./CLHEP::m << " m"

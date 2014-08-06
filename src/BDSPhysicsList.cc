@@ -242,7 +242,7 @@ BDSPhysicsList::~BDSPhysicsList()
 
 void BDSPhysicsList::ConstructProcess()
 { 
-#if DEBUG
+#if BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif 
 
@@ -332,12 +332,12 @@ void BDSPhysicsList::ConstructProcess()
   }
   //Synchrotron radiation
   if(BDSGlobalConstants::Instance()->GetSynchRadOn()) {
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << "synch. rad. is turned on" << G4endl;
 #endif
     ConstructSR();
   } else {
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << "synch. rad. is turned OFF!" << G4endl;
 #endif
   }
@@ -737,7 +737,7 @@ void BDSPhysicsList::ConstructMuon()
       gammaconversiontomuon_xsbias->RegisterProcess(gammaconversiontomuons);
       gammaconversiontomuon_xsbias->SetEnhanceFactor(BDSGlobalConstants::Instance()->GetGammaToMuFe());
       pmanager->AddDiscreteProcess(gammaconversiontomuon_xsbias);
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "GammaToMuFe = " << BDSGlobalConstants::Instance()->GetGammaToMuFe() << G4endl;
 #endif
     } else if (particleName == "e+") {
@@ -758,7 +758,7 @@ void BDSPhysicsList::ConstructMuon()
       annihitomupair_xsbias->RegisterProcess(annihitomupair);
       annihitomupair_xsbias->SetEnhanceFactor(BDSGlobalConstants::Instance()->GetAnnihiToMuFe());
       pmanager->AddDiscreteProcess(annihitomupair_xsbias); 
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "AnnihiToMuFe = " << BDSGlobalConstants::Instance()->GetAnnihiToMuFe() << G4endl;
 #endif    
     } else if( particleName == "mu+" || 
@@ -856,7 +856,7 @@ void BDSPhysicsList::ConstructOptical()
       pmanager->SetProcessOrderingToLast(theScintillationProcess, idxPostStep);
     }
     if (particleName == "opticalphoton") {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << " AddDiscreteProcess to OpticalPhoton " << G4endl;
 #endif
       pmanager->AddDiscreteProcess(theAbsorptionProcess);

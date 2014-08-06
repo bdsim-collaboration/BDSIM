@@ -16,7 +16,7 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
   timestring = timestring.substr(0,timestring.size()-1);
 
   filename = BDSExecOptions::Instance()->GetOutputFilename()+".txt";
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Output format ASCII, filename: " << filename << G4endl;
 #endif
   of.open(filename);
@@ -37,7 +37,7 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
      << G4endl;  
   
   G4String filenameEloss = BDSExecOptions::Instance()->GetOutputFilename()+".eloss.txt";
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Eloss output format ASCII, filename: " << filenameEloss << G4endl;
 #endif
   ofEloss.open(filenameEloss);

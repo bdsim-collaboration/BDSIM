@@ -257,7 +257,7 @@ void BDSAcceleratorComponent::BuildTunnel()
   G4Material *soilMaterial=BDSMaterials::Instance()->GetMaterial(soilMaterialName);
 
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Soil :"
          << " r= " << (itsTunnelRadius+BDSGlobalConstants::Instance()->GetTunnelThickness())/CLHEP::m + BDSGlobalConstants::Instance()->GetTunnelSoilThickness()/CLHEP::m<< " m"
          << " l= " << itsLength/CLHEP::m << " m"
@@ -357,7 +357,7 @@ void BDSAcceleratorComponent::BuildTunnel()
 
     
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "Building a block" << G4endl;
 #endif
     itsTunnelSizedBlock = new G4Box(
@@ -368,7 +368,7 @@ void BDSAcceleratorComponent::BuildTunnel()
 				    );
 
     
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "Building a tunnel solid" << G4endl;
 #endif
 
@@ -384,7 +384,7 @@ void BDSAcceleratorComponent::BuildTunnel()
 					     BDSGlobalConstants::Instance()->RotYM90(),
                                              nullThreeVector
                                              ); 
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "Building a soil tunnel solid" << G4endl;
 #endif
     itsSoilSolid = new G4IntersectionSolid(
@@ -399,7 +399,7 @@ void BDSAcceleratorComponent::BuildTunnel()
                                            BDSGlobalConstants::Instance()->RotYM90(),
                                            nullThreeVector
                                            ); 
-#ifdef DEBUG   
+#ifdef BDSDEBUG   
     G4cout << "Building inner tunnel solid" << G4endl;
 #endif
     itsInnerTunnelSolid=new G4IntersectionSolid(
@@ -413,7 +413,7 @@ void BDSAcceleratorComponent::BuildTunnel()
                                                 BDSGlobalConstants::Instance()->RotYM90(),
                                                 nullThreeVector
                                                 ); 
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "Building larger inner tunnel solid" << G4endl;
 #endif
     itsLargerInnerTunnelSolid= new G4Tubs(itsName+"_temp_inner_tun_solid",
@@ -425,7 +425,7 @@ void BDSAcceleratorComponent::BuildTunnel()
     
     floorOffsetThreeVector = G4ThreeVector(0,-blockSize-BDSGlobalConstants::Instance()->GetTunnelFloorOffset(),0);
     
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "Building tunnel cavity" << G4endl;
 #endif
     itsTunnelCavity = new G4SubtractionSolid(
@@ -435,7 +435,7 @@ void BDSAcceleratorComponent::BuildTunnel()
                                          nullRotationMatrix,
                                          floorOffsetThreeVector
                                          );
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "Building larger tunnel cavity" << G4endl;
 #endif
    itsLargerTunnelCavity = new G4SubtractionSolid(
@@ -448,7 +448,7 @@ void BDSAcceleratorComponent::BuildTunnel()
   }   //End of "else" statement relevant to bending tunnel
 
   
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Building tunnel minus cavity" << G4endl;
 #endif
   itsTunnelMinusCavity = new G4SubtractionSolid(
@@ -456,7 +456,7 @@ void BDSAcceleratorComponent::BuildTunnel()
                                                 itsTunnelSolid,
                                                 itsLargerTunnelCavity
                                                 );
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Building tunnel minus cavity logical volume" << G4endl;
 #endif
 
@@ -465,21 +465,21 @@ void BDSAcceleratorComponent::BuildTunnel()
                         tunnelMaterial,
                         itsName+"_tun_flr_and_tun_log");
   
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Building soil tunnel logical volume" << G4endl;
 #endif
   itsSoilTunnelLogicalVolume=	
     new G4LogicalVolume(itsSoilSolid,
                         soilMaterial,
                         itsName+"_tun_soil_log");
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Building tunnel logical volume" << G4endl;
 #endif
   itsTunnelLogicalVolume=	
     new G4LogicalVolume(itsTunnelSolid,
                         tunnelMaterial,
                         itsName+"_tun_log");
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Building tunnel cavity logical volume" << G4endl;
 #endif
 
@@ -494,7 +494,7 @@ void BDSAcceleratorComponent::BuildTunnel()
     new G4LogicalVolume(itsLargerTunnelCavity,
                         BDSMaterials::Instance()->GetMaterial(tunnelCavityMaterialName),
                         itsName+"_tun_cav_log");
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Placing tunnel minus cavity" << G4endl;
 #endif
   itsTunnelPhysiComp = new G4PVPlacement(
@@ -509,7 +509,7 @@ void BDSAcceleratorComponent::BuildTunnel()
   
   SetMultiplePhysicalVolumes(itsTunnelPhysiComp);
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Placing soil around tunnel" << G4endl;
 #endif
   itsTunnelPhysiCompSoil = new G4PVPlacement(
@@ -557,7 +557,7 @@ void BDSAcceleratorComponent::BuildTunnel()
   itsTunnelCavityLogicalVolume->SetUserLimits(itsInnerTunnelUserLimits);
 #endif
   
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Setting vis attributes" << G4endl;
 #endif
   //
@@ -621,14 +621,14 @@ void BDSAcceleratorComponent::BuildBLMs()
 
    itsBlmLocationR = itsBlmLocationR + BDSGlobalConstants::Instance()->GetBlmRad() + BDSGlobalConstants::Instance()->GetLengthSafety() +itsBpRadius + blmCaseThickness;
    
-#ifdef DEBUG
+#ifdef BDSDEBUG
    G4cout << "BDSAcceleratorComponent::BuildBLMs() itsBlmLocationRadius = " << itsBlmLocationR/CLHEP::mm << " mm" << G4endl;
 #endif
    
    G4double localLength;
    
    //Make sure BLM length can never exceed component length
-#ifdef DEBUG
+#ifdef BDSDEBUG
    G4cout << "BLM length = " << BDSGlobalConstants::Instance()->GetBlmLength()/CLHEP::m << " m" << G4endl;
    G4cout << "BLM radius = " << BDSGlobalConstants::Instance()->GetBlmRad()/CLHEP::m << " m" << G4endl;
    G4cout << "Component length = " << itsLength/CLHEP::m << " m" << G4endl;
@@ -644,7 +644,7 @@ void BDSAcceleratorComponent::BuildBLMs()
    std::list<double>::iterator zit;
    std::list<double>::iterator thetait;
    for (zit=itsBlmLocZ.begin(), thetait=itsBlmLocTheta.begin(); zit!=itsBlmLocZ.end(); zit++, thetait++){
-#ifdef DEBUG
+#ifdef BDSDEBUG
      G4cout << "Building BLM " << i << G4endl; 
 #endif
      G4double indexInt = (G4double)i;
@@ -659,7 +659,7 @@ void BDSAcceleratorComponent::BuildBLMs()
      blmTrans.setY(blmYTrans);
      blmTrans.setX(blmXTrans);
      
-#ifdef DEBUG
+#ifdef BDSDEBUG
      if((*zit*1000) < 0){
        G4cout << "itsLength is: " << itsLength << G4endl;
        G4cout << "z position defined is: " << (*zit*1000) << G4endl;

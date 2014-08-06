@@ -28,32 +28,32 @@ BDSOutputROOT::~BDSOutputROOT()
 void BDSOutputROOT::BuildSamplerTree(G4String name){
   TTree* SamplerTree = new TTree(name, "Sampler output");
   
-  SamplerTree->Branch("E0",&E0,"E0 (GeV)/F");
-  SamplerTree->Branch("x0",&x0,"x0 (mum)/F");
-  SamplerTree->Branch("y0",&y0,"y0 (mum)/F");
-  SamplerTree->Branch("z0",&z0,"z0 (m)/F");
-  SamplerTree->Branch("xp0",&xp0,"xp0 (rad)/F");
-  SamplerTree->Branch("yp0",&yp0,"yp0 (rad)/F");
-  SamplerTree->Branch("zp0",&zp0,"zp0 (rad)/F");
-  SamplerTree->Branch("t0",&t0,"t0 (ns)/F");
+  SamplerTree->Branch("E0",&E0,"E0/F"); // (GeV)
+  SamplerTree->Branch("x0",&x0,"x0/F"); // (mum)
+  SamplerTree->Branch("y0",&y0,"y0/F"); // (mum)
+  SamplerTree->Branch("z0",&z0,"z0/F"); // (m)
+  SamplerTree->Branch("xp0",&xp0,"xp0/F"); // (rad)
+  SamplerTree->Branch("yp0",&yp0,"yp0/F"); // (rad)
+  SamplerTree->Branch("zp0",&zp0,"zp0/F"); // (rad)
+  SamplerTree->Branch("t0",&t0,"t0/F"); // (ns)
   
-  SamplerTree->Branch("E",&E,"E (GeV)/F");
-  SamplerTree->Branch("x",&x,"x (mum)/F");
-  SamplerTree->Branch("y",&y,"y (mum)/F");
-  SamplerTree->Branch("z",&z,"z (m)/F");
-  SamplerTree->Branch("xp",&xp,"xp (rad)/F");
-  SamplerTree->Branch("yp",&yp,"yp (rad)/F");
-  SamplerTree->Branch("zp",&zp,"zp (rad)/F");
-  SamplerTree->Branch("t",&t,"t (ns)/F");
+  SamplerTree->Branch("E",&E,"E/F"); // (GeV)
+  SamplerTree->Branch("x",&x,"x/F"); // (mum)
+  SamplerTree->Branch("y",&y,"y/F"); // (mum)
+  SamplerTree->Branch("z",&z,"z/F"); // (m)
+  SamplerTree->Branch("xp",&xp,"xp/F"); // (rad)
+  SamplerTree->Branch("yp",&yp,"yp/F"); // (rad)
+  SamplerTree->Branch("zp",&zp,"zp/F"); // (rad)
+  SamplerTree->Branch("t",&t,"t/F"); // (ns)
   
-  SamplerTree->Branch("X",&X,"X (mum)/F");
-  SamplerTree->Branch("Y",&Y,"Y (mum)/F");
-  SamplerTree->Branch("Z",&Z,"Z (m)/F");
-  SamplerTree->Branch("Xp",&Xp,"Xp (rad)/F");
-  SamplerTree->Branch("Yp",&Yp,"Yp (rad)/F");
-  SamplerTree->Branch("Zp",&Zp,"Zp (rad)/F");
+  SamplerTree->Branch("X",&X,"X/F"); // (mum)
+  SamplerTree->Branch("Y",&Y,"Y/F"); // (mum)
+  SamplerTree->Branch("Z",&Z,"Z/F"); // (m)
+  SamplerTree->Branch("Xp",&Xp,"Xp/F"); // (rad)
+  SamplerTree->Branch("Yp",&Yp,"Yp/F"); // (rad)
+  SamplerTree->Branch("Zp",&Zp,"Zp/F"); // (rad)
   
-  SamplerTree->Branch("s",&s,"s (m)/F");
+  SamplerTree->Branch("s",&s,"s/F"); // (m)
   
   SamplerTree->Branch("weight",&weight,"weight/F");
   SamplerTree->Branch("partID",&part,"partID/I");
@@ -74,17 +74,17 @@ void BDSOutputROOT::Init()
 
   //build sampler tree
   G4String primariesSamplerName="primaries";
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " building sampler tree named: " << primariesSamplerName << G4endl;
 #endif
   BuildSamplerTree(primariesSamplerName);
   for(G4int i=0;i<BDSSampler::GetNSamplers();i++)
     {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " building sampler tree number: " << i << G4endl;
 #endif
       G4String name=BDSSampler::outputNames[i];
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " named: " << name << G4endl;
 #endif
       BuildSamplerTree(name);
@@ -100,9 +100,9 @@ void BDSOutputROOT::Init()
     // create a tree with trajectories
     {
       TTree* TrajTree = new TTree("Trajectories", "Trajectories");
-      TrajTree->Branch("x",&x,"x (mum)/F");
-      TrajTree->Branch("y",&y,"y (mum)/F");
-      TrajTree->Branch("z",&z,"z (m)/F");
+      TrajTree->Branch("x",&x,"x/F"); // (mum)
+      TrajTree->Branch("y",&y,"y/F"); // (mum)
+      TrajTree->Branch("z",&z,"z/F"); // (m)
       TrajTree->Branch("part",&part,"part/I");
     }
 
@@ -116,14 +116,14 @@ void BDSOutputROOT::Init()
 
   EnergyLossHisto = new TH1F("ElossHisto", "Energy Loss",nBins,0.,BDSGlobalConstants::Instance()->GetZMax()/CLHEP::m);
   EnergyLossTree= new TTree("ElossTree", "Energy Loss");
-  EnergyLossTree->Branch("z",&z_el,"z (m)/F");
-  EnergyLossTree->Branch("E",&E_el,"E (GeV)/F");
+  EnergyLossTree->Branch("z",&z_el,"z/F"); // (m)
+  EnergyLossTree->Branch("E",&E_el,"E/F"); // (GeV)
 
   PrecisionRegionEnergyLossTree= new TTree("PrecisionRegionElossTree", "Energy Loss");//"x:y:z:E:partID:parentID:weight:volumeName");
-  PrecisionRegionEnergyLossTree->Branch("x",&x_el_p,"x (m)/F");
-  PrecisionRegionEnergyLossTree->Branch("y",&y_el_p,"y (m)/F");
-  PrecisionRegionEnergyLossTree->Branch("z",&z_el_p,"z (m)/F");
-  PrecisionRegionEnergyLossTree->Branch("E",&E_el_p,"E (GeV)/F");
+  PrecisionRegionEnergyLossTree->Branch("x",&x_el_p,"x/F"); // (m)
+  PrecisionRegionEnergyLossTree->Branch("y",&y_el_p,"y/F"); // (m)
+  PrecisionRegionEnergyLossTree->Branch("z",&z_el_p,"z/F"); // (m)
+  PrecisionRegionEnergyLossTree->Branch("E",&E_el_p,"E/F"); // (GeV)
   PrecisionRegionEnergyLossTree->Branch("weight",&weight_el_p,"weight/F");
   PrecisionRegionEnergyLossTree->Branch("partID",&part_el_p,"partID/I");
   PrecisionRegionEnergyLossTree->Branch("volumeName",&volumeName_el_p,"volumeName/C");
@@ -174,13 +174,13 @@ void BDSOutputROOT::WritePrimary(G4String samplerName, G4double E,G4double x0,G4
 void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 {
   G4String name;
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " hc->endtries() = " << hc->entries() << G4endl;
 #endif
   for (G4int i=0; i<hc->entries(); i++)
     {
       G4String name = (*hc)[i]->GetName();
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << "Writing hit to sampler " << name << G4endl;
 #endif
       WriteRootHit(name,
@@ -296,7 +296,7 @@ void BDSOutputROOT::Write()
 {
   if(theRootOutputFile && theRootOutputFile->IsOpen())
     {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " writing to root file..." << G4endl;
 #endif
       //Dump all other quantities to file...

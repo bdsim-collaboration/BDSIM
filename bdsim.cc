@@ -113,7 +113,7 @@ int main(int argc,char** argv) {
   bdsOptions->Parse(argc,argv);
   bdsOptions->Print();
   
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> DEBUG mode is on." << G4endl;
 #endif  
 
@@ -130,7 +130,7 @@ int main(int argc,char** argv) {
   // to the BDSBunch instances
   //
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Setting bunch options." << G4endl;
 #endif  
 
@@ -141,7 +141,7 @@ int main(int argc,char** argv) {
   //
 
   // choose the Random engine
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Initialising random number generator." << G4endl;
 #endif  
   CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine);
@@ -164,7 +164,7 @@ int main(int argc,char** argv) {
   CLHEP::HepRandom::saveFullState(G4cout);
   G4cout << G4endl;
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Seed from BDSGlobalConstants=" 
 	 << BDSGlobalConstants::Instance()->GetRandomSeed() << G4endl;
 #endif
@@ -178,21 +178,21 @@ int main(int argc,char** argv) {
   // set mandatory initialization classes
   //
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Constructing run manager"<<G4endl;
 #endif
   BDSRunManager * runManager = new BDSRunManager;
   // runManager->SetNumberOfAdditionalWaitingStacks(1);
 
   //For geometry sampling, phys list must be initialized before detector.
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
 
   BDSPhysicsList* PhysList=new BDSPhysicsList;
   runManager->SetUserInitialization(PhysList);
   
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<< __FUNCTION__ << "> User init phys list"<<G4endl;
 #endif
 
@@ -205,7 +205,7 @@ int main(int argc,char** argv) {
   G4double worldMaximumExtent=1000*CLHEP::m;
   // This sets the tolerances for the geometry (1e-11 times this value)
   G4GeometryManager::GetInstance()->SetWorldMaximumExtent(worldMaximumExtent); 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout<<__FUNCTION__<<"> Geometry Tolerances: " << G4endl;
   G4cout<<__FUNCTION__<<std::setw(23)<<" World Maximum Extent: "<<std::setw(15)<<worldMaximumExtent/CLHEP::m<<" m"<<G4endl;
   G4cout<<__FUNCTION__<<std::setw(23)<<" Surface: "             <<std::setw(15)<<theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m<< " m"<<G4endl;
@@ -216,7 +216,7 @@ int main(int argc,char** argv) {
   G4cout << __FUNCTION__ << "> Constructing the accelerator"<<G4endl;
   BDSDetectorConstruction* detector = new BDSDetectorConstruction();
  
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User init detector"<<G4endl;
 #endif
   runManager->SetUserInitialization(detector);
@@ -224,17 +224,17 @@ int main(int argc,char** argv) {
   //
   // set user action classes
   //
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - runaction"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSRunAction);
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - eventaction"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSEventAction());
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - steppingaction"<<G4endl;
 #endif
   if(BDSExecOptions::Instance()->GetVerboseStep()) {
@@ -245,17 +245,17 @@ int main(int argc,char** argv) {
     runManager->SetUserAction(new BDSThresholdCutSteppingAction);
   }
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - trackingaction"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSUserTrackingAction);
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - stackingaction"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSStackingAction);
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - detector"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSPrimaryGeneratorAction(detector));
@@ -265,7 +265,7 @@ int main(int argc,char** argv) {
   //
   // Initialize G4 kernel
   //
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Init kernel"<<G4endl;
 #endif
   runManager->Initialize();
@@ -302,7 +302,7 @@ int main(int argc,char** argv) {
   //
   // set default output formats:
   //
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
 #endif  
 
@@ -326,18 +326,18 @@ int main(int argc,char** argv) {
   //
 
   if(BDSExecOptions::Instance()->GetOutline()) {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
     G4cout<<"contructing geometry interface"<<G4endl;
 #endif
     BDSGeometryInterface* BDSGI = new BDSGeometryInterface(BDSExecOptions::Instance()->GetOutlineFilename());
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
     G4cout << __FUNCTION__ << "> Writing survey file"<<G4endl;
 #endif
     if(BDSExecOptions::Instance()->GetOutlineFormat()=="survey") BDSGI->Survey();
     if(BDSExecOptions::Instance()->GetOutlineFormat()=="optics") BDSGI->Optics();
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
     G4cout<<"deleting geometry interface"<<G4endl;
 #endif
     delete BDSGI;
@@ -354,7 +354,7 @@ int main(int argc,char** argv) {
 #endif    
 
 #ifdef G4VIS_USE
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< __FUNCTION__ << "> Initializing Visualisation Manager"<<G4endl;
 #endif
       visManager = new BDSVisManager;
@@ -374,7 +374,7 @@ int main(int argc,char** argv) {
       delete session;
 
 #ifdef G4VIS_USE
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout << __FUNCTION__ << "> Visualisation Manager deleting..." << G4endl;
 #endif
       delete visManager;
@@ -391,24 +391,24 @@ int main(int argc,char** argv) {
   //
   G4GeometryManager::GetInstance()->OpenGeometry();
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> BDSOutput deleting..."<<G4endl;
 #endif
   delete bdsOutput;
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> BDSBeamline deleting..."<<G4endl;
 #endif
   delete BDSBeamline::Instance();
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
 #endif
   delete BDSExecOptions::Instance();
   delete BDSGlobalConstants::Instance();
   delete BDSMaterials::Instance();
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif
   delete runManager;

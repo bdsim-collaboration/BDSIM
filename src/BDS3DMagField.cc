@@ -117,7 +117,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
 
   //Mirror in x=0 plane and z=0 plane
   if( x < 0 ){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "x = " << x << ". Mirroring in x=0 plane." << G4endl;
 #endif
     x *= -1;
@@ -126,7 +126,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
   }
 
   if( z <0 ){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "z = " << z << ". Mirroring in z=0 plane." << G4endl;
 #endif
     z *= -1;

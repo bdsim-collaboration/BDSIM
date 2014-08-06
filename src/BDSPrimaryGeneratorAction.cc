@@ -48,7 +48,7 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSDetectorConstruction* /*
   //  particleGun->SetParticleDefinition(BDSGlobalConstants::Instance()->
   //                                      GetParticleDefinition());
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSPrimaryGeneratorAction.cc: Primary particle is " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetParticleName() << G4endl;
   //  G4cout << "BDSPrimaryGeneratorAction.cc: Setting particle definition for gun..." << G4endl;
   //  particleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->
@@ -58,7 +58,7 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSDetectorConstruction* /*
 //   if(BDSGlobalConstants::Instance()->GetUseSynchPrimaryGen()) // synchrotron radiation generator
 //     {
 //       itsBDSSynchrotronRadiation=new BDSSynchrotronRadiation("tmpSynRad");
-// #ifdef DEBUG
+// #ifdef BDSDEBUG
 //       G4cout << "BDSPrimaryGeneratorAction.cc: Setting synch rad..." << G4endl;
 //       G4double R=BDSGlobalConstants::Instance()->GetSynchPrimaryLength()/
 // 	BDSGlobalConstants::Instance()->GetSynchPrimaryAngle();   
@@ -71,7 +71,7 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSDetectorConstruction* /*
 // 					 FindParticle("gamma"));
 //     }
   
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Setting momentum..." << G4endl;
 #endif
   particleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
@@ -129,7 +129,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       E*=-1;
     }
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
     printf("Particles left %i: %f %f %f %f %f %f %f %f\n",
            (int)BDSGlobalConstants::Instance()->holdingQueue.size(),x0,y0,z0,xp,yp,zp,t,E);
 #endif
@@ -147,7 +147,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   particleGun->GeneratePrimaryVertex(anEvent);
 
   //Set the weight
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSPrimaryGeneratorAction: setting weight = " << weight << G4endl;
 #endif
   anEvent->GetPrimaryVertex()->SetWeight(weight);
@@ -162,7 +162,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   }
 
   G4double totalE = E+particleGun->GetParticleDefinition()->GetPDGMass();
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout
     << "BDSPrimaryGeneratorAction: " << G4endl
     << "  position= " << particleGun->GetParticlePosition()/CLHEP::m<<" m"<<G4endl

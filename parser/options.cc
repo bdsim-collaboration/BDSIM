@@ -17,7 +17,7 @@ void Options::print() const {
 
 void Options::set_value(std::string name, double value )
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "parser> Setting value " << name << ", " << value << std::endl; 
 #endif
   //
@@ -231,7 +231,7 @@ void Options::set_value(std::string name, double value )
 
 void Options::set_value(std::string name, std::string value )
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "parser> Setting value " << name << ", " << value << std::endl; 
 #endif
   // 

@@ -49,12 +49,12 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   if (theTrack->GetParentID() == 0){
     //this is a primary track
     //should only increment turn number for primaries
-    #ifdef DEBUG
+    #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " primary particle - incrementing turn number" << G4endl;
     #endif
     BDSGlobalConstants::Instance()->IncrementTurnNumber();
   }
-  #ifdef DEBUG
+  #ifdef BDSDEBUG
   else
     {G4cout << __METHOD_NAME__ << " secondary particle - not incrementing turn number" << G4endl;}
   #endif

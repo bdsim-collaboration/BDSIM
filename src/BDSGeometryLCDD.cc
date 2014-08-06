@@ -106,7 +106,7 @@ BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):
   aconst.name="mole";
   aconst.value=CLHEP::mole;
   CONST_LIST.push_back(aconst);
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSGeometryLCDD CONST_LIST defined units: " <<  G4endl;
   for(unsigned int i=0; i<CONST_LIST.size(); i++){
     G4cout << CONST_LIST[i].name << " " << CONST_LIST[i].value << G4endl;
@@ -210,7 +210,7 @@ void BDSGeometryLCDD::parseDoc()
        cur = cur->next;
      }
    if((!itsMagField) && (!itsUniformMagField)){
-#ifdef DEBUG
+#ifdef BDSDEBUG
      G4cout << "BDSGeometryLCDD.cc> No magnetic fields defined. Making default (zero) BDSMagField" << G4endl;
 #endif
      itsMagField = new BDSMagField();
@@ -564,7 +564,7 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 		 value = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"value"));
 		 unit = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"unit"));
 		 type = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"type"));
-#ifdef DEBUG
+#ifdef BDSDEBUG
 		 G4cout << "BDSGeometryLCDD:ParseMaterials value = " << value << ", unit = " << unit << ", type = " << type << G4endl; 
 #endif
 		 if (!strcmp("",type)){
@@ -586,20 +586,20 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	     std::list<G4double> fractions;
 
 	     tempcur = cur->xmlChildrenNode;
-#ifdef DEBUG
+#ifdef BDSDEBUG
 	     G4cout << "BDSGeometryLCDD::parseMATERIALS - making list of fractions/composites" << G4endl;
 #endif
 	     while(tempcur!=NULL){
-#ifdef DEBUG
+#ifdef BDSDEBUG
 	       G4cout << "BDSGeometryLCDD::parseMATERIALS - name = " << tempcur->name << G4endl;
 #endif	    
 	       if (!xmlStrcmp(tempcur->name, (const xmlChar *)"fraction")){
-#ifdef DEBUG
+#ifdef BDSDEBUG
 		 G4cout << "BDSGeometryLCDD::parseMATERIALS - component = " << parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref")) << G4endl;
 #endif
 		 components.push_back((G4String)parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref")).c_str()); 
 		 stComponents.push_back((G4String)parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref"))); 
-#ifdef DEBUG
+#ifdef BDSDEBUG
 		 G4cout << components.back() << G4endl;
 		 G4cout << "BDSGeometryLCDD::parseMATERIALS - fraction = " << parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"n")) << G4endl;
 #endif
@@ -628,22 +628,22 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	     for(stIter = stComponents.begin();
 	     	 stIter!= stComponents.end();
 	     	 stIter++){
-#ifdef DEBUG
+#ifdef BDSDEBUG
 	       G4cout << "String element: " << *stIter << G4endl;
 #endif
 	       components.push_back((*stIter).c_str());
-#ifdef DEBUG
+#ifdef BDSDEBUG
 	       G4cout << "Element: " << components.back() << G4endl;
 #endif
 	     }
 
 	     if (weights.size()>0){
-#ifdef DEBUG
+#ifdef BDSDEBUG
 	       G4cout << "Size of weights: " << weights.size() << G4endl;
 #endif
 	       BDSMaterials::Instance()->AddMaterial(name, value*unit/(CLHEP::g/CLHEP::cm3), kStateSolid, 300, 1, components, weights);
 	     } else if(fractions.size()>0){
-#ifdef DEBUG
+#ifdef BDSDEBUG
 	       G4cout << "Size of fractions: " << fractions.size() << G4endl;
 #endif
 	       BDSMaterials::Instance()->AddMaterial(name, value*unit/(CLHEP::g/CLHEP::cm3), kStateSolid, 300, 1, components, fractions);
@@ -746,21 +746,21 @@ void BDSGeometryLCDD::parseVOLUME(xmlNodePtr cur)
        if ((!xmlStrcmp(cur->name, (const xmlChar *)"materialref")))
 	 {
 	   materialref = parseStrChar(xmlGetProp(cur,(const xmlChar*)"ref"));
-#ifdef DEBUG
+#ifdef BDSDEBUG
            G4cout << "BDSGeometryLCDD> materialref = " << materialref << G4endl; 
 #endif
 	 }
        else if ((!xmlStrcmp(cur->name, (const xmlChar *)"solidref")))
 	 {
 	   solidref = parseStrChar(xmlGetProp(cur,(const xmlChar*)"ref"));  
-#ifdef DEBUG
+#ifdef BDSDEBUG
            G4cout << "BDSGeometryLCDD> solidref = " << solidref << G4endl; 
 #endif
 	 }
        else if ((!xmlStrcmp(cur->name, (const xmlChar *)"visref")))
 	 {
 	   visref = parseStrChar(xmlGetProp(cur,(const xmlChar*)"ref")); 
-#ifdef DEBUG
+#ifdef BDSDEBUG
            G4cout << "BDSGeometryLCDD> visref = " << visref << G4endl; 
 #endif
 	 }

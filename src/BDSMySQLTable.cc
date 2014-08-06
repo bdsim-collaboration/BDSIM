@@ -18,7 +18,7 @@
 
 BDSMySQLTable::BDSMySQLTable (G4String aTableName)
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " - creating new table named: " << aTableName << G4endl;
 #endif
   SetValidVarTypes();
@@ -33,12 +33,12 @@ void BDSMySQLTable::AddVariable(G4String aName, G4String aType){
   if(!isValidVarType(aType)){
     return;
   }
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " - adding variable: " << aName << " " << aType << " to table " << GetName() << G4endl;
 #endif
   itsVar.push_back(new BDSMySQLVariable(aName,aType));
   itsNVariables++;
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " - nVariables = " << GetNVariables() << G4endl;
 #endif
 }

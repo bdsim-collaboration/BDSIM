@@ -47,7 +47,7 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
   G4double kappa=  (-fPtrMagEqOfMot->FCof()*itsBDblPrime) /InitMag;
    
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout<<"sextupole stepper:"<<G4endl; 
   G4cout << "kappa: " << kappa << G4endl;
   G4cout << "InitMag: " << InitMag << G4endl;

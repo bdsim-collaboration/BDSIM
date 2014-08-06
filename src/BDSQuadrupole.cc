@@ -50,12 +50,12 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
   itsBGrad(bGrad),
   itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
 {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<< __METHOD_NAME__ << "spec=" << spec << G4endl;
 #endif
   // get specific quadrupole type
   G4String qtype = getParameterValueString(spec, "type");
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<< __METHOD_NAME__ << "qtype="<<qtype<<G4endl;
 #endif
 
@@ -68,7 +68,7 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
       //
       // build external volume
       // 
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout<<"Building marker volume "<<G4endl;
 #endif
       BuildDefaultMarkerLogicalVolume();
@@ -83,15 +83,15 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
       //
       // build beampipe (geometry + magnetic field)
       //
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout<<"Building beam pipe field and stepper "<<G4endl;
 #endif
       BuildBPFieldAndStepper();
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<<"Building beam pipe field manager "<<G4endl;
 #endif
       BuildBPFieldMgr(itsStepper,itsMagField);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<<"Building beam pipe "<<G4endl;
 #endif
       BuildBeampipe();
@@ -138,13 +138,13 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
       // define sensitive volumes for hit generation
       //
       if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-#ifdef DEBUG
+#ifdef BDSDEBUG
         G4cout << "BDSQuadrupole.cc:> setting sensitive beam pipe" << G4endl;
 #endif
         SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
       }
       if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-#ifdef DEBUG
+#ifdef BDSDEBUG
         G4cout << "BDSQuadrupole.cc:> setting sensitive outer volume" << G4endl;
 #endif
         SetMultipleSensitiveVolumes(itsOuterLogicalVolume);

@@ -74,7 +74,7 @@ void BDSSampler::SamplerLogicalVolume()
       itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
      // Sensitive Detector:
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << "BDSSampler.cc Nsamplers " << nSamplers << G4endl;
 #endif
 
@@ -98,7 +98,7 @@ void BDSSampler::SamplerLogicalVolume()
 G4VisAttributes* BDSSampler::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.5,0.6,0.7));
-#if defined DEBUG
+#if defined BDSDEBUG
   itsVisAttributes->SetVisibility(true);
 #else
   itsVisAttributes->SetVisibility(false);

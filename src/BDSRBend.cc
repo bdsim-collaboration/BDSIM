@@ -51,7 +51,7 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
 				((itsLength/itsAngle)*sin(itsAngle/2)
 				 + fabs(cos(itsAngle/2))*outR*tan(itsAngle/2)/2)
 				);
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSRBend>> rbend itsMagFieldLength = " << itsMagFieldLength << G4endl;
 #endif
 

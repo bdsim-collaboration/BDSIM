@@ -106,7 +106,7 @@ void BDSBunchOld::SetOptions(struct Options& opt)
     distribType = _UDEF;
     G4cerr << "WARNING bunch distribution type UNKNOWN or USER DEFINED: " << opt.distribType << G4endl;
   }
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<< "BDSBunchOld::SetOptions> distrType : "<<opt.distribType<<G4endl;
 #endif
   //
@@ -171,7 +171,7 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 
   case _GAUSSIAN_MATRIX:
     {       
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout<< "BDSBunchOld::SetOptions> case _GAUSSIAN_MATRIX " << G4endl;      
       G4cout<< "BDSBunchOld::SetOptions> " << X0 << " " << Xp0 << " " << Y0 << " " << Yp0 << " " << T0 << G4endl;
 #endif      
@@ -226,7 +226,7 @@ void BDSBunchOld::SetOptions(struct Options& opt)
       GaussMultiGen = new CLHEP::RandMultiGauss(*CLHEP::HepRandom::getTheEngine(),
 						meansGM,sigmaGM);   
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout<< "BDSBunchOld::SetOptions> case _GAUSSIAN_MATRIX break " << G4endl;      
 #endif      					       
 
@@ -254,7 +254,7 @@ void BDSBunchOld::SetOptions(struct Options& opt)
   case _GUINEAPIG_BUNCH:
     {
       OpenBunchFile();
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunchOld : " <<"GUINEAPIG_BUNCH: skipping "<<nlinesIgnore<<"  lines"<<G4endl;
 #endif
       skip(nlinesIgnore * 6);
@@ -264,7 +264,7 @@ void BDSBunchOld::SetOptions(struct Options& opt)
   case _GUINEAPIG_SLAC:
     {
       OpenBunchFile();
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunchOld : " <<"GUINEAPIG_SLAC: skipping "<<nlinesIgnore<<"  lines"<<G4endl;
 #endif
       skip(nlinesIgnore * 6);
@@ -274,7 +274,7 @@ void BDSBunchOld::SetOptions(struct Options& opt)
   case _GUINEAPIG_PAIRS:
     {
       OpenBunchFile();
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunchOld : " <<"GUINEAPIG_PAIRS: skipping "<<nlinesIgnore<<"  lines"<<G4endl;
 #endif
       skip(nlinesIgnore * 7);
@@ -284,7 +284,7 @@ void BDSBunchOld::SetOptions(struct Options& opt)
   case _CAIN:
     {
       OpenBunchFile();
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunchOld : " <<"CAIN: skipping "<<nlinesIgnore<<"  lines"<<G4endl;
 #endif
       skip(nlinesIgnore * 14);
@@ -311,18 +311,18 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 
 
 	  unparsed_str = unparsed_str.substr(pos+1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
           G4cout<< "BDSBunchOld : " <<"token ->"<<token<<G4endl;
 	  G4cout<< "BDSBunchOld : token.substr(0,1) -> " << token.substr(0,1) << G4endl;
 	  G4cout<< "BDSBunchOld : " <<"unparsed_str ->"<<unparsed_str<<G4endl;
           G4cout<< "BDSBunchOld : " <<"pos ->"<<pos<<G4endl;
 #endif
 	  if(token.substr(0,1)=="E") {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	    G4cout<< "BDSBunchOld : " <<"E!"<<G4endl;
 #endif
 	    G4String rest = token.substr(1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	    G4cout<< "BDSBunchOld : " <<"rest ->"<<rest<<G4endl;
 #endif
 	    G4int pos1 = rest.find("[");
@@ -331,7 +331,7 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 	      G4cerr<<"unit format wrong!!!"<<G4endl;
 	    } else {
 	      G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	      G4cout<< "BDSBunchOld : " <<"fmt ->"<<fmt<<G4endl;
 #endif
 	      sd.name = "E"; 
@@ -344,11 +344,11 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 	      fields.push_back(sd);
 	    }
 	  } else if(token.substr(0,1)=="t") {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	    G4cout<< "BDSBunchOld : " <<"t!"<<G4endl;
 #endif
 	    G4String rest = token.substr(1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	    G4cout<< "BDSBunchOld : " <<"rest ->"<<rest<<G4endl;
 #endif
 	    G4int pos1 = rest.find("[");
@@ -357,7 +357,7 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 	      G4cerr<<"unit format wrong!!!"<<G4endl;
 	    } else {
 	      G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	      G4cout<< "BDSBunchOld : " <<"fmt ->"<<fmt<<G4endl;
 #endif
 	      sd.name = "t"; 
@@ -373,11 +373,11 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 	      
 	    }
 	  } else if( (token.substr(0,1)=="x") && (token.substr(1,1)!="p") ) {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	    G4cout<< "BDSBunchOld : " <<"x!"<<G4endl;
 #endif
 	    G4String rest = token.substr(1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	    G4cout<< "BDSBunchOld : " <<"rest ->"<<rest<<G4endl;
 #endif
 	    G4int pos1 = rest.find("[");
@@ -386,7 +386,7 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 	      G4cerr<<"unit format wrong!!!"<<G4endl;
 	    } else {
 	      G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	      G4cout<< "BDSBunchOld : " <<"fmt ->"<<fmt<<G4endl;
 #endif
 	      sd.name="x";
@@ -401,11 +401,11 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 	      
 	    }
 	  }else if(token.substr(0,1)=="y" && token.substr(1,1)!="p" ) {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	    G4cout<< "BDSBunchOld : " <<"y!"<<G4endl;
 #endif
 	    G4String rest = token.substr(1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	    G4cout<< "BDSBunchOld : " <<"rest ->"<<rest<<G4endl;
 #endif
 	    G4int pos1 = rest.find("[");
@@ -414,7 +414,7 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 	      G4cerr<<"unit format wrong!!!"<<G4endl;
 	    } else {
 	      G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	      G4cout<< "BDSBunchOld : " <<"fmt ->"<<fmt<<G4endl;
 #endif
 	      sd.name="y";
@@ -428,11 +428,11 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 	      fields.push_back(sd);
 	    }
 	  }else if(token.substr(0,1)=="z" && token.substr(1,1)!="p" ) {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
               G4cout<< "BDSBunchOld : " <<"z!"<<G4endl;
 #endif
 	      G4String rest = token.substr(1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
               G4cout<< "BDSBunchOld : " <<"rest ->"<<rest<<G4endl;
 #endif
 	      G4int pos1 = rest.find("[");
@@ -441,7 +441,7 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 		G4cerr<<"unit format wrong!!!"<<G4endl;
 	      } else {
 		G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                 G4cout<< "BDSBunchOld : " <<"fmt ->"<<fmt<<G4endl;
 #endif
 		sd.name="z";
@@ -455,11 +455,11 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 		fields.push_back(sd);
 	      }
 	  } else if(token.substr(0,2)=="xp") {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	    G4cout<< "BDSBunchOld : " <<"xp!"<<G4endl;
 #endif
 	    G4String rest = token.substr(2);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	    G4cout<< "BDSBunchOld : " <<"rest ->"<<rest<<G4endl;
 #endif
 	    G4int pos1 = rest.find("[");
@@ -468,7 +468,7 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 	      G4cerr<<"unit format wrong!!!"<<G4endl;
 	    } else {
 	      G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	      G4cout<< "BDSBunchOld : " <<"fmt ->"<<fmt<<G4endl;
 #endif
 	      sd.name="xp";
@@ -481,11 +481,11 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 	      
 	    }
 	  }else if(token.substr(0,2)=="yp") {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	    G4cout<< "BDSBunchOld : " <<"yp!"<<G4endl;
 #endif
 	    G4String rest = token.substr(2);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	    G4cout<< "BDSBunchOld : " <<"rest ->"<<rest<<G4endl;
 #endif
 	    G4int pos1 = rest.find("[");
@@ -494,7 +494,7 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 	      G4cerr<<"unit format wrong!!!"<<G4endl;
 	    } else {
 	      G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	      G4cout<< "BDSBunchOld : " <<"fmt ->"<<fmt<<G4endl;
 #endif
 	      sd.name="yp";
@@ -506,11 +506,11 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 	      fields.push_back(sd);
 	    }
 	  } else if(token.substr(0,2)=="zp") {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	    G4cout<< "BDSBunchOld : " <<"zp!"<<G4endl;
 #endif
 	    G4String rest = token.substr(2);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	    G4cout<< "BDSBunchOld : " <<"rest ->"<<rest<<G4endl;
 #endif
 	    G4int pos1 = rest.find("[");
@@ -519,7 +519,7 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 	      G4cerr<<"unit format wrong!!!"<<G4endl;
 	    } else {
 	      G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	      G4cout<< "BDSBunchOld : " <<"fmt ->"<<fmt<<G4endl;
 #endif
 	      sd.name="zp";
@@ -531,14 +531,14 @@ void BDSBunchOld::SetOptions(struct Options& opt)
 	      fields.push_back(sd);
 	    }
 	  }else if(token.substr(0,2)=="pt") {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	    G4cout<< "BDSBunchOld : " <<"pt!"<<G4endl;
 #endif
 	    sd.name="pt";
 	    sd.unit=1;
 	    fields.push_back(sd);
 	  } else if(token.substr(0,1)=="w") {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 	    G4cout<< "BDSBunchOld : " <<"weight!"<<G4endl;
 #endif
 	    sd.name="weight";
@@ -647,7 +647,7 @@ void BDSBunchOld::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 				  G4double& t, G4double& E, G4double &weight)
 {
   
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<< "BDSBunchOld::GetNextParticle> Twiss : " << betaX  << " " << betaY  << " " 
 	<< alphaX << " " << alphaY << " "
 	<< emitX  << " " << emitY  << G4endl;
@@ -694,7 +694,7 @@ void BDSBunchOld::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       t = 0;
       E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * (1 + energySpread * GaussGen->shoot());
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunchOld : " <<"GAUSSIAN: "<<G4endl
             <<" X0= "<<X0<<" m"<<G4endl
             <<" Y0= "<<Y0<<" m"<<G4endl
@@ -736,7 +736,7 @@ void BDSBunchOld::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       t = 0;
       E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * (1 + energySpread * (1-2*FlatGen->shoot()));
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunchOld : " <<"SQUARE: "<<G4endl
             <<" X0= "<<X0<<" m"<<G4endl
             <<" Y0= "<<Y0<<" m"<<G4endl
@@ -759,7 +759,7 @@ void BDSBunchOld::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
     }
   case _GAUSSIAN_TWISS:
     {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<<"GAUSSIAN_TWISS: "<<G4endl
             // <<" X0= "<<X0<<" m"<<G4endl
             // <<" Y0= "<<Y0<<" m"<<G4endl
@@ -803,7 +803,7 @@ void BDSBunchOld::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
     }
   case _GAUSSIAN_MATRIX :
     {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunchOld::GetNextParticle> V0 : " << X0 << " " << Xp0 << " " << Y0 << " " << Yp0 << " " << T0 << G4endl;
 #endif
 
@@ -821,7 +821,7 @@ void BDSBunchOld::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       else
         zp =  sqrt(1.-xp*xp -yp*yp);
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunchOld::GetNextParticle>" << " GAUSSIAN_MATRIX : "<<G4endl;
 #endif
       break;
@@ -829,7 +829,7 @@ void BDSBunchOld::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 
   case _RING:
     {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunchOld : " <<"RING: "<<G4endl
             <<" X0= "<<X0<<" m"<<G4endl
             <<" Y0= "<<Y0<<" m"<<G4endl
@@ -864,7 +864,7 @@ void BDSBunchOld::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
   case _ESHELL:
     {// generate elliptical shell - first generate on S1 and then transform into ellipse
       
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunchOld : " <<"SHELL: " 
             <<" X0= " <<X0<<" m"<<G4endl
             <<" Y0= " <<Y0<<" m"<<G4endl
@@ -1119,7 +1119,7 @@ void BDSBunchOld::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
           yp = py*CLHEP::c_light / sqrt(E*E + 2*E*part_mass);
           zp = pz*CLHEP::c_light / sqrt(E*E + 2*E*part_mass);
           
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
           G4cout << "Bunch input was: " << G4endl;
           G4cout << type << "\t"
                  << gen << "\t"
@@ -1154,7 +1154,7 @@ void BDSBunchOld::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       G4int type;
 
       //Skip the a number of lines defined by the user option.
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<< "BDSBunchOld : " <<"UDEF_BUNCH: skipping "<<nlinesIgnore<<"  lines"<<G4endl;
 #endif
       skip((G4int)(nlinesIgnore * fields.size()));
@@ -1162,16 +1162,16 @@ void BDSBunchOld::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       std::list<struct BDSBunchOld::Doublet>::iterator it;
      for(it=fields.begin();it!=fields.end();it++)
        {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
          G4cout<< "BDSBunchOld : " <<it->name<<"  ->  "<<it->unit<<G4endl;
 #endif
          if(it->name=="E") { ReadValue(E); E *= ( CLHEP::GeV * it->unit ); 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
          G4cout << "******** Particle Mass = " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() << G4endl;
          G4cout << "******** Particle Total Energy = " << E << G4endl;
 #endif
          E-=BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
-#ifdef DEBUG
+#ifdef BDSDEBUG
          G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
 	 
 	 G4cout<< "BDSBunchOld : " << E <<G4endl;
@@ -1179,19 +1179,19 @@ void BDSBunchOld::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
          }
          if(it->name=="t") { ReadValue(t); t *= ( CLHEP::s * it->unit ); tdef = true; }
          if(it->name=="x") { ReadValue(x0); x0 *= ( CLHEP::m * it->unit ); 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
            G4cout<< "BDSBunchOld : " << x0 <<G4endl;
 #endif
          }
          if(it->name=="y") { 
            ReadValue(y0); y0 *= ( CLHEP::m * it->unit ); 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
            G4cout<< "BDSBunchOld : " << y0 <<G4endl;
 #endif
          }
          if(it->name=="z") { 
            ReadValue(z0); z0 *= ( CLHEP::m * it->unit ); 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
            G4cout<< "BDSBunchOld : " << z0 <<G4endl;
 #endif
          }
@@ -1232,7 +1232,7 @@ void BDSBunchOld::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
     }
   }
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   // particle properties
   G4cout << __METHOD_NAME__ <<G4endl
 	 <<" x0 = "<<x0<<" m"<<G4endl
@@ -1391,7 +1391,7 @@ void BDSBunchOld::SetEnergySpread(double val)
 template <typename Type> G4bool  BDSBunchOld::ReadValue(Type &value){
   InputBunchFile>>value; 
   if (InputBunchFile.eof()){ //If the end of the file is reached go back to the beginning of the file.
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSBunchOld.cc> End of file reached. Returning to beginning of file." << G4endl;
 #endif
     CloseBunchFile();

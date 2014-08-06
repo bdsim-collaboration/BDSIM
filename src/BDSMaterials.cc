@@ -55,7 +55,7 @@ void BDSMaterials::Initialise()
   //
   // Define elements
   //
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSMaterials: G4 predefined units: " << G4endl;
   G4cout << "g= " << CLHEP::g << G4endl;
   G4cout << "kg= " << CLHEP::kg << G4endl;
@@ -579,7 +579,7 @@ void BDSMaterials::Initialise()
   //Vacuum (same composition as residual vacuum in warm sections of LHC).
   pressure=BDSGlobalConstants::Instance()->GetVacuumPressure();
   density = (CLHEP::STP_Temperature/temperature) * (pressure/(1.*CLHEP::atmosphere))  * 29*CLHEP::g/(22.4*1.e-3*CLHEP::m3) ;
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<< " ***************** defining Vacuum"<<G4endl;
   G4cout<< "pressure="<<pressure/CLHEP::bar<<" bar"<<G4endl;
   G4cout<< "temp="<<temperature/CLHEP::kelvin<<" K"<<G4endl;
@@ -617,7 +617,7 @@ void BDSMaterials::AddMaterial(G4Material* aMaterial, G4String aName)
 {
   aName.toLower();
   if(materials.insert(make_pair(aName,aMaterial)).second){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "New material : " << aName << " added to material table" << G4endl;
 #endif
 
@@ -634,7 +634,7 @@ void BDSMaterials::AddMaterial(G4String aName, G4double itsZ, G4double itsA, G4d
   aName.toLower();
   G4Material* tmpMaterial = new G4Material(aName, itsZ, itsA*CLHEP::g/CLHEP::mole, itsDensity*CLHEP::g/CLHEP::cm3);
   if(materials.insert(make_pair(aName,tmpMaterial)).second){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "New material : " << aName << " added to material table" << G4endl;
 #endif
   }else{
@@ -657,7 +657,7 @@ std::list<const char*> itsComponents, std::list<Type> itsComponentsFractions)
       sIter != itsComponents.end();
       sIter++, dIter++)
   {
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSMaterials::AddMaterial - Adding element: " << (G4String)*sIter << G4endl;
 #endif
     if(CheckElement((G4String)*sIter)){
@@ -665,7 +665,7 @@ std::list<const char*> itsComponents, std::list<Type> itsComponentsFractions)
     } else tmpMaterial->AddMaterial(GetMaterial((G4String)*sIter),(*dIter));
   }
   if(materials.insert(make_pair(aName,tmpMaterial)).second){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "New material : " << aName << " added to material table" << G4endl;
 #endif
   }else{
@@ -677,7 +677,7 @@ std::list<const char*> itsComponents, std::list<Type> itsComponentsFractions)
 void BDSMaterials::AddElement(G4Element* aElement, G4String aSymbol)
 {
   if(elements.insert(make_pair(aSymbol,aElement)).second){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "New atom : " << aSymbol << G4endl;
 #endif
   }else{
@@ -690,7 +690,7 @@ void BDSMaterials::AddElement(G4String aName, G4String aSymbol, G4double itsZ, G
 {
   G4Element* tmpElement = new G4Element(aName, aSymbol, itsZ, itsA*CLHEP::g/CLHEP::mole);
   if(elements.insert(make_pair(aSymbol,tmpElement)).second){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "New atom : " << aSymbol << G4endl;
 #endif
   }else{
@@ -703,11 +703,11 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)
 {
   G4String cmpStr1 ("G4_");
   G4String cmpStr2 (aMaterial, 3);
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSMaterials::GetMaterial() - " << cmpStr1 << " " << cmpStr2 << " " << cmpStr1.compareTo(cmpStr2) << G4endl;
 #endif
   if (!cmpStr1.compareTo(cmpStr2)){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "Using NIST material " << aMaterial << G4endl;
 #endif
     G4NistManager* nistManager = G4NistManager::Instance();
@@ -728,11 +728,11 @@ G4Element* BDSMaterials::GetElement(G4String aSymbol)
 {
   G4String cmpStr1 ("G4_");
   G4String cmpStr2 (aSymbol, 3);
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << cmpStr1 << " " << cmpStr2 << " " << cmpStr1.compareTo(cmpStr2) << G4endl;
 #endif
   if (!cmpStr1.compareTo(cmpStr2)){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "Using NIST material " << aSymbol << G4endl;
 #endif
     G4NistManager* nistManager = G4NistManager::Instance();
@@ -864,7 +864,7 @@ void PrepareRequiredMaterials()
   // Put in a function instead of in full in BDSDetectorConstruction.cc
   
   G4bool verbose = BDSExecOptions::Instance()->GetVerbose();
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4bool debug = true;
 #else
   G4bool debug = false;
@@ -877,7 +877,7 @@ void PrepareRequiredMaterials()
   if (verbose || debug) G4cout << "parsing the atom list..."<< G4endl;
   for(it = atom_list.begin();it!=atom_list.end();it++)
   {
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "---->adding Atom, "
            << "name= " << (*it).name << " "
            << "symbol= " << (*it).symbol << " "
@@ -895,7 +895,7 @@ void PrepareRequiredMaterials()
   for(it = material_list.begin();it!=material_list.end();it++)
   {
     if((*it).Z != 0) {
-#ifdef DEBUG  
+#ifdef BDSDEBUG  
       G4cout << "---->adding Material, "
              << "name= "<< (*it).name << " "
              << "Z= " << (*it).Z << " "
@@ -923,7 +923,7 @@ void PrepareRequiredMaterials()
 
       if((*it).componentsWeights.size()==(*it).components.size()) {
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
         G4cout << "---->adding Material, "
                << "name= "<< (*it).name << " "
                << "density= "<< (*it).density << "g/cm3 "
@@ -944,7 +944,7 @@ void PrepareRequiredMaterials()
       }
       else if((*it).componentsFractions.size()==(*it).components.size()) {
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
         G4cout << "---->adding Material, "
         << "name= "<< (*it).name << " "
         << "density= "<< (*it).density << "g/cm3 "

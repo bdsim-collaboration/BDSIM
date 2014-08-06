@@ -27,7 +27,7 @@ BDSPCLTube::BDSPCLTube(G4double sizeX, G4double sizeYUp, G4double sizeYDown, G4d
 }
 
 void BDSPCLTube::BuildHollow(){
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSPCLTube itsSizeX: " << itsSizeX/CLHEP::m << " m" << G4endl;
   G4cout << "BDSPCLTube itsSizeYUp: " << itsSizeYUp/CLHEP::m << " m" << G4endl;
   G4cout << "BDSPCLTube itsSizeYDown: " << itsSizeYDown/CLHEP::m << " m" << G4endl;
@@ -124,7 +124,7 @@ void BDSPCLTube::BuildHollow(){
 
 void BDSPCLTube::Build(){
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSPCLTube itsSizeX: " << itsSizeX/CLHEP::m << " m" << G4endl;
   G4cout << "BDSPCLTube itsSizeYUp: " << itsSizeYUp/CLHEP::m << " m" << G4endl;
   G4cout << "BDSPCLTube itsSizeYDown: " << itsSizeYDown/CLHEP::m << " m" << G4endl;
@@ -198,7 +198,7 @@ void BDSPCLTube::Build(){
 }
 
 G4VSolid* BDSPCLTube::GetSolid(){
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Returning solid..." << G4endl;
 #endif
   return solid;
