@@ -88,6 +88,8 @@ public :
    TBranch        *b_turnnumber;   //!
 
    // List of branches
+   TString        sSamplerName;
+   TBranch        *bOut_SamplerName; 
    TBranch        *bOut_E0 ; //(GeV);   //!
    TBranch        *bOut_x0 ; //(mum);   //!
    TBranch        *bOut_y0 ; //(mum);   //!
@@ -220,12 +222,15 @@ void Sampler::Init(TTree *tree){
    Notify();
 }
 
-void Sampler::InitOut(TTree *tree, int iSampler, TString sSamplerName) {
+void Sampler::InitOut(TTree *tree, int iSampler, TString sSamplerNameIn) {
+  sSamplerName = sSamplerNameIn;
+
   fChainOut = tree;
   char cSampler[10];
   sprintf(cSampler,"%i",iSampler);
   TString sSampler = TString(cSampler); 
-
+    
+  bOut_SamplerName = fChainOut->Branch(sSampler.Copy().Append("_name"),&sSamplerName,sSampler.Copy().Append("_name/S"));
   bOut_E0  = fChainOut->Branch(sSampler.Copy().Append("_E0"), &E0,sSampler.Copy().Append("E0/F"));
   bOut_x0  = fChainOut->Branch(sSampler.Copy().Append("_x0"), &x0,sSampler.Copy().Append("x0/F"));
   bOut_y0  = fChainOut->Branch(sSampler.Copy().Append("_y0"), &y0,sSampler.Copy().Append("y0/F"));
