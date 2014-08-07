@@ -3,6 +3,7 @@
 
 class TRKTrackingInterface {
 public : 
+  enum type {thin, thick, hybrid}; 
   TRKTrackingInterface();
   ~TRKTrackingInterface(); 
   virtual void Track() = 0;

@@ -3,7 +3,7 @@
 
 #include "TRKElement.h"
 
-class TRKQuadrupole : public TRKElement, TRKTrackingInterface {
+class TRKQuadrupole : public TRKElement {
 public : 
   TRKQuadrupole();  
   TRKQuadrupole(double length, double b)

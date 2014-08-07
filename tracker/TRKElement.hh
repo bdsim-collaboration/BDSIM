@@ -1,8 +1,9 @@
 #ifndef TRKElement_h
 #define TRKElement_h
 
-class TRKElement { 
+class TRKElement : public TRKTrackingInterface { 
  private: 
+  std::string name;               // name of element
   double length;                  // length of component 
   double size_y;                  // height of component 
   double size_x;                  // width  of component 
