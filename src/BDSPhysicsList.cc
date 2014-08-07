@@ -486,12 +486,16 @@ void BDSPhysicsList::ConstructParticle()
     G4Positron::PositronDefinition();
     G4MuonPlus::MuonPlusDefinition();
     G4MuonMinus::MuonMinusDefinition();
-    
+    G4TauPlus::TauPlusDefinition();
+    G4TauMinus::TauMinusDefinition();
+
     G4NeutrinoE::NeutrinoEDefinition();
     G4AntiNeutrinoE::AntiNeutrinoEDefinition();
     G4NeutrinoMu::NeutrinoMuDefinition();
-    G4AntiNeutrinoMu::AntiNeutrinoMuDefinition();  
-    
+    G4AntiNeutrinoMu::AntiNeutrinoMuDefinition();
+    G4NeutrinoTau::NeutrinoTauDefinition();
+    G4AntiNeutrinoTau::AntiNeutrinoTauDefinition();
+
     // mesons
     G4MesonConstructor mConstructor;
     mConstructor.ConstructParticle();
