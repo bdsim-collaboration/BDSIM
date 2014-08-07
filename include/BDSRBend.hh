@@ -35,10 +35,6 @@ public:
            G4double tilt = 0, G4double bGrad=0, G4String aTunnelMaterial="", G4String aMaterial = "");
   ~BDSRBend();
 
-  void SynchRescale(G4double factor);
-
-protected:
-
 private:
   G4double itsBField;
   G4double itsBGrad;

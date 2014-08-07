@@ -47,11 +47,7 @@ public:
                 G4String aMaterial = "", G4double xAper=0, G4double yAper=0);
   ~BDSSectorBend();
 
-  void SynchRescale(G4double factor);
-
   virtual G4double GetArcLength();
-
-protected:
 
 private:
   G4double itsBField;
