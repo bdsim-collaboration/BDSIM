@@ -352,6 +352,8 @@ include(bdsim_install)
 
 add_subdirectory( parser )
 
+add_subdirectory( tracker )
+
 add_executable(bdsimexec bdsim.cc)
 
 set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
