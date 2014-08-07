@@ -23,7 +23,7 @@
 #include <list>
 #include <vector>
 #include "BDSCCDPixelSD.hh"
-
+#include "BDSOutputBase.hh"
 
 class BDSEventAction : public G4UserEventAction
 {

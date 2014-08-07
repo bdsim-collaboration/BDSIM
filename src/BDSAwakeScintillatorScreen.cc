@@ -30,9 +30,11 @@ Work in progress.
 //#include "UltraFresnelLensParameterisation.hh"
 
 #include "G4Trap.hh"
+#include "BDSOutputBase.hh"
+
 
 extern BDSSamplerSD* BDSSamplerSensDet;
-extern BDSOutputbase* bdsOutput;
+
 
 //============================================================
 typedef std::map<G4String,int> LogVolCountMap;

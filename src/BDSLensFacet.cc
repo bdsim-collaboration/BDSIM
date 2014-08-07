@@ -31,7 +31,7 @@ void BDSLensFacet::computeDimensions(){
   if(_baseHeight==0) {_baseHeight=aSmallNumber;}
   _totalHeight = _baseHeight + _size.x()*tan(_angle);
   //phi, theta, psi rotation such that the base is perp. to the z direction.
-  _rotation = new G4RotationMatrix(0,BDSGlobalConstants::Instance()->GetPI()/2.0,0); 
+  _rotation = new G4RotationMatrix(0,pi/2.0,0); 
 }
 
 
