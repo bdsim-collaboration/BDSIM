@@ -30,7 +30,6 @@ void BDSAwakePhysicsList::ConstructPhysics(){
 }
 
 void BDSAwakePhysicsList::ConfigurePhysics(){
-  /*
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   _opticalPhysics->Configure(kCerenkov,  globals->GetTurnOnCerenkov());///< Cerenkov process index                                   
   _opticalPhysics->Configure(kScintillation, true);///< Scintillation process index                              
@@ -41,7 +40,6 @@ void BDSAwakePhysicsList::ConfigurePhysics(){
   _opticalPhysics->Configure(kWLS, true);///< Wave Length Shifting process index                       
     //    _opticalPhysics->Configure(kNoProcess,      globals->GetTurnOn< Number of processes, no selected process
   _opticalPhysics->SetScintillationYieldFactor(globals->GetScintYieldFactor());
-  */
 }
 
 void BDSAwakePhysicsList::Register(){
