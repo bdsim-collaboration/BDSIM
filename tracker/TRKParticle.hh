@@ -5,7 +5,7 @@
 
 class TRKParticle { 
 private : 
-  TRKParticle::TRKParticle();
+  TRKParticle();
   TRKParticle(std::string nameIn, double massIn, double charge);
   ~TRKParticle();
 

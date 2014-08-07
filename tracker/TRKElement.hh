@@ -18,7 +18,7 @@ class TRKElement : public TRKTrackingInterface {
 
 public :
   TRKElement();
-  TRKElement(double length, double size_x, double size_y);
+  TRKElement(std::string name, double length, double size_x, double size_y, TRKApertureInterface *aperture, TRKPlacement *placement);
   ~TRKElement();
 };
 

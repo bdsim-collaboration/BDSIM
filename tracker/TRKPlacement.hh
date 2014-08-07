@@ -6,7 +6,10 @@ public :
   TRKPlacement();
   ~TRKPlacement(); 
   
-private:  
+private:
+  double x;
+  double y;
+  double z;
 };
 
 #endif
