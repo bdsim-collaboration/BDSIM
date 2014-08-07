@@ -9,7 +9,6 @@ Last modified 23.10.2007 by Steve Malton
 #include "G4FieldManager.hh"
 #include "G4UniformMagField.hh"
 #include <cstdlib>
-#include "G4ThreeVector.hh"
 
 extern Options options;
 
@@ -25,6 +24,7 @@ BDSGlobalConstants* BDSGlobalConstants::Instance(){
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0)
 {
+  PI = 4.0 * atan(1.0);
   itsPhysListName = opt.physicsList;
   itsPipeMaterial = opt.pipeMaterial;
   itsVacMaterial = opt.vacMaterial;
@@ -45,10 +45,6 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsFFact=opt.ffact;
   itsParticleName=G4String(opt.particleName);
   itsBeamTotalEnergy = opt.beamEnergy * CLHEP::GeV;
-  if (itsBeamTotalEnergy == 0) {
-    G4cerr << __METHOD_NAME__ << "Error: option \"beamenergy\" is not defined or must be greater than 0" <<  G4endl;
-    exit(1);
-  }
   itsVacuumPressure = opt.vacuumPressure*CLHEP::bar;
   itsPlanckScatterFe = opt.planckScatterFe;
   //Fraction of events with leading particle biasing.
@@ -104,12 +100,20 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsMaxTime = opt.maximumTrackingTime * CLHEP::s;
   
   itsDeltaOneStep = opt.deltaOneStep * CLHEP::m;
+  doTwiss = opt.doTwiss;
   itsDoPlanckScattering = opt.doPlanckScattering;
   itsCheckOverlaps = opt.checkOverlaps;
   itsTurnOnCerenkov = opt.turnOnCerenkov;
+  itsTurnOnOpticalAbsorption = opt.turnOnOpticalAbsorption;
+  itsTurnOnMieScattering = opt.turnOnMieScattering;
+  itsTurnOnRayleighScattering = opt.turnOnRayleighScattering;
+  itsTurnOnOpticalSurface = opt.turnOnOpticalSurface;
+  itsTurnOnBirksSaturation = opt.turnOnBirksSaturation;
+  itsScintYieldFactor=opt.scintYieldFactor;
   itsSynchRadOn = opt.synchRadOn;
   G4cout << "BDSGlobalConstants::Instance() synchRadOn = " << itsSynchRadOn << G4endl;
   itsDecayOn = opt.decayOn;
+  itsSynchRescale = opt.synchRescale; // rescale due to synchrotron
   itsSynchTrackPhotons= opt.synchTrackPhotons;
   G4cout << __METHOD_NAME__ << "synchTrackphotons = " << itsSynchTrackPhotons << G4endl;
   itsSynchLowX = opt.synchLowX;
@@ -145,31 +149,26 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   isReading = false;
   isReadFromStack = false;
   itsFifo = opt.fifo;
-#ifdef BDSDEBUG
+#ifdef DEBUG
   G4cout << __METHOD_NAME__ << "itsFifo = " << itsFifo << G4endl;
   G4cout << __METHOD_NAME__ << "GetFifo() = " << GetFifo() << G4endl;
 #endif
   itsRefVolume = opt.refvolume;
   itsRefCopyNo = opt.refcopyno;
+  isReference = false;
   itsIncludeIronMagFields = opt.includeIronMagFields;
   zeroMagField = new G4UniformMagField(G4ThreeVector());
   itsZeroFieldManager=new G4FieldManager();
   itsZeroFieldManager->SetDetectorField(zeroMagField);
   itsZeroFieldManager->CreateChordFinder(zeroMagField);
-  itsTurnsTaken = 1; //counting from 1
-  if(opt.nturns < 1)
-    {SetTurnsToTake(1);}
-  else
-    {SetTurnsToTake(opt.nturns);}  
+
   InitRotationMatrices();
   
   // options that are never used (no set method):
-  itsLWCalWidth       = 0.0;
-  itsLWCalOffset      = 0.0;
+  itsLWCalWidth = 0.0;
+  itsLWCalOffset = 0.0;
   itsMagnetPoleRadius = 0.0;
-  itsMagnetPoleSize   = 0.0;
-  teleporterdelta     = G4ThreeVector(0.,0.,0.);
-  teleporterlength    = 0.0;
+  itsMagnetPoleSize = 0.0;
   // //Synchrotron primary generator
   // itsSynchPrimaryGen = false; //XXX check what this is 19/4/11
   // itsSynchPrimaryAngle = 0.0;
@@ -177,12 +176,12 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
 }
 
 void BDSGlobalConstants::InitRotationMatrices(){
-  _RotY90       = new G4RotationMatrix();
-  _RotYM90      = new G4RotationMatrix();
-  _RotX90       = new G4RotationMatrix();
-  _RotXM90      = new G4RotationMatrix();
-  _RotYM90X90   = new G4RotationMatrix();
-  _RotYM90XM90  = new G4RotationMatrix();
+  _RotY90=new G4RotationMatrix();
+  _RotYM90=new G4RotationMatrix();
+  _RotX90=new G4RotationMatrix();
+  _RotXM90=new G4RotationMatrix();
+  _RotYM90X90=new G4RotationMatrix();
+  _RotYM90XM90=new G4RotationMatrix();
   G4double pi_ov_2 = asin(1.);
   _RotY90->rotateY(pi_ov_2);
   _RotYM90->rotateY(-pi_ov_2);
