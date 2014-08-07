@@ -22,6 +22,7 @@ Work in progress.
 #include "G4SDManager.hh"
 #include "G4UserLimits.hh"
 #include "G4Version.hh"
+#include "G4PhysicalConstants.hh"
 #include "parser/gmad.h"
 #include <map>
 #include "BDSAwakeMultilayerScreen.hh"
@@ -31,7 +32,7 @@ Work in progress.
 #include "G4Trap.hh"
 
 extern BDSSamplerSD* BDSSamplerSensDet;
-extern BDSOutput* bdsOutput;
+extern BDSOutputbase* bdsOutput;
 
 //============================================================
 typedef std::map<G4String,int> LogVolCountMap;
@@ -42,7 +43,7 @@ extern LogVolMap* LogVol;
 
 //============================================================
 #define DEBUG 1
-BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*BDSGlobalConstants::Instance()->GetPI()/180.0, G4double windowThickness=0, G4String windowMaterial=""):
+BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*pi/180.0, G4double windowThickness=0, G4String windowMaterial=""):
   BDSAcceleratorComponent(aName, 1.0, 0, 0, 0, SetVisAttributes()),_material(material), _thickness(thickness), _screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
 {
   _vacChambType=2;
@@ -560,7 +561,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber2(){
 
   G4LogicalVolume* vacuumInnerLog = new G4LogicalVolume(vacuumInnerSolid, BDSMaterials::Instance()->GetMaterial("vacuum"), "vacuumInnerLog",0,0,0);
 
-  _vacRotationMatrix->rotateY(BDSGlobalConstants::Instance()->GetPI());
+  _vacRotationMatrix->rotateY(pi);
 
   new G4PVPlacement(_vacRotationMatrix, 
 		    G4ThreeVector(_vacDispX2,(_vacHeight+_vacThickness)/2.0,_vacDispZ2), 

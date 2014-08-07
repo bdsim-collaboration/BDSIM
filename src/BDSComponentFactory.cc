@@ -1062,6 +1062,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 	 << " l= " << _element.l << "m"
 	 << " aper= " << aper/CLHEP::m << "m"
 	 << " outR= " << _element.outR << "m"
+	 << " bmapZOffset = "	<<  _element.bmapZOffset * CLHEP::m
 	 << " tunnel material " << _element.tunnelMaterial
 	 << " tunnel cavity material " << _element.tunnelCavityMaterial
 	 << " precision region " << _element.precisionRegion
@@ -1076,6 +1077,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
   return (new BDSElement( _element.name,
 			  _element.geometryFile,
 			  _element.bmapFile,
+			  _element.bmapZOffset * CLHEP::m,
 			  _element.l * CLHEP::m,
 			  aper,
 			  _element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, tunnelOffsetX, _element.tunnelCavityMaterial, _element.precisionRegion ));

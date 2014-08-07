@@ -14,6 +14,7 @@
 #include "G4SDManager.hh"
 #include "G4UserLimits.hh"
 #include "G4Version.hh"
+#include "G4PhysicalConstants.hh"
 #include "parser/gmad.h"
 #include "G4Trap.hh"
 

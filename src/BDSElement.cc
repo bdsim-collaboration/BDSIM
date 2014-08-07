@@ -23,7 +23,6 @@
 #include "G4NystromRK4.hh"
 #include "G4ClassicalRK4.hh"
 #include "G4HelixImplicitEuler.hh"
-#include "myQuadStepper.hh"
 
 // geometry drivers
 #include "parser/enums.h"
