@@ -13,6 +13,11 @@ void Options::print() const {
   std::cout<<"n macroparticles : "<<numberToGenerate<<std::endl;
   std::cout<<"sigmaX           : "<<sigmaX<<std::endl;
   std::cout<<"Cerenkov on               : "<<turnOnCerenkov<<std::endl;
+  std::cout<<"Optical absorption on      : " << turnOnOpticalAbsorption <<std::endl;
+  std::cout<<"Mie scattering on      : " << turnOnMieScattering <<std::endl;
+  std::cout<<"Rayleigh scatering on      : " << turnOnRayleighScattering <<std::endl;
+  std::cout<<"Optical surface on      : " << turnOnOpticalSurface <<std::endl;
+  std::cout<<"Birks saturation on      : " << turnOnBirksSaturation <<std::endl;
 }
 
 void Options::set_value(std::string name, double value )
@@ -157,6 +162,21 @@ void Options::set_value(std::string name, double value )
   if(name == "turnOnCerenkov") {
       turnOnCerenkov = (int)value; return;
   }
+  if(name == "turnOnOpticalAbsorption") {
+      turnOnOpticalAbsorption = (int)value; return;
+  }
+  if(name == "turnOnMieScattering") {
+      turnOnMieScattering = (int)value; return;
+  }
+  if(name == "turnOnRayleighScattering") {
+      turnOnRayleighScattering = (int)value; return;
+  }
+  if(name == "turnOnOpticalSurface") {
+      turnOnOpticalSurface = (int)value; return;
+  }
+  if(name == "turnOnBirksSaturation") {
+      turnOnBirksSaturation = (int)value; return;
+  }
 
   if(name == "srTrackPhotons") {
     synchTrackPhotons = (int)value; return;
@@ -170,6 +190,7 @@ void Options::set_value(std::string name, double value )
   if(name == "LPBFraction") { LPBFraction = value; return; }
   if(name == "annihiToMuFe") { annihiToMuFe = value; return; }
   if(name == "gammaToMuFe") { gammaToMuFe = value; return; }
+  if(name == "scintYieldFactor") { scintYieldFactor = value; return; }
   if(name == "eeToHadronsFe") { eeToHadronsFe = value; return; }
   if(name == "thresholdCutCharged" ) { thresholdCutCharged = (double)value; return; }
   if(name == "thresholdCutPhotons" ) { thresholdCutPhotons = (double)value; return; }

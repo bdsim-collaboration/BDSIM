@@ -9,6 +9,7 @@ Work in progress.
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "BDSMaterials.hh"
+#include "BDSSamplerSD.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
 
@@ -22,7 +23,7 @@ Work in progress.
 class BDSScintillatorScreen :public BDSAcceleratorComponent
 {
 public:
-  BDSScintillatorScreen(G4String aName, G4double aLength=0.3*CLHEP::mm, G4double tScint=0.3*CLHEP::mm);
+  BDSScintillatorScreen(G4String aName, G4double tScint=0.3*CLHEP::mm, G4double angle=0, G4String scintMaterial="lanex", G4String airMaterial="air");
   ~BDSScintillatorScreen();
 
 protected:
@@ -33,6 +34,8 @@ private:
   G4VisAttributes* SetVisAttributes();
   void ComputeDimensions();
   void BuildMarkerVolume();
+  void BuildCameraScoringPlane();
+  void BuildScreenScoringPlane();
   void BuildScintillatorMaterial();
   void BuildScintillatorCompound();
   void BuildScintillatorOpticalProperties();
@@ -48,16 +51,24 @@ private:
   G4VPhysicalVolume* itsScintillatorLayerPhys;
   G4VPhysicalVolume* itsBaseLayerPhys;
   G4VPhysicalVolume* itsBackLayerPhys;
+  G4VPhysicalVolume* itsCameraScoringPlanePhys;
+  G4VPhysicalVolume* itsScreenScoringPlanePhys;
 
   G4LogicalVolume* itsFrontLayerLog;
   G4LogicalVolume* itsScintillatorLayerLog;
   G4LogicalVolume* itsBaseLayerLog;
   G4LogicalVolume* itsBackLayerLog;
+  G4LogicalVolume* itsCameraScoringPlaneLog;
+  G4LogicalVolume* itsScreenScoringPlaneLog;
 
   G4VSolid* itsFrontLayerSolid;
   G4VSolid* itsScintillatorLayerSolid;
   G4VSolid* itsBaseLayerSolid;
   G4VSolid* itsBackLayerSolid;
+  G4VSolid* itsCameraScoringPlaneSolid;
+  G4VSolid* itsScreenScoringPlaneSolid;
+
+
 
   G4LogicalVolume* itsInnerTunnelLogicalVolume;
   G4LogicalVolume* itsSoilTunnelLogicalVolume;
@@ -68,24 +79,29 @@ private:
   G4Mag_UsualEqRhs* itsEqRhs;
   
 private:
-  G4MaterialPropertiesTable* _mptScintillatorMaterial;
-
   G4Material* _frontLayerMaterial;
   G4Material* _scintillatorLayerMaterial;
   G4Material* _baseLayerMaterial;
   G4Material* _backLayerMaterial;
   //BDSEnergyCounterSD* itsEnergyCounterSD;
+  G4Material* _airMaterial;
   G4double itsOuterR;
 
   G4double _screenWidth;
   G4double _screenHeight;
   G4double _screenAngle;
+
+  G4RotationMatrix* _screenRotationMatrix;
   
   G4double _frontThickness;
   G4double _scintillatorThickness;
   G4double _baseThickness;
   G4double _backThickness;
   G4double _totalThickness;
+  G4double _screenThickness;
+
+  //scoring plane
+  G4double _scoringPlaneThickness;
 
   G4double _xLength;
   G4double _yLength;
@@ -93,6 +109,12 @@ private:
   G4VisAttributes* _visAttFront;
   G4VisAttributes* _visAttScint;
   G4VisAttributes* _visAttBase;
+  G4VisAttributes* _visAttSampler;
+
+  G4String _scoringPlaneName;
+  G4String _screenScoringPlaneName;
+  G4String _screenSamplerName;
+  G4String _samplerName;
 };
 
 #endif

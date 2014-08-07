@@ -23,11 +23,11 @@
 #include "BDSCollimator.hh"
 //#include "BDSRealisticCollimator.hh"
 #include "BDSScintillatorScreen.hh"
+#include "BDSAwakeScintillatorScreen.hh"
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
 #include "parser/enums.h"
 #include "parser/elementlist.h"
-
 #include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
 
 #ifdef BDSDEBUG
@@ -231,6 +231,11 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     G4cout << "BDSComponentFactory  - creating screen" << G4endl;
 #endif
     return createScreen(); break; 
+  case _AWAKESCREEN:
+#ifdef DEBUG
+    G4cout << "BDSComponentFactory  - creating awake screen" << G4endl;
+#endif
+    return createAwakeScreen(); break; 
   case _TRANSFORM3D:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating transform3d" << G4endl;
@@ -1057,6 +1062,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 	 << " l= " << _element.l << "m"
 	 << " aper= " << aper/CLHEP::m << "m"
 	 << " outR= " << _element.outR << "m"
+	 << " bmapZOffset = "	<<  _element.bmapZOffset * CLHEP::m
 	 << " tunnel material " << _element.tunnelMaterial
 	 << " tunnel cavity material " << _element.tunnelCavityMaterial
 	 << " precision region " << _element.precisionRegion
@@ -1071,6 +1077,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
   return (new BDSElement( _element.name,
 			  _element.geometryFile,
 			  _element.bmapFile,
+			  _element.bmapZOffset * CLHEP::m,
 			  _element.l * CLHEP::m,
 			  aper,
 			  _element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, tunnelOffsetX, _element.tunnelCavityMaterial, _element.precisionRegion ));
@@ -1294,13 +1301,31 @@ BDSAcceleratorComponent* BDSComponentFactory::createLaser(){
 BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
   if(_element.l == 0) _element.l = 1e-8;
 	
-#ifdef BDSDEBUG 
-  G4cout << "---->creating Screen,"
-	 << " name= "<< _element.name
-	 << " l=" << _element.l <<"m"
-	 << G4endl;
+#ifdef DEBUG 
+        G4cout << "---->creating Screen,"
+               << " name= "<< _element.name
+               << " l=" << _element.l/CLHEP::m<<"m"
+               << " tscint=" << _element.tscint/CLHEP::m<<"m"
+               << " angle=" << _element.angle/CLHEP::rad<<"rad"
+               << " scintmaterial=" << "ups923a"//_element.scintmaterial
+               << " airmaterial=" << "vacuum"//_element.airmaterial
+               << G4endl;
 #endif
-  return (new BDSScintillatorScreen( _element.name, _element.l*CLHEP::m, 0.1*CLHEP::mm));
+	return (new BDSScintillatorScreen( _element.name, _element.tscint*CLHEP::m, (_element.angle-0.78539816339)*CLHEP::rad, "ups923a","vacuum")); //Name, scintillator thickness, angle in radians (relative to -45 degrees)
+}
+
+
+BDSAcceleratorComponent* BDSComponentFactory::createAwakeScreen(){
+	
+#ifdef DEBUG 
+        G4cout << "---->creating Awake Screen,"
+	       << "twindow = " << _element.twindow*1e3/CLHEP::um << " um"
+	       << "tscint = " << _element.tscint*1e3/CLHEP::um << " um"
+	       << "windowmaterial = " << _element.windowmaterial << " um"
+	       << "scintmaterial = " << _element.scintmaterial << " um"
+               << G4endl;
+#endif
+	return (new BDSAwakeScintillatorScreen(_element.name, _element.scintmaterial, _element.tscint*1e3, _element.angle, _element.twindow*1e3, _element.windowmaterial)); //Name
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){

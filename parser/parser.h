@@ -464,6 +464,8 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
       e.blmLocZ = params.blmLocZ;
     if(params.blmLocThetaset)
       e.blmLocTheta = params.blmLocTheta;
+    if(params.bmapZOffsetset)
+      e.bmapZOffset = params.bmapZOffset;
     break;
 
   case _LINE:
@@ -521,7 +523,21 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   case _SCREEN:
     e.type = _SCREEN;
     e.l = params.l;
+    e.angle = params.angle;
     e.tscint = params.tscint;
+    e.scintmaterial = std::string(params.scintmaterial);
+    e.airmaterial = params.airmaterial;  
+    break;
+
+  case _AWAKESCREEN:
+    e.type = _AWAKESCREEN;
+    e.scintmaterial = std::string(params.scintmaterial);
+    std::cout << "scintmaterial: " << e.scintmaterial << " " <<  params.scintmaterial << std::endl;
+    e.tscint = params.tscint;
+    e.angle = params.angle;
+    e.twindow = params.twindow;
+    e.windowmaterial = std::string(params.windowmaterial);
+    std::cout << "windowmaterial: " << e.windowmaterial << " " <<  params.windowmaterial << std::endl;
     break;
 
   default:

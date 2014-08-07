@@ -21,6 +21,8 @@
 #include "BDSXYMagField.hh"
 #include "BDSMagFieldSQL.hh"
 #include "G4NystromRK4.hh"
+#include "G4ClassicalRK4.hh"
+#include "G4HelixImplicitEuler.hh"
 
 // geometry drivers
 #include "parser/enums.h"
@@ -50,7 +52,7 @@ extern LogVolMap* LogVol;
 
 //============================================================
 
-BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap,
+BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap, G4double bmapZOffset,
 		       G4double aLength, G4double bpRad, G4double outR, G4String aTunnelMaterial, G4double aTunnelRadius, G4double aTunnelOffsetX, G4String aTunnelCavityMaterial, G4int aPrecisionRegion):
   BDSAcceleratorComponent(
 			  aName,
@@ -62,6 +64,7 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap,
   itsFieldVolName="";
   itsFieldIsUniform=false;
   itsOuterR = outR;
+  itsBmapZOffset;
   SetType(_ELEMENT);
 
   //Set marker volume lengths
@@ -312,7 +315,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       G4cout << "BDSElement.cc> Making BDS3DMagField..." << G4endl;
 #endif
       
-      itsMagField = new BDS3DMagField(bFile, 0);
+      itsMagField = new BDS3DMagField(bFile, itsBmapZOffset);
       itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::um);
       BuildMagField(true);
     }else if(bFormat=="XY"){

@@ -17,6 +17,7 @@
 
 #include "globals.hh"
 #include "G4ParticleDefinition.hh"
+#include "G4ParticleWithCuts.hh"
 #include "G4ProcessManager.hh"
 #include "G4ProcessVector.hh"
 #include "G4ParticleTypes.hh"
@@ -41,9 +42,12 @@
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
 #include "G4HadronPhysicsFTFP_BERT.hh"
 #endif
+#include "G4Decay.hh"
 #include "G4eeToHadrons.hh"
 
+#include "G4EmStandardPhysics.hh"
 #include "G4EmLivermorePhysics.hh"
+#include "G4EmPenelopePhysics.hh"
 
 // physics processes
 
@@ -63,6 +67,7 @@
 #include "G4eMultipleScattering.hh"
 #include "G4MuMultipleScattering.hh"
 #include "G4hMultipleScattering.hh"
+
 //Optical processes
 #include "G4Cerenkov.hh"
 #include "G4Scintillation.hh"
@@ -127,6 +132,7 @@
 #include "G4StepLimiter.hh"
 #include "G4UserSpecialCuts.hh"
 
+#include "G4OpticalPhysics.hh"
 
 //
 // Hadronic
@@ -164,6 +170,11 @@
 #include "G4MuonMinus.hh"
 #include "G4NeutrinoMu.hh"
 #include "G4AntiNeutrinoMu.hh"
+
+#include "G4TauPlus.hh"
+#include "G4TauMinus.hh"
+#include "G4NeutrinoTau.hh"
+#include "G4AntiNeutrinoTau.hh"
 
 #include "G4Electron.hh"
 #include "G4Positron.hh"
@@ -278,7 +289,16 @@ void BDSPhysicsList::ConstructProcess()
     G4EmLivermorePhysics* physList = new G4EmLivermorePhysics;
     physList->ConstructProcess();
     plistFound=true;
+  }else if(BDSGlobalConstants::Instance()->GetPhysListName() == "penelope"){
+    G4EmPenelopePhysics* physList = new G4EmPenelopePhysics;
+    physList->ConstructProcess();
+    plistFound=true;
+  }else if(BDSGlobalConstants::Instance()->GetPhysListName() == "G4EmStandard"){
+    G4EmStandardPhysics* physList = new G4EmStandardPhysics;
+    physList->ConstructProcess();
+    plistFound=true;
   }
+
 
   if(!plistFound){
     //Need to add transportation if non-standard physics list
@@ -673,6 +693,7 @@ void BDSPhysicsList::ConstructMultipleScattering(){
     if (particleName == "e-") {
       //electron
       pmanager->AddProcess(new G4eMultipleScattering,-1, 1,1);
+
       
     } else if (particleName == "e+") {
       
@@ -789,49 +810,60 @@ void BDSPhysicsList::ConstructDecay()
 
 void BDSPhysicsList::ConstructOptical()
 {
-  if(!BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){ //Otherwise, it is already initialised
-    theCerenkovProcess           = new G4Cerenkov("Cerenkov");
-  }
-  theScintillationProcess      = new G4Scintillation("Scintillation");
-  theAbsorptionProcess         = new G4OpAbsorption();
-  theRayleighScatteringProcess = new G4OpRayleigh();
-  theMieHGScatteringProcess    = new G4OpMieHG();
-  theBoundaryProcess           = new G4OpBoundaryProcess();
+  bool bCerOn=BDSGlobalConstants::Instance()->GetTurnOnCerenkov();
+  bool bBirksOn=BDSGlobalConstants::Instance()->GetTurnOnBirksSaturation();
 
 //  theCerenkovProcess->DumpPhysicsTable();
 //  theScintillationProcess->DumpPhysicsTable();
 //  theRayleighScatteringProcess->DumpPhysicsTable();
 
-  SetVerboseLevel(1);
-  
-  if(!BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){ //Otherwise, it is already initialised
-    theCerenkovProcess->SetMaxNumPhotonsPerStep(20);
-    theCerenkovProcess->SetMaxBetaChangePerStep(10.0);
-    theCerenkovProcess->SetTrackSecondariesFirst(true);
+  if(bCerOn){
+    if(!theCerenkovProcess){
+      theCerenkovProcess = new G4Cerenkov("Cerenkov");
+    }
   }
   
-  theScintillationProcess->SetScintillationYieldFactor(1.);
+  theScintillationProcess      = new G4Scintillation("Scintillation");
+  if(BDSGlobalConstants::Instance()->GetTurnOnOpticalAbsorption()){
+    theAbsorptionProcess         = new G4OpAbsorption();
+  }
+  if(BDSGlobalConstants::Instance()->GetTurnOnRayleighScattering()){
+    theRayleighScatteringProcess = new G4OpRayleigh();
+  }
+  if(BDSGlobalConstants::Instance()->GetTurnOnMieScattering()){
+    theMieHGScatteringProcess    = new G4OpMieHG();
+  }
+  if(BDSGlobalConstants::Instance()->GetTurnOnOpticalSurface()){
+    theBoundaryProcess           = new G4OpBoundaryProcess();
+#if G4VERSION_NUMBER < 960
+    G4OpticalSurfaceModel themodel = unified;
+    theBoundaryProcess->SetModel(themodel);
+#endif
+  }
+
+  SetVerboseLevel(1);
+  theScintillationProcess->SetScintillationYieldFactor(BDSGlobalConstants::Instance()->GetScintYieldFactor());
   theScintillationProcess->SetTrackSecondariesFirst(true);
 
   // Use Birks Correction in the Scintillation process
 
-  G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
-  theScintillationProcess->AddSaturation(emSaturation);
-
-#if G4VERSION_NUMBER < 960
-  G4OpticalSurfaceModel themodel = unified;
-  theBoundaryProcess->SetModel(themodel);
-#endif
+  if(bBirksOn){
+    G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
+    theScintillationProcess->AddSaturation(emSaturation);
+  }
 
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){
     G4ParticleDefinition* particle = theParticleIterator->value();
     G4ProcessManager* pmanager = particle->GetProcessManager();
     G4String particleName = particle->GetParticleName();
-    if(!BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){ //Otherwise, it is already initialised
+    if(bCerOn){
       if (theCerenkovProcess->IsApplicable(*particle)) {
 	pmanager->AddProcess(theCerenkovProcess);
 	pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
+	theCerenkovProcess->SetMaxNumPhotonsPerStep(20);
+	theCerenkovProcess->SetMaxBetaChangePerStep(10.0);
+	theCerenkovProcess->SetTrackSecondariesFirst(true);
       }
     }
     if (theScintillationProcess->IsApplicable(*particle)) {
@@ -840,13 +872,21 @@ void BDSPhysicsList::ConstructOptical()
       pmanager->SetProcessOrderingToLast(theScintillationProcess, idxPostStep);
     }
     if (particleName == "opticalphoton") {
-#ifdef BDSDEBUG
+#ifdef DEBUG
       G4cout << " AddDiscreteProcess to OpticalPhoton " << G4endl;
 #endif
-      pmanager->AddDiscreteProcess(theAbsorptionProcess);
-      pmanager->AddDiscreteProcess(theRayleighScatteringProcess);
-      pmanager->AddDiscreteProcess(theMieHGScatteringProcess);
-      pmanager->AddDiscreteProcess(theBoundaryProcess);
+      if(BDSGlobalConstants::Instance()->GetTurnOnOpticalAbsorption()){
+	pmanager->AddDiscreteProcess(theAbsorptionProcess);
+      }
+      if(BDSGlobalConstants::Instance()->GetTurnOnRayleighScattering()){
+	pmanager->AddDiscreteProcess(theRayleighScatteringProcess);
+      }
+      if(BDSGlobalConstants::Instance()->GetTurnOnMieScattering()){
+	pmanager->AddDiscreteProcess(theMieHGScatteringProcess);
+      }
+      if(BDSGlobalConstants::Instance()->GetTurnOnOpticalSurface()){
+	pmanager->AddDiscreteProcess(theBoundaryProcess);
+      }
     }
   }
 }
@@ -1012,6 +1052,7 @@ void BDSPhysicsList::ConstructLaserWire()
 
 // Low-energy Models
 #if G4VERSION_NUMBER < 1000
+#include "G4LElastic.hh"
 #include "G4LCapture.hh"
 #else
 #include "G4HadronElastic.hh"
@@ -1058,6 +1099,7 @@ void BDSPhysicsList::ConstructLaserWire()
 
 void BDSPhysicsList::ConstructHadronic()
 {
+  
 #if G4VERSION_NUMBER < 1000
   G4NeutronBuilder* theNeutrons=new G4NeutronBuilder;
   theNeutrons->RegisterMe(new G4LHEPNeutronBuilder);
