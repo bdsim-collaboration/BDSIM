@@ -3,7 +3,6 @@
 #include "BDSCCDPixel.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerSD.hh"
-#include "BDSOutput.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"

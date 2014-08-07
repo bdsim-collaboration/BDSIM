@@ -16,8 +16,6 @@
 #include "G4Version.hh"
 #include "parser/gmad.h"
 
-#include "BDSOutput.hh"
-
 extern BDSSamplerSD* BDSSamplerSensDet;
 extern BDSOutput* bdsOutput;
 

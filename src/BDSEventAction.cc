@@ -53,8 +53,6 @@
 
 #include "BDSAcceleratorComponent.hh"
 
-#include "BDSOutput.hh"
-
 typedef std::map<G4String,int> LogVolCountMap;
 extern LogVolCountMap* LogVolCount;
 

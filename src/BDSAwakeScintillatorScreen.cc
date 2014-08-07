@@ -7,7 +7,6 @@ Work in progress.
 #include "BDSAwakeScintillatorScreen.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerSD.hh"
-#include "BDSOutput.hh"
 #include "BDSCCDCamera.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"

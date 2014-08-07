@@ -62,8 +62,6 @@
 #include "BDSTerminator.hh"
 #include "BDSLogicalVolumeInfo.hh"
 
-// output interface
-#include "BDSOutput.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerCylinder.hh"
