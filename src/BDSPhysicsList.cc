@@ -64,13 +64,10 @@
 #include "BDSGammaConversion_LPB.hh" //added by M.D. Salt, R.B. Appleby, 15/10/09
 
 // charged particles
-#if G4VERSION_NUMBER > 819
 #include "G4eMultipleScattering.hh"
 #include "G4MuMultipleScattering.hh"
 #include "G4hMultipleScattering.hh"
-#else
-#include "G4MultipleScattering.hh"
-#endif
+
 //Optical processes
 #include "G4Cerenkov.hh"
 #include "G4Scintillation.hh"
@@ -424,7 +421,7 @@ void BDSPhysicsList::ConstructProcess()
   else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_QGSP_BERT") {
     ConstructEM();
 #if G4VERSION_NUMBER < 1000
-	G4VPhysicsConstructor* hadPhysList = new HadronPhysicsQGSP_BERT("hadron");
+    theBDSIMPhysList = new HadronPhysicsQGSP_BERT("hadron");
 #else
     theBDSIMPhysList = new G4HadronPhysicsQGSP_BERT("hadron");
 #endif
@@ -837,11 +834,9 @@ void BDSPhysicsList::ConstructOptical()
 //  theRayleighScatteringProcess->DumpPhysicsTable();
 
   if(bCerOn){
-    theCerenkovProcess = new G4Cerenkov("Cerenkov");
-    theCerenkovProcess->SetMaxNumPhotonsPerStep(20);
-    theCerenkovProcess->SetMaxBetaChangePerStep(10.0);
-    theCerenkovProcess->SetTrackSecondariesFirst(true);
-    theCerenkovProcess->DumpPhysicsTable();
+    if(!theCerenkovProcess){
+      theCerenkovProcess = new G4Cerenkov("Cerenkov");
+    }
   }
   
   theScintillationProcess      = new G4Scintillation("Scintillation");
@@ -867,6 +862,7 @@ void BDSPhysicsList::ConstructOptical()
   theScintillationProcess->SetTrackSecondariesFirst(true);
 
   // Use Birks Correction in the Scintillation process
+
   if(bBirksOn){
     G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
     theScintillationProcess->AddSaturation(emSaturation);
@@ -881,6 +877,9 @@ void BDSPhysicsList::ConstructOptical()
       if (theCerenkovProcess->IsApplicable(*particle)) {
 	pmanager->AddProcess(theCerenkovProcess);
 	pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
+	theCerenkovProcess->SetMaxNumPhotonsPerStep(20);
+	theCerenkovProcess->SetMaxBetaChangePerStep(10.0);
+	theCerenkovProcess->SetTrackSecondariesFirst(true);
       }
     }
     if (theScintillationProcess->IsApplicable(*particle)) {
