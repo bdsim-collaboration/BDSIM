@@ -6,11 +6,11 @@
 class TRKQuadrupole : public TRKElement {
 public : 
   TRKQuadrupole();  
-  TRKQuadrupole(double length, double b);
+  TRKQuadrupole(TRKElement* element, double strength);
   ~TRKQuadrupole();
   
 private: 
-  
+  double strength;
 };
 
 #endif
