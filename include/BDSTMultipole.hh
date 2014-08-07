@@ -24,7 +24,6 @@
 #include <list>
 
 class G4Mag_UsualEqRhs;
-class BDSRK4Stepper;
 class BDSMultipoleMagField;
 
 class BDSTMultipole :public BDSMultipole

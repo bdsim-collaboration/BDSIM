@@ -18,6 +18,9 @@ public:
   void printNavigation();
   BDSAcceleratorComponent* currentItem();
   BDSAcceleratorComponent* lastItem();
+  BDSAcceleratorComponent* lastItem2();
+  BDSAcceleratorComponent* firstItem();
+  G4bool isLast();
   void first();
   bool isDone();
   void next();
@@ -31,6 +34,8 @@ public:
   G4ThreeVector* positionStart();
   G4ThreeVector* positionEnd();
   G4ThreeVector* positionFromCurrentCenter();
+  G4ThreeVector* GetLastPosition();
+  G4ThreeVector* GetFirstPosition();
 
   G4int size();
 

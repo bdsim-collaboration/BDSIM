@@ -59,7 +59,7 @@ G4bool BDSLWCalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   itsCopyNumber = motherCopyNo+1;
   AddEnergy(aStep->GetTotalEnergyDeposit());
   
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "Its Copy Number is: " << itsCopyNumber << G4endl; 
   G4cout << "The Volumer here is: " << aStep->GetTrack()->GetVolume()->GetName() << G4endl;
   G4cout<<"edep="<<aStep->GetTotalEnergyDeposit()/CLHEP::GeV<<"Total so far="<<itsTotalEnergy/CLHEP::GeV<< " for event: " << G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID() << G4endl;

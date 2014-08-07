@@ -443,9 +443,6 @@ laser : LASER ',' parameters
 screen : SCREEN ',' parameters
 ;
 
-awakescreen : AWAKESCREEN ',' parameters
-;
-
 transform3d : TRANSFORM3D ',' parameters
 ;
 
@@ -511,7 +508,7 @@ parameters:
             {
 	      if(execute)
 		{
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                   printf("parameters, VARIABLE(%s) = aexpr(%.10g)\n",$1->name,$3);
 #endif
 		  if(!strcmp($1->name,"l")) { params.l = $3; params.lset = 1;} // length
@@ -590,7 +587,7 @@ parameters:
 		  else
 		  if(!strcmp($1->name,"tunnelOffsetX")) { params.tunnelOffsetX = $3; params.tunnelOffsetXset = 1;} // tunnel offset
 		  else
-		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = $3; params.precisionRegionset = 1;} // tunnel offset
+		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;} // tunnel offset
 		    else
 		  if(!strcmp($1->name,"e1")) {;}  //
                     else
@@ -628,7 +625,7 @@ parameters:
              {
 	       if(execute) 
 		 {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                    printf("params,VARIABLE (%s) = vecexpr (%d)\n",$1->name,$3->size);
 #endif
                    if(!strcmp($1->name,"knl")) 
@@ -689,7 +686,7 @@ parameters:
              {
 	       if(execute) 
 		 {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                    printf("VARIABLE (%s) = vecexpr (%d)\n",$1->name,$3->size);
 #endif
 		   if(!strcmp($1->name,"knl")) 
@@ -750,12 +747,10 @@ parameters:
             {
 	      if(execute)
 		{
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                   printf("VARIABLE (%s) = aexpr(%.10g)\n",$1->name,$3);
 #endif
 		  if(!strcmp($1->name,"l")) { params.l = $3; params.lset = 1;} // length
-		  else
-		  if(!strcmp($1->name,"bmapZOffset")) { params.bmapZOffset = $3; params.bmapZOffsetset = 1;} // length
 		    else
 		  if(!strcmp($1->name,"B")) { params.B = $3; params.Bset = 1;} // dipole field 
 		    else 
@@ -769,16 +764,15 @@ parameters:
 		    else 
 		  if(!strcmp($1->name,"k3")) { params.k3 = $3; params.k3set = 1;} // octupole coef.
 		    else 
-		      if(!strcmp($1->name,"angle")) { params.angle = $3; params.angleset = 1;} // dipole bending angle
-		      else
-			if(!strcmp($1->name,"phiAngleIn")) { params.phiAngleIn = $3; params.phiAngleInset = 1;} // element incoming angle
-			else
-		      if(!strcmp($1->name,"phiAngleOut")) { params.phiAngleOut = $3; params.phiAngleOutset = 1;} // element outgoing angle
-		      else
+		  if(!strcmp($1->name,"angle")) { params.angle = $3; params.angleset = 1;} // dipole bending angle
+		    else
+		  if(!strcmp($1->name,"phiAngleIn")) { params.phiAngleIn = $3; params.phiAngleInset = 1;} // element incoming angle
+		    else
+		  if(!strcmp($1->name,"phiAngleOut")) { params.phiAngleOut = $3; params.phiAngleOutset = 1;} // element outgoing angle
+		    else
 		  if(!strcmp($1->name,"beampipeThickness") ) 
 			      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
 		    else
-
 		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
 			      { params.aper = $3; params.aperset = 1;}
 		    else
@@ -883,8 +877,8 @@ parameters:
 		       {
 			 //ignore the "type attribute for the moment"
 		       }
-		     else
-		       if(!strcmp($1->name,"material")) 
+		   else
+		   if(!strcmp($1->name,"material")) 
 		       {
 			 params.materialset = 1;
 			 params.material = $3;
@@ -939,7 +933,7 @@ parameters:
                        }
 		    else {
 		      //                  if(VERBOSE)
-		      printf("Warning : unknown parameter %s\n",$1->name);
+		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
 		    }
 		 }
 	     }         
@@ -947,7 +941,7 @@ parameters:
              {
 	       if(execute) 
 		 {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                    printf("VARIABLE (%s) = str (%s)\n",$1->name,$3);
 #endif
 		   if(!strcmp($1->name,"geometry")) 
@@ -1021,7 +1015,7 @@ parameters:
                        }
 		    else {
 		      //                  if(VERBOSE)
-		      printf("Warning : unknown parameter %s\n",$1->name);
+		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
 		    }
 		 }         
 	     }
@@ -1047,7 +1041,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched sequence element, %s\n",$1->name);
 #endif
 		    // add to temporary element sequence
@@ -1064,7 +1058,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched sequence element, %s * %d \n",$1->name,(int)$3);
 #endif
 		    // add to temporary element sequence
@@ -1082,7 +1076,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched sequence element, %s * %d \n",$3->name,(int)$1);
 #endif
                     // add to temporary element sequence
@@ -1100,7 +1094,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s\n",$1->name);
 #endif
                     // add to temporary element sequence
@@ -1117,7 +1111,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s * %d\n",$1->name,(int)$3);
 #endif
                     // add to temporary element sequence
@@ -1135,7 +1129,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s * %d\n",$3->name,(int)$1);
 #endif
                     // add to temporary element sequence
@@ -1153,7 +1147,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s\n",$2->name);
 #endif
                     // add to temporary element sequence
@@ -1170,7 +1164,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s\n",$2->name);
 #endif
                     // add to temporary element sequence
@@ -1190,7 +1184,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched sequence element, %s\n",$1->name);
 #endif
                     // add to temporary element sequence
@@ -1207,7 +1201,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched sequence element, %s * %d \n",$1->name,(int)$3);
 #endif
                     // add to temporary element sequence
@@ -1225,7 +1219,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched sequence element, %s * %d \n",$3->name,(int)$1);
 #endif
 		    // add to temporary element sequence
@@ -1243,7 +1237,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s\n",$1->name);
 #endif
                     // add to temporary element sequence
@@ -1260,7 +1254,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s * %d\n",$1->name,(int)$3);
 #endif
 		    // add to temporary element sequence
@@ -1278,7 +1272,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s * %d\n",$3->name,(int)$1);
 #endif
                     // add to temporary element sequence
@@ -1296,7 +1290,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s\n",$2->name);
 #endif
                     // add to temporary element sequence
@@ -1313,7 +1307,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s\n",$2->name);
 #endif
                     // add to temporary element sequence
@@ -1333,7 +1327,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched sequence element, %s\n",$1->name);
 #endif
 		    // add to temporary element sequence
@@ -1350,7 +1344,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched sequence element, %s * %d \n",$1->name,(int)$3);
 #endif
 		    // add to temporary element sequence
@@ -1368,7 +1362,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched sequence element, %s * %d \n",$3->name,(int)$1);
 #endif
                     // add to temporary element sequence
@@ -1386,7 +1380,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s\n",$1->name);
 #endif
                     // add to temporary element sequence
@@ -1403,7 +1397,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s * %d\n",$1->name,(int)$3);
 #endif
 		    // add to temporary element sequence
@@ -1421,7 +1415,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s * %d\n",$3->name,(int)$1);
 #endif
                     // add to temporary element sequence
@@ -1932,14 +1926,6 @@ command : STOP             { if(execute) quit(); }
 		if(ECHO_GRAMMAR) printf("command -> BETA0\n");
 	      }
           }
-        | TWISS ',' option_parameters // twiss (again, is a synonym of option, for clarity)
-          {
-	    if(execute)
-	      {
-		options.set_value("doTwiss",1);
-		if(ECHO_GRAMMAR) printf("command -> TWISS\n");
-	      }
-          }
         | DUMP ',' sample_options //  options for beam dump 
           {                                                   
             if(execute)                                       
@@ -2015,7 +2001,7 @@ csample_options : VARIABLE '=' aexpr
 			else if (!strcmp($1->name,"l") ) params.l = $3;
 			else {
 			  //                  if(VERBOSE)
-			  printf("Warning : CSAMPLER: unknown parameter %s\n",$1->name);
+			  printf("Warning : CSAMPLER: unknown parameter : \"%s\"\n",$1->name);
 			  exit(1);
 			}
 		      }
@@ -2038,7 +2024,7 @@ csample_options : VARIABLE '=' aexpr
 			else if (!strcmp($1->name,"l") ) params.l = $3;
 			else {
 			  //                  if(VERBOSE)
-			  printf("Warning : CSAMPLER: unknown parameter %s\n",$1->name);
+			  printf("Warning : CSAMPLER: unknown parameter : \"%s\"\n",$1->name);
 			  exit(1);
 			}
 		      }
@@ -2071,7 +2057,7 @@ gas_options : VARIABLE '=' aexpr
 			else if (!strcmp($1->name,"l") ) params.l = $3;
 			else {
 			  //                  if(VERBOSE)
-			  printf("Warning : GAS: unknown parameter %s\n",$1->name);
+			  printf("Warning : GAS: unknown parameter : \"%s\"\n",$1->name);
 			  exit(1);
 			}
 		      }
@@ -2099,7 +2085,7 @@ gas_options : VARIABLE '=' aexpr
 			else if (!strcmp($1->name,"l") ) params.l = $3;
 			else {
 			  //                  if(VERBOSE)
-			  printf("Warning : GAS: unknown parameter %s\n",$1->name);
+			  printf("Warning : GAS: unknown parameter : \"%s\"\n",$1->name);
 			  exit(1);
 			}
 		      }

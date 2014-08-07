@@ -1,117 +1,54 @@
 #include "BDSBunch.hh"
+#include "BDSBunchGaussian.hh"
+#include "BDSBunchSquare.hh"
+#include "BDSBunchCircle.hh"
+#include "BDSBunchRing.hh"
+#include "BDSBunchEShell.hh"
+#include "BDSBunchTwiss.hh"
+#include "BDSBunchOld.hh"
+#include "BDSBunchUserFile.hh"
 
-#include <iostream>
-#include <cmath>
-#include <cstdlib>
-
-#include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
-#include "BDSGlobalConstants.hh"
-//#include "parser/gmad.h"
-#include "parser/options.h"
-
-#include "G4ParticleTable.hh"
-
-// CLHEP from Geant4
-#include "Randomize.hh"
-// CLHEP
-#include "CLHEP/RandomObjects/RandMultiGauss.h"
-
-// distribution type
-namespace {
-  enum {
-    _REFERENCE = 0,
-    _GAUSSIAN = 1,
-    _RING = 2,
-    _SQUARE = 3,
-    _CIRCLE = 4,
-    _GUINEAPIG_BUNCH = 5,
-    _GUINEAPIG_PAIRS = 6,
-    _GUINEAPIG_SLAC = 7,
-    _CAIN = 8,
-    _ESHELL = 9,
-    _GAUSSIAN_TWISS = 10,
-    _GAUSSIAN_MATRIX = 11,
-    _UDEF = 32
-  };
+BDSBunch::BDSBunch() {
+  // Construct default reference type 
+  distribType = std::string("reference");
+  bdsBunch    = new BDSBunchInterface(); 
 }
 
-BDSBunch::BDSBunch():  
-  distribType(-1),X0(0.0),Y0(0.0),Z0(0.0),T0(0.0),Xp0(0.0),Yp0(0.0),Zp0(1.0),
-  envelopeX(0.0),envelopeY(0.0),envelopeT(0.0),
-  envelopeXp(0.0),envelopeYp(0.0),envelopeE(0.0),
-  sigmaX(0.0),sigmaY(0.0),sigmaT(0.0),sigmaXp(0.0),sigmaYp(0.0),
-  rMin(0.0),rMax(0.0),shellx(0.0),shelly(0.0),shellxp(0.0),shellyp(0.0),
-  betaX(0.0),betaY(0.0),alphaX(0.0),alphaY(0.0),emitX(0.0),emitY(0.0),
-  energySpread(0.0),nlinesIgnore(0),partId(0)
-{ 
-  verbose            = BDSExecOptions::Instance()->GetVerbose();
-  verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
-  verboseEvent       = BDSExecOptions::Instance()->GetVerboseEvent();
-  verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
-  nptwiss            = BDSExecOptions::Instance()->GetNPTwiss();
-
-  // Instantiate random number generators
-  GaussGen = new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
-  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
-  GaussMultiGen = NULL;
-
-  // Instantiate vector and matrix for gaussian sigma matrix generation
-  meansGM = CLHEP::HepVector(6);
-  sigmaGM = CLHEP::HepSymMatrix(6);
-
+BDSBunch::~BDSBunch() {
+  delete bdsBunch;
 }
 
-BDSBunch::~BDSBunch()
-{
-  // Delete random number generators
-  delete GaussGen;
-  delete FlatGen;
-  delete GaussMultiGen;
-}
+void BDSBunch::SetOptions(struct Options& opt) {
+  // check options and construct corrrect bdsBunchInterface
+  if(bdsBunch != NULL) 
+    delete bdsBunch;
 
-// set options from gmad
-
-void BDSBunch::skip(G4int nvalues){
-  G4double dummy_val;
-  for(G4int i=0;i<nvalues;i++) ReadValue(dummy_val);
-}
-
-void BDSBunch::SetOptions(struct Options& opt)
-{
-  std::map<const G4String, int, strCmp> distType;
-  distType["reference"]=_REFERENCE;             // Reference orbit
-  distType["gauss"]=_GAUSSIAN;                  // Gaussian with only diagonal sigma matrix
-  distType["ring"]=_RING;                       // Ring in cannonical phase space
-  distType["square"]=_SQUARE;                   // Square phase space (flat)
-  distType["circle"]=_CIRCLE;                   // Circular phase space (flat) 
-  distType["guineapig_bunch"]=_GUINEAPIG_BUNCH; // (LC) Bunch bunch collision 
-  distType["guineapig_pairs"]=_GUINEAPIG_PAIRS; // (LC) Electron and positron pair from bunch bunch collision
-  distType["guineapig_slac"]=_GUINEAPIG_SLAC;   // (LC) SLAC variant of same code
-  distType["cain"]=_CAIN;                       // (LC) Bunch bunch collision
-  distType["eshell"]=_ESHELL;                   // ?? 
-  distType["gausstwiss"]=_GAUSSIAN_TWISS;       // Normal Gaussian Twiss 
-  distType["gaussmatrix"]=_GAUSSIAN_MATRIX;     // Normal Gaussian sigma matrix
-
-  nlinesIgnore = opt.nlinesIgnore;
-  inputfile=opt.distribFile;
-  //#define _skip(nvalues) for(G4int i=0;i<nvalues;i++) ReadValue(dummy_val);
-  
-  // twiss parameters - set always if present
-  SetBetaX(opt.betx);
-  SetBetaY(opt.bety);
-  SetAlphaX(opt.alfx);
-  SetAlphaY(opt.alfy);
-  SetEmitX(opt.emitx);
-  SetEmitY(opt.emity);
-  
-  std::map<const G4String,int>::iterator iter;
-  iter = distType.find(opt.distribType);
-  if(iter!=distType.end()) 
-    distribType = (*iter).second;
+  if (opt.distribType == "reference") 
+    bdsBunch = new BDSBunchInterface();
+  else if(opt.distribType == "gauss" || opt.distribType == "gaussmatrix") 
+    bdsBunch = new BDSBunchGaussian(); 
+  else if(opt.distribType == "square") 
+    bdsBunch = new BDSBunchSquare();
+  else if(opt.distribType == "circle") 
+    bdsBunch = new BDSBunchCircle();
+  else if(opt.distribType == "ring") 
+    bdsBunch = new BDSBunchRing();
+  else if(opt.distribType == "eshell") 
+    bdsBunch = new BDSBunchEShell();
+  else if(opt.distribType == "gausstwiss") 
+    bdsBunch = new BDSBunchTwiss();
+  else if(opt.distribType == "userfile"){
+    bdsBunch = new BDSBunchUserFile(opt);
+  }
+  else if(opt.distribType.find("old") != std::string::npos) { 
+    // remove old from distribType and set distribType again 
+    G4cout << "Old BDSBunch" << G4endl;
+    opt.distribType = opt.distribType.substr(3,opt.distribType.length());
+    bdsBunch = new BDSBunchOld();    
+  }   
   else {
-    distribType = _UDEF;
-    G4cerr << "WARNING bunch distribution type UNKNOWN or USER DEFINED: " << opt.distribType << G4endl;
+    G4cerr << "distribType not found " << opt.distribType << G4endl;
+    exit(1);
   }
 #ifdef DEBUG 
   G4cout<< "BDSBunch::SetOptions> distrType : "<<opt.distribType<<G4endl;
@@ -350,32 +287,6 @@ void BDSBunch::SetOptions(struct Options& opt)
 	      
 	      fields.push_back(sd);
 	    }
-	  } else if(token.substr(0,1)=="P") {
-#ifdef DEBUG 
-	    G4cout<< "BDSBunch : " <<"P!"<<G4endl;
-#endif
-	    G4String rest = token.substr(1);
-#ifdef DEBUG 
-	    G4cout<< "BDSBunch : " <<"rest ->"<<rest<<G4endl;
-#endif
-	    G4int pos1 = rest.find("[");
-	    G4int pos2 = rest.find("]");
-	    if(pos1 < 0 || pos2 < 0) {
-	      G4cerr<<"unit format wrong!!!"<<G4endl;
-	    } else {
-	      G4String fmt = rest.substr(pos1+1,pos2-1);
-#ifdef DEBUG 
-	      G4cout<< "BDSBunch : " <<"fmt ->"<<fmt<<G4endl;
-#endif
-	      sd.name = "P"; 
-              
-	      if(fmt=="GeV") sd.unit=1;
-	      if(fmt=="MeV") sd.unit=1.e-3;
-	      if(fmt=="KeV") sd.unit=1.e-6;
-	      if(fmt=="eV") sd.unit=1.e-9;
-	      
-	      fields.push_back(sd);
-	    }
 	  } else if(token.substr(0,1)=="t") {
 #ifdef DEBUG 
 	    G4cout<< "BDSBunch : " <<"t!"<<G4endl;
@@ -587,27 +498,14 @@ void BDSBunch::SetOptions(struct Options& opt)
   return;  
 }
 
-// get initial bunch distribution parameters in square/circle case 
-G4double BDSBunch::GetEnvelopeT() 
-{
-  return envelopeT;
-} 
 
-G4double BDSBunch::GetEnvelopeX()
-{
-
-  return envelopeX;
+void BDSBunch::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
+			       G4double& xp, G4double& yp, G4double& zp,
+			       G4double& t , G4double&  E, G4double& weight) {
+  bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
+  return;
 }
- 
-G4double BDSBunch::GetEnvelopeY()
-{
-  return envelopeY;
-} 
 
-G4double BDSBunch::GetEnvelopeXp()
-{
-  return envelopeXp;
-}
 
 G4double BDSBunch::GetEnvelopeYp()
 {
@@ -1273,34 +1171,20 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
       skip((G4int)(nlinesIgnore * fields.size()));
      
       std::list<struct BDSBunch::Doublet>::iterator it;
-      for(it=fields.begin();it!=fields.end();it++)
-	{
+     for(it=fields.begin();it!=fields.end();it++)
+       {
 #ifdef DEBUG 
-	  G4cout<< "BDSBunch : " <<it->name<<"  ->  "<<it->unit<<G4endl;
+         G4cout<< "BDSBunch : " <<it->name<<"  ->  "<<it->unit<<G4endl;
 #endif
-	  if(it->name=="E") { 
-	    ReadValue(E); E *= ( CLHEP::GeV * it->unit ); 
+         if(it->name=="E") { ReadValue(E); E *= ( CLHEP::GeV * it->unit ); 
 #ifdef DEBUG 
-	    G4cout << "******** Particle Mass = " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() << G4endl;
-	   G4cout << "******** Particle Total Energy = " << E << G4endl;
-#endif
-	   E-=BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
-#ifdef DEBUG 
-	   G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
-	   G4cout<< "BDSBunch : " << E <<G4endl;
-#endif
-	  }
-	 G4double P=0;
-         if(it->name=="P") { 
-	   ReadValue(P); P *= ( CLHEP::GeV * it->unit ); //Paticle momentum
-	   G4double particleMass = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
-	   G4double totalEnergy = sqrt(P*P + particleMass*particleMass);
-	   E = totalEnergy - particleMass;
-#ifdef DEBUG 
-	   G4cout << "******** Particle Mass = " << particleMass << G4endl;
-	   G4cout << "******** Particle Total Energy = " << totalEnergy << G4endl;
-	   G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
-	   G4cout<< "BDSBunch : " << E <<G4endl;
+         G4cout << "******** Particle Mass = " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() << G4endl;
+         G4cout << "******** Particle Total Energy = " << E << G4endl;
+         
+         E-=BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
+         G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
+	 
+	 G4cout<< "BDSBunch : " << E <<G4endl;
 #endif
          }
          if(it->name=="t") { ReadValue(t); t *= ( CLHEP::s * it->unit ); tdef = true; }
@@ -1347,7 +1231,7 @@ void BDSBunch::GetNextParticle(G4double& x0,G4double& y0,G4double& z0,
 	 // use the Kinetic energy:
 	 //          if(BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGEncoding() != 22){
 	 //}
-	}
+       }
      //Add the global offset Z
      z0=z0+Z0*CLHEP::m;
      break;

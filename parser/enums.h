@@ -27,20 +27,18 @@ enum {
   _RBEND=17,
   _ATOM = 18,
   _SEQUENCE = 19,
-
   _SCREEN = 21,
   _AWAKESCREEN = 22,
-    
   _VKICK=31,
   _HKICK=32,
-  
   _SAMPLER = 41,
   _CSAMPLER = 42,
   _DUMP = 43,
   _GAS = 51,
   _TUNNEL = 52,
-
-  _TRANSFORM3D = 61
+  _TRANSFORM3D = 61,
+  _TELEPORTER  = 98,
+  _TERMINATOR  = 99
 };
 
 const char *typestr(int type);

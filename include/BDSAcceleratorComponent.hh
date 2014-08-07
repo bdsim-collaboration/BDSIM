@@ -112,35 +112,20 @@ public:
   BDSEnergyCounterSD* GetBDSEnergyCounter() const;
   
   void SetBDSEnergyCounter( BDSEnergyCounterSD* anBDSEnergyCounter);
-  
   G4int GetCopyNumber() const;
-  
   G4double GetSPos() const;
-  
   void SetSPos(G4double spos);
-  
   void SetCopyNumber(G4int nCopy);
-  
   void SetSensitiveVolume(G4LogicalVolume* aLogVol);
-  
   G4LogicalVolume* GetSensitiveVolume();
-
   void SetMultipleSensitiveVolumes(G4LogicalVolume* aLogVol);
-
   std::vector<G4LogicalVolume*> GetMultipleSensitiveVolumes();
-
   void SetGFlashVolumes(G4LogicalVolume* aLogVol);
-
   std::vector<G4LogicalVolume*> GetGFlashVolumes();
-
   void SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
-
   std::vector<G4VPhysicalVolume*> GetMultiplePhysicalVolumes();
-
   void SetInnerMostLogicalVolume(G4LogicalVolume* aLogVol);
-  
   G4LogicalVolume* GetInnerMostLogicalVolume() const;
-  
   G4UserLimits* GetInnerBPUserLimits();
   G4UserLimits* GetUserLimits();
 
@@ -155,7 +140,6 @@ public:
 
   // in case a mapped field is provided creates a field mesh in global coordinates
   virtual void PrepareField(G4VPhysicalVolume *referenceVolume); 
-  virtual void SynchRescale(G4double factor); 
 
   // in case a component requires specific alignment (e.g. SQL/BDSElement)
   virtual void AlignComponent(G4ThreeVector& TargetPos, 
@@ -185,7 +169,8 @@ public:
 			  G4double aXAper,
 			  G4double aYAper,
                           G4VisAttributes* aVisAtt,
-                          std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
+                          std::list<G4double> blmLocZ, 
+			  std::list<G4double> blmLocTheta,
                           G4String aTunnelMaterial = "",
 			  G4String aMaterial = "",
 			  G4double phi=0.,  // polar angle (used in hor. bends)
@@ -494,8 +479,7 @@ inline void
 BDSAcceleratorComponent::SetBDSEnergyCounter(BDSEnergyCounterSD* anBDSEnergyCounter)
 {itsBDSEnergyCounter=anBDSEnergyCounter;}
 
-inline  
-void BDSAcceleratorComponent::SetSensitiveVolume(G4LogicalVolume* aLogVol)
+inline  void BDSAcceleratorComponent::SetSensitiveVolume(G4LogicalVolume* aLogVol)
 {itsSensitiveVolume=aLogVol;}
 
 inline  G4LogicalVolume* BDSAcceleratorComponent::GetSensitiveVolume()

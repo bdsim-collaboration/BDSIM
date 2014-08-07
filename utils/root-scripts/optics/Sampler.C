@@ -35,21 +35,29 @@ void Sampler::CalculateOpticalFunctions()
    if (fChain == 0) return;
    Long64_t nentries = fChain->GetEntriesFast();
    
+   int ncut = 0;
    //loop over events in branch
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
      Long64_t ientry = LoadTree(jentry);
      if (ientry < 0) break;
      nb = fChain->GetEntry(jentry);   nbytes += nb;
+     //std::cout << jentry<< std::endl;
      
      //cuts here
      
      // cut for primaries only
      //if (partID != 2212) continue;
      // cut for second turn particles
-     //if (s > 26580.0) continue;
-     
+     //std::cout << s << std::endl;
+     //std::cout << (s > 26658.88) << std::endl;
+     if (s > 26658.88) {ncut += 1;
+       //std::cout << "cut" << std::endl<<std::endl;
+	 continue;}
+
+     //std::cout << "not cut" <<std::endl<<std::endl;
      //your function here
+     s_s    += s;
      wgt    += 1.0;
      x_s    += x;
      y_s    += y;
@@ -68,24 +76,32 @@ void Sampler::CalculateOpticalFunctions()
      ypE_s  += yp*1e6*E;
      yE_s   += y*E;
    }
-   x_s  /= wgt;
-   y_s  /= wgt;
-   xp_s /= wgt;
-   yp_s /= wgt;
-   E_s  /= wgt;
-   EE_s /= wgt;
-   xx_s /= wgt;
-   xxp_s /= wgt;
-   xpE_s /= wgt;
-   xE_s  /= wgt;
-   yy_s  /= wgt;
-   yyp_s /= wgt;
+
+   //std::cout << "ncut     " << ncut << std::endl;
+   //std::cout << "nentries " << nentries << std::endl;
+   //std::cout << "percentage " << ((double)ncut/(double)nentries)*100.0 << std::endl;
+   s_s    /= wgt;
+   x_s    /= wgt;
+   y_s    /= wgt;
+   xp_s   /= wgt;
+   yp_s   /= wgt;
+   E_s    /= wgt;
+   EE_s   /= wgt;
+   xx_s   /= wgt;
+   xxp_s  /= wgt;
+   xpxp_s /= wgt;
+   xpE_s  /= wgt;
+   xE_s   /= wgt;
+   yy_s   /= wgt;
+   yyp_s  /= wgt;
    ypyp_s /= wgt;
-   ypE_s /= wgt;
-   yE_s /= wgt;
+   ypE_s  /= wgt;
+   yE_s   /= wgt;
 
-
-
+   /*
+   std::cout << "x_s  " << x_s << std::endl;
+   std::cout << "y_s  " << y_s << std::endl;
+   */
    //Calculate moments using the sums
    
    xx_s   -= x_s*x_s;
@@ -96,14 +112,24 @@ void Sampler::CalculateOpticalFunctions()
    ypyp_s -= yp_s*yp_s;
 
    /*
+   std::cout << "yy_s   " << yy_s   << std::endl;
    std::cout << "xx_s   " << xx_s   << std::endl;
    std::cout << "xpxp_s " << xpxp_s << std::endl;
+   std::cout << "ypyp_s " << ypyp_s << std::endl;
    std::cout << "xxp_s  " << xxp_s  << std::endl;
-   std::cout << "emit   " << xx_s*xpxp_s - xxp_s*xxp_s <<std::endl;
+   std::cout << "yyp_s  " << yyp_s  << std::endl;
    */
    emitt_x = sqrt(xx_s*xpxp_s - xxp_s*xxp_s);
    emitt_y = sqrt(yy_s*ypyp_s - yyp_s*yyp_s);
-   
+
+   /*
+   std::cout << "emittx " << emitt_x << std::endl;
+   std::cout << "emitty " << emitt_y << std::endl;
+   */
+   //try fixing it at the nominal value
+   //emitt_x = 3.75e6;
+   //emitt_y = 3.75e6;
+
    beta_x  =  xx_s  / emitt_x;
    beta_y  =  yy_s  / emitt_y;
    alph_x  = -xxp_s / emitt_x;

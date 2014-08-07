@@ -10,6 +10,7 @@
 #include "sym_table.h"
 
 #include <cmath>
+#include <cstdlib>
 #include <iostream>
 #include <list>
 #include <map>
@@ -89,6 +90,7 @@ void init()
   options.particleName = "";
   options.distribType = "";
   options.distribFile = "";
+  options.distribFileFormat = "";
 
   options.numberToGenerate = 1;
   options.nlinesIgnore = 0;
@@ -115,7 +117,6 @@ void init()
   options.Rmin=0.0, options.Rmax=0.0;
   options.sigmaE=0.0;
 
-  options.doTwiss = 0;
   options.doPlanckScattering=0;
   options.checkOverlaps=0;
   options.numberOfEventsPerNtuple=0;
@@ -202,7 +203,6 @@ void init()
   options.turnOnCerenkov = 1;
   options.synchRadOn = 0;
   options.decayOn = 1;
-  options.synchRescale = 0;
   options.synchTrackPhotons = 0;
   options.synchLowX = 0.0;
   options.synchLowGamE = 0.0;
@@ -222,6 +222,9 @@ void init()
   options.fifo = "";
   options.refvolume = "";
   options.refcopyno = 0;
+
+  // ring options
+  options.nturns = 1;
 }
 }
 
@@ -231,7 +234,7 @@ int gmad_parser(FILE *f)
 
   yyin=f; 
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "gmad_parser> beginning to parse file" << std::endl;
 #endif
 
@@ -240,13 +243,13 @@ int gmad_parser(FILE *f)
       yyparse();
     }
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "gmad_parser> finished to parsing file" << std::endl;
 #endif
 
   // clear temporary stuff
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "gmad_parser> clearing temporary lists" << std::endl;
 #endif
   element_list.clear();
@@ -257,7 +260,7 @@ int gmad_parser(FILE *f)
   }
   symtab_map.clear();
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "gmad_parser> finished" << std::endl;
 #endif
 
@@ -269,12 +272,16 @@ int gmad_parser(FILE *f)
 int gmad_parser(std::string name)
 {
   const int maxfilenamelength = 200;
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "gmad_parser> opening file" << std::endl;
 #endif
   FILE *f = fopen(name.c_str(),"r");
 
-  if(f==NULL) return -1;
+  if(f==NULL) {
+
+    std::cerr << "gmad_parser> Can't open input file " << name << std::endl;
+    exit(1);
+  }
 
   yyfilename = new char[maxfilenamelength];
   strncpy(yyfilename,name.c_str(),maxfilenamelength);

@@ -20,8 +20,6 @@ Last modified 01.02.2006 by Ilya Agapov
 #include "G4OpBoundaryProcess.hh"
 #include "G4CoulombScattering.hh"
 
-#define kNuCut  5*m
-
 class BDSPhysicsList: public G4VUserPhysicsList
 {
 public:
@@ -38,10 +36,10 @@ public:
 
   void AddParameterisation();
   
-  void ConstructParticle();
-  void ConstructProcess();
+  virtual void ConstructParticle();
+  virtual void ConstructProcess();
 
-  void SetCuts();
+  virtual void SetCuts();
 
   // construct particular physics list processes
 
@@ -51,45 +49,42 @@ public:
   void ConstructMultipleScattering();
   void ConstructCoulombScattering();
 
-  void ConstructEM_LPB(); //added by M.D. Salt, R.B. Appleby, 15/10/09
-
   void ConstructMuon();
-
-  void ConstructMuon_LPB(); 
-
-  void ConstructMuon_XSBias(); 
-
-  void ConstructMerlin();
-
-  void ConstructEM_Low_Energy();
-
-  void ConstructSR();
-
-  void ConstructLaserWire();
-
-  void ConstructHadronic();
-  
-  // void ConstructPhotolepton_Hadron();
-
-  void ConstructHad();
-
-  void ConstructQGSP();
 
   void ConstructDecay();
 
   void ConstructOptical();
 
+  void ConstructMerlin();
+
+  void ConstructEM_Low_Energy();
+
+  void ConstructLaserWire();
+
+  void ConstructHadronic();
+
+  void ConstructSR();
+  
 private:
   G4bool verbose;
 
   std::vector<G4String>  paraWorldName;
 
-    G4Cerenkov*          theCerenkovProcess;
-    G4Scintillation*     theScintillationProcess;
-    G4OpAbsorption*      theAbsorptionProcess;
-    G4OpRayleigh*        theRayleighScatteringProcess;
-    G4OpMieHG*           theMieHGScatteringProcess;
-    G4OpBoundaryProcess* theBoundaryProcess;
+  G4Cerenkov*          theCerenkovProcess;
+  G4Scintillation*     theScintillationProcess;
+  G4OpAbsorption*      theAbsorptionProcess;
+  G4OpRayleigh*        theRayleighScatteringProcess;
+  G4OpMieHG*           theMieHGScatteringProcess;
+  G4OpBoundaryProcess* theBoundaryProcess;
+
+  /// physics lists
+  // standard physics list
+  G4VPhysicsConstructor* theStandardPhysList;
+  // BDSIM physics lists
+  G4VPhysicsConstructor* theBDSIMPhysList;
+  // hadronic physics lists
+  G4VPhysicsConstructor* theHadPhysList1;
+  G4VPhysicsConstructor* theHadPhysList2;
 };
 
 #endif

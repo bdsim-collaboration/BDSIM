@@ -76,7 +76,8 @@ protected:
   // A first order Step along a drift inside the field.
   
 private:
-  
+  G4bool verboseStep;
+  G4int  verboseEventNumber;
   
 };
 

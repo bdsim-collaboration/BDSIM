@@ -42,7 +42,7 @@ G4VParticleChange*
 BDSSynchrotronRadiation::PostStepDoIt(const G4Track& trackData,
 				      const G4Step& stepData)
 {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout << "BDSSynchrotronRadiation::PostStepDoIt" << G4endl;
 #endif
   aParticleChange.Initialize(trackData);
@@ -66,7 +66,7 @@ BDSSynchrotronRadiation::PostStepDoIt(const G4Track& trackData,
   
   if(gamma <= 1.0e3 )
     {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout << "BDSSynchrotronRadiation::PostStepDoItG\nGamma<1000" << G4endl;
 #endif
       return G4VDiscreteProcess::PostStepDoIt(trackData,stepData);
@@ -85,7 +85,7 @@ BDSSynchrotronRadiation::PostStepDoIt(const G4Track& trackData,
   G4PropagatorInField* fFieldPropagator = transportMgr->GetPropagatorInField();
   if( (particleCharge != 0.0) )
     {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
 G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nParticle charge != 0.0" << G4endl;
 #endif
       fieldMgr = fFieldPropagator->FindAndSetFieldManager( trackData.GetVolume() );
@@ -98,7 +98,7 @@ G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nParticle charge != 0.0" << G4e
     }
   if ( fieldExertsForce )
     {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout << "BDSSynchrotronRadiation::PostStepDoIt\n fieldExertsForce==true" << G4endl;
 #endif
       pField = fieldMgr->GetDetectorField() ;
@@ -119,12 +119,12 @@ G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nParticle charge != 0.0" << G4e
       std::deque<G4DynamicParticle*> listOfSecondaries;
       if(perpB > 0.0)
 	{
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
           G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nperpB>0.0" << G4endl;
 #endif
           //Loop over multiplicity
 	  for (int i=0; i<BDSGlobalConstants::Instance()->GetSynchPhotonMultiplicity(); i++){
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
             G4cout  << "BDSSynchrotronRadiation::PostStepDoIt\nSynchPhotonMultiplicity" << G4endl;
 #endif
             //if(fabs(R)==0)
@@ -135,13 +135,13 @@ G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nParticle charge != 0.0" << G4e
 	    
 	    if(GamEnergy>0 && GamEnergy < NewKinEnergy)
 	      {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                 G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nGamEnergy in range" << G4endl;
 #endif
                 if((BDSGlobalConstants::Instance()->GetSynchTrackPhotons())&&
 		   (GamEnergy>BDSGlobalConstants::Instance()->GetSynchLowGamE()) )
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nTrackPhotons" << G4endl;
 #endif
 		    G4DynamicParticle* aGamma= 
@@ -149,7 +149,7 @@ G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nParticle charge != 0.0" << G4e
 					     trackData.GetMomentumDirection(),
 					     GamEnergy);
 		    listOfSecondaries.push_back(aGamma);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("Creating synchRad photon of energy %f\n",GamEnergy);
 #endif
 		  }
@@ -165,7 +165,7 @@ G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nParticle charge != 0.0" << G4e
 		
 		if (NewKinEnergy > 0.)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nNewKinEnergy>0.0" << G4endl;
 #endif
                     // Update the incident particle 
@@ -184,13 +184,13 @@ G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nParticle charge != 0.0" << G4e
 	  aParticleChange.SetNumberOfSecondaries(listOfSecondaries.size());
 
 	  for(int n=0;n<(int)listOfSecondaries.size();n++){
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
             G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nAdding secondaries" << G4endl;
 #endif
               
             aParticleChange.AddSecondary(listOfSecondaries.front()); 
 	    listOfSecondaries.pop_front();
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
             G4cout << "Adding secondary particle...\n";
 #endif
 	  }

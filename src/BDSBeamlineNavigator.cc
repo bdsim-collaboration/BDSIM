@@ -150,7 +150,6 @@ void BDSBeamlineNavigator::next(){
   _iterPositionFromCurrentCenter++;
 }
 
-
 G4RotationMatrix* BDSBeamlineNavigator::rotation(){
   return *_iterRotation;
 }

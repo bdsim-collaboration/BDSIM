@@ -19,12 +19,15 @@ def Plot(data,keys):
     s      = keys.index('s')
     beta_x = keys.index('beta_x')
     beta_y = keys.index('beta_y')
+    max_bx = np.max(data[:,beta_x])
+    max_by = np.max(data[:,beta_y])
+    max_y  = np.max([max_bx,max_by])
 
-    plt.plot(data[:,s],abs(data[:,beta_x]),label=r'$\beta_{x}$')
-    plt.plot(data[:,s],abs(data[:,beta_y]),label=r'$\beta_{y}$')
+    plt.plot(data[:,s],data[:,beta_x],label=r'$\beta_{x}$')
+    plt.plot(data[:,s],data[:,beta_y],label=r'$\beta_{y}$')
     
-    plt.xlim(0,np.max(data[:,s]))
-    plt.ylim(0,2000)
+    plt.xlim(np.min(data[:,s]),np.max(data[:,s]))
+    plt.ylim(0,max_y*1.05)
 
     plt.legend()
 

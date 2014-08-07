@@ -1,5 +1,6 @@
 #include "BDSBeamline.hh"
 #include "G4AffineTransform.hh"
+#include "BDSDebug.hh"
 
 BDSBeamline* BDSBeamline::_instance = 0;
 
@@ -51,6 +52,9 @@ BDSBeamline::~BDSBeamline(){
 }
 
 void BDSBeamline::doNavigation(){
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   //Reset the local rotation matrix
   *_rotationLocal = G4RotationMatrix();
   _s_local   = lastItem()->GetArcLength();
@@ -129,7 +133,7 @@ void BDSBeamline::doNavigation(){
   _positionSList.push_back(_s_total);
   _rotationList.push_back(new G4RotationMatrix(*_rotation));
   _rotationGlobalList.push_back(new G4RotationMatrix(*_rotationGlobal));
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSBeamline::addComponent: finished." << G4endl;
 #endif
 
@@ -138,24 +142,24 @@ void BDSBeamline::doNavigation(){
 
 void BDSBeamline::addComponent(BDSAcceleratorComponent* var){
   //Add component to the beamline
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSBeamline: adding component " << G4endl;
 #endif
   _componentList.push_back(var);
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSBeamline: finished adding component. Setting as current item. " << G4endl;
 #endif
   _iterComponent=_componentList.end();
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSBeamline: Set current item. " << G4endl;
 #endif
   //Do the navigation
   doNavigation();
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Printing name. " << G4endl;
 #endif
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSBeamline: " << lastItem()->GetName() << G4endl;
 #endif
   //Update the reference transform
@@ -165,7 +169,7 @@ void BDSBeamline::addComponent(BDSAcceleratorComponent* var){
 void BDSBeamline::setRefTransform(BDSAcceleratorComponent* var){
   if(BDSGlobalConstants::Instance()->GetRefVolume()==var->GetName() && 
      BDSGlobalConstants::Instance()->GetRefCopyNo()==var->GetCopyNumber()){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "Setting new transform" <<G4endl;
 #endif
     G4AffineTransform tf(rotationGlobal(),*positionStart());
@@ -183,10 +187,10 @@ void BDSBeamline::print(){
 }
 
 void BDSBeamline::printNavigation(){
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSBeamline: _position = " << *_position << G4endl;
 #endif
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSBeamline: _rotation = " << *_rotation << G4endl;
 #endif
 }
@@ -200,6 +204,18 @@ BDSAcceleratorComponent* BDSBeamline::lastItem(){
   _iterLastComponent=_componentList.end();
   _iterLastComponent--;
   return *_iterLastComponent;
+}
+
+BDSAcceleratorComponent* BDSBeamline::lastItem2(){
+  return _componentList.back();
+}
+
+BDSAcceleratorComponent* BDSBeamline::firstItem(){
+  return _componentList.front();
+}
+
+G4bool BDSBeamline::isLast(){
+  return (*_iterComponent == _componentList.back());
 }
 
 G4int BDSBeamline::size(){
@@ -265,4 +281,12 @@ G4double BDSBeamline::positionS(){
 
 G4double BDSBeamline::s_total(){
   return _s_total;
+}
+
+G4ThreeVector* BDSBeamline::GetLastPosition(){
+  return _positionEndList.back();
+}
+
+G4ThreeVector* BDSBeamline::GetFirstPosition(){
+  return _positionStartList.front();
 }

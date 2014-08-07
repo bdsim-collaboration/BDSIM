@@ -120,7 +120,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
 
   local *= Rotation();
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout <<  "BDS3DMagField::GetFieldValue" << G4endl;
   G4cout << "point x       = " << point[0]/cm << " cm" << G4endl;
   G4cout << "point y       = " << point[1]/cm << " cm" << G4endl;
@@ -140,7 +140,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
   //Mirror in x=0 plane and z=0 plane
   /*
   if( local[0] < 0 ){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "x = " << local[0]/cm << " cm. Mirroring in x=0 plane." << G4endl;
 #endif
     local[0] *= -1;
@@ -149,7 +149,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
   }
 
   if( local[2] <0 ){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "z = " << local[2]/cm << " cm. Mirroring in z=0 plane." << G4endl;
 #endif
     local[2] *= -1;
@@ -235,7 +235,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
     Bfield[2] = 0.0;
   }
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Bfield x,y,z = " << 
     Bfield[0]/_fieldUnit << " " <<
     Bfield[1]/_fieldUnit << " " <<

@@ -9,6 +9,7 @@
 
 #include "BDSGlobalConstants.hh" 
 #include "BDSExecOptions.hh"
+#include "BDSDebug.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSamplerHit.hh"
 #include "G4VPhysicalVolume.hh"
@@ -64,9 +65,6 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
 
 G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
-#ifdef DEBUG
-  G4cout << __METHOD_NAME__ << "processing hits for sensitive detector name " << SensitiveDetectorName << G4endl;  
-#endif
   G4Track* theTrack = aStep->GetTrack();
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   //  G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
@@ -74,23 +72,20 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   //     G4String pName=theTrack->GetDefinition()->GetParticleName();
   //    if(pName=="mu+"||pName=="mu-")
   // 	{ // tm
-  //Do not store hit if particles is "twiss" or "reference"
-  if(BDSGlobalConstants::Instance()->DoTwiss() || BDSGlobalConstants::Instance()->isReference) return false;
   //Do not store hit if the particle is not on the boundary 
   if(preStepPoint->GetStepStatus()!=fGeomBoundary) return false;
 
+  G4Track* theTrack = aStep->GetTrack();
   //unique ID of track
   G4int TrackID = theTrack->GetTrackID();
   //unique ID of track's mother
   G4int ParentID = theTrack->GetParentID();
   //time since track creation
   G4double t = theTrack->GetGlobalTime();
-  //total track energy
-  
-  
-  G4double energy = theTrack->GetKineticEnergy()+ 
-    theTrack->GetDefinition()->GetPDGMass();
-  
+  //total track energy 
+  G4double energy = theTrack->GetKineticEnergy()+theTrack->GetDefinition()->GetPDGMass();
+  //Turn Number
+  G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();  
   
   //current particle position (global)
   G4ThreeVector pos = theTrack->GetPosition();
@@ -143,7 +138,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   
   G4String pName=theTrack->GetDefinition()->GetParticleName();
   
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "BDSSamplerSD> Particle name: " << pName << G4endl;  
   G4cout << __METHOD_NAME__ << "BDSSamplerSD> PDG encoding: " << PDGtype << G4endl;  
   G4cout << __METHOD_NAME__ << "BDSSamplerSD> TrackID: " << TrackID << G4endl;  
@@ -207,7 +202,11 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 			t,
 			s,
 			weight,
-			PDGtype,nEvent, ParentID, TrackID);
+			PDGtype,
+			nEvent, 
+			ParentID, 
+			TrackID,
+			turnstaken);
   smpHit->SetGlobalX(pos.x());
   smpHit->SetGlobalY(pos.y());
   smpHit->SetGlobalZ(pos.z());
@@ -216,7 +215,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   smpHit->SetGlobalZPrime(momDir.z());
   smpHit->SetType(itsType);
   
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " Sampler : " << SampName << G4endl;
   G4cout << __METHOD_NAME__ << " Storing hit: E, x, y, z, xPrime, yPrime" << G4endl;
   G4cout << __METHOD_NAME__ << " " << energy <<" "  << x << " " << y << " " << z << " " << xPrime << " " << yPrime << G4endl;
@@ -225,7 +224,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4cout << __METHOD_NAME__ << " entries in hits collection before inserting hit: " << SamplerCollection->entries() << G4endl;
 #endif
   SamplerCollection->insert(smpHit);
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " entries in hits collection after inserting hit: " << SamplerCollection->entries() << G4endl;
 #endif
 

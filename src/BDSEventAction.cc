@@ -64,7 +64,6 @@ extern ECList* theECList;
 G4int event_number; // event number, used for checking on printing verboseEventNumber
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
 
-extern BDSOutput* bdsOutput;
 
 //======================================================
 
@@ -80,6 +79,7 @@ BDSEventAction::BDSEventAction():
 
   if(isBatch) printModulo=10;
   else printModulo=1;
+  
   
   itsRecordSize=1024;
   
@@ -98,27 +98,16 @@ BDSEventAction::~BDSEventAction()
 
 void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 { 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << " processing begin of event action" << G4endl;
 #endif
 
   event_number = evt->GetEventID();
-  
-  if(BDSGlobalConstants::Instance()->DoTwiss())
+
+  if ((event_number+1)%printModulo ==0)
     {
-      if(event_number==0) {
-	G4cout << "\n---> Calculating Twiss Parameters";
-	if(BDSGlobalConstants::Instance()->GetSynchRescale())
-	  G4cout<<" and Rescaling magnets" <<G4endl;
-      }
-    }
-  else
-    {
-      if (BDSGlobalConstants::Instance()->isReference==false && (event_number+1)%printModulo ==0)
-	{
-	  G4cout << "\n---> Begin of event: " << event_number << G4endl;
-	}
+      G4cout << "\n---> Begin of event: " << event_number << G4endl;
     }
   
   if(verboseEvent) G4cout << __METHOD_NAME__ << "event #"<<event_number<<G4endl ;
@@ -140,7 +129,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   //   }
   FireLaserCompton=true;
    
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "begin of event action done"<<G4endl;
 #endif
 }
@@ -149,23 +138,16 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 
 void BDSEventAction::EndOfEventAction(const G4Event* evt)
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout<<"BDSEventAction : processing end of event action"<<G4endl;
 #endif
   
-  if(BDSGlobalConstants::Instance()->DoTwiss())
-    {
-      if(event_number==BDSExecOptions::Instance()->GetNPTwiss()-1)
-	{
-	  G4cout << "\n---> Done" <<G4endl;
-	  G4EventManager::GetEventManager()->GetStackManager()->clear();
-	}
-    }
+
   if(verboseEvent || verboseEventNumber == event_number){
     G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;
   }
   
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<<"BDSEventAction : storing hits"<<G4endl;
 #endif
 
@@ -176,7 +158,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // are there any planar samplers?
   // if so, record the hits for each sampler 
   
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<<"BDSEventAction : processing planar hits collection"<<G4endl;
 #endif
   
@@ -185,22 +167,21 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     SampHC = (BDSSamplerHitsCollection*)(evt->GetHCofThisEvent()->GetHC(SamplerCollID_plane));
   
   if(SampHC){
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " - planar hits collection found. Writing hits." << G4endl;
 #endif
     bdsOutput->WriteHits(SampHC);
   } else {
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " - no planar hits collection found. Not writing hits." << G4endl;
 #endif
   }
-
   SampHC=NULL;
-
+  
   // are there any cylindrical samplers?
   // if so, record the hits
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
 G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #endif
 
@@ -224,7 +205,7 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 
   // create energy loss histogram
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<<"BDSEventAction : storing energy loss histograms"<<G4endl;
 #endif
   
@@ -232,79 +213,36 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   for(iEC=theECList->begin();iEC!=theECList->end();++iEC)
     {
       G4String name=(*iEC)->GetCollectionName(0);
-      
-      G4int BDSEnergyCounter_ID= G4SDManager::GetSDMpointer()->GetCollectionID(name);
-      
-      if(BDSEnergyCounter_ID>=0)
-	{
-	  BDSEnergyCounter_HC=
-	    (BDSEnergyCounterHitsCollection*)(evt->GetHCofThisEvent()->GetHC(BDSEnergyCounter_ID));
-	
-	  if(BDSEnergyCounter_HC) {
-	    bdsOutput->WriteEnergyLoss(BDSEnergyCounter_HC);
-	  }
-	}
+      BDSEnergyCounter_HC=
+	(BDSEnergyCounterHitsCollection*)(evt->GetHCofThisEvent()->GetHC((*iEC)->itsHCID));
+      if(BDSEnergyCounter_HC) {bdsOutput->WriteEnergyLoss(BDSEnergyCounter_HC);}
     }
-#ifdef DEBUG
-  G4cout << __METHOD_NAME__ << " finished writing energy loss." << G4endl;
-#endif
 
-
-
-#ifdef DEBUG 
-  G4cout<<"BDSEventAction : CCD camera hits histograms"<<G4endl;
-#endif
-  
-  BDSCCDPixelHitsCollection* BDSCCDPixel_HC=NULL;
-  G4String name="CCDPixel";
-  G4int BDSCCDPixel_ID= -1;
-  //G4SDManager::GetSDMpointer()->GetCollectionID(name);
-  if(BDSCCDPixel_ID>=0)
-    {
-      BDSCCDPixel_HC=
-	(BDSCCDPixelHitsCollection*)(evt->GetHCofThisEvent()->GetHC(BDSCCDPixel_ID));
-      
-      if(BDSCCDPixel_HC) {
-#ifdef DEBUG
-	G4cout << __METHOD_NAME__ << " - writing CCD hits..." << G4endl;
-#endif
-	bdsOutput->WriteCCDHits(BDSCCDPixel_HC);
-#ifdef DEBUG
-	G4cout << __METHOD_NAME__ << " - finished writing CCD hits " << G4endl;
-#endif
-      }
-    }
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " finished writing energy loss." << G4endl;
 #endif
   
   
   // if events per ntuples not set (default 0) - only write out at end 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " getting number of events per ntuple..." << G4endl;
 #endif
   int evntsPerNtuple = BDSGlobalConstants::Instance()->GetNumberOfEventsPerNtuple();
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " finished getting number of events per ntuple." << G4endl;
 #endif
 
-  // if doTwiss write out at end
-  if( BDSGlobalConstants::Instance()->DoTwiss() && (event_number==BDSExecOptions::Instance()->GetNPTwiss()-1)) {
-    bdsOutput->Commit(); // write and open new file
-  }
   
-  if( !BDSGlobalConstants::Instance()->DoTwiss() && 
-      (
-       (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0) || 
-       (event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate()
-       )
+  if( 
+     (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0) || 
+     (event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate()
       )
     {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " writing out events." << G4endl;
 #endif
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<<"writing to file "<<G4endl;
 #endif
       // notify the output about the event end
@@ -314,7 +252,7 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
       } else {
 	bdsOutput->Commit(); // write and open new file
       }
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout<<"done"<<G4endl;
 #endif
     }
@@ -332,7 +270,7 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   if(BDSGlobalConstants::Instance()->GetStoreTrajectory() ||
      BDSGlobalConstants::Instance()->GetStoreMuonTrajectories() ||
      BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories()){
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout<<"BDSEventAction : storing trajectories"<<G4endl;
 #endif
     // clear out trajectories that don't reach point x
@@ -356,24 +294,24 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 
   // needed to draw trajectories and hits:
   if(!isBatch) {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
     G4cout<<"BDSEventAction : drawing"<<G4endl;
 #endif
     evt->Draw();
   }
   
   //clear out the remaining trajectories
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<<"BDSEventAction : deleting trajectories"<<G4endl;
 #endif
   TrajCont->clearAndDestroy();
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
  G4cout<<"BDSEventAction : end of event action done"<<G4endl;
 #endif
 }
 
 void BDSEventAction::AddPrimaryHits(const G4Event* /*evt*/){
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   //Save the primary particle as a hit 
@@ -397,9 +335,10 @@ void BDSEventAction::AddPrimaryHits(const G4Event* /*evt*/){
   G4int PDGType=primaryParticle->GetPDGcode();
   G4int nEvent = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   G4String samplerName="primaries";
-  bdsOutput->WritePrimary(samplerName, E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent);
+  G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  bdsOutput->WritePrimary(samplerName, E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " finished" << G4endl;
 #endif
 }

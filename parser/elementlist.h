@@ -47,6 +47,7 @@ class ElementList {
   /// begin/end iterator:
   ElementListIterator begin();
   ElementListIterator end();
+  ElementListIterator back();
 
   /// lookup method, returns iterator of list pointing to Element with name
   // TOOD: better list of iterators?

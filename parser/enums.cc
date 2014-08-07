@@ -58,8 +58,12 @@ const char *typestr(int type) {
     return "transform3d";
   case _SCREEN :
     return "screen";
-  case _AWAKESCREEN :
+ case _AWAKESCREEN :
     return "awakescreen";
+  case _TELEPORTER : 
+    return "teleporter";
+  case _TERMINATOR :
+    return "terminator";
   default:
     return "none";
   }

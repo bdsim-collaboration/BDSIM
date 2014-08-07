@@ -49,12 +49,12 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
   itsBGrad(bGrad),
   itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
 {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<< __METHOD_NAME__ << "spec=" << spec << G4endl;
 #endif
   // get specific quadrupole type
   G4String qtype = getParameterValueString(spec, "type");
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<< __METHOD_NAME__ << "qtype="<<qtype<<G4endl;
 #endif
 
@@ -67,7 +67,7 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
       //
       // build external volume
       // 
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout<<"Building marker volume "<<G4endl;
 #endif
       BuildDefaultMarkerLogicalVolume();
@@ -82,15 +82,15 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
       //
       // build beampipe (geometry + magnetic field)
       //
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout<<"Building beam pipe field and stepper "<<G4endl;
 #endif
       BuildBPFieldAndStepper();
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<<"Building beam pipe field manager "<<G4endl;
 #endif
       BuildBPFieldMgr(itsStepper,itsMagField);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<<"Building beam pipe "<<G4endl;
 #endif
       BuildBeampipe();
@@ -137,13 +137,13 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
       // define sensitive volumes for hit generation
       //
       if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-#ifdef DEBUG
+#ifdef BDSDEBUG
         G4cout << "BDSQuadrupole.cc:> setting sensitive beam pipe" << G4endl;
 #endif
         SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
       }
       if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-#ifdef DEBUG
+#ifdef BDSDEBUG
         G4cout << "BDSQuadrupole.cc:> setting sensitive outer volume" << G4endl;
 #endif
         SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
@@ -162,105 +162,11 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
   else
     {
       (*LogVolCount)[itsName]++;
-      if(BDSGlobalConstants::Instance()->GetSynchRadOn()&& BDSGlobalConstants::Instance()->GetSynchRescale())
-	{
-	  // with synchrotron radiation, the rescaled magnetic field
-	  // means elements with the same name must have different
-	  // logical volumes, because they have different fields
-	  itsName+=BDSGlobalConstants::Instance()->StringFromInt((*LogVolCount)[itsName]);
-
-	  //
-	  // build external volume
-	  // 
-	  BuildDefaultMarkerLogicalVolume();
-
-	  //
-	  // build beampipe (geometry + magnetic field)
-	  //
-	  BuildBPFieldAndStepper();
-	  BuildBPFieldMgr(itsStepper,itsMagField);
-	  BuildBeampipe();
-
-	  //
-	  // build magnet (geometry + magnetic field)
-	  // according to quad type
-	  //
-	  if(qtype=="standard") 
-	    BuildOuterLogicalVolume(); // standard - quad with poles and pockets
-	  else if(qtype=="cylinder")  
-            BuildDefaultOuterLogicalVolume(itsLength); // cylinder outer volume
-            //	    BuildEllipticalOuterLogicalVolume(itsLength); // cylinder outer volume
-	  else //default
-            BuildDefaultOuterLogicalVolume(itsLength); // cylinder outer volume
-          //BuildEllipticalOuterLogicalVolume(itsLength); // cylinder outer volume
-	  if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
-	    {
-	      G4double polePos[4];
-	      G4double Bfield[3];
-	      
-	      //coordinate in GetFieldValue
-	      polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(CLHEP::pi/4);
-	      polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(CLHEP::pi/4);
-	      polePos[2]=0.;
-	      polePos[3]=-999.;//flag to use polePos rather than local track
-
-	      itsMagField->GetFieldValue(polePos,Bfield);
-	      G4double BFldIron=
-		sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1])*
-		BDSGlobalConstants::Instance()->GetMagnetPoleSize()/
-		(BDSGlobalConstants::Instance()->GetComponentBoxSize()/2-
-		 BDSGlobalConstants::Instance()->GetMagnetPoleRadius());
-
-	      // Magnetic flux from a pole is divided in two directions
-	      BFldIron/=2.;
-	      
-	      BuildOuterFieldManager(4, BFldIron,CLHEP::pi/4);
-	    }
-	  //When is SynchRescale(factor) called?
-
-	  //
-	  // define sensitive volumes for hit generation
-	  //
-          if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-#ifdef DEBUG
-            G4cout << "BDSQuadrupole.cc:> setting sensitive beampipe 2" << G4endl;
-#endif
-            SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-          }
-          if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-#ifdef DEBUG
-            G4cout << "BDSQuadrupole.cc:> setting sensitive outer volume 2" << G4endl;
-#endif
-            SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-          }
-		  
-	  //
-	  // set visualization attributes
-	  //
-	  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
-	  
-	  //
-	  // append marker logical volume to volume map
-	  //
-	  (*LogVol)[itsName]=itsMarkerLogicalVolume;
-	}
-      else
-	{
 	  //
 	  // use already defined marker volume
 	  //
 	  itsMarkerLogicalVolume=(*LogVol)[itsName];
-	}      
     }
-}
-
-void BDSQuadrupole::SynchRescale(G4double factor)
-{
-  itsStepper->SetBGrad(factor*itsBGrad);
-  itsMagField->SetBGrad(factor*itsBGrad);
-#ifdef DEBUG 
-  G4cout << "Quad " << itsName << " has been scaled" << G4endl;
-#endif
 }
 
 G4VisAttributes* BDSQuadrupole::SetVisAttributes()

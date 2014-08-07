@@ -22,7 +22,7 @@ void Options::print() const {
 
 void Options::set_value(std::string name, double value )
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "parser> Setting value " << name << ", " << value << std::endl; 
 #endif
   //
@@ -178,19 +178,15 @@ void Options::set_value(std::string name, double value )
       turnOnBirksSaturation = (int)value; return;
   }
 
-  if(name == "srRescale") {
-      synchRescale = (int)value; return;
-  }
-
   if(name == "srTrackPhotons") {
     synchTrackPhotons = (int)value; return;
   }
 
-  if(name == "useEMLPB") { useEMLPB = value; return; }
-  if(name == "useHadLPB") { useHadLPB = value; return; }
-  if(name == "sensitiveBeamlineComponents") { sensitiveBeamlineComponents = value; return; }
-  if(name == "sensitiveBeamPipe") { sensitiveBeamPipe = value; return; }
-  if(name == "sensitiveBLMs") { sensitiveBLMs = value; return; }
+  if(name == "useEMLPB") { useEMLPB = (int)value; return; }
+  if(name == "useHadLPB") { useHadLPB = (int)value; return; }
+  if(name == "sensitiveBeamlineComponents") { sensitiveBeamlineComponents = (int)value; return; }
+  if(name == "sensitiveBeamPipe") { sensitiveBeamPipe = (int)value; return; }
+  if(name == "sensitiveBLMs") { sensitiveBLMs = (int)value; return; }
   if(name == "LPBFraction") { LPBFraction = value; return; }
   if(name == "annihiToMuFe") { annihiToMuFe = value; return; }
   if(name == "gammaToMuFe") { gammaToMuFe = value; return; }
@@ -223,7 +219,6 @@ void Options::set_value(std::string name, double value )
   if(name == "alfy" ) { alfy = value; return; }
   if(name == "emitx" ) { emitx = value; return; }
   if(name == "emity" ) { emity = value; return; }
-  if(name == "doTwiss" ) { doTwiss = (int) value; return; }
   if(name == "doPlanckScattering" ) { doPlanckScattering = (int) value; return; }
   if(name == "checkOverlaps" ) { checkOverlaps = (int) value; return; }
 
@@ -247,13 +242,17 @@ void Options::set_value(std::string name, double value )
 
   // options for neutrons
   if(name=="refcopyno") { refcopyno = (int) value; return; }
+  
+  // option for rings
+  if(name=="nturns") {nturns = (int) value; return; }
+  
   std::cerr << "Error: parser> unkown option \"" << name << "\"" << std::endl; 
   exit(1);
 }
 
 void Options::set_value(std::string name, std::string value )
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "parser> Setting value " << name << ", " << value << std::endl; 
 #endif
   // 
@@ -262,6 +261,7 @@ void Options::set_value(std::string name, std::string value )
   if(name == "particle") { particleName = value; return; }
   if(name == "distrType" ) { distribType = value; return; }
   if(name == "distrFile" ) { distribFile = getEnv("BDSIMPATH")+value; return; }
+  if(name == "distrFileFormat" ) { distribFileFormat = value; return; }
 
   //
   // string options for the "option" command

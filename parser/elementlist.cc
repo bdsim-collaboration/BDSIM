@@ -57,6 +57,10 @@ ElementList::ElementListIterator ElementList::end() {
   return itsList.end();
 }
 
+ElementList::ElementListIterator ElementList::back() {
+  return itsList.end()--;
+}
+
 ElementList::ElementListIterator ElementList::find(std::string name,unsigned int count) {
   if (count==1) {
     ElementMapIterator emit = itsMap.find(name);

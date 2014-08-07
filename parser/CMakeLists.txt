@@ -1,18 +1,23 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.6.4)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
+# Suppress policy CMP0042 warning (as of cmake 3.0.0)
+if (${CMAKE_MAJOR_VERSION} GREATER 2)
+    cmake_policy(SET CMP0042 OLD)
+endif()
+
 # suppress warnings
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-value")
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DDEBUG")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DBDSDEBUG")
 endif()
 if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DDEBUG --coverage")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DBDSDEBUG --coverage")
 endif()
 
 if($ENV{VERBOSE})

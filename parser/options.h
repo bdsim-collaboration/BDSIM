@@ -20,6 +20,7 @@ struct Options {
   std::string particleName;
   std::string distribType;
   std::string distribFile;
+  std::string distribFileFormat;
 
   int numberToGenerate;
   int nlinesIgnore; /// ignore first lines in the input bunch file
@@ -65,7 +66,6 @@ struct Options {
   double sigmaE;
 
   /// bdsim options 
-  int       doTwiss;
   int       doPlanckScattering;
   int       checkOverlaps;
   int       numberOfEventsPerNtuple;
@@ -155,7 +155,6 @@ struct Options {
   int turnOnBirksSaturation;
   int      synchRadOn;
   int      decayOn;
-  int      synchRescale;
   int      synchTrackPhotons;
   double   synchLowX;
   double   synchLowGamE;
@@ -175,6 +174,9 @@ struct Options {
   std::string fifo; /// fifo for BDSIM-placet
   std::string refvolume; ///initial starting volume
   int refcopyno; ///initial starting volume copy number
+
+  // Ring parameters
+  int      nturns;
 
   /// print some properties
   void print()const;

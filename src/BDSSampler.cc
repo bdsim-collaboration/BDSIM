@@ -10,10 +10,12 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSSampler.hh"
 #include "G4Box.hh"
+#include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
+#include "G4VPhysicalVolume.hh"
+#include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
-//#include "BDSOutput.hh"
 #include "BDSSamplerSD.hh"
 #include "G4SDManager.hh"
 
@@ -30,7 +32,6 @@ extern BDSSamplerSD* BDSSamplerSensDet;
 
 std::vector <G4String> BDSSampler::outputNames;
 
-//extern BDSOutput* bdsOutput;
 //============================================================
 
 int BDSSampler::nSamplers = 0;
@@ -39,7 +40,7 @@ int BDSSampler::GetNSamplers() { return nSamplers; }
 
 void BDSSampler::AddExternalSampler(G4String name) { nSamplers++; outputNames.push_back(name); }
 
-BDSSampler::BDSSampler (G4String aName,G4double aLength):
+BDSSampler::BDSSampler (G4String aName, G4double aLength):
   BDSAcceleratorComponent(
 			 aName,
 			 aLength,0,0,0,
@@ -51,9 +52,7 @@ BDSSampler::BDSSampler (G4String aName,G4double aLength):
   SamplerLogicalVolume();
   nSamplers++;
   //G4int nSamplers=(*LogVolCount)[itsName];
-  //BDSRoot->SetSamplerNumber(nSamplers);
-
- 
+  //BDSRoot->SetSamplerNumber(nSamplers); 
 }
 
 
@@ -81,12 +80,10 @@ void BDSSampler::SamplerLogicalVolume()
       itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
      // Sensitive Detector:
-//SPM G4cout << "Sampler.cc Nsamplers " << bdsOutput->nSamplers << G4endl;
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << "BDSSampler.cc Nsamplers " << nSamplers << G4endl;
 #endif
 
-//SPM if(bdsOutput->nSamplers==0)
       if(nSamplers==0)
 	{
 	  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
@@ -106,7 +103,12 @@ void BDSSampler::SamplerLogicalVolume()
 
 G4VisAttributes* BDSSampler::SetVisAttributes()
 {
-  itsVisAttributes=new G4VisAttributes(G4Colour(1,1,1));
+  itsVisAttributes=new G4VisAttributes(G4Colour(0.5,0.6,0.7));
+#if defined BDSDEBUG
+  itsVisAttributes->SetVisibility(true);
+#else
+  itsVisAttributes->SetVisibility(false);
+#endif
   return itsVisAttributes;
 }
 

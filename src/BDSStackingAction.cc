@@ -14,12 +14,10 @@
 
 #include "BDSGlobalConstants.hh"
 #include "BDSStackingAction.hh"
-#include "BDSPhotonCounter.hh"
 #include "G4SDManager.hh"
 #include "G4RunManager.hh"
 #include "G4Run.hh"
 #include "G4Event.hh"
-#include "G4HCofThisEvent.hh"
 #include "G4ThreeVector.hh"
 #include "G4Track.hh"
 #include "G4TrackStatus.hh"
@@ -38,10 +36,8 @@ BDSStackingAction::~BDSStackingAction()
 G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * aTrack)
 {
   G4ClassificationOfNewTrack classification = fUrgent;
-  
-  countPhoton(aTrack);
-  
-#ifdef DEBUG 
+
+#ifdef BDSDEBUG 
   G4cout<<"StackingAction: ClassifyNewtrack "<<aTrack->GetTrackID()<<
     " "<<aTrack->GetDefinition()->GetParticleName()<<G4endl;
   G4StackManager* SM = G4EventManager::GetEventManager()->GetStackManager();
@@ -62,6 +58,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
     if( abs(pdgNr) == 12 || abs(pdgNr) == 14 || abs(pdgNr) == 16) {
       return fKill;
     }
+  }
   
   if(BDSGlobalConstants::Instance()->GetStopTracks()) // if tracks killed after interaction
     {
@@ -71,18 +68,15 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       if( (aTrack->GetParentID() > 0) && 
 	  (aTrack->GetDefinition() == G4Electron::ElectronDefinition() ) )
 	{
-	  // if we are in the twiss module - aperture hit is suspicious
-	  if( BDSGlobalConstants::Instance()->DoTwiss() ) 
-	    G4cout<<"WARNING : Electron "<<aTrack->GetParentID()<<" outside of aperture, twiss results will be incorrect"<< G4endl;
-      }
-      return fKill;
-     }
+	  return fKill;
+	}
+      
       // kill secondary photons
       
       if( (aTrack->GetParentID() > 0) && 
 	  (aTrack->GetDefinition() == G4Gamma::GammaDefinition() ) )
 	{
-	  return fKill;
+	  classification = fKill;
 	}
       
       // kill secondary positrons
@@ -90,27 +84,18 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       if( (aTrack->GetParentID() > 0) && 
 	  (aTrack->GetDefinition() == G4Positron::PositronDefinition() ) )
 	{
-	  
-
-	  // if we are in the twiss module - aperture hit is suspicious
-	  if( BDSGlobalConstants::Instance()->DoTwiss() ) 
-	    G4cout<<"WARNING : Positron outside of aperture, twiss results will be incorrect"<< G4endl;
-      return fKill;	
-    }
+	  return fKill;
+	}
 
       // kill secondary protons/antiprotons
       
       if( (aTrack->GetParentID() > 0) && 
 	  ( (aTrack->GetDefinition() == G4Proton::ProtonDefinition() ) ||
 	    (aTrack->GetDefinition() == G4AntiProton::AntiProtonDefinition()) ) )
-	{ 
-	  // if we are in the twiss module - aperture hit is suspicious
-	  if( BDSGlobalConstants::Instance()->DoTwiss() ) {
-	    G4cout<<"WARNING : Proton outside of aperture, twiss results will be incorrect"<<
-	      G4endl;
+	{
+	  return fKill;
 	}
-	return fKill;
-    }
+      
     }
 
   if(BDSGlobalConstants::Instance()->getWaitingForDump()) // if waiting for placet synchronization
@@ -120,16 +105,9 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
 	classification = fPostpone;
      }
 
-  if(BDSGlobalConstants::Instance()->DoTwiss())
-    {
-      if((aTrack->GetParentID() <= 0) &&
-         (aTrack->GetTrackStatus()==fPostponeToNextEvent) )
-	classification = fPostpone;
-    }
-  
   if(BDSGlobalConstants::Instance()->getDumping()) // in the process of dumping
     {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout<<"reclassifying track "<<aTrack->GetTrackID()<<G4endl;
       G4cout<<"r= "<<aTrack->GetPosition()<<G4endl;
 #endif
@@ -141,7 +119,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       G4ThreeVector LocalPosition=tf.TransformPoint(transformedPos);
       G4ThreeVector LocalDirection=tf.TransformAxis(momDir);
       
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << "Stacking: Pos = " << transformedPos << G4endl;
       G4cout << "LocalPos: Pos = " << LocalPosition << G4endl;
       G4cout << "Stacking: mom = " << momDir << G4endl;
@@ -164,7 +142,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       //        BDSGlobalConstants::Instance()->fileDump << aTrack->GetTotalEnergy()/CLHEP::GeV << "\t"
       //<< x << "\t" << y << "\t" << z << "\t"
       //<< xPrime << "\t" << yPrime << "\t" << t <<"\n"; // SPM
-#ifdef DEBUG
+#ifdef BDSDEBUG
       printf("Out: %.15f %.15f %.15f %.15f %.15f %.15f %.15f %f\n",
 	     aTrack->GetTotalEnergy()/CLHEP::GeV,x,y,z,xPrime,yPrime,zPrime,t);
 #endif
@@ -204,7 +182,7 @@ void BDSStackingAction::NewStage()
 {
   // urgent stack empty, looking into the waiting stack
  
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout<<"StackingAction: New stage"<<G4endl;
 #endif
 

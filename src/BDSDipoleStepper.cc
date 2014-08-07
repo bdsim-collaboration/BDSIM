@@ -7,13 +7,13 @@
 
 #include "BDSGlobalConstants.hh" 
 #include "BDSExecOptions.hh"
-#include "myQuadStepper.hh"
+#include "BDSDipoleStepper.hh"
 #include "G4ThreeVector.hh"
 #include "G4TransportationManager.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
 
-myQuadStepper::myQuadStepper(G4Mag_EqRhs *EqRhs)
+BDSDipoleStepper::BDSDipoleStepper(G4Mag_EqRhs *EqRhs)
   : G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
                                       // position & velocity
     itsLength(0.0),itsAngle(0.0),itsBGrad(0.0),itsBField(0.0),itsDist(0.0)
@@ -22,14 +22,14 @@ myQuadStepper::myQuadStepper(G4Mag_EqRhs *EqRhs)
 }
 
 
-void myQuadStepper::AdvanceHelix( const G4double  yIn[],
+void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
 				  G4ThreeVector,
 				  G4double  h,
 				  G4double  yOut[])
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
-  G4cout << "BDSQuadStepper: step= " << h/CLHEP::m << " m" << G4endl
+  G4cout << "BDSDipoleStepper: step= " << h/CLHEP::m << " m" << G4endl
          << " x= " << yIn[0]/CLHEP::m << "m" << G4endl
          << " y= " << yIn[1]/CLHEP::m << "m" << G4endl
          << " z= " << yIn[2]/CLHEP::m << "m" << G4endl
@@ -79,19 +79,12 @@ void myQuadStepper::AdvanceHelix( const G4double  yIn[],
    
   G4double R;
   
-   if(BDSGlobalConstants::Instance()->GetSynchRescale())
-    {
-      G4double B[3];
-      fPtrMagEqOfMot->GetFieldValue(yIn, B);
-      R=-(InitMag/CLHEP::GeV)/(0.299792458 * B[1]/CLHEP::tesla) * CLHEP::m;
-    }
+
+  if(itsBField!=0)
+    R=-(InitMag/CLHEP::GeV)/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
   else
-    {
-      if(itsBField!=0)
-	R=-(InitMag/CLHEP::GeV)/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
-      else
-	R=DBL_MAX;
-    }
+    R=DBL_MAX;
+
 
  // include the sign of the charge of the particles
 
@@ -254,7 +247,7 @@ void myQuadStepper::AdvanceHelix( const G4double  yIn[],
 }
 
 
-void myQuadStepper::Stepper( const G4double yInput[],
+void BDSDipoleStepper::Stepper( const G4double yInput[],
 			     const G4double[],
 			     const G4double hstep,
 			     G4double yOut[],
@@ -268,12 +261,12 @@ void myQuadStepper::Stepper( const G4double yInput[],
 
 }
 
-G4double myQuadStepper::DistChord()   const 
+G4double BDSDipoleStepper::DistChord()   const 
 {
   return itsDist;
   // This is a class method that gives distance of Mid 
   // from the Chord between the Initial and Final points.
 }
 
-myQuadStepper::~myQuadStepper()
+BDSDipoleStepper::~BDSDipoleStepper()
 {}
