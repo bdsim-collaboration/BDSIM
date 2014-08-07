@@ -23,7 +23,7 @@ endif()
 
 file(GLOB TRKsources *.cc )
 
-add_library(tracker STATIC TRKsources )
-add_library(trackerShared SHARED TRKsources)
+add_library(tracker STATIC ${TRKsources})
+add_library(trackerShared SHARED ${TRKsources})
 
 bdsim_install_targets(tracker)
