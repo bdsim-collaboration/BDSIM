@@ -1,7 +1,7 @@
 #ifndef TRKSimulation_h
 #define TRKSimulation_h
 
-#include "TRKLine.h"
+#include "TRKLine.hh"
 
 class TRKSimulation {
 private:
@@ -11,8 +11,8 @@ private:
 public :
   TRKSimulation();
   TRKSimulation(std::string name);
-  
-
-}
+  ~TRKSimulation();
+ 
+};
 
 #endif

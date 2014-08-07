@@ -10,8 +10,8 @@ TRKDrift::TRKDrift(std::string nameIn, double lengthIn, double size_xIn, double 
 
 TRKDrift::~TRKDrift() {}
 
-void TRKDrift::Track(double vIn[], double vOut[], double h) {   
+void TRKDrift::Track(const double vIn[], double vOut[], double h) {   
 } 
 
-void TRKDrift::Track(double vIn[], double vOut[]) { 
+void TRKDrift::Track(const double vIn[], double vOut[]) { 
 }
