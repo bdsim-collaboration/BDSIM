@@ -106,6 +106,8 @@ bool debug = false;
 
 //=================================================================
 
+
+
 BDSDetectorConstruction::BDSDetectorConstruction():
   itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
   solidWorld(NULL),logicWorld(NULL),physiWorld(NULL),
@@ -158,6 +160,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
 
 }
 
+
 //=================================================================
 
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
@@ -177,8 +180,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   //construct bds
   return ConstructBDS(beamline_list);
 }
-
-
 G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_list)
 {  
   std::list<struct Element>::iterator it;
@@ -202,7 +203,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
     AddTerminatorToEndOfBeamline(&beamline_list);
   }
 
+
   // convert the parsed element list to list of BDS elements
+  //
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
 
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
@@ -239,6 +242,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   G4cout << __METHOD_NAME__ << "size of theBeamline: "<< BDSBeamline::Instance()->size() << G4endl;
   
   // construct the component list
+  //
+
   if (verbose || debug) G4cout << "now constructing geometry" << G4endl;
   
   std::list<BDSAcceleratorComponent*>::const_iterator iBeam;
@@ -259,6 +264,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   // define geometry scope - to calculate world dimensions
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     {
+
 #ifdef BDSDEBUG 
       G4cout << BDSBeamline::Instance()->currentItem()->GetName() << "  "
              << BDSBeamline::Instance()->currentItem()->GetLength() << "  "
@@ -406,6 +412,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 
   G4bool use_graphics=true;
   G4ThreeVector TargetPos;
+
+  // set default output formats:
+  G4cout.precision(15);
   
 #ifdef BDSDEBUG 
   G4cout<<"total length="<<s_tot/CLHEP::m<<"m"<<G4endl;
@@ -950,6 +959,18 @@ G4double BDSDetectorConstruction::GetWorldSizeY(){
 
 G4double BDSDetectorConstruction::GetWorldSizeZ(){
   return itsWorldSize[2];
+}
+
+void BDSDetectorConstruction::SetWorldSize(G4double* val){
+  int sExpected = 3;
+  int s=sizeof(val)/sizeof(val[0]);
+  if(s!=sExpected){
+    std::cerr << "Error: BDSDetectorConstruction::SetWorldSize(G4double*) expects an array of size " << sExpected << ". Exiting." << std::endl;
+    exit(1);
+  }
+  for(int i=0; i<s; i++){
+    itsWorldSize[i]=val[i];
+  }
 }
 
 void BDSDetectorConstruction::SetWorldSizeX(G4double val){

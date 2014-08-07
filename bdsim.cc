@@ -43,7 +43,7 @@
 #include <ctime>
 #include <unistd.h>
 #include <getopt.h>
-#include <signal.h>
+
 
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
@@ -136,6 +136,7 @@ int main(int argc,char** argv) {
 
   bdsBunch.SetOptions(options);
 
+
   //
   // initialize random number generator
   //
@@ -221,6 +222,7 @@ int main(int argc,char** argv) {
 #endif
   runManager->SetUserInitialization(detector);
 
+
   //
   // set user action classes
   //
@@ -289,7 +291,7 @@ int main(int argc,char** argv) {
   G4EventManager::GetEventManager()->SetVerboseLevel(BDSExecOptions::Instance()->GetVerboseEventLevel());
   G4EventManager::GetEventManager()->GetTrackingManager()->SetVerboseLevel(BDSExecOptions::Instance()->GetVerboseTrackingLevel());
   G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager()->SetVerboseLevel(BDSExecOptions::Instance()->GetVerboseSteppingLevel());
-
+  
   //
   // Close the geometry
   //
@@ -342,6 +344,7 @@ int main(int argc,char** argv) {
 #endif
     delete BDSGI;
   }
+
 
   if(!BDSExecOptions::Instance()->GetBatch())   // Interactive mode
     {

@@ -50,6 +50,7 @@ G4bool BDSDumpSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4Track* theTrack=aStep->GetTrack();
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   
+ 
   //Check if the particle is on the boundary 
   if(preStepPoint->GetStepStatus()==fGeomBoundary){
     if(abs(theTrack->GetDefinition()->GetPDGEncoding()) == 11){

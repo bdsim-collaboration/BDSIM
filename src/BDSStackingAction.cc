@@ -14,6 +14,8 @@
 
 #include "BDSGlobalConstants.hh"
 #include "BDSStackingAction.hh"
+#include "BDSPhotonCounter.hh"
+#include "G4SDManager.hh"
 #include "G4RunManager.hh"
 #include "G4Run.hh"
 #include "G4Event.hh"
@@ -61,6 +63,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
   
   if(BDSGlobalConstants::Instance()->GetStopTracks()) // if tracks killed after interaction
     {
+      
       // kill secondary electrons
       
       if( (aTrack->GetParentID() > 0) && 
@@ -74,7 +77,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       if( (aTrack->GetParentID() > 0) && 
 	  (aTrack->GetDefinition() == G4Gamma::GammaDefinition() ) )
 	{
-	  return fKill;
+	  classification = fKill;
 	}
       
       // kill secondary positrons
@@ -93,6 +96,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
 	{
 	  return fKill;
 	}
+      
     }
 
   if(BDSGlobalConstants::Instance()->getWaitingForDump()) // if waiting for placet synchronization
@@ -171,6 +175,9 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
   return classification;
 }
 
+void BDSStackingAction::countPhoton(const G4Track* aTrack){
+  BDSPhotonCounter::Instance()->countPhoton(aTrack);
+}
 
 void BDSStackingAction::NewStage()
 {

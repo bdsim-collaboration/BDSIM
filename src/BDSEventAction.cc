@@ -15,6 +15,8 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
 #include "BDSEventAction.hh"
+#include "BDSCCDPixelSD.hh"
+#include "BDSCCDPixelHit.hh"
 
 #include <list>
 #include <map>
@@ -51,8 +53,6 @@
 
 #include "BDSAcceleratorComponent.hh"
 
-#include "BDSOutputBase.hh"
-
 typedef std::map<G4String,int> LogVolCountMap;
 extern LogVolCountMap* LogVolCount;
 
@@ -61,6 +61,7 @@ extern ECList* theECList;
 
 G4int event_number; // event number, used for checking on printing verboseEventNumber
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
+
 
 //======================================================
 
@@ -76,6 +77,7 @@ BDSEventAction::BDSEventAction():
 
   if(isBatch) printModulo=10;
   else printModulo=1;
+  
   
   itsRecordSize=1024;
   
@@ -138,6 +140,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   G4cout<<"BDSEventAction : processing end of event action"<<G4endl;
 #endif
   
+
   if(verboseEvent || verboseEventNumber == event_number){
     G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;
   }
