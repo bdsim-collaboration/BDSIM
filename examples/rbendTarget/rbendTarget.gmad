@@ -42,11 +42,11 @@ msb1e: marker;
 startl: marker;
 endl: marker;
 
-!myLine: line = (startl, drift1, carbonFoil, myField, drift1, msb1b, sbend1, msb1e, drift2, mrb1b, rbend1, mrb1e, drift1,sffb3b, drfit1,  endl);
+myLine: line = (startl, drift1, carbonFoil, myField, drift1, msb1b, sbend1, msb1e, drift2, mrb1b, rbend1, mrb1e, drift1,sffb3b, drift1,  endl);
 
 !myLine: line = (startl,drift1, msb1b, sbend1, msb1e, drift2, mrb1b, rbend1, mrb1e, drift1, sffb3b, drift1, endl);
 
-myLine: line = (startl,drift1, msb1b, sbend1, msb1e, drift2,endl);
+!myLine: line = (startl,drift1, msb1b, sbend1, msb1e, drift2,endl);
 
 use ,period=myLine;
 

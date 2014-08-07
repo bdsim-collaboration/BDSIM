@@ -315,16 +315,11 @@ void BDSEventAction::AddPrimaryHits(const G4Event* /*evt*/){
   //Save the primary particle as a hit 
   G4PrimaryVertex* primaryVertex= G4RunManager::GetRunManager()->GetCurrentEvent()->GetPrimaryVertex();
   G4PrimaryParticle* primaryParticle=primaryVertex->GetPrimary();
-#if G4VERSION_NUMBER > 950
   G4ThreeVector momDir = primaryParticle->GetMomentumDirection();
   G4double E = primaryParticle->GetTotalEnergy();
   G4double xp = momDir.x();
   G4double yp = momDir.y();
   G4double zp = momDir.z();
-#else
-  // implementation for older G4 versions to be fixed!
-  G4double E=0.0, xp=0.0, yp=0.0, zp=0.0;
-#endif
   G4double x0 = primaryVertex->GetX0();
   G4double y0 = primaryVertex->GetY0();
   G4double z0 = primaryVertex->GetZ0();
