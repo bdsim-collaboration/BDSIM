@@ -66,11 +66,7 @@ void BDSEnergyCounterSD::Initialize(G4HCofThisEvent*HCE)
 G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 { 
   if(BDSGlobalConstants::Instance()->GetStopTracks())
-#if G4VERSION_NUMBER > 940
     enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit()); // Why subtract the energy deposit of the step? Why not add?
-#else
-  enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetDeltaEnergy()); // Why subtract the energy deposit of the step? Why not add?
-#endif
   else
     enrg = aStep->GetTotalEnergyDeposit();
 #ifdef BDSDEBUG

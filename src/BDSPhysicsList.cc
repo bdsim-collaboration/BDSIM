@@ -82,9 +82,7 @@
 #include "G4MuIonisation.hh"
 #include "G4MuBremsstrahlung.hh"
 #include "G4MuPairProduction.hh"
-#if G4VERSION_NUMBER < 950
-#include "G4MuonNucleusProcess.hh"
-#elif G4VERSION_NUMBER < 953
+#if G4VERSION_NUMBER < 953
 #include "G4MuNuclearInteraction.hh"
 #else 
 #include "G4MuonVDNuclearModel.hh"
@@ -103,12 +101,6 @@
 //
 
 //gamma
-#if G4VERSION_NUMBER < 950
-#include "G4LowEnergyRayleigh.hh"
-#include "G4LowEnergyPhotoElectric.hh"
-#include "G4LowEnergyCompton.hh"
-#include "G4LowEnergyGammaConversion.hh"
-#else
 #include "G4RayleighScattering.hh"
 #include "G4LivermoreRayleighModel.hh"
 #include "G4PhotoElectricEffect.hh"
@@ -117,28 +109,18 @@
 #include "G4LivermoreComptonModel.hh"
 #include "G4GammaConversion.hh"
 #include "G4LivermoreGammaConversionModel.hh"
-#endif
 
 //e
-#if G4VERSION_NUMBER < 950
-#include "G4LowEnergyIonisation.hh"
-#include "G4LowEnergyBremsstrahlung.hh"
-#else
 #include "G4eIonisation.hh"
 #include "G4LivermoreIonisationModel.hh"
 #include "G4UniversalFluctuation.hh"
 
 #include "G4eBremsstrahlung.hh"
 #include "G4LivermoreBremsstrahlungModel.hh"
-#endif
 
 #include "G4AnnihiToMuPair.hh"
 
 //ions
-#if G4VERSION_NUMBER < 950
-#include "G4hLowEnergyIonisation.hh"
-#endif
-
 #include "BDSLaserCompton.hh"
 #include "BDSSynchrotronRadiation.hh"
 #include "BDSContinuousSR.hh"
@@ -776,9 +758,7 @@ void BDSPhysicsList::ConstructMuon()
         G4Cerenkov* theCerenkovProcess = new G4Cerenkov;
         pmanager->AddProcess(theCerenkovProcess);
         pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
-#if G4VERSION_NUMBER < 950
-        pmanager->AddDiscreteProcess(new G4MuonNucleusProcess);     
-#elif G4VERSION_NUMBER < 953
+#if G4VERSION_NUMBER < 953
 	pmanager->AddDiscreteProcess(new G4MuNuclearInteraction);     
 #else 
 	/*	pmanager->AddDiscreteProcess(new G4MuonVDNuclearModel); */
@@ -892,11 +872,9 @@ void BDSPhysicsList::ConstructMerlin()
 
 void BDSPhysicsList::ConstructEM_Low_Energy()
 {
-#if G4VERSION_NUMBER > 949
   //Applicability range for Livermore models                                                                                                                                
   //for higher energies, the Standard models are used                                                                                                                       
   G4double highEnergyLimit = 1*CLHEP::GeV;
-#endif
 
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){
@@ -905,12 +883,6 @@ void BDSPhysicsList::ConstructEM_Low_Energy()
     G4String particleName = particle->GetParticleName();
      
     if (particleName == "gamma") {
-#if G4VERSION_NUMBER < 950
-      pmanager->AddDiscreteProcess(new G4LowEnergyRayleigh());
-      pmanager->AddDiscreteProcess(new G4LowEnergyPhotoElectric);
-      pmanager->AddDiscreteProcess(new G4LowEnergyCompton);
-      pmanager->AddDiscreteProcess(new G4LowEnergyGammaConversion);
-#else
       G4RayleighScattering* rayl = new G4RayleighScattering();
       G4LivermoreRayleighModel*
 	raylModel = new G4LivermoreRayleighModel();
@@ -938,14 +910,9 @@ void BDSPhysicsList::ConstructEM_Low_Energy()
       convModel->SetHighEnergyLimit(highEnergyLimit);
       conv->AddEmModel(0, convModel);
       pmanager->AddDiscreteProcess(conv);
-#endif
       
     } else if (particleName == "e-") {
         pmanager->AddProcess(new G4eMultipleScattering,-1, 1,1);
-#if G4VERSION_NUMBER < 950
-	pmanager->AddProcess(new G4LowEnergyIonisation,        -1, 2,2);
-	pmanager->AddProcess(new G4LowEnergyBremsstrahlung,    -1, 3,3);
-#else
 	G4eIonisation* eIoni = new G4eIonisation();
 	G4LivermoreIonisationModel*
 	  eIoniModel = new G4LivermoreIonisationModel();
@@ -959,7 +926,6 @@ void BDSPhysicsList::ConstructEM_Low_Energy()
 	eBremModel->SetHighEnergyLimit(highEnergyLimit);
 	eBrem->AddEmModel(0, eBremModel);
 	pmanager->AddProcess(eBrem,                   -1,-1, 2);
-#endif
 	    
     } else if (particleName == "e+") {
         pmanager->AddProcess(new G4eMultipleScattering,-1, 1,1);
@@ -975,24 +941,14 @@ void BDSPhysicsList::ConstructEM_Low_Energy()
 
     } else if (particleName == "GenericIon") {
         pmanager->AddProcess(new G4hMultipleScattering,-1, 1,1);
-#if G4VERSION_NUMBER < 950
-	pmanager->AddProcess(new G4hLowEnergyIonisation,       -1,2,2);
-      //      pmanager->AddProcess(new G4ionIonisation,      -1, 2,2);
-      // it dose not work here
-#else
 	pmanager->AddProcess(new G4ionIonisation,     -1,-1, 1);
-#endif
 
     } else if ((!particle->IsShortLived()) &&
 	       (particle->GetPDGCharge() != 0.0) && 
 	       (particle->GetParticleName() != "chargedgeantino")) {
 
-        pmanager->AddProcess(new G4hMultipleScattering,-1, 1,1);
-#if G4VERSION_NUMBER < 950
-      pmanager->AddProcess(new G4hLowEnergyIonisation,       -1,2,2);
-#else
+      pmanager->AddProcess(new G4hMultipleScattering,-1, 1,1);
       pmanager->AddProcess(new G4hIonisation,       -1,-1, 1);
-#endif
     }
   }
 }
