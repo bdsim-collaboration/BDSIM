@@ -163,6 +163,7 @@ public:
   G4bool GetTurnOnRayleighScattering();
   G4bool GetTurnOnMieScattering();
   G4bool GetTurnOnOpticalSurface();
+  G4bool GetTurnOnBirksSaturation();
   G4double GetScintYieldFactor();
 
   G4bool   GetStoreMuonTrajectories();
@@ -326,6 +327,7 @@ private:
   G4bool   itsTurnOnRayleighScattering;
   G4bool   itsTurnOnMieScattering;
   G4bool   itsTurnOnOpticalSurface;
+  G4bool   itsTurnOnBirksSaturation;
   G4double itsScintYieldFactor;
   G4bool   itsDoPlanckScattering;
   G4bool   itsCheckOverlaps;
@@ -703,6 +705,9 @@ inline  G4bool BDSGlobalConstants::GetTurnOnMieScattering()
 
 inline  G4bool BDSGlobalConstants::GetTurnOnOpticalSurface()
 {return itsTurnOnOpticalSurface;}
+
+inline  G4bool BDSGlobalConstants::GetTurnOnBirksSaturation()
+{return itsTurnOnBirksSaturation;}
 
 inline  G4double BDSGlobalConstants::GetScintYieldFactor()
 {return itsScintYieldFactor;}

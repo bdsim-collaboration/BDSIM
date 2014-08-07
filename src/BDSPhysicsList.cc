@@ -10,6 +10,7 @@
 
 #include <iomanip>   
 
+#include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSPhysicsList.hh"
@@ -46,6 +47,7 @@
 
 #include "G4EmStandardPhysics.hh"
 #include "G4EmLivermorePhysics.hh"
+#include "G4EmPenelopePhysics.hh"
 
 // physics processes
 
