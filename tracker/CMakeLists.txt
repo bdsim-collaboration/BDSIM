@@ -21,7 +21,7 @@ if($ENV{VERBOSE})
 	message(STATUS "PARSER CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
 endif()
 
-add_library(tracker STATIC TRKTrackingInterface.cc )
-add_library(trackerShared SHARED TRKTrackingInterface.cc)
+add_library(tracker STATIC TRKTrackingInterface.cc TRKApertureInterface.cc TRKPlacement.cc TRKElement.cc TRKDrift.cc TRKQuadrupole.cc TRKParticle.cc)
+add_library(trackerShared SHARED TRKTrackingInterface.cc TRKApertureInterface.cc TRKPlacement.cc TRKElement.cc TRKDrift.cc TRKQuadrupole.cc TRKParticle.cc)
 
 bdsim_install_targets(tracker)

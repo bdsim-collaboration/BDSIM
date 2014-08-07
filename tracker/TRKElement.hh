@@ -1,6 +1,12 @@
 #ifndef TRKElement_h
 #define TRKElement_h
 
+#include <string>
+
+#include "TRKTrackingInterface.hh"
+#include "TRKApertureInterface.hh"
+#include "TRKPlacement.hh"
+
 class TRKElement : public TRKTrackingInterface { 
  private: 
   std::string name;               // name of element
@@ -13,7 +19,7 @@ class TRKElement : public TRKTrackingInterface {
 public :
   TRKElement();
   TRKElement(double length, double size_x, double size_y);
-  ~TRKEement();
-}
+  ~TRKElement();
+};
 
 #endif

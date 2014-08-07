@@ -5,6 +5,9 @@ class TRKDrift : public TRKElement {
 public :
   TRKDrift();
   ~TRKDrift(); 
+
+private : 
+
   
 }
 
