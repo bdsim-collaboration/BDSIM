@@ -14,6 +14,7 @@
 
 #include "BDSGlobalConstants.hh"
 #include "BDSStackingAction.hh"
+#include "BDSPhotonCounter.hh"
 #include "G4SDManager.hh"
 #include "G4RunManager.hh"
 #include "G4Run.hh"

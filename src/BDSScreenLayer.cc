@@ -10,6 +10,7 @@
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
 #include "BDSDebug.hh"
+#include "BDSOutputbase.hh"
 
 #include "G4SDManager.hh"
 #include "G4UserLimits.hh"
@@ -17,7 +18,6 @@
 #include "parser/gmad.h"
 
 extern BDSSamplerSD* BDSSamplerSensDet;
-extern BDSOutput* bdsOutput;
 
 //============================================================
 typedef std::map<G4String,int> LogVolCountMap;

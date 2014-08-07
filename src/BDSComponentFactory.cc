@@ -1351,3 +1351,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){
 			      _element.psi *CLHEP::rad ) );
 	
 }
+
+BDSAcceleratorComponent* BDSComponentFactory::createTerminator(){
+  return (new BDSTerminator(_element.name, 
+			    BDSGlobalConstants::Instance()->GetSamplerLength()
+			    ));
+}
