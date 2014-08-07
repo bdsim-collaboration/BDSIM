@@ -7,7 +7,10 @@
 //==========================================================
 //==========================================================
 
+#include "BDSExecOptions.hh"
+#include "BDSGlobalConstants.hh" 
 #include "BDSRunAction.hh"
+#include "BDSRunManager.hh"
 
 #include "G4Run.hh"
 //#include "G4UImanager.hh"

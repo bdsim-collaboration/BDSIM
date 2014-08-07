@@ -30,10 +30,8 @@ CREATE TABLE foil_box (
     Name          VARCHAR(32)   # name of solid, logical, and physical volume
 );
 
-                         
 
-
-INSERT INTO foil_box VALUES ("",0.0, 0.0, 0.5, 1.0, 0.0, 0.0, "s", 1000.0, 
+INSERT INTO foil_box VALUES (0.0, 0.0, 0.5, 1.0, 0.0, 0.0, "s", 1000.0, 
 1000.0, 1.0, "myCarbon", "carbon_foil");
 
 

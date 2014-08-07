@@ -10,8 +10,11 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSSampler.hh"
 #include "G4Box.hh"
+#include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
+#include "G4VPhysicalVolume.hh"
+#include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
 #include "BDSSamplerSD.hh"
 #include "G4SDManager.hh"
@@ -52,10 +55,13 @@ BDSSampler::BDSSampler (G4String aName, G4double aLength):
   //BDSRoot->SetSamplerNumber(nSamplers); 
 }
 
+
 void BDSSampler::SamplerLogicalVolume()
 {
   if(!(*LogVolCount)[itsName])
     {
+
+
       itsMarkerLogicalVolume=
 	new G4LogicalVolume(
 			    new G4Box(itsName+"_solid",

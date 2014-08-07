@@ -159,6 +159,13 @@ public:
   G4bool   GetLaserwireTrackPhotons();
   G4bool   GetLaserwireTrackElectrons();
   G4bool   GetTurnOnCerenkov();
+  G4bool GetTurnOnOpticalAbsorption();
+  G4bool GetTurnOnRayleighScattering();
+  G4bool GetTurnOnMieScattering();
+  G4bool GetTurnOnOpticalSurface();
+  G4bool GetTurnOnBirksSaturation();
+  G4double GetScintYieldFactor();
+
   G4bool   GetStoreMuonTrajectories();
   G4double GetTrajCutGTZ();
   G4double GetTrajCutLTR();
@@ -316,6 +323,12 @@ private:
   G4bool   itsLaserwireTrackPhotons;
   G4bool   itsLaserwireTrackElectrons;
   G4bool   itsTurnOnCerenkov;
+  G4bool   itsTurnOnOpticalAbsorption;
+  G4bool   itsTurnOnRayleighScattering;
+  G4bool   itsTurnOnMieScattering;
+  G4bool   itsTurnOnOpticalSurface;
+  G4bool   itsTurnOnBirksSaturation;
+  G4double itsScintYieldFactor;
   G4bool   itsDoPlanckScattering;
   G4bool   itsCheckOverlaps;
   G4bool   itsStoreMuonTrajectories;
@@ -681,9 +694,26 @@ inline G4double BDSGlobalConstants::GetLengthSafety()
 inline G4bool BDSGlobalConstants::GetTurnOnCerenkov()
 {return itsTurnOnCerenkov;}
 
+inline  G4bool BDSGlobalConstants::GetTurnOnOpticalAbsorption()
+{ return itsTurnOnOpticalAbsorption;}
+
+inline  G4bool BDSGlobalConstants::GetTurnOnRayleighScattering()
+{return itsTurnOnRayleighScattering;}
+
+inline  G4bool BDSGlobalConstants::GetTurnOnMieScattering()
+{return itsTurnOnMieScattering;}
+
+inline  G4bool BDSGlobalConstants::GetTurnOnOpticalSurface()
+{return itsTurnOnOpticalSurface;}
+
+inline  G4bool BDSGlobalConstants::GetTurnOnBirksSaturation()
+{return itsTurnOnBirksSaturation;}
+
+inline  G4double BDSGlobalConstants::GetScintYieldFactor()
+{return itsScintYieldFactor;}
+
 inline G4bool BDSGlobalConstants::GetIncludeIronMagFields()
 {return itsIncludeIronMagFields;}
-
 
 inline G4bool BDSGlobalConstants::GetStoreMuonTrajectories()
 {return itsStoreMuonTrajectories;}

@@ -44,10 +44,6 @@ public:
 	      G4String aMaterial= "");
   ~BDSSolenoid();
 
-  void SynchRescale(G4double factor);
-
-protected:
-
 private:
   G4double itsBField;
 

@@ -107,6 +107,11 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsDoPlanckScattering = opt.doPlanckScattering;
   itsCheckOverlaps = opt.checkOverlaps;
   itsTurnOnCerenkov = opt.turnOnCerenkov;
+  itsTurnOnOpticalAbsorption = opt.turnOnOpticalAbsorption;
+  itsTurnOnRayleighScattering = opt.turnOnRayleighScattering;
+  itsTurnOnMieScattering = opt.turnOnMieScattering;
+  itsTurnOnOpticalSurface = opt.turnOnOpticalSurface;
+  itsScintYieldFactor=opt.scintYieldFactor;
   itsSynchRadOn = opt.synchRadOn;
   G4cout << "BDSGlobalConstants::Instance() synchRadOn = " << itsSynchRadOn << G4endl;
   itsDecayOn = opt.decayOn;

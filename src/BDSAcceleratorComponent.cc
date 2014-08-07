@@ -564,8 +564,8 @@ void BDSAcceleratorComponent::BuildTunnel()
     // set visualization attributes
     //
   VisAtt = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
-  VisAtt->SetVisibility(false);
-  VisAtt->SetForceSolid(true);  
+  VisAtt->SetVisibility(true);
+  VisAtt->SetForceWireframe(true);  
   
   itsSoilTunnelLogicalVolume->SetVisAttributes(VisAtt);
   VisAtt1 = new G4VisAttributes(G4Colour(0.4, 0.4, 0.4));
