@@ -12,5 +12,5 @@ lhc             :
 LHC_new         :
 Mokka           : International Linear Collider Detector 
 PCL             : CLIC post-collision line
-rbendTarget     : Carbon foil target with mokka  
+rbendTarget     : Carbon foil target with SQL  
 twissGen        : Not sure what this is
