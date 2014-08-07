@@ -13,7 +13,8 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int nCopy,
 					 G4double Energy, 
 					 G4double x, 
 					 G4double y, 
-					 G4double z, 
+					 G4double z,
+					 G4double s,
 					 G4String name, 
 					 G4int partID, 
 					 G4double weight, 
@@ -26,21 +27,14 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int nCopy,
   itsX(x), 
   itsY(y), 
   itsZ(z),
+  itsS(s),
   itsWeight(weight),
   itsCopyNumber(nCopy),
   itsPartID(partID),
   itsName(name),
   itsPrecisionRegion(precisionRegion),
   itsTurnsTaken(TurnsTaken)
-{
-  /*
-  G4cout << "BDSEnergyCounterHit> E = " << itsEnergy << G4endl;
-  G4cout << "BDSEnergyCounterHit> x = " << itsX << G4endl;
-  G4cout << "BDSEnergyCounterHit> y = " << itsY << G4endl;
-  G4cout << "BDSEnergyCounterHit> z = " << itsZ << G4endl;
-  G4cout << "BDSEnergyCounterHit> vol = " << itsVolumeName << G4endl;
-  */
-}
+{}
 
 BDSEnergyCounterHit::~BDSEnergyCounterHit()
 {;}

@@ -116,13 +116,14 @@ void BDSOutputROOT::Init()
 
   EnergyLossHisto = new TH1F("ElossHisto", "Energy Loss",nBins,0.,BDSGlobalConstants::Instance()->GetZMax()/CLHEP::m);
   EnergyLossTree= new TTree("ElossTree", "Energy Loss");
-  EnergyLossTree->Branch("z",&z_el,"z/F"); // (m)
+  EnergyLossTree->Branch("s",&s_el,"s/F"); // (m)
   EnergyLossTree->Branch("E",&E_el,"E/F"); // (GeV)
 
-  PrecisionRegionEnergyLossTree= new TTree("PrecisionRegionElossTree", "Energy Loss");//"x:y:z:E:partID:parentID:weight:volumeName");
+  PrecisionRegionEnergyLossTree= new TTree("PrecisionRegionElossTree", "Energy Loss");//"x:y:z:s:E:partID:parentID:weight:volumeName");
   PrecisionRegionEnergyLossTree->Branch("x",&x_el_p,"x/F"); // (m)
   PrecisionRegionEnergyLossTree->Branch("y",&y_el_p,"y/F"); // (m)
   PrecisionRegionEnergyLossTree->Branch("z",&z_el_p,"z/F"); // (m)
+  PrecisionRegionEnergyLossTree->Branch("s",&s_el_p,"s/F"); // (m)
   PrecisionRegionEnergyLossTree->Branch("E",&E_el_p,"E/F"); // (GeV)
   PrecisionRegionEnergyLossTree->Branch("weight",&weight_el_p,"weight/F");
   PrecisionRegionEnergyLossTree->Branch("partID",&part_el_p,"partID/I");
@@ -130,7 +131,36 @@ void BDSOutputROOT::Init()
   PrecisionRegionEnergyLossTree->Branch("turnnumber",&turnnumber,"turnnumber/I");
 }
 
-void BDSOutputROOT::WriteRootHit(G4String Name, G4double InitMom, G4double InitX, G4double InitY, G4double InitZ, G4double InitXPrime, G4double InitYPrime, G4double InitZPrime, G4double  InitT, G4double  Mom, G4double X, G4double Y, G4double Z, G4double XPrime, G4double YPrime, G4double ZPrime, G4double T, G4double GlobalX, G4double GlobalY, G4double GlobalZ, G4double GlobalXPrime, G4double GlobalYPrime, G4double GlobalZPrime, G4double S, G4double Weight, G4int  PDGtype, G4int  EventNo, G4int ParentID,G4int TrackID, G4int TurnsTaken){
+void BDSOutputROOT::WriteRootHit(G4String Name, 
+				 G4double InitMom, 
+				 G4double InitX, 
+				 G4double InitY, 
+				 G4double InitZ, 
+				 G4double InitXPrime, 
+				 G4double InitYPrime, 
+				 G4double InitZPrime, 
+				 G4double InitT, 
+				 G4double Mom, 
+				 G4double X, 
+				 G4double Y, 
+				 G4double Z, 
+				 G4double XPrime, 
+				 G4double YPrime, 
+				 G4double ZPrime, 
+				 G4double T, 
+				 G4double GlobalX, 
+				 G4double GlobalY, 
+				 G4double GlobalZ, 
+				 G4double GlobalXPrime, 
+				 G4double GlobalYPrime, 
+				 G4double GlobalZPrime, 
+				 G4double S, 
+				 G4double Weight, 
+				 G4int    PDGtype, 
+				 G4int    EventNo, 
+				 G4int    ParentID,
+				 G4int    TrackID, 
+				 G4int    TurnsTaken){
 
   TTree* sTree=(TTree*)gDirectory->Get(Name);
   if(!sTree) G4Exception("BDSOutputROOT: ROOT Sampler not found!", "-1", FatalException, "");
@@ -167,8 +197,36 @@ void BDSOutputROOT::WriteRootHit(G4String Name, G4double InitMom, G4double InitX
   sTree->Fill();
 }
 
-void BDSOutputROOT::WritePrimary(G4String samplerName, G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double zp,G4double t,G4double weight,G4int PDGType, G4int nEvent, G4int TurnsTaken){
-  WriteRootHit(samplerName, E, x0, y0, z0, xp, yp, zp, t, E, x0, y0, z0, xp, yp, zp, t, x, y, z, xp, yp, zp, z, weight, PDGType, nEvent, 0, 1, TurnsTaken);
+void BDSOutputROOT::WritePrimary(G4String samplerName, 
+				 G4double E,
+				 G4double x0,
+				 G4double y0,
+				 G4double z0,
+				 G4double xp,
+				 G4double yp,
+				 G4double zp,
+				 G4double t,
+				 G4double weight,
+				 G4int    PDGType, 
+				 G4int    nEvent, 
+				 G4int    TurnsTaken){
+  WriteRootHit(samplerName, 
+	       E, 
+	       x0, y0, z0, 
+	       xp, yp, zp, 
+	       t, E, 
+	       x0, y0, z0, 
+	       xp, yp, zp, 
+	       t, 
+	       x, y, z, 
+	       xp, yp, zp, 
+	       0.0, 
+	       weight, 
+	       PDGType, 
+	       nEvent, 
+	       0, 
+	       1, 
+	       TurnsTaken);
 }
 
 void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
@@ -266,8 +324,8 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
     {
       //all regions fill the energy loss tree....
       E_el=(*hc)[i]->GetEnergy()/CLHEP::GeV;
-      z_el=(*hc)[i]->GetEnergyWeightedZ()*10*(1e-6)/(CLHEP::cm*E_el);
-      EnergyLossHisto->Fill(z_el,E_el);
+      s_el=(*hc)[i]->GetEnergyWeightedS()*10*(1e-6)/(CLHEP::cm*E_el);
+      EnergyLossHisto->Fill(s_el,E_el);
       EnergyLossTree->Fill();
       
       if((*hc)[i]->GetPrecisionRegion()){ //Only the precision region fills this tree, preserving every hit, its position and weight, instead of summing weighted energy in each beam line component.
@@ -276,6 +334,7 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 	x_el_p=((*hc)[i]->GetEnergyWeightedX()/(CLHEP::cm*1e5*E_el_p))/weight_el_p;
 	y_el_p=((*hc)[i]->GetEnergyWeightedY()*10/(CLHEP::cm*E_el_p))/weight_el_p;
 	z_el_p=((*hc)[i]->GetEnergyWeightedZ()*10*(1e-6)/(CLHEP::cm*E_el_p))/weight_el_p;
+	s_el_p=((*hc)[i]->GetEnergyWeightedS()*10*(1e-6)/(CLHEP::cm*E_el_p))/weight_el_p;
 	part_el_p=(*hc)[i]->GetPartID();
 	turnnumber=(*hc)[i]->GetTurnsTaken();
 	G4String temp = (*hc)[i]->GetName()+'\0';
