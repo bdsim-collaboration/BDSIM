@@ -69,9 +69,11 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
   G4Track* theTrack = aStep->GetTrack();
   BDSTrajectory* bdsTraj = new BDSTrajectory(theTrack);
-  bdsTraj->printRichData();
   BDSTrajectoryPoint* bdsTrajPoint = (BDSTrajectoryPoint*)bdsTraj->GetPoint(0);
+  #ifdef BDSDEBUG
+  bdsTraj->printRichData();
   bdsTrajPoint->printRichData();
+  #endif
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   //  G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
   //  // tmp - only store muons
