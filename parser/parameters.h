@@ -109,8 +109,8 @@ struct Parameters {
   std::string  windowmaterial;  int windowmaterialset;
   std::string  airmaterial;  int airmaterialset;
 
-  double at;
-  int atset;
+  // position of an element withing a sequence
+  double at; int atset;
 
 
   //// reset the parameters to defaults

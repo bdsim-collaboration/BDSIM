@@ -98,6 +98,7 @@ void Parameters::flush() {
   tunnelMaterial = ""; tunnelmaterialset = 0;
   tunnelCavityMaterial = ""; tunnelcavitymaterialset = 0;
   spec = ""; specset = 0;
+  at = 0.0; atset = 0;
 }
 
 void Parameters::inherit_properties(struct Element& e)

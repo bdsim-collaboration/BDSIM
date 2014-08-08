@@ -122,16 +122,16 @@ void BDS3DMagField::GetFieldValue(const double point[4],
 
 #ifdef BDSDEBUG
   G4cout <<  "BDS3DMagField::GetFieldValue" << G4endl;
-  G4cout << "point x       = " << point[0]/cm << " cm" << G4endl;
-  G4cout << "point y       = " << point[1]/cm << " cm" << G4endl;
-  G4cout << "point z       = " << point[2]/cm << " cm" << G4endl;
-  G4cout << "translation x = " << translation[0]/cm << " cm" << G4endl;
-  G4cout << "translation y = " << translation[1]/cm << " cm" << G4endl;
-  G4cout << "translation z = " << translation[2]/cm << " cm" << G4endl;
+  G4cout << "point x       = " << point[0]/CLHEP::cm << " cm" << G4endl;
+  G4cout << "point y       = " << point[1]/CLHEP::cm << " cm" << G4endl;
+  G4cout << "point z       = " << point[2]/CLHEP::cm << " cm" << G4endl;
+  G4cout << "translation x = " << translation[0]/CLHEP::cm << " cm" << G4endl;
+  G4cout << "translation y = " << translation[1]/CLHEP::cm << " cm" << G4endl;
+  G4cout << "translation z = " << translation[2]/CLHEP::cm << " cm" << G4endl;
   G4cout << "fZOffset = " << fZoffset/CLHEP::cm << " cm" << G4endl;
-  G4cout << "local x       = " << local[0]/cm << " cm" << G4endl;
-  G4cout << "local y       = " << local[1]/cm << " cm" << G4endl;
-  G4cout << "local z       = " << local[2]/cm << " cm" << G4endl;
+  G4cout << "local x       = " << local[0]/CLHEP::cm << " cm" << G4endl;
+  G4cout << "local y       = " << local[1]/CLHEP::cm << " cm" << G4endl;
+  G4cout << "local z       = " << local[2]/CLHEP::cm << " cm" << G4endl;
 #endif
 
   double signy=1;
