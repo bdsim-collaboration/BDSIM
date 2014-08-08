@@ -1,1 +1,1 @@
-simple_testing(simplemachine "--file=sm.gmad" "")
+simple_testing(simpleMachine "--file=sm.gmad" "")
