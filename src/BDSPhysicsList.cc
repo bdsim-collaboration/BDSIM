@@ -312,9 +312,9 @@ void BDSPhysicsList::ConstructProcess()
       particle->SetApplyCutsFlag(true);
     }
     G4ProcessManager *pmanager = particle->GetProcessManager();
-    //    pmanager->AddProcess(new G4StepLimiter,-1,-1,1);
+    pmanager->AddProcess(new G4StepLimiter,-1,-1,1);
 #ifndef NOUSERSPECIALCUTS
-    //    pmanager->AddDiscreteProcess(new G4UserSpecialCuts);
+    pmanager->AddDiscreteProcess(new G4UserSpecialCuts);
 #endif
   }
   
