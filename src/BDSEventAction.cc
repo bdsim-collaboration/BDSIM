@@ -15,6 +15,7 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
 #include "BDSEventAction.hh"
+#include "BDSOutputBase.hh" 
 #include "BDSCCDPixelSD.hh"
 #include "BDSCCDPixelHit.hh"
 
@@ -59,9 +60,10 @@ extern LogVolCountMap* LogVolCount;
 typedef std::list<BDSEnergyCounterSD*>  ECList;
 extern ECList* theECList;
 
+extern BDSOutputBase* bdsOutput;         // output interface
+
 G4int event_number; // event number, used for checking on printing verboseEventNumber
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
-
 
 //======================================================
 
@@ -230,26 +232,17 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   G4cout << __METHOD_NAME__ << " finished getting number of events per ntuple." << G4endl;
 #endif
 
-  
-  if( 
-     (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0) || 
-     (event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate()
-      )
+  if (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " writing out events." << G4endl;
 #endif
 
-#ifdef BDSDEBUG 
-      G4cout<<"writing to file "<<G4endl;
-#endif
       // notify the output about the event end
       // this can be used for splitting output files etc.
-      if((event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate()) {
-	bdsOutput->Write(); // write last file
-      } else {
-	bdsOutput->Commit(); // write and open new file
-      }
+      
+      bdsOutput->Commit(); // write and open new file
+      
 #ifdef BDSDEBUG
       G4cout<<"done"<<G4endl;
 #endif

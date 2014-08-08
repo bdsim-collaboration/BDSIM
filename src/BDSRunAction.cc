@@ -9,6 +9,7 @@
 
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
+#include "BDSOutputBase.hh" 
 #include "BDSRunAction.hh"
 #include "BDSRunManager.hh"
 
@@ -18,6 +19,7 @@
 #include "G4ios.hh"
 #include "time.h"
 
+extern BDSOutputBase* bdsOutput;         // output interface
 
 //==========================================================
 
@@ -59,6 +61,13 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   //Output feedback
   G4cout << "### Run " << aRun->GetRunID() << " end. Time is " << asctime(localtime(&stoptime)) << G4endl;
   
+  // Write output
+  if(BDSExecOptions::Instance()->GetBatch()) {  // Non-interactive mode
+    bdsOutput->Write(); // write last file
+  } else {
+    bdsOutput->Commit(); // write and open new file
+  }
+
   // note difftime only calculates to the integer second
   G4cout << "Run Duration >> " << difftime(stoptime,starttime) << " s" << G4endl;
 }

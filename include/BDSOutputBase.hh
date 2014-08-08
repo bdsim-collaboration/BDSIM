@@ -38,9 +38,9 @@ public:
 			    G4int    nEvent, 
 			    G4int    TurnsTaken) = 0;
 
-  /// close and open new file
+  /// write and close and open new file
   virtual void Commit()=0;
-  /// close the file
+  /// write and close the file
   virtual void Write()=0;
 
 protected:
