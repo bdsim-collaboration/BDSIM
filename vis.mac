@@ -16,7 +16,7 @@
 
 # Invoke the OGLSX driver 
 #  Create a scene handler and a viewer for the OGLSX driver
-/vis/open OGLSX
+/vis/open OGLSQt
 #/vis/open DAWNFILE
 
 # Create an empty scene 

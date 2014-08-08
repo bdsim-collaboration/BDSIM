@@ -10,7 +10,7 @@
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
 #include "BDSDebug.hh"
-#include "BDSOutputbase.hh"
+#include "BDSOutputBase.hh"
 
 #include "G4SDManager.hh"
 #include "G4UserLimits.hh"
