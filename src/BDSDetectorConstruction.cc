@@ -73,7 +73,6 @@
 
 #include "G4VSampler.hh"
 #include "G4GeometrySampler.hh"
-#include "G4IStore.hh"
 
 #include "parser/element.h"
 #include "parser/elementlist.h"
@@ -112,7 +111,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
   solidWorld(NULL),logicWorld(NULL),physiWorld(NULL),
   magField(NULL),BDSUserLimits(NULL),BDSSensitiveDetector(NULL),
-  itsIStore(NULL),_globalRotation(NULL)
+  _globalRotation(NULL)
 {  
   verbose    = BDSExecOptions::Instance()->GetVerbose();
   gflash     = BDSExecOptions::Instance()->GetGFlash();
@@ -907,13 +906,6 @@ void BDSDetectorConstruction::SetMagField(const G4double fieldValue){
 }
 
 //=================================================================
-  
-void BDSDetectorConstruction::UpdateGeometry()
-{
-  G4RunManager::GetRunManager()->DefineWorldVolume(ConstructBDS(beamline_list));
-}
-
-//=================================================================
 BDSDetectorConstruction::~BDSDetectorConstruction()
 { 
   LogVolCount->clear();
@@ -962,18 +954,6 @@ G4double BDSDetectorConstruction::GetWorldSizeY(){
 
 G4double BDSDetectorConstruction::GetWorldSizeZ(){
   return itsWorldSize[2];
-}
-
-void BDSDetectorConstruction::SetWorldSize(G4double* val){
-  int sExpected = 3;
-  int s=sizeof(val)/sizeof(val[0]);
-  if(s!=sExpected){
-    std::cerr << "Error: BDSDetectorConstruction::SetWorldSize(G4double*) expects an array of size " << sExpected << ". Exiting." << std::endl;
-    exit(1);
-  }
-  for(int i=0; i<s; i++){
-    itsWorldSize[i]=val[i];
-  }
 }
 
 void BDSDetectorConstruction::SetWorldSizeX(G4double val){
