@@ -272,18 +272,6 @@ int main(int argc,char** argv) {
 #endif
   runManager->Initialize();
 
-  //Create a geometric importance sampling store
-  //  if(BDSGlobalConstants::Instance()->GetGeometryBias()){
-  //    G4VIStore *aIstore = 0;
-  //    aIstore = detector->CreateImportanceStore();
-  //    G4GeometrySampler mgs(detector->GetWorldVolume(),"neutron");
-  //    mgs.SetParallel(false);
-  //    G4ImportanceAlgorithm* importanceAlgorithm = new G4ImportanceAlgorithm();
-  //    mgs.PrepareImportanceSampling(aIstore, 0);//,0);
-  //    mgs.Configure();
-  //  }
-
-
   //
   // set verbosity levels
   //

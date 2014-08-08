@@ -12,3 +12,4 @@ TRKQuadrupole::~TRKQuadrupole() {}
 
 void TRKQuadrupole::Track(const double vIn[], double vOut[], double h){}
 void TRKQuadrupole::Track(const double vIn[], double vOut[]){}
+
