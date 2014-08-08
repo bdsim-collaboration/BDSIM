@@ -399,26 +399,28 @@ void BDSPhysicsList::ConstructProcess()
       ConstructHadronic();
     }
   
-  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_QGSP_BERT") {
-    ConstructEM();
+  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_QGSP_BERT") 
+    {
+      ConstructEM();
 #if G4VERSION_NUMBER < 1000
-    theBDSIMPhysList = new HadronPhysicsQGSP_BERT("hadron");
+      theBDSIMPhysList = new HadronPhysicsQGSP_BERT("hadron");
 #else
-    theBDSIMPhysList = new G4HadronPhysicsQGSP_BERT("hadron");
+      theBDSIMPhysList = new G4HadronPhysicsQGSP_BERT("hadron");
 #endif
-    theBDSIMPhysList->ConstructProcess();
-  }
+      theBDSIMPhysList->ConstructProcess();
+    }
   
-  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_QGSP_BERT_muon") {
-    ConstructEM();
-    ConstructMuon();
+  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_QGSP_BERT_muon") 
+    {
+      ConstructEM();
+      ConstructMuon();
 #if G4VERSION_NUMBER < 1000
-    theBDSIMPhysList = new HadronPhysicsQGSP_BERT("hadron");
+      theBDSIMPhysList = new HadronPhysicsQGSP_BERT("hadron");
 #else
-    theBDSIMPhysList = new G4HadronPhysicsQGSP_BERT("hadron");
+      theBDSIMPhysList = new G4HadronPhysicsQGSP_BERT("hadron");
 #endif
-    theBDSIMPhysList->ConstructProcess();
-  }
+      theBDSIMPhysList->ConstructProcess();
+    }
   
   else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_FTFP_BERT"){
     ConstructEM();
@@ -460,10 +462,12 @@ void BDSPhysicsList::ConstructProcess()
     ConstructEM();
     ConstructLaserWire();
   }
-
-  //default - standard (only transportation)
-  G4cerr<<"WARNING : Unknown physics list "<<BDSGlobalConstants::Instance()->GetPhysListName()<<
-    "  using transportation only (standard) "<<G4endl;
+  else {
+    //default - standard (only transportation)
+    G4cerr<<"WARNING : Unknown physics list "<<BDSGlobalConstants::Instance()->GetPhysListName()<<
+      "  using transportation only (standard) "<<G4endl;
+    exit(1);
+  }
 }
 
 void BDSPhysicsList::ConstructParticle()
