@@ -964,18 +964,6 @@ G4double BDSDetectorConstruction::GetWorldSizeZ(){
   return itsWorldSize[2];
 }
 
-void BDSDetectorConstruction::SetWorldSize(G4double* val){
-  int sExpected = 3;
-  int s=sizeof(val)/sizeof(val[0]);
-  if(s!=sExpected){
-    std::cerr << "Error: BDSDetectorConstruction::SetWorldSize(G4double*) expects an array of size " << sExpected << ". Exiting." << std::endl;
-    exit(1);
-  }
-  for(int i=0; i<s; i++){
-    itsWorldSize[i]=val[i];
-  }
-}
-
 void BDSDetectorConstruction::SetWorldSizeX(G4double val){
   itsWorldSize[0]=val;
 }

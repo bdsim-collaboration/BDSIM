@@ -80,8 +80,6 @@ private:
 
   G4bool verbose;
 
-  void SetWorldSize(G4double* val);
-
   void SetWorldSizeX(G4double);
   void SetWorldSizeY(G4double);
   void SetWorldSizeZ(G4double);
