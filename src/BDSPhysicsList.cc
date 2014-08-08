@@ -17,7 +17,6 @@
 
 #include "globals.hh"
 #include "G4ParticleDefinition.hh"
-#include "G4ParticleWithCuts.hh"
 #include "G4ProcessManager.hh"
 #include "G4ProcessVector.hh"
 #include "G4ParticleTypes.hh"
@@ -1052,7 +1051,6 @@ void BDSPhysicsList::ConstructLaserWire()
 
 // Low-energy Models
 #if G4VERSION_NUMBER < 1000
-#include "G4LElastic.hh"
 #include "G4LCapture.hh"
 #else
 #include "G4HadronElastic.hh"

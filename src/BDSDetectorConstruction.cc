@@ -413,8 +413,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   G4bool use_graphics=true;
   G4ThreeVector TargetPos;
 
-  // set default output formats:
-  G4cout.precision(15);
+  // set default output formats for BDSDetector:
+  int G4precision = G4cout.precision(15);
   
 #ifdef BDSDEBUG 
   G4cout<<"total length="<<s_tot/CLHEP::m<<"m"<<G4endl;
@@ -889,6 +889,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 
   if(verbose || debug) G4cout<<"Finished listing materials, returning physiWorld"<<G4endl; 
   
+  // set precision back
+  G4cout.precision(G4precision);
+
   return physiWorld;
 }
 
