@@ -21,9 +21,9 @@ protected:
   TRKtype type;
 
   // type of tracking 
-  virtual void ThinTrack(const double vIn[], double vOut[], double h);
-  virtual void HybridTrack(const double vIn[], double vOut[], double h);
-  virtual void ThickTrack(const double vIn[], double vOut[], double h);
+  virtual void ThinTrack(const double vIn[], double vOut[], double h) = 0;
+  virtual void HybridTrack(const double vIn[], double vOut[], double h) = 0;
+  virtual void ThickTrack(const double vIn[], double vOut[], double h) = 0;
 
 };
 
