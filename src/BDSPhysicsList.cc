@@ -348,7 +348,7 @@ void BDSPhysicsList::ConstructProcess()
   ConstructOptical();
   //============================================
   
-  if(!plistFound) return;
+  if(plistFound) return;
   //Search BDSIM physics lists
   
   if (BDSGlobalConstants::Instance()->GetPhysListName() == "standard") return;
