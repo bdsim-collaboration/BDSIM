@@ -13,7 +13,7 @@ public:
   TRKLine();
   ~TRKLine();
   void AddElement(std::string eName, TRKElement *e);  
-  TRKElement FindElement(std::string eName);
+  TRKElement* FindElement(std::string eName);
   
 };
 
