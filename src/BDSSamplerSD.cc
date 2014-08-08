@@ -33,6 +33,7 @@
 
 #include "G4SDManager.hh"
 
+#define BDSDEBUG 1
 
 //typedef std::vector<G4int> MuonTrackVector;
 //extern MuonTrackVector* theMuonTrackVector;
