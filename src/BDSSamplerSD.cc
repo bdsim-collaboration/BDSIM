@@ -12,6 +12,7 @@
 #include "BDSDebug.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSamplerHit.hh"
+#include "BDSTrajectory.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Track.hh"
@@ -66,6 +67,8 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
 G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
   G4Track* theTrack = aStep->GetTrack();
+  BDSTrajectory* bdsTraj = new BDSTrajectory(theTrack);
+  bdsTraj->printRichData();
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   //  G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
   //  // tmp - only store muons
