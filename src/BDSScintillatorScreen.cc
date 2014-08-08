@@ -17,7 +17,7 @@ Work in progress.
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
 #include "BDSDebug.hh"
-#include "BDSOutputbase.hh"
+#include "BDSOutputBase.hh"
 
 #include "G4SDManager.hh"
 #include "G4UserLimits.hh"
@@ -37,7 +37,7 @@ extern LogVolMap* LogVol;
 //============================================================
 
 BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double tScint, G4double angle, G4String scintMaterial, G4String airMaterial):
-  BDSAcceleratorComponent(aName, tScint, 0, 0, 0, SetVisAttributes()),_scintillatorThickness(tScint),_scintillatorLayerMaterial(BDSMaterials::Instance()->GetMaterial(scintMaterial.data())),_airMaterial(BDSMaterials::Instance()->GetMaterial(airMaterial.data())),_screenAngle(angle)
+  BDSAcceleratorComponent(aName, tScint, 0, 0, 0, SetVisAttributes()),_scintillatorLayerMaterial(BDSMaterials::Instance()->GetMaterial(scintMaterial.data())),_airMaterial(BDSMaterials::Instance()->GetMaterial(airMaterial.data())),_screenAngle(angle),_scintillatorThickness(tScint)
 {
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
