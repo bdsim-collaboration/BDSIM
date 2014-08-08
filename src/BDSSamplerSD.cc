@@ -33,7 +33,6 @@
 
 #include "G4SDManager.hh"
 
-#define BDSDEBUG 1
 
 //typedef std::vector<G4int> MuonTrackVector;
 //extern MuonTrackVector* theMuonTrackVector;
@@ -71,10 +70,8 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
   G4Track* theTrack = aStep->GetTrack();
   BDSTrajectory* bdsTraj = new BDSTrajectory(theTrack);
-  BDSTrajectoryPoint* bdsTrajPoint = (BDSTrajectoryPoint*)bdsTraj->GetPoint(0);
 #ifdef BDSDEBUG
-  bdsTraj->printRichData();
-  bdsTrajPoint->printRichData();
+  bdsTraj->printRichDataOfSteps();
 #endif
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   //  G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
