@@ -73,7 +73,6 @@
 
 #include "G4VSampler.hh"
 #include "G4GeometrySampler.hh"
-#include "G4IStore.hh"
 
 #include "parser/element.h"
 #include "parser/elementlist.h"
@@ -112,7 +111,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
   solidWorld(NULL),logicWorld(NULL),physiWorld(NULL),
   magField(NULL),BDSUserLimits(NULL),BDSSensitiveDetector(NULL),
-  itsIStore(NULL),_globalRotation(NULL)
+  _globalRotation(NULL)
 {  
   verbose    = BDSExecOptions::Instance()->GetVerbose();
   gflash     = BDSExecOptions::Instance()->GetGFlash();
@@ -904,13 +903,6 @@ void BDSDetectorConstruction::SetMagField(const G4double fieldValue){
   magField = new G4UniformMagField(G4ThreeVector(0.,fieldValue,0.));  
   fieldMgr->SetDetectorField(magField);
   fieldMgr->CreateChordFinder(magField);
-}
-
-//=================================================================
-  
-void BDSDetectorConstruction::UpdateGeometry()
-{
-  G4RunManager::GetRunManager()->DefineWorldVolume(ConstructBDS(beamline_list));
 }
 
 //=================================================================
