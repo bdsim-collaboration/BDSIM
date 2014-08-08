@@ -101,41 +101,8 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0;
 
   particleGun->SetParticleDefinition(BDSGlobalConstants::Instance()->GetParticleDefinition());
-
-  if(!BDSGlobalConstants::Instance()->getReadFromStack()){
-    bdsBunch.GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight); // get next starting point
-  }  else if(BDSGlobalConstants::Instance()->holdingQueue.size()!=0){
-    BDSParticle holdingParticle = BDSGlobalConstants::Instance()->holdingQueue.front();
-    BDSParticle outputParticle  = BDSGlobalConstants::Instance()->outputQueue.front();
-    x0 = outputParticle.GetX(); //
-    y0 = outputParticle.GetY(); //
-    z0 = outputParticle.GetZ(); //
-    t  = holdingParticle.GetTime();  //
-    xp = holdingParticle.GetXp();
-    yp = holdingParticle.GetYp();
-    zp = holdingParticle.GetZp();
-    E  = holdingParticle.GetEnergy();
-    weight = holdingParticle.GetWeight();
-
-    //flag for secondaries from previous runs
-    //    if(outputParticle.parentID != 0)
-      //      anEvent->SetEventID(-(anEvent->GetEventID()));
-
-    if(E<0){
-      particleGun->SetParticleDefinition(
-		G4ParticleTable::GetParticleTable()->FindParticle(
-			BDSGlobalConstants::Instance()->GetParticleDefinition()->
-				GetAntiPDGEncoding()));
-      E*=-1;
-    }
-
-#ifdef BDSDEBUG 
-    printf("Particles left %i: %f %f %f %f %f %f %f %f\n",
-           (int)BDSGlobalConstants::Instance()->holdingQueue.size(),x0,y0,z0,xp,yp,zp,t,E);
-#endif
-  }
-  else G4Exception("No new particles to fire...\n", "-1", FatalException, "");
-
+  bdsBunch.GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight); // get next starting point
+  
   if(E==0) G4cout << "Particle energy is 0! This will not be tracked." << G4endl;
 
   G4ThreeVector PartMomDir(0,0,1);
@@ -143,7 +110,29 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   G4ThreeVector LocalPos;
   G4ThreeVector LocalMomDir;
-
+  
+  PartMomDir=G4ThreeVector(xp,yp,zp);
+  PartPosition=G4ThreeVector(x0,y0,z0);
+  
+  if(BDSGlobalConstants::Instance()->GetRefVolume()!=""){
+    const G4AffineTransform* tf = BDSGlobalConstants::Instance()->GetRefTransform();
+    LocalPos = tf->TransformPoint(PartPosition);
+    LocalMomDir = tf->TransformAxis(PartMomDir);
+#ifdef DEBUG 
+    G4cout << PartPosition << G4endl;
+    G4cout << PartMomDir << G4endl;
+    G4cout << LocalPos << G4endl;
+    G4cout << LocalMomDir << G4endl;
+#endif
+    PartPosition = LocalPos;
+    PartMomDir = LocalMomDir;
+  }
+  
+  particleGun->SetParticlePosition(PartPosition);
+  particleGun->SetParticleEnergy(E);
+  particleGun->SetParticleMomentumDirection(PartMomDir);
+  particleGun->SetParticleTime(t);
+  
   particleGun->GeneratePrimaryVertex(anEvent);
 
   //Set the weight
@@ -153,9 +142,9 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   anEvent->GetPrimaryVertex()->SetWeight(weight);
   
   if(BDSGlobalConstants::Instance()->holdingQueue.size()!=0){
-
-//    anEvent->    GetTrack()->SetTrackID(outputParticle.trackID);
-//    anEvent->    GetTrack()->SetParentID(outputParticle.parentID);
+    
+    //    anEvent->    GetTrack()->SetTrackID(outputParticle.trackID);
+    //    anEvent->    GetTrack()->SetParentID(outputParticle.parentID);
     
     BDSGlobalConstants::Instance()->holdingQueue.pop_front();
     BDSGlobalConstants::Instance()->outputQueue.pop_front();
