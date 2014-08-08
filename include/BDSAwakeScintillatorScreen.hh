@@ -126,17 +126,14 @@ private:
   G4String _samplerName4;
   G4String _samplerName5;
   G4String _samplerName6;
-
-
   BDSAwakeMultilayerScreen* _mlScreen;
+  BDSCCDCamera* _camera;
+  G4double _cameraScreenDist;
+  G4String _material;
+  G4double _thickness;
   G4double _screenAngle;
   G4double _windowThickness;
   G4String _windowMaterial;
-  BDSCCDCamera* _camera;
-
-  G4double _cameraScreenDist;
-  G4double _thickness;
-  G4String _material;
 };
 
 #endif
