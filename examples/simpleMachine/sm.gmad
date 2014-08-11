@@ -1,7 +1,7 @@
 d1: drift, l=2*m;
 d2: drift, l=1*m;
 q1: quadrupole, l=10*m, k1=0.000000000000001;
-c1: rcol, l=20*m, ysize=5*mm, xsize=5*mm, material="Copper";
+c1: rcol, l=20*m, ysize=5*mm, xsize=5*mm, material="Copper", precisionRegion=1;
 m1: marker;
 l1: line = (c1,m1,d2);
 use,period=l1;
@@ -20,5 +20,5 @@ beam, particle="proton",
       distrType="reference",
       X0=0.0,
       Y0=0.0,
-      Xp0=0.001;
+      Yp0=0.001;
 
