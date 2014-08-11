@@ -31,10 +31,10 @@ private:
   void build();
   void visAtt();
 
+  G4String _name;
   G4double _diameter;
   G4double _rho; //radius of curvature
   G4double _centreThickness;
-  G4String _name;
   // Geometrical objects:
   G4LogicalVolume* _log;
   G4VSolid* _solid;

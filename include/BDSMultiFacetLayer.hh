@@ -33,8 +33,8 @@ private:
   void placeFacets();
   BDSLensFacet* _facet;
   std::vector<G4ThreeVector> _facetPos;
-  G4double _nFacets;
   G4double _gapWidth;
+  G4double _nFacets;
 };
 
 #endif

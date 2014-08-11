@@ -23,7 +23,7 @@
 #include "BDSMaterials.hh"
 
 BDSCCDChip::BDSCCDChip (G4String aName, G4ThreeVector pixelSize, G4TwoVector nPixels):
-  _name(aName), _pixel(new BDSCCDPixel(pixelSize,aName+"pixel")),_nPixels(nPixels)
+  _pixel(new BDSCCDPixel(pixelSize,aName+"pixel")),_nPixels(nPixels), _name(aName)
 {
   computeDimensions();  
   build();

@@ -36,11 +36,11 @@ public:
 
 protected:
   BDSScreenLayer();
+  G4ThreeVector _size;
   G4String _name;
   G4LogicalVolume* _log;
   G4PVPlacement* _phys;
   G4VSolid* _solid;
-  G4ThreeVector _size;
 
 private:
   class InternalMirror{
@@ -59,10 +59,10 @@ private:
     G4VSolid* _solid;
     G4LogicalVolume* _log;
     G4PVPlacement* _phys;
-    G4LogicalVolume* _motherLog;
-    G4PVPlacement* _motherPhys;
     G4ThreeVector _motherSize;
     G4String _motherMaterial;
+    G4LogicalVolume* _motherLog;
+    G4PVPlacement* _motherPhys;
     G4double _thickness;
     G4double _pos;
   };

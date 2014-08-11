@@ -34,11 +34,11 @@ private:
   void build();
   void visAtt();
 
+  G4String _name;
   G4TwoVector _size;
   G4double _angle;
   G4double _totalHeight;
   G4double _baseHeight;
-  G4String _name;
   G4RotationMatrix* _rotation;
   G4String _logName;
   G4String _solidName;
