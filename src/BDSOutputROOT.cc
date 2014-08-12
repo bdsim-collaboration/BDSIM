@@ -36,6 +36,24 @@ void BDSOutputROOT::BuildSamplerTree(G4String name){
   SamplerTree->Branch("yp0",&yp0,"yp0/F"); // (rad)
   SamplerTree->Branch("zp0",&zp0,"zp0/F"); // (rad)
   SamplerTree->Branch("t0",&t0,"t0/F"); // (ns)
+
+  SamplerTree->Branch("E_prod",&E_prod,"E_prod/F"); // (GeV)
+  SamplerTree->Branch("x_prod",&x_prod,"x_prod/F"); // (mum)
+  SamplerTree->Branch("y_prod",&y_prod,"y_prod/F"); // (mum)
+  SamplerTree->Branch("z_prod",&z_prod,"z_prod/F"); // (m)
+  SamplerTree->Branch("xp_prod",&xp_prod,"xp_prod/F"); // (rad)
+  SamplerTree->Branch("yp_prod",&yp_prod,"yp_prod/F"); // (rad)
+  SamplerTree->Branch("zp_prod",&zp_prod,"zp_prod/F"); // (rad)
+  SamplerTree->Branch("t_prod",&t_prod,"t_prod/F"); // (ns)
+
+  SamplerTree->Branch("E_lastScat",&E_lastScat,"E_lastScat/F"); // (GeV)
+  SamplerTree->Branch("x_lastScat",&x_lastScat,"x_lastScat/F"); // (mum)
+  SamplerTree->Branch("y_lastScat",&y_lastScat,"y_lastScat/F"); // (mum)
+  SamplerTree->Branch("z_lastScat",&z_lastScat,"z_lastScat/F"); // (m)
+  SamplerTree->Branch("xp_lastScat",&xp_lastScat,"xp_lastScat/F"); // (rad)
+  SamplerTree->Branch("yp_lastScat",&yp_lastScat,"yp_lastScat/F"); // (rad)
+  SamplerTree->Branch("zp_lastScat",&zp_lastScat,"zp_lastScat/F"); // (rad)
+  SamplerTree->Branch("t_lastScat",&t_lastScat,"t_lastScat/F"); // (ns)
   
   SamplerTree->Branch("E",&E,"E/F"); // (GeV)
   SamplerTree->Branch("x",&x,"x/F"); // (mum)
@@ -140,6 +158,22 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
 				 G4double InitYPrime, 
 				 G4double InitZPrime, 
 				 G4double InitT, 
+				 G4double ProdMom, 
+				 G4double ProdX, 
+				 G4double ProdY, 
+				 G4double ProdZ, 
+				 G4double ProdXPrime, 
+				 G4double ProdYPrime, 
+				 G4double ProdZPrime, 
+				 G4double ProdT, 
+				 G4double LastScatMom, 
+				 G4double LastScatX, 
+				 G4double LastScatY, 
+				 G4double LastScatZ, 
+				 G4double LastScatXPrime, 
+				 G4double LastScatYPrime, 
+				 G4double LastScatZPrime, 
+				 G4double LastScatT, 
 				 G4double Mom, 
 				 G4double X, 
 				 G4double Y, 
@@ -172,6 +206,23 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
   yp0=InitYPrime / CLHEP::radian;
   zp0=InitZPrime / CLHEP::radian;
   t0=InitT / CLHEP::ns;
+  E_prod=ProdMom / CLHEP::GeV;
+  x_prod=ProdX / CLHEP::micrometer;
+  y_prod=ProdY / CLHEP::micrometer;
+  z_prod=ProdZ / CLHEP::m;
+  xp_prod=ProdXPrime / CLHEP::radian;
+  yp_prod=ProdYPrime / CLHEP::radian;
+  zp_prod=ProdZPrime / CLHEP::radian;
+  t_prod=ProdT / CLHEP::ns;
+  E_lastScat=LastScatMom / CLHEP::GeV;
+  x_lastScat=LastScatX / CLHEP::micrometer;
+  y_lastScat=LastScatY / CLHEP::micrometer;
+  z_lastScat=LastScatZ / CLHEP::m;
+  xp_lastScat=LastScatXPrime / CLHEP::radian;
+  yp_lastScat=LastScatYPrime / CLHEP::radian;
+  zp_lastScat=LastScatZPrime / CLHEP::radian;
+  t_lastScat=LastScatT / CLHEP::ns;
+
   E=Mom / CLHEP::GeV;
   //Edep=Edep / CLHEP::GeV;
   x=X / CLHEP::micrometer;
@@ -214,13 +265,20 @@ void BDSOutputROOT::WritePrimary(G4String samplerName,
 	       E, 
 	       x0, y0, z0, 
 	       xp, yp, zp, 
-	       t, E, 
+	       t, 
+	       E, 
 	       x0, y0, z0, 
 	       xp, yp, zp, 
 	       t, 
-	       x, y, z, 
+	       E, 
+	       x0, y0, z0, 
 	       xp, yp, zp, 
-	       0.0, 
+	       t, 
+	       E, 
+	       x0, y0, z0, 
+	       xp, yp, zp, 
+	       t, 
+	       0,0,0,0,0,0,0,
 	       weight, 
 	       PDGType, 
 	       nEvent, 
@@ -250,6 +308,22 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 		   (*hc)[i]->GetInitYPrime(),
 		   (*hc)[i]->GetInitZPrime(),
 		   (*hc)[i]->GetInitT(),
+		   (*hc)[i]->GetProdMom(),
+		   (*hc)[i]->GetProdX(),
+		   (*hc)[i]->GetProdY(),
+		   (*hc)[i]->GetProdZ(),
+		   (*hc)[i]->GetProdXPrime(),
+		   (*hc)[i]->GetProdYPrime(),
+		   (*hc)[i]->GetProdZPrime(),
+		   (*hc)[i]->GetProdT(),
+		   (*hc)[i]->GetLastScatMom(),
+		   (*hc)[i]->GetLastScatX(),
+		   (*hc)[i]->GetLastScatY(),
+		   (*hc)[i]->GetLastScatZ(),
+		   (*hc)[i]->GetLastScatXPrime(),
+		   (*hc)[i]->GetLastScatYPrime(),
+		   (*hc)[i]->GetLastScatZPrime(),
+		   (*hc)[i]->GetLastScatT(),
 		   (*hc)[i]->GetMom(),
 		   (*hc)[i]->GetX(),
 		   (*hc)[i]->GetY(),

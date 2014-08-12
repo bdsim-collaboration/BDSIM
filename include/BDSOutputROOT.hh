@@ -58,6 +58,8 @@ private:
   TTree *EnergyLossTree;
   
   float x0,xp0,y0,yp0,z0,zp0,E0,t0;
+  float x_prod,xp_prod,y_prod,yp_prod,z_prod,zp_prod,E_prod,t_prod;
+  float x_lastScat,xp_lastScat,y_lastScat,yp_lastScat,z_lastScat,zp_lastScat,E_lastScat,t_lastScat;
   float x,xp,y,yp,z,zp,E,t; //Edep;
   float X,Xp,Y,Yp,Z,Zp,s,weight; //,EWeightZ;
   int part,nev, pID, track_id, turnnumber;
@@ -75,6 +77,22 @@ private:
 		    G4double InitYPrime, 
 		    G4double InitZPrime, 
 		    G4double InitT, 
+		    G4double ProdMom, 
+		    G4double ProdX, 
+		    G4double ProdY, 
+		    G4double ProdZ, 
+		    G4double ProdXPrime, 
+		    G4double ProdYPrime, 
+		    G4double ProdZPrime, 
+		    G4double ProdT, 
+		    G4double LastScatMom, 
+		    G4double LastScatX, 
+		    G4double LastScatY, 
+		    G4double LastScatZ, 
+		    G4double LastScatXPrime, 
+		    G4double LastScatYPrime, 
+		    G4double LastScatZPrime, 
+		    G4double LastScatT, 
 		    G4double Mom, 
 		    G4double X, 
 		    G4double Y, 
@@ -93,10 +111,10 @@ private:
 		    G4double Weight, 
 		    G4int    PDGtype, 
 		    G4int    EventNo, 
-		    G4int    ParentID, 
+		    G4int    ParentID,
 		    G4int    TrackID, 
 		    G4int    TurnsTaken);
-
+  
 };
 
 extern BDSOutputBase* bdsOutput;

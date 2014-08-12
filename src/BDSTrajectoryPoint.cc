@@ -1,33 +1,49 @@
 #include "BDSTrajectoryPoint.hh"
-#include "G4AttDef.hh"
-#include "G4AttValue.hh"
 #include <map>
 #include <iterator>
+#include "G4Allocator.hh"
+#include "G4ProcessType.hh"
+#include "G4VProcess.hh"
 
-BDSTrajectoryPoint::BDSTrajectoryPoint():G4RichTrajectoryPoint(){
+G4Allocator<BDSTrajectoryPoint> bdsTrajectoryPointAllocator;
+
+BDSTrajectoryPoint::BDSTrajectoryPoint(){
+  _currentProcess=NULL;
+  _isScatteringProcess=false;
+}
+BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* aTrack):G4TrajectoryPoint(aTrack->GetPosition())
+{
+  //  G4cout << "Getting current process..." << G4endl;
+  if(aTrack){
+    _vertexPosition=aTrack->GetVertexPosition();
+    _trackID = aTrack->GetTrackID();
+    if(aTrack->GetStep()){
+      _currentProcess = aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep();
+      //      G4cout << "Getting current process type..." << G4endl;
+      G4ProcessType ptype;
+      if(_currentProcess){
+	ptype = _currentProcess->GetProcessType();
+      } else {
+	ptype = fNotDefined;
+      }
+      //      G4cout << "Getting isScattering..." << G4endl;
+      _isScatteringProcess = false;
+      if(!((ptype == fNotDefined) || (ptype == fTransportation))){  //If the process type is not undefined or transportation...
+	if ( aTrack -> GetStep() -> GetDeltaMomentum().mag() != 0){ //...and the particle changed momentum during the step..
+	  _isScatteringProcess = true; //...then this is a "scattering" (momentum-changing non-transportation) process.
+	}
+      }
+    }
+  }
 }
 
 BDSTrajectoryPoint::~BDSTrajectoryPoint(){
 }
 
-void BDSTrajectoryPoint::printRichData(){
-  G4cout << "" << G4endl;
-  G4cout << "BDSTrajectoryPoint - Att Defs: " << G4endl;
-  G4cout << "MapString :: Name :: Description :: Category :: Extra :: ValueType" << G4endl;
-  const std::map<G4String, G4AttDef>*  m = GetAttDefs();
-  for(std::map<G4String, G4AttDef>::const_iterator it = m->begin(); it != m->end(); it++) {
-    G4cout << it->first << " || " 
-	   << it->second.GetName() << " || "
-	   << it->second.GetDesc() << " || "	   
-	   << it->second.GetCategory() << " || "
-	   << it->second.GetExtra() << " || "
-	   << it->second.GetValueType()  
-	   << G4endl;
-  }
-  std::vector<G4AttValue>* val = CreateAttValues();
-  G4cout << "BDSTrajectoryPoint - AttValues: " << G4endl;
-  G4cout << "Name :: Value " << G4endl;
-  for(std::vector<G4AttValue>::iterator it = val->begin(); it != val->end(); it++){
-    G4cout << it->GetName() << " || "  << it->GetValue() << G4endl;
+void BDSTrajectoryPoint::printData(){
+  G4cout << "BDSTrajectoryPoint> printData" << G4endl;
+  if(_currentProcess){
+    G4cout << "_currentProcess = " << _currentProcess->GetProcessName() << G4endl;
+    G4cout << "_isScatteringProcess = " << _isScatteringProcess << G4endl;
   }
 }

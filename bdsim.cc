@@ -243,9 +243,9 @@ int main(int argc,char** argv) {
     runManager->SetUserAction(new BDSVerboseSteppingAction);
   }
 
-  if (BDSGlobalConstants::Instance()->GetThresholdCutPhotons() > 0 || BDSGlobalConstants::Instance()->GetThresholdCutCharged() > 0) {
-    runManager->SetUserAction(new BDSThresholdCutSteppingAction);
-  }
+  //  if (BDSGlobalConstants::Instance()->GetThresholdCutPhotons() > 0 || BDSGlobalConstants::Instance()->GetThresholdCutCharged() > 0) {
+  runManager->SetUserAction(new BDSThresholdCutSteppingAction);
+  //  }
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - trackingaction"<<G4endl;

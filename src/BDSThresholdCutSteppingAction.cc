@@ -13,6 +13,7 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "G4Track.hh"
+#include "G4EventManager.hh"
 
 //====================================================
 
@@ -51,6 +52,8 @@ void BDSThresholdCutSteppingAction::UserSteppingAction(const G4Step* ThisStep)
 	ThisStep->GetTrack()->SetTrackStatus(fStopAndKill);
       }
   }
+ 
+  //  G4EventManager::GetEventManager()->GetTrackingManager()->GimmeTrajectory()->AppendStep(ThisStep);
   //#endif
 }
   

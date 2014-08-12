@@ -79,7 +79,8 @@ private:
 
   /// physics lists
   // standard physics list
-  G4VPhysicsConstructor* theStandardPhysList;
+  G4VPhysicsConstructor* theReferenceHadronicPhysList;
+  G4VPhysicsConstructor* theReferenceEmPhysList;
   // BDSIM physics lists
   G4VPhysicsConstructor* theBDSIMPhysList;
   // hadronic physics lists

@@ -7,6 +7,7 @@
 #include "BDSGlobalConstants.hh"
 
 #include "BDSUserTrackingAction.hh"
+#include "BDSTrajectory.hh"
 #include "G4TrackingManager.hh"
 #include "G4Track.hh"
 
@@ -51,6 +52,15 @@ void BDSUserTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
       else
 	{ fpTrackingManager->SetStoreTrajectory(false); }
     }
+
+  // store all trajectories
+  if(1){ 
+#ifdef BDSDEBUG 
+    G4cout<<"STORING ALL TRAJECTORIES"<<G4endl;
+#endif
+    fpTrackingManager->SetStoreTrajectory(true); 
+    fpTrackingManager->SetTrajectory(new BDSTrajectory(aTrack));
+  }
  
 
   /*
