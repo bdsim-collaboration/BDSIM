@@ -55,8 +55,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double ZOffset, 
 						  G4double tunnelRadius, 
 						  G4double tunnelOffsetX,
-						  G4String aTunnelCavityMaterial,
-						  G4int aPrecisionRegion):
+						  G4String aTunnelCavityMaterial):
   itsName(aName),
   itsLength(aLength),
   itsBpRadius(aBpRadius),
@@ -71,8 +70,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsZOffset(ZOffset), 
   itsTunnelRadius(tunnelRadius), 
   itsTunnelOffsetX(tunnelOffsetX),
-  itsTunnelCavityMaterial(aTunnelCavityMaterial), 
-  itsPrecisionRegion(aPrecisionRegion)
+  itsTunnelCavityMaterial(aTunnelCavityMaterial)
 {
   ConstructorInit();
 }
@@ -94,8 +92,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double ZOffset, 
 						  G4double tunnelRadius, 
 						  G4double tunnelOffsetX, 
-						  G4String aTunnelCavityMaterial, 
-						  G4int aPrecisionRegion):
+						  G4String aTunnelCavityMaterial):
   itsName(aName),
   itsLength(aLength),
   itsBpRadius(aBpRadius),
@@ -112,8 +109,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsZOffset(ZOffset), 
   itsTunnelRadius(tunnelRadius), 
   itsTunnelOffsetX(tunnelOffsetX), 
-  itsTunnelCavityMaterial(aTunnelCavityMaterial), 
-  itsPrecisionRegion(aPrecisionRegion)
+  itsTunnelCavityMaterial(aTunnelCavityMaterial)
 {
   if (itsBlmLocZ.size() != itsBlmLocTheta.size()){
     G4cerr << "BDSAcceleratorComponent: error, lists blmLocZ and blmLocTheta are of unequal size" << G4endl;
