@@ -3,6 +3,9 @@
 
 #include "TRKTrackingElement.hh"
 
+/**
+ * @brief quadrupole tracking
+ */
 class TRKQuadrupole : public TRKTrackingElement {
 private: 
   double strength;
