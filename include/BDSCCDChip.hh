@@ -2,19 +2,13 @@
 #define BDSCCDChip_h 
 
 #include "globals.hh"
-#include "BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
 #include "BDSCCDPixel.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Mag_UsualEqRhs.hh"
 
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
-#include "G4Box.hh"
-#include "G4EllipticalTube.hh"
 #include "G4VSolid.hh"
-#include "G4SubtractionSolid.hh"
-#include<vector>
+#include <vector>
 #include "G4TwoVector.hh"
 #include "G4ThreeVector.hh"
 

@@ -860,7 +860,7 @@ parameters:
              {
 	       if(execute) 
 		 {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                    printf("params,VARIABLE (%s) = str (%s)\n",$1->name,$3);
 #endif
 		   if(!strcmp($1->name,"geometry")) 

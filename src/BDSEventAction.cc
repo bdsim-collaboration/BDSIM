@@ -40,7 +40,6 @@
 #include "G4ChordFinder.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4PrimaryParticle.hh"
-#include "G4Version.hh"
 
 #include "BDSSampler.hh"
 #include "BDSSamplerCylinder.hh"

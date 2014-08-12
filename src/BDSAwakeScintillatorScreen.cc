@@ -8,6 +8,7 @@ Work in progress.
 #include "BDSSampler.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSCCDCamera.hh"
+#include "G4Box.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -20,17 +21,14 @@ Work in progress.
 #include "BDSDebug.hh"
 
 #include "G4SDManager.hh"
-#include "G4UserLimits.hh"
-#include "G4Version.hh"
 #include "G4PhysicalConstants.hh"
-#include "parser/gmad.h"
 #include <map>
 #include "BDSAwakeMultilayerScreen.hh"
 //#include "UltraFresnelLens.hh"
 //#include "UltraFresnelLensParameterisation.hh"
 
 #include "G4Trap.hh"
-#include "BDSOutputBase.hh"
+//#include "BDSOutputBase.hh"
 
 
 extern BDSSamplerSD* BDSSamplerSensDet;

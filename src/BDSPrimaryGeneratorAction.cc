@@ -118,7 +118,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     const G4AffineTransform* tf = BDSGlobalConstants::Instance()->GetRefTransform();
     LocalPos = tf->TransformPoint(PartPosition);
     LocalMomDir = tf->TransformAxis(PartMomDir);
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
     G4cout << PartPosition << G4endl;
     G4cout << PartMomDir << G4endl;
     G4cout << LocalPos << G4endl;

@@ -1,21 +1,15 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSLensFacet.hh"
+#include "BDSMaterials.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4PVPlacement.hh"               
 #include "G4SubtractionSolid.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
-#include "G4OpticalSurface.hh"
-#include "G4LogicalBorderSurface.hh"
-#include "BDSDebug.hh"
 
-#include "G4SDManager.hh"
 #include "G4UserLimits.hh"
-#include "G4Version.hh"
 #include "G4PhysicalConstants.hh"
-#include "parser/gmad.h"
 #include "G4Trap.hh"
 
 //============================================================

@@ -1,12 +1,10 @@
-#include <math.h>
+#include <cmath>
 #include "BDSAwakeMultilayerScreen.hh"
 #include "G4TwoVector.hh"
-#include "BDSLensFacet.hh"
-#include "BDSMultiFacetLayer.hh"
 #include "BDSGlobalConstants.hh"
-#include "G4OpticalSurface.hh"
-#include "G4LogicalBorderSurface.hh"
-#include "G4LogicalSkinSurface.hh"
+// #include "G4OpticalSurface.hh"
+// #include "G4LogicalBorderSurface.hh"
+// #include "G4LogicalSkinSurface.hh"
 #include "BDSSampler.hh"
 
 BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double dgrain, G4double windowThickness, G4String windowMaterial):

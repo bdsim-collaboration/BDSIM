@@ -1,5 +1,9 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSScreenLayer.hh"
+#include "BDSMaterials.hh"
+#include "BDSSampler.hh"
+#include "BDSSamplerSD.hh"
+#include "G4Box.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -9,13 +13,9 @@
 #include "G4TransportationManager.hh"
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
-#include "BDSDebug.hh"
 #include "BDSOutputBase.hh"
 
 #include "G4SDManager.hh"
-#include "G4UserLimits.hh"
-#include "G4Version.hh"
-#include "parser/gmad.h"
 
 extern BDSSamplerSD* BDSSamplerSensDet;
 

@@ -2,20 +2,10 @@
 #define BDSScreenLayer_h 
 
 #include "globals.hh"
-#include "BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
-#include "BDSSamplerSD.hh"
-#include "BDSSampler.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Mag_UsualEqRhs.hh"
 
-#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
-#include "G4Box.hh"
-#include "G4EllipticalTube.hh"
 #include "G4VSolid.hh"
-#include "G4SubtractionSolid.hh"
-#include "G4TwoVector.hh"
 #include "G4Color.hh"
 #include "G4PVPlacement.hh"
 
