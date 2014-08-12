@@ -126,14 +126,14 @@ void BDSOutputROOT::Init()
     }
 
   // build energy loss histogram
-  G4int nBins = G4int(BDSGlobalConstants::Instance()->GetZMax()/(BDSGlobalConstants::Instance()->GetElossHistoBinWidth()*CLHEP::m));
+  G4int nBins = G4int(BDSGlobalConstants::Instance()->GetSMax()/(BDSGlobalConstants::Instance()->GetElossHistoBinWidth()*CLHEP::m));
   G4double wx=(BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelOffsetX())*2;
   G4double wy=(BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelOffsetY())*2;
   G4double bs=BDSGlobalConstants::Instance()->GetComponentBoxSize();
   G4double wmax=std::max(wx,wy);
   wmax=std::max(wmax,bs);
 
-  EnergyLossHisto = new TH1F("ElossHisto", "Energy Loss",nBins,0.,BDSGlobalConstants::Instance()->GetZMax()/CLHEP::m);
+  EnergyLossHisto = new TH1F("ElossHisto", "Energy Loss",nBins,0.,BDSGlobalConstants::Instance()->GetSMax()/CLHEP::m);
   EnergyLossTree= new TTree("ElossTree", "Energy Loss");
   EnergyLossTree->Branch("s",&s_el,"s/F"); // (m)
   EnergyLossTree->Branch("E",&E_el,"E/F"); // (GeV)

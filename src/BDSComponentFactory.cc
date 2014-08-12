@@ -232,7 +232,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
 #endif
     return createScreen(); break; 
   case _AWAKESCREEN:
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating awake screen" << G4endl;
 #endif
     return createAwakeScreen(); break; 
@@ -1301,7 +1301,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createLaser(){
 BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
   if(_element.l == 0) _element.l = 1e-8;
 	
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
         G4cout << "---->creating Screen,"
                << " name= "<< _element.name
                << " l=" << _element.l/CLHEP::m<<"m"
@@ -1317,7 +1317,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
 
 BDSAcceleratorComponent* BDSComponentFactory::createAwakeScreen(){
 	
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
         G4cout << "---->creating Awake Screen,"
 	       << "twindow = " << _element.twindow*1e3/CLHEP::um << " um"
 	       << "tscint = " << _element.tscint*1e3/CLHEP::um << " um"

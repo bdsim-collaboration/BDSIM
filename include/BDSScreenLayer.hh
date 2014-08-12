@@ -2,20 +2,10 @@
 #define BDSScreenLayer_h 
 
 #include "globals.hh"
-#include "BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
-#include "BDSSamplerSD.hh"
-#include "BDSSampler.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Mag_UsualEqRhs.hh"
 
-#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
-#include "G4Box.hh"
-#include "G4EllipticalTube.hh"
 #include "G4VSolid.hh"
-#include "G4SubtractionSolid.hh"
-#include "G4TwoVector.hh"
 #include "G4Color.hh"
 #include "G4PVPlacement.hh"
 
@@ -36,11 +26,11 @@ public:
 
 protected:
   BDSScreenLayer();
+  G4ThreeVector _size;
   G4String _name;
   G4LogicalVolume* _log;
   G4PVPlacement* _phys;
   G4VSolid* _solid;
-  G4ThreeVector _size;
 
 private:
   class InternalMirror{
@@ -59,10 +49,10 @@ private:
     G4VSolid* _solid;
     G4LogicalVolume* _log;
     G4PVPlacement* _phys;
-    G4LogicalVolume* _motherLog;
-    G4PVPlacement* _motherPhys;
     G4ThreeVector _motherSize;
     G4String _motherMaterial;
+    G4LogicalVolume* _motherLog;
+    G4PVPlacement* _motherPhys;
     G4double _thickness;
     G4double _pos;
   };

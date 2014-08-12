@@ -23,7 +23,7 @@ option, beampipeRadius = 1 * cm,
         thresholdCutPhotons = 1000 * KeV;
 
 
-option,physicsList="HadronPhysicsFTFP_BERT";
+option,physicsList="hadronic_FTFP_BERT";
 !option, ffact=1.00006400499999999999;
 option, ffact=1.0000640014297218494195;
 

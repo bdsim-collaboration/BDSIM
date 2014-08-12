@@ -131,8 +131,6 @@
 #include "G4StepLimiter.hh"
 #include "G4UserSpecialCuts.hh"
 
-#include "G4OpticalPhysics.hh"
-
 //
 // Hadronic
 //
@@ -887,7 +885,7 @@ void BDSPhysicsList::ConstructOptical()
       pmanager->SetProcessOrderingToLast(theScintillationProcess, idxPostStep);
     }
     if (particleName == "opticalphoton") {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << " AddDiscreteProcess to OpticalPhoton " << G4endl;
 #endif
       if(BDSGlobalConstants::Instance()->GetTurnOnOpticalAbsorption()){

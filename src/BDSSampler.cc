@@ -14,7 +14,6 @@
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
 #include "BDSSamplerSD.hh"
 #include "G4SDManager.hh"

@@ -1,7 +1,6 @@
 #include "BDSPhotonCounter.hh"
 #include "G4OpticalPhoton.hh"
 #include "G4ParticleDefinition.hh"
-#include "G4ParticleTypes.hh"
 
 BDSPhotonCounter* BDSPhotonCounter::_instance = 0;
 

@@ -3,6 +3,8 @@
 #include "BDSSectorBend.hh"
 #include "G4Tubs.hh"
 #include "G4Trd.hh"
+#include "G4EllipticalTube.hh"
+#include "G4SubtractionSolid.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"

@@ -26,6 +26,7 @@
 #include "G4Cons.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
+#include "G4PVPlacement.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
@@ -34,6 +35,7 @@
 
 #include "G4MagIntegratorStepper.hh"
 
+#include "BDSMaterials.hh"
 #include "BDSMultipoleOuterMagField.hh"
 #include "G4MagneticField.hh"
 

@@ -8,17 +8,12 @@ Work in progress.
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
-#include "BDSSamplerSD.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
 
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
-#include "G4Box.hh"
-#include "G4EllipticalTube.hh"
 #include "G4VSolid.hh"
-#include "G4SubtractionSolid.hh"
 #include "BDSAwakeMultilayerScreen.hh"
 #include "BDSCCDCamera.hh"
 
@@ -26,7 +21,7 @@ class BDSAwakeScintillatorScreen :public BDSAcceleratorComponent
 {
 public:
   BDSAwakeScintillatorScreen(G4String aName, G4String material, G4double thickness, G4double angle, G4double windowThickness, G4String windowMaterial);
-  ~BDSAwakeScintillatorScreen();
+  virtual ~BDSAwakeScintillatorScreen();
 
 protected:
 

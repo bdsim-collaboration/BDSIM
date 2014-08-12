@@ -15,22 +15,14 @@
 #include "globals.hh"
 #include "BDSMaterials.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Cons.hh"
-#include "G4Tubs.hh"
-#include "G4EllipticalTube.hh"
 #include "G4VisAttributes.hh"
 #include "G4UserLimits.hh"
 #include "BDSMySQLTable.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4MagIntegratorStepper.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4ChordFinder.hh"
-#include "G4FieldManager.hh"
-#include "BDSSamplerSD.hh"
+//#include "BDSSamplerSD.hh"
 #include <fstream>
 #include <vector>
-#include <vector>
-#include "BDSMagFieldSQL.hh"
+//#include "BDSMagFieldSQL.hh"
 #include "G4Region.hh"
 
 class BDSGeometrySQL

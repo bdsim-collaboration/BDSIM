@@ -7,6 +7,7 @@ Work in progress.
 #include "BDSScintillatorScreen.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerSD.hh"
+#include "G4Box.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -17,12 +18,8 @@ Work in progress.
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
 #include "BDSDebug.hh"
-#include "BDSOutputBase.hh"
 
 #include "G4SDManager.hh"
-#include "G4UserLimits.hh"
-#include "G4Version.hh"
-#include "parser/gmad.h"
 #include <map>
 
 extern BDSSamplerSD* BDSSamplerSensDet;
@@ -152,7 +149,7 @@ void BDSScintillatorScreen::BuildScreenScoringPlane(){
   G4double dispX=0;
   G4double dispY=0;
   G4double dispZ=sqrt(2)*(-_screenThickness/2.0- _scoringPlaneThickness/2.0);
-  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ),itsScreenScoringPlaneLog,_screenSamplerName,
+  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX,dispY,dispZ),itsScreenScoringPlaneLog,_screenSamplerName,
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   
   (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;

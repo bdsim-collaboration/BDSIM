@@ -2,18 +2,11 @@
 #define BDSLensFacet_h 
 
 #include "globals.hh"
-#include "BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
-#include "BDSSamplerSD.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Mag_UsualEqRhs.hh"
 
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
-#include "G4Box.hh"
-#include "G4EllipticalTube.hh"
 #include "G4VSolid.hh"
-#include "G4SubtractionSolid.hh"
 #include "G4TwoVector.hh"
 
 class BDSLensFacet 
@@ -34,11 +27,11 @@ private:
   void build();
   void visAtt();
 
+  G4String _name;
   G4TwoVector _size;
   G4double _angle;
   G4double _totalHeight;
   G4double _baseHeight;
-  G4String _name;
   G4RotationMatrix* _rotation;
   G4String _logName;
   G4String _solidName;

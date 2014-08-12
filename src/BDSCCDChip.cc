@@ -1,8 +1,7 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSCCDChip.hh"
 #include "BDSCCDPixel.hh"
-#include "BDSSampler.hh"
-#include "BDSSamplerSD.hh"
+#include "G4Box.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -10,20 +9,15 @@
 #include "G4SubtractionSolid.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
-#include "G4OpticalSurface.hh"
-#include "G4LogicalBorderSurface.hh"
 #include "BDSDebug.hh"
 
-#include "G4SDManager.hh"
 #include "G4UserLimits.hh"
-#include "G4Version.hh"
-#include "parser/gmad.h"
 #include <map>
 #include "G4TwoVector.hh"
 #include "BDSMaterials.hh"
 
 BDSCCDChip::BDSCCDChip (G4String aName, G4ThreeVector pixelSize, G4TwoVector nPixels):
-  _name(aName), _pixel(new BDSCCDPixel(pixelSize,aName+"pixel")),_nPixels(nPixels)
+  _pixel(new BDSCCDPixel(pixelSize,aName+"pixel")),_nPixels(nPixels), _name(aName)
 {
   computeDimensions();  
   build();
@@ -95,5 +89,6 @@ void BDSCCDChip::buildPixels(){
 
 BDSCCDChip::~BDSCCDChip()
 {
+  delete _pixel;
 }
 
