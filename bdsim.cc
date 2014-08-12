@@ -53,8 +53,7 @@
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRunAction.hh"
 #include "BDSSamplerSD.hh"
-#include "BDSThresholdCutSteppingAction.hh"
-#include "BDSVerboseSteppingAction.hh"
+#include "BDSSteppingAction.hh"
 #include "BDSStackingAction.hh"
 #include "BDSUserTrackingAction.hh"
 #include "BDSRunManager.hh"
@@ -239,14 +238,12 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - steppingaction"<<G4endl;
 #endif
-  if(BDSExecOptions::Instance()->GetVerboseStep()) {
-    runManager->SetUserAction(new BDSVerboseSteppingAction);
+  
+  if (BDSGlobalConstants::Instance()->GetThresholdCutPhotons() > 0 || BDSGlobalConstants::Instance()->GetThresholdCutCharged() > 0
+      || BDSExecOptions::Instance()->GetVerboseStep()) {
+    runManager->SetUserAction(new BDSSteppingAction);
   }
-
-  //  if (BDSGlobalConstants::Instance()->GetThresholdCutPhotons() > 0 || BDSGlobalConstants::Instance()->GetThresholdCutCharged() > 0) {
-  runManager->SetUserAction(new BDSThresholdCutSteppingAction);
-  //  }
-
+  
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - trackingaction"<<G4endl;
 #endif
