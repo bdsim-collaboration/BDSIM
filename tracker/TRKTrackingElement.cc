@@ -6,14 +6,14 @@ TRKTrackingElement::TRKTrackingElement() {
 }
 
 TRKTrackingElement::TRKTrackingElement(TRKType typeIn, int trackingStepsIn, TRKElement &element) : 
-  type(typeIn), trackingSteps(trackingStepsIn), TRKElement(element) {
+  TRKElement(element), type(typeIn), trackingSteps(trackingStepsIn) {
 }
 
 TRKTrackingElement::TRKTrackingElement(TRKType typeIn, int trackingStepsIn, 
 				       std::string nameIn, double lengthIn, 
 				       double size_xIn, double size_yIn, 
 				       TRKAperture *apertureIn, TRKPlacement *placementIn) : 
-  type(typeIn), trackingSteps(trackingStepsIn), TRKElement(nameIn, lengthIn, size_xIn, size_yIn, apertureIn, placementIn) 
+  TRKElement(nameIn, lengthIn, size_xIn, size_yIn, apertureIn, placementIn), type(typeIn), trackingSteps(trackingStepsIn)
 {
 }
 

@@ -15,7 +15,6 @@ public :
   void HybridTrack(const double vIn[], double vOut[], double h);
   void ThickTrack(const double vIn[], double vOut[], double h);
   
-
 private : 
   
   

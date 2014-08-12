@@ -4,9 +4,10 @@
 class TRKPlacement {
 public : 
   TRKPlacement();
+  TRKPlacement(double x, double y, double z);
   ~TRKPlacement(); 
   
-private:
+protected :
   double x;
   double y;
   double z;

@@ -4,10 +4,11 @@ class vector3 {
  public: 
   vector3() : x(0.0), y(0.0), z(0.0) {     
   }; 
+
   vector3(double xIn, double yIn, double zIn) { 
-    double x;
-    double y;
-    double z; 
+    x = xIn;
+    y = yIn;
+    z = zIn; 
   }
 
   ~vector3() {};
