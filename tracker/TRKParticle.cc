@@ -7,4 +7,4 @@ TRKParticle::TRKParticle(std::string nameIn, double massIn, double chargeIn) :
   name(nameIn), mass(massIn), charge(chargeIn)
 {}
 
-TRKParticle::~TRKParticle() {};
+TRKParticle::~TRKParticle() {}
