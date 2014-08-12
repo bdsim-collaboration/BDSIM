@@ -8,6 +8,7 @@ Work in progress.
 #include "BDSSampler.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSCCDCamera.hh"
+#include "G4Box.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -15,22 +16,17 @@ Work in progress.
 #include "G4SubtractionSolid.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
-#include "G4OpticalSurface.hh"
-#include "G4LogicalBorderSurface.hh"
 #include "BDSDebug.hh"
 
 #include "G4SDManager.hh"
-#include "G4UserLimits.hh"
-#include "G4Version.hh"
 #include "G4PhysicalConstants.hh"
-#include "parser/gmad.h"
 #include <map>
 #include "BDSAwakeMultilayerScreen.hh"
 //#include "UltraFresnelLens.hh"
 //#include "UltraFresnelLensParameterisation.hh"
 
 #include "G4Trap.hh"
-#include "BDSOutputBase.hh"
+//#include "BDSOutputBase.hh"
 
 
 extern BDSSamplerSD* BDSSamplerSensDet;
@@ -44,9 +40,8 @@ typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
 //============================================================
-#define DEBUG 1
 BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*pi/180.0, G4double windowThickness=0, G4String windowMaterial=""):
-  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0, SetVisAttributes()),_material(material), _thickness(thickness), _screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
+  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0, SetVisAttributes()), _mlScreen(NULL), _camera(NULL), _material(material), _thickness(thickness), _screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
 {
   _vacChambType=2;
   //Set as part of precision region (for energy loss monitoring)
@@ -608,4 +603,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber2(){
 BDSAwakeScintillatorScreen::~BDSAwakeScintillatorScreen()
 {
   delete itsVisAttributes;
+  delete _mlScreen;
+  delete _camera;
+  delete _vacRotationMatrix;
 }

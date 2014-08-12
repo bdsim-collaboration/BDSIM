@@ -1,5 +1,5 @@
 #include "BDSBunchGaussian.hh"
-#include <string.h>
+#include <cstring>
 
 BDSBunchGaussian::BDSBunchGaussian() : 
   BDSBunchInterface(),

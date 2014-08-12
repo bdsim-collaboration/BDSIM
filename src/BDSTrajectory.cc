@@ -1,7 +1,7 @@
 #include "BDSTrajectory.hh"
+#include "BDSTrajectoryPoint.hh"
 #include "G4AttDef.hh"
 #include <map>
-#include <iterator>
 
 BDSTrajectory::BDSTrajectory(const G4Track* aTrack):G4RichTrajectory(aTrack){
 }
@@ -22,5 +22,14 @@ void BDSTrajectory::printRichData(){
 	   << it->second.GetExtra() << " || "
 	   << it->second.GetValueType()  
 	   << G4endl;
+  }
+}
+
+void BDSTrajectory::printRichDataOfSteps(){
+  BDSTrajectoryPoint* tj;
+  for(int i = 0; i<GetPointEntries(); i++){
+    tj = (BDSTrajectoryPoint*)GetPoint(i);
+    G4cout << "BDSTrajectory: Rich data for trajectory point : " << i << G4endl;
+    tj->printRichData();
   }
 }

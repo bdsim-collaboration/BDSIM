@@ -1,46 +1,24 @@
 d1: drift, l=2*m;
 d2: drift, l=1*m;
-q1: quadrupole, l=10*m, k2=0.000000000000001;
-c1: rcol, l=20*m, ysize=1*mm, xsize=1*mm, material="Copper";
+q1: quadrupole, l=10*m, k1=0.000000000000001;
+c1: rcol, l=20*m, ysize=5*mm, xsize=5*mm, material="Copper", precisionRegion=1;
 m1: marker;
-l1: line = (
-!c1,m1,
-d2);
+l1: line = (c1,m1,d2);
 use,period=l1;
 !sample, range=d1;
 !sample, range=m1;
 sample, range=d2;
-option, ngenerate=1,
-!	physicsList="QGSP_BERT",
+	
+option, physicsList="em_standard",
 	beampipeRadius=5.0*cm,
 	beampipeThickness=5*cm,
 	boxSize=2.0*m,
-	tunnelRadius=2*m,
-	sensitiveBeamPipe=true;
+	tunnelRadius=2*m;
+
 beam, particle="proton",
-      energy=4000*GeV,
-      distrType="gausstwiss",
-      betx=0.60000*m,
-      bety=0.60000*m,
-      alfx=-0.001083824,
-      alfy= 0.001233215,
-      emitx=0.00025*m,
-      emity=0.00025*m,!emittance 1 orders larger should produce more stuff
-      sigmaE=0.00008836,
-      sigmaT=0.00000000001;
-
-
-!beam, particle="proton",
-!      energy=10.0*GeV,
-!      distrType="gauss",
-!      sigmaX=0.0001,
-!      sigmaXp=0.001,
-!      sigmaY=0.0001,
-!      sigmaYp=0.001,
-!      sigmaE=0.00000001,
-!      sigmaT=0.00000000001;
-!      distrType="reference",
-!      X0=0.05,
-!      Y0=0.05,
-!      Xp0=0.09;
+      energy=10.0*GeV,
+      distrType="reference",
+      X0=0.0,
+      Y0=0.0,
+      Yp0=0.001;
 

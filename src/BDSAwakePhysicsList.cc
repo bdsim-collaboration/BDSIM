@@ -2,8 +2,6 @@
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "G4EmPenelopePhysics.hh"
-#include "G4EmLivermorePhysics.hh"
-#include "G4EmStandardPhysics.hh"
 #include "G4OpticalPhysics.hh"
 #include "G4OpticalProcessIndex.hh"
 #include "G4ParticleTable.hh"

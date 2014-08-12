@@ -10,6 +10,7 @@ public:
   ~BDSTrajectory();
 
   void printRichData();
+  void printRichDataOfSteps();
   
 private:
 };

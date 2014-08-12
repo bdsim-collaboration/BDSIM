@@ -13,8 +13,6 @@
 
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
-#include "G4Box.hh"
-#include "G4EllipticalTube.hh"
 #include "G4VSolid.hh"
 #include "G4SubtractionSolid.hh"
 

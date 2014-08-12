@@ -1,21 +1,20 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSScreenLayer.hh"
+#include "BDSMaterials.hh"
+#include "BDSSampler.hh"
+#include "BDSSamplerSD.hh"
+#include "G4Box.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
-#include "G4SubtractionSolid.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
-#include "BDSDebug.hh"
 #include "BDSOutputBase.hh"
 
 #include "G4SDManager.hh"
-#include "G4UserLimits.hh"
-#include "G4Version.hh"
-#include "parser/gmad.h"
 
 extern BDSSamplerSD* BDSSamplerSensDet;
 
@@ -125,13 +124,9 @@ void BDSScreenLayer::frontInternalMirror(){
 BDSScreenLayer::InternalMirror::~InternalMirror(){
 }
 
-BDSScreenLayer::InternalMirror::InternalMirror(){
-  _thickness=1e-9*CLHEP::m; 
-}
-
 BDSScreenLayer::InternalMirror::InternalMirror(G4int varside, G4ThreeVector size, G4String material, G4LogicalVolume* motherLog, G4PVPlacement* motherPhys):_side(varside),_motherSize(size),_motherMaterial(material),_motherLog(motherLog),_motherPhys(motherPhys)
 {
-  InternalMirror();
+  _thickness=1e-9*CLHEP::m; 
   compute();
   geom();
   place();
@@ -157,8 +152,8 @@ void BDSScreenLayer::InternalMirror::place(){
 
 void BDSScreenLayer::InternalMirror::optical(){
   G4OpticalSurface* OpSurface=new G4OpticalSurface("OpSurface");
-  G4LogicalBorderSurface* LogSurface = new
-    G4LogicalBorderSurface("LogSurface", _motherPhys, _phys, OpSurface);
+  /*G4LogicalBorderSurface* LogSurface = */
+  new G4LogicalBorderSurface("LogSurface", _motherPhys, _phys, OpSurface);
   //  G4LogicalSkinSurface* LogSurface  = new G4LogicalSkinSurface("LogSurface",screenLayer(1)->log(),OpSurface);
   OpSurface -> SetType(dielectric_metal);
   OpSurface -> SetModel(unified);
@@ -180,11 +175,11 @@ void BDSScreenLayer::InternalMirror::compute(){
       throw 1;
     }
   }catch(int e){
-    G4cerr<< "BDSScreenLayer::computInternalMirror - exception number " << e << " occured. Exiting." << G4endl;
+    G4cerr<< "BDSScreenLayer::computInternalMirror - exception number " << e << " occurred. Exiting." << G4endl;
     exit(e);
   }
   
-  G4double _pos = sign*(_motherSize.z()/2.0-_thickness/2.0);
+  _pos = sign*(_motherSize.z()/2.0-_thickness/2.0);
 }
 
 void BDSScreenLayer::sampler(){ //Make this layer a sampler scoring plane

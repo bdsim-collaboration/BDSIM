@@ -24,7 +24,6 @@
 #include "G4AffineTransform.hh"
 
 //#include "G4RunManager.hh"
-#include "G4Version.hh"
 #include "G4SDManager.hh"
 
 #include <map>

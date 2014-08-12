@@ -1,5 +1,6 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSExecOptions.hh"
+#include "BDSDebug.hh"
 #include "BDSCCDPixelSD.hh"
 #include "BDSCCDPixelHit.hh"
 #include "G4VPhysicalVolume.hh"
@@ -41,7 +42,7 @@ void BDSCCDPixelSD::Initialize(G4HCofThisEvent*)
 
 G4bool BDSCCDPixelSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "processing hits for sensitive detector name " << SensitiveDetectorName << G4endl;  
 #endif
   G4TouchableHistory* hist = (G4TouchableHistory*) 
@@ -55,7 +56,7 @@ G4bool BDSCCDPixelSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4int nCCDPixel=hist->GetVolume()->GetCopyNo();
   G4double weight=theTrack->GetWeight();
   
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " Storing hit: nCCDPixel weight" << G4endl;
   G4cout << __METHOD_NAME__ << " " << nCCDPixel <<" "  << weight << G4endl;
 #endif
@@ -64,7 +65,7 @@ G4bool BDSCCDPixelSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
     = new BDSCCDPixelHit(nCCDPixel, weight);
   CCDPixelCollection->insert(pixelHit);
   
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " entries in hits collection after inserting hit: " << CCDPixelCollection->entries() << G4endl;
 #endif
   //The hit was stored, so the return value is "true".

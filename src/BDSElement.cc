@@ -21,7 +21,6 @@
 #include "BDSXYMagField.hh"
 #include "BDSMagFieldSQL.hh"
 #include "G4NystromRK4.hh"
-#include "G4ClassicalRK4.hh"
 #include "G4HelixImplicitEuler.hh"
 
 // geometry drivers
@@ -64,7 +63,7 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap, G4doubl
   itsFieldVolName="";
   itsFieldIsUniform=false;
   itsOuterR = outR;
-  itsBmapZOffset;
+  itsBmapZOffset = bmapZOffset;
   SetType(_ELEMENT);
 
   //Set marker volume lengths
