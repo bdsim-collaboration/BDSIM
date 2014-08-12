@@ -150,7 +150,14 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   
   G4ThreeVector vtx=theTrack->GetVertexPosition();
   G4ThreeVector dir=theTrack->GetVertexMomentumDirection();
-  
+  G4ThreeVector posLastScatter=bdsTraj->GetPositionOfLastScatter(theTrack);
+  G4ThreeVector momDirLastScatter=bdsTraj->GetMomDirAtLastScatter(theTrack);
+  G4double timeLastScatter=bdsTraj->GetTimeAtLastScatter(theTrack);
+  G4double energyLastScatter=bdsTraj->GetEnergyAtLastScatter(theTrack);
+  G4double vertexEnergy=theTrack->GetVertexKineticEnergy() + theTrack->GetParticleDefinition()->GetPDGMass();
+  G4double vertexTime=bdsTraj->GetTimeAtVertex(theTrack);
+
+
   G4double 
     last_scatter_x, last_scatter_xp,
     last_scatter_y, last_scatter_yp,
