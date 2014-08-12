@@ -1,6 +1,7 @@
 #ifndef TRKDrift_h
 #define TRKDrift_h
 
+#include "vector3.hh"
 #include "TRKElement.hh"
 
 class TRKDrift : public TRKElement { 
@@ -10,6 +11,12 @@ public :
   ~TRKDrift(); 
   void Track(const double vIn[], double vOut[], double h); 
   void Track(const double vIn[], double vOut[]);
+
+  // Specific implementations of different tracking routines 
+  void ThinTrack(const double vIn[], double vOut[], double h);
+  void HybridTrack(const double vIn[], double vOut[], double h);
+  void ThickTrack(const double vIn[], double vOut[], double h);
+  
 
 private : 
   
