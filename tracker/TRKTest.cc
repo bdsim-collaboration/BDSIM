@@ -24,6 +24,13 @@ int main() {
   std::cout << "Create Quadrupole" << std::endl;
   TRKQuadrupole quad(quadname,length,size_x,size_y,strength,aper,plac);
   
+  std::cout << "Create Line" << std::endl;
+  TRKLine line("line");
+  line.AddElement(&drift);
+  line.AddElement(&quad);
+  TRKElement* element = line.FindElement("drift");
+  if (element) std::cout << element->GetName() << " has been found" << std::endl;
+
   std::cout << "Test successful!" << std::endl;
   return 0;
 }

@@ -9,7 +9,7 @@
 /**
  * @brief drift tracking
  */
-class TRKDrift : virtual public TRKTrackingElement { 
+class TRKDrift : public TRKTrackingElement { 
 public :
   TRKDrift(std::string name, double length, double size_x, double size_y, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKDrift(); 

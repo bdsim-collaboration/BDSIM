@@ -14,6 +14,11 @@ public :
   TRKElement(std::string name, double length, double size_x, double size_y, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKElement();
 
+  std::string GetName()const {return name;}
+
+  /// output stream
+  friend std::ostream& operator<< (std::ostream &out, const TRKElement &element);
+
 protected : 
   std::string  name;               ///< name of element
   double       length;             ///< length of component [m]

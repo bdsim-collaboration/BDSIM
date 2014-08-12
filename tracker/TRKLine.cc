@@ -1,5 +1,7 @@
 #include "TRKLine.hh"
 
+#include <iostream>
+
 TRKLine::TRKLine(std::string nameIn) :
   TRKTrackingElement(TRKTrackingElement::thin, TRK::DEFAULT_TRACKING_STEPS, nameIn, 0.0, 0.0, 0.0, NULL, NULL)
 {
@@ -9,16 +11,16 @@ TRKLine::~TRKLine()
 {
 }
 
-void Track(const double vIn[], double vOut[]) {
+void TRKLine::Track(const double vIn[], double vOut[]) {
   double vTemp[6];
   /// vTemp = vIn;
   for (int i=0; i<6; i++) {
     vTemp[i]=vIn[i];
   }
 
-  TRKLineIter el_iter = elements.begin();
-  for (;el_start<elements.end(); ++el_start) {
-    (*el_iter)->Track(vTemp,vOut);
+  TRKLineIter elIter = elements.begin();
+  for (;elIter<elements.end(); ++elIter) {
+    (*elIter)->Track(vTemp,vOut);
     /// vTemp = vOut;
     for (int i=0; i<6; i++) {
       vTemp[i]=vOut[i];
@@ -26,22 +28,26 @@ void Track(const double vIn[], double vOut[]) {
   }
 }
 
-void Track(const double vIn[], double vOut[], double h) {
+void TRKLine::Track(const double [], double [], double) {
   /// not sure how to do this
 }
 
-void TRKLine::AddElement(TRKElement* e) {
+void TRKLine::AddElement(TRKTrackingElement* e) {
   elements.push_back(e);
 }
 
-TRKElement* TRKLine::FindElement(std::string eName)const {
+TRKTrackingElement* TRKLine::FindElement(std::string eName)const {
  TRKLineIter elIter = elements.begin();
  TRKLineIter elIterEnd = elements.end();
-  for (;el_start<elIterEnd(); ++el_start) {
-    if (*(elIter)->name == eName) {
+  for (;elIter<elIterEnd; ++elIter) {
+    if ((*elIter)->GetName() == eName) {
       return (*elIter);
     }
   }
   /// if not found return NULL
   return NULL;
 }
+
+void TRKLine::ThinTrack(const double [], double [], double){std::cout << "should not be called" << std::endl;}
+void TRKLine::HybridTrack(const double [], double [], double){std::cout << "should not be called" << std::endl;}
+void TRKLine::ThickTrack(const double [], double [], double){std::cout << "should not be called" << std::endl;}
