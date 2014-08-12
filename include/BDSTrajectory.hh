@@ -20,14 +20,6 @@ public:
   inline int operator == (const BDSTrajectory& right) const
   {return (this==&right);}
 
-  virtual  int GetPointEntries(){
-    return positionRecord->size();
-  }
-  
-  virtual  BDSTrajectoryPoint* GetPoint(G4int i){
-    return (*positionRecord)[i];
-  }
-
   virtual void AppendStep(const G4Step* aStep);
   virtual void MergeTrajectory(const G4VTrajectory* secondTrajectory);
 
@@ -42,7 +34,6 @@ public:
   G4double GetEnergyAtLastScatter(G4Track* aTrack);
 
 private:
-  std::vector<BDSTrajectoryPoint*>* positionRecord;
   std::map<G4int,G4ThreeVector> _positionOfLastScatter;
   std::map<G4int,G4ThreeVector> _momDirAtLastScatter;
   std::map<G4int,G4double> _energyAtLastScatter;

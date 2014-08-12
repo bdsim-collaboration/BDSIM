@@ -18,6 +18,7 @@
 #include "BDSOutputBase.hh" 
 #include "BDSCCDPixelSD.hh"
 #include "BDSCCDPixelHit.hh"
+#include "BDSTrajectory.hh"
 
 #include <list>
 #include <map>
@@ -266,8 +267,8 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #endif
     // clear out trajectories that don't reach point x
     for(iT1=TrajVec->begin();iT1<TrajVec->end();iT1++){
-      this->Traj=(G4VTrajectory*)(*iT1);
-      this->trajEndPoint = this->Traj->GetPoint((int)Traj->GetPointEntries()-1);
+      this->Traj=(BDSTrajectory*)(*iT1);
+      this->trajEndPoint = (BDSTrajectoryPoint*)this->Traj->GetPoint((int)Traj->GetPointEntries()-1);
       this->trajEndPointThreeVector = this->trajEndPoint->GetPosition();
       if(trajEndPointThreeVector.z()/1000.0>BDSGlobalConstants::Instance()->GetTrajCutGTZ()  && 
          (sqrt(pow(trajEndPointThreeVector.x()/1000.0,2) + pow(trajEndPointThreeVector.y()/1000.0,2))<BDSGlobalConstants::Instance()->GetTrajCutLTR())

@@ -4,6 +4,7 @@
 #ifdef USE_ROOT
 
 #include "BDSOutputBase.hh"
+#include "BDSTrajectory.hh"
 
 #include "TROOT.h"
 #include "TH1F.h"
@@ -25,7 +26,7 @@ public:
   /// make energy loss histo
   virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*);
   /// write a trajectory 
-  virtual void WriteTrajectory(std::vector<G4VTrajectory*> &TrajVec);
+  virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec);
   /// write primary hit
   virtual void WritePrimary(G4String samplerName, 
 			    G4double E,

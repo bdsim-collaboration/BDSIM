@@ -5,6 +5,7 @@
 #include "BDSExecOptions.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerCylinder.hh"
+#include "BDSTrajectory.hh"
 
 BDSOutputROOT::BDSOutputROOT():BDSOutputBase()
 {
@@ -350,41 +351,55 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 }
 
 /// write a trajectory to file
-void BDSOutputROOT::WriteTrajectory(std::vector<G4VTrajectory*> &TrajVec){
+void BDSOutputROOT::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec){
   //  G4int tID;
   G4TrajectoryPoint* TrajPoint;
   G4ThreeVector TrajPos;
   
   TTree* TrajTree;
-    
+  
   G4String name = "Trajectories";
   
   TrajTree=(TTree*)gDirectory->Get(name);
-
+  
   if(TrajTree == NULL) { G4cerr<<"TrajTree=NULL"<<G4endl; return;}
   
   if(TrajVec.size())
     {
-      std::vector<G4VTrajectory*>::iterator iT;
+      std::vector<BDSTrajectory*>::iterator iT;
       
       for(iT=TrajVec.begin();iT<TrajVec.end();iT++)
 	{
 	  G4Trajectory* Traj=(G4Trajectory*)(*iT);
 	  
 	  //	  tID=Traj->GetTrackID();	      
+	  
+	  G4int parentID=Traj->GetParentID();
 	  part = Traj->GetPDGEncoding();
 	  
-	  for(G4int j=0; j<Traj->GetPointEntries(); j++)
-	    {
-	      TrajPoint=(G4TrajectoryPoint*)Traj->GetPoint(j);
-	      TrajPos=TrajPoint->GetPosition();
-	      
-	      x = TrajPos.x() / CLHEP::m;
-	      y = TrajPos.y() / CLHEP::m;
-	      z = TrajPos.z() / CLHEP::m;
-
-	      TrajTree->Fill();
+	  G4bool saveTrajectory=true;
+	  
+	  if(!((parentID==0)&&(BDSGlobalConstants::Instance()->GetStoreTrajectory()))){ 
+	    if(!((std::abs(part==13))&&(BDSGlobalConstants::Instance()->GetStoreMuonTrajectories()))){ 
+	      if(!((part==2112)&&(BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories()))){ 
+		saveTrajectory=false;
+	      }
 	    }
+	  }
+	  
+	  if(saveTrajectory){
+	    for(G4int j=0; j<Traj->GetPointEntries(); j++)
+	      {
+		TrajPoint=(G4TrajectoryPoint*)Traj->GetPoint(j);
+		TrajPos=TrajPoint->GetPosition();
+		
+		x = TrajPos.x() / CLHEP::m;
+		y = TrajPos.y() / CLHEP::m;
+		z = TrajPos.z() / CLHEP::m;
+		
+		TrajTree->Fill();
+	      }
+	  }
 	}
     }
 }

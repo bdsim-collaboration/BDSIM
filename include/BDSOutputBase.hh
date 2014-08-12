@@ -3,6 +3,7 @@
 
 #include "BDSSamplerHit.hh"
 #include "BDSEnergyCounterHit.hh"
+#include "BDSTrajectory.hh"
 
 #include "G4Trajectory.hh"
 #include <vector>
@@ -22,7 +23,7 @@ public:
   /// make energy loss histo
   virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*) = 0;
   /// write a trajectory 
-  virtual void WriteTrajectory(std::vector<G4VTrajectory*> &TrajVec) = 0;
+  virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec) = 0;
   /// write primary hit
   virtual void WritePrimary(G4String samplerName, 
 			    G4double E,

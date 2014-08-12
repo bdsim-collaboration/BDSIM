@@ -15,54 +15,9 @@
 
 void BDSUserTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
 {
+  fpTrackingManager->SetStoreTrajectory(true);  //Need to store trajectories to get the position of last scatter etc.
+  fpTrackingManager->SetTrajectory(new BDSTrajectory(aTrack));
   
-  // store muon trajectories
-  if(BDSGlobalConstants::Instance()->GetStoreMuonTrajectories())
-    {
-#ifdef BDSDEBUG 
-      G4cout<<"STORING MUON TRAJECTORIES"<<G4endl;
-#endif
-      if( abs(aTrack->GetDefinition()->GetPDGEncoding())==13)
-	{ fpTrackingManager->SetStoreTrajectory(true); }
-      else
-	{ fpTrackingManager->SetStoreTrajectory(false); }
-    }
-
-  // store neutron trajectories
-  if(BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories())
-    {
-#ifdef BDSDEBUG 
-      G4cout<<"STORING NEUTRON TRAJECTORIES"<<G4endl;
-#endif
-      if( abs(aTrack->GetDefinition()->GetPDGEncoding())==2112)
-	{ fpTrackingManager->SetStoreTrajectory(true); }
-      else
-	{ fpTrackingManager->SetStoreTrajectory(false); }
-    }
-    
-    
-  // store trajectories for primaries
-  if(BDSGlobalConstants::Instance()->GetStoreTrajectory())
-    { 
-#ifdef BDSDEBUG 
-      G4cout<<"STORING PRIMARY TRAJECTORIES"<<G4endl;
-#endif
-      if(aTrack->GetParentID()==0)
-	{ fpTrackingManager->SetStoreTrajectory(true); }
-      else
-	{ fpTrackingManager->SetStoreTrajectory(false); }
-    }
-
-  // store all trajectories
-  if(1){ 
-#ifdef BDSDEBUG 
-    G4cout<<"STORING ALL TRAJECTORIES"<<G4endl;
-#endif
-    fpTrackingManager->SetStoreTrajectory(true); 
-    fpTrackingManager->SetTrajectory(new BDSTrajectory(aTrack));
-  }
- 
-
   /*
     if(aTrack->GetDefinition()->GetParticleName()=="neutron")
     {

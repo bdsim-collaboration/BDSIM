@@ -8,12 +8,9 @@ G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;
 
 
 BDSTrajectory::BDSTrajectory():G4Trajectory(){
-  positionRecord=0;
 }
 
 BDSTrajectory::BDSTrajectory(const G4Track* aTrack):G4Trajectory(aTrack){
-  //  positionRecord = new std::vector<BDSTrajectoryPoint*>;
-  //  positionRecord->push_back(new BDSTrajectoryPoint(aTrack));
   _positionOfLastScatter[aTrack->GetTrackID()]=aTrack->GetPosition();
   _momDirAtLastScatter[aTrack->GetTrackID()]=aTrack->GetMomentumDirection();
   _energyAtLastScatter[aTrack->GetTrackID()]=aTrack->GetTotalEnergy();
