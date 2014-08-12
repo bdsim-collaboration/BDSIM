@@ -212,8 +212,8 @@ public:
   const G4AffineTransform* GetRefTransform();
   void                     SetRefTransform(G4AffineTransform& aTransform);
 
-  G4double GetZMax();
-  void     SetZMax(G4double);
+  G4double GetSMax();
+  void     SetSMax(G4double);
   G4ThreeVector GetTeleporterDelta();
   void          SetTeleporterDelta(G4ThreeVector newteleporterdelta);
   void          SetTeleporterLength(G4double newteleporterlength);
@@ -396,7 +396,7 @@ private:
   G4ThreeVector teleporterdelta;
   G4double      teleporterlength;
   // beamline length
-  G4double itsZMax;
+  G4double itsSMax;
   // logical volume info
   std::map<G4LogicalVolume* , BDSLogicalVolumeInfo*> logicalvolumeinfo;
 };
@@ -863,8 +863,11 @@ inline G4int BDSGlobalConstants::GetTurnsToTake()
 inline void  BDSGlobalConstants::SetTurnsToTake(G4int TurnsToTake)
 {itsTurnsToTake = TurnsToTake;}
 
-inline G4double BDSGlobalConstants::GetZMax() {return itsZMax;}
-inline void BDSGlobalConstants::SetZMax(G4double zm){itsZMax=zm;}
+inline G4double BDSGlobalConstants::GetSMax() 
+{return itsSMax;}
+
+inline void BDSGlobalConstants::SetSMax(G4double smax)
+{itsSMax=smax;}
 
 inline G4ThreeVector BDSGlobalConstants::GetTeleporterDelta()
 {return teleporterdelta;}
