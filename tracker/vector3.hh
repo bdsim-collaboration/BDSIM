@@ -9,6 +9,7 @@ class vector3 {
     double y;
     double z; 
   }
+
   ~vector3() {};
   double& X() {return x;}  
   double& Y() {return y;}
@@ -27,23 +28,23 @@ class vector3 {
     return *this;
   }
   
-  vector3& operator+(vector3 rhs) {
+  vector3 operator+(vector3 rhs) {
     vector3 v;
     v.x = x + rhs.x;
     v.y = y + rhs.y; 
     v.z = z + rhs.z;
-    return v;
+    return *this;
   }
 
-  vector3& operator-(vector3 rhs) {
+  vector3 operator-(vector3 rhs) {
     vector3 v;
     v.x = x - rhs.x;
     v.y = y - rhs.y;
     v.z = z - rhs.z; 
-    return v;
+    return *this;
   }
 
-  vector3& operator*(double d) { 
+  vector3 operator*(double d) { 
     vector3 v;
     v.x = x*d;
     v.y = y*d;
@@ -51,7 +52,7 @@ class vector3 {
     return v;
   }
   
-  vector3& operator/(double d) { 
+  vector3 operator/(double d) { 
     vector3 v;
     v.x = x/d;
     v.y = y/d;

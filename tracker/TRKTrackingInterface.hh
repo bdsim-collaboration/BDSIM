@@ -1,10 +1,13 @@
 #ifndef TRKTrackingInterface_h
 #define TRKTrackingInterface_h
 
+#define DEFAULT_TRACKING_STEPS 10;
+
 class TRKTrackingInterface {
 public : 
-  enum TRKtype {thin, thick, hybrid};
+  enum TRKType {thin, thick, hybrid};
   TRKTrackingInterface();
+  TRKTrackingInterface(TRKtype type, int trackingSteps);
   virtual ~TRKTrackingInterface(); 
 
   /**
@@ -21,7 +24,9 @@ public :
   virtual void ThinTrack(const double vIn[], double vOut[], double h) = 0;
   virtual void HybridTrack(const double vIn[], double vOut[], double h) = 0;
   virtual void ThickTrack(const double vIn[], double vOut[], double h) = 0;
-    
+
+  TRKType trackingType() {return type;}
+      
 protected: 
 
   TRKtype type;
