@@ -2,7 +2,6 @@
 #include "BDSTrajectoryPoint.hh"
 #include "G4AttDef.hh"
 #include <map>
-#include <iterator>
 
 BDSTrajectory::BDSTrajectory(const G4Track* aTrack):G4RichTrajectory(aTrack){
 }

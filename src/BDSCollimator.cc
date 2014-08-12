@@ -10,7 +10,6 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
 #include "G4EllipticalTube.hh"
-#include "G4SubtractionSolid.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
 

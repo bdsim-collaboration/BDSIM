@@ -128,7 +128,7 @@
 #include "BDSLaserCompton.hh"
 #include "BDSSynchrotronRadiation.hh"
 #include "BDSContinuousSR.hh"
-#include "G4StepLimiter.hh"
+//#include "G4StepLimiter.hh"
 #include "G4UserSpecialCuts.hh"
 
 //

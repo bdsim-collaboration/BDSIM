@@ -2,7 +2,6 @@
 #include "G4AttDef.hh"
 #include "G4AttValue.hh"
 #include <map>
-#include <iterator>
 
 BDSTrajectoryPoint::BDSTrajectoryPoint():G4RichTrajectoryPoint(){
 }
