@@ -2,15 +2,13 @@
 #define TRKDrift_h
 
 #include "vector3.hh"
-#include "TRKElement.hh"
+#include "TRKTrackingElement.hh"
 
-class TRKDrift : public TRKElement { 
+class TRKDrift : public TRKTrackingElement { 
 public :
   TRKDrift();
-  TRKDrift(std::string name, double length, double size_x, double size_y, TRKApertureInterface *aperture, TRKPlacement *placement);
+  TRKDrift(std::string name, double length, double size_x, double size_y, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKDrift(); 
-  void Track(const double vIn[], double vOut[], double h); 
-  void Track(const double vIn[], double vOut[]);
 
   // Specific implementations of different tracking routines 
   void ThinTrack(const double vIn[], double vOut[], double h);

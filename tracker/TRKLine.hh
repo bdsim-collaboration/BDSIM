@@ -3,11 +3,11 @@
 
 #include <vector>
 
-#include "TRKElement.hh"
+#include "TRKTrackingElement.hh"
 
-class TRKLine : public TRKElement {
+class TRKLine : public TRKTrackingElement {
 private: 
-  std::vector<TRKTrackingInterface*> elements;
+  std::vector<TRKTrackingElement*> elements;
 
 public:
   TRKLine();

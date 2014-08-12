@@ -1,14 +1,21 @@
-#ifndef TRKTrackingInterface_h
-#define TRKTrackingInterface_h
+#ifndef TRKTrackingElement_h
+#define TRKTrackingElement_h
 
 #define DEFAULT_TRACKING_STEPS 10;
 
-class TRKTrackingInterface {
+#include "TRKAperture.hh"
+#include "TRKElement.hh"
+
+class TRKTrackingElement : public TRKElement {
 public : 
   enum TRKType {thin, thick, hybrid};
-  TRKTrackingInterface();
-  TRKTrackingInterface(TRKtype type, int trackingSteps);
-  virtual ~TRKTrackingInterface(); 
+  TRKTrackingElement();
+  TRKTrackingElement(TRKType type, int trackingSteps, TRKElement &e);
+  TRKTrackingElement(TRKType type, int trackingSteps, 
+		     std::string name, double length, 
+		     double size_x, double size_y, TRKAperture *aperture, TRKPlacement *placement);
+		     
+  virtual ~TRKTrackingElement(); 
 
   /**
    * Tracks a 6-dim vector
@@ -17,8 +24,8 @@ public :
    * @param[in]  h    The step length relative to the full length of the element
   */
 
-  virtual void Track(const double vIn[], double vOut[], double h) = 0;
-  virtual void Track(const double vIn[], double vOut[]) = 0;
+  virtual void Track(const double vIn[], double vOut[], double h);
+  virtual void Track(const double vIn[], double vOut[]);
 
   // type of tracking 
   virtual void ThinTrack(const double vIn[], double vOut[], double h) = 0;
@@ -29,7 +36,7 @@ public :
       
 protected: 
 
-  TRKtype type;
+  TRKType type;
   int trackingSteps;
 
 };
