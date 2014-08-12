@@ -345,7 +345,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
       G4cout<<"s_tot="<<s_tot/CLHEP::m<<" m"<<G4endl;
     }
 
-  BDSGlobalConstants::Instance()->SetZMax(s_tot);
+  BDSGlobalConstants::Instance()->SetSMax(s_tot);
 
   solidWorld = new G4Box("World", GetWorldSizeX(), GetWorldSizeY(), GetWorldSizeZ());
     
@@ -363,7 +363,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   // G4StepLimiter process enabled)
 #ifndef NOUSERLIMITS
   G4UserLimits* WorldUserLimits =new G4UserLimits();
-  WorldUserLimits->SetMaxAllowedStep(10*CLHEP::m);
+  WorldUserLimits->SetMaxAllowedStep(GetWorldSizeZ());
   WorldUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   WorldUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   logicWorld->SetUserLimits(WorldUserLimits);

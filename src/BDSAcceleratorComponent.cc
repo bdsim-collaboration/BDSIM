@@ -124,7 +124,8 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
   //  itsInnerBeampipeUserLimits =new G4UserLimits();
 #ifndef NOUSERLIMITS
   itsUserLimits = new G4UserLimits();
-  itsUserLimits->SetMaxAllowedStep(itsLength);
+  //  itsUserLimits->SetMaxAllowedStep(itsLength);
+  itsUserLimits->SetMaxAllowedStep(1*CLHEP::m);
   itsUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   itsUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
 #endif

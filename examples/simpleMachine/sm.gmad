@@ -1,24 +1,47 @@
+d0: drift, l=0.01*mm;
 d1: drift, l=2*m;
 d2: drift, l=1*m;
 q1: quadrupole, l=10*m, k1=0.000000000000001;
-c1: rcol, l=20*m, ysize=5*mm, xsize=5*mm, material="Copper", precisionRegion=1;
+c1: rcol, l=1*mm, ysize=5*mm, xsize=5*mm, material="Copper", precisionRegion=1;
+m0: marker;
 m1: marker;
-l1: line = (c1,m1,d2);
+
+l1: line = (d0, m0, d1,
+c1,
+m1,d2);
 use,period=l1;
-!sample, range=d1;
-!sample, range=m1;
-sample, range=d2;
-	
-option, physicsList="em_standard",
+sample, range=d1;
+sample, range=m0;
+sample, range=m1;
+!sample, range=d2;
+option, ngenerate=100,
+!	physicsList="QGSP_BERT",
+	physicsList="em_standard",
 	beampipeRadius=5.0*cm,
 	beampipeThickness=5*cm,
 	boxSize=2.0*m,
 	tunnelRadius=2*m;
 
-beam, particle="proton",
+factor=1;
+
+option,        chordStepMinimum    = 0.0000000000001 * m * factor,
+        deltaIntersection   = 0.00000000001 * m * factor,
+        deltaChord          = 0.000001 * m * factor,
+        lengthSafety        = 0 * m,
+        thresholdCutCharged = 1 * keV,
+        thresholdCutPhotons = 1 * keV,
+	defaultRangeCut=1*cm,	
+	prodCutPositrons=1*cm,
+	prodCutElectrons=1*cm,
+	prodCutPhotons=1*cm,
+	prodCutPositronsP=1*cm,
+	prodCutElectronsP=1*cm,
+	prodCutPhotonsP=1*cm;
+
+beam, particle="e-",
       energy=10.0*GeV,
       distrType="reference",
       X0=0.0,
       Y0=0.0,
-      Yp0=0.001;
+      Yp0=0.01;
 

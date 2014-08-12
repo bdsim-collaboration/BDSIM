@@ -130,11 +130,11 @@ void BDSCollimator::BuildInnerCollimator()
       new G4LogicalVolume(itsInnerSolid,
 			  BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			  itsName+"_inner_log");
-
+    
 #ifndef NOUSERLIMITS
-  itsInnerLogVol-> SetUserLimits(itsUserLimits);
+    itsInnerLogVol-> SetUserLimits(itsUserLimits);
 #endif
-
+    
   }
   
   itsOuterSolid = new G4Box(itsName+"_outer_solid",

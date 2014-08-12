@@ -198,7 +198,8 @@ BDSPhysicsList::BDSPhysicsList():  G4VUserPhysicsList()
   theMieHGScatteringProcess    = NULL;
   theBoundaryProcess           = NULL;
 
-  theStandardPhysList          = NULL;
+  theReferenceHadronicPhysList = NULL;
+  theReferenceEmPhysList       = NULL;
   theBDSIMPhysList             = NULL;
   theHadPhysList1              = NULL;
   theHadPhysList2              = NULL;
@@ -224,7 +225,8 @@ BDSPhysicsList::BDSPhysicsList():  G4VUserPhysicsList()
 
 BDSPhysicsList::~BDSPhysicsList()
 {
-  delete theStandardPhysList;
+  delete theReferenceHadronicPhysList;
+  delete theReferenceEmPhysList;
   delete theBDSIMPhysList;
   delete theHadPhysList1;
   delete theHadPhysList2;
@@ -238,47 +240,49 @@ void BDSPhysicsList::ConstructProcess()
 
   bool plistFound=false;
   //standard physics lists
-  if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP"){
+  if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT"){
 #if G4VERSION_NUMBER < 1000
-    theStandardPhysList = new HadronPhysicsQGSP_BERT_HP();
+    theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT();
 #else
-    theStandardPhysList = new G4HadronPhysicsQGSP_BERT_HP();
+    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT();
 #endif
-    theStandardPhysList->ConstructProcess();
+    theReferenceEmPhysList = new G4EmStandardPhysics();
+    theReferenceHadronicPhysList->ConstructProcess();
+    theReferenceEmPhysList->ConstructProcess();
     plistFound=true;
-  } else if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT"){
+  } else if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP"){
 #if G4VERSION_NUMBER < 1000
-    theStandardPhysList = new HadronPhysicsQGSP_BERT();
+    theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT_HP();
 #else
-    theStandardPhysList = new G4HadronPhysicsQGSP_BERT();
+    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT_HP();
 #endif
-    theStandardPhysList->ConstructProcess();
+    theReferenceHadronicPhysList->ConstructProcess();
     plistFound=true;
   } else if (BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP_muon"){ //Modified standard physics lists
 #if G4VERSION_NUMBER < 1000
-    theStandardPhysList = new HadronPhysicsQGSP_BERT_HP();
+    theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT_HP();
 #else
-    theStandardPhysList = new G4HadronPhysicsQGSP_BERT_HP();
+    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT_HP();
 #endif
-    theStandardPhysList->ConstructProcess();
+    theReferenceHadronicPhysList->ConstructProcess();
     ConstructMuon();
     plistFound=true;
   } else if (BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_muon"){
 #if G4VERSION_NUMBER < 1000
-    theStandardPhysList = new HadronPhysicsQGSP_BERT();
+    theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT();
 #else
-    theStandardPhysList = new G4HadronPhysicsQGSP_BERT();
+    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT();
 #endif
-    theStandardPhysList->ConstructProcess();
+    theReferenceHadronicPhysList->ConstructProcess();
     ConstructMuon();
     plistFound=true;
   } else if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP_muon_em_low"){
 #if G4VERSION_NUMBER < 1000
-    theStandardPhysList = new HadronPhysicsQGSP_BERT_HP();
+    theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT_HP();
 #else
-    theStandardPhysList = new G4HadronPhysicsQGSP_BERT_HP();
+    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT_HP();
 #endif
-    theStandardPhysList->ConstructProcess();
+    theReferenceHadronicPhysList->ConstructProcess();
     ConstructMuon();
     ConstructEM_Low_Energy();
     plistFound=true;
@@ -297,24 +301,7 @@ void BDSPhysicsList::ConstructProcess()
   }
 
 
-  if(!plistFound){
-    //Need to add transportation if non-standard physics list
-    AddTransportation();
-  }
-  
-  //Apply the following in all cases - step limiter etc.
-  theParticleIterator->reset();
-  while( (*theParticleIterator)() ){
-    G4ParticleDefinition* particle = theParticleIterator->value();
-    if((particle->GetParticleName()=="gamma")||(particle->GetParticleName()=="e-")||(particle->GetParticleName()=="e+")){
-      particle->SetApplyCutsFlag(true);
-    }
-    G4ProcessManager *pmanager = particle->GetProcessManager();
-    //    pmanager->AddProcess(new G4StepLimiter,-1,-1,1);
-#ifndef NOUSERSPECIALCUTS
-    pmanager->AddDiscreteProcess(new G4UserSpecialCuts);
-#endif
-  }
+
   
   //===========================================
   //Some options
@@ -345,6 +332,26 @@ void BDSPhysicsList::ConstructProcess()
   //Optical processes
   ConstructOptical();
   //============================================
+
+  if(!plistFound){
+    //Need to add transportation and step limiter if non-standard physics list
+    AddTransportation();
+  }
+
+
+  theParticleIterator->reset();
+  while( (*theParticleIterator)() ){
+    G4ParticleDefinition* particle = theParticleIterator->value();
+    if((particle->GetParticleName()=="gamma")||(particle->GetParticleName()=="e-")||(particle->GetParticleName()=="e+")){
+    particle->SetApplyCutsFlag(true);
+    }
+    G4ProcessManager *pmanager = particle->GetProcessManager();
+    pmanager->AddProcess(new G4StepLimiter,-1,-1,1);
+#ifndef NOUSERSPECIALCUTS
+    pmanager->AddDiscreteProcess(new G4UserSpecialCuts);
+#endif
+  }
+
   
   if(plistFound) return;
   //Search BDSIM physics lists
@@ -471,8 +478,13 @@ void BDSPhysicsList::ConstructProcess()
 void BDSPhysicsList::ConstructParticle()
 {
   //standard physics lists
-  if (theStandardPhysList) {
-    theStandardPhysList->ConstructParticle();
+  if (theReferenceHadronicPhysList || theReferenceEmPhysList) {
+    if (theReferenceHadronicPhysList) {
+      theReferenceHadronicPhysList->ConstructParticle();
+    }
+    if (theReferenceEmPhysList) {
+      theReferenceEmPhysList->ConstructParticle();
+    }
   } else {
     // pseudo-particles
     G4Geantino::GeantinoDefinition();
