@@ -1,11 +1,9 @@
 #include "TRKDrift.hh"
 
-TRKDrift::TRKDrift() {}
 TRKDrift::TRKDrift(std::string nameIn, double lengthIn, double size_xIn, double size_yIn, 
 		   TRKAperture *apertureIn, TRKPlacement *placementIn) :
-  TRKTrackingElement(TRKTrackingElement::thin, 10, nameIn,lengthIn, size_xIn, size_yIn, apertureIn, placementIn)
+  TRKTrackingElement(TRKTrackingElement::thin, TRK::DEFAULT_TRACKING_STEPS, nameIn,lengthIn, size_xIn, size_yIn, apertureIn, placementIn)
 {
-  
 }
 
 TRKDrift::~TRKDrift() {}
@@ -16,8 +14,7 @@ void TRKDrift::ThinTrack(const double vIn[], double vOut[], double h) {
   
   vector3 dv = vp0.unit()*h;
   vector3 v1 = v0 + dv;
-  return v1.setArray(vOut);
-  
+  v1.setArray(vOut);
 }
 
 void TRKDrift::HybridTrack(const double vIn[], double vOut[], double h) {  

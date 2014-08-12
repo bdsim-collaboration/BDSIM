@@ -27,3 +27,11 @@ add_library(tracker STATIC ${TRKsources})
 add_library(trackerShared SHARED ${TRKsources})
 
 bdsim_install_targets(tracker)
+
+# add test executable
+add_executable(TRKTest TRKTest.cc)
+set_target_properties(TRKTest PROPERTIES OUTPUT_NAME "TRKTest" VERSION ${BDSIM_VERSION})
+target_link_libraries(TRKTest tracker)
+
+# set binary
+set (binary TRKTest)
