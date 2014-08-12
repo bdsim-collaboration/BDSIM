@@ -44,9 +44,8 @@ typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
 //============================================================
-#define DEBUG 1
 BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*pi/180.0, G4double windowThickness=0, G4String windowMaterial=""):
-  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0, SetVisAttributes()),_material(material), _thickness(thickness), _screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
+  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0, SetVisAttributes()), _mlScreen(NULL), _camera(NULL), _material(material), _thickness(thickness), _screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
 {
   _vacChambType=2;
   //Set as part of precision region (for energy loss monitoring)
@@ -608,4 +607,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber2(){
 BDSAwakeScintillatorScreen::~BDSAwakeScintillatorScreen()
 {
   delete itsVisAttributes;
+  delete _mlScreen;
+  delete _camera;
+  delete _vacRotationMatrix;
 }

@@ -95,5 +95,6 @@ void BDSCCDChip::buildPixels(){
 
 BDSCCDChip::~BDSCCDChip()
 {
+  delete _pixel;
 }
 

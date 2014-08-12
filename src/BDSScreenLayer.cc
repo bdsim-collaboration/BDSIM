@@ -125,13 +125,9 @@ void BDSScreenLayer::frontInternalMirror(){
 BDSScreenLayer::InternalMirror::~InternalMirror(){
 }
 
-BDSScreenLayer::InternalMirror::InternalMirror(){
-  _thickness=1e-9*CLHEP::m; 
-}
-
 BDSScreenLayer::InternalMirror::InternalMirror(G4int varside, G4ThreeVector size, G4String material, G4LogicalVolume* motherLog, G4PVPlacement* motherPhys):_side(varside),_motherSize(size),_motherMaterial(material),_motherLog(motherLog),_motherPhys(motherPhys)
 {
-  InternalMirror();
+  _thickness=1e-9*CLHEP::m; 
   compute();
   geom();
   place();

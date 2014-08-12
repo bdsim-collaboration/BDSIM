@@ -69,8 +69,8 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
 G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
   G4Track* theTrack = aStep->GetTrack();
-  BDSTrajectory* bdsTraj = new BDSTrajectory(theTrack);
 #ifdef BDSDEBUG
+  BDSTrajectory* bdsTraj = new BDSTrajectory(theTrack);
   bdsTraj->printRichDataOfSteps();
 #endif
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();

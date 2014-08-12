@@ -26,7 +26,7 @@ class BDSAwakeScintillatorScreen :public BDSAcceleratorComponent
 {
 public:
   BDSAwakeScintillatorScreen(G4String aName, G4String material, G4double thickness, G4double angle, G4double windowThickness, G4String windowMaterial);
-  ~BDSAwakeScintillatorScreen();
+  virtual ~BDSAwakeScintillatorScreen();
 
 protected:
 

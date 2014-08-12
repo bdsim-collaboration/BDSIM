@@ -175,5 +175,9 @@ void BDSCCDCamera::placeCCDChip(){
 
 BDSCCDCamera::~BDSCCDCamera()
 {
+  delete _objectLens;
+  delete _imageLens;
+  delete _ccdChip;
+
 }
 
