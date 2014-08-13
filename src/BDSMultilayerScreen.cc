@@ -6,11 +6,9 @@
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
-#include "G4TransportationManager.hh"
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
 
-#include "G4SDManager.hh"
 #include "BDSMultilayerScreen.hh"
 
 //============================================================

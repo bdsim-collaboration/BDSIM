@@ -4,7 +4,6 @@
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
 #include "G4Tubs.hh"
 #include "BDSDebug.hh"
@@ -12,7 +11,6 @@
 #include "G4IntersectionSolid.hh"
 #include "G4Orb.hh"
 
-#include "G4UserLimits.hh"
 #include "BDSDebug.hh"
 
 //============================================================

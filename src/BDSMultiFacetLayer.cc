@@ -6,8 +6,6 @@
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
-#include "G4SubtractionSolid.hh"
-#include "G4TransportationManager.hh"
 
 //============================================================
 BDSMultiFacetLayer::BDSMultiFacetLayer (G4String name, BDSLensFacet* facet, G4double gapWidth, G4double nFacets):

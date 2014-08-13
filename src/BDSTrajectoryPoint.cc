@@ -1,6 +1,5 @@
 #include "BDSTrajectoryPoint.hh"
 #include <map>
-#include <iterator>
 #include "G4Allocator.hh"
 #include "G4ProcessType.hh"
 #include "G4VProcess.hh"
