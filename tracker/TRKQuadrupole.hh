@@ -8,10 +8,11 @@
  */
 class TRKQuadrupole : public TRKTrackingElement {
 private: 
+  /// strength in Tesla/meter
   double strength;
 
 public :   
-  TRKQuadrupole(std::string name, double length, double size_x, double size_y, double strength, TRKAperture *aperture, TRKPlacement *placement);
+  TRKQuadrupole(double strength, TRKTrackingElement::TRKType type, int steps, std::string name, double length, double size_x, double size_y, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKQuadrupole();
   
 protected:

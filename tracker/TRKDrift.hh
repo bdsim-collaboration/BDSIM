@@ -11,7 +11,7 @@
  */
 class TRKDrift : public TRKTrackingElement { 
 public :
-  TRKDrift();
+  //  TRKDrift();
   TRKDrift(TRKTrackingElement::TRKType, int trackingSteps, 
 	   std::string name, double length, double size_x, double size_y, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKDrift(); 

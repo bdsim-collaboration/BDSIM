@@ -1,3 +1,6 @@
+#ifndef vector3_h
+#define vector3_h
+
 #include <cmath>
 
 class vector3 { 
@@ -85,3 +88,5 @@ class vector3 {
     double y;
     double z;   
 };
+
+#endif

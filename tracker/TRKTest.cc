@@ -17,12 +17,15 @@ int main() {
   TRKPlacement* plac = NULL;
 
   std::cout << "Create Drift" << std::endl;
-  TRKDrift drift(driftname,length,size_x,size_y,aper,plac);
+  TRKTrackingElement::TRKType type = TRKTrackingElement::thin;
+  TRKDrift drift(type, TRK::DEFAULT_TRACKING_STEPS,
+		 driftname,length,size_x,size_y,aper,plac);
 
   std::string quadname = "quad";
   double strength = 1.0;
   std::cout << "Create Quadrupole" << std::endl;
-  TRKQuadrupole quad(quadname,length,size_x,size_y,strength,aper,plac);
+  TRKQuadrupole quad(strength, type, TRK::DEFAULT_TRACKING_STEPS,
+		     quadname,length,size_x,size_y,aper,plac);
   
   std::cout << "Create Line" << std::endl;
   TRKLine line("line");
