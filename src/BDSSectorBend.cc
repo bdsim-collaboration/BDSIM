@@ -40,7 +40,6 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
   itsTilt=tilt;
   itsBField=bField;
   itsBGrad=bGrad;
-  itsType="sbend";
 
   if (!(*LogVolCount)[itsName])
     {

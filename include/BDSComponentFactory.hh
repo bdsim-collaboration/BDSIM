@@ -34,7 +34,8 @@ private:
   std::list<BDSAcceleratorComponent*> itsBeamline;
   /// parser data
   Element _element, _previousElement, _nextElement;
-  /// method to add common properties like aperture after creation
+  /// method to add common properties (not needed at creation!)
+  /// like aperture after creation
   void addCommonProperties(BDSAcceleratorComponent* element);
   BDSAcceleratorComponent* createSampler();
   BDSAcceleratorComponent* createCSampler();
@@ -52,8 +53,7 @@ private:
   BDSAcceleratorComponent* createMultipole();
   BDSAcceleratorComponent* createElement();
   BDSAcceleratorComponent* createSolenoid();
-  BDSAcceleratorComponent* createECol();
-  BDSAcceleratorComponent* createRCol();
+  BDSAcceleratorComponent* createCollimator();
   BDSAcceleratorComponent* createMuSpoiler();
   BDSAcceleratorComponent* createLaser();
   BDSAcceleratorComponent* createScreen();

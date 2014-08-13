@@ -40,7 +40,6 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
 {
   SetOuterRadius(outR);
   itsTilt=tilt;
-  itsType="deca";
 
   if (!(*LogVolCount)[itsName])
     {

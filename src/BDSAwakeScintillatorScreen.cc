@@ -53,8 +53,6 @@ BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String
 
   _vacRotationMatrix = new G4RotationMatrix();
 
-  itsType="awakescreen";
-  SetName(aName);
   if ( (*LogVolCount)[itsName]==0)
     {
       Build();

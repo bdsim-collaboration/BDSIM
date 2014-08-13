@@ -699,7 +699,7 @@ void BDSAcceleratorComponent::BuildBLMs()
        assemblyBlms->AddPlacedVolume(itsBLMLogicalVolume,blmTr3d);
        assemblyBlms->AddPlacedVolume(itsBlmCaseLogicalVolume,blmTr3d);
    }  
-   if (itsType=="sbend" || itsType=="rbend"){
+   if (itsType=="sbend" || itsType=="rbend"){ // should ideally not be here - JS
      blmRot.setTheta(CLHEP::twopi/4.0);
      blmRot.setPsi(-CLHEP::twopi/4.0);
      blmRot.setPhi(CLHEP::twopi/4.0);
@@ -716,7 +716,7 @@ void BDSAcceleratorComponent::BuildBLMs()
  }
 }
 
-//This Method is for investigating the Anomalous signal at LHc junction IP8
+//This Method is for investigating the Anomalous signal at LHC junction IP8
 
 void BDSAcceleratorComponent::BuildGate()
 {

@@ -212,12 +212,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating ecol" << G4endl;
 #endif
-    element = createECol(); break; 
+    element = createCollimator(); break; 
   case _RCOL:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating rcol" << G4endl;
 #endif
-    element = createRCol(); break; 
+    element = createCollimator(); break; 
   case _MUSPOILER:    
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating muspoiler" << G4endl;
@@ -280,8 +280,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
   return element;
 }
 
-void BDSComponentFactory::addCommonProperties(BDSAcceleratorComponent* element) {
-  element->SetPrecisionRegion(_element.precisionRegion);
+void BDSComponentFactory::addCommonProperties(BDSAcceleratorComponent* component) {
+  component->SetPrecisionRegion(_element.precisionRegion);
+  component->SetType(typestr(_element.type));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSampler(){
@@ -1154,39 +1155,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid(){
 			   ) );
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createECol(){
-
-  G4Material* theMaterial;
-  if(_element.material != "")
-    theMaterial = BDSMaterials::Instance()->GetMaterial( _element.material );
-  else
-    theMaterial = BDSMaterials::Instance()->GetMaterial( "Graphite" );
-  
-#ifdef BDSDEBUG 
-  G4cout << "---->creating Ecol,"
-	 << " name= " << _element.name 
-	 << " xaper= " << _element.xsize <<"m"
-	 << " yaper= " << _element.ysize <<"m"
-	 << " material= " << _element.material
-	 << " tunnel material " << _element.tunnelMaterial
-	 << G4endl;
-#endif
-
-  return (new BDSCollimator(_element.name,
-			    _element.l * CLHEP::m,
-			    _bpRad,
-			    _element.xsize * CLHEP::m,
-			    _element.ysize * CLHEP::m,
-			    _ECOL,
-			    theMaterial,
-			    _element.outR*CLHEP::m,
-			    _element.blmLocZ,
-			    _element.blmLocTheta,
-			    _element.tunnelMaterial) );
-}
-
-
-BDSAcceleratorComponent* BDSComponentFactory::createRCol(){
+BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
 
   G4Material* theMaterial;
   if(_element.material != "")
@@ -1195,7 +1164,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRCol(){
     theMaterial = BDSMaterials::Instance()->GetMaterial( "Graphite" );
 
 #ifdef BDSDEBUG 
-  G4cout << "---->creating Rcol,"
+  G4cout << "---->creating " << typestr(_element.type) << ","
 	 << " name= " << _element.name 
 	 << " xaper= " << _element.xsize <<"m"
 	 << " yaper= " << _element.ysize <<"m"
@@ -1218,18 +1187,18 @@ BDSAcceleratorComponent* BDSComponentFactory::createRCol(){
     _element.outR*CLHEP::m) );
 
   */
+
   return (new BDSCollimator( _element.name,
 			     _element.l * CLHEP::m,
 			     _bpRad,
 			     _element.xsize * CLHEP::m,
 			     _element.ysize * CLHEP::m,
-			     _RCOL,
+			     typestr(_element.type),
 			     theMaterial,
 			     _element.outR*CLHEP::m,
 			     _element.blmLocZ,
 			     _element.blmLocTheta,
 			     _element.tunnelMaterial) );
-      
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){

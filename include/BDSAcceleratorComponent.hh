@@ -252,7 +252,7 @@ protected:
   G4double itsZOffset;
   G4double itsTunnelRadius;
   G4double itsTunnelOffsetX;  
-
+  /// component type, same as from typestr from enums.cc
   G4String itsType;
 
   G4double itsTilt;

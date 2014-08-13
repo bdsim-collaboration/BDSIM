@@ -45,7 +45,6 @@ BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength,
 {
   SetOuterRadius(outR);
   itsTilt=tilt;
-  itsType="multipole";
 
 #ifdef BDSDEBUG
   if (akn.size()>0){

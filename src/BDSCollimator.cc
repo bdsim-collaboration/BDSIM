@@ -14,7 +14,6 @@
 #include "G4TransportationManager.hh"
 
 #include "G4UserLimits.hh"
-#include "parser/enums.h"
 #include <map>
 
 //============================================================
@@ -27,7 +26,7 @@ extern LogVolMap* LogVol;
 //============================================================
 
 BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
-			      G4double xAper,G4double yAper, G4int type,
+			      G4double xAper,G4double yAper, G4String type,
 			      G4Material *CollimatorMaterial, G4double outR, 
                               std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
                               G4String aTunnelMaterial):
@@ -41,8 +40,7 @@ BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
   itsInnerTunnelUserLimits(NULL), itsEqRhs(NULL),
   itsCollimatorMaterial(CollimatorMaterial), itsOuterR(outR)
 {
-  if(type==_RCOL) itsType="rcol";
-  if(type==_ECOL) itsType="ecol";
+  SetType(type);
 
   if(itsOuterR==0) itsOuterR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
 
