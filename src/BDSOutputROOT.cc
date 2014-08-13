@@ -320,8 +320,11 @@ void BDSOutputROOT::WriteTrajectory(std::vector<G4VTrajectory*> &TrajVec){
 void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 {
   G4int n_hit = hc->entries();
+  G4cout << "n_hit " << n_hit << G4endl;
   for (G4int i=0;i<n_hit;i++)
     {
+      G4cout << "ENERGY: " << (*hc)[i]->GetEnergy() << G4endl;
+
       //all regions fill the energy loss tree....
       E_el=(*hc)[i]->GetEnergy()/CLHEP::GeV;
       s_el=(*hc)[i]->GetEnergyWeightedS()*10*(1e-6)/(CLHEP::cm*E_el);

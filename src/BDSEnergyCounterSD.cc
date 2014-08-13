@@ -67,11 +67,15 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 { 
   if(BDSGlobalConstants::Instance()->GetStopTracks())
     enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit()); // Why subtract the energy deposit of the step? Why not add?
+  //this looks like accounting for conservation of energy when you're killing a particle
+  //which may normally break energy conservation for the whole event
+  //see developer guide 6.2.2...
   else
     enrg = aStep->GetTotalEnergyDeposit();
 #ifdef BDSDEBUG
   G4cout << "BDSEnergyCounterSD> enrg = " << enrg << G4endl;
 #endif
+  //if the energy is 0, don't do anything
   if (enrg==0.) return false;      
   
   G4int nCopy=aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();
@@ -131,8 +135,25 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
    if (regionName.contains((G4String)"precisionRegion")) {
      precisionRegion=true;
    }
+   //G4bool precisionRegion = get this info from the logical volume in future
+   
    G4int turnstaken    = BDSGlobalConstants::Instance()->GetTurnsTaken();
    
+   //LN TEST
+   BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
+							enrg,
+							xpos,
+							ypos,
+							zpos,
+							spos,
+							volName, 
+							ptype, 
+							weight, 
+							precisionRegion,
+							turnstaken);
+   // don't worry, won't add 0 energy tracks as filtered at top by if statement
+   BDSEnergyCounterCollection->insert(ECHit);
+   /*
    if ((HitID[nCopy]==-1) || precisionRegion)
      {
        BDSEnergyCounterHit* ECHit 
@@ -152,6 +173,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
    else {
      (*BDSEnergyCounterCollection)[HitID[nCopy]]-> AddEnergyWeightedPosition(enrg, xpos, ypos, zpos, spos, weight);
    }
+   */
    
    if(BDSGlobalConstants::Instance()->GetStopTracks())
      aStep->GetTrack()->SetTrackStatus(fStopAndKill);
@@ -229,6 +251,23 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
   int ptype = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetDefinition()->GetPDGEncoding();
 
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  
+  BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
+							enrg,
+							xpos,
+							ypos,
+							zpos,
+							spos,
+							volName, 
+							ptype, 
+							weight, 
+							0,
+							turnstaken);
+  // don't worry, won't add 0 energy tracks as filtered at top by if statement
+  BDSEnergyCounterCollection->insert(ECHit);
+
+  /*
+  BDSEnergyCounterCollection->insert(ECHit);
   if (HitID[nCopy]==-1){
     BDSEnergyCounterHit* ECHit = 
       new BDSEnergyCounterHit(nCopy,
@@ -246,6 +285,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
   } else {
     (*BDSEnergyCounterCollection)[HitID[nCopy]]-> AddEnergyWeightedPosition(enrg, xpos, ypos, zpos, spos, weight);
   }
+  */
   return true;
 }
 
