@@ -2,14 +2,11 @@
 
 TRKQuadrupole::TRKQuadrupole() {}
 
-TRKQuadrupole::TRKQuadrupole(std::string name, double length, double size_x, double size_y, double str, TRKAperture *aperture, TRKPlacement *placement):
-  TRKTrackingElement(TRKTrackingElement::thin, 10,name,length,size_x,size_y,aperture,placement),
-  strength(str)
-{
-  
+TRKQuadrupole::TRKQuadrupole(double strengthIn, TRKTrackingElement::TRKType typeIn, int trackingStepsIn, std::string nameIn, double lengthIn, double size_xIn, double size_yIn, TRKAperture *apertureIn, TRKPlacement *placementIn):
+  TRKTrackingElement(typeIn, trackingStepsIn,nameIn,lengthIn,size_xIn,size_yIn,apertureIn,placementIn), strength(strengthIn)
+{  
 }
+
 TRKQuadrupole::~TRKQuadrupole() {}
 
-void TRKQuadrupole::Track(const double vIn[], double vOut[], double h){}
-void TRKQuadrupole::Track(const double vIn[], double vOut[]){}
 

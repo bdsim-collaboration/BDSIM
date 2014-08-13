@@ -1,9 +1,9 @@
 #include "TRKDrift.hh"
 
 TRKDrift::TRKDrift() {}
-TRKDrift::TRKDrift(std::string nameIn, double lengthIn, double size_xIn, double size_yIn, 
+TRKDrift::TRKDrift(TRKTrackingElement::TRKType typeIn, int trackingSteps, std::string nameIn, double lengthIn, double size_xIn, double size_yIn, 
 		   TRKAperture *apertureIn, TRKPlacement *placementIn) :
-  TRKTrackingElement(TRKTrackingElement::thin, 10, nameIn,lengthIn, size_xIn, size_yIn, apertureIn, placementIn)
+  TRKTrackingElement(typeIn, trackingSteps, nameIn,lengthIn, size_xIn, size_yIn, apertureIn, placementIn)
 {
   
 }
