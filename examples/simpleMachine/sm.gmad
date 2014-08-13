@@ -16,6 +16,7 @@ sample, range=m1;
 !sample, range=d2;
 option, ngenerate=100,
 	physicsList="QGSP_BERT",
+!	physicsList="hadronic_standard",
 !	physicsList="em_standard",
 	beampipeRadius=5.0*cm,
 	beampipeThickness=5*cm,

@@ -332,40 +332,30 @@ void BDSPhysicsList::ConstructProcess()
   //Optical processes
   ConstructOptical();
   //============================================
-
-  if(!plistFound){
-    //Need to add transportation and step limiter if non-standard physics list
-    AddTransportation();
-  }
-
-
+  //Need to add transportation and step limiter in all cases.
+  AddTransportation();
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){
     G4ParticleDefinition* particle = theParticleIterator->value();
+    G4ProcessManager *pmanager = particle->GetProcessManager();
     if((particle->GetParticleName()=="gamma")||
        (particle->GetParticleName()=="e-")||
        (particle->GetParticleName()=="e+")||
        (particle->GetParticleName()=="proton")){
-    particle->SetApplyCutsFlag(true);
+      particle->SetApplyCutsFlag(true);
     }
-    G4ProcessManager *pmanager = particle->GetProcessManager();
     pmanager->AddProcess(new G4StepLimiter,-1,-1,1);
 #ifndef NOUSERSPECIALCUTS
     pmanager->AddDiscreteProcess(new G4UserSpecialCuts);
 #endif
   }
-
+  //Always add parameterisation
+  AddParameterisation();
   
   if(plistFound) return;
   //Search BDSIM physics lists
-  
   if (BDSGlobalConstants::Instance()->GetPhysListName() == "standard") return;
-
   // register physics processes here
-      
-  //Always add parameterisation
-  AddParameterisation();
-      
   // standard e+/e-/gamma electromagnetic interactions
   if(BDSGlobalConstants::Instance()->GetPhysListName() == "em_standard") 
     {
@@ -379,7 +369,7 @@ void BDSPhysicsList::ConstructProcess()
     {
       ConstructMerlin();
     }
-      
+  
   // low energy em processes
   else if(BDSGlobalConstants::Instance()->GetPhysListName() == "em_low") 
     {
