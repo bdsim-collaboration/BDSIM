@@ -18,55 +18,46 @@ class BDSExecOptions
 public: 
 
   static BDSExecOptions* Instance();
+  static BDSExecOptions* Instance(int argc, char **argv);
   ~BDSExecOptions();
 
   void Usage();
-  void Parse(int arcg, char **argv);
   void Print(); 
 
-  G4String GetInputFilename()                   {return inputFilename;}
-  void     SetInputFilename(G4String s)         {inputFilename = s;}       
-  G4String GetVisMacroFilename()                {return visMacroFilename;}
-  void     SetVisMacroFilename(G4String s)      {visMacroFilename = s;}
-  G4String GetOutputFilename()                  {return outputFilename;}
-  void     SetOutputFilename(G4String s)        {outputFilename = s;}
-  BDSOutputFormat GetOutputFormat()             {return outputFormat;}
-  void     SetOutputFormat(BDSOutputFormat f)   {outputFormat = f;}
-  G4bool   GetOutline()                         {return outline;}
-  void     SetOutline(G4bool b)                 {outline = b;}
-  G4String GetOutlineFilename()                 {return outlineFilename;}
-  void     SetOutlineFilename(G4String s)       {outlineFilename = s;}
-  G4String GetOutlineFormat()                   {return outlineFormat;}
-  void     SetOutlineFormat(G4String s)         {outlineFormat = s;}
+  G4String const GetInputFilename()                   {return inputFilename;}
+  G4String const GetVisMacroFilename()                {return visMacroFilename;}
+  G4String const GetOutputFilename()                  {return outputFilename;}
+  BDSOutputFormat const GetOutputFormat()             {return outputFormat;}
+  G4bool const  GetOutline()                         {return outline;}
+  G4String const GetOutlineFilename()                 {return outlineFilename;}
+  G4String const GetOutlineFormat()                   {return outlineFormat;}
 
-  G4int    GetGFlash()               {return gflash;}
-  void     SetGFlash(G4bool b)       {gflash = b;}
-  G4double GetGFlashEMax()           {return gflashemax;}
-  void     SetGFlashEMax(G4double d) {gflashemax = d;}
-  G4double GetGFlashEMin()           {return gflashemin;}  
-  void     SetGFlashEMin(G4double d) {gflashemin = d;}
+  G4int const   GetGFlash()               {return gflash;}
+  G4double const GetGFlashEMax()           {return gflashemax;}
+  G4double const GetGFlashEMin()           {return gflashemin;}  
 
-  G4bool   GetVerbose()              {return verbose;}
-  G4bool   GetVerboseEvent()         {return verboseEvent;}
-  G4bool   GetVerboseStep()          {return verboseStep;}
-  G4int    GetVerboseEventNumber()   {return verboseEventNumber;}
-  void     SetVerboseEventNumber(G4int val)   {verboseEventNumber = val;}
-  G4bool   GetBatch()                {return batch;}
+  G4bool const  GetVerbose()              {return verbose;}
+  G4bool const  GetVerboseEvent()         {return verboseEvent;}
+  G4bool const  GetVerboseStep()          {return verboseStep;}
+  G4int const   GetVerboseEventNumber()   {return verboseEventNumber;}
+  G4bool const  GetBatch()                {return batch;}
 
-  G4int    GetVerboseRunLevel()      {return verboseRunLevel;}
-  G4int    GetVerboseEventLevel()    {return verboseEventLevel;}
-  G4int    GetVerboseTrackingLevel() {return verboseTrackingLevel;}
-  G4int    GetVerboseSteppingLevel() {return verboseSteppingLevel;}
+  G4int  const  GetVerboseRunLevel()      {return verboseRunLevel;}
+  G4int  const  GetVerboseEventLevel()    {return verboseEventLevel;}
+  G4int  const  GetVerboseTrackingLevel() {return verboseTrackingLevel;}
+  G4int  const  GetVerboseSteppingLevel() {return verboseSteppingLevel;}
 
-  G4bool   GetCircular()             {return circular;}
+  G4bool const  GetCircular()             {return circular;}
 
 
 protected : 
-  BDSExecOptions();
+  BDSExecOptions(int argc, char** argv);
   static BDSExecOptions* _instance;
-
+  
   
 private :
+  BDSExecOptions();
+  void Parse(int arcg, char **argv);
   G4String        inputFilename;
   G4String        visMacroFilename;
   G4String        outputFilename;

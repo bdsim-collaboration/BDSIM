@@ -107,10 +107,8 @@ void BDS_handle_aborts(int signal_number) {
 
 int main(int argc,char** argv) {
 
-  /* Executable command line options reader object */
-  BDSExecOptions *bdsOptions = BDSExecOptions::Instance();
-  bdsOptions->Parse(argc,argv);
-  bdsOptions->Print();
+  /* Initialize executable command line options reader object */
+  BDSExecOptions::Instance(argc,argv)->Print();
   
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> DEBUG mode is on." << G4endl;
@@ -119,9 +117,9 @@ int main(int argc,char** argv) {
   //
   // Parse lattice file
   //
-  G4cout << __FUNCTION__ << "> Using input file : "<< bdsOptions->GetInputFilename()<<G4endl;
+  G4cout << __FUNCTION__ << "> Using input file : "<< BDSExecOptions::Instance()->GetInputFilename()<<G4endl;
   
-  gmad_parser(bdsOptions->GetInputFilename());
+  gmad_parser(BDSExecOptions::Instance()->GetInputFilename());
 
   //
   // pass the run control and beam options read from the lattice

@@ -8,14 +8,25 @@
 
 BDSExecOptions* BDSExecOptions::_instance=0;
 
-BDSExecOptions* BDSExecOptions::Instance(){
+BDSExecOptions* BDSExecOptions::Instance(int argc, char **argv){
   if(_instance==0) {
-    _instance = new BDSExecOptions();
+    _instance = new BDSExecOptions(argc, argv);
+    return _instance;
+  } else {
+    G4Exception("BDSExecOptions::Instance is already initialized. Return pointer to singleton with BDSExecOptions::Instance()", "-1", FatalException, "");
+    return NULL;
   }
-  return _instance;
 }
 
-BDSExecOptions::BDSExecOptions() {  
+BDSExecOptions* BDSExecOptions::Instance(){
+  if(_instance==0) {
+    G4Exception("BDSExecOptions::Instance was not initialised. Initialize first with BDSExecOptions::Instance(int argc, char **argv).", "-1", FatalException, "");
+    return NULL;
+  } else 
+    return _instance;
+}
+
+BDSExecOptions::BDSExecOptions(int argc, char **argv){
   inputFilename       = "optics.mad";
   visMacroFilename    = "vis.mac";
   outputFilename      = "output";
@@ -41,6 +52,7 @@ BDSExecOptions::BDSExecOptions() {
   verboseSteppingLevel = 0;
   
   circular      = false;
+  Parse(argc, argv);
 }
 
 BDSExecOptions::~BDSExecOptions() {
