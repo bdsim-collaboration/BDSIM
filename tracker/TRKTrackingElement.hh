@@ -1,12 +1,10 @@
 #ifndef TRKTrackingElement_h
 #define TRKTrackingElement_h
 
+#include "TRK.h"
 #include "TRKAperture.hh"
 #include "TRKElement.hh"
 
-namespace TRK {
-  const int DEFAULT_TRACKING_STEPS=10;
-}
 
 /**
  * @brief virtual base class for an element that can be tracked
