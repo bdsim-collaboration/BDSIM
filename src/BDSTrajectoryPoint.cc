@@ -28,8 +28,14 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* aTrack):G4TrajectoryPoint(
       //      G4cout << "Getting isScattering..." << G4endl;
       _isScatteringProcess = false;
       if(!((ptype == fNotDefined) || (ptype == fTransportation))){  //If the process type is not undefined or transportation...
-	if ( aTrack -> GetStep() -> GetDeltaMomentum().mag() != 0){ //...and the particle changed momentum during the step..
+	if ( aTrack -> GetStep() -> GetDeltaMomentum().x() != 0){ //...and the particle changed momentum during the step..
 	  _isScatteringProcess = true; //...then this is a "scattering" (momentum-changing non-transportation) process.
+	}
+	if ( aTrack -> GetStep() -> GetDeltaMomentum().y() != 0){ //same for y and z components of momentum.
+	  _isScatteringProcess = true; 
+	}
+	if ( aTrack -> GetStep() -> GetDeltaMomentum().z() != 0){ //...and the particle changed momentum during the step..
+	  _isScatteringProcess = true; 
 	}
       }
     }
