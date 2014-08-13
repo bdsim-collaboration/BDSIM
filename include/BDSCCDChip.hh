@@ -30,7 +30,7 @@ private:
   void buildPixels();
   
   // Geometrical objects:
-  G4VPhysicalVolume* _phys;
+  //  G4VPhysicalVolume* _phys;
   G4LogicalVolume* _log;
   G4VSolid* _solid;
   BDSCCDPixel* _pixel;

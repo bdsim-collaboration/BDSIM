@@ -25,7 +25,7 @@ public:
   
 private:
   BDSCCDPixelHitsCollection *CCDPixelCollection;
-  G4bool                    StoreHit;
+  //  G4bool                    StoreHit;
   G4String itsType;
   G4String _collectionName;
 };
