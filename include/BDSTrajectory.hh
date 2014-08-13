@@ -21,7 +21,7 @@ public:
   {return (this==&right);}
 
   virtual void AppendStep(const G4Step* aStep);
-  virtual void MergeTrajectory(const G4VTrajectory* secondTrajectory);
+  virtual void MergeTrajectory(G4VTrajectory* secondTrajectory);
 
   void printData();
   void printDataOfSteps();

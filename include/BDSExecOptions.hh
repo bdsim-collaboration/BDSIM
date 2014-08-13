@@ -24,30 +24,30 @@ public:
   void Usage();
   void Print(); 
 
-  inline G4String const GetInputFilename()                   {return inputFilename;}
-  inline G4String const GetVisMacroFilename()                {return visMacroFilename;}
-  inline G4String const GetOutputFilename()                  {return outputFilename;}
-  inline BDSOutputFormat const GetOutputFormat()             {return outputFormat;}
-  inline G4bool const  GetOutline()                         {return outline;}
-  inline G4String const GetOutlineFilename()                 {return outlineFilename;}
-  inline G4String const GetOutlineFormat()                   {return outlineFormat;}
+  inline G4String GetInputFilename() const                   {return inputFilename;}
+  inline G4String GetVisMacroFilename() const                {return visMacroFilename;}
+  inline G4String GetOutputFilename() const                  {return outputFilename;}
+  inline BDSOutputFormat GetOutputFormat() const             {return outputFormat;}
+  inline G4bool  GetOutline() const                          {return outline;}
+  inline G4String GetOutlineFilename() const                 {return outlineFilename;}
+  inline G4String GetOutlineFormat() const                   {return outlineFormat;}
 
-  inline G4int const   GetGFlash()               {return gflash;}
-  inline G4double const GetGFlashEMax()           {return gflashemax;}
-  inline G4double const GetGFlashEMin()           {return gflashemin;}  
+  inline G4int   GetGFlash() const                {return gflash;}
+  inline G4double GetGFlashEMax() const           {return gflashemax;}
+  inline G4double GetGFlashEMin() const           {return gflashemin;}  
 
-  inline G4bool const  GetVerbose()              {return verbose;}
-  inline G4bool const  GetVerboseEvent()         {return verboseEvent;}
-  inline G4bool const  GetVerboseStep()          {return verboseStep;}
-  inline G4int const   GetVerboseEventNumber()   {return verboseEventNumber;}
-  inline G4bool const  GetBatch()                {return batch;}
+  inline G4bool  GetVerbose() const              {return verbose;}
+  inline G4bool  GetVerboseEvent() const         {return verboseEvent;}
+  inline G4bool  GetVerboseStep() const          {return verboseStep;}
+  inline G4int   GetVerboseEventNumber() const   {return verboseEventNumber;}
+  inline G4bool  GetBatch() const                {return batch;}
 
-  inline G4int  const  GetVerboseRunLevel()      {return verboseRunLevel;}
-  inline G4int  const  GetVerboseEventLevel()    {return verboseEventLevel;}
-  inline G4int  const  GetVerboseTrackingLevel() {return verboseTrackingLevel;}
-  inline G4int  const  GetVerboseSteppingLevel() {return verboseSteppingLevel;}
+  inline G4int   GetVerboseRunLevel() const      {return verboseRunLevel;}
+  inline G4int   GetVerboseEventLevel() const    {return verboseEventLevel;}
+  inline G4int   GetVerboseTrackingLevel() const {return verboseTrackingLevel;}
+  inline G4int   GetVerboseSteppingLevel() const {return verboseSteppingLevel;}
 
-  inline G4bool const  GetCircular()             {return circular;}
+  inline G4bool  GetCircular() const             {return circular;}
 
 
 protected : 

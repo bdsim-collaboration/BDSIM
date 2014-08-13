@@ -32,7 +32,7 @@ void BDSTrajectory::AppendStep(const G4Step* aStep){
   delete tempTP;
 }
 
-void BDSTrajectory::MergeTrajectory(const G4VTrajectory* secondTrajectory){
+void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory){
   if(!secondTrajectory) return;
 
   BDSTrajectory* seco = (BDSTrajectory*)secondTrajectory;
