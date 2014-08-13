@@ -137,7 +137,6 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
   itsPhiAngleIn = 0.0;
   itsPhiAngleOut = 0.0;
   itsOuterR=0;
-  itsMagScaleFactor = 1;
   itsBlmLocationR=0;
   if (itsTunnelRadius<=BDSGlobalConstants::Instance()->GetLengthSafety()){
     itsTunnelRadius=BDSGlobalConstants::Instance()->GetTunnelRadius();

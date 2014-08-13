@@ -260,7 +260,6 @@ protected:
   G4double itsPhiAngleIn;
   G4double itsPhiAngleOut;
   
-  G4double itsMagScaleFactor;
   G4double itsPhi;
   G4double itsTheta;
   G4double itsPsi;
