@@ -2,6 +2,7 @@
 #define TRKQuadrupole_h
 
 #include "TRKTrackingElement.hh"
+#include "TRKDrift.hh"
 
 /**
  * @brief quadrupole tracking
@@ -11,6 +12,7 @@ private:
   /// strength in Tesla/meter
   double strength;
 
+  
 public :   
   TRKQuadrupole(double strength, TRKTrackingElement::TRKType type, int steps, std::string name, double length, double size_x, double size_y, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKQuadrupole();
@@ -22,6 +24,7 @@ protected:
 
 private :
   TRKQuadrupole(); ///< not implemented
+  TRKDrift *thinDrift; // Drifts required for thin elements.
 
 };
 

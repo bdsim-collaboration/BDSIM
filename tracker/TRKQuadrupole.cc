@@ -11,15 +11,25 @@ TRKQuadrupole::~TRKQuadrupole() {}
 
 void TRKQuadrupole::ThinTrack(const double vIn[], double vOut[], double h) {  
   double vTemp[6];
+
   /// half step
   //  TRKDrift::ThinTrack(vIn,vTemp,h/2);
 
+
+  // if v[3]+h is more than length/2.0 apply drift of length/2.0 - v[3] , then thin lens, then drift of  v[3] + h - length/2.0 
+  // if v[3] < length/2.0 && v[3]+h is less than length/2.0 apply drift only 
+  
+  vector3 pos = vector3(vIn[0],vIn[1],vIn[2]);
+  vector3 mom = vector3(vIn[3],vIn[4],vIn[5]);
+  double  momMag = mom.mag();
+
   /// thin lens kick, not taking into account tilt for the moment 
+  // won't all the thin trackers require a TRKDrift? 
 
   // how to get these:
-  // double momentum
-  // double charge
-  // double rigidity = momentum / eV / c
+  // double momentum mag(vIn[3],vIn[4],vIn[5]). use vector3 class 
+  // double charge, oh charge good point, should just add this to method signature
+  // double rigidity = momentum / eV / c, constants are easy
 
   double k = std::sqrt(std::abs(strength));
 
