@@ -342,7 +342,10 @@ void BDSPhysicsList::ConstructProcess()
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){
     G4ParticleDefinition* particle = theParticleIterator->value();
-    if((particle->GetParticleName()=="gamma")||(particle->GetParticleName()=="e-")||(particle->GetParticleName()=="e+")){
+    if((particle->GetParticleName()=="gamma")||
+       (particle->GetParticleName()=="e-")||
+       (particle->GetParticleName()=="e+")||
+       (particle->GetParticleName()=="proton")){
     particle->SetApplyCutsFlag(true);
     }
     G4ProcessManager *pmanager = particle->GetProcessManager();
