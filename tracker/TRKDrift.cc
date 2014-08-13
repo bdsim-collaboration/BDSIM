@@ -16,8 +16,7 @@ void TRKDrift::ThinTrack(const double vIn[], double vOut[], double h) {
   
   vector3 dv = vp0.unit()*h;
   vector3 v1 = v0 + dv;
-  return v1.setArray(vOut);
-  
+  v1.setArray(vOut);
 }
 
 void TRKDrift::HybridTrack(const double vIn[], double vOut[], double h) {  
