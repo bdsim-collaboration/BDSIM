@@ -64,6 +64,9 @@ void BDSModularPhysicsList::ParsePhysicsList(){
   
   //Synchrotron radiation
   if(_physListName.contains((G4String)"synchrad")){
+    if(!_emPhysics){
+      LoadEm();
+    }
     LoadSynchRad();
   }
 
@@ -81,6 +84,7 @@ void BDSModularPhysicsList::ParsePhysicsList(){
 
   if(_physListName.contains((G4String)"optical")){
     //Optical
+    LoadOptical();
   }
   //Decay - constructed by default if hadronic or em are constructed, 
   //unless "nodecay"
