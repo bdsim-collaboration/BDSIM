@@ -4,6 +4,8 @@
 #include "TRKTrackingElement.hh"
 #include "TRKDrift.hh"
 
+class vector6;
+
 /**
  * @brief quadrupole tracking
  */
@@ -24,8 +26,10 @@ protected:
 
 private :
   TRKQuadrupole(); ///< not implemented
-  TRKDrift *thinDrift; // Drifts required for thin elements.
+  TRKDrift* thinDrift; // Drifts required for thin elements.
 
+  /// thin Kick method
+  void ThinKick(const vector6& vIn, vector6& vOut);
 };
 
 #endif

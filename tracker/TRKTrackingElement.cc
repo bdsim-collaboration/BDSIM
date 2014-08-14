@@ -18,7 +18,7 @@ TRKTrackingElement::~TRKTrackingElement() {
 
 
 void TRKTrackingElement::Track(const double vIn[], double vOut[], double h) {   
-  // we need to check if h < length, perhaps here?
+  // we need to check if h < length, perhaps here? -> better inside aperturecheck or something
 
   if(type == TRKTrackingElement::thin) {
     ThinTrack(vIn,vOut,h); 
@@ -29,7 +29,12 @@ void TRKTrackingElement::Track(const double vIn[], double vOut[], double h) {
   else if(type == TRKTrackingElement::hybrid) {
     ThickTrack(vIn,vOut,h);
   }
-} 
+
+  if (aperture) {
+    bool lost = aperture->CheckAperture(vOut);
+    if (lost) {} // do something;
+  }
+}
 
 void TRKTrackingElement::Track(const double vIn[], double vOut[]) {     
   // double dh = length/trackingSteps;

@@ -2,47 +2,62 @@
 
 #include <cmath>
 #include "vector3.hh"
+#include "vector6.hh"
 
 TRKQuadrupole::TRKQuadrupole(double strengthIn, TRKTrackingElement::TRKType typeIn, int trackingStepsIn, std::string nameIn, double lengthIn, double size_xIn, double size_yIn, TRKAperture *apertureIn, TRKPlacement *placementIn):
-  TRKTrackingElement(typeIn, trackingStepsIn,nameIn,lengthIn,size_xIn,size_yIn,apertureIn,placementIn), strength(strengthIn)
-{  
+  TRKTrackingElement(typeIn, trackingStepsIn,nameIn,lengthIn,size_xIn,size_yIn,apertureIn,placementIn), strength(strengthIn), thinDrift(NULL)
+{
+  if (type == TRKTrackingElement::thin) {
+    thinDrift = new TRKDrift(typeIn, trackingStepsIn,nameIn,lengthIn,size_xIn,size_yIn,apertureIn,placementIn);
+  }
 }
-TRKQuadrupole::~TRKQuadrupole() {}
+
+TRKQuadrupole::~TRKQuadrupole() {
+  delete thinDrift;
+}
 
 void TRKQuadrupole::ThinTrack(const double vIn[], double vOut[], double h) {  
-  double vTemp[6];
+  /// half Drift + Thin Kick + half drift
+  static double halfLength = length/2;
 
-  /// half step
-  //  TRKDrift::ThinTrack(vIn,vTemp,h/2);
+  double hBefore = halfLength - vIn[2];
+  double hAfter = vIn[2] + h - halfLength;
 
-
-  // if v[3]+h is more than length/2.0 apply drift of length/2.0 - v[3] , then thin lens, then drift of  v[3] + h - length/2.0 
-  // if v[3] < length/2.0 && v[3]+h is less than length/2.0 apply drift only 
-  
-  vector3 pos = vector3(vIn[0],vIn[1],vIn[2]);
-  vector3 mom = vector3(vIn[3],vIn[4],vIn[5]);
-  double  momMag = mom.mag();
-
-  /// thin lens kick, not taking into account tilt for the moment 
-  // won't all the thin trackers require a TRKDrift? 
-
-  // how to get these:
-  // double momentum mag(vIn[3],vIn[4],vIn[5]). use vector3 class 
-  // double charge, oh charge good point, should just add this to method signature
-  // double rigidity = momentum / eV / c, constants are easy
-
-  double k = std::sqrt(std::abs(strength));
-
-  if (k>0) {
-    vTemp[4] += -vTemp[1]*k*std::sin(k*h); 
-    vTemp[5] +=  vTemp[1]*k*std::sinh(k*h);
-  } else {
-    vTemp[4] +=  vTemp[1]*k*std::sinh(k*h); 
-    vTemp[5] += -vTemp[1]*k*std::sin(k*h);
+  if (hBefore < 0 || hAfter < 0) {
+    thinDrift->Track(vIn,vOut,h);
+    return;
   }
 
-  /// half step
-  //  TRKDrift::ThinTrack(vTemp,vOut,h/2);
+  /// first drift distance  
+  thinDrift->Track(vIn,vOut,hBefore);
+
+  vector6 vKickIn(vOut);
+  vector6 vKickOut;
+  /// thin kick
+  ThinKick(vKickIn,vKickOut);
+
+  double vTemp[6];
+  vKickOut.setArray(vTemp);
+  /// second drift distance
+  thinDrift->Track(vTemp,vOut,hAfter);
+
+}
+
+void TRKQuadrupole::ThinKick(const vector6& vIn, vector6& vOut) {
+
+  vOut = vIn;
+
+  // double charge, oh charge good point, should just add this to method signature
+  double charge = 1 * TRK::e;
+  double rigidity = std::abs(strength) * vIn.mom().mag() / charge; // to be checked
+
+  double k = 1/std::sqrt(std::abs(rigidity));
+
+  if (k>0) {
+    vOut.plusmom(vector3(-vIn.X()*k*std::sin(k*length), vIn.Y()*k*std::sinh(k*length), 0.0));
+  } else {
+    vOut.plusmom(vector3(vIn.X()*k*std::sinh(k*length), -vIn.Y()*k*std::sin(k*length), 0.0));
+  }
 }
 
 void TRKQuadrupole::HybridTrack(const double vIn[], double vOut[], double h) {  
@@ -50,7 +65,13 @@ void TRKQuadrupole::HybridTrack(const double vIn[], double vOut[], double h) {
 }
 
 void TRKQuadrupole::ThickTrack(const double vIn[], double vOut[], double h) {
-  ThinTrack(vIn, vOut, h);
+  vector6 vTemp(vIn);
+  
+  // double momentum mag(vIn[3],vIn[4],vIn[5]). use vector3 class 
+  // double charge, oh charge good point, should just add this to method signature
+  // double rigidity = momentum / eV / c, constants are easy
+
+  double k = std::sqrt(std::abs(strength));
 }
 
 

@@ -17,7 +17,7 @@ class vector6 {
  public: 
   vector6() : position(), momentum() {};
   vector6(vector3 pos, vector3 mom) : position(pos), momentum(mom) {};
-  vector6(double v[]) {
+  vector6(const double v[]) {
     position = vector3(v[0],v[1],v[2]);
     momentum = vector3(v[3],v[4],v[5]);
   }
@@ -42,6 +42,20 @@ class vector6 {
     v.position = position + rhs.position;
     v.momentum = momentum + rhs.momentum; 
     return v;
+  }
+
+  vector6 &operator+=(const vector6 &rhs) {
+    position += rhs.position;
+    momentum += rhs.momentum; 
+    return *this;
+  }
+
+  void plusmom(const vector3 &rhs) {
+    momentum += rhs; 
+  }
+
+  void pluspos(const vector3 &rhs) {
+    position += rhs; 
   }
 
   vector6 operator-(const vector6 &rhs) {

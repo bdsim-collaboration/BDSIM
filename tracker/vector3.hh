@@ -34,6 +34,13 @@ class vector3 {
     return v;
   }
 
+  vector3 &operator+=(const vector3 &rhs) {
+    x += rhs.x;
+    y += rhs.y; 
+    z += rhs.z;
+    return *this;
+  }
+
   vector3 operator-(const vector3 &rhs) {
     vector3 v;
     v.x = x - rhs.x;
