@@ -8,13 +8,15 @@
 #include "G4Electron.hh"
 #include "G4Positron.hh"
 #include "G4Proton.hh"
+#include "G4VPhysicsConstructor.hh"
 
-
-class BDSCutsAndLimits: public BDSXSBiasPhysics{
+class BDSCutsAndLimits: public G4VPhysicsConstructor{
 public:
   BDSCutsAndLimits();
   ~BDSCutsAndLimits();
   void ConstructProcess();
   void ConstructParticle();
+private:
+  G4bool _wasActivated;
 };
 #endif

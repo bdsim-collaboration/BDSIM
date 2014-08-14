@@ -2,9 +2,9 @@
 #include "BDSVProcess.hh"
 #include "G4StepLimiter.hh"
 #include "G4UserSpecialCuts.hh"
+#include "G4ProcessManager.hh"
 
-
-BDSCutsAndLimits::BDSCutsAndLimits():BDSXSBiasPhysics("BDSCutsAndLimits")
+BDSCutsAndLimits::BDSCutsAndLimits():G4VPhysicsConstructor("BDSCutsAndLimits")
 {;}
 
 BDSCutsAndLimits::~BDSCutsAndLimits()
@@ -23,8 +23,8 @@ void BDSCutsAndLimits::ConstructProcess(){
   _wasActivated=true;
   
   aParticleIterator->reset();
-  while( (*theParticleIterator)() ){
-    G4ParticleDefinition* particle = theParticleIterator->value();
+  while( (*aParticleIterator)() ){
+    G4ParticleDefinition* particle = aParticleIterator->value();
     G4ProcessManager *pmanager = particle->GetProcessManager();
     if((particle->GetParticleName()=="gamma")||
        (particle->GetParticleName()=="e-")||

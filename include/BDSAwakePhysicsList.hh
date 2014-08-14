@@ -17,6 +17,7 @@ public:
   virtual ~BDSAwakePhysicsList();
   void Print();
   virtual void SetCuts();
+
 private:
   void SetParticleDefinition();
   void ConstructMinimumParticleSet();
@@ -33,7 +34,6 @@ private:
   void ConfigurePhysics();
   void ConfigureOptical();
   void Register();
-  void AddParameterisation();
   G4String _physListName;
   //Physics constructor loaders.
   void LoadEm();			  

@@ -35,6 +35,7 @@ BDSAwakePhysicsList::BDSAwakePhysicsList(): G4VModularPhysicsList(),_physListNam
   Register();
   ConstructMinimumParticleSet();
   SetParticleDefinition();
+  SetCuts();
 }
 
 void BDSAwakePhysicsList::Print(){
