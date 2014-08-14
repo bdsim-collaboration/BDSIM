@@ -39,12 +39,6 @@ BDSModularPhysicsList::BDSModularPhysicsList(): G4VModularPhysicsList(),_physLis
 }
 
 void BDSModularPhysicsList::Print(){
-  //  aParticleIterator->reset();
-  //  for(vector<G4VPhysicsConstructor*>::iterator it = _constructors.begin();
-  //      it != _constructors.end();
-  //      ++_constructors){
-  //    (*it)->
-  //  }
 }
 
 //Parse the physicsList option
