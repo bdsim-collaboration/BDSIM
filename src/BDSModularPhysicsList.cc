@@ -198,7 +198,7 @@ void BDSModularPhysicsList::LoadEm(){
 							  
 void BDSModularPhysicsList::LoadEmLow(){			  
   if(!_emPhysics){
-    _emPhysics = new G4EmStandardPhysics();		  
+    _emPhysics = new G4EmPenelopePhysics();		  
     _constructors.push_back(_emPhysics);			  
     LoadParameterisationPhysics();			  
   }
