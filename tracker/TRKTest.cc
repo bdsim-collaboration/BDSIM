@@ -9,7 +9,28 @@
 #include "TRKPlacement.hh"
 #include "TRKQuadrupole.hh"
 
+#include "vector3.hh"
+#include "vector6.hh"
+
 int main() {
+
+  /// vector testing
+  vector3 v1(1,0,0);
+  vector3 v2(0,2,0);
+  vector3 v3(v2);
+  vector3 v4 = v3;
+  vector3 v5 = v3 + v4;
+  v5 = v5 - v1;
+  v5 = v5 * 2;
+  v5 = v5 / 5;
+  std::cout << v5 << " " << v5.mag() << " " << v5.unit() << std::endl;
+
+  vector6 v6(v1,v2);
+  vector6 v7 = v6 * 2;
+  vector6 v8 = v7 - v6;
+  
+  std::cout << v8 << std::endl;
+
   /// instantiate elements
   std::string driftname = "drift";
   double length = 3.0, size_x = 1.0, size_y = 1.0;

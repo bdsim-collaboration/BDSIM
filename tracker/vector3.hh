@@ -2,6 +2,7 @@
 #define vector3_h
 
 #include <cmath>
+#include <ostream>
 
 class vector3 { 
  public: 
@@ -15,37 +16,30 @@ class vector3 {
   }
 
   ~vector3() {};
-  double& X() {return x;}  
-  double& Y() {return y;}
-  double& Z() {return z;} 
+  double X()const {return x;}  
+  double Y()const {return y;}
+  double Z()const {return z;} 
 
   vector3(const vector3 &v) {
     x = v.x;
     y = v.y;
     z = v.z;
   }
-
-  vector3& operator=(vector3 rhs) {
-    x = rhs.x;
-    y = rhs.y;
-    z = rhs.z;
-    return *this;
-  }
   
-  vector3 operator+(vector3 rhs) {
+  vector3 operator+(const vector3 &rhs) {
     vector3 v;
     v.x = x + rhs.x;
     v.y = y + rhs.y; 
     v.z = z + rhs.z;
-    return *this;
+    return v;
   }
 
-  vector3 operator-(vector3 rhs) {
+  vector3 operator-(const vector3 &rhs) {
     vector3 v;
     v.x = x - rhs.x;
     v.y = y - rhs.y;
     v.z = z - rhs.z; 
-    return *this;
+    return v;
   }
 
   vector3 operator*(double d) { 
@@ -82,6 +76,9 @@ class vector3 {
     return vector3(xu,yu,zu);
   }
 
+  friend std::ostream& operator<< (std::ostream &out, const vector3 &v) {
+    return out << "(" << v.x << "," << v.y << "," << v.z << ")";
+  }
   
  private: 
     double x;
