@@ -29,6 +29,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(): G4VModularPhysicsList(),_physLis
   _decayPhysics=NULL;
   _paramPhysics=NULL;
   _synchRadPhysics=NULL;
+  _cutsAndLimits=NULL;
   
   ParsePhysicsList();
   ConfigurePhysics();
@@ -188,53 +189,73 @@ void BDSModularPhysicsList::SetParticleDefinition(){
 }
 
 void BDSModularPhysicsList::LoadEm(){			  
-  _emPhysics = new G4EmStandardPhysics();		  
-  _constructors.push_back(_emPhysics);			  
-  LoadParameterisationPhysics();			  
+  if(!_emPhysics){
+    _emPhysics = new G4EmStandardPhysics();		  
+    _constructors.push_back(_emPhysics);			  
+    LoadParameterisationPhysics();	
+  }		  
 }							  
 							  
 void BDSModularPhysicsList::LoadEmLow(){			  
-  _emPhysics = new G4EmStandardPhysics();		  
-  _constructors.push_back(_emPhysics);			  
-  LoadParameterisationPhysics();			  
+  if(!_emPhysics){
+    _emPhysics = new G4EmStandardPhysics();		  
+    _constructors.push_back(_emPhysics);			  
+    LoadParameterisationPhysics();			  
+  }
 }							  
 							  
 void BDSModularPhysicsList::LoadParameterisationPhysics(){  
-  _paramPhysics = new BDSParameterisationPhysics();	  
-  _constructors.push_back(_paramPhysics);		  
+  if(!_paramPhysics){
+    _paramPhysics = new BDSParameterisationPhysics();	  
+    _constructors.push_back(_paramPhysics);		  
+  }
 }							  
 							  
 void BDSModularPhysicsList::LoadHadronic(){		  
-  _hadronicPhysics = new G4HadronPhysicsQGSP_BERT();	  
-  _constructors.push_back(_hadronicPhysics);		  
+  if(!_hadronicPhysics){
+    _hadronicPhysics = new G4HadronPhysicsQGSP_BERT();	  
+    _constructors.push_back(_hadronicPhysics);		  
+  }
 }							  
 							  
 void BDSModularPhysicsList::LoadHadronicHP(){		  
-  _hadronicPhysics = new G4HadronPhysicsQGSP_BERT_HP();	  
-  _constructors.push_back(_hadronicPhysics);		  
+  if(!_hadronicPhysics){
+    _hadronicPhysics = new G4HadronPhysicsQGSP_BERT_HP();	  
+    _constructors.push_back(_hadronicPhysics);		  
+  }
 }							  
 							  
 void BDSModularPhysicsList::LoadSynchRad(){		  
-  _synchRadPhysics = new BDSSynchRadPhysics();		  
-  _constructors.push_back(_synchRadPhysics);		  
+  if(!_synchRadPhysics){
+    _synchRadPhysics = new BDSSynchRadPhysics();		  
+    _constructors.push_back(_synchRadPhysics);		  
+  }
 }							  
 							  
 void BDSModularPhysicsList::LoadMuon(){			  
-  _muonPhysics = new BDSMuonPhysics();			  
-  _constructors.push_back(_muonPhysics);		  
+  if(!_muonPhysics){
+    _muonPhysics = new BDSMuonPhysics();			  
+    _constructors.push_back(_muonPhysics);		  
+  }
 }							  
 							  
 void BDSModularPhysicsList::LoadOptical(){		  
-  _opticalPhysics = new G4OpticalPhysics();		  
-  _constructors.push_back(_opticalPhysics);		  
+  if(!_opticalPhysics){
+    _opticalPhysics = new G4OpticalPhysics();		  
+    _constructors.push_back(_opticalPhysics);		  
+  }
 }							  
 							  
 void BDSModularPhysicsList::LoadDecay(){			  
-  _decayPhysics = new G4DecayPhysics();			  
-  _constructors.push_back(_decayPhysics);		  
+  if(!_decayPhysics){
+    _decayPhysics = new G4DecayPhysics();			  
+    _constructors.push_back(_decayPhysics);		  
+  }
 }                                                         
 
 void BDSModularPhysicsList::LoadCutsAndLimits(){			  
-  _cutsAndLimits = new BDSCutsAndLimits();			  
-  _constructors.push_back(_cutsAndLimits);		  
+  if(!_cutsAndLimits){
+    _cutsAndLimits = new BDSCutsAndLimits();			  
+    _constructors.push_back(_cutsAndLimits);		  
+  }
 }                                                         
