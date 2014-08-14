@@ -38,7 +38,6 @@ BDSPCLDrift::BDSPCLDrift (G4String aName, G4double aLength,
   itsBeampipeVisAtt(NULL),itsInnerBeampipeVisAtt(NULL),
   itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
 {
-  itsType="pcldrift";
   itsXAper=aperX;
 
   if (!(*LogVolCount)[itsName])

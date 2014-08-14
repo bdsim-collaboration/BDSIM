@@ -39,8 +39,6 @@ BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double tScint, G
   _screenAngle=angle;
   _screenRotationMatrix->rotateY(_screenAngle);
 
-  itsType="screen";
-  SetName(aName);
   if ( (*LogVolCount)[itsName]==0)
     {
       ComputeDimensions();

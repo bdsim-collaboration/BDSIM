@@ -15,21 +15,26 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-#ifndef BDSThresholdCutSteppingAction_h
-#define BDSThresholdCutSteppingAction_h 1
+#ifndef BDSSteppingAction_h
+#define BDSSteppingAction_h 1
 
 #include "G4UserSteppingAction.hh"
 #include "G4Types.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-class BDSThresholdCutSteppingAction : public G4UserSteppingAction
+class BDSSteppingAction : public G4UserSteppingAction
 {
 public:
-  BDSThresholdCutSteppingAction();
-  virtual ~BDSThresholdCutSteppingAction();
+  BDSSteppingAction();
+  virtual ~BDSSteppingAction();
 
   virtual void UserSteppingAction(const G4Step*);
+
+private:
+  void ThresholdCutSteppingAction();
+  void VerboseSteppingAction();
+  const G4Step* _step;
 };
 
 #endif

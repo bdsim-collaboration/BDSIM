@@ -41,7 +41,6 @@ BDSOctupole::BDSOctupole(G4String aName, G4double aLength,
 {
   SetOuterRadius(outR);
   itsTilt=tilt;
-  itsType="octu";
 
   if (!(*LogVolCount)[itsName])
     {

@@ -125,132 +125,134 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
 #ifdef BDSDEBUG
   G4cout << "BDSComponentFactory::createComponent() element name = " << _element.name << G4endl;  
 #endif
+  BDSAcceleratorComponent* element = NULL;
+
   switch(_element.type){
   case _SAMPLER:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating sampler" << G4endl;
 #endif
-    return createSampler(); break;
+    element = createSampler(); break;
   case _DRIFT:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating drift" << G4endl;
 #endif
-    return createDrift(); break; 
+    element = createDrift(); break; 
   case _PCLDRIFT:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating pcl drift" << G4endl;
 #endif
-    return createPCLDrift(); break; 
+    element = createPCLDrift(); break; 
   case _RF:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating rf" << G4endl;
 #endif
-    return createRF(); break; 
+    element = createRF(); break; 
   case _SBEND:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating sbend" << G4endl;
 #endif
-    return createSBend(); break; 
+    element = createSBend(); break; 
   case _RBEND:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating rbend" << G4endl;
 #endif
-    return createRBend(); break; 
+    element = createRBend(); break; 
   case _HKICK:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating hkick" << G4endl;
 #endif
-    return createHKick(); break; 
+    element = createHKick(); break; 
   case _VKICK:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating vkick" << G4endl;
 #endif
-    return createVKick(); break; 
+    element = createVKick(); break; 
   case _QUAD:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating quadrupole" << G4endl;
 #endif
-    return createQuad(); break; 
+    element = createQuad(); break; 
   case _SEXTUPOLE:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating sextupole" << G4endl;
 #endif
-    return createSextupole(); break; 
+    element = createSextupole(); break; 
   case _OCTUPOLE:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating octupole" << G4endl;
 #endif
-    return createOctupole(); break; 
+    element = createOctupole(); break; 
   case _MULT:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating multipole" << G4endl;
 #endif
-    return createMultipole(); break; 
+    element = createMultipole(); break; 
   case _ELEMENT:    
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating element" << G4endl;
 #endif
-    return createElement(); break; 
+    element = createElement(); break; 
   case _CSAMPLER:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating csampler" << G4endl;
 #endif
-    return createCSampler(); break; 
+    element = createCSampler(); break; 
   case _DUMP:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating dump" << G4endl;
 #endif
-    return createDump(); break; 
+    element = createDump(); break; 
   case _SOLENOID:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating solenoid" << G4endl;
 #endif
-    return createSolenoid(); break; 
+    element = createSolenoid(); break; 
   case _ECOL:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating ecol" << G4endl;
 #endif
-    return createECol(); break; 
+    element = createCollimator(); break; 
   case _RCOL:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating rcol" << G4endl;
 #endif
-    return createRCol(); break; 
+    element = createCollimator(); break; 
   case _MUSPOILER:    
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating muspoiler" << G4endl;
 #endif
-    return createMuSpoiler(); break; 
+    element = createMuSpoiler(); break; 
   case _LASER:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating laser" << G4endl;
 #endif
-    return createLaser(); break; 
+    element = createLaser(); break; 
   case _SCREEN:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating screen" << G4endl;
 #endif
-    return createScreen(); break; 
+    element = createScreen(); break; 
   case _AWAKESCREEN:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating awake screen" << G4endl;
 #endif
-    return createAwakeScreen(); break; 
+    element = createAwakeScreen(); break; 
   case _TRANSFORM3D:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating transform3d" << G4endl;
 #endif
-    return createTransform3D(); break;
+    element = createTransform3D(); break;
   case _TELEPORTER:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating teleporter" << G4endl;
 #endif
-    return createTeleporter(); break;
+    element = createTeleporter(); break;
   case _TERMINATOR:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating terminator" << G4endl;
 #endif
-    return createTerminator(); break;
+    element = createTerminator(); break;
 
     // common types, but nothing to do here
   case _MARKER:
@@ -262,7 +264,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
   case _GAS:
   case _TUNNEL:
   case _COLLIMATOR:
-    return NULL;
+    element = NULL;
     break;
   default:
 #ifdef BDSDEBUG
@@ -270,10 +272,17 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
 #endif
     G4Exception("Error: BDSComponentFactory: type not found.", "-1", FatalErrorInArgument, "");   
     exit(1);
-    return NULL;
     break;
   }
   
+  if (element) addCommonProperties(element);
+
+  return element;
+}
+
+void BDSComponentFactory::addCommonProperties(BDSAcceleratorComponent* component) {
+  component->SetPrecisionRegion(_element.precisionRegion);
+  component->SetType(typestr(_element.type));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSampler(){
@@ -1080,7 +1089,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 			  _element.bmapZOffset * CLHEP::m,
 			  _element.l * CLHEP::m,
 			  aper,
-			  _element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, tunnelOffsetX, _element.tunnelCavityMaterial, _element.precisionRegion ));
+			  _element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, tunnelOffsetX, _element.tunnelCavityMaterial));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSolenoid(){
@@ -1146,39 +1155,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid(){
 			   ) );
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createECol(){
-
-  G4Material* theMaterial;
-  if(_element.material != "")
-    theMaterial = BDSMaterials::Instance()->GetMaterial( _element.material );
-  else
-    theMaterial = BDSMaterials::Instance()->GetMaterial( "Graphite" );
-  
-#ifdef BDSDEBUG 
-  G4cout << "---->creating Ecol,"
-	 << " name= " << _element.name 
-	 << " xaper= " << _element.xsize <<"m"
-	 << " yaper= " << _element.ysize <<"m"
-	 << " material= " << _element.material
-	 << " tunnel material " << _element.tunnelMaterial
-	 << G4endl;
-#endif
-
-  return (new BDSCollimator(_element.name,
-			    _element.l * CLHEP::m,
-			    _bpRad,
-			    _element.xsize * CLHEP::m,
-			    _element.ysize * CLHEP::m,
-			    _ECOL,
-			    theMaterial,
-			    _element.outR*CLHEP::m,
-			    _element.blmLocZ,
-			    _element.blmLocTheta,
-			    _element.tunnelMaterial) );
-}
-
-
-BDSAcceleratorComponent* BDSComponentFactory::createRCol(){
+BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
 
   G4Material* theMaterial;
   if(_element.material != "")
@@ -1187,7 +1164,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRCol(){
     theMaterial = BDSMaterials::Instance()->GetMaterial( "Graphite" );
 
 #ifdef BDSDEBUG 
-  G4cout << "---->creating Rcol,"
+  G4cout << "---->creating " << typestr(_element.type) << ","
 	 << " name= " << _element.name 
 	 << " xaper= " << _element.xsize <<"m"
 	 << " yaper= " << _element.ysize <<"m"
@@ -1210,18 +1187,18 @@ BDSAcceleratorComponent* BDSComponentFactory::createRCol(){
     _element.outR*CLHEP::m) );
 
   */
+
   return (new BDSCollimator( _element.name,
 			     _element.l * CLHEP::m,
 			     _bpRad,
 			     _element.xsize * CLHEP::m,
 			     _element.ysize * CLHEP::m,
-			     _RCOL,
+			     typestr(_element.type),
 			     theMaterial,
 			     _element.outR*CLHEP::m,
 			     _element.blmLocZ,
 			     _element.blmLocTheta,
 			     _element.tunnelMaterial) );
-      
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){

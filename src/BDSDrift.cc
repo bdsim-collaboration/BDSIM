@@ -65,7 +65,6 @@ BDSDrift::BDSDrift (G4String aName,
     SetStartOuterRadius(itsStartOuterR);
     SetEndOuterRadius(itsEndOuterR);
   }
-  itsType="drift";
 
   if (!(*LogVolCount)[itsName])
     {

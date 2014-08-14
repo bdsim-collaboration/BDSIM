@@ -128,7 +128,7 @@
 #include "BDSLaserCompton.hh"
 #include "BDSSynchrotronRadiation.hh"
 #include "BDSContinuousSR.hh"
-//#include "G4StepLimiter.hh"
+#include "G4StepLimiter.hh"
 #include "G4UserSpecialCuts.hh"
 
 //
@@ -198,7 +198,8 @@ BDSPhysicsList::BDSPhysicsList():  G4VUserPhysicsList()
   theMieHGScatteringProcess    = NULL;
   theBoundaryProcess           = NULL;
 
-  theStandardPhysList          = NULL;
+  theReferenceHadronicPhysList = NULL;
+  theReferenceEmPhysList       = NULL;
   theBDSIMPhysList             = NULL;
   theHadPhysList1              = NULL;
   theHadPhysList2              = NULL;
@@ -224,7 +225,8 @@ BDSPhysicsList::BDSPhysicsList():  G4VUserPhysicsList()
 
 BDSPhysicsList::~BDSPhysicsList()
 {
-  delete theStandardPhysList;
+  delete theReferenceHadronicPhysList;
+  delete theReferenceEmPhysList;
   delete theBDSIMPhysList;
   delete theHadPhysList1;
   delete theHadPhysList2;
@@ -238,47 +240,51 @@ void BDSPhysicsList::ConstructProcess()
 
   bool plistFound=false;
   //standard physics lists
-  if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP"){
+  if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT"){
 #if G4VERSION_NUMBER < 1000
-    theStandardPhysList = new HadronPhysicsQGSP_BERT_HP();
-#else
-    theStandardPhysList = new G4HadronPhysicsQGSP_BERT_HP();
+    theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT();
+#elseg
+    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT();
 #endif
-    theStandardPhysList->ConstructProcess();
+    theReferenceEmPhysList = new G4EmStandardPhysics();
+    theReferenceHadronicPhysList->ConstructProcess();
+    //    theReferenceEmPhysList->ConstructProcess();
     plistFound=true;
-  } else if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT"){
+  } else if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP"){
 #if G4VERSION_NUMBER < 1000
-    theStandardPhysList = new HadronPhysicsQGSP_BERT();
+    theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT_HP();
 #else
-    theStandardPhysList = new G4HadronPhysicsQGSP_BERT();
+    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT_HP();
 #endif
-    theStandardPhysList->ConstructProcess();
+    theReferenceHadronicPhysList->ConstructProcess();
+    theReferenceEmPhysList = new G4EmStandardPhysics();
+    theReferenceEmPhysList->ConstructProcess();
     plistFound=true;
   } else if (BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP_muon"){ //Modified standard physics lists
 #if G4VERSION_NUMBER < 1000
-    theStandardPhysList = new HadronPhysicsQGSP_BERT_HP();
+    theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT_HP();
 #else
-    theStandardPhysList = new G4HadronPhysicsQGSP_BERT_HP();
+    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT_HP();
 #endif
-    theStandardPhysList->ConstructProcess();
+    theReferenceHadronicPhysList->ConstructProcess();
     ConstructMuon();
     plistFound=true;
   } else if (BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_muon"){
 #if G4VERSION_NUMBER < 1000
-    theStandardPhysList = new HadronPhysicsQGSP_BERT();
+    theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT();
 #else
-    theStandardPhysList = new G4HadronPhysicsQGSP_BERT();
+    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT();
 #endif
-    theStandardPhysList->ConstructProcess();
+    theReferenceHadronicPhysList->ConstructProcess();
     ConstructMuon();
     plistFound=true;
   } else if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP_muon_em_low"){
 #if G4VERSION_NUMBER < 1000
-    theStandardPhysList = new HadronPhysicsQGSP_BERT_HP();
+    theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT_HP();
 #else
-    theStandardPhysList = new G4HadronPhysicsQGSP_BERT_HP();
+    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT_HP();
 #endif
-    theStandardPhysList->ConstructProcess();
+    theReferenceHadronicPhysList->ConstructProcess();
     ConstructMuon();
     ConstructEM_Low_Energy();
     plistFound=true;
@@ -297,24 +303,7 @@ void BDSPhysicsList::ConstructProcess()
   }
 
 
-  if(!plistFound){
-    //Need to add transportation if non-standard physics list
-    AddTransportation();
-  }
-  
-  //Apply the following in all cases - step limiter etc.
-  theParticleIterator->reset();
-  while( (*theParticleIterator)() ){
-    G4ParticleDefinition* particle = theParticleIterator->value();
-    if((particle->GetParticleName()=="gamma")||(particle->GetParticleName()=="e-")||(particle->GetParticleName()=="e+")){
-      particle->SetApplyCutsFlag(true);
-    }
-    G4ProcessManager *pmanager = particle->GetProcessManager();
-    //    pmanager->AddProcess(new G4StepLimiter,-1,-1,1);
-#ifndef NOUSERSPECIALCUTS
-    pmanager->AddDiscreteProcess(new G4UserSpecialCuts);
-#endif
-  }
+
   
   //===========================================
   //Some options
@@ -345,17 +334,30 @@ void BDSPhysicsList::ConstructProcess()
   //Optical processes
   ConstructOptical();
   //============================================
+  //Need to add transportation and step limiter in all cases.
+  AddTransportation();
+  theParticleIterator->reset();
+  while( (*theParticleIterator)() ){
+    G4ParticleDefinition* particle = theParticleIterator->value();
+    G4ProcessManager *pmanager = particle->GetProcessManager();
+    if((particle->GetParticleName()=="gamma")||
+       (particle->GetParticleName()=="e-")||
+       (particle->GetParticleName()=="e+")||
+       (particle->GetParticleName()=="proton")){
+      particle->SetApplyCutsFlag(true);
+    }
+    pmanager->AddProcess(new G4StepLimiter,-1,-1,1);
+#ifndef NOUSERSPECIALCUTS
+    pmanager->AddDiscreteProcess(new G4UserSpecialCuts);
+#endif
+  }
+  //Always add parameterisation
+  AddParameterisation();
   
   if(plistFound) return;
   //Search BDSIM physics lists
-  
   if (BDSGlobalConstants::Instance()->GetPhysListName() == "standard") return;
-
   // register physics processes here
-      
-  //Always add parameterisation
-  AddParameterisation();
-      
   // standard e+/e-/gamma electromagnetic interactions
   if(BDSGlobalConstants::Instance()->GetPhysListName() == "em_standard") 
     {
@@ -369,7 +371,7 @@ void BDSPhysicsList::ConstructProcess()
     {
       ConstructMerlin();
     }
-      
+  
   // low energy em processes
   else if(BDSGlobalConstants::Instance()->GetPhysListName() == "em_low") 
     {
@@ -434,7 +436,6 @@ void BDSPhysicsList::ConstructProcess()
     ConstructEM();
     ConstructMuon();
     ConstructHadronic();
-    //      ConstructPhotolepton_Hadron();
 #if G4VERSION_NUMBER < 1000
     theBDSIMPhysList = new HadronPhysicsQGSP_BERT_HP;
 #else
@@ -471,8 +472,13 @@ void BDSPhysicsList::ConstructProcess()
 void BDSPhysicsList::ConstructParticle()
 {
   //standard physics lists
-  if (theStandardPhysList) {
-    theStandardPhysList->ConstructParticle();
+  if (theReferenceHadronicPhysList || theReferenceEmPhysList) {
+    if (theReferenceHadronicPhysList) {
+      theReferenceHadronicPhysList->ConstructParticle();
+    }
+    if (theReferenceEmPhysList) {
+      theReferenceEmPhysList->ConstructParticle();
+    }
   } else {
     // pseudo-particles
     G4Geantino::GeantinoDefinition();
@@ -602,13 +608,12 @@ void BDSPhysicsList::ConstructEMMisc()
       // gamma         
       pmanager->AddDiscreteProcess(new G4PhotoElectricEffect);
       pmanager->AddDiscreteProcess(new G4ComptonScattering);
-
       if(0){
 	G4GammaConversion* gammaconversion = new G4GammaConversion();
 	gammaconversion->SetLambdaFactor(1/1.0e-20);
 	BDSXSBias* gammaconversion_xsbias = new BDSXSBias();
 	gammaconversion_xsbias->RegisterProcess(gammaconversion);
-	gammaconversion_xsbias->SetEnhanceFactor(1e-20);
+	gammaconversion_xsbias->eFactor(1e-20);
 	pmanager->AddDiscreteProcess(gammaconversion_xsbias);
 	
       } else if (BDSGlobalConstants::Instance()->GetUseEMLPB()){ //added by M.D. Salt, R.B. Appleby, 15/10/09
@@ -628,7 +633,7 @@ void BDSPhysicsList::ConstructEMMisc()
 	ebremsstrahlung->SetLambdaFactor(1/1.0e-20);
 	BDSXSBias* ebremsstrahlung_xsbias = new BDSXSBias();
 	ebremsstrahlung_xsbias->RegisterProcess(ebremsstrahlung);
-	ebremsstrahlung_xsbias->SetEnhanceFactor(1e-20);
+	ebremsstrahlung_xsbias->eFactor(1e-20);
 	pmanager->AddDiscreteProcess(ebremsstrahlung_xsbias);     
       }	else if(BDSGlobalConstants::Instance()->GetUseEMLPB()){ //added by M.D. Salt, R.B. Appleby, 15/10/09
 	  
@@ -655,7 +660,7 @@ void BDSPhysicsList::ConstructEMMisc()
 	ebremsstrahlung->SetLambdaFactor(1/1.0e-20);
 	BDSXSBias* ebremsstrahlung_xsbias = new BDSXSBias();
 	ebremsstrahlung_xsbias->RegisterProcess(ebremsstrahlung);
-	ebremsstrahlung_xsbias->SetEnhanceFactor(1e-20);
+	ebremsstrahlung_xsbias->eFactor(1e-20);
 	pmanager->AddDiscreteProcess(ebremsstrahlung_xsbias);      
       } else if (BDSGlobalConstants::Instance()->GetUseEMLPB()){
 	G4eBremsstrahlung* ebremsstrahlung = new G4eBremsstrahlung();
@@ -743,7 +748,7 @@ void BDSPhysicsList::ConstructMuon()
       BDSXSBias* gammaconversiontomuon_xsbias = new BDSXSBias();
       gammaconversiontomuons->SetCrossSecFactor(BDSGlobalConstants::Instance()->GetGammaToMuFe());
       gammaconversiontomuon_xsbias->RegisterProcess(gammaconversiontomuons);
-      gammaconversiontomuon_xsbias->SetEnhanceFactor(BDSGlobalConstants::Instance()->GetGammaToMuFe());
+      gammaconversiontomuon_xsbias->eFactor(BDSGlobalConstants::Instance()->GetGammaToMuFe());
       pmanager->AddDiscreteProcess(gammaconversiontomuon_xsbias);
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "GammaToMuFe = " << BDSGlobalConstants::Instance()->GetGammaToMuFe() << G4endl;
@@ -756,7 +761,7 @@ void BDSPhysicsList::ConstructMuon()
       // G4cout << "eeToHadronsXSBias = " << BDSGlobalConstants::Instance()->GetEeToHadronsFe() << G4endl;
       eetohadrons->SetCrossSecFactor(BDSGlobalConstants::Instance()->GetEeToHadronsFe());
       //eetohadrons_xsbias->RegisterProcess(eetohadrons);
-      //eetohadrons_xsbias->SetEnhanceFactor(BDSGlobalConstants::Instance()->GetEeToHadronsFe());
+      //eetohadrons_xsbias->eFactor(BDSGlobalConstants::Instance()->GetEeToHadronsFe());
       //pmanager->AddDiscreteProcess(eetohadrons_xsbias);
       pmanager->AddDiscreteProcess(eetohadrons);
       //-------------------------------------------------------
@@ -764,7 +769,7 @@ void BDSPhysicsList::ConstructMuon()
       BDSXSBias* annihitomupair_xsbias = new BDSXSBias();
       annihitomupair->SetCrossSecFactor(BDSGlobalConstants::Instance()->GetAnnihiToMuFe());
       annihitomupair_xsbias->RegisterProcess(annihitomupair);
-      annihitomupair_xsbias->SetEnhanceFactor(BDSGlobalConstants::Instance()->GetAnnihiToMuFe());
+      annihitomupair_xsbias->eFactor(BDSGlobalConstants::Instance()->GetAnnihiToMuFe());
       pmanager->AddDiscreteProcess(annihitomupair_xsbias); 
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "AnnihiToMuFe = " << BDSGlobalConstants::Instance()->GetAnnihiToMuFe() << G4endl;
@@ -1184,7 +1189,6 @@ void BDSPhysicsList::ConstructSR()
 {
   // BDSIM's version of Synchrotron Radiation
   BDSSynchrotronRadiation* srProcess = new BDSSynchrotronRadiation;
-  
   BDSContinuousSR *contSR = new BDSContinuousSR(); // contin. energy loss process
 
   // G4's version of Synchrotron Radiation - not used because does not have

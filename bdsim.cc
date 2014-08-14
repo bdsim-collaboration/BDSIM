@@ -48,13 +48,13 @@
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
 #include "BDSPhysicsList.hh"
+#include "BDSModularPhysicsList.hh"
 #include "QGSP_BERT.hh"
 #include "QGSP_BERT_HP.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRunAction.hh"
 #include "BDSSamplerSD.hh"
-#include "BDSThresholdCutSteppingAction.hh"
-#include "BDSVerboseSteppingAction.hh"
+#include "BDSSteppingAction.hh"
 #include "BDSStackingAction.hh"
 #include "BDSUserTrackingAction.hh"
 #include "BDSRunManager.hh"
@@ -108,10 +108,8 @@ void BDS_handle_aborts(int signal_number) {
 
 int main(int argc,char** argv) {
 
-  /* Executable command line options reader object */
-  BDSExecOptions *bdsOptions = BDSExecOptions::Instance();
-  bdsOptions->Parse(argc,argv);
-  bdsOptions->Print();
+  /* Initialize executable command line options reader object */
+  BDSExecOptions::Instance(argc,argv)->Print();
   
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> DEBUG mode is on." << G4endl;
@@ -120,9 +118,9 @@ int main(int argc,char** argv) {
   //
   // Parse lattice file
   //
-  G4cout << __FUNCTION__ << "> Using input file : "<< bdsOptions->GetInputFilename()<<G4endl;
+  G4cout << __FUNCTION__ << "> Using input file : "<< BDSExecOptions::Instance()->GetInputFilename()<<G4endl;
   
-  gmad_parser(bdsOptions->GetInputFilename());
+  gmad_parser(BDSExecOptions::Instance()->GetInputFilename());
 
   //
   // pass the run control and beam options read from the lattice
@@ -190,7 +188,7 @@ int main(int argc,char** argv) {
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
 
-  BDSPhysicsList* PhysList=new BDSPhysicsList;
+  BDSModularPhysicsList* PhysList=new BDSModularPhysicsList;
   runManager->SetUserInitialization(PhysList);
   
 #ifdef BDSDEBUG 
@@ -239,14 +237,12 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - steppingaction"<<G4endl;
 #endif
-  if(BDSExecOptions::Instance()->GetVerboseStep()) {
-    runManager->SetUserAction(new BDSVerboseSteppingAction);
+  
+  if (BDSGlobalConstants::Instance()->GetThresholdCutPhotons() > 0 || BDSGlobalConstants::Instance()->GetThresholdCutCharged() > 0
+      || BDSExecOptions::Instance()->GetVerboseStep()) {
+    runManager->SetUserAction(new BDSSteppingAction);
   }
-
-  if (BDSGlobalConstants::Instance()->GetThresholdCutPhotons() > 0 || BDSGlobalConstants::Instance()->GetThresholdCutCharged() > 0) {
-    runManager->SetUserAction(new BDSThresholdCutSteppingAction);
-  }
-
+  
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - trackingaction"<<G4endl;
 #endif
