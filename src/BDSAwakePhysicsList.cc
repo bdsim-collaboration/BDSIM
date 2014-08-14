@@ -1,4 +1,4 @@
-#include "BDSAwakePhysicsList.hh"
+#include "BDSModularPhysicsList.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "G4EmPenelopePhysics.hh"
@@ -20,7 +20,7 @@
 
 //Note: transportation process is constructed by default with classes derive from G4VModularPhysicsList
 
-BDSAwakePhysicsList::BDSAwakePhysicsList(): G4VModularPhysicsList(),_physListName(BDSGlobalConstants::Instance()->GetPhysListName()) {
+BDSModularPhysicsList::BDSModularPhysicsList(): G4VModularPhysicsList(),_physListName(BDSGlobalConstants::Instance()->GetPhysListName()) {
   SetVerboseLevel(1);
   _emPhysics=NULL;
   _hadronicPhysics=NULL;
@@ -38,7 +38,7 @@ BDSAwakePhysicsList::BDSAwakePhysicsList(): G4VModularPhysicsList(),_physListNam
   SetCuts();
 }
 
-void BDSAwakePhysicsList::Print(){
+void BDSModularPhysicsList::Print(){
   //  aParticleIterator->reset();
   //  for(vector<G4VPhysicsConstructor*>::iterator it = _constructors.begin();
   //      it != _constructors.end();
@@ -48,7 +48,7 @@ void BDSAwakePhysicsList::Print(){
 }
 
 //Parse the physicsList option
-void BDSAwakePhysicsList::ParsePhysicsList(){
+void BDSModularPhysicsList::ParsePhysicsList(){
   if(_physListName.contains((G4String)"em")){
     if(_physListName.contains((G4String)"emlow")){
       LoadEmLow();
@@ -99,7 +99,7 @@ void BDSAwakePhysicsList::ParsePhysicsList(){
   LoadCutsAndLimits();
 }
 
-void BDSAwakePhysicsList::ConstructMinimumParticleSet(){
+void BDSModularPhysicsList::ConstructMinimumParticleSet(){
   //Minimum required set of particles required for tracking
   G4Electron::Electron();
   G4Positron::Positron();
@@ -107,11 +107,11 @@ void BDSAwakePhysicsList::ConstructMinimumParticleSet(){
   G4AntiProton::AntiProton();
 }
 
-void BDSAwakePhysicsList::ConfigurePhysics(){
+void BDSModularPhysicsList::ConfigurePhysics(){
   if(_opticalPhysics){ ConfigureOptical();}
 }
 
-void BDSAwakePhysicsList::ConfigureOptical(){
+void BDSModularPhysicsList::ConfigureOptical(){
   if (!_opticalPhysics) return;
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   _opticalPhysics->Configure(kCerenkov,  globals->GetTurnOnCerenkov());///< Cerenkov process index                                   
@@ -125,19 +125,19 @@ void BDSAwakePhysicsList::ConfigureOptical(){
   _opticalPhysics->SetScintillationYieldFactor(globals->GetScintYieldFactor());
 }
 
-void BDSAwakePhysicsList::Register(){
+void BDSModularPhysicsList::Register(){
   std::vector<G4VPhysicsConstructor*>::iterator it;
   for(it = _constructors.begin(); it != _constructors.end(); it++){
     RegisterPhysics(*it);
   }
 }
 
-BDSAwakePhysicsList::~BDSAwakePhysicsList()
+BDSModularPhysicsList::~BDSModularPhysicsList()
 { 
 }
 
 
-void BDSAwakePhysicsList::SetCuts()
+void BDSModularPhysicsList::SetCuts()
 {
   G4VUserPhysicsList::SetCuts();
 
@@ -155,7 +155,7 @@ void BDSAwakePhysicsList::SetCuts()
   DumpCutValuesTable(); 
 }  
 
-void BDSAwakePhysicsList::SetParticleDefinition(){
+void BDSModularPhysicsList::SetParticleDefinition(){
   // set primary particle definition and kinetic beam parameters other than total energy
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   BDSGlobalConstants::Instance()->SetParticleDefinition(particleTable->
@@ -189,54 +189,54 @@ void BDSAwakePhysicsList::SetParticleDefinition(){
 	 << BDSGlobalConstants::Instance()->GetBeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
 }
 
-void BDSAwakePhysicsList::LoadEm(){			  
+void BDSModularPhysicsList::LoadEm(){			  
   _emPhysics = new G4EmStandardPhysics();		  
   _constructors.push_back(_emPhysics);			  
   LoadParameterisationPhysics();			  
 }							  
 							  
-void BDSAwakePhysicsList::LoadEmLow(){			  
+void BDSModularPhysicsList::LoadEmLow(){			  
   _emPhysics = new G4EmStandardPhysics();		  
   _constructors.push_back(_emPhysics);			  
   LoadParameterisationPhysics();			  
 }							  
 							  
-void BDSAwakePhysicsList::LoadParameterisationPhysics(){  
+void BDSModularPhysicsList::LoadParameterisationPhysics(){  
   _paramPhysics = new BDSParameterisationPhysics();	  
   _constructors.push_back(_paramPhysics);		  
 }							  
 							  
-void BDSAwakePhysicsList::LoadHadronic(){		  
+void BDSModularPhysicsList::LoadHadronic(){		  
   _hadronicPhysics = new G4HadronPhysicsQGSP_BERT();	  
   _constructors.push_back(_hadronicPhysics);		  
 }							  
 							  
-void BDSAwakePhysicsList::LoadHadronicHP(){		  
+void BDSModularPhysicsList::LoadHadronicHP(){		  
   _hadronicPhysics = new G4HadronPhysicsQGSP_BERT_HP();	  
   _constructors.push_back(_hadronicPhysics);		  
 }							  
 							  
-void BDSAwakePhysicsList::LoadSynchRad(){		  
+void BDSModularPhysicsList::LoadSynchRad(){		  
   _synchRadPhysics = new BDSSynchRadPhysics();		  
   _constructors.push_back(_synchRadPhysics);		  
 }							  
 							  
-void BDSAwakePhysicsList::LoadMuon(){			  
+void BDSModularPhysicsList::LoadMuon(){			  
   _muonPhysics = new BDSMuonPhysics();			  
   _constructors.push_back(_muonPhysics);		  
 }							  
 							  
-void BDSAwakePhysicsList::LoadOptical(){		  
+void BDSModularPhysicsList::LoadOptical(){		  
   _opticalPhysics = new G4OpticalPhysics();		  
   _constructors.push_back(_opticalPhysics);		  
 }							  
 							  
-void BDSAwakePhysicsList::LoadDecay(){			  
+void BDSModularPhysicsList::LoadDecay(){			  
   _decayPhysics = new G4DecayPhysics();			  
   _constructors.push_back(_decayPhysics);		  
 }                                                         
 
-void BDSAwakePhysicsList::LoadCutsAndLimits(){			  
+void BDSModularPhysicsList::LoadCutsAndLimits(){			  
   _cutsAndLimits = new BDSCutsAndLimits();			  
   _constructors.push_back(_cutsAndLimits);		  
 }                                                         

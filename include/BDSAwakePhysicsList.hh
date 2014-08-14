@@ -1,5 +1,5 @@
-#ifndef BDSAwakePhysicsList_h
-#define BDSAwakePhysicsList_h 1
+#ifndef BDSModularPhysicsList_h
+#define BDSModularPhysicsList_h 1
 
 #include "G4VModularPhysicsList.hh"
 #include "G4OpticalPhysics.hh"
@@ -10,11 +10,11 @@
 
 #include <vector>
 
-class BDSAwakePhysicsList: public G4VModularPhysicsList
+class BDSModularPhysicsList: public G4VModularPhysicsList
 {
 public:
-  BDSAwakePhysicsList();
-  virtual ~BDSAwakePhysicsList();
+  BDSModularPhysicsList();
+  virtual ~BDSModularPhysicsList();
   void Print();
   virtual void SetCuts();
 
