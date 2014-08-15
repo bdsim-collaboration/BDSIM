@@ -133,7 +133,7 @@ public:
   G4double GetProdCutPositronsA();
 
   // Environment variables
-  G4String GetBDSIMHOME();
+  G4String GetBDSIMPATH();
 
   // Physical processes etc.
 
@@ -306,7 +306,7 @@ private:
   G4double itsProdCutPositrons;
   G4double itsProdCutPositronsP;
   G4double itsProdCutPositronsA;
-  G4String itsBDSIMHOME;
+  G4String itsBDSIMPATH;
   G4String itsPhysListName;
   G4bool   itsSynchRadOn;
   G4bool   itsDecayOn;
@@ -634,8 +634,8 @@ inline G4double BDSGlobalConstants::GetProdCutPositronsA()
 // inline G4double BDSGlobalConstants::GetHorizontalComponentOffset()
 // {return itsHorizontalComponentOffset;}
 
-inline G4String BDSGlobalConstants::GetBDSIMHOME()
-{return itsBDSIMHOME;}
+inline G4String BDSGlobalConstants::GetBDSIMPATH()
+{return itsBDSIMPATH;}
 
 inline G4String BDSGlobalConstants::GetPhysListName()
 {return itsPhysListName;}
