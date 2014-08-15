@@ -155,7 +155,7 @@ dump  { return DUMP; }
 std::string bdsimpath = (std::string)getEnv("BDSIMPATH");
 std::string includefilename = "";
 if(bdsimpath.length()>0){
-   includefilename = +(std::string)yytext;
+   includefilename = bdsimpath + (std::string)yytext;
 } else {
    //get main filename and get the path part only
    std::string mainfilename = (std::string)yyfilename;
