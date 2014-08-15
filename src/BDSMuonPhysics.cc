@@ -1,4 +1,5 @@
 #include "BDSMuonPhysics.hh"
+#include "BDSXSBiasPhysics.hh"
 #include "G4GammaConversionToMuons.hh"
 #include "BDSVProcess.hh"
 #include "BDSGlobalConstants.hh"
