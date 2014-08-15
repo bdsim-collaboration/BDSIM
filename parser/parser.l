@@ -153,7 +153,7 @@ dump  { return DUMP; }
 
 //this is perhaps unnecessary now...
 std::string bdsimpath = (std::string)getEnv("BDSIMPATH");
-std::stinrg includefilename = "";
+std::string includefilename = "";
 if(bdsimpath.length()>0){
    includefilename = +(std::string)yytext;
 } else {
