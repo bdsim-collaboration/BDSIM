@@ -48,7 +48,6 @@
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
 #include "BDSPhysicsList.hh"
-#include "BDSPhysicsList.hh"
 #include "QGSP_BERT.hh"
 #include "QGSP_BERT_HP.hh"
 #include "BDSPrimaryGeneratorAction.hh"

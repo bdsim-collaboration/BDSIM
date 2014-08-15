@@ -252,7 +252,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     }
     else {
       gFormat = geometry.substr(0,pos);
-      gFile = BDSGlobalConstants::Instance()->GetBDSIMHOME();
+      gFile = BDSGlobalConstants::Instance()->GetBDSIMPATH();
       G4String temp = geometry.substr(pos+1,geometry.length() - pos);     
 #ifdef BDSDEBUG
       G4cout << "BDSElement::PlaceComponents SQL file is " << temp << G4endl;
@@ -276,7 +276,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     }
     else {
       bFormat = bmap.substr(0,pos);
-      bFile = BDSGlobalConstants::Instance()->GetBDSIMHOME();
+      bFile = BDSGlobalConstants::Instance()->GetBDSIMPATH();
       bFile += bmap.substr(pos+1,bmap.length() - pos); 
 #ifdef BDSDEBUG
       G4cout << "BDSElement::PlaceComponents bmap file is " << bFile << G4endl;
