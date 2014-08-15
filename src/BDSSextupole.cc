@@ -257,7 +257,7 @@ void BDSSextupole::BuildOuterLogicalVolume(G4double aLength,
    
   
   G4int n_poles = 6; // number of poles
-  double mag_inradius = 250*mm; // inner radius
+  double mag_inradius = 250*CLHEP::mm; // inner radius
 
   double zplanepos [2] = {0,itsLength};  
 
@@ -266,7 +266,7 @@ void BDSSextupole::BuildOuterLogicalVolume(G4double aLength,
   G4double router [2] = {outerRadius ,outerRadius };
 
   double pole_inradius = itsInnerIronRadius;
-  double pole_extradius = mag_inradius+0.05*m;
+  double pole_extradius = mag_inradius+0.05*CLHEP::m;
 
 itsOuterLogicalVolume=
    new G4LogicalVolume(
@@ -299,7 +299,7 @@ itsOuterLogicalVolume=
 		 pole_extradius,
 		 itsLength/2.0,
 		 0.,
-		 180.0/n_poles*deg);
+		 180.0/n_poles*CLHEP::deg);
   
   G4LogicalVolume* PoleSLV = 
     new G4LogicalVolume(poleS,             //its solid
@@ -312,7 +312,7 @@ itsOuterLogicalVolume=
     // Calculate position with respect to the reference frame 
     // of the mother volume
     G4RotationMatrix* rm = new G4RotationMatrix();
-    //rm->rotateZ((n+0.5)*360.0/n_poles*deg-itsTilt*360.0/n_poles/4.0*deg);
+    //rm->rotateZ((n+0.5)*360.0/n_poles*CLHEP::deg-itsTilt*360.0/n_poles/4.0*CLHEP::deg);
     rm->rotateZ((n+0.5)*360.0/n_poles*CLHEP::degree-itsTilt*180.0/CLHEP::pi*CLHEP::degree);
     G4ThreeVector uz = G4ThreeVector(0.,0.,itsLength/2.0);     
     G4ThreeVector position = uz;

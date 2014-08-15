@@ -257,7 +257,7 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
   outerRadius = outerRadius/sqrt(2.0);
 
   G4int n_poles = 4; // number of poles
-  double mag_inradius = 250*mm; // inner radius
+  double mag_inradius = 250*CLHEP::mm; // inner radius
 
   double zplanepos [2] = {0,itsLength};  
 
@@ -266,7 +266,7 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
   G4double router [2] = {outerRadius * sqrt(2.0),outerRadius * sqrt(2.0)};
 
   double pole_inradius = itsInnerIronRadius;
-  double pole_extradius = mag_inradius+0.05*m;
+  double pole_extradius = mag_inradius+0.05*CLHEP::m;
   //double itstilt = 0;
 
   itsOuterLogicalVolume=
@@ -330,7 +330,7 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
 		 pole_extradius,
 		 itsLength/2.0,
 		 0.,
-		 180.0/n_poles*deg);
+		 180.0/n_poles*CLHEP::deg);
   
   G4LogicalVolume* PoleSLV = 
     new G4LogicalVolume(poleS,             //its solid
@@ -372,7 +372,7 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
     
   G4RotationMatrix* rm_outer = new G4RotationMatrix();
   //rm_outer->rotateZ(360.0/n_poles/4.0*deg-itsTilt*360.0/n_poles/4.0*deg);
-  rm_outer->rotateZ(360.0/n_poles/4.0*deg-itsTilt*180.0/CLHEP::pi*CLHEP::degree);
+  rm_outer->rotateZ(360.0/n_poles/4.0*CLHEP::deg-itsTilt*180.0/CLHEP::pi*CLHEP::degree);
   G4ThreeVector uz = G4ThreeVector(0.,0.,-itsLength/2.0); 
   // insert the outer volume into the marker volume
   itsPhysiComp = 
