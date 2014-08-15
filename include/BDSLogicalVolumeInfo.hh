@@ -11,12 +11,6 @@ public:
   BDSLogicalVolumeInfo(G4String NameIn, G4double SPosIn);
   ~BDSLogicalVolumeInfo();
 
-  /*
-  void     SetName(G4String NameIn);
-  void     SetSPos(G4double SPosIn);
-  G4double GetSPos();
-  */
-
   G4String GetName()
   {return name;}
   

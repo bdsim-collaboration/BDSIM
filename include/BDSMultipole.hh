@@ -14,23 +14,29 @@
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
 #include "G4LogicalVolume.hh"
 
 #include "G4FieldManager.hh"
 #include "G4ChordFinder.hh"
-#include "G4Mag_EqRhs.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4MagneticField.hh"
-#include "G4PVPlacement.hh"               
-#include "G4EllipticalTube.hh"
-#include "G4SubtractionSolid.hh"
 
 class BDSMultipole :public BDSAcceleratorComponent
 {
 public:
-
+  BDSMultipole( G4String aName, 
+		G4double aLength,
+		G4double aBpRadius,
+		G4double aInnerIronRadius,
+		G4VisAttributes* aVisAtt,
+		G4String aMaterial = "",
+		G4double aXAper=0.,
+		G4double aYAper=0.,
+		G4double angle=0.,
+		G4bool beampipeThicknessSet=false,
+		G4double beampipeThickness=-1);
+  
   //Contructor for components with tunnel material added
   BDSMultipole( G4String aName, 
 		G4double aLength,

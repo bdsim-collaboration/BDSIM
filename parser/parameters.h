@@ -18,6 +18,7 @@ struct Parameters {
 
   double B;  int Bset;    /// magnetic field
   double l;  int lset;    /// length
+  double bmapZOffset; int bmapZOffsetset; //offset of the field map magnet field
   double k0; int k0set;   /// dipole 
   double k1; int k1set;   /// quadrupole
   double k2; int k2set;   /// sextupole
@@ -25,6 +26,7 @@ struct Parameters {
   double ks; int ksset;   /// solenoid
 
   double tscint; int tscintset; ///thickness of scintillating part of screen
+  double twindow; int twindowset; ///thickness of window
 
   std::list<double> knl;           /// multipole expansion coefficients
   std::list<double> ksl;           /// skew multipole expansion
@@ -102,6 +104,14 @@ struct Parameters {
   std::list<const char*> components; int componentsset;
   std::list<double> componentsFractions; int componentsFractionsset;
   std::list<int> componentsWeights; int componentsWeightsset;
+
+  std::string  scintmaterial;  int scintmaterialset;
+  std::string  windowmaterial;  int windowmaterialset;
+  std::string  airmaterial;  int airmaterialset;
+
+  // position of an element withing a sequence
+  double at; int atset;
+
 
   //// reset the parameters to defaults
   void flush();

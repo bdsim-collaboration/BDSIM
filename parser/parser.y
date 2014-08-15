@@ -11,7 +11,6 @@
 
   const int ECHO_GRAMMAR = 0; // print grammar rule expansion (for debugging)
   const int VERBOSE = 0; // print more output
-  //  const int VERBOSE_EXPAND = 0; // print the process of line expansion 
   const int INTERACTIVE = 0; // print output of commands (like in interactive mode)
 
 #include "parser.h"
@@ -40,7 +39,7 @@
 %token <dval> NUMBER
 %token <symp> VARIABLE VECVAR FUNC 
 %token <str> STR
-%token MARKER ELEMENT DRIFT PCLDRIFT RF DIPOLE RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE MULTIPOLE SCREEN
+%token MARKER ELEMENT DRIFT PCLDRIFT RF DIPOLE RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token SOLENOID COLLIMATOR RCOL ECOL LINE SEQUENCE SPOILER ABSORBER LASER TRANSFORM3D MUSPOILER
 %token VKICK HKICK KICK
 %token PERIOD APERTURE FILENAME GAS PIPE TUNNEL MATERIAL ATOM
@@ -278,6 +277,15 @@ decl : VARIABLE ':' marker
 	   params.flush();
 	 }
        }
+     | VARIABLE ':' awakescreen
+       {
+	 if(execute) {
+	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : awakescreen\n",$1->name);
+	   // check parameters and write into element table
+	   write_table(params,$1->name,_AWAKESCREEN);
+	   params.flush();
+	 }
+       }
      | VARIABLE ':' transform3d
        {
 	 if(execute)
@@ -434,6 +442,9 @@ laser : LASER ',' parameters
 screen : SCREEN ',' parameters
 ;
 
+awakescreen : AWAKESCREEN ',' parameters
+;
+
 transform3d : TRANSFORM3D ',' parameters
 ;
 
@@ -503,6 +514,8 @@ parameters:
                   printf("parameters, VARIABLE(%s) = aexpr(%.10g)\n",$1->name,$3);
 #endif
 		  if(!strcmp($1->name,"l")) { params.l = $3; params.lset = 1;} // length
+		  else
+		  if(!strcmp($1->name,"bmapZOffset")) { params.bmapZOffset = $3; params.bmapZOffsetset = 1;} // field map z offset
 		    else
 	          if(!strcmp($1->name,"B")) { params.B = $3; params.Bset = 1;} // dipole field
 		    else 
@@ -599,12 +612,15 @@ parameters:
 		  if(!strcmp($1->name,"taperlength")) {params.taperlength = $3; params.taperlengthset = 1;}
 		    else
 		  if(!strcmp($1->name,"flatlength")) {params.flatlength = $3; params.flatlengthset = 1;}
-                  /*   else */
-		  /* if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence */
-		    else {
-		      //                  if(VERBOSE)
-		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
-		    }
+                    else
+		  if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence
+		    else
+                  if(!strcmp($1->name,"tscint")) { params.tscint = $3; params.tscintset = 1;} // thickness for a scintillator screen 
+		  else
+                  if(!strcmp($1->name,"twindow")) { params.twindow = $3; params.twindowset = 1;} // thickness for a scintillator screen window 
+		    else
+                  if(VERBOSE) printf("Warning : unknown parameter %s\n",$1->name);
+		  
 		}
 	    }
            | VARIABLE '=' vecexpr ',' parameters
@@ -664,7 +680,7 @@ parameters:
                        }
 		    else {
 		      //                  if(VERBOSE)
-		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
+		      printf("Warning : unknown parameter %s\n",$1->name);
 		    }
 		 }
 	     }         
@@ -725,7 +741,7 @@ parameters:
                        }
 		     else {
 		       //                  if(VERBOSE)
-		       printf("Warning : unknown parameter : \"%s\"\n",$1->name);
+		       printf("Warning : unknown parameter %s\n",$1->name);
 		     }
 		 }         
 	     }
@@ -809,7 +825,7 @@ parameters:
 		  else
 		  if(!strcmp($1->name,"tunnelOffsetX")) { params.tunnelOffsetX = $3; params.tunnelOffsetXset = 1;} // tunnel offset
 		    else
-		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;} // tunnel offset
+		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = $3; params.precisionRegionset = 1;} // tunnel offset
 		    else
 		  if(!strcmp($1->name,"e1")) {;}  //
                     else
@@ -836,7 +852,7 @@ parameters:
 		  /* if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence */
 		  else {
 		      //                  if(VERBOSE)
-		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
+		      printf("Warning : unknown parameter %s\n",$1->name);
 		  }
 		}
 	    }
@@ -882,6 +898,24 @@ parameters:
 			 params.tunnelCavityMaterial = $3;
 		       }
 		   else 
+		   if(!strcmp($1->name,"scintmaterial")) 
+		     {
+		       params.scintmaterialset = 1;
+		       params.scintmaterial = $3; 
+		     } // material for a scintillator screen 
+		   else
+		   if(!strcmp($1->name,"windowmaterial")) 
+		     {
+		       params.windowmaterialset = 1;
+		       params.windowmaterial = $3; 
+		     } // material for a scintillator screen window
+		   else
+		   if(!strcmp($1->name,"airmaterial")) 
+		     {
+		       params.airmaterialset = 1;
+		       params.airmaterial = $3; 
+		     } // material for air around scintillator screen 
+		    else
 		   if(!strcmp($1->name,"spec")) 
 		       {
 			 params.specset = 1;
@@ -933,6 +967,23 @@ parameters:
                          {	 
                            params.materialset = 1;
                            params.material = $3;
+                         }
+                       else
+			 if(!strcmp($1->name,"scintmaterial")) 
+			   {	 
+			     params.scintmaterialset = 1;
+			     params.scintmaterial = $3;
+			   }
+			 if(!strcmp($1->name,"windowmaterial")) 
+			   {	 
+			     params.windowmaterialset = 1;
+			     params.windowmaterial = $3;
+			   }
+			 else
+			   if(!strcmp($1->name,"airmaterial")) 
+			     {	 
+			       params.airmaterialset = 1;
+			       params.airmaterial = $3;
                          }
                        else
                          if(!strcmp($1->name,"tunnelMaterial")) 

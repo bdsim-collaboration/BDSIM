@@ -19,7 +19,6 @@ Last modified 15.11.2005 by Ilya Agapov
 
 #include "G4Region.hh"
 
-#include "G4IStore.hh"
 #include "G4GeometrySampler.hh"
 
 //GFlash parameterisation                                                                                                                                                     
@@ -49,14 +48,8 @@ public:
 
 public:
      
-  G4VPhysicalVolume* Construct();
+  virtual G4VPhysicalVolume* Construct();
   void SetMagField(const G4double afield);
-  void UpdateGeometry();
-
-  G4VIStore* CreateImportanceStore();
-  // inline G4IStore* GetIStore(){
-  //   return itsIStore;
-  // }
 
   inline G4VPhysicalVolume* GetWorldVolume(){
     return physiWorld;
@@ -110,8 +103,6 @@ private:
 
   G4VSensitiveDetector *  BDSSensitiveDetector;
   
-  G4IStore* itsIStore;
-
   // Gflash members                                                                                                                                                     
   std::vector<GFlashHomoShowerParameterisation*> theParameterisation;
   GFlashHitMaker *theHitMaker;

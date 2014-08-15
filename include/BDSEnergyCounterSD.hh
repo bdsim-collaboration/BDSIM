@@ -32,6 +32,8 @@ public:
   void clear();
   void DrawAll();
   void PrintAll();
+  G4double GetSPositionOfStep(G4Step* aStep);
+
   G4int itsHCID;
 
 private:
@@ -39,14 +41,15 @@ private:
   BDSEnergyCounterSD& operator=(const BDSEnergyCounterSD&);
   BDSEnergyCounterSD(BDSEnergyCounterSD&);
 
-  G4bool verbose;
+  G4bool   verbose;
   G4String itsName;
   BDSEnergyCounterHitsCollection *BDSEnergyCounterCollection;
-  G4int* HitID;
+  G4int*   HitID;
   G4double enrg;
   G4double xpos;
   G4double ypos;
   G4double zpos;
+  G4double spos;
 };
 
 

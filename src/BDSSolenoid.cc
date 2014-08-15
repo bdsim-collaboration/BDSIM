@@ -52,7 +52,6 @@ BDSSolenoid::BDSSolenoid(G4String aName, G4double aLength,
   itsMagField(NULL),itsStepper(NULL),itsEqRhs(NULL)
 {
   SetOuterRadius(outR);
-  itsType="solenoid";
  
   if (!(*LogVolCount)[itsName])
     {

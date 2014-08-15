@@ -15,6 +15,10 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
 #include "BDSEventAction.hh"
+#include "BDSOutputBase.hh" 
+#include "BDSCCDPixelSD.hh"
+#include "BDSCCDPixelHit.hh"
+#include "BDSTrajectory.hh"
 
 #include <list>
 #include <map>
@@ -37,7 +41,6 @@
 #include "G4ChordFinder.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4PrimaryParticle.hh"
-#include "G4Version.hh"
 
 #include "BDSSampler.hh"
 #include "BDSSamplerCylinder.hh"
@@ -51,13 +54,13 @@
 
 #include "BDSAcceleratorComponent.hh"
 
-#include "BDSOutputBase.hh"
-
 typedef std::map<G4String,int> LogVolCountMap;
 extern LogVolCountMap* LogVolCount;
 
 typedef std::list<BDSEnergyCounterSD*>  ECList;
 extern ECList* theECList;
+
+extern BDSOutputBase* bdsOutput;         // output interface
 
 G4int event_number; // event number, used for checking on printing verboseEventNumber
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
@@ -76,6 +79,7 @@ BDSEventAction::BDSEventAction():
 
   if(isBatch) printModulo=10;
   else printModulo=1;
+  
   
   itsRecordSize=1024;
   
@@ -138,6 +142,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   G4cout<<"BDSEventAction : processing end of event action"<<G4endl;
 #endif
   
+
   if(verboseEvent || verboseEventNumber == event_number){
     G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;
   }
@@ -227,26 +232,17 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   G4cout << __METHOD_NAME__ << " finished getting number of events per ntuple." << G4endl;
 #endif
 
-  
-  if( 
-     (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0) || 
-     (event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate()
-      )
+  if (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " writing out events." << G4endl;
 #endif
 
-#ifdef BDSDEBUG 
-      G4cout<<"writing to file "<<G4endl;
-#endif
       // notify the output about the event end
       // this can be used for splitting output files etc.
-      if((event_number+1) == BDSGlobalConstants::Instance()->GetNumberToGenerate()) {
-	bdsOutput->Write(); // write last file
-      } else {
-	bdsOutput->Commit(); // write and open new file
-      }
+      
+      bdsOutput->Commit(); // write and open new file
+      
 #ifdef BDSDEBUG
       G4cout<<"done"<<G4endl;
 #endif
@@ -270,8 +266,8 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #endif
     // clear out trajectories that don't reach point x
     for(iT1=TrajVec->begin();iT1<TrajVec->end();iT1++){
-      this->Traj=(G4VTrajectory*)(*iT1);
-      this->trajEndPoint = this->Traj->GetPoint((int)Traj->GetPointEntries()-1);
+      this->Traj=(BDSTrajectory*)(*iT1);
+      this->trajEndPoint = (BDSTrajectoryPoint*)this->Traj->GetPoint((int)Traj->GetPointEntries()-1);
       this->trajEndPointThreeVector = this->trajEndPoint->GetPosition();
       if(trajEndPointThreeVector.z()/1000.0>BDSGlobalConstants::Instance()->GetTrajCutGTZ()  && 
          (sqrt(pow(trajEndPointThreeVector.x()/1000.0,2) + pow(trajEndPointThreeVector.y()/1000.0,2))<BDSGlobalConstants::Instance()->GetTrajCutLTR())
@@ -312,16 +308,11 @@ void BDSEventAction::AddPrimaryHits(const G4Event* /*evt*/){
   //Save the primary particle as a hit 
   G4PrimaryVertex* primaryVertex= G4RunManager::GetRunManager()->GetCurrentEvent()->GetPrimaryVertex();
   G4PrimaryParticle* primaryParticle=primaryVertex->GetPrimary();
-#if G4VERSION_NUMBER > 950
   G4ThreeVector momDir = primaryParticle->GetMomentumDirection();
   G4double E = primaryParticle->GetTotalEnergy();
   G4double xp = momDir.x();
   G4double yp = momDir.y();
   G4double zp = momDir.z();
-#else
-  // implementation for older G4 versions to be fixed!
-  G4double E=0.0, xp=0.0, yp=0.0, zp=0.0;
-#endif
   G4double x0 = primaryVertex->GetX0();
   G4double y0 = primaryVertex->GetY0();
   G4double z0 = primaryVertex->GetZ0();

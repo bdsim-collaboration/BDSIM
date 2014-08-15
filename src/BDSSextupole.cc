@@ -43,7 +43,6 @@ BDSSextupole::BDSSextupole(G4String aName, G4double aLength,
 {
   SetOuterRadius(outR);
   itsTilt=tilt;
-  itsType="sext";
 
   if (!(*LogVolCount)[itsName])
     {

@@ -114,6 +114,8 @@ struct Options {
   double   gammaToMuFe;
   double   annihiToMuFe;
   double   eeToHadronsFe;
+
+  double scintYieldFactor;
  
   int      useEMLPB;
   int      useHadLPB;
@@ -137,6 +139,7 @@ struct Options {
   double   prodCutPositronsP;
   double   prodCutPositronsA;
 
+
   /// Tracking related parameters 
   double   maximumTrackingTime; /// maximum tracking time per volume [s]
   double   deltaChord;
@@ -146,6 +149,11 @@ struct Options {
   double   maximumEpsilonStep;
   double   deltaOneStep;
   int      turnOnCerenkov;
+  int turnOnOpticalAbsorption;
+  int turnOnMieScattering;
+  int turnOnRayleighScattering;
+  int turnOnOpticalSurface;
+  int turnOnBirksSaturation;
   int      synchRadOn;
   int      decayOn;
   int      synchTrackPhotons;

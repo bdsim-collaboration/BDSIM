@@ -49,7 +49,7 @@ void BDSMaterials::Initialise()
 
   //G4double abundance;
   G4double fractionmass;
-  //G4int ncomponents;
+ //G4int ncomponents;
   G4double temperature, pressure;
 
   //
@@ -112,6 +112,10 @@ void BDSMaterials::Initialise()
 
   tmpElement = new G4Element
     (name="Zirkonium"   , symbol="Zr", z= 40., a=  91.224*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
+
+  tmpElement = new G4Element
+    (name="Rubidium"   , symbol="Rb", z= 37., a=  85.4678*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
+
 
   tmpElement = new G4Element
     (name="Strontium"   , symbol="Sr", z= 38., a=  87.62*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
@@ -453,11 +457,12 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddElement(elements["O"], 4);
   materials[name] = tmpMaterial; 
 
-	tmpMaterial = new G4Material 
-		(name="FusedSilica", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
-	tmpMaterial->AddElement(elements["O"],2);
-	tmpMaterial->AddElement(elements["Si"],1);
-	const G4int FusedSilica_NUMENTRIES = 3; //Number of entries in the material properties table
+  
+  tmpMaterial = new G4Material 
+    (name="fusedsilica", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
+  tmpMaterial->AddElement(elements["O"],2);
+  tmpMaterial->AddElement(elements["Si"],1);
+  const G4int FusedSilica_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double FusedSilica_RIND[FusedSilica_NUMENTRIES]={1.49,1.49,1.49};
   G4double FusedSilica_AbsLength[FusedSilica_NUMENTRIES]={420.*CLHEP::cm,420.*CLHEP::cm,420.*CLHEP::cm};
   G4double FusedSilica_Energy[FusedSilica_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV};
@@ -467,17 +472,125 @@ void BDSMaterials::Initialise()
   tmpMaterial->SetMaterialPropertiesTable(fsMaterialPropertiesTable);
   materials[name] = tmpMaterial; 
 
+  //n-bk7
+  tmpMaterial = new G4Material 
+    (name="n-bk7", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
+  tmpMaterial->AddElement(elements["O"],2);
+  tmpMaterial->AddElement(elements["Si"],1);
+  const G4int N_Bk7_NUMENTRIES = 3; //Number of entries in the material properties table
+  G4double N_Bk7_RIND[N_Bk7_NUMENTRIES]={1.51680,1.51680,1.51680};
+  G4double N_Bk7_AbsLength[N_Bk7_NUMENTRIES]={420.*CLHEP::cm,420.*CLHEP::cm,420.*CLHEP::cm};
+  G4double N_Bk7_Energy[N_Bk7_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV};
+  G4MaterialPropertiesTable* nbk7MaterialPropertiesTable= new G4MaterialPropertiesTable();
+  nbk7MaterialPropertiesTable->AddProperty("ABSLENGTH",N_Bk7_Energy,N_Bk7_AbsLength,N_Bk7_NUMENTRIES);
+  nbk7MaterialPropertiesTable->AddProperty("RINDEX",N_Bk7_Energy,N_Bk7_RIND,N_Bk7_NUMENTRIES);
+  tmpMaterial->SetMaterialPropertiesTable(nbk7MaterialPropertiesTable);
+  materials[name] = tmpMaterial; 
+  
   //scintillator materials
   //YAG
   tmpMaterial = new G4Material(name="yag", density=4.56*CLHEP::g/CLHEP::cm3, 3);
   tmpMaterial->AddElement(elements["Y"],3);
   tmpMaterial->AddElement(elements["Al"],5);
   tmpMaterial->AddElement(elements["O"],12);
+  G4double birks = 0.08*CLHEP::mm/CLHEP::MeV; 
+  tmpMaterial->GetIonisation()->SetBirksConstant(birks);
+  G4MaterialPropertiesTable* mpt_YAG = new G4MaterialPropertiesTable();
+  const int nEntries3=60;
+  const G4int nEntries = 9;
+  G4double PhotonEnergyYAG[nEntries];
+  G4double dNEntries2=(G4double)nEntries;
+  G4double energyMin=1.91*CLHEP::eV;
+  G4double energyMax=2.76*CLHEP::eV;
+  G4double deltaEnergy=(energyMax-energyMin)/(dNEntries2-1.0);
+  G4double energy=energyMin;
+  for(G4int i=0; i<nEntries; energy += deltaEnergy, i++){
+    PhotonEnergyYAG[i]=energy;
+  }
+  G4double RefractiveIndexYAG[nEntries] = //Approximately correct, but check for different wavelengths
+    { 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82,
+      1.82, 1.82 };
+  G4double scintFastYAG[nEntries] = //Approximately correct
+    { 0, 0.25, 2.0, 14.0, 13.0, 7.0, 4.0, 2.0, 0.0 };
+  const G4int nEntries2 = 32;
+  G4double PhotonEnergy[nEntries2] =
+    { 2.034*CLHEP::eV, 2.068*CLHEP::eV, 2.103*CLHEP::eV, 2.139*CLHEP::eV,
+      2.177*CLHEP::eV, 2.216*CLHEP::eV, 2.256*CLHEP::eV, 2.298*CLHEP::eV,
+      2.341*CLHEP::eV, 2.386*CLHEP::eV, 2.433*CLHEP::eV, 2.481*CLHEP::eV,
+      2.532*CLHEP::eV, 2.585*CLHEP::eV, 2.640*CLHEP::eV, 2.697*CLHEP::eV,
+      2.757*CLHEP::eV, 2.820*CLHEP::eV, 2.885*CLHEP::eV, 2.954*CLHEP::eV,
+      3.026*CLHEP::eV, 3.102*CLHEP::eV, 3.181*CLHEP::eV, 3.265*CLHEP::eV,
+      3.353*CLHEP::eV, 3.446*CLHEP::eV, 3.545*CLHEP::eV, 3.649*CLHEP::eV,
+      3.760*CLHEP::eV, 3.877*CLHEP::eV, 4.002*CLHEP::eV, 4.136*CLHEP::eV };
+#if G4VERSION_NUMBER < 950
+  mpt_YAG->AddProperty("FASTCOMPONENT",PhotonEnergyYAG, scintFastYAG, nEntries);
+#else
+  mpt_YAG->AddProperty("FASTCOMPONENT",PhotonEnergyYAG, scintFastYAG, nEntries)->SetSpline(true);
+#endif
+  mpt_YAG->AddProperty("RINDEX",PhotonEnergyYAG, RefractiveIndexYAG, nEntries);
+  mpt_YAG->AddConstProperty("SCINTILLATIONYIELD",8000./CLHEP::MeV); //Approximately correct
+  mpt_YAG->AddConstProperty("RESOLUTIONSCALE",2.0); //Check this
+  mpt_YAG->AddConstProperty("FASTTIMECONSTANT",70.*CLHEP::ns); //Approximately correct
+  mpt_YAG->AddConstProperty("YIELDRATIO",1.0);
+  tmpMaterial->SetMaterialPropertiesTable(mpt_YAG);
   materials[name] = tmpMaterial;
 
+  //UPS-923A  - see http://www.amcrys-h.com/
+  //Define the material properties (copy from NIST table of materials).
+  G4Material* polystyrene = G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYSTYRENE",true,true);
+  tmpMaterial = new G4Material(name="ups923a",density=polystyrene->GetDensity(),1);
+  tmpMaterial->AddMaterial(polystyrene,1);
+  tmpMaterial->SetName(name.c_str());
+  //Define the optical properties.
+  const G4int ups923a_numentries = 67;
+  
+  G4double ups923a_PhotonEnergy[ups923a_numentries]   = {
+    3.35,    3.31,    3.28,    3.26,    3.25,    3.23,    3.23,
+    3.22,    3.21,    3.19,    3.18,    3.17,    3.16,    3.15,
+    3.14,    3.14,    3.13,    3.11,    3.1,    3.09,    3.09,
+    3.08,    3.07,    3.04,    3.02,    3.02,    3.01,    2.99,
+    2.98,    2.97,    2.97,    2.95,    2.95,    2.93,    2.93,
+    2.92,    2.92,    2.91,    2.89,    2.88,    2.87,    2.86,
+    2.85,    2.83,    2.81,    2.8,    2.79,    2.78,    2.76,
+    2.74,    2.72,    2.71,    2.68,    2.66,    2.64,    2.62,
+    2.61,    2.58,    2.55,    2.53,    2.5,    2.48,    2.46,
+    2.44,    2.41,    2.38,    2.35  };      
+  
+  G4double ups923a_emission[ups923a_numentries]   = {
+    0,    0.04,    0.11,    0.2,    0.3,    0.4,    0.52,
+    0.62,    0.67,    0.68,    0.67,    0.62,    0.53,    0.48,
+    0.44,    0.42,    0.4,    0.41,    0.42,    0.51,    0.46,
+    0.57,    0.67,    0.78,    0.91,    0.93,    0.95,    0.96,
+    0.94,    0.91,    0.85,    0.76,    0.67,    0.61,    0.57,
+    0.55,    0.52,    0.51,    0.52,    0.54,    0.57,    0.58,
+    0.6,    0.6,    0.59,    0.58,    0.55,    0.48,    0.42,
+    0.37,    0.33,    0.31,    0.29,    0.28,    0.26,    0.24,
+    0.2,    0.17,    0.12,    0.09,    0.08,    0.07,
+    0.06,    0.04,    0.02,    0.01,    0.01  };
+  
+  G4MaterialPropertiesTable* ups923a_mt = new G4MaterialPropertiesTable();
+  ups923a_mt->AddConstProperty("RESOLUTIONSCALE",2.0); //Check this
+  ups923a_mt->AddConstProperty("FASTTIMECONSTANT",3.3*CLHEP::ns);
+  ups923a_mt->AddConstProperty("YIELDRATIO",1.0);
+  //Birk's constant
+  birks = (0.014/1.06)*CLHEP::cm/CLHEP::MeV; 
+  tmpMaterial->GetIonisation()->SetBirksConstant(birks);
+#if G4VERSION_NUMBER < 950
+  ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy, ups923a_emission, ups923a_numentries);
+#else
+  ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy, ups923a_emission, ups923a_numentries)->SetSpline(true);
+#endif
+  ups923a_mt->AddConstProperty("RINDEX", 1.52);
+  ups923a_mt->AddConstProperty("ABSLENGTH", 1*CLHEP::m);
+  G4double scintYieldAnthracene=14200; //Anthracene yield per 1 CLHEP::MeV
+  G4double scintYieldUPS923A=scintYieldAnthracene*0.60;//60% of anthracene
+  ups923a_mt->AddConstProperty("SCINTILLATIONYIELD",scintYieldUPS923A/CLHEP::MeV);
+  tmpMaterial->SetMaterialPropertiesTable(ups923a_mt);
+  //Put into the materials array.
+  materials[name]=tmpMaterial;
+
   //PET (Dacron)
-  G4NistManager* nistManager = G4NistManager::Instance();
-  tmpMaterial = nistManager->FindOrBuildMaterial("G4_DACRON",true,true);
+  tmpMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_DACRON",true,true);
   name="pet";
   const G4int Pet_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Pet_RIND[Pet_NUMENTRIES] = {1.570,1.570,1.570};//Assume constant refractive index.
@@ -488,7 +601,7 @@ void BDSMaterials::Initialise()
   materials[name]=tmpMaterial;
 
   //Cellulose
-  tmpMaterial = nistManager->FindOrBuildMaterial("G4_CELLULOSE_CELLOPHANE",true,true);
+  tmpMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_CELLULOSE_CELLOPHANE",true,true);
   name="cellulose";
   const G4int Cellulose_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Cellulose_RIND[Cellulose_NUMENTRIES] = {1.532,1.532,1.532};//Assume constant refractive index.
@@ -505,6 +618,148 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddElement(elements["H"],10);
   tmpMaterial->AddElement(elements["N"],2);
   tmpMaterial->AddElement(elements["O"],4);
+  materials[name]=tmpMaterial;
+
+  //Gadolinium oxysulphate Gd_2 O_2 S
+  G4Material* GOS = G4NistManager::Instance()->FindOrBuildMaterial("G4_GADOLINIUM_OXYSULFIDE",true,true);
+
+  //Ganolinium oxysulphate in a polyurethane elastomer (lanex)
+  G4double fill_factor=0.5;
+  G4double lanex_density=fill_factor*GOS->GetDensity()+(1-fill_factor)*GetMaterial("polyurethane")->GetDensity();
+  G4double gos_fraction_by_mass=fill_factor*GOS->GetDensity()/lanex_density;
+  G4double pur_fraction_by_mass=1-gos_fraction_by_mass;
+  tmpMaterial = new G4Material(name="lanex", density=lanex_density, 2);
+  tmpMaterial->AddMaterial(GOS, gos_fraction_by_mass);
+  tmpMaterial->AddMaterial(GetMaterial("polyurethane"), pur_fraction_by_mass);
+  G4MaterialPropertiesTable* mptLanex = new G4MaterialPropertiesTable();
+  const G4int nentLanex=2;
+  G4double rindex=1.50;//(1.82+1.50)/2.0;
+  G4double energytab[]={2.239*CLHEP::eV, 2.241*CLHEP::eV};
+  G4double rindextab[]={rindex, rindex};
+  G4double emitspec[]={1.0, 1.0};
+  G4double abslen[]={7*CLHEP::mm, 7*CLHEP::mm};
+  mptLanex->AddProperty("RINDEX",energytab, rindextab, nentLanex); //Average refractive index of bulk material
+  mptLanex->AddProperty("ABSLENGTH", energytab, abslen, nentLanex);
+  mptLanex->AddProperty("FASTCOMPONENT",energytab, emitspec, nentLanex);
+  G4double scintScalingFactor=1;
+  mptLanex->AddConstProperty("SCINTILLATIONYIELD",7.8e4/CLHEP::MeV);
+  mptLanex->AddConstProperty("RESOLUTIONSCALE",1.0);
+  mptLanex->AddConstProperty("FASTTIMECONSTANT", 1.*CLHEP::ns);
+  mptLanex->AddConstProperty("MIEHG", 60.3e-3*CLHEP::mm);
+  mptLanex->AddConstProperty("MIEHG_FORWARD", 0.91);
+  mptLanex->AddConstProperty("MIEHG_BACKWARD", 0.91);
+  mptLanex->AddConstProperty("MIEHG_FORWARD_RATIO", 1.0);
+  tmpMaterial->SetMaterialPropertiesTable(mptLanex);
+  materials[name]=tmpMaterial;
+
+  //Ganolinium oxysulphate in a polyurethane elastomer (lanex) - version 2
+  tmpMaterial = new G4Material(name="lanex2", density=lanex_density, 2);
+  tmpMaterial->AddMaterial(GOS, gos_fraction_by_mass);
+  tmpMaterial->AddMaterial(GetMaterial("polyurethane"), pur_fraction_by_mass);
+  G4MaterialPropertiesTable* mptLanex2 = new G4MaterialPropertiesTable();
+  mptLanex2->AddProperty("RINDEX",energytab, rindextab, nentLanex); //Average refractive index of bulk material
+  mptLanex2->AddProperty("ABSLENGTH", energytab, abslen, nentLanex);
+  mptLanex2->AddProperty("FASTCOMPONENT",energytab, emitspec, nentLanex);
+  mptLanex2->AddConstProperty("SCINTILLATIONYIELD",8.9e4/CLHEP::MeV);
+  mptLanex2->AddConstProperty("RESOLUTIONSCALE",1.0);
+  mptLanex2->AddConstProperty("FASTTIMECONSTANT", 1.*CLHEP::ns);
+  mptLanex2->AddConstProperty("MIEHG", 60.3e-3*CLHEP::mm);
+  mptLanex2->AddConstProperty("MIEHG_FORWARD", 0.91);
+  mptLanex2->AddConstProperty("MIEHG_BACKWARD", 0.91);
+  mptLanex2->AddConstProperty("MIEHG_FORWARD_RATIO", 0.5);
+  tmpMaterial->SetMaterialPropertiesTable(mptLanex);
+  materials[name]=tmpMaterial;
+
+  //gos_lanex - GOS with the bulk optical transport properties of lanex particles suspended in an elastomer but the atomic, density and scintillation properties of GOS
+  G4double gos_lanex_density=GOS->GetDensity();
+  tmpMaterial = new G4Material(name="gos_lanex", density=gos_lanex_density, 1);
+  tmpMaterial->AddMaterial(GOS, 1.0);
+  G4MaterialPropertiesTable* mptGOSLanex = new G4MaterialPropertiesTable();
+  const G4int nentGOSLanex=2;
+  G4double rindexGOSLanex=1.50;
+  G4double energyGOSLanexTab[]={2.239*CLHEP::eV, 2.241*CLHEP::eV};
+  G4double rindexGOSLanexTab[]={rindexGOSLanex, rindexGOSLanex};
+  G4double emitspecGOSLanex[]={1.0, 1.0};
+  G4double abslenGOSLanex[]={7*CLHEP::mm, 7*CLHEP::mm};
+  G4double mieScatteringLengthGOSLanex=60.3*CLHEP::um;
+  G4double gosLanexMiehgForward=0.911;
+  G4double gosLanexMiehgBackward=0.911;
+  G4double gosLanexMiehgForwardRatio=0.5;
+  G4double mieHgTimeConst=1.0*CLHEP::ns;
+  mptGOSLanex->AddProperty("FASTCOMPONENT",energyGOSLanexTab, emitspecGOSLanex, nentGOSLanex);
+  mptGOSLanex->AddConstProperty("SCINTILLATIONYIELD",8.9e4/CLHEP::MeV); //Intrinisic scintilation yield of GOS
+  mptGOSLanex->AddConstProperty("RESOLUTIONSCALE", 1.0);
+  mptGOSLanex->AddConstProperty("FASTTIMECONSTANT", mieHgTimeConst);
+  mptGOSLanex->AddConstProperty("YIELDRATIO", 1.0);
+  mptGOSLanex->AddConstProperty("MIEHG", mieScatteringLengthGOSLanex);
+  mptGOSLanex->AddConstProperty("MIEHG_FORWARD", gosLanexMiehgForward);
+  mptGOSLanex->AddConstProperty("MIEHG_BACKWARD", gosLanexMiehgBackward);
+  mptGOSLanex->AddConstProperty("MIEHG_FORWARD_RATIO", gosLanexMiehgForwardRatio);
+  mptGOSLanex->AddProperty("RINDEX",energyGOSLanexTab, rindexGOSLanexTab, nentGOSLanex); //Average refractive index of bulk material
+  mptGOSLanex->AddProperty("ABSLENGTH", energyGOSLanexTab, abslenGOSLanex, nentGOSLanex);
+  tmpMaterial->SetMaterialPropertiesTable(mptGOSLanex);
+  materials[name]=tmpMaterial;
+
+  //Same as gos_lanex but refractive index = 1
+  tmpMaterial = new G4Material(name="gos_ri1", density=gos_lanex_density, 1);
+  tmpMaterial->AddMaterial(GOS, 1.0);
+  G4MaterialPropertiesTable* mptGOSLanexRi1 = new G4MaterialPropertiesTable();
+  G4double rindexGOSLanexRi1Tab[]={1.0, 1.0};
+  mptGOSLanexRi1->AddProperty("FASTCOMPONENT",energyGOSLanexTab, emitspecGOSLanex, nentGOSLanex);
+  mptGOSLanexRi1->AddConstProperty("SCINTILLATIONYIELD",8.9e4/CLHEP::MeV); //Intrinisic scintilation yield of GOS
+  mptGOSLanexRi1->AddConstProperty("RESOLUTIONSCALE", 1.0);
+  mptGOSLanexRi1->AddConstProperty("FASTTIMECONSTANT", mieHgTimeConst);
+  mptGOSLanexRi1->AddConstProperty("YIELDRATIO", 1.0);
+  mptGOSLanexRi1->AddConstProperty("MIEHG", mieScatteringLengthGOSLanex);
+  mptGOSLanexRi1->AddConstProperty("MIEHG_FORWARD", gosLanexMiehgForward);
+  mptGOSLanexRi1->AddConstProperty("MIEHG_BACKWARD", gosLanexMiehgBackward);
+  mptGOSLanexRi1->AddConstProperty("MIEHG_FORWARD_RATIO", gosLanexMiehgForwardRatio);
+  mptGOSLanexRi1->AddProperty("RINDEX",energyGOSLanexTab, rindexGOSLanexRi1Tab, nentGOSLanex); //Average refractive index of bulk material
+  mptGOSLanexRi1->AddProperty("ABSLENGTH", energyGOSLanexTab, abslenGOSLanex, nentGOSLanex);
+  tmpMaterial->SetMaterialPropertiesTable(mptGOSLanexRi1);
+  materials[name]=tmpMaterial;
+
+  //pet_lanex - PET with the bulk optical transport properties of lanex particles suspended in an elastomer but the atomic, density and scintillation properties of PET
+  G4double pet_lanex_density=GetMaterial("polyurethane")->GetDensity();
+  tmpMaterial = new G4Material(name="pet_lanex", density=pet_lanex_density, 1);
+  tmpMaterial->AddMaterial(GetMaterial("polyurethane"), 1.0);
+  G4MaterialPropertiesTable* mptPETLanex = new G4MaterialPropertiesTable();
+  mptPETLanex->AddConstProperty("MIEHG", mieScatteringLengthGOSLanex);
+  mptPETLanex->AddConstProperty("MIEHG_FORWARD", gosLanexMiehgForward);
+  mptPETLanex->AddConstProperty("MIEHG_BACKWARD", gosLanexMiehgBackward);
+  mptPETLanex->AddConstProperty("MIEHG_FORWARD_RATIO", gosLanexMiehgForwardRatio);
+  mptPETLanex->AddProperty("RINDEX",energyGOSLanexTab, rindexGOSLanexTab, nentGOSLanex); //Average refractive index of bulk material
+  mptPETLanex->AddProperty("ABSLENGTH", energyGOSLanexTab, abslenGOSLanex, nentGOSLanex);
+  tmpMaterial->SetMaterialPropertiesTable(mptPETLanex);
+  materials[name]=tmpMaterial;
+
+
+  //Medex (larger grained lanex)
+  G4double medex_fill_factor=0.5;
+  G4double medex_density=fill_factor*GOS->GetDensity()+(1-fill_factor)*GetMaterial("polyurethane")->GetDensity();
+  G4double medex_gos_fraction_by_mass=fill_factor*GOS->GetDensity()/medex_density;
+  G4double medex_pur_fraction_by_mass=1-medex_gos_fraction_by_mass;
+  tmpMaterial = new G4Material(name="medex", density=medex_density, 2);
+  tmpMaterial->AddMaterial(GOS, medex_gos_fraction_by_mass);
+  tmpMaterial->AddMaterial(GetMaterial("polyurethane"), medex_pur_fraction_by_mass);
+  G4MaterialPropertiesTable* mptMedex = new G4MaterialPropertiesTable();
+  const G4int nentMedex=2;
+  G4double medexRindex=(1.82+1.50)/2.0;
+  G4double medexEnergytab[]={2.239*CLHEP::eV, 2.241*CLHEP::eV};
+  G4double medexRindextab[]={rindex, rindex};
+  G4double medexEmitspec[]={1.0, 1.0};
+  G4double medexAbslen[]={7*CLHEP::mm, 7*CLHEP::mm};
+  mptMedex->AddProperty("RINDEX",energytab, medexRindextab, nentMedex); //Average refractive index of bulk material
+  mptMedex->AddProperty("ABSLENGTH", energytab, medexAbslen, nentMedex);
+  mptMedex->AddProperty("FASTCOMPONENT",energytab, medexEmitspec, nentMedex);
+  mptMedex->AddConstProperty("SCINTILLATIONYIELD",scintScalingFactor*2.94e4/CLHEP::MeV);
+  mptMedex->AddConstProperty("RESOLUTIONSCALE",1.0);
+  mptMedex->AddConstProperty("FASTTIMECONSTANT", 1.*CLHEP::ns);
+  mptMedex->AddConstProperty("MIEHG", 230e-3*CLHEP::mm);
+  mptMedex->AddConstProperty("MIEHG_FORWARD", 0.93);
+  mptMedex->AddConstProperty("MIEHG_BACKWARD", 0.93);
+  mptMedex->AddConstProperty("MIEHG_FORWARD_RATIO", 1.0);
+  tmpMaterial->SetMaterialPropertiesTable(mptMedex);
   materials[name]=tmpMaterial;
 
   // liquid materials
@@ -556,6 +811,15 @@ void BDSMaterials::Initialise()
     (name="carbonmonoxide", density, 2, kStateGas, temperature, pressure);
   tmpMaterial->AddElement(elements["C"], 1);
   tmpMaterial->AddElement(elements["O"], 1);
+  materials[name] = tmpMaterial; 
+
+  //Awake plasma - rubidium at density of 7e14 atoms/cm3 
+  //  G4double numberDensity = 7.0e14/CLHEP::cm3;
+  a = 85.4678*CLHEP::g/CLHEP::mole;
+  density = 1e-7*CLHEP::g/CLHEP::cm3;
+  //density = a*numberDensity;
+  tmpMaterial =  new G4Material
+    (name="awakeplasma", z=37., a, density);
   materials[name] = tmpMaterial; 
 
   //Carbon monoxide beam pipe gas
@@ -710,8 +974,7 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)
 #ifdef BDSDEBUG
     G4cout << "Using NIST material " << aMaterial << G4endl;
 #endif
-    G4NistManager* nistManager = G4NistManager::Instance();
-    return nistManager->FindOrBuildMaterial(aMaterial, true, true);
+    return G4NistManager::Instance()->FindOrBuildMaterial(aMaterial, true, true);
   } else {
     aMaterial.toLower();
     std::map<G4String,G4Material*>::iterator iter = materials.find(aMaterial);
@@ -735,8 +998,7 @@ G4Element* BDSMaterials::GetElement(G4String aSymbol)
 #ifdef BDSDEBUG
     G4cout << "Using NIST material " << aSymbol << G4endl;
 #endif
-    G4NistManager* nistManager = G4NistManager::Instance();
-    return nistManager->FindOrBuildElement(aSymbol, true);
+    return G4NistManager::Instance()->FindOrBuildElement(aSymbol, true);
   } else {
     std::map<G4String,G4Element*>::iterator iter = elements.find(aSymbol);
     if(iter != elements.end()) return (*iter).second;
@@ -830,11 +1092,11 @@ void BDSMaterials::ListMaterials(){
   G4cout << "Vanadium" << G4endl;
   G4cout << "Water" << G4endl;
   G4cout << "WeightIron" << G4endl;
+  G4cout << "AwakePlasma" << G4endl;
   G4cout << "****************************" << G4endl;
   G4cout << "Available nist materials are:" << G4endl;
-  G4NistManager* nistManager = G4NistManager::Instance();
   G4String list="all";
-  nistManager->ListMaterials(list);
+  G4NistManager::Instance()->ListMaterials(list);
 }
 
 BDSMaterials::~BDSMaterials(){

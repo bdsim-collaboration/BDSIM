@@ -106,7 +106,7 @@ void BDSGeometrySQL::BuildSQLObjects(G4String file)
   G4cout << "BDSGeometrySQL::BuildSQLObjects Loading file " << file << G4endl;
 #endif
 
-  G4String fullpath = BDSGlobalConstants::Instance()->GetBDSIMHOME();
+  G4String fullpath = BDSGlobalConstants::Instance()->GetBDSIMPATH();
   fullpath += file; 
 #ifdef BDSDEBUG
   G4cout << "BDSGeometrySQL::BuildSQLObjects Full path is " << fullpath << G4endl;

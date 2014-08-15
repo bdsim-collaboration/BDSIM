@@ -13,8 +13,6 @@
 
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
-#include "G4Box.hh"
-#include "G4EllipticalTube.hh"
 #include "G4VSolid.hh"
 #include "G4SubtractionSolid.hh"
 
@@ -22,7 +20,7 @@ class BDSCollimator :public BDSAcceleratorComponent
 {
 public:
   BDSCollimator(G4String aName, G4double aLength,G4double bpRad, 
-                G4double xAper, G4double yAper,G4int type,G4Material *collimatorMaterial, G4double outR, 
+                G4double xAper, G4double yAper,G4String type,G4Material *collimatorMaterial, G4double outR, 
                 std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
 G4String aTunnelMaterial="");
   ~BDSCollimator();

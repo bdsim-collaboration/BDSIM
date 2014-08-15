@@ -21,6 +21,7 @@
 #include "BDSXYMagField.hh"
 #include "BDSMagFieldSQL.hh"
 #include "G4NystromRK4.hh"
+#include "G4HelixImplicitEuler.hh"
 
 // geometry drivers
 #include "parser/enums.h"
@@ -50,18 +51,19 @@ extern LogVolMap* LogVol;
 
 //============================================================
 
-BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap,
-		       G4double aLength, G4double bpRad, G4double outR, G4String aTunnelMaterial, G4double aTunnelRadius, G4double aTunnelOffsetX, G4String aTunnelCavityMaterial, G4int aPrecisionRegion):
+BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap, G4double bmapZOffset,
+		       G4double aLength, G4double bpRad, G4double outR, G4String aTunnelMaterial, G4double aTunnelRadius, G4double aTunnelOffsetX, G4String aTunnelCavityMaterial):
   BDSAcceleratorComponent(
 			  aName,
 			  aLength,bpRad,0,0,
-			  SetVisAttributes(), aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*CLHEP::m, aTunnelOffsetX*CLHEP::m, aTunnelCavityMaterial, aPrecisionRegion),
+			  SetVisAttributes(), aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*CLHEP::m, aTunnelOffsetX*CLHEP::m, aTunnelCavityMaterial),
   fChordFinder(NULL), itsFStepper(NULL), itsFEquation(NULL), itsEqRhs(NULL), 
   itsMagField(NULL), itsCachedMagField(NULL), itsUniformMagField(NULL)
 {
   itsFieldVolName="";
   itsFieldIsUniform=false;
   itsOuterR = outR;
+  itsBmapZOffset = bmapZOffset;
   SetType(_ELEMENT);
 
   //Set marker volume lengths
@@ -250,7 +252,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     }
     else {
       gFormat = geometry.substr(0,pos);
-      gFile = BDSGlobalConstants::Instance()->GetBDSIMHOME();
+      gFile = BDSGlobalConstants::Instance()->GetBDSIMPATH();
       G4String temp = geometry.substr(pos+1,geometry.length() - pos);     
 #ifdef BDSDEBUG
       G4cout << "BDSElement::PlaceComponents SQL file is " << temp << G4endl;
@@ -274,7 +276,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     }
     else {
       bFormat = bmap.substr(0,pos);
-      bFile = BDSGlobalConstants::Instance()->GetBDSIMHOME();
+      bFile = BDSGlobalConstants::Instance()->GetBDSIMPATH();
       bFile += bmap.substr(pos+1,bmap.length() - pos); 
 #ifdef BDSDEBUG
       G4cout << "BDSElement::PlaceComponents bmap file is " << bFile << G4endl;
@@ -312,7 +314,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       G4cout << "BDSElement.cc> Making BDS3DMagField..." << G4endl;
 #endif
       
-      itsMagField = new BDS3DMagField(bFile, 0);
+      itsMagField = new BDS3DMagField(bFile, itsBmapZOffset);
       itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::um);
       BuildMagField(true);
     }else if(bFormat=="XY"){

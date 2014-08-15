@@ -140,7 +140,7 @@ public:
   G4String GetMagnetGeometry();
 
   // Environment variables
-  G4String GetBDSIMHOME();
+  G4String GetBDSIMPATH();
 
   // Physical processes etc.
 
@@ -166,6 +166,13 @@ public:
   G4bool   GetLaserwireTrackPhotons();
   G4bool   GetLaserwireTrackElectrons();
   G4bool   GetTurnOnCerenkov();
+  G4bool GetTurnOnOpticalAbsorption();
+  G4bool GetTurnOnRayleighScattering();
+  G4bool GetTurnOnMieScattering();
+  G4bool GetTurnOnOpticalSurface();
+  G4bool GetTurnOnBirksSaturation();
+  G4double GetScintYieldFactor();
+
   G4bool   GetStoreMuonTrajectories();
   G4double GetTrajCutGTZ();
   G4double GetTrajCutLTR();
@@ -212,8 +219,8 @@ public:
   const G4AffineTransform* GetRefTransform();
   void                     SetRefTransform(G4AffineTransform& aTransform);
 
-  G4double GetZMax();
-  void     SetZMax(G4double);
+  G4double GetSMax();
+  void     SetSMax(G4double);
   G4ThreeVector GetTeleporterDelta();
   void          SetTeleporterDelta(G4ThreeVector newteleporterdelta);
   void          SetTeleporterLength(G4double newteleporterlength);
@@ -309,7 +316,7 @@ private:
   G4double itsProdCutPositrons;
   G4double itsProdCutPositronsP;
   G4double itsProdCutPositronsA;
-  G4String itsBDSIMHOME;
+  G4String itsBDSIMPATH;
   G4String itsPhysListName;
   G4bool   itsSynchRadOn;
   G4bool   itsDecayOn;
@@ -326,6 +333,12 @@ private:
   G4bool   itsLaserwireTrackPhotons;
   G4bool   itsLaserwireTrackElectrons;
   G4bool   itsTurnOnCerenkov;
+  G4bool   itsTurnOnOpticalAbsorption;
+  G4bool   itsTurnOnRayleighScattering;
+  G4bool   itsTurnOnMieScattering;
+  G4bool   itsTurnOnOpticalSurface;
+  G4bool   itsTurnOnBirksSaturation;
+  G4double itsScintYieldFactor;
   G4bool   itsDoPlanckScattering;
   G4bool   itsCheckOverlaps;
   G4bool   itsStoreMuonTrajectories;
@@ -393,7 +406,7 @@ private:
   G4ThreeVector teleporterdelta;
   G4double      teleporterlength;
   // beamline length
-  G4double itsZMax;
+  G4double itsSMax;
   // logical volume info
   std::map<G4LogicalVolume* , BDSLogicalVolumeInfo*> logicalvolumeinfo;
 };
@@ -632,8 +645,8 @@ inline G4double BDSGlobalConstants::GetProdCutPositronsA()
 // inline G4double BDSGlobalConstants::GetHorizontalComponentOffset()
 // {return itsHorizontalComponentOffset;}
 
-inline G4String BDSGlobalConstants::GetBDSIMHOME()
-{return itsBDSIMHOME;}
+inline G4String BDSGlobalConstants::GetBDSIMPATH()
+{return itsBDSIMPATH;}
 
 inline G4String BDSGlobalConstants::GetPhysListName()
 {return itsPhysListName;}
@@ -692,9 +705,26 @@ inline G4double BDSGlobalConstants::GetLengthSafety()
 inline G4bool BDSGlobalConstants::GetTurnOnCerenkov()
 {return itsTurnOnCerenkov;}
 
+inline  G4bool BDSGlobalConstants::GetTurnOnOpticalAbsorption()
+{ return itsTurnOnOpticalAbsorption;}
+
+inline  G4bool BDSGlobalConstants::GetTurnOnRayleighScattering()
+{return itsTurnOnRayleighScattering;}
+
+inline  G4bool BDSGlobalConstants::GetTurnOnMieScattering()
+{return itsTurnOnMieScattering;}
+
+inline  G4bool BDSGlobalConstants::GetTurnOnOpticalSurface()
+{return itsTurnOnOpticalSurface;}
+
+inline  G4bool BDSGlobalConstants::GetTurnOnBirksSaturation()
+{return itsTurnOnBirksSaturation;}
+
+inline  G4double BDSGlobalConstants::GetScintYieldFactor()
+{return itsScintYieldFactor;}
+
 inline G4bool BDSGlobalConstants::GetIncludeIronMagFields()
 {return itsIncludeIronMagFields;}
-
 
 inline G4bool BDSGlobalConstants::GetStoreMuonTrajectories()
 {return itsStoreMuonTrajectories;}
@@ -844,8 +874,11 @@ inline G4int BDSGlobalConstants::GetTurnsToTake()
 inline void  BDSGlobalConstants::SetTurnsToTake(G4int TurnsToTake)
 {itsTurnsToTake = TurnsToTake;}
 
-inline G4double BDSGlobalConstants::GetZMax() {return itsZMax;}
-inline void BDSGlobalConstants::SetZMax(G4double zm){itsZMax=zm;}
+inline G4double BDSGlobalConstants::GetSMax() 
+{return itsSMax;}
+
+inline void BDSGlobalConstants::SetSMax(G4double smax)
+{itsSMax=smax;}
 
 inline G4ThreeVector BDSGlobalConstants::GetTeleporterDelta()
 {return teleporterdelta;}

@@ -5,6 +5,8 @@
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Trd.hh"
+#include "G4EllipticalTube.hh"
+#include "G4SubtractionSolid.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4UnionSolid.hh"
 #include "G4SubtractionSolid.hh"
@@ -42,7 +44,6 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
   itsTilt=tilt;
   itsBField=bField;
   itsBGrad=bGrad;
-  itsType="sbend";
 
   if (!(*LogVolCount)[itsName])
     {

@@ -27,6 +27,7 @@
 #include "G4Cons.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
+#include "G4PVPlacement.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
@@ -35,8 +36,13 @@
 
 #include "G4MagIntegratorStepper.hh"
 
+#include "BDSMaterials.hh"
 #include "BDSMultipoleOuterMagField.hh"
 #include "G4MagneticField.hh"
+
+#include <map>
+#include <string>
+
 
 //============================================================
 
@@ -47,7 +53,6 @@ typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
 //============================================================
-
 BDSMultipole::BDSMultipole( G4String aName, 
 			    G4double aLength,
 			    G4double aBpRadius,
@@ -625,94 +630,25 @@ void BDSMultipole::BuildDefaultOuterLogicalVolume(G4double aLength,
     material=  BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
   }
    
+
+  itsOuterLogicalVolume=
+    new G4LogicalVolume(  new G4SubtractionSolid(itsName+"_outer_solid",
+                                                 new G4Tubs(itsName+"_outer_solid_tmp_1",
+                                                            itsInnerIronRadius+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,
+                                                            outerRadius,
+                                                            aLength/2-BDSGlobalConstants::Instance()->GetLengthSafety(),
+                                                            0,CLHEP::twopi*CLHEP::radian),
+                                                 new G4EllipticalTube(itsName+"_outer_solid_tmp_2",
+                                                                      this->GetAperX()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,
+                                                                      this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,
+                                                                      itsLength)
+                                                 ),
+                          material,
+                          itsName+"_outer_log");
   
-  G4int n_poles = 6; // number of poles
-  double mag_inradius = 250*mm; // inner radius
-
-  double zplanepos [2] = {0,itsLength};  
-
-  double rinner [2] = {mag_inradius, mag_inradius};
-  //G4double rinner [2] = {itsInnerIronRadius,itsInnerIronRadius};
-  G4double router [2] = {outerRadius ,outerRadius };
-
-  double pole_inradius = itsInnerIronRadius;
-  double pole_extradius = mag_inradius+0.05*m;
-
-itsOuterLogicalVolume=
-   new G4LogicalVolume(
-			
-			new G4Tubs(itsName+"_outer_solid",
-				   itsInnerIronRadius,
-				   outerRadius * sqrt(2.0),
-				   itsLength/2,
-				   0,CLHEP::twopi*CLHEP::radian),
-			/*
-			new G4Polyhedra(itsName+"_outer_solid", 
-					0.*CLHEP::degree, 
-					360.*CLHEP::degree, 
-					2*n_poles, 
-					2, 
-					zplanepos, 
-					rinner, 
-					router),
-			*/
-			//BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
-			BDSMaterials::Instance()->GetMaterial("Iron"),
-			itsName+"_outer");
-
-
-  // Defining poles
-  G4ThreeVector positionQuad = G4ThreeVector(0,0,0);
-  G4Tubs* poleS
-    = new G4Tubs("pole",
-		 pole_inradius,
-		 pole_extradius,
-		 itsLength/2.0,
-		 0.,
-		 180.0/n_poles*deg);
-  
-  G4LogicalVolume* PoleSLV = 
-    new G4LogicalVolume(poleS,             //its solid
-                        BDSMaterials::Instance()->GetMaterial("Iron"),   //its material
-                        "PoleSLV");        //its name
-  
-  
-  for (G4int n = 0; n < n_poles; n++) {
-
-    // Calculate position with respect to the reference frame 
-    // of the mother volume
-    G4RotationMatrix* rm = new G4RotationMatrix();
-    //rm->rotateZ((n+0.5)*360.0/n_poles*deg-itsTilt*360.0/n_poles/4.0*deg);
-    rm->rotateZ((n+0.5)*360.0/n_poles*CLHEP::degree-itsTilt*180.0/CLHEP::pi*CLHEP::degree);
-    G4ThreeVector uz = G4ThreeVector(0.,0.,itsLength/2.0);     
-    G4ThreeVector position = uz;
-    //G4Transform3D transform = G4Transform3D(rm,position);
-
-    // Place the poles with the appropriate transformation
-   
-    new G4PVPlacement(rm,             //rotation,
-		      uz,             //position
-                      PoleSLV,            //its logical volume
-                      "poleS",               //its name
-                      itsOuterLogicalVolume,             //its mother  volume
-                      false,                 //no boolean operation
-                      n,                     //copy number
-                      BDSGlobalConstants::Instance()->GetCheckOverlaps());       // checking overlaps 
-	
-  }
-
-  // color-coding for the pole
-  G4VisAttributes* VisAtt = 
-    new G4VisAttributes(G4Colour(1.,1.,0.));
-  VisAtt->SetForceSolid(true);
-  PoleSLV->SetVisAttributes(VisAtt);
-
-  G4RotationMatrix* rm2 = new G4RotationMatrix();
-  rm2->rotateZ(360.0/n_poles/4.0*CLHEP::degree-itsTilt*180.0/CLHEP::pi*CLHEP::degree);
   
   itsPhysiComp = new G4PVPlacement(
-				   //(G4RotationMatrix*)0,		      // no rotation
-				   rm2,
+				   (G4RotationMatrix*)0,		      // no rotation
 				   (G4ThreeVector)0,                      // its position
 		      itsOuterLogicalVolume,  // its logical volume
 		      itsName+"_outer_phys",  // its name

@@ -44,10 +44,6 @@ public:
 		 G4String aTunnelMaterial="", G4String aMaterial= "", G4String spec="");
   ~BDSQuadrupole();
 
-  void SynchRescale(G4double factor);
-
-protected:
-
 private:
   G4double itsBGrad;
 

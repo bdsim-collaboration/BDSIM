@@ -33,10 +33,6 @@ public:
 	       G4String aMaterial = "");
   ~BDSSextupole();
 
-  void SynchRescale(G4double factor);
-
-protected:
-
 private:
   G4double itsBDblPrime;
 

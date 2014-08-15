@@ -5,21 +5,22 @@ Work in progress.
 
 #include "BDSGlobalConstants.hh" 
 #include "BDSScintillatorScreen.hh"
+#include "BDSSampler.hh"
+#include "BDSSamplerSD.hh"
+#include "G4Box.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
-#include "G4SubtractionSolid.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
 
 #include "G4SDManager.hh"
-#include "G4UserLimits.hh"
-#include "G4Version.hh"
-#include "parser/gmad.h"
 #include <map>
+
+extern BDSSamplerSD* BDSSamplerSensDet;
 
 //============================================================
 typedef std::map<G4String,int> LogVolCountMap;
@@ -30,11 +31,14 @@ extern LogVolMap* LogVol;
 
 //============================================================
 
-BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double aLength, G4double tScint):
-  BDSAcceleratorComponent(aName, aLength, 0, 0, 0, SetVisAttributes()),_scintillatorThickness(tScint)
+BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double tScint, G4double angle, G4String scintMaterial, G4String airMaterial):
+  BDSAcceleratorComponent(aName, tScint, 0, 0, 0, SetVisAttributes()),_scintillatorLayerMaterial(BDSMaterials::Instance()->GetMaterial(scintMaterial.data())),_airMaterial(BDSMaterials::Instance()->GetMaterial(airMaterial.data())),_screenAngle(angle),_scintillatorThickness(tScint)
 {
-  itsType="screen";
-  SetName(aName);
+  //Set the rotation of the screen
+  _screenRotationMatrix = new G4RotationMatrix();
+  _screenAngle=angle;
+  _screenRotationMatrix->rotateY(_screenAngle);
+
   if ( (*LogVolCount)[itsName]==0)
     {
       ComputeDimensions();
@@ -62,10 +66,13 @@ G4VisAttributes* BDSScintillatorScreen::SetVisAttributes()
   _visAttFront=new G4VisAttributes(G4Colour(1.0,0.0,0.0,0.5));
   _visAttScint=new G4VisAttributes(G4Colour(0.0,1.0,0.0,0.5));
   _visAttBase =new G4VisAttributes(G4Colour(0.3,0.3,0.3,0.5));
+  _visAttSampler=new G4VisAttributes(G4Colour(0.2,0.2,0.0,0.5));
+  
 
   _visAttFront->SetForceSolid(true);
   _visAttScint->SetForceSolid(true);
   _visAttBase->SetForceSolid(true);
+  _visAttSampler->SetForceSolid(true);
 
   return itsVisAttributes;
 }
@@ -75,9 +82,9 @@ void BDSScintillatorScreen::BuildFrontLayer(){
   itsFrontLayerSolid  = new G4Box("CelluloseFront",_screenWidth/2.0,_screenHeight/2.0,_frontThickness/2.0);
   itsFrontLayerLog = new G4LogicalVolume(itsFrontLayerSolid,BDSMaterials::Instance()->GetMaterial("Cellulose"),"CelluloseFront",0,0,0);
   itsFrontLayerLog->SetVisAttributes(_visAttFront);
-  G4double dispZ=_frontThickness/2.0-_totalThickness/2.0;
+  G4double dispZ=_frontThickness/2.0-_screenThickness/2.0;
   itsFrontLayerPhys = new G4PVPlacement(
-					0,
+					_screenRotationMatrix,
 					G4ThreeVector(0,0,dispZ),
 					itsFrontLayerLog,
 					"ScreenCelluloseFrontPhys",
@@ -89,37 +96,133 @@ void BDSScintillatorScreen::BuildFrontLayer(){
   SetMultiplePhysicalVolumes(itsFrontLayerPhys);
 }
 
+void BDSScintillatorScreen::BuildCameraScoringPlane(){
+  G4String tmp = "_cameraScoringPlane";
+  _scoringPlaneName=itsName+tmp;
+  int nThisSampler= BDSSampler::GetNSamplers() + 1;
+  G4String ident="_camera";
+  _samplerName = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_scoringPlaneName);
+  
+  //Build and place the volume...
+  itsCameraScoringPlaneSolid = new G4Box("CameraScoringPlaneSolid",itsLength/2.0,_yLength/2.0,_scoringPlaneThickness/2.0);
+  itsCameraScoringPlaneLog = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog",0,0,0);
+  itsCameraScoringPlaneLog->SetVisAttributes(_visAttScint);
+  G4double dispX=-_xLength/2.0+_scoringPlaneThickness/2.0;
+  G4double dispY=0;
+  G4double dispZ=0;
+  new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),G4ThreeVector(dispX,dispY,dispZ),itsCameraScoringPlaneLog,_samplerName,
+		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+  
+  (*LogVol)[_samplerName]=itsCameraScoringPlaneLog;
+  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
+  if(BDSSampler::GetNSamplers()==0){
+    BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
+    SDMan->AddNewDetector(BDSSamplerSensDet);
+  }
+  itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
+  //SPM bdsOutput->nSamplers++;
+  BDSSampler::AddExternalSampler(_samplerName+"_1");
+#ifndef NOUSERLIMITS
+  G4double maxStepFactor=0.5;
+  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
+  itsScoringPlaneUserLimits->SetMaxAllowedStep(_scoringPlaneThickness*maxStepFactor);
+  itsCameraScoringPlaneLog->SetUserLimits(itsScoringPlaneUserLimits);
+#endif
+}
+
+
+void BDSScintillatorScreen::BuildScreenScoringPlane(){
+  G4String tmp = "_screenScoringPlane";
+  _screenScoringPlaneName=itsName+tmp;
+  int nThisSampler= BDSSampler::GetNSamplers() + 1;
+  G4String ident="_camera";
+  _screenSamplerName = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_screenScoringPlaneName);
+  
+  //Build and place the volume...
+  itsScreenScoringPlaneSolid = new G4Box("ScreenScoringPlaneSolid",_screenWidth/2.0,_screenHeight/2.0,_scoringPlaneThickness/2.0);
+  itsScreenScoringPlaneLog = new G4LogicalVolume(itsScreenScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"ScreenScoringPlaneLog",0,0,0);
+  itsScreenScoringPlaneLog->SetVisAttributes(_visAttSampler);
+  G4double dispX=0;
+  G4double dispY=0;
+  G4double dispZ=sqrt(2)*(-_screenThickness/2.0- _scoringPlaneThickness/2.0);
+  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX,dispY,dispZ),itsScreenScoringPlaneLog,_screenSamplerName,
+		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+  
+  (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;
+  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
+  if(BDSSampler::GetNSamplers()==0){
+    BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
+    SDMan->AddNewDetector(BDSSamplerSensDet);
+  }
+  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
+  //SPM bdsOutput->nSamplers++;
+  BDSSampler::AddExternalSampler(_screenSamplerName+"_1");
+#ifndef NOUSERLIMITS
+  G4double maxStepFactor=0.5;
+  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
+  itsScoringPlaneUserLimits->SetMaxAllowedStep(_scoringPlaneThickness*maxStepFactor);
+  itsScreenScoringPlaneLog->SetUserLimits(itsScoringPlaneUserLimits);
+#endif
+}
+
 void BDSScintillatorScreen::BuildScintillatorLayer(){
 // The phosphor layer
 //   
-  G4double dispZ=_frontThickness+(_scintillatorThickness)/2.0-_totalThickness/2.0;
-  itsScintillatorLayerSolid = new G4Box("PhosphorLayer",_screenWidth/2.0,_screenHeight/2.0,_scintillatorThickness/2.0);
+  G4String name = "ScintillatorLayerPhys";
+  G4double dispZ=0;
+  itsScintillatorLayerSolid = new G4Box("ScintillatorLayerSolid",_screenWidth/2.0,_screenHeight/2.0,_scintillatorThickness/2.0);
   itsScintillatorLayerLog = new G4LogicalVolume(itsScintillatorLayerSolid,_scintillatorLayerMaterial,"PhosphorLayer",0,0,0);
 
   itsScintillatorLayerLog->SetVisAttributes(_visAttScint);
-  itsScintillatorLayerPhys=  new G4PVPlacement(0,G4ThreeVector(0,0,dispZ),itsScintillatorLayerLog,"ScreenPhosphorLayer",
+
+
+
+  int nThisSampler= BDSSampler::GetNSamplers() + 1;
+  _screenSamplerName = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+name);
+  
+  //Build and place the volume...
+  itsScintillatorLayerPhys=  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ),itsScintillatorLayerLog,_screenSamplerName.c_str(),
 					       itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   SetMultiplePhysicalVolumes(itsScintillatorLayerPhys);
+
+  /*
+    (*LogVol)[_screenSamplerName]=itsScintillatorLayerLog;
+    G4SDManager* SDMan = G4SDManager::GetSDMpointer();
+    if(BDSSampler::GetNSamplers()==0){
+      BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
+    SDMan->AddNewDetector(BDSSamplerSensDet);
+  }
+  itsScintillatorLayerLog->SetSensitiveDetector(BDSSamplerSensDet);
+  //SPM bdsOutput->nSamplers++;
+  BDSSampler::AddExternalSampler();
+  bdsOutput->SampName.push_back(_screenSamplerName+"_1");
+#ifndef NOUSERLIMITS
+  G4double maxStepFactor=0.5;
+  G4UserLimits* itsScintillatorLayerUserLimits =  new G4UserLimits();
+  itsScintillatorLayerUserLimits->SetMaxAllowedStep(_scoringPlaneThickness*maxStepFactor);
+  itsScintillatorLayerLog->SetUserLimits(itsScintillatorLayerUserLimits);
+#endif
+  */
 }
 
 void BDSScintillatorScreen::BuildBaseLayer(){
   //The PET backing layer
-  G4double dispZ=_scintillatorThickness+_frontThickness+_baseThickness/2.0-_totalThickness/2.0;
+  G4double dispZ=_scintillatorThickness+_frontThickness+_baseThickness/2.0-_screenThickness/2.0;
   itsBaseLayerSolid = new G4Box("PETLayer",_screenWidth/2.0,_screenHeight/2.0,_baseThickness/2.0);
   itsBaseLayerLog = new G4LogicalVolume(itsBaseLayerSolid,BDSMaterials::Instance()->GetMaterial("PET"),"PETLayer",0,0,0);
   
   itsBaseLayerLog->SetVisAttributes(_visAttBase);
-  itsBaseLayerPhys =  new G4PVPlacement(0,G4ThreeVector(0,0,dispZ),itsBaseLayerLog,"ScreenPETLayer",
+  itsBaseLayerPhys =  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ),itsBaseLayerLog,"ScreenPETLayer",
 					itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   SetMultiplePhysicalVolumes(itsBaseLayerPhys);
 }
 
 void BDSScintillatorScreen::BuildBackLayer(){
-  G4double dispZ=_frontThickness+_scintillatorThickness+_baseThickness+_backThickness/2.0-_totalThickness/2.0;
+  G4double dispZ=_frontThickness+_scintillatorThickness+_baseThickness+_backThickness/2.0-_screenThickness/2.0;
   itsBackLayerSolid = new G4Box("CelluloseBack",_screenWidth/2.0,_screenHeight/2.0,_backThickness/2.0);
   itsBackLayerLog = new G4LogicalVolume(itsBackLayerSolid,BDSMaterials::Instance()->GetMaterial("Cellulose"),"CelluloseBack",0,0,0);
   itsBackLayerLog->SetVisAttributes(_visAttFront);
-  itsBackLayerPhys = new G4PVPlacement(0,G4ThreeVector(0,0,dispZ),itsBackLayerLog,"ScreenCelluloseBack",
+  itsBackLayerPhys = new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ),itsBackLayerLog,"ScreenCelluloseBack",
 				       itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   SetMultiplePhysicalVolumes(itsBackLayerPhys);
 }
@@ -177,9 +280,11 @@ void BDSScintillatorScreen::BuildScintillatorScreen()
 {
   BuildScintillatorMaterial();
   BuildScintillatorLayer();
+  BuildScreenScoringPlane();
+  BuildCameraScoringPlane();
   
   if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-    SetSensitiveVolume(itsScintillatorLayerLog);
+      SetSensitiveVolume(itsScintillatorLayerLog);
   } 
   G4cout << "BDSScintillatorScreen: finished building geometry" << G4endl;
 }
@@ -190,9 +295,7 @@ void BDSScintillatorScreen::BuildScintillatorMaterial(){
 }
 
 void BDSScintillatorScreen::BuildScintillatorCompound(){
-  //Crystal YAG
-  _scintillatorLayerMaterial = BDSMaterials::Instance()->GetMaterial("YAG");
-
+  
   /*
   //Scintillator grains sudpended in a polyurethane elastomer with a specific fill factor
   G4double fill_factor=0.5; //i.e. fraction by volume
@@ -208,36 +311,6 @@ void BDSScintillatorScreen::BuildScintillatorCompound(){
 void BDSScintillatorScreen::BuildScintillatorOpticalProperties(){
   //Fill the material properties table of the _scintillatorLayerMaterial
 
-  const G4int nEntries = 9;
-  G4double PhotonEnergyScintillatorMaterial[nEntries];
-  G4double dNEntries2=(G4double)nEntries;
-  G4double energyMin=1.91*CLHEP::eV;
-  G4double energyMax=2.76*CLHEP::eV;
-  G4double deltaEnergy=(energyMax-energyMin)/(dNEntries2-1.0);
-  G4double energy=energyMin;
-  for(G4int i=0; i<nEntries; energy += deltaEnergy, i++){
-    G4cout << energy << G4endl;
-    PhotonEnergyScintillatorMaterial[i]=energy;
-  }
-  G4double RefractiveIndexScintillatorMaterial[nEntries] = //Approximately correct, but check for different wavelengths
-    { 1.82, 1.82, 1.82, 1.82, 1.82, 1.82, 1.82,
-      1.82, 1.82 };
-  G4double scintFastScintillatorMaterial[nEntries] = //Approximately correct
-    { 0, 0.25, 2.0, 14.0, 13.0, 7.0, 4.0, 2.0, 0.0 };
-  
-  _mptScintillatorMaterial = new G4MaterialPropertiesTable();
-
-#if G4VERSION_NUMBER < 950
-  _mptScintillatorMaterial->AddProperty("FASTCOMPONENT",PhotonEnergyScintillatorMaterial, scintFastScintillatorMaterial, nEntries);
-#else
-  _mptScintillatorMaterial->AddProperty("FASTCOMPONENT",PhotonEnergyScintillatorMaterial, scintFastScintillatorMaterial, nEntries)->SetSpline(true);
-#endif
-  _mptScintillatorMaterial->AddProperty("RINDEX",PhotonEnergyScintillatorMaterial, RefractiveIndexScintillatorMaterial, nEntries);
-  _mptScintillatorMaterial->AddConstProperty("SCINTILLATIONYIELD",8000./CLHEP::MeV); //Approximately correct
-  _mptScintillatorMaterial->AddConstProperty("RESOLUTIONSCALE",2.0); //Check this
-  _mptScintillatorMaterial->AddConstProperty("FASTTIMECONSTANT",70.*CLHEP::ns); //Approximately correct
-  _mptScintillatorMaterial->AddConstProperty("YIELDRATIO",1.0);
-
   /*The below is required for mie scattering
   G4double scatteringLength=2.17*CLHEP::um;
   G4double anisotropyFactor=0.800;
@@ -250,32 +323,44 @@ void BDSScintillatorScreen::BuildScintillatorOpticalProperties(){
   //    ->SetSpline(true);
   */
   
-  _scintillatorLayerMaterial->SetMaterialPropertiesTable(_mptScintillatorMaterial);
+
 }
 
 
 void BDSScintillatorScreen::ComputeDimensions(){
-  /*
-  _xLength = _yLength = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
-  _xLength = std::max(_xLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
-  _yLength = std::max(_yLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
-  */
-
-  _xLength=_yLength=10*CLHEP::m;
+  
+  //  _xLength = _yLength = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
+  //  _xLength = std::max(_xLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
+  //  _yLength = std::max(_yLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
 
   _screenWidth=1*CLHEP::m;
   _screenHeight=3*CLHEP::cm;
-  _screenAngle=0; //Degrees.
-  
+
+  //Length due to the screen thickness
   _frontThickness=0;//13*CLHEP::um;
   _baseThickness=0;//275*CLHEP::um;
   _backThickness=0;//13*CLHEP::um;
+
+  //The scoring plane...
+  _scoringPlaneThickness=1*CLHEP::um;
   
   _totalThickness =  
     _frontThickness+
     _scintillatorThickness+
     _baseThickness+
-    _backThickness;
+    _backThickness+
+    _scoringPlaneThickness;
+
+  _screenThickness =  _totalThickness - _scoringPlaneThickness;
+
+  //Compute the marker volume length according to the screen thickness and width.
+  G4double z_wid = _screenWidth * std::sin(std::abs(_screenAngle));//Length due to the screen width and angle
+  G4double z_thi = _totalThickness * std::cos(_screenAngle);//Length due to the screen thickness
+  G4double x_wid = _screenWidth * std::cos(std::abs(_screenAngle));//Length due to the screen width and angle
+  G4double x_thi = _totalThickness * std::sin(_screenAngle);//Length due to the screen thickness
+  itsLength = (z_wid + z_thi);
+  _xLength = x_wid +x_thi + 2*_scoringPlaneThickness;
+  _yLength = _screenHeight;
 }
 
 void BDSScintillatorScreen::BuildMarkerVolume(){
@@ -286,7 +371,7 @@ void BDSScintillatorScreen::BuildMarkerVolume(){
 
   itsMarkerLogicalVolume=new G4LogicalVolume
     (itsMarkerSolidVolume, 
-     BDSMaterials::Instance()->GetMaterial("vacuum"),
+     _airMaterial,
      itsName+"_log");
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;

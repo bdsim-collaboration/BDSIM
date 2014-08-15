@@ -73,7 +73,6 @@
 
 #include "G4VSampler.hh"
 #include "G4GeometrySampler.hh"
-#include "G4IStore.hh"
 
 #include "parser/element.h"
 #include "parser/elementlist.h"
@@ -106,11 +105,13 @@ bool debug = false;
 
 //=================================================================
 
+
+
 BDSDetectorConstruction::BDSDetectorConstruction():
   itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
   solidWorld(NULL),logicWorld(NULL),physiWorld(NULL),
   magField(NULL),BDSUserLimits(NULL),BDSSensitiveDetector(NULL),
-  itsIStore(NULL),_globalRotation(NULL)
+  _globalRotation(NULL)
 {  
   verbose    = BDSExecOptions::Instance()->GetVerbose();
   gflash     = BDSExecOptions::Instance()->GetGFlash();
@@ -158,6 +159,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
 
 }
 
+
 //=================================================================
 
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
@@ -177,8 +179,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   //construct bds
   return ConstructBDS(beamline_list);
 }
-
-
 G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_list)
 {  
   std::list<struct Element>::iterator it;
@@ -202,7 +202,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
     AddTerminatorToEndOfBeamline(&beamline_list);
   }
 
+
   // convert the parsed element list to list of BDS elements
+  //
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
 
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
@@ -239,6 +241,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   G4cout << __METHOD_NAME__ << "size of theBeamline: "<< BDSBeamline::Instance()->size() << G4endl;
   
   // construct the component list
+  //
+
   if (verbose || debug) G4cout << "now constructing geometry" << G4endl;
   
   std::list<BDSAcceleratorComponent*>::const_iterator iBeam;
@@ -259,6 +263,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   // define geometry scope - to calculate world dimensions
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     {
+
 #ifdef BDSDEBUG 
       G4cout << BDSBeamline::Instance()->currentItem()->GetName() << "  "
              << BDSBeamline::Instance()->currentItem()->GetLength() << "  "
@@ -340,7 +345,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
       G4cout<<"s_tot="<<s_tot/CLHEP::m<<" m"<<G4endl;
     }
 
-  BDSGlobalConstants::Instance()->SetZMax(s_tot);
+  BDSGlobalConstants::Instance()->SetSMax(s_tot);
 
   solidWorld = new G4Box("World", GetWorldSizeX(), GetWorldSizeY(), GetWorldSizeZ());
     
@@ -358,7 +363,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   // G4StepLimiter process enabled)
 #ifndef NOUSERLIMITS
   G4UserLimits* WorldUserLimits =new G4UserLimits();
-  WorldUserLimits->SetMaxAllowedStep(10*CLHEP::m);
+  WorldUserLimits->SetMaxAllowedStep(GetWorldSizeZ());
   WorldUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   WorldUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   logicWorld->SetUserLimits(WorldUserLimits);
@@ -406,6 +411,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 
   G4bool use_graphics=true;
   G4ThreeVector TargetPos;
+
+  // set default output formats for BDSDetector:
+  int G4precision = G4cout.precision(15);
   
 #ifdef BDSDEBUG 
   G4cout<<"total length="<<s_tot/CLHEP::m<<"m"<<G4endl;
@@ -518,7 +526,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 #endif
 
       // advance the coordinates, but not for cylindrical samplers 
-      if( ( ( BDSBeamline::Instance()->currentItem()->GetType() != "csampler") || ( length <= BDSGlobalConstants::Instance()->GetSamplerLength() ) )  && ( BDSBeamline::Instance()->currentItem()->GetType()!=_ELEMENT ))
+      if( ( ( BDSBeamline::Instance()->currentItem()->GetType() != "csampler") || ( length <= BDSGlobalConstants::Instance()->GetSamplerLength() ) )  && ( BDSBeamline::Instance()->currentItem()->GetType()!="element" ))
 	{
 #ifdef BDSDEBUG 
           G4cout << BDSBeamline::Instance()->currentItem()->GetType() << " "
@@ -644,7 +652,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 		//G4cout << "multiplesensvols["<<i<<"] - name : "<<MultipleSensVols.at(i)->GetName() << G4endl;
 		
 		if(gflash){
-		  if((MultipleSensVols.at(i)->GetRegion() != precisionRegion) && (BDSBeamline::Instance()->currentItem()->GetType()==_ELEMENT)){//If not in the precision region....
+		  if((MultipleSensVols.at(i)->GetRegion() != precisionRegion) && (BDSBeamline::Instance()->currentItem()->GetType()=="element")){//If not in the precision region....
 		    //		    if(MultipleSensVols[i]->GetMaterial()->GetState()!=kStateGas){ //If the region material state is not gas, associate with a parameterisation
 #ifdef BDSDEBUG
 		    G4cout << "...adding " << MultipleSensVols[i]->GetName() << " to gFlashRegion" << G4endl;
@@ -880,6 +888,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 
   if(verbose || debug) G4cout<<"Finished listing materials, returning physiWorld"<<G4endl; 
   
+  // set precision back
+  G4cout.precision(G4precision);
+
   return physiWorld;
 }
 
@@ -892,13 +903,6 @@ void BDSDetectorConstruction::SetMagField(const G4double fieldValue){
   magField = new G4UniformMagField(G4ThreeVector(0.,fieldValue,0.));  
   fieldMgr->SetDetectorField(magField);
   fieldMgr->CreateChordFinder(magField);
-}
-
-//=================================================================
-  
-void BDSDetectorConstruction::UpdateGeometry()
-{
-  G4RunManager::GetRunManager()->DefineWorldVolume(ConstructBDS(beamline_list));
 }
 
 //=================================================================

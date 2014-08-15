@@ -18,12 +18,13 @@
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSTrajectory.hh"
 #include "G4Trajectory.hh"
 #include "G4TrajectoryContainer.hh"
 #include <list>
 #include <vector>
-
-
+#include "BDSCCDPixelSD.hh"
+#include "BDSOutputBase.hh"
 
 class BDSEventAction : public G4UserEventAction
 {
@@ -54,14 +55,15 @@ private:
   G4int printModulo;
   G4int itsRecordSize;
 
-  G4VTrajectory* Traj;
-  G4VTrajectoryPoint* trajEndPoint;
+  BDSTrajectory* Traj;
+  BDSTrajectoryPoint* trajEndPoint;
   G4ThreeVector trajEndPointThreeVector;
-  std::vector<G4VTrajectory*> interestingTrajectories;
+  std::vector<BDSTrajectory*> interestingTrajectories;
   
 
   std::list<BDSAcceleratorComponent*>::const_iterator iBeam;
   std::list<BDSEnergyCounterSD*>::const_iterator iEC;
+  std::list<BDSCCDPixelSD*>::const_iterator iCCD;
 
   BDSAcceleratorComponent* LastComp;
   };

@@ -12,8 +12,10 @@ Parameters::Parameters() {
 
 void Parameters::flush() {
   l=0; lset = 0;
+  bmapZOffset = 0; bmapZOffsetset=0;
   r = 0; rset = 0;
   tscint = 0.0003; tscintset = 0;
+  twindow = 0; twindowset = 0;
 
   // materials' parameters
   A = 0; Aset = 0; //g*mol^-1
@@ -90,9 +92,13 @@ void Parameters::flush() {
   bmap = ""; bmapset = 0;
 
   material = ""; materialset = 0;
+  scintmaterial = ""; scintmaterialset = 0;
+  windowmaterial = "vacuum"; windowmaterialset = 0;
+  airmaterial = ""; airmaterialset = 0;
   tunnelMaterial = ""; tunnelmaterialset = 0;
   tunnelCavityMaterial = ""; tunnelcavitymaterialset = 0;
   spec = ""; specset = 0;
+  at = 0.0; atset = 0;
 }
 
 void Parameters::inherit_properties(struct Element& e)
@@ -101,6 +107,7 @@ void Parameters::inherit_properties(struct Element& e)
   // parameters already set in params have priority and are not overridden
   
   if(!lset) { l = e.l; lset = 1; }
+  if(!bmapZOffsetset) { bmapZOffset = e.bmapZOffset; bmapZOffsetset = 1; }
   if(!Bset) { B = e.B; Bset = 1; }
   if(!ksset) { ks = e.ks; ksset = 1; }
   if(!k0set) { k0 = e.k0; k0set = 1; }
@@ -125,6 +132,7 @@ void Parameters::inherit_properties(struct Element& e)
   if(!taperlengthset) { taperlength = e.taperlength; taperlengthset = 1; }
 
   if(!tscintset) { tscint = e.tscint; tscintset = 1; }
+  if(!twindowset) { twindow = e.twindow; twindowset = 1; }
 
   //materials
   if(!Aset) { A = e.A; Aset = 1; }
@@ -163,6 +171,9 @@ void Parameters::inherit_properties(struct Element& e)
 
   if(!specset) { spec = e.spec; specset = 1; }
   if(!materialset) { material = e.spec; materialset = 1; }
+  if(!scintmaterialset) { scintmaterial = e.spec; scintmaterialset = 1; }
+  if(!windowmaterialset) { windowmaterial = e.spec; windowmaterialset = 1; }
+  if(!airmaterialset) { airmaterial = e.spec; airmaterialset = 1; }
   if(!tunnelmaterialset) { tunnelMaterial = e.spec; tunnelmaterialset = 1; }
   if(!tunnelcavitymaterialset) { tunnelCavityMaterial = e.spec; tunnelcavitymaterialset = 1; }
   if(!tunnelRadiusset) { tunnelRadius = e.tunnelRadius; tunnelRadiusset = 1; }

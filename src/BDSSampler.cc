@@ -10,8 +10,10 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSSampler.hh"
 #include "G4Box.hh"
+#include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
+#include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "BDSSamplerSD.hh"
 #include "G4SDManager.hh"
@@ -52,10 +54,13 @@ BDSSampler::BDSSampler (G4String aName, G4double aLength):
   //BDSRoot->SetSamplerNumber(nSamplers); 
 }
 
+
 void BDSSampler::SamplerLogicalVolume()
 {
   if(!(*LogVolCount)[itsName])
     {
+
+
       itsMarkerLogicalVolume=
 	new G4LogicalVolume(
 			    new G4Box(itsName+"_solid",
@@ -69,8 +74,9 @@ void BDSSampler::SamplerLogicalVolume()
       (*LogVol)[itsName]=itsMarkerLogicalVolume;
 #ifndef NOUSERLIMITS
       itsOuterUserLimits =new G4UserLimits();
-      double stepFactor=0.5;
-      itsOuterUserLimits->SetMaxAllowedStep(itsLength*stepFactor);
+      double stepFactor=5;
+      //      itsOuterUserLimits->SetMaxAllowedStep(itsLength*stepFactor);
+      itsOuterUserLimits->SetMaxAllowedStep(1*CLHEP::m);
       itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
      // Sensitive Detector:

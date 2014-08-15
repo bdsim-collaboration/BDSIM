@@ -43,7 +43,8 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
   ofEloss.open(filenameEloss);
   ofEloss << "### BDSIM energy loss output - created "<< timestring <<G4endl;
   ofEloss << std::left << std::setprecision(5) << std::fixed
-	  << std::setw(12) << "Z[m]"     << " "
+    //<< std::setw(12) << "Z[m]"     << " "
+	  << std::setw(12) << "S[m]"     << " "
 	  << std::setw(12) << "E[GeV]"   << " "
 	  << std::setw(6)  << "PDGID"    << " "
 	  << std::setw(7)  << "Weight"   << " "
@@ -109,7 +110,7 @@ void BDSOutputASCII::WriteHits(BDSSamplerHitsCollection *hc)
 
 /// write a trajectory to a root/ascii file
 // TODO: ASCII file not implemented - JS
-void BDSOutputASCII::WriteTrajectory(std::vector<G4VTrajectory*> &/*TrajVec*/){
+void BDSOutputASCII::WriteTrajectory(std::vector<BDSTrajectory*> &/*TrajVec*/){
   G4cout << __METHOD_NAME__ << "WARNING trajectory writing not implemented for ASCII output" << G4endl;
 }
 
@@ -121,13 +122,14 @@ void BDSOutputASCII::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
   for (G4int i=0;i<n_hit;i++)
     {
       G4double Energy     = (*hc)[i]->GetEnergy();
-      G4double Zpos       = (*hc)[i]->GetZ();
+      G4double Spos       = (*hc)[i]->GetS();
+      //G4double Zpos       = (*hc)[i]->GetZ();
       G4int    partID     = (*hc)[i]->GetPartID();
       G4double weight     = (*hc)[i]->GetWeight();
       G4int    turnnumber = (*hc)[i]->GetTurnsTaken();
 
       ofEloss << std::left << std::setprecision(5) << std::fixed
-	      << std::setw(12) << Zpos/CLHEP::m     << " "
+	      << std::setw(12) << Spos/CLHEP::m     << " "
 	      << std::setw(12) << Energy/CLHEP::GeV << " "
 	      << std::setw(6)  << partID            << " "
 	      << std::setw(7)  << weight            << " "

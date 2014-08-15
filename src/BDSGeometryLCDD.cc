@@ -8,7 +8,6 @@
 #include "G4Cons.hh"
 #include "G4Polycone.hh"
 #include "G4Polyhedra.hh"
-#include "G4SubtractionSolid.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"

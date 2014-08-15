@@ -42,7 +42,6 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
   itsBField=bField;
   itsBGrad=bGrad;
   //  itsBpRadius*=2; //bending magnet so double beam pipe radius
-  itsType="rbend";
   
   //magnetic field length for rbend
   itsMagFieldLength = std::min (

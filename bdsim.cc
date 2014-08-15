@@ -53,8 +53,7 @@
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRunAction.hh"
 #include "BDSSamplerSD.hh"
-#include "BDSThresholdCutSteppingAction.hh"
-#include "BDSVerboseSteppingAction.hh"
+#include "BDSSteppingAction.hh"
 #include "BDSStackingAction.hh"
 #include "BDSUserTrackingAction.hh"
 #include "BDSRunManager.hh"
@@ -108,10 +107,8 @@ void BDS_handle_aborts(int signal_number) {
 
 int main(int argc,char** argv) {
 
-  /* Executable command line options reader object */
-  BDSExecOptions *bdsOptions = BDSExecOptions::Instance();
-  bdsOptions->Parse(argc,argv);
-  bdsOptions->Print();
+  /* Initialize executable command line options reader object */
+  BDSExecOptions::Instance(argc,argv)->Print();
   
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> DEBUG mode is on." << G4endl;
@@ -120,9 +117,9 @@ int main(int argc,char** argv) {
   //
   // Parse lattice file
   //
-  G4cout << __FUNCTION__ << "> Using input file : "<< bdsOptions->GetInputFilename()<<G4endl;
+  G4cout << __FUNCTION__ << "> Using input file : "<< BDSExecOptions::Instance()->GetInputFilename()<<G4endl;
   
-  gmad_parser(bdsOptions->GetInputFilename());
+  gmad_parser(BDSExecOptions::Instance()->GetInputFilename());
 
   //
   // pass the run control and beam options read from the lattice
@@ -135,6 +132,7 @@ int main(int argc,char** argv) {
 #endif  
 
   bdsBunch.SetOptions(options);
+
 
   //
   // initialize random number generator
@@ -221,6 +219,7 @@ int main(int argc,char** argv) {
 #endif
   runManager->SetUserInitialization(detector);
 
+
   //
   // set user action classes
   //
@@ -237,14 +236,12 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - steppingaction"<<G4endl;
 #endif
-  if(BDSExecOptions::Instance()->GetVerboseStep()) {
-    runManager->SetUserAction(new BDSVerboseSteppingAction);
+  
+  if (BDSGlobalConstants::Instance()->GetThresholdCutPhotons() > 0 || BDSGlobalConstants::Instance()->GetThresholdCutCharged() > 0
+      || BDSExecOptions::Instance()->GetVerboseStep()) {
+    runManager->SetUserAction(new BDSSteppingAction);
   }
-
-  if (BDSGlobalConstants::Instance()->GetThresholdCutPhotons() > 0 || BDSGlobalConstants::Instance()->GetThresholdCutCharged() > 0) {
-    runManager->SetUserAction(new BDSThresholdCutSteppingAction);
-  }
-
+  
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - trackingaction"<<G4endl;
 #endif
@@ -270,18 +267,6 @@ int main(int argc,char** argv) {
 #endif
   runManager->Initialize();
 
-  //Create a geometric importance sampling store
-  //  if(BDSGlobalConstants::Instance()->GetGeometryBias()){
-  //    G4VIStore *aIstore = 0;
-  //    aIstore = detector->CreateImportanceStore();
-  //    G4GeometrySampler mgs(detector->GetWorldVolume(),"neutron");
-  //    mgs.SetParallel(false);
-  //    G4ImportanceAlgorithm* importanceAlgorithm = new G4ImportanceAlgorithm();
-  //    mgs.PrepareImportanceSampling(aIstore, 0);//,0);
-  //    mgs.Configure();
-  //  }
-
-
   //
   // set verbosity levels
   //
@@ -289,7 +274,7 @@ int main(int argc,char** argv) {
   G4EventManager::GetEventManager()->SetVerboseLevel(BDSExecOptions::Instance()->GetVerboseEventLevel());
   G4EventManager::GetEventManager()->GetTrackingManager()->SetVerboseLevel(BDSExecOptions::Instance()->GetVerboseTrackingLevel());
   G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager()->SetVerboseLevel(BDSExecOptions::Instance()->GetVerboseSteppingLevel());
-
+  
   //
   // Close the geometry
   //
@@ -342,6 +327,7 @@ int main(int argc,char** argv) {
 #endif
     delete BDSGI;
   }
+
 
   if(!BDSExecOptions::Instance()->GetBatch())   // Interactive mode
     {
