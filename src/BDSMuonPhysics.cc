@@ -3,6 +3,7 @@
 #include "BDSVProcess.hh"
 #include "BDSGlobalConstants.hh"
 #include "G4eeToHadrons.hh"
+#include "G4Version.hh"
 
 BDSMuonPhysics::BDSMuonPhysics():BDSXSBiasPhysics("BDSMuonPhysics")
 {;}
@@ -25,6 +26,12 @@ void BDSMuonPhysics::ConstructProcess(){
   if(_wasActivated) return;
   _wasActivated=true;
   
+#if G4VERSION_NUMBER < 1000
+  theParticleTable = G4ParticleTable::GetParticleTable();
+  theParticleIterator = theParticleTable->GetIterator();
+  G4ParticleTable::G4PTblDicIterator* aParticleIterator = theParticleIterator;
+#endif
+
   aParticleIterator->reset();
 
   while( (*aParticleIterator)() ){

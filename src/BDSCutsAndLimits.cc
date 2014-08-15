@@ -3,6 +3,7 @@
 #include "G4StepLimiter.hh"
 #include "G4UserSpecialCuts.hh"
 #include "G4ProcessManager.hh"
+#include "G4Version.hh"
 
 BDSCutsAndLimits::BDSCutsAndLimits():G4VPhysicsConstructor("BDSCutsAndLimits")
 {;}
@@ -22,6 +23,12 @@ void BDSCutsAndLimits::ConstructProcess(){
   if(_wasActivated) return;
   _wasActivated=true;
   
+#if G4VERSION_NUMBER < 1000
+  theParticleTable = G4ParticleTable::GetParticleTable();
+  theParticleIterator = theParticleTable->GetIterator();
+  G4ParticleTable::G4PTblDicIterator* aParticleIterator = theParticleIterator;
+#endif
+
   aParticleIterator->reset();
   while( (*aParticleIterator)() ){
     G4ParticleDefinition* particle = aParticleIterator->value();

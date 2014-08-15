@@ -243,7 +243,7 @@ void BDSPhysicsList::ConstructProcess()
   if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT"){
 #if G4VERSION_NUMBER < 1000
     theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT();
-#elseg
+#else
     theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT();
 #endif
     theReferenceEmPhysList = new G4EmStandardPhysics();
