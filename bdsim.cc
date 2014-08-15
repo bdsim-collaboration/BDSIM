@@ -47,7 +47,7 @@
 
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
-#include "BDSPhysicsList.hh"
+#include "BDSModularPhysicsList.hh"
 #include "QGSP_BERT.hh"
 #include "QGSP_BERT_HP.hh"
 #include "BDSPrimaryGeneratorAction.hh"
@@ -187,7 +187,7 @@ int main(int argc,char** argv) {
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
 
-  BDSPhysicsList* PhysList=new BDSPhysicsList;
+  BDSModularPhysicsList* PhysList=new BDSModularPhysicsList;
   runManager->SetUserInitialization(PhysList);
   
 #ifdef BDSDEBUG 
