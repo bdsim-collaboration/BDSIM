@@ -247,6 +247,7 @@ void Options::set_value(std::string name, std::string value )
   //
 
   // options which influence the geometry
+  if(name == "magnetGeometry" ) { magnetGeometry = value; return; }
   if(name == "beampipeMaterial" ) { pipeMaterial = value; return; }
   if(name == "vacMaterial" ) { vacMaterial = value; return; }
   if(name == "tunnelMaterial" ) { tunnelMaterial = value; return; }

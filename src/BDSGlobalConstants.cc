@@ -32,6 +32,8 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsTunnelCavityMaterialName = opt.tunnelCavityMaterial;
   itsSoilMaterialName = opt.soilMaterial;
 
+  itsMagnetGeometry = opt.magnetGeometry;
+
   itsSampleDistRandomly = true;
   itsGeometryBias = opt.geometryBias;
   

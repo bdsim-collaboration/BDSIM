@@ -86,7 +86,7 @@ void init()
 
   // Default Values for Options
 
-  options.physicsList = "standard";
+  options.physicsList = "cylinder";
   options.particleName = "";
   options.distribType = "";
   options.distribFile = "";
@@ -127,6 +127,7 @@ void init()
 
   options.xsize=0.0, options.ysize=0.0;
 
+  options.magnetGeometry = "cylinder";
   options.componentBoxSize = 0.0;
   options.tunnelRadius = 0.0;
   options.beampipeRadius = 0.0;

@@ -79,6 +79,7 @@ struct Options {
   ///  int backgroundScaleFactor;
 
   /// default geometry parameters
+  std::string magnetGeometry;
   double    componentBoxSize;
   double    tunnelRadius;
   double    beampipeRadius;

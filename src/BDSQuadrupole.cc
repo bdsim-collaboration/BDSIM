@@ -95,18 +95,32 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
       G4cout<<"Building beam pipe "<<G4endl;
 #endif
       BuildBeampipe();
+      
+
+      // build magnet (geometry + magnetic field)
+      // according to quad type
+      
+      G4String geometry = BDSGlobalConstants::Instance()->GetMagnetGeometry();
+
+      if(geometry =="standard") 
+	BuildOuterLogicalVolume(); // standard - quad with poles and pockets
+      else if(geometry =="cylinder")  
+       BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
+      else //default - cylinder - standard
+      BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
+
 
       //
       // build magnet (geometry + magnetic field)
       // according to quad type
       //
-      if(qtype=="standard") 
-	BuildOuterLogicalVolume(); // standard - quad with poles and pockets
-      else if(qtype=="cylinder")  
-       BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
+      //if(qtype=="standard") 
+	//BuildOuterLogicalVolume(); // standard - quad with poles and pockets
+      //else if(qtype=="cylinder")  
+	//BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
       //BuildEllipticalOuterLogicalVolume(itsLength); // cylinder outer volume
-      else //default - cylinder - standard
-      BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
+      //else //default - cylinder - standard
+	//BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
       //BuildEllipticalOuterLogicalVolume(itsLength); // cylinder outer volume
 
       if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
@@ -258,13 +272,7 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
 
   itsOuterLogicalVolume=
     new G4LogicalVolume(
-			/*
-			new G4Tubs(itsName+"_outer_solid",
-				   itsInnerIronRadius,
-				   outerRadius * sqrt(2.0),
-				   itsLength/2,
-				   0,CLHEP::twopi*CLHEP::radian),
-			*/
+
 			new G4Polyhedra(itsName+"_outer_solid", 
 					0.*CLHEP::degree, 
 					360.*CLHEP::degree, 
