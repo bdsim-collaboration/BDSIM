@@ -9,14 +9,21 @@
 #include "BDSGlobalConstants.hh"
 #include "G4EmStandardPhysics.hh"
 #include "BDSParameterisationPhysics.hh"
-#include "G4HadronPhysicsQGSP_BERT_HP.hh"
-#include "G4HadronPhysicsQGSP_BERT.hh"
 #include "G4DecayPhysics.hh"
 #include "BDSSynchRadPhysics.hh"
 #include "G4Electron.hh"
 #include "G4Positron.hh"
 #include "G4Proton.hh"
 #include "G4AntiProton.hh"
+
+#include "G4Version.hh"
+#if G4VERSION_NUMBER < 1000
+#include "HadronPhysicsQGSP_BERT.hh"
+#include "HadronPhysicsQGSP_BERT_HP.hh"
+#else
+#include "G4HadronPhysicsQGSP_BERT_HP.hh"
+#include "G4HadronPhysicsQGSP_BERT.hh"
+#endif
 
 //Note: transportation process is constructed by default with classes derive from G4VModularPhysicsList
 
@@ -213,14 +220,22 @@ void BDSModularPhysicsList::LoadParameterisationPhysics(){
 							  
 void BDSModularPhysicsList::LoadHadronic(){		  
   if(!_hadronicPhysics){
-    _hadronicPhysics = new G4HadronPhysicsQGSP_BERT();	  
+#if G4VERSION_NUMBER < 1000
+    _hadronicPhysics = new HadronPhysicsQGSP_BERT();
+#else
+    _hadronicPhysics = new G4HadronPhysicsQGSP_BERT();
+#endif
     _constructors.push_back(_hadronicPhysics);		  
   }
 }							  
 							  
 void BDSModularPhysicsList::LoadHadronicHP(){		  
   if(!_hadronicPhysics){
-    _hadronicPhysics = new G4HadronPhysicsQGSP_BERT_HP();	  
+#if G4VERSION_NUMBER < 1000
+    _hadronicPhysics = new HadronPhysicsQGSP_BERT_HP();
+#else
+    _hadronicPhysics = new G4HadronPhysicsQGSP_BERT_HP();
+#endif
     _constructors.push_back(_hadronicPhysics);		  
   }
 }							  
