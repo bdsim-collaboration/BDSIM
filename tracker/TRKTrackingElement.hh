@@ -1,7 +1,7 @@
 #ifndef TRKTrackingElement_h
 #define TRKTrackingElement_h
 
-#include "TRK.h"
+#include "TRK.hh"
 #include "TRKAperture.hh"
 #include "TRKElement.hh"
 
@@ -44,11 +44,12 @@ protected:
 
   /// tracking type
   TRKType type;
-  /// number of tracking steps
-  int trackingSteps;
 
 private:
   TRKTrackingElement(); ///< not implemented
+
+  /// number of tracking steps
+  int trackingSteps;
 };
 
 

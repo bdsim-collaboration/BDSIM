@@ -5,6 +5,11 @@ class TRKAperture {
 public : 
   TRKAperture();
   ~TRKAperture(); 
+
+  /// checks if aperture is hit
+  bool CheckAperture(double []){
+    return false; // for now
+  }
   
 private : 
   
