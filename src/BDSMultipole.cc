@@ -21,6 +21,7 @@
 #include "BDSMultipole.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
+#include "G4Polyhedra.hh"
 #include "G4Trap.hh"
 #include "G4EllipticalTube.hh"
 #include "G4Cons.hh"
@@ -52,33 +53,6 @@ typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
 //============================================================
-
-BDSMultipole::BDSMultipole( G4String aName, 
-			    G4double aLength,
-			    G4double aBpRadius,
-			    G4double aInnerIronRadius,
-			    G4VisAttributes* aVisAtt,
-			    G4String aMaterial,
-			    G4double aXAper,
-			    G4double aYAper,
-			    G4double angle,
-			    G4bool beampipeThicknessSet,
-			    G4double beampipeThickness):
-  BDSAcceleratorComponent(
-			 aName, 
-			 aLength,
-			 aBpRadius,
-			 aXAper,
-			 aYAper,
-			 aVisAtt,
-			 aMaterial,
-			 angle),
-  itsInnerIronRadius(aInnerIronRadius)
-{
-  ConstructorInit();
-  SetBeampipeThickness(beampipeThicknessSet, beampipeThickness); 
-}
-
 BDSMultipole::BDSMultipole( G4String aName, 
 			    G4double aLength,
 			    G4double aBpRadius,

@@ -37,6 +37,9 @@ private:
   G4double itsBDblPrime;
 
   void BuildBPFieldAndStepper();
+  //void BuildDefaultOuterLogicalVolume();
+  void BuildDefaultOuterLogicalVolume(G4double aLength,G4bool OuterMaterialIsVacuum=false);
+  void BuildOuterLogicalVolume(G4double aLength,G4bool OuterMaterialIsVacuum=false);
 
   G4VisAttributes* SetVisAttributes();
 

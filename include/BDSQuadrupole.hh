@@ -49,6 +49,7 @@ private:
 
   void BuildOuterLogicalVolume();
   void BuildBPFieldAndStepper();
+  void BuildCylindricalOuterLogicalVolume();
 
   G4VisAttributes* SetVisAttributes();
 
