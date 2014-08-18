@@ -1,11 +1,10 @@
 #include "BDSCutsAndLimits.hh"
-#include "BDSVProcess.hh"
 #include "G4StepLimiter.hh"
 #include "G4UserSpecialCuts.hh"
 #include "G4ProcessManager.hh"
 #include "G4Version.hh"
 
-BDSCutsAndLimits::BDSCutsAndLimits():G4VPhysicsConstructor("BDSCutsAndLimits")
+BDSCutsAndLimits::BDSCutsAndLimits():G4VPhysicsConstructor("BDSCutsAndLimits"),_wasActivated(false)
 {;}
 
 BDSCutsAndLimits::~BDSCutsAndLimits()

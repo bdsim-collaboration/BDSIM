@@ -8,8 +8,6 @@
 #include "G4EllipticalTube.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4IntersectionSolid.hh"
-#include "G4UnionSolid.hh"
-#include "G4SubtractionSolid.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"

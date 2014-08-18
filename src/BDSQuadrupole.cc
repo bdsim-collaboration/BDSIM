@@ -21,7 +21,6 @@
 #include "BDSQuadrupole.hh"
 #include "G4Tubs.hh"
 #include "G4Polyhedra.hh"
-#include "G4Trd.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
