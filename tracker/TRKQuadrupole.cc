@@ -1,6 +1,7 @@
 #include "TRKQuadrupole.hh"
 
 #include <cmath>
+#include <cstdlib>
 #include "vector3.hh"
 #include "vector6.hh"
 
@@ -66,12 +67,30 @@ void TRKQuadrupole::HybridTrack(const double vIn[], double vOut[], double h) {
 
 void TRKQuadrupole::ThickTrack(const double vIn[], double vOut[], double h) {
   vector6 vTemp(vIn);
-  
-  // double momentum mag(vIn[3],vIn[4],vIn[5]). use vector3 class 
   // double charge, oh charge good point, should just add this to method signature
-  // double rigidity = momentum / eV / c, constants are easy
+  double charge = 1 * TRK::e;
+  double rigidity = std::abs(strength) * vTemp.mom().mag() / charge; // to be checked
+  double k = 1/std::sqrt(std::abs(rigidity));
 
-  double k = std::sqrt(std::abs(strength));
+  double c,s,ch,sh; 
+  //  sincos(k*h,&s,&c);
+  c = std::cos(k*h);
+  s = std::sin(k*h);
+  TRK::sincosh(k*h,sh,ch);
+
+  if (k>0) {
+    vOut[0] = c * vIn[0] + s * vIn[1] / k;
+    vOut[1] = c * vIn[1] - s * vIn[0] * k;
+    vOut[2] = ch * vIn[2] + sh * vIn[3] / k;
+    vOut[3] = ch * vIn[3] + sh * vIn[2] * k;
+  } else {
+    vOut[0] = ch * vIn[0] + sh * vIn[1] / k;
+    vOut[1] = ch * vIn[1] + sh * vIn[0] * k;
+    vOut[2] = c * vIn[2] + s * vIn[3] / k;
+    vOut[3] = c * vIn[3] - s * vIn[2] * k;
+  }
+  vOut[4] = vIn[4];
+  vOut[5] = vOut[5];
 }
 
 
