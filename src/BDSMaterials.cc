@@ -496,7 +496,7 @@ void BDSMaterials::Initialise()
   G4double birks = 0.08*CLHEP::mm/CLHEP::MeV; 
   tmpMaterial->GetIonisation()->SetBirksConstant(birks);
   G4MaterialPropertiesTable* mpt_YAG = new G4MaterialPropertiesTable();
-  const int nEntries3=60;
+  //  const int nEntries3=60;
   const G4int nEntries = 9;
   G4double PhotonEnergyYAG[nEntries];
   G4double dNEntries2=(G4double)nEntries;
@@ -512,8 +512,8 @@ void BDSMaterials::Initialise()
       1.82, 1.82 };
   G4double scintFastYAG[nEntries] = //Approximately correct
     { 0, 0.25, 2.0, 14.0, 13.0, 7.0, 4.0, 2.0, 0.0 };
-  const G4int nEntries2 = 32;
-  G4double PhotonEnergy[nEntries2] =
+  //  const G4int nEntries2 = 32;
+  /*  G4double PhotonEnergy[nEntries2] =
     { 2.034*CLHEP::eV, 2.068*CLHEP::eV, 2.103*CLHEP::eV, 2.139*CLHEP::eV,
       2.177*CLHEP::eV, 2.216*CLHEP::eV, 2.256*CLHEP::eV, 2.298*CLHEP::eV,
       2.341*CLHEP::eV, 2.386*CLHEP::eV, 2.433*CLHEP::eV, 2.481*CLHEP::eV,
@@ -522,6 +522,7 @@ void BDSMaterials::Initialise()
       3.026*CLHEP::eV, 3.102*CLHEP::eV, 3.181*CLHEP::eV, 3.265*CLHEP::eV,
       3.353*CLHEP::eV, 3.446*CLHEP::eV, 3.545*CLHEP::eV, 3.649*CLHEP::eV,
       3.760*CLHEP::eV, 3.877*CLHEP::eV, 4.002*CLHEP::eV, 4.136*CLHEP::eV };
+  */
 #if G4VERSION_NUMBER < 950
   mpt_YAG->AddProperty("FASTCOMPONENT",PhotonEnergyYAG, scintFastYAG, nEntries);
 #else
@@ -735,7 +736,7 @@ void BDSMaterials::Initialise()
 
 
   //Medex (larger grained lanex)
-  G4double medex_fill_factor=0.5;
+  //  G4double medex_fill_factor=0.5;
   G4double medex_density=fill_factor*GOS->GetDensity()+(1-fill_factor)*GetMaterial("polyurethane")->GetDensity();
   G4double medex_gos_fraction_by_mass=fill_factor*GOS->GetDensity()/medex_density;
   G4double medex_pur_fraction_by_mass=1-medex_gos_fraction_by_mass;
@@ -744,8 +745,8 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddMaterial(GetMaterial("polyurethane"), medex_pur_fraction_by_mass);
   G4MaterialPropertiesTable* mptMedex = new G4MaterialPropertiesTable();
   const G4int nentMedex=2;
-  G4double medexRindex=(1.82+1.50)/2.0;
-  G4double medexEnergytab[]={2.239*CLHEP::eV, 2.241*CLHEP::eV};
+  //  G4double medexRindex=(1.82+1.50)/2.0;
+  //  G4double medexEnergytab[]={2.239*CLHEP::eV, 2.241*CLHEP::eV};
   G4double medexRindextab[]={rindex, rindex};
   G4double medexEmitspec[]={1.0, 1.0};
   G4double medexAbslen[]={7*CLHEP::mm, 7*CLHEP::mm};

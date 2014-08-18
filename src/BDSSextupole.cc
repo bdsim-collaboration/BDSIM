@@ -155,23 +155,26 @@ G4VisAttributes* BDSSextupole::SetVisAttributes()
 void BDSSextupole::BuildDefaultOuterLogicalVolume()
 
 {
+ 
   G4double outerRadius = itsOuterR;
   if(itsOuterR==0) outerRadius = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
 
-#ifdef BDSDEBUG 
+#ifdef DEBUG 
   G4cout << __METHOD_NAME__ << "Outer volume inner radius :"
          << " r= " << (itsInnerIronRadius)/CLHEP::m << " m"
-         << " l= " << itsLength/2./CLHEP::m << " m"
+         << " l= " << aLength/2./CLHEP::m << " m"
          << G4endl;
 #endif
 
-#ifdef BDSDEBUG 
+#ifdef DEBUG 
   G4cout << __METHOD_NAME__ << "Outer radius :"
          << " r= " << outerRadius/CLHEP::m << " m"
-         << " l= " << itsLength/2./CLHEP::m << " m"
+         << " l= " << aLength/2./CLHEP::m << " m"
          << G4endl;
 #endif
 
+ 
+  
 itsOuterLogicalVolume=
    new G4LogicalVolume(
 			new G4Tubs(itsName+"_outer_solid",
@@ -179,6 +182,8 @@ itsOuterLogicalVolume=
 				   outerRadius,
 				   itsLength/2,
 				   0,CLHEP::twopi*CLHEP::radian),
+
+			
 			//BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			BDSMaterials::Instance()->GetMaterial("Iron"),
 			itsName+"_outer");
@@ -211,7 +216,10 @@ itsOuterLogicalVolume=
   itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
  
+
 }
+
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -219,32 +227,35 @@ itsOuterLogicalVolume=
 //////////////////////////////////////////////////////////////////////////////////////////
 
 
-//void BDSSextupole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
 void BDSSextupole::BuildOuterLogicalVolume()
 {
+ 
   G4double outerRadius = itsOuterR;
   if(itsOuterR==0) outerRadius = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
 
-#ifdef BDSDEBUG 
+#ifdef DEBUG 
   G4cout << __METHOD_NAME__ << "Outer volume inner radius :"
          << " r= " << (itsInnerIronRadius)/CLHEP::m << " m"
-         << " l= " << itsLength/2./CLHEP::m << " m"
+         << " l= " << aLength/2./CLHEP::m << " m"
          << G4endl;
 #endif
 
-#ifdef BDSDEBUG 
+#ifdef DEBUG 
   G4cout << __METHOD_NAME__ << "Outer radius :"
          << " r= " << outerRadius/CLHEP::m << " m"
-         << " l= " << itsLength/2./CLHEP::m << " m"
+         << " l= " << aLength/2./CLHEP::m << " m"
          << G4endl;
 #endif
 
+ 
+  
   G4int n_poles = 6; // number of poles
   double mag_inradius = 250*mm; // inner radius
 
   double zplanepos [2] = {0,itsLength};  
 
   double rinner [2] = {mag_inradius, mag_inradius};
+  
   G4double router [2] = {outerRadius ,outerRadius };
 
   double pole_inradius = itsInnerIronRadius;
@@ -252,6 +263,7 @@ void BDSSextupole::BuildOuterLogicalVolume()
 
 itsOuterLogicalVolume=
    new G4LogicalVolume(
+
 			new G4Polyhedra(itsName+"_outer_solid", 
 					0.*CLHEP::degree, 
 					360.*CLHEP::degree, 
@@ -290,6 +302,7 @@ itsOuterLogicalVolume=
     rm->rotateZ((n+0.5)*360.0/n_poles*CLHEP::degree-itsTilt*180.0/CLHEP::pi*CLHEP::degree);
     G4ThreeVector uz = G4ThreeVector(0.,0.,itsLength/2.0);     
     G4ThreeVector position = uz;
+    //G4Transform3D transform = G4Transform3D(rm,position);
 
     // Place the poles with the appropriate transformation
    

@@ -418,7 +418,7 @@ void BDSSectorBend::BuildSBDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuu
                                                            itsOuterR,          // outer R
                                                            tubLen,             // length
                                                            0,                  // starting phi
-                                                           twopi * rad ),      // delta phi
+                                                           CLHEP::twopi * CLHEP::rad ),      // delta phi
                                                 new G4EllipticalTube(itsName+"_pipe_outer_tmp_2",
                                                                      this->GetAperX()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0, 
                                                                      this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,          
@@ -517,7 +517,7 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
   ///////////////////////////////////////////////////
 
   G4Material* air  = G4Material::GetMaterial("G4_AIR");
-  G4double worldLength = 2*m;
+  G4double worldLength = 2*CLHEP::m;
 
   G4cout << "worldLength " << worldLength;
 
@@ -554,8 +554,8 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 
   // magnet parameters
 
-  double mag_inradius = 192*mm; // inner radius
-  double mag_extradius = 400*mm; // external radius
+  double mag_inradius = 192*CLHEP::mm; // inner radius
+  double mag_extradius = 400*CLHEP::mm; // external radius
 
   // ==================================== //
 
@@ -563,18 +563,18 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
   // Defining external shape using polyhedra
 
   double zplanepos [2] = {0,tubLen};
-  double pipelength [2] = {-2.0*cm,tubLen+2.0*cm};
+  double pipelength [2] = {-2.0*CLHEP::cm,tubLen+2.0*CLHEP::cm};
   double rinner [2] = {mag_inradius, mag_inradius};
   double router [2] = {mag_extradius, mag_extradius};
 
-  G4Polyhedra* polyShape = new G4Polyhedra("polyShape", 0.*deg, 360.*deg, 4, 2, zplanepos, rinner, router);
+  G4Polyhedra* polyShape = new G4Polyhedra("polyShape", 0.*CLHEP::deg, 360.*CLHEP::deg, 4, 2, zplanepos, rinner, router);
 
   ///////////////////////////////////////////////////
 
   // Coils
 
-  double coil_size_x = 8.0*cm;
-  double coil_size_y = 4.0*cm;
+  double coil_size_x = 8.0*CLHEP::cm;
+  double coil_size_y = 4.0*CLHEP::cm;
 
   G4VSolid* Coil = new G4Box("Coil",coil_size_x,coil_size_y,tubLen/2.0);
 
@@ -590,7 +590,7 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
   double beampipe_rinner [2] = {0.0, 0.0};
   double beampipe_router [2] = {this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness(), this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness()};
 
-  G4Polyhedra* Beampipe = new G4Polyhedra("Beampipe", 0.*deg, 360.*deg, 4, 2, pipelength, beampipe_rinner, beampipe_router);
+  G4Polyhedra* Beampipe = new G4Polyhedra("Beampipe", 0.*CLHEP::deg, 360.*CLHEP::deg, 4, 2, pipelength, beampipe_rinner, beampipe_router);
   G4LogicalVolume* BeampipeLV = 
     new G4LogicalVolume(Beampipe,             //its solid
                         material,   //its material
@@ -601,8 +601,8 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
   G4LogicalVolume* shieldLV = 
     new G4LogicalVolume(   new G4SubtractionSolid(
 			   "Shield", polyShape, Beampipe, 0, 
-			   G4ThreeVector((mag_extradius+mag_inradius)/2.0*cos(pi/4.0),
-					 (mag_extradius+mag_inradius)/2.0*sin(pi/4.0),0.)),             //its solid
+			   G4ThreeVector((mag_extradius+mag_inradius)/2.0*cos(CLHEP::pi/4.0),
+					 (mag_extradius+mag_inradius)/2.0*sin(CLHEP::pi/4.0),0.)),             //its solid
                         material,   //its material
                         "shieldLV");        //its name
 
@@ -613,8 +613,8 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
   // Place the external shape in the mother volume
 
   G4RotationMatrix* rm = new G4RotationMatrix();
-  rm->rotateZ(360.0/2.0/4.0*deg);
-  G4ThreeVector uz = G4ThreeVector(-35.*cm,0.,0.); 
+  rm->rotateZ(360.0/2.0/4.0*CLHEP::deg);
+  G4ThreeVector uz = G4ThreeVector(-35.*CLHEP::cm,0.,0.); 
 
   new G4PVPlacement(rm,             //rotation,
 		    uz,             //position
@@ -628,7 +628,7 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
   G4ThreeVector uz2 = G4ThreeVector(mag_extradius+mag_inradius,0.,0.); 
   
   G4RotationMatrix* rm2 = new G4RotationMatrix();
-  rm2->rotateZ(225.0*deg);
+  rm2->rotateZ(225.0*CLHEP::deg);
   new G4PVPlacement(rm2,             //rotation,
 		    uz2,             //position
 		    shieldLV,            //its logical volume
@@ -640,7 +640,7 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 
   */ 
   // Coil placement
-  //rm->rotateX(0.0*deg);
+  //rm->rotateX(0.0*CLHEP::deg);
 
 
    ////////////////////////////////////////////////////////////////////////
@@ -715,7 +715,7 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 
 
   G4RotationMatrix* rm2 = new G4RotationMatrix();
-  rm2->rotateZ(45.0*deg);
+  rm2->rotateZ(45.0*CLHEP::deg);
 
   G4IntersectionSolid *magTubs =
     new G4IntersectionSolid(itsName+"_solid",
