@@ -49,7 +49,7 @@ BDSRfCavity::BDSRfCavity (G4String aName,G4double aLength, G4double bpRad,
       //
       // build cavity (geometry + electric field)
       //
-      BuildDefaultOuterLogicalVolume(itsLength);
+      BuildDefaultOuterLogicalVolume();
 
       //
       // define sensitive volumes for hit generation

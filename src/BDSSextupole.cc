@@ -68,10 +68,22 @@ BDSSextupole::BDSSextupole(G4String aName, G4double aLength,
       //
       // build magnet (geometry + magnetic field)
       //
-      BuildDefaultOuterLogicalVolume(itsLength);
-      //BuildDefaultOuterLogicalVolume();
+      //BuildDefaultOuterLogicalVolume(itsLength);
+      BuildDefaultOuterLogicalVolume();
 
       //BuildOuterLogicalVolume(itsLength);
+
+      // build magnet (geometry + magnetic field)
+      // according to quad type
+      
+      G4String geometry = BDSGlobalConstants::Instance()->GetMagnetGeometry();
+      
+      if(geometry =="standard") 
+	BuildOuterLogicalVolume(); // standard - quad with poles and pockets
+      else if(geometry =="cylinder")  
+	BuildDefaultOuterLogicalVolume(); // cylinder outer volume
+      else //default - cylinder - standard
+	BuildDefaultOuterLogicalVolume(); // cylinder outer volume
 
       if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
 	{
@@ -140,16 +152,10 @@ G4VisAttributes* BDSSextupole::SetVisAttributes()
 //				Cylindrical geometry					//
 //////////////////////////////////////////////////////////////////////////////////////////
 
-void BDSSextupole::BuildDefaultOuterLogicalVolume(G4double aLength,
-						  G4bool OuterMaterialIsVacuum)
+void BDSSextupole::BuildDefaultOuterLogicalVolume()
+
 {
-  //OuterMaterialIsVacuum parameter is useless: one can set
-  //itsMaterial = BDSGlobalConstants::Instance()->GetVacuumMaterial() and obtain the same result. Or cannot?
-
-  G4Material* material;
-  if(itsMaterial != "") material = BDSMaterials::Instance()->GetMaterial(itsMaterial);
-  else material = BDSMaterials::Instance()->GetMaterial("Iron");
-
+ 
   G4double outerRadius = itsOuterR;
   if(itsOuterR==0) outerRadius = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
 
@@ -167,10 +173,7 @@ void BDSSextupole::BuildDefaultOuterLogicalVolume(G4double aLength,
          << G4endl;
 #endif
 
-  if(OuterMaterialIsVacuum){
-    material=  BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
-  }
-   
+ 
   
 itsOuterLogicalVolume=
    new G4LogicalVolume(
@@ -224,16 +227,9 @@ itsOuterLogicalVolume=
 //////////////////////////////////////////////////////////////////////////////////////////
 
 
-void BDSSextupole::BuildOuterLogicalVolume(G4double aLength,
-						  G4bool OuterMaterialIsVacuum)
+void BDSSextupole::BuildOuterLogicalVolume()
 {
-  //OuterMaterialIsVacuum parameter is useless: one can set
-  //itsMaterial = BDSGlobalConstants::Instance()->GetVacuumMaterial() and obtain the same result. Or cannot?
-
-  G4Material* material;
-  if(itsMaterial != "") material = BDSMaterials::Instance()->GetMaterial(itsMaterial);
-  else material = BDSMaterials::Instance()->GetMaterial("Iron");
-
+ 
   G4double outerRadius = itsOuterR;
   if(itsOuterR==0) outerRadius = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
 
@@ -251,32 +247,23 @@ void BDSSextupole::BuildOuterLogicalVolume(G4double aLength,
          << G4endl;
 #endif
 
-  if(OuterMaterialIsVacuum){
-    material=  BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
-  }
-   
+ 
   
   G4int n_poles = 6; // number of poles
-  double mag_inradius = 250*CLHEP::mm; // inner radius
+  double mag_inradius = 250*mm; // inner radius
 
   double zplanepos [2] = {0,itsLength};  
 
   double rinner [2] = {mag_inradius, mag_inradius};
-  //G4double rinner [2] = {itsInnerIronRadius,itsInnerIronRadius};
+  
   G4double router [2] = {outerRadius ,outerRadius };
 
   double pole_inradius = itsInnerIronRadius;
-  double pole_extradius = mag_inradius+0.05*CLHEP::m;
+  double pole_extradius = mag_inradius+0.05*m;
 
 itsOuterLogicalVolume=
    new G4LogicalVolume(
-			/*
-			new G4Tubs(itsName+"_outer_solid",
-				   itsInnerIronRadius,
-				   outerRadius * sqrt(2.0),
-				   itsLength/2,
-				   0,CLHEP::twopi*CLHEP::radian),
-			*/
+
 			new G4Polyhedra(itsName+"_outer_solid", 
 					0.*CLHEP::degree, 
 					360.*CLHEP::degree, 
@@ -299,7 +286,7 @@ itsOuterLogicalVolume=
 		 pole_extradius,
 		 itsLength/2.0,
 		 0.,
-		 180.0/n_poles*CLHEP::deg);
+		 180.0/n_poles*deg);
   
   G4LogicalVolume* PoleSLV = 
     new G4LogicalVolume(poleS,             //its solid
@@ -312,7 +299,6 @@ itsOuterLogicalVolume=
     // Calculate position with respect to the reference frame 
     // of the mother volume
     G4RotationMatrix* rm = new G4RotationMatrix();
-    //rm->rotateZ((n+0.5)*360.0/n_poles*CLHEP::deg-itsTilt*360.0/n_poles/4.0*CLHEP::deg);
     rm->rotateZ((n+0.5)*360.0/n_poles*CLHEP::degree-itsTilt*180.0/CLHEP::pi*CLHEP::degree);
     G4ThreeVector uz = G4ThreeVector(0.,0.,itsLength/2.0);     
     G4ThreeVector position = uz;

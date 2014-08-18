@@ -79,9 +79,17 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
       // build magnet (geometry + magnetic field)
       //
       
+      G4String geometry = BDSGlobalConstants::Instance()->GetMagnetGeometry();
+      if(geometry =="standard") 
+	BuildSBOuterLogicalVolume(); // standard - quad with poles and pockets
+      else if(geometry =="cylinder")  
+	BuildSBDefaultOuterLogicalVolume(); // cylinder outer volume
+      else //default - cylinder - standard
+	BuildSBDefaultOuterLogicalVolume(); // cylinder outer volume
+
 
       //BuildSBOuterLogicalVolume();
-      BuildSBDefaultOuterLogicalVolume();
+      //BuildSBDefaultOuterLogicalVolume();
       if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
 	{
 	  G4double polePos[4];
@@ -252,8 +260,6 @@ void BDSSectorBend::BuildSBBeampipe()
     tubLen=(itsLength)/2.0;
   }
 
-  
-
   //
   // build beampipe
   //
@@ -267,9 +273,6 @@ void BDSSectorBend::BuildSBBeampipe()
                                                                     this->GetAperY()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,          
                                                                     tubLen*2)
                                                );
-
-
-
   
   G4VSolid *pipeInnerEnv = new G4EllipticalTube(itsName+"_pipe_outer_tmp_2",
                                                 this->GetAperX(), 
@@ -384,7 +387,7 @@ G4double BDSSectorBend::GetArcLength()
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void BDSSectorBend::BuildSBDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
-
+  
   G4Material* material;
   
   if(itsMaterial != "")
@@ -406,8 +409,7 @@ void BDSSectorBend::BuildSBDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuu
   } else {
     tubLen = (itsLength-BDSGlobalConstants::Instance()->GetLengthSafety())/2.0;
   }
-  
-  
+    
   G4VSolid *magTubsEnv = new G4SubtractionSolid(itsName+"_solid_env",
                                                 new G4Tubs(itsName+"_solid_tmp_1",
                                                            itsInnerIronRadius + BDSGlobalConstants::Instance()->GetLengthSafety()/2.0, // inner R + overlap safety
@@ -464,16 +466,12 @@ void BDSSectorBend::BuildSBDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuu
   itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
+  
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //					Detailed geometry						//
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
 
 void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 
@@ -500,7 +498,7 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
   }
   
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+  
   G4VSolid *magTubsEnv = new G4SubtractionSolid(itsName+"_solid_env",
                                                 new G4Tubs(itsName+"_solid_tmp_1",
                                                            itsInnerIronRadius + BDSGlobalConstants::Instance()->GetLengthSafety()/2.0, // inner R + overlap safety
@@ -513,7 +511,6 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
                                                                      this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,          
                                                                      tubLen*2)
                                                 );
-  
   
   ///////////////////////////////////////////////////
 
@@ -557,7 +554,6 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 
   double mag_inradius = 192*CLHEP::mm; // inner radius
   double mag_extradius = 400*CLHEP::mm; // external radius
-
 
   // ==================================== //
 
