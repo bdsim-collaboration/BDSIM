@@ -131,7 +131,7 @@ BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength,
       //
       // build magnet (geometry + magnetic field)
       //
-      BuildDefaultOuterLogicalVolume(itsLength);
+      BuildDefaultOuterLogicalVolume();
       
       //
       // define sensitive volumes for hit generation

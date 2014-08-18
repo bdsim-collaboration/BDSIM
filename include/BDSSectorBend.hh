@@ -57,6 +57,7 @@ private:
   void BuildSBMarkerLogicalVolume();
   void BuildSBBeampipe();
   void BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+  void BuildSBDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
 
   G4VisAttributes* SetVisAttributes();
 

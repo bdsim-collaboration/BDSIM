@@ -2,7 +2,6 @@
 
 #include "BDSXSBias.hh"
 #include "G4SteppingManager.hh"
-#include "BDSVProcess.hh"
 
 BDSXSBias::BDSXSBias(const G4String& aName,
                                          G4ProcessType   aType)
@@ -13,6 +12,7 @@ BDSXSBias::BDSXSBias(const G4String& aName,
 BDSXSBias::BDSXSBias(const BDSXSBias& right)
   : G4WrapperProcess(right)
 {
+  // what about _eFactor? JS
 }
 
 BDSXSBias::~BDSXSBias()

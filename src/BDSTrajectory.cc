@@ -1,6 +1,5 @@
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPoint.hh"
-#include "G4AttDef.hh"
 #include <map>
 
 G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;

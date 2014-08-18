@@ -66,7 +66,7 @@ BDSOctupole::BDSOctupole(G4String aName, G4double aLength,
       //
       // build magnet (geometry + magnetic field)
       //
-      BuildDefaultOuterLogicalVolume(itsLength);
+      BuildDefaultOuterLogicalVolume();
       if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
 	{
 	  G4double polePos[4];

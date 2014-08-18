@@ -74,7 +74,7 @@ void BDSSampler::SamplerLogicalVolume()
       (*LogVol)[itsName]=itsMarkerLogicalVolume;
 #ifndef NOUSERLIMITS
       itsOuterUserLimits =new G4UserLimits();
-      double stepFactor=5;
+      //      double stepFactor=5;
       //      itsOuterUserLimits->SetMaxAllowedStep(itsLength*stepFactor);
       itsOuterUserLimits->SetMaxAllowedStep(1*CLHEP::m);
       itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);

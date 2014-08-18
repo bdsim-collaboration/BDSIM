@@ -54,7 +54,9 @@ void BDSMySQLWrapper::TokenizeLine(){
   std::string token;
   _tokens.clear();
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;  
-  boost::char_separator<char> sep(", ",";()\n");
+  // http://www.boost.org/doc/libs/1_55_0b1/libs/tokenizer/char_separator.htm
+  // separate with , and space, keep ; ( ) and \n
+  boost::char_separator<char> sep(", ",";()\n"); 
   tokenizer tok(_currentLine, sep);
   for(tokenizer::iterator tok_iter=tok.begin(); tok_iter != tok.end(); ++tok_iter){
     token = *tok_iter;
