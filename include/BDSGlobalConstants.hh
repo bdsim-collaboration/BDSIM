@@ -135,7 +135,7 @@ public:
   G4double GetProdCutPositronsA();
 
 
-  // Magent geometry variable
+  // Magnet geometry variable
 
   G4String GetMagnetGeometry();
 

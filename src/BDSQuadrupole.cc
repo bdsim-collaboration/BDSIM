@@ -104,23 +104,9 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
       if(geometry =="standard") 
 	BuildOuterLogicalVolume(); // standard - quad with poles and pockets
       else if(geometry =="cylinder")  
-       BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
+	BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
       else //default - cylinder - standard
-      BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
-
-
-      //
-      // build magnet (geometry + magnetic field)
-      // according to quad type
-      //
-      //if(qtype=="standard") 
-	//BuildOuterLogicalVolume(); // standard - quad with poles and pockets
-      //else if(qtype=="cylinder")  
-	//BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
-      //BuildEllipticalOuterLogicalVolume(itsLength); // cylinder outer volume
-      //else //default - cylinder - standard
-	//BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
-      //BuildEllipticalOuterLogicalVolume(itsLength); // cylinder outer volume
+	BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
 
       if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
 	{
@@ -220,7 +206,6 @@ void BDSQuadrupole::BuildCylindricalOuterLogicalVolume()
 				   outerRadius * sqrt(2.0),
 				   itsLength/2,
 				   0,CLHEP::twopi*CLHEP::radian),
-
 			//BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			BDSMaterials::Instance()->GetMaterial("Iron"),
 			itsName+"_outer");
@@ -257,16 +242,16 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
   outerRadius = outerRadius/sqrt(2.0);
 
   G4int n_poles = 4; // number of poles
-  double mag_inradius = 250*mm; // inner radius
+  double mag_inradius = 250*CLHEP::mm; // inner radius
 
-  double zplanepos [2] = {0,itsLength};  
+  double zplanepos [2] = {0,itsLength};
+  double pole_extra_length = 0.05*CLHEP::m;
 
   double rinner [2] = {mag_inradius, mag_inradius};
-  //G4double rinner [2] = {itsInnerIronRadius,itsInnerIronRadius};
   G4double router [2] = {outerRadius * sqrt(2.0),outerRadius * sqrt(2.0)};
 
   double pole_inradius = itsInnerIronRadius;
-  double pole_extradius = mag_inradius+0.05*m;
+  double pole_extradius = mag_inradius+pole_extra_length;
   //double itstilt = 0;
 
   itsOuterLogicalVolume=
@@ -285,41 +270,6 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
 			BDSMaterials::Instance()->GetMaterial("Iron"),
 			itsName+"_outer");
 
-  // External yoke
-
-  /*
-  G4Polyhedra* Yoke = new G4Polyhedra(itsName+"_yoke", 
-				      0.*CLHEP::degree, 
-				      360.*CLHEP::degree, 
-				      2*n_poles, 
-				      2, 
-				      zplanepos, 
-				      rinner, 
-				      router);
-			
- 
-  G4LogicalVolume* YokeLV =
-    new G4LogicalVolume(Yoke,
-			BDSMaterials::Instance()->GetMaterial("Iron"),
-			itsName+"_yoke");
-
-  G4RotationMatrix* rm_yoke = new G4RotationMatrix();
-  rm_yoke->rotateZ(360.0/n_poles*deg-tilt*360.0/n_poles/4.0*deg);
-
-  new G4PVPlacement(
-		    rm_yoke,                      // no rotation
-		    (G4ThreeVector)0,                      // its position
-		    YokeLV,  // its logical volume
-		    "Yoke",  // its name
-		    itsOuterLogicalVolume, // its mother  volume
-		    false,                  // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());   
-
-  G4VisAttributes* VisAtt = 
-    new G4VisAttributes(G4Colour(1., 0., 0.));
-  VisAtt->SetForceSolid(true);
-  YokeLV->SetVisAttributes(VisAtt);
-  */
  /////////////////////////////////////////////////////////////////
   
   // Defining poles
@@ -343,11 +293,9 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
     // Calculate position with respect to the reference frame 
     // of the mother volume
     G4RotationMatrix* rm = new G4RotationMatrix();
-    //rm->rotateZ((n+0.5)*360.0/n_poles*deg-itsTilt*360.0/n_poles/4.0*deg);
     rm->rotateZ((n+0.5)*360.0/n_poles*CLHEP::degree-itsTilt*180.0/CLHEP::pi*CLHEP::degree);
     G4ThreeVector uz = G4ThreeVector(0.,0.,itsLength/2.0);     
     G4ThreeVector position = uz;
-    //G4Transform3D transform = G4Transform3D(rm,position);
 
     // Place the poles with the appropriate transformation
    
@@ -371,7 +319,6 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
   //////////////////////////////////////////////////////////////////////////////////////////////////////////
     
   G4RotationMatrix* rm_outer = new G4RotationMatrix();
-  //rm_outer->rotateZ(360.0/n_poles/4.0*deg-itsTilt*360.0/n_poles/4.0*deg);
   rm_outer->rotateZ(360.0/n_poles/4.0*deg-itsTilt*180.0/CLHEP::pi*CLHEP::degree);
   G4ThreeVector uz = G4ThreeVector(0.,0.,-itsLength/2.0); 
   // insert the outer volume into the marker volume
