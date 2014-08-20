@@ -409,6 +409,7 @@ private:
   G4double itsSMax;
   // logical volume info
   std::map<G4LogicalVolume* , BDSLogicalVolumeInfo*> logicalvolumeinfo;
+  void SetBDSIMPATH();
 };
 
 inline G4double BDSGlobalConstants::GetElossHistoBinWidth()

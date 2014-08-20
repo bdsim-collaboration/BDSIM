@@ -4,6 +4,7 @@ Last modified 23.10.2007 by Steve Malton
 
 **/
 #include "BDSGlobalConstants.hh"
+#include "BDSExecOptions.hh"
 #include "parser/options.h"
 #include "BDSDebug.hh"
 #include "G4FieldManager.hh"
@@ -11,6 +12,7 @@ Last modified 23.10.2007 by Steve Malton
 #include <cstdlib>
 #include "G4ThreeVector.hh"
 #include "parser/getEnv.h"
+#include <unistd.h>
 
 extern Options options;
 
@@ -26,7 +28,7 @@ BDSGlobalConstants* BDSGlobalConstants::Instance(){
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0)
 {
-  itsBDSIMPATH=getEnv("BDSIMPATH");
+ SetBDSIMPATH();
   itsPhysListName = opt.physicsList;
   itsPipeMaterial = opt.pipeMaterial;
   itsVacMaterial = opt.vacMaterial;
@@ -261,6 +263,26 @@ G4String BDSGlobalConstants::StringFromDigit(G4int N)
   else if(N==8)Cnum="8";
   else if(N==9)Cnum="9"; 
   return Cnum;
+}
+
+void BDSGlobalConstants::SetBDSIMPATH(){
+  //Set itsBDSIMPATH to mirror what is done in parser.l (i.e. if no environment varible set, assume base filename path is that of the gmad file).
+  itsBDSIMPATH=getEnv("BDSIMPATH");
+  if(itsBDSIMPATH.length()<=0){
+    std::string mainfilename=BDSExecOptions::Instance()->GetInputFilename();
+    std::string basefilepath = "";
+    std::string::size_type found = mainfilename.rfind("/");//find the last '/'
+    if (found != std::string::npos){
+      //if we found a '/' get the path before that and prepend to included files
+      basefilepath += mainfilename.substr(0,found);
+      basefilepath += "/";
+    }
+    //get current working directory and build up include filenames
+    const int maxfilenamelength = 200;
+    char cwdchars[maxfilenamelength];
+    std::string cwd = (std::string)getcwd(cwdchars, sizeof(cwdchars));
+    itsBDSIMPATH= cwd + "/" + basefilepath; 
+  }
 }
 
 BDSGlobalConstants::~BDSGlobalConstants()

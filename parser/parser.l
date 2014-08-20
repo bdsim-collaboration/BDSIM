@@ -170,7 +170,7 @@ if(bdsimpath.length()>0){
    //get current working directory and build up include filenames
    char cwdchars[maxfilenamelength];
    std::string cwd = (std::string)getcwd(cwdchars, sizeof(cwdchars));
-   includefilename = cwd + "/" + basefilepath + (std::string)yytext;
+   includefilename = cwd + "/" + basefilepath  + (std::string)yytext;
 }
    printf("parser> reading file %s \n",(char*)includefilename.c_str());//yytext
      if( include_stack_ptr >= max_include_depth )
