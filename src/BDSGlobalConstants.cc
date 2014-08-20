@@ -10,6 +10,7 @@ Last modified 23.10.2007 by Steve Malton
 #include "G4UniformMagField.hh"
 #include <cstdlib>
 #include "G4ThreeVector.hh"
+#include "parser/getEnv.h"
 
 extern Options options;
 
@@ -25,6 +26,7 @@ BDSGlobalConstants* BDSGlobalConstants::Instance(){
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0)
 {
+  itsBDSIMPATH=getEnv("BDSIMPATH");
   itsPhysListName = opt.physicsList;
   itsPipeMaterial = opt.pipeMaterial;
   itsVacMaterial = opt.vacMaterial;
