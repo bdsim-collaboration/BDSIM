@@ -284,6 +284,7 @@ void BDSGlobalConstants::SetBDSIMPATH(){
     std::string cwd = (std::string)getcwd(cwdchars, sizeof(cwdchars));
     itsBDSIMPATH= cwd + "/" + basefilepath; 
   }
+  itsBDSIMPATH += "/";
 }
 
 BDSGlobalConstants::~BDSGlobalConstants()
