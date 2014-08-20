@@ -20,7 +20,7 @@
 
 //====================================================
 
-BDSSteppingAction::BDSSteppingAction()
+BDSSteppingAction::BDSSteppingAction():_step(NULL)
 { 
 }
 
