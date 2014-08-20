@@ -26,7 +26,7 @@ BDSGlobalConstants* BDSGlobalConstants::Instance(){
 }
 
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
-  itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0)
+  itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0),itsSMax(0.0)
 {
  SetBDSIMPATH();
   itsPhysListName = opt.physicsList;
@@ -117,6 +117,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsTurnOnRayleighScattering = opt.turnOnRayleighScattering;
   itsTurnOnMieScattering = opt.turnOnMieScattering;
   itsTurnOnOpticalSurface = opt.turnOnOpticalSurface;
+  itsTurnOnBirksSaturation = opt.turnOnBirksSaturation;
   itsScintYieldFactor=opt.scintYieldFactor;
   itsSynchRadOn = opt.synchRadOn;
   G4cout << "BDSGlobalConstants::Instance() synchRadOn = " << itsSynchRadOn << G4endl;
