@@ -48,7 +48,7 @@ public:
   inline G4int   GetVerboseSteppingLevel() const {return verboseSteppingLevel;}
 
   inline G4bool  GetCircular() const             {return circular;}
-
+  inline G4String GetBDSIMPATH() const           {return itsBDSIMPATH;}
 
 protected : 
   BDSExecOptions(int argc, char** argv);
@@ -58,6 +58,7 @@ protected :
 private :
   BDSExecOptions();
   void Parse(int arcg, char **argv);
+  void SetBDSIMPATH();
   G4String        inputFilename;
   G4String        visMacroFilename;
   G4String        outputFilename;
@@ -83,7 +84,8 @@ private :
   G4int  verboseSteppingLevel;
 
   G4bool circular;
-
+  /// string that points to path where files are searched; based on environment variable or else input filename
+  G4String itsBDSIMPATH;
 };
 
 #endif

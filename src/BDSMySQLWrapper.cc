@@ -30,10 +30,15 @@ BDSMySQLWrapper::BDSMySQLWrapper (const G4String& SQLFileName)
   _startOfFile=true;
   BeginTokens();
 
+  if(ifs) {
 #ifdef BDSDEBUG
-  if(ifs) G4cout<<"BDSMySQLWrapper contructor: Loading SQL Filename="<<SQLFileName<<G4endl;
-  else G4cout<<"BDSMySQLWrapper constructor: Unable to load SQL file: "<<SQLFileName<<G4endl;
+    G4cout<<"BDSMySQLWrapper contructor: Loading SQL Filename="<<SQLFileName<<G4endl;
 #endif
+  }
+  else {
+    G4cout<<"BDSMySQLWrapper constructor: Unable to load SQL file: "<<SQLFileName<<G4endl;
+    exit(1);
+  }
 }
 
 BDSMySQLWrapper::~BDSMySQLWrapper()

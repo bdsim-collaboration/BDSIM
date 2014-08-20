@@ -29,8 +29,6 @@ int main(int argc,char** argv) {
   // fill options from file 
   gmad_parser(filename);
 
-  BDSGlobalConstants::Instance();
-
   // Print options for distrib type 
   std::cout << "BDSBunchTest> distribType : "      << options.distribType << std::endl;
   std::cout << "BDSBunchTest> particle    : "      << options.particleName << std::endl;

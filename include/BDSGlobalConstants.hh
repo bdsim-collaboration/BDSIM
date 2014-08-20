@@ -139,9 +139,6 @@ public:
 
   G4String GetMagnetGeometry();
 
-  // Environment variables
-  G4String GetBDSIMPATH();
-
   // Physical processes etc.
 
   G4String GetPhysListName();
@@ -316,7 +313,6 @@ private:
   G4double itsProdCutPositrons;
   G4double itsProdCutPositronsP;
   G4double itsProdCutPositronsA;
-  G4String itsBDSIMPATH;
   G4String itsPhysListName;
   G4bool   itsSynchRadOn;
   G4bool   itsDecayOn;
@@ -409,7 +405,6 @@ private:
   G4double itsSMax;
   // logical volume info
   std::map<G4LogicalVolume* , BDSLogicalVolumeInfo*> logicalvolumeinfo;
-  void SetBDSIMPATH();
 };
 
 inline G4double BDSGlobalConstants::GetElossHistoBinWidth()
@@ -645,9 +640,6 @@ inline G4double BDSGlobalConstants::GetProdCutPositronsA()
 // {return itsVerticalComponentOffset;}
 // inline G4double BDSGlobalConstants::GetHorizontalComponentOffset()
 // {return itsHorizontalComponentOffset;}
-
-inline G4String BDSGlobalConstants::GetBDSIMPATH()
-{return itsBDSIMPATH;}
 
 inline G4String BDSGlobalConstants::GetPhysListName()
 {return itsPhysListName;}

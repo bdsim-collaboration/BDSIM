@@ -29,7 +29,6 @@
 #include <vector>
 #include <cstdlib>
 #include <cstring>
-#include "parser/getEnv.h"
 
 extern BDSSamplerSD* BDSSamplerSensDet;
 
@@ -89,7 +88,7 @@ void BDSGeometrySQL::Construct(G4LogicalVolume *marker)
     {
       if(file.contains("#")) ifs.getline(buffer,1000); // This is a comment line
       else{
-	G4String sBDSPATH = getEnv("BDSIMPATH");
+	G4String sBDSPATH = BDSExecOptions::Instance()->GetBDSIMPATH();
 	G4String fullPath = sBDSPATH + file;
 	BuildSQLObjects(fullPath);}
     }
@@ -104,13 +103,7 @@ void BDSGeometrySQL::BuildSQLObjects(G4String file)
   G4cout << "BDSGeometrySQL::BuildSQLObjects Loading file " << file << G4endl;
 #endif
 
-  G4String fullpath = BDSGlobalConstants::Instance()->GetBDSIMPATH();
-  fullpath += file; 
-#ifdef BDSDEBUG
-  G4cout << "BDSGeometrySQL::BuildSQLObjects Full path is " << fullpath << G4endl;
-#endif
-
-  BDSMySQLWrapper sql(fullpath);
+  BDSMySQLWrapper sql(file);
   itsSQLTable=sql.ConstructTable();
 
   for (G4int i=0; i<(G4int)itsSQLTable.size(); i++)
