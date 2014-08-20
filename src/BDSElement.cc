@@ -21,7 +21,6 @@
 #include "BDSXYMagField.hh"
 #include "BDSMagFieldSQL.hh"
 #include "G4NystromRK4.hh"
-#include "G4HelixImplicitEuler.hh"
 
 // geometry drivers
 #include "parser/enums.h"

@@ -2,8 +2,8 @@
 #include "G4ProcessManager.hh"
 #include "G4Version.hh"
 
-BDSSynchRadPhysics::BDSSynchRadPhysics():G4VPhysicsConstructor("BDSSynchRadPhysics"),_wasActivated(false),
-						 _srProcess(NULL),_contSR(NULL)
+BDSSynchRadPhysics::BDSSynchRadPhysics():G4VPhysicsConstructor("BDSSynchRadPhysics"),
+					 _srProcess(NULL),_contSR(NULL),_wasActivated(false)
 {;}
 
 BDSSynchRadPhysics::~BDSSynchRadPhysics()
