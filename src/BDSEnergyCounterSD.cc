@@ -139,7 +139,9 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
    
    G4int turnstaken    = BDSGlobalConstants::Instance()->GetTurnsTaken();
    
-   //LN TEST
+   // always create a new hit as averaging can be done at output / histogram time
+   // if averaging now, no way back later
+   // amount of data is manageable
    BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
 							enrg,
 							xpos,
@@ -154,27 +156,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 							);
    // don't worry, won't add 0 energy tracks as filtered at top by if statement
    BDSEnergyCounterCollection->insert(ECHit);
-   /*
-   if ((HitID[nCopy]==-1) || precisionRegion)
-     {
-       BDSEnergyCounterHit* ECHit 
-	 = new BDSEnergyCounterHit(nCopy,
-				   enrg,
-				   xpos,
-				   ypos,
-				   zpos,
-				   spos,
-				   volName, 
-				   ptype, 
-				   weight, 
-				   precisionRegion,
-				   turnstaken);
-       HitID[nCopy]= BDSEnergyCounterCollection->insert(ECHit)-1; 
-     } 
-   else {
-     (*BDSEnergyCounterCollection)[HitID[nCopy]]-> AddEnergyWeightedPosition(enrg, xpos, ypos, zpos, spos, weight);
-   }
-   */
    
    if(BDSGlobalConstants::Instance()->GetStopTracks())
      aStep->GetTrack()->SetTrackStatus(fStopAndKill);
@@ -253,6 +234,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
 
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
   
+  // see explanation in other processhits function
   BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
 						       enrg,
 						       xpos,
@@ -267,27 +249,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
 						       );
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   BDSEnergyCounterCollection->insert(ECHit);
-
-  /*
-  BDSEnergyCounterCollection->insert(ECHit);
-  if (HitID[nCopy]==-1){
-    BDSEnergyCounterHit* ECHit = 
-      new BDSEnergyCounterHit(nCopy,
-			      enrg,
-			      xpos,
-			      ypos,
-			      zpos,
-			      spos,
-			      volName, 
-			      ptype, 
-			      weight, 
-			      0,
-			      turnstaken);
-    HitID[nCopy]= BDSEnergyCounterCollection->insert(ECHit)-1;
-  } else {
-    (*BDSEnergyCounterCollection)[HitID[nCopy]]-> AddEnergyWeightedPosition(enrg, xpos, ypos, zpos, spos, weight);
-  }
-  */
+  
   return true;
 }
 
