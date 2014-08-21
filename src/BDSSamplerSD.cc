@@ -71,7 +71,8 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4Track* theTrack = aStep->GetTrack();
 #ifdef BDSDEBUG
   BDSTrajectory* bdsTraj = new BDSTrajectory(theTrack);
-  bdsTraj->printRichDataOfSteps();
+  //bdsTraj->printRichDataOfSteps();
+  // LN removed this because it only prints definition of types, not info itself
 #endif
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   //  G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
