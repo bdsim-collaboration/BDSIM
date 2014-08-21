@@ -1,5 +1,7 @@
 #include "TRKTrackingElement.hh"
 
+#include <iostream>
+
 TRKTrackingElement::TRKTrackingElement(TRKType typeIn, int trackingStepsIn, TRKElement &element) : 
   TRKElement(element), type(typeIn), trackingSteps(trackingStepsIn) {
 }
@@ -20,6 +22,17 @@ TRKTrackingElement::~TRKTrackingElement() {
 void TRKTrackingElement::Track(const double vIn[], double vOut[], double h) {   
   // we need to check if h < length, perhaps here? -> better inside aperturecheck or something
 
+#ifdef TRKDEBUG
+  std::cout << "TRKTrackingElement " << name << " : initial point in local coordinates:" << std::endl
+	 << " x= " << vIn[0] << std::endl
+	 << " y= " << vIn[1] << std::endl
+	 << " z= " << vIn[2] << std::endl
+	 << " x'= " << vIn[3] << std::endl
+	 << " y'= " << vIn[4] << std::endl
+	 << " z'= " << vIn[5] << std::endl
+	 << std::endl; 
+#endif
+
   if(type == TRKTrackingElement::thin) {
     ThinTrack(vIn,vOut,h); 
   }
@@ -34,6 +47,17 @@ void TRKTrackingElement::Track(const double vIn[], double vOut[], double h) {
     bool lost = aperture->CheckAperture(vOut);
     if (lost) {} // do something;
   }
+
+#ifdef TRKDEBUG
+  std::cout << "TRKTrackingElement " << name << " : output point in local coordinates:" << std::endl
+	 << " x= " << vOut[0] << std::endl
+	 << " y= " << vOut[1] << std::endl
+	 << " z= " << vOut[2] << std::endl
+	 << " x'= " << vOut[3] << std::endl
+	 << " y'= " << vOut[4] << std::endl
+	 << " z'= " << vOut[5] << std::endl
+	 << std::endl; 
+#endif
 }
 
 void TRKTrackingElement::Track(const double vIn[], double vOut[]) {     

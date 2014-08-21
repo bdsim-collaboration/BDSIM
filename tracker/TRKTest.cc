@@ -14,6 +14,10 @@
 
 int main() {
 
+#ifdef TRKDEBUG 
+  std::cout << "Debug on" << std::endl;
+#endif
+
   /// vector testing
   vector3 v1(1,0,0);
   vector3 v2(0,2,0);
@@ -54,6 +58,12 @@ int main() {
   line.AddElement(&quad);
   TRKElement* element = line.FindElement("drift");
   if (element) std::cout << element->GetName() << " has been found" << std::endl;
+
+  double vIn[6] = {1.0, 0.0, 0.0, 0.0, 0.01, 1}; 
+  double vOut[6]; 
+  
+  std::cout << "Tracking" << std::endl;
+  line.Track(vIn,vOut);
 
   std::cout << "Test successful!" << std::endl;
   return 0;
