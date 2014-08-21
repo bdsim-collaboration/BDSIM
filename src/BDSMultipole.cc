@@ -599,8 +599,7 @@ void BDSMultipole::BuildDefaultMarkerLogicalVolume()
 }
 
 
-void BDSMultipole::BuildDefaultOuterLogicalVolume(G4double aLength,
-						  G4bool OuterMaterialIsVacuum)
+void BDSMultipole::BuildDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
 {
   //OuterMaterialIsVacuum parameter is useless: one can set
   //itsMaterial = BDSGlobalConstants::Instance()->GetVacuumMaterial() and obtain the same result. Or cannot?
@@ -615,14 +614,14 @@ void BDSMultipole::BuildDefaultOuterLogicalVolume(G4double aLength,
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Outer volume inner radius :"
          << " r= " << (itsInnerIronRadius)/CLHEP::m << " m"
-         << " l= " << aLength/2./CLHEP::m << " m"
+         << " l= " << itsLength/2./CLHEP::m << " m"
          << G4endl;
 #endif
 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Outer radius :"
          << " r= " << outerRadius/CLHEP::m << " m"
-         << " l= " << aLength/2./CLHEP::m << " m"
+         << " l= " << itsLength/2./CLHEP::m << " m"
          << G4endl;
 #endif
 
@@ -636,7 +635,7 @@ void BDSMultipole::BuildDefaultOuterLogicalVolume(G4double aLength,
                                                  new G4Tubs(itsName+"_outer_solid_tmp_1",
                                                             itsInnerIronRadius+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,
                                                             outerRadius,
-                                                            aLength/2-BDSGlobalConstants::Instance()->GetLengthSafety(),
+                                                            itsLength/2-BDSGlobalConstants::Instance()->GetLengthSafety(),
                                                             0,CLHEP::twopi*CLHEP::radian),
                                                  new G4EllipticalTube(itsName+"_outer_solid_tmp_2",
                                                                       this->GetAperX()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,
@@ -670,8 +669,7 @@ void BDSMultipole::BuildDefaultOuterLogicalVolume(G4double aLength,
 
 }
 
-void BDSMultipole::BuildEllipticalOuterLogicalVolume(G4double aLength,
-						  G4bool OuterMaterialIsVacuum)
+void BDSMultipole::BuildEllipticalOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
 {
   //OuterMaterialIsVacuum parameter is useless: one can set
   //itsMaterial = BDSGlobalConstants::Instance()->GetVacuumMaterial() and obtain the same result. Or cannot?
@@ -686,13 +684,13 @@ void BDSMultipole::BuildEllipticalOuterLogicalVolume(G4double aLength,
   G4Tubs* tubs_tmp= new G4Tubs(itsName+"_tubs_tmp",
 			       0,
 			       outerRadius,
-			       aLength/2-BDSGlobalConstants::Instance()->GetLengthSafety(),
+			       itsLength/2-BDSGlobalConstants::Instance()->GetLengthSafety(),
 			       0,CLHEP::twopi*CLHEP::radian);
 
   G4EllipticalTube* etube_tmp= new G4EllipticalTube(itsName+"_etube_tmp",
                                                     this->GetAperX()+1*CLHEP::nm,
                                                     this->GetAperY()+1*CLHEP::nm,
-                                                    aLength/2-BDSGlobalConstants::Instance()->GetLengthSafety());
+                                                    itsLength/2-BDSGlobalConstants::Instance()->GetLengthSafety());
   
  
 

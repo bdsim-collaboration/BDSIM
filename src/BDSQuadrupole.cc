@@ -21,7 +21,6 @@
 #include "BDSQuadrupole.hh"
 #include "G4Tubs.hh"
 #include "G4Polyhedra.hh"
-#include "G4Trd.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -106,21 +105,7 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
       else if(geometry =="cylinder")  
        BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
       else //default - cylinder - standard
-      BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
-
-
-      //
-      // build magnet (geometry + magnetic field)
-      // according to quad type
-      //
-      //if(qtype=="standard") 
-	//BuildOuterLogicalVolume(); // standard - quad with poles and pockets
-      //else if(qtype=="cylinder")  
-	//BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
-      //BuildEllipticalOuterLogicalVolume(itsLength); // cylinder outer volume
-      //else //default - cylinder - standard
-	//BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
-      //BuildEllipticalOuterLogicalVolume(itsLength); // cylinder outer volume
+	BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
 
       if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
 	{
@@ -259,14 +244,15 @@ void BDSQuadrupole::BuildOuterLogicalVolume()
   G4int n_poles = 4; // number of poles
   double mag_inradius = 250*CLHEP::mm; // inner radius
 
-  double zplanepos [2] = {0,itsLength};  
+  double zplanepos [2] = {0,itsLength};
+  double pole_extra_length = 0.05*CLHEP::m;
 
   double rinner [2] = {mag_inradius, mag_inradius};
   //G4double rinner [2] = {itsInnerIronRadius,itsInnerIronRadius};
   G4double router [2] = {outerRadius * sqrt(2.0),outerRadius * sqrt(2.0)};
 
   double pole_inradius = itsInnerIronRadius;
-  double pole_extradius = mag_inradius+0.05*CLHEP::m;
+  double pole_extradius = mag_inradius+pole_extra_length;
   //double itstilt = 0;
 
   itsOuterLogicalVolume=

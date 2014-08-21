@@ -135,12 +135,9 @@ public:
   G4double GetProdCutPositronsA();
 
 
-  // Magent geometry variable
+  // Magnet geometry variable
 
   G4String GetMagnetGeometry();
-
-  // Environment variables
-  G4String GetBDSIMPATH();
 
   // Physical processes etc.
 
@@ -316,7 +313,6 @@ private:
   G4double itsProdCutPositrons;
   G4double itsProdCutPositronsP;
   G4double itsProdCutPositronsA;
-  G4String itsBDSIMPATH;
   G4String itsPhysListName;
   G4bool   itsSynchRadOn;
   G4bool   itsDecayOn;
@@ -644,9 +640,6 @@ inline G4double BDSGlobalConstants::GetProdCutPositronsA()
 // {return itsVerticalComponentOffset;}
 // inline G4double BDSGlobalConstants::GetHorizontalComponentOffset()
 // {return itsHorizontalComponentOffset;}
-
-inline G4String BDSGlobalConstants::GetBDSIMPATH()
-{return itsBDSIMPATH;}
 
 inline G4String BDSGlobalConstants::GetPhysListName()
 {return itsPhysListName;}

@@ -1,7 +1,6 @@
 #include "BDSXSBiasPhysics.hh"
 #include "G4GammaConversionToMuons.hh"
 #include "BDSVProcess.hh"
-#include "BDSGlobalConstants.hh"
 
 BDSXSBiasPhysics::BDSXSBiasPhysics(G4String name):G4VPhysicsConstructor(name),_wasActivated(false)
 {;}

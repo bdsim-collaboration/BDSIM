@@ -2,7 +2,6 @@
 #define __BDS_FILENAME_HH_
 
 #include "G4String.hh"
-#include "parser/getEnv.h"
 
 class BDSFilename {
 public:

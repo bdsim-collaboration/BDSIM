@@ -152,6 +152,7 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
   itsMarkerUserLimits=NULL;
   itsInnerBeampipeUserLimits=NULL;
   itsInnerMostLogicalVolume=NULL;
+  itsPrecisionRegion=0;
   itsMarkerSolidVolume=NULL;
   itsTunnelSolid=NULL;
   itsSoilSolid=NULL;

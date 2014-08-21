@@ -4,7 +4,8 @@
    Copyright (c) 2004 by J.C.Carter.  ALL RIGHTS RESERVED. 
 */
 
-#include "BDSGlobalConstants.hh" // must be first in include list
+#include "BDSGlobalConstants.hh"
+#include "BDSExecOptions.hh"
 #include "BDSElement.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
@@ -21,7 +22,6 @@
 #include "BDSXYMagField.hh"
 #include "BDSMagFieldSQL.hh"
 #include "G4NystromRK4.hh"
-#include "G4HelixImplicitEuler.hh"
 
 // geometry drivers
 #include "parser/enums.h"
@@ -252,18 +252,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     }
     else {
       gFormat = geometry.substr(0,pos);
-      gFile = BDSGlobalConstants::Instance()->GetBDSIMPATH();
-      G4String temp = geometry.substr(pos+1,geometry.length() - pos);     
-#ifdef BDSDEBUG
-      G4cout << "BDSElement::PlaceComponents SQL file is " << temp << G4endl;
-#endif
-#ifdef BDSDEBUG
-      G4cout << "BDSElement::PlaceComponents Full path is " << gFile << G4endl;
-#endif
-      gFile+=temp;
-#ifdef BDSDEBUG
-      G4cout << "BDSElement::PlaceComponents Full path is " << gFile << G4endl;
-#endif
+      gFile = BDSExecOptions::Instance()->GetBDSIMPATH() + geometry.substr(pos+1,geometry.length() - pos);     
     }
   }
 
@@ -276,8 +265,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     }
     else {
       bFormat = bmap.substr(0,pos);
-      bFile = BDSGlobalConstants::Instance()->GetBDSIMPATH();
-      bFile += bmap.substr(pos+1,bmap.length() - pos); 
+      bFile = BDSExecOptions::Instance()->GetBDSIMPATH() + bmap.substr(pos+1,bmap.length() - pos); 
 #ifdef BDSDEBUG
       G4cout << "BDSElement::PlaceComponents bmap file is " << bFile << G4endl;
 #endif

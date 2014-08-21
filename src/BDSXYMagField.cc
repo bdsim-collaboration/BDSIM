@@ -51,8 +51,12 @@ G4int BDSXYMagField::ReadFile(G4String fname)
 #endif
   struct XYFieldRecord rec;
   
+
+  // Open the file for reading.
   std::ifstream bmapif;
-  bmapif.open(fname);
+  bmapif.open(fname.c_str());
+  G4String exceptionString = "Unable to load field map file: " + fname;
+  if(!bmapif) G4Exception(exceptionString.c_str(), "-1", FatalException, "");
 
   while(bmapif.good())
     {

@@ -83,9 +83,9 @@ public:
 
   void BuildDefaultMarkerLogicalVolume();
  
-  void BuildDefaultOuterLogicalVolume(G4double aLength,G4bool OuterMaterialIsVacuum=false);
+  void BuildDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
 
-  void BuildEllipticalOuterLogicalVolume(G4double aLength,G4bool OuterMaterialIsVacuum=false);
+  void BuildEllipticalOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
 
   void BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
 		       G4MagneticField* aField);
