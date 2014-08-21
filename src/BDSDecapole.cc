@@ -40,7 +40,6 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
 {
   SetOuterRadius(outR);
   itsTilt=tilt;
-  itsType="deca";
 
   if (!(*LogVolCount)[itsName])
     {
@@ -66,7 +65,7 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
       //
       // build magnet (geometry + magnetic field)
       //
-      BuildDefaultOuterLogicalVolume(itsLength);
+      BuildDefaultOuterLogicalVolume();
       if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
 	{
 	  G4double polePos[4];

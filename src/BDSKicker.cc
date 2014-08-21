@@ -31,12 +31,6 @@ BDSKicker::BDSKicker(G4String aName, G4double aLength,
   itsTilt=tilt;
   itsBField=bField;
   itsBGrad=bGrad;
-  if (tilt==0)
-    itsType="hkick";
-  else if (tilt==CLHEP::pi/2)
-    itsType="vkick";
-  else
-    itsType="kick";
 
   if (!(*LogVolCount)[itsName])
     {
@@ -55,7 +49,7 @@ BDSKicker::BDSKicker(G4String aName, G4double aLength,
       //
       // build magnet (geometry + magnetic field)
       //
-      BuildDefaultOuterLogicalVolume(itsLength);
+      BuildDefaultOuterLogicalVolume();
       if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
 	{
 	  G4double polePos[4];

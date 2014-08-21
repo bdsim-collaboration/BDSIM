@@ -6,11 +6,9 @@
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
-#include "G4TransportationManager.hh"
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
 
-#include "G4SDManager.hh"
 #include "BDSMultilayerScreen.hh"
 
 //============================================================
@@ -22,6 +20,7 @@ BDSMultilayerScreen::BDSMultilayerScreen (G4TwoVector xysize, G4String name):
   _size.setZ(0);
   _solid=NULL;
   _log=NULL;
+  _phys=NULL;
 }
 
 void BDSMultilayerScreen::screenLayer(G4double thickness, G4String material, G4String name, G4double grooveWidth, G4double grooveSpatialFrequency){

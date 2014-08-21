@@ -12,12 +12,10 @@ Work in progress.
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
-#include "G4SubtractionSolid.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
-#include "BDSDebug.hh"
 
 #include "G4SDManager.hh"
 #include <map>
@@ -41,8 +39,6 @@ BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double tScint, G
   _screenAngle=angle;
   _screenRotationMatrix->rotateY(_screenAngle);
 
-  itsType="screen";
-  SetName(aName);
   if ( (*LogVolCount)[itsName]==0)
     {
       ComputeDimensions();

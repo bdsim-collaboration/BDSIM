@@ -153,39 +153,46 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   
   G4ThreeVector vtx=theTrack->GetVertexPosition();
   G4ThreeVector dir=theTrack->GetVertexMomentumDirection();
-  
+  G4ThreeVector posLastScatter=bdsTraj->GetPositionOfLastScatter(theTrack);
+  G4ThreeVector momDirLastScatter=bdsTraj->GetMomDirAtLastScatter(theTrack);
+  G4double timeLastScatter=bdsTraj->GetTimeAtLastScatter(theTrack);
+  G4double energyLastScatter=bdsTraj->GetEnergyAtLastScatter(theTrack);
+  G4double vertexEnergy=theTrack->GetVertexKineticEnergy() + theTrack->GetParticleDefinition()->GetPDGMass();
+  G4double vertexTime=bdsTraj->GetTimeAtVertex(theTrack);
+
+
   G4double 
-    start_x, start_xp,
-    start_y, start_yp,
-    start_z, start_zp,
-    start_E, start_t;
+    last_scatter_x, last_scatter_xp,
+    last_scatter_y, last_scatter_yp,
+    last_scatter_z, last_scatter_zp,
+    last_scatter_E, last_scatter_t;
   
-  if(pName!="e+" && pName!="e-") 
-    {
-      // store production point
-      start_x   =  vtx.x();
-      start_xp  =  dir.x();
-      start_y   =  vtx.y();
-      start_yp  =  dir.y();	  
-      start_z   =  vtx.z();
-      start_zp  =  dir.z();
-      
-      start_E   =  theTrack->GetVertexKineticEnergy()+ 
-	theTrack->GetDefinition()->GetPDGMass();
-      
-      start_t   = t - theTrack->GetLocalTime();
-    }
-  else
-    {// for electrons (and positrons) store the point of last scatter
-      start_x  = initial_x;
-      start_xp = initial_xp;
-      start_y  = initial_y;
-      start_yp = initial_yp;
-      start_z  = initial_z;
-      start_zp = initial_zp;
-      start_E  = initial_E;
-      start_t  = initial_t;
-    }
+  // store production/scatter point
+  last_scatter_x   =  posLastScatter.x();
+  last_scatter_xp  =  momDirLastScatter.x();
+  last_scatter_y   =  posLastScatter.y();
+  last_scatter_yp  =  momDirLastScatter.y();	  
+  last_scatter_z   =  posLastScatter.z();
+  last_scatter_zp  =  momDirLastScatter.z();
+  last_scatter_E   =  energyLastScatter;
+  last_scatter_t   = timeLastScatter;
+
+  G4double 
+    production_x, production_xp,
+    production_y, production_yp,
+    production_z, production_zp,
+    production_E, production_t;
+
+  //production point
+  production_x   =  vtx.x();
+  production_xp  =  dir.x();
+  production_y   =  vtx.y();
+  production_yp  =  dir.y();	  
+  production_z   =  vtx.z();
+  production_zp  =  dir.z();
+  production_E   =  vertexEnergy;
+  production_t   = vertexTime;
+
   G4double weight=theTrack->GetWeight();
   
   /*
@@ -197,11 +204,21 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   BDSSamplerHit* smpHit
     = new BDSSamplerHit(
 			SampName,
-			start_E,
-			start_x, start_xp,
-			start_y, start_yp,
-			start_z, start_zp,
-			start_t,
+			initial_E,
+			initial_x, initial_xp,
+			initial_y, initial_yp,
+			initial_z, initial_zp,
+			initial_t,
+			production_E,
+			production_x, production_xp,
+			production_y, production_yp,
+			production_z, production_zp,
+			production_t,
+			last_scatter_E,
+			last_scatter_x, last_scatter_xp,
+			last_scatter_y, last_scatter_yp,
+			last_scatter_z, last_scatter_zp,
+			last_scatter_t,
 			energy,
 			x, xPrime,
 			y, yPrime,

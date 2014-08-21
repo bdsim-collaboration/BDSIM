@@ -3,23 +3,21 @@
 #include "BDSXSBias.hh"
 #include "G4SteppingManager.hh"
 
-
 BDSXSBias::BDSXSBias(const G4String& aName,
                                          G4ProcessType   aType)
-  : G4WrapperProcess(aName, aType), eFactor(1.0)
+  : G4WrapperProcess(aName, aType), _eFactor(1)
 {
 }
 
 BDSXSBias::BDSXSBias(const BDSXSBias& right)
-  : G4WrapperProcess(right), eFactor(right.eFactor)
+  : G4WrapperProcess(right)
 {
+  // what about _eFactor? JS
 }
 
 BDSXSBias::~BDSXSBias()
 {
 }
-
-
 
 G4VParticleChange* BDSXSBias::PostStepDoIt(
                                                    const G4Track& track,
@@ -41,7 +39,7 @@ G4VParticleChange* BDSXSBias::PostStepDoIt(
   G4cout << "BDSXSBias::PostStepDoit Getting parent weight" << G4endl;
 #endif
   G4double w =  pChange->GetParentWeight();
-  G4double ws = w / eFactor;
+  G4double ws = w / eFactor();
   G4double survivalProb = w - ws;
   
 #ifdef BDSDEBUG

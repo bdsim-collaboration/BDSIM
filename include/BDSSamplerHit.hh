@@ -24,6 +24,46 @@ public:
 		G4double init_y, G4double init_yPrime,
 		G4double init_z, G4double init_zPrime,
 		G4double init_t,
+		G4double prod_mom,
+		G4double prod_x, G4double prod_xPrime, 
+		G4double prod_y, G4double prod_yPrime,
+		G4double prod_z, G4double prod_zPrime,
+		G4double prod_t,
+		G4double last_scat_mom,
+		G4double last_scat_x, G4double last_scat_xPrime, 
+		G4double last_scat_y, G4double last_scat_yPrime,
+		G4double last_scat_z, G4double last_scat_zPrime,
+		G4double last_scat_t,
+		G4double mom,
+		G4double x, G4double xPrime,
+		G4double y, G4double yPrime,
+		G4double z, G4double zPrime,
+		G4double globalX, G4double globalXPrime,
+		G4double globalY, G4double globalYPrime,
+		G4double globalZ, G4double globalZPrime,
+		G4double t,
+		G4double s,
+		G4double weight,
+		G4int PDGtype, G4int nEvent,
+		G4int ParentID, G4int TrackID,
+		G4int TurnsTaken);
+
+  BDSSamplerHit(G4String aName,
+		G4double init_mom,
+		G4double init_x, G4double init_xPrime, 
+		G4double init_y, G4double init_yPrime,
+		G4double init_z, G4double init_zPrime,
+		G4double init_t,
+		G4double prod_mom,
+		G4double prod_x, G4double prod_xPrime, 
+		G4double prod_y, G4double prod_yPrime,
+		G4double prod_z, G4double prod_zPrime,
+		G4double prod_t,
+		G4double last_scat_mom,
+		G4double last_scat_x, G4double last_scat_xPrime, 
+		G4double last_scat_y, G4double last_scat_yPrime,
+		G4double last_scat_z, G4double last_scat_zPrime,
+		G4double last_scat_t,
 		G4double mom,
 		G4double x, G4double xPrime,
 		G4double y, G4double yPrime,
@@ -45,7 +85,6 @@ private:
 
   //initial momentum of track
   G4double itsInit_Mom;
-
   //initial position and momentum direction of track in GLOBAL coordinates
   G4double itsInit_X;
   G4double itsInit_XPrime;
@@ -53,9 +92,30 @@ private:
   G4double itsInit_YPrime;
   G4double itsInit_Z;
   G4double itsInit_ZPrime;
-
   //global time at track creation
   G4double itsInit_T;
+
+  //point where the particle was produced
+  G4double itsProd_Mom;
+  G4double itsProd_X;
+  G4double itsProd_XPrime;
+  G4double itsProd_Y;
+  G4double itsProd_YPrime;
+  G4double itsProd_Z;
+  G4double itsProd_ZPrime;
+  G4double itsProd_T;
+
+  //point where the particle last scattered
+  G4double itsLastScat_Mom;
+  G4double itsLastScat_X;
+  G4double itsLastScat_XPrime;
+  G4double itsLastScat_Y;
+  G4double itsLastScat_YPrime;
+  G4double itsLastScat_Z;
+  G4double itsLastScat_ZPrime;
+  G4double itsLastScat_T;
+
+
 
   //actual momentum
   G4double itsMom;
@@ -131,6 +191,86 @@ public:
     {itsInit_T=t;}
   inline G4double GetInitT() const
     {return itsInit_T;}
+
+  inline void SetProdMom(G4double mom)
+    {itsProd_Mom=mom;}
+  inline G4double GetProdMom() const
+    {return itsProd_Mom;}
+
+  inline void SetProdX(G4double x)
+    {itsProd_X=x;}
+  inline G4double GetProdX() const
+    {return itsProd_X;}
+
+  inline void SetProdXPrime(G4double xPrime)
+    {itsProd_XPrime=xPrime;}
+  inline G4double GetProdXPrime() const
+    {return itsProd_XPrime;}
+
+  inline void SetProdY(G4double y)
+    {itsProd_Y=y;}
+  inline G4double GetProdY() const
+    {return itsProd_Y;}
+
+  inline void SetProdYPrime(G4double yPrime)
+    {itsProd_YPrime=yPrime;}
+  inline G4double GetProdYPrime() const
+    {return itsProd_YPrime;}
+
+  inline void SetProdZ(G4double z)
+    {itsProd_Z=z;}
+  inline G4double GetProdZ() const
+    {return itsProd_Z;}
+
+  inline void SetProdZPrime(G4double zPrime)
+    {itsProd_ZPrime=zPrime;}
+  inline G4double GetProdZPrime() const
+    {return itsProd_ZPrime;}
+
+  inline void SetProdT(G4double t)
+    {itsProd_T=t;}
+  inline G4double GetProdT() const
+    {return itsProd_T;}
+
+  inline void SetLastScatMom(G4double mom)
+    {itsLastScat_Mom=mom;}
+  inline G4double GetLastScatMom() const
+    {return itsLastScat_Mom;}
+
+  inline void SetLastScatX(G4double x)
+    {itsLastScat_X=x;}
+  inline G4double GetLastScatX() const
+    {return itsLastScat_X;}
+
+  inline void SetLastScatXPrime(G4double xPrime)
+    {itsLastScat_XPrime=xPrime;}
+  inline G4double GetLastScatXPrime() const
+    {return itsLastScat_XPrime;}
+
+  inline void SetLastScatY(G4double y)
+    {itsLastScat_Y=y;}
+  inline G4double GetLastScatY() const
+    {return itsLastScat_Y;}
+
+  inline void SetLastScatYPrime(G4double yPrime)
+    {itsLastScat_YPrime=yPrime;}
+  inline G4double GetLastScatYPrime() const
+    {return itsLastScat_YPrime;}
+
+  inline void SetLastScatZ(G4double z)
+    {itsLastScat_Z=z;}
+  inline G4double GetLastScatZ() const
+    {return itsLastScat_Z;}
+
+  inline void SetLastScatZPrime(G4double zPrime)
+    {itsLastScat_ZPrime=zPrime;}
+  inline G4double GetLastScatZPrime() const
+    {return itsLastScat_ZPrime;}
+
+  inline void SetLastScatT(G4double t)
+    {itsLastScat_T=t;}
+  inline G4double GetLastScatT() const
+    {return itsLastScat_T;}
   
   inline void SetMom(G4double mom)
     {itsMom=mom;}

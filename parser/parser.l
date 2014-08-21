@@ -152,29 +152,33 @@ dump  { return DUMP; }
 <incl>[^ \t\n;]+ {
 
 //this is perhaps unnecessary now...
-//std::string filename = (std::string)getEnv("BDSIMPATH")+(std::string)yytext;
+std::string bdsimpath = (std::string)getEnv("BDSIMPATH");
+std::string includefilename = "";
+if(bdsimpath.length()>0){
+   includefilename = bdsimpath + (std::string)yytext;
+} else {
+   //get main filename and get the path part only
+   std::string mainfilename = (std::string)yyfilename;
+   std::string basefilepath = "";
+   std::string::size_type found = mainfilename.rfind("/");//find the last '/'
+   if (found != std::string::npos){
+     //if we found a '/' get the path before that and prepend to included files
+     basefilepath += mainfilename.substr(0,found);
+     basefilepath += "/";
+   }
 
-//get main filename and get the path part only
-std::string mainfilename = (std::string)yyfilename;
-std::string basefilepath = "";
-std::string::size_type found = mainfilename.rfind("/");//find the last '/'
-if (found != std::string::npos){
-  //if we found a '/' get the path before that and prepend to included files
-  basefilepath += mainfilename.substr(0,found);
-  basefilepath += "/";
+   //get current working directory and build up include filenames
+   char cwdchars[maxfilenamelength];
+   std::string cwd = (std::string)getcwd(cwdchars, sizeof(cwdchars));
+   includefilename = cwd + "/" + basefilepath  + (std::string)yytext;
 }
-
-//get current working directory and build up include filenames
-char cwdchars[maxfilenamelength];
-std::string cwd = (std::string)getcwd(cwdchars, sizeof(cwdchars));
-std::string includefilename = cwd + "/" + basefilepath + (std::string)yytext;
-printf("parser> reading file %s \n",(char*)includefilename.c_str());//yytext
-  if( include_stack_ptr >= max_include_depth )
-    {
-      fprintf(stderr , "Error : Include depth exceeds %d\n",max_include_depth);
-      exit(1);
-    }
-  else
+   printf("parser> reading file %s \n",(char*)includefilename.c_str());//yytext
+     if( include_stack_ptr >= max_include_depth )
+       {
+         fprintf(stderr , "Error : Include depth exceeds %d\n",max_include_depth);
+         exit(1);
+       }
+     else
     {
       yyin = fopen((char*)includefilename.c_str(), "r"); //yytext
       if(yyin)

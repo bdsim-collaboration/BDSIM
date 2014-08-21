@@ -5,7 +5,6 @@
 
 #include "gmad.h"
 #include "elementlist.h"
-#include "options.h"
 #include "parameters.h"
 #include "sym_table.h"
 
@@ -18,7 +17,6 @@
 #include <cstring>
 
 extern struct Parameters params;
-extern Options options;
 
 extern int yyparse();
 
@@ -84,147 +82,6 @@ void init()
 
   params.flush();
 
-  // Default Values for Options
-
-  options.physicsList = "standard";
-  options.particleName = "";
-  options.distribType = "";
-  options.distribFile = "";
-  options.distribFileFormat = "";
-
-  options.numberToGenerate = 1;
-  options.nlinesIgnore = 0;
-  options.elossHistoBinWidth = 1.0;
-  options.elossHistoTransBinWidth = 0.1;
-  options.defaultRangeCut = 7e-4;
-  options.ffact = 1.0;
-  options.beamEnergy = 0.0;
-
-  options.X0 = 0.0, options.Y0 = 0.0, options.Z0 = 0.0;
-  options.Xp0 = 0.0, options.Yp0 = 0.0, options.Zp0 = 0.0;
-  options.T0 = 0.0;
-  options.sigmaT = 0.0;
-  options.betx = 0.0, options.bety = 0.0, options.alfx = 0.0, options.alfy = 0.0, options.emitx = 0.0, options.emity = 0.0;
-  options.sigmaX = 0.0, options.sigmaXp = 0.0, options.sigmaY = 0.0, options.sigmaYp = 0.0;
-  options.envelopeX = 0.0, options.envelopeXp = 0.0, options.envelopeY = 0.0, options.envelopeYp = 0.0, options.envelopeT = 0.0, options.envelopeE = 0.0;
-  options.sigma11 = 0.0,options.sigma12 = 0.0,options.sigma13 = 0.0,options.sigma14 = 0.0,options.sigma15 = 0.0,options.sigma16 = 0.0;
-  options.sigma22 = 0.0,options.sigma23 = 0.0,options.sigma24 = 0.0,options.sigma25 = 0.0,options.sigma26 = 0.0;
-  options.sigma33 = 0.0,options.sigma34 = 0.0,options.sigma35 = 0.0,options.sigma36 = 0.0;
-  options.sigma44 = 0.0,options.sigma45 = 0.0,options.sigma46 = 0.0;
-  options.sigma55 = 0.0,options.sigma56 = 0.0;
-  options.sigma66 = 0.0;
-  options.shellX=0.0, options.shellXp=0.0, options.shellY=0.0, options.shellYp=0.0;
-  options.Rmin=0.0, options.Rmax=0.0;
-  options.sigmaE=0.0;
-
-  options.doPlanckScattering=0;
-  options.checkOverlaps=0;
-  options.numberOfEventsPerNtuple=0;
-  options.eventNumberOffset=0;
-
-  options.vacuumPressure = 1e-12;
-  options.planckScatterFe = 1.0;
-
-  options.xsize=0.0, options.ysize=0.0;
-
-  options.componentBoxSize = 0.0;
-  options.tunnelRadius = 0.0;
-  options.beampipeRadius = 0.0;
-  options.beampipeThickness = 0.0;
-
-  options.pipeMaterial = "StainlessSteel";
-  options.vacMaterial = "Vacuum";
-  options.tunnelMaterial = "concrete";
-  options.tunnelCavityMaterial = "Air";
-  options.soilMaterial = "soil";
-
-  options.includeIronMagFields = 0;
-
-  options.buildTunnel = 0;
-  options.buildTunnelFloor = 0;
-  options.showTunnel = 0;
-  options.tunnelOffsetX = 0;
-  options.tunnelOffsetY = 0;
-  options.samplerDiameter = 0.0;
-  options.tunnelThickness = 0.0;
-  options.tunnelSoilThickness = 0.0;
-  options.tunnelFloorOffset = 0.0;
-
-  options.geometryBias = 0;
-  //Beam loss monitors geometry
-  options.blmRad = 0.05;
-  options.blmLength = 0.18;
-
-  options.gammaToMuFe = 1;
-  options.annihiToMuFe = 1;
-  options.eeToHadronsFe = 1;
-  options.useEMLPB = 0;
-  options.useHadLPB = 0;
-
-  options.sensitiveBeamlineComponents = 1;
-  options.sensitiveBeamPipe = 1;
-  options.sensitiveBLMs = 1;
-
-  options.turnOnCerenkov = 1;
-  options.turnOnOpticalAbsorption = 1;
-  options.turnOnMieScattering = 1;
-  options.turnOnRayleighScattering = 1;
-  options.turnOnOpticalSurface = 1;
-  options.turnOnBirksSaturation = 1;
-  options.scintYieldFactor = 1.0;
-  options.decayOn = 1;
-  //  options.synchRadOn = 0;
-
-
-  options.LPBFraction = 0.0;
-
-  options.thresholdCutCharged = 0.0;
-  options.thresholdCutPhotons = 0.0;
-
-  options.prodCutPhotons=7e-4;
-  options.prodCutPhotonsP=7e-4;
-  options.prodCutPhotonsA=1;
-  options.prodCutElectrons=7e-4;
-  options.prodCutElectronsP=7e-4;
-  options.prodCutElectronsA=1;
-  options.prodCutPositrons=7e-4;
-  options.prodCutPositronsP=7e-4;
-  options.prodCutPositronsA=1;
-
-
-  //tracking options
-  options.maximumTrackingTime = 0.1;
-  options.deltaChord = 0.00001;
-  options.chordStepMinimum = 0.000001;
-  options.deltaIntersection = 0.00001;
-  options.minimumEpsilonStep=0;
-  options.maximumEpsilonStep=1e-7;
-  options.deltaOneStep = 0.00001;
-  options.turnOnCerenkov = 1;
-  options.synchRadOn = 0;
-  options.decayOn = 1;
-  options.synchTrackPhotons = 0;
-  options.synchLowX = 0.0;
-  options.synchLowGamE = 0.0;
-  options.synchPhotonMultiplicity = 1;
-  options.synchMeanFreeFactor = 1;
-  options.lengthSafety = 0.000000001;
-  options.randomSeed = 0;
-  
-  options.useTimer = 0;
-  options.storeMuonTrajectories = 0;
-  options.trajCutGTZ = 0.0;
-  options.trajCutLTR = 0.0;
-  options.storeNeutronTrajectories = 0;
-  options.storeTrajectory = 0;
-  options.stopTracks = 0;
-
-  options.fifo = "";
-  options.refvolume = "";
-  options.refcopyno = 0;
-
-  // ring options
-  options.nturns = 1;
 }
 }
 

@@ -94,6 +94,8 @@ public:
   G4double GetMagnetPoleSize();
   G4double GetMagnetPoleRadius();
 
+
+
   G4bool   GetBuildTunnel(); 
   G4bool   GetBuildTunnelFloor(); 
   G4bool   GetShowTunnel(); 
@@ -132,8 +134,10 @@ public:
   G4double GetProdCutPositronsP();
   G4double GetProdCutPositronsA();
 
-  // Environment variables
-  G4String GetBDSIMHOME();
+
+  // Magnet geometry variable
+
+  G4String GetMagnetGeometry();
 
   // Physical processes etc.
 
@@ -265,6 +269,9 @@ private:
   G4bool   itsGeometryBias;
   G4bool   itsUseEMLPB;
   G4bool   itsUseHadLPB;
+
+  G4String itsMagnetGeometry;
+
   G4double itsMinimumEpsilonStep;
   G4double itsMaximumEpsilonStep;
   G4double itsMaxTime;
@@ -306,7 +313,6 @@ private:
   G4double itsProdCutPositrons;
   G4double itsProdCutPositronsP;
   G4double itsProdCutPositronsA;
-  G4String itsBDSIMHOME;
   G4String itsPhysListName;
   G4bool   itsSynchRadOn;
   G4bool   itsDecayOn;
@@ -557,7 +563,8 @@ inline G4double BDSGlobalConstants::GetBlmLength()
 // inline  G4double BDSGlobalConstants::GetVerticalBeamlineOffset()
 // {return itsVerticalBeamlineOffset;}
 
-
+inline G4String BDSGlobalConstants::GetMagnetGeometry()
+{return itsMagnetGeometry;}
 
 inline G4double BDSGlobalConstants::GetBeampipeRadius() 
 {return itsBeampipeRadius;}
@@ -633,9 +640,6 @@ inline G4double BDSGlobalConstants::GetProdCutPositronsA()
 // {return itsVerticalComponentOffset;}
 // inline G4double BDSGlobalConstants::GetHorizontalComponentOffset()
 // {return itsHorizontalComponentOffset;}
-
-inline G4String BDSGlobalConstants::GetBDSIMHOME()
-{return itsBDSIMHOME;}
 
 inline G4String BDSGlobalConstants::GetPhysListName()
 {return itsPhysListName;}

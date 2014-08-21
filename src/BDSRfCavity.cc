@@ -32,7 +32,6 @@ BDSRfCavity::BDSRfCavity (G4String aName,G4double aLength, G4double bpRad,
   itsStepper(NULL),itsField(NULL),fChordFinder(NULL),fStepper(NULL),fIntgrDriver(NULL),fieldManager(NULL)
 {
   itsGrad = grad;
-  itsType = "rfcavity";
 
   if (!(*LogVolCount)[itsName])
     {
@@ -50,7 +49,7 @@ BDSRfCavity::BDSRfCavity (G4String aName,G4double aLength, G4double bpRad,
       //
       // build cavity (geometry + electric field)
       //
-      BuildDefaultOuterLogicalVolume(itsLength);
+      BuildDefaultOuterLogicalVolume();
 
       //
       // define sensitive volumes for hit generation

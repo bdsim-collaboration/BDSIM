@@ -30,8 +30,13 @@ private:
   G4String _driftName ;
   G4double _driftStartAper, _driftEndAper;
   std::list<struct Element>::iterator _elementIter, _previousElementIter, _nextElementIter;
+  /// beamline
   std::list<BDSAcceleratorComponent*> itsBeamline;
+  /// parser data
   Element _element, _previousElement, _nextElement;
+  /// method to add common properties (not needed at creation!)
+  /// like aperture after creation
+  void addCommonProperties(BDSAcceleratorComponent* element);
   BDSAcceleratorComponent* createSampler();
   BDSAcceleratorComponent* createCSampler();
   BDSAcceleratorComponent* createDump();
@@ -48,8 +53,7 @@ private:
   BDSAcceleratorComponent* createMultipole();
   BDSAcceleratorComponent* createElement();
   BDSAcceleratorComponent* createSolenoid();
-  BDSAcceleratorComponent* createECol();
-  BDSAcceleratorComponent* createRCol();
+  BDSAcceleratorComponent* createCollimator();
   BDSAcceleratorComponent* createMuSpoiler();
   BDSAcceleratorComponent* createLaser();
   BDSAcceleratorComponent* createScreen();

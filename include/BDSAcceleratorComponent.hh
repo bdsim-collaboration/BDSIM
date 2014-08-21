@@ -54,7 +54,8 @@ public:
   //type 
   const G4String GetType () const;
 
-  G4int GetPrecisionRegion() const; //0 = no precision region, 1 = precision region 1, 2 = precision region 2.
+  /// 0 = no precision region, 1 = precision region 1, 2 = precision region 2.
+  G4int GetPrecisionRegion() const;
 
   //
   //    Geometry features    
@@ -157,6 +158,9 @@ public:
   G4double getParameterValue(G4String spec, G4String name) const;
   G4String getParameterValueString(G4String spec, G4String name) const;
 
+  /// BDSComponentFactory creates BDSAcceleratorComponents
+  friend class BDSComponentFactory;
+
 private:
   /// private default constructor
   BDSAcceleratorComponent();
@@ -180,9 +184,7 @@ public:
 			  G4double ZOffset=0.,
 			  G4double tunnelRadius=0.,
 			  G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
-                          G4String aTunnelCavityMaterial = "Air",
-			  G4int aPrecisionRegion=0
-);
+                          G4String aTunnelCavityMaterial = "Air");
 
   BDSAcceleratorComponent (
 			  G4String& aName, 
@@ -199,9 +201,7 @@ public:
 			  G4double ZOffset=0.,
 			  G4double tunnelRadius=0.,
 			  G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
-			  G4String aTunnelCavityMaterial = "Air",
-			  G4int aPrecisionRegion=0);
-
+			  G4String aTunnelCavityMaterial = "Air");
 
 
   G4VisAttributes* GetVisAttributes()const; // get visual attributes
@@ -221,6 +221,8 @@ protected:
   void SetPhi (G4double val);
   void SetTheta(G4double val);
   void SetPsi(G4double val);
+
+  void SetPrecisionRegion (G4int precisionRegionType);
 
   //Calculate dimensions used for the marker volume etc.
   void CalculateLengths();
@@ -250,7 +252,7 @@ protected:
   G4double itsZOffset;
   G4double itsTunnelRadius;
   G4double itsTunnelOffsetX;  
-
+  /// component type, same as from typestr from enums.cc
   G4String itsType;
 
   G4double itsTilt;
@@ -258,7 +260,6 @@ protected:
   G4double itsPhiAngleIn;
   G4double itsPhiAngleOut;
   
-  G4double itsMagScaleFactor;
   G4double itsPhi;
   G4double itsTheta;
   G4double itsPsi;
@@ -443,6 +444,9 @@ inline void BDSAcceleratorComponent::SetType (G4String aType)
 
 inline G4int BDSAcceleratorComponent::GetPrecisionRegion () const
 {return itsPrecisionRegion;}
+
+inline void BDSAcceleratorComponent::SetPrecisionRegion (G4int precisionRegionType)
+{itsPrecisionRegion = precisionRegionType;}
 
 inline G4LogicalVolume* BDSAcceleratorComponent::GetMarkerLogicalVolume() const
 {return itsMarkerLogicalVolume;}

@@ -4,8 +4,6 @@
 #include "BDSGlobalConstants.hh"
 #include "BDS3DMagField.hh"
 
-
-
 BDS3DMagField::BDS3DMagField( const char* filename, double zOffset ) 
   :fZoffset(zOffset),invertX(false),invertY(false),invertZ(false)
 {    
@@ -19,7 +17,11 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
 	 << "\n-----------------------------------------------------------";
     
   G4cout << "\n ---> " "Reading the field grid from " << filename << " ... " << G4endl; 
-  std::ifstream file( filename ); // Open the file for reading.
+  // Open the file for reading.
+  std::ifstream file;
+  file.open(filename);
+  G4String exceptionString = "Unable to load field map file: " + (G4String)filename;
+  if(!file) G4Exception(exceptionString.c_str(), "-1", FatalException, "");
   
   // Ignore first blank line
   char buffer[256];

@@ -55,8 +55,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double ZOffset, 
 						  G4double tunnelRadius, 
 						  G4double tunnelOffsetX,
-						  G4String aTunnelCavityMaterial,
-						  G4int aPrecisionRegion):
+						  G4String aTunnelCavityMaterial):
   itsName(aName),
   itsLength(aLength),
   itsBpRadius(aBpRadius),
@@ -71,8 +70,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsZOffset(ZOffset), 
   itsTunnelRadius(tunnelRadius), 
   itsTunnelOffsetX(tunnelOffsetX),
-  itsTunnelCavityMaterial(aTunnelCavityMaterial), 
-  itsPrecisionRegion(aPrecisionRegion)
+  itsTunnelCavityMaterial(aTunnelCavityMaterial)
 {
   ConstructorInit();
 }
@@ -94,8 +92,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double ZOffset, 
 						  G4double tunnelRadius, 
 						  G4double tunnelOffsetX, 
-						  G4String aTunnelCavityMaterial, 
-						  G4int aPrecisionRegion):
+						  G4String aTunnelCavityMaterial):
   itsName(aName),
   itsLength(aLength),
   itsBpRadius(aBpRadius),
@@ -112,8 +109,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsZOffset(ZOffset), 
   itsTunnelRadius(tunnelRadius), 
   itsTunnelOffsetX(tunnelOffsetX), 
-  itsTunnelCavityMaterial(aTunnelCavityMaterial), 
-  itsPrecisionRegion(aPrecisionRegion)
+  itsTunnelCavityMaterial(aTunnelCavityMaterial)
 {
   if (itsBlmLocZ.size() != itsBlmLocTheta.size()){
     G4cerr << "BDSAcceleratorComponent: error, lists blmLocZ and blmLocTheta are of unequal size" << G4endl;
@@ -128,7 +124,8 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
   //  itsInnerBeampipeUserLimits =new G4UserLimits();
 #ifndef NOUSERLIMITS
   itsUserLimits = new G4UserLimits();
-  itsUserLimits->SetMaxAllowedStep(itsLength);
+  //  itsUserLimits->SetMaxAllowedStep(itsLength);
+  itsUserLimits->SetMaxAllowedStep(1*CLHEP::m);
   itsUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   itsUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
 #endif
@@ -140,7 +137,6 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
   itsPhiAngleIn = 0.0;
   itsPhiAngleOut = 0.0;
   itsOuterR=0;
-  itsMagScaleFactor = 1;
   itsBlmLocationR=0;
   if (itsTunnelRadius<=BDSGlobalConstants::Instance()->GetLengthSafety()){
     itsTunnelRadius=BDSGlobalConstants::Instance()->GetTunnelRadius();
@@ -156,6 +152,7 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
   itsMarkerUserLimits=NULL;
   itsInnerBeampipeUserLimits=NULL;
   itsInnerMostLogicalVolume=NULL;
+  itsPrecisionRegion=0;
   itsMarkerSolidVolume=NULL;
   itsTunnelSolid=NULL;
   itsSoilSolid=NULL;
@@ -702,7 +699,7 @@ void BDSAcceleratorComponent::BuildBLMs()
        assemblyBlms->AddPlacedVolume(itsBLMLogicalVolume,blmTr3d);
        assemblyBlms->AddPlacedVolume(itsBlmCaseLogicalVolume,blmTr3d);
    }  
-   if (itsType=="sbend" || itsType=="rbend"){
+   if (itsType=="sbend" || itsType=="rbend"){ // should ideally not be here - JS
      blmRot.setTheta(CLHEP::twopi/4.0);
      blmRot.setPsi(-CLHEP::twopi/4.0);
      blmRot.setPhi(CLHEP::twopi/4.0);
@@ -719,7 +716,7 @@ void BDSAcceleratorComponent::BuildBLMs()
  }
 }
 
-//This Method is for investigating the Anomalous signal at LHc junction IP8
+//This Method is for investigating the Anomalous signal at LHC junction IP8
 
 void BDSAcceleratorComponent::BuildGate()
 {

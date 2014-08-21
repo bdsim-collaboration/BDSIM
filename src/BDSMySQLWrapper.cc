@@ -30,10 +30,15 @@ BDSMySQLWrapper::BDSMySQLWrapper (const G4String& SQLFileName)
   _startOfFile=true;
   BeginTokens();
 
+  if(ifs) {
 #ifdef BDSDEBUG
-  if(ifs) G4cout<<"BDSMySQLWrapper contructor: Loading SQL Filename="<<SQLFileName<<G4endl;
-  else G4cout<<"BDSMySQLWrapper constructor: Unable to load SQL file: "<<SQLFileName<<G4endl;
+    G4cout<<"BDSMySQLWrapper contructor: Loading SQL Filename="<<SQLFileName<<G4endl;
 #endif
+  }
+  else {
+    G4cout<<"BDSMySQLWrapper constructor: Unable to load SQL file: "<<SQLFileName<<G4endl;
+    exit(1);
+  }
 }
 
 BDSMySQLWrapper::~BDSMySQLWrapper()
@@ -54,7 +59,9 @@ void BDSMySQLWrapper::TokenizeLine(){
   std::string token;
   _tokens.clear();
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;  
-  boost::char_separator<char> sep(", ",";()\n");
+  // http://www.boost.org/doc/libs/1_55_0b1/libs/tokenizer/char_separator.htm
+  // separate with , and space, keep ; ( ) and \n
+  boost::char_separator<char> sep(", ",";()\n"); 
   tokenizer tok(_currentLine, sep);
   for(tokenizer::iterator tok_iter=tok.begin(); tok_iter != tok.end(); ++tok_iter){
     token = *tok_iter;

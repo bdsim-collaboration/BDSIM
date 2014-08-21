@@ -1,21 +1,35 @@
 #include "BDSExecOptions.hh"
 
 #include <iomanip>
+#include <unistd.h>
 
 #include "BDSDebug.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputFormat.hh"
 
+#include "parser/getEnv.h"
+
 BDSExecOptions* BDSExecOptions::_instance=0;
+
+BDSExecOptions* BDSExecOptions::Instance(int argc, char **argv){
+  if(_instance==0) {
+    _instance = new BDSExecOptions(argc, argv);
+    return _instance;
+  } else {
+    G4Exception("BDSExecOptions::Instance is already initialized. Return pointer to singleton with BDSExecOptions::Instance()", "-1", FatalException, "");
+    return NULL;
+  }
+}
 
 BDSExecOptions* BDSExecOptions::Instance(){
   if(_instance==0) {
-    _instance = new BDSExecOptions();
-  }
-  return _instance;
+    G4Exception("BDSExecOptions::Instance was not initialised. Initialize first with BDSExecOptions::Instance(int argc, char **argv).", "-1", FatalException, "");
+    return NULL;
+  } else 
+    return _instance;
 }
 
-BDSExecOptions::BDSExecOptions() {  
+BDSExecOptions::BDSExecOptions(int argc, char **argv){
   inputFilename       = "optics.mad";
   visMacroFilename    = "vis.mac";
   outputFilename      = "output";
@@ -41,6 +55,8 @@ BDSExecOptions::BDSExecOptions() {
   verboseSteppingLevel = 0;
   
   circular      = false;
+  Parse(argc, argv);
+  SetBDSIMPATH();
 }
 
 BDSExecOptions::~BDSExecOptions() {
@@ -193,6 +209,7 @@ void BDSExecOptions::Parse(int argc, char **argv) {
       }
       if( !strcmp(LongOptions[OptionIndex].name, "materials") ) {
 	BDSMaterials::ListMaterials();
+	exit(0);
       }
       if( !strcmp(LongOptions[OptionIndex].name, "circular")  ) {
 	circular = true;
@@ -232,6 +249,26 @@ void BDSExecOptions::Usage() {
 	<<"                        where fmt = optics | survey"<<G4endl
 	<<"--materials           : list materials included in bdsim by default"<<G4endl
 	<<"--circular            : assume circular machine - turn control"<<G4endl;
+}
+
+void BDSExecOptions::SetBDSIMPATH(){
+  //Set itsBDSIMPATH to mirror what is done in parser.l (i.e. if no environment varible set, assume base filename path is that of the gmad file).
+  itsBDSIMPATH=getEnv("BDSIMPATH");
+  if(itsBDSIMPATH.length()<=0){
+    G4String basefilepath = "";
+    G4String::size_type found = inputFilename.rfind("/");//find the last '/'
+    if (found != G4String::npos){
+      //if we found a '/' get the path before that and prepend to included files
+      basefilepath += inputFilename.substr(0,found);
+      basefilepath += "/";
+    }
+    //get current working directory and build up include filenames
+    const int maxfilenamelength = 200;
+    char cwdchars[maxfilenamelength];
+    G4String cwd = (G4String)getcwd(cwdchars, sizeof(cwdchars));
+    itsBDSIMPATH= cwd + "/" + basefilepath; 
+  }
+  itsBDSIMPATH += "/";
 }
 
 void BDSExecOptions::Print() {

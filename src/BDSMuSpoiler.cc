@@ -50,7 +50,6 @@ BDSMuSpoiler::BDSMuSpoiler (G4String& aName,G4double aLength,G4double bpRad,
     itsInnerRadius = minInnRad;
   }
 
-  itsType="muspoiler";
   SetBPVisAttributes();
   if ( (*LogVolCount)[itsName]==0)
     {

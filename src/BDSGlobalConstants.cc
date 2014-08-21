@@ -23,7 +23,7 @@ BDSGlobalConstants* BDSGlobalConstants::Instance(){
 }
 
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
-  itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0)
+  itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0),itsSMax(0.0)
 {
   itsPhysListName = opt.physicsList;
   itsPipeMaterial = opt.pipeMaterial;
@@ -31,6 +31,8 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsTunnelMaterialName = opt.tunnelMaterial;
   itsTunnelCavityMaterialName = opt.tunnelCavityMaterial;
   itsSoilMaterialName = opt.soilMaterial;
+
+  itsMagnetGeometry = opt.magnetGeometry;
 
   itsSampleDistRandomly = true;
   itsGeometryBias = opt.geometryBias;
@@ -111,6 +113,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsTurnOnRayleighScattering = opt.turnOnRayleighScattering;
   itsTurnOnMieScattering = opt.turnOnMieScattering;
   itsTurnOnOpticalSurface = opt.turnOnOpticalSurface;
+  itsTurnOnBirksSaturation = opt.turnOnBirksSaturation;
   itsScintYieldFactor=opt.scintYieldFactor;
   itsSynchRadOn = opt.synchRadOn;
   G4cout << "BDSGlobalConstants::Instance() synchRadOn = " << itsSynchRadOn << G4endl;

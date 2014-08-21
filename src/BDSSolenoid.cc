@@ -52,7 +52,6 @@ BDSSolenoid::BDSSolenoid(G4String aName, G4double aLength,
   itsMagField(NULL),itsStepper(NULL),itsEqRhs(NULL)
 {
   SetOuterRadius(outR);
-  itsType="solenoid";
  
   if (!(*LogVolCount)[itsName])
     {
@@ -71,7 +70,7 @@ BDSSolenoid::BDSSolenoid(G4String aName, G4double aLength,
       //
       // build magnet (geometry + magnetic field)
       //
-      BuildDefaultOuterLogicalVolume(itsLength);
+      BuildDefaultOuterLogicalVolume();
       if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
 	{
 	  G4cerr<<"IncludeIronMagFields option not implemented for solenoid class"<<G4endl;

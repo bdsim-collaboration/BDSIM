@@ -29,7 +29,6 @@
 #include <vector>
 #include <cstdlib>
 #include <cstring>
-#include "parser/getEnv.h"
 
 extern BDSSamplerSD* BDSSamplerSensDet;
 
@@ -42,9 +41,7 @@ BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength):
 #ifdef BDSDEBUG
   G4cout << "BDSGeometrySQL constructor: loading SQL file " << DBfile << G4endl;
 #endif
-  G4String sBDSPATH = getEnv("BDSIMPATH");
-  G4String fullPath = sBDSPATH + DBfile;
-  ifs.open(fullPath.c_str());
+  ifs.open(DBfile.c_str());
   G4String exceptionString = "Unable to load SQL database file: " + DBfile;
   if(!ifs) G4Exception(exceptionString.c_str(), "-1", FatalException, "");
   align_in_volume = NULL;  //default alignment (does nothing)
@@ -91,7 +88,7 @@ void BDSGeometrySQL::Construct(G4LogicalVolume *marker)
     {
       if(file.contains("#")) ifs.getline(buffer,1000); // This is a comment line
       else{
-	G4String sBDSPATH = getEnv("BDSIMPATH");
+	G4String sBDSPATH = BDSExecOptions::Instance()->GetBDSIMPATH();
 	G4String fullPath = sBDSPATH + file;
 	BuildSQLObjects(fullPath);}
     }
@@ -106,13 +103,7 @@ void BDSGeometrySQL::BuildSQLObjects(G4String file)
   G4cout << "BDSGeometrySQL::BuildSQLObjects Loading file " << file << G4endl;
 #endif
 
-  G4String fullpath = BDSGlobalConstants::Instance()->GetBDSIMHOME();
-  fullpath += file; 
-#ifdef BDSDEBUG
-  G4cout << "BDSGeometrySQL::BuildSQLObjects Full path is " << fullpath << G4endl;
-#endif
-
-  BDSMySQLWrapper sql(fullpath);
+  BDSMySQLWrapper sql(file);
   itsSQLTable=sql.ConstructTable();
 
   for (G4int i=0; i<(G4int)itsSQLTable.size(); i++)
