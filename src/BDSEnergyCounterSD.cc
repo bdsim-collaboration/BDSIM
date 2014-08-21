@@ -150,7 +150,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 							ptype, 
 							weight, 
 							precisionRegion,
-							turnstaken);
+							turnstaken
+							);
    // don't worry, won't add 0 energy tracks as filtered at top by if statement
    BDSEnergyCounterCollection->insert(ECHit);
    /*
@@ -253,16 +254,17 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
   
   BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
-							enrg,
-							xpos,
-							ypos,
-							zpos,
-							spos,
-							volName, 
-							ptype, 
-							weight, 
-							0,
-							turnstaken);
+						       enrg,
+						       xpos,
+						       ypos,
+						       zpos,
+						       spos,
+						       volName, 
+						       ptype, 
+						       weight, 
+						       0,
+						       turnstaken
+						       );
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   BDSEnergyCounterCollection->insert(ECHit);
 
