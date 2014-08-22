@@ -93,7 +93,7 @@ extern Options options;
 
 void BDS_handle_aborts(int signal_number) {
   /** 
-      Try to catch exit signals. This is not guaranteed to work.
+      Try to catch abort signals. This is not guaranteed to work.
       Main goal is to close output stream / files.
   */
 
@@ -102,7 +102,8 @@ void BDS_handle_aborts(int signal_number) {
   std::cout << "Trying to write and close output file" << std::endl;
   bdsOutput->Write();
   std::cout << "Ave, Imperator, morituri te salutant!" << std::endl;
-  exit(1);
+  /// abort rather than exit
+  abort();
 }
 
 int main(int argc,char** argv) {
