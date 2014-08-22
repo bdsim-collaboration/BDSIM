@@ -131,7 +131,6 @@ void BDSOutputASCII::WriteHits(BDSSamplerHitsCollection *hc)
 {
   for (G4int i=0; i<hc->entries(); i++)
     {
-  G4cout << i << G4endl;
       WriteAsciiHit(
 		    &ofMain,
 		    (*hc)[i]->GetPDGtype(),
@@ -167,7 +166,7 @@ void BDSOutputASCII::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
   for (G4int i = 0; i < hc->entries(); i++)
     {
       //Fill(sposition,weight aka energy)
-  hist->Fill((*hc)[i]->GetS()/CLHEP::m,(*hc)[i]->GetEnergy()/CLHEP::GeV);
+      hist->Fill((*hc)[i]->GetS()/CLHEP::m,(*hc)[i]->GetEnergy()/CLHEP::GeV);
       // write the hits to the eloss file
       WriteAsciiHit(
 		    &ofELoss,
