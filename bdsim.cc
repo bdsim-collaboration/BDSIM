@@ -101,6 +101,8 @@ void BDS_handle_aborts(int signal_number) {
   std::cout << "With signal: " << strsignal(signal_number) << std::endl;
   std::cout << "Trying to write and close output file" << std::endl;
   bdsOutput->Write();
+  std::cout << "Abort Geant4 run" << std::endl;
+  G4RunManager::GetRunManager()->AbortRun();
   std::cout << "Ave, Imperator, morituri te salutant!" << std::endl;
   /// abort rather than exit
   abort();
@@ -302,7 +304,7 @@ int main(int argc,char** argv) {
   G4cout.precision(10);
 
   // catch aborts to close output stream/file. perhaps not all are needed.
-  signal(SIGABRT, &BDS_handle_aborts); // aborts
+  //  signal(SIGABRT, &BDS_handle_aborts); // aborts -> no abort signal because BDS_handle_aborts ends with abort
   signal(SIGTERM, &BDS_handle_aborts); // termination requests
   signal(SIGSEGV, &BDS_handle_aborts); // segfaults
   signal(SIGINT, &BDS_handle_aborts); // interrupts
