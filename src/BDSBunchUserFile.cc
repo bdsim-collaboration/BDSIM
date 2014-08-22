@@ -1,6 +1,7 @@
 #include "BDSBunchUserFile.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
+#include "BDSDebug.hh"
 
 BDSBunchUserFile::BDSBunchUserFile(struct Options &opt){
   SetOptions(opt);
@@ -26,6 +27,9 @@ void BDSBunchUserFile::CloseBunchFile(){
 
 
 void BDSBunchUserFile::ParseFileFormat(){
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   G4String unparsed_str = bunchFormat;
   G4int pos = unparsed_str.find(":");
   
@@ -338,7 +342,7 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   
   //Skip the a number of lines defined by the user option.
 #ifdef BDSDEBUG 
-  G4cout<< "BDSBunch : " <<"UDEF_BUNCH: skipping "<<nlinesIgnore<<"  lines"<<G4endl;
+  G4cout << "BDSBunch : " << "UDEF_BUNCH: skipping " << nlinesIgnore << " lines" << G4endl;
 #endif
   skip((G4int)(nlinesIgnore * fields.size()));
   
@@ -427,9 +431,8 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 template <typename Type> G4bool  BDSBunchUserFile::ReadValue(Type &value){
   InputBunchFile>>value; 
   if (InputBunchFile.eof()){ //If the end of the file is reached go back to the beginning of the file.
-#ifdef BDSDEBUG
+    //this re reads the same file again to avoid crash - must always print warning
     G4cout << "BDSBunch.cc> End of file reached. Returning to beginning of file." << G4endl;
-#endif
     CloseBunchFile();
     OpenBunchFile();
     InputBunchFile>>value; 
