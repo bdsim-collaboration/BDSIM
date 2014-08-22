@@ -209,6 +209,7 @@ void BDSExecOptions::Parse(int argc, char **argv) {
       }
       if( !strcmp(LongOptions[OptionIndex].name, "materials") ) {
 	BDSMaterials::ListMaterials();
+	exit(0);
       }
       if( !strcmp(LongOptions[OptionIndex].name, "circular")  ) {
 	circular = true;

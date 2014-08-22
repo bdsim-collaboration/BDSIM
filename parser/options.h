@@ -13,6 +13,8 @@
 
 struct Options {
 
+  Options();
+
   /// list of pyhysics processes 
   std::string physicsList;
 
@@ -176,8 +178,8 @@ struct Options {
   std::string fifo; /// fifo for BDSIM-placet
   std::string refvolume; ///initial starting volume
   int refcopyno; ///initial starting volume copy number
-
-  // Ring parameters
+  
+  /// Ring parameters
   int      nturns;
 
   /// print some properties

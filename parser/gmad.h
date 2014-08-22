@@ -28,37 +28,5 @@ extern "C" {
   double get_length(int); // Length of element
   double get_angle(int);  // Angle of element
 
-  /* Interface to extern Options options*/
-  /*
-  char*  get_physicsList();
-  char*  get_particleName();
-  char*  get_distribType();
-  char*  get_distribFile();
-  int    get_numberToGenerate();
-  
-  double get_sigmaX();
-  double get_sigmaY();
-  double get_sigmaXp();
-  double get_sigmaYp();
-  double get_sigmaE();
-  
-  double get_shellX();
-  double get_shellY();
-  double get_shellXp();
-  double get_shellYp();
-  
-  double get_rMin();
-  double get_rMax();
- 
-  double get_betx();
-  double get_bety();
-  double get_alfx();
-  double get_alfy();
-  double get_emitx();
-  double get_emity();
-   
-  */
-  
-  
 }
 #endif
