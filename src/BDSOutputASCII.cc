@@ -76,7 +76,7 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
   hist     = new BDSHistogram1D(xmin,xmax,nbins); //naturally in metres
   // write header info
   ofELossHistogram.open(filenameHistogram.c_str());
-  ofELossHistogram << hist->GetInfo() << " - created " << timestring << G4endl;
+  ofELossHistogram << hist << " - created " << timestring << G4endl;
   ofELossHistogram << std::left << std::setprecision(10) << std::fixed
 		   << std::setw(20) << "S[m]"   << " "
 		   << std::setw(15) << "E[GeV]" << " "
@@ -219,7 +219,7 @@ void BDSOutputASCII::WriteHistogram()
   ofELossHistogram << std::left << std::setprecision(10) << std::fixed
 		   << std::setw(12) << "underflow" << thebins.front()->GetValue() << G4endl
 		   << std::setw(12) << "overflow"  << thebins.back()->GetValue()  << G4endl;
-  //remember .begin() is before first item, so +2 to get 2nd bind
+  //remember .begin() is before first item, so +2 to get 2nd bin
   for (i = thebins.begin()+1; i != --thebins.end(); ++i)
     {
   //only write non zero value bins

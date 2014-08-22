@@ -36,7 +36,8 @@ struct Options {
   /// initial beam centroid
   double X0, Y0, Z0;
   double Xp0, Yp0, Zp0;
-  double T0; 
+  double T0;
+  double E0;
   
   /// bunch length
   double sigmaT;

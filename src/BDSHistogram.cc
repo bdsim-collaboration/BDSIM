@@ -38,6 +38,8 @@ std::pair<G4double, G4double> BDSBin::GetXMeanAndTotal()
 BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins)
 {
   // Generate bins
+  // reserve size for speed optimisation
+  bins.reserve(nbins+2);
   // 1st bins is underflow bin
   bins.push_back(new BDSBin(DBL_MIN,xmin));
 
@@ -69,39 +71,39 @@ void BDSHistogram1D::Empty()
     {(*i)->Empty();}
 }
 
-std::vector<BDSBin*> BDSHistogram1D::GetBins()
+std::vector<BDSBin*> BDSHistogram1D::GetBins()const
 {
   return bins;
 }
 
-std::vector<G4double> BDSHistogram1D::GetBinTotals()
+std::vector<G4double> BDSHistogram1D::GetBinTotals()const
 {
   std::vector<G4double> result;
   // note first and last bins are under and overflow respectively
-  for (std::vector<BDSBin*>::iterator i = bins.begin()++; i != --bins.end(); ++i)
+  for (std::vector<BDSBin*>::const_iterator i = bins.begin()++; i != --bins.end(); ++i)
     {result.push_back((*i)->GetValue());}
   return result;
 }
 
-std::vector<std::pair<G4double, G4double> > BDSHistogram1D::GetBinValues()
+std::vector<std::pair<G4double, G4double> > BDSHistogram1D::GetBinValues()const
 {
   std::vector<std::pair<G4double ,G4double> > result;
   // note first and last bins are under and overflow respectively
-  for (std::vector<BDSBin*>::iterator i = bins.begin()++; i != --bins.end(); ++i)
+  for (std::vector<BDSBin*>::const_iterator i = bins.begin()++; i != --bins.end(); ++i)
     {result.push_back( (*i)->GetXMeanAndTotal() );}
   return result;
 }
 
-std::pair<G4double,G4double> BDSHistogram1D::GetUnderOverFlowBins()
+std::pair<G4double,G4double> BDSHistogram1D::GetUnderOverFlowBins()const
 {
   std::pair<G4double,G4double> extrabins = std::make_pair(bins.front()->GetValue(),bins.back()->GetValue());
   return extrabins;
 }
 
-void BDSHistogram1D::PrintBins()
+void BDSHistogram1D::PrintBins()const
 {
   G4cout << G4endl;
-  for (std::vector<BDSBin*>::iterator i = bins.begin(); i != bins.end(); ++i)
+  for (std::vector<BDSBin*>::const_iterator i = bins.begin(); i != bins.end(); ++i)
     {G4cout << (*i)->GetValue() << G4endl;}
 }
 
@@ -136,19 +138,6 @@ void BDSHistogram1D::Fill(G4double x, G4double weight)
     }
 }
 
-G4String BDSHistogram1D::GetInfo()
-{
-  G4String result;
-  result += "### FirstBinLeft = ";
-  result += std::to_string((*(bins.begin() + 1))->xmin);
-  result += " LastBinLeft = ";
-  result += std::to_string((*(bins.rbegin()++))->xmin);
-  result += " NBins = ";
-  result += std::to_string(bins.size());
-
-  return (G4String)result;
-}
-
 BDSHistogram1D::~BDSHistogram1D()
 {
   //must clear the bins from the heap
@@ -159,4 +148,10 @@ BDSHistogram1D::~BDSHistogram1D()
     {delete *i;}
 }
 
+std::ostream& operator<< (std::ostream &out, const BDSHistogram1D &hist)
+{
+  return out << "### FirstBinLeft = " << hist.GetBins()[1]->xmin 
+	     << " LastBinLeft = " << (*(hist.GetBins().rbegin()++))->xmin 
+	     << " NBins = " << hist.GetBins().size();
+}
 

@@ -155,7 +155,7 @@ void BDSBunchGaussian::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   t  = v[4];
   zp = 0.0;
   z0 = Z0*CLHEP::m + t*CLHEP::c_light;
-  E  = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * v[5];
+  E  = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * v[5];
   
   if (Zp0<0)
     zp = -sqrt(1.-xp*xp -yp*yp);

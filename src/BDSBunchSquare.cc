@@ -56,7 +56,7 @@ void BDSBunchSquare::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   else
     zp = sqrt(1.-xp*xp -yp*yp);
   t = 0;
-  E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * (1 + envelopeE * (1-2*FlatGen->shoot()));
+  E = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * (1 + envelopeE * (1-2*FlatGen->shoot()));
 
   weight = 1.0;
   return; 

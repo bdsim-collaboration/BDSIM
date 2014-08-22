@@ -74,7 +74,7 @@ void BDSBunchInterface::GetNextParticle(G4double& x0, G4double& y0, G4double& z0
   else
     zp = sqrt(1.-xp*xp -yp*yp);      
   t  = 0.0; 
-  E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy();
+  E = BDSGlobalConstants::Instance()->GetParticleKineticEnergy();
   weight = 1.0;
   return;
 }

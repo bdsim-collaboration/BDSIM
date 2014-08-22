@@ -4,8 +4,13 @@
 #include "globals.hh"
 #include <vector>
 #include <utility>
-//#include <string>
+#include <ostream>
 
+/**
+ * @brief a histogram bin
+ * 
+ * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
+ */
 class BDSBin
 {
 public:
@@ -24,7 +29,11 @@ public:
   G4double total;
 };
 
-
+/**
+ * @brief a 1d-histogram class
+ * 
+ * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
+ */
 class BDSHistogram1D
 {
 public:
@@ -34,17 +43,19 @@ public:
   void                                        Empty();
   void                                        Fill(G4double x);
   void                                        Fill(G4double x, G4double weight);
-  std::vector<BDSBin*>                        GetBins();
-  std::vector<G4double>                       GetBinTotals();
-  std::vector<std::pair<G4double, G4double> > GetBinValues();
-  void                                        PrintBins();
-  std::pair<G4double,G4double>                GetUnderOverFlowBins();
-  G4String                                    GetInfo();
+  std::vector<BDSBin*>                        GetBins() const;
+  std::vector<G4double>                       GetBinTotals() const;
+  std::vector<std::pair<G4double, G4double> > GetBinValues() const;
+  /// print value of all bins to cout
+  void                                        PrintBins() const;
+  std::pair<G4double,G4double>                GetUnderOverFlowBins() const;
+  /// output stream
+  friend std::ostream& operator<< (std::ostream &out, const BDSHistogram1D &hist);
   
 private:
-  // vector of bins
-  // 1st bin is underflow bin always
-  // last bin is overflow bin always
+  /// vector of bins
+  /// 1st bin is underflow bin always
+  /// last bin is overflow bin always
   std::vector<BDSBin*> bins;
   G4double binwidth;
 };
