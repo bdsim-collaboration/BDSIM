@@ -93,7 +93,7 @@ extern Options options;
 
 void BDS_handle_aborts(int signal_number) {
   /** 
-      Try to catch exit signals. This is not guaranteed to work.
+      Try to catch abort signals. This is not guaranteed to work.
       Main goal is to close output stream / files.
   */
 
@@ -101,8 +101,9 @@ void BDS_handle_aborts(int signal_number) {
   std::cout << "With signal: " << strsignal(signal_number) << std::endl;
   std::cout << "Trying to write and close output file" << std::endl;
   bdsOutput->Write();
+  std::cout << "Abort Geant4 run" << std::endl;
+  G4RunManager::GetRunManager()->AbortRun();
   std::cout << "Ave, Imperator, morituri te salutant!" << std::endl;
-  exit(1);
 }
 
 int main(int argc,char** argv) {
