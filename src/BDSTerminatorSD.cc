@@ -43,8 +43,10 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
     {
       G4cout << "Number of turns to take: " << BDSGlobalConstants::Instance()->GetTurnsToTake() << G4endl;
       G4cout << "Number of turns taken:   " << turnstaken  << G4endl;
-      G4cout << "Incrementing turn number " << G4endl;
     }
+#ifdef BDSDEBUG
+  G4cout << "Incrementing turn number " << G4endl;
+#endif
   G4Track* theTrack = aStep->GetTrack();
   if (theTrack->GetParentID() == 0){
     //this is a primary track
