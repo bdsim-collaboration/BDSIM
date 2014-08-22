@@ -76,6 +76,17 @@ public:
   void     SetBeamTotalEnergy(G4double val);
   G4double GetBeamMomentum();
   void     SetBeamMomentum(G4double val);
+
+
+  G4double GetParticleKineticEnergy();
+  void     SetParticleKineticEnergy(G4double val);
+  G4double GetParticleTotalEnergy();
+  void     SetParticleTotalEnergy(G4double val);
+  G4double GetParticleMomentum();
+  void     SetParticleMomentum(G4double val);
+
+
+
   G4double GetVacuumPressure();
   G4double GetPlanckScatterFe();
 
@@ -257,8 +268,8 @@ private:
   // initial bunch parameters
   G4String itsParticleName;
   G4ParticleDefinition* itsBeamParticleDefinition;
-  G4double itsBeamTotalEnergy;
-  G4double itsBeamMomentum, itsBeamKineticEnergy;
+  G4double itsBeamTotalEnergy, itsBeamMomentum, itsBeamKineticEnergy;
+  G4double itsParticleTotalEnergy, itsParticleMomentum, itsParticleKineticEnergy;
   G4double itsLPBFraction;
   G4double itsVacuumPressure;
   G4double itsPlanckScatterFe;
@@ -893,6 +904,24 @@ inline void BDSGlobalConstants::AddLogicalVolumeInfo(G4LogicalVolume* logvolpoin
 
 inline std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* BDSGlobalConstants::LogicalVolumeInfo()
 {return &logicalvolumeinfo;}
+
+inline G4double BDSGlobalConstants::GetParticleKineticEnergy()
+{return itsParticleKineticEnergy;}
+
+inline void BDSGlobalConstants::SetParticleKineticEnergy(G4double val)
+{itsParticleKineticEnergy = val;}
+
+inline G4double BDSGlobalConstants::GetParticleTotalEnergy()
+{return itsParticleTotalEnergy;}
+
+inline void BDSGlobalConstants::SetParticleTotalEnergy(G4double val)
+{itsParticleTotalEnergy = val;}
+
+inline G4double BDSGlobalConstants::GetParticleMomentum()
+{return itsParticleMomentum;}
+
+inline void BDSGlobalConstants::SetParticleMomentum(G4double val)
+{itsParticleMomentum = val;}
 
 // UNUSED INLINE FUNCTIONS
 

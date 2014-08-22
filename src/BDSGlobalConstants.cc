@@ -51,6 +51,11 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
     G4cerr << __METHOD_NAME__ << "Error: option \"beamenergy\" is not defined or must be greater than 0" <<  G4endl;
     exit(1);
   }
+  itsParticleTotalEnergy = opt.E0 * CLHEP::GeV; 
+  if (itsParticleTotalEnergy == 0) {
+    itsParticleTotalEnergy = itsBeamTotalEnergy;
+  }
+
   itsVacuumPressure = opt.vacuumPressure*CLHEP::bar;
   itsPlanckScatterFe = opt.planckScatterFe;
   //Fraction of events with leading particle biasing.

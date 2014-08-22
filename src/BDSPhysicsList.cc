@@ -539,6 +539,13 @@ void BDSPhysicsList::ConstructParticle()
   
   BDSGlobalConstants::Instance()->SetBeamKineticEnergy(BDSGlobalConstants::Instance()->GetBeamTotalEnergy() - 
                                    BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() );
+
+
+  BDSGlobalConstants::Instance()->SetParticleMomentum( sqrt(pow(BDSGlobalConstants::Instance()->GetParticleTotalEnergy(),2)-
+                                    pow(BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass(),2)) );
+  
+  BDSGlobalConstants::Instance()->SetParticleKineticEnergy(BDSGlobalConstants::Instance()->GetParticleTotalEnergy() - 
+                                   BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() );
   
   G4cout << __METHOD_NAME__ << "Beam properties:"<<G4endl;
   G4cout << __METHOD_NAME__ << "Particle : " 

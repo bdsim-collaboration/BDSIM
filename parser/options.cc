@@ -7,17 +7,17 @@
 #include <string>
 
 void Options::print() const {
-  std::cout<<"Options : "<<std::endl;
-  std::cout<<"particle : "<<particleName<<std::endl;
-  std::cout<<"energy : "<<beamEnergy<<std::endl;
-  std::cout<<"n macroparticles : "<<numberToGenerate<<std::endl;
-  std::cout<<"sigmaX           : "<<sigmaX<<std::endl;
-  std::cout<<"Cerenkov on               : "<<turnOnCerenkov<<std::endl;
-  std::cout<<"Optical absorption on      : " << turnOnOpticalAbsorption <<std::endl;
-  std::cout<<"Mie scattering on      : " << turnOnMieScattering <<std::endl;
-  std::cout<<"Rayleigh scatering on      : " << turnOnRayleighScattering <<std::endl;
-  std::cout<<"Optical surface on      : " << turnOnOpticalSurface <<std::endl;
-  std::cout<<"Birks saturation on      : " << turnOnBirksSaturation <<std::endl;
+  std::cout<<"Options               : " <<std::endl;
+  std::cout<<"particle              : " <<particleName<<std::endl;
+  std::cout<<"nominal energy        : " <<beamEnergy<<std::endl;
+  std::cout<<"n macroparticles      : " <<numberToGenerate<<std::endl;
+  std::cout<<"sigmaX                : " <<sigmaX<<std::endl;
+  std::cout<<"Cerenkov on           : " <<turnOnCerenkov<<std::endl;
+  std::cout<<"Optical absorption on : " << turnOnOpticalAbsorption <<std::endl;
+  std::cout<<"Mie scattering on     : " << turnOnMieScattering <<std::endl;
+  std::cout<<"Rayleigh scatering on : " << turnOnRayleighScattering <<std::endl;
+  std::cout<<"Optical surface on    : " << turnOnOpticalSurface <<std::endl;
+  std::cout<<"Birks saturation on   : " << turnOnBirksSaturation <<std::endl;
 }
 
 void Options::set_value(std::string name, double value )
@@ -32,7 +32,7 @@ void Options::set_value(std::string name, double value )
   if(name == "elossHistotransBinWidth") {elossHistoTransBinWidth = value; return;}
   if(name == "defaultRangeCut") {defaultRangeCut = value; return;}
   if(name == "ffact") {ffact = value; return;}
-  if(name == "energy" ) {beamEnergy = value; return;}
+  if(name == "energy") {beamEnergy = value; return;}
   if(name == "X0" ) { X0 = value; return; }
   if(name == "Y0" ) { Y0 = value; return; }
   if(name == "Z0" ) { Z0 = value; return; }
@@ -40,6 +40,7 @@ void Options::set_value(std::string name, double value )
   if(name == "Xp0" ) { Xp0 = value; return; }
   if(name == "Yp0" ) { Yp0 = value; return; }
   if(name == "Zp0" ) { Zp0 = value; return; }
+  if(name == "E0") {E0 = value; return;}
 
   if(name == "sigmaT" ) { sigmaT = value; return; }
   if(name == "sigmaE" ) { sigmaE = value; return; }

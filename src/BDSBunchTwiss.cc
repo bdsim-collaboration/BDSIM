@@ -104,7 +104,7 @@ void BDSBunchTwiss::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   else
     zp = sqrt(1.-xp*xp -yp*yp);
   t = 0; // (T0 - sigmaT * (1.-2.*GaussGen->shoot())) * s;
-  E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * (1 + sigmaE * GaussGen->shoot());
+  E = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * (1 + sigmaE * GaussGen->shoot());
   weight = 1.0;
 #endif
 
@@ -116,7 +116,7 @@ void BDSBunchTwiss::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   t  = v[4];
   zp = 0.0;
   z0 = Z0*CLHEP::m + t*CLHEP::c_light;
-  E  = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * v[5];
+  E  = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * v[5];
   
   if (Zp0<0)
     zp = -sqrt(1.-xp*xp -yp*yp);
