@@ -81,7 +81,6 @@ public:
   G4double GetParticleKineticEnergy();
   void     SetParticleKineticEnergy(G4double val);
   G4double GetParticleTotalEnergy();
-  void     SetParticleTotalEnergy(G4double val);
   G4double GetParticleMomentum();
   void     SetParticleMomentum(G4double val);
 
@@ -268,7 +267,9 @@ private:
   // initial bunch parameters
   G4String itsParticleName;
   G4ParticleDefinition* itsBeamParticleDefinition;
+  /// reference beam energy
   G4double itsBeamTotalEnergy, itsBeamMomentum, itsBeamKineticEnergy;
+  /// particle energy
   G4double itsParticleTotalEnergy, itsParticleMomentum, itsParticleKineticEnergy;
   G4double itsLPBFraction;
   G4double itsVacuumPressure;
@@ -913,9 +914,6 @@ inline void BDSGlobalConstants::SetParticleKineticEnergy(G4double val)
 
 inline G4double BDSGlobalConstants::GetParticleTotalEnergy()
 {return itsParticleTotalEnergy;}
-
-inline void BDSGlobalConstants::SetParticleTotalEnergy(G4double val)
-{itsParticleTotalEnergy = val;}
 
 inline G4double BDSGlobalConstants::GetParticleMomentum()
 {return itsParticleMomentum;}

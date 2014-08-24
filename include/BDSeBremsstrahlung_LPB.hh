@@ -4,7 +4,6 @@
 #define EBREMSSTRAHLUNG_LPB_HH
 
 #include "G4WrapperProcess.hh"
-#include "G4RunManager.hh"
 
 class eBremsstrahlung_LPB : public G4WrapperProcess {
   public:
