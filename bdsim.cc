@@ -143,9 +143,9 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Initialising random number generator." << G4endl;
 #endif  
-  CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine);
+  CLHEP::HepRandom::setTheEngine(new CLHEP::HepJamesRandom);
 
-  long seed;
+  long seed = 0;
 
   // get the seed from options if positive, else
   // user time as a seed
@@ -156,6 +156,11 @@ int main(int argc,char** argv) {
     seed = time(NULL);
 
   // set the seed
+  //  G4long seeds[2];
+  //  seeds[0] = BDSGlobalConstants::Instance()->GetRandomSeed();
+  //  seeds[1] = seeds[0]*2 % 271076235412341;
+  //  CLHEP::HepRandom::setTheSeeds(seeds,0);
+
   CLHEP::HepRandom::setTheSeed(seed);
 
   // Print generator full state to output 
