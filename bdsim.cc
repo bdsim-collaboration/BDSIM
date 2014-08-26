@@ -65,6 +65,7 @@
 #include "G4GeometryTolerance.hh"
 
 #include "CLHEP/Random/Random.h"
+#include "CLHEP/Random/JamesRandom.h"
 
 #include "BDSGeometryInterface.hh"
 
