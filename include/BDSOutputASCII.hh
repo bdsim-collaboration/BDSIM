@@ -30,9 +30,13 @@ public:
   
 private:
 
+  /// main output file
   std::ofstream ofMain;
+  /// primaries output file
   std::ofstream ofPrimaries;
+  /// energy loss hits output file
   std::ofstream ofELoss;
+  /// energy loss histogram
   std::ofstream ofELossHistogram;
   BDSHistogram1D* hist;
 

@@ -4,7 +4,6 @@
 #define GAMMACONVERSION_LPB_HH
 
 #include "G4WrapperProcess.hh"
-#include "G4RunManager.hh"
 
 class GammaConversion_LPB : public G4WrapperProcess {
   public:

@@ -26,6 +26,7 @@ Options::Options(){
   X0 = 0.0, Y0 = 0.0, Z0 = 0.0;
   Xp0 = 0.0, Yp0 = 0.0, Zp0 = 0.0;
   T0 = 0.0;
+  E0 = 0.0;
   sigmaT = 0.0;
   betx = 0.0, bety = 0.0, alfx = 0.0, alfy = 0.0, emitx = 0.0, emity = 0.0;
   sigmaX = 0.0, sigmaXp = 0.0, sigmaY = 0.0, sigmaYp = 0.0;

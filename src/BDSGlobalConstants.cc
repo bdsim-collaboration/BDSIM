@@ -23,7 +23,7 @@ BDSGlobalConstants* BDSGlobalConstants::Instance(){
 }
 
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
-  itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0),itsSMax(0.0)
+  itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0),itsParticleMomentum(0.0),itsParticleKineticEnergy(0.0),itsSMax(0.0)
 {
   itsPhysListName = opt.physicsList;
   itsPipeMaterial = opt.pipeMaterial;
@@ -171,9 +171,12 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsZeroFieldManager->CreateChordFinder(zeroMagField);
   itsTurnsTaken = 1; //counting from 1
   if(opt.nturns < 1)
-    {SetTurnsToTake(1);}
+    itsTurnsToTake = 1;
   else
-    {SetTurnsToTake(opt.nturns);}  
+    itsTurnsToTake = opt.nturns;
+  teleporterdelta     = G4ThreeVector(0.,0.,0.);
+  teleporterlength    = 0.0;
+
   InitRotationMatrices();
   
   // options that are never used (no set method):
@@ -181,12 +184,6 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsLWCalOffset      = 0.0;
   itsMagnetPoleRadius = 0.0;
   itsMagnetPoleSize   = 0.0;
-  teleporterdelta     = G4ThreeVector(0.,0.,0.);
-  teleporterlength    = 0.0;
-  // //Synchrotron primary generator
-  // itsSynchPrimaryGen = false; //XXX check what this is 19/4/11
-  // itsSynchPrimaryAngle = 0.0;
-  // itsSynchPrimaryLength = 0.0;
 }
 
 void BDSGlobalConstants::InitRotationMatrices(){

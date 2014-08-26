@@ -4,7 +4,6 @@
 #define GAMMACONVERSIONTOMUONS_HH
 
 #include "G4WrapperProcess.hh"
-#include "G4RunManager.hh"
 
 class BDSXSBias  :public G4WrapperProcess
 {
