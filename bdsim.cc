@@ -48,8 +48,6 @@
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
 #include "BDSPhysicsList.hh"
-#include "QGSP_BERT.hh"
-#include "QGSP_BERT_HP.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRunAction.hh"
 #include "BDSSamplerSD.hh"
@@ -61,7 +59,6 @@
 #include "G4TrackingManager.hh"
 #include "G4SteppingManager.hh"
 #include "G4GeometrySampler.hh"
-//#include "G4ImportanceAlgorithm.hh"
 #include "G4GeometryTolerance.hh"
 
 #include "CLHEP/Random/Random.h"

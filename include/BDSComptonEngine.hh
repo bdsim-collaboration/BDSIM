@@ -11,6 +11,7 @@
 
 #include "G4Track.hh"
 #include "G4Step.hh"
+#include "CLHEP/Units/PhysicalConstants.h"
 
 class BDSComptonEngine  
 { 

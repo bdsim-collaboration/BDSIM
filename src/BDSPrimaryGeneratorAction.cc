@@ -9,8 +9,9 @@
 
 //==================================================================
 //==================================================================
-#include "BDSGlobalConstants.hh" // must be first in include list
+#include "BDSGlobalConstants.hh"
 #include "BDSPrimaryGeneratorAction.hh"
+#include "BDSBunch.hh"
 #include "BDSDetectorConstruction.hh"
 #include "BDSSamplerHit.hh"
 
@@ -19,7 +20,7 @@
 #include "G4ParticleDefinition.hh"
 #include "G4Track.hh"
 
-#include "BDSBunch.hh"
+#include "CLHEP/Units/PhysicalConstants.h"
 
 #include <iostream>
 

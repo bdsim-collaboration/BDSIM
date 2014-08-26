@@ -12,7 +12,7 @@ Last modified 15.11.2005 by Ilya Agapov
 #include "BDSGlobalConstants.hh" 
 #include "BDSContinuousSR.hh"
 #include "G4ios.hh"
-#include "G4UnitsTable.hh"
+#include "CLHEP/Units/PhysicalConstants.h"
 
 BDSContinuousSR::BDSContinuousSR(const G4String& processName)
   : G4VDiscreteProcess(processName)
