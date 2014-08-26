@@ -17,6 +17,7 @@ void BDS::CreateRandomNumberGenerator()
   G4cout << __FUNCTION__ << "> Initialising random number generator." << G4endl;
 #endif  
   CLHEP::HepRandom::setTheEngine(new CLHEP::HepJamesRandom);
+  G4cout << __FUNCTION__ << " " << CLHEP::HepRandom::getTheEngine() << G4endl;
 }
 
 void BDS::SetSeed()
