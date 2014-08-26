@@ -28,11 +28,11 @@ public:
   inline G4String GetVisMacroFilename() const                {return visMacroFilename;}
   inline G4String GetOutputFilename() const                  {return outputFilename;}
   inline BDSOutputFormat GetOutputFormat() const             {return outputFormat;}
-  inline G4bool  GetOutline() const                          {return outline;}
+  inline G4bool   GetOutline() const                         {return outline;}
   inline G4String GetOutlineFilename() const                 {return outlineFilename;}
   inline G4String GetOutlineFormat() const                   {return outlineFormat;}
 
-  inline G4int   GetGFlash() const                {return gflash;}
+  inline G4int    GetGFlash() const               {return gflash;}
   inline G4double GetGFlashEMax() const           {return gflashemax;}
   inline G4double GetGFlashEMin() const           {return gflashemin;}  
 
@@ -48,7 +48,11 @@ public:
   inline G4int   GetVerboseSteppingLevel() const {return verboseSteppingLevel;}
 
   inline G4bool  GetCircular() const             {return circular;}
+  inline G4int   GetSeed() const                 {return seed;}
+  inline G4bool  SetSeed() const                 {return setSeed;}
   inline G4String GetBDSIMPATH() const           {return itsBDSIMPATH;}
+  inline G4bool  SetSeedState() const            {return setSeedState;}
+  inline G4String GetSeedStateFilename() const   {return seedStateFilename;}
 
 protected : 
   BDSExecOptions(int argc, char** argv);
@@ -84,8 +88,12 @@ private :
   G4int  verboseSteppingLevel;
 
   G4bool circular;
+  G4int  seed; // the seed value for the random number generator
+  G4bool setSeed; // if the seed was set by command line - override if specified in options
   /// string that points to path where files are searched; based on environment variable or else input filename
   G4String itsBDSIMPATH;
+  G4bool   setSeedState; // if seed state is specifed - use the state saved in it
+  G4String seedStateFilename; // the seed state filename
 };
 
 #endif

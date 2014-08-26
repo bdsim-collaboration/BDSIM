@@ -40,7 +40,6 @@
 
 #include <cstdlib>      // standard headers 
 #include <cstdio>
-#include <ctime>
 #include <unistd.h>
 #include <getopt.h>
 #include <signal.h>
@@ -61,11 +60,8 @@
 #include "G4GeometrySampler.hh"
 #include "G4GeometryTolerance.hh"
 
-#include "CLHEP/Random/Random.h"
-#include "CLHEP/Random/JamesRandom.h"
-
+#include "BDSRandom.hh" // for random number generator from CLHEP
 #include "BDSGeometryInterface.hh"
-
 #include "BDSOutputBase.hh" 
 #include "BDSOutputASCII.hh" 
 #include "BDSOutputROOT.hh" 
@@ -137,44 +133,12 @@ int main(int argc,char** argv) {
   // initialize random number generator
   //
 
-  // choose the Random engine
-#ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> Initialising random number generator." << G4endl;
-#endif  
-  CLHEP::HepRandom::setTheEngine(new CLHEP::HepJamesRandom);
-
-  long seed = 0;
-
-  // get the seed from options if positive, else
-  // user time as a seed
-
-  if(BDSGlobalConstants::Instance()->GetRandomSeed()>=0)
-    seed = BDSGlobalConstants::Instance()->GetRandomSeed();
-  else
-    seed = time(NULL);
-
-  // set the seed
-  //  G4long seeds[2];
-  //  seeds[0] = BDSGlobalConstants::Instance()->GetRandomSeed();
-  //  seeds[1] = seeds[0]*2 % 271076235412341;
-  //  CLHEP::HepRandom::setTheSeeds(seeds,0);
-
-  CLHEP::HepRandom::setTheSeed(seed);
-
-  // Print generator full state to output 
-  G4cout << __FUNCTION__ << "> Random number generator's state: " << G4endl << G4endl;
-  CLHEP::HepRandom::saveFullState(G4cout);
-  G4cout << G4endl;
-
-#ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> Seed from BDSGlobalConstants=" 
-	 << BDSGlobalConstants::Instance()->GetRandomSeed() << G4endl;
-#endif
- 
-  G4cout << __FUNCTION__ << "> Random number generator's seed = "
-	 << CLHEP::HepRandom::getTheSeed() << G4endl;
-
-
+  BDS::CreateRandomNumberGenerator();
+  BDS::SetSeed(); // set the seed from options or from exec options
+  if (BDSExecOptions::Instance()->SetSeedState()) //optionally load the seed state from file
+    {BDS::LoadSeedState(BDSExecOptions::Instance()->GetSeedStateFilename());}
+  BDS::WriteSeedState(); //write the current state onece set / loaded
+  
   //
   // construct mandatory run manager (the G4 kernel) and
   // set mandatory initialization classes
