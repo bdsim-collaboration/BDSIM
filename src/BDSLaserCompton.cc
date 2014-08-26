@@ -9,6 +9,7 @@
 
 #include "BDSLaserCompton.hh"
 #include "G4ios.hh"
+#include "G4Gamma.hh"
 #include "G4UnitsTable.hh"
 
 BDSLaserCompton::BDSLaserCompton(const G4String& processName)
