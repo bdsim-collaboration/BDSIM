@@ -9,7 +9,7 @@ TRKQuadrupole::TRKQuadrupole(double strengthIn, TRKTrackingElement::TRKType type
   TRKTrackingElement(typeIn, trackingStepsIn,nameIn,lengthIn,size_xIn,size_yIn,apertureIn,placementIn), strength(strengthIn), thinDrift(NULL)
 {
   if (type == TRKTrackingElement::thin) {
-    thinDrift = new TRKDrift(typeIn, trackingStepsIn,nameIn,lengthIn,size_xIn,size_yIn,apertureIn,placementIn);
+    thinDrift = new TRKDrift(typeIn, trackingStepsIn,nameIn+"thinDrift",lengthIn,size_xIn,size_yIn,apertureIn,placementIn);
   }
 }
 
