@@ -9,7 +9,8 @@
 
 #include "BDSLaserCompton.hh"
 #include "G4ios.hh"
-#include "G4UnitsTable.hh"
+#include "G4Gamma.hh"
+#include "CLHEP/Units/PhysicalConstants.h"
 
 BDSLaserCompton::BDSLaserCompton(const G4String& processName)
   :  G4VDiscreteProcess(processName),//isInitialised(false),

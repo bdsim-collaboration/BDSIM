@@ -1,4 +1,5 @@
 #include "BDSSynchRadPhysics.hh"
+#include "G4Gamma.hh"
 #include "G4ProcessManager.hh"
 #include "G4Version.hh"
 

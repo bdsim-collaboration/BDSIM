@@ -22,9 +22,10 @@
 #include "BDSSynchrotronRadiation.hh"
 #include "BDSBeamline.hh"
 #include "G4ios.hh"
-#include "G4UnitsTable.hh"
+#include "G4Gamma.hh"
 #include "G4PropagatorInField.hh"
 #include "Randomize.hh" 
+#include "CLHEP/Units/PhysicalConstants.h"
 
 #include "BDSAcceleratorComponent.hh"
 

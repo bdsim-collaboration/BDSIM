@@ -9,7 +9,7 @@
 
 #include "BDSPlanckScatter.hh"
 #include "G4ios.hh"
-#include "G4UnitsTable.hh"
+#include "G4Gamma.hh"
 
 BDSPlanckScatter::BDSPlanckScatter():G4VEnergyLossProcess("PlanckScatt")
 {

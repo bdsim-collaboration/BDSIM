@@ -17,7 +17,6 @@
 //#include "G4UImanager.hh"
 //#include "G4VVisManager.hh"
 #include "G4ios.hh"
-#include "time.h"
 
 extern BDSOutputBase* bdsOutput;         // output interface
 

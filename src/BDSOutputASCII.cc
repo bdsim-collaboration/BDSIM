@@ -2,9 +2,8 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-//#include <ctime>
 #include <cmath>
-#include "time.h"
+#include <ctime>
 #include <string>
 #include <fstream>
 #include <iostream>

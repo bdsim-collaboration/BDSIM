@@ -1,4 +1,8 @@
 #include "BDSCutsAndLimits.hh"
+#include "G4Gamma.hh"
+#include "G4Electron.hh"
+#include "G4Positron.hh"
+#include "G4Proton.hh"
 #include "G4StepLimiter.hh"
 #include "G4UserSpecialCuts.hh"
 #include "G4ProcessManager.hh"
