@@ -124,7 +124,7 @@ int main(int argc,char** argv) {
   BDS::SetSeed(); // set the seed from options or from exec options
   if (BDSExecOptions::Instance()->SetSeedState()) //optionally load the seed state from file
     {BDS::LoadSeedState(BDSExecOptions::Instance()->GetSeedStateFilename());}
-  BDS::WriteSeedState(); //write the current state onece set / loaded
+  BDS::WriteSeedState(); //write the current state once set / loaded
 
   // instantiate the specific type of bunch distibution (class),
   // get the corresponding parameters from the gmad parser info

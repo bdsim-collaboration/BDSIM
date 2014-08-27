@@ -37,7 +37,6 @@ BDSBunchGaussian::BDSBunchGaussian(G4double sigmaXIn, G4double sigmaYIn, G4doubl
   sigmaGM[5][5] = pow(sigmaE,2);
 
   // Create multi dim gaussian generator
-  if (GaussMultiGen) delete GaussMultiGen;
   GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
 }
 
@@ -83,7 +82,6 @@ BDSBunchGaussian::BDSBunchGaussian(G4double *sigma,
   sigmaGM[5][5] = sigma[20];
 
   // Create multi dim gaussian
-  if (GaussMultiGen) delete GaussMultiGen;
   GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
 }
 
@@ -139,7 +137,7 @@ void BDSBunchGaussian::SetOptions(struct Options& opt) {
     sigmaGM[5][5] = pow(opt.sigmaE,2);
   }
 
-  if (GaussMultiGen) delete GaussMultiGen;
+  delete GaussMultiGen;
   GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
   return;
 }

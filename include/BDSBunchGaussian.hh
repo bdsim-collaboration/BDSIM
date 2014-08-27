@@ -7,11 +7,6 @@
 #include "CLHEP/Matrix/SymMatrix.h"
 #include "CLHEP/RandomObjects/RandMultiGauss.h"
 
-namespace CLHEP {
-  class RandGauss;
-  class RandFlat;
-}
-
 class BDSBunchGaussian : public BDSBunchInterface {
  
 protected : 
