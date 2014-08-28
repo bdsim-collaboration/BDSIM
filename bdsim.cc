@@ -115,20 +115,7 @@ int main(int argc,char** argv) {
   G4cout << __FUNCTION__ << "> Using input file : "<< BDSExecOptions::Instance()->GetInputFilename()<<G4endl;
   
   gmad_parser(BDSExecOptions::Instance()->GetInputFilename());
-
-  //
-  // pass the run control and beam options read from the lattice
-  // file via the gmad parser to the BDSGlobalConstants and 
-  // to the BDSBunch instances
-  //
-
-#ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> Setting bunch options." << G4endl;
-#endif  
-
-  bdsBunch.SetOptions(options);
-
-
+  
   //
   // initialize random number generator
   //
@@ -137,7 +124,15 @@ int main(int argc,char** argv) {
   BDS::SetSeed(); // set the seed from options or from exec options
   if (BDSExecOptions::Instance()->SetSeedState()) //optionally load the seed state from file
     {BDS::LoadSeedState(BDSExecOptions::Instance()->GetSeedStateFilename());}
-  BDS::WriteSeedState(); //write the current state onece set / loaded
+  BDS::WriteSeedState(); //write the current state once set / loaded
+
+  // instantiate the specific type of bunch distibution (class),
+  // get the corresponding parameters from the gmad parser info
+  // and attach to the initialised random number generator
+#ifdef BDSDEBUG
+  G4cout << __FUNCTION__ << "> Instantiating chosen bunch distribution." << G4endl;
+#endif
+  bdsBunch.SetOptions(options);
   
   //
   // construct mandatory run manager (the G4 kernel) and
