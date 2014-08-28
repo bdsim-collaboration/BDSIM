@@ -36,9 +36,7 @@
 #include "G4Trajectory.hh"
 #include "G4SDManager.hh"
 #include "G4ios.hh"
-#include "G4UnitsTable.hh"
 #include "Randomize.hh"
-#include "G4ChordFinder.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4PrimaryParticle.hh"
 

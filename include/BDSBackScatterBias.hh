@@ -4,7 +4,6 @@
 #define BACKSCATTERBIAS_HH
 
 #include "G4WrapperProcess.hh"
-#include "G4RunManager.hh"
 
 class BDSBackScatterBias  :public G4WrapperProcess
 {

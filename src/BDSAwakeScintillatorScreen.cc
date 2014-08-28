@@ -18,7 +18,6 @@ Work in progress.
 #include "BDSDebug.hh"
 
 #include "G4SDManager.hh"
-#include "G4PhysicalConstants.hh"
 #include <map>
 #include "BDSAwakeMultilayerScreen.hh"
 //#include "UltraFresnelLens.hh"
@@ -39,7 +38,7 @@ typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
 //============================================================
-BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*pi/180.0, G4double windowThickness=0, G4String windowMaterial=""):
+BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial=""):
   BDSAcceleratorComponent(aName, 1.0, 0, 0, 0, SetVisAttributes()), _mlScreen(NULL), _camera(NULL), _material(material), _thickness(thickness), _screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
 {
   _vacChambType=2;
@@ -555,7 +554,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber2(){
 
   G4LogicalVolume* vacuumInnerLog = new G4LogicalVolume(vacuumInnerSolid, BDSMaterials::Instance()->GetMaterial("vacuum"), "vacuumInnerLog",0,0,0);
 
-  _vacRotationMatrix->rotateY(pi);
+  _vacRotationMatrix->rotateY(CLHEP::pi);
 
   new G4PVPlacement(_vacRotationMatrix, 
 		    G4ThreeVector(_vacDispX2,(_vacHeight+_vacThickness)/2.0,_vacDispZ2), 

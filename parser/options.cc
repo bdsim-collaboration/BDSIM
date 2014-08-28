@@ -6,18 +6,164 @@
 #include <iostream>
 #include <string>
 
+Options::Options(){
+  // Default Values for Options
+
+  physicsList = "cylinder";
+  particleName = "";
+  distribType = "";
+  distribFile = "";
+  distribFileFormat = "";
+
+  numberToGenerate = 1;
+  nlinesIgnore = 0;
+  elossHistoBinWidth = 1.0;
+  elossHistoTransBinWidth = 0.1;
+  defaultRangeCut = 7e-4;
+  ffact = 1.0;
+  beamEnergy = 0.0;
+
+  X0 = 0.0, Y0 = 0.0, Z0 = 0.0;
+  Xp0 = 0.0, Yp0 = 0.0, Zp0 = 0.0;
+  T0 = 0.0;
+  E0 = 0.0;
+  sigmaT = 0.0;
+  betx = 0.0, bety = 0.0, alfx = 0.0, alfy = 0.0, emitx = 0.0, emity = 0.0;
+  sigmaX = 0.0, sigmaXp = 0.0, sigmaY = 0.0, sigmaYp = 0.0;
+  envelopeX = 0.0, envelopeXp = 0.0, envelopeY = 0.0, envelopeYp = 0.0, envelopeT = 0.0, envelopeE = 0.0;
+  sigma11 = 0.0,sigma12 = 0.0,sigma13 = 0.0,sigma14 = 0.0,sigma15 = 0.0,sigma16 = 0.0;
+  sigma22 = 0.0,sigma23 = 0.0,sigma24 = 0.0,sigma25 = 0.0,sigma26 = 0.0;
+  sigma33 = 0.0,sigma34 = 0.0,sigma35 = 0.0,sigma36 = 0.0;
+  sigma44 = 0.0,sigma45 = 0.0,sigma46 = 0.0;
+  sigma55 = 0.0,sigma56 = 0.0;
+  sigma66 = 0.0;
+  shellX=0.0, shellXp=0.0, shellY=0.0, shellYp=0.0;
+  Rmin=0.0, Rmax=0.0;
+  sigmaE=0.0;
+
+  doPlanckScattering=0;
+  checkOverlaps=0;
+  numberOfEventsPerNtuple=0;
+  eventNumberOffset=0;
+
+  vacuumPressure = 1e-12;
+  planckScatterFe = 1.0;
+
+  xsize=0.0, ysize=0.0;
+
+  magnetGeometry = "cylinder";
+  componentBoxSize = 0.0;
+  tunnelRadius = 0.0;
+  beampipeRadius = 0.0;
+  beampipeThickness = 0.0;
+
+  pipeMaterial = "StainlessSteel";
+  vacMaterial = "Vacuum";
+  tunnelMaterial = "concrete";
+  tunnelCavityMaterial = "Air";
+  soilMaterial = "soil";
+
+  includeIronMagFields = 0;
+
+  buildTunnel = 0;
+  buildTunnelFloor = 0;
+  showTunnel = 0;
+  tunnelOffsetX = 0;
+  tunnelOffsetY = 0;
+  samplerDiameter = 0.0;
+  tunnelThickness = 0.0;
+  tunnelSoilThickness = 0.0;
+  tunnelFloorOffset = 0.0;
+
+  geometryBias = 0;
+  //Beam loss monitors geometry
+  blmRad = 0.05;
+  blmLength = 0.18;
+
+  gammaToMuFe = 1;
+  annihiToMuFe = 1;
+  eeToHadronsFe = 1;
+  useEMLPB = 0;
+  useHadLPB = 0;
+
+  sensitiveBeamlineComponents = 1;
+  sensitiveBeamPipe = 1;
+  sensitiveBLMs = 1;
+
+  turnOnCerenkov = 1;
+  turnOnOpticalAbsorption = 1;
+  turnOnMieScattering = 1;
+  turnOnRayleighScattering = 1;
+  turnOnOpticalSurface = 1;
+  turnOnBirksSaturation = 1;
+  scintYieldFactor = 1.0;
+  decayOn = 1;
+  //  synchRadOn = 0;
+
+
+  LPBFraction = 0.0;
+
+  thresholdCutCharged = 0.0;
+  thresholdCutPhotons = 0.0;
+
+  prodCutPhotons=7e-4;
+  prodCutPhotonsP=7e-4;
+  prodCutPhotonsA=1;
+  prodCutElectrons=7e-4;
+  prodCutElectronsP=7e-4;
+  prodCutElectronsA=1;
+  prodCutPositrons=7e-4;
+  prodCutPositronsP=7e-4;
+  prodCutPositronsA=1;
+
+
+  //tracking options
+  maximumTrackingTime = 0.1;
+  deltaChord = 0.00001;
+  chordStepMinimum = 0.000001;
+  deltaIntersection = 0.00001;
+  minimumEpsilonStep=0;
+  maximumEpsilonStep=1e-7;
+  deltaOneStep = 0.00001;
+  turnOnCerenkov = 1;
+  synchRadOn = 0;
+  decayOn = 1;
+  synchTrackPhotons = 0;
+  synchLowX = 0.0;
+  synchLowGamE = 0.0;
+  synchPhotonMultiplicity = 1;
+  synchMeanFreeFactor = 1;
+  lengthSafety = 0.000000001;
+  randomSeed = 0;
+  
+  useTimer = 0;
+  storeMuonTrajectories = 0;
+  trajCutGTZ = 0.0;
+  trajCutLTR = 0.0;
+  storeNeutronTrajectories = 0;
+  storeTrajectory = 0;
+  stopTracks = 0;
+
+  fifo = "";
+  refvolume = "";
+  refcopyno = 0;
+
+  // ring options
+  nturns = 1;
+}
+
 void Options::print() const {
-  std::cout<<"Options : "<<std::endl;
-  std::cout<<"particle : "<<particleName<<std::endl;
-  std::cout<<"energy : "<<beamEnergy<<std::endl;
-  std::cout<<"n macroparticles : "<<numberToGenerate<<std::endl;
-  std::cout<<"sigmaX           : "<<sigmaX<<std::endl;
-  std::cout<<"Cerenkov on               : "<<turnOnCerenkov<<std::endl;
-  std::cout<<"Optical absorption on      : " << turnOnOpticalAbsorption <<std::endl;
-  std::cout<<"Mie scattering on      : " << turnOnMieScattering <<std::endl;
-  std::cout<<"Rayleigh scatering on      : " << turnOnRayleighScattering <<std::endl;
-  std::cout<<"Optical surface on      : " << turnOnOpticalSurface <<std::endl;
-  std::cout<<"Birks saturation on      : " << turnOnBirksSaturation <<std::endl;
+  std::cout<<"Options               : " <<std::endl;
+  std::cout<<"particle              : " <<particleName<<std::endl;
+  std::cout<<"nominal energy        : " <<beamEnergy<<std::endl;
+  std::cout<<"n macroparticles      : " <<numberToGenerate<<std::endl;
+  std::cout<<"sigmaX                : " <<sigmaX<<std::endl;
+  std::cout<<"Cerenkov on           : " <<turnOnCerenkov<<std::endl;
+  std::cout<<"Optical absorption on : " << turnOnOpticalAbsorption <<std::endl;
+  std::cout<<"Mie scattering on     : " << turnOnMieScattering <<std::endl;
+  std::cout<<"Rayleigh scatering on : " << turnOnRayleighScattering <<std::endl;
+  std::cout<<"Optical surface on    : " << turnOnOpticalSurface <<std::endl;
+  std::cout<<"Birks saturation on   : " << turnOnBirksSaturation <<std::endl;
 }
 
 void Options::set_value(std::string name, double value )
@@ -32,7 +178,7 @@ void Options::set_value(std::string name, double value )
   if(name == "elossHistotransBinWidth") {elossHistoTransBinWidth = value; return;}
   if(name == "defaultRangeCut") {defaultRangeCut = value; return;}
   if(name == "ffact") {ffact = value; return;}
-  if(name == "energy" ) {beamEnergy = value; return;}
+  if(name == "energy") {beamEnergy = value; return;}
   if(name == "X0" ) { X0 = value; return; }
   if(name == "Y0" ) { Y0 = value; return; }
   if(name == "Z0" ) { Z0 = value; return; }
@@ -40,6 +186,7 @@ void Options::set_value(std::string name, double value )
   if(name == "Xp0" ) { Xp0 = value; return; }
   if(name == "Yp0" ) { Yp0 = value; return; }
   if(name == "Zp0" ) { Zp0 = value; return; }
+  if(name == "E0") {E0 = value; return;}
 
   if(name == "sigmaT" ) { sigmaT = value; return; }
   if(name == "sigmaE" ) { sigmaE = value; return; }

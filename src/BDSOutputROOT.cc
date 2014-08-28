@@ -292,7 +292,7 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 {
   G4String name;
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " hc->endtries() = " << hc->entries() << G4endl;
+  G4cout << __METHOD_NAME__ << " hc->entries() = " << hc->entries() << G4endl;
 #endif
   for (G4int i=0; i<hc->entries(); i++)
     {

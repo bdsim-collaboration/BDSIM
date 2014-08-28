@@ -9,7 +9,7 @@
 
 #include "G4UserRunAction.hh"
 #include "globals.hh"
-#include "time.h"
+#include <ctime>
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 

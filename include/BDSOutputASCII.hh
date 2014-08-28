@@ -4,6 +4,7 @@
 #include "BDSOutputBase.hh"
 
 #include <fstream>
+#include "BDSHistogram.hh"
 
 // ASCII output class
 
@@ -26,13 +27,34 @@ public:
 
   virtual void Commit();  /// close the file
   virtual void Write();   /// close and open new file
-
+  
 private:
 
-  std::ofstream of;
-  std::ofstream ofEloss;
+  /// main output file
+  std::ofstream ofMain;
+  /// primaries output file
+  std::ofstream ofPrimaries;
+  /// energy loss hits output file
+  std::ofstream ofELoss;
+  /// energy loss histogram
+  std::ofstream ofELossHistogram;
+  BDSHistogram1D* hist;
 
-  void WriteAsciiHit(G4int PDGType, G4double Mom, G4double X, G4double Y, G4double S, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID, G4int TurnsTaken);
+  void WriteAsciiHit(std::ofstream* outfile, 
+		     G4int    PDGType, 
+		     G4double Mom, 
+		     G4double X, 
+		     G4double Y,
+		     G4double Z,
+		     G4double S, 
+		     G4double XPrime, 
+		     G4double YPrime, 
+		     G4int    EventNo, 
+		     G4double Weight, 
+		     G4int    ParentID, 
+		     G4int    TrackID, 
+		     G4int    TurnsTaken);
+  void WriteHistogram();
 
 };
 

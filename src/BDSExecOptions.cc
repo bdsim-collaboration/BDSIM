@@ -55,6 +55,12 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv){
   verboseSteppingLevel = 0;
   
   circular      = false;
+  
+  seed              = -1;
+  setSeed           = false;
+  seedStateFilename = "";
+  setSeedState      = false;
+
   Parse(argc, argv);
   SetBDSIMPATH();
 }
@@ -89,6 +95,8 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 					{ "batch", 0, 0, 0 },
 					{ "materials", 0, 0, 0 },
 					{ "circular", 0, 0, 0},
+					{ "seed", 1, 0, 0},
+					{ "seedstate",1,0,0},
 					{ 0, 0, 0, 0 }};
   
   int OptionIndex = 0;
@@ -209,9 +217,18 @@ void BDSExecOptions::Parse(int argc, char **argv) {
       }
       if( !strcmp(LongOptions[OptionIndex].name, "materials") ) {
 	BDSMaterials::ListMaterials();
+	exit(0);
       }
       if( !strcmp(LongOptions[OptionIndex].name, "circular")  ) {
 	circular = true;
+      }
+      if( !strcmp(LongOptions[OptionIndex].name, "seed")  ){
+	seed = atoi(optarg);
+	setSeed = true;
+      }
+      if( !strcmp(LongOptions[OptionIndex].name, "seedstate") ){
+	seedStateFilename = optarg;
+	setSeedState = true;
       }
       break;
       
@@ -247,7 +264,9 @@ void BDSExecOptions::Usage() {
 	<<"--outline_type=<fmt>  : type of outline format"<<G4endl
 	<<"                        where fmt = optics | survey"<<G4endl
 	<<"--materials           : list materials included in bdsim by default"<<G4endl
-	<<"--circular            : assume circular machine - turn control"<<G4endl;
+	<<"--circular            : assume circular machine - turn control"<<G4endl
+        <<"--seed=N              : the seed to use for the random number generator" <<G4endl
+	<<"--seedstate=<file>    : file containing CLHEP::Random seed state - overrides other seed options"<<G4endl;
 }
 
 void BDSExecOptions::SetBDSIMPATH(){
@@ -291,6 +310,7 @@ void BDSExecOptions::Print() {
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseTrackingLevel: "<< std::setw(15) << verboseTrackingLevel<< G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseSteppingLevel: "<< std::setw(15) << verboseSteppingLevel<< G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " circular: "            << std::setw(15) << circular            << G4endl;
-
+  G4cout << __METHOD_NAME__ << std::setw(23) << " seed: "                << std::setw(15) << seed                << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " seedStateFilename: "   << std::setw(15) << seedStateFilename   << G4endl;
   return;
 }

@@ -40,7 +40,6 @@
 
 #include <cstdlib>      // standard headers 
 #include <cstdio>
-#include <ctime>
 #include <unistd.h>
 #include <getopt.h>
 #include <signal.h>
@@ -48,8 +47,6 @@
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
 #include "BDSPhysicsList.hh"
-#include "QGSP_BERT.hh"
-#include "QGSP_BERT_HP.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRunAction.hh"
 #include "BDSSamplerSD.hh"
@@ -61,13 +58,10 @@
 #include "G4TrackingManager.hh"
 #include "G4SteppingManager.hh"
 #include "G4GeometrySampler.hh"
-//#include "G4ImportanceAlgorithm.hh"
 #include "G4GeometryTolerance.hh"
 
-#include "CLHEP/Random/Random.h"
-
+#include "BDSRandom.hh" // for random number generator from CLHEP
 #include "BDSGeometryInterface.hh"
-
 #include "BDSOutputBase.hh" 
 #include "BDSOutputASCII.hh" 
 #include "BDSOutputROOT.hh" 
@@ -93,7 +87,7 @@ extern Options options;
 
 void BDS_handle_aborts(int signal_number) {
   /** 
-      Try to catch exit signals. This is not guaranteed to work.
+      Try to catch abort signals. This is not guaranteed to work.
       Main goal is to close output stream / files.
   */
 
@@ -101,8 +95,9 @@ void BDS_handle_aborts(int signal_number) {
   std::cout << "With signal: " << strsignal(signal_number) << std::endl;
   std::cout << "Trying to write and close output file" << std::endl;
   bdsOutput->Write();
+  std::cout << "Abort Geant4 run" << std::endl;
+  G4RunManager::GetRunManager()->AbortRun();
   std::cout << "Ave, Imperator, morituri te salutant!" << std::endl;
-  exit(1);
 }
 
 int main(int argc,char** argv) {
@@ -120,57 +115,25 @@ int main(int argc,char** argv) {
   G4cout << __FUNCTION__ << "> Using input file : "<< BDSExecOptions::Instance()->GetInputFilename()<<G4endl;
   
   gmad_parser(BDSExecOptions::Instance()->GetInputFilename());
-
-  //
-  // pass the run control and beam options read from the lattice
-  // file via the gmad parser to the BDSGlobalConstants and 
-  // to the BDSBunch instances
-  //
-
-#ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> Setting bunch options." << G4endl;
-#endif  
-
-  bdsBunch.SetOptions(options);
-
-
+  
   //
   // initialize random number generator
   //
 
-  // choose the Random engine
+  BDS::CreateRandomNumberGenerator();
+  BDS::SetSeed(); // set the seed from options or from exec options
+  if (BDSExecOptions::Instance()->SetSeedState()) //optionally load the seed state from file
+    {BDS::LoadSeedState(BDSExecOptions::Instance()->GetSeedStateFilename());}
+  BDS::WriteSeedState(); //write the current state once set / loaded
+
+  // instantiate the specific type of bunch distibution (class),
+  // get the corresponding parameters from the gmad parser info
+  // and attach to the initialised random number generator
 #ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> Initialising random number generator." << G4endl;
-#endif  
-  CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine);
-
-  long seed;
-
-  // get the seed from options if positive, else
-  // user time as a seed
-
-  if(BDSGlobalConstants::Instance()->GetRandomSeed()>=0)
-    seed = BDSGlobalConstants::Instance()->GetRandomSeed();
-  else
-    seed = time(NULL);
-
-  // set the seed
-  CLHEP::HepRandom::setTheSeed(seed);
-
-  // Print generator full state to output 
-  G4cout << __FUNCTION__ << "> Random number generator's state: " << G4endl << G4endl;
-  CLHEP::HepRandom::saveFullState(G4cout);
-  G4cout << G4endl;
-
-#ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> Seed from BDSGlobalConstants=" 
-	 << BDSGlobalConstants::Instance()->GetRandomSeed() << G4endl;
+  G4cout << __FUNCTION__ << "> Instantiating chosen bunch distribution." << G4endl;
 #endif
- 
-  G4cout << __FUNCTION__ << "> Random number generator's seed = "
-	 << CLHEP::HepRandom::getTheSeed() << G4endl;
-
-
+  bdsBunch.SetOptions(options);
+  
   //
   // construct mandatory run manager (the G4 kernel) and
   // set mandatory initialization classes

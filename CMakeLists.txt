@@ -320,6 +320,17 @@ if($ENV{VERBOSE})
 	message(STATUS "CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
 endif()
 
+# add a target to generate API documentation with Doxygen
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxygen.cnf.in ${CMAKE_CURRENT_BINARY_DIR}/doxygen.cnf @ONLY)
+  add_custom_target(doc
+    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doxygen.cnf
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Generating API documentation with Doxygen" VERBATIM
+  )
+endif(DOXYGEN_FOUND)
+
 #-----------------------------------------------------------------------
 # macro BDSIM_COLLATE_APPLICATION_SOURCES(source_dest_var)
 #
