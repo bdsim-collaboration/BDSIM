@@ -21,6 +21,8 @@ struct Options {
   /// beam parameters
   std::string particleName;
   std::string distribType;
+  std::string xDistribType; 
+  std::string yDistribType;
   std::string distribFile;
   std::string distribFileFormat;
 

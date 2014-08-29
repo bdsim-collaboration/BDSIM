@@ -7,6 +7,7 @@
 #include "BDSBunchTwiss.hh"
 #include "BDSBunchOld.hh"
 #include "BDSBunchUserFile.hh"
+#include "BDSBunchComposite.hh"
 
 BDSBunch::BDSBunch() {
   // Construct default reference type 
@@ -39,6 +40,9 @@ void BDSBunch::SetOptions(struct Options& opt) {
     bdsBunch = new BDSBunchTwiss();
   else if(opt.distribType == "userfile"){
     bdsBunch = new BDSBunchUserFile(opt);
+  }
+  else if(opt.distribType == "composite") {
+    bdsBunch = new BDSBunchComposite();
   }
   else if(opt.distribType.find("old") != std::string::npos) { 
     // remove old from distribType and set distribType again 
