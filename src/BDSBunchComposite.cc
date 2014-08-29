@@ -6,11 +6,8 @@ BDSBunchComposite::BDSBunchComposite() {
 }
 
 BDSBunchComposite::~BDSBunchComposite() {
-  if(xBunch) 
-    delete xBunch;
-  if(yBunch) 
-    delete yBunch;
-
+  delete xBunch;
+  delete yBunch;
 }
 
 void BDSBunchComposite::SetOptions(struct Options& opt) {
