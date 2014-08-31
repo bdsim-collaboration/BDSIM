@@ -824,8 +824,8 @@ parameters:
 		  if(!strcmp($1->name,"tunnelRadius")) { params.tunnelRadius = $3; params.tunnelRadiusset = 1;} // tunnel radius
 		  else
 		  if(!strcmp($1->name,"tunnelOffsetX")) { params.tunnelOffsetX = $3; params.tunnelOffsetXset = 1;} // tunnel offset
-		    else
-		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = $3; params.precisionRegionset = 1;} // tunnel offset
+		  else
+		    if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;} // tunnel offset
 		    else
 		  if(!strcmp($1->name,"e1")) {;}  //
                     else
