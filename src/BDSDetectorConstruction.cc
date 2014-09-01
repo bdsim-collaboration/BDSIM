@@ -263,26 +263,27 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   // define geometry scope - to calculate world dimensions
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     {
+      BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
 
 #ifdef BDSDEBUG 
-      G4cout << BDSBeamline::Instance()->currentItem()->GetName() << "  "
-             << BDSBeamline::Instance()->currentItem()->GetLength() << "  "
-             << BDSBeamline::Instance()->currentItem()->GetAngle() << "  "
+      G4cout << thecurrentitem->GetName() << "  "
+             << thecurrentitem->GetLength() << "  "
+             << thecurrentitem->GetAngle() << "  "
              << G4endl;
 #endif
 
-      BDSBeamline::Instance()->currentItem()->SetSPos(s_tot+BDSBeamline::Instance()->currentItem()->GetArcLength()/2.0);
+      thecurrentitem->SetSPos(s_tot+thecurrentitem->GetArcLength()/2.0);
 
       // advance coordinates , but not for cylindrical sampler
-      if(( BDSBeamline::Instance()->currentItem()->GetType() != "csampler") || ( BDSBeamline::Instance()->currentItem()->GetLength() <= BDSGlobalConstants::Instance()->GetSamplerLength() ) )
+      if(( thecurrentitem->GetType() != "csampler") || ( thecurrentitem->GetLength() <= BDSGlobalConstants::Instance()->GetSamplerLength() ) )
 	{
-	  s_tot+= BDSBeamline::Instance()->currentItem()->GetArcLength();
+	  s_tot+= thecurrentitem->GetArcLength();
 
-	  G4double angle=BDSBeamline::Instance()->currentItem()->GetAngle();
-	  if(!angle && BDSBeamline::Instance()->currentItem()->GetType()=="transform3d")
-	    angle=BDSBeamline::Instance()->currentItem()->GetPhi();
-	  G4double theta=BDSBeamline::Instance()->currentItem()->GetTheta();
-	  G4double psi=BDSBeamline::Instance()->currentItem()->GetPsi();
+	  G4double angle=thecurrentitem->GetAngle();
+	  if(!angle && thecurrentitem->GetType()=="transform3d")
+	    angle=thecurrentitem->GetPhi();
+	  G4double theta=thecurrentitem->GetTheta();
+	  G4double psi=thecurrentitem->GetPsi();
 
 	  // define new coordinate system local frame	  
 	  localX.rotate(psi,localZ);
@@ -298,23 +299,23 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	  localZ.rotate(theta,localX);
 
 	  // advance the coordinate system translation
-	  rtot += localZ * BDSBeamline::Instance()->currentItem()->GetZLength();
+	  rtot += localZ * thecurrentitem->GetZLength();
 #ifdef BDSDEBUG
-          G4cout << BDSBeamline::Instance()->currentItem()->GetType() << " " << rtot << G4endl;
+          G4cout << thecurrentitem->GetType() << " " << rtot << G4endl;
 #endif
 	}
 
 
-      rextentmax = rtot + localX*BDSBeamline::Instance()->currentItem()->GetXLength() + localY*BDSBeamline::Instance()->currentItem()->GetYLength();
-      rextentmin = rtot - localX*BDSBeamline::Instance()->currentItem()->GetXLength() - localY*BDSBeamline::Instance()->currentItem()->GetYLength();
+      rextentmax = rtot + localX*thecurrentitem->GetXLength() + localY*thecurrentitem->GetYLength();
+      rextentmin = rtot - localX*thecurrentitem->GetXLength() - localY*thecurrentitem->GetYLength();
 
-      //      rextentmax(0) = rtot(0) + (localX*BDSBeamline::Instance()->currentItem()->GetXLength())(0) + (localX*BDSBeamline::Instance()->currentItem()->GetYLength())(0);
-      //      rextentmax(1) = rtot(1) + (localY*BDSBeamline::Instance()->currentItem()->GetXLength())(1) + (localY*BDSBeamline::Instance()->currentItem()->GetYLength())(1);
-      //      rextentmax(2) = rtot(2) + (localZ*BDSBeamline::Instance()->currentItem()->GetXLength())(2) + (localZ*BDSBeamline::Instance()->currentItem()->GetYLength())(2);
+      //      rextentmax(0) = rtot(0) + (localX*thecurrentitem->GetXLength())(0) + (localX*thecurrentitem->GetYLength())(0);
+      //      rextentmax(1) = rtot(1) + (localY*thecurrentitem->GetXLength())(1) + (localY*thecurrentitem->GetYLength())(1);
+      //      rextentmax(2) = rtot(2) + (localZ*thecurrentitem->GetXLength())(2) + (localZ*thecurrentitem->GetYLength())(2);
 
-      //      rextentmin(0) = rtot(0) - localX*BDSBeamline::Instance()->currentItem()->GetXLength() - localX*BDSBeamline::Instance()->currentItem()->GetYLength();
-      //      rextentmin(1) = rtot(1) - localY*BDSBeamline::Instance()->currentItem()->GetXLength() - localY*BDSBeamline::Instance()->currentItem()->GetYLength();
-      //      rextentmin(2) = rtot(2) - localZ*BDSBeamline::Instance()->currentItem()->GetXLength() - localZ*BDSBeamline::Instance()->currentItem()->GetYLength();
+      //      rextentmin(0) = rtot(0) - localX*thecurrentitem->GetXLength() - localX*thecurrentitem->GetYLength();
+      //      rextentmin(1) = rtot(1) - localY*thecurrentitem->GetXLength() - localY*thecurrentitem->GetYLength();
+      //      rextentmin(2) = rtot(2) - localZ*thecurrentitem->GetXLength() - localZ*thecurrentitem->GetYLength();
 
 
 	for(int i=0; i<3; i++){
@@ -421,11 +422,12 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   
   // reset counters:
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next()){
+    BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
 
     // zero length components have no logical volumes
-    if(BDSBeamline::Instance()->currentItem()->GetLength()!=0.)
+    if(thecurrentitem->GetLength()!=0.)
       {
-	G4String logVolName = BDSBeamline::Instance()->currentItem()->GetMarkerLogicalVolume()->GetName();
+	G4String logVolName = thecurrentitem->GetMarkerLogicalVolume()->GetName();
 	(*LogVolCount)[logVolName]=1;
       }
   }
@@ -448,19 +450,20 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   theECList->push_back(ECounter);
   
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
-    { 
-      //BDSBeamline::Instance()->currentItem()->SetZLower(rtot.z());
+    {
+      BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
+      //thecurrentitem->SetZLower(rtot.z());
 #ifdef BDSDEBUG
       G4cout << G4endl;
 #endif
-      G4double angle=BDSBeamline::Instance()->currentItem()->GetAngle();
-      G4double theta=BDSBeamline::Instance()->currentItem()->GetTheta();
-      G4double psi = BDSBeamline::Instance()->currentItem()->GetPsi();
-      G4double tilt = BDSBeamline::Instance()->currentItem()->GetTilt();
-      G4double phi = BDSBeamline::Instance()->currentItem()->GetPhi();
-      G4double length = BDSBeamline::Instance()->currentItem()->GetZLength();
+      G4double angle=thecurrentitem->GetAngle();
+      G4double theta=thecurrentitem->GetTheta();
+      G4double psi = thecurrentitem->GetPsi();
+      G4double tilt = thecurrentitem->GetTilt();
+      G4double phi = thecurrentitem->GetPhi();
+      G4double length = thecurrentitem->GetZLength();
 
-      if( BDSBeamline::Instance()->currentItem()->GetType() == "transform3d")
+      if( thecurrentitem->GetType() == "transform3d")
 	{
 
 #ifdef BDSDEBUG 
@@ -468,13 +471,13 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 #endif
 
 
-	  rtot(0) += BDSBeamline::Instance()->currentItem()->GetXOffset(); 
-	  rtot(1) += BDSBeamline::Instance()->currentItem()->GetYOffset(); 
-	  rtot(2) += BDSBeamline::Instance()->currentItem()->GetZOffset(); 
+	  rtot(0) += thecurrentitem->GetXOffset(); 
+	  rtot(1) += thecurrentitem->GetYOffset(); 
+	  rtot(2) += thecurrentitem->GetZOffset(); 
 
-	  rlast(0) += BDSBeamline::Instance()->currentItem()->GetXOffset();
-	  rlast(1) += BDSBeamline::Instance()->currentItem()->GetYOffset(); 
-	  rlast(2) += BDSBeamline::Instance()->currentItem()->GetZOffset(); 
+	  rlast(0) += thecurrentitem->GetXOffset();
+	  rlast(1) += thecurrentitem->GetYOffset(); 
+	  rlast(2) += thecurrentitem->GetZOffset(); 
 
 	  _globalRotation->rotate(psi,localZ);
 	  localX.rotate(psi,localZ);
@@ -495,7 +498,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
       G4RotationMatrix *rotateComponent = new G4RotationMatrix;
 
       // tilted bends influence reference frame, otherwise just local tilt
-      if(BDSBeamline::Instance()->currentItem()->GetType() == "sbend" || BDSBeamline::Instance()->currentItem()->GetType() == "rbend" )
+      if(thecurrentitem->GetType() == "sbend" || thecurrentitem->GetType() == "rbend" )
 	{
 	  _globalRotation->rotate(tilt,localZ);
 	  localX.rotate(tilt,localZ);
@@ -507,7 +510,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
       // define center of bended elements from the previous coordinate frame
       G4ThreeVector zHalfAngle = localZ; 
 
-      if( BDSBeamline::Instance()->currentItem()->GetType() == "sbend" || BDSBeamline::Instance()->currentItem()->GetType() == "rbend"  )
+      if( thecurrentitem->GetType() == "sbend" || thecurrentitem->GetType() == "rbend"  )
 	zHalfAngle.rotate(angle/2,localY);
 
 #ifdef BDSDEBUG
@@ -526,11 +529,11 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 #endif
 
       // advance the coordinates, but not for cylindrical samplers 
-      if( ( ( BDSBeamline::Instance()->currentItem()->GetType() != "csampler") || ( length <= BDSGlobalConstants::Instance()->GetSamplerLength() ) )  && ( BDSBeamline::Instance()->currentItem()->GetType()!="element" ))
+      if( ( ( thecurrentitem->GetType() != "csampler") || ( length <= BDSGlobalConstants::Instance()->GetSamplerLength() ) )  && ( thecurrentitem->GetType()!="element" ))
 	{
 #ifdef BDSDEBUG 
-          G4cout << BDSBeamline::Instance()->currentItem()->GetType() << " "
-                 << BDSBeamline::Instance()->currentItem()->GetName() << " "
+          G4cout << thecurrentitem->GetType() << " "
+                 << thecurrentitem->GetName() << " "
                  << G4endl;
 #endif
 	  rtot = rlast + zHalfAngle * ( length/2 + BDSGlobalConstants::Instance()->GetLengthSafety()/2 );
@@ -546,7 +549,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
       // define new coordinate system local frame	  
  
       // bends transform the coordinate system
-      if( BDSBeamline::Instance()->currentItem()->GetType() == "sbend" || BDSBeamline::Instance()->currentItem()->GetType() == "rbend")
+      if( thecurrentitem->GetType() == "sbend" || thecurrentitem->GetType() == "rbend")
 	{
 	  _globalRotation->rotate(angle,localY);
 	  localX.rotate(angle,localY);
@@ -560,7 +563,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	  // bend trapezoids defined along z-axis
 	  rotateComponent->rotateY(-CLHEP::twopi/4-angle/2); 						
 	} else {
-	if (BDSBeamline::Instance()->currentItem()->GetMarkerLogicalVolume()->GetSolid()->GetName().contains("trapezoid") ){
+	if (thecurrentitem->GetMarkerLogicalVolume()->GetSolid()->GetName().contains("trapezoid") ){
 	  rotateComponent->rotateY(-CLHEP::twopi/4); //Drift trapezoids defined along z axis 
 	}
       }
@@ -569,7 +572,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 
       // zero length components not placed (transform3d)
       if(length!=0.){
-	G4LogicalVolume* LocalLogVol=BDSBeamline::Instance()->currentItem()->GetMarkerLogicalVolume();
+	G4LogicalVolume* LocalLogVol=thecurrentitem->GetMarkerLogicalVolume();
 	
 	G4String LogVolName=LocalLogVol->GetName();
 	// Set visualisation options for marker volumes - perhaps should be in base class..
@@ -589,23 +592,21 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	/*
 	// now register the spos and other info of this sensitive volume in global map
 	// used by energy counter sd to get spos of that logical volume at histogram time
-	BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
 	BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( thecurrentitem->GetName(),
 								  thecurrentitem->GetSPos() );
 	BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(SensVol,theinfo);
 	*/
 	// now register the spos and other info of this sensitive volume in global map
 	    // used by energy counter sd to get spos of that logical volume at histogram time
-	    BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
-	    BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( LogVolName,
-								 thecurrentitem->GetSPos() );
-	    BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(LocalLogVol,theinfo);
+	BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( LogVolName,
+								  thecurrentitem->GetSPos() );
+	BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(LocalLogVol,theinfo);
 
 	// add the volume to one of the regions
-	if(BDSBeamline::Instance()->currentItem()->GetPrecisionRegion())
+	if(thecurrentitem->GetPrecisionRegion())
 	  {
 #ifdef BDSDEBUG
-	    G4cout<<"ELEMENT IS IN PRECISION REGION: "<<BDSBeamline::Instance()->currentItem()->GetPrecisionRegion()<< G4endl;
+	    G4cout<<"ELEMENT IS IN PRECISION REGION: "<<thecurrentitem->GetPrecisionRegion()<< G4endl;
 #endif
 	    LocalLogVol->SetRegion(precisionRegion);
 	    precisionRegion->AddRootLogicalVolume(LocalLogVol);
@@ -616,16 +617,16 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	G4cout<<"SETTING UP SENSITIVE VOLUME..."<< G4endl;
 #endif	
 	// set up the sensitive volumes for energy counting:
-	BDSBeamline::Instance()->currentItem()->SetCopyNumber(nCopy);
-	G4LogicalVolume* SensVol=BDSBeamline::Instance()->currentItem()->GetSensitiveVolume();
+	thecurrentitem->SetCopyNumber(nCopy);
+	G4LogicalVolume* SensVol=thecurrentitem->GetSensitiveVolume();
 
 	if(SensVol)
 	  {
 	    //use already defined instance of Ecounter sd
-	    BDSBeamline::Instance()->currentItem()->SetBDSEnergyCounter(ECounter);
+	    thecurrentitem->SetBDSEnergyCounter(ECounter);
 	    SensVol->SetSensitiveDetector(ECounter);
 	    //register any volume that an ECounter is attaached to
-	    BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
+	    BDSAcceleratorComponent* thecurrentitem = thecurrentitem;
 	    BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( thecurrentitem->GetName(),
 								      thecurrentitem->GetSPos() );
 	    BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(SensVol,theinfo);
@@ -635,24 +636,24 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 #ifdef BDSDEBUG
 	G4cout<<"SETTING UP MULTIPLE SENSITIVE VOLUMES..."<< G4endl;
 #endif	
-	std::vector<G4LogicalVolume*> MultipleSensVols = BDSBeamline::Instance()->currentItem()->GetMultipleSensitiveVolumes();
-	if( ( BDSBeamline::Instance()->currentItem()->GetType()!="sampler" && BDSBeamline::Instance()->currentItem()->GetType()!="csampler" )
+	std::vector<G4LogicalVolume*> MultipleSensVols = thecurrentitem->GetMultipleSensitiveVolumes();
+	if( ( thecurrentitem->GetType()!="sampler" && thecurrentitem->GetType()!="csampler" )
 	    && MultipleSensVols.size()>0)
 	  {
 	    for(G4int i=0; i<(G4int)MultipleSensVols.size(); i++)
 	      {
 		//use already defined instance of Ecounter sd
-		BDSBeamline::Instance()->currentItem()->SetBDSEnergyCounter(ECounter);
+		thecurrentitem->SetBDSEnergyCounter(ECounter);
 		MultipleSensVols.at(i)->SetSensitiveDetector(ECounter);	
 		//register any volume that an ECounter is attaached to
-		BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
+		BDSAcceleratorComponent* thecurrentitem = thecurrentitem;
 		BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( MultipleSensVols.at(i)->GetName(),
 									  thecurrentitem->GetSPos() );
 		BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(MultipleSensVols.at(i),theinfo);
 		//G4cout << "multiplesensvols["<<i<<"] - name : "<<MultipleSensVols.at(i)->GetName() << G4endl;
 		
 		if(gflash){
-		  if((MultipleSensVols.at(i)->GetRegion() != precisionRegion) && (BDSBeamline::Instance()->currentItem()->GetType()=="element")){//If not in the precision region....
+		  if((MultipleSensVols.at(i)->GetRegion() != precisionRegion) && (thecurrentitem->GetType()=="element")){//If not in the precision region....
 		    //		    if(MultipleSensVols[i]->GetMaterial()->GetState()!=kStateGas){ //If the region material state is not gas, associate with a parameterisation
 #ifdef BDSDEBUG
 		    G4cout << "...adding " << MultipleSensVols[i]->GetName() << " to gFlashRegion" << G4endl;
@@ -681,8 +682,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 		    }
 		    MultipleSensVols[i]->SetRegion(gFlashRegion.back());
 		    gFlashRegion.back()->AddRootLogicalVolume(MultipleSensVols[i]);
-		    //		    gFlashRegion.back()->SetUserLimits(new G4UserLimits(BDSBeamline::Instance()->currentItem()->GetLength()/10.0));
-		    //		    MultipleSensVols[i]->SetUserLimits(new G4UserLimits(BDSBeamline::Instance()->currentItem()->GetLength()/10.0));
+		    //		    gFlashRegion.back()->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
+		    //		    MultipleSensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
 		  }		  
 		}
 	      }
@@ -699,7 +700,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	      //	      MultipleSensVols[i]->SetRegion(NULL);
 
 	      //	      MultipleSensVols[i]->SetRegion(gasRegion);
-	      //	      MultipleSensVols[i]->SetUserLimits(new G4UserLimits(BDSBeamline::Instance()->currentItem()->GetLength()/10.0));
+	      //	      MultipleSensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
 	//      }
 	//      }
 	//      }
@@ -707,11 +708,11 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	
 	// count and store sampler names. Should go into constructors!
   
-	LocalName=BDSBeamline::Instance()->currentItem()->GetName()+"_phys";
-	if(BDSBeamline::Instance()->currentItem()->GetType()=="sampler") {
+	LocalName=thecurrentitem->GetName()+"_phys";
+	if(thecurrentitem->GetType()=="sampler") {
 	  BDSSampler::outputNames.push_back(LocalName + "_" + BDSGlobalConstants::Instance()->StringFromInt(nCopy+1));
 	} 
-	else if(BDSBeamline::Instance()->currentItem()->GetType()=="csampler") {
+	else if(thecurrentitem->GetType()=="csampler") {
 	  BDSSamplerCylinder::outputNames.push_back(LocalName + "_" + BDSGlobalConstants::Instance()->StringFromInt(nCopy+1));
 	} else {
 	  //it would be nice to set correctly names also for other elements...
@@ -720,7 +721,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 
 	/*
 	//for torus sbend
-	if(BDSBeamline::Instance()->currentItem()->GetType() == "sbend") {
+	if(thecurrentitem->GetType() == "sbend") {
 
 	  G4double rho = length/fabs(angle);
 
@@ -747,7 +748,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	// Currently only used for BDSElement	
 	// For other elements stores global position and rotation,
 	// needed for BDSOutline
-	BDSBeamline::Instance()->currentItem()->AlignComponent(//TargetPos,
+	thecurrentitem->AlignComponent(//TargetPos,
 				 rlast,
 				 rotateComponent,
 				 *_globalRotation,
@@ -775,7 +776,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 			    BDSGlobalConstants::Instance()->GetCheckOverlaps());	      //overlap checking
 
 	  fPhysicalVolumeVector.push_back(PhysiComponentPlace);
-	  std::vector<G4VPhysicalVolume*> MultiplePhysicalVolumes = BDSBeamline::Instance()->currentItem()->GetMultiplePhysicalVolumes();
+	  std::vector<G4VPhysicalVolume*> MultiplePhysicalVolumes = thecurrentitem->GetMultiplePhysicalVolumes();
 	  for (unsigned int i=0;i<MultiplePhysicalVolumes.size(); i++) fPhysicalVolumeVector.push_back(MultiplePhysicalVolumes.at(i));
 					    
 
@@ -792,17 +793,16 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	  BDSGlobalConstants::Instance()->SetRefTransform(tf);
         }
 
-	BDSBeamline::Instance()->currentItem()->PrepareField(PhysiComponentPlace);
+	thecurrentitem->PrepareField(PhysiComponentPlace);
 
 	if(use_graphics)
 	  {
-	    	    BDSBeamline::Instance()->currentItem()->GetVisAttributes()->SetVisibility(true);
+	    thecurrentitem->GetVisAttributes()->SetVisibility(true);
 #ifdef BDSDEBUG
-		    BDSBeamline::Instance()->currentItem()->GetMarkerLogicalVolume()->
-	    	      SetVisAttributes(BDSBeamline::Instance()->currentItem()->GetVisAttributes());
+	    thecurrentitem->GetMarkerLogicalVolume()->
+	      SetVisAttributes(thecurrentitem->GetVisAttributes());
 #endif
 	  }
-	
       }
     }
 
@@ -820,14 +820,15 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   //LN TEST of spos
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     {
-      G4double currentspos = BDSBeamline::Instance()->currentItem()->GetSPos();
-      G4String currentname = BDSBeamline::Instance()->currentItem()->GetName();
+      BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
+      G4double currentspos = thecurrentitem->GetSPos();
+      G4String currentname = thecurrentitem->GetName();
       G4cout << "name : " << currentname << "\t" 
 	     << "spos : " << currentspos/CLHEP::m << " m" <<G4endl
-	     << "length   : " << BDSBeamline::Instance()->currentItem()->GetLength()/CLHEP::m << " m" << G4endl
-	     << "xlength  : " << BDSBeamline::Instance()->currentItem()->GetXLength()/CLHEP::m << " m" << G4endl
-	     << "ylength  : " << BDSBeamline::Instance()->currentItem()->GetYLength()/CLHEP::m << " m" << G4endl
-	     << "zlength  : " << BDSBeamline::Instance()->currentItem()->GetZLength()/CLHEP::m << " m" << G4endl
+	     << "length   : " << thecurrentitem->GetLength()/CLHEP::m << " m" << G4endl
+	     << "xlength  : " << thecurrentitem->GetXLength()/CLHEP::m << " m" << G4endl
+	     << "ylength  : " << thecurrentitem->GetYLength()/CLHEP::m << " m" << G4endl
+	     << "zlength  : " << thecurrentitem->GetZLength()/CLHEP::m << " m" << G4endl
 	     << G4endl;
     }
   
