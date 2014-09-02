@@ -623,8 +623,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	    //use already defined instance of Ecounter sd
 	    thecurrentitem->SetBDSEnergyCounter(ECounter);
 	    SensVol->SetSensitiveDetector(ECounter);
-	    //register any volume that an ECounter is attaached to
-	    BDSAcceleratorComponent* thecurrentitem = thecurrentitem;
+	    //register any volume that an ECounter is attached to
+	    BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
 	    BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( thecurrentitem->GetName(),
 								      thecurrentitem->GetSPos() );
 	    BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(SensVol,theinfo);
@@ -643,8 +643,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 		//use already defined instance of Ecounter sd
 		thecurrentitem->SetBDSEnergyCounter(ECounter);
 		MultipleSensVols.at(i)->SetSensitiveDetector(ECounter);	
-		//register any volume that an ECounter is attaached to
-		BDSAcceleratorComponent* thecurrentitem = thecurrentitem;
+		//register any volume that an ECounter is attached to
+		BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
 		BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( MultipleSensVols.at(i)->GetName(),
 									  thecurrentitem->GetSPos() );
 		BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(MultipleSensVols.at(i),theinfo);
