@@ -385,10 +385,10 @@ void BDSMultipole::BuildBeampipe(G4double startAper,
 #endif
   
   itsBeampipeSolid=new G4Cons(itsName+"_bmp_solid",
-			      startAper-BDSGlobalConstants::Instance()->GetBeampipeThickness(),
 			      startAper,
-			      endAper-BDSGlobalConstants::Instance()->GetBeampipeThickness(),
+			      startAper+BDSGlobalConstants::Instance()->GetBeampipeThickness(),
 			      endAper,
+			      endAper+BDSGlobalConstants::Instance()->GetBeampipeThickness(),
 			      itsLength/(2.),
 			      0,CLHEP::twopi*CLHEP::radian);
       
@@ -401,9 +401,9 @@ void BDSMultipole::BuildBeampipe(G4double startAper,
       
       itsInnerBeampipeSolid=new G4Cons(itsName+"_inner_bmp_solid",
 				       0.,
-				       startAper-BDSGlobalConstants::Instance()->GetBeampipeThickness(),
+				       startAper,
 				       0.,
-				       endAper-BDSGlobalConstants::Instance()->GetBeampipeThickness(),
+				       endAper,
 				       itsLength/2-BDSGlobalConstants::Instance()->GetLengthSafety(),
 				       0,CLHEP::twopi*CLHEP::radian);
       
