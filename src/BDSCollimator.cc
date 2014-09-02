@@ -110,10 +110,26 @@ void BDSCollimator::BuildInnerCollimator()
 #endif
     if(itsType == "rcol")
       {
+	
 	itsInnerSolid=new G4Box(itsName+"_inner",
 				itsXAper,
 				itsYAper,
 				itsLength/2);
+	
+	/*
+	double zPlanepos [2] = {0,itsLength};	
+	double rOuter [2] = {itsXAper, itsXAper};
+	G4double rInner [2] = {0.0,0.0};
+
+	itsInnerSolid = new G4Polyhedra(itsName+"_inner",
+					0.,
+					2*CLHEP::pi,
+					4,
+					2,
+					zPlanepos,
+					rInner,
+					rOuter);
+	*/
       }
     
     if(itsType == "ecol")
