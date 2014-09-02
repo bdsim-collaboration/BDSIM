@@ -31,11 +31,10 @@ public:
   /// names of samplers for output
   static std::vector <G4String> outputNames;
 
-protected:
-
 private:
-  void SamplerLogicalVolume();
-  G4VisAttributes* SetVisAttributes();
+  virtual void BuildMarkerLogicalVolume();
+
+  virtual G4VisAttributes* SetVisAttributes();
 
   /// id of sampler
   int nThisSampler;

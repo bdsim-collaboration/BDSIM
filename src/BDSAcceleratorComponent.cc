@@ -40,6 +40,12 @@
 #include "G4AssemblyVolume.hh"
 #include "G4Transform3D.hh"
 
+typedef std::map<G4String,int> LogVolCountMap;
+extern LogVolCountMap* LogVolCount;
+
+typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
+extern LogVolMap* LogVol;
+
 BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4String& aName,
 						  G4double aLength, 
@@ -204,6 +210,38 @@ BDSAcceleratorComponent::~BDSAcceleratorComponent ()
   delete VisAtt3;
   delete VisAtt4;
   delete VisAtt5;
+}
+
+void BDSAcceleratorComponent::Initialise()
+{
+  // check and build logical volume
+  LogicalVolume();
+}
+
+void BDSAcceleratorComponent::LogicalVolume()
+{
+  if(!(*LogVolCount)[itsName])
+    {
+      Build();
+      //
+      // append marker logical volume to volume map
+      //
+      (*LogVolCount)[itsName]=1;
+      (*LogVol)[itsName]=itsMarkerLogicalVolume;
+    }
+  else
+    {
+      (*LogVolCount)[itsName]++;
+      //
+      // use already defined marker volume
+      //
+      itsMarkerLogicalVolume=(*LogVol)[itsName];
+    }
+}
+
+void BDSAcceleratorComponent::Build()
+{
+  BuildMarkerLogicalVolume(); // pure virtual provided by derived class
 }
 
 void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)
@@ -717,7 +755,8 @@ void BDSAcceleratorComponent::BuildBLMs()
 }
 
 //This Method is for investigating the Anomalous signal at LHC junction IP8
-
+// no longer used
+/*
 void BDSAcceleratorComponent::BuildGate()
 {
   //Declare variables, matrices and constants to use
@@ -764,5 +803,5 @@ void BDSAcceleratorComponent::BuildGate()
   VisAtt->SetForceSolid(true);
   itsGateLogicalVolume->SetVisAttributes(VisAtt);
   }
-
+*/
 //  LocalWords:  itsTunnelUserLimits

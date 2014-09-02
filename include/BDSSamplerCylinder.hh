@@ -27,11 +27,9 @@ public:
   /// names of samplers for output
   static std::vector <G4String> outputNames;
 
-protected:
-
 private:
-  void SamplerCylinderLogicalVolume();
-  G4VisAttributes* SetVisAttributes();
+  virtual void BuildMarkerLogicalVolume();
+  virtual G4VisAttributes* SetVisAttributes();
   G4double itsRadius;
 
   /// id of sampler

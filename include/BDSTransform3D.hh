@@ -31,10 +31,9 @@ public:
   
 private:
   
-  G4VisAttributes* SetVisAttributes();
+  virtual void BuildMarkerLogicalVolume();
+  virtual G4VisAttributes* SetVisAttributes();
   
-  //  G4PVPlacement* itsPhysiComp;
-
 };
 
 #endif

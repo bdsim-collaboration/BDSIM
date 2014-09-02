@@ -568,8 +568,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	}
       }
     
-    					
-
       // zero length components not placed (transform3d)
       if(length!=0.){
 	G4LogicalVolume* LocalLogVol=thecurrentitem->GetMarkerLogicalVolume();
@@ -779,8 +777,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	  std::vector<G4VPhysicalVolume*> MultiplePhysicalVolumes = thecurrentitem->GetMultiplePhysicalVolumes();
 	  for (unsigned int i=0;i<MultiplePhysicalVolumes.size(); i++) fPhysicalVolumeVector.push_back(MultiplePhysicalVolumes.at(i));
 					    
-
-	  
 #ifdef BDSDEBUG 
         G4cout << "Volume name: " << LocalName << G4endl;
 #endif

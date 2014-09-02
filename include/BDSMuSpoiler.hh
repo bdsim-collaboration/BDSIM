@@ -17,7 +17,6 @@
 #include "G4VisAttributes.hh"
 
 #include "G4Box.hh"
-//#include "BDSEnergyCounterSD.hh"
 #include "BDSMuSpoilerMagField.hh"
 #include "G4FieldManager.hh"
 
@@ -32,17 +31,17 @@ public:
 
   ~BDSMuSpoiler();
 
-protected:
-
 private:
-  G4VisAttributes* SetVisAttributes();
+  virtual G4VisAttributes* SetVisAttributes();
   G4VisAttributes* SetBPVisAttributes();
 
   // Geometrical objects:
 
+  virtual void Build();
+  virtual void BuildMarkerLogicalVolume();
   void BuildMuSpoiler();
   void BuildMuSpoilerTunnel();
-  void BuildBLMs();
+  virtual void BuildBLMs();
 
   G4VPhysicalVolume* itsPhysiComp;
   G4VPhysicalVolume* itsPhysiCompSoil;

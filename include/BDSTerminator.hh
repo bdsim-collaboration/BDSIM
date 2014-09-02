@@ -16,14 +16,14 @@ public:
   BDSTerminator(G4String aName, G4double aLength);
   ~BDSTerminator();
 private:
-  void TerminatorLogicalVolume();
+  virtual void BuildMarkerLogicalVolume();
 
   //id of this sampler / terminator
   G4int nThisSampler;
   /// total number of terminators
   static G4int nSamplers;
 
-  G4VisAttributes* SetVisAttributes();
+  virtual G4VisAttributes* SetVisAttributes();
 };
 
 void AddTerminatorToEndOfBeamline(ElementList* beamline_list);

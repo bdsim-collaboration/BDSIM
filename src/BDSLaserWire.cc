@@ -13,14 +13,6 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 
-#include <map>
-
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
-
 //============================================================
 
 BDSLaserWire::BDSLaserWire (G4String aName,G4double aLength,
@@ -32,35 +24,24 @@ G4double aWavelength, G4ThreeVector aDirection):
   itsLaserCompton(NULL),
   itsLaserDirection(aDirection),itsLaserWavelength(aWavelength)
 {
-  LaserWireLogicalVolume();
-  BDSGlobalConstants::Instance()->
-    SetLaserwireWavelength(itsMarkerLogicalVolume->GetName(),aWavelength);
-  BDSGlobalConstants::Instance()->
-    SetLaserwireDir(itsMarkerLogicalVolume->GetName(),aDirection);
 }
 
-void BDSLaserWire::LaserWireLogicalVolume()
+void BDSLaserWire::BuildMarkerLogicalVolume()
 {
-  if(!(*LogVolCount)[itsName])
-    {
-      itsMarkerLogicalVolume=new G4LogicalVolume(
-						 new G4Box(itsName+"_solid",
-							   BDSGlobalConstants::Instance()->
-							   GetBeampipeRadius(),
-							   BDSGlobalConstants::Instance()->
-							   GetBeampipeRadius(),
-							   itsLength/2),
-						 BDSMaterials::Instance()->GetMaterial("LaserVac"),
-						 itsName);
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-    }
+  itsMarkerLogicalVolume=new G4LogicalVolume(
+					     new G4Box(itsName+"_solid",
+						       BDSGlobalConstants::Instance()->
+						       GetBeampipeRadius(),
+						       BDSGlobalConstants::Instance()->
+						       GetBeampipeRadius(),
+						       itsLength/2),
+					     BDSMaterials::Instance()->GetMaterial("LaserVac"),
+					     itsName);
   itsMarkerLogicalVolume->SetVisAttributes(itsVisAttributes);
+  BDSGlobalConstants::Instance()->
+    SetLaserwireWavelength(itsMarkerLogicalVolume->GetName(),itsLaserWavelength);
+  BDSGlobalConstants::Instance()->
+    SetLaserwireDir(itsMarkerLogicalVolume->GetName(),itsLaserDirection);
 }
 
 G4VisAttributes* BDSLaserWire::SetVisAttributes()

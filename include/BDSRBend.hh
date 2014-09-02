@@ -39,11 +39,12 @@ private:
   G4double itsBField;
   G4double itsBGrad;
   G4double itsMagFieldLength;
-
-  void BuildBPFieldAndStepper();
-  void BuildRBMarkerLogicalVolume();
-  void BuildRBBeampipe();
-  void BuildRBOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+  
+  virtual void Build();
+  virtual void BuildBPFieldAndStepper();
+  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildBeampipe(G4String materialName="");
+  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
 
   G4VisAttributes* SetVisAttributes();
   G4Trd* markerSolidVolume;
@@ -57,11 +58,6 @@ private:
   G4UserLimits* endsInnerBeampipeUserLimits;
   G4VisAttributes* innerBeampipeVisAtt;
   G4VisAttributes* beampipeVisAtt;
-
-  // field related objects:
-  BDSDipoleStepper* itsStepper;
-  BDSSbendMagField* itsMagField;
-  G4Mag_EqRhs* itsEqRhs;
 
 };
 

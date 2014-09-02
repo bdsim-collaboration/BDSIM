@@ -19,7 +19,7 @@ class BDSTeleporter: public BDSAcceleratorComponent
 public:
   BDSTeleporter(G4String name,
 		G4double length);  
-  ~BDSTeleporter(){};
+  ~BDSTeleporter();
 
 protected:
   G4ChordFinder*          itsChordFinder;
@@ -29,10 +29,13 @@ protected:
   G4Mag_UsualEqRhs*       itsEqRhs;
 
 private:
-  void CreateTeleporterLogicalVolume();
-  void CreateBFieldAndStepper();
-  void CreateFieldManager(G4MagIntegratorStepper* stepper,G4MagneticField* field);
-  G4VisAttributes* SetVisAttributes();
+  virtual void Build();
+  virtual void BuildMarkerLogicalVolume();
+  /// define field and stepper
+  void BuildBPFieldAndStepper();
+  /// build and set field manager and chord finder
+  void BuildBPFieldMgr(G4MagIntegratorStepper* stepper,G4MagneticField* field);
+  virtual G4VisAttributes* SetVisAttributes();
 };
 
 void CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline);

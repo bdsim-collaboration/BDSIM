@@ -23,8 +23,6 @@ Work in progress.
 extern BDSSamplerSD* BDSSamplerSensDet;
 
 //============================================================
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
 
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
@@ -38,24 +36,16 @@ BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double tScint, G
   _screenRotationMatrix = new G4RotationMatrix();
   _screenAngle=angle;
   _screenRotationMatrix->rotateY(_screenAngle);
+}
 
-  if ( (*LogVolCount)[itsName]==0)
-    {
-      ComputeDimensions();
-      BuildMarkerVolume();
-      if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-	BuildTunnel();
-      }
-      BuildScintillatorScreen();
-      
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=GetMarkerLogicalVolume();
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-    }  
+void BDSScintillatorScreen::Build()
+{
+  ComputeDimensions();
+  BuildMarkerLogicalVolume();
+  if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
+    BuildTunnel();
+  }
+  BuildScintillatorScreen();
 }
 
 G4VisAttributes* BDSScintillatorScreen::SetVisAttributes()
@@ -363,7 +353,7 @@ void BDSScintillatorScreen::ComputeDimensions(){
   _yLength = _screenHeight;
 }
 
-void BDSScintillatorScreen::BuildMarkerVolume(){
+void BDSScintillatorScreen::BuildMarkerLogicalVolume(){
   itsMarkerSolidVolume=new G4Box( itsName+"_marker_log",
 				  _xLength,
 				  _yLength,

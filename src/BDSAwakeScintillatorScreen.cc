@@ -18,7 +18,6 @@ Work in progress.
 #include "BDSDebug.hh"
 
 #include "G4SDManager.hh"
-#include <map>
 #include "BDSAwakeMultilayerScreen.hh"
 //#include "UltraFresnelLens.hh"
 //#include "UltraFresnelLensParameterisation.hh"
@@ -26,16 +25,10 @@ Work in progress.
 #include "G4Trap.hh"
 //#include "BDSOutputBase.hh"
 
-
-extern BDSSamplerSD* BDSSamplerSensDet;
-
-
-//============================================================
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
+
+extern BDSSamplerSD* BDSSamplerSensDet;
 
 //============================================================
 BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial=""):
@@ -50,20 +43,6 @@ BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String
     _screenRotationMatrix->rotateY(_screenAngle);
 
   _vacRotationMatrix = new G4RotationMatrix();
-
-  if ( (*LogVolCount)[itsName]==0)
-    {
-      Build();
-      //      SetVisAttributes();
-      
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=GetMarkerLogicalVolume();
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-    }  
 }
 
 G4VisAttributes* BDSAwakeScintillatorScreen::SetVisAttributes()
@@ -288,7 +267,7 @@ void BDSAwakeScintillatorScreen::Build(){
       BuildScreen();
       BuildCamera();	
       ComputeDimensions();
-      BuildMarkerVolume();
+      BuildMarkerLogicalVolume();
       if(_vacChambType==2){
 	BuildVacuumChamber2();
       } else {
@@ -411,7 +390,7 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
 
 }
 
-void BDSAwakeScintillatorScreen::BuildMarkerVolume(){
+void BDSAwakeScintillatorScreen::BuildMarkerLogicalVolume(){
   itsMarkerSolidVolume=new G4Box( itsName+"_marker_solid",
 				  itsXLength/2.0,
 				  itsYLength/2.0,
