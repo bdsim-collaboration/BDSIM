@@ -12,7 +12,6 @@
 #include "BDSDecapole.hh"
 #include "BDSDecMagField.hh"
 #include "BDSDecStepper.hh"
-#include "BDSMaterials.hh"
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
@@ -20,7 +19,6 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4PVPlacement.hh"               
 #include "G4TransportationManager.hh"
 
 //============================================================

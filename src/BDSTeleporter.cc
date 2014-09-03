@@ -24,7 +24,8 @@ BDSTeleporter::BDSTeleporter(G4String name,
 			  0,
 			  0,
 			  0,
-			  SetVisAttributes())
+			  SetVisAttributes()),
+  itsChordFinder(NULL),itsFieldManager(NULL),itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " Constructing Teleporter of length: " 

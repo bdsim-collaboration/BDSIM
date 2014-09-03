@@ -1,8 +1,6 @@
 //BackScatterBias - particles being backscattered are split
 
 #include "BDSBackScatterBias.hh"
-#include "G4SteppingManager.hh"
-
 
 BDSBackScatterBias::BDSBackScatterBias(const G4String& aName,
                                          G4ProcessType   aType)

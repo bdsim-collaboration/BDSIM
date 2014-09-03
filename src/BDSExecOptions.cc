@@ -227,7 +227,9 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 	setSeed = true;
       }
       if( !strcmp(LongOptions[OptionIndex].name, "seedstate") ){
-	seedStateFilename = optarg;
+	if(optarg) {
+	  seedStateFilename = optarg;
+	}
 	setSeedState = true;
       }
       break;
