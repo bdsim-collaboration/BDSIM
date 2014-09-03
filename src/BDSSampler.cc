@@ -21,12 +21,6 @@
 //#include"MagFieldFunction.hh"
 #include <map>
 
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
-
 extern BDSSamplerSD* BDSSamplerSensDet;
 
 std::vector <G4String> BDSSampler::outputNames;
@@ -48,57 +42,39 @@ BDSSampler::BDSSampler (G4String aName, G4double aLength):
   nThisSampler= nSamplers + 1;
   SetName("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
   SetType("sampler");
-  SamplerLogicalVolume();
   nSamplers++;
-  //G4int nSamplers=(*LogVolCount)[itsName];
+#ifdef BDSDEBUG
+  G4cout << "BDSSampler.cc Nsamplers " << nSamplers << G4endl;
+#endif
   //BDSRoot->SetSamplerNumber(nSamplers); 
 }
 
-
-void BDSSampler::SamplerLogicalVolume()
+void BDSSampler::BuildMarkerLogicalVolume()
 {
-  if(!(*LogVolCount)[itsName])
-    {
-
-
-      itsMarkerLogicalVolume=
-	new G4LogicalVolume(
-			    new G4Box(itsName+"_solid",
-				      BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				      BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				      itsLength/2.0),
-			    BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
-			    itsName);
-
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
+  itsMarkerLogicalVolume=
+    new G4LogicalVolume(
+			new G4Box(itsName+"_solid",
+				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
+				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
+				  itsLength/2.0),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			itsName);
+  
 #ifndef NOUSERLIMITS
-      itsOuterUserLimits =new G4UserLimits();
-      //      double stepFactor=5;
-      //      itsOuterUserLimits->SetMaxAllowedStep(itsLength*stepFactor);
-      itsOuterUserLimits->SetMaxAllowedStep(1*CLHEP::m);
-      itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
+  itsOuterUserLimits =new G4UserLimits();
+  //      double stepFactor=5;
+  //      itsOuterUserLimits->SetMaxAllowedStep(itsLength*stepFactor);
+  itsOuterUserLimits->SetMaxAllowedStep(1*CLHEP::m);
+  itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
-     // Sensitive Detector:
-#ifdef BDSDEBUG
-      G4cout << "BDSSampler.cc Nsamplers " << nSamplers << G4endl;
-#endif
-
-      if(nSamplers==0)
-	{
-	  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-	  BDSSamplerSensDet=new BDSSamplerSD(itsName,"plane");
-	  SDMan->AddNewDetector(BDSSamplerSensDet);
-//SPM     itsMarkerLogicalVolume->SetSensitiveDetector(BDSSamplerSensDet);
-	}
-      itsMarkerLogicalVolume->SetSensitiveDetector(BDSSamplerSensDet);
-    }
-  else
+  // Sensitive Detector:
+  if(nSamplers==0)
     {
-      (*LogVolCount)[itsName]++;
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-      itsMarkerLogicalVolume->SetSensitiveDetector(BDSSamplerSensDet);
+      G4SDManager* SDMan = G4SDManager::GetSDMpointer();
+      BDSSamplerSensDet=new BDSSamplerSD(itsName,"plane");
+      SDMan->AddNewDetector(BDSSamplerSensDet);
     }
+  itsMarkerLogicalVolume->SetSensitiveDetector(BDSSamplerSensDet);
 }
 
 G4VisAttributes* BDSSampler::SetVisAttributes()

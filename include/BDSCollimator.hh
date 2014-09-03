@@ -26,12 +26,15 @@ G4String aTunnelMaterial="");
   ~BDSCollimator();
 
 protected:
+  virtual void Build();
 
 private:
-  void BuildBLMs();
+  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildBLMs();
   void BuildInnerCollimator();
   void BuildCollimatorTunnel();
-  G4VisAttributes* SetVisAttributes();
+
+  virtual G4VisAttributes* SetVisAttributes();
 
   // Geometrical objects:
 
@@ -56,7 +59,6 @@ private:
   
   G4Mag_UsualEqRhs* itsEqRhs;
 
-private:
   G4Material* itsCollimatorMaterial;
   //BDSEnergyCounterSD* itsEnergyCounterSD;
   G4double itsOuterR;

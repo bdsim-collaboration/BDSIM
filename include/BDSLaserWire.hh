@@ -32,11 +32,9 @@ public:
   inline void SetLaserWavelength(G4double aWavelength);
   inline G4double GetLaserWavelength();
 
-protected:
-
 private:
-  void LaserWireLogicalVolume();
-  G4VisAttributes* SetVisAttributes();
+  virtual void BuildMarkerLogicalVolume();
+  virtual G4VisAttributes* SetVisAttributes();
 
   BDSLaserCompton* itsLaserCompton; // not used atm, JS
   G4ThreeVector itsLaserDirection;

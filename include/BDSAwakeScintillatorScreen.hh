@@ -26,7 +26,7 @@ public:
 protected:
 
 private:
-  void Build();
+  virtual void Build();
   void BuildCamera();
   void PlaceCamera();
   void BuildScreen();
@@ -36,7 +36,7 @@ private:
   void BuildVacuumChamber2();
   G4VisAttributes* SetVisAttributes();
   void ComputeDimensions();
-  void BuildMarkerVolume();
+  virtual void BuildMarkerLogicalVolume();
   void BuildCameraScoringPlane();
   void BuildScreenScoringPlane();
   void BuildAwakeScintillatorMaterial();

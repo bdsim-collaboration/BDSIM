@@ -13,15 +13,6 @@
 #include "G4UserLimits.hh"
 #include "G4Tubs.hh"
 
-
-#include <map>
-
-//============================================================
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
 //============================================================
 
 BDSMuSpoiler::BDSMuSpoiler (G4String& aName,G4double aLength,G4double bpRad,
@@ -29,7 +20,7 @@ BDSMuSpoiler::BDSMuSpoiler (G4String& aName,G4double aLength,G4double bpRad,
                             std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
                             G4String aTunnelMaterial):
   BDSAcceleratorComponent(aName,
-			 aLength,bpRad,bpRad,bpRad,
+			  aLength,bpRad,bpRad,bpRad,
                           SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial),
   itsPhysiComp(NULL),itsPhysiCompSoil(NULL),itsPhysiComp2(NULL),itsPhysiInnerBP(NULL),
   itsPhysiBP(NULL),itsSolidLogVol(NULL),itsInnerLogVol(NULL),itsBeampipeLogicalVolume(NULL),
@@ -51,19 +42,30 @@ BDSMuSpoiler::BDSMuSpoiler (G4String& aName,G4double aLength,G4double bpRad,
   }
 
   SetBPVisAttributes();
-  if ( (*LogVolCount)[itsName]==0)
-    {
+}
+
+void BDSMuSpoiler::Build()
+{
+  BDSAcceleratorComponent::Build();
+  if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
+    BuildTunnel();
+  }
+  BuildMuSpoiler();
+}
+
+void BDSMuSpoiler::BuildMarkerLogicalVolume() 
+{
   G4double xLength, yLength;
   G4double totalTunnelRadius = BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+std::max(BDSGlobalConstants::Instance()->GetTunnelOffsetX(),BDSGlobalConstants::Instance()->GetTunnelOffsetY());
   
   xLength = yLength = std::max(itsOuterRadius,BDSGlobalConstants::Instance()->GetComponentBoxSize()/2);
   xLength = yLength = std::max(xLength,totalTunnelRadius);
-
+  
 #ifdef BDSDEBUG 
   G4cout<<"marker volume : x/y="<<xLength/CLHEP::m<<
     " m, l= "<<  (itsLength+BDSGlobalConstants::Instance()->GetLengthSafety())/2/CLHEP::m <<" m"<<G4endl;
 #endif
-
+  
   itsMarkerLogicalVolume=new G4LogicalVolume
     (new G4Box( itsName+"_solid",
                 xLength,
@@ -78,22 +80,8 @@ BDSMuSpoiler::BDSMuSpoiler (G4String& aName,G4double aLength,G4double bpRad,
   // G4LogicalVolume::AddDaughter, which calls 
   // pDaughterLogical->SetFieldManager(fFieldManager, true) - the
   // latter 'true' over-writes all the other fields
-      itsMarkerLogicalVolume->
-	SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
-      
-      if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-        BuildTunnel();
-      }
-      BuildMuSpoiler();
-
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-    }  
+  itsMarkerLogicalVolume->
+    SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
 }
 
 void BDSMuSpoiler::BuildMuSpoiler()

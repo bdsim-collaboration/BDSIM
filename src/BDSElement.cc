@@ -36,18 +36,7 @@
 #include "BDSGeometryGDML.hh"
 #endif
 
-#include <map>
 #include <vector>
-
-//============================================================
-
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
-
-
 
 //============================================================
 
@@ -57,6 +46,7 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap, G4doubl
 			  aName,
 			  aLength,bpRad,0,0,
 			  SetVisAttributes(), aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*CLHEP::m, aTunnelOffsetX*CLHEP::m, aTunnelCavityMaterial),
+  itsGeometry(geometry), itsBmap(bmap),
   fChordFinder(NULL), itsFStepper(NULL), itsFEquation(NULL), itsEqRhs(NULL), 
   itsMagField(NULL), itsCachedMagField(NULL), itsUniformMagField(NULL)
 {
@@ -73,30 +63,22 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap, G4doubl
   //          element. Subsequent copies will have no alignment set.
   align_in_volume = NULL;
   align_out_volume = NULL;
-
-  if(!(*LogVolCount)[itsName])
-    {
-#ifdef BDSDEBUG 
-      G4cout<<"BDSElement : starting build logical volume "<<
-        itsName<<G4endl;
-#endif
-      BuildGeometry(); // build element box
-      
-#ifdef BDSDEBUG 
-      G4cout<<"BDSElement : end build logical volume "<<
-        itsName<<G4endl;
-#endif
-
-      PlaceComponents(geometry,bmap); // place components (from file) and build filed maps
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-      
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-    }
 }
 
+void BDSElement::BuildMarkerLogicalVolume() {
+#ifdef BDSDEBUG 
+  G4cout<<"BDSElement : starting build logical volume "<<
+    itsName<<G4endl;
+#endif
+  BuildGeometry(); // build element box
+      
+#ifdef BDSDEBUG 
+  G4cout<<"BDSElement : end build logical volume "<<
+    itsName<<G4endl;
+#endif
+
+  PlaceComponents(itsGeometry,itsBmap); // place components (from file) and build filed maps
+}
 
 void BDSElement::BuildElementMarkerLogicalVolume(){
   
@@ -216,9 +198,6 @@ void BDSElement::BuildGeometry()
   // Build the marker logical volume 
   BuildElementMarkerLogicalVolume();
 
-
-  (*LogVolCount)[itsName] = 1;
-  (*LogVol)[itsName] = itsMarkerLogicalVolume;
 #ifndef NOUSERLIMITS
   itsOuterUserLimits = new G4UserLimits();
   G4double stepfactor=5;
