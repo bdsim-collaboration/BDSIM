@@ -39,9 +39,10 @@ private:
 
   virtual void Build();
   virtual void BuildMarkerLogicalVolume();
-  void BuildMuSpoiler();
-  void BuildMuSpoilerTunnel();
+  void BuildBPFieldAndStepper();
+  void BuildBeampipe();
   virtual void BuildBLMs();
+  void BuildMuSpoiler();
 
   G4VPhysicalVolume* itsPhysiComp;
   G4VPhysicalVolume* itsPhysiCompSoil;
