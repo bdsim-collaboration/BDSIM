@@ -58,7 +58,7 @@ BDSDrift::BDSDrift (G4String aName,
 
 void BDSDrift::BuildBeampipe(G4String materialName) {
   if (itsAperset){
-    BuildBeampipe(materialName);
+    BDSMultipole::BuildBeampipe(materialName);
   } else {
     BDSMultipole::BuildBeampipe(itsXAper, itsYAper, materialName);
   }

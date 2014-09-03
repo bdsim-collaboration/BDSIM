@@ -93,13 +93,13 @@ private:
   /// build beam loss monitors
   virtual void BuildBLMs();
 
-  /// Standard beam pipe, cross section is elliptical (or circular)
-  virtual void BuildBeampipe(G4String materialName = ""); 
-
   /// Method for common parts of both Buildbeampipe methods
   void FinaliseBeampipe(G4String materialName = "",G4RotationMatrix* RotY=NULL);
 
 protected:
+  /// Standard beam pipe, cross section is elliptical (or circular)
+  // protected since called by BDSDrift::BuildBeampipe, change to private in future whenever possible
+  virtual void BuildBeampipe(G4String materialName = ""); 
   /// Builds a tapered beam pipe (only used for drifts at the moment)
   void BuildBeampipe(G4double startAper, G4double endAper, G4String materialName = "");
 
