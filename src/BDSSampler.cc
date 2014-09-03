@@ -8,6 +8,7 @@
 */
 // gab:
 #include "BDSGlobalConstants.hh" 
+#include "BDSMaterials.hh"
 #include "BDSSampler.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
@@ -18,16 +19,14 @@
 #include "BDSSamplerSD.hh"
 #include "G4SDManager.hh"
 
-//#include"MagFieldFunction.hh"
-#include <map>
-
-extern BDSSamplerSD* BDSSamplerSensDet;
+//============================================================
 
 std::vector <G4String> BDSSampler::outputNames;
 
-//============================================================
-
 int BDSSampler::nSamplers = 0;
+
+// created here, so only one is created with fixed known name
+BDSSamplerSD* BDSSampler::SensitiveDetector = new BDSSamplerSD("BDSSampler","plane");
 
 int BDSSampler::GetNSamplers() { return nSamplers; }
 
@@ -46,7 +45,10 @@ BDSSampler::BDSSampler (G4String aName, G4double aLength):
 #ifdef BDSDEBUG
   G4cout << "BDSSampler.cc Nsamplers " << nSamplers << G4endl;
 #endif
-  //BDSRoot->SetSamplerNumber(nSamplers); 
+
+  // register sampler sensitive detector
+  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
+  SDMan->AddNewDetector(SensitiveDetector);
 }
 
 void BDSSampler::BuildMarkerLogicalVolume()
@@ -67,14 +69,7 @@ void BDSSampler::BuildMarkerLogicalVolume()
   itsOuterUserLimits->SetMaxAllowedStep(1*CLHEP::m);
   itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
-  // Sensitive Detector:
-  if(nSamplers==0)
-    {
-      G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-      BDSSamplerSensDet=new BDSSamplerSD(itsName,"plane");
-      SDMan->AddNewDetector(BDSSamplerSensDet);
-    }
-  itsMarkerLogicalVolume->SetSensitiveDetector(BDSSamplerSensDet);
+  itsMarkerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
 }
 
 G4VisAttributes* BDSSampler::SetVisAttributes()

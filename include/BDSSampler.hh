@@ -9,15 +9,9 @@
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
+#include "BDSSamplerSD.hh"
 
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
-
 
 class BDSSampler : public BDSAcceleratorComponent
 {
@@ -31,6 +25,9 @@ public:
   /// names of samplers for output
   static std::vector <G4String> outputNames;
 
+  /// access for external classes to sensitive detector
+  static BDSSamplerSD* GetSensitiveDetector(){return SensitiveDetector;}
+
 private:
   virtual void BuildMarkerLogicalVolume();
 
@@ -40,6 +37,8 @@ private:
   int nThisSampler;
   /// number of total Samplers
   static int nSamplers;
+  /// pointer to sensitive detector, only one for all samplers
+  static BDSSamplerSD* SensitiveDetector;
 };
 
 #endif

@@ -14,10 +14,6 @@
 #include "G4LogicalBorderSurface.hh"
 #include "BDSOutputBase.hh"
 
-#include "G4SDManager.hh"
-
-extern BDSSamplerSD* BDSSamplerSensDet;
-
 //============================================================
 typedef std::map<G4String,int> LogVolCountMap;
 extern LogVolCountMap* LogVolCount;
@@ -185,13 +181,8 @@ void BDSScreenLayer::InternalMirror::compute(){
 void BDSScreenLayer::sampler(){ //Make this layer a sampler scoring plane
   (*LogVol)[_name] = _log;//Add to the map of logical volumes.
   G4String samplerName = _name + "_1";
-  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
 
-  if(BDSSampler::GetNSamplers()==0){
-    BDSSamplerSensDet = new BDSSamplerSD(samplerName, "plane");
-    SDMan->AddNewDetector(BDSSamplerSensDet);
-  }
-  _log->SetSensitiveDetector(BDSSamplerSensDet);
+  _log->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   BDSSampler::AddExternalSampler(samplerName);
 
 #ifndef NOUSERLIMITS

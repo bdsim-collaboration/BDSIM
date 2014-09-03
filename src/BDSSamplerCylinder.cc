@@ -4,6 +4,7 @@
    Copyright (c) 2005 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 #include "BDSGlobalConstants.hh" 
+#include "BDSMaterials.hh"
 #include "BDSSamplerCylinder.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
@@ -14,11 +15,13 @@
 #include "BDSSamplerSD.hh"
 #include "G4SDManager.hh"
 
-std::vector <G4String> BDSSamplerCylinder::outputNames;
-
 //============================================================
 
+std::vector <G4String> BDSSamplerCylinder::outputNames;
+
 int BDSSamplerCylinder::nSamplers = 0;
+
+BDSSamplerSD* BDSSamplerCylinder::SensitiveDetector=new BDSSamplerSD("BDSSamplerCylinder","cylinder");
 
 int BDSSamplerCylinder::GetNSamplers() { return nSamplers; }
 
@@ -36,7 +39,10 @@ BDSSamplerCylinder (G4String aName,G4double aLength,G4double aRadius):
   SetName("CSampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
   SetType("csampler");
   nSamplers++;
-  //BDSRoot->SetSampCylinderNumber(nSamplers);
+
+  // register sampler sensitive detector
+  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
+  SDMan->AddNewDetector(SensitiveDetector);
 }
 
 void BDSSamplerCylinder::BuildMarkerLogicalVolume()
@@ -55,12 +61,7 @@ void BDSSamplerCylinder::BuildMarkerLogicalVolume()
   itsOuterUserLimits->SetMaxAllowedStep(BDSGlobalConstants::Instance()->GetSamplerDiameter()/2.0);
   itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
-  // Sensitive Detector:
-  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-  BDSSamplerSD* SensDet=new BDSSamplerSD(itsName,"cylinder");
-      
-  SDMan->AddNewDetector(SensDet);
-  itsMarkerLogicalVolume->SetSensitiveDetector(SensDet);
+  itsMarkerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
 }
 
 G4VisAttributes* BDSSamplerCylinder::SetVisAttributes()

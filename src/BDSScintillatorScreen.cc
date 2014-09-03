@@ -5,6 +5,7 @@ Work in progress.
 
 #include "BDSGlobalConstants.hh" 
 #include "BDSScintillatorScreen.hh"
+#include "BDSMaterials.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerSD.hh"
 #include "G4Box.hh"
@@ -17,10 +18,7 @@ Work in progress.
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
 
-#include "G4SDManager.hh"
 #include <map>
-
-extern BDSSamplerSD* BDSSamplerSensDet;
 
 //============================================================
 
@@ -104,12 +102,7 @@ void BDSScintillatorScreen::BuildCameraScoringPlane(){
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   
   (*LogVol)[_samplerName]=itsCameraScoringPlaneLog;
-  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-  if(BDSSampler::GetNSamplers()==0){
-    BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
-    SDMan->AddNewDetector(BDSSamplerSensDet);
-  }
-  itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
+  itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   //SPM bdsOutput->nSamplers++;
   BDSSampler::AddExternalSampler(_samplerName+"_1");
 #ifndef NOUSERLIMITS
@@ -139,12 +132,7 @@ void BDSScintillatorScreen::BuildScreenScoringPlane(){
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   
   (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;
-  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-  if(BDSSampler::GetNSamplers()==0){
-    BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
-    SDMan->AddNewDetector(BDSSamplerSensDet);
-  }
-  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
+  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   //SPM bdsOutput->nSamplers++;
   BDSSampler::AddExternalSampler(_screenSamplerName+"_1");
 #ifndef NOUSERLIMITS
@@ -177,12 +165,8 @@ void BDSScintillatorScreen::BuildScintillatorLayer(){
 
   /*
     (*LogVol)[_screenSamplerName]=itsScintillatorLayerLog;
-    G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-    if(BDSSampler::GetNSamplers()==0){
-      BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
-    SDMan->AddNewDetector(BDSSamplerSensDet);
   }
-  itsScintillatorLayerLog->SetSensitiveDetector(BDSSamplerSensDet);
+  itsScintillatorLayerLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   //SPM bdsOutput->nSamplers++;
   BDSSampler::AddExternalSampler();
   bdsOutput->SampName.push_back(_screenSamplerName+"_1");

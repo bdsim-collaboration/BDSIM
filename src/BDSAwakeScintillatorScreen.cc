@@ -5,6 +5,7 @@ Work in progress.
 
 #include "BDSGlobalConstants.hh" 
 #include "BDSAwakeScintillatorScreen.hh"
+#include "BDSMaterials.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSCCDCamera.hh"
@@ -17,7 +18,6 @@ Work in progress.
 #include "G4TransportationManager.hh"
 #include "BDSDebug.hh"
 
-#include "G4SDManager.hh"
 #include "BDSAwakeMultilayerScreen.hh"
 //#include "UltraFresnelLens.hh"
 //#include "UltraFresnelLensParameterisation.hh"
@@ -27,8 +27,6 @@ Work in progress.
 
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
-
-extern BDSSamplerSD* BDSSamplerSensDet;
 
 //============================================================
 BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial=""):
@@ -103,13 +101,9 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   
   (*LogVol)[_samplerName]=itsCameraScoringPlaneLog;
   (*LogVol)[_samplerName2]=itsCameraScoringPlaneLog2;
-  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-  if(BDSSampler::GetNSamplers()==0){
-    BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
-    SDMan->AddNewDetector(BDSSamplerSensDet);
-  }
-  itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
-  itsCameraScoringPlaneLog2->SetSensitiveDetector(BDSSamplerSensDet);
+
+  itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
+  itsCameraScoringPlaneLog2->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   //SPM bdsOutput->nSamplers++;
   BDSSampler::AddExternalSampler(_samplerName+"_1");
   BDSSampler::AddExternalSampler(_samplerName2+"_1");
@@ -143,8 +137,8 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   
   (*LogVol)[_samplerName3]=itsCameraScoringPlaneLog3;
   (*LogVol)[_samplerName4]=itsCameraScoringPlaneLog4;
-  itsCameraScoringPlaneLog3->SetSensitiveDetector(BDSSamplerSensDet);
-  itsCameraScoringPlaneLog4->SetSensitiveDetector(BDSSamplerSensDet);
+  itsCameraScoringPlaneLog3->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
+  itsCameraScoringPlaneLog4->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   BDSSampler::AddExternalSampler(_samplerName3+"_1");
   BDSSampler::AddExternalSampler(_samplerName4+"_1");
 
@@ -177,8 +171,8 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   
   (*LogVol)[_samplerName5]=itsCameraScoringPlaneLog5;
   (*LogVol)[_samplerName6]=itsCameraScoringPlaneLog6;
-  itsCameraScoringPlaneLog5->SetSensitiveDetector(BDSSamplerSensDet);
-  itsCameraScoringPlaneLog6->SetSensitiveDetector(BDSSamplerSensDet);
+  itsCameraScoringPlaneLog5->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
+  itsCameraScoringPlaneLog6->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   BDSSampler::AddExternalSampler(_samplerName5+"_1");
   BDSSampler::AddExternalSampler(_samplerName6+"_1");
 
@@ -240,16 +234,11 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
   (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;
   
   (*LogVol)[_screenSamplerName2]=itsScreenScoringPlaneLog2;
-  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-  if(BDSSampler::GetNSamplers()==0){
-    BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
-    SDMan->AddNewDetector(BDSSamplerSensDet);
-  }
   
   //--
-  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
+  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   //-----------
-  itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSamplerSensDet);
+  itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   //SPM bdsOutput->nSamplers++;
   //--
   BDSSampler::AddExternalSampler(_screenSamplerName+"_1");
