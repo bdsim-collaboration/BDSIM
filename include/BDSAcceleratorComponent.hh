@@ -150,8 +150,9 @@ private:
   /// private default constructor
   BDSAcceleratorComponent();
   /// initialise method
+  /// checks if marker logical volume already exists and builds new one if not
   // can't be in constructor as calls virtual methods
-  virtual void Initialise();
+  void Initialise();
 
 public:
   BDSAcceleratorComponent (
@@ -202,8 +203,6 @@ private:
   //    Geometry building
   //
 
-  /// check if logical volume already exists and build new one if not
-  void LogicalVolume();
   /// build marker logical volume
   virtual void BuildMarkerLogicalVolume() = 0;
   /// set and return visual attributes

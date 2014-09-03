@@ -215,11 +215,6 @@ BDSAcceleratorComponent::~BDSAcceleratorComponent ()
 void BDSAcceleratorComponent::Initialise()
 {
   // check and build logical volume
-  LogicalVolume();
-}
-
-void BDSAcceleratorComponent::LogicalVolume()
-{
   if(!(*LogVolCount)[itsName])
     {
       Build();
