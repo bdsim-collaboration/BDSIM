@@ -3,6 +3,8 @@
 #include <iomanip>
 #include <unistd.h>
 
+#include "globals.hh" // geant4's globals that is...
+
 #include "BDSDebug.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputFormat.hh"
@@ -273,22 +275,31 @@ void BDSExecOptions::Usage() {
 
 void BDSExecOptions::SetBDSIMPATH(){
   //Set itsBDSIMPATH to mirror what is done in parser.l (i.e. if no environment varible set, assume base filename path is that of the gmad file).
-  itsBDSIMPATH=getEnv("BDSIMPATH");
+  itsBDSIMPATH = getEnv("BDSIMPATH");
   if(itsBDSIMPATH.length()<=0){
-    G4String basefilepath = "";
-    G4String::size_type found = inputFilename.rfind("/");//find the last '/'
+    G4String inputFilepath = "";
+    // get the path part of the supplied path to the main input file
+    G4String::size_type found = inputFilename.rfind("/"); // find the last '/'
     if (found != G4String::npos){
-      //if we found a '/' get the path before that and prepend to included files
-      basefilepath += inputFilename.substr(0,found);
-      basefilepath += "/";
+      inputFilepath = inputFilename.substr(0,found); // the path is the bit before that
+    } // else remains empty string
+    // need to know whether it's an absolute or relative path
+    if ((inputFilename.substr(0,1)) == "/"){
+      // the main file has an absolute path
+      itsBDSIMPATH = inputFilepath;
+    } else {
+      // the main file has a relative path
+      char cwdchars[200]; //filepath up to 200 characters
+      G4String cwd = (G4String)getcwd(cwdchars, sizeof(cwdchars)) + "/";
+      itsBDSIMPATH = cwd + inputFilepath;
+    
     }
-    //get current working directory and build up include filenames
-    const int maxfilenamelength = 200;
-    char cwdchars[maxfilenamelength];
-    G4String cwd = (G4String)getcwd(cwdchars, sizeof(cwdchars));
-    itsBDSIMPATH= cwd + "/" + basefilepath; 
   }
   itsBDSIMPATH += "/";
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " BDSIMPATH set to: " << itsBDSIMPATH << G4endl;
+#endif
+
 }
 
 void BDSExecOptions::Print() {

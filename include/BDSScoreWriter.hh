@@ -27,8 +27,8 @@ public:
 	virtual ~BDSScoreWriter();
 	void setMaterial(G4String material) {fMaterial = material;};
 	void setFireAngle(G4double fireAngle) {fFireAngle = fireAngle;};
-	G4String getMaterial() {return fMaterial;};
-	G4String getFireAngle() {return fFireAngle;};
+	G4String getMaterial()  {return fMaterial;};
+	G4double getFireAngle() {return fFireAngle;};
 public:
         /// store a quantity into a file
 #if G4VERSION_NUMBER < 960
