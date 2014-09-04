@@ -787,7 +787,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 #ifdef BDSDEBUG
   // check of logvolinfo
   // LN TEST
-  typedef std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>::iterator it_type;
+  //  typedef std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>::iterator it_type;
   std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* themap = BDSGlobalConstants::Instance()->LogicalVolumeInfo();
   //for (it_type iterator = themap->begin(); iterator != themap->end(); iterator++){
     //G4cout << "pointer : " << iterator->first << "\tname : " << iterator->second->GetName() << "\t" 
