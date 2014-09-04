@@ -281,7 +281,7 @@ void BDSExecOptions::SetBDSIMPATH(){
     // get the path part of the supplied path to the main input file
     G4String::size_type found = inputFilename.rfind("/"); // find the last '/'
     if (found != G4String::npos){
-      inputFilepath = inputFilename.substr(0,found+1); // the path is the bit before that, including the '/'
+      inputFilepath = inputFilename.substr(0,found); // the path is the bit before that
     } // else remains empty string
     // need to know whether it's an absolute or relative path
     if ((inputFilename.substr(0,1)) == "/"){
