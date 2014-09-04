@@ -50,16 +50,6 @@ void BDSKicker::Build() {
       
       BuildOuterFieldManager(2, BFldIron,0);
     }
-  
-  //
-  // define sensitive volumes for hit generation
-  //
-  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-    SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-  }
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-    SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-  }
 }
 
 

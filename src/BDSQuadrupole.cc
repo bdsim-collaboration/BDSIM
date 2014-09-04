@@ -78,21 +78,6 @@ void BDSQuadrupole::Build()
       
       BuildOuterFieldManager(4, BFldIron,CLHEP::pi/4);
     }
-  //
-  // define sensitive volumes for hit generation
-  //
-  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-#ifdef BDSDEBUG
-    G4cout << "BDSQuadrupole.cc:> setting sensitive beam pipe" << G4endl;
-#endif
-    SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-  }
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-#ifdef BDSDEBUG
-    G4cout << "BDSQuadrupole.cc:> setting sensitive outer volume" << G4endl;
-#endif
-    SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-  }
 }
 
 G4VisAttributes* BDSQuadrupole::SetVisAttributes()
@@ -126,6 +111,16 @@ void BDSQuadrupole::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)
     BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
   else //default - cylinder - standard
     BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
+
+  //
+  // define sensitive volumes for hit generation
+  //
+  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
+#ifdef BDSDEBUG
+    G4cout << "BDSQuadrupole.cc:> setting sensitive outer volume" << G4endl;
+#endif
+    AddSensitiveVolume(itsOuterLogicalVolume);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////

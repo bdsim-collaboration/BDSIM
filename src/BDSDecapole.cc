@@ -61,11 +61,6 @@ void BDSDecapole::Build() {
       
       BuildOuterFieldManager(10, BFldIron,CLHEP::pi/10);
     }
-  //
-  // define sensitive volumes for hit generation
-  //
-  SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-  SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
 }
 
 G4VisAttributes* BDSDecapole::SetVisAttributes()

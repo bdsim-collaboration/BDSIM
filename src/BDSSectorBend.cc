@@ -60,17 +60,6 @@ void BDSSectorBend::Build()
       
       BuildOuterFieldManager(2, BFldIron,CLHEP::halfpi);
     }
-
-  //
-  // define sensitive volumes for hit generation
-  //
-  
-  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-    SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-  }
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-    SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-  }
 }
 
 G4VisAttributes* BDSSectorBend::SetVisAttributes()
@@ -109,6 +98,13 @@ void BDSSectorBend::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
     BuildCylindricalOuterLogicalVolume(OuterMaterialIsVacuum); // cylinder outer volume
   else //default - cylinder - standard
     BuildCylindricalOuterLogicalVolume(OuterMaterialIsVacuum); // cylinder outer volume
+  
+  //
+  // define sensitive volumes for hit generation
+  //
+  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
+    AddSensitiveVolume(itsOuterLogicalVolume);
+  }
 }
 
 void BDSSectorBend::BuildMarkerLogicalVolume()
@@ -275,6 +271,12 @@ void BDSSectorBend::BuildBeampipe(G4String materialName)
 		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		        // copy number
   
   SetMultiplePhysicalVolumes(PhysiComp);
+  //
+  // define sensitive volumes for hit generation
+  //
+  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
+    AddSensitiveVolume(itsBeampipeLogicalVolume);
+  }
 
   //
   // set user limits for stepping, tracking and propagation in B field

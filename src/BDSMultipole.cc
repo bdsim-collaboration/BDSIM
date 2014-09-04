@@ -359,6 +359,12 @@ void BDSMultipole::FinaliseBeampipe(G4String materialName, G4RotationMatrix* Rot
   //Add the physical volumes to a vector which can be used for e.g. geometrical biasing
   SetMultiplePhysicalVolumes(itsPhysiInner);
   SetMultiplePhysicalVolumes(itsPhysiComp);
+  //
+  // define sensitive volumes for hit generation
+  //
+  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
+    AddSensitiveVolume(itsBeampipeLogicalVolume);
+  }
   
 #ifndef NOUSERLIMITS
   itsBeampipeUserLimits = new G4UserLimits("beampipe cuts");
@@ -581,6 +587,12 @@ void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
   
   //Add the physical volumes to a vector which can be used for e.g. geometrical biasing
   SetMultiplePhysicalVolumes(itsPhysiComp);
+  //
+  // define sensitive volumes for hit generation
+  //
+  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
+    AddSensitiveVolume(itsOuterLogicalVolume);
+  }
 
   //
   // set visualization attributes

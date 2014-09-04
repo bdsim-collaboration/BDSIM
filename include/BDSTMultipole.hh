@@ -47,7 +47,6 @@ private:
 		     // (NOT multiplied by multipole length)
   G4int itsOrder;
   
-  virtual void Build();
   virtual void BuildBPFieldAndStepper();
 
   virtual G4VisAttributes* SetVisAttributes();

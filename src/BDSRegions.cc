@@ -108,7 +108,7 @@ void BDSRegions::buildGFlashRegion(){
 void BDSRegions::buildGFlashRegion(BDSAcceleratorComponent* /*var*/){
 
   /*
-  vector<G4LogicalVolume*> MultipleSensVols = var->GetMultipleSensitiveVolumes();
+  vector<G4LogicalVolume*> MultipleSensVols = var->GetSensitiveVolumes();
   if( ( var->GetType()!="sampler" && var->GetType()!="csampler" )
       && MultipleSensVols.size()>0)
     {

@@ -195,7 +195,6 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
   itsSPos = 0.0;
   itsCopyNumber = 0;
   itsBDSEnergyCounter=NULL;
-  itsSensitiveVolume=NULL;  
 }
 
 BDSAcceleratorComponent::~BDSAcceleratorComponent ()
@@ -717,7 +716,7 @@ void BDSAcceleratorComponent::BuildBLMs()
        
        //Set BLM gas as sensitive if option is chosen
        if(BDSGlobalConstants::Instance()->GetSensitiveBLMs()){
-         SetMultipleSensitiveVolumes(itsBLMLogicalVolume);
+         AddSensitiveVolume(itsBLMLogicalVolume);
        }
 
        itsBlmCaseLogicalVolume = new G4LogicalVolume(itsBlmCaseSolid,

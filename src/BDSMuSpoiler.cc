@@ -142,7 +142,7 @@ void BDSMuSpoiler::BuildBeampipe()
   itsBeampipeLogicalVolume->SetVisAttributes(itsBPVisAttributes);
 
   if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-    SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
+    AddSensitiveVolume(itsBeampipeLogicalVolume);
   }
 
   itsPhysiInnerBP = new G4PVPlacement(
@@ -235,7 +235,7 @@ void BDSMuSpoiler::BuildMuSpoiler()
   SetMultiplePhysicalVolumes(itsPhysiComp2);
 
   if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-    SetMultipleSensitiveVolumes(itsSolidLogVol);
+    AddSensitiveVolume(itsSolidLogVol);
   }
 
 

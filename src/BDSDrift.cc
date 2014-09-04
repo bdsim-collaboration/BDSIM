@@ -71,13 +71,6 @@ void BDSDrift::Build() {
   VisAtt1->SetVisibility(false);
   VisAtt1->SetForceSolid(true);
   itsMarkerLogicalVolume->SetVisAttributes(VisAtt1);
-
-  //
-  // define sensitive volumes for hit generation
-  //
-  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-    SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-  }
 }
 
 G4VisAttributes* BDSDrift::SetVisAttributes()

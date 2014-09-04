@@ -612,63 +612,47 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 
 	
 #ifdef BDSDEBUG
-	G4cout<<"SETTING UP SENSITIVE VOLUME..."<< G4endl;
+	G4cout<<"SETTING UP SENSITIVE VOLUMES..."<< G4endl;
 #endif	
 	// set up the sensitive volumes for energy counting:
 	thecurrentitem->SetCopyNumber(nCopy);
-	G4LogicalVolume* SensVol=thecurrentitem->GetSensitiveVolume();
 
-	if(SensVol)
-	  {
-	    //use already defined instance of Ecounter sd
-	    thecurrentitem->SetBDSEnergyCounter(ECounter);
-	    SensVol->SetSensitiveDetector(ECounter);
-	    //register any volume that an ECounter is attached to
-	    BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( thecurrentitem->GetName(),
-								      thecurrentitem->GetSPos() );
-	    BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(SensVol,theinfo);
-	    
-	  }
-
-#ifdef BDSDEBUG
-	G4cout<<"SETTING UP MULTIPLE SENSITIVE VOLUMES..."<< G4endl;
-#endif	
-	std::vector<G4LogicalVolume*> MultipleSensVols = thecurrentitem->GetMultipleSensitiveVolumes();
+	std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetSensitiveVolumes();
 	if( ( thecurrentitem->GetType()!="sampler" && thecurrentitem->GetType()!="csampler" )
-	    && MultipleSensVols.size()>0)
+	    && SensVols.size()>0)
 	  {
-	    for(G4int i=0; i<(G4int)MultipleSensVols.size(); i++)
+	    thecurrentitem->SetBDSEnergyCounter(ECounter);
+	    for(G4int i=0; i<(G4int)SensVols.size(); i++)
 	      {
 		//use already defined instance of Ecounter sd
-		thecurrentitem->SetBDSEnergyCounter(ECounter);
-		MultipleSensVols.at(i)->SetSensitiveDetector(ECounter);	
+		SensVols[i]->SetSensitiveDetector(ECounter);	
 		//register any volume that an ECounter is attached to
-		BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( MultipleSensVols.at(i)->GetName(),
+		BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( SensVols[i]->GetName(),
 									  thecurrentitem->GetSPos() );
-		BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(MultipleSensVols.at(i),theinfo);
-		//G4cout << "multiplesensvols["<<i<<"] - name : "<<MultipleSensVols.at(i)->GetName() << G4endl;
+		BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(SensVols[i],theinfo);
+		//G4cout << "sensvols["<<i<<"] - name : "<<SensVols[i]->GetName() << G4endl;
 		
 		if(gflash){
-		  if((MultipleSensVols.at(i)->GetRegion() != precisionRegion) && (thecurrentitem->GetType()=="element")){//If not in the precision region....
-		    //		    if(MultipleSensVols[i]->GetMaterial()->GetState()!=kStateGas){ //If the region material state is not gas, associate with a parameterisation
+		  if((SensVols[i]->GetRegion() != precisionRegion) && (thecurrentitem->GetType()=="element")){//If not in the precision region....
+		    //		    if(SensVols[i]->GetMaterial()->GetState()!=kStateGas){ //If the region material state is not gas, associate with a parameterisation
 #ifdef BDSDEBUG
-		    G4cout << "...adding " << MultipleSensVols[i]->GetName() << " to gFlashRegion" << G4endl;
+		    G4cout << "...adding " << SensVols[i]->GetName() << " to gFlashRegion" << G4endl;
 #endif
 		    /**********************************************                                                                                                                       
 		     * Initialise shower model                                                                                                                                          
 		     ***********************************************/
-		    G4String rname = "gFlashRegion_" + MultipleSensVols[i]->GetName();
+		    G4String rname = "gFlashRegion_" + SensVols[i]->GetName();
 		    gFlashRegion.push_back(new G4Region(rname.c_str()));
 		    G4String mname = "fastShowerModel" + rname;
 #ifdef BDSDEBUG
 		    G4cout << "...making parameterisation..." << G4endl;
 #endif
 		    theFastShowerModel.push_back(new BDSShowerModel(mname.c_str(),gFlashRegion.back()));
-		    theParameterisation.push_back(new GFlashHomoShowerParameterisation(BDSMaterials::Instance()->GetMaterial(MultipleSensVols[i]->GetMaterial()->GetName().c_str()))); 
+		    theParameterisation.push_back(new GFlashHomoShowerParameterisation(BDSMaterials::Instance()->GetMaterial(SensVols[i]->GetMaterial()->GetName().c_str()))); 
 		    theFastShowerModel.back()->SetParameterisation(*theParameterisation.back());
 		    theFastShowerModel.back()->SetParticleBounds(*theParticleBounds) ;
 		    theFastShowerModel.back()->SetHitMaker(*theHitMaker);
-		    if(MultipleSensVols[i]->GetMaterial()->GetState()!=kStateGas){ //If the region material state is not gas, associate with a parameterisation
+		    if(SensVols[i]->GetMaterial()->GetState()!=kStateGas){ //If the region material state is not gas, associate with a parameterisation
 		      theFastShowerModel.back()->SetFlagParamType(1);//Turn on the parameterisation for e-m showers starting in sensitive material and fitting in the current stack.
 		      theFastShowerModel.back()->SetFlagParticleContainment(1);//Turn on containment
 		    } else {
@@ -676,10 +660,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 		      theFastShowerModel.back()->SetFlagParticleContainment(0);//Turn on containment
 
 		    }
-		    MultipleSensVols[i]->SetRegion(gFlashRegion.back());
-		    gFlashRegion.back()->AddRootLogicalVolume(MultipleSensVols[i]);
+		    SensVols[i]->SetRegion(gFlashRegion.back());
+		    gFlashRegion.back()->AddRootLogicalVolume(SensVols[i]);
 		    //		    gFlashRegion.back()->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
-		    //		    MultipleSensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
+		    //		    SensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
 		  }		  
 		}
 	      }
@@ -689,14 +673,14 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 
 	    //Loop through again, unsetting gas regions
 
-	//	if(MultipleSensVols.size()>0){
-	//	  for(G4int i=0; i<(G4int)MultipleSensVols.size(); i++){
-	//	    if(MultipleSensVols[i]->GetMaterial()->GetState()==kStateGas){ //If the region material state is not gas, associate with a parameterisation
-	//	      MultipleSensVols[i]->GetRegion()->RemoveRootLogicalVolume(MultipleSensVols[i]);
-	      //	      MultipleSensVols[i]->SetRegion(NULL);
+	//	if(SensVols.size()>0){
+	//	  for(G4int i=0; i<(G4int)SensVols.size(); i++){
+	//	    if(SensVols[i]->GetMaterial()->GetState()==kStateGas){ //If the region material state is not gas, associate with a parameterisation
+	//	      SensVols[i]->GetRegion()->RemoveRootLogicalVolume(SensVols[i]);
+	      //	      SensVols[i]->SetRegion(NULL);
 
-	      //	      MultipleSensVols[i]->SetRegion(gasRegion);
-	      //	      MultipleSensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
+	      //	      SensVols[i]->SetRegion(gasRegion);
+	      //	      SensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
 	//      }
 	//      }
 	//      }

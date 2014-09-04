@@ -270,10 +270,9 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     // set sensitive volumes
     //vector<G4LogicalVolume*> SensComps = ggmad->SensitiveComponents;
     //for(G4int id=0; id<SensComps.size(); id++)
-    //  SetMultipleSensitiveVolumes(SensComps[id]);
+    //  AddSensitiveVolume(SensComps[id]);
 
-    
-    SetMultipleSensitiveVolumes(itsMarkerLogicalVolume);
+    AddSensitiveVolume(itsMarkerLogicalVolume);
 
     // attach magnetic field if present
     if(bFormat=="3D"){
@@ -303,7 +302,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     itsMarkerLogicalVolume->SetVisAttributes(VisAttLCDD);
 
     LCDD->Construct(itsMarkerLogicalVolume);
-    SetMultipleSensitiveVolumes(itsMarkerLogicalVolume);
+    AddSensitiveVolume(itsMarkerLogicalVolume);
     if(bFormat=="XY"){
       itsMagField = new BDSXYMagField(bFile);
       itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::um);
@@ -335,7 +334,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 
     std::vector<G4LogicalVolume*> SensComps = LCDD->SensitiveComponents;
     for(G4int id=0; id<(G4int)SensComps.size(); id++)
-      SetMultipleSensitiveVolumes(SensComps[id]);
+      AddSensitiveVolume(SensComps[id]);
     delete LCDD;
 #else
     G4cout << "LCDD support not selected during BDSIM configuration" << G4endl;
@@ -354,7 +353,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 
     std::vector<G4LogicalVolume*> SensComps = Mokka->SensitiveComponents;
     for(G4int id=0; id<(G4int)SensComps.size(); id++)
-      SetMultipleSensitiveVolumes(SensComps[id]);
+      AddSensitiveVolume(SensComps[id]);
 
     std::vector<G4LogicalVolume*> GFlashComps =Mokka->itsGFlashComponents;
     for(G4int id=0; id<(G4int)GFlashComps.size(); id++)
