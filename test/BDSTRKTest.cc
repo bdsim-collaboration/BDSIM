@@ -3,16 +3,24 @@
 #include <iostream>
 #include <string>
 
-#include "TRKAperture.hh"
-#include "TRKDrift.hh"
-#include "TRKLine.hh"
-#include "TRKPlacement.hh"
-#include "TRKQuadrupole.hh"
+#include "tracker/TRKAperture.hh"
+#include "tracker/TRKDrift.hh"
+#include "tracker/TRKFactory.hh"
+#include "tracker/TRKLine.hh"
+#include "tracker/TRKPlacement.hh"
+#include "tracker/TRKQuadrupole.hh"
 
-#include "vector3.hh"
-#include "vector6.hh"
+#include "tracker/vector3.hh"
+#include "tracker/vector6.hh"
 
-int main() {
+// GMAD parser
+#include "parser/gmad.h"
+#include "parser/options.h"
+
+extern ElementList beamline_list;
+extern Options options;
+
+int main(int argc,char** argv) {
 
 #ifdef TRKDEBUG 
   std::cout << "Debug on" << std::endl;
@@ -56,6 +64,8 @@ int main() {
   TRKLine line("line");
   line.AddElement(&drift);
   line.AddElement(&quad);
+  std::cout << "Line created" << std::endl; 
+  std::cout << line << std::endl;
   TRKElement* element = line.FindElement("drift");
   if (element) std::cout << element->GetName() << " has been found" << std::endl;
 
@@ -65,6 +75,30 @@ int main() {
   std::cout << "Tracking" << std::endl;
   line.Track(vIn,vOut);
 
+  // second method of creation, input file and factory 
+
+  // default filename
+  std::string filename = "./BDSTrackingTestFiles/gmad";
+
+  /// first argument is gmad file
+  if (argc>1){
+    filename = argv[1];
+  }
+
+  // fill options from file 
+  gmad_parser(filename);
+
+  TRKTrackingElement::TRKType type2 = TRKTrackingElement::thick;
+
+  TRKFactory trkfactory = TRKFactory(type2,options);
+  TRKTrackingElement* createdLine = trkfactory.createLine(beamline_list);
+  TRKLine* line2 = dynamic_cast<TRKLine*>(createdLine);
+  if (line2) {
+    std::cout << "line created from gmad file: " << std::endl;
+    std::cout << line2 << std::endl;
+
+    line2->Track(vIn,vOut);
+  }
   std::cout << "Test successful!" << std::endl;
   return 0;
 }

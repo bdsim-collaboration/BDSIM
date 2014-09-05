@@ -19,7 +19,7 @@ void TRKLine::Track(const double vIn[], double vOut[]) {
   }
 
   TRKLineIter elIter = elements.begin();
-  for (;elIter<elements.end(); ++elIter) {
+  for (;elIter!=elements.end(); ++elIter) {
     (*elIter)->Track(vTemp,vOut);
     /// vTemp = vOut;
     for (int i=0; i<6; i++) {
@@ -39,7 +39,7 @@ void TRKLine::AddElement(TRKTrackingElement* e) {
 TRKTrackingElement* TRKLine::FindElement(std::string eName)const {
  TRKLineIter elIter = elements.begin();
  TRKLineIter elIterEnd = elements.end();
-  for (;elIter<elIterEnd; ++elIter) {
+  for (;elIter!=elIterEnd; ++elIter) {
     if ((*elIter)->GetName() == eName) {
       return (*elIter);
     }
@@ -51,3 +51,13 @@ TRKTrackingElement* TRKLine::FindElement(std::string eName)const {
 void TRKLine::ThinTrack(const double [], double [], double){std::cout << "should not be called" << std::endl;}
 void TRKLine::HybridTrack(const double [], double [], double){std::cout << "should not be called" << std::endl;}
 void TRKLine::ThickTrack(const double [], double [], double){std::cout << "should not be called" << std::endl;}
+
+  /// output stream
+std::ostream& operator<< (std::ostream &out, const TRKLine &line) {
+  TRKLine::TRKLineIter elIter = line.elements.begin();
+  TRKLine::TRKLineIter elIterEnd = line.elements.end();
+  for (;elIter!=elIterEnd; ++elIter) {
+    out << *(*elIter) << std::endl;
+  }
+  return out;
+}

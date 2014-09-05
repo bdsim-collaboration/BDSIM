@@ -25,6 +25,9 @@ public:
   virtual void Track(const double vIn[], double vOut[]);
   virtual void Track(const double vIn[], double vOut[], double h);
 
+  /// output stream
+  friend std::ostream& operator<< (std::ostream &out, const TRKLine &element);
+
 protected:
   virtual void ThinTrack(const double vIn[], double vOut[], double h);
   virtual void HybridTrack(const double vIn[], double vOut[], double h);

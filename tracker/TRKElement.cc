@@ -6,3 +6,8 @@ TRKElement::TRKElement(std::string nameIn, double lengthIn, double size_xIn, dou
 {} 
 
 TRKElement::~TRKElement() {}
+
+std::ostream& operator<< (std::ostream &out, const TRKElement &element) {
+  return out << element.name << " "
+	     << element.length << "m ";
+}
