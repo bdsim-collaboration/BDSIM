@@ -1499,6 +1499,18 @@ same format as this.
 
 @end example
 
+@node print
+@subsection @code{print}
+
+The @code{print} command will print the element list. It can also print
+the value of an option or a variable.
+
+@example
+
+@code{print, x;}
+
+@end example
+
 
 @c cccccccccccccccccccccccccccccccccccccccccc
 @c
