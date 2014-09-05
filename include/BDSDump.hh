@@ -29,12 +29,10 @@ public:
   /// separate counter used in BDSRunManager
   static int nUsedDumps;
 
-protected:
-
 private:
 
-  void DumpLogicalVolume();
-  G4VisAttributes* SetVisAttributes();
+  virtual void BuildMarkerLogicalVolume();
+  virtual G4VisAttributes* SetVisAttributes();
 
   /// number of total Dumps
   static int nDumps;

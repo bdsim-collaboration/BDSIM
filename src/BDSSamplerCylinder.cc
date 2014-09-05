@@ -4,6 +4,7 @@
    Copyright (c) 2005 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 #include "BDSGlobalConstants.hh" 
+#include "BDSMaterials.hh"
 #include "BDSSamplerCylinder.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
@@ -11,23 +12,16 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 
-#include <map>
-
 #include "BDSSamplerSD.hh"
 #include "G4SDManager.hh"
 
-
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
+//============================================================
 
 std::vector <G4String> BDSSamplerCylinder::outputNames;
 
-//============================================================
-
 int BDSSamplerCylinder::nSamplers = 0;
+
+BDSSamplerSD* BDSSamplerCylinder::SensitiveDetector=new BDSSamplerSD("BDSSamplerCylinder","cylinder");
 
 int BDSSamplerCylinder::GetNSamplers() { return nSamplers; }
 
@@ -44,46 +38,30 @@ BDSSamplerCylinder (G4String aName,G4double aLength,G4double aRadius):
   nThisSampler = nSamplers + 1;
   SetName("CSampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
   SetType("csampler");
-  SamplerCylinderLogicalVolume();
   nSamplers++;
-  //G4int nSamplers=(*LogVolCount)[itsName];
-  //BDSRoot->SetSampCylinderNumber(nSamplers);
+
+  // register sampler sensitive detector
+  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
+  SDMan->AddNewDetector(SensitiveDetector);
 }
 
-
-void BDSSamplerCylinder::SamplerCylinderLogicalVolume()
+void BDSSamplerCylinder::BuildMarkerLogicalVolume()
 {
-  if(!(*LogVolCount)[itsName])
-    {
-
-      itsMarkerLogicalVolume=
-	new G4LogicalVolume(new G4Tubs(itsName+"_body",
-				       itsRadius-1.e-6*CLHEP::m,
-				       itsRadius,
-				       itsLength/2,
-				       0,CLHEP::twopi*CLHEP::radian),
-			    BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
-			    itsName);
+  itsMarkerLogicalVolume=
+    new G4LogicalVolume(new G4Tubs(itsName+"_body",
+				   itsRadius-1.e-6*CLHEP::m,
+				   itsRadius,
+				   itsLength/2,
+				   0,CLHEP::twopi*CLHEP::radian),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			itsName);
       
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
 #ifndef NOUSERLIMITS
-      itsOuterUserLimits =new G4UserLimits();
-      itsOuterUserLimits->SetMaxAllowedStep(BDSGlobalConstants::Instance()->GetSamplerDiameter()/2.0);
-      itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
+  itsOuterUserLimits =new G4UserLimits();
+  itsOuterUserLimits->SetMaxAllowedStep(BDSGlobalConstants::Instance()->GetSamplerDiameter()/2.0);
+  itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
-      // Sensitive Detector:
-      G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-      BDSSamplerSD* SensDet=new BDSSamplerSD(itsName,"cylinder");
-       
-      SDMan->AddNewDetector(SensDet);
-      itsMarkerLogicalVolume->SetSensitiveDetector(SensDet);
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-    }
+  itsMarkerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
 }
 
 G4VisAttributes* BDSSamplerCylinder::SetVisAttributes()

@@ -14,8 +14,6 @@
 #include "G4LogicalVolume.hh"
 
 #include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4PVPlacement.hh"               
@@ -33,9 +31,13 @@ public:
 protected:
 
 private:
-  G4VisAttributes* SetVisAttributes();
-  void BuildBLMs();
-  void BuildBeampipe(G4String materialName = "");
+  virtual void Build();
+  virtual G4VisAttributes* SetVisAttributes();
+  virtual void BuildBLMs();
+  virtual void BuildBeampipe(G4String materialName = "");
+  /// field related objects
+  virtual void BuildBPFieldAndStepper();
+
   G4double itsYAperUp, itsYAperDown, itsDyAper;
 
   G4VSolid* outer_solid;
@@ -52,12 +54,6 @@ private:
 
   //  G4UserLimits* itsBeampipeUserLimits;
   //  G4UserLimits* itsInnerBeampipeUserLimits;
-
-  /// field related objects
-  void BuildBpFieldAndStepper();
-  BDSDriftStepper* itsStepper;
-  BDSMagField* itsMagField;
-  G4Mag_UsualEqRhs* itsEqRhs;
 };
 
 #endif

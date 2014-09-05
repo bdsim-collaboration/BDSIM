@@ -17,13 +17,6 @@
 #include <map>
 
 //============================================================
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
-
-//============================================================
 
 BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
 			      G4double xAper,G4double yAper, G4String type,
@@ -43,12 +36,22 @@ BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
   SetType(type);
 
   if(itsOuterR==0) itsOuterR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
+}
 
-  if ( (*LogVolCount)[itsName]==0)
-    {
+void BDSCollimator::Build()
+{
+  BDSAcceleratorComponent::Build();
+  if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
+    BuildTunnel();
+  }
+  BuildBLMs();
+}
+
+void BDSCollimator::BuildMarkerLogicalVolume()
+{
   G4double xLength, yLength;
   xLength = yLength = std::max(itsOuterR,BDSGlobalConstants::Instance()->GetComponentBoxSize()/2);
-
+  
   xLength = std::max(xLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
   yLength = std::max(yLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
 
@@ -60,28 +63,15 @@ BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
      BDSMaterials::Instance()->GetMaterial("vacuum"),
      itsName+"_log");
 
-      if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-        BuildTunnel();
-      }
-      BuildInnerCollimator();
-      BuildBLMs();
+  BuildInnerCollimator();
 
-      itsSolidLogVol->SetVisAttributes(itsVisAttributes);
+  itsSolidLogVol->SetVisAttributes(itsVisAttributes);
 
-      //visual attributes      
-      G4VisAttributes* VisAtt1 =
-        new G4VisAttributes(G4Colour(0., 0., 0.));
-      VisAtt1->SetForceSolid(true);
-      if (itsInnerLogVol) itsInnerLogVol->SetVisAttributes(VisAtt1);
-
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-    }  
+  //visual attributes      
+  G4VisAttributes* VisAtt1 =
+    new G4VisAttributes(G4Colour(0., 0., 0.));
+  VisAtt1->SetForceSolid(true);
+  if (itsInnerLogVol) itsInnerLogVol->SetVisAttributes(VisAtt1);
 }
 
 void BDSCollimator::BuildBLMs(){
@@ -96,7 +86,6 @@ G4VisAttributes* BDSCollimator::SetVisAttributes()
   return itsVisAttributes;
 }
 
-
 void BDSCollimator::BuildInnerCollimator()
 {
 
@@ -110,10 +99,26 @@ void BDSCollimator::BuildInnerCollimator()
 #endif
     if(itsType == "rcol")
       {
+	
 	itsInnerSolid=new G4Box(itsName+"_inner",
 				itsXAper,
 				itsYAper,
 				itsLength/2);
+	
+	/*
+	double zPlanepos [2] = {0,itsLength};	
+	double rOuter [2] = {itsXAper, itsXAper};
+	G4double rInner [2] = {0.0,0.0};
+
+	itsInnerSolid = new G4Polyhedra(itsName+"_inner",
+					0.,
+					2*CLHEP::pi,
+					4,
+					2,
+					zPlanepos,
+					rInner,
+					rOuter);
+	*/
       }
     
     if(itsType == "ecol")

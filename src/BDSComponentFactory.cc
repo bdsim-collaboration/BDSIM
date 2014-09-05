@@ -275,7 +275,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     break;
   }
   
-  if (element) addCommonProperties(element);
+  if (element) {
+    addCommonProperties(element);
+    element->Initialise();
+  }
 
   return element;
 }

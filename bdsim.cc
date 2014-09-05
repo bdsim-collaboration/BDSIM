@@ -76,9 +76,8 @@
 
 //=======================================================
 // Global variables 
-BDSOutputBase* bdsOutput;         // output interface
-BDSBunch       bdsBunch;          // bunch information 
-BDSSamplerSD*  BDSSamplerSensDet; // sampler
+BDSOutputBase* bdsOutput=NULL;         // output interface
+BDSBunch       bdsBunch;               // bunch information 
 //=======================================================
 
 //=======================================================
