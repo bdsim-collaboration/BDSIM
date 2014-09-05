@@ -25,12 +25,6 @@ BDSRfCavity::BDSRfCavity (G4String aName,G4double aLength, G4double bpRad,
 void BDSRfCavity::Build()
 {
   BDSMultipole::Build();
-  //
-  // define sensitive volumes for hit generation
-  //
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-    SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-  }
   itsInnerBPLogicalVolume->SetFieldManager(fieldManager,false);
 }
 

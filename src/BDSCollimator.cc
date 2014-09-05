@@ -184,7 +184,7 @@ void BDSCollimator::BuildInnerCollimator()
   } 
   
   if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-    SetSensitiveVolume(itsSolidLogVol);
+    AddSensitiveVolume(itsSolidLogVol);
   }
   SetMultiplePhysicalVolumes(itsPhysiComp);
 #ifdef BDSDEBUG

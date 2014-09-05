@@ -52,16 +52,6 @@ void BDSSolenoid::Build()
     {
       G4cerr<<"IncludeIronMagFields option not implemented for solenoid class"<<G4endl;
     }
-  
-  //
-  // define sensitive volumes for hit generation
-  //
-  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-    SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-  }
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-    SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-  }
 }
   
 G4VisAttributes* BDSSolenoid::SetVisAttributes()

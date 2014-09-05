@@ -60,16 +60,6 @@ void BDSSextupole::Build()
       
       BuildOuterFieldManager(6, BFldIron,CLHEP::pi/6);
     }
-  
-  //
-  // define sensitive volumes for hit generation
-  //
-  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-    SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-  }
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-    SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-  }
 }
 
 G4VisAttributes* BDSSextupole::SetVisAttributes()
@@ -92,8 +82,14 @@ void BDSSextupole::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)
     BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
   else //default - cylinder - standard
     BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
-}
 
+  //
+  // define sensitive volumes for hit generation
+  //
+  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
+    AddSensitiveVolume(itsOuterLogicalVolume);
+  }
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //				Cylindrical geometry					//

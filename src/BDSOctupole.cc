@@ -57,16 +57,6 @@ void BDSOctupole::Build() {
       
       BuildOuterFieldManager(8, BFldIron,CLHEP::pi/8);
     }
-  
-  //
-  // define sensitive volumes for hit generation
-  //
-  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-    SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-  }
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-    SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-  }
 }
 
 G4VisAttributes* BDSOctupole::SetVisAttributes()

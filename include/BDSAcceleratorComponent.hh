@@ -109,10 +109,8 @@ public:
   G4double GetSPos() const;
   void SetSPos(G4double spos);
   void SetCopyNumber(G4int nCopy);
-  void SetSensitiveVolume(G4LogicalVolume* aLogVol);
-  G4LogicalVolume* GetSensitiveVolume();
-  void SetMultipleSensitiveVolumes(G4LogicalVolume* aLogVol);
-  std::vector<G4LogicalVolume*> GetMultipleSensitiveVolumes();
+  void AddSensitiveVolume(G4LogicalVolume* aLogVol);
+  std::vector<G4LogicalVolume*> GetSensitiveVolumes();
   void SetGFlashVolumes(G4LogicalVolume* aLogVol);
   std::vector<G4LogicalVolume*> GetGFlashVolumes();
   void SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
@@ -339,8 +337,7 @@ private:
   G4int itsCopyNumber;
   BDSEnergyCounterSD* itsBDSEnergyCounter;
   //  G4int itsCollectionID;
-  G4LogicalVolume* itsSensitiveVolume;
-  std::vector<G4LogicalVolume*> itsMultipleSensitiveVolumes;
+  std::vector<G4LogicalVolume*> itsSensitiveVolumes;
   std::vector<G4LogicalVolume*> itsGFlashVolumes;
   //A vector containing the physical volumes in the accelerator component- to be used for geometric importance sampling etc.
   std::vector<G4VPhysicalVolume*> itsMultiplePhysicalVolumes;
@@ -485,20 +482,14 @@ inline void
 BDSAcceleratorComponent::SetBDSEnergyCounter(BDSEnergyCounterSD* anBDSEnergyCounter)
 {itsBDSEnergyCounter=anBDSEnergyCounter;}
 
-inline  void BDSAcceleratorComponent::SetSensitiveVolume(G4LogicalVolume* aLogVol)
-{itsSensitiveVolume=aLogVol;}
+inline  void BDSAcceleratorComponent::AddSensitiveVolume(G4LogicalVolume* aLogVol)
+{ itsSensitiveVolumes.push_back(aLogVol);}
 
-inline  G4LogicalVolume* BDSAcceleratorComponent::GetSensitiveVolume()
-{return itsSensitiveVolume;}
-
-inline void BDSAcceleratorComponent::SetMultipleSensitiveVolumes(G4LogicalVolume* aLogVol)
-{ itsMultipleSensitiveVolumes.push_back(aLogVol);}
+inline  std::vector<G4LogicalVolume*> BDSAcceleratorComponent::GetSensitiveVolumes()
+{return itsSensitiveVolumes;}
 
 inline void BDSAcceleratorComponent::SetGFlashVolumes(G4LogicalVolume* aLogVol)
 { itsGFlashVolumes.push_back(aLogVol);}
-
-inline  std::vector<G4LogicalVolume*> BDSAcceleratorComponent::GetMultipleSensitiveVolumes()
-{return itsMultipleSensitiveVolumes;}
 
 inline  std::vector<G4LogicalVolume*> BDSAcceleratorComponent::GetGFlashVolumes()
 {return itsGFlashVolumes;}

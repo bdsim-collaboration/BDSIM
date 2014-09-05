@@ -30,16 +30,6 @@ BDSPCLDrift::BDSPCLDrift (G4String aName, G4double aLength,
   itsXAper=aperX;
 }
 
-void BDSPCLDrift::Build() {
-  BDSMultipole::Build();
-  //
-  // define sensitive volumes for hit generation
-  //
-  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-    SetMultipleSensitiveVolumes(itsOuterBeamPipeLogicalVolume);	
-  }
-}
-
 void BDSPCLDrift::BuildBeampipe(G4String materialName){
   G4Material *material;
   if(materialName != ""){
@@ -60,8 +50,6 @@ void BDSPCLDrift::BuildBeampipe(G4String materialName){
   G4cout << "PCLDrift aperYDown: " << itsYAperDown/CLHEP::m << " m" << G4endl;
   G4cout << "PCLDrift Dy: " << itsDyAper/CLHEP::m << " m" << G4endl;
 #endif
-
-
 
   G4double ts = BDSGlobalConstants::Instance()->GetLengthSafety()+itsBeampipeThickness/2;
 
@@ -137,6 +125,12 @@ void BDSPCLDrift::BuildBeampipe(G4String materialName){
   //Add the physical volumes to a vector which can be used for e.g. geometrical biasing
   SetMultiplePhysicalVolumes(itsPhysiInner);
   SetMultiplePhysicalVolumes(itsPhysiOuter);
+  //
+  // define sensitive volumes for hit generation
+  //
+  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
+    AddSensitiveVolume(itsOuterBeamPipeLogicalVolume);	
+  }
 
 #ifndef NOUSERLIMITS
   itsBeampipeUserLimits =  new G4UserLimits("beampipe cuts");
