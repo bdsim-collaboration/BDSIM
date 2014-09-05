@@ -95,7 +95,7 @@ int main(int argc,char** argv) {
   TRKLine* line2 = dynamic_cast<TRKLine*>(createdLine);
   if (line2) {
     std::cout << "line created from gmad file: " << std::endl;
-    std::cout << line2 << std::endl;
+    std::cout << *line2 << std::endl;
 
     line2->Track(vIn,vOut);
   }

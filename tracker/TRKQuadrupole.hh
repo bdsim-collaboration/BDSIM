@@ -26,7 +26,7 @@ protected:
 
 private :
   TRKQuadrupole(); ///< not implemented
-  TRKDrift* thinDrift; // Drifts required for thin elements.
+  TRKDrift* drift; // Drifts required for thin elements and zero strength
 
   /// thin Kick method
   void ThinKick(const vector6& vIn, vector6& vOut);

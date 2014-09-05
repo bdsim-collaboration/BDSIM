@@ -6,18 +6,19 @@
 #include "vector6.hh"
 
 TRKQuadrupole::TRKQuadrupole(double strengthIn, TRKTrackingElement::TRKType typeIn, int trackingStepsIn, std::string nameIn, double lengthIn, double size_xIn, double size_yIn, TRKAperture *apertureIn, TRKPlacement *placementIn):
-  TRKTrackingElement(typeIn, trackingStepsIn,nameIn,lengthIn,size_xIn,size_yIn,apertureIn,placementIn), strength(strengthIn), thinDrift(NULL)
+  TRKTrackingElement(typeIn, trackingStepsIn,nameIn,lengthIn,size_xIn,size_yIn,apertureIn,placementIn), strength(strengthIn), drift(NULL)
 {
-  if (type == TRKTrackingElement::thin) {
-    thinDrift = new TRKDrift(typeIn, trackingStepsIn,nameIn+"thinDrift",lengthIn,size_xIn,size_yIn,apertureIn,placementIn);
-  }
+  drift = new TRKDrift(typeIn, trackingStepsIn,nameIn+"Drift",lengthIn,size_xIn,size_yIn,apertureIn,placementIn);
 }
 
 TRKQuadrupole::~TRKQuadrupole() {
-  delete thinDrift;
+  delete drift;
 }
 
 void TRKQuadrupole::ThinTrack(const double vIn[], double vOut[], double h) {  
+  if (std::abs(strength)<=1e-12) {
+    return drift->Track(vIn,vOut,h);
+  }
   /// half Drift + Thin Kick + half drift
   static double halfLength = length/2;
 
@@ -25,12 +26,12 @@ void TRKQuadrupole::ThinTrack(const double vIn[], double vOut[], double h) {
   double hAfter = vIn[2] + h - halfLength;
 
   if (hBefore < 0 || hAfter < 0) {
-    thinDrift->Track(vIn,vOut,h);
+    drift->Track(vIn,vOut,h);
     return;
   }
 
   /// first drift distance  
-  thinDrift->Track(vIn,vOut,hBefore);
+  drift->Track(vIn,vOut,hBefore);
 
   vector6 vKickIn(vOut);
   vector6 vKickOut;
@@ -40,7 +41,7 @@ void TRKQuadrupole::ThinTrack(const double vIn[], double vOut[], double h) {
   double vTemp[6];
   vKickOut.setArray(vTemp);
   /// second drift distance
-  thinDrift->Track(vTemp,vOut,hAfter);
+  drift->Track(vTemp,vOut,hAfter);
 
 }
 
@@ -69,6 +70,11 @@ void TRKQuadrupole::ThickTrack(const double vIn[], double vOut[], double h) {
   vector6 vTemp(vIn);
   // double charge, oh charge good point, should just add this to method signature
   double charge = 1 * TRK::e;
+
+  if (std::abs(strength)<=1e-12) {
+    return drift->Track(vIn,vOut,h);
+  }
+
   double rigidity = std::abs(strength) * vTemp.mom().mag() / charge; // to be checked
   double k = 1/std::sqrt(std::abs(rigidity));
 

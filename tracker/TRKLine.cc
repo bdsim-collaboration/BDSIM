@@ -52,12 +52,12 @@ void TRKLine::ThinTrack(const double [], double [], double){std::cout << "should
 void TRKLine::HybridTrack(const double [], double [], double){std::cout << "should not be called" << std::endl;}
 void TRKLine::ThickTrack(const double [], double [], double){std::cout << "should not be called" << std::endl;}
 
-  /// output stream
+/// output stream
 std::ostream& operator<< (std::ostream &out, const TRKLine &line) {
   TRKLine::TRKLineIter elIter = line.elements.begin();
   TRKLine::TRKLineIter elIterEnd = line.elements.end();
   for (;elIter!=elIterEnd; ++elIter) {
-    out << *(*elIter) << std::endl;
+    out << **elIter << std::endl;
   }
   return out;
 }
