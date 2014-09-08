@@ -70,16 +70,6 @@ void BDSRBend::Build()
       
       BuildOuterFieldManager(2, BFldIron,CLHEP::pi/2);
     }
-
-  //
-  // define sensitive volumes for hit generation
-  //
-  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-    SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-  }
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-    SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-  }
 }
 
 G4VisAttributes* BDSRBend::SetVisAttributes()
@@ -350,7 +340,13 @@ void BDSRBend::BuildBeampipe(G4String materialName)
   SetMultiplePhysicalVolumes(PhysiComp);
   SetMultiplePhysicalVolumes(PhysiInnerEnds);
   SetMultiplePhysicalVolumes(PhysiCompEnds);
-  
+  //
+  // define sensitive volumes for hit generation
+  //
+  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
+    AddSensitiveVolume(itsBeampipeLogicalVolume);
+  }
+
 #ifndef NOUSERLIMITS
   //
   // set user limits for stepping, tracking and propagation in B field
@@ -459,6 +455,12 @@ void BDSRBend::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
                       0, BDSGlobalConstants::Instance()->GetCheckOverlaps());                     // copy number
 
   SetMultiplePhysicalVolumes(itsPhysiComp);
+  //
+  // define sensitive volumes for hit generation
+  //
+  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
+    AddSensitiveVolume(itsOuterLogicalVolume);
+  }
 
   //
   // set visualization attributes

@@ -94,20 +94,6 @@ BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength,
   itsOrder = kn.size();
 }
 
-void BDSTMultipole::Build()
-{  
-  BDSMultipole::Build();
-  //
-  // define sensitive volumes for hit generation
-  //
-  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-    SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-  }
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-    SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-  }
-}
-
 G4VisAttributes* BDSTMultipole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.1,0.4,0.2));

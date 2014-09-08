@@ -51,10 +51,7 @@ void BDSBunchSquare::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   if(envelopeXp !=0) xp += envelopeXp * (1-2*FlatGen->shoot()) * CLHEP::rad;
   if(envelopeYp !=0) yp += envelopeYp * (1-2*FlatGen->shoot()) * CLHEP::rad;
   
-  if (Zp0<0)
-    zp = -sqrt(1.-xp*xp -yp*yp);
-  else
-    zp = sqrt(1.-xp*xp -yp*yp);
+  zp = calculateZp(xp,yp,Zp0);
   t = 0;
   E = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * (1 + envelopeE * (1-2*FlatGen->shoot()));
 
