@@ -29,9 +29,6 @@ protected:
 private:
   TRKOctopole(); ///< not implemented
   TRKDrift* drift; // Drifts required for thin elements and zero strength
-
-  /// thin Kick method
-  void ThinKick(const vector6& vIn, vector6& vOut);
 };
 
 #endif
