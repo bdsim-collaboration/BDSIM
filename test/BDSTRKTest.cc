@@ -88,6 +88,8 @@ int main(int argc,char** argv) {
   // fill options from file 
   gmad_parser(filename);
 
+  std::cout << "Thick tracking" << std::endl;
+
   TRKTrackingElement::TRKType type2 = TRKTrackingElement::thick;
 
   TRKFactory trkfactory = TRKFactory(type2,options);
@@ -99,6 +101,16 @@ int main(int argc,char** argv) {
 
     line2->Track(vIn,vOut);
   }
+
+  std::cout << "Hybrid tracking" << std::endl;
+
+  TRKTrackingElement::TRKType type3 = TRKTrackingElement::hybrid;
+
+  TRKFactory trkfactory3 = TRKFactory(type3,options);
+  TRKTrackingElement* createdLine3 = trkfactory3.createLine(beamline_list);
+  TRKLine* line3 = dynamic_cast<TRKLine*>(createdLine3);
+  if (line3) line3->Track(vIn,vOut);
+
   std::cout << "Test successful!" << std::endl;
   return 0;
 }

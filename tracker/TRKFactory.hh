@@ -35,7 +35,9 @@ private:
   double brho;
   TRKAperture* aper;
   TRKPlacement* placement;
-
+  /// circular flag
+  bool circular;
+  
 };
 
 #endif
