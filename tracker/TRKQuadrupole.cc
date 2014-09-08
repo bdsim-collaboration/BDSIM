@@ -264,4 +264,6 @@ void TRKQuadrupole::ThickTrack(const double vIn[], double vOut[], double h) {
   vOut[5] = vOut[5];
 }
 
-
+std::ostream& operator<< (std::ostream &out, const TRKQuadrupole &element) {
+  return out << element.strength << " ";
+}

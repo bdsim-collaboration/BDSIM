@@ -15,6 +15,7 @@ public :
    * thin: thin lens tracking
    * thick: thick lens tracking
    * hybrid: Geant4 field stepper
+   // Q: add symplectic? -JS
    */
   enum TRKType {thin, thick, hybrid};
   TRKTrackingElement(TRKType type, int trackingSteps, TRKElement &e);
@@ -50,6 +51,7 @@ private:
 
   /// number of tracking steps
   int trackingSteps;
+
 };
 
 
