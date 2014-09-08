@@ -59,6 +59,12 @@ TRKTrackingElement* TRKFactory::createElement(Element& element) {
     return createDipole(element);
   case _QUAD:
     return createQuadrupole(element);
+  case _SEXTUPOLE:
+    return createSextupole(element);
+  case _OCTUPOLE:
+    return createOctopole(element);
+  // case _DECAPOLE:
+  //   return createDecapole(element);
   default:
     return NULL;
   }
@@ -102,4 +108,16 @@ TRKTrackingElement* TRKFactory::createQuadrupole(Element& element) {
 			   0,
 			   aper,
 			   placement);
+}
+
+TRKTrackingElement* TRKFactory::createSextupole(Element& /*element*/) {
+  return NULL;
+}
+
+TRKTrackingElement* TRKFactory::createOctopole(Element& /*element*/) {
+  return NULL;
+}
+
+TRKTrackingElement* TRKFactory::createDecapole(Element& /*element*/) {
+  return NULL;
 }

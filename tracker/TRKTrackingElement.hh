@@ -31,8 +31,8 @@ public :
    * @param[in]  vIn  The 6 dimensional input vector.
    * @param[in]  h    The step length in mm.
    */
-  virtual void Track(const double vIn[], double vOut[], double h);
-  virtual void Track(const double vIn[], double vOut[]);
+  void Track(const double vIn[], double vOut[], double h);
+  void Track(const double vIn[], double vOut[]);
 
   /// returns tracking type
   TRKType trackingType()const {return type;}

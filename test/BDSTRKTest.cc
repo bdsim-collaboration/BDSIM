@@ -8,7 +8,9 @@
 #include "tracker/TRKFactory.hh"
 #include "tracker/TRKLine.hh"
 #include "tracker/TRKPlacement.hh"
+#include "tracker/TRKOctopole.hh"
 #include "tracker/TRKQuadrupole.hh"
+#include "tracker/TRKSextupole.hh"
 
 #include "tracker/vector3.hh"
 #include "tracker/vector6.hh"
@@ -55,15 +57,28 @@ int main(int argc,char** argv) {
 		 driftname,length,size_x,size_y,aper,plac);
 
   std::string quadname = "quad";
+  std::string sextname = "sext";
+  std::string octname = "oct";
   double strength = 1.0;
   std::cout << "Create Quadrupole" << std::endl;
   TRKQuadrupole quad(strength, type, TRK::DEFAULT_TRACKING_STEPS,
 		     quadname,length,size_x,size_y,aper,plac);
   
+  std::cout << "Create Sextupole" << std::endl;
+  TRKSextupole sext(strength, type, TRK::DEFAULT_TRACKING_STEPS,
+		    sextname,length,size_x,size_y,aper,plac);
+
+  std::cout << "Create Octopole" << std::endl;
+  TRKOctopole oct(strength, type, TRK::DEFAULT_TRACKING_STEPS,
+		  octname,length,size_x,size_y,aper,plac);
+
+
   std::cout << "Create Line" << std::endl;
   TRKLine line("line");
   line.AddElement(&drift);
   line.AddElement(&quad);
+  line.AddElement(&sext);
+  line.AddElement(&oct);
   std::cout << "Line created" << std::endl; 
   std::cout << line << std::endl;
   TRKElement* element = line.FindElement("drift");
@@ -72,7 +87,7 @@ int main(int argc,char** argv) {
   double vIn[6] = {1.0, 0.0, 0.0, 0.0, 0.01, 1}; 
   double vOut[6]; 
   
-  std::cout << "Tracking" << std::endl;
+  std::cout << "Thin Tracking" << std::endl;
   line.Track(vIn,vOut);
 
   // second method of creation, input file and factory 

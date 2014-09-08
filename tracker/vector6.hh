@@ -72,6 +72,12 @@ class vector6 {
     return v;
   }
   
+  vector6 &operator*=(double d) {
+    position *= d;
+    momentum *= d; 
+    return *this;
+  }
+
   vector6 operator/(double d) { 
     vector6 v;
     v.position = position*d;
