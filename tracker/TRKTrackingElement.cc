@@ -36,10 +36,10 @@ void TRKTrackingElement::Track(const double vIn[], double vOut[], double h) {
   if(type == TRKTrackingElement::thin) {
     ThinTrack(vIn,vOut,h); 
   }
-  else if(type == TRKTrackingElement::thick) {
+  else if(type == TRKTrackingElement::hybrid) {
     HybridTrack(vIn,vOut,h); 
   }
-  else if(type == TRKTrackingElement::hybrid) {
+  else if(type == TRKTrackingElement::thick) {
     ThickTrack(vIn,vOut,h);
   }
 

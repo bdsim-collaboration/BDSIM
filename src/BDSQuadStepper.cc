@@ -83,8 +83,6 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
     }
   else 
     { 
-      h2=h*h;
-
       G4AffineTransform GlobalAffine=QuadNavigator->
 	GetGlobalToLocalTransform();
 

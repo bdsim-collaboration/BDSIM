@@ -2,6 +2,7 @@
 #define TRKElement_h
 
 #include <string>
+#include <iostream>
 
 #include "TRKAperture.hh"
 #include "TRKPlacement.hh"

@@ -7,9 +7,6 @@ if (${CMAKE_MAJOR_VERSION} GREATER 2)
     cmake_policy(SET CMP0042 OLD)
 endif()
 
-# suppress warnings
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-value")
-
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DTRKDEBUG")
 endif()
@@ -17,21 +14,11 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DTRKDEBUG --coverage")
 endif()
 
-if($ENV{VERBOSE})
-	message(STATUS "PARSER CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
-endif()
-
 file(GLOB TRKsources *.cc )
 
 add_library(tracker STATIC ${TRKsources})
-add_library(trackerShared SHARED ${TRKsources})
+
+#file(GLOB gmadsources ../parser/gmad.cc ../parser/getEnv.cc ../parser/element.cc ../parser/elementlist.cc ../parser/enums.cc ../parser/options.cc ../parser/parameters.cc)
+#add_library(trackerShared SHARED ${TRKsources} ${gmadsources})
 
 bdsim_install_targets(tracker)
-
-# add test executable
-add_executable(TRKTest TRKTest.cc)
-set_target_properties(TRKTest PROPERTIES OUTPUT_NAME "TRKTest" VERSION ${BDSIM_VERSION})
-target_link_libraries(TRKTest tracker)
-
-# set binary
-set (binary TRKTest)
