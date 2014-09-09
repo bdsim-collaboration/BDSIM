@@ -31,7 +31,8 @@ TRKFactory::TRKFactory(TRKTrackingElement::TRKType typeIn, Options& options) {
 }
 
 TRKLine* TRKFactory::createLine(ElementList& beamline_list) {
-  TRKLine* line = new TRKLine("beamline");
+  bool circular = false;
+  TRKLine* line = new TRKLine("beamline",circular);
   std::list<struct Element>::iterator it = beamline_list.begin();
 
   for(;it!=beamline_list.end();it++){

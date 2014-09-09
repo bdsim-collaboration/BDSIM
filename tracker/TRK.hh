@@ -4,7 +4,13 @@
 #include <cmath>
 
 namespace TRK {
+  // tracking parameters
+  /// steps for thin lens tracking
   const int DEFAULT_TRACKING_STEPS=10;
+  /// maximum number of turns for rings
+  const int NR_TURNS=200;
+
+  // constants
   const double SOL=2.9e8;
   const double e = 1.6e-19;
 

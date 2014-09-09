@@ -2,9 +2,10 @@
 
 #include <iostream>
 
-TRKLine::TRKLine(std::string nameIn) :
-  TRKTrackingElement(TRKTrackingElement::thin, TRK::DEFAULT_TRACKING_STEPS, nameIn, 0.0, 0.0, 0.0, NULL, NULL)
+TRKLine::TRKLine(std::string nameIn, bool circular) :
+  TRKTrackingElement(TRKTrackingElement::thin, TRK::DEFAULT_TRACKING_STEPS, nameIn, 0.0, 0.0, 0.0, NULL, NULL), circular(false)
 {
+  maxTurns = (circular ? TRK::NR_TURNS : 1);
 }
 
 TRKLine::~TRKLine()
@@ -19,11 +20,13 @@ void TRKLine::Track(const double vIn[], double vOut[]) {
   }
 
   TRKLineIter elIter = elements.begin();
-  for (;elIter!=elements.end(); ++elIter) {
-    (*elIter)->Track(vTemp,vOut);
-    /// vTemp = vOut;
-    for (int i=0; i<6; i++) {
-      vTemp[i]=vOut[i];
+  for (unsigned int i=0; i<maxTurns; i++) {
+    for (;elIter!=elements.end(); ++elIter) {
+      (*elIter)->Track(vTemp,vOut);
+      /// vTemp = vOut;
+      for (int j=0; j<6; j++) {
+	vTemp[j]=vOut[j];
+      }
     }
   }
 }
