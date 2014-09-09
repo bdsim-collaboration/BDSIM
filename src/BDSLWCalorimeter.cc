@@ -28,7 +28,10 @@ BDSLWCalorimeter::BDSLWCalorimeter (G4String& aName,G4double aLength,
 			 aName,
 			 aLength,aBpRad,0,0,
 			 SetVisAttributes(),aTunnelMaterial),
-  itsBPFieldMgr(NULL)
+  itsBeampipeLogicalVolume(NULL),itsInnerBPLogicalVolume(NULL),itsPhysiInner(NULL),
+  itsPhysiComp(NULL),itsLWCalLogicalVolume(NULL),itsBeampipeUserLimits(NULL),
+  itsBPFieldMgr(NULL),itsBPTube(NULL),itsInnerBPTube(NULL),itsLWCal(NULL),
+  itsPhysiLWCal(NULL)
 {
 }
 

@@ -19,7 +19,6 @@
 #include "BDSExecOptions.hh"     // executable command line options 
 #include "BDSGlobalConstants.hh" //  global parameters
 
-#include "G4UImanager.hh"        // G4 session managers
 #include "G4UIterminal.hh"
 #ifdef G4UI_USE_TCSH
 #include "G4UItcsh.hh"
@@ -37,7 +36,6 @@
 #include "G4UIExecutive.hh"
 #endif
 
-
 #include <cstdlib>      // standard headers 
 #include <cstdio>
 #include <unistd.h>
@@ -49,7 +47,6 @@
 #include "BDSPhysicsList.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRunAction.hh"
-#include "BDSSamplerSD.hh"
 #include "BDSSteppingAction.hh"
 #include "BDSStackingAction.hh"
 #include "BDSUserTrackingAction.hh"
@@ -57,7 +54,6 @@
 #include "G4EventManager.hh" // Geant4 includes
 #include "G4TrackingManager.hh"
 #include "G4SteppingManager.hh"
-#include "G4GeometrySampler.hh"
 #include "G4GeometryTolerance.hh"
 
 #include "BDSRandom.hh" // for random number generator from CLHEP
