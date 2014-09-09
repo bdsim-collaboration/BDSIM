@@ -106,12 +106,12 @@ void BDSBunchTwiss::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   */
 
   CLHEP::HepVector v = GaussMultiGen->fire();
-  x0 = v[0];
-  xp = v[1];
-  y0 = v[2];
-  yp = v[3];
-  t  = v[4];
-  zp = 0.0;
+  x0 = v[0] * CLHEP::m;
+  xp = v[1] * CLHEP::rad;
+  y0 = v[2] * CLHEP::m;
+  yp = v[3] * CLHEP::rad;
+  t  = v[4] * CLHEP::s;
+  zp = 0.0  * CLHEP::rad;
   z0 = Z0*CLHEP::m + t*CLHEP::c_light;
   E  = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * v[5];
   
