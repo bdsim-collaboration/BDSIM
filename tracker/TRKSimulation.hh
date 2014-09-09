@@ -3,6 +3,9 @@
 
 #include "TRKLine.hh"
 
+/**
+ * @brief what does this class do?
+ */
 class TRKSimulation {
 private:
   std::string name; 

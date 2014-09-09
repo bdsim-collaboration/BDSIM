@@ -28,12 +28,19 @@ private:
   TRKTrackingElement* createDrift(Element& element);
   TRKTrackingElement* createDipole(Element& element);
   TRKTrackingElement* createQuadrupole(Element& element);
+  TRKTrackingElement* createSextupole(Element& element);
+  TRKTrackingElement* createOctopole(Element& element);
+  TRKTrackingElement* createDecapole(Element& element);
 
+  /// tracking type
   TRKTrackingElement::TRKType type;
+  /// particle properties
   double charge;
   double momentum;
   double brho;
+  /// default aperture
   TRKAperture* aper;
+  /// global placement position
   TRKPlacement* placement;
   /// circular flag
   bool circular;

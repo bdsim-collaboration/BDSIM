@@ -13,9 +13,13 @@ private:
   // in case we use FindElement a lot, probably good to make an index also (but something for later)
   std::vector<TRKTrackingElement*> elements;
   typedef std::vector<TRKTrackingElement*>::const_iterator TRKLineIter;
+  /// circular flag for rings
+  bool circular;
+  /// maximum number of turns
+  unsigned int maxTurns;
 
 public:
-  TRKLine(std::string name);
+  explicit TRKLine(std::string name, bool circular=false);
   ~TRKLine();
   /// Append TRKElement to Line
   void AddElement(TRKTrackingElement *e);

@@ -17,8 +17,6 @@ TRKTrackingElement::TRKTrackingElement(TRKType typeIn, int trackingStepsIn,
 TRKTrackingElement::~TRKTrackingElement() { 
 }
 
-
-
 void TRKTrackingElement::Track(const double vIn[], double vOut[], double h) {   
   // we need to check if h < length, perhaps here? -> better inside aperturecheck or something
 
@@ -45,7 +43,11 @@ void TRKTrackingElement::Track(const double vIn[], double vOut[], double h) {
 
   if (aperture) {
     bool lost = aperture->CheckAperture(vOut);
-    if (lost) {} // do something;
+    if (lost) {
+      // do something;
+      // track with aperture check?
+      // storeParticle();
+    }
   }
 
 #ifdef TRKDEBUG

@@ -228,17 +228,16 @@ void TRKQuadrupole::HybridTrack(const double vIn[], double vOut[], double h) {
   vOut[3] = x1p;
   vOut[4] = y1p;
   vOut[5] = z1p;
-    
 }
 
 void TRKQuadrupole::ThickTrack(const double vIn[], double vOut[], double h) {
-  vector6 vTemp(vIn);
-  // double charge, oh charge good point, should just add this to method signature
-  double charge = 1 * TRK::e;
-
   if (std::abs(strength)<=1e-12) {
     return drift->Track(vIn,vOut,h);
   }
+
+  vector6 vTemp(vIn);
+  // double charge, oh charge good point, should just add this to method signature
+  double charge = 1 * TRK::e;
 
   double rigidity = std::abs(strength) * vTemp.mom().mag() / charge; // to be checked
   double k = 1/std::sqrt(std::abs(rigidity));
@@ -264,4 +263,6 @@ void TRKQuadrupole::ThickTrack(const double vIn[], double vOut[], double h) {
   vOut[5] = vOut[5];
 }
 
-
+std::ostream& operator<< (std::ostream &out, const TRKQuadrupole &element) {
+  return out << element.strength << " ";
+}

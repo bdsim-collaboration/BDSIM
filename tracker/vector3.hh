@@ -57,6 +57,13 @@ class vector3 {
     return v;
   }
   
+  vector3 &operator*=(const double d) {
+    x *= d;
+    y *= d; 
+    z *= d;
+    return *this;
+  }
+
   vector3 operator/(double d) { 
     vector3 v;
     v.x = x/d;

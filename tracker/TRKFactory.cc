@@ -31,7 +31,8 @@ TRKFactory::TRKFactory(TRKTrackingElement::TRKType typeIn, Options& options) {
 }
 
 TRKLine* TRKFactory::createLine(ElementList& beamline_list) {
-  TRKLine* line = new TRKLine("beamline");
+  bool circular = false;
+  TRKLine* line = new TRKLine("beamline",circular);
   std::list<struct Element>::iterator it = beamline_list.begin();
 
   for(;it!=beamline_list.end();it++){
@@ -59,6 +60,12 @@ TRKTrackingElement* TRKFactory::createElement(Element& element) {
     return createDipole(element);
   case _QUAD:
     return createQuadrupole(element);
+  case _SEXTUPOLE:
+    return createSextupole(element);
+  case _OCTUPOLE:
+    return createOctopole(element);
+  // case _DECAPOLE:
+  //   return createDecapole(element);
   default:
     return NULL;
   }
@@ -102,4 +109,16 @@ TRKTrackingElement* TRKFactory::createQuadrupole(Element& element) {
 			   0,
 			   aper,
 			   placement);
+}
+
+TRKTrackingElement* TRKFactory::createSextupole(Element& /*element*/) {
+  return NULL;
+}
+
+TRKTrackingElement* TRKFactory::createOctopole(Element& /*element*/) {
+  return NULL;
+}
+
+TRKTrackingElement* TRKFactory::createDecapole(Element& /*element*/) {
+  return NULL;
 }

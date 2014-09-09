@@ -5,7 +5,6 @@ TRKDrift::TRKDrift(TRKTrackingElement::TRKType typeIn, int trackingSteps, std::s
 		   TRKAperture *apertureIn, TRKPlacement *placementIn) :
   TRKTrackingElement(typeIn, trackingSteps, nameIn,lengthIn, size_xIn, size_yIn, apertureIn, placementIn)
 {
-  
 }
 
 TRKDrift::~TRKDrift() {}
