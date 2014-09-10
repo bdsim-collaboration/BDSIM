@@ -25,6 +25,8 @@ void TRKLine::Track(const double vIn[], double vOut[]) {
       (*elIter)->Track(vTemp,vOut);
       /// vTemp = vOut;
       for (int j=0; j<6; j++) {
+	/// new input coordinates
+	// Q(JS): transform to local of element or not?
 	vTemp[j]=vOut[j];
       }
     }

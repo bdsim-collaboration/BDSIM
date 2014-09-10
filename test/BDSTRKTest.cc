@@ -108,8 +108,7 @@ int main(int argc,char** argv) {
   TRKTrackingElement::TRKType type2 = TRKTrackingElement::thick;
 
   TRKFactory trkfactory = TRKFactory(type2,options);
-  TRKTrackingElement* createdLine = trkfactory.createLine(beamline_list);
-  TRKLine* line2 = dynamic_cast<TRKLine*>(createdLine);
+  TRKLine* line2 = trkfactory.createLine(beamline_list);
   if (line2) {
     std::cout << "line created from gmad file: " << std::endl;
     std::cout << *line2 << std::endl;
@@ -122,8 +121,7 @@ int main(int argc,char** argv) {
   TRKTrackingElement::TRKType type3 = TRKTrackingElement::hybrid;
 
   TRKFactory trkfactory3 = TRKFactory(type3,options);
-  TRKTrackingElement* createdLine3 = trkfactory3.createLine(beamline_list);
-  TRKLine* line3 = dynamic_cast<TRKLine*>(createdLine3);
+  TRKLine* line3 = trkfactory3.createLine(beamline_list);
   if (line3) line3->Track(vIn,vOut);
 
   std::cout << "Test successful!" << std::endl;

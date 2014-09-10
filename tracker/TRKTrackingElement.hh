@@ -5,7 +5,6 @@
 #include "TRKAperture.hh"
 #include "TRKElement.hh"
 
-
 /**
  * @brief virtual base class for an element that can be tracked
  */
@@ -44,6 +43,7 @@ protected:
   /// thin lens kick tracking
   virtual void ThinTrack(const double vIn[], double vOut[], double h) = 0;
   /// thin lens kick tracking symplectic
+  /// defaults to ThinTrack, can be overwritten by derived classes
   virtual void ThinTrackSymplectic(const double vIn[], double vOut[], double h){
     ThinTrack(vIn, vOut, h);
   }
@@ -58,7 +58,7 @@ protected:
 private:
   TRKTrackingElement(); ///< not implemented
 
-  /// store direction and location at beginning of tracking step , global
+  /// store direction and location at beginning of tracking step , global coordinates
   void StoreParticle(const double vIn[])const;
 
   /// number of tracking steps

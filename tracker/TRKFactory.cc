@@ -3,7 +3,10 @@
 #include "TRKLine.hh"
 #include "TRKDrift.hh"
 //#include "TRKDipole.hh"
+#include "TRKDecapole.hh"
 #include "TRKQuadrupole.hh"
+#include "TRKOctopole.hh"
+#include "TRKSextupole.hh"
 
 #include "parser/element.h"
 #include "parser/elementlist.h"
@@ -27,6 +30,7 @@ TRKFactory::TRKFactory(TRKTrackingElement::TRKType typeIn, Options& options) {
   /// start placement, could be updated after every new element
   placement = new TRKPlacement();
   /// circular flag? //not available from Options, as command line option!
+  // could use GC.nturns instead!
   //  bool circular = options.
 }
 
@@ -107,12 +111,32 @@ TRKTrackingElement* TRKFactory::createQuadrupole(Element& element) {
 			   placement);
 }
 
-TRKTrackingElement* TRKFactory::createSextupole(Element& /*element*/) {
-  return NULL;
+TRKTrackingElement* TRKFactory::createSextupole(Element& element) {
+#ifdef TRKDEBUG
+  std::cout << "create Sextupole" << std::endl;
+#endif
+  double bPrime = - brho * (element.k2 / CLHEP::m3); // to be checked
+  return new TRKSextupole(bPrime,
+			  type,
+			  TRK::DEFAULT_TRACKING_STEPS,
+			  element.name,
+			  element.l,
+			  aper,
+			  placement);
 }
 
-TRKTrackingElement* TRKFactory::createOctopole(Element& /*element*/) {
-  return NULL;
+TRKTrackingElement* TRKFactory::createOctopole(Element& element) {
+#ifdef TRKDEBUG
+  std::cout << "create Quadrupole" << std::endl;
+#endif
+  double bPrime = - brho * (element.k3 / CLHEP::m2 / CLHEP::m2); // to be checked
+  return new TRKOctopole(bPrime,
+			 type,
+			 TRK::DEFAULT_TRACKING_STEPS,
+			 element.name,
+			 element.l,
+			 aper,
+			 placement);
 }
 
 TRKTrackingElement* TRKFactory::createDecapole(Element& /*element*/) {

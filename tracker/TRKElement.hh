@@ -21,14 +21,16 @@ public :
   friend std::ostream& operator<< (std::ostream &out, const TRKElement &element);
 
 protected : 
-  std::string  name;               ///< name of element
+  std::string  name;               ///< name of element -- do we need this? JS
   double       length;             ///< length of component [m]
   TRKAperture  *aperture;          ///< aperture of element
   TRKPlacement *placement;         ///< location of element
 
 private :
   TRKElement(); ///< not implemented
-
+  
+  /// global coordinates of local point
+  double* LocalToGlobal(double /*vOut*/[]){return NULL;}
 };
 
 #endif
