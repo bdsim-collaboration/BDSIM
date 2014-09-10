@@ -41,7 +41,7 @@
 #include "G4MagneticField.hh"
 
 #include <string>
-
+#define BDSDDEBUG 1
 //============================================================
 BDSMultipole::BDSMultipole( G4String aName, 
 			    G4double aLength,

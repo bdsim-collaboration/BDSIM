@@ -29,7 +29,7 @@
 #include "parser/enums.h"
 #include "parser/elementlist.h"
 #include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
-
+#define BDSDEBUG 1
 #ifdef BDSDEBUG
 bool debug1 = true;
 #else
@@ -63,7 +63,8 @@ BDSComponentFactory::BDSComponentFactory(){
   // I suspect FeRad is planned to be offered as an option for the inner radius
   // of the iron in case it is different from the beampipe outer radius
   // Not done yet.
-  _FeRad = _bpRad;
+  _bpThick = BDSGlobalConstants::Instance()->GetBeampipeThickness();
+  _FeRad = _bpRad + _bpThick; //Needs to be the outer beam pipe radius - add the beam pipe thickness.
   if (verbose || debug1) G4cout<<"Default magnet inner radius= "<<_FeRad/CLHEP::m<< "m"
 			      << G4endl;
 
@@ -506,7 +507,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
   if( (_element.aperX>0) || (_element.aperY>0)){  //aperX or aperY override aper, aper set to the largest of aperX or aperY
     aper=std::max(_element.aperX,_element.aperY);
   }
-  _FeRad = aper;
+  _FeRad = aper + _bpThick;
   
   if( _element.outR < aper/CLHEP::m)
     {
@@ -599,7 +600,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
   //
   G4double aper = 2*_bpRad;
   if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  _FeRad = aper;
+  _FeRad = aper + _bpThick;
   
   if( _element.outR < aper/CLHEP::m)
     {
@@ -679,8 +680,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
   //
   G4double aper = _bpRad;
   if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  _FeRad = aper;
-  
+  _FeRad = aper + _bpThick;
+
   if( _element.outR < aper/CLHEP::m)
     {
 #ifdef BDSDEBUG
@@ -750,7 +751,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
   //
   G4double aper = _bpRad;
   if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  G4double _FeRad = aper;
+  _FeRad = aper + _bpThick;
   
   if( _element.outR < aper/CLHEP::m)
     {
@@ -820,7 +821,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createQuad(){
   //
   G4double aper = _bpRad;
   if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  _FeRad = aper;
+  _FeRad = aper + _bpThick;
+
   if( _element.outR < aper/CLHEP::m)
     {
 #ifdef BDSDEBUG
@@ -859,7 +861,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole(){
   //
   G4double aper = _bpRad;
   if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  _FeRad = aper;
+  _FeRad = aper + _bpThick;
   
   if( _element.outR < aper/CLHEP::m)
     {
@@ -916,7 +918,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole(){
   //
   G4double aper = _bpRad;
   if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  _FeRad = aper;
+  _FeRad = aper + _bpThick;
   
   if( _element.outR < aper/CLHEP::m)
     {
@@ -974,7 +976,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole(){
   G4double aper = _bpRad;
   if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
   
-  _FeRad = aper;
+  _FeRad = aper+ _bpThick;
   
   if( _element.outR < aper/CLHEP::m)
     {
@@ -1103,7 +1105,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid(){
   G4double aper = _bpRad;
   if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
   
-  _FeRad = aper;
+  _FeRad = aper+ _bpThick;
   
   if( _element.outR < aper/CLHEP::m)
     {
