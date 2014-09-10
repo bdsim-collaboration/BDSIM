@@ -1,6 +1,5 @@
 #include "BDSBeamline.hh"
 #include "G4AffineTransform.hh"
-#include "BDSDebug.hh"
 #include "BDSBeamlineNavigator.hh"
 
 BDSBeamline* BDSBeamline::_instance = 0;
