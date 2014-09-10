@@ -3,7 +3,7 @@
 #include <iostream>
 
 TRKLine::TRKLine(std::string nameIn, bool circular) :
-  TRKTrackingElement(TRKTrackingElement::thin, TRK::DEFAULT_TRACKING_STEPS, nameIn, 0.0, 0.0, 0.0, NULL, NULL), circular(false)
+  TRKTrackingElement(TRKTrackingElement::thin, TRK::DEFAULT_TRACKING_STEPS, nameIn, 0.0, NULL, NULL), circular(false)
 {
   maxTurns = (circular ? TRK::NR_TURNS : 1);
 }

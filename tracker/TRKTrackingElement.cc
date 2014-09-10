@@ -8,9 +8,8 @@ TRKTrackingElement::TRKTrackingElement(TRKType typeIn, int trackingStepsIn, TRKE
 
 TRKTrackingElement::TRKTrackingElement(TRKType typeIn, int trackingStepsIn, 
 				       std::string nameIn, double lengthIn, 
-				       double size_xIn, double size_yIn, 
 				       TRKAperture *apertureIn, TRKPlacement *placementIn) : 
-  TRKElement(nameIn, lengthIn, size_xIn, size_yIn, apertureIn, placementIn), type(typeIn), trackingSteps(trackingStepsIn)
+  TRKElement(nameIn, lengthIn, apertureIn, placementIn), type(typeIn), trackingSteps(trackingStepsIn)
 {
 }
 
@@ -31,6 +30,7 @@ void TRKTrackingElement::Track(const double vIn[], double vOut[], double h) {
 	 << std::endl; 
 #endif
 
+  // this if/else can be optimised perhaps
   if(type == TRKTrackingElement::thin) {
     ThinTrack(vIn,vOut,h); 
   }
@@ -46,7 +46,7 @@ void TRKTrackingElement::Track(const double vIn[], double vOut[], double h) {
     if (lost) {
       // do something;
       // track with aperture check?
-      // storeParticle();
+      StoreParticle(vIn);
     }
   }
 
@@ -83,4 +83,12 @@ void TRKTrackingElement::Track(const double vIn[], double vOut[]) {
       vTemp[i]=vOut[i];
     }
   }
+}
+
+void TRKTrackingElement::StoreParticle(const double /*vIn*/[])const
+{
+  // write to file or pass to runmanager
+
+
+
 }

@@ -83,8 +83,6 @@ TRKTrackingElement* TRKFactory::createDrift(Element& element) {
 		      TRK::DEFAULT_TRACKING_STEPS,
 		      element.name,
 		      element.l,
-		      0,
-		      0,
 		      aper,
 		      placement);
 }
@@ -105,8 +103,6 @@ TRKTrackingElement* TRKFactory::createQuadrupole(Element& element) {
 			   TRK::DEFAULT_TRACKING_STEPS,
 			   element.name,
 			   element.l,
-			   0,
-			   0,
 			   aper,
 			   placement);
 }

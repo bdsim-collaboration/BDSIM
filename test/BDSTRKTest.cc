@@ -48,13 +48,13 @@ int main(int argc,char** argv) {
   /// instantiate elements
   std::string driftname = "drift";
   double length = 3.0, size_x = 1.0, size_y = 1.0;
-  TRKAperture* aper = NULL;
+  TRKAperture* aper = new TRKAperture(size_x,size_y,TRKAperture::rectangle);
   TRKPlacement* plac = NULL;
 
   std::cout << "Create Drift" << std::endl;
   TRKTrackingElement::TRKType type = TRKTrackingElement::thin;
   TRKDrift drift(type, TRK::DEFAULT_TRACKING_STEPS,
-		 driftname,length,size_x,size_y,aper,plac);
+		 driftname,length,aper,plac);
 
   std::string quadname = "quad";
   std::string sextname = "sext";
@@ -62,15 +62,15 @@ int main(int argc,char** argv) {
   double strength = 1.0;
   std::cout << "Create Quadrupole" << std::endl;
   TRKQuadrupole quad(strength, type, TRK::DEFAULT_TRACKING_STEPS,
-		     quadname,length,size_x,size_y,aper,plac);
+		     quadname,length,aper,plac);
   
   std::cout << "Create Sextupole" << std::endl;
   TRKSextupole sext(strength, type, TRK::DEFAULT_TRACKING_STEPS,
-		    sextname,length,size_x,size_y,aper,plac);
+		    sextname,length,aper,plac);
 
   std::cout << "Create Octopole" << std::endl;
   TRKOctopole oct(strength, type, TRK::DEFAULT_TRACKING_STEPS,
-		  octname,length,size_x,size_y,aper,plac);
+		  octname,length,aper,plac);
 
 
   std::cout << "Create Line" << std::endl;
