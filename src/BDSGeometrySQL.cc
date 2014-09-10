@@ -42,9 +42,7 @@ BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength):
 #ifdef BDSDEBUG
   G4cout << "BDSGeometrySQL constructor: loading SQL file " << DBfile << G4endl;
 #endif
-  G4String sBDSPATH = getEnv("BDSIMPATH");
-  G4String fullPath = sBDSPATH + DBfile;
-  ifs.open(fullPath.c_str());
+  ifs.open(DBfile.c_str());
   G4String exceptionString = "Unable to load SQL database file: " + DBfile;
   if(!ifs) G4Exception(exceptionString.c_str(), "-1", FatalException, "");
   align_in_volume = NULL;  //default alignment (does nothing)
