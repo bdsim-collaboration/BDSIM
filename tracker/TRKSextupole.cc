@@ -31,9 +31,8 @@ void TRKSextupole::ThinTrack(const double vIn[], double vOut[], double h)
 
   // adapted from PLACET, element_thin_lens
   // paraxial approximation ONLY!!
-
   if((std::abs(zp)>0.99)&&(std::abs(strength)<1.e-6)) {
-    HybridTrack(vIn,vOut,h);
+    return HybridTrack(vIn,vOut,h);
   }
 
   // initialise kick // only needed once

@@ -18,6 +18,7 @@ TRKTrackingElement::~TRKTrackingElement() {
 
 void TRKTrackingElement::Track(const double vIn[], double vOut[], double h) {   
   // we need to check if h < length, perhaps here? -> better inside aperturecheck or something
+  // or make this one private and only call from Track(In,Out)
 
 #ifdef TRKDEBUG
   std::cout << "TRKTrackingElement " << name << " : initial point in local coordinates:" << std::endl
@@ -30,9 +31,12 @@ void TRKTrackingElement::Track(const double vIn[], double vOut[], double h) {
 	 << std::endl; 
 #endif
 
-  // this if/else can be optimised perhaps
+  // this if/else can be optimised perhaps at construction time
   if(type == TRKTrackingElement::thin) {
     ThinTrack(vIn,vOut,h); 
+  }
+  else if(type == TRKTrackingElement::thinsymplectic) {
+    ThinTrackSymplectic(vIn,vOut,h);
   }
   else if(type == TRKTrackingElement::hybrid) {
     HybridTrack(vIn,vOut,h); 

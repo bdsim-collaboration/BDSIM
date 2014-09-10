@@ -24,6 +24,9 @@ public :
 		     
   virtual ~TRKTrackingElement(); 
 
+  /// returns tracking type
+  TRKType trackingType()const {return type;}
+
   /**
    * Tracks a 6-dim vector
    * @param[out] vOut The 6 dimensional output vector.
@@ -31,12 +34,9 @@ public :
    * @param[in]  h    The step length in mm.
    */
   ///@{
-  void Track(const double vIn[], double vOut[], double h);
   void Track(const double vIn[], double vOut[]);
+  void Track(const double vIn[], double vOut[], double h);
   ///@}
-
-  /// returns tracking type
-  TRKType trackingType()const {return type;}
 
 protected: 
   // type of tracking 

@@ -31,7 +31,7 @@ void TRKOctopole::ThinTrack(const double vIn[], double vOut[], double h) {
   // adapted from PLACET, element_thin_lens
   // paraxial approximation ONLY!!
   if((std::abs(zp)>0.99)&&(std::abs(strength)<1.e-6)) {
-    HybridTrack(vIn,vOut,h);
+    return HybridTrack(vIn,vOut,h);
   }
 
   // initialise kick // only needed once
@@ -51,7 +51,7 @@ void TRKOctopole::ThinTrack(const double vIn[], double vOut[], double h) {
   vOut[2] = z0 + (0.5e-6 * (xp_*xp_ + yp_*yp_) * h); // to be checked
 
   // calculate particle kick
-  Kick = Kn * std::pow(std::complex<double>(vOut[0], vOut[1]),2);
+  Kick = Kn * std::pow(std::complex<double>(vOut[0], vOut[1]),3);
   kickxp = -real(Kick);
   kickyp = +imag(Kick);
 
