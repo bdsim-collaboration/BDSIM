@@ -417,7 +417,7 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
       else if(it->name=="skip") {double dummy; ReadValue(dummy);}
       
       // compute zp from xp and yp if it hasn't been read from file
-      if (!zpdef) zp = calculateZp(xp,yp,1);
+      if (!zpdef) zp = CalculateZp(xp,yp,1);
       // compute t from z0 if it hasn't been read from file
       if (!tdef) t=0; 
       // use the Kinetic energy:

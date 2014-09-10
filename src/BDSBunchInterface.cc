@@ -55,7 +55,7 @@ void BDSBunchInterface::SetOptions(struct Options& opt) {
   sigmaE = opt.sigmaE;
   sigmaT = opt.sigmaT;
 
-  Zp0 = calculateZp(Xp0,Yp0,opt.Zp0);
+  Zp0 = CalculateZp(Xp0,Yp0,opt.Zp0);
 }
 
 void BDSBunchInterface::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
@@ -66,7 +66,7 @@ void BDSBunchInterface::GetNextParticle(G4double& x0, G4double& y0, G4double& z0
   z0 = (Z0 + 0.0) * CLHEP::m;
   xp = (Xp0 + 0.0)* CLHEP::rad;
   yp = (Yp0 + 0.0)* CLHEP::rad;
-  zp = calculateZp(xp,yp,Zp0);
+  zp = CalculateZp(xp,yp,Zp0);
   t  = 0.0; 
   E = BDSGlobalConstants::Instance()->GetParticleKineticEnergy();
   weight = 1.0;
@@ -112,7 +112,7 @@ CLHEP::RandMultiGauss* BDSBunchInterface::CreateMultiGauss(CLHEP::HepRandomEngin
   return new CLHEP::RandMultiGauss(anEngine,mu,sigma); 
 }
 
-G4double BDSBunchInterface::calculateZp(G4double xp, G4double yp, G4double Zp0)const
+G4double BDSBunchInterface::CalculateZp(G4double xp, G4double yp, G4double Zp0)const
 {
   double zp;
   if (xp*xp -yp*yp > 1) {

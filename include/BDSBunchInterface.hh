@@ -30,7 +30,7 @@ protected :
   // can change sigma matrix to make non-definite
   CLHEP::RandMultiGauss* CreateMultiGauss(CLHEP::HepRandomEngine & anEngine, const CLHEP::HepVector & mu, CLHEP::HepSymMatrix & sigma);
 
-  G4double calculateZp(G4double xp, G4double yp, G4double Zp0)const;
+  G4double CalculateZp(G4double xp, G4double yp, G4double Zp0)const;
 
 public : 
   BDSBunchInterface();
