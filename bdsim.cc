@@ -279,11 +279,6 @@ int main(int argc,char** argv) {
 #endif
     if(BDSExecOptions::Instance()->GetOutlineFormat()=="survey") BDSGI->Survey();
     if(BDSExecOptions::Instance()->GetOutlineFormat()=="optics") BDSGI->Optics();
-
-#ifdef BDSDEBUG 
-    G4cout<<"deleting geometry interface"<<G4endl;
-#endif
-    delete BDSGI;
   }
 
 
@@ -318,10 +313,6 @@ int main(int argc,char** argv) {
       delete session;
 
 #ifdef G4VIS_USE
-#ifdef BDSDEBUG 
-      G4cout << __FUNCTION__ << "> Visualisation Manager deleting..." << G4endl;
-#endif
-      delete visManager;
     }
 #endif
   else           // Batch mode
@@ -335,27 +326,6 @@ int main(int argc,char** argv) {
   //
   G4GeometryManager::GetInstance()->OpenGeometry();
 
-#ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> BDSOutput deleting..."<<G4endl;
-#endif
-  delete bdsOutput;
-
-#ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> BDSBeamline deleting..."<<G4endl;
-#endif
-  delete BDSBeamline::Instance();
-
-#ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
-#endif
-  delete BDSExecOptions::Instance();
-  delete BDSGlobalConstants::Instance();
-  delete BDSMaterials::Instance();
-
-#ifdef BDSDEBUG 
-  G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
-#endif
-  delete runManager;
  
   G4cout << __FUNCTION__ << "> End of Run, Thank you for using BDSIM!" << G4endl;
 
