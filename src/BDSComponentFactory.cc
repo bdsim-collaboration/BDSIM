@@ -29,7 +29,7 @@
 #include "parser/enums.h"
 #include "parser/elementlist.h"
 #include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
-#define BDSDEBUG 1
+
 #ifdef BDSDEBUG
 bool debug1 = true;
 #else
