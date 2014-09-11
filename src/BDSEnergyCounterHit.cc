@@ -19,7 +19,8 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int nCopy,
 					 G4int partID, 
 					 G4double weight, 
 					 G4bool precisionRegion, 
-					 G4int TurnsTaken):
+					 G4int TurnsTaken
+					 ):
   itsEnergy(Energy*weight), 
   itsEnergyWeightedX(x*Energy*weight), 
   itsEnergyWeightedY(y*Energy*weight), 

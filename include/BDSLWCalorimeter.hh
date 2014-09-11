@@ -22,10 +22,10 @@ class BDSLWCalorimeter :public BDSAcceleratorComponent
 public:
   BDSLWCalorimeter(G4String& aName,G4double aLength, G4double aBpRad, G4String aTunnelMaterial="");
   ~BDSLWCalorimeter();
-  void BuildBeampipe(G4double aLength);
-  void BuildCal(G4double aLength);
 
 protected:
+  virtual void Build();
+
   G4LogicalVolume* itsBeampipeLogicalVolume;
   G4LogicalVolume* itsInnerBPLogicalVolume;
   G4VPhysicalVolume* itsPhysiInner;
@@ -35,13 +35,15 @@ protected:
   G4FieldManager* itsBPFieldMgr;
 
 private:
+  virtual G4VisAttributes* SetVisAttributes();
+  virtual void BuildMarkerLogicalVolume();
+  void BuildBeampipe(G4double aLength);
+  void BuildCal(G4double aLength);
+
   G4Tubs* itsBPTube;
   G4Tubs* itsInnerBPTube;
   G4Box*  itsLWCal;
   G4VPhysicalVolume* itsPhysiLWCal;
-  G4VisAttributes* SetVisAttributes();
-  void LWCalorimeterLogicalVolume();
-
 };
 
 #endif

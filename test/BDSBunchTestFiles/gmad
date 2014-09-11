@@ -1,5 +1,5 @@
-include 8_GaussTwiss.gmad
+include 12_Composite.gmad
 include options.gmad
-include fodo.gmad;
+include fodo.gmad
 
-option, ngenerate=1000;
+option, ngenerate=10000;

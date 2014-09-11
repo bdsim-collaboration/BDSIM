@@ -3,31 +3,19 @@
 #define BDSSynchrotronRadiation_h 1
 
 #include "BDSGlobalConstants.hh"
+#include "BDSMaterials.hh"
 
 #include "G4ios.hh" 
 #include "globals.hh"
 #include "G4VDiscreteProcess.hh"
 #include "G4Track.hh"
 #include "G4Step.hh"
-#include "G4Gamma.hh"
 #include "G4Electron.hh"
 #include "G4Positron.hh"
-#include "G4OrderedTable.hh" 
-#include "G4PhysicsTable.hh"
-#include "G4PhysicsLogVector.hh"
-#include "BDSComptonEngine.hh"
-#include "BDSMaterials.hh"
-
-#include "G4ChordFinder.hh"
+#include "G4Field.hh"
 #include "G4FieldManager.hh"
-#include "G4MagIntegratorDriver.hh"
-#include "G4MagIntegratorStepper.hh"
-#include "G4FieldTrack.hh"
-
-#include "G4MagIntegratorDriver.hh"
-
-#include "G4Navigator.hh"
 #include "G4AffineTransform.hh"
+#include "G4NavigationHistory.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
  

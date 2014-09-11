@@ -57,14 +57,6 @@ public:
   /// 0 = no precision region, 1 = precision region 1, 2 = precision region 2.
   G4int GetPrecisionRegion() const;
 
-  //
-  //    Geometry features    
-  //
-
-  void BuildTunnel();
-  void BuildBLMs();
-  void BuildGate();
-
   // angle - for bends etc.
   G4double GetAngle ();
 
@@ -117,10 +109,8 @@ public:
   G4double GetSPos() const;
   void SetSPos(G4double spos);
   void SetCopyNumber(G4int nCopy);
-  void SetSensitiveVolume(G4LogicalVolume* aLogVol);
-  G4LogicalVolume* GetSensitiveVolume();
-  void SetMultipleSensitiveVolumes(G4LogicalVolume* aLogVol);
-  std::vector<G4LogicalVolume*> GetMultipleSensitiveVolumes();
+  void AddSensitiveVolume(G4LogicalVolume* aLogVol);
+  std::vector<G4LogicalVolume*> GetSensitiveVolumes();
   void SetGFlashVolumes(G4LogicalVolume* aLogVol);
   std::vector<G4LogicalVolume*> GetGFlashVolumes();
   void SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
@@ -130,14 +120,7 @@ public:
   G4UserLimits* GetInnerBPUserLimits();
   G4UserLimits* GetUserLimits();
 
-  // G4double GetZLower();
-  // G4double GetZUpper();
-  // void SetZLower(G4double aZLower);
-  // void SetZUpper(G4double aZUpper);
-  // void AddSynchEnergyLoss(G4double SynchEnergyLoss);
-  // G4double GetSynchEnergyLoss();
-  
-  void BuildOuterFieldManager();
+  //  void BuildOuterFieldManager();
 
   // in case a mapped field is provided creates a field mesh in global coordinates
   virtual void PrepareField(G4VPhysicalVolume *referenceVolume); 
@@ -164,6 +147,10 @@ public:
 private:
   /// private default constructor
   BDSAcceleratorComponent();
+  /// initialise method
+  /// checks if marker logical volume already exists and builds new one if not
+  // can't be in constructor as calls virtual methods
+  void Initialise();
 
 public:
   BDSAcceleratorComponent (
@@ -178,7 +165,6 @@ public:
                           G4String aTunnelMaterial = "",
 			  G4String aMaterial = "",
 			  G4double phi=0.,  // polar angle (used in hor. bends)
-                          //G4double theta=0.,
 			  G4double XOffset=0.,
 			  G4double YOffset=0.,
 			  G4double ZOffset=0.,
@@ -203,17 +189,32 @@ public:
 			  G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
 			  G4String aTunnelCavityMaterial = "Air");
 
-
-  G4VisAttributes* GetVisAttributes()const; // get visual attributes
-  virtual G4VisAttributes* SetVisAttributes(); // set and return visual attributes
+  G4VisAttributes* GetVisAttributes()const; ///> get visual attributes
   G4LogicalVolume* itsOuterLogicalVolume;
   G4LogicalVolume* itsMarkerLogicalVolume;
   G4LogicalVolume* itsTunnelLogicalVolume;
   G4LogicalVolume* itsTunnelFloorLogicalVolume;
 
 
-protected:
+private:
+  //
+  //    Geometry building
+  //
 
+  /// build marker logical volume
+  virtual void BuildMarkerLogicalVolume() = 0;
+  /// set and return visual attributes
+  virtual G4VisAttributes* SetVisAttributes(); 
+
+protected:
+  /// build logical volumes: marker, tunnel, field, blms etc.
+  virtual void Build();
+  /// build tunnel
+  void BuildTunnel();
+  /// build beam loss monitors
+  virtual void BuildBLMs();
+
+protected:
   /// set methods, protected
   void SetName(G4String aName);
   void SetType(G4String aType);
@@ -226,7 +227,6 @@ protected:
 
   //Calculate dimensions used for the marker volume etc.
   void CalculateLengths();
-
 
   //Values related to BLM placement and geometry
   G4double itsBlmLocationR;
@@ -337,8 +337,7 @@ private:
   G4int itsCopyNumber;
   BDSEnergyCounterSD* itsBDSEnergyCounter;
   //  G4int itsCollectionID;
-  G4LogicalVolume* itsSensitiveVolume;
-  std::vector<G4LogicalVolume*> itsMultipleSensitiveVolumes;
+  std::vector<G4LogicalVolume*> itsSensitiveVolumes;
   std::vector<G4LogicalVolume*> itsGFlashVolumes;
   //A vector containing the physical volumes in the accelerator component- to be used for geometric importance sampling etc.
   std::vector<G4VPhysicalVolume*> itsMultiplePhysicalVolumes;
@@ -483,20 +482,14 @@ inline void
 BDSAcceleratorComponent::SetBDSEnergyCounter(BDSEnergyCounterSD* anBDSEnergyCounter)
 {itsBDSEnergyCounter=anBDSEnergyCounter;}
 
-inline  void BDSAcceleratorComponent::SetSensitiveVolume(G4LogicalVolume* aLogVol)
-{itsSensitiveVolume=aLogVol;}
+inline  void BDSAcceleratorComponent::AddSensitiveVolume(G4LogicalVolume* aLogVol)
+{ itsSensitiveVolumes.push_back(aLogVol);}
 
-inline  G4LogicalVolume* BDSAcceleratorComponent::GetSensitiveVolume()
-{return itsSensitiveVolume;}
-
-inline void BDSAcceleratorComponent::SetMultipleSensitiveVolumes(G4LogicalVolume* aLogVol)
-{ itsMultipleSensitiveVolumes.push_back(aLogVol);}
+inline  std::vector<G4LogicalVolume*> BDSAcceleratorComponent::GetSensitiveVolumes()
+{return itsSensitiveVolumes;}
 
 inline void BDSAcceleratorComponent::SetGFlashVolumes(G4LogicalVolume* aLogVol)
 { itsGFlashVolumes.push_back(aLogVol);}
-
-inline  std::vector<G4LogicalVolume*> BDSAcceleratorComponent::GetMultipleSensitiveVolumes()
-{return itsMultipleSensitiveVolumes;}
 
 inline  std::vector<G4LogicalVolume*> BDSAcceleratorComponent::GetGFlashVolumes()
 {return itsGFlashVolumes;}

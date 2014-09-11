@@ -24,21 +24,13 @@
 #include "BDSSolenoidStepper.hh"
 #include "G4HelixImplicitEuler.hh"
 
+#include "G4UniformMagField.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
-#include <map>
-
-//============================================================
-
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
 
 //============================================================
 
@@ -48,64 +40,17 @@ BDSSolenoid::BDSSolenoid(G4String aName, G4double aLength,
                          std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
 			 G4String aTunnelMaterial, G4String aMaterial):
   BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
-  itsBField(bField),
-  itsMagField(NULL),itsStepper(NULL),itsEqRhs(NULL)
+  itsBField(bField)
 {
   SetOuterRadius(outR);
- 
-  if (!(*LogVolCount)[itsName])
+}
+
+void BDSSolenoid::Build()
+{
+  BDSMultipole::Build();
+  if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
-      //
-      // build external volume
-      // 
-      BuildDefaultMarkerLogicalVolume();
-
-      //
-      // build beampipe (geometry + magnetic field)
-      //
-      BuildBPFieldAndStepper();
-      BuildBPFieldMgr(itsStepper,itsMagField);
-      BuildBeampipe();
-
-      //
-      // build magnet (geometry + magnetic field)
-      //
-      BuildDefaultOuterLogicalVolume();
-      if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
-	{
-	  G4cerr<<"IncludeIronMagFields option not implemented for solenoid class"<<G4endl;
-	}
-
-      BuildBLMs();
-
-      //
-      // define sensitive volumes for hit generation
-      //
-      if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-        SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-      }
-      if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-        SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-      }
-
-      //
-      // set visualization attributes
-      //
-      itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
-
-      //
-      // append marker logical volume to volume map
-      //
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-	  //
-	  // use already defined marker volume
-	  //
-	  itsMarkerLogicalVolume=(*LogVol)[itsName];
+      G4cerr<<"IncludeIronMagFields option not implemented for solenoid class"<<G4endl;
     }
 }
   
@@ -131,13 +76,11 @@ void BDSSolenoid::BuildBPFieldAndStepper()
   itsMagField=new G4UniformMagField(Bfield);
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
   itsStepper=new BDSSolenoidStepper(itsEqRhs);
-  itsStepper->SetBField(itsBField);
+  BDSSolenoidStepper* solenoidStepper = dynamic_cast<BDSSolenoidStepper*>(itsStepper);
+  solenoidStepper->SetBField(itsBField);
 #endif
 }
 
 BDSSolenoid::~BDSSolenoid()
 {
-  delete itsMagField;
-  delete itsEqRhs;
-  delete itsStepper;
 }

@@ -471,6 +471,9 @@ void BDSPhysicsList::ConstructProcess()
 
 void BDSPhysicsList::ConstructParticle()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   //standard physics lists
   if (theReferenceHadronicPhysList || theReferenceEmPhysList) {
     if (theReferenceHadronicPhysList) {
@@ -539,6 +542,13 @@ void BDSPhysicsList::ConstructParticle()
   
   BDSGlobalConstants::Instance()->SetBeamKineticEnergy(BDSGlobalConstants::Instance()->GetBeamTotalEnergy() - 
                                    BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() );
+
+
+  BDSGlobalConstants::Instance()->SetParticleMomentum( sqrt(pow(BDSGlobalConstants::Instance()->GetParticleTotalEnergy(),2)-
+                                    pow(BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass(),2)) );
+  
+  BDSGlobalConstants::Instance()->SetParticleKineticEnergy(BDSGlobalConstants::Instance()->GetParticleTotalEnergy() - 
+                                   BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() );
   
   G4cout << __METHOD_NAME__ << "Beam properties:"<<G4endl;
   G4cout << __METHOD_NAME__ << "Particle : " 
@@ -588,17 +598,26 @@ void BDSPhysicsList::SetCuts()
 // particular physics process constructors
 
 void BDSPhysicsList::ConstructEM(){
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   ConstructEMMisc();
   ConstructMultipleScattering();
 }
 
 void BDSPhysicsList::ConstructEMSingleScatter(){
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   ConstructEMMisc();
   ConstructCoulombScattering();
 }
 
 void BDSPhysicsList::ConstructEMMisc()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){
     G4ParticleDefinition* particle = theParticleIterator->value();
@@ -691,11 +710,14 @@ void BDSPhysicsList::ConstructEMMisc()
 }
 
 void BDSPhysicsList::ConstructMultipleScattering(){
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){
-    G4ParticleDefinition* particle = theParticleIterator->value();
-    G4ProcessManager* pmanager = particle->GetProcessManager();
-    G4String particleName = particle->GetParticleName();
+    G4ParticleDefinition* particle     = theParticleIterator->value();
+    G4ProcessManager*     pmanager     = particle->GetProcessManager();
+    G4String              particleName = particle->GetParticleName();
     if (particleName == "e-") {
       //electron
       pmanager->AddProcess(new G4eMultipleScattering,-1, 1,1);
@@ -715,6 +737,9 @@ void BDSPhysicsList::ConstructMultipleScattering(){
 }
 
 void BDSPhysicsList::ConstructCoulombScattering(){
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){
     G4ParticleDefinition* particle = theParticleIterator->value();
@@ -736,6 +761,9 @@ void BDSPhysicsList::ConstructCoulombScattering(){
 // particular physics process constructors
 void BDSPhysicsList::ConstructMuon()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){
     G4ParticleDefinition* particle = theParticleIterator->value();
@@ -798,6 +826,9 @@ void BDSPhysicsList::ConstructMuon()
 
 void BDSPhysicsList::ConstructDecay()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   theParticleIterator->reset();
   G4Decay* theDecayProcess = new G4Decay();
   while( (*theParticleIterator)() ){
@@ -816,6 +847,9 @@ void BDSPhysicsList::ConstructDecay()
 
 void BDSPhysicsList::ConstructOptical()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   bool bCerOn=BDSGlobalConstants::Instance()->GetTurnOnCerenkov();
   bool bBirksOn=BDSGlobalConstants::Instance()->GetTurnOnBirksSaturation();
 
@@ -829,7 +863,7 @@ void BDSPhysicsList::ConstructOptical()
     }
   }
   
-  theScintillationProcess      = new G4Scintillation("Scintillation");
+  theScintillationProcess        = new G4Scintillation("Scintillation");
   if(BDSGlobalConstants::Instance()->GetTurnOnOpticalAbsorption()){
     theAbsorptionProcess         = new G4OpAbsorption();
   }
@@ -879,7 +913,7 @@ void BDSPhysicsList::ConstructOptical()
     }
     if (particleName == "opticalphoton") {
 #ifdef BDSDEBUG
-      G4cout << " AddDiscreteProcess to OpticalPhoton " << G4endl;
+      G4cout << "AddDiscreteProcess to OpticalPhoton " << G4endl;
 #endif
       if(BDSGlobalConstants::Instance()->GetTurnOnOpticalAbsorption()){
 	pmanager->AddDiscreteProcess(theAbsorptionProcess);
@@ -900,6 +934,9 @@ void BDSPhysicsList::ConstructOptical()
 
 void BDSPhysicsList::ConstructMerlin()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){
     G4ParticleDefinition* particle = theParticleIterator->value();
@@ -918,6 +955,9 @@ void BDSPhysicsList::ConstructMerlin()
 
 void BDSPhysicsList::ConstructEM_Low_Energy()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   //Applicability range for Livermore models                                                                                                                                
   //for higher energies, the Standard models are used                                                                                                                       
   G4double highEnergyLimit = 1*CLHEP::GeV;
@@ -1001,6 +1041,9 @@ void BDSPhysicsList::ConstructEM_Low_Energy()
 
 void BDSPhysicsList::ConstructLaserWire()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   G4cout << "Constructing laser-wire" << G4endl;
 
   theParticleIterator->reset();
@@ -1104,6 +1147,9 @@ void BDSPhysicsList::ConstructLaserWire()
 
 void BDSPhysicsList::ConstructHadronic()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   
 #if G4VERSION_NUMBER < 1000
   G4NeutronBuilder* theNeutrons=new G4NeutronBuilder;

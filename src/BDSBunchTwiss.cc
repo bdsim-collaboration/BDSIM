@@ -3,8 +3,8 @@
 BDSBunchTwiss::BDSBunchTwiss() :
   BDSBunchInterface(), betaX(0.0), betaY(0.0), alphaX(0.0), alphaY(0.0), emitX(0.0), emitY(0.0), gammaX(0.0), gammaY(0.0)
 {
-  GaussGen = new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
-  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
+  //  GaussGen = new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
+  //  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
   GaussMultiGen = NULL;   
 }
 
@@ -16,8 +16,8 @@ BDSBunchTwiss::BDSBunchTwiss(G4double betaXIn,  G4double betaYIn,
 			     G4double sigmaTIn, G4double sigmaEIn) : 
   BDSBunchInterface(X0In,Y0In,Z0In,T0In,Xp0In,Yp0In,Zp0In,sigmaTIn,sigmaEIn), betaX(betaXIn), betaY(betaYIn), alphaX(alphaXIn), alphaY(alphaYIn), emitX(emitXIn), emitY(emitYIn)
 {
-  GaussGen = new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
-  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
+  //  GaussGen = new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
+  //  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
   GaussMultiGen = NULL;
 
   sigmaT = sigmaTIn; 
@@ -29,8 +29,8 @@ BDSBunchTwiss::BDSBunchTwiss(G4double betaXIn,  G4double betaYIn,
 }
 
 BDSBunchTwiss::~BDSBunchTwiss() {
-  delete GaussGen;
-  delete FlatGen;
+  //  delete GaussGen;
+  //  delete FlatGen;
   delete GaussMultiGen;
 }
 
@@ -77,7 +77,7 @@ void BDSBunchTwiss::CommonConstruction() {
   sigmaGM[4][4] =  pow(sigmaT,2); 
   sigmaGM[5][5] =  pow(sigmaE,2);
 
-  if (GaussMultiGen) delete GaussMultiGen;
+  delete GaussMultiGen;
   GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
 
   return;
@@ -86,7 +86,7 @@ void BDSBunchTwiss::CommonConstruction() {
 void BDSBunchTwiss::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 				    G4double& xp, G4double& yp, G4double& zp,
 				    G4double& t , G4double&  E, G4double& weight) {
-#if 0 
+  /*
   G4double phiX = CLHEP::twopi * G4UniformRand();
   G4double phiY = CLHEP::twopi * G4UniformRand();
   G4double ex   = std::abs(GaussGen->shoot()*emitX);
@@ -99,33 +99,24 @@ void BDSBunchTwiss::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 
   z0 = Z0 * CLHEP::m + (T0 - sigmaT * (1.-2.*GaussGen->shoot())) * CLHEP::c_light * CLHEP::s;
 
-  if (Zp0<0)
-    zp = -sqrt(1.-xp*xp -yp*yp);
-  else
-    zp = sqrt(1.-xp*xp -yp*yp);
+  zp = CalculateZp(xp,yp,Zp0);
   t = 0; // (T0 - sigmaT * (1.-2.*GaussGen->shoot())) * s;
-  E = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * (1 + sigmaE * GaussGen->shoot());
+  E = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * (1 + sigmaE * GaussGen->shoot());
   weight = 1.0;
-#endif
+  */
 
   CLHEP::HepVector v = GaussMultiGen->fire();
-  x0 = v[0];
-  xp = v[1];
-  y0 = v[2];
-  yp = v[3];
-  t  = v[4];
-  zp = 0.0;
+  x0 = v[0] * CLHEP::m;
+  xp = v[1] * CLHEP::rad;
+  y0 = v[2] * CLHEP::m;
+  yp = v[3] * CLHEP::rad;
+  t  = v[4] * CLHEP::s;
+  zp = 0.0  * CLHEP::rad;
   z0 = Z0*CLHEP::m + t*CLHEP::c_light;
-  E  = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * v[5];
+  E  = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * v[5];
   
-  if (Zp0<0)
-    zp = -sqrt(1.-xp*xp -yp*yp);
-  else
-    zp =  sqrt(1.-xp*xp -yp*yp);
+  zp = CalculateZp(xp,yp,Zp0);
 
   weight = 1.0;
-  return;
-  
-
   return;
 }

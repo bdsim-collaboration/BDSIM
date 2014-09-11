@@ -1,9 +1,9 @@
 #include "BDSBeamlineNavigator.hh"
-#include "BDSGlobalConstants.hh"
-#include "G4AffineTransform.hh"
+#include "BDSAcceleratorComponent.hh"
+#include "BDSDebug.hh"
 #include "G4RotationMatrix.hh"
 
-BDSBeamlineNavigator::BDSBeamlineNavigator():_s_local(0.0),_s_total(0.0){
+BDSBeamlineNavigator::BDSBeamlineNavigator():_s_total(0.0){
   _localX = new G4ThreeVector(1,0,0);
   _localY = new G4ThreeVector(0,1,0);
   _localZ = new G4ThreeVector(0,0,1);
@@ -17,7 +17,6 @@ BDSBeamlineNavigator::BDSBeamlineNavigator():_s_local(0.0),_s_total(0.0){
   _positionEnd = new G4ThreeVector(0,0,0);
   _positionFromCurrentCenter = new G4ThreeVector(0,0,0);
   _zHalfAngle = new G4ThreeVector(0,0,0); 
-  
 }
 
 BDSBeamlineNavigator::~BDSBeamlineNavigator(){
@@ -32,16 +31,17 @@ BDSBeamlineNavigator::~BDSBeamlineNavigator(){
   delete _positionEnd;
   delete _positionFromCurrentCenter;
   delete _zHalfAngle;
+
+  // todo clear lists
 }
 
 void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   //Reset the local rotation matrix
-  G4cout << "BDSBeamlineNavigator::addComponent: resetting rotation matrix" << G4endl;
   *_rotationLocal = G4RotationMatrix();
-
-  G4cout << "BDSBeamlineNavigator::addComponent: component variables" << G4endl;
-  _s_local   = var->GetArcLength();
-  _s_total += _s_local;
+  _s_total += var->GetArcLength();;
   G4double angle=var->GetAngle();
   G4double theta=var->GetTheta();
   G4double phi=var->GetPhi();
@@ -49,7 +49,6 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
   G4double length=var->GetZLength();
   
   if( var->GetType() == "transform3d"){
-    G4cout << "BDSBeamlineNavigator::addComponent: doing transform3d" << G4endl;
     _rotationGlobal->rotate(psi,_localZ);
     _rotationLocal->rotate(psi,_localZ);
     _rotationGlobal->rotate(phi,_localY);   
@@ -68,15 +67,11 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
   _zHalfAngle->setX(_localZ->x());
   _zHalfAngle->setY(_localZ->y());
   _zHalfAngle->setZ(_localZ->z());
-  G4cout << "BDSBeamlineNavigator::addComponent: doing _zHalfAngle" << G4endl;
   if( var->GetType() == "sbend" || var->GetType() == "rbend"  ) {
-    G4cout << "BDSBeamlineNavigator::addComponent: bend half angle" << G4endl;
     _zHalfAngle->rotate(angle/2,*_localY);
   }
   
   // target position - advance the coordinates
-
-  G4cout << "BDSBeamlineNavigator::addComponent: advancing coordinates" << G4endl;
 
   *_positionStart = (*_positionEnd);
   *_position = (*_positionEnd) + (*_zHalfAngle) * ( length/2 );  // The target position is the centre of the component.
@@ -84,7 +79,6 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
   *_positionFromCurrentCenter = (*_position) - (*_positionEnd)/2.0; //The position of the beam line component from the centre of the CURRENT beam line
   
   // rotate to the previous reference frame
-  G4cout << "BDSBeamlineNavigator::addComponent: rotating" << G4endl;
   _rotation->transform(*_rotationGlobal);
   _rotation->invert();
   // recompute global rotation
@@ -94,7 +88,6 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
   
   // bends transform the coordinate system
   if( var->GetType() == "sbend" || var->GetType() == "rbend"){
-    G4cout << "BDSBeamlineNavigator::addComponent: bend transform" << G4endl;
     _rotationGlobal->rotate(angle,*_localY);
     _localX->rotate(angle,*_localY);
     _localZ->rotate(angle,*_localY);
@@ -103,29 +96,33 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
     _localZ->rotate(theta,*_localX);
     // bend trapezoids defined along z-axis
     _rotation->rotateY(-CLHEP::twopi/4-angle/2); 						
-  } else {
-    if (var->GetMarkerLogicalVolume()->GetSolid()->GetName().contains("trapezoid") ){
-      G4cout << "BDSBeamlineNavigator::addComponent: trapezoid rotate" << G4endl;
-      _rotation->rotateY(-CLHEP::twopi/4); //Drift trapezoids defined along z axis 
-    }
+  } else if 
+      (var->GetType() != "transform3d" && 
+       var->GetMarkerLogicalVolume() && 
+       var->GetMarkerLogicalVolume()->GetSolid() && 
+       var->GetMarkerLogicalVolume()->GetSolid()->GetName().contains("trapezoid") ) {
+    _rotation->rotateY(-CLHEP::twopi/4); //Drift trapezoids defined along z axis 
   }
 
-
-
-  G4cout << "BDSBeamlineNavigator::addComponent: appending lists" << G4endl;
   _positionList.push_back(new G4ThreeVector(*_position));
   _positionStartList.push_back(new G4ThreeVector(*_positionStart));
   _positionEndList.push_back(new G4ThreeVector(*_positionEnd));
   _positionFromCurrentCenterList.push_back(new G4ThreeVector(*_positionFromCurrentCenter));
+  _positionSList.push_back(_s_total);
   _rotationList.push_back(new G4RotationMatrix(*_rotation));
   _rotationGlobalList.push_back(new G4RotationMatrix(*_rotationGlobal));
-  G4cout << "BDSBeamlineNavigator::addComponent: finished." << G4endl;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "finished." << G4endl;
+  print();
+#endif
 }
 
 
 void BDSBeamlineNavigator::print(){
+#ifdef BDSDEBUG
   G4cout << "BDSBeamlineNavigator: _position = " << *_position << G4endl;
   G4cout << "BDSBeamlineNavigator: _rotation = " << *_rotation << G4endl;
+#endif
 }
 
 void BDSBeamlineNavigator::first(){
@@ -135,6 +132,7 @@ void BDSBeamlineNavigator::first(){
   _iterPositionStart=_positionStartList.begin();
   _iterPositionEnd=_positionEndList.begin();
   _iterPositionFromCurrentCenter=_positionFromCurrentCenterList.begin();
+  _iterPositionS=_positionSList.begin();
 }
 
 bool BDSBeamlineNavigator::isDone(){
@@ -148,6 +146,7 @@ void BDSBeamlineNavigator::next(){
   _iterPositionStart++;
   _iterPositionEnd++;
   _iterPositionFromCurrentCenter++;
+  _iterPositionS++;
 }
 
 G4RotationMatrix* BDSBeamlineNavigator::rotation(){
@@ -174,6 +173,18 @@ G4ThreeVector* BDSBeamlineNavigator::positionFromCurrentCenter(){
   return *_iterPositionFromCurrentCenter;
 }
 
+G4double BDSBeamlineNavigator::positionS(){
+  return *_iterPositionS;
+}
+
 G4double BDSBeamlineNavigator::s_total(){
   return _s_total;
+}
+
+G4ThreeVector* BDSBeamlineNavigator::GetLastPosition(){
+  return _positionEndList.back();
+}
+
+G4ThreeVector* BDSBeamlineNavigator::GetFirstPosition(){
+  return _positionStartList.front();
 }

@@ -17,12 +17,6 @@
 #include <cmath>
 #include "parser/enums.h"
 
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
-
 BDSTeleporter::BDSTeleporter(G4String name,
 			     G4double length):
   BDSAcceleratorComponent(name,
@@ -30,19 +24,24 @@ BDSTeleporter::BDSTeleporter(G4String name,
 			  0,
 			  0,
 			  0,
-			  SetVisAttributes())
+			  SetVisAttributes()),
+  itsChordFinder(NULL),itsFieldManager(NULL),itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " Constructing Teleporter of length: " 
 	 << length/CLHEP::m << " m" << G4endl;
 #endif
   SetType("teleporter");
-  CreateBFieldAndStepper();   // create custom stepper
-  CreateFieldManager(itsStepper,itsMagField);  // register it in a manger
-  CreateTeleporterLogicalVolume();  // create logical volume and attach manager(stepper)
 }
 
-void BDSTeleporter::CreateTeleporterLogicalVolume()
+void BDSTeleporter::Build()
+{
+  BuildBPFieldAndStepper();   // create custom stepper
+  BuildBPFieldMgr(itsStepper,itsMagField);  // register it in a manager
+  BuildMarkerLogicalVolume();  // create logical volume and attach manager(stepper)
+}
+
+void BDSTeleporter::BuildMarkerLogicalVolume()
 {
   itsMarkerLogicalVolume = 
     new G4LogicalVolume(
@@ -53,12 +52,9 @@ void BDSTeleporter::CreateTeleporterLogicalVolume()
 			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			itsName);
   itsMarkerLogicalVolume->SetFieldManager(itsFieldManager,false); // modelled from BDSMultipole.cc
-  
-  (*LogVolCount)[itsName] = 1;
-  (*LogVol)[itsName] = itsMarkerLogicalVolume;
 }
   
-void BDSTeleporter::CreateBFieldAndStepper()
+void BDSTeleporter::BuildBPFieldAndStepper()
 {
 #ifdef BDSDEBUG
   G4cout << "BDSTeleporter Build Stepper & Field " << G4endl;
@@ -69,7 +65,7 @@ void BDSTeleporter::CreateBFieldAndStepper()
   itsStepper  = new BDSTeleporterStepper(itsEqRhs);
 }
 
-void BDSTeleporter::CreateFieldManager( G4MagIntegratorStepper* stepper,
+void BDSTeleporter::BuildBPFieldMgr( G4MagIntegratorStepper* stepper,
     G4MagneticField* field)
 {
   //this is all copied from BDSMultipole.cc although names tidied a bit
@@ -145,3 +141,9 @@ void AddTeleporterToEndOfBeamline(ElementList* beamline_list)
   beamline_list->push_back(e);
 }
 
+BDSTeleporter::~BDSTeleporter()
+{
+  delete itsMagField;
+  delete itsEqRhs;
+  delete itsStepper;
+}

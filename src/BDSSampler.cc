@@ -8,6 +8,7 @@
 */
 // gab:
 #include "BDSGlobalConstants.hh" 
+#include "BDSMaterials.hh"
 #include "BDSSampler.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
@@ -18,22 +19,14 @@
 #include "BDSSamplerSD.hh"
 #include "G4SDManager.hh"
 
-//#include"MagFieldFunction.hh"
-#include <map>
-
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
-
-extern BDSSamplerSD* BDSSamplerSensDet;
+//============================================================
 
 std::vector <G4String> BDSSampler::outputNames;
 
-//============================================================
-
 int BDSSampler::nSamplers = 0;
+
+// created here, so only one is created with fixed known name
+BDSSamplerSD* BDSSampler::SensitiveDetector = new BDSSamplerSD("BDSSampler","plane");
 
 int BDSSampler::GetNSamplers() { return nSamplers; }
 
@@ -48,57 +41,35 @@ BDSSampler::BDSSampler (G4String aName, G4double aLength):
   nThisSampler= nSamplers + 1;
   SetName("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
   SetType("sampler");
-  SamplerLogicalVolume();
   nSamplers++;
-  //G4int nSamplers=(*LogVolCount)[itsName];
-  //BDSRoot->SetSamplerNumber(nSamplers); 
+#ifdef BDSDEBUG
+  G4cout << "BDSSampler.cc Nsamplers " << nSamplers << G4endl;
+#endif
+
+  // register sampler sensitive detector
+  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
+  SDMan->AddNewDetector(SensitiveDetector);
 }
 
-
-void BDSSampler::SamplerLogicalVolume()
+void BDSSampler::BuildMarkerLogicalVolume()
 {
-  if(!(*LogVolCount)[itsName])
-    {
-
-
-      itsMarkerLogicalVolume=
-	new G4LogicalVolume(
-			    new G4Box(itsName+"_solid",
-				      BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				      BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				      itsLength/2.0),
-			    BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
-			    itsName);
-
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
+  itsMarkerLogicalVolume=
+    new G4LogicalVolume(
+			new G4Box(itsName+"_solid",
+				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
+				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
+				  itsLength/2.0),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			itsName);
+  
 #ifndef NOUSERLIMITS
-      itsOuterUserLimits =new G4UserLimits();
-      //      double stepFactor=5;
-      //      itsOuterUserLimits->SetMaxAllowedStep(itsLength*stepFactor);
-      itsOuterUserLimits->SetMaxAllowedStep(1*CLHEP::m);
-      itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
+  itsOuterUserLimits =new G4UserLimits();
+  //      double stepFactor=5;
+  //      itsOuterUserLimits->SetMaxAllowedStep(itsLength*stepFactor);
+  itsOuterUserLimits->SetMaxAllowedStep(1*CLHEP::m);
+  itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
-     // Sensitive Detector:
-#ifdef BDSDEBUG
-      G4cout << "BDSSampler.cc Nsamplers " << nSamplers << G4endl;
-#endif
-
-      if(nSamplers==0)
-	{
-	  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-	  BDSSamplerSensDet=new BDSSamplerSD(itsName,"plane");
-	  SDMan->AddNewDetector(BDSSamplerSensDet);
-//SPM     itsMarkerLogicalVolume->SetSensitiveDetector(BDSSamplerSensDet);
-	}
-      itsMarkerLogicalVolume->SetSensitiveDetector(BDSSamplerSensDet);
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-      itsMarkerLogicalVolume->SetSensitiveDetector(BDSSamplerSensDet);
-    }
+  itsMarkerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
 }
 
 G4VisAttributes* BDSSampler::SetVisAttributes()

@@ -25,7 +25,8 @@ public:
 		      G4int    partID=0, 
 		      G4double weight=1, 
 		      G4bool   precisionRegion=false, 
-		      G4int    TurnsTaken=1);
+		      G4int    TurnsTaken=1
+		      );
 
   ~BDSEnergyCounterHit();
 
@@ -57,6 +58,10 @@ public:
   inline G4bool   GetPrecisionRegion();
   inline G4int    GetTurnsTaken();
   inline void     SetTurnsTaken(G4int turnstaken);
+  //X, Y Prime
+  //event no
+  //parent id
+  //track id
   
 private:
   /// private default constructor (not implemented)

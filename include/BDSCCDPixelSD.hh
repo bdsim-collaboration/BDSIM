@@ -3,7 +3,6 @@
 
 #include "G4VSensitiveDetector.hh"
 #include "BDSCCDPixelHit.hh"
-#include "G4TransportationManager.hh"
 
 class G4Step;
 class G4HCofThisEvent;

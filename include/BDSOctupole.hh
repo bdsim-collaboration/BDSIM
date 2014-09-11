@@ -13,8 +13,6 @@
 #include "BDSOctStepper.hh"
 
 #include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4PVPlacement.hh"               
@@ -33,18 +31,15 @@ public:
 	      G4String aMaterial = "");
   ~BDSOctupole();
 
+protected:
+  virtual void Build();
+
 private:
   G4double itsBTrpPrime;
 
-  void BuildBPFieldAndStepper();
+  virtual void BuildBPFieldAndStepper();
 
-  G4VisAttributes* SetVisAttributes();
-
-  // field related objects:
-  BDSOctStepper* itsStepper;
-  BDSOctMagField* itsMagField;
-  G4Mag_UsualEqRhs* itsEqRhs;
-
+  virtual G4VisAttributes* SetVisAttributes();
 };
 
 #endif

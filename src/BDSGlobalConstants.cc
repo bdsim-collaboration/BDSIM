@@ -26,7 +26,7 @@ BDSGlobalConstants* BDSGlobalConstants::Instance(){
 }
 
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
-  itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0),itsSMax(0.0)
+  itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0),itsParticleMomentum(0.0),itsParticleKineticEnergy(0.0),itsSMax(0.0)
 {
  SetBDSIMPATH();
   itsPhysListName = opt.physicsList;
@@ -55,6 +55,11 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
     G4cerr << __METHOD_NAME__ << "Error: option \"beamenergy\" is not defined or must be greater than 0" <<  G4endl;
     exit(1);
   }
+  itsParticleTotalEnergy = opt.E0 * CLHEP::GeV; 
+  if (itsParticleTotalEnergy == 0) {
+    itsParticleTotalEnergy = itsBeamTotalEnergy;
+  }
+
   itsVacuumPressure = opt.vacuumPressure*CLHEP::bar;
   itsPlanckScatterFe = opt.planckScatterFe;
   //Fraction of events with leading particle biasing.
@@ -170,9 +175,12 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsZeroFieldManager->CreateChordFinder(zeroMagField);
   itsTurnsTaken = 1; //counting from 1
   if(opt.nturns < 1)
-    {SetTurnsToTake(1);}
+    itsTurnsToTake = 1;
   else
-    {SetTurnsToTake(opt.nturns);}  
+    itsTurnsToTake = opt.nturns;
+  teleporterdelta     = G4ThreeVector(0.,0.,0.);
+  teleporterlength    = 0.0;
+
   InitRotationMatrices();
   
   // options that are never used (no set method):
@@ -283,8 +291,7 @@ void BDSGlobalConstants::SetBDSIMPATH(){
     char cwdchars[maxfilenamelength];
     std::string cwd = (std::string)getcwd(cwdchars, sizeof(cwdchars));
     itsBDSIMPATH= cwd + "/" + basefilepath; 
-  } 
-  itsBDSIMPATH += "/"; 
+  }
 }
 
 BDSGlobalConstants::~BDSGlobalConstants()

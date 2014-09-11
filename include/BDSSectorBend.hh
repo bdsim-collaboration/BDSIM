@@ -53,18 +53,19 @@ private:
   G4double itsBField;
   G4double itsBGrad;
 
-  void BuildBPFieldAndStepper();
-  void BuildSBMarkerLogicalVolume();
-  void BuildSBBeampipe();
-  void BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
-  void BuildSBDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+  virtual void Build();
+  virtual void BuildBPFieldAndStepper();
+  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildBeampipe(G4String materialName = "");
 
-  G4VisAttributes* SetVisAttributes();
+  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
 
-  // field related objects:
-  BDSDipoleStepper* itsStepper;
-  BDSSbendMagField* itsMagField;
-  G4Mag_EqRhs* itsEqRhs;
+  /// quad with poles and pockets
+  void BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+  /// cylinder
+  void BuildCylindricalOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+
+  virtual G4VisAttributes* SetVisAttributes();
 
   // G4int itsNSegments;
   // G4double itsSegmentLength;

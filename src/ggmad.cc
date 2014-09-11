@@ -2,7 +2,6 @@
 #include "BDSDebug.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "ggmad.hh"
-#include "parser/getEnv.h"
 
 #include "G4Box.hh"
 #include "G4Tubs.hh"
@@ -17,11 +16,9 @@
 
 GGmadDriver::GGmadDriver(G4String file)
 {
-  G4String sBDSPATH = getEnv("BDSIMPATH");
-  G4String fullPath = sBDSPATH + file;
-  G4cout << __METHOD_NAME__ << "> reading file : " << fullPath << G4endl;
-  inputf.open(fullPath);
-  if(!inputf.good()) {G4cerr<<"ggmad driver: error  opening input file "<<fullPath<<G4endl; exit(1);}
+  G4cout << __METHOD_NAME__ << "> reading file : " << file << G4endl;
+  inputf.open(file);
+  if(!inputf.good()) {G4cerr<<"ggmad driver: error  opening input file "<<file<<G4endl; exit(1);}
 }
 
 void GGmadDriver::Construct(G4LogicalVolume *marker)

@@ -39,17 +39,16 @@ class BDSRfCavity :public BDSMultipole
 
   private:
 
-  //  void BuildOuterLogicalVolume();
-  void BuildMarkerFieldAndStepper();
-  //void BuildMarkerLogicalVolume();
+  virtual void Build();
+  virtual void BuildBPFieldAndStepper();
 
-  G4VisAttributes* SetVisAttributes();
+  virtual G4VisAttributes* SetVisAttributes();
 
   G4double itsGrad; // longitudinal E field grad in MV / m
 
   // field related objects:
-  G4MagErrorStepper* itsStepper;
-  G4UniformElectricField* itsField;
+  //G4MagErrorStepper* itsStepper;
+  G4UniformElectricField* itsEField;
   G4ChordFinder*          fChordFinder ;
   G4MagIntegratorStepper* fStepper ;
   G4MagInt_Driver*        fIntgrDriver;

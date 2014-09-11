@@ -14,7 +14,6 @@
 #include "G4HelixImplicitEuler.hh"
 
 #include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4PVPlacement.hh"
@@ -41,8 +40,6 @@ public:
 		G4String aMaterial = "");
     ~BDSTMultipole();
 
-protected:
-
 private:
   std::list<G4double> kn; // list of normal multipole strengths 1/Brho * Bn
 		     // (NOT multiplied by multipole length)
@@ -50,15 +47,9 @@ private:
 		     // (NOT multiplied by multipole length)
   G4int itsOrder;
   
-  void BuildBPFieldAndStepper();
+  virtual void BuildBPFieldAndStepper();
 
-  G4VisAttributes* SetVisAttributes();
-
-  // field related objects:
-  G4HelixImplicitEuler* itsStepper;
-  BDSMultipoleMagField* itsMagField;
-  G4Mag_UsualEqRhs* itsEqRhs;
-
+  virtual G4VisAttributes* SetVisAttributes();
 };
 
 #endif

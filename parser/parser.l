@@ -154,24 +154,33 @@ dump  { return DUMP; }
 //this is perhaps unnecessary now...
 std::string bdsimpath = (std::string)getEnv("BDSIMPATH");
 std::string includefilename = "";
+std::string mainfilename    = (std::string)yyfilename; //get the supplied main filename
+std::string mainfilepath    = "";
 if(bdsimpath.length()>0){
+#ifdef BDSDEBUG
+   printf("parser> using BDSIMPATH to build included filepaths\n");
+#endif
    includefilename = bdsimpath + (std::string)yytext;
 } else {
-   //get main filename and get the path part only
-   std::string mainfilename = (std::string)yyfilename;
-   std::string basefilepath = "";
-   std::string::size_type found = mainfilename.rfind("/");//find the last '/'
+   // get the path part of the supplied path to the main input file
+   std::string::size_type found = mainfilename.rfind("/"); // find the last '/'
    if (found != std::string::npos){
-     //if we found a '/' get the path before that and prepend to included files
-     basefilepath += mainfilename.substr(0,found);
-     basefilepath += "/";
+     mainfilepath = mainfilename.substr(0,found+1); // the path is the bit before that, including the '/'
+   } // else remains empty string
+   // need to know whether it's an absolute or relative path
+   if ((mainfilename.substr(0,1)) == "/"){
+     // the main file has an absolute path
+     includefilename = mainfilepath + (std::string)yytext;
+   } else {
+     // the main file has a relative path
+     char cwdchars[200]; //filepath up to 200 characters
+     std::string cwd = (std::string)getcwd(cwdchars, sizeof(cwdchars)) + "/";
+     includefilename = cwd + mainfilepath + (std::string)yytext;
    }
-
-   //get current working directory and build up include filenames
-   char cwdchars[maxfilenamelength];
-   std::string cwd = (std::string)getcwd(cwdchars, sizeof(cwdchars));
-   includefilename = cwd + "/" + basefilepath  + (std::string)yytext;
 }
+#ifdef BDSDEBUG
+printf("parser> include filename is: %s \n",includefilename.c_str());
+#endif
    printf("parser> reading file %s \n",(char*)includefilename.c_str());//yytext
      if( include_stack_ptr >= max_include_depth )
        {

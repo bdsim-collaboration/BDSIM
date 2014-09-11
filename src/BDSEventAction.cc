@@ -36,9 +36,7 @@
 #include "G4Trajectory.hh"
 #include "G4SDManager.hh"
 #include "G4ios.hh"
-#include "G4UnitsTable.hh"
 #include "Randomize.hh"
-#include "G4ChordFinder.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4PrimaryParticle.hh"
 
@@ -247,7 +245,15 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
       G4cout<<"done"<<G4endl;
 #endif
     }
-  
+
+  // needed to draw trajectories and hits:
+  if(!isBatch) {
+#ifdef BDSDEBUG 
+    G4cout<<"BDSEventAction : drawing"<<G4endl;
+#endif
+    evt->Draw();
+  }
+    
   // Save interesting trajectories
   
   G4TrajectoryContainer* TrajCont=evt->GetTrajectoryContainer();
@@ -283,19 +289,11 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
     }
   }
 
-  // needed to draw trajectories and hits:
-  if(!isBatch) {
-#ifdef BDSDEBUG 
-    G4cout<<"BDSEventAction : drawing"<<G4endl;
-#endif
-    evt->Draw();
-  }
-  
   //clear out the remaining trajectories
 #ifdef BDSDEBUG 
   G4cout<<"BDSEventAction : deleting trajectories"<<G4endl;
 #endif
-  TrajCont->clearAndDestroy();
+  //  TrajCont->clearAndDestroy();
 #ifdef BDSDEBUG 
  G4cout<<"BDSEventAction : end of event action done"<<G4endl;
 #endif

@@ -1,10 +1,15 @@
 #include "BDSExecOptions.hh"
 
 #include <iomanip>
+#include <unistd.h>
+
+#include "globals.hh" // geant4's globals that is...
 
 #include "BDSDebug.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputFormat.hh"
+
+#include "parser/getEnv.h"
 
 BDSExecOptions* BDSExecOptions::_instance=0;
 
@@ -52,7 +57,14 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv){
   verboseSteppingLevel = 0;
   
   circular      = false;
+  
+  seed              = -1;
+  setSeed           = false;
+  seedStateFilename = "";
+  setSeedState      = false;
+
   Parse(argc, argv);
+  SetBDSIMPATH();
 }
 
 BDSExecOptions::~BDSExecOptions() {
@@ -85,6 +97,8 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 					{ "batch", 0, 0, 0 },
 					{ "materials", 0, 0, 0 },
 					{ "circular", 0, 0, 0},
+					{ "seed", 1, 0, 0},
+					{ "seedstate",1,0,0},
 					{ 0, 0, 0, 0 }};
   
   int OptionIndex = 0;
@@ -205,9 +219,20 @@ void BDSExecOptions::Parse(int argc, char **argv) {
       }
       if( !strcmp(LongOptions[OptionIndex].name, "materials") ) {
 	BDSMaterials::ListMaterials();
+	exit(0);
       }
       if( !strcmp(LongOptions[OptionIndex].name, "circular")  ) {
 	circular = true;
+      }
+      if( !strcmp(LongOptions[OptionIndex].name, "seed")  ){
+	seed = atoi(optarg);
+	setSeed = true;
+      }
+      if( !strcmp(LongOptions[OptionIndex].name, "seedstate") ){
+	if(optarg) {
+	  seedStateFilename = optarg;
+	}
+	setSeedState = true;
       }
       break;
       
@@ -243,7 +268,38 @@ void BDSExecOptions::Usage() {
 	<<"--outline_type=<fmt>  : type of outline format"<<G4endl
 	<<"                        where fmt = optics | survey"<<G4endl
 	<<"--materials           : list materials included in bdsim by default"<<G4endl
-	<<"--circular            : assume circular machine - turn control"<<G4endl;
+	<<"--circular            : assume circular machine - turn control"<<G4endl
+        <<"--seed=N              : the seed to use for the random number generator" <<G4endl
+	<<"--seedstate=<file>    : file containing CLHEP::Random seed state - overrides other seed options"<<G4endl;
+}
+
+void BDSExecOptions::SetBDSIMPATH(){
+  //Set itsBDSIMPATH to mirror what is done in parser.l (i.e. if no environment varible set, assume base filename path is that of the gmad file).
+  itsBDSIMPATH = getEnv("BDSIMPATH");
+  if(itsBDSIMPATH.length()<=0){
+    G4String inputFilepath = "";
+    // get the path part of the supplied path to the main input file
+    G4String::size_type found = inputFilename.rfind("/"); // find the last '/'
+    if (found != G4String::npos){
+      inputFilepath = inputFilename.substr(0,found); // the path is the bit before that
+    } // else remains empty string
+    // need to know whether it's an absolute or relative path
+    if ((inputFilename.substr(0,1)) == "/"){
+      // the main file has an absolute path
+      itsBDSIMPATH = inputFilepath;
+    } else {
+      // the main file has a relative path
+      char cwdchars[200]; //filepath up to 200 characters
+      G4String cwd = (G4String)getcwd(cwdchars, sizeof(cwdchars)) + "/";
+      itsBDSIMPATH = cwd + inputFilepath;
+    
+    }
+  }
+  itsBDSIMPATH += "/";
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " BDSIMPATH set to: " << itsBDSIMPATH << G4endl;
+#endif
+
 }
 
 void BDSExecOptions::Print() {
@@ -267,6 +323,7 @@ void BDSExecOptions::Print() {
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseTrackingLevel: "<< std::setw(15) << verboseTrackingLevel<< G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseSteppingLevel: "<< std::setw(15) << verboseSteppingLevel<< G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " circular: "            << std::setw(15) << circular            << G4endl;
-
+  G4cout << __METHOD_NAME__ << std::setw(23) << " seed: "                << std::setw(15) << seed                << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " seedStateFilename: "   << std::setw(15) << seedStateFilename   << G4endl;
   return;
 }

@@ -3,8 +3,6 @@
 
 #include "BDSGlobalConstants.hh"
 #include "BDS3DMagField.hh"
-#include "parser/getEnv.h"
-
 
 BDS3DMagField::BDS3DMagField( const char* filename, double zOffset ) 
   :fZoffset(zOffset),invertX(false),invertY(false),invertZ(false)

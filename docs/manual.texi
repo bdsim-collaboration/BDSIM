@@ -1179,6 +1179,7 @@ For more details see the file @code{src/BDSMaterials.cc} or run the command
 * sample and csample::
 * dump::
 * use::
+* print::
 @end menu
 
 The execution control is performed in the GMAD input file through @code{option} and @code{sample}
@@ -1499,6 +1500,17 @@ same format as this.
 
 @end example
 
+@node print
+@subsection @code{print}
+
+The @code{print} command will print the element list. It can also print
+the value of an option or a variable.
+
+@example
+
+@code{print, x;}
+
+@end example
 
 @c cccccccccccccccccccccccccccccccccccccccccc
 @c

@@ -11,17 +11,6 @@
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
 
-#include <map>
-
-//============================================================
-
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
-
-
 //============================================================
 
 BDSRBend::BDSRBend(G4String aName, G4double aLength, 
@@ -35,7 +24,7 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
   markerSolidVolume(NULL),rbendRectangleSolidVolume(NULL),rbendRectangleLogicalVolume(NULL),
   middleBeampipeLogicalVolume(NULL),middleInnerBPLogicalVolume(NULL),endsBeampipeLogicalVolume(NULL),
   endsInnerBPLogicalVolume(NULL),endsBeampipeUserLimits(NULL),endsInnerBeampipeUserLimits(NULL),
-  innerBeampipeVisAtt(NULL),beampipeVisAtt(NULL),itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
+  innerBeampipeVisAtt(NULL),beampipeVisAtt(NULL)
 {
   SetOuterRadius(outR);
   itsTilt=tilt;
@@ -53,83 +42,33 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
 #ifdef BDSDEBUG
   G4cout << "BDSRBend>> rbend itsMagFieldLength = " << itsMagFieldLength << G4endl;
 #endif
+}
 
-  if (!(*LogVolCount)[itsName])
+void BDSRBend::Build()
+{
+  BDSMultipole::Build();
+  if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
-      //
-      // build external volume
-      // 
-      BuildRBMarkerLogicalVolume();
-
-      //
-      //build tunnel 
-      if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-	BuildTunnel(); //Geometry problem, do not build tunnel
-      }
+      G4double polePos[4];
+      G4double Bfield[3];
       
-      //
-      // build beampipe (geometry + magnetic field)
-      //
-      BuildBPFieldAndStepper();
-      BuildBPFieldMgr(itsStepper,itsMagField);
-      BuildRBBeampipe();
-
-      //
-      // build magnet (geometry + magnetic field)
-      //
-      BuildRBOuterLogicalVolume();
-      if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
-	{
-	  G4double polePos[4];
-	  G4double Bfield[3];
-
-	  //coordinate in GetFieldValue
-	  polePos[0]=0.;
-	  polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius();
-	  polePos[2]=0.;
-	  polePos[3]=-999.;//flag to use polePos rather than local track
-
-	  itsMagField->GetFieldValue(polePos,Bfield);
-	  G4double BFldIron=
-	    sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1])*
-	    BDSGlobalConstants::Instance()->GetMagnetPoleSize()/
-	    (BDSGlobalConstants::Instance()->GetComponentBoxSize()/2-
-	     BDSGlobalConstants::Instance()->GetMagnetPoleRadius());
-
-	  // Magnetic flux from a pole is divided in two directions
-	  BFldIron/=2.;
-	  
-	  BuildOuterFieldManager(2, BFldIron,CLHEP::pi/2);
-	}
-      BuildBLMs();
-      //
-      // define sensitive volumes for hit generation
-      //
-      if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-        SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-      }
-      if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-        SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-      }
-
-      //
-      // set visualization attributes
-      //
-      itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
-
-      //
-      // append marker logical volume to volume map
-      //
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-	  //
-	  // use already defined marker volume
-	  //
-	  itsMarkerLogicalVolume=(*LogVol)[itsName];
+      //coordinate in GetFieldValue
+      polePos[0]=0.;
+      polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius();
+      polePos[2]=0.;
+      polePos[3]=-999.;//flag to use polePos rather than local track
+      
+      itsMagField->GetFieldValue(polePos,Bfield);
+      G4double BFldIron=
+	sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1])*
+	BDSGlobalConstants::Instance()->GetMagnetPoleSize()/
+	(BDSGlobalConstants::Instance()->GetComponentBoxSize()/2-
+	 BDSGlobalConstants::Instance()->GetMagnetPoleRadius());
+      
+      // Magnetic flux from a pole is divided in two directions
+      BFldIron/=2.;
+      
+      BuildOuterFieldManager(2, BFldIron,CLHEP::pi/2);
     }
 }
 
@@ -149,11 +88,12 @@ void BDSRBend::BuildBPFieldAndStepper()
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
   
   itsStepper = new BDSDipoleStepper(itsEqRhs);
-  itsStepper->SetBField(-itsBField); // note the - sign...
-  itsStepper->SetBGrad(itsBGrad);
+  BDSDipoleStepper* dipoleStepper = dynamic_cast<BDSDipoleStepper*>(itsStepper);
+  dipoleStepper->SetBField(-itsBField); // note the - sign...
+  dipoleStepper->SetBGrad(itsBGrad);
 }
 
-void BDSRBend::BuildRBMarkerLogicalVolume()
+void BDSRBend::BuildMarkerLogicalVolume()
 {
   if (markerSolidVolume==0) {
 
@@ -208,12 +148,17 @@ void BDSRBend::BuildRBMarkerLogicalVolume()
 
 
 // construct a beampipe for r bend
-void BDSRBend::BuildRBBeampipe()
+void BDSRBend::BuildBeampipe(G4String materialName)
 {
-  //
-  // use default beampipe material
-  //
-  G4Material *material =  BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName());
+  G4Material* material;
+  if(materialName == "")
+    {
+      material = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName() );
+    }
+  else
+    {
+      material = BDSMaterials::Instance()->GetMaterial(materialName);
+    }
   
   //
   // compute some geometrical parameters
@@ -395,7 +340,13 @@ void BDSRBend::BuildRBBeampipe()
   SetMultiplePhysicalVolumes(PhysiComp);
   SetMultiplePhysicalVolumes(PhysiInnerEnds);
   SetMultiplePhysicalVolumes(PhysiCompEnds);
-  
+  //
+  // define sensitive volumes for hit generation
+  //
+  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
+    AddSensitiveVolume(itsBeampipeLogicalVolume);
+  }
+
 #ifndef NOUSERLIMITS
   //
   // set user limits for stepping, tracking and propagation in B field
@@ -445,7 +396,7 @@ void BDSRBend::BuildRBBeampipe()
   endsBeampipeLogicalVolume->SetVisAttributes(beampipeVisAtt);
 }
 
-void BDSRBend::BuildRBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
+void BDSRBend::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 
   G4Material* material;
   if(itsMaterial != "")
@@ -504,6 +455,17 @@ void BDSRBend::BuildRBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
                       0, BDSGlobalConstants::Instance()->GetCheckOverlaps());                     // copy number
 
   SetMultiplePhysicalVolumes(itsPhysiComp);
+  //
+  // define sensitive volumes for hit generation
+  //
+  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
+    AddSensitiveVolume(itsOuterLogicalVolume);
+  }
+
+  //
+  // set visualization attributes
+  //
+  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
 #ifndef NOUSERLIMITS
   itsOuterUserLimits =
@@ -521,7 +483,4 @@ BDSRBend::~BDSRBend()
 //   delete itsBeampipeUserLimits;
 //   delete endsBeampipeUserLimits;
 //   delete endsInnerBeampipeUserLimits;
-  delete itsMagField;
-  delete itsEqRhs;
-  delete itsStepper;
 }

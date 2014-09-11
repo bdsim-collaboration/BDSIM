@@ -18,14 +18,6 @@
 #include "BDSDebug.hh"
 #include "parser/enums.h"
 
-#include <map>
-
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
-
 int BDSTerminator::nSamplers=0;
 
 BDSTerminator::BDSTerminator(G4String aName, G4double aLength):
@@ -37,11 +29,10 @@ BDSTerminator::BDSTerminator(G4String aName, G4double aLength):
   nThisSampler= nSamplers + 1;
   SetName("Terminator_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
   SetType("terminator");
-  TerminatorLogicalVolume();
   nSamplers++;
 }
 
-void BDSTerminator::TerminatorLogicalVolume()
+void BDSTerminator::BuildMarkerLogicalVolume()
 {
   //Bascially a copy of BDSSampler but with different sensitive detector added
   G4Box* terminatorBox = new G4Box(itsName+"_solid",
@@ -52,9 +43,6 @@ void BDSTerminator::TerminatorLogicalVolume()
 					      BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 					      itsName);
   
-  (*LogVolCount)[itsName]=1;
-  (*LogVol)[itsName]=itsMarkerLogicalVolume;
-
   // SENSITIVE DETECTOR
   G4SDManager* SDMan    = G4SDManager::GetSDMpointer();
   G4VSensitiveDetector* theTerminator  = new BDSTerminatorSD(itsName);

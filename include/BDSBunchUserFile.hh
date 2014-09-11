@@ -21,7 +21,7 @@ private:
   std::list<struct Doublet> fields;
   void SetDistribFile(G4String val) {distribFile=val;}
   void SetBunchFormat(G4String val) {bunchFormat=val;}
-  void SetNLinesIgnore(G4int val) {nlinesIgnore=val;}
+  void SetNLinesIgnore(G4int val)   {nlinesIgnore=val;}
 
 protected : 
   G4String distribFile;
@@ -36,9 +36,9 @@ public:
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);  
   
-  G4String GetDistibFile() {return distribFile;}
-  G4String GetBunchFormat() {return bunchFormat;}
-  G4int GetNLinesIgnore() {return nlinesIgnore;}
+  G4String GetDistibFile()   {return distribFile;}
+  G4String GetBunchFormat()  {return bunchFormat;}
+  G4int    GetNLinesIgnore() {return nlinesIgnore;}
 };
 
 #endif

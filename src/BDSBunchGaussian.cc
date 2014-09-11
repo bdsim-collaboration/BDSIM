@@ -37,8 +37,8 @@ BDSBunchGaussian::BDSBunchGaussian(G4double sigmaXIn, G4double sigmaYIn, G4doubl
   sigmaGM[5][5] = pow(sigmaE,2);
 
   // Create multi dim gaussian generator
-  if (GaussMultiGen) delete GaussMultiGen;
   GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
+  G4cout << CLHEP::HepRandom::getTheEngine() << G4endl;
 }
 
 BDSBunchGaussian::BDSBunchGaussian(G4double *sigma, 
@@ -83,8 +83,8 @@ BDSBunchGaussian::BDSBunchGaussian(G4double *sigma,
   sigmaGM[5][5] = sigma[20];
 
   // Create multi dim gaussian
-  if (GaussMultiGen) delete GaussMultiGen;
   GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
+  G4cout << CLHEP::HepRandom::getTheEngine() << G4endl;
 }
 
 BDSBunchGaussian::~BDSBunchGaussian() {
@@ -139,7 +139,7 @@ void BDSBunchGaussian::SetOptions(struct Options& opt) {
     sigmaGM[5][5] = pow(opt.sigmaE,2);
   }
 
-  if (GaussMultiGen) delete GaussMultiGen;
+  delete GaussMultiGen;
   GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
   return;
 }
@@ -148,19 +148,16 @@ void BDSBunchGaussian::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 				       G4double& xp, G4double& yp, G4double& zp,
 				       G4double& t , G4double&  E, G4double& weight) {
   CLHEP::HepVector v = GaussMultiGen->fire();
-  x0 = v[0];
-  xp = v[1];
-  y0 = v[2];
-  yp = v[3];
-  t  = v[4];
-  zp = 0.0;
+  x0 = v[0] * CLHEP::m;
+  xp = v[1] * CLHEP::rad;
+  y0 = v[2] * CLHEP::m;
+  yp = v[3] * CLHEP::rad;
+  t  = v[4] * CLHEP::s;
+  zp = 0.0  * CLHEP::rad;
   z0 = Z0*CLHEP::m + t*CLHEP::c_light;
-  E  = BDSGlobalConstants::Instance()->GetBeamKineticEnergy() * v[5];
+  E  = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * v[5];
   
-  if (Zp0<0)
-    zp = -sqrt(1.-xp*xp -yp*yp);
-  else
-    zp =  sqrt(1.-xp*xp -yp*yp);
+  zp = CalculateZp(xp,yp,Zp0);
 
   weight = 1.0;
   return;

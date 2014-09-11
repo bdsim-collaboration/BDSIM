@@ -13,8 +13,6 @@
 #include "BDSSextStepper.hh"
 
 #include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4PVPlacement.hh"               
@@ -36,20 +34,15 @@ public:
 private:
   G4double itsBDblPrime;
 
-  void BuildBPFieldAndStepper();
+  virtual void Build();
+  virtual void BuildBPFieldAndStepper();
 
-  void BuildDefaultOuterLogicalVolume();
-  void BuildOuterLogicalVolume();
+  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+
+  void BuildStandardOuterLogicalVolume();
+  void BuildCylindricalOuterLogicalVolume();
   
-  //void BuildDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
-  //void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
-
-  G4VisAttributes* SetVisAttributes();
-
-  // field related objects:
-  BDSSextStepper* itsStepper;
-  BDSSextMagField* itsMagField;
-  G4Mag_UsualEqRhs* itsEqRhs;
+  virtual G4VisAttributes* SetVisAttributes();
 
 };
 

@@ -7,12 +7,6 @@
 #include "CLHEP/Matrix/SymMatrix.h"
 #include "CLHEP/RandomObjects/RandMultiGauss.h"
 
-namespace CLHEP {
-  class RandGauss;
-  class RandFlat;
-  class RandMultiGauss;
-}
-
 class BDSBunchTwiss : public BDSBunchInterface {
 
 private : 
@@ -27,8 +21,8 @@ private :
   G4double gammaY;
   
   /* Random number generators */
-  CLHEP::RandGauss *GaussGen;
-  CLHEP::RandFlat  *FlatGen;  
+  //  CLHEP::RandGauss *GaussGen;
+  //  CLHEP::RandFlat  *FlatGen;  
   CLHEP::RandMultiGauss* GaussMultiGen;  
 
   /* Gaussian generator */

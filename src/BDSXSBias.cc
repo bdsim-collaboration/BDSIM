@@ -1,7 +1,6 @@
 //XSBias with artificially scaled cross section
 
 #include "BDSXSBias.hh"
-#include "G4SteppingManager.hh"
 
 BDSXSBias::BDSXSBias(const G4String& aName,
                                          G4ProcessType   aType)

@@ -15,7 +15,6 @@
 
 #include "BDSMultipole.hh"
 #include "BDSSbendMagField.hh"
-#include "G4Mag_EqRhs.hh"
 
 class BDSKicker:public BDSMultipole
 {
@@ -29,20 +28,15 @@ public:
   ~BDSKicker();
   
 protected:
+  virtual void Build();
 
 private:
   G4double itsBField;
   G4double itsBGrad;
 
-  void BuildBPFieldAndStepper();
+  virtual void BuildBPFieldAndStepper();
 
-  G4VisAttributes* SetVisAttributes();
-
-  // field related objects:
-  BDSDipoleStepper* itsStepper;
-
-  BDSSbendMagField* itsMagField;
-  G4Mag_EqRhs* itsEqRhs;
+  virtual G4VisAttributes* SetVisAttributes();
 };
 
 #endif

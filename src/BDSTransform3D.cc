@@ -11,16 +11,6 @@
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
 
-#include <map>
-
-//============================================================
-
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
-
 //============================================================
 
 BDSTransform3D::BDSTransform3D(G4String aName, G4double x,G4double y,G4double z,
@@ -43,20 +33,11 @@ BDSTransform3D::BDSTransform3D(G4String aName, G4double x,G4double y,G4double z,
   SetPsi(psi);
   SetPhi(phi);
   SetType("transform3d");
-  
-  if (!(*LogVolCount)[itsName])
-    {
-      //BuildDefaultMarkerLogicalVolume();
+}
 
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-    }
-  
+void BDSTransform3D::BuildMarkerLogicalVolume()
+{
+  // nothing to do here
 }
 
 

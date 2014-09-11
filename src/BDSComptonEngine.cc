@@ -8,9 +8,9 @@
 
 #include "BDSComptonEngine.hh"
 #include "G4ios.hh"
-#include "G4UnitsTable.hh"
-#include "Randomize.hh" 
 #include "G4LorentzRotation.hh"
+#include "Randomize.hh" 
+#include "CLHEP/Units/PhysicalConstants.h"
 
 BDSComptonEngine::BDSComptonEngine(){}
 

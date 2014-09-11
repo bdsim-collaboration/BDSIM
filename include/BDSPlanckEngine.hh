@@ -8,20 +8,10 @@
 
 #include "G4ios.hh" 
 #include "globals.hh"
-#include "Randomize.hh" 
-#include "G4Version.hh"
-#if G4VERSION_NUMBER < 1000
-#include "G4VeLowEnergyLoss.hh"
-#endif
-#include "G4Track.hh"
-#include "G4Step.hh"
-#include "G4Gamma.hh"
-#include "G4Electron.hh"
-#include "G4Positron.hh"
-#include "G4OrderedTable.hh" 
-#include "G4PhysicsTable.hh"
-#include "G4PhysicsLogVector.hh"
- 
+#include "G4LorentzVector.hh"
+
+#include "CLHEP/Units/PhysicalConstants.h"
+
 class BDSPlanckEngine  
 { 
   public:
