@@ -133,7 +133,7 @@ void BDSQuadrupole::BuildCylindricalOuterLogicalVolume()
   G4double outerRadius = itsOuterR;
   if(itsOuterR==0) outerRadius = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
 
-  outerRadius = outerRadius/sqrt(2.0);
+  outerRadius = outerRadius/sqrt(2.0); //Why divide by sqrt of 2?
 
   itsOuterLogicalVolume=
     new G4LogicalVolume(
@@ -163,6 +163,12 @@ void BDSQuadrupole::BuildCylindricalOuterLogicalVolume()
 		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
+  
+  // color-coding for the pole
+  G4VisAttributes* VisAtt = 
+    new G4VisAttributes(G4Colour(1., 0., 0.));
+  VisAtt->SetForceSolid(true);
+  itsOuterLogicalVolume->SetVisAttributes(VisAtt);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////

@@ -55,6 +55,7 @@
 #include "G4TrackingManager.hh"
 #include "G4SteppingManager.hh"
 #include "G4GeometryTolerance.hh"
+#include "G4TrajectoryDrawByCharge.hh"
 
 #include "BDSRandom.hh" // for random number generator from CLHEP
 #include "BDSGeometryInterface.hh"
@@ -298,6 +299,9 @@ int main(int argc,char** argv) {
 #endif
       visManager = new BDSVisManager;
       visManager->Initialize();
+      G4TrajectoryDrawByCharge* trajModel1 = new G4TrajectoryDrawByCharge("trajModel1");
+      visManager->RegisterModel(trajModel1);
+      visManager->SelectTrajectoryModel(trajModel1->Name());
 #endif
  
 #ifdef G4UI_USE
