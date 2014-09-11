@@ -146,12 +146,6 @@ void BDSQuadrupole::BuildCylindricalOuterLogicalVolume()
 			BDSMaterials::Instance()->GetMaterial("Iron"),
 			itsName+"_outer");
 
-  // color-coding for the pole
-  G4VisAttributes* VisAtt = 
-    new G4VisAttributes(G4Colour(1., 0., 0.));
-  VisAtt->SetForceSolid(true);
-  itsOuterLogicalVolume->SetVisAttributes(VisAtt);
-
   // insert the outer volume into the marker volume
   itsPhysiComp = 
     new G4PVPlacement(
