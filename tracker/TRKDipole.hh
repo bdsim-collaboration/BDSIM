@@ -13,9 +13,11 @@ class TRKDipole : public TRKTrackingElement {
 private: 
   /// strength in Tesla/meter
   double strength;
-  
+  /// magnetic field in Tesla
+  double bField;
+
 public:
-  TRKDipole(double strength, TRKTrackingElement::TRKType type, int steps, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
+  TRKDipole(double strength, double bField, TRKTrackingElement::TRKType type, int steps, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKDipole();
   
   /// output stream
@@ -23,6 +25,7 @@ public:
 
 protected:
   virtual void ThinTrack(const double vIn[], double vOut[], double h);
+  virtual void ThinTrackSymplectic(const double vIn[], double vOut[], double h);
   virtual void HybridTrack(const double vIn[], double vOut[], double h);
   virtual void ThickTrack(const double vIn[], double vOut[], double h);
 
@@ -30,8 +33,6 @@ private:
   TRKDipole(); ///< not implemented
   TRKDrift* drift; // Drifts required for thin elements and zero strength
 
-  /// thin Kick method
-  void ThinKick(const vector6& vIn, vector6& vOut);
 };
 
 #endif

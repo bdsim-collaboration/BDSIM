@@ -2,7 +2,7 @@
 
 #include "TRKLine.hh"
 #include "TRKDrift.hh"
-//#include "TRKDipole.hh"
+#include "TRKDipole.hh"
 #include "TRKDecapole.hh"
 #include "TRKQuadrupole.hh"
 #include "TRKOctopole.hh"
@@ -76,6 +76,7 @@ TRKTrackingElement* TRKFactory::createElement(Element& element) {
 }
 
 TRKTrackingElement* TRKFactory::createLine(Element& /*element*/) {
+  // method not needed?
   return NULL;
 }
 
@@ -92,6 +93,8 @@ TRKTrackingElement* TRKFactory::createDrift(Element& element) {
 }
 
 TRKTrackingElement* TRKFactory::createDipole(Element& /*element*/) {
+  // bfield , see componentfactory and bdskicker.cc
+  // strength (bprime)
   return NULL;
 }
 
