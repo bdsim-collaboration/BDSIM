@@ -51,7 +51,7 @@
 #include "BDSSynchrotronRadiation.hh"
 
 #include "BDSAcceleratorComponent.hh"
-#define BDSDEBUG 1
+
 typedef std::map<G4String,int> LogVolCountMap;
 extern LogVolCountMap* LogVolCount;
 
