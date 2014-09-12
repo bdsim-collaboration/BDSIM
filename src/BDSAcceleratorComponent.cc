@@ -26,6 +26,7 @@
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSMaterials.hh"
+#include "BDSDebug.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Colour.hh"
@@ -52,7 +53,6 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double aBpRadius,
 						  G4double aXAper,
 						  G4double aYAper, 
-						  G4VisAttributes* aVisAtt,
 						  G4String aTunnelMaterial,
 						  G4String aMaterial,
 						  G4double angle,
@@ -69,7 +69,6 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsYAper(aYAper),
   itsAngle(angle),
   itsMaterial(aMaterial),
-  itsVisAttributes(aVisAtt),
   itsTunnelMaterial(aTunnelMaterial),
   itsXOffset(XOffset),
   itsYOffset(YOffset), 
@@ -87,7 +86,6 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double aBpRadius,
 						  G4double aXAper,
 						  G4double aYAper, 
-						  G4VisAttributes* aVisAtt,
 						  std::list<G4double> blmLocZ, 
 						  std::list<G4double> blmLocTheta,
 						  G4String aTunnelMaterial,
@@ -106,7 +104,6 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsYAper(aYAper),
   itsAngle(angle),
   itsMaterial(aMaterial),
-  itsVisAttributes(aVisAtt), 
   itsBlmLocZ(blmLocZ), 
   itsBlmLocTheta(blmLocTheta),
   itsTunnelMaterial(aTunnelMaterial),
@@ -184,6 +181,7 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
 
   nullRotationMatrix=NULL;
   tunnelRot=NULL;
+  itsVisAttributes = new G4VisAttributes(true);
   VisAtt=NULL;
   VisAtt1=NULL;
   VisAtt2=NULL;
@@ -199,7 +197,6 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
 
 BDSAcceleratorComponent::~BDSAcceleratorComponent ()
 {
-  delete itsVisAttributes;
 #ifndef NOUSERLIMITS
   delete itsUserLimits;
 #endif

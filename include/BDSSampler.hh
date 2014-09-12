@@ -31,8 +31,6 @@ public:
 private:
   virtual void BuildMarkerLogicalVolume();
 
-  virtual G4VisAttributes* SetVisAttributes();
-
   /// id of sampler
   int nThisSampler;
   /// number of total Samplers

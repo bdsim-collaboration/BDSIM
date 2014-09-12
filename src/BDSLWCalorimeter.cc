@@ -27,12 +27,13 @@ BDSLWCalorimeter::BDSLWCalorimeter (G4String& aName,G4double aLength,
   BDSAcceleratorComponent(
 			 aName,
 			 aLength,aBpRad,0,0,
-			 SetVisAttributes(),aTunnelMaterial),
+			 aTunnelMaterial),
   itsBeampipeLogicalVolume(NULL),itsInnerBPLogicalVolume(NULL),itsPhysiInner(NULL),
   itsPhysiComp(NULL),itsLWCalLogicalVolume(NULL),itsBeampipeUserLimits(NULL),
   itsBPFieldMgr(NULL),itsBPTube(NULL),itsInnerBPTube(NULL),itsLWCal(NULL),
   itsPhysiLWCal(NULL)
 {
+  SetVisAttributes();
 }
 
 void BDSLWCalorimeter::Build()
@@ -173,10 +174,9 @@ void BDSLWCalorimeter::BuildBeampipe(G4double aLength)
   
 }
 
-G4VisAttributes* BDSLWCalorimeter::SetVisAttributes()
+void BDSLWCalorimeter::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(1,0.5,0.5));
-  return itsVisAttributes;
 }
 
 BDSLWCalorimeter::~BDSLWCalorimeter()

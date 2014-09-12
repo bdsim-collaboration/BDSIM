@@ -20,11 +20,11 @@ BDSSpoiler::BDSSpoiler (G4String& aName,G4double aLength,G4double bpRad,
 			  G4double xAper,G4double yAper,
 			  G4Material* SpoilerMaterial):
   BDSAcceleratorComponent(aName,
-			 aLength,bpRad,xAper,yAper,
-			 SetVisAttributes()),
+			 aLength,bpRad,xAper,yAper),
   itsPhysiComp(NULL), itsPhysiComp2(NULL), itsSolidLogVol(NULL), 
   itsInnerLogVol(NULL), itsSpoilerMaterial(SpoilerMaterial)
 {
+  SetVisAttributes();
 }
 
 void BDSSpoiler::Build()
@@ -46,10 +46,9 @@ void BDSSpoiler::BuildMarkerLogicalVolume()
 }
 
 
-G4VisAttributes* BDSSpoiler::SetVisAttributes()
+void BDSSpoiler::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.3,0.4,0.2));
-  return itsVisAttributes;
 }
 
 

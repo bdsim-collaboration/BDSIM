@@ -10,9 +10,9 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSMaterials.hh"
 #include "BDSSampler.hh"
+#include "BDSDebug.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
-#include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
@@ -35,8 +35,7 @@ void BDSSampler::AddExternalSampler(G4String name) { nSamplers++; outputNames.pu
 BDSSampler::BDSSampler (G4String aName, G4double aLength):
   BDSAcceleratorComponent(
 			 aName,
-			 aLength,0,0,0,
-			 SetVisAttributes())
+			 aLength,0,0,0)
 {
   nThisSampler= nSamplers + 1;
   SetName("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
@@ -72,18 +71,9 @@ void BDSSampler::BuildMarkerLogicalVolume()
   itsMarkerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
 }
 
-G4VisAttributes* BDSSampler::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(0.5,0.6,0.7));
-#if defined BDSDEBUG
-  itsVisAttributes->SetVisibility(true);
-#else
-  itsVisAttributes->SetVisibility(false);
-#endif
-  return itsVisAttributes;
-}
-
 BDSSampler::~BDSSampler()
 {
+  G4cout << __METHOD_NAME__ << G4endl;
   --nSamplers;
+  G4cout << __METHOD_END__ << G4endl;
 }

@@ -31,7 +31,7 @@ public:
 protected:
 
 private:
-  virtual G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
   virtual void BuildBLMs();
   virtual void BuildBeampipe(G4String materialName = "");
   /// field related objects

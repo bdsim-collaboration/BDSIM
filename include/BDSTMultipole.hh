@@ -49,7 +49,7 @@ private:
   
   virtual void BuildBPFieldAndStepper();
 
-  virtual G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
 };
 
 #endif

@@ -22,7 +22,7 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
                              std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
 			     G4double tilt, G4double bGrad, 
 			     G4String aTunnelMaterial, G4String aMaterial, G4double aXAper, G4double aYAper):
-  BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
+  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
 	       aXAper, aYAper, angle)
 {
   SetOuterRadius(outR);
@@ -62,12 +62,11 @@ void BDSSectorBend::Build()
     }
 }
 
-G4VisAttributes* BDSSectorBend::SetVisAttributes()
+void BDSSectorBend::SetVisAttributes()
 {
   itsVisAttributes = new G4VisAttributes(G4Colour(0,0,1)); //blue
   itsVisAttributes->SetForceSolid(true);
   itsVisAttributes->SetVisibility(true);
-  return itsVisAttributes;
 }
 
 void BDSSectorBend::BuildBPFieldAndStepper()

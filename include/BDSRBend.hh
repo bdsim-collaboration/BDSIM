@@ -46,7 +46,7 @@ private:
   virtual void BuildBeampipe(G4String materialName="");
   virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
 
-  G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
   G4Trd* markerSolidVolume;
   G4Trd* rbendRectangleSolidVolume;
   G4LogicalVolume* rbendRectangleLogicalVolume;

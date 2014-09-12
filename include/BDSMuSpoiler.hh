@@ -32,8 +32,8 @@ public:
   ~BDSMuSpoiler();
 
 private:
-  virtual G4VisAttributes* SetVisAttributes();
-  G4VisAttributes* SetBPVisAttributes();
+  virtual void SetVisAttributes();
+  void SetBPVisAttributes();
 
   // Geometrical objects:
 

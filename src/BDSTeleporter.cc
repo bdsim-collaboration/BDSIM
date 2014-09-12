@@ -23,8 +23,7 @@ BDSTeleporter::BDSTeleporter(G4String name,
 			  length,
 			  0,
 			  0,
-			  0,
-			  SetVisAttributes()),
+			  0),
   itsChordFinder(NULL),itsFieldManager(NULL),itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
 {
 #ifdef BDSDEBUG
@@ -32,6 +31,7 @@ BDSTeleporter::BDSTeleporter(G4String name,
 	 << length/CLHEP::m << " m" << G4endl;
 #endif
   SetType("teleporter");
+  SetVisAttributes();
 }
 
 void BDSTeleporter::Build()
@@ -89,7 +89,7 @@ void BDSTeleporter::BuildBPFieldMgr( G4MagIntegratorStepper* stepper,
     itsFieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
 }
 
-G4VisAttributes* BDSTeleporter::SetVisAttributes()
+void BDSTeleporter::SetVisAttributes()
 {
   //make it visible if debug build and invisible otherwise
   itsVisAttributes = new G4VisAttributes(G4Colour(0.852,0.438,0.836,0.5));
@@ -98,7 +98,6 @@ G4VisAttributes* BDSTeleporter::SetVisAttributes()
 #else
   itsVisAttributes->SetVisibility(false);
 #endif
-  return itsVisAttributes;
 }
 
 void CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
