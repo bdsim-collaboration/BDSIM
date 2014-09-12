@@ -16,13 +16,8 @@ BDSBeamline::BDSBeamline(){
 }
 
 BDSBeamline::~BDSBeamline(){
-  for(first(); !isDone(); next()){
-    delete *_iterComponent;
-  }
   _componentList.clear();
-
   delete _navigator;
-
   _instance = 0;
 }
 
