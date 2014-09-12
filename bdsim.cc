@@ -329,12 +329,12 @@ int main(int argc,char** argv) {
   // job termination
   //
   G4GeometryManager::GetInstance()->OpenGeometry();
-  
+
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> BDSOutput deleting..."<<G4endl;
 #endif
   delete bdsOutput;
-
+  
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> BDSBeamline deleting..."<<G4endl;
 #endif
