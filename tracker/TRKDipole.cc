@@ -3,6 +3,7 @@
 #include <cmath>
 #include <cfloat>
 #include <cstdlib>
+#include <limits>
 #include "vector3.hh"
 #include "vector6.hh"
 
@@ -71,27 +72,32 @@ void TRKDipole::HybridTrack(const double vIn[], double vOut[], double h) {
   vector3 dPos = (vhat*sinT + vnorm*(1-cosT)) * R;
 
   // strength
+
+  vOut[0] = x0+dPos.X();
+  vOut[1] = y0+dPos.Y();
+  vOut[2] = z0+dPos.Z();
+  
+  vOut[3] = cosT*vhat.X() + sinT*vnorm.X();
+  vOut[4] = cosT*vhat.Y() + sinT*vnorm.Y();
+  vOut[5] = cosT*vhat.Z() + sinT*vnorm.Z();
   
   if(fabs(strength)<std::numeric_limits<double>::epsilon()) {  // no gradient
-  
-    vOut[0] = x0+dPos.X();
-    vOut[1] = y0+dPos.Y();
-    vOut[2] = z0+dPos.Z();
-    
-    vOut[3] = cosT*vhat.X() + sinT*vnorm.X();
-    vOut[4] = cosT*vhat.Y() + sinT*vnorm.Y();
-    vOut[5] = cosT*vhat.Z() + sinT*vnorm.Z();
+    return;
   }
 
   double x1,x1p,y1,y1p,z1p;
-  //double z1;
-  
-  double NomEnergy = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
-  double NomR = -(NomEnergy/CLHEP::GeV)/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
 
-  double NominalPath = sqrt(NomR*NomR - LocalR.z()*LocalR.z()) - fabs(NomR)*cos(itsAngle/2);
+  /** TODO   NOMR should go to factory
+  double NomEnergy = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
+  double NomR = -(NomEnergy/CLHEP::GeV)/(0.299792458 * bField/CLHEP::tesla) * CLHEP::m;
+
+  double NominalPath = sqrt(NomR*NomR - z0*z0) - fabs(NomR)*cos(itsAngle/2);
   
-  double EndNomPath = sqrt(NomR*NomR - itsFinalPoint.z()*itsFinalPoint.z()) - fabs(NomR)*cos(itsAngle/2);
+  double EndNomPath = sqrt(NomR*NomR - vOut[2]*vOut[2]) - fabs(NomR)*cos(itsAngle/2);
+  */
+  //  double NomR = 0.0; // temp
+  double NominalPath =0.0; // temp
+  double EndNomPath =0.0;
 
   if(R<0)
     {
@@ -99,61 +105,41 @@ void TRKDipole::HybridTrack(const double vIn[], double vOut[], double h) {
       EndNomPath*=-1;
     }
 
-  double x0=LocalR.x() - NominalPath;
-  double y0=LocalR.y();
-  double z0=LocalR.z();
+  x0=x0 - NominalPath;
 
-  double theta_in = asin(z0/NomR);
-  
-  LocalRp.rotateY(-theta_in);
+  // TODO rotate!
+  //double theta_in = asin(z0/NomR);
+  //LocalRp.rotateY(-theta_in);
 
-  double xp=LocalRp.x();
-  double yp=LocalRp.y();
-  double zp=LocalRp.z();
-
-  // Save for Synchrotron Radiation calculations:
-  BDSLocalRadiusOfCurvature=R;
-  
-  double rootK=sqrt(fabs(kappa*zp));
+  double rootK=sqrt(fabs(strength*zp));
   double rootKh=rootK*h*zp;
   double X11,X12,X21,X22;
   double Y11,Y12,Y21,Y22;
 
-  if (kappa>0)
+  if (strength>0)
     {
       X11= cos(rootKh);
       X12= sin(rootKh)/rootK;
-      X21=-fabs(kappa)*X12;
+      X21=-fabs(strength)*X12;
       X22= X11;
       
       Y11= cosh(rootKh);
       Y12= sinh(rootKh)/rootK;
-      Y21= fabs(kappa)*Y12;
+      Y21= fabs(strength)*Y12;
       Y22= Y11;
     }
-  else // if (kappa<0)
+  else // if (strength<0)
     {
       X11= cosh(rootKh);
       X12= sinh(rootKh)/rootK;
-      X21= fabs(kappa)*X12;
+      X21= fabs(strength)*X12;
       X22= X11;
       
       Y11= cos(rootKh);
       Y12= sin(rootKh)/rootK;
-      Y21= -fabs(kappa)*Y12;
+      Y21= -fabs(strength)*Y12;
       Y22= Y11;
     }
-  // else // should not happen as already returned in that case
-  //   {
-  //     X11 = 1;
-  //     X12 = 0;
-  //     X21 = 0;
-  //     X22 = 1;
-  //     Y11 = 1;
-  //     Y12 = 0;
-  //     Y21 = 0;
-  //     Y22 = 1;
-  //   }
 
   x1      = X11*x0 + X12*xp;    
   x1p     = X21*x0 + X22*xp;
@@ -162,44 +148,29 @@ void TRKDipole::HybridTrack(const double vIn[], double vOut[], double h) {
   y1p     = Y21*y0 + Y22*yp;
 
   z1p=sqrt(1 - x1p*x1p -y1p*y1p);
-  /* 
-  x1 -=(kappa/ (24*R) ) * h2*h2;
-  x1p-=(kappa/ (6*R) ) * h*h2;
-  */
+
   double dx=x1-x0;
   double dy=y1-y0;
   // Linear chord length
   
-  LocalR.setX(dx +itsInitialR.x() + EndNomPath - NominalPath);
-  LocalR.setY(dy + itsInitialR.y());
-  LocalR.setZ(itsFinalPoint.z());
+  vector3 outPos(dx + vIn[0] + EndNomPath - NominalPath,
+		 dy + vIn[1],
+		 vOut[2]);
   
+  vector3 outDir(x1p, y1p, z1p);
 
-  LocalRp.setX(x1p);
-  LocalRp.setY(y1p);
-  LocalRp.setZ(z1p);
-  LocalRp.rotateY(theta_in);
+  //  TODO
+  // outDir.rotateY(theta_in);
+  // outDir.rotateY(-h/R);
+  //  GlobalTangent*=InitMag;
   
-  GlobalPosition=LocalAffine.TransformPoint(LocalR); 
+  vOut[0] = outPos.X(); 
+  vOut[1] = outPos.Y(); 
+  vOut[2] = outPos.Z(); 
   
-  LocalRp.rotateY(-h/R);
-  GlobalTangent=LocalAffine.TransformAxis(LocalRp);
-
-
-  GlobalTangent*=InitMag;
-  
-  // gab: replace += with =
-  yOut[0] = GlobalPosition.x(); 
-  yOut[1] = GlobalPosition.y(); 
-  yOut[2] = GlobalPosition.z(); 
-  
-  yOut[3] = GlobalTangent.x();
-  yOut[4] = GlobalTangent.y();
-  yOut[5] = GlobalTangent.z();
-
-
-
-
+  vOut[3] = outDir.X();
+  vOut[4] = outDir.Y();
+  vOut[5] = outDir.Z();
 }
 
 void TRKDipole::ThickTrack(const double /*vIn*/[], double /*vOut*/[], double /*h*/) {
