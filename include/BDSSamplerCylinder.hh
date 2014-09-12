@@ -11,8 +11,6 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSSamplerSD.hh"
 
-#include "G4VisAttributes.hh"
-
 class BDSSamplerCylinder :public BDSAcceleratorComponent
 {
 public:

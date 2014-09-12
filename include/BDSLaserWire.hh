@@ -13,10 +13,6 @@
 #include "G4LogicalVolume.hh"
 
 #include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "BDSLaserCompton.hh"
 
 class BDSLaserWire :public BDSAcceleratorComponent

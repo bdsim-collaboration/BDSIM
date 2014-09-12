@@ -17,8 +17,6 @@
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
 
-#include "G4VisAttributes.hh"
-
 class BDSDump : public BDSAcceleratorComponent
 {
 public:

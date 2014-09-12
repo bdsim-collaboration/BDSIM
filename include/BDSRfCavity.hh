@@ -14,17 +14,11 @@
 
 #include "G4FieldManager.hh"
 #include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
 #include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4UniformMagField.hh"
-#include "G4PVPlacement.hh"               
 
 #include "G4UniformElectricField.hh"
-//#include "G4ClassicalRK4.hh"
 #include "G4MagErrorStepper.hh"
 #include "G4EqMagElectricField.hh"
-#include "G4TransportationManager.hh"
 
 #include "BDSMultipole.hh"
 

@@ -19,14 +19,19 @@
 #include "BDSDebug.hh"
 
 #include "BDSQuadrupole.hh"
+
 #include "BDSMaterials.hh"
-#include "G4Tubs.hh"
-#include "G4Polyhedra.hh"
-#include "G4VisAttributes.hh"
+#include "BDSQuadMagField.hh"
+#include "BDSQuadStepper.hh"
+
+#include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
+#include "G4Polyhedra.hh"
+#include "G4PVPlacement.hh"               
+#include "G4Tubs.hh"
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
+#include "G4VisAttributes.hh"
+#include "G4VPhysicalVolume.hh"
 
 //============================================================
 

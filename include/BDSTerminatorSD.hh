@@ -8,8 +8,6 @@
 #define BDSTerminatorSD_h
 
 #include "G4VSensitiveDetector.hh"
-#include "G4Navigator.hh"
-#include "G4TransportationManager.hh"
 
 class BDSTerminatorSD: public G4VSensitiveDetector
 {

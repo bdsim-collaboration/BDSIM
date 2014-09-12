@@ -14,7 +14,6 @@
 
 #include "G4FieldManager.hh"
 #include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4PVPlacement.hh"               
 
 #include "BDSMultipole.hh"

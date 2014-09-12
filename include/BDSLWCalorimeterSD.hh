@@ -8,8 +8,6 @@
 
 #include "G4VSensitiveDetector.hh"
 #include "BDSLWCalorimeterHit.hh"
-#include "G4Navigator.hh"
-#include "G4TransportationManager.hh"
 
 class G4Step;
 class G4HCofThisEvent;

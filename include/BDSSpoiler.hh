@@ -13,7 +13,6 @@
 #include "G4Mag_UsualEqRhs.hh"
 
 #include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4Box.hh"
 
 class BDSSpoiler :public BDSAcceleratorComponent

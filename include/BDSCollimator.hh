@@ -12,7 +12,6 @@
 #include "G4Mag_UsualEqRhs.hh"
 
 #include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 #include "G4SubtractionSolid.hh"
 

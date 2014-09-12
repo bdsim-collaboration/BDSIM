@@ -24,10 +24,9 @@
 #include "G4ios.hh"
 #include "G4Gamma.hh"
 #include "G4PropagatorInField.hh"
+#include "G4TransportationManager.hh"
 #include "Randomize.hh" 
 #include "CLHEP/Units/PhysicalConstants.h"
-
-#include "BDSAcceleratorComponent.hh"
 
 BDSSynchrotronRadiation::BDSSynchrotronRadiation(const G4String& processName)
   : G4VDiscreteProcess(processName)

@@ -7,16 +7,6 @@
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4UniformMagField.hh"
-#include "G4PVPlacement.hh"               
-
 
 class BDSTransform3D : public BDSAcceleratorComponent
 {

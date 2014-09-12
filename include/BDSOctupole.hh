@@ -8,17 +8,7 @@
 #define BDSOctupole_h 1
 
 #include "globals.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-#include "BDSOctStepper.hh"
-
-#include "G4FieldManager.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4PVPlacement.hh"               
-
 #include "BDSMultipole.hh"
-#include "BDSOctMagField.hh"
 
 class BDSOctupole :public BDSMultipole
 {

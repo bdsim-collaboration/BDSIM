@@ -20,10 +20,8 @@
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 
-#include "G4Navigator.hh"
 #include "G4AffineTransform.hh"
 
-//#include "G4RunManager.hh"
 #include "G4SDManager.hh"
 
 #include <map>

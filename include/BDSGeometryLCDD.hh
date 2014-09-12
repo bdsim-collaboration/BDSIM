@@ -31,7 +31,6 @@
 #include "G4PVPlacement.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "G4ChordFinder.hh"
 #include "G4FieldManager.hh"
 #include "BDSSamplerSD.hh"
 #include <fstream>

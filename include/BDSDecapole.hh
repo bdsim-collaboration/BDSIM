@@ -9,8 +9,6 @@
 
 #include "globals.hh"
 
-#include "G4VisAttributes.hh"
-
 #include "BDSMultipole.hh"
 
 class BDSDecapole :public BDSMultipole

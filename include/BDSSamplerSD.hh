@@ -12,7 +12,6 @@
 
 #include "G4VSensitiveDetector.hh"
 #include "BDSSamplerHit.hh"
-#include "G4TransportationManager.hh"
 
 class G4Step;
 class G4HCofThisEvent;

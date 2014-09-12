@@ -14,7 +14,6 @@ class G4FieldManager;
 class G4LogicalVolume;
 class G4Tubs;
 class G4UserLimits;
-class G4VisAttributes;
 class G4VPhysicalVolume;
 
 class BDSLWCalorimeter :public BDSAcceleratorComponent

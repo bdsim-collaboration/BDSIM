@@ -8,18 +8,7 @@
 #define BDSDrift_h 1
 
 #include "globals.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4PVPlacement.hh"               
-#include "BDSDriftStepper.hh"
-#include "BDSMagField.hh"
 #include "BDSMultipole.hh"
-#include "G4MagIntegratorStepper.hh"
 
 class BDSDrift :public BDSMultipole
 {

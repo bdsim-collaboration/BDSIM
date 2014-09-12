@@ -1,15 +1,23 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSRBend.hh"
-#include "G4Tubs.hh"
-#include "G4Trd.hh"
+
+#include "BDSDipoleStepper.hh"
+#include "BDSMaterials.hh"
+#include "BDSSbendMagField.hh"
+
+#include "G4FieldManager.hh"
 #include "G4IntersectionSolid.hh"
-#include "G4SubtractionSolid.hh"
-#include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4UserLimits.hh"
+#include "G4Mag_EqRhs.hh"
+#include "G4PVPlacement.hh"               
+#include "G4SubtractionSolid.hh"
 #include "G4TransportationManager.hh"
+#include "G4Trd.hh"
+#include "G4Tubs.hh"
+#include "G4UserLimits.hh"
+#include "G4VisAttributes.hh"
+#include "G4VPhysicalVolume.hh"
 
 //============================================================
 

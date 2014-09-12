@@ -2,19 +2,7 @@
 #define BDSKicker_h 
 
 #include "globals.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-#include "BDSDipoleStepper.hh"
-
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4PVPlacement.hh"               
-
 #include "BDSMultipole.hh"
-#include "BDSSbendMagField.hh"
 
 class BDSKicker:public BDSMultipole
 {
