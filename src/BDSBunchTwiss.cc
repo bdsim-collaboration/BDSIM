@@ -3,8 +3,6 @@
 BDSBunchTwiss::BDSBunchTwiss() :
   BDSBunchInterface(), betaX(0.0), betaY(0.0), alphaX(0.0), alphaY(0.0), emitX(0.0), emitY(0.0), gammaX(0.0), gammaY(0.0)
 {
-  //  GaussGen = new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
-  //  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
   GaussMultiGen = NULL;   
 }
 
@@ -16,8 +14,6 @@ BDSBunchTwiss::BDSBunchTwiss(G4double betaXIn,  G4double betaYIn,
 			     G4double sigmaTIn, G4double sigmaEIn) : 
   BDSBunchInterface(X0In,Y0In,Z0In,T0In,Xp0In,Yp0In,Zp0In,sigmaTIn,sigmaEIn), betaX(betaXIn), betaY(betaYIn), alphaX(alphaXIn), alphaY(alphaYIn), emitX(emitXIn), emitY(emitYIn)
 {
-  //  GaussGen = new CLHEP::RandGauss(*CLHEP::HepRandom::getTheEngine());
-  //  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
   GaussMultiGen = NULL;
 
   sigmaT = sigmaTIn; 
@@ -29,8 +25,6 @@ BDSBunchTwiss::BDSBunchTwiss(G4double betaXIn,  G4double betaYIn,
 }
 
 BDSBunchTwiss::~BDSBunchTwiss() {
-  //  delete GaussGen;
-  //  delete FlatGen;
   delete GaussMultiGen;
 }
 

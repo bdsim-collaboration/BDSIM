@@ -9,6 +9,12 @@
 
 class BDSBeamlineNavigator;
 
+/**
+ * @brief a class that holds the beamline.
+ * 
+ * singleton pattern, and owns the memory of its components
+ */
+
 class BDSBeamline{
 public:
 

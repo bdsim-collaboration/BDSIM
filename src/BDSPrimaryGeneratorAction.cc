@@ -103,14 +103,11 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   
   if(E==0) G4cout << "Particle energy is 0! This will not be tracked." << G4endl;
 
-  G4ThreeVector PartMomDir(0,0,1);
-  G4ThreeVector PartPosition(0,0,0);
-
   G4ThreeVector LocalPos;
   G4ThreeVector LocalMomDir;
   
-  PartMomDir=G4ThreeVector(xp,yp,zp);
-  PartPosition=G4ThreeVector(x0,y0,z0);
+  G4ThreeVector PartMomDir(xp,yp,zp);
+  G4ThreeVector PartPosition(x0,y0,z0);
   
   if(BDSGlobalConstants::Instance()->GetRefVolume()!=""){
     const G4AffineTransform* tf = BDSGlobalConstants::Instance()->GetRefTransform();
