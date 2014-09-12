@@ -1,9 +1,12 @@
 #include "TRKDipole.hh"
 
 #include <cmath>
+#include <cfloat>
 #include <cstdlib>
 #include "vector3.hh"
 #include "vector6.hh"
+
+#include "CLHEP/Units/SystemOfUnits.h"
 
 TRKDipole::TRKDipole(double strengthIn, double bFieldIn, TRKTrackingElement::TRKType typeIn, int trackingStepsIn, std::string nameIn, double lengthIn, TRKAperture *apertureIn, TRKPlacement *placementIn):
   TRKTrackingElement(typeIn, trackingStepsIn,nameIn,lengthIn,apertureIn,placementIn), strength(strengthIn), bField(bFieldIn), drift(NULL)
@@ -37,7 +40,7 @@ void TRKDipole::HybridTrack(const double vIn[], double vOut[], double h) {
 
   vector3 yhat(0.,1.,0.);
 
-  vector3 vhat(vIn3[3],vIn[4],vIn[5]);
+  vector3 vhat(vIn[3],vIn[4],vIn[5]);
   
   vector3 vnorm = vhat.cross(yhat);
   // TODO: double initMag = vhat.mag(); // not correct, need to be included in bfield in Factory
@@ -53,20 +56,19 @@ void TRKDipole::HybridTrack(const double vIn[], double vOut[], double h) {
   // if(  fPtrMagEqOfMot->FCof()<0) R*=-1.;
   // else if ( fPtrMagEqOfMot->FCof()==0) R=DBL_MAX;
   
-  double Theta   = h/R;
-
-  double CosT_ov_2, SinT_ov_2, CosT, SinT;
-  CosT_ov_2=cos(Theta/2);
-  SinT_ov_2=sin(Theta/2);
+  double theta   = h/R;
+  double cosT_ov_2, sinT_ov_2, cosT, sinT;
+  cosT_ov_2 = cos(theta/2);
+  sinT_ov_2 = sin(theta/2);
   
-  CosT=(CosT_ov_2*CosT_ov_2)- (SinT_ov_2*SinT_ov_2);
-  SinT=2*CosT_ov_2*SinT_ov_2;
+  cosT = (cosT_ov_2 * cosT_ov_2)- (sinT_ov_2 * sinT_ov_2);
+  sinT = 2 * cosT_ov_2 * sinT_ov_2;
   
   //BDSLocalRadiusOfCurvature=R;
   
   //  itsDist=fabs(R)*(1.-CosT_ov_2);
   
-  vector3 dPos=R*(SinT*vhat + (1-CosT)*vnorm);
+  vector3 dPos = (vhat*sinT + vnorm*(1-cosT)) * R;
 
   // strength
   
@@ -81,15 +83,15 @@ void TRKDipole::HybridTrack(const double vIn[], double vOut[], double h) {
     vOut[5] = cosT*vhat.Z() + sinT*vnorm.Z();
   }
 
-  G4double x1,x1p,y1,y1p,z1p;
-  //G4double z1;
+  double x1,x1p,y1,y1p,z1p;
+  //double z1;
   
-  G4double NomEnergy = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
-  G4double NomR = -(NomEnergy/CLHEP::GeV)/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
+  double NomEnergy = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
+  double NomR = -(NomEnergy/CLHEP::GeV)/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
 
-  G4double NominalPath = sqrt(NomR*NomR - LocalR.z()*LocalR.z()) - fabs(NomR)*cos(itsAngle/2);
+  double NominalPath = sqrt(NomR*NomR - LocalR.z()*LocalR.z()) - fabs(NomR)*cos(itsAngle/2);
   
-  G4double EndNomPath = sqrt(NomR*NomR - itsFinalPoint.z()*itsFinalPoint.z()) - fabs(NomR)*cos(itsAngle/2);
+  double EndNomPath = sqrt(NomR*NomR - itsFinalPoint.z()*itsFinalPoint.z()) - fabs(NomR)*cos(itsAngle/2);
 
   if(R<0)
     {
@@ -97,25 +99,25 @@ void TRKDipole::HybridTrack(const double vIn[], double vOut[], double h) {
       EndNomPath*=-1;
     }
 
-  G4double x0=LocalR.x() - NominalPath;
-  G4double y0=LocalR.y();
-  G4double z0=LocalR.z();
+  double x0=LocalR.x() - NominalPath;
+  double y0=LocalR.y();
+  double z0=LocalR.z();
 
-  G4double theta_in = asin(z0/NomR);
+  double theta_in = asin(z0/NomR);
   
   LocalRp.rotateY(-theta_in);
 
-  G4double xp=LocalRp.x();
-  G4double yp=LocalRp.y();
-  G4double zp=LocalRp.z();
+  double xp=LocalRp.x();
+  double yp=LocalRp.y();
+  double zp=LocalRp.z();
 
   // Save for Synchrotron Radiation calculations:
   BDSLocalRadiusOfCurvature=R;
   
-  G4double rootK=sqrt(fabs(kappa*zp));
-  G4double rootKh=rootK*h*zp;
-  G4double X11,X12,X21,X22;
-  G4double Y11,Y12,Y21,Y22;
+  double rootK=sqrt(fabs(kappa*zp));
+  double rootKh=rootK*h*zp;
+  double X11,X12,X21,X22;
+  double Y11,Y12,Y21,Y22;
 
   if (kappa>0)
     {
@@ -164,8 +166,8 @@ void TRKDipole::HybridTrack(const double vIn[], double vOut[], double h) {
   x1 -=(kappa/ (24*R) ) * h2*h2;
   x1p-=(kappa/ (6*R) ) * h*h2;
   */
-  G4double dx=x1-x0;
-  G4double dy=y1-y0;
+  double dx=x1-x0;
+  double dy=y1-y0;
   // Linear chord length
   
   LocalR.setX(dx +itsInitialR.x() + EndNomPath - NominalPath);

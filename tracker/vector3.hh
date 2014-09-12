@@ -90,6 +90,14 @@ class vector3 {
     return vector3(xu,yu,zu);
   }
 
+  vector3 cross(const vector3 &rhs) {
+    vector3 v;
+    v.x = (y * rhs.z) - (rhs.y * z);
+    v.y = (z * rhs.x) - (rhs.z * x);
+    v.z = (x * rhs.y) - (rhs.x * y);
+    return v;
+  }
+
   friend std::ostream& operator<< (std::ostream &out, const vector3 &v) {
     return out << "(" << v.x << "," << v.y << "," << v.z << ")";
   }
