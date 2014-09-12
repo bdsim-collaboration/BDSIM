@@ -82,7 +82,7 @@ CLHEP::RandMultiGauss* BDSBunchInterface::CreateMultiGauss(CLHEP::HepRandomEngin
     G4cout << sigma << G4endl;
     G4cout << __METHOD_NAME__ << "adding a small error to zero diagonal elements" << G4endl;
 
-    double small_error = 1e-12;
+    double small_error = 1e-20;
     
     for (int i=0; i<6; i++) {
       if (sigma[i][i]==0) {
