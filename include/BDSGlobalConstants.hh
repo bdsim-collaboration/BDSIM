@@ -386,6 +386,9 @@ private:
   G4String itsTunnelMaterialName;        //tunnel material
   G4String itsTunnelCavityMaterialName;  //tunnel cavity material
   G4String itsSoilMaterialName;          //material around tunnel
+  G4String itsBDSIMPATH;
+  void SetBDSIMPATH();
+  G4String GetBDSIMPATH();
   G4bool   isWaitingForDump;
   G4bool   isDumping;
   G4bool   isReading;
@@ -410,6 +413,10 @@ private:
   void     SetLPBFraction(G4double val);
 
 };
+
+inline  G4String BDSGlobalConstants::GetBDSIMPATH(){
+  return itsBDSIMPATH;
+}
 
 inline G4double BDSGlobalConstants::GetElossHistoBinWidth()
 {return itsElossHistoBinWidth;}
