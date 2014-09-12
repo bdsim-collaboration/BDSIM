@@ -8,9 +8,8 @@ TRKTrackingElement::TRKTrackingElement(TRKType typeIn, int trackingStepsIn, TRKE
 
 TRKTrackingElement::TRKTrackingElement(TRKType typeIn, int trackingStepsIn, 
 				       std::string nameIn, double lengthIn, 
-				       double size_xIn, double size_yIn, 
 				       TRKAperture *apertureIn, TRKPlacement *placementIn) : 
-  TRKElement(nameIn, lengthIn, size_xIn, size_yIn, apertureIn, placementIn), type(typeIn), trackingSteps(trackingStepsIn)
+  TRKElement(nameIn, lengthIn, apertureIn, placementIn), type(typeIn), trackingSteps(trackingStepsIn)
 {
 }
 
@@ -19,6 +18,7 @@ TRKTrackingElement::~TRKTrackingElement() {
 
 void TRKTrackingElement::Track(const double vIn[], double vOut[], double h) {   
   // we need to check if h < length, perhaps here? -> better inside aperturecheck or something
+  // or make this one private and only call from Track(In,Out)
 
 #ifdef TRKDEBUG
   std::cout << "TRKTrackingElement " << name << " : initial point in local coordinates:" << std::endl
@@ -31,8 +31,12 @@ void TRKTrackingElement::Track(const double vIn[], double vOut[], double h) {
 	 << std::endl; 
 #endif
 
+  // this if/else can be optimised perhaps at construction time
   if(type == TRKTrackingElement::thin) {
     ThinTrack(vIn,vOut,h); 
+  }
+  else if(type == TRKTrackingElement::thinsymplectic) {
+    ThinTrackSymplectic(vIn,vOut,h);
   }
   else if(type == TRKTrackingElement::hybrid) {
     HybridTrack(vIn,vOut,h); 
@@ -46,7 +50,7 @@ void TRKTrackingElement::Track(const double vIn[], double vOut[], double h) {
     if (lost) {
       // do something;
       // track with aperture check?
-      // storeParticle();
+      StoreParticle(vIn);
     }
   }
 
@@ -83,4 +87,12 @@ void TRKTrackingElement::Track(const double vIn[], double vOut[]) {
       vTemp[i]=vOut[i];
     }
   }
+}
+
+void TRKTrackingElement::StoreParticle(const double /*vIn*/[])const
+{
+  // write to file or pass to runmanager
+
+
+
 }

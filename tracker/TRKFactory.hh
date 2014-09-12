@@ -4,8 +4,8 @@
 #include "TRKTrackingElement.hh"
 
 class ElementList;
-class Element;
-class Options;
+struct Element;
+struct Options;
 
 class TRKAperture;
 class TRKLine;

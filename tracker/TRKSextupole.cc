@@ -6,10 +6,10 @@
 #include "vector3.hh"
 #include "vector6.hh"
 
-TRKSextupole::TRKSextupole(double strengthIn, TRKTrackingElement::TRKType typeIn, int trackingStepsIn, std::string nameIn, double lengthIn, double size_xIn, double size_yIn, TRKAperture *apertureIn, TRKPlacement *placementIn):
-  TRKTrackingElement(typeIn, trackingStepsIn,nameIn,lengthIn,size_xIn,size_yIn,apertureIn,placementIn), strength(strengthIn), drift(NULL)
+TRKSextupole::TRKSextupole(double strengthIn, TRKTrackingElement::TRKType typeIn, int trackingStepsIn, std::string nameIn, double lengthIn, TRKAperture *apertureIn, TRKPlacement *placementIn):
+  TRKTrackingElement(typeIn, trackingStepsIn,nameIn,lengthIn,apertureIn,placementIn), strength(strengthIn), drift(NULL)
 {
-  drift = new TRKDrift(typeIn, trackingStepsIn,nameIn+"Drift",lengthIn,size_xIn,size_yIn,apertureIn,placementIn);
+  drift = new TRKDrift(typeIn, trackingStepsIn,nameIn+"Drift",lengthIn,apertureIn,placementIn);
 }
 
 TRKSextupole::~TRKSextupole() {
@@ -31,9 +31,8 @@ void TRKSextupole::ThinTrack(const double vIn[], double vOut[], double h)
 
   // adapted from PLACET, element_thin_lens
   // paraxial approximation ONLY!!
-
   if((std::abs(zp)>0.99)&&(std::abs(strength)<1.e-6)) {
-    HybridTrack(vIn,vOut,h);
+    return HybridTrack(vIn,vOut,h);
   }
 
   // initialise kick // only needed once

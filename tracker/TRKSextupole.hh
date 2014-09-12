@@ -15,7 +15,7 @@ private:
   double strength;
   
 public:
-  TRKSextupole(double strength, TRKTrackingElement::TRKType type, int steps, std::string name, double length, double size_x, double size_y, TRKAperture *aperture, TRKPlacement *placement);
+  TRKSextupole(double strength, TRKTrackingElement::TRKType type, int steps, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKSextupole();
   
   /// output stream

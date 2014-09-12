@@ -1,14 +1,15 @@
 #include "TRKQuadrupole.hh"
 
 #include <cmath>
+#include <complex>
 #include <cstdlib>
 #include "vector3.hh"
 #include "vector6.hh"
 
-TRKQuadrupole::TRKQuadrupole(double strengthIn, TRKTrackingElement::TRKType typeIn, int trackingStepsIn, std::string nameIn, double lengthIn, double size_xIn, double size_yIn, TRKAperture *apertureIn, TRKPlacement *placementIn):
-  TRKTrackingElement(typeIn, trackingStepsIn,nameIn,lengthIn,size_xIn,size_yIn,apertureIn,placementIn), strength(strengthIn), drift(NULL)
+TRKQuadrupole::TRKQuadrupole(double strengthIn, TRKTrackingElement::TRKType typeIn, int trackingStepsIn, std::string nameIn, double lengthIn, TRKAperture *apertureIn, TRKPlacement *placementIn):
+  TRKTrackingElement(typeIn, trackingStepsIn,nameIn,lengthIn,apertureIn,placementIn), strength(strengthIn), drift(NULL)
 {
-  drift = new TRKDrift(typeIn, trackingStepsIn,nameIn+"Drift",lengthIn,size_xIn,size_yIn,apertureIn,placementIn);
+  drift = new TRKDrift(typeIn, trackingStepsIn,nameIn+"Drift",lengthIn,apertureIn,placementIn);
 }
 
 TRKQuadrupole::~TRKQuadrupole() {
@@ -19,30 +20,43 @@ void TRKQuadrupole::ThinTrack(const double vIn[], double vOut[], double h) {
   if (std::abs(strength)<=1e-12) {
     return drift->Track(vIn,vOut,h);
   }
-  /// half Drift + Thin Kick + half drift
-  static double halfLength = length/2;
 
-  double hBefore = halfLength - vIn[2];
-  double hAfter = vIn[2] + h - halfLength;
+  double x0 = vIn[0];
+  double y0 = vIn[1];
+  double z0 = vIn[2];
+  double xp = vIn[3];
+  double yp = vIn[4];
+  double zp = vIn[5];
 
-  if (hBefore < 0 || hAfter < 0) {
-    drift->Track(vIn,vOut,h);
-    return;
+  // paraxial approximation ONLY!!
+  if((std::abs(zp)>0.99)&&(std::abs(strength)<1.e-6)) {
+    return HybridTrack(vIn,vOut,h);
   }
 
-  /// first drift distance  
-  drift->Track(vIn,vOut,hBefore);
+  // initialise kick // only needed once
+  double Kn = strength;
 
-  vector6 vKickIn(vOut);
-  vector6 vKickOut;
-  /// thin kick
-  ThinKick(vKickIn,vKickOut);
+  // calculate particle kick
+  std::complex<double> Kick = Kn * std::complex<double>(x0, y0);
+  double kickxp = -real(Kick);
+  double kickyp = +imag(Kick);
 
-  double vTemp[6];
-  vKickOut.setArray(vTemp);
-  /// second drift distance
-  drift->Track(vTemp,vOut,hAfter);
+  // apply kick, 2 steps
+  double xp_ = xp + kickxp * 0.5;
+  double yp_ = yp + kickyp * 0.5;
 
+  vOut[0] = x0 + xp_ * h;
+  vOut[1] = y0 + yp_ * h;
+  vOut[2] = z0 + (0.5e-6 * (xp_*xp_ + yp_*yp_) * h); // to be checked
+
+  // calculate particle kick
+  Kick = Kn * std::complex<double>(vOut[0], vOut[1]);
+  kickxp = -real(Kick);
+  kickyp = +imag(Kick);
+
+  vOut[3] = xp_ + kickxp * 0.5;
+  vOut[4] = yp_ + kickyp * 0.5;
+  // vOut[5] = zp;
 }
 
 void TRKQuadrupole::ThinKick(const vector6& vIn, vector6& vOut) {

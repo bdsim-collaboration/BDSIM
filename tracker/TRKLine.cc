@@ -3,7 +3,7 @@
 #include <iostream>
 
 TRKLine::TRKLine(std::string nameIn, bool circular) :
-  TRKTrackingElement(TRKTrackingElement::thin, TRK::DEFAULT_TRACKING_STEPS, nameIn, 0.0, 0.0, 0.0, NULL, NULL), circular(false)
+  TRKTrackingElement(TRKTrackingElement::thin, TRK::DEFAULT_TRACKING_STEPS, nameIn, 0.0, NULL, NULL), circular(false)
 {
   maxTurns = (circular ? TRK::NR_TURNS : 1);
 }
@@ -25,6 +25,8 @@ void TRKLine::Track(const double vIn[], double vOut[]) {
       (*elIter)->Track(vTemp,vOut);
       /// vTemp = vOut;
       for (int j=0; j<6; j++) {
+	/// new input coordinates
+	// Q(JS): transform to local of element or not?
 	vTemp[j]=vOut[j];
       }
     }

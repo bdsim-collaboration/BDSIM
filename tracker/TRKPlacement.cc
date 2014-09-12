@@ -9,3 +9,9 @@ TRKPlacement::TRKPlacement(double xIn, double yIn, double zIn) : x(xIn), y(yIn),
 }
 
 TRKPlacement::~TRKPlacement() {}
+
+vector3 TRKPlacement::GetGlobal()const
+{
+  return vector3(x,y,z);
+
+}

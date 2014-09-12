@@ -15,7 +15,7 @@ private:
   double strength;
   
 public :
-  TRKSolenoid(double strength, TRKTrackingElement::TRKType type, int steps, std::string name, double length, double size_x, double size_y, TRKAperture *aperture, TRKPlacement *placement);
+  TRKSolenoid(double strength, TRKTrackingElement::TRKType type, int steps, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKSolenoid();
   
   /// output stream

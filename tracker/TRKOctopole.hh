@@ -15,7 +15,7 @@ private:
   double strength;
   
 public:
-  TRKOctopole(double strength, TRKTrackingElement::TRKType type, int steps, std::string name, double length, double size_x, double size_y, TRKAperture *aperture, TRKPlacement *placement);
+  TRKOctopole(double strength, TRKTrackingElement::TRKType type, int steps, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKOctopole();
   
   /// output stream
