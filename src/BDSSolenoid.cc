@@ -42,7 +42,6 @@ BDSSolenoid::BDSSolenoid(G4String aName, G4double aLength,
   BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
   itsBField(bField)
 {
-  SetVisAttributes();
   SetOuterRadius(outR);
 }
 

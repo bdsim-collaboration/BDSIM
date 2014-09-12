@@ -117,8 +117,6 @@ BDSMultipole::BDSMultipole( G4String aName,
 }
 
 void BDSMultipole::ConstructorInit(){
-  CalculateLengths();
-
   itsStepper=NULL;
   itsMagField=NULL;
   itsEqRhs=NULL;
@@ -154,7 +152,8 @@ void BDSMultipole::Build()
   //
   BuildBPFieldAndStepper();
   BuildBPFieldMgr(itsStepper, itsMagField);
-  BuildMarkerLogicalVolume();
+
+  BDSAcceleratorComponent::Build();
   BuildOuterLogicalVolume();
   BuildBeampipe();
   if(BDSGlobalConstants::Instance()->GetBuildTunnel()){

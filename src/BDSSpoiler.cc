@@ -24,7 +24,6 @@ BDSSpoiler::BDSSpoiler (G4String& aName,G4double aLength,G4double bpRad,
   itsPhysiComp(NULL), itsPhysiComp2(NULL), itsSolidLogVol(NULL), 
   itsInnerLogVol(NULL), itsSpoilerMaterial(SpoilerMaterial)
 {
-  SetVisAttributes();
 }
 
 void BDSSpoiler::Build()

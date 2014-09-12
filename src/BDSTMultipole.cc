@@ -32,7 +32,6 @@ BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength,
 			     G4String aTunnelMaterial, G4String aMaterial):
   BDSMultipole(aName,aLength, bpRad, FeRad,blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial)
 {
-  SetVisAttributes();
   SetOuterRadius(outR);
   itsTilt=tilt;
 

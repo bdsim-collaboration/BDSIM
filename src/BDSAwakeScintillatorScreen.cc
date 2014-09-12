@@ -41,7 +41,6 @@ BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String
     _screenRotationMatrix->rotateY(_screenAngle);
 
   _vacRotationMatrix = new G4RotationMatrix();
-  SetVisAttributes();
 }
 
 void BDSAwakeScintillatorScreen::SetVisAttributes()
@@ -250,6 +249,7 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
 }
 
 void BDSAwakeScintillatorScreen::Build(){
+      SetVisAttributes(); 
       BuildScreen();
       BuildCamera();	
       ComputeDimensions();
@@ -563,7 +563,6 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber2(){
 
 BDSAwakeScintillatorScreen::~BDSAwakeScintillatorScreen()
 {
-  delete itsVisAttributes;
   delete _mlScreen;
   delete _camera;
   delete _vacRotationMatrix;

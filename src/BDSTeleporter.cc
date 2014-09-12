@@ -30,15 +30,13 @@ BDSTeleporter::BDSTeleporter(G4String name,
   G4cout << __METHOD_NAME__ << " Constructing Teleporter of length: " 
 	 << length/CLHEP::m << " m" << G4endl;
 #endif
-  SetType("teleporter");
-  SetVisAttributes();
 }
 
 void BDSTeleporter::Build()
 {
   BuildBPFieldAndStepper();   // create custom stepper
   BuildBPFieldMgr(itsStepper,itsMagField);  // register it in a manager
-  BuildMarkerLogicalVolume();  // create logical volume and attach manager(stepper)
+  BDSAcceleratorComponent::Build(); // create logical volume and attach manager(stepper)
 }
 
 void BDSTeleporter::BuildMarkerLogicalVolume()

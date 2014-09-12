@@ -169,6 +169,7 @@ void BDSQuadrupole::BuildCylindricalOuterLogicalVolume()
 ///////////////////////////////////////////////////////////////////////////////////////////
 void BDSQuadrupole::SetVisAttributes()
 {
+  itsVisAttributes = new G4VisAttributes(true);
   itsVisAttributes->SetColor(1,0,0);
   itsVisAttributes->SetForceSolid(true);
   itsVisAttributes->SetVisibility(true);

@@ -1198,7 +1198,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
 			     _bpRad,
 			     _element.xsize * CLHEP::m,
 			     _element.ysize * CLHEP::m,
-			     typestr(_element.type),
 			     theMaterial,
 			     _element.outR*CLHEP::m,
 			     _element.blmLocZ,

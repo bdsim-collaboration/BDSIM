@@ -223,9 +223,6 @@ protected:
 
   void SetPrecisionRegion (G4int precisionRegionType);
 
-  //Calculate dimensions used for the marker volume etc.
-  void CalculateLengths();
-
   //Values related to BLM placement and geometry
   G4double itsBlmLocationR;
   //  G4double itsBlmRadius;
@@ -320,15 +317,14 @@ private:
   BDSAcceleratorComponent(BDSAcceleratorComponent&);
   /// constructor initialisation
   void ConstructorInit();
+  /// Calculate dimensions used for the marker volume etc.
+  void CalculateLengths();
 
   G4RotationMatrix* nullRotationMatrix;
   G4RotationMatrix* tunnelRot;
   G4VisAttributes* VisAtt;
   G4VisAttributes* VisAtt1;
   G4VisAttributes* VisAtt2;
-  G4VisAttributes* VisAtt3;
-  G4VisAttributes* VisAtt4;
-  G4VisAttributes* VisAtt5;
   G4Tubs* itsBLMSolid;
   G4Tubs* itsBlmOuterSolid;
   G4double itsSPos;
@@ -459,7 +455,8 @@ inline G4VisAttributes* BDSAcceleratorComponent::GetVisAttributes() const
 {return itsVisAttributes;}
 
 inline void BDSAcceleratorComponent::SetVisAttributes()
-{itsVisAttributes=NULL;}
+{itsVisAttributes = new G4VisAttributes(true);
+}
 
 inline BDSEnergyCounterSD* BDSAcceleratorComponent::GetBDSEnergyCounter() const
 {return itsBDSEnergyCounter;}

@@ -28,7 +28,6 @@ BDSPCLDrift::BDSPCLDrift (G4String aName, G4double aLength,
   itsBeampipeVisAtt(NULL),itsInnerBeampipeVisAtt(NULL)
 {
   itsXAper=aperX;
-  SetVisAttributes();
 }
 
 void BDSPCLDrift::BuildBeampipe(G4String materialName){

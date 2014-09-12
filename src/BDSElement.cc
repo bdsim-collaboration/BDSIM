@@ -25,7 +25,6 @@
 #include "G4NystromRK4.hh"
 
 // geometry drivers
-#include "parser/enums.h"
 #include "ggmad.hh"
 #include "BDSGeometrySQL.hh"
 
@@ -55,16 +54,11 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap, G4doubl
   itsFieldIsUniform=false;
   itsOuterR = outR;
   itsBmapZOffset = bmapZOffset;
-  SetType(_ELEMENT);
-
-  //Set marker volume lengths
-  CalculateLengths();
 
   // WARNING: ALign in and out will only apply to the first instance of the
   //          element. Subsequent copies will have no alignment set.
   align_in_volume = NULL;
   align_out_volume = NULL;
-  SetVisAttributes();
 }
 
 void BDSElement::BuildMarkerLogicalVolume() {

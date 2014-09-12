@@ -36,7 +36,6 @@ BDSSamplerCylinder (G4String aName,G4double aLength,G4double aRadius):
 {
   nThisSampler = nSamplers + 1;
   SetName("CSampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
-  SetType("csampler");
   nSamplers++;
 
   // register sampler sensitive detector

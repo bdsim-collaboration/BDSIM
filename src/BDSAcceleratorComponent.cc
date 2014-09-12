@@ -144,7 +144,7 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
   if (itsTunnelRadius<=BDSGlobalConstants::Instance()->GetLengthSafety()){
     itsTunnelRadius=BDSGlobalConstants::Instance()->GetTunnelRadius();
   }
-  CalculateLengths();
+  CalculateLengths(); // Calculate dimensions based on component and tunnel dimensions
   itsOuterLogicalVolume=NULL;
   itsMarkerLogicalVolume=NULL;
   itsTunnelLogicalVolume=NULL;
@@ -181,13 +181,10 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
 
   nullRotationMatrix=NULL;
   tunnelRot=NULL;
-  itsVisAttributes = new G4VisAttributes(true);
+  itsVisAttributes=NULL;
   VisAtt=NULL;
   VisAtt1=NULL;
   VisAtt2=NULL;
-  VisAtt3=NULL;
-  VisAtt4=NULL;
-  VisAtt5=NULL;
   itsBLMSolid=NULL;
   itsBlmOuterSolid=NULL;
   itsSPos = 0.0;
@@ -197,15 +194,13 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
 
 BDSAcceleratorComponent::~BDSAcceleratorComponent ()
 {
+  delete itsVisAttributes;
 #ifndef NOUSERLIMITS
   delete itsUserLimits;
 #endif
   delete VisAtt;
   delete VisAtt1;
   delete VisAtt2;
-  delete VisAtt3;
-  delete VisAtt4;
-  delete VisAtt5;
 }
 
 void BDSAcceleratorComponent::Initialise()
@@ -232,6 +227,7 @@ void BDSAcceleratorComponent::Initialise()
 
 void BDSAcceleratorComponent::Build()
 {
+  SetVisAttributes(); // sets color attributes, virtual method
   BuildMarkerLogicalVolume(); // pure virtual provided by derived class
 }
 
@@ -600,9 +596,6 @@ void BDSAcceleratorComponent::BuildTunnel()
   VisAtt2 = new G4VisAttributes(G4Colour(0.0, 0.5, 0.5));
   VisAtt2->SetVisibility(false);
   VisAtt2->SetForceSolid(true);
-  VisAtt3 = new G4VisAttributes(G4Colour(0.4, 0.4, 0.4));
-  VisAtt3->SetVisibility(false);
-  VisAtt3->SetForceSolid(true);
   itsTunnelMinusCavityLogicalVolume->SetVisAttributes(VisAtt1);
   itsMarkerLogicalVolume->SetVisAttributes(VisAtt);
   itsTunnelCavityLogicalVolume->SetVisAttributes(VisAtt2);
@@ -634,14 +627,6 @@ void BDSAcceleratorComponent::BuildBLMs()
    G4AssemblyVolume* assemblyBlms= new G4AssemblyVolume();
    G4Transform3D blmTr3d;
    
-   //declare vis attributes
-   VisAtt4 = new G4VisAttributes(G4Colour(0.5, 0.5, 0.0));
-   VisAtt4->SetVisibility(true);
-   VisAtt4->SetForceSolid(true);
-   VisAtt5 = new G4VisAttributes(G4Colour(0.5, 0.0, 0.5));
-   VisAtt5->SetVisibility(true);
-   VisAtt5->SetForceSolid(true);
-
    //set case thickness
    blmCaseThickness = 1e-20*CLHEP::m;
 

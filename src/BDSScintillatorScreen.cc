@@ -38,6 +38,7 @@ BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double tScint, G
 
 void BDSScintillatorScreen::Build()
 {
+  SetVisAttributes(); 
   ComputeDimensions();
   BuildMarkerLogicalVolume();
   if(BDSGlobalConstants::Instance()->GetBuildTunnel()){

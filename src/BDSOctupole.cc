@@ -28,7 +28,6 @@ BDSOctupole::BDSOctupole(G4String aName, G4double aLength,
   BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
   itsBTrpPrime(BTrpPrime)
 {
-  SetVisAttributes();
   SetOuterRadius(outR);
   itsTilt=tilt;
 }

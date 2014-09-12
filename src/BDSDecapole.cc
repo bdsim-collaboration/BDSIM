@@ -32,7 +32,6 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
   BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
   itsBQuadPrime(BQuadPrime)
 {
-  SetVisAttributes();
   SetOuterRadius(outR);
   itsTilt=tilt;
 }

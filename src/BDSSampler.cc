@@ -39,7 +39,6 @@ BDSSampler::BDSSampler (G4String aName, G4double aLength):
 {
   nThisSampler= nSamplers + 1;
   SetName("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
-  SetType("sampler");
   nSamplers++;
 #ifdef BDSDEBUG
   G4cout << "BDSSampler.cc Nsamplers " << nSamplers << G4endl;

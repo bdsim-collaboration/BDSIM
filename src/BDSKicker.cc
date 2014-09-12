@@ -22,7 +22,6 @@ BDSKicker::BDSKicker(G4String aName, G4double aLength,
   itsTilt=tilt;
   itsBField=bField;
   itsBGrad=bGrad;
-  SetVisAttributes();
 }
 
 void BDSKicker::Build() {

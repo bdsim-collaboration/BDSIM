@@ -23,7 +23,6 @@ G4double aWavelength, G4ThreeVector aDirection):
   itsLaserCompton(NULL),
   itsLaserDirection(aDirection),itsLaserWavelength(aWavelength)
 {
-  SetVisAttributes();
 }
 
 void BDSLaserWire::BuildMarkerLogicalVolume()

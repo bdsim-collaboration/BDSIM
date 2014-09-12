@@ -25,10 +25,8 @@ BDSTerminator::BDSTerminator(G4String aName, G4double aLength):
 			 aName,
 			 aLength,0,0,0)
 {
-  SetVisAttributes();
   nThisSampler= nSamplers + 1;
   SetName("Terminator_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
-  SetType("terminator");
   nSamplers++;
 }
 

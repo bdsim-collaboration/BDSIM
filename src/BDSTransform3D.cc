@@ -1,15 +1,8 @@
 /* BDSIM code.    Version 1.0
 
 */
-#include "BDSGlobalConstants.hh" 
 
 #include "BDSTransform3D.hh"
-#include "G4Tubs.hh"
-#include "G4VisAttributes.hh"
-#include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
 
 //============================================================
 
@@ -31,7 +24,6 @@ BDSTransform3D::BDSTransform3D(G4String aName, G4double x,G4double y,G4double z,
   SetTheta(theta);
   SetPsi(psi);
   SetPhi(phi);
-  SetType("transform3d");
 }
 
 void BDSTransform3D::BuildMarkerLogicalVolume()

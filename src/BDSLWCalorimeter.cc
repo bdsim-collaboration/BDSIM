@@ -33,7 +33,6 @@ BDSLWCalorimeter::BDSLWCalorimeter (G4String& aName,G4double aLength,
   itsBPFieldMgr(NULL),itsBPTube(NULL),itsInnerBPTube(NULL),itsLWCal(NULL),
   itsPhysiLWCal(NULL)
 {
-  SetVisAttributes();
 }
 
 void BDSLWCalorimeter::Build()

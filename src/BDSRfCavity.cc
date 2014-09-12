@@ -20,7 +20,6 @@ BDSRfCavity::BDSRfCavity (G4String aName,G4double aLength, G4double bpRad,
   itsEField(NULL),fChordFinder(NULL),fStepper(NULL),fIntgrDriver(NULL),fieldManager(NULL)
 {
   itsGrad = grad;
-  SetVisAttributes();
 }
 
 void BDSRfCavity::Build()

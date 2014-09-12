@@ -39,7 +39,6 @@ BDSMuSpoiler::BDSMuSpoiler (G4String& aName,G4double aLength,G4double bpRad,
   }
 
   SetBPVisAttributes();
-  SetVisAttributes();
 }
 
 void BDSMuSpoiler::Build()

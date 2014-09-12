@@ -410,7 +410,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 
   G4SDManager* SDman = G4SDManager::GetSDMpointer();
 
-  G4bool use_graphics=true;
   G4ThreeVector TargetPos;
 
   // set default output formats for BDSDetector:
@@ -772,15 +771,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
         }
 
 	thecurrentitem->PrepareField(PhysiComponentPlace);
-
-	if(use_graphics)
-	  {
-	    thecurrentitem->GetVisAttributes()->SetVisibility(true);
-#ifdef BDSDEBUG
-	    thecurrentitem->GetMarkerLogicalVolume()->
-	      SetVisAttributes(thecurrentitem->GetVisAttributes());
-#endif
-	  }
       }
     }
 
