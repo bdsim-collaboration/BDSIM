@@ -45,7 +45,6 @@ private:
   virtual void BuildBeampipe(G4String materialName = "");
   virtual void BuildBPFieldAndStepper();
   virtual void BuildBLMs();
-  virtual G4VisAttributes* SetVisAttributes();
   G4double itsStartOuterR;
   G4double itsEndOuterR;
   G4bool itsAperset;

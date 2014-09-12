@@ -42,7 +42,7 @@ class BDSRfCavity :public BDSMultipole
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
 
-  virtual G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
 
   G4double itsGrad; // longitudinal E field grad in MV / m
 

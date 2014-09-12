@@ -34,7 +34,7 @@ private:
   void BuildInnerCollimator();
   void BuildCollimatorTunnel();
 
-  virtual G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
 
   // Geometrical objects:
 

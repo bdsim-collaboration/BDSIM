@@ -19,11 +19,11 @@ BDSLaserWire::BDSLaserWire (G4String aName,G4double aLength,
 G4double aWavelength, G4ThreeVector aDirection):
   BDSAcceleratorComponent(
     aName,
-    aLength,0,0,0,
-    SetVisAttributes()),
+    aLength,0,0,0),
   itsLaserCompton(NULL),
   itsLaserDirection(aDirection),itsLaserWavelength(aWavelength)
 {
+  SetVisAttributes();
 }
 
 void BDSLaserWire::BuildMarkerLogicalVolume()
@@ -44,12 +44,11 @@ void BDSLaserWire::BuildMarkerLogicalVolume()
     SetLaserwireDir(itsMarkerLogicalVolume->GetName(),itsLaserDirection);
 }
 
-G4VisAttributes* BDSLaserWire::SetVisAttributes()
+void BDSLaserWire::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.,1.,0.));
   itsVisAttributes->SetForceSolid(true);
   itsVisAttributes->SetVisibility(true);
-  return itsVisAttributes;
 }
 
 BDSLaserWire::~BDSLaserWire()

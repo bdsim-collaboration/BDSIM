@@ -30,7 +30,7 @@ private:
   virtual void Build();
   virtual void BuildMarkerLogicalVolume();
   void BuildInnerSpoiler();
-  virtual G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
 
   // Geometrical objects:
 

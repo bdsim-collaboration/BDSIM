@@ -21,7 +21,7 @@ BDSMuSpoiler::BDSMuSpoiler (G4String& aName,G4double aLength,G4double bpRad,
                             G4String aTunnelMaterial):
   BDSAcceleratorComponent(aName,
 			  aLength,bpRad,bpRad,bpRad,
-                          SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial),
+                          blmLocZ, blmLocTheta, aTunnelMaterial),
   itsPhysiComp(NULL),itsPhysiComp2(NULL),itsPhysiInnerBP(NULL),
   itsPhysiBP(NULL),itsSolidLogVol(NULL),itsInnerLogVol(NULL),itsBeampipeLogicalVolume(NULL),
   itsInnerBPLogicalVolume(NULL),itsBPTube(NULL),itsInnerBPTube(NULL),
@@ -39,6 +39,7 @@ BDSMuSpoiler::BDSMuSpoiler (G4String& aName,G4double aLength,G4double bpRad,
   }
 
   SetBPVisAttributes();
+  SetVisAttributes();
 }
 
 void BDSMuSpoiler::Build()
@@ -256,20 +257,18 @@ void BDSMuSpoiler::BuildBLMs(){
 }
 
 
-G4VisAttributes* BDSMuSpoiler::SetVisAttributes()
+void BDSMuSpoiler::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.0,0.5,0.5));
   itsVisAttributes->SetForceSolid(true);
   itsVisAttributes->SetVisibility(true);
-  return itsVisAttributes;
 }
 
-G4VisAttributes* BDSMuSpoiler::SetBPVisAttributes()
+void BDSMuSpoiler::SetBPVisAttributes()
 {
   itsBPVisAttributes=new G4VisAttributes(G4Colour(0.2,0.2,0.2));
   itsBPVisAttributes->SetForceSolid(true);
   itsBPVisAttributes->SetVisibility(true);
-  return itsBPVisAttributes;
 }
 
 

@@ -29,13 +29,13 @@ protected:
   G4Mag_UsualEqRhs*       itsEqRhs;
 
 private:
+  void SetVisAttributes();
   virtual void Build();
   virtual void BuildMarkerLogicalVolume();
   /// define field and stepper
   void BuildBPFieldAndStepper();
   /// build and set field manager and chord finder
   void BuildBPFieldMgr(G4MagIntegratorStepper* stepper,G4MagneticField* field);
-  virtual G4VisAttributes* SetVisAttributes();
 };
 
 void CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline);

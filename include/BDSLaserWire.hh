@@ -34,7 +34,7 @@ public:
 
 private:
   virtual void BuildMarkerLogicalVolume();
-  virtual G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
 
   BDSLaserCompton* itsLaserCompton; // not used atm, JS
   G4ThreeVector itsLaserDirection;
