@@ -329,8 +329,29 @@ int main(int argc,char** argv) {
   // job termination
   //
   G4GeometryManager::GetInstance()->OpenGeometry();
+  
+#ifdef BDSDEBUG 
+  G4cout << __FUNCTION__ << "> BDSOutput deleting..."<<G4endl;
+#endif
+  delete bdsOutput;
 
- 
+#ifdef BDSDEBUG
+  G4cout << __FUNCTION__ << "> BDSBeamline deleting..."<<G4endl;
+#endif
+  delete BDSBeamline::Instance();
+
+#ifdef BDSDEBUG 
+  G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
+#endif
+  delete BDSExecOptions::Instance();
+  delete BDSGlobalConstants::Instance();
+  delete BDSMaterials::Instance();
+
+#ifdef BDSDEBUG 
+  G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
+#endif
+  delete runManager; 
+
   G4cout << __FUNCTION__ << "> End of Run, Thank you for using BDSIM!" << G4endl;
 
    
