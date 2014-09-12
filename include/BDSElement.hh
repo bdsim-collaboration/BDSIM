@@ -46,7 +46,7 @@ public:
 private:
 
   virtual void BuildMarkerLogicalVolume();
-  virtual G4VisAttributes* SetVisAttributes();  
+  void SetVisAttributes();  
 
   void BuildElementMarkerLogicalVolume();
   void BuildGeometry();

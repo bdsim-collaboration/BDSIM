@@ -25,7 +25,7 @@ BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
                               G4String aTunnelMaterial):
   BDSAcceleratorComponent(aName,
 			  aLength,bpRad,xAper,yAper,
-			  SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial),
+			  blmLocZ, blmLocTheta, aTunnelMaterial),
   itsPhysiComp(NULL), itsPhysiComp2(NULL), itsSolidLogVol(NULL), itsTempSolidLogVol(NULL),
   itsInnerLogVol(NULL), itsInnerSolid(NULL), itsOuterSolid(NULL), itsSolid(NULL), itsSoilTube(NULL),
   itsTunnelTube(NULL),  itsInnerTunnelTube(NULL), itsInnerTunnelLogicalVolume(NULL),
@@ -36,6 +36,7 @@ BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
   SetType(type);
 
   if(itsOuterR==0) itsOuterR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
+  SetVisAttributes();
 }
 
 void BDSCollimator::Build()
@@ -79,11 +80,10 @@ void BDSCollimator::BuildBLMs(){
   BDSAcceleratorComponent::BuildBLMs();
 }
 
-G4VisAttributes* BDSCollimator::SetVisAttributes()
+void BDSCollimator::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.3,0.4,0.2));
   itsVisAttributes->SetForceSolid(true);
-  return itsVisAttributes;
 }
 
 void BDSCollimator::BuildInnerCollimator()

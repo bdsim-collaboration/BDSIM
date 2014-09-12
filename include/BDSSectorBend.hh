@@ -65,7 +65,7 @@ private:
   /// cylinder
   void BuildCylindricalOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
 
-  virtual G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
 
   // G4int itsNSegments;
   // G4double itsSegmentLength;

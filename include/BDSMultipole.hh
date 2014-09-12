@@ -22,7 +22,6 @@
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4RotationMatrix.hh"
 #include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 
 class BDSMultipole :public BDSAcceleratorComponent
 {
@@ -31,7 +30,6 @@ public:
 		G4double aLength,
 		G4double aBpRadius,
 		G4double aInnerIronRadius,
-		G4VisAttributes* aVisAtt,
 		G4String aMaterial = "",
 		G4double aXAper=0.,
 		G4double aYAper=0.,
@@ -44,7 +42,6 @@ public:
 		G4double aLength,
 		G4double aBpRadius,
 		G4double aInnerIronRadius,
-		G4VisAttributes* aVisAtt,
                 G4String aTunnelMaterial = "",
                 G4String aMaterial="",
 		G4double aXAper=0.,
@@ -61,7 +58,6 @@ public:
 		G4double aLength,
 		G4double aBpRadius,
 		G4double aInnerIronRadius,
-		G4VisAttributes* aVisAtt,
                 std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
                 G4String aTunnelMaterial = "",
                 G4String aMaterial="",

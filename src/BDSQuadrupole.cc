@@ -35,7 +35,7 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
 			     G4double bGrad, G4double tilt, G4double outR,
                              std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
 			     G4String aTunnelMaterial, G4String aMaterial, G4String spec):
-  BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
+  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
   itsBGrad(bGrad)
 {
 #ifdef BDSDEBUG 
@@ -78,13 +78,6 @@ void BDSQuadrupole::Build()
       
       BuildOuterFieldManager(4, BFldIron,CLHEP::pi/4);
     }
-}
-
-G4VisAttributes* BDSQuadrupole::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(1,0,0));
-  itsVisAttributes->SetForceSolid(true);
-  return itsVisAttributes;
 }
 
 void BDSQuadrupole::BuildBPFieldAndStepper()
@@ -174,6 +167,12 @@ void BDSQuadrupole::BuildCylindricalOuterLogicalVolume()
 ///////////////////////////////////////////////////////////////////////////////////////////
 // 				Detailed geometry					 //
 ///////////////////////////////////////////////////////////////////////////////////////////
+void BDSQuadrupole::SetVisAttributes()
+{
+  itsVisAttributes->SetColor(1,0,0);
+  itsVisAttributes->SetForceSolid(true);
+  itsVisAttributes->SetVisibility(true);
+}
 
 
 void BDSQuadrupole::BuildStandardOuterLogicalVolume()

@@ -30,8 +30,9 @@ BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength,
 			     std::list<G4double> akn, std::list<G4double> aks, 
                              std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
 			     G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName,aLength, bpRad, FeRad,SetVisAttributes(),blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial)
+  BDSMultipole(aName,aLength, bpRad, FeRad,blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial)
 {
+  SetVisAttributes();
   SetOuterRadius(outR);
   itsTilt=tilt;
 
@@ -94,11 +95,10 @@ BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength,
   itsOrder = kn.size();
 }
 
-G4VisAttributes* BDSTMultipole::SetVisAttributes()
+void BDSTMultipole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.1,0.4,0.2));
   itsVisAttributes->SetForceSolid(true);
-  return itsVisAttributes;
 }
 
 void BDSTMultipole::BuildBPFieldAndStepper()

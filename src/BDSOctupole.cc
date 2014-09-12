@@ -25,9 +25,10 @@ BDSOctupole::BDSOctupole(G4String aName, G4double aLength,
 			 G4double outR, 
                          std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
                          G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
+  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
   itsBTrpPrime(BTrpPrime)
 {
+  SetVisAttributes();
   SetOuterRadius(outR);
   itsTilt=tilt;
 }
@@ -59,11 +60,10 @@ void BDSOctupole::Build() {
     }
 }
 
-G4VisAttributes* BDSOctupole::SetVisAttributes()
+void BDSOctupole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0,1,1));
   itsVisAttributes->SetForceSolid(true);
-  return itsVisAttributes;
 }
 
 void BDSOctupole::BuildBPFieldAndStepper()

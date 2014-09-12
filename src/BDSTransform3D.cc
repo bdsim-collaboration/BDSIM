@@ -21,7 +21,6 @@ BDSTransform3D::BDSTransform3D(G4String aName, G4double x,G4double y,G4double z,
 			  0,
 			  0,
 			  0,
-			  NULL,
 			  "",
                           "",
 			  0, // angle
@@ -38,13 +37,6 @@ BDSTransform3D::BDSTransform3D(G4String aName, G4double x,G4double y,G4double z,
 void BDSTransform3D::BuildMarkerLogicalVolume()
 {
   // nothing to do here
-}
-
-
-G4VisAttributes* BDSTransform3D::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(0,1,0));
-  return itsVisAttributes;
 }
 
 

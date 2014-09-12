@@ -32,7 +32,7 @@ public:
 private:
 
   virtual void BuildMarkerLogicalVolume();
-  virtual G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
 
   /// number of total Dumps
   static int nDumps;

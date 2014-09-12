@@ -23,9 +23,9 @@ int BDSTerminator::nSamplers=0;
 BDSTerminator::BDSTerminator(G4String aName, G4double aLength):
   BDSAcceleratorComponent(
 			 aName,
-			 aLength,0,0,0,
-			 SetVisAttributes())
+			 aLength,0,0,0)
 {
+  SetVisAttributes();
   nThisSampler= nSamplers + 1;
   SetName("Terminator_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
   SetType("terminator");
@@ -55,10 +55,9 @@ void BDSTerminator::BuildMarkerLogicalVolume()
   //BDSTerminatorUserLimits has the logic inside it to respond to turn number
 }
 
-G4VisAttributes* BDSTerminator::SetVisAttributes()
+void BDSTerminator::SetVisAttributes()
 {
   itsVisAttributes = new G4VisAttributes(G4Colour(1,1,1));
-  return itsVisAttributes;
 }
 
 BDSTerminator::~BDSTerminator()

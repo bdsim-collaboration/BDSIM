@@ -29,9 +29,10 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
 			 G4double outR, 
                          std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
                          G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
+  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
   itsBQuadPrime(BQuadPrime)
 {
+  SetVisAttributes();
   SetOuterRadius(outR);
   itsTilt=tilt;
 }
@@ -63,11 +64,10 @@ void BDSDecapole::Build() {
     }
 }
 
-G4VisAttributes* BDSDecapole::SetVisAttributes()
+void BDSDecapole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0,0,1)); //green
   itsVisAttributes->SetForceSolid(true);
-  return itsVisAttributes;
 }
 
 void BDSDecapole::BuildBPFieldAndStepper()

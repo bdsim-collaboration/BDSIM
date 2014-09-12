@@ -19,7 +19,7 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
                    std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
                    G4double tilt, G4double bGrad, 
                    G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
+  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
 	       0, 0, angle),
   markerSolidVolume(NULL),rbendRectangleSolidVolume(NULL),rbendRectangleLogicalVolume(NULL),
   middleBeampipeLogicalVolume(NULL),middleInnerBPLogicalVolume(NULL),endsBeampipeLogicalVolume(NULL),
@@ -72,11 +72,10 @@ void BDSRBend::Build()
     }
 }
 
-G4VisAttributes* BDSRBend::SetVisAttributes()
+void BDSRBend::SetVisAttributes()
 {
   itsVisAttributes = new G4VisAttributes(G4Colour(0,0,1)); //blue
   itsVisAttributes->SetForceSolid(true);
-  return itsVisAttributes;
 }
 
 void BDSRBend::BuildBPFieldAndStepper()

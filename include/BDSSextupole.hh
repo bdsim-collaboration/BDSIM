@@ -42,7 +42,7 @@ private:
   void BuildStandardOuterLogicalVolume();
   void BuildCylindricalOuterLogicalVolume();
   
-  virtual G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
 
 };
 

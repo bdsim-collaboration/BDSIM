@@ -7,6 +7,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSExecOptions.hh"
 #include "BDSElement.hh"
+#include "BDSDebug.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Torus.hh"
@@ -45,7 +46,7 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap, G4doubl
   BDSAcceleratorComponent(
 			  aName,
 			  aLength,bpRad,0,0,
-			  SetVisAttributes(), aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*CLHEP::m, aTunnelOffsetX*CLHEP::m, aTunnelCavityMaterial),
+			  aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*CLHEP::m, aTunnelOffsetX*CLHEP::m, aTunnelCavityMaterial),
   itsGeometry(geometry), itsBmap(bmap),
   fChordFinder(NULL), itsFStepper(NULL), itsFEquation(NULL), itsEqRhs(NULL), 
   itsMagField(NULL), itsCachedMagField(NULL), itsUniformMagField(NULL)
@@ -63,6 +64,7 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap, G4doubl
   //          element. Subsequent copies will have no alignment set.
   align_in_volume = NULL;
   align_out_volume = NULL;
+  SetVisAttributes();
 }
 
 void BDSElement::BuildMarkerLogicalVolume() {
@@ -417,10 +419,9 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 
 
 
-G4VisAttributes* BDSElement::SetVisAttributes()
+void BDSElement::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.5,0.5,1));
-  return itsVisAttributes;
 }
 
 

@@ -32,8 +32,6 @@ public:
 private:
   
   virtual void BuildMarkerLogicalVolume();
-  virtual G4VisAttributes* SetVisAttributes();
-  
 };
 
 #endif

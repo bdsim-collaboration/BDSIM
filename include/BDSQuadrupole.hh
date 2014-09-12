@@ -54,7 +54,7 @@ private:
   /// cylinder
   void BuildCylindricalOuterLogicalVolume();
 
-  virtual G4VisAttributes* SetVisAttributes();
+  void SetVisAttributes();
 };
 
 #endif
