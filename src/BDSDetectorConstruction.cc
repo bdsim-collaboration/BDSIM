@@ -179,6 +179,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   //construct bds
   return ConstructBDS(beamline_list);
 }
+
 G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_list)
 {  
   std::list<struct Element>::iterator it;
@@ -202,7 +203,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
     AddTerminatorToEndOfBeamline(&beamline_list);
   }
 
-
   // convert the parsed element list to list of BDS elements
   //
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
@@ -215,21 +215,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 #endif
 
     BDSAcceleratorComponent* temp = theComponentFactory->createComponent(it, beamline_list);
-
-#ifdef BDSDEBUG
-    G4cout << "pushing onto back of beamline..." << G4endl;
-#endif
     if(temp){
       BDSBeamline::Instance()->addComponent(temp);
-      //For the outline file...
-      BDSBeamline::Instance()->lastItem()->SetK1((*it).k1);
-      BDSBeamline::Instance()->lastItem()->SetK2((*it).k2);
-      BDSBeamline::Instance()->lastItem()->SetK3((*it).k3);
     }
-
-#ifdef BDSDEBUG
-    G4cout << "done." << G4endl;
-#endif
   }
   
   delete theComponentFactory;
