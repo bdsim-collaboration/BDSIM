@@ -10,10 +10,9 @@
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Mag_UsualEqRhs.hh"
 
-#include "G4UserLimits.hh"
-#include "G4Box.hh"
+class G4Material;
+class G4VPhysicalVolume;
 
 class BDSSpoiler :public BDSAcceleratorComponent
 {

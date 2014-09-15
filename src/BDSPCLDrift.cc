@@ -7,6 +7,7 @@
 
 #include "BDSPCLDrift.hh"
 #include "BDSMagField.hh"
+#include "BDSMaterials.hh"
 #include "BDSDriftStepper.hh"
 #include "BDSPCLTube.hh"
 

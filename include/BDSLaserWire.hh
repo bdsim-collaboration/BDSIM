@@ -7,12 +7,9 @@
 #ifndef BDSLaserWire_h
 #define BDSLaserWire_h 1
 
-#include"globals.hh"
+#include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
 
-#include "G4FieldManager.hh"
 #include "BDSLaserCompton.hh"
 
 class BDSLaserWire :public BDSAcceleratorComponent

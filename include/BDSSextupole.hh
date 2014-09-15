@@ -8,16 +8,8 @@
 #define BDSSextupole_h 1
 
 #include "globals.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-#include "BDSSextStepper.hh"
-
-#include "G4FieldManager.hh"
-#include "G4UserLimits.hh"
-#include "G4PVPlacement.hh"               
 
 #include "BDSMultipole.hh"
-#include "BDSSextMagField.hh"
 
 class BDSSextupole :public BDSMultipole
 {

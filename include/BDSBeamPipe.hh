@@ -10,17 +10,11 @@
 #ifndef BDSBeamPipe_h
 #define BDSBeamPipe_h 1
 
-#include"globals.hh"
-#include "BDSMaterials.hh"
+#include "globals.hh"
 #include "G4LogicalVolume.hh"
 
-#include "G4FieldManager.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
-#include "G4UniformMagField.hh"
 #include "G4IntersectionSolid.hh"
-#include "G4VSolid.hh"
 #include "G4Trd.hh"
 #include "G4Tubs.hh"
 #include "G4FieldManager.hh"

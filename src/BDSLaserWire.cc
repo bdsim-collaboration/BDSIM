@@ -6,12 +6,10 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSLaserWire.hh"
+#include "BDSMaterials.hh"
 #include "G4Box.hh"
-#include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4UserLimits.hh"
 
 //============================================================
 
