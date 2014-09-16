@@ -111,7 +111,7 @@ private:
   std::vector<GFlashHomoShowerParameterisation*> theParameterisation;
   GFlashHitMaker *theHitMaker;
   GFlashParticleBounds *theParticleBounds;
-  GFlashParticleBounds *theParticleBoundsVac;
+  //  GFlashParticleBounds *theParticleBoundsVac;
   std::vector<BDSShowerModel*> theFastShowerModel;
   std::vector<G4Region*> gFlashRegion;
 

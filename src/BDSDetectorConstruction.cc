@@ -100,7 +100,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
   solidWorld(NULL),logicWorld(NULL),physiWorld(NULL),
   magField(NULL),BDSUserLimits(NULL),BDSSensitiveDetector(NULL),
-  _globalRotation(NULL)
+  theHitMaker(NULL),theParticleBounds(NULL),_globalRotation(NULL)
 {  
   verbose    = BDSExecOptions::Instance()->GetVerbose();
   gflash     = BDSExecOptions::Instance()->GetGFlash();
@@ -115,37 +115,38 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   //initialize global rotation matrix
   _globalRotation = new G4RotationMatrix();
 
-  // GlashStuff                                                                                                                                                         
-  theParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
-  theParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*CLHEP::GeV);
-  theParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*CLHEP::GeV);
-  theParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  
-  theParticleBounds->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),gflashemax*CLHEP::GeV);
-  theParticleBounds->SetMinEneToParametrise(*G4Positron::PositronDefinition(),gflashemin*CLHEP::GeV);
-  theParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-
-  theParticleBoundsVac  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
-  theParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*CLHEP::GeV);
-  theParticleBoundsVac->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),0*CLHEP::GeV);
+  if (gflash) {
+    // GFlashStuff
+    theParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
+    theParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*CLHEP::GeV);
+    theParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*CLHEP::GeV);
+    theParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+    
+    theParticleBounds->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),gflashemax*CLHEP::GeV);
+    theParticleBounds->SetMinEneToParametrise(*G4Positron::PositronDefinition(),gflashemin*CLHEP::GeV);
+    theParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+    
+    // theParticleBoundsVac  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
+    // theParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*CLHEP::GeV);
+    // theParticleBoundsVac->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),0*CLHEP::GeV);
 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "theParticleBounds - min E - electron: " 
-	 << theParticleBounds->GetMinEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< " GeV" << G4endl;
-  G4cout << __METHOD_NAME__ << "theParticleBounds - max E - electron: " 
-	 << theParticleBounds->GetMaxEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
-  G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - electron: " 
-	 << theParticleBounds->GetEneToKill(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
-  G4cout << __METHOD_NAME__ << "theParticleBounds - min E - positron: " 
-	 << theParticleBounds->GetMinEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
-  G4cout << __METHOD_NAME__ << "theParticleBounds - max E - positron: " 
-	 << theParticleBounds->GetMaxEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
-  G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - positron: " 
-	 << theParticleBounds->GetEneToKill(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
+    G4cout << __METHOD_NAME__ << "theParticleBounds - min E - electron: " 
+	   << theParticleBounds->GetMinEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< " GeV" << G4endl;
+    G4cout << __METHOD_NAME__ << "theParticleBounds - max E - electron: " 
+	   << theParticleBounds->GetMaxEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
+    G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - electron: " 
+	   << theParticleBounds->GetEneToKill(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
+    G4cout << __METHOD_NAME__ << "theParticleBounds - min E - positron: " 
+	   << theParticleBounds->GetMinEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
+    G4cout << __METHOD_NAME__ << "theParticleBounds - max E - positron: " 
+	   << theParticleBounds->GetMaxEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
+    G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - positron: " 
+	   << theParticleBounds->GetEneToKill(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
 #endif
 
-  theHitMaker          = new GFlashHitMaker();                    // Makes the EnergieSpots 
-
+    theHitMaker          = new GFlashHitMaker();                    // Makes the EnergieSpots 
+  }
 }
 
 
@@ -264,7 +265,7 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
 
   delete theHitMaker;
   delete theParticleBounds;
-  delete theParticleBoundsVac;
+  //  delete theParticleBoundsVac;
 }
 
 //=================================================================
@@ -676,8 +677,8 @@ void BDSDetectorConstruction::ComponentPlacement(){
 #ifdef BDSDEBUG
 		  G4cout << "...adding " << SensVols[i]->GetName() << " to gFlashRegion" << G4endl;
 #endif
-		  /**********************************************                                                                                                                       
-		   * Initialise shower model                                                                                                                                          
+		  /**********************************************
+		   * Initialise shower model
 		   ***********************************************/
 		  G4String rname = "gFlashRegion_" + SensVols[i]->GetName();
 		  gFlashRegion.push_back(new G4Region(rname.c_str()));
@@ -705,7 +706,6 @@ void BDSDetectorConstruction::ComponentPlacement(){
 		}		  
 	      }
 	    }
-
 	}
 
 
