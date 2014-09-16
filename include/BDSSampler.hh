@@ -27,6 +27,8 @@ public:
   static BDSSamplerSD* GetSensitiveDetector(){return SensitiveDetector;}
 
 private:
+  virtual void Initialise();
+
   virtual void BuildMarkerLogicalVolume();
 
   /// id of sampler

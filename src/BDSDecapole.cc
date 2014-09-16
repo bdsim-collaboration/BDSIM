@@ -19,7 +19,6 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4TransportationManager.hh"
 
 //============================================================
 

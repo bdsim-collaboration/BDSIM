@@ -7,7 +7,6 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSExecOptions.hh"
 #include "BDSElement.hh"
-#include "BDSDebug.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Torus.hh"

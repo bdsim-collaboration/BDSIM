@@ -88,11 +88,6 @@ public:
   G4double GetK2();
   G4double GetK3();
 
-  ///Set is only for Outline readout purposes - doesn't change magnet strengths
-  void SetK1(G4double K1);
-  void SetK2(G4double K2);
-  void SetK3(G4double K3);
-
   G4RotationMatrix* GetRotation();
   G4ThreeVector GetPosition();
   
@@ -108,7 +103,6 @@ public:
   G4int GetCopyNumber() const;
   G4double GetSPos() const;
   void SetSPos(G4double spos);
-  void SetCopyNumber(G4int nCopy);
   void AddSensitiveVolume(G4LogicalVolume* aLogVol);
   std::vector<G4LogicalVolume*> GetSensitiveVolumes();
   void SetGFlashVolumes(G4LogicalVolume* aLogVol);
@@ -147,10 +141,11 @@ public:
 private:
   /// private default constructor
   BDSAcceleratorComponent();
+protected:
   /// initialise method
   /// checks if marker logical volume already exists and builds new one if not
   // can't be in constructor as calls virtual methods
-  void Initialise();
+  virtual void Initialise();
 
 public:
   BDSAcceleratorComponent (
@@ -222,6 +217,11 @@ protected:
   void SetPsi(G4double val);
 
   void SetPrecisionRegion (G4int precisionRegionType);
+
+  ///Set is only for Outline readout purposes - doesn't change magnet strengths
+  void SetK1(G4double K1);
+  void SetK2(G4double K2);
+  void SetK3(G4double K3);
 
   //Values related to BLM placement and geometry
   G4double itsBlmLocationR;
@@ -328,6 +328,7 @@ private:
   G4Tubs* itsBLMSolid;
   G4Tubs* itsBlmOuterSolid;
   G4double itsSPos;
+  /// count of logical volumes shared with other instances; start at 0
   G4int itsCopyNumber;
   BDSEnergyCounterSD* itsBDSEnergyCounter;
   //  G4int itsCollectionID;
@@ -466,9 +467,6 @@ inline G4int BDSAcceleratorComponent::GetCopyNumber() const
 
 inline G4double BDSAcceleratorComponent::GetSPos() const
 {return itsSPos;}
-
-inline void BDSAcceleratorComponent::SetCopyNumber(G4int nCopy)
-{itsCopyNumber=nCopy;}
 
 inline void BDSAcceleratorComponent::SetSPos(G4double spos)
 {itsSPos=spos;}

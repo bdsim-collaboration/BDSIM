@@ -26,7 +26,6 @@
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSMaterials.hh"
-#include "BDSDebug.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Colour.hh"
@@ -35,17 +34,16 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4AssemblyVolume.hh"
 #include "G4Transform3D.hh"
 
 typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
+LogVolCountMap* LogVolCount = new LogVolCountMap();
 
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
+LogVolMap* LogVol = new LogVolMap();
 
 BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4String& aName,
@@ -205,19 +203,21 @@ BDSAcceleratorComponent::~BDSAcceleratorComponent ()
 
 void BDSAcceleratorComponent::Initialise()
 {
-  // check and build logical volume
-  if(!(*LogVolCount)[itsName])
+  /// check and build logical volume
+
+  // set copy number (count starts at 0)
+  // post increment guarantees itsCopyNumber starts at 0!
+  itsCopyNumber = (*LogVolCount)[itsName]++;
+  if(itsCopyNumber == 0)
     {
       Build();
       //
       // append marker logical volume to volume map
       //
-      (*LogVolCount)[itsName]=1;
       (*LogVol)[itsName]=itsMarkerLogicalVolume;
     }
   else
     {
-      (*LogVolCount)[itsName]++;
       //
       // use already defined marker volume
       //

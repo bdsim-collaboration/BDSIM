@@ -9,12 +9,10 @@
 
 #include "BDSDriftStepper.hh"
 #include "BDSMagField.hh"
-#include "BDSMaterials.hh"
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
 #include "G4MagIntegratorStepper.hh"
-#include "G4PVPlacement.hh"               
 #include "G4Tubs.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"

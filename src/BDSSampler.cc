@@ -49,6 +49,13 @@ BDSSampler::BDSSampler (G4String aName, G4double aLength):
   SDMan->AddNewDetector(SensitiveDetector);
 }
 
+void BDSSampler::Initialise()
+{
+  BDSAcceleratorComponent::Initialise();
+  
+  BDSSampler::outputNames.push_back(itsName + "_phys_" + BDSGlobalConstants::Instance()->StringFromInt(GetCopyNumber()+1));
+}
+
 void BDSSampler::BuildMarkerLogicalVolume()
 {
   itsMarkerLogicalVolume=

@@ -27,6 +27,7 @@ public:
   static BDSSamplerSD* GetSensitiveDetector(){return SensitiveDetector;}
 
 private:
+  virtual void Initialise();
   virtual void BuildMarkerLogicalVolume();
   virtual void SetVisAttributes();
 

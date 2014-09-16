@@ -17,7 +17,6 @@
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4PVPlacement.hh"               
-#include "G4TransportationManager.hh"
 #include "G4UserLimits.hh"
 #include "G4VPhysicalVolume.hh"
 

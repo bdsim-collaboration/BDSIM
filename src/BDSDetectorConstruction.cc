@@ -89,12 +89,6 @@ ECList* theECList;
 G4double BDSLocalRadiusOfCurvature=DBL_MAX;// Used in Mean Free Path calc.
 //--------------------------
 
-typedef std::map<G4String,int> LogVolCountMap;
-LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-LogVolMap* LogVol;
-
 //=========================================
 
 #ifdef BDSDEBUG
@@ -104,8 +98,6 @@ bool debug = false;
 #endif
 
 //=================================================================
-
-
 
 BDSDetectorConstruction::BDSDetectorConstruction():
   itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
@@ -165,8 +157,6 @@ BDSDetectorConstruction::BDSDetectorConstruction():
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 {
   theECList   = new ECList;
-  LogVolCount = new LogVolCountMap();
-  LogVol      = new LogVolMap();
   gasRegion   = new G4Region("gasRegion");
 
   G4ProductionCuts* theGasProductionCuts = new G4ProductionCuts();
@@ -182,14 +172,108 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 
 G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_list)
 {  
-  std::list<struct Element>::iterator it;
-
   // prepare materials for this run
-  PrepareRequiredMaterials();
+  BDSMaterials::Instance()->PrepareRequiredMaterials();
   
   // set global magnetic field first
   SetMagField(0.0); // necessary to set a global field; so chose zero
   
+  // construct the component list
+  BuildBeamline();
+
+  // build world and calculate coordinates
+  BuildWorld();
+
+  // set default output formats for BDSDetector:
+  int G4precision = G4cout.precision(15);
+  
+  // placement procedure
+  ComponentPlacement();
+
+#ifdef BDSDEBUG
+  // check of logvolinfo
+  // LN TEST
+  //  typedef std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>::iterator it_type;
+  std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* themap = BDSGlobalConstants::Instance()->LogicalVolumeInfo();
+  //for (it_type iterator = themap->begin(); iterator != themap->end(); iterator++){
+    //G4cout << "pointer : " << iterator->first << "\tname : " << iterator->second->GetName() << "\t" 
+    //	   << iterator->second->GetSPos()/CLHEP::m << G4endl;
+  //}
+  G4cout << themap->size() << G4endl;
+
+  //LN TEST of spos
+  for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
+    {
+      BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
+      G4double currentspos = thecurrentitem->GetSPos();
+      G4String currentname = thecurrentitem->GetName();
+      G4cout << "name : " << currentname << "\t" 
+	     << "spos : " << currentspos/CLHEP::m << " m" <<G4endl
+	     << "length   : " << thecurrentitem->GetLength()/CLHEP::m << " m" << G4endl
+	     << "xlength  : " << thecurrentitem->GetXLength()/CLHEP::m << " m" << G4endl
+	     << "ylength  : " << thecurrentitem->GetYLength()/CLHEP::m << " m" << G4endl
+	     << "zlength  : " << thecurrentitem->GetZLength()/CLHEP::m << " m" << G4endl
+	     << G4endl;
+    }
+  
+#endif
+  // construct tunnel
+  BuildTunnel();
+
+  // free the parser list
+  std::list<struct Element>::iterator it;
+  for(it = beamline_list.begin();it!=beamline_list.end();it++) {
+    delete (*it).lst;
+  }
+  beamline_list.clear();
+
+  if(verbose || debug) G4cout<<"end placement, size="<<BDSBeamline::Instance()->size()<<G4endl;
+  
+  if(verbose || debug) G4cout<<"Detector Construction done"<<G4endl; 
+
+#ifdef BDSDEBUG 
+  G4cout << *(G4Material::GetMaterialTable()) << G4endl;
+#endif
+
+  if(verbose || debug) G4cout<<"Finished listing materials, returning physiWorld"<<G4endl; 
+  
+  // set precision back
+  G4cout.precision(G4precision);
+
+  return physiWorld;
+}
+
+//=================================================================
+ 
+void BDSDetectorConstruction::SetMagField(const G4double fieldValue){
+  
+  G4FieldManager* fieldMgr =
+    G4TransportationManager::GetTransportationManager()->GetFieldManager();
+  magField = new G4UniformMagField(G4ThreeVector(0.,fieldValue,0.));  
+  fieldMgr->SetDetectorField(magField);
+  fieldMgr->CreateChordFinder(magField);
+}
+
+//=================================================================
+BDSDetectorConstruction::~BDSDetectorConstruction()
+{ 
+  delete theECList;
+  //theECList = NULL;
+
+  delete precisionRegion;
+  gFlashRegion.clear();
+
+  delete _globalRotation;
+
+  delete theHitMaker;
+  delete theParticleBounds;
+  delete theParticleBoundsVac;
+}
+
+//=================================================================
+
+void BDSDetectorConstruction::BuildBeamline(){
+  std::list<struct Element>::iterator it;
   // Special ring machine bits
   // Add teleporter to account for slight ring offset
   // Add terminator to do ring turn counting logic
@@ -227,16 +311,14 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   G4cout << __METHOD_NAME__ << "size of beamline element list: "<< beamline_list.size() << G4endl;
 #endif
   G4cout << __METHOD_NAME__ << "size of theBeamline: "<< BDSBeamline::Instance()->size() << G4endl;
-  
-  // construct the component list
-  //
+}
 
+void BDSDetectorConstruction::BuildWorld(){
   if (verbose || debug) G4cout << "now constructing geometry" << G4endl;
   
   std::list<BDSAcceleratorComponent*>::const_iterator iBeam;
   
   G4ThreeVector rtot = G4ThreeVector(0.,0.,0.);   // world dimension
-  G4ThreeVector rlast = G4ThreeVector(0.,0.,0.);  // edge of last element coordinates
   G4ThreeVector rextentmax = G4ThreeVector(0.,0.,0.);  // extent
   G4ThreeVector rextentmin = G4ThreeVector(0.,0.,0.);  // extent
   G4ThreeVector rmin = G4ThreeVector(0.,0.,0.);
@@ -383,49 +465,23 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 
   // world
 
-  physiWorld = new G4PVPlacement((G4RotationMatrix*)0,		// no rotation
-  				 (G4ThreeVector)0,             // at (0,0,0)
+  physiWorld = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
+  				 (G4ThreeVector)0,     // at (0,0,0)
                                  logicWorld,	// its logical volume
                                  LocalName,	// its name
                                  NULL,		// its mother  volume
                                  false,		// no boolean operation
                                  0,             // copy number
-				 BDSGlobalConstants::Instance()->GetCheckOverlaps());		// overlap checking
+				 BDSGlobalConstants::Instance()->GetCheckOverlaps());// overlap checking
 
+}
 
-
+void BDSDetectorConstruction::ComponentPlacement(){
+  if (verbose || debug) G4cout<<"starting placement procedure "<<G4endl;
+  
   // sensitive detectors
 
   G4SDManager* SDman = G4SDManager::GetSDMpointer();
-
-  G4ThreeVector TargetPos;
-
-  // set default output formats for BDSDetector:
-  int G4precision = G4cout.precision(15);
-  
-#ifdef BDSDEBUG 
-  G4cout<<"total length="<<s_tot/CLHEP::m<<"m"<<G4endl;
-#endif
-  
-  // reset counters:
-  for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next()){
-    BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
-
-    // zero length components have no logical volumes
-    if(thecurrentitem->GetLength()!=0.)
-      {
-	G4String logVolName = thecurrentitem->GetMarkerLogicalVolume()->GetName();
-	(*LogVolCount)[logVolName]=1;
-      }
-  }
-  
-  if (verbose || debug) G4cout<<"starting placement procedure "<<G4endl;
-  
-  rtot = G4ThreeVector(0.,0.,0.);
-  localX = G4ThreeVector(1.,0.,0.); 
-  localY = G4ThreeVector(0.,1.,0.);
-  localZ = G4ThreeVector(0.,0.,1.);
-  
   //you only need a single instance of your sensitive detector class
   //attach to as many logical volumes as you want
   //note each new sensitive detector invokes a slow string compare
@@ -435,7 +491,16 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   SDman->AddNewDetector(ECounter);
   //SDman->AddNewDetector(TurnCounter);
   theECList->push_back(ECounter);
-  
+
+  G4ThreeVector TargetPos;
+
+  G4ThreeVector rlast = G4ThreeVector(0.,0.,0.);  // edge of last element coordinates
+
+  G4ThreeVector rtot(0.,0.,0.);
+  G4ThreeVector localX(1.,0.,0.); 
+  G4ThreeVector localY(0.,1.,0.);
+  G4ThreeVector localZ(0.,0.,1.);
+
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     {
       BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
@@ -571,8 +636,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 #endif
 	LocalLogVol->SetVisAttributes(VisAtt1);
 	//------------
-	int nCopy=(*LogVolCount)[LogVolName]-1;
-	(*LogVolCount)[LogVolName]++;
+	const int nCopy = thecurrentitem->GetCopyNumber();
 	
 	/*
 	// now register the spos and other info of this sensitive volume in global map
@@ -601,8 +665,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 #ifdef BDSDEBUG
 	G4cout<<"SETTING UP SENSITIVE VOLUMES..."<< G4endl;
 #endif	
-	// set up the sensitive volumes for energy counting:
-	thecurrentitem->SetCopyNumber(nCopy);
 
 	std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetSensitiveVolumes();
 	if( ( thecurrentitem->GetType()!="sampler" && thecurrentitem->GetType()!="csampler" )
@@ -672,20 +734,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	//      }
 	//      }
 
-	
-	// count and store sampler names. Should go into constructors!
-  
-	LocalName=thecurrentitem->GetName()+"_phys";
-	if(thecurrentitem->GetType()=="sampler") {
-	  BDSSampler::outputNames.push_back(LocalName + "_" + BDSGlobalConstants::Instance()->StringFromInt(nCopy+1));
-	} 
-	else if(thecurrentitem->GetType()=="csampler") {
-	  BDSSamplerCylinder::outputNames.push_back(LocalName + "_" + BDSGlobalConstants::Instance()->StringFromInt(nCopy+1));
-	} else {
-	  //it would be nice to set correctly names also for other elements...
-	  //but need to count them!
-	}
-
 	/*
 	//for torus sbend
 	if(thecurrentitem->GetType() == "sbend") {
@@ -726,10 +774,12 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 				 localZ);
 
 #ifdef BDSDEBUG
-	G4cout<<"Placing PHYSICAL COMPONENT..."<< G4endl;
+	G4cout << "Placing PHYSICAL COMPONENT..."<< G4endl;
 	G4cout << "BDSDetectorConstruction : rotateComponent = " << *rotateComponent << G4endl;
 	G4cout << "BDSDetectorConstruction : TargetPos        = " << TargetPos << G4endl;
 #endif	
+
+	G4String LocalName=thecurrentitem->GetName()+"_phys";
 
 	G4PVPlacement* PhysiComponentPlace = 
 	  new G4PVPlacement(
@@ -740,7 +790,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 			    physiWorld,	      // its mother  volume
 			    false,	      // no boolean operation
 			    nCopy,            // copy number
-			    BDSGlobalConstants::Instance()->GetCheckOverlaps());	      //overlap checking
+			    BDSGlobalConstants::Instance()->GetCheckOverlaps());//overlap checking
 
 	  fPhysicalVolumeVector.push_back(PhysiComponentPlace);
 	  std::vector<G4VPhysicalVolume*> MultiplePhysicalVolumes = thecurrentitem->GetMultiplePhysicalVolumes();
@@ -761,38 +811,12 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	thecurrentitem->PrepareField(PhysiComponentPlace);
       }
     }
+}
 
-#ifdef BDSDEBUG
-  // check of logvolinfo
-  // LN TEST
-  //  typedef std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>::iterator it_type;
-  std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* themap = BDSGlobalConstants::Instance()->LogicalVolumeInfo();
-  //for (it_type iterator = themap->begin(); iterator != themap->end(); iterator++){
-    //G4cout << "pointer : " << iterator->first << "\tname : " << iterator->second->GetName() << "\t" 
-    //	   << iterator->second->GetSPos()/CLHEP::m << G4endl;
-  //}
-  G4cout << themap->size() << G4endl;
-
-  //LN TEST of spos
-  for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
-    {
-      BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
-      G4double currentspos = thecurrentitem->GetSPos();
-      G4String currentname = thecurrentitem->GetName();
-      G4cout << "name : " << currentname << "\t" 
-	     << "spos : " << currentspos/CLHEP::m << " m" <<G4endl
-	     << "length   : " << thecurrentitem->GetLength()/CLHEP::m << " m" << G4endl
-	     << "xlength  : " << thecurrentitem->GetXLength()/CLHEP::m << " m" << G4endl
-	     << "ylength  : " << thecurrentitem->GetYLength()/CLHEP::m << " m" << G4endl
-	     << "zlength  : " << thecurrentitem->GetZLength()/CLHEP::m << " m" << G4endl
-	     << G4endl;
-    }
-  
-#endif
-  // construct tunnel
+void BDSDetectorConstruction::BuildTunnel(){
+  std::list<struct Element>::iterator it;
   for(it = beamline_list.begin();it!=beamline_list.end();it++)
     {
-      
       if((*it).type==_TUNNEL ) {
 #ifdef BDSDEBUG
 	G4cout<<"BUILDING TUNNEL : "<<(*it).l<<"  "<<(*it).name<<G4endl;
@@ -828,69 +852,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
       }
       
     }
-  
-  // free the parser list
-  for(it = beamline_list.begin();it!=beamline_list.end();it++) {
-    delete (*it).lst;
-  }
-  beamline_list.clear();
-
-  if(verbose || debug) G4cout<<"end placement, size="<<BDSBeamline::Instance()->size()<<G4endl;
-  
-  if(verbose || debug) G4cout<<"Detector Construction done"<<G4endl; 
-
-#ifdef BDSDEBUG 
-  G4cout << *(G4Material::GetMaterialTable()) << G4endl;
-#endif
-
-  if(verbose || debug) G4cout<<"Finished listing materials, returning physiWorld"<<G4endl; 
-  
-  // set precision back
-  G4cout.precision(G4precision);
-
-  return physiWorld;
 }
-
-//=================================================================
- 
-void BDSDetectorConstruction::SetMagField(const G4double fieldValue){
-  
-  G4FieldManager* fieldMgr =
-    G4TransportationManager::GetTransportationManager()->GetFieldManager();
-  magField = new G4UniformMagField(G4ThreeVector(0.,fieldValue,0.));  
-  fieldMgr->SetDetectorField(magField);
-  fieldMgr->CreateChordFinder(magField);
-}
-
-//=================================================================
-BDSDetectorConstruction::~BDSDetectorConstruction()
-{ 
-  LogVolCount->clear();
-  delete LogVolCount;
-  //LogVolCount = NULL;
-  
-  //LogVolMap::iterator iter;
-  //for(iter=LogVol->begin();iter!=LogVol->end();iter++){
-  //  delete (*iter).second;
-  // }
-  LogVol->clear();
-  delete LogVol;
-  //LogVol = NULL;
-
-  delete theECList;
-  //theECList = NULL;
-
-  delete precisionRegion;
-  gFlashRegion.clear();
-
-  delete _globalRotation;
-
-  delete theHitMaker;
-  delete theParticleBounds;
-  delete theParticleBoundsVac;
-}
-
-//=================================================================
 
 G4double* BDSDetectorConstruction::GetWorldSize(){
   int s=3;
