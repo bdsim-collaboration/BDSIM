@@ -66,7 +66,7 @@ private:
   BDSDetectorConstruction& operator=(const BDSDetectorConstruction&);
   BDSDetectorConstruction(BDSDetectorConstruction&);
 
-  G4bool verbose;
+  G4VPhysicalVolume* ConstructBDS(ElementList& beamline_list);
 
   void SetMagField(const G4double afield);
   
@@ -83,6 +83,7 @@ private:
   void SetWorldSizeY(G4double);
   void SetWorldSizeZ(G4double);
 
+  G4bool verbose;
 
   G4int    gflash;
   G4double gflashemax;
@@ -101,9 +102,6 @@ private:
   std::vector<G4double> itsWorldSize;
   std::vector< G4VPhysicalVolume * > fPhysicalVolumeVector; //a vector with all the physical volumes
 
-  void DefineMaterials();
-
-  G4VPhysicalVolume* ConstructBDS(ElementList& beamline_list);
   G4UniformMagField* magField;      //pointer to the magnetic field
   G4UserLimits* BDSUserLimits;
 
