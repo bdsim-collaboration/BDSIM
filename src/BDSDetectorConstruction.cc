@@ -615,7 +615,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
       // zero length components not placed (transform3d)
       if(length<=0.) {
 	delete rotateComponent;
-	return;
+	continue;
       }
 
       G4LogicalVolume* LocalLogVol=thecurrentitem->GetMarkerLogicalVolume();
