@@ -12,9 +12,8 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSBunch.hh"
-#include "BDSDetectorConstruction.hh"
 #include "BDSParticle.hh"
-#include "BDSSamplerHit.hh"
+//#include "BDSSamplerHit.hh"
 
 #include "G4Event.hh"
 #include "G4ParticleGun.hh"
@@ -23,11 +22,9 @@
 
 #include "CLHEP/Units/PhysicalConstants.h"
 
-#include <iostream>
-
 extern BDSBunch bdsBunch;
 
-BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSDetectorConstruction* /*BDSDC*/)
+BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction()
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
 

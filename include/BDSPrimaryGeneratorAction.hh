@@ -13,23 +13,21 @@
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"
-#include <fstream>
-#include "BDSSynchrotronRadiation.hh"
-#include "BDSSamplerHit.hh"
+//#include <fstream>
+//#include "BDSSynchrotronRadiation.hh"
+//#include "BDSSamplerHit.hh"
 
 class G4ParticleGun;
 class G4Event;
-class BDSDetectorConstruction;
-
 
 class BDSPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
 public:
-  BDSPrimaryGeneratorAction(BDSDetectorConstruction*);    
+  BDSPrimaryGeneratorAction();    
   ~BDSPrimaryGeneratorAction();
   
 public:
-  void GeneratePrimaries(G4Event*);
+  virtual void GeneratePrimaries(G4Event*);
   
 private:
   G4ParticleGun*              particleGun;	  //pointer a to G4 service class

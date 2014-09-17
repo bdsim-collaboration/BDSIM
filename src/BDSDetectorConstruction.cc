@@ -313,8 +313,6 @@ void BDSDetectorConstruction::BuildBeamline(){
 void BDSDetectorConstruction::BuildWorld(){
   if (verbose || debug) G4cout << "now constructing geometry" << G4endl;
   
-  std::list<BDSAcceleratorComponent*>::const_iterator iBeam;
-  
   G4ThreeVector rtot = G4ThreeVector(0.,0.,0.);   // world dimension
   G4ThreeVector rextentmax = G4ThreeVector(0.,0.,0.);  // extent
   G4ThreeVector rextentmin = G4ThreeVector(0.,0.,0.);  // extent

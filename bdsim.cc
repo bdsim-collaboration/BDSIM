@@ -212,11 +212,10 @@ int main(int argc,char** argv) {
   runManager->SetUserAction(new BDSStackingAction);
 
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> User action - detector"<<G4endl;
+  G4cout << __FUNCTION__ << "> User action - primary generator"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSPrimaryGeneratorAction(detector));
+  runManager->SetUserAction(new BDSPrimaryGeneratorAction());
 
-  
 
   //
   // Initialize G4 kernel
