@@ -1,5 +1,13 @@
 #include "BDSBunchComposite.hh"
 
+#include "BDSBunchGaussian.hh"
+#include "BDSBunchSquare.hh"
+#include "BDSBunchCircle.hh"
+#include "BDSBunchRing.hh"
+#include "BDSBunchEShell.hh"
+#include "BDSBunchTwiss.hh"
+#include "BDSBunchUserFile.hh"
+
 BDSBunchComposite::BDSBunchComposite() {
   xBunch = NULL;
   yBunch = NULL;
