@@ -42,15 +42,15 @@ private:
 
   //  G4double sig_x,sig_xp,sig_y,sig_yp,sig_t;
   
-  std::ifstream InputBunchFile;
-  std::ifstream ExtractBunchFile;
+  //  std::ifstream InputBunchFile;
+  //std::ifstream ExtractBunchFile;
 
   // G4double logXfactor;
   // G4double logYfactor;
 
-  BDSSynchrotronRadiation* itsBDSSynchrotronRadiation;
+  // BDSSynchrotronRadiation* itsBDSSynchrotronRadiation;
 
-  BDSSamplerHitsCollection *itsSamplerHitsCollection;
+  //  BDSSamplerHitsCollection *itsSamplerHitsCollection;
 };
 
 #endif
