@@ -6,13 +6,10 @@
 
 #include "G4Box.hh"
 #include "G4Cons.hh"
-#include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Mag_UsualEqRhs.hh"
 #include "G4PVPlacement.hh"
 #include "G4Trd.hh"
 #include "G4Tubs.hh"
-#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 

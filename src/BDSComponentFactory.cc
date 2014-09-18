@@ -287,6 +287,11 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
 void BDSComponentFactory::addCommonProperties(BDSAcceleratorComponent* component) {
   component->SetPrecisionRegion(_element.precisionRegion);
   component->SetType(typestr(_element.type));
+
+  //For the optics file...
+  component->SetK1(_element.k1);
+  component->SetK2(_element.k2);
+  component->SetK3(_element.k3);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSampler(){

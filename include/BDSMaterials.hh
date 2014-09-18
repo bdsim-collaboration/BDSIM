@@ -19,11 +19,11 @@ class BDSMaterials
 {
 public:
 
-  
   static BDSMaterials* Instance();
   ~BDSMaterials(); //SPM
 
-  void Initialise(); //SPM
+  /// converts parser material list
+  void PrepareRequiredMaterials();
 
   void AddMaterial(G4Material* aMaterial,G4String aName); //SPM
   void AddMaterial(G4String aName, G4double itsZ, G4double itsA, G4double itsDensity); //SPM
@@ -54,6 +54,8 @@ protected:
   std::map<G4String,G4Material*> materials; //SPM
   std::map<G4String,G4Element*>  elements; //SPM
 private:
+  void Initialise(); //SPM
+
   static BDSMaterials* _instance;
   G4MaterialPropertiesTable* airMaterialPropertiesTable;
   G4MaterialPropertiesTable* celluloseMaterialPropertiesTable;
@@ -62,7 +64,5 @@ private:
   G4MaterialPropertiesTable* vacMaterialPropertiesTable;
 
 };
-
-void PrepareRequiredMaterials();
 
 #endif

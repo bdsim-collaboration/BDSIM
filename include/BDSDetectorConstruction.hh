@@ -49,15 +49,10 @@ public:
 public:
      
   virtual G4VPhysicalVolume* Construct();
-  void SetMagField(const G4double afield);
 
   inline G4VPhysicalVolume* GetWorldVolume(){
     return physiWorld;
   }
-
-  // inline G4GeometrySampler* GetGeometrySampler(){
-  //   return itsGeometrySampler;
-  // }
 
 public:
 
@@ -72,6 +67,17 @@ private:
   BDSDetectorConstruction(BDSDetectorConstruction&);
 
   G4bool verbose;
+
+  void SetMagField(const G4double afield);
+  
+  /// converts parser beamline_list to BDSAcceleratorComponent with help of BDSComponentFactory
+  void BuildBeamline();
+  /// build world volume, and calculate positions
+  void BuildWorld();
+  /// placements
+  void ComponentPlacement();
+  /// build tunnel from _TUNNEL elements
+  void BuildTunnel();
 
   void SetWorldSizeX(G4double);
   void SetWorldSizeY(G4double);

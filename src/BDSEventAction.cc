@@ -52,9 +52,6 @@
 
 #include "BDSAcceleratorComponent.hh"
 
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
 typedef std::list<BDSEnergyCounterSD*>  ECList;
 extern ECList* theECList;
 

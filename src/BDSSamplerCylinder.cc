@@ -43,6 +43,13 @@ BDSSamplerCylinder (G4String aName,G4double aLength,G4double aRadius):
   SDMan->AddNewDetector(SensitiveDetector);
 }
 
+void BDSSamplerCylinder::Initialise()
+{
+  BDSAcceleratorComponent::Initialise();
+  
+  BDSSamplerCylinder::outputNames.push_back(itsName + "_phys_" + BDSGlobalConstants::Instance()->StringFromInt(GetCopyNumber()+1));
+}
+
 void BDSSamplerCylinder::BuildMarkerLogicalVolume()
 {
   itsMarkerLogicalVolume=
