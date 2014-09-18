@@ -4,6 +4,7 @@
 #include "BDSBunchComposite.hh"
 #include "BDSBunchEShell.hh"
 #include "BDSBunchGaussian.hh"
+#include "BDSBunchInterface.hh"
 #include "BDSBunchRing.hh"
 #include "BDSBunchSquare.hh"
 #include "BDSBunchUserFile.hh"

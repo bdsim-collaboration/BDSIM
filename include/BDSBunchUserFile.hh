@@ -21,6 +21,10 @@ private:
   void SetDistribFile(G4String val) {distribFile=val;}
   void SetBunchFormat(G4String val) {bunchFormat=val;}
   void SetNLinesIgnore(G4int val)   {nlinesIgnore=val;}
+  G4double ParseEnergyUnit(G4String &fmt);
+  G4double ParseLengthUnit(G4String &fmt);
+  G4double ParseAngleUnit(G4String &fmt);
+  G4double ParseTimeUnit(G4String &fmt);
 
 protected : 
   G4String distribFile;
