@@ -30,6 +30,7 @@
 #include "parser/elementlist.h"
 #include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
 
+#ifdef BDSDEBUG
 bool debug1 = true;
 #else
 bool debug1 = false;
