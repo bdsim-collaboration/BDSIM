@@ -78,15 +78,15 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   //  G4cout << __METHOD_NAME__ << " - getting traj container." << G4endl;
   G4TrajectoryContainer* container = G4RunManager::GetRunManager()->GetCurrentEvent()->GetTrajectoryContainer();
   if(container){
-    G4cout << __METHOD_NAME__ << " - getting traj container size." << G4endl;
+    //    G4cout << __METHOD_NAME__ << " - getting traj container size." << G4endl;
     size_t nTraj=container->size();
-    G4cout << __METHOD_NAME__ << " - traj container size = " << nTraj << G4endl;
-    G4cout << __METHOD_NAME__ << " - looping through trajectories." << G4endl;
+    //    G4cout << __METHOD_NAME__ << " - traj container size = " << nTraj << G4endl;
+    //    G4cout << __METHOD_NAME__ << " - looping through trajectories." << G4endl;
     for(size_t i=0; i<nTraj; i++){
-      G4cout << __METHOD_NAME__ << " - looping through trajectories - " << i << G4endl;
+      //      G4cout << __METHOD_NAME__ << " - looping through trajectories - " << i << G4endl;
       bdsTraj = (BDSTrajectory*)((*container)[i]);
       if(bdsTraj->GetTrackID()==theTrack->GetTrackID()){
-	G4cout << __METHOD_NAME__ << " found trajectory." << G4endl;
+	//	G4cout << __METHOD_NAME__ << " found trajectory." << G4endl;
 	break;
       }
     }
