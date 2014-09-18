@@ -195,7 +195,7 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   std::list<BDSEnergyCounterSD*>::const_iterator iEC;
   for(iEC=theECList->begin();iEC!=theECList->end();++iEC)
     {
-      G4String name=(*iEC)->GetCollectionName(0);
+      //      G4String name=(*iEC)->GetCollectionName(0);
       BDSEnergyCounter_HC=
 	(BDSEnergyCounterHitsCollection*)(evt->GetHCofThisEvent()->GetHC((*iEC)->itsHCID));
       if(BDSEnergyCounter_HC) {bdsOutput->WriteEnergyLoss(BDSEnergyCounter_HC);}

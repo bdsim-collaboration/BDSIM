@@ -330,7 +330,6 @@ private:
   G4double itsSPos;
   /// count of logical volumes shared with other instances; start at 0
   G4int itsCopyNumber;
-  BDSEnergyCounterSD* itsBDSEnergyCounter;
   //  G4int itsCollectionID;
   std::vector<G4LogicalVolume*> itsSensitiveVolumes;
   std::vector<G4LogicalVolume*> itsGFlashVolumes;
@@ -459,9 +458,6 @@ inline void BDSAcceleratorComponent::SetVisAttributes()
 {itsVisAttributes = new G4VisAttributes(true);
 }
 
-inline BDSEnergyCounterSD* BDSAcceleratorComponent::GetBDSEnergyCounter() const
-{return itsBDSEnergyCounter;}
-
 inline G4int BDSAcceleratorComponent::GetCopyNumber() const
 {return itsCopyNumber;}
 
@@ -470,10 +466,6 @@ inline G4double BDSAcceleratorComponent::GetSPos() const
 
 inline void BDSAcceleratorComponent::SetSPos(G4double spos)
 {itsSPos=spos;}
-
-inline void 
-BDSAcceleratorComponent::SetBDSEnergyCounter(BDSEnergyCounterSD* anBDSEnergyCounter)
-{itsBDSEnergyCounter=anBDSEnergyCounter;}
 
 inline  void BDSAcceleratorComponent::AddSensitiveVolume(G4LogicalVolume* aLogVol)
 { itsSensitiveVolumes.push_back(aLogVol);}

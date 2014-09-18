@@ -135,7 +135,7 @@ void BDSHistogram1D::Fill(G4double x, G4double weight)
     {
       if ((*i)->InRange(x))
 	{
-	  (*(*i)) += (1.0*weight);
+	  (*(*i)) += weight;
 	  break;
 	}
     }

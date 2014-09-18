@@ -59,7 +59,6 @@ private:
   G4Mag_UsualEqRhs* itsEqRhs;
 
   G4Material* itsCollimatorMaterial;
-  //BDSEnergyCounterSD* itsEnergyCounterSD;
   G4double itsOuterR;
 };
 
