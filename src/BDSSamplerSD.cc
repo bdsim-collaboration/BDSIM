@@ -29,6 +29,7 @@
 #include "G4AffineTransform.hh"
 
 #include "G4RunManager.hh"
+#include "G4TrajectoryContainer.hh"
 #include <vector>
 
 #include "G4SDManager.hh"
@@ -69,7 +70,40 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
 G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
   G4Track* theTrack = aStep->GetTrack();
-  BDSTrajectory* bdsTraj = new BDSTrajectory(theTrack);
+
+  //BDSTrajectory* bdsTraj =  (BDSTrajectory*)G4EventManager::GetEventManager()->GetTrackingManager()->GimmeTrajectory();
+  //  BDSTrajectory* bdsTraj = new BDSTrajectory(theTrack);
+  //Find the trajectory that corresponds to the track.
+  BDSTrajectory* bdsTraj = NULL;
+  //  G4cout << __METHOD_NAME__ << " - getting traj container." << G4endl;
+  G4TrajectoryContainer* container = G4RunManager::GetRunManager()->GetCurrentEvent()->GetTrajectoryContainer();
+  if(container){
+    G4cout << __METHOD_NAME__ << " - getting traj container size." << G4endl;
+    size_t nTraj=container->size();
+    G4cout << __METHOD_NAME__ << " - traj container size = " << nTraj << G4endl;
+    G4cout << __METHOD_NAME__ << " - looping through trajectories." << G4endl;
+    for(size_t i=0; i<nTraj; i++){
+      G4cout << __METHOD_NAME__ << " - looping through trajectories - " << i << G4endl;
+      bdsTraj = (BDSTrajectory*)((*container)[i]);
+      if(bdsTraj->GetTrackID()==theTrack->GetTrackID()){
+	G4cout << __METHOD_NAME__ << " found trajectory." << G4endl;
+	break;
+      }
+    }
+    if (bdsTraj == NULL){
+      G4String exceptionString = __METHOD_NAME__ + ": trajectory not found.\n";
+      G4Exception(exceptionString.c_str(), "-1", FatalException, "");
+    }
+  }
+
+  /*
+else {
+    G4String exceptionString = __METHOD_NAME__ + ": trajectory container not found.\n";
+    G4Exception(exceptionString.c_str(), "-1", FatalException, "");
+  }
+  */
+
+
   //bdsTraj->printRichDataOfSteps();
   // LN removed this because it only prints definition of types, not info itself
   
@@ -152,29 +186,8 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   
   G4ThreeVector vtx=theTrack->GetVertexPosition();
   G4ThreeVector dir=theTrack->GetVertexMomentumDirection();
-  G4ThreeVector posLastScatter=bdsTraj->GetPositionOfLastScatter(theTrack);
-  G4ThreeVector momDirLastScatter=bdsTraj->GetMomDirAtLastScatter(theTrack);
-  G4double timeLastScatter=bdsTraj->GetTimeAtLastScatter(theTrack);
-  G4double energyLastScatter=bdsTraj->GetEnergyAtLastScatter(theTrack);
   G4double vertexEnergy=theTrack->GetVertexKineticEnergy() + theTrack->GetParticleDefinition()->GetPDGMass();
-  G4double vertexTime=bdsTraj->GetTimeAtVertex(theTrack);
-
-
-  G4double 
-    last_scatter_x, last_scatter_xp,
-    last_scatter_y, last_scatter_yp,
-    last_scatter_z, last_scatter_zp,
-    last_scatter_E, last_scatter_t;
-  
-  // store production/scatter point
-  last_scatter_x   =  posLastScatter.x();
-  last_scatter_xp  =  momDirLastScatter.x();
-  last_scatter_y   =  posLastScatter.y();
-  last_scatter_yp  =  momDirLastScatter.y();	  
-  last_scatter_z   =  posLastScatter.z();
-  last_scatter_zp  =  momDirLastScatter.z();
-  last_scatter_E   =  energyLastScatter;
-  last_scatter_t   = timeLastScatter;
+  G4double vertexTime=-1;
 
   G4double 
     production_x, production_xp,
@@ -192,6 +205,35 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   production_E   =  vertexEnergy;
   production_t   = vertexTime;
 
+  G4ThreeVector posLastScatter=vtx;
+  G4ThreeVector momDirLastScatter=dir;
+  G4double timeLastScatter=vertexTime;
+  G4double energyLastScatter=vertexEnergy;
+  if(bdsTraj){
+    posLastScatter=bdsTraj->GetPositionOfLastScatter(theTrack);
+    momDirLastScatter=bdsTraj->GetMomDirAtLastScatter(theTrack);
+    timeLastScatter=bdsTraj->GetTimeAtLastScatter(theTrack);
+    energyLastScatter=bdsTraj->GetEnergyAtLastScatter(theTrack);
+    vertexEnergy=theTrack->GetVertexKineticEnergy() + theTrack->GetParticleDefinition()->GetPDGMass();
+    vertexTime=bdsTraj->GetTimeAtVertex(theTrack);
+  } 
+  
+  G4double 
+    last_scatter_x, last_scatter_xp,
+    last_scatter_y, last_scatter_yp,
+    last_scatter_z, last_scatter_zp,
+    last_scatter_E, last_scatter_t;
+  
+  // store production/scatter point
+  last_scatter_x   =  posLastScatter.x();
+  last_scatter_xp  =  momDirLastScatter.x();
+  last_scatter_y   =  posLastScatter.y();
+  last_scatter_yp  =  momDirLastScatter.y();	  
+  last_scatter_z   =  posLastScatter.z();
+  last_scatter_zp  =  momDirLastScatter.z();
+  last_scatter_E   =  energyLastScatter;
+  last_scatter_t   = timeLastScatter;
+  
   G4double weight=theTrack->GetWeight();
   
   /*

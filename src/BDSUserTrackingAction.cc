@@ -13,10 +13,10 @@
 
 //#include "BDSNeutronTrackInfo.hh"
 
-void BDSUserTrackingAction::PreUserTrackingAction(const G4Track* /*aTrack*/)
+void BDSUserTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
 {
   fpTrackingManager->SetStoreTrajectory(true);  //Need to store trajectories to get the position of last scatter etc.
-  
+  //  fpTrackingManager->SetTrajectory(new BDSTrajectory(aTrack));  
   /*
     if(aTrack->GetDefinition()->GetParticleName()=="neutron")
     {

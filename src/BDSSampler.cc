@@ -72,7 +72,5 @@ void BDSSampler::BuildMarkerLogicalVolume()
 
 BDSSampler::~BDSSampler()
 {
-  G4cout << __METHOD_NAME__ << G4endl;
   --nSamplers;
-  G4cout << __METHOD_END__ << G4endl;
 }

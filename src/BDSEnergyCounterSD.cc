@@ -6,6 +6,7 @@
 #include "BDSExecOptions.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSMaterials.hh"
 
 #include "BDSEnergyCounterSD.hh"
 #include "BDSEnergyCounterHit.hh"
@@ -63,7 +64,13 @@ void BDSEnergyCounterSD::Initialize(G4HCofThisEvent*HCE)
 
 G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 { 
-  if(BDSGlobalConstants::Instance()->GetStopTracks())
+  G4Material* stepMaterial = aStep->GetPostStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetMaterial();
+  G4Material* vacMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
+
+  //A bool to determine wether or not to stop the track. Only stop the track if the particle is not in vacuum.
+  G4bool bStopTrack =  ((BDSGlobalConstants::Instance()->GetStopTracks())&&(stepMaterial!=vacMaterial));
+  
+  if(bStopTrack)
     enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit()); // Why subtract the energy deposit of the step? Why not add?
   //this looks like accounting for conservation of energy when you're killing a particle
   //which may normally break energy conservation for the whole event
@@ -109,7 +116,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   ypos=0.5*(aStep->GetPreStepPoint()->GetPosition().y()
   	    + aStep->GetPostStepPoint()->GetPosition().y());
   
-  if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) 
+  if(verbose && bStopTrack) 
     {
     G4cout << "BDSEnergyCounterSD: Current Volume: " 
 	   << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() 
@@ -155,7 +162,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
    // don't worry, won't add 0 energy tracks as filtered at top by if statement
    BDSEnergyCounterCollection->insert(ECHit);
    
-   if(BDSGlobalConstants::Instance()->GetStopTracks())
+   if(bStopTrack)
      aStep->GetTrack()->SetTrackStatus(fStopAndKill);
 
   return true;
@@ -214,7 +221,10 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
     spos += localposition.z();
   }
   
-  if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) 
+  G4Material* stepMaterial = thevolume->GetMaterial();
+  G4Material* vacMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
+  G4bool bStopTrack =  ((BDSGlobalConstants::Instance()->GetStopTracks())&&(stepMaterial!=vacMaterial));
+  if(verbose && bStopTrack) 
     {
       G4cout << " BDSEnergyCounterSD: Current Volume: " <<  volName 
 	     << " Event: "    << event_number 
