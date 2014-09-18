@@ -7,7 +7,6 @@
 
 class BDSBunchUserFile : public BDSBunchInterface { 
 private:
-  BDSBunchUserFile(); //Must be constructed with options.
   void ParseFileFormat();
   void OpenBunchFile();
   void CloseBunchFile();
@@ -29,14 +28,14 @@ protected :
   G4int nlinesIgnore;
   
 public: 
-  BDSBunchUserFile(struct Options &opt);
+  BDSBunchUserFile();
   ~BDSBunchUserFile(); 
-  void SetOptions(struct Options& opt);
-  void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-		       G4double& xp, G4double& yp, G4double& zp,
-		       G4double& t , G4double&  E, G4double& weight);  
+  virtual void SetOptions(struct Options& opt);
+  virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
+			       G4double& xp, G4double& yp, G4double& zp,
+			       G4double& t , G4double&  E, G4double& weight);  
   
-  G4String GetDistibFile()   {return distribFile;}
+  G4String GetDistribFile()  {return distribFile;}
   G4String GetBunchFormat()  {return bunchFormat;}
   G4int    GetNLinesIgnore() {return nlinesIgnore;}
 };

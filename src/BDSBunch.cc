@@ -1,12 +1,5 @@
 #include "BDSBunch.hh"
-#include "BDSBunchGaussian.hh"
-#include "BDSBunchSquare.hh"
-#include "BDSBunchCircle.hh"
-#include "BDSBunchRing.hh"
-#include "BDSBunchEShell.hh"
-#include "BDSBunchTwiss.hh"
-#include "BDSBunchUserFile.hh"
-#include "BDSBunchComposite.hh"
+#include "BDSBunchFactory.hh"
 
 BDSBunch::BDSBunch() {
   // Construct default reference type 
@@ -22,30 +15,8 @@ void BDSBunch::SetOptions(struct Options& opt) {
   // check options and construct corrrect bdsBunchInterface
   delete bdsBunch;
 
-  if (opt.distribType == "reference") 
-    bdsBunch = new BDSBunchInterface();
-  else if(opt.distribType == "gauss" || opt.distribType == "gaussmatrix") 
-    bdsBunch = new BDSBunchGaussian(); 
-  else if(opt.distribType == "square") 
-    bdsBunch = new BDSBunchSquare();
-  else if(opt.distribType == "circle") 
-    bdsBunch = new BDSBunchCircle();
-  else if(opt.distribType == "ring") 
-    bdsBunch = new BDSBunchRing();
-  else if(opt.distribType == "eshell") 
-    bdsBunch = new BDSBunchEShell();
-  else if(opt.distribType == "gausstwiss") 
-    bdsBunch = new BDSBunchTwiss();
-  else if(opt.distribType == "userfile"){
-    bdsBunch = new BDSBunchUserFile(opt);
-  }
-  else if(opt.distribType == "composite") {
-    bdsBunch = new BDSBunchComposite();
-  }
-  else {
-    G4cerr << "distribType not found " << opt.distribType << G4endl;
-    exit(1);
-  }
+  bdsBunch = BDSBunchFactory::createBunch(opt.distribType);
+
   bdsBunch->SetOptions(opt);
   return;
 }

@@ -1,12 +1,5 @@
 #include "BDSBunchComposite.hh"
-
-#include "BDSBunchGaussian.hh"
-#include "BDSBunchSquare.hh"
-#include "BDSBunchCircle.hh"
-#include "BDSBunchRing.hh"
-#include "BDSBunchEShell.hh"
-#include "BDSBunchTwiss.hh"
-#include "BDSBunchUserFile.hh"
+#include "BDSBunchFactory.hh"
 
 BDSBunchComposite::BDSBunchComposite() {
   xBunch = NULL;
@@ -21,49 +14,14 @@ BDSBunchComposite::~BDSBunchComposite() {
 void BDSBunchComposite::SetOptions(struct Options& opt) {
   BDSBunchInterface::SetOptions(opt);
   
+  delete xBunch;
+  delete yBunch;
 
-  if (opt.xDistribType == "reference") 
-    xBunch = new BDSBunchInterface();
-  else if(opt.xDistribType == "gauss" || opt.xDistribType == "gaussmatrix") 
-    xBunch = new BDSBunchGaussian(); 
-  else if(opt.xDistribType == "square") 
-    xBunch = new BDSBunchSquare();
-  else if(opt.xDistribType == "circle") 
-    xBunch = new BDSBunchCircle();
-  else if(opt.xDistribType == "ring") 
-    xBunch = new BDSBunchRing();
-  else if(opt.xDistribType == "eshell") 
-    xBunch = new BDSBunchEShell();
-  else if(opt.xDistribType == "gausstwiss") 
-    xBunch = new BDSBunchTwiss();
-  else {
-    G4cerr << "xDistribType not found " << opt.xDistribType << G4endl;
-    exit(1);
-  }
+  xBunch = BDSBunchFactory::createBunch(opt.xDistribType);
+  yBunch = BDSBunchFactory::createBunch(opt.yDistribType);
 
-  if (opt.yDistribType == "reference") 
-    yBunch = new BDSBunchInterface();
-  else if(opt.yDistribType == "gauss" || opt.yDistribType == "gaussmatrix") 
-    yBunch = new BDSBunchGaussian(); 
-  else if(opt.yDistribType == "square") 
-    yBunch = new BDSBunchSquare();
-  else if(opt.yDistribType == "circle") 
-    yBunch = new BDSBunchCircle();
-  else if(opt.yDistribType == "ring") 
-    yBunch = new BDSBunchRing();
-  else if(opt.yDistribType == "eshell") 
-    yBunch = new BDSBunchEShell();
-  else if(opt.yDistribType == "gausstwiss") 
-    yBunch = new BDSBunchTwiss();
-  else {
-    G4cerr << "yDistribType not found " << opt.yDistribType << G4endl;
-    exit(1);
-  }
-
- 
   xBunch->SetOptions(opt);
   yBunch->SetOptions(opt);
-  
 }
 
 void BDSBunchComposite::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

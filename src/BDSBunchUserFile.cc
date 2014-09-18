@@ -3,10 +3,7 @@
 #include "G4ParticleTable.hh"
 #include "BDSDebug.hh"
 
-BDSBunchUserFile::BDSBunchUserFile(struct Options &opt){
-  SetOptions(opt);
-  ParseFileFormat();
-  OpenBunchFile(); //
+BDSBunchUserFile::BDSBunchUserFile():nlinesIgnore(0){
 }
 
 BDSBunchUserFile::~BDSBunchUserFile(){
@@ -325,6 +322,8 @@ void BDSBunchUserFile::SetOptions(struct Options &opt) {
   SetDistribFile((G4String)opt.distribFile); 
   SetBunchFormat((G4String)opt.distribFileFormat); 
   SetNLinesIgnore(opt.nlinesIgnore);
+  ParseFileFormat();
+  OpenBunchFile(); //
   return; 
 }
 
