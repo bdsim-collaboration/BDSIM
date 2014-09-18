@@ -57,7 +57,9 @@
 #include "G4Material.hh"
 
 #include "BDSAcceleratorComponent.hh"
+#include "BDSBeamline.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSMaterials.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTerminator.hh"
 #include "BDSLogicalVolumeInfo.hh"
@@ -80,11 +82,6 @@
 
 typedef std::list<BDSEnergyCounterSD*>  ECList;
 ECList* theECList;
-
-//--------------------------
-// SYNCHROTRON RAD ***
-G4double BDSLocalRadiusOfCurvature=DBL_MAX;// Used in Mean Free Path calc.
-//--------------------------
 
 //=========================================
 

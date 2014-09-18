@@ -13,15 +13,13 @@ Last modified 15.11.2005 by Ilya Agapov
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 
-#include "BDSWorld.hh"
-#include "BDSMaterials.hh"
-#include "BDSBeamline.hh"
+//#include "BDSWorld.hh"
 
 #include "G4Region.hh"
 
 #include "G4GeometrySampler.hh"
 
-//GFlash parameterisation                                                                                                                                                     
+//GFlash parameterisation
 #include "GFlashHomoShowerParameterisation.hh"
 #include "BDSShowerModel.hh"
 #include "GFlashHitMaker.hh"

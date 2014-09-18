@@ -14,6 +14,11 @@ Last modified 15.11.2005 by Ilya Agapov
 #include "G4ios.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
 
+//--------------------------
+// SYNCHROTRON RAD ***
+G4double BDSLocalRadiusOfCurvature=DBL_MAX;// Used in Mean Free Path calc.
+//--------------------------
+
 BDSContinuousSR::BDSContinuousSR(const G4String& processName)
   : G4VDiscreteProcess(processName)
      // initialization
