@@ -458,6 +458,8 @@ void BDSOutputROOT::Write()
       delete theRootOutputFile;
       theRootOutputFile=NULL;
     }
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " ...finished." << G4endl;
+#ifdef BDSDEBUG
 }
 #endif
