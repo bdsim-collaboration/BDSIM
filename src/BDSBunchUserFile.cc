@@ -3,8 +3,6 @@
 #include "G4ParticleTable.hh"
 #include "BDSDebug.hh"
 
-#define BDSDEBUG 1
-
 BDSBunchUserFile::BDSBunchUserFile(struct Options &opt){
   SetOptions(opt);
   ParseFileFormat();

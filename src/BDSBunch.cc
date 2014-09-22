@@ -9,7 +9,6 @@
 #include "BDSBunchComposite.hh"
 #include "BDSDebug.hh"
 
-#define BDSDEBUG 1
 
 BDSBunch::BDSBunch() {
   // Construct default reference type 

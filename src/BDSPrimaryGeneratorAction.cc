@@ -21,7 +21,6 @@
 #include "G4Track.hh"
 
 #include "CLHEP/Units/PhysicalConstants.h"
-#define BDSDEBUG 1
 extern BDSBunch bdsBunch;
 
 BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction()
