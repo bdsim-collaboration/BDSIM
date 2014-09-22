@@ -39,6 +39,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(): G4VModularPhysicsList(),_physLis
   ParsePhysicsList();
   ConfigurePhysics();
   Register();
+  ConstructParticle();
   ConstructMinimumParticleSet();
   SetParticleDefinition();
   SetCuts();
@@ -105,6 +106,7 @@ void BDSModularPhysicsList::ParsePhysicsList(){
 
 void BDSModularPhysicsList::ConstructMinimumParticleSet(){
   //Minimum required set of particles required for tracking
+  G4Gamma::Gamma();
   G4Electron::Electron();
   G4Positron::Positron();
   G4Proton::Proton();
@@ -161,8 +163,8 @@ void BDSModularPhysicsList::SetCuts()
 
 void BDSModularPhysicsList::SetParticleDefinition(){
   // set primary particle definition and kinetic beam parameters other than total energy
-  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  BDSGlobalConstants::Instance()->SetParticleDefinition(particleTable->
+  //  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+  BDSGlobalConstants::Instance()->SetParticleDefinition(theParticleTable->
 							FindParticle(BDSGlobalConstants::Instance()->GetParticleName()) );  
   
   if(!BDSGlobalConstants::Instance()->GetParticleDefinition()) 
