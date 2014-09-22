@@ -13,6 +13,7 @@
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSBunch.hh"
 #include "BDSParticle.hh"
+#include "BDSDebug.hh"
 //#include "BDSSamplerHit.hh"
 
 #include "G4Event.hh"
@@ -22,7 +23,7 @@
 
 #include "CLHEP/Units/PhysicalConstants.h"
 extern BDSBunch bdsBunch;
-
+#define BDSDEBUG 1
 BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction()
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
@@ -67,6 +68,9 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction()
 
   //Set up the hits collection for storing the primaries
   //itsSamplerHitsCollection = new BDSSamplerHitsCollection((G4String)"inputSampler",(G4String)"inputCollection");
+#ifdef BDSDEBUG
+  G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
 //===================================================

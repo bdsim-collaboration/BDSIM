@@ -47,7 +47,7 @@
 
 typedef std::list<BDSEnergyCounterSD*>  ECList;
 extern ECList* theECList;
-#define BDSDEBUG 1
+
 extern BDSOutputBase* bdsOutput;         // output interface
 
 G4int event_number; // event number, used for checking on printing verboseEventNumber

@@ -56,9 +56,7 @@ void BDSBunch::SetOptions(struct Options& opt) {
 void BDSBunch::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 			       G4double& xp, G4double& yp, G4double& zp,
 			       G4double& t , G4double&  E, G4double& weight) {
-  G4cout << __METHOD_NAME__ << G4endl;
   bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
-  G4cout << __METHOD_END__ << G4endl;
   return;
 }
 
