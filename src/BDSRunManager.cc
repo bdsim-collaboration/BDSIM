@@ -23,6 +23,7 @@
 //#include "G4UImanager.hh"
 
 #include "BDSWorld.hh"
+#define BDSDEBUG 1
 
 BDSRunManager* BDSRunManager::fRunManager = 0;
 
