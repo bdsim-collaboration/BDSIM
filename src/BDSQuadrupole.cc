@@ -91,9 +91,9 @@ void BDSQuadrupole::BuildBPFieldAndStepper()
   itsMagField=new BDSQuadMagField(1*itsBGrad); //L Deacon checking sign of field 4/7/12
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
 
-  itsStepper=new BDSQuadStepper(itsEqRhs);
-  BDSQuadStepper* quadStepper = dynamic_cast<BDSQuadStepper*>(itsStepper);
+  BDSQuadStepper* quadStepper=new BDSQuadStepper(itsEqRhs);
   quadStepper->SetBGrad(itsBGrad);
+  itsStepper = quadStepper;
 }
 
 void BDSQuadrupole::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)

@@ -74,9 +74,9 @@ void BDSDecapole::BuildBPFieldAndStepper()
   itsMagField=new BDSDecMagField(itsBQuadPrime);
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
   
-  itsStepper=new BDSDecStepper(itsEqRhs);
-  BDSDecStepper* decStepper = dynamic_cast<BDSDecStepper*>(itsStepper);
+  BDSDecStepper* decStepper=new BDSDecStepper(itsEqRhs);
   decStepper->SetBQuadPrime(itsBQuadPrime);
+  itsStepper = decStepper;
 }
 
 BDSDecapole::~BDSDecapole()

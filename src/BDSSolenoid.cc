@@ -73,9 +73,9 @@ void BDSSolenoid::BuildBPFieldAndStepper()
   G4ThreeVector Bfield(0.,0.,itsBField);
   itsMagField=new G4UniformMagField(Bfield);
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
-  itsStepper=new BDSSolenoidStepper(itsEqRhs);
-  BDSSolenoidStepper* solenoidStepper = dynamic_cast<BDSSolenoidStepper*>(itsStepper);
+  BDSSolenoidStepper* solenoidStepper=new BDSSolenoidStepper(itsEqRhs);
   solenoidStepper->SetBField(itsBField);
+  itsStepper = solenoidStepper;
 #endif
 }
 

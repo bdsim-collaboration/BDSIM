@@ -75,9 +75,9 @@ void BDSOctupole::BuildBPFieldAndStepper()
   itsMagField=new BDSOctMagField(itsBTrpPrime);
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
   
-  itsStepper=new BDSOctStepper(itsEqRhs);
-  BDSOctStepper* octStepper = dynamic_cast<BDSOctStepper*>(itsStepper);
+  BDSOctStepper* octStepper=new BDSOctStepper(itsEqRhs);
   octStepper->SetBTrpPrime(itsBTrpPrime);
+  itsStepper = octStepper;
 }
 
 BDSOctupole::~BDSOctupole()

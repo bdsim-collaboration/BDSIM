@@ -93,10 +93,10 @@ void BDSRBend::BuildBPFieldAndStepper()
 
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
   
-  itsStepper = new BDSDipoleStepper(itsEqRhs);
-  BDSDipoleStepper* dipoleStepper = dynamic_cast<BDSDipoleStepper*>(itsStepper);
+  BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
   dipoleStepper->SetBField(-itsBField); // note the - sign...
   dipoleStepper->SetBGrad(itsBGrad);
+  itsStepper = dipoleStepper;
 }
 
 void BDSRBend::BuildMarkerLogicalVolume()

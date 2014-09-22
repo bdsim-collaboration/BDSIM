@@ -844,6 +844,7 @@ inline void BDSGeometryLCDD::BuildSubtraction(xmlNodePtr cur)
     }
   else
     {
+      // following will crash if componentRotation == NULL! - JS
       G4Transform3D transform(*componentRotation,PlacementPoint);
       SOLID_LIST.push_back(new G4SubtractionSolid(name,
 						  GetSolidByName(firstname),

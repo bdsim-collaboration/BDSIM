@@ -303,9 +303,9 @@ void BDSSextupole::BuildBPFieldAndStepper()
   itsMagField=new BDSSextMagField(1*itsBDblPrime); //L Deacon testing field sign 4/7/12
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
 
-  itsStepper=new BDSSextStepper(itsEqRhs);
-  BDSSextStepper* sextStepper = dynamic_cast<BDSSextStepper*>(itsStepper);
+  BDSSextStepper* sextStepper=new BDSSextStepper(itsEqRhs);
   sextStepper->SetBDblPrime(itsBDblPrime);
+  itsStepper = sextStepper;
 }
 
 BDSSextupole::~BDSSextupole()
