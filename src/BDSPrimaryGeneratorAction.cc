@@ -12,8 +12,8 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSBunch.hh"
-#include "BDSDetectorConstruction.hh"
-#include "BDSSamplerHit.hh"
+#include "BDSParticle.hh"
+//#include "BDSSamplerHit.hh"
 
 #include "G4Event.hh"
 #include "G4ParticleGun.hh"
@@ -22,21 +22,9 @@
 
 #include "CLHEP/Units/PhysicalConstants.h"
 
-#include <iostream>
-
 extern BDSBunch bdsBunch;
 
-//===================================================
-// Keep initial point in phase space for diagnostics
-G4double
-  initial_x, initial_xp,
-  initial_y, initial_yp,
-  initial_z, initial_zp,
-  initial_E, initial_t,
-  initial_weight;
-
-BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSDetectorConstruction* /*BDSDC*/)
-  :itsBDSSynchrotronRadiation(NULL)
+BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction()
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
 
@@ -79,7 +67,7 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSDetectorConstruction* /*
   weight = 1;
 
   //Set up the hits collection for storing the primaries
-  itsSamplerHitsCollection = new BDSSamplerHitsCollection((G4String)"inputSampler",(G4String)"inputCollection");
+  //itsSamplerHitsCollection = new BDSSamplerHitsCollection((G4String)"inputSampler",(G4String)"inputCollection");
 }
 
 //===================================================
@@ -87,7 +75,7 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSDetectorConstruction* /*
 BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
 {
   delete particleGun;
-  delete itsBDSSynchrotronRadiation;
+  //  delete itsBDSSynchrotronRadiation;
 }
 
 //===================================================
@@ -157,18 +145,8 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 #endif
 
   // save initial values outside scope for entry into the samplers:
-  initial_x  = x0;
-  initial_xp = xp;
-  initial_y  = y0;
-  initial_yp = yp;
-  initial_t  = t;
-  initial_z  = z0;
-  initial_zp = zp;
-  // total energy is used elsewhere:
-  initial_E  = totalE;
-  // weight
-  initial_weight=weight;
+  BDSParticle initialPoint(x0,y0,z0,xp,yp,zp,totalE,t,weight);
+  BDSGlobalConstants::Instance()->SetInitialPoint(initialPoint);
 }
 
 //===================================================
-

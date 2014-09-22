@@ -3,17 +3,8 @@
 
 #include "globals.hh"
 #include "parser/options.h"
-#include "BDSGlobalConstants.hh"
 
 #include "BDSBunchInterface.hh"
-#include "BDSBunchGaussian.hh"
-#include "BDSBunchSquare.hh"
-#include "BDSBunchCircle.hh"
-#include "BDSBunchRing.hh"
-#include "BDSBunchEShell.hh"
-#include "BDSBunchTwiss.hh"
-#include "BDSBunchOld.hh"
-#include "BDSBunchUserFile.hh"
 
 class BDSBunchComposite : public BDSBunchInterface {
  

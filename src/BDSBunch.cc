@@ -5,7 +5,6 @@
 #include "BDSBunchRing.hh"
 #include "BDSBunchEShell.hh"
 #include "BDSBunchTwiss.hh"
-#include "BDSBunchOld.hh"
 #include "BDSBunchUserFile.hh"
 #include "BDSBunchComposite.hh"
 
@@ -21,8 +20,7 @@ BDSBunch::~BDSBunch() {
 
 void BDSBunch::SetOptions(struct Options& opt) {
   // check options and construct corrrect bdsBunchInterface
-  if(bdsBunch != NULL) 
-    delete bdsBunch;
+  delete bdsBunch;
 
   if (opt.distribType == "reference") 
     bdsBunch = new BDSBunchInterface();
@@ -44,12 +42,6 @@ void BDSBunch::SetOptions(struct Options& opt) {
   else if(opt.distribType == "composite") {
     bdsBunch = new BDSBunchComposite();
   }
-  else if(opt.distribType.find("old") != std::string::npos) { 
-    // remove old from distribType and set distribType again 
-    G4cout << "Old BDSBunch" << G4endl;
-    opt.distribType = opt.distribType.substr(3,opt.distribType.length());
-    bdsBunch = new BDSBunchOld();    
-  }   
   else {
     G4cerr << "distribType not found " << opt.distribType << G4endl;
     exit(1);

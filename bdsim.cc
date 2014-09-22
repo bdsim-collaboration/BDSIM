@@ -57,13 +57,14 @@
 #include "G4GeometryTolerance.hh"
 #include "G4TrajectoryDrawByCharge.hh"
 
-#include "BDSRandom.hh" // for random number generator from CLHEP
+#include "BDSBeamline.hh"
+#include "BDSBunch.hh"
 #include "BDSGeometryInterface.hh"
+#include "BDSMaterials.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSOutputASCII.hh" 
 #include "BDSOutputROOT.hh" 
-#include "BDSBunch.hh"
-#include "BDSMaterials.hh"
+#include "BDSRandom.hh" // for random number generator from CLHEP
 //#ifdef USE_ROOT
 //#include "BDSScoreWriter.hh"
 //#endif
@@ -212,11 +213,10 @@ int main(int argc,char** argv) {
   runManager->SetUserAction(new BDSStackingAction);
 
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> User action - detector"<<G4endl;
+  G4cout << __FUNCTION__ << "> User action - primary generator"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSPrimaryGeneratorAction(detector));
+  runManager->SetUserAction(new BDSPrimaryGeneratorAction());
 
-  
 
   //
   // Initialize G4 kernel
