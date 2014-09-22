@@ -29,7 +29,6 @@
 
 extern G4int event_number;
 
-
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
   :G4VSensitiveDetector(name),
    itsHCID(-1),

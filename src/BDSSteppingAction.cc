@@ -12,6 +12,7 @@
 #include "BDSSteppingAction.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSDebug.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4NavigationHistory.hh"

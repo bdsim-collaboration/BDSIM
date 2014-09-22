@@ -56,6 +56,7 @@ void init()
   add_var("GeV",1.0 ,reserved);
   add_var("MeV",1e-3,reserved);
   add_var("KeV",1e-6,reserved);
+  add_var("keV",1e-6,reserved);
   add_var("eV" ,1e-9,reserved);
 
   add_var("MV",1.0,reserved);
