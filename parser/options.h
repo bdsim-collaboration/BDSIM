@@ -74,7 +74,7 @@ struct Options {
   int       doPlanckScattering;
   int       checkOverlaps;
   int       numberOfEventsPerNtuple;
-  unsigned long int eventNumberOffset;
+  int       eventNumberOffset;
   double    vacuumPressure;
   double    planckScatterFe; 
 
@@ -120,7 +120,7 @@ struct Options {
   double   annihiToMuFe;
   double   eeToHadronsFe;
 
-  double scintYieldFactor;
+  double   scintYieldFactor;
  
   int      useEMLPB;
   int      useHadLPB;
@@ -154,11 +154,11 @@ struct Options {
   double   maximumEpsilonStep;
   double   deltaOneStep;
   int      turnOnCerenkov;
-  int turnOnOpticalAbsorption;
-  int turnOnMieScattering;
-  int turnOnRayleighScattering;
-  int turnOnOpticalSurface;
-  int turnOnBirksSaturation;
+  int      turnOnOpticalAbsorption;
+  int      turnOnMieScattering;
+  int      turnOnRayleighScattering;
+  int      turnOnOpticalSurface;
+  int      turnOnBirksSaturation;
   int      synchRadOn;
   int      decayOn;
   int      synchTrackPhotons;
@@ -168,6 +168,8 @@ struct Options {
   int      synchMeanFreeFactor;
   double   lengthSafety;
   long int randomSeed;
+  /// tracking type
+  std::string trackingType;
 
   int      useTimer;
   int      storeMuonTrajectories;

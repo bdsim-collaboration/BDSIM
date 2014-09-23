@@ -145,6 +145,7 @@ Options::Options(){
   storeNeutronTrajectories = 0;
   storeTrajectory = 0;
   stopTracks = 0;
+  trackingType = "hybrid";
 
   fifo = "";
   refvolume = "";
@@ -371,19 +372,17 @@ void Options::set_value(std::string name, double value )
   if(name == "doPlanckScattering" ) { doPlanckScattering = (int) value; return; }
   if(name == "checkOverlaps" ) { checkOverlaps = (int) value; return; }
 
-  if(name == "storeTrajectory") { storeTrajectory = (int) value; return; } 
-  if(name == "storeTrajectories") { storeTrajectory = (int) value; return; } 
-  if(name == "storeMuonTrajectory") { storeMuonTrajectories = (int) value; return; } 
-  if(name == "storeMuonTrajectories") { storeMuonTrajectories = (int) value; return; } 
+  if(name == "storeTrajectory" || name == "storeTrajectories")
+    { storeTrajectory = (int) value; return; } 
+  if(name == "storeNeutronTrajectory" || name == "storeNeutronTrajectories")
+    { storeNeutronTrajectories = (int) value; return; } 
+  if(name == "storeMuonTrajectory" || name == "storeMuonTrajectories")
+    { storeMuonTrajectories = (int) value; return; } 
   if(name == "trajCutGTZ") { trajCutGTZ = (double) value; return; } 
   if(name == "trajCutLTR") { trajCutLTR = (double) value; return; } 
 
-  if(name == "storeNeutronTrajectory") { storeNeutronTrajectories = (int) value; return; } 
-  if(name == "storeNeutronTrajectories") { storeNeutronTrajectories = (int) value; return; } 
-
-
   // options for generation and storage
-  if(name == "randomSeed") { randomSeed = (int) value; return; }
+  if(name == "randomSeed") { randomSeed = (long int)value; return; }
   if(name == "ngenerate" ) { numberToGenerate = (int)value; return; }
   if(name == "nperfile" ) { numberOfEventsPerNtuple = (int)value; return; }
   if(name == "eventNumberOffset" ) { eventNumberOffset = (int)value; return; }
@@ -428,6 +427,7 @@ void Options::set_value(std::string name, std::string value )
   
   // options which influence the tracking
   if(name == "physicsList" ) { physicsList = value; return; } 
+  if(name == "trackingType") { trackingType = value; return; }
 
   // options for external code interfaces
   if(name == "fifo") { fifo = value; return; }

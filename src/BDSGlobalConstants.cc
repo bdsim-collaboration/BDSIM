@@ -134,6 +134,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsNumberOfEventsPerNtuple = opt.numberOfEventsPerNtuple;
   itsEventNumberOffset = opt.eventNumberOffset;
   itsRandomSeed = opt.randomSeed;
+  itsTrackingType = opt.trackingType;
   itsGammaToMuFe= opt.gammaToMuFe;
   itsAnnihiToMuFe= opt.annihiToMuFe;
   itsEeToHadronsFe=opt.eeToHadronsFe;

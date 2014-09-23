@@ -191,6 +191,7 @@ public:
 
   G4double GetLengthSafety();
   G4long   GetRandomSeed();
+  G4String GetTrackingType();
   G4int    GetNumberToGenerate();
   G4int    GetNumberOfEventsPerNtuple();
   G4int    GetEventNumberOffset();
@@ -348,6 +349,7 @@ private:
   G4bool   itsIncludeIronMagFields;
   G4double itsLengthSafety;
   G4long   itsRandomSeed;
+  G4String itsTrackingType;
   G4int    itsNumberToGenerate;
   G4int    itsNumberOfEventsPerNtuple;
   G4int    itsEventNumberOffset;
