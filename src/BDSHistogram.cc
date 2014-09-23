@@ -151,7 +151,7 @@ BDSHistogram1D::~BDSHistogram1D()
     {delete *i;}
 }
 
-std::ostream& operator<< (std::ostream &out, const BDSHistogram1D &hist)
+std::ostream& operator<< (std::ostream &out, BDSHistogram1D const &hist)
 {
   return out << "### FirstBinLeft = " << hist.GetBins()[1]->xmin 
 	     << " LastBinLeft = " << (*(hist.GetBins().rbegin()++))->xmin 
