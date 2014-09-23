@@ -9,7 +9,7 @@
 Options::Options(){
   // Default Values for Options
 
-  physicsList = "cylinder";
+  physicsList = "standard"; //default - standard (only transportation)
   particleName = "";
   distribType = "";
   xDistribType = ""; 

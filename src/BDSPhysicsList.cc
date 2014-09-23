@@ -462,9 +462,7 @@ void BDSPhysicsList::ConstructProcess()
     ConstructLaserWire();
   }
   else {
-    //default - standard (only transportation)
-    G4cerr<<"WARNING : Unknown physics list "<<BDSGlobalConstants::Instance()->GetPhysListName()<<
-      "  using transportation only (standard) "<<G4endl;
+    G4cerr<<"WARNING : Unknown physics list "<<BDSGlobalConstants::Instance()->GetPhysListName()<<G4endl;
     exit(1);
   }
 }
