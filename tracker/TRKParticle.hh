@@ -1,18 +1,38 @@
 #ifndef TRKParticle_h
 #define TRKParticle_h
 
-#include <string>
+#include <ostream>
+#include "vector6.hh"
 
-class TRKParticle { 
-private : 
+class TRKParticle : public vector6 { 
+public: 
   TRKParticle();
-  TRKParticle(std::string nameIn, double massIn, double charge);
+  TRKParticle(vector6);
   ~TRKParticle();
 
-public : 
-  std::string name; 
-  double mass;
-  double charge;   
+  /// output stream
+  //  friend std::ostream& operator<< (std::ostream &out, const TRKParticle &part);
+
+private:
+  // vector3 pos;
+  // vector3 mom;
+  // double mass;
+  // double charge;   
+
+public:
+  // double X0(){return pos.X();
+  // double Y0(){return pos.Y();
+  // double Z0(){return pos.Z();
+  // double Xp(){return mom.X();
+  // double Yp(){return mom.Y();
+  // double Zp(){return mom.Z();
+
+  // double x0;
+  // double y0;
+  // double z0;
+  // double xp;
+  // double yp;
+  // double zp;
 };
 
 #endif

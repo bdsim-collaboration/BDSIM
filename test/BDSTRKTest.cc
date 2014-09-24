@@ -4,13 +4,17 @@
 #include <string>
 
 #include "tracker/TRKAperture.hh"
-#include "tracker/TRKDrift.hh"
+#include "tracker/TRKBunch.hh"
 #include "tracker/TRKFactory.hh"
+#include "tracker/TRKHybrid.hh"
 #include "tracker/TRKLine.hh"
 #include "tracker/TRKPlacement.hh"
-#include "tracker/TRKOctopole.hh"
+#include "tracker/TRKOctupole.hh"
 #include "tracker/TRKQuadrupole.hh"
 #include "tracker/TRKSextupole.hh"
+#include "tracker/TRKThick.hh"
+#include "tracker/TRKThin.hh"
+#include "tracker/TRKTracker.hh"
 
 #include "tracker/vector3.hh"
 #include "tracker/vector6.hh"
@@ -52,43 +56,42 @@ int main(int argc,char** argv) {
   TRKPlacement* plac = NULL;
 
   std::cout << "Create Drift" << std::endl;
-  TRKTrackingElement::TRKType type = TRKTrackingElement::thin;
-  TRKDrift drift(type, TRK::DEFAULT_TRACKING_STEPS,
-		 driftname,length,aper,plac);
+  TRKDrift drift(driftname,length,aper,plac);
 
   std::string quadname = "quad";
   std::string sextname = "sext";
   std::string octname = "oct";
   double strength = 1.0;
   std::cout << "Create Quadrupole" << std::endl;
-  TRKQuadrupole quad(strength, type, TRK::DEFAULT_TRACKING_STEPS,
-		     quadname,length,aper,plac);
+  TRKQuadrupole quad(strength,quadname,length,aper,plac);
   
   std::cout << "Create Sextupole" << std::endl;
-  TRKSextupole sext(strength, type, TRK::DEFAULT_TRACKING_STEPS,
-		    sextname,length,aper,plac);
+  TRKSextupole sext(strength,sextname,length,aper,plac);
 
-  std::cout << "Create Octopole" << std::endl;
-  TRKOctopole oct(strength, type, TRK::DEFAULT_TRACKING_STEPS,
-		  octname,length,aper,plac);
+  std::cout << "Create Octupole" << std::endl;
+  TRKOctupole oct(strength,octname,length,aper,plac);
 
 
   std::cout << "Create Line" << std::endl;
-  TRKLine line("line");
-  line.AddElement(&drift);
-  line.AddElement(&quad);
-  line.AddElement(&sext);
-  line.AddElement(&oct);
+  TRKLine* line = new TRKLine("line");
+  line->AddElement(&drift);
+  line->AddElement(&quad);
+  line->AddElement(&sext);
+  line->AddElement(&oct);
   std::cout << "Line created" << std::endl; 
   std::cout << line << std::endl;
-  TRKElement* element = line.FindElement("drift");
+  TRKElement* element = line->FindElement("drift");
   if (element) std::cout << element->GetName() << " has been found" << std::endl;
 
-  double vIn[6] = {1.0, 0.0, 0.0, 0.0, 0.01, 1}; 
-  double vOut[6]; 
+  // double vIn[6] = {1.0, 0.0, 0.0, 0.0, 0.01, 1}; 
+  // double vOut[6]; 
   
   std::cout << "Thin Tracking" << std::endl;
-  line.Track(vIn,vOut);
+  TRKThin* thin = new TRKThin(TRK::DEFAULT_TRACKING_STEPS);
+  TRKTracker thintracker(line,thin);
+  TRKBunch* bunch = new TRKBunch();
+  // todo add particles
+  thintracker.Track(bunch);
 
   // second method of creation, input file and factory 
 
@@ -105,24 +108,26 @@ int main(int argc,char** argv) {
 
   std::cout << "Thick tracking" << std::endl;
 
-  TRKTrackingElement::TRKType type2 = TRKTrackingElement::thick;
-
-  TRKFactory trkfactory = TRKFactory(type2,options);
+  TRKFactory trkfactory = TRKFactory(options);
   TRKLine* line2 = trkfactory.createLine(beamline_list);
   if (line2) {
     std::cout << "line created from gmad file: " << std::endl;
     std::cout << *line2 << std::endl;
 
-    line2->Track(vIn,vOut);
+    TRKThick* thick = new TRKThick(TRK::DEFAULT_TRACKING_STEPS);
+    TRKTracker thicktracker(line2,thick);
+    thicktracker.Track(bunch);
   }
 
   std::cout << "Hybrid tracking" << std::endl;
 
-  TRKTrackingElement::TRKType type3 = TRKTrackingElement::hybrid;
+  TRKHybrid* hybrid = new TRKHybrid(TRK::DEFAULT_TRACKING_STEPS);
 
-  TRKFactory trkfactory3 = TRKFactory(type3,options);
+  TRKFactory trkfactory3 = TRKFactory(options);
   TRKLine* line3 = trkfactory3.createLine(beamline_list);
-  if (line3) line3->Track(vIn,vOut);
+
+  TRKTracker hybridtracker(line3,hybrid);
+  hybridtracker.Track(bunch);
 
   std::cout << "Test successful!" << std::endl;
   return 0;

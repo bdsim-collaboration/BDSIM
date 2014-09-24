@@ -2,48 +2,24 @@
 
 #include <iostream>
 
-TRKLine::TRKLine(std::string nameIn, bool circular) :
-  TRKTrackingElement(TRKTrackingElement::thin, TRK::DEFAULT_TRACKING_STEPS, nameIn, 0.0, NULL, NULL), circular(false)
+#include "TRKElement.hh"
+
+TRKLine::TRKLine(std::string nameIn, bool circularIn) :
+  name(nameIn),circular(circularIn)
 {
-  maxTurns = (circular ? TRK::NR_TURNS : 1);
 }
 
 TRKLine::~TRKLine()
 {
 }
 
-void TRKLine::Track(const double vIn[], double vOut[]) {
-  double vTemp[6];
-  /// vTemp = vIn;
-  for (int i=0; i<6; i++) {
-    vTemp[i]=vIn[i];
-  }
-
-  TRKLineIter elIter = elements.begin();
-  for (unsigned int i=0; i<maxTurns; i++) {
-    for (;elIter!=elements.end(); ++elIter) {
-      (*elIter)->Track(vTemp,vOut);
-      /// vTemp = vOut;
-      for (int j=0; j<6; j++) {
-	/// new input coordinates
-	// Q(JS): transform to local of element or not?
-	vTemp[j]=vOut[j];
-      }
-    }
-  }
-}
-
-void TRKLine::Track(const double [], double [], double) {
-  /// not sure how to do this
-}
-
-void TRKLine::AddElement(TRKTrackingElement* e) {
+void TRKLine::AddElement(TRKElement* e) {
   elements.push_back(e);
 }
 
-TRKTrackingElement* TRKLine::FindElement(std::string eName)const {
- TRKLineIter elIter = elements.begin();
- TRKLineIter elIterEnd = elements.end();
+TRKElement* TRKLine::FindElement(std::string eName)const {
+ TRKLineConstIter elIter = elements.begin();
+ TRKLineConstIter elIterEnd = elements.end();
   for (;elIter!=elIterEnd; ++elIter) {
     if ((*elIter)->GetName() == eName) {
       return (*elIter);
@@ -53,14 +29,10 @@ TRKTrackingElement* TRKLine::FindElement(std::string eName)const {
   return NULL;
 }
 
-void TRKLine::ThinTrack(const double [], double [], double){std::cout << "should not be called" << std::endl;}
-void TRKLine::HybridTrack(const double [], double [], double){std::cout << "should not be called" << std::endl;}
-void TRKLine::ThickTrack(const double [], double [], double){std::cout << "should not be called" << std::endl;}
-
 /// output stream
 std::ostream& operator<< (std::ostream &out, const TRKLine &line) {
-  TRKLine::TRKLineIter elIter = line.elements.begin();
-  TRKLine::TRKLineIter elIterEnd = line.elements.end();
+  TRKLineConstIter elIter = line.begin();
+  TRKLineConstIter elIterEnd = line.end();
   for (;elIter!=elIterEnd; ++elIter) {
     out << **elIter << std::endl;
   }

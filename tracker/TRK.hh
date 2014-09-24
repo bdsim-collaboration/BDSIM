@@ -14,6 +14,14 @@ namespace TRK {
   const double SOL=2.9e8;
   const double e = 1.6e-19;
 
+  /** tracking type
+   * thin: thin lens tracking
+   * thin symplectic
+   * thick: thick lens tracking
+   * hybrid: Geant4 field stepper
+   */
+  enum TRKType {thin, thinsymplectic, thick, hybrid};
+
   /** 
    * fast way to calculate both sinh and cosh
    * syntax similar to sincos(phi,s,c),

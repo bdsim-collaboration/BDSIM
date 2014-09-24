@@ -1,7 +1,7 @@
 #ifndef TRKFactory_h
 #define TRKFactory_h
 
-#include "TRKTrackingElement.hh"
+#include "TRKElement.hh"
 
 class ElementList;
 struct Element;
@@ -17,23 +17,21 @@ class TRKPlacement;
 
 class TRKFactory {
  public:
-  TRKFactory(TRKTrackingElement::TRKType type, Options& options);
+  TRKFactory(Options& options);
 
   TRKLine* createLine(ElementList& beamline_list);
 
 private:
-  TRKTrackingElement* createElement(Element& element);
+  TRKElement* createElement(Element& element);
 
-  TRKTrackingElement* createLine(Element& element);
-  TRKTrackingElement* createDrift(Element& element);
-  TRKTrackingElement* createDipole(Element& element);
-  TRKTrackingElement* createQuadrupole(Element& element);
-  TRKTrackingElement* createSextupole(Element& element);
-  TRKTrackingElement* createOctopole(Element& element);
-  TRKTrackingElement* createDecapole(Element& element);
+  TRKElement* createLine(Element& element);
+  TRKElement* createDrift(Element& element);
+  TRKElement* createDipole(Element& element);
+  TRKElement* createQuadrupole(Element& element);
+  TRKElement* createSextupole(Element& element);
+  TRKElement* createOctupole(Element& element);
+  TRKElement* createDecapole(Element& element);
 
-  /// tracking type
-  TRKTrackingElement::TRKType type;
   /// particle properties
   double charge;
   double momentum;

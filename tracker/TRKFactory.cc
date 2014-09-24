@@ -1,11 +1,10 @@
 #include "TRKFactory.hh"
 
 #include "TRKLine.hh"
-#include "TRKDrift.hh"
 #include "TRKDipole.hh"
 #include "TRKDecapole.hh"
 #include "TRKQuadrupole.hh"
-#include "TRKOctopole.hh"
+#include "TRKOctupole.hh"
 #include "TRKSextupole.hh"
 
 #include "parser/element.h"
@@ -15,10 +14,8 @@
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
-TRKFactory::TRKFactory(TRKTrackingElement::TRKType typeIn, Options& options) {
+TRKFactory::TRKFactory(Options& options) {
 
-  type = typeIn;
-  
   // define charge and momentum from options
   charge = 1;
   momentum = 0;
@@ -40,7 +37,7 @@ TRKLine* TRKFactory::createLine(ElementList& beamline_list) {
   std::list<struct Element>::iterator it = beamline_list.begin();
 
   for(;it!=beamline_list.end();it++){
-    TRKTrackingElement* element = createElement(*it);
+    TRKElement* element = createElement(*it);
     if (element) {
       line->AddElement(element);
       std::cout << "element created: " << *element << std::endl;
@@ -52,7 +49,7 @@ TRKLine* TRKFactory::createLine(ElementList& beamline_list) {
 }
 
 
-TRKTrackingElement* TRKFactory::createElement(Element& element) {
+TRKElement* TRKFactory::createElement(Element& element) {
   switch (element.type) {
 
   case _LINE:
@@ -67,7 +64,7 @@ TRKTrackingElement* TRKFactory::createElement(Element& element) {
   case _SEXTUPOLE:
     return createSextupole(element);
   case _OCTUPOLE:
-    return createOctopole(element);
+    return createOctupole(element);
   // case _DECAPOLE:
   //   return createDecapole(element);
   default:
@@ -75,30 +72,28 @@ TRKTrackingElement* TRKFactory::createElement(Element& element) {
   }
 }
 
-TRKTrackingElement* TRKFactory::createLine(Element& /*element*/) {
+TRKElement* TRKFactory::createLine(Element& /*element*/) {
   // method not needed?
   return NULL;
 }
 
-TRKTrackingElement* TRKFactory::createDrift(Element& element) {
+TRKElement* TRKFactory::createDrift(Element& element) {
 #ifdef TRKDEBUG
   std::cout << "create Drift" << std::endl;
 #endif
-  return new TRKDrift(type,
-		      TRK::DEFAULT_TRACKING_STEPS,
-		      element.name,
+  return new TRKDrift(element.name,
 		      element.l,
 		      aper,
 		      placement);
 }
 
-TRKTrackingElement* TRKFactory::createDipole(Element& /*element*/) {
+TRKElement* TRKFactory::createDipole(Element& /*element*/) {
   // bfield , see componentfactory and bdskicker.cc
   // strength (bprime)
   return NULL;
 }
 
-TRKTrackingElement* TRKFactory::createQuadrupole(Element& element) {
+TRKElement* TRKFactory::createQuadrupole(Element& element) {
 
 #ifdef TRKDEBUG
   std::cout << "create Quadrupole" << std::endl;
@@ -106,42 +101,36 @@ TRKTrackingElement* TRKFactory::createQuadrupole(Element& element) {
   double bPrime = - brho * (element.k1 / CLHEP::m2);
 
   return new TRKQuadrupole(bPrime,
-			   type,
-			   TRK::DEFAULT_TRACKING_STEPS,
 			   element.name,
 			   element.l,
 			   aper,
 			   placement);
 }
 
-TRKTrackingElement* TRKFactory::createSextupole(Element& element) {
+TRKElement* TRKFactory::createSextupole(Element& element) {
 #ifdef TRKDEBUG
   std::cout << "create Sextupole" << std::endl;
 #endif
   double bPrime = - brho * (element.k2 / CLHEP::m3); // to be checked
   return new TRKSextupole(bPrime,
-			  type,
-			  TRK::DEFAULT_TRACKING_STEPS,
 			  element.name,
 			  element.l,
 			  aper,
 			  placement);
 }
 
-TRKTrackingElement* TRKFactory::createOctopole(Element& element) {
+TRKElement* TRKFactory::createOctupole(Element& element) {
 #ifdef TRKDEBUG
   std::cout << "create Quadrupole" << std::endl;
 #endif
   double bPrime = - brho * (element.k3 / CLHEP::m2 / CLHEP::m2); // to be checked
-  return new TRKOctopole(bPrime,
-			 type,
-			 TRK::DEFAULT_TRACKING_STEPS,
+  return new TRKOctupole(bPrime,
 			 element.name,
 			 element.l,
 			 aper,
 			 placement);
 }
 
-TRKTrackingElement* TRKFactory::createDecapole(Element& /*element*/) {
+TRKElement* TRKFactory::createDecapole(Element& /*element*/) {
   return NULL;
 }

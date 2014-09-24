@@ -1,41 +1,43 @@
 #ifndef TRKLine_h
 #define TRKLine_h
 
+#include <string>
 #include <vector>
 
-#include "TRKTrackingElement.hh"
+class TRKElement;
+
+//typedef std::vector<TRKElement*>::iterator TRKLineIter;
+typedef std::vector<TRKElement*>::const_iterator TRKLineConstIter;
 
 /**
- * @brief line tracking
+ * @brief beamline
  */
-class TRKLine : public TRKTrackingElement {
+class TRKLine {
 private: 
   // in case we use FindElement a lot, probably good to make an index also (but something for later)
-  std::vector<TRKTrackingElement*> elements;
-  typedef std::vector<TRKTrackingElement*>::const_iterator TRKLineIter;
-  /// circular flag for rings
-  bool circular;
-  /// maximum number of turns
-  unsigned int maxTurns;
-
+  std::vector<TRKElement*> elements;
+  std::string name;               ///< name of element
+  bool circular;                  ///< circular flag for rings
+  
 public:
   explicit TRKLine(std::string name, bool circular=false);
   ~TRKLine();
   /// Append TRKElement to Line
-  void AddElement(TRKTrackingElement *e);
+  void AddElement(TRKElement *e);
   /// Find first element with name eName
-  TRKTrackingElement* FindElement(std::string eName)const;
-  /// Track all elements in line
-  virtual void Track(const double vIn[], double vOut[]);
-  virtual void Track(const double vIn[], double vOut[], double h);
+  TRKElement* FindElement(std::string eName)const;
+
+  std::string GetName()const{return name;}
+  bool GetCircular()const{return circular;}
+
+  // TRKLineIter begin() {return elements.begin();}
+  // TRKLineIter end() {return elements.end();}
+
+  TRKLineConstIter begin()const {return elements.begin();}
+  TRKLineConstIter end()const {return elements.end();}
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKLine &element);
-
-protected:
-  virtual void ThinTrack(const double vIn[], double vOut[], double h);
-  virtual void HybridTrack(const double vIn[], double vOut[], double h);
-  virtual void ThickTrack(const double vIn[], double vOut[], double h);
 
 private:
   TRKLine(); ///< not implemented

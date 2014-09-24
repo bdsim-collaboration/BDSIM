@@ -7,6 +7,9 @@
 #include "TRKAperture.hh"
 #include "TRKPlacement.hh"
 
+class TRKBunch;
+class TRKStrategy;
+
 /**
  * @brief a basic element
  */
@@ -15,8 +18,14 @@ public :
   TRKElement(std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKElement();
 
-  std::string GetName()const {return name;}
+  /// track method, visitor pattern
+  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
 
+  std::string GetName()const {return name;}
+  double GetLength()const {return length;}
+  // should made const
+  TRKAperture* GetAperture()const {return aperture;}
+  
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKElement &element);
 
@@ -32,5 +41,8 @@ private :
   /// global coordinates of local point
   double* LocalToGlobal(double /*vOut*/[]){return NULL;}
 };
+
+// declare drift
+typedef TRKElement TRKDrift;
 
 #endif

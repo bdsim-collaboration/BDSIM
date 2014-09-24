@@ -1,10 +1,15 @@
 #include "TRKParticle.hh"
 
-TRKParticle::TRKParticle() : name(""), mass(0.0), charge(0.0)
+TRKParticle::TRKParticle()
 {}
 
-TRKParticle::TRKParticle(std::string nameIn, double massIn, double chargeIn) : 
-  name(nameIn), mass(massIn), charge(chargeIn)
+TRKParticle::TRKParticle(vector6 v6):vector6(v6)
 {}
 
 TRKParticle::~TRKParticle() {}
+
+
+std::ostream& operator<< (std::ostream &out, const TRKParticle &part)
+{
+  return out << (const vector6&)part;
+}
