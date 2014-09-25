@@ -68,6 +68,6 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   }
 
   // note difftime only calculates to the integer second
-  G4cout << "Run Duration >> " << difftime(stoptime,starttime) << " s" << G4endl;
+  G4cout << "Run Duration >> " << (int)difftime(stoptime,starttime) << " s" << G4endl;
 }
 //==========================================================
