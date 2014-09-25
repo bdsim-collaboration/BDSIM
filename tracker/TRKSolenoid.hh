@@ -4,7 +4,7 @@
 #include "TRKElement.hh"
 
 /**
- * @brief solenoid tracking
+ * @brief Solenoid
  */
 class TRKSolenoid : public TRKElement {
 private: 

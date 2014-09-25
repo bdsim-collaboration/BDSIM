@@ -10,7 +10,7 @@ class TRKDipole : public TRKElement {
 private: 
   /// strength in Tesla/meter
   double strength;
-  /// magnetic field in Tesla
+  /// magnetic field in Tesla - only used for hybrid tracking
   double bField;
 
 public:

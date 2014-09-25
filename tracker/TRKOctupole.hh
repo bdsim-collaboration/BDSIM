@@ -4,7 +4,7 @@
 #include "TRKElement.hh"
 
 /**
- * @brief sextupole tracking
+ * @brief Octupole
  */
 class TRKOctupole : public TRKElement {
 private:

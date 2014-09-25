@@ -11,7 +11,7 @@ class TRKBunch;
 class TRKStrategy;
 
 /**
- * @brief a basic element
+ * @brief Base class element, also used for Drift
  */
 class TRKElement { 
 public :
