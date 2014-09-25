@@ -179,43 +179,59 @@ void BDSBunchUserFile::SetOptions(struct Options &opt) {
 
 G4double BDSBunchUserFile::ParseEnergyUnit(G4String &fmt)
 {
-  G4double unit;
+  G4double unit=1.;
   if(fmt=="GeV") unit=1;
   else if(fmt=="MeV") unit=1.e-3;
   else if(fmt=="KeV") unit=1.e-6;
   else if(fmt=="eV") unit=1.e-9;
+  else {
+    G4cout << __METHOD_NAME__ << "Unrecognised energy unit! " << fmt << G4endl;
+    exit(1);
+  }
   return unit;
 }
 
 G4double BDSBunchUserFile::ParseLengthUnit(G4String &fmt)
 {
-  G4double unit;
+  G4double unit=1.;
   if(fmt=="m") unit=1;
   else if(fmt=="cm") unit=1.e-2;
   else if(fmt=="mm") unit=1.e-3;
-  else if(fmt=="mum") unit=1.e-6;
+  else if(fmt=="mum" || fmt=="um") unit=1.e-6;
   else if(fmt=="nm") unit=1.e-9;
+  else {
+    G4cout << __METHOD_NAME__ << "Unrecognised length unit! " << fmt << G4endl;
+    exit(1);
+  }
   return unit;
 }
 
 G4double BDSBunchUserFile::ParseAngleUnit(G4String &fmt)
 {
-  G4double unit;
+  G4double unit=1.;
   if(fmt=="rad") unit=1;
   else if(fmt=="mrad") unit=1.e-3;
-  else if(fmt=="murad") unit=1.e-6;
+  else if(fmt=="murad" || fmt=="urad") unit=1.e-6;
+  else {
+    G4cout << __METHOD_NAME__ << "Unrecognised angle unit! " << fmt << G4endl;
+    exit(1);
+  }
   return unit;
 }
 
 G4double BDSBunchUserFile::ParseTimeUnit(G4String &fmt)
 {
-  G4double unit;
+  G4double unit=1.;
   if(fmt=="s") unit=1;
   else if(fmt=="ms") unit=1.e-3;
-  else if(fmt=="mus") unit=1.e-6;
+  else if(fmt=="mus" || fmt=="us") unit=1.e-6;
   else if(fmt=="ns") unit=1.e-9;
   else if(fmt=="mm/c") unit=(CLHEP::mm/CLHEP::c_light)/CLHEP::s;
   else if(fmt=="nm/c") unit=(CLHEP::nm/CLHEP::c_light)/CLHEP::s;
+  else {
+    G4cout << __METHOD_NAME__ << "Unrecognised time unit! " << fmt << G4endl;
+    exit(1);
+  }
   return unit;
 }
 
