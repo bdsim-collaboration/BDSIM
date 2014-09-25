@@ -184,6 +184,7 @@ G4double BDSBunchUserFile::ParseEnergyUnit(G4String &fmt)
   else if(fmt=="MeV") unit=1.e-3;
   else if(fmt=="KeV") unit=1.e-6;
   else if(fmt=="eV") unit=1.e-9;
+  else unit = 1;
   return unit;
 }
 
@@ -195,6 +196,7 @@ G4double BDSBunchUserFile::ParseLengthUnit(G4String &fmt)
   else if(fmt=="mm") unit=1.e-3;
   else if(fmt=="mum") unit=1.e-6;
   else if(fmt=="nm") unit=1.e-9;
+  else unit = 1;
   return unit;
 }
 
@@ -204,6 +206,7 @@ G4double BDSBunchUserFile::ParseAngleUnit(G4String &fmt)
   if(fmt=="rad") unit=1;
   else if(fmt=="mrad") unit=1.e-3;
   else if(fmt=="murad") unit=1.e-6;
+  else unit = 1;
   return unit;
 }
 
@@ -216,6 +219,7 @@ G4double BDSBunchUserFile::ParseTimeUnit(G4String &fmt)
   else if(fmt=="ns") unit=1.e-9;
   else if(fmt=="mm/c") unit=(CLHEP::mm/CLHEP::c_light)/CLHEP::s;
   else if(fmt=="nm/c") unit=(CLHEP::nm/CLHEP::c_light)/CLHEP::s;
+  else unit = 1;
   return unit;
 }
 
