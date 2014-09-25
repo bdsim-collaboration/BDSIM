@@ -14,6 +14,7 @@ Options::Options(){
   distribType = "";
   xDistribType = ""; 
   yDistribType = "";
+  zDistribType = "";
   distribFile = "";
   distribFileFormat = "";
 
@@ -411,6 +412,7 @@ void Options::set_value(std::string name, std::string value )
   if(name == "distrType" ) { distribType = value; return; }
   if(name == "xDistrType" ) { xDistribType = value; return; }
   if(name == "yDistrType" ) { yDistribType = value; return; }
+  if(name == "zDistrType" ) { zDistribType = value; return; }
   if(name == "distrFile" ) { distribFile = getEnv("BDSIMPATH")+value; return; }
   if(name == "distrFileFormat" ) { distribFileFormat = value; return; }
 

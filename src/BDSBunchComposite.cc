@@ -11,11 +11,13 @@
 BDSBunchComposite::BDSBunchComposite() {
   xBunch = NULL;
   yBunch = NULL;
+  yBunch = NULL;
 }
 
 BDSBunchComposite::~BDSBunchComposite() {
   delete xBunch;
   delete yBunch;
+  delete zBunch;
 }
 
 void BDSBunchComposite::SetOptions(struct Options& opt) {
@@ -60,9 +62,28 @@ void BDSBunchComposite::SetOptions(struct Options& opt) {
     exit(1);
   }
 
- 
+  if (opt.zDistribType == "reference") 
+    zBunch = new BDSBunchInterface();
+  else if(opt.zDistribType == "gauss" || opt.zDistribType == "gaussmatrix") 
+    zBunch = new BDSBunchGaussian(); 
+  else if(opt.zDistribType == "square") 
+    zBunch = new BDSBunchSquare();
+  else if(opt.zDistribType == "circle") 
+    zBunch = new BDSBunchCircle();
+  else if(opt.zDistribType == "ring") 
+    zBunch = new BDSBunchRing();
+  else if(opt.zDistribType == "eshell") 
+    zBunch = new BDSBunchEShell();
+  else if(opt.zDistribType == "gausstwiss") 
+    zBunch = new BDSBunchTwiss();
+  else {
+    G4cerr << "zDistribType not found " << opt.zDistribType << G4endl;
+    exit(1);
+  }
+  
   xBunch->SetOptions(opt);
   yBunch->SetOptions(opt);
+  zBunch->SetOptions(opt);
   
 }
 
@@ -71,18 +92,20 @@ void BDSBunchComposite::GetNextParticle(G4double& x0, G4double& y0, G4double& z0
 					G4double& t , G4double&  E, G4double& weight) { 
   G4double xx0, xy0, xz0, xxp, xyp, xzp, xt, xE, xWeight;
   G4double yx0, yy0, yz0, yxp, yyp, yzp, yt, yE, yWeight;
+  G4double zx0, zy0, zz0, zxp, zyp, zzp, zt, zE, zWeight;
   
   xBunch->GetNextParticle(xx0, xy0, xz0, xxp, xyp, xzp, xt, xE, xWeight);
   yBunch->GetNextParticle(yx0, yy0, yz0, yxp, yyp, yzp, yt, yE, yWeight);
+  zBunch->GetNextParticle(zx0, zy0, zz0, zxp, zyp, zzp, zt, zE, zWeight);
 
   x0 = xx0;
   xp = xxp;
   y0 = yy0;
   yp = yyp;
-  z0 = xz0;
-  zp = xzp; // Is this correct?
-  t  = xt;
-  E  = xE; 
+  z0 = zz0;
+  zp = zzp; 
+  t  = zt;
+  E  = zE; 
   weight = xWeight;
 
   return;

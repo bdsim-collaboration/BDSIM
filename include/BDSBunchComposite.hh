@@ -11,6 +11,7 @@ class BDSBunchComposite : public BDSBunchInterface {
 protected : 
   BDSBunchInterface *xBunch; 
   BDSBunchInterface *yBunch;
+  BDSBunchInterface *zBunch;
 
 public :
   BDSBunchComposite(); 
