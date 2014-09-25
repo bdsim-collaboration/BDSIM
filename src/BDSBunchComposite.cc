@@ -4,7 +4,7 @@
 BDSBunchComposite::BDSBunchComposite() {
   xBunch = NULL;
   yBunch = NULL;
-  yBunch = NULL;
+  zBunch = NULL;
 }
 
 BDSBunchComposite::~BDSBunchComposite() {
@@ -18,6 +18,7 @@ void BDSBunchComposite::SetOptions(struct Options& opt) {
   
   delete xBunch;
   delete yBunch;
+  delete zBunch;
 
   xBunch = BDSBunchFactory::createBunch(opt.xDistribType);
   yBunch = BDSBunchFactory::createBunch(opt.yDistribType);
