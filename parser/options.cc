@@ -3,6 +3,7 @@
 #include "getEnv.h"
 
 #include <cstdlib>
+#include <iomanip>
 #include <iostream>
 #include <string>
 
@@ -172,7 +173,7 @@ void Options::print() const {
 void Options::set_value(std::string name, double value )
 {
 #ifdef BDSDEBUG
-  std::cout << "parser> Setting value " << name << ", " << value << std::endl; 
+  std::cout << "parser> Setting value " << std::setw(25) << std::left << name << value << std::endl;
 #endif
   //
   // numeric options for the "beam" command
@@ -403,7 +404,7 @@ void Options::set_value(std::string name, double value )
 void Options::set_value(std::string name, std::string value )
 {
 #ifdef BDSDEBUG
-  std::cout << "parser> Setting value " << name << ", " << value << std::endl; 
+  std::cout << "parser> Setting value " << std::setw(25) << std::left << name << value << std::endl;
 #endif
   // 
   // string options for the "beam" command
