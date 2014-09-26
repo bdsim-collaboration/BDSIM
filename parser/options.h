@@ -81,7 +81,7 @@ struct Options {
   /// for element specification
   double xsize, ysize;
 
-  ///  int backgroundScaleFactor;
+  //  int backgroundScaleFactor;
 
   /// default geometry parameters
   std::string magnetGeometry;
@@ -179,9 +179,9 @@ struct Options {
   int      storeTrajectory;
   int      stopTracks;
 
-  std::string fifo; /// fifo for BDSIM-placet
-  std::string refvolume; ///initial starting volume
-  int refcopyno; ///initial starting volume copy number
+  std::string fifo; ///< fifo for BDSIM-placet
+  std::string refvolume; ///< initial starting volume
+  int refcopyno; ///< initial starting volume copy number
   
   /// Ring parameters
   int      nturns;
