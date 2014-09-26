@@ -16,6 +16,8 @@ public:
   /// returns tracking type
   //  TRKType trackingType()const {return type;}
 
+  using TRKThin::Track; // import all Track declarations from TRKThin
+
   /**
    * Tracks a bunch through an element
    * @param[in]  el    The TRKElement.

@@ -7,6 +7,6 @@ TRKThinSymplectic::TRKThinSymplectic(int trackingStepsIn) :
 TRKThinSymplectic::~TRKThinSymplectic() { 
 }
 
-void TRKThinSymplectic::Track(TRKDrift* el, TRKBunch* bunch) { 
+void TRKThinSymplectic::Track(TRKDrift* /*el*/, TRKBunch* /*bunch*/) { 
 
 }
