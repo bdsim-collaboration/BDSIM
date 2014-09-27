@@ -3,30 +3,34 @@
 
 #include <ostream>
 #include <vector>
-#include "vector3.hh"
+#include <utility>
+#include <string>
+#include "parser/options.h"
+#include "TRKParticle.hh"
 
-class TRKParticle;
-
-typedef std::vector<TRKParticle*>::iterator TRKBunchIter;
+typedef std::vector<TRKParticle>::iterator TRKBunchIter;
 
 /**
  * @brief vector of particles
  */
 class TRKBunch { 
 public:
-  TRKBunch();
+  TRKBunch(struct Options& opt);
   ~TRKBunch();
+  
+  TRKBunchIter begin() {return bunch.begin();}
+  TRKBunchIter end()   {return bunch.end();}
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKBunch &part);
 
 private:
-  std::vector <TRKParticle*> bunch;
-
-public:
-
-  TRKBunchIter begin() {return bunch.begin();}
-  TRKBunchIter end() {return bunch.end();}
+  TRKBunch(); /// bunch must be instantiated with a number of particles  
+  int population;
+  std::vector <TRKParticle> bunch;
+  
+  void Populate(struct Options& opt); /// populate particles using options and random number generator
+  std::pair<double,int> GetParticleMassAndCharge(std::string particlename);
 };
 
 #endif
