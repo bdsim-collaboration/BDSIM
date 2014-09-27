@@ -20,10 +20,13 @@ void TRKTracker::Track(TRKBunch* bunch){
       (*elIter)->Track(bunch,strategy);
       /// vTemp = vOut;
       // Q(JS): transform to local of element or not?
-      Check((*elIter)->GetAperture());
+      // A(LN): will always be in local coords - only transform
+      // to global when sending to bdsim...
+      Check(bunch,(*elIter)->GetAperture());
     }
   }
 }
 
-void TRKTracker::Check(TRKAperture* /*ap*/) {
+void TRKTracker::Check(TRKBunch* /*bunch*/,TRKAperture* /*ap*/) {
+  //should loop over all particles in bunch to check the single aperture
 }

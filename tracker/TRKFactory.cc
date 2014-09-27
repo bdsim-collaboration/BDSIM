@@ -23,6 +23,7 @@ TRKFactory::TRKFactory(Options& options) {
   brho = options.ffact * momentum / 0.299792458 / charge;
 
   // perhaps also define default aperture
+  //can get from options
   aper = NULL;
   /// start placement, could be updated after every new element
   placement = new TRKPlacement();
@@ -57,6 +58,8 @@ TRKElement* TRKFactory::createElement(Element& element) {
   case _DRIFT:
     return createDrift(element);
   case _VKICK:
+    //temporary
+    return createDrift(element);
   case _HKICK:
     return createDipole(element);
   case _QUAD:
