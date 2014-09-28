@@ -16,6 +16,8 @@
 #include "tracker/TRKThin.hh"
 #include "tracker/TRKTracker.hh"
 
+#include "tracker/TRKParticleDefinition.hh"
+
 #include "tracker/vector3.hh"
 #include "tracker/vector6.hh"
 

@@ -10,9 +10,9 @@ set (binary BDSBunchTest)
 ## BDSTrkTest
 
 # add test executable
-add_executable(BDSTRKTest BDSTRKTest.cc)
+add_executable(BDSTRKTest BDSTRKTest1.cc)
 set_target_properties(BDSTRKTest PROPERTIES OUTPUT_NAME "BDSTRKTest" VERSION ${BDSIM_VERSION})
-target_link_libraries(BDSTRKTest tracker gmad)
+target_link_libraries(BDSTRKTest bdsim tracker gmad)
 
 # set binary
 set (binary BDSTRKTest)

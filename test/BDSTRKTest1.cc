@@ -6,10 +6,12 @@
 #include "tracker/TRKFactory.hh"
 #include "tracker/TRKStrategy.hh"
 #include "tracker/TRKTracker.hh"
+#include "tracker/TRKHybrid.hh"
 
 #include "BDSExecOptions.hh"
 
 extern Options options;
+extern ElementList beamline_list;
 
 int main (int argc, char** argv){
   //for now, need exec options parsing from bdsim
@@ -26,7 +28,8 @@ int main (int argc, char** argv){
   TRKLine* beamline   = factory->createLine(beamline_list);
 
   //build tracking strategy
-  TRKStrategy* strategy = new TRKStrategy();
+  int nTrackingSteps = 1;
+  TRKStrategy* strategy = new TRKHybrid(nTrackingSteps);
 
   //build tracker
   TRKTracker tracker(beamline,strategy);
