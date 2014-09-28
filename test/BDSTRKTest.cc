@@ -89,7 +89,7 @@ int main(int argc,char** argv) {
   std::cout << "Thin Tracking" << std::endl;
   TRKThin* thin = new TRKThin(TRK::DEFAULT_TRACKING_STEPS);
   TRKTracker thintracker(line,thin);
-  TRKBunch* bunch = new TRKBunch();
+  TRKBunch* bunch = new TRKBunch(options);
   // todo add particles
   thintracker.Track(bunch);
 
