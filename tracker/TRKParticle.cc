@@ -1,47 +1,52 @@
 #include "TRKParticle.hh"
 #include "vector6.hh"
 
-TRKParticle::TRKParticle():beforeindex(0)
+TRKParticle::TRKParticle():energy(0),mass(0),charge(0),beforeindex(0)
 {
-  posmom[2] = {vector6(),vector6()};
+  posmom[0] = vector6();
+  posmom[1] = vector6();
 }
 
-TRKParticle::TRKParticle(vector6 coordsIn, double energyIn, double massIn, int chargeIn):beforeindex(0)
+TRKParticle::TRKParticle(double energyIn, double massIn, int chargeIn):
+  energy(energyIn),mass(massIn),charge(chargeIn),beforeindex(0)
+{
+  posmom[0] = vector6();
+  posmom[1] = vector6();
+}
+
+TRKParticle::TRKParticle(vector6 coordsIn, double energyIn, double massIn, int chargeIn):
+  energy(energyIn),mass(massIn),charge(chargeIn),beforeindex(0)
 {
   posmom[0] = coordsIn;
   posmom[1] = vector6();
-  energy    = energyIn;
-  mass      = massIn;
-  charge    = chargeIn;
 }
 
 TRKParticle::TRKParticle(double vIn[]):beforeindex(0)
 {
   //x,y,s,xp,yp,sp,energy,mass,charge
-  posmom[0] = vector6(vIn[0],vIn[1],vIn[2],vIn[3],vIn[4],vIn[5]);
+  posmom[0] = vector6(vector3(vIn[0],vIn[1],vIn[2]),vector3(vIn[3],vIn[4],vIn[5]));
   posmom[1] = vector6();
-  energy    = vIn[6]
+  energy    = vIn[6];
   mass      = vIn[7];
   charge    = (int)vIn[8];
 }
 
 TRKParticle::~TRKParticle() {}
 
-vector6 GetBefore()
+void TRKParticle::SetPosMom(vector6 posmomIn)
 {
-  return posmom[beforeindex];
+  posmom[!beforeindex].SetPosMom(posmomIn);
 }
 
-vector6 GetAfter()
+void TRKParticle::SetPos(vector3 posIn)
 {
-  return posmom[(int)!(bool)beforeindex];
+  posmom[!beforeindex].SetPos(posIn);
 }
 
-void ConfirmNewCoordinates()
+void TRKParticle::SetMom(vector3 momIn)
 {
-  beforeindex = (int)!(bool)beforeindex;
+  posmom[!beforeindex].SetMom(momIn);
 }
-
 
 std::ostream& operator<< (std::ostream &out, const TRKParticle &part)
 {

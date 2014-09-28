@@ -29,8 +29,13 @@ class vector6 {
   double Yp()const {return momentum.Y();}
   double Zp()const {return momentum.Z();}
 
-  vector3 pos()const {return position;}
-  vector3 mom()const {return momentum;}
+  vector3 Pos()const {return position;}
+  vector3 Mom()const {return momentum;}
+
+  void    SetPosMom(vector6 posmomIn) {position = posmomIn.Pos(); momentum=posmomIn.Mom();}
+  //should SetPosMom really be the '=' operator?
+  void    SetPos(vector3 posIn) { position = posIn;}
+  void    SetMom(vector3 momIn) { momentum = momIn;}
 
   vector6(const vector6 &v) {
     position = v.position;
@@ -97,20 +102,6 @@ class vector6 {
   friend std::ostream& operator<< (std::ostream &out, const vector6 &v) {
     return out << v.position << " " << v.momentum;
   }
-  
-
-  // double mag() {
-  //   return sqrt(x*x+y*y+z*z);
-  // }
-
-  // vector3 unit() {
-  //   double m = this->mag();
-  //   double xu = x/m;
-  //   double yu = y/m;
-  //   double zu = z/m;
-  //   return vector3(xu,yu,zu);
-  // }
-
 
 };
 #endif
