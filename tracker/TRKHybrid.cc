@@ -24,13 +24,13 @@ void TRKHybrid::Track(TRKDrift* el, TRKBunch* bunch) {
   const double h = el->GetLength()/trackingSteps;
 
   TRKBunchIter iter = bunch->begin();
-  TRKBunchIter end = bunch->end();
+  TRKBunchIter end  = bunch->end();
 
   for (;iter!=end;++iter) {
-    TRKParticle* part = *iter;
+    TRKParticle part = *iter;
     for (int i=0; i<trackingSteps; i++) {
-      vector3 dv = part->mom().unit()*h;
-      part->pluspos(dv);
+      vector3 dv = part.Mom().unit()*h;
+      part.SetPos(part.Pos() + dv);
     }
   }
 }
@@ -47,16 +47,16 @@ void TRKHybrid::Track(TRKDipole* el, TRKBunch* bunch) {
   TRKBunchIter end = bunch->end();
   
   for (;iter!=end;++iter) {
-    TRKParticle* part = *iter;
+    TRKParticle part = *iter;
     for (int i=0; i<trackingSteps; i++) {
 
       /// from BDSQuadStepper
-      double x0 = part->X();
-      double y0 = part->Y();
-      double z0 = part->Z();
-      double xp = part->Xp();
-      double yp = part->Yp();
-      double zp = part->Zp();
+      double x0 = part.X();
+      double y0 = part.Y();
+      double z0 = part.Z();
+      double xp = part.Xp();
+      double yp = part.Yp();
+      double zp = part.Zp();
 
       // adapted from BDSDipoleStepper.cc
       // 1) bfield
@@ -64,7 +64,7 @@ void TRKHybrid::Track(TRKDipole* el, TRKBunch* bunch) {
 
       vector3 yhat(0.,1.,0.);
 
-      vector3 vhat = part->mom();
+      vector3 vhat = part.Mom();
   
       vector3 vnorm = vhat.cross(yhat);
       // TODO: double initMag = vhat.mag(); // not correct, need to be included in bfield in Factory
@@ -177,8 +177,8 @@ void TRKHybrid::Track(TRKDipole* el, TRKBunch* bunch) {
       double dy=y1-y0;
       // Linear chord length
   
-      vector3 outPos(dx + part->X() + EndNomPath - NominalPath,
-		     dy + part->Y(),
+      vector3 outPos(dx + part.X() + EndNomPath - NominalPath,
+		     dy + part.Y(),
 		     vOut[2]);
   
       vector3 outDir(x1p, y1p, z1p);
@@ -195,7 +195,7 @@ void TRKHybrid::Track(TRKDipole* el, TRKBunch* bunch) {
       vOut[3] = outDir.X();
       vOut[4] = outDir.Y();
       vOut[5] = outDir.Z();
-      *part=vector6(vOut);
+      part.SetPosMom(vector6(vOut));
     }
   }
 }
@@ -212,16 +212,16 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
   TRKBunchIter end = bunch->end();
   
   for (;iter!=end;++iter) {
-    TRKParticle* part = *iter;
+    TRKParticle part = *iter;
     for (int i=0; i<trackingSteps; i++) {
 
       /// from BDSQuadStepper
-      double x0 = part->X();
-      double y0 = part->Y();
-      double z0 = part->Z();
-      double xp = part->Xp();
-      double yp = part->Yp();
-      double zp = part->Zp();
+      double x0 = part.X();
+      double y0 = part.Y();
+      double z0 = part.Z();
+      double xp = part.Xp();
+      double yp = part.Yp();
+      double zp = part.Zp();
   
       vector3 rpp (-zp*x0, zp*y0, x0*xp - y0*yp);
       rpp = rpp * strength;
@@ -378,7 +378,7 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
       vOut[3] = x1p;
       vOut[4] = y1p;
       vOut[5] = z1p;
-      *part=vector6(vOut);
+      part.SetPosMom(vector6(vOut));
     }
   }
 }
@@ -395,14 +395,14 @@ void TRKHybrid::Track(TRKSextupole* el, TRKBunch* bunch) {
   TRKBunchIter end = bunch->end();
   
   for (;iter!=end;++iter) {
-    TRKParticle* part = *iter;
+    TRKParticle part = *iter;
     for (int i=0; i<trackingSteps; i++) {
-      double x0 = part->X();
-      double y0 = part->Y();
-      double z0 = part->Z();
-      double xp = part->Xp();
-      double yp = part->Yp();
-      double zp = part->Zp();
+      double x0 = part.X();
+      double y0 = part.Y();
+      double z0 = part.Z();
+      double xp = part.Xp();
+      double yp = part.Yp();
+      double zp = part.Zp();
 
       // from BDSSextStepper
       // Evaluate field at the approximate midpoint of the step.
@@ -454,7 +454,7 @@ void TRKHybrid::Track(TRKSextupole* el, TRKBunch* bunch) {
       vOut[3] += h*LocalRpp.X();
       vOut[4] += h*LocalRpp.Y();
       vOut[5] += h*LocalRpp.Z();
-      *part=vector6(vOut);
+      part.SetPosMom(vector6(vOut));
     }
   }
 }
