@@ -44,7 +44,8 @@ void TRKBunch::Populate(struct Options& opt)
   for (int i = 0; i < population; i++)
     {
       bdsbunch.GetNextParticle(x0,y0,s0,xp,yp,sp,t,E,weight);
-      //bunch.push_back(TRKParticle(x0,y0,s0,xp,yp,sp,t,E,mass,charge));
+      double paramsIn[9] = {x0,y0,s0,xp,yp,sp,E,mass,charge};
+      bunch.push_back(TRKParticle(paramsIn));
       //need to finish / write particle...
       //weight not required
     }

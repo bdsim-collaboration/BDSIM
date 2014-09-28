@@ -11,13 +11,13 @@ class TRKParticleDefinition {
 public:
   ~TRKParticleDefinition();
   static TRKParticleDefinition* Instance();   ///access method for instance
-  std::pair<double,int> GetParticleMassAndCharge(std::string particlename);
+  std::pair<double,int> GetParticleMassAndCharge(const std::string particlename);
 
 protected:
   TRKParticleDefinition();
 private:
   static TRKParticleDefinition* _instance; ///singleton patter
-  const std::map<std::string,std::pair<double, int> > particleMassCharge;
+  std::map<std::string,std::pair<double, int> > particleMassCharge;
   std::map<std::string,std::pair<double, int> > PrepareDefinitions();
 };
 
