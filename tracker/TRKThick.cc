@@ -86,8 +86,31 @@ void TRKThick::Track(TRKQuadrupole* el, TRKBunch* bunch) {
   }
 }
 
-void TRKThick::Track(TRKSextupole* /*el*/, TRKBunch* /*bunch*/) { 
+void TRKThick::Track(TRKSextupole* el, TRKBunch* bunch) { 
+  const double h = el->GetLength()/trackingSteps;
+
+  TRKBunchIter iter = bunch->begin();
+  TRKBunchIter end  = bunch->end();
+
+  //TBC - justs copies coordinates on just now
+  for (;iter!=end;++iter) {
+    TRKParticle& part = *iter;
+    for (int i=0; i<trackingSteps; i++) {
+      part.SetPosMom(part.PosMom());
+    }
+  }
 }
 
-void TRKThick::Track(TRKOctupole* /*el*/, TRKBunch* /*bunch*/) { 
+void TRKThick::Track(TRKOctupole* el, TRKBunch* bunch) {
+  const double h = el->GetLength()/trackingSteps;
+
+  TRKBunchIter iter = bunch->begin();
+  TRKBunchIter end  = bunch->end();
+
+  for (;iter!=end;++iter) {
+    TRKParticle& part = *iter;
+    for (int i=0; i<trackingSteps; i++) {
+      part.SetPosMom(part.PosMom());
+    }
+  }
 }
