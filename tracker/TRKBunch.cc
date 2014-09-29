@@ -16,7 +16,7 @@
 TRKBunch::TRKBunch(struct Options& opt)
 {
 #ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << std::endl;
+  std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
 #endif
   population= opt.numberToGenerate;
   //must have positive number of particles
@@ -32,7 +32,7 @@ TRKBunch::TRKBunch(struct Options& opt)
 void TRKBunch::Populate(struct Options& opt)
 {
 #ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << std::endl;
+  std::cout << __METHOD_NAME__ << "Generating particles" << std::endl;
 #endif
   //particle definition / generation
   //just now this allows every particle to have a different
