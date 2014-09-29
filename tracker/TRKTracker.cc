@@ -60,6 +60,6 @@ void TRKTracker::CheckAperture(TRKBunch* bunch,TRKElement* element) {
   }
 }
 
-void TRKTracker::Shift(TRKParticle particle) {
+void TRKTracker::Shift(TRKParticle& particle) {
   std::cout << "Naughty particle! shifting to BDSIM... not implemented yet" << std::endl;
 ;}

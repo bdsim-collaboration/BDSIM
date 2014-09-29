@@ -25,7 +25,7 @@ public :
   void Track(TRKBunch* bunch);
   /// check aperture method
   void Check();
-  void Shift(TRKParticle particle);
+  void Shift(TRKParticle& particle);
 };
 
 #endif
