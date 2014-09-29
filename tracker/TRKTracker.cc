@@ -6,6 +6,8 @@
 #include "TRKBunch.hh"
 #include "TRKLine.hh"
 #include "TRKStrategy.hh"
+#include "TRKParticle.hh"
+#include "TRKElement.hh"
 
 TRKTracker::TRKTracker(TRKLine* lineIn, TRKStrategy* strategyIn):line(lineIn),strategy(strategyIn)
 {
@@ -27,18 +29,37 @@ void TRKTracker::Track(TRKBunch* bunch){
 #endif
     for (;elIter!=line->end(); ++elIter) {
 #ifdef TRKDEBUG
-      std::cout << (*elIter) << std::endl;
+      std::cout << "before tracking" << std::endl;
+      std::cout << *bunch << std::endl;
 #endif
       (*elIter)->Track(bunch,strategy);
-      /// vTemp = vOut;
-      // Q(JS): transform to local of element or not?
-      // A(LN): will always be in local coords - only transform
-      // to global when sending to bdsim...
-      Check(bunch,(*elIter)->GetAperture());
+#ifdef TRKDEBUG
+      std::cout << "after tracking" << std::endl;
+      std::cout << *bunch << std::endl;
+#endif
+      CheckAperture(bunch,*elIter);
     }
   }
 }
 
-void TRKTracker::Check(TRKBunch* /*bunch*/,TRKAperture* /*ap*/) {
-  //should loop over all particles in bunch to check the single aperture
+void TRKTracker::CheckAperture(TRKBunch* bunch,TRKElement* element) {
+#ifdef BDSDEBUG
+  std::cout << __METHOD_NAME__ << std::endl;
+#endif
+  TRKAperture* aperture = element->GetAperture();
+  //do the actual comparison
+  //if bad set some flag
+  //else update
+  TRKBunchIter iter = bunch->begin();
+  TRKBunchIter  end = bunch->end();
+  
+  for (;iter!=end;++iter) {
+    TRKParticle& part = *iter;
+    //do check here with if else
+    (aperture->CheckAperture(part)) ? Shift(part) : part.ConfirmNewCoordinates();
+  }
 }
+
+void TRKTracker::Shift(TRKParticle particle) {
+  std::cout << "Naughty particle! shifting to BDSIM... not implemented yet" << std::endl;
+;}

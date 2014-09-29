@@ -4,8 +4,8 @@
 class TRKBunch;
 class TRKLine;
 class TRKStrategy;
-
-class TRKAperture;
+class TRKElement;
+class TRKParticle;
 /**
  * @brief class that takes care of the tracker
  */
@@ -15,7 +15,7 @@ private:
   /// tracking type
   TRKStrategy* strategy;
   /// aperture check
-  void Check(TRKBunch* bunch, TRKAperture* aperture);
+  void CheckAperture(TRKBunch* bunch, TRKElement* element);
   /// maximum number of turns
   unsigned int maxTurns;
 public :
@@ -25,6 +25,7 @@ public :
   void Track(TRKBunch* bunch);
   /// check aperture method
   void Check();
+  void Shift(TRKParticle particle);
 };
 
 #endif

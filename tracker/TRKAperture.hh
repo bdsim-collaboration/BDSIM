@@ -1,6 +1,7 @@
 #ifndef TRKAperture_h
 #define TRKAperture_h
 
+#include "TRKParticle.hh"
 /**
  * @brief Aperture class
  */
@@ -17,7 +18,7 @@ public :
   ~TRKAperture(); 
 
   /// checks if aperture is hit
-  bool CheckAperture(const double /*vIn*/[]){
+  bool CheckAperture(const TRKParticle& /*particle*/){
     return false; // for now
   }
   
