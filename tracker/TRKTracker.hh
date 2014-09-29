@@ -15,7 +15,7 @@ private:
   /// tracking type
   TRKStrategy* strategy;
   /// aperture check
-  void Check(TRKAperture*);
+  void Check(TRKBunch* bunch, TRKAperture* aperture);
   /// maximum number of turns
   unsigned int maxTurns;
 public :

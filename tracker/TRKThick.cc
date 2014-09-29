@@ -21,10 +21,10 @@ void TRKThick::Track(TRKDrift* el, TRKBunch* bunch) {
   TRKBunchIter end = bunch->end();
 
   for (;iter!=end;++iter) {
-    TRKParticle* part = *iter;
+    TRKParticle part = *iter;
     for (int i=0; i<trackingSteps; i++) {
-      vector3 dv = part->mom().unit()*h;
-      part->pluspos(dv);
+      vector3 dv = part.Mom().unit()*h;
+      part.SetPos(part.Pos() + dv);
     }
   }
 }
@@ -44,20 +44,20 @@ void TRKThick::Track(TRKQuadrupole* el, TRKBunch* bunch) {
   TRKBunchIter end = bunch->end();
   
   for (;iter!=end;++iter) {
-    TRKParticle* part = *iter;
+    TRKParticle part = *iter;
     for (int i=0; i<trackingSteps; i++) {
-      double x0 = part->X();
-      double y0 = part->Y();
-      double z0 = part->Z();
-      double xp = part->Xp();
-      double yp = part->Yp();
-      double zp = part->Zp();
+      double x0 = part.X();
+      double y0 = part.Y();
+      double z0 = part.Z();
+      double xp = part.Xp();
+      double yp = part.Yp();
+      double zp = part.Zp();
 
-      vector6 vTemp(*part);
+      vector6 vTemp(part.PosMom());
       // double charge, oh charge good point, should just add this to method signature
       double charge = 1 * TRK::e;
 
-      double rigidity = std::abs(strength) * vTemp.mom().mag() / charge; // to be checked
+      double rigidity = std::abs(strength) * vTemp.Mom().mag() / charge; // to be checked
       double k = 1/std::sqrt(std::abs(rigidity));
 
       double c,s,ch,sh; 
@@ -79,8 +79,8 @@ void TRKThick::Track(TRKQuadrupole* el, TRKBunch* bunch) {
 	vOut[4] = c * yp - s * xp * k;
       }
       vOut[2] = z0;
-      vOut[6] = zp;
-      *part=vector6(vOut);
+      vOut[5] = zp;
+      part.SetPosMom(vector6(vOut));
     }
   }
 }

@@ -26,10 +26,10 @@ void TRKThin::Track(TRKDrift* el, TRKBunch* bunch) {
   TRKBunchIter end = bunch->end();
 
   for (;iter!=end;++iter) {
-    TRKParticle* part = *iter;
+    TRKParticle part = *iter;
     for (int i=0; i<trackingSteps; i++) {
-      vector3 dv = part->mom().unit()*h;
-      part->pluspos(dv);
+      vector3 dv = part.Mom().unit()*h;
+      part.SetPos(part.Pos() + dv);
     }
   }
 }
@@ -79,21 +79,21 @@ void TRKThin::Track(TRKQuadrupole* el, TRKBunch* bunch) {
   const double Kn = strength;
 
   for (;iter!=end;++iter) {
-    TRKParticle* part = *iter;
+    TRKParticle part = *iter;
     // paraxial approximation ONLY!!
-    if(iter== bunch->begin() && (std::abs(part->Zp())>0.99)&&(std::abs(strength)<1.e-6)) {
+    if(iter== bunch->begin() && (std::abs(part.Zp())>0.99)&&(std::abs(strength)<1.e-6)) {
       TRKHybrid hybrid(trackingSteps);
       return hybrid.Track(el,bunch);
     }
     
     for (int i=0; i<trackingSteps; i++) {
 
-      double x0 = part->X();
-      double y0 = part->Y();
-      double z0 = part->Z();
-      double xp = part->Xp();
-      double yp = part->Yp();
-      double zp = part->Zp();
+      double x0 = part.X();
+      double y0 = part.Y();
+      double z0 = part.Z();
+      double xp = part.Xp();
+      double yp = part.Yp();
+      double zp = part.Zp();
 
       // calculate particle kick
       std::complex<double> Kick = Kn * std::complex<double>(x0, y0);
@@ -118,7 +118,7 @@ void TRKThin::Track(TRKQuadrupole* el, TRKBunch* bunch) {
       vOut[3] = xp_ + kickxp * 0.5;
       vOut[4] = yp_ + kickyp * 0.5;
       vOut[5] = zp;
-      *part=vector6(vOut);
+      part.SetPosMom(vector6(vOut));
     }
   }
 }
@@ -138,21 +138,21 @@ void TRKThin::Track(TRKSextupole* el, TRKBunch* bunch) {
   double Kn = strength * 0.5;
 
   for (;iter!=end;++iter) {
-    TRKParticle* part = *iter;
+    TRKParticle part = *iter;
     // paraxial approximation ONLY!!
-    if(iter== bunch->begin() && (std::abs(part->Zp())>0.99)&&(std::abs(strength)<1.e-6)) {
+    if(iter== bunch->begin() && (std::abs(part.Zp())>0.99)&&(std::abs(strength)<1.e-6)) {
       TRKHybrid hybrid(trackingSteps);
       return hybrid.Track(el,bunch);
     }
     
     for (int i=0; i<trackingSteps; i++) {
 
-      double x0 = part->X();
-      double y0 = part->Y();
-      double z0 = part->Z();
-      double xp = part->Xp();
-      double yp = part->Yp();
-      double zp = part->Zp();
+      double x0 = part.X();
+      double y0 = part.Y();
+      double z0 = part.Z();
+      double xp = part.Xp();
+      double yp = part.Yp();
+      double zp = part.Zp();
 
       // adapted from PLACET, element_thin_lens
 
@@ -178,7 +178,7 @@ void TRKThin::Track(TRKSextupole* el, TRKBunch* bunch) {
       vOut[3] = xp_ + kickxp * 0.5;
       vOut[4] = yp_ + kickyp * 0.5;
       vOut[5] = zp;
-      *part=vector6(vOut);
+      part.SetPosMom(vector6(vOut));
     }
   }
 }
@@ -198,21 +198,21 @@ void TRKThin::Track(TRKOctupole* el, TRKBunch* bunch) {
   double Kn = strength / 6;
 
   for (;iter!=end;++iter) {
-    TRKParticle* part = *iter;
+    TRKParticle part = *iter;
     // paraxial approximation ONLY!!
-    if(iter== bunch->begin() && (std::abs(part->Zp())>0.99)&&(std::abs(strength)<1.e-6)) {
+    if(iter== bunch->begin() && (std::abs(part.Zp())>0.99)&&(std::abs(strength)<1.e-6)) {
       TRKHybrid hybrid(trackingSteps);
       return hybrid.Track(el,bunch);
     }
     
     for (int i=0; i<trackingSteps; i++) {
 
-      double x0 = part->X();
-      double y0 = part->Y();
-      double z0 = part->Z();
-      double xp = part->Xp();
-      double yp = part->Yp();
-      double zp = part->Zp();
+      double x0 = part.X();
+      double y0 = part.Y();
+      double z0 = part.Z();
+      double xp = part.Xp();
+      double yp = part.Yp();
+      double zp = part.Zp();
 
       // adapted from PLACET, element_thin_lens
 
@@ -238,7 +238,7 @@ void TRKThin::Track(TRKOctupole* el, TRKBunch* bunch) {
       vOut[3] = xp_ + kickxp * 0.5;
       vOut[4] = yp_ + kickyp * 0.5;
       vOut[5] = zp;
-      *part=vector6(vOut);
+      part.SetPosMom(vector6(vOut));
     }
   }
 }
