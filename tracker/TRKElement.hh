@@ -21,9 +21,8 @@ public :
   /// track method, visitor pattern
   void Track(TRKBunch* bunch, TRKStrategy* strategy);
 
-  std::string GetName()const {return name;}
-  double GetLength()const {return length;}
-  // should made const
+  std::string  GetName()const {return name;}
+  double       GetLength()const {return length;}
   TRKAperture* GetAperture()const {return aperture;}
   
   /// output stream
