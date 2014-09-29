@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <ostream>
+#include <iomanip>
 
 class vector3 { 
  public: 
@@ -99,6 +100,7 @@ class vector3 {
   }
 
   friend std::ostream& operator<< (std::ostream &out, const vector3 &v) {
+    out << std::scientific << std::setprecision(5);
     return out << "(" << v.x << "," << v.y << "," << v.z << ")";
   }
   
