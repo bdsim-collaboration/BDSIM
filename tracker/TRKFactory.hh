@@ -2,6 +2,9 @@
 #define TRKFactory_h
 
 #include "TRKElement.hh"
+#include "TRK.hh"
+
+#include <string>
 
 class ElementList;
 struct Element;
@@ -10,6 +13,7 @@ struct Options;
 class TRKAperture;
 class TRKLine;
 class TRKPlacement;
+class TRKStrategy;
 
 /**
  * @brief factory to create beamline elements
@@ -19,9 +23,12 @@ class TRKFactory {
  public:
   TRKFactory(Options& options);
 
-  TRKLine* createLine(ElementList& beamline_list);
+  TRKLine*     createLine(ElementList& beamline_list);
+  TRKStrategy* createStrategy();
 
 private:
+  TRK::Strategy setStrategyEnum(std::string sIn);
+  
   TRKElement* createElement(Element& element);
 
   TRKElement* createLine(Element& element);
@@ -42,6 +49,10 @@ private:
   TRKPlacement* placement;
   /// circular flag
   bool circular;
+  /// tracking strategy
+  TRK::Strategy strategy;
+  int   trackingsteps;
+
   
 };
 

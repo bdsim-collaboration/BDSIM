@@ -20,7 +20,8 @@ namespace TRK {
    * thick: thick lens tracking
    * hybrid: Geant4 field stepper
    */
-  enum TRKType {thin, thinsymplectic, thick, hybrid};
+  //enum TRKType 
+  enum Strategy {THIN,THINSYMPLECTIC,THICK,HYBRID};
 
   /** 
    * fast way to calculate both sinh and cosh
