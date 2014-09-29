@@ -1,4 +1,6 @@
 #include "TRKParticleDefinition.hh"
+
+#include <cstdlib>
 #include <iostream>
 
 TRKParticleDefinition* TRKParticleDefinition::_instance = 0;
@@ -61,19 +63,12 @@ std::map<std::string,std::pair<double, int> > TRKParticleDefinition::PrepareDefi
 
 std::pair<double,int> TRKParticleDefinition::GetParticleMassAndCharge(const std::string particlename)
 {
-  return particleMassCharge.at(particlename);
-  /*
   std::map<std::string, std::pair<double, int> >::iterator it;
-  it = particleMassCharge.at(particlename);
-  if (it = particleMassCharge.end())
+  it = particleMassCharge.find(particlename);
+  if (it == particleMassCharge.end())
     {
       std::cout << "particle name unrecognised - " << particlename << std::endl;
       exit(1);
     }
-  else {
-    return particleMassCharge[particlename];
-  }
-  //maybe this is bad because it may not return the right thing
-  //but that's protected by an exit(1)...
-  */
+  return particleMassCharge[particlename];
 }
