@@ -56,7 +56,7 @@ void TRKTracker::CheckAperture(TRKBunch* bunch,TRKElement* element) {
   for (;iter!=end;++iter) {
     TRKParticle& part = *iter;
     //do check here with if else
-    (aperture->CheckAperture(part)) ? Shift(part) : part.ConfirmNewCoordinates();
+    (aperture->OutsideAperture(part)) ? Shift(part) : part.ConfirmNewCoordinates();
   }
 }
 

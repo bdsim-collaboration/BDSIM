@@ -28,6 +28,12 @@
 #include "parser/enums.h"
 #include "parser/options.h"
 
+//aperture
+#include "TRKAperture.hh"
+#include "TRKApertureCircular.hh"
+#include "TRKApertureRectangular.hh"
+#include "TRKApertureEllipsoidal.hh"
+
 #include "CLHEP/Units/SystemOfUnits.h"
 
 TRKFactory::TRKFactory(Options& options) {
@@ -39,10 +45,7 @@ TRKFactory::TRKFactory(Options& options) {
   momentum = 0;
   // magnetic rigidity
   brho = options.ffact * momentum / 0.299792458 / charge;
-
-  // perhaps also define default aperture
-  //can get from options
-  aper = NULL;
+  
   /// start placement, could be updated after every new element
   placement = new TRKPlacement();
   /// circular flag? //not available from Options, as command line option!
@@ -50,8 +53,11 @@ TRKFactory::TRKFactory(Options& options) {
   //  bool circular = options.
 
   //pull out strategy info
-  strategy      = setStrategyEnum(options.trackingType);
-  trackingsteps = options.trackingSteps;
+  strategy        = setStrategyEnum(options.trackingType);
+  aperturetype    = setApertureEnum(options.apertureType);
+  beampiperadius  = options.beampipeRadius;
+  trackingsteps   = options.trackingSteps;
+  defaultaperture = new TRKApertureCircular(beampiperadius);
 }
 
 TRK::Strategy TRKFactory::setStrategyEnum(std::string sIn)
@@ -80,6 +86,39 @@ TRKStrategy* TRKFactory::createStrategy() {
   default:
     return NULL;
   }
+}
+
+TRK::Aperture TRKFactory::setApertureEnum(std::string aIn)
+{
+  if (aIn == "circular") {return TRK::CIRCULAR;}
+  else if (aIn == "rectangular") {return TRK::RECTANGULAR;}
+  else if (aIn == "ellipsoidal") {return TRK::ELLIPSOIDAL;}
+  else {
+    std::cout << "Unknown aperture type " << aIn << std::endl;
+    exit(1);
+  }
+}
+
+TRKAperture* TRKFactory::createAperture(Element& element) {
+  //this is annoyingly complex because of the poor implementation of aperture
+  //in bdsim.  this is made to allow both general form and individual elements
+  //to have their own aperture definitions. individual aperture type is not 
+  //possible. it will just default to the general kind.
+  //default case = aperturetype
+  if ((element.aperX != 0) && (element.aperY !=0)) {
+    //must be specified - now check whether one of the asymmetric types is specified
+    if (aperturetype == TRK::RECTANGULAR) {
+      return new TRKApertureRectangular(element.aperX,element.aperY);}
+    else {
+      //in effect the default if two apertures are specified for an element
+      return new TRKApertureEllipsoidal(element.aperX,element.aperY);}
+  }
+  else if (aperturetype == TRK::RECTANGULAR) {
+    //no specified x and y aper, but told its rectangular -> square
+    return new TRKApertureRectangular(beampiperadius,beampiperadius);}
+  else {
+    //must be circular then
+    return defaultaperture;}
 }
 
 TRKLine* TRKFactory::createLine(ElementList& beamline_list) {
@@ -136,15 +175,17 @@ TRKElement* TRKFactory::createDrift(Element& element) {
 #ifdef TRKDEBUG
   std::cout << "create Drift" << std::endl;
 #endif
+  TRKAperture* aperture = createAperture(element);
   return new TRKDrift(element.name,
 		      element.l,
-		      aper,
+		      aperture,
 		      placement);
 }
 
 TRKElement* TRKFactory::createDipole(Element& /*element*/) {
   // bfield , see componentfactory and bdskicker.cc
   // strength (bprime)
+  //TRKAperture* aperture = createAperture(element);
   return NULL;
 }
 
@@ -154,11 +195,11 @@ TRKElement* TRKFactory::createQuadrupole(Element& element) {
   std::cout << "create Quadrupole" << std::endl;
 #endif
   double bPrime = - brho * (element.k1 / CLHEP::m2);
-
+  TRKAperture* aperture = createAperture(element);
   return new TRKQuadrupole(bPrime,
 			   element.name,
 			   element.l,
-			   aper,
+			   aperture,
 			   placement);
 }
 
@@ -167,10 +208,11 @@ TRKElement* TRKFactory::createSextupole(Element& element) {
   std::cout << "create Sextupole" << std::endl;
 #endif
   double bPrime = - brho * (element.k2 / CLHEP::m3); // to be checked
+  TRKAperture* aperture = createAperture(element);
   return new TRKSextupole(bPrime,
 			  element.name,
 			  element.l,
-			  aper,
+			  aperture,
 			  placement);
 }
 
@@ -179,13 +221,15 @@ TRKElement* TRKFactory::createOctupole(Element& element) {
   std::cout << "create Quadrupole" << std::endl;
 #endif
   double bPrime = - brho * (element.k3 / CLHEP::m2 / CLHEP::m2); // to be checked
+  TRKAperture* aperture = createAperture(element);
   return new TRKOctupole(bPrime,
 			 element.name,
 			 element.l,
-			 aper,
+			 aperture,
 			 placement);
 }
 
 TRKElement* TRKFactory::createDecapole(Element& /*element*/) {
+  //TRKAperture* aperture = createAperture(element);
   return NULL;
 }
