@@ -50,6 +50,7 @@ void TRKParticle::SetMom(vector3 momIn)
 
 std::ostream& operator<< (std::ostream &out, const TRKParticle &part)
 {
+  out << "Energy: " << part.E() << " Mass: " << part.M() << " Charge: " << part.Charge() << " ";
   out << "Before: " << part.PosMom() << " After: " << part.PosMomAfter();
   return out;
 }
