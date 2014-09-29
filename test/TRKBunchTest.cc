@@ -40,7 +40,7 @@ int main (int argc, char** argv){
 
   strategy->Track(quad,bunch);
 
-  std::cout << *bunch << std::endl;
+  std::cout << *bunch;
 
   TRKParticle& part = *(bunch->begin());
   part.SetPos(vector3(1,2,3));
