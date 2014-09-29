@@ -16,6 +16,7 @@ class TRKOctupole;
 class TRKThin : public TRKStrategy {
 public:
 
+  // todo, discuss, do we need tracking step for thin?
   TRKThin(int trackingSteps);
 		     
   virtual ~TRKThin(); 

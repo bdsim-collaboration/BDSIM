@@ -34,7 +34,34 @@ void TRKThin::Track(TRKDrift* el, TRKBunch* bunch) {
   }
 }
 
-void TRKThin::Track(TRKDipole* /*el*/, TRKBunch* /*bunch*/) { 
+void TRKThin::Track(TRKDipole* el, TRKBunch* bunch) { 
+  /// from Sixtrack Physics Manual 3.2.2 Thin Dipole expanded Hamiltonian
+
+  const double strength = el->GetStrength();
+  if (std::abs(strength)<=1e-12) {
+    return Track((TRKDrift*)el,bunch);
+  }
+
+  const double h = el->GetLength()/trackingSteps;
+
+  for (int i=0; i<trackingSteps; i++) {
+      
+    TRKBunchIter iter = bunch->begin();
+    TRKBunchIter end = bunch->end();
+    
+    // TODO how to use half? add option?
+    // half drift
+    Track((TRKDrift*)el,bunch);
+
+
+    for (;iter!=end;++iter) {
+
+
+    }
+    // TODO how to use half? add option?
+    // half drift
+    Track((TRKDrift*)el,bunch);
+  }
 }
 
 void TRKThin::Track(TRKQuadrupole* el, TRKBunch* bunch) { 
