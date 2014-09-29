@@ -3,6 +3,9 @@
 #include <cmath>
 #include <complex>
 #include <cstdlib>
+#include <iostream>
+
+#include "BDSDebug.hh"
 
 #include "TRKBunch.hh"
 #include "TRKHybrid.hh"
@@ -14,6 +17,10 @@
 
 TRKThin::TRKThin(int trackingStepsIn) : 
   TRKStrategy(trackingStepsIn) {
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << "with " << trackingStepsIn 
+	    << " tracking steps per element" << std::endl;
+#endif
 }
 
 TRKThin::~TRKThin() { 
@@ -30,6 +37,7 @@ void TRKThin::Track(TRKDrift* el, TRKBunch* bunch) {
     for (int i=0; i<trackingSteps; i++) {
       vector3 dv = part.Mom().unit()*h;
       part.SetPos(part.Pos() + dv);
+      //      std::cout <<part << std::endl;
     }
   }
 }

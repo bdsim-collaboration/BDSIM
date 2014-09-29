@@ -3,6 +3,9 @@
 
 #include "TRKFactory.hh"
 
+//debug
+#include "BDSDebug.hh"
+
 //individual beam elements
 #include "TRKLine.hh"
 #include "TRKDipole.hh"
@@ -28,7 +31,9 @@
 #include "CLHEP/Units/SystemOfUnits.h"
 
 TRKFactory::TRKFactory(Options& options) {
-
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
+#endif
   // define charge and momentum from options
   charge = 1;
   momentum = 0;
@@ -86,7 +91,9 @@ TRKLine* TRKFactory::createLine(ElementList& beamline_list) {
     TRKElement* element = createElement(*it);
     if (element) {
       line->AddElement(element);
-      std::cout << "element created: " << *element << std::endl;
+#ifdef TRKDEBUG
+      std::cout << __METHOD_NAME__ << "element created: " << *element << std::endl;
+#endif
       // update placement
     }
   }
