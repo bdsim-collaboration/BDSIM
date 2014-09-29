@@ -53,8 +53,11 @@ private:
   //position and momentum have two values - before and after
   vector6 posmom [2];
   //energy,mass and charge don't change in the tracker!
+  // is energy needed? - JS
   double  energy;
+  /// mass in MeV
   double  mass;
+  /// charge in units of elementary charge
   int     charge;
   
   //need a 0 or a 1 for addresing, smallest c++ object is 1byte
