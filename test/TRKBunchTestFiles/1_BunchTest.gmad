@@ -1,0 +1,5 @@
+include 1_Bunch.gmad
+include options.gmad
+include fodo.gmad;
+
+option, ngenerate=200;
