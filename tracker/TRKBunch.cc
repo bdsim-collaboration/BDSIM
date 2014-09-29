@@ -9,9 +9,9 @@
 #include "TRKParticleDefinition.hh"
 
 #include "BDSBunch.hh"
-#include "parser/options.h"
-
 #include "BDSDebug.hh"
+
+#include "parser/options.h"
 
 TRKBunch::TRKBunch(struct Options& opt)
 {

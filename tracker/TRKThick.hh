@@ -36,10 +36,6 @@ public:
   void Track(TRKOctupole* el, TRKBunch* bunch);
   ///@}
 
-protected:
-  /// number of tracking steps
-  int trackingSteps;
-
 private:
   TRKThick(); ///< not implemented
 };
