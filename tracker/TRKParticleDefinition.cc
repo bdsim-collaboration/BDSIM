@@ -70,5 +70,5 @@ std::pair<double,int> TRKParticleDefinition::GetParticleMassAndCharge(const std:
       std::cout << "particle name unrecognised - " << particlename << std::endl;
       exit(1);
     }
-  return particleMassCharge[particlename];
+  return it->second;
 }
