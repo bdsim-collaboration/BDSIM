@@ -30,12 +30,12 @@ void TRKTracker::Track(TRKBunch* bunch){
     for (;elIter!=line->end(); ++elIter) {
 #ifdef TRKDEBUG
       std::cout << "before tracking" << std::endl;
-      std::cout << *bunch << std::endl;
+      std::cout << *bunch;
 #endif
       (*elIter)->Track(bunch,strategy);
 #ifdef TRKDEBUG
       std::cout << "after tracking" << std::endl;
-      std::cout << *bunch << std::endl;
+      std::cout << *bunch;
 #endif
       CheckAperture(bunch,*elIter);
     }
