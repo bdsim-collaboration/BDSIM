@@ -11,8 +11,13 @@
 #include "BDSBunch.hh"
 #include "parser/options.h"
 
+#include "BDSDebug.hh"
+
 TRKBunch::TRKBunch(struct Options& opt)
 {
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << std::endl;
+#endif
   population= opt.numberToGenerate;
   //must have positive number of particles
   if (population < 0){population = abs(population);}
@@ -26,6 +31,9 @@ TRKBunch::TRKBunch(struct Options& opt)
 
 void TRKBunch::Populate(struct Options& opt)
 {
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << std::endl;
+#endif
   //particle definition / generation
   //just now this allows every particle to have a different
   //mass and charge
@@ -61,7 +69,7 @@ std::ostream& operator<< (std::ostream &out, const TRKBunch &beam)
   std::vector<TRKParticle>::const_iterator end  = beam.bunch.end();
   
   for (;iter!=end;++iter) {
-    out << (*iter) << std::endl;
+    out << *iter << std::endl;
   }
   return out;
 }

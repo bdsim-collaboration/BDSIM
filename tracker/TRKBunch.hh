@@ -22,7 +22,7 @@ public:
   TRKBunchIter end()   {return bunch.end();}
 
   /// output stream
-  friend std::ostream& operator<< (std::ostream &out, const TRKBunch &part);
+  friend std::ostream& operator<< (std::ostream &out, const TRKBunch &beam);
 
 private:
   TRKBunch(); /// bunch must be instantiated with a number of particles  
