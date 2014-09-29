@@ -20,21 +20,21 @@ void TRKThinSymplectic::Track(TRKDrift* el, TRKBunch* bunch) {
   TRKBunchIter end = bunch->end();
   
   for (;iter!=end;++iter) {
-    TRKParticle* part = *iter;
+    TRKParticle& part = *iter;
     
     for (int i=0; i<trackingSteps; i++) {
 
-      // double x0 = part->X();
-      // double y0 = part->Y();
-      // double z0 = part->Z();
-      double xp = part->Xp();
-      double yp = part->Yp();
-      // double zp = part->Zp();
+      // double x0 = part.X();
+      // double y0 = part.Y();
+      // double z0 = part.Z();
+      double xp = part.Xp();
+      double yp = part.Yp();
+      // double zp = part.Zp();
 
       // TODO, E0, P0 beta0 get from BDSParticle and GConstants
       double beta0=0,E0=0,P0=0, momentum0=0,E=0;
       /// from Sixtrack Physics Manual 3.1 Drift
-      double delta = (part->mom().mag() - momentum0) / momentum0;
+      double delta = (part.Mom().mag() - momentum0) / momentum0;
 
       double pt = (E-E0)/P0/TRK::SOL;
 
@@ -42,9 +42,9 @@ void TRKThinSymplectic::Track(TRKDrift* el, TRKBunch* bunch) {
       double betaz=pz/(1/beta0+pt);
 
       vector3 dv(xp/pz*h,yp/pz*h,(1-beta0/betaz)*h);
-      part->pluspos(dv);
+      part.SetPos(part.Pos() + dv);
     }
-  }	
+  }
 }
 
 void TRKThinSymplectic::Track(TRKDipole* el, TRKBunch* bunch) { 
@@ -69,14 +69,14 @@ void TRKThinSymplectic::Track(TRKDipole* el, TRKBunch* bunch) {
     Track((TRKDrift*)el,bunch);
     
     for (;iter!=end;++iter) {
-      TRKParticle* part = *iter;
+      TRKParticle& part = *iter;
 	
-      double x0 = part->X();
-      double y0 = part->Y();
-      // double z0 = part->Z();
-      double xp = part->Xp();
-      // double yp = part->Yp();
-      double zp = part->Zp();
+      double x0 = part.X();
+      double y0 = part.Y();
+      // double z0 = part.Z();
+      double xp = part.Xp();
+      // double yp = part.Yp();
+      double zp = part.Zp();
       
       // 3 steps , T11(L/2) T1 (L),T11(L/2)
 

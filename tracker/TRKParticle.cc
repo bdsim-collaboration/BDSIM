@@ -21,14 +21,14 @@ TRKParticle::TRKParticle(vector6 coordsIn, double energyIn, double massIn, int c
   posmom[1] = vector6();
 }
 
-TRKParticle::TRKParticle(double vIn[]):beforeindex(0)
+TRKParticle::TRKParticle(double vIn[], int chargeIn):beforeindex(0)
 {
   //x,y,s,xp,yp,sp,energy,mass,charge
   posmom[0] = vector6(vector3(vIn[0],vIn[1],vIn[2]),vector3(vIn[3],vIn[4],vIn[5]));
   posmom[1] = vector6();
   energy    = vIn[6];
   mass      = vIn[7];
-  charge    = (int)vIn[8];
+  charge    = chargeIn;
 }
 
 TRKParticle::~TRKParticle() {}

@@ -21,7 +21,7 @@ void TRKThick::Track(TRKDrift* el, TRKBunch* bunch) {
   TRKBunchIter end = bunch->end();
 
   for (;iter!=end;++iter) {
-    TRKParticle part = *iter;
+    TRKParticle& part = *iter;
     for (int i=0; i<trackingSteps; i++) {
       vector3 dv = part.Mom().unit()*h;
       part.SetPos(part.Pos() + dv);
@@ -44,7 +44,7 @@ void TRKThick::Track(TRKQuadrupole* el, TRKBunch* bunch) {
   TRKBunchIter end = bunch->end();
   
   for (;iter!=end;++iter) {
-    TRKParticle part = *iter;
+    TRKParticle& part = *iter;
     for (int i=0; i<trackingSteps; i++) {
       double x0 = part.X();
       double y0 = part.Y();

@@ -26,7 +26,7 @@ void TRKThin::Track(TRKDrift* el, TRKBunch* bunch) {
   TRKBunchIter end = bunch->end();
 
   for (;iter!=end;++iter) {
-    TRKParticle part = *iter;
+    TRKParticle& part = *iter;
     for (int i=0; i<trackingSteps; i++) {
       vector3 dv = part.Mom().unit()*h;
       part.SetPos(part.Pos() + dv);
@@ -79,7 +79,7 @@ void TRKThin::Track(TRKQuadrupole* el, TRKBunch* bunch) {
   const double Kn = strength;
 
   for (;iter!=end;++iter) {
-    TRKParticle part = *iter;
+    TRKParticle& part = *iter;
     // paraxial approximation ONLY!!
     if(iter== bunch->begin() && (std::abs(part.Zp())>0.99)&&(std::abs(strength)<1.e-6)) {
       TRKHybrid hybrid(trackingSteps);
@@ -138,7 +138,7 @@ void TRKThin::Track(TRKSextupole* el, TRKBunch* bunch) {
   double Kn = strength * 0.5;
 
   for (;iter!=end;++iter) {
-    TRKParticle part = *iter;
+    TRKParticle& part = *iter;
     // paraxial approximation ONLY!!
     if(iter== bunch->begin() && (std::abs(part.Zp())>0.99)&&(std::abs(strength)<1.e-6)) {
       TRKHybrid hybrid(trackingSteps);
@@ -198,7 +198,7 @@ void TRKThin::Track(TRKOctupole* el, TRKBunch* bunch) {
   double Kn = strength / 6;
 
   for (;iter!=end;++iter) {
-    TRKParticle part = *iter;
+    TRKParticle& part = *iter;
     // paraxial approximation ONLY!!
     if(iter== bunch->begin() && (std::abs(part.Zp())>0.99)&&(std::abs(strength)<1.e-6)) {
       TRKHybrid hybrid(trackingSteps);

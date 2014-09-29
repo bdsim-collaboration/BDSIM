@@ -16,7 +16,7 @@ public:
   TRKParticle();
   TRKParticle(double energyIn, double massIn, int chargeIn);
   TRKParticle(vector6 coordsIn, double energyIn, double massIn, int chargeIn);
-  TRKParticle(double []);
+  TRKParticle(double paramsIn[], int chargeIn);
   ~TRKParticle();
   
   //accessors
