@@ -9,6 +9,7 @@
 #include "tracker/TRKHybrid.hh"
 #include "tracker/TRKThin.hh"
 #include "tracker/TRKAperture.hh"
+#include "tracker/TRKApertureCircular.hh"
 #include "tracker/TRKQuadrupole.hh"
 
 #include "BDSExecOptions.hh"
@@ -27,21 +28,21 @@ int main (int argc, char** argv){
 
   //build bunch - DONE
   TRKBunch* bunch   = new TRKBunch(options);
-
   std::cout << *bunch << std::endl;
 
   //create strategy / set of routines
   TRKStrategy* strategy = new TRKThin(1/*ntrackingsteps*/);
 
   //create a single element
-  TRKAperture* ap = new TRKAperture(5.0,5.0,TRKAperture::rectangle);
+  TRKAperture* ap = new TRKApertureCircular(0.05);
   TRKPlacement* pl = new TRKPlacement();
   TRKQuadrupole* quad = new TRKQuadrupole(0.1,"quad1",2.5,ap,pl);  
 
+  //track the bunch through a quad
   strategy->Track(quad,bunch);
-
   std::cout << *bunch;
 
+  //get a single particle and fiddle it a bit
   TRKParticle& part = *(bunch->begin());
   part.SetPos(vector3(1,2,3));
   std::cout << part << std::endl;
