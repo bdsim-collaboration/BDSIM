@@ -170,6 +170,7 @@ struct Options {
   long int randomSeed;
   /// tracking type
   std::string trackingType;
+  int      trackingSteps; ///per element for tracker
 
   int      useTimer;
   int      storeMuonTrajectories;

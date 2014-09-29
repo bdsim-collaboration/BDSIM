@@ -1,5 +1,8 @@
+#include <iostream>
+
 #include "TRKFactory.hh"
 
+//individual beam elements
 #include "TRKLine.hh"
 #include "TRKDipole.hh"
 #include "TRKDecapole.hh"
@@ -7,6 +10,15 @@
 #include "TRKOctupole.hh"
 #include "TRKSextupole.hh"
 
+//tracking strategies / routines
+#include "TRKStrategy.hh"
+#include "TRK.hh"
+#include "TRKThin.hh"
+#include "TRKThinSymplectic.hh"
+#include "TRKThick.hh"
+#include "TRKHybrid.hh"
+
+//parser info
 #include "parser/element.h"
 #include "parser/elementlist.h"
 #include "parser/enums.h"
@@ -30,6 +42,38 @@ TRKFactory::TRKFactory(Options& options) {
   /// circular flag? //not available from Options, as command line option!
   // could use GC.nturns instead!
   //  bool circular = options.
+
+  //pull out strategy info
+  strategy      = setStrategyEnum(options.trackingType);
+  trackingsteps = options.trackingSteps;
+}
+
+TRK::Strategy TRKFactory::setStrategyEnum(std::string sIn)
+{
+  if (sIn == "thin") {return TRK::THIN;}
+  else if (sIn == "thinsymplectic") {return TRK::THINSYMPLECTIC;}
+  else if (sIn == "thick") {return TRK::THICK;}
+  else if (sIn == "hybrid") {return TRK::HYBRID;}
+  else {
+    std::cout << "Unknown strategy " << sIn << std::endl;
+    exit(1);
+  }
+}
+
+TRKStrategy* TRKFactory::createStrategy() {
+  switch(strategy) {
+
+  case TRK::THIN:
+    return new TRKThin(trackingsteps);
+  case TRK::THINSYMPLECTIC:
+    return new TRKThinSymplectic(trackingsteps);
+  case TRK::THICK:
+    return new TRKThick(trackingsteps);
+  case TRK::HYBRID:
+    return new TRKHybrid(trackingsteps);
+  default:
+    return NULL;
+  }
 }
 
 TRKLine* TRKFactory::createLine(ElementList& beamline_list) {

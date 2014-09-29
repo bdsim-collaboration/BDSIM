@@ -137,6 +137,8 @@ Options::Options(){
   synchMeanFreeFactor = 1;
   lengthSafety = 0.000000001;
   randomSeed = 0;
+  trackingType = "hybrid";
+  trackingSteps = 1;
   
   useTimer = 0;
   storeMuonTrajectories = 0;
@@ -145,7 +147,6 @@ Options::Options(){
   storeNeutronTrajectories = 0;
   storeTrajectory = 0;
   stopTracks = 0;
-  trackingType = "hybrid";
 
   fifo = "";
   refvolume = "";
@@ -393,6 +394,9 @@ void Options::set_value(std::string name, double value )
   
   // option for rings
   if(name=="nturns") {nturns = (int) value; return; }
+
+  // tracking
+  if(name == "trackingSteps") { trackingSteps = (int)value; return;}
   
   std::cerr << "Error: parser> unkown option \"" << name << "\"" << std::endl; 
   exit(1);
@@ -426,8 +430,8 @@ void Options::set_value(std::string name, std::string value )
   if(name == "soilMaterial" ) { soilMaterial = value; return; }
   
   // options which influence the tracking
-  if(name == "physicsList" ) { physicsList = value; return; } 
-  if(name == "trackingType") { trackingType = value; return; }
+  if(name == "physicsList" )  { physicsList   = value; return;} 
+  if(name == "trackingType")  { trackingType  = value; return;}
 
   // options for external code interfaces
   if(name == "fifo") { fifo = value; return; }
