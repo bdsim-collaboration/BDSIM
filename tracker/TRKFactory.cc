@@ -106,7 +106,7 @@ TRKAperture* TRKFactory::createAperture(Element& element) {
   //possible. it will just default to the general kind.
   //default case = aperturetype
   if ((element.aperX != 0) && (element.aperY !=0)) {
-    //must be specified - now check whether one of the asymmetric types is specified
+    //must have been specified - now check whether one of the asymmetric aperture types is specified
     if (aperturetype == TRK::RECTANGULAR) {
       return new TRKApertureRectangular(element.aperX,element.aperY);}
     else {
@@ -190,7 +190,6 @@ TRKElement* TRKFactory::createDipole(Element& /*element*/) {
 }
 
 TRKElement* TRKFactory::createQuadrupole(Element& element) {
-
 #ifdef TRKDEBUG
   std::cout << "create Quadrupole" << std::endl;
 #endif

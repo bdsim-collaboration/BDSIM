@@ -1,12 +1,12 @@
 #ifndef TRKFactory_h
-#define TRKFactory_h
+#define TRKFactory_h 1
 
 #include "TRKElement.hh"
 #include "TRK.hh"
 
 #include <string>
 
-class ElementList;
+class  ElementList;
 struct Element;
 struct Options;
 

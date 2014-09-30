@@ -21,10 +21,9 @@ private:
 public :
   TRKTracker(TRKLine* line, TRKStrategy* strategy);
   ~TRKTracker();
-  /// track bunch through beamline
+  /// track bunch through beamline - main tracking loop
   void Track(TRKBunch* bunch);
-  /// check aperture method
-  void Check();
+  /// move a particle to bdsim tracking queue and delete from bunch
   void Shift(TRKParticle& particle);
 };
 
