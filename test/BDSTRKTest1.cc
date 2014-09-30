@@ -6,7 +6,6 @@
 #include "tracker/TRKFactory.hh"
 #include "tracker/TRKStrategy.hh"
 #include "tracker/TRKTracker.hh"
-#include "tracker/TRKHybrid.hh"
 
 #include "BDSExecOptions.hh"
 
@@ -20,24 +19,18 @@ int main (int argc, char** argv){
   //parse input
   gmad_parser(BDSExecOptions::Instance()->GetInputFilename());
 
-  //build bunch - DONE
-  TRKBunch* bunch   = new TRKBunch(options);
+  //build bunch
+  TRKBunch* bunch       = new TRKBunch(options);
   
   //build beamline
   TRKFactory* factory   = new TRKFactory(options);
   TRKLine* beamline     = factory->createLine(beamline_list);
   TRKStrategy* strategy = factory->createStrategy();
 
-  //build tracking strategy
-  //int nTrackingSteps = 1;
-  //TRKStrategy* strategy = new TRKHybrid(nTrackingSteps);
-
   //build tracker
   TRKTracker tracker(beamline,strategy);
 
   //run tracking - all output through bdsim
-  //well will want output / transfer of particles potentially
-  //after each tracking stage - will be done inside Track
   tracker.Track(bunch);
   
   //done
