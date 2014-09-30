@@ -23,7 +23,7 @@
 
 #include "CLHEP/Units/PhysicalConstants.h"
 extern BDSBunch bdsBunch;
-#define BDSDEBUG 1
+
 BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction()
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
