@@ -58,6 +58,7 @@ Options::Options(){
   tunnelRadius = 0.0;
   beampipeRadius = 0.0;
   beampipeThickness = 0.0;
+  apertureType      = "circular";
 
   pipeMaterial = "StainlessSteel";
   vacMaterial = "Vacuum";
@@ -428,6 +429,7 @@ void Options::set_value(std::string name, std::string value )
   if(name == "tunnelMaterial" ) { tunnelMaterial = value; return; }
   if(name == "tunnelCavityMaterial" ) { tunnelCavityMaterial = value; return; }
   if(name == "soilMaterial" ) { soilMaterial = value; return; }
+  if(name == "apertureType" ) { apertureType = value; return; }
   
   // options which influence the tracking
   if(name == "physicsList" )  { physicsList   = value; return;} 

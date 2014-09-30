@@ -44,7 +44,7 @@ void TRKTracker::Track(TRKBunch* bunch){
 
 void TRKTracker::CheckAperture(TRKBunch* bunch,TRKElement* element) {
 #ifdef BDSDEBUG
-  std::cout << __METHOD_NAME__ << std::endl;
+  std::cout << __METHOD_NAME__ << " at element " << *element << std::endl;
 #endif
   TRKAperture* aperture = element->GetAperture();
   //do the actual comparison
@@ -56,7 +56,7 @@ void TRKTracker::CheckAperture(TRKBunch* bunch,TRKElement* element) {
   for (;iter!=end;++iter) {
     TRKParticle& part = *iter;
     //do check here with if else
-    (aperture->CheckAperture(part)) ? Shift(part) : part.ConfirmNewCoordinates();
+    (aperture->OutsideAperture(part)) ? Shift(part) : part.ConfirmNewCoordinates();
   }
 }
 

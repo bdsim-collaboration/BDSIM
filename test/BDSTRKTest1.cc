@@ -24,8 +24,8 @@ int main (int argc, char** argv){
   TRKBunch* bunch   = new TRKBunch(options);
   
   //build beamline
-  TRKFactory* factory = new TRKFactory(options);
-  TRKLine* beamline   = factory->createLine(beamline_list);
+  TRKFactory* factory   = new TRKFactory(options);
+  TRKLine* beamline     = factory->createLine(beamline_list);
   TRKStrategy* strategy = factory->createStrategy();
 
   //build tracking strategy

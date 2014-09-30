@@ -18,17 +18,16 @@ TRKParticle::TRKParticle(vector6 coordsIn, double energyIn, double massIn, int c
   energy(energyIn),mass(massIn),charge(chargeIn),beforeindex(0)
 {
   posmom[0] = coordsIn;
-  posmom[1] = vector6();
+  posmom[1] = coordsIn;
 }
 
-TRKParticle::TRKParticle(double vIn[], int chargeIn):beforeindex(0)
+TRKParticle::TRKParticle(double vIn[], int chargeIn):charge(chargeIn),beforeindex(0)
 {
   //x,y,s,xp,yp,sp,energy,mass,charge
   posmom[0] = vector6(vector3(vIn[0],vIn[1],vIn[2]),vector3(vIn[3],vIn[4],vIn[5]));
-  posmom[1] = vector6();
+  posmom[1] = posmom[0];
   energy    = vIn[6];
   mass      = vIn[7];
-  charge    = chargeIn;
 }
 
 TRKParticle::~TRKParticle() {}
@@ -50,7 +49,7 @@ void TRKParticle::SetMom(vector3 momIn)
 
 std::ostream& operator<< (std::ostream &out, const TRKParticle &part)
 {
-  out << "Energy: " << part.E() << " Mass: " << part.M() << " Charge: " << part.Charge() << " ";
+  out << "E: " << part.E() << " M: " << part.M() << " Chrg: " << part.Charge() << " ";
   out << "Before: " << part.PosMom() << " After: " << part.PosMomAfter();
   return out;
 }

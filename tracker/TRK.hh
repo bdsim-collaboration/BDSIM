@@ -24,6 +24,7 @@ namespace TRK {
    */
   //enum TRKType 
   enum Strategy {THIN,THINSYMPLECTIC,THICK,HYBRID};
+  enum Aperture {CIRCULAR,RECTANGULAR,ELLIPSOIDAL};
 
   /** 
    * fast way to calculate both sinh and cosh

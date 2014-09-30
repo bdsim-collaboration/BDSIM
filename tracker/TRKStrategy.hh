@@ -1,5 +1,5 @@
 #ifndef TRKStrategy_h
-#define TRKStrategy_h
+#define TRKStrategy_h 1
 
 #include "TRK.hh"
 #include "TRKElement.hh"

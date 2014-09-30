@@ -28,6 +28,9 @@ class TRKFactory {
 
 private:
   TRK::Strategy setStrategyEnum(std::string sIn);
+  TRK::Aperture setApertureEnum(std::string aIn);
+  
+  TRKAperture* createAperture(Element& element);
   
   TRKElement* createElement(Element& element);
 
@@ -43,17 +46,21 @@ private:
   double charge;
   double momentum;
   double brho;
-  /// default aperture
-  TRKAperture* aper;
+
   /// global placement position
   TRKPlacement* placement;
+  
   /// circular flag
   bool circular;
+  
   /// tracking strategy
   TRK::Strategy strategy;
   int   trackingsteps;
-
   
+  /// aperture
+  TRKAperture* defaultaperture; /// default aperture
+  TRK::Aperture aperturetype;   /// enum of aperture type
+  double beampiperadius;
 };
 
 #endif
