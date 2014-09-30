@@ -55,11 +55,11 @@ class vector6 {
     return *this;
   }
 
-  void plusmom(const vector3 &rhs) {
+  void PlusMom(const vector3 &rhs) {
     momentum += rhs; 
   }
 
-  void pluspos(const vector3 &rhs) {
+  void PlusPos(const vector3 &rhs) {
     position += rhs; 
   }
 

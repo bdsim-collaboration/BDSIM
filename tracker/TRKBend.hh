@@ -5,6 +5,8 @@
 
 /**
  * @brief bend
+ * 
+ * dipole tracking but reference s-position is changed
  */
 class TRKBend : public TRKElement {
 private: 

@@ -13,21 +13,30 @@
 class TRKParticle { 
 public:
   //constructors
-  TRKParticle();
-  TRKParticle(double energyIn, double massIn, int chargeIn);
+  // TRKParticle();
+  // TRKParticle(double energyIn, double massIn, int chargeIn);
   TRKParticle(vector6 coordsIn, double energyIn, double massIn, int chargeIn);
   TRKParticle(double paramsIn[], int chargeIn);
   ~TRKParticle();
   
   //accessors
+  /// return coordinate in meter
+  ///@{
   double X()const      {return posmom[beforeindex].X();}  
   double Y()const      {return posmom[beforeindex].Y();}
   double Z()const      {return posmom[beforeindex].Z();}
+  ///@}
+  /// return momentum coordinate in rad
+  ///@{
   double Xp()const     {return posmom[beforeindex].Xp();}
   double Yp()const     {return posmom[beforeindex].Yp();}
   double Zp()const     {return posmom[beforeindex].Zp();}
+  ///@}
+  /// return energy in MeV
   double E()const      {return energy;}
+  /// return mass in MeV / c^2
   double M()const      {return mass;}
+  /// return elementary charge
   int    Charge()const {return charge;}
 
   vector6 PosMom()const {return posmom[beforeindex];}
@@ -42,6 +51,9 @@ public:
   void    SetPosMom(vector6 posmomIn);
   void    SetPos(vector3 posIn);
   void    SetMom(vector3 momIn);
+  //plus operator
+  void    PlusPos(vector3& posIn);
+  void    PlusMom(vector3& momIn);
 
   //toggle the beforeindex
   void ConfirmNewCoordinates() {beforeindex = !beforeindex;}
@@ -51,18 +63,19 @@ public:
 
 private:
   //position and momentum have two values - before and after
+  /// position in meter and momentum in rad
   vector6 posmom [2];
   //energy,mass and charge don't change in the tracker!
-  // is energy needed? - JS
+  /// energy in MeV
   double  energy;
-  /// mass in MeV
+  /// mass in MeV / c^2
   double  mass;
   /// charge in units of elementary charge
   int     charge;
   
-  //need a 0 or a 1 for addresing, smallest c++ object is 1byte
+  //need a 0 or a 1 for addresing
   //implicit conversion from bool to int useful
-  //before index is the address of the "before state" of the vector array
+  //before index is the index of the "before state" of the vector array
   //using this toggle avoids copying each time the vector is updated as you
   //simply flip the bool to point to the other
   bool beforeindex;

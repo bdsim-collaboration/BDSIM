@@ -42,7 +42,7 @@ void TRKThinSymplectic::Track(TRKDrift* el, TRKBunch* bunch) {
       double betaz=pz/(1/beta0+pt);
 
       vector3 dv(xp/pz*h,yp/pz*h,(1-beta0/betaz)*h);
-      part.SetPos(part.Pos() + dv);
+      part.PlusPos(dv);
     }
   }
 }
