@@ -1,10 +1,10 @@
 #ifndef TRKStrategy_h
 #define TRKStrategy_h 1
 
-#include "TRK.hh"
 #include "TRKElement.hh"
 
 class TRKBunch;
+class TRKBend;
 class TRKDipole;
 class TRKQuadrupole;
 class TRKSextupole;
@@ -30,6 +30,7 @@ public :
    */
   ///@{
   virtual void Track(TRKDrift* el, TRKBunch* bunch)=0;
+  virtual void Track(TRKBend* el, TRKBunch* bunch)=0;
   virtual void Track(TRKDipole* el, TRKBunch* bunch)=0;
   virtual void Track(TRKQuadrupole* el, TRKBunch* bunch)=0;
   virtual void Track(TRKSextupole* el, TRKBunch* bunch)=0;

@@ -200,6 +200,10 @@ void TRKHybrid::Track(TRKDipole* el, TRKBunch* bunch) {
   }
 }
 
+void TRKHybrid::Track(TRKBend* el, TRKBunch* bunch) { 
+
+}
+
 void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) { 
   double strength = el->GetStrength();
   if (std::abs(strength)<=1e-12) {

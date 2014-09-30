@@ -32,6 +32,10 @@ void TRKThick::Track(TRKDrift* el, TRKBunch* bunch) {
 void TRKThick::Track(TRKDipole* /*el*/, TRKBunch* /*bunch*/) { 
 }
 
+void TRKThick::Track(TRKBend* el, TRKBunch* bunch) { 
+
+}
+
 void TRKThick::Track(TRKQuadrupole* el, TRKBunch* bunch) { 
   double strength = el->GetStrength();
   if (std::abs(strength)<=1e-12) {

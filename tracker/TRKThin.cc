@@ -71,6 +71,10 @@ void TRKThin::Track(TRKDipole* el, TRKBunch* bunch) {
   }
 }
 
+void TRKThin::Track(TRKBend* el, TRKBunch* bunch) { 
+
+}
+
 void TRKThin::Track(TRKQuadrupole* el, TRKBunch* bunch) { 
   const double strength = el->GetStrength();
   if (std::abs(strength)<=1e-12) {

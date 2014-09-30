@@ -4,12 +4,6 @@
 #include "TRKStrategy.hh"
 #include "TRKElement.hh"
 
-class TRKBunch;
-class TRKDipole;
-class TRKQuadrupole;
-class TRKSextupole;
-class TRKOctupole;
-
 /**
  * @brief Thick tracking
  */
@@ -29,11 +23,12 @@ public:
    * @param[in]  bunch The bunch.
    */
   ///@{
-  void Track(TRKDrift* el, TRKBunch* bunch);
-  void Track(TRKDipole* el, TRKBunch* bunch);
-  void Track(TRKQuadrupole* el, TRKBunch* bunch);
-  void Track(TRKSextupole* el, TRKBunch* bunch);
-  void Track(TRKOctupole* el, TRKBunch* bunch);
+  virtual void Track(TRKDrift* el, TRKBunch* bunch);
+  virtual void Track(TRKDipole* el, TRKBunch* bunch);
+  virtual void Track(TRKBend* el, TRKBunch* bunch);
+  virtual void Track(TRKQuadrupole* el, TRKBunch* bunch);
+  virtual void Track(TRKSextupole* el, TRKBunch* bunch);
+  virtual void Track(TRKOctupole* el, TRKBunch* bunch);
   ///@}
 
 private:

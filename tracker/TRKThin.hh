@@ -5,10 +5,6 @@
 #include "TRKElement.hh"
 
 class TRKBunch;
-class TRKDipole;
-class TRKQuadrupole;
-class TRKSextupole;
-class TRKOctupole;
 
 /**
  * @brief Thin tracking
@@ -32,6 +28,7 @@ public:
   ///@{
   virtual void Track(TRKDrift* el, TRKBunch* bunch);
   virtual void Track(TRKDipole* el, TRKBunch* bunch);
+  virtual void Track(TRKBend* el, TRKBunch* bunch);
   virtual void Track(TRKQuadrupole* el, TRKBunch* bunch);
   virtual void Track(TRKSextupole* el, TRKBunch* bunch);
   virtual void Track(TRKOctupole* el, TRKBunch* bunch);
