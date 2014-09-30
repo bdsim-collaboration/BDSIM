@@ -21,6 +21,9 @@ public:
   TRKBunchIter begin() {return bunch.begin();}
   TRKBunchIter end()   {return bunch.end();}
 
+  /// erase method, returns iterator to element
+  TRKBunchIter Erase(TRKBunchIter iter) {return bunch.erase(iter);}
+
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKBunch &beam);
 

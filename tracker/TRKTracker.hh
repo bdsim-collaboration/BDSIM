@@ -1,7 +1,8 @@
 #ifndef TRKTracker_h
 #define TRKTracker_h
 
-class TRKBunch;
+#include "TRKBunch.hh"
+
 class TRKLine;
 class TRKStrategy;
 class TRKElement;
@@ -23,8 +24,8 @@ public :
   ~TRKTracker();
   /// track bunch through beamline - main tracking loop
   void Track(TRKBunch* bunch);
-  /// move a particle to bdsim tracking queue and delete from bunch
-  void Shift(TRKParticle& particle);
+  /// move a particle to bdsim tracking queue and delete from bunch, 
+  void Shift(TRKBunch* bunch, TRKBunchIter& iter);
 };
 
 #endif

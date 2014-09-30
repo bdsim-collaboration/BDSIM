@@ -57,12 +57,14 @@ void TRKTracker::CheckAperture(TRKBunch* bunch,TRKElement* element) {
   //iterate over bunch and use the aperture check function from this element
   for (;iter!=end;++iter) {
     TRKParticle& part = *iter;
-    (aperture->OutsideAperture(part)) ? Shift(part) : part.ConfirmNewCoordinates();
+    (aperture->OutsideAperture(part)) ? Shift(bunch,iter) : part.ConfirmNewCoordinates();
   }
 }
 
-void TRKTracker::Shift(TRKParticle& /*particle*/) {
+void TRKTracker::Shift(TRKBunch* bunch, TRKBunchIter& iter) {
   //1 copy particle to bdsim queue
   //2 delete particle from bunch... or flag for deletion at end..
   std::cout << "Naughty particle! shifting to BDSIM... not implemented yet" << std::endl;
-;}
+  iter = bunch->Erase(iter);
+  iter--;
+}

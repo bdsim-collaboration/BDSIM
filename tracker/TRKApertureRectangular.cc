@@ -1,4 +1,7 @@
 #include "TRKApertureRectangular.hh"
+
+#include <cmath>
+
 #include "TRKParticle.hh"
 #include "vector3.hh"
 
@@ -11,5 +14,5 @@ TRKApertureRectangular::~TRKApertureRectangular(){}
 bool TRKApertureRectangular::OutsideAperture(const TRKParticle& particle)
 {
   vector3 pos = particle.PosAfter();
-  return ((abs(pos.X()) > xWidth) || (abs(pos.Y()) > yWidth));
+  return ((std::abs(pos.X()) > xWidth) || (std::abs(pos.Y()) > yWidth));
 }
