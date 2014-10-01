@@ -13,6 +13,6 @@ TRKApertureRectangular::~TRKApertureRectangular(){}
 
 bool TRKApertureRectangular::OutsideAperture(const TRKParticle& particle)
 {
-  vector3 pos = particle.PosAfter();
+  vector3 pos = particle.Pos();
   return ((std::abs(pos.X()) > xWidth) || (std::abs(pos.Y()) > yWidth));
 }

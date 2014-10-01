@@ -12,6 +12,6 @@ TRKApertureEllipsoidal::~TRKApertureEllipsoidal(){}
 
 bool TRKApertureEllipsoidal::OutsideAperture(const TRKParticle& particle)
 {
-  vector3 pos = particle.PosAfter();
+  vector3 pos = particle.Pos();
   return (yWidthSq*pos.X()*pos.X() + xWidthSq*pos.Y()*pos.Y()) > xyWidthSqProd;
 }

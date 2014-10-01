@@ -13,7 +13,7 @@ TRKApertureCircular::~TRKApertureCircular(){}
 
 bool TRKApertureCircular::OutsideAperture(const TRKParticle& particle)
 {
-  vector3 pos = particle.PosAfter();
+  vector3 pos = particle.Pos();
   return radiusSq > (pos.X()*pos.X() + pos.Y()*pos.Y());
 }
 /*
