@@ -44,9 +44,7 @@ int main (int argc, char** argv){
 
   //get a single particle and fiddle it a bit
   TRKParticle& part = *(bunch->begin());
-  part.SetPos(vector3(1,2,3));
-  std::cout << part << std::endl;
-  part.SetMom(vector3(0.001,0.001,1.0));
+  part.SetPosMom(vector3(1,2,3),vector3(0.001,0.001,1.0));
   std::cout << part << std::endl;
   part.ConfirmNewCoordinates();
   std::cout << part << std::endl;

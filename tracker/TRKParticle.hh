@@ -13,8 +13,6 @@
 class TRKParticle { 
 public:
   //constructors
-  // TRKParticle();
-  // TRKParticle(double energyIn, double massIn, int chargeIn);
   TRKParticle(vector6 coordsIn, double energyIn, double massIn, int chargeIn);
   TRKParticle(double paramsIn[], int chargeIn);
   ~TRKParticle();
@@ -49,11 +47,8 @@ public:
 
   //setting functions
   void    SetPosMom(vector6 posmomIn);
-  void    SetPos(vector3 posIn);
-  void    SetMom(vector3 momIn);
-  //plus operator
-  void    PlusPos(vector3& posIn);
-  void    PlusMom(vector3& momIn);
+  void    SetPosMom(vector3 posIn,vector3 momIn);
+  void    SetEnergy(double energyIn){energy=energyIn;}
 
   //toggle the beforeindex
   void ConfirmNewCoordinates() {beforeindex = !beforeindex;}

@@ -37,24 +37,10 @@ void TRKParticle::SetPosMom(vector6 posmomIn)
   posmom[!beforeindex].SetPosMom(posmomIn);
 }
 
-void TRKParticle::SetPos(vector3 posIn)
+void TRKParticle::SetPosMom(vector3 posIn, vector3 momIn)
 {
   posmom[!beforeindex].SetPos(posIn);
-}
-
-void TRKParticle::SetMom(vector3 momIn)
-{
   posmom[!beforeindex].SetMom(momIn);
-}
-
-void TRKParticle::PlusPos(vector3& posIn)
-{
-  posmom[!beforeindex].PlusPos(posIn);
-}
-
-void TRKParticle::PlusMom(vector3& posIn)
-{
-  posmom[!beforeindex].PlusMom(posIn);
 }
 
 std::ostream& operator<< (std::ostream &out, const TRKParticle &part)
