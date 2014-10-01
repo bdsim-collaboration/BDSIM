@@ -68,9 +68,6 @@ BDSComponentFactory::BDSComponentFactory(){
   if (verbose || debug1) G4cout<<"Default magnet inner radius= "<<_FeRad/CLHEP::m<< "m"
 			      << G4endl;
 
-   // stuff for rescaling due to synchrotron radiation, IGNORING
-  _synch_factor = 1;
-  //
   _driftStartAper = _bpRad;
   _driftEndAper = _bpRad;
 }
@@ -557,10 +554,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
     _element.B = bField/CLHEP::tesla;
   }
   
-  // synch factor??
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2) * _synch_factor;
+  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
   //Should keep the correct geometry, therefore keep dipole withe zero angle.
   if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) { // not possible due to check earlier - JS
     return createDrift();
@@ -649,11 +645,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
     _element.B = bField/CLHEP::tesla;
   }
   
-  // synch factor???
-  
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2) * _synch_factor;
+  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
   
   if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
     return createDrift();
@@ -714,10 +708,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
     _element.B = bField/CLHEP::tesla;
   }
   
-  // synch factor??
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2) * _synch_factor;
+  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
   
   if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
     G4cerr << "---->NOT creating Hkick,"
@@ -783,10 +776,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
     bField = - _brho * _element.angle / length;
     _element.B = bField/CLHEP::tesla;
   }
-  // synch factor???
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2) * _synch_factor;
+  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
   
   if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
     G4cerr << "---->NOT creating Vkick,"
@@ -844,7 +836,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createQuad(){
 	//
 	// B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
 	// Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2) * _synch_factor;
+  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
   
   return (new BDSQuadrupole( _element.name,
 			     _element.l * CLHEP::m,
@@ -885,7 +877,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole(){
   
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
   // brho is in Geant4 units, but k2 is not -> multiply k2 by m^-3
-  G4double bDoublePrime = - _brho * (_element.k2 / CLHEP::m3) * _synch_factor;
+  G4double bDoublePrime = - _brho * (_element.k2 / CLHEP::m3);
   
 #ifdef BDSDEBUG 
   G4cout << "---->creating Sextupole,"
@@ -942,7 +934,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole(){
   
   // B''' = d^3By/dx^3 = Brho * (1/Brho d^3By/dx^3) = Brho * k3
   // brho is in Geant4 units, but k3 is not -> multiply k3 by m^-4
-  G4double bTriplePrime = - _brho * (_element.k3 / (CLHEP::m3*CLHEP::m)) * _synch_factor;
+  G4double bTriplePrime = - _brho * (_element.k3 / (CLHEP::m3*CLHEP::m));
   
 #ifdef BDSDEBUG 
   G4cout << "---->creating Octupole,"
