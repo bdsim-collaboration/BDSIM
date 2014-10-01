@@ -20,15 +20,15 @@ public:
   //accessors
   /// return coordinate in meter
   ///@{
-  double X()const      {return posmom[beforeindex].X();}  
-  double Y()const      {return posmom[beforeindex].Y();}
-  double Z()const      {return posmom[beforeindex].Z();}
+  double X()const      {return posmom.X();}  
+  double Y()const      {return posmom.Y();}
+  double Z()const      {return posmom.Z();}
   ///@}
   /// return momentum coordinate in rad
   ///@{
-  double Xp()const     {return posmom[beforeindex].Xp();}
-  double Yp()const     {return posmom[beforeindex].Yp();}
-  double Zp()const     {return posmom[beforeindex].Zp();}
+  double Xp()const     {return posmom.Xp();}
+  double Yp()const     {return posmom.Yp();}
+  double Zp()const     {return posmom.Zp();}
   ///@}
   /// return energy in MeV
   double E()const      {return energy;}
@@ -37,43 +37,39 @@ public:
   /// return elementary charge
   int    Charge()const {return charge;}
 
-  vector6 PosMom()const {return posmom[beforeindex];}
-  vector3 Pos()const    {return posmom[beforeindex].Pos();}
-  vector3 Mom()const    {return posmom[beforeindex].Mom();}
+  vector6 PosMom()const {return posmom;}
+  vector3 Pos()const    {return posmom.Pos();}
+  vector3 Mom()const    {return posmom.Mom();}
 
-  vector6 PosMomAfter()const {return posmom[!beforeindex];}
-  vector3 PosAfter()const    {return posmom[!beforeindex].Pos();}
-  vector3 MomAfter()const    {return posmom[!beforeindex].Mom();}
+  vector6 PosMomBefore()const {return posmombefore;}
+  vector3 PosBefore()const    {return posmombefore.Pos();}
+  vector3 MomBefore()const    {return posmombefore.Mom();}
+  double  EBefore()const      {return energybefore;}
 
   //setting functions
   void    SetPosMom(vector6 posmomIn);
-  void    SetPosMom(vector3 posIn,vector3 momIn);
+  void    SetPosMom(vector3 posIn, vector3 momIn);
   void    SetEnergy(double energyIn){energy=energyIn;}
 
   //toggle the beforeindex
-  void ConfirmNewCoordinates() {beforeindex = !beforeindex;}
+  void ConfirmNewCoordinates() {energybefore = energy; posmombefore=posmom;}
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKParticle &part);
 
 private:
-  //position and momentum have two values - before and after
   /// position in meter and momentum in rad
-  vector6 posmom [2];
-  //energy,mass and charge don't change in the tracker!
-  /// energy in MeV
+  vector6 posmom;
+  vector6 posmombefore;
+
+  //mass and charge don't change in the tracker!
+  /// energy in MeV - can change in tracker
   double  energy;
+  double  energybefore;
   /// mass in MeV / c^2
   double  mass;
   /// charge in units of elementary charge
   int     charge;
-  
-  //need a 0 or a 1 for addresing
-  //implicit conversion from bool to int useful
-  //before index is the index of the "before state" of the vector array
-  //using this toggle avoids copying each time the vector is updated as you
-  //simply flip the bool to point to the other
-  bool beforeindex;
 };
 
 #endif
