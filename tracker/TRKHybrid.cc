@@ -21,17 +21,15 @@ TRKHybrid::~TRKHybrid() {
 }
 
 void TRKHybrid::Track(TRKDrift* el, TRKBunch* bunch) { 
-  const double h = el->GetLength()/trackingSteps;
-
+  // this drift method can be done in one go, trackingsteps not needed;
+  const double h = el->GetLength(); 
   TRKBunchIter iter = bunch->begin();
   TRKBunchIter end  = bunch->end();
 
   for (;iter!=end;++iter) {
     TRKParticle& part = *iter;
-    for (int i=0; i<trackingSteps; i++) {
-      vector3 dv = part.Mom().unit()*h;
-      part.SetPosMom(dv+part.Pos(),part.Mom());
-    }
+    vector3 dv = part.Mom().unit()*h;
+    part.SetPosMom(dv+part.Pos(),part.Mom());    
   }
 }
 
