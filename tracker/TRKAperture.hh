@@ -4,6 +4,8 @@
 #include "TRK.hh"
 
 #include "TRKParticle.hh"
+#include "TRKBunch.hh"
+#include <vector>
 /**
  * @brief Aperture base class
  */
@@ -15,6 +17,14 @@ public :
 
   /// checks if aperture is hit
   virtual bool OutsideAperture(const TRKParticle& particle)=0;
+
+  //don't need different methods for each element
+  //just get the aperture
+  //virtual void CheckAperture(TRKBunch* bunch)=0;
+  
+
+  //virtual void CheckBunch(TRKBunch& bunch){};
+  //bool operator() (std::vector<TRKParticle>::iterator iter) {return OutsideAperture(*iter);}
   //for now literally checks if outside the aperture
   //in future will check including the rigidity and strength
   //if we have to give this check function the strength, this could

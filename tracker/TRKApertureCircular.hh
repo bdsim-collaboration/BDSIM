@@ -3,7 +3,7 @@
 
 #include "TRKAperture.hh"
 #include "TRKParticle.hh"
-
+#include "TRKBunch.hh"
 /**
  * @brief Circular aperture class
  */
@@ -13,6 +13,7 @@ public:
   virtual ~TRKApertureCircular();
 
   virtual bool OutsideAperture(const TRKParticle& particle);
+  //virtual void CheckBunch(TRKBunch& bunch);
 
 private:
   double radius;

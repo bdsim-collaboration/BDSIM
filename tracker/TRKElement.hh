@@ -20,6 +20,7 @@ public :
 
   /// track method, visitor pattern
   void Track(TRKBunch* bunch, TRKStrategy* strategy);
+  //void CheckAperture(TRKBunch* bunch, TRKApertureStrategy* aperturestrategy);
 
   std::string  GetName()const {return name;}
   double       GetLength()const {return length;}
