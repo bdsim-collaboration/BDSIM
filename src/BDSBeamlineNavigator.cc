@@ -32,7 +32,20 @@ BDSBeamlineNavigator::~BDSBeamlineNavigator(){
   delete _positionFromCurrentCenter;
   delete _zHalfAngle;
 
-  // todo clear lists
+  // clear lists
+  std::list<G4ThreeVector*>::iterator it = _positionList.begin();
+  for (;it!=_positionList.end(); ++it) {delete *it;}
+  it = _positionStartList.begin();
+  for (;it!=_positionStartList.end(); ++it) {delete *it;}
+  it = _positionEndList.begin();
+  for (;it!=_positionEndList.end(); ++it) {delete *it;}
+  it = _positionFromCurrentCenterList.begin();
+  for (;it!=_positionFromCurrentCenterList.end(); ++it) {delete *it;}
+
+  std::list<G4RotationMatrix*>::iterator rotit = _rotationList.begin();
+  for (;rotit!=_rotationList.end(); ++rotit) {delete *rotit;}
+  rotit = _rotationGlobalList.begin();
+  for (;rotit!=_rotationGlobalList.end(); ++rotit) {delete *rotit;}
 }
 
 void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){

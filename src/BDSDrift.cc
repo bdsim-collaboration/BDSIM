@@ -72,7 +72,7 @@ void BDSDrift::BuildBeampipe(G4String materialName) {
 void BDSDrift::Build() {
   BDSMultipole::Build();
 
-  G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
+  static G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
   VisAtt1->SetVisibility(false);
   VisAtt1->SetForceSolid(true);
   itsMarkerLogicalVolume->SetVisAttributes(VisAtt1);
