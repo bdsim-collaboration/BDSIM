@@ -13,12 +13,13 @@
 class TRKParticle { 
 public:
   //constructors
+  TRKParticle();
   TRKParticle(vector6 coordsIn, double energyIn, double massIn, int chargeIn);
   TRKParticle(double paramsIn[], int chargeIn);
   ~TRKParticle();
   
   //accessors
-  /// return coordinate in meter
+  /// return coordinate in metre
   ///@{
   double X()const      {return posmom.X();}  
   double Y()const      {return posmom.Y();}
@@ -58,7 +59,7 @@ public:
   friend std::ostream& operator<< (std::ostream &out, const TRKParticle &part);
 
 private:
-  /// position in meter and momentum in rad
+  /// position in metre and momentum in rad
   vector6 posmom;
   vector6 posmombefore;
 
