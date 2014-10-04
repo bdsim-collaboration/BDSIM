@@ -59,6 +59,7 @@ Options::Options(){
   beampipeRadius = 0.0;
   beampipeThickness = 0.0;
   apertureType      = "circular";
+  dontUseAperture   = false;
 
   pipeMaterial = "StainlessSteel";
   vacMaterial = "Vacuum";
@@ -398,6 +399,9 @@ void Options::set_value(std::string name, double value )
 
   // tracking
   if(name == "trackingSteps") { trackingSteps = (int)value; return;}
+
+  // aperture
+  if(name == "dontUseAperture") {dontUseAperture = (bool)value; return;}
   
   std::cerr << "Error: parser> unkown option \"" << name << "\"" << std::endl; 
   exit(1);
