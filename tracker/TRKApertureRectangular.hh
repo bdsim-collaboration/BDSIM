@@ -13,6 +13,7 @@ public:
   virtual ~TRKApertureRectangular();
 
   virtual bool OutsideAperture(const TRKParticle& particle);
+  void         CheckAperture  (TRKBunch* bunch);
 
 private:
   double xWidth;

@@ -28,7 +28,7 @@ int main (int argc, char** argv){
   TRKStrategy* strategy = factory->createStrategy();
 
   //build tracker
-  TRKTracker tracker(beamline,strategy);
+  TRKTracker tracker(beamline,strategy,options);
 
   //run tracking - all output through bdsim
   tracker.Track(bunch);

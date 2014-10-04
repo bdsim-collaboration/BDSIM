@@ -12,7 +12,8 @@ public:
   TRKApertureEllipsoidal(double xWidthIn, double yWidthIn);
   virtual ~TRKApertureEllipsoidal();
 
-  virtual bool OutsideAperture(const TRKParticle& particle);
+  virtual bool     OutsideAperture(const TRKParticle& particle);
+  void             CheckAperture  (TRKBunch* bunch);
 
 private:
   double xWidth;

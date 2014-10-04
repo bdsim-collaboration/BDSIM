@@ -2,18 +2,21 @@
 #define TRKApertureCircular_h 1
 
 #include "TRKAperture.hh"
-#include "TRKParticle.hh"
-#include "TRKBunch.hh"
+
+class TRKParticle;
+class TRKBunch;
+
 /**
  * @brief Circular aperture class
  */
 class TRKApertureCircular: public TRKAperture {
+  //friend class TRKAperture;
 public:
   TRKApertureCircular(double radius);
   virtual ~TRKApertureCircular();
 
   virtual bool OutsideAperture(const TRKParticle& particle);
-  //virtual void CheckBunch(TRKBunch& bunch);
+  void         CheckAperture  (TRKBunch* bunch);
 
 private:
   double radius;

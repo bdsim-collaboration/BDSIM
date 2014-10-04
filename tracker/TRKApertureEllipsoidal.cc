@@ -1,6 +1,5 @@
+#include "TRKAperture.hh"
 #include "TRKApertureEllipsoidal.hh"
-#include "TRKParticle.hh"
-#include "vector3.hh"
 
 TRKApertureEllipsoidal::TRKApertureEllipsoidal(double xWidthIn, double yWidthIn):
   xWidth(xWidthIn),yWidth(yWidthIn),xWidthSq(xWidthIn*xWidthIn),yWidthSq(yWidthIn*yWidthIn)
