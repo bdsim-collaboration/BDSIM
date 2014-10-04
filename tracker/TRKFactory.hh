@@ -61,6 +61,7 @@ private:
   TRKAperture* defaultaperture; /// default aperture
   TRK::Aperture aperturetype;   /// enum of aperture type
   double beampiperadius;
+  bool   dontuseaperture;
 };
 
 #endif

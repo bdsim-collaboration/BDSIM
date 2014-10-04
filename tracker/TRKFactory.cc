@@ -58,6 +58,7 @@ TRKFactory::TRKFactory(Options& options) {
   beampiperadius  = options.beampipeRadius;
   trackingsteps   = options.trackingSteps;
   defaultaperture = new TRKApertureCircular(beampiperadius);
+  dontuseaperture = options.dontUseAperture;
 }
 
 TRK::Strategy TRKFactory::setStrategyEnum(std::string sIn)
@@ -90,7 +91,7 @@ TRKStrategy* TRKFactory::createStrategy() {
 
 TRK::Aperture TRKFactory::setApertureEnum(std::string aIn)
 {
-  if (aIn == "circular") {return TRK::CIRCULAR;}
+  if (aIn == "circular")         {return TRK::CIRCULAR;}
   else if (aIn == "rectangular") {return TRK::RECTANGULAR;}
   else if (aIn == "ellipsoidal") {return TRK::ELLIPSOIDAL;}
   else {
@@ -105,7 +106,11 @@ TRKAperture* TRKFactory::createAperture(Element& element) {
   //to have their own aperture definitions. individual aperture type is not 
   //possible. it will just default to the general kind.
   //default case = aperturetype
-  if ((element.aperX != 0) && (element.aperY !=0)) {
+  
+  if (dontuseaperture) {
+    return NULL; //empty pointer as it won't be used.
+  }
+  else if ((element.aperX != 0) && (element.aperY !=0)) {
     //must have been specified - now check whether one of the asymmetric aperture types is specified
     if (aperturetype == TRK::RECTANGULAR) {
       return new TRKApertureRectangular(element.aperX,element.aperY);}
