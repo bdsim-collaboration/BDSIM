@@ -11,7 +11,17 @@ TRKElement::~TRKElement() {}
 
 void TRKElement::Track(TRKBunch* bunch, TRKStrategy* strategy)
 {
+#ifdef TRKDEBUG
+  std::cout << "before tracking" << std::endl;
+  std::cout << *bunch;
+#endif
+
   strategy->Track(this,bunch);
+
+#ifdef TRKDEBUG
+  std::cout << "after tracking" << std::endl;
+  std::cout << *bunch;
+#endif
 }
 /*
 void TRKElement::CheckAperture(TRKBunch* bunch);
