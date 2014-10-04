@@ -29,6 +29,12 @@ TRKBunch::TRKBunch(struct Options& opt)
   Populate(opt);
 }
 
+
+TRKBunch::TRKBunch(const std::vector<TRKParticle>& particleVectorIn)
+{
+  bunch = particleVectorIn;
+}
+
 void TRKBunch::Populate(struct Options& opt)
 {
 #ifdef TRKDEBUG

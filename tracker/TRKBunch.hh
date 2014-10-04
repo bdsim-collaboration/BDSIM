@@ -16,13 +16,19 @@ typedef std::vector<TRKParticle>::iterator TRKBunchIter;
 class TRKBunch { 
 public:
   TRKBunch(struct Options& opt);
+  TRKBunch(const std::vector<TRKParticle>& particleVectorIn);
   ~TRKBunch();
   
   TRKBunchIter begin() {return bunch.begin();}
   TRKBunchIter end()   {return bunch.end();}
+  
+  int size() const {return bunch.size();}
 
   /// erase method, returns iterator to element
   TRKBunchIter Erase(TRKBunchIter iter) {return bunch.erase(iter);}
+  TRKBunchIter Erase(TRKBunchIter start, TRKBunchIter finish) {return bunch.erase(start,finish);}
+  
+  bool NonZero() {return bunch.size() == 0;}
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKBunch &beam);
