@@ -1,8 +1,8 @@
 #include "TRKParticle.hh"
 #include "vector6.hh"
 
-//this is need puerly for initialising a vector (reserving rather) for quicker push backs`
-TRKParticle::TRKParticle():posmom(vector6()),posmombefore(vector6()),energy(0),energybefore(0),mass(0),charge(0){};
+//this is need puerly for initialising a vector (reserving rather) for quicker push backs -> JS not true, not with proper reserve
+//TRKParticle::TRKParticle():posmom(vector6()),posmombefore(vector6()),energy(0),energybefore(0),mass(0),charge(0){};
 
 TRKParticle::TRKParticle(vector6 coordsIn, double energyIn, double massIn, int chargeIn):
   posmom(coordsIn),posmombefore(coordsIn),energy(energyIn),energybefore(energyIn),

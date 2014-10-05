@@ -13,13 +13,14 @@ void TRKAperture::CheckAperture(TRKBunch* bunch)
   TRKBunchIter backactive = bunch->end()--; //used to denote the last useful particle
 
   //make an output vector of particles
-  std::vector<TRKParticle> lostparticles(1000); 
+  std::vector<TRKParticle> lostparticles;
   //reserve say 1000 particles for quick push_back
+  lostparticles.reserve(1000);
   
   for (;iter != end; ++iter)
     {
       if (OutsideAperture(*iter)) {
-	  //note we're using the OutsideAperture virtual funciton in each derived class
+	  //note we're using the OutsideAperture virtual function in each derived class
 	  lostparticles.push_back(*iter); //copy to output vector
 	  std::swap(iter,backactive);   //copy swap the bad one with the last good one
 	  backactive--; //change mark of where last good one is

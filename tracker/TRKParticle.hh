@@ -13,7 +13,7 @@
 class TRKParticle { 
 public:
   //constructors
-  TRKParticle();
+  //  TRKParticle();
   TRKParticle(vector6 coordsIn, double energyIn, double massIn, int chargeIn);
   TRKParticle(double paramsIn[], int chargeIn);
   ~TRKParticle();

@@ -5,10 +5,7 @@
 
 #include "TRKParticle.hh"
 #include "TRKBunch.hh"
-#include "vector3.hh"
-#include <vector>
-#include <algorithm>
-#include <iterator>
+
 /**
  * @brief Aperture base class
  */
