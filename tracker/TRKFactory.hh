@@ -26,6 +26,8 @@ class TRKFactory {
   TRKLine*     createLine(ElementList& beamline_list);
   TRKStrategy* createStrategy();
 
+  friend std::ostream& operator<< (std::ostream& out, const TRKFactory &factory);
+
 private:
   TRK::Strategy setStrategyEnum(std::string sIn);
   TRK::Aperture setApertureEnum(std::string aIn);

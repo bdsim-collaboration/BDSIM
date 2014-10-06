@@ -61,6 +61,18 @@ TRKFactory::TRKFactory(Options& options) {
   dontuseaperture = options.dontUseAperture;
 }
 
+std::ostream& operator<< (std::ostream& out, const TRKFactory& factory)
+{
+  out << "TRKFactory Instance - details:"                      << std::endl
+      << "Tracking Strategy (enum): " << factory.strategy         << std::endl
+      << "Aperture Type:            " << factory.aperturetype     << std::endl
+      << "Beam Pipe Radius (m):     " << factory.beampiperadius   << std::endl
+      << "Tracking Steps:           " << factory.trackingsteps    << std::endl
+      << "Default Aperture Type:    " << *factory.defaultaperture << std::endl
+      << "Don't Use Aperture:       " << factory.dontuseaperture;
+  return out;
+}
+
 TRK::Strategy TRKFactory::setStrategyEnum(std::string sIn)
 {
   if (sIn == "thin") {return TRK::THIN;}
