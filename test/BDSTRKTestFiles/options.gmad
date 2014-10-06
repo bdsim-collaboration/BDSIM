@@ -1,6 +1,6 @@
 ! standard options for runing bdsim
 
-option, beampipeRadius = 3 * mm,
+option, beampipeRadius = 5 * mm,
         boxSize = 1.9 * m,
         tunnelRadius= 2.0 * m,
         beampipeThickness   = 0.5 * cm,
