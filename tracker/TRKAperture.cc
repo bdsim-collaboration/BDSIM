@@ -16,7 +16,7 @@ void TRKAperture::CheckAperture(TRKBunch* bunch)
 {
   //loop over bunch and check aperture
   TRKBunchIter iter       = bunch->begin();
-  TRKBunchIter backactive = bunch->end()--; //used to denote the last useful particle
+  TRKBunchIter backactive = --(bunch->end()); //used to denote the last useful particle
   //don't use 'back' as that returns a direct reference and not an iterator
 
   //make an output vector of particles
@@ -29,9 +29,8 @@ void TRKAperture::CheckAperture(TRKBunch* bunch)
   std::cout << __METHOD_NAME__ << " Bunch Population: " << bunch->size()
 	    << "; Lost Particles Population " << lostparticles.size() << std::endl;
 #endif
-  
-  //for (;iter != end; ++iter)
-  while (iter != backactive) //a while loop gives over control of the increment of the iterator
+
+  while (iter != backactive+1) //a while loop gives over control of the increment of the iterator
     {
       if (OutsideAperture(*iter)) {
 #ifdef TRKDEBUG
@@ -39,7 +38,15 @@ void TRKAperture::CheckAperture(TRKBunch* bunch)
 #endif
 	  //note we're using the OutsideAperture virtual function in each derived class
 	  lostparticles.push_back(*iter); //copy to output vector
-	  std::swap(iter,backactive);   //swap the bad one with the last good one
+#ifdef TRKDEBUG
+	  std::cout << "BEFORE SWAP" << std::endl;
+	  std::cout << *bunch <<std::endl;
+#endif
+	  std::swap(*iter,*backactive);   //swap the bad one with the last good one
+#ifdef TRKDEBUG
+	  std::cout << "AFTER SWAP" << std::endl;
+	  std::cout << *bunch <<std::endl;
+#endif
 	  --backactive; //change mark of where last good one is
 	  //don't increment the iterator so we check the unknown particle from the end
 	}
@@ -58,6 +65,10 @@ void TRKAperture::CheckAperture(TRKBunch* bunch)
   //for each type of aperture
   //note this algorithm is only good when typicaly vector size is over 1k or 10k and 
   //vector elements are moderately sized (better for larger and longer)
+#ifdef TRKDEBUG
+  std::cout << "BACK ACTIVE after testing" << std::endl;
+  std::cout << *backactive << std::endl;
+#endif
 
   //erase all the bad particles at the back of the vector in one foul swoop
   bunch->Erase(backactive,bunch->end());
@@ -67,7 +78,7 @@ void TRKAperture::CheckAperture(TRKBunch* bunch)
 #ifdef TRKDEBUG
   if (lostparticles.size() > 0) {
     std::cout << "Lost particles: " << std::endl;
-    std::cout << TRKBunch(lostparticles) << std::endl;
+    std::cout << TRKBunch(lostparticles);
     std::cout << "End of lost particles" << std::endl;
   }
 #endif
