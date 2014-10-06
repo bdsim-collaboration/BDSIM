@@ -31,6 +31,7 @@ void TRKElement::CheckAperture(TRKBunch* bunch)
 }
 
 std::ostream& operator<< (std::ostream &out, const TRKElement &element) {
-  return out << element.name << " "
-	     << element.length << "m ";
+  return out << element.name << "; L= "
+	     << element.length << "m; Aperture: "
+	     << *(element.aperture);
 }
