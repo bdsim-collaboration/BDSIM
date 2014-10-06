@@ -25,6 +25,9 @@ BDSGlobalConstants* BDSGlobalConstants::Instance(){
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0),itsParticleMomentum(0.0),itsParticleKineticEnergy(0.0),itsSMax(0.0)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   itsPhysListName = opt.physicsList;
   itsPipeMaterial = opt.pipeMaterial;
   itsVacMaterial = opt.vacMaterial;
@@ -185,6 +188,9 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsLWCalOffset      = 0.0;
   itsMagnetPoleRadius = 0.0;
   itsMagnetPoleSize   = 0.0;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "finished constructor" << G4endl;
+#endif
 }
 
 void BDSGlobalConstants::InitRotationMatrices(){
