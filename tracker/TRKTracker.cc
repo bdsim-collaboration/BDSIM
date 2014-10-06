@@ -27,18 +27,14 @@ TRKTracker::~TRKTracker() {
 
 void TRKTracker::Track(TRKBunch* bunch) 
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << std::endl;
-#endif
+  std::cout << __METHOD_NAME__ << "starting tracking" << std::endl;
   
   if (!bunch) return; //can't track nothing
   TRKLineConstIter elIter = line->begin();
   //iterate over number of turns
   for (unsigned int i=0; i<maxTurns; i++) 
     {
-#ifdef TRKDEBUG
       std::cout << "Turn Number: " << i << " / " << maxTurns << std::endl;
-#endif
       //iterate over beamline elements
       for (;elIter!=line->end(); ++elIter) 
 	{
