@@ -1,6 +1,7 @@
 #include "parser/gmad.h"
 #include "parser/options.h"
 
+#include "tracker/TRKPhysicsCalculations.hh"
 #include "tracker/TRKBunch.hh"
 #include "tracker/TRKLine.hh"
 #include "tracker/TRKFactory.hh"
@@ -18,6 +19,10 @@ int main (int argc, char** argv){
   
   //parse input
   gmad_parser(BDSExecOptions::Instance()->GetInputFilename());
+
+  //prepare the necessary numbers accounting for particle mass
+  //must be before bds bunch is created
+  TRK::CalculateKineticEnergy(options);
 
   //build bunch
   TRKBunch* bunch       = new TRKBunch(options);
