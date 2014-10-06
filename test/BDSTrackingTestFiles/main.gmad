@@ -1,5 +1,0 @@
-include options.gmad
-include beam.gmad
-include BDSQuadrupole.gmad
-
-option, ngenerate=3;
