@@ -77,3 +77,27 @@ std::pair<double,int> TRKParticleDefinition::GetParticleMassAndCharge(const std:
     }
   return it->second;
 }
+
+double TRKParticleDefinition::GetParticleMass(const std::string particlename)
+{
+  std::map<std::string, std::pair<double, int> >::iterator it;
+  it = particleMassCharge.find(particlename);
+  if (it == particleMassCharge.end())
+    {
+      std::cout << "particle name unrecognised - " << particlename << std::endl;
+      exit(1);
+    }
+  return it->second.second;
+}
+
+int TRKParticleDefinition::GetParticleCharge(const std::string particlename)
+{
+  std::map<std::string, std::pair<double, int> >::iterator it;
+  it = particleMassCharge.find(particlename);
+  if (it == particleMassCharge.end())
+    {
+      std::cout << "particle name unrecognised - " << particlename << std::endl;
+      exit(1);
+    }
+  return it->second.first;
+}

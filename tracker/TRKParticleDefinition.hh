@@ -13,6 +13,8 @@ public:
   ~TRKParticleDefinition();
   static TRKParticleDefinition* Instance();   ///> access method for instance
   std::pair<double,int> GetParticleMassAndCharge(const std::string particlename);
+  double GetParticleMass  (const std::string particlename);
+  int    GetParticleCharge(const std::string particlename);
 
 protected:
   TRKParticleDefinition();
