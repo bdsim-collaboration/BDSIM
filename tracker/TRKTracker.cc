@@ -1,12 +1,8 @@
 #include <iostream>
+#include "stdlib.h"
 
 #include "BDSDebug.hh"
 #include "parser/options.h"
-
-#include <iterator> // std::back_inserter
-#include <algorithm> // std::copy_if erase_if remove_if
-#include <vector>
-#include <functional>
 
 #include "TRKTracker.hh"
 
@@ -19,7 +15,10 @@
 TRKTracker::TRKTracker(TRKLine* lineIn, TRKStrategy* strategyIn, Options& options):line(lineIn),strategy(strategyIn)
 {
   dontuseaperture = options.dontUseAperture;
-  maxTurns = (line->GetCircular() ? TRK::NR_TURNS : 1);
+  maxTurns = std::abs(options.nturns);
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << "number of turns to take: " << maxTurns << std::endl;
+#endif
 }
 
 TRKTracker::~TRKTracker() {
@@ -31,7 +30,7 @@ void TRKTracker::Track(TRKBunch* bunch)
   
   if (!bunch) return; //can't track nothing
   TRKLineConstIter elIter = line->begin();
-  //iterate over number of turns
+  //iterate over number of turns - if linear, just 1 'turn'
   for (unsigned int i=0; i<maxTurns; i++) 
     {
       std::cout << "Turn Number: " << i << " / " << maxTurns << std::endl;
@@ -48,4 +47,6 @@ void TRKTracker::Track(TRKBunch* bunch)
 	}// end of beamline iteration
       if (bunch->size() < 1) {std::cout << "No further particles to track" << std::endl;break;}
     }// end of turns iteration
+  std::cout << "All turns completed" << std::endl
+	    << "Thank you for using BDSIM Tracker" << std::endl;
 }
