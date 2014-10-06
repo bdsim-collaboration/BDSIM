@@ -58,6 +58,12 @@ void TRKParticleDefinition::PrepareDefinitions()
   particleMassCharge["antimuon"]     = std::make_pair (antimuonmass     ,antimuoncharge);
   particleMassCharge["neutron"]      = std::make_pair (neutronmass      ,neutroncharge);
   particleMassCharge["photon"]       = std::make_pair (photonmass       ,photoncharge);
+
+  // Aliases
+
+  particleMassCharge["e-"] = particleMassCharge["electron"];
+  particleMassCharge["e+"] = particleMassCharge["antielectron"];
+  particleMassCharge["positron"] = particleMassCharge["antielectron"];
 }
 
 std::pair<double,int> TRKParticleDefinition::GetParticleMassAndCharge(const std::string particlename)
