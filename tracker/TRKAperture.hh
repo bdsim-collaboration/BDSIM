@@ -6,6 +6,8 @@
 #include "TRKParticle.hh"
 #include "TRKBunch.hh"
 
+#include <ostream>
+
 /**
  * @brief Aperture base class
  */
@@ -22,7 +24,10 @@ public :
   /// loop over bunch and apply aperture test - implemented in this base class
   void CheckAperture(TRKBunch* bunch);
 
-  //Should also provide a << cout stream implementation for each and declare here
+  virtual std::ostream& PrintDetails(std::ostream& out) const = 0;
+  //you can't make a friend operator virtual so wrap the real output in a method 
+  //and use that polymorphically
+  friend std::ostream& operator<< (std::ostream& out, const TRKAperture& aperture);
 };
 
 #endif

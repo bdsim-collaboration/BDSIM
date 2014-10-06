@@ -12,8 +12,9 @@ public:
   TRKApertureRectangular(double xWidthIn, double yWidthIn);
   virtual ~TRKApertureRectangular();
 
-  virtual bool OutsideAperture(const TRKParticle& particle);
-  void         CheckAperture  (TRKBunch* bunch);
+  virtual bool          OutsideAperture(const TRKParticle& particle);
+  virtual std::ostream& PrintDetails   (std::ostream& out) const;
+  void                  CheckAperture  (TRKBunch* bunch);
 
 private:
   double xWidth;

@@ -3,6 +3,7 @@
 
 #include "TRKAperture.hh"
 #include "TRKParticle.hh"
+#include <iostream>
 
 /**
  * @brief Ellipsoidal aperture class
@@ -12,8 +13,9 @@ public:
   TRKApertureEllipsoidal(double xWidthIn, double yWidthIn);
   virtual ~TRKApertureEllipsoidal();
 
-  virtual bool     OutsideAperture(const TRKParticle& particle);
-  void             CheckAperture  (TRKBunch* bunch);
+  virtual bool          OutsideAperture(const TRKParticle& particle);
+  virtual std::ostream& PrintDetails   (std::ostream& out) const;
+  void                  CheckAperture  (TRKBunch* bunch);
 
 private:
   double xWidth;

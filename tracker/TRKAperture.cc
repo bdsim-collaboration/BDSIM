@@ -4,27 +4,51 @@
 #include <iostream>
 #include <algorithm> //for swap
 
+#include "BDSDebug.hh"
+
+std::ostream& operator<< (std::ostream& out, const TRKAperture& aperture)
+{
+  aperture.PrintDetails(out);
+  return out;
+}
 
 void TRKAperture::CheckAperture(TRKBunch* bunch)
 {
   //loop over bunch and check aperture
   TRKBunchIter iter       = bunch->begin();
-  TRKBunchIter end        = bunch->end();
   TRKBunchIter backactive = bunch->end()--; //used to denote the last useful particle
+  //don't use 'back' as that returns a direct reference and not an iterator
 
   //make an output vector of particles
   std::vector<TRKParticle> lostparticles;
   //reserve say 1000 particles for quick push_back
-  lostparticles.reserve(1000);
+  int expectedNLost = (int)bunch->size()*0.01;
+  lostparticles.reserve(expectedNLost);
+
+#ifdef BDSDEBUG
+  std::cout << __METHOD_NAME__ << " Bunch Population: " << bunch->size()
+	    << "; Lost Particles Population " << lostparticles.size() << std::endl;
+#endif
   
-  for (;iter != end; ++iter)
+  //for (;iter != end; ++iter)
+  while (iter != backactive) //a while loop gives over control of the increment of the iterator
     {
       if (OutsideAperture(*iter)) {
+#ifdef TRKDEBUG
+	std::cout << "Particle outside aperture! " << std::endl;
+#endif
 	  //note we're using the OutsideAperture virtual function in each derived class
 	  lostparticles.push_back(*iter); //copy to output vector
-	  std::swap(iter,backactive);   //copy swap the bad one with the last good one
-	  backactive--; //change mark of where last good one is
+	  std::swap(iter,backactive);   //swap the bad one with the last good one
+	  --backactive; //change mark of where last good one is
+	  //don't increment the iterator so we check the unknown particle from the end
 	}
+      else {
+#ifdef TRKDEBUG
+	std::cout << "Particle inside aperture - continuing" << std::endl;
+#endif
+	++iter;
+      }
     }
   //note this method only swaps bad particles to the end of the vector / container
   //std::remove_if for example does the same but causes a copy of all subsequent 
@@ -32,16 +56,27 @@ void TRKAperture::CheckAperture(TRKBunch* bunch)
   //std::remove_if also would require a static object or plain funciton and hence
   //doesn't play nicely with polymorphism - we have to create a dummy functor class
   //for each type of aperture
+  //note this algorithm is only good when typicaly vector size is over 1k or 10k and 
+  //vector elements are moderately sized (better for larger and longer)
 
   //erase all the bad particles at the back of the vector in one foul swoop
   bunch->Erase(backactive,bunch->end());
   
   //now publish / shift all output particles to BDSIM here - TBC
   // for now lets just output them
+#ifdef TRKDEBUG
   if (lostparticles.size() > 0) {
     std::cout << "Lost particles: " << std::endl;
     std::cout << TRKBunch(lostparticles) << std::endl;
     std::cout << "End of lost particles" << std::endl;
   }
+#endif
+
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << "After aperture checking: " 
+	    << "Bunch Population: " << bunch->size() 
+	    << "; Lost Particles Population: " << lostparticles.size() << std::endl;
+#endif
+
 }
 
