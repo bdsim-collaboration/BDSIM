@@ -175,7 +175,10 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsZeroFieldManager->CreateChordFinder(zeroMagField);
   itsTurnsTaken = 1; //counting from 1
   if(opt.nturns < 1)
-    itsTurnsToTake = 1;
+    {
+      G4cout << "nturns < 1 - setting to 1" << G4endl;
+      itsTurnsToTake = 1;
+    }
   else
     itsTurnsToTake = opt.nturns;
   teleporterdelta     = G4ThreeVector(0.,0.,0.);
