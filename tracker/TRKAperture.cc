@@ -54,6 +54,7 @@ void TRKAperture::CheckAperture(TRKBunch* bunch)
 #ifdef TRKDEBUG
 	std::cout << "Particle inside aperture - continuing" << std::endl;
 #endif
+	iter->ConfirmNewCoordinates();
 	++iter;
       }
     }
@@ -66,12 +67,18 @@ void TRKAperture::CheckAperture(TRKBunch* bunch)
   //note this algorithm is only good when typicaly vector size is over 1k or 10k and 
   //vector elements are moderately sized (better for larger and longer)
 #ifdef TRKDEBUG
-  std::cout << "BACK ACTIVE after testing" << std::endl;
-  std::cout << *backactive << std::endl;
+  std::cout << "BACK ACTIVE after testing loop" << std::endl;
+  std::cout << *backactive << std::endl << std::endl;
+  std::cout << "BUNCH BEFORE erasure" << std::endl;
+  std::cout << *bunch;
 #endif
 
   //erase all the bad particles at the back of the vector in one foul swoop
-  bunch->Erase(backactive,bunch->end());
+  bunch->Erase(backactive+1,bunch->end());
+#ifdef TRKDEBUG
+  std::cout << "BUNCH AFTER erasure" << std::endl;
+  std::cout << *bunch;
+#endif
   
   //now publish / shift all output particles to BDSIM here - TBC
   // for now lets just output them
