@@ -1,5 +1,5 @@
+#include <cstdlib>
 #include <iostream>
-#include "stdlib.h"
 
 #include "BDSDebug.hh"
 #include "parser/options.h"
@@ -37,13 +37,13 @@ void TRKTracker::Track(TRKBunch* bunch)
       //iterate over beamline elements
       for (;elIter!=line->end(); ++elIter) 
 	{
+	  if (bunch->size() < 1) break;
 	  //track all particles through an element
 	  (*elIter)->Track(bunch,strategy);
 	  
 	  //check the aperture and decide whether to shift to bdsim
 	  if (!dontuseaperture) //is aperture checking turned on?
 	    {(*elIter)->CheckAperture(bunch);}
-	  if (bunch->size() < 1) break;
 	}// end of beamline iteration
       if (bunch->size() < 1) {std::cout << "No further particles to track" << std::endl;break;}
     }// end of turns iteration
