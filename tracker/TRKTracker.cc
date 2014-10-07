@@ -15,7 +15,10 @@
 TRKTracker::TRKTracker(TRKLine* lineIn, TRKStrategy* strategyIn, Options& options):line(lineIn),strategy(strategyIn)
 {
   dontuseaperture = options.dontUseAperture;
-  maxTurns = std::abs(options.nturns);
+  if (options.circular)
+    { maxTurns = std::abs(options.nturns);}
+  else 
+    { maxTurns = 1;}
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "number of turns to take: " << maxTurns << std::endl;
 #endif

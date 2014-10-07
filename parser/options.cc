@@ -155,6 +155,7 @@ Options::Options(){
   refcopyno = 0;
 
   // ring options
+  circular = false;
   nturns = 1;
 }
 
@@ -395,7 +396,8 @@ void Options::set_value(std::string name, double value )
   if(name=="refcopyno") { refcopyno = (int) value; return; }
   
   // option for rings
-  if(name=="nturns") {nturns = (int) value; return; }
+  if(name=="circular") {circular = (int) value; return;}
+  if(name=="nturns")   {nturns   = (int) value; return;}
 
   // tracking
   if(name == "trackingSteps") { trackingSteps = (int)value; return;}

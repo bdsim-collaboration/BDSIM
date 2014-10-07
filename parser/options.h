@@ -187,6 +187,7 @@ struct Options {
   int refcopyno; ///< initial starting volume copy number
   
   /// Ring parameters
+  bool     circular;
   int      nturns;
 
   /// print some properties

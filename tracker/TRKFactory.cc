@@ -52,13 +52,14 @@ TRKFactory::TRKFactory(Options& options) {
   // could use GC.nturns instead!
   //  bool circular = options.
 
-  //pull out strategy info
+  //pull out info from options
   strategy        = setStrategyEnum(options.trackingType);
   aperturetype    = setApertureEnum(options.apertureType);
   beampiperadius  = options.beampipeRadius;
   trackingsteps   = options.trackingSteps;
   defaultaperture = new TRKApertureCircular(beampiperadius);
   dontuseaperture = options.dontUseAperture;
+  circular        = options.circular;
 }
 
 std::ostream& operator<< (std::ostream& out, const TRKFactory& factory)
@@ -139,7 +140,6 @@ TRKAperture* TRKFactory::createAperture(Element& element) {
 }
 
 TRKLine* TRKFactory::createLine(ElementList& beamline_list) {
-  bool circular = false;
   TRKLine* line = new TRKLine("beamline",circular);
   std::list<struct Element>::iterator it = beamline_list.begin();
 
@@ -153,7 +153,6 @@ TRKLine* TRKFactory::createLine(ElementList& beamline_list) {
       // update placement
     }
   }
-  /// teleporter / terminator for rings?
   return line;
 }
 
