@@ -21,11 +21,12 @@ BDSOutputBase* trkOutput; //output interface
 int main (int argc, char** argv){
   //for now, need exec options parsing from bdsim
   BDSExecOptions::Instance(argc,argv)->Print();
-
-  trkOutput = TRK::InitialiseOutput();
   
   //parse input
   gmad_parser(BDSExecOptions::Instance()->GetInputFilename());
+
+  //initialise output
+  trkOutput = TRK::InitialiseOutput();
 
   //build bunch
   TRKBunch* bunch       = new TRKBunch(options);
