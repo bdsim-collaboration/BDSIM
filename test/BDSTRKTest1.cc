@@ -6,15 +6,23 @@
 #include "tracker/TRKFactory.hh"
 #include "tracker/TRKStrategy.hh"
 #include "tracker/TRKTracker.hh"
+#include "tracker/TRK.hh"
 
 #include "BDSExecOptions.hh"
+#include "BDSOutputBase.hh"
 
+//Things from the parser
 extern Options options;
 extern ElementList beamline_list;
+
+//GLOBALS
+BDSOutputBase* trkOutput; //output interface
 
 int main (int argc, char** argv){
   //for now, need exec options parsing from bdsim
   BDSExecOptions::Instance(argc,argv)->Print();
+
+  trkOutput = TRK::InitialiseOutput();
   
   //parse input
   gmad_parser(BDSExecOptions::Instance()->GetInputFilename());
@@ -30,7 +38,7 @@ int main (int argc, char** argv){
   //build tracker
   TRKTracker tracker(beamline,strategy,options);
 
-  //run tracking - all output through bdsim
+  //run tracking - all output through bdsim / samplers
   tracker.Track(bunch);
   
   //done
