@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
 #include "parser/options.h"
 
 #include "TRKTracker.hh"
@@ -34,6 +35,7 @@ void TRKTracker::Track(TRKBunch* bunch)
   if (!bunch) return; //can't track nothing
   TRKLineConstIter elIter = line->begin();
   //iterate over number of turns - if linear, just 1 'turn'
+  BDSGlobalConstants::Instance()->ResetTurnNumber(); //used in output data
   for (unsigned int i=0; i<maxTurns; i++) 
     {
       std::cout << "Turn Number: " << i << " / " << maxTurns << std::endl;
@@ -48,6 +50,7 @@ void TRKTracker::Track(TRKBunch* bunch)
 	  if (!dontuseaperture) //is aperture checking turned on?
 	    {(*elIter)->CheckAperture(bunch);}
 	}// end of beamline iteration
+      BDSGlobalConstants::Instance()->IncrementTurnNumber(); //used in output data
       if (bunch->size() < 1) {std::cout << "No further particles to track" << std::endl;break;}
     }// end of turns iteration
   std::cout << "All turns completed" << std::endl
