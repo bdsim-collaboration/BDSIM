@@ -13,6 +13,7 @@
 #include "TRKQuadrupole.hh"
 #include "TRKOctupole.hh"
 #include "TRKSextupole.hh"
+#include "TRKSampler.hh"
 
 //tracking strategies / routines
 #include "TRKStrategy.hh"
@@ -164,22 +165,49 @@ TRKElement* TRKFactory::createElement(Element& element) {
     return createLine(element);
   case _DRIFT:
     return createDrift(element);
-  case _VKICK:
-    //temporary
+  case _PCLDRIFT:
     return createDrift(element);
-  case _HKICK:
-    return createDipole(element);
+  case _SBEND:
+    //TEMPORARY
+    return createDrift(element);
+  case _RBEND:
+    //TEMPORARY
+    return createDrift(element);;
   case _QUAD:
     return createQuadrupole(element);
   case _SEXTUPOLE:
     return createSextupole(element);
   case _OCTUPOLE:
     return createOctupole(element);
-  // case _DECAPOLE:
-  //   return createDecapole(element);
+    //  case _DECAPOLE:
+    //TEMPORARY
+    //return createDrift(element);
+  case _SOLENOID:
+    //TEMPORARY
+    return createDrift(element);
+  case _MULT:
+    //TEMPORARY
+    return createDrift(element);
+  case _ELEMENT:
+    //TEMPORARY
+    return createDrift(element);
+  case _SAMPLER:
+    return createSampler(element);
+  case _TRANSFORM3D:
+    //TEMPORARY
+    return NULL;
+  case _VKICK:
+    //TEMPORARY
+    return createDrift(element);
+  case _HKICK:
+    return createDipole(element);
   default:
     return NULL;
   }
+  /* types not specified - see parser/enums.h for types
+  _SCREEN
+  _CSAMPLER
+  */
 }
 
 TRKElement* TRKFactory::createLine(Element& /*element*/) {
@@ -247,4 +275,8 @@ TRKElement* TRKFactory::createOctupole(Element& element) {
 TRKElement* TRKFactory::createDecapole(Element& /*element*/) {
   //TRKAperture* aperture = createAperture(element);
   return NULL;
+}
+
+TRKElement* TRKFactory::createSampler(Element& element) {
+  return new TRKSampler(element.name);
 }

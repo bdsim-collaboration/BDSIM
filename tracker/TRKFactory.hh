@@ -38,11 +38,18 @@ private:
 
   TRKElement* createLine(Element& element);
   TRKElement* createDrift(Element& element);
+  //TRKElement* createSBend(Element& element);
+  //TRKElement* createRBend(Element& element);
   TRKElement* createDipole(Element& element);
   TRKElement* createQuadrupole(Element& element);
   TRKElement* createSextupole(Element& element);
   TRKElement* createOctupole(Element& element);
   TRKElement* createDecapole(Element& element);
+  //TRKElement* createSolenoid(Element& element);
+  //TRKElement* createMultipole(Element& element);
+  //TRKElement* createGmadElement(Element& element);
+  TRKElement* createSampler(Element& element);
+  //TRKElement* createTransform3D(Element& element);
 
   /// particle properties
   double charge;
