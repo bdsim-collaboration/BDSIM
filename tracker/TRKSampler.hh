@@ -10,7 +10,7 @@
  */
 class TRKSampler : public TRKElement {
 public:
-  TRKSampler(std::string name);
+  TRKSampler(std::string nameIn);
   ~TRKSampler();
 
   friend std::ostream& operator<< (std::ostream &out, const TRKSampler& element);
