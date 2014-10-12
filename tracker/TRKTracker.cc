@@ -33,6 +33,7 @@ void TRKTracker::Track(TRKBunch* bunch)
   std::cout << __METHOD_NAME__ << "starting tracking" << std::endl;
   
   if (!bunch) return; //can't track nothing
+  if (bunch->size() < 1) return; //even if bunch exists, there must be particles in it
   TRKLineConstIter elIter = line->begin();
   //iterate over number of turns - if linear, just 1 'turn'
   BDSGlobalConstants::Instance()->ResetTurnNumber(); //used in output data
@@ -40,9 +41,8 @@ void TRKTracker::Track(TRKBunch* bunch)
     {
       std::cout << "Turn Number: " << i << " / " << maxTurns << std::endl;
       //iterate over beamline elements
-      for (;elIter!=line->end(); ++elIter) 
+      for (elIter = line->begin();elIter!=line->end(); ++elIter) 
 	{
-	  if (bunch->size() < 1) break;
 	  //track all particles through an element
 	  (*elIter)->Track(bunch,strategy);
 	  
