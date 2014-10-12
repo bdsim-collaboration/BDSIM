@@ -20,6 +20,6 @@ std::ostream& TRKApertureEllipsoidal::PrintDetails(std::ostream& out) const
   out << "Ellipsoidal Aperture with x Width (m): " << xWidth
       << "; and y Width (m): " << yWidth
       << "; calculated parameters xSq, ySq, xSq*ySq are (m2,m2,m4) "
-      << xWidthSq << " " << yWidthSq << " " << xyWidthSqProd;
+      << xWidthSq << " " << yWidthSq << " " << xyWidthSqProd << " ";
   return out;
 }

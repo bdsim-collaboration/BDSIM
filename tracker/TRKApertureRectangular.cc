@@ -20,6 +20,6 @@ bool TRKApertureRectangular::OutsideAperture(const TRKParticle& particle)
 std::ostream& TRKApertureRectangular::PrintDetails(std::ostream& out) const
 {
   out << "Rectangular Aperture with x Width (m): " << xWidth
-      << "; and y Width (m): " << yWidth;
+      << "; and y Width (m): " << yWidth << " ";
   return out;
 }

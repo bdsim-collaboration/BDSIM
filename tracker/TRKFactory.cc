@@ -122,7 +122,7 @@ TRKAperture* TRKFactory::createAperture(Element& element) {
   //default case = aperturetype
   
   if (dontuseaperture) {
-    return NULL; //empty pointer as it won't be used.
+    return NULL; //no aperture at all - will never be check with this setting so no seg fault
   }
   else if ((element.aperX != 0) && (element.aperY !=0)) {
     //must have been specified - now check whether one of the asymmetric aperture types is specified
@@ -211,6 +211,9 @@ TRKElement* TRKFactory::createElement(Element& element) {
 }
 
 TRKElement* TRKFactory::createLine(Element& /*element*/) {
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << std::endl;
+#endif
   // method not needed?
   return NULL;
 }
@@ -227,6 +230,9 @@ TRKElement* TRKFactory::createDrift(Element& element) {
 }
 
 TRKElement* TRKFactory::createDipole(Element& /*element*/) {
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << std::endl;
+#endif
   // bfield , see componentfactory and bdskicker.cc
   // strength (bprime)
   //TRKAperture* aperture = createAperture(element);
@@ -273,10 +279,16 @@ TRKElement* TRKFactory::createOctupole(Element& element) {
 }
 
 TRKElement* TRKFactory::createDecapole(Element& /*element*/) {
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << std::endl;
+#endif
   //TRKAperture* aperture = createAperture(element);
   return NULL;
 }
 
 TRKElement* TRKFactory::createSampler(Element& element) {
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << std::endl;
+#endif
   return new TRKSampler(element.name);
 }

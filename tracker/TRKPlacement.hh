@@ -11,6 +11,9 @@ public :
   
   vector3 GetGlobal()const;
 
+  /// output stream
+  friend std::ostream& operator<< (std::ostream &out, const TRKPlacement &placement);
+
 private :
   double x;
   double y;

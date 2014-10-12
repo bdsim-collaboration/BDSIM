@@ -22,6 +22,6 @@ bool TRKApertureCircular::OutsideAperture(const TRKParticle& particle)
 std::ostream& TRKApertureCircular::PrintDetails(std::ostream& out) const
 {
   out << "Circular Aperture with radius (m): " << radius 
-      << " and calculated radius squared (m^2): " << radiusSq;
+      << " and calculated radius squared (m^2): " << radiusSq << " ";
   return out;
 }
