@@ -10,6 +10,8 @@
 
 #include "BDSExecOptions.hh"
 
+BDSOutputBase* trkOutput; //output interface
+
 extern Options options;
 extern ElementList beamline_list;
 
