@@ -43,6 +43,8 @@ void TRKTracker::Track(TRKBunch* bunch)
       //iterate over beamline elements
       for (elIter = line->begin();elIter!=line->end(); ++elIter) 
 	{
+	  //calculate optical functions if required
+
 	  //track all particles through an element
 	  (*elIter)->Track(bunch,strategy);
 	  
