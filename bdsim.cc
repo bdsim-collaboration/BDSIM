@@ -19,7 +19,6 @@
 #include "BDSExecOptions.hh"     // executable command line options 
 #include "BDSGlobalConstants.hh" //  global parameters
 
-#include "G4UImanager.hh"        // G4 session managers
 #include "G4UIterminal.hh"
 #ifdef G4UI_USE_TCSH
 #include "G4UItcsh.hh"
@@ -37,7 +36,6 @@
 #include "G4UIExecutive.hh"
 #endif
 
-
 #include <cstdlib>      // standard headers 
 #include <cstdio>
 #include <unistd.h>
@@ -49,7 +47,6 @@
 #include "BDSPhysicsList.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRunAction.hh"
-#include "BDSSamplerSD.hh"
 #include "BDSSteppingAction.hh"
 #include "BDSStackingAction.hh"
 #include "BDSUserTrackingAction.hh"
@@ -57,16 +54,17 @@
 #include "G4EventManager.hh" // Geant4 includes
 #include "G4TrackingManager.hh"
 #include "G4SteppingManager.hh"
-#include "G4GeometrySampler.hh"
 #include "G4GeometryTolerance.hh"
+#include "G4TrajectoryDrawByCharge.hh"
 
-#include "BDSRandom.hh" // for random number generator from CLHEP
+#include "BDSBeamline.hh"
+#include "BDSBunch.hh"
 #include "BDSGeometryInterface.hh"
+#include "BDSMaterials.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSOutputASCII.hh" 
 #include "BDSOutputROOT.hh" 
-#include "BDSBunch.hh"
-#include "BDSMaterials.hh"
+#include "BDSRandom.hh" // for random number generator from CLHEP
 //#ifdef USE_ROOT
 //#include "BDSScoreWriter.hh"
 //#endif
@@ -76,9 +74,8 @@
 
 //=======================================================
 // Global variables 
-BDSOutputBase* bdsOutput;         // output interface
-BDSBunch       bdsBunch;          // bunch information 
-BDSSamplerSD*  BDSSamplerSensDet; // sampler
+BDSOutputBase* bdsOutput=NULL;         // output interface
+BDSBunch       bdsBunch;               // bunch information 
 //=======================================================
 
 //=======================================================
@@ -216,11 +213,10 @@ int main(int argc,char** argv) {
   runManager->SetUserAction(new BDSStackingAction);
 
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> User action - detector"<<G4endl;
+  G4cout << __FUNCTION__ << "> User action - primary generator"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSPrimaryGeneratorAction(detector));
+  runManager->SetUserAction(new BDSPrimaryGeneratorAction());
 
-  
 
   //
   // Initialize G4 kernel
@@ -284,11 +280,6 @@ int main(int argc,char** argv) {
 #endif
     if(BDSExecOptions::Instance()->GetOutlineFormat()=="survey") BDSGI->Survey();
     if(BDSExecOptions::Instance()->GetOutlineFormat()=="optics") BDSGI->Optics();
-
-#ifdef BDSDEBUG 
-    G4cout<<"deleting geometry interface"<<G4endl;
-#endif
-    delete BDSGI;
   }
 
 
@@ -308,6 +299,9 @@ int main(int argc,char** argv) {
 #endif
       visManager = new BDSVisManager;
       visManager->Initialize();
+      G4TrajectoryDrawByCharge* trajModel1 = new G4TrajectoryDrawByCharge("trajModel1");
+      visManager->RegisterModel(trajModel1);
+      visManager->SelectTrajectoryModel(trajModel1->Name());
 #endif
  
 #ifdef G4UI_USE
@@ -323,10 +317,6 @@ int main(int argc,char** argv) {
       delete session;
 
 #ifdef G4VIS_USE
-#ifdef BDSDEBUG 
-      G4cout << __FUNCTION__ << "> Visualisation Manager deleting..." << G4endl;
-#endif
-      delete visManager;
     }
 #endif
   else           // Batch mode
@@ -344,7 +334,7 @@ int main(int argc,char** argv) {
   G4cout << __FUNCTION__ << "> BDSOutput deleting..."<<G4endl;
 #endif
   delete bdsOutput;
-
+  
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> BDSBeamline deleting..."<<G4endl;
 #endif
@@ -360,8 +350,8 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif
-  delete runManager;
- 
+  delete runManager; 
+
   G4cout << __FUNCTION__ << "> End of Run, Thank you for using BDSIM!" << G4endl;
 
    

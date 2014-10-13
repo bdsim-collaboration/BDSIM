@@ -23,6 +23,7 @@ struct Options {
   std::string distribType;
   std::string xDistribType; 
   std::string yDistribType;
+  std::string zDistribType;
   std::string distribFile;
   std::string distribFileFormat;
 

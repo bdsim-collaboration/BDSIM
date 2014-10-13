@@ -17,8 +17,6 @@
 #include "G4AffineTransform.hh"
 #include "G4NavigationHistory.hh"
 
-extern G4double BDSLocalRadiusOfCurvature;
- 
 class BDSSynchrotronRadiation : public G4VDiscreteProcess 
 { 
 public:

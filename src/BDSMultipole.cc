@@ -4,7 +4,7 @@
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 
    Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
-   Added extra parameter to BuildDefaultOuterLogicalVolume so that it is 
+   Added extra parameter to BuildLogicalVolume so that it is 
      possible to set the material as either Iron or Vacuum
    Removed StringFromInt function
 */
@@ -30,7 +30,6 @@
 #include "G4PVPlacement.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4IntersectionSolid.hh"
 
@@ -40,24 +39,13 @@
 #include "BDSMultipoleOuterMagField.hh"
 #include "G4MagneticField.hh"
 
-#include <map>
 #include <string>
-
-
-//============================================================
-
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
 
 //============================================================
 BDSMultipole::BDSMultipole( G4String aName, 
 			    G4double aLength,
 			    G4double aBpRadius,
 			    G4double aInnerIronRadius,
-                            G4VisAttributes* aVisAtt,
 			    std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
                             G4String aTunnelMaterial,
                             G4String aMaterial,
@@ -76,7 +64,6 @@ BDSMultipole::BDSMultipole( G4String aName,
 			 aBpRadius,
 			 aXAper,
 			 aYAper,
-			 aVisAtt,
 			 blmLocZ,
 			 blmLocTheta,
                          aTunnelMaterial,
@@ -90,8 +77,8 @@ BDSMultipole::BDSMultipole( G4String aName,
   itsInnerIronRadius(aInnerIronRadius)
 {
   ConstructorInit();
-  BDSAcceleratorComponent::itsPhiAngleIn=phiAngleIn;
-  BDSAcceleratorComponent::itsPhiAngleOut=phiAngleOut;
+  itsPhiAngleIn=phiAngleIn;
+  itsPhiAngleOut=phiAngleOut;
   SetBeampipeThickness(beampipeThicknessSet, beampipeThickness); 
 }
 
@@ -99,7 +86,6 @@ BDSMultipole::BDSMultipole( G4String aName,
 			    G4double aLength,
 			    G4double aBpRadius,
 			    G4double aInnerIronRadius,
-                            G4VisAttributes* aVisAtt,
                             G4String aTunnelMaterial,
                             G4String aMaterial,
 			    G4double aXAper,
@@ -115,7 +101,6 @@ BDSMultipole::BDSMultipole( G4String aName,
 			 aBpRadius,
 			 aXAper,
 			 aYAper,
-			 aVisAtt,
                          aTunnelMaterial,
 			 aMaterial,
 			 angle,
@@ -131,7 +116,9 @@ BDSMultipole::BDSMultipole( G4String aName,
 }
 
 void BDSMultipole::ConstructorInit(){
-  CalculateLengths();
+  itsStepper=NULL;
+  itsMagField=NULL;
+  itsEqRhs=NULL;
 
   itsBeampipeLogicalVolume=NULL;
   itsInnerBPLogicalVolume=NULL;
@@ -157,34 +144,39 @@ void BDSMultipole::SetBeampipeThickness(G4bool set, G4double val){
   }
 }
 
+void BDSMultipole::Build()
+{
+  //
+  // build beampipe (geometry + magnetic field)
+  //
+  BuildBPFieldAndStepper();
+  BuildBPFieldMgr(itsStepper, itsMagField);
 
+  BDSAcceleratorComponent::Build();
+  BuildOuterLogicalVolume();
+  BuildBeampipe();
+  if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
+    BuildTunnel();
+  }
+  //Build the beam loss monitors
+  BuildBLMs();
+}
 
 void BDSMultipole::BuildBLMs(){
   itsBlmLocationR=itsOuterR;
-  BDSAcceleratorComponent::BuildBLMs();
+  BDSAcceleratorComponent::BuildBLMs(); // resets itsBlmLocationR! -- JS
 }
 
 void BDSMultipole::BuildBeampipe(G4String materialName)
 {
-  G4Material *material;
-
-  if(materialName == "")
-    {
-      material = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName() );
-    }
-  else
-    {
-      material = BDSMaterials::Instance()->GetMaterial(materialName);
-    }
-
   // build beampipe
-  G4RotationMatrix* RotY;
+  G4RotationMatrix* RotY = NULL; // no rotation
 
   if((itsPhiAngleIn==0)&&(itsPhiAngleOut==0)){
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << "Building ordinary beam pipe (not trapezoid) " << G4endl;
 #endif
-    RotY=NULL; // no rotation
+
 #ifdef BDSDEBUG 
     G4cout << __METHOD_NAME__ << "Outer pipe :"
 	   << " r= " << itsBpRadius/CLHEP::m << " m"
@@ -269,6 +261,65 @@ void BDSMultipole::BuildBeampipe(G4String materialName)
 			      (G4ThreeVector)0);
   
   }
+  FinaliseBeampipe(materialName,RotY);
+}
+
+void BDSMultipole::BuildBeampipe(G4double startAper,
+                                 G4double endAper, G4String materialName)
+{
+  //make sure length is not 0 
+  if (itsLength==0){
+    itsLength=itsLength+pow(1.0,-20.0);
+  }
+
+  G4RotationMatrix* RotY=NULL ;
+  
+  // build beampipe
+  
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << "Outer pipe :"
+	 << " start r= " << startAper/CLHEP::m << " m"
+	 << " end r= " << endAper/CLHEP::m << " m"
+	 << " l= " << itsLength/(2.)/CLHEP::m << " m"
+	 << G4endl;
+#endif
+  
+  itsBeampipeSolid=new G4Cons(itsName+"_bmp_solid",
+			      startAper,
+			      startAper+BDSGlobalConstants::Instance()->GetBeampipeThickness(),
+			      endAper,
+			      endAper+BDSGlobalConstants::Instance()->GetBeampipeThickness(),
+			      itsLength/(2.),
+			      0,CLHEP::twopi*CLHEP::radian);
+      
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << "Inner pipe :"
+	 << " r= " << (itsBpRadius-BDSGlobalConstants::Instance()->GetBeampipeThickness() )/CLHEP::m << " m"
+	 << " l= " << itsLength/(2.)/CLHEP::m << " m"
+	 << G4endl;
+#endif
+      
+  itsInnerBeampipeSolid=new G4Cons(itsName+"_inner_bmp_solid",
+				   0.,
+				   startAper,
+				   0.,
+				   endAper,
+				   itsLength/2-BDSGlobalConstants::Instance()->GetLengthSafety(),
+				   0,CLHEP::twopi*CLHEP::radian);
+  
+  FinaliseBeampipe(materialName,RotY);
+}
+
+void BDSMultipole::FinaliseBeampipe(G4String materialName, G4RotationMatrix* RotY) {
+  G4Material* material;
+  if(materialName == "")
+    {
+      material = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName() );
+    }
+  else
+    {
+      material = BDSMaterials::Instance()->GetMaterial(materialName);
+    }
   
   itsBeampipeLogicalVolume=	
     new G4LogicalVolume(itsBeampipeSolid,
@@ -302,6 +353,12 @@ void BDSMultipole::BuildBeampipe(G4String materialName)
   //Add the physical volumes to a vector which can be used for e.g. geometrical biasing
   SetMultiplePhysicalVolumes(itsPhysiInner);
   SetMultiplePhysicalVolumes(itsPhysiComp);
+  //
+  // define sensitive volumes for hit generation
+  //
+  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
+    AddSensitiveVolume(itsBeampipeLogicalVolume);
+  }
   
 #ifndef NOUSERLIMITS
   itsBeampipeUserLimits = new G4UserLimits("beampipe cuts");
@@ -348,137 +405,7 @@ void BDSMultipole::BuildBeampipe(G4String materialName)
   VisAtt1->SetForceSolid(true);
   VisAtt1->SetVisibility(true);
   itsBeampipeLogicalVolume->SetVisAttributes(VisAtt1);
-
 }
-
-
-void BDSMultipole::BuildBeampipe(G4double startAper,
-                                 G4double endAper, G4String materialName)
-{
-  //make sure length is not 0 
-  if (itsLength==0){
-    itsLength=itsLength+pow(1.0,-20.0);
-  }
-
-  G4Material* material;
-
-  if(materialName == "")
-    {
-      material = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName() );
-    }
-  else
-    {
-      material = BDSMaterials::Instance()->GetMaterial(materialName);
-    }
-
-  G4RotationMatrix* RotY;
-  RotY=NULL ;
-  
-  // build beampipe
-  
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Outer pipe :"
-	 << " start r= " << startAper/CLHEP::m << " m"
-	 << " end r= " << endAper/CLHEP::m << " m"
-	 << " l= " << itsLength/(2.)/CLHEP::m << " m"
-	 << G4endl;
-#endif
-  
-  itsBeampipeSolid=new G4Cons(itsName+"_bmp_solid",
-			      startAper-BDSGlobalConstants::Instance()->GetBeampipeThickness(),
-			      startAper,
-			      endAper-BDSGlobalConstants::Instance()->GetBeampipeThickness(),
-			      endAper,
-			      itsLength/(2.),
-			      0,CLHEP::twopi*CLHEP::radian);
-      
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Inner pipe :"
-	 << " r= " << (itsBpRadius-BDSGlobalConstants::Instance()->GetBeampipeThickness() )/CLHEP::m << " m"
-	 << " l= " << itsLength/(2.)/CLHEP::m << " m"
-	 << G4endl;
-#endif
-      
-      itsInnerBeampipeSolid=new G4Cons(itsName+"_inner_bmp_solid",
-				       0.,
-				       startAper-BDSGlobalConstants::Instance()->GetBeampipeThickness(),
-				       0.,
-				       endAper-BDSGlobalConstants::Instance()->GetBeampipeThickness(),
-				       itsLength/2-BDSGlobalConstants::Instance()->GetLengthSafety(),
-				       0,CLHEP::twopi*CLHEP::radian);
-      
-    itsBeampipeLogicalVolume=	
-      new G4LogicalVolume(itsBeampipeSolid,
-			  material,
-			  itsName+"_bmp_log");
-    
-    itsInnerBPLogicalVolume=	
-      new G4LogicalVolume(itsInnerBeampipeSolid,
-			  BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
-			  itsName+"_inner_bmp_log");
-      
-    itsPhysiInner = new G4PVPlacement(
-				      RotY,		        // no rotation
-				      (G4ThreeVector)0,	                // at (0,0,0)
-				      itsInnerBPLogicalVolume,  // its logical volume
-				      itsName+"_inner_bmp_phys",// its name
-				      itsMarkerLogicalVolume,   // its mother  volume
-				      false,		        // no boolean operation
-				      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		        // copy number
-    
-      
-    
-    itsPhysiComp = new G4PVPlacement(
-				     RotY,			     // no rotation
-				     (G4ThreeVector)0,	                     // at (0,0,0)
-				     itsBeampipeLogicalVolume,  // its logical volume
-				     itsName+"_bmp_phys",	     // its name
-				     itsMarkerLogicalVolume,    // its mother  volume
-				     false,		     // no boolean operation
-				     0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		             // copy number
-    
-    //Add the physical volumes to a vector which can be used for e.g. geometrical biasing
-    SetMultiplePhysicalVolumes(itsPhysiInner);
-    SetMultiplePhysicalVolumes(itsPhysiComp);
-    
-#ifndef NOUSERLIMITS
-      G4double maxStepFactor=0.5;
-      itsBeampipeUserLimits = new G4UserLimits("beampipe cuts");
-      itsBeampipeUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-      itsBeampipeUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
-      itsBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-      
-      itsBeampipeLogicalVolume->SetUserLimits(itsBeampipeUserLimits);
-      itsInnerBPLogicalVolume->SetUserLimits(itsBeampipeUserLimits);
-#endif
-
-  itsBeampipeLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
-  itsInnerBPLogicalVolume->SetFieldManager(itsBPFieldMgr,false) ;
-
-  // now protect the fields inside the marker volume by giving the
-  // marker a null magnetic field (otherwise G4VPlacement can
-  // over-ride the already-created fields, by calling 
-  // G4LogicalVolume::AddDaughter, which calls 
-  // pDaughterLogical->SetFieldManager(fFieldManager, true) - the
-  // latter 'true' over-writes all the other fields
-
-  itsMarkerLogicalVolume->
-    SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
-  
-  //
-  // set visualization attributes
-  //
-  G4VisAttributes* VisAtt =  new G4VisAttributes(G4Colour(0., 0., 0, 0.1));
-  VisAtt->SetForceSolid(true);
-  VisAtt->SetVisibility(true);
-  itsInnerBPLogicalVolume->SetVisAttributes(VisAtt);
-
-  G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.4, 0.4, 0.4));
-  VisAtt1->SetForceSolid(true);
-  VisAtt->SetVisibility(true);
-  itsBeampipeLogicalVolume->SetVisAttributes(VisAtt1);
-}
-
 
 void BDSMultipole::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
 				   G4MagneticField* aField)
@@ -504,7 +431,7 @@ void BDSMultipole::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
 }
 
 
-void BDSMultipole::BuildDefaultMarkerLogicalVolume()
+void BDSMultipole::BuildMarkerLogicalVolume()
 {
   if ((itsPhiAngleIn==0)&&(itsPhiAngleOut==0)){
     itsMarkerSolidVolume = new G4Box( itsName+"_marker_solid",
@@ -599,11 +526,8 @@ void BDSMultipole::BuildDefaultMarkerLogicalVolume()
 }
 
 
-void BDSMultipole::BuildDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
+void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
 {
-  //OuterMaterialIsVacuum parameter is useless: one can set
-  //itsMaterial = BDSGlobalConstants::Instance()->GetVacuumMaterial() and obtain the same result. Or cannot?
-
   G4Material* material;
   if(itsMaterial != "") material = BDSMaterials::Instance()->GetMaterial(itsMaterial);
   else material = BDSMaterials::Instance()->GetMaterial("Iron");
@@ -657,6 +581,17 @@ void BDSMultipole::BuildDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
   
   //Add the physical volumes to a vector which can be used for e.g. geometrical biasing
   SetMultiplePhysicalVolumes(itsPhysiComp);
+  //
+  // define sensitive volumes for hit generation
+  //
+  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
+    AddSensitiveVolume(itsOuterLogicalVolume);
+  }
+
+  //
+  // set visualization attributes
+  //
+  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
 
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
@@ -665,63 +600,7 @@ void BDSMultipole::BuildDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
   itsOuterUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
   itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
- 
-
 }
-
-void BDSMultipole::BuildEllipticalOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
-{
-  //OuterMaterialIsVacuum parameter is useless: one can set
-  //itsMaterial = BDSGlobalConstants::Instance()->GetVacuumMaterial() and obtain the same result. Or cannot?
-
-  G4Material* material;
-  if(itsMaterial != "") material = BDSMaterials::Instance()->GetMaterial(itsMaterial);
-  else material = BDSMaterials::Instance()->GetMaterial("Iron");
-  if(OuterMaterialIsVacuum) material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
-  G4double outerRadius = itsOuterR;
-  if(itsOuterR==0) outerRadius = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
-
-  G4Tubs* tubs_tmp= new G4Tubs(itsName+"_tubs_tmp",
-			       0,
-			       outerRadius,
-			       itsLength/2-BDSGlobalConstants::Instance()->GetLengthSafety(),
-			       0,CLHEP::twopi*CLHEP::radian);
-
-  G4EllipticalTube* etube_tmp= new G4EllipticalTube(itsName+"_etube_tmp",
-                                                    this->GetAperX()+1*CLHEP::nm,
-                                                    this->GetAperY()+1*CLHEP::nm,
-                                                    itsLength/2-BDSGlobalConstants::Instance()->GetLengthSafety());
-  
- 
-
-  G4LogicalVolume* itsOuterLogicalVolume=
-    new G4LogicalVolume(new G4SubtractionSolid(itsName+"_outer_solid",
-					       tubs_tmp, etube_tmp),
-			material,
-			itsName+"_outer_log");
-  
-  itsPhysiComp = new G4PVPlacement(
-				   (G4RotationMatrix*)0,		      // no rotation
-				   (G4ThreeVector)0,                      // its position
-				   itsOuterLogicalVolume,  // its logical volume
-				   itsName+"_outer_phys",  // its name
-				   itsMarkerLogicalVolume, // its mother  volume
-				   false,		      // no boolean operation
-				   0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		      // copy number
-  
-  //Add the physical volumes to a vector which can be used for e.g. geometrical biasing
-  SetMultiplePhysicalVolumes(itsPhysiComp);
-  
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  itsOuterUserLimits = new G4UserLimits("multipole cut");
-  itsOuterUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  itsOuterUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
-  itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
-#endif
- 
-
-  }
 
 void BDSMultipole::BuildOuterFieldManager(G4int nPoles, G4double poleField,
 					  G4double phiOffset)
@@ -744,8 +623,6 @@ void BDSMultipole::BuildOuterFieldManager(G4int nPoles, G4double poleField,
   if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0)
     itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
   itsOuterLogicalVolume->SetFieldManager(itsOuterFieldMgr,false);
-
-
 }
 
 
@@ -758,4 +635,7 @@ BDSMultipole::~BDSMultipole()
   delete itsMarkerUserLimits;
   delete itsBeampipeUserLimits;
 #endif
+  delete itsMagField;
+  delete itsEqRhs;
+  delete itsStepper;
 }

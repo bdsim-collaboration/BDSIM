@@ -77,7 +77,7 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
   hist     = new BDSHistogram1D(xmin,xmax,nbins); //naturally in metres
   // write header info
   ofELossHistogram.open(filenameHistogram.c_str());
-  ofELossHistogram << hist << " - created " << timestring << G4endl;
+  ofELossHistogram << *hist << " - created " << timestring << G4endl;
   ofELossHistogram << std::left << std::setprecision(10) << std::fixed
 		   << std::setw(20) << "S[m]"   << " "
 		   << std::setw(15) << "E[GeV]" << " "

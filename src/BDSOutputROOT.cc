@@ -7,6 +7,7 @@
 #include "BDSSamplerCylinder.hh"
 #include "BDSTrajectory.hh"
 
+
 BDSOutputROOT::BDSOutputROOT():BDSOutputBase()
 {
   G4cout<<"output format ROOT"<<G4endl;
@@ -490,10 +491,14 @@ void BDSOutputROOT::Commit()
 
 void BDSOutputROOT::Write()
 {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   if(theRootOutputFile && theRootOutputFile->IsOpen())
     {
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " writing to root file..." << G4endl;
+      G4cout << __METHOD_NAME__ << " - ROOT file found and open, writing." << G4endl;
 #endif
       //Dump all other quantities to file...
       theRootOutputFile->Write();
@@ -501,5 +506,6 @@ void BDSOutputROOT::Write()
       delete theRootOutputFile;
       theRootOutputFile=NULL;
     }
+  G4cout << __METHOD_NAME__ << " ...finished." << G4endl;
 }
 #endif

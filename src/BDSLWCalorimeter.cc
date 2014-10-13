@@ -20,20 +20,6 @@
 #include "BDSLWCalorimeterSD.hh"
 #include "G4SDManager.hh"
 
-
-//#include"MagFieldFunction.hh"
-#include <map>
-
-
-//============================================================
-
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
-
-
 //============================================================
 
 BDSLWCalorimeter::BDSLWCalorimeter (G4String& aName,G4double aLength,
@@ -41,51 +27,41 @@ BDSLWCalorimeter::BDSLWCalorimeter (G4String& aName,G4double aLength,
   BDSAcceleratorComponent(
 			 aName,
 			 aLength,aBpRad,0,0,
-			 SetVisAttributes(),aTunnelMaterial),
-  itsBPFieldMgr(NULL)
+			 aTunnelMaterial),
+  itsBeampipeLogicalVolume(NULL),itsInnerBPLogicalVolume(NULL),itsPhysiInner(NULL),
+  itsPhysiComp(NULL),itsLWCalLogicalVolume(NULL),itsBeampipeUserLimits(NULL),
+  itsBPFieldMgr(NULL),itsBPTube(NULL),itsInnerBPTube(NULL),itsLWCal(NULL),
+  itsPhysiLWCal(NULL)
 {
-  LWCalorimeterLogicalVolume();
-  BuildCal(aLength);
-  BuildBeampipe(aLength);
-
-  //G4int nLWCalorimeters=(*LogVolCount)[itsName];
-  //BDSRoot->SetLWCalorimeterNumber(nLWCalorimeters);
-
 }
 
-
-void BDSLWCalorimeter::LWCalorimeterLogicalVolume()
+void BDSLWCalorimeter::Build()
 {
-  if(!(*LogVolCount)[itsName])
-    {
+  BDSAcceleratorComponent::Build();
+  BuildCal(itsLength);
+  BuildBeampipe(itsLength);
+}
 
-      G4double SampTransSize;
-      SampTransSize=2.*BDSGlobalConstants::Instance()->GetTunnelRadius();
+void BDSLWCalorimeter::BuildMarkerLogicalVolume()
+{
+  G4double SampTransSize;
+  SampTransSize=2.*BDSGlobalConstants::Instance()->GetTunnelRadius();
 
-      itsMarkerLogicalVolume=
-	new G4LogicalVolume(
-			    new G4Box(itsName+"_solid",
-				      SampTransSize,
-				      SampTransSize,
-				      itsLength/2),
-			    BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
-			    itsName);
-
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
+  itsMarkerLogicalVolume=
+    new G4LogicalVolume(
+			new G4Box(itsName+"_solid",
+				  SampTransSize,
+				  SampTransSize,
+				  itsLength/2),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			itsName);
+  
 #ifndef NOUSERLIMITS
-      itsOuterUserLimits =new G4UserLimits();
-      itsOuterUserLimits->SetMaxAllowedStep(itsLength);
-      itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-      itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
+  itsOuterUserLimits =new G4UserLimits();
+  itsOuterUserLimits->SetMaxAllowedStep(itsLength);
+  itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
-
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-    }
 }
 
 void BDSLWCalorimeter::BuildCal(G4double aLength)
@@ -197,10 +173,9 @@ void BDSLWCalorimeter::BuildBeampipe(G4double aLength)
   
 }
 
-G4VisAttributes* BDSLWCalorimeter::SetVisAttributes()
+void BDSLWCalorimeter::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(1,0.5,0.5));
-  return itsVisAttributes;
 }
 
 BDSLWCalorimeter::~BDSLWCalorimeter()

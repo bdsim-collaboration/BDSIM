@@ -1120,11 +1120,10 @@ BDSMaterials::~BDSMaterials(){
   _instance = 0;
 }
 
-void PrepareRequiredMaterials()
+void BDSMaterials::PrepareRequiredMaterials()
 {
   // This function uses the list from the parser and prepares
   // the necessary materials for this run.
-  // Put in a function instead of in full in BDSDetectorConstruction.cc
   
   G4bool verbose = BDSExecOptions::Instance()->GetVerbose();
 #ifdef BDSDEBUG
@@ -1149,7 +1148,7 @@ void PrepareRequiredMaterials()
            << G4endl;
 #endif
 
-    BDSMaterials::Instance()->AddElement((*it).name,(*it).symbol,(*it).Z,(*it).A);
+    AddElement((*it).name,(*it).symbol,(*it).Z,(*it).A);
   }
   if (verbose || debug) G4cout << "size of atom list: "<< atom_list.size() << G4endl;
   
@@ -1166,7 +1165,7 @@ void PrepareRequiredMaterials()
              << "density= "<< (*it).density << "g/cm3 "
              << G4endl;
 #endif
-      BDSMaterials::Instance()->AddMaterial((*it).name,(*it).Z,(*it).A,(*it).density);
+      AddMaterial((*it).name,(*it).Z,(*it).A,(*it).density);
     }
     else if((*it).components.size() != 0){
 
@@ -1197,13 +1196,13 @@ void PrepareRequiredMaterials()
                << G4endl;
 #endif
 
-	BDSMaterials::Instance()->AddMaterial((G4String)(*it).name,
-				  (G4double)(*it).density,
-				  (G4State)itsState,
-				  (G4double)(*it).temper,
-				  (G4double)(*it).pressure,
-				  (std::list<const char*>)(*it).components,
-				  (std::list<G4int>)(*it).componentsWeights);
+	AddMaterial((G4String)(*it).name,
+		    (G4double)(*it).density,
+		    (G4State)itsState,
+		    (G4double)(*it).temper,
+		    (G4double)(*it).pressure,
+		    (std::list<const char*>)(*it).components,
+		    (std::list<G4int>)(*it).componentsWeights);
       }
       else if((*it).componentsFractions.size()==(*it).components.size()) {
 
@@ -1217,13 +1216,13 @@ void PrepareRequiredMaterials()
         << "ncomponents= " << (*it).components.size() << " "
         << G4endl;
 #endif
-        BDSMaterials::Instance()->AddMaterial((*it).name,
-				  (*it).density,
-				  itsState,
-				  (*it).temper,
-				  (*it).pressure,
-				  (*it).components,
-				  (*it).componentsFractions);
+        AddMaterial((*it).name,
+		    (*it).density,
+		    itsState,
+		    (*it).temper,
+		    (*it).pressure,
+		    (*it).components,
+		    (*it).componentsFractions);
       }
       else {
 	G4Exception("Badly defined material - number of components is not equal to number of weights or mass fractions!", "-1", FatalErrorInArgument, "");

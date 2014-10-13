@@ -8,19 +8,8 @@
 #define BDSSextupole_h 1
 
 #include "globals.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-#include "BDSSextStepper.hh"
-
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4PVPlacement.hh"               
 
 #include "BDSMultipole.hh"
-#include "BDSSextMagField.hh"
 
 class BDSSextupole :public BDSMultipole
 {
@@ -36,20 +25,15 @@ public:
 private:
   G4double itsBDblPrime;
 
-  void BuildBPFieldAndStepper();
+  virtual void Build();
+  virtual void BuildBPFieldAndStepper();
 
-  void BuildDefaultOuterLogicalVolume();
-  void BuildOuterLogicalVolume();
+  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+
+  void BuildStandardOuterLogicalVolume();
+  void BuildCylindricalOuterLogicalVolume();
   
-  //void BuildDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
-  //void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
-
-  G4VisAttributes* SetVisAttributes();
-
-  // field related objects:
-  BDSSextStepper* itsStepper;
-  BDSSextMagField* itsMagField;
-  G4Mag_UsualEqRhs* itsEqRhs;
+  virtual void SetVisAttributes();
 
 };
 

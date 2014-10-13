@@ -17,7 +17,6 @@
 #include "G4VisAttributes.hh"
 
 #include "G4Box.hh"
-//#include "BDSEnergyCounterSD.hh"
 #include "BDSMuSpoilerMagField.hh"
 #include "G4FieldManager.hh"
 
@@ -32,52 +31,36 @@ public:
 
   ~BDSMuSpoiler();
 
-protected:
-
 private:
-  G4VisAttributes* SetVisAttributes();
-  G4VisAttributes* SetBPVisAttributes();
+  virtual void SetVisAttributes();
+  void SetBPVisAttributes();
 
   // Geometrical objects:
 
-  void BuildMuSpoiler();
-  void BuildMuSpoilerTunnel();
-  void BuildBLMs();
+  virtual void Build();
+  virtual void BuildMarkerLogicalVolume();
+  void         BuildBPFieldAndStepper();
+  void         BuildBeampipe();
+  virtual void BuildBLMs();
+  void         BuildMuSpoiler();
 
   G4VPhysicalVolume* itsPhysiComp;
-  G4VPhysicalVolume* itsPhysiCompSoil;
   G4VPhysicalVolume* itsPhysiComp2;
   G4VPhysicalVolume* itsPhysiInnerBP;
   G4VPhysicalVolume* itsPhysiBP;
-  G4LogicalVolume* itsSolidLogVol;
-  G4LogicalVolume* itsInnerLogVol;
-  G4LogicalVolume* itsBeampipeLogicalVolume;
-  G4LogicalVolume* itsInnerBPLogicalVolume;
-  G4Tubs* itsBPTube;
-  G4Tubs* itsInnerBPTube;
-   
-  G4Tubs* itsSoilTube;
-  G4Tubs* itsTunnelTube;
-  G4Tubs* itsInnerTunnelTube;
-
-  G4LogicalVolume* itsInnerTunnelLogicalVolume;
-  G4LogicalVolume* itsSoilTunnelLogicalVolume;
-  G4UserLimits* itsTunnelUserLimits;
-  G4UserLimits* itsSoilTunnelUserLimits;
-  G4UserLimits* itsInnerTunnelUserLimits;
-                 
-  G4VisAttributes* itsBPVisAttributes;
-  G4Mag_UsualEqRhs* itsEqRhs;
-
-private:
-  //  BDSEnergyCounterSD* itsEnergyCounterSD;
-  G4double itsBeampipeRadius;
-  G4double itsInnerRadius;
-  G4double itsOuterRadius;
-  G4double itsBField;
-
+  G4LogicalVolume*   itsSolidLogVol;
+  G4LogicalVolume*   itsInnerLogVol;
+  G4LogicalVolume*   itsBeampipeLogicalVolume;
+  G4LogicalVolume*   itsInnerBPLogicalVolume;
+  G4Tubs*            itsBPTube;
+  G4Tubs*            itsInnerBPTube;                 
+  G4VisAttributes*   itsBPVisAttributes;
+  G4double           itsBeampipeRadius;
+  G4double           itsInnerRadius;
+  G4double           itsOuterRadius;
+  G4double           itsBField;
   BDSMuSpoilerMagField* itsMagField;
-  G4FieldManager* itsFieldMgr;
+  G4FieldManager*    itsFieldMgr;
 };
 
 #endif

@@ -8,14 +8,14 @@
 #include "globals.hh"
 
 //#include "BDSWorld.hh"
-#include "BDSMaterials.hh"
-#include "BDSBeamline.hh"
+// #include "BDSMaterials.hh"
+// #include "BDSBeamline.hh"
 
 #include "G4Region.hh"
 
 //GFlash parameterisation
 #include "GFlashHomoShowerParameterisation.hh"
-#include "G4FastSimulationManager.hh"
+// #include "G4FastSimulationManager.hh"
 #include "BDSShowerModel.hh"
 #include "GFlashHitMaker.hh"
 #include "GFlashParticleBounds.hh"
@@ -27,9 +27,8 @@
 #include "G4Tubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4PVPlacement.hh"
-#include "G4UniformMagField.hh"
-#include "G4TransportationManager.hh"
+// #include "G4PVPlacement.hh"
+// #include "G4UniformMagField.hh"
 
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
@@ -40,7 +39,7 @@
 #include "BDSAcceleratorComponent.hh"
 
 #include "G4Navigator.hh"
-#include "G4UniformMagField.hh"
+// #include "G4UniformMagField.hh"
 
 #include "G4Material.hh"
 #include "BDSEnergyCounterSD.hh"
@@ -108,7 +107,7 @@ void BDSRegions::buildGFlashRegion(){
 void BDSRegions::buildGFlashRegion(BDSAcceleratorComponent* /*var*/){
 
   /*
-  vector<G4LogicalVolume*> MultipleSensVols = var->GetMultipleSensitiveVolumes();
+  vector<G4LogicalVolume*> MultipleSensVols = var->GetSensitiveVolumes();
   if( ( var->GetType()!="sampler" && var->GetType()!="csampler" )
       && MultipleSensVols.size()>0)
     {

@@ -7,6 +7,7 @@
 
 #include "BDSPCLDrift.hh"
 #include "BDSMagField.hh"
+#include "BDSMaterials.hh"
 #include "BDSDriftStepper.hh"
 #include "BDSPCLTube.hh"
 
@@ -15,71 +16,18 @@
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
-
-#include <map>
-
-//============================================================
-
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
 
 //============================================================
 
 BDSPCLDrift::BDSPCLDrift (G4String aName, G4double aLength, 
 			  std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta, G4double aperX, G4double aperYUp, G4double aperYDown, G4double aperDy, G4String tunnelMaterial, G4double aper, G4double tunnelRadius, G4double tunnelOffsetX, G4String aMaterial):
-  BDSMultipole(aName, aLength, aper, aper, SetVisAttributes(),  blmLocZ, blmLocTheta, tunnelMaterial, aMaterial, aper, aper, 0, tunnelRadius, tunnelOffsetX),
+  BDSMultipole(aName, aLength, aper, aper, blmLocZ, blmLocTheta, tunnelMaterial, aMaterial, aper, aper, 0, tunnelRadius, tunnelOffsetX),
   itsYAperUp(aperYUp), itsYAperDown(aperYDown), itsDyAper(aperDy),
   outer_solid(NULL),inner_solid(NULL),itsOuterBeamPipeLogicalVolume(NULL),
   itsInnerBeamPipeLogicalVolume(NULL),itsPhysiInner(NULL),itsPhysiOuter(NULL),
-  itsBeampipeVisAtt(NULL),itsInnerBeampipeVisAtt(NULL),
-  itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
+  itsBeampipeVisAtt(NULL),itsInnerBeampipeVisAtt(NULL)
 {
   itsXAper=aperX;
-
-  if (!(*LogVolCount)[itsName])
-    {
-      //
-      // build external volume
-      // 
-      BuildDefaultMarkerLogicalVolume();
-
-      //
-      // build beampipe (geometry + magnetic field)
-      //
-      if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-        BuildTunnel();
-      }
-      BuildBpFieldAndStepper();
-      BuildBPFieldMgr(itsStepper, itsMagField);
-      BuildBeampipe(itsMaterial);
-      BuildBLMs();
-  
-      //
-      // define sensitive volumes for hit generation
-      //
-      if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-	SetMultipleSensitiveVolumes(itsOuterBeamPipeLogicalVolume);	
-      }
-      
-      //
-      // append marker logical volume to volume map
-      //
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-      
-      //
-      // use already defined marker volume
-      //
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-    }
 }
 
 void BDSPCLDrift::BuildBeampipe(G4String materialName){
@@ -102,8 +50,6 @@ void BDSPCLDrift::BuildBeampipe(G4String materialName){
   G4cout << "PCLDrift aperYDown: " << itsYAperDown/CLHEP::m << " m" << G4endl;
   G4cout << "PCLDrift Dy: " << itsDyAper/CLHEP::m << " m" << G4endl;
 #endif
-
-
 
   G4double ts = BDSGlobalConstants::Instance()->GetLengthSafety()+itsBeampipeThickness/2;
 
@@ -179,6 +125,12 @@ void BDSPCLDrift::BuildBeampipe(G4String materialName){
   //Add the physical volumes to a vector which can be used for e.g. geometrical biasing
   SetMultiplePhysicalVolumes(itsPhysiInner);
   SetMultiplePhysicalVolumes(itsPhysiOuter);
+  //
+  // define sensitive volumes for hit generation
+  //
+  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
+    AddSensitiveVolume(itsOuterBeamPipeLogicalVolume);	
+  }
 
 #ifndef NOUSERLIMITS
   itsBeampipeUserLimits =  new G4UserLimits("beampipe cuts");
@@ -219,7 +171,7 @@ void BDSPCLDrift::BuildBeampipe(G4String materialName){
 #endif
 }
 
-void BDSPCLDrift::BuildBpFieldAndStepper(){
+void BDSPCLDrift::BuildBPFieldAndStepper(){
     // set up the magnetic field and stepper
   itsMagField=new BDSMagField(); //Zero magnetic field.
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
@@ -230,17 +182,13 @@ void BDSPCLDrift::BuildBLMs(){
   BDSAcceleratorComponent::BuildBLMs();
 }
 
-G4VisAttributes* BDSPCLDrift::SetVisAttributes()
+void BDSPCLDrift::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.5,0.5,0.5));
-  return itsVisAttributes;
 }
 
 BDSPCLDrift::~BDSPCLDrift()
 {
   delete itsBeampipeVisAtt;
   delete itsInnerBeampipeVisAtt;
-  delete itsMagField;
-  delete itsEqRhs;
-  delete itsStepper;
 }

@@ -15,65 +15,23 @@
 #include "G4Allocator.hh"
 #include "G4ThreeVector.hh"
 
+#include "BDSParticle.hh"
+
 class BDSSamplerHit :public G4VHit
 {
 public:
   BDSSamplerHit(G4String aName,
-		G4double init_mom,
-		G4double init_x, G4double init_xPrime, 
-		G4double init_y, G4double init_yPrime,
-		G4double init_z, G4double init_zPrime,
-		G4double init_t,
-		G4double prod_mom,
-		G4double prod_x, G4double prod_xPrime, 
-		G4double prod_y, G4double prod_yPrime,
-		G4double prod_z, G4double prod_zPrime,
-		G4double prod_t,
-		G4double last_scat_mom,
-		G4double last_scat_x, G4double last_scat_xPrime, 
-		G4double last_scat_y, G4double last_scat_yPrime,
-		G4double last_scat_z, G4double last_scat_zPrime,
-		G4double last_scat_t,
-		G4double mom,
-		G4double x, G4double xPrime,
-		G4double y, G4double yPrime,
-		G4double z, G4double zPrime,
-		G4double globalX, G4double globalXPrime,
-		G4double globalY, G4double globalYPrime,
-		G4double globalZ, G4double globalZPrime,
-		G4double t,
+		BDSParticle init,
+		BDSParticle prod,
+		BDSParticle last_scat,
+		BDSParticle local,
+		BDSParticle global,
 		G4double s,
 		G4double weight,
 		G4int PDGtype, G4int nEvent,
 		G4int ParentID, G4int TrackID,
-		G4int TurnsTaken);
-
-  BDSSamplerHit(G4String aName,
-		G4double init_mom,
-		G4double init_x, G4double init_xPrime, 
-		G4double init_y, G4double init_yPrime,
-		G4double init_z, G4double init_zPrime,
-		G4double init_t,
-		G4double prod_mom,
-		G4double prod_x, G4double prod_xPrime, 
-		G4double prod_y, G4double prod_yPrime,
-		G4double prod_z, G4double prod_zPrime,
-		G4double prod_t,
-		G4double last_scat_mom,
-		G4double last_scat_x, G4double last_scat_xPrime, 
-		G4double last_scat_y, G4double last_scat_yPrime,
-		G4double last_scat_z, G4double last_scat_zPrime,
-		G4double last_scat_t,
-		G4double mom,
-		G4double x, G4double xPrime,
-		G4double y, G4double yPrime,
-		G4double z, G4double zPrime,
-		G4double t,
-		G4double s,
-		G4double weight,
-		G4int PDGtype, G4int nEvent,
-		G4int ParentID, G4int TrackID,
-		G4int TurnsTaken);
+		G4int TurnsTaken,
+		G4String sampType);
 
   ~BDSSamplerHit();
   
@@ -83,64 +41,23 @@ public:
 private:
   G4String itsName;
 
-  //initial momentum of track
-  G4double itsInit_Mom;
-  //initial position and momentum direction of track in GLOBAL coordinates
-  G4double itsInit_X;
-  G4double itsInit_XPrime;
-  G4double itsInit_Y;
-  G4double itsInit_YPrime;
-  G4double itsInit_Z;
-  G4double itsInit_ZPrime;
-  //global time at track creation
-  G4double itsInit_T;
+  ///initial particle track in GLOBAL coordinates
+  BDSParticle itsInit;
 
-  //point where the particle was produced
-  G4double itsProd_Mom;
-  G4double itsProd_X;
-  G4double itsProd_XPrime;
-  G4double itsProd_Y;
-  G4double itsProd_YPrime;
-  G4double itsProd_Z;
-  G4double itsProd_ZPrime;
-  G4double itsProd_T;
+  ///point where the particle was produced
+  BDSParticle itsProd;
 
-  //point where the particle last scattered
-  G4double itsLastScat_Mom;
-  G4double itsLastScat_X;
-  G4double itsLastScat_XPrime;
-  G4double itsLastScat_Y;
-  G4double itsLastScat_YPrime;
-  G4double itsLastScat_Z;
-  G4double itsLastScat_ZPrime;
-  G4double itsLastScat_T;
+  ///point where the particle last scattered
+  BDSParticle itsLastScat;
 
+  ///actual position and momentum direction in LOCAL coordinates, relative to
+  ///the sampler and to the ideal orbit
+  BDSParticle itsLocal;
 
+  ///actual position and momentum direction in GLOBAL coordinates
+  BDSParticle itsGlobal;
 
-  //actual momentum
-  G4double itsMom;
-
-  //actual position and momentum direction in LOCAL coordinates, relative to
-  //the sampler and to the ideal orbit
-  G4double itsX;
-  G4double itsXPrime;
-  G4double itsY;
-  G4double itsYPrime;
-  G4double itsZ;
-  G4double itsZPrime;
-
-  //actual position and momentum direction in GLOBAL coordinates
-  G4double itsGlobalX;
-  G4double itsGlobalXPrime;
-  G4double itsGlobalY;
-  G4double itsGlobalYPrime;
-  G4double itsGlobalZ;
-  G4double itsGlobalZPrime;
-
-  //actual time
-  G4double itsT;
-
-  //total current track length
+  ///total current track length
   G4double itsS;
 
   G4double itsWeight;
@@ -152,230 +69,98 @@ private:
   G4String itsSampType;
   
 public:
-  inline void SetInitMom(G4double mom)
-    {itsInit_Mom=mom;}
   inline G4double GetInitMom() const
-    {return itsInit_Mom;}
-
-  inline void SetInitX(G4double x)
-    {itsInit_X=x;}
+    {return itsInit.GetEnergy();}
   inline G4double GetInitX() const
-    {return itsInit_X;}
-
-  inline void SetInitXPrime(G4double xPrime)
-    {itsInit_XPrime=xPrime;}
+    {return itsInit.GetX();}
   inline G4double GetInitXPrime() const
-    {return itsInit_XPrime;}
-
-  inline void SetInitY(G4double y)
-    {itsInit_Y=y;}
+    {return itsInit.GetXp();}
   inline G4double GetInitY() const
-    {return itsInit_Y;}
-
-  inline void SetInitYPrime(G4double yPrime)
-    {itsInit_YPrime=yPrime;}
+    {return itsInit.GetY();}
   inline G4double GetInitYPrime() const
-    {return itsInit_YPrime;}
-
-  inline void SetInitZ(G4double z)
-    {itsInit_Z=z;}
+    {return itsInit.GetYp();}
   inline G4double GetInitZ() const
-    {return itsInit_Z;}
-
-  inline void SetInitZPrime(G4double zPrime)
-    {itsInit_ZPrime=zPrime;}
+    {return itsInit.GetZ();}
   inline G4double GetInitZPrime() const
-    {return itsInit_ZPrime;}
-
-  inline void SetInitT(G4double t)
-    {itsInit_T=t;}
+    {return itsInit.GetZp();}
   inline G4double GetInitT() const
-    {return itsInit_T;}
-
-  inline void SetProdMom(G4double mom)
-    {itsProd_Mom=mom;}
+    {return itsInit.GetTime();}
   inline G4double GetProdMom() const
-    {return itsProd_Mom;}
-
-  inline void SetProdX(G4double x)
-    {itsProd_X=x;}
+    {return itsProd.GetEnergy();}
   inline G4double GetProdX() const
-    {return itsProd_X;}
-
-  inline void SetProdXPrime(G4double xPrime)
-    {itsProd_XPrime=xPrime;}
+    {return itsProd.GetX();}
   inline G4double GetProdXPrime() const
-    {return itsProd_XPrime;}
-
-  inline void SetProdY(G4double y)
-    {itsProd_Y=y;}
+    {return itsProd.GetXp();}
   inline G4double GetProdY() const
-    {return itsProd_Y;}
-
-  inline void SetProdYPrime(G4double yPrime)
-    {itsProd_YPrime=yPrime;}
+    {return itsProd.GetY();}
   inline G4double GetProdYPrime() const
-    {return itsProd_YPrime;}
-
-  inline void SetProdZ(G4double z)
-    {itsProd_Z=z;}
+    {return itsProd.GetYp();}
   inline G4double GetProdZ() const
-    {return itsProd_Z;}
-
-  inline void SetProdZPrime(G4double zPrime)
-    {itsProd_ZPrime=zPrime;}
+    {return itsProd.GetZ();}
   inline G4double GetProdZPrime() const
-    {return itsProd_ZPrime;}
-
-  inline void SetProdT(G4double t)
-    {itsProd_T=t;}
+    {return itsProd.GetZp();}
   inline G4double GetProdT() const
-    {return itsProd_T;}
-
-  inline void SetLastScatMom(G4double mom)
-    {itsLastScat_Mom=mom;}
+    {return itsProd.GetTime();}
   inline G4double GetLastScatMom() const
-    {return itsLastScat_Mom;}
-
-  inline void SetLastScatX(G4double x)
-    {itsLastScat_X=x;}
+    {return itsLastScat.GetEnergy();}
   inline G4double GetLastScatX() const
-    {return itsLastScat_X;}
-
-  inline void SetLastScatXPrime(G4double xPrime)
-    {itsLastScat_XPrime=xPrime;}
+    {return itsLastScat.GetX();}
   inline G4double GetLastScatXPrime() const
-    {return itsLastScat_XPrime;}
-
-  inline void SetLastScatY(G4double y)
-    {itsLastScat_Y=y;}
+    {return itsLastScat.GetXp();}
   inline G4double GetLastScatY() const
-    {return itsLastScat_Y;}
-
-  inline void SetLastScatYPrime(G4double yPrime)
-    {itsLastScat_YPrime=yPrime;}
+    {return itsLastScat.GetY();}
   inline G4double GetLastScatYPrime() const
-    {return itsLastScat_YPrime;}
-
-  inline void SetLastScatZ(G4double z)
-    {itsLastScat_Z=z;}
+    {return itsLastScat.GetYp();}
   inline G4double GetLastScatZ() const
-    {return itsLastScat_Z;}
-
-  inline void SetLastScatZPrime(G4double zPrime)
-    {itsLastScat_ZPrime=zPrime;}
+    {return itsLastScat.GetZ();}
   inline G4double GetLastScatZPrime() const
-    {return itsLastScat_ZPrime;}
-
-  inline void SetLastScatT(G4double t)
-    {itsLastScat_T=t;}
+    {return itsLastScat.GetZp();}
   inline G4double GetLastScatT() const
-    {return itsLastScat_T;}
-  
-  inline void SetMom(G4double mom)
-    {itsMom=mom;}
+    {return itsLastScat.GetTime();}
   inline G4double GetMom() const
-    {return itsMom;}
-
-  inline void SetX(G4double x)
-    {itsX=x;}
+    {return itsLocal.GetEnergy();}
   inline G4double GetX() const
-    {return itsX;}
-
-  inline void SetXPrime(G4double xPrime)
-    {itsXPrime=xPrime;}
+    {return itsLocal.GetX();}
   inline G4double GetXPrime() const
-    {return itsXPrime;}
-
-  inline void SetY(G4double y)
-    {itsY=y;}
+    {return itsLocal.GetXp();}
   inline G4double GetY() const
-    {return itsY;}
-
-  inline void SetYPrime(G4double yPrime)
-    {itsYPrime=yPrime;}
+    {return itsLocal.GetY();}
   inline G4double GetYPrime() const
-    {return itsYPrime;}
-
-  inline void SetZ(G4double z)
-    {itsZ=z;}
+    {return itsLocal.GetYp();}
   inline G4double GetZ() const
-    {return itsZ;}
-
-  inline void SetZPrime(G4double zPrime)
-    {itsZPrime=zPrime;}
+    {return itsLocal.GetZ();}
   inline G4double GetZPrime() const
-    {return itsZPrime;}
-
-  inline void SetGlobalX(G4double x)
-    {itsGlobalX=x;}
+    {return itsLocal.GetZp();}
   inline G4double GetGlobalX() const
-    {return itsGlobalX;}
-
-  inline void SetGlobalXPrime(G4double xPrime)
-    {itsGlobalXPrime=xPrime;}
+    {return itsGlobal.GetX();}
   inline G4double GetGlobalXPrime() const
-    {return itsGlobalXPrime;}
-
-  inline void SetGlobalY(G4double y)
-    {itsGlobalY=y;}
+    {return itsGlobal.GetXp();}
   inline G4double GetGlobalY() const
-    {return itsGlobalY;}
-
-  inline void SetGlobalYPrime(G4double yPrime)
-    {itsGlobalYPrime=yPrime;}
+    {return itsGlobal.GetY();}
   inline G4double GetGlobalYPrime() const
-    {return itsGlobalYPrime;}
-
-  inline void SetGlobalZ(G4double z)
-    {itsGlobalZ=z;}
+    {return itsGlobal.GetYp();}
   inline G4double GetGlobalZ() const
-    {return itsGlobalZ;}
-
-  inline void SetGlobalZPrime(G4double zPrime)
-    {itsGlobalZPrime=zPrime;}
+    {return itsGlobal.GetZ();}
   inline G4double GetGlobalZPrime() const
-    {return itsGlobalZPrime;}
-
-  inline void SetT(G4double t)
-    {itsT=t;}
+    {return itsGlobal.GetZp();}
   inline G4double GetT() const
-    {return itsT;}
-
-  inline void SetS(G4double ss)
-    {itsS=ss;}
+    {return itsLocal.GetTime();}
   inline G4double GetS() const
     {return itsS;}
-
-  inline void SetWeight(G4double aWeight)
-    {itsWeight=aWeight;}
   inline G4double GetWeight() const
     {return itsWeight;}
-  
-  inline void SetName(G4String aName)
-    {itsName=aName;}
   inline G4String GetName() const
     {return itsName;}
-
-  inline void SetType(G4String aSampType)
-    {itsSampType=aSampType;}
   inline G4String GetType()
     {return itsSampType;}
-
-  inline void SetEventNo(G4int nEvent)
-    {itsEventNo=nEvent;}
   inline G4int GetEventNo() const
     {return itsEventNo;}
-
   inline G4int GetPDGtype() const
     {return itsPDGtype;}
-
   inline G4int GetParentID() const
     {return itsParentID;}
-
   inline G4int GetTrackID() const
     {return itsTrackID;}
-
   inline G4int GetTurnsTaken() const
   {return itsTurnsTaken;}
 };

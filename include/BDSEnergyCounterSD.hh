@@ -10,7 +10,6 @@
 #include "G4VSensitiveDetector.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "G4Navigator.hh"
-#include "G4TransportationManager.hh"
 #include "G4GFlashSpot.hh"
 #include "G4VGFlashSensitiveDetector.hh"
 

@@ -24,7 +24,6 @@
 #include "G4NystromRK4.hh"
 
 // geometry drivers
-#include "parser/enums.h"
 #include "ggmad.hh"
 #include "BDSGeometrySQL.hh"
 
@@ -36,18 +35,7 @@
 #include "BDSGeometryGDML.hh"
 #endif
 
-#include <map>
 #include <vector>
-
-//============================================================
-
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
-
-
 
 //============================================================
 
@@ -56,7 +44,8 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap, G4doubl
   BDSAcceleratorComponent(
 			  aName,
 			  aLength,bpRad,0,0,
-			  SetVisAttributes(), aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*CLHEP::m, aTunnelOffsetX*CLHEP::m, aTunnelCavityMaterial),
+			  aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*CLHEP::m, aTunnelOffsetX*CLHEP::m, aTunnelCavityMaterial),
+  itsGeometry(geometry), itsBmap(bmap),
   fChordFinder(NULL), itsFStepper(NULL), itsFEquation(NULL), itsEqRhs(NULL), 
   itsMagField(NULL), itsCachedMagField(NULL), itsUniformMagField(NULL)
 {
@@ -64,39 +53,27 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap, G4doubl
   itsFieldIsUniform=false;
   itsOuterR = outR;
   itsBmapZOffset = bmapZOffset;
-  SetType(_ELEMENT);
-
-  //Set marker volume lengths
-  CalculateLengths();
 
   // WARNING: ALign in and out will only apply to the first instance of the
   //          element. Subsequent copies will have no alignment set.
   align_in_volume = NULL;
   align_out_volume = NULL;
-
-  if(!(*LogVolCount)[itsName])
-    {
-#ifdef BDSDEBUG 
-      G4cout<<"BDSElement : starting build logical volume "<<
-        itsName<<G4endl;
-#endif
-      BuildGeometry(); // build element box
-      
-#ifdef BDSDEBUG 
-      G4cout<<"BDSElement : end build logical volume "<<
-        itsName<<G4endl;
-#endif
-
-      PlaceComponents(geometry,bmap); // place components (from file) and build filed maps
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-      
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-    }
 }
 
+void BDSElement::BuildMarkerLogicalVolume() {
+#ifdef BDSDEBUG 
+  G4cout<<"BDSElement : starting build logical volume "<<
+    itsName<<G4endl;
+#endif
+  BuildGeometry(); // build element box
+      
+#ifdef BDSDEBUG 
+  G4cout<<"BDSElement : end build logical volume "<<
+    itsName<<G4endl;
+#endif
+
+  PlaceComponents(itsGeometry,itsBmap); // place components (from file) and build filed maps
+}
 
 void BDSElement::BuildElementMarkerLogicalVolume(){
   
@@ -216,9 +193,6 @@ void BDSElement::BuildGeometry()
   // Build the marker logical volume 
   BuildElementMarkerLogicalVolume();
 
-
-  (*LogVolCount)[itsName] = 1;
-  (*LogVol)[itsName] = itsMarkerLogicalVolume;
 #ifndef NOUSERLIMITS
   itsOuterUserLimits = new G4UserLimits();
   G4double stepfactor=5;
@@ -291,10 +265,9 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     // set sensitive volumes
     //vector<G4LogicalVolume*> SensComps = ggmad->SensitiveComponents;
     //for(G4int id=0; id<SensComps.size(); id++)
-    //  SetMultipleSensitiveVolumes(SensComps[id]);
+    //  AddSensitiveVolume(SensComps[id]);
 
-    
-    SetMultipleSensitiveVolumes(itsMarkerLogicalVolume);
+    AddSensitiveVolume(itsMarkerLogicalVolume);
 
     // attach magnetic field if present
     if(bFormat=="3D"){
@@ -324,7 +297,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     itsMarkerLogicalVolume->SetVisAttributes(VisAttLCDD);
 
     LCDD->Construct(itsMarkerLogicalVolume);
-    SetMultipleSensitiveVolumes(itsMarkerLogicalVolume);
+    AddSensitiveVolume(itsMarkerLogicalVolume);
     if(bFormat=="XY"){
       itsMagField = new BDSXYMagField(bFile);
       itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::um);
@@ -356,7 +329,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 
     std::vector<G4LogicalVolume*> SensComps = LCDD->SensitiveComponents;
     for(G4int id=0; id<(G4int)SensComps.size(); id++)
-      SetMultipleSensitiveVolumes(SensComps[id]);
+      AddSensitiveVolume(SensComps[id]);
     delete LCDD;
 #else
     G4cout << "LCDD support not selected during BDSIM configuration" << G4endl;
@@ -375,7 +348,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 
     std::vector<G4LogicalVolume*> SensComps = Mokka->SensitiveComponents;
     for(G4int id=0; id<(G4int)SensComps.size(); id++)
-      SetMultipleSensitiveVolumes(SensComps[id]);
+      AddSensitiveVolume(SensComps[id]);
 
     std::vector<G4LogicalVolume*> GFlashComps =Mokka->itsGFlashComponents;
     for(G4int id=0; id<(G4int)GFlashComps.size(); id++)
@@ -439,10 +412,9 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 
 
 
-G4VisAttributes* BDSElement::SetVisAttributes()
+void BDSElement::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.5,0.5,1));
-  return itsVisAttributes;
 }
 
 

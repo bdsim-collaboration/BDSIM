@@ -17,8 +17,6 @@
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
 
-#include "G4VisAttributes.hh"
-
 class BDSDump : public BDSAcceleratorComponent
 {
 public:
@@ -29,12 +27,10 @@ public:
   /// separate counter used in BDSRunManager
   static int nUsedDumps;
 
-protected:
-
 private:
 
-  void DumpLogicalVolume();
-  G4VisAttributes* SetVisAttributes();
+  virtual void BuildMarkerLogicalVolume();
+  virtual void SetVisAttributes();
 
   /// number of total Dumps
   static int nDumps;

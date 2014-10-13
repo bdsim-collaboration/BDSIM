@@ -22,17 +22,12 @@
 #include "G4RegionStore.hh"
 #include "BDSMySQLWrapper.hh"
 #include "BDSMaterials.hh"
-#include "G4SDManager.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSampler.hh"
 #include "BDSPCLTube.hh"
 #include <vector>
 #include <cstdlib>
 #include <cstring>
-
-extern BDSSamplerSD* BDSSamplerSensDet;
-
-//extern BDSGlobalConstants* BDSGlobalConstants::Instance();
 
 BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength):
   rotateComponent(NULL),itsMarkerVol(NULL)
@@ -609,12 +604,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildSampler(BDSMySQLTable* aSQLTable, G4int k)
 
   _lengthUserLimit = length*0.5;
   
-  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-  if(BDSSampler::GetNSamplers()==0){
-    BDSSamplerSensDet = new BDSSamplerSD(_Name, "plane");
-    SDMan->AddNewDetector(BDSSamplerSensDet);
-  }
-  aSamplerVol->SetSensitiveDetector(BDSSamplerSensDet);
+  aSamplerVol->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
 
   BDSSampler::AddExternalSampler(BDSGlobalConstants::Instance()->StringFromInt(BDSSampler::GetNSamplers())+"_"+_Name+"_1");
   

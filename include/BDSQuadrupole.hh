@@ -20,19 +20,7 @@
 #define __BDSQUADRUPOLE_H
 
 #include "globals.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-#include "BDSQuadStepper.hh"
-
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4PVPlacement.hh"               
-
 #include "BDSMultipole.hh"
-#include "BDSQuadMagField.hh"
 
 class BDSQuadrupole :public BDSMultipole
 {
@@ -46,18 +34,18 @@ public:
 
 private:
   G4double itsBGrad;
+  
+  virtual void Build();
 
-  void BuildOuterLogicalVolume();
-  void BuildBPFieldAndStepper();
+  virtual void BuildOuterLogicalVolume(bool OuterMaterialIsVacuum = false);
+  virtual void BuildBPFieldAndStepper();
+  
+  /// quad with poles and pockets
+  void BuildStandardOuterLogicalVolume();
+  /// cylinder
   void BuildCylindricalOuterLogicalVolume();
 
-  G4VisAttributes* SetVisAttributes();
-
-  // field related objects:
-  BDSQuadStepper* itsStepper;
-  BDSQuadMagField* itsMagField;
-  G4Mag_UsualEqRhs* itsEqRhs;
-
+  void SetVisAttributes();
 };
 
 #endif

@@ -20,20 +20,8 @@
 #define BDSSectorBend_h 
 
 #include "globals.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-#include "BDSDipoleStepper.hh"
-
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4PVPlacement.hh"               
 
 #include "BDSMultipole.hh"
-#include "BDSSbendMagField.hh"
-#include "G4Mag_EqRhs.hh"
 
 class BDSSectorBend :public BDSMultipole
 {
@@ -53,18 +41,19 @@ private:
   G4double itsBField;
   G4double itsBGrad;
 
-  void BuildBPFieldAndStepper();
-  void BuildSBMarkerLogicalVolume();
-  void BuildSBBeampipe();
-  void BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
-  void BuildSBDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+  virtual void Build();
+  virtual void BuildBPFieldAndStepper();
+  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildBeampipe(G4String materialName = "");
 
-  G4VisAttributes* SetVisAttributes();
+  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
 
-  // field related objects:
-  BDSDipoleStepper* itsStepper;
-  BDSSbendMagField* itsMagField;
-  G4Mag_EqRhs* itsEqRhs;
+  /// quad with poles and pockets
+  void BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+  /// cylinder
+  void BuildCylindricalOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+
+  virtual void SetVisAttributes();
 
   // G4int itsNSegments;
   // G4double itsSegmentLength;

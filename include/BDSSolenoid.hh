@@ -20,18 +20,7 @@
 
 #include "globals.hh"
 
-
-#include "G4VisAttributes.hh"
 #include "BDSMultipole.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4UniformMagField.hh"
-#include "BDSSolenoidStepper.hh"
-#include "BDSSolenoidMagField.hh"
-
-class G4Mag_UsualEqRhs;
-class G4UniformMagField;
-class BDSSolenoidStepper;
-class BDSSolenoidMagField;
 
 class BDSSolenoid : public BDSMultipole
 {
@@ -47,19 +36,10 @@ public:
 private:
   G4double itsBField;
 
-  void BuildBPFieldAndStepper();
+  virtual void Build();
+  virtual void BuildBPFieldAndStepper();
 
-  G4VisAttributes* SetVisAttributes();
-
-  // field related objects:
-#ifdef _USE_GEANT4_STEPPER_
-  BDSSolenoidMagField* itsMagField;
-  G4MagIntegratorStepper* itsStepper;
-#else
-  G4UniformMagField* itsMagField;
-  BDSSolenoidStepper* itsStepper;
-#endif
-  G4Mag_UsualEqRhs* itsEqRhs;
+  virtual void SetVisAttributes();
 };
 
 #endif

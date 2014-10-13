@@ -191,6 +191,8 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsLWCalOffset      = 0.0;
   itsMagnetPoleRadius = 0.0;
   itsMagnetPoleSize   = 0.0;
+  teleporterdelta     = G4ThreeVector(0.,0.,0.);
+  teleporterlength    = 0.0;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "finished constructor" << G4endl;
 #endif

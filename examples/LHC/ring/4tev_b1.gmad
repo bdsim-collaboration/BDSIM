@@ -18,4 +18,4 @@ include lhc_options.gmad;
 !include beam_core.gmad;
 include beam_reference.gmad;
 
-option,ngenerate=1;
+option,ngenerate=10;

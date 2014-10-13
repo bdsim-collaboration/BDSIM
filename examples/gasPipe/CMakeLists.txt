@@ -1,1 +1,1 @@
-simple_testing(gasPipe "--file=gasPipe.gmad" "")
+simple_testing(gasPipe_LONG "--file=gasPipe.gmad" "")

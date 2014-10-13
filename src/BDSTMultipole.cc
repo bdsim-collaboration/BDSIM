@@ -7,30 +7,19 @@
 
 //==============================================================
 
-
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSTMultipole.hh"
-#include "G4Tubs.hh"
-#include "G4VisAttributes.hh"
-#include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
-
 #include "BDSMultipoleMagField.hh"
-#include "G4Mag_UsualEqRhs.hh"
+
+#include "G4FieldManager.hh"
 #include "G4HelixImplicitEuler.hh"
-
-#include <map>
-
-//============================================================
-
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
+#include "G4LogicalVolume.hh"
+#include "G4Mag_UsualEqRhs.hh"
+#include "G4Tubs.hh"
+#include "G4UserLimits.hh"
+#include "G4VisAttributes.hh"
+#include "G4VPhysicalVolume.hh"
 
 //============================================================
 
@@ -40,8 +29,7 @@ BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength,
 			     std::list<G4double> akn, std::list<G4double> aks, 
                              std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
 			     G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName,aLength, bpRad, FeRad,SetVisAttributes(),blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
-  itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
+  BDSMultipole(aName,aLength, bpRad, FeRad,blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial)
 {
   SetOuterRadius(outR);
   itsTilt=tilt;
@@ -103,74 +91,12 @@ BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength,
 #endif
 
   itsOrder = kn.size();
-  
-  if (!(*LogVolCount)[itsName])
-    {
-      //
-      // build external volume
-      //
-      BuildDefaultMarkerLogicalVolume();
-
-      //
-      //build tunnel
-      if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-        BuildTunnel();
-      }
-      
-      //
-      // build beampipe (geometry + magnetic field)
-      //
-      //Build multipole field and stepper if field is non-zero, otherwise
-      //build drift field and stepper
-      //      if(fieldNonZero){
-        BuildBPFieldAndStepper();
-        BuildBPFieldMgr(itsStepper,itsMagField);
-        //      }
-      BuildBeampipe();
-      
-      //
-      // build magnet (geometry + magnetic field)
-      //
-      BuildDefaultOuterLogicalVolume();
-      
-      //
-      // define sensitive volumes for hit generation
-      //
-      if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-        SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-      }
-      if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-        SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-      }
-
-      BuildBLMs();
-      
-      //
-      // set visualization attributes
-      //
-      itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
-      
-      //
-      // append marker logical volume to volume map
-      //
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-      //
-      // use already defined marker volume
-      //
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-    }      
 }
 
-G4VisAttributes* BDSTMultipole::SetVisAttributes()
+void BDSTMultipole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.1,0.4,0.2));
   itsVisAttributes->SetForceSolid(true);
-  return itsVisAttributes;
 }
 
 void BDSTMultipole::BuildBPFieldAndStepper()
@@ -178,13 +104,9 @@ void BDSTMultipole::BuildBPFieldAndStepper()
   // set up the magnetic field and stepper
   itsMagField=new BDSMultipoleMagField(kn,ks);
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
-  
   itsStepper=new G4HelixImplicitEuler(itsEqRhs);
 }
 
 BDSTMultipole::~BDSTMultipole()
 {
-  delete itsMagField;
-  delete itsEqRhs;
-  delete itsStepper;
 }

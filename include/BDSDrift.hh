@@ -8,19 +8,7 @@
 #define BDSDrift_h 1
 
 #include "globals.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4PVPlacement.hh"               
-#include "BDSDriftStepper.hh"
-#include "BDSMagField.hh"
 #include "BDSMultipole.hh"
-#include "G4MagIntegratorStepper.hh"
 
 class BDSDrift :public BDSMultipole
 {
@@ -40,17 +28,15 @@ public:
   ~BDSDrift();
 
 protected:
-  void BuildBpFieldAndStepper();
-  //field related objects
-  G4MagIntegratorStepper* itsStepper;
-  //BDSDriftStepper* itsStepper;
-  BDSMagField* itsMagField;
-  G4Mag_UsualEqRhs* itsEqRhs;
+  virtual void Build();
+
 private:
-  void BuildBLMs();
-  G4VisAttributes* SetVisAttributes();
+  virtual void BuildBeampipe(G4String materialName = "");
+  virtual void BuildBPFieldAndStepper();
+  virtual void BuildBLMs();
   G4double itsStartOuterR;
   G4double itsEndOuterR;
+  G4bool itsAperset;
 };
 
 #endif
