@@ -149,7 +149,7 @@ TRKLine* TRKFactory::createLine(ElementList& beamline_list) {
     if (element) {
       line->AddElement(element);
 #ifdef TRKDEBUG
-      std::cout << __METHOD_NAME__ << "element created: " << *element << std::endl;
+      std::cout << " Element created: " << *element << std::endl;
 #endif
       // update placement
     }
@@ -220,7 +220,7 @@ TRKElement* TRKFactory::createLine(Element& /*element*/) {
 
 TRKElement* TRKFactory::createDrift(Element& element) {
 #ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << std::endl;
+  std::cout << __METHOD_NAME__;
 #endif
   TRKAperture* aperture = createAperture(element);
   return new TRKDrift(element.name,
@@ -231,7 +231,7 @@ TRKElement* TRKFactory::createDrift(Element& element) {
 
 TRKElement* TRKFactory::createDipole(Element& /*element*/) {
 #ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << std::endl;
+  std::cout << __METHOD_NAME__;
 #endif
   // bfield , see componentfactory and bdskicker.cc
   // strength (bprime)
@@ -241,7 +241,7 @@ TRKElement* TRKFactory::createDipole(Element& /*element*/) {
 
 TRKElement* TRKFactory::createQuadrupole(Element& element) {
 #ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << std::endl;
+  std::cout << __METHOD_NAME__;
 #endif
   double bPrime = - brho * (element.k1 / CLHEP::m2);
   TRKAperture* aperture = createAperture(element);
@@ -254,7 +254,7 @@ TRKElement* TRKFactory::createQuadrupole(Element& element) {
 
 TRKElement* TRKFactory::createSextupole(Element& element) {
 #ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << std::endl;
+  std::cout << __METHOD_NAME__;
 #endif
   double bPrime = - brho * (element.k2 / CLHEP::m3); // to be checked
   TRKAperture* aperture = createAperture(element);
@@ -267,7 +267,7 @@ TRKElement* TRKFactory::createSextupole(Element& element) {
 
 TRKElement* TRKFactory::createOctupole(Element& element) {
 #ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << std::endl;
+  std::cout << __METHOD_NAME__;
 #endif
   double bPrime = - brho * (element.k3 / CLHEP::m2 / CLHEP::m2); // to be checked
   TRKAperture* aperture = createAperture(element);
@@ -280,7 +280,7 @@ TRKElement* TRKFactory::createOctupole(Element& element) {
 
 TRKElement* TRKFactory::createDecapole(Element& /*element*/) {
 #ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << std::endl;
+  std::cout << __METHOD_NAME__;
 #endif
   //TRKAperture* aperture = createAperture(element);
   return NULL;
@@ -288,7 +288,7 @@ TRKElement* TRKFactory::createDecapole(Element& /*element*/) {
 
 TRKElement* TRKFactory::createSampler(Element& element) {
 #ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << std::endl;
+  std::cout << __METHOD_NAME__;
 #endif
   return new TRKSampler(element.name);
 }
