@@ -4,6 +4,7 @@
 #include "TRKElement.hh"
 
 class TRKBunch;
+class TRKDrift;
 class TRKBend;
 class TRKDipole;
 class TRKQuadrupole;
@@ -30,6 +31,7 @@ public :
    * @param[in]  bunch The bunch.
    */
   ///@{
+  void         Track(TRKElement*    el, TRKBunch* bunch);
   virtual void Track(TRKDrift*      el, TRKBunch* bunch)=0;
   virtual void Track(TRKBend*       el, TRKBunch* bunch)=0;
   virtual void Track(TRKDipole*     el, TRKBunch* bunch)=0;

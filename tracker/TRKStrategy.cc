@@ -12,6 +12,10 @@ TRKStrategy::TRKStrategy(int trackingStepsIn) :
 TRKStrategy::~TRKStrategy() { 
 }
 
+void TRKStrategy::Track(TRKElement* el, TRKBunch* bunch) {
+  Track((TRKDrift*)el,bunch);
+}
+
 void TRKStrategy::Track(TRKSampler* el, TRKBunch* bunch) {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << " Sampler writing output" << std::endl;

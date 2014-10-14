@@ -43,6 +43,6 @@ private :
 };
 
 // declare drift
-typedef TRKElement TRKDrift;
+//typedef TRKElement TRKDrift;
 
 #endif

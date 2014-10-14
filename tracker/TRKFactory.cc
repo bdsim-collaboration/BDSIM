@@ -8,6 +8,7 @@
 
 //individual beam elements
 #include "TRKLine.hh"
+#include "TRKDrift.hh"
 #include "TRKDipole.hh"
 #include "TRKDecapole.hh"
 #include "TRKQuadrupole.hh"

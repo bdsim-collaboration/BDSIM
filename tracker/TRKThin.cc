@@ -10,6 +10,7 @@
 #include "TRKBunch.hh"
 #include "TRKHybrid.hh"
 #include "TRKParticle.hh"
+#include "TRKDrift.hh"
 #include "TRKDipole.hh"
 #include "TRKQuadrupole.hh"
 #include "TRKSextupole.hh"
