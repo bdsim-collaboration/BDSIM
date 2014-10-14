@@ -48,7 +48,7 @@ TRKFactory::TRKFactory(Options& options) {
   brho = options.ffact * momentum / 0.299792458 / charge;
   
   /// start placement, could be updated after every new element
-  placement = new TRKPlacement();
+  placement = NULL;//new TRKPlacement();
   /// circular flag? //not available from Options, as command line option!
   // could use GC.nturns instead!
   //  bool circular = options.
