@@ -212,7 +212,8 @@ void TRKHybrid::Track(TRKBend* el, TRKBunch* bunch) {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << " Bend" << std::endl;
 #endif
-
+  std::cout << "DANGER WILL ROBINSON - NOT FINISHED" << std::endl;
+  return Track((TRKDrift*)el, bunch);
 }
 
 void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) { 
