@@ -14,6 +14,8 @@ private:
 public :
   TRKSolenoid(double strength, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKSolenoid();
+
+  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
   
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKSolenoid &element);

@@ -15,6 +15,8 @@ public:
   TRKSextupole(double strength, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKSextupole();
 
+  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
+
   double GetStrength()const{return strength;}
 
   /// output stream

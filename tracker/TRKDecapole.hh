@@ -14,6 +14,8 @@ private:
 public:
   TRKDecapole(double strength, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKDecapole();
+
+  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
   
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKDecapole &element);

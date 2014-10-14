@@ -19,6 +19,8 @@ public:
   TRKBend(double strength, double angle, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKBend();
   
+  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
+  
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKBend &element);
 

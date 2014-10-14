@@ -17,6 +17,8 @@ public:
   
   double GetStrength()const{return strength;}
 
+  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
+
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKQuadrupole &element);
 

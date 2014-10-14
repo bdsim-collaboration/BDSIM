@@ -19,7 +19,7 @@ public :
   ~TRKElement();
 
   /// track method, visitor pattern
-  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
+  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy) = 0;
   void CheckAperture(TRKBunch* bunch);
 
   std::string  GetName()const {return name;}
