@@ -13,6 +13,8 @@
 #include "TRKSextupole.hh"
 #include "TRKOctupole.hh"
 
+#include "BDSDebug.hh"
+
 TRKHybrid::TRKHybrid(int trackingStepsIn) : 
   TRKStrategy(trackingStepsIn) {
 }
@@ -20,7 +22,10 @@ TRKHybrid::TRKHybrid(int trackingStepsIn) :
 TRKHybrid::~TRKHybrid() { 
 }
 
-void TRKHybrid::Track(TRKDrift* el, TRKBunch* bunch) { 
+void TRKHybrid::Track(TRKDrift* el, TRKBunch* bunch) {
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << " Drift" << std::endl;
+#endif
   // this drift method can be done in one go, trackingsteps not needed;
   const double h = el->GetLength(); 
   TRKBunchIter iter = bunch->begin();
@@ -34,6 +39,9 @@ void TRKHybrid::Track(TRKDrift* el, TRKBunch* bunch) {
 }
 
 void TRKHybrid::Track(TRKDipole* el, TRKBunch* bunch) { 
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << " Dipole" << std::endl;
+#endif
   double strength = el->GetStrength();
   if (std::abs(strength)<=1e-12) {
     return Track((TRKDrift*)el,bunch);
@@ -199,10 +207,16 @@ void TRKHybrid::Track(TRKDipole* el, TRKBunch* bunch) {
 }
 
 void TRKHybrid::Track(TRKBend* el, TRKBunch* bunch) { 
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << " Bend" << std::endl;
+#endif
 
 }
 
 void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) { 
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << " Quadrupole" << std::endl;
+#endif
   double strength = el->GetStrength();
   if (std::abs(strength)<=1e-12) {
     return Track((TRKDrift*)el,bunch);
@@ -386,6 +400,9 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
 }
 
 void TRKHybrid::Track(TRKSextupole* el, TRKBunch* bunch) { 
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << " Sextupole" << std::endl;
+#endif
   double strength = el->GetStrength();
   if (std::abs(strength)<=1e-12) {
     return Track((TRKDrift*)el,bunch);
@@ -462,4 +479,7 @@ void TRKHybrid::Track(TRKSextupole* el, TRKBunch* bunch) {
 }
 
 void TRKHybrid::Track(TRKOctupole* /*el*/, TRKBunch* /*bunch*/) { 
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << " Octupole" << std::endl;
+#endif
 }

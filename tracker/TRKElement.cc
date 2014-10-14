@@ -12,6 +12,7 @@ TRKElement::~TRKElement() {}
 void TRKElement::Track(TRKBunch* bunch, TRKStrategy* strategy)
 {
 #ifdef TRKDEBUG
+  std::cout << "Tracking through element named: " << name << std::endl;
   std::cout << "before tracking" << std::endl;
   std::cout << *bunch;
 #endif
