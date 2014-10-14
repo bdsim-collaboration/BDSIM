@@ -24,7 +24,7 @@ int main (int argc, char** argv){
   
   //parse input
   gmad_parser(BDSExecOptions::Instance()->GetInputFilename());
-
+  
   //initialise output
   trkOutput = TRK::InitialiseOutput();
 

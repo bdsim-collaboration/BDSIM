@@ -7,6 +7,7 @@
 #include "TRKBunch.hh"
 #include "TRKParticle.hh"
 #include "TRKParticleDefinition.hh"
+#include "TRKPhysicsCalculations.hh"
 
 #include "BDSBunch.hh"
 #include "parser/options.h"
@@ -27,6 +28,9 @@ TRKBunch::TRKBunch(struct Options& opt)
   bunch.reserve(population);
   //populate particles using options & random number generator
   Populate(opt);
+
+  //calculate energy based on particle mass
+  TRK::CalculateKineticEnergy(options);
 }
 
 
