@@ -1,4 +1,5 @@
 #include "BDSBunchComposite.hh"
+#include "BDSDebug.hh"
 #include "BDSBunchFactory.hh"
 
 BDSBunchComposite::BDSBunchComposite() {
@@ -19,6 +20,21 @@ void BDSBunchComposite::SetOptions(struct Options& opt) {
   delete xBunch;
   delete yBunch;
   delete zBunch;
+
+  if (opt.xDistribType.empty() || opt.yDistribType.empty() || opt.zDistribType.empty())
+    {
+      G4cout << __METHOD_NAME__ << "Compositeness distribution requires x,y,z distribution to be set" << G4endl;
+      G4cout << __METHOD_NAME__ << "X: " << opt.xDistribType << G4endl;
+      G4cout << __METHOD_NAME__ << "Y: " << opt.yDistribType << G4endl;
+      G4cout << __METHOD_NAME__ << "Z: " << opt.zDistribType << G4endl;
+      exit(1);
+    }
+  
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "X: " << opt.xDistribType << G4endl;
+  G4cout << __METHOD_NAME__ << "Y: " << opt.yDistribType << G4endl;
+  G4cout << __METHOD_NAME__ << "Z: " << opt.zDistribType << G4endl;
+#endif
 
   xBunch = BDSBunchFactory::createBunch(opt.xDistribType);
   yBunch = BDSBunchFactory::createBunch(opt.yDistribType);
