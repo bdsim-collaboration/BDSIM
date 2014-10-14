@@ -16,8 +16,7 @@ void TRKStrategy::Track(TRKSampler* el, TRKBunch* bunch) {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << " Sampler writing output" << std::endl;
 #endif
-  std::string name = el->GetName();
   //don't modify particles, but we write to output here
-  trkOutput->WriteTrackerBunch(name,bunch);
+  trkOutput->WriteTrackerBunch(el->GetName(),bunch);
 
 }
