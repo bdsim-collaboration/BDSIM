@@ -19,6 +19,9 @@
 extern Options options;
 extern ElementList beamline_list;
 
+//GLOBALS
+BDSOutputBase* trkOutput; //output interface
+
 int main (int argc, char** argv){
   //for now, need exec options parsing from bdsim
   BDSExecOptions::Instance(argc,argv)->Print();
@@ -29,6 +32,9 @@ int main (int argc, char** argv){
   //build bunch - DONE
   TRKBunch* bunch   = new TRKBunch(options);
   std::cout << *bunch << std::endl;
+
+  //initialise output
+  trkOutput = TRK::InitialiseOutput();
 
   //create strategy / set of routines
   TRKStrategy* strategy = new TRKThin(1/*ntrackingsteps*/);
