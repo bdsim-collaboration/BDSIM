@@ -1,6 +1,7 @@
 #include "TRKStrategy.hh"
 #include "BDSOutputBase.hh"
 #include "TRKSampler.hh"
+#include "BDSDebug.hh"
 
 extern BDSOutputBase* trkOutput;
 
