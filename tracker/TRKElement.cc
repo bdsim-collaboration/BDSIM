@@ -32,9 +32,8 @@ void TRKElement::CheckAperture(TRKBunch* bunch)
 }
 
 std::ostream& operator<< (std::ostream &out, const TRKElement &element) {
-  out << element.name << "; L= "
-      << element.length << "m; Aperture: ";
-  if (element.aperture)  {out << *(element.aperture);}
-  if (element.placement) {out << *(element.placement);}
+  out << element.name << "; L= " << element.length << "m";
+  if (element.aperture)  {out << "; Aperture: " << *(element.aperture);}
+  if (element.placement) {out << "; Placement: " << *(element.placement);}
   return out;
 }
