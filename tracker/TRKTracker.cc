@@ -33,7 +33,7 @@ void TRKTracker::Track(TRKBunch* bunch)
   std::cout << __METHOD_NAME__ << "starting tracking" << std::endl;
   
   if (!bunch) return; //can't track nothing
-  if (bunch->size() < 1) return; //even if bunch exists, there must be particles in it
+  if (bunch->empty()) return; //even if bunch exists, there must be particles in it
   TRKLineConstIter elIter = line->begin();
   //iterate over number of turns - if linear, just 1 'turn'
   BDSGlobalConstants::Instance()->ResetTurnNumber(); //used in output data
@@ -53,7 +53,7 @@ void TRKTracker::Track(TRKBunch* bunch)
 	    {(*elIter)->CheckAperture(bunch);}
 	}// end of beamline iteration
       BDSGlobalConstants::Instance()->IncrementTurnNumber(); //used in output data
-      if (bunch->size() < 1) {std::cout << "No further particles to track" << std::endl;break;}
+      if (bunch->empty()) {std::cout << "No further particles to track" << std::endl;break;}
     }// end of turns iteration
   std::cout << "All turns completed" << std::endl
 	    << "Thank you for using BDSIM Tracker" << std::endl;
