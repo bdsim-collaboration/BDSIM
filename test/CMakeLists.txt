@@ -23,18 +23,6 @@ target_link_libraries(BDSTRKTest bdsim tracker gmad)
 set (binary BDSTRKTest)
 add_subdirectory(BDSTRKTestFiles)
 
-##############
-## TRKAperture #
-##############
-
-# add test executable
-add_executable(TRKApertureTest1 TRKApertureTest1.cc)
-set_target_properties(TRKApertureTest1 PROPERTIES OUTPUT_NAME "TRKApertureTest1" VERSION ${BDSIM_VERSION})
-target_link_libraries(TRKApertureTest1 bdsim tracker gmad)
-
-# set binary
-set (binary TRKApertureTest1)
-
 ###############
 ## TRKBunchTest #
 ###############
