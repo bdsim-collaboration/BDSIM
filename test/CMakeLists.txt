@@ -36,6 +36,12 @@ target_link_libraries(TRKBunchTest bdsim tracker gmad)
 set (binary TRKBunchTest)
 
 add_subdirectory(BDSBunchTestFiles)
+
+set (binary BDSTRKTest)
+
 add_subdirectory(BDSTRKTestFiles)
+
+set (binary TRKBunchTest)
+ 
 add_subdirectory(TRKBunchTestFiles)
 
