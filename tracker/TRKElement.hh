@@ -19,7 +19,7 @@ public :
   ~TRKElement();
 
   /// track method, visitor pattern
-  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy) = 0;
+  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
   void CheckAperture(TRKBunch* bunch);
 
   std::string  GetName()const {return name;}
@@ -43,6 +43,6 @@ private :
 };
 
 // declare drift
-//typedef TRKElement TRKDrift;
+typedef TRKElement TRKDrift;
 
 #endif
