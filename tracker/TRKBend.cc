@@ -13,6 +13,7 @@ void TRKBend::Track(TRKBunch* bunch, TRKStrategy* strategy) {
   strategy->Track(this,bunch);
 }
 
-std::ostream& operator<< (std::ostream &out, const TRKBend &element) {
-  return out << element.strength << " " << element.angle << " ";
+void TRKBend::Print(std::ostream &out)const {
+  TRKElement::Print(out);
+  out << "; Strength: " << strength << "T";
 }

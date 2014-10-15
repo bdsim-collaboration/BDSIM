@@ -13,6 +13,7 @@ void TRKSolenoid::Track(TRKBunch* bunch, TRKStrategy* strategy) {
   strategy->Track(this,bunch);
 }
 
-std::ostream& operator<< (std::ostream &out, const TRKSolenoid &element) {
-  return out << element.strength << " ";
+void TRKSolenoid::Print(std::ostream &out)const {
+  TRKElement::Print(out);
+  out << "; Strength: " << strength << "T/m";
 }

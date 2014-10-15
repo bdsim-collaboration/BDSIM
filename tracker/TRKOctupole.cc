@@ -21,6 +21,7 @@ void TRKOctupole::Track(TRKBunch* bunch, TRKStrategy* strategy) {
   strategy->Track(this,bunch);
 }
 
-std::ostream& operator<< (std::ostream &out, const TRKOctupole &element) {
-  return out << element.strength << " ";
+void TRKOctupole::Print(std::ostream &out)const {
+  TRKElement::Print(out);
+  out << "; Strength: " << strength << "T/m^3";
 }

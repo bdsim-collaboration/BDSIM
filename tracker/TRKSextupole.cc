@@ -21,6 +21,7 @@ void TRKSextupole::Track(TRKBunch* bunch, TRKStrategy* strategy) {
   strategy->Track(this,bunch);
 }
 
-std::ostream& operator<< (std::ostream &out, const TRKSextupole &element) {
-  return out << element.strength << " ";
+void TRKSextupole::Print(std::ostream &out)const {
+  TRKElement::Print(out);
+  out << "; Strength: " << strength << "T/m^2";
 }

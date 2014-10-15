@@ -23,6 +23,7 @@ void TRKDipole::Track(TRKBunch* bunch, TRKStrategy* strategy) {
   strategy->Track(this,bunch);
 }
 
-std::ostream& operator<< (std::ostream &out, const TRKDipole &element) {
-  return out << element.strength << " ";
+void TRKDipole::Print(std::ostream &out)const {
+  TRKElement::Print(out);
+  out << "; Strength: " << strength << "T";
 }

@@ -21,8 +21,9 @@ public:
 
   double GetStrength()const{return strength;}
 
+protected:
   /// output stream
-  friend std::ostream& operator<< (std::ostream &out, const TRKDipole &element);
+  virtual void Print(std::ostream& out) const;
 
 private:
   TRKDipole(); ///< not implemented

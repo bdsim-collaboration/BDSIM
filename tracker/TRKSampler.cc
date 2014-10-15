@@ -14,6 +14,6 @@ void TRKSampler::Track(TRKBunch* bunch, TRKStrategy* strategy) {
   strategy->Track(this,bunch);
 }
 
-std::ostream& operator<< (std::ostream& out, const TRKSampler& element) {
-  return out << "Sampler: " << element.name << " ";
+void TRKSampler::Print(std::ostream &out)const {
+  out << "Sampler: " << name << " ";
 }

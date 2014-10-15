@@ -9,12 +9,13 @@ TRKQuadrupole::TRKQuadrupole(double strengthIn, std::string nameIn, double lengt
 TRKQuadrupole::~TRKQuadrupole() {
 }
 
-std::ostream& operator<< (std::ostream &out, const TRKQuadrupole &element) {
-  return out << element.strength << " ";
-}
-
 void TRKQuadrupole::Track(TRKBunch* bunch, TRKStrategy* strategy) {
   strategy->Track(this,bunch);
+}
+
+void TRKQuadrupole::Print(std::ostream &out)const {
+  TRKElement::Print(out);
+  out << "; Strength: " << strength << "T/m";
 }
 
 // void TRKQuadrupole::ThinKick(const vector6& vIn, vector6& vOut) {

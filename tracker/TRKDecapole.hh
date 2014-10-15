@@ -17,8 +17,9 @@ public:
 
   virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
   
+protected:
   /// output stream
-  friend std::ostream& operator<< (std::ostream &out, const TRKDecapole &element);
+  virtual void Print(std::ostream& out) const;
 
 private:
   TRKDecapole(); ///< not implemented

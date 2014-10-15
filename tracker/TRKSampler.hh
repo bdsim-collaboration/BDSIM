@@ -15,8 +15,9 @@ public:
 
   virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
 
+protected:
   /// output stream
-  friend std::ostream& operator<< (std::ostream &out, const TRKSampler& element);
+  virtual void Print(std::ostream& out) const;
   
 private:
   TRKSampler(); ///< not implemented
