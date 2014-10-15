@@ -26,11 +26,10 @@ TRKBunch::TRKBunch(struct Options& opt)
   if (population == 0){population = 1;}
   //initialise the vector of particles
   bunch.reserve(population);
+  //calculate energy based on particle mass - must do before we populate
+  TRK::CalculateKineticEnergy(options);
   //populate particles using options & random number generator
   Populate(opt);
-
-  //calculate energy based on particle mass
-  TRK::CalculateKineticEnergy(options);
 }
 
 
