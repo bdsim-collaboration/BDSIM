@@ -16,7 +16,9 @@ private:
 public:
   TRKDipole(double strength, double bField, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKDipole();
-  
+
+  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);  
+
   double GetStrength()const{return strength;}
 
   /// output stream

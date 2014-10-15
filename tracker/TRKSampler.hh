@@ -13,11 +13,11 @@ public:
   TRKSampler(std::string nameIn);
   ~TRKSampler();
 
+  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
+
+  /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKSampler& element);
-
-  void Track(TRKBunch* bunch, TRKStrategy* strategy);
-  void CheckAperture(TRKBunch* bunch);
-
+  
 private:
   TRKSampler(); ///< not implemented
 };

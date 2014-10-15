@@ -26,14 +26,14 @@ public:
    * @param[in]  bunch The bunch.
    */
   ///@{
-  virtual void Track(TRKDrift* el, TRKBunch* bunch);
+  virtual void Track(TRKDrift*  el, TRKBunch* bunch);
   virtual void Track(TRKDipole* el, TRKBunch* bunch);
   ///@}
 
   //  same as in TRKThin
   //  void Track(TRKQuadrupole* el, TRKBunch* bunch);
-  //  void Track(TRKSextupole* el, TRKBunch* bunch);
-  //  void Track(TRKOctupole* el, TRKBunch* bunch);
+  //  void Track(TRKSextupole*  el, TRKBunch* bunch);
+  //  void Track(TRKOctupole*   el, TRKBunch* bunch);
 
 private:
   TRKThinSymplectic(); ///< not implemented

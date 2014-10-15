@@ -1,5 +1,5 @@
 #include "TRKQuadrupole.hh"
-
+#include "TRKStrategy.hh"
 
 TRKQuadrupole::TRKQuadrupole(double strengthIn, std::string nameIn, double lengthIn, TRKAperture *apertureIn, TRKPlacement *placementIn):
   TRKElement(nameIn,lengthIn,apertureIn,placementIn), strength(strengthIn)
@@ -11,6 +11,10 @@ TRKQuadrupole::~TRKQuadrupole() {
 
 std::ostream& operator<< (std::ostream &out, const TRKQuadrupole &element) {
   return out << element.strength << " ";
+}
+
+void TRKQuadrupole::Track(TRKBunch* bunch, TRKStrategy* strategy) {
+  strategy->Track(this,bunch);
 }
 
 // void TRKQuadrupole::ThinKick(const vector6& vIn, vector6& vOut) {

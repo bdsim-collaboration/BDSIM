@@ -10,6 +10,7 @@
 #include "TRKBunch.hh"
 #include "TRKHybrid.hh"
 #include "TRKParticle.hh"
+#include "TRKDrift.hh"
 #include "TRKDipole.hh"
 #include "TRKQuadrupole.hh"
 #include "TRKSextupole.hh"
@@ -70,7 +71,7 @@ void TRKThin::Track(TRKDipole* el, TRKBunch* bunch) {
 }
 
 void TRKThin::Track(TRKBend* el, TRKBunch* bunch) { 
-
+  return Track((TRKDrift*)el,bunch);
 }
 
 void TRKThin::Track(TRKQuadrupole* el, TRKBunch* bunch) { 

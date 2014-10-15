@@ -15,6 +15,8 @@ public:
   TRKOctupole(double strength, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKOctupole();
 
+  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
+
   double GetStrength()const{return strength;}
 
   /// output stream

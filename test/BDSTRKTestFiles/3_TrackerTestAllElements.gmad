@@ -1,0 +1,47 @@
+d1: drift, l=0.25;
+q1: quadrupole, l=0.5, k1=2.0;
+s1: sextupole, l=0.7, k2=0.3;
+o1: octupole, l=0.6, k3=0.4;
+sol1: solenoid, l=2.3, k0=0.4;
+endl: marker;
+
+lat : line = (d1,q1,s1,o1,sol1,endl);
+use, period=lat;
+
+sample, range = endl;
+
+option, beampipeRadius = 20 * mm,
+        boxSize = 1.9 * m,
+        tunnelRadius= 2.0 * m,
+        beampipeThickness   = 0.5 * cm,
+        chordStepMinimum    = 0.0000000001 * m,
+        deltaIntersection   = 0.00000001 * m,
+        deltaChord          = 0.001 * m,
+        lengthSafety        = 0.00001 * m,
+        thresholdCutCharged = 10 * MeV,
+        thresholdCutPhotons = 10 * MeV,
+	samplerDiameter = 4.0*m,
+	stopTracks = 0,
+	trackingType = "hybrid",
+	trackingSteps = 1;
+
+option,physicsList="em_standard";
+
+option, ngenerate=5,
+	apertureType="circular";
+
+!beam,  particle="e-",
+!       energy = 1*GeV,
+!       distrType  = "userfile",
+!       distrFile  = "1_Particles.dat",
+!       distrFileFormat = "x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:E[MeV]";
+
+!option, nlinesIgnore = 0;
+
+beam,   particle = "e-",
+	energy = 1*GeV,
+	distrType="square",
+	X0 = 0.1*mm,
+	Y0 = 0*mm,
+	envelopeX = 1*mm,
+	envelopeY = 1*mm;
