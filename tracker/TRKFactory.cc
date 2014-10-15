@@ -48,7 +48,12 @@ TRKFactory::TRKFactory(Options& options) {
   charge = TRKParticleDefinition::Instance()->GetParticleCharge(options.particleName);
   momentum = options.beamEnergy;
   // magnetic rigidity
-  brho = options.ffact * momentum / 0.299792458 / charge;
+  if (charge!=0) {
+    brho = options.ffact * momentum / 0.299792458 / charge;
+  } else {
+    // zero charge particles have infinite magnetic rigidity
+    brho = 0;
+  }
   
   /// start placement, could be updated after every new element
   placement = NULL;//new TRKPlacement();
@@ -300,11 +305,11 @@ TRKElement* TRKFactory::createSolenoid(Element& element) {
   double bField;
   if(element.B != 0){
     bField = element.B * CLHEP::tesla;
-    element.ks  = (bField/brho) / CLHEP::m;
+    //    element.ks  = (bField/brho) / CLHEP::m;
   }
   else{
     bField = (element.ks/CLHEP::m) * brho;
-    element.B = bField/CLHEP::tesla;
+    //    element.B = bField/CLHEP::tesla;
   }
 
   TRKAperture* aperture = createAperture(element);

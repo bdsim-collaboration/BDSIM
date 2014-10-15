@@ -52,7 +52,7 @@ private:
   //TRKElement* createTransform3D(Element& element);
 
   /// particle properties
-  double charge;
+  int charge;
   /// beam momentum in GeV
   double momentum;
   double brho;
