@@ -3,8 +3,6 @@
 
 #include <cmath>
 
-#include "BDSOutputBase.hh"
-
 namespace TRK {
   // tracking parameters
   /// steps for thin lens tracking
@@ -45,9 +43,6 @@ namespace TRK {
       c = (ea + inv_ea)*0.5;
     }
   }
-  
-  BDSOutputBase* InitialiseOutput();
-
 }
 
 #endif

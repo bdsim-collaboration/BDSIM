@@ -11,6 +11,7 @@
 #include "tracker/TRKAperture.hh"
 #include "tracker/TRKApertureCircular.hh"
 #include "tracker/TRKQuadrupole.hh"
+#include "tracker/TRKOutput.hh"
 
 #include "BDSExecOptions.hh"
 

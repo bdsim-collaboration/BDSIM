@@ -1,9 +1,8 @@
-#include "TRK.hh"
+#include "TRKOutput.hh"
 
 #include "BDSOutputASCII.hh"
 #include "BDSOutputROOT.hh"
 #include "BDSExecOptions.hh"
-#include "BDSOutputFormat.hh"
 
 //This is based on a section from the bdsim.cc main, but put in a function 
 // JS: better not to use separate functions, rather should become a factory class or singleton in OutputBase.

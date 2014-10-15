@@ -7,6 +7,7 @@
 #include "tracker/TRKFactory.hh"
 #include "tracker/TRKStrategy.hh"
 #include "tracker/TRKTracker.hh"
+#include "tracker/TRKOutput.hh"
 
 #include "BDSExecOptions.hh"
 
