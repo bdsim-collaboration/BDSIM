@@ -20,6 +20,7 @@
 //tracking strategies / routines
 #include "TRKStrategy.hh"
 #include "TRK.hh"
+#include "TRKParticleDefinition.hh"
 #include "TRKThin.hh"
 #include "TRKThinSymplectic.hh"
 #include "TRKThick.hh"
@@ -44,8 +45,8 @@ TRKFactory::TRKFactory(Options& options) {
   std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
 #endif
   // define charge and momentum from options
-  charge = 1;
-  momentum = 0;
+  charge = TRKParticleDefinition::Instance()->GetParticleCharge(options.particleName);
+  momentum = options.beamEnergy;
   // magnetic rigidity
   brho = options.ffact * momentum / 0.299792458 / charge;
   
@@ -296,7 +297,7 @@ TRKElement* TRKFactory::createSolenoid(Element& element) {
   //
   // B = B/Brho * Brho = ks * Brho
   // brho is in Geant4 units, but ks is not -> multiply ks by m^-1
-  G4double bField;
+  double bField;
   if(element.B != 0){
     bField = element.B * CLHEP::tesla;
     element.ks  = (bField/brho) / CLHEP::m;

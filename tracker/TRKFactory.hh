@@ -53,6 +53,7 @@ private:
 
   /// particle properties
   double charge;
+  /// beam momentum in GeV
   double momentum;
   double brho;
 
