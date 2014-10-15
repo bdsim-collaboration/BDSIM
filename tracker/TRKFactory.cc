@@ -13,8 +13,9 @@
 #include "TRKDecapole.hh"
 #include "TRKQuadrupole.hh"
 #include "TRKOctupole.hh"
-#include "TRKSextupole.hh"
 #include "TRKSampler.hh"
+#include "TRKSextupole.hh"
+#include "TRKSolenoid.hh"
 
 //tracking strategies / routines
 #include "TRKStrategy.hh"
@@ -184,8 +185,7 @@ TRKElement* TRKFactory::createElement(Element& element) {
     //TEMPORARY
     //return createDrift(element);
   case _SOLENOID:
-    //TEMPORARY
-    return createDrift(element);
+    return createSolenoid(element);
   case _MULT:
     //TEMPORARY
     return createDrift(element);
@@ -285,6 +285,33 @@ TRKElement* TRKFactory::createDecapole(Element& /*element*/) {
 #endif
   //TRKAperture* aperture = createAperture(element);
   return NULL;
+}
+
+TRKElement* TRKFactory::createSolenoid(Element& element) {
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__;
+#endif
+  //
+  // magnetic field
+  //
+  // B = B/Brho * Brho = ks * Brho
+  // brho is in Geant4 units, but ks is not -> multiply ks by m^-1
+  G4double bField;
+  if(element.B != 0){
+    bField = element.B * CLHEP::tesla;
+    element.ks  = (bField/brho) / CLHEP::m;
+  }
+  else{
+    bField = (element.ks/CLHEP::m) * brho;
+    element.B = bField/CLHEP::tesla;
+  }
+
+  TRKAperture* aperture = createAperture(element);
+  return new TRKSolenoid(bField,
+			 element.name,
+			 element.l,
+			 aperture,
+			 placement);
 }
 
 TRKElement* TRKFactory::createSampler(Element& element) {

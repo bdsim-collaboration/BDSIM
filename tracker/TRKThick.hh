@@ -29,6 +29,7 @@ public:
   virtual void Track(TRKQuadrupole* el, TRKBunch* bunch);
   virtual void Track(TRKSextupole*  el, TRKBunch* bunch);
   virtual void Track(TRKOctupole*   el, TRKBunch* bunch);
+  virtual void Track(TRKSolenoid*   el, TRKBunch* bunch);
   ///@}
 
 private:

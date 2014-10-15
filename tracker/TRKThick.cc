@@ -119,3 +119,7 @@ void TRKThick::Track(TRKOctupole* el, TRKBunch* bunch) {
     }
   }
 }
+
+void TRKThick::Track(TRKSolenoid* el, TRKBunch* bunch) { 
+  Track((TRKDrift*)el,bunch);
+}

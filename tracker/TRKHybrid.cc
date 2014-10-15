@@ -485,4 +485,12 @@ void TRKHybrid::Track(TRKOctupole* /*el*/, TRKBunch* /*bunch*/) {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << " Octupole" << std::endl;
 #endif
+  //  Track((TRKDrift*)el,bunch);
+}
+
+void TRKHybrid::Track(TRKSolenoid* el, TRKBunch* bunch) { 
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << " Solenoid " << std::endl;
+#endif
+  Track((TRKDrift*)el,bunch);
 }

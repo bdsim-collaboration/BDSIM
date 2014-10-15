@@ -45,7 +45,7 @@ private:
   TRKElement* createSextupole(Element& element);
   TRKElement* createOctupole(Element& element);
   TRKElement* createDecapole(Element& element);
-  //TRKElement* createSolenoid(Element& element);
+  TRKElement* createSolenoid(Element& element);
   //TRKElement* createMultipole(Element& element);
   //TRKElement* createGmadElement(Element& element);
   TRKElement* createSampler(Element& element);

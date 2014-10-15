@@ -252,3 +252,7 @@ void TRKThin::Track(TRKOctupole* el, TRKBunch* bunch) {
     }
   }
 }
+
+void TRKThin::Track(TRKSolenoid* el, TRKBunch* bunch) { 
+  Track((TRKDrift*)el,bunch);
+}
