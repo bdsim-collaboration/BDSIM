@@ -87,7 +87,7 @@ double TRKParticleDefinition::GetParticleMass(const std::string particlename)
       std::cout << "particle name unrecognised - " << particlename << std::endl;
       exit(1);
     }
-  return it->second.second;
+  return it->second.first;
 }
 
 int TRKParticleDefinition::GetParticleCharge(const std::string particlename)
@@ -99,5 +99,5 @@ int TRKParticleDefinition::GetParticleCharge(const std::string particlename)
       std::cout << "particle name unrecognised - " << particlename << std::endl;
       exit(1);
     }
-  return it->second.first;
+  return it->second.second;
 }
