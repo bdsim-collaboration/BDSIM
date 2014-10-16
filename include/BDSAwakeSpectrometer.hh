@@ -1,0 +1,167 @@
+/* BDSIM code.   
+A scintillator screen.
+Work in progress.  
+*/
+
+#ifndef BDSAwakeSpectrometer_h
+#define BDSAwakeSpectrometer_h 
+
+#include "globals.hh"
+#include "BDSAcceleratorComponent.hh"
+#include "G4LogicalVolume.hh"
+#include "G4Mag_UsualEqRhs.hh"
+
+#include "G4UserLimits.hh"
+#include "G4VisAttributes.hh"
+#include "G4VSolid.hh"
+#include "BDSAwakeMultilayerScreen.hh"
+#include "BDSCCDCamera.hh"
+
+class BDSAwakeSpectrometer :public BDSAcceleratorComponent
+{
+
+
+
+  
+
+public:
+  BDSAwakeSpectrometer(G4String aName, G4String material, G4double thickness, G4double angle, G4double windowThickness, G4String windowMaterial);
+  virtual ~BDSAwakeSpectrometer();
+
+protected:
+
+private:
+  virtual void Build();
+  //To build the magnet...
+  void MagnetDefaults();
+  void BuildMagnet();
+  void PlaceMagnet();
+  void BuildYoke();
+  void BuildPoles();
+  void BuildCoils();
+  void BuildField();
+  void BuildVacuumChamber();
+  //To build the camera...
+  void BuildCamera();
+  void PlaceCamera();
+  //To build the screen...
+  void BuildScreen();
+  void PlaceScreen();
+  //To build the tunnel...
+  void BuildAwakeSpectrometerTunnel();
+  //To build the vacuum chamber...
+  void BuildVacuumChamber1();
+  void BuildVacuumChamber2();
+  virtual void SetVisAttributes();
+  void ComputeDimensions();
+  virtual void BuildMarkerLogicalVolume();
+  void BuildCameraScoringPlane();
+  void BuildScreenScoringPlane();
+
+
+  // Geometrical objects and associated parameters:
+  //Magnet logical volume to include magnet and surrounding area in order to include the vacuum chamber which will protude the magnet at the end/sides
+  G4LogicalVolume* itsMagnetLog;
+  G4ThreeVector itsMagnetSize;
+  G4ThreeVector itsMagnetPos;
+  G4ThreeVector itsYokeSize;  
+  G4ThreeVector itsYokePos;
+  G4LogicalVolume* itsYokeLog;
+  G4ThreeVector itsCoilSize;  
+  G4ThreeVector itsCoilPos;
+  G4ThreeVector itsUpperCoilPos;
+  G4ThreeVector itsLowerCoilPos;
+  G4LogicalVolume* itsCoilLog;
+  G4ThreeVector itsApertureSize;
+  G4ThreeVector itsAperturePos;
+  G4ThreeVector itsPoleSize;
+  G4ThreeVector itsUpperPolePos;
+  G4ThreeVector itsLowerPolePos;
+  G4LogicalVolume* itsPoleLog;
+  G4ThreeVector itsMagnetCentre;
+  G4double itsPoleVerticalGap;
+  G4double itsFieldWidth; //Width of the uniform magnetic field.
+  G4double itsUpstreamCoilLength;
+  G4double itsDownstreamCoilLength;
+
+  G4VPhysicalVolume* itsCameraScoringPlanePhys;
+  G4VPhysicalVolume* itsScreenScoringPlanePhys;
+  G4LogicalVolume* itsCameraScoringPlaneLog;
+  G4LogicalVolume* itsCameraScoringPlaneLog2;
+  G4LogicalVolume* itsCameraScoringPlaneLog3;
+  G4LogicalVolume* itsCameraScoringPlaneLog4;
+  G4LogicalVolume* itsCameraScoringPlaneLog5;
+  G4LogicalVolume* itsCameraScoringPlaneLog6;
+  G4LogicalVolume* itsScreenScoringPlaneLog;
+  G4LogicalVolume* itsScreenScoringPlaneLog2;
+  G4VSolid* itsCameraScoringPlaneSolid;
+  G4VSolid* itsScreenScoringPlaneSolid;
+
+  G4LogicalVolume* itsInnerTunnelLogicalVolume;
+  G4LogicalVolume* itsSoilTunnelLogicalVolume;
+  G4UserLimits* itsTunnelUserLimits;
+  G4UserLimits* itsSoilTunnelUserLimits;
+  G4UserLimits* itsInnerTunnelUserLimits;
+                    
+  //  G4Mag_UsualEqRhs* itsEqRhs;
+  
+private:
+  G4double itsOuterR;
+
+  G4RotationMatrix* _screenRotationMatrix;
+  G4RotationMatrix* _vacRotationMatrix;
+
+  //scoring plane
+  G4double _totalThickness;
+  G4double _screenThickness;
+  G4double _screenHeight;
+  G4double _screenWidth;
+  G4double _scoringPlaneThickness;
+
+  //Vacuum chamber dimensions
+  G4int _vacChambType;
+  G4double _vacWindowHeight;
+  G4double _vacMylarThickness;
+  G4double _vacKevlarThickness;
+  G4double _vacThickness;
+  G4double _vacInnerHeight;
+  G4double _vacInnerWidth;
+  G4double _vacHeight;
+  G4double _vacLength;
+
+  G4double _vacWidth1;
+  G4double _vacDispX1;
+  G4double _vacDispY1;
+  G4double _vacDispZ1;
+
+  G4double _vacWidth2;
+  G4double _vacDispX2;
+  G4double _vacDispY2;
+  G4double _vacDispZ2;
+
+  G4VisAttributes* _visAttFront;
+  G4VisAttributes* _visAttScint;
+  G4VisAttributes* _visAttBase;
+  G4VisAttributes* _visAttSampler;
+
+  G4String _scoringPlaneName;
+  G4String _screenScoringPlaneName;
+  G4String _screenSamplerName;
+  G4String _screenSamplerName2;
+  G4String _samplerName;
+  G4String _samplerName2;
+  G4String _samplerName3;
+  G4String _samplerName4;
+  G4String _samplerName5;
+  G4String _samplerName6;
+  BDSAwakeMultilayerScreen* _mlScreen;
+  BDSCCDCamera* _camera;
+  G4double _cameraScreenDist;
+  G4String _material;
+  G4double _thickness;
+  G4double _screenAngle;
+  G4double _windowThickness;
+  G4String _windowMaterial;
+};
+
+#endif
