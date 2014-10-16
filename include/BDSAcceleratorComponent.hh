@@ -320,7 +320,7 @@ private:
   /// Calculate dimensions used for the marker volume etc.
   void CalculateLengths();
 
-  G4RotationMatrix* nullRotationMatrix;
+
   G4RotationMatrix* tunnelRot;
   G4VisAttributes* VisAtt;
   G4VisAttributes* VisAtt1;
@@ -338,7 +338,8 @@ private:
   //  G4double itsZLower;
   //  G4double itsZUpper;
   //  G4double itsSynchEnergyLoss;
-
+protected:
+  G4RotationMatrix* nullRotationMatrix;
 };
 
 // Class BDSAcceleratorComponent 
