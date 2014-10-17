@@ -1,7 +1,0 @@
-beam,  particle="e-",
-       energy=1.0 * GeV,
-       distrType="reference",
-       X0=0.0*mm,
-       Y0=0.0*mm,
-       Xp0=0.0,
-       Yp0=0.0;

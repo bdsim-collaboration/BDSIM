@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><gdml xsi:noNamespaceSchemaLocation="GDMLSchema/gdml.xsd">  <define>    <position name="TrackerinWorldpos" unit="mm" x="0" y="0" z="100"/>
-  </define>  <materials>    <element name="Nitrogen" formula="N" Z="7.">
-      <atom value="14.01"/>
-    </element>    <material formula=" " name="Air" >                    <D value="1.290" unit="mg/cm3"/>                    <fraction n="0.7" ref="Nitrogen" />                    <fraction n="0.3" ref="Oxygen" />    </material>  </materials>  <solids>    <box lunit="mm" name="Tracker" x="50" y="50" z="50"/>
-  </solids>  <structure>    <volume name="World" >      <materialref ref="Air" />    </volume>  </structure>  <solidref ref="world" />  <physvol>    <volumeref ref="Tracker" />    <positionref ref="TrackerinWorldpos"/>  </physvol>
-  <rotationref ref="TrackerinWorldrot"/>  <setup name="Default" version="1.0" >    <world ref="World" />  </setup>
-</gdml>
