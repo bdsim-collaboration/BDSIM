@@ -23,5 +23,4 @@ void TRKStrategy::Track(TRKSampler* el, TRKBunch* bunch) {
 #endif
   //don't modify particles, but we write to output here
   trkOutput->WriteTrackerBunch(el->GetName(),bunch);
-
 }

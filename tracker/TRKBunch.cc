@@ -10,9 +10,12 @@
 #include "TRKPhysicsCalculations.hh"
 
 #include "BDSBunch.hh"
+#include "BDSOutputBase.hh"
 #include "parser/options.h"
 
 #include "BDSDebug.hh"
+
+extern BDSOutputBase* trkOutput;
 
 TRKBunch::TRKBunch(struct Options& opt)
 {
@@ -30,6 +33,8 @@ TRKBunch::TRKBunch(struct Options& opt)
   TRK::CalculateKineticEnergy(options);
   //populate particles using options & random number generator
   Populate(opt);
+  //write primaries to output file
+  trkOutput->WriteTrackerBunch("primaries",this,true);
 }
 
 

@@ -191,6 +191,9 @@ void BDSOutputASCII::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 
 void BDSOutputASCII::WriteTrackerBunch(G4String /*samplerName*/, TRKBunch* bunch, bool primary)
 {
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << std::endl;
+#endif
   //only difference between primaries and normal output here is the file stream
   std::ofstream* outfile;
   if (primary)
