@@ -10,22 +10,16 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSOctupole.hh"
-#include "G4Tubs.hh"
-#include "G4VisAttributes.hh"
+
+#include "BDSOctMagField.hh"
+#include "BDSOctStepper.hh"
+
+#include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
+#include "G4Tubs.hh"
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
-
-#include <map>
-
-//============================================================
-
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
+#include "G4VisAttributes.hh"
+#include "G4VPhysicalVolume.hh"
 
 //============================================================
 
@@ -35,101 +29,44 @@ BDSOctupole::BDSOctupole(G4String aName, G4double aLength,
 			 G4double outR, 
                          std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
                          G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
-  itsBTrpPrime(BTrpPrime),
-  itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
+  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
+  itsBTrpPrime(BTrpPrime)
 {
   SetOuterRadius(outR);
   itsTilt=tilt;
+}
 
-  if (!(*LogVolCount)[itsName])
+void BDSOctupole::Build() {
+  BDSMultipole::Build();
+  if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
-      //
-      // build external volume
-      //
-      BuildDefaultMarkerLogicalVolume();
-
-      //
-      //build tunnel
-      //
-      if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-        BuildTunnel();
-      }
-
-      //
-      // build beampipe (geometry + magnetic field)
-      //
-      BuildBPFieldAndStepper();
-      BuildBPFieldMgr(itsStepper,itsMagField);
-      BuildBeampipe();
-
-      //
-      // build magnet (geometry + magnetic field)
-      //
-      BuildDefaultOuterLogicalVolume();
-      if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
-	{
-	  G4double polePos[4];
-	  G4double Bfield[3];
-
-	  //coordinate in GetFieldValue
-	  polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(CLHEP::pi/8);
-	  polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(CLHEP::pi/8);
-	  polePos[2]=0.;
-	  polePos[3]=-999.;//flag to use polePos rather than local track
-
-	  itsMagField->GetFieldValue(polePos,Bfield);
-	  G4double BFldIron=
-	    sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1])*
-	    BDSGlobalConstants::Instance()->GetMagnetPoleSize()/
-	    (BDSGlobalConstants::Instance()->GetComponentBoxSize()/2-
-	     BDSGlobalConstants::Instance()->GetMagnetPoleRadius());
-
-	  // Magnetic flux from a pole is divided in two directions
-	  BFldIron/=2.;
-
-	  BuildOuterFieldManager(8, BFldIron,CLHEP::pi/8);
-	}
-
-      //Build the beam loss monitors
-      BuildBLMs();
-
-      //
-      // define sensitive volumes for hit generation
-      //
-      if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-        SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-      }
-      if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-        SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-      }
-
-      //
-      // set visualization attributes
-      //
-      itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
-
-      //
-      // append marker logical volume to volume map
-      //
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-      //
-      // use already defined marker volume
-      //
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
+      G4double polePos[4];
+      G4double Bfield[3];
+      
+      //coordinate in GetFieldValue
+      polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(CLHEP::pi/8);
+      polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(CLHEP::pi/8);
+      polePos[2]=0.;
+      polePos[3]=-999.;//flag to use polePos rather than local track
+      
+      itsMagField->GetFieldValue(polePos,Bfield);
+      G4double BFldIron=
+	sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1])*
+	BDSGlobalConstants::Instance()->GetMagnetPoleSize()/
+	(BDSGlobalConstants::Instance()->GetComponentBoxSize()/2-
+	 BDSGlobalConstants::Instance()->GetMagnetPoleRadius());
+      
+      // Magnetic flux from a pole is divided in two directions
+      BFldIron/=2.;
+      
+      BuildOuterFieldManager(8, BFldIron,CLHEP::pi/8);
     }
 }
 
-G4VisAttributes* BDSOctupole::SetVisAttributes()
+void BDSOctupole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0,1,1));
   itsVisAttributes->SetForceSolid(true);
-  return itsVisAttributes;
 }
 
 void BDSOctupole::BuildBPFieldAndStepper()
@@ -138,13 +75,11 @@ void BDSOctupole::BuildBPFieldAndStepper()
   itsMagField=new BDSOctMagField(itsBTrpPrime);
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
   
-  itsStepper=new BDSOctStepper(itsEqRhs);
-  itsStepper->SetBTrpPrime(itsBTrpPrime);
+  BDSOctStepper* octStepper=new BDSOctStepper(itsEqRhs);
+  octStepper->SetBTrpPrime(itsBTrpPrime);
+  itsStepper = octStepper;
 }
 
 BDSOctupole::~BDSOctupole()
 {
-  delete itsMagField;
-  delete itsEqRhs;
-  delete itsStepper;
 }

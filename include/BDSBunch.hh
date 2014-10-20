@@ -6,12 +6,23 @@
 
 #include "globals.hh"
 #include "parser/options.h"
-#include "BDSGlobalConstants.hh"
+
+/**
+ * @brief the particle generator
+ * 
+ * This class generates the particles
+ *
+ * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ */
+
+// can become a singleton? - JS
 
 class BDSBunch {
 
 protected:
-  std::string        distribType; 
+  /// particle distribution
+  std::string        distribType;
+  /// bdsBunch holds the distribution information and provides the next particle
   BDSBunchInterface *bdsBunch; 
   
 public:

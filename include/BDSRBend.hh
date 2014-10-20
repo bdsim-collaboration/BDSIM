@@ -10,20 +10,13 @@
 #define BDSRBend_h 
 
 #include "globals.hh"
-#include "BDSMaterials.hh"
 #include "G4LogicalVolume.hh"
-#include "BDSDipoleStepper.hh"
-
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4UserLimits.hh"
+#include "G4Trd.hh"
 #include "G4VisAttributes.hh"
-#include "G4PVPlacement.hh"               
 
 #include "BDSMultipole.hh"
-#include "BDSSbendMagField.hh"
-#include "G4Mag_EqRhs.hh"
 
 class BDSRBend :public BDSMultipole
 {
@@ -39,13 +32,14 @@ private:
   G4double itsBField;
   G4double itsBGrad;
   G4double itsMagFieldLength;
+  
+  virtual void Build();
+  virtual void BuildBPFieldAndStepper();
+  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildBeampipe(G4String materialName="");
+  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
 
-  void BuildBPFieldAndStepper();
-  void BuildRBMarkerLogicalVolume();
-  void BuildRBBeampipe();
-  void BuildRBOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
-
-  G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
   G4Trd* markerSolidVolume;
   G4Trd* rbendRectangleSolidVolume;
   G4LogicalVolume* rbendRectangleLogicalVolume;
@@ -57,11 +51,6 @@ private:
   G4UserLimits* endsInnerBeampipeUserLimits;
   G4VisAttributes* innerBeampipeVisAtt;
   G4VisAttributes* beampipeVisAtt;
-
-  // field related objects:
-  BDSDipoleStepper* itsStepper;
-  BDSSbendMagField* itsMagField;
-  G4Mag_EqRhs* itsEqRhs;
 
 };
 

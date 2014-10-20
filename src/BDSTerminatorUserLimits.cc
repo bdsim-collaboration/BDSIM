@@ -9,7 +9,7 @@
 This class is to give dynamic user limits to a certain volume.
 In the case of a ring, we want to cut ALL particles at the end 
 of the ring after a certain number of turns.
- */
+*/
 
 #include "G4ios.hh"
 #include "BDSTerminatorUserLimits.hh"

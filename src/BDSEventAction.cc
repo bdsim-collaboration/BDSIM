@@ -16,8 +16,6 @@
 #include "BDSDebug.hh"
 #include "BDSEventAction.hh"
 #include "BDSOutputBase.hh" 
-#include "BDSCCDPixelSD.hh"
-#include "BDSCCDPixelHit.hh"
 #include "BDSTrajectory.hh"
 
 #include <list>
@@ -29,9 +27,7 @@
 #include "G4EventManager.hh"
 #include "G4Run.hh"
 #include "G4RunManager.hh"
-#include "G4StackManager.hh"
 #include "G4HCofThisEvent.hh"
-#include "G4VHitsCollection.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4Trajectory.hh"
 #include "G4SDManager.hh"
@@ -44,16 +40,10 @@
 #include "BDSSamplerCylinder.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSEnergyCounterHit.hh"
+#include "BDSEnergyCounterSD.hh"
 
 // #include "BDSLWCalorimeter.hh"
 // #include "BDSLWCalorimeterHit.hh"
-
-#include "BDSSynchrotronRadiation.hh"
-
-#include "BDSAcceleratorComponent.hh"
-
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
 
 typedef std::list<BDSEnergyCounterSD*>  ECList;
 extern ECList* theECList;
@@ -67,21 +57,15 @@ G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once i
 
 BDSEventAction::BDSEventAction():
   SamplerCollID_plane(-1),SamplerCollID_cylin(-1),
-  drawFlag("all"),Traj(NULL),trajEndPoint(NULL)
+  Traj(NULL),trajEndPoint(NULL)
 { 
   verbose            = BDSExecOptions::Instance()->GetVerbose();
-  verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
   verboseEvent       = BDSExecOptions::Instance()->GetVerboseEvent();
   verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
   isBatch            = BDSExecOptions::Instance()->GetBatch();
 
   if(isBatch) printModulo=10;
   else printModulo=1;
-  
-  
-  itsRecordSize=1024;
-  
-  LastComp=NULL;
 }
 
 //======================================================
@@ -151,7 +135,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
 
   //Record the primary events
-  AddPrimaryHits(evt);
+  AddPrimaryHits();
   
   // are there any planar samplers?
   // if so, record the hits for each sampler 
@@ -208,9 +192,10 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #endif
   
   BDSEnergyCounterHitsCollection* BDSEnergyCounter_HC=NULL;
+  std::list<BDSEnergyCounterSD*>::const_iterator iEC;
   for(iEC=theECList->begin();iEC!=theECList->end();++iEC)
     {
-      G4String name=(*iEC)->GetCollectionName(0);
+      //      G4String name=(*iEC)->GetCollectionName(0);
       BDSEnergyCounter_HC=
 	(BDSEnergyCounterHitsCollection*)(evt->GetHCofThisEvent()->GetHC((*iEC)->itsHCID));
       if(BDSEnergyCounter_HC) {bdsOutput->WriteEnergyLoss(BDSEnergyCounter_HC);}
@@ -245,7 +230,15 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
       G4cout<<"done"<<G4endl;
 #endif
     }
-  
+
+  // needed to draw trajectories and hits:
+  if(!isBatch) {
+#ifdef BDSDEBUG 
+    G4cout<<"BDSEventAction : drawing"<<G4endl;
+#endif
+    evt->Draw();
+  }
+    
   // Save interesting trajectories
   
   G4TrajectoryContainer* TrajCont=evt->GetTrajectoryContainer();
@@ -281,25 +274,17 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
     }
   }
 
-  // needed to draw trajectories and hits:
-  if(!isBatch) {
-#ifdef BDSDEBUG 
-    G4cout<<"BDSEventAction : drawing"<<G4endl;
-#endif
-    evt->Draw();
-  }
-  
   //clear out the remaining trajectories
 #ifdef BDSDEBUG 
   G4cout<<"BDSEventAction : deleting trajectories"<<G4endl;
 #endif
-  TrajCont->clearAndDestroy();
+  //  TrajCont->clearAndDestroy();
 #ifdef BDSDEBUG 
  G4cout<<"BDSEventAction : end of event action done"<<G4endl;
 #endif
 }
 
-void BDSEventAction::AddPrimaryHits(const G4Event* /*evt*/){
+void BDSEventAction::AddPrimaryHits(){
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -326,6 +311,5 @@ void BDSEventAction::AddPrimaryHits(const G4Event* /*evt*/){
   G4cout << __METHOD_NAME__ << " finished" << G4endl;
 #endif
 }
-
 
 //======================================================

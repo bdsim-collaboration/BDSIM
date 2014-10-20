@@ -26,7 +26,7 @@ public:
 protected:
 
 private:
-  void Build();
+  virtual void Build();
   void BuildCamera();
   void PlaceCamera();
   void BuildScreen();
@@ -34,9 +34,9 @@ private:
   void BuildAwakeScintillatorScreenTunnel();
   void BuildVacuumChamber1();
   void BuildVacuumChamber2();
-  G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
   void ComputeDimensions();
-  void BuildMarkerVolume();
+  virtual void BuildMarkerLogicalVolume();
   void BuildCameraScoringPlane();
   void BuildScreenScoringPlane();
   void BuildAwakeScintillatorMaterial();
@@ -69,8 +69,7 @@ private:
   G4UserLimits* itsSoilTunnelUserLimits;
   G4UserLimits* itsInnerTunnelUserLimits;
                     
-  G4VisAttributes* itsVisAttributes;
-  G4Mag_UsualEqRhs* itsEqRhs;
+  //  G4Mag_UsualEqRhs* itsEqRhs;
   
 private:
   G4double itsOuterR;

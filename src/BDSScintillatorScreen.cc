@@ -5,6 +5,7 @@ Work in progress.
 
 #include "BDSGlobalConstants.hh" 
 #include "BDSScintillatorScreen.hh"
+#include "BDSMaterials.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerSD.hh"
 #include "G4Box.hh"
@@ -13,18 +14,12 @@ Work in progress.
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
 
-#include "G4SDManager.hh"
 #include <map>
 
-extern BDSSamplerSD* BDSSamplerSensDet;
-
 //============================================================
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
 
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
@@ -32,33 +27,26 @@ extern LogVolMap* LogVol;
 //============================================================
 
 BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double tScint, G4double angle, G4String scintMaterial, G4String airMaterial):
-  BDSAcceleratorComponent(aName, tScint, 0, 0, 0, SetVisAttributes()),_scintillatorLayerMaterial(BDSMaterials::Instance()->GetMaterial(scintMaterial.data())),_airMaterial(BDSMaterials::Instance()->GetMaterial(airMaterial.data())),_screenAngle(angle),_scintillatorThickness(tScint)
+  BDSAcceleratorComponent(aName, tScint, 0, 0, 0),_scintillatorLayerMaterial(BDSMaterials::Instance()->GetMaterial(scintMaterial.data())),_airMaterial(BDSMaterials::Instance()->GetMaterial(airMaterial.data())),_screenAngle(angle),_scintillatorThickness(tScint)
 {
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
   _screenAngle=angle;
   _screenRotationMatrix->rotateY(_screenAngle);
-
-  if ( (*LogVolCount)[itsName]==0)
-    {
-      ComputeDimensions();
-      BuildMarkerVolume();
-      if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-	BuildTunnel();
-      }
-      BuildScintillatorScreen();
-      
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=GetMarkerLogicalVolume();
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-    }  
 }
 
-G4VisAttributes* BDSScintillatorScreen::SetVisAttributes()
+void BDSScintillatorScreen::Build()
+{
+  SetVisAttributes(); 
+  ComputeDimensions();
+  BuildMarkerLogicalVolume();
+  if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
+    BuildTunnel();
+  }
+  BuildScintillatorScreen();
+}
+
+void BDSScintillatorScreen::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.3,0.4,0.2));
   itsVisAttributes->SetForceSolid(true);
@@ -73,8 +61,6 @@ G4VisAttributes* BDSScintillatorScreen::SetVisAttributes()
   _visAttScint->SetForceSolid(true);
   _visAttBase->SetForceSolid(true);
   _visAttSampler->SetForceSolid(true);
-
-  return itsVisAttributes;
 }
 
 void BDSScintillatorScreen::BuildFrontLayer(){
@@ -114,12 +100,7 @@ void BDSScintillatorScreen::BuildCameraScoringPlane(){
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   
   (*LogVol)[_samplerName]=itsCameraScoringPlaneLog;
-  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-  if(BDSSampler::GetNSamplers()==0){
-    BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
-    SDMan->AddNewDetector(BDSSamplerSensDet);
-  }
-  itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
+  itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   //SPM bdsOutput->nSamplers++;
   BDSSampler::AddExternalSampler(_samplerName+"_1");
 #ifndef NOUSERLIMITS
@@ -149,12 +130,7 @@ void BDSScintillatorScreen::BuildScreenScoringPlane(){
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   
   (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;
-  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-  if(BDSSampler::GetNSamplers()==0){
-    BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
-    SDMan->AddNewDetector(BDSSamplerSensDet);
-  }
-  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSamplerSensDet);
+  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   //SPM bdsOutput->nSamplers++;
   BDSSampler::AddExternalSampler(_screenSamplerName+"_1");
 #ifndef NOUSERLIMITS
@@ -187,12 +163,8 @@ void BDSScintillatorScreen::BuildScintillatorLayer(){
 
   /*
     (*LogVol)[_screenSamplerName]=itsScintillatorLayerLog;
-    G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-    if(BDSSampler::GetNSamplers()==0){
-      BDSSamplerSensDet = new BDSSamplerSD(itsName, "plane");
-    SDMan->AddNewDetector(BDSSamplerSensDet);
   }
-  itsScintillatorLayerLog->SetSensitiveDetector(BDSSamplerSensDet);
+  itsScintillatorLayerLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   //SPM bdsOutput->nSamplers++;
   BDSSampler::AddExternalSampler();
   bdsOutput->SampName.push_back(_screenSamplerName+"_1");
@@ -284,7 +256,7 @@ void BDSScintillatorScreen::BuildScintillatorScreen()
   BuildCameraScoringPlane();
   
   if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-      SetSensitiveVolume(itsScintillatorLayerLog);
+      AddSensitiveVolume(itsScintillatorLayerLog);
   } 
   G4cout << "BDSScintillatorScreen: finished building geometry" << G4endl;
 }
@@ -363,7 +335,7 @@ void BDSScintillatorScreen::ComputeDimensions(){
   _yLength = _screenHeight;
 }
 
-void BDSScintillatorScreen::BuildMarkerVolume(){
+void BDSScintillatorScreen::BuildMarkerLogicalVolume(){
   itsMarkerSolidVolume=new G4Box( itsName+"_marker_log",
 				  _xLength,
 				  _yLength,

@@ -7,16 +7,9 @@
 #ifndef BDSLaserWire_h
 #define BDSLaserWire_h 1
 
-#include"globals.hh"
+#include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
 
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "BDSLaserCompton.hh"
 
 class BDSLaserWire :public BDSAcceleratorComponent
@@ -32,11 +25,9 @@ public:
   inline void SetLaserWavelength(G4double aWavelength);
   inline G4double GetLaserWavelength();
 
-protected:
-
 private:
-  void LaserWireLogicalVolume();
-  G4VisAttributes* SetVisAttributes();
+  virtual void BuildMarkerLogicalVolume();
+  virtual void SetVisAttributes();
 
   BDSLaserCompton* itsLaserCompton; // not used atm, JS
   G4ThreeVector itsLaserDirection;

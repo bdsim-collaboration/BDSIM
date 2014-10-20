@@ -24,11 +24,12 @@ public:
 protected:
 
 private:
+  virtual void Build();
   void BuildScintillatorScreen();
   void BuildScintillatorScreenTunnel();
-  G4VisAttributes* SetVisAttributes();
+  void SetVisAttributes();
   void ComputeDimensions();
-  void BuildMarkerVolume();
+  virtual void BuildMarkerLogicalVolume();
   void BuildCameraScoringPlane();
   void BuildScreenScoringPlane();
   void BuildScintillatorMaterial();
@@ -78,7 +79,6 @@ private:
   G4Material* _scintillatorLayerMaterial;
   G4Material* _baseLayerMaterial;
   G4Material* _backLayerMaterial;
-  //BDSEnergyCounterSD* itsEnergyCounterSD;
   G4Material* _airMaterial;
   G4double itsOuterR;
 

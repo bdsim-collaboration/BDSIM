@@ -9,11 +9,7 @@
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
+#include "BDSSamplerSD.hh"
 
 class BDSSamplerCylinder :public BDSAcceleratorComponent
 {
@@ -27,17 +23,22 @@ public:
   /// names of samplers for output
   static std::vector <G4String> outputNames;
 
-protected:
+  /// access for external classes to sensitive detector
+  static BDSSamplerSD* GetSensitiveDetector(){return SensitiveDetector;}
 
 private:
-  void SamplerCylinderLogicalVolume();
-  G4VisAttributes* SetVisAttributes();
+  virtual void Initialise();
+  virtual void BuildMarkerLogicalVolume();
+  virtual void SetVisAttributes();
+
   G4double itsRadius;
 
   /// id of sampler
   int nThisSampler;
   /// number of total Samplers
   static int nSamplers;
+  /// pointer to sensitive detector, only one for all cylindrical samplers
+  static BDSSamplerSD* SensitiveDetector;
 };
 
 #endif

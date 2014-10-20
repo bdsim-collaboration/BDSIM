@@ -4,7 +4,7 @@
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 
    Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
-   Added extra parameter to BuildDefaultOuterLogicalVolume so that it is 
+   Added extra parameter to BuildOuterLogicalVolume so that it is 
      possible to set the material as either Iron or Vacuum
    Removed StringFromInt function
 */
@@ -18,9 +18,10 @@
 
 #include "G4FieldManager.hh"
 #include "G4ChordFinder.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4MagneticField.hh"
+#include "G4Mag_UsualEqRhs.hh"
+#include "G4RotationMatrix.hh"
+#include "G4UserLimits.hh"
 
 class BDSMultipole :public BDSAcceleratorComponent
 {
@@ -29,7 +30,6 @@ public:
 		G4double aLength,
 		G4double aBpRadius,
 		G4double aInnerIronRadius,
-		G4VisAttributes* aVisAtt,
 		G4String aMaterial = "",
 		G4double aXAper=0.,
 		G4double aYAper=0.,
@@ -37,12 +37,11 @@ public:
 		G4bool beampipeThicknessSet=false,
 		G4double beampipeThickness=-1);
   
-  //Contructor for components with tunnel material added
+  /// Constructor for components with tunnel material added
   BDSMultipole( G4String aName, 
 		G4double aLength,
 		G4double aBpRadius,
 		G4double aInnerIronRadius,
-		G4VisAttributes* aVisAtt,
                 G4String aTunnelMaterial = "",
                 G4String aMaterial="",
 		G4double aXAper=0.,
@@ -54,12 +53,11 @@ public:
 		G4double beampipeThickess=-1);
 
 
-  //Contructor for components with blms and tunnel material added
+  /// Constructor for components with blms and tunnel material added
   BDSMultipole( G4String aName, 
 		G4double aLength,
 		G4double aBpRadius,
 		G4double aInnerIronRadius,
-		G4VisAttributes* aVisAtt,
                 std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
                 G4String aTunnelMaterial = "",
                 G4String aMaterial="",
@@ -75,22 +73,31 @@ public:
 
   virtual ~BDSMultipole();
 
-  void BuildBLMs();
+protected:
+  virtual void Build();
 
-  virtual void BuildBeampipe(G4String materialName = ""); //Standard beam pipe, cross section is elliptical (or circular)
-
-  void BuildBeampipe(G4double startAper, G4double endAper, G4String materialName = ""); //Builds a tapered beam pipe
-
-  void BuildDefaultMarkerLogicalVolume();
- 
-  void BuildDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
-
-  void BuildEllipticalOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
-
+private:
+  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+  /// build and set field manager and chord finder
   void BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
 		       G4MagneticField* aField);
 
-  G4FieldManager* GetBPFieldMgr();
+  /// define field and stepper
+  virtual void BuildBPFieldAndStepper()=0;
+
+  /// build beam loss monitors
+  virtual void BuildBLMs();
+
+  /// Method for common parts of both Buildbeampipe methods
+  void FinaliseBeampipe(G4String materialName = "",G4RotationMatrix* RotY=NULL);
+
+protected:
+  /// Standard beam pipe, cross section is elliptical (or circular)
+  // protected since called by BDSDrift::BuildBeampipe, change to private in future whenever possible
+  virtual void BuildBeampipe(G4String materialName = ""); 
+  /// Builds a tapered beam pipe (only used for drifts at the moment)
+  void BuildBeampipe(G4double startAper, G4double endAper, G4String materialName = "");
 
   void BuildOuterFieldManager(G4int nPoles, G4double poleField, 
 			      G4double phiOffset);
@@ -100,6 +107,12 @@ public:
   void SetEndOuterRadius(G4double outR);
 
 protected:
+  // field related objects, set by BuildBPFieldAndStepper
+  G4MagIntegratorStepper* itsStepper;
+  G4MagneticField* itsMagField;
+  G4Mag_UsualEqRhs* itsEqRhs;
+
+  // beam pipe volumes
   G4LogicalVolume* itsBeampipeLogicalVolume;
   G4LogicalVolume* itsInnerBPLogicalVolume;
 
@@ -128,11 +141,7 @@ private:
   void ConstructorInit();
 
   void SetBeampipeThickness(G4bool, G4double);
-
 };
-
-inline G4FieldManager* BDSMultipole::GetBPFieldMgr()
-{return itsBPFieldMgr;}
 
 inline void BDSMultipole::SetOuterRadius(G4double outR)
 {itsOuterR = outR;}

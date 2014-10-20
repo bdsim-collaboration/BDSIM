@@ -57,14 +57,14 @@
 #include "G4Material.hh"
 
 #include "BDSAcceleratorComponent.hh"
+#include "BDSBeamline.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSMaterials.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTerminator.hh"
 #include "BDSLogicalVolumeInfo.hh"
 
 #include "BDSComponentFactory.hh"
-#include "BDSSampler.hh"
-#include "BDSSamplerCylinder.hh"
 
 #include "G4MagneticField.hh"
 
@@ -77,23 +77,11 @@
 #include "parser/element.h"
 #include "parser/elementlist.h"
 #include "parser/enums.h"
-#include "parser/gmad.h"
 
 //====================================
 
 typedef std::list<BDSEnergyCounterSD*>  ECList;
 ECList* theECList;
-
-//--------------------------
-// SYNCHROTRON RAD ***
-G4double BDSLocalRadiusOfCurvature=DBL_MAX;// Used in Mean Free Path calc.
-//--------------------------
-
-typedef std::map<G4String,int> LogVolCountMap;
-LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-LogVolMap* LogVol;
 
 //=========================================
 
@@ -105,13 +93,11 @@ bool debug = false;
 
 //=================================================================
 
-
-
 BDSDetectorConstruction::BDSDetectorConstruction():
   itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
   solidWorld(NULL),logicWorld(NULL),physiWorld(NULL),
   magField(NULL),BDSUserLimits(NULL),BDSSensitiveDetector(NULL),
-  _globalRotation(NULL)
+  theHitMaker(NULL),theParticleBounds(NULL),_globalRotation(NULL)
 {  
   verbose    = BDSExecOptions::Instance()->GetVerbose();
   gflash     = BDSExecOptions::Instance()->GetGFlash();
@@ -126,37 +112,38 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   //initialize global rotation matrix
   _globalRotation = new G4RotationMatrix();
 
-  // GlashStuff                                                                                                                                                         
-  theParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
-  theParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*CLHEP::GeV);
-  theParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*CLHEP::GeV);
-  theParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  
-  theParticleBounds->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),gflashemax*CLHEP::GeV);
-  theParticleBounds->SetMinEneToParametrise(*G4Positron::PositronDefinition(),gflashemin*CLHEP::GeV);
-  theParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-
-  theParticleBoundsVac  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
-  theParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*CLHEP::GeV);
-  theParticleBoundsVac->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),0*CLHEP::GeV);
+  if (gflash) {
+    // GFlashStuff
+    theParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
+    theParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*CLHEP::GeV);
+    theParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*CLHEP::GeV);
+    theParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+    
+    theParticleBounds->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),gflashemax*CLHEP::GeV);
+    theParticleBounds->SetMinEneToParametrise(*G4Positron::PositronDefinition(),gflashemin*CLHEP::GeV);
+    theParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+    
+    // theParticleBoundsVac  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
+    // theParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*CLHEP::GeV);
+    // theParticleBoundsVac->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),0*CLHEP::GeV);
 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "theParticleBounds - min E - electron: " 
-	 << theParticleBounds->GetMinEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< " GeV" << G4endl;
-  G4cout << __METHOD_NAME__ << "theParticleBounds - max E - electron: " 
-	 << theParticleBounds->GetMaxEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
-  G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - electron: " 
-	 << theParticleBounds->GetEneToKill(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
-  G4cout << __METHOD_NAME__ << "theParticleBounds - min E - positron: " 
-	 << theParticleBounds->GetMinEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
-  G4cout << __METHOD_NAME__ << "theParticleBounds - max E - positron: " 
-	 << theParticleBounds->GetMaxEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
-  G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - positron: " 
-	 << theParticleBounds->GetEneToKill(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
+    G4cout << __METHOD_NAME__ << "theParticleBounds - min E - electron: " 
+	   << theParticleBounds->GetMinEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< " GeV" << G4endl;
+    G4cout << __METHOD_NAME__ << "theParticleBounds - max E - electron: " 
+	   << theParticleBounds->GetMaxEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
+    G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - electron: " 
+	   << theParticleBounds->GetEneToKill(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
+    G4cout << __METHOD_NAME__ << "theParticleBounds - min E - positron: " 
+	   << theParticleBounds->GetMinEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
+    G4cout << __METHOD_NAME__ << "theParticleBounds - max E - positron: " 
+	   << theParticleBounds->GetMaxEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
+    G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - positron: " 
+	   << theParticleBounds->GetEneToKill(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
 #endif
 
-  theHitMaker          = new GFlashHitMaker();                    // Makes the EnergieSpots 
-
+    theHitMaker          = new GFlashHitMaker();                    // Makes the EnergieSpots 
+  }
 }
 
 
@@ -165,8 +152,6 @@ BDSDetectorConstruction::BDSDetectorConstruction():
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 {
   theECList   = new ECList;
-  LogVolCount = new LogVolCountMap();
-  LogVol      = new LogVolMap();
   gasRegion   = new G4Region("gasRegion");
 
   G4ProductionCuts* theGasProductionCuts = new G4ProductionCuts();
@@ -179,16 +164,110 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   //construct bds
   return ConstructBDS(beamline_list);
 }
+
 G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_list)
 {  
-  std::list<struct Element>::iterator it;
-
   // prepare materials for this run
-  PrepareRequiredMaterials();
+  BDSMaterials::Instance()->PrepareRequiredMaterials();
   
   // set global magnetic field first
   SetMagField(0.0); // necessary to set a global field; so chose zero
   
+  // construct the component list
+  BuildBeamline();
+
+  // build world and calculate coordinates
+  BuildWorld();
+
+  // set default output formats for BDSDetector:
+  int G4precision = G4cout.precision(15);
+  
+  // placement procedure
+  ComponentPlacement();
+
+#ifdef BDSDEBUG
+  // check of logvolinfo
+  // LN TEST
+  //  typedef std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>::iterator it_type;
+  std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* themap = BDSGlobalConstants::Instance()->LogicalVolumeInfo();
+  //for (it_type iterator = themap->begin(); iterator != themap->end(); iterator++){
+    //G4cout << "pointer : " << iterator->first << "\tname : " << iterator->second->GetName() << "\t" 
+    //	   << iterator->second->GetSPos()/CLHEP::m << G4endl;
+  //}
+  G4cout << themap->size() << G4endl;
+
+  //LN TEST of spos
+  for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
+    {
+      BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
+      G4double currentspos = thecurrentitem->GetSPos();
+      G4String currentname = thecurrentitem->GetName();
+      G4cout << "name : " << currentname << "\t" 
+	     << "spos : " << currentspos/CLHEP::m << " m" <<G4endl
+	     << "length   : " << thecurrentitem->GetLength()/CLHEP::m << " m" << G4endl
+	     << "xlength  : " << thecurrentitem->GetXLength()/CLHEP::m << " m" << G4endl
+	     << "ylength  : " << thecurrentitem->GetYLength()/CLHEP::m << " m" << G4endl
+	     << "zlength  : " << thecurrentitem->GetZLength()/CLHEP::m << " m" << G4endl
+	     << G4endl;
+    }
+  
+#endif
+  // construct tunnel
+  BuildTunnel();
+
+  // free the parser list
+  std::list<struct Element>::iterator it;
+  for(it = beamline_list.begin();it!=beamline_list.end();it++) {
+    delete (*it).lst;
+  }
+  beamline_list.clear();
+
+  if(verbose || debug) G4cout<<"end placement, size="<<BDSBeamline::Instance()->size()<<G4endl;
+  
+  if(verbose || debug) G4cout<<"Detector Construction done"<<G4endl; 
+
+#ifdef BDSDEBUG 
+  G4cout << *(G4Material::GetMaterialTable()) << G4endl;
+#endif
+
+  if(verbose || debug) G4cout<<"Finished listing materials, returning physiWorld"<<G4endl; 
+  
+  // set precision back
+  G4cout.precision(G4precision);
+
+  return physiWorld;
+}
+
+//=================================================================
+ 
+void BDSDetectorConstruction::SetMagField(const G4double fieldValue){
+  
+  G4FieldManager* fieldMgr =
+    G4TransportationManager::GetTransportationManager()->GetFieldManager();
+  magField = new G4UniformMagField(G4ThreeVector(0.,fieldValue,0.));  
+  fieldMgr->SetDetectorField(magField);
+  fieldMgr->CreateChordFinder(magField);
+}
+
+//=================================================================
+BDSDetectorConstruction::~BDSDetectorConstruction()
+{ 
+  delete theECList;
+  //theECList = NULL;
+
+  delete precisionRegion;
+  gFlashRegion.clear();
+
+  delete _globalRotation;
+
+  delete theHitMaker;
+  delete theParticleBounds;
+  //  delete theParticleBoundsVac;
+}
+
+//=================================================================
+void BDSDetectorConstruction::BuildBeamline(){
+  std::list<struct Element>::iterator it;
   // Special ring machine bits
   // Add teleporter to account for slight ring offset
   // Add terminator to do ring turn counting logic
@@ -202,7 +281,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
     AddTerminatorToEndOfBeamline(&beamline_list);
   }
 
-
   // convert the parsed element list to list of BDS elements
   //
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
@@ -215,40 +293,24 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 #endif
 
     BDSAcceleratorComponent* temp = theComponentFactory->createComponent(it, beamline_list);
-
-#ifdef BDSDEBUG
-    G4cout << "pushing onto back of beamline..." << G4endl;
-#endif
     if(temp){
       BDSBeamline::Instance()->addComponent(temp);
-      //For the outline file...
-      BDSBeamline::Instance()->lastItem()->SetK1((*it).k1);
-      BDSBeamline::Instance()->lastItem()->SetK2((*it).k2);
-      BDSBeamline::Instance()->lastItem()->SetK3((*it).k3);
     }
-
-#ifdef BDSDEBUG
-    G4cout << "done." << G4endl;
-#endif
   }
   
   delete theComponentFactory;
-  theComponentFactory = NULL;
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "size of beamline element list: "<< beamline_list.size() << G4endl;
 #endif
   G4cout << __METHOD_NAME__ << "size of theBeamline: "<< BDSBeamline::Instance()->size() << G4endl;
-  
-  // construct the component list
-  //
+}
 
+//=================================================================
+void BDSDetectorConstruction::BuildWorld(){
   if (verbose || debug) G4cout << "now constructing geometry" << G4endl;
   
-  std::list<BDSAcceleratorComponent*>::const_iterator iBeam;
-  
   G4ThreeVector rtot = G4ThreeVector(0.,0.,0.);   // world dimension
-  G4ThreeVector rlast = G4ThreeVector(0.,0.,0.);  // edge of last element coordinates
   G4ThreeVector rextentmax = G4ThreeVector(0.,0.,0.);  // extent
   G4ThreeVector rextentmin = G4ThreeVector(0.,0.,0.);  // extent
   G4ThreeVector rmin = G4ThreeVector(0.,0.,0.);
@@ -395,50 +457,24 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 
   // world
 
-  physiWorld = new G4PVPlacement((G4RotationMatrix*)0,		// no rotation
-  				 (G4ThreeVector)0,             // at (0,0,0)
+  physiWorld = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
+  				 (G4ThreeVector)0,     // at (0,0,0)
                                  logicWorld,	// its logical volume
                                  LocalName,	// its name
                                  NULL,		// its mother  volume
                                  false,		// no boolean operation
                                  0,             // copy number
-				 BDSGlobalConstants::Instance()->GetCheckOverlaps());		// overlap checking
+				 BDSGlobalConstants::Instance()->GetCheckOverlaps());// overlap checking
 
+}
 
-
+//=================================================================
+void BDSDetectorConstruction::ComponentPlacement(){
+  if (verbose || debug) G4cout<<"starting placement procedure "<<G4endl;
+  
   // sensitive detectors
 
   G4SDManager* SDman = G4SDManager::GetSDMpointer();
-
-  G4bool use_graphics=true;
-  G4ThreeVector TargetPos;
-
-  // set default output formats for BDSDetector:
-  int G4precision = G4cout.precision(15);
-  
-#ifdef BDSDEBUG 
-  G4cout<<"total length="<<s_tot/CLHEP::m<<"m"<<G4endl;
-#endif
-  
-  // reset counters:
-  for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next()){
-    BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
-
-    // zero length components have no logical volumes
-    if(thecurrentitem->GetLength()!=0.)
-      {
-	G4String logVolName = thecurrentitem->GetMarkerLogicalVolume()->GetName();
-	(*LogVolCount)[logVolName]=1;
-      }
-  }
-  
-  if (verbose || debug) G4cout<<"starting placement procedure "<<G4endl;
-  
-  rtot = G4ThreeVector(0.,0.,0.);
-  localX = G4ThreeVector(1.,0.,0.); 
-  localY = G4ThreeVector(0.,1.,0.);
-  localZ = G4ThreeVector(0.,0.,1.);
-  
   //you only need a single instance of your sensitive detector class
   //attach to as many logical volumes as you want
   //note each new sensitive detector invokes a slow string compare
@@ -448,7 +484,16 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   SDman->AddNewDetector(ECounter);
   //SDman->AddNewDetector(TurnCounter);
   theECList->push_back(ECounter);
-  
+
+  G4ThreeVector TargetPos;
+
+  G4ThreeVector rlast = G4ThreeVector(0.,0.,0.);  // edge of last element coordinates
+
+  G4ThreeVector rtot(0.,0.,0.);
+  G4ThreeVector localX(1.,0.,0.); 
+  G4ThreeVector localY(0.,1.,0.);
+  G4ThreeVector localZ(0.,0.,1.);
+
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     {
       BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
@@ -469,7 +514,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 #ifdef BDSDEBUG 
           G4cout<<"transform3d : "<<phi<<" "<<theta<<" "<<psi<<G4endl;
 #endif
-
 
 	  rtot(0) += thecurrentitem->GetXOffset(); 
 	  rtot(1) += thecurrentitem->GetYOffset(); 
@@ -549,294 +593,209 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
       // define new coordinate system local frame	  
  
       // bends transform the coordinate system
-      if( thecurrentitem->GetType() == "sbend" || thecurrentitem->GetType() == "rbend")
-	{
-	  _globalRotation->rotate(angle,localY);
-	  localX.rotate(angle,localY);
-	  localZ.rotate(angle,localY);
-	  
-	  
-	  _globalRotation->rotate(theta,localX);
-	  localY.rotate(theta,localX);
-	  localZ.rotate(theta,localX);
-	  
-	  // bend trapezoids defined along z-axis
-	  rotateComponent->rotateY(-CLHEP::twopi/4-angle/2); 						
-	} else {
-	if (thecurrentitem->GetMarkerLogicalVolume()->GetSolid()->GetName().contains("trapezoid") ){
-	  rotateComponent->rotateY(-CLHEP::twopi/4); //Drift trapezoids defined along z axis 
-	}
+      if( thecurrentitem->GetType() == "sbend" || thecurrentitem->GetType() == "rbend") {
+	_globalRotation->rotate(angle,localY);
+	localX.rotate(angle,localY);
+	localZ.rotate(angle,localY);
+	
+	_globalRotation->rotate(theta,localX);
+	localY.rotate(theta,localX);
+	localZ.rotate(theta,localX);
+	
+	// bend trapezoids defined along z-axis
+	rotateComponent->rotateY(-CLHEP::twopi/4-angle/2);
+      } else if (thecurrentitem->GetMarkerLogicalVolume()->GetSolid()->GetName().contains("trapezoid") ) {
+	rotateComponent->rotateY(-CLHEP::twopi/4); //Drift trapezoids defined along z axis 
       }
-    
-    					
-
+      
       // zero length components not placed (transform3d)
-      if(length!=0.){
-	G4LogicalVolume* LocalLogVol=thecurrentitem->GetMarkerLogicalVolume();
-	
-	G4String LogVolName=LocalLogVol->GetName();
-	// Set visualisation options for marker volumes - perhaps should be in base class..
-	G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0, 0.4));
-	VisAtt1->SetForceSolid(true);  
-	// Set visible only if debug build, otherwise hidden
-#if defined BDSDEBUG
-	VisAtt1->SetVisibility(true);
-#else
-	VisAtt1->SetVisibility(false);
-#endif
-	LocalLogVol->SetVisAttributes(VisAtt1);
-	//------------
-	int nCopy=(*LogVolCount)[LogVolName]-1;
-	(*LogVolCount)[LogVolName]++;
-	
-	/*
-	// now register the spos and other info of this sensitive volume in global map
-	// used by energy counter sd to get spos of that logical volume at histogram time
-	BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( thecurrentitem->GetName(),
-								  thecurrentitem->GetSPos() );
-	BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(SensVol,theinfo);
-	*/
-	// now register the spos and other info of this sensitive volume in global map
-	    // used by energy counter sd to get spos of that logical volume at histogram time
-	BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( LogVolName,
-								  thecurrentitem->GetSPos() );
-	BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(LocalLogVol,theinfo);
-
-	// add the volume to one of the regions
-	if(thecurrentitem->GetPrecisionRegion())
-	  {
-#ifdef BDSDEBUG
-	    G4cout<<"ELEMENT IS IN PRECISION REGION: "<<thecurrentitem->GetPrecisionRegion()<< G4endl;
-#endif
-	    LocalLogVol->SetRegion(precisionRegion);
-	    precisionRegion->AddRootLogicalVolume(LocalLogVol);
-	  }
-
-	
-#ifdef BDSDEBUG
-	G4cout<<"SETTING UP SENSITIVE VOLUME..."<< G4endl;
-#endif	
-	// set up the sensitive volumes for energy counting:
-	thecurrentitem->SetCopyNumber(nCopy);
-	G4LogicalVolume* SensVol=thecurrentitem->GetSensitiveVolume();
-
-	if(SensVol)
-	  {
-	    //use already defined instance of Ecounter sd
-	    thecurrentitem->SetBDSEnergyCounter(ECounter);
-	    SensVol->SetSensitiveDetector(ECounter);
-	    //register any volume that an ECounter is attached to
-	    BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
-	    BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( thecurrentitem->GetName(),
-								      thecurrentitem->GetSPos() );
-	    BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(SensVol,theinfo);
-	    
-	  }
-
-#ifdef BDSDEBUG
-	G4cout<<"SETTING UP MULTIPLE SENSITIVE VOLUMES..."<< G4endl;
-#endif	
-	std::vector<G4LogicalVolume*> MultipleSensVols = thecurrentitem->GetMultipleSensitiveVolumes();
-	if( ( thecurrentitem->GetType()!="sampler" && thecurrentitem->GetType()!="csampler" )
-	    && MultipleSensVols.size()>0)
-	  {
-	    for(G4int i=0; i<(G4int)MultipleSensVols.size(); i++)
-	      {
-		//use already defined instance of Ecounter sd
-		thecurrentitem->SetBDSEnergyCounter(ECounter);
-		MultipleSensVols.at(i)->SetSensitiveDetector(ECounter);	
-		//register any volume that an ECounter is attached to
-		BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
-		BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( MultipleSensVols.at(i)->GetName(),
-									  thecurrentitem->GetSPos() );
-		BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(MultipleSensVols.at(i),theinfo);
-		//G4cout << "multiplesensvols["<<i<<"] - name : "<<MultipleSensVols.at(i)->GetName() << G4endl;
-		
-		if(gflash){
-		  if((MultipleSensVols.at(i)->GetRegion() != precisionRegion) && (thecurrentitem->GetType()=="element")){//If not in the precision region....
-		    //		    if(MultipleSensVols[i]->GetMaterial()->GetState()!=kStateGas){ //If the region material state is not gas, associate with a parameterisation
-#ifdef BDSDEBUG
-		    G4cout << "...adding " << MultipleSensVols[i]->GetName() << " to gFlashRegion" << G4endl;
-#endif
-		    /**********************************************                                                                                                                       
-		     * Initialise shower model                                                                                                                                          
-		     ***********************************************/
-		    G4String rname = "gFlashRegion_" + MultipleSensVols[i]->GetName();
-		    gFlashRegion.push_back(new G4Region(rname.c_str()));
-		    G4String mname = "fastShowerModel" + rname;
-#ifdef BDSDEBUG
-		    G4cout << "...making parameterisation..." << G4endl;
-#endif
-		    theFastShowerModel.push_back(new BDSShowerModel(mname.c_str(),gFlashRegion.back()));
-		    theParameterisation.push_back(new GFlashHomoShowerParameterisation(BDSMaterials::Instance()->GetMaterial(MultipleSensVols[i]->GetMaterial()->GetName().c_str()))); 
-		    theFastShowerModel.back()->SetParameterisation(*theParameterisation.back());
-		    theFastShowerModel.back()->SetParticleBounds(*theParticleBounds) ;
-		    theFastShowerModel.back()->SetHitMaker(*theHitMaker);
-		    if(MultipleSensVols[i]->GetMaterial()->GetState()!=kStateGas){ //If the region material state is not gas, associate with a parameterisation
-		      theFastShowerModel.back()->SetFlagParamType(1);//Turn on the parameterisation for e-m showers starting in sensitive material and fitting in the current stack.
-		      theFastShowerModel.back()->SetFlagParticleContainment(1);//Turn on containment
-		    } else {
-		      theFastShowerModel.back()->SetFlagParamType(0);//Turn on the parameterisation for e-m showers starting in sensitive material and fitting in the current stack.
-		      theFastShowerModel.back()->SetFlagParticleContainment(0);//Turn on containment
-
-		    }
-		    MultipleSensVols[i]->SetRegion(gFlashRegion.back());
-		    gFlashRegion.back()->AddRootLogicalVolume(MultipleSensVols[i]);
-		    //		    gFlashRegion.back()->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
-		    //		    MultipleSensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
-		  }		  
-		}
-	      }
-
-	  }
-
-
-	    //Loop through again, unsetting gas regions
-
-	//	if(MultipleSensVols.size()>0){
-	//	  for(G4int i=0; i<(G4int)MultipleSensVols.size(); i++){
-	//	    if(MultipleSensVols[i]->GetMaterial()->GetState()==kStateGas){ //If the region material state is not gas, associate with a parameterisation
-	//	      MultipleSensVols[i]->GetRegion()->RemoveRootLogicalVolume(MultipleSensVols[i]);
-	      //	      MultipleSensVols[i]->SetRegion(NULL);
-
-	      //	      MultipleSensVols[i]->SetRegion(gasRegion);
-	      //	      MultipleSensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
-	//      }
-	//      }
-	//      }
-
-	
-	// count and store sampler names. Should go into constructors!
-  
-	LocalName=thecurrentitem->GetName()+"_phys";
-	if(thecurrentitem->GetType()=="sampler") {
-	  BDSSampler::outputNames.push_back(LocalName + "_" + BDSGlobalConstants::Instance()->StringFromInt(nCopy+1));
-	} 
-	else if(thecurrentitem->GetType()=="csampler") {
-	  BDSSamplerCylinder::outputNames.push_back(LocalName + "_" + BDSGlobalConstants::Instance()->StringFromInt(nCopy+1));
-	} else {
-	  //it would be nice to set correctly names also for other elements...
-	  //but need to count them!
-	}
-
-	/*
-	//for torus sbend
-	if(thecurrentitem->GetType() == "sbend") {
-
-	  G4double rho = length/fabs(angle);
-
-	  G4RotationMatrix* Rot=new G4RotationMatrix();
-	  Rot->rotateX(-pi/2 * rad);
-	  //Rot->rotateZ(pi * rad);
-	  //Rot->rotateZ(- ( pi/2 - fabs(angle)/2 ) * rad);
-	  TargetPos -= zHalfAngle *  ( length/2 + BDSGlobalConstants::Instance()->GetLengthSafety()/2 ) ;
-	  TargetPos+=G4ThreeVector(-rho,0,0);
-	  //TargetPos=G4ThreeVector(0,0,rho);
-	  //if(angle < 0)
-	  //{
-	  //  Rot->rotateZ(pi);
-	  //  TargetPos=G4ThreeVector(rho,0,0);
-	  //}
-	  rotateComponent=Rot;
-	}
-	*/
-
-#ifdef BDSDEBUG
-	G4cout<<"ALIGNING COMPONENT..."<< G4endl;
-#endif	
-	// Align Component - most cases does nothing. 
-	// Currently only used for BDSElement	
-	// For other elements stores global position and rotation,
-	// needed for BDSOutline
-	thecurrentitem->AlignComponent(//TargetPos,
-				 rlast,
-				 rotateComponent,
-				 *_globalRotation,
-				 rtot,
-				 rlast,
-				 localX,
-				 localY,
-				 localZ);
-
-#ifdef BDSDEBUG
-	G4cout<<"Placing PHYSICAL COMPONENT..."<< G4endl;
-	G4cout << "BDSDetectorConstruction : rotateComponent = " << *rotateComponent << G4endl;
-	G4cout << "BDSDetectorConstruction : TargetPos        = " << TargetPos << G4endl;
-#endif	
-
-	G4PVPlacement* PhysiComponentPlace = 
-	  new G4PVPlacement(
-			    rotateComponent,  // its rotation
-			    TargetPos,        // its position
-			    LocalName,	      // its name
-			    LocalLogVol,      // its logical volume
-			    physiWorld,	      // its mother  volume
-			    false,	      // no boolean operation
-			    nCopy,            // copy number
-			    BDSGlobalConstants::Instance()->GetCheckOverlaps());	      //overlap checking
-
-	  fPhysicalVolumeVector.push_back(PhysiComponentPlace);
-	  std::vector<G4VPhysicalVolume*> MultiplePhysicalVolumes = thecurrentitem->GetMultiplePhysicalVolumes();
-	  for (unsigned int i=0;i<MultiplePhysicalVolumes.size(); i++) fPhysicalVolumeVector.push_back(MultiplePhysicalVolumes.at(i));
-					    
-
-	  
-#ifdef BDSDEBUG 
-        G4cout << "Volume name: " << LocalName << G4endl;
-#endif
-        if(BDSGlobalConstants::Instance()->GetRefVolume()+"_phys"==LocalName && 
-           BDSGlobalConstants::Instance()->GetRefCopyNo()==nCopy){
-#ifdef BDSDEBUG 
-          G4cout << "Setting new transform" <<G4endl;
-#endif
-	  G4AffineTransform tf(*_globalRotation,TargetPos-G4ThreeVector(0,0,length/2));
-	  BDSGlobalConstants::Instance()->SetRefTransform(tf);
-        }
-
-	thecurrentitem->PrepareField(PhysiComponentPlace);
-
-	if(use_graphics)
-	  {
-	    thecurrentitem->GetVisAttributes()->SetVisibility(true);
-#ifdef BDSDEBUG
-	    thecurrentitem->GetMarkerLogicalVolume()->
-	      SetVisAttributes(thecurrentitem->GetVisAttributes());
-#endif
-	  }
+      if(length<=0.) {
+	delete rotateComponent;
+	continue;
       }
-    }
+
+      G4LogicalVolume* LocalLogVol=thecurrentitem->GetMarkerLogicalVolume();
+	
+      G4String LogVolName=LocalLogVol->GetName();
+      // Set visualisation options for marker volumes - perhaps should be in base class..
+      G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0, 0.4));
+      VisAtt1->SetForceSolid(true);  
+      // Set visible only if debug build, otherwise hidden
+#if defined BDSDEBUG
+      VisAtt1->SetVisibility(true);
+#else
+      VisAtt1->SetVisibility(false);
+#endif
+      LocalLogVol->SetVisAttributes(VisAtt1);
+      //------------
+      const int nCopy = thecurrentitem->GetCopyNumber();
+	
+      // now register the spos and other info of this sensitive volume in global map
+      // used by energy counter sd to get spos of that logical volume at histogram time
+      BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( LogVolName,
+								thecurrentitem->GetSPos() );
+      BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(LocalLogVol,theinfo);
+
+      // add the volume to one of the regions
+      if(thecurrentitem->GetPrecisionRegion())
+	{
+#ifdef BDSDEBUG
+	  G4cout<<"ELEMENT IS IN PRECISION REGION: "<<thecurrentitem->GetPrecisionRegion()<< G4endl;
+#endif
+	  LocalLogVol->SetRegion(precisionRegion);
+	  precisionRegion->AddRootLogicalVolume(LocalLogVol);
+	}
+
+	
+#ifdef BDSDEBUG
+      G4cout<<"SETTING UP SENSITIVE VOLUMES..."<< G4endl;
+#endif	
+
+      std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetSensitiveVolumes();
+      for(G4int i=0; i<(G4int)SensVols.size(); i++)
+	{
+	  //use already defined instance of Ecounter sd
+	  SensVols[i]->SetSensitiveDetector(ECounter);	
+	  //register any volume that an ECounter is attached to
+	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( SensVols[i]->GetName(),
+								    thecurrentitem->GetSPos() );
+	  BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(SensVols[i],theinfo);
+	  //G4cout << "sensvols["<<i<<"] - name : "<<SensVols[i]->GetName() << G4endl;
+		
+	  if(gflash && 
+	     SensVols[i]->GetRegion() != precisionRegion && 
+	     (thecurrentitem->GetType()=="element")) {//If not in the precision region....
+	    //		    if(SensVols[i]->GetMaterial()->GetState()!=kStateGas){ //If the region material state is not gas, associate with a parameterisation
+#ifdef BDSDEBUG
+	    G4cout << "...adding " << SensVols[i]->GetName() << " to gFlashRegion" << G4endl;
+#endif
+	    /**********************************************
+	     * Initialise shower model
+	     ***********************************************/
+	    G4String rname = "gFlashRegion_" + SensVols[i]->GetName();
+	    gFlashRegion.push_back(new G4Region(rname.c_str()));
+	    G4String mname = "fastShowerModel" + rname;
+#ifdef BDSDEBUG
+	    G4cout << "...making parameterisation..." << G4endl;
+#endif
+	    theFastShowerModel.push_back(new BDSShowerModel(mname.c_str(),gFlashRegion.back()));
+	    theParameterisation.push_back(new GFlashHomoShowerParameterisation(BDSMaterials::Instance()->GetMaterial(SensVols[i]->GetMaterial()->GetName().c_str()))); 
+	    theFastShowerModel.back()->SetParameterisation(*theParameterisation.back());
+	    theFastShowerModel.back()->SetParticleBounds(*theParticleBounds) ;
+	    theFastShowerModel.back()->SetHitMaker(*theHitMaker);
+	    if(SensVols[i]->GetMaterial()->GetState()!=kStateGas){ //If the region material state is not gas, associate with a parameterisation
+	      theFastShowerModel.back()->SetFlagParamType(1);//Turn on the parameterisation for e-m showers starting in sensitive material and fitting in the current stack.
+	      theFastShowerModel.back()->SetFlagParticleContainment(1);//Turn on containment
+	    } else {
+	      theFastShowerModel.back()->SetFlagParamType(0);//Turn on the parameterisation for e-m showers starting in sensitive material and fitting in the current stack.
+	      theFastShowerModel.back()->SetFlagParticleContainment(0);//Turn on containment
+		  
+	    }
+	    SensVols[i]->SetRegion(gFlashRegion.back());
+	    gFlashRegion.back()->AddRootLogicalVolume(SensVols[i]);
+	    //		    gFlashRegion.back()->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
+	    //		    SensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
+	  }		  
+	}
+      
+      //Loop through again, unsetting gas regions
+
+      //	if(SensVols.size()>0){
+      //	  for(G4int i=0; i<(G4int)SensVols.size(); i++){
+      //	    if(SensVols[i]->GetMaterial()->GetState()==kStateGas){ //If the region material state is not gas, associate with a parameterisation
+      //	      SensVols[i]->GetRegion()->RemoveRootLogicalVolume(SensVols[i]);
+      //	      SensVols[i]->SetRegion(NULL);
+
+      //	      SensVols[i]->SetRegion(gasRegion);
+      //	      SensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
+      //      }
+      //      }
+      //      }
+
+      /*
+      //for torus sbend
+      if(thecurrentitem->GetType() == "sbend") {
+
+      G4double rho = length/fabs(angle);
+
+      G4RotationMatrix* Rot=new G4RotationMatrix();
+      Rot->rotateX(-pi/2 * rad);
+      //Rot->rotateZ(pi * rad);
+      //Rot->rotateZ(- ( pi/2 - fabs(angle)/2 ) * rad);
+      TargetPos -= zHalfAngle *  ( length/2 + BDSGlobalConstants::Instance()->GetLengthSafety()/2 ) ;
+      TargetPos+=G4ThreeVector(-rho,0,0);
+      //TargetPos=G4ThreeVector(0,0,rho);
+      //if(angle < 0)
+      //{
+      //  Rot->rotateZ(pi);
+      //  TargetPos=G4ThreeVector(rho,0,0);
+      //}
+      rotateComponent=Rot;
+      }
+      */
 
 #ifdef BDSDEBUG
-  // check of logvolinfo
-  // LN TEST
-  typedef std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>::iterator it_type;
-  std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* themap = BDSGlobalConstants::Instance()->LogicalVolumeInfo();
-  //for (it_type iterator = themap->begin(); iterator != themap->end(); iterator++){
-    //G4cout << "pointer : " << iterator->first << "\tname : " << iterator->second->GetName() << "\t" 
-    //	   << iterator->second->GetSPos()/CLHEP::m << G4endl;
-  //}
-  G4cout << themap->size() << G4endl;
+      G4cout<<"ALIGNING COMPONENT..."<< G4endl;
+#endif	
+      // Align Component - most cases does nothing. 
+      // Currently only used for BDSElement	
+      // For other elements stores global position and rotation,
+      // needed for BDSOutline
+      thecurrentitem->AlignComponent(//TargetPos,
+				     rlast,
+				     rotateComponent,
+				     *_globalRotation,
+				     rtot,
+				     rlast,
+				     localX,
+				     localY,
+				     localZ);
 
-  //LN TEST of spos
-  for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
-    {
-      BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
-      G4double currentspos = thecurrentitem->GetSPos();
-      G4String currentname = thecurrentitem->GetName();
-      G4cout << "name : " << currentname << "\t" 
-	     << "spos : " << currentspos/CLHEP::m << " m" <<G4endl
-	     << "length   : " << thecurrentitem->GetLength()/CLHEP::m << " m" << G4endl
-	     << "xlength  : " << thecurrentitem->GetXLength()/CLHEP::m << " m" << G4endl
-	     << "ylength  : " << thecurrentitem->GetYLength()/CLHEP::m << " m" << G4endl
-	     << "zlength  : " << thecurrentitem->GetZLength()/CLHEP::m << " m" << G4endl
-	     << G4endl;
-    }
-  
+#ifdef BDSDEBUG
+      G4cout << "Placing PHYSICAL COMPONENT..."<< G4endl;
+      G4cout << "BDSDetectorConstruction : rotateComponent = " << *rotateComponent << G4endl;
+      G4cout << "BDSDetectorConstruction : TargetPos        = " << TargetPos << G4endl;
+#endif	
+
+      G4String LocalName=thecurrentitem->GetName()+"_phys";
+
+      G4PVPlacement* PhysiComponentPlace = 
+	new G4PVPlacement(
+			  rotateComponent,  // its rotation
+			  TargetPos,        // its position
+			  LocalName,	      // its name
+			  LocalLogVol,      // its logical volume
+			  physiWorld,	      // its mother  volume
+			  false,	      // no boolean operation
+			  nCopy,            // copy number
+			  BDSGlobalConstants::Instance()->GetCheckOverlaps());//overlap checking
+
+      fPhysicalVolumeVector.push_back(PhysiComponentPlace);
+      std::vector<G4VPhysicalVolume*> MultiplePhysicalVolumes = thecurrentitem->GetMultiplePhysicalVolumes();
+      for (unsigned int i=0;i<MultiplePhysicalVolumes.size(); i++) fPhysicalVolumeVector.push_back(MultiplePhysicalVolumes.at(i));
+					    
+#ifdef BDSDEBUG 
+      G4cout << "Volume name: " << LocalName << G4endl;
 #endif
-  // construct tunnel
+      if(BDSGlobalConstants::Instance()->GetRefVolume()+"_phys"==LocalName && 
+	 BDSGlobalConstants::Instance()->GetRefCopyNo()==nCopy){
+#ifdef BDSDEBUG 
+	G4cout << "Setting new transform" <<G4endl;
+#endif
+	G4AffineTransform tf(*_globalRotation,TargetPos-G4ThreeVector(0,0,length/2));
+	BDSGlobalConstants::Instance()->SetRefTransform(tf);
+      }
+
+      thecurrentitem->PrepareField(PhysiComponentPlace);
+    }
+}
+
+
+//=================================================================
+void BDSDetectorConstruction::BuildTunnel(){
+  std::list<struct Element>::iterator it;
   for(it = beamline_list.begin();it!=beamline_list.end();it++)
     {
-      
       if((*it).type==_TUNNEL ) {
 #ifdef BDSDEBUG
 	G4cout<<"BUILDING TUNNEL : "<<(*it).l<<"  "<<(*it).name<<G4endl;
@@ -870,71 +829,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 	  
 	} else  G4cerr<<"Tunnel won't be build! "<<G4endl;
       }
-      
     }
-  
-  // free the parser list
-  for(it = beamline_list.begin();it!=beamline_list.end();it++) {
-    delete (*it).lst;
-  }
-  beamline_list.clear();
-
-  if(verbose || debug) G4cout<<"end placement, size="<<BDSBeamline::Instance()->size()<<G4endl;
-  
-  if(verbose || debug) G4cout<<"Detector Construction done"<<G4endl; 
-
-#ifdef BDSDEBUG 
-  G4cout << *(G4Material::GetMaterialTable()) << G4endl;
-#endif
-
-  if(verbose || debug) G4cout<<"Finished listing materials, returning physiWorld"<<G4endl; 
-  
-  // set precision back
-  G4cout.precision(G4precision);
-
-  return physiWorld;
 }
-
-//=================================================================
- 
-void BDSDetectorConstruction::SetMagField(const G4double fieldValue){
-  
-  G4FieldManager* fieldMgr =
-    G4TransportationManager::GetTransportationManager()->GetFieldManager();
-  magField = new G4UniformMagField(G4ThreeVector(0.,fieldValue,0.));  
-  fieldMgr->SetDetectorField(magField);
-  fieldMgr->CreateChordFinder(magField);
-}
-
-//=================================================================
-BDSDetectorConstruction::~BDSDetectorConstruction()
-{ 
-  LogVolCount->clear();
-  delete LogVolCount;
-  //LogVolCount = NULL;
-  
-  //LogVolMap::iterator iter;
-  //for(iter=LogVol->begin();iter!=LogVol->end();iter++){
-  //  delete (*iter).second;
-  // }
-  LogVol->clear();
-  delete LogVol;
-  //LogVol = NULL;
-
-  delete theECList;
-  //theECList = NULL;
-
-  delete precisionRegion;
-  gFlashRegion.clear();
-
-  delete _globalRotation;
-
-  delete theHitMaker;
-  delete theParticleBounds;
-  delete theParticleBoundsVac;
-}
-
-//=================================================================
 
 G4double* BDSDetectorConstruction::GetWorldSize(){
   int s=3;

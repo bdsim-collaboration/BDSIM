@@ -1,6 +1,11 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSSectorBend.hh"
+
+#include "BDSDipoleStepper.hh"
+#include "BDSMaterials.hh"
+#include "BDSSbendMagField.hh"
+
 #include "G4Polyhedra.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
@@ -10,21 +15,10 @@
 #include "G4IntersectionSolid.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
+#include "G4Mag_UsualEqRhs.hh"
+#include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
-
-#include <map>
-
-//============================================================
-
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
-
-
+#include "G4VPhysicalVolume.hh"
 
 //============================================================
 
@@ -34,128 +28,51 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
                              std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
 			     G4double tilt, G4double bGrad, 
 			     G4String aTunnelMaterial, G4String aMaterial, G4double aXAper, G4double aYAper):
-  BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
-	       aXAper, aYAper, angle),
-  itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
+  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
+	       aXAper, aYAper, angle)
 {
   SetOuterRadius(outR);
   itsTilt=tilt;
   itsBField=bField;
   itsBGrad=bGrad;
-
-  if (!(*LogVolCount)[itsName])
-    {
-      //
-      // build external volume
-      // 
-      BuildSBMarkerLogicalVolume();
-      G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.4, 0.4, 0.4));
-      VisAtt1->SetVisibility(true);
-      VisAtt1->SetForceSolid(true);
-      itsMarkerLogicalVolume->SetVisAttributes(VisAtt1);
-      //
-      // build tunnel
-      //
-//       G4double oldTunnelRad=      BDSGlobalConstants::Instance()->GetTunnelRadius();
-         
-      if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-	BuildTunnel();  //Do not build tunnel as there is a geometry problem
-      }
-      
-      //      BDSGlobalConstants::Instance()->SetTunnelRadius(oldTunnelRad);
-
-      //Build IP8Gate
-      //      BuildGate();
-     
-      //
-      // build beampipe (geometry + magnetic field)
-      //
-      
-	      BuildBPFieldAndStepper();
-	      BuildBPFieldMgr(itsStepper,itsMagField);
-	      BuildSBBeampipe();
-
-      //
-      // build magnet (geometry + magnetic field)
-      //
-      
-      G4String geometry = BDSGlobalConstants::Instance()->GetMagnetGeometry();
-      if(geometry =="standard") 
-	BuildSBOuterLogicalVolume(); // standard - quad with poles and pockets
-      else if(geometry =="cylinder")  
-	BuildSBDefaultOuterLogicalVolume(); // cylinder outer volume
-      else //default - cylinder - standard
-	BuildSBDefaultOuterLogicalVolume(); // cylinder outer volume
-
-
-      //BuildSBOuterLogicalVolume();
-      //BuildSBDefaultOuterLogicalVolume();
-      if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
-	{
-	  G4double polePos[4];
-	  G4double Bfield[3];
-
-	  //coordinate in GetFieldValue
-	  polePos[0]=0.;
-	  polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius();
-	  polePos[2]=0.;
-	  polePos[3]=-999.;//flag to use polePos rather than local track
-
-	  itsMagField->GetFieldValue(polePos,Bfield);
-	  G4double BFldIron=
-	    sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1])*
-	    BDSGlobalConstants::Instance()->GetMagnetPoleSize()/
-	    (BDSGlobalConstants::Instance()->GetComponentBoxSize()/2-
-	     BDSGlobalConstants::Instance()->GetMagnetPoleRadius());
-
-	  // Magnetic flux from a pole is divided in two directions
-	  BFldIron/=2.;
-	  
-	  BuildOuterFieldManager(2, BFldIron,CLHEP::halfpi);
-	}
-
-      //
-      // define sensitive volumes for hit generation
-      //
-
-
-      if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
-        SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
-      }
-      if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-        SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
-      }
-
-
-      //
-      // set visualization attributes
-      //
-      itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
-	
-      //
-      // append marker logical volume to volume map
-      //
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-      //
-      // use already defined marker volume
-      //
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-    }
-  
-  BuildBLMs();
 }
 
-G4VisAttributes* BDSSectorBend::SetVisAttributes()
+void BDSSectorBend::Build()
+{
+  BDSMultipole::Build();
+  //Build IP8Gate
+  //      BuildGate();
+  
+  if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
+    {
+      G4double polePos[4];
+      G4double Bfield[3];
+      
+      //coordinate in GetFieldValue
+      polePos[0]=0.;
+      polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius();
+      polePos[2]=0.;
+      polePos[3]=-999.;//flag to use polePos rather than local track
+      
+      itsMagField->GetFieldValue(polePos,Bfield);
+      G4double BFldIron=
+	sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1])*
+	BDSGlobalConstants::Instance()->GetMagnetPoleSize()/
+	(BDSGlobalConstants::Instance()->GetComponentBoxSize()/2-
+	 BDSGlobalConstants::Instance()->GetMagnetPoleRadius());
+      
+      // Magnetic flux from a pole is divided in two directions
+      BFldIron/=2.;
+      
+      BuildOuterFieldManager(2, BFldIron,CLHEP::halfpi);
+    }
+}
+
+void BDSSectorBend::SetVisAttributes()
 {
   itsVisAttributes = new G4VisAttributes(G4Colour(0,0,1)); //blue
   itsVisAttributes->SetForceSolid(true);
   itsVisAttributes->SetVisibility(true);
-  return itsVisAttributes;
 }
 
 void BDSSectorBend::BuildBPFieldAndStepper()
@@ -166,12 +83,36 @@ void BDSSectorBend::BuildBPFieldAndStepper()
 
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
   
-  itsStepper = new BDSDipoleStepper(itsEqRhs);
-  itsStepper->SetBField(-itsBField); // note the - sign...
-  itsStepper->SetBGrad(itsBGrad);
+  BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
+  dipoleStepper->SetBField(-itsBField); // note the - sign...
+  dipoleStepper->SetBGrad(itsBGrad);
+  itsStepper = dipoleStepper;
 }
 
-void BDSSectorBend::BuildSBMarkerLogicalVolume()
+void BDSSectorBend::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
+{
+  //
+  // build magnet (geometry + magnetic field)
+  //
+      
+  G4String geometry = BDSGlobalConstants::Instance()->GetMagnetGeometry();
+ 
+  if(geometry =="standard") 
+    BuildStandardOuterLogicalVolume(OuterMaterialIsVacuum); // standard - sbend with poles and pockets
+  else if(geometry =="cylinder")  
+    BuildCylindricalOuterLogicalVolume(OuterMaterialIsVacuum); // cylinder outer volume
+  else //default - cylinder - standard
+    BuildCylindricalOuterLogicalVolume(OuterMaterialIsVacuum); // cylinder outer volume
+  
+  //
+  // define sensitive volumes for hit generation
+  //
+  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
+    AddSensitiveVolume(itsOuterLogicalVolume);
+  }
+}
+
+void BDSSectorBend::BuildMarkerLogicalVolume()
 {
   G4double xLength, yLength;
   xLength = yLength = std::max(itsOuterR,BDSGlobalConstants::Instance()->GetComponentBoxSize()/2);
@@ -223,24 +164,31 @@ G4double  maxStepFactor=0.5;
   itsMarkerUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
   itsMarkerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
   
-
   //
   // zero field in the marker volume
   //
   itsMarkerLogicalVolume->
     SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
+
+  G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.4, 0.4, 0.4));
+  VisAtt1->SetVisibility(true);
+  VisAtt1->SetForceSolid(true);
+  itsMarkerLogicalVolume->SetVisAttributes(VisAtt1);
 }
 
-
 // construct a beampipe for sector bend
-void BDSSectorBend::BuildSBBeampipe()
+void BDSSectorBend::BuildBeampipe(G4String materialName)
 {
-  //
-  // use default beampipe material
-  //
-    G4Material *material =  BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName());
-    //  G4Material *material =  BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()); //LD 8/11/10 
-  
+  G4Material* material;
+  if(materialName == "")
+    {
+      material = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName() );
+    }
+  else
+    {
+      material = BDSMaterials::Instance()->GetMaterial(materialName);
+    }
+
   //
   // compute some geometrical parameters
   //
@@ -328,6 +276,12 @@ void BDSSectorBend::BuildSBBeampipe()
 		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		        // copy number
   
   SetMultiplePhysicalVolumes(PhysiComp);
+  //
+  // define sensitive volumes for hit generation
+  //
+  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
+    AddSensitiveVolume(itsBeampipeLogicalVolume);
+  }
 
   //
   // set user limits for stepping, tracking and propagation in B field
@@ -367,8 +321,6 @@ void BDSSectorBend::BuildSBBeampipe()
   VisAtt1->SetVisibility(true);
   VisAtt1->SetForceSolid(true);
   itsBeampipeLogicalVolume->SetVisAttributes(VisAtt1);
-
-
 }
 
 
@@ -386,7 +338,7 @@ G4double BDSSectorBend::GetArcLength()
 //					Cylindrical geometry						//
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void BDSSectorBend::BuildSBDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
+void BDSSectorBend::BuildCylindricalOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
   
   G4Material* material;
   
@@ -458,6 +410,11 @@ void BDSSectorBend::BuildSBDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuu
   SetMultiplePhysicalVolumes(itsPhysiComp);
   G4double  maxStepFactor=0.5;
 
+  //
+  // set visualization attributes
+  //
+  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
+  
 #ifndef NOUSERLIMITS
   itsOuterUserLimits =
     new G4UserLimits("multipole cut",DBL_MAX,DBL_MAX,DBL_MAX,
@@ -466,14 +423,13 @@ void BDSSectorBend::BuildSBDefaultOuterLogicalVolume(G4bool OuterMaterialIsVacuu
   itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
-  
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //					Detailed geometry						//
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
+void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 
   G4Material* material;
   
@@ -768,7 +724,4 @@ void BDSSectorBend::BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum){
 
 BDSSectorBend::~BDSSectorBend()
 {
-  delete itsMagField;
-  delete itsEqRhs;
-  delete itsStepper;
 }
