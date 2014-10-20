@@ -12,6 +12,11 @@
 #include "G4EllipticalTube.hh"
 #include "G4UserLimits.hh"
 #include "G4TransportationManager.hh"
+#include "G4Polyhedra.hh"
+#include "G4Cons.hh"
+#include "G4Trd.hh"
+
+#include "G4UnionSolid.hh"
 
 #include "G4UserLimits.hh"
 #include <map>
@@ -111,21 +116,90 @@ void BDSCollimator::BuildInnerCollimator()
     if(itsType == "rcol")
       {
 	
-	itsInnerSolid=new G4Box(itsName+"_inner",
-				itsXAper,
-				itsYAper,
-				itsLength/2);
 	
+	G4Box* itsInnerSolid1 = new G4Box(itsName+"_inner",
+				   2.0*itsXAper,
+				   itsYAper/3.0,
+				   itsLength/2);
+
+	G4Trd* itsInnerSolid2 = new G4Trd (itsName+"_inner",
+					  2.0*itsXAper,
+					  itsXAper/3.0,
+					  itsYAper,
+					  itsYAper/3.0,
+					  itsLength/10.0);
+
+	G4Trd* itsInnerSolid3 = new G4Trd (itsName+"_inner",
+					  itsXAper/3.0,
+					  2.0*itsXAper,
+					  itsYAper/3.0,
+					  itsYAper,
+					  itsLength/10.0);
+
+	G4ThreeVector  translation0(0, 0, -itsLength/2.0+itsLength/10.0);
+	G4ThreeVector  translation1(0, 0, itsLength/2.0-itsLength/10.0);
+
+	G4UnionSolid*   itsInnerSolid4 = new G4UnionSolid(itsName+"_inner",
+					 itsInnerSolid1,
+					 itsInnerSolid2,
+					 0,
+					 translation0);
+
+	itsInnerSolid = new G4UnionSolid(itsName+"_inner",
+					 itsInnerSolid4,
+					 itsInnerSolid3,
+					 0,
+					 translation1);
+	// LHC collimator (Cone)
+
+	  /*
+     
+	G4ThreeVector  translation1(0, 0, -itsLength/3.0);
+	G4ThreeVector  translation2(0, 0, itsLength/3.0);
+	G4ThreeVector  translation0(0, 0, 0);
+
+	G4Cons* itsInnerSolid2 = new G4Cons (itsName+"_inner",
+				     0,
+				     itsXAper,
+				     0,
+				     0,
+				     itsLength/6.,
+				     0,
+				     2*CLHEP::pi);
+       
+	G4Cons* itsInnerSolid3 = new G4Cons (itsName+"_inner",
+				     0,
+				     0,
+				     0,
+				     itsXAper,
+				     itsLength/6.,
+				     0,
+				     2*CLHEP::pi);
+
+	G4UnionSolid* itsInnerSolid4 = new G4UnionSolid(itsName+"_inner",
+					 itsInnerSolid1,
+					 itsInnerSolid2,
+					 0,
+					 translation1);
+
+	itsInnerSolid = new G4UnionSolid(itsName+"_inner",
+					 itsInnerSolid4,
+					 itsInnerSolid3,
+					 0,
+					 translation2);
+	
+	*/
+
 	/*
-	double zPlanepos [2] = {0,itsLength};	
-	double rOuter [2] = {itsXAper, itsXAper};
-	G4double rInner [2] = {0.0,0.0};
+	double zPlanepos [4] = {-itsLength/2.0,-itsLength/3.0,itsLength/3.0,itsLength/2.0};	
+	double rOuter [4] = {2.0*itsXAper,itsXAper,itsXAper,2.0*itsXAper};
+	G4double rInner [4] = {0.0,0.0,0.0,0.0};	
 
 	itsInnerSolid = new G4Polyhedra(itsName+"_inner",
 					0.,
 					2*CLHEP::pi,
+					20,
 					4,
-					2,
 					zPlanepos,
 					rInner,
 					rOuter);
