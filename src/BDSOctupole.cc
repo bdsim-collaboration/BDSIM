@@ -10,12 +10,16 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSOctupole.hh"
-#include "G4Tubs.hh"
-#include "G4VisAttributes.hh"
+
+#include "BDSOctMagField.hh"
+#include "BDSOctStepper.hh"
+
+#include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
+#include "G4Tubs.hh"
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
+#include "G4VisAttributes.hh"
+#include "G4VPhysicalVolume.hh"
 
 //============================================================
 
@@ -25,7 +29,7 @@ BDSOctupole::BDSOctupole(G4String aName, G4double aLength,
 			 G4double outR, 
                          std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
                          G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
+  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
   itsBTrpPrime(BTrpPrime)
 {
   SetOuterRadius(outR);
@@ -59,11 +63,10 @@ void BDSOctupole::Build() {
     }
 }
 
-G4VisAttributes* BDSOctupole::SetVisAttributes()
+void BDSOctupole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0,1,1));
   itsVisAttributes->SetForceSolid(true);
-  return itsVisAttributes;
 }
 
 void BDSOctupole::BuildBPFieldAndStepper()
@@ -72,9 +75,9 @@ void BDSOctupole::BuildBPFieldAndStepper()
   itsMagField=new BDSOctMagField(itsBTrpPrime);
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
   
-  itsStepper=new BDSOctStepper(itsEqRhs);
-  BDSOctStepper* octStepper = dynamic_cast<BDSOctStepper*>(itsStepper);
+  BDSOctStepper* octStepper=new BDSOctStepper(itsEqRhs);
   octStepper->SetBTrpPrime(itsBTrpPrime);
+  itsStepper = octStepper;
 }
 
 BDSOctupole::~BDSOctupole()

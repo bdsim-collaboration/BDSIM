@@ -11,7 +11,6 @@
 #include "G4PVPlacement.hh"               
 #include "G4EllipticalTube.hh"
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
 
 #include "G4UserLimits.hh"
 #include <map>
@@ -19,13 +18,13 @@
 //============================================================
 
 BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
-			      G4double xAper,G4double yAper, G4String type,
+			      G4double xAper,G4double yAper,
 			      G4Material *CollimatorMaterial, G4double outR, 
                               std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
                               G4String aTunnelMaterial):
   BDSAcceleratorComponent(aName,
 			  aLength,bpRad,xAper,yAper,
-			  SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial),
+			  blmLocZ, blmLocTheta, aTunnelMaterial),
   itsPhysiComp(NULL), itsPhysiComp2(NULL), itsSolidLogVol(NULL), itsTempSolidLogVol(NULL),
   itsInnerLogVol(NULL), itsInnerSolid(NULL), itsOuterSolid(NULL), itsSolid(NULL), itsSoilTube(NULL),
   itsTunnelTube(NULL),  itsInnerTunnelTube(NULL), itsInnerTunnelLogicalVolume(NULL),
@@ -33,8 +32,6 @@ BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
   itsInnerTunnelUserLimits(NULL), itsEqRhs(NULL),
   itsCollimatorMaterial(CollimatorMaterial), itsOuterR(outR)
 {
-  SetType(type);
-
   if(itsOuterR==0) itsOuterR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
 }
 
@@ -79,11 +76,10 @@ void BDSCollimator::BuildBLMs(){
   BDSAcceleratorComponent::BuildBLMs();
 }
 
-G4VisAttributes* BDSCollimator::SetVisAttributes()
+void BDSCollimator::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.3,0.4,0.2));
   itsVisAttributes->SetForceSolid(true);
-  return itsVisAttributes;
 }
 
 void BDSCollimator::BuildInnerCollimator()

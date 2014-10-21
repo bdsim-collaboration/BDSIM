@@ -20,7 +20,6 @@
 
 #include "globals.hh"
 
-#include "G4VisAttributes.hh"
 #include "BDSMultipole.hh"
 
 class BDSSolenoid : public BDSMultipole
@@ -40,7 +39,7 @@ private:
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
 
-  virtual G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
 };
 
 #endif

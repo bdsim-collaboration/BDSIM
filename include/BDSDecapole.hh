@@ -9,8 +9,6 @@
 
 #include "globals.hh"
 
-#include "G4VisAttributes.hh"
-
 #include "BDSMultipole.hh"
 
 class BDSDecapole :public BDSMultipole
@@ -32,7 +30,7 @@ private:
 
   virtual void BuildBPFieldAndStepper();
 
-  virtual G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
 };
 
 #endif

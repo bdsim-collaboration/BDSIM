@@ -20,16 +20,7 @@
 #define __BDSQUADRUPOLE_H
 
 #include "globals.hh"
-#include "G4LogicalVolume.hh"
-#include "BDSQuadStepper.hh"
-
-#include "G4FieldManager.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4PVPlacement.hh"               
-
 #include "BDSMultipole.hh"
-#include "BDSQuadMagField.hh"
 
 class BDSQuadrupole :public BDSMultipole
 {
@@ -54,7 +45,7 @@ private:
   /// cylinder
   void BuildCylindricalOuterLogicalVolume();
 
-  virtual G4VisAttributes* SetVisAttributes();
+  void SetVisAttributes();
 };
 
 #endif

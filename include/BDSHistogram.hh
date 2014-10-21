@@ -50,7 +50,7 @@ public:
   void                                        PrintBins() const;
   std::pair<G4double,G4double>                GetUnderOverFlowBins() const;
   /// output stream
-  friend std::ostream& operator<< (std::ostream &out, const BDSHistogram1D &hist);
+  friend std::ostream& operator<< (std::ostream &out, BDSHistogram1D const &hist);
   
 private:
   /// vector of bins

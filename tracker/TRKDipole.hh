@@ -1,38 +1,32 @@
 #ifndef TRKDipole_h
 #define TRKDipole_h
 
-#include "TRKTrackingElement.hh"
-#include "TRKDrift.hh"
-
-class vector6;
+#include "TRKElement.hh"
 
 /**
- * @brief dipole/kicker tracking
+ * @brief dipole/kicker
  */
-class TRKDipole : public TRKTrackingElement {
+class TRKDipole : public TRKElement {
 private: 
   /// strength in Tesla/meter
   double strength;
-  /// magnetic field in Tesla
+  /// magnetic field in Tesla - only used for hybrid tracking
   double bField;
 
 public:
-  TRKDipole(double strength, double bField, TRKTrackingElement::TRKType type, int steps, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
+  TRKDipole(double strength, double bField, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKDipole();
-  
-  /// output stream
-  friend std::ostream& operator<< (std::ostream &out, const TRKDipole &element);
+
+  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);  
+
+  double GetStrength()const{return strength;}
 
 protected:
-  virtual void ThinTrack(const double vIn[], double vOut[], double h);
-  virtual void ThinTrackSymplectic(const double vIn[], double vOut[], double h);
-  virtual void HybridTrack(const double vIn[], double vOut[], double h);
-  virtual void ThickTrack(const double vIn[], double vOut[], double h);
+  /// output stream
+  virtual void Print(std::ostream& out) const;
 
 private:
   TRKDipole(); ///< not implemented
-  TRKDrift* drift; // Drifts required for thin elements and zero strength
-
 };
 
 #endif

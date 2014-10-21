@@ -11,8 +11,6 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSSamplerSD.hh"
 
-#include "G4VisAttributes.hh"
-
 class BDSSamplerCylinder :public BDSAcceleratorComponent
 {
 public:
@@ -29,8 +27,9 @@ public:
   static BDSSamplerSD* GetSensitiveDetector(){return SensitiveDetector;}
 
 private:
+  virtual void Initialise();
   virtual void BuildMarkerLogicalVolume();
-  virtual G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
 
   G4double itsRadius;
 

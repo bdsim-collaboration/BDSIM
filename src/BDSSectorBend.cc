@@ -1,6 +1,11 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSSectorBend.hh"
+
+#include "BDSDipoleStepper.hh"
+#include "BDSMaterials.hh"
+#include "BDSSbendMagField.hh"
+
 #include "G4Polyhedra.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
@@ -10,9 +15,10 @@
 #include "G4IntersectionSolid.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
+#include "G4Mag_UsualEqRhs.hh"
+#include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
+#include "G4VPhysicalVolume.hh"
 
 //============================================================
 
@@ -22,7 +28,7 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
                              std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
 			     G4double tilt, G4double bGrad, 
 			     G4String aTunnelMaterial, G4String aMaterial, G4double aXAper, G4double aYAper):
-  BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
+  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
 	       aXAper, aYAper, angle)
 {
   SetOuterRadius(outR);
@@ -62,12 +68,11 @@ void BDSSectorBend::Build()
     }
 }
 
-G4VisAttributes* BDSSectorBend::SetVisAttributes()
+void BDSSectorBend::SetVisAttributes()
 {
   itsVisAttributes = new G4VisAttributes(G4Colour(0,0,1)); //blue
   itsVisAttributes->SetForceSolid(true);
   itsVisAttributes->SetVisibility(true);
-  return itsVisAttributes;
 }
 
 void BDSSectorBend::BuildBPFieldAndStepper()
@@ -78,10 +83,10 @@ void BDSSectorBend::BuildBPFieldAndStepper()
 
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
   
-  itsStepper = new BDSDipoleStepper(itsEqRhs);
-  BDSDipoleStepper* dipoleStepper = dynamic_cast<BDSDipoleStepper*>(itsStepper);
+  BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
   dipoleStepper->SetBField(-itsBField); // note the - sign...
   dipoleStepper->SetBGrad(itsBGrad);
+  itsStepper = dipoleStepper;
 }
 
 void BDSSectorBend::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)

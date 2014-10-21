@@ -1,6 +1,5 @@
 #include "BDSBeamline.hh"
 #include "G4AffineTransform.hh"
-#include "BDSDebug.hh"
 #include "BDSBeamlineNavigator.hh"
 
 BDSBeamline* BDSBeamline::_instance = 0;
@@ -21,9 +20,7 @@ BDSBeamline::~BDSBeamline(){
     delete *_iterComponent;
   }
   _componentList.clear();
-
   delete _navigator;
-
   _instance = 0;
 }
 

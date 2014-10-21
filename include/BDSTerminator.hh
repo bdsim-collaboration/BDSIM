@@ -23,7 +23,7 @@ private:
   /// total number of terminators
   static G4int nSamplers;
 
-  virtual G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
 };
 
 void AddTerminatorToEndOfBeamline(ElementList* beamline_list);

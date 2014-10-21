@@ -6,12 +6,10 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSLaserWire.hh"
+#include "BDSMaterials.hh"
 #include "G4Box.hh"
-#include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4UserLimits.hh"
 
 //============================================================
 
@@ -19,8 +17,7 @@ BDSLaserWire::BDSLaserWire (G4String aName,G4double aLength,
 G4double aWavelength, G4ThreeVector aDirection):
   BDSAcceleratorComponent(
     aName,
-    aLength,0,0,0,
-    SetVisAttributes()),
+    aLength,0,0,0),
   itsLaserCompton(NULL),
   itsLaserDirection(aDirection),itsLaserWavelength(aWavelength)
 {
@@ -44,12 +41,11 @@ void BDSLaserWire::BuildMarkerLogicalVolume()
     SetLaserwireDir(itsMarkerLogicalVolume->GetName(),itsLaserDirection);
 }
 
-G4VisAttributes* BDSLaserWire::SetVisAttributes()
+void BDSLaserWire::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.,1.,0.));
   itsVisAttributes->SetForceSolid(true);
   itsVisAttributes->SetVisibility(true);
-  return itsVisAttributes;
 }
 
 BDSLaserWire::~BDSLaserWire()

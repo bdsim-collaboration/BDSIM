@@ -17,8 +17,6 @@
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
 
-#include "G4VisAttributes.hh"
-
 class BDSDump : public BDSAcceleratorComponent
 {
 public:
@@ -32,7 +30,7 @@ public:
 private:
 
   virtual void BuildMarkerLogicalVolume();
-  virtual G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
 
   /// number of total Dumps
   static int nDumps;

@@ -6,11 +6,17 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSDrift.hh"
+
+#include "BDSDriftStepper.hh"
+#include "BDSMagField.hh"
+
+#include "G4FieldManager.hh"
+#include "G4LogicalVolume.hh"
+#include "G4MagIntegratorStepper.hh"
 #include "G4Tubs.hh"
+#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
 
 #include <map>
 
@@ -32,7 +38,6 @@ BDSDrift::BDSDrift (G4String aName,
 	       aLength, 
 	       aper, 
 	       aper, 
-	       SetVisAttributes(), 
 	       blmLocZ, 
 	       blmLocTheta, 
 	       tunnelMaterial, 
@@ -71,12 +76,6 @@ void BDSDrift::Build() {
   VisAtt1->SetVisibility(false);
   VisAtt1->SetForceSolid(true);
   itsMarkerLogicalVolume->SetVisAttributes(VisAtt1);
-}
-
-G4VisAttributes* BDSDrift::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(0,1,0)); //useless
-  return itsVisAttributes;
 }
 
 void BDSDrift::BuildBPFieldAndStepper(){

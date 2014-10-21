@@ -7,16 +7,25 @@
 #include "TRKAperture.hh"
 #include "TRKPlacement.hh"
 
+class TRKBunch;
+class TRKStrategy;
+
 /**
- * @brief a basic element
+ * @brief Base class element, also used for Drift
  */
 class TRKElement { 
 public :
   TRKElement(std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
   ~TRKElement();
 
-  std::string GetName()const {return name;}
+  /// track method, visitor pattern
+  virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
+  void CheckAperture(TRKBunch* bunch);
 
+  std::string  GetName()const {return name;}
+  double       GetLength()const {return length;}
+  TRKAperture* GetAperture()const {return aperture;}
+  
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKElement &element);
 
@@ -26,11 +35,23 @@ protected :
   TRKAperture  *aperture;          ///< aperture of element
   TRKPlacement *placement;         ///< location of element
 
+  /// virtual print method for overloading operator<<. Virtual Friend Function Idiom
+  virtual void Print(std::ostream& out) const;
+
 private :
   TRKElement(); ///< not implemented
   
-  /// global coordinates of local point
+  /// global coordinates of local point - perhaps not needed
   double* LocalToGlobal(double /*vOut*/[]){return NULL;}
 };
+
+// declare drift
+typedef TRKElement TRKDrift;
+
+inline std::ostream& operator<< (std::ostream &out, const TRKElement &element)
+{
+  element.Print(out);
+  return out;
+}
 
 #endif

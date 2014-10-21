@@ -18,7 +18,6 @@
 #include "BDSSamplerSD.hh"
 #include "BDSDetectorSolenoidMagField.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "G4ChordFinder.hh"
 #include "G4TessellatedSolid.hh"
 #include "G4UniformMagField.hh"
 

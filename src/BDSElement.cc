@@ -24,7 +24,6 @@
 #include "G4NystromRK4.hh"
 
 // geometry drivers
-#include "parser/enums.h"
 #include "ggmad.hh"
 #include "BDSGeometrySQL.hh"
 
@@ -45,7 +44,7 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap, G4doubl
   BDSAcceleratorComponent(
 			  aName,
 			  aLength,bpRad,0,0,
-			  SetVisAttributes(), aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*CLHEP::m, aTunnelOffsetX*CLHEP::m, aTunnelCavityMaterial),
+			  aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*CLHEP::m, aTunnelOffsetX*CLHEP::m, aTunnelCavityMaterial),
   itsGeometry(geometry), itsBmap(bmap),
   fChordFinder(NULL), itsFStepper(NULL), itsFEquation(NULL), itsEqRhs(NULL), 
   itsMagField(NULL), itsCachedMagField(NULL), itsUniformMagField(NULL)
@@ -54,10 +53,6 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap, G4doubl
   itsFieldIsUniform=false;
   itsOuterR = outR;
   itsBmapZOffset = bmapZOffset;
-  SetType(_ELEMENT);
-
-  //Set marker volume lengths
-  CalculateLengths();
 
   // WARNING: ALign in and out will only apply to the first instance of the
   //          element. Subsequent copies will have no alignment set.
@@ -417,10 +412,9 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 
 
 
-G4VisAttributes* BDSElement::SetVisAttributes()
+void BDSElement::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.5,0.5,1));
-  return itsVisAttributes;
 }
 
 

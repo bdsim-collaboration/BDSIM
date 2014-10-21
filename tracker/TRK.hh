@@ -11,8 +11,20 @@ namespace TRK {
   const int NR_TURNS=200;
 
   // constants
-  const double SOL=2.9e8;
+  /// speed of light
+  const double SOL=3.0e8;
+  /// electric charge
   const double e = 1.6e-19;
+
+  /** tracking type
+   * thin: thin lens tracking
+   * thin symplectic
+   * thick: thick lens tracking
+   * hybrid: Geant4 field stepper
+   */
+  //enum TRKType 
+  enum Strategy {THIN,THINSYMPLECTIC,THICK,HYBRID};
+  enum Aperture {CIRCULAR,RECTANGULAR,ELLIPSOIDAL};
 
   /** 
    * fast way to calculate both sinh and cosh

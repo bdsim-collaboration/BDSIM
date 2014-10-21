@@ -17,7 +17,6 @@
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4UniformMagField.hh"
 #include "BDSMagField.hh"
 #include "G4CachedMagneticField.hh"
@@ -46,7 +45,7 @@ public:
 private:
 
   virtual void BuildMarkerLogicalVolume();
-  virtual G4VisAttributes* SetVisAttributes();  
+  void SetVisAttributes();  
 
   void BuildElementMarkerLogicalVolume();
   void BuildGeometry();

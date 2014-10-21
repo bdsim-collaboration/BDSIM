@@ -41,6 +41,7 @@ public:
 			    G4int PDGType, 
 			    G4int nEvent, 
 			    G4int TurnsTaken);
+  virtual void WriteTrackerBunch(G4String samplerName, TRKBunch* bunch, bool primary=false);
 
   virtual void Commit();  /// close the file
   virtual void Write();   /// close and open new file

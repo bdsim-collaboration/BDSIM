@@ -34,7 +34,7 @@ private:
   void BuildAwakeScintillatorScreenTunnel();
   void BuildVacuumChamber1();
   void BuildVacuumChamber2();
-  G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
   void ComputeDimensions();
   virtual void BuildMarkerLogicalVolume();
   void BuildCameraScoringPlane();
@@ -69,8 +69,7 @@ private:
   G4UserLimits* itsSoilTunnelUserLimits;
   G4UserLimits* itsInnerTunnelUserLimits;
                     
-  G4VisAttributes* itsVisAttributes;
-  G4Mag_UsualEqRhs* itsEqRhs;
+  //  G4Mag_UsualEqRhs* itsEqRhs;
   
 private:
   G4double itsOuterR;

@@ -1,6 +1,0 @@
-include options.gmad
-include beam.gmad
-include BDSQuadrupole.gmad
-include latt.gmad;
-
-option, ngenerate=10000;

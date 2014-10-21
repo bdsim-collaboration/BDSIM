@@ -1,15 +1,19 @@
 #ifndef TRKFactory_h
-#define TRKFactory_h
+#define TRKFactory_h 1
 
-#include "TRKTrackingElement.hh"
+#include "TRKElement.hh"
+#include "TRK.hh"
 
-class ElementList;
+#include <string>
+
+class  ElementList;
 struct Element;
 struct Options;
 
 class TRKAperture;
 class TRKLine;
 class TRKPlacement;
+class TRKStrategy;
 
 /**
  * @brief factory to create beamline elements
@@ -17,34 +21,57 @@ class TRKPlacement;
 
 class TRKFactory {
  public:
-  TRKFactory(TRKTrackingElement::TRKType type, Options& options);
+  TRKFactory(Options& options);
 
-  TRKLine* createLine(ElementList& beamline_list);
+  TRKLine*     createLine(ElementList& beamline_list);
+  TRKStrategy* createStrategy();
+
+  friend std::ostream& operator<< (std::ostream& out, const TRKFactory &factory);
 
 private:
-  TRKTrackingElement* createElement(Element& element);
+  TRK::Strategy setStrategyEnum(std::string sIn);
+  TRK::Aperture setApertureEnum(std::string aIn);
+  
+  TRKAperture* createAperture(Element& element);
+  
+  TRKElement* createElement(Element& element);
 
-  TRKTrackingElement* createLine(Element& element);
-  TRKTrackingElement* createDrift(Element& element);
-  TRKTrackingElement* createDipole(Element& element);
-  TRKTrackingElement* createQuadrupole(Element& element);
-  TRKTrackingElement* createSextupole(Element& element);
-  TRKTrackingElement* createOctopole(Element& element);
-  TRKTrackingElement* createDecapole(Element& element);
+  TRKElement* createLine(Element& element);
+  TRKElement* createDrift(Element& element);
+  //TRKElement* createSBend(Element& element);
+  //TRKElement* createRBend(Element& element);
+  TRKElement* createDipole(Element& element);
+  TRKElement* createQuadrupole(Element& element);
+  TRKElement* createSextupole(Element& element);
+  TRKElement* createOctupole(Element& element);
+  TRKElement* createDecapole(Element& element);
+  TRKElement* createSolenoid(Element& element);
+  //TRKElement* createMultipole(Element& element);
+  //TRKElement* createGmadElement(Element& element);
+  TRKElement* createSampler(Element& element);
+  //TRKElement* createTransform3D(Element& element);
 
-  /// tracking type
-  TRKTrackingElement::TRKType type;
   /// particle properties
-  double charge;
+  int charge;
+  /// beam momentum in GeV
   double momentum;
   double brho;
-  /// default aperture
-  TRKAperture* aper;
+
   /// global placement position
   TRKPlacement* placement;
+  
   /// circular flag
   bool circular;
   
+  /// tracking strategy
+  TRK::Strategy strategy;
+  int   trackingsteps;
+  
+  /// aperture
+  TRKAperture* defaultaperture; /// default aperture
+  TRK::Aperture aperturetype;   /// enum of aperture type
+  double beampiperadius;
+  bool   dontuseaperture;
 };
 
 #endif

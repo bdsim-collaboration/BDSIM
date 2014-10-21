@@ -30,7 +30,6 @@
 #include "G4PVPlacement.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4IntersectionSolid.hh"
 
@@ -47,7 +46,6 @@ BDSMultipole::BDSMultipole( G4String aName,
 			    G4double aLength,
 			    G4double aBpRadius,
 			    G4double aInnerIronRadius,
-                            G4VisAttributes* aVisAtt,
 			    std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
                             G4String aTunnelMaterial,
                             G4String aMaterial,
@@ -66,7 +64,6 @@ BDSMultipole::BDSMultipole( G4String aName,
 			 aBpRadius,
 			 aXAper,
 			 aYAper,
-			 aVisAtt,
 			 blmLocZ,
 			 blmLocTheta,
                          aTunnelMaterial,
@@ -89,7 +86,6 @@ BDSMultipole::BDSMultipole( G4String aName,
 			    G4double aLength,
 			    G4double aBpRadius,
 			    G4double aInnerIronRadius,
-                            G4VisAttributes* aVisAtt,
                             G4String aTunnelMaterial,
                             G4String aMaterial,
 			    G4double aXAper,
@@ -105,7 +101,6 @@ BDSMultipole::BDSMultipole( G4String aName,
 			 aBpRadius,
 			 aXAper,
 			 aYAper,
-			 aVisAtt,
                          aTunnelMaterial,
 			 aMaterial,
 			 angle,
@@ -121,8 +116,6 @@ BDSMultipole::BDSMultipole( G4String aName,
 }
 
 void BDSMultipole::ConstructorInit(){
-  CalculateLengths();
-
   itsStepper=NULL;
   itsMagField=NULL;
   itsEqRhs=NULL;
@@ -158,7 +151,8 @@ void BDSMultipole::Build()
   //
   BuildBPFieldAndStepper();
   BuildBPFieldMgr(itsStepper, itsMagField);
-  BuildMarkerLogicalVolume();
+
+  BDSAcceleratorComponent::Build();
   BuildOuterLogicalVolume();
   BuildBeampipe();
   if(BDSGlobalConstants::Instance()->GetBuildTunnel()){

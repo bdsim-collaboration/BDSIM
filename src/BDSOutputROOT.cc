@@ -7,6 +7,7 @@
 #include "BDSSamplerCylinder.hh"
 #include "BDSTrajectory.hh"
 
+
 BDSOutputROOT::BDSOutputROOT():BDSOutputBase()
 {
   G4cout<<"output format ROOT"<<G4endl;
@@ -433,6 +434,54 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
     }
 }
 
+void BDSOutputROOT::WriteTrackerBunch(G4String samplerName, TRKBunch* bunch, bool primary)
+{
+  G4String name;
+  if (primary)
+    {name = "Primaries";}
+  else
+    {name = samplerName;}
+  //perhaps this should actually switch to use WritePrimary method...
+  //but then that simply duplicates the numbers several times..
+  int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  //note 0 values denote those not specified or used
+  for (TRKBunchIter it = bunch->begin(); it != bunch->end(); ++it)
+    {
+      WriteRootHit(name,
+		   0,//Init
+		   0,0,0,
+		   0,0,0,
+		   0,
+		   0,//Prod
+		   0,0,0,
+		   0,0,0,
+		   0,
+		   0,//LastScatter
+		   0,0,0,
+		   0,0,0,
+		   0,
+		   it->E()*1000.0, //tracker in MeV, output in GeV
+		   it->X()*1e-6,   //convert to um
+		   it->Y()*1e-6,   //convert to um
+		   it->Z()*1e-6,   //convert to um
+		   it->Xp(),       //leave in rad
+		   it->Yp(),       //leave in rad
+		   it->Zp(),       //leave in rad
+		   0,
+		   0,0,0,          //Global
+		   0,0,0,
+		   it->Z(),        //Z and S are synonymous in the tracker
+		   1,              //weight
+		   0,              //PDGID
+		   0,
+		   0,
+		   0,
+		   turnstaken
+		   );
+	}
+}
+
+
 void BDSOutputROOT::Commit()
 {
   Write();
@@ -442,10 +491,14 @@ void BDSOutputROOT::Commit()
 
 void BDSOutputROOT::Write()
 {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   if(theRootOutputFile && theRootOutputFile->IsOpen())
     {
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " writing to root file..." << G4endl;
+      G4cout << __METHOD_NAME__ << " - ROOT file found and open, writing." << G4endl;
 #endif
       //Dump all other quantities to file...
       theRootOutputFile->Write();
@@ -453,5 +506,6 @@ void BDSOutputROOT::Write()
       delete theRootOutputFile;
       theRootOutputFile=NULL;
     }
+  G4cout << __METHOD_NAME__ << " ...finished." << G4endl;
 }
 #endif

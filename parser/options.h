@@ -23,6 +23,7 @@ struct Options {
   std::string distribType;
   std::string xDistribType; 
   std::string yDistribType;
+  std::string zDistribType;
   std::string distribFile;
   std::string distribFileFormat;
 
@@ -74,14 +75,14 @@ struct Options {
   int       doPlanckScattering;
   int       checkOverlaps;
   int       numberOfEventsPerNtuple;
-  unsigned long int eventNumberOffset;
+  int       eventNumberOffset;
   double    vacuumPressure;
   double    planckScatterFe; 
 
   /// for element specification
   double xsize, ysize;
 
-  ///  int backgroundScaleFactor;
+  //  int backgroundScaleFactor;
 
   /// default geometry parameters
   std::string magnetGeometry;
@@ -94,6 +95,8 @@ struct Options {
   std::string tunnelMaterial;
   std::string tunnelCavityMaterial;
   std::string soilMaterial;
+  std::string apertureType;
+  bool        dontUseAperture;
 
   int      includeIronMagFields;
 
@@ -120,7 +123,7 @@ struct Options {
   double   annihiToMuFe;
   double   eeToHadronsFe;
 
-  double scintYieldFactor;
+  double   scintYieldFactor;
  
   int      useEMLPB;
   int      useHadLPB;
@@ -154,11 +157,11 @@ struct Options {
   double   maximumEpsilonStep;
   double   deltaOneStep;
   int      turnOnCerenkov;
-  int turnOnOpticalAbsorption;
-  int turnOnMieScattering;
-  int turnOnRayleighScattering;
-  int turnOnOpticalSurface;
-  int turnOnBirksSaturation;
+  int      turnOnOpticalAbsorption;
+  int      turnOnMieScattering;
+  int      turnOnRayleighScattering;
+  int      turnOnOpticalSurface;
+  int      turnOnBirksSaturation;
   int      synchRadOn;
   int      decayOn;
   int      synchTrackPhotons;
@@ -168,6 +171,9 @@ struct Options {
   int      synchMeanFreeFactor;
   double   lengthSafety;
   long int randomSeed;
+  /// tracking type
+  std::string trackingType;
+  int      trackingSteps; ///per element for tracker
 
   int      useTimer;
   int      storeMuonTrajectories;
@@ -177,11 +183,12 @@ struct Options {
   int      storeTrajectory;
   int      stopTracks;
 
-  std::string fifo; /// fifo for BDSIM-placet
-  std::string refvolume; ///initial starting volume
-  int refcopyno; ///initial starting volume copy number
+  std::string fifo; ///< fifo for BDSIM-placet
+  std::string refvolume; ///< initial starting volume
+  int refcopyno; ///< initial starting volume copy number
   
   /// Ring parameters
+  bool     circular;
   int      nturns;
 
   /// print some properties

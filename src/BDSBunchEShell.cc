@@ -42,7 +42,7 @@ void BDSBunchEShell::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   yp = Yp0 + cos(phi) * shellYp;
   
   z0 = Z0 * CLHEP::m;
-  zp = calculateZp(xp,yp,Zp0);
+  zp = CalculateZp(xp,yp,Zp0);
  
   t = T0 * CLHEP::s;
   E = BDSGlobalConstants::Instance()->GetParticleKineticEnergy()* (1 + sigmaE/2. * (1. -2. * FlatGen->shoot()));

@@ -9,21 +9,9 @@
 #define BDSTMultipole_h 1
 
 #include "globals.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-#include "G4HelixImplicitEuler.hh"
-
-#include "G4FieldManager.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4PVPlacement.hh"
-
 #include "BDSMultipole.hh"
 
 #include <list>
-
-class G4Mag_UsualEqRhs;
-class BDSMultipoleMagField;
 
 class BDSTMultipole :public BDSMultipole
 {
@@ -49,7 +37,7 @@ private:
   
   virtual void BuildBPFieldAndStepper();
 
-  virtual G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
 };
 
 #endif

@@ -13,18 +13,11 @@
 #define BDSEventAction_h 
 
 
-#include "BDSGlobalConstants.hh"
 #include "G4UserEventAction.hh"
 #include "globals.hh"
-#include "BDSAcceleratorComponent.hh"
-#include "BDSEnergyCounterSD.hh"
 #include "BDSTrajectory.hh"
-#include "G4Trajectory.hh"
-#include "G4TrajectoryContainer.hh"
 #include <list>
 #include <vector>
-#include "BDSCCDPixelSD.hh"
-#include "BDSOutputBase.hh"
 
 class BDSEventAction : public G4UserEventAction
 {
@@ -35,12 +28,10 @@ public:
 public:
   virtual void   BeginOfEventAction(const G4Event*);
   virtual void   EndOfEventAction(const G4Event*);
-  void AddPrimaryHits(const G4Event* event);
-  void SetDrawFlag   (G4String val)  {drawFlag = val;};
+  void AddPrimaryHits();
     
 private:
   G4bool verbose;
-  G4bool verboseStep;
   G4bool verboseEvent;
   G4int  verboseEventNumber;
   G4bool isBatch;
@@ -50,24 +41,14 @@ private:
   //    G4int                       SamplerCollID_primaries;                
   //    G4int                       LWCalorimeterCollID;
   //    G4int                       EnergyCounterCollID;                
-  G4String                    drawFlag;
   
   G4int printModulo;
-  G4int itsRecordSize;
 
   BDSTrajectory* Traj;
   BDSTrajectoryPoint* trajEndPoint;
   G4ThreeVector trajEndPointThreeVector;
   std::vector<BDSTrajectory*> interestingTrajectories;
-  
-
-  std::list<BDSAcceleratorComponent*>::const_iterator iBeam;
-  std::list<BDSEnergyCounterSD*>::const_iterator iEC;
-  std::list<BDSCCDPixelSD*>::const_iterator iCCD;
-
-  BDSAcceleratorComponent* LastComp;
-  };
+};
 
 #endif
 
-    

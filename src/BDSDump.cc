@@ -35,7 +35,7 @@ BDSDump::BDSDump (G4String aName,G4double aLength, G4String aTunnelMaterial):
   BDSAcceleratorComponent(
 			 aName,
 			 aLength,0,0,0,
-			 SetVisAttributes(), aTunnelMaterial)
+			 aTunnelMaterial)
 {
   SetName("Dump_"+BDSGlobalConstants::Instance()->StringFromInt(nDumps)+"_"+itsName);
   ++nDumps;
@@ -78,10 +78,9 @@ void BDSDump::BuildMarkerLogicalVolume()
   itsMarkerLogicalVolume->SetSensitiveDetector(BDSDumpSensDet);
 }
 
-G4VisAttributes* BDSDump::SetVisAttributes()
+void BDSDump::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(1,1,1));
-  return itsVisAttributes;
 }
 
 BDSDump::~BDSDump()

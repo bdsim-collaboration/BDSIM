@@ -1,10 +1,16 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSKicker.hh"
-#include "G4VisAttributes.hh"
+
+#include "BDSDipoleStepper.hh"
+#include "BDSSbendMagField.hh"
+
+#include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
+#include "G4Mag_UsualEqRhs.hh"
+#include "G4UserLimits.hh"
+#include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4TransportationManager.hh"
 
 #include <map>
 
@@ -15,7 +21,7 @@ BDSKicker::BDSKicker(G4String aName, G4double aLength,
 		     G4double bField, G4double angle, G4double outR,
 		     G4double tilt, G4double bGrad, 
 		     G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), aTunnelMaterial, aMaterial,
+  BDSMultipole(aName, aLength, bpRad, FeRad, aTunnelMaterial, aMaterial,
 	       0, 0, angle)
 {
   SetOuterRadius(outR);
@@ -53,11 +59,10 @@ void BDSKicker::Build() {
 }
 
 
-G4VisAttributes* BDSKicker::SetVisAttributes()
+void BDSKicker::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0,0,1));
   itsVisAttributes->SetForceSolid(true);
-  return itsVisAttributes;
 }
 
 
@@ -69,10 +74,10 @@ void BDSKicker::BuildBPFieldAndStepper()
   
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
   
-  itsStepper = new BDSDipoleStepper(itsEqRhs);
-  BDSDipoleStepper* dipoleStepper = dynamic_cast<BDSDipoleStepper*>(itsStepper);
+  BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
   dipoleStepper->SetBField(-itsBField); // note the - sign...
   dipoleStepper->SetBGrad(itsBGrad);
+  itsStepper = dipoleStepper;
 }
 
 BDSKicker::~BDSKicker()

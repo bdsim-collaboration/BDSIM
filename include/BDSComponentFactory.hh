@@ -4,7 +4,6 @@
 #include <list>
 #include "globals.hh"
 #include "parser/element.h"
-#include "parser/gmad.h"
 #include "BDSAcceleratorComponent.hh"
 
 class ElementList; 
@@ -22,7 +21,7 @@ private:
   G4bool   verbose;
   
   G4double _charge, _momentum, _brho;
-  G4double _bpRad, _FeRad; 
+  G4double _bpRad, _FeRad, _bpThick; 
   
   // stuff for rescaling due to synchrotron radiation, IGNORING
   G4double _synch_factor ;

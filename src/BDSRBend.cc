@@ -1,15 +1,22 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSRBend.hh"
-#include "G4Tubs.hh"
-#include "G4Trd.hh"
+
+#include "BDSDipoleStepper.hh"
+#include "BDSMaterials.hh"
+#include "BDSSbendMagField.hh"
+
+#include "G4FieldManager.hh"
 #include "G4IntersectionSolid.hh"
-#include "G4SubtractionSolid.hh"
-#include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
+#include "G4Mag_EqRhs.hh"
+#include "G4PVPlacement.hh"               
+#include "G4SubtractionSolid.hh"
+#include "G4Trd.hh"
+#include "G4Tubs.hh"
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
+#include "G4VisAttributes.hh"
+#include "G4VPhysicalVolume.hh"
 
 //============================================================
 
@@ -19,7 +26,7 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
                    std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
                    G4double tilt, G4double bGrad, 
                    G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
+  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
 	       0, 0, angle),
   markerSolidVolume(NULL),rbendRectangleSolidVolume(NULL),rbendRectangleLogicalVolume(NULL),
   middleBeampipeLogicalVolume(NULL),middleInnerBPLogicalVolume(NULL),endsBeampipeLogicalVolume(NULL),
@@ -72,11 +79,10 @@ void BDSRBend::Build()
     }
 }
 
-G4VisAttributes* BDSRBend::SetVisAttributes()
+void BDSRBend::SetVisAttributes()
 {
   itsVisAttributes = new G4VisAttributes(G4Colour(0,0,1)); //blue
   itsVisAttributes->SetForceSolid(true);
-  return itsVisAttributes;
 }
 
 void BDSRBend::BuildBPFieldAndStepper()
@@ -87,10 +93,10 @@ void BDSRBend::BuildBPFieldAndStepper()
 
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
   
-  itsStepper = new BDSDipoleStepper(itsEqRhs);
-  BDSDipoleStepper* dipoleStepper = dynamic_cast<BDSDipoleStepper*>(itsStepper);
+  BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
   dipoleStepper->SetBField(-itsBField); // note the - sign...
   dipoleStepper->SetBGrad(itsBGrad);
+  itsStepper = dipoleStepper;
 }
 
 void BDSRBend::BuildMarkerLogicalVolume()

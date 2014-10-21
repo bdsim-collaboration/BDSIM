@@ -11,8 +11,6 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSSamplerSD.hh"
 
-#include "G4VisAttributes.hh"
-
 class BDSSampler : public BDSAcceleratorComponent
 {
 public:
@@ -29,9 +27,9 @@ public:
   static BDSSamplerSD* GetSensitiveDetector(){return SensitiveDetector;}
 
 private:
-  virtual void BuildMarkerLogicalVolume();
+  virtual void Initialise();
 
-  virtual G4VisAttributes* SetVisAttributes();
+  virtual void BuildMarkerLogicalVolume();
 
   /// id of sampler
   int nThisSampler;

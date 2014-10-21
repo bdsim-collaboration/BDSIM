@@ -9,11 +9,12 @@
 Options::Options(){
   // Default Values for Options
 
-  physicsList = "cylinder";
+  physicsList = "standard"; //default - standard (only transportation)
   particleName = "";
   distribType = "";
   xDistribType = ""; 
   yDistribType = "";
+  zDistribType = "";
   distribFile = "";
   distribFileFormat = "";
 
@@ -58,6 +59,8 @@ Options::Options(){
   tunnelRadius = 0.0;
   beampipeRadius = 0.0;
   beampipeThickness = 0.0;
+  apertureType      = "circular";
+  dontUseAperture   = false;
 
   pipeMaterial = "StainlessSteel";
   vacMaterial = "Vacuum";
@@ -137,6 +140,8 @@ Options::Options(){
   synchMeanFreeFactor = 1;
   lengthSafety = 0.000000001;
   randomSeed = 0;
+  trackingType = "hybrid";
+  trackingSteps = 1;
   
   useTimer = 0;
   storeMuonTrajectories = 0;
@@ -151,6 +156,7 @@ Options::Options(){
   refcopyno = 0;
 
   // ring options
+  circular = false;
   nturns = 1;
 }
 
@@ -371,19 +377,17 @@ void Options::set_value(std::string name, double value )
   if(name == "doPlanckScattering" ) { doPlanckScattering = (int) value; return; }
   if(name == "checkOverlaps" ) { checkOverlaps = (int) value; return; }
 
-  if(name == "storeTrajectory") { storeTrajectory = (int) value; return; } 
-  if(name == "storeTrajectories") { storeTrajectory = (int) value; return; } 
-  if(name == "storeMuonTrajectory") { storeMuonTrajectories = (int) value; return; } 
-  if(name == "storeMuonTrajectories") { storeMuonTrajectories = (int) value; return; } 
+  if(name == "storeTrajectory" || name == "storeTrajectories")
+    { storeTrajectory = (int) value; return; } 
+  if(name == "storeNeutronTrajectory" || name == "storeNeutronTrajectories")
+    { storeNeutronTrajectories = (int) value; return; } 
+  if(name == "storeMuonTrajectory" || name == "storeMuonTrajectories")
+    { storeMuonTrajectories = (int) value; return; } 
   if(name == "trajCutGTZ") { trajCutGTZ = (double) value; return; } 
   if(name == "trajCutLTR") { trajCutLTR = (double) value; return; } 
 
-  if(name == "storeNeutronTrajectory") { storeNeutronTrajectories = (int) value; return; } 
-  if(name == "storeNeutronTrajectories") { storeNeutronTrajectories = (int) value; return; } 
-
-
   // options for generation and storage
-  if(name == "randomSeed") { randomSeed = (int) value; return; }
+  if(name == "randomSeed") { randomSeed = (long int)value; return; }
   if(name == "ngenerate" ) { numberToGenerate = (int)value; return; }
   if(name == "nperfile" ) { numberOfEventsPerNtuple = (int)value; return; }
   if(name == "eventNumberOffset" ) { eventNumberOffset = (int)value; return; }
@@ -393,7 +397,14 @@ void Options::set_value(std::string name, double value )
   if(name=="refcopyno") { refcopyno = (int) value; return; }
   
   // option for rings
-  if(name=="nturns") {nturns = (int) value; return; }
+  if(name=="circular") {circular = (int) value; return;}
+  if(name=="nturns")   {nturns   = (int) value; return;}
+
+  // tracking
+  if(name == "trackingSteps") { trackingSteps = (int)value; return;}
+
+  // aperture
+  if(name == "dontUseAperture") {dontUseAperture = (bool)value; return;}
   
   std::cerr << "Error: parser> unkown option \"" << name << "\"" << std::endl; 
   exit(1);
@@ -411,6 +422,7 @@ void Options::set_value(std::string name, std::string value )
   if(name == "distrType" ) { distribType = value; return; }
   if(name == "xDistrType" ) { xDistribType = value; return; }
   if(name == "yDistrType" ) { yDistribType = value; return; }
+  if(name == "zDistrType" ) { zDistribType = value; return; }
   if(name == "distrFile" ) { distribFile = getEnv("BDSIMPATH")+value; return; }
   if(name == "distrFileFormat" ) { distribFileFormat = value; return; }
 
@@ -425,9 +437,11 @@ void Options::set_value(std::string name, std::string value )
   if(name == "tunnelMaterial" ) { tunnelMaterial = value; return; }
   if(name == "tunnelCavityMaterial" ) { tunnelCavityMaterial = value; return; }
   if(name == "soilMaterial" ) { soilMaterial = value; return; }
+  if(name == "apertureType" ) { apertureType = value; return; }
   
   // options which influence the tracking
-  if(name == "physicsList" ) { physicsList = value; return; } 
+  if(name == "physicsList" )  { physicsList   = value; return;} 
+  if(name == "trackingType")  { trackingType  = value; return;}
 
   // options for external code interfaces
   if(name == "fifo") { fifo = value; return; }

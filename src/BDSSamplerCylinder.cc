@@ -31,18 +31,23 @@ BDSSamplerCylinder::
 BDSSamplerCylinder (G4String aName,G4double aLength,G4double aRadius):
   BDSAcceleratorComponent(
 			 aName,
-			 aLength,0,0,0,
-			 SetVisAttributes()),
+			 aLength,0,0,0),
   itsRadius(aRadius)
 {
   nThisSampler = nSamplers + 1;
   SetName("CSampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
-  SetType("csampler");
   nSamplers++;
 
   // register sampler sensitive detector
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   SDMan->AddNewDetector(SensitiveDetector);
+}
+
+void BDSSamplerCylinder::Initialise()
+{
+  BDSAcceleratorComponent::Initialise();
+  
+  BDSSamplerCylinder::outputNames.push_back(itsName + "_phys_" + BDSGlobalConstants::Instance()->StringFromInt(GetCopyNumber()+1));
 }
 
 void BDSSamplerCylinder::BuildMarkerLogicalVolume()
@@ -64,10 +69,9 @@ void BDSSamplerCylinder::BuildMarkerLogicalVolume()
   itsMarkerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
 }
 
-G4VisAttributes* BDSSamplerCylinder::SetVisAttributes()
+void BDSSamplerCylinder::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(1,0,1));
-  return itsVisAttributes;
 }
 
 BDSSamplerCylinder::~BDSSamplerCylinder()

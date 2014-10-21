@@ -88,11 +88,6 @@ public:
   G4double GetK2();
   G4double GetK3();
 
-  ///Set is only for Outline readout purposes - doesn't change magnet strengths
-  void SetK1(G4double K1);
-  void SetK2(G4double K2);
-  void SetK3(G4double K3);
-
   G4RotationMatrix* GetRotation();
   G4ThreeVector GetPosition();
   
@@ -108,7 +103,6 @@ public:
   G4int GetCopyNumber() const;
   G4double GetSPos() const;
   void SetSPos(G4double spos);
-  void SetCopyNumber(G4int nCopy);
   void AddSensitiveVolume(G4LogicalVolume* aLogVol);
   std::vector<G4LogicalVolume*> GetSensitiveVolumes();
   void SetGFlashVolumes(G4LogicalVolume* aLogVol);
@@ -147,10 +141,11 @@ public:
 private:
   /// private default constructor
   BDSAcceleratorComponent();
+protected:
   /// initialise method
   /// checks if marker logical volume already exists and builds new one if not
   // can't be in constructor as calls virtual methods
-  void Initialise();
+  virtual void Initialise();
 
 public:
   BDSAcceleratorComponent (
@@ -159,7 +154,6 @@ public:
 			  G4double aBpRadius,
 			  G4double aXAper,
 			  G4double aYAper,
-                          G4VisAttributes* aVisAtt,
                           std::list<G4double> blmLocZ, 
 			  std::list<G4double> blmLocTheta,
                           G4String aTunnelMaterial = "",
@@ -178,7 +172,6 @@ public:
 			  G4double aBpRadius,
 			  G4double aXAper,
 			  G4double aYAper,
-                          G4VisAttributes* aVisAtt,
                           G4String aTunnelMaterial = "",
 			  G4String aMaterial = "",
 			  G4double phi=0.,  // polar angle (used in hor. bends)
@@ -204,7 +197,7 @@ private:
   /// build marker logical volume
   virtual void BuildMarkerLogicalVolume() = 0;
   /// set and return visual attributes
-  virtual G4VisAttributes* SetVisAttributes(); 
+  virtual void SetVisAttributes(); 
 
 protected:
   /// build logical volumes: marker, tunnel, field, blms etc.
@@ -225,8 +218,10 @@ protected:
 
   void SetPrecisionRegion (G4int precisionRegionType);
 
-  //Calculate dimensions used for the marker volume etc.
-  void CalculateLengths();
+  ///Set is only for Outline readout purposes - doesn't change magnet strengths
+  void SetK1(G4double K1);
+  void SetK2(G4double K2);
+  void SetK3(G4double K3);
 
   //Values related to BLM placement and geometry
   G4double itsBlmLocationR;
@@ -322,20 +317,19 @@ private:
   BDSAcceleratorComponent(BDSAcceleratorComponent&);
   /// constructor initialisation
   void ConstructorInit();
+  /// Calculate dimensions used for the marker volume etc.
+  void CalculateLengths();
 
   G4RotationMatrix* nullRotationMatrix;
   G4RotationMatrix* tunnelRot;
   G4VisAttributes* VisAtt;
   G4VisAttributes* VisAtt1;
   G4VisAttributes* VisAtt2;
-  G4VisAttributes* VisAtt3;
-  G4VisAttributes* VisAtt4;
-  G4VisAttributes* VisAtt5;
   G4Tubs* itsBLMSolid;
   G4Tubs* itsBlmOuterSolid;
   G4double itsSPos;
+  /// count of logical volumes shared with other instances; start at 0
   G4int itsCopyNumber;
-  BDSEnergyCounterSD* itsBDSEnergyCounter;
   //  G4int itsCollectionID;
   std::vector<G4LogicalVolume*> itsSensitiveVolumes;
   std::vector<G4LogicalVolume*> itsGFlashVolumes;
@@ -460,11 +454,9 @@ SetInnerMostLogicalVolume(G4LogicalVolume* aLogVol)
 inline G4VisAttributes* BDSAcceleratorComponent::GetVisAttributes() const
 {return itsVisAttributes;}
 
-inline G4VisAttributes* BDSAcceleratorComponent::SetVisAttributes()
-{itsVisAttributes=NULL; return itsVisAttributes;}
-
-inline BDSEnergyCounterSD* BDSAcceleratorComponent::GetBDSEnergyCounter() const
-{return itsBDSEnergyCounter;}
+inline void BDSAcceleratorComponent::SetVisAttributes()
+{itsVisAttributes = new G4VisAttributes(true);
+}
 
 inline G4int BDSAcceleratorComponent::GetCopyNumber() const
 {return itsCopyNumber;}
@@ -472,15 +464,8 @@ inline G4int BDSAcceleratorComponent::GetCopyNumber() const
 inline G4double BDSAcceleratorComponent::GetSPos() const
 {return itsSPos;}
 
-inline void BDSAcceleratorComponent::SetCopyNumber(G4int nCopy)
-{itsCopyNumber=nCopy;}
-
 inline void BDSAcceleratorComponent::SetSPos(G4double spos)
 {itsSPos=spos;}
-
-inline void 
-BDSAcceleratorComponent::SetBDSEnergyCounter(BDSEnergyCounterSD* anBDSEnergyCounter)
-{itsBDSEnergyCounter=anBDSEnergyCounter;}
 
 inline  void BDSAcceleratorComponent::AddSensitiveVolume(G4LogicalVolume* aLogVol)
 { itsSensitiveVolumes.push_back(aLogVol);}

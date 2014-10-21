@@ -28,12 +28,6 @@ public:
 
 public:
 
- void AddParallelWorldName(G4String& pname)
-         {paraWorldName.push_back(pname);}
-
-
-  void AddScoringProcess();
-
   void AddParameterisation();
   
   virtual void ConstructParticle();
@@ -67,8 +61,6 @@ public:
   
 private:
   G4bool verbose;
-
-  std::vector<G4String>  paraWorldName;
 
   G4Cerenkov*          theCerenkovProcess;
   G4Scintillation*     theScintillationProcess;

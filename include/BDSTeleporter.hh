@@ -2,15 +2,11 @@
 #define BDSTeleporter_h 1
 
 #include "BDSTeleporterStepper.hh"
-#include "G4VisAttributes.hh"
 #include "G4ChordFinder.hh"
 #include "G4FieldManager.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "BDSMagField.hh"
 #include "G4Mag_UsualEqRhs.hh"
-//#include "globals.hh"
-//#include "BDSGlobalConstants.hh"
-//#include "BDSDrift.hh"
 #include "BDSBeamline.hh"
 #include "parser/elementlist.h"
 
@@ -29,13 +25,13 @@ protected:
   G4Mag_UsualEqRhs*       itsEqRhs;
 
 private:
+  void SetVisAttributes();
   virtual void Build();
   virtual void BuildMarkerLogicalVolume();
   /// define field and stepper
   void BuildBPFieldAndStepper();
   /// build and set field manager and chord finder
   void BuildBPFieldMgr(G4MagIntegratorStepper* stepper,G4MagneticField* field);
-  virtual G4VisAttributes* SetVisAttributes();
 };
 
 void CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline);

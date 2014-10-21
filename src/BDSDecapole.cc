@@ -19,7 +19,6 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4TransportationManager.hh"
 
 //============================================================
 
@@ -29,7 +28,7 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
 			 G4double outR, 
                          std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
                          G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
+  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
   itsBQuadPrime(BQuadPrime)
 {
   SetOuterRadius(outR);
@@ -63,11 +62,10 @@ void BDSDecapole::Build() {
     }
 }
 
-G4VisAttributes* BDSDecapole::SetVisAttributes()
+void BDSDecapole::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0,0,1)); //green
   itsVisAttributes->SetForceSolid(true);
-  return itsVisAttributes;
 }
 
 void BDSDecapole::BuildBPFieldAndStepper()
@@ -76,9 +74,9 @@ void BDSDecapole::BuildBPFieldAndStepper()
   itsMagField=new BDSDecMagField(itsBQuadPrime);
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
   
-  itsStepper=new BDSDecStepper(itsEqRhs);
-  BDSDecStepper* decStepper = dynamic_cast<BDSDecStepper*>(itsStepper);
+  BDSDecStepper* decStepper=new BDSDecStepper(itsEqRhs);
   decStepper->SetBQuadPrime(itsBQuadPrime);
+  itsStepper = decStepper;
 }
 
 BDSDecapole::~BDSDecapole()

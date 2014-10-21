@@ -88,7 +88,6 @@ public:
   void     SetParticleMomentum(G4double val);
 
 
-
   G4double GetVacuumPressure();
   G4double GetPlanckScatterFe();
 
@@ -107,8 +106,7 @@ public:
   G4double GetMagnetPoleSize();
   G4double GetMagnetPoleRadius();
 
-
-
+  /// tunnel
   G4bool   GetBuildTunnel(); 
   G4bool   GetBuildTunnelFloor(); 
   G4bool   GetShowTunnel(); 
@@ -123,16 +121,20 @@ public:
   G4double GetBlmRad();
   G4double GetBlmLength();
 
+  /// Beampipe
   G4double GetBeampipeRadius(); 
   G4double GetBeampipeThickness(); 
 
+  /// Sampler
   G4double GetSamplerDiameter();
   G4double GetSamplerLength();
 
+  /// Chord stepping
   G4double GetDeltaIntersection();
   G4double GetDeltaChord();
   G4double GetChordStepMinimum();
 
+  /// Threshold and Production cuts
   G4double GetThresholdCutCharged();
   G4double GetThresholdCutPhotons();
 
@@ -145,7 +147,6 @@ public:
   G4double GetProdCutPositrons();
   G4double GetProdCutPositronsP();
   G4double GetProdCutPositronsA();
-
 
   // Magnet geometry variable
 
@@ -191,6 +192,7 @@ public:
 
   G4double GetLengthSafety();
   G4long   GetRandomSeed();
+  G4String GetTrackingType();
   G4int    GetNumberToGenerate();
   G4int    GetNumberOfEventsPerNtuple();
   G4int    GetEventNumberOffset();
@@ -237,6 +239,10 @@ public:
   std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* LogicalVolumeInfo(); 
   // add a new set of info to the map
   void AddLogicalVolumeInfo(G4LogicalVolume* logvolpointer, BDSLogicalVolumeInfo* bdslogvolinfo);
+
+  /// initial particle
+  BDSParticle GetInitialPoint();
+  void SetInitialPoint(BDSParticle& particle);
   
   // SPM : temp filestream for placet to read and write
   //  std::ofstream fileDump;
@@ -348,6 +354,7 @@ private:
   G4bool   itsIncludeIronMagFields;
   G4double itsLengthSafety;
   G4long   itsRandomSeed;
+  G4String itsTrackingType;
   G4int    itsNumberToGenerate;
   G4int    itsNumberOfEventsPerNtuple;
   G4int    itsEventNumberOffset;
@@ -405,6 +412,8 @@ private:
   G4double itsSMax;
   // logical volume info
   std::map<G4LogicalVolume* , BDSLogicalVolumeInfo*> logicalvolumeinfo;
+  /// initial particle
+  BDSParticle itsInitialPoint;
 
   // private set methods
   void     SetLPBFraction(G4double val);
@@ -845,5 +854,11 @@ inline G4double BDSGlobalConstants::GetParticleMomentum()
 
 inline void BDSGlobalConstants::SetParticleMomentum(G4double val)
 {itsParticleMomentum = val;}
+
+inline BDSParticle BDSGlobalConstants::GetInitialPoint()
+{return itsInitialPoint;}
+
+inline void BDSGlobalConstants::SetInitialPoint(BDSParticle& particle)
+{itsInitialPoint = particle;}
 
 #endif

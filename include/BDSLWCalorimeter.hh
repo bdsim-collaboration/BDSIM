@@ -14,7 +14,6 @@ class G4FieldManager;
 class G4LogicalVolume;
 class G4Tubs;
 class G4UserLimits;
-class G4VisAttributes;
 class G4VPhysicalVolume;
 
 class BDSLWCalorimeter :public BDSAcceleratorComponent
@@ -35,7 +34,7 @@ protected:
   G4FieldManager* itsBPFieldMgr;
 
 private:
-  virtual G4VisAttributes* SetVisAttributes();
+  virtual void SetVisAttributes();
   virtual void BuildMarkerLogicalVolume();
   void BuildBeampipe(G4double aLength);
   void BuildCal(G4double aLength);

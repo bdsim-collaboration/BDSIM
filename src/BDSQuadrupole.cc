@@ -19,14 +19,19 @@
 #include "BDSDebug.hh"
 
 #include "BDSQuadrupole.hh"
+
 #include "BDSMaterials.hh"
-#include "G4Tubs.hh"
-#include "G4Polyhedra.hh"
-#include "G4VisAttributes.hh"
+#include "BDSQuadMagField.hh"
+#include "BDSQuadStepper.hh"
+
+#include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
+#include "G4Polyhedra.hh"
+#include "G4PVPlacement.hh"               
+#include "G4Tubs.hh"
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
+#include "G4VisAttributes.hh"
+#include "G4VPhysicalVolume.hh"
 
 //============================================================
 
@@ -35,7 +40,7 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
 			     G4double bGrad, G4double tilt, G4double outR,
                              std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
 			     G4String aTunnelMaterial, G4String aMaterial, G4String spec):
-  BDSMultipole(aName, aLength, bpRad, FeRad, SetVisAttributes(), blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
+  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
   itsBGrad(bGrad)
 {
 #ifdef BDSDEBUG 
@@ -80,22 +85,15 @@ void BDSQuadrupole::Build()
     }
 }
 
-G4VisAttributes* BDSQuadrupole::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(1,0,0));
-  itsVisAttributes->SetForceSolid(true);
-  return itsVisAttributes;
-}
-
 void BDSQuadrupole::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
   itsMagField=new BDSQuadMagField(1*itsBGrad); //L Deacon checking sign of field 4/7/12
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
 
-  itsStepper=new BDSQuadStepper(itsEqRhs);
-  BDSQuadStepper* quadStepper = dynamic_cast<BDSQuadStepper*>(itsStepper);
+  BDSQuadStepper* quadStepper=new BDSQuadStepper(itsEqRhs);
   quadStepper->SetBGrad(itsBGrad);
+  itsStepper = quadStepper;
 }
 
 void BDSQuadrupole::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)
@@ -133,7 +131,7 @@ void BDSQuadrupole::BuildCylindricalOuterLogicalVolume()
   G4double outerRadius = itsOuterR;
   if(itsOuterR==0) outerRadius = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
 
-  outerRadius = outerRadius/sqrt(2.0);
+  outerRadius = outerRadius/sqrt(2.0); //Why divide by sqrt of 2?
 
   itsOuterLogicalVolume=
     new G4LogicalVolume(
@@ -163,11 +161,24 @@ void BDSQuadrupole::BuildCylindricalOuterLogicalVolume()
 		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
+  
+  // color-coding for the pole
+  G4VisAttributes* VisAtt = 
+    new G4VisAttributes(G4Colour(1., 0., 0.));
+  VisAtt->SetForceSolid(true);
+  itsOuterLogicalVolume->SetVisAttributes(VisAtt);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // 				Detailed geometry					 //
 ///////////////////////////////////////////////////////////////////////////////////////////
+void BDSQuadrupole::SetVisAttributes()
+{
+  itsVisAttributes = new G4VisAttributes(true);
+  itsVisAttributes->SetColor(1,0,0);
+  itsVisAttributes->SetForceSolid(true);
+  itsVisAttributes->SetVisibility(true);
+}
 
 
 void BDSQuadrupole::BuildStandardOuterLogicalVolume()

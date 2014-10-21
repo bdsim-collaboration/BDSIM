@@ -7,12 +7,12 @@
 #include "BDSSpoiler.hh"
 #include "BDSMaterials.hh"
 
+#include "G4Box.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
 
 //============================================================
 
@@ -20,8 +20,7 @@ BDSSpoiler::BDSSpoiler (G4String& aName,G4double aLength,G4double bpRad,
 			  G4double xAper,G4double yAper,
 			  G4Material* SpoilerMaterial):
   BDSAcceleratorComponent(aName,
-			 aLength,bpRad,xAper,yAper,
-			 SetVisAttributes()),
+			 aLength,bpRad,xAper,yAper),
   itsPhysiComp(NULL), itsPhysiComp2(NULL), itsSolidLogVol(NULL), 
   itsInnerLogVol(NULL), itsSpoilerMaterial(SpoilerMaterial)
 {
@@ -46,10 +45,9 @@ void BDSSpoiler::BuildMarkerLogicalVolume()
 }
 
 
-G4VisAttributes* BDSSpoiler::SetVisAttributes()
+void BDSSpoiler::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.3,0.4,0.2));
-  return itsVisAttributes;
 }
 
 

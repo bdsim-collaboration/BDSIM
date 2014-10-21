@@ -1,0 +1,19 @@
+include options.gmad
+include fodo.gmad;
+
+option, ngenerate=5,
+	apertureType="circular";
+
+!beam,  particle="e-",
+!       energy = 1*GeV,
+!       distrType  = "userfile",
+!       distrFile  = "1_Particles.dat",
+!       distrFileFormat = "x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:E[MeV]";
+
+!option, nlinesIgnore = 0;
+
+beam,   particle = "e-",
+	energy = 1*GeV,
+	distrType="square",
+	X0 = 5*mm,
+	envelopeX = 10*mm;

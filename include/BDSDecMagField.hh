@@ -8,7 +8,6 @@
 
 #include "G4Types.hh"
 #include "G4MagneticField.hh"
-#include "G4Navigator.hh"
 
 class BDSDecMagField : public G4MagneticField
 {

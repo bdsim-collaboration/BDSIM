@@ -1,39 +1,19 @@
 #include "TRKSolenoid.hh"
+#include "TRKStrategy.hh"
 
-#include <cmath>
-#include <cstdlib>
-#include "vector3.hh"
-#include "vector6.hh"
-
-TRKSolenoid::TRKSolenoid(double strengthIn, TRKTrackingElement::TRKType typeIn, int trackingStepsIn, std::string nameIn, double lengthIn, TRKAperture *apertureIn, TRKPlacement *placementIn):
-  TRKTrackingElement(typeIn, trackingStepsIn,nameIn,lengthIn,apertureIn,placementIn), strength(strengthIn), drift(NULL)
+TRKSolenoid::TRKSolenoid(double strengthIn, std::string nameIn, double lengthIn, TRKAperture *apertureIn, TRKPlacement *placementIn):
+  TRKElement(nameIn,lengthIn,apertureIn,placementIn), strength(strengthIn)
 {
-  drift = new TRKDrift(typeIn, trackingStepsIn,nameIn+"Drift",lengthIn,apertureIn,placementIn);
 }
 
 TRKSolenoid::~TRKSolenoid() {
-  delete drift;
 }
 
-void TRKSolenoid::ThinTrack(const double vIn[], double vOut[], double h) {  
-  if (std::abs(strength)<=1e-12) {
-    return drift->Track(vIn,vOut,h);
-  }
-
+void TRKSolenoid::Track(TRKBunch* bunch, TRKStrategy* strategy) {
+  strategy->Track(this,bunch);
 }
 
-void TRKSolenoid::HybridTrack(const double vIn[], double vOut[], double h) {  
-  if (std::abs(strength)<=1e-12) {
-    return drift->Track(vIn,vOut,h);
-  }
-}
-
-void TRKSolenoid::ThickTrack(const double vIn[], double vOut[], double h) {
-  if (std::abs(strength)<=1e-12) {
-    return drift->Track(vIn,vOut,h);
-  }
-}
-
-std::ostream& operator<< (std::ostream &out, const TRKSolenoid &element) {
-  return out << element.strength << " ";
+void TRKSolenoid::Print(std::ostream &out)const {
+  TRKElement::Print(out);
+  out << "; Strength: " << strength << "T/m";
 }

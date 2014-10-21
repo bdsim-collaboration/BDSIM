@@ -25,6 +25,9 @@ BDSGlobalConstants* BDSGlobalConstants::Instance(){
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0),itsParticleMomentum(0.0),itsParticleKineticEnergy(0.0),itsSMax(0.0)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   itsPhysListName = opt.physicsList;
   itsPipeMaterial = opt.pipeMaterial;
   itsVacMaterial = opt.vacMaterial;
@@ -134,6 +137,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsNumberOfEventsPerNtuple = opt.numberOfEventsPerNtuple;
   itsEventNumberOffset = opt.eventNumberOffset;
   itsRandomSeed = opt.randomSeed;
+  itsTrackingType = opt.trackingType;
   itsGammaToMuFe= opt.gammaToMuFe;
   itsAnnihiToMuFe= opt.annihiToMuFe;
   itsEeToHadronsFe=opt.eeToHadronsFe;
@@ -171,7 +175,10 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsZeroFieldManager->CreateChordFinder(zeroMagField);
   itsTurnsTaken = 1; //counting from 1
   if(opt.nturns < 1)
-    itsTurnsToTake = 1;
+    {
+      G4cout << "nturns < 1 - setting to 1" << G4endl;
+      itsTurnsToTake = 1;
+    }
   else
     itsTurnsToTake = opt.nturns;
   teleporterdelta     = G4ThreeVector(0.,0.,0.);
@@ -184,6 +191,11 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsLWCalOffset      = 0.0;
   itsMagnetPoleRadius = 0.0;
   itsMagnetPoleSize   = 0.0;
+  teleporterdelta     = G4ThreeVector(0.,0.,0.);
+  teleporterlength    = 0.0;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "finished constructor" << G4endl;
+#endif
 }
 
 void BDSGlobalConstants::InitRotationMatrices(){

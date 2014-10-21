@@ -14,7 +14,6 @@ Work in progress.
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
 
@@ -28,7 +27,7 @@ extern LogVolMap* LogVol;
 //============================================================
 
 BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double tScint, G4double angle, G4String scintMaterial, G4String airMaterial):
-  BDSAcceleratorComponent(aName, tScint, 0, 0, 0, SetVisAttributes()),_scintillatorLayerMaterial(BDSMaterials::Instance()->GetMaterial(scintMaterial.data())),_airMaterial(BDSMaterials::Instance()->GetMaterial(airMaterial.data())),_screenAngle(angle),_scintillatorThickness(tScint)
+  BDSAcceleratorComponent(aName, tScint, 0, 0, 0),_scintillatorLayerMaterial(BDSMaterials::Instance()->GetMaterial(scintMaterial.data())),_airMaterial(BDSMaterials::Instance()->GetMaterial(airMaterial.data())),_screenAngle(angle),_scintillatorThickness(tScint)
 {
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
@@ -38,6 +37,7 @@ BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double tScint, G
 
 void BDSScintillatorScreen::Build()
 {
+  SetVisAttributes(); 
   ComputeDimensions();
   BuildMarkerLogicalVolume();
   if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
@@ -46,7 +46,7 @@ void BDSScintillatorScreen::Build()
   BuildScintillatorScreen();
 }
 
-G4VisAttributes* BDSScintillatorScreen::SetVisAttributes()
+void BDSScintillatorScreen::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.3,0.4,0.2));
   itsVisAttributes->SetForceSolid(true);
@@ -61,8 +61,6 @@ G4VisAttributes* BDSScintillatorScreen::SetVisAttributes()
   _visAttScint->SetForceSolid(true);
   _visAttBase->SetForceSolid(true);
   _visAttSampler->SetForceSolid(true);
-
-  return itsVisAttributes;
 }
 
 void BDSScintillatorScreen::BuildFrontLayer(){

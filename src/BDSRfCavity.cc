@@ -6,7 +6,6 @@
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
 
 #include "G4MagIntegratorDriver.hh"
 
@@ -16,7 +15,7 @@
 
 BDSRfCavity::BDSRfCavity (G4String aName,G4double aLength, G4double bpRad, 
 			  G4double grad, G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName ,aLength, bpRad, bpRad, SetVisAttributes(), aTunnelMaterial, aMaterial),
+  BDSMultipole(aName ,aLength, bpRad, bpRad, aTunnelMaterial, aMaterial),
   itsEField(NULL),fChordFinder(NULL),fStepper(NULL),fIntgrDriver(NULL),fieldManager(NULL)
 {
   itsGrad = grad;
@@ -29,11 +28,10 @@ void BDSRfCavity::Build()
 }
 
 
-G4VisAttributes* BDSRfCavity::SetVisAttributes()
+void BDSRfCavity::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.25,0.25,0.5));
   itsVisAttributes->SetForceSolid(true);
-  return itsVisAttributes;
 }
 
 

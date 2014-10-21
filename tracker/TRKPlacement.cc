@@ -15,3 +15,8 @@ vector3 TRKPlacement::GetGlobal()const
   return vector3(x,y,z);
 
 }
+
+std::ostream& operator<< (std::ostream& out, const TRKPlacement& /*placement*/) {
+  out << "Placement - TBC ";
+  return out;
+}

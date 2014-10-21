@@ -49,7 +49,7 @@ void BDSBunchCircle::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   xp += cos(phiRp) * rp * CLHEP::rad;
   yp += sin(phiRp) * rp * CLHEP::rad;
   
-  zp = calculateZp(xp,yp,Zp0);
+  zp = CalculateZp(xp,yp,Zp0);
   t = 0.0;
   E = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * (1 + envelopeE * (1-2*FlatGen->shoot()));
 

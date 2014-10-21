@@ -34,17 +34,16 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4AssemblyVolume.hh"
 #include "G4Transform3D.hh"
 
 typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
+LogVolCountMap* LogVolCount = new LogVolCountMap();
 
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
+LogVolMap* LogVol = new LogVolMap();
 
 BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4String& aName,
@@ -52,7 +51,6 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double aBpRadius,
 						  G4double aXAper,
 						  G4double aYAper, 
-						  G4VisAttributes* aVisAtt,
 						  G4String aTunnelMaterial,
 						  G4String aMaterial,
 						  G4double angle,
@@ -69,7 +67,6 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsYAper(aYAper),
   itsAngle(angle),
   itsMaterial(aMaterial),
-  itsVisAttributes(aVisAtt),
   itsTunnelMaterial(aTunnelMaterial),
   itsXOffset(XOffset),
   itsYOffset(YOffset), 
@@ -87,7 +84,6 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double aBpRadius,
 						  G4double aXAper,
 						  G4double aYAper, 
-						  G4VisAttributes* aVisAtt,
 						  std::list<G4double> blmLocZ, 
 						  std::list<G4double> blmLocTheta,
 						  G4String aTunnelMaterial,
@@ -106,7 +102,6 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsYAper(aYAper),
   itsAngle(angle),
   itsMaterial(aMaterial),
-  itsVisAttributes(aVisAtt), 
   itsBlmLocZ(blmLocZ), 
   itsBlmLocTheta(blmLocTheta),
   itsTunnelMaterial(aTunnelMaterial),
@@ -147,7 +142,7 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
   if (itsTunnelRadius<=BDSGlobalConstants::Instance()->GetLengthSafety()){
     itsTunnelRadius=BDSGlobalConstants::Instance()->GetTunnelRadius();
   }
-  CalculateLengths();
+  CalculateLengths(); // Calculate dimensions based on component and tunnel dimensions
   itsOuterLogicalVolume=NULL;
   itsMarkerLogicalVolume=NULL;
   itsTunnelLogicalVolume=NULL;
@@ -184,17 +179,14 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
 
   nullRotationMatrix=NULL;
   tunnelRot=NULL;
+  itsVisAttributes=NULL;
   VisAtt=NULL;
   VisAtt1=NULL;
   VisAtt2=NULL;
-  VisAtt3=NULL;
-  VisAtt4=NULL;
-  VisAtt5=NULL;
   itsBLMSolid=NULL;
   itsBlmOuterSolid=NULL;
   itsSPos = 0.0;
   itsCopyNumber = 0;
-  itsBDSEnergyCounter=NULL;
 }
 
 BDSAcceleratorComponent::~BDSAcceleratorComponent ()
@@ -206,26 +198,25 @@ BDSAcceleratorComponent::~BDSAcceleratorComponent ()
   delete VisAtt;
   delete VisAtt1;
   delete VisAtt2;
-  delete VisAtt3;
-  delete VisAtt4;
-  delete VisAtt5;
 }
 
 void BDSAcceleratorComponent::Initialise()
 {
-  // check and build logical volume
-  if(!(*LogVolCount)[itsName])
+  /// check and build logical volume
+
+  // set copy number (count starts at 0)
+  // post increment guarantees itsCopyNumber starts at 0!
+  itsCopyNumber = (*LogVolCount)[itsName]++;
+  if(itsCopyNumber == 0)
     {
       Build();
       //
       // append marker logical volume to volume map
       //
-      (*LogVolCount)[itsName]=1;
       (*LogVol)[itsName]=itsMarkerLogicalVolume;
     }
   else
     {
-      (*LogVolCount)[itsName]++;
       //
       // use already defined marker volume
       //
@@ -235,6 +226,7 @@ void BDSAcceleratorComponent::Initialise()
 
 void BDSAcceleratorComponent::Build()
 {
+  SetVisAttributes(); // sets color attributes, virtual method
   BuildMarkerLogicalVolume(); // pure virtual provided by derived class
 }
 
@@ -603,9 +595,6 @@ void BDSAcceleratorComponent::BuildTunnel()
   VisAtt2 = new G4VisAttributes(G4Colour(0.0, 0.5, 0.5));
   VisAtt2->SetVisibility(false);
   VisAtt2->SetForceSolid(true);
-  VisAtt3 = new G4VisAttributes(G4Colour(0.4, 0.4, 0.4));
-  VisAtt3->SetVisibility(false);
-  VisAtt3->SetForceSolid(true);
   itsTunnelMinusCavityLogicalVolume->SetVisAttributes(VisAtt1);
   itsMarkerLogicalVolume->SetVisAttributes(VisAtt);
   itsTunnelCavityLogicalVolume->SetVisAttributes(VisAtt2);
@@ -637,14 +626,6 @@ void BDSAcceleratorComponent::BuildBLMs()
    G4AssemblyVolume* assemblyBlms= new G4AssemblyVolume();
    G4Transform3D blmTr3d;
    
-   //declare vis attributes
-   VisAtt4 = new G4VisAttributes(G4Colour(0.5, 0.5, 0.0));
-   VisAtt4->SetVisibility(true);
-   VisAtt4->SetForceSolid(true);
-   VisAtt5 = new G4VisAttributes(G4Colour(0.5, 0.0, 0.5));
-   VisAtt5->SetVisibility(true);
-   VisAtt5->SetForceSolid(true);
-
    //set case thickness
    blmCaseThickness = 1e-20*CLHEP::m;
 

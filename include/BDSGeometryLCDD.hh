@@ -31,7 +31,6 @@
 #include "G4PVPlacement.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "G4ChordFinder.hh"
 #include "G4FieldManager.hh"
 #include "BDSSamplerSD.hh"
 #include <fstream>
@@ -845,6 +844,7 @@ inline void BDSGeometryLCDD::BuildSubtraction(xmlNodePtr cur)
     }
   else
     {
+      // following will crash if componentRotation == NULL! - JS
       G4Transform3D transform(*componentRotation,PlacementPoint);
       SOLID_LIST.push_back(new G4SubtractionSolid(name,
 						  GetSolidByName(firstname),
