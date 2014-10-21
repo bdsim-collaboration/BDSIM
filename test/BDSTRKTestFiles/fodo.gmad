@@ -8,10 +8,10 @@ endl: marker;
 lat : line = (d1,q1,d2,q2,d3,endl);
 use, period=lat;
 
-sample, range = d1;
-sample, range = q1;
-sample, range = d2;
-sample, range = q2;
-sample, range = d3; 
+!sample, range = d1;
+!sample, range = q1;
+!sample, range = d2;
+!sample, range = q2;
+!sample, range = d3; 
 sample, range = endl;
 
