@@ -15,4 +15,6 @@ BDSOutputBase* TRK::InitialiseOutput() {
     return new BDSOutputROOT();
 #endif
   }
+  // should not happen, but to prevent compiler warning
+  return new BDSOutputASCII();
 }

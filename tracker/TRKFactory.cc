@@ -187,9 +187,8 @@ TRKElement* TRKFactory::createElement(Element& element) {
     return createSextupole(element);
   case _OCTUPOLE:
     return createOctupole(element);
-    //  case _DECAPOLE:
-    //TEMPORARY
-    //return createDrift(element);
+  // case _DECAPOLE:
+  //   return createDecapole(element);
   case _SOLENOID:
     return createSolenoid(element);
   case _MULT:

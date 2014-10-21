@@ -65,7 +65,7 @@ private:
 
   //mass and charge don't change in the tracker!
   /// energy in MeV - can change in tracker
-  double  energy;
+  double  energy; // JS: might be faster to store and use the inverse energy
   double  energybefore;
   /// mass in MeV / c^2
   double  mass;
