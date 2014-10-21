@@ -204,8 +204,6 @@ TRKElement* TRKFactory::createElement(Element& element) {
     //TEMPORARY
     return NULL;
   case _VKICK:
-    //TEMPORARY
-    return createDrift(element);
   case _HKICK:
     return createDipole(element);
   default:
