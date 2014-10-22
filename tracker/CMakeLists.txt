@@ -22,7 +22,7 @@ file(GLOB BDSBunchsources ../src/BDSBunch*.cc )
 add_library(tracker STATIC ${TRKsources} ${BDSBunchsources} 
  ../include/BDSDebug.hh
  ../src/BDSOutputBase.cc
- ../src/BDSGlobalConstants.cc
+ ../src/BDSGlobalConstants.cc)
 bdsim_install_targets(tracker)
 
 #file(GLOB gmadsources ../parser/gmad.cc ../parser/getEnv.cc ../parser/element.cc ../parser/elementlist.cc ../parser/enums.cc ../parser/options.cc ../parser/parameters.cc)
