@@ -19,7 +19,9 @@ file(GLOB TRKsources *.cc )
 # no longer so easy to make static library as dependencies back to
 # BDSIM classes
 add_library(tracker STATIC ${TRKsources} ../include/BDSDebug.hh ../src/BDSBunch.cc
- ../src/BDSOutputBase.cc ../src/BDSOutputASCII.cc ../src/BDSExecOptions.cc ../src/BDSGlobalConstants.cc)
+ ../src/BDSOutputBase.cc ../src/BDSOutputASCII.cc
+ ../src/BDSExecOptions.cc ../src/BDSGlobalConstants.cc
+ ../src/BDSBunchFactory.cc ../src/BDSBunchInterface.cc ../src/BDSHistogram.cc)
 bdsim_install_targets(tracker)
 
 #file(GLOB gmadsources ../parser/gmad.cc ../parser/getEnv.cc ../parser/element.cc ../parser/elementlist.cc ../parser/enums.cc ../parser/options.cc ../parser/parameters.cc)
