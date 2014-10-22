@@ -210,8 +210,8 @@ void BDSOutputASCII::WriteTrackerBunch(G4String /*samplerName*/, TRKBunch* bunch
 		  it->E()*1000.0, //convert to GeV
 		  it->X()*1e-6,   //convert to um
 		  it->Y()*1e-6,   //convert to um
-		  it->Z(),        //leave in m
-		  it->Z(), //note z and s are synonymous in tracker
+		  it->Z()*1000.0, //convert to um
+		  it->Z()*1000.0, //note z and s are synonymous in tracker - convert to m
 		  it->Xp(),       //leave in rad
 		  it->Yp(),       //leave in rad
 		  0, //can you cast an iterator to an int?
