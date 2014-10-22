@@ -1,7 +1,9 @@
 #include "TRKStrategy.hh"
+
+#include "BDSDebug.hh"
 #include "BDSOutputBase.hh"
 #include "TRKSampler.hh"
-#include "BDSDebug.hh"
+#include "TRKTiltOffset.hh"
 
 extern BDSOutputBase* trkOutput;
 
@@ -23,4 +25,10 @@ void TRKStrategy::Track(TRKSampler* el, TRKBunch* bunch) {
 #endif
   //don't modify particles, but we write to output here
   trkOutput->WriteTrackerBunch(el->GetName(),bunch);
+}
+
+void TRKStrategy::Track(TRKTiltOffset* el, TRKBunch* bunch) {
+  std::cout << __METHOD_NAME__ << " TiltOffset" << std::endl;
+
+  // TODO
 }

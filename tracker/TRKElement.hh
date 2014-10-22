@@ -9,6 +9,7 @@
 
 class TRKBunch;
 class TRKStrategy;
+class TRKTiltOffset;
 
 /**
  * @brief Base class element, also used for Drift
@@ -30,10 +31,12 @@ public :
   friend std::ostream& operator<< (std::ostream &out, const TRKElement &element);
 
 protected : 
-  std::string  name;               ///< name of element -- do we need this? JS
-  double       length;             ///< length of component [m]
-  TRKAperture  *aperture;          ///< aperture of element
-  TRKPlacement *placement;         ///< location of element
+  std::string    name;              ///< name of element -- do we need this? JS
+  double         length;            ///< length of component [m]
+  TRKAperture*   aperture;          ///< aperture of element
+  TRKPlacement*  placement;         ///< location of element
+  TRKTiltOffset* offsetIn;          ///< tilt and offset entrance of element
+  TRKTiltOffset* offsetOut;         ///< tilt and offset exit of element
 
   /// virtual print method for overloading operator<<. Virtual Friend Function Idiom
   virtual void Print(std::ostream& out) const;

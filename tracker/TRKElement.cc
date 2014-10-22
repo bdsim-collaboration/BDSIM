@@ -5,7 +5,10 @@
 TRKElement::TRKElement(std::string nameIn, double lengthIn,
 		       TRKAperture *apertureIn, TRKPlacement *placementIn) :
   name(nameIn), length(lengthIn), aperture(apertureIn), placement(placementIn)
-{} 
+{
+  offsetIn  = NULL;
+  offsetOut = NULL;
+} 
 
 TRKElement::~TRKElement() {}
 
@@ -18,7 +21,11 @@ void TRKElement::Track(TRKBunch* bunch, TRKStrategy* strategy)
   std::cout << *bunch;
 #endif
 
+  if (offsetIn && offsetOut) strategy->Track(offsetIn,bunch);
+
   strategy->Track(this,bunch);
+
+  if (offsetIn && offsetOut) strategy->Track(offsetOut,bunch);
 
 #ifdef TRKDEBUG
   std::cout << "after tracking" << std::endl;
