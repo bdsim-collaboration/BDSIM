@@ -7,6 +7,7 @@
 class TRKTiltOffset {
 public: 
   TRKTiltOffset(double x,double y, double phi, double theta, double psi);
+
 private:
   /// horizontal offset in [m]
   double offsetX;
@@ -14,13 +15,20 @@ private:
   double offsetY;
   /// Euler angles in [urad]
   ///@{
-  /// tilt, alpha (rotation around z-axis) in [urad]
+  /// tilt, phi/alpha (rotation around z-axis) in [urad]
   double phi;
-  /// beta (rotation around x'-axis)
+  /// theta/beta (rotation around x'-axis)
   double theta;
-  /// gamma (rotation around z''-axis)
+  /// psi/gamma (rotation around z''-axis)
   double psi;
   ///@}
+
+public:
+  double GetOffsetX() const {return offsetX;}
+  double GetOffsetY() const {return offsetY;}
+  double GetPhi()     const {return phi;}
+  double GetTheta()   const {return theta;}
+  double GetPsi()     const {return psi;}
 };
 
 #endif
