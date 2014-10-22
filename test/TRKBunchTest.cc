@@ -11,9 +11,9 @@
 #include "tracker/TRKAperture.hh"
 #include "tracker/TRKApertureCircular.hh"
 #include "tracker/TRKQuadrupole.hh"
-#include "tracker/TRKOutput.hh"
 
 #include "BDSExecOptions.hh"
+#include "BDSOutputFactory.hh"
 
 #include <iostream>
 
@@ -21,7 +21,7 @@ extern Options options;
 extern ElementList beamline_list;
 
 //GLOBALS
-BDSOutputBase* trkOutput; //output interface
+BDSOutputBase* trkOutput=NULL; //output interface
 
 int main (int argc, char** argv){
   //for now, need exec options parsing from bdsim
@@ -31,7 +31,7 @@ int main (int argc, char** argv){
   gmad_parser(BDSExecOptions::Instance()->GetInputFilename());
 
   //initialise output
-  trkOutput = TRK::InitialiseOutput();
+  trkOutput = BDSOutputFactory::createOutput(BDSExecOptions::Instance()->GetOutputFormat());
 
   //build bunch
   TRKBunch* bunch   = new TRKBunch(options);

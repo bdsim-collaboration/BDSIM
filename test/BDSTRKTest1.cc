@@ -6,17 +6,17 @@
 #include "tracker/TRKFactory.hh"
 #include "tracker/TRKStrategy.hh"
 #include "tracker/TRKTracker.hh"
-#include "tracker/TRKOutput.hh"
 
 #include "BDSExecOptions.hh"
 #include "BDSOutputBase.hh"
+#include "BDSOutputFactory.hh"
 
 //Things from the parser
 extern Options options;
 extern ElementList beamline_list;
 
 //GLOBALS
-BDSOutputBase* trkOutput; //output interface
+BDSOutputBase* trkOutput=NULL; //output interface
 
 int main (int argc, char** argv){
   //for now, need exec options parsing from bdsim
@@ -26,7 +26,8 @@ int main (int argc, char** argv){
   gmad_parser(BDSExecOptions::Instance()->GetInputFilename());
   
   //initialise output
-  trkOutput = TRK::InitialiseOutput();
+  //trkOutput = BDSOutputFactory::Instance()->InitialiseOutput();
+  trkOutput = BDSOutputFactory::createOutput(BDSExecOptions::Instance()->GetOutputFormat());
 
   //build bunch
   TRKBunch* bunch       = new TRKBunch(options);
@@ -42,6 +43,10 @@ int main (int argc, char** argv){
   //run tracking - all output through bdsim / samplers
   tracker.Track(bunch);
   
+  // free memory (good code test)
+  delete factory;
+  delete bunch;
+
   //done
   return 0;
 }
