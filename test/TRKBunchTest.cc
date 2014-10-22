@@ -30,12 +30,12 @@ int main (int argc, char** argv){
   //parse input
   gmad_parser(BDSExecOptions::Instance()->GetInputFilename());
 
-  //build bunch - DONE
-  TRKBunch* bunch   = new TRKBunch(options);
-  std::cout << *bunch << std::endl;
-
   //initialise output
   trkOutput = TRK::InitialiseOutput();
+
+  //build bunch
+  TRKBunch* bunch   = new TRKBunch(options);
+  std::cout << *bunch << std::endl;
 
   //create strategy / set of routines
   TRKStrategy* strategy = new TRKThin(1/*ntrackingsteps*/);
