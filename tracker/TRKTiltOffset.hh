@@ -14,11 +14,11 @@ private:
   double offsetY;
   /// Euler angles in [urad]
   ///@{
-  /// tilt, alpha in [urad]
+  /// tilt, alpha (rotation around z-axis) in [urad]
   double phi;
-  /// beta
+  /// beta (rotation around x'-axis)
   double theta;
-  /// gamma
+  /// gamma (rotation around z''-axis)
   double psi;
   ///@}
 };

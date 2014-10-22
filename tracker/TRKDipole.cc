@@ -14,7 +14,7 @@
 TRKDipole::TRKDipole(double strengthIn, double bFieldIn, std::string nameIn, double lengthIn, TRKAperture *apertureIn, TRKPlacement *placementIn):
   TRKElement(nameIn,lengthIn,apertureIn,placementIn), strength(strengthIn), bField(bFieldIn)
 {
-  // TODO - calculate integrated strength from length and particle type
+  // TODO - calculate integrated strength from length and particle type - tbd in Factory
   intStrength = strengthIn;
 }
 
