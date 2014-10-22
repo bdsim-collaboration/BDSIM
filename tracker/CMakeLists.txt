@@ -16,9 +16,11 @@ endif()
 
 file(GLOB TRKsources *.cc )
 
-add_library(tracker STATIC ${TRKsources})
+# no longer so easy to make static library as dependencies back to
+# BDSIM classes
+add_library(tracker STATIC ${TRKsources} ../include/BDSDebug.hh ../src/BDSBunch.cc
+ ../src/BDSOutputBase.cc ../src/BDSOutputASCII.cc ../src/BDSExecOptions.cc ../src/BDSGlobalConstants.cc)
+bdsim_install_targets(tracker)
 
 #file(GLOB gmadsources ../parser/gmad.cc ../parser/getEnv.cc ../parser/element.cc ../parser/elementlist.cc ../parser/enums.cc ../parser/options.cc ../parser/parameters.cc)
 #add_library(trackerShared SHARED ${TRKsources} ${gmadsources})
-
-bdsim_install_targets(tracker)
