@@ -19,12 +19,13 @@ public:
   ~TRKParticle();
   
   //accessors
-  /// return coordinate in metre
+  /// return coordinate in micrometre
   ///@{
   double X()const      {return posmom.X();}  
   double Y()const      {return posmom.Y();}
-  double Z()const      {return posmom.Z();}
   ///@}
+  /// return coordinate in metre
+  double Z()const      {return posmom.Z();}
   /// return momentum coordinate in rad
   ///@{
   double Xp()const     {return posmom.Xp();}
@@ -59,7 +60,7 @@ public:
   friend std::ostream& operator<< (std::ostream &out, const TRKParticle &part);
 
 private:
-  /// position in metre and momentum in rad
+  /// position in micrometre (transverse) and metre (longitudinal) and momentum in rad
   vector6 posmom;
   vector6 posmombefore;
 
