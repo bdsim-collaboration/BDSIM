@@ -203,7 +203,7 @@ protected:
   /// build logical volumes: marker, tunnel, field, blms etc.
   virtual void Build();
   /// build tunnel
-  void BuildTunnel();
+  virtual void BuildTunnel();
   /// build beam loss monitors
   virtual void BuildBLMs();
 
@@ -240,12 +240,16 @@ protected:
   G4VisAttributes* itsVisAttributes;
   std::list<G4double> itsBlmLocZ;
   std::list<G4double> itsBlmLocTheta;
-  G4String itsTunnelMaterial;
+  G4String itsTunnelMaterialName;
+  G4Material* itsTunnelMaterial;
+  G4Material* itsSoilMaterial;
   //Tunnel geom
   G4double itsXOffset;
   G4double itsYOffset;
   G4double itsZOffset;
   G4double itsTunnelRadius;
+  G4double itsFloorBeamlineHeight;
+  G4double itsBeamlineCeilingHeight;
   G4double itsTunnelOffsetX;  
   /// component type, same as from typestr from enums.cc
   G4String itsType;
@@ -277,7 +281,7 @@ protected:
   /// Marker solid
   G4VSolid* itsMarkerSolidVolume;
 
-
+  BDSTunnel* itsTunnel;
 
   /// Solid shapes used in building tunnel
   G4VSolid* itsTunnelSolid;
@@ -322,6 +326,9 @@ private:
 
 
   G4RotationMatrix* tunnelRot;
+  G4ThreeVector tunnelTrans;
+  G4ThreeVector floorOffsetThreeVector;		
+  G4ThreeVector nullThreeVector;
   G4VisAttributes* VisAtt;
   G4VisAttributes* VisAtt1;
   G4VisAttributes* VisAtt2;
@@ -504,6 +511,12 @@ inline G4double BDSAcceleratorComponent::GetZOffset()
 
 inline G4double BDSAcceleratorComponent::GetTunnelRadius()
 {return itsTunnelRadius;}
+
+inline G4double BDSAcceleratorComponent::GetBeamlineCeilingHeight()
+{return itsBeamlineCeilingHeight;}
+
+inline G4double BDSAcceleratorComponent::GetFloorBeamlineHeight()
+{return itsFloorBeamlineHeight;}
 
 inline G4double BDSAcceleratorComponent::GetTunnelOffsetX()
 {return itsTunnelOffsetX;}
