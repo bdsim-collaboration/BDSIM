@@ -143,6 +143,7 @@ void set_vector(std::list<int>& dst, struct Array *src)
 #endif
 }
 
+/// method that decides which element properties are used per element type
 int write_table(struct Parameters pars,const char* name, int type, std::list<struct Element> *lst=NULL);
 int expand_line(const char *name, const char *start, const char *end);
 
@@ -178,6 +179,11 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.tunnelRadius = params.tunnelRadius;
   e.tunnelOffsetX = params.tunnelOffsetX;
   e.precisionRegion = params.precisionRegion;
+
+  // for transform3ds, lasers and for tracker
+  e.xdir = params.xdir;
+  e.ydir = params.ydir;
+  e.zdir = params.zdir;
   
   //specific parameters
   switch(type) {
@@ -445,9 +451,6 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   case _LASER:
     e.type = _LASER;
     e.l = params.l;
-    e.xdir = params.xdir;
-    e.ydir = params.ydir;
-    e.zdir = params.zdir;
     e.waveLength = params.waveLength;
     if(params.blmLocZset)
       e.blmLocZ = params.blmLocZ;
@@ -484,9 +487,6 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     
   case _TRANSFORM3D:
     e.type = _TRANSFORM3D;
-    e.xdir = params.xdir;
-    e.ydir = params.ydir;
-    e.zdir = params.zdir;
     e.theta = params.theta;
     e.phi = params.phi;
     e.psi = params.psi;
