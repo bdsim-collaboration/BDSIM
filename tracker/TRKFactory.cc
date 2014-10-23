@@ -167,51 +167,70 @@ TRKLine* TRKFactory::createLine(ElementList& beamline_list) {
 
 
 TRKElement* TRKFactory::createElement(Element& element) {
+  TRKElement* trkelement = NULL;
   switch (element.type) {
 
   case _LINE:
-    return createLine(element);
+    trkelement = createLine(element);
   case _DRIFT:
-    return createDrift(element);
+    trkelement = createDrift(element);
   case _PCLDRIFT:
-    return createDrift(element);
+    trkelement = createDrift(element);
   case _SBEND:
     //TEMPORARY
-    return createDrift(element);
+    trkelement = createDrift(element);
   case _RBEND:
     //TEMPORARY
-    return createDrift(element);;
+    trkelement = createDrift(element);;
   case _QUAD:
-    return createQuadrupole(element);
+    trkelement = createQuadrupole(element);
   case _SEXTUPOLE:
-    return createSextupole(element);
+    trkelement = createSextupole(element);
   case _OCTUPOLE:
-    return createOctupole(element);
+    trkelement = createOctupole(element);
   // case _DECAPOLE:
-  //   return createDecapole(element);
+  //   trkelement = createDecapole(element);
   case _SOLENOID:
-    return createSolenoid(element);
+    trkelement = createSolenoid(element);
   case _MULT:
     //TEMPORARY
-    return createDrift(element);
+    trkelement = createDrift(element);
   case _ELEMENT:
     //TEMPORARY
-    return createDrift(element);
+    trkelement = createDrift(element);
   case _SAMPLER:
-    return createSampler(element);
+    trkelement = createSampler(element);
   case _TRANSFORM3D:
     //TEMPORARY
-    return NULL;
+    trkelement = NULL;
   case _VKICK:
   case _HKICK:
-    return createDipole(element);
+    trkelement = createDipole(element);
   default:
-    return NULL;
+    trkelement = NULL;
   }
   /* types not specified - see parser/enums.h for types
   _SCREEN
   _CSAMPLER
   */
+
+  if (trkelement) {
+    addCommonProperties(trkelement,element);
+  }
+
+  return trkelement;
+}
+
+void TRKFactory::addCommonProperties(TRKElement* trkelement, Element& element) {
+  // offset and tilt
+  //  if (element.phi!=0.0 || element.theta!=0.0 || element.psi!=0.0) {
+  // only tilt for now
+  if (element.tilt!=0.0) {
+    trkelement->SetTilt(element.tilt,0,0); // todo check rotation correct!
+  }
+  if (element.xdir!=0.0 || element.ydir!=0.0) {
+    trkelement->SetOffset(element.xdir, element.ydir);
+  }
 }
 
 TRKElement* TRKFactory::createLine(Element& /*element*/) {

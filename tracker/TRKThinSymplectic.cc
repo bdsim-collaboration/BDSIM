@@ -1,6 +1,6 @@
 #include "TRKThinSymplectic.hh"
 
-
+#include "TRK.hh"
 #include "TRKBunch.hh"
 #include "TRKDipole.hh"
 //#include "TRKDrift.hh"

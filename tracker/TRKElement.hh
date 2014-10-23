@@ -4,10 +4,9 @@
 #include <string>
 #include <iostream>
 
-#include "TRKAperture.hh"
-#include "TRKPlacement.hh"
-
+class TRKAperture;
 class TRKBunch;
+class TRKPlacement;
 class TRKStrategy;
 class TRKTiltOffset;
 
@@ -29,6 +28,14 @@ public :
   
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKElement &element);
+
+  /// set and add offsets
+  ///@{
+  void SetOffset(double x, double y);
+  void SetTilt(double phi, double theta, double psi);
+  void AddOffset(double x, double y);
+  void AddTilt(double phi, double theta, double psi);
+  ///@}
 
 protected : 
   std::string    name;              ///< name of element -- do we need this? JS

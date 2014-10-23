@@ -1,5 +1,6 @@
 #include "TRKThick.hh"
 
+#include "TRK.hh"
 #include "TRKBunch.hh"
 #include "TRKParticle.hh"
 //#include "TRKDrift.hh"

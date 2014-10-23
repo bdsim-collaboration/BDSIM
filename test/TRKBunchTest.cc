@@ -10,6 +10,7 @@
 #include "tracker/TRKThin.hh"
 #include "tracker/TRKAperture.hh"
 #include "tracker/TRKApertureCircular.hh"
+#include "tracker/TRKPlacement.hh"
 #include "tracker/TRKQuadrupole.hh"
 
 #include "BDSExecOptions.hh"
@@ -44,6 +45,7 @@ int main (int argc, char** argv){
   TRKAperture* ap = new TRKApertureCircular(0.05);
   TRKPlacement* pl = new TRKPlacement();
   TRKQuadrupole* quad = new TRKQuadrupole(0.1,"quad1",2.5,ap,pl);  
+  quad->SetOffset(0.3,0.2);
 
   //track the bunch through a quad
   strategy->Track(quad,bunch);
