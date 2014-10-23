@@ -172,42 +172,58 @@ TRKElement* TRKFactory::createElement(Element& element) {
 
   case _LINE:
     trkelement = createLine(element);
+    break;
   case _DRIFT:
     trkelement = createDrift(element);
+    break;
   case _PCLDRIFT:
     trkelement = createDrift(element);
+    break;
   case _SBEND:
     //TEMPORARY
     trkelement = createDrift(element);
+    break;
   case _RBEND:
     //TEMPORARY
     trkelement = createDrift(element);;
+    break;
   case _QUAD:
     trkelement = createQuadrupole(element);
+    break;
   case _SEXTUPOLE:
     trkelement = createSextupole(element);
+    break;
   case _OCTUPOLE:
     trkelement = createOctupole(element);
+    break;
   // case _DECAPOLE:
   //   trkelement = createDecapole(element);
+    //    break;
   case _SOLENOID:
     trkelement = createSolenoid(element);
+    break;
   case _MULT:
     //TEMPORARY
     trkelement = createDrift(element);
+    break;
   case _ELEMENT:
     //TEMPORARY
     trkelement = createDrift(element);
+    break;
   case _SAMPLER:
     trkelement = createSampler(element);
+    break;
   case _TRANSFORM3D:
     //TEMPORARY
     trkelement = NULL;
+    break;
   case _VKICK:
   case _HKICK:
     trkelement = createDipole(element);
+    break;
   default:
     trkelement = NULL;
+    break;
   }
   /* types not specified - see parser/enums.h for types
   _SCREEN
