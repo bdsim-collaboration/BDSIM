@@ -78,11 +78,6 @@
 #include "parser/elementlist.h"
 #include "parser/enums.h"
 
-//====================================
-
-typedef std::list<BDSEnergyCounterSD*>  ECList;
-ECList* theECList;
-
 //=========================================
 
 #ifdef BDSDEBUG
@@ -151,7 +146,6 @@ BDSDetectorConstruction::BDSDetectorConstruction():
 
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 {
-  theECList   = new ECList;
   gasRegion   = new G4Region("gasRegion");
 
   G4ProductionCuts* theGasProductionCuts = new G4ProductionCuts();
@@ -252,9 +246,6 @@ void BDSDetectorConstruction::SetMagField(const G4double fieldValue){
 //=================================================================
 BDSDetectorConstruction::~BDSDetectorConstruction()
 { 
-  delete theECList;
-  //theECList = NULL;
-
   delete precisionRegion;
   gFlashRegion.clear();
 
@@ -483,7 +474,6 @@ void BDSDetectorConstruction::ComponentPlacement(){
   //BDSTerminatorSD*    TurnCounter = new BDSTerminatorSD("ring_counter");
   SDman->AddNewDetector(ECounter);
   //SDman->AddNewDetector(TurnCounter);
-  theECList->push_back(ECounter);
 
   G4ThreeVector TargetPos;
 
