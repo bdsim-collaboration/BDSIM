@@ -447,7 +447,7 @@ void BDSOutputROOT::WritePrimaryLoss(BDSEnergyCounterHit* hit)
   s_pl=hit->GetS()/CLHEP::m;
   E_pl=hit->GetEnergy()/CLHEP::GeV;
 
-  PrimaryLossHisto->Fill(s_pl,E_pl);
+  PrimaryLossHisto->Fill(s_pl); //for now fill without weight - can be weighted in analysis
   PrimaryLossTree->Fill();
 }
 

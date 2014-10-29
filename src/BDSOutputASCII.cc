@@ -209,7 +209,7 @@ void BDSOutputASCII::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 
 void BDSOutputASCII::WritePrimaryLoss(BDSEnergyCounterHit* hit)
 {
-  phist->Fill(hit->GetS()/CLHEP::m);
+  phist->Fill(hit->GetS()/CLHEP::m); //for now, don't weight - can be weighted in analysis
 }
 
 void BDSOutputASCII::Commit()
