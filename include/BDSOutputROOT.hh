@@ -25,6 +25,8 @@ public:
   virtual void WriteHits(BDSSamplerHitsCollection*);
   /// make energy loss histo
   virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*);
+  /// write primary loss histo
+  virtual void WritePrimaryLoss(BDSEnergyCounterHit*);
   /// write a trajectory 
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec);
   /// write primary hit
@@ -53,10 +55,12 @@ private:
   TFile* theRootOutputFile;
   //  TTree *theLWCalorimeterTree;
 
-  TH1F *EnergyLossHisto;
+  TH1F* EnergyLossHisto;
+  TH1F* PrimaryLossHisto;
   //  TH3F *EnergyLossHisto3d;
-  TTree *PrecisionRegionEnergyLossTree;
-  TTree *EnergyLossTree;
+  TTree* PrecisionRegionEnergyLossTree;
+  TTree* EnergyLossTree;
+  TTree* PrimaryLossTree;
   
   float x0,xp0,y0,yp0,z0,zp0,E0,t0;
   float x_prod,xp_prod,y_prod,yp_prod,z_prod,zp_prod,E_prod,t_prod;
@@ -65,6 +69,7 @@ private:
   float X,Xp,Y,Yp,Z,Zp,s,weight; //,EWeightZ;
   int part,nev, pID, track_id, turnnumber;
   float s_el,E_el;
+  float s_pl,E_pl;
   float x_el_p,y_el_p,z_el_p,E_el_p,s_el_p;
   int part_el_p, weight_el_p;
   char volumeName_el_p[100];

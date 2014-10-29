@@ -20,7 +20,9 @@ public:
   virtual void WriteHits(BDSSamplerHitsCollection*);
   /// make energy loss histo
   virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*);
-  /// write a trajectory 
+  /// write primary loss histo
+  virtual void WritePrimaryLoss(BDSEnergyCounterHit*);
+  /// write a trajectory
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec);
   /// write primary hit
   virtual void WritePrimary(G4String samplerName, G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double zp,G4double t,G4double weight,G4int PDGType, G4int nEvent, G4int TurnsTaken);
@@ -39,6 +41,9 @@ private:
   /// energy loss histogram
   std::ofstream ofELossHistogram;
   BDSHistogram1D* hist;
+  /// primary loss histogram
+  std::ofstream ofPLossHistogram;
+  BDSHistogram1D* phist;
 
   void WriteAsciiHit(std::ofstream* outfile, 
 		     G4int    PDGType, 
@@ -54,7 +59,8 @@ private:
 		     G4int    ParentID, 
 		     G4int    TrackID, 
 		     G4int    TurnsTaken);
-  void WriteHistogram();
+  
+  void WriteHistogram(BDSHistogram1D* aHist, std::ofstream* anOf);
 
 };
 

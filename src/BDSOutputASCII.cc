@@ -19,16 +19,18 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
   // generate filenames
   G4String basefilename = BDSExecOptions::Instance()->GetOutputFilename();
   filename = basefilename + ".txt"; //main output filename - for samplers
-  G4String filenamePrimaries = basefilename + ".primaries.txt"; // for primaries
-  G4String filenameELoss     = basefilename + ".eloss.txt"; //for eloss hits
-  G4String filenameHistogram = basefilename + ".elosshist.txt"; // eloss histogram
+  G4String filenamePrimaries  = basefilename + ".primaries.txt"; // for primaries
+  G4String filenameELoss      = basefilename + ".eloss.txt"; //for eloss hits
+  G4String filenameHistogram  = basefilename + ".elosshist.txt"; // eloss histogram
+  G4String filenamePHistogram = basefilename + ".plosshist.txt"; // primary loss histogram
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Output format ASCII" << G4endl;
-  G4cout << "Output filename          : " << filename  << G4endl;
-  G4cout << "Primaries filename       : " << filenamePrimaries << G4endl;
-  G4cout << "Histogram filename       : " << filenameHistogram << G4endl;
-  G4cout << "EnergyLoss Hits filename : " << filenameELoss     << G4endl;
+  G4cout << "Output filename            : " << filename  << G4endl;
+  G4cout << "Primaries filename         : " << filenamePrimaries << G4endl;
+  G4cout << "Histogram filename         : " << filenameHistogram << G4endl;
+  G4cout << "EnergyLoss Hits filename   : " << filenameELoss     << G4endl;
+  G4cout << "Primary Histogram filename : " << filenamePHistogram << G4endl;
 #endif
   std::stringstream headerstream;
   headerstream << std::left << std::setprecision(10) << std::fixed
@@ -80,6 +82,20 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
 		   << std::setw(20) << "S[m]"   << " "
 		   << std::setw(15) << "E[GeV]" << " "
 		   << G4endl;
+  
+  // primary loss histogram and output file initialisation
+  // construct histogram
+  // binning is the same as eloss
+  phist    = new BDSHistogram1D(xmin,xmax,nbins); //naturally in metres
+  // write header info
+  ofPLossHistogram.open(filenamePHistogram.c_str());
+  ofPLossHistogram << *hist << " - created " << timestring << G4endl;
+  ofPLossHistogram << std::left << std::setprecision(10) << std::fixed
+		   << std::setw(20) << "S[m]"   << " "
+		   << std::setw(15) << "E[GeV]" << " "
+		   << G4endl;
+
+
 }
 
 BDSOutputASCII::~BDSOutputASCII()
@@ -99,6 +115,10 @@ BDSOutputASCII::~BDSOutputASCII()
   if (ofELossHistogram.is_open()) {
     ofELossHistogram.flush();
     ofELossHistogram.close();
+  }
+  if (ofPLossHistogram.is_open()) {
+    ofPLossHistogram.flush();
+    ofPLossHistogram.close();
   }
 }
 
@@ -187,13 +207,20 @@ void BDSOutputASCII::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
   ofELoss.flush();
 }
 
+void BDSOutputASCII::WritePrimaryLoss(BDSEnergyCounterHit* hit)
+{
+  phist->Fill(hit->GetS()/CLHEP::m);
+}
+
 void BDSOutputASCII::Commit()
 {
   ofMain.flush();
   ofPrimaries.flush();
   ofELoss.flush();
-  WriteHistogram();
+  WriteHistogram(hist,&ofELossHistogram);
+  WriteHistogram(phist,&ofPLossHistogram);
   ofELossHistogram.flush();
+  ofPLossHistogram.flush();
   /// multiple file writing not implemented for ASCII
 }
 
@@ -205,33 +232,30 @@ void BDSOutputASCII::Write()
   ofPrimaries.close();
   ofELoss.flush();
   ofELoss.close();
-  WriteHistogram();
-  ofELossHistogram.flush();
+  WriteHistogram(hist,&ofELossHistogram);
+  WriteHistogram(phist,&ofPLossHistogram);
   ofELossHistogram.close();
+  ofPLossHistogram.close();
 }
 
-void BDSOutputASCII::WriteHistogram()
+void BDSOutputASCII::WriteHistogram(BDSHistogram1D* aHist, std::ofstream* anOf)
 {
-  std::vector<BDSBin*> thebins = hist->GetBins();
+  std::vector<BDSBin*> thebins = aHist->GetBins();
   std::vector<BDSBin*>::iterator i = thebins.begin();
-  ofELossHistogram << std::left << std::setprecision(10) << std::fixed
-		   << std::setw(12) << "underflow" << thebins.front()->GetValue() << G4endl
-		   << std::setw(12) << "overflow"  << thebins.back()->GetValue()  << G4endl;
+  *anOf << std::left << std::setprecision(10) << std::fixed
+	<< std::setw(12) << "underflow" << thebins.front()->GetValue() << G4endl
+	<< std::setw(12) << "overflow"  << thebins.back()->GetValue()  << G4endl;
   //remember .begin() is before first item, so +2 to get 2nd bin
   for (i = thebins.begin()+1; i != --thebins.end(); ++i)
     {
-  //only write non zero value bins
-  //    if ((*i) != 0)
-  //	{
       std::pair<G4double, G4double> binvalues = (*i)->GetXMeanAndTotal();
 #ifdef BDSDEBUG
       G4cout << "writing bin " << binvalues.first << " " << binvalues.second << G4endl;
 #endif
-      ofELossHistogram << std::left << std::setprecision(10) << std::fixed
-		       << std::setw(12) << binvalues.first  << " " << std::scientific
-		       << std::setw(12) << binvalues.second << " "
-		       << G4endl;
-	  //	}
+      *anOf << std::left << std::setprecision(10) << std::fixed
+	    << std::setw(12) << binvalues.first  << " " << std::scientific
+	    << std::setw(12) << binvalues.second << " "
+	    << G4endl;
     }
-  ofELossHistogram.flush();
+  anOf->flush();
 }
