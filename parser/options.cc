@@ -42,6 +42,7 @@ Options::Options(){
   sigma55 = 0.0,sigma56 = 0.0;
   sigma66 = 0.0;
   shellX=0.0, shellXp=0.0, shellY=0.0, shellYp=0.0;
+  shellXWidth=0.0, shellXpWidth=0.0, shellYWidth=0.0, shellYpWidth=0.0;
   Rmin=0.0, Rmax=0.0;
   sigmaE=0.0;
 
@@ -238,10 +239,14 @@ void Options::set_value(std::string name, double value )
   if(name == "sigma66" ) { sigma66 = value; return; }
     
   // options for beam distrType="eshell"
-  if(name == "shellX" ) { shellX = value; return; }
-  if(name == "shellY" ) { shellY = value; return; }
+  if(name == "shellX"  ) { shellX  = value; return; }
+  if(name == "shellY"  ) { shellY  = value; return; }
   if(name == "shellXp" ) { shellXp = value; return; }
   if(name == "shellYp" ) { shellYp = value; return; }
+  if(name == "shellXWidth" ) { shellXWidth  = value; return;}
+  if(name == "shellXpWidth") { shellXpWidth = value; return;}
+  if(name == "shellYWidth" ) { shellYWidth  = value; return;}
+  if(name == "shellYpWidth") { shellYpWidth = value; return;}
 
   // options for beam distrType="ring"
   if(name == "Rmin" ) { Rmin = value; return; }
