@@ -53,7 +53,10 @@ BDSEnergyCounterHit* BDS::FindFirstPrimaryHit(BDSEnergyCounterHitsCollection* hc
 	sposMin = spos; //keep for testing
 	indexofHit = i; //record which hit it was
       }
-    } 
-  return (*hc)[indexofHit];
+    }
+  if (indexofHit != -1)
+    {return (*hc)[indexofHit];}
+  else
+    {return NULL;}
 }
 

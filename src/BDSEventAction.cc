@@ -203,9 +203,12 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 
   //if we have primary hits, find the first one and write that
   if(primaryCounterHits) {
-    BDSEnergyCounterHit* thePrimaryHit = BDS::FindFirstPrimaryHit(primaryCounterHits);
-    //write
-    bdsOutput->WritePrimaryLoss(thePrimaryHit);
+    if (primaryCounterHits->entries()>0){
+      BDSEnergyCounterHit* thePrimaryHit = BDS::FindFirstPrimaryHit(primaryCounterHits);
+      //write
+      if (thePrimaryHit)
+	{bdsOutput->WritePrimaryLoss(thePrimaryHit);}
+    }
   }
   
 #ifdef BDSDEBUG
