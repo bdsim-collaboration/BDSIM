@@ -87,7 +87,10 @@ void BDS_handle_aborts(int signal_number) {
       Try to catch abort signals. This is not guaranteed to work.
       Main goal is to close output stream / files.
   */
-
+  // prevent recursive calling
+  static int nrOfCalls=0;
+  if (nrOfCalls>0) exit(1);
+  nrOfCalls++;
   std::cout << "BDSIM is about to crash or was interrupted! " << std::endl;
   std::cout << "With signal: " << strsignal(signal_number) << std::endl;
   std::cout << "Trying to write and close output file" << std::endl;
