@@ -168,6 +168,9 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
     //create a duplicate hit in the primarycounter hits collection
     //there are usually a few - filter at end of event action
     BDSEnergyCounterHit* PCHit = new BDSEnergyCounterHit(*ECHit);
+    //set the energy to be the full energy of the primary
+    //just now it's the wee bit of energy deposited in that step
+    PCHit->SetEnergy(BDSGlobalConstants::Instance()->GetBeamKineticEnergy());
     primaryCounterCollection->insert(PCHit);
   }
   
