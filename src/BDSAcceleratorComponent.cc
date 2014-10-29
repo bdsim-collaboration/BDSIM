@@ -26,7 +26,9 @@
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSMaterials.hh"
+#include "BDSDebug.hh"
 #include "G4Box.hh"
+#include "G4Trap.hh"
 #include "G4Tubs.hh"
 #include "G4Colour.hh"
 #include "G4VisAttributes.hh"
@@ -67,13 +69,9 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsYAper(aYAper),
   itsAngle(angle),
   itsMaterial(aMaterial),
-  itsTunnelMaterialName(aTunnelMaterial),
   itsXOffset(XOffset),
   itsYOffset(YOffset), 
-  itsZOffset(ZOffset), 
-  itsTunnelRadius(tunnelRadius), 
-  itsTunnelOffsetX(tunnelOffsetX),
-  itsTunnelCavityMaterial(aTunnelCavityMaterial)
+  itsZOffset(ZOffset) 
 {
   ConstructorInit();
 }
@@ -104,13 +102,9 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsMaterial(aMaterial),
   itsBlmLocZ(blmLocZ), 
   itsBlmLocTheta(blmLocTheta),
-  itsTunnelMaterialName(aTunnelMaterial),
   itsXOffset(XOffset),
   itsYOffset(YOffset), 
-  itsZOffset(ZOffset), 
-  itsTunnelRadius(tunnelRadius), 
-  itsTunnelOffsetX(tunnelOffsetX), 
-  itsTunnelCavityMaterial(aTunnelCavityMaterial)
+  itsZOffset(ZOffset) 
 {
   if (itsBlmLocZ.size() != itsBlmLocTheta.size()){
     G4cerr << "BDSAcceleratorComponent: error, lists blmLocZ and blmLocTheta are of unequal size" << G4endl;
@@ -141,9 +135,7 @@ inline void BDSAcceleratorComponent::ConstructorInit(){\
   itsPhiAngleOut = 0.0;
   itsOuterR=0;
   itsBlmLocationR=0;
-  if (itsTunnelRadius<=BDSGlobalConstants::Instance()->GetLengthSafety()){
-    itsTunnelRadius=BDSGlobalConstants::Instance()->GetTunnelRadius();
-  }
+  itsTunnel=NULL;
   CalculateLengths(); // Calculate dimensions based on component and tunnel dimensions
   itsOuterLogicalVolume=NULL;
   itsMarkerLogicalVolume=NULL;
@@ -157,7 +149,6 @@ inline void BDSAcceleratorComponent::ConstructorInit(){\
   itsMarkerSolidVolume=NULL;
   itsBLMLogicalVolume=NULL;
   itsBlmCaseLogicalVolume=NULL;
-  itsSoilTunnelLogicalVolume=NULL;
 
   nullRotationMatrix=NULL;
   itsVisAttributes=NULL;
@@ -205,20 +196,167 @@ void BDSAcceleratorComponent::Initialise()
     }
 }
 
-void BDSAcceleratorComponent::Build()
+void BDSAcceleratorComponent::Build()//Execute build methods common for all classes.
 {
   SetVisAttributes(); // sets color attributes, virtual method
-  BuildMarkerLogicalVolume(); // pure virtual provided by derived class
+  BuildMarkerLogicalVolume(); 
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << " - setting tunnel mother volume " << G4endl;
+#endif
+  if(itsTunnel != NULL){
+    itsTunnel->motherVolume(GetMarkerLogicalVolume());
+  }
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
-void BDSAcceleratorTunnel::BuildTunnel(){
-  itsTunnel = new BDSTunnel(this);
-  //  _tunnel->radius(GetTunnelRadius());
-  //  _tunnel->offsetX(GetTunnelOffsetX());
-  //  _tunnel->floorBeamlineHeight(GetFloorBeamlineHeight());
-  //  _tunnel->beamlineCeilingHeight(GetBeamlineCeilingHeight());
-  //  _tunnel->MotherComponent(this);
-  itsTunnel->Build();
+void BDSAcceleratorComponent::BuildStraightMarkerSolid(){
+    itsMarkerSolidVolume = new G4Box( itsName+"_marker_solid",
+				      itsXLength,
+				      itsYLength,
+				      itsLength/2);
+}
+
+void BDSAcceleratorComponent::BuildBendMarkerSolid(){
+  G4double transverseSize=std::max(itsXLength, itsYLength);
+  G4double xHalfLengthPlus, xHalfLengthMinus;
+  
+  xHalfLengthPlus = (itsLength + (transverseSize/2.0)*(tan(itsPhiAngleIn) -tan(itsPhiAngleOut)))/2.0;
+  xHalfLengthMinus = (itsLength +  (transverseSize/2.0)*(tan(itsPhiAngleOut)-tan(itsPhiAngleIn )))/2.0;
+  
+  
+  if((xHalfLengthPlus<0) || (xHalfLengthMinus<0)){
+    G4cerr << "Bend radius in " << itsName << " too small for this tunnel/component geometry. Exiting." << G4endl;
+    G4cerr << "xHalfLengthPlus:  " << xHalfLengthPlus << G4endl;
+    G4cerr << "xHalfLengthMinus: " << xHalfLengthMinus << G4endl;  
+    exit(1);
+  }
+  
+  
+  G4cout << "BDSAcceleratorComponent::MakeDefaultMarkerLogicalVolume> Trap parameters:  " << G4endl;
+  G4cout  <<   
+    transverseSize/2 << " " <<
+    itsPhiAngleOut-itsPhiAngleIn << " " <<
+    0 << " " <<
+    transverseSize/2.0 << " " <<
+    xHalfLengthPlus << " " <<
+    xHalfLengthPlus << " " <<
+    0 << " " <<
+    transverseSize/2.0 << " " <<
+    xHalfLengthMinus << " " <<
+    xHalfLengthMinus << " " <<
+    0 << " " << G4endl;
+  
+  itsMarkerSolidVolume = new G4Trap(itsName+"_trapezoid_marker",
+				    transverseSize/2.0, // z hlf lgth Dz
+				    atan((tan(itsPhiAngleOut)-tan(itsPhiAngleIn))/2.0), // pTheta
+				    0,// pPhi
+				    transverseSize/2.0, // pDy1
+				    xHalfLengthPlus,    // pDx1
+				    xHalfLengthPlus,    // pDx2
+				    0, // pAlp1
+				    transverseSize/2.0,  // pDy2
+				    xHalfLengthMinus,     // pDx3
+				    xHalfLengthMinus,     // pDx4
+				    0); // pAlp2
+
+  /*Is this equivalent to the G4Trap above?
+  itsMarkerSolidVolume = new G4Trd(itsName+"_marker",
+				   xHalfLengthPlus,     // x hlf lgth at +z
+				   xHalfLengthMinus,    // x hlf lgth at -z
+				   transverseSize/2,    // y hlf lgth at +z
+				   transverseSize/2,    // y hlf lgth at -z
+				   fabs(cos(itsAngle/2))*transverseSize/2);// z hlf lgth
+  */
+}
+
+void BDSAcceleratorComponent::BuildMarkerLogicalVolume(){ //To avoid code repetition a default marker logical volume is provided here
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  CalculateLengths();
+  if ((itsPhiAngleIn==0)&&(itsPhiAngleOut==0)){
+    BuildStraightMarkerSolid();
+  } else {
+    BuildBendMarkerSolid();
+  }
+  
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - making logical volume object..." << G4endl;
+#endif
+  itsMarkerLogicalVolume=new G4LogicalVolume(
+					     itsMarkerSolidVolume,
+					     BDSMaterials::Instance()->GetMaterial("vacuum"),
+					     itsName+"_log");
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - setting user limits..." << G4endl;
+#endif
+#ifndef NOUSERLIMITS
+  G4double maxStepFactor=0.5;
+  itsMarkerUserLimits =  new G4UserLimits();
+  itsMarkerUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
+  itsMarkerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  itsMarkerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  itsMarkerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
+#endif
+  // now protect the fields inside the marker volume by giving the
+  // marker a null magnetic field (otherwise G4VPlacement can
+  // over-ride the already-created fields, by calling 
+  // G4LogicalVolume::AddDaughter, which calls 
+  // pDaughterLogical->SetFieldManager(fFieldManager, true) - the
+  // latter 'true' over-writes all the other fields
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - setting field manager..." << G4endl;
+#endif
+    itsMarkerLogicalVolume->
+      SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
+#ifdef BDSDEBUG
+    G4cout << __METHOD_END__ << G4endl;
+#endif
+}
+
+void BDSAcceleratorComponent::SetTunnel(BDSTunnel* val){
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  itsTunnel = val;
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_END__ << G4endl;
+#endif
+}
+
+void BDSAcceleratorComponent::SetMultiplePhysicalVolumes(std::vector<G4VPhysicalVolume*> val){
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for(std::vector<G4VPhysicalVolume*>::const_iterator it = val.begin();
+      it != val.end(); it++){
+    SetMultiplePhysicalVolumes(*it);
+  }
+#ifdef BDSDEBUG
+  G4cout << __METHOD_END__ << G4endl;
+#endif
+}
+
+void BDSAcceleratorComponent::BuildTunnel(){
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
+  if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
+    if(itsTunnel != NULL){
+      itsTunnel->Build();
+      SetMultiplePhysicalVolumes(itsTunnel->multiplePhysicalVolumes());
+    } else {
+      std::stringstream ss;
+      ss << "BDSAcceleratorComponent::BuildTunnel() - attempting to build tunnel but no tunnel assigned to accelerator component " << itsName ;
+      G4Exception(ss.str().c_str(), "-1", FatalException, "");
+    }
+  }
+#ifdef BDSDEBUG
+  G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
 void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)
@@ -227,10 +365,27 @@ void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)
 }
 
 void BDSAcceleratorComponent::CalculateLengths(){
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  double tunnelOffsetX=0;
+  double tunnelOffsetY=0;
+  double tunnelThickness=0;
+  double tunnelRadius=0;
+  if(this->GetTunnel() != NULL){
+    tunnelOffsetX=GetTunnel()->offsetX();
+    tunnelOffsetY=GetTunnel()->offsetY();
+    tunnelRadius=GetTunnel()->radius();
+    tunnelThickness=GetTunnel()->thickness()+GetTunnel()->soilThickness();
+  } 
+
   itsXLength = itsYLength = std::max(itsOuterR,BDSGlobalConstants::Instance()->GetComponentBoxSize()/2);
-  itsXLength = std::max(itsXLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
-  itsYLength = std::max(itsYLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
+  itsXLength = std::max(itsXLength, tunnelRadius+2*std::abs(tunnelOffsetX) + tunnelThickness+ 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
+  itsYLength = std::max(itsYLength, tunnelRadius+2*std::abs(tunnelOffsetY) + tunnelThickness+ 4*BDSGlobalConstants::Instance()->GetLengthSafety() );
   
+#ifdef BDSDEBUG
+  G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
 void BDSAcceleratorComponent::AlignComponent(G4ThreeVector& TargetPos,

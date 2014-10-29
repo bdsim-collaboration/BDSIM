@@ -108,14 +108,13 @@ public:
 
   /// tunnel
   G4bool   GetBuildTunnel(); 
-  G4bool   GetBuildTunnelFloor(); 
   G4bool   GetShowTunnel(); 
   G4double GetTunnelRadius(); 
   G4double GetTunnelThickness(); 
   G4double GetTunnelSoilThickness(); 
-  G4double GetTunnelFloorOffset(); 
+  G4double GetFloorBeamlineHeight(); 
+  G4double GetBeamlineCeilingHeight(); 
   G4double GetTunnelOffsetX(); 
-  G4double GetTunnelOffsetY(); 
 
   // Beam loss monitors
   G4double GetBlmRad();
@@ -292,9 +291,9 @@ private:
   G4double itsTunnelRadius;
   G4double itsTunnelThickness;
   G4double itsTunnelSoilThickness;
-  G4double itsTunnelFloorOffset;
+  G4double itsFloorBeamlineHeight;
+  G4double itsBeamlineCeilingHeight;
   G4double itsTunnelOffsetX;
-  G4double itsTunnelOffsetY;
   G4bool   itsShowTunnel;
   //Booleans determining which types of components are sensitive
   G4bool   itsSensitiveComponents;
@@ -530,9 +529,6 @@ inline G4double BDSGlobalConstants::GetMagnetPoleRadius()
 inline G4bool BDSGlobalConstants::GetBuildTunnel()
 {return itsBuildTunnel;}
 
-inline G4bool BDSGlobalConstants::GetBuildTunnelFloor()
-{return itsBuildTunnelFloor;}
-
 inline G4double BDSGlobalConstants::GetTunnelRadius()
 {return itsTunnelRadius;}
 
@@ -542,14 +538,14 @@ inline G4double BDSGlobalConstants::GetTunnelThickness()
 inline G4double BDSGlobalConstants::GetTunnelSoilThickness()
 {return itsTunnelSoilThickness;}
 
-inline G4double BDSGlobalConstants::GetTunnelFloorOffset()
-{return itsTunnelFloorOffset;}
+inline G4double BDSGlobalConstants::GetFloorBeamlineHeight()
+{return itsFloorBeamlineHeight;}
+
+inline G4double BDSGlobalConstants::GetBeamlineCeilingHeight()
+{return itsBeamlineCeilingHeight;}
 
 inline G4double BDSGlobalConstants::GetTunnelOffsetX()
 {return itsTunnelOffsetX;}
-
-inline G4double BDSGlobalConstants::GetTunnelOffsetY()
-{return itsTunnelOffsetY;}
 
 inline G4bool BDSGlobalConstants::GetShowTunnel()
 {return itsShowTunnel;}

@@ -53,36 +53,6 @@ void BDSMuSpoiler::Build()
   BuildMuSpoiler();
 }
 
-void BDSMuSpoiler::BuildMarkerLogicalVolume() 
-{
-  G4double xLength, yLength;
-  G4double totalTunnelRadius = BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+std::max(BDSGlobalConstants::Instance()->GetTunnelOffsetX(),BDSGlobalConstants::Instance()->GetTunnelOffsetY());
-  
-  xLength = yLength = std::max(itsOuterRadius,BDSGlobalConstants::Instance()->GetComponentBoxSize()/2);
-  xLength = yLength = std::max(xLength,totalTunnelRadius);
-  
-#ifdef BDSDEBUG 
-  G4cout<<"marker volume : x/y="<<xLength/CLHEP::m<<
-    " m, l= "<<  (itsLength+BDSGlobalConstants::Instance()->GetLengthSafety())/2/CLHEP::m <<" m"<<G4endl;
-#endif
-  
-  itsMarkerLogicalVolume=new G4LogicalVolume
-    (new G4Box( itsName+"_solid",
-                xLength,
-		yLength,
-		(itsLength-BDSGlobalConstants::Instance()->GetLengthSafety())/2), //z half length 
-     BDSMaterials::Instance()->GetMaterial("vacuum"),
-     itsName+"_log");
-
-  // now protect the fields inside the marker volume by giving the
-  // marker a null magnetic field (otherwise G4VPlacement can
-  // over-ride the already-created fields, by calling 
-  // G4LogicalVolume::AddDaughter, which calls 
-  // pDaughterLogical->SetFieldManager(fFieldManager, true) - the
-  // latter 'true' over-writes all the other fields
-  itsMarkerLogicalVolume->
-    SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
-}
 
 void BDSMuSpoiler::BuildBPFieldAndStepper()
 {

@@ -26,7 +26,6 @@ protected:
 private:
 
   virtual void Build();
-  virtual void BuildMarkerLogicalVolume();
   void BuildInnerSpoiler();
   virtual void SetVisAttributes();
 

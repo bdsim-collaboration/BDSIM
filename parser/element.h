@@ -23,8 +23,9 @@ struct Element {
   double gradient; /// for rf cavities
   double aperYUp, aperYDown, aperDy;  ///pcldrift
   double phi, theta, psi; /// for 3d transforms
-  double tunnelRadius;
-  double tunnelOffsetX;
+  double tunnelRadius, tunnelOffsetX, floorBeamlineHeight, beamlineCeilingHeight, tunnelThickness, tunnelSoilThickness;
+  int tunnelRadiusset, tunnelOffsetXset, floorBeamlineHeightset, beamlineCeilingHeightset, tunnelThicknessset, tunnelSoilThicknessset;
+  int tunnelType, tunnelTypeset;
   std::list<double> knl;
   std::list<double> ksl;
 

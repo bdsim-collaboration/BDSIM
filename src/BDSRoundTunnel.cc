@@ -1,72 +1,85 @@
 #include "BDSRoundTunnel.hh"
+#include "BDSGlobalConstants.hh"
+#include "G4Box.hh"
+#include "G4Tubs.hh"
+#include "G4SubtractionSolid.hh"
+#include "G4IntersectionSolid.hh"
+#include "BDSDebug.hh"
+#define BDSDEBUG 1
 
-BDSRoundTunnel::BDSRoundTunnel(){
+BDSRoundTunnel::BDSRoundTunnel(Element element) :BDSTunnel(element)
+{
+  G4cout << __METHOD_NAME__ << " - _radius = " <<radius() << G4endl;
+  CalculateDimensions();
 }
 
 BDSRoundTunnel::~BDSRoundTunnel(){
 }
 
 void BDSRoundTunnel::CalculateDimensions(){
-  _offsetY = _radius - _beamlineCeilingHeight;
-  tunnelTrans.setX(_offsetX);
-  tunnelTrans.setY(_offsetY);
-  tunnelTrans.setZ(0);
+  offsetY(radius() + beamlineCeilingHeight());
+  _trans.setX(offsetX());
+  _trans.setY(offsetY());
+  _trans.setZ(0);
 
   //Size of a block used in geometry construction.
-  _blockSize = 4*_radius;
+  G4cout << __METHOD_NAME__ << " - _radius = " << radius() << G4endl;
+  _blockSize = 4*radius();
+  G4cout << __METHOD_NAME__ << " - _blockSize = " << _blockSize << G4endl;
   //A vector used for construction the tunnel floor.
-  _floorOffset = G4ThreeVector(0,-blockSize-_floorBeamlineHeight + _offsetY,0);
+  _floorOffset = G4ThreeVector(0,-_blockSize-_floorBeamlineHeight + _offsetY,0);
   
 }
 
 void BDSRoundTunnel::BuildStraightSolids(){
+
   _tunnelSizedBlock = new G4Box(
 				_motherName+"_bnd_sized_block_solid", 
 				_blockSize,
 				_blockSize,
-				(_length-BDSGlobalConstants::Instance()->GetLengthSafety())
+				_length-BDSGlobalConstants::Instance()->GetLengthSafety()
 				);
   
-  _tunnelSolid=new G4Tubs(_motherName+"_tun_solid",
+  _solid=new G4Tubs(_motherName+"_tun_solid",
 			  0,
-			  _radius+BDSGlobalConstants::Instance()->GetTunnelThickness(),
+			  radius()+BDSGlobalConstants::Instance()->GetTunnelThickness(),
 			  (_length-BDSGlobalConstants::Instance()->GetLengthSafety())/2.0,
 			  0,CLHEP::twopi*CLHEP::radian);
   
   _soilSolid=new G4Tubs(_motherName+"_tun_soil_solid",
-			_radius+BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetLengthSafety(),
-			_radius+BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness(),	
+			radius()+BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetLengthSafety(),
+			radius()+BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness(),	
 			(_length-BDSGlobalConstants::Instance()->GetLengthSafety())/2.0,
 			0,CLHEP::twopi*CLHEP::radian);
   
-  _innerTunnelSolid=new G4Tubs(_motherName+"_inner_tun_solid",
+  _innerSolid=new G4Tubs(_motherName+"_inner_tun_solid",
 			       0.,
-			       _radius,
+			       radius(),
 			       (_length-BDSGlobalConstants::Instance()->GetLengthSafety())/2,
 			       0,CLHEP::twopi*CLHEP::radian);
   
-  _largerInnerTunnelSolid=new G4Tubs(_motherName+"_inner_tun_solid",
+  _largerInnerSolid=new G4Tubs(_motherName+"_inner_tun_solid",
 				     0.,
-				     _radius+BDSGlobalConstants::Instance()->GetLengthSafety(),
+				     radius()+BDSGlobalConstants::Instance()->GetLengthSafety(),
 				     (_length-BDSGlobalConstants::Instance()->GetLengthSafety()),
 				     0,CLHEP::twopi*CLHEP::radian);
   
   
   
   
-  _tunnelCavity = new G4SubtractionSolid(
+  _cavity = new G4SubtractionSolid(
                                          _motherName +"_tun_cavity_solid", 
-                                         _innerTunnelSolid,
+                                         _innerSolid,
                                          _tunnelSizedBlock,
-                                         nullRotationMatrix,
+                                         _nullRotationMatrix,
                                          _floorOffset
                                          );
   
-  _largerTunnelCavity = new G4SubtractionSolid(
+  _largerCavity = new G4SubtractionSolid(
 					       _motherName +"_tun_cavity_solid", 
-					       _largerInnerTunnelSolid,
+					       _largerInnerSolid,
 					       _tunnelSizedBlock,
-					       nullRotationMatrix,
+					       _nullRotationMatrix,
 					       _floorOffset
 					       );
   
@@ -74,19 +87,19 @@ void BDSRoundTunnel::BuildStraightSolids(){
 
 void BDSRoundTunnel::BuildAngleSolids(){
   G4double pi_ov_2 = asin(1.);
-  tunnelRot->rotateY(pi_ov_2);
+  _rot->rotateY(pi_ov_2);
   
   G4double xHalfLengthPlus, xHalfLengthMinus, tunHalfLen;
-  xHalfLengthMinus = (_length/_motherComponent->GetAngle())*sin(_motherComponent->GetAngle()/2)
-    - fabs(cos(_motherComponent->GetAngle()/2)) * (_radius + BDSGlobalConstants::Instance()->GetTunnelThickness()) * tan(_motherComponent->GetAngle()/2)/2;
+  xHalfLengthMinus = (_length/_angle)*sin(_angle/2)
+    - fabs(cos(_angle/2)) * (radius() + BDSGlobalConstants::Instance()->GetTunnelThickness()) * tan(_angle/2)/2;
   
-  xHalfLengthPlus = (_length/_motherComponent->GetAngle())*sin(_motherComponent->GetAngle()/2)
-    + fabs(cos(_motherComponent->GetAngle()/2)) * (_radius + BDSGlobalConstants::Instance()->GetTunnelThickness()) * tan(_motherComponent->GetAngle()/2)/2;
+  xHalfLengthPlus = (_length/_angle)*sin(_angle/2)
+    + fabs(cos(_angle/2)) * (radius() + BDSGlobalConstants::Instance()->GetTunnelThickness()) * tan(_angle/2)/2;
   
   tunHalfLen = std::max(xHalfLengthPlus,xHalfLengthMinus);
-  tunnelTrans.setZ(0);
-  tunnelTrans.setX(0);
-  tunnelTrans.setY(_offsetY);
+  _trans.setZ(0);
+  _trans.setX(0);
+  _trans.setY(_offsetY);
   
   
   
@@ -105,17 +118,17 @@ void BDSRoundTunnel::BuildAngleSolids(){
     G4cout << "Building a tunnel solid" << G4endl;
 #endif
 
-    _tunnelSolid = new G4IntersectionSolid(
+    _solid = new G4IntersectionSolid(
                                              _motherName+"_tun_solid",
                                              new G4Tubs(
                                                         _motherName+"_temp_tun_solid",
                                                         0,
-                                                        _radius+BDSGlobalConstants::Instance()->GetTunnelThickness(),
+                                                        radius()+BDSGlobalConstants::Instance()->GetTunnelThickness(),
                                                         tunHalfLen,
                                                         0,CLHEP::twopi*CLHEP::radian),			    
                                              _motherVolume->GetSolid(),
 					     BDSGlobalConstants::Instance()->RotYM90(),
-                                             nullThreeVector
+                                             _nullThreeVector
                                              ); 
 #ifdef BDSDEBUG
     G4cout << "Building a soil tunnel solid" << G4endl;
@@ -124,34 +137,34 @@ void BDSRoundTunnel::BuildAngleSolids(){
                                            _motherName+"_soil_solid",
                                            new G4Tubs(
                                                       _motherName+"_temp_soil_solid",
-                                                      _radius+BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetLengthSafety(),
-                                                      _radius+BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness(),
+                                                      radius()+BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetLengthSafety(),
+                                                      radius()+BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness(),
                                                       tunHalfLen,
                                                       0,CLHEP::twopi*CLHEP::radian),
                                            _motherVolume->GetSolid(),
                                            BDSGlobalConstants::Instance()->RotYM90(),
-                                           nullThreeVector
+                                           _nullThreeVector
                                            ); 
 #ifdef BDSDEBUG   
     G4cout << "Building inner tunnel solid" << G4endl;
 #endif
-    _innerTunnelSolid=new G4IntersectionSolid(
+    _innerSolid=new G4IntersectionSolid(
                                                 _motherName+"_inner_tun_solid",
                                                 new G4Tubs(_motherName+"_temp_inner_tun_solid",
                                                            0.,
-                                                           _radius,
+                                                           radius(),
                                                            tunHalfLen,
                                                            0,CLHEP::twopi*CLHEP::radian),
                                                 _motherVolume->GetSolid(),
                                                 BDSGlobalConstants::Instance()->RotYM90(),
-                                                nullThreeVector
+                                                _nullThreeVector
                                                 ); 
 #ifdef BDSDEBUG
     G4cout << "Building larger inner tunnel solid" << G4endl;
 #endif
-    _largerInnerTunnelSolid= new G4Tubs(_motherName+"_temp_inner_tun_solid",
+    _largerInnerSolid= new G4Tubs(_motherName+"_temp_inner_tun_solid",
                                           0.,
-                                          _radius+BDSGlobalConstants::Instance()->GetLengthSafety(),
+                                          radius()+BDSGlobalConstants::Instance()->GetLengthSafety(),
                                           2*tunHalfLen,
                                           0,CLHEP::twopi*CLHEP::radian);
                                                        
@@ -160,31 +173,30 @@ void BDSRoundTunnel::BuildAngleSolids(){
 #ifdef BDSDEBUG
     G4cout << "Building tunnel cavity" << G4endl;
 #endif
-    _tunnelCavity = new G4SubtractionSolid(
+    _cavity = new G4SubtractionSolid(
                                          _motherName +"_tun_cavity_solid", 
-                                         _innerTunnelSolid,
+                                         _innerSolid,
                                          _tunnelSizedBlock,
-                                         nullRotationMatrix,
+                                         _nullRotationMatrix,
                                          _floorOffset
                                          );
 #ifdef BDSDEBUG
     G4cout << "Building larger tunnel cavity" << G4endl;
 #endif
-   _largerTunnelCavity = new G4SubtractionSolid(
+   _largerCavity = new G4SubtractionSolid(
                                          _motherName +"_tun_cavity_solid", 
-                                         _largerInnerTunnelSolid,
+                                         _largerInnerSolid,
                                          _tunnelSizedBlock,
-                                         nullRotationMatrix,
+                                         _nullRotationMatrix,
                                          _floorOffset
                                          );
 }
 
 void BDSRoundTunnel::BuildSolidVolumes(){
-  
-  tunnelRot=new G4RotationMatrix();
-  
-  
-  if ( _motherComponent->GetAngle()==0 ){ //Build a straight tunnel using tubes
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  if ( _angle==0 ){ //Build a straight tunnel using tubes
     BuildStraightSolids();
   } else {
     BuildAngleSolids();
@@ -193,10 +205,13 @@ void BDSRoundTunnel::BuildSolidVolumes(){
 #ifdef BDSDEBUG
   G4cout << "Building tunnel walls" << G4endl;
 #endif
-  _tunnelWalls = new G4SubtractionSolid(
+  _wallsSolid = new G4SubtractionSolid(
 					_motherName+"_tun_walls",
-					_tunnelSolid,
-					_largerTunnelCavity
+					_solid,
+					_largerCavity
 					);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 

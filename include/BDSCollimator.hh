@@ -28,7 +28,6 @@ protected:
   virtual void Build();
 
 private:
-  virtual void BuildMarkerLogicalVolume();
   virtual void BuildBLMs();
   void BuildInnerCollimator();
   void BuildCollimatorTunnel();

@@ -35,7 +35,6 @@ protected:
 
 private:
   virtual void SetVisAttributes();
-  virtual void BuildMarkerLogicalVolume();
   void BuildBeampipe(G4double aLength);
   void BuildCal(G4double aLength);
 

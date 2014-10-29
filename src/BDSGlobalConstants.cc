@@ -71,7 +71,6 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
     exit(1);
   }
   itsBuildTunnel = opt.buildTunnel;
-  itsBuildTunnelFloor = opt.buildTunnelFloor;  
   itsTunnelRadius = opt.tunnelRadius * CLHEP::m;
   if (itsTunnelRadius < itsComponentBoxSize/2){
     G4cerr << __METHOD_NAME__ << "> Error: option \"tunnelRadius\" must be grater than \"boxSize\"/2 " << G4endl;
@@ -79,9 +78,9 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   }
   itsTunnelThickness = opt.tunnelThickness * CLHEP::m; //Tunnel geometry options read from file
   itsTunnelSoilThickness = opt.tunnelSoilThickness * CLHEP::m;
-  itsTunnelFloorOffset = opt.tunnelFloorOffset * CLHEP::m;
+  itsFloorBeamlineHeight = opt.floorBeamlineHeight * CLHEP::m;
+  itsBeamlineCeilingHeight = opt.beamlineCeilingHeight * CLHEP::m;
   itsTunnelOffsetX = opt.tunnelOffsetX * CLHEP::m;
-  itsTunnelOffsetY = opt.tunnelOffsetY * CLHEP::m;
   //Beam loss monitor (BLM) geometry
   itsBlmRad = opt.blmRad * CLHEP::m;
   itsBlmLength = opt.blmLength * CLHEP::m;

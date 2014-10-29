@@ -43,7 +43,6 @@ private:
 
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
-  virtual void BuildMarkerLogicalVolume();
   virtual void BuildBeampipe(G4String materialName = "");
 
   virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);

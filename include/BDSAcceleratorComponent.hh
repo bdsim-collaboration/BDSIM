@@ -33,6 +33,7 @@
 #include "globals.hh"
 //#include "BDSBeamPipe.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSTunnel.hh"
 
 #include "G4MagneticField.hh"
 #include "G4MagIntegratorStepper.hh"
@@ -78,9 +79,6 @@ public:
   G4double GetYOffset();
   G4double GetZOffset();
 
-  G4double GetTunnelRadius();
-  G4double GetTunnelOffsetX();
-  
   G4double GetAperX();
   G4double GetAperY();
 
@@ -95,8 +93,6 @@ public:
   
   G4LogicalVolume* GetMarkerLogicalVolume() const;
 
-  G4LogicalVolume* GetTunnelLogicalVolume() const;
-  G4String GetTunnelCavityMaterial() const;
   BDSEnergyCounterSD* GetBDSEnergyCounter() const;
   
   void SetBDSEnergyCounter( BDSEnergyCounterSD* anBDSEnergyCounter);
@@ -108,6 +104,7 @@ public:
   void SetGFlashVolumes(G4LogicalVolume* aLogVol);
   std::vector<G4LogicalVolume*> GetGFlashVolumes();
   void SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
+  void SetMultiplePhysicalVolumes(std::vector<G4VPhysicalVolume*> val);
   std::vector<G4VPhysicalVolume*> GetMultiplePhysicalVolumes();
   void SetInnerMostLogicalVolume(G4LogicalVolume* aLogVol);
   G4LogicalVolume* GetInnerMostLogicalVolume() const;
@@ -185,9 +182,9 @@ public:
   G4VisAttributes* GetVisAttributes()const; ///> get visual attributes
   G4LogicalVolume* itsOuterLogicalVolume;
   G4LogicalVolume* itsMarkerLogicalVolume;
-  G4LogicalVolume* itsTunnelLogicalVolume;
-  G4LogicalVolume* itsTunnelFloorLogicalVolume;
 
+  virtual void SetTunnel(BDSTunnel* val);
+  const BDSTunnel* GetTunnel();
 
 private:
   //
@@ -195,13 +192,16 @@ private:
   //
 
   /// build marker logical volume
-  virtual void BuildMarkerLogicalVolume() = 0;
+  void BuildStraightMarkerSolid();
+  void BuildBendMarkerSolid();
   /// set and return visual attributes
   virtual void SetVisAttributes(); 
+
 
 protected:
   /// build logical volumes: marker, tunnel, field, blms etc.
   virtual void Build();
+  virtual void BuildMarkerLogicalVolume();
   /// build tunnel
   virtual void BuildTunnel();
   /// build beam loss monitors
@@ -235,27 +235,17 @@ protected:
   G4double itsBpRadius;
   G4double itsXAper;
   G4double itsYAper;
+  G4double itsXOffset;
+  G4double itsYOffset;
+  G4double itsZOffset;
   G4double itsAngle;
   G4String itsMaterial;
   G4VisAttributes* itsVisAttributes;
   std::list<G4double> itsBlmLocZ;
   std::list<G4double> itsBlmLocTheta;
-  G4String itsTunnelMaterialName;
-  G4Material* itsTunnelMaterial;
-  G4Material* itsSoilMaterial;
-  //Tunnel geom
-  G4double itsXOffset;
-  G4double itsYOffset;
-  G4double itsZOffset;
-  G4double itsTunnelRadius;
-  G4double itsFloorBeamlineHeight;
-  G4double itsBeamlineCeilingHeight;
-  G4double itsTunnelOffsetX;  
   /// component type, same as from typestr from enums.cc
   G4String itsType;
-
   G4double itsTilt;
-
   G4double itsPhiAngleIn;
   G4double itsPhiAngleOut;
   
@@ -275,7 +265,6 @@ protected:
   G4UserLimits* itsInnerBeampipeUserLimits;
   G4LogicalVolume* itsInnerMostLogicalVolume;
 
-  G4String itsTunnelCavityMaterial;
   G4int itsPrecisionRegion;
 
   /// Marker solid
@@ -283,36 +272,11 @@ protected:
 
   BDSTunnel* itsTunnel;
 
-  /// Solid shapes used in building tunnel
-  G4VSolid* itsTunnelSolid;
-  G4VSolid* itsSoilSolid;
-  G4VSolid* itsInnerTunnelSolid;
-  G4VSolid *itsTunnelCavity;
-  G4VSolid *itsLargerTunnelCavity;
-  G4VSolid *itsTunnelFloor;
-  G4VSolid* itsLargerInnerTunnelSolid; 
-  G4VSolid *itsTunnelMinusCavity;
-  G4CSGSolid* itsTunnelSizedBlock;
-
   /// BLM logical volumes
   G4LogicalVolume* itsBLMLogicalVolume;
   G4LogicalVolume* itsBlmCaseLogicalVolume;
   /// BLM physical volumes
   std::vector<G4VPhysicalVolume*> itsBLMPhysiComp;
-  /// Tunnel logical volumes
-  G4LogicalVolume* itsSoilTunnelLogicalVolume;
-  G4LogicalVolume* itsTunnelCavityLogicalVolume;
-  G4LogicalVolume*  itsTunnelMinusCavityLogicalVolume;
-  /// Tunnel physical volumes
-  G4VPhysicalVolume* itsTunnelPhysiInner;
-  G4VPhysicalVolume* itsTunnelPhysiComp;
-  G4VPhysicalVolume* itsTunnelFloorPhysiComp;
-  G4VPhysicalVolume* itsTunnelPhysiCompSoil;
-  /// Tunnel user limits
-  G4UserLimits* itsTunnelUserLimits;
-  G4UserLimits* itsSoilTunnelUserLimits;
-  G4UserLimits* itsInnerTunnelUserLimits;
-
 
 
 private:
@@ -325,9 +289,6 @@ private:
   void CalculateLengths();
 
 
-  G4RotationMatrix* tunnelRot;
-  G4ThreeVector tunnelTrans;
-  G4ThreeVector floorOffsetThreeVector;		
   G4ThreeVector nullThreeVector;
   G4VisAttributes* VisAtt;
   G4VisAttributes* VisAtt1;
@@ -462,6 +423,8 @@ SetInnerMostLogicalVolume(G4LogicalVolume* aLogVol)
 inline G4VisAttributes* BDSAcceleratorComponent::GetVisAttributes() const
 {return itsVisAttributes;}
 
+inline const BDSTunnel* BDSAcceleratorComponent::GetTunnel(){ return itsTunnel;}
+
 inline void BDSAcceleratorComponent::SetVisAttributes()
 {itsVisAttributes = new G4VisAttributes(true);
 }
@@ -508,18 +471,6 @@ inline G4double BDSAcceleratorComponent::GetYOffset()
 
 inline G4double BDSAcceleratorComponent::GetZOffset()
 {return itsZOffset;}
-
-inline G4double BDSAcceleratorComponent::GetTunnelRadius()
-{return itsTunnelRadius;}
-
-inline G4double BDSAcceleratorComponent::GetBeamlineCeilingHeight()
-{return itsBeamlineCeilingHeight;}
-
-inline G4double BDSAcceleratorComponent::GetFloorBeamlineHeight()
-{return itsFloorBeamlineHeight;}
-
-inline G4double BDSAcceleratorComponent::GetTunnelOffsetX()
-{return itsTunnelOffsetX;}
 
 inline G4double BDSAcceleratorComponent::GetTilt()
 {return itsTilt;}

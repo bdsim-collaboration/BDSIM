@@ -129,7 +129,7 @@ void BDSOutputROOT::Init()
   // build energy loss histogram
   G4int nBins = G4int(BDSGlobalConstants::Instance()->GetSMax()/(BDSGlobalConstants::Instance()->GetElossHistoBinWidth()*CLHEP::m));
   G4double wx=(BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelOffsetX())*2;
-  G4double wy=(BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelOffsetY())*2;
+  G4double wy=(BDSGlobalConstants::Instance()->GetTunnelRadius())*2;
   G4double bs=BDSGlobalConstants::Instance()->GetComponentBoxSize();
   G4double wmax=std::max(wx,wy);
   wmax=std::max(wmax,bs);

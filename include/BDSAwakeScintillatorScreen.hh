@@ -36,7 +36,6 @@ private:
   void BuildVacuumChamber2();
   virtual void SetVisAttributes();
   void ComputeDimensions();
-  virtual void BuildMarkerLogicalVolume();
   void BuildCameraScoringPlane();
   void BuildScreenScoringPlane();
   void BuildAwakeScintillatorMaterial();

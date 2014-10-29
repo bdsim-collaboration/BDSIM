@@ -84,7 +84,7 @@ typedef std::list<BDSEnergyCounterSD*>  ECList;
 ECList* theECList;
 
 //=========================================
-
+#define BDSDEBUG 1
 #ifdef BDSDEBUG
 bool debug = true;
 #else

@@ -1,10 +1,11 @@
 #include "options.h"
-
+#include "enums.h"
 #include "getEnv.h"
 
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <float.h>
 
 Options::Options(){
   // Default Values for Options
@@ -55,7 +56,13 @@ Options::Options(){
 
   magnetGeometry = "cylinder";
   componentBoxSize = 0.0;
-  tunnelRadius = 0.0;
+  tunnelRadius = DBL_MAX;
+  tunnelType = _ROUND_TUNNEL; 
+  tunnelOffsetX = DBL_MAX;
+  floorBeamlineHeight=DBL_MAX; 
+  beamlineCeilingHeight=DBL_MAX; 
+  tunnelThickness=DBL_MAX; 
+  tunnelSoilThickness=DBL_MAX;
   beampipeRadius = 0.0;
   beampipeThickness = 0.0;
 
@@ -70,12 +77,7 @@ Options::Options(){
   buildTunnel = 0;
   buildTunnelFloor = 0;
   showTunnel = 0;
-  tunnelOffsetX = 0;
-  tunnelOffsetY = 0;
   samplerDiameter = 0.0;
-  tunnelThickness = 0.0;
-  tunnelSoilThickness = 0.0;
-  tunnelFloorOffset = 0.0;
 
   geometryBias = 0;
   //Beam loss monitors geometry
@@ -256,8 +258,14 @@ void Options::set_value(std::string name, double value )
   // options which influence the geometry
   if(name == "boxSize" ) {componentBoxSize = value; return; }
   if(name == "tunnelRadius" ) { tunnelRadius = value; return; }
+  if(name == "floorBeamlineHeight" ) { floorBeamlineHeight = value; return; }
+  if(name == "beamlineCeilingHeight" ) { beamlineCeilingHeight = value; return; }
+  if(name == "tunnelThickness" ) { tunnelThickness = value; return; }
+  if(name == "tunnelSoilThickness" ) { tunnelSoilThickness = value; return; }
+  if(name == "tunnelOffsetX" ) { tunnelOffsetX = value; return; }
   if(name == "beampipeThickness" ) { beampipeThickness = value; return; }
   if(name == "beampipeRadius" ) { beampipeRadius = value; return; }
+
 
   if(name == "includeIronMagFields") {
     includeIronMagFields = (int)value; return;
@@ -275,6 +283,10 @@ void Options::set_value(std::string name, double value )
     showTunnel = (int)value; return;
   }
 
+  if(name == "tunnelType") {
+    tunnelType = (int)value; return;
+  }
+
   if(name == "synchRadOn") { 
     synchRadOn=(int)value;
     return; 
@@ -284,12 +296,8 @@ void Options::set_value(std::string name, double value )
     decayOn = (int)value; return; 
   }
   
-  if(name == "tunnelOffsetX" ) { tunnelOffsetX = value; return; }
-  if(name == "tunnelOffsetY" ) { tunnelOffsetY = value; return; }
+
   if(name == "samplerDiameter" ) { samplerDiameter = value; return; }
-  if(name == "tunnelThickness" ) { tunnelThickness = value; return; }
-  if(name == "tunnelSoilThickness" ) { tunnelSoilThickness = value; return; }
-  if(name == "tunnelFloorOffset" ) { tunnelFloorOffset = value; return; }
 
   //geometry biasing
   if(name == "geometryBias") {

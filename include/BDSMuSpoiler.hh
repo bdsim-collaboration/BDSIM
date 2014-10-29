@@ -38,7 +38,6 @@ private:
   // Geometrical objects:
 
   virtual void Build();
-  virtual void BuildMarkerLogicalVolume();
   void         BuildBPFieldAndStepper();
   void         BuildBeampipe();
   virtual void BuildBLMs();

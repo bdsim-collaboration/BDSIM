@@ -32,19 +32,6 @@ void BDSSpoiler::Build()
   BuildInnerSpoiler();
 }
 
-void BDSSpoiler::BuildMarkerLogicalVolume()
-{  
-  itsMarkerLogicalVolume=
-    new G4LogicalVolume(
-			new G4Box(itsName,
-				  BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
-				  BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
-				  itsLength/2),
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
-			itsName);
-}
-
-
 void BDSSpoiler::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.3,0.4,0.2));

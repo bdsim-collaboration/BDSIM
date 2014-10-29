@@ -1,8 +1,10 @@
 #include "parameters.h"
+#include "enums.h"
 
 #include <cstdio>
 #include <list>
 #include <string>
+#include <float.h>
 
 #include "element.h"
 
@@ -47,8 +49,14 @@ void Parameters::flush() {
   theta = 0; thetaset = 0;
   psi = 0; psiset = 0;
 
-  tunnelRadius = 0; tunnelRadiusset = 0;
-  tunnelOffsetX = 0; tunnelOffsetXset = 0;
+  //Tunnel parameters
+  tunnelRadius = DBL_MAX; tunnelRadiusset = 0;
+  tunnelType = _ROUND_TUNNEL; tunnelTypeset=0;
+  tunnelOffsetX = DBL_MAX; tunnelOffsetXset = 0;
+  floorBeamlineHeight = DBL_MAX; floorBeamlineHeightset = 0;
+  beamlineCeilingHeight = DBL_MAX; beamlineCeilingHeightset = 0;
+  tunnelThickness = DBL_MAX;   tunnelThicknessset = 0;
+  tunnelSoilThickness = DBL_MAX;   tunnelSoilThicknessset = 0;
 
   precisionRegion = 0; precisionRegionset = 0;
 
@@ -95,7 +103,8 @@ void Parameters::flush() {
   scintmaterial = ""; scintmaterialset = 0;
   windowmaterial = "vacuum"; windowmaterialset = 0;
   airmaterial = ""; airmaterialset = 0;
-  tunnelMaterial = ""; tunnelmaterialset = 0;
+  tunnelMaterial = "concrete"; tunnelmaterialset = 0;
+  tunnelSoilMaterial = "soil"; tunnelSoilMaterialset = 0;
   tunnelCavityMaterial = ""; tunnelcavitymaterialset = 0;
   spec = ""; specset = 0;
   at = 0.0; atset = 0;
@@ -175,9 +184,14 @@ void Parameters::inherit_properties(struct Element& e)
   if(!windowmaterialset) { windowmaterial = e.spec; windowmaterialset = 1; }
   if(!airmaterialset) { airmaterial = e.spec; airmaterialset = 1; }
   if(!tunnelmaterialset) { tunnelMaterial = e.spec; tunnelmaterialset = 1; }
+  if(!tunnelSoilMaterialset) { tunnelSoilMaterial = e.spec; tunnelSoilMaterialset = 1; }
   if(!tunnelcavitymaterialset) { tunnelCavityMaterial = e.spec; tunnelcavitymaterialset = 1; }
   if(!tunnelRadiusset) { tunnelRadius = e.tunnelRadius; tunnelRadiusset = 1; }
-  if(!tunnelOffsetXset) { tunnelOffsetX = e.tunnelOffsetX; tunnelOffsetXset = 1; }
+  if(!tunnelTypeset) { tunnelType = e.tunnelType; tunnelTypeset = 1; }
+  if(!floorBeamlineHeightset) { floorBeamlineHeight = e.floorBeamlineHeight; floorBeamlineHeightset = 1; }
+  if(!beamlineCeilingHeightset) { beamlineCeilingHeight = e.beamlineCeilingHeight; beamlineCeilingHeightset = 1; }
+  if(!tunnelThicknessset) { tunnelThickness = e.tunnelThickness; tunnelThicknessset = 1; }
+  if(!tunnelSoilThicknessset) { tunnelSoilThickness = e.tunnelSoilThickness; tunnelSoilThicknessset = 1; }
   if(!precisionRegionset) { precisionRegion = e.precisionRegion; precisionRegionset = 1; }
 
 }

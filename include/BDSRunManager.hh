@@ -15,7 +15,6 @@
 #include "G4EventManager.hh"
 #include "globals.hh"
 #include  <vector>
-#include "BDSWorld.hh"
 
 class BDSRunManager:public G4RunManager
 {
