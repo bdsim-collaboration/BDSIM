@@ -19,18 +19,20 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
   // generate filenames
   G4String basefilename = BDSExecOptions::Instance()->GetOutputFilename();
   filename = basefilename + ".txt"; //main output filename - for samplers
-  G4String filenamePrimaries  = basefilename + ".primaries.txt"; // for primaries
-  G4String filenameELoss      = basefilename + ".eloss.txt"; //for eloss hits
-  G4String filenameHistogram  = basefilename + ".elosshist.txt"; // eloss histogram
+  G4String filenamePrimaries  = basefilename + ".primaries.txt"; // primaries
+  G4String filenameELoss      = basefilename + ".eloss.txt";     // energy loss hits
+  G4String filenameHistogram  = basefilename + ".elosshist.txt"; // eneryg loss histogram
+  G4String filenamePLoss      = basefilename + ".ploss.txt";     // primary loss hits
   G4String filenamePHistogram = basefilename + ".plosshist.txt"; // primary loss histogram
 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Output format ASCII" << G4endl;
-  G4cout << "Output filename            : " << filename  << G4endl;
-  G4cout << "Primaries filename         : " << filenamePrimaries << G4endl;
-  G4cout << "Histogram filename         : " << filenameHistogram << G4endl;
-  G4cout << "EnergyLoss Hits filename   : " << filenameELoss     << G4endl;
-  G4cout << "Primary Histogram filename : " << filenamePHistogram << G4endl;
+  G4cout << __METHOD_NAME__ << "Output format ASCII - filenames:" << G4endl;
+  G4cout << "Output                 : " << filename           << G4endl;
+  G4cout << "Primaries              : " << filenamePrimaries  << G4endl;
+  G4cout << "Energy Loss Histogram  : " << filenameHistogram  << G4endl;
+  G4cout << "Energy Loss Hits       : " << filenameELoss      << G4endl;
+  G4cout << "Primary Loss Histogram : " << filenamePHistogram << G4endl;
+  G4cout << "Primary Loss Hits      : " << filenamePLoss      << G4endl;
 #endif
   std::stringstream headerstream;
   headerstream << std::left << std::setprecision(10) << std::fixed
@@ -64,6 +66,11 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
   ofELoss.open(filenameELoss.c_str());
   ofELoss      << "### BDSIM energy loss hits output - created " << timestring <<G4endl;
   ofELoss      << headerstring;
+
+  // primary loss hits output file initialisation
+  ofPLoss.open(filenamePLoss.c_str());
+  ofPLoss      << "### BDSIM primary loss hits output - created " << timestring <<G4endl;
+  ofPLoss      << headerstring;
   
   // energy loss histogram and output file initialisation
   // construct histogram
@@ -92,7 +99,7 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
   ofPLossHistogram << *hist << " - created " << timestring << G4endl;
   ofPLossHistogram << std::left << std::setprecision(10) << std::fixed
 		   << std::setw(20) << "S[m]"   << " "
-		   << std::setw(15) << "E[GeV]" << " "
+		   << std::setw(15) << "Number" << " "
 		   << G4endl;
 
 
@@ -111,6 +118,10 @@ BDSOutputASCII::~BDSOutputASCII()
   if (ofELoss.is_open()) {
     ofELoss.flush();
     ofELoss.close();
+  }
+  if (ofPLoss.is_open()) {
+    ofPLoss.flush();
+    ofPLoss.close();
   }
   if (ofELossHistogram.is_open()) {
     ofELossHistogram.flush();
@@ -209,7 +220,25 @@ void BDSOutputASCII::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 
 void BDSOutputASCII::WritePrimaryLoss(BDSEnergyCounterHit* hit)
 {
-  phist->Fill(hit->GetS()/CLHEP::m); //for now, don't weight - can be weighted in analysis
+  phist->Fill(hit->GetS()/CLHEP::m); //no weighting by energy - done in external analysis
+
+  WriteAsciiHit(
+		&ofPLoss,
+		hit->GetPartID(),
+		hit->GetEnergy(),
+		hit->GetX(),
+		hit->GetY(),
+		hit->GetZ(),
+		hit->GetS(),
+		0.0,//hit->GetXPrime(),
+		0.0,//hit->GetYPrime(),
+		0,//hit->GetEventNo(),
+		hit->GetWeight(),
+		0,//hit->GetParentID(),
+		0,//hit->GetTrackID(),
+		hit->GetTurnsTaken()
+		);
+  ofPLoss.flush();
 }
 
 void BDSOutputASCII::Commit()
@@ -217,6 +246,7 @@ void BDSOutputASCII::Commit()
   ofMain.flush();
   ofPrimaries.flush();
   ofELoss.flush();
+  ofPLoss.flush();
   WriteHistogram(hist,&ofELossHistogram);
   WriteHistogram(phist,&ofPLossHistogram);
   ofELossHistogram.flush();
@@ -232,6 +262,8 @@ void BDSOutputASCII::Write()
   ofPrimaries.close();
   ofELoss.flush();
   ofELoss.close();
+  ofPLoss.flush();
+  ofPLoss.close();
   WriteHistogram(hist,&ofELossHistogram);
   WriteHistogram(phist,&ofPLossHistogram);
   ofELossHistogram.close();

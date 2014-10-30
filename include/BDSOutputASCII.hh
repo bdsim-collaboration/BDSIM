@@ -41,6 +41,8 @@ private:
   /// energy loss histogram
   std::ofstream ofELossHistogram;
   BDSHistogram1D* hist;
+  /// primary loss hits output file
+  std::ofstream ofPLoss;
   /// primary loss histogram
   std::ofstream ofPLossHistogram;
   BDSHistogram1D* phist;
