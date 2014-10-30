@@ -51,7 +51,7 @@ void Parameters::flush() {
 
   //Tunnel parameters
   tunnelRadius = DBL_MAX; tunnelRadiusset = 0;
-  tunnelType = _ROUND_TUNNEL; tunnelTypeset=0;
+  tunnelType = -1; tunnelTypeset=0;
   tunnelOffsetX = DBL_MAX; tunnelOffsetXset = 0;
   floorBeamlineHeight = DBL_MAX; floorBeamlineHeightset = 0;
   beamlineCeilingHeight = DBL_MAX; beamlineCeilingHeightset = 0;

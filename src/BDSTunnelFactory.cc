@@ -4,6 +4,7 @@
 #include "BDSRectangleTunnel.hh"
 #include "BDSRoundTunnel.hh"
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
 
 #define BDSDEBUG 1
 
@@ -26,8 +27,14 @@ BDSTunnel* BDSTunnelFactory::makeTunnel(){
 #endif
   
   BDSTunnel* tunnel = NULL;
+  G4int tunnelType = 0;
+  if(_element.tunnelType>=0){ //Not set if less than zero (default = -1) ...
+    tunnelType=_element.tunnelType;
+  } else {
+    tunnelType = BDSGlobalConstants::Instance()->GetTunnelType(); //... in which case use the global option.
+  }
   
-  switch(_element.tunnelType){
+  switch(tunnelType){
   case _RECT_TUNNEL:
 #ifdef BDSDEBUG
     G4cout << "BDSTunnelFactory  - making rectangle tunnel" << G4endl;

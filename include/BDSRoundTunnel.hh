@@ -22,7 +22,7 @@ private:
   virtual void BuildSolidVolumes();
   virtual void BuildStraightSolids();
   virtual void BuildAngleSolids();
-
+  virtual void SetVisAttributes();
 
   G4VSolid* _tunnelSizedBlock;
   G4LogicalVolume* _floorLogicalVolume;

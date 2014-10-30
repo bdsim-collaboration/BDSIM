@@ -86,6 +86,8 @@ protected:
   G4UserLimits* _userLimits;
   G4UserLimits* _soilUserLimits;
 
+  virtual void SetVisAttributes();
+  G4VisAttributes* _visAtt1;
 
 private:
   void radius(G4double val);
@@ -98,11 +100,9 @@ private:
   void BuildLogicalVolumes();
   void defaults();
   void SetUserLimits();
-  void SetVisAttributes();
   G4bool _bBuildTunnel;
   std::vector<G4VPhysicalVolume*> _multiplePhysicalVolumes;
   G4VisAttributes* _visAtt;
-  G4VisAttributes* _visAtt1;
   G4VisAttributes* _visAtt2;
 };
 

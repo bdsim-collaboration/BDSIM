@@ -109,6 +109,7 @@ public:
   /// tunnel
   G4bool   GetBuildTunnel(); 
   G4bool   GetShowTunnel(); 
+  G4int   GetTunnelType(); 
   G4double GetTunnelRadius(); 
   G4double GetTunnelThickness(); 
   G4double GetTunnelSoilThickness(); 
@@ -295,6 +296,7 @@ private:
   G4double itsBeamlineCeilingHeight;
   G4double itsTunnelOffsetX;
   G4bool   itsShowTunnel;
+  G4int   itsTunnelType;
   //Booleans determining which types of components are sensitive
   G4bool   itsSensitiveComponents;
   G4bool   itsSensitiveBeamPipe;
@@ -549,6 +551,9 @@ inline G4double BDSGlobalConstants::GetTunnelOffsetX()
 
 inline G4bool BDSGlobalConstants::GetShowTunnel()
 {return itsShowTunnel;}
+
+inline G4int BDSGlobalConstants::GetTunnelType()
+{return itsTunnelType;}
 
 inline G4bool BDSGlobalConstants::GetGeometryBias()
 {return itsGeometryBias;}

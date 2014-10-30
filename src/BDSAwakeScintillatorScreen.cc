@@ -263,7 +263,9 @@ void BDSAwakeScintillatorScreen::Build(){
   PlaceScreen();
   //      PlaceCamera();
   if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-    BuildTunnel();
+    if(itsTunnel != NULL){
+      BuildTunnel();
+    }
   }
   AddSensitiveVolume(itsMarkerLogicalVolume);
 }

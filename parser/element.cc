@@ -173,7 +173,7 @@ void Element::flush() {
   beamlineCeilingHeight=DBL_MAX; 
   tunnelThickness=DBL_MAX; 
   tunnelSoilThickness=DBL_MAX;
-  tunnelType=_ROUND_TUNNEL; 
+  tunnelType=-1; 
 }
 
 double Element::property_lookup(char* property_name)const{

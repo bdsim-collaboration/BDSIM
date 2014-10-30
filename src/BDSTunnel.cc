@@ -22,8 +22,10 @@ BDSTunnel::BDSTunnel(Element element){
   G4cout << __METHOD_NAME__ << " - def. const., _radius set to " << radius() << G4endl;
   G4cout << __METHOD_NAME__ << " - def. const., _radius set to " << _radius << G4endl;
   _floorBeamlineHeight = BDSGlobalConstants::Instance()->GetFloorBeamlineHeight();
+  G4cout << __METHOD_NAME__<< " - globals.floorBeamlineHeight = " << BDSGlobalConstants::Instance()->GetFloorBeamlineHeight() << G4endl;
+
   _beamlineCeilingHeight = BDSGlobalConstants::Instance()->GetBeamlineCeilingHeight();
-  _offsetX = BDSGlobalConstants::Instance()->GetTunnelOffsetX();
+  _offsetX = BDSGlobalConstants::Instance()->GetTunnelOffsetX()*1000;
   _thickness = BDSGlobalConstants::Instance()->GetTunnelThickness();
   _soilThickness = BDSGlobalConstants::Instance()->GetTunnelSoilThickness();
   _rot = new G4RotationMatrix(0,0,0);
@@ -37,7 +39,7 @@ BDSTunnel::BDSTunnel(Element element){
 
   G4cout << __METHOD_NAME__<< " - element const. - dc - radius = " << radius() << G4endl;
   //Set tunnel parameters to parser parameters if they have been set by the parser (i.e. not DBL_MAX).
-  length(element.l);
+  length(element.l*1000);
   angle(element.angle);
   if (element.tunnelRadius != DBL_MAX){
     radius(element.tunnelRadius);
@@ -46,13 +48,14 @@ BDSTunnel::BDSTunnel(Element element){
   if (element.floorBeamlineHeight != DBL_MAX){
     floorBeamlineHeight(element.floorBeamlineHeight);
   }
-  G4cout << __METHOD_NAME__<< " - fbh - radius = " << radius() << G4endl;
+  G4cout << __METHOD_NAME__<< " - floorBeamlineHeight = " << beamlineCeilingHeight() << G4endl;
   if (element.beamlineCeilingHeight != DBL_MAX){
     beamlineCeilingHeight(element.beamlineCeilingHeight);
   }
-  G4cout << __METHOD_NAME__<< " - bch - radius = " << radius() << G4endl;
+  G4cout << __METHOD_NAME__<< " - beamlineCeilingHeight = " << beamlineCeilingHeight() << G4endl;
+
   if (element.tunnelOffsetX != DBL_MAX){
-    offsetX(element.tunnelOffsetX);
+    offsetX(element.tunnelOffsetX*1000);
   }
   G4cout << __METHOD_NAME__<< " - ox - radius = " << radius() << G4endl;
   if (element.tunnelThickness != DBL_MAX){
@@ -112,22 +115,28 @@ void BDSTunnel::CheckExceptions(){
   //Print debug statements.
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
-  /*
   G4cout << "Soil :"
-         << " r= " << (_radius+BDSGlobalConstants::Instance()->GetTunnelThickness())/CLHEP::m + BDSGlobalConstants::Instance()->GetTunnelSoilThickness()/CLHEP::m<< " m"
-         << " l= " << _length/CLHEP::m << " m"
-         << " material = " << _soilMaterial->GetName() << " m"
+         << " r= " << (radius()+thickness())/CLHEP::m + soilThickness()/CLHEP::m<< " m"
+         << " l= " << length()/CLHEP::m << " m"
+         << " material = " << _soilMaterial->GetName() 
          << G4endl;
   G4cout << "Outer tunnel :"
-         << " r= " << (_radius+BDSGlobalConstants::Instance()->GetTunnelThickness())/CLHEP::m << " m"
-         << " l= " << _length/CLHEP::m << " m"
-         << " material = " << _material->GetName() << " m"
+         << " r= " << (radius()+thickness())/CLHEP::m << " m"
+         << " l= " << length()/CLHEP::m << " m"
+         << " material = " << _material->GetName() 
          << G4endl;
   G4cout << "Inner tunnel :"
-         << " r= " << _radius/CLHEP::m << " m"
-         << " l= " << _length/CLHEP::m << " m"
+         << " r= " << radius()/CLHEP::m << " m"
+         << " l= " << length()/CLHEP::m << " m"
          << G4endl;
-  */
+
+  G4cout << "Offsetx :"
+         << " offsetX= " << offsetX()/CLHEP::m << " m"
+         << " offsetY= " << offsetY()/CLHEP::m << " m"
+	 << " beamlineCeilingHeight= " << _beamlineCeilingHeight/CLHEP::m << " m"
+	 << " floorBeamlineHeight= " << _floorBeamlineHeight/CLHEP::m << " m"
+         << G4endl;
+
 #endif
   
   std::stringstream ss;
@@ -252,14 +261,14 @@ void BDSTunnel::PlaceLogicalVolumes(){
   G4cout << __METHOD_NAME__ << " - placing tunnel walls" << G4endl;
 #endif
   _physiComp = new G4PVPlacement(
-                                         _rot,		     // no rotation
-                                         _trans,	                     // at (0,0,0)
-                                         _wallsLogicalVolume,  // its logical volume
-                                         _motherName+"_tun_phys",	     // its name
-                                         _motherVolume,    // its mother  volume
-                                         true,		     // no boolean operation
-                                         0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		             // copy number
-  
+				 _rot,		     // no rotation
+				 _trans,	                     // at (0,0,0)
+				 _wallsLogicalVolume,  // its logical volume
+				 _motherName+"_tun_phys",	     // its name
+				 _motherVolume,    // its mother  volume
+				 true,		     // no boolean operation
+				 0, BDSGlobalConstants::Instance()->GetCheckOverlaps()
+				 );		             // copy number
   
   multiplePhysicalVolumes(_physiComp);
   
@@ -278,6 +287,9 @@ void BDSTunnel::PlaceLogicalVolumes(){
   
   multiplePhysicalVolumes(_physiCompSoil);
   */
+#ifdef BDSDEBUG
+  G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
 void BDSTunnel::SetUserLimits(){
@@ -322,7 +334,8 @@ void BDSTunnel::SetVisAttributes(){
   _soilLogicalVolume->SetVisAttributes(_visAtt);
   _visAtt1 = new G4VisAttributes(G4Colour(0.4, 0.4, 0.4));
   _visAtt1->SetVisibility(BDSGlobalConstants::Instance()->GetShowTunnel());
-  _visAtt1->SetForceSolid(true);
+  //  _visAtt1->SetForceSolid(true);
+  _visAtt1->SetForceWireframe(true);
   _wallsLogicalVolume->SetVisAttributes(_visAtt1);
   /*
   _visAtt2 = new G4VisAttributes(G4Colour(0.0, 0.5, 0.5));

@@ -244,7 +244,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating awake screen" << G4endl;
 #endif
-    element = createAwakeScreen(); addTunnel(element); break; 
+    element = createAwakeScreen();
+    addTunnel(element); 
+    break; 
   case _TRANSFORM3D:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating transform3d" << G4endl;
