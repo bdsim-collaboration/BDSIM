@@ -310,7 +310,7 @@ void BDSComponentFactory::addTunnel(BDSAcceleratorComponent* component){
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " - making tunnel... " << G4endl;
 #endif
-  BDSTunnel* tunnel = itsTunnelFactory->makeTunnel(_element);
+  BDSTunnel* tunnel = itsTunnelFactory->makeTunnel(_element, component);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " - setting tunnel -  " << tunnel->name() << G4endl;
 #endif

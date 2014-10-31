@@ -40,6 +40,10 @@ BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String
     _screenRotationMatrix->rotateY(_screenAngle);
 
   _vacRotationMatrix = new G4RotationMatrix();
+
+  BuildScreen();
+  BuildCamera();	//Need the screen and camera for the dimensions.
+  ComputeDimensions(); //Need the dimensions in order to build the tunnel.
 }
 
 void BDSAwakeScintillatorScreen::SetVisAttributes()
@@ -248,9 +252,8 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
 }
 
 void BDSAwakeScintillatorScreen::Build(){
-  BuildScreen();
-  BuildCamera();	
-  ComputeDimensions();
+
+
   BuildMarkerLogicalVolume();
   SetVisAttributes(); 
   if(_vacChambType==2){
@@ -264,6 +267,7 @@ void BDSAwakeScintillatorScreen::Build(){
   //      PlaceCamera();
   if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
     if(itsTunnel != NULL){
+      itsTunnel->motherVolume(GetMarkerLogicalVolume());
       BuildTunnel();
     }
   }

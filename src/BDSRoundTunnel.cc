@@ -7,7 +7,7 @@
 #include "BDSDebug.hh"
 #define BDSDEBUG 1
 
-BDSRoundTunnel::BDSRoundTunnel(Element element) :BDSTunnel(element)
+BDSRoundTunnel::BDSRoundTunnel(Element element, G4double length, G4double angle) :BDSTunnel(element, length, angle)
 {
   G4cout << __METHOD_NAME__ << " - _radius = " <<radius() << G4endl;
   CalculateDimensions();
@@ -17,18 +17,16 @@ BDSRoundTunnel::~BDSRoundTunnel(){
 }
 
 void BDSRoundTunnel::CalculateDimensions(){
-  offsetY(beamlineCeilingHeight() - radius());
+  offsetY(_beamlineCeilingHeight-radius());
   _trans.setX(offsetX());
   _trans.setY(offsetY());
   _trans.setZ(0);
-
   //Size of a block used in geometry construction.
   G4cout << __METHOD_NAME__ << " - _radius = " << radius() << G4endl;
   _blockSize = 4*radius();
   G4cout << __METHOD_NAME__ << " - _blockSize = " << _blockSize << G4endl;
   //A vector used for construction the tunnel floor.
-  _floorOffset = G4ThreeVector(0,-_blockSize-_floorBeamlineHeight + _offsetY,0);
-  
+  _floorOffset = G4ThreeVector(0,-_blockSize+radius()-_beamlineCeilingHeight-_floorBeamlineHeight,0);
 }
 
 void BDSRoundTunnel::BuildStraightSolids(){

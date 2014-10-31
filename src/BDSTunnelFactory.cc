@@ -15,8 +15,9 @@ BDSTunnelFactory::~BDSTunnelFactory(){
 }
 
 //Build a tunnel using data from an element.
-BDSTunnel* BDSTunnelFactory::makeTunnel(Element& val){
-  _element = val;
+BDSTunnel* BDSTunnelFactory::makeTunnel(Element& val1, BDSAcceleratorComponent* val2){
+  _element = val1;
+  _component = val2;
 return  makeTunnel();
 }
 
@@ -61,12 +62,11 @@ BDSTunnel* BDSTunnelFactory::makeTunnel(){
 }
 
 BDSTunnel* BDSTunnelFactory::makeRectangleTunnel(){
-  BDSTunnel* aTunnel = new BDSRectangleTunnel(_element);
-  return aTunnel;
+  return new BDSRectangleTunnel(_element, _component->GetLength(), _component->GetAngle());
 }
 
 BDSTunnel* BDSTunnelFactory::makeRoundTunnel(){
-  G4cout << __METHOD_NAME__ << G4endl;
-  BDSTunnel* aTunnel = new BDSRoundTunnel(_element);
-  return aTunnel;
+  return new BDSRoundTunnel(_element, _component->GetLength(), _component->GetAngle());
 }
+
+

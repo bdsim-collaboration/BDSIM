@@ -8,7 +8,7 @@
 
 class BDSRoundTunnel:public BDSTunnel{
 public:
-  BDSRoundTunnel(Element val);
+  BDSRoundTunnel(Element val, G4double length, G4double angle);
   ~BDSRoundTunnel();
 
 

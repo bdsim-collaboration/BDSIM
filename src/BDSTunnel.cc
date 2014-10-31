@@ -9,20 +9,14 @@
 
 #define BDSDEBUG 1
 
-BDSTunnel::BDSTunnel(Element element){
-  G4cout << __METHOD_NAME__ << G4endl;
-  G4cout << __METHOD_NAME__<< " - element const. - initially radius = " << radius() << G4endl;
-  
+void BDSTunnel::Defaults(){
+ G4cout << __METHOD_NAME__ << G4endl;
   _angle=0;
   _length=0;//Length and angle will be set according to the accelerator component.
   _material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetTunnelMaterialName());
   _soilMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetSoilMaterialName());
-  G4cout << __METHOD_NAME__ << " - def. const., global constants radius  = " << BDSGlobalConstants::Instance()->GetTunnelRadius() << G4endl;
   radius(BDSGlobalConstants::Instance()->GetTunnelRadius());
-  G4cout << __METHOD_NAME__ << " - def. const., _radius set to " << radius() << G4endl;
-  G4cout << __METHOD_NAME__ << " - def. const., _radius set to " << _radius << G4endl;
   _floorBeamlineHeight = BDSGlobalConstants::Instance()->GetFloorBeamlineHeight();
-  G4cout << __METHOD_NAME__<< " - globals.floorBeamlineHeight = " << BDSGlobalConstants::Instance()->GetFloorBeamlineHeight() << G4endl;
 
   _beamlineCeilingHeight = BDSGlobalConstants::Instance()->GetBeamlineCeilingHeight();
   _offsetX = BDSGlobalConstants::Instance()->GetTunnelOffsetX()*1000;
@@ -33,42 +27,49 @@ BDSTunnel::BDSTunnel(Element element){
   _nullThreeVector.set(0,0,0);
   _nullRotationMatrix = new G4RotationMatrix(0,0,0);
   _bBuildTunnel = true;
-  G4cout << __METHOD_NAME__<< " - element const. - end radius = " << radius() << G4endl;
-  G4cout << __METHOD_END__ << " - def. const." << G4endl;
+}
 
 
-  G4cout << __METHOD_NAME__<< " - element const. - dc - radius = " << radius() << G4endl;
-  //Set tunnel parameters to parser parameters if they have been set by the parser (i.e. not DBL_MAX).
-  length(element.l*1000);
-  angle(element.angle);
+BDSTunnel::BDSTunnel(Element element, G4double length, G4double angle){//, BDSAcceleratorComponent* component){
+  G4cout << __METHOD_NAME__ << G4endl;
+  Defaults();
+  _length = length;
+  _angle = angle;
+  SetParameters(element);
+//  SetParameters(component);
+}
+
+
+void BDSTunnel::SetParameters(Element element){
+ //Set tunnel parameters to parser parameters if they have been set by the parser (i.e. not DBL_MAX).
   if (element.tunnelRadius != DBL_MAX){
     radius(element.tunnelRadius);
-    G4cout << __METHOD_NAME__<< " - element const. - setting radius to " << radius() << G4endl;
   }
   if (element.floorBeamlineHeight != DBL_MAX){
     floorBeamlineHeight(element.floorBeamlineHeight);
   }
-  G4cout << __METHOD_NAME__<< " - floorBeamlineHeight = " << beamlineCeilingHeight() << G4endl;
   if (element.beamlineCeilingHeight != DBL_MAX){
     beamlineCeilingHeight(element.beamlineCeilingHeight);
   }
-  G4cout << __METHOD_NAME__<< " - beamlineCeilingHeight = " << beamlineCeilingHeight() << G4endl;
 
   if (element.tunnelOffsetX != DBL_MAX){
     offsetX(element.tunnelOffsetX*1000);
   }
-  G4cout << __METHOD_NAME__<< " - ox - radius = " << radius() << G4endl;
   if (element.tunnelThickness != DBL_MAX){
     thickness(element.tunnelThickness);
   }
-  G4cout << __METHOD_NAME__<< " - thi - radius = " << radius() << G4endl;
   if (element.tunnelSoilThickness != DBL_MAX){
     soilThickness(element.tunnelSoilThickness);
   }
-  G4cout << __METHOD_NAME__<< " - element const. - radius = " << radius() << G4endl;
   G4cout << __METHOD_END__ << G4endl;
 }
-
+/*
+void BDSTunnel::SetParameters(BDSAcceleratorComponent* element){
+  //Set parameters which are common to both tunnel and accelerator component.
+  length(element->GetLength());
+  angle(element->GetAngle());
+}
+*/
 double BDSTunnel::radius() const{
   return _radius;
 }
@@ -108,12 +109,8 @@ void BDSTunnel::motherVolume(G4LogicalVolume* val){
 
 //G4Exception("Error: length of component less than safety length", "-1", FatalErrorInArgument, "");
 
-
-
-//Check for exceptions (use before building).
-void BDSTunnel::CheckExceptions(){
+void BDSTunnel::print(){
   //Print debug statements.
-#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << "Soil :"
          << " r= " << (radius()+thickness())/CLHEP::m + soilThickness()/CLHEP::m<< " m"
@@ -129,16 +126,16 @@ void BDSTunnel::CheckExceptions(){
          << " r= " << radius()/CLHEP::m << " m"
          << " l= " << length()/CLHEP::m << " m"
          << G4endl;
-
   G4cout << "Offsetx :"
          << " offsetX= " << offsetX()/CLHEP::m << " m"
          << " offsetY= " << offsetY()/CLHEP::m << " m"
 	 << " beamlineCeilingHeight= " << _beamlineCeilingHeight/CLHEP::m << " m"
 	 << " floorBeamlineHeight= " << _floorBeamlineHeight/CLHEP::m << " m"
          << G4endl;
+}
 
-#endif
-  
+//Check for exceptions (use before building).
+void BDSTunnel::CheckExceptions(){
   std::stringstream ss;
   //Make sure length is not too short....
   if(_length <= BDSGlobalConstants::Instance()->GetLengthSafety()){
@@ -225,6 +222,7 @@ void BDSTunnel::CalculateDimensions(){
 void BDSTunnel::Build(){
   G4cout << __METHOD_NAME__ << G4endl;
   CheckExceptions();
+  print();
   if(_bBuildTunnel){
   G4cout << __METHOD_NAME__ << " - building solid volumes..." << G4endl;
   BuildSolidVolumes();

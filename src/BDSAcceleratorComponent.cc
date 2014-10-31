@@ -115,7 +115,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   ConstructorInit();
 }
 
-inline void BDSAcceleratorComponent::ConstructorInit(){\
+inline void BDSAcceleratorComponent::ConstructorInit(){
   nullThreeVector = G4ThreeVector(0,0,0);
   nullRotationMatrix = new G4RotationMatrix();
   //  itsInnerBeampipeUserLimits =new G4UserLimits();

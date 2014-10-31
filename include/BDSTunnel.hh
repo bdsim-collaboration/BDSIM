@@ -10,9 +10,12 @@
 
 class BDSTunnel{
 public:
-  BDSTunnel(Element val);  
+  BDSTunnel(Element val1, G4double length, G4double angle);//, BDSAcceleratorComponent* val2);  
   ~BDSTunnel();
 
+  void length(G4double val);
+  void angle(G4double val); //The phi angle if the tunnel has a horizontal bend.
+  void print();
   void motherVolume(G4LogicalVolume* val);  
   virtual void Build();
   //  void motherComponent(BDSAcceleratorComponent* val);
@@ -33,13 +36,14 @@ public:
 
 protected:
   BDSTunnel();
-  void length(G4double val);
+
+
   void floorBeamlineHeight(G4double val);
   void beamlineCeilingHeight(G4double val);
   void thickness(G4double val);
   void soilThickness(G4double val);
   void offsetX(G4double val);
-  void angle(G4double val); //The phi angle if the tunnel has a horizontal bend.
+
 
   void offsetY(G4double val);
   //Dimensions.  
@@ -90,7 +94,10 @@ protected:
   G4VisAttributes* _visAtt1;
 
 private:
-  void radius(G4double val);
+  void Defaults();
+  void SetParameters(Element element);
+  //  void SetParameters(BDSAcceleratorComponent* element);
+    void radius(G4double val);
   G4double _radius;
   void CheckExceptions();
   virtual void BuildSolidVolumes();
