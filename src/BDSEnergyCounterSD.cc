@@ -19,12 +19,7 @@
 #include "G4ios.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
-
-#include "G4VProcess.hh"
-
 #include "G4AffineTransform.hh"
-
-#include "G4SDManager.hh"
 
 #include <map>
 

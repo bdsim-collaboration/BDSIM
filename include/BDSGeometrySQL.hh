@@ -12,26 +12,23 @@
 #ifndef BDSGeometrySQL_h
 #define BDSGeometrySQL_h 1
 
+#include <fstream>
+#include <list>
+#include <vector>
+
 #include "globals.hh"
-#include "BDSMaterials.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VisAttributes.hh"
 #include "G4UserLimits.hh"
 #include "BDSMySQLTable.hh"
 #include "G4VPhysicalVolume.hh"
-//#include "BDSSamplerSD.hh"
-#include <fstream>
-#include <vector>
-//#include "BDSMagFieldSQL.hh"
 #include "G4Region.hh"
 
 class BDSGeometrySQL
 {
 public:
-  BDSGeometrySQL(G4String DBfile, G4double markerlength);
+  BDSGeometrySQL(G4String DBfile, G4double markerlength,G4LogicalVolume *marker);
   ~BDSGeometrySQL();
-
-  void Construct(G4LogicalVolume *marker);
 
   // For List of uniform fields for volumes
   std::list<G4ThreeVector> UniformField;
@@ -98,6 +95,7 @@ private:
   G4Region* _precisionRegionSQL;
   G4Region* _approximationRegionSQL;
 
+  void Construct();
   void BuildSQLObjects(G4String file);
   void SetCommonParams(BDSMySQLTable*,G4int);
   void SetPlacementParams(BDSMySQLTable*,G4int);

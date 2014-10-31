@@ -18,7 +18,6 @@
 #include "G4Event.hh"
 #include "G4ParticleGun.hh"
 #include "G4ParticleDefinition.hh"
-#include "G4Track.hh"
 
 #include "CLHEP/Units/PhysicalConstants.h"
 

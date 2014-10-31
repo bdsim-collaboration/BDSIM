@@ -29,10 +29,10 @@
 #include <cstdlib>
 #include <cstring>
 
-BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength):
-  rotateComponent(NULL),itsMarkerVol(NULL)
+BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength, G4LogicalVolume *marker):
+  rotateComponent(NULL),itsMarkerLength(markerlength),itsMarkerVol(marker)
 {
-  itsMarkerLength = markerlength;
+  VOL_LIST.push_back(itsMarkerVol);
 #ifdef BDSDEBUG
   G4cout << "BDSGeometrySQL constructor: loading SQL file " << DBfile << G4endl;
 #endif
@@ -68,15 +68,14 @@ BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength):
     approxProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsA(),G4ProductionCuts::GetIndex("e+"));
     _approximationRegionSQL->SetProductionCuts(approxProductionCuts);
     //  }
+    Construct();
 }
 
 BDSGeometrySQL::~BDSGeometrySQL(){
 }
 
-void BDSGeometrySQL::Construct(G4LogicalVolume *marker)
+void BDSGeometrySQL::Construct()
 {
-  itsMarkerVol = marker;
-  VOL_LIST.push_back(itsMarkerVol);
   G4String file;
   char buffer[1000];
   while (ifs>>file)
