@@ -10,7 +10,6 @@
 
 #include "BDSTerminatorSD.hh"
 
-#include "G4SDManager.hh"
 #include "G4ios.hh"
 #include "G4TouchableHistory.hh"
 #include "G4VTouchable.hh"
