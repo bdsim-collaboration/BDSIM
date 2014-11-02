@@ -14,17 +14,17 @@ class TRKParticle {
 public:
   //constructors
   //  TRKParticle();
-  TRKParticle(vector6 coordsIn, double energyIn, double massIn, int chargeIn);
-  TRKParticle(double paramsIn[], int chargeIn);
+  TRKParticle(vector6 coordsIn, double energyIn, double massIn, int chargeIn, int eventIDIn);
+  TRKParticle(double paramsIn[], int chargeIn, int eventIDIn);
   ~TRKParticle();
   
   //accessors
-  /// return coordinate in micrometre
+  /// return coordinate in micrometres
   ///@{
   double X()const      {return posmom.X();}  
   double Y()const      {return posmom.Y();}
   ///@}
-  /// return coordinate in metre
+  /// return coordinate in metres
   double Z()const      {return posmom.Z();}
   /// return momentum coordinate in rad
   ///@{
@@ -38,6 +38,8 @@ public:
   double M()const      {return mass;}
   /// return elementary charge
   int    Charge()const {return charge;}
+  /// return eventID
+  int    EventID()const {return eventID;}
 
   vector6 PosMom()const {return posmom;}
   vector3 Pos()const    {return posmom.Pos();}
@@ -72,6 +74,8 @@ private:
   double  mass;
   /// charge in units of elementary charge
   int     charge;
+  /// event id for referencing in both tracker and bdsim output
+  int     eventID;
 };
 
 #endif
