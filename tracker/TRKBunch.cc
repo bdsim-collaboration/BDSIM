@@ -55,7 +55,7 @@ void TRKBunch::Populate(struct Options& opt)
   //basis, which would save around 20% memory on each particle...
   std::string particlename = std::string(opt.particleName);
   std::pair<double, int> pmc = TRKParticleDefinition::Instance()->GetParticleMassAndCharge(particlename);
-  double mass = pmc.first;
+  double mass = pmc.first*0.001; //mass converted from MeV to GeV manually without CLHEP
   int  charge = pmc.second;
 
   BDSBunch bdsbunch;
