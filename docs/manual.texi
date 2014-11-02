@@ -1393,19 +1393,19 @@ ranges between @code{M} and @code{6}
 
 @item @code{distrType}=''eshell'': a thin elliptic shell (locus) in @code{x,x'} and @code{y,y'} with given semiaxes:
 @itemize @bullet
-@item @code{shellX} - in [m]
-@item @code{shellXp} - in [rad]
-@item @code{shellY} - in [m]
-@item @code{shellYp} - in [rad]
+@item @code{shellX} - radius in [m]
+@item @code{shellXp} - radius in [rad]
+@item @code{shellY} - radius in [m]
+@item @code{shellYp} - radius in [rad]
 @item @code{sigmaE} - in [GeV]
 @end itemize
 
 The width of shell can also be specifed via the following parameters:
 @itemize @bullet
-@item @code{shellXWidth} - in [m]
-@item @code{shellXpWidth} - in [rad]
-@item @code{shellYWidth} - in [m]
-@item @code{shellYpWidth} - in [rad]
+@item @code{shellXWidth} - absolute width in [m]
+@item @code{shellXpWidth} - absolute width in [rad]
+@item @code{shellYWidth} - absolute width in [m]
+@item @code{shellYpWidth} - absolute width in [rad]
 @end itemize
 
 If left unspecified, these default to 0 and therefore the shell is infinitely thin.  Partilces are uniformly distributed in this width.
@@ -1432,10 +1432,10 @@ The input parameters specify a radius R that is the same for both @code{x,x'} an
 
 @item @code{distrType}=``square'': similar to circle - a filled square in both @code{x,x'} and @code{y,y'} planes with uniform distribution in all dimensions.  The input parameters specify the envelope.
 @itemize @bullet
-@item @code{envelopeX} - full width of square in @code{x} - in [m]
-@item @code{envelopeXp} - full width of square in @code{x'} - in [rad]
-@item @code{envelopeY} - full width of square in @code{y} - in [m]
-@item @code{envelopeYp} - full width of square in @code{y'} - in [rad]
+@item @code{envelopeX} - half width of square in @code{x} - in [m]
+@item @code{envelopeXp} - half width of square in @code{x'} - in [rad]
+@item @code{envelopeY} - half width of square in @code{y} - in [m]
+@item @code{envelopeYp} - half width of square in @code{y'} - in [rad]
 @item @code{envelopeT} - full with in time - in [s]
 @item @code{envelopeE} - full width in energy - in [GeV]
 @end itemize
