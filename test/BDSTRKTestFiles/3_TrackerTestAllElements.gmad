@@ -2,17 +2,19 @@ include options.gmad
 include beam.gmad
 
 d1: drift, l=0.25;
+sb1: sbend, angle=0.01, l=0.33;
 q1: quadrupole, l=0.5, k1=2.0;
 s1: sextupole, l=0.7, k2=0.3;
 o1: octupole, l=0.6, k3=0.4;
 sol1: solenoid, l=2.3, ks=0.4;
 endl: marker;
 
-lat : line = (d1,q1,s1,o1,sol1,endl);
+lat : line = (d1,sb1,q1,s1,o1,sol1,endl);
 use, period=lat;
 
 sample, range = endl;
 
 option, ngenerate=5,
-	apertureType="circular";
+	apertureType="circular",
+	dontUseAperture=1;
 
