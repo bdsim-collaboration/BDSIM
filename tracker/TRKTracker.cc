@@ -51,6 +51,9 @@ void TRKTracker::Track(TRKBunch* bunch)
 	  //check the aperture and decide whether to shift to bdsim
 	  if (!dontuseaperture) //is aperture checking turned on?
 	    {(*elIter)->CheckAperture(bunch);}
+	  
+	  //confirm coordinates for particles that didn't 'hit' aperture
+	  (*elIter)->ConfirmCoordinates(bunch);
 	}// end of beamline iteration
       BDSGlobalConstants::Instance()->IncrementTurnNumber(); //used in output data
       if (bunch->empty()) {std::cout << "No further particles to track" << std::endl;break;}

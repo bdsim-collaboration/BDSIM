@@ -48,6 +48,16 @@ void TRKElement::CheckAperture(TRKBunch* bunch)
     {aperture->CheckAperture(bunch);}
 }
 
+void TRKElement::ConfirmCoordinates(TRKBunch* bunch)
+{
+  //in case we don't use aperture, we still have to confirm coordinates
+  TRKBunchIter iter = bunch->begin();
+  TRKBunchIter iend = bunch->end();
+  for (;iter != iend; ++iter) {
+    iter->ConfirmNewCoordinates();
+  }
+}
+
 void TRKElement::SetOffset(double x, double y)
 {
   if (!offsetIn) {
