@@ -12,4 +12,6 @@ beam,   particle = "e-",
 	X0 = 0.1*mm,
 	Y0 = 0*mm,
 	envelopeX = 1*mm,
-	envelopeY = 1*mm;
+	envelopeY = 1*mm,
+	envelopeXp = 0.001,
+	envelopeYp = 0.001;
