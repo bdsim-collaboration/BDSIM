@@ -34,6 +34,10 @@ void TRKTracker::Track(TRKBunch* bunch)
   
   if (!bunch) return; //can't track nothing
   if (bunch->empty()) return; //even if bunch exists, there must be particles in it
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << " bunch before any tracking " << std::endl;
+  std::cout << *bunch << std::endl;
+#endif
   TRKLineConstIter elIter = line->begin();
   //iterate over number of turns - if linear, just 1 'turn'
   BDSGlobalConstants::Instance()->ResetTurnNumber(); //used in output data
