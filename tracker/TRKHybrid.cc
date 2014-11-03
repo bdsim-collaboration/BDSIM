@@ -29,7 +29,7 @@ void TRKHybrid::Track(TRKDrift* el, TRKBunch* bunch) {
   std::cout << __METHOD_NAME__ << " Drift" << std::endl;
 #endif
   // this drift method can be done in one go, trackingsteps not needed;
-  const double h = el->GetLength(); 
+  const double h = el->GetLength()*1e6; //convet from m to um
   TRKBunchIter iter = bunch->begin();
   TRKBunchIter end  = bunch->end();
 
@@ -49,7 +49,7 @@ void TRKHybrid::Track(TRKDipole* el, TRKBunch* bunch) {
     return Track((TRKDrift*)el,bunch);
   }
 
-  const double h = el->GetLength()/trackingSteps;
+  const double h = el->GetLength()*1e6/trackingSteps; //convert form m to um
 
   TRKBunchIter iter = bunch->begin();
   TRKBunchIter end = bunch->end();
@@ -225,7 +225,7 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
     return Track((TRKDrift*)el,bunch);
   }
 
-  const double h = el->GetLength()/trackingSteps;
+  const double h = el->GetLength()*1e6/trackingSteps; //convert from m to um
 
   TRKBunchIter iter = bunch->begin();
   TRKBunchIter end = bunch->end();
@@ -411,7 +411,7 @@ void TRKHybrid::Track(TRKSextupole* el, TRKBunch* bunch) {
     return Track((TRKDrift*)el,bunch);
   }
 
-  const double h = el->GetLength()/trackingSteps;
+  const double h = el->GetLength()*1e6/trackingSteps; //convert from m to um
 
   TRKBunchIter iter = bunch->begin();
   TRKBunchIter end = bunch->end();
