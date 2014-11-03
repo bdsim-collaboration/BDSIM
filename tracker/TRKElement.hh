@@ -21,6 +21,8 @@ public :
   /// track method, visitor pattern
   virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
   void CheckAperture(TRKBunch* bunch);
+  // for when no aperture is used - we have to copy after state to before / confirm coordinates
+  void ConfirmCoordinates(TRKBunch* bunch);
 
   std::string  GetName()const {return name;}
   double       GetLength()const {return length;}
