@@ -45,6 +45,7 @@ void TRKHybrid::Track(TRKDipole* el, TRKBunch* bunch) {
   std::cout << __METHOD_NAME__ << " Dipole" << std::endl;
 #endif
   double strength = el->GetStrength();
+  //note from TRKDipole.hh strength is in MeV* urad
   if (std::abs(strength)<=1e-12) {
     return Track((TRKDrift*)el,bunch);
   }
@@ -221,6 +222,9 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
   std::cout << __METHOD_NAME__ << " Quadrupole" << std::endl;
 #endif
   double strength = el->GetStrength();
+  // note from TRKQuadrupole.hh strength is in T/m
+  // transverse coords are in um
+  // need to change routine below for units to match
   if (std::abs(strength)<=1e-12) {
     return Track((TRKDrift*)el,bunch);
   }
@@ -407,6 +411,9 @@ void TRKHybrid::Track(TRKSextupole* el, TRKBunch* bunch) {
   std::cout << __METHOD_NAME__ << " Sextupole" << std::endl;
 #endif
   double strength = el->GetStrength();
+  // note from TRKSextupole.hh strength is in T/m^2
+  // transverse coords are in um
+  // need to change routine below for units to match
   if (std::abs(strength)<=1e-12) {
     return Track((TRKDrift*)el,bunch);
   }
@@ -481,16 +488,18 @@ void TRKHybrid::Track(TRKSextupole* el, TRKBunch* bunch) {
   }
 }
 
-void TRKHybrid::Track(TRKOctupole* /*el*/, TRKBunch* /*bunch*/) { 
+void TRKHybrid::Track(TRKOctupole* el, TRKBunch* bunch) { 
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << " Octupole" << std::endl;
 #endif
-  //  Track((TRKDrift*)el,bunch);
+  std::cout << "DANGER WILL ROBINSON - NOT FINISHED" << std::endl;
+  Track((TRKDrift*)el,bunch);
 }
 
 void TRKHybrid::Track(TRKSolenoid* el, TRKBunch* bunch) { 
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << " Solenoid " << std::endl;
 #endif
+  std::cout << "DANGER WILL ROBINSON - NOT FINISHED" << std::endl;
   Track((TRKDrift*)el,bunch);
 }
