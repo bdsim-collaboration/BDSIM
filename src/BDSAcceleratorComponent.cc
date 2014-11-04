@@ -16,7 +16,7 @@
 //     x  x   2002 by Blair
 //
 //
-
+#define BDSDEBUG 1
 
 #include <list>
 #include <sstream>
