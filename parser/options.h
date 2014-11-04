@@ -86,7 +86,6 @@ struct Options {
   /// default geometry parameters
   std::string magnetGeometry;
   double    componentBoxSize;
-  double    tunnelRadius;
   double    beampipeRadius;
   double    beampipeThickness;
   std::string pipeMaterial;
@@ -98,15 +97,9 @@ struct Options {
   int      includeIronMagFields;
 
   /// tunnel geometry parameters
-  int      buildTunnel;
-  int      buildTunnelFloor;
-  int      showTunnel;
-  double   tunnelOffsetX;
-  double   tunnelOffsetY;
+  int      buildTunnel, buildTunnelFloor, showTunnel, tunnelType;
+  double    tunnelRadius, tunnelOffsetX, floorBeamlineHeight, beamlineCeilingHeight, tunnelThickness, tunnelSoilThickness;
   double   samplerDiameter;
-  double   tunnelThickness;
-  double   tunnelSoilThickness;
-  double   tunnelFloorOffset;
   
   ///Geometry biasing
   int      geometryBias;

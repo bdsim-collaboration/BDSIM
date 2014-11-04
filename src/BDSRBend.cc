@@ -99,6 +99,7 @@ void BDSRBend::BuildBPFieldAndStepper()
   dipoleStepper->SetBGrad(itsBGrad);
 }
 
+/*
 void BDSRBend::BuildMarkerLogicalVolume()
 {
   if (markerSolidVolume==0) {
@@ -127,7 +128,8 @@ void BDSRBend::BuildMarkerLogicalVolume()
 					  fabs(cos(itsAngle/2))*boxSize/2);
     
   }
-
+*/
+  /*
   G4String LocalLogicalName=itsName;
   
   itsMarkerLogicalVolume=    
@@ -151,7 +153,7 @@ void BDSRBend::BuildMarkerLogicalVolume()
   itsMarkerLogicalVolume->
     SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
 }
-
+  */
 
 // construct a beampipe for r bend
 void BDSRBend::BuildBeampipe(G4String materialName)

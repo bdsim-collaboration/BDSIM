@@ -5,6 +5,7 @@
 #include "globals.hh"
 #include "parser/element.h"
 #include "BDSAcceleratorComponent.hh"
+#include "BDSTunnelFactory.hh"
 
 class ElementList; 
 
@@ -62,5 +63,7 @@ private:
   BDSAcceleratorComponent* createTerminator();
   BDSAcceleratorComponent* createTeleporter();
 
+  void addTunnel(BDSAcceleratorComponent*);
+  BDSTunnelFactory* itsTunnelFactory;
 };
 #endif

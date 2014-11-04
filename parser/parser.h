@@ -176,7 +176,12 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.tunnelMaterial = params.tunnelMaterial;  
   e.tunnelCavityMaterial = params.tunnelCavityMaterial;  
   e.tunnelRadius = params.tunnelRadius;
+  e.tunnelType = params.tunnelType;
   e.tunnelOffsetX = params.tunnelOffsetX;
+  e.floorBeamlineHeight = params.floorBeamlineHeight ;
+  e.beamlineCeilingHeight = params.beamlineCeilingHeight ;
+  e.tunnelThickness = params.tunnelThickness ;
+  e.tunnelSoilThickness = params.tunnelSoilThickness ;
   e.precisionRegion = params.precisionRegion;
   
   //specific parameters

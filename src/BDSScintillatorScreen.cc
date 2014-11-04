@@ -335,25 +335,6 @@ void BDSScintillatorScreen::ComputeDimensions(){
   _yLength = _screenHeight;
 }
 
-void BDSScintillatorScreen::BuildMarkerLogicalVolume(){
-  itsMarkerSolidVolume=new G4Box( itsName+"_marker_log",
-				  _xLength,
-				  _yLength,
-				  itsLength/2.0); //z half length 
-
-  itsMarkerLogicalVolume=new G4LogicalVolume
-    (itsMarkerSolidVolume, 
-     _airMaterial,
-     itsName+"_log");
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  itsMarkerUserLimits =  new G4UserLimits();
-  itsMarkerUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
-  itsMarkerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  itsMarkerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
-#endif
-}
-
 
 BDSScintillatorScreen::~BDSScintillatorScreen()
 {

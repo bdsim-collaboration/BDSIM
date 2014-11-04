@@ -40,7 +40,7 @@
 #include "G4MagneticField.hh"
 
 #include <string>
-
+#define BDSDEBUG 1
 //============================================================
 BDSMultipole::BDSMultipole( G4String aName, 
 			    G4double aLength,
@@ -146,6 +146,9 @@ void BDSMultipole::SetBeampipeThickness(G4bool set, G4double val){
 
 void BDSMultipole::Build()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   //
   // build beampipe (geometry + magnetic field)
   //
@@ -155,11 +158,12 @@ void BDSMultipole::Build()
   BDSAcceleratorComponent::Build();
   BuildOuterLogicalVolume();
   BuildBeampipe();
-  if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-    BuildTunnel();
-  }
+  BuildTunnel();
   //Build the beam loss monitors
   BuildBLMs();
+#ifdef BDSDEBUG
+  G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
 void BDSMultipole::BuildBLMs(){
@@ -383,15 +387,8 @@ void BDSMultipole::FinaliseBeampipe(G4String materialName, G4RotationMatrix* Rot
   itsInnerBPLogicalVolume->SetFieldManager(itsBPFieldMgr,false) ;
 
 
-  // now protect the fields inside the marker volume by giving the
-  // marker a null magnetic field (otherwise G4VPlacement can
-  // over-ride the already-created fields, by calling 
-  // G4LogicalVolume::AddDaughter, which calls 
-  // pDaughterLogical->SetFieldManager(fFieldManager, true) - the
-  // latter 'true' over-writes all the other fields
   
-  itsMarkerLogicalVolume->
-    SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
+
   
   //
   // set visualization attributes
@@ -431,101 +428,6 @@ void BDSMultipole::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
 }
 
 
-void BDSMultipole::BuildMarkerLogicalVolume()
-{
-  if ((itsPhiAngleIn==0)&&(itsPhiAngleOut==0)){
-    itsMarkerSolidVolume = new G4Box( itsName+"_marker_solid",
-				      itsXLength,
-				      itsYLength,
-				      itsLength/2);
-  } else {
-    G4double xLength, yLength;
-    xLength = yLength = std::max(itsOuterR,BDSGlobalConstants::Instance()->GetComponentBoxSize()/2);
-    xLength = std::max(xLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
-    yLength = std::max(yLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
-    
-    G4double transverseSize=std::max(xLength, yLength);
-    G4double xHalfLengthPlus, xHalfLengthMinus;
-    
-    
-    xHalfLengthPlus = (itsLength + (transverseSize/2.0)*(tan(itsPhiAngleIn) -tan(itsPhiAngleOut)))/2.0;
-    xHalfLengthMinus = (itsLength +  (transverseSize/2.0)*(tan(itsPhiAngleOut)-tan(itsPhiAngleIn )))/2.0;
-    
-    /*
-      if (itsPhiAngleIn >0){
-      xHalfLengthPlus = ( (itsLength/itsPhiAngleIn) * sin(itsPhiAngleIn/2.0) 
-      + fabs(cos(itsPhiAngleIn/2.0))*(transverseSize/2.0)*(tan(itsPhiAngleIn) -tan(itsPhiAngleOut)))/2.0;
-      
-      xHalfLengthMinus = ((itsLength/itsPhiAngleIn)*sin(itsPhiAngleIn/2.0)
-      + fabs(cos(itsPhiAngleIn/2.0))*(transverseSize/2.0)*(tan(itsPhiAngleOut)-tan(itsPhiAngleIn )))/2.0;
-      } else {
-      xHalfLengthPlus = (itsLength + (transverseSize/2.0)*(tan(itsPhiAngleIn) -tan(itsPhiAngleOut)))/2.0;
-      xHalfLengthMinus = (itsLength +  (transverseSize/2.0)*(tan(itsPhiAngleOut)-tan(itsPhiAngleIn )))/2.0;
-      }
-    */
-
-    if((xHalfLengthPlus<0) || (xHalfLengthMinus<0)){
-      G4cerr << "Bend radius in " << itsName << " too small for this tunnel/component geometry. Exiting." << G4endl;
-      exit(1);
-    }
-
-    /*  
-	itsMarkerSolidVolume = new G4Trd(itsName+"_marker",
-	xHalfLengthPlus,     // x hlf lgth at +z
-	xHalfLengthMinus,    // x hlf lgth at -z
-	transverseSize/2,           // y hlf lgth at +z
-	transverseSize/2,           // y hlf lgth at -z
-	fabs(cos(itsAngle/2))*transverseSize/2);// z hlf lgth
-    */
-    
-    G4cout << "BDSMultipole::MakeDefaultMarkerLogicalVolume> Trap parameters:  " << G4endl;
-    G4cout  <<   
-      //fabs(cos(itsPhiAngleIn/2))*transverseSize/2 << " " <<
-      transverseSize/2 << " " <<
-      itsPhiAngleOut-itsPhiAngleIn << " " <<
-      0 << " " <<
-      transverseSize/2.0 << " " <<
-      xHalfLengthPlus << " " <<
-      xHalfLengthPlus << " " <<
-      0 << " " <<
-      transverseSize/2.0 << " " <<
-      xHalfLengthMinus << " " <<
-      xHalfLengthMinus << " " <<
-      0 << " " << G4endl;
-    
-    itsMarkerSolidVolume = new G4Trap(itsName+"_trapezoid_marker",
-				      //			    fabs(cos(itsPhiAngleIn/2))*transverseSize/2,// z hlf lgth
-				      transverseSize/2.0, // z hlf lgth Dz
-				      atan((tan(itsPhiAngleOut)-tan(itsPhiAngleIn))/2.0), // pTheta
-				      0,// pPhi
-				      transverseSize/2.0, // pDy1
-				      xHalfLengthPlus,    // pDx1
-				      xHalfLengthPlus,    // pDx2
-				      0, // pAlp1
-				      transverseSize/2.0,  // pDy2
-				      xHalfLengthMinus,     // pDx3
-				      xHalfLengthMinus,     // pDx4
-				      0); // pAlp2
-    
-  }
-  
-  
-  itsMarkerLogicalVolume=new G4LogicalVolume
-    (
-     itsMarkerSolidVolume,
-     BDSMaterials::Instance()->GetMaterial("vacuum"),
-     itsName+"_log");
-  
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  itsMarkerUserLimits =  new G4UserLimits();
-  itsMarkerUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
-  itsMarkerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  itsMarkerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
-#endif
-}
-
-
 void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
 {
   G4Material* material;
@@ -541,14 +443,14 @@ void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
          << " l= " << itsLength/2./CLHEP::m << " m"
          << G4endl;
 #endif
-
+  
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Outer radius :"
          << " r= " << outerRadius/CLHEP::m << " m"
          << " l= " << itsLength/2./CLHEP::m << " m"
          << G4endl;
 #endif
-
+  
   if(OuterMaterialIsVacuum){
     material=  BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
   }

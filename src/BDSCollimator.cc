@@ -38,38 +38,17 @@ BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
 void BDSCollimator::Build()
 {
   BDSAcceleratorComponent::Build();
-  if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-    BuildTunnel();
-  }
-  BuildBLMs();
-}
-
-void BDSCollimator::BuildMarkerLogicalVolume()
-{
-  G4double xLength, yLength;
-  xLength = yLength = std::max(itsOuterR,BDSGlobalConstants::Instance()->GetComponentBoxSize()/2);
-  
-  xLength = std::max(xLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
-  yLength = std::max(yLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
-
-  itsMarkerLogicalVolume=new G4LogicalVolume
-    (new G4Box( itsName+"_marker_log",
-                xLength,
-		yLength,
-		(itsLength+BDSGlobalConstants::Instance()->GetLengthSafety())/2), //z half length 
-     BDSMaterials::Instance()->GetMaterial("vacuum"),
-     itsName+"_log");
-
+  BuildTunnel();
   BuildInnerCollimator();
-
   itsSolidLogVol->SetVisAttributes(itsVisAttributes);
-
   //visual attributes      
   G4VisAttributes* VisAtt1 =
     new G4VisAttributes(G4Colour(0., 0., 0.));
   VisAtt1->SetForceSolid(true);
   if (itsInnerLogVol) itsInnerLogVol->SetVisAttributes(VisAtt1);
+  BuildBLMs();
 }
+
 
 void BDSCollimator::BuildBLMs(){
   itsBlmLocationR=itsOuterR*2;

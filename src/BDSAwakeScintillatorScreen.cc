@@ -40,6 +40,10 @@ BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String
     _screenRotationMatrix->rotateY(_screenAngle);
 
   _vacRotationMatrix = new G4RotationMatrix();
+
+  BuildScreen();
+  BuildCamera();	//Need the screen and camera for the dimensions.
+  ComputeDimensions(); //Need the dimensions in order to build the tunnel.
 }
 
 void BDSAwakeScintillatorScreen::SetVisAttributes()
@@ -248,24 +252,26 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
 }
 
 void BDSAwakeScintillatorScreen::Build(){
-      SetVisAttributes(); 
-      BuildScreen();
-      BuildCamera();	
-      ComputeDimensions();
-      BuildMarkerLogicalVolume();
-      if(_vacChambType==2){
-	BuildVacuumChamber2();
-      } else {
-      BuildVacuumChamber1();
-      }
-      //      BuildScreenScoringPlane();
-      BuildCameraScoringPlane();
-      PlaceScreen();
-      //      PlaceCamera();
-      if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-	BuildTunnel();
-      }
-      AddSensitiveVolume(itsMarkerLogicalVolume);
+
+
+  BuildMarkerLogicalVolume();
+  SetVisAttributes(); 
+  if(_vacChambType==2){
+    BuildVacuumChamber2();
+  } else {
+    BuildVacuumChamber1();
+  }
+  //      BuildScreenScoringPlane();
+  BuildCameraScoringPlane();
+  PlaceScreen();
+  //      PlaceCamera();
+  if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
+    if(itsTunnel != NULL){
+      itsTunnel->motherVolume(GetMarkerLogicalVolume());
+      BuildTunnel();
+    }
+  }
+  AddSensitiveVolume(itsMarkerLogicalVolume);
 }
 
 void BDSAwakeScintillatorScreen::BuildCamera(){
@@ -373,29 +379,6 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
 
 
 
-}
-
-void BDSAwakeScintillatorScreen::BuildMarkerLogicalVolume(){
-  itsMarkerSolidVolume=new G4Box( itsName+"_marker_solid",
-				  itsXLength/2.0,
-				  itsYLength/2.0,
-				  itsLength/2.0); //z half length 
-
-  itsMarkerLogicalVolume=new G4LogicalVolume
-    (itsMarkerSolidVolume, 
-     BDSMaterials::Instance()->GetMaterial("vacuum"),
-     itsName+"_marker_log");
-  G4VisAttributes* visAtt = new G4VisAttributes(G4Color(0,1,0));
-  visAtt->SetForceWireframe(true);
-  visAtt->SetVisibility(true);
-  itsMarkerLogicalVolume->SetVisAttributes(visAtt);
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  itsMarkerUserLimits =  new G4UserLimits();
-  itsMarkerUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
-  itsMarkerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  itsMarkerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
-#endif
 }
 
 void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){

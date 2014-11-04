@@ -77,7 +77,6 @@ protected:
   virtual void Build();
 
 private:
-  virtual void BuildMarkerLogicalVolume();
   virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
   /// build and set field manager and chord finder
   void BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,

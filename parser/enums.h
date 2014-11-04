@@ -43,6 +43,12 @@ enum {
 
 const char *typestr(int type);
 
+//Tunnel geometry types
+enum{
+  _ROUND_TUNNEL = 0,
+  _RECT_TUNNEL = 1
+};
+
 // geometry and field formats
 /* enum { */
 /*   _GMAD = 0, */
