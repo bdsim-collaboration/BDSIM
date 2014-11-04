@@ -5,7 +5,6 @@
 #include "BDSEnergyCounterHit.hh"
 #include "BDSTrajectory.hh"
 
-#include "G4Trajectory.hh"
 #include <vector>
 
 #include "tracker/TRKBunch.hh"

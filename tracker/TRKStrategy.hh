@@ -12,6 +12,7 @@ class TRKSextupole;
 class TRKOctupole;
 class TRKSolenoid;
 class TRKSampler;
+class TRKTiltOffset;
 
 /**
  * @brief virtual base class for a track strategy
@@ -41,6 +42,7 @@ public :
   virtual void Track(TRKOctupole*   el, TRKBunch* bunch)=0;
   virtual void Track(TRKSolenoid*   el, TRKBunch* bunch)=0;
   void         Track(TRKSampler*    el, TRKBunch* bunch);
+  void         Track(TRKTiltOffset* el, TRKBunch* bunch);
   ///@}
 
 protected:

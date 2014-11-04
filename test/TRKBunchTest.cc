@@ -10,10 +10,11 @@
 #include "tracker/TRKThin.hh"
 #include "tracker/TRKAperture.hh"
 #include "tracker/TRKApertureCircular.hh"
+#include "tracker/TRKPlacement.hh"
 #include "tracker/TRKQuadrupole.hh"
-#include "tracker/TRKOutput.hh"
 
 #include "BDSExecOptions.hh"
+#include "BDSOutputFactory.hh"
 
 #include <iostream>
 
@@ -21,7 +22,7 @@ extern Options options;
 extern ElementList beamline_list;
 
 //GLOBALS
-BDSOutputBase* trkOutput; //output interface
+BDSOutputBase* trkOutput=NULL; //output interface
 
 int main (int argc, char** argv){
   //for now, need exec options parsing from bdsim
@@ -30,12 +31,12 @@ int main (int argc, char** argv){
   //parse input
   gmad_parser(BDSExecOptions::Instance()->GetInputFilename());
 
-  //build bunch - DONE
+  //initialise output
+  trkOutput = BDSOutputFactory::createOutput(BDSExecOptions::Instance()->GetOutputFormat());
+
+  //build bunch
   TRKBunch* bunch   = new TRKBunch(options);
   std::cout << *bunch << std::endl;
-
-  //initialise output
-  trkOutput = TRK::InitialiseOutput();
 
   //create strategy / set of routines
   TRKStrategy* strategy = new TRKThin(1/*ntrackingsteps*/);
@@ -44,6 +45,7 @@ int main (int argc, char** argv){
   TRKAperture* ap = new TRKApertureCircular(0.05);
   TRKPlacement* pl = new TRKPlacement();
   TRKQuadrupole* quad = new TRKQuadrupole(0.1,"quad1",2.5,ap,pl);  
+  quad->SetOffset(0.3,0.2);
 
   //track the bunch through a quad
   strategy->Track(quad,bunch);

@@ -15,10 +15,15 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
 endif()
 
 file(GLOB TRKsources *.cc )
+file(GLOB BDSBunchsources ../src/BDSBunch*.cc )
 
-add_library(tracker STATIC ${TRKsources})
+# no longer so easy to make static library as dependencies back to
+# BDSIM classes
+add_library(tracker STATIC ${TRKsources} ${BDSBunchsources} 
+ ../include/BDSDebug.hh
+ ../src/BDSOutputBase.cc
+ ../src/BDSGlobalConstants.cc)
+bdsim_install_targets(tracker)
 
 #file(GLOB gmadsources ../parser/gmad.cc ../parser/getEnv.cc ../parser/element.cc ../parser/elementlist.cc ../parser/enums.cc ../parser/options.cc ../parser/parameters.cc)
 #add_library(trackerShared SHARED ${TRKsources} ${gmadsources})
-
-bdsim_install_targets(tracker)

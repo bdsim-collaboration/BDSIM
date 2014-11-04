@@ -54,7 +54,6 @@ void TRKAperture::CheckAperture(TRKBunch* bunch)
 #ifdef TRKDEBUG
 	std::cout << "Particle inside aperture - continuing" << std::endl;
 #endif
-	iter->ConfirmNewCoordinates();
 	++iter;
       }
     }

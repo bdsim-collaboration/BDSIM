@@ -1,0 +1,3 @@
+e1: octupole, l=1.0, k3=1.0;
+
+include GenericThinTest.gmad;

@@ -4,13 +4,7 @@ include fodo.gmad;
 option, ngenerate=5,
 	apertureType="circular";
 
-!beam,  particle="e-",
-!       energy = 1*GeV,
-!       distrType  = "userfile",
-!       distrFile  = "1_Particles.dat",
-!       distrFileFormat = "x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:E[MeV]";
-
-!option, nlinesIgnore = 0;
+option, beampipeRadius = 5 * mm;
 
 beam,   particle = "e-",
 	energy = 1*GeV,

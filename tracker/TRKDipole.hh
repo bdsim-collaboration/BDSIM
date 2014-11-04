@@ -12,6 +12,8 @@ private:
   double strength;
   /// magnetic field in Tesla - only used for hybrid tracking
   double bField;
+  /// integrated strength MeV * urad
+  double intStrength;
 
 public:
   TRKDipole(double strength, double bField, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
@@ -20,6 +22,7 @@ public:
   virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);  
 
   double GetStrength()const{return strength;}
+  double GetIntStrength()const{return intStrength;}
 
 protected:
   /// output stream

@@ -167,54 +167,86 @@ TRKLine* TRKFactory::createLine(ElementList& beamline_list) {
 
 
 TRKElement* TRKFactory::createElement(Element& element) {
+  TRKElement* trkelement = NULL;
   switch (element.type) {
 
   case _LINE:
-    return createLine(element);
+    trkelement = createLine(element);
+    break;
   case _DRIFT:
-    return createDrift(element);
+    trkelement = createDrift(element);
+    break;
   case _PCLDRIFT:
-    return createDrift(element);
+    trkelement = createDrift(element);
+    break;
   case _SBEND:
     //TEMPORARY
-    return createDrift(element);
+    trkelement = createDrift(element);
+    break;
   case _RBEND:
     //TEMPORARY
-    return createDrift(element);;
+    trkelement = createDrift(element);;
+    break;
   case _QUAD:
-    return createQuadrupole(element);
+    trkelement = createQuadrupole(element);
+    break;
   case _SEXTUPOLE:
-    return createSextupole(element);
+    trkelement = createSextupole(element);
+    break;
   case _OCTUPOLE:
-    return createOctupole(element);
-    //  case _DECAPOLE:
-    //TEMPORARY
-    //return createDrift(element);
+    trkelement = createOctupole(element);
+    break;
+  // case _DECAPOLE:
+  //   trkelement = createDecapole(element);
+    //    break;
   case _SOLENOID:
-    return createSolenoid(element);
+    trkelement = createSolenoid(element);
+    break;
   case _MULT:
     //TEMPORARY
-    return createDrift(element);
+    trkelement = createDrift(element);
+    break;
   case _ELEMENT:
     //TEMPORARY
-    return createDrift(element);
+    trkelement = createDrift(element);
+    break;
   case _SAMPLER:
-    return createSampler(element);
+    trkelement = createSampler(element);
+    break;
   case _TRANSFORM3D:
     //TEMPORARY
-    return NULL;
+    trkelement = NULL;
+    break;
   case _VKICK:
-    //TEMPORARY
-    return createDrift(element);
   case _HKICK:
-    return createDipole(element);
+    trkelement = createDipole(element);
+    break;
   default:
-    return NULL;
+    trkelement = NULL;
+    break;
   }
   /* types not specified - see parser/enums.h for types
   _SCREEN
   _CSAMPLER
   */
+
+  if (trkelement) {
+    addCommonProperties(trkelement,element);
+  }
+
+  return trkelement;
+}
+
+void TRKFactory::addCommonProperties(TRKElement* trkelement, Element& element) {
+  // offset and tilt
+  //  if (element.phi!=0.0 || element.theta!=0.0 || element.psi!=0.0) {
+  // only tilt for now
+  if (element.tilt!=0.0) {
+    trkelement->SetTilt(element.tilt,0,0); // todo check rotation correct!
+  }
+  if (element.xdir!=0.0 || element.ydir!=0.0) {
+    trkelement->SetOffset(element.xdir, element.ydir);
+  }
 }
 
 TRKElement* TRKFactory::createLine(Element& /*element*/) {

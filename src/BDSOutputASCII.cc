@@ -191,6 +191,9 @@ void BDSOutputASCII::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 
 void BDSOutputASCII::WriteTrackerBunch(G4String /*samplerName*/, TRKBunch* bunch, bool primary)
 {
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << std::endl;
+#endif
   //only difference between primaries and normal output here is the file stream
   std::ofstream* outfile;
   if (primary)
@@ -200,18 +203,20 @@ void BDSOutputASCII::WriteTrackerBunch(G4String /*samplerName*/, TRKBunch* bunch
   //turns taken same for all particles in bunch
   int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
   //loop over bunch and write using ascii method
+  //NOTE WRITEASCIIHIT divides by clhep units and tracker doesn't use the clhep units
+  //so it must be first multiplied back to be divided by writeasciihit
   for (TRKBunchIter it = bunch->begin(); it != bunch->end(); ++it) {
     WriteAsciiHit(
 		  outfile,
 		  0, //TBC - requires geant4 or modification of particledefinitiontable
-		  it->E()*1000.0, //convert to GeV
-		  it->X()*1e-6,   //convert to um
-		  it->Y()*1e-6,   //convert to um
-		  it->Z(),        //leave in m
-		  it->Z(), //note z and s are synonymous in tracker
-		  it->Xp(),       //leave in rad
-		  it->Yp(),       //leave in rad
-		  0, //can you cast an iterator to an int?
+		  it->E()*CLHEP::GeV,//convert to GeV
+		  it->X()*CLHEP::um, //um
+		  it->Y()*CLHEP::um, //um
+		  it->Z()*CLHEP::um, //convert to um
+		  it->Z()*CLHEP::m, //note z and s are synonymous in tracker - convert to m
+		  it->Xp()*CLHEP::radian, //leave in rad
+		  it->Yp()*CLHEP::radian, //leave in rad
+		  it->EventID(),
 		  1,
 		  0,
 		  0,

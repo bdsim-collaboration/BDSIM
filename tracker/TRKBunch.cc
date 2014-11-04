@@ -10,9 +10,12 @@
 #include "TRKPhysicsCalculations.hh"
 
 #include "BDSBunch.hh"
+#include "BDSOutputBase.hh"
 #include "parser/options.h"
 
 #include "BDSDebug.hh"
+
+extern BDSOutputBase* trkOutput;
 
 TRKBunch::TRKBunch(struct Options& opt)
 {
@@ -30,6 +33,8 @@ TRKBunch::TRKBunch(struct Options& opt)
   TRK::CalculateKineticEnergy(options);
   //populate particles using options & random number generator
   Populate(opt);
+  //write primaries to output file
+  trkOutput->WriteTrackerBunch("primaries",this,true);
 }
 
 
@@ -50,7 +55,7 @@ void TRKBunch::Populate(struct Options& opt)
   //basis, which would save around 20% memory on each particle...
   std::string particlename = std::string(opt.particleName);
   std::pair<double, int> pmc = TRKParticleDefinition::Instance()->GetParticleMassAndCharge(particlename);
-  double mass = pmc.first;
+  double mass = pmc.first*0.001; //mass converted from MeV to GeV manually without CLHEP
   int  charge = pmc.second;
 
   BDSBunch bdsbunch;
@@ -61,10 +66,9 @@ void TRKBunch::Populate(struct Options& opt)
   for (int i = 0; i < population; i++)
     {
       bdsbunch.GetNextParticle(x0,y0,s0,xp,yp,sp,t,E,weight);
-      double paramsIn[8] = {x0/CLHEP::m,y0/CLHEP::m,s0/CLHEP::m,xp/CLHEP::rad,yp/CLHEP::rad,sp/CLHEP::rad,E/CLHEP::GeV,mass};
-      bunch.push_back(TRKParticle(paramsIn, charge));
-      //need to finish / write particle...
-      //weight not required
+      double paramsIn[8] = {x0/CLHEP::um,y0/CLHEP::um,s0/CLHEP::m,xp/CLHEP::rad,yp/CLHEP::rad,sp/CLHEP::rad,E/CLHEP::GeV,mass};
+      bunch.push_back(TRKParticle(paramsIn, charge, i));
+      //weight not required - maybe should be kept though to pass on to bdsim
     }
 }
 

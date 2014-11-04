@@ -1,5 +1,6 @@
 #include "TRKThick.hh"
 
+#include "TRK.hh"
 #include "TRKBunch.hh"
 #include "TRKParticle.hh"
 //#include "TRKDrift.hh"
@@ -91,8 +92,8 @@ void TRKThick::Track(TRKQuadrupole* el, TRKBunch* bunch) {
   }
 }
 
-void TRKThick::Track(TRKSextupole* el, TRKBunch* bunch) { 
-  const double h = el->GetLength()/trackingSteps;
+void TRKThick::Track(TRKSextupole* /*el*/, TRKBunch* bunch) { 
+  //  const double h = el->GetLength()/trackingSteps;
 
   TRKBunchIter iter = bunch->begin();
   TRKBunchIter end  = bunch->end();
@@ -106,8 +107,8 @@ void TRKThick::Track(TRKSextupole* el, TRKBunch* bunch) {
   }
 }
 
-void TRKThick::Track(TRKOctupole* el, TRKBunch* bunch) {
-  const double h = el->GetLength()/trackingSteps;
+void TRKThick::Track(TRKOctupole* /*el*/, TRKBunch* bunch) {
+  //  const double h = el->GetLength()/trackingSteps;
 
   TRKBunchIter iter = bunch->begin();
   TRKBunchIter end  = bunch->end();

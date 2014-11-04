@@ -51,6 +51,9 @@ private:
   TRKElement* createSampler(Element& element);
   //TRKElement* createTransform3D(Element& element);
 
+  /// set common properties
+  void addCommonProperties(TRKElement* trkel, Element& el);
+
   /// particle properties
   int charge;
   /// beam momentum in GeV

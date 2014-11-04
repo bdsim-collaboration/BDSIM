@@ -62,8 +62,7 @@
 #include "BDSGeometryInterface.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputBase.hh" 
-#include "BDSOutputASCII.hh" 
-#include "BDSOutputROOT.hh" 
+#include "BDSOutputFactory.hh" 
 #include "BDSRandom.hh" // for random number generator from CLHEP
 //#ifdef USE_ROOT
 //#include "BDSScoreWriter.hh"
@@ -250,13 +249,7 @@ int main(int argc,char** argv) {
   G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
 #endif  
 
-  if (BDSExecOptions::Instance()->GetOutputFormat() == BDSOutputFormat::_ASCII) {
-    bdsOutput = new BDSOutputASCII();
-  } else if (BDSExecOptions::Instance()->GetOutputFormat() == BDSOutputFormat::_ROOT) {
-#ifdef USE_ROOT
-    bdsOutput = new BDSOutputROOT();
-#endif
-  }
+  bdsOutput = BDSOutputFactory::createOutput(BDSExecOptions::Instance()->GetOutputFormat());
   G4cout.precision(10);
 
   // catch aborts to close output stream/file. perhaps not all are needed.
