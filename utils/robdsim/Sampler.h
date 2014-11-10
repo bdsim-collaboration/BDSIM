@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Wed Mar 12 11:53:11 2014 by ROOT version 5.34/14
-// from TTree Sampler_13430_DRIFT458_13429_phys_1/Sampler output
-// found on file: track3_0.root
+// Mon Nov 10 13:21:43 2014 by ROOT version 5.34/21
+// from TTree primaries/Sampler output
+// found on file: /Users/sboogert/Physics/ilc/sim/bdsim-madx/t1_0.root
 //////////////////////////////////////////////////////////
 
 #ifndef Sampler_h
@@ -11,7 +11,6 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
-#include <fstream>
 
 // Header file for the classes stored in the TTree if any.
 
@@ -19,104 +18,112 @@
 
 class Sampler {
 public :
-  TTree          *fChain;   //!pointer to the analyzed TTree or TChain
-  Int_t           fCurrent; //!current Tree number in a TChain
-  
-  // Declaration of leaf types
-  Float_t         E0;
-  Float_t         x0;
-  Float_t         y0;
-  Float_t         z0;
-  Float_t         xp0;
-  Float_t         yp0;
-  Float_t         zp0;
-  Float_t         t0;
-  Float_t         E;
-  Float_t         x;
-  Float_t         y;
-  Float_t         z;
-  Float_t         xp;
-  Float_t         yp;
-  Float_t         zp;
-  Float_t         t;
-  Float_t         X;
-  Float_t         Y;
-  Float_t         Z;
-  Float_t         Xp;
-  Float_t         Yp;
-  Float_t         Zp;
-  Float_t         s;
-  Float_t         weight;
-  Int_t           partID;
-  Int_t           nEvent;
-  Int_t           parentID;
-  Int_t           trackID;
-  Int_t           turnnumber;
-  
-  // List of branches
-  TBranch        *b_E0 ; // (GeV);   //!
-  TBranch        *b_x0 ; // (mum);   //!
-  TBranch        *b_y0 ; // (mum);   //!
-  TBranch        *b_z0 ; // (m);   //!
-  TBranch        *b_xp0 ; // (rad);   //!
-  TBranch        *b_yp0 ; // (rad);   //!
-  TBranch        *b_zp0 ; // (rad);   //!
-  TBranch        *b_t0 ; // (ns);   //!
-  TBranch        *b_E ; // (GeV);   //!
-  TBranch        *b_x ; // (mum);   //!
-  TBranch        *b_y ; // (mum);   //!
-  TBranch        *b_z ; // (m);   //!
-  TBranch        *b_xp ; // (rad);   //!
-  TBranch        *b_yp ; // (rad);   //!
-  TBranch        *b_zp ; // (rad);   //!
-  TBranch        *b_t ; // (ns);   //!
-  TBranch        *b_X ; // (mum);   //!
-  TBranch        *b_Y ; // (mum);   //!
-  TBranch        *b_Z ; // (m);   //!
-  TBranch        *b_Xp ; // (rad);   //!
-  TBranch        *b_Yp ; // (rad);   //!
-  TBranch        *b_Zp ; // (rad);   //!
-  TBranch        *b_s ; // (m);   //!
-  TBranch        *b_weight;   //!
-  TBranch        *b_partID;   //!
-  TBranch        *b_nEvent;   //!
-  TBranch        *b_parentID;   //!
-  TBranch        *b_trackID;   //!
-  TBranch        *b_turnnumber;   //!
-  
-  // My Data Members
-  // sums - initialised to zero as that's what they start at
-  double wgt;
-  double s_s; //so we can get the mean s from not cut data
-  double x_s;  
-  double y_s;    
-  double xp_s;   
-  double yp_s;   
-  double E_s;    
-  double EE_s;   
-  double xx_s;   
-  double xxp_s;  
-  double xpxp_s; 
-  double xpE_s;  
-  double xE_s;   
-  double yy_s;   
-  double yyp_s;  
-  double ypyp_s; 
-  double ypE_s;  
-  double yE_s;   
-  double emitt_x, emitt_y;
-  double beta_x, beta_y, alph_x, alph_y, disp_x, disp_xp, disp_y, disp_yp;
-  
-  Sampler(TTree *tree=0);
-  virtual ~Sampler();
-  virtual Int_t    Cut(Long64_t entry);
-  virtual Int_t    GetEntry(Long64_t entry);
-  virtual Long64_t LoadTree(Long64_t entry);
-  virtual void     Init(TTree *tree);
-  virtual void     CalculateOpticalFunctions();
-  virtual Bool_t   Notify();
-  virtual void     Show(Long64_t entry = -1);
-  virtual void     AppendOpticalData(std::ofstream *ofs);
+   TTree          *fChain;   //!pointer to the analyzed TTree or TChain
+   Int_t           fCurrent; //!current Tree number in a TChain
+
+   // Declaration of leaf types
+   Float_t         E0;
+   Float_t         x0;
+   Float_t         y0;
+   Float_t         z0;
+   Float_t         xp0;
+   Float_t         yp0;
+   Float_t         zp0;
+   Float_t         t0;
+   Float_t         E_prod;
+   Float_t         x_prod;
+   Float_t         y_prod;
+   Float_t         z_prod;
+   Float_t         xp_prod;
+   Float_t         yp_prod;
+   Float_t         zp_prod;
+   Float_t         t_prod;
+   Float_t         E_lastScat;
+   Float_t         x_lastScat;
+   Float_t         y_lastScat;
+   Float_t         z_lastScat;
+   Float_t         xp_lastScat;
+   Float_t         yp_lastScat;
+   Float_t         zp_lastScat;
+   Float_t         t_lastScat;
+   Float_t         E;
+   Float_t         x;
+   Float_t         y;
+   Float_t         z;
+   Float_t         xp;
+   Float_t         yp;
+   Float_t         zp;
+   Float_t         t;
+   Float_t         X;
+   Float_t         Y;
+   Float_t         Z;
+   Float_t         Xp;
+   Float_t         Yp;
+   Float_t         Zp;
+   Float_t         s;
+   Float_t         weight;
+   Int_t           partID;
+   Int_t           nEvent;
+   Int_t           parentID;
+   Int_t           trackID;
+   Int_t           turnnumber;
+
+   // List of branches
+   TBranch        *b_E0;   //!
+   TBranch        *b_x0;   //!
+   TBranch        *b_y0;   //!
+   TBranch        *b_z0;   //!
+   TBranch        *b_xp0;   //!
+   TBranch        *b_yp0;   //!
+   TBranch        *b_zp0;   //!
+   TBranch        *b_t0;   //!
+   TBranch        *b_E_prod;   //!
+   TBranch        *b_x_prod;   //!
+   TBranch        *b_y_prod;   //!
+   TBranch        *b_z_prod;   //!
+   TBranch        *b_xp_prod;   //!
+   TBranch        *b_yp_prod;   //!
+   TBranch        *b_zp_prod;   //!
+   TBranch        *b_t_prod;   //!
+   TBranch        *b_E_lastScat;   //!
+   TBranch        *b_x_lastScat;   //!
+   TBranch        *b_y_lastScat;   //!
+   TBranch        *b_z_lastScat;   //!
+   TBranch        *b_xp_lastScat;   //!
+   TBranch        *b_yp_lastScat;   //!
+   TBranch        *b_zp_lastScat;   //!
+   TBranch        *b_t_lastScat;   //!
+   TBranch        *b_E;   //!
+   TBranch        *b_x;   //!
+   TBranch        *b_y;   //!
+   TBranch        *b_z;   //!
+   TBranch        *b_xp;   //!
+   TBranch        *b_yp;   //!
+   TBranch        *b_zp;   //!
+   TBranch        *b_t;   //!
+   TBranch        *b_X;   //!
+   TBranch        *b_Y;   //!
+   TBranch        *b_Z;   //!
+   TBranch        *b_Xp;   //!
+   TBranch        *b_Yp;   //!
+   TBranch        *b_Zp;   //!
+   TBranch        *b_s;   //!
+   TBranch        *b_weight;   //!
+   TBranch        *b_partID;   //!
+   TBranch        *b_nEvent;   //!
+   TBranch        *b_parentID;   //!
+   TBranch        *b_trackID;   //!
+   TBranch        *b_turnnumber;   //!
+
+   Sampler(TTree *tree=0);
+   virtual ~Sampler();
+   virtual Int_t    Cut(Long64_t entry);
+   virtual Int_t    GetEntry(Long64_t entry);
+   virtual Long64_t LoadTree(Long64_t entry);
+   virtual void     Init(TTree *tree);
+   virtual void     Loop();
+   virtual Bool_t   Notify();
+   virtual void     Show(Long64_t entry = -1);
 };
 
 #endif
@@ -127,34 +134,14 @@ Sampler::Sampler(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("st_100_0.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/Users/sboogert/Physics/ilc/sim/bdsim-madx/t1_0.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("st_100_0.root");
+         f = new TFile("/Users/sboogert/Physics/ilc/sim/bdsim-madx/t1_0.root");
       }
-      f->GetObject("Sampler_11280_TAS1L1_11279_phys_1",tree);
+      f->GetObject("primaries",tree);
 
    }
    Init(tree);
-   
-   //initialise sums
-   s_s    = 0;
-   wgt    = 0; //weight already used in data
-   x_s    = 0;
-   y_s    = 0;
-   xp_s   = 0;
-   yp_s   = 0;
-   E_s    = 0;
-   EE_s   = 0;
-   xx_s   = 0;
-   xxp_s  = 0;
-   xpxp_s = 0;
-   xpE_s  = 0;
-   xE_s   = 0;
-   yy_s   = 0;
-   yyp_s  = 0;
-   ypyp_s = 0;
-   ypE_s  = 0;
-   yE_s   = 0;
 }
 
 Sampler::~Sampler()
@@ -198,29 +185,45 @@ void Sampler::Init(TTree *tree)
    fCurrent = -1;
    fChain->SetMakeClass(1);
 
-   fChain->SetBranchAddress("E0", &E0, &b_E0 ); //(GeV));
-   fChain->SetBranchAddress("x0", &x0, &b_x0 ); //(mum));
-   fChain->SetBranchAddress("y0", &y0, &b_y0 ); //(mum));
-   fChain->SetBranchAddress("z0", &z0, &b_z0 ); //(m));
-   fChain->SetBranchAddress("xp0", &xp0, &b_xp0 ); //(rad));
-   fChain->SetBranchAddress("yp0", &yp0, &b_yp0 ); //(rad));
-   fChain->SetBranchAddress("zp0", &zp0, &b_zp0 ); //(rad));
-   fChain->SetBranchAddress("t0", &t0, &b_t0 ); //(ns));
-   fChain->SetBranchAddress("E", &E, &b_E ); //(GeV));
-   fChain->SetBranchAddress("x", &x, &b_x ); //(mum));
-   fChain->SetBranchAddress("y", &y, &b_y ); //(mum));
-   fChain->SetBranchAddress("z", &z, &b_z ); //(m));
-   fChain->SetBranchAddress("xp", &xp, &b_xp ); //(rad));
-   fChain->SetBranchAddress("yp", &yp, &b_yp ); //(rad));
-   fChain->SetBranchAddress("zp", &zp, &b_zp ); //(rad));
-   fChain->SetBranchAddress("t", &t, &b_t ); //(ns));
-   fChain->SetBranchAddress("X", &X, &b_X ); //(mum));
-   fChain->SetBranchAddress("Y", &Y, &b_Y ); //(mum));
-   fChain->SetBranchAddress("Z", &Z, &b_Z ); //(m));
-   fChain->SetBranchAddress("Xp", &Xp, &b_Xp ); //(rad));
-   fChain->SetBranchAddress("Yp", &Yp, &b_Yp ); //(rad));
-   fChain->SetBranchAddress("Zp", &Zp, &b_Zp ); //(rad));
-   fChain->SetBranchAddress("s", &s, &b_s ); //(m));
+   fChain->SetBranchAddress("E0", &E0, &b_E0);
+   fChain->SetBranchAddress("x0", &x0, &b_x0);
+   fChain->SetBranchAddress("y0", &y0, &b_y0);
+   fChain->SetBranchAddress("z0", &z0, &b_z0);
+   fChain->SetBranchAddress("xp0", &xp0, &b_xp0);
+   fChain->SetBranchAddress("yp0", &yp0, &b_yp0);
+   fChain->SetBranchAddress("zp0", &zp0, &b_zp0);
+   fChain->SetBranchAddress("t0", &t0, &b_t0);
+   fChain->SetBranchAddress("E_prod", &E_prod, &b_E_prod);
+   fChain->SetBranchAddress("x_prod", &x_prod, &b_x_prod);
+   fChain->SetBranchAddress("y_prod", &y_prod, &b_y_prod);
+   fChain->SetBranchAddress("z_prod", &z_prod, &b_z_prod);
+   fChain->SetBranchAddress("xp_prod", &xp_prod, &b_xp_prod);
+   fChain->SetBranchAddress("yp_prod", &yp_prod, &b_yp_prod);
+   fChain->SetBranchAddress("zp_prod", &zp_prod, &b_zp_prod);
+   fChain->SetBranchAddress("t_prod", &t_prod, &b_t_prod);
+   fChain->SetBranchAddress("E_lastScat", &E_lastScat, &b_E_lastScat);
+   fChain->SetBranchAddress("x_lastScat", &x_lastScat, &b_x_lastScat);
+   fChain->SetBranchAddress("y_lastScat", &y_lastScat, &b_y_lastScat);
+   fChain->SetBranchAddress("z_lastScat", &z_lastScat, &b_z_lastScat);
+   fChain->SetBranchAddress("xp_lastScat", &xp_lastScat, &b_xp_lastScat);
+   fChain->SetBranchAddress("yp_lastScat", &yp_lastScat, &b_yp_lastScat);
+   fChain->SetBranchAddress("zp_lastScat", &zp_lastScat, &b_zp_lastScat);
+   fChain->SetBranchAddress("t_lastScat", &t_lastScat, &b_t_lastScat);
+   fChain->SetBranchAddress("E", &E, &b_E);
+   fChain->SetBranchAddress("x", &x, &b_x);
+   fChain->SetBranchAddress("y", &y, &b_y);
+   fChain->SetBranchAddress("z", &z, &b_z);
+   fChain->SetBranchAddress("xp", &xp, &b_xp);
+   fChain->SetBranchAddress("yp", &yp, &b_yp);
+   fChain->SetBranchAddress("zp", &zp, &b_zp);
+   fChain->SetBranchAddress("t", &t, &b_t);
+   fChain->SetBranchAddress("X", &X, &b_X);
+   fChain->SetBranchAddress("Y", &Y, &b_Y);
+   fChain->SetBranchAddress("Z", &Z, &b_Z);
+   fChain->SetBranchAddress("Xp", &Xp, &b_Xp);
+   fChain->SetBranchAddress("Yp", &Yp, &b_Yp);
+   fChain->SetBranchAddress("Zp", &Zp, &b_Zp);
+   fChain->SetBranchAddress("s", &s, &b_s);
    fChain->SetBranchAddress("weight", &weight, &b_weight);
    fChain->SetBranchAddress("partID", &partID, &b_partID);
    fChain->SetBranchAddress("nEvent", &nEvent, &b_nEvent);
@@ -255,22 +258,4 @@ Int_t Sampler::Cut(Long64_t entry)
 // returns -1 otherwise.
    return 1;
 }
-
-void Sampler::AppendOpticalData(std::ofstream *output)
-{
-  *output << s_s     << "\t";
-  *output << beta_x  << "\t";
-  *output << beta_y  << "\t";
-  *output << alph_x  << "\t";
-  *output << alph_y  << "\t";
-  *output << disp_x  << "\t";
-  *output << disp_xp << "\t";
-  *output << disp_y  << "\t";
-  *output << disp_yp << "\t";
-  *output << emitt_x << "\t";
-  *output << emitt_y << "\n";
-}
-
-
 #endif // #ifdef Sampler_cxx
-
