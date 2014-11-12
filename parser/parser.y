@@ -20,7 +20,7 @@
 
 %}
 
-
+/* define stack type */
 %union{
   double dval;
   int ival;
@@ -969,12 +969,24 @@ parameters:
                            params.material = $3;
                          }
                        else
+                         if(!strcmp($1->name,"tunnelMaterial")) 
+		       {
+			 params.tunnelmaterialset = 1;
+			 params.tunnelMaterial = $3;
+		       }
+			 else
+                         if(!strcmp($1->name,"tunnelCavityMaterial")) 
+		       {
+			 params.tunnelcavitymaterialset = 1;
+			 params.tunnelCavityMaterial = $3;
+		       }
+                       else
 			 if(!strcmp($1->name,"scintmaterial")) 
 			   {	 
 			     params.scintmaterialset = 1;
 			     params.scintmaterial = $3;
 			   }
-			 if(!strcmp($1->name,"windowmaterial")) 
+			 else if(!strcmp($1->name,"windowmaterial")) 
 			   {	 
 			     params.windowmaterialset = 1;
 			     params.windowmaterial = $3;
@@ -985,18 +997,6 @@ parameters:
 			       params.airmaterialset = 1;
 			       params.airmaterial = $3;
                          }
-                       else
-                         if(!strcmp($1->name,"tunnelMaterial")) 
-		       {	 
-			 params.tunnelmaterialset = 1;
-			 params.tunnelMaterial = $3;
-		       }
-			 else
-                         if(!strcmp($1->name,"tunnelCavityMaterial")) 
-		       {	 
-			 params.tunnelcavitymaterialset = 1;
-			 params.tunnelCavityMaterial = $3;
-		       }
                      else
                    if(!strcmp($1->name,"spec")) 
 		       {
