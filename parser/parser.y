@@ -12,6 +12,11 @@
   const int ECHO_GRAMMAR = 0; // print grammar rule expansion (for debugging)
   const int VERBOSE = 0; // print more output
   const int INTERACTIVE = 0; // print output of commands (like in interactive mode)
+  /* for more debug with parser:
+     1) set yydebug to 1 in parser.tab.c (needs to be reset as this file gets overwritten from time to time!) 
+     2) add %debug below
+     3) compile bison with "-t" flag. This is automatically done when CMAKE_BUILD_TYPE equals Debug
+  */
 
 #include "parser.h"
 
@@ -29,6 +34,8 @@
   struct Array *array;
 }
 
+/* more debug output can be added with %debug" */
+//%debug
 
 %left '+' '-'
 %left '*' '/'
@@ -58,6 +65,15 @@
 %type <symp> sample_options
 %type <symp> csample_options
 %type <symp> gas_options
+
+/* printout format for debug output */
+%printer { fprintf (yyoutput, "%.10g", $$); } <dval>
+%printer { fprintf (yyoutput, "%d", $$); } <ival>
+%printer { fprintf (yyoutput, "\"%s\"", $$); } <str>
+%printer { fprintf (yyoutput, "\"%s\"", $$->name); } <symp>
+%printer { fprintf (yyoutput, "size %d, &%p", $$->size, (void*)$$->data); } <array>
+%printer { fprintf (yyoutput, "<>"); } <>
+
 %%
 
 input : 
@@ -302,11 +318,10 @@ decl : VARIABLE ':' marker
 	   {
 	     // create entry in the main table and add pointer to the parsed sequence
 	     if(ECHO_GRAMMAR) printf("VARIABLE : LINE %s\n",$1->name);
-	     //  std::list<struct Element>* tmp_list = new list<struct Element>;
+	     // copy tmp_list to params
 	     write_table(params,$1->name,_LINE,new std::list<struct Element>(tmp_list));
-	     // write_table(params,$1->name,_LINE,tmp_list);
-	      tmp_list.erase(tmp_list.begin(), tmp_list.end());
-	      tmp_list.~list<struct Element>();
+	     // clean list
+	     tmp_list.clear();
 	   }
        }     
      | VARIABLE ':' sequence
@@ -315,8 +330,10 @@ decl : VARIABLE ':' marker
 	   {
              // create entry in the main table and add pointer to the parsed sequence
 	     if(ECHO_GRAMMAR) printf("VARIABLE : SEQUENCE %s\n",$1->name);
+	     // copy tmp_list to params
 	     write_table(params,$1->name,_SEQUENCE,new std::list<struct Element>(tmp_list));
-	     tmp_list.erase(tmp_list.begin(), tmp_list.end());
+	     // clean list
+	     tmp_list.clear();
 	   }
        }
      | VARIABLE ':' extension
@@ -1537,7 +1554,7 @@ assignment :  VARIABLE '=' aexpr
               {
 		if(execute)
 		  {
-		    $1->array.erase($1->array.begin(),$1->array.end());
+		    $1->array.clear();
 		    for(int i=0;i<$3->size;i++)
 		      $1->array.push_back($3->data[i]);
 		    $1->type = _ARRAY;
@@ -1551,7 +1568,7 @@ assignment :  VARIABLE '=' aexpr
               {
 		if(execute)
 		  {
-		    $1->array.erase($1->array.begin(),$1->array.end());
+		    $1->array.clear();
 		    for(int i=0;i<$3->size;i++)
 		      $1->array.push_back($3->data[i]);
 		    $$ = $1;
@@ -1797,7 +1814,7 @@ vectnum : '{' numbers '}'
 	  	{
 	 	 $$->data[i++] = (*it);
 		}
-    	        _tmparray.erase(_tmparray.begin(),_tmparray.end());
+    	        _tmparray.clear();
 
 	        std::list<char*>::iterator lIter;
 	        for(lIter = _tmpstring.begin(); lIter != _tmpstring.end(); lIter++)
