@@ -24,7 +24,14 @@ if($ENV{VERBOSE})
 	message(STATUS "PARSER CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
 endif()
 
-bison_target(PARSER parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.c)
+# compile BISON, with debug if in Debug mode
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+   bison_target(PARSER parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.c
+COMPILE_FLAGS "-t")
+else ()
+   bison_target(PARSER parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.c)
+endif()
+
 flex_target(SCANNER parser.l  ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
 add_flex_bison_dependency(SCANNER PARSER)
 
