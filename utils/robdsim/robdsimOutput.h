@@ -25,7 +25,7 @@ class robdsimOutput {
   void SamplerLoop(); 
 
  private: 
-  char *path; 
+  char   *path; 
   TChain *primaryChain; 
   TChain *elossChain;
   TChain *plossChain;
