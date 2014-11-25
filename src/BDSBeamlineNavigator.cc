@@ -76,7 +76,7 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
     _localZ->rotate(theta,*_localX);
   }
   
-  // define center of bended elements from the previos coordinate frame
+  // define center of bended elements from the previous coordinate frame
   _zHalfAngle->setX(_localZ->x());
   _zHalfAngle->setY(_localZ->y());
   _zHalfAngle->setZ(_localZ->z());
