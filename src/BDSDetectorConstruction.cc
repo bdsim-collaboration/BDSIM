@@ -180,32 +180,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   ComponentPlacement();
 
 #ifdef BDSDEBUG
-  // check of logvolinfo
-  // LN TEST
-  //  typedef std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>::iterator it_type;
-  std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* themap = BDSGlobalConstants::Instance()->LogicalVolumeInfo();
-  //for (it_type iterator = themap->begin(); iterator != themap->end(); iterator++){
-    //G4cout << "pointer : " << iterator->first << "\tname : " << iterator->second->GetName() << "\t" 
-    //	   << iterator->second->GetSPos()/CLHEP::m << G4endl;
-  //}
-  G4cout << themap->size() << G4endl;
-
-  //LN TEST of spos
-  for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
-    {
-      BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
-      G4double currentspos = thecurrentitem->GetSPos();
-      G4String currentname = thecurrentitem->GetName();
-      G4cout << "name : " << currentname << "\t" 
-	     << "spos : " << currentspos/CLHEP::m << " m" <<G4endl
-	     << "length   : " << thecurrentitem->GetLength()/CLHEP::m << " m" << G4endl
-	     << "xlength  : " << thecurrentitem->GetXLength()/CLHEP::m << " m" << G4endl
-	     << "ylength  : " << thecurrentitem->GetYLength()/CLHEP::m << " m" << G4endl
-	     << "zlength  : " << thecurrentitem->GetZLength()/CLHEP::m << " m" << G4endl
-	     << G4endl;
-    }
-  
+  BDSBeamline::Instance()->print();
 #endif
+  
   // construct tunnel
   BuildTunnel();
 
