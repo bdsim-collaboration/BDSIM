@@ -14,9 +14,14 @@ class robdsimOutput {
 
  public : 
   robdsimOutput();
-  robdsimOutput(char *path);   
+  robdsimOutput(char *path, bool debug);   
   ~robdsimOutput(); 
 
+  void CommonCtor(); 
+  void MakeListOfRootFiles(char *path); 
+  std::vector<std::string> GetListOfRootFiles() { return rootFiles; }
+  void MakeListOfSamplers();
+  std::vector<std::string> GetListOfSamplers() { return samplerNames;}
   void Chain();
   
   void ElossLoop(); 
@@ -25,12 +30,16 @@ class robdsimOutput {
   void SamplerLoop(); 
 
  private: 
-  char   *path; 
+  bool   debug;
+  char   *path;
+  std::vector<std::string> rootFiles; 
+  std::vector<std::string> samplerNames;
+
   TChain *primaryChain; 
   TChain *elossChain;
   TChain *plossChain;
-  TChain *precisionElossChain;
-  std::vector<TChain*> samplerChains; 
+  TChain *pelossChain;
+  std::vector<TChain*> samplerChains;
 
   Sampler        primary; 
   Sampler        sampler; 
