@@ -10,6 +10,7 @@
 #include "TFile.h"
 #include "TObject.h"
 
+
 /***********************************************************************************************************/
 robdsimOutput::robdsimOutput() {
 }
@@ -21,6 +22,7 @@ robdsimOutput::robdsimOutput(char *path, bool debugIn) {
   this->MakeListOfSamplers();
   this->CommonCtor();
   this->Chain();
+  this->AssignStructures(); // all but samplers
 }
 
 /***********************************************************************************************************/
@@ -70,7 +72,13 @@ void robdsimOutput::MakeListOfRootFiles(char *path) {
     }
   }
   /**************************************************
-   File load  
+   Single root file load  
+   *************************************************/
+  else if(TString(path).EndsWith(".root")) {
+    fileNames.push_back(path);
+  }
+  /**************************************************
+   File listing file load  
    *************************************************/
   else {
     std::ifstream ifs(path);
@@ -137,6 +145,14 @@ void robdsimOutput::Chain() {
 }
   
 /***********************************************************************************************************/
+void robdsimOutput::AssignStructures() {
+  primary = new Sampler(this->primaryChain);
+  eloss   = new Eloss(this->elossChain);
+  ploss   = new Eloss(this->plossChain); 
+  peloss  = new PrecisionEloss(this->pelossChain);
+}
+
+/***********************************************************************************************************/
 void robdsimOutput::ElossLoop() {
   for(int i=0;i<elossChain->GetEntries();i++) {
     elossChain->GetEntry(i);
@@ -161,9 +177,14 @@ void robdsimOutput::PrecisionElossLoop() {
 void robdsimOutput::SamplerLoop() {
   // loop over samplers 
   for(std::vector<TChain*>::iterator c = samplerChains.begin(); c != samplerChains.end(); c++) {
+    Sampler         s = Sampler(*c);    
+    SamplerAnalysis a = SamplerAnalysis(&s);  
+    
+    std::cout << "robdsimOutput::SamplerLoop> " << (*c)->GetName() << " " << (*c)->GetEntries() << std::endl;;
     // loop of sampler entries
     for(int i=0;i<(*c)->GetEntries();i++) {
       (*c)->GetEntry(i);
+      a.ProcessEntry();
     }
   }  
 }

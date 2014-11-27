@@ -4,7 +4,7 @@ ROOT_CFLAGS=`root-config --cflags`
 ROOT_LIBS=`root-config --glibs`
 TARGET=robdsim.so
 
-COBJS=Sampler.o Eloss.o PrecisionEloss.o SamplerDict.o ElossDict.o PrecisionElossDict.o robdsimOutput.o robdsimOutputDict.o
+COBJS=Sampler.o Eloss.o PrecisionEloss.o SamplerDict.o ElossDict.o PrecisionElossDict.o robdsimOutput.o robdsimOutputDict.o SamplerAnalysis.o
 
 
 %.o : %.C

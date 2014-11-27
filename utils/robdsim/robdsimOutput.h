@@ -1,4 +1,5 @@
 #ifndef __RoBdsimOutput_h
+#define __RoBdsimOutput_h
 
 #include <vector>
 #include <map>
@@ -9,6 +10,7 @@
 #include "TH1D.h"
 
 #include "Sampler.h"
+#include "SamplerAnalysis.h"
 #include "Eloss.h"
 #include "PrecisionEloss.h"
 
@@ -28,6 +30,8 @@ class robdsimOutput {
   std::vector<std::string> GetListOfHistoNames() { return histoNames;} 
   void Chain();
   std::vector<TChain*> GetListOfSamplerChains() { return samplerChains;}
+  void AssignStructures(); 
+  
   
   void ElossLoop(); 
   void PlossLoop();
@@ -72,12 +76,14 @@ class robdsimOutput {
   std::map<std::string,TH1D*>     histos;
 
   // Event data structures 
-  Sampler        primary; 
-  Sampler        sampler; 
-  Eloss          eloss;
-  Eloss          ploss;
-  PrecisionEloss peloss;
+  Sampler         *primary; 
+  Sampler         *sampler; 
+  Eloss           *eloss;
+  Eloss           *ploss;
+  PrecisionEloss  *peloss;
 
+  // Analysis structures 
+  std::vector<SamplerAnalysis*> samplerAnalyses;
 };
 
 #endif
