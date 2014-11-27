@@ -108,6 +108,11 @@ void robdsimOutput::MakeListOfSamplers() {
   delete f;
 }
 
+void robdsimOutput::MakeHistograms() { 
+  return;
+}
+
+
 /***********************************************************************************************************/
 void robdsimOutput::Chain() {
   // Loop over files 
