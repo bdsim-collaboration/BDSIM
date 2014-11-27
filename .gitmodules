@@ -4,3 +4,6 @@
 [submodule "utils/pyfluka"]
 	path = utils/pyfluka
 	url = https://bitbucket.org/nevay/pyfluka.git
+[submodule "utils/robdsim"]
+	path = utils/robdsim
+	url = https://bitbucket.org/nevay/robdsim.git
