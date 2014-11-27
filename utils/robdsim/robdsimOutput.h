@@ -23,6 +23,7 @@ class robdsimOutput {
   void MakeListOfSamplers();
   std::vector<std::string> GetListOfSamplers() { return samplerNames;}
   void Chain();
+  std::vector<TChain*> GetListOfSamplerChains() { return samplerChains;}
   
   void ElossLoop(); 
   void PlossLoop();

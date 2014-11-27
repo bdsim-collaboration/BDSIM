@@ -8,10 +8,13 @@
 #include "TList.h"
 #include "TChain.h"
 #include "TFile.h"
+#include "TObject.h"
 
+/***********************************************************************************************************/
 robdsimOutput::robdsimOutput() {
 }
 
+/***********************************************************************************************************/
 robdsimOutput::robdsimOutput(char *path, bool debugIn) {
   debug = debugIn;
   this->MakeListOfRootFiles(path);
@@ -20,21 +23,34 @@ robdsimOutput::robdsimOutput(char *path, bool debugIn) {
   this->Chain();
 }
 
-
+/***********************************************************************************************************/
 robdsimOutput::~robdsimOutput() {
   delete primaryChain;
   delete elossChain;
   delete plossChain;
   delete pelossChain;
-}
 
+  // loop over sampler chains and delete
+  for(std::vector<TChain*>::iterator c = samplerChains.begin(); c != samplerChains.end(); c++) {
+    delete *c;
+  }
+}
+/***********************************************************************************************************/
 void robdsimOutput::CommonCtor() {
+
+  // primary 
   primaryChain = new TChain("primaries");
+  // energy loss 
   elossChain   = new TChain("ElossTree");
   plossChain   = new TChain("PlossTree");
   pelossChain  = new TChain("PrecisionRegionElossTree");  
+  // loop over sampler names and create chains 
+  for(std::vector<std::string>::iterator i = samplerNames.begin(); i != samplerNames.end(); ++i) { 
+    samplerChains.push_back(new TChain((*i).data()));
+  }
 }
 
+/***********************************************************************************************************/
 void robdsimOutput::MakeListOfRootFiles(char *path) {
   TSystemFile sf = TSystemFile(path,path);
   std::vector<std::string> fileNames;  
@@ -71,17 +87,28 @@ void robdsimOutput::MakeListOfRootFiles(char *path) {
   rootFiles = fileNames;
 }
 
+/***********************************************************************************************************/
 void robdsimOutput::MakeListOfSamplers() { 
   if(debug) {
     std::cout << "robdsimOutput::MakeListOfSamplers> Template "<< rootFiles[0].data() << std::endl;
   }
 
 
-  TFile *f = new TFile(rootFiles[0].data());
+  TFile *f  = new TFile(rootFiles[0].data());
+  TList *fk = f->GetListOfKeys();
+  
+  for(int i = 0; i<fk->GetEntries(); i++) {
+    TObject  *ko = fk->At(i);             // key object
+    TObject  *fo = f->Get(ko->GetName()); // file object 
+    if(std::string(fo->ClassName()) == "TTree" && std::string(ko->GetName()).find("Sampler") != std::string::npos ) {
+      samplerNames.push_back(std::string(ko->GetName()));      
+    }
+  }
   
   delete f;
 }
 
+/***********************************************************************************************************/
 void robdsimOutput::Chain() {
   // Loop over files 
   for(std::vector<std::string>::iterator f = rootFiles.begin(); f != rootFiles.end(); ++f) {
@@ -95,24 +122,43 @@ void robdsimOutput::Chain() {
     pelossChain->Add((*f).data());
 
     // Loop over samplers and chain 
-    
+    for(std::vector<TChain*>::iterator c = samplerChains.begin(); c != samplerChains.end(); c++) {
+      (*c)->Add((*f).data());
+    }
+
     // Add histograms 
     
-  }
-  
+  }  
 }
   
+/***********************************************************************************************************/
 void robdsimOutput::ElossLoop() {
   for(int i=0;i<elossChain->GetEntries();i++) {
     elossChain->GetEntry(i);
   }
 }
  
+/***********************************************************************************************************/
 void robdsimOutput::PlossLoop() {
+  for(int i=0;i<plossChain->GetEntries();i++) {
+    plossChain->GetEntry(i);
+  }
 }
 
+/***********************************************************************************************************/
 void robdsimOutput::PrecisionElossLoop() {
+  for(int i=0;i<pelossChain->GetEntries();i++) {
+    pelossChain->GetEntry(i);
+  }
 }
 
+/***********************************************************************************************************/
 void robdsimOutput::SamplerLoop() {
+  // loop over samplers 
+  for(std::vector<TChain*>::iterator c = samplerChains.begin(); c != samplerChains.end(); c++) {
+    // loop of sampler entries
+    for(int i=0;i<(*c)->GetEntries();i++) {
+      (*c)->GetEntry(i);
+    }
+  }  
 }
