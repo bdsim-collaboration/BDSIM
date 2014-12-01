@@ -110,8 +110,11 @@ void BDSCollimator::BuildInnerCollimator()
     if(itsType == "rcol")
       {
 	
-	
-	G4Box* itsInnerSolid1 = new G4Box(itsName+"_inner",
+
+	// Rectangular collimator //
+	/*
+
+	G4Box* itsInnerSolid1 = new (itsName+"_inner",
 				   2.0*itsXAper,
 				   itsYAper/3.0,
 				   itsLength/2);
@@ -144,31 +147,45 @@ void BDSCollimator::BuildInnerCollimator()
 					 itsInnerSolid3,
 					 0,
 					 translation1);
+	*/
+
+
 	// LHC collimator (Cone)
 
-	  /*
+	G4double itsConeAper =  1.5*itsXAper;
      
-	G4ThreeVector  translation1(0, 0, -itsLength/3.0);
-	G4ThreeVector  translation2(0, 0, itsLength/3.0);
+	G4ThreeVector  translation1(-(itsConeAper-itsXAper), 0, -itsLength/3.0);
+	G4ThreeVector  translation2(-(itsConeAper-itsXAper), 0, itsLength/3.0);
 	G4ThreeVector  translation0(0, 0, 0);
+	
+	G4Box* itsInnerSolid1 = new G4Box(itsName+"_inner",
+				   2.0*itsXAper,
+				   itsYAper/3.0,
+				   itsLength/2);
+
+	// the cone in one side
 
 	G4Cons* itsInnerSolid2 = new G4Cons (itsName+"_inner",
 				     0,
-				     itsXAper,
+				     itsConeAper,
 				     0,
 				     0,
 				     itsLength/6.,
 				     0,
 				     2*CLHEP::pi);
        
+	// the cone in the other side
+
 	G4Cons* itsInnerSolid3 = new G4Cons (itsName+"_inner",
 				     0,
 				     0,
 				     0,
-				     itsXAper,
+				     itsConeAper,
 				     itsLength/6.,
 				     0,
 				     2*CLHEP::pi);
+
+	// adding the volumes that will be subtrackted afterwards
 
 	G4UnionSolid* itsInnerSolid4 = new G4UnionSolid(itsName+"_inner",
 					 itsInnerSolid1,
@@ -182,7 +199,7 @@ void BDSCollimator::BuildInnerCollimator()
 					 0,
 					 translation2);
 	
-	*/
+	
 
 	/*
 	double zPlanepos [4] = {-itsLength/2.0,-itsLength/3.0,itsLength/3.0,itsLength/2.0};	
@@ -218,9 +235,10 @@ void BDSCollimator::BuildInnerCollimator()
 #endif
     
   }
-  
+
+	
   itsOuterSolid = new G4Box(itsName+"_outer_solid",
-			    itsOuterR,
+			    itsOuterR/2.0,
 			    itsOuterR,
 			    itsLength/2);
 
@@ -236,10 +254,14 @@ void BDSCollimator::BuildInnerCollimator()
   itsSolidLogVol-> SetUserLimits(itsUserLimits);
   itsMarkerLogicalVolume->SetUserLimits(itsUserLimits);
 #endif
+
+  G4ThreeVector outerThreeVector = G4ThreeVector(itsOuterR/2.0,0,0);
+
   itsPhysiComp = 
     new G4PVPlacement(
 		      nullRotationMatrix,   // no rotation
 		      nullThreeVector,        // its position
+		      //outerThreeVector,
 		      itsSolidLogVol,    // its logical volume
 		      itsName+"_solid_phys",	     // its name
 		      itsMarkerLogicalVolume, // its mother  volume
