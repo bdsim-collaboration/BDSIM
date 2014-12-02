@@ -164,6 +164,7 @@ void Element::flush() {
   material="";
   scintmaterial="";
   windowmaterial="";
+  vacuummaterial="";
   airmaterial="";
   tunnelMaterial="";
   tunnelCavityMaterial="Air";

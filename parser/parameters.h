@@ -107,6 +107,7 @@ struct Parameters {
 
   std::string  scintmaterial;  int scintmaterialset;
   std::string  windowmaterial;  int windowmaterialset;
+  std::string  vacuummaterial;  int vacuummaterialset;
   std::string  airmaterial;  int airmaterialset;
 
   // position of an element withing a sequence

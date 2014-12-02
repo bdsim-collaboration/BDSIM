@@ -102,6 +102,7 @@ void Parameters::flush() {
   material = ""; materialset = 0;
   scintmaterial = ""; scintmaterialset = 0;
   windowmaterial = "vacuum"; windowmaterialset = 0;
+  vacuummaterial = "vacuum"; vacuummaterialset = 0;
   airmaterial = ""; airmaterialset = 0;
   tunnelMaterial = "concrete"; tunnelmaterialset = 0;
   tunnelSoilMaterial = "soil"; tunnelSoilMaterialset = 0;
@@ -182,6 +183,7 @@ void Parameters::inherit_properties(struct Element& e)
   if(!materialset) { material = e.spec; materialset = 1; }
   if(!scintmaterialset) { scintmaterial = e.spec; scintmaterialset = 1; }
   if(!windowmaterialset) { windowmaterial = e.spec; windowmaterialset = 1; }
+  if(!vacuummaterialset) { vacuummaterial = e.spec; vacuummaterialset = 1; }
   if(!airmaterialset) { airmaterial = e.spec; airmaterialset = 1; }
   if(!tunnelmaterialset) { tunnelMaterial = e.spec; tunnelmaterialset = 1; }
   if(!tunnelSoilMaterialset) { tunnelSoilMaterial = e.spec; tunnelSoilMaterialset = 1; }

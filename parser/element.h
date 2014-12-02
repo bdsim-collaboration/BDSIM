@@ -49,6 +49,7 @@ struct Element {
   std::string bmapFile;
   std::string material;
   std::string windowmaterial;
+  std::string vacuummaterial;
   std::string scintmaterial;
   std::string airmaterial;
   std::string tunnelMaterial;

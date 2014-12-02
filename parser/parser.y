@@ -930,6 +930,12 @@ parameters:
 		       params.windowmaterial = $3; 
 		     } // material for a scintillator screen window
 		   else
+		   if(!strcmp($1->name,"vacuummaterial")) 
+		     {
+		       params.vacuummaterialset = 1;
+		       params.vacuummaterial = $3; 
+		     } // material for a scintillator screen vacuum
+		   else
 		   if(!strcmp($1->name,"airmaterial")) 
 		     {
 		       params.airmaterialset = 1;
@@ -998,6 +1004,11 @@ parameters:
 			   {	 
 			     params.windowmaterialset = 1;
 			     params.windowmaterial = $3;
+			   }
+			 if(!strcmp($1->name,"vacuummaterial")) 
+			   {	 
+			     params.vacuummaterialset = 1;
+			     params.vacuummaterial = $3;
 			   }
 			 else
 			   if(!strcmp($1->name,"airmaterial")) 
