@@ -19,10 +19,7 @@
 #include "G4ios.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
-
 #include "G4AffineTransform.hh"
-
-#include "G4SDManager.hh"
 
 #include <map>
 
@@ -31,8 +28,8 @@ extern G4int event_number;
 
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
   :G4VSensitiveDetector(name),
-   itsHCID(-1),
-   BDSEnergyCounterCollection(NULL),
+   energyCounterCollection(NULL),
+   primaryCounterCollection(NULL),
    enrg(0.0),
    xpos(0.0),
    ypos(0.0),
@@ -41,7 +38,8 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
 {
   verbose = BDSExecOptions::Instance()->GetVerbose();
   itsName = name;
-  collectionName.insert("EC_"+name);
+  collectionName.insert("energy_counter");
+  collectionName.insert("primary_counter");
   #define NMAXCOPY 5
   HitID = new G4int[NMAXCOPY];
 }
@@ -51,14 +49,20 @@ BDSEnergyCounterSD::~BDSEnergyCounterSD()
   delete [] HitID;
 }
 
-void BDSEnergyCounterSD::Initialize(G4HCofThisEvent*HCE)
+void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 {
-  BDSEnergyCounterCollection = new BDSEnergyCounterHitsCollection
-    (SensitiveDetectorName,collectionName[0]); 
+  static G4int HCID = -1;
   for(G4int i=0; i<NMAXCOPY;i++)HitID[i]=-1;
-  if (itsHCID < 0){
-    itsHCID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);}
-  HCE->AddHitsCollection(itsHCID,BDSEnergyCounterCollection);
+
+  energyCounterCollection = new BDSEnergyCounterHitsCollection
+    (SensitiveDetectorName,collectionName[0]);
+  HCID = GetCollectionID(0);
+  HCE->AddHitsCollection(HCID,energyCounterCollection);
+
+  primaryCounterCollection = new BDSEnergyCounterHitsCollection
+    (SensitiveDetectorName,collectionName[1]);
+  HCID = GetCollectionID(1);
+  HCE->AddHitsCollection(HCID,primaryCounterCollection);
 }
 
 G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
@@ -111,57 +115,65 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   
   if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) 
     {
-    G4cout << "BDSEnergyCounterSD: Current Volume: " 
-	   << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() 
-	   << "\tEvent:  " << event_number 
-	   << "\tEnergy: " << enrg/CLHEP::GeV 
-	   << "GeV\tPosition: " << zpos/CLHEP::m <<" m"<< G4endl;
+      G4cout << "BDSEnergyCounterSD: Current Volume: " 
+	     << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() 
+	     << "\tEvent:  " << event_number 
+	     << "\tEnergy: " << enrg/CLHEP::GeV 
+	     << "GeV\tPosition: " << zpos/CLHEP::m <<" m"<< G4endl;
     }
-
-   G4double weight = aStep->GetTrack()->GetWeight();
-   if (weight == 0){
-     G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl;
-     exit(1);
-   }
-   G4int    ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
-   G4String volName    = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
-   G4String regionName = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetRegion()->GetName();
+  
+  G4double weight = aStep->GetTrack()->GetWeight();
+  if (weight == 0){
+    G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl;
+    exit(1);
+  }
+  G4int    ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
+  G4String volName    = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
+  G4String regionName = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetRegion()->GetName();
+  
+  spos = GetSPositionOfStep(aStep);
+  
+  G4bool precisionRegion = false;
+  if (regionName.contains((G4String)"precisionRegion")) {
+    precisionRegion=true;
+  }
+  //G4bool precisionRegion = get this info from the logical volume in future
+  
+  G4int turnstaken    = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  
+  //create hits and put in hits collection of the event
+  //do analysis / output in end of event action
+  BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
+						       enrg,
+						       xpos,
+						       ypos,
+						       zpos,
+						       spos,
+						       volName, 
+						       ptype, 
+						       weight, 
+						       precisionRegion,
+						       turnstaken
+						       );
+  // don't worry, won't add 0 energy tracks as filtered at top by if statement
+  energyCounterCollection->insert(ECHit);
+  
+  //record first scatter of primary if it exists
+  if (aStep->GetTrack()->GetParentID() == 0) {
+    //create a duplicate hit in the primarycounter hits collection
+    //there are usually a few - filter at end of event action
+    BDSEnergyCounterHit* PCHit = new BDSEnergyCounterHit(*ECHit);
+    //set the energy to be the full energy of the primary
+    //just now it's the wee bit of energy deposited in that step
+    PCHit->SetEnergy(BDSGlobalConstants::Instance()->GetBeamKineticEnergy());
+    primaryCounterCollection->insert(PCHit);
+  }
+  
+  if(BDSGlobalConstants::Instance()->GetStopTracks())
+    aStep->GetTrack()->SetTrackStatus(fStopAndKill);
    
-   spos = GetSPositionOfStep(aStep);
-
-   G4bool precisionRegion = false;
-   if (regionName.contains((G4String)"precisionRegion")) {
-     precisionRegion=true;
-   }
-   //G4bool precisionRegion = get this info from the logical volume in future
-   
-   G4int turnstaken    = BDSGlobalConstants::Instance()->GetTurnsTaken();
-   
-   // always create a new hit as averaging can be done at output / histogram time
-   // if averaging now, no way back later
-   // amount of data is manageable
-   BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
-							enrg,
-							xpos,
-							ypos,
-							zpos,
-							spos,
-							volName, 
-							ptype, 
-							weight, 
-							precisionRegion,
-							turnstaken
-							);
-   // don't worry, won't add 0 energy tracks as filtered at top by if statement
-   BDSEnergyCounterCollection->insert(ECHit);
-   
-   if(BDSGlobalConstants::Instance()->GetStopTracks())
-     aStep->GetTrack()->SetTrackStatus(fStopAndKill);
-
   return true;
 }
-
-
 
 G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
 { 
@@ -246,7 +258,15 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
 						       turnstaken
 						       );
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
-  BDSEnergyCounterCollection->insert(ECHit);
+  energyCounterCollection->insert(ECHit);
+  
+  //record first scatter of primary if it exists
+  if (aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetParentID() == 0) {
+    //create a duplicate hit in the primarycounter hits collection
+    //there are usually a few - filter at end of event action
+    BDSEnergyCounterHit* PCHit = new BDSEnergyCounterHit(*ECHit);
+    primaryCounterCollection->insert(PCHit);
+  }
   
   return true;
 }

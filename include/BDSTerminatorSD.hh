@@ -21,8 +21,6 @@ public:
   void   clear      ();
   void   DrawAll();
   void   PrintAll   ();
-  
-  G4int  itsHCID;
 
 private:
   G4bool verbose;

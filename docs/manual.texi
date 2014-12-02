@@ -107,24 +107,28 @@ is if building shared libraries.
 where the options are
 
 @example
---file=<filename>    : specify the lattice file
---output=<fmt>       : output format (root|ascii), default ascii
---outfile=<file>     : output file name. Will be appended with _N
-                       where N = 0, 1, 2, 3... etc.
---vis_mac=<file>     : visualization macro script, default vis.mac
+--file=<filename>     : specify the lattice file
+--output=<fmt>        : output format (root|ascii), default ascii
+--outfile=<file>      : output file name. Will be appended with _N
+                        where N = 0, 1, 2, 3... etc.
+--vis_mac=<file>      : visualization macro script, default vis.mac
 --gflash=N            : whether or not to turn on gFlash fast shower parameterisation. Default 0.
 --gflashemax=N        : maximum energy for gflash shower parameterisation in GeV. Default 10000.
 --gflashemin=N        : minimum energy for gflash shower parameterisation in GeV. Default 0.1.
---help               : display this message
---verbose            : display general parameters before run
---verbose_event      : display information for every event
---verbose_step       : display tracking information after each step
+--help                : display this message
+--verbose             : display general parameters before run
+--verbose_event       : display information for every event
+--verbose_step        : display tracking information after each step
 --verbose_event_num=N : display tracking information for event number N
---batch              : batch mode - no graphics
---outline=<file>     : print geometry/optics info to <file>
---outline_type=<fmt> : type of outline format
-                       where fmt = optics | survey
- --materials         : list materials included in BDSIM by default
+--batch               : batch mode - no graphics
+--outline=<file>      : print geometry/optics info to <file>
+--outline_type=<fmt>  : type of outline format
+                        where fmt = optics | survey
+--materials           : list materials included in BDSIM by default
+--circular            : assume circular machine - turn control
+--seed=N              : the seed to use for the random number generator
+--seedstate=<file>    : file containing CLHEP::Random seed state - overrides other seed options
+
 @end example
 
 
@@ -1387,14 +1391,24 @@ variables if they have been defined previously. It will also recalculate the Twi
 ranges between @code{M} and @code{6}
 @end itemize 
 
-@item @code{distrType}=''eshell'': an infinitely thin elliptic shell (locus) in @code{x,x'} and @code{y,y'} with given semiaxes:
+@item @code{distrType}=''eshell'': a thin elliptic shell (locus) in @code{x,x'} and @code{y,y'} with given semiaxes:
 @itemize @bullet
-@item @code{shellX}
-@item @code{shellXp}
-@item @code{shellY}
-@item @code{shellYp}
-@item @code{sigmaE}
+@item @code{shellX} - radius in [m]
+@item @code{shellXp} - radius in [rad]
+@item @code{shellY} - radius in [m]
+@item @code{shellYp} - radius in [rad]
+@item @code{sigmaE} - in [GeV]
 @end itemize
+
+The width of shell can also be specifed via the following parameters:
+@itemize @bullet
+@item @code{shellXWidth} - absolute width in [m]
+@item @code{shellXpWidth} - absolute width in [rad]
+@item @code{shellYWidth} - absolute width in [m]
+@item @code{shellYpWidth} - absolute width in [rad]
+@end itemize
+
+If left unspecified, these default to 0 and therefore the shell is infinitely thin.  Partilces are uniformly distributed in this width.
 
 @item @code{distrType}=``ring'': in the @code{x}, @code{y} plane the particles
 are uniformly distributed in @math{r} and in @math{\phi} inside a ring
@@ -1407,27 +1421,67 @@ about the nominal beam kinetic energy.
 @item @code{sigmaE} - RMS energy spread [GeV] 
 @end itemize
 
-@c @code{Square}
-@c @code{beam,distrType="square";}
+@item @code{distrType}=``circle'': filled circle in both @code{x,x'} and @code{y,y'} planes with uniform distribution in all dimensions. 
+The input parameters specify a radius R that is the same for both @code{x,x'} and @code{y,y'}, but it is denoted in input as @code{X}.
+@itemize @bullet
+@item @code{envelopeX} - radius in @code{x}, @code{y} - in [m]
+@item @code{envelopeXp} - radius in @code{x'}, @code{y'} - in [rad]
+@item @code{envelopeT} - full width in time - in [s]
+@item @code{envelopeE} - full width in energy - in [GeV]
+@end itemize
 
-@c @code{Circle}
-@c @code{beam,distrType="circle";}
+@item @code{distrType}=``square'': similar to circle - a filled square in both @code{x,x'} and @code{y,y'} planes with uniform distribution in all dimensions.  The input parameters specify the envelope.
+@itemize @bullet
+@item @code{envelopeX} - half width of square in @code{x} - in [m]
+@item @code{envelopeXp} - half width of square in @code{x'} - in [rad]
+@item @code{envelopeY} - half width of square in @code{y} - in [m]
+@item @code{envelopeYp} - half width of square in @code{y'} - in [rad]
+@item @code{envelopeT} - full with in time - in [s]
+@item @code{envelopeE} - full width in energy - in [GeV]
+@end itemize
+
+@item @code{distrType}=``userfile'': user defined file format and list of particles in ascii text file.
+@itemize @bullet
+@item @code{distrFile} - string (must be in inverted commas) filename where particles are listed
+@item @code{distrFileFormat} = string specifying columns in text file
+@end itemize
+
+You must also specify the general option in your gmad file (ie not under @code{beam}.
+
+@code{option, nlinesIgnore = N;} 
+
+where N is the integer number of liens to ignore in the file (for header purposes) - default 0.
 @end enumerate
 
-
-Example:
+Examples:
 
 @example
 
-@code{beam, particle="e+", energy=100*MeV, distrType="gauss", sigmaX=0.01,
-            sigmaXp=0.1, sigmaY=0.01, sigmaYp=0.1;}
-@c @code{beam, particle="e+", energy=100*MeV, nparticles=1000, distrType="gauss", sigmaX=0.01, sigmaXp=0.1, sigmaY=0.01, sigmaYp=0.1;}
+@code{beam, particle="e+",}
+@code{      energy=100*MeV,} 
+@code{      distrType="gauss",} 
+@code{      sigmaX=0.01,}
+@code{      sigmaXp=0.1,} 
+@code{      sigmaY=0.01,}
+@code{      sigmaYp=0.1;}
 
 @end example
 
+@example
+@code{beam,  particle="e-",}
+@code{       energy = 1*GeV,}
+@code{       distrType  = "userfile",}
+@code{       distrFile  = "9_UserFile.dat",}
+@code{       distrFileFormat = "x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:E[MeV]";}
+
+@code{option, nlinesIgnore = 0;}
+
+@end example
+Note, currently this distribution only works when bdsim is executed in the directory of the userfile. There are examples for all distribution types in @code{bdsimsource/test/BDSBunchTestFiles}.
+
 In alternative, one can pass to the simulation a file containing a list of
 particles to be generated. 
-For more details see @ref{Bunch description formats}.
+For more details see @ref{Bunch description formats} [DEPRECATED].
 
 @node sample and csample
 @subsection @code{sample} and @code{csample}

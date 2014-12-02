@@ -12,9 +12,11 @@ BDSOutputROOT::BDSOutputROOT():BDSOutputBase()
 {
   G4cout<<"output format ROOT"<<G4endl;
   theRootOutputFile = NULL;
-  EnergyLossHisto = NULL;
+  EnergyLossHisto   = NULL;
+  PrimaryLossHisto  = NULL;
   PrecisionRegionEnergyLossTree = NULL;
-  EnergyLossTree = NULL;
+  EnergyLossTree    = NULL;
+  PrimaryLossTree   = NULL;
   Init(); // activate the output
 }
 
@@ -138,6 +140,11 @@ void BDSOutputROOT::Init()
   EnergyLossTree= new TTree("ElossTree", "Energy Loss");
   EnergyLossTree->Branch("s",&s_el,"s/F"); // (m)
   EnergyLossTree->Branch("E",&E_el,"E/F"); // (GeV)
+
+  PrimaryLossHisto = new TH1F("PlossHisto", "Primary Losses", nBins, 0., BDSGlobalConstants::Instance()->GetSMax()/CLHEP::m);
+  PrimaryLossTree = new TTree("PlossTree", "Primary Losses");
+  PrimaryLossTree->Branch("s",&s_pl,"s/F"); // (m)
+  PrimaryLossTree->Branch("E",&E_pl,"s/F"); // (GeV)
 
   PrecisionRegionEnergyLossTree= new TTree("PrecisionRegionElossTree", "Energy Loss");//"x:y:z:s:E:partID:parentID:weight:volumeName");
   PrecisionRegionEnergyLossTree->Branch("x",&x_el_p,"x/F"); // (m)
@@ -432,6 +439,16 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 	PrecisionRegionEnergyLossTree->Fill();
       }
     }
+}
+
+void BDSOutputROOT::WritePrimaryLoss(BDSEnergyCounterHit* hit)
+{
+  //all regions fill the energy loss tree....
+  s_pl=hit->GetS()/CLHEP::m;
+  E_pl=hit->GetEnergy()/CLHEP::GeV;
+
+  PrimaryLossHisto->Fill(s_pl); //for now fill without weight - can be weighted in analysis
+  PrimaryLossTree->Fill();
 }
 
 void BDSOutputROOT::Commit()

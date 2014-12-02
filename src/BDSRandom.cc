@@ -22,12 +22,12 @@ void BDS::CreateRandomNumberGenerator()
 void BDS::SetSeed()
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "> set the seed" << G4endl;
-  G4cout << __METHOD_NAME__ << "> Seed from BDSGlobalConstants = " 
+  G4cout << __METHOD_NAME__ << " set the seed" << G4endl;
+  G4cout << __METHOD_NAME__ << " seed from BDSGlobalConstants = " 
 	 << BDSGlobalConstants::Instance()->GetRandomSeed() << G4endl
-         << __METHOD_NAME__ << "> Seed from BDSExecOptions = "
+         << __METHOD_NAME__ << " seed from BDSExecOptions = "
          << BDSExecOptions::Instance()->GetSeed() << G4endl
-         << __METHOD_NAME__ << "> seed set in exec options : "
+         << __METHOD_NAME__ << " seed set in exec options : "
 	 << BDSExecOptions::Instance()->SetSeed() << G4endl;
 #endif
   // get seed from options if set

@@ -10,7 +10,6 @@
 
 #include "BDSTerminatorSD.hh"
 
-#include "G4SDManager.hh"
 #include "G4ios.hh"
 #include "G4TouchableHistory.hh"
 #include "G4VTouchable.hh"
@@ -18,10 +17,9 @@
 
 
 BDSTerminatorSD::BDSTerminatorSD(G4String name)
-  :G4VSensitiveDetector(name), itsHCID(-1)
+  :G4VSensitiveDetector(name)
 {
   verbose  = BDSExecOptions::Instance()->GetVerbose();
-  collectionName.insert("Terminator_"+name);
 }
 
 BDSTerminatorSD::~BDSTerminatorSD()
@@ -29,13 +27,11 @@ BDSTerminatorSD::~BDSTerminatorSD()
 
 void BDSTerminatorSD::Initialize(G4HCofThisEvent* /*HCE*/)
 {
-  if (itsHCID < 0)
-    {itsHCID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);}
   BDSGlobalConstants::Instance()->ResetTurnNumber();
   //we don't actually use HCE here as we don't need to log any of the particle info
 }
 
-G4bool BDSTerminatorSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
+G4bool BDSTerminatorSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
 {
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
   // feedback info but only every 10 turns to avoid slow down and output bloat

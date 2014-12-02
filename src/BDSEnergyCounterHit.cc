@@ -40,3 +40,23 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int nCopy,
 
 BDSEnergyCounterHit::~BDSEnergyCounterHit()
 {;}
+
+BDSEnergyCounterHit* BDS::FindFirstPrimaryHit(BDSEnergyCounterHitsCollection* hc)
+{
+  G4double sposMin = 1e20; //stupidly large number - spos will always be less than
+  G4double spos = 0;
+  G4int indexofHit = -1;
+  for (G4int i = 0; i < hc->entries(); ++i)
+    {
+      spos = (*hc)[i]->GetS();
+      if (spos < sposMin) {
+	sposMin = spos; //keep for testing
+	indexofHit = i; //record which hit it was
+      }
+    }
+  if (indexofHit != -1)
+    {return (*hc)[indexofHit];}
+  else
+    {return NULL;}
+}
+

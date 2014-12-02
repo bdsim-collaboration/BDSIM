@@ -12,7 +12,7 @@
  */
 
 struct Element {
-  short type;
+  int type; ///< element enum
   int precisionRegion;
   std::string name;
 
@@ -32,7 +32,7 @@ struct Element {
   std::list<double> blmLocZ;
   std::list<double> blmLocTheta;
 
-   /// material properties
+  /// material properties
   double A; 
   double Z; 
   double density; 

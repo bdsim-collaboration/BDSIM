@@ -12,6 +12,8 @@
 #include "G4Allocator.hh"
 #include "G4ThreeVector.hh"
 
+//FindFirstPrimaryHit declaration at the bottom of this file
+
 class BDSEnergyCounterHit :public G4VHit
 {
 public:
@@ -29,7 +31,7 @@ public:
 		      );
 
   ~BDSEnergyCounterHit();
-
+  
   inline void* operator new(size_t) ;
   inline void operator delete(void *aHit);
 
@@ -140,6 +142,12 @@ inline void BDSEnergyCounterHit::AddEnergyWeightedPosition(G4double Energy, G4do
   itsEnergy+=Energy*weight;
 }
 
+inline G4int BDSEnergyCounterHit::GetTurnsTaken()
+{return itsTurnsTaken;}
+
+inline void  BDSEnergyCounterHit::SetTurnsTaken(G4int turnstaken)
+{itsTurnsTaken = turnstaken;}
+
 typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
 extern G4Allocator<BDSEnergyCounterHit> BDSEnergyCounterHitAllocator;
 
@@ -155,11 +163,10 @@ inline void BDSEnergyCounterHit::operator delete(void *aHit)
  BDSEnergyCounterHitAllocator.FreeSingle((BDSEnergyCounterHit*) aHit);
 }
 
-inline G4int BDSEnergyCounterHit::GetTurnsTaken()
-{return itsTurnsTaken;}
 
-inline void  BDSEnergyCounterHit::SetTurnsTaken(G4int turnstaken)
-{itsTurnsTaken = turnstaken;}
+namespace BDS {
+  BDSEnergyCounterHit* FindFirstPrimaryHit(BDSEnergyCounterHitsCollection* HC);
+}
 
 #endif
 

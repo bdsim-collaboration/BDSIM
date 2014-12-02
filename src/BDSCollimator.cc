@@ -11,22 +11,9 @@
 #include "G4PVPlacement.hh"               
 #include "G4EllipticalTube.hh"
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
-#include "G4Polyhedra.hh"
-#include "G4Cons.hh"
-#include "G4Trd.hh"
-
-#include "G4UnionSolid.hh"
 
 #include "G4UserLimits.hh"
 #include <map>
-
-//============================================================
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
 
 //============================================================
 
@@ -77,11 +64,13 @@ void BDSCollimator::BuildMarkerLogicalVolume()
 
   itsSolidLogVol->SetVisAttributes(itsVisAttributes);
 
-  //visual attributes      
-  G4VisAttributes* VisAtt1 =
-    new G4VisAttributes(G4Colour(0., 0., 0.));
-  VisAtt1->SetForceSolid(true);
-  if (itsInnerLogVol) itsInnerLogVol->SetVisAttributes(VisAtt1);
+  if (itsInnerLogVol) {
+    //visual attributes      
+    static G4VisAttributes* VisAtt1 =
+      new G4VisAttributes(G4Colour(0., 0., 0.));
+    VisAtt1->SetForceSolid(true);
+    itsInnerLogVol->SetVisAttributes(VisAtt1);
+  }
 }
 
 void BDSCollimator::BuildBLMs(){
@@ -94,7 +83,6 @@ void BDSCollimator::SetVisAttributes()
   itsVisAttributes=new G4VisAttributes(G4Colour(0.3,0.4,0.2));
   itsVisAttributes->SetForceSolid(true);
 }
-
 
 void BDSCollimator::BuildInnerCollimator()
 {
@@ -110,107 +98,21 @@ void BDSCollimator::BuildInnerCollimator()
     if(itsType == "rcol")
       {
 	
-
-	// Rectangular collimator //
+	itsInnerSolid=new G4Box(itsName+"_inner",
+				itsXAper,
+				itsYAper,
+				itsLength/2);
+	
 	/*
-
-	G4Box* itsInnerSolid1 = new (itsName+"_inner",
-				   2.0*itsXAper,
-				   itsYAper/3.0,
-				   itsLength/2);
-
-	G4Trd* itsInnerSolid2 = new G4Trd (itsName+"_inner",
-					  2.0*itsXAper,
-					  itsXAper/3.0,
-					  itsYAper,
-					  itsYAper/3.0,
-					  itsLength/10.0);
-
-	G4Trd* itsInnerSolid3 = new G4Trd (itsName+"_inner",
-					  itsXAper/3.0,
-					  2.0*itsXAper,
-					  itsYAper/3.0,
-					  itsYAper,
-					  itsLength/10.0);
-
-	G4ThreeVector  translation0(0, 0, -itsLength/2.0+itsLength/10.0);
-	G4ThreeVector  translation1(0, 0, itsLength/2.0-itsLength/10.0);
-
-	G4UnionSolid*   itsInnerSolid4 = new G4UnionSolid(itsName+"_inner",
-					 itsInnerSolid1,
-					 itsInnerSolid2,
-					 0,
-					 translation0);
-
-	itsInnerSolid = new G4UnionSolid(itsName+"_inner",
-					 itsInnerSolid4,
-					 itsInnerSolid3,
-					 0,
-					 translation1);
-	*/
-
-
-	// LHC collimator (Cone)
-
-	G4double itsConeAper =  1.5*itsXAper;
-     
-	G4ThreeVector  translation1(-(itsConeAper-itsXAper), 0, -itsLength/3.0);
-	G4ThreeVector  translation2(-(itsConeAper-itsXAper), 0, itsLength/3.0);
-	G4ThreeVector  translation0(0, 0, 0);
-	
-	G4Box* itsInnerSolid1 = new G4Box(itsName+"_inner",
-				   2.0*itsXAper,
-				   itsYAper/3.0,
-				   itsLength/2);
-
-	// the cone in one side
-
-	G4Cons* itsInnerSolid2 = new G4Cons (itsName+"_inner",
-				     0,
-				     itsConeAper,
-				     0,
-				     0,
-				     itsLength/6.,
-				     0,
-				     2*CLHEP::pi);
-       
-	// the cone in the other side
-
-	G4Cons* itsInnerSolid3 = new G4Cons (itsName+"_inner",
-				     0,
-				     0,
-				     0,
-				     itsConeAper,
-				     itsLength/6.,
-				     0,
-				     2*CLHEP::pi);
-
-	// adding the volumes that will be subtrackted afterwards
-
-	G4UnionSolid* itsInnerSolid4 = new G4UnionSolid(itsName+"_inner",
-					 itsInnerSolid1,
-					 itsInnerSolid2,
-					 0,
-					 translation1);
-
-	itsInnerSolid = new G4UnionSolid(itsName+"_inner",
-					 itsInnerSolid4,
-					 itsInnerSolid3,
-					 0,
-					 translation2);
-	
-	
-
-	/*
-	double zPlanepos [4] = {-itsLength/2.0,-itsLength/3.0,itsLength/3.0,itsLength/2.0};	
-	double rOuter [4] = {2.0*itsXAper,itsXAper,itsXAper,2.0*itsXAper};
-	G4double rInner [4] = {0.0,0.0,0.0,0.0};	
+	double zPlanepos [2] = {0,itsLength};	
+	double rOuter [2] = {itsXAper, itsXAper};
+	G4double rInner [2] = {0.0,0.0};
 
 	itsInnerSolid = new G4Polyhedra(itsName+"_inner",
 					0.,
 					2*CLHEP::pi,
-					20,
 					4,
+					2,
 					zPlanepos,
 					rInner,
 					rOuter);
@@ -235,10 +137,9 @@ void BDSCollimator::BuildInnerCollimator()
 #endif
     
   }
-
-	
+  
   itsOuterSolid = new G4Box(itsName+"_outer_solid",
-			    itsOuterR/2.0,
+			    itsOuterR,
 			    itsOuterR,
 			    itsLength/2);
 
@@ -254,14 +155,10 @@ void BDSCollimator::BuildInnerCollimator()
   itsSolidLogVol-> SetUserLimits(itsUserLimits);
   itsMarkerLogicalVolume->SetUserLimits(itsUserLimits);
 #endif
-
-  G4ThreeVector outerThreeVector = G4ThreeVector(itsOuterR/2.0,0,0);
-
   itsPhysiComp = 
     new G4PVPlacement(
 		      nullRotationMatrix,   // no rotation
 		      nullThreeVector,        // its position
-		      //outerThreeVector,
 		      itsSolidLogVol,    // its logical volume
 		      itsName+"_solid_phys",	     // its name
 		      itsMarkerLogicalVolume, // its mother  volume
@@ -297,3 +194,4 @@ void BDSCollimator::BuildInnerCollimator()
 BDSCollimator::~BDSCollimator()
 {
 }
+
