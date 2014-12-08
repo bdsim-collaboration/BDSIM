@@ -19,14 +19,19 @@ int gmad_parser(std::string name);
 
 /** Python interface **/ 
 extern "C" {   
-  int    gmad_parser_c(char *name);
+  int    GmadParser_c(char *name);
 
   /* Interface to extern ElementList beamline_list */
-  int    get_nelements(); // Length of list
-  short  get_type(int);   // Type of element 
-  const char*  get_name(int);   // Name of element
-  double get_length(int); // Length of element
-  double get_angle(int);  // Angle of element
+  int          GetNelements();            // Length of list
+  short        GetType(int);              // Type of element 
+  const char*  GetName(int);              // Name of element
+  double       GetLength(int);            // Length of element
+  double       GetAngle(int);             // Angle of element
+  double*      GetKs(int);                // All magnetic ks
+  double       GetAperX(int);             // Aperture in X
+  double       GetAperY(int);             // Aperture in Y
+  double       GetAper(int);              // General Aperture
+  double       GetBeampipeThickness(int); // Beam Pipe Thickness
 
 }
 #endif

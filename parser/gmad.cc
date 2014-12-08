@@ -150,41 +150,82 @@ int gmad_parser(std::string name)
 
 
 /** Python interface **/ 
-int gmad_parser_c(char *name) 
+int GmadParser_c(char *name) 
 {
   gmad_parser(std::string(name));
   return 0;
 }
 
-int get_nelements() 
+int GetNelements() 
 {
   return beamline_list.size();
 }  
 
-const char* get_name(int i) 
+const char* GetName(int i) 
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
   return (it->name).c_str();
 }
 
-short get_type(int i) 
+short GetType(int i) 
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
   return it->type;
 }
 
-double get_length(int i) 
+double GetLength(int i) 
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
   return it->l;
 }
 
-double get_angle(int i) 
+double GetAngle(int i) 
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
   return it->angle;  
+}
+
+double* GetKs(int i)
+{
+  std::list<Element>::iterator it = beamline_list.begin();
+  std::advance(it, i);
+  double* result = new double[5];
+  result[0] = it->ks;
+  result[1] = it->k0;
+  result[2] = it->k1;
+  result[3] = it->k2;
+  result[4] = it->k3;
+  return result;
+}
+
+double GetAperX(int i) 
+{
+  std::list<Element>::iterator it = beamline_list.begin();
+  std::advance(it, i);
+  return it->aperX;  
+}
+
+double GetAperY(int i) 
+{
+  std::list<Element>::iterator it = beamline_list.begin();
+  std::advance(it, i);
+  return it->aperY;  
+}
+
+double GetAper(int i) 
+{
+  std::list<Element>::iterator it = beamline_list.begin();
+  std::advance(it, i);
+  return it->aper;  
+}
+
+double GetBeampipeThickness(int i)
+{
+  std::list<Element>::iterator it = beamline_list.begin();
+  std::advance(it, i);
+  return it->beampipeThickness;
 }
