@@ -14,6 +14,7 @@
 
 #include "G4FieldManager.hh"
 #include "G4HelixImplicitEuler.hh"
+#include "G4SimpleRunge.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4Tubs.hh"
@@ -104,7 +105,8 @@ void BDSTMultipole::BuildBPFieldAndStepper()
   // set up the magnetic field and stepper
   itsMagField=new BDSMultipoleMagField(kn,ks);
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
-  itsStepper=new G4HelixImplicitEuler(itsEqRhs);
+  //  itsStepper=new G4HelixImplicitEuler(itsEqRhs);
+  itsStepper=new G4SimpleRunge(itsEqRhs);
 }
 
 BDSTMultipole::~BDSTMultipole()
