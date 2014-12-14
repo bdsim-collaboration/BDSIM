@@ -16,13 +16,15 @@
 #include "G4Navigator.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4TransportationManager.hh"
+#include "BDSDebug.hh"
 
 BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4double> ks)
 {
 
-#ifdef BDSDEBUG 
-    G4cout<<"Creating BDSMultipoleMagField"<<G4endl;
-    G4cout<<"size="<<kn.size()<<G4endl;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout<<"Creating BDSMultipoleMagField"<<G4endl;
+  G4cout<<"size="<<kn.size()<<G4endl;
 #endif
 
   // compute magnetic rigidity brho
@@ -99,6 +101,7 @@ void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
 		       G4double *Bfield ) const
 {
 #ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
   G4cout<<"Called GetFieldValue at position (in global coordinates): ("
         <<Point[0]/CLHEP::cm<<" "<<Point[1]/CLHEP::cm<<" "<<Point[2]/CLHEP::cm
         <<")cm"<<G4endl;
