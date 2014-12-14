@@ -1,5 +1,0 @@
-include __BEAM
-include options.gmad
-include __COMPONENT
-
-option, ngenerate=10000;
