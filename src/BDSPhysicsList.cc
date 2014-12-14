@@ -646,14 +646,15 @@ void BDSPhysicsList::ConstructEMMisc()
       
     } else if (particleName == "e-") {
       pmanager->AddProcess(new G4eIonisation,       -1, 2,2);
-      if(0){
-	G4eBremsstrahlung* ebremsstrahlung = new G4eBremsstrahlung();
-	ebremsstrahlung->SetLambdaFactor(1/1.0e-20);
-	BDSXSBias* ebremsstrahlung_xsbias = new BDSXSBias();
-	ebremsstrahlung_xsbias->RegisterProcess(ebremsstrahlung);
-	ebremsstrahlung_xsbias->eFactor(1e-20);
-	pmanager->AddDiscreteProcess(ebremsstrahlung_xsbias);     
-      }	else if(BDSGlobalConstants::Instance()->GetUseEMLPB()){ //added by M.D. Salt, R.B. Appleby, 15/10/09
+      // if(0){
+      // 	G4eBremsstrahlung* ebremsstrahlung = new G4eBremsstrahlung();
+      // 	ebremsstrahlung->SetLambdaFactor(1/1.0e-20);
+      // 	BDSXSBias* ebremsstrahlung_xsbias = new BDSXSBias();
+      // 	ebremsstrahlung_xsbias->RegisterProcess(ebremsstrahlung);
+      // 	ebremsstrahlung_xsbias->eFactor(1e-20);
+      // 	pmanager->AddDiscreteProcess(ebremsstrahlung_xsbias);     
+      // }	else 
+      if(BDSGlobalConstants::Instance()->GetUseEMLPB()){ //added by M.D. Salt, R.B. Appleby, 15/10/09
 	  
         G4eBremsstrahlung* ebremsstrahlung = new G4eBremsstrahlung();
         eBremsstrahlung_LPB* ebremsstrahlung_lpb = new eBremsstrahlung_LPB();
@@ -673,14 +674,15 @@ void BDSPhysicsList::ConstructEMMisc()
     } else if (particleName == "e+") {
       //positron
       pmanager->AddProcess(new G4eIonisation,       -1, 2,2);
-      if(0){
-	G4eBremsstrahlung* ebremsstrahlung = new G4eBremsstrahlung();
-	ebremsstrahlung->SetLambdaFactor(1/1.0e-20);
-	BDSXSBias* ebremsstrahlung_xsbias = new BDSXSBias();
-	ebremsstrahlung_xsbias->RegisterProcess(ebremsstrahlung);
-	ebremsstrahlung_xsbias->eFactor(1e-20);
-	pmanager->AddDiscreteProcess(ebremsstrahlung_xsbias);      
-      } else if (BDSGlobalConstants::Instance()->GetUseEMLPB()){
+      // if(0){
+      // 	G4eBremsstrahlung* ebremsstrahlung = new G4eBremsstrahlung();
+      // 	ebremsstrahlung->SetLambdaFactor(1/1.0e-20);
+      // 	BDSXSBias* ebremsstrahlung_xsbias = new BDSXSBias();
+      // 	ebremsstrahlung_xsbias->RegisterProcess(ebremsstrahlung);
+      // 	ebremsstrahlung_xsbias->eFactor(1e-20);
+      // 	pmanager->AddDiscreteProcess(ebremsstrahlung_xsbias);      
+      // } else 
+      if (BDSGlobalConstants::Instance()->GetUseEMLPB()){
 	G4eBremsstrahlung* ebremsstrahlung = new G4eBremsstrahlung();
 	eBremsstrahlung_LPB* ebremsstrahlung_lpb = new eBremsstrahlung_LPB();
         ebremsstrahlung_lpb->RegisterProcess(ebremsstrahlung);
