@@ -272,6 +272,11 @@ void BDSDetectorConstruction::BuildBeamline(){
   G4cout << __METHOD_NAME__ << "size of beamline element list: "<< beamline_list.size() << G4endl;
 #endif
   G4cout << __METHOD_NAME__ << "size of theBeamline: "<< BDSBeamline::Instance()->size() << G4endl;
+
+  if (BDSBeamline::Instance()->size() == 0) {
+    G4cout << __METHOD_NAME__ << "beamline empty or no line selected! exiting" << G4endl;
+    exit(1);
+  }
 }
 
 //=================================================================
