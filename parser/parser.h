@@ -163,6 +163,7 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%d, lset = %d\n", params.k1, params.k2, params.k3, type, params.lset);
 #endif
   struct Element e;
+  
   e.type = type;
   // common parameters for all elements
   e.name = std::string(name);
