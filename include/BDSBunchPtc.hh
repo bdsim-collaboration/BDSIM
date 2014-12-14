@@ -4,12 +4,14 @@
 #include <vector>
 
 #include "BDSBunchInterface.hh"
+#include "BDSDebug.hh"
 
 class BDSBunchPtc : public BDSBunchInterface { 
 private: 
-  int nRays;
+  G4int    nRays;
   G4String fileName;
 
+  G4int    iRay; // current ray
   std::vector<double*> ptcData; 
   
 public: 

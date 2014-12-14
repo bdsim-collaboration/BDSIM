@@ -4,6 +4,10 @@ BDSBunchSquare::BDSBunchSquare() :
   BDSBunchInterface(), envelopeX(0.0), envelopeY(0.0), 
   envelopeXp(0.0), envelopeYp(0.0), envelopeT(0.0), envelopeE(0.0)
 {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
 
@@ -17,15 +21,27 @@ BDSBunchSquare::BDSBunchSquare(G4double envelopeXIn,  G4double envelopeYIn,
   envelopeXp(envelopeXpIn), envelopeYp(envelopeYpIn), 
   envelopeT(envelopeTIn), envelopeE(envelopeEIn)
 {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
 
 BDSBunchSquare::~BDSBunchSquare() 
 {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   delete FlatGen;
 }
 
 void BDSBunchSquare::SetOptions(struct Options &opt) {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   BDSBunchInterface::SetOptions(opt);
   SetEnvelopeX(opt.envelopeX); 
   SetEnvelopeY(opt.envelopeY);
@@ -39,6 +55,10 @@ void BDSBunchSquare::SetOptions(struct Options &opt) {
 void BDSBunchSquare::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		     G4double& xp, G4double& yp, G4double& zp,
 		     G4double& t , G4double&  E, G4double& weight) {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   x0 = X0  * CLHEP::m;
   y0 = Y0  * CLHEP::m;
   z0 = Z0  * CLHEP::m;
