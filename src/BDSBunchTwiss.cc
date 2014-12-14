@@ -63,7 +63,7 @@ void BDSBunchTwiss::CommonConstruction() {
   sigmaGM[0][0] =  emitX*betaX;  
   sigmaGM[0][1] = -emitX*alphaX;
   sigmaGM[1][0] = -emitX*alphaX;
-  sigmaGM[1][1] =  emitX*gammaX;`
+  sigmaGM[1][1] =  emitX*gammaX;
   sigmaGM[2][2] =  emitY*betaY;
   sigmaGM[2][3] = -emitY*alphaY;
   sigmaGM[3][2] = -emitY*alphaY;
