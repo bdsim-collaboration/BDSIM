@@ -1,4 +1,5 @@
 #include "BDSBunchPtc.hh"
+#include "BDSDebug.hh"
 
 #include <fstream>
 #include <regex>

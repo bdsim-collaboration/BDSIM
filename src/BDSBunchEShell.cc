@@ -1,4 +1,5 @@
 #include "BDSBunchEShell.hh"
+#include "BDSDebug.hh"
 
 BDSBunchEShell::BDSBunchEShell() : 
   BDSBunchInterface(), shellX(0.0), shellXp(0.0), shellY(0.0), shellYp(0.0), 

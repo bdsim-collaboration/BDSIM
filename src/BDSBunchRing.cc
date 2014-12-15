@@ -1,4 +1,5 @@
 #include "BDSBunchRing.hh"
+#include "BDSDebug.hh"
 
 BDSBunchRing::BDSBunchRing() : 
   BDSBunchInterface(), rMin(0), rMax(0) {

@@ -1,4 +1,5 @@
 #include "BDSBunchCircle.hh"
+#include "BDSDebug.hh"
 
 BDSBunchCircle::BDSBunchCircle() :
   BDSBunchInterface(), envelopeR(0.0), envelopeRp(0.0), envelopeT(0.0), envelopeE(0.0)

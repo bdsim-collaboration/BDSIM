@@ -1,5 +1,6 @@
 #include "BDSBunch.hh"
 #include "BDSBunchFactory.hh"
+#include "BDSDebug.hh"
 
 BDSBunch::BDSBunch() {
 #ifdef BDSDEBUG 

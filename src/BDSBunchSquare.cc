@@ -1,4 +1,5 @@
 #include "BDSBunchSquare.hh"
+#include "BDSDebug.hh"
 
 BDSBunchSquare::BDSBunchSquare() :
   BDSBunchInterface(), envelopeX(0.0), envelopeY(0.0), 
