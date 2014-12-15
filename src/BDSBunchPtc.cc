@@ -4,7 +4,6 @@
 #include <fstream>
 #include <regex>
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
 BDSBunchPtc::BDSBunchPtc() { 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
@@ -16,7 +15,6 @@ BDSBunchPtc::BDSBunchPtc() {
   this->iRay = 0;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
 BDSBunchPtc::~BDSBunchPtc() { 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
@@ -26,7 +24,6 @@ BDSBunchPtc::~BDSBunchPtc() {
   }
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
 void BDSBunchPtc::LoadPtcFile() { 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
@@ -34,6 +31,11 @@ void BDSBunchPtc::LoadPtcFile() {
 
   // open file and read line by line and extract values
   std::ifstream ifstr(this->fileName);
+
+  if (!ifstr)
+    { G4cout << __METHOD_NAME__ << "\"" << this->fileName << "\" file doesn't exist - exiting as no input" << G4endl;
+      exit(1);
+    }
 
   std::string line; 
   while(ifstr) { 
@@ -103,7 +105,6 @@ void BDSBunchPtc::LoadPtcFile() {
   return;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
 void BDSBunchPtc::SetOptions(struct Options& opt) {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << " " << opt.distribFile << G4endl;
@@ -114,7 +115,6 @@ void BDSBunchPtc::SetOptions(struct Options& opt) {
   this->LoadPtcFile();
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
 void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 				  G4double& xp, G4double& yp, G4double& zp,
 				  G4double& t , G4double&  E, G4double& weight) {

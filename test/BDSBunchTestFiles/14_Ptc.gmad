@@ -1,4 +1,4 @@
 beam,  particle="e-",
        energy = 1*GeV,
        distrType  = "ptc",
-       distrFile  = "inrays.madx";
+       distrFile  = "14_Ptc_Inrays.madx";
