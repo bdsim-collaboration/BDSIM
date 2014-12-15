@@ -193,6 +193,7 @@ public:
   G4double GetLengthSafety();
   G4long   GetRandomSeed();
   G4int    GetNumberToGenerate();
+  void     SetNumberToGenerate(G4int);
   G4int    GetNumberOfEventsPerNtuple();
   G4int    GetEventNumberOffset();
   G4FieldManager* GetZeroFieldManager();
@@ -708,6 +709,9 @@ inline G4long BDSGlobalConstants::GetRandomSeed()
 
 inline G4int BDSGlobalConstants::GetNumberToGenerate()
 {return itsNumberToGenerate;}
+
+inline void BDSGlobalConstants::SetNumberToGenerate(G4int numberToGenerate)
+{itsNumberToGenerate = numberToGenerate;}
 
 inline G4int BDSGlobalConstants::GetNumberOfEventsPerNtuple()
 {return itsNumberOfEventsPerNtuple;}

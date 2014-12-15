@@ -1,5 +1,10 @@
 #include "BDSBunchPtc.hh"
 
+#include <fstream>
+#include <regex>
+
+#define BDSDEBUG 1
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 BDSBunchPtc::BDSBunchPtc() { 
 #ifdef BDSDEBUG 
@@ -17,6 +22,9 @@ BDSBunchPtc::~BDSBunchPtc() {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  for(std::vector<double*>::iterator i = this->ptcData.begin();i!=this->ptcData.end();++i) {
+    delete *i;
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -26,16 +34,80 @@ void BDSBunchPtc::LoadPtcFile() {
 #endif
 
   // open file and read line by line and extract values
-  
+  std::ifstream ifstr(this->fileName);
 
-  // set number of available rays 
+  std::string line; 
+  while(ifstr) { 
+    // read single line 
+    std::getline(ifstr,line); 
+
+    // create regular expressions 
+    std::regex rex("\\sx\\s*=\\s*([0-9eE.+-]+)");
+    std::regex rey("\\sy\\s*=\\s*([0-9eE.+-]+)");
+    std::regex repx("px\\s*=\\s*([0-9eE.+-]+)");
+    std::regex repy("py\\s*=\\s*([0-9eE.+-]+)");
+    std::regex ret("\\st\\s*=\\s*([0-9eE.+-]+)");
+    std::regex rept("pt\\s*=\\s*([0-9eE.+-]+)");
+
+    // return search match objects 
+    std::smatch smx;
+    std::smatch smy;
+    std::smatch smpx;
+    std::smatch smpy;
+    std::smatch smt;    
+    std::smatch smpt;
+
+    // perform search
+    std::regex_search(line,smx, rex);
+    std::regex_search(line,smy, rey);
+    std::regex_search(line,smpx,repx);
+    std::regex_search(line,smpy,repy);
+    std::regex_search(line,smt, ret);
+    std::regex_search(line,smpt, rept);
+
+    // variable for storage
+    double x=0.0;
+    double y=0.0;
+    double px=0.0;
+    double py=0.0; 
+    double t=0.0;
+    double pt=0.0;
+    
+    if(smx.size() == 2)  x  = std::stod(smx[1]);
+    if(smy.size() == 2)  y  = std::stod(smy[1]);
+    if(smpx.size() == 2) px = std::stod(smpx[1]);
+    if(smpy.size() == 2) py = std::stod(smpy[1]);
+    if(smt.size() == 2)  t  = std::stod(smt[1]);
+    if(smpt.size() == 2) pt = std::stod(smpt[1]);
+
+#ifdef BDSDEBUG 
+    G4cout << __METHOD_NAME__ << "read line " << line << G4endl;
+    G4cout << __METHOD_NAME__ << "values    " << x << " " << px << " " << y << " " << py << " " << t << " " << pt << G4endl;   
+#endif 
+    
+    double *values = new double[6]; 
+    values[0] = x;
+    values[1] = px;
+    values[2] = y; 
+    values[3] = py;
+    values[4] = t; 
+    values[5] = pt; 
+    
+    // append values to storage vector
+    this->ptcData.push_back(values);
+  }
+
+    // set number of available rays in options 
+  this->nRays = this->ptcData.size();
+  BDSGlobalConstants::Instance()->SetNumberToGenerate(this->nRays);
+
   return;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 void BDSBunchPtc::SetOptions(struct Options& opt) {
 #ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << __METHOD_NAME__ << " " << opt.distribFile << G4endl;
 #endif
 
   BDSBunchInterface::SetOptions(opt);
