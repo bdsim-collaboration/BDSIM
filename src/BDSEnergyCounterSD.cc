@@ -31,10 +31,13 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
    energyCounterCollection(NULL),
    primaryCounterCollection(NULL),
    enrg(0.0),
-   xpos(0.0),
-   ypos(0.0),
-   zpos(0.0),
-   spos(0.0)
+   X(0.0),
+   Y(0.0),
+   Z(0.0),
+   S(0.0),
+   x(0.0),
+   y(0.0),
+   z(0.0)
 {
   verbose = BDSExecOptions::Instance()->GetVerbose();
   itsName = name;
@@ -97,21 +100,29 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   
   // Get Translation and Rotation of Sampler Volume w.r.t the World Volume
   // as described in Geant4 FAQ's: http://geant4.cern.ch/support/faq.shtml
-  //G4AffineTransform tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
-  G4ThreeVector pos    = aStep->GetTrack()->GetPosition();
-  G4ThreeVector momDir = aStep->GetTrack()->GetMomentumDirection();
+  G4AffineTransform tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
+  G4ThreeVector posbefore = aStep->GetTrack()->GetPosition();
+  G4ThreeVector posafter  = aStep->GetTrack()->GetPosition();
+  //G4ThreeVector momDir = aStep->GetTrack()->GetMomentumDirection();
 
-  //G4ThreeVector LocalPosition  = tf.TransformPoint(pos);
+  //calculate local coordinates
+  G4ThreeVector posbeforelocal  = tf.TransformPoint(posbefore);
+  G4ThreeVector posafterlocal   = tf.TransformPoint(posbefore);
   //G4ThreeVector LocalDirection = tf.TransformAxis(momDir);
 
-  zpos=0.5*(aStep->GetPreStepPoint()->GetPosition().z()
-  	    + aStep->GetPostStepPoint()->GetPosition().z());
-  
-  xpos=0.5*(aStep->GetPreStepPoint()->GetPosition().x()
-	    + aStep->GetPostStepPoint()->GetPosition().x());
-  
-  ypos=0.5*(aStep->GetPreStepPoint()->GetPosition().y()
-  	    + aStep->GetPostStepPoint()->GetPosition().y());
+  //G4cout << "Gobal Position " << pos << G4endl;
+  //G4cout << "Local Position " << poslocal << G4endl << G4endl;
+
+  //calculate mean position of step
+  //global
+  Y = 0.5 * (posbefore.x() + posafter.x());
+  Y = 0.5 * (posbefore.y() + posafter.y());
+  Z = 0.5 * (posbefore.z() + posafter.z());
+  S = GetSPositionOfStep(aStep);
+  //local
+  x = 0.5 * (posbeforelocal.x() + posafterlocal.x());
+  y = 0.5 * (posbeforelocal.y() + posafterlocal.y());
+  z = 0.5 * (posbeforelocal.z() + posafterlocal.z());
   
   if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) 
     {
@@ -119,7 +130,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 	     << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() 
 	     << "\tEvent:  " << event_number 
 	     << "\tEnergy: " << enrg/CLHEP::GeV 
-	     << "GeV\tPosition: " << zpos/CLHEP::m <<" m"<< G4endl;
+	     << "GeV\tPosition: " << S/CLHEP::m <<" m"<< G4endl;
     }
   
   G4double weight = aStep->GetTrack()->GetWeight();
@@ -130,8 +141,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4int    ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
   G4String volName    = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
   G4String regionName = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetRegion()->GetName();
-  
-  spos = GetSPositionOfStep(aStep);
   
   G4bool precisionRegion = false;
   if (regionName.contains((G4String)"precisionRegion")) {
@@ -145,15 +154,19 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   //do analysis / output in end of event action
   BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
 						       enrg,
-						       xpos,
-						       ypos,
-						       zpos,
-						       spos,
+						       X,
+						       Y,
+						       Z,
+						       S,
+						       x,
+						       y,
+						       z,
 						       volName, 
 						       ptype, 
 						       weight, 
 						       precisionRegion,
-						       turnstaken
+						       turnstaken,
+						       event_number
 						       );
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);
@@ -165,7 +178,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
     BDSEnergyCounterHit* PCHit = new BDSEnergyCounterHit(*ECHit);
     //set the energy to be the full energy of the primary
     //just now it's the wee bit of energy deposited in that step
-    PCHit->SetEnergy(BDSGlobalConstants::Instance()->GetBeamKineticEnergy());
+    G4double primaryEnergy = BDSGlobalConstants::Instance()->GetBeamKineticEnergy();
+    PCHit->SetEnergy(primaryEnergy);
     primaryCounterCollection->insert(PCHit);
   }
   
@@ -200,38 +214,28 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
   
   // Get Translation and Rotation of Sampler Volume w.r.t the World Volume
   // as described in Geant4 FAQ's: http://geant4.cern.ch/support/faq.shtml
-  G4AffineTransform tf  = (aSpot->GetTouchableHandle()->GetHistory()->GetTopTransform());
-  G4ThreeVector     pos = aSpot->GetPosition();
-  
-  zpos=pos.z();
-  xpos=pos.x();
-  ypos=pos.y();
-  
-  // Get the s position along the accelerator by querying the logical volume
-  // Get the logical volume from this step
-  G4LogicalVolume* thevolume = aSpot->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
+  G4AffineTransform tf = (aSpot->GetTouchableHandle()->GetHistory()->GetTopTransform());
+  G4ThreeVector pos    = aSpot->GetPosition();
 
-  // Find it's s position from global map made at constrcution time
-  typedef std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>::iterator it_type;
-  it_type search = BDSGlobalConstants::Instance()->LogicalVolumeInfo()->find(thevolume);
+  //calculate local coordinates
+  G4ThreeVector poslocal = tf.TransformPoint(pos);
   
-  if (search == BDSGlobalConstants::Instance()->LogicalVolumeInfo()->end()){
-    //this means that the logical volume pointer doesn't exist in the map 
-    //checking this prevents segfaults
-    spos = -1.0*CLHEP::m; // set to unreal s position to identify and not fail
-  }
-  else {
-    spos = BDSGlobalConstants::Instance()->GetLogicalVolumeInfo(thevolume)->GetSPos();
-    G4ThreeVector localposition = tf.TransformPoint(pos);
-    spos += localposition.z();
-  }
+  //global
+  Y = pos.x();
+  Y = pos.y();
+  Z = pos.z();
+  S = GetSPositionOfSpot(aSpot);
+  //local
+  x = poslocal.x();
+  y = poslocal.y();
+  z = poslocal.z();
   
   if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) 
     {
       G4cout << " BDSEnergyCounterSD: Current Volume: " <<  volName 
 	     << " Event: "    << event_number 
 	     << " Energy: "   << enrg/CLHEP::GeV << " GeV"
-	     << " Position: " << zpos/CLHEP::m   << " m" 
+	     << " Position: " << S/CLHEP::m   << " m" 
 	     << G4endl;
     }
   
@@ -247,15 +251,19 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
   // see explanation in other processhits function
   BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
 						       enrg,
-						       xpos,
-						       ypos,
-						       zpos,
-						       spos,
+						       X,
+						       Y,
+						       Z,
+						       S,
+						       x,
+						       y,
+						       z,
 						       volName, 
 						       ptype, 
 						       weight, 
 						       0,
-						       turnstaken
+						       turnstaken,
+						       event_number
 						       );
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);
@@ -265,6 +273,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
     //create a duplicate hit in the primarycounter hits collection
     //there are usually a few - filter at end of event action
     BDSEnergyCounterHit* PCHit = new BDSEnergyCounterHit(*ECHit);
+    G4double primaryEnergy = BDSGlobalConstants::Instance()->GetBeamKineticEnergy();
+    PCHit->SetEnergy(primaryEnergy);
     primaryCounterCollection->insert(PCHit);
   }
   
@@ -304,6 +314,32 @@ G4double BDSEnergyCounterSD::GetSPositionOfStep(G4Step* aStep)
     G4AffineTransform tf              = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
     G4ThreeVector     prestepposlocal = tf.TransformPoint(prestepposition);
     thespos += prestepposlocal.z();
+   }
+  return thespos;
+}
+
+G4double BDSEnergyCounterSD::GetSPositionOfSpot(G4GFlashSpot* aSpot)
+{
+  G4double thespos;
+  // Get the s position along the accelerator by querying the logical volume
+  // Get the logical volume from this step
+  G4LogicalVolume* thevolume = aSpot->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
+
+  // Find it's s position from global map made at constrcution time
+  typedef std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>::iterator it_type;
+  it_type search = BDSGlobalConstants::Instance()->LogicalVolumeInfo()->find(thevolume);
+  
+  if (search == BDSGlobalConstants::Instance()->LogicalVolumeInfo()->end()){
+    //this means that the logical volume pointer doesn't exist in the map 
+    //checking this prevents segfaults
+    thespos = -1.0*CLHEP::m; // set to unreal s position to identify and not fail
+  }
+  else {
+    thespos = BDSGlobalConstants::Instance()->GetLogicalVolumeInfo(thevolume)->GetSPos();
+    G4ThreeVector     pos = aSpot->GetPosition();
+    G4AffineTransform tf  = (aSpot->GetTouchableHandle()->GetHistory()->GetTopTransform());
+    G4ThreeVector localposition = tf.TransformPoint(pos);
+    thespos += localposition.z();
    }
   return thespos;
 }

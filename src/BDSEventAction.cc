@@ -89,7 +89,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 
   if ((event_number+1)%printModulo ==0)
     {
-      G4cout << __METHOD_NAME__ << " Begin of event: " << event_number << G4endl;
+      G4cout << "\n---> Begin of event: " << event_number << G4endl;
     }
   
   if(verboseEvent) G4cout << __METHOD_NAME__ << "event #"<<event_number<<G4endl ;
@@ -204,10 +204,14 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   //if we have primary hits, find the first one and write that
   if(primaryCounterHits) {
     if (primaryCounterHits->entries()>0){
-      BDSEnergyCounterHit* thePrimaryHit = BDS::FindFirstPrimaryHit(primaryCounterHits);
+      BDSEnergyCounterHit* thePrimaryHit  = BDS::LowestSPosPrimaryHit(primaryCounterHits);
+      BDSEnergyCounterHit* thePrimaryLoss = BDS::HighestSPosPrimaryHit(primaryCounterHits);
       //write
-      if (thePrimaryHit)
-	{bdsOutput->WritePrimaryLoss(thePrimaryHit);}
+      if (thePrimaryHit && thePrimaryLoss)
+	{
+	  bdsOutput->WritePrimaryLoss(thePrimaryLoss);
+	  bdsOutput->WritePrimaryHit(thePrimaryHit);
+	}
     }
   }
   

@@ -33,6 +33,7 @@ public:
   void DrawAll();
   void PrintAll();
   G4double GetSPositionOfStep(G4Step* aStep);
+  G4double GetSPositionOfSpot(G4GFlashSpot* aSpot);
   G4String GetName();
 
 private:
@@ -46,10 +47,8 @@ private:
   BDSEnergyCounterHitsCollection* primaryCounterCollection;
   G4int*   HitID;
   G4double enrg;
-  G4double xpos;
-  G4double ypos;
-  G4double zpos;
-  G4double spos;
+  G4double X,Y,Z,S; // global coordinates
+  G4double x,y,z;   // local coordinates
 };
 
 inline G4String BDSEnergyCounterSD::GetName()

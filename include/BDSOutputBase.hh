@@ -22,8 +22,10 @@ public:
   virtual void WriteHits(BDSSamplerHitsCollection*) = 0;
   /// make energy loss histo
   virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*) = 0;
-  /// make primary loss histo
+  /// make primary loss histo - where primaries stop being primaries
   virtual void WritePrimaryLoss(BDSEnergyCounterHit*) = 0;
+  /// make primary hits histo - where primaries impact
+  virtual void WritePrimaryHit(BDSEnergyCounterHit*) = 0;
   /// write a trajectory 
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec) = 0;
   /// write primary hit
