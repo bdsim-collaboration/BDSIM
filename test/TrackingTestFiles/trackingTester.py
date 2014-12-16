@@ -30,6 +30,9 @@ def makeTest(type, name, particle, energy,**kwargs) :
     if type == 'drift' : 
         bm.AddDrift(name,kwargs['l'])
         xm.AddDrift(name,kwargs['l'])
+    elif type == 'quadrupole' : 
+        bm.AddQuadrupole(name,length=kwargs['length'],k1=kwargs['k1'])
+        xm.AddQuadrupole(name,length=kwargs['length'],k1=kwargs['k1'])
 
     bm.AddSampler('all')
     xm.AddSampler('all')

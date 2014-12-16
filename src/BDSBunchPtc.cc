@@ -123,16 +123,14 @@ void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 #endif
   x0     = this->ptcData[this->iRay][0]*CLHEP::m+X0;
   y0     = this->ptcData[this->iRay][2]*CLHEP::m+Y0;
-  z0     = 0.0;
+  z0     = this->ptcData[this->iRay][4]+Z0;
   xp     = this->ptcData[this->iRay][1]*CLHEP::rad+Xp0;
   yp     = this->ptcData[this->iRay][3]*CLHEP::rad+Yp0;
-  zp     = CalculateZp(xp,yp,Zp0);
-  t      = this->ptcData[this->iRay][4];
+  t      = (z0-Z0)/CLHEP::c_light+T0;
   E      = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * (this->ptcData[this->iRay][5]+1.0);
+  zp     = CalculateZp(xp,yp,Zp0);
   weight = 1.0; 
 
-
-  G4cout << t << " " << E << " " << t << " " << zp << " " << G4endl;
   this->iRay++;
 
   return;
