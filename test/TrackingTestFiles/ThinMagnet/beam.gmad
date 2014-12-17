@@ -1,0 +1,9 @@
+!beam,  particle="e-",
+!       energy=1.0 * GeV,
+!       distrType="reference",
+!       X0=1e-3*m;
+
+beam,   distrFile="inrays.madx",
+        energy=1*GeV, 
+        distrType="ptc", 
+        particle="e-";
