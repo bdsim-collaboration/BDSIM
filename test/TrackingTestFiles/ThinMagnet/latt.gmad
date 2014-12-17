@@ -2,7 +2,8 @@
 ! k1=1.0, k1l = 1e3, 1e4, 1e5, 1e6
 
 d1: drift, l=0.5;
-q : quadrupole, k1=1.0e6, l=1e-6;
+! q : quadrupole, k1=1.0e6, l=1e-6;
+q : sextupole, k2=1.0e6, l=1e-6;
 d2: drift, l=0.5;
 m : marker;
 

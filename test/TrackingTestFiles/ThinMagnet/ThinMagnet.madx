@@ -1,0 +1,27 @@
+d1: drift, l=0.5;
+! q : quadrupole, k1=1.0e6, l=1e-6;
+q : sextupole, k2=1.0e6, l=1e-6;
+d2: drift, l=0.5;
+m : marker;
+
+l : line = (d1,q,d2,m);
+
+beam, particle=electron, energy=1.0, npart=2.0e+10;	
+
+use, period=l;
+
+
+ptc_create_universe;
+ptc_create_layout,model=2,method=6,nst=10;
+call, file ="inrays_x.madx";
+ptc_align;
+
+ptc_observe, place=d1;
+ptc_observe, place=q;
+ptc_observe, place=d2;
+ptc_observe, place=m;
+
+ptc_track, element_by_element, dump, turns=1, icase=5, onetable;
+
+ptc_track_end;
+ptc_end;

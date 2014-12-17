@@ -3,7 +3,7 @@
 !       distrType="reference",
 !       X0=1e-3*m;
 
-beam,   distrFile="inrays.madx",
+beam,   distrFile="inrays_x.madx",
         energy=1*GeV, 
         distrType="ptc", 
         particle="e-";
