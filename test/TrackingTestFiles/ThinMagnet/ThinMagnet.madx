@@ -13,8 +13,8 @@ use, period=l;
 
 ptc_create_universe;
 ptc_create_layout,model=2,method=6,nst=10;
-call, file ="inrays_x.madx";
-ptc_align;
+call, file ="inrays_y.madx";
+ptc_align; 
 
 ptc_observe, place=d1;
 ptc_observe, place=q;
