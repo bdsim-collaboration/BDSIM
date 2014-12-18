@@ -99,8 +99,6 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
        x0=x0+LocalRp.x()*h/2;
        y0=y0+LocalRp.y()*h/2;
        
-       G4double x02My02=(x0*x0-y0*y0);
-
        G4double xp=LocalRp.x();
        G4double yp=LocalRp.y();
        G4double zp=LocalRp.z();
@@ -108,10 +106,11 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
        // local r'' (for curvature)
        G4ThreeVector LocalRpp;
 
+       G4double x02My02=(x0*x0-y0*y0);
        LocalRpp.setX(-zp*x02My02);
        LocalRpp.setY(2*zp*x0*y0);
        LocalRpp.setZ(xp*x02My02-2*yp*x0*y0);
-       //       LocalRpp = LocalRpp.unit();
+       LocalRpp = LocalRpp.unit();
        
 #ifdef BDSDEBUG        
        G4cout << __METHOD_NAME__ << "LocalRpp      : " <<LocalRpp       << G4endl;
@@ -150,10 +149,11 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
            LocalR.setY(LocalR.y()+dy);
            LocalR.setZ(LocalR.z()+dz);
 	  
-	   LocalRp = LocalRp+h*LocalRpp;
-	   //	   LocalRp = LocalRp.unit();
+	   //	   LocalRp = LocalRp+h*LocalRpp;
+	   LocalRp = LocalRp.unit();
 	 }
        else {
+	 // LocalR += h*LocalRp;
 	 LocalR += h*LocalRp.unit();
        }
        
