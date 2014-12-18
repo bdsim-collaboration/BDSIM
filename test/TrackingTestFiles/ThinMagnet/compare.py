@@ -22,8 +22,8 @@ def compare(column = 1, madxFile='trackone', bdsimFile='output_0.root') :
     m = pymadx.TfsArray(madxFile) 
     r = robdsim.robdsimOutput(bdsimFile) 
     
-    md = ((m.GetSegment(6)).dataArray)[:,3:-2]
-    print m.GetSegment(6).columns
+    md = ((m.GetSegment(5)).dataArray)[:,3:-2]
+    print m.GetSegment(5).columns
     rd = robdsim.d2darrayToNumpy(r.GetSamplerData(4))[:-1,:] # have an extra particle in root !
 
     # fix root units back to metres from micron
