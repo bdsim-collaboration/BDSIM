@@ -6,4 +6,4 @@
 beam,   distrFile="inrays_y.madx",
         energy=1*GeV, 
         distrType="ptc", 
-        particle="e-";
+        particle="e+";

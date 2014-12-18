@@ -20,6 +20,8 @@
 
 extern G4double BDSLocalRadiusOfCurvature;
 
+#define BDSDEBUG 1 
+
 BDSSextStepper::BDSSextStepper(G4Mag_EqRhs *EqRhs)
   : G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
                                       // position & velocity
@@ -47,13 +49,13 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
   G4double kappa=  (-fPtrMagEqOfMot->FCof()*itsBDblPrime) /InitMag;
    
 
-#ifdef BDSDEBUG
-  G4cout<<"sextupole stepper:"<<G4endl; 
-  G4cout << "kappa: " << kappa << G4endl;
-  G4cout << "InitMag: " << InitMag << G4endl;
-  G4cout << "g'': " <<itsBDblPrime<< G4endl;
+#ifdef BDSDEBUG  
+  G4cout << "sextupole stepper:"       << G4endl; 
+  G4cout << "kappa: "                  << kappa << G4endl;
+  G4cout << "InitMag: "                << InitMag << G4endl;
+  G4cout << "g'': "                    << itsBDblPrime<< G4endl;
   G4cout << "fPtrMagEqOfMot->FCof(): " << fPtrMagEqOfMot->FCof() << G4endl << G4endl;
-  G4cout << "h=: " <<h<< G4endl;
+  G4cout << "h=: "                     << h << G4endl;
 #endif
 
    if(fabs(kappa)<1.e-12)
@@ -69,6 +71,7 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
        ySext[5] = v0.z();
 
        itsDist=0;
+       return;
      }
    else 
      {      
@@ -81,11 +84,10 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
        
        G4AffineTransform GlobalAffine=SextNavigator->
 	 GetGlobalToLocalTransform();
-       G4ThreeVector LocalR=GlobalAffine.TransformPoint(GlobalPosition); 
+       G4ThreeVector LocalR =GlobalAffine.TransformPoint(GlobalPosition); 
        G4ThreeVector LocalRp=GlobalAffine.TransformAxis(InitMomDir);
-       
-       
-       G4double x0=LocalR.x(); 
+              
+       G4double x0=LocalR.x();  
        G4double y0=LocalR.y();
 
        // Evaluate field at the approximate midpoint of the step.
@@ -100,13 +102,15 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
 
        // local r'' (for curvature)
        G4ThreeVector LocalRpp;
-       LocalRpp.setX(- zp*x02My02);
+
+       LocalRpp.setX(-zp*x02My02);
        LocalRpp.setY(2*zp*x0*y0);
        LocalRpp.setZ(xp*x02My02-2*yp*x0*y0);
-
+ 
        //G4cout << "LocalRpp: " <<LocalRpp<< G4endl;
 
        LocalRpp*=kappa/2; // 2 is actually a 2! factor.
+
        // determine effective curvature
        G4double R_1 = LocalRpp.mag();
 
@@ -142,19 +146,23 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
 	   LocalRp = LocalRp+ h*LocalRpp;
 
 	 }
-       else
-	 {LocalR += h*LocalRp;}
+       else {
+	 LocalR += h*LocalRp;
+       }
        
        GlobalPosition=LocalAffine.TransformPoint(LocalR); 
        G4ThreeVector GlobalTangent=LocalAffine.TransformAxis(LocalRp)*InitMag;
        
-       ySext[0]   = GlobalPosition.x(); 
-       ySext[1]   = GlobalPosition.y(); 
-       ySext[2]   = GlobalPosition.z(); 
+       
+       ySext[0] = GlobalPosition.x(); 
+       ySext[1] = GlobalPosition.y(); 
+       ySext[2] = GlobalPosition.z(); 
 				
        ySext[3] = GlobalTangent.x();
        ySext[4] = GlobalTangent.y();
        ySext[5] = GlobalTangent.z();
+
+       return;
      }
 }
 
@@ -177,11 +185,11 @@ void BDSSextStepper::Stepper( const G4double yInput[],
   G4double h = hstep * 0.5; 
   
   // Do two half steps
-  AdvanceHelix(yIn,   (G4ThreeVector)0,  h, yTemp);
+  AdvanceHelix(yIn,   (G4ThreeVector)0, h, yTemp);
   AdvanceHelix(yTemp, (G4ThreeVector)0, h, yOut); 
   
   // Do a full Step
-  h = hstep ;
+  h = hstep;
   AdvanceHelix(yIn, (G4ThreeVector)0, h, yTemp); 
   
   for(i=0;i<nvar;i++) yErr[i] = yOut[i] - yTemp[i] ;
