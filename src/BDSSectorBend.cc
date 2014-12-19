@@ -5,6 +5,7 @@
 #include "BDSDipoleStepper.hh"
 #include "BDSMaterials.hh"
 #include "BDSSbendMagField.hh"
+#include "BDSDebug.hh"
 
 #include "G4Polyhedra.hh"
 #include "G4Box.hh"
@@ -139,9 +140,9 @@ void BDSSectorBend::BuildMarkerLogicalVolume()
   }
   
   if((xHalfLengthPlus<0) || (xHalfLengthMinus<0)){
-    G4cerr << "Bend radius in " << itsName << " too small for this tunnel/component geometry. Exiting." << G4endl;
-    G4cerr << "xHalfLengthPlus:  " << xHalfLengthPlus << G4endl;
-    G4cerr << "xHalfLengthMinus: " << xHalfLengthMinus << G4endl;
+    G4cerr << __METHOD_NAME__ << "Bend radius in "   << itsName << " too small for this tunnel/component geometry. Exiting." << G4endl;
+    G4cerr << __METHOD_NAME__ << "xHalfLengthPlus:  " << xHalfLengthPlus << G4endl;
+    G4cerr << __METHOD_NAME__ << "xHalfLengthMinus: " << xHalfLengthMinus << G4endl;
     exit(1);
   }
 

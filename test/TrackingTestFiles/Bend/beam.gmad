@@ -1,3 +1,8 @@
 beam,  particle="e-",
        energy=1.0 * GeV,
-       distrType="reference";
+       distrType="reference",
+       X0=0.0,
+       Y0=0.0,
+       Z0=-1e-3,
+       Xp0=0.0,
+       Yp0=0.0;
