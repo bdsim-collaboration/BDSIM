@@ -57,11 +57,11 @@
 %type <dval> aexpr
 %type <dval> expr
 %type <symp> assignment
-%type <array> vecexpr;
-%type <array> vectnum vectstr;
-%type <str> use_parameters;
-%type <ival> extension;
-%type <ival> newinstance;
+%type <array> vecexpr
+%type <array> vectnum vectstr
+%type <str> use_parameters
+%type <ival> extension
+%type <ival> newinstance
 %type <symp> sample_options
 %type <symp> csample_options
 %type <symp> gas_options
