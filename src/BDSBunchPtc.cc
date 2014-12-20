@@ -2,7 +2,9 @@
 #include "BDSDebug.hh"
 
 #include <fstream>
+#if __cplusplus!=199711 
 #include <regex>
+#endif 
 
 BDSBunchPtc::BDSBunchPtc() { 
 #ifdef BDSDEBUG 
@@ -42,6 +44,17 @@ void BDSBunchPtc::LoadPtcFile() {
     // read single line 
     std::getline(ifstr,line); 
 
+    // variable for storage
+    double x=0.0;
+    double y=0.0;
+    double px=0.0;
+    double py=0.0; 
+    double t=0.0;
+    double pt=0.0;
+    
+#if __cplusplus==199711 
+
+#else 
     // create regular expressions 
     std::regex rex("\\sx\\s*=\\s*([0-9eE.+-]+)");
     std::regex rey("\\sy\\s*=\\s*([0-9eE.+-]+)");
@@ -66,20 +79,14 @@ void BDSBunchPtc::LoadPtcFile() {
     std::regex_search(line,smt, ret);
     std::regex_search(line,smpt, rept);
 
-    // variable for storage
-    double x=0.0;
-    double y=0.0;
-    double px=0.0;
-    double py=0.0; 
-    double t=0.0;
-    double pt=0.0;
-    
     if(smx.size() == 2)  x  = std::stod(smx[1]);
     if(smy.size() == 2)  y  = std::stod(smy[1]);
     if(smpx.size() == 2) px = std::stod(smpx[1]);
     if(smpy.size() == 2) py = std::stod(smpy[1]);
     if(smt.size() == 2)  t  = std::stod(smt[1]);
     if(smpt.size() == 2) pt = std::stod(smpt[1]);
+#endif
+
 
 #ifdef BDSDEBUG 
     G4cout << __METHOD_NAME__ << "read line " << line << G4endl;
