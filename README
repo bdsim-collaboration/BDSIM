@@ -55,11 +55,17 @@ optional:
 
 to compile, see https://twiki.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BDsimInstall
 
+
+```
+#!shell
+
    %  mkdir build
    %  cd build
    %  cmake ..
    %  make
    %  make install
+```
+
 
 Getting Started
 ===================
