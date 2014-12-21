@@ -55,16 +55,12 @@ optional:
 
 to compile, see https://twiki.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BDsimInstall
 
+    %  mkdir build
+    %  cd build
+    %  cmake ..
+    %  make
+    %  make install
 
-```
-#!shell
-
-   %  mkdir build
-   %  cd build
-   %  cmake ..
-   %  make
-   %  make install
-```
 
 
 Getting Started
@@ -73,7 +69,7 @@ Getting Started
 to run:
     bdsim [options]
 
-f.e. 
+i.e. 
     bdsim --file=line.gmad --output=root
 
 to see the full list of options:
