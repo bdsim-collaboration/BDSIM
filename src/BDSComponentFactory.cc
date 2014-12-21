@@ -543,14 +543,16 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
   }
   
   G4double bField;
-  if(_element.B != 0){
+  if(_element.B != 0) {
     bField = _element.B * CLHEP::tesla;
     G4double rho = _brho/bField;
-    _element.angle  = - 2.0*asin(magFieldLength/2.0/rho);
+    //    _element.angle  = - 2.0*asin(magFieldLength/2.0/rho);
+    _element.angle  = - magFieldLength/rho;
   }
-  else{
+  else {
     _element.angle *= -1;
-    bField = - 2 * _brho * sin(_element.angle/2.0) / magFieldLength;
+    //    bField = - 2 * _brho * sin(_element.angle/2.0) / magFieldLength;
+    bField = - _brho * _element.angle/magFieldLength;
     _element.B = bField/CLHEP::tesla;
   }
   
