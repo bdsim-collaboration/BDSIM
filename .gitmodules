@@ -1,0 +1,15 @@
+[submodule "utils/pybdsim"]
+	path = utils/pybdsim
+	url = http://bitbucket.org/nevay/pybdsim
+[submodule "utils/robdsim"]
+	path = utils/robdsim
+	url = http://bitbucket.org/nevay/robdsim
+[submodule "utils/pymadx"]
+	path = utils/pymadx
+	url = http://bitbucket.org/stewartboogert/pymadx
+[submodule "utils/pymad8"]
+	path = utils/pymad8
+	url = http://bitbucket.org/stewartboogert/pymad8
+[submodule "utils/pyfluka"]
+	path = utils/pyfluka
+	url = http://bitbucket.org/nevay/pyfluka
