@@ -10,6 +10,3 @@
 [submodule "utils/pymad8"]
 	path = utils/pymad8
 	url = https://bitbucket.org/stewartboogert/pymad8
-[submodule "utils/pymadx"]
-	path = utils/pymadx
-	url = https://bitbucket.org/stewartboogert/pymadx
