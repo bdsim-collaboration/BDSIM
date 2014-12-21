@@ -20,7 +20,7 @@
 #include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
 #include "G4VPhysicalVolume.hh"
-
+// #define BDSDEBUG
 //============================================================
 
 BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength, 
@@ -32,6 +32,14 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
   BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
 	       aXAper, aYAper, angle)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "name : " << aName << " length : " << aLength << " bpRad : " << bpRad << " FeRad : " 
+	 << FeRad << " bField : " << bField << " angle : " << angle << " outR : " << outR << " tilt : " 
+	 << tilt <<  " bGrad : "<< bGrad <<  " tunnelMaterial : " << aTunnelMaterial <<  " material : " 
+	 << aMaterial << " aXAper : " << aXAper << " aYAper : " << aYAper << G4endl;
+#endif
+	 
+
   SetOuterRadius(outR);
   itsTilt=tilt;
   itsBField=bField;
