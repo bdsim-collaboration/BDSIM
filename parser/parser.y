@@ -67,12 +67,14 @@
 %type <symp> gas_options
 
 /* printout format for debug output */
+/*
 %printer { fprintf (yyoutput, "%.10g", $$); } <dval>
 %printer { fprintf (yyoutput, "%d", $$); } <ival>
 %printer { fprintf (yyoutput, "\"%s\"", $$); } <str>
 %printer { fprintf (yyoutput, "\"%s\"", $$->name); } <symp>
 %printer { fprintf (yyoutput, "size %d, &%p", $$->size, (void*)$$->data); } <array>
 %printer { fprintf (yyoutput, "<>"); } <>
+*/
 
 %%
 
