@@ -261,7 +261,7 @@ void BDSAwakeScintillatorScreen::Build(){
   } else {
     BuildVacuumChamber1();
   }
-  //      BuildScreenScoringPlane();
+  BuildScreenScoringPlane();
   BuildCameraScoringPlane();
   PlaceScreen();
   //      PlaceCamera();
@@ -342,9 +342,9 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   G4double x_thi = _totalThickness * std::sin(std::abs(_screenAngle));//Length due to the screen thickness
   
   //Vacuum chamber dimensions.
-  _vacThickness=2*CLHEP::mm;
+  _vacThickness=6*CLHEP::mm; //MBPS = 2mm
   _vacInnerWidth=7*CLHEP::cm;
-  _vacInnerHeight=7*CLHEP::cm;
+  _vacInnerHeight=65*CLHEP::cm;//MBPS = 7cm
   _vacHeight=_vacInnerHeight+2*_vacThickness;
   
   _vacWidth2=x_wid;
