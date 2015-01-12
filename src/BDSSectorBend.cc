@@ -263,26 +263,26 @@ void BDSSectorBend::BuildBeampipe(G4String materialName)
   G4VPhysicalVolume* PhysiInner;
   PhysiInner = 
     new G4PVPlacement(
-		      BDSGlobalConstants::Instance()->RotY90(),		       // rotation
-		      (G4ThreeVector)0,	               // at (0,0,0)
+		      BDSGlobalConstants::Instance()->RotY90(), // rotation
+		      (G4ThreeVector)0,	       // at (0,0,0)
 		      itsInnerBPLogicalVolume, // its logical volume
 		      itsName+"_InnerBmp",     // its name
 		      itsMarkerLogicalVolume,  // its mother volume
-		      false,		       // no booleanm operation
-		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		       // copy number
+		      false,		       // no boolean operation
+		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps()); // copy number
   
   SetMultiplePhysicalVolumes(PhysiInner);
 
   G4VPhysicalVolume* PhysiComp;
   PhysiComp =
     new G4PVPlacement(
-		      BDSGlobalConstants::Instance()->RotY90(),		        // rotation
-		      (G4ThreeVector)0,	                // at (0,0,0)
+		      BDSGlobalConstants::Instance()->RotY90(),	// rotation
+		      (G4ThreeVector)0,	        // at (0,0,0)
 		      itsBeampipeLogicalVolume, // its logical volume
 		      itsName+"_bmp",	        // its name
 		      itsMarkerLogicalVolume,   // its mother volume
 		      false,		        // no boolean operation
-		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		        // copy number
+		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps()); // copy number
   
   SetMultiplePhysicalVolumes(PhysiComp);
   //
@@ -408,13 +408,13 @@ void BDSSectorBend::BuildCylindricalOuterLogicalVolume(G4bool OuterMaterialIsVac
 
   itsPhysiComp =
     new G4PVPlacement(
-                      BDSGlobalConstants::Instance()->RotY90(),                 // rotation
-                      (G4ThreeVector)0,                      // at (0,0,0)
+                      BDSGlobalConstants::Instance()->RotY90(), // rotation
+                      (G4ThreeVector)0,       // at (0,0,0)
                       itsOuterLogicalVolume,  // its logical volume
                       itsName+"_solid",       // its name
                       itsMarkerLogicalVolume, // its mother  volume
                       false,                  // no boolean operation
-                      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());                     // copy number
+                      0, BDSGlobalConstants::Instance()->GetCheckOverlaps()); // copy number
 
   SetMultiplePhysicalVolumes(itsPhysiComp);
   G4double  maxStepFactor=0.5;
