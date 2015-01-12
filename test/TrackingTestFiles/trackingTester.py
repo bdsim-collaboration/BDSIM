@@ -50,6 +50,9 @@ def makeTest(type_, name, particle, energy,**kwargs) :
     elif type_ == 'quadrupole' : 
         bm.AddQuadrupole(name,**kwargs)
         xm.AddQuadrupole(name,**kwargs)
+    elif type == 'sextupole' : 
+        bm.AddSextupole(name,**kwargs)
+        xm.AddSextupole(name,**kwargs)        
 
     bm.AddMarker("theend") # Need a post element marker to sample at, only for bdsim
 

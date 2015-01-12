@@ -38,6 +38,11 @@
 ehthumbs.db
 Thumbs.db
 
+# Latex #
+######################
+*.aux
+*.out 
+
 # Exclusion #
 #############
 !CMakeLists.txt
