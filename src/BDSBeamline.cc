@@ -37,8 +37,7 @@ void BDSBeamline::addComponent(BDSAcceleratorComponent* var){
   _navigator->addComponent(var);
 
 #ifdef BDSDEBUG
-  G4cout << "Printing name. " << G4endl;
-  G4cout << "BDSBeamline: " << lastItem()->GetName() << G4endl;
+  G4cout << "BDSBeamline: last item" << lastItem()->GetName() << G4endl;
 #endif
   //Update the reference transform
   setRefTransform(var);

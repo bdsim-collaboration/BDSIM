@@ -202,13 +202,14 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
   //     Y22 = 1;
   //   }
 
-  x1      = X11*x0 + X12*xp;    
-  x1p= X21*x0 + X22*xp;
+  x1  = X11*x0 + X12*xp;    
+  x1p = X21*x0 + X22*xp;
 
-  y1      = Y11*y0 + Y12*yp;    
-  y1p= Y21*y0 + Y22*yp;
+  y1  = Y11*y0 + Y12*yp;    
+  y1p = Y21*y0 + Y22*yp;
 
-  z1p=sqrt(1 - x1p*x1p -y1p*y1p);
+  z1p = sqrt(1 - x1p*x1p -y1p*y1p);
+
   /* 
   x1 -=(kappa/ (24*R) ) * h2*h2;
   x1p-=(kappa/ (6*R) ) * h*h2;

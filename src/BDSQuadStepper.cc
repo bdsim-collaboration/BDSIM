@@ -201,6 +201,9 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
 	  else
 	    // perform local helical steps (paraxial approx not safe)
 	    {
+	      #ifdef BDSDEBUG
+	      G4cout << "local helical steps" << G4endl;
+	      #endif
 	      // simple quadratic approx:	      
 	      G4double quadX= - kappa*x0*zp;
 	      G4double quadY=   kappa*y0*zp;
