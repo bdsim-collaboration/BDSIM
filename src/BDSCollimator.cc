@@ -194,3 +194,4 @@ void BDSCollimator::BuildInnerCollimator()
 BDSCollimator::~BDSCollimator()
 {
 }
+
