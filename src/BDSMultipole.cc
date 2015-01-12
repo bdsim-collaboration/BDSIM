@@ -331,9 +331,14 @@ void BDSMultipole::FinaliseBeampipe(G4String materialName, G4RotationMatrix* Rot
 			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			itsName+"_inner_bmp_log");
   
+
+  G4ThreeVector positionBeamPipe1 = G4ThreeVector(-97.26*CLHEP::mm,0.,0.); 
+  G4ThreeVector positionBeamPipe2 = G4ThreeVector(97.26*CLHEP::mm,0.,0.); 
+
   itsPhysiInner = new G4PVPlacement(
 				    RotY,                     // rotation
 				    (G4ThreeVector)0,         // at (0,0,0)
+				    //positionBeamPipe1,
 				    itsInnerBPLogicalVolume,  // its logical volume
 				    itsName+"_inner_bmp_phys",// its name
 				    itsMarkerLogicalVolume,   // its mother  volume
@@ -344,6 +349,7 @@ void BDSMultipole::FinaliseBeampipe(G4String materialName, G4RotationMatrix* Rot
   itsPhysiComp = new G4PVPlacement(
 				   RotY,                      // rotation
 				   (G4ThreeVector)0,          // at (0,0,0)
+				   //positionBeamPipe1,
 				   itsBeampipeLogicalVolume,  // its logical volume
 				   itsName+"_bmp_phys",	      // its name
 				   itsMarkerLogicalVolume,    // its mother  volume

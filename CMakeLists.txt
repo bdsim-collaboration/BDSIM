@@ -340,7 +340,6 @@ macro(BDSIM_COLLATE_APPLICATION_SOURCES source_dest_var)
     ${CMAKE_CURRENT_SOURCE_DIR}/bdsim.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/BDS*.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ggmad.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/myQuadStepper.cc
     )
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 endmacro()
@@ -396,10 +395,12 @@ bdsim_install_targets(${executables} ${libraries})
 file(GLOB headers include/*.hh parser/*.h)
 bdsim_install_headers(${headers})
 
+# Utils directory
+add_subdirectory(utils)
+
 # Testing:
 enable_testing()
 include(CTest)
 include(bdsim_test_macros)
 add_subdirectory(examples)
-add_subdirectory(utils)
 add_subdirectory(test)
