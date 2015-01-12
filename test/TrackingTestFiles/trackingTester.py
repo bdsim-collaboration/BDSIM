@@ -21,16 +21,20 @@ def cleanTest(type_) :
     _os.system("rm -rf Maxwellian_bend_for_ptc.txt trackone inrays.madx") 
 
 
-def makeTest(type_, name, particle, energy,**kwargs) : 
-    print 'makeTest.type> ',type_
-    print 'makeTest.name> ',name
+def makeTest(type_='drift', foldername=None, particle='e-', energy=1.0,**kwargs) : 
+    print 'makeTest.type>   ',type_
+    print 'makeTest.folder> ',foldername
     for k in kwargs : 
-        print 'makeTest.kwargs>',k+'='+str(kwargs[k])
+        print 'makeTest.kwargs> ',k+'='+str(kwargs[k])
 
     ptcFileName = 'inrays.madx'
+    if foldername != None:
+        ptcPathName = foldername+'/'+ptcFileName
+    else:
+        ptcPathName = ptcFileName
 
     ptc = pymadx.Ptc.Generator()
-    ptc.Generate(1000,ptcFileName)
+    ptc.Generate(1000,ptcPathName)
 
     bb  = pybdsim.Beam(particle,energy,'ptc')
     xb  = pymadx.Beam(particle,energy,'ptc')
@@ -44,13 +48,16 @@ def makeTest(type_, name, particle, energy,**kwargs) :
     bm.AddBeam(bb)
     xm.AddBeam(xb)
 
-    if type_ == 'drift' : 
+    if type_ == 'drift' :
+        name = 'd1'
         bm.AddDrift(name,**kwargs)
         xm.AddDrift(name,**kwargs)
-    elif type_ == 'quadrupole' : 
+    elif type_ == 'quadrupole' :
+        name = 'q1'
         bm.AddQuadrupole(name,**kwargs)
         xm.AddQuadrupole(name,**kwargs)
-    elif type == 'sextupole' : 
+    elif type == 'sextupole' :
+        name = 's1'
         bm.AddSextupole(name,**kwargs)
         xm.AddSextupole(name,**kwargs)        
 
@@ -58,9 +65,13 @@ def makeTest(type_, name, particle, energy,**kwargs) :
 
     bm.AddSampler('all')
     xm.AddSampler('all')
-        
-    bm.WriteLattice(type_)
-    xm.WriteLattice(type_)
+
+    if foldername != None:
+        outputname = foldername+'/'+type_
+    else:
+        outputname = type_
+    bm.WriteLattice(outputname)
+    xm.WriteLattice(outputname)
 
 def executeTest(type_) : 
     _os.system("madx < "+type_+".madx > madx.log")
