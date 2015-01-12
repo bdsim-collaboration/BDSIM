@@ -82,14 +82,14 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 { 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
-  G4cout << __METHOD_NAME__ << " processing begin of event action" << G4endl;
+  G4cout << __METHOD_NAME__ << " Processing begin of event action" << G4endl;
 #endif
 
   event_number = evt->GetEventID();
 
   if ((event_number+1)%printModulo ==0)
     {
-      G4cout << "\n---> Begin of event: " << event_number << G4endl;
+      G4cout << __METHOD_NAME__ << " Begin of event: " << event_number << G4endl;
     }
   
   if(verboseEvent) G4cout << __METHOD_NAME__ << "event #"<<event_number<<G4endl ;

@@ -7,3 +7,9 @@
 [submodule "utils/robdsim"]
 	path = utils/robdsim
 	url = https://bitbucket.org/nevay/robdsim.git
+[submodule "utils/pymadx"]
+	path = utils/pymadx
+	url = https://bitbucket.org/stewartboogert/pymadx
+[submodule "utils/pymad8"]
+	path = utils/pymad8
+	url = https://bitbucket.org/stewartboogert/pymad8

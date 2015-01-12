@@ -1,10 +1,15 @@
 #include "BDSBunchGaussian.hh"
 #include <cstring>
+#include "BDSDebug.hh"
 
 BDSBunchGaussian::BDSBunchGaussian() : 
   BDSBunchInterface(),
   sigmaX(0.0),sigmaY(0.0),sigmaXp(0.0),sigmaYp(0.0)
 {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   meansGM = CLHEP::HepVector(6);
   sigmaGM = CLHEP::HepSymMatrix(6);
   GaussMultiGen = NULL;
@@ -17,6 +22,10 @@ BDSBunchGaussian::BDSBunchGaussian(G4double sigmaXIn, G4double sigmaYIn, G4doubl
   BDSBunchInterface(X0In,Y0In, Z0In, T0In, Xp0In, Yp0In, Zp0In, sigmaTIn, sigmaEIn), 
   sigmaX(sigmaXIn), sigmaY(sigmaYIn), sigmaXp(sigmaXpIn), sigmaYp(sigmaYpIn)
 {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   meansGM = CLHEP::HepVector(6);
   sigmaGM = CLHEP::HepSymMatrix(6);
 
@@ -48,6 +57,10 @@ BDSBunchGaussian::BDSBunchGaussian(G4double *sigma,
   BDSBunchInterface(X0In,Y0In, Z0In, T0In, Xp0In, Yp0In, Zp0In, sigmaTIn, sigmaEIn),
   sigmaX(0.0),sigmaY(0.0),sigmaXp(0.0),sigmaYp(0.0)
 {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   meansGM = CLHEP::HepVector(6);
   sigmaGM = CLHEP::HepSymMatrix(6);
 
@@ -88,10 +101,18 @@ BDSBunchGaussian::BDSBunchGaussian(G4double *sigma,
 }
 
 BDSBunchGaussian::~BDSBunchGaussian() {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   delete GaussMultiGen;
 }
 
 void BDSBunchGaussian::SetOptions(struct Options& opt) {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   BDSBunchInterface::SetOptions(opt);
   
   SetSigmaX(opt.sigmaX); 
@@ -147,6 +168,10 @@ void BDSBunchGaussian::SetOptions(struct Options& opt) {
 void BDSBunchGaussian::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 				       G4double& xp, G4double& yp, G4double& zp,
 				       G4double& t , G4double&  E, G4double& weight) {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   CLHEP::HepVector v = GaussMultiGen->fire();
   x0 = v[0] * CLHEP::m;
   xp = v[1] * CLHEP::rad;

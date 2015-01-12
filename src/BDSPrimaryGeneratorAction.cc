@@ -14,6 +14,7 @@
 #include "BDSBunch.hh"
 #include "BDSParticle.hh"
 //#include "BDSSamplerHit.hh"
+#include "BDSDebug.hh"
 
 #include "G4Event.hh"
 #include "G4ParticleGun.hh"
@@ -87,8 +88,13 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   particleGun->SetParticleDefinition(BDSGlobalConstants::Instance()->GetParticleDefinition());
   bdsBunch.GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight); // get next starting point
-  
-  if(E==0) G4cout << "Particle energy is 0! This will not be tracked." << G4endl;
+  if(E==0) G4cout << __METHOD_NAME__ << "Particle energy is 0! This will not be tracked." << G4endl;
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ 
+	 << x0 << " " << y0 << " " << z0 << " " 
+	 << xp << " " << yp << " " << zp << " " 
+	 << t  << " " << E  << " " << weight << G4endl;
+#endif
 
   G4ThreeVector LocalPos;
   G4ThreeVector LocalMomDir;

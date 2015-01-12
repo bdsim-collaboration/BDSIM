@@ -1,6 +1,0 @@
-d01: drift, l=1.0;
-
-lat : line = (d01);
-use, period=lat;
-
-sample, range = d01;

@@ -4,13 +4,22 @@
 #include "BDSDebug.hh"
 
 BDSBunchUserFile::BDSBunchUserFile():nlinesIgnore(0){
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
 }
 
 BDSBunchUserFile::~BDSBunchUserFile(){
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   CloseBunchFile();
 }
 
 void BDSBunchUserFile::OpenBunchFile(){
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   InputBunchFile.open(distribFile);
   if(!InputBunchFile.good()){ 
     G4cerr<<"Cannot open bunch file "<< distribFile <<G4endl; 
@@ -19,6 +28,9 @@ void BDSBunchUserFile::OpenBunchFile(){
 }
 
 void BDSBunchUserFile::CloseBunchFile(){
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   InputBunchFile.close();
 }
 

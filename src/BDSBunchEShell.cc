@@ -1,9 +1,13 @@
 #include "BDSBunchEShell.hh"
+#include "BDSDebug.hh"
 
 BDSBunchEShell::BDSBunchEShell() : 
   BDSBunchInterface(), shellX(0.0), shellXp(0.0), shellY(0.0), shellYp(0.0), 
   shellXWidth(0.0), shellXpWidth(0.0), shellYWidth(0.0), shellYpWidth(0.0) 
 {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine()); 
 }
 
@@ -19,15 +23,24 @@ BDSBunchEShell::BDSBunchEShell(G4double shellXIn, G4double shellXpIn,
   shellXWidth(shellXWidthIn), shellXpWidth(shellXpWidthIn), 
   shellYWidth(shellYWidthIn), shellYpWidth(shellYpWidthIn)
 {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine()); 
 }
 
 BDSBunchEShell::~BDSBunchEShell() 
 {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   delete FlatGen;
 }
 
 void BDSBunchEShell::SetOptions(struct Options& opt) {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   BDSBunchInterface::SetOptions(opt);
   SetShellX (opt.shellX);
   SetShellY (opt.shellY);
@@ -42,6 +55,9 @@ void BDSBunchEShell::SetOptions(struct Options& opt) {
 void BDSBunchEShell::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 				    G4double& xp, G4double& yp, G4double& zp,
 				    G4double& t , G4double&  E, G4double& weight) {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   G4double phi = 2 * CLHEP::pi * FlatGen->shoot();
   G4double xamp  = 0.5 - FlatGen->shoot();
   G4double yamp  = 0.5 - FlatGen->shoot();

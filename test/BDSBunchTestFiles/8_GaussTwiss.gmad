@@ -1,5 +1,5 @@
-beam, particle="proton",
-      energy=4000*GeV,
+beam, particle="e-",
+      energy=1.0*GeV,
       distrType="gausstwiss",
       betx=0.60000*m,
       bety=0.60000*m,

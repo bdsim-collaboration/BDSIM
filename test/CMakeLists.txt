@@ -9,3 +9,4 @@ target_link_libraries(BDSBunchTest bdsim gmad)
 set (binary BDSBunchTest)
 
 add_subdirectory(BDSBunchTestFiles)
+add_subdirectory(TrackingTestFiles)
