@@ -30,7 +30,7 @@ def makeTest(type_, name, particle, energy,**kwargs) :
     ptcFileName = 'inrays.madx'
 
     ptc = pymadx.Ptc.Generator()
-    ptc.generate(1000,ptcFileName)
+    ptc.Generate(1000,ptcFileName)
 
     bb  = pybdsim.Beam(particle,energy,'ptc')
     xb  = pymadx.Beam(particle,energy,'ptc')
