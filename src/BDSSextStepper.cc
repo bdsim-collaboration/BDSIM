@@ -15,6 +15,7 @@
 // GEANT4 tag $Name:  $
 //
 #include "BDSSextStepper.hh"
+#include "BDSDebug.hh"
 #include "G4ThreeVector.hh"
 #include "G4TransportationManager.hh"
 
@@ -46,15 +47,15 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
 
   G4double kappa=  (-fPtrMagEqOfMot->FCof()*itsBDblPrime) /InitMag;
    
-
-#ifdef BDSDEBUG
-  G4cout<<"sextupole stepper:"<<G4endl; 
-  G4cout << "kappa: " << kappa << G4endl;
-  G4cout << "InitMag: " << InitMag << G4endl;
-  G4cout << "g'': " <<itsBDblPrime<< G4endl;
-  G4cout << "fPtrMagEqOfMot->FCof(): " << fPtrMagEqOfMot->FCof() << G4endl << G4endl;
-  G4cout << "h=: " <<h<< G4endl;
-#endif
+#ifdef BDSDEBUG  
+  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << __METHOD_NAME__ << "kappa                 : " << kappa << G4endl;
+  G4cout << __METHOD_NAME__ << "InitMag               : " << InitMag << G4endl;
+  G4cout << __METHOD_NAME__ << "fPtrMagEqOfMot::FCof(): " << fPtrMagEqOfMot->FCof() << G4endl;
+  G4cout << __METHOD_NAME__ << "g''                   : " << itsBDblPrime<< G4endl;
+  G4cout << __METHOD_NAME__ << "fPtrMagEqOfMot->FCof(): " << fPtrMagEqOfMot->FCof() << G4endl;
+  G4cout << __METHOD_NAME__ << "h                     : " << h << G4endl;
+#endif 
 
    if(fabs(kappa)<1.e-12)
      {
