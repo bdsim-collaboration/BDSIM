@@ -17,10 +17,10 @@ class Test:
         self.filename     = self.type_
         self.foldername   = foldername
         self.ptcfilename  = 'inrays.madx'
-        if foldername != None:
+        if self.foldername != None:
             self.usingfolder = True
             self.filepath = self.foldername+'/'+self.filename
-            self.ptcfilepath =  foldername+'/'+self.ptcfilename
+            self.ptcfilepath =  self.foldername+'/'+self.ptcfilename
         else:
             self.usingfolder = False
             self.filepath = self.filename
@@ -39,9 +39,13 @@ class Test:
     
     def Clean(self):        
         _os.system("rm -rf "+self.filepath+"*")
-        _os.system("rm -rf output*")
-        _os.system("rm -rf Maxwellian_bend_for_ptc.txt trackone inrays.madx")
-
+        _os.system("rm -rf "+self.foldername+"/output*")
+        _os.system("rm -rf "+self.foldername+"/Maxwellian_bend_for_ptc.txt trackone inrays.madx")
+        _os.system("rm -rf "+self.foldername+"/test*")
+        _os.system("rm -rf "+self.foldername+"/*.log")
+        _os.system("rm -rf "+self.foldername+"/trackone")
+        _os.system("rm -rf "+self.foldername+"/inrays.madx")
+        
     def ChangeDistribution(self,distribution='flat',nparticles=10,**kwargs):
         """
         'flat'
@@ -112,3 +116,7 @@ class Test:
         
         if self.usingfolder:
             _os.chdir("../")
+
+    def Compare(self):
+
+        return
