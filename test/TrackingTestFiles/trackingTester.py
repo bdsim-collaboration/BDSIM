@@ -109,7 +109,7 @@ class Test:
 
         bm.WriteLattice(self.filepath)
         xm.WriteLattice(self.filepath)
-            
+
     def Execute(self):
         if self.usingfolder:
             _os.chdir(self.foldername)
@@ -127,6 +127,7 @@ class Test:
         By = bdsim.Y()
 
         madx = pymadx.Tfs(self.foldername+"/trackone")
+        madx = madx.GetSegment(madx.nsegments-1)
         Mx = madx.GetColumn('X')
         My = madx.GetColumn('Y')
 
