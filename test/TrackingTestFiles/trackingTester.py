@@ -28,6 +28,7 @@ class Test:
         self.particle     = particle
         self.energy       = energy
         self.distribution = distribution
+        self.distrkwargs  = {}
         self.nparticles   = nparticles
         self.kwargs       = kwargs
         
@@ -39,7 +40,20 @@ class Test:
     def Clean(self):        
         _os.system("rm -rf "+self.filepath+"*")
         _os.system("rm -rf output*")
-        _os.system("rm -rf Maxwellian_bend_for_ptc.txt trackone inrays.madx") 
+        _os.system("rm -rf Maxwellian_bend_for_ptc.txt trackone inrays.madx")
+
+    def ChangeDistribution(self,distribution='flat',nparticles=10,**kwargs):
+        """
+        'flat'
+        kwargs: mux=0.0, widthx=1e-05, mupx=0.0, widthpx=1e-05, muy=0.0, 
+                widthy=0.001, mupy=0.0, widthpy=0.001
+        'gauss'
+        kwargs: gemx=1e-10, betax=0.1, alfx=0.0, gemy=1e-10, betay=0.1, 
+                alfy=0.0, sigmat=1e-12, sigmapt=1e-12
+        """
+        self.distribution = distribution
+        self.distrkwargs  = kwargs
+        self.nparticles   = nparticles
         
     def Make(self):
         #type_='drift', foldername=None, particle='e-', energy=1.0,**kwargs) : 
@@ -50,9 +64,9 @@ class Test:
             print k+'='+str(self.kwargs[k]),
 
         if self.distribution == 'flat':
-            ptc = pymadx.Ptc.FlatGenerator()
+            ptc = pymadx.Ptc.FlatGenerator(**self.distrkwargs)
         elif self.distribution == 'gauss':
-            ptc = pymadx.Ptc.GaussGenerator()
+            ptc = pymadx.Ptc.GaussGenerator(**self.distrkwargs)
         
         ptc.Generate(self.nparticles,self.ptcfilepath)
         
