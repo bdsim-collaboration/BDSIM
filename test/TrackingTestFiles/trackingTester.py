@@ -7,6 +7,7 @@ import pybdsim.Builder
 import pybdsim.Data
 import os as _os
 import matplotlib.pyplot as _plt
+import robdsim
 
 class Test:
     def __init__(self,type_,foldername=None,particle="e-",energy=1.0,distribution='flat',nparticles=10,length=1.0,**kwargs): 
@@ -123,6 +124,7 @@ class Test:
         
         _os.system("madx < "+self.filename+".madx > madx.log")
         _os.system("bdsim --file="+self.filename+".gmad --batch --outfile='test' > bdsim.log")
+        _os.system("bdsim --file="+self.filename+".gmad --batch --output=root --outfile='test' > bdsim.log")
         
         if self.usingfolder:
             _os.chdir("../")
@@ -141,7 +143,10 @@ class Test:
         My = madx.GetColumn('Y')*1e6
         Mxp = madx.GetColumn('PX')
         Myp = madx.GetColumn('PY')
-
+        
+        bfn =''
+        if self.usingfolder:
+            bfn += self.foldername
         _plt.figure()
         _plt.plot(Mx,My,'b.',label='PTC')
         _plt.plot(Bx,By,'g.',label='BDSIM')
@@ -149,8 +154,8 @@ class Test:
         _plt.xlabel(r"x ($\mu$m)")
         _plt.ylabel(r"y ($\mu$m)")
         _plt.title(self.type_)
-        _plt.savefig(self.type_+'.pdf')
-        _plt.savefig(self.type_+'.png')
+        _plt.savefig(bfn+'_xy.pdf')
+        _plt.savefig(bfn+'_xy.png')
 
         _plt.figure()
         _plt.plot(Mxp,Myp,'b.',label='PTC')
@@ -158,9 +163,34 @@ class Test:
         _plt.legend()
         _plt.xlabel(r"x' (rad)")
         _plt.ylabel(r"y' (rad)")
+        _plt.title(bfn)
+        _plt.savefig(bfn+'_xpyp.pdf')
+        _plt.savefig(bfn+'_xpyp.png')
+
+        _plt.figure()
+        _plt.plot(Mx,Mxp,'b.',label='PTC')
+        _plt.plot(Bx,Bxp,'g.',label='BDSIM')
+        _plt.legend()
+        _plt.xlabel(r"x (rad)")
+        _plt.ylabel(r"x' (rad)")
         _plt.title(self.type_)
-        _plt.savefig(self.type_+'.pdf')
-        _plt.savefig(self.type_+'.png')
+        _plt.savefig(bfn+'_xxp.pdf')
+        _plt.savefig(bfn+'_xxp.png')
+
+        _plt.figure()
+        _plt.plot(My,Myp,'b.',label='PTC')
+        _plt.plot(By,Byp,'g.',label='BDSIM')
+        _plt.legend()
+        _plt.xlabel(r"y (rad)")
+        _plt.ylabel(r"y' (rad)")
+        _plt.title(self.type_)
+        _plt.savefig(bfn+'_yyp.pdf')
+        _plt.savefig(bfn+'_yyp.png')
+
+        #emittance
         
-        #print Bx, By
-        #print Mx, My
+        r = robdsim.robdsimOutput(bfn+"/test_0.root")
+        r.CalculateOpticalFunctions("optics.dat")
+        d = pybdsim.Data.Load("optics.dat")
+        print 'Horizontal emittance ',d.Emitt_x()
+        print 'Vertical emittance   ',d.Emitt_y()
