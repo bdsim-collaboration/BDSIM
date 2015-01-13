@@ -40,10 +40,9 @@ void BDSBunchPtc::LoadPtcFile() {
     }
 
   std::string line; 
-  while(ifstr) { 
-    // read single line 
-    std::getline(ifstr,line); 
-
+  // read single line 
+  while(std::getline(ifstr,line)) { 
+    
     // variable for storage
     double x=0.0;
     double y=0.0;
@@ -139,6 +138,9 @@ void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   weight = 1.0; 
 
   this->iRay++;
+
+  // if all particles are read, start at 0 again
+  if (this->iRay == this->nRays) this->iRay=0;
 
   return;
 }
