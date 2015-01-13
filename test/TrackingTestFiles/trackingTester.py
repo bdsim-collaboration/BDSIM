@@ -8,7 +8,7 @@ import pybdsim.Data
 import os as _os
 
 class Test:
-    def __init__(self,type_,foldername=None,particle="e-",energy=1.0,distribution='flat',nparticles=10,**kwargs): 
+    def __init__(self,type_,foldername=None,particle="e-",energy=1.0,distribution='flat',nparticles=10,length=1.0,**kwargs): 
         """
         Tracking test class
 
@@ -33,6 +33,7 @@ class Test:
         self.distribution = distribution
         self.distrkwargs  = {}
         self.nparticles   = nparticles
+        self.length       = 1.0
         self.kwargs       = kwargs
         
     def CleanMakeRun(self):
@@ -91,16 +92,16 @@ class Test:
     
         if self.type_ == 'drift' :
             name = 'd1'
-            bm.AddDrift(name,**self.kwargs)
-            xm.AddDrift(name,**self.kwargs)
+            bm.AddDrift(name,length=self.length,**self.kwargs)
+            xm.AddDrift(name,length=self.length,**self.kwargs)
         elif self.type_ == 'quadrupole' :
             name = 'q1'
-            bm.AddQuadrupole(name,**self.kwargs)
-            xm.AddQuadrupole(name,**self.kwargs)
+            bm.AddQuadrupole(name,length=self.length,**self.kwargs)
+            xm.AddQuadrupole(name,length=self.length,**self.kwargs)
         elif self.type_ == 'sextupole' :
             name = 's1'
-            bm.AddSextupole(name,**self.kwargs)
-            xm.AddSextupole(name,**self.kwargs)        
+            bm.AddSextupole(name,length=self.length,**self.kwargs)
+            xm.AddSextupole(name,length=self.length,**self.kwargs)        
 
         bm.AddMarker("theend") # Need a post element marker to sample at, only for bdsim
         
