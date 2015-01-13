@@ -6,6 +6,7 @@ import pybdsim.Beam
 import pybdsim.Builder
 import pybdsim.Data
 import os as _os
+import matplotlib.pyplot as _plt
 
 class Test:
     def __init__(self,type_,foldername=None,particle="e-",energy=1.0,distribution='flat',nparticles=10,length=1.0,**kwargs): 
@@ -40,6 +41,7 @@ class Test:
         self.Clean()
         self.Make()
         self.Execute()
+        self.Compare()
     
     def Clean(self):        
         _os.system("rm -rf "+self.filepath+"*")
@@ -94,6 +96,10 @@ class Test:
             name = 'd1'
             bm.AddDrift(name,length=self.length,**self.kwargs)
             xm.AddDrift(name,length=self.length,**self.kwargs)
+        elif self.type_ == 'sbend':
+            name = 'sb1'
+            bm.AddDipole(name,length=self.length,**self.kwargs)
+            xm.AddDipole(name,length=self.length,**self.kwargs)
         elif self.type_ == 'quadrupole' :
             name = 'q1'
             bm.AddQuadrupole(name,length=self.length,**self.kwargs)
@@ -128,11 +134,19 @@ class Test:
         By = bdsim.Y()
 
         madx = pymadx.Tfs(self.foldername+"/trackone")
-        Mx = madx.GetColumn('X')
-        My = madx.GetColumn('Y')
+        madx = madx.GetSegment(madx.nsegments) #get the last 'segment' / sampler
+        Mx = madx.GetColumn('X')*1e6
+        My = madx.GetColumn('Y')*1e6
 
-        print Bx, By
-        print Mx, My
+        _plt.figure()
+        _plt.plot(Mx,My,'b.',label='PTC')
+        _plt.plot(Bx,By,'g.',label='BDSIM')
+        _plt.legend()
+        _plt.xlabel(r"x $\mu$m")
+        _plt.ylabel(r"y $\mu$m")
+        _plt.title(self.type_)
+        _plt.savefig(self.type_+'.pdf')
+        _plt.savefig(self.type_+'.png')
         
-        
-        return
+        #print Bx, By
+        #print Mx, My
