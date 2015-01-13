@@ -1,8 +1,10 @@
 import pymadx.Ptc
 import pymadx.Beam
 import pymadx.Builder
+import pymadx.Tfs
 import pybdsim.Beam
-import pybdsim.Builder 
+import pybdsim.Builder
+import pybdsim.Data
 import os as _os
 
 class Test:
@@ -17,10 +19,11 @@ class Test:
         self.filename     = self.type_
         self.foldername   = foldername
         self.ptcfilename  = 'inrays.madx'
-        if foldername != None:
+        if self.foldername != None:
             self.usingfolder = True
             self.filepath = self.foldername+'/'+self.filename
-            self.ptcfilepath =  foldername+'/'+self.ptcfilename
+            self.ptcfilepath =  self.foldername+'/'+self.ptcfilename
+            _os.system("mkdir -p " + self.foldername)
         else:
             self.usingfolder = False
             self.filepath = self.filename
@@ -40,9 +43,13 @@ class Test:
     
     def Clean(self):        
         _os.system("rm -rf "+self.filepath+"*")
-        _os.system("rm -rf output*")
-        _os.system("rm -rf Maxwellian_bend_for_ptc.txt trackone inrays.madx")
-
+        _os.system("rm -rf "+self.foldername+"/output*")
+        _os.system("rm -rf "+self.foldername+"/Maxwellian_bend_for_ptc.txt trackone inrays.madx")
+        _os.system("rm -rf "+self.foldername+"/test*")
+        _os.system("rm -rf "+self.foldername+"/*.log")
+        _os.system("rm -rf "+self.foldername+"/trackone")
+        _os.system("rm -rf "+self.foldername+"/inrays.madx")
+        
     def ChangeDistribution(self,distribution='flat',nparticles=10,**kwargs):
         """
         'flat'
@@ -109,7 +116,23 @@ class Test:
             _os.chdir(self.foldername)
         
         _os.system("madx < "+self.filename+".madx > madx.log")
-        _os.system("bdsim --file="+self.filename+".gmad --batch --output=root --outfile='test' > bdsim.log")
+        _os.system("bdsim --file="+self.filename+".gmad --batch --outfile='test' > bdsim.log")
         
         if self.usingfolder:
             _os.chdir("../")
+
+    def Compare(self):
+
+        bdsim = pybdsim.Data.Load(self.foldername+"/test.txt")
+        Bx = bdsim.X()
+        By = bdsim.Y()
+
+        madx = pymadx.Tfs(self.foldername+"/trackone")
+        Mx = madx.GetColumn('X')
+        My = madx.GetColumn('Y')
+
+        print Bx, By
+        print Mx, My
+        
+        
+        return
