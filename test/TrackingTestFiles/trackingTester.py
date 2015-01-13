@@ -132,18 +132,32 @@ class Test:
         bdsim = pybdsim.Data.Load(self.foldername+"/test.txt")
         Bx = bdsim.X()
         By = bdsim.Y()
+        Bxp = bdsim.Xp()
+        Byp = bdsim.Yp()
 
         madx = pymadx.Tfs(self.foldername+"/trackone")
         madx = madx.GetSegment(madx.nsegments) #get the last 'segment' / sampler
         Mx = madx.GetColumn('X')*1e6
         My = madx.GetColumn('Y')*1e6
+        Mxp = madx.GetColumn('PX')
+        Myp = madx.GetColumn('PY')
 
         _plt.figure()
         _plt.plot(Mx,My,'b.',label='PTC')
         _plt.plot(Bx,By,'g.',label='BDSIM')
         _plt.legend()
-        _plt.xlabel(r"x $\mu$m")
-        _plt.ylabel(r"y $\mu$m")
+        _plt.xlabel(r"x ($\mu$m)")
+        _plt.ylabel(r"y ($\mu$m)")
+        _plt.title(self.type_)
+        _plt.savefig(self.type_+'.pdf')
+        _plt.savefig(self.type_+'.png')
+
+        _plt.figure()
+        _plt.plot(Mxp,Myp,'b.',label='PTC')
+        _plt.plot(Bxp,Byp,'g.',label='BDSIM')
+        _plt.legend()
+        _plt.xlabel(r"x' (rad)")
+        _plt.ylabel(r"y' (rad)")
         _plt.title(self.type_)
         _plt.savefig(self.type_+'.pdf')
         _plt.savefig(self.type_+'.png')
