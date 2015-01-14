@@ -37,6 +37,7 @@ class Test:
         self.nparticles   = nparticles
         self.length       = length
         self.kwargs       = kwargs
+        self.figureNr     = 1729 # arbitrary number where figure start from
         
     def CleanMakeRun(self):
         self.Clean()
@@ -52,6 +53,10 @@ class Test:
         _os.system("rm -rf "+self.foldername+"/*.log")
         _os.system("rm -rf "+self.foldername+"/trackone")
         _os.system("rm -rf "+self.foldername+"/inrays.madx")
+
+        # clean and close figures, seems not to work
+        #for i in [0,3]:
+        #    _plt.close(self.figureNr+i)
         
     def ChangeDistribution(self,distribution='flat',nparticles=10,**kwargs):
         """
@@ -131,66 +136,73 @@ class Test:
 
     def Compare(self):
 
-        bdsim = pybdsim.Data.Load(self.foldername+"/test.txt")
+        if self.usingfolder:
+            _os.chdir(self.foldername)
+
+        bdsim = pybdsim.Data.Load("test.txt")
         Bx = bdsim.X()
         By = bdsim.Y()
         Bxp = bdsim.Xp()
         Byp = bdsim.Yp()
 
-        madx = pymadx.Tfs(self.foldername+"/trackone")
+        madx = pymadx.Tfs("trackone")
         madx = madx.GetSegment(madx.nsegments) #get the last 'segment' / sampler
-        Mx = madx.GetColumn('X')*1e6
-        My = madx.GetColumn('Y')*1e6
+        Mx = madx.GetColumn('X')*1e6 # convert from m to um
+        My = madx.GetColumn('Y')*1e6 
         Mxp = madx.GetColumn('PX')
         Myp = madx.GetColumn('PY')
         
-        bfn =''
-        if self.usingfolder:
-            bfn += self.foldername
-        _plt.figure()
+        _plt.figure(self.figureNr)
+        _plt.clf()
         _plt.plot(Mx,My,'b.',label='PTC')
         _plt.plot(Bx,By,'g.',label='BDSIM')
         _plt.legend()
         _plt.xlabel(r"x ($\mu$m)")
         _plt.ylabel(r"y ($\mu$m)")
         _plt.title(self.type_)
-        _plt.savefig(bfn+'_xy.pdf')
-        _plt.savefig(bfn+'_xy.png')
+        _plt.savefig(self.type_+'_xy.pdf')
+        _plt.savefig(self.type_+'_xy.png')
 
-        _plt.figure()
+        _plt.figure(self.figureNr+1)
+        _plt.clf()
         _plt.plot(Mxp,Myp,'b.',label='PTC')
         _plt.plot(Bxp,Byp,'g.',label='BDSIM')
         _plt.legend()
-        _plt.xlabel(r"x' (rad)")
-        _plt.ylabel(r"y' (rad)")
-        _plt.title(bfn)
-        _plt.savefig(bfn+'_xpyp.pdf')
-        _plt.savefig(bfn+'_xpyp.png')
+        _plt.xlabel(r"x' ($\mu$m)")
+        _plt.ylabel(r"y' ($\mu$m)")
+        _plt.title(self.type_)
+        _plt.savefig(self.type_+'_xpyp.pdf')
+        _plt.savefig(self.type_+'_xpyp.png')
 
-        _plt.figure()
+        _plt.figure(self.figureNr+2)
+        _plt.clf()
         _plt.plot(Mx,Mxp,'b.',label='PTC')
         _plt.plot(Bx,Bxp,'g.',label='BDSIM')
         _plt.legend()
-        _plt.xlabel(r"x (rad)")
+        _plt.xlabel(r"x ($\mu$m)")
         _plt.ylabel(r"x' (rad)")
         _plt.title(self.type_)
-        _plt.savefig(bfn+'_xxp.pdf')
-        _plt.savefig(bfn+'_xxp.png')
+        _plt.savefig(self.type_+'_xxp.pdf')
+        _plt.savefig(self.type_+'_xxp.png')
 
-        _plt.figure()
+        _plt.figure(self.figureNr+3)
+        _plt.clf()
         _plt.plot(My,Myp,'b.',label='PTC')
         _plt.plot(By,Byp,'g.',label='BDSIM')
         _plt.legend()
-        _plt.xlabel(r"y (rad)")
+        _plt.xlabel(r"y ($\mu$m)")
         _plt.ylabel(r"y' (rad)")
         _plt.title(self.type_)
-        _plt.savefig(bfn+'_yyp.pdf')
-        _plt.savefig(bfn+'_yyp.png')
+        _plt.savefig(self.type_+'_yyp.pdf')
+        _plt.savefig(self.type_+'_yyp.png')
 
         #emittance
         
-        r = robdsim.robdsimOutput(bfn+"/test_0.root")
+        r = robdsim.robdsimOutput("test_0.root")
         r.CalculateOpticalFunctions("optics.dat")
         d = pybdsim.Data.Load("optics.dat")
-        print 'Horizontal emittance ',d.Emitt_x()
-        print 'Vertical emittance   ',d.Emitt_y()
+        print 'Horizontal emittance bdsim (before,after) ',d.Emitt_x()
+        print 'Vertical emittance bdsim (before,after) ',d.Emitt_y()
+
+        if self.usingfolder:
+            _os.chdir("../")
