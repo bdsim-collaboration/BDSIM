@@ -35,7 +35,7 @@ class Test:
         self.distribution = distribution
         self.distrkwargs  = {}
         self.nparticles   = nparticles
-        self.length       = 1.0
+        self.length       = length
         self.kwargs       = kwargs
         self.figureNr     = 1729 # arbitrary number where figure start from
         
