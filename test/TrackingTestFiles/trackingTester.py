@@ -51,6 +51,7 @@ class Test:
         _os.system("rm -rf "+self.foldername+"/Maxwellian_bend_for_ptc.txt trackone inrays.madx")
         _os.system("rm -rf "+self.foldername+"/test*")
         _os.system("rm -rf "+self.foldername+"/*.log")
+        _os.system("rm -rf "+self.foldername+"/*.dat")        
         _os.system("rm -rf "+self.foldername+"/trackone")
         _os.system("rm -rf "+self.foldername+"/inrays.madx")
 
@@ -134,11 +135,17 @@ class Test:
         if self.usingfolder:
             _os.chdir("../")
 
-    def Compare(self):
+    def Compare(self, addPrimaries=True):
 
         if self.usingfolder:
             _os.chdir(self.foldername)
 
+        bdsimprim = pybdsim.Data.Load("test.primaries.txt")
+        Bx0 = bdsimprim.X()
+        By0 = bdsimprim.Y()
+        Bxp0 = bdsimprim.Xp()
+        Byp0 = bdsimprim.Yp()
+        
         bdsim = pybdsim.Data.Load("test.txt")
         Bx = bdsim.X()
         By = bdsim.Y()
@@ -152,10 +159,14 @@ class Test:
         Mxp = madx.GetColumn('PX')
         Myp = madx.GetColumn('PY')
         
+        # 2d plots
+        
         _plt.figure(self.figureNr)
         _plt.clf()
         _plt.plot(Mx,My,'b.',label='PTC')
         _plt.plot(Bx,By,'g.',label='BDSIM')
+        if addPrimaries:
+            _plt.plot(Bx0,By0,'r.',label='BDSIM prim')
         _plt.legend()
         _plt.xlabel(r"x ($\mu$m)")
         _plt.ylabel(r"y ($\mu$m)")
@@ -167,6 +178,8 @@ class Test:
         _plt.clf()
         _plt.plot(Mxp,Myp,'b.',label='PTC')
         _plt.plot(Bxp,Byp,'g.',label='BDSIM')
+        if addPrimaries:
+            _plt.plot(Bxp0,Byp0,'r.',label='BDSIM prim')
         _plt.legend()
         _plt.xlabel(r"x' ($\mu$m)")
         _plt.ylabel(r"y' ($\mu$m)")
@@ -178,6 +191,8 @@ class Test:
         _plt.clf()
         _plt.plot(Mx,Mxp,'b.',label='PTC')
         _plt.plot(Bx,Bxp,'g.',label='BDSIM')
+        if addPrimaries:
+            _plt.plot(Bx0,Bxp0,'r.',label='BDSIM prim')
         _plt.legend()
         _plt.xlabel(r"x ($\mu$m)")
         _plt.ylabel(r"x' (rad)")
@@ -189,6 +204,8 @@ class Test:
         _plt.clf()
         _plt.plot(My,Myp,'b.',label='PTC')
         _plt.plot(By,Byp,'g.',label='BDSIM')
+        if addPrimaries:
+            _plt.plot(By0,Byp,'r.',label='BDSIM prim')
         _plt.legend()
         _plt.xlabel(r"y ($\mu$m)")
         _plt.ylabel(r"y' (rad)")
@@ -196,6 +213,55 @@ class Test:
         _plt.savefig(self.type_+'_yyp.pdf')
         _plt.savefig(self.type_+'_yyp.png')
 
+        # 1d plots
+
+        _plt.figure(self.figureNr+4)
+        _plt.clf()
+        _plt.hist(Mx,color='b',label='PTC',histtype='step')
+        _plt.hist(Bx,color='g',label='BDSIM',histtype='step')
+        if addPrimaries:
+            _plt.hist(Bx0,color='r',label='BDSIM prim',histtype='step')
+        _plt.legend()
+        _plt.xlabel(r"x ($\mu$m)")
+        _plt.title(self.type_)
+        _plt.savefig(self.type_+'_x.pdf')
+        _plt.savefig(self.type_+'_x.png')
+
+        _plt.figure(self.figureNr+5)
+        _plt.clf()
+        _plt.hist(My,color='b',label='PTC',histtype='step')
+        _plt.hist(By,color='g',label='BDSIM',histtype='step')
+        if addPrimaries:
+            _plt.hist(By0,color='r',label='BDSIM prim',histtype='step')
+        _plt.legend()
+        _plt.xlabel(r"y ($\mu$m)")
+        _plt.title(self.type_)
+        _plt.savefig(self.type_+'_y.pdf')
+        _plt.savefig(self.type_+'_y.png')
+
+        _plt.figure(self.figureNr+6)
+        _plt.clf()
+        _plt.hist(Mxp,color='b',label='PTC',histtype='step')
+        _plt.hist(Bxp,color='g',label='BDSIM',histtype='step')
+        if addPrimaries:
+            _plt.hist(Bxp0,color='r',label='BDSIM prim',histtype='step')
+        _plt.legend()
+        _plt.xlabel(r"x' (rad)")
+        _plt.title(self.type_)
+        _plt.savefig(self.type_+'_xp.pdf')
+        _plt.savefig(self.type_+'_xp.png')
+
+        _plt.figure(self.figureNr+7)
+        _plt.clf()
+        _plt.hist(Myp,color='b',label='PTC',histtype='step')
+        _plt.hist(Byp,color='g',label='BDSIM',histtype='step')
+        if addPrimaries:
+            _plt.hist(Byp0,color='r',label='BDSIM prim',histtype='step')
+        _plt.legend()
+        _plt.xlabel(r"y' (rad)")
+        _plt.title(self.type_)
+        _plt.savefig(self.type_+'_yp.pdf')
+        _plt.savefig(self.type_+'_yp.png')
         #emittance
         
         r = robdsim.robdsimOutput("test_0.root")
