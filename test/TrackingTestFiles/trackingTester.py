@@ -35,7 +35,7 @@ class Test:
         self.distribution = distribution
         self.distrkwargs  = {}
         self.nparticles   = nparticles
-        self.length       = 1.0
+        self.length       = length
         self.kwargs       = kwargs
         
     def CleanMakeRun(self):
