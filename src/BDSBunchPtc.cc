@@ -2,7 +2,7 @@
 #include "BDSDebug.hh"
 
 #include <fstream>
-#if __cplusplus!=199711 
+#if __cplusplus!=199711 // test for c++11 features
 #include <regex>
 #endif 
 

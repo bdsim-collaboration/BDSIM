@@ -263,7 +263,9 @@ int main(int argc,char** argv) {
   } else if (BDSExecOptions::Instance()->GetOutputFormat() == BDSOutputFormat::_COMBINED) {
     BDSOutputVector* combinedOutput = new BDSOutputVector();
     combinedOutput->Add(new BDSOutputASCII());
+#ifdef USE_ROOT
     combinedOutput->Add(new BDSOutputROOT());
+#endif
     bdsOutput = combinedOutput;
   }
 
