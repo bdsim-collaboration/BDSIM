@@ -1,8 +1,9 @@
 #include "BDSBunchPtc.hh"
 #include "BDSDebug.hh"
+#include <iostream>
 
 #include <fstream>
-#if __cplusplus!=199711 // test for c++11 features
+#if __cplusplus>199711 // test for c++11 features
 #include <regex>
 #endif 
 
@@ -51,9 +52,8 @@ void BDSBunchPtc::LoadPtcFile() {
     double t=0.0;
     double pt=0.0;
     
-#if __cplusplus==199711 
+#if __cplusplus>199711 
 
-#else 
     // create regular expressions 
     std::regex rex("\\sx\\s*=\\s*([0-9eE.+-]+)");
     std::regex rey("\\sy\\s*=\\s*([0-9eE.+-]+)");
