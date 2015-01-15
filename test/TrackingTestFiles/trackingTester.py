@@ -8,6 +8,7 @@ import pybdsim.Data
 import os as _os
 import matplotlib.pyplot as _plt
 import robdsim
+import numpy as _np
 
 class Test:
     def __init__(self,type_,foldername=None,particle="e-",energy=1.0,distribution='flat',nparticles=10,length=1.0,**kwargs): 
@@ -139,11 +140,18 @@ class Test:
         if self.usingfolder:
             _os.chdir(self.foldername)
 
+        prim   = pybdsim.Data.Load("test.primaries.txt")
+        primx  = prim.X()
+        primy  = prim.Y()
+        primxp = prim.Xp()
+        primyp = prim.Yp()
+
         bdsim = pybdsim.Data.Load("test.txt")
         Bx = bdsim.X()
         By = bdsim.Y()
         Bxp = bdsim.Xp()
         Byp = bdsim.Yp()
+        self.B = {'bx':Bx,'by':By}
 
         madx = pymadx.Tfs("trackone")
         madx = madx.GetSegment(madx.nsegments) #get the last 'segment' / sampler
@@ -151,6 +159,18 @@ class Test:
         My = madx.GetColumn('Y')*1e6 
         Mxp = madx.GetColumn('PX')
         Myp = madx.GetColumn('PY')
+        self.M = {'mx':Mx,'my':My}
+
+        print _np.shape(Mx)
+        print _np.shape(Bx)
+        fresx  = (Mx - Bx)
+        fresy  = (My - By)
+        fresx  = _np.nan_to_num(fresx) / Mx #protect against nans for 0 diff
+        fresy  = _np.nan_to_num(fresy) / My
+        fresxp = (Mxp - Bxp)
+        fresyp = (Myp - Byp)
+        fresxp = _np.nan_to_num(fresxp) / Mxp
+        fresyp = _np.nan_to_num(fresyp) / Myp
         
         _plt.figure(self.figureNr)
         _plt.clf()
@@ -196,8 +216,34 @@ class Test:
         _plt.savefig(self.type_+'_yyp.pdf')
         _plt.savefig(self.type_+'_yyp.png')
 
-        #emittance
+        #residuals
+        f = _plt.figure(self.figureNr+4)
+        _plt.clf()
+        axX = f.add_subplot(221)
+        axX.hist(Mx,weights=fresx,bins=100)
+        axX.set_xlabel(r'X ($\mu$m)')
+        axX.set_ylabel('Residual')
+        axX.text(0.05,0.85,'X',transform=axX.transAxes)
         
+        axY = f.add_subplot(222)
+        axY.hist(My,weights=fresy,bins=100)
+        axY.set_xlabel(r'Y ($\mu$m)')
+        axY.set_ylabel('Residual')
+        axY.text(0.05,0.85,'Y',transform=axX.transAxes)
+
+        axXp = f.add_subplot(223)
+        axXp.hist(Mxp,weights=fresxp,bins=100)
+        axXp.set_xlabel('Xp (rad)')
+        axXp.set_ylabel('Residual')
+        axXp.text(0.05,0.85,'Xp',transform=axX.transAxes)
+
+        axYp = f.add_subplot(224)
+        axYp.hist(Myp,weights=fresyp,bins=100)
+        axYp.set_xlabel('Yp (rad)')
+        axYp.set_ylabel('Residual')
+        axYp.text(0.05,0.85,'Yp',transform=axX.transAxes)
+        
+        #emittance
         r = robdsim.robdsimOutput("test_0.root")
         r.CalculateOpticalFunctions("optics.dat")
         d = pybdsim.Data.Load("optics.dat")
