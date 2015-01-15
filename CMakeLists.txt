@@ -16,13 +16,16 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Mod
 # With this true we automatically include current src/binary directory
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
-# Default build type (defines different sets of flags)
+# Default build type (defines different sets of compiler flags)
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
        "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel DebugProf DebugCoverage."
        FORCE)
 endif()
 
+message(STATUS "Build Type ${CMAKE_BUILD_TYPE}")
+
+# Compiler flags based on build type 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     add_definitions("-g -O0 -DBDSDEBUG")
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
@@ -36,7 +39,18 @@ elseif(${CMAKE_BUILD_TYPE} STREQUAL "None")
     set(CMAKE_CXX_FLAGS "-O3 -ffast-math -DNDEBUG")
 endif()
 
-message(STATUS "Build Type ${CMAKE_BUILD_TYPE}")
+# Compiler-specific C++11 activation.
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+    execute_process(
+        COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
+    if (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
+        message(STATUS "Compiler supports C++11")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    endif ()
+elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    message(STATUS "Compiler supports C++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+endif()
 
 set(CMAKE_C_ORIG_FLAGS "${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_ORIG_FLAGS "${CMAKE_CXX_FLAGS}")
