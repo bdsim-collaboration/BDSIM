@@ -64,6 +64,7 @@
 #include "BDSOutputBase.hh" 
 #include "BDSOutputASCII.hh" 
 #include "BDSOutputROOT.hh" 
+#include "BDSOutputVector.hh" 
 #include "BDSRandom.hh" // for random number generator from CLHEP
 //#ifdef USE_ROOT
 //#include "BDSScoreWriter.hh"
@@ -259,7 +260,14 @@ int main(int argc,char** argv) {
 #ifdef USE_ROOT
     bdsOutput = new BDSOutputROOT();
 #endif
+  } else if (BDSExecOptions::Instance()->GetOutputFormat() == BDSOutputFormat::_COMBINED) {
+    BDSOutputVector* combinedOutput = new BDSOutputVector();
+    combinedOutput->Add(new BDSOutputASCII());
+    combinedOutput->Add(new BDSOutputROOT());
+    bdsOutput = combinedOutput;
   }
+
+  // set output precision
   G4cout.precision(10);
 
   // catch aborts to close output stream/file. perhaps not all are needed.
