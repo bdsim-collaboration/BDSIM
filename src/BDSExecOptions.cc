@@ -163,12 +163,13 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 	if(optarg) {
 	  if(!strcmp(optarg,"ascii") || !strcmp(optarg,"ASCII")) outputFormat=BDSOutputFormat::_ASCII;
 	  else if (!strcmp(optarg,"root") || !strcmp(optarg,"ROOT")) outputFormat=BDSOutputFormat::_ROOT;
+	  else if (!strcmp(optarg,"combined") || !strcmp(optarg,"COMBINED")) outputFormat=BDSOutputFormat::_COMBINED;
 	  else {
 	    G4cerr<<"unknown output format "<<optarg<<G4endl;
 	    exit(1);
 	  }
 #ifndef USE_ROOT
-	  if (outputFormat == BDSOutputFormat::_ROOT) {
+	  if (outputFormat == BDSOutputFormat::_ROOT || outputFormat == BDSOutputFormat::_COMBINED) {
 	    G4cerr << "ERROR outputFormat root, but BDSIM not configured with ROOT support!" << G4endl;
 	    G4cerr << "Use ascii instead, or recompile with ROOT!" << G4endl;
 	    exit(1);
@@ -251,7 +252,7 @@ void BDSExecOptions::Usage() {
   G4cout<<"Usage: bdsim [options]"<<G4endl;
   G4cout<<"Options:"<<G4endl;
   G4cout<<"--file=<filename>     : specify the lattice file "<<G4endl
-	<<"--output=<fmt>        : output format (root|ascii), default ascii"<<G4endl
+	<<"--output=<fmt>        : output format (root|ascii|combined), default ascii"<<G4endl
 	<<"--outfile=<file>      : output file name. Will be appended with _N"<<G4endl
         <<"                        where N = 0, 1, 2, 3... etc."<<G4endl
 	<<"--vis_mac=<file>      : file with the visualization macro script, default vis.mac"<<G4endl

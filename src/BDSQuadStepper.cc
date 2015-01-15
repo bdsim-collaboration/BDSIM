@@ -135,7 +135,8 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
 	  itsDist= h2/(8*R);
 
 	  // check for paraxial approximation:
-	  if((fabs(zp)>0.99)&&(fabs(kappa)<1.e-6))
+	  //if((fabs(zp)>0.99)&&(fabs(kappa)<1.e-6))
+	  if(true)
 	    {
 	      #ifdef BDSDEBUG
 	      G4cout << "paraxial approximation being used" << G4endl;
@@ -201,6 +202,9 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
 	  else
 	    // perform local helical steps (paraxial approx not safe)
 	    {
+	      #ifdef BDSDEBUG
+	      G4cout << "local helical steps" << G4endl;
+	      #endif
 	      // simple quadratic approx:	      
 	      G4double quadX= - kappa*x0*zp;
 	      G4double quadY=   kappa*y0*zp;

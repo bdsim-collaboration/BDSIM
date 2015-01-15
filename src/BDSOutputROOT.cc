@@ -10,7 +10,9 @@
 
 BDSOutputROOT::BDSOutputROOT():BDSOutputBase()
 {
+#ifdef BDSDEBUG
   G4cout<<"output format ROOT"<<G4endl;
+#endif
   theRootOutputFile = NULL;
   EnergyLossHisto   = NULL;
   PrimaryHitsHisto  = NULL;

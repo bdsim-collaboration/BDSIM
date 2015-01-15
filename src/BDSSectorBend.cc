@@ -5,6 +5,7 @@
 #include "BDSDipoleStepper.hh"
 #include "BDSMaterials.hh"
 #include "BDSSbendMagField.hh"
+#include "BDSDebug.hh"
 
 #include "G4Polyhedra.hh"
 #include "G4Box.hh"
@@ -19,7 +20,7 @@
 #include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
 #include "G4VPhysicalVolume.hh"
-
+// #define BDSDEBUG
 //============================================================
 
 BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength, 
@@ -31,6 +32,14 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
   BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
 	       aXAper, aYAper, angle)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "name : " << aName << " length : " << aLength << " bpRad : " << bpRad << " FeRad : " 
+	 << FeRad << " bField : " << bField << " angle : " << angle << " outR : " << outR << " tilt : " 
+	 << tilt <<  " bGrad : "<< bGrad <<  " tunnelMaterial : " << aTunnelMaterial <<  " material : " 
+	 << aMaterial << " aXAper : " << aXAper << " aYAper : " << aYAper << G4endl;
+#endif
+	 
+
   SetOuterRadius(outR);
   itsTilt=tilt;
   itsBField=bField;
@@ -139,9 +148,9 @@ void BDSSectorBend::BuildMarkerLogicalVolume()
   }
   
   if((xHalfLengthPlus<0) || (xHalfLengthMinus<0)){
-    G4cerr << "Bend radius in " << itsName << " too small for this tunnel/component geometry. Exiting." << G4endl;
-    G4cerr << "xHalfLengthPlus:  " << xHalfLengthPlus << G4endl;
-    G4cerr << "xHalfLengthMinus: " << xHalfLengthMinus << G4endl;
+    G4cerr << __METHOD_NAME__ << "Bend radius in "   << itsName << " too small for this tunnel/component geometry. Exiting." << G4endl;
+    G4cerr << __METHOD_NAME__ << "xHalfLengthPlus:  " << xHalfLengthPlus << G4endl;
+    G4cerr << __METHOD_NAME__ << "xHalfLengthMinus: " << xHalfLengthMinus << G4endl;
     exit(1);
   }
 
@@ -254,26 +263,26 @@ void BDSSectorBend::BuildBeampipe(G4String materialName)
   G4VPhysicalVolume* PhysiInner;
   PhysiInner = 
     new G4PVPlacement(
-		      BDSGlobalConstants::Instance()->RotY90(),		       // rotation
-		      (G4ThreeVector)0,	               // at (0,0,0)
+		      BDSGlobalConstants::Instance()->RotY90(), // rotation
+		      (G4ThreeVector)0,	       // at (0,0,0)
 		      itsInnerBPLogicalVolume, // its logical volume
 		      itsName+"_InnerBmp",     // its name
 		      itsMarkerLogicalVolume,  // its mother volume
-		      false,		       // no booleanm operation
-		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		       // copy number
+		      false,		       // no boolean operation
+		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps()); // copy number
   
   SetMultiplePhysicalVolumes(PhysiInner);
 
   G4VPhysicalVolume* PhysiComp;
   PhysiComp =
     new G4PVPlacement(
-		      BDSGlobalConstants::Instance()->RotY90(),		        // rotation
-		      (G4ThreeVector)0,	                // at (0,0,0)
+		      BDSGlobalConstants::Instance()->RotY90(),	// rotation
+		      (G4ThreeVector)0,	        // at (0,0,0)
 		      itsBeampipeLogicalVolume, // its logical volume
 		      itsName+"_bmp",	        // its name
 		      itsMarkerLogicalVolume,   // its mother volume
 		      false,		        // no boolean operation
-		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		        // copy number
+		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps()); // copy number
   
   SetMultiplePhysicalVolumes(PhysiComp);
   //
@@ -399,13 +408,13 @@ void BDSSectorBend::BuildCylindricalOuterLogicalVolume(G4bool OuterMaterialIsVac
 
   itsPhysiComp =
     new G4PVPlacement(
-                      BDSGlobalConstants::Instance()->RotY90(),                 // rotation
-                      (G4ThreeVector)0,                      // at (0,0,0)
+                      BDSGlobalConstants::Instance()->RotY90(), // rotation
+                      (G4ThreeVector)0,       // at (0,0,0)
                       itsOuterLogicalVolume,  // its logical volume
                       itsName+"_solid",       // its name
                       itsMarkerLogicalVolume, // its mother  volume
                       false,                  // no boolean operation
-                      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());                     // copy number
+                      0, BDSGlobalConstants::Instance()->GetCheckOverlaps()); // copy number
 
   SetMultiplePhysicalVolumes(itsPhysiComp);
   G4double  maxStepFactor=0.5;
