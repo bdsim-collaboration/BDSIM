@@ -30,6 +30,12 @@ void BDSOutputVector::WritePrimaryLoss(BDSEnergyCounterHit* a){
   }
 }
 
+void BDSOutputVector::WritePrimaryHit(BDSEnergyCounterHit* a){
+  for (unsigned int i=0; i<output.size(); i++) {
+    output[i]->WritePrimaryHit(a);
+  }
+}
+
 void BDSOutputVector::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec){
   for (unsigned int i=0; i<output.size(); i++) {
     output[i]->WriteTrajectory(TrajVec);

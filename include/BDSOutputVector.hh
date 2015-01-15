@@ -23,6 +23,8 @@ public:
   virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*);
   /// make primary loss histo
   virtual void WritePrimaryLoss(BDSEnergyCounterHit*);
+  /// make primary hits histo - where primaries impact
+  virtual void WritePrimaryHit(BDSEnergyCounterHit*);
   /// write a trajectory 
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec);
   /// write primary hit
