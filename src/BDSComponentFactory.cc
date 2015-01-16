@@ -30,6 +30,10 @@
 #include "parser/elementlist.h"
 #include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
 
+#include <cmath>
+#include <stringstream>
+#include <string>
+
 #ifdef BDSDEBUG
 bool debug1 = true;
 #else
@@ -567,34 +571,38 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
     //					aper, aper, _element.tunnelMaterial ) );
   }
 
-    /*
-      return (new BDSRBend( _element.name,
-      _element.l*CLHEP::m,
-      aper,
-      FeRad,
-      bField,
-      _element.angle,
-      _element.outR * CLHEP::m,
-      _element.blmLocZ,
-      _element.blmLocTheta,
-      _element.tilt * CLHEP::rad,
-      bPrime,
-      _element.material ) );
-      
-    */
-  return (new BDSSectorBend( _element.name,
-			     length,
-			     aper,
-			     FeRad,
-			     bField,
-			     _element.angle,
-			     _element.outR * CLHEP::m,
-			     _element.blmLocZ,
-			     _element.blmLocTheta,
-			     _element.tilt,
-			     bPrime,
-			     _element.tunnelMaterial,
-			     _element.material, _element.aperX*CLHEP::m, _element.aperY*CLHEP::m ) );
+  //if angle greater than 10mrad, split sbend into N chunks where n is ceiling(angle/10mrad)
+  //this also works when the angle is less than 10mrad as there will just be 1 chunk!
+  //calculate number of sbends to split parent into
+  int nSbends = (int) ceil(_element.angle / 1.e-2 * CLHEP::rad);
+  //calculate their angle
+  double semiangle = _element.angle / (double) nSbends;
+  //create Line to put them in
+  BDSLine* sbendline = new BDSLine();
+  //create sbends and put them in the line
+  for (int i = 0; i < nSbends; ++i)
+    {
+      std::stringstream name;
+      name << _element.name << "_" << i;
+      std::string itsname = name.str();
+      BDSLine->addComponent( new BDSSectorBend( itsname,
+						length,
+						aper,
+						FeRad,
+						bField,
+						semiangle,  //NOTE
+						_element.outR * CLHEP::m,
+						_element.blmLocZ,
+						_element.blmLocTheta,
+						_element.tilt,
+						bPrime,
+						_element.tunnelMaterial,
+						_element.material,
+						_element.aperX*CLHEP::m,
+						_element.aperY*CLHEP::m )
+			     );
+    }
+  return sbendline;
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
