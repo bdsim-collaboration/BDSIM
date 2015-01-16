@@ -262,7 +262,15 @@ void BDSDetectorConstruction::BuildBeamline(){
 
     BDSAcceleratorComponent* temp = theComponentFactory->createComponent(it, beamline_list);
     if(temp){
-      BDSBeamline::Instance()->addComponent(temp);
+      if (temp->GetType() == "line") {
+	//line of components to be added individually
+	for (BDSLineIterator i = temp->begin(); i != temp->end(); ++i) {
+	  BDSBeamline::Instance()->addComponent(*i);}
+      }
+      else {
+	//single component
+	BDSBeamline::Instance()->addComponent(temp);
+      }
     }
   }
   
