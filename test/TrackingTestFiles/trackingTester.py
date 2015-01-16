@@ -289,22 +289,22 @@ class Test:
         axX = f.add_subplot(221)
         axX.hist(Mx,weights=fresx,bins=100,ec='b')
         axX.set_xlabel(r'X ($\mu$m)')
-        axX.set_ylabel('Residual')
+        axX.set_ylabel('Fractional Residual')
         
         axY = f.add_subplot(222)
         axY.hist(My,weights=fresy,bins=100,ec='b')
         axY.set_xlabel(r'Y ($\mu$m)')
-        axY.set_ylabel('Residual')
+        axY.set_ylabel('Fractional Residual')
         
         axXp = f.add_subplot(223)
         axXp.hist(Mxp*1e3,weights=fresxp,bins=100,ec='b')
         axXp.set_xlabel('Xp (mrad)')
-        axXp.set_ylabel('Residual')
+        axXp.set_ylabel('Fractional Residual')
 
         axYp = f.add_subplot(224)
         axYp.hist(Myp*1e3,weights=fresyp,bins=100,ec='b')
         axYp.set_xlabel('Yp (mrad)')
-        axYp.set_ylabel('Residual')
+        axYp.set_ylabel('Fractional Residual')
 
         _plt.subplots_adjust(left=0.15,right=0.95,top=0.95,wspace=0.39,hspace=0.25)
         _plt.savefig(self.type_+'_residuals.pdf')

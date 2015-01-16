@@ -243,8 +243,8 @@ void BDSOutputASCII::WritePrimaryLoss(BDSEnergyCounterHit* hit)
   ofPLoss.flush();
 }
 
-void BDSOutputASCII::WritePrimaryHit(BDSEnergyCounterHit* hit)
-{;}
+void BDSOutputASCII::WritePrimaryHit(BDSEnergyCounterHit* /*hit*/)
+{}
 
 void BDSOutputASCII::Commit()
 {
