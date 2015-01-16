@@ -59,6 +59,7 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSLine.hh"
 #include "BDSMaterials.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTerminator.hh"
@@ -263,9 +264,12 @@ void BDSDetectorConstruction::BuildBeamline(){
     BDSAcceleratorComponent* temp = theComponentFactory->createComponent(it, beamline_list);
     if(temp){
       if (temp->GetType() == "line") {
-	//line of components to be added individually
-	for (BDSLineIterator i = temp->begin(); i != temp->end(); ++i) {
-	  BDSBeamline::Instance()->addComponent(*i);}
+	BDSLine* line = dynamic_cast<BDSLine*>(temp);
+	if (line) {
+	  //line of components to be added individually
+	  for (BDSLine::BDSLineIterator i = line->begin(); i != line->end(); ++i) {
+	    BDSBeamline::Instance()->addComponent(*i);}
+	}
       }
       else {
 	//single component
