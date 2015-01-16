@@ -575,9 +575,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
   //if angle greater than 10mrad, split sbend into N chunks where n is ceiling(angle/10mrad)
   //this also works when the angle is less than 10mrad as there will just be 1 chunk!
   //calculate number of sbends to split parent into
-  int nSbends = (int) ceil(_element.angle / 1.e-2 * CLHEP::rad);
+  int nSbends = (int) ceil(std::abs(_element.angle) / 1.e-2 * CLHEP::rad);
   //calculate their angle
   double semiangle = _element.angle / (double) nSbends;
+  double semilength = length / (double) nSbends;
   //create Line to put them in
   BDSLine* sbendline = new BDSLine("sbendline",	_element.blmLocZ, _element.blmLocTheta);
   //create sbends and put them in the line
@@ -587,7 +588,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
       name << _element.name << "_" << i;
       std::string itsname = name.str();
       sbendline->addComponent( new BDSSectorBend( itsname,
-						  length,
+						  semilength, //NOTE
 						  aper,
 						  FeRad,
 						  bField,
