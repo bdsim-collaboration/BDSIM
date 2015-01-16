@@ -145,12 +145,14 @@ class Test:
         By0 = bdsimprim.Y()
         Bxp0 = bdsimprim.Xp()
         Byp0 = bdsimprim.Yp()
+        self.bdsimprimaries = {'x':Bx0,'y':By0,'xp':Bxp0,'yp':Byp0}
         
         bdsim = pybdsim.Data.Load("test.txt")
         Bx = bdsim.X()
         By = bdsim.Y()
         Bxp = bdsim.Xp()
         Byp = bdsim.Yp()
+        self.bdsimoutput = {'x':Bx,'y':By,'xp':Bxp,'yp':Byp}
 
         madx = pymadx.Tfs("trackone")
         madx = madx.GetSegment(madx.nsegments) #get the last 'segment' / sampler
@@ -158,6 +160,7 @@ class Test:
         My = madx.GetColumn('Y')*1e6 
         Mxp = madx.GetColumn('PX')
         Myp = madx.GetColumn('PY')
+        self.ptcoutput = {'x':Bx,'y':My,'xp':Mxp,'yp':Myp}
 
         fresx  = _np.nan_to_num(Mx - Bx)
         fresy  = _np.nan_to_num(My - By)
@@ -167,6 +170,7 @@ class Test:
         fresyp = _np.nan_to_num(Myp - Byp)
         fresxp = _np.nan_to_num(fresxp / Mxp)
         fresyp = _np.nan_to_num(fresyp / Myp)
+        self.residuals = {'x':fresx,'y':fresy,'xp':fresxp,'yp':fresyp}
         
         # 2d plots
         #X vs Y
