@@ -279,8 +279,19 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
   }
   
   if (element) {
-    addCommonProperties(element);
-    element->Initialise();
+    if (element->GetType() == "line") {
+      BDSLine* line = dynamic_cast<BDSLine*>(element);
+      if (line) {
+	//line of components to be added individually
+	for (BDSLine::BDSLineIterator i = line->begin(); i != line->end(); ++i) {
+	  addCommonProperties(*i);
+	  (*i)->Initialise();
+	}
+      }
+    } else {
+      addCommonProperties(element);
+      element->Initialise();
+    }
   }
 
   return element;
