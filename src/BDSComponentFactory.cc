@@ -568,7 +568,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
   else {
     _element.angle *= -1;
     //    bField = - 2 * _brho * sin(_element.angle/2.0) / magFieldLength;
-    bField = - _brho * _element.angle/magFieldLength;
+    bField = _brho * _element.angle/magFieldLength * _charge; // charge in e units
     _element.B = bField/CLHEP::tesla;
   }
   
@@ -664,7 +664,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
     //            = (geometrical length/(2.0*sin(angle/2))*angle
     G4double arclength = 0.5*magFieldLength * _element.angle / sin(_element.angle/2.0);
     // B = Brho/rho = Brho/(arc length/angle)
-    bField = - _brho * _element.angle / arclength;
+    bField = _brho * _element.angle / arclength * _charge; // charge in e units
     _element.B = bField/CLHEP::tesla;
   }
   
@@ -727,7 +727,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
   }
   else{
     // B = Brho/rho = Brho/(arc length/angle)
-    bField = - _brho * _element.angle / length;
+    bField = _brho * _element.angle / length * _charge; // charge in e units
     _element.B = bField/CLHEP::tesla;
   }
   
@@ -796,7 +796,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
   }
   else{
     // B = Brho/rho = Brho/(arc length/angle)
-    bField = - _brho * _element.angle / length;
+    bField = _brho * _element.angle / length * _charge; // charge in e units
     _element.B = bField/CLHEP::tesla;
   }
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
