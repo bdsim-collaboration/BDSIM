@@ -99,38 +99,14 @@ void BDSQuadrupole::BuildBPFieldAndStepper()
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  // set up the magnetic field and stepper
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " - mag field " << G4endl;
-#endif
-
-
+  // set up the magnetic field and stepper                                                                                            
   itsMagField=new BDSQuadMagField(1*itsBGrad); 
-
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " - eq rhs " << G4endl;
-#endif
-
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
 
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " - stepper " << G4endl;
-#endif
-
-  itsStepper=new BDSQuadStepper(itsEqRhs);
-
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " - quadStepper " << G4endl;
-#endif
-
-  BDSQuadStepper* quadStepper = dynamic_cast<BDSQuadStepper*>(itsStepper);
-
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " - quadStepper - set bgrad " << G4endl;
-#endif
-
-
+  BDSQuadStepper* quadStepper=new BDSQuadStepper(itsEqRhs);
   quadStepper->SetBGrad(itsBGrad);
+  itsStepper = quadStepper;
+
 #ifdef BDSDEBUG
   G4cout << __METHOD_END__ << G4endl;
 #endif
