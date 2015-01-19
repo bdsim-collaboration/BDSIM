@@ -314,7 +314,7 @@ void BDSDetectorConstruction::BuildWorld(){
 
 #ifdef BDSDEBUG 
       G4cout << thecurrentitem->GetName() << "  "
-             << thecurrentitem->GetLength() << "  "
+             << thecurrentitem->GetChordLength() << "  "
              << thecurrentitem->GetAngle() << "  "
              << G4endl;
 #endif
@@ -322,7 +322,7 @@ void BDSDetectorConstruction::BuildWorld(){
       thecurrentitem->SetSPos(s_tot+thecurrentitem->GetArcLength()/2.0);
 
       // advance coordinates , but not for cylindrical sampler
-      if(( thecurrentitem->GetType() != "csampler") || ( thecurrentitem->GetLength() <= BDSGlobalConstants::Instance()->GetSamplerLength() ) )
+      if(( thecurrentitem->GetType() != "csampler") || ( thecurrentitem->GetChordLength() <= BDSGlobalConstants::Instance()->GetSamplerLength() ) )
 	{
 	  s_tot+= thecurrentitem->GetArcLength();
 
@@ -677,8 +677,8 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	    }
 	    SensVols[i]->SetRegion(gFlashRegion.back());
 	    gFlashRegion.back()->AddRootLogicalVolume(SensVols[i]);
-	    //		    gFlashRegion.back()->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
-	    //		    SensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
+	    //		    gFlashRegion.back()->SetUserLimits(new G4UserLimits(thecurrentitem->GetChordLength()/10.0));
+	    //		    SensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetChordLength()/10.0));
 	  }		  
 	}
       
@@ -691,7 +691,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
       //	      SensVols[i]->SetRegion(NULL);
 
       //	      SensVols[i]->SetRegion(gasRegion);
-      //	      SensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
+      //	      SensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetChordLength()/10.0));
       //      }
       //      }
       //      }

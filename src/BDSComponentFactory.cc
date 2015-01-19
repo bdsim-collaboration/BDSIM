@@ -578,16 +578,16 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
   //Should keep the correct geometry, therefore keep dipole withe zero angle.
   if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) { // not possible due to check earlier - JS
     return createDrift();
-    //return (new BDSDrift( _element.name,
-    //					_element.l*CLHEP::m, _element.blmLocZ, _element.blmLocTheta,
-    //					aper, aper, _element.tunnelMaterial ) );
   }
 
-  //if angle greater than 10mrad, split sbend into N chunks where n is ceiling(angle/10mrad)
-  //this also works when the angle is less than 10mrad as there will just be 1 chunk!
   //calculate number of sbends to split parent into
-  int nSbends = (int) ceil(std::abs(_element.angle) / 1.e-2 * CLHEP::rad);
-  //calculate their angle
+
+  //if maximum distance between arc path and straight path larger than 1mm, split sbend into N chunks,
+  //this also works when maximum distance is less than 1mm as there will just be 1 chunk!
+  double aperturePrecision = 1.0; // in mm
+  // from formula: L/2 / N tan (angle/N) < precision. (L=physical length)
+  int nSbends = (int) ceil(std::sqrt(std::abs(length*_element.angle/2/aperturePrecision)));
+  //calculate their angle and length
   double semiangle = _element.angle / (double) nSbends;
   double semilength = length / (double) nSbends;
   //create Line to put them in

@@ -75,7 +75,7 @@ void BDSGeometryInterface::Optics()
       optics << std::left 
 	     << setw(15) << thecurrentitem->GetType() << " "
 	     << setw(40) << thecurrentitem->GetName() << " "
-	     << setw(15) << thecurrentitem->GetLength()/CLHEP::m  << " "
+	     << setw(15) << thecurrentitem->GetChordLength()/CLHEP::m  << " "
 	     << setw(15) << BDSBeamline::Instance()->positionS()/CLHEP::m  << " "
 	     << setw(15) << thecurrentitem->GetAngle()   << " "
 	     << setw(15) << thecurrentitem->GetK1()   << " "
@@ -112,7 +112,7 @@ void BDSGeometryInterface::Survey()
 	 << setw(12) << "SStart[m]   " << " "
 	 << setw(12) << "SMid[m]     " << " "
 	 << setw(12) << "SEnd[m]     " << " "
-	 << setw(12) << "Length[m]   " << " "
+	 << setw(12) << "Chord_len[m]" << " "
 	 << setw(12) << "Arc_len[m]  " << " "
 	 << setw(12) << "X[m]        " << " "
 	 << setw(12) << "Y[m]        " << " "
@@ -158,7 +158,7 @@ void BDSGeometryInterface::Survey()
       
       survey.precision(7);
       
-      length = thecurrentitem->GetLength()/CLHEP::m;
+      length = thecurrentitem->GetArcLength()/CLHEP::m;
       spos   = thecurrentitem->GetSPos()/CLHEP::m;
       
       survey << std::left << std::setprecision(6) << std::fixed
@@ -167,7 +167,7 @@ void BDSGeometryInterface::Survey()
 	     << setw(12) << spos - (length/2.0)                         << " " /*SStart*/
 	     << setw(12) << spos                                        << " " /*SMid*/
 	     << setw(12) << spos + (length/2.0)                         << " " /*SEnd*/
-	     << setw(12) << thecurrentitem->GetLength()/CLHEP::m        << " "
+	     << setw(12) << thecurrentitem->GetChordLength()/CLHEP::m   << " "
 	     << setw(12) << thecurrentitem->GetArcLength()/CLHEP::m     << " "
 	     << setw(12) << thecurrentitem->GetPosition().x()/CLHEP::m  << " "
 	     << setw(12) << thecurrentitem->GetPosition().y()/CLHEP::m  << " "
@@ -183,7 +183,7 @@ void BDSGeometryInterface::Survey()
 	     << setw(12) << thecurrentitem->GetK2()                     << " "
 	     << setw(12) << thecurrentitem->GetK3()                     << " "
 	     << G4endl;
-      lengthTotal+=thecurrentitem->GetLength()/CLHEP::m;
+      lengthTotal+=thecurrentitem->GetChordLength()/CLHEP::m;
       arc_lengthTotal+=thecurrentitem->GetArcLength()/CLHEP::m;
     }
   survey << "### Total length = " << lengthTotal << "m" << G4endl;

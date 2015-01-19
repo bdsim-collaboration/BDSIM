@@ -44,6 +44,14 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
   itsTilt=tilt;
   itsBField=bField;
   itsBGrad=bGrad;
+
+  // arc length = radius*angle
+  //            = (chord length/(2.0*sin(angle/2))*angle
+  if (itsAngle == 0.0)
+     itsChordLength = itsLength;
+  else
+     itsChordLength = 2.0 * itsLength * sin(0.5*itsAngle) / itsAngle;
+
 }
 
 void BDSSectorBend::Build()
@@ -88,7 +96,7 @@ void BDSSectorBend::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
   G4ThreeVector Bfield(0.,-itsBField,0.);
-  itsMagField=new BDSSbendMagField(Bfield,itsLength,itsAngle);
+  itsMagField=new BDSSbendMagField(Bfield,itsLength,itsAngle); // B-Field constructed with arc length for radius of curvature
 
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
   
@@ -132,19 +140,19 @@ void BDSSectorBend::BuildMarkerLogicalVolume()
 
 #ifdef BDSDEBUG 
   G4cout<<"marker volume : x/y="<<transverseSize/CLHEP::m<<
-    " m, l= "<<  (itsLength)/2/CLHEP::m <<" m"<<G4endl;
+    " m, l= "<<  (itsChordLength)/CLHEP::m <<" m"<<G4endl;
 #endif
 
   G4double xHalfLengthPlus, xHalfLengthMinus;
   if(fabs(itsAngle) > 1e-20){
-    xHalfLengthMinus = (itsLength/itsAngle)*sin(itsAngle/2)
+    xHalfLengthMinus = (itsChordLength/2.0)
       - fabs(cos(itsAngle/2))*transverseSize*tan(itsAngle/2)/2;
     
-    xHalfLengthPlus = (itsLength/itsAngle)*sin(itsAngle/2)
+    xHalfLengthPlus = (itsChordLength/2.0)
       + fabs(cos(itsAngle/2))*transverseSize*tan(itsAngle/2)/2;
   } else {
-    xHalfLengthPlus=(itsLength)/2.0;
-    xHalfLengthMinus=(itsLength)/2.0;
+    xHalfLengthPlus=(itsChordLength)/2.0;
+    xHalfLengthMinus=(itsChordLength)/2.0;
   }
   
   if((xHalfLengthPlus<0) || (xHalfLengthMinus<0)){
@@ -206,15 +214,15 @@ void BDSSectorBend::BuildBeampipe(G4String materialName)
   G4double xHalfLengthPlus, xHalfLengthMinus, tubLen;
   if(itsAngle != 0){
     xHalfLengthMinus =
-      (itsLength/itsAngle)*sin(itsAngle/2)
+      (itsChordLength/2.0)
       - fabs(cos(itsAngle/2)) * boxSize * tan(itsAngle/2)/2;
     
     xHalfLengthPlus =
-      (itsLength/itsAngle)*sin(itsAngle/2)
+      (itsChordLength/2.0)
       + fabs(cos(itsAngle/2)) * boxSize * tan(itsAngle/2)/2;
     tubLen = std::max(xHalfLengthPlus,xHalfLengthMinus);
   } else {
-    tubLen=(itsLength)/2.0;
+    tubLen=(itsChordLength)/2.0;
   }
 
   //
@@ -332,17 +340,6 @@ void BDSSectorBend::BuildBeampipe(G4String materialName)
   itsBeampipeLogicalVolume->SetVisAttributes(VisAtt1);
 }
 
-
-G4double BDSSectorBend::GetArcLength()
-{
-  // arc length = radius*angle
-  //            = (geometrical length/(2.0*sin(angle/2))*angle
-  if (itsAngle == 0.0)
-    return itsLength;
-  else
-    return (itsLength * (0.5*itsAngle) / sin(0.5*itsAngle));
-}
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //					Cylindrical geometry						//
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -358,17 +355,17 @@ void BDSSectorBend::BuildCylindricalOuterLogicalVolume(G4bool OuterMaterialIsVac
   
   G4double xHalfLengthPlus, xHalfLengthMinus, tubLen;
   if(itsAngle != 0){
-    xHalfLengthMinus = (itsLength/itsAngle)*sin(itsAngle/2)
+    xHalfLengthMinus = (itsChordLength/2.0)
       - fabs(cos(itsAngle/2)) * BDSGlobalConstants::Instance()->GetComponentBoxSize() * tan(itsAngle/2)/2
       - BDSGlobalConstants::Instance()->GetLengthSafety()/2;
 
-    xHalfLengthPlus = (itsLength/itsAngle)*sin(itsAngle/2)
+    xHalfLengthPlus = (itsChordLength/2.0)
     + fabs(cos(itsAngle/2)) * BDSGlobalConstants::Instance()->GetComponentBoxSize() * tan(itsAngle/2)/2
       - BDSGlobalConstants::Instance()->GetLengthSafety()/2;
     
     tubLen = std::max(xHalfLengthPlus,xHalfLengthMinus);
   } else {
-    tubLen = (itsLength-BDSGlobalConstants::Instance()->GetLengthSafety())/2.0;
+    tubLen = (itsChordLength-BDSGlobalConstants::Instance()->GetLengthSafety())/2.0;
   }
     
   G4VSolid *magTubsEnv = new G4SubtractionSolid(itsName+"_solid_env",
@@ -449,17 +446,17 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
   
   G4double xHalfLengthPlus, xHalfLengthMinus, tubLen;
   if(itsAngle != 0){
-    xHalfLengthMinus = (itsLength/itsAngle)*sin(itsAngle/2)
+    xHalfLengthMinus = (itsChordLength/2.0)
       - fabs(cos(itsAngle/2)) * BDSGlobalConstants::Instance()->GetComponentBoxSize() * tan(itsAngle/2)/2
       - BDSGlobalConstants::Instance()->GetLengthSafety()/2;
 
-    xHalfLengthPlus = (itsLength/itsAngle)*sin(itsAngle/2)
+    xHalfLengthPlus = (itsChordLength/2.0)
     + fabs(cos(itsAngle/2)) * BDSGlobalConstants::Instance()->GetComponentBoxSize() * tan(itsAngle/2)/2
       - BDSGlobalConstants::Instance()->GetLengthSafety()/2;
     
     tubLen = std::max(xHalfLengthPlus,xHalfLengthMinus);
   } else {
-    tubLen = (itsLength-BDSGlobalConstants::Instance()->GetLengthSafety())/2.0;
+    tubLen = (itsChordLength-BDSGlobalConstants::Instance()->GetLengthSafety())/2.0;
   }
   
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -730,6 +727,11 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+G4double BDSSectorBend::GetChordLength()
+{
+  return itsChordLength;
+}
 
 BDSSectorBend::~BDSSectorBend()
 {

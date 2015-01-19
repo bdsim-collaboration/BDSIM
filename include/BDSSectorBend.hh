@@ -35,7 +35,7 @@ public:
                 G4String aMaterial = "", G4double xAper=0, G4double yAper=0);
   ~BDSSectorBend();
 
-  virtual G4double GetArcLength();
+  virtual G4double GetChordLength();
 
 private:
   G4double itsBField;
@@ -55,9 +55,8 @@ private:
 
   virtual void SetVisAttributes();
 
-  // G4int itsNSegments;
-  // G4double itsSegmentLength;
-  // G4double itsSegmentAngle;
+  // chord length in [m]
+  G4double itsChordLength;
 };
 
 #endif

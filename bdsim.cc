@@ -292,7 +292,11 @@ int main(int argc,char** argv) {
     G4cout << __FUNCTION__ << "> Writing survey file"<<G4endl;
 #endif
     if(BDSExecOptions::Instance()->GetOutlineFormat()=="survey") BDSGI->Survey();
-    if(BDSExecOptions::Instance()->GetOutlineFormat()=="optics") BDSGI->Optics();
+    else if(BDSExecOptions::Instance()->GetOutlineFormat()=="optics") BDSGI->Optics();
+    else {
+      G4cout << __FUNCTION__ << "> Outlineformat " << BDSExecOptions::Instance()->GetOutlineFormat() << "is not known! exiting." << G4endl;
+      exit(1);
+    }
   }
 
 

@@ -61,7 +61,7 @@ public:
   G4double GetAngle ();
 
   // geometry length of the component.
-  virtual G4double GetLength ();
+  virtual G4double GetChordLength ();
   virtual G4double GetZLength ();
   virtual G4double GetXLength ();
   virtual G4double GetYLength ();
@@ -343,7 +343,7 @@ private:
 
 // Class BDSAcceleratorComponent 
 
-inline G4double BDSAcceleratorComponent::GetLength ()
+inline G4double BDSAcceleratorComponent::GetChordLength ()
 {return itsLength;}
 
 inline G4double BDSAcceleratorComponent::GetXLength ()
