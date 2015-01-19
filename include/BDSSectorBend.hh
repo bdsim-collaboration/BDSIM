@@ -40,6 +40,8 @@ public:
 private:
   G4double itsBField;
   G4double itsBGrad;
+  /// chord length in [m]
+  G4double itsChordLength;
 
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
@@ -55,8 +57,9 @@ private:
 
   virtual void SetVisAttributes();
 
-  // chord length in [m]
-  G4double itsChordLength;
+  /// calculate Tube Length for geometry building
+  G4double CalculateTubeLength()const;
+
 };
 
 #endif
