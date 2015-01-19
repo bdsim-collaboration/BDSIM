@@ -158,7 +158,9 @@ void BDSMultipole::Build()
   BDSAcceleratorComponent::Build();
   BuildOuterLogicalVolume();
   BuildBeampipe();
-  BuildTunnel();
+  if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
+    BuildTunnel();
+  }
   //Build the beam loss monitors
   BuildBLMs();
 #ifdef BDSDEBUG
@@ -407,6 +409,9 @@ void BDSMultipole::FinaliseBeampipe(G4String materialName, G4RotationMatrix* Rot
 void BDSMultipole::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
 				   G4MagneticField* aField)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   itsChordFinder= 
     new G4ChordFinder(aField,
 		      BDSGlobalConstants::Instance()->GetChordStepMinimum(),
@@ -425,6 +430,9 @@ void BDSMultipole::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
     itsBPFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
   if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0)
     itsBPFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+#ifdef BDSDEBUG
+     G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
 

@@ -35,6 +35,8 @@
 
 //============================================================
 
+#define BDSDEBUG 1
+
 BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength, 
 			     G4double bpRad, G4double FeRad,
 			     G4double bGrad, G4double tilt, G4double outR,
@@ -58,6 +60,9 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
 
 void BDSQuadrupole::Build() 
 {
+#ifdef BDSDEBUG 
+  G4cout<< __METHOD_NAME__ << G4endl;
+#endif
   BDSMultipole::Build();
   
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
@@ -83,17 +88,52 @@ void BDSQuadrupole::Build()
       
       BuildOuterFieldManager(4, BFldIron,CLHEP::pi/4);
     }
+#ifdef BDSDEBUG 
+  G4cout<< __METHOD_END__ << G4endl;
+#endif
 }
 
 void BDSQuadrupole::BuildBPFieldAndStepper()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   // set up the magnetic field and stepper
-  itsMagField=new BDSQuadMagField(1*itsBGrad); //L Deacon checking sign of field 4/7/12
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - mag field " << G4endl;
+#endif
+
+
+  itsMagField=new BDSQuadMagField(1*itsBGrad); 
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - eq rhs " << G4endl;
+#endif
+
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
 
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - stepper " << G4endl;
+#endif
+
   itsStepper=new BDSQuadStepper(itsEqRhs);
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - quadStepper " << G4endl;
+#endif
+
   BDSQuadStepper* quadStepper = dynamic_cast<BDSQuadStepper*>(itsStepper);
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - quadStepper - set bgrad " << G4endl;
+#endif
+
+
   quadStepper->SetBGrad(itsBGrad);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
 void BDSQuadrupole::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)

@@ -198,6 +198,9 @@ void BDSAcceleratorComponent::Initialise()
 
 void BDSAcceleratorComponent::Build()//Execute build methods common for all classes.
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   SetVisAttributes(); // sets color attributes, virtual method
   BuildMarkerLogicalVolume(); 
 #ifdef BDSDEBUG 
