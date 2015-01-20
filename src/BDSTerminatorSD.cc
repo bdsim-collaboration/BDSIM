@@ -45,13 +45,18 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   G4cout << "Incrementing turn number " << G4endl;
 #endif
   G4Track* theTrack = aStep->GetTrack();
-  if (theTrack->GetParentID() == 0){
+  if ((theTrack->GetParentID() == 0) && (theTrack->GetTrackLength()/CLHEP::m > 1*CLHEP::m)){
     //this is a primary track
     //should only increment turn number for primaries
-    #ifdef BDSDEBUG
+#ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " primary particle - incrementing turn number" << G4endl;
-    #endif
+    G4cout << __METHOD_NAME__ << " track length is: " << theTrack->GetTrackLength()/CLHEP::m << G4endl;
+    G4cout << __METHOD_NAME__ << " turn number is : " << BDSGlobalConstants::Instance()->GetTurnsTaken() << G4endl;
+#endif   
     BDSGlobalConstants::Instance()->IncrementTurnNumber();
+#ifdef BDSDEBUG
+    G4cout << __METHOD_NAME__ << " new turn number : " << BDSGlobalConstants::Instance()->GetTurnsTaken() << G4endl;
+#endif
   }
   #ifdef BDSDEBUG
   else
