@@ -1,7 +1,6 @@
 #include "BDSComponentFactory.hh"
 #include "BDSExecOptions.hh"
 // elements
-//#include "BDSBeamPipe.hh"
 #include "BDSDrift.hh"
 #include "BDSPCLDrift.hh"
 #include "BDSSectorBend.hh"
@@ -27,9 +26,9 @@
 #include "BDSAwakeScintillatorScreen.hh"
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
+#include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
 #include "parser/enums.h"
 #include "parser/elementlist.h"
-#include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
 
 #include <cmath>
 #include <sstream>
@@ -47,12 +46,13 @@ BDSComponentFactory::BDSComponentFactory(){
   // compute magnetic rigidity brho
   // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * |charge(e)|)
   //
-  // charge (in |e| units)
+  // charge (in e units)
   _charge = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge();
   // momentum (in GeV/c)
+
   _momentum = BDSGlobalConstants::Instance()->GetBeamMomentum()/CLHEP::GeV;
   // rigidity (in T*m)
-  _brho = -BDSGlobalConstants::Instance()->GetFFact()*( _momentum / 0.299792458);
+  _brho = BDSGlobalConstants::Instance()->GetFFact()*( _momentum / 0.299792458);
   
   // rigidity (in Geant4 units)
   _brho *= (CLHEP::tesla*CLHEP::m);
@@ -63,7 +63,7 @@ BDSComponentFactory::BDSComponentFactory(){
   //
   _bpRad=BDSGlobalConstants::Instance()->GetBeampipeRadius();
   if (verbose || debug1) G4cout<<"Default pipe outer radius= "<<_bpRad/CLHEP::m<< "m"
-			      << G4endl;
+			       << G4endl;
 
   // I suspect FeRad is planned to be offered as an option for the inner radius
   // of the iron in case it is different from the beampipe outer radius
@@ -107,7 +107,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(std::list<struct E
   return createComponent(*_elementIter, *_previousElementIter, *_nextElementIter);
 }
 
-									 
 BDSAcceleratorComponent* BDSComponentFactory::createComponent(Element& aElement, Element& previousElement, Element& nextElement){
 #ifdef BDSDEBUG
   G4cout << "BDSComponentFactory::createComponent() creating element..." << G4endl;  
@@ -277,8 +276,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     exit(1);
     break;
   }
-  
+
+  // add common properties and build geometry
   if (element) {
+    // check if element is divided into multiple parts 
     if (element->GetType() == "line") {
       BDSLine* line = dynamic_cast<BDSLine*>(element);
       if (line) {
@@ -568,7 +569,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
   else {
     _element.angle *= -1;
     //    bField = - 2 * _brho * sin(_element.angle/2.0) / magFieldLength;
-    bField = _brho * _element.angle/magFieldLength * _charge; // charge in e units
+    bField = - _brho * _element.angle/magFieldLength * _charge; // charge in e units
     _element.B = bField/CLHEP::tesla;
   }
   
@@ -664,7 +665,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
     //            = (geometrical length/(2.0*sin(angle/2))*angle
     G4double arclength = 0.5*magFieldLength * _element.angle / sin(_element.angle/2.0);
     // B = Brho/rho = Brho/(arc length/angle)
-    bField = _brho * _element.angle / arclength * _charge; // charge in e units
+    bField = - _brho * _element.angle / arclength * _charge; // charge in e units
     _element.B = bField/CLHEP::tesla;
   }
   
@@ -727,7 +728,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
   }
   else{
     // B = Brho/rho = Brho/(arc length/angle)
-    bField = _brho * _element.angle / length * _charge; // charge in e units
+    bField = - _brho * _element.angle / length * _charge; // charge in e units
     _element.B = bField/CLHEP::tesla;
   }
   
@@ -796,7 +797,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
   }
   else{
     // B = Brho/rho = Brho/(arc length/angle)
-    bField = _brho * _element.angle / length * _charge; // charge in e units
+    bField = - _brho * _element.angle / length * _charge; // charge in e units
     _element.B = bField/CLHEP::tesla;
   }
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
