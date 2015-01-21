@@ -347,7 +347,7 @@ void BDSDetectorConstruction::BuildWorld(){
 	  localZ.rotate(theta,localX);
 
 	  // advance the coordinate system translation
-	  rtot += localZ * thecurrentitem->GetZLength();
+	  rtot += localZ * thecurrentitem->GetChordLength();
 #ifdef BDSDEBUG
           G4cout << thecurrentitem->GetType() << " " << rtot << G4endl;
 #endif
