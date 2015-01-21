@@ -558,13 +558,12 @@ void BDSDetectorConstruction::ComponentPlacement(){
                  << thecurrentitem->GetName() << " "
                  << G4endl;
 #endif
-	  rtot = rlast + zHalfAngle * ( length/2 + BDSGlobalConstants::Instance()->GetLengthSafety()/2 );
-	  rlast = rtot + zHalfAngle * ( length/2 + BDSGlobalConstants::Instance()->GetLengthSafety()/2 );
+	  rtot = rlast + zHalfAngle * length/2;
+	  rlast = rtot + zHalfAngle * length/2;
 	}
 
       // rotate to the previous reference frame
       rotateComponent->transform(*_globalRotation);
-
       rotateComponent->invert();
 
       // recompute global rotation
@@ -581,7 +580,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	localZ.rotate(theta,localX);
 	
 	// bend trapezoids defined along z-axis
-	rotateComponent->rotateY(-CLHEP::twopi/4-angle/2);
+	rotateComponent->rotateY(-angle/2.0);
       } else if (thecurrentitem->GetMarkerLogicalVolume()->GetSolid()->GetName().contains("trapezoid") ) {
 	rotateComponent->rotateY(-CLHEP::twopi/4); //Drift trapezoids defined along z axis 
       }
