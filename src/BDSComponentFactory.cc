@@ -623,7 +623,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
   //
   // geometry
   //
-  G4double aper = 2*_bpRad;
+  G4double aper = _bpRad;
   if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
   G4double FeRad = aper + _bpThick;
   
