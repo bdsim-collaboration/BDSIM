@@ -595,7 +595,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
       G4LogicalVolume* LocalLogVol = thecurrentitem->GetMarkerLogicalVolume();
       G4String LogVolName          = LocalLogVol->GetName();
       // Set visualisation options for marker volumes - perhaps should be in base class..
-      static G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0, 0.4));
+      static G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0, 0.1));
       VisAtt1->SetForceSolid(true);  
       // Set visible only if debug build, otherwise hidden
 #if defined BDSDEBUG
