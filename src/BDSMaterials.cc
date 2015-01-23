@@ -523,11 +523,7 @@ void BDSMaterials::Initialise()
       3.353*CLHEP::eV, 3.446*CLHEP::eV, 3.545*CLHEP::eV, 3.649*CLHEP::eV,
       3.760*CLHEP::eV, 3.877*CLHEP::eV, 4.002*CLHEP::eV, 4.136*CLHEP::eV };
   */
-#if G4VERSION_NUMBER < 950
-  mpt_YAG->AddProperty("FASTCOMPONENT",PhotonEnergyYAG, scintFastYAG, nEntries);
-#else
   mpt_YAG->AddProperty("FASTCOMPONENT",PhotonEnergyYAG, scintFastYAG, nEntries)->SetSpline(true);
-#endif
   mpt_YAG->AddProperty("RINDEX",PhotonEnergyYAG, RefractiveIndexYAG, nEntries);
   mpt_YAG->AddConstProperty("SCINTILLATIONYIELD",8000./CLHEP::MeV); //Approximately correct
   mpt_YAG->AddConstProperty("RESOLUTIONSCALE",2.0); //Check this
@@ -576,11 +572,7 @@ void BDSMaterials::Initialise()
   //Birk's constant
   birks = (0.014/1.06)*CLHEP::cm/CLHEP::MeV; 
   tmpMaterial->GetIonisation()->SetBirksConstant(birks);
-#if G4VERSION_NUMBER < 950
-  ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy, ups923a_emission, ups923a_numentries);
-#else
   ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy, ups923a_emission, ups923a_numentries)->SetSpline(true);
-#endif
   ups923a_mt->AddConstProperty("RINDEX", 1.52);
   ups923a_mt->AddConstProperty("ABSLENGTH", 1*CLHEP::m);
   G4double scintYieldAnthracene=14200; //Anthracene yield per 1 CLHEP::MeV
