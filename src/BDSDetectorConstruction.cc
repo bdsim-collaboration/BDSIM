@@ -470,11 +470,11 @@ void BDSDetectorConstruction::ComponentPlacement(){
   SDman->AddNewDetector(ECounter);
   //SDman->AddNewDetector(TurnCounter);
 
-  G4ThreeVector TargetPos;
+  G4ThreeVector TargetPos; // position of component 
 
   G4ThreeVector rlast = G4ThreeVector(0.,0.,0.);  // edge of last element coordinates
 
-  G4ThreeVector rtot(0.,0.,0.);
+  G4ThreeVector rtot(0.,0.,0.); // position of component, often same as TargetPos
   G4ThreeVector localX(1.,0.,0.); 
   G4ThreeVector localY(0.,1.,0.);
   G4ThreeVector localZ(0.,0.,1.);
@@ -565,8 +565,8 @@ void BDSDetectorConstruction::ComponentPlacement(){
                  << thecurrentitem->GetName() << " "
                  << G4endl;
 #endif
-	  rtot = rlast + zHalfAngle * ( length/2 + BDSGlobalConstants::Instance()->GetLengthSafety()/2 );
-	  rlast = rtot + zHalfAngle * ( length/2 + BDSGlobalConstants::Instance()->GetLengthSafety()/2 );
+	  rtot = TargetPos;
+	  rlast = TargetPos + zHalfAngle * ( length/2 + BDSGlobalConstants::Instance()->GetLengthSafety()/2 );
 	}
 
       // rotate to the previous reference frame
@@ -748,10 +748,10 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	new G4PVPlacement(
 			  rotateComponent,  // its rotation
 			  TargetPos,        // its position
-			  LocalName,	      // its name
+			  LocalName,        // its name
 			  LocalLogVol,      // its logical volume
-			  physiWorld,	      // its mother  volume
-			  false,	      // no boolean operation
+			  physiWorld,       // its mother  volume
+			  false,            // no boolean operation
 			  nCopy,            // copy number
 			  BDSGlobalConstants::Instance()->GetCheckOverlaps());//overlap checking
 
