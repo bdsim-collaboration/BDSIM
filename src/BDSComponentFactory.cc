@@ -645,6 +645,11 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
 					((_element.l/_element.angle)*sin(_element.angle/2)
 					 + fabs(cos(_element.angle/2))*_element.outR*tan(_element.angle/2)/2)
 					)*CLHEP::m;
+
+  G4double outR = _element.outR*CLHEP::m;
+  G4double itsAngle = _element.angle;
+  G4double b = outR / (tan(0.5*fabs(itsAngle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(itsAngle))) );
+  magFieldLength = length - (2.0*b);
   
   //
   // magnetic field
