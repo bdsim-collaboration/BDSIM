@@ -47,15 +47,14 @@ private:
   virtual void BuildBPFieldAndStepper();
   virtual void BuildMarkerLogicalVolume();
   virtual void BuildBeampipe(G4String materialName = "");
-
   virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+
+  virtual void SetVisAttributes();
 
   /// quad with poles and pockets
   void BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
   /// cylinder
   void BuildCylindricalOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
-
-  virtual void SetVisAttributes();
 
   /// calculate Tube Length for geometry building
   G4double CalculateTubeLength()const;

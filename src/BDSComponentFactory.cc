@@ -675,11 +675,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
   
   if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
     return createDrift();
-    // return (new BDSDrift( _element.name,
-    // 					length,
-    // 					_element.blmLocZ,
-    // 					_element.blmLocTheta,
-    // 					aper, aper, _element.tunnelMaterial ) );
   }
 
   return (new BDSRBend( _element.name,

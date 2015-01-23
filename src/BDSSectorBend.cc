@@ -41,9 +41,9 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
 	 
 
   SetOuterRadius(outR);
-  itsTilt=tilt;
-  itsBField=bField;
-  itsBGrad=bGrad;
+  itsTilt   = tilt;
+  itsBField = bField;
+  itsBGrad  = bGrad;
 
   // arc length = radius*angle
   //            = (chord length/(2.0*sin(angle/2))*angle
@@ -56,8 +56,6 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
 void BDSSectorBend::Build()
 {
   BDSMultipole::Build();
-  //Build IP8Gate
-  //      BuildGate();
   
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
