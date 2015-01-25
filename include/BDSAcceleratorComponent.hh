@@ -98,6 +98,7 @@ public:
   virtual void PrepareField(G4VPhysicalVolume *referenceVolume); 
 
   // in case a component requires specific alignment (e.g. SQL/BDSElement)
+  /*
   virtual void AlignComponent(G4ThreeVector& TargetPos, 
 			      G4RotationMatrix *TargetRot,
 			      G4RotationMatrix& globalRotation,
@@ -106,7 +107,7 @@ public:
 			      G4ThreeVector& localX,
 			      G4ThreeVector& localY,
 			      G4ThreeVector& localZ); 
-
+  */
   
   // get parameter value from the specification string
 
@@ -237,8 +238,8 @@ protected:
   G4double itsTheta;
   G4double itsPsi;
   G4double itsK1, itsK2, itsK3;
-  G4RotationMatrix* itsRotation; // rotation matrix (not used)
-  G4ThreeVector itsPosition;
+  //G4RotationMatrix* itsRotation; // rotation matrix (not used)
+  //G4ThreeVector itsPosition;
   //  BDSBeamPipe* itsBeamPipe;
   G4MagIntegratorStepper*  itsOuterStepper;
   /// generic user limits
@@ -392,11 +393,11 @@ inline void BDSAcceleratorComponent::SetK2(G4double K2)
 inline void BDSAcceleratorComponent::SetK3(G4double K3)
 { itsK3 = K3; }
 
-inline G4RotationMatrix* BDSAcceleratorComponent::GetRotation()
-{ return itsRotation;}
+//inline G4RotationMatrix* BDSAcceleratorComponent::GetRotation()
+//{ return itsRotation;}
 
-inline G4ThreeVector BDSAcceleratorComponent::GetPosition()
-{ return itsPosition;}
+//inline G4ThreeVector BDSAcceleratorComponent::GetPosition()
+//{ return itsPosition;}
 
 inline const G4String BDSAcceleratorComponent::GetName () const
 {return itsName;}

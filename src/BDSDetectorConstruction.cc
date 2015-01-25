@@ -676,8 +676,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 #endif	
       // Align Component - most cases does nothing. 
       // Currently only used for BDSElement	
-      // For other elements stores global position and rotation,
-      // needed for BDSOutline
+      /*
       thecurrentitem->AlignComponent(//TargetPos,
 				     rlast,
 				     rotateComponent,
@@ -687,6 +686,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 				     localX,
 				     localY,
 				     localZ);
+      */
 
 #ifdef BDSDEBUG
       G4cout << "Placing PHYSICAL COMPONENT..."<< G4endl;
