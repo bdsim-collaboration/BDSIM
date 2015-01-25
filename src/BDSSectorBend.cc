@@ -450,114 +450,92 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
   rm->rotateZ(360.0/2.0/4.0*CLHEP::deg);
   G4ThreeVector uz = G4ThreeVector(-35.*CLHEP::cm,0.,0.); 
 
-  new G4PVPlacement(rm,             //rotation,
-		    uz,             //position
-		    shieldLV,            //its logical volume
-		    "poleShield",               //its name
-		    worldLV,             //its mother  volume
-		    false,                 //no boolean operation
-		    0,                     //copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());       // checking ove
-  /*
-  G4ThreeVector uz2 = G4ThreeVector(mag_extradius+mag_inradius,0.,0.); 
-  
-  G4RotationMatrix* rm2 = new G4RotationMatrix();
-  rm2->rotateZ(225.0*CLHEP::deg);
-  new G4PVPlacement(rm2,             //rotation,
-		    uz2,             //position
-		    shieldLV,            //its logical volume
-		    "poleShield",               //its name
-		    worldLV,             //its mother  volume
-		    false,                 //no boolean operation
-		    0,                     //copy number
-		    fCheckOverlaps);       // checking ove
+  G4PVPlacement* shieldPhysVol = new G4PVPlacement(rm,             //rotation,
+						   uz,             //position
+						   shieldLV,       //its logical volume
+						   "poleShield",   //its name
+						   worldLV,        //its mother  volume
+						   false,          //no boolean operation
+						   0,              //copy number
+						   BDSGlobalConstants::Instance()->GetCheckOverlaps()); // checking ove
 
-  */ 
-  // Coil placement
-  //rm->rotateX(0.0*CLHEP::deg);
-
-
-   ////////////////////////////////////////////////////////////////////////
+  SetMultiplePhysicalVolumes(shieldPhysVol);
 
   double magnet_shift = -35.*CLHEP::cm; // displace magnet to center ir with respect to the beampipe
-
   double coil_pos_x = mag_inradius-coil_size_x;
   double coil_pos_y = mag_inradius-coil_size_y;
-
-  G4ThreeVector positionCoil1 = G4ThreeVector(coil_pos_x + magnet_shift,coil_pos_y,tubLen/2.0);
+  G4ThreeVector positionCoil1 = G4ThreeVector(coil_pos_x + magnet_shift,coil_pos_y,itsChordLength/2.0);
   
-  new G4PVPlacement(0,             //rotation,
-		    positionCoil1, //position
-		    CoilLV,        //its logical volume
-		    "Coil",        //its name
-		    worldLV,       //its mother  volume
-		    false,         //no boolean operation
-		    0,             //copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()); // checking overlaps
+  G4PVPlacement* coil1PhysVol = new G4PVPlacement(0,             //rotation,
+						  positionCoil1, //position
+						  CoilLV,        //its logical volume
+						  "Coil",        //its name
+						  worldLV,       //its mother  volume
+						  false,         //no boolean operation
+						  0,             //copy number
+						  BDSGlobalConstants::Instance()->GetCheckOverlaps()); // checking overlaps
 
-   G4ThreeVector positionCoil2 = G4ThreeVector(coil_pos_x + magnet_shift,-coil_pos_y,tubLen/2.0);
+  G4ThreeVector positionCoil2 = G4ThreeVector(coil_pos_x + magnet_shift,-coil_pos_y,itsChordLength/2.0);
   
-  new G4PVPlacement(0,             //rotation,
-		    positionCoil2, //position
-		    CoilLV,        //its logical volume
-		    "Coil",        //its name
-		    worldLV,       //its mother  volume
-		    false,         //no boolean operation
-		    0,             //copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()); // checking overlaps
+  G4PVPlacement* coil2PhysVol = new G4PVPlacement(0,             //rotation,
+						  positionCoil2, //position
+						  CoilLV,        //its logical volume
+						  "Coil",        //its name
+						  worldLV,       //its mother  volume
+						  false,         //no boolean operation
+						  0,             //copy number
+						  BDSGlobalConstants::Instance()->GetCheckOverlaps()); // checking overlaps
 
 
   double coil_pos_x2 = mag_extradius+coil_size_x;
   double coil_pos_y2 = mag_inradius-coil_size_y;
-
-  G4ThreeVector positionCoil3 = G4ThreeVector(coil_pos_x2 + magnet_shift,coil_pos_y2,tubLen/2.0);
+  G4ThreeVector positionCoil3 = G4ThreeVector(coil_pos_x2 + magnet_shift,coil_pos_y2,itsChordLength/2.0);
   
-  new G4PVPlacement(0,             //rotation,
-		    positionCoil3, //position
-		    CoilLV,        //its logical volume
-		    "Coil",        //its name
-		    worldLV,       //its mother  volume
-		    false,         //no boolean operation
-		    0,             //copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()); // checking overlaps
+  G4PVPlacement* coil3PhysVol = new G4PVPlacement(0,             //rotation,
+						  positionCoil3, //position
+						  CoilLV,        //its logical volume
+						  "Coil",        //its name
+						  worldLV,       //its mother  volume
+						  false,         //no boolean operation
+						  0,             //copy number
+						  BDSGlobalConstants::Instance()->GetCheckOverlaps()); // checking overlaps
 
- G4ThreeVector positionCoil4 = G4ThreeVector(coil_pos_x2 + magnet_shift,-coil_pos_y2,tubLen/2.0);
+ G4ThreeVector positionCoil4 = G4ThreeVector(coil_pos_x2 + magnet_shift,-coil_pos_y2,itsChordLength/2.0);
   
-  new G4PVPlacement(0,             //rotation,
-		    positionCoil4, //position
-		    CoilLV,        //its logical volume
-		    "Coil",        //its name
-		    worldLV,       //its mother  volume
-		    false,         //no boolean operation
-		    0,             //copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()); // checking overlaps
+  G4PVPlacement* coil4PhysVol = new G4PVPlacement(0,             //rotation,
+						  positionCoil4, //position
+						  CoilLV,        //its logical volume
+						  "Coil",        //its name
+						  worldLV,       //its mother  volume
+						  false,         //no boolean operation
+						  0,             //copy number
+						  BDSGlobalConstants::Instance()->GetCheckOverlaps()); // checking overlaps
 
-  //////////////////////////////////////////////////////////////////////////////
+  SetMultiplePhysicalVolumes(coil1PhysVol);
+  SetMultiplePhysicalVolumes(coil2PhysVol);
+  SetMultiplePhysicalVolumes(coil3PhysVol);
+  SetMultiplePhysicalVolumes(coil4PhysVol);
 
+  
   G4VisAttributes* magnetVisAtt = new G4VisAttributes(G4Colour(0.4, 0.4, 0.4));
 
   BeampipeLV ->SetVisAttributes(magnetVisAtt);
   
   // color-coding for the pole
-  G4VisAttributes* VisAtt = 
-    new G4VisAttributes(G4Colour(0.,0.,1.));
+  G4VisAttributes* VisAtt = new G4VisAttributes(G4Colour(0.,0.,1.));
   VisAtt->SetForceSolid(true);
   CoilLV->SetVisAttributes(VisAtt);
   shieldLV->SetVisAttributes(VisAtt);
 
-  //////////////////////////////////////////////////////////////////////////////
-
-
   G4RotationMatrix* rm2 = new G4RotationMatrix();
   rm2->rotateZ(45.0*CLHEP::deg);
 
-  G4IntersectionSolid *magTubs =
-    new G4IntersectionSolid(itsName+"_solid",
-			    magTubsEnv,
-			    itsMarkerSolidVolume,
-			    BDSGlobalConstants::Instance()->RotYM90(),
-			    (G4ThreeVector)0); 
-
+  G4IntersectionSolid *magTubs = new G4IntersectionSolid(itsName+"_solid",
+							 magTubsEnv,
+							 itsMarkerSolidVolume,
+							 BDSGlobalConstants::Instance()->RotYM90(),
+							 (G4ThreeVector)0); 
+  
   if(OuterMaterialIsVacuum)
     {
       itsOuterLogicalVolume = 
@@ -576,18 +554,15 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
   G4ThreeVector worldposition = G4ThreeVector(0.,0.,0.);
 
 
-  itsPhysiComp =
-    new G4PVPlacement(0,
-                      //BDSGlobalConstants::Instance()->RotY90(), // rotation
-                      worldposition,           // at (0,0,0)
-                      //itsOuterLogicalVolume, // its logical volume
-		      worldLV,
-                      itsName+"_solid",       // its name
-                      itsMarkerLogicalVolume, // its mother  volume
-                      false,                  // no boolean operation
-                      0, // copy number
-		      BDSGlobalConstants::Instance()->GetCheckOverlaps());
-
+  itsPhysiComp =  new G4PVPlacement(0,                      // rotation
+				    worldposition,          // position at (0,0,0)
+				    worldLV,                // logical volume
+				    itsName+"_solid",       // its name
+				    itsMarkerLogicalVolume, // its mother  volume
+				    false,                  // no boolean operation
+				    0,                      // copy number
+				    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+  
   SetMultiplePhysicalVolumes(itsPhysiComp);
   G4double  maxStepFactor=0.5;
 
