@@ -42,6 +42,8 @@ public:
   G4ThreeVector* positionFromCurrentCenter();
   G4ThreeVector* GetLastPosition();
   G4ThreeVector* GetFirstPosition();
+  G4ThreeVector  GetMaximumExtentPositive();
+  G4ThreeVector  GetMaximumExtentNegative();
 
   G4int size();
 

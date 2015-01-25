@@ -8,15 +8,18 @@ BDSBeamlineNavigator::BDSBeamlineNavigator():_s_total(0.0){
   _localY = new G4ThreeVector(0,1,0);
   _localZ = new G4ThreeVector(0,0,1);
 
-  _rotationLocal = new G4RotationMatrix();
+  _rotationLocal  = new G4RotationMatrix();
   _rotationGlobal = new G4RotationMatrix();
-  _rotation = new G4RotationMatrix();
+  _rotation       = new G4RotationMatrix();
   
-  _position = new G4ThreeVector(0,0,0);
-  _positionStart = new G4ThreeVector(0,0,0);
-  _positionEnd = new G4ThreeVector(0,0,0);
+  _position                  = new G4ThreeVector(0,0,0);
+  _positionStart             = new G4ThreeVector(0,0,0);
+  _positionEnd               = new G4ThreeVector(0,0,0);
   _positionFromCurrentCenter = new G4ThreeVector(0,0,0);
-  _zHalfAngle = new G4ThreeVector(0,0,0); 
+  _zHalfAngle                = new G4ThreeVector(0,0,0);
+
+  _maximumExtentPositive = G4ThreeVector(1,1,1); //minimum world size
+  _maximumExtentNegative = G4ThreeVector(1,1,1);
 }
 
 BDSBeamlineNavigator::~BDSBeamlineNavigator(){
@@ -54,12 +57,18 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
 #endif
   //Reset the local rotation matrix
   *_rotationLocal = G4RotationMatrix();
-  _s_total += var->GetArcLength();;
-  G4double angle=var->GetAngle();
-  G4double theta=var->GetTheta();
-  G4double phi=var->GetPhi();
-  G4double psi=var->GetPsi();
-  G4double length=var->GetZLength();
+  
+  G4double angle  = var->GetAngle();
+  G4double theta  = var->GetTheta();
+  G4double phi    = var->GetPhi();
+  G4double psi    = var->GetPsi();
+  G4double length = var->GetChordLength();
+  G4double xsize  = var->GetXLength();
+  G4double ysize  = var->GetYLength();
+  G4ThreeVector size = G4ThreeVector(xsize,ysize,length*0.5); //all half lengths
+
+  G4double spos   = _s_total + (length*0.5); //spos at centre of element
+  _s_total       += length;
   
   if( var->GetType() == "transform3d"){
     _rotationGlobal->rotate(psi,_localZ);
@@ -80,12 +89,12 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
   _zHalfAngle->setX(_localZ->x());
   _zHalfAngle->setY(_localZ->y());
   _zHalfAngle->setZ(_localZ->z());
-  if( var->GetType() == "sbend" || var->GetType() == "rbend"  ) {
-    _zHalfAngle->rotate(angle/2,*_localY);
-  }
+  if( fabs(angle) > 1e-12 )
+    {
+      _zHalfAngle->rotate(0.5*angle,*_localY);
+    }
   
   // target position - advance the coordinates
-
   *_positionStart = (*_positionEnd);
   *_position = (*_positionEnd) + (*_zHalfAngle) * ( length/2 );  // The target position is the centre of the component.
   *_positionEnd = (*_position) + (*_zHalfAngle) * ( length/2 );  // The end position of the component.
@@ -96,27 +105,43 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
   _rotation->invert();
   // recompute global rotation
   // define new coordinate system local frame	  
-
-
   
   // bends transform the coordinate system
-  if( var->GetType() == "sbend" || var->GetType() == "rbend"){
-    _rotationGlobal->rotate(angle,*_localY);
-    _localX->rotate(angle,*_localY);
-    _localZ->rotate(angle,*_localY);
-    _rotationGlobal->rotate(theta,*_localX);
-    _localY->rotate(theta,*_localX);
-    _localZ->rotate(theta,*_localX);
-    // bend trapezoids defined along z-axis
-    _rotation->rotateY(-CLHEP::twopi/4-angle/2); 						
-  } else if 
-      (var->GetType() != "transform3d" && 
-       var->GetMarkerLogicalVolume() && 
-       var->GetMarkerLogicalVolume()->GetSolid() && 
-       var->GetMarkerLogicalVolume()->GetSolid()->GetName().contains("trapezoid") ) {
-    _rotation->rotateY(-CLHEP::twopi/4); //Drift trapezoids defined along z axis 
-  }
+  if( fabs(angle) > 1e-12 )
+    {
+      _rotationGlobal->rotate(angle,*_localY);
+      _localX->rotate(angle,*_localY);
+      _localZ->rotate(angle,*_localY);
+      _rotationGlobal->rotate(theta,*_localX);
+      _localY->rotate(theta,*_localX);
+      _localZ->rotate(theta,*_localX);						
+    }
+  else if (var->GetType() != "transform3d" && 
+	   var->GetMarkerLogicalVolume() && 
+	   var->GetMarkerLogicalVolume()->GetSolid() && 
+	   var->GetMarkerLogicalVolume()->GetSolid()->GetName().contains("trapezoid") )
+    {
+      _rotation->rotateY(-CLHEP::twopi/4); //Drift trapezoids defined along z axis 
+    }
 
+  // update extent of model for world volume definition
+  G4ThreeVector thisextentpos = *_position + size.transform(*_rotationGlobal); //project size in global coordinates
+  G4ThreeVector thisextentneg = *_position - size.transform(*_rotationGlobal);
+  G4cout << " size:             " << size << G4endl;
+  G4cout << " size transformed: " << size.transform(*_rotationGlobal) << G4endl;
+  // loop over each size and compare to cumulative extent
+  for (int i=0; i<3; i++)
+    {
+      if (thisextentpos[i] > _maximumExtentPositive[i])
+	{_maximumExtentPositive[i] = thisextentpos[i];}
+      if (thisextentneg[i] < _maximumExtentNegative[i])
+	{_maximumExtentNegative[i] = thisextentneg[i];}
+    }
+  //update S position information for this element
+  var->SetSPos(spos);
+  //update global s position max
+  BDSGlobalConstants::Instance()->SetSMax(_s_total);
+  
   _positionList.push_back(new G4ThreeVector(*_position));
   _positionStartList.push_back(new G4ThreeVector(*_positionStart));
   _positionEndList.push_back(new G4ThreeVector(*_positionEnd));
@@ -200,4 +225,12 @@ G4ThreeVector* BDSBeamlineNavigator::GetLastPosition(){
 
 G4ThreeVector* BDSBeamlineNavigator::GetFirstPosition(){
   return _positionStartList.front();
+}
+
+G4ThreeVector BDSBeamlineNavigator::GetMaximumExtentPositive(){
+  return _maximumExtentPositive;
+}
+
+G4ThreeVector BDSBeamlineNavigator::GetMaximumExtentNegative(){
+  return _maximumExtentNegative;
 }

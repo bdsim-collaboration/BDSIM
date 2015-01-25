@@ -138,3 +138,11 @@ G4ThreeVector* BDSBeamline::GetLastPosition(){
 G4ThreeVector* BDSBeamline::GetFirstPosition(){
   return _navigator->GetFirstPosition();
 }
+
+G4ThreeVector BDSBeamline::GetMaximumExtentPositive(){
+  return _navigator->GetMaximumExtentPositive();
+}
+
+G4ThreeVector BDSBeamline::GetMaximumExtentNegative(){
+  return _navigator->GetMaximumExtentNegative();
+}
