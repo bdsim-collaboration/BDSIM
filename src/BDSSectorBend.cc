@@ -21,7 +21,6 @@
 #include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
 #include "G4VPhysicalVolume.hh"
-//============================================================
 
 BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength, 
 			     G4double bpRad, G4double FeRad,
@@ -38,8 +37,7 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
 	 << tilt <<  " bGrad : "<< bGrad <<  " tunnelMaterial : " << aTunnelMaterial <<  " material : " 
 	 << aMaterial << " aXAper : " << aXAper << " aYAper : " << aYAper << G4endl;
 #endif
-	 
-
+  
   SetOuterRadius(outR);
   itsTilt   = tilt;
   itsBField = bField;
@@ -93,11 +91,11 @@ void BDSSectorBend::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
   G4ThreeVector Bfield(0.,-itsBField,0.);
-  itsMagField=new BDSSbendMagField(Bfield,itsLength,itsAngle); // B-Field constructed with arc length for radius of curvature
-
-  itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
-  
+  // B-Field constructed with arc length for radius of curvature
+  itsMagField = new BDSSbendMagField(Bfield,itsLength,itsAngle);
+  itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
   BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
+  
   dipoleStepper->SetBField(-itsBField); // note the - sign...
   dipoleStepper->SetBGrad(itsBGrad);
   itsStepper = dipoleStepper;
@@ -105,10 +103,7 @@ void BDSSectorBend::BuildBPFieldAndStepper()
 
 void BDSSectorBend::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
 {
-  //
-  // build magnet (geometry + magnetic field)
-  //
-      
+  // build magnet outer geometry + magnetic field    
   G4String geometry = BDSGlobalConstants::Instance()->GetMagnetGeometry();
  
   if(geometry =="standard") 
@@ -118,9 +113,7 @@ void BDSSectorBend::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
   else //default - cylinder - standard
     BuildCylindricalOuterLogicalVolume(OuterMaterialIsVacuum); // cylinder outer volume
   
-  //
   // define sensitive volumes for hit generation
-  //
   if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
     AddSensitiveVolume(itsOuterLogicalVolume);
   }
@@ -155,20 +148,18 @@ void BDSSectorBend::BuildMarkerLogicalVolume()
 					inputface,          // input face normal vector
 					outputface );       // output face normal vector
 
-  G4String LocalLogicalName=itsName;
+  G4String LocalLogicalName = itsName;
   itsMarkerLogicalVolume=    
     new G4LogicalVolume(itsMarkerSolidVolume,
 			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			LocalLogicalName+"_marker");
 
   itsMarkerUserLimits = new G4UserLimits(DBL_MAX,DBL_MAX,DBL_MAX, BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-G4double  maxStepFactor=0.5;
+  G4double  maxStepFactor = 0.5;
   itsMarkerUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
   itsMarkerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
   
-  //
   // zero field in the marker volume
-  //
   itsMarkerLogicalVolume->
     SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
 
@@ -183,17 +174,11 @@ void BDSSectorBend::BuildBeampipe(G4String materialName)
 {
   G4Material* material;
   if(materialName == "")
-    {
-      material = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName() );
-    }
+    { material = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName() );}
   else
-    {
-      material = BDSMaterials::Instance()->GetMaterial(materialName);
-    }
+    { material = BDSMaterials::Instance()->GetMaterial(materialName); }
   
-  //
   // build beampipe
-  //
   G4VSolid *pipeTubsEnv = 
     new G4SubtractionSolid("_pipe_outer_env",
 			   new G4EllipticalTube(itsName+"_pipe_outer_tmp_1",
@@ -254,43 +239,35 @@ void BDSSectorBend::BuildBeampipe(G4String materialName)
 		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps()); // copy number
   
   SetMultiplePhysicalVolumes(PhysiComp);
-  //
+
   // define sensitive volumes for hit generation
-  //
   if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
     AddSensitiveVolume(itsBeampipeLogicalVolume);
   }
-
-  //
+  
   // set user limits for stepping, tracking and propagation in B field
-  //
 #ifndef NOUSERLIMITS
   itsBeampipeUserLimits =
     new G4UserLimits("beampipe cuts",DBL_MAX,DBL_MAX,DBL_MAX,
   		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  G4double maxStepFactor=0.5;
+  G4double maxStepFactor = 0.5;
   itsBeampipeUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
   itsBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   itsBeampipeLogicalVolume->SetUserLimits(itsBeampipeUserLimits);
   
-  G4double maxStepFactorIn=0.5;
   itsInnerBeampipeUserLimits =
     new G4UserLimits("inner beampipe cuts",DBL_MAX,DBL_MAX,DBL_MAX,
   		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  itsInnerBeampipeUserLimits->SetMaxAllowedStep(itsLength*maxStepFactorIn);
+  itsInnerBeampipeUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
   itsInnerBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   itsInnerBPLogicalVolume->SetUserLimits(itsInnerBeampipeUserLimits);
 #endif
-
-  //
+  
   // set magnetic field inside beampipe
-  //
   itsBeampipeLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
   itsInnerBPLogicalVolume->SetFieldManager(itsBPFieldMgr,false);
-
-  //
+  
   // set visualization attributes
-  //
   G4VisAttributes* VisAtt =  new G4VisAttributes(G4Colour(0., 0., 0, 0.1));
   VisAtt->SetForceSolid(true);
   itsInnerBPLogicalVolume->SetVisAttributes(VisAtt);
@@ -427,60 +404,32 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
                  air,      //its material
                  "World"); //its name
   
-  //  Must place the World Physical volume unrotated at (0,0,0).
-  // 
-
-/*
-  G4VPhysicalVolume* worldPV
-    = new G4PVPlacement(
-                 0,               // no rotation
-                 G4ThreeVector(), // at (0,0,0)
-                 worldLV,         // its logical volume
-                 "World",         // its name
-                 0,               // its mother  volume
-                 false,           // no boolean operations
-                 0,               // copy number
-                 BDSGlobalConstants::Instance()->GetCheckOverlaps()); // checking overlaps 
-*/
- 
-
-// =========== Inputs ================= //
+  //  Must place the World Physical volume unrotated at (0,0,0)
 
   // magnet parameters
-
   double mag_inradius = 192*CLHEP::mm; // inner radius
   double mag_extradius = 400*CLHEP::mm; // external radius
 
-  // ==================================== //
-
-
   // Defining external shape using polyhedra
-
-  double zplanepos [2] = {0,tubLen};
-  double pipelength [2] = {-2.0*CLHEP::cm,tubLen+2.0*CLHEP::cm};
+  double zplanepos [2] = {0,itsChordLength};
+  double pipelength [2] = {-2.0*CLHEP::cm,itsChordLength+2.0*CLHEP::cm};
   double rinner [2] = {mag_inradius, mag_inradius};
   double router [2] = {mag_extradius, mag_extradius};
 
   G4Polyhedra* polyShape = new G4Polyhedra("polyShape", 0.*CLHEP::deg, 360.*CLHEP::deg, 4, 2, zplanepos, rinner, router);
 
-  ///////////////////////////////////////////////////
-
   // Coils
-
   double coil_size_x = 8.0*CLHEP::cm;
   double coil_size_y = 4.0*CLHEP::cm;
 
-  G4VSolid* Coil = new G4Box("Coil",coil_size_x,coil_size_y,tubLen/2.0);
+  G4VSolid* Coil = new G4Box("Coil",coil_size_x,coil_size_y,itsChordLength/2.0);
 
   G4LogicalVolume* CoilLV = 
     new G4LogicalVolume(Coil,      //its solid
                         material,  //its material
                         "CoilLV"); //its name
-   
-    /////////////////////////////////////////////////////
     
-    // Beampipe
-  
+  // Beampipe
   double beampipe_rinner [2] = {0.0, 0.0};
   double beampipe_router [2] = {this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness(), this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness()};
 
@@ -491,16 +440,16 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
                         "BeampipeLV"); //its name
 
   // Iron yoke subtracting beampipe
-
   G4LogicalVolume* shieldLV = 
-    new G4LogicalVolume(   new G4SubtractionSolid(
-			   "Shield", polyShape, Beampipe, 0, 
-			   G4ThreeVector((mag_extradius+mag_inradius)/2.0*cos(CLHEP::pi/4.0),
-					 (mag_extradius+mag_inradius)/2.0*sin(CLHEP::pi/4.0),0.)),             //its solid
-                        material,   //its material
-                        "shieldLV");        //its name
-
-   ////////////////////////////////////////////////////
+    new G4LogicalVolume(  new G4SubtractionSolid(
+						 "Shield",
+						 polyShape,
+						 Beampipe,
+						 0, 
+						 G4ThreeVector((mag_extradius+mag_inradius)/2.0*cos(CLHEP::pi/4.0),
+							       (mag_extradius+mag_inradius)/2.0*sin(CLHEP::pi/4.0),0.)),             //its solid
+			  material,    //its material
+			  "shieldLV"); //its name
 
   G4ThreeVector positionQuad = G4ThreeVector(0,0,0);
   

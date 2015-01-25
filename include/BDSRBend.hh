@@ -1,11 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 18.10.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-   IA: 12.10.05 , modified
-*/
-
 #ifndef BDSRBend_h
 #define BDSRBend_h 
 
@@ -54,19 +46,6 @@ private:
   virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
 
   virtual void SetVisAttributes();
-  
-  //G4CutTubs* markerSolidVolume;
-  //G4Box* rbendRectangleSolidVolume;
-  //G4LogicalVolume* rbendRectangleLogicalVolume;
-  //G4LogicalVolume* middleBeampipeLogicalVolume;
-  //G4LogicalVolume* middleInnerBPLogicalVolume;
-  //G4LogicalVolume* endsBeampipeLogicalVolume;
-  //G4LogicalVolume* endsInnerBPLogicalVolume;
-  //G4UserLimits* endsBeampipeUserLimits;
-  //G4UserLimits* endsInnerBeampipeUserLimits;
-  //G4VisAttributes* innerBeampipeVisAtt;
-  //G4VisAttributes* beampipeVisAtt;
-
 };
 
 #endif

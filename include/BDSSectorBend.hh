@@ -1,21 +1,3 @@
-//  
-//   BDSIM, (C) 2001-2007
-//   
-//   version 0.4
-//  
-//
-//
-//   Rectangular bending magnet class
-//   - itsLength parameter internally stores the geometrical length 
-//   - itsAngle parameter internally stores the bending angle
-//   - to get the arc length use the GetArcLength() function
-//   - the volume is a trapezoid with pole faces perpendicular to the ideal
-//     orbit
-//     
-//   History
-//
-//
-
 #ifndef BDSSectorBend_h
 #define BDSSectorBend_h 
 

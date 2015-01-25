@@ -1,23 +1,3 @@
-//  
-//   BDSIM, (C) 2001-2006 
-//   
-//   version 0.3
-//  
-//
-//
-//
-//
-//   Generic accelerator component class
-//
-//
-//   History
-//
-//     24 Nov 2006 by Agapov,  v.0.3
-//     x  x   2002 by Blair
-//
-//
-
-
 #include <list>
 #include <sstream>
 #include <cmath>
