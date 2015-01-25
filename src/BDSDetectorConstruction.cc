@@ -64,22 +64,16 @@
 #include "BDSTeleporter.hh"
 #include "BDSTerminator.hh"
 #include "BDSLogicalVolumeInfo.hh"
-
 #include "BDSComponentFactory.hh"
 
 #include "G4MagneticField.hh"
-
-// GMAD interface
-#include "ggmad.hh"
-
 #include "G4VSampler.hh"
 #include "G4GeometrySampler.hh"
 
+#include "ggmad.hh"
 #include "parser/element.h"
 #include "parser/elementlist.h"
 #include "parser/enums.h"
-
-//=========================================
 
 #ifdef BDSDEBUG
 bool debug = true;
@@ -99,11 +93,6 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   gflash     = BDSExecOptions::Instance()->GetGFlash();
   gflashemax = BDSExecOptions::Instance()->GetGFlashEMax();
   gflashemin = BDSExecOptions::Instance()->GetGFlashEMin();
-  
-  //initialize world size vector
-  itsWorldSize.push_back(0);
-  itsWorldSize.push_back(1);
-  itsWorldSize.push_back(2);
 
   //initialize global rotation matrix
   _globalRotation = new G4RotationMatrix();
@@ -292,141 +281,57 @@ void BDSDetectorConstruction::BuildBeamline(){
   }
 }
 
-//=================================================================
 void BDSDetectorConstruction::BuildWorld(){
-  if (verbose || debug) G4cout << "now constructing geometry" << G4endl;
-  
-  G4ThreeVector rtot = G4ThreeVector(0.,0.,0.);   // world dimension
-  G4ThreeVector rextentmax = G4ThreeVector(0.,0.,0.);  // extent
-  G4ThreeVector rextentmin = G4ThreeVector(0.,0.,0.);  // extent
-  G4ThreeVector rmin = G4ThreeVector(0.,0.,0.);
-  G4ThreeVector rmax = G4ThreeVector(0.,0.,0.);
-
-  G4ThreeVector localX = G4ThreeVector(1,0,0);  // local coordinate axis
-  G4ThreeVector localY = G4ThreeVector(0,1,0);
-  G4ThreeVector localZ = G4ThreeVector(0,0,1);
-
-  G4double s_tot = 0; // position along the beamline
-
-  // define geometry scope - to calculate world dimensions
-  for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
-    {
-      BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
-
-#ifdef BDSDEBUG 
-      G4cout << thecurrentitem->GetName() << "  "
-             << thecurrentitem->GetChordLength() << "  "
-             << thecurrentitem->GetAngle() << "  "
-             << G4endl;
-#endif
-
-      thecurrentitem->SetSPos(s_tot+thecurrentitem->GetArcLength()/2.0);
-
-      // advance coordinates , but not for cylindrical sampler
-      if(( thecurrentitem->GetType() != "csampler") || ( thecurrentitem->GetChordLength() <= BDSGlobalConstants::Instance()->GetSamplerLength() ) )
-	{
-	  s_tot+= thecurrentitem->GetArcLength();
-
-	  G4double angle=thecurrentitem->GetAngle();
-	  if(!angle && thecurrentitem->GetType()=="transform3d")
-	    angle=thecurrentitem->GetPhi();
-	  G4double theta=thecurrentitem->GetTheta();
-	  G4double psi=thecurrentitem->GetPsi();
-
-	  // define new coordinate system local frame	  
-	  localX.rotate(psi,localZ);
-	  localY.rotate(psi,localZ);
-	  localZ.rotate(psi,localZ);
-
-	  localX.rotate(angle,localY);
-	  localY.rotate(angle,localY);
-	  localZ.rotate(angle,localY);
-
-	  localX.rotate(theta,localX);
-	  localY.rotate(theta,localX);
-	  localZ.rotate(theta,localX);
-
-	  // advance the coordinate system translation
-	  rtot += localZ * thecurrentitem->GetChordLength();
 #ifdef BDSDEBUG
-          G4cout << thecurrentitem->GetType() << " " << rtot << " RTOT" << G4endl;
+  G4cout << __METHOD_NAME__ << G4endl;
 #endif
-	}
-
-
-      rextentmax = rtot + localX*thecurrentitem->GetXLength() + localY*thecurrentitem->GetYLength();
-      rextentmin = rtot - localX*thecurrentitem->GetXLength() - localY*thecurrentitem->GetYLength();
-
-      //      rextentmax(0) = rtot(0) + (localX*thecurrentitem->GetXLength())(0) + (localX*thecurrentitem->GetYLength())(0);
-      //      rextentmax(1) = rtot(1) + (localY*thecurrentitem->GetXLength())(1) + (localY*thecurrentitem->GetYLength())(1);
-      //      rextentmax(2) = rtot(2) + (localZ*thecurrentitem->GetXLength())(2) + (localZ*thecurrentitem->GetYLength())(2);
-
-      //      rextentmin(0) = rtot(0) - localX*thecurrentitem->GetXLength() - localX*thecurrentitem->GetYLength();
-      //      rextentmin(1) = rtot(1) - localY*thecurrentitem->GetXLength() - localY*thecurrentitem->GetYLength();
-      //      rextentmin(2) = rtot(2) - localZ*thecurrentitem->GetXLength() - localZ*thecurrentitem->GetYLength();
-
-
-	for(int i=0; i<3; i++){
-	  rmax(i) = std::max(rextentmax(i),rmax(i));
-	  rmin(i) = std::min(rextentmin(i),rmin(i));
-	}
-    }
-
-  // determine the world size  
-  G4String LocalName="World";
+  G4ThreeVector maxpositive = BDSBeamline::Instance()->GetMaximumExtentPositive();
+  G4ThreeVector maxnegative = BDSBeamline::Instance()->GetMaximumExtentNegative();
+  G4ThreeVector worldR;
+  for (int i = 0; i < 3; i++){
+    worldR[i] = std::max(fabs(maxpositive[i]),fabs(maxnegative[i]));
+  }
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " world extent positive : " << maxpositive << G4endl;
+  G4cout << __METHOD_NAME__ << " world extent negative : " << maxnegative << G4endl;
+  G4cout << __METHOD_NAME__ << " world half size determined to be strictly: " << worldR << G4endl;
+#endif
+  worldR += G4ThreeVector(5000,5000,5000); //add 5m extra in every dimension
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " with 5m margin becomes in all dimensions : " << worldR << G4endl;
+#endif
   
-  SetWorldSizeX(1.5*( 2*std::max(fabs( rmin(0) ),fabs( rmax(0) ) ) ) *CLHEP::mm);
-  SetWorldSizeY(1.5*( 2*std::max(fabs(rmin(1)),fabs(rmax(1))) ) *CLHEP::mm);
-  SetWorldSizeZ(1.5*(fabs(rmin(2)) + fabs(rmax(2))) *CLHEP::mm);
-
-  if(verbose || debug)
-    {
-      
-      G4cout<<"minX="<<rmin(0)/CLHEP::m<<" m"<<" maxX="<<rmax(0)/CLHEP::m<<" m"<<G4endl;
-      G4cout<<"minY="<<rmin(1)/CLHEP::m<<" m"<<" maxY="<<rmax(1)/CLHEP::m<<" m"<<G4endl;
-      G4cout<<"minZ="<<rmin(2)/CLHEP::m<<" m"<<" maxZ="<<rmax(2)/CLHEP::m<<" m"<<G4endl;
-
-      G4cout<<"itsWorldSizeX = "<<GetWorldSizeX()/CLHEP::m<<G4endl;
-      G4cout<<"itsWorldSizeY = "<<GetWorldSizeY()/CLHEP::m<<G4endl;
-      G4cout<<"itsWorldSizeZ = "<<GetWorldSizeZ()/CLHEP::m<<G4endl;
-      
-      G4cout<<"box size="<<BDSGlobalConstants::Instance()->GetComponentBoxSize()/CLHEP::m<<" m"<<G4endl;
-      G4cout<<"s_tot="<<s_tot/CLHEP::m<<" m"<<G4endl;
-    }
-
-  BDSGlobalConstants::Instance()->SetSMax(s_tot);
-
-  solidWorld = new G4Box("World", GetWorldSizeX(), GetWorldSizeY(), GetWorldSizeZ());
+  G4String worldName="World";
+  solidWorld = new G4Box(worldName, worldR.x(), worldR.y(), worldR.z());
     
   logicWorld = new G4LogicalVolume(solidWorld,	       //its solid
 				   BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()), //its material
-				   "World");	       //its name
+				   worldName);	       //its name
   
   logicWorld->SetVisAttributes (G4VisAttributes::Invisible);
   // set world volume visibility for debugging
-#ifdef BDSDEBUG 
-  logicWorld->SetVisAttributes(new G4VisAttributes(true));	
+#ifdef BDSDEBUG
+  G4VisAttributes* debugWorldVis = new G4VisAttributes(true);
+  debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
+  debugWorldVis->SetColour(1.0,1.0,1.0); //black
+  logicWorld->SetVisAttributes(debugWorldVis);
 #endif
 	
-  // set default max step length (only for particles which have the
-  // G4StepLimiter process enabled)
+  // set limits
 #ifndef NOUSERLIMITS
-  G4UserLimits* WorldUserLimits =new G4UserLimits();
-  WorldUserLimits->SetMaxAllowedStep(GetWorldSizeZ());
+  G4UserLimits* WorldUserLimits = new G4UserLimits();
+  WorldUserLimits->SetMaxAllowedStep(worldR.z());
   WorldUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   WorldUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   logicWorld->SetUserLimits(WorldUserLimits);
 #endif
 
-
+  // create regions
 #ifdef BDSDEBUG
   G4cout<<"Creating regions..."<<G4endl;
 #endif
-  
   precisionRegion = new G4Region("precisionRegion");
-   
   G4ProductionCuts* theProductionCuts = new G4ProductionCuts();
-  
   if(BDSGlobalConstants::Instance()->GetProdCutPhotonsP()>0)
     theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsP(),G4ProductionCuts::GetIndex("gamma"));
 
@@ -441,12 +346,11 @@ void BDSDetectorConstruction::BuildWorld(){
   precisionRegion->SetUserLimits(WorldUserLimits);
 #endif
 
-  // world
-
+  // place the world
   physiWorld = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
   				 (G4ThreeVector)0,     // at (0,0,0)
                                  logicWorld,	// its logical volume
-                                 LocalName,	// its name
+                                 worldName,	// its name
                                  NULL,		// its mother  volume
                                  false,		// no boolean operation
                                  0,             // copy number
@@ -454,7 +358,6 @@ void BDSDetectorConstruction::BuildWorld(){
 
 }
 
-//=================================================================
 void BDSDetectorConstruction::ComponentPlacement(){
   if (verbose || debug) G4cout<<"starting placement procedure "<<G4endl;
   
@@ -727,8 +630,6 @@ void BDSDetectorConstruction::ComponentPlacement(){
     }
 }
 
-
-//=================================================================
 void BDSDetectorConstruction::BuildTunnel(){
   std::list<struct Element>::iterator it;
   for(it = beamline_list.begin();it!=beamline_list.end();it++)
@@ -767,37 +668,4 @@ void BDSDetectorConstruction::BuildTunnel(){
 	} else  G4cerr<<"Tunnel won't be build! "<<G4endl;
       }
     }
-}
-
-G4double* BDSDetectorConstruction::GetWorldSize(){
-  int s=3;
-  G4double* ret = new G4double[s];
-  for(int i=0; i<s; i++){
-    ret[i]=itsWorldSize[i];
-  }
-  return ret;
-}
-
-G4double BDSDetectorConstruction::GetWorldSizeX(){
-  return itsWorldSize[0];
-}
-
-G4double BDSDetectorConstruction::GetWorldSizeY(){
-  return itsWorldSize[1];
-}
-
-G4double BDSDetectorConstruction::GetWorldSizeZ(){
-  return itsWorldSize[2];
-}
-
-void BDSDetectorConstruction::SetWorldSizeX(G4double val){
-  itsWorldSize[0]=val;
-}
-
-void BDSDetectorConstruction::SetWorldSizeY(G4double val){
-  itsWorldSize[1]=val;
-}
-
-void BDSDetectorConstruction::SetWorldSizeZ(G4double val){
-  itsWorldSize[2]=val;
 }
