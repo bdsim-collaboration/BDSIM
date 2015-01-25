@@ -39,12 +39,12 @@ public:
   G4double GetAngle ();
 
   // geometry length of the component.
-  virtual G4double GetChordLength ();
-  virtual G4double GetZLength ();
-  virtual G4double GetXLength ();
-  virtual G4double GetYLength ();
-  virtual G4double GetArcLength ();
 
+  virtual G4double GetYLength ();
+  virtual G4double GetXLength ();
+  virtual G4double GetArcLength ();   // note no z length - this is chord length
+  virtual G4double GetChordLength (); // only chord OR arc makes it explicit
+  
   G4double GetPhiAngleIn (); //polar angle in
   G4double GetPhiAngleOut (); //polar angle out
 
@@ -331,9 +331,6 @@ inline G4double BDSAcceleratorComponent::GetYLength ()
 {return itsYLength;}
 
 inline G4double BDSAcceleratorComponent::GetArcLength ()
-{return itsLength;}
-
-inline G4double BDSAcceleratorComponent::GetZLength ()
 {return itsLength;}
 
 inline G4double BDSAcceleratorComponent::GetAngle ()
