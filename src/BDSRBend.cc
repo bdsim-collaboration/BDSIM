@@ -21,7 +21,6 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-//============================================================
 
 BDSRBend::BDSRBend(G4String aName, G4double aLength, 
                    G4double bpRad, G4double FeRad,
@@ -49,33 +48,28 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
   // the outer logical volume (magnet cylinder - defined by outR) doesn't protrude
   // into the previous volume / outside the marker volume.  for zero angle, this is 0
 
-  G4double b = outR / (tan(0.5*fabs(itsAngle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(itsAngle))) );
-  G4double maglength = itsChordLength - (2.0*b);
-  G4double dx = -1.0*b*tan(0.5*fabs(itsAngle));
-  G4ThreeVector magpos = G4ThreeVector(dx, 0, 0);
-  G4double dz = (maglength*0.5)+(b*0.5);
-  G4ThreeVector driftposstart = G4ThreeVector(0.5*dx, 0, -1*dz);
-  G4ThreeVector driftposend   = G4ThreeVector(0.5*dx, 0, dz);
-  G4double driftlength        = b / (cos(0.5*fabs(itsAngle)));
-
-  itsStraightSectionChord  = b;
-  itsMagFieldLength        = maglength;
-  itsStraightSectionLength = driftlength;
-  magnetXShift             = dx;
+  itsStraightSectionChord     = outR / (tan(0.5*fabs(itsAngle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(itsAngle))) );
+  itsMagFieldLength           = itsChordLength - (2.0*itsStraightSectionChord);
+  magnetXShift                = orientation*itsStraightSectionChord*tan(0.5*fabs(itsAngle));
+  G4ThreeVector magpos        = G4ThreeVector(magnetXShift, 0, 0);
+  G4double      dz            = (itsMagFieldLength*0.5)+(itsStraightSectionChord*0.5);
+  G4ThreeVector driftposstart = G4ThreeVector(0.5*magnetXShift, 0, -1*dz);
+  G4ThreeVector driftposend   = G4ThreeVector(0.5*magnetXShift, 0, dz);
+  itsStraightSectionLength    = itsStraightSectionChord / (cos(0.5*fabs(itsAngle)));
 
   G4double in_z = cos(0.5*fabs(itsAngle)); // calculate components of normal vectors (in the end mag(normal) = 1)
   G4double in_x = sin(0.5*fabs(itsAngle));
   inputface  = G4ThreeVector(orientation*in_x, 0.0, -1.0*in_z); //-1 as pointing down in z for normal
   outputface = G4ThreeVector(orientation*in_x, 0.0, in_z);
   
-  //#ifdef BDSDEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Angle                   = " << itsAngle                 << G4endl;
   G4cout << __METHOD_NAME__ << "Straight section chord  = " << itsStraightSectionChord  << G4endl;
   G4cout << __METHOD_NAME__ << "Magnetic field length   = " << itsMagFieldLength        << G4endl;
   G4cout << __METHOD_NAME__ << "Straight section length = " << itsStraightSectionLength << G4endl;
   G4cout << __METHOD_NAME__ << "Straight section chord  = " << itsStraightSectionChord  << G4endl;
   G4cout << __METHOD_NAME__ << "Magnet shift in X       = " << magnetXShift             << G4endl;
-  //#endif
+#endif
 }
 
 void BDSRBend::Build()
@@ -117,8 +111,10 @@ void BDSRBend::BuildBPFieldAndStepper()
   // set up the magnetic field and stepper
   G4ThreeVector Bfield(0.,-itsBField,0.);
   G4double arclength = fabs(itsAngle) * ((itsMagFieldLength*0.5) / sin(0.5*fabs(itsAngle)));
-  G4cout << "Arclength " << arclength << G4endl;
-  itsMagField = new BDSSbendMagField(Bfield,arclength*0.5,itsAngle);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " calculated arclength in dipole field: " << arclength << G4endl;
+#endif
+  itsMagField = new BDSSbendMagField(Bfield,arclength,itsAngle);
   itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
   
   BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
@@ -152,7 +148,7 @@ void BDSRBend::BuildMarkerLogicalVolume()
 
 #ifndef NOUSERLIMITS
   itsMarkerUserLimits = new G4UserLimits(DBL_MAX,DBL_MAX,DBL_MAX);
-  itsMarkerUserLimits->SetMaxAllowedStep(itsMagFieldLength*5);
+  itsMarkerUserLimits->SetMaxAllowedStep(itsMagFieldLength*0.5);
   itsMarkerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
 #endif
   // zero field in the marker volume
@@ -173,12 +169,10 @@ void BDSRBend::BuildBeampipe(G4String materialName)
   G4double bpThickness = BDSGlobalConstants::Instance()->GetBeampipeThickness();
 
   //start section beam pipe solid
-  //pipeTubs
-  G4double pipelength = itsStraightSectionLength - BDSGlobalConstants::Instance()->GetLengthSafety();
   G4CutTubs* straightBeampipeOuter = new G4CutTubs(+"_pipe_start_outer_env",      // name
 						   itsBpRadius,                   // inner R
 						   itsBpRadius+bpThickness+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0, // outer R
-						   pipelength/2.0,  // half length in z
+						   itsStraightSectionLength*0.5,  // half length in z
 						   0.0,                           // starting angle
 						   2.0*CLHEP::pi,                 // finishing angle - full
 						   G4ThreeVector(0,0,-1),         // will be normal to previous beam pipe
@@ -188,7 +182,7 @@ void BDSRBend::BuildBeampipe(G4String materialName)
   G4CutTubs* straightBeampipeVacuum = new G4CutTubs(+"_pipe_start_outer_env",      // name
 						    0,                             // inner R
 						    itsBpRadius,                   // outer R
-						    pipelength/2.0,  // half length
+						    itsStraightSectionLength*0.5,  // half length
 						    0.0,                           // starting angle
 						    2.0*CLHEP::pi,                 // finishing angle - full
 						    G4ThreeVector(0,0,-1),         // will be normal to previous beam pipe
@@ -328,6 +322,9 @@ void BDSRBend::BuildBeampipe(G4String materialName)
   G4UserLimits* magnetUserLimits = new G4UserLimits("rbend central cuts", DBL_MAX, DBL_MAX, DBL_MAX, thresholdCutCharged);
   double nsteps = ceil(fabs(itsAngle)/0.01);
   double maxstepsize = itsMagFieldLength/nsteps/10.; //fairly abritrary fraction but ensures closure at this level
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " maximum step size set to: " << maxstepsize/CLHEP::mm << " mm" << G4endl;
+#endif
   magnetUserLimits->SetMaxAllowedStep(maxstepsize);
   magnetUserLimits->SetUserMaxTime(maxTime);
   
