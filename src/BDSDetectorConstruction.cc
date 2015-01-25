@@ -422,7 +422,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
       G4RotationMatrix *rotateComponent = new G4RotationMatrix;
 
       // tilted bends influence reference frame, otherwise just local tilt
-      if(thecurrentitem->GetType() == "sbend" || thecurrentitem->GetType() == "rbend" )
+      if( fabs(angle) > 1e-12 )
 	{
 	  _globalRotation->rotate(tilt,localZ);
 	  localX.rotate(tilt,localZ);
@@ -434,7 +434,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
       // define center of bended elements from the previous coordinate frame
       G4ThreeVector zHalfAngle = localZ; 
 
-      if( thecurrentitem->GetType() == "sbend" || thecurrentitem->GetType() == "rbend"  )
+      if( fabs(angle) > 1e-12 ) 
 	{zHalfAngle.rotate(angle/2,localY);}
 
 #ifdef BDSDEBUG
