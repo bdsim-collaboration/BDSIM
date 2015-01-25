@@ -125,10 +125,9 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
     }
 
   // update extent of model for world volume definition
-  G4ThreeVector thisextentpos = *_position + size.transform(*_rotationGlobal); //project size in global coordinates
+  // project size in global coordinates
+  G4ThreeVector thisextentpos = *_position + size.transform(*_rotationGlobal); 
   G4ThreeVector thisextentneg = *_position - size.transform(*_rotationGlobal);
-  G4cout << " size:             " << size << G4endl;
-  G4cout << " size transformed: " << size.transform(*_rotationGlobal) << G4endl;
   // loop over each size and compare to cumulative extent
   for (int i=0; i<3; i++)
     {
