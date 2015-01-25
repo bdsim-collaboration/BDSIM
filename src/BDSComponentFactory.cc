@@ -588,6 +588,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
   double aperturePrecision = 1.0; // in mm
   // from formula: L/2 / N tan (angle/N) < precision. (L=physical length)
   int nSbends = (int) ceil(std::sqrt(std::abs(length*_element.angle/2/aperturePrecision)));
+  //nSbends = 1;   //use for debugging
   //calculate their angle and length
   double semiangle = _element.angle / (double) nSbends;
   double semilength = length / (double) nSbends;
