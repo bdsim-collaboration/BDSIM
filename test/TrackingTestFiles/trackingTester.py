@@ -15,7 +15,7 @@ class Test:
         """
         Tracking test class
 
-        type = 'drift' | 'quadrupole' | 'sextupole'
+        type = 'drift' | 'quadrupole' | 'sextupole' | 'sbend' | 'solenoid'
         distribution = 'flat' | 'gaussian'
         """
         self.type_        = type_
@@ -115,7 +115,11 @@ class Test:
         elif self.type_ == 'sextupole' :
             name = 's1'
             bm.AddSextupole(name,length=self.length,**self.kwargs)
-            xm.AddSextupole(name,length=self.length,**self.kwargs)        
+            xm.AddSextupole(name,length=self.length,**self.kwargs)
+        elif self.type_ == 'solenoid':
+            name = 'sl1'
+            bm.AddSolenoid(name,length=self.length,**self.kwargs)
+            xm.AddSolenoid(name,length=self.length,**self.kwargs)
 
         bm.AddMarker("theend") # Need a post element marker to sample at, only for bdsim
         
