@@ -38,6 +38,7 @@ private:
 
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
+  virtual void BuildBeampipe(G4String materialName);
 
   virtual void SetVisAttributes();
 };
