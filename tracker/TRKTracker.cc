@@ -43,11 +43,16 @@ void TRKTracker::Track(TRKBunch* bunch)
   BDSGlobalConstants::Instance()->ResetTurnNumber(); //used in output data
   for (unsigned int i=0; i<maxTurns; i++) 
     {
+      //check if all particles have been lost before turns completed
+      if (bunch->empty()) {break;}
       std::cout << "Turn Number: " << i << " / " << maxTurns << std::endl;
       //iterate over beamline elements
       for (elIter = line->begin();elIter!=line->end(); ++elIter) 
 	{
-	  //calculate optical functions if required
+	  //check if all particles have been lost after previous element
+	  if (bunch->empty()) {break;}
+	  
+	  //calculate optical functions if required - TBC
 
 	  //track all particles through an element
 	  (*elIter)->Track(bunch,strategy);
