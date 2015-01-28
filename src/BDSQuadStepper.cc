@@ -1,22 +1,8 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
-// This code implementation is the intellectual property of
-// the GEANT4 collaboration.
-//
-// By copying, distributing or modifying the Program (or any work
-// based on the Program) you indicate your acceptance of this statement,
-// and all its terms.
-//
-// $Id: BDSQuadStepper.cc,v 1.7 2007/11/14 12:43:25 malton Exp $
-//
-
 #include "BDSQuadStepper.hh"
 #include "G4ThreeVector.hh"
 #include "G4TransportationManager.hh"
+#include "G4Navigator.hh"
+#include "G4AffineTransform.hh"
 
 using std::max;
 extern G4double BDSLocalRadiusOfCurvature;
@@ -45,16 +31,16 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
 
 #ifdef BDSDEBUG
   G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
-  G4cout << "BDSQuadStepper: step= " << h/CLHEP::m << " m" << G4endl
-         << " x= " << yIn[0]/CLHEP::m << "m" << G4endl
-         << " y= " << yIn[1]/CLHEP::m << "m" << G4endl
-         << " z= " << yIn[2]/CLHEP::m << "m" << G4endl
-         << " px= " << yIn[3]/CLHEP::GeV << "GeV/c" << G4endl
-         << " py= " << yIn[4]/CLHEP::GeV << "GeV/c" << G4endl
-         << " pz= " << yIn[5]/CLHEP::GeV << "GeV/c" << G4endl
-         << " q= " << charge/CLHEP::eplus << "e" << G4endl
-         << " dBy/dx= " << itsBGrad/(CLHEP::tesla/CLHEP::m) << "T/m" << G4endl
-         << " k= " << kappa/(1./CLHEP::m2) << "m^-2" << G4endl
+  G4cout << "BDSQuadStepper: step = " << h/CLHEP::m << " m" << G4endl
+         << " x  = " << yIn[0]/CLHEP::m     << " m"     << G4endl
+         << " y  = " << yIn[1]/CLHEP::m     << " m"     << G4endl
+         << " z  = " << yIn[2]/CLHEP::m     << " m"     << G4endl
+         << " px = " << yIn[3]/CLHEP::GeV   << " GeV/c" << G4endl
+         << " py = " << yIn[4]/CLHEP::GeV   << " GeV/c" << G4endl
+         << " pz = " << yIn[5]/CLHEP::GeV   << " GeV/c" << G4endl
+         << " q  = " << charge/CLHEP::eplus << " e"     << G4endl
+         << " dBy/dx = " << itsBGrad/(CLHEP::tesla/CLHEP::m) << " T/m" << G4endl
+         << " k = " << kappa/(1./CLHEP::m2) << " m^-2" << G4endl
          << G4endl; 
 #endif
 

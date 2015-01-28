@@ -1,23 +1,8 @@
-//  
-//   BDSIM, (C) 2001-2007
-//   
-//   version 0.4
-//  
-//
-//
-//   Stepper for Solenoid magnetic field
-//
-//
-//   History
-//
-//     21 Oct 2007 by Marchiori,  v.0.4
-//
-//
-
-#include "BDSGlobalConstants.hh" 
 #include "BDSSolenoidStepper.hh"
 #include "G4ThreeVector.hh"
 #include "G4TransportationManager.hh"
+#include "G4Navigator.hh"
+#include "G4AffineTransform.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
 

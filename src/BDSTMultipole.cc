@@ -1,12 +1,3 @@
-/* BDSIM
-
-19 May 2008 by Marchiori G.
-17 Apr 2006 by Ilya Agapov
-
-*/
-
-//==============================================================
-
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSTMultipole.hh"
@@ -22,7 +13,6 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-//============================================================
 
 BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength, 
 			     G4double bpRad, G4double FeRad,
@@ -103,10 +93,9 @@ void BDSTMultipole::SetVisAttributes()
 void BDSTMultipole::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
-  itsMagField=new BDSMultipoleMagField(kn,ks);
-  itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
-  //  itsStepper=new G4HelixImplicitEuler(itsEqRhs);
-  itsStepper=new G4SimpleRunge(itsEqRhs);
+  itsMagField = new BDSMultipoleMagField(kn,ks);
+  itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
+  itsStepper  = new G4SimpleRunge(itsEqRhs);
 }
 
 BDSTMultipole::~BDSTMultipole()

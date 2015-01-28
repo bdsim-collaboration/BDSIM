@@ -43,11 +43,11 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
 #endif
 
   const G4double *pIn = yIn+3;
-  G4ThreeVector v0= G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
+  G4ThreeVector v0    = G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
 
-  G4ThreeVector GlobalPosition= G4ThreeVector( yIn[0], yIn[1], yIn[2]);  
-  G4double InitMag=v0.mag();
-  G4ThreeVector InitMomDir=v0.unit();
+  G4ThreeVector GlobalPosition = G4ThreeVector( yIn[0], yIn[1], yIn[2]);  
+  G4double      InitMag        = v0.mag();
+  G4ThreeVector InitMomDir     = v0.unit();
   
   //G4double h2=h*h;
 
@@ -70,13 +70,9 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
   // advance the orbit
  
   G4ThreeVector itsFinalPoint,itsFinalDir;
-  
   G4ThreeVector yhat(0.,1.,0.);
-
-  G4ThreeVector vhat=LocalRp;
-  
-  G4ThreeVector vnorm=vhat.cross(yhat);
-   
+  G4ThreeVector vhat  = LocalRp;
+  G4ThreeVector vnorm = vhat.cross(yhat);
   G4double R;
   
 
@@ -86,8 +82,7 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
     R=DBL_MAX;
 
 
- // include the sign of the charge of the particles
-
+  // include the sign of the charge of the particles
   if(  fPtrMagEqOfMot->FCof()<0) R*=-1.;
   else if ( fPtrMagEqOfMot->FCof()==0) R=DBL_MAX;
 

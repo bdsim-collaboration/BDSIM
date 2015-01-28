@@ -1,18 +1,3 @@
-//  
-//   BDSIM, (C) 2001-2007
-//   
-//   version 0.4
-//
-
-//
-// class BDSSolenoidStepper
-//
-// Class description:
-// stepper for solenoid magnetic field
-
-// History:
-//
-
 #ifndef BDSSOLENOIDSTEPPER_HH
 #define BDSSOLENOIDSTEPPER_HH
 #include "globals.hh"
