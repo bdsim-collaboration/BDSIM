@@ -47,12 +47,11 @@ protected:
   // A first order Step along a solenoid inside the field.
 
 private:
-  
-  G4Mag_EqRhs*  fPtrMagEqOfMot;
-
+  G4Navigator* SolenoidNavigator;
+  G4Mag_EqRhs* fPtrMagEqOfMot;
   G4double itsBField;
-
   G4double itsDist;
+  //G4double pitch;
 
 };
 
