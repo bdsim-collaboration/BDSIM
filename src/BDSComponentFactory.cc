@@ -27,8 +27,11 @@
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
 #include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
+
 #include "parser/enums.h"
 #include "parser/elementlist.h"
+
+#include "BDSDebug.hh"
 
 #include <cmath>
 #include <sstream>
@@ -589,6 +592,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
   // from formula: L/2 / N tan (angle/N) < precision. (L=physical length)
   int nSbends = (int) ceil(std::sqrt(std::abs(length*_element.angle/2/aperturePrecision)));
   //nSbends = 1;   //use for debugging
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " splitting sbend into " << nSbends << " sbends" << G4endl;
+#endif
   //calculate their angle and length
   double semiangle = _element.angle / (double) nSbends;
   double semilength = length / (double) nSbends;
