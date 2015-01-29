@@ -1,4 +1,6 @@
 #include "BDSSolenoidStepper.hh"
+#include "BDSDebug.hh"
+
 #include "G4ThreeVector.hh"
 #include "G4TransportationManager.hh"
 #include "G4Navigator.hh"
@@ -223,7 +225,7 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
          << " py = " << yIn[4]/CLHEP::GeV << " GeV/c" << G4endl
          << " pz = " << yIn[5]/CLHEP::GeV << " GeV/c" << G4endl
          << " q  = " << charge/CLHEP::eplus << "e" << G4endl
-         << " Bz = " << itsBField/(CLHEP::tesla/CLHEP::m) << " T/m" << G4endl
+         << " Bz = " << itsBField/(CLHEP::tesla/CLHEP::m) << " T" << G4endl
          << " k  = " << kappa/(1./CLHEP::m2) << " m^-2" << G4endl
          << G4endl; 
 #endif
@@ -282,158 +284,167 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
 #ifdef BDSDEBUG 
   G4cout << " curvature= " << R_1*CLHEP::m << "m^-1" << G4endl;
 #endif
-  /*
-  //if(R_1 > 1e-12)
-  if(true)
-  {*/
+
+  if (R_1<1e-15)
+    {
+      // very radius of curvature - treat as drift
+      G4ThreeVector positionMove = h * InitMomDir;
+      
+      yOut[0] = yIn[0] + positionMove.x(); 
+      yOut[1] = yIn[1] + positionMove.y(); 
+      yOut[2] = yIn[2] + positionMove.z(); 
+      
+      yOut[3] = GlobalP.x();
+      yOut[4] = GlobalP.y();
+      yOut[5] = GlobalP.z();
+
+      itsDist=0;
+      return;
+    }
+
 #ifdef BDSDEBUG
-  G4cout << "Local radius of curvature > 1 -> using thick matrix " << G4endl;
+  G4cout << __METHOD_NAME__ << " using thick matrix " << G4endl;
 #endif
-  G4double R=1./R_1;
   
-  // Save for Synchrotron Radiation calculations:
+  // Save for Synchrotron Radiation calculations
+  G4double R=1./R_1;
   BDSLocalRadiusOfCurvature=R;
   
   // chord distance (simple quadratic approx)
   itsDist= h2/(8*R);
-  /*
+
   // check for paraxial approximation:
   if(fabs(zp0)>0.9)
-  {*/
-  G4double w       = kappa;
-  G4double wL      = kappa*h; //really omega - so use 'O' to describe
-  G4double cosOL   = cos(wL);
-  G4double cosSqOL = cosOL*cosOL;
-  G4double sinOL   = sin(wL);
-  G4double sin2OL  = sin(2.0*wL);
-  G4double sinSqOL = sinOL*sinOL;
-  G4cout << w << " " << wL << " "<<cosOL<<" "<<cosSqOL<<" "<<sinOL<<G4endl;
-  G4cout <<sin2OL<< " "<<sinSqOL<< G4endl;
-  
-  //RMatrix
-  //  ( cos^2 (wL)     , (1/2w)sin(2wL)  , (1/2)sin(2wL)  , (1/w)sin^2(wL) )
-  //  ( (w/2)sin(2wL)  , cos^2(wL)       ,  -w sin^2(wL)  , (1/2)sin(2wL)  )
-  //  ( -(1/2)sin(2wL) , (-1/w)sin^2(wL) , cos^2(wL)      , (1/2w)sin(2wL) )
-  //  ( w sin^2(wL)    , (-1/2)sin(2wL)  , (-w/2)sin(2wL) , cos^2(wL)      )
-  
-  // calculate thick lens transfer matrix
-  x1  = x0*cosSqOL + (0.5*xp0/w)*sin2OL + (0.5*y0)*sin2OL + (yp0/w)*sinSqOL;
-  xp1 = (0.5*x0*w)*sin2OL + xp0*cosSqOL - (w*y0)*sinSqOL + (0.5*yp0)*sin2OL;
-  y1  = (-0.5*x0) - (xp0*w)*sinSqOL + y0*cosSqOL + (0.5*yp0/w)*sin2OL;
-  yp1 = x0*w*sinSqOL - (0.5*xp0)*sin2OL - (0.5*w*y0)*sin2OL + yp0*cosSqOL;
-  
-  G4cout << x1/CLHEP::m << " " << xp1 << " " << y1/CLHEP::m << " " << yp1 << G4endl;
-  
-  
-  // enusre normalisation for vector
-  z1p = sqrt(1 - x1p*x1p -y1p*y1p);
-  
-  // calculate deltas to existing coords
-  G4double dx = x1-x0;
-  G4double dy = y1-y0;
-  
-  // Linear chord length
-  G4double dR2 = dx*dx+dy*dy;
-  G4double dz  = sqrt(h2*(1.-h2/(12*R*R))-dR2);
-  
-  // check for precision problems
-  G4double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;
-  if(ScaleFac>1.0000001)
-  {
-  ScaleFac=sqrt(ScaleFac);
-  dx/=ScaleFac;
-  dy/=ScaleFac;
-  dz/=ScaleFac;
-  x1=x0+dx;
-  y1=y0+dy;
-  }
-  z1=z0+dz;
-  //*/
-  //z1  = z0+h;
-  //zp1 = zp0;
-  /*
+    {
+      //RMatrix
+      //  ( cos^2 (wL)     , (1/2w)sin(2wL)  , (1/2)sin(2wL)  , (1/w)sin^2(wL) )
+      //  ( (w/2)sin(2wL)  , cos^2(wL)       ,  -w sin^2(wL)  , (1/2)sin(2wL)  )
+      //  ( -(1/2)sin(2wL) , (-1/w)sin^2(wL) , cos^2(wL)      , (1/2w)sin(2wL) )
+      //  ( w sin^2(wL)    , (-1/2)sin(2wL)  , (-w/2)sin(2wL) , cos^2(wL)      )
+      
+      G4double w       = kappa;
+      G4double wL      = kappa*h; //really omega - so use 'O' to describe
+      G4double cosOL   = cos(wL);
+      G4double cosSqOL = cosOL*cosOL;
+      G4double sinOL   = sin(wL);
+      G4double sin2OL  = sin(2.0*wL);
+      G4double sinSqOL = sinOL*sinOL;
+      
+      // calculate thick lens transfer matrix
+      x1  = x0*cosSqOL + (0.5*xp0/w)*sin2OL + (0.5*y0)*sin2OL + (yp0/w)*sinSqOL;
+      xp1 = (0.5*x0*w)*sin2OL + xp0*cosSqOL - (w*y0)*sinSqOL + (0.5*yp0)*sin2OL;
+      y1  = (-0.5*x0)*sin2OL - (xp0*w)*sinSqOL + y0*cosSqOL + (0.5*yp0/w)*sin2OL;
+      yp1 = x0*w*sinSqOL - (0.5*xp0)*sin2OL - (0.5*w*y0)*sin2OL + yp0*cosSqOL;  
+      
+      // enusre normalisation for vector
+      zp1 = sqrt(1 - xp1*xp1 -yp1*yp1);
+      
+      // calculate deltas to existing coords
+      G4double dx = x1-x0;
+      G4double dy = y1-y0;
+      
+      // Linear chord length
+      G4double dR2 = dx*dx+dy*dy;
+      G4double dz  = sqrt(h2*(1.-h2/(12*R*R))-dR2);
+      G4cout << "dz " << dz << G4endl;
+      G4cout << "dz/h " << dz/h << G4endl;
+      
+      // check for precision problems
+      G4double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;
+      G4cout << "Scale factor " << ScaleFac << G4endl;
+      if(ScaleFac>1.0000001)
+	{
+	  ScaleFac=sqrt(ScaleFac);
+	  dx/=ScaleFac;
+	  dy/=ScaleFac;
+	  dz/=ScaleFac;
+	  x1=x0+dx;
+	  y1=y0+dy;
+	}
+      z1=z0+dz;
+      z1 = z0 + h;
+      //
+      //z1  = z0+h;
+      //zp1 = zp0;
     }
-    else
+  else
     // perform local helical steps (paraxial approx not safe)
     {
-    #ifdef BDSDEBUG
-    G4cout << "local helical steps" << G4endl;
-    #endif
-	      // simple quadratic approx:	      
-	      G4double solX = - kappa*x0*zp0;
-	      G4double solY =   kappa*y0*zp0;
-	      G4double solZ =   kappa*(x0*xp0 - y0*yp0);
-	      
-	      // determine maximum curvature:
-	      G4double maxCurv = std:: max(fabs(solX),fabs(solY));
-	      maxCurv          = std:: max(maxCurv,fabs(solZ));
-	      
-	      x1 = x0 + h*xp0 + solX*h2/2;
-	      y1 = y0 + h*yp0 + solY*h2/2; 
-	      z1 = z0 + h*zp0 + solZ*h2/2;
-	      
-	      x1p = xp0 + solX*h;
-	      y1p = yp0 + solY*h;
-	      z1p = zp0 + solZ*h;
-	      
-	      // estimate parameters at end of step:
-	      G4double solX_end= - kappa*x1*z1p;
-	      G4double solY_end=   kappa*y1*z1p;
-	      G4double solZ_end=   kappa*(x1*x1p - y1*y1p);
-	      
-	      // determine maximum curvature:
-	      maxCurv = std::max(maxCurv,fabs(solX_end));
-	      maxCurv = std::max(maxCurv,fabs(solY_end));
-	      maxCurv = std::max(maxCurv,fabs(solZ_end));
-	      itsDist = maxCurv*h2/4.;
-	      
-	      // use the average:
-	      G4double solX_av=(solX+solX_end)/2;
-	      G4double solY_av=(solY+solY_end)/2;
-	      G4double solZ_av=(solZ+solZ_end)/2;
-	      
-	      G4double x_prime_av=(xp0 + x1p)/2;
-	      G4double y_prime_av=(yp0 + y1p)/2;
-	      G4double z_prime_av=(zp0 + z1p)/2;
-	      
-	      x1 = x0 + h*x_prime_av + solX_av * h2/2;
-	      y1 = y0 + h*y_prime_av + solY_av * h2/2; 
-	      z1 = z0 + h*z_prime_av + solZ_av * h2/2;
-	      
-	      x1p = xp0 + solX_av*h;
-	      y1p = yp0 + solY_av*h;
-	      z1p = zp0 + solZ_av*h;
-	      
-	      G4double dx = (x1-x0);
-	      G4double dy = (y1-y0);
-	      G4double dz = (z1-z0);
-	      G4double chord2 = dx*dx + dy*dy + dz*dz;
-	      if(chord2>h2)
-		{
-		  G4double hnew=h*sqrt(h2/chord2);
-		  x1 = x0 + hnew*x_prime_av + solX_av * hnew*hnew/2;
-		  y1 = y0 + hnew*y_prime_av + solY_av * hnew*hnew/2; 
-		  z1 = z0 + hnew*z_prime_av + solZ_av * hnew*hnew/2;
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << " local helical steps" << G4endl;
+#endif
+      //TBC - taken from quadrupole just now!
+      
+      // simple quadratic approx:	      
+      G4double solX = - kappa*x0*zp0;
+      G4double solY =   kappa*y0*zp0;
+      G4double solZ =   kappa*(x0*xp0 - y0*yp0);
+      
+      // determine maximum curvature:
+      G4double maxCurv = std:: max(fabs(solX),fabs(solY));
+      maxCurv          = std:: max(maxCurv,fabs(solZ));
+      
+      x1 = x0 + h*xp0 + solX*h2/2;
+      y1 = y0 + h*yp0 + solY*h2/2; 
+      z1 = z0 + h*zp0 + solZ*h2/2;
+      
+      xp1 = xp0 + solX*h;
+      yp1 = yp0 + solY*h;
+      zp1 = zp0 + solZ*h;
+      
+      // estimate parameters at end of step:
+      G4double solX_end = - kappa*x1*zp1;
+      G4double solY_end =   kappa*y1*zp1;
+      G4double solZ_end =   kappa*(x1*xp1 - y1*yp1);
+      
+      // determine maximum curvature:
+      maxCurv = std::max(maxCurv,fabs(solX_end));
+      maxCurv = std::max(maxCurv,fabs(solY_end));
+      maxCurv = std::max(maxCurv,fabs(solZ_end));
+      itsDist = maxCurv*h2/4.;
+      
+      // use the average:
+      G4double solX_av = (solX+solX_end)/2;
+      G4double solY_av = (solY+solY_end)/2;
+      G4double solZ_av = (solZ+solZ_end)/2;
+      
+      G4double x_prime_av = (xp0 + xp1)/2;
+      G4double y_prime_av = (yp0 + yp1)/2;
+      G4double z_prime_av = (zp0 + zp1)/2;
+      
+      x1 = x0 + h*x_prime_av + solX_av * h2/2;
+      y1 = y0 + h*y_prime_av + solY_av * h2/2; 
+      z1 = z0 + h*z_prime_av + solZ_av * h2/2;
+      
+      xp1 = xp0 + solX_av*h;
+      yp1 = yp0 + solY_av*h;
+      zp1 = zp0 + solZ_av*h;
+      
+      G4double dx = (x1-x0);
+      G4double dy = (y1-y0);
+      G4double dz = (z1-z0);
+      G4double chord2 = dx*dx + dy*dy + dz*dz;
+      if(chord2>h2)
+	{
+	  G4double hnew=h*sqrt(h2/chord2);
+	  x1 = x0 + hnew*x_prime_av + solX_av * hnew*hnew/2;
+	  y1 = y0 + hnew*y_prime_av + solY_av * hnew*hnew/2; 
+	  z1 = z0 + hnew*z_prime_av + solZ_av * hnew*hnew/2;
+	  
+	  xp1 = xp0 + solX_av*hnew;
+	  yp1 = yp0 + solY_av*hnew;
+	  zp1 = zp0 + solZ_av*hnew;
+	}
+    }
 
-		  x1p = xp0 + solX_av*hnew;
-		  y1p = yp0 + solY_av*hnew;
-		  z1p = zp0 + solZ_av*hnew;
-		}
-	    }
-	      */
-  G4cout << "x1 " << x1 << G4endl;
-  G4cout << "LocalR " << LocalR << G4endl;
+  //write the final coordinates
   LocalR.setX(x1);
   LocalR.setY(y1);
   LocalR.setZ(z1);
-  G4cout << LocalR << G4endl;
   LocalRp.setX(xp1);
   LocalRp.setY(yp1);
   LocalRp.setZ(zp1);
-
-  //	}
-
-
+  
 #ifdef BDSDEBUG 
   G4cout << "BDSSolenoidStepper: final point in local coordinates:" << G4endl
 	 << " x  = " << LocalR[0]/CLHEP::m << " m" << G4endl
