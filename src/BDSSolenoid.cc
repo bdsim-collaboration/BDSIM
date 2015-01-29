@@ -42,7 +42,7 @@ void BDSSolenoid::Build()
 void BDSSolenoid::BuildBeampipe(G4String materialName)
 {
   BDSMultipole::BuildBeampipe(materialName);
-  itsInnerBeampipeUserLimits->SetMaxAllowedStep(itsLength*0.1);
+  itsInnerBeampipeUserLimits->SetMaxAllowedStep(itsLength*0.01);
   itsInnerBPLogicalVolume->SetUserLimits(itsInnerBeampipeUserLimits);
 }
 

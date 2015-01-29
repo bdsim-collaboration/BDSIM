@@ -210,8 +210,8 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
   G4ThreeVector GlobalR    = G4ThreeVector( yIn[0], yIn[1], yIn[2]);
   G4ThreeVector GlobalP    = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
   G4ThreeVector InitMomDir = GlobalP.unit();
-  G4double InitPMag        = GlobalP.mag();
-  G4double kappa           = - fPtrMagEqOfMot->FCof()*itsBField/InitPMag;
+  G4double      InitPMag   = GlobalP.mag();
+  G4double      kappa      = - fPtrMagEqOfMot->FCof()*itsBField/InitPMag;
 
 #ifdef BDSDEBUG
   G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
@@ -229,12 +229,19 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
 #endif
 
   G4double      h2 = h*h;
-  G4ThreeVector LocalR,LocalRp ;
+  //G4ThreeVector LocalR,LocalRp ;
 
   // setup our own navigator for calculating transforms
   SolenoidNavigator->SetWorldVolume(G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->GetWorldVolume()); 
   SolenoidNavigator->LocateGlobalPointAndSetup(GlobalR);
 
+  G4AffineTransform GlobalAffine = SolenoidNavigator->
+    GetGlobalToLocalTransform();
+  
+  G4ThreeVector LocalR  = GlobalAffine.TransformPoint(GlobalR); 
+  G4ThreeVector LocalRp = GlobalAffine.TransformAxis(InitMomDir);
+
+  G4double x1,xp1,y1,yp1,z1,zp1;
   
   if (fabs(kappa)<1e-12)
     {
@@ -250,120 +257,108 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
       yOut[5] = GlobalP.z();
 
       itsDist=0;
+      return;
     }
-  else
-    {
-      // finite strength - treat as a solenoid
-      G4AffineTransform GlobalAffine = SolenoidNavigator->
-	GetGlobalToLocalTransform();
-
-      G4ThreeVector LocalR  = GlobalAffine.TransformPoint(GlobalR); 
-      G4ThreeVector LocalRp = GlobalAffine.TransformAxis(InitMomDir);
-
-      G4double x0,xp0,y0,yp0,z0,zp0;
-      G4double x1,x1p,y1,y1p,z1,z1p;
-      x0  = LocalR.x();
-      y0  = LocalR.y();
-      z0  = LocalR.z();
-      xp0 = LocalRp.x();
-      yp0 = LocalRp.y();
-      zp0 = LocalRp.z();
-
-       // local r'' (for curvature)
-      G4ThreeVector LocalRpp;
-      LocalRpp.setX(-zp0*x0);
-      LocalRpp.setY( zp0*y0);
-      LocalRpp.setZ( x0*xp0 - y0*yp0);
-      G4cout << "Local Rpp " << LocalRpp << G4endl;
-      LocalRpp *= kappa;
-      G4cout << "Local Rpp " << LocalRpp << G4endl;
-
-      // determine effective curvature 
-      G4double R_1 = LocalRpp.mag();
+  
+  // finite strength - treat as a solenoid
+  G4double x0  = LocalR.x();
+  G4double y0  = LocalR.y();
+  G4double z0  = LocalR.z();
+  G4double xp0 = LocalRp.x();
+  G4double yp0 = LocalRp.y();
+  G4double zp0 = LocalRp.z();
+  
+  // local r'' (for curvature)
+  G4ThreeVector LocalRpp;
+  LocalRpp.setX(-zp0*x0);
+  LocalRpp.setY( zp0*y0);
+  LocalRpp.setZ( x0*xp0 - y0*yp0);
+  G4cout << "Local Rpp " << LocalRpp << G4endl;
+  LocalRpp *= kappa;
+  G4cout << "Local Rpp " << LocalRpp << G4endl;
+  
+  // determine effective curvature 
+  G4double R_1 = LocalRpp.mag();
 #ifdef BDSDEBUG 
-      G4cout << " curvature= " << R_1*CLHEP::m << "m^-1" << G4endl;
+  G4cout << " curvature= " << R_1*CLHEP::m << "m^-1" << G4endl;
 #endif
-
-      //if(R_1 > 1e-12)
-      if(true)
-	{
+  /*
+  //if(R_1 > 1e-12)
+  if(true)
+  {*/
 #ifdef BDSDEBUG
-	  G4cout << "Local radius of curvature > 1 -> using thick matrix " << G4endl;
+  G4cout << "Local radius of curvature > 1 -> using thick matrix " << G4endl;
 #endif
-	  G4double R=1./R_1;
-
-	  // Save for Synchrotron Radiation calculations:
-	  BDSLocalRadiusOfCurvature=R;
-
-	  // chord distance (simple quadratic approx)
-	  itsDist= h2/(8*R);
-
-	  // check for paraxial approximation:
-	  if(fabs(zp0)>0.9)
-	    {
-	      G4double w       = kappa;
-	      G4double wL      = kappa*h; //really omega - so use 'O' to describe
-	      G4double cosOL   = cos(wL);
-	      G4double cosSqOL = cosOL*cosOL;
-	      G4double sinOL   = sin(wL);
-	      G4double sin2OL  = sin(2.0*wL);
-	      G4double sinSqOL = sinOL*sinOL;
-	      G4cout << w << " " << wL << " "<<cosOL<<" "<<cosSqOL<<" "<<sinOL<<G4endl;
-	      G4cout <<sin2OL<< " "<<sinSqOL<< G4endl;
-	      
-	      //RMatrix
-	      //  ( cos^2 (wL)     , (1/2w)sin(2wL)  , (1/2)sin(2wL)  , (1/w)sin^2(wL) )
- 	      //  ( (w/2)sin(2wL)  , cos^2(wL)       ,  -w sin^2(wL)  , (1/2)sin(2wL)  )
-	      //  ( -(1/2)sin(2wL) , (-1/w)sin^2(wL) , cos^2(wL)      , (1/2w)sin(2wL) )
-	      //  ( w sin^2(wL)    , (-1/2)sin(2wL)  , (-w/2)sin(2wL) , cos^2(wL)      )
-
-	      // calculate thick lens transfer matrix
-	      G4double x1  = 0;
-	      G4double xp1 = 0;
-	      G4double y1  = 0;
-	      G4double yp1 = 0;
-	      x1  = x0*cosSqOL + (0.5*xp0/w)*sin2OL + (0.5*y0)*sin2OL + (yp0/w)*sinSqOL;
-	      xp1 = (0.5*x0*w)*sin2OL + xp0*cosSqOL - (w*y0)*sinSqOL + (0.5*yp0)*sin2OL;
-	      y1  = (-0.5*x0) - (xp0*w)*sinSqOL + y0*cosSqOL + (0.5*yp0/w)*sin2OL;
-	      yp1 = x0*w*sinSqOL - (0.5*xp0)*sin2OL - (0.5*w*y0)*sin2OL + yp0*cosSqOL;
-
-	      G4cout << x1/CLHEP::m << " " << xp1 << " " << y1 << " " << yp1 << G4endl;
-
-	      /*
-	      // enusre normalisation for vector
-	      z1p = sqrt(1 - x1p*x1p -y1p*y1p);
-
-	      // calculate deltas to existing coords
-	      G4double dx = x1-x0;
-	      G4double dy = y1-y0;
-
-	      // Linear chord length
-              G4double dR2 = dx*dx+dy*dy;
-	      G4double dz  = sqrt(h2*(1.-h2/(12*R*R))-dR2);
-	      
-	      // check for precision problems
-	      G4double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;
-	      if(ScaleFac>1.0000001)
-		{
-		  ScaleFac=sqrt(ScaleFac);
-		  dx/=ScaleFac;
-		  dy/=ScaleFac;
-		  dz/=ScaleFac;
-		  x1=x0+dx;
-		  y1=y0+dy;
-		}
-	      z1=z0+dz;
-	      */
-	      z1=z0;
-	      z1p=zp0;
-	      G4cout << x1 << G4endl;
-	    }
-	  else
-	    // perform local helical steps (paraxial approx not safe)
-	    {
-#ifdef BDSDEBUG
-	      G4cout << "local helical steps" << G4endl;
-#endif
+  G4double R=1./R_1;
+  
+  // Save for Synchrotron Radiation calculations:
+  BDSLocalRadiusOfCurvature=R;
+  
+  // chord distance (simple quadratic approx)
+  itsDist= h2/(8*R);
+  /*
+  // check for paraxial approximation:
+  if(fabs(zp0)>0.9)
+  {*/
+  G4double w       = kappa;
+  G4double wL      = kappa*h; //really omega - so use 'O' to describe
+  G4double cosOL   = cos(wL);
+  G4double cosSqOL = cosOL*cosOL;
+  G4double sinOL   = sin(wL);
+  G4double sin2OL  = sin(2.0*wL);
+  G4double sinSqOL = sinOL*sinOL;
+  G4cout << w << " " << wL << " "<<cosOL<<" "<<cosSqOL<<" "<<sinOL<<G4endl;
+  G4cout <<sin2OL<< " "<<sinSqOL<< G4endl;
+  
+  //RMatrix
+  //  ( cos^2 (wL)     , (1/2w)sin(2wL)  , (1/2)sin(2wL)  , (1/w)sin^2(wL) )
+  //  ( (w/2)sin(2wL)  , cos^2(wL)       ,  -w sin^2(wL)  , (1/2)sin(2wL)  )
+  //  ( -(1/2)sin(2wL) , (-1/w)sin^2(wL) , cos^2(wL)      , (1/2w)sin(2wL) )
+  //  ( w sin^2(wL)    , (-1/2)sin(2wL)  , (-w/2)sin(2wL) , cos^2(wL)      )
+  
+  // calculate thick lens transfer matrix
+  x1  = x0*cosSqOL + (0.5*xp0/w)*sin2OL + (0.5*y0)*sin2OL + (yp0/w)*sinSqOL;
+  xp1 = (0.5*x0*w)*sin2OL + xp0*cosSqOL - (w*y0)*sinSqOL + (0.5*yp0)*sin2OL;
+  y1  = (-0.5*x0) - (xp0*w)*sinSqOL + y0*cosSqOL + (0.5*yp0/w)*sin2OL;
+  yp1 = x0*w*sinSqOL - (0.5*xp0)*sin2OL - (0.5*w*y0)*sin2OL + yp0*cosSqOL;
+  
+  G4cout << x1/CLHEP::m << " " << xp1 << " " << y1/CLHEP::m << " " << yp1 << G4endl;
+  
+  
+  // enusre normalisation for vector
+  z1p = sqrt(1 - x1p*x1p -y1p*y1p);
+  
+  // calculate deltas to existing coords
+  G4double dx = x1-x0;
+  G4double dy = y1-y0;
+  
+  // Linear chord length
+  G4double dR2 = dx*dx+dy*dy;
+  G4double dz  = sqrt(h2*(1.-h2/(12*R*R))-dR2);
+  
+  // check for precision problems
+  G4double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;
+  if(ScaleFac>1.0000001)
+  {
+  ScaleFac=sqrt(ScaleFac);
+  dx/=ScaleFac;
+  dy/=ScaleFac;
+  dz/=ScaleFac;
+  x1=x0+dx;
+  y1=y0+dy;
+  }
+  z1=z0+dz;
+  //*/
+  //z1  = z0+h;
+  //zp1 = zp0;
+  /*
+    }
+    else
+    // perform local helical steps (paraxial approx not safe)
+    {
+    #ifdef BDSDEBUG
+    G4cout << "local helical steps" << G4endl;
+    #endif
 	      // simple quadratic approx:	      
 	      G4double solX = - kappa*x0*zp0;
 	      G4double solY =   kappa*y0*zp0;
@@ -425,54 +420,46 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
 		  z1p = zp0 + solZ_av*hnew;
 		}
 	    }
-	    
-	  G4cout << x1 << G4endl;
-	  LocalR.setX(x1);
-	  LocalR.setY(y1);
-	  LocalR.setZ(z1);
-	  G4cout << LocalR << G4endl;
-	  LocalRp.setX(x1p);
-	  LocalRp.setY(y1p);
-	  LocalRp.setZ(z1p);
+	      */
+  G4cout << "x1 " << x1 << G4endl;
+  G4cout << "LocalR " << LocalR << G4endl;
+  LocalR.setX(x1);
+  LocalR.setY(y1);
+  LocalR.setZ(z1);
+  G4cout << LocalR << G4endl;
+  LocalRp.setX(xp1);
+  LocalRp.setY(yp1);
+  LocalRp.setZ(zp1);
 
-	}
-      else //if curvature = 0 ...
-        {
-	  G4cout << "Local radius of curvature 0 -> drifting" << G4endl;
-	  G4cout << LocalR << G4endl;
-	  LocalR += h*LocalRp;
-	  G4cout << LocalR << G4endl;
-	  itsDist=0.;
-	}
+  //	}
+
 
 #ifdef BDSDEBUG 
-      G4cout << "BDSSolenoidStepper: final point in local coordinates:" << G4endl
-             << " x  = " << LocalR[0]/CLHEP::m << " m" << G4endl
-             << " y  = " << LocalR[1]/CLHEP::m << " m" << G4endl
-             << " z  = " << LocalR[2]/CLHEP::m << " m" << G4endl
-             << " x' = " << LocalRp[0]         << G4endl
-             << " y' = " << LocalRp[1]         << G4endl
-             << " z' = " << LocalRp[2]         << G4endl
-             << G4endl; 
+  G4cout << "BDSSolenoidStepper: final point in local coordinates:" << G4endl
+	 << " x  = " << LocalR[0]/CLHEP::m << " m" << G4endl
+	 << " y  = " << LocalR[1]/CLHEP::m << " m" << G4endl
+	 << " z  = " << LocalR[2]/CLHEP::m << " m" << G4endl
+	 << " x' = " << LocalRp[0]         << G4endl
+	 << " y' = " << LocalRp[1]         << G4endl
+	 << " z' = " << LocalRp[2]         << G4endl
+	 << G4endl; 
 #endif
 
-      G4AffineTransform LocalAffine = SolenoidNavigator-> 
-      	GetLocalToGlobalTransform();
-
-      GlobalR = LocalAffine.TransformPoint(LocalR); 
-      GlobalP = InitPMag*LocalAffine.TransformAxis(LocalRp);
-
-      yOut[0] = GlobalR.x(); 
-      yOut[1] = GlobalR.y(); 
-      yOut[2] = GlobalR.z(); 
-
-      yOut[3] = GlobalP.x();
-      yOut[4] = GlobalP.y();
-      yOut[5] = GlobalP.z();
-      
-    }
- 
-}    
+  G4AffineTransform LocalAffine = SolenoidNavigator-> 
+    GetLocalToGlobalTransform();
+  
+  GlobalR = LocalAffine.TransformPoint(LocalR); 
+  GlobalP = InitPMag*LocalAffine.TransformAxis(LocalRp);
+  
+  yOut[0] = GlobalR.x(); 
+  yOut[1] = GlobalR.y(); 
+  yOut[2] = GlobalR.z(); 
+  
+  yOut[3] = GlobalP.x();
+  yOut[4] = GlobalP.y();
+  yOut[5] = GlobalP.z();
+  
+}  
 
 
 void BDSSolenoidStepper::Stepper( const G4double yInput[],
