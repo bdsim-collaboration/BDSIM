@@ -16,6 +16,8 @@ of the ring after a certain number of turns.
 #include "G4UserLimits.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSExecOptions.hh"
+#include "G4Track.hh"
+#include "BDSDebug.hh"
 
 // basic inheritance - just use everything normally from G4UserLimits but 
 // replace one function in inherited class
@@ -50,13 +52,20 @@ BDSTerminatorUserLimits::BDSTerminatorUserLimits(const G4String& type,
   verbose = BDSExecOptions::Instance()->GetVerbose();
 }
 
-inline G4double BDSTerminatorUserLimits::GetUserMinEkine(const G4Track&)
+inline G4double BDSTerminatorUserLimits::GetUserMinEkine(const G4Track& trk)
 {
   // does the number of turns passed == number of turns to take
-if (BDSGlobalConstants::Instance()->GetTurnsTaken() == BDSGlobalConstants::Instance()->GetTurnsToTake())
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " turns taken : " << BDSGlobalConstants::Instance()->GetTurnsTaken() << G4endl;
+#endif
+  if ((BDSGlobalConstants::Instance()->GetTurnsTaken() == BDSGlobalConstants::Instance()->GetTurnsToTake())
+      && trk.GetTrackLength()/CLHEP::m > 1.0*CLHEP::m)
     {
+      //only stop if it's travelled at least one metre - protects against starting distribution
+      //starting inside terminator
       if (verbose){
 	G4cout << "Requested number of turns completed - stopping all particles" << G4endl;
+	G4cout << "Track length: " << trk.GetTrackLength()/CLHEP::m << " m" << G4endl;
       }
       return stoprunningEK;
     } // yes - stop: return DBL_MAX eV so no particles will be tracked

@@ -9,8 +9,6 @@
 #include <iostream>
 #include <iomanip>
 
-#include "tracker/TRKBunch.hh"
-
 BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
 {
   time_t currenttime;
@@ -21,16 +19,20 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
   // generate filenames
   G4String basefilename = BDSExecOptions::Instance()->GetOutputFilename();
   filename = basefilename + ".txt"; //main output filename - for samplers
-  G4String filenamePrimaries = basefilename + ".primaries.txt"; // for primaries
-  G4String filenameELoss     = basefilename + ".eloss.txt"; //for eloss hits
-  G4String filenameHistogram = basefilename + ".elosshist.txt"; // eloss histogram
+  G4String filenamePrimaries  = basefilename + ".primaries.txt"; // primaries
+  G4String filenameELoss      = basefilename + ".eloss.txt";     // energy loss hits
+  G4String filenameHistogram  = basefilename + ".elosshist.txt"; // eneryg loss histogram
+  G4String filenamePLoss      = basefilename + ".ploss.txt";     // primary loss hits
+  G4String filenamePHistogram = basefilename + ".plosshist.txt"; // primary loss histogram
 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Output format ASCII" << G4endl;
-  G4cout << "Output filename          : " << filename  << G4endl;
-  G4cout << "Primaries filename       : " << filenamePrimaries << G4endl;
-  G4cout << "Histogram filename       : " << filenameHistogram << G4endl;
-  G4cout << "EnergyLoss Hits filename : " << filenameELoss     << G4endl;
+  G4cout << __METHOD_NAME__ << "Output format ASCII - filenames:" << G4endl;
+  G4cout << "Output                 : " << filename           << G4endl;
+  G4cout << "Primaries              : " << filenamePrimaries  << G4endl;
+  G4cout << "Energy Loss Histogram  : " << filenameHistogram  << G4endl;
+  G4cout << "Energy Loss Hits       : " << filenameELoss      << G4endl;
+  G4cout << "Primary Loss Histogram : " << filenamePHistogram << G4endl;
+  G4cout << "Primary Loss Hits      : " << filenamePLoss      << G4endl;
 #endif
   std::stringstream headerstream;
   headerstream << std::left << std::setprecision(10) << std::fixed
@@ -64,6 +66,11 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
   ofELoss.open(filenameELoss.c_str());
   ofELoss      << "### BDSIM energy loss hits output - created " << timestring <<G4endl;
   ofELoss      << headerstring;
+
+  // primary loss hits output file initialisation
+  ofPLoss.open(filenamePLoss.c_str());
+  ofPLoss      << "### BDSIM primary loss hits output - created " << timestring <<G4endl;
+  ofPLoss      << headerstring;
   
   // energy loss histogram and output file initialisation
   // construct histogram
@@ -82,6 +89,20 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
 		   << std::setw(20) << "S[m]"   << " "
 		   << std::setw(15) << "E[GeV]" << " "
 		   << G4endl;
+  
+  // primary loss histogram and output file initialisation
+  // construct histogram
+  // binning is the same as eloss
+  phist    = new BDSHistogram1D(xmin,xmax,nbins); //naturally in metres
+  // write header info
+  ofPLossHistogram.open(filenamePHistogram.c_str());
+  ofPLossHistogram << *hist << " - created " << timestring << G4endl;
+  ofPLossHistogram << std::left << std::setprecision(10) << std::fixed
+		   << std::setw(20) << "S[m]"   << " "
+		   << std::setw(15) << "Number" << " "
+		   << G4endl;
+
+
 }
 
 BDSOutputASCII::~BDSOutputASCII()
@@ -98,10 +119,20 @@ BDSOutputASCII::~BDSOutputASCII()
     ofELoss.flush();
     ofELoss.close();
   }
+  if (ofPLoss.is_open()) {
+    ofPLoss.flush();
+    ofPLoss.close();
+  }
   if (ofELossHistogram.is_open()) {
     ofELossHistogram.flush();
     ofELossHistogram.close();
   }
+  if (ofPLossHistogram.is_open()) {
+    ofPLossHistogram.flush();
+    ofPLossHistogram.close();
+  }
+  delete hist;
+  delete phist;
 }
 
 void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile, G4int PDGType, G4double Mom, G4double X, G4double Y, G4double Z, G4double S, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID, G4int TurnsTaken)
@@ -189,49 +220,42 @@ void BDSOutputASCII::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
   ofELoss.flush();
 }
 
-void BDSOutputASCII::WriteTrackerBunch(G4String /*samplerName*/, TRKBunch* bunch, bool primary)
+void BDSOutputASCII::WritePrimaryLoss(BDSEnergyCounterHit* hit)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << std::endl;
-#endif
-  //only difference between primaries and normal output here is the file stream
-  std::ofstream* outfile;
-  if (primary)
-    {outfile = &ofPrimaries;}
-  else 
-    {outfile = &ofMain;}
-  //turns taken same for all particles in bunch
-  int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
-  //loop over bunch and write using ascii method
-  //NOTE WRITEASCIIHIT divides by clhep units and tracker doesn't use the clhep units
-  //so it must be first multiplied back to be divided by writeasciihit
-  for (TRKBunchIter it = bunch->begin(); it != bunch->end(); ++it) {
-    WriteAsciiHit(
-		  outfile,
-		  0, //TBC - requires geant4 or modification of particledefinitiontable
-		  it->E()*CLHEP::GeV,//convert to GeV
-		  it->X()*CLHEP::um, //um
-		  it->Y()*CLHEP::um, //um
-		  it->Z()*CLHEP::um, //convert to um
-		  it->Z()*CLHEP::m, //note z and s are synonymous in tracker - convert to m
-		  it->Xp()*CLHEP::radian, //leave in rad
-		  it->Yp()*CLHEP::radian, //leave in rad
-		  it->EventID(),
-		  1,
-		  0,
-		  0,
-		  turnstaken
-		  );
-  }
+  phist->Fill(hit->GetS()/CLHEP::m); //no weighting by energy - done in external analysis
+
+  WriteAsciiHit(
+		&ofPLoss,
+		hit->GetPartID(),
+		hit->GetEnergy(),
+		hit->GetX(),
+		hit->GetY(),
+		hit->GetZ(),
+		hit->GetS(),
+		0.0,//hit->GetXPrime(),
+		0.0,//hit->GetYPrime(),
+		0,//hit->GetEventNo(),
+		hit->GetWeight(),
+		0,//hit->GetParentID(),
+		0,//hit->GetTrackID(),
+		hit->GetTurnsTaken()
+		);
+  ofPLoss.flush();
 }
+
+void BDSOutputASCII::WritePrimaryHit(BDSEnergyCounterHit* /*hit*/)
+{}
 
 void BDSOutputASCII::Commit()
 {
   ofMain.flush();
   ofPrimaries.flush();
   ofELoss.flush();
-  WriteHistogram();
+  ofPLoss.flush();
+  WriteHistogram(hist,&ofELossHistogram);
+  WriteHistogram(phist,&ofPLossHistogram);
   ofELossHistogram.flush();
+  ofPLossHistogram.flush();
   /// multiple file writing not implemented for ASCII
 }
 
@@ -243,33 +267,32 @@ void BDSOutputASCII::Write()
   ofPrimaries.close();
   ofELoss.flush();
   ofELoss.close();
-  WriteHistogram();
-  ofELossHistogram.flush();
+  ofPLoss.flush();
+  ofPLoss.close();
+  WriteHistogram(hist,&ofELossHistogram);
+  WriteHistogram(phist,&ofPLossHistogram);
   ofELossHistogram.close();
+  ofPLossHistogram.close();
 }
 
-void BDSOutputASCII::WriteHistogram()
+void BDSOutputASCII::WriteHistogram(BDSHistogram1D* aHist, std::ofstream* anOf)
 {
-  std::vector<BDSBin*> thebins = hist->GetBins();
+  std::vector<BDSBin*> thebins = aHist->GetBins();
   std::vector<BDSBin*>::iterator i = thebins.begin();
-  ofELossHistogram << std::left << std::setprecision(10) << std::fixed
-		   << std::setw(12) << "underflow" << thebins.front()->GetValue() << G4endl
-		   << std::setw(12) << "overflow"  << thebins.back()->GetValue()  << G4endl;
+  *anOf << std::left << std::setprecision(10) << std::fixed
+	<< std::setw(12) << "underflow" << thebins.front()->GetValue() << G4endl
+	<< std::setw(12) << "overflow"  << thebins.back()->GetValue()  << G4endl;
   //remember .begin() is before first item, so +2 to get 2nd bin
   for (i = thebins.begin()+1; i != --thebins.end(); ++i)
     {
-  //only write non zero value bins
-  //    if ((*i) != 0)
-  //	{
       std::pair<G4double, G4double> binvalues = (*i)->GetXMeanAndTotal();
 #ifdef BDSDEBUG
       G4cout << "writing bin " << binvalues.first << " " << binvalues.second << G4endl;
 #endif
-      ofELossHistogram << std::left << std::setprecision(10) << std::fixed
-		       << std::setw(12) << binvalues.first  << " " << std::scientific
-		       << std::setw(12) << binvalues.second << " "
-		       << G4endl;
-	  //	}
+      *anOf << std::left << std::setprecision(10) << std::fixed
+	    << std::setw(12) << binvalues.first  << " " << std::scientific
+	    << std::setw(12) << binvalues.second << " "
+	    << G4endl;
     }
-  ofELossHistogram.flush();
+  anOf->flush();
 }

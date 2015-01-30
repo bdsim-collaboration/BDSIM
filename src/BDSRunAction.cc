@@ -12,6 +12,7 @@
 #include "BDSOutputBase.hh" 
 #include "BDSRunAction.hh"
 #include "BDSRunManager.hh"
+#include "BDSDebug.hh"
 
 #include "G4Run.hh"
 //#include "G4UImanager.hh"
@@ -39,7 +40,7 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   starttime = time(NULL);
 
   //Output feedback
-  G4cout << "### Run " << aRun->GetRunID() << " start. Time is " << asctime(localtime(&starttime)) << G4endl;
+  G4cout << __METHOD_NAME__ << " Run " << aRun->GetRunID() << " start. Time is " << asctime(localtime(&starttime)) << G4endl;
 
   //  if (G4VVisManager::GetConcreteInstance())
   //    {
@@ -58,7 +59,7 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   stoptime = time(NULL);
 
   //Output feedback
-  G4cout << "### Run " << aRun->GetRunID() << " end. Time is " << asctime(localtime(&stoptime)) << G4endl;
+  G4cout << __METHOD_NAME__ << "Run " << aRun->GetRunID() << " end. Time is " << asctime(localtime(&stoptime)) << G4endl;
   
   // Write output
   if(BDSExecOptions::Instance()->GetBatch()) {  // Non-interactive mode

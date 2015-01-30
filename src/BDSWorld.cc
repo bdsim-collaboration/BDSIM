@@ -28,8 +28,8 @@ BDSWorld::~BDSWorld(){
   delete _size;
   /*
   delete _solidVolume;
-		  //		    gFlashRegion.back()->SetUserLimits(new G4UserLimits(var->GetLength()/10.0));
-		  //		    MultipleSensVols[i]->SetUserLimits(new G4UserLimits(var->GetLength()/10.0));
+		  //		    gFlashRegion.back()->SetUserLimits(new G4UserLimits(var->GetChordLength()/10.0));
+		  //		    MultipleSensVols[i]->SetUserLimits(new G4UserLimits(var->GetChordLength()/10.0));
 b
   delete _logicalVolume;
   delete _physicalVolume;

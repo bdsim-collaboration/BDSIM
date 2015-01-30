@@ -44,7 +44,7 @@ void BDSTeleporterStepper::AdvanceHelix( const G4double  yIn[],
   G4cout << " Telporter Stepper" << G4endl;
   G4cout << "turnstaken " << turnstaken << G4endl;
 #endif
-  //  if (turnstaken == turnnumberrecord.back())
+  //if (turnstaken != turnnumberrecord.back())
   if (1 == 1)
     {
       //do the adjustment
@@ -63,7 +63,7 @@ void BDSTeleporterStepper::AdvanceHelix( const G4double  yIn[],
     }
   else
     {
-      //move the particle along the step without affecting anyting
+      //move the particle along the step without affecting anything (ensure periodicity)
       yOut[0] = yIn[0];
       yOut[1] = yIn[1];
       yOut[2] = yIn[2] + h;

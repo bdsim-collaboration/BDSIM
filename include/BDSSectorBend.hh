@@ -35,11 +35,13 @@ public:
                 G4String aMaterial = "", G4double xAper=0, G4double yAper=0);
   ~BDSSectorBend();
 
-  virtual G4double GetArcLength();
+  virtual G4double GetChordLength();
 
 private:
   G4double itsBField;
   G4double itsBGrad;
+  /// chord length in [m]
+  G4double itsChordLength;
 
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
@@ -55,9 +57,9 @@ private:
 
   virtual void SetVisAttributes();
 
-  // G4int itsNSegments;
-  // G4double itsSegmentLength;
-  // G4double itsSegmentAngle;
+  /// calculate Tube Length for geometry building
+  G4double CalculateTubeLength()const;
+
 };
 
 #endif

@@ -62,7 +62,7 @@
 #include "BDSGeometryInterface.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputBase.hh" 
-#include "BDSOutputFactory.hh" 
+#include "BDSOutputFactory.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
 //#ifdef USE_ROOT
 //#include "BDSScoreWriter.hh"
@@ -86,7 +86,10 @@ void BDS_handle_aborts(int signal_number) {
       Try to catch abort signals. This is not guaranteed to work.
       Main goal is to close output stream / files.
   */
-
+  // prevent recursive calling
+  static int nrOfCalls=0;
+  if (nrOfCalls>0) exit(1);
+  nrOfCalls++;
   std::cout << "BDSIM is about to crash or was interrupted! " << std::endl;
   std::cout << "With signal: " << strsignal(signal_number) << std::endl;
   std::cout << "Trying to write and close output file" << std::endl;
@@ -233,22 +236,17 @@ int main(int argc,char** argv) {
   G4EventManager::GetEventManager()->GetTrackingManager()->SetVerboseLevel(BDSExecOptions::Instance()->GetVerboseTrackingLevel());
   G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager()->SetVerboseLevel(BDSExecOptions::Instance()->GetVerboseSteppingLevel());
   
-  //
   // Close the geometry
-  //
   G4bool bCloseGeometry = G4GeometryManager::GetInstance()->CloseGeometry();
   if(!bCloseGeometry) { 
     G4cerr << "bdsim.cc: error - geometry not closed." << G4endl;
     return 1;
   }
-
-  //
+  
   // set default output formats:
-  //
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
-#endif  
-
+#endif
   bdsOutput = BDSOutputFactory::createOutput(BDSExecOptions::Instance()->GetOutputFormat());
   G4cout.precision(10);
 
@@ -257,11 +255,8 @@ int main(int argc,char** argv) {
   signal(SIGTERM, &BDS_handle_aborts); // termination requests
   signal(SIGSEGV, &BDS_handle_aborts); // segfaults
   signal(SIGINT, &BDS_handle_aborts); // interrupts
-
-  //
+  
   // Write survey file
-  //
-
   if(BDSExecOptions::Instance()->GetOutline()) {
 #ifdef BDSDEBUG 
     G4cout<<"contructing geometry interface"<<G4endl;
@@ -272,7 +267,11 @@ int main(int argc,char** argv) {
     G4cout << __FUNCTION__ << "> Writing survey file"<<G4endl;
 #endif
     if(BDSExecOptions::Instance()->GetOutlineFormat()=="survey") BDSGI->Survey();
-    if(BDSExecOptions::Instance()->GetOutlineFormat()=="optics") BDSGI->Optics();
+    else if(BDSExecOptions::Instance()->GetOutlineFormat()=="optics") BDSGI->Optics();
+    else {
+      G4cout << __FUNCTION__ << "> Outlineformat " << BDSExecOptions::Instance()->GetOutlineFormat() << "is not known! exiting." << G4endl;
+      exit(1);
+    }
   }
 
 

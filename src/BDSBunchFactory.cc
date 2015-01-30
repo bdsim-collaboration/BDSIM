@@ -9,6 +9,7 @@
 #include "BDSBunchSquare.hh"
 #include "BDSBunchUserFile.hh"
 #include "BDSBunchTwiss.hh"
+#include "BDSBunchPtc.hh"
 
 BDSBunchInterface* BDSBunchFactory::createBunch(G4String distribType)
 {
@@ -31,6 +32,8 @@ BDSBunchInterface* BDSBunchFactory::createBunch(G4String distribType)
     bdsBunch = new BDSBunchUserFile();
   else if(distribType == "composite")
     bdsBunch = new BDSBunchComposite();
+  else if(distribType == "ptc") 
+    bdsBunch = new BDSBunchPtc(); 
   else {
     G4cerr << "distribType not found " << distribType << G4endl;
     exit(1);

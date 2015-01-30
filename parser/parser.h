@@ -143,7 +143,7 @@ void set_vector(std::list<int>& dst, struct Array *src)
 #endif
 }
 
-/// method that decides which element properties are used per element type
+/// method that transfers parameters to element properties
 int write_table(struct Parameters pars,const char* name, int type, std::list<struct Element> *lst=NULL);
 int expand_line(const char *name, const char *start, const char *end);
 
@@ -163,14 +163,16 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%d, lset = %d\n", params.k1, params.k2, params.k3, type, params.lset);
 #endif
   struct Element e;
+  
+  e.type = type;
   // common parameters for all elements
   e.name = std::string(name);
   e.lst = NULL;
+  e.l = params.l;
   e.aper = params.aper;
   e.aperX = params.aperX;
   e.aperY = params.aperY;
   e.bpRad = params.bpRad;
-  e.outR = params.outR;
   e.xsize = params.xsize;
   e.ysize = params.ysize;
   e.material = params.material;  
@@ -180,320 +182,104 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.tunnelOffsetX = params.tunnelOffsetX;
   e.precisionRegion = params.precisionRegion;
 
+  // specific parameters
+  // JS: perhaps add a printout warning in case it is not used doesn't match the element; how to do this systematically?
+
   // for transform3ds, lasers and for tracker
   e.xdir = params.xdir;
   e.ydir = params.ydir;
   e.zdir = params.zdir;
-  
-  //specific parameters
+
+  // BLM
+  if(params.blmLocZset)
+    e.blmLocZ = params.blmLocZ;
+  if(params.blmLocThetaset)
+    e.blmLocTheta = params.blmLocTheta;
+
+  // Drift
+  if(params.phiAngleInset)
+    e.phiAngleIn = params.phiAngleIn;
+  if(params.phiAngleOutset)
+    e.phiAngleOut = params.phiAngleOut;
+
+  // Drift, PCL Drift
+  if(params.beampipeThicknessset)
+    e.beampipeThickness = params.beampipeThickness;
+  // aperture for PCL drift
+  if(params.aperYUpset) e.aperYUp = params.aperYUp;	
+  if(params.aperYDownset) e.aperYDown = params.aperYDown;
+  if(params.aperDyset) e.aperDy = params.aperDy;
+  // RF
+  e.gradient = params.gradient;
+  // SBend, RBend, (Awake)Screen
+  e.angle = params.angle;
+  // SBend, RBend
+  e.hgap = params.hgap;
+  // SBend, RBend, HKick, VKick, Quad
+  e.k1 = params.k1;
+  // SBend, RBend, HKick, VKick, Solenoid, MuSpoiler
+  e.B = params.B;
+  // SBend, RBend, HKick, VKick, Quad, Sext, Oct, Mult
+  if(params.tiltset) e.tilt = params.tilt;
+  // Quad
+  e.spec = params.spec;
+  // Sext
+  if(params.k2set) {
+    if (type==_SEXTUPOLE) e.k2 = params.k2;
+    else {
+      printf("Warning: k2 will not be set for element %s of type %d\n",name, type);
+    }
+  }
+  // Octupole
+  if(params.k3set) {
+    if (type==_OCTUPOLE) e.k3 = params.k3;
+    else {
+      printf("Warning: k3 will not be set for element %s of type %d\n",name, type);
+    }
+  }
+  // Multipole
+  if(params.knlset)
+    e.knl = params.knl;
+  if(params.kslset)
+    e.ksl = params.ksl;
+  // Solenoid
+  e.ks = params.ks;
+  // RCOL
+  e.flatlength = params.flatlength;
+  e.taperlength = params.taperlength;
+  // MuSpoiler
+  e.outR = params.outR;
+  e.inR = params.inR;
+  // Laser
+  e.waveLength = params.waveLength;
+  // Element, Tunnel
+  e.geometryFile = params.geometry;
+  // Element
+  e.bmapFile = params.bmap;
+  if(params.bmapZOffsetset)
+    e.bmapZOffset = params.bmapZOffset;
+  // Transform3D
+  e.theta = params.theta;
+  e.phi = params.phi;
+  e.psi = params.psi;
+  // (Awake) Screen
+  e.tscint = params.tscint;
+  e.scintmaterial = params.scintmaterial;
+  // Screen
+  e.airmaterial = params.airmaterial;
+  // AwakeScreen
+  e.twindow = params.twindow;
+  e.windowmaterial = params.windowmaterial;
+
+  // overwriting of other parameters or specific printing
   switch(type) {
 
-  case _MARKER :
-    e.type= _MARKER;
-    break;
-
-  case _DRIFT:
-    e.type = _DRIFT;
-    e.l = params.l;
-    if(params.blmLocZset)
-      e.blmLocZ = params.blmLocZ;
-    if(params.blmLocThetaset)
-      e.blmLocTheta = params.blmLocTheta;
-    if(params.phiAngleInset)
-      e.phiAngleIn = params.phiAngleIn;
-    if(params.phiAngleOutset)
-      e.phiAngleOut = params.phiAngleOut;
-    if(params.beampipeThicknessset)
-      e.beampipeThickness = params.beampipeThickness;
-    break;
-
-  case _PCLDRIFT:
-    e.type = _PCLDRIFT;
-    e.l = params.l;
-    if(params.blmLocZset) e.blmLocZ = params.blmLocZ;
-    if(params.blmLocThetaset) e.blmLocTheta = params.blmLocTheta;
-    if(params.aperYUpset) e.aperYUp = params.aperYUp;	
-    if(params.aperYDownset) e.aperYDown = params.aperYDown;
-    if(params.aperDyset) e.aperDy = params.aperDy;
-    if(params.beampipeThicknessset) e.beampipeThickness = params.beampipeThickness;
-    break;
-
-  case _RF:
-    e.type = _RF;
-    e.l = params.l;
-    e.gradient = params.gradient;
-    if(params.blmLocZset)
-      e.blmLocZ = params.blmLocZ;
-    if(params.blmLocThetaset)
-      e.blmLocTheta = params.blmLocTheta;
-    break;
-
-  case _SBEND:
-    e.type = _SBEND;
-    e.l = params.l;
-    e.B = params.B;
-    e.angle = params.angle;
-    e.hgap = params.hgap;
-    e.k1 = params.k1;
-    if(params.tiltset) e.tilt = params.tilt;
-    if(params.blmLocZset)
-      e.blmLocZ = params.blmLocZ;
-    if(params.blmLocThetaset)
-      e.blmLocTheta = params.blmLocTheta;
-    
-    break;
-
-  case _RBEND:
-    e.type = _RBEND;
-    e.l = params.l;
-    e.B = params.B;
-    e.angle = params.angle;
-    e.hgap = params.hgap;
-    e.k1 = params.k1;
-    if(params.tiltset) e.tilt = params.tilt;
-    if(params.blmLocZset)
-      e.blmLocZ = params.blmLocZ;
-    if(params.blmLocThetaset)
-      e.blmLocTheta = params.blmLocTheta;
-    
-    break;
-
-  case _VKICK:
-    e.type = _VKICK;
-    e.l = params.l;
-    e.B = params.B;
-    e.angle = params.angle;
-    if(params.tiltset) e.tilt = params.tilt;
-    if(params.blmLocZset)
-      e.blmLocZ = params.blmLocZ;
-    if(params.blmLocThetaset)
-      e.blmLocTheta = params.blmLocTheta;
-    
-    break;
-
-  case _HKICK:
-    e.type = _HKICK;
-    e.l = params.l;
-    e.B = params.B;
-    e.angle = params.angle;
-    if(params.tiltset) e.tilt = params.tilt;
-    if(params.blmLocZset)
-      e.blmLocZ = params.blmLocZ;
-    if(params.blmLocThetaset)
-      e.blmLocTheta = params.blmLocTheta;
-    
-    break;
-
-  case _QUAD:
-    e.type = _QUAD;      
-    e.l = params.l;
-    
-    if(params.k0set) {
-      //      if(VERBOSE)
-	printf("Warning: k0 will not be set for element %s of type QUADRUPOLE\n",name);
-    }
-    if(params.k1set) {
-      e.k1 = params.k1;
-    }
-    if(params.k2set) {
-      //      if(VERBOSE)
-	printf("Warning: k2 will not be set for element %s of type QUADRUPOLE\n",name);
-    }
-    if(params.k3set) {
-      //      if(VERBOSE)
-	printf("Warning: k3 will not be set for element %s of type QUADRUPOLE\n",name);
-    }
-    if(params.tiltset) {
-      e.tilt = params.tilt;
-    }
-    e.spec = std::string(params.spec); 
-    if(params.blmLocZset)
-      e.blmLocZ = params.blmLocZ;
-    if(params.blmLocThetaset)
-      e.blmLocTheta = params.blmLocTheta;
-    break;
-
-  case _SEXTUPOLE:
-    e.type = _SEXTUPOLE;
-    e.l = params.l;
-    
-    if(params.k0set) {
-      //      if(VERBOSE)
-	printf("Warning: k0 will not be set for element %s of type SEXTUPOLE\n",name);
-    }
-    if(params.k1set) {
-      //      if(VERBOSE)
-	printf("Warning: k1 will not be set for element %s of type SEXTUPOLE\n",name);
-    }
-    if(params.k2set) {
-      e.k2 = params.k2;
-    }
-    if(params.k3set) {
-      //      if(VERBOSE)
-	printf("Warning: k3 will not be set for element %s of type SEXTUPOLE\n",name);
-    }
-    if(params.tiltset) {
-      e.tilt = params.tilt;
-    }
-    if(params.blmLocZset)
-      e.blmLocZ = params.blmLocZ;
-    if(params.blmLocThetaset)
-      e.blmLocTheta = params.blmLocTheta;
-    break;
-
-  case _OCTUPOLE:
-    e.type = _OCTUPOLE;
-    e.l = params.l;
-    
-    if(params.k0set) {
-      //      if(VERBOSE)
-	printf("Warning: k0 will not be set for element %s of type OCTUPOLE\n",name);
-    }
-    if(params.k1set) {
-      //      if(VERBOSE)
-	printf("Warning: k1 will not be set for element %s of type OCTUPOLE\n",name);
-    }
-    if(params.k2set) {
-      //      if(VERBOSE)
-	printf("Warning: k2 will not be set for element %s of type OCTUPOLE\n",name);
-    }
-    if(params.k3set) {
-      e.k3 = params.k3;
-    }
-    if(params.tiltset) {
-      e.tilt = params.tilt;
-    }
-    if(params.blmLocZset)
-      e.blmLocZ = params.blmLocZ;
-    if(params.blmLocThetaset)
-      e.blmLocTheta = params.blmLocTheta;
-    break;
-
-  case _MULT:
-    e.type = _MULT;
-    e.l = params.l;
-    
-    if(params.knlset)
-      e.knl = params.knl;
-    if(params.kslset)
-      e.ksl = params.ksl;
-    if(params.k0set) {
-      //      if(VERBOSE)
-	printf("Warning: k0 will not be set for element %s of type MULTIPOLE\n",name);
-    }
-    if(params.k1set) {
-      //      if(VERBOSE)
-	printf("Warning: k1 will not be set for element %s of type MULTIPOLE\n",name);
-    }
-    if(params.k2set) {
-      //      if(VERBOSE)
-	printf("Warning: k2 will not be set for element %s of type MULTIPOLE\n",name);
-    }
-    if(params.k3set) {
-      //      if(VERBOSE)
-	printf("Warning: k3 will not be set for element %s of type MULTIPOLE\n",name);
-    }
-    if(params.tiltset) {
-      e.tilt = params.tilt;
-    }
-    if(params.blmLocZset)
-      e.blmLocZ = params.blmLocZ;
-    if(params.blmLocThetaset)
-      e.blmLocTheta = params.blmLocTheta;
-    break;
-
-  case _SOLENOID:
-    e.type = _SOLENOID;
-    e.l = params.l;
-    e.ks = params.ks;
-    e.B = params.B;
-    if(params.blmLocZset)
-      e.blmLocZ = params.blmLocZ;
-    if(params.blmLocThetaset)
-      e.blmLocTheta = params.blmLocTheta;
-    break;
-
-  case _ECOL:
-    e.type = _ECOL;
-    e.l = params.l;
-    e.material = std::string(params.material);
-    if(params.blmLocZset)
-      e.blmLocZ = params.blmLocZ;
-    if(params.blmLocThetaset)
-      e.blmLocTheta = params.blmLocTheta;
-    
-    break;
-
-  case _MUSPOILER:
-    e.type = _MUSPOILER;
-    e.l = params.l;
-    e.B = params.B;
-    e.outR = params.outR;
-    e.inR = params.inR;
-    if(params.blmLocZset)
-      e.blmLocZ = params.blmLocZ;
-    if(params.blmLocThetaset)
-      e.blmLocTheta = params.blmLocTheta;
-    break;
-
-  case _RCOL:
-    e.type = _RCOL;
-    e.l = params.l;
-    e.material = std::string(params.material);
-    e.flatlength = params.flatlength;
-    e.taperlength = params.taperlength;
-    if(params.blmLocZset)
-      e.blmLocZ = params.blmLocZ;
-    if(params.blmLocThetaset)
-      e.blmLocTheta = params.blmLocTheta;
-    break;
-
-  case _LASER:
-    e.type = _LASER;
-    e.l = params.l;
-    e.waveLength = params.waveLength;
-    if(params.blmLocZset)
-      e.blmLocZ = params.blmLocZ;
-    if(params.blmLocThetaset)
-      e.blmLocTheta = params.blmLocTheta;
-    break;
-
-  case _ELEMENT:
-    e.type = _ELEMENT;
-    e.l = params.l;
-    e.geometryFile = std::string(params.geometry);
-    e.bmapFile = std::string(params.bmap);
-    if(params.blmLocZset)
-      e.blmLocZ = params.blmLocZ;
-    if(params.blmLocThetaset)
-      e.blmLocTheta = params.blmLocTheta;
-    if(params.bmapZOffsetset)
-      e.bmapZOffset = params.bmapZOffset;
-    break;
-
   case _LINE:
-    e.lst = lst;
-    e.type = _LINE;
-    break;
-
   case _REV_LINE:
     e.lst = lst;
-    e.type = _REV_LINE;
-    break;
-
-  case _SAMPLER:
-    e.type = _SAMPLER;
-    break;
-    
-  case _TRANSFORM3D:
-    e.type = _TRANSFORM3D;
-    e.theta = params.theta;
-    e.phi = params.phi;
-    e.psi = params.psi;
     break;
 
   case _MATERIAL:
-    e.type = _MATERIAL;
     e.A = params.A;
     e.Z = params.Z;
     e.density = params.density;
@@ -507,7 +293,6 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     return 0;
 
   case _ATOM:
-    e.type = _ATOM;
     e.A = params.A;
     e.Z = params.Z;
     e.symbol = params.symbol;
@@ -515,34 +300,16 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     return 0;
 
   case _TUNNEL:
-    e.type = _TUNNEL;
     e.l = -1;
-    e.geometryFile = std::string(params.geometry);
-    break;
-
-  case _SCREEN:
-    e.type = _SCREEN;
-    e.l = params.l;
-    e.angle = params.angle;
-    e.tscint = params.tscint;
-    e.scintmaterial = std::string(params.scintmaterial);
-    e.airmaterial = params.airmaterial;  
     break;
 
   case _AWAKESCREEN:
-    e.type = _AWAKESCREEN;
-    e.scintmaterial = std::string(params.scintmaterial);
     std::cout << "scintmaterial: " << e.scintmaterial << " " <<  params.scintmaterial << std::endl;
-    e.tscint = params.tscint;
-    e.angle = params.angle;
-    e.twindow = params.twindow;
-    e.windowmaterial = std::string(params.windowmaterial);
     std::cout << "windowmaterial: " << e.windowmaterial << " " <<  params.windowmaterial << std::endl;
     break;
 
   default:
-    break;  
-
+    break;
   }
 
   element_list.push_back(e);

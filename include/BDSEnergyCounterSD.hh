@@ -13,6 +13,7 @@
 #include "G4GFlashSpot.hh"
 #include "G4VGFlashSensitiveDetector.hh"
 
+class G4VProcess;
 class G4Step;
 class G4HCofThisEvent;
 class G4TouchableHistory;
@@ -32,8 +33,8 @@ public:
   void DrawAll();
   void PrintAll();
   G4double GetSPositionOfStep(G4Step* aStep);
-
-  G4int itsHCID;
+  G4double GetSPositionOfSpot(G4GFlashSpot* aSpot);
+  G4String GetName();
 
 private:
   /// assignment and copy constructor not implemented nor used
@@ -42,15 +43,16 @@ private:
 
   G4bool   verbose;
   G4String itsName;
-  BDSEnergyCounterHitsCollection *BDSEnergyCounterCollection;
+  BDSEnergyCounterHitsCollection* energyCounterCollection;
+  BDSEnergyCounterHitsCollection* primaryCounterCollection;
   G4int*   HitID;
   G4double enrg;
-  G4double xpos;
-  G4double ypos;
-  G4double zpos;
-  G4double spos;
+  G4double X,Y,Z,S; // global coordinates
+  G4double x,y,z;   // local coordinates
 };
 
+inline G4String BDSEnergyCounterSD::GetName()
+{return itsName;}
 
 
 #endif

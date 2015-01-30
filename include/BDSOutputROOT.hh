@@ -25,6 +25,10 @@ public:
   virtual void WriteHits(BDSSamplerHitsCollection*);
   /// make energy loss histo
   virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*);
+  /// write primary loss histo
+  virtual void WritePrimaryLoss(BDSEnergyCounterHit*);
+  /// write primary hits histo
+  virtual void WritePrimaryHit(BDSEnergyCounterHit*);
   /// write a trajectory 
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec);
   /// write primary hit
@@ -54,10 +58,14 @@ private:
   TFile* theRootOutputFile;
   //  TTree *theLWCalorimeterTree;
 
-  TH1F *EnergyLossHisto;
+  TH1F* EnergyLossHisto;
+  TH1F* PrimaryLossHisto;
+  TH1F* PrimaryHitsHisto;
   //  TH3F *EnergyLossHisto3d;
-  TTree *PrecisionRegionEnergyLossTree;
-  TTree *EnergyLossTree;
+  TTree* PrecisionRegionEnergyLossTree;
+  TTree* EnergyLossTree;
+  TTree* PrimaryLossTree;
+  TTree* PrimaryHitsTree;
   
   float x0,xp0,y0,yp0,z0,zp0,E0,t0;
   float x_prod,xp_prod,y_prod,yp_prod,z_prod,zp_prod,E_prod,t_prod;
@@ -65,9 +73,17 @@ private:
   float x,xp,y,yp,z,zp,E,t; //Edep;
   float X,Xp,Y,Yp,Z,Zp,s,weight; //,EWeightZ;
   int part,nev, pID, track_id, turnnumber;
-  float s_el,E_el;
-  float x_el_p,y_el_p,z_el_p,E_el_p,s_el_p;
-  int part_el_p, weight_el_p;
+  /// energy loss histogram variables
+  float S_el,E_el;
+  /// primary loss histogram variables
+  float X_pl,Y_pl,Z_pl,S_pl,x_pl,y_pl,z_pl,E_pl,weight_pl;
+  int part_pl, turnnumber_pl, eventno_pl;
+  /// primary hits histogram variables
+  float X_ph,Y_ph,Z_ph,S_ph,x_ph,y_ph,z_ph,E_ph,weight_ph;
+  int part_ph, turnnumber_ph, eventno_ph;
+  /// precision energy loss variables
+  float X_el_p,Y_el_p,Z_el_p,S_el_p,x_el_p,y_el_p,z_el_p,E_el_p;
+  int part_el_p, weight_el_p, turnnumber_el_p, eventno_el_p;
   char volumeName_el_p[100];
 
   void WriteRootHit(G4String Name, 

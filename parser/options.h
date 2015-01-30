@@ -64,6 +64,7 @@ struct Options {
   
   /// for the elliptic shell distribution
   double shellX, shellXp, shellY, shellYp;
+  double shellXWidth, shellXpWidth, shellYWidth, shellYpWidth;
 
   /// for the ring beam distribution
   double Rmin, Rmax;

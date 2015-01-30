@@ -82,7 +82,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 { 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
-  G4cout << __METHOD_NAME__ << " processing begin of event action" << G4endl;
+  G4cout << __METHOD_NAME__ << " Processing begin of event action" << G4endl;
 #endif
 
   event_number = evt->GetEventID();
@@ -190,17 +190,31 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #ifdef BDSDEBUG 
   G4cout<<"BDSEventAction : storing energy loss histograms"<<G4endl;
 #endif
-  
-  BDSEnergyCounterHitsCollection* BDSEnergyCounter_HC=NULL;
-  std::list<BDSEnergyCounterSD*>::const_iterator iEC;
-  for(iEC=theECList->begin();iEC!=theECList->end();++iEC)
-    {
-      //      G4String name=(*iEC)->GetCollectionName(0);
-      BDSEnergyCounter_HC=
-	(BDSEnergyCounterHitsCollection*)(evt->GetHCofThisEvent()->GetHC((*iEC)->itsHCID));
-      if(BDSEnergyCounter_HC) {bdsOutput->WriteEnergyLoss(BDSEnergyCounter_HC);}
-    }
 
+  G4SDManager* mySDMan = G4SDManager::GetSDMpointer();
+  G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
+  BDSEnergyCounterHitsCollection* energyCounterHits = 
+    (BDSEnergyCounterHitsCollection*)(HCE->GetHC(mySDMan->GetCollectionID("energy_counter")));
+  BDSEnergyCounterHitsCollection* primaryCounterHits = 
+    (BDSEnergyCounterHitsCollection*)(HCE->GetHC(mySDMan->GetCollectionID("primary_counter")));
+
+  //if we have energy deposition hits, write them
+  if(energyCounterHits) {bdsOutput->WriteEnergyLoss(energyCounterHits);}
+
+  //if we have primary hits, find the first one and write that
+  if(primaryCounterHits) {
+    if (primaryCounterHits->entries()>0){
+      BDSEnergyCounterHit* thePrimaryHit  = BDS::LowestSPosPrimaryHit(primaryCounterHits);
+      BDSEnergyCounterHit* thePrimaryLoss = BDS::HighestSPosPrimaryHit(primaryCounterHits);
+      //write
+      if (thePrimaryHit && thePrimaryLoss)
+	{
+	  bdsOutput->WritePrimaryLoss(thePrimaryLoss);
+	  bdsOutput->WritePrimaryHit(thePrimaryHit);
+	}
+    }
+  }
+  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " finished writing energy loss." << G4endl;
 #endif
@@ -310,6 +324,7 @@ void BDSEventAction::AddPrimaryHits(){
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " finished" << G4endl;
 #endif
+  
 }
 
 //======================================================

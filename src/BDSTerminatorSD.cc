@@ -10,7 +10,6 @@
 
 #include "BDSTerminatorSD.hh"
 
-#include "G4SDManager.hh"
 #include "G4ios.hh"
 #include "G4TouchableHistory.hh"
 #include "G4VTouchable.hh"
@@ -18,10 +17,9 @@
 
 
 BDSTerminatorSD::BDSTerminatorSD(G4String name)
-  :G4VSensitiveDetector(name), itsHCID(-1)
+  :G4VSensitiveDetector(name)
 {
   verbose  = BDSExecOptions::Instance()->GetVerbose();
-  collectionName.insert("Terminator_"+name);
 }
 
 BDSTerminatorSD::~BDSTerminatorSD()
@@ -29,13 +27,11 @@ BDSTerminatorSD::~BDSTerminatorSD()
 
 void BDSTerminatorSD::Initialize(G4HCofThisEvent* /*HCE*/)
 {
-  if (itsHCID < 0)
-    {itsHCID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);}
   BDSGlobalConstants::Instance()->ResetTurnNumber();
   //we don't actually use HCE here as we don't need to log any of the particle info
 }
 
-G4bool BDSTerminatorSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
+G4bool BDSTerminatorSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
 {
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
   // feedback info but only every 10 turns to avoid slow down and output bloat
@@ -49,13 +45,18 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4cout << "Incrementing turn number " << G4endl;
 #endif
   G4Track* theTrack = aStep->GetTrack();
-  if (theTrack->GetParentID() == 0){
+  if ((theTrack->GetParentID() == 0) && (theTrack->GetTrackLength()/CLHEP::m > 1*CLHEP::m)){
     //this is a primary track
     //should only increment turn number for primaries
-    #ifdef BDSDEBUG
+#ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " primary particle - incrementing turn number" << G4endl;
-    #endif
+    G4cout << __METHOD_NAME__ << " track length is: " << theTrack->GetTrackLength()/CLHEP::m << G4endl;
+    G4cout << __METHOD_NAME__ << " turn number is : " << BDSGlobalConstants::Instance()->GetTurnsTaken() << G4endl;
+#endif   
     BDSGlobalConstants::Instance()->IncrementTurnNumber();
+#ifdef BDSDEBUG
+    G4cout << __METHOD_NAME__ << " new turn number : " << BDSGlobalConstants::Instance()->GetTurnsTaken() << G4endl;
+#endif
   }
   #ifdef BDSDEBUG
   else

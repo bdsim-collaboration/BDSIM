@@ -12,12 +12,15 @@
  */
 
 struct Element {
-  short type;
+  int type; ///< element enum
   int precisionRegion;
   std::string name;
 
   double inR; double bpRad; /// inner radius and beam pipe radius of muon spoiler  
-  double l,ks,k0,k1,k2,k3,angle,beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut, tscint, twindow, bmapZOffset; // l in meter
+  double l; // l in metres
+  double ks,k0,k1,k2,k3,angle;
+  double beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut;
+  double tscint, twindow, bmapZOffset; 
   double xdir, ydir, zdir, waveLength; /// for laser wire and 3d transforms
   double flatlength,taperlength; ///for realistic collimators
   double gradient; /// for rf cavities
@@ -32,7 +35,7 @@ struct Element {
   std::list<double> blmLocZ;
   std::list<double> blmLocTheta;
 
-   /// material properties
+  /// material properties
   double A; 
   double Z; 
   double density; 

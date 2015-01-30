@@ -5,7 +5,7 @@ project(BDSIM)
 # project version
 set( BDSIM_MAJOR_VERSION 0 )
 set( BDSIM_MINOR_VERSION 6 )
-set( BDSIM_PATCH_LEVEL 0 )
+set( BDSIM_PATCH_LEVEL develop )
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
 message(STATUS "Configuring BDSIM ${BDSIM_VERSION}")
@@ -16,13 +16,16 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Mod
 # With this true we automatically include current src/binary directory
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
-# Default build type (defines different sets of flags)
+# Default build type (defines different sets of compiler flags)
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
        "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel DebugProf DebugCoverage."
        FORCE)
 endif()
 
+message(STATUS "Build Type ${CMAKE_BUILD_TYPE}")
+
+# Compiler flags based on build type 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     add_definitions("-g -O0 -DBDSDEBUG")
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
@@ -36,7 +39,18 @@ elseif(${CMAKE_BUILD_TYPE} STREQUAL "None")
     set(CMAKE_CXX_FLAGS "-O3 -ffast-math -DNDEBUG")
 endif()
 
-message(STATUS "Build Type ${CMAKE_BUILD_TYPE}")
+# Compiler-specific C++11 activation.
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+    execute_process(
+        COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
+    if (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
+        message(STATUS "Compiler supports C++11")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    endif ()
+elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    message(STATUS "Compiler supports C++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+endif()
 
 set(CMAKE_C_ORIG_FLAGS "${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_ORIG_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -86,8 +100,8 @@ if (USE_AFS AND NOT CLHEP_LIBRARY_DIR)
       set(CLHEP_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.3.1/x86_64-slc5-gcc43-opt/include)
       set(CLHEP_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.3.1/x86_64-slc5-gcc43-opt/lib)
    elseif (RHL6)
-      set(CLHEP_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.3.1/x86_64-slc6-gcc46-opt/include)
-      set(CLHEP_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.3.1/x86_64-slc6-gcc46-opt/lib)
+      set(CLHEP_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.4.1/x86_64-slc6-gcc47-opt/include)
+      set(CLHEP_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.4.1/x86_64-slc6-gcc47-opt/lib)
    endif()
 endif()
 
@@ -105,7 +119,7 @@ elseif(USE_AFS)
     elseif (RHL5)
         set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.07/x86_64-slc5-gcc43-opt/root")
     elseif (RHL6)
-        set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.18/x86_64-slc6-gcc46-opt/root")
+        set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.24/x86_64-slc6-gcc47-opt/root")
     endif()
     if($ENV{VERBOSE})
         message(STATUS "ROOTSYS: ${ROOTSYS}")
@@ -138,8 +152,8 @@ if(USE_AFS)
       set(XercesC_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc5-gcc43-opt/include)
       set(XercesC_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc5-gcc43-opt/lib)
    elseif(RHL6)
-      set(XercesC_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc6-gcc46-opt/include)
-      set(XercesC_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc6-gcc46-opt/lib)
+      set(XercesC_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc6-gcc47-opt/include)
+      set(XercesC_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc6-gcc47-opt/lib)
    endif()
 endif()
 
@@ -214,10 +228,10 @@ if (NOT Geant4_FOUND AND USE_AFS)
       set(Geant4_DIR /afs/cern.ch/sw/lcg/external/geant4/9.6.p03/x86_64-slc5-gcc43-opt/lib64/Geant4-9.6.3)
       set(Geant4_VERSION 9.6.3)
    elseif(RHL6)
-      set(Geant4_INCLUDE_DIRS /afs/cern.ch/sw/lcg/external/geant4/9.6.p03/share/include)
-      set(Geant4_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/geant4/9.6.p03/x86_64-slc6-gcc46-opt/lib64)
-      set(Geant4_DIR /afs/cern.ch/sw/lcg/external/geant4/9.6.p03/x86_64-slc6-gcc46-opt/lib64/Geant4-9.6.3)
-      set(Geant4_VERSION 9.6.3)
+      set(Geant4_INCLUDE_DIRS /afs/cern.ch/sw/lcg/external/geant4/10.0.p03/share/include)
+      set(Geant4_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/geant4/10.0.p03/x86_64-slc6-gcc47-opt/lib64)
+      set(Geant4_DIR /afs/cern.ch/sw/lcg/external/geant4/10.0.p03/x86_64-slc6-gcc47-opt/lib64/Geant4-10.0.3)
+      set(Geant4_VERSION 10.0.3)
    endif()
    find_package(Geant4 QUIET COMPONENTS ui_all vis_all PATHS ${Geant4_DIR} NO_DEFAULT_PATH)
 endif()
@@ -340,7 +354,6 @@ macro(BDSIM_COLLATE_APPLICATION_SOURCES source_dest_var)
     ${CMAKE_CURRENT_SOURCE_DIR}/bdsim.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/BDS*.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ggmad.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/myQuadStepper.cc
     )
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 endmacro()
@@ -398,10 +411,12 @@ bdsim_install_targets(${executables} ${libraries})
 file(GLOB headers include/*.hh parser/*.h)
 bdsim_install_headers(${headers})
 
+# Utils directory
+add_subdirectory(utils)
+
 # Testing:
 enable_testing()
 include(CTest)
 include(bdsim_test_macros)
 add_subdirectory(examples)
-add_subdirectory(utils)
 add_subdirectory(test)

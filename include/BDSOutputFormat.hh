@@ -6,8 +6,8 @@
 struct BDSOutputFormatDef {
   enum type {
     _ASCII = 0,
-    _ROOT = 1
-    //, _ASCII_ROOT = 2
+    _ROOT = 1,
+    _COMBINED = 2
   };
 };
 

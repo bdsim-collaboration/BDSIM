@@ -9,7 +9,7 @@ BDSTunnelCavitySection::BDSTunnelCavitySection(BDSAcceleratorComponent* var){
   _acceleratorComponent=var;
   _name=_acceleratorComponent->GetName()+"_tunnel_cavity";
   _radius=_acceleratorComponent->GetTunnelRadius();
-  _length=_acceleratorComponent->GetLength();
+  _length=_acceleratorComponent->GetChordLength();
   _angle=_acceleratorComponent->GetAngle();
   G4double posX(_acceleratorComponent->GetTunnelOffsetX());
   G4double posY(BDSGlobalConstants::Instance()->GetTunnelOffsetY());

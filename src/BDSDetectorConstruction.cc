@@ -59,6 +59,7 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSLine.hh"
 #include "BDSMaterials.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTerminator.hh"
@@ -77,11 +78,6 @@
 #include "parser/element.h"
 #include "parser/elementlist.h"
 #include "parser/enums.h"
-
-//====================================
-
-typedef std::list<BDSEnergyCounterSD*>  ECList;
-ECList* theECList;
 
 //=========================================
 
@@ -151,7 +147,6 @@ BDSDetectorConstruction::BDSDetectorConstruction():
 
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 {
-  theECList   = new ECList;
   gasRegion   = new G4Region("gasRegion");
 
   G4ProductionCuts* theGasProductionCuts = new G4ProductionCuts();
@@ -171,7 +166,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   BDSMaterials::Instance()->PrepareRequiredMaterials();
   
   // set global magnetic field first
-  SetMagField(0.0); // necessary to set a global field; so chose zero
+  SetMagField(0.0); // necessary to set a global field; so choose zero
   
   // construct the component list
   BuildBeamline();
@@ -186,32 +181,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   ComponentPlacement();
 
 #ifdef BDSDEBUG
-  // check of logvolinfo
-  // LN TEST
-  //  typedef std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>::iterator it_type;
-  std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* themap = BDSGlobalConstants::Instance()->LogicalVolumeInfo();
-  //for (it_type iterator = themap->begin(); iterator != themap->end(); iterator++){
-    //G4cout << "pointer : " << iterator->first << "\tname : " << iterator->second->GetName() << "\t" 
-    //	   << iterator->second->GetSPos()/CLHEP::m << G4endl;
-  //}
-  G4cout << themap->size() << G4endl;
-
-  //LN TEST of spos
-  for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
-    {
-      BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
-      G4double currentspos = thecurrentitem->GetSPos();
-      G4String currentname = thecurrentitem->GetName();
-      G4cout << "name : " << currentname << "\t" 
-	     << "spos : " << currentspos/CLHEP::m << " m" <<G4endl
-	     << "length   : " << thecurrentitem->GetLength()/CLHEP::m << " m" << G4endl
-	     << "xlength  : " << thecurrentitem->GetXLength()/CLHEP::m << " m" << G4endl
-	     << "ylength  : " << thecurrentitem->GetYLength()/CLHEP::m << " m" << G4endl
-	     << "zlength  : " << thecurrentitem->GetZLength()/CLHEP::m << " m" << G4endl
-	     << G4endl;
-    }
-  
+  BDSBeamline::Instance()->print();
 #endif
+  
   // construct tunnel
   BuildTunnel();
 
@@ -252,9 +224,6 @@ void BDSDetectorConstruction::SetMagField(const G4double fieldValue){
 //=================================================================
 BDSDetectorConstruction::~BDSDetectorConstruction()
 { 
-  delete theECList;
-  //theECList = NULL;
-
   delete precisionRegion;
   gFlashRegion.clear();
 
@@ -294,7 +263,19 @@ void BDSDetectorConstruction::BuildBeamline(){
 
     BDSAcceleratorComponent* temp = theComponentFactory->createComponent(it, beamline_list);
     if(temp){
-      BDSBeamline::Instance()->addComponent(temp);
+      if (temp->GetType() == "line") {
+	// dynamic cast to access methods for iteration
+	BDSLine* line = dynamic_cast<BDSLine*>(temp);
+	if (line) {
+	  //line of components to be added individually
+	  for (BDSLine::BDSLineIterator i = line->begin(); i != line->end(); ++i) {
+	    BDSBeamline::Instance()->addComponent(*i);}
+	}
+      }
+      else {
+	//single component
+	BDSBeamline::Instance()->addComponent(temp);
+      }
     }
   }
   
@@ -304,6 +285,11 @@ void BDSDetectorConstruction::BuildBeamline(){
   G4cout << __METHOD_NAME__ << "size of beamline element list: "<< beamline_list.size() << G4endl;
 #endif
   G4cout << __METHOD_NAME__ << "size of theBeamline: "<< BDSBeamline::Instance()->size() << G4endl;
+
+  if (BDSBeamline::Instance()->size() == 0) {
+    G4cout << __METHOD_NAME__ << "beamline empty or no line selected! exiting" << G4endl;
+    exit(1);
+  }
 }
 
 //=================================================================
@@ -329,7 +315,7 @@ void BDSDetectorConstruction::BuildWorld(){
 
 #ifdef BDSDEBUG 
       G4cout << thecurrentitem->GetName() << "  "
-             << thecurrentitem->GetLength() << "  "
+             << thecurrentitem->GetChordLength() << "  "
              << thecurrentitem->GetAngle() << "  "
              << G4endl;
 #endif
@@ -337,7 +323,7 @@ void BDSDetectorConstruction::BuildWorld(){
       thecurrentitem->SetSPos(s_tot+thecurrentitem->GetArcLength()/2.0);
 
       // advance coordinates , but not for cylindrical sampler
-      if(( thecurrentitem->GetType() != "csampler") || ( thecurrentitem->GetLength() <= BDSGlobalConstants::Instance()->GetSamplerLength() ) )
+      if(( thecurrentitem->GetType() != "csampler") || ( thecurrentitem->GetChordLength() <= BDSGlobalConstants::Instance()->GetSamplerLength() ) )
 	{
 	  s_tot+= thecurrentitem->GetArcLength();
 
@@ -483,7 +469,6 @@ void BDSDetectorConstruction::ComponentPlacement(){
   //BDSTerminatorSD*    TurnCounter = new BDSTerminatorSD("ring_counter");
   SDman->AddNewDetector(ECounter);
   //SDman->AddNewDetector(TurnCounter);
-  theECList->push_back(ECounter);
 
   G4ThreeVector TargetPos;
 
@@ -618,7 +603,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	
       G4String LogVolName=LocalLogVol->GetName();
       // Set visualisation options for marker volumes - perhaps should be in base class..
-      G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0, 0.4));
+      static G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0, 0.4));
       VisAtt1->SetForceSolid(true);  
       // Set visible only if debug build, otherwise hidden
 #if defined BDSDEBUG
@@ -693,8 +678,8 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	    }
 	    SensVols[i]->SetRegion(gFlashRegion.back());
 	    gFlashRegion.back()->AddRootLogicalVolume(SensVols[i]);
-	    //		    gFlashRegion.back()->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
-	    //		    SensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
+	    //		    gFlashRegion.back()->SetUserLimits(new G4UserLimits(thecurrentitem->GetChordLength()/10.0));
+	    //		    SensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetChordLength()/10.0));
 	  }		  
 	}
       
@@ -707,7 +692,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
       //	      SensVols[i]->SetRegion(NULL);
 
       //	      SensVols[i]->SetRegion(gasRegion);
-      //	      SensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetLength()/10.0));
+      //	      SensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetChordLength()/10.0));
       //      }
       //      }
       //      }

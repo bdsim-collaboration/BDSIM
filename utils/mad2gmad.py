@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+import re
 import optparse
 
 def main() :
@@ -38,6 +39,8 @@ def main() :
     # boolian analysis or not
     ba  = False
 
+    objDict = {}
+
     for l in i : 
         # check if continued line 
         l = l.strip('\n ')
@@ -48,6 +51,11 @@ def main() :
                 lta = l
                 ba  = False 
                 o.write(lta+'\n') 
+                continue
+            elif t[0].lower() == 'return' : 
+                lta = l 
+                ba = False 
+                o.write(lta.lower()+'\n')
                 continue
             elif l[-1] == '&' : 
                 lta = lta+l[0:-1] 
@@ -72,7 +80,7 @@ def main() :
             # append semicolon
             lta = lta+';'
 
-            # remove mad specific commands (should be saveline so no 
+            # remove mad bspecific commands (should be saveline so no 
             # problems but...)
             if lta.find('plot')     != -1 : lta = ''
             if lta.find('assign')   != -1 : lta = ''
@@ -115,13 +123,34 @@ def main() :
         
             # remove multipoles 
             
-                
+            # make name, type dictionary
+            name = lta.split(": ")[0]
+            rest = lta.split(": ")[1]
+            
+            # split lines on ,; and remove white space
+            spec = [] 
+            for s in re.split('[,;=]',rest) : 
+                if s != '' : 
+                    spec.append(s.strip())
+            type = spec[0] 
+#            def  = spec[1:]
+            
+            # add to object dictionary 
+            objDict[name] = [type] 
+
+            try : 
+                print name,type, objDict[type] 
+            except : 
+                print ''
+                pass 
+
             if options.removeMultipole and (lta.find('multipole') != -1) : 
                 lta = '! removed multipole'+lta
             o.write(lta+'\n')
             # clean up
             ba = False
             lta = str()
+
 
     i.close()
     o.close()
