@@ -526,6 +526,12 @@ void BDSOutputROOT::WritePrimaryHit(BDSEnergyCounterHit* hit)
   PrimaryHitsTree->Fill();
 }
 
+void BDSOutputROOT::WriteTrackerBunch(G4String /*samplerName*/, TRKBunch* /*bunch*/, bool /*primary*/){
+  // do nothing for now - only really needed for development purposes just now
+  // so simply ascii output
+  return;
+}
+
 void BDSOutputROOT::Commit()
 {
   Write();

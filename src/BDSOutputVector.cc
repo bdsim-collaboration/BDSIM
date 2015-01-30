@@ -61,6 +61,13 @@ void BDSOutputVector::WritePrimary(G4String samplerName,
   }
 }
 
+void BDSOutputVector::WriteTrackerBunch(G4String samplerName, TRKBunch* bunch, bool primary)
+{
+  for (unsigned int i=0; i<output.size(); i++) {
+    output[i]->WriteTrackerBunch(samplerName,bunch,primary);
+  }
+}
+
 void BDSOutputVector::Commit(){
   for (unsigned int i=0; i<output.size(); i++) {
     output[i]->Commit();

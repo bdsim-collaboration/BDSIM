@@ -9,6 +9,8 @@
 #include <iostream>
 #include <iomanip>
 
+#include "tracker/TRKBunch.hh"
+
 BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
 {
   time_t currenttime;
@@ -245,6 +247,39 @@ void BDSOutputASCII::WritePrimaryLoss(BDSEnergyCounterHit* hit)
 
 void BDSOutputASCII::WritePrimaryHit(BDSEnergyCounterHit* /*hit*/)
 {}
+
+void BDSOutputASCII::WriteTrackerBunch(G4String /*samplerName*/, TRKBunch* bunch, bool primary)
+{
+  //only difference between primaries and normal output here is the file stream
+  std::ofstream* outfile;
+  if (primary)
+    {outfile = &ofPrimaries;}
+  else 
+    {outfile = &ofMain;}
+  //turns taken same for all particles in bunch
+  G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  //loop over bunch and write using ascii method
+  for (TRKBunchIter it = bunch->begin(); it != bunch->end(); it++) {
+    WriteAsciiHit(
+		  outfile,
+		  0, //TBC - requires geant4 or modification of particledefinitiontable
+		  it->E()*1000.0, //convert to GeV
+		  it->X()*1e-6,   //convert to um
+		  it->Y()*1e-6,   //convert to um
+		  it->Z(),        //leave in m
+		  it->Z(), //note z and s are synonymous in tracker
+		  it->Xp(),       //leave in rad
+		  it->Yp(),       //leave in rad
+		  0, //can you cast an iterator to an int?
+		  1,
+		  0,
+		  0,
+		  turnstaken
+		  );
+  }
+}
+
+
 
 void BDSOutputASCII::Commit()
 {
