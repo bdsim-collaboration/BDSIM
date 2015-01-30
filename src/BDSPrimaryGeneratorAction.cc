@@ -92,7 +92,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0;
 
   particleGun->SetParticleDefinition(BDSGlobalConstants::Instance()->GetParticleDefinition());
-  if(nEvent>0){
+  if(nEvent>=0){
     bdsBunch.GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight); // get next starting point
   } else {
     E=BDSGlobalConstants::Instance()->GetBeamKineticEnergy(); //The zeroeth event is a reference trajectory.

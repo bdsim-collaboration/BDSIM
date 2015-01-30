@@ -133,7 +133,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4String SampName = theTrack->GetVolume()->GetName()+"_"+BDSGlobalConstants::Instance()->StringFromInt(nSampler);
 
   //Check if the particle is a reference particle. If it is, set the reference particle.
-  if(nEvent == 0){
+  if(nEvent < 0){
     BDSParticle referenceParticle(LocalPosition,LocalDirection,energy,t); //Just store the reference particle in this sampler.
     itsReferenceParticleMap[SampName]=referenceParticle;
     return false; //A hit was not stored, so return false.
