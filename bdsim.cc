@@ -62,9 +62,7 @@
 #include "BDSGeometryInterface.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputBase.hh" 
-#include "BDSOutputASCII.hh" 
-#include "BDSOutputROOT.hh" 
-#include "BDSOutputVector.hh" 
+#include "BDSOutputFactory.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
 //#ifdef USE_ROOT
 //#include "BDSScoreWriter.hh"
@@ -238,38 +236,18 @@ int main(int argc,char** argv) {
   G4EventManager::GetEventManager()->GetTrackingManager()->SetVerboseLevel(BDSExecOptions::Instance()->GetVerboseTrackingLevel());
   G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager()->SetVerboseLevel(BDSExecOptions::Instance()->GetVerboseSteppingLevel());
   
-  //
   // Close the geometry
-  //
   G4bool bCloseGeometry = G4GeometryManager::GetInstance()->CloseGeometry();
   if(!bCloseGeometry) { 
     G4cerr << "bdsim.cc: error - geometry not closed." << G4endl;
     return 1;
   }
-
-  //
+  
   // set default output formats:
-  //
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
-#endif  
-
-  if (BDSExecOptions::Instance()->GetOutputFormat() == BDSOutputFormat::_ASCII) {
-    bdsOutput = new BDSOutputASCII();
-  } else if (BDSExecOptions::Instance()->GetOutputFormat() == BDSOutputFormat::_ROOT) {
-#ifdef USE_ROOT
-    bdsOutput = new BDSOutputROOT();
 #endif
-  } else if (BDSExecOptions::Instance()->GetOutputFormat() == BDSOutputFormat::_COMBINED) {
-    BDSOutputVector* combinedOutput = new BDSOutputVector();
-    combinedOutput->Add(new BDSOutputASCII());
-#ifdef USE_ROOT
-    combinedOutput->Add(new BDSOutputROOT());
-#endif
-    bdsOutput = combinedOutput;
-  }
-
-  // set output precision
+  bdsOutput = BDSOutputFactory::createOutput(BDSExecOptions::Instance()->GetOutputFormat());
   G4cout.precision(10);
 
   // catch aborts to close output stream/file. perhaps not all are needed.
@@ -277,11 +255,8 @@ int main(int argc,char** argv) {
   signal(SIGTERM, &BDS_handle_aborts); // termination requests
   signal(SIGSEGV, &BDS_handle_aborts); // segfaults
   signal(SIGINT, &BDS_handle_aborts); // interrupts
-
-  //
+  
   // Write survey file
-  //
-
   if(BDSExecOptions::Instance()->GetOutline()) {
 #ifdef BDSDEBUG 
     G4cout<<"contructing geometry interface"<<G4endl;
