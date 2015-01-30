@@ -1,5 +1,4 @@
 #include "BDSGlobalConstants.hh" 
-
 #include "BDSKicker.hh"
 
 #include "BDSDipoleStepper.hh"
@@ -12,9 +11,7 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-#include <map>
-
-//============================================================
+//#include <map>
 
 BDSKicker::BDSKicker(G4String aName, G4double aLength, 
 		     G4double bpRad, G4double FeRad,
@@ -22,12 +19,15 @@ BDSKicker::BDSKicker(G4String aName, G4double aLength,
 		     G4double tilt, G4double bGrad, 
 		     G4String aTunnelMaterial, G4String aMaterial):
   BDSMultipole(aName, aLength, bpRad, FeRad, aTunnelMaterial, aMaterial,
-	       0, 0, angle)
+	       0, 0, /*itsAngle=*/0)
 {
   SetOuterRadius(outR);
-  itsTilt=tilt;
-  itsBField=bField;
-  itsBGrad=bGrad;
+  itsTilt      = tilt;
+  itsBField    = bField;
+  itsBGrad     = bGrad;
+  //use separate kick angle as kicker doesn't rotate reference trajectory
+  //bdsbeamline places things based on itsAngle
+  itsKickAngle = angle;
 }
 
 void BDSKicker::Build() {
@@ -70,7 +70,7 @@ void BDSKicker::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
   G4ThreeVector Bfield(0.,-itsBField,0.); // note the - sign...
-  itsMagField=new BDSSbendMagField(Bfield,itsLength,itsAngle);
+  itsMagField=new BDSSbendMagField(Bfield,itsLength,itsKickAngle);
   
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
   

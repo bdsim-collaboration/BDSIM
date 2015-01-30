@@ -30,14 +30,14 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
 #ifdef BDSDEBUG
   G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
   G4cout << "BDSDipoleStepper: step= " << h/CLHEP::m << " m" << G4endl
-         << " x= " << yIn[0]/CLHEP::m << "m" << G4endl
-         << " y= " << yIn[1]/CLHEP::m << "m" << G4endl
-         << " z= " << yIn[2]/CLHEP::m << "m" << G4endl
-         << " px= " << yIn[3]/CLHEP::GeV << "GeV/c" << G4endl
-         << " py= " << yIn[4]/CLHEP::GeV << "GeV/c" << G4endl
-         << " pz= " << yIn[5]/CLHEP::GeV << "GeV/c" << G4endl
-         << " q= " << charge/CLHEP::eplus << "e" << G4endl
-    //         << " dBy/dx= " << itsBGrad/(CLHEP::tesla/CLHEP::m) << "T/m" << G4endl
+         << " x  = " << yIn[0]/CLHEP::m     << " m" << G4endl
+         << " y  = " << yIn[1]/CLHEP::m     << " m" << G4endl
+         << " z  = " << yIn[2]/CLHEP::m     << " m" << G4endl
+         << " px = " << yIn[3]/CLHEP::GeV   << " GeV/c" << G4endl
+         << " py = " << yIn[4]/CLHEP::GeV   << " GeV/c" << G4endl
+         << " pz = " << yIn[5]/CLHEP::GeV   << " GeV/c" << G4endl
+         << " q  = " << charge/CLHEP::eplus << " e" << G4endl
+	 << " B  = " << itsBField/(CLHEP::tesla) << " T" << G4endl
     //         << " k= " << kappa/(1./CLHEP::m2) << "m^-2" << G4endl
          << G4endl; 
 #endif

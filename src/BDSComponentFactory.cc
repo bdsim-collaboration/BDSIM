@@ -705,9 +705,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
-  //
   // geometry
-  //
   G4double aper = _bpRad;
   if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
   G4double FeRad = aper + _bpThick;
@@ -722,11 +720,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
 #endif
       _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
     }
-  
   G4double length = _element.l*CLHEP::m;
-  //
+  
   // magnetic field
-  //
   G4double bField;
   if(_element.B != 0){
     // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
@@ -754,11 +750,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
 	   << " tunnel material " << _element.tunnelMaterial
 	   << G4endl;
     return createDrift();
-    // return (new BDSDrift( _element.name,
-    // 					length,
-    // 					_element.blmLocZ,
-    // 					_element.blmLocTheta,
-    // 					aper, aper, _element.tunnelMaterial ) );
   } 
 
   return (new BDSKicker( _element.name,
@@ -775,9 +766,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
-  //
   // geometry
-  //
   G4double aper = _bpRad;
   if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
   G4double FeRad = aper + _bpThick;
@@ -793,9 +782,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
       _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
     }
   G4double length = _element.l*CLHEP::m;
-  //
+  
   // magnetic field
-  //
   G4double bField;
   if(_element.B != 0){
     // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
@@ -823,11 +811,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
 	   << G4endl;
 
     return createDrift();
-    // return (new BDSDrift( _element.name,
-    // 					_element.l * CLHEP::m,
-    // 					_element.blmLocZ,
-    // 					_element.blmLocTheta,
-    //                                            aper, aper, _element.tunnelMaterial ) );
   } 
 
   return (new BDSKicker( _element.name,
