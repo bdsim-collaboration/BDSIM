@@ -132,30 +132,44 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4int nSampler=theTrack->GetVolume()->GetCopyNo()+1;
   G4String SampName = theTrack->GetVolume()->GetName()+"_"+BDSGlobalConstants::Instance()->StringFromInt(nSampler);
 
+  G4bool noReferenceParticle=false;
   //Check if the particle is a reference particle. If it is, set the reference particle.
+  //Assume the reference particle is at zero coordinates.
+  G4ThreeVector refPos;
+  refPos.set(0,0,0);
+  G4ThreeVector refDir;
+  refDir.set(0,0,1);
   if(nEvent < 0){
-    BDSParticle referenceParticle(LocalPosition,LocalDirection,energy,t); //Just store the reference particle in this sampler.
+    BDSParticle referenceParticle(refPos,refDir,energy,t); //Just store the reference particle in this sampler.
     itsReferenceParticleMap[SampName]=referenceParticle;
     return false; //A hit was not stored, so return false.
-  } else if(    itsReferenceParticleMap.find(SampName)==itsReferenceParticleMap.end()){
-    /*G4Exception here.*/
-  }
+  }else if(itsReferenceParticleMap.find(SampName)==itsReferenceParticleMap.end()){
+    G4bool noReferenceParticle=true;
+  } 
 
+  /*
+    BDSParticle referenceParticle(refPos,refDir,BDSGlobalConstants::Instance()->GetBeamEnergy(),0); //Just store the reference particle in this sampler with local t=0
+    itsReferenceParticleMap[SampName]=referenceParticle;
+  */
 
-  //Get the local position of the particle relative to the reference trajectory.
-  BDSParticle refParticle=itsReferenceParticleMap[SampName];
-  G4ThreeVector refDirection=refParticle.GetDirection();
-  G4ThreeVector refPosition=refParticle.GetPosition();
-  G4double t_ref=refParticle.GetTime();
-  G4double velocity=theTrack->GetVelocity();
+  G4ThreeVector pos_rel=LocalPosition; 
+  G4double t_rel=t;
+  if(!noReferenceParticle){
+    //Get the local position of the particle relative to the reference trajectory.
+    BDSParticle refParticle=itsReferenceParticleMap[SampName];
+    G4ThreeVector refDirection=refParticle.GetDirection();
+    G4ThreeVector refPosition=refParticle.GetPosition();
+    G4double t_ref=refParticle.GetTime();
+    G4double velocity=theTrack->GetVelocity();
   
-  //Now define t relative to the time of the reference particle.
-  G4double t_rel=t-t_ref;
-  G4double s_rel =-1*(t_rel*velocity); //The distance of the particle from the reference particle.
-  G4ThreeVector rel_trans = LocalDirection*s_rel;
-  G4ThreeVector pos_rel = LocalPosition+rel_trans; 
- 
-  BDSParticle local(pos_rel,LocalDirection,energy,t_ref); //Time is always t_ref = reference orbit time. Position is relative to the reference particle. Local direction is always relative to the reference orbit.
+    //Now define t relative to the time of the reference particle.
+    t_rel-=t_ref;
+    G4double s_rel =-1*(t_rel*velocity); //The distance of the particle from the reference particle.
+    G4ThreeVector rel_trans = LocalDirection*s_rel;
+    pos_rel += rel_trans; 
+  } 
+  
+  BDSParticle local(pos_rel,LocalDirection,energy,t_rel); //Time is always t_ref = reference orbit time. Position is relative to the reference particle. Local direction is always relative to the reference orbit.
 
   nEvent+=BDSGlobalConstants::Instance()->GetEventNumberOffset();
   

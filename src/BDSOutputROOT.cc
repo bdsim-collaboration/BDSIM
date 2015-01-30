@@ -65,6 +65,7 @@ void BDSOutputROOT::BuildSamplerTree(G4String name){
   SamplerTree->Branch("yp",&yp,"yp/F"); // (rad)
   SamplerTree->Branch("zp",&zp,"zp/F"); // (rad)
   SamplerTree->Branch("t",&t,"t/F"); // (ns)
+  SamplerTree->Branch("t_local",&t_local,"t_local/F"); // (ns)
   
   SamplerTree->Branch("X",&X,"X/F"); // (mum)
   SamplerTree->Branch("Y",&Y,"Y/F"); // (mum)
@@ -183,7 +184,8 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
 				 G4double XPrime, 
 				 G4double YPrime, 
 				 G4double ZPrime, 
-				 G4double T, 
+				 G4double globalTime, 
+				 G4double localTime, 
 				 G4double GlobalX, 
 				 G4double GlobalY, 
 				 G4double GlobalZ, 
@@ -233,7 +235,8 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
   xp=XPrime / CLHEP::radian;
   yp=YPrime / CLHEP::radian;
   zp=ZPrime / CLHEP::radian;
-  t=T / CLHEP::ns;
+  t=globalTime / CLHEP::ns;
+  t_local=localTime / CLHEP::ns;
   X=GlobalX / CLHEP::m;
   Y=GlobalY / CLHEP::m;
   Z=GlobalZ / CLHEP::m;
@@ -279,6 +282,7 @@ void BDSOutputROOT::WritePrimary(G4String samplerName,
 	       E, 
 	       x0, y0, z0, 
 	       xp, yp, zp, 
+	       t,
 	       t, 
 	       0,0,0,0,0,0,0,
 	       weight, 
@@ -333,7 +337,8 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 		   (*hc)[i]->GetXPrime(),
 		   (*hc)[i]->GetYPrime(),
 		   (*hc)[i]->GetZPrime(),
-		   (*hc)[i]->GetT(),
+		   (*hc)[i]->GetTGlobal(),
+		   (*hc)[i]->GetTLocal(),
 		   (*hc)[i]->GetGlobalX(),
 		   (*hc)[i]->GetGlobalY(),
 		   (*hc)[i]->GetGlobalZ(),

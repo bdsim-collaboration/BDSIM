@@ -143,8 +143,10 @@ public:
     {return itsGlobal.GetZ();}
   inline G4double GetGlobalZPrime() const
     {return itsGlobal.GetZp();}
-  inline G4double GetT() const
+  inline G4double GetTLocal() const
     {return itsLocal.GetTime();}
+  inline G4double GetTGlobal() const
+    {return itsGlobal.GetTime();}
   inline G4double GetS() const
     {return itsS;}
   inline G4double GetWeight() const

@@ -23,7 +23,7 @@ public:
   /// write a trajectory 
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec);
   /// write primary hit
-  virtual void WritePrimary(G4String samplerName, G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double zp,G4double t,G4double weight,G4int PDGType, G4int nEvent, G4int TurnsTaken);
+  virtual void WritePrimary(G4String samplerName, G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double zp,G4double tLocal,G4double weight,G4int PDGType, G4int nEvent, G4int TurnsTaken);
 
   virtual void Commit();  /// close the file
   virtual void Write();   /// close and open new file
@@ -62,7 +62,7 @@ private:
 		     G4double Y,
 		     G4double Z,
 		     G4double S, 
-		     G4double t, 
+		     G4double tLocal, 
 		     G4double XPrime, 
 		     G4double YPrime, 
 		     G4int    EventNo, 
@@ -81,7 +81,8 @@ private:
 		     G4double YGlobal, 
 		     G4double ZGlobal, 
 		     G4double S, 
-		     G4double t,
+		     G4double tLocal,
+		     G4double tGlobal,
 		     G4double XPrime, 
 		     G4double YPrime, 
 		     G4double XPrimeGlobal, 
