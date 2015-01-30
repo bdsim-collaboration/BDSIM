@@ -246,7 +246,7 @@ int main(int argc,char** argv) {
   }
 
   //Set the maximum acceptable step size
-  //  G4TransportationManager::GetTransportationManager()->GetPropagatorInField()->SetLargestAcceptableStep(10*CLHEP::cm);
+  //  G4TransportationManager::GetTransportationManager()->GetPropagatorInField()->SetLargestAcceptableStep(1*CLHEP::m);
 
   //
   // set default output formats:

@@ -10,9 +10,10 @@ Last modified 23.10.2007 by Steve Malton
 #include "G4UniformMagField.hh"
 #include <cstdlib>
 #include "G4ThreeVector.hh"
+#include "G4ParticleTable.hh"
 
 extern Options options;
-
+#define DEBUG 1
 BDSGlobalConstants* BDSGlobalConstants::_instance = 0;
 
 BDSGlobalConstants* BDSGlobalConstants::Instance(){
@@ -56,6 +57,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   if (itsParticleTotalEnergy == 0) {
     itsParticleTotalEnergy = itsBeamTotalEnergy;
   }
+  //  itsBeamKineticEnergy = itsBeamTotalEnergy - itsBeamParticleDefinition->GetPDGMass();
 
   itsVacuumPressure = opt.vacuumPressure*CLHEP::bar;
   itsPlanckScatterFe = opt.planckScatterFe;

@@ -32,7 +32,7 @@
 #include <vector>
 
 #include "G4SDManager.hh"
-
+#define DEBUG 1
 BDSSamplerSD::BDSSamplerSD(G4String name, G4String type)
   :G4VSensitiveDetector(name),itsHCID(-1),SamplerCollection(NULL),
    itsType(type)
@@ -57,7 +57,7 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
 
 G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
-  G4Track* theTrack = aStep->GetTrack();
+  G4Track* theTrack = aStep->GetTrack();  //We should use the point at the incoming boundary of the sampler.
   BDSTrajectory* bdsTraj = new BDSTrajectory(theTrack);
   //bdsTraj->printRichDataOfSteps();
   // LN removed this because it only prints definition of types, not info itself
@@ -70,6 +70,10 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   // 	{ // tm
   //Do not store hit if the particle is not on the boundary 
   if(preStepPoint->GetStepStatus()!=fGeomBoundary) return false;
+  //  if(preStepPoint->GetSensitiveDetector() == this) return false; 
+
+  
+
 
   //unique ID of track
   G4int TrackID = theTrack->GetTrackID();
@@ -84,12 +88,14 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   
   //current particle position (global)
   G4ThreeVector pos = theTrack->GetPosition();
+  
   //total track length
   G4double s = theTrack->GetTrackLength();
   if(ParentID != 0) s = pos.z();
   //G4ThreeVector pos = preStepPoint->GetPosition();
   //current particle direction (global)
   G4ThreeVector momDir = theTrack->GetMomentumDirection();
+
   //G4ThreeVector momDir = preStepPoint->GetMomentumDirection();
   
   // Get Translation and Rotation of Sampler Volume w.r.t the World Volume
@@ -106,8 +112,9 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   //      G4ThreeVector LocalPosition=pos+Trans; 
   //      G4ThreeVector LocalDirection=Rot*momDir; 
   G4ThreeVector LocalPosition = tf.TransformPoint(pos);
+  LocalPosition.setZ(0); //Define the local z coordinate to be zero.
   G4ThreeVector LocalDirection = tf.TransformAxis(momDir);
-  
+
   // Changed z output by Samplers to be the position of the sampler
   // not time of flight of the particle JCC 15/10/05
   //G4double z=-(time*c_light-(pos.z()+BDSGlobalConstants::Instance()->GetWorldSizeZ()));
@@ -117,15 +124,41 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   if(zPrime<0) energy*=-1;
   // apply a correction that takes ac... gab to do later!
 
-  BDSParticle local(LocalPosition,LocalDirection,energy,t);
+
+
 
   G4int nEvent= 
     G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-  
-  nEvent+=BDSGlobalConstants::Instance()->GetEventNumberOffset();
-  
   G4int nSampler=theTrack->GetVolume()->GetCopyNo()+1;
   G4String SampName = theTrack->GetVolume()->GetName()+"_"+BDSGlobalConstants::Instance()->StringFromInt(nSampler);
+
+  //Check if the particle is a reference particle. If it is, set the reference particle.
+  if(nEvent == 0){
+    BDSParticle referenceParticle(LocalPosition,LocalDirection,energy,t); //Just store the reference particle in this sampler.
+    itsReferenceParticleMap[SampName]=referenceParticle;
+    return false; //A hit was not stored, so return false.
+  } else if(    itsReferenceParticleMap.find(SampName)==itsReferenceParticleMap.end()){
+    /*G4Exception here.*/
+  }
+
+
+  //Get the local position of the particle relative to the reference trajectory.
+  BDSParticle refParticle=itsReferenceParticleMap[SampName];
+  G4ThreeVector refDirection=refParticle.GetDirection();
+  G4ThreeVector refPosition=refParticle.GetPosition();
+  G4double t_ref=refParticle.GetTime();
+  G4double velocity=theTrack->GetVelocity();
+  
+  //Now define t relative to the time of the reference particle.
+  G4double t_rel=t-t_ref;
+  G4double s_rel =-1*(t_rel*velocity); //The distance of the particle from the reference particle.
+  G4ThreeVector rel_trans = LocalDirection*s_rel;
+  G4ThreeVector pos_rel = LocalPosition+rel_trans; 
+ 
+  BDSParticle local(pos_rel,LocalDirection,energy,t_ref); //Time is always t_ref = reference orbit time. Position is relative to the reference particle. Local direction is always relative to the reference orbit.
+
+  nEvent+=BDSGlobalConstants::Instance()->GetEventNumberOffset();
+  
   G4int PDGtype=theTrack->GetDefinition()->GetPDGEncoding();
   
   G4String pName=theTrack->GetDefinition()->GetParticleName();

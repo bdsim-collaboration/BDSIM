@@ -54,6 +54,44 @@ private:
 		     G4int    ParentID, 
 		     G4int    TrackID, 
 		     G4int    TurnsTaken);
+
+  void WriteAsciiHit(std::ofstream* outfile, 
+		     G4int    PDGType, 
+		     G4double Mom, 
+		     G4double X, 
+		     G4double Y,
+		     G4double Z,
+		     G4double S, 
+		     G4double t, 
+		     G4double XPrime, 
+		     G4double YPrime, 
+		     G4int    EventNo, 
+		     G4double Weight, 
+		     G4int    ParentID, 
+		     G4int    TrackID, 
+		     G4int    TurnsTaken);
+
+  void WriteAsciiHit(std::ofstream* outfile, 
+		     G4int PDGType, 
+		     G4double Mom, 
+		     G4double X, 
+		     G4double Y, 
+		     G4double Z, 
+		     G4double XGlobal,
+		     G4double YGlobal, 
+		     G4double ZGlobal, 
+		     G4double S, 
+		     G4double t,
+		     G4double XPrime, 
+		     G4double YPrime, 
+		     G4double XPrimeGlobal, 
+		     G4double YPrimeGlobal, 
+		     G4int EventNo, 
+		     G4double Weight, 
+		     G4int ParentID, 
+		     G4int TrackID, 
+		     G4int TurnsTaken);
+
   void WriteHistogram();
 
 };

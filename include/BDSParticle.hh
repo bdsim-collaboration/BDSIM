@@ -39,6 +39,7 @@ private:
   /// track ID of parent
   G4int itsParentID;
 
+
 public:
   G4double GetX()const{return itsPosition.x();}
   G4double GetY()const{return itsPosition.y();}
@@ -53,6 +54,9 @@ public:
   
   G4int GetTrackID()const{return itsTrackID;}
   G4int GetParentID()const{return itsParentID;}
+
+  G4ThreeVector GetPosition()const{return itsPosition;}
+  G4ThreeVector GetDirection()const{return itsMomentum;}
   
 };
 

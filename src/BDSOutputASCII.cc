@@ -37,7 +37,32 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
 	       << std::setw(15) << "X[mum]"   << " "
 	       << std::setw(15) << "Y[mum]"   << " "
 	       << std::setw(15) << "Z[mum]"   << " "
+	       << std::setw(15) << "XGlob[mum]"   << " "
+	       << std::setw(15) << "YGlob[mum]"   << " "
+	       << std::setw(15) << "ZGlob[mum]"   << " "
 	       << std::setw(20) << "S[m]"     << " "
+	       << std::setw(20) << "t[ns]"     << " "
+	       << std::setw(15) << "Xp[rad]"  << " "
+	       << std::setw(15) << "Yp[rad]"  << " "
+	       << std::setw(15) << "XpGlob[rad]"  << " "
+	       << std::setw(15) << "YpGlob[rad]"  << " "
+	       << std::setw(6)  << "NEvent"   << " "
+	       << std::setw(15) << "Weight"   << " "
+	       << std::setw(9)  << "ParentID" << " "
+	       << std::setw(8)  << "TrackID"  << " "
+	       << std::setw(5)  << "Turn"
+	       << G4endl;
+  G4String headerstring = headerstream.str();
+
+  std::stringstream primaryheaderstream;
+  primaryheaderstream << std::left << std::setprecision(10) << std::fixed
+	       << std::setw(6)  << "PDGID"    << " "
+	       << std::setw(15) << "E[GeV]"   << " "
+	       << std::setw(15) << "X[mum]"   << " "
+	       << std::setw(15) << "Y[mum]"   << " "
+	       << std::setw(15) << "Z[mum]"   << " "
+	       << std::setw(20) << "S[m]"     << " "
+	       << std::setw(20) << "t[ns]"     << " "
 	       << std::setw(15) << "Xp[rad]"  << " "
 	       << std::setw(15) << "Yp[rad]"  << " "
 	       << std::setw(6)  << "NEvent"   << " "
@@ -46,7 +71,7 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
 	       << std::setw(8)  << "TrackID"  << " "
 	       << std::setw(5)  << "Turn"
 	       << G4endl;
-  G4String headerstring = headerstream.str();
+  G4String primaryheaderstring = primaryheaderstream.str();
 
   // main output file initialisation
   ofMain.open(filename.c_str());
@@ -56,12 +81,12 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
   // primaries output file initialisation
   ofPrimaries.open(filenamePrimaries.c_str());
   ofPrimaries  << "### BDSIM primaries output - created "<< timestring << G4endl;
-  ofPrimaries  << headerstring;
+  ofPrimaries  << primaryheaderstring;
 
   // energy loss hits output file initialisation
   ofELoss.open(filenameELoss.c_str());
   ofELoss      << "### BDSIM energy loss hits output - created " << timestring <<G4endl;
-  ofELoss      << headerstring;
+  ofELoss      << primaryheaderstring;
   
   // energy loss histogram and output file initialisation
   // construct histogram
@@ -111,6 +136,26 @@ void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile, G4int PDGType, G4doub
 	   << std::setw(15) << Y/CLHEP::micrometer  << " "
 	   << std::setw(15) << Z/CLHEP::micrometer  << " "
 	   << std::setw(20) << S/CLHEP::m           << " "
+		   << std::setw(15) << XPrime/CLHEP::radian << " "
+	   << std::setw(15) << YPrime/CLHEP::radian << " "
+	   << std::setw(6)  << EventNo              << " "
+	   << std::setw(15) << Weight               << " "
+	   << std::setw(9)  << ParentID             << " "
+	   << std::setw(8)  << TrackID              << " "
+	   << std::setw(5)  << TurnsTaken
+	   << G4endl;
+}
+
+void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile, G4int PDGType, G4double Mom, G4double X, G4double Y, G4double Z, G4double S, G4double t, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID, G4int TurnsTaken)
+{
+  *outfile << std::left << std::setprecision(10) << std::fixed
+	   << std::setw(6)  << PDGType              << " "
+	   << std::setw(15) << Mom/CLHEP::GeV       << " "
+	   << std::setw(15) << X/CLHEP::micrometer  << " "
+	   << std::setw(15) << Y/CLHEP::micrometer  << " "
+	   << std::setw(15) << Z/CLHEP::micrometer  << " "
+	   << std::setw(20) << S/CLHEP::m           << " "
+	   << std::setw(20) << t/CLHEP::ns           << " "
 	   << std::setw(15) << XPrime/CLHEP::radian << " "
 	   << std::setw(15) << YPrime/CLHEP::radian << " "
 	   << std::setw(6)  << EventNo              << " "
@@ -121,10 +166,38 @@ void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile, G4int PDGType, G4doub
 	   << G4endl;
 }
 
-void BDSOutputASCII::WritePrimary(G4String /*samplerName*/, G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double /*zp*/,G4double /*t*/,G4double weight,G4int PDGType, G4int nEvent, G4int TurnsTaken){
-  WriteAsciiHit(&ofPrimaries, PDGType, E, x0, y0, z0, /*s=*/0.0, xp, yp, nEvent, weight, 0, 1, TurnsTaken);
+void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile, G4int PDGType, G4double Mom, G4double X, G4double Y, G4double Z, G4double XGlobal,
+				   G4double YGlobal, G4double ZGlobal, G4double S, G4double t, G4double XPrime, G4double YPrime, 
+				   G4double XPrimeGlobal, G4double YPrimeGlobal, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID, G4int TurnsTaken)
+{
+  *outfile << std::left << std::setprecision(10) << std::fixed
+	   << std::setw(6)  << PDGType              << " "
+	   << std::setw(15) << Mom/CLHEP::GeV       << " "
+	   << std::setw(15) << X/CLHEP::micrometer  << " "
+	   << std::setw(15) << Y/CLHEP::micrometer  << " "
+	   << std::setw(15) << Z/CLHEP::micrometer  << " "
+	   << std::setw(15) << XGlobal/CLHEP::micrometer  << " "
+	   << std::setw(15) << YGlobal/CLHEP::micrometer  << " "
+	   << std::setw(15) << ZGlobal/CLHEP::micrometer  << " "
+	   << std::setw(20) << S/CLHEP::m           << " "
+	   << std::setw(20) << t/CLHEP::ns           << " "
+	   << std::setw(15) << XPrime/CLHEP::radian << " "
+	   << std::setw(15) << YPrime/CLHEP::radian << " "
+	   << std::setw(15) << XPrimeGlobal/CLHEP::radian << " "
+	   << std::setw(15) << YPrimeGlobal/CLHEP::radian << " "
+	   << std::setw(6)  << EventNo              << " "
+	   << std::setw(15) << Weight               << " "
+	   << std::setw(9)  << ParentID             << " "
+	   << std::setw(8)  << TrackID              << " "
+	   << std::setw(5)  << TurnsTaken
+	   << G4endl;
+}
+
+void BDSOutputASCII::WritePrimary(G4String /*samplerName*/, G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double /*zp*/,G4double t,G4double weight,G4int PDGType, G4int nEvent, G4int TurnsTaken){
+  WriteAsciiHit(&ofPrimaries, PDGType, E, x0, y0, z0, /*s=*/0.0, t, xp, yp, nEvent, weight, 0, 1, TurnsTaken);
   ofPrimaries.flush();
 }
+
 
 void BDSOutputASCII::WriteHits(BDSSamplerHitsCollection *hc)
 {
@@ -137,9 +210,15 @@ void BDSOutputASCII::WriteHits(BDSSamplerHitsCollection *hc)
 		    (*hc)[i]->GetX(),
 		    (*hc)[i]->GetY(),
 		    (*hc)[i]->GetZ(),
+                    (*hc)[i]->GetGlobalX(),
+		    (*hc)[i]->GetGlobalY(),
+		    (*hc)[i]->GetGlobalZ(),
 		    (*hc)[i]->GetS(),
+		    (*hc)[i]->GetT(),
 		    (*hc)[i]->GetXPrime(),
 		    (*hc)[i]->GetYPrime(),
+		    (*hc)[i]->GetGlobalXPrime(),
+		    (*hc)[i]->GetGlobalYPrime(),
 		    (*hc)[i]->GetEventNo(),
 		    (*hc)[i]->GetWeight(),
 		    (*hc)[i]->GetParentID(),

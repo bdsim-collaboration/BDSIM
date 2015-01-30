@@ -87,10 +87,18 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   //this function is called at the begining of event
 
+  G4int nEvent = anEvent->GetEventID();
+
   G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0;
 
   particleGun->SetParticleDefinition(BDSGlobalConstants::Instance()->GetParticleDefinition());
-  bdsBunch.GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight); // get next starting point
+  if(nEvent>0){
+    bdsBunch.GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight); // get next starting point
+  } else {
+    E=BDSGlobalConstants::Instance()->GetBeamKineticEnergy(); //The zeroeth event is a reference trajectory.
+    weight = 1;
+    zp=1;
+  }
   
   if(E==0) G4cout << "Particle energy is 0! This will not be tracked." << G4endl;
 
