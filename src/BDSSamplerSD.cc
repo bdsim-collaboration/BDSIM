@@ -167,7 +167,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
     G4double velocity=theTrack->GetVelocity();
   
     //Now define t relative to the time of the reference particle.
-    t_rel-=t_ref;
+    t_rel -= t_ref;
     G4double s_rel =-1*(t_rel*velocity); //The distance of the particle from the reference particle.
     G4ThreeVector rel_trans = LocalDirection*s_rel;
     pos_rel += rel_trans; 
