@@ -91,7 +91,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   
   //total track length
   G4double s = theTrack->GetTrackLength();
-  if(ParentID != 0) s = pos.z();
+
   //G4ThreeVector pos = preStepPoint->GetPosition();
   //current particle direction (global)
   G4ThreeVector momDir = theTrack->GetMomentumDirection();
@@ -132,6 +132,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4int nSampler=theTrack->GetVolume()->GetCopyNo()+1;
   G4String SampName = theTrack->GetVolume()->GetName()+"_"+BDSGlobalConstants::Instance()->StringFromInt(nSampler);
 
+
   G4bool noReferenceParticle=false;
   //Check if the particle is a reference particle. If it is, set the reference particle.
   //Assume the reference particle is at zero coordinates.
@@ -141,10 +142,11 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   refDir.set(0,0,1);
   if(nEvent < 0){
     BDSParticle referenceParticle(refPos,refDir,energy,t); //Just store the reference particle in this sampler.
+    referenceParticle.SetS(s); 
     itsReferenceParticleMap[SampName]=referenceParticle;
     return false; //A hit was not stored, so return false.
   }else if(itsReferenceParticleMap.find(SampName)==itsReferenceParticleMap.end()){
-    G4bool noReferenceParticle=true;
+    noReferenceParticle=true;
   } 
 
   /*
@@ -154,9 +156,11 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 
   G4ThreeVector pos_rel=LocalPosition; 
   G4double t_rel=t;
+  G4double sReference=0; //The track length of the reference particle.
   if(!noReferenceParticle){
     //Get the local position of the particle relative to the reference trajectory.
     BDSParticle refParticle=itsReferenceParticleMap[SampName];
+    sReference=refParticle.GetS();
     G4ThreeVector refDirection=refParticle.GetDirection();
     G4ThreeVector refPosition=refParticle.GetPosition();
     G4double t_ref=refParticle.GetTime();
@@ -167,9 +171,13 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
     G4double s_rel =-1*(t_rel*velocity); //The distance of the particle from the reference particle.
     G4ThreeVector rel_trans = LocalDirection*s_rel;
     pos_rel += rel_trans; 
-  } 
+  }
+
+
   
-  BDSParticle local(pos_rel,LocalDirection,energy,t_rel); //Time is always t_ref = reference orbit time. Position is relative to the reference particle. Local direction is always relative to the reference orbit.
+  BDSParticle local(LocalPosition,LocalDirection,energy,t);
+
+  BDSParticle local_rel(pos_rel,LocalDirection,energy,t_rel); //Time is always t_ref = reference orbit time. Position is relative to the reference particle. Local direction is always relative to the reference orbit.
 
   nEvent+=BDSGlobalConstants::Instance()->GetEventNumberOffset();
   
@@ -210,8 +218,10 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 			production,
 			lastScatter,
 			local,
+			local_rel,
 			global,
 			s,
+			sReference,
 			weight,
 			PDGtype,
 			nEvent, 

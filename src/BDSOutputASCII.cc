@@ -37,12 +37,16 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
 	       << std::setw(15) << "X[mum]"   << " "
 	       << std::setw(15) << "Y[mum]"   << " "
 	       << std::setw(15) << "Z[mum]"   << " "
+	       << std::setw(15) << "XRel[mum]"   << " "
+	       << std::setw(15) << "YRel[mum]"   << " "
+	       << std::setw(15) << "ZRel[mum]"   << " "
+	       << std::setw(20) << "tRel[ns]"     << " "
 	       << std::setw(15) << "XGlob[mum]"   << " "
 	       << std::setw(15) << "YGlob[mum]"   << " "
 	       << std::setw(15) << "ZGlob[mum]"   << " "
-	       << std::setw(20) << "S[m]"     << " "
-	       << std::setw(20) << "tLocal[ns]"     << " "
 	       << std::setw(20) << "tGlobal[ns]"     << " "
+	       << std::setw(20) << "S[m]"     << " "
+	       << std::setw(20) << "SReference[m]"     << " "
 	       << std::setw(15) << "Xp[rad]"  << " "
 	       << std::setw(15) << "Yp[rad]"  << " "
 	       << std::setw(15) << "XpGlob[rad]"  << " "
@@ -147,7 +151,7 @@ void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile, G4int PDGType, G4doub
 	   << G4endl;
 }
 
-void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile, G4int PDGType, G4double Mom, G4double X, G4double Y, G4double Z, G4double S, G4double tLocal, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID, G4int TurnsTaken)
+void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile, G4int PDGType, G4double Mom, G4double X, G4double Y, G4double Z,G4double S, G4double tLocal, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID, G4int TurnsTaken)
 {
   *outfile << std::left << std::setprecision(10) << std::fixed
 	   << std::setw(6)  << PDGType              << " "
@@ -167,8 +171,9 @@ void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile, G4int PDGType, G4doub
 	   << G4endl;
 }
 
-void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile, G4int PDGType, G4double Mom, G4double X, G4double Y, G4double Z, G4double XGlobal,
-				   G4double YGlobal, G4double ZGlobal, G4double S, G4double tLocal, G4double tGlobal,G4double XPrime, G4double YPrime, 
+void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile, G4int PDGType, G4double Mom, G4double X, G4double Y, G4double Z, 
+				   G4double XRel, G4double YRel, G4double ZRel, G4double tRel, 
+				   G4double XGlobal,G4double YGlobal, G4double ZGlobal,G4double tGlobal,G4double S, G4double SReference,G4double XPrime, G4double YPrime, 
 				   G4double XPrimeGlobal, G4double YPrimeGlobal, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID, G4int TurnsTaken)
 {
   *outfile << std::left << std::setprecision(10) << std::fixed
@@ -177,12 +182,16 @@ void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile, G4int PDGType, G4doub
 	   << std::setw(15) << X/CLHEP::micrometer  << " "
 	   << std::setw(15) << Y/CLHEP::micrometer  << " "
 	   << std::setw(15) << Z/CLHEP::micrometer  << " "
+	   << std::setw(15) << XRel/CLHEP::micrometer  << " "
+	   << std::setw(15) << YRel/CLHEP::micrometer  << " "
+	   << std::setw(15) << ZRel/CLHEP::micrometer  << " "
+	   << std::setw(20) << tRel/CLHEP::ns           << " "
 	   << std::setw(15) << XGlobal/CLHEP::micrometer  << " "
 	   << std::setw(15) << YGlobal/CLHEP::micrometer  << " "
 	   << std::setw(15) << ZGlobal/CLHEP::micrometer  << " "
-	   << std::setw(20) << S/CLHEP::m           << " "
-	   << std::setw(20) << tLocal/CLHEP::ns           << " "
 	   << std::setw(20) << tGlobal/CLHEP::ns           << " "
+	   << std::setw(20) << S/CLHEP::m           << " "
+	   << std::setw(20) << SReference/CLHEP::m           << " "
 	   << std::setw(15) << XPrime/CLHEP::radian << " "
 	   << std::setw(15) << YPrime/CLHEP::radian << " "
 	   << std::setw(15) << XPrimeGlobal/CLHEP::radian << " "
@@ -212,12 +221,16 @@ void BDSOutputASCII::WriteHits(BDSSamplerHitsCollection *hc)
 		    (*hc)[i]->GetX(),
 		    (*hc)[i]->GetY(),
 		    (*hc)[i]->GetZ(),
+		    (*hc)[i]->GetRelX(),
+		    (*hc)[i]->GetRelY(),
+		    (*hc)[i]->GetRelZ(),
+		    (*hc)[i]->GetRelT(),
                     (*hc)[i]->GetGlobalX(),
 		    (*hc)[i]->GetGlobalY(),
 		    (*hc)[i]->GetGlobalZ(),
-		    (*hc)[i]->GetS(),
-		    (*hc)[i]->GetTLocal(),
 		    (*hc)[i]->GetTGlobal(),
+		    (*hc)[i]->GetS(),
+		    (*hc)[i]->GetSReference(),
 		    (*hc)[i]->GetXPrime(),
 		    (*hc)[i]->GetYPrime(),
 		    (*hc)[i]->GetGlobalXPrime(),

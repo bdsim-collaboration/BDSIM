@@ -65,8 +65,14 @@ void BDSOutputROOT::BuildSamplerTree(G4String name){
   SamplerTree->Branch("yp",&yp,"yp/F"); // (rad)
   SamplerTree->Branch("zp",&zp,"zp/F"); // (rad)
   SamplerTree->Branch("t",&t,"t/F"); // (ns)
-  SamplerTree->Branch("t_local",&t_local,"t_local/F"); // (ns)
+
+  SamplerTree->Branch("xRel",&xRel,"xRel/F"); // (mum)
+  SamplerTree->Branch("yRel",&yRel,"yRel/F"); // (mum)
+  SamplerTree->Branch("zRel",&zRel,"zRel/F"); // (mum)
+  SamplerTree->Branch("tRel",&tRel,"tRel/F"); // (ns)
   
+
+
   SamplerTree->Branch("X",&X,"X/F"); // (mum)
   SamplerTree->Branch("Y",&Y,"Y/F"); // (mum)
   SamplerTree->Branch("Z",&Z,"Z/F"); // (m)
@@ -75,6 +81,7 @@ void BDSOutputROOT::BuildSamplerTree(G4String name){
   SamplerTree->Branch("Zp",&Zp,"Zp/F"); // (rad)
   
   SamplerTree->Branch("s",&s,"s/F"); // (m)
+  SamplerTree->Branch("sReference",&sReference,"sReference/F"); // (m)
   
   SamplerTree->Branch("weight",&weight,"weight/F");
   SamplerTree->Branch("partID",&part,"partID/I");
@@ -181,11 +188,14 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
 				 G4double X, 
 				 G4double Y, 
 				 G4double Z, 
+				 G4double XRel, 
+				 G4double YRel, 
+				 G4double ZRel, 
+				 G4double TRel, 
 				 G4double XPrime, 
 				 G4double YPrime, 
 				 G4double ZPrime, 
 				 G4double globalTime, 
-				 G4double localTime, 
 				 G4double GlobalX, 
 				 G4double GlobalY, 
 				 G4double GlobalZ, 
@@ -193,6 +203,7 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
 				 G4double GlobalYPrime, 
 				 G4double GlobalZPrime, 
 				 G4double S, 
+				 G4double SReference, 
 				 G4double Weight, 
 				 G4int    PDGtype, 
 				 G4int    EventNo, 
@@ -231,12 +242,15 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
   //Edep=Edep / CLHEP::GeV;
   x=X / CLHEP::micrometer;
   y=Y / CLHEP::micrometer;
-  z=Z / CLHEP::m;
+  z=Z / CLHEP::micrometer;
+  xRel=XRel / CLHEP::micrometer;
+  yRel=YRel / CLHEP::micrometer;
+  zRel=ZRel / CLHEP::micrometer;
   xp=XPrime / CLHEP::radian;
   yp=YPrime / CLHEP::radian;
   zp=ZPrime / CLHEP::radian;
   t=globalTime / CLHEP::ns;
-  t_local=localTime / CLHEP::ns;
+  tRel=TRel / CLHEP::ns;
   X=GlobalX / CLHEP::m;
   Y=GlobalY / CLHEP::m;
   Z=GlobalZ / CLHEP::m;
@@ -244,6 +258,7 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
   Yp=GlobalYPrime / CLHEP::radian;
   Zp=GlobalZPrime / CLHEP::radian;
   s=S / CLHEP::m;
+  sReference=SReference / CLHEP::m;
   weight=Weight;
   part=PDGtype; 
   nev=EventNo; 
@@ -281,10 +296,11 @@ void BDSOutputROOT::WritePrimary(G4String samplerName,
 	       t, 
 	       E, 
 	       x0, y0, z0, 
+	       x0, y0, z0, 
+	       t,
 	       xp, yp, zp, 
 	       t,
-	       t, 
-	       0,0,0,0,0,0,0,
+	       0,0,0,0,0,0,0,0,
 	       weight, 
 	       PDGType, 
 	       nEvent, 
@@ -334,11 +350,14 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 		   (*hc)[i]->GetX(),
 		   (*hc)[i]->GetY(),
 		   (*hc)[i]->GetZ(),
+		   (*hc)[i]->GetRelX(),
+		   (*hc)[i]->GetRelY(),
+		   (*hc)[i]->GetRelZ(),
+		   (*hc)[i]->GetRelT(),
 		   (*hc)[i]->GetXPrime(),
 		   (*hc)[i]->GetYPrime(),
 		   (*hc)[i]->GetZPrime(),
 		   (*hc)[i]->GetTGlobal(),
-		   (*hc)[i]->GetTLocal(),
 		   (*hc)[i]->GetGlobalX(),
 		   (*hc)[i]->GetGlobalY(),
 		   (*hc)[i]->GetGlobalZ(),
@@ -346,6 +365,7 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 		   (*hc)[i]->GetGlobalYPrime(),
 		   (*hc)[i]->GetGlobalZPrime(),
 		   (*hc)[i]->GetS(),
+		   (*hc)[i]->GetSReference(),
 		   (*hc)[i]->GetWeight(),
 		   (*hc)[i]->GetPDGtype(), 
 		   (*hc)[i]->GetEventNo(), 
