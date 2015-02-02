@@ -336,7 +336,7 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
       y1  = (-0.5*x0)*sin2OL - (xp0*w)*sinSqOL + y0*cosSqOL + (0.5*yp0/w)*sin2OL;
       yp1 = x0*w*sinSqOL - (0.5*xp0)*sin2OL - (0.5*w*y0)*sin2OL + yp0*cosSqOL;  
       
-      // enusre normalisation for vector
+      // ensure normalisation for vector
       zp1 = sqrt(1 - xp1*xp1 -yp1*yp1);
       
       // calculate deltas to existing coords
@@ -470,7 +470,7 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
   yOut[4] = GlobalP.y();
   yOut[5] = GlobalP.z();
   
-}  
+}
 
 
 void BDSSolenoidStepper::Stepper( const G4double yInput[],
