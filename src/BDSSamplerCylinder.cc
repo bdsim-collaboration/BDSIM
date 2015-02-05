@@ -6,12 +6,12 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSMaterials.hh"
 #include "BDSSamplerCylinder.hh"
+#include "BDSDebug.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
-
 #include "BDSSamplerSD.hh"
 #include "G4SDManager.hh"
 
@@ -77,4 +77,5 @@ void BDSSamplerCylinder::SetVisAttributes()
 BDSSamplerCylinder::~BDSSamplerCylinder()
 {
   --nSamplers;
+  if(nSamplers<0) G4cerr << __METHOD_NAME__ << "WARNING: more samplers deleted than created!" << G4endl;
 }

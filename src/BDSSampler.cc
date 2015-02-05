@@ -79,12 +79,7 @@ void BDSSampler::BuildMarkerLogicalVolume()
 
 BDSSampler::~BDSSampler()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   --nSamplers;
 
-#ifdef BDSDEBUG
-  G4cout << __METHOD_END__ << G4endl;
-#endif
+  if(nSamplers<0) G4cerr << __METHOD_NAME__ << "WARNING: more samplers deleted than created!" << G4endl;
 }
