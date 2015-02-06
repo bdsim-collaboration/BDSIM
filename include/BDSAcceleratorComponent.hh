@@ -214,7 +214,8 @@ protected:
   G4double itsBpRadius;
   G4double itsXAper;
   G4double itsYAper;
-  G4double itsAngle;
+  G4double itsAngle;   // the angle (rad) by which the reference coordinates are changed - for placement
+  // sbends and rbends use this - h and vkicks this should be 0.
   G4String itsMaterial;
   G4VisAttributes* itsVisAttributes;
   std::list<G4double> itsBlmLocZ;
