@@ -7,8 +7,6 @@
 BDS3DMagField::BDS3DMagField( const char* filename, double zOffset ) 
   :fZoffset(zOffset),invertX(false),invertY(false),invertZ(false)
 {    
-
-
   _lenUnit= CLHEP::cm;
   _fieldUnit= CLHEP::tesla; 
 
@@ -124,7 +122,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
   local *= Rotation();
 
 #ifdef BDSDEBUG
-  G4cout <<  "BDS3DMagField::GetFieldValue" << G4endl;
+  G4cout << "BDS3DMagField::GetFieldValue" << G4endl;
   G4cout << "point x       = " << point[0]/CLHEP::cm << " cm" << G4endl;
   G4cout << "point y       = " << point[1]/CLHEP::cm << " cm" << G4endl;
   G4cout << "point z       = " << point[2]/CLHEP::cm << " cm" << G4endl;

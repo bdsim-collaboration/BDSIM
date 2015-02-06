@@ -5,7 +5,7 @@ project(BDSIM)
 # project version
 set( BDSIM_MAJOR_VERSION 0 )
 set( BDSIM_MINOR_VERSION 6 )
-set( BDSIM_PATCH_LEVEL 0 )
+set( BDSIM_PATCH_LEVEL develop )
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
 message(STATUS "Configuring BDSIM ${BDSIM_VERSION}")
@@ -39,7 +39,8 @@ elseif(${CMAKE_BUILD_TYPE} STREQUAL "None")
     set(CMAKE_CXX_FLAGS "-O3 -ffast-math -DNDEBUG")
 endif()
 
-# Compiler-specific C++11 activation.
+# Compiler-specific C++11 activation. Replace later with
+# CMAKE_CXX_STANDARD flag only available for cmake 3.1
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     execute_process(
         COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
@@ -49,7 +50,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     endif ()
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     message(STATUS "Compiler supports C++11")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
 set(CMAKE_C_ORIG_FLAGS "${CMAKE_C_FLAGS}")
