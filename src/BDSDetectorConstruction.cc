@@ -370,9 +370,9 @@ void BDSDetectorConstruction::ComponentPlacement(){
   BDSEnergyCounterSD* ECounter    = new BDSEnergyCounterSD("base_ec");
   SDman->AddNewDetector(ECounter);
 
-  G4ThreeVector TargetPos;
+  G4ThreeVector TargetPos;          // position of component
   G4ThreeVector rlast = G4ThreeVector(0.,0.,0.);  // edge of last element coordinates
-  G4ThreeVector rtot(0.,0.,0.);
+  G4ThreeVector rtot(0.,0.,0.);     // position of component, often same as TargetPos
   G4ThreeVector localX(1.,0.,0.); 
   G4ThreeVector localY(0.,1.,0.);
   G4ThreeVector localZ(0.,0.,1.);
