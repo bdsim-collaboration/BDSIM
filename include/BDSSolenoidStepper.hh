@@ -41,16 +41,20 @@ protected:
   //  --- Methods used to implement all the derived classes -----
 
   void AdvanceHelix( const G4double  yIn[],
+		     const G4double dydx[],
 		     G4ThreeVector Bfld,
 		     G4double  h,
-		     G4double  yOut[]);    // output 
+		     G4double  yOut[], // output 
+		     G4double  yErr[]);    
   // A first order Step along a solenoid inside the field.
 
 private:
   G4Navigator* SolenoidNavigator;
+  G4MagIntegratorStepper* backupStepper; // use for high amplitude particles
   G4Mag_EqRhs* fPtrMagEqOfMot;
   G4double itsBField;
   G4double itsDist;
+  const G4int nvar;
   //G4double pitch;
 
 };

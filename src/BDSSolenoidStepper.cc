@@ -5,22 +5,26 @@
 #include "G4TransportationManager.hh"
 #include "G4Navigator.hh"
 #include "G4AffineTransform.hh"
+#include "G4ClassicalRK4.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
 
 BDSSolenoidStepper::BDSSolenoidStepper(G4Mag_EqRhs *EqRhs)
   : G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
                                       // position & velocity
-    itsBField(0.0), itsDist(0.0)
+    itsBField(0.0), itsDist(0.0), nvar(6)
 {
   fPtrMagEqOfMot    = EqRhs;
   SolenoidNavigator = new G4Navigator();
+  backupStepper     = new G4ClassicalRK4(EqRhs,6);
 }
 
 void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
+				       const G4double dydx[],
 				       G4ThreeVector,
 				       G4double  h,
-				       G4double  yOut[])
+				       G4double  yOut[],
+				       G4double  yErr[])
 {
   const G4double *pIn      = yIn+3;
   G4ThreeVector GlobalR    = G4ThreeVector( yIn[0], yIn[1], yIn[2]);
@@ -179,129 +183,66 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
 	  y1 =  y0+dy;
 	}
       z1 = z0+dz;
+
+      //write the final coordinates
+      LocalR.setX(x1);
+      LocalR.setY(y1);
+      LocalR.setZ(z1);
+      LocalRp.setX(xp1);
+      LocalRp.setY(yp1);
+      LocalRp.setZ(zp1);
+      
+#ifdef BDSDEBUG 
+      G4cout << "BDSSolenoidStepper: final point in local coordinates:" << G4endl
+	     << " x  = " << LocalR[0]/CLHEP::m << " m" << G4endl
+	     << " y  = " << LocalR[1]/CLHEP::m << " m" << G4endl
+	     << " z  = " << LocalR[2]/CLHEP::m << " m" << G4endl
+	     << " x' = " << LocalRp[0]         << G4endl
+	     << " y' = " << LocalRp[1]         << G4endl
+	     << " z' = " << LocalRp[2]         << G4endl
+	     << G4endl; 
+#endif
+      
+      G4AffineTransform LocalAffine = SolenoidNavigator-> 
+	GetLocalToGlobalTransform();
+      
+      GlobalR = LocalAffine.TransformPoint(LocalR); 
+      GlobalP = InitPMag*LocalAffine.TransformAxis(LocalRp);
+      
+      yOut[0] = GlobalR.x(); 
+      yOut[1] = GlobalR.y(); 
+      yOut[2] = GlobalR.z(); 
+      
+      yOut[3] = GlobalP.x();
+      yOut[4] = GlobalP.y();
+      yOut[5] = GlobalP.z();
+
+      for(G4int i=0;i<nvar;i++) yErr[i]=0; //set error to be zero - not strictly correct
     }
   else
     // perform local helical steps (paraxial approx not safe)
     {
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " local helical steps" << G4endl;
+      G4cout << __METHOD_NAME__ << " local helical steps - using G4ClassicalRK4" << G4endl;
 #endif
-      //TBC - taken from quadrupole just now!
-      
-      // simple quadratic approx:	      
-      G4double solX = - kappa*x0*zp0;
-      G4double solY =   kappa*y0*zp0;
-      G4double solZ =   kappa*(x0*xp0 - y0*yp0);
-      
-      // determine maximum curvature:
-      G4double maxCurv = std:: max(fabs(solX),fabs(solY));
-      maxCurv          = std:: max(maxCurv,fabs(solZ));
-      
-      x1 = x0 + h*xp0 + solX*h2/2;
-      y1 = y0 + h*yp0 + solY*h2/2; 
-      z1 = z0 + h*zp0 + solZ*h2/2;
-      
-      xp1 = xp0 + solX*h;
-      yp1 = yp0 + solY*h;
-      zp1 = zp0 + solZ*h;
-      
-      // estimate parameters at end of step:
-      G4double solX_end = - kappa*x1*zp1;
-      G4double solY_end =   kappa*y1*zp1;
-      G4double solZ_end =   kappa*(x1*xp1 - y1*yp1);
-      
-      // determine maximum curvature:
-      maxCurv = std::max(maxCurv,fabs(solX_end));
-      maxCurv = std::max(maxCurv,fabs(solY_end));
-      maxCurv = std::max(maxCurv,fabs(solZ_end));
-      itsDist = maxCurv*h2/4.;
-      
-      // use the average:
-      G4double solX_av = (solX+solX_end)/2;
-      G4double solY_av = (solY+solY_end)/2;
-      G4double solZ_av = (solZ+solZ_end)/2;
-      
-      G4double x_prime_av = (xp0 + xp1)/2;
-      G4double y_prime_av = (yp0 + yp1)/2;
-      G4double z_prime_av = (zp0 + zp1)/2;
-      
-      x1 = x0 + h*x_prime_av + solX_av * h2/2;
-      y1 = y0 + h*y_prime_av + solY_av * h2/2; 
-      z1 = z0 + h*z_prime_av + solZ_av * h2/2;
-      
-      xp1 = xp0 + solX_av*h;
-      yp1 = yp0 + solY_av*h;
-      zp1 = zp0 + solZ_av*h;
-      
-      G4double dx = (x1-x0);
-      G4double dy = (y1-y0);
-      G4double dz = (z1-z0);
-      G4double chord2 = dx*dx + dy*dy + dz*dz;
-      if(chord2>h2)
-	{
-	  G4double hnew=h*sqrt(h2/chord2);
-	  x1 = x0 + hnew*x_prime_av + solX_av * hnew*hnew/2;
-	  y1 = y0 + hnew*y_prime_av + solY_av * hnew*hnew/2; 
-	  z1 = z0 + hnew*z_prime_av + solZ_av * hnew*hnew/2;
-	  
-	  xp1 = xp0 + solX_av*hnew;
-	  yp1 = yp0 + solY_av*hnew;
-	  zp1 = zp0 + solZ_av*hnew;
-	}
-    }
-
-  //write the final coordinates
-  LocalR.setX(x1);
-  LocalR.setY(y1);
-  LocalR.setZ(z1);
-  LocalRp.setX(xp1);
-  LocalRp.setY(yp1);
-  LocalRp.setZ(zp1);
-  
-#ifdef BDSDEBUG 
-  G4cout << "BDSSolenoidStepper: final point in local coordinates:" << G4endl
-	 << " x  = " << LocalR[0]/CLHEP::m << " m" << G4endl
-	 << " y  = " << LocalR[1]/CLHEP::m << " m" << G4endl
-	 << " z  = " << LocalR[2]/CLHEP::m << " m" << G4endl
-	 << " x' = " << LocalRp[0]         << G4endl
-	 << " y' = " << LocalRp[1]         << G4endl
-	 << " z' = " << LocalRp[2]         << G4endl
-	 << G4endl; 
-#endif
-
-  G4AffineTransform LocalAffine = SolenoidNavigator-> 
-    GetLocalToGlobalTransform();
-  
-  GlobalR = LocalAffine.TransformPoint(LocalR); 
-  GlobalP = InitPMag*LocalAffine.TransformAxis(LocalRp);
-  
-  yOut[0] = GlobalR.x(); 
-  yOut[1] = GlobalR.y(); 
-  yOut[2] = GlobalR.z(); 
-  
-  yOut[3] = GlobalP.x();
-  yOut[4] = GlobalP.y();
-  yOut[5] = GlobalP.z();
-  
+      // use a classical Runge Kutta stepper here
+      backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
+    }  
 }
 
 
 void BDSSolenoidStepper::Stepper( const G4double yInput[],
-				  const G4double[],
+				  const G4double dydx[],
 				  const G4double hstep,
 				  G4double yOut[],
 				  G4double yErr[]      )
-{  
-  const G4int nvar = 6 ;
-
+{ 
   //simply perform one step here
-  for(G4int i=0;i<nvar;i++) yErr[i]=0;
-  AdvanceHelix(yInput,(G4ThreeVector)0,hstep,yOut);
+  AdvanceHelix(yInput,dydx,(G4ThreeVector)0,hstep,yOut,yErr);
 }
 
 G4double BDSSolenoidStepper::DistChord()   const 
 {
-
   return itsDist;
   // This is a class method that gives distance of Mid 
   //  from the Chord between the Initial and Final points.
