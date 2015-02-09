@@ -552,14 +552,14 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
   rm->rotateZ(360.0/2.0/4.0*CLHEP::deg);
   G4ThreeVector uz = G4ThreeVector(-35.*CLHEP::cm,0.,0.); 
 
-  new G4PVPlacement(rm,             //rotation,
-		    uz,             //position
-		    shieldLV,            //its logical volume
-		    "poleShield",               //its name
-		    worldLV,             //its mother  volume
-		    false,                 //no boolean operation
-		    0,                     //copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());       // checking ove
+  new G4PVPlacement(rm,            //rotation
+                    uz,            //position
+                    shieldLV,      //its logical volume
+                    "poleShield",  //its name
+                    worldLV,       //its mother  volume
+                    false,         //no boolean operation
+                    0,             //copy number
+                    BDSGlobalConstants::Instance()->GetCheckOverlaps()); // checking overlaps
   /*
   G4ThreeVector uz2 = G4ThreeVector(mag_extradius+mag_inradius,0.,0.); 
   
