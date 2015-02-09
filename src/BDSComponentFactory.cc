@@ -1147,13 +1147,13 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid(){
 #ifdef BDSDEBUG 
   G4cout << "---->creating Solenoid,"
 	 << " name= " << _element.name
-	 << " l= " << _element.l << "m"
-	 << " ks= " << _element.ks << "m^-1"
-	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
-	 << " B= " << bField/CLHEP::tesla << "T"
-	 << " aper= " << aper/CLHEP::m << "m"
-	 << " outR= " << _element.outR << "m"
-	 << " FeRad= " << FeRad/CLHEP::m << "m"
+	 << " l= " << _element.l << " m"
+	 << " ks= " << _element.ks << " m^-1"
+	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"
+	 << " B= " << bField/CLHEP::tesla << " T"
+	 << " aper= " << aper/CLHEP::m << " m"
+	 << " outR= " << _element.outR << " m"
+	 << " FeRad= " << FeRad/CLHEP::m << " m"
 	 << " tunnel material " << _element.tunnelMaterial
 	 << " material= " << _element.material
 	 << G4endl;
