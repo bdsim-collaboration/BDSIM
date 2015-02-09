@@ -44,20 +44,19 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
          << " k  = " << kappa/(1./CLHEP::m2) << " m^-2" << G4endl
          << G4endl; 
 #endif
-
-  G4double      h2 = h*h;
-
+  
   // setup our own navigator for calculating transforms
   SolenoidNavigator->SetWorldVolume(G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->GetWorldVolume()); 
   SolenoidNavigator->LocateGlobalPointAndSetup(GlobalR);
 
+  // get the transform
   G4AffineTransform GlobalAffine = SolenoidNavigator->
     GetGlobalToLocalTransform();
   
   G4ThreeVector LocalR  = GlobalAffine.TransformPoint(GlobalR); 
   G4ThreeVector LocalRp = GlobalAffine.TransformAxis(InitMomDir);
 
-  G4double x1,xp1,y1,yp1,z1,zp1;
+  G4double x1,xp1,y1,yp1,z1,zp1; //output coordinates to be
   
   if (fabs(kappa)<1e-12)
     {
@@ -130,6 +129,9 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
     {
       // RMatrix - from Andy Wolszki's Linear Dynamics lectures (#5, slide 43)
       // http://pcwww.liv.ac.uk/~awolski/main_teaching_Cockcroft_LinearDynamics.htm
+      // note this is actually for one step through the whole solenoid as focussing
+      // comes from edge effects - may need to reconsider this in the future...
+      // maximum step size is set to full length in BDSSolenoid.cc
       // ( cos^2 (wL)     , (1/2w)sin(2wL)  , (1/2)sin(2wL)  , (1/w)sin^2(wL) ) (x )
       // ( (w/2)sin(2wL)  , cos^2(wL)       ,  -w sin^2(wL)  , (1/2)sin(2wL)  ) (x')
       // ( -(1/2)sin(2wL) , (-1/w)sin^2(wL) , cos^2(wL)      , (1/2w)sin(2wL) ) (y )
