@@ -1,3 +1,4 @@
+#include "BDSDebug.hh"
 #include "BDSBeamline.hh"
 #include "G4AffineTransform.hh"
 #include "BDSBeamlineNavigator.hh"
@@ -27,7 +28,7 @@ BDSBeamline::~BDSBeamline(){
 void BDSBeamline::addComponent(BDSAcceleratorComponent* var){
   //Add component to the beamline
 #ifdef BDSDEBUG
-  G4cout << "BDSBeamline: adding component " << G4endl;
+  G4cout << __METHOD_NAME__ << " adding component" << G4endl;
 #endif
 
   _componentList.push_back(var);
@@ -37,7 +38,7 @@ void BDSBeamline::addComponent(BDSAcceleratorComponent* var){
   _navigator->addComponent(var);
 
 #ifdef BDSDEBUG
-  G4cout << "BDSBeamline: last item" << lastItem()->GetName() << G4endl;
+  G4cout << __METHOD_NAME__ << " last item is " << lastItem()->GetName() << G4endl;
 #endif
   //Update the reference transform
   setRefTransform(var);
@@ -47,7 +48,7 @@ void BDSBeamline::setRefTransform(BDSAcceleratorComponent* var){
   if(BDSGlobalConstants::Instance()->GetRefVolume()==var->GetName() && 
      BDSGlobalConstants::Instance()->GetRefCopyNo()==var->GetCopyNumber()){
 #ifdef BDSDEBUG
-    G4cout << "Setting new transform" <<G4endl;
+    G4cout << __METHOD_NAME__ << "setting new transform" <<G4endl;
 #endif
     G4AffineTransform tf(rotationGlobal(),*positionStart());
     BDSGlobalConstants::Instance()->SetRefTransform(tf);
@@ -136,4 +137,12 @@ G4ThreeVector* BDSBeamline::GetLastPosition(){
 
 G4ThreeVector* BDSBeamline::GetFirstPosition(){
   return _navigator->GetFirstPosition();
+}
+
+G4ThreeVector BDSBeamline::GetMaximumExtentPositive(){
+  return _navigator->GetMaximumExtentPositive();
+}
+
+G4ThreeVector BDSBeamline::GetMaximumExtentNegative(){
+  return _navigator->GetMaximumExtentNegative();
 }

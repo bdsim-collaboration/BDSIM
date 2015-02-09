@@ -333,7 +333,14 @@ void BDSQuadStepper::Stepper( const G4double yInput[],
       h = hstep ;
       AdvanceHelix(yIn, (G4ThreeVector)0, h, yTemp); 
       
-      for(i=0;i<nvar;i++) yErr[i] = yOut[i] - yTemp[i] ;
+      for(i=0;i<nvar;i++) {
+	yErr[i] = yOut[i] - yTemp[i] ;
+	// if error small, set error to 0
+	// this is done to prevent Geant4 going to smaller and smaller steps
+	// ideally use some of the global constants instead of hardcoding here
+	// could look at step size as well instead.
+	if (std::abs(yErr[i]) < 1e-7) yErr[i] = 0;
+      }
     }
 }
 

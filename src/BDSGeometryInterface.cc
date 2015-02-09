@@ -145,14 +145,18 @@ void BDSGeometryInterface::Survey()
 	else aper_type=3;
       else aper_type=1;
       
-      G4double phi=0.0, theta=0.0, psi=0.0;
+      //G4double phi=0.0, theta=0.0, psi=0.0;
+      G4double phi   = BDSBeamline::Instance()->rotation()->getPhi();
+      G4double theta = BDSBeamline::Instance()->rotation()->getTheta();
+      G4double psi   = BDSBeamline::Instance()->rotation()->getPsi();
+      /*
       if(thecurrentitem->GetRotation())
 	{
 	  phi = thecurrentitem->GetRotation()->getPhi();
 	  theta = thecurrentitem->GetRotation()->getTheta();
 	  psi = thecurrentitem->GetRotation()->getPsi();
 	}
-      
+      */
       survey.setf(std::ios::fixed, std::ios::floatfield);
       survey.setf(std::ios::showpoint);
       
@@ -169,9 +173,9 @@ void BDSGeometryInterface::Survey()
 	     << setw(12) << spos + (length/2.0)                         << " " /*SEnd*/
 	     << setw(12) << thecurrentitem->GetChordLength()/CLHEP::m   << " "
 	     << setw(12) << thecurrentitem->GetArcLength()/CLHEP::m     << " "
-	     << setw(12) << thecurrentitem->GetPosition().x()/CLHEP::m  << " "
-	     << setw(12) << thecurrentitem->GetPosition().y()/CLHEP::m  << " "
-	     << setw(12) << thecurrentitem->GetPosition().z()/CLHEP::m  << " "
+	     << setw(12) << BDSBeamline::Instance()->position()->x()/CLHEP::m  << " "
+	     << setw(12) << BDSBeamline::Instance()->position()->y()/CLHEP::m  << " "
+	     << setw(12) << BDSBeamline::Instance()->position()->z()/CLHEP::m  << " "
 	     << setw(12) << phi/CLHEP::radian                           << " "
 	     << setw(12) << theta/CLHEP::radian                         << " "
 	     << setw(12) << psi/CLHEP::radian                           << " "

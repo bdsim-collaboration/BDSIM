@@ -124,12 +124,12 @@ Options::Options(){
 
   //tracking options
   maximumTrackingTime = 0.1;
-  deltaChord = 0.00001;
-  chordStepMinimum = 0.000001;
+  deltaChord = 0.00001; // m
+  chordStepMinimum = 0.000001; // m
   deltaIntersection = 0.00001;
-  minimumEpsilonStep=0;
-  maximumEpsilonStep=1e-7;
-  deltaOneStep = 0.00001;
+  minimumEpsilonStep=5e-5; // default value in Geant4, old value 0
+  maximumEpsilonStep=1e-3; // default value in Geant4, old value 1e-7
+  deltaOneStep = 0.5e-5; // default value in Geant4, old value 0.00001;
   turnOnCerenkov = 1;
   synchRadOn = 0;
   decayOn = 1;

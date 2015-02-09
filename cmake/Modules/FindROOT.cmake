@@ -50,6 +50,13 @@ else()
     OUTPUT_VARIABLE ROOT_LIBRARIES
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
+  # Hack to remove c++11 lib in favour of the one provided already
+  if (NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    SET(C11 "-stdlib=libc++")
+    STRING(REPLACE ${C11} "" ROOT_LIBRARIES_TEMP ${ROOT_LIBRARIES})
+    SET(ROOT_LIBRARIES ${ROOT_LIBRARIES_TEMP})
+  endif()
+
   execute_process(
     COMMAND ${ROOT_CONFIG_EXECUTABLE} --libdir
     OUTPUT_VARIABLE ROOT_LIBRARY_DIR

@@ -16,6 +16,7 @@
 //
 #include "BDSSextStepper.hh"
 #include "BDSDebug.hh"
+#include "G4Navigator.hh"
 #include "G4ThreeVector.hh"
 #include "G4TransportationManager.hh"
 
@@ -41,12 +42,9 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
   G4ThreeVector InitMomDir=v0.unit();
 
   G4ThreeVector GlobalPosition= G4ThreeVector( yIn[0], yIn[1], yIn[2]);  
-
   G4double InitMag=v0.mag();
-
-
   G4double kappa=  (-fPtrMagEqOfMot->FCof()*itsBDblPrime) /InitMag;
-   
+
 #ifdef BDSDEBUG  
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << "kappa                 : " << kappa << G4endl;
@@ -55,6 +53,27 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
   G4cout << __METHOD_NAME__ << "g''                   : " << itsBDblPrime<< G4endl;
   G4cout << __METHOD_NAME__ << "fPtrMagEqOfMot->FCof(): " << fPtrMagEqOfMot->FCof() << G4endl;
   G4cout << __METHOD_NAME__ << "h                     : " << h << G4endl;
+
+  G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
+
+  G4Navigator* SextNavigator=
+    G4TransportationManager::GetTransportationManager()->
+    GetNavigatorForTracking();
+  G4String VolName = SextNavigator->LocateGlobalPointAndSetup(GlobalPosition)->GetName();
+
+  G4cout << "BDSSextStepper: " << VolName << G4endl
+	 << " step= " << h/CLHEP::m << " m" << G4endl
+         << " x= " << yIn[0]/CLHEP::m << "m" << G4endl
+         << " y= " << yIn[1]/CLHEP::m << "m" << G4endl
+         << " z= " << yIn[2]/CLHEP::m << "m" << G4endl
+         << " px= " << yIn[3]/CLHEP::GeV << "GeV/c" << G4endl
+         << " py= " << yIn[4]/CLHEP::GeV << "GeV/c" << G4endl
+         << " pz= " << yIn[5]/CLHEP::GeV << "GeV/c" << G4endl
+         << " q= " << charge/CLHEP::eplus << "e" << G4endl
+         << " dBy/dx= " << itsBDblPrime/(CLHEP::tesla/CLHEP::m/CLHEP::m) << "T/m^2" << G4endl
+         << " k= " << kappa/(1./CLHEP::m2) << "m^-2" << G4endl
+         << G4endl 
+         << G4endl;
 #endif 
 
    if(fabs(kappa)<1.e-12)
@@ -166,7 +185,6 @@ void BDSSextStepper::Stepper( const G4double yInput[],
 			     G4double yErr[]      )
 {  
   const G4int nvar = 6 ;
-  
   G4int i;
  
   G4double yTemp[7], yIn[7];
@@ -175,7 +193,7 @@ void BDSSextStepper::Stepper( const G4double yInput[],
   
   for(i=0;i<nvar;i++) yIn[i]=yInput[i];
   
-  G4double h = hstep * 0.5; 
+  G4double h = hstep * 0.5;
   
   // Do two half steps
   AdvanceHelix(yIn,   (G4ThreeVector)0,  h, yTemp);
@@ -185,7 +203,14 @@ void BDSSextStepper::Stepper( const G4double yInput[],
   h = hstep ;
   AdvanceHelix(yIn, (G4ThreeVector)0, h, yTemp); 
   
-  for(i=0;i<nvar;i++) yErr[i] = yOut[i] - yTemp[i] ;
+  for(i=0;i<nvar;i++) {
+    yErr[i] = yOut[i] - yTemp[i] ;
+    // if error small, set error to 0
+    // this is done to prevent Geant4 going to smaller and smaller steps
+    // ideally use some of the global constants instead of hardcoding here
+    // could look at step size as well instead.
+    if (std::abs(yErr[i]) < 1e-7) yErr[i] = 0;
+  }
 }
 
 G4double BDSSextStepper::DistChord()   const 

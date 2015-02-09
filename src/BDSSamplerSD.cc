@@ -57,17 +57,10 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
 
 G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
-  G4Track* theTrack = aStep->GetTrack();
-  BDSTrajectory* bdsTraj = new BDSTrajectory(theTrack);
-  //bdsTraj->printRichDataOfSteps();
-  // LN removed this because it only prints definition of types, not info itself
-  
+  G4Track* theTrack         = aStep->GetTrack();
+  BDSTrajectory* bdsTraj    = new BDSTrajectory(theTrack);
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
-  //  G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
-  //  // tmp - only store muons
-  //     G4String pName=theTrack->GetDefinition()->GetParticleName();
-  //    if(pName=="mu+"||pName=="mu-")
-  // 	{ // tm
+  
   //Do not store hit if the particle is not on the boundary 
   if(preStepPoint->GetStepStatus()!=fGeomBoundary) return false;
 
@@ -107,11 +100,6 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   //      G4ThreeVector LocalDirection=Rot*momDir; 
   G4ThreeVector LocalPosition = tf.TransformPoint(pos);
   G4ThreeVector LocalDirection = tf.TransformAxis(momDir);
-  
-  // Changed z output by Samplers to be the position of the sampler
-  // not time of flight of the particle JCC 15/10/05
-  //G4double z=-(time*c_light-(pos.z()+BDSGlobalConstants::Instance()->GetWorldSizeZ()));
-  //G4double z=pos.z();
 
   G4double zPrime=LocalDirection.z();
   if(zPrime<0) energy*=-1;
@@ -136,14 +124,14 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4cout << __METHOD_NAME__ << "BDSSamplerSD> TrackID: " << TrackID << G4endl;  
 #endif
   
-  G4ThreeVector vtx=theTrack->GetVertexPosition();
-  G4ThreeVector dir=theTrack->GetVertexMomentumDirection();
-  G4ThreeVector posLastScatter=bdsTraj->GetPositionOfLastScatter(theTrack);
-  G4ThreeVector momDirLastScatter=bdsTraj->GetMomDirAtLastScatter(theTrack);
-  G4double timeLastScatter=bdsTraj->GetTimeAtLastScatter(theTrack);
-  G4double energyLastScatter=bdsTraj->GetEnergyAtLastScatter(theTrack);
-  G4double vertexEnergy=theTrack->GetVertexKineticEnergy() + theTrack->GetParticleDefinition()->GetPDGMass();
-  G4double vertexTime=bdsTraj->GetTimeAtVertex(theTrack);
+  G4ThreeVector vtx               = theTrack->GetVertexPosition();
+  G4ThreeVector dir               = theTrack->GetVertexMomentumDirection();
+  G4ThreeVector posLastScatter    = bdsTraj->GetPositionOfLastScatter(theTrack);
+  G4ThreeVector momDirLastScatter = bdsTraj->GetMomDirAtLastScatter(theTrack);
+  G4double timeLastScatter        = bdsTraj->GetTimeAtLastScatter(theTrack);
+  G4double energyLastScatter      = bdsTraj->GetEnergyAtLastScatter(theTrack);
+  G4double vertexEnergy = theTrack->GetVertexKineticEnergy() + theTrack->GetParticleDefinition()->GetPDGMass();
+  G4double vertexTime             = bdsTraj->GetTimeAtVertex(theTrack);
 
   // store production/scatter point
   BDSParticle lastScatter(posLastScatter,momDirLastScatter,energyLastScatter,timeLastScatter);
@@ -192,9 +180,6 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 
 void BDSSamplerSD::EndOfEvent(G4HCofThisEvent* /*HCE*/)
 {
-  //G4SDManager * SDman = G4SDManager::GetSDMpointer();
-  //G4int HCID = SDman->GetCollectionID(itsCollectionName);
-  //HCE->AddHitsCollection(HCID, SamplerCollection );
 }
 
 void BDSSamplerSD::clear(){} 

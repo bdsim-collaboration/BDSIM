@@ -26,6 +26,8 @@ public:
   G4ThreeVector* positionFromCurrentCenter();
   G4ThreeVector* GetLastPosition();
   G4ThreeVector* GetFirstPosition();
+  G4ThreeVector GetMaximumExtentPositive();
+  G4ThreeVector GetMaximumExtentNegative();
 
   G4double s_total();
 
@@ -49,6 +51,8 @@ private:
   G4RotationMatrix* _rotationLocal;
   G4RotationMatrix* _rotationGlobal;
   G4RotationMatrix* _rotation;
+  G4ThreeVector _maximumExtentPositive;
+  G4ThreeVector _maximumExtentNegative;
 
   std::list<G4RotationMatrix*> _rotationList;
   std::list<G4RotationMatrix*> _rotationGlobalList;
