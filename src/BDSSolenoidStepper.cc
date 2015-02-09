@@ -213,7 +213,7 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
   G4ThreeVector GlobalP    = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
   G4ThreeVector InitMomDir = GlobalP.unit();
   G4double      InitPMag   = GlobalP.mag();
-  G4double      kappa      = - fPtrMagEqOfMot->FCof()*itsBField/InitPMag;
+  G4double      kappa      = - 0.5*fPtrMagEqOfMot->FCof()*itsBField/InitPMag;
 
 #ifdef BDSDEBUG
   G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
@@ -334,7 +334,7 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
       // calculate thick lens transfer matrix
       x1  = x0*cosSqOL + (0.5*xp0/w)*sin2OL + (0.5*y0)*sin2OL + (yp0/w)*sinSqOL;
       xp1 = (0.5*x0*w)*sin2OL + xp0*cosSqOL - (w*y0)*sinSqOL + (0.5*yp0)*sin2OL;
-      y1  = (-0.5*x0)*sin2OL - (xp0*w)*sinSqOL + y0*cosSqOL + (0.5*yp0/w)*sin2OL;
+      y1  = (-0.5*x0)*sin2OL - (xp0/w)*sinSqOL + y0*cosSqOL + (0.5*yp0/w)*sin2OL;
       yp1 = x0*w*sinSqOL - (0.5*xp0)*sin2OL - (0.5*w*y0)*sin2OL + yp0*cosSqOL;  
       
       // ensure normalisation for vector
