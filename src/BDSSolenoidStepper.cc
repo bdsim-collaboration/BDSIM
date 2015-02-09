@@ -231,7 +231,6 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
 #endif
 
   G4double      h2 = h*h;
-  //G4ThreeVector LocalR,LocalRp ;
 
   // setup our own navigator for calculating transforms
   SolenoidNavigator->SetWorldVolume(G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->GetWorldVolume()); 
@@ -275,9 +274,7 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
   LocalRpp.setX(-zp0*x0);
   LocalRpp.setY( zp0*y0);
   LocalRpp.setZ( x0*xp0 - y0*yp0);
-  G4cout << "Local Rpp " << LocalRpp << G4endl;
   LocalRpp *= kappa;
-  G4cout << "Local Rpp " << LocalRpp << G4endl;
   
   // determine effective curvature 
   G4double R_1 = LocalRpp.mag();
@@ -303,7 +300,7 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
     }
 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " using thick matrix " << G4endl;
+  G4cout << __METHOD_NAME__ << " using thick lens matrix " << G4endl;
 #endif
   
   // Save for Synchrotron Radiation calculations
@@ -316,15 +313,19 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
   // check for paraxial approximation:
   if(fabs(zp0)>0.9)
     {
-      //RMatrix
-      //  ( cos^2 (wL)     , (1/2w)sin(2wL)  , (1/2)sin(2wL)  , (1/w)sin^2(wL) )
-      //  ( (w/2)sin(2wL)  , cos^2(wL)       ,  -w sin^2(wL)  , (1/2)sin(2wL)  )
-      //  ( -(1/2)sin(2wL) , (-1/w)sin^2(wL) , cos^2(wL)      , (1/2w)sin(2wL) )
-      //  ( w sin^2(wL)    , (-1/2)sin(2wL)  , (-w/2)sin(2wL) , cos^2(wL)      )
+      // RMatrix - from Andy Wolszki's Linear Dynamics lectures (#5, slide 43)
+      // http://pcwww.liv.ac.uk/~awolski/main_teaching_Cockcroft_LinearDynamics.htm
+      // ( cos^2 (wL)     , (1/2w)sin(2wL)  , (1/2)sin(2wL)  , (1/w)sin^2(wL) ) (x )
+      // ( (w/2)sin(2wL)  , cos^2(wL)       ,  -w sin^2(wL)  , (1/2)sin(2wL)  ) (x')
+      // ( -(1/2)sin(2wL) , (-1/w)sin^2(wL) , cos^2(wL)      , (1/2w)sin(2wL) ) (y )
+      // ( w sin^2(wL)    , (-1/2)sin(2wL)  , (-w/2)sin(2wL) , cos^2(wL)      ) (y')
       
       G4double w       = kappa;
-      G4double wL      = kappa*h; //really omega - so use 'O' to describe
-      G4double cosOL   = cos(wL);
+      //need the length along curvlinear s -> project h on z
+      G4ThreeVector positionMove = h * InitMomDir; 
+      G4double dz      = positionMove.z();
+      G4double wL      = kappa*dz; 
+      G4double cosOL   = cos(wL); // w is really omega - so use 'O' to describe - OL = omega*L
       G4double cosSqOL = cosOL*cosOL;
       G4double sinOL   = sin(wL);
       G4double sin2OL  = sin(2.0*wL);
@@ -343,29 +344,24 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
       G4double dx = x1-x0;
       G4double dy = y1-y0;
       
-      // Linear chord length
-      G4double dR2 = dx*dx+dy*dy;
-      G4double dz  = sqrt(h2*(1.-h2/(12*R*R))-dR2);
-      G4cout << "dz " << dz << G4endl;
-      G4cout << "dz/h " << dz/h << G4endl;
-      
       // check for precision problems
-      G4double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;
-      G4cout << "Scale factor " << ScaleFac << G4endl;
+      G4double ScaleFac = (dx*dx+dy*dy+dz*dz)/h2;
+#ifdef BDSDEBUG
+      G4cout << "Ratio of calculated to proposed step length: " << ScaleFac << G4endl;
+#endif
       if(ScaleFac>1.0000001)
 	{
-	  ScaleFac=sqrt(ScaleFac);
-	  dx/=ScaleFac;
-	  dy/=ScaleFac;
-	  dz/=ScaleFac;
-	  x1=x0+dx;
-	  y1=y0+dy;
+#ifdef BDSDEBUG
+	  G4cout << __METHOD_NAME__ << " normalising to conserve step length" << G4endl;
+#endif
+	  ScaleFac = sqrt(ScaleFac);
+	  dx /= ScaleFac;
+	  dy /= ScaleFac;
+	  dz /= ScaleFac;
+	  x1 =  x0+dx;
+	  y1 =  y0+dy;
 	}
-      z1=z0+dz;
-      z1 = z0 + h;
-      //
-      //z1  = z0+h;
-      //zp1 = zp0;
+      z1 = z0+dz;
     }
   else
     // perform local helical steps (paraxial approx not safe)
@@ -481,6 +477,7 @@ void BDSSolenoidStepper::Stepper( const G4double yInput[],
 {  
   const G4int nvar = 6 ;
 
+  //simply perform one step here
   for(G4int i=0;i<nvar;i++) yErr[i]=0;
   AdvanceHelix(yInput,(G4ThreeVector)0,hstep,yOut);
 }
