@@ -21,6 +21,7 @@ protected:
 private:
   G4double itsBField;
   G4double itsBGrad;
+  G4double itsKickAngle;
 
   virtual void BuildBPFieldAndStepper();
 

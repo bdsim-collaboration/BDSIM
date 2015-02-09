@@ -1,25 +1,3 @@
-//  
-//   BDSIM, (C) 2001-2006 
-//   
-//   version 0.3
-//  
-//
-//
-//
-//
-//   Generic accelerator component class
-//
-//
-//   History
-//
-//     24 Nov 2006 by Agapov,  v.0.3
-//     x  x   2002 by Blair
-//
-//
-
-
-
-
 #ifndef __BDSACCELERATORCOMPONENT_H
 #define __BDSACCELERATORCOMPONENT_H
 
@@ -61,12 +39,12 @@ public:
   G4double GetAngle ();
 
   // geometry length of the component.
-  virtual G4double GetChordLength ();
-  virtual G4double GetZLength ();
-  virtual G4double GetXLength ();
-  virtual G4double GetYLength ();
-  virtual G4double GetArcLength ();
 
+  virtual G4double GetYLength ();
+  virtual G4double GetXLength ();
+  virtual G4double GetArcLength ();   // note no z length - this is chord length
+  virtual G4double GetChordLength (); // only chord OR arc makes it explicit
+  
   G4double GetPhiAngleIn (); //polar angle in
   G4double GetPhiAngleOut (); //polar angle out
 
@@ -120,6 +98,7 @@ public:
   virtual void PrepareField(G4VPhysicalVolume *referenceVolume); 
 
   // in case a component requires specific alignment (e.g. SQL/BDSElement)
+  /*
   virtual void AlignComponent(G4ThreeVector& TargetPos, 
 			      G4RotationMatrix *TargetRot,
 			      G4RotationMatrix& globalRotation,
@@ -128,7 +107,7 @@ public:
 			      G4ThreeVector& localX,
 			      G4ThreeVector& localY,
 			      G4ThreeVector& localZ); 
-
+  */
   
   // get parameter value from the specification string
 
@@ -235,7 +214,8 @@ protected:
   G4double itsBpRadius;
   G4double itsXAper;
   G4double itsYAper;
-  G4double itsAngle;
+  G4double itsAngle;   // the angle (rad) by which the reference coordinates are changed - for placement
+  // sbends and rbends use this - h and vkicks this should be 0.
   G4String itsMaterial;
   G4VisAttributes* itsVisAttributes;
   std::list<G4double> itsBlmLocZ;
@@ -259,8 +239,8 @@ protected:
   G4double itsTheta;
   G4double itsPsi;
   G4double itsK1, itsK2, itsK3;
-  G4RotationMatrix* itsRotation; // rotation matrix (not used)
-  G4ThreeVector itsPosition;
+  //G4RotationMatrix* itsRotation; // rotation matrix (not used)
+  //G4ThreeVector itsPosition;
   //  BDSBeamPipe* itsBeamPipe;
   G4MagIntegratorStepper*  itsOuterStepper;
   /// generic user limits
@@ -355,9 +335,6 @@ inline G4double BDSAcceleratorComponent::GetYLength ()
 inline G4double BDSAcceleratorComponent::GetArcLength ()
 {return itsLength;}
 
-inline G4double BDSAcceleratorComponent::GetZLength ()
-{return itsLength;}
-
 inline G4double BDSAcceleratorComponent::GetAngle ()
 {return itsAngle;}
 
@@ -417,11 +394,11 @@ inline void BDSAcceleratorComponent::SetK2(G4double K2)
 inline void BDSAcceleratorComponent::SetK3(G4double K3)
 { itsK3 = K3; }
 
-inline G4RotationMatrix* BDSAcceleratorComponent::GetRotation()
-{ return itsRotation;}
+//inline G4RotationMatrix* BDSAcceleratorComponent::GetRotation()
+//{ return itsRotation;}
 
-inline G4ThreeVector BDSAcceleratorComponent::GetPosition()
-{ return itsPosition;}
+//inline G4ThreeVector BDSAcceleratorComponent::GetPosition()
+//{ return itsPosition;}
 
 inline const G4String BDSAcceleratorComponent::GetName () const
 {return itsName;}

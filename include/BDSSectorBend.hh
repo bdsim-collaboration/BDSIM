@@ -1,21 +1,3 @@
-//  
-//   BDSIM, (C) 2001-2007
-//   
-//   version 0.4
-//  
-//
-//
-//   Rectangular bending magnet class
-//   - itsLength parameter internally stores the geometrical length 
-//   - itsAngle parameter internally stores the bending angle
-//   - to get the arc length use the GetArcLength() function
-//   - the volume is a trapezoid with pole faces perpendicular to the ideal
-//     orbit
-//     
-//   History
-//
-//
-
 #ifndef BDSSectorBend_h
 #define BDSSectorBend_h 
 
@@ -40,25 +22,29 @@ public:
 private:
   G4double itsBField;
   G4double itsBGrad;
+  
   /// chord length in [m]
   G4double itsChordLength;
+
+  /// normal vectors for faces when preparing solids
+  G4ThreeVector inputface;
+  G4ThreeVector outputface;
+  
+  /// orientation of shifts - depends on angle - calculations use absolute value of angle for safety
+  G4int orientation;
 
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
   virtual void BuildMarkerLogicalVolume();
   virtual void BuildBeampipe(G4String materialName = "");
-
   virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+
+  virtual void SetVisAttributes();
 
   /// quad with poles and pockets
   void BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
   /// cylinder
   void BuildCylindricalOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
-
-  virtual void SetVisAttributes();
-
-  /// calculate Tube Length for geometry building
-  G4double CalculateTubeLength()const;
 
 };
 

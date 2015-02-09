@@ -1,23 +1,3 @@
-//  
-//   BDSIM, (C) 2001-2006 
-//   
-//   version 0.3
-//  
-//
-//
-//
-//
-//   Generic accelerator component class
-//
-//
-//   History
-//
-//     24 Nov 2006 by Agapov,  v.0.3
-//     x  x   2002 by Blair
-//
-//
-
-
 #include <list>
 #include <sstream>
 #include <cmath>
@@ -147,7 +127,7 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
   itsMarkerLogicalVolume=NULL;
   itsTunnelLogicalVolume=NULL;
   itsTunnelFloorLogicalVolume=NULL;
-  itsRotation=NULL;
+  //itsRotation=NULL;
   itsOuterStepper=NULL;
   itsOuterUserLimits=NULL;
   itsMarkerUserLimits=NULL;
@@ -236,12 +216,14 @@ void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)
 }
 
 void BDSAcceleratorComponent::CalculateLengths(){
+  //all half lengths
   itsXLength = itsYLength = std::max(itsOuterR,BDSGlobalConstants::Instance()->GetComponentBoxSize()/2);
   itsXLength = std::max(itsXLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
   itsYLength = std::max(itsYLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
   
 }
 
+/*
 void BDSAcceleratorComponent::AlignComponent(G4ThreeVector& TargetPos,
 					     G4RotationMatrix *TargetRot, 
 					     G4RotationMatrix&,
@@ -255,7 +237,7 @@ void BDSAcceleratorComponent::AlignComponent(G4ThreeVector& TargetPos,
   itsPosition=TargetPos;
   return;
 }
-
+*/
 void BDSAcceleratorComponent::BuildTunnel()
 {
   //Make sure length is not zero

@@ -84,6 +84,9 @@ void BDSBunchPtc::LoadPtcFile() {
     if(smpy.size() == 2) py = std::stod(smpy[1]);
     if(smt.size() == 2)  t  = std::stod(smt[1]);
     if(smpt.size() == 2) pt = std::stod(smpt[1]);
+#else
+    G4cout << __METHOD_NAME__ << " WARNING not using C++11 regex to parse file"
+	   << " - no particle coordinates read in - default all 0" << G4endl;
 #endif
 
 
