@@ -57,28 +57,13 @@ void BDSSolenoid::BuildBPFieldAndStepper()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-
-  //#ifdef _USE_GEANT4_STEPPER_
-  // using Geant4
-//G4ThreeVector Bfield(0.,0.,itsBField);
-//itsMagField = new G4UniformMagField(Bfield);
-  //itsMagField = new BDSSolenoidMagField(itsBField);
-  itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
-//itsStepper  = new G4ClassicalRK4(itsEqRhs,6);
-  //itsStepper  = new G4SimpleRunge(itsEqRhs);
-  //itsStepper  = new G4HelixImplicitEuler(itsEqRhs);
-  //#endif
-
-//#else
-  // using BDSIM
+  
   G4ThreeVector Bfield(0.,0.,itsBField);
   itsMagField = new G4UniformMagField(Bfield);
   itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
   BDSSolenoidStepper* solenoidStepper = new BDSSolenoidStepper(itsEqRhs);
   solenoidStepper->SetBField(itsBField);
   itsStepper = solenoidStepper;
-//#endif
-//  */
 }
 
 BDSSolenoid::~BDSSolenoid()
