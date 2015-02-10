@@ -109,7 +109,7 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
 
   if (R_1<1e-15)
     {
-      // very radius of curvature - treat as drift
+      // very large radius of curvature - treat as drift
       G4ThreeVector positionMove = h * InitMomDir;
       
       yOut[0] = yIn[0] + positionMove.x(); 
@@ -119,6 +119,13 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
       yOut[3] = GlobalP.x();
       yOut[4] = GlobalP.y();
       yOut[5] = GlobalP.z();
+
+      yErr[0] = 0; // 0 error as a drift
+      yErr[1] = 0; // must set here as we return after this
+      yErr[2] = 0;
+      yErr[3] = 0;
+      yErr[4] = 0;
+      yErr[5] = 0;
 
       itsDist=0;
       return;
