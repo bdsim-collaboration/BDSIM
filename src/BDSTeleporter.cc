@@ -47,7 +47,7 @@ void BDSTeleporter::BuildMarkerLogicalVolume()
 				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
 				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
 				   itsLength/2.0),
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName()),
 			itsName);
   itsMarkerLogicalVolume->SetFieldManager(itsFieldManager,false); // modelled from BDSMultipole.cc
 }

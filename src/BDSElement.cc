@@ -94,7 +94,7 @@ void BDSElement::BuildElementMarkerLogicalVolume(){
                                   elementSize,
                                   elementSize,   
 				  itsLength/2.0),
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName()),
 			itsName);
 
   
@@ -140,7 +140,7 @@ void BDSElement::BuildElementMarkerLogicalVolume(){
 							    sin(itsPhiAngleIn)*elementSize,
 							    elementSize,
 							    itsLength/2),
-						  BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+						  BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName()),
 						  itsName+"tempBox1Log"
 						  );
   
@@ -169,7 +169,7 @@ void BDSElement::BuildElementMarkerLogicalVolume(){
   
   itsMarkerLogicalVolume=    
     new G4LogicalVolume(itsMarkerSolidVolume,
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName()),
 			LocalLogicalName+"_marker");
   */
   

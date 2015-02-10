@@ -132,7 +132,7 @@ void BDSMuSpoiler::BuildBeampipe()
 
   itsInnerBPLogicalVolume=	
     new G4LogicalVolume(itsInnerBPTube,
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName()),
 			itsName+"_inner_bmp_log");
 
   itsBeampipeLogicalVolume->SetVisAttributes(itsBPVisAttributes);
@@ -194,7 +194,7 @@ void BDSMuSpoiler::BuildMuSpoiler()
 				   itsInnerRadius,
 				   itsLength/2,
 				   0,CLHEP::twopi*CLHEP::radian),
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName()),
 			itsName+"_inner");
 
 #ifndef NOUSERLIMITS

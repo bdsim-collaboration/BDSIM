@@ -332,7 +332,7 @@ void BDSMultipole::FinaliseBeampipe(G4String materialName, G4RotationMatrix* Rot
   
   itsInnerBPLogicalVolume=	
     new G4LogicalVolume(itsInnerBeampipeSolid,
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName()),
 			itsName+"_inner_bmp_log");
   
 
@@ -560,7 +560,7 @@ void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
 #endif
 
   if(OuterMaterialIsVacuum){
-    material=  BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
+    material=  BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName());
   }
    
 

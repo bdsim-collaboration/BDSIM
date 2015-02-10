@@ -162,7 +162,7 @@ void BDSSectorBend::BuildMarkerLogicalVolume()
   G4String LocalLogicalName = itsName;
   itsMarkerLogicalVolume=    
     new G4LogicalVolume(itsMarkerSolidVolume,
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName()),
 			LocalLogicalName+"_marker");
 
   itsMarkerUserLimits = new G4UserLimits(DBL_MAX,DBL_MAX,DBL_MAX, BDSGlobalConstants::Instance()->GetThresholdCutCharged());
@@ -224,7 +224,7 @@ void BDSSectorBend::BuildBeampipe(G4String materialName)
   
   itsInnerBPLogicalVolume=	
     new G4LogicalVolume(pipeInner,
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName()),
 			itsName+"_bmp_Inner_log");
 
   G4VPhysicalVolume* PhysiInner;
@@ -301,7 +301,7 @@ void BDSSectorBend::BuildCylindricalOuterLogicalVolume(G4bool OuterMaterialIsVac
   else
     { material = BDSMaterials::Instance()->GetMaterial("Iron");}
   if(OuterMaterialIsVacuum)
-    {material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
+    {material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName());}
 
 
  G4VSolid *magOuterTubs =  new G4CutTubs( itsName+"_solid",  // name
@@ -540,7 +540,7 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
     {
       itsOuterLogicalVolume = 
 	new G4LogicalVolume(magTubs,
-			    BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			    BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName()),
 			    itsName+"_outer");
     }
   else

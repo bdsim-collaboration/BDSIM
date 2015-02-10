@@ -27,7 +27,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
 {
   itsPhysListName = opt.physicsList;
   itsPipeMaterial = opt.pipeMaterial;
-  itsVacMaterial = opt.vacMaterial;
+  itsVacMaterialName = opt.vacMaterial;
   itsTunnelMaterialName = opt.tunnelMaterial;
   itsTunnelCavityMaterialName = opt.tunnelCavityMaterial;
   itsSoilMaterialName = opt.soilMaterial;

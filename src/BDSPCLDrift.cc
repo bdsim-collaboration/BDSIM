@@ -71,7 +71,7 @@ void BDSPCLDrift::BuildBeampipe(G4String materialName){
 
   itsInnerBeamPipeLogicalVolume=	
     new G4LogicalVolume(inner_solid,
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName()),
 			itsName+"_inner_bmp_log");
 
   itsOuterBeamPipeLogicalVolume=	

@@ -53,7 +53,7 @@ void BDSLWCalorimeter::BuildMarkerLogicalVolume()
 				  SampTransSize,
 				  SampTransSize,
 				  itsLength/2),
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName()),
 			itsName);
   
 #ifndef NOUSERLIMITS
@@ -116,7 +116,7 @@ void BDSLWCalorimeter::BuildBeampipe(G4double aLength)
   
   itsInnerBPLogicalVolume=	
     new G4LogicalVolume(itsInnerBPTube,
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName()),
 			itsName+"_bmp_Inner_log");
   
   itsPhysiInner = new G4PVPlacement(
