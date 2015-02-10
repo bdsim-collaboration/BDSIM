@@ -1,3 +1,4 @@
+#include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryCircular.hh"
 #include "BDSBeamPipe.hh"
 
@@ -23,14 +24,21 @@ BDSBeamPipeFactoryCircular* BDSBeamPipeFactoryCircular::Instance()
   return _instance;
 }
 
+BDSBeamPipeFactoryCircular::BDSBeamPipeFactoryCircular(){;}
+
+BDSBeamPipeFactoryCircular::~BDSBeamPipeFactoryCircular()
+{
+  _instance = 0;
+}
+
 BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,              // name
 							G4double    lengthIn,            // length [mm]
 							G4Material* vacuumMaterialIn,    // vacuum material
 							G4double    beamPipeThicknessIn, // beampipe thickness [mm]
 							G4Material* beamPipeMaterialIn,  // beampipe material
 							G4double    aper1In,             // aperture parameter 1
-							G4double    /*aper2In,*/         // aperture parameter 2
-							G4double    /*aper3In,*/         // aperture parameter 3
+							G4double    /*aper2In*/,         // aperture parameter 2
+							G4double    /*aper3In*/,         // aperture parameter 3
 							G4double    /*aper4In */         // aperture parameter 4
 							)
 {
@@ -44,16 +52,16 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,     
   if (!beamPipeMaterialIn)
     {beamPipeMaterialIn = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetPipeMaterialName());}
 
-  if (aper1 < 1e-10)
+  if (aper1In < 1e-10)
     {aper1In = BDSGlobalConstants::Instance()->GetBeampipeRadius();}
 
   // build the solids
   G4double lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
   
-  G4VSolid* vacuumSolid   = new G4Tubs(nameIn + "_vacuum_solid"       // name
+  G4VSolid* vacuumSolid   = new G4Tubs(nameIn + "_vacuum_solid",      // name
 				       0,                             // inner radius
 				       aper1In,                       // outer radius
-				       lengthIn*0.5                   // half length
+				       lengthIn*0.5,                  // half length
 				       0,                             // rotation start angle
 				       CLHEP::twopi);                 // rotation finish angle
   
@@ -65,7 +73,7 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,     
 				       CLHEP::twopi);                 // rotation finish angle
 
   G4double containerRadius = aper1In + beamPipeThicknessIn + lengthSafety;
-  G4VSolid* containerSolid = new G4Tubs(nameIn + "_container_solid"   // name
+  G4VSolid* containerSolid = new G4Tubs(nameIn + "_container_solid",  // name
 					0,                            // inner radius
 					containerRadius,              // outer radius
 					lengthIn*0.5,                 // half length
@@ -90,8 +98,8 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,     
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    (G4ThreeVector)0,             // position
 		    vacuumLV,                     // lv to be placed
-		    nameIn + "_vacuum_pv"         // name
-		    containerLV                   // mother lv to be place in
+		    nameIn + "_vacuum_pv",        // name
+		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
@@ -100,8 +108,8 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,     
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    (G4ThreeVector)0,             // position
 		    beampipeLV,                   // lv to be placed
-		    nameIn + "_beampipe_pv"       // name
-		    containerLV                   // mother lv to be place in
+		    nameIn + "_beampipe_pv",      // name
+		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
@@ -113,21 +121,52 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,     
   std::pair<double,double> extZ = std::make_pair(-lengthIn*0.5,lengthIn*0.5);
   
   // build the BDSBeamPipe instance and return it
-  BDSBeamPipe* aPipe = new BDSBeamPipe(containerSolid,containerLV,extX,extY,extY,vacuumLV,true,containerRadius);
+  BDSBeamPipe* aPipe = new BDSBeamPipe(containerSolid,containerLV,extX,extY,extZ,vacuumLV,true,containerRadius);
   return aPipe;
 }
  
- BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledIn(G4String    nameIn,              // name
-    G4double    lengthIn,            // length [mm]
-    G4double    angleInIn,           // the normal angle of the input face
-    G4Material* vacuumMaterialIn,    // vacuum material
-    G4double    beamPipeThicknessIn, // beampipe thickness [mm]
-    G4Material* beamPipeMaterialIn,  // beampipe material
-    G4double    aper1In,             // aperture parameter 1
-    G4double    /*aper2In,*/         // aperture parameter 2
-    G4double    /*aper3In,*/         // aperture parameter 3
-    G4double    /*aper4In */         // aperture parameter 4
-    )
- {
-  return CreateBeamPipe(nameIn, lengthIn, vacuumMaterialIn, beamPipeThicknessIn, beamPipeMaterialIn, aper1In, aper2In,
-    }
+BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledIn(G4String    nameIn,              // name
+								G4double    lengthIn,            // length [mm]
+								G4double    /*angleInIn*/,           // the normal angle of the input face
+								G4Material* vacuumMaterialIn,    // vacuum material
+								G4double    beamPipeThicknessIn, // beampipe thickness [mm]
+								G4Material* beamPipeMaterialIn,  // beampipe material
+								G4double    aper1In,             // aperture parameter 1
+								G4double    /*aper2In*/,         // aperture parameter 2
+								G4double    /*aper3In*/,         // aperture parameter 3
+								G4double    /*aper4In */         // aperture parameter 4
+								)
+{
+  return CreateBeamPipe(nameIn, lengthIn, vacuumMaterialIn, beamPipeThicknessIn, beamPipeMaterialIn, aper1In);
+}
+
+BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledOut(G4String    nameIn,              // name
+								 G4double    lengthIn,            // length [mm]
+								 G4double    /*angleOutIn*/,           // the normal angle of the output face
+								 G4Material* vacuumMaterialIn,    // vacuum material
+								 G4double    beamPipeThicknessIn, // beampipe thickness [mm]
+								 G4Material* beamPipeMaterialIn,  // beampipe material
+								 G4double    aper1In,             // aperture parameter 1
+								 G4double    /*aper2In*/,         // aperture parameter 2
+								 G4double    /*aper3In*/,         // aperture parameter 3
+								 G4double    /*aper4In */         // aperture parameter 4
+								 )
+{
+  return CreateBeamPipe(nameIn, lengthIn, vacuumMaterialIn, beamPipeThicknessIn, beamPipeMaterialIn, aper1In);
+}
+
+BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledInOut(G4String    nameIn,              // name
+								   G4double    lengthIn,            // length [mm]
+								   G4double    /*angleInIn*/,           // the normal angle of the input face
+								   G4double    /*angleOutIn*/,           // the normal angle of the input face
+								   G4Material* vacuumMaterialIn,    // vacuum material
+								   G4double    beamPipeThicknessIn, // beampipe thickness [mm]
+								   G4Material* beamPipeMaterialIn,  // beampipe material
+								   G4double    aper1In,             // aperture parameter 1
+								   G4double    /*aper2In*/,         // aperture parameter 2
+								   G4double    /*aper3In*/,         // aperture parameter 3
+								   G4double    /*aper4In */         // aperture parameter 4
+								   )
+{
+  return CreateBeamPipe(nameIn, lengthIn, vacuumMaterialIn, beamPipeThicknessIn, beamPipeMaterialIn, aper1In);
+}

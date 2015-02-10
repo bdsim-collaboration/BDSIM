@@ -4,7 +4,7 @@
 #include "G4LogicalVolume.hh"
 #include <utility>                 // for std::pair
 
-BDSGeometryComponet::BDSGeometryComponent(G4VSolid*        containerSolidIn,
+BDSGeometryComponent::BDSGeometryComponent(G4VSolid*        containerSolidIn,
 					  G4LogicalVolume* containerLVIn):
   containerSolid(containerSolidIn),containerLogicalVolume(containerLVIn)
 {
@@ -20,8 +20,8 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*        containerSolidIn,
 					   std::pair<G4double,G4double> extentZIn):
   containerSolid(containerSolidIn),
   containerLogicalVolume(containerLVIn),
-  exentX(extentXIn),
-  exentY(extentYIn),
-  exentZ(extentZIn)
+  extentX(extentXIn),
+  extentY(extentYIn),
+  extentZ(extentZIn)
 {;}
 

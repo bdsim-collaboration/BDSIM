@@ -33,8 +33,8 @@ public:
   std::pair<G4double,G4double> GetExtentY(); /// get -ve/+ve extent in local y
   std::pair<G4double,G4double> GetExtentZ(); /// get -ve/+ve extent in local z
   void SetExtentX(G4double lowerX, G4double upperX); /// set the extent in local x
-  void SetExtentX(G4double lowerY, G4double upperY); /// set the extent in local y
-  void SetExtentX(G4double lowerZ, G4double upperZ); /// set the extent in local z
+  void SetExtentY(G4double lowerY, G4double upperY); /// set the extent in local y
+  void SetExtentZ(G4double lowerZ, G4double upperZ); /// set the extent in local z
 
 protected:
   G4VSolid*                 containerSolid;
@@ -62,10 +62,10 @@ inline std::pair<G4double,G4double> BDSGeometryComponent::GetExtentZ()
 inline void BDSGeometryComponent::SetExtentX(G4double lowerX, G4double upperX)
 {extentX = std::make_pair(lowerX,upperX);}
 
-inline void BDSGeometryComponent::SetExtentX(G4double lowerY, G4double upperY)
+inline void BDSGeometryComponent::SetExtentY(G4double lowerY, G4double upperY)
 {extentY = std::make_pair(lowerY,upperY);}
 
-inline void BDSGeometryComponent::SetExtentX(G4double lowerZ, G4double upperZ)
+inline void BDSGeometryComponent::SetExtentZ(G4double lowerZ, G4double upperZ)
 {extentZ = std::make_pair(lowerZ,upperZ);}
 
 #endif

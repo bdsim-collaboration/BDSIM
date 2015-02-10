@@ -27,7 +27,7 @@ public:
 	      );
   ~BDSBeamPipe(); /// default destructor sufficient as G4 manages solids and LVs
   
-  G4LogicalVolume* GetVacummLogicalVolume();
+  G4LogicalVolume* GetVacuumLogicalVolume();
   G4bool           ContainerIsCircular();
   G4double         GetContainerRadius();
   

@@ -11,10 +11,10 @@ BDSBeamPipe::BDSBeamPipe(G4VSolid*                 containerSolidIn,
 			 std::pair<double, double> extentYIn,
 			 std::pair<double, double> extentZIn,
 			 G4LogicalVolume*          vacuumLVIn,
-			 G4bool                    containerIsCircularIn = false,
-			 G4double                  containerRadiusIn = 0.0
+			 G4bool                    containerIsCircularIn,
+			 G4double                  containerRadiusIn
 			 ):
   BDSGeometryComponent(containerSolidIn, containerLVIn, extentXIn, extentYIn, extentZIn),
-  vacuumLogicalVolume(vacuumLVIn), containerIsCircular(containIsCircularIn),
+  vacuumLogicalVolume(vacuumLVIn), containerIsCircular(containerIsCircularIn),
   containerRadius(containerRadiusIn)
 {;}

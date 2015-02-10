@@ -27,9 +27,6 @@
 class BDSBeamPipeFactoryBase
 {
 public:
-  BDSBeamPipeFactoryBase();
-  virtual ~BDSBeamPipeFactoryBase();
-
   // NOTE each derived class is expected to be a singleton but this can't be specified here
   // as it'd refer to the abstract base class - must be implemented in each derived class
   // utilised in BDSBeamPipeFactory.cc
@@ -52,7 +49,7 @@ public:
   /// create beampipe with an angled face on input side only
   virtual BDSBeamPipe* CreateBeamPipeAngledIn(   G4String    nameIn,
 					         G4double    lengthIn,
-					         G4double    angleInIn,   // the normal angle of the input face
+					         G4double    angleInIn, // the normal angle of the input face
 					         G4Material* vacuumMaterialIn = NULL,
 					         G4double    beamPipeThicknessIn = 0,
 					         G4Material* beamPipeMaterialIn = NULL,
