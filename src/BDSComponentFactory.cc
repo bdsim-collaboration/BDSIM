@@ -28,6 +28,10 @@
 #include "BDSTeleporter.hh"
 #include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
 
+#include "BDSBeamPipe.hh"
+#include "BDSBeamPipeFactory.hh"
+#include "BDSBeamPipeType.hh"
+
 #include "parser/enums.h"
 #include "parser/elementlist.h"
 
@@ -355,6 +359,13 @@ BDSAcceleratorComponent* BDSComponentFactory::createTeleporter(){
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createDrift(){
+  BDSBeamPipe* aBeamPipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(BDSBeamPipeType::circular,
+									  "lalala",
+									  2500);
+
+  G4cout << " if this works - yay - name is " << aBeamPipe->GetVacuumLogicalVolume()->GetName() << G4endl;
+
+  
   G4double aper(0), aperX(0), aperY(0);
   G4bool aperset = false;
   G4double phiAngleIn(0.0), phiAngleOut(0.0);
