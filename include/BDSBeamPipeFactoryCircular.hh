@@ -2,6 +2,7 @@
 #define BDSBEAMPIPEFACTORYCIRCULAR_H
 
 #include "BDSBeamPipeFactoryBase.hh"
+#include "BDSBeamPipe.hh"
 
 /**
  * @brief factory for circular beam pipes
@@ -69,6 +70,35 @@ public:
 private:
   BDSBeamPipeFactoryCircular(); /// private default constructor - singelton pattern
   static BDSBeamPipeFactoryCircular* _instance;
+
+  void TestInputParameters(G4Material*& vacuumMaterialIn,
+			   G4double&    beamPipeThicknessIn,
+			   G4Material*& beamPipeMaterialIn,
+			   G4double&    aper1In);
+
+  G4double lengthSafety;
+
+  //abstract common build features to one function
+  //use member variables unique to this factory to pass them around
+
+  BDSBeamPipe* CommonFinalConstruction(G4String    nameIn,
+				       G4Material* vacuumMaterialIn,
+				       G4Material* beamPipeMaterialIn,
+				       G4double    lengthIn,
+				       G4double    containerRadiusIn);
+  void CreateGeneralAngledSolids(G4String      nameIn,
+				 G4double      lengthIn,
+				 G4double      aper1In,
+				 G4double      beamPipeThicknessIn,
+				 G4ThreeVector inputfaceIn,
+				 G4ThreeVector outputfaceIn);
+  G4VSolid*        vacuumSolid;
+  G4VSolid*        beamPipeSolid;
+  G4VSolid*        containerSolid;
+  G4LogicalVolume* vacuumLV;
+  G4LogicalVolume* beamPipeLV;
+  G4LogicalVolume* containerLV;
+
 };
   
 #endif
