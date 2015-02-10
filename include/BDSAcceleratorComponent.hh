@@ -9,7 +9,6 @@
 #include "G4LogicalVolume.hh"
 #include "G4VisAttributes.hh"
 #include "globals.hh"
-//#include "BDSBeamPipe.hh"
 #include "BDSEnergyCounterSD.hh"
 
 #include "G4MagneticField.hh"
@@ -241,7 +240,6 @@ protected:
   G4double itsK1, itsK2, itsK3;
   //G4RotationMatrix* itsRotation; // rotation matrix (not used)
   //G4ThreeVector itsPosition;
-  //  BDSBeamPipe* itsBeamPipe;
   G4MagIntegratorStepper*  itsOuterStepper;
   /// generic user limits
   G4UserLimits* itsUserLimits;
