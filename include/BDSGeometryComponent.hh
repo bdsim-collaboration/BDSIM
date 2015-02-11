@@ -25,7 +25,7 @@ public:
 		       std::pair<G4double,G4double> extentXIn,
 		       std::pair<G4double,G4double> extentYIn,
 		       std::pair<G4double,G4double> extentZIn);
-  ~BDSGeometryComponent();
+  ~BDSGeometryComponent(){;};  /// Does not delete anything contained in pointers as G4 does that
 
   G4VSolid*         GetContainerSolid(); /// get the solid of the container for possible subtraction
   G4LogicalVolume*  GetContainerLogicalVolume(); /// get the logical volume of the container for placement

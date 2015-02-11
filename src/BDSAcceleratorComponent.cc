@@ -19,6 +19,8 @@
 #include "G4AssemblyVolume.hh"
 #include "G4Transform3D.hh"
 
+#include "BDSGeometryComponent.hh"
+
 typedef std::map<G4String,int> LogVolCountMap;
 LogVolCountMap* LogVolCount = new LogVolCountMap();
 
@@ -40,6 +42,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double tunnelRadius, 
 						  G4double tunnelOffsetX,
 						  G4String aTunnelCavityMaterial):
+  BDSGeometryComponent(NULL,NULL),
   itsName(aName),
   itsLength(aLength),
   itsBpRadius(aBpRadius),
@@ -75,6 +78,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double tunnelRadius, 
 						  G4double tunnelOffsetX, 
 						  G4String aTunnelCavityMaterial):
+  BDSGeometryComponent(NULL,NULL),
   itsName(aName),
   itsLength(aLength),
   itsBpRadius(aBpRadius),

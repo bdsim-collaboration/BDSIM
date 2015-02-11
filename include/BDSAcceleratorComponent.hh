@@ -18,8 +18,10 @@
 #include "G4CSGSolid.hh"
 #include "G4Tubs.hh"
 
+#include "BDSGeometryComponent.hh"
 
-class BDSAcceleratorComponent 
+
+class BDSAcceleratorComponent: public BDSGeometryComponent
 {
 public:
   //destructor
