@@ -52,10 +52,25 @@ struct Parameters {
   double angle; int angleset;   /// bending angle
   double phiAngleIn; int phiAngleInset;   /// incoming bending angle for element
   double phiAngleOut; int phiAngleOutset;   /// outgoing bending angle for element
-  double beampipeThickness; int beampipeThicknessset;  
+  double beampipeThickness; int beampipeThicknessset;
+
+  //old aperture model
   double aper; int aperset;   /// aperture (circular)
   double aperX; int aperXset;   /// aperture (elliptical)
-  double aperY; int aperYset;   
+  double aperY; int aperYset;
+
+  //pcl drift
+  double aperYUp; int aperYUpset;  
+  double aperYDown; int aperYDownset; 
+  double aperDy; int aperDyset;
+
+  //new aperture model
+  double aper1; int aper1set;
+  double aper2; int aper2set;
+  double aper3; int aper3set;
+  double aper4; int aper4set;
+  std::string apertureType; int apertureTypeset;
+  
   double phi, theta, psi; /// for 3d transforms
   int phiset, thetaset, psiset;
   double tunnelRadius;
@@ -66,9 +81,7 @@ struct Parameters {
   ///which precision physics region the element is in (0 = none)
   int precisionRegion; int precisionRegionset;
 
-  double aperYUp; int aperYUpset;  
-  double aperYDown; int aperYDownset; 
-  double aperDy; int aperDyset;
+
   
   double flatlength; int flatlengthset;
   double taperlength; int taperlengthset;

@@ -575,6 +575,18 @@ parameters:
 		  if(!strcmp($1->name,"aperDy") ||!strcmp($1->name,"apertureDy") ) 
 		    { params.aperDy = $3; params.aperDyset = 1;}
 		    else
+		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
+		    { params.aper1 = $3; params.aper1set = 1;}
+		    else
+		  if(!strcmp($1->name,"aper2") ||!strcmp($1->name,"aperture2") ) 
+		    { params.aper2 = $3; params.aper2set = 1;}
+		    else
+		  if(!strcmp($1->name,"aper3") ||!strcmp($1->name,"aperture3") ) 
+		    { params.aper3 = $3; params.aper3set = 1;}
+		    else
+		  if(!strcmp($1->name,"aper4") ||!strcmp($1->name,"aperture4") ) 
+		    { params.aper4 = $3; params.aper4set = 1;}
+		    else
 		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
 		    else
                   if(!strcmp($1->name,"inR") ) { params.inR = $3; params.inRset = 1;}
@@ -812,6 +824,18 @@ parameters:
 		  if(!strcmp($1->name,"aperDy") ||!strcmp($1->name,"apertureDy") ) 
 		    { params.aperDy = $3; params.aperDyset = 1;}
 		    else
+		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
+		    { params.aper1 = $3; params.aper1set = 1;}
+		    else
+		  if(!strcmp($1->name,"aper2") ||!strcmp($1->name,"aperture2") ) 
+		    { params.aper2 = $3; params.aper2set = 1;}
+		    else
+		  if(!strcmp($1->name,"aper3") ||!strcmp($1->name,"aperture3") ) 
+		    { params.aper3 = $3; params.aper3set = 1;}
+		    else
+		  if(!strcmp($1->name,"aper4") ||!strcmp($1->name,"aperture4") ) 
+		    { params.aper4 = $3; params.aper4set = 1;}
+		    else
 		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
 		    else
                   if(!strcmp($1->name,"inR") ) { params.inR = $3; params.inRset = 1;}
@@ -904,6 +928,11 @@ parameters:
 			 params.materialset = 1;
 			 params.material = $3;
 		       }
+		   if(!strcmp($1->name,"apertureType"))
+		       {
+			 params.apertureTypeset = 1;
+			 params.apertureType = $3;
+		       }
 		   else
 		   if(!strcmp($1->name,"tunnelMaterial")) 
 		       {
@@ -993,7 +1022,12 @@ parameters:
 			 params.tunnelmaterialset = 1;
 			 params.tunnelMaterial = $3;
 		       }
-			 else
+		       if(!strcmp($1->name,"apertureType"))
+			 {
+			   params.apertureTypeset = 1;
+			   params.apertureType = $3;
+			 }
+		       else
                          if(!strcmp($1->name,"tunnelCavityMaterial")) 
 		       {
 			 params.tunnelcavitymaterialset = 1;

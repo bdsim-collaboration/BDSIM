@@ -123,12 +123,22 @@ void Element::flush() {
   taperlength = 0;
   hgap = 0;
   beampipeThickness = 0;
+  // new aperture model
+  aper1 = 0;
+  aper2 = 0;
+  aper3 = 0;
+  aper4 = 0;
+  apertureType = "";
+  
+  // old aperture model
   aper = 0;
   aperX = 0;
   aperY = 0;
   aperYUp = 0;
   aperYDown = 0;
   aperDy = 0;
+
+  
   inR = 0;
   bpRad = 0;
   outR = 0;
@@ -191,6 +201,10 @@ double Element::property_lookup(char* property_name)const{
   if(!strcmp(property_name,"aperYUp")) return aperYUp;
   if(!strcmp(property_name,"aperYDown")) return aperYDown;
   if(!strcmp(property_name,"aperDy")) return aperDy;
+  if(!strcmp(property_name,"aper1")) return aper1;
+  if(!strcmp(property_name,"aper2")) return aper2;
+  if(!strcmp(property_name,"aper3")) return aper3;
+  if(!strcmp(property_name,"aper4")) return aper4;
   if(!strcmp(property_name,"outR")) return outR;
   if(!strcmp(property_name,"inR")) return inR;
   if(!strcmp(property_name,"bpRad")) return bpRad;

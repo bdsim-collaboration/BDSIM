@@ -169,9 +169,19 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.name = std::string(name);
   e.lst = NULL;
   e.l = params.l;
+
+  //old aperture model
   e.aper = params.aper;
   e.aperX = params.aperX;
   e.aperY = params.aperY;
+
+  //new aperture model
+  e.aper1 = params.aper1;
+  e.aper2 = params.aper2;
+  e.aper3 = params.aper3;
+  e.aper4 = params.aper4;
+  e.apertureType = params.apertureType;
+  
   e.bpRad = params.bpRad;
   e.xsize = params.xsize;
   e.ysize = params.ysize;
@@ -181,6 +191,7 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.tunnelRadius = params.tunnelRadius;
   e.tunnelOffsetX = params.tunnelOffsetX;
   e.precisionRegion = params.precisionRegion;
+  // end of common parameters
 
   // specific parameters
   // JS: perhaps add a printout warning in case it is not used doesn't match the element; how to do this systematically?
