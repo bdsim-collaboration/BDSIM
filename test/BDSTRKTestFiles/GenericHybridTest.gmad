@@ -1,0 +1,13 @@
+include options.gmad
+include beam.gmad
+
+endl: marker;
+
+lat : line = (e1,endl);
+use, period=lat;
+
+sample, range = endl;
+
+option, ngenerate=1,
+	apertureType="circular",
+	trackingType="hybrid"

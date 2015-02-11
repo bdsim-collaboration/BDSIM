@@ -17,7 +17,7 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
   time(&currenttime);
   std::string timestring = asctime(localtime(&currenttime));
   timestring = timestring.substr(0,timestring.size()-1);
-  
+
   // generate filenames
   G4String basefilename = BDSExecOptions::Instance()->GetOutputFilename();
   filename = basefilename + ".txt"; //main output filename - for samplers
@@ -73,7 +73,7 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
   ofPLoss.open(filenamePLoss.c_str());
   ofPLoss      << "### BDSIM primary loss hits output - created " << timestring <<G4endl;
   ofPLoss      << headerstring;
-  
+
   // energy loss histogram and output file initialisation
   // construct histogram
   G4double xmin, xmax, binwidth;
@@ -91,7 +91,7 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
 		   << std::setw(20) << "S[m]"   << " "
 		   << std::setw(15) << "E[GeV]" << " "
 		   << G4endl;
-  
+
   // primary loss histogram and output file initialisation
   // construct histogram
   // binning is the same as eloss
@@ -254,20 +254,24 @@ void BDSOutputASCII::WriteTrackerBunch(G4String /*samplerName*/, TRKBunch* bunch
   std::ofstream* outfile;
   if (primary)
     {outfile = &ofPrimaries;}
-  else 
+  else
     {outfile = &ofMain;}
   //turns taken same for all particles in bunch
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
   //loop over bunch and write using ascii method
   for (TRKBunchIter it = bunch->begin(); it != bunch->end(); it++) {
+
+    // TODEL
+    std::cout << "WRITING PARTICLE: x:" << it->X() << ", y:" << it->Y() << std::endl;
+
     WriteAsciiHit(
 		  outfile,
 		  0, //TBC - requires geant4 or modification of particledefinitiontable
 		  it->E()*1000.0, //convert to GeV
-		  it->X()*1e-6,   //convert to um
-		  it->Y()*1e-6,   //convert to um
-		  it->Z(),        //leave in m
-		  it->Z(), //note z and s are synonymous in tracker
+		  it->X()*CLHEP::um,        //already in um, convert to mm for CLHEP conversion
+		  it->Y()*1e-3,        //already in um, convert to mm for CLHEP conversion
+		  it->Z()*1e-3,        // convert from m to mm for CLHEP
+		  it->Z()*1e-3, //note z and s are synonymous in tracker
 		  it->Xp(),       //leave in rad
 		  it->Yp(),       //leave in rad
 		  0, //can you cast an iterator to an int?

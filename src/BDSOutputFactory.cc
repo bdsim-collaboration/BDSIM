@@ -15,14 +15,14 @@ BDSOutputBase* BDSOutputFactory::createOutput(BDSOutputFormat format) {
     return new BDSOutputROOT();
 #endif
   }
-  else if (format == BDSOutputFormat::_COMBINED) {
-    BDSOutputVector* combinedOutput = new BDSOutputVector();
-    combinedOutput->Add(new BDSOutputASCII());
-#ifdef USE_ROOT
-    combinedOutput->Add(new BDSOutputROOT());
-#endif
-    bdsOutput = combinedOutput;
-  }
+//   else if (format == BDSOutputFormat::_COMBINED) {
+//     BDSOutputVector* combinedOutput = new BDSOutputVector();
+//     combinedOutput->Add(new BDSOutputASCII());
+// #ifdef USE_ROOT
+//     combinedOutput->Add(new BDSOutputROOT());
+// #endif
+//     bdsOutput = combinedOutput;
+//   }
   // should not happen, but to prevent compiler warning
   return new BDSOutputASCII();
 }

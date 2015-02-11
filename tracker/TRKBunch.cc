@@ -22,13 +22,6 @@ TRKBunch::TRKBunch(struct Options& opt)
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
 #endif
-  population= opt.numberToGenerate;
-  //must have positive number of particles
-  if (population < 0){population = abs(population);}
-  //must have at least 1 particle
-  if (population == 0){population = 1;}
-  //initialise the vector of particles
-  bunch.reserve(population);
   //calculate energy based on particle mass - must do before we populate
   TRK::CalculateKineticEnergy(options);
   //populate particles using options & random number generator
@@ -58,16 +51,37 @@ void TRKBunch::Populate(struct Options& opt)
   double mass = pmc.first*0.001; //mass converted from MeV to GeV manually without CLHEP
   int  charge = pmc.second;
 
+  // Initialise bunch
   BDSBunch bdsbunch;
+
+  // Get bunch type from gmad options for correct population
   bdsbunch.SetOptions(opt);
+
+
+  // Update population according to changes in bunch type
+  population= BDSGlobalConstants::Instance()->GetNumberToGenerate();
+
+  //must have positive number of particles
+  if (population < 0){population = abs(population);}
+    //must have at least 1 particle
+    if (population == 0){population = 1;}
+      //initialise the vector of particles
+      bunch.reserve(population);
+
+
   //note in this tracker there are only local rectilinear coordinates
   //therefore 'z' is misleading and 's' should be used instead
   double x0=0.0, y0=0.0, s0=0.0, xp=0.0, yp=0.0, sp=0.0, t=0.0, E=0.0, weight=1.0;
+
   for (int i = 0; i < population; i++)
     {
+      // bdsbunch generates values in CLHEP mm standard.
       bdsbunch.GetNextParticle(x0,y0,s0,xp,yp,sp,t,E,weight);
+
+
       double paramsIn[8] = {x0/CLHEP::um,y0/CLHEP::um,s0/CLHEP::m,xp/CLHEP::rad,yp/CLHEP::rad,sp/CLHEP::rad,E/CLHEP::GeV,mass};
       bunch.push_back(TRKParticle(paramsIn, charge, i));
+
       //weight not required - maybe should be kept though to pass on to bdsim
     }
 }
@@ -80,7 +94,7 @@ std::ostream& operator<< (std::ostream &out, const TRKBunch &beam)
 {
   std::vector<TRKParticle>::const_iterator iter = beam.bunch.begin();
   std::vector<TRKParticle>::const_iterator end  = beam.bunch.end();
-  
+
   for (;iter!=end;++iter) {
     out << *iter << std::endl;
   }
