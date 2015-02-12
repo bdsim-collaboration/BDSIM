@@ -7,9 +7,6 @@
 #include "G4Mag_UsualEqRhs.hh"
 
 #include "G4MagneticField.hh"
-#include "G4HelixImplicitEuler.hh"
-#include "G4SimpleRunge.hh"
-#include "G4ClassicalRK4.hh"
 
 #include "G4UniformMagField.hh"
 #include "G4Tubs.hh"

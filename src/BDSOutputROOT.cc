@@ -175,7 +175,7 @@ void BDSOutputROOT::Init()
   PrimaryHitsTree->Branch("weight",     &weight_ph,     "weight/F");
   PrimaryHitsTree->Branch("partID",     &part_ph,       "partID/I");
   PrimaryHitsTree->Branch("turnnumber", &turnnumber_ph, "turnnumber/I");
-  PrimaryHitsTree->Branch("eventNo",    &eventno_pl,    "eventNo/I");
+  PrimaryHitsTree->Branch("eventNo",    &eventno_ph,    "eventNo/I");
   
   //Precision region energy loss tree setup
   PrecisionRegionEnergyLossTree= new TTree("PrecisionRegionElossTree", "Energy Loss");
