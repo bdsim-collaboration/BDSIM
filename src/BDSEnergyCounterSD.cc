@@ -99,15 +99,14 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
     }
   
   // Get Translation and Rotation of Sampler Volume w.r.t the World Volume
-  // as described in Geant4 FAQ's: http://geant4.cern.ch/support/faq.shtml
   G4AffineTransform tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
-  G4ThreeVector posbefore = aStep->GetTrack()->GetPosition();
-  G4ThreeVector posafter  = aStep->GetTrack()->GetPosition();
+  G4ThreeVector posbefore = aStep->GetPreStepPoint()->GetPosition();
+  G4ThreeVector posafter  = aStep->GetPostStepPoint()->GetPosition();
   //G4ThreeVector momDir = aStep->GetTrack()->GetMomentumDirection();
 
   //calculate local coordinates
   G4ThreeVector posbeforelocal  = tf.TransformPoint(posbefore);
-  G4ThreeVector posafterlocal   = tf.TransformPoint(posbefore);
+  G4ThreeVector posafterlocal   = tf.TransformPoint(posafter);
   //G4ThreeVector LocalDirection = tf.TransformAxis(momDir);
 
   //G4cout << "Gobal Position " << pos << G4endl;
@@ -213,7 +212,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
     }
   
   // Get Translation and Rotation of Sampler Volume w.r.t the World Volume
-  // as described in Geant4 FAQ's: http://geant4.cern.ch/support/faq.shtml
   G4AffineTransform tf = (aSpot->GetTouchableHandle()->GetHistory()->GetTopTransform());
   G4ThreeVector pos    = aSpot->GetPosition();
 
