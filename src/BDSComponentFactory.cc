@@ -41,6 +41,8 @@
 #include <sstream>
 #include <string>
 
+#include "BDSDrift2.hh"
+
 #ifdef BDSDEBUG
 bool debug1 = true;
 #else
@@ -359,12 +361,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createTeleporter(){
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createDrift(){
-  BDSBeamPipe* aBeamPipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(BDSBeamPipeType::circular,
-									  "lalala",
-									  2500);
-
-  G4cout << " if this works - yay - name is " << aBeamPipe->GetVacuumLogicalVolume()->GetName() << G4endl;
-
   
   G4double aper(0), aperX(0), aperY(0);
   G4bool aperset = false;
@@ -449,18 +445,28 @@ BDSAcceleratorComponent* BDSComponentFactory::createDrift(){
     phiAngleOut = 0.0;
   }
 
-  return (new BDSDrift( _element.name,
-			_element.l*CLHEP::m,
-			_element.blmLocZ,
-			_element.blmLocTheta,
-			aperX, 
-			aperY, 
-			_element.tunnelMaterial, 
-			aperset, 
-			aper,
-			tunnelOffsetX, 
-			phiAngleIn, 
-			phiAngleOut));
+  BDSBeamPipeType beamPipeType = BDS::DetermineBeamPipeType(_element.apertureType);
+  G4Material* beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(_element.beamPipeMaterial)
+    if(materialName == "")
+    {
+      material = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName() );
+    }
+  else
+    {
+      material = BDSMaterials::Instance()->GetMaterial(materialName);
+    }
+
+  return (new BDSDrift2( _element.name,
+			 _element.l*CLHEP::m,
+			 beamPipeType,
+			 _element.beamPipeThickness*CLHEP::m,
+			 _element.aper1,
+			 _element.aper2,
+			 _element.aper3,
+			 _element.aper4,
+			 _element.beamPipeMaterial
+
+			 ));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createPCLDrift(){
