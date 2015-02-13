@@ -41,6 +41,7 @@
 #include "BDSSamplerHit.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSAnalysisManager.hh"
 
 // #include "BDSLWCalorimeter.hh"
 // #include "BDSLWCalorimeterHit.hh"
@@ -199,7 +200,20 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
     (BDSEnergyCounterHitsCollection*)(HCE->GetHC(mySDMan->GetCollectionID("primary_counter")));
 
   //if we have energy deposition hits, write them
-  if(energyCounterHits) {bdsOutput->WriteEnergyLoss(energyCounterHits);}
+  if(energyCounterHits)
+    {
+      bdsOutput->WriteEnergyLoss(energyCounterHits); // write hits
+
+      //bin hits in histograms
+      BDSAnalysisManager* analMan = BDSAnalysisManager::Instance();
+      for (G4int i = 0; i < energyCounterHits->entries(); i++)
+	{
+	  //general eloss histo
+	  analMan->Fill1DHistogram(2,(*energyCounterHits)[i]->GetS()/CLHEP::m,(*energyCounterHits)[i]->GetEnergy()/CLHEP::GeV);
+	  //per element eloss histo
+	  analMan->Fill1DHistogram(5,(*energyCounterHits)[i]->GetS()/CLHEP::m,(*energyCounterHits)[i]->GetEnergy()/CLHEP::GeV);
+	}
+    }
 
   //if we have primary hits, find the first one and write that
   if(primaryCounterHits) {
@@ -211,6 +225,12 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 	{
 	  bdsOutput->WritePrimaryLoss(thePrimaryLoss);
 	  bdsOutput->WritePrimaryHit(thePrimaryHit);
+	  // general histos
+	  BDSAnalysisManager::Instance()->Fill1DHistogram(0,thePrimaryHit->GetS()/CLHEP::m);
+	  BDSAnalysisManager::Instance()->Fill1DHistogram(1,thePrimaryLoss->GetS()/CLHEP::m);
+	  // per element histos
+      	  BDSAnalysisManager::Instance()->Fill1DHistogram(3,thePrimaryHit->GetS()/CLHEP::m);
+	  BDSAnalysisManager::Instance()->Fill1DHistogram(4,thePrimaryLoss->GetS()/CLHEP::m);
 	}
     }
   }
