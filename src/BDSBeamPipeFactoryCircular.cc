@@ -4,6 +4,7 @@
 
 #include "BDSMaterials.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSDebug.hh"
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4Material.hh"
@@ -13,6 +14,8 @@
 #include "G4Tubs.hh"
 #include "G4CutTubs.hh"
 #include "G4ThreeVector.hh"
+#include "G4Colour.hh"
+#include "G4VisAttributes.hh"
 
 #include <cmath>
 #include <utility>                         // for std::pair
@@ -54,6 +57,9 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,     
 							G4double    /*aper4In */         // aperture parameter 4
 							)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // test input parameters - set global options as default if not specified
   TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In);
 
@@ -97,6 +103,9 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledIn(G4String    name
 								G4double    /*aper4In */         // aperture parameter 4
 								)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // test input parameters - set global options as default if not specified
   TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In);
 
@@ -128,6 +137,9 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledOut(G4String    nam
 								 G4double    /*aper4In */         // aperture parameter 4
 								 )
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // test input parameters - set global options as default if not specified
   TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In);
 
@@ -160,6 +172,9 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledInOut(G4String    n
 								   G4double    /*aper4In */         // aperture parameter 4
 								   )
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
    // test input parameters - set global options as default if not specified
   TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In);
 
@@ -215,6 +230,9 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
 								 G4double    lengthIn,
 								 G4double    containerRadiusIn)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // build the logical volumes
   vacuumLV   = new G4LogicalVolume(vacuumSolid,
 				   vacuumMaterialIn,
@@ -228,6 +246,19 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
 				    vacuumMaterialIn,
 				    nameIn + "_container_lv");
 
+  // set visual attributes
+  G4VisAttributes* pipeVisAttr = new G4VisAttributes(G4Color(0.4,0.4,0.4));
+  pipeVisAttr->SetVisibility(true);
+  pipeVisAttr->SetForceSolid(true);
+  beamPipeLV->SetVisAttributes(pipeVisAttr);
+
+  vacuumLV->SetVisAttributes(new G4VisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr()));
+#ifdef BDSDEBUG
+  containerLV->SetVisAttributes(new G4VisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
+#else
+  containerLV->SetVisAttributes(new G4VisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr()));
+#endif
+  
   // place the components inside the container
   // note we don't need the pointer for anything - it's registered upon construction with g4
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation

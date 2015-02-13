@@ -7,6 +7,7 @@
 #include "G4ThreeVector.hh"
 #include "G4String.hh"
 #include "G4AffineTransform.hh"
+#include "G4VisAttributes.hh"
 
 #include "BDSParticle.hh"
 #include "G4LogicalVolume.hh"
@@ -359,6 +360,10 @@ private:
   G4RotationMatrix* _RotYM90X90;
   G4RotationMatrix* _RotYM90XM90;
 
+  void InitVisAttributes();
+  G4VisAttributes* invisibleVisAttr;
+  G4VisAttributes* visibleDebugVisAttr;
+
 public:
   G4RotationMatrix* RotY90() const;
   G4RotationMatrix* RotYM90() const;
@@ -374,6 +379,9 @@ public:
   G4String GetSoilMaterialName();
   G4String GetTunnelMaterialName();
   G4String GetTunnelCavityMaterialName();
+
+  G4VisAttributes* GetInvisibleVisAttr();
+  G4VisAttributes* GetVisibleDebugVisAttr();
   
 private:
   G4double itsLWCalWidth;
@@ -853,5 +861,11 @@ inline BDSParticle BDSGlobalConstants::GetInitialPoint()
 
 inline void BDSGlobalConstants::SetInitialPoint(BDSParticle& particle)
 {itsInitialPoint = particle;}
+
+inline G4VisAttributes* BDSGlobalConstants::GetInvisibleVisAttr()
+{return invisibleVisAttr;}
+
+inline G4VisAttributes* BDSGlobalConstants::GetVisibleDebugVisAttr()
+{return visibleDebugVisAttr;}
 
 #endif

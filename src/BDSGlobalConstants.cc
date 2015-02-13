@@ -10,6 +10,8 @@ Last modified 23.10.2007 by Steve Malton
 #include "G4UniformMagField.hh"
 #include <cstdlib>
 #include "G4ThreeVector.hh"
+#include "G4VisAttributes.hh"
+#include "G4Colour.hh"
 
 extern Options options;
 
@@ -186,6 +188,19 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsMagnetPoleSize   = 0.0;
   teleporterdelta     = G4ThreeVector(0.,0.,0.);
   teleporterlength    = 0.0;
+}
+
+void BDSGlobalConstants::InitVisAttributes()
+{
+  //for vacuum volumes
+  invisibleVisAttr = new G4VisAttributes(&G4Colour::Black);
+  invisibleVisAttr->SetVisibility(false);
+  invisibleVisAttr->SetForceSolid(true);
+
+  //for normally invisible volumes like marker / container volumes in debug mode
+  visibleDebugVisAttr = new G4VisAttributes(&G4Colour::Green,0.1);
+  visibleDebugVisAttr->SetVisibility(true);
+  visibleDebugVisAttr->SetForceSolid(true);
 }
 
 void BDSGlobalConstants::InitRotationMatrices(){
