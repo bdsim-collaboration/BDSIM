@@ -2,9 +2,10 @@
 #define BDSBEAMPIPETYPE_H
 
 #include "BDSTypeSafeEnum.hh"
+#include "globals.hh"         // geant4 globals / types
 
 /**
- * @brief type definition for beampipes - used for comparison
+ * @brief Type definition for beampipes - used for comparison
  * in factory methods
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
@@ -16,4 +17,10 @@ struct beampipetypes_def {
 
 typedef BDSTypeSafeEnum<beampipetypes_def,int> BDSBeamPipeType;
 
+namespace BDS {
+  BDSBeamPipeType DetermineBeamPipeType(G4String apertureType);
+}
 #endif
+
+
+
