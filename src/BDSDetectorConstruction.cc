@@ -506,7 +506,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 #else
       VisAtt1->SetVisibility(false);
 #endif
-      LocalLogVol->SetVisAttributes(VisAtt1);
+      //LocalLogVol->SetVisAttributes(VisAtt1);
       
       // now register the spos and other info of this sensitive volume in global map
       // used by energy counter sd to get spos of that logical volume at histogram time
@@ -599,6 +599,11 @@ void BDSDetectorConstruction::ComponentPlacement(){
 
       G4String LocalName=thecurrentitem->GetName()+"_phys";
       const int nCopy = thecurrentitem->GetCopyNumber();
+      G4cout << "THE NAME " << LocalLogVol->GetName() << G4endl;
+      G4cout << "VIS C:R  " << LocalLogVol->GetVisAttributes()->GetColour().GetRed() << G4endl;
+      G4cout << "VIS C:G  " << LocalLogVol->GetVisAttributes()->GetColour().GetGreen() << G4endl;
+      G4cout << "VIS C:B  " << LocalLogVol->GetVisAttributes()->GetColour().GetBlue() << G4endl;
+      G4cout << "VISIBLE  " << LocalLogVol->GetVisAttributes()->IsVisible() << G4endl;
       G4PVPlacement* PhysiComponentPlace = 
 	new G4PVPlacement(
 			  rotateComponent,  // its rotation
