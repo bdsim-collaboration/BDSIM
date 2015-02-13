@@ -19,12 +19,14 @@ struct Element {
   double inR; double bpRad; /// inner radius and beam pipe radius of muon spoiler  
   double l; // l in metres
   double ks,k0,k1,k2,k3,angle;
-  double beampipeThickness;
+
   double aper,aperX, aperY; //old aperture model
   double aperYUp, aperYDown, aperDy;  ///pcldrift
 
+  double beampipeThickness;
   double aper1, aper2, aper3, aper4; // new aperture model
   std::string apertureType;
+  std::string beampipeMaterial;
   
   double tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut;
   double tscint, twindow, bmapZOffset; 

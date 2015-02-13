@@ -934,6 +934,12 @@ parameters:
 			 params.apertureType = $3;
 		       }
 		   else
+		   if(!strcmp($1->name,"beampipeMaterial"))
+			 {
+			   params.beampipeMaterialset = 1;
+			   params.beampipeMaterial = $3;
+			 }
+		   else
 		   if(!strcmp($1->name,"tunnelMaterial")) 
 		       {
 			 params.tunnelmaterialset = 1;
@@ -1022,10 +1028,17 @@ parameters:
 			 params.tunnelmaterialset = 1;
 			 params.tunnelMaterial = $3;
 		       }
+		       else
 		       if(!strcmp($1->name,"apertureType"))
 			 {
 			   params.apertureTypeset = 1;
 			   params.apertureType = $3;
+			 }
+		       else
+		       if(!strcmp($1->name,"beampipeMaterial"))
+			 {
+			   params.beampipeMaterialset = 1;
+			   params.beampipeMaterial = $3;
 			 }
 		       else
                          if(!strcmp($1->name,"tunnelCavityMaterial")) 

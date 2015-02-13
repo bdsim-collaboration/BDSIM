@@ -75,6 +75,7 @@ void Parameters::flush() {
   aper3 = 0; aper3set = 0;
   aper4 = 0; aper4set = 0;
   apertureType=""; apertureTypeset = 0;
+  beampipeMaterial = ""; beampipeMaterialset = 0;
 
   B  = 0; Bset  = 0;
   k0 = 0; k0set = 0;
@@ -173,6 +174,7 @@ void Parameters::inherit_properties(struct Element& e)
   if(!aper3set) { aper3 = e.aper3; aper3set = 1;}
   if(!aper4set) { aper4 = e.aper4; aper4set = 1;}
   if(!apertureTypeset) { apertureType = e.apertureType; apertureTypeset = 1;}
+  if(!beampipeMaterialset) { beampipeMaterial = e.beampipeMaterial; beampipeMaterialset = 1;}
   
   if(!inRset) { inR = e.inR; inRset = 1; }
   if(!bpRadset) { bpRad = e.bpRad; bpRadset = 1; }

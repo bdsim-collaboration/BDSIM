@@ -129,6 +129,7 @@ void Element::flush() {
   aper3 = 0;
   aper4 = 0;
   apertureType = "";
+  beampipeMaterial = "";
   
   // old aperture model
   aper = 0;

@@ -70,6 +70,7 @@ struct Parameters {
   double aper3; int aper3set;
   double aper4; int aper4set;
   std::string apertureType; int apertureTypeset;
+  std::string beampipeMaterial; int beampipeMaterialset;
   
   double phi, theta, psi; /// for 3d transforms
   int phiset, thetaset, psiset;

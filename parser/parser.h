@@ -181,6 +181,7 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.aper3 = params.aper3;
   e.aper4 = params.aper4;
   e.apertureType = params.apertureType;
+  e.beampipeMaterial = params.beampipeMaterial;
   
   e.bpRad = params.bpRad;
   e.xsize = params.xsize;
