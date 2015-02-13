@@ -1,17 +1,9 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
 #ifndef BDSRunAction_h
 #define BDSRunAction_h 1
 
 #include "G4UserRunAction.hh"
 #include "globals.hh"
 #include <ctime>
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 class G4Run;
 
@@ -28,6 +20,14 @@ public:
 private:
   time_t starttime;
   time_t stoptime;
+
+  //indices of histograms with analysis manager
+  G4int phitsindex;
+  G4int plossindex;
+  G4int elossindex;
+  G4int phitspeindex;
+  G4int plosspeindex;
+  G4int elosspeindex;
 };
 
 #endif
