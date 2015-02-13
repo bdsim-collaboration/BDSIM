@@ -1,3 +1,5 @@
+#include "BDSDebug.hh"
+
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryCircular.hh"
@@ -20,6 +22,9 @@ BDSBeamPipeFactory::BDSBeamPipeFactory()
 
 BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeType typeIn)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   switch(typeIn.underlying()){
 
   case BDSBeamPipeType::circular:
@@ -51,6 +56,9 @@ BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(BDSBeamPipeType beamPipeTypeIn,
 						G4double        aper4
 						)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeTypeIn);
   return factory->CreateBeamPipe(nameIn,lengthIn,vacuumMaterialIn,beamPipeThicknessIn,
 				 beamPipeMaterialIn,aper1,aper2,aper3,aper4);
