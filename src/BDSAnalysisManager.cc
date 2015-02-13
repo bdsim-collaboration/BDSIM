@@ -41,7 +41,7 @@ G4int BDSAnalysisManager::Create1DHistogram(G4String name,
 
 G4int BDSAnalysisManager::Create1DHistogram(G4String name,
 					    G4String /*title*/,
-					    std::vector<double> edges)
+					    std::vector<double>& edges)
 {
   histograms1d.push_back(new BDSHistogram1D(edges,name));
   return histograms1d.size();

@@ -28,7 +28,7 @@ public:
 
   G4int Create1DHistogram(G4String name,
 			  G4String title,
-			  std::vector<double> edges);
+			  std::vector<double>& edges);
 
   /// Access a histogram
   BDSHistogram1D* GetHistogram(G4int index);
