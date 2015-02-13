@@ -1,7 +1,7 @@
 #ifndef BDSHistogram_h
 #define BDSHistogram_h 1
 
-#include "globals.hh"
+#include "globals.hh"       // geant4 globals / types
 #include <vector>
 #include <utility>
 #include <ostream>
@@ -37,7 +37,8 @@ public:
 class BDSHistogram1D
 {
 public:
-  BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins);
+  BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4String nameIn="histogram");
+  BDSHistogram1D(std::vector<G4double> binEdges, G4String name="histogram");
   ~BDSHistogram1D();
   
   void                                        Empty();
@@ -58,6 +59,7 @@ private:
   /// last bin is overflow bin always
   std::vector<BDSBin*> bins;
   G4double binwidth;
+  G4String name;
 };
 
 #endif

@@ -35,7 +35,8 @@ std::pair<G4double, G4double> BDSBin::GetXMeanAndTotal()
   return std::make_pair(xmean,total);
 }
 
-BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins)
+BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4String nameIn):
+  name(nameIn)
 {
   // Generate bins
   // reserve size for speed optimisation
@@ -66,6 +67,30 @@ BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins)
     }
   // last bin is overflow bin
   bins.push_back(new BDSBin(xmax,DBL_MAX));
+}
+
+BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn):
+  name(nameIn)
+{
+  // reserve size for speed optimisation
+  bins.reserve(binEdges.size()+1); // -1 (for extra edge) + 2 for under/overfloww
+  
+  // prepare iterators
+  std::vector<double>::iterator iter, end;
+  iter = binEdges.begin();
+  end = binEdges.end();
+
+  // prepare underflow bin
+  bins.push_back(new BDSBin(DBL_MIN,*iter));
+  
+  BDSBin* tempbin = NULL;
+  for (iter = binEdges.begin(); iter != end--; ++iter)
+    {
+      tempbin = new BDSBin(*iter,*(iter+1));
+      bins.push_back(tempbin);
+    }
+  // last bin is overflow bin
+  bins.push_back(new BDSBin(*end,DBL_MAX));
 }
 
 void BDSHistogram1D::Empty()
