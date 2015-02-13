@@ -131,6 +131,7 @@ std::pair<G4double,G4double> BDSHistogram1D::GetUnderOverFlowBins()const
 void BDSHistogram1D::PrintBins()const
 {
   G4cout << G4endl;
+  G4cout << "Name: " << name << G4endl;
   for (std::vector<BDSBin*>::const_iterator i = bins.begin(); i != bins.end(); ++i)
     {G4cout << (*i)->GetValue() << G4endl;}
 }
@@ -140,7 +141,7 @@ void BDSHistogram1D::Fill(G4double x)
   //iterate through vector and check if x in bin range
   //if so append it to total
 #ifdef BDSDEBUG
-  G4cout << "Hitogram1D > Fill with " << x << G4endl;
+  G4cout << __METHOD_NAME__ << x << G4endl;
 #endif
   for (std::vector<BDSBin*>::iterator i = bins.begin(); i != bins.end(); ++i)
     {
