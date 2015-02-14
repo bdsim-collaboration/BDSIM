@@ -63,8 +63,13 @@ public:
   void                                        PrintBins() const;
   std::pair<BDSBin*,BDSBin*>                  GetUnderOverFlowBins() const;
   std::pair<G4double,G4double>                GetUnderOverFlowBinValues() const;
-  BDSBin* GetUnderflowBin() const;
-  BDSBin* GetOverflowBin()  const;
+  BDSBin*                                     GetUnderflowBin() const;
+  BDSBin*                                     GetOverflowBin()  const;
+  BDSBin*                                     GetFirstBin() const;
+  BDSBin*                                     GetLastBin() const;
+  G4String                                    GetName() const;
+  G4String                                    GetTitle() const;
+  size_t                                      GetNBins() const;
 
   // iterators
   BDSBin* currentBin();

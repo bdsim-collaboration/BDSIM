@@ -113,6 +113,12 @@ BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4
   first();
 }
 
+G4String BDSHistogram1D::GetName() const
+{ return name;}
+
+G4String BDSHistogram1D::GetTitle() const
+{ return title;}
+
 void BDSHistogram1D::Empty()
 {
   for (std::vector<BDSBin*>::iterator i = bins.begin(); i != bins.end(); ++i)
@@ -141,16 +147,6 @@ std::vector<std::pair<G4double, G4double> > BDSHistogram1D::GetBinXMeansAndTotal
   return result;
 }
 
-std::pair<G4double,G4double> BDSHistogram1D::GetUnderOverFlowBinValues()const
-{
-  return std::make_pair(bins.front()->GetValue(),bins.back()->GetValue());
-}
-
-std::pair<BDSBin*, BDSBin*> BDSHistogram1D::GetUnderOverFlowBins() const
-{
-  return std::make_pair(underflow,overflow);
-}
-
 void BDSHistogram1D::PrintBins()const
 {
   G4cout << G4endl;
@@ -160,6 +156,31 @@ void BDSHistogram1D::PrintBins()const
   for (std::vector<BDSBin*>::const_iterator i = bins.begin(); i != bins.end(); ++i)
     {G4cout << **i << G4endl;}
 }
+
+std::pair<BDSBin*, BDSBin*> BDSHistogram1D::GetUnderOverFlowBins() const
+{
+  return std::make_pair(underflow,overflow);
+}
+
+std::pair<G4double,G4double> BDSHistogram1D::GetUnderOverFlowBinValues()const
+{
+  return std::make_pair(bins.front()->GetValue(),bins.back()->GetValue());
+}
+
+BDSBin* BDSHistogram1D::GetUnderflowBin() const
+{return underflow;}
+
+BDSBin* BDSHistogram1D::GetOverflowBin() const
+{return overflow;}
+
+BDSBin* BDSHistogram1D::GetFirstBin() const
+{return bins.front();}
+
+BDSBin* BDSHistogram1D::GetLastBin() const
+{return bins.back();}
+
+size_t BDSHistogram1D::GetNBins() const
+{return bins.size();}
 
 void BDSHistogram1D::Fill(G4double x)
 {
@@ -194,8 +215,8 @@ BDSHistogram1D::~BDSHistogram1D()
 
 std::ostream& operator<< (std::ostream &out, BDSHistogram1D const &hist)
 {
-  return out << "### FirstBinLeft = " << hist.GetBins()[1]->xmin 
-	     << " LastBinLeft = " << (*(hist.GetBins().rbegin()++))->xmin 
+  return out << "### FirstBinLeft = " << hist.GetFirstBin()->GetLowerEdge() 
+	     << " LastBinLeft = " << hist.GetLastBin()->GetLowerEdge()
 	     << " NBins = " << hist.GetBins().size();
 }
 
