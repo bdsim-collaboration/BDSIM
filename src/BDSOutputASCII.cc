@@ -9,9 +9,6 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
-#include <algorithm> // for remove_if
-#include <cctype>    // for isspace
-#include <functional>
 #include <sys/stat.h>
 
 
@@ -207,16 +204,14 @@ void BDSOutputASCII::WritePrimaryHit(BDSEnergyCounterHit* /*hit*/)
 
 void BDSOutputASCII::WriteHistogram(BDSHistogram1D* histogramIn)
 {
+  //prepare file name
   G4String title = histogramIn->GetName();
-  //remove white space
-  title.erase(std::remove_if(title.begin(),title.end(),isspace),title.end());
-  //remove non alpha numeric characters
-  std::replace_if(title.begin(),title.end(),BDS::non_alpha(),'_');
-  
+  title = BDS::PrepareSafeName(title);
   G4String filename = basefilename + "." + title + ".hist.txt";
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "filename determined to be: " << filename << G4endl;
 #endif
+  
   //open file and write header info
   std::ofstream histOS;
   histOS.open(filename.c_str());

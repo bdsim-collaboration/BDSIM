@@ -17,6 +17,12 @@ namespace BDS {
   {
     G4bool operator()(char c);
   };
+
+  // remove white space and special characters in the name
+  G4String PrepareSafeName(G4String name);
+
+
+  
 }
 
 
