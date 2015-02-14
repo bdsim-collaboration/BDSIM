@@ -28,7 +28,8 @@ public:
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec);
   /// write primary hit
   virtual void WritePrimary(G4String samplerName, G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double zp,G4double t,G4double weight,G4int PDGType, G4int nEvent, G4int TurnsTaken);
-
+  /// write a histogram
+  virtual void WriteHistogram(BDSHistogram1D* histogramIn);
   virtual void Commit();  /// close the file
   virtual void Write();   /// close and open new file
   
