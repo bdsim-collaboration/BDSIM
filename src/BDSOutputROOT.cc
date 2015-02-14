@@ -6,6 +6,8 @@
 #include "BDSSampler.hh"
 #include "BDSSamplerCylinder.hh"
 #include "BDSTrajectory.hh"
+#include "BDSUtilities.hh"
+#include "BDSHistogram.hh"
 
 
 BDSOutputROOT::BDSOutputROOT():BDSOutputBase()
@@ -14,9 +16,6 @@ BDSOutputROOT::BDSOutputROOT():BDSOutputBase()
   G4cout<<"output format ROOT"<<G4endl;
 #endif
   theRootOutputFile = NULL;
-  EnergyLossHisto   = NULL;
-  PrimaryHitsHisto  = NULL;
-  PrimaryLossHisto  = NULL;
   PrecisionRegionEnergyLossTree = NULL;
   EnergyLossTree    = NULL;
   PrimaryHitsTree   = NULL;
@@ -28,8 +27,6 @@ BDSOutputROOT::~BDSOutputROOT()
 {
   if (theRootOutputFile && theRootOutputFile->IsOpen()) {
     theRootOutputFile->Write();
-    //      theRootOutputFile->Close();
-    //      delete theRootOutputFile;
   }
 }
 
@@ -133,20 +130,19 @@ void BDSOutputROOT::Init()
     }
 
   // build energy loss histogram
-  G4int nBins = G4int(BDSGlobalConstants::Instance()->GetSMax()/(BDSGlobalConstants::Instance()->GetElossHistoBinWidth()*CLHEP::m));
+  /*
   G4double wx=(BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelOffsetX())*2;
   G4double wy=(BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelOffsetY())*2;
   G4double bs=BDSGlobalConstants::Instance()->GetComponentBoxSize();
   G4double wmax=std::max(wx,wy);
   wmax=std::max(wmax,bs);
-
-  EnergyLossHisto = new TH1F("ElossHisto", "Energy Loss",nBins,0.,BDSGlobalConstants::Instance()->GetSMax()/CLHEP::m);
+  */
+  
   EnergyLossTree= new TTree("ElossTree", "Energy Loss");
   EnergyLossTree->Branch("s",&S_el,"s/F"); // (m)
   EnergyLossTree->Branch("E",&E_el,"E/F"); // (GeV)
 
-  //Primary loss tree and histogram setup
-  PrimaryLossHisto = new TH1F("PlossHisto", "Primary Losses", nBins, 0., BDSGlobalConstants::Instance()->GetSMax()/CLHEP::m);
+  //Primary loss tree setup
   PrimaryLossTree  = new TTree("PlossTree", "Primary Losses");
   PrimaryLossTree->Branch("X",          &X_pl,          "X/F"); // (m)
   PrimaryLossTree->Branch("Y",          &Y_pl,          "Y/F"); // (m)
@@ -161,8 +157,7 @@ void BDSOutputROOT::Init()
   PrimaryLossTree->Branch("turnnumber", &turnnumber_pl, "turnnumber/I");
   PrimaryLossTree->Branch("eventNo",    &eventno_pl,    "eventNo/I");
 
-  //Primary hits tree and histogram setup
-  PrimaryHitsHisto = new TH1F("PhitsHisto", "Primary Hits", nBins, 0., BDSGlobalConstants::Instance()->GetSMax()/CLHEP::m);
+  //Primary hits tree setup
   PrimaryHitsTree  = new TTree("PhitsTree", "Primary Hits");
   PrimaryHitsTree->Branch("X",          &X_ph,          "X/F"); // (m)
   PrimaryHitsTree->Branch("Y",          &Y_ph,          "Y/F"); // (m)
@@ -448,8 +443,6 @@ void BDSOutputROOT::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec){
     }
 }
 
-// make energy loss histo
-
 void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 {
   G4int n_hit = hc->entries();
@@ -458,7 +451,6 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
       //all regions fill the energy loss tree....
       E_el = (*hc)[i]->GetEnergy()/CLHEP::GeV;
       S_el = (*hc)[i]->GetS()/CLHEP::m;
-      EnergyLossHisto->Fill(S_el,E_el);
       EnergyLossTree->Fill();
       
       if((*hc)[i]->GetPrecisionRegion()){ //Only the precision region fills this tree, preserving every hit, its position and weight, instead of summing weighted energy in each beam line component.
@@ -497,9 +489,7 @@ void BDSOutputROOT::WritePrimaryLoss(BDSEnergyCounterHit* hit)
   part_pl       = hit->GetPartID();
   turnnumber_pl = hit->GetTurnsTaken();
   eventno_pl    = hit->GetEventNo();
-
-  //fill histogram
-  PrimaryLossHisto->Fill(S_pl); //for now fill without weight - can be weighted in analysis
+  
   //write to file
   PrimaryLossTree->Fill();
 }
@@ -520,14 +510,38 @@ void BDSOutputROOT::WritePrimaryHit(BDSEnergyCounterHit* hit)
   turnnumber_ph = hit->GetTurnsTaken();
   eventno_ph    = hit->GetEventNo();
   
-  //fill histogram
-  PrimaryHitsHisto->Fill(S_ph); //for now fill without weight - can be weighted in analysis
   //write to file
   PrimaryHitsTree->Fill();
 }
 
-void BDSOutputROOT::WriteHistogram(BDSHistogram1D* /*histogramIn*/)
-{return;}
+void BDSOutputROOT::WriteHistogram(BDSHistogram1D* hIn)
+{
+  G4String hname = hIn->GetName();
+  hname = BDS::PrepareSafeName(hname);
+  G4double xmin  = hIn->GetFirstBin()->GetLowerEdge();
+  G4double xmax  = hIn->GetLastBin()->GetUpperEdge();
+  G4int    nbins = hIn->GetNBins();
+  
+  TH1D* h = new TH1D(hname, hIn->GetTitle(), nbins, xmin, xmax);
+
+  G4int i;
+  for(hIn->first(),i = 1;!hIn->isDone();hIn->next(), i++)
+    {
+      BDSBin* currentBin = hIn->currentBin();
+      h->SetBinContent(i,currentBin->GetValue());
+      h->SetBinError(i,  currentBin->GetError());
+    }
+  //over / underflow manually set
+  h->SetBinContent(0,hIn->GetUnderflowBin()->GetValue()); //underflow
+  h->SetBinContent(0,hIn->GetUnderflowBin()->GetError());
+  h->SetBinContent(h->GetNbinsX()+1,hIn->GetOverflowBin()->GetValue()); //overflow
+  h->SetBinContent(h->GetNbinsX()+1,hIn->GetOverflowBin()->GetError());
+
+  h->SetEntries(hIn->GetNEntries());
+  
+  h->Write(); // as commit actually closes a file as does write..
+  delete h;
+}
 
 void BDSOutputROOT::Commit()
 {

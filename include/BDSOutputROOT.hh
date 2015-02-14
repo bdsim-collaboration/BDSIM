@@ -11,7 +11,15 @@
 #include "TFile.h"
 #include "TTree.h"
 
-/// ROOT output class
+/**
+ * @brief ROOT output class
+ * 
+ * Write BDSIM output to ROOT files. Originally
+ * part of BDSIM code base and recently developed and maintained
+ * by Jochem Snuverink, Lawrence Deacon & Laurie Nevay
+ * 
+ * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
+ */
 
 class BDSOutputROOT : public BDSOutputBase {
 
@@ -58,11 +66,7 @@ private:
   void BuildSamplerTree(G4String name);
   TFile* theRootOutputFile;
   //  TTree *theLWCalorimeterTree;
-
-  TH1F* EnergyLossHisto;
-  TH1F* PrimaryLossHisto;
-  TH1F* PrimaryHitsHisto;
-  //  TH3F *EnergyLossHisto3d;
+  
   TTree* PrecisionRegionEnergyLossTree;
   TTree* EnergyLossTree;
   TTree* PrimaryLossTree;
