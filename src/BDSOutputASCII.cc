@@ -2,6 +2,7 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSUtilities.hh"       // for BDS::non_alpha
 #include <cmath>
 #include <ctime>
 #include <string>
@@ -13,12 +14,6 @@
 #include <functional>
 #include <sys/stat.h>
 
-//utility function for replace_if
-struct BDS::non_alpha {
-    bool operator()(char c) {
-        return !isalpha(c);
-    }
-};
 
 BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
 {

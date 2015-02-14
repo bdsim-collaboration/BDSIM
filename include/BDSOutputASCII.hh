@@ -6,7 +6,15 @@
 #include <fstream>
 #include "BDSHistogram.hh"
 
-// ASCII output class
+/**
+ * @brief ASCII output class
+ * 
+ * Write BDSIM output to multiple ascii text files. Originally
+ * part of BDSIM code base and recently developed and maintained
+ * by Jochem Snuverink & Laurie Nevay
+ * 
+ * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
+ */
 
 class BDSOutputASCII : public BDSOutputBase {
 
@@ -61,10 +69,6 @@ private:
 		     G4int    TrackID, 
 		     G4int    TurnsTaken);
 };
-
-namespace BDS {
-  struct non_alpha;
-}
 
 extern BDSOutputBase* bdsOutput;
 #endif
