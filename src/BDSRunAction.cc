@@ -64,13 +64,19 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   G4cout << __METHOD_NAME__ << "Run " << aRun->GetRunID() << " end. Time is " << asctime(localtime(&stoptime)) << G4endl;
   
   // Write output
+  // write histograms to output - do this before potentially closing / opening new files
+  bdsOutput->WriteHistogram(BDSAnalysisManager::Instance()->GetHistogram(0));
+  bdsOutput->WriteHistogram(BDSAnalysisManager::Instance()->GetHistogram(1));
+  bdsOutput->WriteHistogram(BDSAnalysisManager::Instance()->GetHistogram(2));
+  bdsOutput->WriteHistogram(BDSAnalysisManager::Instance()->GetHistogram(3));
+  bdsOutput->WriteHistogram(BDSAnalysisManager::Instance()->GetHistogram(4));
+  bdsOutput->WriteHistogram(BDSAnalysisManager::Instance()->GetHistogram(5));
   if(BDSExecOptions::Instance()->GetBatch()) {  // Non-interactive mode
     bdsOutput->Write(); // write last file
   } else {
     bdsOutput->Commit(); // write and open new file
   }
-
+    
   // note difftime only calculates to the integer second
   G4cout << "Run Duration >> " << (int)difftime(stoptime,starttime) << " s" << G4endl;
 }
-//==========================================================
