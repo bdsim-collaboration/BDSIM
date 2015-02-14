@@ -101,21 +101,15 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   G4cout<<"BDSEventAction : processing end of event action"<<G4endl;
 #endif
   
-
   if(verboseEvent || verboseEventNumber == event_number){
     G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;
   }
-  
+ 
 #ifdef BDSDEBUG 
   G4cout<<"BDSEventAction : storing hits"<<G4endl;
-#endif
-
-
+#endif 
   //Record the primary events
   AddPrimaryHits();
-  
-  // are there any planar samplers?
-  // if so, record the hits for each sampler 
   
 #ifdef BDSDEBUG 
   G4cout<<"BDSEventAction : processing planar hits collection"<<G4endl;
