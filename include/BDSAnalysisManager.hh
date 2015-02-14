@@ -10,6 +10,13 @@
  * histograms.
  * 
  * singleton pattern
+ * 
+ * This is conceptually based on the Geant4 AnalysisManager classes,
+ * however this does not inherit it nor adhere strictly to it. The
+ * purpose of this class is only to deal with histograms. The Geant4
+ * AnalysisManagers are based on an output format.  Here this will 
+ * be a communal histogram class and storage system and the different
+ * output formats will write them appropriately.
  */
 
 class BDSAnalysisManager
