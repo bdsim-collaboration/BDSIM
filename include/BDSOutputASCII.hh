@@ -34,21 +34,17 @@ public:
   virtual void Write();   /// close and open new file
   
 private:
-
+  G4String basefilename;
+  G4String timestring;
+  
   /// main output file
   std::ofstream ofMain;
   /// primaries output file
   std::ofstream ofPrimaries;
   /// energy loss hits output file
   std::ofstream ofELoss;
-  /// energy loss histogram
-  std::ofstream ofELossHistogram;
-  BDSHistogram1D* hist;
   /// primary loss hits output file
   std::ofstream ofPLoss;
-  /// primary loss histogram
-  std::ofstream ofPLossHistogram;
-  BDSHistogram1D* phist;
 
   void WriteAsciiHit(std::ofstream* outfile, 
 		     G4int    PDGType, 
@@ -64,10 +60,11 @@ private:
 		     G4int    ParentID, 
 		     G4int    TrackID, 
 		     G4int    TurnsTaken);
-  
-  void WriteHistogram(BDSHistogram1D* aHist, std::ofstream* anOf);
-
 };
+
+namespace BDS {
+  struct non_alpha;
+}
 
 extern BDSOutputBase* bdsOutput;
 #endif
