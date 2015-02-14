@@ -22,6 +22,13 @@ BDSBin::BDSBin(G4double inXmin, G4double inXmax)
 #endif
 }
 
+BDSBin BDSBin::operator+= (const G4double& weight)
+{
+  total += weight;
+  sumWeightsSquared += weight*weight;
+  return *this;
+}
+
 bool BDSBin::InRange(G4double x)
 {
   if ( x >= xmin && x < xmax)
