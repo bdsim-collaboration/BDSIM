@@ -16,6 +16,7 @@ class BDSBin
 public:
   BDSBin(G4double inXmin, G4double inXmax);
   G4double GetValue(){return total;}
+  G4double GetError(){return sqrt(sumWeightsSquared);}
   G4double GetLowerEdge(){return xmin;}
   G4double GetUpperEdge(){return xmax;}
   std::pair<G4double, G4double> GetXMeanAndTotal();

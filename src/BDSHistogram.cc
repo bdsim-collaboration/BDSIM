@@ -11,6 +11,7 @@
 BDSBin::BDSBin(G4double inXmin, G4double inXmax)
 {
   total =  0.0;
+  sumWeightsSquared = 0.0;
   xmin  = inXmin;
   xmax  = inXmax;
   xmean = (xmax + xmin)/2.0;
