@@ -42,14 +42,21 @@ std::pair<G4double, G4double> BDSBin::GetXMeanAndTotal()
   return std::make_pair(xmean,total);
 }
 
-BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4String nameIn):
-  name(nameIn)
+std::ostream& operator<< (std::ostream &out, BDSBin const &bin)
 {
-  // Generate bins
+  return out << "(" << bin.xmin << " , " << bin.xmax << ") : " << bin.total;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4String nameIn, G4String titleIn):
+  name(nameIn),title(titleIn)
+{
+  //underflow bin
+  underflow = new BDSBin(DBL_MIN,xmin);
+  
   // reserve size for speed optimisation
-  bins.reserve(nbins+2);
-  // 1st bins is underflow bin
-  bins.push_back(new BDSBin(DBL_MIN,xmin));
+  bins.reserve(nbins);
 
   // caculate binwidth
   binwidth = (xmax - xmin) / (G4double)nbins;
@@ -58,7 +65,7 @@ BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4Stri
 	 << " S min : "      << xmin 
 	 << " m, S max : "   << xmax 
 	 << " m, nbins : " << nbins 
-	 << "Bin width: "  << binwidth 
+	 << " Bin width: "  << binwidth 
 	 << " m" << G4endl;
 #endif
   G4double localmin, localmax;
@@ -72,23 +79,26 @@ BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4Stri
       localmin += binwidth;
       localmax += binwidth;
     }
-  // last bin is overflow bin
-  bins.push_back(new BDSBin(xmax,DBL_MAX));
+  // overflow bin
+  overflow = new BDSBin(xmax,DBL_MAX);
+
+  //initialise iterators
+  first();
 }
 
-BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn):
-  name(nameIn)
+BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4String titleIn):
+  name(nameIn),title(titleIn)
 {
   // reserve size for speed optimisation
-  bins.reserve(binEdges.size()+1); // -1 (for extra edge) + 2 for under/overfloww
+  bins.reserve(binEdges.size()-1); // -1 (for extra edge)
   
   // prepare iterators
   std::vector<double>::iterator iter, end;
   iter = binEdges.begin();
   end = binEdges.end();
-
-  // prepare underflow bin
-  bins.push_back(new BDSBin(DBL_MIN,*iter));
+  
+  //underflow bin
+  underflow = new BDSBin(DBL_MIN,*iter);
   
   BDSBin* tempbin = NULL;
   for (iter = binEdges.begin(); iter != end--; ++iter)
@@ -96,8 +106,11 @@ BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn):
       tempbin = new BDSBin(*iter,*(iter+1));
       bins.push_back(tempbin);
     }
-  // last bin is overflow bin
-  bins.push_back(new BDSBin(*end,DBL_MAX));
+  // overflow bin
+  overflow = new BDSBin(binEdges.back(),DBL_MAX);
+
+  //initialise iterators
+  first();
 }
 
 void BDSHistogram1D::Empty()
@@ -111,66 +124,59 @@ std::vector<BDSBin*> BDSHistogram1D::GetBins()const
   return bins;
 }
 
-std::vector<G4double> BDSHistogram1D::GetBinTotals()const
+std::vector<G4double> BDSHistogram1D::GetBinValues()const
 {
   std::vector<G4double> result;
-  // note first and last bins are under and overflow respectively
-  for (std::vector<BDSBin*>::const_iterator i = bins.begin()++; i != --bins.end(); ++i)
+  for (std::vector<BDSBin*>::const_iterator i = bins.begin(); i != bins.end(); ++i)
     {result.push_back((*i)->GetValue());}
   return result;
 }
 
-std::vector<std::pair<G4double, G4double> > BDSHistogram1D::GetBinValues()const
+std::vector<std::pair<G4double, G4double> > BDSHistogram1D::GetBinXMeansAndTotals()const
 {
   std::vector<std::pair<G4double ,G4double> > result;
   // note first and last bins are under and overflow respectively
-  for (std::vector<BDSBin*>::const_iterator i = bins.begin()++; i != --bins.end(); ++i)
+  for (std::vector<BDSBin*>::const_iterator i = bins.begin(); i != bins.end(); ++i)
     {result.push_back( (*i)->GetXMeanAndTotal() );}
   return result;
 }
 
-std::pair<G4double,G4double> BDSHistogram1D::GetUnderOverFlowBins()const
+std::pair<G4double,G4double> BDSHistogram1D::GetUnderOverFlowBinValues()const
 {
-  std::pair<G4double,G4double> extrabins = std::make_pair(bins.front()->GetValue(),bins.back()->GetValue());
-  return extrabins;
+  return std::make_pair(bins.front()->GetValue(),bins.back()->GetValue());
+}
+
+std::pair<BDSBin*, BDSBin*> BDSHistogram1D::GetUnderOverFlowBins() const
+{
+  return std::make_pair(underflow,overflow);
 }
 
 void BDSHistogram1D::PrintBins()const
 {
   G4cout << G4endl;
   G4cout << "Name: " << name << G4endl;
+  G4cout << "Underflow: " << *underflow << G4endl;
+  G4cout << "Overflow:  " << *overflow  << G4endl;
   for (std::vector<BDSBin*>::const_iterator i = bins.begin(); i != bins.end(); ++i)
-    {G4cout << (*i)->GetValue() << G4endl;}
+    {G4cout << **i << G4endl;}
 }
 
 void BDSHistogram1D::Fill(G4double x)
 {
-  //iterate through vector and check if x in bin range
-  //if so append it to total
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << x << G4endl;
-#endif
-  for (std::vector<BDSBin*>::iterator i = bins.begin(); i != bins.end(); ++i)
-    {
-      if ((*i)->InRange(x))
-	{
-	  (*(*i))+=1.0; 
-	  break;
-	}
-    }
+  Fill(x,1.0); // fill with weigth = 1
 }
 
 void BDSHistogram1D::Fill(G4double x, G4double weight)
 {
   //iterate through vector and check if x in bin range
-  //if so append it to total
+  if (underflow->InRange(x))
+    {(*underflow)+=1; return;}
+  if (overflow->InRange(x))
+    {(*overflow)+=1; return;}
   for (std::vector<BDSBin*>::iterator i = bins.begin(); i != bins.end(); ++i)
     {
       if ((*i)->InRange(x))
-	{
-	  (*(*i)) += weight;
-	  break;
-	}
+	{ (*(*i)) += weight; break;}
     }
 }
 
@@ -182,6 +188,8 @@ BDSHistogram1D::~BDSHistogram1D()
 #endif
   for (std::vector<BDSBin*>::iterator i = bins.begin(); i != bins.end(); ++i)
     {delete *i;}
+  delete underflow;
+  delete overflow;
 }
 
 std::ostream& operator<< (std::ostream &out, BDSHistogram1D const &hist)
@@ -191,3 +199,28 @@ std::ostream& operator<< (std::ostream &out, BDSHistogram1D const &hist)
 	     << " NBins = " << hist.GetBins().size();
 }
 
+BDSBin* BDSHistogram1D::currentBin()
+{
+  return *_iterBins;
+}
+
+void BDSHistogram1D::first()
+{
+  _iterBins = bins.begin();
+}
+
+G4bool BDSHistogram1D::isLastBin()
+{
+  // size safe evalutation of whether we're at the last item
+  return ((_iterBins != bins.end()) && (std::next(_iterBins) == bins.end()));
+}
+
+G4bool BDSHistogram1D::isDone()
+{
+  return (_iterBins == bins.end());
+}
+
+void BDSHistogram1D::next()
+{
+  _iterBins++;
+}

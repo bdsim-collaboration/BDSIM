@@ -29,6 +29,10 @@ public:
   G4double xmax;
   G4double xmean;
   G4double total;
+  G4double sumWeightsSquared;
+
+  /// output stream
+  friend std::ostream& operator<< (std::ostream &out, BDSBin const &bin);
 };
 
 /**
@@ -39,19 +43,36 @@ public:
 class BDSHistogram1D
 {
 public:
-  BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4String nameIn="histogram");
-  BDSHistogram1D(std::vector<G4double> binEdges, G4String name="histogram");
+  BDSHistogram1D(G4double xmin,
+		 G4double xmax,
+		 G4int    nbins,
+		 G4String nameIn="histogram",
+		 G4String titleIn="histogram");
+  BDSHistogram1D(std::vector<G4double> binEdges,
+		 G4String name="histogram",
+		 G4String titleIn="histogram");
   ~BDSHistogram1D();
   
   void                                        Empty();
   void                                        Fill(G4double x);
   void                                        Fill(G4double x, G4double weight);
   std::vector<BDSBin*>                        GetBins() const;
-  std::vector<G4double>                       GetBinTotals() const;
-  std::vector<std::pair<G4double, G4double> > GetBinValues() const;
+  std::vector<G4double>                       GetBinValues() const;
+  std::vector<std::pair<G4double, G4double> > GetBinXMeansAndTotals() const;
   /// print value of all bins to cout
   void                                        PrintBins() const;
-  std::pair<G4double,G4double>                GetUnderOverFlowBins() const;
+  std::pair<BDSBin*,BDSBin*>                  GetUnderOverFlowBins() const;
+  std::pair<G4double,G4double>                GetUnderOverFlowBinValues() const;
+  BDSBin* GetUnderflowBin() const;
+  BDSBin* GetOverflowBin()  const;
+
+  // iterators
+  BDSBin* currentBin();
+  void    first();
+  G4bool  isLastBin();
+  G4bool  isDone();
+  void    next();
+  
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSHistogram1D const &hist);
   
@@ -60,8 +81,13 @@ private:
   /// 1st bin is underflow bin always
   /// last bin is overflow bin always
   std::vector<BDSBin*> bins;
+  BDSBin*  overflow;
+  BDSBin*  underflow;
   G4double binwidth;
   G4String name;
+  G4String title;
+
+  std::vector<BDSBin*>::const_iterator _iterBins;
 };
 
 #endif
