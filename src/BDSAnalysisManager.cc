@@ -30,20 +30,20 @@ BDSAnalysisManager::~BDSAnalysisManager()
 }
 
 G4int BDSAnalysisManager::Create1DHistogram(G4String name,
-					    G4String /*title*/,
+					    G4String title,
 					    G4int    nbins,
 					    G4double xmin,
 					    G4double xmax)
 {
-  histograms1d.push_back(new BDSHistogram1D(xmin, xmax, nbins, name));
+  histograms1d.push_back(new BDSHistogram1D(xmin, xmax, nbins, name, title));
   return histograms1d.size();
 }
 
 G4int BDSAnalysisManager::Create1DHistogram(G4String name,
-					    G4String /*title*/,
+					    G4String title,
 					    std::vector<double>& edges)
 {
-  histograms1d.push_back(new BDSHistogram1D(edges,name));
+  histograms1d.push_back(new BDSHistogram1D(edges,name, title));
   return histograms1d.size();
 }
 
