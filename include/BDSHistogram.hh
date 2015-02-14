@@ -71,6 +71,7 @@ public:
   G4String                                    GetName() const;
   G4String                                    GetTitle() const;
   size_t                                      GetNBins() const;
+  G4int                                       GetNEntries() const;
 
   // iterators
   BDSBin* currentBin();
@@ -92,6 +93,7 @@ private:
   G4double binwidth;
   G4String name;
   G4String title;
+  G4int    entries;
 
   std::vector<BDSBin*>::const_iterator _iterBins;
 };

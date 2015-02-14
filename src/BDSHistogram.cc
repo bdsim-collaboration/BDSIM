@@ -51,7 +51,7 @@ std::ostream& operator<< (std::ostream &out, BDSBin const &bin)
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4String nameIn, G4String titleIn):
-  name(nameIn),title(titleIn)
+  name(nameIn),title(titleIn),entries(0)
 {
   //underflow bin
   underflow = new BDSBin(DBL_MIN,xmin);
@@ -88,7 +88,7 @@ BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4Stri
 }
 
 BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4String titleIn):
-  name(nameIn),title(titleIn)
+  name(nameIn),title(titleIn),entries(0)
 {
   // reserve size for speed optimisation
   bins.reserve(binEdges.size()-1); // -1 (for extra edge)
@@ -183,9 +183,13 @@ BDSBin* BDSHistogram1D::GetLastBin() const
 size_t BDSHistogram1D::GetNBins() const
 {return bins.size();}
 
+G4int BDSHistogram1D::GetNEntries() const
+{return entries;}
+
 void BDSHistogram1D::Fill(G4double x)
 {
   Fill(x,1.0); // fill with weigth = 1
+  entries++;
 }
 
 void BDSHistogram1D::Fill(G4double x, G4double weight)
@@ -200,6 +204,7 @@ void BDSHistogram1D::Fill(G4double x, G4double weight)
       if ((*i)->InRange(x))
 	{ (*(*i)) += weight; break;}
     }
+  entries++;
 }
 
 BDSHistogram1D::~BDSHistogram1D()
