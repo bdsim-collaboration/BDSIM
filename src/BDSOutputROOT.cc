@@ -526,6 +526,9 @@ void BDSOutputROOT::WritePrimaryHit(BDSEnergyCounterHit* hit)
   PrimaryHitsTree->Fill();
 }
 
+void BDSOutputROOT::WriteHistogram(BDSHistogram1D* /*histogramIn*/)
+{return;}
+
 void BDSOutputROOT::Commit()
 {
   Write();
