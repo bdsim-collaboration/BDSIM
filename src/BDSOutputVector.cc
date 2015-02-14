@@ -61,6 +61,12 @@ void BDSOutputVector::WritePrimary(G4String samplerName,
   }
 }
 
+void BDSOutputVector::WriteHistogram(BDSHistogram1D* histogramIn) {
+  for (unsigned int i=0; i<output.size(); i++) {
+    output[i]->WriteHistogram(histogramIn);
+  }
+}
+
 void BDSOutputVector::Commit(){
   for (unsigned int i=0; i<output.size(); i++) {
     output[i]->Commit();
