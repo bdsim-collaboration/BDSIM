@@ -53,6 +53,10 @@ std::ostream& operator<< (std::ostream &out, BDSBin const &bin)
 BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4String nameIn, G4String titleIn):
   name(nameIn),title(titleIn),entries(0)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "name: " << nameIn << ", title: " << titleIn << G4endl;
+  G4cout << __METHOD_NAME__ << "xmin: " << xmin << ", xmax: " << xmax << ", nbins: " << nbins << G4endl;
+#endif
   //underflow bin
   underflow = new BDSBin(DBL_MIN,xmin);
   
@@ -90,6 +94,10 @@ BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4Stri
 BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4String titleIn):
   name(nameIn),title(titleIn),entries(0)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "name: " << nameIn << ", title: " << titleIn << G4endl;
+  G4cout << __METHOD_NAME__ << "xmin: " << binEdges.front() << ", xmax: " << binEdges.back() << ", nbins: " << binEdges.size() << G4endl;
+#endif
   // reserve size for speed optimisation
   bins.reserve(binEdges.size()-1); // -1 (for extra edge)
   
@@ -101,12 +109,23 @@ BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4
   //underflow bin
   underflow = new BDSBin(DBL_MIN,*iter);
   
-  BDSBin* tempbin = NULL;
-  for (iter = binEdges.begin(); iter != end--; ++iter)
+  BDSBin* tempbin    = NULL;
+  G4double binstart  = 0;
+  G4double binfinish = 0;
+  if (binEdges.size() > 2)
     {
-      tempbin = new BDSBin(*iter,*(iter+1));
-      bins.push_back(tempbin);
+      for (iter = binEdges.begin(); iter != (end-1); ++iter)
+	{
+	  binstart  = *iter;
+	  binfinish = *(iter+1);
+	  if ((binfinish - binstart) > 1e-6)
+	    { //only add a bin if it's a finite width
+	      tempbin = new BDSBin(*iter,*(iter+1));
+	      bins.push_back(tempbin);
+	    }
+	}
     }
+  // else just underflow and overflow
   // overflow bin
   overflow = new BDSBin(binEdges.back(),DBL_MAX);
 

@@ -35,6 +35,9 @@ G4int BDSAnalysisManager::Create1DHistogram(G4String name,
 					    G4double xmin,
 					    G4double xmax)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   histograms1d.push_back(new BDSHistogram1D(xmin, xmax, nbins, name, title));
   return histograms1d.size();
 }
@@ -43,6 +46,9 @@ G4int BDSAnalysisManager::Create1DHistogram(G4String name,
 					    G4String title,
 					    std::vector<double>& edges)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   histograms1d.push_back(new BDSHistogram1D(edges,name, title));
   return histograms1d.size();
 }
