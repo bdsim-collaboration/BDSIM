@@ -250,8 +250,6 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
       double yp = part.Yp();
       double zp = part.Zp();
 
-      std::cout << "HYBRIDQUAD INIT: x0=" << x0 << ", y0=" << y0 << ", z0=" << z0 << ", xp=" << xp << ", yp=" << yp << ", zp=" << zp << std::endl;
-
       vector3 rpp (-zp*x0, zp*y0, x0*xp - y0*yp);
       rpp = rpp * strength;
 
@@ -271,134 +269,133 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
       //  itsDist= h2/(8*R);
       // check for paraxial approximation:
       if((std::abs(zp)>0.99)&&(std::abs(strength)<1.e-6))
-	{
-    //TODEL
-//#ifdef TRKDEBUG
-	  std::cout << "paraxial approximation being used" << std::endl;
-//#endif
-	  double rootK=sqrt(std::abs(strength*zp));
-	  double rootKh=rootK*h*zp;
-	  double X11,X12,X21,X22;
-	  double Y11,Y12,Y21,Y22;
+    	{
+    #ifdef TRKDEBUG
+    	  std::cout << "paraxial approximation being used" << std::endl;
+    #endif
+    	  double rootK=sqrt(std::abs(strength*zp));
+    	  double rootKh=rootK*h*zp;
+    	  double X11,X12,X21,X22;
+    	  double Y11,Y12,Y21,Y22;
 
-	  if (strength>0)
-	    {
-	      X11= std::cos(rootKh);
-	      X12= std::sin(rootKh)/rootK;
-	      X21=-std::abs(strength)*X12;
-	      X22= X11;
+    	  if (strength>0)
+    	    {
+    	      X11= std::cos(rootKh);
+    	      X12= std::sin(rootKh)/rootK;
+    	      X21=-std::abs(strength)*X12;
+    	      X22= X11;
 
-	      Y11= std::cosh(rootKh);
-	      Y12= std::sinh(rootKh)/rootK;
-	      Y21= std::abs(strength)*Y12;
-	      Y22= Y11;
-	    }
-	  else //if (strength<0)
-	    {
-	      X11= std::cosh(rootKh);
-	      X12= std::sinh(rootKh)/rootK;
-	      X21= std::abs(strength)*X12;
-	      X22= X11;
+    	      Y11= std::cosh(rootKh);
+    	      Y12= std::sinh(rootKh)/rootK;
+    	      Y21= std::abs(strength)*Y12;
+    	      Y22= Y11;
+    	    }
+    	  else //if (strength<0)
+    	    {
+    	      X11= std::cosh(rootKh);
+    	      X12= std::sinh(rootKh)/rootK;
+    	      X21= std::abs(strength)*X12;
+    	      X22= X11;
 
-	      Y11= std::cos(rootKh);
-	      Y12= std::sin(rootKh)/rootK;
-	      Y21= -std::abs(strength)*Y12;
-	      Y22= Y11;
-	    }
+    	      Y11= std::cos(rootKh);
+    	      Y12= std::sin(rootKh)/rootK;
+    	      Y21= -std::abs(strength)*Y12;
+    	      Y22= Y11;
+    	    }
 
-	  x1 = X11*x0 + X12*xp;
-	  x1p= X21*x0 + X22*xp;
+    	  x1 = X11*x0 + X12*xp;
+    	  x1p= X21*x0 + X22*xp;
 
-	  y1 = Y11*y0 + Y12*yp;
-	  y1p= Y21*y0 + Y22*yp;
+    	  y1 = Y11*y0 + Y12*yp;
+    	  y1p= Y21*y0 + Y22*yp;
 
-	  z1p=sqrt(1 - x1p*x1p -y1p*y1p);
+    	  z1p=sqrt(1 - x1p*x1p -y1p*y1p);
 
-	  double dx=x1-x0;
-	  double dy=y1-y0;
+    	  double dx=x1-x0;
+    	  double dy=y1-y0;
 
-	  // Linear chord length
-	  double dR2=dx*dx+dy*dy;
-	  double dz=std::sqrt(h2*(1.-h2/(12*R*R))-dR2);
+    	  // Linear chord length
+    	  double dR2=dx*dx+dy*dy;
+    	  double dz=std::sqrt(h2*(1.-h2/(12*R*R))-dR2);
 
-	  // check for precision problems
-	  double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;
-	  if(ScaleFac>1.0000001)
-	    {
-	      ScaleFac=std::sqrt(ScaleFac);
-	      dx/=ScaleFac;
-	      dy/=ScaleFac;
-	      dz/=ScaleFac;
-	      x1=x0+dx;
-	      y1=y0+dy;
-	    }
-	  z1=z0+dz;
-	}
+    	  // check for precision problems
+    	  double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;
+    	  if(ScaleFac>1.0000001)
+    	    {
+    	      ScaleFac=std::sqrt(ScaleFac);
+    	      dx/=ScaleFac;
+    	      dy/=ScaleFac;
+    	      dz/=ScaleFac;
+    	      x1=x0+dx;
+    	      y1=y0+dy;
+    	    }
+    	  z1=z0+dz;
+    	}
       else
-	// perform local helical steps (paraxial approx not safe)
-	{
-	  // simple quadratic approx:
-	  double quadX= - strength*x0*zp;
-	  double quadY=   strength*y0*zp;
-	  double quadZ=   strength*(x0*xp - y0*yp);
+    	// perform local helical steps (paraxial approx not safe)
+    	{
+    	  // simple quadratic approx:
+    	  double quadX= - strength*x0*zp;
+    	  double quadY=   strength*y0*zp;
+    	  double quadZ=   strength*(x0*xp - y0*yp);
 
-	  // determine maximum curvature:
-	  double maxCurv=std::max(std::abs(quadX),std::abs(quadY));
-	  maxCurv=std::max(maxCurv,std::abs(quadZ));
+    	  // determine maximum curvature:
+    	  double maxCurv=std::max(std::abs(quadX),std::abs(quadY));
+    	  maxCurv=std::max(maxCurv,std::abs(quadZ));
 
-	  x1 = x0 + h*xp + quadX*h2/2;
-	  y1 = y0 + h*yp + quadY*h2/2;
-	  z1 = z0 + h*zp + quadZ*h2/2;
+    	  x1 = x0 + h*xp + quadX*h2/2;
+    	  y1 = y0 + h*yp + quadY*h2/2;
+    	  z1 = z0 + h*zp + quadZ*h2/2;
 
-	  x1p = xp + quadX*h;
-	  y1p = yp + quadY*h;
-	  z1p = zp + quadZ*h;
+    	  x1p = xp + quadX*h;
+    	  y1p = yp + quadY*h;
+    	  z1p = zp + quadZ*h;
 
-	  // estimate parameters at end of step:
-	  double quadX_end= - strength*x1*z1p;
-	  double quadY_end=   strength*y1*z1p;
-	  double quadZ_end=   strength*(x1*x1p - y1*y1p);
+    	  // estimate parameters at end of step:
+    	  double quadX_end= - strength*x1*z1p;
+    	  double quadY_end=   strength*y1*z1p;
+    	  double quadZ_end=   strength*(x1*x1p - y1*y1p);
 
-	  // determine maximum curvature:
-	  maxCurv=std::max(maxCurv,std::abs(quadX_end));
-	  maxCurv=std::max(maxCurv,std::abs(quadY_end));
-	  maxCurv=std::max(maxCurv,std::abs(quadZ_end));
+    	  // determine maximum curvature:
+    	  maxCurv=std::max(maxCurv,std::abs(quadX_end));
+    	  maxCurv=std::max(maxCurv,std::abs(quadY_end));
+    	  maxCurv=std::max(maxCurv,std::abs(quadZ_end));
 
-	  //      itsDist=maxCurv*h2/4.;
+    	  //      itsDist=maxCurv*h2/4.;
 
-	  // use the average:
-	  double quadX_av=(quadX+quadX_end)/2;
-	  double quadY_av=(quadY+quadY_end)/2;
-	  double quadZ_av=(quadZ+quadZ_end)/2;
+    	  // use the average:
+    	  double quadX_av=(quadX+quadX_end)/2;
+    	  double quadY_av=(quadY+quadY_end)/2;
+    	  double quadZ_av=(quadZ+quadZ_end)/2;
 
-	  double x_prime_av=(xp + x1p)/2;
-	  double y_prime_av=(yp + y1p)/2;
-	  double z_prime_av=(zp + z1p)/2;
+    	  double x_prime_av=(xp + x1p)/2;
+    	  double y_prime_av=(yp + y1p)/2;
+    	  double z_prime_av=(zp + z1p)/2;
 
-	  x1 = x0 + h*x_prime_av + quadX_av * h2/2;
-	  y1 = y0 + h*y_prime_av + quadY_av * h2/2;
-	  z1 = z0 + h*z_prime_av + quadZ_av * h2/2;
+    	  x1 = x0 + h*x_prime_av + quadX_av * h2/2;
+    	  y1 = y0 + h*y_prime_av + quadY_av * h2/2;
+    	  z1 = z0 + h*z_prime_av + quadZ_av * h2/2;
 
-	  x1p = xp + quadX_av*h;
-	  y1p = yp + quadY_av*h;
-	  z1p = zp + quadZ_av*h;
+    	  x1p = xp + quadX_av*h;
+    	  y1p = yp + quadY_av*h;
+    	  z1p = zp + quadZ_av*h;
 
-	  double dx = (x1-x0);
-	  double dy = (y1-y0);
-	  double dz = (z1-z0);
-	  double chord2 = dx*dx + dy*dy + dz*dz;
-	  if(chord2>h2)
-	    {
-	      double hnew=h*sqrt(h2/chord2);
-	      x1=x0 + hnew*x_prime_av + quadX_av * hnew*hnew/2;
-	      y1=y0 + hnew*y_prime_av + quadY_av * hnew*hnew/2;
-	      z1=z0 + hnew*z_prime_av + quadZ_av * hnew*hnew/2;
+    	  double dx = (x1-x0);
+    	  double dy = (y1-y0);
+    	  double dz = (z1-z0);
+    	  double chord2 = dx*dx + dy*dy + dz*dz;
+    	  if(chord2>h2)
+  	    {
+  	      double hnew=h*sqrt(h2/chord2);
+  	      x1=x0 + hnew*x_prime_av + quadX_av * hnew*hnew/2;
+  	      y1=y0 + hnew*y_prime_av + quadY_av * hnew*hnew/2;
+  	      z1=z0 + hnew*z_prime_av + quadZ_av * hnew*hnew/2;
 
-	      x1p=xp + quadX_av*hnew;
-	      y1p=yp + quadY_av*hnew;
-	      z1p=zp + quadZ_av*hnew;
-	    }
-	}
+  	      x1p=xp + quadX_av*hnew;
+  	      y1p=yp + quadY_av*hnew;
+  	      z1p=zp + quadZ_av*hnew;
+  	    }
+    	}
 
       double vOut[6];
       vOut[0] = x1;

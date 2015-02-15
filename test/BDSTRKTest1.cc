@@ -10,6 +10,7 @@
 #include "BDSExecOptions.hh"
 #include "BDSOutputBase.hh"
 #include "BDSOutputFactory.hh"
+#include "BDSRandom.hh" // for random number generator from CLHEP
 
 //Things from the parser
 extern Options options;
@@ -28,6 +29,13 @@ int main (int argc, char** argv){
   //initialise output
   //trkOutput = BDSOutputFactory::Instance()->InitialiseOutput();
   trkOutput = BDSOutputFactory::createOutput(BDSExecOptions::Instance()->GetOutputFormat());
+
+  //initialise random numbers
+  BDS::CreateRandomNumberGenerator();
+  BDS::SetSeed(); // set the seed from options or from exec options
+  if (BDSExecOptions::Instance()->SetSeedState()) //optionally load the seed state from file
+    {BDS::LoadSeedState(BDSExecOptions::Instance()->GetSeedStateFilename());}
+  BDS::WriteSeedState(); //write the current state once set / loaded
 
   //build bunch
   TRKBunch* bunch       = new TRKBunch(options);
