@@ -27,8 +27,11 @@
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
 #include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
+
 #include "parser/enums.h"
 #include "parser/elementlist.h"
+
+#include "BDSDebug.hh"
 
 #include <cmath>
 #include <sstream>
@@ -588,6 +591,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
   double aperturePrecision = 1.0; // in mm
   // from formula: L/2 / N tan (angle/N) < precision. (L=physical length)
   int nSbends = (int) ceil(std::sqrt(std::abs(length*_element.angle/2/aperturePrecision)));
+  //nSbends = 1;   //use for debugging
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " splitting sbend into " << nSbends << " sbends" << G4endl;
+#endif
   //calculate their angle and length
   double semiangle = _element.angle / (double) nSbends;
   double semilength = length / (double) nSbends;
@@ -623,7 +630,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
   //
   // geometry
   //
-  G4double aper = 2*_bpRad;
+  G4double aper = _bpRad;
   if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
   G4double FeRad = aper + _bpThick;
   
@@ -645,6 +652,11 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
 					((_element.l/_element.angle)*sin(_element.angle/2)
 					 + fabs(cos(_element.angle/2))*_element.outR*tan(_element.angle/2)/2)
 					)*CLHEP::m;
+
+  G4double outR = _element.outR*CLHEP::m;
+  G4double itsAngle = _element.angle;
+  G4double b = outR / (tan(0.5*fabs(itsAngle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(itsAngle))) );
+  magFieldLength = length - (2.0*b);
   
   //
   // magnetic field
@@ -675,11 +687,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
   
   if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
     return createDrift();
-    // return (new BDSDrift( _element.name,
-    // 					length,
-    // 					_element.blmLocZ,
-    // 					_element.blmLocTheta,
-    // 					aper, aper, _element.tunnelMaterial ) );
   }
 
   return (new BDSRBend( _element.name,
@@ -698,9 +705,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
-  //
   // geometry
-  //
   G4double aper = _bpRad;
   if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
   G4double FeRad = aper + _bpThick;
@@ -715,11 +720,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
 #endif
       _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
     }
-  
   G4double length = _element.l*CLHEP::m;
-  //
+  
   // magnetic field
-  //
   G4double bField;
   if(_element.B != 0){
     // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
@@ -747,11 +750,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
 	   << " tunnel material " << _element.tunnelMaterial
 	   << G4endl;
     return createDrift();
-    // return (new BDSDrift( _element.name,
-    // 					length,
-    // 					_element.blmLocZ,
-    // 					_element.blmLocTheta,
-    // 					aper, aper, _element.tunnelMaterial ) );
   } 
 
   return (new BDSKicker( _element.name,
@@ -768,9 +766,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
-  //
   // geometry
-  //
   G4double aper = _bpRad;
   if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
   G4double FeRad = aper + _bpThick;
@@ -786,9 +782,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
       _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
     }
   G4double length = _element.l*CLHEP::m;
-  //
+  
   // magnetic field
-  //
   G4double bField;
   if(_element.B != 0){
     // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
@@ -816,11 +811,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
 	   << G4endl;
 
     return createDrift();
-    // return (new BDSDrift( _element.name,
-    // 					_element.l * CLHEP::m,
-    // 					_element.blmLocZ,
-    // 					_element.blmLocTheta,
-    //                                            aper, aper, _element.tunnelMaterial ) );
   } 
 
   return (new BDSKicker( _element.name,
@@ -1157,13 +1147,13 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid(){
 #ifdef BDSDEBUG 
   G4cout << "---->creating Solenoid,"
 	 << " name= " << _element.name
-	 << " l= " << _element.l << "m"
-	 << " ks= " << _element.ks << "m^-1"
-	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
-	 << " B= " << bField/CLHEP::tesla << "T"
-	 << " aper= " << aper/CLHEP::m << "m"
-	 << " outR= " << _element.outR << "m"
-	 << " FeRad= " << FeRad/CLHEP::m << "m"
+	 << " l= " << _element.l << " m"
+	 << " ks= " << _element.ks << " m^-1"
+	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"
+	 << " B= " << bField/CLHEP::tesla << " T"
+	 << " aper= " << aper/CLHEP::m << " m"
+	 << " outR= " << _element.outR << " m"
+	 << " FeRad= " << FeRad/CLHEP::m << " m"
 	 << " tunnel material " << _element.tunnelMaterial
 	 << " material= " << _element.material
 	 << G4endl;

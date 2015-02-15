@@ -15,7 +15,7 @@ class Test:
         """
         Tracking test class
 
-        type = 'drift' | 'quadrupole' | 'sextupole'
+        type = 'drift' | 'quadrupole' | 'sextupole' | 'sbend' | 'solenoid'
         distribution = 'flat' | 'gaussian'
         """
         self.type_        = type_
@@ -115,7 +115,11 @@ class Test:
         elif self.type_ == 'sextupole' :
             name = 's1'
             bm.AddSextupole(name,length=self.length,**self.kwargs)
-            xm.AddSextupole(name,length=self.length,**self.kwargs)        
+            xm.AddSextupole(name,length=self.length,**self.kwargs)
+        elif self.type_ == 'solenoid':
+            name = 'sl1'
+            bm.AddSolenoid(name,length=self.length,**self.kwargs)
+            xm.AddSolenoid(name,length=self.length,**self.kwargs)
 
         bm.AddMarker("theend") # Need a post element marker to sample at, only for bdsim
         
@@ -231,56 +235,47 @@ class Test:
 
         # 1d plots
         # x comparison
-        _plt.figure(self.figureNr+4)
+        f = _plt.figure(self.figureNr+4)
+        f.suptitle(self.type_)
         _plt.clf()
-        _plt.hist(Mx,color='b',label='PTC',histtype='step')
-        _plt.hist(Bx,color='g',label='BDSIM',histtype='step')
-        if addPrimaries:
-            _plt.hist(Bx0,color='r',label='BDSIM prim',histtype='step')
-        _plt.legend()
-        _plt.xlabel(r"x ($\mu$m)")
-        _plt.title(self.type_)
-        _plt.savefig(self.type_+'_x.pdf')
-        _plt.savefig(self.type_+'_x.png')
 
-        # y comparison
-        _plt.figure(self.figureNr+5)
-        _plt.clf()
-        _plt.hist(My,color='b',label='PTC',histtype='step')
-        _plt.hist(By,color='g',label='BDSIM',histtype='step')
+        ax1 = f.add_subplot(221)
+        ax1.hist(Mx,color='b',label='PTC',histtype='step')
+        ax1.hist(Bx,color='g',label='BDSIM',histtype='step')
         if addPrimaries:
-            _plt.hist(By0,color='r',label='BDSIM prim',histtype='step')
-        _plt.legend()
-        _plt.xlabel(r"y ($\mu$m)")
-        _plt.title(self.type_)
-        _plt.savefig(self.type_+'_y.pdf')
-        _plt.savefig(self.type_+'_y.png')
+            ax1.hist(Bx0,color='r',label='BDSIM prim',histtype='step')
+        ax1.legend(fontsize='x-small',loc=0)
+        ax1.set_xlabel(r"x ($\mu$m)")
+        
+        # y comparison
+        ax2 = f.add_subplot(222)
+        ax2.hist(My,color='b',label='PTC',histtype='step')
+        ax2.hist(By,color='g',label='BDSIM',histtype='step')
+        if addPrimaries:
+            ax2.hist(By0,color='r',label='BDSIM prim',histtype='step')
+        ax2.legend(fontsize='x-small',loc=0)
+        ax2.set_xlabel(r"y ($\mu$m)")
 
         # xp comparison
-        _plt.figure(self.figureNr+6)
-        _plt.clf()
-        _plt.hist(Mxp,color='b',label='PTC',histtype='step')
-        _plt.hist(Bxp,color='g',label='BDSIM',histtype='step')
+        ax3 = f.add_subplot(223)
+        ax3.hist(Mxp,color='b',label='PTC',histtype='step')
+        ax3.hist(Bxp,color='g',label='BDSIM',histtype='step')
         if addPrimaries:
-            _plt.hist(Bxp0,color='r',label='BDSIM prim',histtype='step')
-        _plt.legend()
-        _plt.xlabel(r"x' (rad)")
-        _plt.title(self.type_)
-        _plt.savefig(self.type_+'_xp.pdf')
-        _plt.savefig(self.type_+'_xp.png')
+            ax3.hist(Bxp0,color='r',label='BDSIM prim',histtype='step')
+        ax3.legend(fontsize='x-small',loc=0)
+        ax3.set_xlabel(r"x' (rad)")
 
         # yp comparison
-        _plt.figure(self.figureNr+7)
-        _plt.clf()
-        _plt.hist(Myp,color='b',label='PTC',histtype='step')
-        _plt.hist(Byp,color='g',label='BDSIM',histtype='step')
+        ax4 = f.add_subplot(224)
+        ax4.hist(Myp,color='b',label='PTC',histtype='step')
+        ax4.hist(Byp,color='g',label='BDSIM',histtype='step')
         if addPrimaries:
-            _plt.hist(Byp0,color='r',label='BDSIM prim',histtype='step')
-        _plt.legend()
-        _plt.xlabel(r"y' (rad)")
-        _plt.title(self.type_)
-        _plt.savefig(self.type_+'_yp.pdf')
-        _plt.savefig(self.type_+'_yp.png')
+            ax4.hist(Byp0,color='r',label='BDSIM prim',histtype='step')
+        ax4.legend(fontsize='x-small',loc=0)
+        ax4.set_xlabel(r"y' (rad)")
+        
+        _plt.savefig(self.type_+'_hist.pdf')
+        _plt.savefig(self.type_+'_hist.png')
 
         # residuals in one plot
         f = _plt.figure(self.figureNr+8)

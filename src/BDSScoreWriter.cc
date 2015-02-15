@@ -3,8 +3,6 @@
 #include "BDSScoreWriter.hh"
 
 #include "G4MultiFunctionalDetector.hh"
-#include "G4SDParticleFilter.hh"
-#include "G4VPrimitiveScorer.hh"
 #include "G4VScoringMesh.hh"
 
 #include <map>
@@ -28,11 +26,7 @@ BDSScoreWriter::~BDSScoreWriter() {
 	;
 }
 
-#if G4VERSION_NUMBER < 960
-void BDSScoreWriter::DumpQuantityToFile(G4String & psName, G4String & /*fileName*/, G4String & option)
-#else
 void BDSScoreWriter::DumpQuantityToFile(const G4String & psName, const G4String & /*fileName*/, const G4String & option)
-#endif
 {
   time_t rawtime;
   struct tm * timeinfo;

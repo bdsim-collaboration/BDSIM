@@ -1,18 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
-//
-// class BDSQuadStepper
-//
-// Class description:
-// stepper for pure quadrupole magnetic field
-
-// History:
-// - Created. G.Blair 1/11/00
-
 #ifndef BDSQUADSTEPPER_HH
 #define BDSQUADSTEPPER_HH
 #include "globals.hh"
@@ -63,7 +48,7 @@ protected:
 
 private:
   G4Navigator* QuadNavigator;
-  G4Mag_EqRhs*  fPtrMagEqOfMot;
+  G4Mag_EqRhs* fPtrMagEqOfMot;
 
   G4double itsBGrad;
 

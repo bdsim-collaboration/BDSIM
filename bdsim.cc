@@ -1,5 +1,5 @@
 //  
-//   BDSIM, (C) 2001-2014 
+//   BDSIM, (C) 2001-2015
 //   
 //   version 0.6
 //  
@@ -125,7 +125,7 @@ int main(int argc,char** argv) {
     {BDS::LoadSeedState(BDSExecOptions::Instance()->GetSeedStateFilename());}
   BDS::WriteSeedState(); //write the current state once set / loaded
 
-  // instantiate the specific type of bunch distibution (class),
+  // instantiate the specific type of bunch distribution (class),
   // get the corresponding parameters from the gmad parser info
   // and attach to the initialised random number generator
 #ifdef BDSDEBUG
@@ -198,7 +198,7 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - steppingaction"<<G4endl;
 #endif
-  
+  // Only add steppingaction if it is actually used, so do check here (for cpu reasons)
   if (BDSGlobalConstants::Instance()->GetThresholdCutPhotons() > 0 || BDSGlobalConstants::Instance()->GetThresholdCutCharged() > 0
       || BDSExecOptions::Instance()->GetVerboseStep()) {
     runManager->SetUserAction(new BDSSteppingAction);

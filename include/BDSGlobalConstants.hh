@@ -1,15 +1,6 @@
-/** BDSIM, v0.4
-
-Last modified 30.10.2007 by Steve Malton
-
-**/
-
-//==============================================================
-
 #ifndef BDSGlobalConstants_h
 #define BDSGlobalConstants_h 
 
-//#include <fstream>
 #include <deque>
 #include <map>
 

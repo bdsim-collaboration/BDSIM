@@ -1,28 +1,12 @@
-//  
-//   BDSIM, (C) 2001-2007
-//   
-//   version 0.4
-//  
-//
-//
-//   Solenoid class
-//
-//
-//   History
-//
-//     21 Oct 2007 by Marchiori,  v.0.4
-//
-//
-
-
 #include "BDSGlobalConstants.hh" 
+#include "BDSDebug.hh"
 
 #include "BDSSolenoid.hh"
-#include "G4Mag_UsualEqRhs.hh"
 #include "BDSSolenoidMagField.hh"
-#include "G4MagneticField.hh"
 #include "BDSSolenoidStepper.hh"
-#include "G4HelixImplicitEuler.hh"
+#include "G4Mag_UsualEqRhs.hh"
+
+#include "G4MagneticField.hh"
 
 #include "G4UniformMagField.hh"
 #include "G4Tubs.hh"
@@ -31,7 +15,6 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 
-//============================================================
 
 BDSSolenoid::BDSSolenoid(G4String aName, G4double aLength, 
 			 G4double bpRad, G4double FeRad,
@@ -52,7 +35,14 @@ void BDSSolenoid::Build()
       G4cerr<<"IncludeIronMagFields option not implemented for solenoid class"<<G4endl;
     }
 }
-  
+
+void BDSSolenoid::BuildBeampipe(G4String materialName)
+{
+  BDSMultipole::BuildBeampipe(materialName);
+  itsInnerBeampipeUserLimits->SetMaxAllowedStep(itsLength);
+  itsInnerBPLogicalVolume->SetUserLimits(itsInnerBeampipeUserLimits);
+}
+
 void BDSSolenoid::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(1.,0.,0.)); //red
@@ -61,22 +51,16 @@ void BDSSolenoid::SetVisAttributes()
 
 void BDSSolenoid::BuildBPFieldAndStepper()
 {
-  // set up the magnetic field and stepper
-
-#ifdef _USE_GEANT4_STEPPER_
-  // using Geant4
-  itsMagField = new BDSSolenoidMagField(itsBField);
-  itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
-  itsStepper=new G4HelixImplicitEuler(itsEqRhs);
-#else
-  // using BDSIM
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  
   G4ThreeVector Bfield(0.,0.,itsBField);
-  itsMagField=new G4UniformMagField(Bfield);
-  itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
-  BDSSolenoidStepper* solenoidStepper=new BDSSolenoidStepper(itsEqRhs);
+  itsMagField = new G4UniformMagField(Bfield);
+  itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
+  BDSSolenoidStepper* solenoidStepper = new BDSSolenoidStepper(itsEqRhs);
   solenoidStepper->SetBField(itsBField);
   itsStepper = solenoidStepper;
-#endif
 }
 
 BDSSolenoid::~BDSSolenoid()

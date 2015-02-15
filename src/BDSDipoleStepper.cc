@@ -30,24 +30,24 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
 #ifdef BDSDEBUG
   G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
   G4cout << "BDSDipoleStepper: step= " << h/CLHEP::m << " m" << G4endl
-         << " x= " << yIn[0]/CLHEP::m << "m" << G4endl
-         << " y= " << yIn[1]/CLHEP::m << "m" << G4endl
-         << " z= " << yIn[2]/CLHEP::m << "m" << G4endl
-         << " px= " << yIn[3]/CLHEP::GeV << "GeV/c" << G4endl
-         << " py= " << yIn[4]/CLHEP::GeV << "GeV/c" << G4endl
-         << " pz= " << yIn[5]/CLHEP::GeV << "GeV/c" << G4endl
-         << " q= " << charge/CLHEP::eplus << "e" << G4endl
-    //         << " dBy/dx= " << itsBGrad/(CLHEP::tesla/CLHEP::m) << "T/m" << G4endl
+         << " x  = " << yIn[0]/CLHEP::m     << " m" << G4endl
+         << " y  = " << yIn[1]/CLHEP::m     << " m" << G4endl
+         << " z  = " << yIn[2]/CLHEP::m     << " m" << G4endl
+         << " px = " << yIn[3]/CLHEP::GeV   << " GeV/c" << G4endl
+         << " py = " << yIn[4]/CLHEP::GeV   << " GeV/c" << G4endl
+         << " pz = " << yIn[5]/CLHEP::GeV   << " GeV/c" << G4endl
+         << " q  = " << charge/CLHEP::eplus << " e" << G4endl
+	 << " B  = " << itsBField/(CLHEP::tesla) << " T" << G4endl
     //         << " k= " << kappa/(1./CLHEP::m2) << "m^-2" << G4endl
          << G4endl; 
 #endif
 
   const G4double *pIn = yIn+3;
-  G4ThreeVector v0= G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
+  G4ThreeVector v0    = G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
 
-  G4ThreeVector GlobalPosition= G4ThreeVector( yIn[0], yIn[1], yIn[2]);  
-  G4double InitMag=v0.mag();
-  G4ThreeVector InitMomDir=v0.unit();
+  G4ThreeVector GlobalPosition = G4ThreeVector( yIn[0], yIn[1], yIn[2]);  
+  G4double      InitMag        = v0.mag();
+  G4ThreeVector InitMomDir     = v0.unit();
   
   //G4double h2=h*h;
 
@@ -70,13 +70,9 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
   // advance the orbit
  
   G4ThreeVector itsFinalPoint,itsFinalDir;
-  
   G4ThreeVector yhat(0.,1.,0.);
-
-  G4ThreeVector vhat=LocalRp;
-  
-  G4ThreeVector vnorm=vhat.cross(yhat);
-   
+  G4ThreeVector vhat  = LocalRp;
+  G4ThreeVector vnorm = vhat.cross(yhat);
   G4double R;
   
 
@@ -86,8 +82,7 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
     R=DBL_MAX;
 
 
- // include the sign of the charge of the particles
-
+  // include the sign of the charge of the particles
   if(  fPtrMagEqOfMot->FCof()<0) R*=-1.;
   else if ( fPtrMagEqOfMot->FCof()==0) R=DBL_MAX;
 

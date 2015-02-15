@@ -244,34 +244,38 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 }
 
 void BDSExecOptions::Usage() {
-  G4cout<<"bdsim : version 0.6.0"<<G4endl;
-  G4cout<<"        (C) 2001-2014 Royal Holloway University London"<<G4endl;
+  G4cout<<"bdsim : version 0.6.develop"<<G4endl;
+  G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
   G4cout<<"        http://www.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BdSim"<<G4endl;
   G4cout<<G4endl;
 
   G4cout<<"Usage: bdsim [options]"<<G4endl;
   G4cout<<"Options:"<<G4endl;
-  G4cout<<"--file=<filename>     : specify the lattice file "<<G4endl
-	<<"--output=<fmt>        : output format (root|ascii|combined), default ascii"<<G4endl
-	<<"--outfile=<file>      : output file name. Will be appended with _N"<<G4endl
-        <<"                        where N = 0, 1, 2, 3... etc."<<G4endl
-	<<"--vis_mac=<file>      : file with the visualization macro script, default vis.mac"<<G4endl
-	<<"--gflash=N            : whether or not to turn on gFlash fast shower parameterisation. Default 0."<<G4endl
-	<<"--gflashemax=N        : maximum energy for gflash shower parameterisation in GeV. Default 10000."<<G4endl
-	<<"--gflashemin=N        : minimum energy for gflash shower parameterisation in GeV. Default 0.1."<<G4endl
-	<<"--help                : display this message"<<G4endl
-	<<"--verbose             : display general parameters before run"<<G4endl
-    	<<"--verbose_event       : display information for every event "<<G4endl
-    	<<"--verbose_step        : display tracking information after each step"<<G4endl
-	<<"--verbose_event_num=N : display tracking information for event number N"<<G4endl
-	<<"--batch               : batch mode - no graphics"<<G4endl
-	<<"--outline=<file>      : print geometry info to <file>"<<G4endl
-	<<"--outline_type=<fmt>  : type of outline format"<<G4endl
-	<<"                        where fmt = optics | survey"<<G4endl
-	<<"--materials           : list materials included in bdsim by default"<<G4endl
-	<<"--circular            : assume circular machine - turn control"<<G4endl
-        <<"--seed=N              : the seed to use for the random number generator" <<G4endl
-	<<"--seedstate=<file>    : file containing CLHEP::Random seed state - overrides other seed options"<<G4endl;
+  G4cout<<"--file=<filename>      : specify the lattice and options file "<<G4endl
+	<<"--batch                : batch mode - no graphics"<<G4endl
+	<<"--circular             : assume circular machine - turn control"<<G4endl
+	<<"--gflash=N             : whether or not to turn on gFlash fast shower parameterisation. Default 0."<<G4endl
+	<<"--gflashemax=N         : maximum energy for gflash shower parameterisation in GeV. Default 10000."<<G4endl
+	<<"--gflashemin=N         : minimum energy for gflash shower parameterisation in GeV. Default 0.1."<<G4endl
+	<<"--help                 : display this message"<<G4endl
+	<<"--materials            : list materials included in bdsim by default"<<G4endl
+	<<"--outline=<file>       : print geometry info to <file>"<<G4endl
+	<<"--outline_type=<fmt>   : type of outline format"<<G4endl
+	<<"                         where fmt = optics | survey"<<G4endl
+	<<"--output=<fmt>         : output format (root|ascii|combined), default ascii"<<G4endl
+	<<"--outfile=<file>       : output file name. Will be appended with _N"<<G4endl
+        <<"                         where N = 0, 1, 2, 3... etc."<<G4endl
+        <<"--seed=N               : the seed to use for the random number generator" <<G4endl
+	<<"--seedstate=<file>     : file containing CLHEP::Random seed state - overrides other seed options"<<G4endl
+	<<"--verbose              : display general parameters before run"<<G4endl
+	<<"--verbose_event        : display information for every event "<<G4endl
+	<<"--verbose_event_num=N  : display tracking information for event number N"<<G4endl
+	<<"--verbose_step         : display tracking information after each step"<<G4endl
+	<<"--verbose_G4event=N    : set Geant4 Event manager verbosity level"<<G4endl
+	<<"--verbose_G4run=N      : set Geant4 verbosity level (see Geant4 manual for details)"<<G4endl
+	<<"--verbose_G4stepping=N : set Geant4 Stepping manager verbosity level"<<G4endl
+	<<"--verbose_G4tracking=N : set Geant4 Tracking manager verbosity level [-1:5]"<<G4endl
+	<<"--vis_mac=<file>       : file with the visualization macro script, default vis.mac"<<G4endl;
 }
 
 void BDSExecOptions::SetBDSIMPATH(){

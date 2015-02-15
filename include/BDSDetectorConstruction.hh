@@ -1,11 +1,3 @@
-/** BDSIM, v0.1   
-
-Last modified 15.11.2005 by Ilya Agapov
-
-**/
-
-//==============================================================
-
 #ifndef BDSDetectorConstruction_h
 #define BDSDetectorConstruction_h 
 
@@ -13,10 +5,7 @@ Last modified 15.11.2005 by Ilya Agapov
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 
-//#include "BDSWorld.hh"
-
 #include "G4Region.hh"
-
 #include "G4GeometrySampler.hh"
 
 //GFlash parameterisation
@@ -35,8 +24,6 @@ class G4VSensitiveDetector;
 
 class ElementList;
 
-//==============================================================
-
 class BDSDetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
@@ -45,19 +32,10 @@ public:
   ~BDSDetectorConstruction();
 
 public:
-     
   virtual G4VPhysicalVolume* Construct();
 
-  inline G4VPhysicalVolume* GetWorldVolume(){
-    return physiWorld;
-  }
-
-public:
-
-  G4double* GetWorldSize();
-  G4double GetWorldSizeX();
-  G4double GetWorldSizeY();
-  G4double GetWorldSizeZ();
+  inline G4VPhysicalVolume* GetWorldVolume()
+  {return physiWorld;}
   
 private:
   /// assignment and copy constructor not implemented nor used
@@ -76,10 +54,6 @@ private:
   void ComponentPlacement();
   /// build tunnel from _TUNNEL elements
   void BuildTunnel();
-
-  void SetWorldSizeX(G4double);
-  void SetWorldSizeY(G4double);
-  void SetWorldSizeZ(G4double);
 
   G4bool verbose;
 

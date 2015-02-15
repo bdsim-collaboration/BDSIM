@@ -1,7 +1,7 @@
-//
 // This class returns the B field of a solenoid in GLOBAL coordinates
-//
+
 #include "BDSGlobalConstants.hh"
+#include "BDSDebug.hh"
 
 #include "BDSSolenoidMagField.hh"
 
@@ -37,4 +37,9 @@ void BDSSolenoidMagField::GetFieldValue( const G4double* /*Point[4]*/,
   Bfield[0]=GlobalBField.x();
   Bfield[1]=GlobalBField.y();
   Bfield[2]=GlobalBField.z();
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " B field = " << Bfield[0] << " " << Bfield[1] << " " << Bfield[2] << G4endl;
+#endif
+  
 }

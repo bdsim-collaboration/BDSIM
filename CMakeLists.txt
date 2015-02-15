@@ -39,7 +39,8 @@ elseif(${CMAKE_BUILD_TYPE} STREQUAL "None")
     set(CMAKE_CXX_FLAGS "-O3 -ffast-math -DNDEBUG")
 endif()
 
-# Compiler-specific C++11 activation.
+# Compiler-specific C++11 activation. Replace later with
+# CMAKE_CXX_STANDARD flag only available for cmake 3.1
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     execute_process(
         COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
@@ -48,8 +49,13 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
     endif ()
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    # find version:
+    EXECUTE_PROCESS( COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string )
+    string (REGEX REPLACE ".*clang version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${clang_full_version_string})
+    #message(STATUS "CLANG_VERSION_STRING ${CLANG_VERSION_STRING}")
+
     message(STATUS "Compiler supports C++11")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
 endif()
 
 set(CMAKE_C_ORIG_FLAGS "${CMAKE_C_FLAGS}")
@@ -320,11 +326,19 @@ endif()
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-# set compiler flags
+## set compiler flags
+# warning flags
 set(WFLAGS "-Wall -Wextra -pedantic -Wno-long-long -Wpointer-arith -Woverloaded-virtual")
+# suppress some warnings from CLHEP 2.2 (to be checked from time to time if still necessary)
+# for clang versions 3.6 and higher
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" AND CLANG_VERSION_STRING VERSION_GREATER 3.5)
+  set(WFLAGS "${WFLAGS} -Wno-absolute-value")
+endif()
+
+# cmake flags
 set(CMAKE_FLAGS "${CMAKE_FLAGS} ${CLHEP_DEFINITIONS}  ${WFLAGS}")
 set(BDSIM_FLAGS "${CMAKE_FLAGS} ${VIS_FLAGS} -DCLHEP_VERSION=${CLHEP_VERSION} -DG4VERSION=${G4_MAJOR_VERSION} -DG4MINORVERSION=${G4_MINOR_VERSION} ${BDSIM_FLAGS}")
-
+# add original flags to cmake c and c++ flags
 set(CMAKE_C_FLAGS "${CMAKE_C_ORIG_FLAGS} ${BDSIM_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_ORIG_FLAGS} ${BDSIM_FLAGS}")
 

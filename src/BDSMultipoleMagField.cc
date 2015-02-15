@@ -1,14 +1,3 @@
-/* BDSIM, v0.4   
-
-19 May 2008 by Marchiori G.
-11 Oct 2007 by Steve Malton
-
-*/
-
-//==============================================================
-
-
-
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSMultipoleMagField.hh"
@@ -107,9 +96,7 @@ void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
         <<")cm"<<G4endl;
 #endif
 
-  //
   // convert global to local coordinates
-  //
   G4Navigator* MulNavigator=
     G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
   

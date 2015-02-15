@@ -64,22 +64,16 @@
 #include "BDSTeleporter.hh"
 #include "BDSTerminator.hh"
 #include "BDSLogicalVolumeInfo.hh"
-
 #include "BDSComponentFactory.hh"
 
 #include "G4MagneticField.hh"
-
-// GMAD interface
-#include "ggmad.hh"
-
 #include "G4VSampler.hh"
 #include "G4GeometrySampler.hh"
 
+#include "ggmad.hh"
 #include "parser/element.h"
 #include "parser/elementlist.h"
 #include "parser/enums.h"
-
-//=========================================
 
 #ifdef BDSDEBUG
 bool debug = true;
@@ -99,11 +93,6 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   gflash     = BDSExecOptions::Instance()->GetGFlash();
   gflashemax = BDSExecOptions::Instance()->GetGFlashEMax();
   gflashemin = BDSExecOptions::Instance()->GetGFlashEMin();
-  
-  //initialize world size vector
-  itsWorldSize.push_back(0);
-  itsWorldSize.push_back(1);
-  itsWorldSize.push_back(2);
 
   //initialize global rotation matrix
   _globalRotation = new G4RotationMatrix();
@@ -292,141 +281,57 @@ void BDSDetectorConstruction::BuildBeamline(){
   }
 }
 
-//=================================================================
 void BDSDetectorConstruction::BuildWorld(){
-  if (verbose || debug) G4cout << "now constructing geometry" << G4endl;
-  
-  G4ThreeVector rtot = G4ThreeVector(0.,0.,0.);   // world dimension
-  G4ThreeVector rextentmax = G4ThreeVector(0.,0.,0.);  // extent
-  G4ThreeVector rextentmin = G4ThreeVector(0.,0.,0.);  // extent
-  G4ThreeVector rmin = G4ThreeVector(0.,0.,0.);
-  G4ThreeVector rmax = G4ThreeVector(0.,0.,0.);
-
-  G4ThreeVector localX = G4ThreeVector(1,0,0);  // local coordinate axis
-  G4ThreeVector localY = G4ThreeVector(0,1,0);
-  G4ThreeVector localZ = G4ThreeVector(0,0,1);
-
-  G4double s_tot = 0; // position along the beamline
-
-  // define geometry scope - to calculate world dimensions
-  for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
-    {
-      BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
-
-#ifdef BDSDEBUG 
-      G4cout << thecurrentitem->GetName() << "  "
-             << thecurrentitem->GetChordLength() << "  "
-             << thecurrentitem->GetAngle() << "  "
-             << G4endl;
-#endif
-
-      thecurrentitem->SetSPos(s_tot+thecurrentitem->GetArcLength()/2.0);
-
-      // advance coordinates , but not for cylindrical sampler
-      if(( thecurrentitem->GetType() != "csampler") || ( thecurrentitem->GetChordLength() <= BDSGlobalConstants::Instance()->GetSamplerLength() ) )
-	{
-	  s_tot+= thecurrentitem->GetArcLength();
-
-	  G4double angle=thecurrentitem->GetAngle();
-	  if(!angle && thecurrentitem->GetType()=="transform3d")
-	    angle=thecurrentitem->GetPhi();
-	  G4double theta=thecurrentitem->GetTheta();
-	  G4double psi=thecurrentitem->GetPsi();
-
-	  // define new coordinate system local frame	  
-	  localX.rotate(psi,localZ);
-	  localY.rotate(psi,localZ);
-	  localZ.rotate(psi,localZ);
-
-	  localX.rotate(angle,localY);
-	  localY.rotate(angle,localY);
-	  localZ.rotate(angle,localY);
-
-	  localX.rotate(theta,localX);
-	  localY.rotate(theta,localX);
-	  localZ.rotate(theta,localX);
-
-	  // advance the coordinate system translation
-	  rtot += localZ * thecurrentitem->GetZLength();
 #ifdef BDSDEBUG
-          G4cout << thecurrentitem->GetType() << " " << rtot << G4endl;
+  G4cout << __METHOD_NAME__ << G4endl;
 #endif
-	}
-
-
-      rextentmax = rtot + localX*thecurrentitem->GetXLength() + localY*thecurrentitem->GetYLength();
-      rextentmin = rtot - localX*thecurrentitem->GetXLength() - localY*thecurrentitem->GetYLength();
-
-      //      rextentmax(0) = rtot(0) + (localX*thecurrentitem->GetXLength())(0) + (localX*thecurrentitem->GetYLength())(0);
-      //      rextentmax(1) = rtot(1) + (localY*thecurrentitem->GetXLength())(1) + (localY*thecurrentitem->GetYLength())(1);
-      //      rextentmax(2) = rtot(2) + (localZ*thecurrentitem->GetXLength())(2) + (localZ*thecurrentitem->GetYLength())(2);
-
-      //      rextentmin(0) = rtot(0) - localX*thecurrentitem->GetXLength() - localX*thecurrentitem->GetYLength();
-      //      rextentmin(1) = rtot(1) - localY*thecurrentitem->GetXLength() - localY*thecurrentitem->GetYLength();
-      //      rextentmin(2) = rtot(2) - localZ*thecurrentitem->GetXLength() - localZ*thecurrentitem->GetYLength();
-
-
-	for(int i=0; i<3; i++){
-	  rmax(i) = std::max(rextentmax(i),rmax(i));
-	  rmin(i) = std::min(rextentmin(i),rmin(i));
-	}
-    }
-
-  // determine the world size  
-  G4String LocalName="World";
+  G4ThreeVector maxpositive = BDSBeamline::Instance()->GetMaximumExtentPositive();
+  G4ThreeVector maxnegative = BDSBeamline::Instance()->GetMaximumExtentNegative();
+  G4ThreeVector worldR;
+  for (int i = 0; i < 3; i++){
+    worldR[i] = std::max(fabs(maxpositive[i]),fabs(maxnegative[i]));
+  }
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " world extent positive : " << maxpositive << G4endl;
+  G4cout << __METHOD_NAME__ << " world extent negative : " << maxnegative << G4endl;
+  G4cout << __METHOD_NAME__ << " world half size determined to be strictly: " << worldR << G4endl;
+#endif
+  worldR += G4ThreeVector(5000,5000,5000); //add 5m extra in every dimension
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " with 5m margin becomes in all dimensions : " << worldR << G4endl;
+#endif
   
-  SetWorldSizeX(1.5*( 2*std::max(fabs( rmin(0) ),fabs( rmax(0) ) ) ) *CLHEP::mm);
-  SetWorldSizeY(1.5*( 2*std::max(fabs(rmin(1)),fabs(rmax(1))) ) *CLHEP::mm);
-  SetWorldSizeZ(1.5*(fabs(rmin(2)) + fabs(rmax(2))) *CLHEP::mm);
-
-  if(verbose || debug)
-    {
-      
-      G4cout<<"minX="<<rmin(0)/CLHEP::m<<" m"<<" maxX="<<rmax(0)/CLHEP::m<<" m"<<G4endl;
-      G4cout<<"minY="<<rmin(1)/CLHEP::m<<" m"<<" maxY="<<rmax(1)/CLHEP::m<<" m"<<G4endl;
-      G4cout<<"minZ="<<rmin(2)/CLHEP::m<<" m"<<" maxZ="<<rmax(2)/CLHEP::m<<" m"<<G4endl;
-
-      G4cout<<"itsWorldSizeX = "<<GetWorldSizeX()/CLHEP::m<<G4endl;
-      G4cout<<"itsWorldSizeY = "<<GetWorldSizeY()/CLHEP::m<<G4endl;
-      G4cout<<"itsWorldSizeZ = "<<GetWorldSizeZ()/CLHEP::m<<G4endl;
-      
-      G4cout<<"box size="<<BDSGlobalConstants::Instance()->GetComponentBoxSize()/CLHEP::m<<" m"<<G4endl;
-      G4cout<<"s_tot="<<s_tot/CLHEP::m<<" m"<<G4endl;
-    }
-
-  BDSGlobalConstants::Instance()->SetSMax(s_tot);
-
-  solidWorld = new G4Box("World", GetWorldSizeX(), GetWorldSizeY(), GetWorldSizeZ());
+  G4String worldName="World";
+  solidWorld = new G4Box(worldName, worldR.x(), worldR.y(), worldR.z());
     
   logicWorld = new G4LogicalVolume(solidWorld,	       //its solid
 				   BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()), //its material
-				   "World");	       //its name
+				   worldName);	       //its name
   
   logicWorld->SetVisAttributes (G4VisAttributes::Invisible);
   // set world volume visibility for debugging
-#ifdef BDSDEBUG 
-  logicWorld->SetVisAttributes(new G4VisAttributes(true));	
+#ifdef BDSDEBUG
+  G4VisAttributes* debugWorldVis = new G4VisAttributes(true);
+  debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
+  debugWorldVis->SetColour(1.0,1.0,1.0); //black
+  logicWorld->SetVisAttributes(debugWorldVis);
 #endif
 	
-  // set default max step length (only for particles which have the
-  // G4StepLimiter process enabled)
+  // set limits
 #ifndef NOUSERLIMITS
-  G4UserLimits* WorldUserLimits =new G4UserLimits();
-  WorldUserLimits->SetMaxAllowedStep(GetWorldSizeZ());
+  G4UserLimits* WorldUserLimits = new G4UserLimits();
+  WorldUserLimits->SetMaxAllowedStep(worldR.z());
   WorldUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   WorldUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   logicWorld->SetUserLimits(WorldUserLimits);
 #endif
 
-
+  // create regions
 #ifdef BDSDEBUG
   G4cout<<"Creating regions..."<<G4endl;
 #endif
-  
   precisionRegion = new G4Region("precisionRegion");
-   
   G4ProductionCuts* theProductionCuts = new G4ProductionCuts();
-  
   if(BDSGlobalConstants::Instance()->GetProdCutPhotonsP()>0)
     theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsP(),G4ProductionCuts::GetIndex("gamma"));
 
@@ -441,12 +346,11 @@ void BDSDetectorConstruction::BuildWorld(){
   precisionRegion->SetUserLimits(WorldUserLimits);
 #endif
 
-  // world
-
+  // place the world
   physiWorld = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
   				 (G4ThreeVector)0,     // at (0,0,0)
                                  logicWorld,	// its logical volume
-                                 LocalName,	// its name
+                                 worldName,	// its name
                                  NULL,		// its mother  volume
                                  false,		// no boolean operation
                                  0,             // copy number
@@ -454,27 +358,21 @@ void BDSDetectorConstruction::BuildWorld(){
 
 }
 
-//=================================================================
 void BDSDetectorConstruction::ComponentPlacement(){
   if (verbose || debug) G4cout<<"starting placement procedure "<<G4endl;
   
   // sensitive detectors
-
   G4SDManager* SDman = G4SDManager::GetSDMpointer();
   //you only need a single instance of your sensitive detector class
   //attach to as many logical volumes as you want
   //note each new sensitive detector invokes a slow string compare
-  //while registering with sd manager.  ok if only a few SD types.
+  //while registering with sd manager. ok if only a few SD types.
   BDSEnergyCounterSD* ECounter    = new BDSEnergyCounterSD("base_ec");
-  //BDSTerminatorSD*    TurnCounter = new BDSTerminatorSD("ring_counter");
   SDman->AddNewDetector(ECounter);
-  //SDman->AddNewDetector(TurnCounter);
 
-  G4ThreeVector TargetPos;
-
+  G4ThreeVector TargetPos;          // position of component
   G4ThreeVector rlast = G4ThreeVector(0.,0.,0.);  // edge of last element coordinates
-
-  G4ThreeVector rtot(0.,0.,0.);
+  G4ThreeVector rtot(0.,0.,0.);     // position of component, often same as TargetPos
   G4ThreeVector localX(1.,0.,0.); 
   G4ThreeVector localY(0.,1.,0.);
   G4ThreeVector localZ(0.,0.,1.);
@@ -482,24 +380,21 @@ void BDSDetectorConstruction::ComponentPlacement(){
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     {
       BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
-      //thecurrentitem->SetZLower(rtot.z());
 #ifdef BDSDEBUG
       G4cout << G4endl;
 #endif
-      G4double angle=thecurrentitem->GetAngle();
-      G4double theta=thecurrentitem->GetTheta();
-      G4double psi = thecurrentitem->GetPsi();
-      G4double tilt = thecurrentitem->GetTilt();
-      G4double phi = thecurrentitem->GetPhi();
-      G4double length = thecurrentitem->GetZLength();
+      G4double angle  = thecurrentitem->GetAngle();
+      G4double theta  = thecurrentitem->GetTheta();
+      G4double psi    = thecurrentitem->GetPsi();
+      G4double tilt   = thecurrentitem->GetTilt();
+      G4double phi    = thecurrentitem->GetPhi();
+      G4double length = thecurrentitem->GetChordLength();
 
       if( thecurrentitem->GetType() == "transform3d")
 	{
-
 #ifdef BDSDEBUG 
           G4cout<<"transform3d : "<<phi<<" "<<theta<<" "<<psi<<G4endl;
 #endif
-
 	  rtot(0) += thecurrentitem->GetXOffset(); 
 	  rtot(1) += thecurrentitem->GetYOffset(); 
 	  rtot(2) += thecurrentitem->GetZOffset(); 
@@ -527,7 +422,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
       G4RotationMatrix *rotateComponent = new G4RotationMatrix;
 
       // tilted bends influence reference frame, otherwise just local tilt
-      if(thecurrentitem->GetType() == "sbend" || thecurrentitem->GetType() == "rbend" )
+      if( fabs(angle) > 1e-12 )
 	{
 	  _globalRotation->rotate(tilt,localZ);
 	  localX.rotate(tilt,localZ);
@@ -539,25 +434,26 @@ void BDSDetectorConstruction::ComponentPlacement(){
       // define center of bended elements from the previous coordinate frame
       G4ThreeVector zHalfAngle = localZ; 
 
-      if( thecurrentitem->GetType() == "sbend" || thecurrentitem->GetType() == "rbend"  )
-	zHalfAngle.rotate(angle/2,localY);
+      if( fabs(angle) > 1e-12 ) 
+	{zHalfAngle.rotate(angle/2,localY);}
 
 #ifdef BDSDEBUG
-      G4cout<<"zHalfAngle="<<zHalfAngle<<G4endl;
-      G4cout<<"localZ="<<localZ<<G4endl;
-      G4cout<<"localX="<<localX<<G4endl;
-      G4cout<<"localY="<<localY<<G4endl;
-      G4cout<<"rlast="<<rlast<<G4endl;
+      G4cout << "zHalfAngle = " << zHalfAngle <<G4endl;
+      G4cout << "localZ     = " << localZ     <<G4endl;
+      G4cout << "localX     = " << localX     <<G4endl;
+      G4cout << "localY     = " << localY     <<G4endl;
+      G4cout << "rlast      = " << rlast      <<G4endl;
+      G4cout << "rtot       = " << rtot       <<G4endl;
 #endif
       
       // target position
-      TargetPos = rlast + zHalfAngle *  ( length/2 + BDSGlobalConstants::Instance()->GetLengthSafety()/2 ) ;
-
+      TargetPos = rlast + zHalfAngle *  ( length/2 + BDSGlobalConstants::Instance()->GetLengthSafety()/2 );
 #ifdef BDSDEBUG 
-      G4cout<<"TargetPos="<<TargetPos<<G4endl;
+      G4cout<<"TargetPos  = "<<TargetPos<<G4endl;
 #endif
 
-      // advance the coordinates, but not for cylindrical samplers 
+      // advance the coordinates, but not for cylindrical samplers
+      //think this should be > samplerlength
       if( ( ( thecurrentitem->GetType() != "csampler") || ( length <= BDSGlobalConstants::Instance()->GetSamplerLength() ) )  && ( thecurrentitem->GetType()!="element" ))
 	{
 #ifdef BDSDEBUG 
@@ -565,13 +461,12 @@ void BDSDetectorConstruction::ComponentPlacement(){
                  << thecurrentitem->GetName() << " "
                  << G4endl;
 #endif
-	  rtot = rlast + zHalfAngle * ( length/2 + BDSGlobalConstants::Instance()->GetLengthSafety()/2 );
-	  rlast = rtot + zHalfAngle * ( length/2 + BDSGlobalConstants::Instance()->GetLengthSafety()/2 );
+	  rtot = rlast + zHalfAngle * length/2;
+	  rlast = rtot + zHalfAngle * length/2;
 	}
 
       // rotate to the previous reference frame
       rotateComponent->transform(*_globalRotation);
-
       rotateComponent->invert();
 
       // recompute global rotation
@@ -588,7 +483,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	localZ.rotate(theta,localX);
 	
 	// bend trapezoids defined along z-axis
-	rotateComponent->rotateY(-CLHEP::twopi/4-angle/2);
+	rotateComponent->rotateY(-angle/2.0);
       } else if (thecurrentitem->GetMarkerLogicalVolume()->GetSolid()->GetName().contains("trapezoid") ) {
 	rotateComponent->rotateY(-CLHEP::twopi/4); //Drift trapezoids defined along z axis 
       }
@@ -599,11 +494,11 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	continue;
       }
 
-      G4LogicalVolume* LocalLogVol=thecurrentitem->GetMarkerLogicalVolume();
-	
-      G4String LogVolName=LocalLogVol->GetName();
+      // set visualisation attributes
+      G4LogicalVolume* LocalLogVol = thecurrentitem->GetMarkerLogicalVolume();
+      G4String LogVolName          = LocalLogVol->GetName();
       // Set visualisation options for marker volumes - perhaps should be in base class..
-      static G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0, 0.4));
+      static G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0, 0.1));
       VisAtt1->SetForceSolid(true);  
       // Set visible only if debug build, otherwise hidden
 #if defined BDSDEBUG
@@ -612,9 +507,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
       VisAtt1->SetVisibility(false);
 #endif
       LocalLogVol->SetVisAttributes(VisAtt1);
-      //------------
-      const int nCopy = thecurrentitem->GetCopyNumber();
-	
+      
       // now register the spos and other info of this sensitive volume in global map
       // used by energy counter sd to get spos of that logical volume at histogram time
       BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( LogVolName,
@@ -630,12 +523,10 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	  LocalLogVol->SetRegion(precisionRegion);
 	  precisionRegion->AddRootLogicalVolume(LocalLogVol);
 	}
-
 	
 #ifdef BDSDEBUG
       G4cout<<"SETTING UP SENSITIVE VOLUMES..."<< G4endl;
-#endif	
-
+#endif 
       std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetSensitiveVolumes();
       for(G4int i=0; i<(G4int)SensVols.size(); i++)
 	{
@@ -682,50 +573,13 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	    //		    SensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetChordLength()/10.0));
 	  }		  
 	}
-      
-      //Loop through again, unsetting gas regions
-
-      //	if(SensVols.size()>0){
-      //	  for(G4int i=0; i<(G4int)SensVols.size(); i++){
-      //	    if(SensVols[i]->GetMaterial()->GetState()==kStateGas){ //If the region material state is not gas, associate with a parameterisation
-      //	      SensVols[i]->GetRegion()->RemoveRootLogicalVolume(SensVols[i]);
-      //	      SensVols[i]->SetRegion(NULL);
-
-      //	      SensVols[i]->SetRegion(gasRegion);
-      //	      SensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetChordLength()/10.0));
-      //      }
-      //      }
-      //      }
-
-      /*
-      //for torus sbend
-      if(thecurrentitem->GetType() == "sbend") {
-
-      G4double rho = length/fabs(angle);
-
-      G4RotationMatrix* Rot=new G4RotationMatrix();
-      Rot->rotateX(-pi/2 * rad);
-      //Rot->rotateZ(pi * rad);
-      //Rot->rotateZ(- ( pi/2 - fabs(angle)/2 ) * rad);
-      TargetPos -= zHalfAngle *  ( length/2 + BDSGlobalConstants::Instance()->GetLengthSafety()/2 ) ;
-      TargetPos+=G4ThreeVector(-rho,0,0);
-      //TargetPos=G4ThreeVector(0,0,rho);
-      //if(angle < 0)
-      //{
-      //  Rot->rotateZ(pi);
-      //  TargetPos=G4ThreeVector(rho,0,0);
-      //}
-      rotateComponent=Rot;
-      }
-      */
 
 #ifdef BDSDEBUG
       G4cout<<"ALIGNING COMPONENT..."<< G4endl;
 #endif	
       // Align Component - most cases does nothing. 
       // Currently only used for BDSElement	
-      // For other elements stores global position and rotation,
-      // needed for BDSOutline
+      /*
       thecurrentitem->AlignComponent(//TargetPos,
 				     rlast,
 				     rotateComponent,
@@ -735,6 +589,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 				     localX,
 				     localY,
 				     localZ);
+      */
 
 #ifdef BDSDEBUG
       G4cout << "Placing PHYSICAL COMPONENT..."<< G4endl;
@@ -743,7 +598,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 #endif	
 
       G4String LocalName=thecurrentitem->GetName()+"_phys";
-
+      const int nCopy = thecurrentitem->GetCopyNumber();
       G4PVPlacement* PhysiComponentPlace = 
 	new G4PVPlacement(
 			  rotateComponent,  // its rotation
@@ -775,8 +630,6 @@ void BDSDetectorConstruction::ComponentPlacement(){
     }
 }
 
-
-//=================================================================
 void BDSDetectorConstruction::BuildTunnel(){
   std::list<struct Element>::iterator it;
   for(it = beamline_list.begin();it!=beamline_list.end();it++)
@@ -815,37 +668,4 @@ void BDSDetectorConstruction::BuildTunnel(){
 	} else  G4cerr<<"Tunnel won't be build! "<<G4endl;
       }
     }
-}
-
-G4double* BDSDetectorConstruction::GetWorldSize(){
-  int s=3;
-  G4double* ret = new G4double[s];
-  for(int i=0; i<s; i++){
-    ret[i]=itsWorldSize[i];
-  }
-  return ret;
-}
-
-G4double BDSDetectorConstruction::GetWorldSizeX(){
-  return itsWorldSize[0];
-}
-
-G4double BDSDetectorConstruction::GetWorldSizeY(){
-  return itsWorldSize[1];
-}
-
-G4double BDSDetectorConstruction::GetWorldSizeZ(){
-  return itsWorldSize[2];
-}
-
-void BDSDetectorConstruction::SetWorldSizeX(G4double val){
-  itsWorldSize[0]=val;
-}
-
-void BDSDetectorConstruction::SetWorldSizeY(G4double val){
-  itsWorldSize[1]=val;
-}
-
-void BDSDetectorConstruction::SetWorldSizeZ(G4double val){
-  itsWorldSize[2]=val;
 }

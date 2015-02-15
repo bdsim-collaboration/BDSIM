@@ -146,9 +146,10 @@ void BDSMultipole::SetBeampipeThickness(G4bool set, G4double val){
 
 void BDSMultipole::Build()
 {
-  //
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // build beampipe (geometry + magnetic field)
-  //
   BuildBPFieldAndStepper();
   BuildBPFieldMgr(itsStepper, itsMagField);
 
@@ -169,6 +170,9 @@ void BDSMultipole::BuildBLMs(){
 
 void BDSMultipole::BuildBeampipe(G4String materialName)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // build beampipe
   G4RotationMatrix* RotY = NULL; // no rotation
 
