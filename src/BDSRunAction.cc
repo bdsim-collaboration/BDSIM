@@ -32,9 +32,9 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   nbins    = (int) ceil((smax-smin)/binwidth); // rounding up so last bin definitely covers smax
   smax     = smin + (nbins*binwidth);          // redefine smax
   // create the histograms
-  phitsindex = BDSAnalysisManager::Instance()->Create1DHistogram("phits","Primary Hits",nbins,smin,smax); //0
-  plossindex = BDSAnalysisManager::Instance()->Create1DHistogram("ploss","Primary Loss",nbins,smin,smax); //1
-  elossindex = BDSAnalysisManager::Instance()->Create1DHistogram("eloss","Energy Loss", nbins,smin,smax); //2
+  phitsindex = BDSAnalysisManager::Instance()->Create1DHistogram("PhitsHisto","Primary Hits",nbins,smin,smax); //0
+  plossindex = BDSAnalysisManager::Instance()->Create1DHistogram("PlossHisto","Primary Loss",nbins,smin,smax); //1
+  elossindex = BDSAnalysisManager::Instance()->Create1DHistogram("ElossHisto","Energy Loss", nbins,smin,smax); //2
   // prepare bin edges for a by-element histogram
   std::vector<double> binedges;
   binedges.push_back(0.0);
@@ -46,9 +46,9 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
       binedges.push_back(s_end);
     }
   // create per element ("pe") bin width histograms
-  phitspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("phitspe","Primary Hits per Element",binedges); //3
-  plosspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("plosspe","Primary Loss per Element",binedges); //4
-  elosspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("elosspe","Energy Loss per Element" ,binedges); //5
+  phitspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("PhitsPEHisto","Primary Hits per Element",binedges); //3
+  plosspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("PlossPEHisto","Primary Loss per Element",binedges); //4
+  elosspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("ElossPEHisto","Energy Loss per Element" ,binedges); //5
   
   //Output feedback
   G4cout << __METHOD_NAME__ << " Run " << aRun->GetRunID() << " start. Time is " << asctime(localtime(&starttime)) << G4endl;
