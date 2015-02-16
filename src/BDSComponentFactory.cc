@@ -445,27 +445,23 @@ BDSAcceleratorComponent* BDSComponentFactory::createDrift(){
     phiAngleOut = 0.0;
   }
 
-  BDSBeamPipeType beamPipeType = BDS::DetermineBeamPipeType(_element.apertureType);
-  G4Material* beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(_element.beamPipeMaterial)
-    if(materialName == "")
-    {
-      material = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName() );
-    }
+  BDSBeamPipeType beampipeType = BDS::DetermineBeamPipeType(_element.apertureType);
+  //G4Material* beampipeMaterial = BDSMaterials::Instance()->GetMaterial(_element.beampipeMaterial);
+  G4Material* beampipeMaterial;
+  if(_element.beampipeMaterial == "")
+    { beampipeMaterial = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName() );}
   else
-    {
-      material = BDSMaterials::Instance()->GetMaterial(materialName);
-    }
+    { beampipeMaterial = BDSMaterials::Instance()->GetMaterial(_element.beampipeMaterial); }
 
   return (new BDSDrift2( _element.name,
 			 _element.l*CLHEP::m,
-			 beamPipeType,
-			 _element.beamPipeThickness*CLHEP::m,
+			 beampipeType,
+			 _element.beampipeThickness*CLHEP::m,
 			 _element.aper1,
 			 _element.aper2,
 			 _element.aper3,
 			 _element.aper4,
-			 _element.beamPipeMaterial
-
+			 beampipeMaterial
 			 ));
 }
 
