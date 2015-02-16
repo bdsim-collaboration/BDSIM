@@ -42,6 +42,8 @@ public:
 			    G4int    nEvent, 
 			    G4int    TurnsTaken);
 
+  /// write a histogram
+  virtual void WriteHistogram(BDSHistogram1D* histogramIn);
   /// write and close and open new file
   virtual void Commit();
   /// write and close the file

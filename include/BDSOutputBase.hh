@@ -4,6 +4,7 @@
 #include "BDSSamplerHit.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSTrajectory.hh"
+#include "BDSHistogram.hh"
 
 #include "G4Trajectory.hh"
 #include <vector>
@@ -43,6 +44,8 @@ public:
 			    G4int    nEvent, 
 			    G4int    TurnsTaken) = 0;
 
+  /// write a histgoram
+  virtual void WriteHistogram(BDSHistogram1D* histogramIn) = 0;
   /// write and close and open new file
   virtual void Commit()=0;
   /// write and close the file

@@ -15,7 +15,8 @@ BDSBunchPtc::BDSBunchPtc() {
   // load inrays file in current directory 
   this->fileName = "./inrays.madx";
   // Set ray counter to zero
-  this->iRay = 0;
+  this->iRay  = 0;
+  this->nRays = 0;
 }
 
 BDSBunchPtc::~BDSBunchPtc() { 

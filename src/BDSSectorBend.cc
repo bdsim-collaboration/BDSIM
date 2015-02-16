@@ -10,7 +10,6 @@
 #include "G4Polyhedra.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
-#include "G4Trd.hh"
 #include "G4CutTubs.hh"
 #include "G4EllipticalTube.hh"
 #include "G4SubtractionSolid.hh"

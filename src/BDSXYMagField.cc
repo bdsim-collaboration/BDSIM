@@ -155,13 +155,12 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
   SetOriginRotation(*Rot);
   SetOriginTranslation(Trans);
 
-  G4double bx, by, bz, x, y;
-
   for(int i=0; i<nX;i++)
     for(int j=0;j<nY;j++)
       {
-	x =  i * hx - xHalf;
-	y =  j * hy - yHalf;
+	G4double bx=0., by=0., bz=0.;
+	G4double x = i * hx - xHalf;
+	G4double y = j * hy - yHalf;
 	
 	// find the closest measured point
 	// if the point is further than ... set to zero 
@@ -332,18 +331,20 @@ G4double GetNearestValue(std::vector<struct XYFieldRecord> fieldValues, G4double
 {
   std::vector<struct XYFieldRecord>::iterator it;
 
-  G4double dist = 10.e+10;
+  G4double nearestDist = 10.e+10;
 
   for(it = fieldValues.begin(); it!=fieldValues.end();it++)
     {
-      dist = sqrt( (x-(*it).x)*(x-(*it).x) + (y-(*it).y)*(y-(*it).y));
-      bx = (*it).Bx;
-      by = (*it).By;
-      bz = (*it).Bz;
+      G4double dist = sqrt( (x-(*it).x)*(x-(*it).x) + (y-(*it).y)*(y-(*it).y));
+      if (dist<nearestDist) {
+	nearestDist = dist;
+	bx = (*it).Bx;
+	by = (*it).By;
+	bz = (*it).Bz;
+      }
     }
 
-  return dist;
-  
+  return nearestDist;
 }
 
 

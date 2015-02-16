@@ -13,10 +13,6 @@ BDSBunch::BDSBunch() {
 }
 
 BDSBunch::~BDSBunch() {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   delete bdsBunch;
 }
 

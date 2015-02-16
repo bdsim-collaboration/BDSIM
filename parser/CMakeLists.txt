@@ -36,11 +36,11 @@ else ()
    bison_target(PARSER parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.c)
 endif()
 
-flex_target(SCANNER parser.l  ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
+flex_target(SCANNER parser.l ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
 add_flex_bison_dependency(SCANNER PARSER)
 
 # make sure cmake compiles as c++
-SET_SOURCE_FILES_PROPERTIES( parser.tab.c lex.yy.c PROPERTIES LANGUAGE CXX )
+SET_SOURCE_FILES_PROPERTIES(parser.tab.c lex.yy.c PROPERTIES LANGUAGE CXX )
 
 # You can also use file globbing, but that can cause confusion
 # when we have old makefiles and cmake next to each other.
