@@ -518,16 +518,17 @@ void BDSOutputROOT::WriteHistogram(BDSHistogram1D* hIn)
 {
   G4String hname = hIn->GetName();
   hname = BDS::PrepareSafeName(hname);
-  G4int    nbins = hIn->GetNBins();
 
   std::vector<G4double> binLowerEdges = hIn->GetBinLowerEdges();
+  if (binLowerEdges.size() < 1)
+    {return;} //no bins - don't write the histogram
   binLowerEdges.push_back(hIn->GetLastBin()->GetUpperEdge()); //root requires nbins+1
 
   //always construct the histogram by bin edges - works both with constant
   //and variable bin width histograms
   // &vector[0] gives an array to the contents of the vector - ensured as
   // standard is that the vector's contents are contiguous
-  TH1D* h = new TH1D(hname, hIn->GetTitle(), nbins, &binLowerEdges[0]);
+  TH1D* h = new TH1D(hname, hIn->GetTitle(), hIn->GetNBins(), &binLowerEdges[0]);
 
   G4int i;
   for(hIn->first(),i = 1;!hIn->isDone();hIn->next(), i++)
