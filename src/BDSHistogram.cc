@@ -161,9 +161,16 @@ std::vector<G4double> BDSHistogram1D::GetBinValues()const
 std::vector<std::pair<G4double, G4double> > BDSHistogram1D::GetBinXMeansAndTotals()const
 {
   std::vector<std::pair<G4double ,G4double> > result;
-  // note first and last bins are under and overflow respectively
   for (std::vector<BDSBin*>::const_iterator i = bins.begin(); i != bins.end(); ++i)
     {result.push_back( (*i)->GetXMeanAndTotal() );}
+  return result;
+}
+
+std::vector<G4double> BDSHistogram1D::GetBinLowerEdges() const
+{
+  std::vector<G4double> result;
+  for (std::vector<BDSBin*>::const_iterator i = bins.begin(); i != bins.end(); ++i)
+    {result.push_back( (*i)->GetLowerEdge() );}
   return result;
 }
 

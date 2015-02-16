@@ -60,6 +60,7 @@ public:
   std::vector<BDSBin*>                        GetBins() const;
   std::vector<G4double>                       GetBinValues() const;
   std::vector<std::pair<G4double, G4double> > GetBinXMeansAndTotals() const;
+  std::vector<G4double>                       GetBinLowerEdges() const;
   /// print value of all bins to cout
   void                                        PrintBins() const;
   std::pair<BDSBin*,BDSBin*>                  GetUnderOverFlowBins() const;
