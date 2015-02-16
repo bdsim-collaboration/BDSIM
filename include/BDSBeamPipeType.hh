@@ -3,6 +3,7 @@
 
 #include "BDSTypeSafeEnum.hh"
 #include "globals.hh"         // geant4 globals / types
+#include "parser/element.h"
 
 /**
  * @brief Type definition for beampipes - used for comparison
@@ -19,6 +20,7 @@ typedef BDSTypeSafeEnum<beampipetypes_def,int> BDSBeamPipeType;
 
 namespace BDS {
   BDSBeamPipeType DetermineBeamPipeType(G4String apertureType);
+  BDSBeamPipeType DetermineBeamPipeType(Element& element);
 }
 #endif
 

@@ -13,3 +13,8 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
   else
     {return BDSBeamPipeType::circular;} // default case
 }
+
+BDSBeamPipeType BDS::DetermineBeamPipeType(Element& element)
+{
+  return DetermineBeamPipeType(element.apertureType);
+}
