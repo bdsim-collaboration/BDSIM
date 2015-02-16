@@ -36,7 +36,11 @@ G4int BDSAnalysisManager::Create1DHistogram(G4String name,
 					    G4double xmax)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << __METHOD_NAME__   << "Name: " << name
+	 << ", Title: "       << title
+	 << ", # of Bins: "   << nbins
+	 << ", Lower limit: " << xmin
+	 << ", Upper limit: " << xmax << G4endl;
 #endif
   histograms1d.push_back(new BDSHistogram1D(xmin, xmax, nbins, name, title));
   return histograms1d.size();
@@ -47,7 +51,11 @@ G4int BDSAnalysisManager::Create1DHistogram(G4String name,
 					    std::vector<double>& edges)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << __METHOD_NAME__ << "Name: " << name
+	 << ", Title: " << title << G4endl
+	 << __METHOD_NAME__ << "Vector of bin edges - # of Bins: " << edges.size()
+	 << ", Lower limit: " << edges.front()
+	 << ", Upper limit: " << edges.back() << G4endl;
 #endif
   histograms1d.push_back(new BDSHistogram1D(edges,name, title));
   return histograms1d.size();
@@ -72,5 +80,5 @@ void  BDSAnalysisManager::CheckHistogramIndex(G4int histoIndex)
     G4cerr << __METHOD_NAME__ << "invalid histogram index" << G4endl;
     exit(1);
   }
-  // void - keep going
+  // else void - keep going
 }
