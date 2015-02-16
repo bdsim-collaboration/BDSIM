@@ -216,12 +216,12 @@ void BDSOutputASCII::WriteHistogram(BDSHistogram1D* histogramIn)
   std::ofstream histOS;
   histOS.open(filename.c_str());
   histOS << *histogramIn << " - created " << timestring << G4endl;
-  histOS << "Underflow: " << histogramIn->GetUnderflowBin()->GetValue() << G4endl;
-  histOS << "Overflow:  " << histogramIn->GetOverflowBin()->GetValue()  << G4endl;
   histOS << std::left << std::setprecision(10) << std::fixed
 	 << std::setw(20) << "SLower[m]" << " "
     	 << std::setw(20) << "SUpper[m]" << " "
 	 << std::setw(20) << "Value"     << G4endl;
+  histOS << "Underflow: " << histogramIn->GetUnderflowBin()->GetValue() << G4endl;
+  histOS << "Overflow:  " << histogramIn->GetOverflowBin()->GetValue()  << G4endl;
   
   //iterate over bins and fill them in
   histOS << std::scientific;
