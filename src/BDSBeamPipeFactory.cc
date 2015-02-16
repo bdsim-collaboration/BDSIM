@@ -20,12 +20,12 @@ BDSBeamPipeFactory* BDSBeamPipeFactory::Instance()
 BDSBeamPipeFactory::BDSBeamPipeFactory()
 {;}
 
-BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeType typeIn)
+BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeType type)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  switch(typeIn.underlying()){
+  switch(type.underlying()){
 
   case BDSBeamPipeType::circular:
     return BDSBeamPipeFactoryCircular::Instance();
@@ -44,80 +44,77 @@ BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeTyp
   }
 }
   
-BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(BDSBeamPipeType beamPipeTypeIn,
-						G4String        nameIn,
-						G4double        lengthIn,
-						G4Material*     vacuumMaterialIn,
-						G4double        beamPipeThicknessIn,
-						G4Material*     beamPipeMaterialIn,
+BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(BDSBeamPipeType beamPipeType,
+						G4String        name,
+						G4double        length,
 						G4double        aper1,
 						G4double        aper2,
 						G4double        aper3,
-						G4double        aper4
+						G4double        aper4,
+						G4Material*     vacuumMaterial,
+						G4double        beamPipeThickness,
+						G4Material*     beamPipeMaterial
 						)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeTypeIn);
-  return factory->CreateBeamPipe(nameIn,lengthIn,vacuumMaterialIn,beamPipeThicknessIn,
-				 beamPipeMaterialIn,aper1,aper2,aper3,aper4);
+  BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeType);
+  return factory->CreateBeamPipe(name,length,aper1,aper2,aper3,aper4,
+				 vacuumMaterial,beamPipeThickness,beamPipeMaterial);
 }
 
-BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipeAngledIn(BDSBeamPipeType beamPipeTypeIn,
-							G4String        nameIn,
-							G4double        lengthIn,
-							G4double        angleInIn,
-							G4Material*     vacuumMaterialIn,
-							G4double        beamPipeThicknessIn,
-							G4Material*     beamPipeMaterialIn,
+BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipeAngledIn(BDSBeamPipeType beamPipeType,
+							G4String        name,
+							G4double        length,
+							G4double        angleIn,
 							G4double        aper1,
 							G4double        aper2,
 							G4double        aper3,
-							G4double        aper4
+							G4double        aper4,
+							G4Material*     vacuumMaterial,
+							G4double        beamPipeThickness,
+							G4Material*     beamPipeMaterial
 							)
 {
-  BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeTypeIn);
-  return factory->CreateBeamPipeAngledIn(nameIn,lengthIn,angleInIn,vacuumMaterialIn,
-					 beamPipeThicknessIn,beamPipeMaterialIn,
-					 aper1,aper2,aper3,aper4);
+  BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeType);
+  return factory->CreateBeamPipeAngledIn(name,length,angleIn,aper1,aper2,aper3,aper4,
+					 vacuumMaterial,beamPipeThickness,beamPipeMaterial);
 }
 
-BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipeAngledOut(BDSBeamPipeType beamPipeTypeIn,
-							 G4String        nameIn,
-							 G4double        lengthIn,
-							 G4double        angleOutIn,
-							 G4Material*     vacuumMaterialIn,
-							 G4double        beamPipeThicknessIn,
-							 G4Material*     beamPipeMaterialIn,
+BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipeAngledOut(BDSBeamPipeType beamPipeType,
+							 G4String        name,
+							 G4double        length,
+							 G4double        angleOut,
 							 G4double        aper1,
 							 G4double        aper2,
 							 G4double        aper3,
-							 G4double        aper4
+							 G4double        aper4,
+							 G4Material*     vacuumMaterial,
+							 G4double        beamPipeThickness,
+							 G4Material*     beamPipeMaterial
 							 )
 {
-  BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeTypeIn);
-  return factory->CreateBeamPipeAngledOut(nameIn,lengthIn,angleOutIn,vacuumMaterialIn,
-					  beamPipeThicknessIn,beamPipeMaterialIn,
-					  aper1,aper2,aper3,aper4);
+  BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeType);
+  return factory->CreateBeamPipeAngledOut(name,length,angleOut,aper1,aper2,aper3,aper4,
+					  vacuumMaterial,beamPipeThickness,beamPipeMaterial);
 }
 
-BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipeAngledInOut(BDSBeamPipeType beamPipeTypeIn,
-							   G4String        nameIn,
-							   G4double        lengthIn,
-							   G4double        angleInIn,
-							   G4double        angleOutIn,
-							   G4Material*     vacuumMaterialIn,
-							   G4double        beamPipeThicknessIn,
-							   G4Material*     beamPipeMaterialIn,
+BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipeAngledInOut(BDSBeamPipeType beamPipeType,
+							   G4String        name,
+							   G4double        length,
+							   G4double        angleIn,
+							   G4double        angleOut,
 							   G4double        aper1,
 							   G4double        aper2,
 							   G4double        aper3,
-							   G4double        aper4
+							   G4double        aper4,
+							   G4Material*     vacuumMaterial,
+							   G4double        beamPipeThickness,
+							   G4Material*     beamPipeMaterial
 							   )
 {
-  BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeTypeIn);
-  return factory->CreateBeamPipeAngledInOut(nameIn,lengthIn,angleInIn,angleOutIn,
-					    vacuumMaterialIn,beamPipeThicknessIn,
-					    beamPipeMaterialIn,aper1,aper2,aper3,aper4);
+  BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeType);
+  return factory->CreateBeamPipeAngledInOut(name,length,angleIn,angleOut,aper1,aper2,aper3,aper4,
+					    vacuumMaterial,beamPipeThickness,beamPipeMaterial);
 }

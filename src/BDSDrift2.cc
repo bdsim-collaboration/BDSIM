@@ -54,13 +54,13 @@ void BDSDrift2::Build() {
   BDSBeamPipe* pipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeType,
 								     itsName,
 								     itsLength,
-								     vacuumMaterial,
-								     beamPipeThickness,
-								     beamPipeMaterial,
 								     aper1,
 								     aper2,
 								     aper3,
-								     aper4
+								     aper4,
+								     vacuumMaterial,
+								     beamPipeThickness,
+								     beamPipeMaterial
 								     );
 
   itsMarkerLogicalVolume = pipe->GetContainerLogicalVolume();

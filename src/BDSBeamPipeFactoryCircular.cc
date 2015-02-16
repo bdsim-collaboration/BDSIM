@@ -48,13 +48,13 @@ BDSBeamPipeFactoryCircular::~BDSBeamPipeFactoryCircular()
 
 BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,              // name
 							G4double    lengthIn,            // length [mm]
-							G4Material* vacuumMaterialIn,    // vacuum material
-							G4double    beamPipeThicknessIn, // beampipe thickness [mm]
-							G4Material* beamPipeMaterialIn,  // beampipe material
 							G4double    aper1In,             // aperture parameter 1
 							G4double    /*aper2In*/,         // aperture parameter 2
 							G4double    /*aper3In*/,         // aperture parameter 3
-							G4double    /*aper4In */         // aperture parameter 4
+							G4double    /*aper4In*/,         // aperture parameter 4
+							G4Material* vacuumMaterialIn,    // vacuum material
+							G4double    beamPipeThicknessIn, // beampipe thickness [mm]
+							G4Material* beamPipeMaterialIn   // beampipe material
 							)
 {
 #ifdef BDSDEBUG
@@ -94,13 +94,13 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,     
 BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledIn(G4String    nameIn,              // name
 								G4double    lengthIn,            // length [mm]
 								G4double    angleInIn,           // the normal angle of the input face
-								G4Material* vacuumMaterialIn,    // vacuum material
-								G4double    beamPipeThicknessIn, // beampipe thickness [mm]
-								G4Material* beamPipeMaterialIn,  // beampipe material
 								G4double    aper1In,             // aperture parameter 1
 								G4double    /*aper2In*/,         // aperture parameter 2
 								G4double    /*aper3In*/,         // aperture parameter 3
-								G4double    /*aper4In */         // aperture parameter 4
+								G4double    /*aper4In */,        // aperture parameter 4
+								G4Material* vacuumMaterialIn,    // vacuum material
+								G4double    beamPipeThicknessIn, // beampipe thickness [mm]
+								G4Material* beamPipeMaterialIn   // beampipe material
 								)
 {
 #ifdef BDSDEBUG
@@ -128,13 +128,13 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledIn(G4String    name
 BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledOut(G4String    nameIn,              // name
 								 G4double    lengthIn,            // length [mm]
 								 G4double    angleOutIn,           // the normal angle of the output face
-								 G4Material* vacuumMaterialIn,    // vacuum material
-								 G4double    beamPipeThicknessIn, // beampipe thickness [mm]
-								 G4Material* beamPipeMaterialIn,  // beampipe material
 								 G4double    aper1In,             // aperture parameter 1
 								 G4double    /*aper2In*/,         // aperture parameter 2
 								 G4double    /*aper3In*/,         // aperture parameter 3
-								 G4double    /*aper4In */         // aperture parameter 4
+								 G4double    /*aper4In */,        // aperture parameter 4
+								 G4Material* vacuumMaterialIn,    // vacuum material
+								 G4double    beamPipeThicknessIn, // beampipe thickness [mm]
+								 G4Material* beamPipeMaterialIn   // beampipe material
 								 )
 {
 #ifdef BDSDEBUG
@@ -163,13 +163,13 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledInOut(G4String    n
 								   G4double    lengthIn,            // length [mm]
 								   G4double    angleInIn,           // the normal angle of the input face
 								   G4double    angleOutIn,          // the normal angle of the input face
-								   G4Material* vacuumMaterialIn,    // vacuum material
-								   G4double    beamPipeThicknessIn, // beampipe thickness [mm]
-								   G4Material* beamPipeMaterialIn,  // beampipe material
 								   G4double    aper1In,             // aperture parameter 1
 								   G4double    /*aper2In*/,         // aperture parameter 2
 								   G4double    /*aper3In*/,         // aperture parameter 3
-								   G4double    /*aper4In */         // aperture parameter 4
+								   G4double    /*aper4In */,        // aperture parameter 4
+								   G4Material* vacuumMaterialIn,    // vacuum material
+								   G4double    beamPipeThicknessIn, // beampipe thickness [mm]
+								   G4Material* beamPipeMaterialIn  // beampipe material
 								   )
 {
 #ifdef BDSDEBUG

@@ -18,39 +18,39 @@ public:
   BDSBeamPipe* CreateBeamPipe(BDSBeamPipeType beamPipeTypeIn,            // aperture type
 			      G4String        nameIn,                    // name
 			      G4double        lengthIn,                  // length [mm]
-			      G4Material*     vacuumMaterialIn = NULL,   // vacuum material
-			      G4double        beamPipeThicknessIn = 0,   // beampipe thickness [mm]
-			      G4Material*     beamPipeMaterialIn = NULL, // beampipe material
 			      G4double        aper1 = 0,                 // aperture parameter 1
 			      G4double        aper2 = 0,                 // aperture parameter 2
 			      G4double        aper3 = 0,                 // aperture parameter 3
-			      G4double        aper4 = 0                  // aperture parameter 4
+			      G4double        aper4 = 0,                 // aperture parameter 4
+			      G4Material*     vacuumMaterialIn = NULL,   // vacuum material
+			      G4double        beamPipeThicknessIn = 0,   // beampipe thickness [mm]
+			      G4Material*     beamPipeMaterialIn = NULL  // beampipe material
 			      );
 
   BDSBeamPipe* CreateBeamPipeAngledIn(   BDSBeamPipeType beamPipeTypeIn,
 				         G4String        nameIn,
 				         G4double        lengthIn,
 				         G4double        angleInIn,   // the normal angle of the input face
-				         G4Material*     vacuumMaterialIn = NULL,
-				         G4double        beamPipeThicknessIn = 0,
-				         G4Material*     beamPipeMaterialIn = NULL,
 				         G4double        aper1 = 0,
 				         G4double        aper2 = 0,
 				         G4double        aper3 = 0,
-				         G4double        aper4 = 0
+				         G4double        aper4 = 0,
+					 G4Material*     vacuumMaterialIn = NULL,
+				         G4double        beamPipeThicknessIn = 0,
+				         G4Material*     beamPipeMaterialIn = NULL
 				         );
 
   BDSBeamPipe* CreateBeamPipeAngledOut(  BDSBeamPipeType beamPipeTypeIn,
 				         G4String        nameIn,
 				         G4double        lengthIn,
 				         G4double        angleOutIn, // the normal angle of the output face
-				         G4Material*     vacuumMaterialIn = NULL,
-				         G4double        beamPipeThicknessIn = 0,
-				         G4Material*     beamPipeMaterialIn = NULL,
 				         G4double        aper1 = 0,
 				         G4double        aper2 = 0,
 				         G4double        aper3 = 0,
-				         G4double        aper4 = 0
+				         G4double        aper4 = 0,
+					 G4Material*     vacuumMaterialIn = NULL,
+				         G4double        beamPipeThicknessIn = 0,
+				         G4Material*     beamPipeMaterialIn = NULL
 				         );
 
   BDSBeamPipe* CreateBeamPipeAngledInOut(BDSBeamPipeType beamPipeTypeIn,
@@ -58,13 +58,13 @@ public:
 					 G4double        lengthIn,
 					 G4double        angleInIn,  // the normal angle of the input face
 					 G4double        angleOutIn, // the normal angle of the output face
-					 G4Material*     vacuumMaterialIn = NULL,
-					 G4double        beamPipeThicknessIn = 0,
-					 G4Material*     beamPipeMaterialIn = NULL,
 					 G4double        aper1 = 0,
 					 G4double        aper2 = 0,
 					 G4double        aper3 = 0,
-					 G4double        aper4 = 0
+					 G4double        aper4 = 0,
+					 G4Material*     vacuumMaterialIn = NULL,
+					 G4double        beamPipeThicknessIn = 0,
+					 G4Material*     beamPipeMaterialIn = NULL
 					 );
 
 private:
