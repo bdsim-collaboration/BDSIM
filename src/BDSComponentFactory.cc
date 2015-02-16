@@ -444,24 +444,16 @@ BDSAcceleratorComponent* BDSComponentFactory::createDrift(){
     phiAngleIn = 0.0;
     phiAngleOut = 0.0;
   }
-
-  BDSBeamPipeType beampipeType = BDS::DetermineBeamPipeType(_element.apertureType);
-  //G4Material* beampipeMaterial = BDSMaterials::Instance()->GetMaterial(_element.beampipeMaterial);
-  G4Material* beampipeMaterial;
-  if(_element.beampipeMaterial == "")
-    { beampipeMaterial = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName() );}
-  else
-    { beampipeMaterial = BDSMaterials::Instance()->GetMaterial(_element.beampipeMaterial); }
-
+  
   return (new BDSDrift2( _element.name,
 			 _element.l*CLHEP::m,
-			 beampipeType,
+			 BDS::DetermineBeamPipeType(_element.apertureType),
 			 _element.beampipeThickness*CLHEP::m,
 			 _element.aper1,
 			 _element.aper2,
 			 _element.aper3,
 			 _element.aper4,
-			 beampipeMaterial
+			 PrepareBeamPipeMaterial(_element)
 			 ));
 }
 
@@ -1361,4 +1353,39 @@ BDSAcceleratorComponent* BDSComponentFactory::createTerminator(){
   return (new BDSTerminator(_element.name, 
 			    BDSGlobalConstants::Instance()->GetSamplerLength()
 			    ));
+}
+
+
+
+G4Material* BDSComponentFactory::PrepareBeamPipeMaterial(Element& element)
+{
+  G4Material* beampipeMaterial;
+  if(element.beampipeMaterial == "")
+    { beampipeMaterial = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName() );}
+  else
+    { beampipeMaterial = BDSMaterials::Instance()->GetMaterial(element.beampipeMaterial); }
+  return beampipeMaterial;
+}
+
+G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element& /*element*/)
+{
+  //in future do somethign relating to what's set in element
+  //also make some setting available in element
+  return BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName());
+}
+
+BDSBeamPipe* BDSComponentFactory::PrepareBeamPipe(Element& element)
+{
+  BDSBeamPipe* pipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(BDS::DetermineBeamPipeType(element),
+								     element.name,
+								     element.l*CLHEP::m,
+								     element.aper1,
+								     element.aper2,
+								     element.aper3,
+								     element.aper4,
+								     PrepareVacuumMaterial(element),
+								     element.beampipeThickness,
+								     PrepareBeamPipeMaterial(element)
+								     );
+  return pipe;
 }

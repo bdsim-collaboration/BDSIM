@@ -5,6 +5,7 @@
 #include "globals.hh"
 #include "parser/element.h"
 #include "BDSAcceleratorComponent.hh"
+#include "BDSBeamPipe.hh"
 
 class ElementList; 
 
@@ -59,6 +60,11 @@ private:
   // for each of them - special cases need only for ring logic
   BDSAcceleratorComponent* createTerminator();
   BDSAcceleratorComponent* createTeleporter();
+
+  /// Utility function to prepare beampipe material
+  G4Material*  PrepareBeamPipeMaterial(Element& element);
+  G4Material*  PrepareVacuumMaterial(Element& element);
+  BDSBeamPipe* PrepareBeamPipe(Element& element);
 
 };
 #endif
