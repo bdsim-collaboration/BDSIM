@@ -40,6 +40,8 @@ public:
   void AddElement(G4Element* aElement,G4String aName); //SPM
   void AddElement(G4String aName, G4String aSymbol, G4double itsZ, G4double itsA); //SPM
 
+  /// output available materials
+  // static since BDSMaterials construction needs BDSGlobalConstants, which needs full options definitions (not ideal, but alas)
   static void ListMaterials();
 
   G4Material* GetMaterial(G4String aMaterial); //SPM
@@ -51,6 +53,7 @@ public:
 
 protected:
   BDSMaterials();
+  // map of materials, convention name lowercase
   std::map<G4String,G4Material*> materials; //SPM
   std::map<G4String,G4Element*>  elements; //SPM
 private:

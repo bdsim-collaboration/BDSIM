@@ -79,7 +79,7 @@ void BDSMaterials::Initialise()
     (name="Beryllium"  , symbol="Be", z=  4., a=   9.0122*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
   tmpElement = new G4Element
-    (name="Boron"  , symbol="B", z=  5., a=   10.811*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
+    (name="Boron"      , symbol="B", z=  5., a=   10.811*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
   tmpElement = new G4Element
     (name="Carbon"     , symbol="C" , z=  6., a=  12.00*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
@@ -90,7 +90,11 @@ void BDSMaterials::Initialise()
   tmpElement = new G4Element
     (name="Oxygen"     , symbol="O" , z=  8., a=  16.00*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
-  tmpElement = new G4Element("Yttrium", symbol="Y", z=39 , a=88.906*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
+  tmpElement = new G4Element
+    (name="Sodium"     , symbol="Na", z= 11., a= 22.98976928*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
+
+  tmpElement = new G4Element
+    (name="Magnesium"  , symbol="Mg", z= 12., a=  24.3050*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
   tmpElement = new G4Element
     (name="Aluminium"  , symbol="Al", z= 13., a=  26.98*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
@@ -105,29 +109,19 @@ void BDSMaterials::Initialise()
     (name="Sulphur"    , symbol="S" , z= 16., a=  32.066*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
   tmpElement = new G4Element
+    (name="Potassium"   , symbol="K", z= 19., a=  39.0983*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
+
+  tmpElement = new G4Element
     (name="Calcium"    , symbol="Ca", z= 20., a=  40.078*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
   tmpElement = new G4Element
     (name="Titanium"   , symbol="Ti", z= 22., a=  47.867*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
   tmpElement = new G4Element
-    (name="Zirkonium"   , symbol="Zr", z= 40., a=  91.224*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
-
-  tmpElement = new G4Element
-    (name="Rubidium"   , symbol="Rb", z= 37., a=  85.4678*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
-
-
-  tmpElement = new G4Element
-    (name="Strontium"   , symbol="Sr", z= 38., a=  87.62*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
-
-  tmpElement = new G4Element
-    (name="Magnesium"   , symbol="Mg", z= 12., a=  24.3050*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
-
-  tmpElement = new G4Element
-    (name="Potassium"   , symbol="K", z= 19., a=  39.0983*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
-
-  tmpElement = new G4Element
     (name="Vanadium"   , symbol="V" , z= 23., a=  50.9415*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
+
+  tmpElement = new G4Element
+    (name="Chromium"   , symbol="Cr", z= 24., a= 51.9961*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
   tmpElement = new G4Element
     (name="Manganese"  , symbol="Mn", z= 25., a=  54.93805*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
@@ -145,10 +139,34 @@ void BDSMaterials::Initialise()
     (name="Copper"     , symbol="Cu", z= 29., a=  63.546*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
   tmpElement = new G4Element
+    (name="Zinc"       , symbol="Zn", z= 30., a= 65.38*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
+
+  tmpElement = new G4Element
+    (name="Rubidium"   , symbol="Rb", z= 37., a=  85.4678*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
+
+  tmpElement = new G4Element
+    (name="Strontium"  , symbol="Sr", z= 38., a=  87.62*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
+
+  tmpElement = new G4Element
+    (name="Yttrium"    , symbol="Y", z=39 , a=88.906*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
+
+  tmpElement = new G4Element
+    (name="Zirkonium"  , symbol="Zr", z= 40., a=  91.224*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
+
+  tmpElement = new G4Element
     (name="Niobium"    , symbol="Nb", z= 41., a=  92.906*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
   tmpElement = new G4Element
+    (name="Molybdenum" , symbol="Mo", z= 42., a= 95.94*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
+
+  tmpElement = new G4Element
+    (name="Barium"     , symbol="Ba", z= 56., a= 137.327*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
+
+  tmpElement = new G4Element
     (name="Samarium"   , symbol="Sm", z= 62., a= 150.4*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
+
+  tmpElement = new G4Element
+    (name="Europium"   , symbol="Eu", z= 63., a= 151.964*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
   tmpElement = new G4Element
     (name="Tungsten"   , symbol="W" , z= 74., a= 183.84*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
@@ -157,25 +175,7 @@ void BDSMaterials::Initialise()
     (name="Lead"       , symbol="Pb", z= 82., a= 207.2*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
   tmpElement = new G4Element
-    (name="Molybdenum"       , symbol="Mo", z= 42., a= 95.94*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
-
-  tmpElement = new G4Element
-    (name="Chromium"       , symbol="Cr", z= 24., a= 51.9961*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
-
-  tmpElement = new G4Element
-    (name="Sodium"       , symbol="Na", z= 11., a= 22.98976928*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
-
-  tmpElement = new G4Element
-    (name="Zinc"       , symbol="Zn", z= 30., a= 65.38*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
-
-  tmpElement = new G4Element
-    (name="Barium"       , symbol="Ba", z= 56., a= 137.327*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
-
-  tmpElement = new G4Element
-    (name="Europium"       , symbol="Eu", z= 63., a= 151.964*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
-
-  tmpElement = new G4Element
-    (name="Uranium"       , symbol="U", z= 92., a=  238.0289*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
+    (name="Uranium"    , symbol="U", z= 92., a=  238.0289*CLHEP::g/CLHEP::mole); elements[symbol] = tmpElement;
 
   //
   // Define materials
@@ -185,45 +185,21 @@ void BDSMaterials::Initialise()
   //default Geant4 pressure = 1atm
 
   // solid materials
-
+  // metals
+  
   G4Material* tmpMaterial = new G4Material
     (name="aluminium"     , density=  2.700*CLHEP::g/CLHEP::cm3, 1, kStateSolid);
   tmpMaterial->AddElement(elements["Al"],1);
   materials[name] = tmpMaterial; 
 
   tmpMaterial = new G4Material
-    (name="vanadium"      , density=  5.800*CLHEP::g/CLHEP::cm3, 1, kStateSolid);
-  tmpMaterial->AddElement(elements["V"],1);
-  materials[name] = tmpMaterial; 
-
-  tmpMaterial = new G4Material
-    (name="tungsten"      , density= 19.3  *CLHEP::g/CLHEP::cm3, 1, kStateSolid);
-  tmpMaterial->AddElement(elements["W"],1);
-  materials[name] = tmpMaterial; 
-
-  tmpMaterial = new G4Material
-    (name="iron"          , density=  7.874 *CLHEP::g/CLHEP::cm3, 1, kStateSolid);
-  tmpMaterial->AddElement(elements["Fe"],1);
-  materials[name] = tmpMaterial; 
-
-  tmpMaterial = new G4Material
-    (name="uranium"          , density=  18.9 *CLHEP::g/CLHEP::cm3, 1, kStateSolid);
-  tmpMaterial->AddElement(elements["U"],1);
+    (name="beryllium"     , density=  1.848*CLHEP::g/CLHEP::cm3, 1, kStateSolid);
+  tmpMaterial->AddElement(elements["Be"],1);
   materials[name] = tmpMaterial; 
 
   tmpMaterial = new G4Material
     (name="copper"        , density=  8.96 *CLHEP::g/CLHEP::cm3, 1, kStateSolid);
   tmpMaterial->AddElement(elements["Cu"],1);
-  materials[name] = tmpMaterial; 
-
-  tmpMaterial = new G4Material
-    (name="weightiron"    , density=  7.87 *CLHEP::g/CLHEP::cm3, 1, kStateSolid);
-  tmpMaterial->AddElement(elements["Fe"],1);
-  materials[name] = tmpMaterial; 
-
-  tmpMaterial = new G4Material
-    (name="titanium"      , density=  4.54 *CLHEP::g/CLHEP::cm3, 1, kStateSolid);
-  tmpMaterial->AddElement(elements["Ti"],1);
   materials[name] = tmpMaterial; 
 
   tmpMaterial = new G4Material
@@ -237,6 +213,16 @@ void BDSMaterials::Initialise()
   materials[name] = tmpMaterial; 
 
   tmpMaterial = new G4Material
+    (name="iron"          , density=  7.874 *CLHEP::g/CLHEP::cm3, 1, kStateSolid);
+  tmpMaterial->AddElement(elements["Fe"],1);
+  materials[name] = tmpMaterial; 
+
+  tmpMaterial = new G4Material
+    (name="weightiron"    , density=  7.87 *CLHEP::g/CLHEP::cm3, 1, kStateSolid);
+  tmpMaterial->AddElement(elements["Fe"],1);
+  materials[name] = tmpMaterial; 
+
+  tmpMaterial = new G4Material
     (name="lead"          , density= 11.35 *CLHEP::g/CLHEP::cm3, 1, kStateSolid);
   tmpMaterial->AddElement(elements["Pb"],1);
   materials[name] = tmpMaterial; 
@@ -247,19 +233,38 @@ void BDSMaterials::Initialise()
   materials[name] = tmpMaterial; 
 
   tmpMaterial = new G4Material
-    (name="beryllium"     , density=  1.848*CLHEP::g/CLHEP::cm3, 1, kStateSolid);
-  tmpMaterial->AddElement(elements["Be"],1);
+    (name="titanium"      , density=  4.54 *CLHEP::g/CLHEP::cm3, 1, kStateSolid);
+  tmpMaterial->AddElement(elements["Ti"],1);
+  materials[name] = tmpMaterial; 
+
+  tmpMaterial = new G4Material
+    (name="tungsten"      , density= 19.3  *CLHEP::g/CLHEP::cm3, 1, kStateSolid);
+  tmpMaterial->AddElement(elements["W"],1);
+  materials[name] = tmpMaterial; 
+
+  tmpMaterial = new G4Material
+    (name="uranium"          , density=  18.9 *CLHEP::g/CLHEP::cm3, 1, kStateSolid);
+  tmpMaterial->AddElement(elements["U"],1);
+  materials[name] = tmpMaterial; 
+
+  tmpMaterial = new G4Material
+    (name="vanadium"      , density=  5.800*CLHEP::g/CLHEP::cm3, 1, kStateSolid);
+  tmpMaterial->AddElement(elements["V"],1);
+  materials[name] = tmpMaterial; 
+
+  // composites and alloys
+
+  tmpMaterial = new G4Material
+    (name="leadtungstate" , density=  8.27 *CLHEP::g/CLHEP::cm3, 3, kStateSolid);
+  tmpMaterial->AddElement(elements["Pb"], 1);
+  tmpMaterial->AddElement(elements["W"], 1);
+  tmpMaterial->AddElement(elements["O"], 4);
   materials[name] = tmpMaterial; 
 
   tmpMaterial = new G4Material
     (name="smco"          , density=  8.4  *CLHEP::g/CLHEP::cm3, 2, kStateSolid, 300*CLHEP::kelvin);
   tmpMaterial->AddElement(elements["Sm"],fractionmass=0.338);
   tmpMaterial->AddElement(elements["Co"],fractionmass=0.662);
-  materials[name] = tmpMaterial; 
-
-  tmpMaterial = new G4Material
-    (name="niobium"       , density=  8.57 *CLHEP::g/CLHEP::cm3, 1, kStateSolid, 2*CLHEP::kelvin);
-  tmpMaterial->AddElement(elements["Nb"],1);
   materials[name] = tmpMaterial; 
 
   //Titanium alloy (BDS collimator material SLAC-TN-03-069 p25) deacon 15 Jun 2007
@@ -295,20 +300,45 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddElement(elements["Fe"], fractionmass=0.65545);
   materials[name] = tmpMaterial; 
 
-  //Kapton polyimide film
+  // superconducting materials
+  // niobium at 2K
   tmpMaterial = new G4Material
-    (name="kapton", density=  1.42 *CLHEP::g/CLHEP::cm3, 4, kStateSolid, 295*CLHEP::kelvin);
-  tmpMaterial->AddElement(elements["H"], fractionmass=0.026362);
-  tmpMaterial->AddElement(elements["C"], fractionmass=0.691133);
-  tmpMaterial->AddElement(elements["N"], fractionmass=0.073270);
-  tmpMaterial->AddElement(elements["O"], fractionmass=0.209235);
+    (name="niobium"       , density=  8.57 *CLHEP::g/CLHEP::cm3, 1, kStateSolid, 2*CLHEP::kelvin);
+  tmpMaterial->AddElement(elements["Nb"],1);
   materials[name] = tmpMaterial; 
-
-
+  // niobium titanium at 4K
   tmpMaterial = new G4Material
     (name="nbti"          , density=  5.6  *CLHEP::g/CLHEP::cm3, 2, kStateSolid, 4*CLHEP::kelvin);
   tmpMaterial->AddElement(elements["Nb"], 1);
   tmpMaterial->AddElement(elements["Ti"], 1);
+  materials[name] = tmpMaterial; 
+
+  // non-metal solids
+  
+  tmpMaterial = new G4Material
+    (name="bn5000"      , density=  1.925  *CLHEP::g/CLHEP::cm3, 5, kStateSolid, 300*CLHEP::kelvin);
+  tmpMaterial->AddElement(elements["B"], 0.383249242);//0.418535);
+  tmpMaterial->AddElement(elements["Ni"], 0.472071387);//0.515535);
+  tmpMaterial->AddElement(elements["O"], 0.0366276887);//0.04);
+  tmpMaterial->AddElement(elements["Ca"], 0.0228923054);//0.025);
+  tmpMaterial->AddElement(elements["Si"], 0.0851593762);//0.093);
+  materials[name] = tmpMaterial; 
+
+  //Calcium carbonate
+  tmpMaterial = new G4Material
+    (name="calciumCarbonate", density=  1201  *CLHEP::kg/CLHEP::m3, 3, kStateSolid, 300*CLHEP::kelvin);
+  tmpMaterial->AddElement(elements["Ca"],1);
+  tmpMaterial->AddElement(elements["O"], 3);
+  tmpMaterial->AddElement(elements["C"], 1);
+  materials[name] = tmpMaterial; 
+
+  //Clay
+  tmpMaterial = new G4Material
+    (name="clay", density=  1746  *CLHEP::kg/CLHEP::m3, 4, kStateSolid, 300*CLHEP::kelvin);
+  tmpMaterial->AddElement(elements["Al"],1);
+  tmpMaterial->AddElement(elements["O"], 9);
+  tmpMaterial->AddElement(elements["Si"], 2);
+  tmpMaterial->AddElement(elements["H"], 4);
   materials[name] = tmpMaterial; 
 
   tmpMaterial = new G4Material
@@ -320,7 +350,6 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddElement(elements["Al"], 0.014245);
   tmpMaterial->AddElement(elements["Fe"], 0.00285);
   materials[name] = tmpMaterial; 
-
   
   tmpMaterial = new G4Material(name="lhcconcrete", density= 2.42*CLHEP::g/CLHEP::cm3,
                                20, kStateSolid, 300*CLHEP::kelvin);
@@ -346,17 +375,91 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddElement(elements["Eu"], 4.184974185E-05  *CLHEP::perCent);
   materials[name] = tmpMaterial; 
 
-  
-  tmpMaterial = new G4Material
-    (name="bn5000"      , density=  1.925  *CLHEP::g/CLHEP::cm3, 5, kStateSolid, 300*CLHEP::kelvin);
-  tmpMaterial->AddElement(elements["B"], 0.383249242);//0.418535);
-  tmpMaterial->AddElement(elements["Ni"], 0.472071387);//0.515535);
-  tmpMaterial->AddElement(elements["O"], 0.0366276887);//0.04);
-  tmpMaterial->AddElement(elements["Ca"], 0.0228923054);//0.025);
-  tmpMaterial->AddElement(elements["Si"], 0.0851593762);//0.093);
+  tmpMaterial = new G4Material 
+    (name="fusedsilica", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
+  tmpMaterial->AddElement(elements["O"],2);
+  tmpMaterial->AddElement(elements["Si"],1);
+  const G4int FusedSilica_NUMENTRIES = 3; //Number of entries in the material properties table
+  G4double FusedSilica_RIND[FusedSilica_NUMENTRIES]={1.49,1.49,1.49};
+  G4double FusedSilica_AbsLength[FusedSilica_NUMENTRIES]={420.*CLHEP::cm,420.*CLHEP::cm,420.*CLHEP::cm};
+  G4double FusedSilica_Energy[FusedSilica_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV};
+  fsMaterialPropertiesTable= new G4MaterialPropertiesTable();
+  fsMaterialPropertiesTable->AddProperty("ABSLENGTH",FusedSilica_Energy,FusedSilica_AbsLength,FusedSilica_NUMENTRIES);
+  fsMaterialPropertiesTable->AddProperty("RINDEX",FusedSilica_Energy,FusedSilica_RIND,FusedSilica_NUMENTRIES);
+  tmpMaterial->SetMaterialPropertiesTable(fsMaterialPropertiesTable);
   materials[name] = tmpMaterial; 
-  G4int natoms;
+
+  //Invar.Temperature 2 kelvin. LDeacon 6th Feburary 2006
+  tmpMaterial = new G4Material
+    (name="invar"         , density=  8.1  *CLHEP::kg/CLHEP::m3, 2, kStateSolid, 2*CLHEP::kelvin);
+  tmpMaterial->AddElement(elements["Ni"], fractionmass=0.35);
+  tmpMaterial->AddElement(elements["Fe"], fractionmass=0.65);
+  materials[name] = tmpMaterial; 
+
+  //Kapton polyimide film
+  tmpMaterial = new G4Material
+    (name="kapton", density=  1.42 *CLHEP::g/CLHEP::cm3, 4, kStateSolid, 295*CLHEP::kelvin);
+  tmpMaterial->AddElement(elements["H"], fractionmass=0.026362);
+  tmpMaterial->AddElement(elements["C"], fractionmass=0.691133);
+  tmpMaterial->AddElement(elements["N"], fractionmass=0.073270);
+  tmpMaterial->AddElement(elements["O"], fractionmass=0.209235);
+  materials[name] = tmpMaterial; 
+
+  //n-bk7
+  tmpMaterial = new G4Material 
+    (name="n-bk7", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
+  tmpMaterial->AddElement(elements["O"],2);
+  tmpMaterial->AddElement(elements["Si"],1);
+  const G4int N_Bk7_NUMENTRIES = 3; //Number of entries in the material properties table
+  G4double N_Bk7_RIND[N_Bk7_NUMENTRIES]={1.51680,1.51680,1.51680};
+  G4double N_Bk7_AbsLength[N_Bk7_NUMENTRIES]={420.*CLHEP::cm,420.*CLHEP::cm,420.*CLHEP::cm};
+  G4double N_Bk7_Energy[N_Bk7_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV};
+  G4MaterialPropertiesTable* nbk7MaterialPropertiesTable= new G4MaterialPropertiesTable();
+  nbk7MaterialPropertiesTable->AddProperty("ABSLENGTH",N_Bk7_Energy,N_Bk7_AbsLength,N_Bk7_NUMENTRIES);
+  nbk7MaterialPropertiesTable->AddProperty("RINDEX",N_Bk7_Energy,N_Bk7_RIND,N_Bk7_NUMENTRIES);
+  tmpMaterial->SetMaterialPropertiesTable(nbk7MaterialPropertiesTable);
+  materials[name] = tmpMaterial; 
+
+  //quartz
+  tmpMaterial = new G4Material
+    (name="quartz", density=  2.655  *CLHEP::g/CLHEP::cm3, 2, kStateSolid, 300*CLHEP::kelvin);
+  tmpMaterial->AddElement(elements["Si"],1);
+  tmpMaterial->AddElement(elements["O"], 2);
+  materials[name] = tmpMaterial; 
+
+  // marl
+  tmpMaterial = new G4Material
+    (name="marl"          , density=1474*CLHEP::kg/CLHEP::m3, 2, kStateSolid, 300*CLHEP::kelvin);
+  tmpMaterial->AddMaterial(materials["clay"], 0.5 );
+  tmpMaterial->AddMaterial(materials["calciumCarbonate"],0.5);
+  materials[name] = tmpMaterial; 
+
+  //clayousMarl
+  tmpMaterial = new G4Material
+    (name="clayousMarl"          , density=1555*CLHEP::kg/CLHEP::m3, 2, kStateSolid, 300*CLHEP::kelvin);
+  tmpMaterial->AddMaterial(materials["clay"], 0.65 );
+  tmpMaterial->AddMaterial(materials["calciumCarbonate"],0.35);
+  materials[name] = tmpMaterial; 
+
+  //limousMarl
+  tmpMaterial = new G4Material
+    (name="limousMarl"          , density=1392*CLHEP::kg/CLHEP::m3, 2, kStateSolid, 300*CLHEP::kelvin);
+  tmpMaterial->AddMaterial(materials["clay"], 0.35 );
+  tmpMaterial->AddMaterial(materials["calciumCarbonate"],0.65);
+  materials[name] = tmpMaterial; 
+
+  // "standard" soil (dry)
+  tmpMaterial = new G4Material
+    (name="soil"          , density=  1.9  *CLHEP::g/CLHEP::cm3, 4, kStateSolid, 300*CLHEP::kelvin);
+  tmpMaterial->AddElement(elements["Si"],0.33377483443708611 );
+  tmpMaterial->AddElement(elements["O"], 0.57218543046357617);
+  tmpMaterial->AddElement(elements["H"], 0.022516556291390728);
+  tmpMaterial->AddElement(elements["Al"], 0.071523178807947022);
+  materials[name] = tmpMaterial; 
+
+  // Epoxy Resin components
   //The main component of epoxy resin commonly used to insulate magnet coils.
+  G4int natoms;
   tmpMaterial = new G4Material
     (name="aralditef", density = 1.175*CLHEP::g/CLHEP::cm3, 3, kStateSolid, 300*CLHEP::kelvin);
   tmpMaterial->AddElement(elements["C"], natoms=12);
@@ -388,104 +491,6 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddMaterial(materials["hy906"],fractionmass=0.497512);
   tmpMaterial->AddMaterial(materials["dy061"],fractionmass=0.004976);
   materials[name] = tmpMaterial;
-
-  //Invar.Temperature 2 kelvin. LDeacon 6th Feburary 2006
-  tmpMaterial = new G4Material
-    (name="invar"         , density=  8.1  *CLHEP::kg/CLHEP::m3, 2, kStateSolid, 2*CLHEP::kelvin);
-  tmpMaterial->AddElement(elements["Ni"], fractionmass=0.35);
-  tmpMaterial->AddElement(elements["Fe"], fractionmass=0.65);
-  materials[name] = tmpMaterial; 
-
-  // "standard" soil (dry)
-  tmpMaterial = new G4Material
-    (name="soil"          , density=  1.9  *CLHEP::g/CLHEP::cm3, 4, kStateSolid, 300*CLHEP::kelvin);
-  tmpMaterial->AddElement(elements["Si"],0.33377483443708611 );
-  tmpMaterial->AddElement(elements["O"], 0.57218543046357617);
-  tmpMaterial->AddElement(elements["H"], 0.022516556291390728);
-  tmpMaterial->AddElement(elements["Al"], 0.071523178807947022);
-  materials[name] = tmpMaterial; 
-
-  //quartz
-  tmpMaterial = new G4Material
-    (name="quartz", density=  2.655  *CLHEP::g/CLHEP::cm3, 2, kStateSolid, 300*CLHEP::kelvin);
-  tmpMaterial->AddElement(elements["Si"],1);
-  tmpMaterial->AddElement(elements["O"], 2);
-  materials[name] = tmpMaterial; 
-
-  //Clay
-  tmpMaterial = new G4Material
-    (name="clay", density=  1746  *CLHEP::kg/CLHEP::m3, 4, kStateSolid, 300*CLHEP::kelvin);
-  tmpMaterial->AddElement(elements["Al"],1);
-  tmpMaterial->AddElement(elements["O"], 9);
-  tmpMaterial->AddElement(elements["Si"], 2);
-  tmpMaterial->AddElement(elements["H"], 4);
-  materials[name] = tmpMaterial; 
-
-  //Calcium carbonate
-  tmpMaterial = new G4Material
-    (name="calciumCarbonate", density=  1201  *CLHEP::kg/CLHEP::m3, 3, kStateSolid, 300*CLHEP::kelvin);
-  tmpMaterial->AddElement(elements["Ca"],1);
-  tmpMaterial->AddElement(elements["O"], 3);
-  tmpMaterial->AddElement(elements["C"], 1);
-  materials[name] = tmpMaterial; 
-
-  // marl
-  tmpMaterial = new G4Material
-    (name="marl"          , density=1474*CLHEP::kg/CLHEP::m3, 2, kStateSolid, 300*CLHEP::kelvin);
-  tmpMaterial->AddMaterial(materials["clay"], 0.5 );
-  tmpMaterial->AddMaterial(materials["calciumCarbonate"],0.5);
-  materials[name] = tmpMaterial; 
-
-  //clayousMarl
-  tmpMaterial = new G4Material
-    (name="clayousMarl"          , density=1555*CLHEP::kg/CLHEP::m3, 2, kStateSolid, 300*CLHEP::kelvin);
-  tmpMaterial->AddMaterial(materials["clay"], 0.65 );
-  tmpMaterial->AddMaterial(materials["calciumCarbonate"],0.35);
-  materials[name] = tmpMaterial; 
-
-  //limousMarl
-  tmpMaterial = new G4Material
-    (name="limousMarl"          , density=1392*CLHEP::kg/CLHEP::m3, 2, kStateSolid, 300*CLHEP::kelvin);
-  tmpMaterial->AddMaterial(materials["clay"], 0.35 );
-  tmpMaterial->AddMaterial(materials["calciumCarbonate"],0.65);
-  materials[name] = tmpMaterial; 
-
-  tmpMaterial = new G4Material
-    (name="leadtungstate" , density=  8.27 *CLHEP::g/CLHEP::cm3, 3, kStateSolid);
-  tmpMaterial->AddElement(elements["Pb"], 1);
-  tmpMaterial->AddElement(elements["W"], 1);
-  tmpMaterial->AddElement(elements["O"], 4);
-  materials[name] = tmpMaterial; 
-
-  
-  tmpMaterial = new G4Material 
-    (name="fusedsilica", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
-  tmpMaterial->AddElement(elements["O"],2);
-  tmpMaterial->AddElement(elements["Si"],1);
-  const G4int FusedSilica_NUMENTRIES = 3; //Number of entries in the material properties table
-  G4double FusedSilica_RIND[FusedSilica_NUMENTRIES]={1.49,1.49,1.49};
-  G4double FusedSilica_AbsLength[FusedSilica_NUMENTRIES]={420.*CLHEP::cm,420.*CLHEP::cm,420.*CLHEP::cm};
-  G4double FusedSilica_Energy[FusedSilica_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV};
-  fsMaterialPropertiesTable= new G4MaterialPropertiesTable();
-  fsMaterialPropertiesTable->AddProperty("ABSLENGTH",FusedSilica_Energy,FusedSilica_AbsLength,FusedSilica_NUMENTRIES);
-  fsMaterialPropertiesTable->AddProperty("RINDEX",FusedSilica_Energy,FusedSilica_RIND,FusedSilica_NUMENTRIES);
-  tmpMaterial->SetMaterialPropertiesTable(fsMaterialPropertiesTable);
-  materials[name] = tmpMaterial; 
-
-  //n-bk7
-  tmpMaterial = new G4Material 
-    (name="n-bk7", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
-  tmpMaterial->AddElement(elements["O"],2);
-  tmpMaterial->AddElement(elements["Si"],1);
-  const G4int N_Bk7_NUMENTRIES = 3; //Number of entries in the material properties table
-  G4double N_Bk7_RIND[N_Bk7_NUMENTRIES]={1.51680,1.51680,1.51680};
-  G4double N_Bk7_AbsLength[N_Bk7_NUMENTRIES]={420.*CLHEP::cm,420.*CLHEP::cm,420.*CLHEP::cm};
-  G4double N_Bk7_Energy[N_Bk7_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV};
-  G4MaterialPropertiesTable* nbk7MaterialPropertiesTable= new G4MaterialPropertiesTable();
-  nbk7MaterialPropertiesTable->AddProperty("ABSLENGTH",N_Bk7_Energy,N_Bk7_AbsLength,N_Bk7_NUMENTRIES);
-  nbk7MaterialPropertiesTable->AddProperty("RINDEX",N_Bk7_Energy,N_Bk7_RIND,N_Bk7_NUMENTRIES);
-  tmpMaterial->SetMaterialPropertiesTable(nbk7MaterialPropertiesTable);
-  materials[name] = tmpMaterial; 
   
   //scintillator materials
   //YAG
@@ -1024,56 +1029,90 @@ G4bool BDSMaterials::CheckElement(G4String aSymbol)
 }
 
 void BDSMaterials::ListMaterials(){
+  // would be better if automatically generated, but not trivial due to instantisation dependency of BDSGlobalConstants
   G4cout << "Available elements are:" << G4endl;
-  G4cout << "Boron  - B" << G4endl;
   G4cout << "Aluminium  - Al" << G4endl;
+  G4cout << "Barium     - Ba" << G4endl;
+  G4cout << "Beryllium  - Be" << G4endl;
+  G4cout << "Boron      - B" << G4endl;
   G4cout << "Calcium    - Ca" << G4endl;
   G4cout << "Carbon     - C" << G4endl;
+  G4cout << "Chromium   - Cr" << G4endl;
   G4cout << "Cobalt     - Co" << G4endl;
+  G4cout << "Copper     - Cu" << G4endl;
+  G4cout << "Europium   - Eu" << G4endl;
   G4cout << "Helium     - He" << G4endl;
   G4cout << "Hydrogen   - H" << G4endl;
   G4cout << "Iron       - Fe" << G4endl;
   G4cout << "Lead       - Pb" << G4endl;
+  G4cout << "Magnesium  - Mg" << G4endl;
   G4cout << "Manganese  - Mn" << G4endl;
+  G4cout << "Molybdenum - Mo" << G4endl;
+  G4cout << "Nickel     - Ni" << G4endl;
   G4cout << "Niobium    - Nb" << G4endl;
   G4cout << "Nitrogen   - N" << G4endl;
   G4cout << "Oxygen     - O" << G4endl;
+  G4cout << "Potassium  - K" << G4endl;
   G4cout << "Phosphorus - P" << G4endl;
+  G4cout << "Rubidium   - Rb" << G4endl;
   G4cout << "Samarium   - Sm" << G4endl;
   G4cout << "Silicon    - Si" << G4endl;
+  G4cout << "Sodium     - Na" << G4endl;
+  G4cout << "Strontium  - Sr" << G4endl;
   G4cout << "Sulphur    - S" << G4endl;
   G4cout << "Titanium   - Ti" << G4endl;
-  G4cout << "Zirkonium   - Zr" << G4endl;
   G4cout << "Tungsten   - W" << G4endl;
+  G4cout << "Uranium    - U" << G4endl;
   G4cout << "Vanadium   - V" << G4endl;
-  G4cout << "Molybdenum   - Mo" << G4endl;
-  G4cout << "Chromium   - Cr" << G4endl;
-  G4cout << "Sodium   - Na" << G4endl;
-  G4cout << "Barium   - Ba" << G4endl;
-  G4cout << "Zinc   - Zn" << G4endl;
-  G4cout << "Europium   - Eu" << G4endl;
+  G4cout << "Yttrium    - Y" << G4endl;
+  G4cout << "Zinc       - Zn" << G4endl;
+  G4cout << "Zirkonium  - Zr" << G4endl;
   G4cout << "***************" << G4endl;
   G4cout << "Available materials are:" << G4endl;
   G4cout << "Air" << G4endl;
   G4cout << "Aluminium" << G4endl;
   G4cout << "AralditeF" << G4endl;
+  G4cout << "AwakePlasma" << G4endl;
   G4cout << "Beryllium" << G4endl;
+  G4cout << "CalciumCarbonate" << G4endl;
   G4cout << "CarbonMonoxide" << G4endl;
+  G4cout << "BP_CarbonMonoxide" << G4endl;
   G4cout << "CarbonSteel" << G4endl;
+  G4cout << "Cellulose" << G4endl;
+  G4cout << "Clay" << G4endl;
   G4cout << "Concrete" << G4endl;
   G4cout << "LHCConcrete" << G4endl;
   G4cout << "Copper" << G4endl;
+  G4cout << "FusedSilica" << G4endl;
   G4cout << "Graphite" << G4endl;
   G4cout << "GraphiteFoam" << G4endl;
+  G4cout << "HY906" << G4endl;
+  G4cout << "DY061" << G4endl;
   G4cout << "BN5000" << G4endl;
+  G4cout << "EpoxyResin3" << G4endl;
   G4cout << "Invar" << G4endl;
   G4cout << "Iron" << G4endl;
+  G4cout << "WeightIron" << G4endl;
+  G4cout << "Kapton" << G4endl;
+  G4cout << "Lanex" << G4endl;
+  G4cout << "Lanex2" << G4endl;
+  G4cout << "GOS_Lanex" << G4endl;
+  G4cout << "GOS_ri1" << G4endl;
+  G4cout << "PET_Lanex" << G4endl;
   G4cout << "LaserVac" << G4endl;
   G4cout << "Lead" << G4endl;
   G4cout << "LeadTungstate" << G4endl;
   G4cout << "LiquidHelium" << G4endl;
+  G4cout << "Marl" << G4endl;
+  G4cout << "ClayousMarl" << G4endl;
+  G4cout << "LimousMarl" << G4endl;
+  G4cout << "N-BK7" << G4endl;
   G4cout << "NbTi" << G4endl;
   G4cout << "Niobium" << G4endl;
+  G4cout << "Nitrogen" << G4endl;  
+  G4cout << "PET" << G4endl;
+  G4cout << "PolyUrethane" << G4endl;
+  G4cout << "Quartz" << G4endl;
   G4cout << "Silicon" << G4endl;
   G4cout << "SmCo" << G4endl;
   G4cout << "Soil" << G4endl;
@@ -1081,13 +1120,14 @@ void BDSMaterials::ListMaterials(){
   G4cout << "Titanium" << G4endl;
   G4cout << "TitaniumAlloy" << G4endl;
   G4cout << "Tungsten" << G4endl;
+  G4cout << "Uranium" << G4endl;
+  G4cout << "UPS923A" << G4endl;
   G4cout << "Vacuum" << G4endl;
   G4cout << "Vanadium" << G4endl;
   G4cout << "Water" << G4endl;
-  G4cout << "WeightIron" << G4endl;
-  G4cout << "AwakePlasma" << G4endl;
+  G4cout << "YAG" << G4endl;
   G4cout << "****************************" << G4endl;
-  G4cout << "Available nist materials are:" << G4endl;
+  G4cout << "Available NIST materials are:" << G4endl;
   G4String list="all";
   G4NistManager::Instance()->ListMaterials(list);
 }
