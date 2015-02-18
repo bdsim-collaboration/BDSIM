@@ -124,7 +124,7 @@ class Test:
         if self.usingfolder:
             _os.chdir("../")
 
-    def Compare(self, addPrimaries=False):
+    def Compare(self, addPrimaries=True):
 
         if self.usingfolder:
             _os.chdir(self.foldername)
