@@ -260,21 +260,17 @@ void BDSOutputASCII::WriteTrackerBunch(G4String /*samplerName*/, TRKBunch* bunch
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
   //loop over bunch and write using ascii method
   for (TRKBunchIter it = bunch->begin(); it != bunch->end(); it++) {
-
-    // TODEL
-    std::cout << "WRITING PARTICLE: x:" << it->X() << ", y:" << it->Y() << std::endl;
-
     WriteAsciiHit(
 		  outfile,
 		  0, //TBC - requires geant4 or modification of particledefinitiontable
-		  it->E()*1000.0, //convert to GeV
-		  it->X()*CLHEP::um,        //already in um, convert to mm for CLHEP conversion
-		  it->Y()*1e-3,        //already in um, convert to mm for CLHEP conversion
-		  it->Z()*1e-3,        // convert from m to mm for CLHEP
-		  it->Z()*1e-3, //note z and s are synonymous in tracker
-		  it->Xp(),       //leave in rad
-		  it->Yp(),       //leave in rad
-		  0, //can you cast an iterator to an int?
+		  it->E()*1000.0,     //convert to GeV
+		  it->X()*CLHEP::um,  //already in um, convert to mm for CLHEP conversion
+		  it->Y()*1e-3,       //already in um, convert to mm for CLHEP conversion
+		  it->Z()*1e-3,       //convert from m to mm for CLHEP
+		  it->Z()*1e-3,       //note z and s are synonymous in tracker
+		  it->Xp(),           //leave in rad
+		  it->Yp(),           //leave in rad
+		  0,                  //can you cast an iterator to an int?
 		  1,
 		  0,
 		  0,
