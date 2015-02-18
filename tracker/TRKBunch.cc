@@ -79,7 +79,7 @@ void TRKBunch::Populate(struct Options& opt)
       bdsbunch.GetNextParticle(x0,y0,s0,xp,yp,sp,t,E,weight);
 
 
-      double paramsIn[8] = {x0/CLHEP::um,y0/CLHEP::um,s0/CLHEP::m,xp/CLHEP::rad,yp/CLHEP::rad,sp/CLHEP::rad,E/CLHEP::GeV,mass};
+      double paramsIn[8] = {x0/CLHEP::um,y0/CLHEP::um,s0/CLHEP::um,xp/CLHEP::rad,yp/CLHEP::rad,sp/CLHEP::rad,E/CLHEP::GeV,mass};
       bunch.push_back(TRKParticle(paramsIn, charge, i));
 
       //weight not required - maybe should be kept though to pass on to bdsim

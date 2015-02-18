@@ -6,6 +6,7 @@
 #include <limits>
 #include <vector>
 
+#include "TRK.hh"
 #include "TRKBunch.hh"
 #include "TRKParticle.hh"
 //#include "TRKDrift.hh"
@@ -250,13 +251,10 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
       double yp = part.Yp();
       double zp = part.Zp();
 
-      std::cout << "HYBRIDQUAD INIT: x0=" << x0 << ", y0=" << y0 << ", z0=" << z0 << ", xp=" << xp << ", yp=" << yp << ", zp=" << zp << std::endl;
-
       vector3 rpp (-zp*x0, zp*y0, x0*xp - y0*yp);
       rpp = rpp * strength;
 
       double R_1 = rpp.mag();
-
       if (R_1 == 0) { // curvature 0
 	/// TODO single particle tracking?
 	//	return drift->Track(vIn,vOut,h);
@@ -264,150 +262,64 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
 
       double h2=h*h;
 
-      double x1,x1p,y1,y1p,z1,z1p;
-
       double R=1./R_1;
       // chord distance (simple quadratic approx)
       //  itsDist= h2/(8*R);
-      // check for paraxial approximation:
-      if((std::abs(zp)>0.99)&&(std::abs(strength)<1.e-6))
-	{
-    //TODEL
-//#ifdef TRKDEBUG
-	  std::cout << "paraxial approximation being used" << std::endl;
-//#endif
-	  double rootK=sqrt(std::abs(strength*zp));
-	  double rootKh=rootK*h*zp;
-	  double X11,X12,X21,X22;
-	  double Y11,Y12,Y21,Y22;
-
-	  if (strength>0)
-	    {
-	      X11= std::cos(rootKh);
-	      X12= std::sin(rootKh)/rootK;
-	      X21=-std::abs(strength)*X12;
-	      X22= X11;
-
-	      Y11= std::cosh(rootKh);
-	      Y12= std::sinh(rootKh)/rootK;
-	      Y21= std::abs(strength)*Y12;
-	      Y22= Y11;
-	    }
-	  else //if (strength<0)
-	    {
-	      X11= std::cosh(rootKh);
-	      X12= std::sinh(rootKh)/rootK;
-	      X21= std::abs(strength)*X12;
-	      X22= X11;
-
-	      Y11= std::cos(rootKh);
-	      Y12= std::sin(rootKh)/rootK;
-	      Y21= -std::abs(strength)*Y12;
-	      Y22= Y11;
-	    }
-
-	  x1 = X11*x0 + X12*xp;
-	  x1p= X21*x0 + X22*xp;
-
-	  y1 = Y11*y0 + Y12*yp;
-	  y1p= Y21*y0 + Y22*yp;
-
-	  z1p=sqrt(1 - x1p*x1p -y1p*y1p);
-
-	  double dx=x1-x0;
-	  double dy=y1-y0;
-
-	  // Linear chord length
-	  double dR2=dx*dx+dy*dy;
-	  double dz=std::sqrt(h2*(1.-h2/(12*R*R))-dR2);
-
-	  // check for precision problems
-	  double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;
-	  if(ScaleFac>1.0000001)
-	    {
-	      ScaleFac=std::sqrt(ScaleFac);
-	      dx/=ScaleFac;
-	      dy/=ScaleFac;
-	      dz/=ScaleFac;
-	      x1=x0+dx;
-	      y1=y0+dy;
-	    }
-	  z1=z0+dz;
-	}
-      else
-	// perform local helical steps (paraxial approx not safe)
-	{
-	  // simple quadratic approx:
-	  double quadX= - strength*x0*zp;
-	  double quadY=   strength*y0*zp;
-	  double quadZ=   strength*(x0*xp - y0*yp);
-
-	  // determine maximum curvature:
-	  double maxCurv=std::max(std::abs(quadX),std::abs(quadY));
-	  maxCurv=std::max(maxCurv,std::abs(quadZ));
-
-	  x1 = x0 + h*xp + quadX*h2/2;
-	  y1 = y0 + h*yp + quadY*h2/2;
-	  z1 = z0 + h*zp + quadZ*h2/2;
-
-	  x1p = xp + quadX*h;
-	  y1p = yp + quadY*h;
-	  z1p = zp + quadZ*h;
-
-	  // estimate parameters at end of step:
-	  double quadX_end= - strength*x1*z1p;
-	  double quadY_end=   strength*y1*z1p;
-	  double quadZ_end=   strength*(x1*x1p - y1*y1p);
-
-	  // determine maximum curvature:
-	  maxCurv=std::max(maxCurv,std::abs(quadX_end));
-	  maxCurv=std::max(maxCurv,std::abs(quadY_end));
-	  maxCurv=std::max(maxCurv,std::abs(quadZ_end));
-
-	  //      itsDist=maxCurv*h2/4.;
-
-	  // use the average:
-	  double quadX_av=(quadX+quadX_end)/2;
-	  double quadY_av=(quadY+quadY_end)/2;
-	  double quadZ_av=(quadZ+quadZ_end)/2;
-
-	  double x_prime_av=(xp + x1p)/2;
-	  double y_prime_av=(yp + y1p)/2;
-	  double z_prime_av=(zp + z1p)/2;
-
-	  x1 = x0 + h*x_prime_av + quadX_av * h2/2;
-	  y1 = y0 + h*y_prime_av + quadY_av * h2/2;
-	  z1 = z0 + h*z_prime_av + quadZ_av * h2/2;
-
-	  x1p = xp + quadX_av*h;
-	  y1p = yp + quadY_av*h;
-	  z1p = zp + quadZ_av*h;
-
-	  double dx = (x1-x0);
-	  double dy = (y1-y0);
-	  double dz = (z1-z0);
-	  double chord2 = dx*dx + dy*dy + dz*dz;
-	  if(chord2>h2)
-	    {
-	      double hnew=h*sqrt(h2/chord2);
-	      x1=x0 + hnew*x_prime_av + quadX_av * hnew*hnew/2;
-	      y1=y0 + hnew*y_prime_av + quadY_av * hnew*hnew/2;
-	      z1=z0 + hnew*z_prime_av + quadZ_av * hnew*hnew/2;
-
-	      x1p=xp + quadX_av*hnew;
-	      y1p=yp + quadY_av*hnew;
-	      z1p=zp + quadZ_av*hnew;
-	    }
-	}
-
+      
+      // Use paraxial approximation:
+#ifdef TRKDEBUG
+  	  std::cout << "paraxial approximation being used" << std::endl;
+#endif
+  	  double rootK=sqrt(std::abs(strength*zp));
+  	  double rootKh=rootK*h*zp;
+      
+      double c,s,ch,sh; 
+      c = std::cos(rootKh);
+      s = std::sin(rootKh);
+      TRK::sincosh(rootKh,sh,ch);
+      
       double vOut[6];
-      vOut[0] = x1;
-      vOut[1] = y1;
-      vOut[2] = z1;
+  	  if (strength>0)
+	    {
+        vOut[0] = (c * x0) + (s * xp / rootK);    //x1
+        vOut[1] = (ch * y0) + (sh * yp / rootK);  //y1
+        vOut[3] = (- s * x0 * rootK) + (c * xp);  //xp1
+        vOut[4] = (sh * y0 * rootK) + (ch * yp);  //yp1
+	    }
+  	  else
+	    {
+        vOut[0] = (ch * x0) + (sh * xp / rootK);  //x1
+        vOut[1] = (c * y0) + (s * yp / rootK);    //y1
+        vOut[3] = (sh * x0 * rootK) + (ch * xp);  //xp1
+        vOut[4] = (- s * y0 * rootK) + (c * yp);  //yp1
+	    }
+      
+      // Code block can be replaced with z1 = h, z1p = z0p?
+      // Block start
+  	  vOut[5] =sqrt(1 - vOut[3]*vOut[3] - vOut[4]*vOut[4]); // z1p = sqrt(1- xp1^2 - yp1^2)
 
-      vOut[3] = x1p;
-      vOut[4] = y1p;
-      vOut[5] = z1p;
+  	  double dx=vOut[0]-x0;
+  	  double dy=vOut[1]-y0;
+
+  	  // Linear chord length
+  	  double dR2=dx*dx+dy*dy;
+  	  double dz=std::sqrt(h2*(1.-h2/(12*R*R))-dR2);
+
+  	  // check for precision problems
+  	  double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;
+  	  if(ScaleFac>1.0000001)
+  	    {
+  	      ScaleFac=std::sqrt(ScaleFac);
+  	      dx/=ScaleFac;
+  	      dy/=ScaleFac;
+  	      dz/=ScaleFac;
+  	      vOut[0]=x0+dx; //x1
+  	      vOut[1]=y0+dy; //y1
+  	    }
+  	  
+      vOut[2]=z0+dz; //z1 
+      // Block end     
+      
       part.SetPosMom(vector6(vOut));
     }
   }
