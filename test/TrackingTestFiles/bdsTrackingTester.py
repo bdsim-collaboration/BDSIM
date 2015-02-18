@@ -103,7 +103,7 @@ class Test:
             bm.AddDipole(name,length=self.length,**self.kwargs)
         elif self.type_ == 'quadrupole' :
             name = 'q1'
-            bm.AddQuadrupole(name,length=self.length, k1=1.0,**self.kwargs)
+            bm.AddQuadrupole(name,length=self.length,**self.kwargs)
         elif self.type_ == 'sextupole' :
             name = 's1'
             bm.AddSextupole(name,length=self.length,**self.kwargs)
