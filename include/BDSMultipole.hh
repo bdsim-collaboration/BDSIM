@@ -14,6 +14,7 @@
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
+#include "BDSBeamPipe.hh"
 #include "G4LogicalVolume.hh"
 
 #include "G4FieldManager.hh"
@@ -70,6 +71,15 @@ public:
 		G4double phiAngleOut=0,
 		G4bool beampipeThicknessSet=false,
 		G4double beampipeThickness=-1);
+
+  // Constructor for new beampipe and as little as is needed
+  BDSMultipole( G4String     name, 
+		G4double     length,
+		BDSBeamPipe* beamPipeIn,
+		G4String     outerMaterial="",
+		G4String     tunnelMaterial="",
+		G4double     tunnelRadius=0,
+		G4double     tunnelOffsetX=0);
 
   virtual ~BDSMultipole();
 
@@ -133,6 +143,7 @@ protected:   // these might need to be accessed from the child classes
   G4ChordFinder* itsChordFinder;
   G4MagneticField* itsOuterMagField;
 
+  BDSBeamPipe* beamPipe;
   // G4double itsStartOuterR;
   // G4double itsEndOuterR;
 

@@ -39,6 +39,8 @@
 #include "BDSMultipoleOuterMagField.hh"
 #include "G4MagneticField.hh"
 
+#include "BDSBeamPipe.hh"
+
 #include <string>
 
 //============================================================
@@ -115,6 +117,30 @@ BDSMultipole::BDSMultipole( G4String aName,
   SetBeampipeThickness(beampipeThicknessSet, beampipeThickness); 
 }
 
+BDSMultipole::BDSMultipole( G4String     name, 
+			    G4double     length,
+			    BDSBeamPipe* beamPipeIn,
+			    G4String     outerMaterial,
+			    G4String     tunnelMaterial,
+			    G4double     tunnelRadius,
+			    G4double     tunnelOffsetX):
+  BDSAcceleratorComponent(
+			  name,
+			  length,
+			  0,              //beampipe radius in AC
+			  0,0,            // aperx apery
+			  tunnelMaterial,
+			  outerMaterial,
+			  0,              //angle
+			  0,0,0,          // ???
+			  tunnelRadius,
+			  tunnelOffsetX),
+  itsInnerIronRadius(0),beamPipe(beamPipeIn)
+{
+  ConstructorInit();
+}
+
+			  
 void BDSMultipole::ConstructorInit(){
   itsStepper=NULL;
   itsMagField=NULL;
@@ -173,6 +199,22 @@ void BDSMultipole::BuildBeampipe(G4String materialName)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  /*
+  itsInnerBeampipeSolid;
+  itsBeampipeSolid;
+  itsBeampipeLogicalVolume;
+  itsInnerBeampipeLogicalVolume;
+  itsPhysiInner;
+  itsPhysiComp; //bp logical volume placement
+  SetMultiplePhysicalVolumes(physv);
+  AddSensitiveVolume(lv);
+  itsBeampipeUserLimits;
+  itsInnerBeampipeUserLimits;
+  itsMarkerLogicalVolume //set field manager
+  */
+
+
+  
   // build beampipe
   G4RotationMatrix* RotY = NULL; // no rotation
 
