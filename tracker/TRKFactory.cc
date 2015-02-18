@@ -6,6 +6,9 @@
 //debug
 #include "BDSDebug.hh"
 
+//for momentum
+#include "BDSGlobalConstants.hh"
+
 //individual beam elements
 #include "TRKLine.hh"
 //#include "TRKDrift.hh"
@@ -46,7 +49,7 @@ TRKFactory::TRKFactory(Options& options) {
 #endif
   // define charge and momentum from options
   charge = TRKParticleDefinition::Instance()->GetParticleCharge(options.particleName);
-  momentum = options.beamEnergy;
+  momentum = BDSGlobalConstants::Instance()->GetParticleMomentum()/CLHEP::GeV;
   // magnetic rigidity
   if (charge!=0) {
     brho = options.ffact * momentum / 0.299792458 / charge;
@@ -54,6 +57,14 @@ TRKFactory::TRKFactory(Options& options) {
     // zero charge particles have infinite magnetic rigidity
     brho = 0;
   }
+  brho *= CLHEP::tesla*CLHEP::m;
+  
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << "Rigidity (Brho) : " << brho/(CLHEP::tesla*CLHEP::m) << " T*m" << std::endl;
+  std::cout << "ffact    : " << options.ffact << std::endl;
+  std::cout << "momentum : " << momentum << " GeV" << std::endl;
+  std::cout << "charge   : " << charge << std::endl;
+#endif
   
   /// start placement, could be updated after every new element
   placement = NULL;//new TRKPlacement();
