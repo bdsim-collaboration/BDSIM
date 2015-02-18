@@ -34,7 +34,7 @@ void TRKParticle::SetPosMom(vector3 posIn, vector3 momIn)
 
 std::ostream& operator<< (std::ostream &out, const TRKParticle &part)
 {
-  out << "E: " << part.E() << " M: " << part.M() << " Chrg: " << part.Charge() << std::endl;
+  out << "E_k: " << part.E() << " M: " << part.M() << " Chrg: " << part.Charge() << std::endl;
   out << "Before: " << part.PosMomBefore() << " After: " << part.PosMom();
   return out;
 }

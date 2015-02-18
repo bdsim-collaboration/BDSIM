@@ -103,7 +103,7 @@ class Test:
             bm.AddDipole(name,length=self.length,**self.kwargs)
         elif self.type_ == 'quadrupole' :
             name = 'q1'
-            bm.AddQuadrupole(name,length=self.length, k1=1.0,**self.kwargs)
+            bm.AddQuadrupole(name,length=self.length,**self.kwargs)
         elif self.type_ == 'sextupole' :
             name = 's1'
             bm.AddSextupole(name,length=self.length,**self.kwargs)
@@ -124,7 +124,7 @@ class Test:
         if self.usingfolder:
             _os.chdir("../")
 
-    def Compare(self, addPrimaries=False):
+    def Compare(self, addPrimaries=True):
 
         if self.usingfolder:
             _os.chdir(self.foldername)
