@@ -24,8 +24,11 @@ void TRKThick::Track(TRKDrift* el, TRKBunch* bunch) {
 
   for (;iter!=end;++iter) {
     TRKParticle& part = *iter;
-    vector3 dv = part.Mom().unit()*h;
-    part.SetPosMom(dv+part.Pos(),part.Mom());    
+    
+    vector3 unit = part.Mom().unit();
+    vector3 dv = unit * h / unit.Z();   
+    
+    part.SetPosMom(dv+part.Pos(),part.Mom());     
   }
 }
 
