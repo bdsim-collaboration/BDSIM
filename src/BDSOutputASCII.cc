@@ -280,6 +280,31 @@ void BDSOutputASCII::WriteTrackerBunch(G4String /*samplerName*/, TRKBunch* bunch
   }
 }
 
+void BDSOutputASCII::WriteTrackerPrimaryLoss(TRKBunch* lostBunch, int turnsTaken)
+{  
+  for (TRKBunchIter it = lostBunch->begin(); it != lostBunch->end(); it++) 
+  {
+    phist->Fill(it->Z()/CLHEP::m); //no weighting by energy - done in external analysis
+    
+    WriteAsciiHit(
+      &ofPLoss,
+      0, //TBC - requires geant4 or modification of particledefinitiontable
+      it->E()*1000.0, //convert to GeV
+      it->X()*CLHEP::um,        //already in um, convert to mm for CLHEP conversion
+      it->Y()*CLHEP::um,        //already in um, convert to mm for CLHEP conversion
+      it->Z()*CLHEP::um,        //already in um, convert to mm for CLHEP conversion
+      it->Z()*CLHEP::um,   //note z and s are synonymous in tracker
+      it->Xp(),       //leave in rad
+      it->Yp(),       //leave in rad
+      0, //can you cast an iterator to an int?
+      1,
+      0,
+      0,
+      turnsTaken
+    );
+  }
+  ofPLoss.flush();
+}
 
 
 void BDSOutputASCII::Commit()
