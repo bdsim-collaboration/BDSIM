@@ -78,8 +78,14 @@ void TRKBunch::Populate(struct Options& opt)
       // bdsbunch generates values in CLHEP mm standard.
       bdsbunch.GetNextParticle(x0,y0,s0,xp,yp,sp,t,E,weight);
 
+      double energy = E/CLHEP::GeV;
+      //momentum back calculated from kinetic energy - can't change bds bunch
+      // p = sqrt( (E + m)^2 - m^2 )
+      double p = sqrt( energy*energy + 2*energy*mass );
 
-      double paramsIn[8] = {x0/CLHEP::um,y0/CLHEP::um,s0/CLHEP::um,xp/CLHEP::rad,yp/CLHEP::rad,sp/CLHEP::rad,E/CLHEP::GeV,mass};
+      double paramsIn[8] = {x0/CLHEP::um,y0/CLHEP::um,s0/CLHEP::um,
+			    xp/CLHEP::rad,yp/CLHEP::rad,sp/CLHEP::rad,
+			    p,mass};
       bunch.push_back(TRKParticle(paramsIn, charge, i));
 
       //weight not required - maybe should be kept though to pass on to bdsim

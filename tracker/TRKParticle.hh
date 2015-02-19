@@ -6,8 +6,13 @@
 #include "vector6.hh"
 
 /**
- * @brief particle class has two 6 vectors for before and after stepping
- pos/mom plus mass, energy, charge.
+ * @brief Particle class has two 6 vectors for before and after stepping
+ * pos/mom plus mass, momentum, charge. 3 vector momentum 'mom' is the 
+ * differential momentum (x',y',z') and momentum is the total current
+ * absolute momentum. Momentum is required for rigidity and therefore
+ * tracking. Geant4 requires the kinetic energy of the particle as well
+ * as the particle definition - the kinetic energy can be calculate at
+ * output time / when information is passed to bdsim.
 */
 
 class TRKParticle { 
@@ -32,10 +37,12 @@ public:
   double Yp()const     {return posmom.Yp();}
   double Zp()const     {return posmom.Zp();}
   ///@}
-  /// return energy in MeV
-  double E()const      {return energy;}
+  /// return kinetic energy in MeV
+  double Ek()const      {return sqrt(p*p+mass*mass)-mass;}
   /// return mass in MeV / c^2
   double M()const      {return mass;}
+  /// return momentum in MeV / c^2
+  double P()const      {return p;}
   /// return elementary charge
   int    Charge()const {return charge;}
   /// return eventID
@@ -48,15 +55,15 @@ public:
   vector6 PosMomBefore()const {return posmombefore;}
   vector3 PosBefore()const    {return posmombefore.Pos();}
   vector3 MomBefore()const    {return posmombefore.Mom();}
-  double  EBefore()const      {return energybefore;}
+  double  PBefore()const      {return pbefore;}
 
   //setting functions
   void    SetPosMom(vector6 posmomIn);
   void    SetPosMom(vector3 posIn, vector3 momIn);
-  void    SetEnergy(double energyIn){energy=energyIn;}
+  void    SetP(double pIn){p=pIn;}
 
   //toggle the beforeindex
-  void ConfirmNewCoordinates() {energybefore = energy; posmombefore=posmom;}
+  void ConfirmNewCoordinates() {pbefore = p; posmombefore=posmom;}
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKParticle &part);
@@ -67,15 +74,15 @@ private:
   vector6 posmombefore;
 
   //mass and charge don't change in the tracker!
-  /// energy in MeV - can change in tracker
-  double  energy; // JS: might be faster to store and use the inverse energy
-  double  energybefore;
+  /// momentum in MeV - can change in tracker
+  double p; 
+  double pbefore;
   /// mass in MeV / c^2
-  double  mass;
+  double mass;
   /// charge in units of elementary charge
-  int     charge;
+  int    charge;
   /// event id for referencing in both tracker and bdsim output
-  int     eventID;
+  int    eventID;
 };
 
 #endif
