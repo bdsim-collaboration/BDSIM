@@ -295,7 +295,7 @@ TRKElement* TRKFactory::createQuadrupole(Element& element) {
 #endif
   double bPrime = - brho * (element.k1 / CLHEP::m2);
   TRKAperture* aperture = createAperture(element);
-  return new TRKQuadrupole(bPrime,
+  return new TRKQuadrupole(element.k1,
 			   element.name,
 			   element.l,
 			   aperture,

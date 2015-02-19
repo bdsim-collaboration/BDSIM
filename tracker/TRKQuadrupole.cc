@@ -32,7 +32,7 @@ void TRKQuadrupole::Track(TRKBunch* bunch, TRKStrategy* strategy) {
 
 void TRKQuadrupole::Print(std::ostream &out)const {
   TRKElement::Print(out);
-  out << "; Strength: " << strength << "T/m";
+  out << "; Strength: " << strength << " T/m";
 }
 
 // void TRKQuadrupole::ThinKick(const vector6& vIn, vector6& vOut) {

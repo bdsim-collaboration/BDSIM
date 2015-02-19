@@ -17,9 +17,13 @@
 #include "TRKOctupole.hh"
 
 #include "BDSDebug.hh"
+#include "CLHEP/Units/SystemOfUnits.h"
+#include "BDSGlobalConstants.hh"
 
 TRKHybrid::TRKHybrid(int trackingStepsIn) :
   TRKStrategy(trackingStepsIn) {
+  nominalenergy = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
+  nominalmomentum = BDSGlobalConstants::Instance()->GetBeamMomentum()/CLHEP::GeV;
 }
 
 TRKHybrid::~TRKHybrid() {
@@ -147,6 +151,7 @@ void TRKHybrid::Track(TRKDipole* el, TRKBunch* bunch) {
       //double theta_in = asin(z0/NomR);
       //LocalRp.rotateY(-theta_in);
 
+
       double rootK=sqrt(fabs(strength*zp));
       double rootKh=rootK*h*zp;
       double X11,X12,X21,X22;
@@ -234,8 +239,11 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
   }
 
 
-  const double h = el->GetLength()*1e6/trackingSteps; //convert from m to um
-
+  const double h = el->GetLength()*CLHEP::m/CLHEP::um/trackingSteps; //convert from m to um
+#ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << " step length per tracking step: " << h << " um" << std::endl;
+  std::cout << __METHOD_NAME__ << " number of tracking steps: " << trackingSteps << std::endl;
+#endif
   TRKBunchIter iter = bunch->begin();
   TRKBunchIter end = bunch->end();
 
@@ -251,6 +259,11 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
       double yp = part.Yp();
       double zp = part.Zp();
 
+      std::cout << "xp " << xp << std::endl;
+      std::cout << "yp " << yp << std::endl;
+      std::cout << "zp " << zp << std::endl;
+
+      /*
       vector3 rpp (-zp*x0, zp*y0, x0*xp - y0*yp);
       rpp = rpp * strength;
 
@@ -265,18 +278,32 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
       double R=1./R_1;
       // chord distance (simple quadratic approx)
       //  itsDist= h2/(8*R);
-      
+      */
       // Use paraxial approximation:
 #ifdef TRKDEBUG
-  	  std::cout << "paraxial approximation being used" << std::endl;
-#endif
-  	  double rootK=sqrt(std::abs(strength*zp));
-  	  double rootKh=rootK*h*zp;
+      std::cout << "paraxial approximation being used" << std::endl;
       
+#endif
+
+      double mommag = sqrt(xp*xp + yp*yp + zp*zp);
+      std::cout << mommag << std::endl;
+      //double brho_thisparticle = part.E()/
+      std::cout << "strengh " << strength << std::endl;
+      std::cout << "nominal mom " << nominalmomentum << std::endl;
+      std::cout << "part.Ek " << part.Ek() << std::endl;
+      std::cout << "part.P  " << part.P() << std::endl;
+      double k = strength * (nominalmomentum/part.P());
+      std::cout << "k this particle " << k << std::endl;
+      double rootK=sqrt(std::abs(strength));
+      double rootKh=rootK*h;
+      //std::cout << "k : " << strength << std::endl;
       double c,s,ch,sh; 
       c = std::cos(rootKh);
       s = std::sin(rootKh);
       TRK::sincosh(rootKh,sh,ch);
+      std::cout <<"k "<<strength<<" rootk "<<rootK<<" rootKH "<<rootKh<<std::endl;
+      std::cout <<"cos(rootKh) " << c << " sin(rootKh) " << s <<std::endl;
+      std::cout <<"sincosh(rootKh) " << sh << " " << ch << std::endl; 
       
       double vOut[6];
   	  if (strength>0)
@@ -300,7 +327,8 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
 
   	  double dx=vOut[0]-x0;
   	  double dy=vOut[1]-y0;
-
+	  double dz = h;
+	  /*
   	  // Linear chord length
   	  double dR2=dx*dx+dy*dy;
   	  double dz=std::sqrt(h2*(1.-h2/(12*R*R))-dR2);
@@ -316,7 +344,7 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
   	      vOut[0]=x0+dx; //x1
   	      vOut[1]=y0+dy; //y1
   	    }
-  	  
+	  */
       vOut[2]=z0+dz; //z1 
       // Block end     
       

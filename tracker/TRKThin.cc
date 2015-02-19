@@ -63,7 +63,8 @@ void TRKThin::Track(TRKDipole* el, TRKBunch* bunch) {
   for (;iter!=end;++iter) {
     TRKParticle& part = *iter;
     vector3 mom = part.Mom();
-    double dx = mom.X() + strength / part.E();
+    //double dx = mom.X() + strength / part.E(); // LN temporary to get to compile
+    double dx = mom.X() + strength / part.P();
     vector3 momnew = vector3(dx,mom.Y(),mom.Z());
     part.SetPosMom(part.Pos(),momnew);
   }
