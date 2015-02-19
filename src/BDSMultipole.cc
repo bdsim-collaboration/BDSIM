@@ -523,7 +523,7 @@ void BDSMultipole::BuildMarkerLogicalVolume()
   itsMarkerLogicalVolume=new G4LogicalVolume
     (
      itsMarkerSolidVolume,
-     BDSMaterials::Instance()->GetMaterial("vacuum"),
+     BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
      itsName+"_log");
   
 #ifndef NOUSERLIMITS
