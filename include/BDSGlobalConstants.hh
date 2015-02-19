@@ -713,7 +713,6 @@ inline G4int BDSGlobalConstants::GetEventNumberOffset()
 inline G4FieldManager* BDSGlobalConstants::GetZeroFieldManager()
 {return itsZeroFieldManager;}
 
-
 inline  G4double BDSGlobalConstants::GetLWCalWidth()
 {return itsLWCalWidth;}
 
