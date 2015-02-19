@@ -44,6 +44,7 @@ public:
 			    G4int TurnsTaken);
   /// write tracker bunch
   virtual void WriteTrackerBunch(G4String samplerName, TRKBunch* bunch, bool primary=false);
+  virtual void WriteTrackerPrimaryLoss(TRKBunch* lostBunch, int turnsTaken);
 
 
   virtual void Commit();  /// close the file

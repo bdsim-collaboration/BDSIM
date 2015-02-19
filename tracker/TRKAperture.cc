@@ -4,7 +4,13 @@
 #include <iostream>
 #include <algorithm> //for swap
 
+// Loss output
 #include "BDSDebug.hh"
+#include "BDSOutputBase.hh"
+#include "BDSGlobalConstants.hh"
+
+extern BDSOutputBase* trkOutput;
+
 
 std::ostream& operator<< (std::ostream& out, const TRKAperture& aperture)
 {
@@ -94,6 +100,16 @@ void TRKAperture::CheckAperture(TRKBunch* bunch)
 	    << "Bunch Population: " << bunch->size() 
 	    << "; Lost Particles Population: " << lostparticles.size() << std::endl;
 #endif
-
+  
+  // Output losses to ploss file
+  // The precision of the losses in only precise to the start of the element
+  if(lostparticles.size() > 0)
+  {
+    TRKBunch* lostBunch = new TRKBunch(lostparticles);
+    int turnsTaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+    trkOutput->WriteTrackerPrimaryLoss(lostBunch, turnsTaken);
+    
+    delete lostBunch;
+  }
 }
 

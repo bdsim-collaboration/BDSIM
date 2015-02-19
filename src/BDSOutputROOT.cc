@@ -531,6 +531,11 @@ void BDSOutputROOT::WriteTrackerBunch(G4String /*samplerName*/, TRKBunch* /*bunc
   // so simply ascii output
   return;
 }
+void BDSOutputROOT::WriteTrackerPrimaryLoss(TRKBunch* /*lostBunch*/, int /*turnsTaken*/){
+  // do nothing for now - only really needed for development purposes just now
+  // so simply ascii output
+  return;
+}
 
 void BDSOutputROOT::Commit()
 {
