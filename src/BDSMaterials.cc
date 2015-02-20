@@ -838,17 +838,18 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddElement(elements["N"], fractionmass=1.0);
   materials[name] = tmpMaterial; 
 
-  //Vacuum (same composition as residual vacuum in warm sections of LHC).
-  pressure=BDSGlobalConstants::Instance()->GetVacuumPressure();
-  density = (CLHEP::STP_Temperature/temperature) * (pressure/(1.*CLHEP::atmosphere))  * 29*CLHEP::g/(22.4*1.e-3*CLHEP::m3) ;
+  //Default vacuum (same composition as residual vacuum in warm sections of LHC).
+  // can be overridden by vacMaterial option
+  G4double vacpressure=BDSGlobalConstants::Instance()->GetVacuumPressure();
+  density = (CLHEP::STP_Temperature/temperature) * (vacpressure/(1.*CLHEP::atmosphere))  * 29*CLHEP::g/(22.4*1.e-3*CLHEP::m3) ;
 #ifdef BDSDEBUG 
   G4cout<< " ***************** defining Vacuum"<<G4endl;
-  G4cout<< "pressure="<<pressure/CLHEP::bar<<" bar"<<G4endl;
+  G4cout<< "pressure="<<vacpressure/CLHEP::bar<<" bar"<<G4endl;
   G4cout<< "temp="<<temperature/CLHEP::kelvin<<" K"<<G4endl;
   G4cout<< "density="<<density/(CLHEP::g/CLHEP::m3)<<"g/m^3"<<G4endl;
 #endif
   tmpMaterial = new G4Material
-    (name="vacuum", density, 3, kStateGas, temperature, pressure);
+    (name="vacuum", density, 3, kStateGas, temperature, vacpressure);
   tmpMaterial->AddElement(elements["H"], fractionmass=0.482);
   tmpMaterial->AddElement(elements["C"], fractionmass=0.221);
   tmpMaterial->AddElement(elements["O"], fractionmass=0.297);
@@ -862,7 +863,7 @@ void BDSMaterials::Initialise()
   tmpMaterial->SetMaterialPropertiesTable(vacMaterialPropertiesTable);
 
   tmpMaterial = new G4Material
-    (name="laservac"      , density, 1, kStateGas, temperature, pressure);
+    (name="laservac"      , density, 1, kStateGas, temperature, vacpressure);
   tmpMaterial->AddMaterial(materials["vacuum"], fractionmass=1.);
   materials[name] = tmpMaterial; 
 
