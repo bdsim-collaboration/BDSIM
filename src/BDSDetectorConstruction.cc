@@ -305,7 +305,7 @@ void BDSDetectorConstruction::BuildWorld(){
   solidWorld = new G4Box(worldName, worldR.x(), worldR.y(), worldR.z());
     
   logicWorld = new G4LogicalVolume(solidWorld,	       //its solid
-				   BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()), //its material
+				   BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()), //its material
 				   worldName);	       //its name
   
   logicWorld->SetVisAttributes (G4VisAttributes::Invisible);

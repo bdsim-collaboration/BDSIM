@@ -40,7 +40,7 @@ void BDSSpoiler::BuildMarkerLogicalVolume()
 				  BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
 				  BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
 				  itsLength/2),
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
 			itsName);
 }
 

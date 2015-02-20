@@ -97,7 +97,8 @@ BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
 
       
  
-      if(track.GetMaterial()==BDSMaterials::Instance()->GetMaterial("Vacuum")&&Blocal !=0 )
+      if(track.GetMaterial()==BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial())
+	 && Blocal !=0 )
 	{
 	  G4ThreeVector InitMag=track.GetMomentum();
 

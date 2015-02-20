@@ -838,17 +838,18 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddElement(elements["N"], fractionmass=1.0);
   materials[name] = tmpMaterial; 
 
-  //Vacuum (same composition as residual vacuum in warm sections of LHC).
-  pressure=BDSGlobalConstants::Instance()->GetVacuumPressure();
-  density = (CLHEP::STP_Temperature/temperature) * (pressure/(1.*CLHEP::atmosphere))  * 29*CLHEP::g/(22.4*1.e-3*CLHEP::m3) ;
+  //Default vacuum (same composition as residual vacuum in warm sections of LHC).
+  // can be overridden by vacMaterial option
+  G4double vacpressure=BDSGlobalConstants::Instance()->GetVacuumPressure();
+  density = (CLHEP::STP_Temperature/temperature) * (vacpressure/(1.*CLHEP::atmosphere))  * 29*CLHEP::g/(22.4*1.e-3*CLHEP::m3) ;
 #ifdef BDSDEBUG 
   G4cout<< " ***************** defining Vacuum"<<G4endl;
-  G4cout<< "pressure="<<pressure/CLHEP::bar<<" bar"<<G4endl;
+  G4cout<< "pressure="<<vacpressure/CLHEP::bar<<" bar"<<G4endl;
   G4cout<< "temp="<<temperature/CLHEP::kelvin<<" K"<<G4endl;
   G4cout<< "density="<<density/(CLHEP::g/CLHEP::m3)<<"g/m^3"<<G4endl;
 #endif
   tmpMaterial = new G4Material
-    (name="vacuum", density, 3, kStateGas, temperature, pressure);
+    (name="vacuum", density, 3, kStateGas, temperature, vacpressure);
   tmpMaterial->AddElement(elements["H"], fractionmass=0.482);
   tmpMaterial->AddElement(elements["C"], fractionmass=0.221);
   tmpMaterial->AddElement(elements["O"], fractionmass=0.297);
@@ -862,7 +863,7 @@ void BDSMaterials::Initialise()
   tmpMaterial->SetMaterialPropertiesTable(vacMaterialPropertiesTable);
 
   tmpMaterial = new G4Material
-    (name="laservac"      , density, 1, kStateGas, temperature, pressure);
+    (name="laservac"      , density, 1, kStateGas, temperature, vacpressure);
   tmpMaterial->AddMaterial(materials["vacuum"], fractionmass=1.);
   materials[name] = tmpMaterial; 
 
@@ -872,7 +873,11 @@ void BDSMaterials::Initialise()
     (name="beamgasplugmat", density, 2, kStateGas);
    tmpMaterial->AddElement(elements["C"], 1);
   tmpMaterial->AddElement(elements["O"], 1);
-  materials[name] = tmpMaterial; 
+  materials[name] = tmpMaterial;
+
+  // Empty material (space vacuum - real empty material does not exist in Geant4)
+  tmpMaterial = G4NistManager::Instance()->FindOrBuildMaterial(name="G4_Galactic");
+  materials[name] = tmpMaterial;
 }
 
 void BDSMaterials::AddMaterial(G4Material* aMaterial, G4String aName)
@@ -889,12 +894,17 @@ void BDSMaterials::AddMaterial(G4Material* aMaterial, G4String aName)
   }
 }
 
-// add material with default state (kSolidState), temperature (273.15K)
-// and pressure (1atm)
-void BDSMaterials::AddMaterial(G4String aName, G4double itsZ, G4double itsA, G4double itsDensity)
+// add material
+void BDSMaterials::AddMaterial(G4String aName,
+			       G4double itsZ,
+			       G4double itsA,
+			       G4double itsDensity,
+			       G4State  itsState,    //solid,gas
+			       G4double itsTemp,     //temperature
+			       G4double itsPressure) //pressure
 {
   aName.toLower();
-  G4Material* tmpMaterial = new G4Material(aName, itsZ, itsA*CLHEP::g/CLHEP::mole, itsDensity*CLHEP::g/CLHEP::cm3);
+  G4Material* tmpMaterial = new G4Material(aName, itsZ, itsA*CLHEP::g/CLHEP::mole, itsDensity*CLHEP::g/CLHEP::cm3, itsState, itsTemp*CLHEP::kelvin, itsPressure*CLHEP::atmosphere);
   if(materials.insert(make_pair(aName,tmpMaterial)).second){
 #ifdef BDSDEBUG
     G4cout << "New material : " << aName << " added to material table" << G4endl;
@@ -1188,6 +1198,18 @@ void BDSMaterials::PrepareRequiredMaterials()
   if (verbose || debug) G4cout << "parsing the material list..."<< G4endl;
   for(it = material_list.begin();it!=material_list.end();it++)
   {
+    G4State itsState;
+    if      ((*it).state=="solid")  itsState = kStateSolid;
+    else if ((*it).state=="liquid") itsState = kStateLiquid;
+    else if ((*it).state=="gas")    itsState = kStateGas;
+    else {
+      G4cout << "Unknown material state "<< (*it).state 
+	     << ", setting it to default (solid)"
+	     << G4endl;
+      (*it).state="solid";
+      itsState = kStateSolid;
+    }
+
     if((*it).Z != 0) {
 #ifdef BDSDEBUG  
       G4cout << "---->adding Material, "
@@ -1195,39 +1217,33 @@ void BDSMaterials::PrepareRequiredMaterials()
              << "Z= " << (*it).Z << " "
              << "A= " << (*it).A << "g/mole "
              << "density= "<< (*it).density << "g/cm3 "
+	     << "state= " << (*it).state << " "
+	     << "T= " << (*it).temper << "K "
+	     << "P= " << (*it).pressure << "atm "
              << G4endl;
 #endif
-      AddMaterial((*it).name,(*it).Z,(*it).A,(*it).density);
+      AddMaterial((*it).name,
+		  (*it).Z,
+		  (*it).A,
+		  (*it).density,
+		  itsState,
+		  (*it).temper,
+		  (*it).pressure);
     }
     else if((*it).components.size() != 0){
-
-      G4State itsState;
-      if ((*it).state=="solid") itsState = kStateSolid;
-      else
-      if ((*it).state=="liquid") itsState = kStateLiquid;
-      else
-      if ((*it).state=="gas") itsState = kStateGas;
-      else {
-	G4cout << "Unknown material state "<< (*it).state 
-	       << ", setting it to default (solid)"
-	       << G4endl;
-	(*it).state="solid";
-	itsState = kStateSolid;
-      }
-
-      if((*it).componentsWeights.size()==(*it).components.size()) {
-
 #ifdef BDSDEBUG 
-        G4cout << "---->adding Material, "
-               << "name= "<< (*it).name << " "
-               << "density= "<< (*it).density << "g/cm3 "
-               << "state= " << (*it).state << " "
-               << "T= " << (*it).temper << "K "
-               << "P= " << (*it).pressure << "atm "
-               << "ncomponents= " << (*it).components.size() << " "
-               << G4endl;
+      G4cout << "---->adding Material, "
+	     << "name= "<< (*it).name << " "
+	     << "density= "<< (*it).density << "g/cm3 "
+	     << "state= " << (*it).state << " "
+	     << "T= " << (*it).temper << "K "
+	     << "P= " << (*it).pressure << "atm "
+	     << "ncomponents= " << (*it).components.size() << " "
+	     << G4endl;
 #endif
 
+      if((*it).componentsWeights.size()==(*it).components.size()) {
+	
 	AddMaterial((G4String)(*it).name,
 		    (G4double)(*it).density,
 		    (G4State)itsState,
@@ -1238,16 +1254,6 @@ void BDSMaterials::PrepareRequiredMaterials()
       }
       else if((*it).componentsFractions.size()==(*it).components.size()) {
 
-#ifdef BDSDEBUG 
-        G4cout << "---->adding Material, "
-        << "name= "<< (*it).name << " "
-        << "density= "<< (*it).density << "g/cm3 "
-        << "state= " << (*it).state << " "
-        << "T= " << (*it).temper << "K "
-        << "P= " << (*it).pressure << "atm "
-        << "ncomponents= " << (*it).components.size() << " "
-        << G4endl;
-#endif
         AddMaterial((*it).name,
 		    (*it).density,
 		    itsState,
@@ -1267,5 +1273,4 @@ void BDSMaterials::PrepareRequiredMaterials()
     }
   }
   if (verbose || debug) G4cout << "size of material list: "<< material_list.size() << G4endl;
-
 }
