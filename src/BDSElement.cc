@@ -94,7 +94,7 @@ void BDSElement::BuildElementMarkerLogicalVolume(){
                                   elementSize,
                                   elementSize,   
 				  itsLength/2.0),
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
 			itsName);
 
   

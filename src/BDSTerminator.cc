@@ -38,7 +38,7 @@ void BDSTerminator::BuildMarkerLogicalVolume()
 				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
 				   itsLength/2.0);
   itsMarkerLogicalVolume =new G4LogicalVolume(terminatorBox,
-					      BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+					      BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
 					      itsName);
   
   // SENSITIVE DETECTOR

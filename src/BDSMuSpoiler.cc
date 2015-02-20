@@ -71,7 +71,7 @@ void BDSMuSpoiler::BuildMarkerLogicalVolume()
                 xLength,
 		yLength,
 		(itsLength-BDSGlobalConstants::Instance()->GetLengthSafety())/2), //z half length 
-     BDSMaterials::Instance()->GetMaterial("vacuum"),
+     BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
      itsName+"_log");
 
   // now protect the fields inside the marker volume by giving the

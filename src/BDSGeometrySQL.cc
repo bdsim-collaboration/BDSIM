@@ -143,7 +143,7 @@ void BDSGeometrySQL::SetCommonParams(BDSMySQLTable* aSQLTable, G4int k){
   _VisRed = _VisGreen = _VisBlue = 0.5;
   _VisAlpha = 0.5;
   _VisType = "S";
-  _Material = "VACUUM";
+  _Material = BDSGlobalConstants::Instance()->GetVacuumMaterial();
   _Name="";
   _PrecisionRegion=0;
   _ApproximationRegion=0;

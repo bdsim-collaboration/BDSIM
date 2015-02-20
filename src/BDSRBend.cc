@@ -138,9 +138,8 @@ void BDSRBend::BuildMarkerLogicalVolume()
 						   outputface );       // output face normal vector
 
   // make logical volume
-  G4Material* vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
   itsMarkerLogicalVolume = new G4LogicalVolume(itsMarkerSolidVolume,
-					       vacuumMaterial,
+					       BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
 					       LocalLogicalName+"_marker");
 
 #ifndef NOUSERLIMITS

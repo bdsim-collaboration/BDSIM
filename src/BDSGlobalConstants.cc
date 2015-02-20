@@ -28,6 +28,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsPhysListName = opt.physicsList;
   itsPipeMaterial = opt.pipeMaterial;
   itsVacMaterial = opt.vacMaterial;
+  itsEmptyMaterial = "G4_Galactic"; // space vacuum
   itsTunnelMaterialName = opt.tunnelMaterial;
   itsTunnelCavityMaterialName = opt.tunnelCavityMaterial;
   itsSoilMaterialName = opt.soilMaterial;

@@ -873,7 +873,11 @@ void BDSMaterials::Initialise()
     (name="beamgasplugmat", density, 2, kStateGas);
    tmpMaterial->AddElement(elements["C"], 1);
   tmpMaterial->AddElement(elements["O"], 1);
-  materials[name] = tmpMaterial; 
+  materials[name] = tmpMaterial;
+
+  // Empty material (space vacuum - real empty material does not exist in Geant4)
+  tmpMaterial = G4NistManager::Instance()->FindOrBuildMaterial(name="G4_Galactic");
+  materials[name] = tmpMaterial;
 }
 
 void BDSMaterials::AddMaterial(G4Material* aMaterial, G4String aName)
