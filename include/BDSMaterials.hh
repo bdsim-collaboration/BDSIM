@@ -25,6 +25,7 @@ public:
   /// converts parser material list
   void PrepareRequiredMaterials();
 
+  ///@{
   /** Add materials
       @param[in] Z        atomic number
       @param[in] A        mole mass in g/mole
@@ -32,8 +33,7 @@ public:
       @param[in] state    solid/gas
       @param[in] temp     in kelvin
       @param[in] pressure in atm
-   */ 
-  ///@{
+  */ 
   void AddMaterial(G4Material* aMaterial,G4String aName);
   void AddMaterial(G4String aName,
 		   G4double itsZ,
