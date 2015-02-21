@@ -279,7 +279,11 @@ void BDSHistogram1D::first()
 G4bool BDSHistogram1D::isLastBin()
 {
   // size safe evalutation of whether we're at the last item
-  return ((_iterBins != bins.end()) && (std::next(_iterBins) == bins.end()));
+  // need a copy of the iterator to advance it
+  // can be done with std::next but SL5 doesn't have that
+  std::vector<BDSBin*>::const_iterator _iterBinsTemp = _iterBins;
+  _iterBinsTemp++;
+  return ((_iterBins != bins.end()) && (_iterBinsTemp == bins.end()));
 }
 
 G4bool BDSHistogram1D::isDone()
