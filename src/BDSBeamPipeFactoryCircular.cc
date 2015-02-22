@@ -5,6 +5,7 @@
 #include "BDSMaterials.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
+#include "BDSSDManager.hh"
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4Material.hh"
@@ -258,6 +259,14 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
 #else
   containerLV->SetVisAttributes(new G4VisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr()));
 #endif
+
+  // make the beampipe sensitive if required
+  if (BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
+    {
+      //beampipes are sensitive - attach appropriate sd to the beampipe volume
+      beamPipeLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
+    }
+
   
   // place the components inside the container
   // note we don't need the pointer for anything - it's registered upon construction with g4
