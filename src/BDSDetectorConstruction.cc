@@ -615,6 +615,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 			  nCopy,            // copy number
 			  BDSGlobalConstants::Instance()->GetCheckOverlaps());//overlap checking
 
+      //this vector of physical volumes isn't used anywhere...
       fPhysicalVolumeVector.push_back(PhysiComponentPlace);
       std::vector<G4VPhysicalVolume*> MultiplePhysicalVolumes = thecurrentitem->GetMultiplePhysicalVolumes();
       for (unsigned int i=0;i<MultiplePhysicalVolumes.size(); i++) fPhysicalVolumeVector.push_back(MultiplePhysicalVolumes.at(i));
@@ -631,6 +632,9 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	BDSGlobalConstants::Instance()->SetRefTransform(tf);
       }
 
+      //this does nothing by default - only used by BDSElement
+      //looks like it could just be done in its construction rather than
+      //in BDSDetectorConstruction
       thecurrentitem->PrepareField(PhysiComponentPlace);
     }
 }

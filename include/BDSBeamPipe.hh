@@ -7,8 +7,9 @@
 #include "G4LogicalVolume.hh"
 
 /**
- * @brief a beampipe class - holds all information required for a
- * piece of beampipe
+ * @brief A holder class for all information required for a
+ * piece of beampipe.  This does not implement the construction
+ * of the beampipe. 
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
@@ -26,9 +27,13 @@ public:
 	      G4double                  containerRadiusIn = 0.0
 	      );
   ~BDSBeamPipe(); /// default destructor sufficient as G4 manages solids and LVs
-  
+
+  /// access the vacuum volume to set fields and limits
   G4LogicalVolume* GetVacuumLogicalVolume();
+  /// flag to tell whether the parent volume needn't use a subtraction
+  /// solid and can simply use a G4Tubs for example
   G4bool           ContainerIsCircular();
+  /// if it is circular, we need the radius
   G4double         GetContainerRadius();
   
 protected:
