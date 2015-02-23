@@ -8,15 +8,16 @@
 #include "BDSSDManager.hh"
 
 #include "globals.hh"                      // geant4 globals / types
-#include "G4Material.hh"
-#include "G4VSolid.hh"
-#include "G4LogicalVolume.hh"
-#include "G4PVPlacement.hh"
-#include "G4Tubs.hh"
-#include "G4CutTubs.hh"
-#include "G4ThreeVector.hh"
 #include "G4Colour.hh"
+#include "G4CutTubs.hh"
+#include "G4LogicalVolume.hh"
+#include "G4Material.hh"
+#include "G4PVPlacement.hh"
+#include "G4ThreeVector.hh"
+#include "G4Tubs.hh"
+#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
+#include "G4VSolid.hh"
 
 #include <cmath>
 #include <utility>                         // for std::pair
@@ -246,7 +247,7 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
   containerLV = new G4LogicalVolume(containerSolid,
 				    vacuumMaterialIn,
 				    nameIn + "_container_lv");
-
+  
   // VISUAL ATTRIBUTES
   // set visual attributes
   // beampipe
@@ -273,6 +274,7 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
 
   // USER LIMITS
   // set user limits based on bdsim user specified parameters
+
 #ifndef NOUSERLIMITS
   G4UserLimits* beamPipeUserLimits = new G4UserLimits("beampipe_cuts");
   G4double maxStepFactor = 0.5; // fraction of length for maximum step size
@@ -315,6 +317,12 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
   
   // build the BDSBeamPipe instance and return it
   BDSBeamPipe* aPipe = new BDSBeamPipe(containerSolid,containerLV,extX,extY,extZ,vacuumLV,true,containerRadiusIn);
+
+  // REGISTER all lvs
+  aPipe->RegisterLogicalVolume(vacuumLV); //using geometry component base class method
+  aPipe->RegisterLogicalVolume(beamPipeLV);
+  aPipe->RegisterLogicalVolume(containerLV);
+  
   return aPipe;
 }
 

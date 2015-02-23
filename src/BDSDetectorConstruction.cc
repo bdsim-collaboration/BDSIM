@@ -528,7 +528,20 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	
 #ifdef BDSDEBUG
       G4cout<<"SETTING UP SENSITIVE VOLUMES..."<< G4endl;
-#endif 
+#endif
+
+      // register all logical volumes with sposition and any other information for later use
+      std::vector<G4LogicalVolume*> allLVs = thecurrentitem->GetAllLogicalVolumes();
+      std::vector<G4LogicalVolume*>::iterator allLVsIterator = allLVs.begin();
+      for(;allLVsIterator != allLVs.end(); ++allLVsIterator)
+	{
+	  BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(*allLVsIterator,
+							       new BDSLogicalVolumeInfo((*allLVsIterator)->GetName(),
+											thecurrentitem->GetSPos())
+							       );
+	}
+
+      // old way of setting sensitive volumes - remains for now for components that haven't been changed
       std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetSensitiveVolumes();
       for(G4int i=0; i<(G4int)SensVols.size(); i++)
 	{

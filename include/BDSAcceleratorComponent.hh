@@ -170,9 +170,7 @@ public:
 
 
 private:
-  //
-  //    Geometry building
-  //
+  /// Geometry building
 
   /// build marker logical volume
   virtual void BuildMarkerLogicalVolume() = 0;
