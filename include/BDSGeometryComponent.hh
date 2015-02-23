@@ -5,9 +5,10 @@
 #include "G4VSolid.hh"
 #include "G4LogicalVolume.hh"
 #include <utility>              //for std::pair
+#include <vector>
 
 /**
- * @brief a generic geometry component for a bdsim model
+ * @brief A generic geometry component for a bdsim model
  * 
  * This class contains the minimum information required
  * for any object to be place in the bdsim model
@@ -35,6 +36,9 @@ public:
   void SetExtentX(G4double lowerX, G4double upperX); /// set the extent in local x
   void SetExtentY(G4double lowerY, G4double upperY); /// set the extent in local y
   void SetExtentZ(G4double lowerZ, G4double upperZ); /// set the extent in local z
+  void RegisterLogicalVolume(G4LogicalVolume* logicalVolume);
+  void RegisterLogicalVolumes(std::vector<G4LogicalVolume*> logicalVolumes);
+  std::vector<G4LogicalVolume*> GetAllLogicalVolumes();
 
 protected:
   G4VSolid*                 containerSolid;
@@ -42,6 +46,10 @@ protected:
   std::pair<G4double, G4double> extentX;  //local -ve,+ve
   std::pair<G4double, G4double> extentY;
   std::pair<G4double, G4double> extentZ;
+  std::vector<G4LogicalVolume*> allLogicalVolumes;
+  // we have to keep a registry of all logical volumes to be able to associate
+  // information with them at construction time - for example S position - that
+  // can't be stored in the Logical Volume class itself without modifying geant
 };
 
 inline G4VSolid* BDSGeometryComponent::GetContainerSolid()
@@ -67,5 +75,14 @@ inline void BDSGeometryComponent::SetExtentY(G4double lowerY, G4double upperY)
 
 inline void BDSGeometryComponent::SetExtentZ(G4double lowerZ, G4double upperZ)
 {extentZ = std::make_pair(lowerZ,upperZ);}
+
+inline void BDSGeometryComponent::RegisterLogicalVolume(G4LogicalVolume* logicalVolume)
+{allLogicalVolumes.push_back(logicalVolume);}
+
+inline void BDSGeometryComponent::RegisterLogicalVolumes(std::vector<G4LogicalVolume*> logicalVolumes)
+{allLogicalVolumes.insert(allLogicalVolumes.end(), logicalVolumes.begin(), logicalVolumes.end());}
+
+inline std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllLogicalVolumes()
+{return allLogicalVolumes;}
 
 #endif
