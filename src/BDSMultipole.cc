@@ -40,6 +40,8 @@
 #include "G4MagneticField.hh"
 
 #include "BDSBeamPipe.hh"
+#include "BDSBeamPipeFactory.hh"
+#include "BDSBeamPipeType.hh"
 
 #include <string>
 
@@ -117,25 +119,33 @@ BDSMultipole::BDSMultipole( G4String aName,
   SetBeampipeThickness(beampipeThicknessSet, beampipeThickness); 
 }
 
-BDSMultipole::BDSMultipole( G4String     name, 
-			    G4double     length,
-			    BDSBeamPipe* beamPipeIn,
-			    G4String     outerMaterial,
-			    G4String     tunnelMaterial,
-			    G4double     tunnelRadius,
-			    G4double     tunnelOffsetX):
-  BDSAcceleratorComponent(
-			  name,
+BDSMultipole::BDSMultipole( G4String        name, 
+			    G4double        length,
+			    BDSBeamPipeType beamPipeTypeIn,
+			    G4double        aper1In,
+			    G4double        aper2In,
+			    G4double        aper3In,
+			    G4double        aper4In,
+			    G4Material*     vacuumMaterialIn,
+			    G4double        beamPipeThicknessIn,
+			    G4Material*     beamPipeMaterialIn,
+			    G4String        outerMaterial,
+			    G4String        tunnelMaterial,
+			    G4double        tunnelRadius,
+			    G4double        tunnelOffsetX):
+  BDSAcceleratorComponent(name,
 			  length,
 			  0,              //beampipe radius in AC
-			  0,0,            // aperx apery
+			  0,0,            //aperx apery
 			  tunnelMaterial,
 			  outerMaterial,
 			  0,              //angle
 			  0,0,0,          // ???
 			  tunnelRadius,
 			  tunnelOffsetX),
-  itsInnerIronRadius(0),beamPipe(beamPipeIn)
+  itsInnerIronRadius(0),beamPipeType(beamPipeTypeIn),aper1(aper1In),aper2(aper2In),
+  aper3(aper3In),aper4(aper4In),vacuumMaterial(vacuumMaterialIn),
+  beamPipeThickness(beamPipeThicknessIn),beamPipeMaterial(beamPipeMaterialIn)
 {
   ConstructorInit();
 }
@@ -179,7 +189,7 @@ void BDSMultipole::Build()
   BuildBPFieldAndStepper();
   BuildBPFieldMgr(itsStepper, itsMagField);
 
-  BDSAcceleratorComponent::Build();
+  BDSAcceleratorComponent::Build(); //builds marker logical volume
   BuildOuterLogicalVolume();
   BuildBeampipe();
   if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
@@ -194,27 +204,37 @@ void BDSMultipole::BuildBLMs(){
   BDSAcceleratorComponent::BuildBLMs(); // resets itsBlmLocationR! -- JS
 }
 
-void BDSMultipole::BuildBeampipe(G4String materialName)
+void BDSMultipole::BuildBeampipe(G4String /*materialName*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  /*
-  itsInnerBeampipeSolid;
-  itsBeampipeSolid;
-  itsBeampipeLogicalVolume;
-  itsInnerBeampipeLogicalVolume;
-  itsPhysiInner;
-  itsPhysiComp; //bp logical volume placement
-  SetMultiplePhysicalVolumes(physv);
-  AddSensitiveVolume(lv);
-  itsBeampipeUserLimits;
-  itsInnerBeampipeUserLimits;
-  itsMarkerLogicalVolume //set field manager
-  */
 
+  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeType,
+							    itsName,
+							    itsLength,
+							    aper1,
+							    aper2,
+							    aper3,
+							    aper4,
+							    vacuumMaterial,
+							    beamPipeThickness,
+							    beamPipeMaterial);
 
+  // register logical volumes using geometry component base class
+  RegisterLogicalVolumes(beampipe->GetAllLogicalVolumes());
+
+  G4RotationMatrix* RotY = NULL;
+  itsPhysiComp = new G4PVPlacement(
+				   RotY,                      // rotation
+				   (G4ThreeVector)0,          // at (0,0,0)
+				   beampipe->GetContainerLogicalVolume(),  // its logical volume
+				   itsName+"_bmp_phys",	      // its name
+				   itsMarkerLogicalVolume,    // its mother  volume
+				   false,                     // no boolean operation
+				   0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
   
+  /*
   // build beampipe
   G4RotationMatrix* RotY = NULL; // no rotation
 
@@ -308,8 +328,10 @@ void BDSMultipole::BuildBeampipe(G4String materialName)
   
   }
   FinaliseBeampipe(materialName,RotY);
+  */
 }
 
+/*
 void BDSMultipole::BuildBeampipe(G4double startAper,
                                  G4double endAper, G4String materialName)
 {
@@ -355,7 +377,7 @@ void BDSMultipole::BuildBeampipe(G4double startAper,
   
   FinaliseBeampipe(materialName,RotY);
 }
-
+*/
 void BDSMultipole::FinaliseBeampipe(G4String materialName, G4RotationMatrix* RotY) {
   G4Material* material;
   if(materialName == "")
@@ -567,6 +589,10 @@ void BDSMultipole::BuildMarkerLogicalVolume()
      itsMarkerSolidVolume,
      BDSMaterials::Instance()->GetMaterial("vacuum"),
      itsName+"_log");
+
+  // taken from FinaliseBeamPipe method - supposed to protect against fields being overridden
+  itsMarkerLogicalVolume->
+    SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
   
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
@@ -580,6 +606,11 @@ void BDSMultipole::BuildMarkerLogicalVolume()
 
 void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
 {
+  G4cout << "OUTER MATERIAL IS VACUUM " << OuterMaterialIsVacuum << G4endl;
+  if (OuterMaterialIsVacuum)
+    {return;} // no need to create another volume
+
+  
   G4Material* material;
   if(itsMaterial != "") material = BDSMaterials::Instance()->GetMaterial(itsMaterial);
   else material = BDSMaterials::Instance()->GetMaterial("Iron");
@@ -620,6 +651,7 @@ void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
                                                  ),
                           material,
                           itsName+"_outer_log");
+  //this should really be the local beampipe thickness, not the global one as specific to this element
   
   
   itsPhysiComp = new G4PVPlacement(

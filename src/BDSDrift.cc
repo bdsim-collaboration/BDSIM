@@ -60,12 +60,32 @@ BDSDrift::BDSDrift (G4String aName,
     SetEndOuterRadius(itsEndOuterR);
   }
 }
+BDSDrift::BDSDrift(G4String        name,
+		   G4double        length,
+		   BDSBeamPipeType beamPipeType,
+		   G4double        aper1,
+		   G4double        aper2,
+		   G4double        aper3,
+		   G4double        aper4,
+		   G4Material*     vacuumMaterial,
+		   G4double        beamPipeThickness,
+		   G4Material*     beamPipeMaterial,
+		   G4String        outerMaterial,
+		   G4String        tunnelMaterial,
+		   G4double        tunnelRadius,
+		   G4double        tunnelOffsetX):
+  BDSMultipole(name,length,beamPipeType,aper1,aper2,aper3,aper4,vacuumMaterial,beamPipeThickness,beamPipeMaterial,
+	       outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX)
+{;}
+
+
 
 void BDSDrift::BuildBeampipe(G4String materialName) {
   if (itsAperset){
     BDSMultipole::BuildBeampipe(materialName);
   } else {
-    BDSMultipole::BuildBeampipe(itsXAper, itsYAper, materialName);
+    //BDSMultipole::BuildBeampipe(itsXAper, itsYAper, materialName);
+    BDSMultipole::BuildBeampipe(materialName);
   }
 }
 

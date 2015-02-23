@@ -14,15 +14,18 @@
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
+#include "BDSBeamPipeType.hh"
 #include "BDSBeamPipe.hh"
-#include "G4LogicalVolume.hh"
 
 #include "G4FieldManager.hh"
 #include "G4ChordFinder.hh"
+#include "G4LogicalVolume.hh"
 #include "G4MagneticField.hh"
 #include "G4Mag_UsualEqRhs.hh"
+#include "G4Material.hh"
 #include "G4RotationMatrix.hh"
 #include "G4UserLimits.hh"
+
 
 class BDSMultipole :public BDSAcceleratorComponent
 {
@@ -72,14 +75,21 @@ public:
 		G4bool beampipeThicknessSet=false,
 		G4double beampipeThickness=-1);
 
-  // Constructor for new beampipe and as little as is needed
-  BDSMultipole( G4String     name, 
-		G4double     length,
-		BDSBeamPipe* beamPipeIn,
-		G4String     outerMaterial="",
-		G4String     tunnelMaterial="",
-		G4double     tunnelRadius=0,
-		G4double     tunnelOffsetX=0);
+  // Constructor for new beampipe
+  BDSMultipole( G4String        name, 
+		G4double        length,
+		BDSBeamPipeType beamPipeType,
+		G4double        aper1,
+		G4double        aper2,
+		G4double        aper3,
+		G4double        aper4,
+		G4Material*     vacuumMaterial,
+		G4double        beamPipeThickness,
+		G4Material*     beamPipeMaterial,
+		G4String        outerMaterial="",
+		G4String        tunnelMaterial="",
+		G4double        tunnelRadius=0,
+		G4double        tunnelOffsetX=0);
 
   virtual ~BDSMultipole();
 
@@ -88,7 +98,7 @@ protected:
 
 private:
   virtual void BuildMarkerLogicalVolume();
-  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=true);
   /// build and set field manager and chord finder
   void BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
 		       G4MagneticField* aField);
@@ -103,11 +113,11 @@ private:
   void FinaliseBeampipe(G4String materialName = "",G4RotationMatrix* RotY=NULL);
 
 protected:
-  /// Standard beam pipe, cross section is elliptical (or circular)
+  /// Standard beam pipe
   // protected since called by BDSDrift::BuildBeampipe, change to private in future whenever possible
   virtual void BuildBeampipe(G4String materialName = ""); 
   /// Builds a tapered beam pipe (only used for drifts at the moment)
-  void BuildBeampipe(G4double startAper, G4double endAper, G4String materialName = "");
+  //void BuildBeampipe(G4double startAper, G4double endAper, G4String materialName = "");
 
   void BuildOuterFieldManager(G4int nPoles, G4double poleField, 
 			      G4double phiOffset);
@@ -143,7 +153,20 @@ protected:   // these might need to be accessed from the child classes
   G4ChordFinder* itsChordFinder;
   G4MagneticField* itsOuterMagField;
 
-  BDSBeamPipe* beamPipe;
+
+  //for beampipe construction
+  BDSBeamPipeType beamPipeType;
+  G4double        aper1;
+  G4double        aper2;
+  G4double        aper3;
+  G4double        aper4;
+  G4Material*     vacuumMaterial;
+  G4double        beamPipeThickness;
+  G4Material*     beamPipeMaterial;
+
+  //the constructed beampipe
+  BDSBeamPipe*    beampipe;
+  
   // G4double itsStartOuterR;
   // G4double itsEndOuterR;
 

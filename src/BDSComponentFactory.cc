@@ -444,7 +444,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createDrift(){
     phiAngleIn = 0.0;
     phiAngleOut = 0.0;
   }
-  
+
+  G4Material* vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName());
+  G4Material* beamPipeMaterial = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName());
+  /*
   return (new BDSDrift2( _element.name,
 			 _element.l*CLHEP::m,
 			 BDS::DetermineBeamPipeType(_element.apertureType),
@@ -455,6 +458,18 @@ BDSAcceleratorComponent* BDSComponentFactory::createDrift(){
 			 _element.aper4,
 			 PrepareBeamPipeMaterial(_element)
 			 ));
+  */
+  return (new BDSDrift( _element.name,
+			_element.l*CLHEP::m,
+			BDS::DetermineBeamPipeType(_element.apertureType),
+			_element.aper1,
+			_element.aper2,
+			_element.aper3,
+			_element.aper4,
+			vacuumMaterial,
+			_element.beampipeThickness*CLHEP::m,
+			beamPipeMaterial));
+  
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createPCLDrift(){
