@@ -247,27 +247,45 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
 				    vacuumMaterialIn,
 				    nameIn + "_container_lv");
 
+  // VISUAL ATTRIBUTES
   // set visual attributes
+  // beampipe
   G4VisAttributes* pipeVisAttr = new G4VisAttributes(G4Color(0.4,0.4,0.4));
   pipeVisAttr->SetVisibility(true);
   pipeVisAttr->SetForceSolid(true);
   beamPipeLV->SetVisAttributes(pipeVisAttr);
-
+  // vacuum
   vacuumLV->SetVisAttributes(new G4VisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr()));
+  // container
 #ifdef BDSDEBUG
   containerLV->SetVisAttributes(new G4VisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
 #else
   containerLV->SetVisAttributes(new G4VisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr()));
 #endif
 
-  // make the beampipe sensitive if required
+  // SENSITIVITY
+  // make the beampipe sensitive if required (attachd Sensitive Detector Class)
   if (BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
     {
       //beampipes are sensitive - attach appropriate sd to the beampipe volume
       beamPipeLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
     }
 
-  
+  // USER LIMITS
+  // set user limits based on bdsim user specified parameters
+#ifndef NOUSERLIMITS
+  G4UserLimits* beamPipeUserLimits = new G4UserLimits("beampipe_cuts");
+  G4double maxStepFactor = 0.5; // fraction of length for maximum step size
+  beamPipeUserLimits->SetMaxAllowedStep( lengthIn * maxStepFactor );
+  beamPipeUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  beamPipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  //attach cuts to volumes
+  vacuumLV->SetUserLimits(beamPipeUserLimits);
+  beamPipeLV->SetUserLimits(beamPipeUserLimits);
+  containerLV->SetUserLimits(beamPipeUserLimits);
+#endif
+
+  // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for anything - it's registered upon construction with g4
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
