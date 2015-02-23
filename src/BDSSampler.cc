@@ -19,6 +19,8 @@
 #include "BDSSamplerSD.hh"
 #include "G4SDManager.hh"
 
+#include "BDSSDManager.hh"
+
 //============================================================
 
 std::vector <G4String> BDSSampler::outputNames;
@@ -45,8 +47,8 @@ BDSSampler::BDSSampler (G4String aName, G4double aLength):
 #endif
 
   // register sampler sensitive detector
-  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-  SDMan->AddNewDetector(SensitiveDetector);
+  //G4SDManager* SDMan = G4SDManager::GetSDMpointer();
+  //SDMan->AddNewDetector(SensitiveDetector);
 }
 
 void BDSSampler::Initialise()
@@ -74,7 +76,8 @@ void BDSSampler::BuildMarkerLogicalVolume()
   itsOuterUserLimits->SetMaxAllowedStep(1*CLHEP::m);
   itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
-  itsMarkerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
+  //itsMarkerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
+  itsMarkerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 }
 
 BDSSampler::~BDSSampler()

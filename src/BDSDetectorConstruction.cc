@@ -29,6 +29,8 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
 
+#include "BDSSDManager.hh"
+
 #include "G4UserLimits.hh"
 #include "G4GeometryManager.hh"
 #include "G4Region.hh"
@@ -367,8 +369,8 @@ void BDSDetectorConstruction::ComponentPlacement(){
   //attach to as many logical volumes as you want
   //note each new sensitive detector invokes a slow string compare
   //while registering with sd manager. ok if only a few SD types.
-  BDSEnergyCounterSD* ECounter    = new BDSEnergyCounterSD("base_ec");
-  SDman->AddNewDetector(ECounter);
+  //BDSEnergyCounterSD* ECounter    = new BDSEnergyCounterSD("base_ec");
+  //SDman->AddNewDetector(ECounter);
 
   G4ThreeVector TargetPos;          // position of component
   G4ThreeVector rlast = G4ThreeVector(0.,0.,0.);  // edge of last element coordinates
@@ -531,7 +533,8 @@ void BDSDetectorConstruction::ComponentPlacement(){
       for(G4int i=0; i<(G4int)SensVols.size(); i++)
 	{
 	  //use already defined instance of Ecounter sd
-	  SensVols[i]->SetSensitiveDetector(ECounter);	
+	  //SensVols[i]->SetSensitiveDetector(ECounter);
+	  SensVols[i]->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
 	  //register any volume that an ECounter is attached to
 	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( SensVols[i]->GetName(),
 								    thecurrentitem->GetSPos() );
@@ -600,10 +603,10 @@ void BDSDetectorConstruction::ComponentPlacement(){
       G4String LocalName=thecurrentitem->GetName()+"_phys";
       const int nCopy = thecurrentitem->GetCopyNumber();
       G4cout << "THE NAME " << LocalLogVol->GetName() << G4endl;
-      G4cout << "VIS C:R  " << LocalLogVol->GetVisAttributes()->GetColour().GetRed() << G4endl;
-      G4cout << "VIS C:G  " << LocalLogVol->GetVisAttributes()->GetColour().GetGreen() << G4endl;
-      G4cout << "VIS C:B  " << LocalLogVol->GetVisAttributes()->GetColour().GetBlue() << G4endl;
-      G4cout << "VISIBLE  " << LocalLogVol->GetVisAttributes()->IsVisible() << G4endl;
+      //G4cout << "VIS C:R  " << LocalLogVol->GetVisAttributes()->GetColour().GetRed() << G4endl;
+      //G4cout << "VIS C:G  " << LocalLogVol->GetVisAttributes()->GetColour().GetGreen() << G4endl;
+      //G4cout << "VIS C:B  " << LocalLogVol->GetVisAttributes()->GetColour().GetBlue() << G4endl;
+      //G4cout << "VISIBLE  " << LocalLogVol->GetVisAttributes()->IsVisible() << G4endl;
       G4PVPlacement* PhysiComponentPlace = 
 	new G4PVPlacement(
 			  rotateComponent,  // its rotation
