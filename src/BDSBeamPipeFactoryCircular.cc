@@ -212,7 +212,7 @@ void BDSBeamPipeFactoryCircular::TestInputParameters(G4Material*&  vacuumMateria
 						     G4double&     aper1In)
 {
   if (!vacuumMaterialIn)
-    {vacuumMaterialIn = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName());}
+    {vacuumMaterialIn = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
 
   if (beamPipeThicknessIn < 1e-10)
     {beamPipeThicknessIn = BDSGlobalConstants::Instance()->GetBeampipeThickness();}

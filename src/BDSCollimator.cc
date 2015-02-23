@@ -129,7 +129,7 @@ void BDSCollimator::BuildInnerCollimator()
   
     itsInnerLogVol=
       new G4LogicalVolume(itsInnerSolid,
-			  BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName()),
+			  BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			  itsName+"_inner_log");
     
 #ifndef NOUSERLIMITS

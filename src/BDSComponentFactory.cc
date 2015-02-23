@@ -445,7 +445,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createDrift(){
     phiAngleOut = 0.0;
   }
 
-  G4Material* vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName());
+  G4Material* vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
   G4Material* beamPipeMaterial = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName());
   /*
   return (new BDSDrift2( _element.name,
@@ -1386,7 +1386,7 @@ G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element& /*element*/)
 {
   //in future do somethign relating to what's set in element
   //also make some setting available in element
-  return BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName());
+  return BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
 }
 
 BDSBeamPipe* BDSComponentFactory::PrepareBeamPipe(Element& element)
