@@ -138,9 +138,8 @@ void BDSRBend::BuildMarkerLogicalVolume()
 						   outputface );       // output face normal vector
 
   // make logical volume
-  G4Material* vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName());
   itsMarkerLogicalVolume = new G4LogicalVolume(itsMarkerSolidVolume,
-					       vacuumMaterial,
+					       BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
 					       LocalLogicalName+"_marker");
 
 #ifndef NOUSERLIMITS
@@ -204,7 +203,7 @@ void BDSRBend::BuildBeampipe(G4String materialName)
   //end section beam pipe solid - can just use start section and rotate it
   
   // create logical volumes from solids
-  G4Material* vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName());
+  G4Material* vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
   G4LogicalVolume* straightBeampipeLogVolume = new G4LogicalVolume(straightBeampipeOuter,
 								   bpmaterial,
 								   itsName+"_bmp_logical");
@@ -366,7 +365,7 @@ void BDSRBend::BuildOuterLogicalVolume(G4bool outerMaterialIsVacuum){
   // build logical volume
   G4Material* materialToUse = NULL;
   if (outerMaterialIsVacuum)
-    { materialToUse = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName());}
+    { materialToUse = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
   else
     { materialToUse = material;}
   itsOuterLogicalVolume = new G4LogicalVolume(magTubs,

@@ -375,7 +375,8 @@ public:
   G4double GetLWCalWidth();
   G4double GetLWCalOffset();
   G4String GetPipeMaterialName();
-  G4String GetVacuumMaterialName();
+  G4String GetVacuumMaterial();
+  G4String GetEmptyMaterial();
   G4String GetSoilMaterialName();
   G4String GetTunnelMaterialName();
   G4String GetTunnelCavityMaterialName();
@@ -387,7 +388,8 @@ private:
   G4double itsLWCalWidth;
   G4double itsLWCalOffset;
   G4String itsPipeMaterial;              //beampipe material
-  G4String itsVacMaterialName;           //vacuum inside beampipe
+  G4String itsVacMaterial;               //vacuum inside beampipe
+  G4String itsEmptyMaterial;             //empty material for e.g. marker volumes
   G4String itsTunnelMaterialName;        //tunnel material
   G4String itsTunnelCavityMaterialName;  //tunnel cavity material
   G4String itsSoilMaterialName;          //material around tunnel
@@ -721,7 +723,6 @@ inline G4int BDSGlobalConstants::GetEventNumberOffset()
 inline G4FieldManager* BDSGlobalConstants::GetZeroFieldManager()
 {return itsZeroFieldManager;}
 
-
 inline  G4double BDSGlobalConstants::GetLWCalWidth()
 {return itsLWCalWidth;}
 
@@ -731,8 +732,11 @@ inline  G4double BDSGlobalConstants::GetLWCalOffset()
 inline G4String BDSGlobalConstants::GetPipeMaterialName()
 {return itsPipeMaterial;}
 
-inline G4String BDSGlobalConstants::GetVacuumMaterialName()
-{return itsVacMaterialName;}
+inline G4String BDSGlobalConstants::GetVacuumMaterial()
+{return itsVacMaterial;}
+
+inline G4String BDSGlobalConstants::GetEmptyMaterial()
+{return itsEmptyMaterial;}
 
 inline G4String BDSGlobalConstants::GetSoilMaterialName()
 {return itsSoilMaterialName;}

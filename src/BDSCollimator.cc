@@ -57,7 +57,7 @@ void BDSCollimator::BuildMarkerLogicalVolume()
                 xLength,
 		yLength,
 		(itsLength+BDSGlobalConstants::Instance()->GetLengthSafety())/2), //z half length 
-     BDSMaterials::Instance()->GetMaterial("vacuum"),
+     BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
      itsName+"_log");
 
   BuildInnerCollimator();

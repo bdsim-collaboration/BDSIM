@@ -279,7 +279,8 @@ void BDSHistogram1D::first()
 G4bool BDSHistogram1D::isLastBin()
 {
   // size safe evalutation of whether we're at the last item
-  return ((_iterBins != bins.end()) && (std::next(_iterBins) == bins.end()));
+  // can be done with std::next but prefer not to use c++11
+  return ((_iterBins != bins.end()) && (_iterBins + 1 == bins.end()));
 }
 
 G4bool BDSHistogram1D::isDone()

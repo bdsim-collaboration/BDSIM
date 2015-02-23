@@ -1323,7 +1323,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
                << " airmaterial=" << "vacuum"//_element.airmaterial
                << G4endl;
 #endif
-	return (new BDSScintillatorScreen( _element.name, _element.tscint*CLHEP::m, (_element.angle-0.78539816339)*CLHEP::rad, "ups923a","vacuum")); //Name, scintillator thickness, angle in radians (relative to -45 degrees)
+	return (new BDSScintillatorScreen( _element.name, _element.tscint*CLHEP::m, (_element.angle-0.78539816339)*CLHEP::rad, "ups923a",BDSGlobalConstants::Instance()->GetVacuumMaterial())); //Name, scintillator thickness, angle in radians (relative to -45 degrees)
 }
 
 

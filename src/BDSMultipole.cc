@@ -17,33 +17,31 @@
 #include <cstddef>
 #include <cmath>
 #include <map>
+#include <string>
 
 #include "BDSMultipole.hh"
 #include "G4Box.hh"
-#include "G4Tubs.hh"
-#include "G4Polyhedra.hh"
-#include "G4Trap.hh"
-#include "G4EllipticalTube.hh"
 #include "G4Cons.hh"
-#include "G4VisAttributes.hh"
-#include "G4LogicalVolume.hh"
-#include "G4PVPlacement.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4UserLimits.hh"
-#include "G4SubtractionSolid.hh"
+#include "G4EllipticalTube.hh"
 #include "G4IntersectionSolid.hh"
-
+#include "G4LogicalVolume.hh"
 #include "G4MagIntegratorStepper.hh"
+#include "G4MagneticField.hh"
+#include "G4Polyhedra.hh"
+#include "G4PVPlacement.hh"
+#include "G4SubtractionSolid.hh"
+#include "G4Trap.hh"
+#include "G4Tubs.hh"
+#include "G4UserLimits.hh"
+#include "G4VisAttributes.hh"
+#include "G4VPhysicalVolume.hh"
 
 #include "BDSMaterials.hh"
 #include "BDSMultipoleOuterMagField.hh"
-#include "G4MagneticField.hh"
 
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeType.hh"
-
-#include <string>
 
 //============================================================
 BDSMultipole::BDSMultipole( G4String aName, 
@@ -583,11 +581,10 @@ void BDSMultipole::BuildMarkerLogicalVolume()
     
   }
   
-  
   itsMarkerLogicalVolume=new G4LogicalVolume
     (
      itsMarkerSolidVolume,
-     BDSMaterials::Instance()->GetMaterial("vacuum"),
+     BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
      itsName+"_log");
 
   // taken from FinaliseBeamPipe method - supposed to protect against fields being overridden
@@ -633,7 +630,7 @@ void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
 #endif
 
   if(OuterMaterialIsVacuum){
-    material=  BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName());
+    material=  BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
   }
    
 

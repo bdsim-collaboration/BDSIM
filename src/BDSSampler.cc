@@ -66,7 +66,7 @@ void BDSSampler::BuildMarkerLogicalVolume()
 				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
 				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
 				  itsLength/2.0),
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
 			itsName);
   
 #ifndef NOUSERLIMITS
