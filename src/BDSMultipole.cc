@@ -188,8 +188,9 @@ void BDSMultipole::Build()
   BuildBPFieldMgr(itsStepper, itsMagField);
 
   BDSAcceleratorComponent::Build(); //builds marker logical volume
-  BuildOuterLogicalVolume();
+  
   BuildBeampipe();
+  BuildOuterLogicalVolume();
   if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
     BuildTunnel();
   }
