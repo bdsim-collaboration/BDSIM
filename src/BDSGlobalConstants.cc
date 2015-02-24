@@ -204,6 +204,14 @@ void BDSGlobalConstants::InitVisAttributes()
   visibleDebugVisAttr->SetForceSolid(true);
 }
 
+void BDSGlobalConstants::InitDefaultUserLimits()
+{
+  //these must be copied and not attached directly
+  defaultUserLimits = new G4UserLimits("defalut_cuts");
+  defaultUserLimits->SetUserMinEkine( GetThresholdCutCharged() );
+  //user must set step length manually
+}
+
 void BDSGlobalConstants::InitRotationMatrices(){
   _RotY90       = new G4RotationMatrix();
   _RotYM90      = new G4RotationMatrix();

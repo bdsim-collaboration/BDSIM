@@ -8,6 +8,7 @@
 #include "G4String.hh"
 #include "G4AffineTransform.hh"
 #include "G4VisAttributes.hh"
+#include "G4UserLimits.hh"
 
 #include "BDSParticle.hh"
 #include "G4LogicalVolume.hh"
@@ -364,6 +365,9 @@ private:
   G4VisAttributes* invisibleVisAttr;
   G4VisAttributes* visibleDebugVisAttr;
 
+  void InitDefaultUserLimits();
+  G4UserLimits* defaultUserLimits;
+
 public:
   G4RotationMatrix* RotY90() const;
   G4RotationMatrix* RotYM90() const;
@@ -383,6 +387,8 @@ public:
 
   G4VisAttributes* GetInvisibleVisAttr();
   G4VisAttributes* GetVisibleDebugVisAttr();
+
+  G4UserLimits* GetDefaultUserLimits();
   
 private:
   G4double itsLWCalWidth;
@@ -871,5 +877,8 @@ inline G4VisAttributes* BDSGlobalConstants::GetInvisibleVisAttr()
 
 inline G4VisAttributes* BDSGlobalConstants::GetVisibleDebugVisAttr()
 {return visibleDebugVisAttr;}
+
+inline G4UserLimits* BDSGlobalConstants::GetDefaultUserLimits()
+{return defaultUserLimits;}
 
 #endif
