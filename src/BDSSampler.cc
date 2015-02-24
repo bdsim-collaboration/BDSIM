@@ -77,6 +77,11 @@ void BDSSampler::BuildMarkerLogicalVolume()
   itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
   //itsMarkerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
+#ifdef BDSDEBUG
+  itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+#else
+  itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+#endif
   itsMarkerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 }
 
