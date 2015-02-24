@@ -18,6 +18,7 @@
 #include <cmath>
 #include <map>
 #include <string>
+#include <algorithm> // for std::max
 
 #include "BDSMultipole.hh"
 #include "G4Box.hh"
@@ -618,14 +619,80 @@ void BDSMultipole::BuildMarkerLogicalVolume()
 
 void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
 {
-  G4cout << "OUTER MATERIAL IS VACUUM " << OuterMaterialIsVacuum << G4endl;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  // default cylindrical geometry for straight magnets only
+  
+  // check if outer volume is required
   if (OuterMaterialIsVacuum)
     {return;} // no need to create another volume
-
   
+  // test beampipe instance exists / has been built already
+  if (!beampipe)
+    {
+      G4cerr << __METHOD_NAME__ << " no beampipe has been built - can't wrap around it" << G4endl;
+      exit(1);
+    }
+
+  // build the logical volume
   G4Material* material;
-  if(itsMaterial != "") material = BDSMaterials::Instance()->GetMaterial(itsMaterial);
-  else material = BDSMaterials::Instance()->GetMaterial("Iron");
+  if(itsMaterial != "")
+    {material = BDSMaterials::Instance()->GetMaterial(itsMaterial);}
+  else
+    {material = BDSMaterials::Instance()->GetMaterial("Iron");}
+  
+  G4double lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
+  G4double outerRadius = itsOuterR;
+  if(itsOuterR==0) outerRadius = BDSGlobalConstants::Instance()->GetComponentBoxSize()*0.5;
+  if (beampipe->ContainerIsCircular())
+    {
+      // simple circular beampipe - no need for a subtraction solid
+      G4double innerRadius = beampipe->GetContainerRadius()+lengthSafety;
+      /*
+      G4cout << "Inner Radius " << innerRadius << G4endl;
+      G4cout << "Outer Radius " << outerRadius << G4endl;
+      G4cout << "Length       " << itsLength << G4endl;
+      G4cout << "Length Safety " << lengthSafety << G4endl;
+      */
+      itsOuterLogicalVolume = new G4LogicalVolume( new G4Tubs(itsName+"_outer_solid",
+							      innerRadius,
+							      outerRadius,
+							      itsLength*0.5-lengthSafety,
+							      0,
+							      CLHEP::twopi),
+						   material,
+						   itsName+"_outer_lv");
+     
+    }
+  else
+    {
+      // not a simple circular beampipe - have to use subtraction solid
+      // check outer radius is really outside the beampipe
+      G4double maxX = std::max(beampipe->GetExtentX().first,beampipe->GetExtentX().second);
+      G4double maxY = std::max(beampipe->GetExtentY().first,beampipe->GetExtentY().second);
+      if (outerRadius < maxX)
+	{outerRadius = maxX + 1*CLHEP::cm;} //minimum extra size
+      if (outerRadius < maxY)
+	{outerRadius = maxY + 1*CLHEP::cm;}
+      itsOuterLogicalVolume =
+	new G4LogicalVolume( new G4SubtractionSolid (itsName+"_outer_solid",
+						     new G4Tubs(itsName+"_outer_solid+cylinder",
+								0.0,  // solid cylinder for unambiguous subtraction
+								outerRadius,
+								itsLength*0.5 - 2.0*lengthSafety, // to ensure it's inside the marker volume
+								0,
+								CLHEP::twopi),
+						     beampipe->GetContainerSolid()),
+						     material,
+						     itsName+"_outer_lv");
+    }
+  /*    
+  G4Material* material;
+  if(itsMaterial != "")
+    {material = BDSMaterials::Instance()->GetMaterial(itsMaterial);}
+  else
+    {material = BDSMaterials::Instance()->GetMaterial("Iron");}
 
   G4double outerRadius = itsOuterR;
   if(itsOuterR==0) outerRadius = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
@@ -665,24 +732,27 @@ void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
                           itsName+"_outer_log");
   //this should really be the local beampipe thickness, not the global one as specific to this element
   
-  
+  */
+  RegisterLogicalVolume(itsOuterLogicalVolume);
+  G4cout << "mlv " << itsMarkerLogicalVolume->GetName() << G4endl;
   itsPhysiComp = new G4PVPlacement(
-				   (G4RotationMatrix*)0,		      // no rotation
-				   (G4ThreeVector)0,                      // its position
-		      itsOuterLogicalVolume,  // its logical volume
-		      itsName+"_outer_phys",  // its name
-		      itsMarkerLogicalVolume, // its mother  volume
-		      false,		      // no boolean operation
-				   0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		      // copy number
+				   (G4RotationMatrix*)0,   // no rotation
+				   (G4ThreeVector)0,       // its position
+				   itsOuterLogicalVolume,  // its logical volume
+				   itsName+"_outer_phys",  // its name
+				   itsMarkerLogicalVolume, // its mother  volume
+				   false,		   // no boolean operation
+				   0,                      // copy number
+				   BDSGlobalConstants::Instance()->GetCheckOverlaps());		      
   
   //Add the physical volumes to a vector which can be used for e.g. geometrical biasing
-  SetMultiplePhysicalVolumes(itsPhysiComp);
+  //SetMultiplePhysicalVolumes(itsPhysiComp);
   //
   // define sensitive volumes for hit generation
   //
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-    AddSensitiveVolume(itsOuterLogicalVolume);
-  }
+  //if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
+  //  AddSensitiveVolume(itsOuterLogicalVolume);
+  //}
 
   //
   // set visualization attributes
