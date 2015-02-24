@@ -23,6 +23,7 @@
 #include "BDSMaterials.hh"
 #include "BDSQuadMagField.hh"
 #include "BDSQuadStepper.hh"
+#include "BDSEnergyCounterSD.hh"
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
@@ -32,6 +33,7 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
+#include "BDSSDManager.hh"
 
 //============================================================
 
@@ -56,8 +58,33 @@ BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength,
   itsTilt=tilt;
 }
 
+BDSQuadrupole::BDSQuadrupole(G4String        name,
+			     G4double        length,
+			     G4double        bGrad,
+			     BDSBeamPipeType beamPipeType,
+			     G4double        aper1,
+			     G4double        aper2,
+			     G4double        aper3,
+			     G4double        aper4,
+			     G4Material*     vacuumMaterial,
+			     G4double        beamPipeThickness,
+			     G4Material*     beamPipeMaterial,
+			     G4String        outerMaterial,
+			     G4String        tunnelMaterial,
+			     G4double        tunnelRadius,
+			     G4double        tunnelOffsetX):
+  BDSMultipole(name,length,beamPipeType,aper1,aper2,aper3,aper4,vacuumMaterial,beamPipeThickness,
+	       beamPipeMaterial,outerMaterial,tunnelRadius,tunnelOffsetX),
+  itsBGrad(bGrad)
+{
+  G4String qtype = "cylinder";
+}
+
 void BDSQuadrupole::Build() 
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   BDSMultipole::Build();
   
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
@@ -105,20 +132,25 @@ void BDSQuadrupole::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)
   
   if(geometry =="standard") 
     BuildStandardOuterLogicalVolume(); // standard - quad with poles and pockets
-  else if(geometry =="cylinder")  
-    BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
+  else if(geometry =="cylinder")
+    BDSMultipole::BuildOuterLogicalVolume(false);
+  //BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
   else //default - cylinder - standard
-    BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
-
-  //
+    BDSMultipole::BuildOuterLogicalVolume(false);
+  //BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
+  /*
   // define sensitive volumes for hit generation
-  //
   if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
 #ifdef BDSDEBUG
     G4cout << "BDSQuadrupole.cc:> setting sensitive outer volume" << G4endl;
 #endif
     AddSensitiveVolume(itsOuterLogicalVolume);
-  }
+    }*/
+  //AddSensitiveVolume(itsOuterLogicalVolume);
+
+  //remember if it's vacuum, it won't be built
+  if (itsOuterLogicalVolume)
+    {itsOuterLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
