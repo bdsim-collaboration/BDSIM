@@ -219,6 +219,20 @@ void BDSMultipole::BuildBeampipe(G4String /*materialName*/)
 							    beamPipeThickness,
 							    beamPipeMaterial);
 
+  //actual beam pipe ->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
+  // SET FIELD
+  beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false) ;
+  // now protect the fields inside the marker volume by giving the
+  // marker a null magnetic field (otherwise G4VPlacement can
+  // over-ride the already-created fields, by calling 
+  // G4LogicalVolume::AddDaughter, which calls 
+  // pDaughterLogical->SetFieldManager(fFieldManager, true) - the
+  // latter 'true' over-writes all the other fields
+  
+  itsMarkerLogicalVolume->
+    SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
+  
+
   // register logical volumes using geometry component base class
   RegisterLogicalVolumes(beampipe->GetAllLogicalVolumes());
 
