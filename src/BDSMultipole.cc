@@ -761,11 +761,14 @@ void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
 
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
-  itsOuterUserLimits =  new G4UserLimits("multipole cut");
-  itsOuterUserLimits->SetUserMinEkine( BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  itsOuterUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
   itsOuterUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
+  //itsOuterUserLimits =  new G4UserLimits("multipole_cut");
+  //itsOuterUserLimits->SetUserMinEkine( BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  //itsOuterUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
   itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
+  G4cout << "TEST " << itsOuterLogicalVolume->GetName() << G4endl;
 }
 
 void BDSMultipole::BuildOuterFieldManager(G4int nPoles, G4double poleField,

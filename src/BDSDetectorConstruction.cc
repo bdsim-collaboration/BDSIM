@@ -364,7 +364,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
   if (verbose || debug) G4cout<<"starting placement procedure "<<G4endl;
   
   // sensitive detectors
-  G4SDManager* SDman = G4SDManager::GetSDMpointer();
+  //G4SDManager* SDman = G4SDManager::GetSDMpointer();
   //you only need a single instance of your sensitive detector class
   //attach to as many logical volumes as you want
   //note each new sensitive detector invokes a slow string compare
@@ -517,6 +517,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
       BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(LocalLogVol,theinfo);
 
       // add the volume to one of the regions
+      
       if(thecurrentitem->GetPrecisionRegion())
 	{
 #ifdef BDSDEBUG
@@ -525,7 +526,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	  LocalLogVol->SetRegion(precisionRegion);
 	  precisionRegion->AddRootLogicalVolume(LocalLogVol);
 	}
-	
+      
 #ifdef BDSDEBUG
       G4cout<<"SETTING UP SENSITIVE VOLUMES..."<< G4endl;
 #endif
@@ -542,6 +543,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	}
 
       // old way of setting sensitive volumes - remains for now for components that haven't been changed
+      /*
       std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetSensitiveVolumes();
       for(G4int i=0; i<(G4int)SensVols.size(); i++)
 	{
@@ -561,9 +563,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 #ifdef BDSDEBUG
 	    G4cout << "...adding " << SensVols[i]->GetName() << " to gFlashRegion" << G4endl;
 #endif
-	    /**********************************************
-	     * Initialise shower model
-	     ***********************************************/
+	    // Initialise shower model
 	    G4String rname = "gFlashRegion_" + SensVols[i]->GetName();
 	    gFlashRegion.push_back(new G4Region(rname.c_str()));
 	    G4String mname = "fastShowerModel" + rname;
@@ -589,7 +589,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	    //		    SensVols[i]->SetUserLimits(new G4UserLimits(thecurrentitem->GetChordLength()/10.0));
 	  }		  
 	}
-
+      */
 #ifdef BDSDEBUG
       G4cout<<"ALIGNING COMPONENT..."<< G4endl;
 #endif	
