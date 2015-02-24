@@ -27,7 +27,7 @@
 #include "G4UserLimits.hh"
 
 
-class BDSMultipole :public BDSAcceleratorComponent
+class BDSMultipole: public BDSAcceleratorComponent
 {
 public:
   BDSMultipole( G4String aName, 
@@ -38,7 +38,7 @@ public:
 		G4double aXAper=0.,
 		G4double aYAper=0.,
 		G4double angle=0.,
-		G4bool beampipeThicknessSet=false,
+		G4bool   beampipeThicknessSet=false,
 		G4double beampipeThickness=-1);
   
   /// Constructor for components with tunnel material added
@@ -53,7 +53,7 @@ public:
 		G4double angle=0.,
 		G4double tunnelRadius=0.,
 		G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
-		G4bool beampipeThicknessSet=false,
+		G4bool   beampipeThicknessSet=false,
 		G4double beampipeThickess=-1);
 
 
@@ -97,8 +97,6 @@ protected:
   virtual void Build();
 
 private:
-  virtual void BuildMarkerLogicalVolume();
-  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=true);
   /// build and set field manager and chord finder
   void BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
 		       G4MagneticField* aField);
@@ -113,6 +111,8 @@ private:
   void FinaliseBeampipe(G4String materialName = "",G4RotationMatrix* RotY=NULL);
 
 protected:
+  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=true);
   /// Standard beam pipe
   // protected since called by BDSDrift::BuildBeampipe, change to private in future whenever possible
   virtual void BuildBeampipe(G4String materialName = ""); 
@@ -135,15 +135,13 @@ protected:
   // beam pipe volumes
   G4LogicalVolume* itsBeampipeLogicalVolume;
   G4LogicalVolume* itsInnerBPLogicalVolume;
-
-  //-----------------------------
+  
   G4UserLimits* itsBeampipeUserLimits;
   G4VPhysicalVolume* itsPhysiComp;
   G4VPhysicalVolume* itsPhysiInner;
   G4FieldManager* itsBPFieldMgr;
   G4FieldManager* itsOuterFieldMgr;
 
-protected:   // these might need to be accessed from the child classes
   G4double itsInnerIronRadius;
   G4double itsBeampipeThickness;
   
