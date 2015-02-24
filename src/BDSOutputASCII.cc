@@ -289,7 +289,7 @@ void BDSOutputASCII::WriteTrackerPrimaryLoss(TRKBunch* lostBunch, int turnsTaken
     WriteAsciiHit(
       &ofPLoss,
       0, //TBC - requires geant4 or modification of particledefinitiontable
-      it->E()*1000.0, //convert to GeV
+      it->Ek()*1000.0, //convert to GeV
       it->X()*CLHEP::um,        //already in um, convert to mm for CLHEP conversion
       it->Y()*CLHEP::um,        //already in um, convert to mm for CLHEP conversion
       it->Z()*CLHEP::um,        //already in um, convert to mm for CLHEP conversion
