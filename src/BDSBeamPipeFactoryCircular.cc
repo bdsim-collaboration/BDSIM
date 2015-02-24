@@ -256,12 +256,12 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
   pipeVisAttr->SetForceSolid(true);
   beamPipeLV->SetVisAttributes(pipeVisAttr);
   // vacuum
-  vacuumLV->SetVisAttributes(new G4VisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr()));
+  vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
   // container
 #ifdef BDSDEBUG
-  containerLV->SetVisAttributes(new G4VisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
 #else
-  containerLV->SetVisAttributes(new G4VisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr()));
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
 #endif
 
   // SENSITIVITY

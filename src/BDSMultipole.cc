@@ -223,7 +223,7 @@ void BDSMultipole::BuildBeampipe(G4String /*materialName*/)
 
   //actual beam pipe ->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
   // SET FIELD
-  beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false) ;
+  beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false);
   // now protect the fields inside the marker volume by giving the
   // marker a null magnetic field (otherwise G4VPlacement can
   // over-ride the already-created fields, by calling 
@@ -606,13 +606,21 @@ void BDSMultipole::BuildMarkerLogicalVolume()
   // taken from FinaliseBeamPipe method - supposed to protect against fields being overridden
   itsMarkerLogicalVolume->
     SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
-  
+
+  // USER LIMITS
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
   itsMarkerUserLimits =  new G4UserLimits();
   itsMarkerUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
   itsMarkerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   itsMarkerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
+#endif
+
+  // VIS ATTR
+#ifdef BDSDEBUG
+  itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+#else
+  itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
 #endif
 }
 
