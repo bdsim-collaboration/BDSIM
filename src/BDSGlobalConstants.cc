@@ -189,6 +189,9 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsMagnetPoleSize   = 0.0;
   teleporterdelta     = G4ThreeVector(0.,0.,0.);
   teleporterlength    = 0.0;
+
+  InitVisAttributes();
+  InitDefaultUserLimits();
 }
 
 void BDSGlobalConstants::InitVisAttributes()
