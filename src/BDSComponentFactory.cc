@@ -871,7 +871,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createQuad(){
 	// B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
 	// Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
-  
+  /*
   return (new BDSQuadrupole( _element.name,
 			     _element.l * CLHEP::m,
 			     aper,
@@ -884,6 +884,21 @@ BDSAcceleratorComponent* BDSComponentFactory::createQuad(){
 			     _element.tunnelMaterial,
 			     _element.material,
 			     _element.spec ) );
+  */
+  G4Material* vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
+  //G4Material* beamPipeMaterial = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName());
+  return (new BDSQuadrupole( _element.name,
+			     _element.l * CLHEP::m,
+			     bPrime,
+			     BDS::DetermineBeamPipeType(_element.apertureType),
+			     _element.aper1,
+			     _element.aper2,
+			     _element.aper3,
+			     _element.aper4,
+			     vacuumMaterial,
+			     _element.beampipeThickness*CLHEP::m,
+			     PrepareBeamPipeMaterial(_element)));
+			     
 }  
   
 BDSAcceleratorComponent* BDSComponentFactory::createSextupole(){
