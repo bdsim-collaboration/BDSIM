@@ -235,13 +235,13 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
 
   // note from TRKQuadrupole.hh strength is in T/m
   // transverse coords are in um
-  // need to change routine below for units to match
+  // routine expects all values in m, converts back to transverse um after
   if (std::abs(strength)<=1e-12) {
     return Track((TRKDrift*)el,bunch);
   }
-
-
-  const double h = el->GetLength()*CLHEP::m/CLHEP::um/trackingSteps; //convert from m to um
+  
+  // Keep h in m for this routine
+  const double h = el->GetLength()/trackingSteps;
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << " step length per tracking step: " << h << " um" << std::endl;
   std::cout << __METHOD_NAME__ << " number of tracking steps: " << trackingSteps << std::endl;
@@ -254,101 +254,68 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
     for (int i=0; i<trackingSteps; i++) {
 
       /// from BDSQuadStepper
-      double x0 = part.X();
-      double y0 = part.Y();
-      double z0 = part.Z();
+      // Converted from um to m for this routine
+      double x0 = part.X()/1e6;
+      double y0 = part.Y()/1e6;
+      double z0 = part.Z()/1e6;
       double xp = part.Xp();
       double yp = part.Yp();
       double zp = part.Zp();
 
-      std::cout << "xp " << xp << std::endl;
-      std::cout << "yp " << yp << std::endl;
-      std::cout << "zp " << zp << std::endl;
-
-      /*
-      vector3 rpp (-zp*x0, zp*y0, x0*xp - y0*yp);
-      rpp = rpp * strength;
-
-      double R_1 = rpp.mag();
-      if (R_1 == 0) { // curvature 0
-	/// TODO single particle tracking?
-	//	return drift->Track(vIn,vOut,h);
-      }
-
-      double h2=h*h;
-
-      double R=1./R_1;
-      // chord distance (simple quadratic approx)
-      //  itsDist= h2/(8*R);
-      */
       // Use paraxial approximation:
 #ifdef TRKDEBUG
       std::cout << "paraxial approximation being used" << std::endl;
       
 #endif
-
-      double mommag = sqrt(xp*xp + yp*yp + zp*zp);
-      std::cout << mommag << std::endl;
-      //double brho_thisparticle = part.E()/
-      std::cout << "strengh " << strength << std::endl;
-      std::cout << "nominal mom " << nominalmomentum << std::endl;
-      std::cout << "part.Ek " << part.Ek() << std::endl;
-      std::cout << "part.P  " << part.P() << std::endl;
-      double k = strength * (nominalmomentum/part.P());
-      std::cout << "k this particle " << k << std::endl;
-      double rootK=sqrt(std::abs(strength));
+      
+      double k = strength * (nominalmomentum/part.P()); // k in T/m
+      
+      double rootK=sqrt(std::abs(k));
       double rootKh=rootK*h;
-      //std::cout << "k : " << strength << std::endl;
+      
       double c,s,ch,sh; 
       c = std::cos(rootKh);
       s = std::sin(rootKh);
       TRK::sincosh(rootKh,sh,ch);
-      std::cout <<"k "<<strength<<" rootk "<<rootK<<" rootKH "<<rootKh<<std::endl;
+
+#ifdef TRKDEBUG
+      std::cout <<"k "<< k <<" rootk "<<rootK<<" rootKH "<<rootKh<<std::endl;
       std::cout <<"cos(rootKh) " << c << " sin(rootKh) " << s <<std::endl;
       std::cout <<"sincosh(rootKh) " << sh << " " << ch << std::endl; 
+#endif
       
+      // Match direction of rotation with BDSIM (negative particle tracking bug)
+      if (part.Charge() < 0) 
+      {
+#ifdef TRKDEBUG
+        std::cout << "Tracking negative particle, flipping k value" << std::endl;
+#endif
+        k = -k;
+      }
+        
+      
+      // The rightmost factors of 1e6 are to convert m back to um
       double vOut[6];
-  	  if (strength>0)
+  	  if (k>0)
 	    {
-        vOut[0] = (c * x0) + (s * xp / rootK);    //x1
-        vOut[1] = (ch * y0) + (sh * yp / rootK);  //y1
-        vOut[3] = (- s * x0 * rootK) + (c * xp);  //xp1
-        vOut[4] = (sh * y0 * rootK) + (ch * yp);  //yp1
+        vOut[0] = ((c * x0) + (s * xp / rootK)) * 1e6;    //x1
+        vOut[1] = ((ch * y0) + (sh * yp / rootK)) * 1e6;  //y1
+        vOut[3] = (- s * x0 * rootK) + (c * xp);          //xp1
+        vOut[4] = (sh * y0 * rootK) + (ch * yp);          //yp1
 	    }
   	  else
 	    {
-        vOut[0] = (ch * x0) + (sh * xp / rootK);  //x1
-        vOut[1] = (c * y0) + (s * yp / rootK);    //y1
-        vOut[3] = (sh * x0 * rootK) + (ch * xp);  //xp1
-        vOut[4] = (- s * y0 * rootK) + (c * yp);  //yp1
+        vOut[0] = ((ch * x0) + (sh * xp / rootK)) * 1e6;  //x1
+        vOut[1] = ((c * y0) + (s * yp / rootK)) * 1e6;    //y1
+        vOut[3] = (sh * x0 * rootK) + (ch * xp);          //xp1
+        vOut[4] = (- s * y0 * rootK) + (c * yp);          //yp1
 	    }
       
-      // Code block can be replaced with z1 = h, z1p = z0p?
-      // Block start
   	  vOut[5] =sqrt(1 - vOut[3]*vOut[3] - vOut[4]*vOut[4]); // z1p = sqrt(1- xp1^2 - yp1^2)
-
-  	  double dx=vOut[0]-x0;
-  	  double dy=vOut[1]-y0;
-	  double dz = h;
-	  /*
-  	  // Linear chord length
-  	  double dR2=dx*dx+dy*dy;
-  	  double dz=std::sqrt(h2*(1.-h2/(12*R*R))-dR2);
-
-  	  // check for precision problems
-  	  double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;
-  	  if(ScaleFac>1.0000001)
-  	    {
-  	      ScaleFac=std::sqrt(ScaleFac);
-  	      dx/=ScaleFac;
-  	      dy/=ScaleFac;
-  	      dz/=ScaleFac;
-  	      vOut[0]=x0+dx; //x1
-  	      vOut[1]=y0+dy; //y1
-  	    }
-	  */
-      vOut[2]=z0+dz; //z1 
-      // Block end     
+      
+      // Convert h (m) to (um)
+	    double dz = h*1e6;
+      vOut[2]=z0+dz;   
       
       part.SetPosMom(vector6(vOut));
     }
