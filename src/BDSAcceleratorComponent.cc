@@ -212,6 +212,14 @@ void BDSAcceleratorComponent::Build()
 {
   SetVisAttributes(); // sets color attributes, virtual method
   BuildMarkerLogicalVolume(); // pure virtual provided by derived class
+
+  // visual attributes
+#ifdef BDSDEBUG
+  itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+#else
+  itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+#endif
+  
 }
 
 void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)

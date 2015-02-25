@@ -242,7 +242,6 @@ void BDSDetectorConstruction::BuildBeamline(){
   }
 
   // convert the parsed element list to list of BDS elements
-  //
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
 
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
@@ -309,22 +308,20 @@ void BDSDetectorConstruction::BuildWorld(){
   logicWorld = new G4LogicalVolume(solidWorld,	       //its solid
 				   BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()), //its material
 				   worldName);	       //its name
-  
-  logicWorld->SetVisAttributes (G4VisAttributes::Invisible);
-  // set world volume visibility for debugging
+
+  // visual attributes
 #ifdef BDSDEBUG
-  G4VisAttributes* debugWorldVis = new G4VisAttributes(true);
+  G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
   debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
-  debugWorldVis->SetColour(1.0,1.0,1.0); //black
   logicWorld->SetVisAttributes(debugWorldVis);
+#else
+  logicWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
 #endif
 	
   // set limits
 #ifndef NOUSERLIMITS
-  G4UserLimits* WorldUserLimits = new G4UserLimits();
-  WorldUserLimits->SetMaxAllowedStep(worldR.z());
-  WorldUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  WorldUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  G4UserLimits* WorldUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
+  WorldUserLimits->SetMaxAllowedStep(worldR.z()*0.5);
   logicWorld->SetUserLimits(WorldUserLimits);
 #endif
 
@@ -499,25 +496,8 @@ void BDSDetectorConstruction::ComponentPlacement(){
       // set visualisation attributes
       G4LogicalVolume* LocalLogVol = thecurrentitem->GetMarkerLogicalVolume();
       G4String LogVolName          = LocalLogVol->GetName();
-      // Set visualisation options for marker volumes - perhaps should be in base class..
-      static G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0, 0.1));
-      VisAtt1->SetForceSolid(true);  
-      // Set visible only if debug build, otherwise hidden
-#if defined BDSDEBUG
-      VisAtt1->SetVisibility(true);
-#else
-      VisAtt1->SetVisibility(false);
-#endif
-      //LocalLogVol->SetVisAttributes(VisAtt1);
       
-      // now register the spos and other info of this sensitive volume in global map
-      // used by energy counter sd to get spos of that logical volume at histogram time
-      BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( LogVolName,
-								thecurrentitem->GetSPos() );
-      BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(LocalLogVol,theinfo);
-
       // add the volume to one of the regions
-      
       if(thecurrentitem->GetPrecisionRegion())
 	{
 #ifdef BDSDEBUG
@@ -615,11 +595,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 
       G4String LocalName=thecurrentitem->GetName()+"_phys";
       const int nCopy = thecurrentitem->GetCopyNumber();
-      G4cout << "THE NAME " << LocalLogVol->GetName() << G4endl;
-      //G4cout << "VIS C:R  " << LocalLogVol->GetVisAttributes()->GetColour().GetRed() << G4endl;
-      //G4cout << "VIS C:G  " << LocalLogVol->GetVisAttributes()->GetColour().GetGreen() << G4endl;
-      //G4cout << "VIS C:B  " << LocalLogVol->GetVisAttributes()->GetColour().GetBlue() << G4endl;
-      //G4cout << "VISIBLE  " << LocalLogVol->GetVisAttributes()->IsVisible() << G4endl;
+      
       G4PVPlacement* PhysiComponentPlace = 
 	new G4PVPlacement(
 			  rotateComponent,  // its rotation
