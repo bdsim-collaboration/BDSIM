@@ -55,6 +55,9 @@ private:
   /// build tunnel from _TUNNEL elements
   void BuildTunnel();
 
+  /// function to add the volume to the gflash parameterisation model
+  void SetGFlashOnVolume(G4LogicalVolume* volume);
+
   G4bool verbose;
 
   G4int    gflash;

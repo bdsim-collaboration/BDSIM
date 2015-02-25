@@ -493,7 +493,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	continue;
       }
 
-      // set visualisation attributes
+      // get the logical volume to be placed
       G4LogicalVolume* LocalLogVol = thecurrentitem->GetMarkerLogicalVolume();
       G4String LogVolName          = LocalLogVol->GetName();
       
@@ -531,50 +531,17 @@ void BDSDetectorConstruction::ComponentPlacement(){
       // in future will be done in all component constructors
       std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetSensitiveVolumes();
       std::vector<G4LogicalVolume*>::iterator sensIt= SensVols.begin();
-      //for(G4int i=0; i<(G4int)SensVols.size(); i++)
       for(;sensIt != SensVols.end(); ++sensIt)
 	{
 	  //use already defined instance of Ecounter sd
-	  //SensVols[i]->SetSensitiveDetector(ECounter);
 	  (*sensIt)->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
 	  //register any volume that an ECounter is attached to
 	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( (*sensIt)->GetName(),
 								    thecurrentitem->GetSPos() );
 	  BDSGlobalConstants::Instance()->AddLogicalVolumeInfo((*sensIt),theinfo);
-	  //G4cout << "sensvols["<<i<<"] - name : "<<(*sensIt)->GetName() << G4endl;
-		
-	  if(gflash && 
-	     (*sensIt)->GetRegion() != precisionRegion && 
-	     (thecurrentitem->GetType()=="element")) {//If not in the precision region....
-	    //		    if((*sensIt)->GetMaterial()->GetState()!=kStateGas){ //If the region material state is not gas, associate with a parameterisation
-#ifdef BDSDEBUG
-	    G4cout << "...adding " << (*sensIt)->GetName() << " to gFlashRegion" << G4endl;
-#endif
-	    // Initialise shower model
-	    G4String rname = "gFlashRegion_" + (*sensIt)->GetName();
-	    gFlashRegion.push_back(new G4Region(rname.c_str()));
-	    G4String mname = "fastShowerModel" + rname;
-#ifdef BDSDEBUG
-	    G4cout << "...making parameterisation..." << G4endl;
-#endif
-	    theFastShowerModel.push_back(new BDSShowerModel(mname.c_str(),gFlashRegion.back()));
-	    theParameterisation.push_back(new GFlashHomoShowerParameterisation(BDSMaterials::Instance()->GetMaterial((*sensIt)->GetMaterial()->GetName().c_str()))); 
-	    theFastShowerModel.back()->SetParameterisation(*theParameterisation.back());
-	    theFastShowerModel.back()->SetParticleBounds(*theParticleBounds) ;
-	    theFastShowerModel.back()->SetHitMaker(*theHitMaker);
-	    if((*sensIt)->GetMaterial()->GetState()!=kStateGas){ //If the region material state is not gas, associate with a parameterisation
-	      theFastShowerModel.back()->SetFlagParamType(1);//Turn on the parameterisation for e-m showers starting in sensitive material and fitting in the current stack.
-	      theFastShowerModel.back()->SetFlagParticleContainment(1);//Turn on containment
-	    } else {
-	      theFastShowerModel.back()->SetFlagParamType(0);//Turn on the parameterisation for e-m showers starting in sensitive material and fitting in the current stack.
-	      theFastShowerModel.back()->SetFlagParticleContainment(0);//Turn on containment
-		  
-	    }
-	    (*sensIt)->SetRegion(gFlashRegion.back());
-	    gFlashRegion.back()->AddRootLogicalVolume((*sensIt));
-	    //		    gFlashRegion.back()->SetUserLimits(new G4UserLimits(thecurrentitem->GetChordLength()/10.0));
-	    //		    (*sensIt)->SetUserLimits(new G4UserLimits(thecurrentitem->GetChordLength()/10.0));
-	  }		  
+	  //set gflash parameterisation on volume if required
+	  if(gflash && ((*sensIt)->GetRegion() != precisionRegion) && (thecurrentitem->GetType()=="element"))
+	    {SetGFlashOnVolume(*sensIt);}
 	}
       
 #ifdef BDSDEBUG
@@ -604,13 +571,12 @@ void BDSDetectorConstruction::ComponentPlacement(){
       const int nCopy = thecurrentitem->GetCopyNumber();
       
       G4PVPlacement* PhysiComponentPlace = 
-	new G4PVPlacement(
-			  rotateComponent,  // its rotation
+	new G4PVPlacement(rotateComponent,  // its rotation
 			  TargetPos,        // its position
-			  LocalName,	      // its name
+			  LocalName,	    // its name
 			  LocalLogVol,      // its logical volume
-			  physiWorld,	      // its mother  volume
-			  false,	      // no boolean operation
+			  physiWorld,	    // its mother  volume
+			  false,	    // no boolean operation
 			  nCopy,            // copy number
 			  BDSGlobalConstants::Instance()->GetCheckOverlaps());//overlap checking
 
@@ -676,4 +642,48 @@ void BDSDetectorConstruction::BuildTunnel(){
 	} else  G4cerr<<"Tunnel won't be build! "<<G4endl;
       }
     }
+}
+
+
+void BDSDetectorConstruction::SetGFlashOnVolume(G4LogicalVolume* volume)
+{
+  // this has been taken from component placement and put in a separate funciton to make clearer
+  // for now.  perhaps should be revisited. LN
+
+  //If not in the precision region....
+  //		    if(volume->GetMaterial()->GetState()!=kStateGas){ //If the region material state is not gas, associate with a parameterisation
+#ifdef BDSDEBUG
+  G4cout << "...adding " << volume->GetName() << " to gFlashRegion" << G4endl;
+#endif
+  // Initialise shower model
+  G4String rname = "gFlashRegion_" + volume->GetName();
+  gFlashRegion.push_back(new G4Region(rname.c_str()));
+  G4String mname = "fastShowerModel" + rname;
+#ifdef BDSDEBUG
+  G4cout << "...making parameterisation..." << G4endl;
+#endif
+  theFastShowerModel.push_back(new BDSShowerModel(mname.c_str(),gFlashRegion.back()));
+  theParameterisation.push_back(new GFlashHomoShowerParameterisation(BDSMaterials::Instance()->GetMaterial(volume->GetMaterial()->GetName().c_str()))); 
+  theFastShowerModel.back()->SetParameterisation(*theParameterisation.back());
+  theFastShowerModel.back()->SetParticleBounds(*theParticleBounds) ;
+  theFastShowerModel.back()->SetHitMaker(*theHitMaker);
+  if(volume->GetMaterial()->GetState()!=kStateGas)
+    { //If the region material state is not gas, associate with a parameterisation
+      //Turn on the parameterisation for e-m showers starting in sensitive material and fitting in the current stack.
+      theFastShowerModel.back()->SetFlagParamType(1);
+      //Turn on containment
+      theFastShowerModel.back()->SetFlagParticleContainment(1);
+    }
+  else
+    {
+      //Turn on the parameterisation for e-m showers starting in sensitive material and fitting in the current stack.
+      theFastShowerModel.back()->SetFlagParamType(0);
+      //Turn on containment
+      theFastShowerModel.back()->SetFlagParticleContainment(0);
+  }
+  volume->SetRegion(gFlashRegion.back());
+  gFlashRegion.back()->AddRootLogicalVolume(volume);
+  //gFlashRegion.back()->SetUserLimits(new G4UserLimits(thecurrentitem->GetChordLength()/10.0));
+  //volume->SetUserLimits(new G4UserLimits(thecurrentitem->GetChordLength()/10.0));
+
 }
