@@ -31,6 +31,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsPhysListName = opt.physicsList;
   itsPipeMaterial = opt.pipeMaterial;
   itsVacMaterial = opt.vacMaterial;
+  itsEmptyMaterial = "G4_Galactic"; // space vacuum
   itsTunnelMaterialName = opt.tunnelMaterial;
   itsTunnelCavityMaterialName = opt.tunnelCavityMaterial;
   itsSoilMaterialName = opt.soilMaterial;
@@ -77,7 +78,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsBuildTunnelFloor = opt.buildTunnelFloor;  
   itsTunnelRadius = opt.tunnelRadius * CLHEP::m;
   if (itsTunnelRadius < itsComponentBoxSize/2){
-    G4cerr << __METHOD_NAME__ << "> Error: option \"tunnelRadius\" must be grater than \"boxSize\"/2 " << G4endl;
+    G4cerr << __METHOD_NAME__ << "> Error: option \"tunnelRadius\" must be greater than \"boxSize\"/2 " << G4endl;
     exit(1);
   }
   itsTunnelThickness = opt.tunnelThickness * CLHEP::m; //Tunnel geometry options read from file

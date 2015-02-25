@@ -60,7 +60,7 @@ void BDSCCDCamera::buildCavity(){
   G4Tubs* cavityTubs = new G4Tubs("CCDCameraCavity_solid",0,_objectLens->diameter()/2.0,_cavityLength/2.0,0,CLHEP::twopi*CLHEP::rad);
   _cavityLog = new G4LogicalVolume(				   
 				   cavityTubs,     
-				   BDSMaterials::Instance()->GetMaterial("vacuum"),
+				   BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 				   _name+"_cavity_log");
   _cavityLog->SetVisAttributes(new G4VisAttributes(G4Color(1.0,0.0,0)));
 }

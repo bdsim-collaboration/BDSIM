@@ -4,7 +4,9 @@
 #include "BDSSamplerHit.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSTrajectory.hh"
+#include "BDSHistogram.hh"
 
+#include "G4Trajectory.hh"
 #include <vector>
 
 #include "tracker/TRKBunch.hh"
@@ -43,6 +45,9 @@ public:
 			    G4int    PDGType, 
 			    G4int    nEvent, 
 			    G4int    TurnsTaken) = 0;
+
+  /// write a histgoram
+  virtual void WriteHistogram(BDSHistogram1D* histogramIn) = 0;
 
   /// write tracker bunch
   virtual void WriteTrackerBunch(G4String samplerName, TRKBunch* bunch, bool primary=false) = 0;

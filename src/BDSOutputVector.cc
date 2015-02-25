@@ -68,6 +68,12 @@ void BDSOutputVector::WriteTrackerBunch(G4String samplerName, TRKBunch* bunch, b
   }
 }
 
+void BDSOutputVector::WriteHistogram(BDSHistogram1D* histogramIn) {
+  for (unsigned int i=0; i<output.size(); i++) {
+    output[i]->WriteHistogram(histogramIn);
+  }
+}
+
 void BDSOutputVector::Commit(){
   for (unsigned int i=0; i<output.size(); i++) {
     output[i]->Commit();
