@@ -1,16 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-   Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
-   Removed StringFromInt function - using BDSGlobalConstants::Instance() version
-   Added/Changed Sampler code for Plane Sampler or Cylinder Sampler (GABs Code)
-*/
-
-
-//======================================================
-//======================================================
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
@@ -41,6 +28,7 @@
 #include "BDSSamplerHit.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSAnalysisManager.hh"
 
 // #include "BDSLWCalorimeter.hh"
 // #include "BDSLWCalorimeterHit.hh"
@@ -52,8 +40,6 @@ extern BDSOutputBase* bdsOutput;         // output interface
 
 G4int event_number; // event number, used for checking on printing verboseEventNumber
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
-
-//======================================================
 
 BDSEventAction::BDSEventAction():
   SamplerCollID_plane(-1),SamplerCollID_cylin(-1),
@@ -68,15 +54,8 @@ BDSEventAction::BDSEventAction():
   else printModulo=1;
 }
 
-//======================================================
-
 BDSEventAction::~BDSEventAction()
-{
-//   delete Traj;
-//   delete trajEndPoint;
-}
-
-//======================================================
+{}
 
 void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 { 
@@ -116,29 +95,21 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #endif
 }
 
-//======================================================
-
 void BDSEventAction::EndOfEventAction(const G4Event* evt)
 {
 #ifdef BDSDEBUG
   G4cout<<"BDSEventAction : processing end of event action"<<G4endl;
 #endif
   
-
   if(verboseEvent || verboseEventNumber == event_number){
     G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;
   }
-  
+ 
 #ifdef BDSDEBUG 
   G4cout<<"BDSEventAction : storing hits"<<G4endl;
-#endif
-
-
+#endif 
   //Record the primary events
   AddPrimaryHits();
-  
-  // are there any planar samplers?
-  // if so, record the hits for each sampler 
   
 #ifdef BDSDEBUG 
   G4cout<<"BDSEventAction : processing planar hits collection"<<G4endl;
@@ -175,10 +146,6 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   // are there any Laser wire calorimeters?
   // TODO : check it !!! at present not writing LW stuff
   // remember to uncomment LWCalHC above if using this
-
-  // 
-  //  G4cout<<"BDSEventAction : processing laserwire calorimeter hits collection"<<G4endl;
-  //
   //BDSLWCalorimeterHitsCollection* LWCalHC=NULL;
   // if(LWCalorimeterCollID>=0) 
   //   LWCalHC=(BDSLWCalorimeterHitsCollection*)(evt->GetHCofThisEvent()->GetHC(LWCalorimeterCollID));
@@ -186,7 +153,6 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 
 
   // create energy loss histogram
-
 #ifdef BDSDEBUG 
   G4cout<<"BDSEventAction : storing energy loss histograms"<<G4endl;
 #endif
@@ -199,7 +165,20 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
     (BDSEnergyCounterHitsCollection*)(HCE->GetHC(mySDMan->GetCollectionID("primary_counter")));
 
   //if we have energy deposition hits, write them
-  if(energyCounterHits) {bdsOutput->WriteEnergyLoss(energyCounterHits);}
+  if(energyCounterHits)
+    {
+      bdsOutput->WriteEnergyLoss(energyCounterHits); // write hits
+
+      //bin hits in histograms
+      BDSAnalysisManager* analMan = BDSAnalysisManager::Instance();
+      for (G4int i = 0; i < energyCounterHits->entries(); i++)
+	{
+	  //general eloss histo
+	  analMan->Fill1DHistogram(2,(*energyCounterHits)[i]->GetS()/CLHEP::m,(*energyCounterHits)[i]->GetEnergy()/CLHEP::GeV);
+	  //per element eloss histo
+	  analMan->Fill1DHistogram(5,(*energyCounterHits)[i]->GetS()/CLHEP::m,(*energyCounterHits)[i]->GetEnergy()/CLHEP::GeV);
+	}
+    }
 
   //if we have primary hits, find the first one and write that
   if(primaryCounterHits) {
@@ -211,6 +190,12 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 	{
 	  bdsOutput->WritePrimaryLoss(thePrimaryLoss);
 	  bdsOutput->WritePrimaryHit(thePrimaryHit);
+	  // general histos
+	  BDSAnalysisManager::Instance()->Fill1DHistogram(0,thePrimaryHit->GetS()/CLHEP::m);
+	  BDSAnalysisManager::Instance()->Fill1DHistogram(1,thePrimaryLoss->GetS()/CLHEP::m);
+	  // per element histos
+      	  BDSAnalysisManager::Instance()->Fill1DHistogram(3,thePrimaryHit->GetS()/CLHEP::m);
+	  BDSAnalysisManager::Instance()->Fill1DHistogram(4,thePrimaryLoss->GetS()/CLHEP::m);
 	}
     }
   }
@@ -218,7 +203,6 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " finished writing energy loss." << G4endl;
 #endif
-  
   
   // if events per ntuples not set (default 0) - only write out at end 
 #ifdef BDSDEBUG
@@ -232,14 +216,9 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   if (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0)
     {
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " writing out events." << G4endl;
-#endif
-
-      // notify the output about the event end
-      // this can be used for splitting output files etc.
-      
+      G4cout << __METHOD_NAME__ << " writing events." << G4endl;
+#endif      
       bdsOutput->Commit(); // write and open new file
-      
 #ifdef BDSDEBUG
       G4cout<<"done"<<G4endl;
 #endif
@@ -254,14 +233,10 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   }
     
   // Save interesting trajectories
-  
   G4TrajectoryContainer* TrajCont=evt->GetTrajectoryContainer();
-
   if(!TrajCont) return;
-  
   TrajectoryVector* TrajVec=TrajCont->GetVector();
   TrajectoryVector::iterator iT1;
-
   
   if(BDSGlobalConstants::Instance()->GetStoreTrajectory() ||
      BDSGlobalConstants::Instance()->GetStoreMuonTrajectories() ||
@@ -326,5 +301,3 @@ void BDSEventAction::AddPrimaryHits(){
 #endif
   
 }
-
-//======================================================

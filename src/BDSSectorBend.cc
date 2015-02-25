@@ -161,7 +161,7 @@ void BDSSectorBend::BuildMarkerLogicalVolume()
   G4String LocalLogicalName = itsName;
   itsMarkerLogicalVolume=    
     new G4LogicalVolume(itsMarkerSolidVolume,
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
 			LocalLogicalName+"_marker");
 
   itsMarkerUserLimits = new G4UserLimits(DBL_MAX,DBL_MAX,DBL_MAX, BDSGlobalConstants::Instance()->GetThresholdCutCharged());

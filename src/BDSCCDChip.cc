@@ -47,7 +47,7 @@ void BDSCCDChip::buildMotherVolume(){
   
   _log=new G4LogicalVolume
     (_solid, 
-     BDSMaterials::Instance()->GetMaterial("vacuum"),
+     BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
      _name+"_log");
   G4cout << __METHOD_END__ << G4endl;
 }

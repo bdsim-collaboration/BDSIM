@@ -58,7 +58,7 @@ void BDSSamplerCylinder::BuildMarkerLogicalVolume()
 				   itsRadius,
 				   itsLength/2,
 				   0,CLHEP::twopi*CLHEP::radian),
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
 			itsName);
       
 #ifndef NOUSERLIMITS
