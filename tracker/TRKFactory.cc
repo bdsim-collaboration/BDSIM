@@ -293,7 +293,6 @@ TRKElement* TRKFactory::createQuadrupole(Element& element) {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__;
 #endif
-  double bPrime = - brho * (element.k1 / CLHEP::m2);
   TRKAperture* aperture = createAperture(element);
   return new TRKQuadrupole(element.k1,
 			   element.name,

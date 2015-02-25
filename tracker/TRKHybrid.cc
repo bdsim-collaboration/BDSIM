@@ -260,7 +260,6 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
       double z0 = part.Z()/1e6;
       double xp = part.Xp();
       double yp = part.Yp();
-      double zp = part.Zp();
 
       // Use paraxial approximation:
 #ifdef TRKDEBUG
