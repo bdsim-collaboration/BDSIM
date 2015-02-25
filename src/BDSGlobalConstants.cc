@@ -202,7 +202,8 @@ void BDSGlobalConstants::InitVisAttributes()
   invisibleVisAttr->SetForceSolid(true);
 
   //for normally invisible volumes like marker / container volumes in debug mode
-  visibleDebugVisAttr = new G4VisAttributes(&G4Colour::Green,0.1);
+  visibleDebugVisAttr = new G4VisAttributes(); //green
+  visibleDebugVisAttr->SetColour(0,0.6,0,0.1);
   visibleDebugVisAttr->SetVisibility(true);
   visibleDebugVisAttr->SetForceSolid(true);
 }
