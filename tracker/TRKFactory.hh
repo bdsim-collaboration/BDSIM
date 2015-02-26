@@ -38,8 +38,8 @@ private:
 
   TRKElement* createLine(Element& element);
   TRKElement* createDrift(Element& element);
-  //TRKElement* createSBend(Element& element);
-  //TRKElement* createRBend(Element& element);
+  TRKElement* createSBend(Element& element);
+  TRKElement* createRBend(Element& element);
   TRKElement* createDipole(Element& element);
   TRKElement* createQuadrupole(Element& element);
   TRKElement* createSextupole(Element& element);

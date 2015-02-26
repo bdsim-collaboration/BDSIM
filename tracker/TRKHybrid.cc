@@ -10,7 +10,8 @@
 #include "TRKBunch.hh"
 #include "TRKParticle.hh"
 //#include "TRKDrift.hh"
-#include "TRKBend.hh"
+#include "TRKSBend.hh"
+#include "TRKRBend.hh"
 #include "TRKDipole.hh"
 #include "TRKQuadrupole.hh"
 #include "TRKSextupole.hh"
@@ -219,12 +220,192 @@ void TRKHybrid::Track(TRKDipole* el, TRKBunch* bunch) {
   }
 }
 
-void TRKHybrid::Track(TRKBend* el, TRKBunch* bunch) {
+void TRKHybrid::Track(TRKSBend* el, TRKBunch* bunch) {
+  #ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << " SBend" << std::endl;
+  #endif
+    
+  // transverse coords are in um
+  // routine expects all values in m, converts back to transverse um after
+  
+  // Keep arc length in m for this routine
+  // TODO These const parameters can beneficially be included in TRKSBend?
+  const double arclength = el->GetLength()/trackingSteps;
+  const double angle = el->GetAngle()/trackingSteps;
+  
+  // for low angles track as drift
+  if (std::abs(angle)<=1e-12) {
+    return Track((TRKDrift*)el,bunch);
+  }
+  
+  const double gyroradius = arclength / angle;
+  const double kappa = 1 / gyroradius;
+  
 #ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << " Bend" << std::endl;
+  std::cout << __METHOD_NAME__ << " step length per tracking step: " << arclength << " um" << std::endl;
+  std::cout << __METHOD_NAME__ << " number of tracking steps: " << trackingSteps << std::endl;
 #endif
-  std::cout << "DANGER WILL ROBINSON - NOT FINISHED" << std::endl;
-  return Track((TRKDrift*)el, bunch);
+
+  TRKBunchIter iter = bunch->begin();
+  TRKBunchIter end = bunch->end();
+  
+  for (;iter!=end;++iter) 
+  {
+    TRKParticle& part = *iter;
+    for (int i=0; i<trackingSteps; i++) 
+    {      
+      // Converted from um to m for this routine
+      double x0 = part.X()/1e6;
+      double y0 = part.Y()/1e6;
+      double z0 = part.Z()/1e6;
+      double xp = part.Xp();
+      double yp = part.Yp();
+      
+      // From gyroradius = mv / qB in T
+      // TODO Can bField be moved to TRKSBend? No dependency on charge/bRho
+      double bField = nominalmomentum / (part.Charge() * gyroradius);
+      
+      // k is magnetic strength in T/m scaled per particle
+      double smallk = bField / arclength * (nominalmomentum/part.P());
+      
+      // Reference: Wiedemann Particle Accelerator Physics (4.37)
+      double K = smallk + kappa*kappa;
+      
+      double rootK=sqrt(std::abs(K));
+      double rootKh=rootK*arclength;
+      
+      double c,s,ch,sh; 
+      c = std::cos(rootKh);
+      s = std::sin(rootKh);
+      TRK::sincosh(rootKh,sh,ch);
+      
+      #ifdef TRKDEBUG
+      std::cout <<"K "<< K <<" rootk "<<rootK<<" rootKH "<<rootKh<<std::endl;
+      std::cout <<"cos(rootKh) " << c << " sin(rootKh) " << s <<std::endl;
+      std::cout <<"sincosh(rootKh) " << sh << " " << ch << std::endl; 
+      #endif
+      
+      // Match direction of rotation with BDSIM (negative particle tracking bug)
+      if (part.Charge() < 0) 
+      {
+        #ifdef TRKDEBUG
+        std::cout << "Tracking negative particle, flipping K value" << std::endl;
+        #endif
+        K = -K;
+      }
+      
+      // The rightmost factors of 1e6 are to convert m back to um
+      double vOut[6];
+      if (K>0)
+      {
+        vOut[0] = ((c * x0) + (s * xp / rootK)) * 1e6;    //x1
+        vOut[1] = ((ch * y0) + (sh * yp / rootK)) * 1e6;  //y1
+        vOut[3] = (- s * x0 * rootK) + (c * xp);          //xp1
+        vOut[4] = (sh * y0 * rootK) + (ch * yp);          //yp1
+      }
+      else
+      {
+        vOut[0] = ((ch * x0) + (sh * xp / rootK)) * 1e6;  //x1
+        vOut[1] = ((c * y0) + (s * yp / rootK)) * 1e6;    //y1
+        vOut[3] = (sh * x0 * rootK) + (ch * xp);          //xp1
+        vOut[4] = (- s * y0 * rootK) + (c * yp);          //yp1
+      }
+      
+      vOut[5] =sqrt(1 - vOut[3]*vOut[3] - vOut[4]*vOut[4]); // z1p = sqrt(1- xp1^2 - yp1^2)
+      
+      // Convert h (m) to (um)
+      double dz = arclength*1e6;
+      vOut[2]=z0+dz;   
+      
+      part.SetPosMom(vector6(vOut));
+    }
+  }
+}
+
+void TRKHybrid::Track(TRKRBend* el, TRKBunch* bunch) {
+  #ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << " RBend" << std::endl;
+  #endif
+  
+  std::cout << "WARNING: RBends not implemented correctly." << std::endl;
+  // transverse coords are in um
+  // routine expects all values in m, converts back to transverse um after
+  
+  // Keep chord length in m for this routine
+  // TODO These const parameters can beneficially be included in TRKSBend?
+  // TODO Trackingsteps not trivial to implement in this geometry
+  const double chordlength = el->GetLength();
+  double angle = el->GetAngle();
+  
+  // for low angles track as drift
+  if (std::abs(angle)<=1e-12) {
+    return Track((TRKDrift*)el,bunch);
+  }
+  
+  const double gyroradius = 0.5 * chordlength * std::sin(angle*0.5);
+  
+  #ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__ << " step length per tracking step: " << arclength << " um" << std::endl;
+  std::cout << __METHOD_NAME__ << " number of tracking steps: " << trackingSteps << std::endl;
+  #endif
+  
+  TRKBunchIter iter = bunch->begin();
+  TRKBunchIter end = bunch->end();
+  
+  for (;iter!=end;++iter) 
+  {
+    TRKParticle& part = *iter;
+    // Converted from um to m for this routine
+    double x0 = part.X()/1e6;
+    double y0 = part.Y()/1e6;
+    double z0 = part.Z()/1e6;
+    double xp = part.Xp();
+    double yp = part.Yp();
+    
+    double c,s,ch,sh; 
+    c = std::cos(angle);
+    s = std::sin(angle);
+    TRK::sincosh(angle,sh,ch);
+    
+    #ifdef TRKDEBUG
+    std::cout <<"cos(theta) " << c << " sin(theta) " << s <<std::endl;
+    std::cout <<"sincosh(theta) " << sh << " " << ch << std::endl; 
+    #endif
+    
+    // Match direction of rotation with BDSIM (negative particle tracking bug)
+    if (part.Charge() < 0) 
+    {
+#ifdef TRKDEBUG
+      std::cout << "Tracking negative particle, flipping theta value" << std::endl;
+#endif
+      angle = -angle;
+    }
+    
+    // The rightmost factors of 1e6 are to convert m back to um
+    double vOut[6];
+    if (angle>0)
+    {
+      vOut[0] = (x0 + gyroradius * s) * 1e6;   //x1
+      vOut[1] = (y0 + gyroradius * sh) * 1e6;  //y1
+      vOut[3] = xp;                            //xp1
+      vOut[4] = yp;                            //yp1
+    }
+    else
+    {
+      vOut[0] = (x0 + gyroradius * sh) * 1e6;  //x1
+      vOut[1] = (y0 + gyroradius * s) * 1e6;   //y1
+      vOut[3] = xp;                            //xp1
+      vOut[4] = yp;                            //yp1
+    }
+    
+    vOut[5] =sqrt(1 - vOut[3]*vOut[3] - vOut[4]*vOut[4]); // z1p = sqrt(1- xp1^2 - yp1^2)
+    
+    // Convert h (m) to (um)
+    double dz = chordlength*1e6;
+    vOut[2]=z0+dz;   
+    
+    part.SetPosMom(vector6(vOut));
+  }
 }
 
 void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {

@@ -37,7 +37,12 @@ void TRKThick::Track(TRKDipole* el, TRKBunch* bunch) {
   return Track((TRKDrift*)el,bunch);
 }
 
-void TRKThick::Track(TRKBend* el, TRKBunch* bunch) { 
+void TRKThick::Track(TRKSBend* el, TRKBunch* bunch) { 
+  std::cout << "WARNING - METHOD NOT IMPLEMENTED" << std::endl;
+  return Track((TRKDrift*)el,bunch);
+}
+
+void TRKThick::Track(TRKRBend* el, TRKBunch* bunch) { 
   std::cout << "WARNING - METHOD NOT IMPLEMENTED" << std::endl;
   return Track((TRKDrift*)el,bunch);
 }

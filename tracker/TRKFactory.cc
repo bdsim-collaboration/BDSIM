@@ -19,6 +19,8 @@
 #include "TRKSampler.hh"
 #include "TRKSextupole.hh"
 #include "TRKSolenoid.hh"
+#include "TRKSBend.hh"
+#include "TRKRBend.hh"
 
 //tracking strategies / routines
 #include "TRKStrategy.hh"
@@ -191,12 +193,10 @@ TRKElement* TRKFactory::createElement(Element& element) {
     trkelement = createDrift(element);
     break;
   case _SBEND:
-    //TEMPORARY
-    trkelement = createDrift(element);
+    trkelement = createSBend(element);
     break;
   case _RBEND:
-    //TEMPORARY
-    trkelement = createDrift(element);;
+    trkelement = createRBend(element);;
     break;
   case _QUAD:
     trkelement = createQuadrupole(element);
@@ -360,6 +360,31 @@ TRKElement* TRKFactory::createSolenoid(Element& element) {
 			 element.l,
 			 aperture,
 			 placement);
+}
+
+TRKElement* TRKFactory::createSBend(Element& element) {
+  #ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__;
+  #endif
+  
+  TRKAperture* aperture = createAperture(element);
+  return new TRKSBend(element.angle,
+      element.name,
+      element.l,
+      aperture,
+      placement);
+}
+TRKElement* TRKFactory::createRBend(Element& element) {
+  #ifdef TRKDEBUG
+  std::cout << __METHOD_NAME__;
+  #endif
+  
+  TRKAperture* aperture = createAperture(element);
+  return new TRKRBend(element.angle,
+      element.name,
+      element.l,
+      aperture,
+      placement);
 }
 
 TRKElement* TRKFactory::createSampler(Element& element) {

@@ -25,7 +25,8 @@ public:
   ///@{
   virtual void Track(TRKDrift*      el, TRKBunch* bunch);
   virtual void Track(TRKDipole*     el, TRKBunch* bunch);
-  virtual void Track(TRKBend*       el, TRKBunch* bunch);
+  virtual void Track(TRKSBend*      el, TRKBunch* bunch);
+  virtual void Track(TRKRBend*      el, TRKBunch* bunch);
   virtual void Track(TRKQuadrupole* el, TRKBunch* bunch);
   virtual void Track(TRKSextupole*  el, TRKBunch* bunch);
   virtual void Track(TRKOctupole*   el, TRKBunch* bunch);

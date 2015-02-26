@@ -5,7 +5,8 @@
 
 class TRKBunch;
 //class TRKDrift;
-class TRKBend;
+class TRKSBend;
+class TRKRBend;
 class TRKDipole;
 class TRKQuadrupole;
 class TRKSextupole;
@@ -35,7 +36,8 @@ public :
   ///@{
   //void         Track(TRKElement*    el, TRKBunch* bunch);
   virtual void Track(TRKDrift*      el, TRKBunch* bunch)=0;
-  virtual void Track(TRKBend*       el, TRKBunch* bunch)=0;
+  virtual void Track(TRKSBend*      el, TRKBunch* bunch)=0;
+  virtual void Track(TRKRBend*      el, TRKBunch* bunch)=0;
   virtual void Track(TRKDipole*     el, TRKBunch* bunch)=0;
   virtual void Track(TRKQuadrupole* el, TRKBunch* bunch)=0;
   virtual void Track(TRKSextupole*  el, TRKBunch* bunch)=0;

@@ -1,5 +1,5 @@
-#ifndef TRKBend_h
-#define TRKBend_h
+#ifndef TRKRBend_h
+#define TRKRBend_h
 
 #include "TRKElement.hh"
 
@@ -8,16 +8,16 @@
  * 
  * dipole tracking but reference s-position is changed
  */
-class TRKBend : public TRKElement {
+class TRKRBend : public TRKElement {
 private: 
-  /// strength in Tesla/meter
-  double strength;
   /// bending angle in rad
   double angle;
 
 public:
-  TRKBend(double strength, double angle, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
-  ~TRKBend();
+  TRKRBend(double angle, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
+  ~TRKRBend();
+  
+  double GetAngle()const{return angle;}
   
   virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
   
@@ -26,7 +26,7 @@ protected:
   virtual void Print(std::ostream& out) const;
 
 private:
-  TRKBend(); ///< not implemented
+  TRKRBend(); ///< not implemented
 };
 
 #endif

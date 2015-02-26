@@ -75,7 +75,11 @@ void TRKThin::Track(TRKDipole* el, TRKBunch* bunch) {
   Track((TRKDrift*)el,bunch);
 }
 
-void TRKThin::Track(TRKBend* el, TRKBunch* bunch) { 
+void TRKThin::Track(TRKSBend* el, TRKBunch* bunch) { 
+  return Track((TRKDrift*)el,bunch);
+}
+
+void TRKThin::Track(TRKRBend* el, TRKBunch* bunch) { 
   return Track((TRKDrift*)el,bunch);
 }
 
