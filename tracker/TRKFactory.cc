@@ -145,6 +145,9 @@ TRKAperture* TRKFactory::createAperture(Element& element) {
   if (dontuseaperture) {
     return NULL; //no aperture at all - will never be check with this setting so no seg fault
   }
+  else if (element.aper != 0) {
+    return new TRKApertureCircular(element.aper);
+  }
   else if ((element.aperX != 0) && (element.aperY !=0)) {
     //must have been specified - now check whether one of the asymmetric aperture types is specified
     if (aperturetype == TRK::RECTANGULAR) {
