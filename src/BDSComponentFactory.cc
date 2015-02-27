@@ -886,15 +886,15 @@ BDSAcceleratorComponent* BDSComponentFactory::createQuad(){
 			     _element.spec ) );
   */
   G4Material* vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
-  //G4Material* beamPipeMaterial = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName());
+
   return (new BDSQuadrupole( _element.name,
 			     _element.l * CLHEP::m,
 			     bPrime,
 			     BDS::DetermineBeamPipeType(_element.apertureType),
-			     _element.aper1,
-			     _element.aper2,
-			     _element.aper3,
-			     _element.aper4,
+			     _element.aper1*CLHEP::m,
+			     _element.aper2*CLHEP::m,
+			     _element.aper3*CLHEP::m,
+			     _element.aper4*CLHEP::m,
 			     vacuumMaterial,
 			     _element.beampipeThickness*CLHEP::m,
 			     PrepareBeamPipeMaterial(_element)));
