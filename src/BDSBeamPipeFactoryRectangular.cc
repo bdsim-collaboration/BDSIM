@@ -6,6 +6,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
 #include "BDSSDManager.hh"
+#include "BDSUtilities.hh"            // for calculateorientation
 
 #include "globals.hh"                 // geant4 globals / types
 #include "G4Box.hh"
@@ -430,12 +431,6 @@ void BDSBeamPipeFactoryRectangular::CreateGeneralAngledSolids(G4String      name
 
 void BDSBeamPipeFactoryRectangular::CalculateOrientations(G4double angleIn, G4double angleOut)
 {
-  if (angleIn < 0)
-    {orientationIn = 1;}
-  else
-    {orientationIn = -1;}
-  if (angleOut < 0)
-    {orientationOut = 1;}
-  else
-    {orientationOut = -1;}
+  orientationIn  = BDS::CalculateOrientation(angleIn);
+  orientationOut = BDS::CalculateOrientation(angleOut);
 }
