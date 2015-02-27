@@ -33,7 +33,7 @@ void BDSTeleporterStepper::AdvanceHelix( const G4double  yIn[],
   // FOR NOW - do it to everything every time
   //           will likely only take one step...
   // keep a record of the turn number for this particle
-  // only adjust it's position if the particle on this turn
+  // only adjust its position if the particle on this turn
   // hasn't been shifted already - ie its turn number
   // won't have been registered in the vector member
   // turnnumberrecord
@@ -41,7 +41,7 @@ void BDSTeleporterStepper::AdvanceHelix( const G4double  yIn[],
   
   
 #ifdef BDSDEBUG
-  G4cout << " Telporter Stepper" << G4endl;
+  G4cout << " Teleporter Stepper" << G4endl;
   G4cout << "turnstaken " << turnstaken << G4endl;
 #endif
   //if (turnstaken != turnnumberrecord.back())
