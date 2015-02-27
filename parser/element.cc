@@ -130,6 +130,9 @@ void Element::flush() {
   aper4 = 0;
   apertureType = "";
   beampipeMaterial = "";
+
+  // component size - for stuff outside beampipe if applicable
+  boxSize = 0;
   
   // old aperture model
   aper = 0;
@@ -206,6 +209,7 @@ double Element::property_lookup(char* property_name)const{
   if(!strcmp(property_name,"aper2")) return aper2;
   if(!strcmp(property_name,"aper3")) return aper3;
   if(!strcmp(property_name,"aper4")) return aper4;
+  if(!strcmp(property_name,"boxSize")) return boxSize;
   if(!strcmp(property_name,"outR")) return outR;
   if(!strcmp(property_name,"inR")) return inR;
   if(!strcmp(property_name,"bpRad")) return bpRad;

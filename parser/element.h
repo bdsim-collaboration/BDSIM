@@ -27,6 +27,8 @@ struct Element {
   double aper1, aper2, aper3, aper4; // new aperture model
   std::string apertureType;
   std::string beampipeMaterial;
+
+  double boxSize; //outer *diameter / full width* of component
   
   double tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut;
   double tscint, twindow, bmapZOffset; 

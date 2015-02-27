@@ -587,6 +587,9 @@ parameters:
 		  if(!strcmp($1->name,"aper4") ||!strcmp($1->name,"aperture4") ) 
 		    { params.aper4 = $3; params.aper4set = 1;}
 		    else
+		  if(!strcmp($1->name,"boxSize")) 
+		    { params.boxSize = $3; params.boxSizeset = 1;}
+		    else
 		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
 		    else
                   if(!strcmp($1->name,"inR") ) { params.inR = $3; params.inRset = 1;}
@@ -835,6 +838,9 @@ parameters:
 		    else
 		  if(!strcmp($1->name,"aper4") ||!strcmp($1->name,"aperture4") ) 
 		    { params.aper4 = $3; params.aper4set = 1;}
+		    else
+		  if(!strcmp($1->name,"boxSize")) 
+		    { params.boxSize = $3; params.boxSizeset = 1;}
 		    else
 		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
 		    else

@@ -77,6 +77,9 @@ void Parameters::flush() {
   apertureType=""; apertureTypeset = 0;
   beampipeMaterial = ""; beampipeMaterialset = 0;
 
+  // component size
+  boxSize = 0; boxSizeset = 0;
+
   B  = 0; Bset  = 0;
   k0 = 0; k0set = 0;
   k1 = 0; k1set = 0;
@@ -175,6 +178,9 @@ void Parameters::inherit_properties(struct Element& e)
   if(!aper4set) { aper4 = e.aper4; aper4set = 1;}
   if(!apertureTypeset) { apertureType = e.apertureType; apertureTypeset = 1;}
   if(!beampipeMaterialset) { beampipeMaterial = e.beampipeMaterial; beampipeMaterialset = 1;}
+
+  // component size
+  if(!boxSizeset) { boxSize = e.boxSize; boxSizeset = 1;}
   
   if(!inRset) { inR = e.inR; inRset = 1; }
   if(!bpRadset) { bpRad = e.bpRad; bpRadset = 1; }
