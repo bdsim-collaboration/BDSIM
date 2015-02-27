@@ -413,12 +413,19 @@ void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
     {material = BDSMaterials::Instance()->GetMaterial("Iron");}
   
   G4double lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
-  G4double outerRadius  = itsOuterR;
-  if(itsOuterR==0) outerRadius = BDSGlobalConstants::Instance()->GetComponentBoxSize()*0.5;
+  G4double outerRadius  = boxSize*0.5;
   if (beampipe->ContainerIsCircular())
     {
       // simple circular beampipe - no need for a subtraction solid
       G4double innerRadius = beampipe->GetContainerRadius()+lengthSafety;
+      
+      // check outerRadius is bigger
+      if ((boxSize*0.5) < innerRadius)
+	{
+	  G4cout << __METHOD_NAME__ << " - warning - beampipe is bigger than the boxSize" << G4endl
+		 << "setting boxSize to be just big enough to contain beampipe " << G4endl;
+	  outerRadius = innerRadius+1*CLHEP::cm;
+	}
       itsOuterLogicalVolume = new G4LogicalVolume( new G4Tubs(itsName+"_outer_solid",
 							      innerRadius,
 							      outerRadius,
@@ -439,6 +446,10 @@ void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
 	{outerRadius = maxX + 1*CLHEP::cm;} //minimum extra size
       if (outerRadius < maxY)
 	{outerRadius = maxY + 1*CLHEP::cm;}
+      G4double hypotenuse = sqrt(maxX*maxX + maxY*maxY);
+      if (outerRadius < hypotenuse)
+	{outerRadius = hypotenuse + 1*CLHEP::cm;}
+      
       itsOuterLogicalVolume =
 	new G4LogicalVolume( new G4SubtractionSolid (itsName+"_outer_solid",
 						     new G4Tubs(itsName+"_outer_solid+cylinder",
