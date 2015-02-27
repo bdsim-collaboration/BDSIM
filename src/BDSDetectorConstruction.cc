@@ -360,15 +360,6 @@ void BDSDetectorConstruction::BuildWorld(){
 void BDSDetectorConstruction::ComponentPlacement(){
   if (verbose || debug) G4cout<<"starting placement procedure "<<G4endl;
   
-  // sensitive detectors
-  //G4SDManager* SDman = G4SDManager::GetSDMpointer();
-  //you only need a single instance of your sensitive detector class
-  //attach to as many logical volumes as you want
-  //note each new sensitive detector invokes a slow string compare
-  //while registering with sd manager. ok if only a few SD types.
-  //BDSEnergyCounterSD* ECounter    = new BDSEnergyCounterSD("base_ec");
-  //SDman->AddNewDetector(ECounter);
-
   G4ThreeVector TargetPos;          // position of component
   G4ThreeVector rlast = G4ThreeVector(0.,0.,0.);  // edge of last element coordinates
   G4ThreeVector rtot(0.,0.,0.);     // position of component, often same as TargetPos

@@ -127,26 +127,14 @@ void BDSQuadrupole::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)
 {
   // build magnet (geometry + magnetic field)
   // according to quad type
-    
   G4String geometry = BDSGlobalConstants::Instance()->GetMagnetGeometry();
   
   if(geometry =="standard") 
     BuildStandardOuterLogicalVolume(); // standard - quad with poles and pockets
   else if(geometry =="cylinder")
     BDSMultipole::BuildOuterLogicalVolume(false);
-  //BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
   else //default - cylinder - standard
     BDSMultipole::BuildOuterLogicalVolume(false);
-  //BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
-  /*
-  // define sensitive volumes for hit generation
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-#ifdef BDSDEBUG
-    G4cout << "BDSQuadrupole.cc:> setting sensitive outer volume" << G4endl;
-#endif
-    AddSensitiveVolume(itsOuterLogicalVolume);
-    }*/
-  //AddSensitiveVolume(itsOuterLogicalVolume);
 
   //remember if it's vacuum, it won't be built
   if (itsOuterLogicalVolume)
