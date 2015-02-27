@@ -64,6 +64,7 @@ private:
   /// Utility function to prepare beampipe material
   G4Material*  PrepareBeamPipeMaterial(Element& element);
   G4Material*  PrepareVacuumMaterial(Element& element);
+  G4double     PrepareBoxSize(Element& element);
   BDSBeamPipe* PrepareBeamPipe(Element& element);
 
 };

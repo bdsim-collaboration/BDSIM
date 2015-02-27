@@ -86,6 +86,7 @@ public:
 		G4Material*     vacuumMaterial,
 		G4double        beamPipeThickness,
 		G4Material*     beamPipeMaterial,
+		G4double        boxSize,
 		G4String        outerMaterial="",
 		G4String        tunnelMaterial="",
 		G4double        tunnelRadius=0,
@@ -150,8 +151,7 @@ protected:
 
   G4ChordFinder* itsChordFinder;
   G4MagneticField* itsOuterMagField;
-
-
+  
   //for beampipe construction
   BDSBeamPipeType beamPipeType;
   G4double        aper1;
@@ -161,9 +161,12 @@ protected:
   G4Material*     vacuumMaterial;
   G4double        beamPipeThickness;
   G4Material*     beamPipeMaterial;
-
+  
   //the constructed beampipe
   BDSBeamPipe*    beampipe;
+
+  //for outer volume construction
+  G4double        boxSize;
   
   // G4double itsStartOuterR;
   // G4double itsEndOuterR;

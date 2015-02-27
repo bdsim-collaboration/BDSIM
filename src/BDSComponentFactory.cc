@@ -1404,6 +1404,16 @@ G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element& /*element*/)
   return BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
 }
 
+G4double BDSComponentFactory::PrepareBoxSize(Element& element)
+{
+  G4double boxSize = element.boxSize;
+  if (boxSize < 1e-6)
+    {//boxSize not set - use global option as default
+      boxSize = BDSGlobalConstants::Instance()->GetComponentBoxSize();
+    }
+  return boxSize;
+}
+
 BDSBeamPipe* BDSComponentFactory::PrepareBeamPipe(Element& element)
 {
   BDSBeamPipe* pipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(BDS::DetermineBeamPipeType(element),

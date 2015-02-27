@@ -38,6 +38,7 @@ public:
 	   G4Material*     vacuumMaterial,
 	   G4double        beamPipeThickness,
 	   G4Material*     beamPipeMaterial,
+	   G4double        boxSize,
 	   G4String        outerMaterial="",
 	   G4String        tunnelMaterial="",
 	   G4double        tunnelRadius=0,

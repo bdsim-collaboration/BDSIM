@@ -128,6 +128,7 @@ BDSMultipole::BDSMultipole( G4String        name,
 			    G4Material*     vacuumMaterialIn,
 			    G4double        beamPipeThicknessIn,
 			    G4Material*     beamPipeMaterialIn,
+			    G4double        boxSizeIn,
 			    G4String        outerMaterial,
 			    G4String        tunnelMaterial,
 			    G4double        tunnelRadius,
@@ -144,7 +145,8 @@ BDSMultipole::BDSMultipole( G4String        name,
 			  tunnelOffsetX),
   itsInnerIronRadius(0),beamPipeType(beamPipeTypeIn),aper1(aper1In),aper2(aper2In),
   aper3(aper3In),aper4(aper4In),vacuumMaterial(vacuumMaterialIn),
-  beamPipeThickness(beamPipeThicknessIn),beamPipeMaterial(beamPipeMaterialIn)
+  beamPipeThickness(beamPipeThicknessIn),beamPipeMaterial(beamPipeMaterialIn),
+  boxSize(boxSizeIn)
 {
   ConstructorInit();
 }
