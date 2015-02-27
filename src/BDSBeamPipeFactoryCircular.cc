@@ -34,13 +34,14 @@ BDSBeamPipeFactoryCircular* BDSBeamPipeFactoryCircular::Instance()
 
 BDSBeamPipeFactoryCircular::BDSBeamPipeFactoryCircular()
 {
-  lengthSafety   = BDSGlobalConstants::Instance()->GetLengthSafety();
-  vacuumSolid    = NULL;
-  beamPipeSolid  = NULL;
-  containerSolid = NULL;
-  vacuumLV       = NULL;
-  beamPipeLV     = NULL;
-  containerLV    = NULL;
+  lengthSafety              = BDSGlobalConstants::Instance()->GetLengthSafety();
+  vacuumSolid               = NULL;
+  beamPipeSolid             = NULL;
+  containerSolid            = NULL;
+  containerSubtractionSolid = NULL;
+  vacuumLV                  = NULL;
+  beamPipeLV                = NULL;
+  containerLV               = NULL;
 }
 
 BDSBeamPipeFactoryCircular::~BDSBeamPipeFactoryCircular()
@@ -69,14 +70,14 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,     
   vacuumSolid   = new G4Tubs(nameIn + "_vacuum_solid",      // name
 			     0,                             // inner radius
 			     aper1In,                       // outer radius
-			     lengthIn*0.5,                  // half length
+			     lengthIn*0.5-2*lengthSafety,   // half length
 			     0,                             // rotation start angle
 			     CLHEP::twopi);                 // rotation finish angle
   
   beamPipeSolid = new G4Tubs(nameIn + "_pipe_solid",        // name
 			     aper1In + lengthSafety,        // inner radius + length safety to avoid overlaps
 			     aper1In + beamPipeThicknessIn, // outer radius
-			     lengthIn*0.5,                  // half length
+			     (lengthIn*0.5)-2*lengthSafety, // half length
 			     0,                             // rotation start angle
 			     CLHEP::twopi);                 // rotation finish angle
   
@@ -84,7 +85,7 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,     
   containerSolid = new G4Tubs(nameIn + "_container_solid",  // name
 			      0,                            // inner radius
 			      containerRadius,              // outer radius
-			      lengthIn*0.5,                 // half length
+			      (lengthIn*0.5)-lengthSafety,  // half length
 			      0,                            // rotation start angle
 			      CLHEP::twopi);                // rotation finish angle
   
@@ -235,6 +236,16 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  // prepare a longer container subtraction solid
+  // doesn't have to be angled as it's only used for transverse subtraction
+  containerSubtractionSolid = new G4Tubs(nameIn + "_container_sub_solid",// name
+					 0,                              // inner radius
+					 containerRadiusIn,              // outer radius
+					 lengthIn,                       // full length for unambiguous subtraction
+					 0,                              // rotation start angle
+					 CLHEP::twopi);                  // rotation finish angle
+  
+  
   // build the logical volumes
   vacuumLV   = new G4LogicalVolume(vacuumSolid,
 				   vacuumMaterialIn,
@@ -316,7 +327,9 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
   std::pair<double,double> extZ = std::make_pair(-lengthIn*0.5,lengthIn*0.5);
   
   // build the BDSBeamPipe instance and return it
-  BDSBeamPipe* aPipe = new BDSBeamPipe(containerSolid,containerLV,extX,extY,extZ,vacuumLV,true,containerRadiusIn);
+  BDSBeamPipe* aPipe = new BDSBeamPipe(containerSolid,containerLV,extX,extY,extZ,
+				       containerSubtractionSolid,
+				       vacuumLV,true,containerRadiusIn);
 
   // REGISTER all lvs
   aPipe->RegisterLogicalVolume(vacuumLV); //using geometry component base class method

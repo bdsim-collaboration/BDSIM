@@ -95,6 +95,7 @@ private:
   G4VSolid*        vacuumSolid;
   G4VSolid*        beamPipeSolid;
   G4VSolid*        containerSolid;
+  G4VSolid*        containerSubtractionSolid;
   G4LogicalVolume* vacuumLV;
   G4LogicalVolume* beamPipeLV;
   G4LogicalVolume* containerLV;
