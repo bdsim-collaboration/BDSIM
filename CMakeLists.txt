@@ -435,3 +435,6 @@ include(CTest)
 include(bdsim_test_macros)
 add_subdirectory(examples)
 add_subdirectory(test)
+
+# Manual
+add_subdirectory(docs)
