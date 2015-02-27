@@ -149,6 +149,9 @@ if(USE_ROOT)
     message(STATUS "ROOT support ON")
 endif()
 
+# find Boost
+find_package(Boost REQUIRED)
+
 # add xercesc include path (possibly not needed with Geant4 CMake config):
 if(USE_AFS)
    if(APPLE)
