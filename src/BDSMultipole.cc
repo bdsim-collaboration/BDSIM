@@ -221,7 +221,11 @@ void BDSMultipole::BuildBeampipe(G4String /*materialName*/)
 							    vacuumMaterial,
 							    beamPipeThickness,
 							    beamPipeMaterial);
+  BeamPipeCommonTasks();
+}
 
+void BDSMultipole::BeamPipeCommonTasks()
+{
   //actual beam pipe ->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
   // SET FIELD
   beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false);
@@ -254,7 +258,6 @@ void BDSMultipole::BuildBeampipe(G4String /*materialName*/)
 				   itsMarkerLogicalVolume,    // its mother  volume
 				   false,                     // no boolean operation
 				   0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
-  
 }
 
 void BDSMultipole::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
@@ -399,11 +402,10 @@ void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
     {return;} // no need to create another volume
   
   // test beampipe instance exists / has been built already
-  if (!beampipe)
-    {
-      G4cerr << __METHOD_NAME__ << " no beampipe has been built - can't wrap around it" << G4endl;
-      exit(1);
-    }
+  if (!beampipe){
+    G4cerr << __METHOD_NAME__ << " no beampipe has been built - can't wrap around it" << G4endl;
+    exit(1);
+  }
 
   // build the logical volume
   G4Material* material;
@@ -452,7 +454,7 @@ void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
       
       itsOuterLogicalVolume =
 	new G4LogicalVolume( new G4SubtractionSolid (itsName+"_outer_solid",
-						     new G4Tubs(itsName+"_outer_solid+cylinder",
+						     new G4Tubs(itsName+"_outer_solid_cylinder",
 								0.0,  // solid cylinder for unambiguous subtraction
 								outerRadius,
 								itsLength*0.5 - 2.0*lengthSafety, // to ensure it's inside the marker volume

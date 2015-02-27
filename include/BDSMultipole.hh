@@ -119,6 +119,7 @@ protected:
   virtual void BuildBeampipe(G4String materialName = ""); 
   /// Builds a tapered beam pipe (only used for drifts at the moment)
   //void BuildBeampipe(G4double startAper, G4double endAper, G4String materialName = "");
+  void BeamPipeCommonTasks();
 
   void BuildOuterFieldManager(G4int nPoles, G4double poleField, 
 			      G4double phiOffset);
