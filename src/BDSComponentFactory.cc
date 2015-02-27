@@ -1289,7 +1289,7 @@ G4double BDSComponentFactory::PrepareBoxSize(Element& element)
     {//boxSize not set - use global option as default
       boxSize = BDSGlobalConstants::Instance()->GetComponentBoxSize();
     }
-  return boxSize;
+  return boxSize*CLHEP::m;
 }
 
 BDSBeamPipe* BDSComponentFactory::PrepareBeamPipe(Element& element)
