@@ -137,7 +137,7 @@ void BDSQuadrupole::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)
   else //default - cylinder - standard
     BDSMultipole::BuildOuterLogicalVolume(false);
 
-  //remember if it's vacuum, it won't be built
+  //remember if it's vacuum, it won't be built - have to check it's there
   if (itsOuterLogicalVolume)
     {itsOuterLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());}
 }

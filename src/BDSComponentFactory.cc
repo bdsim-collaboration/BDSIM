@@ -452,10 +452,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createRF(){
   }
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
-  //
+BDSAcceleratorComponent* BDSComponentFactory::createSBend()
+{
+  /*
   // geometry
-  //
   G4double aper = _bpRad;
   if( _element.aper > 0 ) aper = _element.aper * CLHEP::m; //Set if aper specified for element
   if( (_element.aperX>0) || (_element.aperY>0)){  //aperX or aperY override aper, aper set to the largest of aperX or aperY
@@ -473,14 +473,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
 #endif
       _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
     }
-  
+  */
   // arc length
   G4double length = _element.l*CLHEP::m;
   G4double magFieldLength = length;
   
-  //
   // magnetic field
-  //
   
   // MAD conventions:
   // 1) a positive bend angle represents a bend to the right, i.e.
@@ -488,11 +486,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
   // 2) a positive K1 = 1/|Brho| dBy/dx means horizontal focusing of
   // positive charges
   // CHECK SIGNS 
-  //
   
-  if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
-    _element.angle=1e-7 * CLHEP::rad;
-  }
+  //if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
+  //  _element.angle=1e-7 * CLHEP::rad;
+  // }
   
   G4double bField;
   if(_element.B != 0) {
@@ -539,6 +536,23 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
       name << _element.name << "_" << i;
       std::string itsname = name.str();
       sbendline->addComponent( new BDSSectorBend( itsname,
+						  semilength,
+						  semiangle,
+						  bField,
+						  bPrime,
+						  BDS::DetermineBeamPipeType(_element.apertureType),
+						  _element.aper1*CLHEP::m,
+						  _element.aper2*CLHEP::m,
+						  _element.aper3*CLHEP::m,
+						  _element.aper4*CLHEP::m,
+						  PrepareVacuumMaterial(_element),
+						  _element.beampipeThickness*CLHEP::m,
+						  PrepareBeamPipeMaterial(_element),
+						  PrepareBoxSize(_element)
+						  ));
+
+      /*
+      sbendline->addComponent( new BDSSectorBend( itsname,
 						  semilength, //NOTE
 						  aper,
 						  FeRad,
@@ -552,8 +566,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
 						  _element.tunnelMaterial,
 						  _element.material,
 						  _element.aperX*CLHEP::m,
-						  _element.aperY*CLHEP::m )
-			       );
+						  _element.aperY*CLHEP::m ));*/
     }
   return sbendline;
 }
@@ -1284,12 +1297,13 @@ G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element& /*element*/)
 
 G4double BDSComponentFactory::PrepareBoxSize(Element& element)
 {
-  G4double boxSize = element.boxSize;
+  G4double boxSize = element.boxSize*CLHEP::m;
   if (boxSize < 1e-6)
     {//boxSize not set - use global option as default
       boxSize = BDSGlobalConstants::Instance()->GetComponentBoxSize();
     }
-  return boxSize*CLHEP::m;
+  // returns in metres
+  return boxSize;
 }
 
 BDSBeamPipe* BDSComponentFactory::PrepareBeamPipe(Element& element)

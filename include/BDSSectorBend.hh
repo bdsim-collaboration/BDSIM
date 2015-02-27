@@ -15,6 +15,24 @@ public:
                 G4double tilt = 0, G4double bGrad=0, 
                 G4String aTunnelMaterial="",
                 G4String aMaterial = "", G4double xAper=0, G4double yAper=0);
+  BDSSectorBend(G4String        nameIn,
+		G4double        lengthIn,
+		G4double        angleIn,
+		G4double        bFieldIn,
+		G4double        bGradIn,
+		BDSBeamPipeType beamPipeType,
+		G4double        aper1,
+		G4double        aper2,
+		G4double        aper3,
+		G4double        aper4,
+		G4Material*     vacuumMaterial,
+		G4double        beamPipeThickness,
+		G4Material*     beamPipeMaterial,
+		G4double        boxSize,
+		G4String        outerMaterial="",
+		G4String        tunnelMaterial="",
+		G4double        tunnelRadius=0,
+		G4double        tunnelOffsetX=0);
   ~BDSSectorBend();
 
   virtual G4double GetChordLength();
