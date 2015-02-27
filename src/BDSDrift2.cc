@@ -1,12 +1,6 @@
 #include "BDSDrift2.hh"
 
-
 #include "globals.hh" // geant4 globals / types
-//#include "G4LogicalVolume.hh"
-//#include "G4Tubs.hh"
-//#include "G4UserLimits.hh"
-//#include "G4VisAttributes.hh"
-//#include "G4VPhysicalVolume.hh"
 #include "G4Material.hh"
 
 #include <list>
@@ -16,11 +10,6 @@
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeType.hh"
-
-//#include <map>
-
-// TEST new drift to test out new beampipe factory
-
 
 BDSDrift2::BDSDrift2 (G4String        nameIn, 
 		      G4double        lengthIn,
@@ -51,6 +40,7 @@ BDSDrift2::BDSDrift2 (G4String        nameIn,
 {;}
 
 void BDSDrift2::Build() {
+  
   BDSBeamPipe* pipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeType,
 								     itsName,
 								     itsLength,
@@ -62,6 +52,6 @@ void BDSDrift2::Build() {
 								     beamPipeThickness,
 								     beamPipeMaterial
 								     );
-
+  
   itsMarkerLogicalVolume = pipe->GetContainerLogicalVolume();
 }
