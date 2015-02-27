@@ -100,6 +100,13 @@ private:
   G4LogicalVolume* beamPipeLV;
   G4LogicalVolume* containerLV;
 
+  /// orientation -1,0,1 value - always use |angle| with trigonometric and then
+  /// multiply by this factor, 0 by default - determine this in one function
+  /// to avoid mistakes
+  G4int orientationIn;
+  G4int orientationOut;
+  void CalculateOrientations(G4double angleIn, G4double angleOut);
+
 };
   
 #endif

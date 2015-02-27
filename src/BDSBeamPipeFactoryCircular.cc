@@ -112,14 +112,11 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledIn(G4String    name
   // test input parameters - set global options as default if not specified
   TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In);
 
-  G4double orientation = 0;
-  if (angleInIn < 0)
-    {orientation = -1;}
-  else
-    {orientation = 1;}
+  CalculateOrientations(angleInIn, 0);
+  
   G4double in_z = cos(fabs(angleInIn)); // calculate components of normal vectors (in the end mag(normal) = 1)
   G4double in_x = sin(fabs(angleInIn)); // note full angle here as it's the entrance angle
-  G4ThreeVector inputface  = G4ThreeVector(orientation*in_x, 0.0, -1.0*in_z); //-1 as pointing down in z for normal
+  G4ThreeVector inputface  = G4ThreeVector(orientationIn*in_x, 0.0, -1.0*in_z); //-1 as pointing down in z for normal
   G4ThreeVector outputface = G4ThreeVector(0.0, 0.0, 1.0);                    // no output face angle
   G4double containerRadius = aper1In + beamPipeThicknessIn + lengthSafety;
   
@@ -146,15 +143,12 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledOut(G4String    nam
   // test input parameters - set global options as default if not specified
   TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In);
 
-  G4double orientation = 0;
-  if (angleOutIn < 0)
-    {orientation = 1;}
-  else
-    {orientation = -1;}
+  CalculateOrientations(0, angleOutIn);
+  
   G4double out_z = cos(fabs(angleOutIn)); // calculate components of normal vectors (in the end mag(normal) = 1)
   G4double out_x = sin(fabs(angleOutIn)); // note full angle here as it's the exit angle
   G4ThreeVector inputface  = G4ThreeVector(0.0, 0.0, -1.0); //-1 as pointing down in z for normal
-  G4ThreeVector outputface = G4ThreeVector(orientation*out_x, 0.0, out_z);               // no output face angle
+  G4ThreeVector outputface = G4ThreeVector(orientationOut*out_x, 0.0, out_z);               // no output face angle
   G4double containerRadius = aper1In + beamPipeThicknessIn + lengthSafety;
   
   CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, beamPipeThicknessIn, inputface, outputface);
@@ -181,21 +175,13 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledInOut(G4String    n
    // test input parameters - set global options as default if not specified
   TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In);
 
-  G4double orientationIn  = 0;
-  G4double orientationOut = 0;
-  if (angleInIn < 0)
-    {orientationIn = -1;}
-  else
-    {orientationIn = 1;}
-  if (angleOutIn < 0)
-    {orientationOut = -1;}
-  else
-    {orientationOut = 1;}
+  CalculateOrientations(angleInIn, angleOutIn);
+  
   G4double in_z  = cos(fabs(angleInIn)); // calculate components of normal vectors (in the end mag(normal) = 1)
   G4double in_x  = sin(fabs(angleInIn)); // note full angle here as it's the exit angle
   G4double out_z = cos(fabs(angleOutIn));
   G4double out_x = sin(fabs(angleOutIn));
-  G4ThreeVector inputface  = G4ThreeVector(-orientationIn*in_x, 0.0, -1.0*in_z); //-1 as pointing down in z for normal
+  G4ThreeVector inputface  = G4ThreeVector(orientationIn*in_x, 0.0, -1.0*in_z); //-1 as pointing down in z for normal
   G4ThreeVector outputface = G4ThreeVector(orientationOut*out_x, 0.0, out_z);               // no output face angle
   G4double containerRadius = aper1In + beamPipeThicknessIn + lengthSafety;
   
@@ -378,4 +364,16 @@ void BDSBeamPipeFactoryCircular::CreateGeneralAngledSolids(G4String      nameIn,
 				 CLHEP::twopi,                 // rotation finish angle
 				 inputfaceIn,                  // input face normal
 				 outputfaceIn);                // rotation finish angle
+}
+
+void BDSBeamPipeFactoryCircular::CalculateOrientations(G4double angleIn, G4double angleOut)
+{
+  if (angleIn < 0)
+    {orientationIn = 1;}
+  else
+    {orientationIn = -1;}
+  if (angleOut < 0)
+    {orientationOut = 1;}
+  else
+    {orientationOut = -1;}
 }
