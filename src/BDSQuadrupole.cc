@@ -142,57 +142,6 @@ void BDSQuadrupole::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)
     {itsOuterLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());}
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////
-// 				Cylindrical geometry					 //
-///////////////////////////////////////////////////////////////////////////////////////////
-
-
-void BDSQuadrupole::BuildCylindricalOuterLogicalVolume()
-{
-  G4double outerRadius = itsOuterR;
-  if(itsOuterR==0) outerRadius = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
-
-  outerRadius = outerRadius/sqrt(2.0); //Why divide by sqrt of 2?
-
-  itsOuterLogicalVolume=
-    new G4LogicalVolume(
-			
-			new G4Tubs(itsName+"_outer_solid",
-				   itsInnerIronRadius,
-				   outerRadius * sqrt(2.0),
-				   itsLength/2,
-				   0,CLHEP::twopi*CLHEP::radian),
-			BDSMaterials::Instance()->GetMaterial("Iron"),
-			itsName+"_outer");
-
-  // insert the outer volume into the marker volume
-  itsPhysiComp = 
-    new G4PVPlacement(
-		      0,                      // no rotation
-		      (G4ThreeVector)0,                      // its position
-		      itsOuterLogicalVolume,  // its logical volume
-		      itsName+"_outer_phys",  // its name
-		      itsMarkerLogicalVolume, // its mother  volume
-		      false,                  // no boolean operation
-		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());                     // copy number
-  
-#ifndef NOUSERLIMITS
-  itsOuterUserLimits =
-    new G4UserLimits("quadrupole cut",itsLength,DBL_MAX,BDSGlobalConstants::Instance()->GetMaxTime(),
-		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
-#endif
-  
-  // color-coding for the pole
-  G4VisAttributes* VisAtt = 
-    new G4VisAttributes(G4Colour(1., 0., 0.));
-  VisAtt->SetForceSolid(true);
-  itsOuterLogicalVolume->SetVisAttributes(VisAtt);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////
-// 				Detailed geometry					 //
-///////////////////////////////////////////////////////////////////////////////////////////
 void BDSQuadrupole::SetVisAttributes()
 {
   itsVisAttributes = new G4VisAttributes(true);
@@ -236,8 +185,6 @@ void BDSQuadrupole::BuildStandardOuterLogicalVolume()
 					router),
 			BDSMaterials::Instance()->GetMaterial("Iron"),
 			itsName+"_outer");
-
- /////////////////////////////////////////////////////////////////
   
   // Defining poles
   G4ThreeVector positionQuad = G4ThreeVector(0,0,0);
@@ -282,8 +229,6 @@ void BDSQuadrupole::BuildStandardOuterLogicalVolume()
     new G4VisAttributes(G4Colour(1., 0., 0.));
   VisAtt->SetForceSolid(true);
   PoleSLV->SetVisAttributes(VisAtt);
-
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////
     
   G4RotationMatrix* rm_outer = new G4RotationMatrix();
   rm_outer->rotateZ(360.0/n_poles/4.0*CLHEP::deg-itsTilt*180.0/CLHEP::pi*CLHEP::degree);
@@ -306,8 +251,4 @@ void BDSQuadrupole::BuildStandardOuterLogicalVolume()
 		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
-}
-
-BDSQuadrupole::~BDSQuadrupole()
-{
 }

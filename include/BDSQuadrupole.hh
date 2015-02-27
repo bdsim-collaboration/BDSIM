@@ -59,8 +59,6 @@ private:
   
   /// quad with poles and pockets
   void BuildStandardOuterLogicalVolume();
-  /// cylinder
-  void BuildCylindricalOuterLogicalVolume();
 
   void SetVisAttributes();
 };
