@@ -74,7 +74,7 @@ BDSQuadrupole::BDSQuadrupole(G4String        name,
 			     G4double        tunnelRadius,
 			     G4double        tunnelOffsetX):
   BDSMultipole(name,length,beamPipeType,aper1,aper2,aper3,aper4,vacuumMaterial,beamPipeThickness,
-	       beamPipeMaterial,outerMaterial,tunnelRadius,tunnelOffsetX),
+	       beamPipeMaterial,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBGrad(bGrad)
 {
   G4String qtype = "cylinder";
