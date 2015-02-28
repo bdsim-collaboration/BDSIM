@@ -30,8 +30,8 @@ public:
 		G4double bGrad, G4double tilt, G4double outR, 
                 std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
 		 G4String aTunnelMaterial="", G4String aMaterial= "", G4String spec="");
-  BDSQuadrupole(G4String        nameIn,
-		G4double        lengthIn,
+  BDSQuadrupole(G4String        name,
+		G4double        length,
 		G4double        bGrad,
 		BDSBeamPipeType beamPipeType,
 		G4double        aper1,
