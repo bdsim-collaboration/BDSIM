@@ -27,20 +27,34 @@ BDSSolenoid::BDSSolenoid(G4String aName, G4double aLength,
   SetOuterRadius(outR);
 }
 
+BDSSolenoid::BDSSolenoid(G4String        name,
+			 G4double        length,
+			 G4double        bField,
+			 BDSBeamPipeType beamPipeType,
+			 G4double        aper1,
+			 G4double        aper2,
+			 G4double        aper3,
+			 G4double        aper4,
+			 G4Material*     vacuumMaterial,
+			 G4double        beamPipeThickness,
+			 G4Material*     beamPipeMaterial,
+			 G4double        boxSize,
+			 G4String        outerMaterial,
+			 G4String        tunnelMaterial,
+			 G4double        tunnelRadius,
+			 G4double        tunnelOffsetX):
+  BDSMultipole(name,length,beamPipeType,aper1,aper2,aper3,aper4,vacuumMaterial,beamPipeThickness,
+	       beamPipeMaterial,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+  itsBField(bField)
+{;}
+
 void BDSSolenoid::Build()
 {
   BDSMultipole::Build();
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
-      G4cerr<<"IncludeIronMagFields option not implemented for solenoid class"<<G4endl;
+      G4cout << __METHOD_NAME__ << "IncludeIronMagFields option not implemented for solenoid class"<<G4endl;
     }
-}
-
-void BDSSolenoid::BuildBeampipe(G4String materialName)
-{
-  BDSMultipole::BuildBeampipe(materialName);
-  itsInnerBeampipeUserLimits->SetMaxAllowedStep(itsLength);
-  itsInnerBPLogicalVolume->SetUserLimits(itsInnerBeampipeUserLimits);
 }
 
 void BDSSolenoid::SetVisAttributes()
@@ -61,8 +75,4 @@ void BDSSolenoid::BuildBPFieldAndStepper()
   BDSSolenoidStepper* solenoidStepper = new BDSSolenoidStepper(itsEqRhs);
   solenoidStepper->SetBField(itsBField);
   itsStepper = solenoidStepper;
-}
-
-BDSSolenoid::~BDSSolenoid()
-{
 }

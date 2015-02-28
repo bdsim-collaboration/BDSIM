@@ -16,8 +16,6 @@
 #ifndef __BDSSOLENOID_H
 #define __BDSSOLENOID_H
 
-//#define _USE_GEANT4_STEPPER_
-
 #include "globals.hh"
 
 #include "BDSMultipole.hh"
@@ -31,14 +29,29 @@ public:
               std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
               G4String aTunnelMaterial="",
 	      G4String aMaterial= "");
-  ~BDSSolenoid();
+  BDSSolenoid(G4String        name,
+	      G4double        length,
+	      G4double        bField,
+	      BDSBeamPipeType beamPipeType,
+	      G4double        aper1,
+	      G4double        aper2,
+	      G4double        aper3,
+	      G4double        aper4,
+	      G4Material*     vacuumMaterial,
+	      G4double        beamPipeThickness,
+	      G4Material*     beamPipeMaterial,
+	      G4double        boxSize,
+	      G4String        outerMaterial="",
+	      G4String        tunnelMaterial="",
+	      G4double        tunnelRadius=0,
+	      G4double        tunnelOffsetX=0);
+  ~BDSSolenoid(){;};
 
 private:
   G4double itsBField;
 
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
-  virtual void BuildBeampipe(G4String materialName);
 
   virtual void SetVisAttributes();
 };

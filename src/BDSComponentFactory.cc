@@ -985,28 +985,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 			  _element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, tunnelOffsetX, _element.tunnelCavityMaterial));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createSolenoid(){
-
-  //
-  // geometry
-  //
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  
-  G4double FeRad = aper+ _bpThick;
-  
-  if( _element.outR < aper/CLHEP::m)
-    {
-#ifdef BDSDEBUG
-      G4cout << _element.name << ": outer radius smaller than aperture: "
-	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cout << _element.name << ": setting outer radius to default = "
-	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
-#endif
-      _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
-    }
-  
-  //
+BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
+{
   // magnetic field
   //
   // B = B/Brho * Brho = ks * Brho
@@ -1028,13 +1008,11 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid(){
 	 << " ks= " << _element.ks << " m^-1"
 	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"
 	 << " B= " << bField/CLHEP::tesla << " T"
-	 << " aper= " << aper/CLHEP::m << " m"
-	 << " outR= " << _element.outR << " m"
-	 << " FeRad= " << FeRad/CLHEP::m << " m"
 	 << " tunnel material " << _element.tunnelMaterial
 	 << " material= " << _element.material
 	 << G4endl;
 #endif
+  /*
   return (new BDSSolenoid( _element.name,
 			   _element.l * CLHEP::m,
 			   aper,
@@ -1045,7 +1023,19 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid(){
 			   _element.blmLocTheta,
 			   _element.tunnelMaterial,
 			   _element.material
-			   ) );
+			   ) );*/
+  return (new BDSSolenoid( _element.name,
+			   _element.l * CLHEP::m,
+			   bField,
+			   BDS::DetermineBeamPipeType(_element.apertureType),
+			   _element.aper1*CLHEP::m,
+			   _element.aper2*CLHEP::m,
+			   _element.aper3*CLHEP::m,
+			   _element.aper4*CLHEP::m,
+			   PrepareVacuumMaterial(_element),
+			   _element.beampipeThickness*CLHEP::m,
+			   PrepareBeamPipeMaterial(_element),
+			   PrepareBoxSize(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
