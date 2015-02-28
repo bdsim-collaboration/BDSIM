@@ -234,13 +234,13 @@ void BDSSectorBend::BuildBeampipe(G4String /*materialName*/)
   BeamPipeCommonTasks(); //from bdsmultipole;
 }
 
-void BDSSectorBend::BuildCylindricalOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
+void BDSSectorBend::BuildCylindricalOuterLogicalVolume(G4bool outerMaterialIsVacuum)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   // check if outer volume is required
-  if (OuterMaterialIsVacuum)
+  if (outerMaterialIsVacuum)
     {return;} // no need to create another volume
 
   // test beampipe instance exists / has been built already
@@ -255,19 +255,18 @@ void BDSSectorBend::BuildCylindricalOuterLogicalVolume(G4bool OuterMaterialIsVac
     { material = BDSMaterials::Instance()->GetMaterial(itsMaterial);}
   else
     { material = BDSMaterials::Instance()->GetMaterial("Iron");}
-  if(OuterMaterialIsVacuum)
+  if(outerMaterialIsVacuum)
     { material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
 
   G4double lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
   G4double outerRadius  = boxSize*0.5;
-  G4cout << " TEST " << outerRadius/CLHEP::mm << " mm" << G4endl;
   if (beampipe->ContainerIsCircular())
     {
       // simple circular beampipe - no need for a subtraction solid
       G4double innerRadius = beampipe->GetContainerRadius()+lengthSafety;
       
       // check outerRadius is bigger
-      if ((boxSize*0.5) < innerRadius)
+      if (outerRadius < innerRadius)
 	{
 	  G4cout << __METHOD_NAME__ << " - warning - beampipe is bigger than the boxSize" << G4endl
 		 << "setting boxSize to be just big enough to contain beampipe " << G4endl;
