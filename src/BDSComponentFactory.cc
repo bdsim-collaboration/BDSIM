@@ -454,42 +454,17 @@ BDSAcceleratorComponent* BDSComponentFactory::createRF(){
 
 BDSAcceleratorComponent* BDSComponentFactory::createSBend()
 {
-  /*
-  // geometry
-  G4double aper = _bpRad;
-  if( _element.aper > 0 ) aper = _element.aper * CLHEP::m; //Set if aper specified for element
-  if( (_element.aperX>0) || (_element.aperY>0)){  //aperX or aperY override aper, aper set to the largest of aperX or aperY
-    aper=std::max(_element.aperX,_element.aperY);
-  }
-  G4double FeRad = aper + _bpThick;
-  
-  if( _element.outR < aper/CLHEP::m)
-    {
-#ifdef BDSDEBUG
-      G4cout << _element.name << ": outer radius smaller than aperture: "
-	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cout << _element.name << ": setting outer radius to default = "
-	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
-#endif
-      _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
-    }
-  */
   // arc length
   G4double length = _element.l*CLHEP::m;
   G4double magFieldLength = length;
   
   // magnetic field
-  
   // MAD conventions:
   // 1) a positive bend angle represents a bend to the right, i.e.
   // towards negative x values (even for negative _charges??)
   // 2) a positive K1 = 1/|Brho| dBy/dx means horizontal focusing of
   // positive charges
   // CHECK SIGNS 
-  
-  //if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
-  //  _element.angle=1e-7 * CLHEP::rad;
-  // }
   
   G4double bField;
   if(_element.B != 0) {
@@ -508,13 +483,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend()
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
-  //Should keep the correct geometry, therefore keep dipole withe zero angle.
-  if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) { // not possible due to check earlier - JS
-    return createDrift();
-  }
 
   //calculate number of sbends to split parent into
-
   //if maximum distance between arc path and straight path larger than 1mm, split sbend into N chunks,
   //this also works when maximum distance is less than 1mm as there will just be 1 chunk!
   double aperturePrecision = 1.0; // in mm
@@ -792,29 +762,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createQuad()
 			     PrepareBoxSize(_element)));			     
 }  
   
-BDSAcceleratorComponent* BDSComponentFactory::createSextupole(){
-  //
-  // geometry
-  //
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  G4double FeRad = aper + _bpThick;
+BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
+{
   
-  if( _element.outR < aper/CLHEP::m)
-    {
-#ifdef BDSDEBUG
-      G4cout << _element.name << ": outer radius smaller than aperture: "
-	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cout << _element.name << ": setting outer radius to default = "
-	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
-#endif
-      _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
-    }
-  
-  //
-  // magnetic field
-  //
-  
+  // magnetic field 
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
   // brho is in Geant4 units, but k2 is not -> multiply k2 by m^-3
   G4double bDoublePrime = - _brho * (_element.k2 / CLHEP::m3);
@@ -827,14 +778,11 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole(){
 	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
 	 << " B''= " << bDoublePrime/(CLHEP::tesla/CLHEP::m2) << "T/m^2"
 	 << " tilt= " << _element.tilt << "rad"
-	 << " aper= " << aper/CLHEP::m << "m"
-	 << " outR= " << _element.outR << "m"
-	 << " FeRad= " << FeRad/CLHEP::m << "m"
 	 << " tunnel material " << _element.tunnelMaterial
 	 << " material= " << _element.material
 	 << G4endl;
 #endif
-  
+  /*
   return (new BDSSextupole( _element.name,
 			    _element.l * CLHEP::m,
 			    aper,
@@ -846,6 +794,20 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole(){
 			    _element.blmLocTheta,
 			    _element.tunnelMaterial,
 			    _element.material ) );
+  */
+  return (new BDSSextupole( _element.name,
+			    _element.l * CLHEP::m,
+			    bDoublePrime,
+			    BDS::DetermineBeamPipeType(_element.apertureType),
+			    _element.aper1*CLHEP::m,
+			    _element.aper2*CLHEP::m,
+			    _element.aper3*CLHEP::m,
+			    _element.aper4*CLHEP::m,
+			    PrepareVacuumMaterial(_element),
+			    _element.beampipeThickness*CLHEP::m,
+			    PrepareBeamPipeMaterial(_element),
+			    PrepareBoxSize(_element)));	
+  
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createOctupole(){
