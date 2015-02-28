@@ -106,7 +106,7 @@ private:
 
 protected:
   virtual void BuildMarkerLogicalVolume();
-  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=true);
+  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
   /// Standard beam pipe
   // protected since called by BDSDrift::BuildBeampipe, change to private in future whenever possible
   virtual void BuildBeampipe(G4String materialName = ""); 
