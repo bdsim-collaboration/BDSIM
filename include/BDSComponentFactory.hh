@@ -6,6 +6,7 @@
 #include "parser/element.h"
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamPipe.hh"
+#include "BDSBeamPipeInfo.hh"
 
 class ElementList; 
 
@@ -61,11 +62,12 @@ private:
   BDSAcceleratorComponent* createTerminator();
   BDSAcceleratorComponent* createTeleporter();
 
-  /// Utility function to prepare beampipe material
+  /// Utility function to prepare beampipe
   G4Material*  PrepareBeamPipeMaterial(Element& element);
   G4Material*  PrepareVacuumMaterial(Element& element);
   G4double     PrepareBoxSize(Element& element);
   BDSBeamPipe* PrepareBeamPipe(Element& element);
+  beamPipeInfo PrepareBeamPipeInfo(Element& element);
 
 };
 #endif

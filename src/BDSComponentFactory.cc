@@ -1250,3 +1250,17 @@ BDSBeamPipe* BDSComponentFactory::PrepareBeamPipe(Element& element)
 								     );
   return pipe;
 }
+
+beamPipeInfo BDSComponentFactory::PrepareBeamPipeInfo(Element& element)
+{
+  beamPipeInfo info;
+  info.beamPipeType      = BDS::DetermineBeamPipeType(element);
+  info.aper1             = element.aper1*CLHEP::m;
+  info.aper2             = element.aper2*CLHEP::m;
+  info.aper3             = element.aper3*CLHEP::m;
+  info.aper4             = element.aper4*CLHEP::m;
+  info.vacuumMaterial    = PrepareVacuumMaterial(element);
+  info.beamPipeThickness = element.beampipeThickness*CLHEP::m;
+  info.beamPipeMaterial  = PrepareBeamPipeMaterial(element);
+  return info;
+}
