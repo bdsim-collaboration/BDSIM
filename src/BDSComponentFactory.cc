@@ -528,82 +528,52 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend()
   return sbendline;
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
-  //
-  // geometry
-  //
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  G4double FeRad = aper + _bpThick;
-  
-  if( _element.outR < aper/CLHEP::m)
-    {
-#ifdef BDSDEBUG
-      G4cout << _element.name << ": outer radius smaller than aperture: "
-	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cout << _element.name << ": setting outer radius to default = "
-	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
-#endif
-      _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
-    }
-  
-  G4double length = _element.l*CLHEP::m; //geometrical length
-  G4double magFieldLength = 2*std::min ( //length of magnetic field
-					((_element.l/_element.angle)*sin(_element.angle/2)
-					 - fabs(cos(_element.angle/2))*_element.outR*tan(_element.angle/2)/2), 
-					((_element.l/_element.angle)*sin(_element.angle/2)
-					 + fabs(cos(_element.angle/2))*_element.outR*tan(_element.angle/2)/2)
-					)*CLHEP::m;
+BDSAcceleratorComponent* BDSComponentFactory::createRBend()
+{
+  // calculate length of central straight length and edge sections
+  // unfortunately, this has to be duplicated here as we need to
+  // calculated the magnetic field length (less than the full length)
+  // in case we need to calculate the field
+  G4double outerRadius = PrepareBoxSize(_element)*0.5;
+  G4double angle       = _element.angle;
+  G4double chordLength = _element.l*CLHEP::m;
+  G4double straightSectionChord = outerRadius / (tan(0.5*fabs(angle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(angle))) );
+  G4double magFieldLength = chordLength - (2.0*straightSectionChord);
 
-  G4double outR = _element.outR*CLHEP::m;
-  G4double itsAngle = _element.angle;
-  G4double b = outR / (tan(0.5*fabs(itsAngle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(itsAngle))) );
-  magFieldLength = length - (2.0*b);
-  
-  //
   // magnetic field
-  //
-  
   // CHECK SIGNS OF B, B', ANGLE
   G4double bField;
   if(_element.B != 0){
-    // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
+  // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
     bField = _element.B * CLHEP::tesla;
     G4double rho = _brho/bField;
     //_element.angle  = - bField * length / brho;
-    _element.angle  = - 2.0*asin(length/2.0/rho);
+    _element.angle  = - 2.0*asin(magFieldLength/2.0/rho);
+    G4cout << "calculated angle from field - now " << _element.angle << G4endl;
   }
   else{
     _element.angle *= -1;
     // arc length = radius*angle
     //            = (geometrical length/(2.0*sin(angle/2))*angle
-    G4double arclength = 0.5*magFieldLength * _element.angle / sin(_element.angle/2.0);
+    G4double arclength = 0.5*magFieldLength * fabs(_element.angle) / sin(fabs(_element.angle)*0.5);
     // B = Brho/rho = Brho/(arc length/angle)
     bField = - _brho * _element.angle / arclength * _charge; // charge in e units
     _element.B = bField/CLHEP::tesla;
+    G4cout << "calculated field from angle - angle,field = " << _element.angle << " " << _element.B << G4endl;
   }
   
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
-  
-  if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
-    return createDrift();
-  }
 
   return (new BDSRBend( _element.name,
-			length,
-			aper,
-			FeRad,
+			_element.l*CLHEP::m,
 			bField,
-			_element.angle,
-			_element.outR * CLHEP::m,
-			_element.blmLocZ,
-			_element.blmLocTheta,
-			_element.tilt * CLHEP::rad,
 			bPrime,
-			_element.tunnelMaterial,
-			_element.material ) );
+			_element.angle,
+			PrepareBeamPipeInfo(_element),
+			PrepareBoxSize(_element)
+			));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
