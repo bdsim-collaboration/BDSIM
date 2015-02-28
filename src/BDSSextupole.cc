@@ -7,11 +7,11 @@
    Changed StringFromInt to be the BDSGlobal version
 */
 
-#include "BDSGlobalConstants.hh" 
-#include "BDSDebug.hh"
-
 #include "BDSSextupole.hh"
 
+#include "BDSGlobalConstants.hh" 
+#include "BDSDebug.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSMaterials.hh"
 #include "BDSSextMagField.hh"
 #include "BDSSextStepper.hh"
@@ -26,8 +26,6 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-//============================================================
-
 BDSSextupole::BDSSextupole(G4String aName, G4double aLength, 
 			   G4double bpRad, G4double FeRad,
 			   G4double BDblPrime, G4double tilt, 
@@ -41,24 +39,16 @@ BDSSextupole::BDSSextupole(G4String aName, G4double aLength,
   itsTilt=tilt;
 }
 
-BDSSextupole::BDSSextupole(G4String        name,
-			   G4double        length,
-			   G4double        bDblPrime,
-			   BDSBeamPipeType beamPipeType,
-			   G4double        aper1,
-			   G4double        aper2,
-			   G4double        aper3,
-			   G4double        aper4,
-			   G4Material*     vacuumMaterial,
-			   G4double        beamPipeThickness,
-			   G4Material*     beamPipeMaterial,
-			   G4double        boxSize,
-			   G4String        outerMaterial,
-			   G4String        tunnelMaterial,
-			   G4double        tunnelRadius,
-			   G4double        tunnelOffsetX):
-  BDSMultipole(name,length,beamPipeType,aper1,aper2,aper3,aper4,vacuumMaterial,beamPipeThickness,
-	       beamPipeMaterial,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+BDSSextupole::BDSSextupole(G4String     name,
+			   G4double     length,
+			   G4double     bDblPrime,
+			   beamPipeInfo beamPipeInfoIn,
+			   G4double     boxSize,
+			   G4String     outerMaterial,
+			   G4String     tunnelMaterial,
+			   G4double     tunnelRadius,
+			   G4double     tunnelOffsetX):
+  BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBDblPrime(bDblPrime)
 {;}
 

@@ -1,19 +1,20 @@
-#include "BDSGlobalConstants.hh" 
-#include "BDSDebug.hh"
 
+#include "BDSBeamPipeInfo.hh"
+#include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh" 
 #include "BDSSolenoid.hh"
 #include "BDSSolenoidMagField.hh"
 #include "BDSSolenoidStepper.hh"
-#include "G4Mag_UsualEqRhs.hh"
 
-#include "G4MagneticField.hh"
-
-#include "G4UniformMagField.hh"
-#include "G4Tubs.hh"
-#include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
+#include "G4Mag_UsualEqRhs.hh"
+#include "G4MagneticField.hh"
+#include "G4Tubs.hh"
+#include "G4UniformMagField.hh"
 #include "G4UserLimits.hh"
+#include "G4VisAttributes.hh"
+#include "G4VPhysicalVolume.hh"
+
 
 
 BDSSolenoid::BDSSolenoid(G4String aName, G4double aLength, 
@@ -27,24 +28,16 @@ BDSSolenoid::BDSSolenoid(G4String aName, G4double aLength,
   SetOuterRadius(outR);
 }
 
-BDSSolenoid::BDSSolenoid(G4String        name,
-			 G4double        length,
-			 G4double        bField,
-			 BDSBeamPipeType beamPipeType,
-			 G4double        aper1,
-			 G4double        aper2,
-			 G4double        aper3,
-			 G4double        aper4,
-			 G4Material*     vacuumMaterial,
-			 G4double        beamPipeThickness,
-			 G4Material*     beamPipeMaterial,
-			 G4double        boxSize,
-			 G4String        outerMaterial,
-			 G4String        tunnelMaterial,
-			 G4double        tunnelRadius,
-			 G4double        tunnelOffsetX):
-  BDSMultipole(name,length,beamPipeType,aper1,aper2,aper3,aper4,vacuumMaterial,beamPipeThickness,
-	       beamPipeMaterial,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+BDSSolenoid::BDSSolenoid(G4String     name,
+			 G4double     length,
+			 G4double     bField,
+			 beamPipeInfo beamPipeInfoIn,
+			 G4double     boxSize,
+			 G4String     outerMaterial,
+			 G4String     tunnelMaterial,
+			 G4double     tunnelRadius,
+			 G4double     tunnelOffsetX):
+  BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBField(bField)
 {;}
 

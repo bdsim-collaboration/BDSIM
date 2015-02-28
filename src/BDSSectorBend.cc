@@ -66,26 +66,18 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
   outputface    = G4ThreeVector(-orientation*in_x, 0.0, in_z);
 }
 
-BDSSectorBend::BDSSectorBend(G4String        name,
-			     G4double        length,
-			     G4double        angle,
-			     G4double        bField,
-			     G4double        bGrad,
-			     BDSBeamPipeType beamPipeType,
-			     G4double        aper1,
-			     G4double        aper2,
-			     G4double        aper3,
-			     G4double        aper4,
-			     G4Material*     vacuumMaterial,
-			     G4double        beamPipeThickness,
-			     G4Material*     beamPipeMaterial,
-			     G4double        boxSize,
-			     G4String        outerMaterial,
-			     G4String        tunnelMaterial,
-			     G4double        tunnelRadius,
-			     G4double        tunnelOffsetX):
-  BDSMultipole(name,length,beamPipeType,aper1,aper2,aper3,aper4,vacuumMaterial,beamPipeThickness,
-	       beamPipeMaterial,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+BDSSectorBend::BDSSectorBend(G4String     name,
+			     G4double     length,
+			     G4double     angle,
+			     G4double     bField,
+			     G4double     bGrad,
+			     beamPipeInfo beamPipeInfoIn,
+			     G4double     boxSize,
+			     G4String     outerMaterial,
+			     G4String     tunnelMaterial,
+			     G4double     tunnelRadius,
+			     G4double     tunnelOffsetX):
+  BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBField(bField),itsBGrad(bGrad)
 {
   itsAngle = angle;

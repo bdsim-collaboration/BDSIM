@@ -14,8 +14,8 @@
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "BDSBeamPipeType.hh"
 #include "BDSBeamPipe.hh"
+#include "BDSBeamPipeInfo.hh"
 
 #include "G4FieldManager.hh"
 #include "G4ChordFinder.hh"
@@ -76,21 +76,14 @@ public:
 		G4double beampipeThickness=-1);
 
   // Constructor for new beampipe
-  BDSMultipole( G4String        name, 
-		G4double        length,
-		BDSBeamPipeType beamPipeType,
-		G4double        aper1,
-		G4double        aper2,
-		G4double        aper3,
-		G4double        aper4,
-		G4Material*     vacuumMaterial,
-		G4double        beamPipeThickness,
-		G4Material*     beamPipeMaterial,
-		G4double        boxSize,
-		G4String        outerMaterial="",
-		G4String        tunnelMaterial="",
-		G4double        tunnelRadius=0,
-		G4double        tunnelOffsetX=0);
+  BDSMultipole( G4String     name, 
+		G4double     length,
+		beamPipeInfo beamPipeInfo,
+		G4double     boxSize,
+		G4String     outerMaterial="",
+		G4String     tunnelMaterial="",
+		G4double     tunnelRadius=0,
+		G4double     tunnelOffsetX=0);
 
   virtual ~BDSMultipole();
 

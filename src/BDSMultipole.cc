@@ -43,8 +43,8 @@
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeType.hh"
+#include "BDSBeamPipeInfo.hh"
 
-//============================================================
 BDSMultipole::BDSMultipole( G4String aName, 
 			    G4double aLength,
 			    G4double aBpRadius,
@@ -118,21 +118,14 @@ BDSMultipole::BDSMultipole( G4String aName,
   SetBeampipeThickness(beampipeThicknessSet, beampipeThickness); 
 }
 
-BDSMultipole::BDSMultipole( G4String        name, 
-			    G4double        length,
-			    BDSBeamPipeType beamPipeTypeIn,
-			    G4double        aper1In,
-			    G4double        aper2In,
-			    G4double        aper3In,
-			    G4double        aper4In,
-			    G4Material*     vacuumMaterialIn,
-			    G4double        beamPipeThicknessIn,
-			    G4Material*     beamPipeMaterialIn,
-			    G4double        boxSizeIn,
-			    G4String        outerMaterial,
-			    G4String        tunnelMaterial,
-			    G4double        tunnelRadius,
-			    G4double        tunnelOffsetX):
+BDSMultipole::BDSMultipole( G4String     name, 
+			    G4double     length,
+			    beamPipeInfo info,
+			    G4double     boxSizeIn,
+			    G4String     outerMaterial,
+			    G4String     tunnelMaterial,
+			    G4double     tunnelRadius,
+			    G4double     tunnelOffsetX):
   BDSAcceleratorComponent(name,
 			  length,
 			  0,              //beampipe radius in AC
@@ -143,10 +136,10 @@ BDSMultipole::BDSMultipole( G4String        name,
 			  0,0,0,          // ???
 			  tunnelRadius,
 			  tunnelOffsetX),
-  itsInnerIronRadius(0),beamPipeType(beamPipeTypeIn),aper1(aper1In),aper2(aper2In),
-  aper3(aper3In),aper4(aper4In),vacuumMaterial(vacuumMaterialIn),
-  beamPipeThickness(beamPipeThicknessIn),beamPipeMaterial(beamPipeMaterialIn),
-  boxSize(boxSizeIn)
+  itsInnerIronRadius(0), beamPipeType(info.beamPipeType),
+  aper1(info.aper1), aper2(info.aper2), aper3(info.aper3), aper4(info.aper4),
+  vacuumMaterial(info.vacuumMaterial), beamPipeThickness(info.beamPipeThickness),
+  beamPipeMaterial(info.beamPipeMaterial), boxSize(boxSizeIn)
 {
   ConstructorInit();
 }

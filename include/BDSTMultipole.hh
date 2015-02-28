@@ -11,7 +11,7 @@
 #include "globals.hh"
 #include "BDSMultipole.hh"
 #include "G4Material.hh"
-#include "BDSBeamPipeType.hh"
+#include "BDSBeamPipeInfo.hh"
 
 #include <list>
 
@@ -28,25 +28,18 @@ public:
 		std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
                 G4String aTunnelMaterial = "",
 		G4String aMaterial = "");
-  BDSTMultipole(G4String        name,
-		G4double        length,
+  BDSTMultipole(G4String            name,
+		G4double            length,
 		std::list<G4double> akn, // list of normal multipole strengths
 		                    // (NOT multiplied by multipole length)
 		std::list<G4double> aks, // list of skew multipole strengths
 		                    // (NOT multiplied by multipole length)
-		BDSBeamPipeType beamPipeType,
-		G4double        aper1,
-		G4double        aper2,
-		G4double        aper3,
-		G4double        aper4,
-		G4Material*     vacuumMaterial,
-		G4double        beamPipeThickness,
-		G4Material*     beamPipeMaterial,
-		G4double        boxSize,
-		G4String        outerMaterial="",
-		G4String        tunnelMaterial="",
-		G4double        tunnelRadius=0,
-		G4double        tunnelOffsetX=0);
+		beamPipeInfo        beamPipeInfo,
+		G4double            boxSize,
+		G4String            outerMaterial="",
+		G4String            tunnelMaterial="",
+		G4double            tunnelRadius=0,
+		G4double            tunnelOffsetX=0);
   ~BDSTMultipole(){;};
   
 private:

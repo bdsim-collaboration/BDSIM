@@ -1,5 +1,6 @@
 #include "BDSGlobalConstants.hh" 
 
+#include "BDSBeamPipeInfo.hh"
 #include "BDSTMultipole.hh"
 #include "BDSMultipoleMagField.hh"
 
@@ -28,27 +29,19 @@ BDSTMultipole::BDSTMultipole(G4String aName, G4double aLength,
 }
 
 
-BDSTMultipole::BDSTMultipole(G4String        name,
-			     G4double        length,
+BDSTMultipole::BDSTMultipole(G4String            name,
+			     G4double            length,
 			     std::list<G4double> akn, // list of normal multipole strengths
 			     // (NOT multiplied by multipole length)
 			     std::list<G4double> aks, // list of skew multipole strengths
 			     // (NOT multiplied by multipole length)
-			     BDSBeamPipeType beamPipeType,
-			     G4double        aper1,
-			     G4double        aper2,
-			     G4double        aper3,
-			     G4double        aper4,
-			     G4Material*     vacuumMaterial,
-			     G4double        beamPipeThickness,
-			     G4Material*     beamPipeMaterial,
-			     G4double        boxSize,
-			     G4String        outerMaterial,
-			     G4String        tunnelMaterial,
-			     G4double        tunnelRadius,
-			     G4double        tunnelOffsetX):
-  BDSMultipole(name,length,beamPipeType,aper1,aper2,aper3,aper4,vacuumMaterial,beamPipeThickness,
-	       beamPipeMaterial,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX)
+			     beamPipeInfo        beamPipeInfoIn,
+			     G4double            boxSize,
+			     G4String            outerMaterial,
+			     G4String            tunnelMaterial,
+			     G4double            tunnelRadius,
+			     G4double            tunnelOffsetX):
+  BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX)
 {
   CommonConstructor(akn,aks);
 }

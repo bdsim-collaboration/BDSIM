@@ -31,6 +31,7 @@
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeType.hh"
+#include "BDSBeamPipeInfo.hh"
 
 #include "parser/enums.h"
 #include "parser/elementlist.h"
@@ -441,14 +442,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRF()
   return (new BDSRfCavity( _element.name,
 			   _element.l * CLHEP::m,
 			   _element.gradient,
-			   BDS::DetermineBeamPipeType(_element.apertureType),
-			   _element.aper1*CLHEP::m,
-			   _element.aper2*CLHEP::m,
-			   _element.aper3*CLHEP::m,
-			   _element.aper4*CLHEP::m,
-			   PrepareVacuumMaterial(_element),
-			   _element.beampipeThickness*CLHEP::m,
-			   PrepareBeamPipeMaterial(_element),
+			   PrepareBeamPipeInfo(_element),
 			   PrepareBoxSize(_element)));	
 }
 
@@ -510,14 +504,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend()
 						  semiangle,
 						  bField,
 						  bPrime,
-						  BDS::DetermineBeamPipeType(_element.apertureType),
-						  _element.aper1*CLHEP::m,
-						  _element.aper2*CLHEP::m,
-						  _element.aper3*CLHEP::m,
-						  _element.aper4*CLHEP::m,
-						  PrepareVacuumMaterial(_element),
-						  _element.beampipeThickness*CLHEP::m,
-						  PrepareBeamPipeMaterial(_element),
+						  PrepareBeamPipeInfo(_element),
 						  PrepareBoxSize(_element)
 						  ));
 
@@ -751,20 +738,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createQuad()
   return (new BDSQuadrupole( _element.name,
 			     _element.l * CLHEP::m,
 			     bPrime,
-			     BDS::DetermineBeamPipeType(_element.apertureType),
-			     _element.aper1*CLHEP::m,
-			     _element.aper2*CLHEP::m,
-			     _element.aper3*CLHEP::m,
-			     _element.aper4*CLHEP::m,
-			     PrepareVacuumMaterial(_element),
-			     _element.beampipeThickness*CLHEP::m,
-			     PrepareBeamPipeMaterial(_element),
+			     PrepareBeamPipeInfo(_element),
 			     PrepareBoxSize(_element)));			     
 }  
   
 BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
 {
-  
   // magnetic field 
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
   // brho is in Geant4 units, but k2 is not -> multiply k2 by m^-3
@@ -798,14 +777,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
   return (new BDSSextupole( _element.name,
 			    _element.l * CLHEP::m,
 			    bDoublePrime,
-			    BDS::DetermineBeamPipeType(_element.apertureType),
-			    _element.aper1*CLHEP::m,
-			    _element.aper2*CLHEP::m,
-			    _element.aper3*CLHEP::m,
-			    _element.aper4*CLHEP::m,
-			    PrepareVacuumMaterial(_element),
-			    _element.beampipeThickness*CLHEP::m,
-			    PrepareBeamPipeMaterial(_element),
+			    PrepareBeamPipeInfo(_element),
 			    PrepareBoxSize(_element)));	
   
 }
@@ -844,14 +816,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole()
   return ( new BDSOctupole( _element.name,
 			    _element.l * CLHEP::m,
 			    bTriplePrime,
-			    BDS::DetermineBeamPipeType(_element.apertureType),
-			    _element.aper1*CLHEP::m,
-			    _element.aper2*CLHEP::m,
-			    _element.aper3*CLHEP::m,
-			    _element.aper4*CLHEP::m,
-			    PrepareVacuumMaterial(_element),
-			    _element.beampipeThickness*CLHEP::m,
-			    PrepareBeamPipeMaterial(_element),
+			    PrepareBeamPipeInfo(_element),
 			    PrepareBoxSize(_element)));
 }
 
@@ -915,14 +880,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
 			     _element.l * CLHEP::m,
 			     _element.knl,
 			     _element.ksl,
-			     BDS::DetermineBeamPipeType(_element.apertureType),
-			     _element.aper1*CLHEP::m,
-			     _element.aper2*CLHEP::m,
-			     _element.aper3*CLHEP::m,
-			     _element.aper4*CLHEP::m,
-			     PrepareVacuumMaterial(_element),
-			     _element.beampipeThickness*CLHEP::m,
-			     PrepareBeamPipeMaterial(_element),
+			     PrepareBeamPipeInfo(_element),
 			     PrepareBoxSize(_element)));
 }
 
@@ -1015,14 +973,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
   return (new BDSSolenoid( _element.name,
 			   _element.l * CLHEP::m,
 			   bField,
-			   BDS::DetermineBeamPipeType(_element.apertureType),
-			   _element.aper1*CLHEP::m,
-			   _element.aper2*CLHEP::m,
-			   _element.aper3*CLHEP::m,
-			   _element.aper4*CLHEP::m,
-			   PrepareVacuumMaterial(_element),
-			   _element.beampipeThickness*CLHEP::m,
-			   PrepareBeamPipeMaterial(_element),
+			   PrepareBeamPipeInfo(_element),
 			   PrepareBoxSize(_element)));
 }
 

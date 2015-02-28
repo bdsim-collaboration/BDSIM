@@ -19,6 +19,9 @@
 #include "globals.hh"
 
 #include "BDSMultipole.hh"
+#include "BDSBeamPipeInfo.hh"
+
+#include <list>
 
 class BDSSolenoid : public BDSMultipole
 {
@@ -29,22 +32,15 @@ public:
               std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
               G4String aTunnelMaterial="",
 	      G4String aMaterial= "");
-  BDSSolenoid(G4String        name,
-	      G4double        length,
-	      G4double        bField,
-	      BDSBeamPipeType beamPipeType,
-	      G4double        aper1,
-	      G4double        aper2,
-	      G4double        aper3,
-	      G4double        aper4,
-	      G4Material*     vacuumMaterial,
-	      G4double        beamPipeThickness,
-	      G4Material*     beamPipeMaterial,
-	      G4double        boxSize,
-	      G4String        outerMaterial="",
-	      G4String        tunnelMaterial="",
-	      G4double        tunnelRadius=0,
-	      G4double        tunnelOffsetX=0);
+  BDSSolenoid(G4String     name,
+	      G4double     length,
+	      G4double     bField,
+	      beamPipeInfo beamPipeInfoIn,
+	      G4double     boxSize,
+	      G4String     outerMaterial="",
+	      G4String     tunnelMaterial="",
+	      G4double     tunnelRadius=0,
+	      G4double     tunnelOffsetX=0);
   ~BDSSolenoid(){;};
 
 private:

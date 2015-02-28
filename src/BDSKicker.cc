@@ -11,8 +11,6 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-//#include <map>
-
 BDSKicker::BDSKicker(G4String aName, G4double aLength, 
 		     G4double bpRad, G4double FeRad,
 		     G4double bField, G4double angle, G4double outR,
@@ -29,6 +27,21 @@ BDSKicker::BDSKicker(G4String aName, G4double aLength,
   //bdsbeamline places things based on itsAngle
   itsKickAngle = angle;
 }
+
+BDSKicker::BDSKicker(G4String     name,
+		     G4double     length,
+		     G4double     bField,
+		     G4double     bGrad,
+		     G4double     angle,
+		     beamPipeInfo beamPipeInfo,
+		     G4double     boxSize,
+		     G4String     outerMaterial,
+		     G4String     tunnelMaterial,
+		     G4double     tunnelRadius,
+		     G4double     tunnelOffsetX):
+  BDSMultipole(name,length,beamPipeInfo,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+  itsBField(bField),itsBGrad(bGrad),itsKickAngle(angle)
+{;}
 
 void BDSKicker::Build() {
   BDSMultipole::Build();
@@ -78,8 +91,4 @@ void BDSKicker::BuildBPFieldAndStepper()
   dipoleStepper->SetBField(-itsBField); // note the - sign...
   dipoleStepper->SetBGrad(itsBGrad);
   itsStepper = dipoleStepper;
-}
-
-BDSKicker::~BDSKicker()
-{
 }

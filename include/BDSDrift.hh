@@ -9,7 +9,7 @@
 
 #include "globals.hh"
 #include "BDSMultipole.hh"
-#include "BDSBeamPipeType.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "G4Material.hh"
 
 class BDSDrift :public BDSMultipole
@@ -28,21 +28,14 @@ public:
 	   G4double phiAngleIn = 0, 
 	   G4double phiAngleOut = 0);
   
-  BDSDrift(G4String        name,
-	   G4double        length,
-	   BDSBeamPipeType beamPipeType,
-	   G4double        aper1,
-	   G4double        aper2,
-	   G4double        aper3,
-	   G4double        aper4,
-	   G4Material*     vacuumMaterial,
-	   G4double        beamPipeThickness,
-	   G4Material*     beamPipeMaterial,
-	   G4double        boxSize,
-	   G4String        outerMaterial="",
-	   G4String        tunnelMaterial="",
-	   G4double        tunnelRadius=0,
-	   G4double        tunnelOffsetX=0);
+  BDSDrift(G4String     name,
+	   G4double     length,
+	   beamPipeInfo beamPipeInfoIn,
+	   G4double     boxSize,
+	   G4String     outerMaterial="",
+	   G4String     tunnelMaterial="",
+	   G4double     tunnelRadius=0,
+	   G4double     tunnelOffsetX=0);
   ~BDSDrift();
 
 protected:
