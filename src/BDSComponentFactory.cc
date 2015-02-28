@@ -810,30 +810,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
   
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createOctupole(){
-
-  //
-  // geometry
-  //
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  G4double FeRad = aper + _bpThick;
-  
-  if( _element.outR < aper/CLHEP::m)
-    {
-#ifdef BDSDEBUG
-      G4cout << _element.name << ": outer radius smaller than aperture: "
-	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cout << _element.name << ": setting outer radius to default = "
-	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
-#endif
-      _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
-    }
-  
-  //
-  // magnetic field
-  //
-  
+BDSAcceleratorComponent* BDSComponentFactory::createOctupole()
+{
+  // magnetic field  
   // B''' = d^3By/dx^3 = Brho * (1/Brho d^3By/dx^3) = Brho * k3
   // brho is in Geant4 units, but k3 is not -> multiply k3 by m^-4
   G4double bTriplePrime = - _brho * (_element.k3 / (CLHEP::m3*CLHEP::m));
@@ -846,14 +825,11 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole(){
 	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
 	 << " B'''= " << bTriplePrime/(CLHEP::tesla/CLHEP::m3) << "T/m^3"
 	 << " tilt= " << _element.tilt << "rad"
-	 << " aper= " << aper/CLHEP::m << "m"
-	 << " outR= " << _element.outR << "m"
-	 << " FeRad= " << FeRad/CLHEP::m << "m"
 	 << " tunnel material " << _element.tunnelMaterial
 	 << " material= " << _element.material
 	 << G4endl;
 #endif
-  
+  /*
   return (new BDSOctupole( _element.name,
 			   _element.l * CLHEP::m,
 			   aper,
@@ -864,7 +840,19 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole(){
 			   _element.blmLocZ,
 			   _element.blmLocTheta,
 			   _element.tunnelMaterial,
-			   _element.material ) );
+			   _element.material ) );*/
+  return ( new BDSOctupole( _element.name,
+			    _element.l * CLHEP::m,
+			    bTriplePrime,
+			    BDS::DetermineBeamPipeType(_element.apertureType),
+			    _element.aper1*CLHEP::m,
+			    _element.aper2*CLHEP::m,
+			    _element.aper3*CLHEP::m,
+			    _element.aper4*CLHEP::m,
+			    PrepareVacuumMaterial(_element),
+			    _element.beampipeThickness*CLHEP::m,
+			    PrepareBeamPipeMaterial(_element),
+			    PrepareBoxSize(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createMultipole()

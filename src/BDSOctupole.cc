@@ -21,20 +21,39 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-//============================================================
-
 BDSOctupole::BDSOctupole(G4String aName, G4double aLength, 
 			 G4double bpRad, G4double FeRad,
-			 G4double BTrpPrime, G4double tilt, 
+			 G4double BTriplePrime, G4double tilt, 
 			 G4double outR, 
                          std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
                          G4String aTunnelMaterial, G4String aMaterial):
   BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
-  itsBTrpPrime(BTrpPrime)
+  itsBTriplePrime(BTriplePrime)
 {
   SetOuterRadius(outR);
   itsTilt=tilt;
 }
+
+BDSOctupole::BDSOctupole(G4String        name,
+			 G4double        length,
+			 G4double        bTriplePrime,
+			 BDSBeamPipeType beamPipeType,
+			 G4double        aper1,
+			 G4double        aper2,
+			 G4double        aper3,
+			 G4double        aper4,
+			 G4Material*     vacuumMaterial,
+			 G4double        beamPipeThickness,
+			 G4Material*     beamPipeMaterial,
+			 G4double        boxSize,
+			 G4String        outerMaterial,
+			 G4String        tunnelMaterial,
+			 G4double        tunnelRadius,
+			 G4double        tunnelOffsetX):
+  BDSMultipole(name,length,beamPipeType,aper1,aper2,aper3,aper4,vacuumMaterial,beamPipeThickness,
+	       beamPipeMaterial,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+  itsBTriplePrime(bTriplePrime)
+{;}
 
 void BDSOctupole::Build() {
   BDSMultipole::Build();
@@ -72,14 +91,10 @@ void BDSOctupole::SetVisAttributes()
 void BDSOctupole::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
-  itsMagField=new BDSOctMagField(itsBTrpPrime);
+  itsMagField=new BDSOctMagField(itsBTriplePrime);
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
   
   BDSOctStepper* octStepper=new BDSOctStepper(itsEqRhs);
-  octStepper->SetBTrpPrime(itsBTrpPrime);
+  octStepper->SetBTrpPrime(itsBTriplePrime);
   itsStepper = octStepper;
-}
-
-BDSOctupole::~BDSOctupole()
-{
 }
