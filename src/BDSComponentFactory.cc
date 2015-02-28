@@ -867,43 +867,18 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole(){
 			   _element.material ) );
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createMultipole(){
-  
-  //
-  // geometry
-  //
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  
-  G4double FeRad = aper+ _bpThick;
-  
-  if( _element.outR < aper/CLHEP::m)
-    {
-#ifdef BDSDEBUG
-      G4cout << _element.name << ": outer radius smaller than aperture: "
-	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cout << _element.name << ": setting outer radius to default = "
-	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
-#endif
-      _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
-    }
-  
+BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
+{  
 #ifdef BDSDEBUG 
   G4cout << "---->creating Multipole,"
 	 << " name= " << _element.name
 	 << " l= " << _element.l << "m"
 	 << " tilt= " << _element.tilt << "rad"
-	 << " aper= " << aper/CLHEP::m << "m"
-	 << " outR= " << _element.outR << "m"
-	 << " FeRad= " << FeRad/CLHEP::m << "m"
 	 << " tunnel material " << _element.tunnelMaterial
 	 << " material= " << _element.material
 	 << G4endl;
 #endif
-  
-  //
   // magnetic field
-  //
   std::list<double>::iterator kit;
   
 #ifdef BDSDEBUG 
@@ -933,7 +908,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole(){
 #ifdef BDSDEBUG 
   G4cout << "}" << G4endl;
 #endif
-  
+  /*
   return (new BDSTMultipole( _element.name,
 			     _element.l * CLHEP::m,
 			     aper,
@@ -946,7 +921,21 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole(){
 			     _element.blmLocTheta,
 			     _element.tunnelMaterial, 
 			     _element.material 
-			     ) );
+			     ) );*/
+
+  return (new BDSTMultipole( _element.name,
+			     _element.l * CLHEP::m,
+			     _element.knl,
+			     _element.ksl,
+			     BDS::DetermineBeamPipeType(_element.apertureType),
+			     _element.aper1*CLHEP::m,
+			     _element.aper2*CLHEP::m,
+			     _element.aper3*CLHEP::m,
+			     _element.aper4*CLHEP::m,
+			     PrepareVacuumMaterial(_element),
+			     _element.beampipeThickness*CLHEP::m,
+			     PrepareBeamPipeMaterial(_element),
+			     PrepareBoxSize(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createElement(){
