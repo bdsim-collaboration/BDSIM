@@ -20,8 +20,6 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-//============================================================
-
 BDSDecapole::BDSDecapole(G4String aName, G4double aLength, 
 			 G4double bpRad, G4double FeRad,
 			 G4double BQuadPrime, G4double tilt, 
@@ -34,6 +32,19 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
   SetOuterRadius(outR);
   itsTilt=tilt;
 }
+
+BDSDecapole::BDSDecapole(G4String      name,
+			 G4double      length,
+			 G4double      bQuadPrime,
+			 beamPipeInfo  beamPipeInfo,
+			 G4double      boxSize,
+			 G4String      outerMaterial,
+			 G4String      tunnelMaterial,
+			 G4double      tunnelRadius,
+			 G4double      tunnelOffsetX):
+  BDSMultipole(name,length,beamPipeInfo,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+  itsBQuadPrime(bQuadPrime)
+{;}
 
 void BDSDecapole::Build() {
   BDSMultipole::Build();
@@ -77,8 +88,4 @@ void BDSDecapole::BuildBPFieldAndStepper()
   BDSDecStepper* decStepper=new BDSDecStepper(itsEqRhs);
   decStepper->SetBQuadPrime(itsBQuadPrime);
   itsStepper = decStepper;
-}
-
-BDSDecapole::~BDSDecapole()
-{
 }
