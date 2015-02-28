@@ -187,6 +187,11 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsLWCalOffset      = 0.0;
   itsMagnetPoleRadius = 0.0;
   itsMagnetPoleSize   = 0.0;
+
+  // initialise the default vis attributes and user limits that
+  // can be copied by various bits of geometry
+  InitVisAttributes();
+  InitDefaultUserLimits();
 }
 
 void BDSGlobalConstants::InitVisAttributes()
