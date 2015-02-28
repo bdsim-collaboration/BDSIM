@@ -430,26 +430,26 @@ BDSAcceleratorComponent* BDSComponentFactory::createPCLDrift(){
 			   _element.aperX*CLHEP::m, _element.aperYUp*CLHEP::m, _element.aperYDown*CLHEP::m,_element.aperDy*CLHEP::m, _element.tunnelMaterial, aper, _element.tunnelRadius*CLHEP::m, tunnelOffsetX));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createRF(){
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  
-  if(_element.l > 0) // skip zero-length elements
-    {
-      return (new BDSRfCavity( _element.name,
-					     _element.l * CLHEP::m,
-					     aper,
-					     _element.gradient,
-					     _element.tunnelMaterial,
-					     _element.material ) );
-    } else {
-    G4cerr << "---->NOT creating RF,"
-	   << " name= " << _element.name
-	   << ", TOO SHORT LENGTH:"
-	   << " l= " << _element.l << "m"
-	   << G4endl;
-    return NULL;
-  }
+BDSAcceleratorComponent* BDSComponentFactory::createRF()
+{  
+  /*return (new BDSRfCavity( _element.name,
+			   _element.l * CLHEP::m,
+			   aper,
+			   _element.gradient,
+			   _element.tunnelMaterial,
+			   _element.material ) );*/
+  return (new BDSRfCavity( _element.name,
+			   _element.l * CLHEP::m,
+			   _element.gradient,
+			   BDS::DetermineBeamPipeType(_element.apertureType),
+			   _element.aper1*CLHEP::m,
+			   _element.aper2*CLHEP::m,
+			   _element.aper3*CLHEP::m,
+			   _element.aper4*CLHEP::m,
+			   PrepareVacuumMaterial(_element),
+			   _element.beampipeThickness*CLHEP::m,
+			   PrepareBeamPipeMaterial(_element),
+			   PrepareBoxSize(_element)));	
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSBend()
