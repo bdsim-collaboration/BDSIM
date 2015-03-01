@@ -39,7 +39,7 @@ private:
   G4bool   isVerticalKicker;
 
   virtual void BuildBPFieldAndStepper();
-  virtual void BuildBeampipe(G4String materialName); // overload multipole base class method
+  virtual void BuildBeampipe(); // overload multipole base class method
   virtual void SetVisAttributes();
 };
 

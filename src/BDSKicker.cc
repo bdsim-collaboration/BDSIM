@@ -74,7 +74,7 @@ void BDSKicker::Build()
     }
 }
 
-void BDSKicker::BuildBeampipe(G4String /*materialName*/)
+void BDSKicker::BuildBeampipe()
 {
   // have to distinguish if it's a vertical or horizontal kicker
   // but without rotating the aperture model - ie input parameters aper1

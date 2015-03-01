@@ -42,7 +42,6 @@ protected:
   virtual void Build();
 
 private:
-  virtual void BuildBeampipe(G4String materialName = "");
   virtual void BuildBPFieldAndStepper();
   virtual void BuildBLMs();
   G4double itsStartOuterR;

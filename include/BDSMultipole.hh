@@ -107,11 +107,11 @@ private:
 protected:
   virtual void BuildMarkerLogicalVolume();
   virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
-  /// Standard beam pipe
-  // protected since called by BDSDrift::BuildBeampipe, change to private in future whenever possible
-  virtual void BuildBeampipe(G4String materialName = ""); 
-  /// Builds a tapered beam pipe (only used for drifts at the moment)
-  //void BuildBeampipe(G4double startAper, G4double endAper, G4String materialName = "");
+  /// general straight beampipe - can be overloaded by derived classes
+  virtual void BuildBeampipe();
+  /// common tasks after the beampipe solids have been defined.
+  /// derived classes that override BuildBeampipe implement this manually
+  /// in the contents of their BuildBeampipe
   void BeamPipeCommonTasks();
 
   void BuildOuterFieldManager(G4int nPoles, G4double poleField, 

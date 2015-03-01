@@ -198,7 +198,7 @@ void BDSMultipole::BuildBLMs(){
   BDSAcceleratorComponent::BuildBLMs(); // resets itsBlmLocationR! -- JS
 }
 
-void BDSMultipole::BuildBeampipe(G4String /*materialName*/)
+void BDSMultipole::BuildBeampipe()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;

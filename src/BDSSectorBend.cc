@@ -212,7 +212,7 @@ void BDSSectorBend::BuildMarkerLogicalVolume()
   itsMarkerLogicalVolume->SetVisAttributes(VisAtt1);
 }
 
-void BDSSectorBend::BuildBeampipe(G4String /*materialName*/)
+void BDSSectorBend::BuildBeampipe()
 {
   #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " sector bend version " << G4endl;

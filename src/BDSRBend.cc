@@ -185,7 +185,7 @@ void BDSRBend::BuildMarkerLogicalVolume()
 }
 
 // construct a beampipe for r bend
-void BDSRBend::BuildBeampipe(G4String /*materialName*/)
+void BDSRBend::BuildBeampipe()
 {
   BDSBeamPipe* bpFirstBit = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledOut(beamPipeType,
 										    itsName,

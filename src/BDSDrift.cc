@@ -71,17 +71,6 @@ BDSDrift::BDSDrift(G4String     name,
   BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX)
 {;}
 
-
-
-void BDSDrift::BuildBeampipe(G4String materialName) {
-  if (itsAperset){
-    BDSMultipole::BuildBeampipe(materialName);
-  } else {
-    //BDSMultipole::BuildBeampipe(itsXAper, itsYAper, materialName);
-    BDSMultipole::BuildBeampipe(materialName);
-  }
-}
-
 void BDSDrift::Build() {
   BDSMultipole::Build();
 
