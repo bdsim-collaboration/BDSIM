@@ -9,48 +9,33 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipe.hh"
-#include "BDSBeamPipeType.hh"
+#include "BDSBeamPipeInfo.hh"
 
-BDSDrift2::BDSDrift2 (G4String        nameIn, 
-		      G4double        lengthIn,
-		      BDSBeamPipeType beamPipeTypeIn,
-		      G4double        beamPipeThicknessIn,
-		      G4double        aper1In,
-		      G4double        aper2In,
-		      G4double        aper3In,
-		      G4double        aper4In,
-		      G4Material*     beamPipeMaterialIn,
-		      G4Material*     vacuumMaterialIn
-		      ):
+BDSDrift2::BDSDrift2 (G4String     nameIn, 
+		      G4double     lengthIn,
+		      beamPipeInfo beamPipeInfoIn):
   BDSAcceleratorComponent(nameIn,
 			  lengthIn,
-			  aper1In,
-			  aper1In,
-			  aper2In,
+			  beamPipeInfoIn.aper1,
+			  beamPipeInfoIn.aper1,
+			  beamPipeInfoIn.aper2,
 			  std::list<G4double>(),
 			  std::list<G4double>()),
-  beamPipeType(beamPipeTypeIn),
-  aper1(aper1In),
-  aper2(aper2In),
-  aper3(aper3In),
-  aper4(aper4In),
-  beamPipeThickness(beamPipeThicknessIn),
-  beamPipeMaterial(beamPipeMaterialIn),
-  vacuumMaterial(vacuumMaterialIn)
+  itsBeamPipeInfo(beamPipeInfoIn)
 {;}
 
 void BDSDrift2::Build() {
   
-  BDSBeamPipe* pipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeType,
+  BDSBeamPipe* pipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(itsBeamPipeInfo.beamPipeType,
 								     itsName,
 								     itsLength,
-								     aper1,
-								     aper2,
-								     aper3,
-								     aper4,
-								     vacuumMaterial,
-								     beamPipeThickness,
-								     beamPipeMaterial
+								     itsBeamPipeInfo.aper1,
+								     itsBeamPipeInfo.aper2,
+								     itsBeamPipeInfo.aper3,
+								     itsBeamPipeInfo.aper4,
+								     itsBeamPipeInfo.vacuumMaterial,
+								     itsBeamPipeInfo.beamPipeThickness,
+								     itsBeamPipeInfo.beamPipeMaterial
 								     );
   
   itsMarkerLogicalVolume = pipe->GetContainerLogicalVolume();

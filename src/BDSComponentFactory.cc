@@ -381,14 +381,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createDrift()
   
   return (new BDSDrift2( _element.name,
 			 _element.l*CLHEP::m,
-			 BDS::DetermineBeamPipeType(_element.apertureType),
-			 _element.beampipeThickness*CLHEP::m,
-			 _element.aper1*CLHEP::m,
-			 _element.aper2*CLHEP::m,
-			 _element.aper3*CLHEP::m,
-			 _element.aper4*CLHEP::m,
-			 PrepareBeamPipeMaterial(_element),
-			 PrepareVacuumMaterial(_element)
+			 PrepareBeamPipeInfo(_element)
 			 ));
 }
 
