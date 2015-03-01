@@ -394,7 +394,7 @@ void BDSMultipole::BuildMarkerLogicalVolume()
 }
 
 
-void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
+void BDSMultipole::BuildOuterLogicalVolume(G4bool outerMaterialIsVacuum)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -402,7 +402,7 @@ void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
   // default cylindrical geometry for straight magnets only
   
   // check if outer volume is required
-  if (OuterMaterialIsVacuum)
+  if (outerMaterialIsVacuum)
     {return;} // no need to create another volume
   
   // test beampipe instance exists / has been built already

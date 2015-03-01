@@ -48,7 +48,7 @@ private:
   
   virtual void Build();
 
-  virtual void BuildOuterLogicalVolume(bool OuterMaterialIsVacuum = false);
+  virtual void BuildOuterLogicalVolume(bool outerMaterialIsVacuum = false);
   virtual void BuildBPFieldAndStepper();
   
   /// quad with poles and pockets

@@ -287,7 +287,6 @@ void BDSRBend::BuildOuterLogicalVolume(G4bool outerMaterialIsVacuum)
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   // check if outer volume is required
-  G4cout << " BOOL " << outerMaterialIsVacuum << G4endl;
   if (outerMaterialIsVacuum)
     {return;} // no need to create another volume
   
