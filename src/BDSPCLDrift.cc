@@ -35,7 +35,7 @@ void BDSPCLDrift::BuildBeampipe(G4String materialName){
   if(materialName != ""){
     material = BDSMaterials::Instance()->GetMaterial( materialName );
   } else {
-    material = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName());
+    material = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetBeamPipeMaterialName());
   }
   
   // build beampipe

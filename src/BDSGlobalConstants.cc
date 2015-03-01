@@ -5,6 +5,7 @@ Last modified 23.10.2007 by Steve Malton
 **/
 #include "BDSGlobalConstants.hh"
 #include "parser/options.h"
+#include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
 #include "G4FieldManager.hh"
 #include "G4UniformMagField.hh"
@@ -27,15 +28,17 @@ BDSGlobalConstants* BDSGlobalConstants::Instance(){
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0),itsParticleMomentum(0.0),itsParticleKineticEnergy(0.0),itsSMax(0.0)
 {
-  itsPhysListName = opt.physicsList;
-  itsPipeMaterial = opt.pipeMaterial;
-  itsVacMaterial = opt.vacMaterial;
-  itsEmptyMaterial = "G4_Galactic"; // space vacuum
+  itsPhysListName       = opt.physicsList;
+  itsBeamPipeMaterial   = opt.beampipeMaterial;
+  G4cout << "GLOBALS " << opt.apertureType << G4endl;
+  itsApertureType       = BDS::DetermineBeamPipeType(opt.apertureType,true); //true is flag for first global check
+  G4cout << "GLOBALS2 " << itsApertureType << G4endl;
+  itsVacMaterial        = opt.vacMaterial;
+  itsEmptyMaterial      = "G4_Galactic"; // space vacuum
   itsTunnelMaterialName = opt.tunnelMaterial;
   itsTunnelCavityMaterialName = opt.tunnelCavityMaterial;
-  itsSoilMaterialName = opt.soilMaterial;
-
-  itsMagnetGeometry = opt.magnetGeometry;
+  itsSoilMaterialName   = opt.soilMaterial;
+  itsMagnetGeometry     = opt.magnetGeometry;
 
   itsSampleDistRandomly = true;
   itsGeometryBias = opt.geometryBias;
@@ -62,11 +65,16 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsVacuumPressure = opt.vacuumPressure*CLHEP::bar;
   itsPlanckScatterFe = opt.planckScatterFe;
   //Fraction of events with leading particle biasing.
+
+  //beampipe
   itsBeampipeRadius = opt.beampipeRadius * CLHEP::m;
-  if(itsBeampipeRadius == 0){
-    G4cerr << __METHOD_NAME__ << "Error: option \"beampipeRadius\" must be greater than 0" <<  G4endl;
-    exit(1);
-  }
+  itsAper1 = opt.aper1*CLHEP::m;
+  itsAper2 = opt.aper2*CLHEP::m;
+  itsAper3 = opt.aper3*CLHEP::m;
+  itsAper4 = opt.aper4*CLHEP::m;
+  // note beampipetype already done before these checks! at top of this function
+  BDS::CheckApertureInfo(itsApertureType,itsBeampipeRadius,itsAper1,itsAper2,itsAper3,itsAper4);
+  
   itsBeampipeThickness = opt.beampipeThickness * CLHEP::m;
   itsComponentBoxSize = opt.componentBoxSize * CLHEP::m;
   if (itsComponentBoxSize < (itsBeampipeThickness + itsBeampipeRadius)){

@@ -96,7 +96,7 @@ void BDSMuSpoiler::BuildBPFieldAndStepper()
 void BDSMuSpoiler::BuildBeampipe()
 {
   // build beampipe
-  G4Material *bpMaterial = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName() );
+  G4Material *bpMaterial = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetBeamPipeMaterialName() );
 
 #ifdef BDSDEBUG 
   G4cout << "Outer pipe :"

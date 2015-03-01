@@ -216,7 +216,7 @@ void BDSBeamPipeFactoryRectangular::TestInputParameters(G4Material*&  vacuumMate
     {beamPipeThicknessIn = BDSGlobalConstants::Instance()->GetBeampipeThickness();}
 
   if (!beamPipeMaterialIn)
-    {beamPipeMaterialIn = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetPipeMaterialName());}
+    {beamPipeMaterialIn = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetBeamPipeMaterialName());}
 
   if (aper1In < 1e-10)
     {aper1In = BDSGlobalConstants::Instance()->GetBeampipeRadius();}
