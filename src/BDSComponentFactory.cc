@@ -613,21 +613,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
              << G4endl;
       return NULL;
   }
-  // geometry
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  G4double FeRad = aper + _bpThick;
 
-  if( _element.outR < aper/CLHEP::m)
-    {
-#ifdef BDSDEBUG
-      G4cout << _element.name << ": outer radius smaller than aperture: "
-	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cout << _element.name << ": setting outer radius to default = "
-	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
-#endif
-      _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
-    }
   G4double length = _element.l*CLHEP::m;
   
   // magnetic field
@@ -646,7 +632,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
-  
+
+  // LN I think we should build it anyway and the stepper should deal
+  // with this - ie so we still have the outer geometry
+  /*
   if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
     G4cerr << "---->NOT creating Hkick,"
 	   << " name= " << _element.name
@@ -658,8 +647,17 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
 	   << " tunnel material " << _element.tunnelMaterial
 	   << G4endl;
     return createDrift();
-  } 
-
+  }
+  */
+  return (new BDSKicker( _element.name,
+			 _element.l * CLHEP::m,
+			 bField,
+			 bPrime,
+			 _element.angle,
+			 false,   // it's a horizontal kicker
+			 PrepareBeamPipeInfo(_element),
+			 PrepareBoxSize(_element) ));
+  /*
   return (new BDSKicker( _element.name,
 			 length,
 			 aper,
@@ -683,21 +681,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
              << G4endl;
       return NULL;
   }
-  // geometry
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  G4double FeRad = aper + _bpThick;
   
-  if( _element.outR < aper/CLHEP::m)
-    {
-#ifdef BDSDEBUG
-      G4cout << _element.name << ": outer radius smaller than aperture: "
-	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cout << _element.name << ": setting outer radius to default = "
-	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
-#endif
-      _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
-    }
   G4double length = _element.l*CLHEP::m;
   
   // magnetic field
@@ -715,7 +699,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
-  
+
+  // LN I think we should build it anyway and the stepper should deal
+  // with this - ie so we still have the outer geometry
+  /*
   if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
     G4cerr << "---->NOT creating Vkick,"
 	   << " name= " << _element.name
@@ -728,8 +715,17 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
 	   << G4endl;
 
     return createDrift();
-  } 
-
+  }
+  */
+  return (new BDSKicker( _element.name,
+			 _element.l * CLHEP::m,
+			 bField,
+			 bPrime,
+			 _element.angle,
+			 true,   // it's a vertical kicker
+			 PrepareBeamPipeInfo(_element),
+			 PrepareBoxSize(_element) ));
+  /*
   return (new BDSKicker( _element.name,
 			 _element.l * CLHEP::m,
 			 aper,
@@ -740,7 +736,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
 			 (_element.tilt+CLHEP::pi/2)*CLHEP::rad,
 			 bPrime,
 			 _element.tunnelMaterial,
-			 _element.material ) );
+			 _element.material ) );*/
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createQuad()

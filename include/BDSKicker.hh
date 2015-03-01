@@ -20,6 +20,7 @@ public:
 	    G4double        bField,
 	    G4double        bGrad,
 	    G4double        angle,
+	    G4bool          verticalKicker,
 	    beamPipeInfo    beamPipeInfo,
 	    G4double        boxSize,
 	    G4String        outerMaterial="",
@@ -35,9 +36,10 @@ private:
   G4double itsBField;
   G4double itsBGrad;
   G4double itsKickAngle;
+  G4bool   isVerticalKicker;
 
   virtual void BuildBPFieldAndStepper();
-
+  virtual void BuildBeampipe(G4String materialName); // overload multipole base class method
   virtual void SetVisAttributes();
 };
 
