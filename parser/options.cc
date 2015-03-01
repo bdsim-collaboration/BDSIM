@@ -56,17 +56,18 @@ Options::Options(){
 
   xsize=0.0, ysize=0.0;
 
-  magnetGeometry = "cylinder";
-  componentBoxSize = 0.0;
-  tunnelRadius = 0.0;
-  beampipeRadius = 0.0;
+  magnetGeometry    = "cylinder";
+  componentBoxSize  = 0.0;
+  tunnelRadius      = 0.0;
+  beampipeRadius    = 0.0;
   beampipeThickness = 0.0;
 
-  pipeMaterial = "StainlessSteel";
-  vacMaterial = "Vacuum";
-  tunnelMaterial = "concrete";
+  apertureType      = "circular";
+  beampipeMaterial  = "StainlessSteel";
+  vacMaterial       = "Vacuum";
+  tunnelMaterial    = "concrete";
   tunnelCavityMaterial = "Air";
-  soilMaterial = "soil";
+  soilMaterial      = "soil";
 
   includeIronMagFields = 0;
 
@@ -265,6 +266,10 @@ void Options::set_value(std::string name, double value )
   if(name == "tunnelRadius" ) { tunnelRadius = value; return; }
   if(name == "beampipeThickness" ) { beampipeThickness = value; return; }
   if(name == "beampipeRadius" ) { beampipeRadius = value; return; }
+  if(name == "aper1" ) { aper1 = value; return; }
+  if(name == "aper2" ) { aper2 = value; return; }
+  if(name == "aper3" ) { aper3 = value; return; }
+  if(name == "aper4" ) { aper4 = value; return; }
 
   if(name == "includeIronMagFields") {
     includeIronMagFields = (int)value; return;
@@ -427,12 +432,13 @@ void Options::set_value(std::string name, std::string value )
   //
 
   // options which influence the geometry
-  if(name == "magnetGeometry" ) { magnetGeometry = value; return; }
-  if(name == "beampipeMaterial" ) { pipeMaterial = value; return; }
-  if(name == "vacMaterial" ) { vacMaterial = value; return; }
-  if(name == "tunnelMaterial" ) { tunnelMaterial = value; return; }
+  if(name == "magnetGeometry" )   { magnetGeometry   = value; return; }
+  if(name == "apertureType" )     { apertureType     = value; return; }
+  if(name == "beampipeMaterial" ) { beampipeMaterial = value; return; }
+  if(name == "vacMaterial" )      { vacMaterial      = value; return; }
+  if(name == "tunnelMaterial" )   { tunnelMaterial   = value; return; }
   if(name == "tunnelCavityMaterial" ) { tunnelCavityMaterial = value; return; }
-  if(name == "soilMaterial" ) { soilMaterial = value; return; }
+  if(name == "soilMaterial" )     { soilMaterial     = value; return; }
   
   // options which influence the tracking
   if(name == "physicsList" ) { physicsList = value; return; } 
