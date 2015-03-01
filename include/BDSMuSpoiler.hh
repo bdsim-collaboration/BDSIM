@@ -8,42 +8,68 @@
 #define BDSMuSpoiler_h 1
 
 #include "globals.hh"
-#include "BDSAcceleratorComponent.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-
-#include "G4Box.hh"
+#include "BDSBeamPipeInfo.hh"
+#include "BDSMultipole.hh"
 #include "BDSMuSpoilerMagField.hh"
-#include "G4FieldManager.hh"
 
-class BDSMuSpoiler :public BDSAcceleratorComponent
+//#include "BDSAcceleratorComponent.hh"
+//#include "G4Mag_UsualEqRhs.hh"
+//#include "BDSMaterials.hh"
+//#include "G4LogicalVolume.hh"
+
+//#include "G4UserLimits.hh"
+//#include "G4VisAttributes.hh"
+
+//#include "G4Box.hh"
+//#include "BDSMuSpoilerMagField.hh"
+//#include "G4FieldManager.hh"
+
+class BDSMuSpoiler :public BDSMultipole
 {
 public:
+  /*
   BDSMuSpoiler(G4String& aName, G4double aLength,G4double bpRad, 
 	       G4double rInner, G4double rOuter,G4double BField, 
                std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-               G4String aTunnelMaterial="");
-
-
+               G4String aTunnelMaterial="");*/
+  BDSMuSpoiler(G4String     name,
+	       G4double     length,
+	       G4double     bField,
+	       beamPipeInfo beamPipeInfo,
+	       G4double     boxSize,
+	       G4String     outerMaterial="",
+	       G4String     tunnelMaterial="",
+	       G4double     tunnelRadius=0,
+	       G4double     tunnelOffsetX=0);
   ~BDSMuSpoiler();
 
 private:
+  G4double     itsBField;
+
+  /// override multipole build beampipe method as we don't want to set the field there
+  virtual void BuildBeamPipe();
+  /// create the desired outer logical volume and attach the field to it
+  virtual void BuildOuterLogicalVolume(bool outerMaterialsIsVacuum);
+  /// build the necessary field for muspoiler
+  virtual void BuildBPFieldAndStepper();
   virtual void SetVisAttributes();
-  void SetBPVisAttributes();
+
+  BDSMuSpoilerMagField* outerMagField;
+  G4FieldManager*       outerFieldMgr;
+
+  //virtual void Build();
+  //void SetBPVisAttributes();
 
   // Geometrical objects:
 
-  virtual void Build();
-  virtual void BuildMarkerLogicalVolume();
-  void         BuildBPFieldAndStepper();
-  void         BuildBeampipe();
-  virtual void BuildBLMs();
-  void         BuildMuSpoiler();
 
+  //virtual void BuildMarkerLogicalVolume();
+
+  //void         BuildBeampipe();
+  //virtual void BuildBLMs();
+  //void         BuildMuSpoiler();
+  /*
+  
   G4VPhysicalVolume* itsPhysiComp;
   G4VPhysicalVolume* itsPhysiComp2;
   G4VPhysicalVolume* itsPhysiInnerBP;
@@ -58,9 +84,10 @@ private:
   G4double           itsBeampipeRadius;
   G4double           itsInnerRadius;
   G4double           itsOuterRadius;
-  G4double           itsBField;
+
   BDSMuSpoilerMagField* itsMagField;
   G4FieldManager*    itsFieldMgr;
+  */
 };
 
 #endif

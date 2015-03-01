@@ -3,8 +3,11 @@
    Last modified 12.12.2004
    Copyright (c) 2004 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
+
+#include "BDSBeamPipeType.hh"
+#include "BDSBeamPipeFactory.hh"
 #include "BDSGlobalConstants.hh" 
-#include "BDSMuSpoiler.hh"
+
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -12,8 +15,18 @@
 #include "G4UserLimits.hh"
 #include "G4Tubs.hh"
 
-//============================================================
+#include "globals.hh"
+#include "BDSBeamPipeInfo.hh"
+#include "BDSDebug.hh"
+#include "BDSMultipole.hh"
+#include "BDSMuSpoiler.hh"
+#include "BDSMuSpoilerMagField.hh"
+#include "G4Mag_UsualEqRhs.hh"
+#include "G4FieldManager.hh"
+#include "G4ClassicalRK4.hh"
 
+
+/*
 BDSMuSpoiler::BDSMuSpoiler (G4String& aName,G4double aLength,G4double bpRad,
 			    G4double rInner, G4double rOuter,G4double aBField, 
                             std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
@@ -39,7 +52,21 @@ BDSMuSpoiler::BDSMuSpoiler (G4String& aName,G4double aLength,G4double bpRad,
 
   SetBPVisAttributes();
 }
+*/
+BDSMuSpoiler::BDSMuSpoiler(G4String     name,
+			   G4double     length,
+			   G4double     bField,
+			   beamPipeInfo beamPipeInfoIn,
+			   G4double     boxSize,
+			   G4String     outerMaterial,
+			   G4String     tunnelMaterial,
+			   G4double     tunnelRadius,
+			   G4double     tunnelOffsetX):
+  BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+  itsBField(bField)
+{;}
 
+/*
 void BDSMuSpoiler::Build()
 {
   BuildBPFieldAndStepper();
@@ -83,18 +110,53 @@ void BDSMuSpoiler::BuildMarkerLogicalVolume()
   itsMarkerLogicalVolume->
     SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
 }
+*/
 
 void BDSMuSpoiler::BuildBPFieldAndStepper()
 {
-  if(itsBField)
-    {
-      itsMagField=new BDSMuSpoilerMagField(itsBField);
-      itsFieldMgr=new G4FieldManager(itsMagField);
-    }
+  // don't do anything and leave as null pointers
+  // don't worry, they won't be attached if null - whew
+  return;
 }
 
-void BDSMuSpoiler::BuildBeampipe()
+void BDSMuSpoiler::BuildBeamPipe()
 {
+  #ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  
+  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeType,
+							    itsName,
+							    itsLength,
+							    aper1,
+							    aper2,
+							    aper3,
+							    aper4,
+							    vacuumMaterial,
+							    beamPipeThickness,
+							    beamPipeMaterial);
+
+  itsMarkerLogicalVolume->
+    SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
+
+  RegisterLogicalVolumes(beampipe->GetAllLogicalVolumes());
+
+  // place beampipe
+  itsPhysiComp = new G4PVPlacement(0,                         // rotation
+				   (G4ThreeVector)0,          // at (0,0,0)
+				   beampipe->GetContainerLogicalVolume(),  // its logical volume
+				   itsName+"_bmp_phys",	      // its name
+				   itsMarkerLogicalVolume,    // its mother  volume
+				   false,                     // no boolean operation
+				   0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
+
+  //update extents - remember we don't know here if the outer volume is built
+  //so this can be overwritten but acts as a minimum
+  SetExtentX(beampipe->GetExtentX());
+  SetExtentY(beampipe->GetExtentY());
+  SetExtentZ(beampipe->GetExtentZ());
+
+  /*
   // build beampipe
   G4Material *bpMaterial = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetBeamPipeMaterialName() );
 
@@ -174,11 +236,32 @@ void BDSMuSpoiler::BuildBeampipe()
     SetUserLimits(new G4UserLimits(DBL_MAX,DBL_MAX,BDSGlobalConstants::Instance()->GetMaxTime(),
 				       BDSGlobalConstants::Instance()->GetThresholdCutCharged()));
 #endif
-
+  */
 }
 
-void BDSMuSpoiler::BuildMuSpoiler()
+void BDSMuSpoiler::BuildOuterLogicalVolume(bool /*outerMaterialIsVacuum*/)
 {
+  //whole point is the outerlogical volume so ignore the outerMaterialIsVacuum flag
+  
+  //void BDSMuSpoiler::BuildMuSpoiler()
+  //{
+
+  BDSMultipole::BuildOuterLogicalVolume(false);
+
+  // prepare and attach field
+  outerMagField = new BDSMuSpoilerMagField(itsBField);
+  outerFieldMgr = new G4FieldManager(outerMagField);
+  if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0)
+    {outerFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());}
+  if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>0)
+    {outerFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());}
+  if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0)
+    {outerFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());}
+  //if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0)
+  //  {itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());}
+  itsOuterLogicalVolume->SetFieldManager(itsOuterFieldMgr,false);
+
+  /*  
   itsSolidLogVol=
     new G4LogicalVolume(new G4Tubs(itsName+"_solid",
 				   itsInnerRadius+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,
@@ -248,10 +331,12 @@ void BDSMuSpoiler::BuildMuSpoiler()
   //For geometric biasing etc.
   SetMultiplePhysicalVolumes(itsPhysiComp);
 }
-
+  */
+  /*
 void BDSMuSpoiler::BuildBLMs(){
   itsBlmLocationR=itsOuterRadius;
   BDSAcceleratorComponent::BuildBLMs();
+  */
 }
 
 
@@ -262,37 +347,41 @@ void BDSMuSpoiler::SetVisAttributes()
   itsVisAttributes->SetVisibility(true);
 }
 
+/*
 void BDSMuSpoiler::SetBPVisAttributes()
 {
   itsBPVisAttributes=new G4VisAttributes(G4Colour(0.2,0.2,0.2));
   itsBPVisAttributes->SetForceSolid(true);
   itsBPVisAttributes->SetVisibility(true);
 }
-
+*/
 
 BDSMuSpoiler::~BDSMuSpoiler()
 {
-  delete itsBPVisAttributes;
+  delete outerMagField;
+  delete outerFieldMgr;
+  
+  // delete itsBPVisAttributes;
 
-//   delete itsInnerTunnelUserLimits;
-//   delete itsTunnelUserLimits;
-//   delete itsSoilTunnelUserLimits;
-
-//   delete itsBPTube;
-//   delete itsInnerBPTube;
-
+  //   delete itsInnerTunnelUserLimits;
+  //   delete itsTunnelUserLimits;
+  //   delete itsSoilTunnelUserLimits;
+  
+  //   delete itsBPTube;
+  //   delete itsInnerBPTube;
+  
   //  delete itsPhysiComp;
   //  delete itsPhysiComp2;
   //  delete itsPhysiInnerBP;
   //  delete itsPhysiBP;
   //  delete itsPhysiCompSoil;
 
-  delete itsMagField;
-  delete itsFieldMgr;
+  //delete itsMagField;
+  //delete itsFieldMgr;
 
-//   delete itsSoilTube;
-//   delete itsTunnelTube;
-//   delete itsInnerTunnelTube;
-//   delete itsInnerTunnelLogicalVolume;
-//   delete itsSoilTunnelLogicalVolume;
+  //   delete itsSoilTube;
+  //   delete itsTunnelTube;
+  //   delete itsInnerTunnelTube;
+  //   delete itsInnerTunnelLogicalVolume;
+  //   delete itsSoilTunnelLogicalVolume;
 }

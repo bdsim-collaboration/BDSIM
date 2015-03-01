@@ -1030,27 +1030,27 @@ BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
 	 << " tunnel material " << _element.tunnelMaterial
 	 << G4endl;
 #endif
-  G4String name = _element.name;
-  G4double length = _element.l*CLHEP::m;
-  G4double bField = _element.B * CLHEP::tesla;
-  G4double beamPipeRadius;
+  //G4String name = _element.name;
+  // G4double length = _element.l*CLHEP::m;
+  //G4double bField = _element.B * CLHEP::tesla;
+  //G4double beamPipeRadius;
   //        if(_element.aperSet){
-  beamPipeRadius = _element.aper*CLHEP::m;
+  //beamPipeRadius = _element.aper*CLHEP::m;
   //        } else {
   //          beamPipeRadius = BDSGlobalConstants::Instance()->GetBeampipeRadius();
   //        }
-  G4double innerRadius;
+  //G4double innerRadius;
   //        if (_element.inRset){
-  innerRadius = _element.inR*CLHEP::m;
+  //innerRadius = _element.inR*CLHEP::m;
   //        } else {
   //          innerRadius = beamPipeRadius;
   //        }
-  G4double outerRadius = _element.outR*CLHEP::m;
+  //G4double outerRadius = _element.outR*CLHEP::m;
         
 #ifdef BDSDEBUG
-  G4cout << "BDSMuSpoiler: " << name << " " << length/CLHEP::m << " " << outerRadius/CLHEP::m << " " << innerRadius/CLHEP::m << " " << bField/CLHEP::tesla << " " << beamPipeRadius/CLHEP::m << G4endl;
+  G4cout << "BDSMuSpoiler: " << _element.name << " " << _element.l*CLHEP::m << " " << " " << _element.B*CLHEP::tesla << G4endl;
 #endif
-
+  /*
   return (new BDSMuSpoiler(name,
 			   length,
 			   beamPipeRadius,
@@ -1060,7 +1060,13 @@ BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
 			   _element.blmLocZ,
 			   _element.blmLocTheta,
 			   _element.tunnelMaterial));
-      
+  */
+
+  return (new BDSMuSpoiler(_element.name,
+			   _element.l*CLHEP::m,
+			   _element.B * CLHEP::tesla,
+			   PrepareBeamPipeInfo(_element),
+			   PrepareBoxSize(_element) ));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createLaser(){
