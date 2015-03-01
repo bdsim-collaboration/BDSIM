@@ -316,7 +316,7 @@ void BDSRBend::BuildOuterLogicalVolume(G4bool outerMaterialIsVacuum)
       itsOuterLogicalVolume = new G4LogicalVolume(new G4Tubs( itsName+"_outer_solid",            // name
 							      innerRadius,
 							      outerRadius,
-							      itsMagFieldLength/2.0*0.5-2*lengthSafety,
+							      itsMagFieldLength*0.5-2*lengthSafety,
 							      0.0,                               // starting angle
 							      2.0*CLHEP::pi),                    // finishing angle - full
 							       
