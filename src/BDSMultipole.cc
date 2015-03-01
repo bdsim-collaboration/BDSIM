@@ -238,6 +238,8 @@ void BDSMultipole::BeamPipeCommonTasks()
 
 
   // y rotation if using trapezoid marker volume for angled faces
+  // LN - I don't think this works as itsPhiAngleIn Out not set properly
+  // can revist when redo markervolumes without trapezoid
   G4RotationMatrix* RotY = NULL;
   if ( (fabs(itsPhiAngleIn) > 0) || (fabs(itsPhiAngleOut)>0) )
     {RotY=BDSGlobalConstants::Instance()->RotY90(); }
@@ -461,8 +463,7 @@ void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
   RegisterLogicalVolume(itsOuterLogicalVolume);
 
   // place the outer volume
-  itsPhysiComp = new G4PVPlacement(
-				   (G4RotationMatrix*)0,   // no rotation
+  itsPhysiComp = new G4PVPlacement((G4RotationMatrix*)0,   // no rotation
 				   (G4ThreeVector)0,       // its position
 				   itsOuterLogicalVolume,  // its logical volume
 				   itsName+"_outer_phys",  // its name

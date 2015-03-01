@@ -22,9 +22,6 @@ BDSBeamPipeFactory::BDSBeamPipeFactory()
 
 BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeType type)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   switch(type.underlying()){
 
   case BDSBeamPipeType::circular:
@@ -47,6 +44,9 @@ BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeTyp
     return BDSBeamPipeFactoryRectangular::Instance();
     break;
   default:
+#ifdef BDSDEBUG
+    G4cout << __METHOD_NAME__ << "unknown type \"" << type << "\" - circular beampipe factory by default" << G4endl;
+#endif
     return BDSBeamPipeFactoryCircular::Instance();
     break;
   }
