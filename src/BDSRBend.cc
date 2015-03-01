@@ -175,13 +175,18 @@ void BDSRBend::BuildMarkerLogicalVolume()
 					       LocalLogicalName+"_marker");
 
 #ifndef NOUSERLIMITS
-  itsMarkerUserLimits = new G4UserLimits(DBL_MAX,DBL_MAX,DBL_MAX);
-  itsMarkerUserLimits->SetMaxAllowedStep(itsMagFieldLength*0.5);
+  itsMarkerUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
+  itsMarkerUserLimits->SetMaxAllowedStep(itsLength*0.5);
   itsMarkerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
 #endif
+  
   // zero field in the marker volume
   itsMarkerLogicalVolume->
     SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
+
+  SetExtentX(-boxSize*0.5,boxSize*0.5);
+  SetExtentY(-boxSize*0.5,boxSize*0.5);
+  SetExtentZ(-itsChordLength*0.5,itsChordLength*0.5);
 }
 
 // construct a beampipe for r bend
@@ -270,6 +275,10 @@ void BDSRBend::BuildBeampipe()
    RegisterLogicalVolumes(bpFirstBit->GetAllLogicalVolumes());
    RegisterLogicalVolumes(beampipe->GetAllLogicalVolumes());
    RegisterLogicalVolumes(bpLastBit->GetAllLogicalVolumes());
+   
+   SetExtentX(beampipe->GetExtentX()); //not exact but only central porition will use this
+   SetExtentY(beampipe->GetExtentY());
+   SetExtentZ(-itsChordLength*0.5,itsChordLength*0.5);
 }
 
 void BDSRBend::BuildOuterLogicalVolume(G4bool outerMaterialIsVacuum)
@@ -372,4 +381,11 @@ void BDSRBend::BuildOuterLogicalVolume(G4bool outerMaterialIsVacuum)
   itsOuterUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
   itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
+
+  // set extent
+  SetExtentX(-outerRadius,outerRadius);
+  SetExtentY(-outerRadius,outerRadius);
+  SetExtentZ(-itsChordLength*0.5,itsChordLength*0.5);
+  // here outer volume is shorter than chordlength, but record that
+  // as maximum extent of the whole magnet
 }

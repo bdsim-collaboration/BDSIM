@@ -197,19 +197,19 @@ void BDSSectorBend::BuildMarkerLogicalVolume()
 			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
 			LocalLogicalName+"_marker");
 
-  itsMarkerUserLimits = new G4UserLimits(DBL_MAX,DBL_MAX,DBL_MAX, BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  G4double  maxStepFactor = 0.5;
-  itsMarkerUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
+#ifndef NOUSERLIMITS
+  itsMarkerUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
+  itsMarkerUserLimits->SetMaxAllowedStep(itsLength*0.5);
   itsMarkerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
+#endif
   
   // zero field in the marker volume
   itsMarkerLogicalVolume->
     SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
 
-  G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.4, 0.4, 0.4));
-  VisAtt1->SetVisibility(true);
-  VisAtt1->SetForceSolid(true);
-  itsMarkerLogicalVolume->SetVisAttributes(VisAtt1);
+  SetExtentX(-transverseSize*0.5,transverseSize*0.5);
+  SetExtentY(-transverseSize*0.5,transverseSize*0.5);
+  SetExtentZ(-itsChordLength*0.5,itsChordLength*0.5);
 }
 
 void BDSSectorBend::BuildBeampipe()

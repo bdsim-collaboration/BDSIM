@@ -128,6 +128,17 @@ void BDSKicker::BuildBeampipe()
 				   itsMarkerLogicalVolume,    // its mother  volume
 				   false,                     // no boolean operation
 				   0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
+
+  // record extent of geometry
+  if (isVerticalKicker){
+    SetExtentX(beampipe->GetExtentY());
+    SetExtentY(beampipe->GetExtentX());
+  }
+  else {
+    SetExtentX(beampipe->GetExtentX());
+    SetExtentY(beampipe->GetExtentY());
+  }
+  SetExtentZ(beampipe->GetExtentZ());
 } 
 
 void BDSKicker::SetVisAttributes()

@@ -219,7 +219,7 @@ void BDSGlobalConstants::InitVisAttributes()
 void BDSGlobalConstants::InitDefaultUserLimits()
 {
   //these must be copied and not attached directly
-  defaultUserLimits = new G4UserLimits("defalut_cuts");
+  defaultUserLimits = new G4UserLimits("default_cuts");
   defaultUserLimits->SetUserMinEkine( GetThresholdCutCharged() );
   //user must set step length manually
 }

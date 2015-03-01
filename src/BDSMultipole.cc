@@ -253,6 +253,13 @@ void BDSMultipole::BeamPipeCommonTasks()
 				   itsMarkerLogicalVolume,    // its mother  volume
 				   false,                     // no boolean operation
 				   0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
+
+  //update extents - remember we don't know here if the outer volume is built
+  //so this can be overwritten but acts as a minimum
+  SetExtentX(beampipe->GetExtentX());
+  SetExtentY(beampipe->GetExtentY());
+  SetExtentZ(beampipe->GetExtentZ());
+  
 }
 
 void BDSMultipole::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
@@ -354,7 +361,9 @@ void BDSMultipole::BuildMarkerLogicalVolume()
 				      xHalfLengthMinus,     // pDx3
 				      xHalfLengthMinus,     // pDx4
 				      0); // pAlp2
-    
+    SetExtentX(-transverseSize*0.5,transverseSize*0.5);
+    SetExtentY(-transverseSize*0.5,transverseSize*0.5);
+    SetExtentZ(-itsLength*0.5,itsLength*0.5);
   }
   
   itsMarkerLogicalVolume=new G4LogicalVolume
@@ -481,6 +490,11 @@ void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
   itsOuterUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
   itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
+
+  //set the new extent of the magnet
+  SetExtentX(-outerRadius,outerRadius);
+  SetExtentY(-outerRadius,outerRadius);
+  SetExtentZ(-itsLength*0.5,itsLength*0.5);
 }
 
 void BDSMultipole::BuildOuterFieldManager(G4int nPoles, G4double poleField,
