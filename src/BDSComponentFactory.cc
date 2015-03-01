@@ -52,6 +52,7 @@ bool debug1 = false;
 
 BDSComponentFactory::BDSComponentFactory(){
   verbose = BDSExecOptions::Instance()->GetVerbose();
+  lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
   //
   // compute magnetic rigidity brho
   // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * |charge(e)|)
@@ -339,7 +340,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createTeleporter(){
   // after they've been created
   CalculateAndSetTeleporterDelta(BDSBeamline::Instance());
   G4double teleporterlength = BDSGlobalConstants::Instance()->GetTeleporterLength();
-  if(teleporterlength < BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if(teleporterlength < lengthSafety){
       G4cerr << "---->NOT creating Teleporter, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
@@ -364,7 +365,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createTeleporter(){
 BDSAcceleratorComponent* BDSComponentFactory::createDrift()
 {
   //G4double tunnelOffsetX = BDSGlobalConstants::Instance()->GetTunnelOffsetX();
-  if(_element.l*CLHEP::m < BDSGlobalConstants::Instance()->GetLengthSafety()){
+  // like most elements, drift requires l > 4*lengthSafety
+  if(_element.l*CLHEP::m < 4*lengthSafety){
     G4cerr << "---->NOT creating element, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
@@ -386,7 +388,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createDrift()
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createPCLDrift(){
- if(_element.l*CLHEP::m < BDSGlobalConstants::Instance()->GetLengthSafety()){
+ if(_element.l*CLHEP::m < 4*lengthSafety){
     G4cerr << "---->NOT creating element, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
@@ -398,20 +400,20 @@ BDSAcceleratorComponent* BDSComponentFactory::createPCLDrift(){
   G4double aper=0;
 
   //Check all apertures are set.
-  if (_element.aperY>BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if (_element.aperY>lengthSafety){
     _element.aperYUp = _element.aperY;
     _element.aperYDown = _element.aperY;
   }
   
-  if (_element.aperX<BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if (_element.aperX<lengthSafety){
     G4cerr << "Error: BDSDetectorConstruction.cc, in building PCLDrift, aperX = " << _element.aperX << " is less than lengthSafety." << G4endl;
     exit(1);
   } 
-  if (_element.aperYUp<BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if (_element.aperYUp<lengthSafety){
     G4cerr << "Error: BDSDetectorConstruction.cc, in building PCLDrift, aperYUp = " << _element.aperYUp << " is less than lengthSafety." << G4endl;
     exit(1);
   } 
-  if (_element.aperYDown<BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if (_element.aperYDown<lengthSafety){
     G4cerr << "Error: BDSDetectorConstruction.cc, in building PCLDrift, aperYDown = " << _element.aperYDown << " is less than lengthSafety." << G4endl;
     exit(1);
   } 
@@ -435,7 +437,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createPCLDrift(){
 
 BDSAcceleratorComponent* BDSComponentFactory::createRF()
 {
-  if(_element.l*CLHEP::m < BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if(_element.l*CLHEP::m < 4*lengthSafety){
     G4cerr << "---->NOT creating element, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
@@ -458,7 +460,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRF()
 
 BDSAcceleratorComponent* BDSComponentFactory::createSBend()
 {
-  if(_element.l*CLHEP::m < BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if(_element.l*CLHEP::m < 4*lengthSafety){
     G4cerr << "---->NOT creating element, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
@@ -548,7 +550,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend()
 
 BDSAcceleratorComponent* BDSComponentFactory::createRBend()
 {
-  if(_element.l*CLHEP::m < BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if(_element.l*CLHEP::m < 4*lengthSafety){
     G4cerr << "---->NOT creating element, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
@@ -603,7 +605,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend()
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
-  if(_element.l*CLHEP::m < BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if(_element.l*CLHEP::m < 4*lengthSafety){
     G4cerr << "---->NOT creating element, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
@@ -669,10 +671,11 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
 			 bPrime,
 			 _element.tunnelMaterial,
 			 _element.material ) );
+  */
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
-  if(_element.l*CLHEP::m < BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if(_element.l*CLHEP::m < 4*lengthSafety){
     G4cerr << "---->NOT creating element, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
@@ -742,7 +745,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
 
 BDSAcceleratorComponent* BDSComponentFactory::createQuad()
 {
-  if(_element.l*CLHEP::m < BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if(_element.l*CLHEP::m < 4*lengthSafety){
     G4cerr << "---->NOT creating element, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
@@ -764,7 +767,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createQuad()
   
 BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
 {
-  if(_element.l*CLHEP::m < BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if(_element.l*CLHEP::m < 4*lengthSafety){
     G4cerr << "---->NOT creating element, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
@@ -800,7 +803,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
 
 BDSAcceleratorComponent* BDSComponentFactory::createOctupole()
 {
-  if(_element.l*CLHEP::m < BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if(_element.l*CLHEP::m < 4*lengthSafety){
     G4cerr << "---->NOT creating element, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
@@ -835,7 +838,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole()
 
 BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
 {
-  if(_element.l*CLHEP::m < BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if(_element.l*CLHEP::m < 4*lengthSafety){
     G4cerr << "---->NOT creating element, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
@@ -892,7 +895,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createElement(){
-  if(_element.l*CLHEP::m < BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if(_element.l*CLHEP::m < 4*lengthSafety){
     G4cerr << "---->NOT creating element, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
@@ -934,7 +937,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 
 BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
 {
-  if(_element.l*CLHEP::m < BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if(_element.l*CLHEP::m < 4*lengthSafety){
     G4cerr << "---->NOT creating element, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
@@ -976,7 +979,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
-  if(_element.l*CLHEP::m < BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if(_element.l*CLHEP::m < 4*lengthSafety){
     G4cerr << "---->NOT creating element, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
@@ -1015,7 +1018,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
-  if(_element.l*CLHEP::m < BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if(_element.l*CLHEP::m < 4*lengthSafety){
     G4cerr << "---->NOT creating element, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"

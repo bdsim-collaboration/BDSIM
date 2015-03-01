@@ -21,6 +21,8 @@ public:
  
 private:
   G4bool   verbose;
+
+  G4double lengthSafety;
   
   G4double _charge, _momentum, _brho;
   G4double _bpRad, _bpThick; 
