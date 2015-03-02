@@ -150,7 +150,9 @@ if(USE_ROOT)
 endif()
 
 # find Boost
-#find_package(Boost REQUIRED)
+# Disable cmake script from Boost package because it is broken on lxplus
+set(Boost_NO_BOOST_CMAKE ON)
+find_package(Boost REQUIRED)
 
 # add xercesc include path (possibly not needed with Geant4 CMake config):
 if(USE_AFS)
