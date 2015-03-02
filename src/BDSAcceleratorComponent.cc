@@ -215,9 +215,11 @@ void BDSAcceleratorComponent::Build()
 
   // visual attributes
 #ifdef BDSDEBUG
-  itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+  if(itsMarkerLogicalVolume)
+    itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
 #else
-  itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+  if(itsMarkerLogicalVolume)
+    itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
 #endif
   
 }
