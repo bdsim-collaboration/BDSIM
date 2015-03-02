@@ -435,7 +435,7 @@ void Options::set_value(std::string name, std::string value )
   if(name == "magnetGeometry" )   { magnetGeometry   = value; return; }
   if(name == "apertureType" )     { apertureType     = value; return; }
   if(name == "beampipeMaterial" ) { beampipeMaterial = value; return; }
-  if(name == "vacMaterial" )      { vacMaterial      = value; return; }
+  if(name == "vacuumMaterial" )   { vacMaterial      = value; return; }
   if(name == "tunnelMaterial" )   { tunnelMaterial   = value; return; }
   if(name == "tunnelCavityMaterial" ) { tunnelCavityMaterial = value; return; }
   if(name == "soilMaterial" )     { soilMaterial     = value; return; }
