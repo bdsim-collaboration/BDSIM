@@ -266,14 +266,12 @@ void TRKHybrid::Track(TRKSBend* el, TRKBunch* bunch) {
     // kappa = 1/rho
     double kappa = 1/gyroradius;
     
-    double c,s,ch,sh; 
+    double c,s; 
     c = std::cos(relangle);
-    s = std::sin(relangle);      
-    TRK::sincosh(relangle,sh,ch);
+    s = std::sin(relangle);
     
     #ifdef TRKDEBUG
     std::cout <<"cos(theta) " << c << " sin(theta) " << s <<std::endl;
-    std::cout <<"sincosh(theta) " << sh << " " << ch << std::endl; 
     #endif
     
     // The rightmost factors of 1e6 are to convert m back to um
@@ -299,25 +297,21 @@ void TRKHybrid::Track(TRKRBend* el, TRKBunch* bunch) {
   std::cout << __METHOD_NAME__ << " RBend" << std::endl;
   #endif
   
-  std::cout << "WARNING: RBends not implemented correctly." << std::endl;
   // transverse coords are in um
   // routine expects all values in m, converts back to transverse um after
   
   // Keep chord length in m for this routine
-  // TODO These const parameters can beneficially be included in TRKSBend?
   // TODO Trackingsteps not trivial to implement in this geometry
   const double chordlength = el->GetLength();
-  double angle = el->GetAngle();
+  const double angle = el->GetAngle();
   
   // for low angles track as drift
   if (std::abs(angle)<=1e-12) {
     return Track((TRKDrift*)el,bunch);
   }
   
-  const double gyroradius = 0.5 * chordlength * std::sin(angle*0.5);
-  
   #ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << " step length per tracking step: " << arclength << " um" << std::endl;
+  std::cout << __METHOD_NAME__ << " step length per tracking step: " << chordlength << " um" << std::endl;
   std::cout << __METHOD_NAME__ << " number of tracking steps: " << trackingSteps << std::endl;
   #endif
   
@@ -334,41 +328,24 @@ void TRKHybrid::Track(TRKRBend* el, TRKBunch* bunch) {
     double xp = part.Xp();
     double yp = part.Yp();
     
-    double c,s,ch,sh; 
-    c = std::cos(angle);
-    s = std::sin(angle);
-    TRK::sincosh(angle,sh,ch);
+    double relangle = angle * (nominalmomentum/part.P());
+    
+    // Geometric relation from chord/angle
+    double gyroradius = 0.5 * chordlength / std::sin(relangle*0.5);
+    
+    double s; 
+    s = std::sin(relangle);
     
     #ifdef TRKDEBUG
-    std::cout <<"cos(theta) " << c << " sin(theta) " << s <<std::endl;
-    std::cout <<"sincosh(theta) " << sh << " " << ch << std::endl; 
+    std::cout <<"sin(theta) " << s <<std::endl;
     #endif
-    
-    // Match direction of rotation with BDSIM (negative particle tracking bug)
-    if (part.Charge() < 0) 
-    {
-#ifdef TRKDEBUG
-      std::cout << "Tracking negative particle, flipping theta value" << std::endl;
-#endif
-      angle = -angle;
-    }
     
     // The rightmost factors of 1e6 are to convert m back to um
     double vOut[6];
-    if (angle>0)
-    {
-      vOut[0] = (x0 + gyroradius * s) * 1e6;   //x1
-      vOut[1] = (y0 + gyroradius * sh) * 1e6;  //y1
-      vOut[3] = xp;                            //xp1
-      vOut[4] = yp;                            //yp1
-    }
-    else
-    {
-      vOut[0] = (x0 + gyroradius * sh) * 1e6;  //x1
-      vOut[1] = (y0 + gyroradius * s) * 1e6;   //y1
-      vOut[3] = xp;                            //xp1
-      vOut[4] = yp;                            //yp1
-    }
+    vOut[0] = (x0 + gyroradius * s * xp) * 1e6; //x1
+    vOut[1] = (y0 + gyroradius * s * yp) * 1e6; //y1
+    vOut[3] = xp;                               //xp1
+    vOut[4] = yp;                               //yp1
     
     vOut[5] =sqrt(1 - vOut[3]*vOut[3] - vOut[4]*vOut[4]); // z1p = sqrt(1- xp1^2 - yp1^2)
     
