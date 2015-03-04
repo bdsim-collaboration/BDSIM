@@ -88,9 +88,3 @@ void BDSLWCalorimeterSD::EndOfEvent(G4HCofThisEvent*HCE)
     { HCID = GetCollectionID(0); }
   HCE->AddHitsCollection( HCID, LWCalorimeterCollection );
 }
-
-void BDSLWCalorimeterSD::clear(){} 
-
-void BDSLWCalorimeterSD::DrawAll(){} 
-
-void BDSLWCalorimeterSD::PrintAll(){} 

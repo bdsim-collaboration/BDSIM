@@ -33,8 +33,8 @@ private:
   G4bool verboseStep;
   G4int  verboseEventNumber;
   G4int  nvar;
-  std::vector<G4int> turnnumberrecord;
-  G4int  turnstaken;
+  //  std::vector<G4int> turnnumberrecord;
+  //  G4int  turnstaken;
   G4ThreeVector teleporterdelta;
 };
 
