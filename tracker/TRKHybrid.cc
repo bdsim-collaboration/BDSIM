@@ -229,17 +229,14 @@ void TRKHybrid::Track(TRKSBend* el, TRKBunch* bunch) {
   // routine expects all values in m, converts back to transverse um after
   
   // Keep arc length in m for this routine
-  // TODO These const parameters can beneficially be included in TRKSBend?
-  const double arclength = el->GetLength()/trackingSteps;
-  const double angle = el->GetAngle()/trackingSteps;
+  // TODO account for multiple tracking steps
+  const double arclength = el->GetLength();
+  const double angle = el->GetAngle();
   
   // for low angles track as drift
   if (std::abs(angle)<=1e-12) {
     return Track((TRKDrift*)el,bunch);
   }
-  
-  const double gyroradius = arclength / angle;
-  const double kappa = 1 / gyroradius;
   
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << " step length per tracking step: " << arclength << " um" << std::endl;
@@ -252,73 +249,48 @@ void TRKHybrid::Track(TRKSBend* el, TRKBunch* bunch) {
   for (;iter!=end;++iter) 
   {
     TRKParticle& part = *iter;
-    for (int i=0; i<trackingSteps; i++) 
-    {      
-      // Converted from um to m for this routine
-      double x0 = part.X()/1e6;
-      double y0 = part.Y()/1e6;
-      double z0 = part.Z()/1e6;
-      double xp = part.Xp();
-      double yp = part.Yp();
-      
-      // From gyroradius = mv / qB in T
-      // TODO Can bField be moved to TRKSBend? No dependency on charge/bRho
-      double bField = nominalmomentum / (part.Charge() * gyroradius);
-      
-      // k is magnetic strength in T/m scaled per particle
-      double smallk = bField / arclength * (nominalmomentum/part.P());
-      
-      // Reference: Wiedemann Particle Accelerator Physics (4.37)
-      double K = smallk + kappa*kappa;
-      
-      double rootK=sqrt(std::abs(K));
-      double rootKh=rootK*arclength;
-      
-      double c,s,ch,sh; 
-      c = std::cos(rootKh);
-      s = std::sin(rootKh);
-      TRK::sincosh(rootKh,sh,ch);
-      
-      #ifdef TRKDEBUG
-      std::cout <<"K "<< K <<" rootk "<<rootK<<" rootKH "<<rootKh<<std::endl;
-      std::cout <<"cos(rootKh) " << c << " sin(rootKh) " << s <<std::endl;
-      std::cout <<"sincosh(rootKh) " << sh << " " << ch << std::endl; 
-      #endif
-      
-      // Match direction of rotation with BDSIM (negative particle tracking bug)
-      if (part.Charge() < 0) 
-      {
-        #ifdef TRKDEBUG
-        std::cout << "Tracking negative particle, flipping K value" << std::endl;
-        #endif
-        K = -K;
-      }
-      
-      // The rightmost factors of 1e6 are to convert m back to um
-      double vOut[6];
-      if (K>0)
-      {
-        vOut[0] = ((c * x0) + (s * xp / rootK)) * 1e6;    //x1
-        vOut[1] = ((ch * y0) + (sh * yp / rootK)) * 1e6;  //y1
-        vOut[3] = (- s * x0 * rootK) + (c * xp);          //xp1
-        vOut[4] = (sh * y0 * rootK) + (ch * yp);          //yp1
-      }
-      else
-      {
-        vOut[0] = ((ch * x0) + (sh * xp / rootK)) * 1e6;  //x1
-        vOut[1] = ((c * y0) + (s * yp / rootK)) * 1e6;    //y1
-        vOut[3] = (sh * x0 * rootK) + (ch * xp);          //xp1
-        vOut[4] = (- s * y0 * rootK) + (c * yp);          //yp1
-      }
-      
-      vOut[5] =sqrt(1 - vOut[3]*vOut[3] - vOut[4]*vOut[4]); // z1p = sqrt(1- xp1^2 - yp1^2)
-      
-      // Convert h (m) to (um)
-      double dz = arclength*1e6;
-      vOut[2]=z0+dz;   
-      
-      part.SetPosMom(vector6(vOut));
-    }
+    // Converted from um to m for this routine
+    double x0 = part.X()/1e6;
+    double y0 = part.Y()/1e6;
+    double z0 = part.Z()/1e6;
+    double xp = part.Xp();
+    double yp = part.Yp();
+        
+    // Reference: Wiedemann Particle Accelerator Physics (C.5)
+    
+    // Rigidity effects on B field (linearly scaling in theta)
+    double relangle = angle * (nominalmomentum/part.P());
+    
+    // rho = arclength / angle
+    double gyroradius = arclength / relangle;
+    // kappa = 1/rho
+    double kappa = 1/gyroradius;
+    
+    double c,s,ch,sh; 
+    c = std::cos(relangle);
+    s = std::sin(relangle);      
+    TRK::sincosh(relangle,sh,ch);
+    
+    #ifdef TRKDEBUG
+    std::cout <<"cos(theta) " << c << " sin(theta) " << s <<std::endl;
+    std::cout <<"sincosh(theta) " << sh << " " << ch << std::endl; 
+    #endif
+    
+    // The rightmost factors of 1e6 are to convert m back to um
+    double vOut[6];
+    
+    vOut[0] = (c * x0 + gyroradius * s * xp) * 1e6;   //x1
+    vOut[1] = (y0 + arclength * yp)          * 1e6;   //y1
+    vOut[3] = -kappa * s * x0 + c * xp;               //xp1
+    vOut[4] = yp;                                     //yp1
+    
+    vOut[5] =sqrt(1 - vOut[3]*vOut[3] - vOut[4]*vOut[4]); // z1p = sqrt(1- xp1^2 - yp1^2)
+    
+    // Convert h (m) to (um)
+    double dz = arclength*1e6;
+    vOut[2]=z0+dz;   
+    
+    part.SetPosMom(vector6(vOut));
   }
 }
 

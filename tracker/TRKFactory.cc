@@ -370,8 +370,19 @@ TRKElement* TRKFactory::createSBend(Element& element) {
   std::cout << __METHOD_NAME__;
   #endif
   
+  double angle;
+  // B Field used to define bend: theta = qBl / p 
+  if(element.B != 0)
+  {    
+    angle = charge * (element.B * CLHEP::tesla) * element.l / momentum;
+  }
+  else
+  {
+    angle = element.angle;
+  }
+  
   TRKAperture* aperture = createAperture(element);
-  return new TRKSBend(element.angle,
+  return new TRKSBend(angle,
       element.name,
       element.l,
       aperture,
