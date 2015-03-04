@@ -16,7 +16,7 @@ class Test:
         """
         Tracking test class
 
-        type = 'drift' | 'quadrupole' | 'sextupole'
+        type = 'drift' | 'quadrupole' | 'sextupole' | 'sbend' | 'rbend'
         distribution = 'flat' | 'gaussian'
         """
         self.type_        = type_
@@ -101,6 +101,9 @@ class Test:
         elif self.type_ == 'sbend':
             name = 'sb1'
             bm.AddDipole(name,length=self.length,**self.kwargs)
+        elif self.type_ == 'rbend':
+            name = 'rb1'
+            bm.AddDipole(name,category='rbend',length=self.length,**self.kwargs)
         elif self.type_ == 'quadrupole' :
             name = 'q1'
             bm.AddQuadrupole(name,length=self.length,**self.kwargs)
@@ -118,8 +121,8 @@ class Test:
         if self.usingfolder:
             _os.chdir(self.foldername)
         
-        _os.system("bdsim-tracking --file="+self.filename+".gmad --batch --outfile='testTRK' --output=combined > bdsimTRK.log")
-        _os.system("bdsim --file="+self.filename+".gmad --batch --outfile='test' --output=combined > bdsim.log")
+        _os.system("bdsim-tracking --file="+self.filename+".gmad --batch --outfile='testTRK' --output=combined > test_trk.log")
+        _os.system("bdsim --file="+self.filename+".gmad --batch --outfile='testBDS' --output=combined > test_bds.log")
 
         if self.usingfolder:
             _os.chdir("../")
@@ -129,14 +132,14 @@ class Test:
         if self.usingfolder:
             _os.chdir(self.foldername)
 
-        bdsimprim = pybdsim.Data.Load("test.primaries.txt")
+        bdsimprim = pybdsim.Data.Load("testBDS/testBDS.primaries.txt")
         Bx0 = bdsimprim.X()
         By0 = bdsimprim.Y()
         Bxp0 = bdsimprim.Xp()
         Byp0 = bdsimprim.Yp()
         self.bdsimprimaries = {'x':Bx0,'y':By0,'xp':Bxp0,'yp':Byp0}
 
-        bdsim = pybdsim.Data.Load("test.txt")
+        bdsim = pybdsim.Data.Load("testBDS/testBDS.txt")
         Bx = bdsim.X()
         By = bdsim.Y()
         Bxp = bdsim.Xp()
@@ -144,14 +147,14 @@ class Test:
         self.bdsimoutput = {'x':Bx,'y':By,'xp':Bxp,'yp':Byp}
 
 
-        bdsimprim_trk = pybdsim.Data.Load("testTRK.primaries.txt")
+        bdsimprim_trk = pybdsim.Data.Load("testTRK/testTRK.primaries.txt")
         Bx0_t = bdsimprim_trk.X()
         By0_t = bdsimprim_trk.Y()
         Bxp0_t = bdsimprim_trk.Xp()
         Byp0_t = bdsimprim_trk.Yp()
         self.bdsimprimaries_trk = {'x':Bx0_t,'y':By0_t,'xp':Bxp0_t,'yp':Byp0_t}
 
-        bdsim_trk = pybdsim.Data.Load("testTRK.txt")
+        bdsim_trk = pybdsim.Data.Load("testTRK/testTRK.txt")
         Bx_t = bdsim_trk.X()
         By_t = bdsim_trk.Y()
         Bxp_t = bdsim_trk.Xp()
