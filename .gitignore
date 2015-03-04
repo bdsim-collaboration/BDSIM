@@ -46,3 +46,11 @@ Thumbs.db
 # Exclusion #
 #############
 !CMakeLists.txt
+
+# Manual #
+######################
+#manual/build/*
+manual/build/latex/*
+manual/build/html/*
+manual/build/doctrees/*
+!manual/build/latex/BDSIM.pdf
