@@ -252,7 +252,7 @@ void TRKHybrid::Track(TRKSBend* el, TRKBunch* bunch) {
     // Converted from um to m for this routine
     double x0 = part.X()/1e6;
     double y0 = part.Y()/1e6;
-    double z0 = part.Z()/1e6;
+    double z0 = part.Z();
     double xp = part.Xp();
     double yp = part.Yp();
         
@@ -324,7 +324,7 @@ void TRKHybrid::Track(TRKRBend* el, TRKBunch* bunch) {
     // Converted from um to m for this routine
     double x0 = part.X()/1e6;
     double y0 = part.Y()/1e6;
-    double z0 = part.Z()/1e6;
+    double z0 = part.Z();
     double xp = part.Xp();
     double yp = part.Yp();
     
@@ -387,7 +387,7 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
       // Converted from um to m for this routine
       double x0 = part.X()/1e6;
       double y0 = part.Y()/1e6;
-      double z0 = part.Z()/1e6;
+      double z0 = part.Z();
       double xp = part.Xp();
       double yp = part.Yp();
 
