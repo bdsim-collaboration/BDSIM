@@ -33,9 +33,6 @@
 // #include "BDSLWCalorimeter.hh"
 // #include "BDSLWCalorimeterHit.hh"
 
-typedef std::list<BDSEnergyCounterSD*>  ECList;
-extern ECList* theECList;
-
 extern BDSOutputBase* bdsOutput;         // output interface
 
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event

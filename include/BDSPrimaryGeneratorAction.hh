@@ -13,42 +13,28 @@
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"
-//#include <fstream>
-//#include "BDSSynchrotronRadiation.hh"
-//#include "BDSSamplerHit.hh"
 
-class G4ParticleGun;
+class BDSBunch;
 class G4Event;
+class G4ParticleGun;
 
 class BDSPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
 public:
-  BDSPrimaryGeneratorAction();    
+  BDSPrimaryGeneratorAction(BDSBunch*);    
   ~BDSPrimaryGeneratorAction();
   
 public:
   virtual void GeneratePrimaries(G4Event*);
   
 private:
-  G4ParticleGun*              particleGun;	  //pointer a to G4 service class
-  
+  /// pointer a to G4 service class
+  G4ParticleGun*              particleGun;	  
+  /// weight of the primaries
+  /// currently always 1 and not possible to change it
   G4double weight;
- 
-  // beam data:
-  //  G4double beta_x,sig_z,KineticEnergy,
-  // gamma,beta_y,sig_dp,emit_x,emit_y,charge;
-
-  //  G4double sig_x,sig_xp,sig_y,sig_yp,sig_t;
-  
-  //  std::ifstream InputBunchFile;
-  //std::ifstream ExtractBunchFile;
-
-  // G4double logXfactor;
-  // G4double logYfactor;
-
-  // BDSSynchrotronRadiation* itsBDSSynchrotronRadiation;
-
-  //  BDSSamplerHitsCollection *itsSamplerHitsCollection;
+  /// pointer to the particle distribution generator
+  BDSBunch* bdsBunch;
 };
 
 #endif

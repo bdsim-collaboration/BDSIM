@@ -13,7 +13,7 @@
 
 BDSDriftStepper::BDSDriftStepper(G4Mag_EqRhs *EqRhs)
    : G4MagIntegratorStepper(EqRhs,6)  // integrate over 6 variables only !!
-                                       // position & velocity
+                                      // position & velocity
 {
   verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
   verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
