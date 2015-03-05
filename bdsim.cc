@@ -74,9 +74,6 @@
 //=======================================================
 // Global variables 
 BDSOutputBase* bdsOutput=NULL;         // output interface
-BDSBunch       bdsBunch;               // bunch information 
-//=======================================================
-
 //=======================================================
 
 extern Options options;
@@ -131,7 +128,8 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Instantiating chosen bunch distribution." << G4endl;
 #endif
-  bdsBunch.SetOptions(options);
+  BDSBunch* bdsBunch = new BDSBunch();
+  bdsBunch->SetOptions(options);
   
   //
   // construct mandatory run manager (the G4 kernel) and
@@ -181,7 +179,6 @@ int main(int argc,char** argv) {
 #endif
   runManager->SetUserInitialization(detector);
 
-
   //
   // set user action classes
   //
@@ -217,7 +214,7 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - primary generator"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSPrimaryGeneratorAction());
+  runManager->SetUserAction(new BDSPrimaryGeneratorAction(bdsBunch));
 
 
   //
@@ -343,6 +340,8 @@ int main(int argc,char** argv) {
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif
   delete runManager; 
+
+  delete bdsBunch;
 
   G4cout << __FUNCTION__ << "> End of Run, Thank you for using BDSIM!" << G4endl;
 

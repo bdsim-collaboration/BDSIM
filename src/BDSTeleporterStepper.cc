@@ -1,17 +1,14 @@
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
-#include "globals.hh"
 
-#include "BDSDriftStepper.hh"
-#include "G4ThreeVector.hh"
 #include "BDSTeleporterStepper.hh"
 #include "BDSDebug.hh"
-
-extern G4int event_number;
+#include "G4Event.hh"
+#include "G4EventManager.hh"
 
 BDSTeleporterStepper::BDSTeleporterStepper(G4Mag_EqRhs *EqRhs)
    : G4MagIntegratorStepper(EqRhs,6)  // integrate over 6 variables only !!
-                                       // position & velocity
+                                      // position & velocity
 {
 #ifdef BDSDEBUG
   G4cout << "BDSTeleporterStepper Constructor " << G4endl;
@@ -19,8 +16,8 @@ BDSTeleporterStepper::BDSTeleporterStepper(G4Mag_EqRhs *EqRhs)
   verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
   verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
   nvar               = 6;
-  turnnumberrecord.push_back((G4int)-1);
-  turnstaken         = 0;
+  //  turnnumberrecord.push_back((G4int)-1);
+  //  turnstaken         = 0;
   teleporterdelta    = BDSGlobalConstants::Instance()->GetTeleporterDelta();
 }
 
@@ -37,10 +34,9 @@ void BDSTeleporterStepper::AdvanceHelix( const G4double  yIn[],
   // hasn't been shifted already - ie its turn number
   // won't have been registered in the vector member
   // turnnumberrecord
-  turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
-  
   
 #ifdef BDSDEBUG
+  G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
   G4cout << " Teleporter Stepper" << G4endl;
   G4cout << "turnstaken " << turnstaken << G4endl;
 #endif
@@ -49,7 +45,7 @@ void BDSTeleporterStepper::AdvanceHelix( const G4double  yIn[],
     {
       //do the adjustment
       //register this turn
-      turnnumberrecord.push_back(turnstaken);
+      //turnnumberrecord.push_back(turnstaken);
       //G4cout << "registering this turn in teleporter" << G4endl;
       // accelerator is built along z axis
       // bends bend normally in x axis
@@ -73,7 +69,7 @@ void BDSTeleporterStepper::AdvanceHelix( const G4double  yIn[],
     }
   
   // dump step information for particular event
-  if(verboseStep || verboseEventNumber == event_number)
+  if(verboseStep || verboseEventNumber == G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID())
     {
       G4ThreeVector inA  = G4ThreeVector(yIn[0],yIn[1],yIn[2]);
       G4ThreeVector inB  = G4ThreeVector(yIn[3],yIn[4],yIn[5]);

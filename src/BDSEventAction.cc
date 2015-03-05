@@ -33,12 +33,8 @@
 // #include "BDSLWCalorimeter.hh"
 // #include "BDSLWCalorimeterHit.hh"
 
-typedef std::list<BDSEnergyCounterSD*>  ECList;
-extern ECList* theECList;
-
 extern BDSOutputBase* bdsOutput;         // output interface
 
-G4int event_number; // event number, used for checking on printing verboseEventNumber
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
 
 BDSEventAction::BDSEventAction():
@@ -64,7 +60,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   G4cout << __METHOD_NAME__ << " Processing begin of event action" << G4endl;
 #endif
 
-  event_number = evt->GetEventID();
+  G4int event_number = evt->GetEventID();
 
   if ((event_number+1)%printModulo ==0)
     {
@@ -100,7 +96,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout<<"BDSEventAction : processing end of event action"<<G4endl;
 #endif
-  
+
+  G4int event_number = evt->GetEventID();
   if(verboseEvent || verboseEventNumber == event_number){
     G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;
   }

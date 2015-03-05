@@ -70,16 +70,6 @@ G4bool BDSDumpSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   return true;
 }
 
-void BDSDumpSD::EndOfEvent(G4HCofThisEvent*)
-{
-}
-
-void BDSDumpSD::clear(){} 
-
-void BDSDumpSD::DrawAll(){} 
-
-void BDSDumpSD::PrintAll(){} 
-
 unsigned int BDSDumpSD::nCounter = 0; 
 
 unsigned int BDSDumpSD::trackCounter = 0; 

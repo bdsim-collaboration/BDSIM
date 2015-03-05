@@ -25,13 +25,10 @@ public:
   BDSEnergyCounterSD(G4String name);
   ~BDSEnergyCounterSD();
 
-  void Initialize(G4HCofThisEvent*HCE);
-  G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
-  G4bool ProcessHits(G4GFlashSpot*aSpot ,G4TouchableHistory* ROhist);
-  void EndOfEvent(G4HCofThisEvent*HCE);
-  void clear();
-  void DrawAll();
-  void PrintAll();
+  virtual void Initialize(G4HCofThisEvent*HCE);
+  virtual G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
+  virtual G4bool ProcessHits(G4GFlashSpot*aSpot ,G4TouchableHistory* ROhist);
+
   G4double GetSPositionOfStep(G4Step* aStep);
   G4double GetSPositionOfSpot(G4GFlashSpot* aSpot);
   G4String GetName();
