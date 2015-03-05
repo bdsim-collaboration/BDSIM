@@ -19,8 +19,6 @@
 #include "G4ParticleGun.hh"
 #include "G4ParticleDefinition.hh"
 
-#include "CLHEP/Units/PhysicalConstants.h"
-
 BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch* bdsBunchIn):
   weight(1),
   bdsBunch(bdsBunchIn)
@@ -44,7 +42,6 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch* bdsBunchIn):
 
 BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
 {
-  delete bdsBunch;
   delete particleGun;
 }
 
