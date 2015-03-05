@@ -445,12 +445,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRF()
              << G4endl;
       return NULL;
   }
-  /*return (new BDSRfCavity( _element.name,
-			   _element.l * CLHEP::m,
-			   aper,
-			   _element.gradient,
-			   _element.tunnelMaterial,
-			   _element.material ) );*/
+  
   return (new BDSRfCavity( _element.name,
 			   _element.l * CLHEP::m,
 			   _element.gradient,
@@ -527,23 +522,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend()
 						  PrepareBeamPipeInfo(_element),
 						  PrepareBoxSize(_element)
 						  ));
-
-      /*
-      sbendline->addComponent( new BDSSectorBend( itsname,
-						  semilength, //NOTE
-						  aper,
-						  FeRad,
-						  bField,
-						  semiangle,  //NOTE
-						  _element.outR * CLHEP::m,
-						  _element.blmLocZ,
-						  _element.blmLocTheta,
-						  _element.tilt,
-						  bPrime,
-						  _element.tunnelMaterial,
-						  _element.material,
-						  _element.aperX*CLHEP::m,
-						  _element.aperY*CLHEP::m ));*/
     }
   return sbendline;
 }
@@ -657,19 +635,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
 			 false,   // it's a horizontal kicker
 			 PrepareBeamPipeInfo(_element),
 			 PrepareBoxSize(_element) ));
-  /*
-  return (new BDSKicker( _element.name,
-			 length,
-			 aper,
-			 FeRad,
-			 bField,
-			 _element.angle,
-			 _element.outR * CLHEP::m,
-			 _element.tilt * CLHEP::rad,
-			 bPrime,
-			 _element.tunnelMaterial,
-			 _element.material ) );
-  */
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
@@ -725,18 +690,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
 			 true,   // it's a vertical kicker
 			 PrepareBeamPipeInfo(_element),
 			 PrepareBoxSize(_element) ));
-  /*
-  return (new BDSKicker( _element.name,
-			 _element.l * CLHEP::m,
-			 aper,
-			 FeRad,
-			 bField,
-			 _element.angle,
-			 _element.outR * CLHEP::m,
-			 (_element.tilt+CLHEP::pi/2)*CLHEP::rad,
-			 bPrime,
-			 _element.tunnelMaterial,
-			 _element.material ) );*/
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createQuad()
@@ -1030,38 +983,11 @@ BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
 	 << " tunnel material " << _element.tunnelMaterial
 	 << G4endl;
 #endif
-  //G4String name = _element.name;
-  // G4double length = _element.l*CLHEP::m;
-  //G4double bField = _element.B * CLHEP::tesla;
-  //G4double beamPipeRadius;
-  //        if(_element.aperSet){
-  //beamPipeRadius = _element.aper*CLHEP::m;
-  //        } else {
-  //          beamPipeRadius = BDSGlobalConstants::Instance()->GetBeampipeRadius();
-  //        }
-  //G4double innerRadius;
-  //        if (_element.inRset){
-  //innerRadius = _element.inR*CLHEP::m;
-  //        } else {
-  //          innerRadius = beamPipeRadius;
-  //        }
-  //G4double outerRadius = _element.outR*CLHEP::m;
         
 #ifdef BDSDEBUG
   G4cout << "BDSMuSpoiler: " << _element.name << " " << _element.l*CLHEP::m << " " << " " << _element.B*CLHEP::tesla << G4endl;
 #endif
-  /*
-  return (new BDSMuSpoiler(name,
-			   length,
-			   beamPipeRadius,
-			   innerRadius,
-			   outerRadius,
-			   bField, 
-			   _element.blmLocZ,
-			   _element.blmLocTheta,
-			   _element.tunnelMaterial));
-  */
-
+  
   return (new BDSMuSpoiler(_element.name,
 			   _element.l*CLHEP::m,
 			   _element.B * CLHEP::tesla,
