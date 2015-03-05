@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <iostream>
+#include <chrono>
 
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
@@ -12,6 +13,9 @@
 #include "TRKStrategy.hh"
 #include "TRKParticle.hh"
 #include "TRKElement.hh"
+
+typedef std::chrono::high_resolution_clock Clock;
+typedef std::chrono::milliseconds milliseconds;
 
 TRKTracker::TRKTracker(TRKLine* lineIn, TRKStrategy* strategyIn, Options& options):line(lineIn),strategy(strategyIn)
 {
@@ -31,6 +35,8 @@ TRKTracker::~TRKTracker() {
 void TRKTracker::Track(TRKBunch* bunch) 
 {
   std::cout << __METHOD_NAME__ << "starting tracking" << std::endl;
+  
+  Clock::time_point tStart = Clock::now(); 
   
   if (!bunch) return; //can't track nothing
   if (bunch->empty()) return; //even if bunch exists, there must be particles in it
@@ -67,6 +73,13 @@ void TRKTracker::Track(TRKBunch* bunch)
       BDSGlobalConstants::Instance()->IncrementTurnNumber(); //used in output data
       if (bunch->empty()) {std::cout << "No further particles to track" << std::endl;break;}
     }// end of turns iteration
+    
+    
+    Clock::time_point tEnd = Clock::now();
+    milliseconds timeDiff = std::chrono::duration_cast<milliseconds>(tEnd-tStart);
+    
+    std::cout << "Time taken: " << timeDiff.count() << "ms" << std::endl;
+    
   std::cout << "All turns completed" << std::endl
 	    << "Thank you for using BDSIM Tracker" << std::endl;
 }
