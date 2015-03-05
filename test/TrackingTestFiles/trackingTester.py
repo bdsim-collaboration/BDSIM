@@ -144,14 +144,14 @@ class Test:
         if self.usingfolder:
             _os.chdir(self.foldername)
 
-        bdsimprim = pybdsim.Data.Load("test.primaries.txt")
+        bdsimprim = pybdsim.Data.Load("test/test.primaries.txt")
         Bx0 = bdsimprim.X()
         By0 = bdsimprim.Y()
         Bxp0 = bdsimprim.Xp()
         Byp0 = bdsimprim.Yp()
         self.bdsimprimaries = {'x':Bx0,'y':By0,'xp':Bxp0,'yp':Byp0}
         
-        bdsim = pybdsim.Data.Load("test.txt")
+        bdsim = pybdsim.Data.Load("test/test.txt")
         Bx = bdsim.X()
         By = bdsim.Y()
         Bxp = bdsim.Xp()
