@@ -1,10 +1,11 @@
 #ifndef BDSMAGNETOUTERFACTORYBASE_H
 #define BDSMAGNETOUTERFACTORYBASE_H
 
+#include "BDSGeometryComponent.hh"
 #include "BDSBeamPipe.hh"
-#include "G4Material.hh"
 
 #include "globals.hh"         // geant4 globals / types
+#include "G4Material.hh"
 
 /**
  * @brief Abstract base class for magnet outer volume factories
@@ -33,94 +34,96 @@ public:
   /// internal member variables with the same name - avoiding 'itsVariable'.
 
   /// sector bend outer volume
-  virtual BDSGeometryComponent* CreateSectorBend(G4String     name,                   // name
-						 G4double     length,                 // length [mm]
-						 BDSBeamPipe* beamPipeIn,             // beampipe
-						 G4double     boxSize,                // full width
-						 G4Material*  outerMaterial = NULL,    // material for outer volume
+  virtual BDSGeometryComponent* CreateSectorBend(G4String     name,                // name
+						 G4double     length,              // length [mm]
+						 BDSBeamPipe* beamPipe,            // beampipe
+						 G4double     boxSize,             // full width
+						 G4double     angle,               // full bend angle [rad]
+						 G4Material*  outerMaterial = NULL // material for outer volume
 						 ) = 0;
 
   /// rectangular bend outer volume
-  virtual BDSGeometryComponent* CreateRectangularBend(G4String     name,                 // name
-						      G4double     length,               // length [mm]
-						      BDSBeamPipe* beamPipeIn,           // beampipe
-						      G4double     boxSize,              // full width
-						      G4Material*  outerMaterial = NULL  // material for outer volume
+  virtual BDSGeometryComponent* CreateRectangularBend(G4String     name,                // name
+						      G4double     length,              // length [mm]
+						      BDSBeamPipe* beamPipe,            // beampipe
+						      G4double     boxSize,             // full width
+						      G4double     angle,               // full bend angle [rad]
+						      G4Material*  outerMaterial = NULL // material for outer volume
 						      ) = 0;
 
   
   /// quadrupole outer volume
   virtual BDSGeometryComponent* CreateQuadrupole(G4String     name,                 // name
 						 G4double     length,               // length [mm]
-						 BDSBeamPipe* beamPipeIn,           // beampipe
+						 BDSBeamPipe* beamPipe,             // beampipe
 						 G4double     boxSize,              // full width
-						 G4Material*  outerMaterial = NULL, // material for outer volume
+						 G4Material*  outerMaterial = NULL  // material for outer volume
 						 ) = 0;
 
 
   /// sextupole outer volume
-  virtual BDSGeometryComponent* CreateSextupole(G4String     name,                  // name
-						G4double     length,                // length [mm]
-						BDSBeamPipe* beamPipeIn,            // beampipe
-						G4double     boxSize,               // full width
-						G4Material*  outerMaterial = NULL   // material for outer volume
+  virtual BDSGeometryComponent* CreateSextupole(G4String     name,                 // name
+						G4double     length,               // length [mm]
+						BDSBeamPipe* beamPipe,             // beampipe
+						G4double     boxSize,              // full width
+						G4Material*  outerMaterial = NULL  // material for outer volume
 						) = 0;
 
   /// octupole outer volume
-  virtual BDSGeometryComponent* CreateOctupole(G4String     name,                   // name
-					       G4double     length,                 // length [mm]
-					       BDSBeamPipe* beamPipeIn,             // beampipe
-					       G4double     boxSize,                // full width
-					       G4Material*  outerMaterial = NULL    // material for outer volume
+  virtual BDSGeometryComponent* CreateOctupole(G4String     name,                  // name
+					       G4double     length,                // length [mm]
+					       BDSBeamPipe* beamPipe,              // beampipe
+					       G4double     boxSize,               // full width
+					       G4Material*  outerMaterial = NULL   // material for outer volume
 					       ) = 0;
 
   /// decapole outer volume
-  virtual BDSGeometryComponent* CreateDecapole(G4String     name,                   // name
-					       G4double     length,                 // length [mm]
-					       BDSBeamPipe* beamPipeIn,             // beampipe
-					       G4double     boxSize,                // full width
-					       G4Material*  outerMaterial = NULL    // material for outer volume
+  virtual BDSGeometryComponent* CreateDecapole(G4String     name,                  // name
+					       G4double     length,                // length [mm]
+					       BDSBeamPipe* beamPipe,              // beampipe
+					       G4double     boxSize,               // full width
+					       G4Material*  outerMaterial = NULL   // material for outer volume
 					       ) = 0;
 
   /// solenoid  outer volume
-  virtual BDSGeometryComponent* CreateSolenoid(G4String     name,                   // name
-					       G4double     length,                 // length [mm]
-					       BDSBeamPipe* beamPipeIn,             // beampipe
-					       G4double     boxSize,                // full width
-					       G4Material*  outerMaterial = NULL    // material for outer volume
+  virtual BDSGeometryComponent* CreateSolenoid(G4String     name,                  // name
+					       G4double     length,                // length [mm]
+					       BDSBeamPipe* beamPipe,              // beampipe
+					       G4double     boxSize,               // full width
+					       G4Material*  outerMaterial = NULL   // material for outer volume
 					       ) = 0;
 
   /// general multipole outer volume - could be any 2N order multipole
-  virtual BDSGeometryComponent* CreateMultipole(G4String     name,                   // name
-						G4double     length,                 // length [mm]
-						BDSBeamPipe* beamPipeIn,                // beampipe
-						G4double     boxSize,                   // full width
-						G4Material*  outerMaterial = NULL      // material for outer volume
+  virtual BDSGeometryComponent* CreateMultipole(G4String     name,                 // name
+						G4double     length,               // length [mm]
+						BDSBeamPipe* beamPipe,             // beampipe
+						G4double     boxSize,              // full width
+						G4Material*  outerMaterial = NULL  // material for outer volume
 						) = 0;
 
   /// RF cavity outer volume
-  virtual BDSGeometryComponent* CreateRfCavity(G4String     name,                   // name
-					       G4double     length,                 // length [mm]
-					       BDSBeamPipe* beamPipeIn,                // beampipe
-					       G4double     boxSize,                   // full width
-					       G4Material*  outerMaterial = NULL      // material for outer volume
+  virtual BDSGeometryComponent* CreateRfCavity(G4String     name,                  // name
+					       G4double     length,                // length [mm]
+					       BDSBeamPipe* beamPipe,              // beampipe
+					       G4double     boxSize,               // full width
+					       G4Material*  outerMaterial = NULL   // material for outer volume
 					       ) = 0;
 
   /// muon spoiler outer volume
-  virtual BDSGeometryComponent* CreateMuSpoiler(G4String     name,                   // name
-						G4double     length,                 // length [mm]
-						BDSBeamPipe* beamPipeIn,                // beampipe
-						G4double     boxSize,                   // full width
-						G4Material*  outerMaterial = NULL      // material for outer volume
+  virtual BDSGeometryComponent* CreateMuSpoiler(G4String     name,                 // name
+						G4double     length,               // length [mm]
+						BDSBeamPipe* beamPipe,             // beampipe
+						G4double     boxSize,              // full width
+						G4Material*  outerMaterial = NULL  // material for outer volume
 						) = 0;
 
   /// horizontal and vertical kicker outer volume
-  virtual BDSGeometryComponent* CreateKicker(G4String     name,                      // name
-					     G4double     length,                 // length [mm]
-					     BDSBeamPipe* beamPipeIn,                // beampipe
-					     G4double     boxSize,                   // full width
-					     G4bool       vertical = true,
-					     G4Material*  outerMaterial = NULL      // material for outer volume
+  virtual BDSGeometryComponent* CreateKicker(G4String     name,                  // name
+					     G4double     length,                // length [mm]
+					     BDSBeamPipe* beamPipe,              // beampipe
+					     G4double     boxSize,               // full width
+					     G4bool       vertical = true,       // is it a vertical kicker?
+					     G4Material*  outerMaterial = NULL   // material for outer volume
 					     ) = 0;
 
   
