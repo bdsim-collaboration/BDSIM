@@ -36,6 +36,9 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
+#include "BDSMagnetOuterFactory.hh"
+#include "BDSMagnetType.hh"
+
 BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength, 
 			     G4double bpRad, G4double FeRad,
 			     G4double bGrad, G4double tilt, G4double outR,
@@ -117,6 +120,16 @@ void BDSQuadrupole::BuildBPFieldAndStepper()
 
 void BDSQuadrupole::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)
 {
+
+  BDSGeometryComponent* outerLV = BDSMagnetOuterFactory::Instance()->CreateQuadrupole(BDSMagnetType::cylindrical,
+										      itsName,
+										      itsLength,
+										      beampipe,
+										      boxSize,
+										      BDSMaterials::Instance()->GetMaterial("Iron"));
+
+  G4cout << "NAME " << outerLV->GetContainerSolid()->GetName() << G4endl;
+										      
   // build magnet (geometry + magnetic field)
   // according to quad type
   G4String geometry = BDSGlobalConstants::Instance()->GetMagnetGeometry();
