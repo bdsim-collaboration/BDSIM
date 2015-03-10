@@ -43,6 +43,8 @@ BDSBeamPipeFactoryCircular::BDSBeamPipeFactoryCircular()
   vacuumLV                  = NULL;
   beamPipeLV                = NULL;
   containerLV               = NULL;
+  orientationIn  = 0;
+  orientationOut = 0;
 }
 
 BDSBeamPipeFactoryCircular::~BDSBeamPipeFactoryCircular()

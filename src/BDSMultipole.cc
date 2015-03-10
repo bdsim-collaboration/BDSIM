@@ -118,14 +118,14 @@ BDSMultipole::BDSMultipole( G4String aName,
   SetBeampipeThickness(beampipeThicknessSet, beampipeThickness); 
 }
 
-BDSMultipole::BDSMultipole( G4String     name, 
-			    G4double     length,
-			    beamPipeInfo info,
-			    G4double     boxSizeIn,
-			    G4String     outerMaterial,
-			    G4String     tunnelMaterial,
-			    G4double     tunnelRadius,
-			    G4double     tunnelOffsetX):
+BDSMultipole::BDSMultipole( G4String        name, 
+			    G4double        length,
+			    BDSBeamPipeInfo info,
+			    G4double        boxSizeIn,
+			    G4String        outerMaterial,
+			    G4String        tunnelMaterial,
+			    G4double        tunnelRadius,
+			    G4double        tunnelOffsetX):
   BDSAcceleratorComponent(name,
 			  length,
 			  0,              //beampipe radius in AC

@@ -39,15 +39,15 @@ BDSSextupole::BDSSextupole(G4String aName, G4double aLength,
   itsTilt=tilt;
 }
 
-BDSSextupole::BDSSextupole(G4String     name,
-			   G4double     length,
-			   G4double     bDblPrime,
-			   beamPipeInfo beamPipeInfoIn,
-			   G4double     boxSize,
-			   G4String     outerMaterial,
-			   G4String     tunnelMaterial,
-			   G4double     tunnelRadius,
-			   G4double     tunnelOffsetX):
+BDSSextupole::BDSSextupole(G4String        name,
+			   G4double        length,
+			   G4double        bDblPrime,
+			   BDSBeamPipeInfo beamPipeInfoIn,
+			   G4double        boxSize,
+			   G4String        outerMaterial,
+			   G4String        tunnelMaterial,
+			   G4double        tunnelRadius,
+			   G4double        tunnelOffsetX):
   BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBDblPrime(bDblPrime)
 {;}

@@ -64,11 +64,6 @@ void Parameters::flush() {
   aperX = 0; aperXset = 0;
   aperY = 0; aperYset = 0;
 
-  // pcl drift
-  aperYUp = 0; aperYUpset = 0;
-  aperYDown = 0; aperYDownset = 0;
-  aperDy=0; aperDyset = 0;
-
   // new aperture model
   aper1 = 0; aper1set = 0;
   aper2 = 0; aper2set = 0;
@@ -168,9 +163,6 @@ void Parameters::inherit_properties(struct Element& e)
   if(!aperset) { aper = e.aper; aperset = 1; }
   if(!aperXset) { aperX = e.aperX; aperXset = 1; }
   if(!aperYset) { aperY = e.aperY; aperYset = 1; }
-  if(!aperYUpset) { aperYUp = e.aperYUp; aperYUpset = 1; }
-  if(!aperYDownset) { aperYDown = e.aperYDown; aperYDownset = 1; }
-  if(!aperDyset) { aperDy = e.aperDy; aperDyset = 1; }
   // new aperture model
   if(!aper1set) { aper1 = e.aper1; aper1set = 1;}
   if(!aper2set) { aper2 = e.aper2; aper2set = 1;}

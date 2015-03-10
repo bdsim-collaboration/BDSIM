@@ -30,18 +30,18 @@ BDSKicker::BDSKicker(G4String aName, G4double aLength,
   itsKickAngle = angle;
 }
 
-BDSKicker::BDSKicker(G4String     name,
-		     G4double     length,
-		     G4double     bField,
-		     G4double     bGrad,
-		     G4double     angle,
-		     G4bool       verticalKicker,
-		     beamPipeInfo beamPipeInfo,
-		     G4double     boxSize,
-		     G4String     outerMaterial,
-		     G4String     tunnelMaterial,
-		     G4double     tunnelRadius,
-		     G4double     tunnelOffsetX):
+BDSKicker::BDSKicker(G4String        name,
+		     G4double        length,
+		     G4double        bField,
+		     G4double        bGrad,
+		     G4double        angle,
+		     G4bool          verticalKicker,
+		     BDSBeamPipeInfo beamPipeInfo,
+		     G4double        boxSize,
+		     G4String        outerMaterial,
+		     G4String        tunnelMaterial,
+		     G4double        tunnelRadius,
+		     G4double        tunnelOffsetX):
   BDSMultipole(name,length,beamPipeInfo,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBField(bField),itsBGrad(bGrad),itsKickAngle(angle),isVerticalKicker(verticalKicker)
 {;}
@@ -92,18 +92,19 @@ void BDSKicker::BuildBeampipe()
       kickerAper2 = aper2;
     }
   
-  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeType,
-							    itsName,
-							    itsLength,
-							    kickerAper1,
-							    kickerAper2,
-							    aper3,
-							    aper4,
-							    vacuumMaterial,
-							    beamPipeThickness,
-							    beamPipeMaterial);
+  beampipe =
+    BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeType,
+						   itsName,
+						   itsLength,
+						   kickerAper1,
+						   kickerAper2,
+						   aper3,
+						   aper4,
+						   vacuumMaterial,
+						   beamPipeThickness,
+						   beamPipeMaterial);
 
-  //manully do BeamPipeCommonTasks here as rotation in placement can be different
+  //manually do BeamPipeCommonTasks here as rotation in placement can be different
 
   // SET FIELD
   beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false);

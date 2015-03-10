@@ -134,9 +134,9 @@ decl : VARIABLE ':' marker
      | VARIABLE ':' pcldrift
        {
 	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : pcldrift\n",$1->name);
+	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : pcldrift (drift)\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_PCLDRIFT);
+	   write_table(params,$1->name,_DRIFT);
 	   params.flush();
 	 }
        } 
@@ -413,7 +413,7 @@ marker : MARKER ;
 drift : DRIFT ',' parameters
 ;
 
-pcldrift : PCLDRIFT ',' parameters
+pcldrift : DRIFT ',' parameters
 ;
 
 rf : RF ',' parameters
@@ -565,15 +565,6 @@ parameters:
 		    else
 		  if(!strcmp($1->name,"aperY") ||!strcmp($1->name,"apertureY") ) 
 		      { params.aperY = $3; params.aperYset = 1;}
-		    else
-		  if(!strcmp($1->name,"aperYUp") ||!strcmp($1->name,"apertureYUp") ) 
-		      { params.aperYUp = $3; params.aperYUpset = 1;}
-		    else
-		  if(!strcmp($1->name,"aperYDown") ||!strcmp($1->name,"apertureYDown") ) 
-		      { params.aperYDown = $3; params.aperYDownset = 1;}
-		    else
-		  if(!strcmp($1->name,"aperDy") ||!strcmp($1->name,"apertureDy") ) 
-		    { params.aperDy = $3; params.aperDyset = 1;}
 		    else
 		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
 		    { params.aper1 = $3; params.aper1set = 1;}
@@ -818,15 +809,6 @@ parameters:
 		  if(!strcmp($1->name,"aperY") ||!strcmp($1->name,"apertureY") ) 
 			      { params.aperY = $3; params.aperYset = 1;}
 		  else
-		  if(!strcmp($1->name,"aperYUp") ||!strcmp($1->name,"apertureYUp") ) 
-		      { params.aperYUp = $3; params.aperYUpset = 1;}
-		    else
-		  if(!strcmp($1->name,"aperYDown") ||!strcmp($1->name,"apertureYDown") ) 
-		      { params.aperYDown = $3; params.aperYDownset = 1;}
-		    else
-		  if(!strcmp($1->name,"aperDy") ||!strcmp($1->name,"apertureDy") ) 
-		    { params.aperDy = $3; params.aperDyset = 1;}
-		    else
 		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
 		    { params.aper1 = $3; params.aper1set = 1;}
 		    else

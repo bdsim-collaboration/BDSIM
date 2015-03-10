@@ -76,14 +76,14 @@ public:
 		G4double beampipeThickness=-1);
 
   // Constructor for new beampipe
-  BDSMultipole( G4String     name, 
-		G4double     length,
-		beamPipeInfo beamPipeInfo,
-		G4double     boxSize,
-		G4String     outerMaterial="",
-		G4String     tunnelMaterial="",
-		G4double     tunnelRadius=0,
-		G4double     tunnelOffsetX=0);
+  BDSMultipole( G4String        name, 
+		G4double        length,
+		BDSBeamPipeInfo beamPipeInfo,
+		G4double        boxSize,
+		G4String        outerMaterial="",
+		G4String        tunnelMaterial="",
+		G4double        tunnelRadius=0,
+		G4double        tunnelOffsetX=0);
 
   virtual ~BDSMultipole();
 

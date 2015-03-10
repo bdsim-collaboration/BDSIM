@@ -34,15 +34,15 @@ BDSOctupole::BDSOctupole(G4String aName, G4double aLength,
   itsTilt=tilt;
 }
 
-BDSOctupole::BDSOctupole(G4String        name,
-			 G4double        length,
-			 G4double        bTriplePrime,
-			 beamPipeInfo    beamPipeInfoIn,
-			 G4double        boxSize,
-			 G4String        outerMaterial,
-			 G4String        tunnelMaterial,
-			 G4double        tunnelRadius,
-			 G4double        tunnelOffsetX):
+BDSOctupole::BDSOctupole(G4String           name,
+			 G4double           length,
+			 G4double           bTriplePrime,
+			 BDSBeamPipeInfo    beamPipeInfoIn,
+			 G4double           boxSize,
+			 G4String           outerMaterial,
+			 G4String           tunnelMaterial,
+			 G4double           tunnelRadius,
+			 G4double           tunnelOffsetX):
   BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBTriplePrime(bTriplePrime)
 {;}

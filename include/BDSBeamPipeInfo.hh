@@ -14,7 +14,7 @@
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
-struct beamPipeInfo {
+struct BDSBeamPipeInfo {
   BDSBeamPipeType beamPipeType;
   G4double        aper1;
   G4double        aper2;
@@ -24,10 +24,5 @@ struct beamPipeInfo {
   G4double        beamPipeThickness;
   G4Material*     beamPipeMaterial;
 };
-
-
-
-
-
 
 #endif

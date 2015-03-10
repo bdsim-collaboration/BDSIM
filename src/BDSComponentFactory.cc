@@ -2,7 +2,6 @@
 #include "BDSExecOptions.hh"
 // elements
 #include "BDSDrift.hh"
-#include "BDSPCLDrift.hh"
 #include "BDSSectorBend.hh"
 #include "BDSRBend.hh"
 #include "BDSKicker.hh"
@@ -27,9 +26,6 @@
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
 #include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
-
-#include "BDSBeamPipe.hh"
-#include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeInfo.hh"
 
@@ -41,8 +37,6 @@
 #include <cmath>
 #include <sstream>
 #include <string>
-
-#include "BDSDrift2.hh"
 
 #ifdef BDSDEBUG
 bool debug1 = true;
@@ -151,11 +145,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     G4cout << "BDSComponentFactory  - creating drift" << G4endl;
 #endif
     element = createDrift(); break; 
-  case _PCLDRIFT:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating pcl drift" << G4endl;
-#endif
-    element = createPCLDrift(); break; 
   case _RF:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating rf" << G4endl;
@@ -381,58 +370,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createDrift()
 	 << G4endl;
 #endif
   
-  return (new BDSDrift2( _element.name,
-			 _element.l*CLHEP::m,
-			 PrepareBeamPipeInfo(_element)
-			 ));
-}
-
-BDSAcceleratorComponent* BDSComponentFactory::createPCLDrift(){
- if(_element.l*CLHEP::m < 4*lengthSafety){
-    G4cerr << "---->NOT creating element, "
-             << " name = " << _element.name
-             << ", LENGTH TOO SHORT:"
-             << " l = " << _element.l*CLHEP::m << "m"
-             << G4endl;
-      return NULL;
-  }
-
-  G4double aper=0;
-
-  //Check all apertures are set.
-  if (_element.aperY>lengthSafety){
-    _element.aperYUp = _element.aperY;
-    _element.aperYDown = _element.aperY;
-  }
-  
-  if (_element.aperX<lengthSafety){
-    G4cerr << "Error: BDSDetectorConstruction.cc, in building PCLDrift, aperX = " << _element.aperX << " is less than lengthSafety." << G4endl;
-    exit(1);
-  } 
-  if (_element.aperYUp<lengthSafety){
-    G4cerr << "Error: BDSDetectorConstruction.cc, in building PCLDrift, aperYUp = " << _element.aperYUp << " is less than lengthSafety." << G4endl;
-    exit(1);
-  } 
-  if (_element.aperYDown<lengthSafety){
-    G4cerr << "Error: BDSDetectorConstruction.cc, in building PCLDrift, aperYDown = " << _element.aperYDown << " is less than lengthSafety." << G4endl;
-    exit(1);
-  } 
-  
-  if( (_element.aperX>0) || (_element.aperY>0)){  //aperX or aperY override aper, aper set to the largest of aperX or aperY
-    aper=std::max(_element.aperX,_element.aperYUp+_element.aperDy);
-    aper=std::max(aper,_element.aperYDown+_element.aperDy);
-  }
-  
-  G4double tunnelOffsetX = BDSGlobalConstants::Instance()->GetTunnelOffsetX();
-  if(_element.tunnelOffsetX<1e6) {
-    tunnelOffsetX = _element.tunnelOffsetX*CLHEP::m;
-  }
- 
-  return (new BDSPCLDrift( _element.name,
-			   _element.l*CLHEP::m,
-			   _element.blmLocZ,
-			   _element.blmLocTheta,
-			   _element.aperX*CLHEP::m, _element.aperYUp*CLHEP::m, _element.aperYDown*CLHEP::m,_element.aperDy*CLHEP::m, _element.tunnelMaterial, aper, _element.tunnelRadius*CLHEP::m, tunnelOffsetX));
+  return (new BDSDrift( _element.name,
+			_element.l*CLHEP::m,
+			PrepareBeamPipeInfo(_element)
+			));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createRF()
@@ -1117,26 +1058,10 @@ G4double BDSComponentFactory::PrepareBoxSize(Element& element)
   return boxSize;
 }
 
-BDSBeamPipe* BDSComponentFactory::PrepareBeamPipe(Element& element)
+BDSBeamPipeInfo BDSComponentFactory::PrepareBeamPipeInfo(Element& element)
 {
-  BDSBeamPipe* pipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(BDS::DetermineBeamPipeType(element),
-								     element.name,
-								     element.l*CLHEP::m,
-								     element.aper1,
-								     element.aper2,
-								     element.aper3,
-								     element.aper4,
-								     PrepareVacuumMaterial(element),
-								     element.beampipeThickness,
-								     PrepareBeamPipeMaterial(element)
-								     );
-  return pipe;
-}
-
-beamPipeInfo BDSComponentFactory::PrepareBeamPipeInfo(Element& element)
-{
-  beamPipeInfo info;
-  info.beamPipeType      = BDS::DetermineBeamPipeType(element);
+  BDSBeamPipeInfo info;
+  info.beamPipeType      = BDS::DetermineBeamPipeType(element.apertureType);
 
   // note even if aperN in the element is 0 (ie unset), we should use
   // the default aperture model from global constants (already in metres)

@@ -33,15 +33,15 @@ BDSDecapole::BDSDecapole(G4String aName, G4double aLength,
   itsTilt=tilt;
 }
 
-BDSDecapole::BDSDecapole(G4String      name,
-			 G4double      length,
-			 G4double      bQuadPrime,
-			 beamPipeInfo  beamPipeInfo,
-			 G4double      boxSize,
-			 G4String      outerMaterial,
-			 G4String      tunnelMaterial,
-			 G4double      tunnelRadius,
-			 G4double      tunnelOffsetX):
+BDSDecapole::BDSDecapole(G4String         name,
+			 G4double         length,
+			 G4double         bQuadPrime,
+			 BDSBeamPipeInfo  beamPipeInfo,
+			 G4double         boxSize,
+			 G4String         outerMaterial,
+			 G4String         tunnelMaterial,
+			 G4double         tunnelRadius,
+			 G4double         tunnelOffsetX):
   BDSMultipole(name,length,beamPipeInfo,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBQuadPrime(bQuadPrime)
 {;}

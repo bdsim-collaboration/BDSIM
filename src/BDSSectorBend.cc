@@ -66,17 +66,17 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
   outputface    = G4ThreeVector(-orientation*in_x, 0.0, in_z);
 }
 
-BDSSectorBend::BDSSectorBend(G4String     name,
-			     G4double     length,
-			     G4double     angle,
-			     G4double     bField,
-			     G4double     bGrad,
-			     beamPipeInfo beamPipeInfoIn,
-			     G4double     boxSize,
-			     G4String     outerMaterial,
-			     G4String     tunnelMaterial,
-			     G4double     tunnelRadius,
-			     G4double     tunnelOffsetX):
+BDSSectorBend::BDSSectorBend(G4String        name,
+			     G4double        length,
+			     G4double        angle,
+			     G4double        bField,
+			     G4double        bGrad,
+			     BDSBeamPipeInfo beamPipeInfoIn,
+			     G4double        boxSize,
+			     G4String        outerMaterial,
+			     G4String        tunnelMaterial,
+			     G4double        tunnelRadius,
+			     G4double        tunnelOffsetX):
   BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBField(bField),itsBGrad(bGrad)
 {
@@ -218,19 +218,20 @@ void BDSSectorBend::BuildBeampipe()
   G4cout << __METHOD_NAME__ << " sector bend version " << G4endl;
 #endif
 
-  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(beamPipeType,
-								       itsName,
-								       itsChordLength,
-								       -itsAngle*0.5,
-								       -itsAngle*0.5,
-								       aper1,
-								       aper2,
-								       aper3,
-								       aper4,
-								       vacuumMaterial,
-								       beamPipeThickness,
-								       beamPipeMaterial);
-
+  beampipe =
+    BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(beamPipeType,
+							      itsName,
+							      itsChordLength,
+							      -itsAngle*0.5,
+							      -itsAngle*0.5,
+							      aper1,
+							      aper2,
+							      aper3,
+							      aper4,
+							      vacuumMaterial,
+							      beamPipeThickness,
+							      beamPipeMaterial);
+  
   BeamPipeCommonTasks(); //from bdsmultipole;
 }
 

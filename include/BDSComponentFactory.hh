@@ -42,7 +42,6 @@ private:
   BDSAcceleratorComponent* createCSampler();
   BDSAcceleratorComponent* createDump();
   BDSAcceleratorComponent* createDrift();
-  BDSAcceleratorComponent* createPCLDrift();
   BDSAcceleratorComponent* createRF();
   BDSAcceleratorComponent* createSBend();
   BDSAcceleratorComponent* createRBend();
@@ -65,11 +64,10 @@ private:
   BDSAcceleratorComponent* createTeleporter();
 
   /// Utility function to prepare beampipe
-  G4Material*  PrepareBeamPipeMaterial(Element& element);
-  G4Material*  PrepareVacuumMaterial(Element& element);
-  G4double     PrepareBoxSize(Element& element);
-  BDSBeamPipe* PrepareBeamPipe(Element& element);
-  beamPipeInfo PrepareBeamPipeInfo(Element& element);
+  G4Material*     PrepareBeamPipeMaterial(Element& element);
+  G4Material*     PrepareVacuumMaterial(Element& element);
+  G4double        PrepareBoxSize(Element& element);
+  BDSBeamPipeInfo PrepareBeamPipeInfo(Element& element);
 
 };
 #endif

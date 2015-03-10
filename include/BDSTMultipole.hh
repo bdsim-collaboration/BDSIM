@@ -34,7 +34,7 @@ public:
 		                    // (NOT multiplied by multipole length)
 		std::list<G4double> aks, // list of skew multipole strengths
 		                    // (NOT multiplied by multipole length)
-		beamPipeInfo        beamPipeInfo,
+		BDSBeamPipeInfo     beamPipeInfo,
 		G4double            boxSize,
 		G4String            outerMaterial="",
 		G4String            tunnelMaterial="",

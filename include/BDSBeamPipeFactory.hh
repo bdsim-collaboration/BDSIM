@@ -11,7 +11,7 @@
 class BDSBeamPipeFactory
 {
 public:
-  static BDSBeamPipeFactory* Instance(); /// singleon pattern
+  static BDSBeamPipeFactory* Instance(); /// singleton pattern
   
   ~BDSBeamPipeFactory();
   

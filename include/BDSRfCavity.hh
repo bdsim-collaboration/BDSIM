@@ -29,15 +29,15 @@ class BDSRfCavity :public BDSMultipole
   public:
   BDSRfCavity(G4String aName, G4double aLength,G4double bpRad, G4double grad, 
               G4String aTunnelMaterial="",G4String aMaterial = "");
-  BDSRfCavity(G4String     name,
-	      G4double     length,
-	      G4double     grad,
-	      beamPipeInfo beamPipeInfoIn,
-	      G4double     boxSize,
-	      G4String     outerMaterial="",
-	      G4String     tunnelMaterial="",
-	      G4double     tunnelRadius=0,
-	      G4double     tunnelOffsetX=0);
+  BDSRfCavity(G4String        name,
+	      G4double        length,
+	      G4double        grad,
+	      BDSBeamPipeInfo beamPipeInfoIn,
+	      G4double        boxSize,
+	      G4String        outerMaterial="",
+	      G4String        tunnelMaterial="",
+	      G4double        tunnelRadius=0,
+	      G4double        tunnelOffsetX=0);
   ~BDSRfCavity(){;};
   
   private:

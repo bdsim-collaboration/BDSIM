@@ -35,7 +35,7 @@ BDSTMultipole::BDSTMultipole(G4String            name,
 			     // (NOT multiplied by multipole length)
 			     std::list<G4double> aks, // list of skew multipole strengths
 			     // (NOT multiplied by multipole length)
-			     beamPipeInfo        beamPipeInfoIn,
+			     BDSBeamPipeInfo     beamPipeInfoIn,
 			     G4double            boxSize,
 			     G4String            outerMaterial,
 			     G4String            tunnelMaterial,

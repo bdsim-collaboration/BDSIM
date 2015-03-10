@@ -26,16 +26,16 @@ public:
 		       std::pair<G4double,G4double> extentXIn,
 		       std::pair<G4double,G4double> extentYIn,
 		       std::pair<G4double,G4double> extentZIn);
-  ~BDSGeometryComponent(){;};  /// Does not delete anything contained in pointers as G4 does that
+  ~BDSGeometryComponent(){;};  ///> Does not delete anything contained in pointers as G4 does that
 
-  G4VSolid*         GetContainerSolid(); /// get the solid of the container for possible subtraction
-  G4LogicalVolume*  GetContainerLogicalVolume(); /// get the logical volume of the container for placement
-  std::pair<G4double,G4double> GetExtentX(); /// get -ve/+ve extent in local x
-  std::pair<G4double,G4double> GetExtentY(); /// get -ve/+ve extent in local y
-  std::pair<G4double,G4double> GetExtentZ(); /// get -ve/+ve extent in local z
-  void SetExtentX(G4double lowerX, G4double upperX); /// set the extent in local x
-  void SetExtentY(G4double lowerY, G4double upperY); /// set the extent in local y
-  void SetExtentZ(G4double lowerZ, G4double upperZ); /// set the extent in local z
+  G4VSolid*         GetContainerSolid(); ///> get the solid of the container for possible subtraction
+  G4LogicalVolume*  GetContainerLogicalVolume(); ///> get the logical volume of the container for placement
+  std::pair<G4double,G4double> GetExtentX(); ///> get -ve/+ve extent in local x
+  std::pair<G4double,G4double> GetExtentY(); ///> get -ve/+ve extent in local y
+  std::pair<G4double,G4double> GetExtentZ(); ///> get -ve/+ve extent in local z
+  void SetExtentX(G4double lowerX, G4double upperX); ///> set the extent in local x
+  void SetExtentY(G4double lowerY, G4double upperY); ///> set the extent in local y
+  void SetExtentZ(G4double lowerZ, G4double upperZ); ///> set the extent in local z
   void SetExtentX(std::pair<G4double, G4double> extentXIn);
   void SetExtentY(std::pair<G4double, G4double> extentYIn);
   void SetExtentZ(std::pair<G4double, G4double> extentZIn);

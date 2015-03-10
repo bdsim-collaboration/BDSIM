@@ -40,17 +40,17 @@ BDSRBend::BDSRBend(G4String aName, G4double aLength,
   CommonConstructor(aLength);
 }
 
-BDSRBend::BDSRBend(G4String     name,
-		   G4double     length,
-		   G4double     bField,
-		   G4double     bGrad,
-		   G4double     angle,
-		   beamPipeInfo beamPipeInfoIn,
-		   G4double     boxSize,
-		   G4String     outerMaterial,
-		   G4String     tunnelMaterial,
-		   G4double     tunnelRadius,
-		   G4double     tunnelOffsetX):
+BDSRBend::BDSRBend(G4String        name,
+		   G4double        length,
+		   G4double        bField,
+		   G4double        bGrad,
+		   G4double        angle,
+		   BDSBeamPipeInfo beamPipeInfoIn,
+		   G4double        boxSize,
+		   G4String        outerMaterial,
+		   G4String        tunnelMaterial,
+		   G4double        tunnelRadius,
+		   G4double        tunnelOffsetX):
   BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBField(bField),itsBGrad(bGrad)
 {
@@ -192,21 +192,11 @@ void BDSRBend::BuildMarkerLogicalVolume()
 // construct a beampipe for r bend
 void BDSRBend::BuildBeampipe()
 {
-  BDSBeamPipe* bpFirstBit = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledOut(beamPipeType,
-										    itsName,
-										    itsStraightSectionLength,
-										    -itsAngle*0.5,
-										    aper1,
-										    aper2,
-										    aper3,
-										    aper4,
-										    vacuumMaterial,
-										    beamPipeThickness,
-										    beamPipeMaterial);
-
-  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeType,
+  BDSBeamPipe* bpFirstBit =
+    BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledOut(beamPipeType,
 							    itsName,
-							    itsMagFieldLength,
+							    itsStraightSectionLength,
+							    -itsAngle*0.5,
 							    aper1,
 							    aper2,
 							    aper3,
@@ -214,18 +204,31 @@ void BDSRBend::BuildBeampipe()
 							    vacuumMaterial,
 							    beamPipeThickness,
 							    beamPipeMaterial);
+  
+  beampipe =
+    BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeType,
+						   itsName,
+						   itsMagFieldLength,
+						   aper1,
+						   aper2,
+						   aper3,
+						   aper4,
+						   vacuumMaterial,
+						   beamPipeThickness,
+						   beamPipeMaterial);
 
-  BDSBeamPipe* bpLastBit = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledIn(beamPipeType,
-										  itsName,
-										  itsStraightSectionLength,
-										  itsAngle*0.5,
-										  aper1,
-										  aper2,
-										  aper3,
-										  aper4,
-										  vacuumMaterial,
-										  beamPipeThickness,
-										  beamPipeMaterial);
+  BDSBeamPipe* bpLastBit =
+    BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledIn(beamPipeType,
+							   itsName,
+							   itsStraightSectionLength,
+							   itsAngle*0.5,
+							   aper1,
+							   aper2,
+							   aper3,
+							   aper4,
+							   vacuumMaterial,
+							   beamPipeThickness,
+							   beamPipeMaterial);
 
   // place logical volumes inside marker (container) volume
   // calculate offsets and rotations

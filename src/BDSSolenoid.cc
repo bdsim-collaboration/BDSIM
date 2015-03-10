@@ -28,15 +28,15 @@ BDSSolenoid::BDSSolenoid(G4String aName, G4double aLength,
   SetOuterRadius(outR);
 }
 
-BDSSolenoid::BDSSolenoid(G4String     name,
-			 G4double     length,
-			 G4double     bField,
-			 beamPipeInfo beamPipeInfoIn,
-			 G4double     boxSize,
-			 G4String     outerMaterial,
-			 G4String     tunnelMaterial,
-			 G4double     tunnelRadius,
-			 G4double     tunnelOffsetX):
+BDSSolenoid::BDSSolenoid(G4String        name,
+			 G4double        length,
+			 G4double        bField,
+			 BDSBeamPipeInfo beamPipeInfoIn,
+			 G4double        boxSize,
+			 G4String        outerMaterial,
+			 G4String        tunnelMaterial,
+			 G4double        tunnelRadius,
+			 G4double        tunnelOffsetX):
   BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBField(bField)
 {;}
