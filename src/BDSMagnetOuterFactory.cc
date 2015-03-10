@@ -4,7 +4,7 @@
 #include "BDSMagnetOuterFactoryCylindrical.hh"
 //#include "BDSMagnetOuterFactoryNC.hh"
 //#include "BDSMagnetOuterFactoryLHC.hh"
-#include "BDSMagnetType.hh"
+#include "BDSMagnetGeometryType.hh"
 
 #include "globals.hh"                        // geant4 globals / types
 
@@ -20,24 +20,24 @@ BDSMagnetOuterFactory* BDSMagnetOuterFactory::Instance()
 BDSMagnetOuterFactory::BDSMagnetOuterFactory()
 {;}
 
-BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagnetType magnetTypeIn)
+BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagnetGeometryType magnetTypeIn)
 {
   switch(magnetTypeIn.underlying()){
 
-  case BDSMagnetType::cylindrical:
+  case BDSMagnetGeometryType::cylindrical:
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " cylindrical magnet factory" << G4endl;
 #endif
     return BDSMagnetOuterFactoryCylindrical::Instance();
     break;
-  case BDSMagnetType::normalconducting:
+  case BDSMagnetGeometryType::normalconducting:
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " normal conducting magnet factory" << G4endl;
 #endif
     //return BDSMagnetOuterFactoryNC::Instance();
     return BDSMagnetOuterFactoryCylindrical::Instance();
     break;
-  case BDSMagnetType::lhc:
+  case BDSMagnetGeometryType::lhc:
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " LHC magnet factory" << G4endl;
 #endif
@@ -69,7 +69,7 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateSectorBend(BDSMagnetType magn
   return factory->CreateSectorBend(name, length, beamPipe, boxSize, angle, outerMaterial);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactory::CreateRectangularBend(BDSMagnetType magnetType,
+BDSGeometryComponent* BDSMagnetOuterFactory::CreateRectangularBend(BDSMagnetGeometryType magnetType,
 								   G4String      name,
 								   G4double      length,
 								   BDSBeamPipe*  beamPipe,
@@ -85,7 +85,7 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateRectangularBend(BDSMagnetType
 }
   
 
-BDSGeometryComponent* BDSMagnetOuterFactory::CreateQuadrupole(BDSMagnetType magnetType,
+BDSGeometryComponent* BDSMagnetOuterFactory::CreateQuadrupole(BDSMagnetGeometryType magnetType,
 							      G4String      name,
 							      G4double      length,
 							      BDSBeamPipe*  beamPipe,
@@ -99,7 +99,7 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateQuadrupole(BDSMagnetType magn
   return factory->CreateQuadrupole(name, length, beamPipe, boxSize, outerMaterial);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactory::CreateSextupole(BDSMagnetType magnetType,
+BDSGeometryComponent* BDSMagnetOuterFactory::CreateSextupole(BDSMagnetGeometryType magnetType,
 							     G4String      name,
 							     G4double      length,
 							     BDSBeamPipe*  beamPipe,
@@ -113,7 +113,7 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateSextupole(BDSMagnetType magne
   return factory->CreateSextupole(name, length, beamPipe, boxSize, outerMaterial);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactory::CreateOctupole(BDSMagnetType magnetType,
+BDSGeometryComponent* BDSMagnetOuterFactory::CreateOctupole(BDSMagnetGeometryType magnetType,
 							    G4String      name,
 							    G4double      length,
 							    BDSBeamPipe*  beamPipe,
@@ -127,7 +127,7 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateOctupole(BDSMagnetType magnet
   return factory->CreateOctupole(name, length, beamPipe, boxSize, outerMaterial);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactory::CreateDecapole(BDSMagnetType magnetType,
+BDSGeometryComponent* BDSMagnetOuterFactory::CreateDecapole(BDSMagnetGeometryType magnetType,
 							    G4String      name,
 							    G4double      length,
 							    BDSBeamPipe*  beamPipe,
@@ -141,7 +141,7 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateDecapole(BDSMagnetType magnet
   return factory->CreateDecapole(name, length, beamPipe, boxSize, outerMaterial);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactory::CreateSolenoid(BDSMagnetType magnetType,
+BDSGeometryComponent* BDSMagnetOuterFactory::CreateSolenoid(BDSMagnetGeometryType magnetType,
 							    G4String      name,
 							    G4double      length,
 							    BDSBeamPipe*  beamPipe,
@@ -155,7 +155,7 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateSolenoid(BDSMagnetType magnet
   return factory->CreateSolenoid(name, length, beamPipe, boxSize, outerMaterial);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactory::CreateMultipole(BDSMagnetType magnetType,
+BDSGeometryComponent* BDSMagnetOuterFactory::CreateMultipole(BDSMagnetGeometryType magnetType,
 							     G4String      name,
 							     G4double      length,
 							     BDSBeamPipe*  beamPipe,
@@ -169,7 +169,7 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateMultipole(BDSMagnetType magne
   return factory->CreateMultipole(name, length, beamPipe, boxSize, outerMaterial);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactory::CreateRfCavity(BDSMagnetType magnetType,
+BDSGeometryComponent* BDSMagnetOuterFactory::CreateRfCavity(BDSMagnetGeometryType magnetType,
 							    G4String      name,
 							    G4double      length,
 							    BDSBeamPipe*  beamPipe,
@@ -183,7 +183,7 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateRfCavity(BDSMagnetType magnet
   return factory->CreateRfCavity(name, length, beamPipe, boxSize, outerMaterial);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactory::CreateMuSpoiler(BDSMagnetType magnetType,
+BDSGeometryComponent* BDSMagnetOuterFactory::CreateMuSpoiler(BDSMagnetGeometryType magnetType,
 						G4String      name,
 						G4double      length,
 						BDSBeamPipe*  beamPipe,
@@ -197,7 +197,7 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateMuSpoiler(BDSMagnetType magne
   return factory->CreateMuSpoiler(name, length, beamPipe, boxSize, outerMaterial);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactory::CreateKicker(BDSMagnetType magnetType,
+BDSGeometryComponent* BDSMagnetOuterFactory::CreateKicker(BDSMagnetGeometryType magnetType,
 							  G4String      name,
 							  G4double      length,
 							  BDSBeamPipe*  beamPipe,

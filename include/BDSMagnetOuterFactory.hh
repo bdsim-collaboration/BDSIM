@@ -5,7 +5,7 @@
 
 #include "BDSBeamPipe.hh"
 #include "BDSMagnetOuterFactoryBase.hh"
-#include "BDSMagnetType.hh"
+#include "BDSMagnetGeometryType.hh"
 
 #include "globals.hh"           // geant4 globals / types
 #include "G4Material.hh"
@@ -18,7 +18,7 @@ public:
   ~BDSMagnetOuterFactory();
 
   /// sector bend outer volume
-  virtual BDSGeometryComponent* CreateSectorBend(BDSMagnetType magnetType,          // magnet type
+  virtual BDSGeometryComponent* CreateSectorBend(BDSMagnetGeometryType magnetType,          // magnet type
 						 G4String      name,                // name
 						 G4double      length,              // length [mm]
 						 BDSBeamPipe*  beamPipe,            // beampipe
@@ -28,7 +28,7 @@ public:
 						 );
 
   /// rectangular bend outer volume
-  virtual BDSGeometryComponent* CreateRectangularBend(BDSMagnetType magnetType,          // magnet type
+  virtual BDSGeometryComponent* CreateRectangularBend(BDSMagnetGeometryType magnetType,          // magnet type
 						      G4String      name,                // name
 						      G4double      length,              // length [mm]
 						      BDSBeamPipe*  beamPipe,            // beampipe
@@ -38,7 +38,7 @@ public:
 						      );
   
   /// quadrupole outer volume
-  virtual BDSGeometryComponent* CreateQuadrupole(BDSMagnetType magnetType,           // magnet type
+  virtual BDSGeometryComponent* CreateQuadrupole(BDSMagnetGeometryType magnetType,           // magnet type
 						 G4String      name,                 // name
 						 G4double      length,               // length [mm]
 						 BDSBeamPipe*  beamPipe,             // beampipe
@@ -48,7 +48,7 @@ public:
 
 
   /// sextupole outer volume
-  virtual BDSGeometryComponent* CreateSextupole(BDSMagnetType magnetType,           // magnet type
+  virtual BDSGeometryComponent* CreateSextupole(BDSMagnetGeometryType magnetType,           // magnet type
 						G4String      name,                 // name
 						G4double      length,               // length [mm]
 						BDSBeamPipe*  beamPipe,             // beampipe
@@ -57,7 +57,7 @@ public:
 						);
 
   /// octupole outer volume
-  virtual BDSGeometryComponent* CreateOctupole(BDSMagnetType magnetType,            // magnet type
+  virtual BDSGeometryComponent* CreateOctupole(BDSMagnetGeometryType magnetType,            // magnet type
 					       G4String      name,                  // name
 					       G4double      length,                // length [mm]
 					       BDSBeamPipe*  beamPipe,              // beampipe
@@ -66,7 +66,7 @@ public:
 					       );
 
   /// decapole outer volume
-  virtual BDSGeometryComponent* CreateDecapole(BDSMagnetType magnetType,            // magnet type
+  virtual BDSGeometryComponent* CreateDecapole(BDSMagnetGeometryType magnetType,            // magnet type
 					       G4String      name,                  // name
 					       G4double      length,                // length [mm]
 					       BDSBeamPipe*  beamPipe,              // beampipe
@@ -75,7 +75,7 @@ public:
 					       );
 
   /// solenoid  outer volume
-  virtual BDSGeometryComponent* CreateSolenoid(BDSMagnetType magnetType,            // magnet type
+  virtual BDSGeometryComponent* CreateSolenoid(BDSMagnetGeometryType magnetType,            // magnet type
 					       G4String      name,                  // name
 					       G4double      length,                // length [mm]
 					       BDSBeamPipe*  beamPipe,              // beampipe
@@ -84,7 +84,7 @@ public:
 					       );
 
   /// general multipole outer volume - could be any 2N order multipole
-  virtual BDSGeometryComponent* CreateMultipole(BDSMagnetType magnetType,           // magnet type
+  virtual BDSGeometryComponent* CreateMultipole(BDSMagnetGeometryType magnetType,           // magnet type
 						G4String      name,                 // name
 						G4double      length,               // length [mm]
 						BDSBeamPipe*  beamPipe,             // beampipe
@@ -93,7 +93,7 @@ public:
 						);
 
   /// RF cavity outer volume
-  virtual BDSGeometryComponent* CreateRfCavity(BDSMagnetType magnetType,            // magnet type
+  virtual BDSGeometryComponent* CreateRfCavity(BDSMagnetGeometryType magnetType,            // magnet type
 					       G4String      name,                  // name
 					       G4double      length,                // length [mm]
 					       BDSBeamPipe*  beamPipe,              // beampipe
@@ -102,7 +102,7 @@ public:
 					       );
 
   /// muon spoiler outer volume
-  virtual BDSGeometryComponent* CreateMuSpoiler(BDSMagnetType magnetType,           // magnet type
+  virtual BDSGeometryComponent* CreateMuSpoiler(BDSMagnetGeometryType magnetType,           // magnet type
 						G4String      name,                 // name
 						G4double      length,               // length [mm]
 						BDSBeamPipe*  beamPipe,             // beampipe
@@ -111,7 +111,7 @@ public:
 						);
 
   /// horizontal and vertical kicker outer volume
-  virtual BDSGeometryComponent* CreateKicker(BDSMagnetType magnetType,            // magnet type
+  virtual BDSGeometryComponent* CreateKicker(BDSMagnetGeometryType magnetType,            // magnet type
 					     G4String      name,                  // name
 					     G4double      length,                // length [mm]
 					     BDSBeamPipe*  beamPipe,              // beampipe
@@ -123,7 +123,7 @@ public:
 private:
   BDSMagnetOuterFactory();
   static BDSMagnetOuterFactory* _instance;
-  BDSMagnetOuterFactoryBase* GetAppropriateFactory(BDSMagnetType magnetTypeIn);
+  BDSMagnetOuterFactoryBase* GetAppropriateFactory(BDSMagnetGeometryType magnetTypeIn);
 
 };
 
