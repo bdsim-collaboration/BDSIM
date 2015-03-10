@@ -41,7 +41,7 @@ Requirements
 ============
 
 1) Geant4 installed or access to **AFS** [#macafsnote]_. Version 4.9.6 or higher.
-2) Cmake 2.8 or higher
+2) CMake 2.6.4 or higher
 3) Flex 2.5.37 or higher
 4) Bison 2.3 or higher
 5) CLHEP 2.1.3.1 or higher
@@ -81,16 +81,16 @@ We recommend obtaining required packages using **MacPorts** package manager,
 although they can be obtained both through other package managers and by
 manually downloading, compiling and installing the source for each.
 
-Once ready, make a directory **outisde** the BDSIM source directory to build
+Once ready, make a directory **outside** the BDSIM source directory to build
 BDSIM in::
 
   > ls
   bdsim
   > mkdir bdsim-build
   > ls
-  bdsim          bdsim-build
+  bdsim bdsim-build
 
-From this directory use the following cmake command to configure the BDSIM
+From this directory use the following CMake command to configure the BDSIM
 installation::
 
   > cd bdsim-build
@@ -134,10 +134,10 @@ This typically produces the following output, which is slightly different on eac
   -- Generating done
   -- Build files have been written to: /Users/nevay/physics/reps/bdsim-test2
 
-Cmake will search your system for the required dependencies. In the above example, this
+CMake will search your system for the required dependencies. In the above example, this
 proceeded without any errors. In the case where a required dependecy cannot be found,
-an error will be shown and cmake will stop. Please see `Configuring the BDSIM Build with
-Cmake`_ for further details on how to fix this and further configure the BDSIM installation.
+an error will be shown and CMake will stop. Please see `Configuring the BDSIM Build with
+CMake`_ for further details on how to fix this and further configure the BDSIM installation.
 
 You can then compile BDSIM with::
 
@@ -147,9 +147,9 @@ BDSIM can then be installed for access from anywhere on the system with::
   
   > sudo make install
 
-To change the installation directory, see `Configuring the BDSIM Build with Cmake`_
+To change the installation directory, see `Configuring the BDSIM Build with CMake`_
 From any directory on your computer, ``bdsim`` should be available.  From the build directory
-you can verify your installation using a serious of tests included with BDSIM. ::
+you can verify your installation using a series of tests included with BDSIM. ::
 
   > ctest -E LONG
 
@@ -160,7 +160,7 @@ Scientific Linux
 For SL5 you will have to use Geant 4.9.6 as Geant 4.10 onwards is not compatable.
 Older version of Geant4 can be downloaded from their
 `archive <http://geant4.web.cern.ch/geant4/support/source_archive.shtml>`_ . 
-For SL6, we recommend the latest version of Geant4, currently 4.10.p04.  
+For SL6, we recommend the latest version of Geant4, currently 4.10.1.  
 Once ready, make a directory **outisde** the BDSIM source directory to build
 BDSIM in::
 
@@ -170,7 +170,7 @@ BDSIM in::
   > ls
   bdsim          bdsim-build
 
-From this directory use the following cmake command to configure the BDSIM
+From this directory use the following CMake command to configure the BDSIM
 installation::
 
   > cd bdsim-build
@@ -184,7 +184,7 @@ BDSIM can then be installed for access from anywhere on the system with::
   
   > sudo make install
 
-To change the installation directory, see `Configuring the BDSIM Build with Cmake`_
+To change the installation directory, see `Configuring the BDSIM Build with CMake`_
 From any directory on your computer, ``bdsim`` should be available.  From the build directory
 you can verify your installation using a serious of tests included with BDSIM.::
 
@@ -196,7 +196,7 @@ Scientific Linux with AFS Access
 When the machine has AFS connection, then the dependent packages like Geant4 can
 be taken from there and don't need to be installed. The same compiler version needs
 to be used for BDSIM as the one for Geant4.  The following scripts must be sourced
-before using cmake.  
+before using CMake.  
 
 For version 0.6 and older::
   
@@ -211,11 +211,11 @@ For the tags 0.61-0.63 and the develop branch::
 After this, the installation procedure for `Scientific Linux`_ should be followed.
 
 
-Configuring the BDSIM Build with Cmake
+Configuring the BDSIM Build with CMake
 --------------------------------------
 
 To either enter paths to dependcies manually, or edit the configuration, the following
-command will give you and interface to cmake (from ``bdsim-build`` directory)::
+command will give you and interface to CMake (from ``bdsim-build`` directory)::
 
   > ccmake .
 
@@ -240,14 +240,14 @@ configuration and that won't require the ``sudo`` command. The installation dire
 can be specified by editing the ``CMAKE_INSTALL_PREFIX`` variable.
 
 
-Making DOxygen Documentation
+Making Doxygen Documentation
 ----------------------------
 
 From the build directory, after running ``make``, run the following command::
 
   > make doc
 
-to make the DOxygen documentation in a folder called ``DOxygen``.
+to make the Doxygen documentation in a folder called ``Doxygen``.
 
 Geant4 Installation Guide
 -------------------------
@@ -266,14 +266,14 @@ Make a build and installation directory **outside** that directory ::
   > mkdir geant4.10.04-build
   > mkdir geant4.10.04-install
 
-Configure Geant4 using cmake ::
+Configure Geant4 using CMake ::
 
   > cd geant4.10.04-build
   > cmake ../geant4.10.04
 
 At this point it's useful to define the installation directory for Geant4 by
-modifying the cmake configuration as generally desbribed in
-`Configuring the BDSIM Build with Cmake`_. ::
+modifying the CMake configuration as generally desbribed in
+`Configuring the BDSIM Build with CMake`_. ::
 
   > ccmake .
 
@@ -361,7 +361,7 @@ please contact us (see :ref:`support-section`).
    
    This means compiler version for BDSIM is different from the one used to compile Geant4.
    Make sure it is the same compiler version. Remember to start from a clean build
-   directory otherwise cmake does **NOT** update the compiler version.
+   directory otherwise CMake does **NOT** update the compiler version.
 
 
 .. rubric:: Footnotes
