@@ -142,6 +142,13 @@ BDSMultipole::BDSMultipole( G4String     name,
   beamPipeMaterial(info.beamPipeMaterial), boxSize(boxSizeIn)
 {
   ConstructorInit();
+
+  // check material for outer logical volume
+  G4Material* material;
+  if(itsMaterial != "")
+    {material = BDSMaterials::Instance()->GetMaterial(itsMaterial);}
+  else
+    {material = BDSMaterials::Instance()->GetMaterial("Iron");}
 }
 
 			  
@@ -164,6 +171,9 @@ void BDSMultipole::ConstructorInit(){
 
   itsChordFinder=NULL;
   itsOuterMagField=NULL;
+
+  beampipe = NULL;
+  outer    = NULL;
 }
 
 void BDSMultipole::SetBeampipeThickness(G4bool set, G4double val){
@@ -261,7 +271,6 @@ void BDSMultipole::BeamPipeCommonTasks()
   SetExtentX(beampipe->GetExtentX());
   SetExtentY(beampipe->GetExtentY());
   SetExtentZ(beampipe->GetExtentZ());
-  
 }
 
 void BDSMultipole::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
@@ -395,6 +404,13 @@ void BDSMultipole::BuildMarkerLogicalVolume()
 #endif
 }
 
+void BDSMultipole::OuterVolumeCommonTasks()
+{
+  // do placement here
+  // set field
+  // register it
+  return;
+}
 
 void BDSMultipole::BuildOuterLogicalVolume(G4bool outerMaterialIsVacuum)
 {

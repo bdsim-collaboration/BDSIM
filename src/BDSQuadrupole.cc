@@ -118,6 +118,13 @@ void BDSQuadrupole::BuildBPFieldAndStepper()
   itsStepper = quadStepper;
 }
 
+
+void BDSQuadrupole::BuildOuterVolume()
+{
+  outer = BDSMagnetOuterFactory::Instance()->CreateQuadrupole(BDSMagnetGeometryType::quadrupole, itsName,
+							      itsLength, beampipe, itsBoxSize, itsMaterial);
+}
+
 void BDSQuadrupole::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)
 {
 

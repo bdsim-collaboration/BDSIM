@@ -107,6 +107,13 @@ private:
 protected:
   virtual void BuildMarkerLogicalVolume();
   virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+  
+  /// method to create outer volume if required, derived class must implment
+  virtual void BuildOuterVolume() = 0;
+  
+  /// placement and registration of outer volume if it exists
+  void OuterVolumeCommonTasks();
+  
   /// general straight beampipe - can be overloaded by derived classes
   virtual void BuildBeampipe();
   /// common tasks after the beampipe solids have been defined.
@@ -161,6 +168,9 @@ protected:
 
   //for outer volume construction
   G4double        boxSize;
+
+  //the assembled outer logical volume
+  BDSGeometryComponent* outer;
   
   // G4double itsStartOuterR;
   // G4double itsEndOuterR;
