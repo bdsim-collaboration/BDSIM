@@ -17,6 +17,15 @@ public:
   
   ~BDSMagnetOuterFactory();
 
+  /// default straight
+  virtual BDSGeometryComponent* CreateDefaultStraight(BDSMagnetGeometryType magnetType,  // magnet type
+						      G4String      name,                // name
+						      G4double      length,              // length [mm]
+						      BDSBeamPipe*  beamPipe,            // beampipe
+						      G4double      boxSize,             // full width
+						      G4Material*   outerMaterial = NULL // material for outer volume
+						      );
+  
   /// sector bend outer volume
   virtual BDSGeometryComponent* CreateSectorBend(BDSMagnetGeometryType magnetType,          // magnet type
 						 G4String      name,                // name

@@ -48,6 +48,20 @@ BDSMagnetOuterFactoryCylindrical::~BDSMagnetOuterFactoryCylindrical()
   _instance = 0;
 }
 
+BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateDefaultStraight(G4String      name,
+									      G4double      length,
+									      BDSBeamPipe*  beamPipe,
+									      G4double      boxSize,
+									      G4Material*   outerMaterial)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  CreateCylindricalSolids(name, length, beamPipe, boxSize);
+  return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("default"));
+
+}
+
 BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String      name,
 									 G4double      length,
 									 BDSBeamPipe*  beamPipe,
@@ -126,6 +140,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4
 									      G4double      /*angle*/,
 									      G4Material*   outerMaterial)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   //rectangular bends currently just make a shorter straight volume, so ignore angle for now
   CreateCylindricalSolids(name, length, beamPipe, boxSize);
   return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("rectangularbend"));
@@ -137,6 +154,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateQuadrupole(G4Strin
 									 G4double      boxSize,
 									 G4Material*   outerMaterial)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   CreateCylindricalSolids(name, length, beamPipe, boxSize);
   return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("quadrupole"));
 }
@@ -157,6 +177,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateOctupole(G4String 
 								       G4double      boxSize,
 								       G4Material*   outerMaterial)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   CreateCylindricalSolids(name, length, beamPipe, boxSize);
   return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("octuupole"));
 }
@@ -167,6 +190,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateDecapole(G4String 
 								       G4double      boxSize,
 								       G4Material*   outerMaterial)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   CreateCylindricalSolids(name, length, beamPipe, boxSize);
   return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("decapole"));
 }
@@ -187,6 +213,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateMultipole(G4String
 									G4double      boxSize,
 									G4Material*   outerMaterial)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   CreateCylindricalSolids(name, length, beamPipe, boxSize);
   return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("multipole"));
 }
@@ -197,6 +226,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateRfCavity(G4String 
 								       G4double      boxSize,
 								       G4Material*   outerMaterial)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   CreateCylindricalSolids(name, length, beamPipe, boxSize);
   return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("rfcavity"));
 }
@@ -207,6 +239,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateMuSpoiler(G4String
 								       G4double      boxSize,
 								       G4Material*   outerMaterial)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   CreateCylindricalSolids(name, length, beamPipe, boxSize);
   return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("muspoiler"));
 }
@@ -218,6 +253,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateKicker(G4String   
 								     G4bool        /*vertical*/,
 								     G4Material*   outerMaterial)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // in this factory, h and v kickers will look the same so ignore bool vertical
   // have to retain it though for virtual base class compatability
   CreateCylindricalSolids(name, length, beamPipe, boxSize);

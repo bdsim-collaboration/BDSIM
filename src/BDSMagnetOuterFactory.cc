@@ -54,7 +54,21 @@ BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagne
   }
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactory::CreateSectorBend(BDSMagnetType magnetType,
+BDSGeometryComponent* BDSMangetOuterFactory::CreateDefaultStraight(BDSMagnetGeometryType magnetType,
+								   G4String      name,
+								   G4double      length,
+								   BDSBeamPipe*  beamPipe,
+								   G4double      boxSize,
+								   G4Material*   outerMaterial)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(magnetType);
+  return factory->CreateDefaultStraight(name, length, beamPipe, boxSize, outerMaterial);
+}
+
+BDSGeometryComponent* BDSMagnetOuterFactory::CreateSectorBend(BDSMagnetGeometryType magnetType,
 							      G4String      name,
 							      G4double      length,
 							      BDSBeamPipe*  beamPipe,
