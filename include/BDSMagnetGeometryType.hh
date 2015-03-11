@@ -3,7 +3,6 @@
 
 #include "BDSTypeSafeEnum.hh"
 #include "globals.hh"         // geant4 globals / types
-#include "parser/element.h"
 
 /**
  * @brief Geometry type definition for magnets - used for comparison
