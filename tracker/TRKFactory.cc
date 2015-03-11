@@ -227,6 +227,9 @@ TRKElement* TRKFactory::createElement(Element& element) {
   case _SAMPLER:
     trkelement = createSampler(element);
     break;
+  case _RCOL:
+    trkelement = createDrift(element);
+    break;
   case _TRANSFORM3D:
     //TEMPORARY
     trkelement = NULL;
@@ -239,6 +242,7 @@ TRKElement* TRKFactory::createElement(Element& element) {
     trkelement = NULL;
     break;
   }
+  
   /* types not specified - see parser/enums.h for types
   _SCREEN
   _CSAMPLER
