@@ -12,15 +12,6 @@
 
 #include "G4ExplicitEuler.hh"
 
-
-BDSRfCavity::BDSRfCavity (G4String aName,G4double aLength, G4double bpRad, 
-			  G4double grad, G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName ,aLength, bpRad, bpRad, aTunnelMaterial, aMaterial),
-  itsEField(NULL),fChordFinder(NULL),fStepper(NULL),fIntgrDriver(NULL)
-{
-  itsGrad = grad;
-}
-
 BDSRfCavity::BDSRfCavity(G4String        name,
 			 G4double        length,
 			 G4double        grad,

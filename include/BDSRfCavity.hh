@@ -27,8 +27,6 @@
 class BDSRfCavity :public BDSMultipole
 {
   public:
-  BDSRfCavity(G4String aName, G4double aLength,G4double bpRad, G4double grad, 
-              G4String aTunnelMaterial="",G4String aMaterial = "");
   BDSRfCavity(G4String        name,
 	      G4double        length,
 	      G4double        grad,

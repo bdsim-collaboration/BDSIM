@@ -23,23 +23,6 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-
-BDSRBend::BDSRBend(G4String aName, G4double aLength, 
-                   G4double bpRad, G4double FeRad,
-                   G4double bField, G4double angle, G4double outR,
-                   std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-                   G4double tilt, G4double bGrad, 
-                   G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
-	       0, 0, angle)
-{
-  SetOuterRadius(outR);
-  itsTilt   = tilt;
-  itsBField = bField;
-  itsBGrad  = bGrad;
-  CommonConstructor(aLength);
-}
-
 BDSRBend::BDSRBend(G4String        name,
 		   G4double        length,
 		   G4double        bField,
