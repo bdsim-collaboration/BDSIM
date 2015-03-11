@@ -282,8 +282,6 @@ void BDSRBend::BuildOuterLogicalVolume(G4bool outerMaterialIsVacuum)
     { material = BDSMaterials::Instance()->GetMaterial(itsMaterial);}
   else
     { material = BDSMaterials::Instance()->GetMaterial("Iron");}
-  if(outerMaterialIsVacuum)
-    { material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
 
   G4double lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
   // outerRadius defined in constructor / (temporary) common constructor
@@ -299,16 +297,16 @@ void BDSRBend::BuildOuterLogicalVolume(G4bool outerMaterialIsVacuum)
 		 << "setting boxSize to be just big enough to contain beampipe " << G4endl;
 	  outerRadius = innerRadius+1*CLHEP::cm;
 	}
-      itsOuterLogicalVolume = new G4LogicalVolume(new G4Tubs( itsName+"_outer_solid",            // name
-							      innerRadius,
-							      outerRadius,
-							      itsMagFieldLength*0.5-2*lengthSafety,
-							      0.0,                               // starting angle
-							      2.0*CLHEP::pi),                    // finishing angle - full
-							       
-						  material,
-						  itsName+"_outer_lv");
-      
+      itsOuterLogicalVolume =
+	new G4LogicalVolume(new G4Tubs( itsName+"_outer_solid",            // name
+					innerRadius,
+					outerRadius,
+					itsMagFieldLength*0.5-2*lengthSafety,
+					0.0,                               // starting angle
+					2.0*CLHEP::pi),                    // finishing angle - full
+			    
+			    material,
+			    itsName+"_outer_lv");
     }
   else
     {

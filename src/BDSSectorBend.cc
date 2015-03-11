@@ -216,8 +216,6 @@ void BDSSectorBend::BuildCylindricalOuterLogicalVolume(G4bool outerMaterialIsVac
     { material = BDSMaterials::Instance()->GetMaterial(itsMaterial);}
   else
     { material = BDSMaterials::Instance()->GetMaterial("Iron");}
-  if(outerMaterialIsVacuum)
-    { material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
 
   G4double lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
   G4double outerRadius  = boxSize*0.5;

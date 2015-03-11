@@ -16,7 +16,6 @@
 
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
-#include "BDSDebug.hh"
 #include "BDSMultipole.hh"
 #include "BDSMuSpoiler.hh"
 #include "BDSMuSpoilerMagField.hh"
@@ -31,7 +30,9 @@ BDSMuSpoiler::BDSMuSpoiler(G4String        name,
 			   G4double        tunnelRadius,
 			   G4double        tunnelOffsetX):
   BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
-  itsBField(bField)
+  itsBField(bField),
+  outerMagField(NULL),
+  outerFieldMgr(NULL)
 {;}
 
 void BDSMuSpoiler::BuildBPFieldAndStepper()

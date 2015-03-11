@@ -205,7 +205,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
 void BDSGlobalConstants::InitVisAttributes()
 {
   //for vacuum volumes
-  invisibleVisAttr = new G4VisAttributes(&G4Colour::Black);
+  invisibleVisAttr = new G4VisAttributes(G4Colour::Black());
   invisibleVisAttr->SetVisibility(false);
   invisibleVisAttr->SetForceSolid(true);
 
@@ -306,5 +306,6 @@ BDSGlobalConstants::~BDSGlobalConstants()
 {  
   delete itsZeroFieldManager;
   delete zeroMagField;
+  delete defaultUserLimits;
   _instance = 0;
 }
