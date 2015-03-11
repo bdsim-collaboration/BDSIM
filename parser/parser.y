@@ -413,7 +413,7 @@ marker : MARKER ;
 drift : DRIFT ',' parameters
 ;
 
-pcldrift : DRIFT ',' parameters
+pcldrift : PCLDRIFT ',' parameters
 ;
 
 rf : RF ',' parameters
