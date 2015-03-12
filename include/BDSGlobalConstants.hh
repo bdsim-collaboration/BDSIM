@@ -393,7 +393,7 @@ private:
   G4double itsLWCalWidth;
   G4double itsLWCalOffset;
   G4String itsBeamPipeMaterial;          //beampipe material
-  G4String itsVacuumMaterial;               //vacuum inside beampipe
+  G4String itsVacuumMaterial;            //vacuum inside beampipe
   G4String itsEmptyMaterial;             //empty material for e.g. marker volumes
   G4String itsTunnelMaterialName;        //tunnel material
   G4String itsTunnelCavityMaterialName;  //tunnel cavity material

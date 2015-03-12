@@ -1,16 +1,16 @@
 #include "BDSBeamPipeInfo.hh"
 
 
-
-
+BDSBeamPipeInfo::BDSBeamPipeInfo()
+{;}
 
 BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeType beamPipeTypeIn,
 				 G4double        aper1In,
 				 G4double        aper2In,
 				 G4double        aper3In,
 				 G4double        aper4In,
-				 G4Material*     vacuumMaterialIn;
-				 G4double        beamPipeThicknessIn;
+				 G4Material*     vacuumMaterialIn,
+				 G4double        beamPipeThicknessIn,
 				 G4Material*     beamPipeMaterialIn)
 {
   beamPipeType      = beamPipeTypeIn;

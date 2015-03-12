@@ -15,7 +15,10 @@
  */
 
 struct BDSBeamPipeInfo {
+  /// default constructor
   BDSBeamPipeInfo();
+
+  /// extra constructor to assign all members at once
   BDSBeamPipeInfo(BDSBeamPipeType beamPipeTypeIn,
 		  G4double        aper1In,
 		  G4double        aper2In,

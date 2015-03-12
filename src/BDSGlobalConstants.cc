@@ -52,6 +52,16 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   // circular behaviour. set as null and component factory will replaced
   itsBeamPipeInfo = new BDSBeamPipeInfo(apertureType, aper1, aper2, aper3,
 					aper4, NULL, beamPipeThickness,NULL);
+
+  itsBeamPipeMaterial = opt.beampipeMaterial;
+
+  //check component general box size (full width) is greater than the beampipe full width
+  itsComponentBoxSize = opt.componentBoxSize * CLHEP::m;
+  if (itsComponentBoxSize < 2*(beamPipeThickness + beamPipeRadius)){
+    G4cerr << __METHOD_NAME__ << "Error: option \"boxSize\" must be greater than 2X "
+	   << "the sum of \"beampipeRadius\" and \"beamPipeThickness\" " << G4endl;
+    exit(1);
+  }
   
   // empty material can't be nothing so extremely low density
   itsEmptyMaterial = "G4_Galactic"; // space vacuum
@@ -85,13 +95,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsVacuumPressure = opt.vacuumPressure*CLHEP::bar;
   itsPlanckScatterFe = opt.planckScatterFe;
   //Fraction of events with leading particle biasing.
-
-  // FLAG FLAG FLAG
-  itsComponentBoxSize = opt.componentBoxSize * CLHEP::m;
-  if (itsComponentBoxSize < (itsBeampipeThickness + itsBeampipeRadius)){
-    G4cerr << __METHOD_NAME__ << "Error: option \"boxSize\" must be greater than the sum of \"beampipeRadius\" and \"beamPipeThickness\" " << G4endl;
-    exit(1);
-  }
+  
   itsBuildTunnel = opt.buildTunnel;
   itsBuildTunnelFloor = opt.buildTunnelFloor;  
   itsTunnelRadius = opt.tunnelRadius * CLHEP::m;
