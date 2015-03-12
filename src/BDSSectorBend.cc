@@ -309,6 +309,10 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
     material = BDSMaterials::Instance()->GetMaterial(itsMaterial);
   else
     material = BDSMaterials::Instance()->GetMaterial("Iron");
+
+  BDSBeamPipeInfo* defaultBP = BDSGlobalConstants::Instance()->GetDefaultBeamPipeInfo();
+  G4double beamPipeThickness = defaultBP->beamPipeThickness;
+  G4double lengthSafety      = BDSGlobalConstants::Instance()->GetLengthSafety();
   
   G4VSolid *magTubsEnv = 
     new G4SubtractionSolid(itsName+"_solid_env",
@@ -319,8 +323,8 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
 				      0,                            // starting phi
 				      CLHEP::twopi * CLHEP::rad ),  // delta phi
 			   new G4EllipticalTube(itsName+"_pipe_outer_tmp_2",
-						this->GetAperX()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0, 
-						this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,          
+						this->GetAperX()+beamPipeThickness+lengthSafety,
+						this->GetAperY()+beamPipeThickness+lengthSafety,
 						itsChordLength*2.2) // full length + 20% for unambiguous subtraction
 			   );
 
@@ -368,7 +372,7 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
     
   // Beampipe
   double beampipe_rinner [2] = {0.0, 0.0};
-  double beampipe_router [2] = {this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness(), this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness()};
+  double beampipe_router [2] = {this->GetAperY()+beamPipeThickness, this->GetAperY()+beamPipeThickness};
 
   G4Polyhedra* Beampipe = new G4Polyhedra("Beampipe", 0.*CLHEP::deg, 360.*CLHEP::deg, 4, 2, pipelength, beampipe_rinner, beampipe_router);
   G4LogicalVolume* BeampipeLV = 

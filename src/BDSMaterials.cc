@@ -988,7 +988,7 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)
     std::map<G4String,G4Material*>::iterator iter = materials.find(aMaterial);
     if(iter != materials.end()) return (*iter).second;
     else{
-      G4String exceptionString = "BDSMaterials::GetMaterial - Material "+aMaterial+" not known. Aborting.";
+      G4String exceptionString = "BDSMaterials::GetMaterial - Material \""+aMaterial+"\" not known. Aborting.";
       G4Exception(exceptionString.c_str(), "-1", FatalException, "");
       exit(1);
     }

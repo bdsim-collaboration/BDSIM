@@ -25,13 +25,12 @@ G4double aWavelength, G4ThreeVector aDirection):
 
 void BDSLaserWire::BuildMarkerLogicalVolume()
 {
+  G4double beamPipeRadius = BDSGlobalConstants::Instance()->GetDefaultBeamPipeInfo()->aper1;
   itsMarkerLogicalVolume=new G4LogicalVolume(
 					     new G4Box(itsName+"_solid",
-						       BDSGlobalConstants::Instance()->
-						       GetBeampipeRadius(),
-						       BDSGlobalConstants::Instance()->
-						       GetBeampipeRadius(),
-						       itsLength/2),
+						       beamPipeRadius,
+						       beamPipeRadius,
+						       itsLength*0.5),
 					     BDSMaterials::Instance()->GetMaterial("LaserVac"),
 					     itsName);
   itsMarkerLogicalVolume->SetVisAttributes(itsVisAttributes);
