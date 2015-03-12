@@ -23,23 +23,6 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-
-BDSRBend::BDSRBend(G4String aName, G4double aLength, 
-                   G4double bpRad, G4double FeRad,
-                   G4double bField, G4double angle, G4double outR,
-                   std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-                   G4double tilt, G4double bGrad, 
-                   G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
-	       0, 0, angle)
-{
-  SetOuterRadius(outR);
-  itsTilt   = tilt;
-  itsBField = bField;
-  itsBGrad  = bGrad;
-  CommonConstructor(aLength);
-}
-
 BDSRBend::BDSRBend(G4String        name,
 		   G4double        length,
 		   G4double        bField,
@@ -299,8 +282,6 @@ void BDSRBend::BuildOuterLogicalVolume(G4bool outerMaterialIsVacuum)
     { material = BDSMaterials::Instance()->GetMaterial(itsMaterial);}
   else
     { material = BDSMaterials::Instance()->GetMaterial("Iron");}
-  if(outerMaterialIsVacuum)
-    { material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
 
   G4double lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
   // outerRadius defined in constructor / (temporary) common constructor
@@ -316,16 +297,16 @@ void BDSRBend::BuildOuterLogicalVolume(G4bool outerMaterialIsVacuum)
 		 << "setting boxSize to be just big enough to contain beampipe " << G4endl;
 	  outerRadius = innerRadius+1*CLHEP::cm;
 	}
-      itsOuterLogicalVolume = new G4LogicalVolume(new G4Tubs( itsName+"_outer_solid",            // name
-							      innerRadius,
-							      outerRadius,
-							      itsMagFieldLength*0.5-2*lengthSafety,
-							      0.0,                               // starting angle
-							      2.0*CLHEP::pi),                    // finishing angle - full
-							       
-						  material,
-						  itsName+"_outer_lv");
-      
+      itsOuterLogicalVolume =
+	new G4LogicalVolume(new G4Tubs( itsName+"_outer_solid",            // name
+					innerRadius,
+					outerRadius,
+					itsMagFieldLength*0.5-2*lengthSafety,
+					0.0,                               // starting angle
+					2.0*CLHEP::pi),                    // finishing angle - full
+			    
+			    material,
+			    itsName+"_outer_lv");
     }
   else
     {

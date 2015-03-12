@@ -8,11 +8,6 @@
 class BDSRBend :public BDSMultipole
 {
 public:
-  BDSRBend(G4String aName, G4double aLength,
-	   G4double bpRad, G4double FeRad,
-	   G4double bField, G4double angle, G4double outR,
-           std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-           G4double tilt = 0, G4double bGrad=0, G4String aTunnelMaterial="", G4String aMaterial = "");
   BDSRBend(G4String        name,
 	   G4double        length,
 	   G4double        bField,

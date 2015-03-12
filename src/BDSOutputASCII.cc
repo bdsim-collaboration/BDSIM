@@ -1,7 +1,6 @@
 #include "BDSOutputASCII.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"       // for BDS::non_alpha
 #include <cmath>
 #include <ctime>
@@ -22,9 +21,13 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
   // generate filenames
   basefilename = BDSExecOptions::Instance()->GetOutputFilename();
   // lots of files - make a directory with the users permissions
-  mkdir(basefilename.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-  basefilename = basefilename + "/" + basefilename;
-  
+  int status = mkdir(basefilename.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+  if (status == 0) {
+    basefilename = basefilename + "/" + basefilename;
+  } else { // directory creation didn't succeed
+    G4cerr << __METHOD_NAME__ << "WARNING: directory " << basefilename << " was not created" << G4endl;
+  }
+    
   filename = basefilename + ".txt"; //main output filename - for samplers
   G4String filenamePrimaries  = basefilename + ".primaries.txt"; // primaries
   G4String filenameELoss      = basefilename + ".eloss.txt";     // energy loss hits

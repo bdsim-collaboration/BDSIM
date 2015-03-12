@@ -6,7 +6,6 @@
 #include <limits>
 
 #include "BDSGlobalConstants.hh" 
-#include "BDSExecOptions.hh"
 #include "BDSDipoleStepper.hh"
 #include "G4ThreeVector.hh"
 #include "G4TransportationManager.hh"

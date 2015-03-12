@@ -17,7 +17,7 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "BDSSamplerSD.hh"
-#include "G4SDManager.hh"
+//#include "G4SDManager.hh"
 
 #include "BDSSDManager.hh"
 

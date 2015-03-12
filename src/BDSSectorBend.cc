@@ -26,46 +26,6 @@
 
 #include "globals.hh"             // geant4 types / globals
 
-BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength, 
-			     G4double bpRad, G4double FeRad,
-			     G4double bField, G4double angle, G4double outR,
-                             std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-			     G4double tilt, G4double bGrad, 
-			     G4String aTunnelMaterial, G4String aMaterial, G4double aXAper, G4double aYAper):
-  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
-	       aXAper, aYAper, angle)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "name : " << aName << " length : " << aLength << " bpRad : " << bpRad << " FeRad : " 
-	 << FeRad << " bField : " << bField << " angle : " << angle << " outR : " << outR << " tilt : " 
-	 << tilt <<  " bGrad : "<< bGrad <<  " tunnelMaterial : " << aTunnelMaterial <<  " material : " 
-	 << aMaterial << " aXAper : " << aXAper << " aYAper : " << aYAper << G4endl;
-#endif
-  
-  SetOuterRadius(outR);
-  itsTilt   = tilt;
-  itsBField = bField;
-  itsBGrad  = bGrad;
-
-  // arc length = radius*angle
-  //            = (chord length/(2.0*sin(angle/2))*angle
-  if (itsAngle == 0.0)
-     itsChordLength = itsLength;
-  else
-     itsChordLength = 2.0 * itsLength * sin(0.5*itsAngle) / itsAngle;
-
-  // use abs(angle) for most calculations then use this orientation bool to flip eitherway
-  orientation  = BDS::CalculateOrientation(itsAngle);
-
-  // prepare normal vectors for input and output planes
-  // calculate components of normal vectors (in the end mag(normal) = 1)
-  G4double in_z = cos(0.5*fabs(itsAngle)); 
-  G4double in_x = sin(0.5*fabs(itsAngle));
-  inputface     = G4ThreeVector(-orientation*in_x, 0.0, -1.0*in_z);
-  //-1 as pointing down in z for normal
-  outputface    = G4ThreeVector(-orientation*in_x, 0.0, in_z);
-}
-
 BDSSectorBend::BDSSectorBend(G4String        name,
 			     G4double        length,
 			     G4double        angle,
@@ -256,8 +216,6 @@ void BDSSectorBend::BuildCylindricalOuterLogicalVolume(G4bool outerMaterialIsVac
     { material = BDSMaterials::Instance()->GetMaterial(itsMaterial);}
   else
     { material = BDSMaterials::Instance()->GetMaterial("Iron");}
-  if(outerMaterialIsVacuum)
-    { material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
 
   G4double lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
   G4double outerRadius  = boxSize*0.5;

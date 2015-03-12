@@ -13,23 +13,6 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 
-BDSKicker::BDSKicker(G4String aName, G4double aLength, 
-		     G4double bpRad, G4double FeRad,
-		     G4double bField, G4double angle, G4double outR,
-		     G4double tilt, G4double bGrad, 
-		     G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName, aLength, bpRad, FeRad, aTunnelMaterial, aMaterial,
-	       0, 0, /*itsAngle=*/0)
-{
-  SetOuterRadius(outR);
-  itsTilt      = tilt;
-  itsBField    = bField;
-  itsBGrad     = bGrad;
-  //use separate kick angle as kicker doesn't rotate reference trajectory
-  //bdsbeamline places things based on itsAngle
-  itsKickAngle = angle;
-}
-
 BDSKicker::BDSKicker(G4String        name,
 		     G4double        length,
 		     G4double        bField,
