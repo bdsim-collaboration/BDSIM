@@ -26,8 +26,8 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
 				  G4double  h,
 				  G4double  yOut[])
 {
-#ifdef BDSDEBUG
   G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
+#ifdef BDSDEBUG
   G4cout << "BDSDipoleStepper: step= " << h/CLHEP::m << " m" << G4endl
          << " x  = " << yIn[0]/CLHEP::m     << " m" << G4endl
          << " y  = " << yIn[1]/CLHEP::m     << " m" << G4endl
@@ -96,8 +96,8 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
   // radius of curvature
   G4double R=-(InitMag/CLHEP::GeV)/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
 
-  // include the sign of the charge of the particles
-  if(  fPtrMagEqOfMot->FCof()<0) R*=-1.;
+  // include the charge of the particles
+  R*=charge;
   
   G4double Theta   = h/R;
 
@@ -125,9 +125,9 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
 
   GlobalTangent*=InitMag;
 
-  yOut[0]   = GlobalPosition.x(); 
-  yOut[1]   = GlobalPosition.y(); 
-  yOut[2]   = GlobalPosition.z(); 
+  yOut[0] = GlobalPosition.x(); 
+  yOut[1] = GlobalPosition.y(); 
+  yOut[2] = GlobalPosition.z(); 
   
   yOut[3] = GlobalTangent.x();
   yOut[4] = GlobalTangent.y();
@@ -194,17 +194,6 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
       Y21= -fabs(kappa)*Y12;
       Y22= Y11;
     }
-  // else // should not happen as already returned in that case
-  //   {
-  //     X11 = 1;
-  //     X12 = 0;
-  //     X21 = 0;
-  //     X22 = 1;
-  //     Y11 = 1;
-  //     Y12 = 0;
-  //     Y21 = 0;
-  //     Y22 = 1;
-  //   }
 
   x1  = X11*x0 + X12*xp;    
   x1p = X21*x0 + X22*xp;
