@@ -63,23 +63,6 @@ BDSComponentFactory::BDSComponentFactory(){
   _brho *= (CLHEP::tesla*CLHEP::m);
 
   if (verbose || debug1) G4cout << "Rigidity (Brho) : "<< fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
-  //
-  // beampipe default outer radius (if not overridden by "aper" option)
-  //
-  _bpRad=BDSGlobalConstants::Instance()->GetBeampipeRadius();
-  if (verbose || debug1) G4cout<<"Default pipe outer radius= "<<_bpRad/CLHEP::m<< "m"
-			       << G4endl;
-
-  // I suspect FeRad is planned to be offered as an option for the inner radius
-  // of the iron in case it is different from the beampipe outer radius
-  // Not done yet.
-  _bpThick = BDSGlobalConstants::Instance()->GetBeampipeThickness();
-  //  _FeRad = _bpRad + _bpThick; //Needs to be the outer beam pipe radius - add the beam pipe thickness.
-  // if (verbose || debug1) G4cout<<"Default magnet inner radius= "<<_FeRad/CLHEP::m<< "m"
-  // 			      << G4endl;
-
-  _driftStartAper = _bpRad;
-  _driftEndAper = _bpRad;
 }
 
 BDSComponentFactory::~BDSComponentFactory(){
@@ -795,14 +778,17 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
   }
 
   // geometry
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
+  G4double aperture;
+  if( _element.aper > 1.e-10*CLHEP::m )
+    {aperture = _element.aper * CLHEP::m;}
+  else
+    {aperture = BDSGlobalConstants::Instance()->GetDefaultBeamPipeInfo()->aper1;}
 
 #ifdef BDSDEBUG 
   G4cout << "---->creating Element,"
 	 << " name= " << _element.name
 	 << " l= " << _element.l << "m"
-	 << " aper= " << aper/CLHEP::m << "m"
+	 << " aper= " << aperture/CLHEP::m << "m"
 	 << " outR= " << _element.outR << "m"
 	 << " bmapZOffset = "	<<  _element.bmapZOffset * CLHEP::m
 	 << " tunnel material " << _element.tunnelMaterial
@@ -821,8 +807,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 			  _element.bmapFile,
 			  _element.bmapZOffset * CLHEP::m,
 			  _element.l * CLHEP::m,
-			  aper,
-			  _element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, tunnelOffsetX, _element.tunnelCavityMaterial));
+			  aperture,
+			  _element.outR * CLHEP::m ,
+			  _element.tunnelMaterial,
+			  _element.tunnelRadius,
+			  tunnelOffsetX,
+			  _element.tunnelCavityMaterial));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
@@ -895,9 +885,11 @@ BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
 	 << G4endl;
 #endif
 
+  G4double defaultAperture = BDSGlobalConstants::Instance()->GetDefaultBeamPipeInfo()->aper1;
+
   return (new BDSCollimator( _element.name,
 			     _element.l * CLHEP::m,
-			     _bpRad,
+			     defaultAperture,
 			     _element.xsize * CLHEP::m,
 			     _element.ysize * CLHEP::m,
 			     theMaterial,
@@ -1042,6 +1034,7 @@ G4Material* BDSComponentFactory::PrepareBeamPipeMaterial(Element& element)
 
 G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element& /*element*/)
 {
+  //TBC
   //in future do somethign relating to what's set in element
   //also make some setting available in element
   return BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
@@ -1061,28 +1054,29 @@ G4double BDSComponentFactory::PrepareBoxSize(Element& element)
 BDSBeamPipeInfo BDSComponentFactory::PrepareBeamPipeInfo(Element& element)
 {
   BDSBeamPipeInfo info;
-  info.beamPipeType      = BDS::DetermineBeamPipeType(element.apertureType);
+  info.beamPipeType = BDS::DetermineBeamPipeType(element.apertureType);
 
   // note even if aperN in the element is 0 (ie unset), we should use
   // the default aperture model from global constants (already in metres)
   // aper1
+  BDSBeamPipeInfo* default_ = BDSGlobalConstants::Instance()->GetDefaultBeamPipeInfo();
   if (element.aper1 == 0)
-    {info.aper1 = BDSGlobalConstants::Instance()->GetAper1();}
+    {info.aper1 = default_->aper1;}
   else
     {info.aper1 = element.aper1*CLHEP::m;}
   // aper2
   if (element.aper2 == 0)
-    {info.aper2 = BDSGlobalConstants::Instance()->GetAper2();}
+    {info.aper2 = default_->aper2;}
   else
     {info.aper2 = element.aper2*CLHEP::m;}
   // aper3
   if (element.aper3 == 0)
-    {info.aper3 = BDSGlobalConstants::Instance()->GetAper3();}
+    {info.aper3 = default_->aper3;}
   else
     {info.aper3 = element.aper3*CLHEP::m;}
   // aper4
   if (element.aper4 == 0)
-    {info.aper4 = BDSGlobalConstants::Instance()->GetAper4();}
+    {info.aper4 = default_->aper4;}
   else
     {info.aper4 = element.aper4*CLHEP::m;}
   

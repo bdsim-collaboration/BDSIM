@@ -22,7 +22,7 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType, G4bool globalC
       }
       else {
 	// normal check - we can use BDSGlobalConstants - can't do this above as BDSGlobalConstants is using this function!
-	return BDSGlobalConstants::Instance()->GetApertureType();
+	return BDSGlobalConstants::Instance()->GetDefaultBeamPipeInfo()->beamPipeType;
       }
     }
 
@@ -33,9 +33,17 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType, G4bool globalC
   return returnValue;
 }
 
-void BDS::CheckApertureInfo(BDSBeamPipeType beamPipeTypeIn, G4double& beamPipeRadius,
+void BDS::CheckApertureInfo(BDSBeamPipeType& beamPipeTypeIn, G4double& beamPipeRadius,
+			    G4double& beamPipeThickness,
 			    G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
+  //check that the beampipethickness is finite
+  if (beamPipeThickness < 1e-9)
+    {
+      G4cout << __METHOD_NAME__ << " ERROR - beampipe thickness too small : " << beamPipeThickness << G4endl;
+      exit(1);
+    }
+  
   if (beamPipeTypeIn == BDSBeamPipeType::circular)
     {BDS::InfoOKForCircular(beamPipeRadius,aper1,aper2,aper3,aper4);}
   //if (beamPipeTypeIn == BDSBeamPIpeType::elliptical)
