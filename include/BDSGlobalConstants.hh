@@ -11,6 +11,7 @@
 #include "G4UserLimits.hh"
 
 #include "BDSBeamPipeType.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSParticle.hh"
 #include "G4LogicalVolume.hh"
 #include "BDSLogicalVolumeInfo.hh"
@@ -116,12 +117,7 @@ public:
   G4double GetBlmLength();
 
   /// Beampipe
-  G4double GetBeampipeRadius();
-  G4double GetAper1();
-  G4double GetAper2();
-  G4double GetAper3();
-  G4double GetAper4();
-  G4double GetBeampipeThickness(); 
+  BDSBeamPipeInfo* GetDefaultBeamPipeInfo();
 
   /// Sampler
   G4double GetSamplerDiameter();
@@ -146,12 +142,10 @@ public:
   G4double GetProdCutPositronsP();
   G4double GetProdCutPositronsA();
 
-  // Magnet geometry variable
-
+  /// Magnet geometry variable
   G4String GetMagnetGeometry();
 
-  // Physical processes etc.
-
+  /// Physical processes etc.
   G4String GetPhysListName();
   G4bool   GetSynchRadOn();
   G4bool   GetDecayOn();
@@ -172,11 +166,11 @@ public:
   G4bool   GetLaserwireTrackPhotons();
   G4bool   GetLaserwireTrackElectrons();
   G4bool   GetTurnOnCerenkov();
-  G4bool GetTurnOnOpticalAbsorption();
-  G4bool GetTurnOnRayleighScattering();
-  G4bool GetTurnOnMieScattering();
-  G4bool GetTurnOnOpticalSurface();
-  G4bool GetTurnOnBirksSaturation();
+  G4bool   GetTurnOnOpticalAbsorption();
+  G4bool   GetTurnOnRayleighScattering();
+  G4bool   GetTurnOnMieScattering();
+  G4bool   GetTurnOnOpticalSurface();
+  G4bool   GetTurnOnBirksSaturation();
   G4double GetScintYieldFactor();
 
   G4bool   GetStoreMuonTrajectories();
@@ -277,6 +271,7 @@ private:
   G4bool   itsUseEMLPB;
   G4bool   itsUseHadLPB;
 
+  BDSBeamPipeInfo* itsBeamPipeInfo;
   G4String itsMagnetGeometry;
 
   G4double itsMinimumEpsilonStep;
@@ -302,12 +297,6 @@ private:
   //Beam loss monitor geometry
   G4double itsBlmRad;
   G4double itsBlmLength;
-  G4double itsBeampipeRadius;
-  G4double itsAper1;
-  G4double itsAper2;
-  G4double itsAper3;
-  G4double itsAper4;
-  G4double itsBeampipeThickness;
   G4double itsSamplerDiameter;
   G4double itsSamplerLength;
   G4double itsDeltaIntersection;
@@ -387,7 +376,7 @@ public:
 
   G4double GetLWCalWidth();
   G4double GetLWCalOffset();
-  BDSBeamPipeType GetApertureType();
+
   G4String GetBeamPipeMaterialName();
   G4String GetVacuumMaterial();
   G4String GetEmptyMaterial();
@@ -403,9 +392,8 @@ public:
 private:
   G4double itsLWCalWidth;
   G4double itsLWCalOffset;
-  BDSBeamPipeType itsApertureType;              //aperture model to use by default
   G4String itsBeamPipeMaterial;          //beampipe material
-  G4String itsVacMaterial;               //vacuum inside beampipe
+  G4String itsVacuumMaterial;               //vacuum inside beampipe
   G4String itsEmptyMaterial;             //empty material for e.g. marker volumes
   G4String itsTunnelMaterialName;        //tunnel material
   G4String itsTunnelCavityMaterialName;  //tunnel cavity material
@@ -587,24 +575,6 @@ inline G4double BDSGlobalConstants::GetBlmLength()
 inline G4String BDSGlobalConstants::GetMagnetGeometry()
 {return itsMagnetGeometry;}
 
-inline G4double BDSGlobalConstants::GetBeampipeRadius() 
-{return itsBeampipeRadius;}
-
-inline G4double BDSGlobalConstants::GetAper1()
-{return itsAper1;}
-
-inline G4double BDSGlobalConstants::GetAper2()
-{return itsAper2;}
-
-inline G4double BDSGlobalConstants::GetAper3()
-{return itsAper3;}
-
-inline G4double BDSGlobalConstants::GetAper4()
-{return itsAper4;}
-
-inline G4double BDSGlobalConstants::GetBeampipeThickness() 
-{return itsBeampipeThickness;}
-
 inline G4double BDSGlobalConstants::GetSamplerDiameter() 
 {return itsSamplerDiameter;}
 
@@ -758,14 +728,11 @@ inline  G4double BDSGlobalConstants::GetLWCalWidth()
 inline  G4double BDSGlobalConstants::GetLWCalOffset()
 {return itsLWCalOffset;}
 
-inline BDSBeamPipeType BDSGlobalConstants::GetApertureType()
-{return itsApertureType;}
-
 inline G4String BDSGlobalConstants::GetBeamPipeMaterialName()
 {return itsBeamPipeMaterial;}
 
 inline G4String BDSGlobalConstants::GetVacuumMaterial()
-{return itsVacMaterial;}
+{return itsVacuumMaterial;}
 
 inline G4String BDSGlobalConstants::GetEmptyMaterial()
 {return itsEmptyMaterial;}
@@ -906,5 +873,8 @@ inline G4VisAttributes* BDSGlobalConstants::GetVisibleDebugVisAttr()
 
 inline G4UserLimits* BDSGlobalConstants::GetDefaultUserLimits()
 {return defaultUserLimits;}
+
+inline BDSBeamPipeInfo* BDSGlobalConstants::GetDefaultBeamPipeInfo()
+{return itsBeamPipeInfo;}
 
 #endif

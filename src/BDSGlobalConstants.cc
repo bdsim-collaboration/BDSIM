@@ -6,7 +6,9 @@ Last modified 23.10.2007 by Steve Malton
 #include "BDSGlobalConstants.hh"
 #include "parser/options.h"
 #include "BDSBeamPipeType.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
+#include "BDSMaterials.hh"
 #include "G4FieldManager.hh"
 #include "G4UniformMagField.hh"
 #include <cstdlib>
@@ -29,12 +31,30 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0),itsParticleMomentum(0.0),itsParticleKineticEnergy(0.0),itsSMax(0.0)
 {
   itsPhysListName       = opt.physicsList;
-  itsBeamPipeMaterial   = opt.beampipeMaterial;
-  G4cout << "GLOBALS " << opt.apertureType << G4endl;
-  itsApertureType       = BDS::DetermineBeamPipeType(opt.apertureType,true); //true is flag for first global check
-  G4cout << "GLOBALS2 " << itsApertureType << G4endl;
-  itsVacMaterial        = opt.vacMaterial;
-  itsEmptyMaterial      = "G4_Galactic"; // space vacuum
+
+  // prepare vacuum (distinct from empty volume material)
+  itsVacuumMaterial = opt.vacMaterial;
+  
+  // prepare the default beampipe model information and test parameters make sense
+  BDSBeamPipeType apertureType = BDS::DetermineBeamPipeType(opt.apertureType,true);
+  G4double beamPipeRadius      = opt.beampipeRadius * CLHEP::m;
+  G4double aper1               = opt.aper1*CLHEP::m;
+  G4double aper2               = opt.aper2*CLHEP::m;
+  G4double aper3               = opt.aper3*CLHEP::m;
+  G4double aper4               = opt.aper4*CLHEP::m;
+  G4double beamPipeThickness   = opt.beampipeThickness * CLHEP::m;
+  // perform some checks to see the values make sense for that aperture model
+  BDS::CheckApertureInfo(apertureType, beamPipeRadius, beamPipeThickness,
+			 aper1, aper2, aper3, aper4);
+  
+  // wrap it all up in an instance of beampipe info
+  // CANNOT use BDSMaterials here as it calls bdsglobal constants leading to
+  // circular behaviour. set as null and component factory will replaced
+  itsBeamPipeInfo = new BDSBeamPipeInfo(apertureType, aper1, aper2, aper3,
+					aper4, NULL, beamPipeThickness,NULL);
+  
+  // empty material can't be nothing so extremely low density
+  itsEmptyMaterial = "G4_Galactic"; // space vacuum
   itsTunnelMaterialName = opt.tunnelMaterial;
   itsTunnelCavityMaterialName = opt.tunnelCavityMaterial;
   itsSoilMaterialName   = opt.soilMaterial;
@@ -66,16 +86,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsPlanckScatterFe = opt.planckScatterFe;
   //Fraction of events with leading particle biasing.
 
-  //beampipe
-  itsBeampipeRadius = opt.beampipeRadius * CLHEP::m;
-  itsAper1 = opt.aper1*CLHEP::m;
-  itsAper2 = opt.aper2*CLHEP::m;
-  itsAper3 = opt.aper3*CLHEP::m;
-  itsAper4 = opt.aper4*CLHEP::m;
-  // note beampipetype already done before these checks! at top of this function
-  BDS::CheckApertureInfo(itsApertureType,itsBeampipeRadius,itsAper1,itsAper2,itsAper3,itsAper4);
-  
-  itsBeampipeThickness = opt.beampipeThickness * CLHEP::m;
+  // FLAG FLAG FLAG
   itsComponentBoxSize = opt.componentBoxSize * CLHEP::m;
   if (itsComponentBoxSize < (itsBeampipeThickness + itsBeampipeRadius)){
     G4cerr << __METHOD_NAME__ << "Error: option \"boxSize\" must be greater than the sum of \"beampipeRadius\" and \"beamPipeThickness\" " << G4endl;

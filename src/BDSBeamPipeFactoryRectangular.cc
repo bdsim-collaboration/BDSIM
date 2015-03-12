@@ -214,16 +214,17 @@ void BDSBeamPipeFactoryRectangular::TestInputParameters(G4Material*&  vacuumMate
     {vacuumMaterialIn = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
 
   if (beamPipeThicknessIn < 1e-10)
-    {beamPipeThicknessIn = BDSGlobalConstants::Instance()->GetBeampipeThickness();}
+    {beamPipeThicknessIn = BDSGlobalConstants::Instance()->GetDefaultBeamPipeInfo()->beamPipeThickness;}
 
   if (!beamPipeMaterialIn)
     {beamPipeMaterialIn = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetBeamPipeMaterialName());}
 
   if (aper1In < 1e-10)
-    {aper1In = BDSGlobalConstants::Instance()->GetBeampipeRadius();}
+    {aper1In = BDSGlobalConstants::Instance()->GetDefaultBeamPipeInfo()->aper1;}
 
   if (aper2In < 1e-10)
-    {aper2In = BDSGlobalConstants::Instance()->GetBeampipeRadius();}
+    {aper1In = BDSGlobalConstants::Instance()->GetDefaultBeamPipeInfo()->aper2;}
+  
 }
 
 /// only the solids are unique, once we have those, the logical volumes and placement in the

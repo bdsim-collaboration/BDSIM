@@ -24,7 +24,8 @@ namespace BDS {
 
   /// function to check relevant aperture values are set.  This is really a dispatch function
   /// for other aperture specific methods below
-  void CheckApertureInfo(BDSBeamPipeType beamPipeTypeIn, G4double& beamPipeRadius,
+  void CheckApertureInfo(BDSBeamPipeType& beamPipeTypeIn, G4double& beamPipeRadius,
+			 G4double& beamPipeThickness,
 			 G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
   /// aperture info check for circular aperture
   void InfoOKForCircular(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
