@@ -65,17 +65,17 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   //Fraction of events with leading particle biasing.
 
   //beampipe
-  itsBeampipeRadius = opt.beampipeRadius * CLHEP::m;
+  itsBeamPipeRadius = opt.beampipeRadius * CLHEP::m;
   itsAper1 = opt.aper1*CLHEP::m;
   itsAper2 = opt.aper2*CLHEP::m;
   itsAper3 = opt.aper3*CLHEP::m;
   itsAper4 = opt.aper4*CLHEP::m;
   // note beampipetype already done before these checks! at top of this function
-  BDS::CheckApertureInfo(itsApertureType,itsBeampipeRadius,itsAper1,itsAper2,itsAper3,itsAper4);
+  BDS::CheckApertureInfo(itsApertureType,itsBeamPipeRadius,itsAper1,itsAper2,itsAper3,itsAper4);
   
-  itsBeampipeThickness = opt.beampipeThickness * CLHEP::m;
+  itsBeamPipeThickness = opt.beampipeThickness * CLHEP::m;
   itsComponentBoxSize = opt.componentBoxSize * CLHEP::m;
-  if (itsComponentBoxSize < (itsBeampipeThickness + itsBeampipeRadius)){
+  if (itsComponentBoxSize < (itsBeamPipeThickness + itsBeamPipeRadius)){
     G4cerr << __METHOD_NAME__ << "Error: option \"boxSize\" must be greater than the sum of \"beampipeRadius\" and \"beamPipeThickness\" " << G4endl;
     exit(1);
   }

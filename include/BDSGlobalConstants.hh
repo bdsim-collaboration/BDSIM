@@ -116,12 +116,12 @@ public:
   G4double GetBlmLength();
 
   /// Beampipe
-  G4double GetBeampipeRadius();
+  G4double GetBeamPipeRadius();
   G4double GetAper1();
   G4double GetAper2();
   G4double GetAper3();
   G4double GetAper4();
-  G4double GetBeampipeThickness(); 
+  G4double GetBeamPipeThickness(); 
 
   /// Sampler
   G4double GetSamplerDiameter();
@@ -302,12 +302,12 @@ private:
   //Beam loss monitor geometry
   G4double itsBlmRad;
   G4double itsBlmLength;
-  G4double itsBeampipeRadius;
+  G4double itsBeamPipeRadius;
   G4double itsAper1;
   G4double itsAper2;
   G4double itsAper3;
   G4double itsAper4;
-  G4double itsBeampipeThickness;
+  G4double itsBeamPipeThickness;
   G4double itsSamplerDiameter;
   G4double itsSamplerLength;
   G4double itsDeltaIntersection;
@@ -587,8 +587,8 @@ inline G4double BDSGlobalConstants::GetBlmLength()
 inline G4String BDSGlobalConstants::GetMagnetGeometry()
 {return itsMagnetGeometry;}
 
-inline G4double BDSGlobalConstants::GetBeampipeRadius() 
-{return itsBeampipeRadius;}
+inline G4double BDSGlobalConstants::GetBeamPipeRadius()
+{return itsBeamPipeRadius;}
 
 inline G4double BDSGlobalConstants::GetAper1()
 {return itsAper1;}
@@ -602,8 +602,8 @@ inline G4double BDSGlobalConstants::GetAper3()
 inline G4double BDSGlobalConstants::GetAper4()
 {return itsAper4;}
 
-inline G4double BDSGlobalConstants::GetBeampipeThickness() 
-{return itsBeampipeThickness;}
+inline G4double BDSGlobalConstants::GetBeamPipeThickness() 
+{return itsBeamPipeThickness;}
 
 inline G4double BDSGlobalConstants::GetSamplerDiameter() 
 {return itsSamplerDiameter;}

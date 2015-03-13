@@ -66,14 +66,14 @@ BDSComponentFactory::BDSComponentFactory(){
   //
   // beampipe default outer radius (if not overridden by "aper" option)
   //
-  _bpRad=BDSGlobalConstants::Instance()->GetBeampipeRadius();
+  _bpRad=BDSGlobalConstants::Instance()->GetBeamPipeRadius();
   if (verbose || debug1) G4cout<<"Default pipe outer radius= "<<_bpRad/CLHEP::m<< "m"
 			       << G4endl;
 
   // I suspect FeRad is planned to be offered as an option for the inner radius
   // of the iron in case it is different from the beampipe outer radius
   // Not done yet.
-  _bpThick = BDSGlobalConstants::Instance()->GetBeampipeThickness();
+  _bpThick = BDSGlobalConstants::Instance()->GetBeamPipeThickness();
   //  _FeRad = _bpRad + _bpThick; //Needs to be the outer beam pipe radius - add the beam pipe thickness.
   // if (verbose || debug1) G4cout<<"Default magnet inner radius= "<<_FeRad/CLHEP::m<< "m"
   // 			      << G4endl;
