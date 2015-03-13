@@ -30,10 +30,8 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
 {
   itsPhysListName       = opt.physicsList;
   itsBeamPipeMaterial   = opt.beampipeMaterial;
-  G4cout << "GLOBALS " << opt.apertureType << G4endl;
   itsApertureType       = BDS::DetermineBeamPipeType(opt.apertureType,true); //true is flag for first global check
-  G4cout << "GLOBALS2 " << itsApertureType << G4endl;
-  itsVacMaterial        = opt.vacMaterial;
+  itsVacuumMaterial     = opt.vacMaterial;
   itsEmptyMaterial      = "G4_Galactic"; // space vacuum
   itsTunnelMaterialName = opt.tunnelMaterial;
   itsTunnelCavityMaterialName = opt.tunnelCavityMaterial;

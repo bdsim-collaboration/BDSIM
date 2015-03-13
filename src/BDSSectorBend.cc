@@ -310,14 +310,13 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
   else
     material = BDSMaterials::Instance()->GetMaterial("Iron");
 
-  BDSBeamPipeInfo* defaultBP = BDSGlobalConstants::Instance()->GetDefaultBeamPipeInfo();
-  G4double beamPipeThickness = defaultBP->beamPipeThickness;
+  G4double beamPipeThickness = BDSGlobalConstants::Instance()->GetBeamPipeThickness();
   G4double lengthSafety      = BDSGlobalConstants::Instance()->GetLengthSafety();
   
   G4VSolid *magTubsEnv = 
     new G4SubtractionSolid(itsName+"_solid_env",
 			   new G4Tubs(itsName+"_solid_tmp_1",
-				      itsInnerIronRadius + BDSGlobalConstants::Instance()->GetLengthSafety()/2.0, // inner R + overlap safety
+				      itsInnerIronRadius + lengthSafety/2.0, // inner R + overlap safety
 				      itsOuterR,                    // outer R
 				      itsChordLength,               // length
 				      0,                            // starting phi

@@ -765,7 +765,7 @@ inline G4String BDSGlobalConstants::GetBeamPipeMaterialName()
 {return itsBeamPipeMaterial;}
 
 inline G4String BDSGlobalConstants::GetVacuumMaterial()
-{return itsVacMaterial;}
+{return itsVacuumMaterial;}
 
 inline G4String BDSGlobalConstants::GetEmptyMaterial()
 {return itsEmptyMaterial;}
