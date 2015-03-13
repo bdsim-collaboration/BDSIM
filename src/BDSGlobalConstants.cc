@@ -265,7 +265,7 @@ G4RotationMatrix* BDSGlobalConstants::RotYM90XM90() const{
 }
 
 // a robust compiler-invariant method to convert from integer to G4String
-G4String BDSGlobalConstants::StringFromInt(G4int N) 
+G4String BDSGlobalConstants::StringFromInt(G4int N)const
 {
   if (N==0) return "0";
   G4int nLocal=N, nDigit=0, nMax=1;
@@ -281,7 +281,7 @@ G4String BDSGlobalConstants::StringFromInt(G4int N)
 }
 
 // a robust compiler-invariant method to convert from digit to G4String
-G4String BDSGlobalConstants::StringFromDigit(G4int N) 
+G4String BDSGlobalConstants::StringFromDigit(G4int N)const 
 {
   if(N<0 || N>9)
     G4Exception("Invalid Digit in BDSGlobalConstants::StringFromDigit", "-1", FatalException, "");

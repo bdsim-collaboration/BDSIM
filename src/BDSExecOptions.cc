@@ -13,7 +13,7 @@
 
 BDSExecOptions* BDSExecOptions::_instance=0;
 
-BDSExecOptions* BDSExecOptions::Instance(int argc, char **argv){
+const BDSExecOptions* BDSExecOptions::Instance(int argc, char **argv){
   if(_instance==0) {
     _instance = new BDSExecOptions(argc, argv);
     return _instance;
@@ -23,7 +23,7 @@ BDSExecOptions* BDSExecOptions::Instance(int argc, char **argv){
   }
 }
 
-BDSExecOptions* BDSExecOptions::Instance(){
+const BDSExecOptions* BDSExecOptions::Instance(){
   if(_instance==0) {
     G4Exception("BDSExecOptions::Instance was not initialised. Initialize first with BDSExecOptions::Instance(int argc, char **argv).", "-1", FatalException, "");
     return NULL;
@@ -243,7 +243,7 @@ void BDSExecOptions::Parse(int argc, char **argv) {
   } 
 }
 
-void BDSExecOptions::Usage() {
+void BDSExecOptions::Usage()const {
   G4cout<<"bdsim : version 0.6.develop"<<G4endl;
   G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
   G4cout<<"        http://www.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BdSim"<<G4endl;
@@ -307,7 +307,7 @@ void BDSExecOptions::SetBDSIMPATH(){
 
 }
 
-void BDSExecOptions::Print() {
+void BDSExecOptions::Print()const {
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " inputFilename: "       << std::setw(15) << inputFilename       << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " visMacroFilename: "    << std::setw(15) << visMacroFilename    << G4endl;
