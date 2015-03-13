@@ -25,11 +25,7 @@ private:
   G4double lengthSafety;
   
   G4double _charge, _momentum, _brho;
-  G4double _bpRad, _bpThick; 
   
-  // drifts
-  G4String _driftName ;
-  G4double _driftStartAper, _driftEndAper;
   std::list<struct Element>::iterator _elementIter, _previousElementIter, _nextElementIter;
   /// beamline
   std::list<BDSAcceleratorComponent*> itsBeamline;

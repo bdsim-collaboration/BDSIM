@@ -63,23 +63,6 @@ BDSComponentFactory::BDSComponentFactory(){
   _brho *= (CLHEP::tesla*CLHEP::m);
 
   if (verbose || debug1) G4cout << "Rigidity (Brho) : "<< fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
-  //
-  // beampipe default outer radius (if not overridden by "aper" option)
-  //
-  _bpRad=BDSGlobalConstants::Instance()->GetBeamPipeRadius();
-  if (verbose || debug1) G4cout<<"Default pipe outer radius= "<<_bpRad/CLHEP::m<< "m"
-			       << G4endl;
-
-  // I suspect FeRad is planned to be offered as an option for the inner radius
-  // of the iron in case it is different from the beampipe outer radius
-  // Not done yet.
-  _bpThick = BDSGlobalConstants::Instance()->GetBeamPipeThickness();
-  //  _FeRad = _bpRad + _bpThick; //Needs to be the outer beam pipe radius - add the beam pipe thickness.
-  // if (verbose || debug1) G4cout<<"Default magnet inner radius= "<<_FeRad/CLHEP::m<< "m"
-  // 			      << G4endl;
-
-  _driftStartAper = _bpRad;
-  _driftEndAper = _bpRad;
 }
 
 BDSComponentFactory::~BDSComponentFactory(){
@@ -795,7 +778,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
   }
 
   // geometry
-  G4double aper = _bpRad;
+  G4double aper = BDSGlobalConstants::Instance()->GetBeamPipeRadius();
   if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
 
 #ifdef BDSDEBUG 
@@ -895,9 +878,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
 	 << G4endl;
 #endif
 
+  G4double radius = BDSGlobalConstants::Instance()->GetBeamPipeRadius();
   return (new BDSCollimator( _element.name,
 			     _element.l * CLHEP::m,
-			     _bpRad,
+			     radius,
 			     _element.xsize * CLHEP::m,
 			     _element.ysize * CLHEP::m,
 			     theMaterial,
