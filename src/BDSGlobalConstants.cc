@@ -60,7 +60,6 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
     itsParticleTotalEnergy = itsBeamTotalEnergy;
   }
 
-  itsVacuumPressure = opt.vacuumPressure*CLHEP::bar;
   itsPlanckScatterFe = opt.planckScatterFe;
   //Fraction of events with leading particle biasing.
 

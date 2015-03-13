@@ -111,16 +111,22 @@ int main(int argc,char** argv) {
   G4cout << __FUNCTION__ << "> Using input file : "<< BDSExecOptions::Instance()->GetInputFilename()<<G4endl;
   
   gmad_parser(BDSExecOptions::Instance()->GetInputFilename());
+
+  //
+  // parse options and explicitly initialise materials and global constants
+  //
+  BDSMaterials::Instance();
+  BDSGlobalConstants::Instance();
   
   //
   // initialize random number generator
   //
 
-  BDS::CreateRandomNumberGenerator();
-  BDS::SetSeed(); // set the seed from options or from exec options
+  BDSRandom::CreateRandomNumberGenerator();
+  BDSRandom::SetSeed(); // set the seed from options or from exec options
   if (BDSExecOptions::Instance()->SetSeedState()) //optionally load the seed state from file
-    {BDS::LoadSeedState(BDSExecOptions::Instance()->GetSeedStateFilename());}
-  BDS::WriteSeedState(); //write the current state once set / loaded
+    {BDSRandom::LoadSeedState(BDSExecOptions::Instance()->GetSeedStateFilename());}
+  BDSRandom::WriteSeedState(); //write the current state once set / loaded
 
   // instantiate the specific type of bunch distribution (class),
   // get the corresponding parameters from the gmad parser info

@@ -82,7 +82,6 @@ public:
   void     SetParticleMomentum(G4double val);
 
 
-  G4double GetVacuumPressure();
   G4double GetPlanckScatterFe();
 
   G4double GetGammaToMuFe();
@@ -267,7 +266,6 @@ private:
   /// particle energy
   G4double itsParticleTotalEnergy, itsParticleMomentum, itsParticleKineticEnergy;
   G4double itsLPBFraction;
-  G4double itsVacuumPressure;
   G4double itsPlanckScatterFe;
   G4double itsGammaToMuFe;
   G4double itsAnnihiToMuFe;
@@ -502,9 +500,6 @@ inline void BDSGlobalConstants::SetParticleDefinition(G4ParticleDefinition* aBea
 
 inline void BDSGlobalConstants::SetParticleName(G4String aParticleName)
 {itsParticleName = aParticleName;}
-
-inline G4double BDSGlobalConstants::GetVacuumPressure()
-{return itsVacuumPressure;}
 
 inline G4double BDSGlobalConstants::GetPlanckScatterFe()
 {return itsPlanckScatterFe;}
