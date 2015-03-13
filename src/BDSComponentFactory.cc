@@ -778,17 +778,14 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
   }
 
   // geometry
-  G4double aperture;
-  if( _element.aper > 1.e-10*CLHEP::m )
-    {aperture = _element.aper * CLHEP::m;}
-  else
-    {aperture = BDSGlobalConstants::Instance()->GetDefaultBeamPipeInfo()->aper1;}
+  G4double aper = BDSGlobalConstants::Instance()->GetBeamPipeRadius();
+  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
 
 #ifdef BDSDEBUG 
   G4cout << "---->creating Element,"
 	 << " name= " << _element.name
 	 << " l= " << _element.l << "m"
-	 << " aper= " << aperture/CLHEP::m << "m"
+	 << " aper= " << aper/CLHEP::m << "m"
 	 << " outR= " << _element.outR << "m"
 	 << " bmapZOffset = "	<<  _element.bmapZOffset * CLHEP::m
 	 << " tunnel material " << _element.tunnelMaterial
@@ -807,12 +804,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 			  _element.bmapFile,
 			  _element.bmapZOffset * CLHEP::m,
 			  _element.l * CLHEP::m,
-			  aperture,
-			  _element.outR * CLHEP::m ,
-			  _element.tunnelMaterial,
-			  _element.tunnelRadius,
-			  tunnelOffsetX,
-			  _element.tunnelCavityMaterial));
+			  aper,
+			  _element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, tunnelOffsetX, _element.tunnelCavityMaterial));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
@@ -885,11 +878,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
 	 << G4endl;
 #endif
 
-  G4double defaultAperture = BDSGlobalConstants::Instance()->GetDefaultBeamPipeInfo()->aper1;
-
+  G4double radius = BDSGlobalConstants::Instance()->GetBeamPipeRadius();
   return (new BDSCollimator( _element.name,
 			     _element.l * CLHEP::m,
-			     defaultAperture,
+			     radius,
 			     _element.xsize * CLHEP::m,
 			     _element.ysize * CLHEP::m,
 			     theMaterial,
@@ -1024,17 +1016,19 @@ BDSAcceleratorComponent* BDSComponentFactory::createTerminator(){
 
 G4Material* BDSComponentFactory::PrepareBeamPipeMaterial(Element& element)
 {
-  G4Material* beampipeMaterial;
+  G4Material* beamPipeMaterial;
   if(element.beampipeMaterial == "")
-    { beampipeMaterial = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetBeamPipeMaterialName() );}
+    {
+      G4String defaultMaterialName = BDSGlobalConstants::Instance()->GetBeamPipeMaterialName();
+      beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
+    }
   else
-    { beampipeMaterial = BDSMaterials::Instance()->GetMaterial(element.beampipeMaterial); }
-  return beampipeMaterial;
+    { beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(element.beampipeMaterial); }
+  return beamPipeMaterial;
 }
 
 G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element& /*element*/)
 {
-  //TBC
   //in future do somethign relating to what's set in element
   //also make some setting available in element
   return BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
@@ -1054,29 +1048,28 @@ G4double BDSComponentFactory::PrepareBoxSize(Element& element)
 BDSBeamPipeInfo BDSComponentFactory::PrepareBeamPipeInfo(Element& element)
 {
   BDSBeamPipeInfo info;
-  info.beamPipeType = BDS::DetermineBeamPipeType(element.apertureType);
+  info.beamPipeType      = BDS::DetermineBeamPipeType(element.apertureType);
 
   // note even if aperN in the element is 0 (ie unset), we should use
   // the default aperture model from global constants (already in metres)
   // aper1
-  BDSBeamPipeInfo* default_ = BDSGlobalConstants::Instance()->GetDefaultBeamPipeInfo();
   if (element.aper1 == 0)
-    {info.aper1 = default_->aper1;}
+    {info.aper1 = BDSGlobalConstants::Instance()->GetAper1();}
   else
     {info.aper1 = element.aper1*CLHEP::m;}
   // aper2
   if (element.aper2 == 0)
-    {info.aper2 = default_->aper2;}
+    {info.aper2 = BDSGlobalConstants::Instance()->GetAper2();}
   else
     {info.aper2 = element.aper2*CLHEP::m;}
   // aper3
   if (element.aper3 == 0)
-    {info.aper3 = default_->aper3;}
+    {info.aper3 = BDSGlobalConstants::Instance()->GetAper3();}
   else
     {info.aper3 = element.aper3*CLHEP::m;}
   // aper4
   if (element.aper4 == 0)
-    {info.aper4 = default_->aper4;}
+    {info.aper4 = BDSGlobalConstants::Instance()->GetAper4();}
   else
     {info.aper4 = element.aper4*CLHEP::m;}
   

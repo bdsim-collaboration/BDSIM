@@ -26,7 +26,6 @@ private:
   
   G4double _charge, _momentum, _brho;
   
-  // drifts
   std::list<struct Element>::iterator _elementIter, _previousElementIter, _nextElementIter;
   /// beamline
   std::list<BDSAcceleratorComponent*> itsBeamline;

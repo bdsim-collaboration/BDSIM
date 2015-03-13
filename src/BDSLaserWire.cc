@@ -25,7 +25,7 @@ G4double aWavelength, G4ThreeVector aDirection):
 
 void BDSLaserWire::BuildMarkerLogicalVolume()
 {
-  G4double beamPipeRadius = BDSGlobalConstants::Instance()->GetDefaultBeamPipeInfo()->aper1;
+  G4double beamPipeRadius = BDSGlobalConstants::Instance()->GetBeamPipeRadius();
   itsMarkerLogicalVolume=new G4LogicalVolume(
 					     new G4Box(itsName+"_solid",
 						       beamPipeRadius,
