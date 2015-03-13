@@ -1024,12 +1024,15 @@ BDSAcceleratorComponent* BDSComponentFactory::createTerminator(){
 
 G4Material* BDSComponentFactory::PrepareBeamPipeMaterial(Element& element)
 {
-  G4Material* beampipeMaterial;
+  G4Material* beamPipeMaterial;
   if(element.beampipeMaterial == "")
-    { beampipeMaterial = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetBeamPipeMaterialName() );}
+    {
+      G4String defaultMaterialName = BDSGlobalConstants::Instance()->GetBeamPipeMaterialName();
+      beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
+    }
   else
-    { beampipeMaterial = BDSMaterials::Instance()->GetMaterial(element.beampipeMaterial); }
-  return beampipeMaterial;
+    { beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(element.beampipeMaterial); }
+  return beamPipeMaterial;
 }
 
 G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element& /*element*/)
