@@ -39,36 +39,15 @@
 #include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetGeometryType.hh"
 
-BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength, 
-			     G4double bpRad, G4double FeRad,
-			     G4double bGrad, G4double tilt, G4double outR,
-                             std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-			     G4String aTunnelMaterial, G4String aMaterial, G4String spec):
-  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
-  itsBGrad(bGrad)
-{
-#ifdef BDSDEBUG 
-  G4cout<< __METHOD_NAME__ << "spec=" << spec << G4endl;
-#endif
-  // get specific quadrupole type
-  G4String qtype = getParameterValueString(spec, "type");
-#ifdef BDSDEBUG 
-  G4cout<< __METHOD_NAME__ << "qtype="<<qtype<<G4endl;
-#endif
-
-  SetOuterRadius(outR);
-  itsTilt=tilt;
-}
-
-BDSQuadrupole::BDSQuadrupole(G4String      name,
-			     G4double      length,
-			     G4double      bGrad,
-			     beamPipeInfo  beamPipeInfoIn,
-			     G4double      boxSize,
-			     G4String      outerMaterial,
-			     G4String      tunnelMaterial,
-			     G4double      tunnelRadius,
-			     G4double      tunnelOffsetX):
+BDSQuadrupole::BDSQuadrupole(G4String         name,
+			     G4double         length,
+			     G4double         bGrad,
+			     BDSBeamPipeInfo  beamPipeInfoIn,
+			     G4double         boxSize,
+			     G4String         outerMaterial,
+			     G4String         tunnelMaterial,
+			     G4double         tunnelRadius,
+			     G4double         tunnelOffsetX):
   BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBGrad(bGrad)
 {

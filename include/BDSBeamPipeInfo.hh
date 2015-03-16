@@ -14,7 +14,20 @@
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
-struct beamPipeInfo {
+struct BDSBeamPipeInfo {
+  /// default constructor
+  BDSBeamPipeInfo();
+
+  /// extra constructor to assign all members at once
+  BDSBeamPipeInfo(BDSBeamPipeType beamPipeTypeIn,
+		  G4double        aper1In,
+		  G4double        aper2In,
+		  G4double        aper3In,
+		  G4double        aper4In,
+		  G4Material*     vacuumMaterialIn,
+		  G4double        beamPipeThicknessIn,
+		  G4Material*     beamPipeMaterialIn);
+		  
   BDSBeamPipeType beamPipeType;
   G4double        aper1;
   G4double        aper2;
@@ -24,10 +37,5 @@ struct beamPipeInfo {
   G4double        beamPipeThickness;
   G4Material*     beamPipeMaterial;
 };
-
-
-
-
-
 
 #endif

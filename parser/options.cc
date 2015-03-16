@@ -63,6 +63,11 @@ Options::Options(){
   beampipeThickness = 0.0;
 
   apertureType      = "circular";
+  aper1             = 0.0;
+  aper2             = 0.0;
+  aper3             = 0.0;
+  aper4             = 0.0;
+    
   beampipeMaterial  = "StainlessSteel";
   vacMaterial       = "Vacuum";
   tunnelMaterial    = "concrete";

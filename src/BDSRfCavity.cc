@@ -12,24 +12,15 @@
 
 #include "G4ExplicitEuler.hh"
 
-
-BDSRfCavity::BDSRfCavity (G4String aName,G4double aLength, G4double bpRad, 
-			  G4double grad, G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName ,aLength, bpRad, bpRad, aTunnelMaterial, aMaterial),
-  itsEField(NULL),fChordFinder(NULL),fStepper(NULL),fIntgrDriver(NULL)
-{
-  itsGrad = grad;
-}
-
-BDSRfCavity::BDSRfCavity(G4String     name,
-			 G4double     length,
-			 G4double     grad,
-			 beamPipeInfo beamPipeInfoIn,
-			 G4double     boxSize,
-			 G4String     outerMaterial,
-			 G4String     tunnelMaterial,
-			 G4double     tunnelRadius,
-			 G4double     tunnelOffsetX):
+BDSRfCavity::BDSRfCavity(G4String        name,
+			 G4double        length,
+			 G4double        grad,
+			 BDSBeamPipeInfo beamPipeInfoIn,
+			 G4double        boxSize,
+			 G4String        outerMaterial,
+			 G4String        tunnelMaterial,
+			 G4double        tunnelRadius,
+			 G4double        tunnelOffsetX):
   BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsGrad(grad)
 {

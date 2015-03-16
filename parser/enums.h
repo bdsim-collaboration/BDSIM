@@ -7,7 +7,6 @@ enum {
   _NONE = -1,
   _MARKER = 1,
   _DRIFT = 2,
-  _PCLDRIFT = 63,
   _RF = 3,
   _SBEND = 4, 
   _QUAD  = 5,

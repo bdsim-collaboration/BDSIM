@@ -17,12 +17,12 @@ class BDSExecOptions
 {
 public: 
 
-  static BDSExecOptions* Instance();
-  static BDSExecOptions* Instance(int argc, char **argv);
+  static const BDSExecOptions* Instance();
+  static const BDSExecOptions* Instance(int argc, char **argv);
   ~BDSExecOptions();
 
-  void Usage();
-  void Print(); 
+  void Usage()const;
+  void Print()const;
 
   inline G4String GetInputFilename() const                   {return inputFilename;}
   inline G4String GetVisMacroFilename() const                {return visMacroFilename;}

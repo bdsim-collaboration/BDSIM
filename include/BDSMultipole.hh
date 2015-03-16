@@ -30,60 +30,15 @@
 class BDSMultipole: public BDSAcceleratorComponent
 {
 public:
-  BDSMultipole( G4String aName, 
-		G4double aLength,
-		G4double aBpRadius,
-		G4double aInnerIronRadius,
-		G4String aMaterial = "",
-		G4double aXAper=0.,
-		G4double aYAper=0.,
-		G4double angle=0.,
-		G4bool   beampipeThicknessSet=false,
-		G4double beampipeThickness=-1);
-  
-  /// Constructor for components with tunnel material added
-  BDSMultipole( G4String aName, 
-		G4double aLength,
-		G4double aBpRadius,
-		G4double aInnerIronRadius,
-                G4String aTunnelMaterial = "",
-                G4String aMaterial="",
-		G4double aXAper=0.,
-		G4double aYAper=0.,
-		G4double angle=0.,
-		G4double tunnelRadius=0.,
-		G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
-		G4bool   beampipeThicknessSet=false,
-		G4double beampipeThickess=-1);
-
-
-  /// Constructor for components with blms and tunnel material added
-  BDSMultipole( G4String aName, 
-		G4double aLength,
-		G4double aBpRadius,
-		G4double aInnerIronRadius,
-                std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-                G4String aTunnelMaterial = "",
-                G4String aMaterial="",
-		G4double aXAper=0.,
-		G4double aYAper=0.,
-		G4double angle=0.,
-		G4double tunnelRadius=0.,
-		G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
-		G4double phiAngleIn=0,
-		G4double phiAngleOut=0,
-		G4bool beampipeThicknessSet=false,
-		G4double beampipeThickness=-1);
-
   // Constructor for new beampipe
-  BDSMultipole( G4String     name, 
-		G4double     length,
-		beamPipeInfo beamPipeInfo,
-		G4double     boxSize,
-		G4String     outerMaterial="",
-		G4String     tunnelMaterial="",
-		G4double     tunnelRadius=0,
-		G4double     tunnelOffsetX=0);
+  BDSMultipole( G4String        name, 
+		G4double        length,
+		BDSBeamPipeInfo beamPipeInfo,
+		G4double        boxSize,
+		G4String        outerMaterial="",
+		G4String        tunnelMaterial="",
+		G4double        tunnelRadius=0,
+		G4double        tunnelOffsetX=0);
 
   virtual ~BDSMultipole();
 
@@ -145,7 +100,6 @@ protected:
   G4FieldManager* itsOuterFieldMgr;
 
   G4double itsInnerIronRadius;
-  G4double itsBeampipeThickness;
   
   G4VSolid* itsBeampipeSolid;
   G4VSolid* itsInnerBeampipeSolid;
@@ -178,8 +132,6 @@ protected:
 private:
   /// constructor initialisation
   void ConstructorInit();
-
-  void SetBeampipeThickness(G4bool, G4double);
 };
 
 inline void BDSMultipole::SetOuterRadius(G4double outR)

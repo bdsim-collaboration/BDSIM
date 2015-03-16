@@ -38,15 +38,16 @@ BDSBeamPipeFactoryRectangular* BDSBeamPipeFactoryRectangular::Instance()
 
 BDSBeamPipeFactoryRectangular::BDSBeamPipeFactoryRectangular()
 {
-  lengthSafety   = BDSGlobalConstants::Instance()->GetLengthSafety();
-  vacuumSolid    = NULL;
-  beamPipeSolid  = NULL;
-  containerSolid = NULL;
-  vacuumLV       = NULL;
-  beamPipeLV     = NULL;
-  containerLV    = NULL;
-  orientationIn  = 0;
-  orientationOut = 0;
+  lengthSafety              = BDSGlobalConstants::Instance()->GetLengthSafety();
+  vacuumSolid               = NULL;
+  beamPipeSolid             = NULL;
+  containerSolid            = NULL;
+  containerSubtractionSolid = NULL;
+  vacuumLV                  = NULL;
+  beamPipeLV                = NULL;
+  containerLV               = NULL;
+  orientationIn             = 0;
+  orientationOut            = 0;
 }
 
 BDSBeamPipeFactoryRectangular::~BDSBeamPipeFactoryRectangular()
@@ -86,7 +87,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipe(G4String    nameIn,  
 				 aper2In + lengthSafety,         // y half width
 				 lengthIn);                      // length - full length fo unambiguous subtraction
   // beamPipeSolidOuter will be the outer edge of the metal beampipe
-  // therefore it has to be the width of the aperutre + beampipeThickness
+  // therefore it has to be the width of the aperture + beampipeThickness
   beamPipeSolidOuter = new G4Box(nameIn + "_pipe_solid_outer",   // name
 				 aper1In + beamPipeThicknessIn,  // x half width
 				 aper2In + beamPipeThicknessIn,  // y half width
@@ -213,16 +214,16 @@ void BDSBeamPipeFactoryRectangular::TestInputParameters(G4Material*&  vacuumMate
     {vacuumMaterialIn = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
 
   if (beamPipeThicknessIn < 1e-10)
-    {beamPipeThicknessIn = BDSGlobalConstants::Instance()->GetBeampipeThickness();}
+    {beamPipeThicknessIn = BDSGlobalConstants::Instance()->GetBeamPipeThickness();}
 
   if (!beamPipeMaterialIn)
     {beamPipeMaterialIn = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetBeamPipeMaterialName());}
 
   if (aper1In < 1e-10)
-    {aper1In = BDSGlobalConstants::Instance()->GetBeampipeRadius();}
+    {aper1In = BDSGlobalConstants::Instance()->GetBeamPipeRadius();}
 
   if (aper2In < 1e-10)
-    {aper2In = BDSGlobalConstants::Instance()->GetBeampipeRadius();}
+    {aper2In = BDSGlobalConstants::Instance()->GetBeamPipeRadius();}
 }
 
 /// only the solids are unique, once we have those, the logical volumes and placement in the
@@ -398,7 +399,7 @@ void BDSBeamPipeFactoryRectangular::CreateGeneralAngledSolids(G4String      name
 				 aper2In + lengthSafety,         // y half width
 				 2*lengthIn);                    // 2*length - full length fo unambiguous subtraction
   // beamPipeSolidOuter will be the outer edge of the metal beampipe
-  // therefore it has to be the width of the aperutre + beampipeThickness
+  // therefore it has to be the width of the aperture + beampipeThickness
   beamPipeSolidOuter = new G4Box(nameIn + "_pipe_solid_outer",   // name
 				 aper1In + beamPipeThicknessIn,  // x half width
 				 aper2In + beamPipeThicknessIn,  // y half width

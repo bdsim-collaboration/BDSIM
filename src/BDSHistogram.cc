@@ -3,7 +3,6 @@
 #include <vector>
 #include <cfloat>
 #include <iostream>
-#include <iomanip>
 #include <string>
 #include <utility>
 #include "globals.hh"
@@ -65,8 +64,8 @@ BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4Stri
   // reserve size for speed optimisation
   bins.reserve(nbins);
 
-  // caculate binwidth
-  binwidth = (xmax - xmin) / (G4double)nbins;
+  // calculate binwidth
+  G4double binwidth = (xmax - xmin) / (G4double)nbins;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ 
 	 << " S min : "      << xmin 

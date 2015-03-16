@@ -9,24 +9,18 @@
 class BDSKicker:public BDSMultipole
 {
 public:
-  BDSKicker(G4String aName, G4double aLength,
-	    G4double bpRad, G4double FeRad,
-	    G4double bField, G4double angle, G4double outR,
-	    G4double tilt = 0, G4double bGrad=0, 
-            G4String aTunnelMaterial = "",
-	    G4String aMaterial = "");
-  BDSKicker(G4String        name,
-	    G4double        length,
-	    G4double        bField,
-	    G4double        bGrad,
-	    G4double        angle,
-	    G4bool          verticalKicker,
-	    beamPipeInfo    beamPipeInfo,
-	    G4double        boxSize,
-	    G4String        outerMaterial="",
-	    G4String        tunnelMaterial="",
-	    G4double        tunnelRadius=0,
-	    G4double        tunnelOffsetX=0);
+  BDSKicker(G4String           name,
+	    G4double           length,
+	    G4double           bField,
+	    G4double           bGrad,
+	    G4double           angle,
+	    G4bool             verticalKicker,
+	    BDSBeamPipeInfo    beamPipeInfo,
+	    G4double           boxSize,
+	    G4String           outerMaterial="",
+	    G4String           tunnelMaterial="",
+	    G4double           tunnelRadius=0,
+	    G4double           tunnelOffsetX=0);
   ~BDSKicker(){;};
   
 protected:

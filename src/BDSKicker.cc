@@ -13,35 +13,18 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 
-BDSKicker::BDSKicker(G4String aName, G4double aLength, 
-		     G4double bpRad, G4double FeRad,
-		     G4double bField, G4double angle, G4double outR,
-		     G4double tilt, G4double bGrad, 
-		     G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName, aLength, bpRad, FeRad, aTunnelMaterial, aMaterial,
-	       0, 0, /*itsAngle=*/0)
-{
-  SetOuterRadius(outR);
-  itsTilt      = tilt;
-  itsBField    = bField;
-  itsBGrad     = bGrad;
-  //use separate kick angle as kicker doesn't rotate reference trajectory
-  //bdsbeamline places things based on itsAngle
-  itsKickAngle = angle;
-}
-
-BDSKicker::BDSKicker(G4String     name,
-		     G4double     length,
-		     G4double     bField,
-		     G4double     bGrad,
-		     G4double     angle,
-		     G4bool       verticalKicker,
-		     beamPipeInfo beamPipeInfo,
-		     G4double     boxSize,
-		     G4String     outerMaterial,
-		     G4String     tunnelMaterial,
-		     G4double     tunnelRadius,
-		     G4double     tunnelOffsetX):
+BDSKicker::BDSKicker(G4String        name,
+		     G4double        length,
+		     G4double        bField,
+		     G4double        bGrad,
+		     G4double        angle,
+		     G4bool          verticalKicker,
+		     BDSBeamPipeInfo beamPipeInfo,
+		     G4double        boxSize,
+		     G4String        outerMaterial,
+		     G4String        tunnelMaterial,
+		     G4double        tunnelRadius,
+		     G4double        tunnelOffsetX):
   BDSMultipole(name,length,beamPipeInfo,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBField(bField),itsBGrad(bGrad),itsKickAngle(angle),isVerticalKicker(verticalKicker)
 {;}
@@ -92,18 +75,19 @@ void BDSKicker::BuildBeampipe()
       kickerAper2 = aper2;
     }
   
-  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeType,
-							    itsName,
-							    itsLength,
-							    kickerAper1,
-							    kickerAper2,
-							    aper3,
-							    aper4,
-							    vacuumMaterial,
-							    beamPipeThickness,
-							    beamPipeMaterial);
+  beampipe =
+    BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeType,
+						   itsName,
+						   itsLength,
+						   kickerAper1,
+						   kickerAper2,
+						   aper3,
+						   aper4,
+						   vacuumMaterial,
+						   beamPipeThickness,
+						   beamPipeMaterial);
 
-  //manully do BeamPipeCommonTasks here as rotation in placement can be different
+  //manually do BeamPipeCommonTasks here as rotation in placement can be different
 
   // SET FIELD
   beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false);

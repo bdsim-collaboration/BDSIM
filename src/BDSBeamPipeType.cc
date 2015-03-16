@@ -15,10 +15,10 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType, G4bool globalC
   if (types.find(apertureType) == types.end())
     {
       if (globalCheck){
-      // it's not a valid key
-      G4cout << __METHOD_NAME__ << " " << apertureType << " is not a valid apertureType - using default circular" << G4endl;
-      // this in effect, become the default case even if the default is spelled wrongly in parser/options.cc
-      return BDSBeamPipeType::circular;
+	// it's not a valid key
+	G4cout << __METHOD_NAME__ << " " << apertureType << " is not a valid apertureType - using default circular" << G4endl;
+	// this in effect, become the default case even if the default is spelled wrongly in parser/options.cc
+	exit(1);
       }
       else {
 	// normal check - we can use BDSGlobalConstants - can't do this above as BDSGlobalConstants is using this function!
@@ -26,17 +26,11 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType, G4bool globalC
       }
     }
 
-  BDSBeamPipeType returnValue;
-  returnValue = types[apertureType];
+  BDSBeamPipeType returnValue = types[apertureType];
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " determined aperture type to be " << returnValue << G4endl;
 #endif
   return returnValue;
-}
-
-BDSBeamPipeType BDS::DetermineBeamPipeType(Element& element)
-{
-  return BDS::DetermineBeamPipeType(element.apertureType,false);
 }
 
 void BDS::CheckApertureInfo(BDSBeamPipeType beamPipeTypeIn, G4double& beamPipeRadius,

@@ -15,7 +15,7 @@
 class BDSBeamPipeFactoryCircular: public BDSBeamPipeFactoryBase
 {
 public:
-  static BDSBeamPipeFactoryCircular* Instance(); /// singleton accessor
+  static BDSBeamPipeFactoryCircular* Instance(); ///< singleton accessor
   
   virtual ~BDSBeamPipeFactoryCircular();
 
@@ -68,7 +68,7 @@ public:
 						 );
 
 private:
-  BDSBeamPipeFactoryCircular(); /// private default constructor - singelton pattern
+  BDSBeamPipeFactoryCircular(); ///< private default constructor - singleton pattern
   static BDSBeamPipeFactoryCircular* _instance;
 
   void TestInputParameters(G4Material*& vacuumMaterialIn,

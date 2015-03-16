@@ -23,34 +23,17 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-
-BDSRBend::BDSRBend(G4String aName, G4double aLength, 
-                   G4double bpRad, G4double FeRad,
-                   G4double bField, G4double angle, G4double outR,
-                   std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-                   G4double tilt, G4double bGrad, 
-                   G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
-	       0, 0, angle)
-{
-  SetOuterRadius(outR);
-  itsTilt   = tilt;
-  itsBField = bField;
-  itsBGrad  = bGrad;
-  CommonConstructor(aLength);
-}
-
-BDSRBend::BDSRBend(G4String     name,
-		   G4double     length,
-		   G4double     bField,
-		   G4double     bGrad,
-		   G4double     angle,
-		   beamPipeInfo beamPipeInfoIn,
-		   G4double     boxSize,
-		   G4String     outerMaterial,
-		   G4String     tunnelMaterial,
-		   G4double     tunnelRadius,
-		   G4double     tunnelOffsetX):
+BDSRBend::BDSRBend(G4String        name,
+		   G4double        length,
+		   G4double        bField,
+		   G4double        bGrad,
+		   G4double        angle,
+		   BDSBeamPipeInfo beamPipeInfoIn,
+		   G4double        boxSize,
+		   G4String        outerMaterial,
+		   G4String        tunnelMaterial,
+		   G4double        tunnelRadius,
+		   G4double        tunnelOffsetX):
   BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBField(bField),itsBGrad(bGrad)
 {
@@ -192,21 +175,11 @@ void BDSRBend::BuildMarkerLogicalVolume()
 // construct a beampipe for r bend
 void BDSRBend::BuildBeampipe()
 {
-  BDSBeamPipe* bpFirstBit = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledOut(beamPipeType,
-										    itsName,
-										    itsStraightSectionLength,
-										    -itsAngle*0.5,
-										    aper1,
-										    aper2,
-										    aper3,
-										    aper4,
-										    vacuumMaterial,
-										    beamPipeThickness,
-										    beamPipeMaterial);
-
-  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeType,
+  BDSBeamPipe* bpFirstBit =
+    BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledOut(beamPipeType,
 							    itsName,
-							    itsMagFieldLength,
+							    itsStraightSectionLength,
+							    -itsAngle*0.5,
 							    aper1,
 							    aper2,
 							    aper3,
@@ -214,18 +187,31 @@ void BDSRBend::BuildBeampipe()
 							    vacuumMaterial,
 							    beamPipeThickness,
 							    beamPipeMaterial);
+  
+  beampipe =
+    BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeType,
+						   itsName,
+						   itsMagFieldLength,
+						   aper1,
+						   aper2,
+						   aper3,
+						   aper4,
+						   vacuumMaterial,
+						   beamPipeThickness,
+						   beamPipeMaterial);
 
-  BDSBeamPipe* bpLastBit = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledIn(beamPipeType,
-										  itsName,
-										  itsStraightSectionLength,
-										  itsAngle*0.5,
-										  aper1,
-										  aper2,
-										  aper3,
-										  aper4,
-										  vacuumMaterial,
-										  beamPipeThickness,
-										  beamPipeMaterial);
+  BDSBeamPipe* bpLastBit =
+    BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledIn(beamPipeType,
+							   itsName,
+							   itsStraightSectionLength,
+							   itsAngle*0.5,
+							   aper1,
+							   aper2,
+							   aper3,
+							   aper4,
+							   vacuumMaterial,
+							   beamPipeThickness,
+							   beamPipeMaterial);
 
   // place logical volumes inside marker (container) volume
   // calculate offsets and rotations
@@ -296,8 +282,6 @@ void BDSRBend::BuildOuterLogicalVolume(G4bool outerMaterialIsVacuum)
     { material = BDSMaterials::Instance()->GetMaterial(itsMaterial);}
   else
     { material = BDSMaterials::Instance()->GetMaterial("Iron");}
-  if(outerMaterialIsVacuum)
-    { material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
 
   G4double lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
   // outerRadius defined in constructor / (temporary) common constructor
@@ -313,16 +297,16 @@ void BDSRBend::BuildOuterLogicalVolume(G4bool outerMaterialIsVacuum)
 		 << "setting boxSize to be just big enough to contain beampipe " << G4endl;
 	  outerRadius = innerRadius+1*CLHEP::cm;
 	}
-      itsOuterLogicalVolume = new G4LogicalVolume(new G4Tubs( itsName+"_outer_solid",            // name
-							      innerRadius,
-							      outerRadius,
-							      itsMagFieldLength*0.5-2*lengthSafety,
-							      0.0,                               // starting angle
-							      2.0*CLHEP::pi),                    // finishing angle - full
-							       
-						  material,
-						  itsName+"_outer_lv");
-      
+      itsOuterLogicalVolume =
+	new G4LogicalVolume(new G4Tubs( itsName+"_outer_solid",            // name
+					innerRadius,
+					outerRadius,
+					itsMagFieldLength*0.5-2*lengthSafety,
+					0.0,                               // starting angle
+					2.0*CLHEP::pi),                    // finishing angle - full
+			    
+			    material,
+			    itsName+"_outer_lv");
     }
   else
     {

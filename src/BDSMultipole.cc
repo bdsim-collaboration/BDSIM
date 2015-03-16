@@ -22,13 +22,10 @@
 
 #include "BDSMultipole.hh"
 #include "G4Box.hh"
-#include "G4Cons.hh"
-#include "G4EllipticalTube.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4LogicalVolume.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4MagneticField.hh"
-#include "G4Polyhedra.hh"
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4Trap.hh"
@@ -45,87 +42,14 @@
 #include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeInfo.hh"
 
-BDSMultipole::BDSMultipole( G4String aName, 
-			    G4double aLength,
-			    G4double aBpRadius,
-			    G4double aInnerIronRadius,
-			    std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-                            G4String aTunnelMaterial,
-                            G4String aMaterial,
-			    G4double aXAper,
-			    G4double aYAper,
-			    G4double angle,
-			    G4double tunnelRadius,
-			    G4double tunnelOffsetX,
-			    G4double phiAngleIn,
-			    G4double phiAngleOut,
-			    G4bool beampipeThicknessSet,
-			    G4double beampipeThickness):
-  BDSAcceleratorComponent(
-			 aName, 
-			 aLength,
-			 aBpRadius,
-			 aXAper,
-			 aYAper,
-			 blmLocZ,
-			 blmLocTheta,
-                         aTunnelMaterial,
-			 aMaterial,
-			 angle,
-			 0.,
-			 0.,
-			 0.,
-			 tunnelRadius,
-			 tunnelOffsetX),
-  itsInnerIronRadius(aInnerIronRadius)
-{
-  ConstructorInit();
-  itsPhiAngleIn=phiAngleIn;
-  itsPhiAngleOut=phiAngleOut;
-  SetBeampipeThickness(beampipeThicknessSet, beampipeThickness); 
-}
-
-BDSMultipole::BDSMultipole( G4String aName, 
-			    G4double aLength,
-			    G4double aBpRadius,
-			    G4double aInnerIronRadius,
-                            G4String aTunnelMaterial,
-                            G4String aMaterial,
-			    G4double aXAper,
-			    G4double aYAper,
-			    G4double angle,
-			    G4double tunnelRadius,
-			    G4double tunnelOffsetX,
-			    G4bool beampipeThicknessSet,
-			    G4double beampipeThickness):
-  BDSAcceleratorComponent(
-			 aName, 
-			 aLength,
-			 aBpRadius,
-			 aXAper,
-			 aYAper,
-                         aTunnelMaterial,
-			 aMaterial,
-			 angle,
-			 0.,
-			 0.,
-			 0.,
-			 tunnelRadius,
-			 tunnelOffsetX),
-  itsInnerIronRadius(aInnerIronRadius)
-{
-  ConstructorInit();
-  SetBeampipeThickness(beampipeThicknessSet, beampipeThickness); 
-}
-
-BDSMultipole::BDSMultipole( G4String     name, 
-			    G4double     length,
-			    beamPipeInfo info,
-			    G4double     boxSizeIn,
-			    G4String     outerMaterial,
-			    G4String     tunnelMaterial,
-			    G4double     tunnelRadius,
-			    G4double     tunnelOffsetX):
+BDSMultipole::BDSMultipole( G4String        name, 
+			    G4double        length,
+			    BDSBeamPipeInfo info,
+			    G4double        boxSizeIn,
+			    G4String        outerMaterial,
+			    G4String        tunnelMaterial,
+			    G4double        tunnelRadius,
+			    G4double        tunnelOffsetX):
   BDSAcceleratorComponent(name,
 			  length,
 			  0,              //beampipe radius in AC
@@ -174,14 +98,6 @@ void BDSMultipole::ConstructorInit(){
 
   beampipe = NULL;
   outer    = NULL;
-}
-
-void BDSMultipole::SetBeampipeThickness(G4bool set, G4double val){
-  if(set){
-    itsBeampipeThickness=val;
-  } else {
-    itsBeampipeThickness=BDSGlobalConstants::Instance()->GetBeampipeThickness();
-  }
 }
 
 void BDSMultipole::Build()

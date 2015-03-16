@@ -17,21 +17,15 @@
 class BDSSextupole :public BDSMultipole
 {
 public:
-  BDSSextupole(G4String aName, G4double aLength,
-	       G4double bpRad, G4double FeRad,
-	       G4double BDblPrime, G4double tilt, G4double outR, 
-               std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-               G4String aTunnelMaterial = "",
-	       G4String aMaterial = "");
-  BDSSextupole(G4String     name,
-	       G4double     length,
-	       G4double     bDblPrime,
-	       beamPipeInfo beamPipeInfoIn,
-	       G4double     boxSize,
-	       G4String     outerMaterial="",
-	       G4String     tunnelMaterial="",
-	       G4double     tunnelRadius=0,
-	       G4double     tunnelOffsetX=0);
+  BDSSextupole(G4String        name,
+	       G4double        length,
+	       G4double        bDblPrime,
+	       BDSBeamPipeInfo beamPipeInfoIn,
+	       G4double        boxSize,
+	       G4String        outerMaterial="",
+	       G4String        tunnelMaterial="",
+	       G4double        tunnelRadius=0,
+	       G4double        tunnelOffsetX=0);
   ~BDSSextupole(){;};
 
 private:

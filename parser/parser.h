@@ -217,13 +217,9 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   if(params.phiAngleOutset)
     e.phiAngleOut = params.phiAngleOut;
 
-  // Drift, PCL Drift
+  // Drift, Drift
   if(params.beampipeThicknessset)
     e.beampipeThickness = params.beampipeThickness;
-  // aperture for PCL drift
-  if(params.aperYUpset) e.aperYUp = params.aperYUp;	
-  if(params.aperYDownset) e.aperYDown = params.aperYDown;
-  if(params.aperDyset) e.aperDy = params.aperDy;
   // RF
   e.gradient = params.gradient;
   // SBend, RBend, (Awake)Screen

@@ -26,57 +26,17 @@
 
 #include "globals.hh"             // geant4 types / globals
 
-BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength, 
-			     G4double bpRad, G4double FeRad,
-			     G4double bField, G4double angle, G4double outR,
-                             std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-			     G4double tilt, G4double bGrad, 
-			     G4String aTunnelMaterial, G4String aMaterial, G4double aXAper, G4double aYAper):
-  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
-	       aXAper, aYAper, angle)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "name : " << aName << " length : " << aLength << " bpRad : " << bpRad << " FeRad : " 
-	 << FeRad << " bField : " << bField << " angle : " << angle << " outR : " << outR << " tilt : " 
-	 << tilt <<  " bGrad : "<< bGrad <<  " tunnelMaterial : " << aTunnelMaterial <<  " material : " 
-	 << aMaterial << " aXAper : " << aXAper << " aYAper : " << aYAper << G4endl;
-#endif
-  
-  SetOuterRadius(outR);
-  itsTilt   = tilt;
-  itsBField = bField;
-  itsBGrad  = bGrad;
-
-  // arc length = radius*angle
-  //            = (chord length/(2.0*sin(angle/2))*angle
-  if (itsAngle == 0.0)
-     itsChordLength = itsLength;
-  else
-     itsChordLength = 2.0 * itsLength * sin(0.5*itsAngle) / itsAngle;
-
-  // use abs(angle) for most calculations then use this orientation bool to flip eitherway
-  orientation  = BDS::CalculateOrientation(itsAngle);
-
-  // prepare normal vectors for input and output planes
-  // calculate components of normal vectors (in the end mag(normal) = 1)
-  G4double in_z = cos(0.5*fabs(itsAngle)); 
-  G4double in_x = sin(0.5*fabs(itsAngle));
-  inputface     = G4ThreeVector(-orientation*in_x, 0.0, -1.0*in_z);
-  //-1 as pointing down in z for normal
-  outputface    = G4ThreeVector(-orientation*in_x, 0.0, in_z);
-}
-
-BDSSectorBend::BDSSectorBend(G4String     name,
-			     G4double     length,
-			     G4double     angle,
-			     G4double     bField,
-			     G4double     bGrad,
-			     beamPipeInfo beamPipeInfoIn,
-			     G4double     boxSize,
-			     G4String     outerMaterial,
-			     G4String     tunnelMaterial,
-			     G4double     tunnelRadius,
-			     G4double     tunnelOffsetX):
+BDSSectorBend::BDSSectorBend(G4String        name,
+			     G4double        length,
+			     G4double        angle,
+			     G4double        bField,
+			     G4double        bGrad,
+			     BDSBeamPipeInfo beamPipeInfoIn,
+			     G4double        boxSize,
+			     G4String        outerMaterial,
+			     G4String        tunnelMaterial,
+			     G4double        tunnelRadius,
+			     G4double        tunnelOffsetX):
   BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBField(bField),itsBGrad(bGrad)
 {
@@ -218,19 +178,20 @@ void BDSSectorBend::BuildBeampipe()
   G4cout << __METHOD_NAME__ << " sector bend version " << G4endl;
 #endif
 
-  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(beamPipeType,
-								       itsName,
-								       itsChordLength,
-								       -itsAngle*0.5,
-								       -itsAngle*0.5,
-								       aper1,
-								       aper2,
-								       aper3,
-								       aper4,
-								       vacuumMaterial,
-								       beamPipeThickness,
-								       beamPipeMaterial);
-
+  beampipe =
+    BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(beamPipeType,
+							      itsName,
+							      itsChordLength,
+							      -itsAngle*0.5,
+							      -itsAngle*0.5,
+							      aper1,
+							      aper2,
+							      aper3,
+							      aper4,
+							      vacuumMaterial,
+							      beamPipeThickness,
+							      beamPipeMaterial);
+  
   BeamPipeCommonTasks(); //from bdsmultipole;
 }
 
@@ -255,8 +216,6 @@ void BDSSectorBend::BuildCylindricalOuterLogicalVolume(G4bool outerMaterialIsVac
     { material = BDSMaterials::Instance()->GetMaterial(itsMaterial);}
   else
     { material = BDSMaterials::Instance()->GetMaterial("Iron");}
-  if(outerMaterialIsVacuum)
-    { material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
 
   G4double lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
   G4double outerRadius  = boxSize*0.5;
@@ -350,18 +309,21 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
     material = BDSMaterials::Instance()->GetMaterial(itsMaterial);
   else
     material = BDSMaterials::Instance()->GetMaterial("Iron");
+
+  G4double beamPipeThickness = BDSGlobalConstants::Instance()->GetBeamPipeThickness();
+  G4double lengthSafety      = BDSGlobalConstants::Instance()->GetLengthSafety();
   
   G4VSolid *magTubsEnv = 
     new G4SubtractionSolid(itsName+"_solid_env",
 			   new G4Tubs(itsName+"_solid_tmp_1",
-				      itsInnerIronRadius + BDSGlobalConstants::Instance()->GetLengthSafety()/2.0, // inner R + overlap safety
+				      itsInnerIronRadius + lengthSafety/2.0, // inner R + overlap safety
 				      itsOuterR,                    // outer R
 				      itsChordLength,               // length
 				      0,                            // starting phi
 				      CLHEP::twopi * CLHEP::rad ),  // delta phi
 			   new G4EllipticalTube(itsName+"_pipe_outer_tmp_2",
-						this->GetAperX()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0, 
-						this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness()+BDSGlobalConstants::Instance()->GetLengthSafety()/2.0,          
+						this->GetAperX()+beamPipeThickness+lengthSafety,
+						this->GetAperY()+beamPipeThickness+lengthSafety,
 						itsChordLength*2.2) // full length + 20% for unambiguous subtraction
 			   );
 
@@ -409,7 +371,7 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
     
   // Beampipe
   double beampipe_rinner [2] = {0.0, 0.0};
-  double beampipe_router [2] = {this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness(), this->GetAperY()+BDSGlobalConstants::Instance()->GetBeampipeThickness()};
+  double beampipe_router [2] = {this->GetAperY()+beamPipeThickness, this->GetAperY()+beamPipeThickness};
 
   G4Polyhedra* Beampipe = new G4Polyhedra("Beampipe", 0.*CLHEP::deg, 360.*CLHEP::deg, 4, 2, pipelength, beampipe_rinner, beampipe_router);
   G4LogicalVolume* BeampipeLV = 

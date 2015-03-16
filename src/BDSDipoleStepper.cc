@@ -6,7 +6,6 @@
 #include <limits>
 
 #include "BDSGlobalConstants.hh" 
-#include "BDSExecOptions.hh"
 #include "BDSDipoleStepper.hh"
 #include "G4ThreeVector.hh"
 #include "G4TransportationManager.hh"
@@ -27,8 +26,8 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
 				  G4double  h,
 				  G4double  yOut[])
 {
-#ifdef BDSDEBUG
   G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
+#ifdef BDSDEBUG
   G4cout << "BDSDipoleStepper: step= " << h/CLHEP::m << " m" << G4endl
          << " x  = " << yIn[0]/CLHEP::m     << " m" << G4endl
          << " y  = " << yIn[1]/CLHEP::m     << " m" << G4endl
@@ -48,9 +47,30 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
   G4ThreeVector GlobalPosition = G4ThreeVector( yIn[0], yIn[1], yIn[2]);  
   G4double      InitMag        = v0.mag();
   G4ThreeVector InitMomDir     = v0.unit();
-  
+
+  // in case of zero field (though what if there is a quadrupole part..)
+  // or neutral particles do a linear step:
+  if(itsBField==0 || fPtrMagEqOfMot->FCof()==0) {
+    G4ThreeVector positionMove = h * InitMomDir;
+
+    yOut[0] = yIn[0] + positionMove.x();
+    yOut[1] = yIn[1] + positionMove.y();
+    yOut[2] = yIn[2] + positionMove.z();
+    
+    yOut[3] = v0.x();
+    yOut[4] = v0.y();
+    yOut[5] = v0.z();
+
+    // Set to infinite radius for Synchrotron Radiation calculation:
+    //    BDSLocalRadiusOfCurvature=DBL_MAX;
+
+    itsDist=0;
+    return;
+  }
+
   //G4double h2=h*h;
 
+  // global to local
   G4Navigator* HelixNavigator=
     G4TransportationManager::GetTransportationManager()->
     GetNavigatorForTracking();
@@ -73,19 +93,12 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
   G4ThreeVector yhat(0.,1.,0.);
   G4ThreeVector vhat  = LocalRp;
   G4ThreeVector vnorm = vhat.cross(yhat);
-  G4double R;
   
+  // radius of curvature
+  G4double R=-(InitMag/CLHEP::GeV)/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
 
-  if(itsBField!=0)
-    R=-(InitMag/CLHEP::GeV)/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
-  else
-    R=DBL_MAX;
-
-
-  // include the sign of the charge of the particles
-  if(  fPtrMagEqOfMot->FCof()<0) R*=-1.;
-  else if ( fPtrMagEqOfMot->FCof()==0) R=DBL_MAX;
-
+  // include the charge of the particles
+  R*=charge;
   
   G4double Theta   = h/R;
 
@@ -96,6 +109,7 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
   CosT=(CosT_ov_2*CosT_ov_2)- (SinT_ov_2*SinT_ov_2);
   SinT=2*CosT_ov_2*SinT_ov_2;
   
+  // Save for Synchrotron Radiation calculations:
   BDSLocalRadiusOfCurvature=R;
   
   itsDist=fabs(R)*(1.-CosT_ov_2);
@@ -106,24 +120,26 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
   itsFinalDir=CosT*vhat +SinT*vnorm;
   
 
-  G4ThreeVector GlobalTangent;
-
-  GlobalPosition=LocalAffine.TransformPoint(itsFinalPoint); 
-  GlobalTangent=LocalAffine.TransformAxis(itsFinalDir);
-
-  GlobalTangent*=InitMag;
-
-  yOut[0]   = GlobalPosition.x(); 
-  yOut[1]   = GlobalPosition.y(); 
-  yOut[2]   = GlobalPosition.z(); 
-  
-  yOut[3] = GlobalTangent.x();
-  yOut[4] = GlobalTangent.y();
-  yOut[5] = GlobalTangent.z();
-
-  
+  // gradient for quadrupolar field
   G4double kappa= - fPtrMagEqOfMot->FCof()* ( itsBGrad) /InitMag; // was ist das? 
-  if(fabs(kappa)<std::numeric_limits<double>::epsilon()) return; // no gradient 
+  // ignore quadrupolar component for now as this needs fixing
+  if(true || fabs(kappa)<1.e-12) { // no gradient
+    
+    GlobalPosition=LocalAffine.TransformPoint(itsFinalPoint); 
+    G4ThreeVector GlobalTangent=LocalAffine.TransformAxis(itsFinalDir);
+    
+    GlobalTangent*=InitMag;
+    
+    yOut[0] = GlobalPosition.x(); 
+    yOut[1] = GlobalPosition.y(); 
+    yOut[2] = GlobalPosition.z(); 
+    
+    yOut[3] = GlobalTangent.x();
+    yOut[4] = GlobalTangent.y();
+    yOut[5] = GlobalTangent.z();
+    
+    return; 
+  }
 
   G4double x1,x1p,y1,y1p,z1p;
   //G4double z1;
@@ -153,9 +169,6 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
   G4double yp=LocalRp.y();
   G4double zp=LocalRp.z();
 
-  // Save for Synchrotron Radiation calculations:
-  BDSLocalRadiusOfCurvature=R;
-  
   G4double rootK=sqrt(fabs(kappa*zp));
   G4double rootKh=rootK*h*zp;
   G4double X11,X12,X21,X22;
@@ -185,17 +198,6 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
       Y21= -fabs(kappa)*Y12;
       Y22= Y11;
     }
-  // else // should not happen as already returned in that case
-  //   {
-  //     X11 = 1;
-  //     X12 = 0;
-  //     X21 = 0;
-  //     X22 = 1;
-  //     Y11 = 1;
-  //     Y12 = 0;
-  //     Y21 = 0;
-  //     Y22 = 1;
-  //   }
 
   x1  = X11*x0 + X12*xp;    
   x1p = X21*x0 + X22*xp;
@@ -226,8 +228,7 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
   GlobalPosition=LocalAffine.TransformPoint(LocalR); 
   
   LocalRp.rotateY(-h/R);
-  GlobalTangent=LocalAffine.TransformAxis(LocalRp);
-
+  G4ThreeVector GlobalTangent=LocalAffine.TransformAxis(LocalRp);
 
   GlobalTangent*=InitMag;
   

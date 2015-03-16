@@ -20,28 +20,15 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-BDSDecapole::BDSDecapole(G4String aName, G4double aLength, 
-			 G4double bpRad, G4double FeRad,
-			 G4double BQuadPrime, G4double tilt, 
-			 G4double outR, 
-                         std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-                         G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
-  itsBQuadPrime(BQuadPrime)
-{
-  SetOuterRadius(outR);
-  itsTilt=tilt;
-}
-
-BDSDecapole::BDSDecapole(G4String      name,
-			 G4double      length,
-			 G4double      bQuadPrime,
-			 beamPipeInfo  beamPipeInfo,
-			 G4double      boxSize,
-			 G4String      outerMaterial,
-			 G4String      tunnelMaterial,
-			 G4double      tunnelRadius,
-			 G4double      tunnelOffsetX):
+BDSDecapole::BDSDecapole(G4String         name,
+			 G4double         length,
+			 G4double         bQuadPrime,
+			 BDSBeamPipeInfo  beamPipeInfo,
+			 G4double         boxSize,
+			 G4String         outerMaterial,
+			 G4String         tunnelMaterial,
+			 G4double         tunnelRadius,
+			 G4double         tunnelOffsetX):
   BDSMultipole(name,length,beamPipeInfo,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBQuadPrime(bQuadPrime)
 {;}

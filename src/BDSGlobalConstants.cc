@@ -31,7 +31,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsPhysListName       = opt.physicsList;
   itsBeamPipeMaterial   = opt.beampipeMaterial;
   itsApertureType       = BDS::DetermineBeamPipeType(opt.apertureType,true); //true is flag for first global check
-  itsVacMaterial        = opt.vacMaterial;
+  itsVacuumMaterial     = opt.vacMaterial;
   itsEmptyMaterial      = "G4_Galactic"; // space vacuum
   itsTunnelMaterialName = opt.tunnelMaterial;
   itsTunnelCavityMaterialName = opt.tunnelCavityMaterial;
@@ -60,22 +60,21 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
     itsParticleTotalEnergy = itsBeamTotalEnergy;
   }
 
-  itsVacuumPressure = opt.vacuumPressure*CLHEP::bar;
   itsPlanckScatterFe = opt.planckScatterFe;
   //Fraction of events with leading particle biasing.
 
   //beampipe
-  itsBeampipeRadius = opt.beampipeRadius * CLHEP::m;
+  itsBeamPipeRadius = opt.beampipeRadius * CLHEP::m;
   itsAper1 = opt.aper1*CLHEP::m;
   itsAper2 = opt.aper2*CLHEP::m;
   itsAper3 = opt.aper3*CLHEP::m;
   itsAper4 = opt.aper4*CLHEP::m;
   // note beampipetype already done before these checks! at top of this function
-  BDS::CheckApertureInfo(itsApertureType,itsBeampipeRadius,itsAper1,itsAper2,itsAper3,itsAper4);
+  BDS::CheckApertureInfo(itsApertureType,itsBeamPipeRadius,itsAper1,itsAper2,itsAper3,itsAper4);
   
-  itsBeampipeThickness = opt.beampipeThickness * CLHEP::m;
+  itsBeamPipeThickness = opt.beampipeThickness * CLHEP::m;
   itsComponentBoxSize = opt.componentBoxSize * CLHEP::m;
-  if (itsComponentBoxSize < (itsBeampipeThickness + itsBeampipeRadius)){
+  if (itsComponentBoxSize < (itsBeamPipeThickness + itsBeamPipeRadius)){
     G4cerr << __METHOD_NAME__ << "Error: option \"boxSize\" must be greater than the sum of \"beampipeRadius\" and \"beamPipeThickness\" " << G4endl;
     exit(1);
   }
@@ -203,7 +202,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
 void BDSGlobalConstants::InitVisAttributes()
 {
   //for vacuum volumes
-  invisibleVisAttr = new G4VisAttributes(&G4Colour::Black);
+  invisibleVisAttr = new G4VisAttributes(G4Colour::Black());
   invisibleVisAttr->SetVisibility(false);
   invisibleVisAttr->SetForceSolid(true);
 
@@ -266,7 +265,7 @@ G4RotationMatrix* BDSGlobalConstants::RotYM90XM90() const{
 }
 
 // a robust compiler-invariant method to convert from integer to G4String
-G4String BDSGlobalConstants::StringFromInt(G4int N) 
+G4String BDSGlobalConstants::StringFromInt(G4int N)const
 {
   if (N==0) return "0";
   G4int nLocal=N, nDigit=0, nMax=1;
@@ -282,7 +281,7 @@ G4String BDSGlobalConstants::StringFromInt(G4int N)
 }
 
 // a robust compiler-invariant method to convert from digit to G4String
-G4String BDSGlobalConstants::StringFromDigit(G4int N) 
+G4String BDSGlobalConstants::StringFromDigit(G4int N)const 
 {
   if(N<0 || N>9)
     G4Exception("Invalid Digit in BDSGlobalConstants::StringFromDigit", "-1", FatalException, "");
@@ -304,5 +303,6 @@ BDSGlobalConstants::~BDSGlobalConstants()
 {  
   delete itsZeroFieldManager;
   delete zeroMagField;
+  delete defaultUserLimits;
   _instance = 0;
 }
