@@ -7,6 +7,8 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSMagnetOuterInfo.hh"
+#include "BDSTunnelInfo.hh"
 
 class ElementList; 
 
@@ -60,10 +62,12 @@ private:
   BDSAcceleratorComponent* createTeleporter();
 
   /// Utility function to prepare beampipe
-  G4Material*     PrepareBeamPipeMaterial(Element& element);
-  G4Material*     PrepareVacuumMaterial(Element& element);
-  G4double        PrepareBoxSize(Element& element);
-  BDSBeamPipeInfo PrepareBeamPipeInfo(Element& element);
+  G4Material*        PrepareBeamPipeMaterial(Element& element);
+  G4Material*        PrepareVacuumMaterial(Element& element);
+  BDSMagnetOuterInfo PrepareMagnetOuterInfo(Element& element);
+  BDSTunnelInfo      PrepareTunnelInfo(Element& element);
+  G4double           PrepareOuterDiameter(Element& element);
+  BDSBeamPipeInfo    PrepareBeamPipeInfo(Element& element);
 
 };
 #endif

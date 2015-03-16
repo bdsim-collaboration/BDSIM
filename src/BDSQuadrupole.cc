@@ -54,6 +54,15 @@ BDSQuadrupole::BDSQuadrupole(G4String         name,
   G4String qtype = "cylinder";
 }
 
+BDSQuadrupole::BDSQuadrupole(G4String           name,
+			     G4double           length,
+			     G4double           bGrad,
+			     BDSBeamPipeInfo    beamPipeInfo,
+			     BDSMagnetOuterInfo magnetOuterInfo,
+			     BDSTunnelInfo      tunnelInfo):
+  BDSMultipole(name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),itsBGrad(bGrad)
+{;}
+
 void BDSQuadrupole::Build() 
 {
 #ifdef BDSDEBUG
@@ -100,9 +109,11 @@ void BDSQuadrupole::BuildBPFieldAndStepper()
 
 void BDSQuadrupole::BuildOuterVolume()
 {
-  G4Material* outerMaterial = BDSMaterials::Instance()->GetMaterial(itsMaterial); //itsMaterial == its name really!
-  outer = BDSMagnetOuterFactory::Instance()->CreateQuadrupole(BDSMagnetGeometryType::cylindrical, itsName,
-							      itsLength, beampipe, boxSize, outerMaterial);
+  G4Material* outerMaterial  = itsMagnetOuterInfo.outerMaterial;
+  BDSMagnetGeometryType type = itsMagnetOuterInfo.geometryType;
+  G4double outerDiameter     = itsMagnetOuterInfo.outerDiameter;
+  outer = BDSMagnetOuterFactory::Instance()->CreateQuadrupole(type, itsName, itsLength, beampipe,
+							      outerDiameter, outerMaterial);
 }
 
 void BDSQuadrupole::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)
@@ -119,7 +130,7 @@ void BDSQuadrupole::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)
 										      
   // build magnet (geometry + magnetic field)
   // according to quad type
-  G4String geometry = BDSGlobalConstants::Instance()->GetMagnetGeometry();
+  G4String geometry = "cylinder";
   
   if(geometry =="standard") 
     BuildStandardOuterLogicalVolume(); // standard - quad with poles and pockets

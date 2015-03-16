@@ -111,7 +111,7 @@ void BDSSectorBend::BuildBPFieldAndStepper()
 void BDSSectorBend::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)
 {
   // build magnet outer geometry + magnetic field    
-  G4String geometry = BDSGlobalConstants::Instance()->GetMagnetGeometry();
+  G4String geometry = "cylinder";
  
   if(geometry =="standard") 
     BuildStandardOuterLogicalVolume(false); // standard - sbend with poles and pockets

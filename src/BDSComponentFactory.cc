@@ -1,4 +1,5 @@
 #include "BDSComponentFactory.hh"
+
 #include "BDSExecOptions.hh"
 // elements
 #include "BDSDrift.hh"
@@ -25,9 +26,13 @@
 #include "BDSAwakeScintillatorScreen.hh"
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
+
 #include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
+
 #include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetGeometryType.hh"
 
 #include "parser/enums.h"
 #include "parser/elementlist.h"
@@ -630,12 +635,19 @@ BDSAcceleratorComponent* BDSComponentFactory::createQuad()
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
-  
+  /*
   return (new BDSQuadrupole( _element.name,
 			     _element.l * CLHEP::m,
 			     bPrime,
 			     PrepareBeamPipeInfo(_element),
-			     PrepareBoxSize(_element)));			     
+			     PrepareOuterDiameter(_element)));*/
+
+  return (new BDSQuadrupole( _element.name,
+			     _element.l * CLHEP::m,
+			     bPrime,
+			     PrepareBeamPipeInfo(_element),
+			     PrepareMagnetOuterInfo(_element),
+			     PrepareTunnelInfo(_element)) );
 }  
   
 BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
@@ -662,7 +674,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
 	 << " B''= " << bDoublePrime/(CLHEP::tesla/CLHEP::m2) << "T/m^2"
 	 << " tilt= " << _element.tilt << "rad"
 	 << " tunnel material " << _element.tunnelMaterial
-	 << " material= " << _element.material
+	 << " material= " << _element.outerMaterial
 	 << G4endl;
 #endif
   
@@ -698,7 +710,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole()
 	 << " B'''= " << bTriplePrime/(CLHEP::tesla/CLHEP::m3) << "T/m^3"
 	 << " tilt= " << _element.tilt << "rad"
 	 << " tunnel material " << _element.tunnelMaterial
-	 << " material= " << _element.material
+	 << " material= " << _element.outerMaterial
 	 << G4endl;
 #endif
   
@@ -725,7 +737,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
 	 << " l= " << _element.l << "m"
 	 << " tilt= " << _element.tilt << "rad"
 	 << " tunnel material " << _element.tunnelMaterial
-	 << " material= " << _element.material
+	 << " material= " << _element.outerMaterial
 	 << G4endl;
 #endif
   // magnetic field
@@ -839,7 +851,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
 	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"
 	 << " B= " << bField/CLHEP::tesla << " T"
 	 << " tunnel material " << _element.tunnelMaterial
-	 << " material= " << _element.material
+	 << " material= " << _element.outerMaterial
 	 << G4endl;
 #endif
   
@@ -1028,12 +1040,45 @@ G4Material* BDSComponentFactory::PrepareBeamPipeMaterial(Element& element)
 
 G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element& /*element*/)
 {
-  //in future do somethign relating to what's set in element
+  //in future do something relating to what's set in the element
   //also make some setting available in element
   return BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
 }
 
-G4double BDSComponentFactory::PrepareBoxSize(Element& element)
+BDSMagnetOuterInfo BDSComponentFactory::PrepareMagnetOuterInfo(Element& element)
+{
+  BDSMagnetOuterInfo info;
+  // magnet geometry type
+  info.geometryType = BDS::DetermineMagnetGeometryType(element.magnetGeometryType);
+
+  // outer diameter
+  G4double outerDiameter = element.outerDiameter*CLHEP::m;
+  if (outerDiameter < 1e-6)
+    {//outerDiameter not set - use global option as default
+      outerDiameter = BDSGlobalConstants::Instance()->GetOuterDiameter();
+    }
+  info.outerDiameter = outerDiameter;
+
+  // outer material
+  G4Material* outerMaterial;
+  if(element.outerMaterial == "")
+    {
+      G4String defaultMaterialName = BDSGlobalConstants::Instance()->GetOuterMaterialName();
+      outerMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
+    }
+  else
+    {outerMaterial = BDSMaterials::Instance()->GetMaterial(element.outerMaterial);}
+  info.outerMaterial = outerMaterial;
+  
+  return info;
+}
+
+BDSTunnelInfo BDSComponentFactory::PrepareTunnelInfo(Element& /*element*/)
+{
+  //in future do something relating to what's set in the element
+  BDSTunnelInfo info;
+  return info;
+}
 
 G4double BDSComponentFactory::PrepareOuterDiameter(Element& element)
 {

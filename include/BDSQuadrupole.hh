@@ -35,6 +35,12 @@ public:
 		G4String        tunnelMaterial="",
 		G4double        tunnelRadius=0,
 		G4double        tunnelOffsetX=0);
+  BDSQuadrupole(G4String           name,
+		G4double           length,
+		G4double           bGrad,
+		BDSBeamPipeInfo    beamPipeInfo,
+		BDSMagnetOuterInfo magnetOuterInfo,
+		BDSTunnelInfo      tunnelInfo);
 		
   ~BDSQuadrupole(){;}
 

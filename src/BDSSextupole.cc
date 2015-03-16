@@ -77,7 +77,7 @@ void BDSSextupole::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)
 {
   // build magnet (geometry + magnetic field)
   // according to quad type
-  G4String geometry = BDSGlobalConstants::Instance()->GetMagnetGeometry();
+  G4String geometry = "cylinder";
   
   if(geometry =="standard") 
     BuildStandardOuterLogicalVolume(); // standard - quad with poles and pockets
