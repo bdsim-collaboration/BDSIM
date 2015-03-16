@@ -37,7 +37,7 @@
 #include "G4VPhysicalVolume.hh"
 
 #include "BDSMagnetOuterFactory.hh"
-#include "BDSMagnetType.hh"
+#include "BDSMagnetGeometryType.hh"
 
 BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength, 
 			     G4double bpRad, G4double FeRad,
@@ -121,14 +121,15 @@ void BDSQuadrupole::BuildBPFieldAndStepper()
 
 void BDSQuadrupole::BuildOuterVolume()
 {
-  outer = BDSMagnetOuterFactory::Instance()->CreateQuadrupole(BDSMagnetGeometryType::quadrupole, itsName,
-							      itsLength, beampipe, itsBoxSize, itsMaterial);
+  G4Material* outerMaterial = BDSMaterials::Instance()->GetMaterial(itsMaterial); //itsMaterial == its name really!
+  outer = BDSMagnetOuterFactory::Instance()->CreateQuadrupole(BDSMagnetGeometryType::cylindrical, itsName,
+							      itsLength, beampipe, boxSize, outerMaterial);
 }
 
 void BDSQuadrupole::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)
 {
 
-  BDSGeometryComponent* outerLV = BDSMagnetOuterFactory::Instance()->CreateQuadrupole(BDSMagnetType::cylindrical,
+  BDSGeometryComponent* outerLV = BDSMagnetOuterFactory::Instance()->CreateQuadrupole(BDSMagnetGeometryType::cylindrical,
 										      itsName,
 										      itsLength,
 										      beampipe,
