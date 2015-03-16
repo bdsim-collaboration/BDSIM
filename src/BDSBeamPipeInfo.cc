@@ -2,7 +2,16 @@
 
 
 BDSBeamPipeInfo::BDSBeamPipeInfo()
-{;}
+{
+  beamPipeType      = BDSBeamPipeType::circular;
+  aper1             = 0.0;
+  aper2             = 0.0;
+  aper3             = 0.0;
+  aper4             = 0.0;
+  vacuumMaterial    = NULL;
+  beamPipeThickness = 0.0;
+  beamPipeMaterial  = NULL;
+}
 
 BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeType beamPipeTypeIn,
 				 G4double        aper1In,
