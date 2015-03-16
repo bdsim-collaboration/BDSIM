@@ -48,20 +48,6 @@ BDSMagnetOuterFactoryCylindrical::~BDSMagnetOuterFactoryCylindrical()
   _instance = 0;
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateDefaultStraight(G4String      name,
-									      G4double      length,
-									      BDSBeamPipe*  beamPipe,
-									      G4double      boxSize,
-									      G4Material*   outerMaterial)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  CreateCylindricalSolids(name, length, beamPipe, boxSize);
-  return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("default"));
-
-}
-
 BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String      name,
 									 G4double      length,
 									 BDSBeamPipe*  beamPipe,
