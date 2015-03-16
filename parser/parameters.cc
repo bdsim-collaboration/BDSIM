@@ -51,20 +51,10 @@ void Parameters::flush() {
   tunnelOffsetX = 0; tunnelOffsetXset = 0;
 
   precisionRegion = 0; precisionRegionset = 0;
-
-  beampipeThickness = 0; beampipeThicknessset = 0;
-
-  outR = 0; outRset = 0;
-  inR = 0; inRset = 0;
-  bpRad = 0; bpRadset = 0;
   tilt = 0; tiltset = 0;
-
-  // old aperture model
-  aper = 0; aperset = 0;
-  aperX = 0; aperXset = 0;
-  aperY = 0; aperYset = 0;
-
-  // new aperture model
+  
+  // aperture model
+  beampipeThickness = 0; beampipeThicknessset = 0;
   aper1 = 0; aper1set = 0;
   aper2 = 0; aper2set = 0;
   aper3 = 0; aper3set = 0;
@@ -72,8 +62,10 @@ void Parameters::flush() {
   apertureType=""; apertureTypeset = 0;
   beampipeMaterial = ""; beampipeMaterialset = 0;
 
-  // component size
-  boxSize = 0; boxSizeset = 0;
+  // magnet geometry
+  magnetGeometryType = ""; magnetGeometryTypeset = 0;
+  outerMaterial      = ""; outerMaterialset      = 0;
+  outerDiameter      = 0;  outerDiameterset      = 0;
 
   B  = 0; Bset  = 0;
   k0 = 0; k0set = 0;
@@ -159,11 +151,8 @@ void Parameters::inherit_properties(struct Element& e)
   if(!componentsFractionsset) 
     { componentsFractions = e.componentsFractions; componentsFractionsset = 1; }
 
+  // aperture model
   if(!beampipeThicknessset) { beampipeThickness = e.beampipeThickness; beampipeThicknessset = 1; }
-  if(!aperset) { aper = e.aper; aperset = 1; }
-  if(!aperXset) { aperX = e.aperX; aperXset = 1; }
-  if(!aperYset) { aperY = e.aperY; aperYset = 1; }
-  // new aperture model
   if(!aper1set) { aper1 = e.aper1; aper1set = 1;}
   if(!aper2set) { aper2 = e.aper2; aper2set = 1;}
   if(!aper3set) { aper3 = e.aper3; aper3set = 1;}
@@ -171,12 +160,10 @@ void Parameters::inherit_properties(struct Element& e)
   if(!apertureTypeset) { apertureType = e.apertureType; apertureTypeset = 1;}
   if(!beampipeMaterialset) { beampipeMaterial = e.beampipeMaterial; beampipeMaterialset = 1;}
 
-  // component size
-  if(!boxSizeset) { boxSize = e.boxSize; boxSizeset = 1;}
-  
-  if(!inRset) { inR = e.inR; inRset = 1; }
-  if(!bpRadset) { bpRad = e.bpRad; bpRadset = 1; }
-  if(!outRset) { outR = e.outR; outRset = 1; }
+  // magnet geometry
+  if(!magnetGeometryTypeset) {magnetGeometryType = e.magnetGeometryType; magnetGeometryTypeset = 1;}
+  if(!outerMaterialset)      {outerMaterial      = e.outerMaterial;      outerMaterialset = 1;}
+  if(!outerDiameterset)      {outerDiameter = e.outerDiameter; outerDiameterset = 1;}
 
   if(!gradientset) { gradient = e.gradient; gradientset = 1; }
 

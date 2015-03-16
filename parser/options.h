@@ -85,12 +85,14 @@ struct Options {
 
   ///  int backgroundScaleFactor;
 
-  /// default geometry parameters
-  std::string magnetGeometry;
-  double    componentBoxSize;
-  double    tunnelRadius;
-  double    beampipeRadius;
-  double    beampipeThickness;
+  /// default magnet geometry parameters
+  std::string magnetGeometryType;
+  std::string outerMaterialName;
+  double      outerDiameter;
+
+  /// default beampipe parameters
+  double      beampipeRadius;
+  double      beampipeThickness;
   std::string apertureType;
   double      aper1;
   double      aper2;
@@ -98,6 +100,9 @@ struct Options {
   double      aper4;
   std::string beampipeMaterial;
   std::string vacMaterial;
+
+  /// default tunnel parameters
+  double    tunnelRadius;
   std::string tunnelMaterial;
   std::string tunnelCavityMaterial;
   std::string soilMaterial;

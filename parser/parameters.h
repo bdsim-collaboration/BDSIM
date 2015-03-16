@@ -52,14 +52,9 @@ struct Parameters {
   double angle; int angleset;   ///> bending angle
   double phiAngleIn; int phiAngleInset;   ///> incoming bending angle for element
   double phiAngleOut; int phiAngleOutset;   ///> outgoing bending angle for element
+  
+  //aperture model
   double beampipeThickness; int beampipeThicknessset;
-
-  //old aperture model
-  double aper; int aperset;   ///> aperture (circular)
-  double aperX; int aperXset;   ///> aperture (elliptical)
-  double aperY; int aperYset;
-
-  //new aperture model
   double aper1; int aper1set;
   double aper2; int aper2set;
   double aper3; int aper3set;
@@ -67,8 +62,10 @@ struct Parameters {
   std::string apertureType; int apertureTypeset;
   std::string beampipeMaterial; int beampipeMaterialset;
 
-  //component size
-  double boxSize; int boxSizeset;
+  //magnet geometry
+  std::string magnetGeometryType; int magnetGeometryTypeset;
+  std::string outerMaterial;      int outerMaterialset;
+  double      outerDiameter;      int outerDiameterset;
   
   double phi, theta, psi; ///> for 3d transforms
   int phiset, thetaset, psiset;
@@ -84,9 +81,7 @@ struct Parameters {
   double flatlength; int flatlengthset;
   double taperlength; int taperlengthset;
   double gradient; int gradientset;
-
-  double outR; int outRset; ///> outer radius of magnets
-  double inR, bpRad; int inRset, bpRadset;///> inner radius and beam pipe radius of muon spoiler
+  
   double hgap, hgapset;
   double xsize, ysize; int xsizeset, ysizeset; ///> aperture (or laser spotsize for laser)
   double xdir, ydir, zdir, waveLength; int xdirset, ydirset, zdirset, waveLengthset;

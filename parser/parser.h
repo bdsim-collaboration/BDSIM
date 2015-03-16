@@ -170,12 +170,7 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.lst = NULL;
   e.l = params.l;
 
-  //old aperture model
-  e.aper = params.aper;
-  e.aperX = params.aperX;
-  e.aperY = params.aperY;
-
-  //new aperture model
+  //aperture model
   e.aper1 = params.aper1;
   e.aper2 = params.aper2;
   e.aper3 = params.aper3;
@@ -183,15 +178,15 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.apertureType = params.apertureType;
   e.beampipeMaterial = params.beampipeMaterial;
 
-  // component size
-  e.boxSize = params.boxSize;
+  //magnet geometry
+  e.outerDiameter = params.outerDiameter;
+  e.outerMaterial = params.outerMaterial;
+  e.magnetGeometryType = params.magnetGeometryType;
   
-  e.bpRad = params.bpRad;
   e.xsize = params.xsize;
   e.ysize = params.ysize;
   e.material = params.material;  
-  e.tunnelMaterial = params.tunnelMaterial;  
-  e.tunnelCavityMaterial = params.tunnelCavityMaterial;  
+  e.tunnelMaterial = params.tunnelMaterial;
   e.tunnelRadius = params.tunnelRadius;
   e.tunnelOffsetX = params.tunnelOffsetX;
   e.precisionRegion = params.precisionRegion;
@@ -258,9 +253,6 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   // RCOL
   e.flatlength = params.flatlength;
   e.taperlength = params.taperlength;
-  // MuSpoiler
-  e.outR = params.outR;
-  e.inR = params.inR;
   // Laser
   e.waveLength = params.waveLength;
   // Element, Tunnel
