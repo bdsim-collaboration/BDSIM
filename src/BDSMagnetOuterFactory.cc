@@ -26,20 +26,20 @@ BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagne
 
   case BDSMagnetGeometryType::cylindrical:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " cylindrical magnet factory" << G4endl;
+    G4cout << __METHOD_NAME__ << "cylindrical magnet factory" << G4endl;
 #endif
     return BDSMagnetOuterFactoryCylindrical::Instance();
     break;
   case BDSMagnetGeometryType::normalconducting:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " normal conducting magnet factory" << G4endl;
+    G4cout << __METHOD_NAME__ << "normal conducting magnet factory" << G4endl;
 #endif
     //return BDSMagnetOuterFactoryNC::Instance();
     return BDSMagnetOuterFactoryCylindrical::Instance();
     break;
   case BDSMagnetGeometryType::lhc:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " LHC magnet factory" << G4endl;
+    G4cout << __METHOD_NAME__ << "LHC magnet factory" << G4endl;
 #endif
     //return BDSMagnetOuterFactoryLHC::Instance();
     return BDSMagnetOuterFactoryCylindrical::Instance();
@@ -52,20 +52,6 @@ BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagne
     return BDSMagnetOuterFactoryCylindrical::Instance();
     break;
   }
-}
-
-BDSGeometryComponent* BDSMangetOuterFactory::CreateDefaultStraight(BDSMagnetGeometryType magnetType,
-								   G4String      name,
-								   G4double      length,
-								   BDSBeamPipe*  beamPipe,
-								   G4double      boxSize,
-								   G4Material*   outerMaterial)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(magnetType);
-  return factory->CreateDefaultStraight(name, length, beamPipe, boxSize, outerMaterial);
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactory::CreateSectorBend(BDSMagnetGeometryType magnetType,
