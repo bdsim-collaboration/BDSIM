@@ -70,6 +70,7 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
 
   //G4double h2=h*h;
 
+  // global to local
   G4Navigator* HelixNavigator=
     G4TransportationManager::GetTransportationManager()->
     GetNavigatorForTracking();
@@ -118,24 +119,27 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
   itsFinalPoint=LocalR+dPos;
   itsFinalDir=CosT*vhat +SinT*vnorm;
   
-  G4ThreeVector GlobalTangent;
-
-  GlobalPosition=LocalAffine.TransformPoint(itsFinalPoint); 
-  GlobalTangent=LocalAffine.TransformAxis(itsFinalDir);
-
-  GlobalTangent*=InitMag;
-
-  yOut[0] = GlobalPosition.x(); 
-  yOut[1] = GlobalPosition.y(); 
-  yOut[2] = GlobalPosition.z(); 
-  
-  yOut[3] = GlobalTangent.x();
-  yOut[4] = GlobalTangent.y();
-  yOut[5] = GlobalTangent.z();
 
   // gradient for quadrupolar field
   G4double kappa= - fPtrMagEqOfMot->FCof()* ( itsBGrad) /InitMag; // was ist das? 
-  if(fabs(kappa)<std::numeric_limits<double>::epsilon()) return; // no gradient 
+  // ignore quadrupolar component for now as this needs fixing
+  if(true || fabs(kappa)<1.e-12) { // no gradient
+    
+    GlobalPosition=LocalAffine.TransformPoint(itsFinalPoint); 
+    G4ThreeVector GlobalTangent=LocalAffine.TransformAxis(itsFinalDir);
+    
+    GlobalTangent*=InitMag;
+    
+    yOut[0] = GlobalPosition.x(); 
+    yOut[1] = GlobalPosition.y(); 
+    yOut[2] = GlobalPosition.z(); 
+    
+    yOut[3] = GlobalTangent.x();
+    yOut[4] = GlobalTangent.y();
+    yOut[5] = GlobalTangent.z();
+    
+    return; 
+  }
 
   G4double x1,x1p,y1,y1p,z1p;
   //G4double z1;
@@ -224,8 +228,7 @@ void BDSDipoleStepper::AdvanceHelix( const G4double  yIn[],
   GlobalPosition=LocalAffine.TransformPoint(LocalR); 
   
   LocalRp.rotateY(-h/R);
-  GlobalTangent=LocalAffine.TransformAxis(LocalRp);
-
+  G4ThreeVector GlobalTangent=LocalAffine.TransformAxis(LocalRp);
 
   GlobalTangent*=InitMag;
   
