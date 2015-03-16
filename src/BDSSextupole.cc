@@ -237,3 +237,8 @@ void BDSSextupole::BuildBPFieldAndStepper()
   sextStepper->SetBDblPrime(itsBDblPrime);
   itsStepper = sextStepper;
 }
+
+void BDSSextupole::BuildOuterVolume()
+{
+  return;
+}

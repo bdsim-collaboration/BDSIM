@@ -121,3 +121,8 @@ void BDSTMultipole::BuildBPFieldAndStepper()
   itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
   itsStepper  = new G4SimpleRunge(itsEqRhs);
 }
+
+void BDSTMultipole::BuildOuterVolume()
+{
+  return;
+}

@@ -76,3 +76,9 @@ void BDSRfCavity::BuildBPFieldAndStepper()
   fChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
   itsBPFieldMgr->SetChordFinder( fChordFinder );
 }
+
+void BDSRfCavity::BuildOuterVolume()
+{
+  return;
+}
+

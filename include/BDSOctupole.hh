@@ -36,6 +36,7 @@ protected:
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
   virtual void SetVisAttributes();
+  virtual void BuildOuterVolume();
 
 private:
   G4double itsBTriplePrime;

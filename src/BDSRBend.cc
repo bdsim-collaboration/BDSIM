@@ -388,3 +388,8 @@ void BDSRBend::BuildOuterLogicalVolume(G4bool outerMaterialIsVacuum)
   // here outer volume is shorter than chordlength, but record that
   // as maximum extent of the whole magnet
 }
+
+void BDSRBend::BuildOuterVolume()
+{
+  return;
+}

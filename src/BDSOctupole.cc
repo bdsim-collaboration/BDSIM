@@ -90,3 +90,8 @@ void BDSOctupole::BuildBPFieldAndStepper()
   octStepper->SetBTrpPrime(itsBTriplePrime);
   itsStepper = octStepper;
 }
+
+void BDSOctupole::BuildOuterVolume()
+{
+  return;
+}

@@ -58,6 +58,7 @@ private:
   virtual void BuildMarkerLogicalVolume();
   virtual void BuildBeampipe();
   virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+  virtual void BuildOuterVolume();
 
   virtual void SetVisAttributes();
 

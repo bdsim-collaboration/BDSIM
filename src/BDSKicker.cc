@@ -161,3 +161,8 @@ void BDSKicker::BuildBPFieldAndStepper()
   dipoleStepper->SetBGrad(itsBGrad);
   itsStepper = dipoleStepper;
 }
+
+void BDSKicker::BuildOuterVolume()
+{
+  return;
+}

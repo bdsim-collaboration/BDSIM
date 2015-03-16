@@ -41,6 +41,7 @@ private:
   virtual void BuildBPFieldAndStepper();
   virtual void BuildBeampipe(); // overload multipole base class method
   virtual void SetVisAttributes();
+  virtual void BuildOuterVolume();
 };
 
 #endif

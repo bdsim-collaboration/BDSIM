@@ -54,6 +54,8 @@ private:
   virtual void BuildBPFieldAndStepper();
   virtual void SetVisAttributes();
 
+  virtual void BuildOuterVolume();
+
   BDSMuSpoilerMagField* outerMagField;
   G4FieldManager*       outerFieldMgr;
 

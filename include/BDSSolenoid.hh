@@ -50,6 +50,7 @@ private:
   virtual void BuildBPFieldAndStepper();
 
   virtual void SetVisAttributes();
+  virtual void BuildOuterVolume();
 };
 
 #endif

@@ -385,3 +385,8 @@ BDSMuSpoiler::~BDSMuSpoiler()
   //   delete itsInnerTunnelLogicalVolume;
   //   delete itsSoilTunnelLogicalVolume;
 }
+
+void BDSMuSpoiler::BuildOuterVolume()
+{
+  return;
+}

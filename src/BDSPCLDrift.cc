@@ -193,3 +193,8 @@ BDSPCLDrift::~BDSPCLDrift()
   delete itsBeampipeVisAtt;
   delete itsInnerBeampipeVisAtt;
 }
+
+void BDSPCLDrift::BuildOuterVolume()
+{
+  return;
+}

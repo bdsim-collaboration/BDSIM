@@ -34,6 +34,7 @@ private:
   virtual void BuildBeampipe();
   /// field related objects
   virtual void BuildBPFieldAndStepper();
+  virtual void BuildOuterVolume();
 
   G4double itsYAperUp, itsYAperDown, itsDyAper;
 

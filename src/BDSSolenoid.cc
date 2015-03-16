@@ -69,3 +69,8 @@ void BDSSolenoid::BuildBPFieldAndStepper()
   solenoidStepper->SetBField(itsBField);
   itsStepper = solenoidStepper;
 }
+
+void BDSSolenoid::BuildOuterVolume()
+{
+  return;
+}

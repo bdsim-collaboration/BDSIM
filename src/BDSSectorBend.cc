@@ -571,3 +571,8 @@ G4double BDSSectorBend::GetChordLength()
 BDSSectorBend::~BDSSectorBend()
 {
 }
+
+void BDSSectorBend::BuildOuterVolume()
+{
+  return;
+}

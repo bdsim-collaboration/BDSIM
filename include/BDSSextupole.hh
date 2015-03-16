@@ -46,6 +46,8 @@ private:
   
   virtual void SetVisAttributes();
 
+  virtual void BuildOuterVolume();
+  
 };
 
 #endif
