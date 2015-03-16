@@ -16,6 +16,8 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSMagnetOuterInfo.hh"
+#include "BDSTunnelInfo.hh"
 
 #include "G4FieldManager.hh"
 #include "G4ChordFinder.hh"
@@ -40,6 +42,12 @@ public:
 		G4double        tunnelRadius=0,
 		G4double        tunnelOffsetX=0);
 
+  BDSMultipole(G4String           name, 
+	       G4double           length,
+	       BDSBeamPipeInfo    beamPipeInfo,
+	       BDSMagnetOuterInfo magnetOuterInfo,
+	       BDSTunnelInfo      tunnelInfo);
+  
   virtual ~BDSMultipole();
 
 protected:
@@ -125,6 +133,13 @@ protected:
 
   //the assembled outer logical volume
   BDSGeometryComponent* outer;
+
+  //for the outer volume construction
+  BDSMagnetOuterInfo itsMagnetOuterInfo;
+
+  //for the tunnel construction
+  BDSTunnelInfo itsTunnelInfo;
+  
   
   // G4double itsStartOuterR;
   // G4double itsEndOuterR;

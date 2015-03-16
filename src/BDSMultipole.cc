@@ -75,6 +75,29 @@ BDSMultipole::BDSMultipole( G4String        name,
     {material = BDSMaterials::Instance()->GetMaterial("Iron");}
 }
 
+BDSMultipole::BDSMultipole(G4String           name,
+			   G4double           length,
+			   BDSBeamPipeInfo    info,
+			   BDSMagnetOuterInfo magnetOuterInfo,
+			   BDSTunnelInfo      tunnelInfo):
+  BDSAcceleratorComponent(name,
+			  length,
+			  0,              //beampipe radius in AC
+			  0,0,            //aperx apery
+			  "",             //tunnel material name
+			  "",             //outer material name
+			  0,              //angle
+			  0,0,0,          // ???
+			  tunnelInfo.aper1,
+			  tunnelInfo.tunnelOffsetX),
+  itsInnerIronRadius(0), beamPipeType(info.beamPipeType),
+  aper1(info.aper1), aper2(info.aper2), aper3(info.aper3), aper4(info.aper4),
+  vacuumMaterial(info.vacuumMaterial), beamPipeThickness(info.beamPipeThickness),
+  beamPipeMaterial(info.beamPipeMaterial), itsMagnetOuterInfo(magnetOuterInfo)
+{
+  ConstructorInit();
+}
+
 			  
 void BDSMultipole::ConstructorInit(){
   itsStepper=NULL;
@@ -111,7 +134,9 @@ void BDSMultipole::Build()
   BDSAcceleratorComponent::Build(); //builds marker logical volume & itVisAttributes
   
   BuildBeampipe();
-  BuildOuterLogicalVolume();
+  BuildOuterVolume();
+  OuterVolumeCommonTasks();
+  //BuildOuterLogicalVolume();
   if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
     BuildTunnel();
   }
@@ -322,10 +347,29 @@ void BDSMultipole::BuildMarkerLogicalVolume()
 
 void BDSMultipole::OuterVolumeCommonTasks()
 {
-  // do placement here
-  // set field
-  // register it
-  return;
+  // register logical volumes using geometry component base class
+  RegisterLogicalVolumes(outer->GetAllLogicalVolumes());
+  
+  // y rotation if using trapezoid marker volume for angled faces
+  // LN - I don't think this works as itsPhiAngleIn Out not set properly
+  // can revist when redo markervolumes without trapezoid
+  G4RotationMatrix* RotY = NULL;
+  if ( (fabs(itsPhiAngleIn) > 0) || (fabs(itsPhiAngleOut)>0) )
+    {RotY=BDSGlobalConstants::Instance()->RotY90(); }
+
+  // place beampipe
+  itsPhysiComp = new G4PVPlacement(RotY,                      // rotation
+				   (G4ThreeVector)0,          // at (0,0,0)
+				   outer->GetContainerLogicalVolume(), // its logical volume
+				   itsName+"_outer_phys",     // its name
+				   itsMarkerLogicalVolume,    // its mother  volume
+				   false,                     // no boolean operation
+				   0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
+
+  //update extents
+  SetExtentX(outer->GetExtentX());
+  SetExtentY(outer->GetExtentY());
+  SetExtentZ(outer->GetExtentZ());
 }
 
 void BDSMultipole::BuildOuterLogicalVolume(G4bool outerMaterialIsVacuum)
