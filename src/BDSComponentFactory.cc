@@ -374,7 +374,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRF()
 			   _element.l * CLHEP::m,
 			   _element.gradient,
 			   PrepareBeamPipeInfo(_element),
-			   PrepareBoxSize(_element)));	
+			   PrepareOuterDiameter(_element)));	
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSBend()
@@ -444,7 +444,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend()
 						  bField,
 						  bPrime,
 						  PrepareBeamPipeInfo(_element),
-						  PrepareBoxSize(_element)
+						  PrepareOuterDiameter(_element)
 						  ));
     }
   return sbendline;
@@ -464,7 +464,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend()
   // unfortunately, this has to be duplicated here as we need to
   // calculated the magnetic field length (less than the full length)
   // in case we need to calculate the field
-  G4double outerRadius = PrepareBoxSize(_element)*0.5;
+  G4double outerRadius = PrepareOuterDiameter(_element)*0.5;
   G4double angle       = _element.angle;
   G4double chordLength = _element.l*CLHEP::m;
   G4double straightSectionChord = outerRadius / (tan(0.5*fabs(angle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(angle))) );
@@ -502,7 +502,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend()
 			bPrime,
 			_element.angle,
 			PrepareBeamPipeInfo(_element),
-			PrepareBoxSize(_element)
+			PrepareOuterDiameter(_element)
 			));
 }
 
@@ -558,7 +558,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
 			 _element.angle,
 			 false,   // it's a horizontal kicker
 			 PrepareBeamPipeInfo(_element),
-			 PrepareBoxSize(_element) ));
+			 PrepareOuterDiameter(_element) ));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
@@ -613,7 +613,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
 			 _element.angle,
 			 true,   // it's a vertical kicker
 			 PrepareBeamPipeInfo(_element),
-			 PrepareBoxSize(_element) ));
+			 PrepareOuterDiameter(_element) ));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createQuad()
@@ -670,7 +670,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
 			    _element.l * CLHEP::m,
 			    bDoublePrime,
 			    PrepareBeamPipeInfo(_element),
-			    PrepareBoxSize(_element)));	
+			    PrepareOuterDiameter(_element)));	
   
 }
 
@@ -706,7 +706,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole()
 			    _element.l * CLHEP::m,
 			    bTriplePrime,
 			    PrepareBeamPipeInfo(_element),
-			    PrepareBoxSize(_element)));
+			    PrepareOuterDiameter(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
@@ -764,7 +764,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
 			     _element.knl,
 			     _element.ksl,
 			     PrepareBeamPipeInfo(_element),
-			     PrepareBoxSize(_element)));
+			     PrepareOuterDiameter(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createElement(){
@@ -778,18 +778,17 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
   }
 
   // geometry
-  G4double aper = BDSGlobalConstants::Instance()->GetBeamPipeRadius();
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
+  G4double aper1 = BDSGlobalConstants::Instance()->GetBeamPipeRadius();
+  if( _element.aper1 > 1.e-10*CLHEP::m ) aper1 = _element.aper1 * CLHEP::m;
 
 #ifdef BDSDEBUG 
   G4cout << "---->creating Element,"
 	 << " name= " << _element.name
 	 << " l= " << _element.l << "m"
-	 << " aper= " << aper/CLHEP::m << "m"
+	 << " aper= " << aper1/CLHEP::m << "m"
 	 << " outR= " << _element.outR << "m"
 	 << " bmapZOffset = "	<<  _element.bmapZOffset * CLHEP::m
 	 << " tunnel material " << _element.tunnelMaterial
-	 << " tunnel cavity material " << _element.tunnelCavityMaterial
 	 << " precision region " << _element.precisionRegion
 	 << G4endl;
 #endif
@@ -804,8 +803,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 			  _element.bmapFile,
 			  _element.bmapZOffset * CLHEP::m,
 			  _element.l * CLHEP::m,
-			  aper,
-			  _element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, tunnelOffsetX, _element.tunnelCavityMaterial));
+			  aper1,
+			  _element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, tunnelOffsetX, ""));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
@@ -848,7 +847,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
 			   _element.l * CLHEP::m,
 			   bField,
 			   PrepareBeamPipeInfo(_element),
-			   PrepareBoxSize(_element)));
+			   PrepareOuterDiameter(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
@@ -917,7 +916,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
 			   _element.l*CLHEP::m,
 			   _element.B * CLHEP::tesla,
 			   PrepareBeamPipeInfo(_element),
-			   PrepareBoxSize(_element) ));
+			   PrepareOuterDiameter(_element) ));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createLaser(){
@@ -1035,14 +1034,16 @@ G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element& /*element*/)
 }
 
 G4double BDSComponentFactory::PrepareBoxSize(Element& element)
+
+G4double BDSComponentFactory::PrepareOuterDiameter(Element& element)
 {
-  G4double boxSize = element.boxSize*CLHEP::m;
-  if (boxSize < 1e-6)
-    {//boxSize not set - use global option as default
-      boxSize = BDSGlobalConstants::Instance()->GetComponentBoxSize();
+  G4double outerDiameter = element.outerDiameter*CLHEP::m;
+  if (outerDiameter < 1e-6)
+    {//outerDiameter not set - use global option as default
+      outerDiameter = BDSGlobalConstants::Instance()->GetOuterDiameter();
     }
   // returns in metres
-  return boxSize;
+  return outerDiameter;
 }
 
 BDSBeamPipeInfo BDSComponentFactory::PrepareBeamPipeInfo(Element& element)
