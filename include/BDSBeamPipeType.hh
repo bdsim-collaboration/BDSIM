@@ -3,7 +3,6 @@
 
 #include "BDSTypeSafeEnum.hh"
 #include "globals.hh"         // geant4 globals / types
-#include "parser/element.h"
 
 /**
  * @brief Type definition for beampipes - used for comparison
@@ -20,7 +19,6 @@ typedef BDSTypeSafeEnum<beampipetypes_def,int> BDSBeamPipeType;
 
 namespace BDS {
   BDSBeamPipeType DetermineBeamPipeType(G4String apertureType, G4bool globalCheck=false);
-  BDSBeamPipeType DetermineBeamPipeType(Element& element);
 
   /// function to check relevant aperture values are set.  This is really a dispatch function
   /// for other aperture specific methods below
