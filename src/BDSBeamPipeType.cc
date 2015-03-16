@@ -16,8 +16,7 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType, G4bool globalC
     {
       if (globalCheck){
 	// it's not a valid key
-	G4cout << __METHOD_NAME__ << " " << apertureType << " is not a valid apertureType - using default circular" << G4endl;
-	// this in effect, become the default case even if the default is spelled wrongly in parser/options.cc
+	G4cout << __METHOD_NAME__ << "\"" << apertureType << "\" is not a valid aperture type" << G4endl;
 	exit(1);
       }
       else {
