@@ -18,7 +18,7 @@ BDSMagnetColours::BDSMagnetColours()
 {
   colours["default"]          = new G4Colour(1,     0.078, 0.576); // hot warning pink
   colours["sectorbend"]       = new G4Colour(0,     0,     1);     // blue
-  colours["rectanglularbend"] = new G4Colour(0,     0,     1);     // blue
+  colours["rectangularbend"]  = new G4Colour(0,     0,     1);     // blue
   colours["quadrupole"]       = new G4Colour(1,     0,     0);     // red
   colours["sextupole"]        = new G4Colour(1,     1,     0);     // yellow
   colours["octupole"]         = new G4Colour(0,     1,     0);     // green
