@@ -11,12 +11,12 @@
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
-struct magnettypes_def {
+struct magnetgeometrytypes_def {
   enum type { cylindrical, normalconducting, lhc };
 
 };
 
-typedef BDSTypeSafeEnum<magnettypes_def, G4int> BDSMagnetGeometryType;
+typedef BDSTypeSafeEnum<magnetgeometrytypes_def, G4int> BDSMagnetGeometryType;
 
 namespace BDS {
   /// function to determine the type of the magnet geometry

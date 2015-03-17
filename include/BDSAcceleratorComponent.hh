@@ -174,7 +174,7 @@ private:
 
   /// build marker logical volume
   virtual void BuildMarkerLogicalVolume() = 0;
-  /// set and return visual attributes
+  /// set visual attributes
   virtual void SetVisAttributes(); 
 
 protected:
