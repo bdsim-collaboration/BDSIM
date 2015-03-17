@@ -287,7 +287,7 @@ void BDSMultipole::BuildOuterVolume()
       
       // place outer volume
       itsPhysiComp = new G4PVPlacement(RotY,                      // rotation
-				       (G4ThreeVector)0,          // at (0,0,0)
+				       *(outer->GetPlacementOffset()), // at normally (0,0,0)
 				       outer->GetContainerLogicalVolume(), // its logical volume
 				       itsName+"_outer_phys",     // its name
 				       itsMarkerLogicalVolume,    // its mother  volume
