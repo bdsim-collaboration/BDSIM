@@ -269,6 +269,7 @@ void Options::set_value(std::string name, double value )
 
   // options which influence the geometry
   if(name == "outerDiameter" ) {outerDiameter = value; return; }
+  if(name == "boxSize")        {outerDiameter = value; return; } // for backwards compatability
   if(name == "tunnelRadius" ) { tunnelRadius = value; return; }
   if(name == "beampipeThickness" ) { beampipeThickness = value; return; }
   if(name == "beampipeRadius" ) { beampipeRadius = value; return; }

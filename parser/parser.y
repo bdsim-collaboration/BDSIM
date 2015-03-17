@@ -572,6 +572,9 @@ parameters:
 		  if(!strcmp($1->name,"outerDiameter")) 
 		    { params.outerDiameter = $3; params.outerDiameterset = 1;}
 		    else
+		  if(!strcmp($1->name,"boxSize")) //for backwards compatability 
+		    { params.outerDiameter = $3; params.outerDiameterset = 1;}
+		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
 		  if(!strcmp($1->name,"ysize") ) { params.ysize = $3; params.ysizeset = 1;}
@@ -802,6 +805,9 @@ parameters:
 		  if(!strcmp($1->name,"outerDiameter")) 
 		    { params.outerDiameter = $3; params.outerDiameterset = 1;}
 		    else
+		  if(!strcmp($1->name,"boxSize")) //for backwards compatability 
+		    { params.outerDiameter = $3; params.outerDiameterset = 1;}
+		  else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
 		  if(!strcmp($1->name,"ysize") ) { params.ysize = $3; params.ysizeset = 1;}
