@@ -64,7 +64,8 @@ BDSMultipole::BDSMultipole(BDSMagnetType      type,
   itsType(type),itsInnerIronRadius(0), beamPipeType(info.beamPipeType),
   aper1(info.aper1), aper2(info.aper2), aper3(info.aper3), aper4(info.aper4),
   vacuumMaterial(info.vacuumMaterial), beamPipeThickness(info.beamPipeThickness),
-  beamPipeMaterial(info.beamPipeMaterial), itsMagnetOuterInfo(magnetOuterInfo)
+  beamPipeMaterial(info.beamPipeMaterial), boxSize(magnetOuterInfo.outerDiameter),
+  itsMagnetOuterInfo(magnetOuterInfo)
 {
   ConstructorInit();
 }
