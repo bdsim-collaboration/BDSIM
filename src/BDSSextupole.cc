@@ -28,19 +28,6 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-BDSSextupole::BDSSextupole(G4String        name,
-			   G4double        length,
-			   G4double        bDblPrime,
-			   BDSBeamPipeInfo beamPipeInfoIn,
-			   G4double        boxSize,
-			   G4String        outerMaterial,
-			   G4String        tunnelMaterial,
-			   G4double        tunnelRadius,
-			   G4double        tunnelOffsetX):
-  BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
-  itsBDblPrime(bDblPrime)
-{;}
-
 BDSSextupole::BDSSextupole(G4String           name,
 			   G4double           length,
 			   G4double           bDblPrime,

@@ -34,15 +34,6 @@ class BDSMultipole: public BDSAcceleratorComponent
 {
 public:
   // Constructor for new beampipe
-  BDSMultipole( G4String        name, 
-		G4double        length,
-		BDSBeamPipeInfo beamPipeInfo,
-		G4double        boxSize,
-		G4String        outerMaterial="",
-		G4String        tunnelMaterial="",
-		G4double        tunnelRadius=0,
-		G4double        tunnelOffsetX=0);
-
   BDSMultipole(BDSMagnetType      type,
 	       G4String           name, 
 	       G4double           length,

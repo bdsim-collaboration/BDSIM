@@ -45,11 +45,8 @@ BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagne
     return BDSMagnetOuterFactoryCylindrical::Instance();
     break;
   default:
-#ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "unknown type \"" << magnetTypeIn
-	   << "\" - cylindrical factory by default" << G4endl;
-#endif
-    return BDSMagnetOuterFactoryCylindrical::Instance();
+    G4cerr << __METHOD_NAME__ << "unknown type \"" << magnetTypeIn << G4endl;
+    exit(1);
     break;
   }
 }

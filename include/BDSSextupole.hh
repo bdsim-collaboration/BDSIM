@@ -17,15 +17,6 @@
 class BDSSextupole :public BDSMultipole
 {
 public:
-  BDSSextupole(G4String        name,
-	       G4double        length,
-	       G4double        bDblPrime,
-	       BDSBeamPipeInfo beamPipeInfoIn,
-	       G4double        boxSize,
-	       G4String        outerMaterial="",
-	       G4String        tunnelMaterial="",
-	       G4double        tunnelRadius=0,
-	       G4double        tunnelOffsetX=0);
   BDSSextupole(G4String           name,
 	       G4double           length,
 	       G4double           bDblPrime,

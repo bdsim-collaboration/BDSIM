@@ -45,42 +45,6 @@
 #include "BDSMultipole.hh"
 #include "BDSMultipoleOuterMagField.hh"
 
-
-
-
-BDSMultipole::BDSMultipole( G4String        name, 
-			    G4double        length,
-			    BDSBeamPipeInfo info,
-			    G4double        boxSizeIn,
-			    G4String        outerMaterial,
-			    G4String        tunnelMaterial,
-			    G4double        tunnelRadius,
-			    G4double        tunnelOffsetX):
-  BDSAcceleratorComponent(name,
-			  length,
-			  0,              //beampipe radius in AC
-			  0,0,            //aperx apery
-			  tunnelMaterial,
-			  outerMaterial,
-			  0,              //angle
-			  0,0,0,          // ???
-			  tunnelRadius,
-			  tunnelOffsetX),
-  itsInnerIronRadius(0), beamPipeType(info.beamPipeType),
-  aper1(info.aper1), aper2(info.aper2), aper3(info.aper3), aper4(info.aper4),
-  vacuumMaterial(info.vacuumMaterial), beamPipeThickness(info.beamPipeThickness),
-  beamPipeMaterial(info.beamPipeMaterial), boxSize(boxSizeIn)
-{
-  ConstructorInit();
-
-  // check material for outer logical volume
-  G4Material* material;
-  if(itsMaterial != "")
-    {material = BDSMaterials::Instance()->GetMaterial(itsMaterial);}
-  else
-    {material = BDSMaterials::Instance()->GetMaterial("Iron");}
-}
-
 BDSMultipole::BDSMultipole(BDSMagnetType      type,
 			   G4String           name,
 			   G4double           length,
