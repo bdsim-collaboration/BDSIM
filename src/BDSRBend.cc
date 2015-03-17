@@ -13,6 +13,7 @@
 #include "BDSSbendMagField.hh"
 #include "BDSSDManager.hh"
 #include "BDSTunnelInfo.hh"
+#include "BDSUtilities.hh"
 
 #include "G4FieldManager.hh"
 #include "G4IntersectionSolid.hh"
@@ -37,7 +38,8 @@ BDSRBend::BDSRBend(G4String           name,
   BDSMultipole(BDSMagnetType::rectangularbend,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
   itsBField(bField),itsBGrad(bGrad)
 {
-  itsAngle = angle;
+  itsAngle    = angle;
+  outerRadius = magnetOuterInfo.outerDiameter*0.5; 
   CommonConstructor(length);
 }
 
@@ -47,13 +49,7 @@ void BDSRBend::CommonConstructor(G4double aLength)
   //full length along chord - just its length in case of rbend
   itsChordLength = aLength;
 
-  if (itsAngle < 0)
-    {orientation = -1;}
-  else
-    {orientation = 1;}
-
-  // sort out outer radius of magnet now
-  outerRadius = boxSize*0.5;
+  orientation = BDS::CalculateOrientation(itsAngle);
 
   // itsStraightSectionChord is the distance along the chord required to be used by a drift pipe so that
   // the outer logical volume (magnet cylinder - defined by outRadius) doesn't protrude
@@ -70,8 +66,8 @@ void BDSRBend::CommonConstructor(G4double aLength)
 
   G4double in_z = cos(0.5*fabs(itsAngle)); // calculate components of normal vectors (in the end mag(normal) = 1)
   G4double in_x = sin(0.5*fabs(itsAngle));
-  inputface  = G4ThreeVector(orientation*in_x, 0.0, -1.0*in_z); //-1 as pointing down in z for normal
-  outputface = G4ThreeVector(orientation*in_x, 0.0, in_z);
+  inputface  = G4ThreeVector(-orientation*in_x, 0.0, -1.0*in_z); //-1 as pointing down in z for normal
+  outputface = G4ThreeVector(-orientation*in_x, 0.0, in_z);
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Angle                   = " << itsAngle                 << G4endl;
@@ -163,6 +159,17 @@ void BDSRBend::BuildMarkerLogicalVolume()
   SetExtentX(-boxSize*0.5,boxSize*0.5);
   SetExtentY(-boxSize*0.5,boxSize*0.5);
   SetExtentZ(-itsChordLength*0.5,itsChordLength*0.5);
+}
+
+void BDSRBend::BuildOuterVolume()
+{
+  //need to make a shorter outer volume for rbend geometry
+  //let's cheat and use the base class method by fiddling the
+  //component length then setting it back - reduces code duplication
+  G4double originalLength = itsLength;
+  itsLength = itsMagFieldLength;
+  BDSMultipole::BuildOuterVolume();
+  itsLength = originalLength;
 }
 
 // construct a beampipe for r bend
