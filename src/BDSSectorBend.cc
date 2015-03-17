@@ -151,7 +151,7 @@ void BDSSectorBend::BuildMarkerLogicalVolume()
 void BDSSectorBend::BuildBeampipe()
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " sector bend version " << G4endl;
+  G4cout << __METHOD_NAME__ << "sector bend version " << G4endl;
 #endif
 
   beampipe =

@@ -12,7 +12,7 @@
  */
 
 struct magnetgeometrytypes_def {
-  enum type { cylindrical, normalconducting, lhc };
+  enum type { cylindrical, normalconducting, lhcleft, lhcright };
 
 };
 

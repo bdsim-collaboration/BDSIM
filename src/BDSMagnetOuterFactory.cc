@@ -3,7 +3,8 @@
 #include "BDSMagnetOuterFactoryBase.hh"
 #include "BDSMagnetOuterFactoryCylindrical.hh"
 //#include "BDSMagnetOuterFactoryNC.hh"
-//#include "BDSMagnetOuterFactoryLHC.hh"
+#include "BDSMagnetOuterFactoryLHCLeft.hh"
+#include "BDSMagnetOuterFactoryLHCRight.hh"
 #include "BDSMagnetGeometryType.hh"
 
 #include "globals.hh"                        // geant4 globals / types
@@ -37,12 +38,17 @@ BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagne
     //return BDSMagnetOuterFactoryNC::Instance();
     return BDSMagnetOuterFactoryCylindrical::Instance();
     break;
-  case BDSMagnetGeometryType::lhc:
+  case BDSMagnetGeometryType::lhcleft:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "LHC magnet factory" << G4endl;
+    G4cout << __METHOD_NAME__ << "LHC magnet factory - with left offset" << G4endl;
 #endif
-    //return BDSMagnetOuterFactoryLHC::Instance();
-    return BDSMagnetOuterFactoryCylindrical::Instance();
+    return BDSMagnetOuterFactoryLHCLeft::Instance();
+    break;
+  case BDSMagnetGeometryType::lhcright:
+#ifdef BDSDEBUG
+    G4cout << __METHOD_NAME__ << "LHC magnet factory - with right offset" << G4endl;
+#endif
+    return BDSMagnetOuterFactoryLHCRight::Instance();
     break;
   default:
     G4cerr << __METHOD_NAME__ << "unknown type \"" << magnetTypeIn << G4endl;
