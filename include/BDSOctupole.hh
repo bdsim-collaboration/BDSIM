@@ -15,22 +15,17 @@
 class BDSOctupole :public BDSMultipole
 {
 public:
-  BDSOctupole(G4String        name,
-	      G4double        length,
-	      G4double        bTriplePrime,
-	      BDSBeamPipeInfo beamPipeInfoIn,
-	      G4double        boxSize,
-	      G4String        outerMaterial="",
-	      G4String        tunnelMaterial="",
-	      G4double        tunnelRadius=0,
-	      G4double        tunnelOffsetX=0);
+  BDSOctupole(G4String           name,
+	      G4double           length,
+	      G4double           bTriplePrime,
+	      BDSBeamPipeInfo    beamPipeInfo,
+	      BDSMagnetOuterInfo magnetOuterInfo,
+	      BDSTunnelInfo      tunnelInfo);
   ~BDSOctupole(){;};
 
 protected:
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
-  virtual void SetVisAttributes();
-  virtual void BuildOuterVolume();
 
 private:
   G4double itsBTriplePrime;

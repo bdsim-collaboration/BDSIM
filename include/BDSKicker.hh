@@ -4,6 +4,8 @@
 #include "globals.hh"
 #include "BDSMultipole.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetType.hh"
 #include "G4Material.hh"
 
 class BDSKicker:public BDSMultipole
@@ -16,11 +18,8 @@ public:
 	    G4double           angle,
 	    G4bool             verticalKicker,
 	    BDSBeamPipeInfo    beamPipeInfo,
-	    G4double           boxSize,
-	    G4String           outerMaterial="",
-	    G4String           tunnelMaterial="",
-	    G4double           tunnelRadius=0,
-	    G4double           tunnelOffsetX=0);
+	    BDSMagnetOuterInfo magnetOuterInfo,
+	    BDSTunnelInfo      tunnelInfo);
   ~BDSKicker(){;};
   
 protected:
@@ -34,8 +33,7 @@ private:
 
   virtual void BuildBPFieldAndStepper();
   virtual void BuildBeampipe(); // overload multipole base class method
-  virtual void SetVisAttributes();
-  virtual void BuildOuterVolume();
+
 };
 
 #endif

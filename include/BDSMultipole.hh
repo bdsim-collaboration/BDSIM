@@ -17,6 +17,7 @@
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetType.hh"
 #include "BDSTunnelInfo.hh"
 
 #include "G4FieldManager.hh"
@@ -42,7 +43,8 @@ public:
 		G4double        tunnelRadius=0,
 		G4double        tunnelOffsetX=0);
 
-  BDSMultipole(G4String           name, 
+  BDSMultipole(BDSMagnetType      type,
+	       G4String           name, 
 	       G4double           length,
 	       BDSBeamPipeInfo    beamPipeInfo,
 	       BDSMagnetOuterInfo magnetOuterInfo,
@@ -69,13 +71,9 @@ private:
 
 protected:
   virtual void BuildMarkerLogicalVolume();
-  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
   
-  /// method to create outer volume if required, derived class must implment
-  virtual void BuildOuterVolume() = 0;
-  
-  /// placement and registration of outer volume if it exists
-  void OuterVolumeCommonTasks();
+  /// method to create outer volume
+  virtual void BuildOuterVolume();
   
   /// general straight beampipe - can be overloaded by derived classes
   virtual void BuildBeampipe();
@@ -91,7 +89,14 @@ protected:
   void SetStartOuterRadius(G4double outR);
   void SetEndOuterRadius(G4double outR);
 
+  // don't need but provide null implementation here so it needn't be
+  // in the derived classes
+  virtual void SetVisAttributes();
+
 protected:
+  // type
+  BDSMagnetType itsType;
+  
   // field related objects, set by BuildBPFieldAndStepper
   G4MagIntegratorStepper* itsStepper;
   G4MagneticField* itsMagField;
@@ -139,10 +144,6 @@ protected:
 
   //for the tunnel construction
   BDSTunnelInfo itsTunnelInfo;
-  
-  
-  // G4double itsStartOuterR;
-  // G4double itsEndOuterR;
 
 private:
   /// constructor initialisation

@@ -11,21 +11,20 @@
 
 #include "BDSMultipole.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSMagnetOuterInfo.hh"
+#include "BDSTunnelInfo.hh"
 
 #include <list>
 
 class BDSDecapole: public BDSMultipole
 {
 public:
-  BDSDecapole(G4String        name,
-	      G4double        length,
-	      G4double        bQuadPrime,
-	      BDSBeamPipeInfo beamPipeInfo,
-	      G4double        boxSize,
-	      G4String        outerMaterial = "",
-	      G4String        tunnelMaterial = "",
-	      G4double        tunnelRadius = 0,
-	      G4double        tunnelOffsetX = 0);
+  BDSDecapole(G4String           name,
+	      G4double           length,
+	      G4double           bQuadPrime,
+	      BDSBeamPipeInfo    beamPipeInfo,
+	      BDSMagnetOuterInfo magnetOuterInfo,
+	      BDSTunnelInfo      tunnelInfo);
   ~BDSDecapole(){;};
 
 protected:
@@ -35,7 +34,6 @@ private:
   G4double itsBQuadPrime;
 
   virtual void BuildBPFieldAndStepper();
-  virtual void SetVisAttributes();
 };
 
 #endif

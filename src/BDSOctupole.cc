@@ -10,9 +10,12 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSBeamPipeInfo.hh"
+#include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetType.hh"
 #include "BDSOctupole.hh"
 #include "BDSOctMagField.hh"
 #include "BDSOctStepper.hh"
+#include "BDSTunnelInfo.hh"
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
@@ -24,13 +27,10 @@
 BDSOctupole::BDSOctupole(G4String           name,
 			 G4double           length,
 			 G4double           bTriplePrime,
-			 BDSBeamPipeInfo    beamPipeInfoIn,
-			 G4double           boxSize,
-			 G4String           outerMaterial,
-			 G4String           tunnelMaterial,
-			 G4double           tunnelRadius,
-			 G4double           tunnelOffsetX):
-  BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+			 BDSBeamPipeInfo    beamPipeInfo,
+			 BDSMagnetOuterInfo magnetOuterInfo,
+			 BDSTunnelInfo      tunnelInfo):
+  BDSMultipole(BDSMagnetType::octupole,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
   itsBTriplePrime(bTriplePrime)
 {;}
 
@@ -61,12 +61,6 @@ void BDSOctupole::Build() {
     }
 }
 
-void BDSOctupole::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(0,1,1));
-  itsVisAttributes->SetForceSolid(true);
-}
-
 void BDSOctupole::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
@@ -76,9 +70,4 @@ void BDSOctupole::BuildBPFieldAndStepper()
   BDSOctStepper* octStepper=new BDSOctStepper(itsEqRhs);
   octStepper->SetBTrpPrime(itsBTriplePrime);
   itsStepper = octStepper;
-}
-
-void BDSOctupole::BuildOuterVolume()
-{
-  return;
 }

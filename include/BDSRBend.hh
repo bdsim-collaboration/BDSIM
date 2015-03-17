@@ -3,22 +3,22 @@
 
 #include "globals.hh"
 
+#include "BDSBeamPipeInfo.hh"
+#include "BDSMagnetOuterInfo.hh"
 #include "BDSMultipole.hh"
+#include "BDSTunnelInfo.hh"
 
 class BDSRBend :public BDSMultipole
 {
 public:
-  BDSRBend(G4String        name,
-	   G4double        length,
-	   G4double        bField,
-	   G4double        bGrad,
-	   G4double        angle,
-	   BDSBeamPipeInfo beamPipeInfo,
-	   G4double        boxSize,
-	   G4String        outerMaterial="",
-	   G4String        tunnelMaterial="",
-	   G4double        tunnelRadius=0,
-	   G4double        tunnelOffsetX=0);
+  BDSRBend(G4String           name,
+	   G4double           length,
+	   G4double           bField,
+	   G4double           bGrad,
+	   G4double           angle,
+	   BDSBeamPipeInfo    beamPipeInfo,
+	   BDSMagnetOuterInfo magnetOuterInfo,
+	   BDSTunnelInfo      tunnelInfo);
   ~BDSRBend(){;};
 
 private:
@@ -52,10 +52,6 @@ private:
   virtual void BuildBPFieldAndStepper();
   virtual void BuildMarkerLogicalVolume();
   virtual void BuildBeampipe();
-  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
-  virtual void BuildOuterVolume();
-
-  virtual void SetVisAttributes();
 
   /// temporary function while old constructor still exists - used to avoid duplicating
   /// code in the mean time

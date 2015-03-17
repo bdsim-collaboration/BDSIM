@@ -26,15 +26,6 @@
 class BDSQuadrupole :public BDSMultipole
 {
 public:
-  BDSQuadrupole(G4String        name,
-		G4double        length,
-		G4double        bGrad,
-		BDSBeamPipeInfo beamPipeInfo,
-		G4double        boxSize,
-		G4String        outerMaterial="",
-		G4String        tunnelMaterial="",
-		G4double        tunnelRadius=0,
-		G4double        tunnelOffsetX=0);
   BDSQuadrupole(G4String           name,
 		G4double           length,
 		G4double           bGrad,
@@ -48,15 +39,7 @@ private:
   G4double itsBGrad;
   
   virtual void Build();
-
-  virtual void BuildOuterLogicalVolume(bool outerMaterialIsVacuum = false);
-  virtual void BuildOuterVolume();
   virtual void BuildBPFieldAndStepper();
-  
-  /// quad with poles and pockets
-  void BuildStandardOuterLogicalVolume();
-
-  void SetVisAttributes();
 };
 
 #endif

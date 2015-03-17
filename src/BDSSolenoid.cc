@@ -15,16 +15,13 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-BDSSolenoid::BDSSolenoid(G4String        name,
-			 G4double        length,
-			 G4double        bField,
-			 BDSBeamPipeInfo beamPipeInfoIn,
-			 G4double        boxSize,
-			 G4String        outerMaterial,
-			 G4String        tunnelMaterial,
-			 G4double        tunnelRadius,
-			 G4double        tunnelOffsetX):
-  BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+BDSSolenoid::BDSSolenoid(G4String           name,
+			 G4double           length,
+			 G4double           bField,
+			 BDSBeamPipeInfo    beamPipeInfo,
+			 BDSMagnetOuterInfo magnetOuterInfo,
+			 BDSTunnelInfo      tunnelInfo):
+  BDSMultipole(BDSMagnetType::solenoid,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
   itsBField(bField)
 {;}
 
@@ -35,12 +32,6 @@ void BDSSolenoid::Build()
     {
       G4cout << __METHOD_NAME__ << "IncludeIronMagFields option not implemented for solenoid class"<<G4endl;
     }
-}
-
-void BDSSolenoid::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(1.,0.,0.)); //red
-  itsVisAttributes->SetForceSolid(true);
 }
 
 void BDSSolenoid::BuildBPFieldAndStepper()
@@ -55,9 +46,4 @@ void BDSSolenoid::BuildBPFieldAndStepper()
   BDSSolenoidStepper* solenoidStepper = new BDSSolenoidStepper(itsEqRhs);
   solenoidStepper->SetBField(itsBField);
   itsStepper = solenoidStepper;
-}
-
-void BDSSolenoid::BuildOuterVolume()
-{
-  return;
 }

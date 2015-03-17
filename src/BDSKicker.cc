@@ -3,7 +3,10 @@
 
 #include "BDSBeamPipeFactory.hh"
 #include "BDSDipoleStepper.hh"
+#include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetType.hh"
 #include "BDSSbendMagField.hh"
+#include "BDSTunnelInfo.hh"
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
@@ -20,14 +23,14 @@ BDSKicker::BDSKicker(G4String        name,
 		     G4double        angle,
 		     G4bool          verticalKicker,
 		     BDSBeamPipeInfo beamPipeInfo,
-		     G4double        boxSize,
-		     G4String        outerMaterial,
-		     G4String        tunnelMaterial,
-		     G4double        tunnelRadius,
-		     G4double        tunnelOffsetX):
-  BDSMultipole(name,length,beamPipeInfo,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+		     BDSMagnetOuterInfo magnetOuterInfo,
+		     BDSTunnelInfo      tunnelInfo):
+  BDSMultipole(BDSMagnetType::hkicker,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
   itsBField(bField),itsBGrad(bGrad),itsKickAngle(angle),isVerticalKicker(verticalKicker)
-{;}
+{
+  if (verticalKicker)
+    {itsType = BDSMagnetType::vkicker;}
+}
 
 void BDSKicker::Build()
 {
@@ -125,13 +128,6 @@ void BDSKicker::BuildBeampipe()
   SetExtentZ(beampipe->GetExtentZ());
 } 
 
-void BDSKicker::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(0,0,1));
-  itsVisAttributes->SetForceSolid(true);
-}
-
-
 void BDSKicker::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
@@ -144,9 +140,4 @@ void BDSKicker::BuildBPFieldAndStepper()
   dipoleStepper->SetBField(-itsBField); // note the - sign...
   dipoleStepper->SetBGrad(itsBGrad);
   itsStepper = dipoleStepper;
-}
-
-void BDSKicker::BuildOuterVolume()
-{
-  return;
 }

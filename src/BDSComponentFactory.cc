@@ -1,6 +1,5 @@
 #include "BDSComponentFactory.hh"
 
-#include "BDSExecOptions.hh"
 // elements
 #include "BDSDrift.hh"
 #include "BDSSectorBend.hh"
@@ -27,17 +26,18 @@
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
 
-#include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
-
+// general
+#include "BDSBeamline.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSDebug.hh"
+#include "BDSExecOptions.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetGeometryType.hh"
+#include "BDSTunnelInfo.hh"
 
 #include "parser/enums.h"
 #include "parser/elementlist.h"
-
-#include "BDSDebug.hh"
 
 #include <cmath>
 #include <sstream>
@@ -379,7 +379,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createRF()
 			   _element.l * CLHEP::m,
 			   _element.gradient,
 			   PrepareBeamPipeInfo(_element),
-			   PrepareOuterDiameter(_element)));	
+			   PrepareMagnetOuterInfo(_element),
+			   PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSBend()
@@ -449,8 +450,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend()
 						  bField,
 						  bPrime,
 						  PrepareBeamPipeInfo(_element),
-						  PrepareOuterDiameter(_element)
-						  ));
+						  PrepareMagnetOuterInfo(_element),
+						  PrepareTunnelInfo(_element)));
     }
   return sbendline;
 }
@@ -507,8 +508,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend()
 			bPrime,
 			_element.angle,
 			PrepareBeamPipeInfo(_element),
-			PrepareOuterDiameter(_element)
-			));
+			PrepareMagnetOuterInfo(_element),
+			PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
@@ -563,7 +564,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
 			 _element.angle,
 			 false,   // it's a horizontal kicker
 			 PrepareBeamPipeInfo(_element),
-			 PrepareOuterDiameter(_element) ));
+			 PrepareMagnetOuterInfo(_element),
+			 PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
@@ -618,7 +620,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
 			 _element.angle,
 			 true,   // it's a vertical kicker
 			 PrepareBeamPipeInfo(_element),
-			 PrepareOuterDiameter(_element) ));
+			 PrepareMagnetOuterInfo(_element),
+			 PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createQuad()
@@ -635,12 +638,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createQuad()
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
-  /*
-  return (new BDSQuadrupole( _element.name,
-			     _element.l * CLHEP::m,
-			     bPrime,
-			     PrepareBeamPipeInfo(_element),
-			     PrepareOuterDiameter(_element)));*/
 
   return (new BDSQuadrupole( _element.name,
 			     _element.l * CLHEP::m,
@@ -682,8 +679,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
 			    _element.l * CLHEP::m,
 			    bDoublePrime,
 			    PrepareBeamPipeInfo(_element),
-			    PrepareOuterDiameter(_element)));	
-  
+			    PrepareMagnetOuterInfo(_element),
+			    PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createOctupole()
@@ -718,7 +715,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole()
 			    _element.l * CLHEP::m,
 			    bTriplePrime,
 			    PrepareBeamPipeInfo(_element),
-			    PrepareOuterDiameter(_element)));
+			    PrepareMagnetOuterInfo(_element),
+			    PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
@@ -776,7 +774,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
 			     _element.knl,
 			     _element.ksl,
 			     PrepareBeamPipeInfo(_element),
-			     PrepareOuterDiameter(_element)));
+			     PrepareMagnetOuterInfo(_element),
+			     PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createElement(){
@@ -859,7 +858,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
 			   _element.l * CLHEP::m,
 			   bField,
 			   PrepareBeamPipeInfo(_element),
-			   PrepareOuterDiameter(_element)));
+			   PrepareMagnetOuterInfo(_element),
+			   PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
@@ -928,7 +928,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
 			   _element.l*CLHEP::m,
 			   _element.B * CLHEP::tesla,
 			   PrepareBeamPipeInfo(_element),
-			   PrepareOuterDiameter(_element) ));
+			   PrepareMagnetOuterInfo(_element),
+			   PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createLaser(){
