@@ -23,7 +23,7 @@
 class BDSMagnetOuterFactoryLHC: public BDSMagnetOuterFactoryBase
 {
 public:
-  BDSMagnetOuterFactoryLHC();  
+  BDSMagnetOuterFactoryLHC(G4bool isLeftOffset);
   ~BDSMagnetOuterFactoryLHC(){;};
   
   /// sector bend outer volume

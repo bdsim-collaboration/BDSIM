@@ -30,7 +30,8 @@
 // but you can edit each function as you wish
 // functions should base their offset using the member G4bool isLeftOffset
 
-BDSMagnetOuterFactoryLHC::BDSMagnetOuterFactoryLHC()
+BDSMagnetOuterFactoryLHC::BDSMagnetOuterFactoryLHC(G4bool isLeftOffsetIn):
+  isLeftOffset(isLeftOffsetIn)
 {
   lengthSafety   = BDSGlobalConstants::Instance()->GetLengthSafety();
   outerSolid     = NULL;

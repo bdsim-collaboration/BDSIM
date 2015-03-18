@@ -1,8 +1,6 @@
 #include "BDSMagnetOuterFactoryLHCRight.hh"
 #include "BDSMagnetOuterFactoryLHC.hh"
 
-//#include "BDSDebug.hh"
-
 BDSMagnetOuterFactoryLHCRight* BDSMagnetOuterFactoryLHCRight::_instance = 0;
 
 BDSMagnetOuterFactoryLHCRight* BDSMagnetOuterFactoryLHCRight::Instance()
@@ -12,10 +10,9 @@ BDSMagnetOuterFactoryLHCRight* BDSMagnetOuterFactoryLHCRight::Instance()
   return _instance;
 }
 
-BDSMagnetOuterFactoryLHCRight::BDSMagnetOuterFactoryLHCRight()
+BDSMagnetOuterFactoryLHCRight::BDSMagnetOuterFactoryLHCRight():
+  BDSMagnetOuterFactoryLHC(false)
 {
-  BDSMagnetOuterFactoryLHC::BDSMagnetOuterFactoryLHC();
-  isLeftOffset   = false;
 }
 
 BDSMagnetOuterFactoryLHCRight::~BDSMagnetOuterFactoryLHCRight()
