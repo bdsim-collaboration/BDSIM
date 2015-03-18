@@ -5,6 +5,7 @@
 #include "BDSBeamPipeFactoryCircular.hh"
 //#include "BDSBeamPipeFactoryElliptical.hh"
 #include "BDSBeamPipeFactoryRectangular.hh"
+#include "BDSBeamPipeFactoryLHC.hh"
 #include "BDSBeamPipeType.hh"
 #include "globals.hh"                        // geant4 globals / types
 
@@ -42,6 +43,12 @@ BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeTyp
     G4cout << __METHOD_NAME__ << " rectangular beampipe factory" << G4endl;
 #endif
     return BDSBeamPipeFactoryRectangular::Instance();
+    break;
+  case BDSBeamPipeType::lhc:
+#ifdef BDSDEBUG
+    G4cout << __METHOD_NAME__ << " lhc beampipe factory" << G4endl;
+#endif
+    return BDSBeamPipeFactoryLHC::Instance();
     break;
   default:
 #ifdef BDSDEBUG
