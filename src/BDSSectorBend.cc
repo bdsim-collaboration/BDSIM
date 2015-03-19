@@ -171,6 +171,17 @@ void BDSSectorBend::BuildBeampipe()
   BeamPipeCommonTasks(); //from bdsmultipole;
 }
 
+void BDSSectorBend::BuildOuterVolume()
+{
+  //need to make a shorter outer volume for rbend geometry
+  //let's cheat and use the base class method by fiddling the
+  //component length then setting it back - reduces code duplication
+  G4double originalLength = itsLength;
+  itsLength = itsChordLength;
+  BDSMultipole::BuildOuterVolume();
+  itsLength = originalLength;
+}
+
 G4double BDSSectorBend::GetChordLength()
 {
   return itsChordLength;

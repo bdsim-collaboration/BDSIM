@@ -1,6 +1,8 @@
 #include "BDSMagnetOuterFactoryLHC.hh"
 
 #include "BDSBeamPipe.hh"
+#include "BDSBeamPipeType.hh"
+#include "BDSBeamPipeFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
@@ -13,6 +15,7 @@
 #include "G4Colour.hh"
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
+#include "G4UnionSolid.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
@@ -21,7 +24,7 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
-
+#include "G4IntersectionSolid.hh"
 #include <cmath>
 #include <utility>                         // for std::pair
 #include <algorithm>                       // for std::max
@@ -38,17 +41,16 @@ BDSMagnetOuterFactoryLHC::BDSMagnetOuterFactoryLHC()
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
-									 G4double      length,
-									 BDSBeamPipe*  beamPipe,
-									 G4double      boxSize,
-									 G4double      angle,
-									 G4Material*   outerMaterial)
+								 G4double      length,
+								 BDSBeamPipe*  beamPipe,
+								 G4double      boxSize,
+								 G4double      angle,
+								 G4Material*   outerMaterial)
+
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // test input parameters - set global options as default if not specified
-  TestInputParameters(beamPipe,boxSize,outerMaterial);
+
+  G4cout << "Length = " << 0.5*length/CLHEP::m << G4endl;
+  G4cout << "Length = " << beamPipe->GetExtentZ().second/CLHEP::m << G4endl;
 
   G4int orientation   = BDS::CalculateOrientation(angle);
   G4double zcomponent = cos(fabs(angle*0.5)); // calculate components of normal vectors (in the end mag(normal) = 1)
@@ -105,7 +107,403 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 					      containerSolidCylinder,
 					      beamPipe->GetContainerSubtractionSolid());
     }
-  return CommonFinalConstructor(name,length,boxSize,outerMaterial,BDSMagnetColours::Instance()->GetMagnetColour("sectorbend"));
+
+
+  //////////////////////////////////////// Superconducting coils //////////////////////////////////////////
+
+  G4double BPseparation = 2*97.26*CLHEP::mm;
+  G4ThreeVector positionBeamPipeCoil1 = G4ThreeVector(0.,0.,0.); 
+  G4ThreeVector positionBeamPipeCoil2 = G4ThreeVector(2*97.26*CLHEP::mm,0.,0.); 
+
+  G4double coilAngle = CLHEP::pi*3./4. * CLHEP::rad;
+  G4double CoilOuterRadius = beamPipe->GetContainerRadius() + 2*lengthSafety + 118.6/2.0 * CLHEP::mm - 56.0/2.0*CLHEP::mm ;
+
+  G4ThreeVector inputfaceCoil  = G4ThreeVector(-orientation*xcomponent, 0.0, -1.0*zcomponent); //-1 as pointing down in z for normal
+  G4ThreeVector outputfaceCoil = G4ThreeVector(-orientation*xcomponent, 0.0, zcomponent);   // no output face angle
+
+  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  G4LogicalVolume *containerLV = new G4LogicalVolume(containerSolid,
+						     emptyMaterial,
+						     name + "_container_lv");
+
+  G4VSolid *coil1 = new G4CutTubs(name+"_coil_tmp_1",
+				 beamPipe->GetContainerRadius() + 2*lengthSafety,
+				 CoilOuterRadius,          
+				 length*0.5-2*lengthSafety,             // length
+				 -coilAngle/2.0,
+				 coilAngle,
+				 inputfaceCoil,                   // input face normal
+				 outputfaceCoil);                 // output face normal
+
+
+
+  G4LogicalVolume *CoilLV1 =  new G4LogicalVolume(coil1,
+						 //BDSMaterials::Instance()->GetMaterial("NbTi.1"),
+						 BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+						 name+"_coil");
+
+
+  G4VSolid *coil2 = new G4CutTubs(name+"_coil_tmp_1",
+				  beamPipe->GetContainerRadius() + 2*lengthSafety,
+				  CoilOuterRadius,          
+				  length*0.5-2*lengthSafety,             // length
+				  CLHEP::pi-coilAngle/2.0,    
+				  coilAngle,
+				  inputfaceCoil,                   // input face normal
+				  outputfaceCoil);                 // output face normal
+
+  G4LogicalVolume *CoilLV2 =  new G4LogicalVolume(coil2,
+						 //BDSMaterials::Instance()->GetMaterial("NbTi.1"),
+						 BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+						 name+"_coil");
+
+
+  G4VSolid *coil3 = new G4CutTubs(name+"_coil_tmp_1",
+				 beamPipe->GetContainerRadius() + 2*lengthSafety,
+				 CoilOuterRadius,          
+				 length*0.5+BPseparation*tan(fabs(angle*0.5))-2*lengthSafety,             // length
+				 -coilAngle/2.0,
+				 coilAngle,
+				 inputfaceCoil,                   // input face normal
+				 outputfaceCoil);                 // output face normal
+
+
+  G4LogicalVolume *CoilLV3 =  new G4LogicalVolume(coil3,
+						 //BDSMaterials::Instance()->GetMaterial("NbTi.1"),
+						 BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+						 name+"_coil");
+
+  G4VSolid *coil4 = new G4CutTubs(name+"_coil_tmp_1",
+				  beamPipe->GetContainerRadius() + 2*lengthSafety,
+				  CoilOuterRadius,          
+				  length*0.5+BPseparation*tan(fabs(angle*0.5))-2*lengthSafety,             // length
+				  CLHEP::pi-coilAngle/2.0,    
+				  coilAngle,
+				  inputfaceCoil,                   // input face normal
+				  outputfaceCoil);                 // output face normal
+
+  G4LogicalVolume *CoilLV4 =  new G4LogicalVolume(coil4,
+						 //BDSMaterials::Instance()->GetMaterial("NbTi.1"),
+						 BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+						 name+"_coil");
+
+
+  new G4PVPlacement(0,                 // rotation
+		    positionBeamPipeCoil1,                      // at (0,0,0)
+		    CoilLV1,  // its logical volume
+		    name+"_solid_PV1",       // its name
+		    containerLV, // its mother  volume
+		    false,                  // no boolean operation
+		    0, 
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());   
+
+  
+  new G4PVPlacement(0,               // rotation
+		    positionBeamPipeCoil1,                      // at (0,0,0)
+		    CoilLV2,  // its logical volume
+		    name+"_solid_PV2",       // its name
+		    containerLV, // its mother  volume
+		    false,                  // no boolean operation
+		    0, 
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());  
+
+  
+  new G4PVPlacement(0,                 // rotation
+		    positionBeamPipeCoil2,                      // at (0,0,0)
+		    CoilLV3,  // its logical volume
+		    name+"_solid_PV3",       // its name
+		    containerLV, // its mother  volume
+		    false,                  // no boolean operation
+		    0, 
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());   
+  
+  new G4PVPlacement(0,               // rotation
+		    positionBeamPipeCoil2,                      // at (0,0,0)
+		    CoilLV4,  // its logical volume
+		    name+"_solid_PV4",       // its name
+		    containerLV, // its mother  volume
+		    false,                  // no boolean operation
+		    0, 
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps()); 
+
+  
+  // color-coding for the pole
+  G4VisAttributes* VisAtt = 
+    new G4VisAttributes(G4Colour(0.9, 0.75, 0.)); //red
+  VisAtt->SetForceSolid(true);
+  CoilLV1->SetVisAttributes(VisAtt);
+  CoilLV2->SetVisAttributes(VisAtt);
+  CoilLV3->SetVisAttributes(VisAtt);
+  CoilLV4->SetVisAttributes(VisAtt);
+  
+  ////////////////////////////////////// non-magnetic collars ///////////////////////////////////////////////////////
+  
+  G4double collarOuterR = 101.18 * CLHEP::mm;
+  
+  G4VSolid *collar_up1 = new G4CutTubs(name+"_coilar_tmp_up",
+				      beamPipe->GetContainerRadius() + 2*lengthSafety,
+				      CoilOuterRadius,
+				      length*0.5-2*lengthSafety, 
+				      coilAngle/2.,
+				      (CLHEP::pi*CLHEP::rad - coilAngle),
+				      inputfaceCoil,                   // input face normal
+				      outputfaceCoil);                 // output face normal
+  
+  G4VSolid *collar_down1 = new G4CutTubs(name+"_coilar_tmp_down",
+				     beamPipe->GetContainerRadius() + 2*lengthSafety,
+				     CoilOuterRadius,
+				     length*0.5-2*lengthSafety,
+				     CLHEP::pi * CLHEP::rad + coilAngle/2.,
+				     (CLHEP::pi * CLHEP::rad - coilAngle),
+				     inputfaceCoil,                   // input face normal
+				     outputfaceCoil);                 // output face normal
+
+  G4VSolid *collar_up2 = new G4CutTubs(name+"_coilar_tmp_up",
+				      beamPipe->GetContainerRadius() + 2*lengthSafety,
+				      CoilOuterRadius,
+				      length*0.5+BPseparation*tan(fabs(angle*0.5))-2*lengthSafety, 
+				      coilAngle/2.,
+				      (CLHEP::pi*CLHEP::rad - coilAngle),
+				      inputfaceCoil,                   // input face normal
+				      outputfaceCoil);                 // output face normal
+  
+  G4VSolid *collar_down2 = new G4CutTubs(name+"_coilar_tmp_down",
+				     beamPipe->GetContainerRadius() + 2*lengthSafety,
+				     CoilOuterRadius,
+				     length*0.5+BPseparation*tan(fabs(angle*0.5))-2*lengthSafety,
+				     CLHEP::pi * CLHEP::rad + coilAngle/2.,
+				     (CLHEP::pi * CLHEP::rad - coilAngle),
+				     inputfaceCoil,                   // input face normal
+				     outputfaceCoil);                 // output face normal
+
+  G4VSolid *collar01 = new G4UnionSolid(name+"_solid_tmp_0",
+					   collar_up1,
+					   collar_down1);
+
+  G4VSolid *collar02 = new G4UnionSolid(name+"_solid_tmp_0",
+					   collar_up2,
+					   collar_down2);
+  
+  G4VSolid *collarOuter1 = new G4CutTubs(name+"collar_volume",
+					 CoilOuterRadius,
+					 collarOuterR,          // outer R
+					 length*0.5-2*lengthSafety,             // length
+					 0*0.5-2*lengthSafety,                  // starting p
+					 CLHEP::twopi * CLHEP::rad,
+					 inputfaceCoil,                   // input face normal
+					 outputfaceCoil);                 // output face normal
+
+  G4VSolid *collarOuter2 = new G4CutTubs(name+"collar_volume",
+					 CoilOuterRadius,
+					 collarOuterR,          // outer R
+					 length*0.5+BPseparation*tan(fabs(angle*0.5))-2*lengthSafety,             // length
+					 0*0.5-2*lengthSafety,                  // starting p
+					 CLHEP::twopi * CLHEP::rad,
+					 inputfaceCoil,                   // input face normal
+					 outputfaceCoil);                 // output face normal
+    
+  G4VSolid *collar1 = new G4UnionSolid(name+"_solid_tmp_0",
+					   collar01,
+					   collarOuter1);
+
+  G4LogicalVolume *collarLV1 =  new G4LogicalVolume(collar1,
+						   BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+						   name+"_collar");
+  
+  G4VSolid *collar2 = new G4UnionSolid(name+"_solid_tmp_0",
+					   collar02,
+					   collarOuter2);
+
+  G4LogicalVolume *collarLV2 =  new G4LogicalVolume(collar2,
+						   BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+						   name+"_collar");
+
+  new G4PVPlacement(0,                 // rotation
+		    positionBeamPipeCoil1,                      // at (0,0,0)
+		    collarLV1,  // its logical volume
+		    name+"_collar1",       // its name
+		    containerLV, // its mother  volume
+		    false,                  // no boolean operation
+		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());   
+
+  new G4PVPlacement(0,                 // rotation
+		    positionBeamPipeCoil2,                      // at (0,0,0)
+		    collarLV2,  // its logical volume
+		    name+"_collar2",       // its name
+		    containerLV, // its mother  volume
+		    false,                  // no boolean operation
+		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());   
+
+  // color-coding for the pole
+  G4VisAttributes* VisAtt2 = new G4VisAttributes(G4Colour(0.9, 0.9, 0.9)); //
+  VisAtt2->SetForceSolid(true);
+  collarLV1->SetVisAttributes(VisAtt2);
+  collarLV2->SetVisAttributes(VisAtt2);
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  G4double posBP = 97.26*CLHEP::mm;
+
+  G4ThreeVector positionBeamPipe1 = G4ThreeVector(-posBP,0.,0.); 
+  G4ThreeVector positionBeamPipe2 = G4ThreeVector(posBP,0.,0.); 
+
+  G4VSolid *magTubsEnv1 = new G4CutTubs(name+"_solid_tmp_1",
+					0.,
+					boxSize*0.5,          // outer R
+					length*0.5+BPseparation*tan(fabs(angle*0.5))/2.0-2*lengthSafety,             // length
+					0,                  // starting phi
+					CLHEP::twopi * CLHEP::rad,
+					inputfaceCoil,                   // input face normal
+					outputfaceCoil);                 // output face normal
+  
+
+
+  G4VSolid *magTubsEnv2 = new G4SubtractionSolid(name+"_solid_env",
+						magTubsEnv1,
+						new G4CutTubs(name+"collar_volume",
+							      0,
+							      collarOuterR,          // outer R
+							      length,             // length
+							      0,                  // starting p
+							      CLHEP::twopi * CLHEP::rad,
+							      inputfaceCoil,                   // input face normal
+							      outputfaceCoil),                 // output face normal,
+						 0,
+						 positionBeamPipe1						
+						 ); 
+
+  G4VSolid *magTubs = new G4SubtractionSolid(name+"_solid_env",
+					     magTubsEnv2,
+					     new G4CutTubs(name+"collar_volume",
+							   0,
+							   collarOuterR,          // outer R
+							   length,             // length
+							   0,                  // starting p
+							   CLHEP::twopi * CLHEP::rad,
+							   inputfaceCoil,                   // input face normal
+							   outputfaceCoil),                 // output face normal
+					     0,
+					     positionBeamPipe2						
+					     ); 
+
+
+  G4LogicalVolume *yokeLV = new G4LogicalVolume(magTubs,
+					      BDSMaterials::Instance()->GetMaterial("Iron"),
+					      name+"_outer");
+
+  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+		    positionBeamPipe2,             // position
+		    yokeLV,                       // lv to be placed
+		    name + "_outer_LHC_pv",           // name
+		    containerLV,                  // mother lv to be place in
+		    false,                        // no boolean operation
+		    0,                            // copy number
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
+		    );
+
+  G4VisAttributes* VisAttOuter = new G4VisAttributes(G4Colour(0.9, 0.5, 1.0));
+  VisAttOuter->SetForceSolid(true);
+  yokeLV->SetVisAttributes(VisAttOuter);
+
+  G4String defaultMaterialName = BDSGlobalConstants::Instance()->GetBeamPipeMaterialName();
+  G4Material* beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
+
+  G4Material* vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
+  
+  BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(BDSBeamPipeType::lhc,
+										    name,
+										    length*0.5+BPseparation*tan(fabs(angle*0.5))-2*lengthSafety,
+										    -angle*0.5,
+										    -angle*0.5,
+										    beamPipe->GetContainerRadius() + 2*lengthSafety,
+										    beamPipe->GetContainerRadius() + 2*lengthSafety,
+										    beamPipe->GetContainerRadius() + 2*lengthSafety,
+										    0,
+										    vacuumMaterial,
+										    0.1*CLHEP::cm,
+										    beamPipeMaterial);
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  // test input parameters - set global options as default if not specified
+  TestInputParameters(beamPipe,boxSize,outerMaterial);
+  
+
+  // build the logical volumes
+  G4LogicalVolume* outerLV   = new G4LogicalVolume(outerSolid,
+						   outerMaterial,
+						   name + "_outer_lv");
+
+
+  //G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
+  //						     emptyMaterial,
+  //						     name + "_container_lv");
+  
+  // VISUAL ATTRIBUTES
+  // set visual attributes
+  // outer
+  G4VisAttributes* outerVisAttr = new G4VisAttributes(*(BDSMagnetColours::Instance()->GetMagnetColour("sectorbend")));
+  outerVisAttr->SetVisibility(true);
+  outerVisAttr->SetForceSolid(true);
+  outerLV->SetVisAttributes(outerVisAttr);
+  // container
+#ifdef BDSDEBUG
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+#else
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+#endif
+
+  // SENSITIVITY
+  // make the outer sensitive if required (attachd Sensitive Detector Class)
+  outerLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
+
+  // USER LIMITS
+  // set user limits based on bdsim user specified parameters
+
+#ifndef NOUSERLIMITS
+  G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
+  G4double maxStepFactor = 0.5; // fraction of length for maximum step size
+  outerUserLimits->SetMaxAllowedStep( length * maxStepFactor );
+  outerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  //attach cuts to volumes
+  outerLV->SetUserLimits(outerUserLimits);
+  containerLV->SetUserLimits(outerUserLimits);
+#endif
+
+  // PLACEMENT
+  // place the components inside the container
+  // note we don't need the pointer for anything - it's registered upon construction with g4
+  /*
+  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+		    (G4ThreeVector)0,             // position
+		    outerLV,                      // lv to be placed
+		    name + "_outer_pv",           // name
+		    containerLV,                  // mother lv to be place in
+		    false,                        // no boolean operation
+		    0,                            // copy number
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
+		    );
+  */
+  // record extents
+  // container radius is the same for all methods as all cylindrical
+  G4double containerRadius = boxSize + lengthSafety;
+  std::pair<double,double> extX = std::make_pair(-containerRadius,containerRadius);
+  std::pair<double,double> extY = std::make_pair(-containerRadius,containerRadius);
+  std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
+  
+  // build the BDSGeometryComponent instance and return it
+  BDSGeometryComponent* outer = new BDSGeometryComponent(containerSolid,
+							 containerLV,
+							 extX, extY, extZ);
+  // REGISTER all lvs
+  outer->RegisterLogicalVolume(outerLV); //using geometry component base class method
+  outer->RegisterLogicalVolume(containerLV);
+  
+  return outer;
+
+  //return CommonFinalConstructor(name,length,boxSize,outerMaterial,);
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      name,
@@ -333,8 +731,8 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CommonFinalConstructor(G4String 
 
   G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
   G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
-						     emptyMaterial,
-						     name + "_container_lv");
+  						     emptyMaterial,
+  						     name + "_container_lv");
   
   // VISUAL ATTRIBUTES
   // set visual attributes
@@ -371,6 +769,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CommonFinalConstructor(G4String 
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for anything - it's registered upon construction with g4
+  /*
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    (G4ThreeVector)0,             // position
 		    outerLV,                      // lv to be placed
@@ -380,7 +779,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CommonFinalConstructor(G4String 
 		    0,                            // copy number
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
 		    );
-
+  */
   // record extents
   // container radius is the same for all methods as all cylindrical
   G4double containerRadius = boxSize + lengthSafety;

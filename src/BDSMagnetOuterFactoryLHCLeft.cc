@@ -12,9 +12,9 @@ BDSMagnetOuterFactoryLHCLeft* BDSMagnetOuterFactoryLHCLeft::Instance()
   return _instance;
 }
 
-BDSMagnetOuterFactoryLHCLeft::BDSMagnetOuterFactoryLHCLeft()
+BDSMagnetOuterFactoryLHCLeft::BDSMagnetOuterFactoryLHCLeft():
+  BDSMagnetOuterFactoryLHC()
 {
-  BDSMagnetOuterFactoryLHC::BDSMagnetOuterFactoryLHC();
   isLeftOffset   = true;
 }
 
