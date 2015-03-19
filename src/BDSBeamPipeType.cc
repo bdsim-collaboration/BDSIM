@@ -100,8 +100,13 @@ void BDS::InfoOKForLHC(G4double& beamPipeRadius, G4double& aper1, G4double& aper
     exit(1);
   }
 
-  if (aper3 > aper1) {
+  if ((aper3 > aper1) and (aper2 < aper3)) {
     G4cerr << __METHOD_NAME__ << "WARNING - \"aper3\" > \"aper1\" (or \"beamPipeRadius\") for lhc aperture model - will not produce desired shape" << G4endl;
+    exit(1);
+  }
+
+  if ((aper3 > aper2) and (aper1 < aper3)) {
+    G4cerr << __METHOD_NAME__ << "WARNING - \"aper3\" > \"aper2\" (or \"beamPipeRadius\") for lhc aperture model - will not produce desired shape" << G4endl;
     exit(1);
   }
 }
