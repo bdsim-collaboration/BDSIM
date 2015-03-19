@@ -49,6 +49,24 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 
 {
 
+  /// Mass to the Right or to the Left
+  
+  G4ThreeVector dipolePosition;
+  G4double massShift;
+
+  if (isLeftOffset)
+    {
+      dipolePosition = G4ThreeVector(97.26*CLHEP::mm,0.,0.);
+      massShift = 97.26*CLHEP::mm;
+      G4cout << "dipole to the Right" << G4endl;
+    }
+  else
+    {
+      dipolePosition = G4ThreeVector(-97.26*CLHEP::mm,0.,0.);
+      massShift = -97.26*CLHEP::mm;
+      G4cout << "dipole to the Left" << G4endl;
+    }
+  
   G4cout << "Length = " << 0.5*length/CLHEP::m << G4endl;
   G4cout << "Length = " << beamPipe->GetExtentZ().second/CLHEP::m << G4endl;
 
@@ -113,7 +131,8 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 
   G4double BPseparation = 2*97.26*CLHEP::mm;
   G4ThreeVector positionBeamPipeCoil1 = G4ThreeVector(0.,0.,0.); 
-  G4ThreeVector positionBeamPipeCoil2 = G4ThreeVector(2*97.26*CLHEP::mm,0.,0.); 
+  //G4ThreeVector positionBeamPipeCoil2 = G4ThreeVector(2*97.26*CLHEP::mm,0.,0.); 
+  G4ThreeVector positionBeamPipeCoil2 = G4ThreeVector(2*massShift,0.,0.); 
 
   G4double coilAngle = CLHEP::pi*3./4. * CLHEP::rad;
   G4double CoilOuterRadius = beamPipe->GetContainerRadius() + 2*lengthSafety + 118.6/2.0 * CLHEP::mm - 56.0/2.0*CLHEP::mm ;
@@ -138,8 +157,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 
 
   G4LogicalVolume *CoilLV1 =  new G4LogicalVolume(coil1,
-						 //BDSMaterials::Instance()->GetMaterial("NbTi.1"),
-						 BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+						 BDSMaterials::Instance()->GetMaterial("NbTi.1"),
 						 name+"_coil");
 
 
@@ -153,8 +171,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 				  outputfaceCoil);                 // output face normal
 
   G4LogicalVolume *CoilLV2 =  new G4LogicalVolume(coil2,
-						 //BDSMaterials::Instance()->GetMaterial("NbTi.1"),
-						 BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+						 BDSMaterials::Instance()->GetMaterial("NbTi.1"),
 						 name+"_coil");
 
 
@@ -169,8 +186,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 
 
   G4LogicalVolume *CoilLV3 =  new G4LogicalVolume(coil3,
-						 //BDSMaterials::Instance()->GetMaterial("NbTi.1"),
-						 BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+						 BDSMaterials::Instance()->GetMaterial("NbTi.1"),
 						 name+"_coil");
 
   G4VSolid *coil4 = new G4CutTubs(name+"_coil_tmp_1",
@@ -183,8 +199,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 				  outputfaceCoil);                 // output face normal
 
   G4LogicalVolume *CoilLV4 =  new G4LogicalVolume(coil4,
-						 //BDSMaterials::Instance()->GetMaterial("NbTi.1"),
-						 BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+						 BDSMaterials::Instance()->GetMaterial("NbTi.1"),
 						 name+"_coil");
 
 
@@ -229,7 +244,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   
   // color-coding for the pole
   G4VisAttributes* VisAtt = 
-    new G4VisAttributes(G4Colour(0.9, 0.75, 0.)); //red
+    new G4VisAttributes(G4Colour(0.9, 0.75, 0.));
   VisAtt->SetForceSolid(true);
   CoilLV1->SetVisAttributes(VisAtt);
   CoilLV2->SetVisAttributes(VisAtt);
@@ -242,7 +257,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   
   G4VSolid *collar_up1 = new G4CutTubs(name+"_coilar_tmp_up",
 				      beamPipe->GetContainerRadius() + 2*lengthSafety,
-				      CoilOuterRadius,
+				      CoilOuterRadius-2*lengthSafety,
 				      length*0.5-2*lengthSafety, 
 				      coilAngle/2.,
 				      (CLHEP::pi*CLHEP::rad - coilAngle),
@@ -251,7 +266,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   
   G4VSolid *collar_down1 = new G4CutTubs(name+"_coilar_tmp_down",
 				     beamPipe->GetContainerRadius() + 2*lengthSafety,
-				     CoilOuterRadius,
+				     CoilOuterRadius-2*lengthSafety,
 				     length*0.5-2*lengthSafety,
 				     CLHEP::pi * CLHEP::rad + coilAngle/2.,
 				     (CLHEP::pi * CLHEP::rad - coilAngle),
@@ -260,7 +275,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 
   G4VSolid *collar_up2 = new G4CutTubs(name+"_coilar_tmp_up",
 				      beamPipe->GetContainerRadius() + 2*lengthSafety,
-				      CoilOuterRadius,
+				      CoilOuterRadius-2*lengthSafety,
 				      length*0.5+BPseparation*tan(fabs(angle*0.5))-2*lengthSafety, 
 				      coilAngle/2.,
 				      (CLHEP::pi*CLHEP::rad - coilAngle),
@@ -269,7 +284,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   
   G4VSolid *collar_down2 = new G4CutTubs(name+"_coilar_tmp_down",
 				     beamPipe->GetContainerRadius() + 2*lengthSafety,
-				     CoilOuterRadius,
+				     CoilOuterRadius-2*lengthSafety,
 				     length*0.5+BPseparation*tan(fabs(angle*0.5))-2*lengthSafety,
 				     CLHEP::pi * CLHEP::rad + coilAngle/2.,
 				     (CLHEP::pi * CLHEP::rad - coilAngle),
@@ -285,8 +300,8 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 					   collar_down2);
   
   G4VSolid *collarOuter1 = new G4CutTubs(name+"collar_volume",
-					 CoilOuterRadius,
-					 collarOuterR,          // outer R
+					 CoilOuterRadius+2*lengthSafety,
+					 collarOuterR-2*lengthSafety,          // outer R
 					 length*0.5-2*lengthSafety,             // length
 					 0*0.5-2*lengthSafety,                  // starting p
 					 CLHEP::twopi * CLHEP::rad,
@@ -294,8 +309,8 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 					 outputfaceCoil);                 // output face normal
 
   G4VSolid *collarOuter2 = new G4CutTubs(name+"collar_volume",
-					 CoilOuterRadius,
-					 collarOuterR,          // outer R
+					 CoilOuterRadius+2*lengthSafety,
+					 collarOuterR-2*lengthSafety,          // outer R
 					 length*0.5+BPseparation*tan(fabs(angle*0.5))-2*lengthSafety,             // length
 					 0*0.5-2*lengthSafety,                  // starting p
 					 CLHEP::twopi * CLHEP::rad,
@@ -342,7 +357,8 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
-  G4double posBP = 97.26*CLHEP::mm;
+  //G4double posBP = 97.26*CLHEP::mm;
+  G4double posBP = massShift;
 
   G4ThreeVector positionBeamPipe1 = G4ThreeVector(-posBP,0.,0.); 
   G4ThreeVector positionBeamPipe2 = G4ThreeVector(posBP,0.,0.); 
@@ -362,7 +378,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 						magTubsEnv1,
 						new G4CutTubs(name+"collar_volume",
 							      0,
-							      collarOuterR,          // outer R
+							      collarOuterR+2*lengthSafety,          // outer R
 							      length,             // length
 							      0,                  // starting p
 							      CLHEP::twopi * CLHEP::rad,
@@ -376,7 +392,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 					     magTubsEnv2,
 					     new G4CutTubs(name+"collar_volume",
 							   0,
-							   collarOuterR,          // outer R
+							   collarOuterR+2*lengthSafety,          // outer R
 							   length,             // length
 							   0,                  // starting p
 							   CLHEP::twopi * CLHEP::rad,
@@ -401,9 +417,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
 		    );
 
-  G4VisAttributes* VisAttOuter = new G4VisAttributes(G4Colour(0.9, 0.5, 1.0));
-  VisAttOuter->SetForceSolid(true);
-  yokeLV->SetVisAttributes(VisAttOuter);
+  G4VisAttributes* LHCblue = new G4VisAttributes(G4Colour(0.0, 0.5, 1.0));
+  LHCblue->SetForceSolid(true);
+  yokeLV->SetVisAttributes(LHCblue);
 
   G4String defaultMaterialName = BDSGlobalConstants::Instance()->GetBeamPipeMaterialName();
   G4Material* beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
@@ -412,16 +428,33 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   
   BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(BDSBeamPipeType::lhc,
 										    name,
-										    length*0.5+BPseparation*tan(fabs(angle*0.5))-2*lengthSafety,
+										    2*(length*0.5+BPseparation*tan(fabs(angle*0.5))-2*lengthSafety),
 										    -angle*0.5,
 										    -angle*0.5,
-										    beamPipe->GetContainerRadius() + 2*lengthSafety,
-										    beamPipe->GetContainerRadius() + 2*lengthSafety,
-										    beamPipe->GetContainerRadius() + 2*lengthSafety,
+										    beamPipe->GetContainerRadius() - 2*lengthSafety - 0.1*CLHEP::cm,
+										    beamPipe->GetContainerRadius() - 2*lengthSafety - 0.1*CLHEP::cm,
+										    beamPipe->GetContainerRadius() - 2*lengthSafety - 0.1*CLHEP::cm,
 										    0,
 										    vacuumMaterial,
 										    0.1*CLHEP::cm,
 										    beamPipeMaterial);
+
+  G4LogicalVolume *secondBPLV = secondBP->GetContainerLogicalVolume();
+
+
+  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+		    2*positionBeamPipe2,             // position
+		    secondBPLV,                       // lv to be placed
+		    name + "_second_BP",           // name
+		    containerLV,                  // mother lv to be place in
+		    false,                        // no boolean operation
+		    0,                            // copy number
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
+		    );
+
+  //G4VisAttributes* VisAttOuterBP = new G4VisAttributes(G4Colour(1.0, 1.0, 1.0));
+  //VisAttOuterBP->SetForceSolid(true);
+  //secondBPLV->SetVisAttributes(VisAttOuterBP);
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
