@@ -3,7 +3,7 @@
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryCircular.hh"
-//#include "BDSBeamPipeFactoryElliptical.hh"
+#include "BDSBeamPipeFactoryElliptical.hh"
 #include "BDSBeamPipeFactoryRectangular.hh"
 #include "BDSBeamPipeFactoryLHC.hh"
 #include "BDSBeamPipeType.hh"
@@ -35,8 +35,7 @@ BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeTyp
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " elliptical beampipe factory" << G4endl;
 #endif
-    //return BDSBeamPipeFactoryElliptical::Instance();
-    return BDSBeamPipeFactoryCircular::Instance();
+    return BDSBeamPipeFactoryElliptical::Instance();
     break;
   case BDSBeamPipeType::rectangular:
 #ifdef BDSDEBUG

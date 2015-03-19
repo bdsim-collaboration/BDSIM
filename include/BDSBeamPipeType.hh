@@ -13,7 +13,7 @@
  */
 
 struct beampipetypes_def {
-  enum type { circular, elliptical, rectangular, lhc };
+  enum type { circular, rectangular, elliptical, lhc };
 };
 
 typedef BDSTypeSafeEnum<beampipetypes_def,int> BDSBeamPipeType;
@@ -28,6 +28,8 @@ namespace BDS {
 			 G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
   /// aperture info check for circular aperture
   void InfoOKForCircular(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
+  /// aperture info check for elliptical aperture
+  void InfoOKForElliptical(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
   /// aperture info check for rectangular aperture
   void InfoOKForRectangular(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
   /// aperture info check for lhc aperture

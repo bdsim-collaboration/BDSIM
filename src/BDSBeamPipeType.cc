@@ -9,8 +9,8 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType, G4bool globalC
 {
   std::map<G4String, BDSBeamPipeType> types;
   types["circular"]    = BDSBeamPipeType::circular;
+  types["elliptical"]  = BDSBeamPipeType::elliptical;
   types["rectangular"] = BDSBeamPipeType::rectangular;
-  //types["elliptical"]  = BDSBeamPipeType::circular; //TEMPORARY
   types["lhc"]         = BDSBeamPipeType::lhc;
   
   if (types.find(apertureType) == types.end())
@@ -38,10 +38,10 @@ void BDS::CheckApertureInfo(BDSBeamPipeType beamPipeTypeIn, G4double& beamPipeRa
 {
   if (beamPipeTypeIn == BDSBeamPipeType::circular)
     {BDS::InfoOKForCircular(beamPipeRadius,aper1,aper2,aper3,aper4);}
+  if (beamPipeTypeIn == BDSBeamPipeType::elliptical)
+    {BDS::InfoOKForElliptical(beamPipeRadius,aper1,aper2,aper3,aper4);}
   if (beamPipeTypeIn == BDSBeamPipeType::rectangular)
     {BDS::InfoOKForRectangular(beamPipeRadius,aper1,aper2,aper3,aper4);}
-  //if (beamPipeTypeIn == BDSBeamPIpeType::elliptical)
-  //  {BDS::InofOKForEllipticall(beamPipeRadius,aper1,aper2,aper3,aper4);}
   if (beamPipeTypeIn == BDSBeamPipeType::lhc)
     {BDS::InfoOKForLHC(beamPipeRadius,aper1,aper2,aper3,aper4);}
   else
@@ -62,6 +62,12 @@ void BDS::InfoOKForCircular(G4double& beamPipeRadius, G4double& aper1, G4double&
       // aper1 set but beampiperadius not - copy just in case
       beamPipeRadius = aper1;
     }
+}
+
+void BDS::InfoOKForElliptical(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
+{
+  // can actually use the same checks for rectangular as two parameter
+  BDS::InfoOKForRectangular(beamPipeRadius,aper1,aper2,aper3,aper4);
 }
 
 void BDS::InfoOKForRectangular(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
