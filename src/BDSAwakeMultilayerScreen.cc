@@ -8,7 +8,7 @@
 #include "BDSSampler.hh"
 
 BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double dgrain, G4double windowThickness, G4String windowMaterial):
-BDSMultilayerScreen(G4TwoVector(1*CLHEP::m,3*CLHEP::cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(thickness),  _dgrain(dgrain), _windowThickness(windowThickness),_windowMaterial(windowMaterial)
+BDSMultilayerScreen(G4TwoVector(1*CLHEP::m,8*CLHEP::cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(thickness),  _dgrain(dgrain), _windowThickness(windowThickness),_windowMaterial(windowMaterial)
 {
   _fillFactor=0.5;
   _layerThickness=_dgrain;
