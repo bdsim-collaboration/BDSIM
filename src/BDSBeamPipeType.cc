@@ -14,6 +14,7 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType, G4bool globalC
   types["rectangular"] = BDSBeamPipeType::rectangular;
   types["lhc"]         = BDSBeamPipeType::lhc;
   types["lhcdetailed"] = BDSBeamPipeType::lhcdetailed;
+  types["rectellipse"] = BDSBeamPipeType::rectellipse;
 
   G4String apertureTypeLower = G4String(apertureType); // copy if first
   apertureTypeLower.toLower();
@@ -49,6 +50,10 @@ void BDS::CheckApertureInfo(BDSBeamPipeType beamPipeTypeIn, G4double& beamPipeRa
     {BDS::InfoOKForRectangular(beamPipeRadius,aper1,aper2,aper3,aper4);}
   if (beamPipeTypeIn == BDSBeamPipeType::lhc)
     {BDS::InfoOKForLHC(beamPipeRadius,aper1,aper2,aper3,aper4);}
+  if (beamPipeTypeIn == BDSBeamPipeType::lhcdetailed)
+    {BDS::InfoOKForLHCDetailed(beamPipeRadius,aper1,aper2,aper3,aper4);}
+  if (beamPipeTypeIn == BDSBeamPipeType::rectellipse)
+    {BDS::InfoOKForRectEllipse(beamPipeRadius,aper1,aper2,aper3,aper4);}
   else
     {BDS::InfoOKForCircular(beamPipeRadius,aper1,aper2,aper3,aper4);}
 }
@@ -137,4 +142,25 @@ void BDS::InfoOKForLHCDetailed(G4double& beamPipeRadius, G4double& aper1, G4doub
 	     << " be too big to fit within \"aper3\" (must be < \"aper3\")" << G4endl;
       exit(1);
     }  
+}
+
+void BDS::InfoOKForRectEllipse(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
+{
+  // basic checks
+  BDS::InfoOKForCircular(beamPipeRadius,aper1,aper2,aper3,aper4);
+  /*
+  //treat rectangle as point coordinates.  If this point is inside ellipse,
+  //rectangle is too small -> error should just use elliptical aperture
+  G4double test = sqrt((aper1/aper3)*(aper1/aper3) + (aper2/aper4)*(aper2/aper4));
+  if (test < 1)
+    {
+      //rectangle too small
+      G4cerr << __METHOD_NAME__ << "WARNING - combination of \"aper1\" and \"aper2\" too small"
+	     << " rectangle is entirely inside ellipse - simply use elliptical aperture" << G4endl;
+      exit(1);
+    }
+  */
+  //check if ellipse is b
+  if ((aper1 > aper3) and (aper2 > aper4))
+    {;}
 }
