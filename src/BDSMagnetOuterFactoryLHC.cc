@@ -131,7 +131,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 
   G4double BPseparation = 2*97.26*CLHEP::mm;
   G4ThreeVector positionBeamPipeCoil1 = G4ThreeVector(0.,0.,0.); 
-  //G4ThreeVector positionBeamPipeCoil2 = G4ThreeVector(2*97.26*CLHEP::mm,0.,0.); 
   G4ThreeVector positionBeamPipeCoil2 = G4ThreeVector(2*massShift,0.,0.); 
 
   G4double coilAngle = CLHEP::pi*3./4. * CLHEP::rad;
@@ -452,10 +451,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
 		    );
 
-  //G4VisAttributes* VisAttOuterBP = new G4VisAttributes(G4Colour(1.0, 1.0, 1.0));
-  //VisAttOuterBP->SetForceSolid(true);
-  //secondBPLV->SetVisAttributes(VisAttOuterBP);
-
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -468,11 +463,11 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 						   outerMaterial,
 						   name + "_outer_lv");
 
-
-  //G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
-  //						     emptyMaterial,
-  //						     name + "_container_lv");
-  
+  /*
+  G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
+  						     emptyMaterial,
+  						     name + "_container_lv");
+  */
   // VISUAL ATTRIBUTES
   // set visual attributes
   // outer
