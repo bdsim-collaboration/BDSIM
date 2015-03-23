@@ -29,9 +29,6 @@
 #include <utility>                         // for std::pair
 #include <algorithm>                       // for std::max
 
-// NOTE HECTOR this is just copied from BDSMagnetOuterFactoryCylindrical.cc just now
-// but you can edit each function as you wish
-// functions should base their offset using the member G4bool isLeftOffset
 
 BDSMagnetOuterFactoryLHC::BDSMagnetOuterFactoryLHC(G4bool isLeftOffsetIn):
   isLeftOffset(isLeftOffsetIn)
@@ -49,28 +46,36 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 								 G4Material*   outerMaterial)
 
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
 
-  /// Mass to the Right or to the Left
+  // test input parameters - set global options as default if not specified
+  TestInputParameters(beamPipe,boxSize,outerMaterial);
   
+  /// Mass to the Right or to the Left
   G4ThreeVector dipolePosition;
-  G4double massShift;
+  G4double      massShift = 97.26*CLHEP::mm;
 
   if (isLeftOffset)
     {
-      dipolePosition = G4ThreeVector(97.26*CLHEP::mm,0.,0.);
-      massShift = 97.26*CLHEP::mm;
-      G4cout << "dipole to the Right" << G4endl;
+      dipolePosition = G4ThreeVector(massShift,0.,0.);
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "dipole to the Right" << G4endl;
+#endif
     }
   else
     {
-      dipolePosition = G4ThreeVector(-97.26*CLHEP::mm,0.,0.);
-      massShift = -97.26*CLHEP::mm;
-      G4cout << "dipole to the Left" << G4endl;
+      dipolePosition = G4ThreeVector(-massShift,0.,0.);
+      massShift *= -1;
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "dipole to the Left" << G4endl;
+#endif
     }
-  
+  /*
   G4cout << "Length = " << 0.5*length/CLHEP::m << G4endl;
   G4cout << "Length = " << beamPipe->GetExtentZ().second/CLHEP::m << G4endl;
-
+  */
   G4int orientation   = BDS::CalculateOrientation(angle);
   G4double zcomponent = cos(fabs(angle*0.5)); // calculate components of normal vectors (in the end mag(normal) = 1)
   G4double xcomponent = sin(fabs(angle*0.5)); // note full angle here as it's the exit angle
@@ -127,9 +132,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 					      beamPipe->GetContainerSubtractionSolid());
     }
 
-
-  //////////////////////////////////////// Superconducting coils //////////////////////////////////////////
-
+  // Superconducting coils
   G4double BPseparation = 2*97.26*CLHEP::mm;
   G4ThreeVector positionBeamPipeCoil1 = G4ThreeVector(0.,0.,0.); 
   G4ThreeVector positionBeamPipeCoil2 = G4ThreeVector(2*massShift,0.,0.); 
@@ -153,8 +156,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 				 coilAngle,
 				 inputfaceCoil,                   // input face normal
 				 outputfaceCoil);                 // output face normal
-
-
 
   G4LogicalVolume *CoilLV1 =  new G4LogicalVolume(coil1,
 						 BDSMaterials::Instance()->GetMaterial("NbTi.1"),
@@ -251,8 +252,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   CoilLV3->SetVisAttributes(VisAtt);
   CoilLV4->SetVisAttributes(VisAtt);
   
-  ////////////////////////////////////// non-magnetic collars ///////////////////////////////////////////////////////
-  
+  // non-magnetic collars
   G4double collarOuterR = 101.18 * CLHEP::mm;
   
   G4VSolid *collar_up1 = new G4CutTubs(name+"_coilar_tmp_up",
@@ -354,8 +354,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   VisAtt2->SetForceSolid(true);
   collarLV1->SetVisAttributes(VisAtt2);
   collarLV2->SetVisAttributes(VisAtt2);
-
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
   //G4double posBP = 97.26*CLHEP::mm;
   G4double posBP = massShift;
@@ -371,8 +369,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 					CLHEP::twopi * CLHEP::rad,
 					inputfaceCoil,                   // input face normal
 					outputfaceCoil);                 // output face normal
-  
-
 
   G4VSolid *magTubsEnv2 = new G4SubtractionSolid(name+"_solid_env",
 						magTubsEnv1,
@@ -401,8 +397,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 					     0,
 					     positionBeamPipe2						
 					     ); 
-
-
+  
   G4LogicalVolume *yokeLV = new G4LogicalVolume(magTubs,
 					      BDSMaterials::Instance()->GetMaterial("Iron"),
 					      name+"_outer");
@@ -425,19 +420,20 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   G4Material* beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
 
   G4Material* vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
-  
-  BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(BDSBeamPipeType::lhc,
+
+  //use beampipe factories to create another beampipe (note no magnetic field for now...)
+  BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(BDSBeamPipeType::lhcdetailed,
 										    name,
 										    2*(length*0.5+BPseparation*tan(fabs(angle*0.5))-2*lengthSafety),
-										    -angle*0.5,
-										    -angle*0.5,
-										    beamPipe->GetContainerRadius() - 2*lengthSafety - 0.1*CLHEP::cm,
-										    beamPipe->GetContainerRadius() - 2*lengthSafety - 0.1*CLHEP::cm,
-										    beamPipe->GetContainerRadius() - 2*lengthSafety - 0.1*CLHEP::cm,
-										    0,
-										    vacuumMaterial,
-										    0.1*CLHEP::cm,
-										    beamPipeMaterial);
+										    -angle*0.5,        // entrane angle
+										    -angle*0.5,        // exit angle
+										    4.404*CLHEP::cm,   // aper1
+										    3.428*CLHEP::cm,   // aper2
+										    4.404*CLHEP::cm,   // aper3
+										    0,                 // aper4
+										    vacuumMaterial,    // vacuum material
+										    1*CLHEP::mm,       // beampipeThickness
+										    beamPipeMaterial); // beampipe material
 
   G4LogicalVolume *secondBPLV = secondBP->GetContainerLogicalVolume();
 
@@ -451,12 +447,8 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 		    0,                            // copy number
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
 		    );
+  
 
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // test input parameters - set global options as default if not specified
-  TestInputParameters(beamPipe,boxSize,outerMaterial);
   
 
   // build the logical volumes
