@@ -43,6 +43,7 @@ private:
   virtual void BuildBPFieldAndStepper();
   virtual void BuildMarkerLogicalVolume();
   virtual void BuildBeampipe();
+  virtual void BuildOuterVolume();
 };
 
 #endif
