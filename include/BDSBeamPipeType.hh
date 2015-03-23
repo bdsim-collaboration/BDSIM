@@ -12,7 +12,7 @@
  */
 
 struct beampipetypes_def {
-  enum type { circular, rectangular, elliptical, lhc };
+  enum type { circular, rectangular, elliptical, lhc, lhcdetailed, rectellipse};
 };
 
 typedef BDSTypeSafeEnum<beampipetypes_def,int> BDSBeamPipeType;
@@ -24,14 +24,24 @@ namespace BDS {
   /// for other aperture specific methods below
   void CheckApertureInfo(BDSBeamPipeType beamPipeTypeIn, G4double& beamPipeRadius,
 			 G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
+
   /// aperture info check for circular aperture
   void InfoOKForCircular(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
+
   /// aperture info check for elliptical aperture
   void InfoOKForElliptical(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
+
   /// aperture info check for rectangular aperture
   void InfoOKForRectangular(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
+
   /// aperture info check for lhc aperture
   void InfoOKForLHC(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
+
+  /// aperture info check for lhc detailed aperture
+  void InfoOKForLHCDetailed(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
+
+  /// aperture info check for rectellipse aperture
+  void InfoOKForRectEllipse(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
 }
 #endif
 
