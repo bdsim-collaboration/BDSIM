@@ -49,6 +49,8 @@ void BDS::CheckApertureInfo(BDSBeamPipeType beamPipeTypeIn, G4double& beamPipeRa
     {BDS::InfoOKForRectangular(beamPipeRadius,aper1,aper2,aper3,aper4);}
   if (beamPipeTypeIn == BDSBeamPipeType::lhc)
     {BDS::InfoOKForLHC(beamPipeRadius,aper1,aper2,aper3,aper4);}
+  if (beamPipeTypeIn == BDSBeamPipeType::lhcdetailed)
+    {BDS::InfoOKForLHCDetailed(beamPipeRadius,aper1,aper2,aper3,aper4);}
   else
     {BDS::InfoOKForCircular(beamPipeRadius,aper1,aper2,aper3,aper4);}
 }
@@ -126,9 +128,23 @@ void BDS::InfoOKForLHCDetailed(G4double& beamPipeRadius, G4double& aper1, G4doub
 {
   BDS::InfoOKForLHC(beamPipeRadius,aper1,aper2,aper3,aper4);
 
-  G4double coolingPipeFullWidth = BDSBeamPipeFactoryLHCDetailed::Instance()->GetFullWidthOfCoolingPipe();
-  G4double lengthSafety         = BDSGlobalConstants::Instance()->GetLengthSafety();
-  G4double height = aper2 + BDSGlobalConstants::Instance()->GetBeamPipeThickness() + coolingPipeFullWidth + 4*lengthSafety;
+  //initially used BDSGlobalConstants here, but if the user uses that as the default model, a
+  //circular dependency is created. The idea was not to duplicate hard coded parameters in
+  //the LHCDetailed factory but accessing this leads to a similarly circular dependency
+  //for now the checks are therefore more basic and the information is hard coded
+  //this should be revisited
+
+  /*
+  G4double coolingPipeFullWidth = 3*CLHEP::mm;
+  //BDSBeamPipeFactoryLHCDetailed::Instance()->GetFullWidthOfCoolingPipe();
+  G4double lengthSafety         = 1e-9;
+  //BDSGlobalConstants::Instance()->GetLengthSafety();
+
+  //now if pipe is rotated by 90 degrees (case when aper2 = aper3 and aper2 > aper1 we should put
+  //cooling pipes on the side
+  //complicated to test for - try taking larger of aper1 and aper2
+  G4double height               = std::max(aper2,aper1) + 2*CLHEP::mm + coolingPipeFullWidth + 4*lengthSafety;
+  // + BDSGlobalConstants::Instance()->GetBeamPipeThickness() + coolingPipeFullWidth + 4*lengthSafety;
 
   if (height > aper3)
     {
@@ -136,5 +152,6 @@ void BDS::InfoOKForLHCDetailed(G4double& beamPipeRadius, G4double& aper1, G4doub
       G4cerr << __METHOD_NAME__ << "WARNING - \"aper2\" + beampipeThickness + LHC detailed cooling tube will"
 	     << " be too big to fit within \"aper3\" (must be < \"aper3\")" << G4endl;
       exit(1);
-    }  
+    }
+  */
 }
