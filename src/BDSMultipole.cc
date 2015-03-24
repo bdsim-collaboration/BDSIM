@@ -286,12 +286,12 @@ void BDSMultipole::BuildOuterVolume()
 	{RotY=BDSGlobalConstants::Instance()->RotY90(); }
       
       // place outer volume
-      itsPhysiComp = new G4PVPlacement(RotY,                      // rotation
-				       *(outer->GetPlacementOffset()), // at normally (0,0,0)
+      itsPhysiComp = new G4PVPlacement(RotY,                        // rotation
+				       outer->GetPlacementOffset(), // at normally (0,0,0)
 				       outer->GetContainerLogicalVolume(), // its logical volume
-				       itsName+"_outer_phys",     // its name
-				       itsMarkerLogicalVolume,    // its mother  volume
-				       false,                     // no boolean operation
+				       itsName+"_outer_phys",       // its name
+				       itsMarkerLogicalVolume,      // its mother  volume
+				       false,                       // no boolean operation
 				       0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
 
       //update extents
