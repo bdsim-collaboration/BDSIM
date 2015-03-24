@@ -85,57 +85,50 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   if (beamPipe->ContainerIsCircular())
     {
       //circular beampipe so we can simply use its radius
-      outerSolid = new G4CutTubs(name + "_outer_solid",       // name
-				 beamPipe->GetContainerRadius() + 2*lengthSafety,  // inner radius
-				 boxSize*0.5,                 // outer radius
-				 length*0.5-2*lengthSafety,   // half length
-				 0,                           // rotation start angle
-				 CLHEP::twopi,                // rotation finish angle
-				 inputface,                   // input face normal
-				 outputface);                 // output face normal
-
       //container is similar but slightly wider and hollow (to allow placement of beampipe)
-      containerSolid = new G4CutTubs(name + "_contiainer_solid",  // name
-				     beamPipe->GetContainerRadius() + lengthSafety, // inner radius
-				     boxSize*0.5 + lengthSafety,  // outer radius
-				     length*0.5,                  // half length
-				     0,                           // rotation start angle
-				     CLHEP::twopi,                // rotation finish angle
-				     inputface,                   // input face normal
-				     outputface);                 // output face normal
+      //have to do subtraction as cuttubs aperture is central and the beampipe (active one) is not here
+      G4VSolid* containerSolidOuter = new G4CutTubs(name + "_contiainer_solid_outer",  // name
+						    0,                           // inner radius
+						    boxSize*0.5,                 // outer radius
+						    length*0.5,                  // half length
+						    0,                           // rotation start angle
+						    CLHEP::twopi,                // rotation finish angle
+						    inputface,                   // input face normal
+						    outputface);                 // output face normal
+      G4VSolid* containerSolidInner = new G4Tubs(name + "_contiainer_solid_inner",  // name
+						 0,                           // inner radius
+						 beamPipe->GetContainerRadius() + lengthSafety, // outer radius
+						 length,                      // full length for unambiguous subtraction
+						 0,                           // rotation start angle
+						 CLHEP::twopi);
+      containerSolid = new G4SubtractionSolid(name + "_container_solid",   // name
+					      containerSolidOuter,         // outer bit
+					      containerSolidInner,         // subtract this from it
+					      0,                           // rotation
+					      -dipolePosition);            // translation
     }
   else
     {
-      G4VSolid* outerSolidCylinder = new G4CutTubs(name + "_outer_solid_cylinder",  // name
-						   0,  // inner radius - for unambiguous subtraction
-						   boxSize*0.5,                 // outer radius
-						   length*0.5-2*lengthSafety,   // half length
-						   0,                           // rotation start angle
-						   CLHEP::twopi,                // rotation finish angle
-						   inputface,                   // input face normal
-						   outputface);                 // output face normal
-      outerSolid = new G4SubtractionSolid(name + "_outer_solid",
-					  outerSolidCylinder,
-					  beamPipe->GetContainerSubtractionSolid());
-
       //container is similar but slightly wider
-      G4VSolid* containerSolidCylinder = new G4CutTubs(name + "_container_solid_cylinder", // name
-						       0,  // inner radius - for unambiguous subtraction
-						       boxSize*0.5 + lengthSafety,  // outer radius
-						       length*0.5,                  // half length
-						       0,                           // rotation start angle
-						       CLHEP::twopi,                // rotation finish angle
-						       inputface,                   // input face normal
-						       outputface);                 // output face normal
+      G4VSolid* containerSolidOuter = new G4CutTubs(name + "_contiainer_solid_outer",  // name
+						    0,                           // inner radius
+						    boxSize*0.5,                 // outer radius
+						    length*0.5,                  // half length
+						    0,                           // rotation start angle
+						    CLHEP::twopi,                // rotation finish angle
+						    inputface,                   // input face normal
+						    outputface);                 // output face normal
       containerSolid = new G4SubtractionSolid(name + "_container_solid",
-					      containerSolidCylinder,
-					      beamPipe->GetContainerSubtractionSolid());
+					      containerSolidOuter,
+					      beamPipe->GetContainerSubtractionSolid(),
+					      0,                // rotation
+					      -dipolePosition); // translation
     }
 
   // Superconducting coils
   G4double BPseparation = 2*97.26*CLHEP::mm;
-  G4ThreeVector positionBeamPipeCoil1 = G4ThreeVector(0.,0.,0.); 
-  G4ThreeVector positionBeamPipeCoil2 = G4ThreeVector(2*massShift,0.,0.); 
+  G4ThreeVector positionBeamPipeCoil1 = -dipolePosition;
+  G4ThreeVector positionBeamPipeCoil2 = dipolePosition;
 
   G4double coilAngle = CLHEP::pi*3./4. * CLHEP::rad;
   G4double CoilOuterRadius = beamPipe->GetContainerRadius() + 2*lengthSafety + 118.6/2.0 * CLHEP::mm - 56.0/2.0*CLHEP::mm ;
@@ -200,44 +193,44 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 				  outputfaceCoil);                 // output face normal
 
   G4LogicalVolume *CoilLV4 =  new G4LogicalVolume(coil4,
-						 BDSMaterials::Instance()->GetMaterial("NbTi.1"),
-						 name+"_coil");
+						  BDSMaterials::Instance()->GetMaterial("NbTi.1"),
+						  name+"_coil");
 
 
-  new G4PVPlacement(0,                 // rotation
-		    positionBeamPipeCoil1,                      // at (0,0,0)
-		    CoilLV1,  // its logical volume
-		    name+"_solid_PV1",       // its name
-		    containerLV, // its mother  volume
+  new G4PVPlacement(0,                      // rotation
+		    positionBeamPipeCoil1,  // at (0,0,0)
+		    CoilLV1,                // its logical volume
+		    name+"_coil1_pv",       // its name
+		    containerLV,            // its mother  volume
 		    false,                  // no boolean operation
 		    0, 
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps());   
 
   
-  new G4PVPlacement(0,               // rotation
-		    positionBeamPipeCoil1,                      // at (0,0,0)
-		    CoilLV2,  // its logical volume
-		    name+"_solid_PV2",       // its name
-		    containerLV, // its mother  volume
+  new G4PVPlacement(0,                      // rotation
+		    positionBeamPipeCoil1,  // at (0,0,0)
+		    CoilLV2,                // its logical volume
+		    name+"_coil2_pv",       // its name
+		    containerLV,            // its mother  volume
 		    false,                  // no boolean operation
 		    0, 
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps());  
 
   
-  new G4PVPlacement(0,                 // rotation
-		    positionBeamPipeCoil2,                      // at (0,0,0)
-		    CoilLV3,  // its logical volume
-		    name+"_solid_PV3",       // its name
-		    containerLV, // its mother  volume
+  new G4PVPlacement(0,                      // rotation
+		    positionBeamPipeCoil2,  // at (0,0,0)
+		    CoilLV3,                // its logical volume
+		    name+"_coil3_pv",       // its name
+		    containerLV,            // its mother  volume
 		    false,                  // no boolean operation
 		    0, 
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps());   
   
-  new G4PVPlacement(0,               // rotation
-		    positionBeamPipeCoil2,                      // at (0,0,0)
-		    CoilLV4,  // its logical volume
-		    name+"_solid_PV4",       // its name
-		    containerLV, // its mother  volume
+  new G4PVPlacement(0,                      // rotation
+		    positionBeamPipeCoil2,  // at (0,0,0)
+		    CoilLV4,                // its logical volume
+		    name+"_coil4_pv",       // its name
+		    containerLV,            // its mother  volume
 		    false,                  // no boolean operation
 		    0, 
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps()); 
@@ -333,19 +326,19 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 						   BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
 						   name+"_collar");
 
-  new G4PVPlacement(0,                 // rotation
-		    positionBeamPipeCoil1,                      // at (0,0,0)
-		    collarLV1,  // its logical volume
-		    name+"_collar1",       // its name
-		    containerLV, // its mother  volume
+  new G4PVPlacement(0,                      // rotation
+		    positionBeamPipeCoil1,  // at (0,0,0)
+		    collarLV1,              // its logical volume
+		    name+"_collar1_pv",     // its name
+		    containerLV,            // its mother  volume
 		    false,                  // no boolean operation
 		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());   
 
-  new G4PVPlacement(0,                 // rotation
-		    positionBeamPipeCoil2,                      // at (0,0,0)
-		    collarLV2,  // its logical volume
-		    name+"_collar2",       // its name
-		    containerLV, // its mother  volume
+  new G4PVPlacement(0,                      // rotation
+		    positionBeamPipeCoil2,  // at (0,0,0)
+		    collarLV2,              // its logical volume
+		    name+"_collar2_pv",     // its name
+		    containerLV,            // its mother  volume
 		    false,                  // no boolean operation
 		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());   
 
@@ -403,9 +396,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 					      name+"_outer");
 
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    positionBeamPipe2,             // position
+		    G4ThreeVector(0,0,0),         // position
 		    yokeLV,                       // lv to be placed
-		    name + "_outer_LHC_pv",           // name
+		    name + "_yoke__pv",           // name
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
@@ -439,9 +432,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 
 
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    2*positionBeamPipe2,             // position
-		    secondBPLV,                       // lv to be placed
-		    name + "_second_BP",           // name
+		    dipolePosition,               // position
+		    secondBPLV,                   // lv to be placed
+		    name + "_second_beampipe_pv", // name
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
@@ -452,9 +445,10 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   
 
   // build the logical volumes
+  /*
   G4LogicalVolume* outerLV   = new G4LogicalVolume(outerSolid,
 						   outerMaterial,
-						   name + "_outer_lv");
+						   name + "_outer_lv");*/
 
   /*
   G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
@@ -467,7 +461,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   G4VisAttributes* outerVisAttr = new G4VisAttributes(*(BDSMagnetColours::Instance()->GetMagnetColour("sectorbend")));
   outerVisAttr->SetVisibility(true);
   outerVisAttr->SetForceSolid(true);
-  outerLV->SetVisAttributes(outerVisAttr);
+  //outerLV->SetVisAttributes(outerVisAttr);
   // container
 #ifdef BDSDEBUG
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
@@ -477,7 +471,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 
   // SENSITIVITY
   // make the outer sensitive if required (attachd Sensitive Detector Class)
-  outerLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
+  //outerLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
 
   // USER LIMITS
   // set user limits based on bdsim user specified parameters
@@ -489,24 +483,10 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   outerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   //attach cuts to volumes
-  outerLV->SetUserLimits(outerUserLimits);
+  //outerLV->SetUserLimits(outerUserLimits);
   containerLV->SetUserLimits(outerUserLimits);
 #endif
-
-  // PLACEMENT
-  // place the components inside the container
-  // note we don't need the pointer for anything - it's registered upon construction with g4
-  /*
-  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    (G4ThreeVector)0,             // position
-		    outerLV,                      // lv to be placed
-		    name + "_outer_pv",           // name
-		    containerLV,                  // mother lv to be place in
-		    false,                        // no boolean operation
-		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
-  */
+  
   // record extents
   // container radius is the same for all methods as all cylindrical
   G4double containerRadius = boxSize + lengthSafety;
@@ -517,9 +497,10 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   // build the BDSGeometryComponent instance and return it
   BDSGeometryComponent* outer = new BDSGeometryComponent(containerSolid,
 							 containerLV,
-							 extX, extY, extZ);
+							 extX, extY, extZ,
+							 dipolePosition);
   // REGISTER all lvs
-  outer->RegisterLogicalVolume(outerLV); //using geometry component base class method
+  //outer->RegisterLogicalVolume(outerLV); //using geometry component base class method
   outer->RegisterLogicalVolume(containerLV);
   
   return outer;
@@ -790,7 +771,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CommonFinalConstructor(G4String 
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for anything - it's registered upon construction with g4
-  /*
+  
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    (G4ThreeVector)0,             // position
 		    outerLV,                      // lv to be placed
@@ -800,7 +781,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CommonFinalConstructor(G4String 
 		    0,                            // copy number
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
 		    );
-  */
+  
   // record extents
   // container radius is the same for all methods as all cylindrical
   G4double containerRadius = boxSize + lengthSafety;
