@@ -9,7 +9,7 @@ BDSMagnetGeometryType BDS::DetermineMagnetGeometryType(G4String geometryType, G4
 {
   std::map<G4String, BDSMagnetGeometryType> types;
   types["cylindrical"]       = BDSMagnetGeometryType::cylindrical;
-  types["normalconducting"]  = BDSMagnetGeometryType::cylindrical; //TEMPORARY
+  types["normalconducting"]  = BDSMagnetGeometryType::normalconducting;
   types["lhcleft"]           = BDSMagnetGeometryType::lhcleft;
   types["lhcright"]          = BDSMagnetGeometryType::lhcright;
   

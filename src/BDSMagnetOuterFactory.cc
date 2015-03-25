@@ -2,7 +2,7 @@
 #include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetOuterFactoryBase.hh"
 #include "BDSMagnetOuterFactoryCylindrical.hh"
-//#include "BDSMagnetOuterFactoryNC.hh"
+#include "BDSMagnetOuterFactoryPoles.hh"
 #include "BDSMagnetOuterFactoryLHCLeft.hh"
 #include "BDSMagnetOuterFactoryLHCRight.hh"
 #include "BDSMagnetGeometryType.hh"
@@ -35,8 +35,7 @@ BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagne
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << "normal conducting magnet factory" << G4endl;
 #endif
-    //return BDSMagnetOuterFactoryNC::Instance();
-    return BDSMagnetOuterFactoryCylindrical::Instance();
+    return BDSMagnetOuterFactoryPoles::Instance();
     break;
   case BDSMagnetGeometryType::lhcleft:
 #ifdef BDSDEBUG
