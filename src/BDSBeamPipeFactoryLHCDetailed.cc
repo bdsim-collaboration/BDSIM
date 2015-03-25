@@ -390,6 +390,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
   // set visual attributes
   // copper skin
   G4VisAttributes* cuVisAttr   = new G4VisAttributes(G4Colour(0.722, 0.525, 0.043));
+  cuVisAttr->SetForceLineSegmentsPerCircle(50);
   cuVisAttr->SetVisibility(true);
   cuVisAttr->SetForceSolid(true);
 
@@ -397,6 +398,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
   G4VisAttributes* pipeVisAttr = new G4VisAttributes(G4Colour(0.4,0.4,0.4));
   pipeVisAttr->SetVisibility(true);
   pipeVisAttr->SetForceSolid(true);
+  pipeVisAttr->SetForceLineSegmentsPerCircle(60);
   
   vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
   copperSkinLV->SetVisAttributes(cuVisAttr);
