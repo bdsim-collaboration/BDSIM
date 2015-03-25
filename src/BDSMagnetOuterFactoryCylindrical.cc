@@ -167,7 +167,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateOctupole(G4String 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   CreateCylindricalSolids(name, length, beamPipe, boxSize);
-  return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("octuupole"));
+  return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("octupole"));
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateDecapole(G4String      name,
