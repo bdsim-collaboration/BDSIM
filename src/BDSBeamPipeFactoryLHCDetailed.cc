@@ -411,16 +411,15 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
 #endif
 
   // SENSITIVITY
-  // make the beampipe sensitive if required (attachd Sensitive Detector Class)
-  if (BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
-    {
-      //beampipes are sensitive - attach appropriate sd to the beampipe volume
-      beamPipeLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
-    }
+  //beampipes are sensitive - attach appropriate sd to the beampipe volume
+  copperSkinLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
+  screenLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
+  coolingPipeLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
+  beamPipeLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
+  containerLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
 
   // USER LIMITS
   // set user limits based on bdsim user specified parameters
-
 #ifndef NOUSERLIMITS
   G4UserLimits* beamPipeUserLimits = new G4UserLimits("beampipe_cuts");
   G4double maxStepFactor = 0.5; // fraction of length for maximum step size
@@ -520,6 +519,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
   aPipe->RegisterLogicalVolume(coolingPipeLV);
   aPipe->RegisterLogicalVolume(beamPipeLV);
   aPipe->RegisterLogicalVolume(containerLV);
+  aPipe->RegisterLogicalVolume(copperSkinLV);
   
   return aPipe;
 }
