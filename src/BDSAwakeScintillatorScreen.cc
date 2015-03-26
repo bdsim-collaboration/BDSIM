@@ -295,12 +295,11 @@ void BDSAwakeScintillatorScreen::BuildScreen()
   G4double grainSize = 10*1e-6*CLHEP::m;
   _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, grainSize, _windowThickness, _windowMaterial);
   
-  G4cout << "finished." << G4endl;
-  //  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-  //    for(int i=0; i<_mlScreen->nLayers(); i++){
-  //      AddSensitiveVolume(_mlScreen[i].log());
-  //    }
-  //  } 
+    if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
+    for(int i=0; i<_mlScreen->nLayers(); i++){
+      AddSensitiveVolume(_mlScreen[i].log());
+    }
+  } 
   G4cout << "BDSAwakeScintillatorScreen: finished building geometry" << G4endl;
 }
 
