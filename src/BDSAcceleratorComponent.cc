@@ -171,6 +171,8 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
   itsBlmOuterSolid=NULL;
   itsSPos = 0.0;
   itsCopyNumber = 0;
+
+  readOutLV = NULL;
 }
 
 BDSAcceleratorComponent::~BDSAcceleratorComponent ()

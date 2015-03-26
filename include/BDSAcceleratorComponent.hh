@@ -40,7 +40,6 @@ public:
   G4double GetAngle ();
 
   // geometry length of the component.
-
   virtual G4double GetYLength ();
   virtual G4double GetXLength ();
   virtual G4double GetArcLength ();   // note no z length - this is chord length
@@ -78,20 +77,23 @@ public:
   G4String GetTunnelCavityMaterial() const;
   BDSEnergyCounterSD* GetBDSEnergyCounter() const;
   
-  void SetBDSEnergyCounter( BDSEnergyCounterSD* anBDSEnergyCounter);
-  G4int GetCopyNumber() const;
-  G4double GetSPos() const;
-  void SetSPos(G4double spos);
-  void AddSensitiveVolume(G4LogicalVolume* aLogVol);
+  void             SetBDSEnergyCounter( BDSEnergyCounterSD* anBDSEnergyCounter);
+  G4int            GetCopyNumber() const;
+  G4double         GetSPos() const;
+  void             SetSPos(G4double spos);
+  void             AddSensitiveVolume(G4LogicalVolume* aLogVol);
   std::vector<G4LogicalVolume*> GetSensitiveVolumes();
-  void SetGFlashVolumes(G4LogicalVolume* aLogVol);
+  void             SetGFlashVolumes(G4LogicalVolume* aLogVol);
   std::vector<G4LogicalVolume*> GetGFlashVolumes();
-  void SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
+  void             SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
   std::vector<G4VPhysicalVolume*> GetMultiplePhysicalVolumes();
-  void SetInnerMostLogicalVolume(G4LogicalVolume* aLogVol);
+  void             SetInnerMostLogicalVolume(G4LogicalVolume* aLogVol);
   G4LogicalVolume* GetInnerMostLogicalVolume() const;
-  G4UserLimits* GetInnerBPUserLimits();
-  G4UserLimits* GetUserLimits();
+  G4UserLimits*    GetInnerBPUserLimits();
+  G4UserLimits*    GetUserLimits();
+
+  /// access the read out geometry
+  inline G4LogicalVolume* GetReadOutLogicalVolume();
 
   //  void BuildOuterFieldManager();
 
@@ -185,7 +187,6 @@ protected:
   /// build beam loss monitors
   virtual void BuildBLMs();
 
-protected:
   /// set methods, protected
   void SetName(G4String aName);
   void SetType(G4String aType);
@@ -287,7 +288,8 @@ protected:
   G4UserLimits* itsSoilTunnelUserLimits;
   G4UserLimits* itsInnerTunnelUserLimits;
 
-
+  /// Read out geometry volume
+  G4LogicalVolume* readOutLV;
 
 private:
   /// assignment and copy constructor not implemented nor used
@@ -484,6 +486,9 @@ inline G4double BDSAcceleratorComponent::GetTunnelOffsetX()
 
 inline G4double BDSAcceleratorComponent::GetTilt()
 {return itsTilt;}
+
+inline G4LogicalVolume* BDSAcceleratorComponent::GetReadOutLogicalVolume()
+{return readOutLV;}
 
 
 inline  G4double BDSAcceleratorComponent::getParameterValue(G4String spec, G4String name) const
