@@ -13,5 +13,5 @@ BDSAcceleratorModel* BDSAcceleratorModel::Instance()
 
 
 BDSAcceleratorModel::BDSAcceleratorModel():
-  readOutWorld(NULL)
+  readOutWorldPV(NULL),readOutWorldLV(NULL)
 {;}
