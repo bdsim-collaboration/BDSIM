@@ -13,5 +13,5 @@ BDSReadOutGeometry::~BDSReadOutGeometry()
 
 G4VPhysicalVolume* BDSReadOutGeometry::Build()
 {
-  return BDSAcceleratorModel::Instance()->GetReadOutWorld();
+  return BDSAcceleratorModel::Instance()->GetReadOutWorldPV();
 }
