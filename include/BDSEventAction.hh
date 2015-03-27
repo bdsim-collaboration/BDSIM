@@ -15,6 +15,7 @@
 
 #include "G4UserEventAction.hh"
 #include "globals.hh"
+#include "BDSAnalysisManager.hh"
 #include "BDSTrajectory.hh"
 #include <list>
 #include <vector>
@@ -31,16 +32,17 @@ public:
   void AddPrimaryHits();
     
 private:
+  BDSAnalysisManager* analMan;
   G4bool verbose;
   G4bool verboseEvent;
   G4int  verboseEventNumber;
   G4bool isBatch;
 
-  G4int                       SamplerCollID_plane;                
-  G4int                       SamplerCollID_cylin;                
-  //    G4int                       SamplerCollID_primaries;                
-  //    G4int                       LWCalorimeterCollID;
-  //    G4int                       EnergyCounterCollID;                
+  G4int samplerCollID_plane;
+  G4int samplerCollID_cylin;
+  //G4int lWCalorimeterCollID;
+  G4int energyCounterCollID; ///< collection ID for energy deposition hits for read out geometry
+  G4int primaryCounterCollID;///< collection ID for primary hits for read out geometry
   
   G4int printModulo;
 
