@@ -392,11 +392,12 @@ void BDSDetectorConstruction::ComponentPlacement(){
 
   // few general variables that we don't need to get every
   // time in the loop for component placement
-  G4VPhysicalVolume* readOutWorldPV     = BDSAcceleratorModel::Instance()->GetReadOutWorldPV();
+  G4VPhysicalVolume* readOutWorldPV       = BDSAcceleratorModel::Instance()->GetReadOutWorldPV();
   if (!readOutWorldPV)
     {G4cout << "crap" << G4endl;}
-  G4VSensitiveDetector* energyCounterSD = BDSSDManager::Instance()->GetEnergyCounterOnAxisSD();
-  G4bool checkOverlaps                  = BDSGlobalConstants::Instance()->GetCheckOverlaps();
+  G4VSensitiveDetector* energyCounterSD   = BDSSDManager::Instance()->GetEnergyCounterOnAxisSD();
+  G4VSensitiveDetector* energyCounterSDRO = BDSSDManager::Instance()->GetEnergyCounterOnAxisSDRO();
+  G4bool checkOverlaps                    = BDSGlobalConstants::Instance()->GetCheckOverlaps();
 
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     {
@@ -562,7 +563,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 
       // make read out geometry sensitive
       if (readOutLV)
-	{readOutLV->SetSensitiveDetector(energyCounterSD);}
+	{readOutLV->SetSensitiveDetector(energyCounterSDRO);}
       
       // old way of setting sensitive volumes - remains for now for components that haven't been changed
       // in future will be done in all component constructors
@@ -571,7 +572,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
       for(;sensIt != SensVols.end(); ++sensIt)
 	{
 	  //use already defined instance of Ecounter sd
-	  (*sensIt)->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
+	  (*sensIt)->SetSensitiveDetector(energyCounterSD);
 	  //register any volume that an ECounter is attached to
 	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( (*sensIt)->GetName(),
 								    thecurrentitem->GetSPos() );
