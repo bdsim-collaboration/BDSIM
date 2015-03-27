@@ -16,6 +16,7 @@
 #include "G4LogicalVolume.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4RotationMatrix.hh"
+#include "G4SDManager.hh"
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
 #include "G4TouchableHistory.hh"
@@ -25,10 +26,14 @@
 
 #include <map>
 
+#define NMAXCOPY 5
+
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
   :G4VSensitiveDetector(name),
    energyCounterCollection(NULL),
    primaryCounterCollection(NULL),
+   HCIDe(-1),
+   HCIDp(-1),
    enrg(0.0),
    X(0.0),
    Y(0.0),
@@ -42,33 +47,30 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
   itsName = name;
   collectionName.insert("energy_counter");
   collectionName.insert("primary_counter");
-  #define NMAXCOPY 5
-  HitID = new G4int[NMAXCOPY];
 }
 
 BDSEnergyCounterSD::~BDSEnergyCounterSD()
-{
-  delete [] HitID;
-}
+{;}
 
 void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
-{
-  static G4int HCID = -1;
-  for(G4int i=0; i<NMAXCOPY;i++)HitID[i]=-1;
-
-  energyCounterCollection = new BDSEnergyCounterHitsCollection
-    (SensitiveDetectorName,collectionName[0]);
-  HCID = GetCollectionID(0);
-  HCE->AddHitsCollection(HCID,energyCounterCollection);
+{  
+  energyCounterCollection = new BDSEnergyCounterHitsCollection(SensitiveDetectorName,collectionName[0]);
+  if (HCIDe < 0)
+    {HCIDe = G4SDManager::GetSDMpointer()->GetCollectionID(energyCounterCollection);}
+  HCE->AddHitsCollection(HCIDe,energyCounterCollection);
 
   primaryCounterCollection = new BDSEnergyCounterHitsCollection
     (SensitiveDetectorName,collectionName[1]);
-  HCID = GetCollectionID(1);
-  HCE->AddHitsCollection(HCID,primaryCounterCollection);
+  if (HCIDp < 0)
+    {HCIDp = G4SDManager::GetSDMpointer()->GetCollectionID(primaryCounterCollection);}
+  HCE->AddHitsCollection(HCIDp,primaryCounterCollection);
 }
 
-G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory* /*readOutTH*/)
-{ 
+G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory* readOutTH)
+{
+  if(readOutTH)
+    {G4cout << " It exists " << G4endl;}
+  
   if(BDSGlobalConstants::Instance()->GetStopTracks())
     enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit()); // Why subtract the energy deposit of the step? Why not add?
   //this looks like accounting for conservation of energy when you're killing a particle

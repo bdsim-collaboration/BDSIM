@@ -44,7 +44,7 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
   precisionRegion(precisionRegionIn),
   turnsTaken(turnsTakenIn),
   eventNo(eventNoIn)
-{}
+{;}
 
 BDSEnergyCounterHit::~BDSEnergyCounterHit()
 {;}
