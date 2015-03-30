@@ -583,8 +583,6 @@ parameters:
 		    else
 		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
 		    else
-                  if(!strcmp($1->name,"inR") ) { params.inR = $3; params.inRset = 1;}
-		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
 		  if(!strcmp($1->name,"ysize") ) { params.ysize = $3; params.ysizeset = 1;}
@@ -825,8 +823,6 @@ parameters:
 		    { params.boxSize = $3; params.boxSizeset = 1;}
 		    else
 		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
-		    else
-                  if(!strcmp($1->name,"inR") ) { params.inR = $3; params.inRset = 1;}
 		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else

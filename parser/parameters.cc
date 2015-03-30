@@ -55,8 +55,6 @@ void Parameters::flush() {
   beampipeThickness = 0; beampipeThicknessset = 0;
 
   outR = 0; outRset = 0;
-  inR = 0; inRset = 0;
-  bpRad = 0; bpRadset = 0;
   tilt = 0; tiltset = 0;
 
   // old aperture model
@@ -174,8 +172,6 @@ void Parameters::inherit_properties(struct Element& e)
   // component size
   if(!boxSizeset) { boxSize = e.boxSize; boxSizeset = 1;}
   
-  if(!inRset) { inR = e.inR; inRset = 1; }
-  if(!bpRadset) { bpRad = e.bpRad; bpRadset = 1; }
   if(!outRset) { outR = e.outR; outRset = 1; }
 
   if(!gradientset) { gradient = e.gradient; gradientset = 1; }

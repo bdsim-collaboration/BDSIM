@@ -186,7 +186,6 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   // component size
   e.boxSize = params.boxSize;
   
-  e.bpRad = params.bpRad;
   e.xsize = params.xsize;
   e.ysize = params.ysize;
   e.material = params.material;  
@@ -258,9 +257,7 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   // RCOL
   e.flatlength = params.flatlength;
   e.taperlength = params.taperlength;
-  // MuSpoiler
   e.outR = params.outR;
-  e.inR = params.inR;
   // Laser
   e.waveLength = params.waveLength;
   // Element, Tunnel

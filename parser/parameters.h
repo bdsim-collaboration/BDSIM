@@ -86,7 +86,6 @@ struct Parameters {
   double gradient; int gradientset;
 
   double outR; int outRset; ///> outer radius of magnets
-  double inR, bpRad; int inRset, bpRadset;///> inner radius and beam pipe radius of muon spoiler
   double hgap, hgapset;
   double xsize, ysize; int xsizeset, ysizeset; ///> aperture (or laser spotsize for laser)
   double xdir, ydir, zdir, waveLength; int xdirset, ydirset, zdirset, waveLengthset;
