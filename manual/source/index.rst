@@ -13,10 +13,9 @@ Contents:
    
    introduction
    installation
-   getting_started
+   running
    model_description
    model_preparation
-   running
    output_analysis
    support
    appendix1_tracking
