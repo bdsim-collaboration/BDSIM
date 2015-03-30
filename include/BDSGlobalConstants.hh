@@ -7,16 +7,16 @@
 #include "G4ThreeVector.hh"
 #include "G4String.hh"
 #include "G4AffineTransform.hh"
-#include "G4VisAttributes.hh"
-#include "G4UserLimits.hh"
 
 #include "BDSBeamPipeType.hh"
 #include "BDSParticle.hh"
-#include "G4LogicalVolume.hh"
 
 class G4FieldManager;
+class G4LogicalVolume;
 class G4ParticleDefinition;
 class G4UniformMagField;
+class G4UserLimits;
+class G4VisAttributes;
 
 class BDSLogicalVolumeInfo;
 

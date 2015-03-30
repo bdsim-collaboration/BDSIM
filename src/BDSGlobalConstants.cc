@@ -12,12 +12,12 @@ Last modified 23.10.2007 by Steve Malton
 
 #include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
-#include "BDSLogicalVolumeInfo.hh"
 
 #include "G4Colour.hh"
 #include "G4FieldManager.hh"
 #include "G4UniformMagField.hh"
 #include "G4ThreeVector.hh"
+#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
 extern Options options;
