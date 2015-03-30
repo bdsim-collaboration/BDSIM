@@ -30,9 +30,9 @@ BDSMuSpoiler::BDSMuSpoiler(G4String        name,
 			   G4double        tunnelRadius,
 			   G4double        tunnelOffsetX):
   BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
-  itsBField(bField),
-  outerMagField(NULL),
-  outerFieldMgr(NULL)
+  itsBField(bField)
+  // outerMagField(NULL),
+  // outerFieldMgr(NULL)
 {;}
 
 void BDSMuSpoiler::BuildBPFieldAndStepper()
@@ -52,16 +52,18 @@ void BDSMuSpoiler::BuildOuterLogicalVolume(bool /*outerMaterialIsVacuum*/)
   BDSMultipole::BuildOuterLogicalVolume(false);
 
   // prepare and attach field
-  outerMagField = new BDSMuSpoilerMagField(itsBField);
-  outerFieldMgr = new G4FieldManager(outerMagField);
+  delete itsOuterMagField;
+  delete itsOuterFieldMgr;
+  itsOuterMagField = new BDSMuSpoilerMagField(itsBField);
+  itsOuterFieldMgr = new G4FieldManager(itsOuterMagField);
   if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0)
-    {outerFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());}
+    {itsOuterFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());}
   if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>0)
-    {outerFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());}
+    {itsOuterFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());}
   if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0)
-    {outerFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());}
+    {itsOuterFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());}
   //if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0)
-  //  {itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());}
+  //  {itsItsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());}
   itsOuterLogicalVolume->SetFieldManager(itsOuterFieldMgr,false);
 
 }
@@ -75,6 +77,6 @@ void BDSMuSpoiler::SetVisAttributes()
 
 BDSMuSpoiler::~BDSMuSpoiler()
 {
-  delete outerMagField;
-  delete outerFieldMgr;
+  // delete outerMagField;
+  // delete outerFieldMgr;
 }
