@@ -172,8 +172,6 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
 
   //old aperture model
   e.aper = params.aper;
-  e.aperX = params.aperX;
-  e.aperY = params.aperY;
 
   //new aperture model
   e.aper1 = params.aper1;

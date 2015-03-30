@@ -56,8 +56,6 @@ struct Parameters {
 
   //old aperture model
   double aper; int aperset;   ///> aperture (circular)
-  double aperX; int aperXset;   ///> aperture (elliptical)
-  double aperY; int aperYset;
 
   //new aperture model
   double aper1; int aper1set;

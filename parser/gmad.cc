@@ -202,19 +202,19 @@ double* GetKs(int i)
   return result;
 }
 
-double GetAperX(int i) 
-{
-  std::list<Element>::iterator it = beamline_list.begin();
-  std::advance(it, i);
-  return it->aperX;  
-}
+// double GetAperX(int i) 
+// {
+//   std::list<Element>::iterator it = beamline_list.begin();
+//   std::advance(it, i);
+//   return it->aperX;  
+// }
 
-double GetAperY(int i) 
-{
-  std::list<Element>::iterator it = beamline_list.begin();
-  std::advance(it, i);
-  return it->aperY;  
-}
+// double GetAperY(int i) 
+// {
+//   std::list<Element>::iterator it = beamline_list.begin();
+//   std::advance(it, i);
+//   return it->aperY;  
+// }
 
 double GetAper(int i) 
 {

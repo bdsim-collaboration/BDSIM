@@ -59,8 +59,6 @@ void Parameters::flush() {
 
   // old aperture model
   aper = 0; aperset = 0;
-  aperX = 0; aperXset = 0;
-  aperY = 0; aperYset = 0;
 
   // new aperture model
   aper1 = 0; aper1set = 0;
@@ -159,8 +157,6 @@ void Parameters::inherit_properties(struct Element& e)
 
   if(!beampipeThicknessset) { beampipeThickness = e.beampipeThickness; beampipeThicknessset = 1; }
   if(!aperset) { aper = e.aper; aperset = 1; }
-  if(!aperXset) { aperX = e.aperX; aperXset = 1; }
-  if(!aperYset) { aperY = e.aperY; aperYset = 1; }
   // new aperture model
   if(!aper1set) { aper1 = e.aper1; aper1set = 1;}
   if(!aper2set) { aper2 = e.aper2; aper2set = 1;}

@@ -19,7 +19,7 @@ struct Element {
   double l; // l in metres
   double ks,k0,k1,k2,k3,angle;
 
-  double aper,aperX, aperY; //old aperture model
+  double aper; //old aperture model
 
   double beampipeThickness;
   double aper1, aper2, aper3, aper4; // new aperture model

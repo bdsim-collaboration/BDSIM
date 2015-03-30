@@ -560,12 +560,6 @@ parameters:
 		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
 		      { params.aper = $3; params.aperset = 1;}
 		    else
-		  if(!strcmp($1->name,"aperX") ||!strcmp($1->name,"apertureX") ) 
-		      { params.aperX = $3; params.aperXset = 1;}
-		    else
-		  if(!strcmp($1->name,"aperY") ||!strcmp($1->name,"apertureY") ) 
-		      { params.aperY = $3; params.aperYset = 1;}
-		    else
 		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
 		    { params.aper1 = $3; params.aper1set = 1;}
 		    else
@@ -801,12 +795,6 @@ parameters:
 		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
 			      { params.aper = $3; params.aperset = 1;}
 		    else
-		  if(!strcmp($1->name,"aperX") ||!strcmp($1->name,"apertureX") ) 
-			      { params.aperX = $3; params.aperXset = 1;}
-		    else
-		  if(!strcmp($1->name,"aperY") ||!strcmp($1->name,"apertureY") ) 
-			      { params.aperY = $3; params.aperYset = 1;}
-		  else
 		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
 		    { params.aper1 = $3; params.aper1set = 1;}
 		    else

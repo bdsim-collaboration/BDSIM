@@ -135,8 +135,6 @@ void Element::flush() {
   
   // old aperture model
   aper = 0;
-  aperX = 0;
-  aperY = 0;
   
   outR = 0;
   waveLength = 0;
@@ -193,8 +191,6 @@ double Element::property_lookup(char* property_name)const{
   if(!strcmp(property_name,"phiAngleOut")) return phiAngleOut;
   if(!strcmp(property_name,"beampipeThickness")) return beampipeThickness;
   if(!strcmp(property_name,"aper")) return aper;
-  if(!strcmp(property_name,"aperX")) return aperX;
-  if(!strcmp(property_name,"aperY")) return aperY;
   if(!strcmp(property_name,"aper1")) return aper1;
   if(!strcmp(property_name,"aper2")) return aper2;
   if(!strcmp(property_name,"aper3")) return aper3;
