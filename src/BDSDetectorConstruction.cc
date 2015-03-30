@@ -393,9 +393,6 @@ void BDSDetectorConstruction::ComponentPlacement(){
   // few general variables that we don't need to get every
   // time in the loop for component placement
   G4VPhysicalVolume* readOutWorldPV       = BDSAcceleratorModel::Instance()->GetReadOutWorldPV();
-  if (!readOutWorldPV)
-    {G4cout << "crap" << G4endl;}
-  G4VSensitiveDetector* energyCounterSD   = BDSSDManager::Instance()->GetEnergyCounterOnAxisSD();
   G4VSensitiveDetector* energyCounterSDRO = BDSSDManager::Instance()->GetEnergyCounterOnAxisSDRO();
   G4bool checkOverlaps                    = BDSGlobalConstants::Instance()->GetCheckOverlaps();
 
@@ -535,19 +532,14 @@ void BDSDetectorConstruction::ComponentPlacement(){
 #ifdef BDSDEBUG
       G4cout<<"SETTING UP SENSITIVE VOLUMES..."<< G4endl;
 #endif
-
       // now register the spos and other info of this sensitive volume in global map
       // used by energy counter sd to get spos of that logical volume at histogram time
       BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( LogVolName,
-								thecurrentitem->GetSPos() );
-      BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(LocalLogVol,theinfo);
-      // in future we can probably not add teh mass geometry info if read out geometry exists
-      // as it'll always be used and we don't want to make searching for this volume info longer
-      // than it needs to be
+								thecurrentitem->GetSPos());
       if(readOutLV)
 	{BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(readOutLV,theinfo);}
-      //else
-      //  {BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(LocalLogVol,theinfo);}
+      else
+        {BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(LocalLogVol,theinfo);}
 
       // this bit would also be unnecessary once all switched over to read out geometry
       // Register all logical volumes with sposition and any other information for later use
@@ -567,12 +559,12 @@ void BDSDetectorConstruction::ComponentPlacement(){
       
       // old way of setting sensitive volumes - remains for now for components that haven't been changed
       // in future will be done in all component constructors
-      std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetSensitiveVolumes();
+      std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetAllSensitiveVolumes();
       std::vector<G4LogicalVolume*>::iterator sensIt= SensVols.begin();
       for(;sensIt != SensVols.end(); ++sensIt)
 	{
 	  //use already defined instance of Ecounter sd
-	  (*sensIt)->SetSensitiveDetector(energyCounterSD);
+	  (*sensIt)->SetSensitiveDetector(energyCounterSDRO);
 	  //register any volume that an ECounter is attached to
 	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( (*sensIt)->GetName(),
 								    thecurrentitem->GetSPos() );

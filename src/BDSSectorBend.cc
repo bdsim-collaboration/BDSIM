@@ -173,7 +173,7 @@ void BDSSectorBend::BuildBeampipe()
 
 void BDSSectorBend::BuildOuterVolume()
 {
-  //need to make a shorter outer volume for rbend geometry
+  //need to make a shorter outer volume for bend geometry
   //let's cheat and use the base class method by fiddling the
   //component length then setting it back - reduces code duplication
   G4double originalLength = itsLength;

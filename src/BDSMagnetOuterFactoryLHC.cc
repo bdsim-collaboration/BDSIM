@@ -643,7 +643,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
 #endif
 
-  // USER LIMITS and SENSITIVITY for all components
+  // USER LIMITS for all components
 #ifndef NOUSERLIMITS
   G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
   G4double maxStepFactor = 0.5; // fraction of length for maximum step size
@@ -651,9 +651,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   userLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
 #endif
+  
   for (std::vector<G4LogicalVolume*>::iterator i = allLogicalVolumes.begin(); i != allLogicalVolumes.end(); ++i)
     {
-      (*i)->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
 #ifndef NOUSERLIMITS
       (*i)->SetUserLimits(userLimits);
 #endif
@@ -675,16 +675,19 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   // REGISTER all lvs
   outer->RegisterLogicalVolumes(secondBP->GetAllLogicalVolumes());
   outer->RegisterLogicalVolumes(allLogicalVolumes);
+
+  // copy sensitive volumes if they exist
+  outer->RegisterSensitiveVolumes(secondBP->GetAllSensitiveVolumes());
   
   return outer;
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      name,
-									      G4double      length,
-									      BDSBeamPipe*  beamPipe,
-									      G4double      boxSize,
-									      G4double      /*angle*/,
-									      G4Material*   outerMaterial)
+								      G4double      length,
+								      BDSBeamPipe*  beamPipe,
+								      G4double      boxSize,
+								      G4double      /*angle*/,
+								      G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -695,10 +698,10 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String  
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
-									 G4double      length,
-									 BDSBeamPipe*  beamPipe,
-									 G4double      boxSize,
-									 G4Material*   outerMaterial)
+								 G4double      length,
+								 BDSBeamPipe*  beamPipe,
+								 G4double      boxSize,
+								 G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -708,20 +711,20 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSextupole(G4String      name,
-									G4double      length,
-									BDSBeamPipe*  beamPipe,
-									G4double      boxSize,
-									G4Material*   outerMaterial)
+								G4double      length,
+								BDSBeamPipe*  beamPipe,
+								G4double      boxSize,
+								G4Material*   outerMaterial)
 {
   CreateCylindricalSolids(name, length, beamPipe, boxSize);
   return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("sextupole"));
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateOctupole(G4String      name,
-								       G4double      length,
-								       BDSBeamPipe*  beamPipe,
-								       G4double      boxSize,
-								       G4Material*   outerMaterial)
+							       G4double      length,
+							       BDSBeamPipe*  beamPipe,
+							       G4double      boxSize,
+							       G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -731,10 +734,10 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateOctupole(G4String      nam
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateDecapole(G4String      name,
-								       G4double      length,
-								       BDSBeamPipe*  beamPipe,
-								       G4double      boxSize,
-								       G4Material*   outerMaterial)
+							       G4double      length,
+							       BDSBeamPipe*  beamPipe,
+							       G4double      boxSize,
+							       G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -744,20 +747,20 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateDecapole(G4String      nam
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSolenoid(G4String      name,
-								       G4double      length,
-								       BDSBeamPipe*  beamPipe,
-								       G4double      boxSize,
-								       G4Material*   outerMaterial)
+							       G4double      length,
+							       BDSBeamPipe*  beamPipe,
+							       G4double      boxSize,
+							       G4Material*   outerMaterial)
 {
   CreateCylindricalSolids(name, length, beamPipe, boxSize);
   return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("solenoid"));
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateMultipole(G4String      name,
-									G4double      length,
-									BDSBeamPipe*  beamPipe,
-									G4double      boxSize,
-									G4Material*   outerMaterial)
+								G4double      length,
+								BDSBeamPipe*  beamPipe,
+								G4double      boxSize,
+								G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -767,10 +770,10 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateMultipole(G4String      na
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateRfCavity(G4String      name,
-								       G4double      length,
-								       BDSBeamPipe*  beamPipe,
-								       G4double      boxSize,
-								       G4Material*   outerMaterial)
+							       G4double      length,
+							       BDSBeamPipe*  beamPipe,
+							       G4double      boxSize,
+							       G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -780,10 +783,10 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateRfCavity(G4String      nam
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateMuSpoiler(G4String      name,
-								       G4double      length,
-								       BDSBeamPipe*  beamPipe,
-								       G4double      boxSize,
-								       G4Material*   outerMaterial)
+								G4double      length,
+								BDSBeamPipe*  beamPipe,
+								G4double      boxSize,
+								G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -793,11 +796,11 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateMuSpoiler(G4String      na
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateKicker(G4String      name,
-								     G4double      length,
-								     BDSBeamPipe*  beamPipe,
-								     G4double      boxSize,
-								     G4bool        /*vertical*/,
-								     G4Material*   outerMaterial)
+							     G4double      length,
+							     BDSBeamPipe*  beamPipe,
+							     G4double      boxSize,
+							     G4bool        /*vertical*/,
+							     G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -811,9 +814,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateKicker(G4String      name,
 /// functions below here are private to this particular factory
 
 void BDSMagnetOuterFactoryLHC::CreateCylindricalSolids(G4String     name,
-							       G4double     length,
-							       BDSBeamPipe* beamPipe,
-							       G4double     boxSize)
+						       G4double     length,
+						       BDSBeamPipe* beamPipe,
+						       G4double     boxSize)
 {
   if (beamPipe->ContainerIsCircular())
     {
@@ -859,8 +862,8 @@ void BDSMagnetOuterFactoryLHC::CreateCylindricalSolids(G4String     name,
 }
 
 void BDSMagnetOuterFactoryLHC::TestInputParameters(BDSBeamPipe* beamPipe,
-							   G4double&    boxSize,
-							   G4Material*& outerMaterial)// reference to a pointer
+						   G4double&    boxSize,
+						   G4Material*& outerMaterial)// reference to a pointer
 {
   //function arguments by reference to they can be modified in place
   //check outer material is something
@@ -888,10 +891,10 @@ void BDSMagnetOuterFactoryLHC::TestInputParameters(BDSBeamPipe* beamPipe,
 /// only the solids are unique, once we have those, the logical volumes and placement in the
 /// container are the same.  group all this functionality together
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CommonFinalConstructor(G4String    name,
-									       G4double    length,
-									       G4double    boxSize,
-									       G4Material* outerMaterial,
-									       G4Colour*   colour)
+								       G4double    length,
+								       G4double    boxSize,
+								       G4Material* outerMaterial,
+								       G4Colour*   colour)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -921,13 +924,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CommonFinalConstructor(G4String 
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
 #endif
 
-  // SENSITIVITY
-  // make the outer sensitive if required (attachd Sensitive Detector Class)
-  outerLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
-
-  // USER LIMITS
-  // set user limits based on bdsim user specified parameters
-
+  // USER LIMITS - set user limits based on bdsim user specified parameters
 #ifndef NOUSERLIMITS
   G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
   G4double maxStepFactor = 0.5; // fraction of length for maximum step size

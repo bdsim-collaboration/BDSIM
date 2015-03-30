@@ -261,6 +261,14 @@ void BDSRBend::BuildBeampipe()
    RegisterLogicalVolumes(bpFirstBit->GetAllLogicalVolumes());
    RegisterLogicalVolumes(beampipe->GetAllLogicalVolumes());
    RegisterLogicalVolumes(bpLastBit->GetAllLogicalVolumes());
+
+   // register components as sensitive if required
+   if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
+     {
+       RegisterSensitiveVolumes(bpFirstBit->GetAllSensitiveVolumes());
+       RegisterSensitiveVolumes(beampipe->GetAllSensitiveVolumes());
+       RegisterSensitiveVolumes(bpLastBit->GetAllSensitiveVolumes());
+     }
    
    SetExtentX(beampipe->GetExtentX()); //not exact but only central porition will use this
    SetExtentY(beampipe->GetExtentY());

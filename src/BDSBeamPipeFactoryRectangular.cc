@@ -283,7 +283,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CommonFinalConstruction(G4String    
   if (BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
     {
       //beampipes are sensitive - attach appropriate sd to the beampipe volume
-      beamPipeLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
+      //beamPipeLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
     }
 
   // USER LIMITS
@@ -340,6 +340,10 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CommonFinalConstruction(G4String    
   aPipe->RegisterLogicalVolume(vacuumLV); //using geometry component base class method
   aPipe->RegisterLogicalVolume(beamPipeLV);
   aPipe->RegisterLogicalVolume(containerLV);
+
+  // register sensitive volumes
+  aPipe->RegisterSensitiveVolume(beamPipeLV);
+  aPipe->RegisterSensitiveVolume(containerLV);
   
   return aPipe;
 }
@@ -378,7 +382,7 @@ void BDSBeamPipeFactoryRectangular::CreateGeneralAngledSolids(G4String      name
 				  angledFaceRadius,              // outer radius
 				  (lengthIn*0.5)-2*lengthSafety, // half length - must fit within container
 				  0,                             // rotation start angle
-				  CLHEP::twopi,                  // rotation finish angle
+				  CLHEP::twopi,                  // rotation sweep angle
 				  inputfaceIn,                   // input face normal
 				  outputfaceIn);                 // output face normal
   

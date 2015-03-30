@@ -44,6 +44,9 @@ public:
   void SetExtentZ(std::pair<G4double, G4double> extentZIn);
   void RegisterLogicalVolume(G4LogicalVolume* logicalVolume);
   void RegisterLogicalVolumes(std::vector<G4LogicalVolume*> logicalVolumes);
+  void RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume);
+  void RegisterSensitiveVolumes(std::vector<G4LogicalVolume*> sensitiveVolumes);
+  std::vector<G4LogicalVolume*> GetAllSensitiveVolumes();
   std::vector<G4LogicalVolume*> GetAllLogicalVolumes();
 
 protected:
@@ -56,6 +59,9 @@ protected:
   // we have to keep a registry of all logical volumes to be able to associate
   // information with them at construction time - for example S position - that
   // can't be stored in the Logical Volume class itself without modifying geant
+  
+  /// registry of all volumes that should be made sensitive
+  std::vector<G4LogicalVolume*> allSensitiveVolumes;
   G4ThreeVector                 placementOffset;
 };
 
@@ -106,5 +112,14 @@ inline void BDSGeometryComponent::RegisterLogicalVolumes(std::vector<G4LogicalVo
 
 inline std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllLogicalVolumes()
 {return allLogicalVolumes;}
+
+inline void BDSGeometryComponent::RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume)
+{allSensitiveVolumes.push_back(sensitiveVolume);}
+
+inline void BDSGeometryComponent::RegisterSensitiveVolumes(std::vector<G4LogicalVolume*> sensitiveVolumes)
+{allSensitiveVolumes.insert(allSensitiveVolumes.end(), sensitiveVolumes.begin(), sensitiveVolumes.end());}
+
+inline std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllSensitiveVolumes()
+{return allSensitiveVolumes;}
 
 #endif

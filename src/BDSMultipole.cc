@@ -161,7 +161,10 @@ void BDSMultipole::BeamPipeCommonTasks()
   // register logical volumes using geometry component base class
   RegisterLogicalVolumes(beampipe->GetAllLogicalVolumes());
 
-
+  // register components as sensitive if required
+  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
+    {RegisterSensitiveVolumes(beampipe->GetAllSensitiveVolumes());}
+  
   // y rotation if using trapezoid marker volume for angled faces
   // LN - I don't think this works as itsPhiAngleIn Out not set properly
   // can revist when redo markervolumes without trapezoid
@@ -277,6 +280,10 @@ void BDSMultipole::BuildOuterVolume()
     {
       // register logical volumes using geometry component base class
       RegisterLogicalVolumes(outer->GetAllLogicalVolumes());
+
+      // register components as sensitive if required
+      if(BDSGlobalConstants::Instance()->GetSensitiveComponents())
+	{RegisterSensitiveVolumes(outer->GetAllLogicalVolumes());}
   
       // y rotation if using trapezoid marker volume for angled faces
       // LN - I don't think this works as itsPhiAngleIn Out not set properly

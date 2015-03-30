@@ -248,8 +248,7 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
 				    vacuumMaterialIn,
 				    nameIn + "_container_lv");
   
-  // VISUAL ATTRIBUTES
-  // set visual attributes
+  // VISUAL ATTRIBUTES - set visual attributes
   // beampipe
   G4VisAttributes* pipeVisAttr = new G4VisAttributes(G4Color(0.4,0.4,0.4));
   pipeVisAttr->SetVisibility(true);
@@ -264,17 +263,8 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
 #endif
 
-  // SENSITIVITY
-  // make the beampipe sensitive if required (attachd Sensitive Detector Class)
-  if (BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
-    {
-      //beampipes are sensitive - attach appropriate sd to the beampipe volume
-      beamPipeLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
-    }
-
   // USER LIMITS
   // set user limits based on bdsim user specified parameters
-
 #ifndef NOUSERLIMITS
   G4UserLimits* beamPipeUserLimits = new G4UserLimits("beampipe_cuts");
   G4double maxStepFactor = 0.5; // fraction of length for maximum step size
@@ -324,6 +314,10 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
   aPipe->RegisterLogicalVolume(vacuumLV); //using geometry component base class method
   aPipe->RegisterLogicalVolume(beamPipeLV);
   aPipe->RegisterLogicalVolume(containerLV);
+
+  // register sensitive volumes
+  aPipe->RegisterSensitiveVolume(beamPipeLV);
+  aPipe->RegisterSensitiveVolume(containerLV);
   
   return aPipe;
 }

@@ -361,13 +361,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPoles::CommonFinalConstructor(G4Strin
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
 #endif
 
-  // SENSITIVITY
-  // make the outer sensitive if required (attachd Sensitive Detector Class)
-  outerLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
-
-  // USER LIMITS
-  // set user limits based on bdsim user specified parameters
-
+  // USER LIMITS - set user limits based on bdsim user specified parameters
 #ifndef NOUSERLIMITS
   G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
   G4double maxStepFactor = 0.5; // fraction of length for maximum step size

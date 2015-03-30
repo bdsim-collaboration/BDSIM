@@ -101,6 +101,9 @@ void BDSKicker::BuildBeampipe()
   // register logical volumes using geometry component base class
   RegisterLogicalVolumes(beampipe->GetAllLogicalVolumes());
 
+  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
+    {RegisterSensitiveVolumes(beampipe->GetAllSensitiveVolumes());}
+
   // if it's a vertical kicker, rotate the beam pipe by 90 degrees
   // this also rotates the dipole stepper in the vacuum volume
   G4RotationMatrix* kickerRotation = new G4RotationMatrix();
