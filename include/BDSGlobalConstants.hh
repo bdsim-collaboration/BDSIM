@@ -13,11 +13,12 @@
 #include "BDSBeamPipeType.hh"
 #include "BDSParticle.hh"
 #include "G4LogicalVolume.hh"
-#include "BDSLogicalVolumeInfo.hh"
 
 class G4FieldManager;
 class G4ParticleDefinition;
 class G4UniformMagField;
+
+class BDSLogicalVolumeInfo;
 
 struct Options;
 
@@ -401,7 +402,7 @@ public:
 private:
   G4double itsLWCalWidth;
   G4double itsLWCalOffset;
-  BDSBeamPipeType itsApertureType;              //aperture model to use by default
+  BDSBeamPipeType itsApertureType;       //aperture model to use by default
   G4String itsBeamPipeMaterial;          //beampipe material
   G4String itsVacuumMaterial;            //vacuum inside beampipe
   G4String itsEmptyMaterial;             //empty material for e.g. marker volumes

@@ -3,16 +3,22 @@
 Last modified 23.10.2007 by Steve Malton
 
 **/
+
+#include <cstdlib>
+
 #include "BDSGlobalConstants.hh"
+
 #include "parser/options.h"
+
 #include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
+#include "BDSLogicalVolumeInfo.hh"
+
+#include "G4Colour.hh"
 #include "G4FieldManager.hh"
 #include "G4UniformMagField.hh"
-#include <cstdlib>
 #include "G4ThreeVector.hh"
 #include "G4VisAttributes.hh"
-#include "G4Colour.hh"
 
 extern Options options;
 
