@@ -60,10 +60,6 @@ private:
 
   G4bool verbose;
 
-  G4int    gflash;
-  G4double gflashemax;
-  G4double gflashemin;
-    
   G4GeometrySampler* itsGeometrySampler;
 
   G4Region* precisionRegion;
