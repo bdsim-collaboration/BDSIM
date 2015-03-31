@@ -310,13 +310,13 @@ void BDSDetectorConstruction::BuildWorld(){
 				   worldName);	       //its name
 
   // visual attributes
-#ifdef BDSDEBUG
-  G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
-  debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
-  logicWorld->SetVisAttributes(debugWorldVis);
-#else
-  logicWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-#endif
+  if (BDSExecOptions::Instance()->GetVisDebug()) {
+    G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
+    debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
+    logicWorld->SetVisAttributes(debugWorldVis);
+  } else {
+    logicWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+  }
 	
   // set limits
 #ifndef NOUSERLIMITS

@@ -9,7 +9,7 @@
    Removed StringFromInt function
 */
 
-
+#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
 
@@ -305,11 +305,11 @@ void BDSMultipole::BuildMarkerLogicalVolume()
 #endif
 
   // VIS ATTR
-#ifdef BDSDEBUG
-  itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-#else
-  itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-#endif
+  if (BDSExecOptions::Instance()->GetVisDebug()) {
+    itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+  } else {
+    itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+  }
 }
 
 
@@ -442,7 +442,6 @@ void BDSMultipole::BuildOuterFieldManager(G4int nPoles, G4double poleField,
     itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
   itsOuterLogicalVolume->SetFieldManager(itsOuterFieldMgr,false);
 }
-
 
 BDSMultipole::~BDSMultipole()
 {

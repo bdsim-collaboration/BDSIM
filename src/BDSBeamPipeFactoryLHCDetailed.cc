@@ -2,9 +2,10 @@
 #include "BDSBeamPipeFactoryLHCDetailed.hh"
 #include "BDSBeamPipe.hh"
 
-#include "BDSMaterials.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
+#include "BDSExecOptions.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSMaterials.hh"
 #include "BDSSDManager.hh"
 #include "BDSUtilities.hh"                 // for calculateorientation
 
@@ -402,11 +403,11 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
   coolingPipeLV->SetVisAttributes(pipeVisAttr);
   beamPipeLV->SetVisAttributes(pipeVisAttr);
   // container
-#ifdef BDSDEBUG
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-#else
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-#endif
+  if (BDSExecOptions::Instance()->GetVisDebug()) {
+    containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+  } else {
+    containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+  }
 
   // SENSITIVITY
   // make the beampipe sensitive if required (attachd Sensitive Detector Class)

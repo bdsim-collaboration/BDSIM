@@ -2,9 +2,10 @@
 #include "BDSBeamPipeFactoryRectangular.hh"
 #include "BDSBeamPipe.hh"
 
-#include "BDSMaterials.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
+#include "BDSExecOptions.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSMaterials.hh"
 #include "BDSSDManager.hh"
 #include "BDSUtilities.hh"            // for calculateorientation
 
@@ -271,11 +272,11 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CommonFinalConstruction(G4String    
   // vacuum
   vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
   // container
-#ifdef BDSDEBUG
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-#else
+  if (BDSExecOptions::Instance()->GetVisDebug()) {
+    containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+  } else {
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-#endif
+  }
 
   // SENSITIVITY
   // make the beampipe sensitive if required (attachd Sensitive Detector Class)
