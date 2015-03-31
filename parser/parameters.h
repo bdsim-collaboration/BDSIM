@@ -81,7 +81,7 @@ struct Parameters {
   double flatlength; int flatlengthset;
   double taperlength; int taperlengthset;
   double gradient; int gradientset;
-  
+  double outR; int outRset; ///> outer radius of magnets
   double hgap, hgapset;
   double xsize, ysize; int xsizeset, ysizeset; ///> aperture (or laser spotsize for laser)
   double xdir, ydir, zdir, waveLength; int xdirset, ydirset, zdirset, waveLengthset;

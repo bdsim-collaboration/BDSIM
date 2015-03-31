@@ -93,8 +93,6 @@ public:
   /// access the read out geometry
   inline G4LogicalVolume* GetReadOutLogicalVolume();
 
-  //  void BuildOuterFieldManager();
-
   // in case a mapped field is provided creates a field mesh in global coordinates
   virtual void PrepareField(G4VPhysicalVolume *referenceVolume); 
 

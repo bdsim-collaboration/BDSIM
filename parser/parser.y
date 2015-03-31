@@ -572,8 +572,7 @@ parameters:
 		  if(!strcmp($1->name,"outerDiameter")) 
 		    { params.outerDiameter = $3; params.outerDiameterset = 1;}
 		    else
-		  if(!strcmp($1->name,"boxSize")) //for backwards compatability 
-		    { params.outerDiameter = $3; params.outerDiameterset = 1;}
+		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
 		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
@@ -789,7 +788,7 @@ parameters:
 		    else
 		  if(!strcmp($1->name,"beampipeThickness") ) 
 			      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
-		  else
+		    else
 		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
 		    { params.aper1 = $3; params.aper1set = 1;}
 		    else
@@ -807,7 +806,9 @@ parameters:
 		    else
 		  if(!strcmp($1->name,"boxSize")) //for backwards compatability 
 		    { params.outerDiameter = $3; params.outerDiameterset = 1;}
-		  else
+		    else
+		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
+		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
 		  if(!strcmp($1->name,"ysize") ) { params.ysize = $3; params.ysizeset = 1;}

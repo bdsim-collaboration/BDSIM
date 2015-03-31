@@ -34,8 +34,8 @@ private:
   /// override multipole method to attach outer field
   virtual void BuildOuterVolume();
 
-  BDSMuSpoilerMagField* outerMagField;
-  G4FieldManager*       outerFieldMgr;
+  // BDSMuSpoilerMagField* outerMagField;
+  // G4FieldManager*       outerFieldMgr;
 };
 
 #endif

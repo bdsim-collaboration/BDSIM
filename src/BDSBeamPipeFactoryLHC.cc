@@ -2,9 +2,10 @@
 #include "BDSBeamPipeFactoryLHC.hh"
 #include "BDSBeamPipe.hh"
 
-#include "BDSMaterials.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
+#include "BDSExecOptions.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSMaterials.hh"
 #include "BDSSDManager.hh"
 #include "BDSUtilities.hh"                 // for calculateorientation
 
@@ -326,11 +327,11 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CommonFinalConstruction(G4String    nameIn,
   // vacuum
   vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
   // container
-#ifdef BDSDEBUG
+  if (BDSExecOptions::Instance()->GetVisDebug()) {
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-#else
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-#endif
+  } else {
+    containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+  }
 
   // USER LIMITS - set user limits based on bdsim user specified parameters
 #ifndef NOUSERLIMITS

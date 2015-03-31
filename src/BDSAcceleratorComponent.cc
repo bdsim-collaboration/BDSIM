@@ -2,9 +2,11 @@
 #include <sstream>
 #include <cmath>
 
+#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSAcceleratorComponent.hh"
+#include "BDSGeometryComponent.hh"
 #include "BDSMaterials.hh"
 #include "BDSReadOutGeometry.hh"
 #include "G4Box.hh"
@@ -19,8 +21,6 @@
 #include "G4IntersectionSolid.hh"
 #include "G4AssemblyVolume.hh"
 #include "G4Transform3D.hh"
-
-#include "BDSGeometryComponent.hh"
 
 typedef std::map<G4String,int> LogVolCountMap;
 LogVolCountMap* LogVolCount = new LogVolCountMap();
@@ -218,14 +218,13 @@ void BDSAcceleratorComponent::Build()
   BuildMarkerLogicalVolume(); // pure virtual provided by derived class
 
   // visual attributes
-#ifdef BDSDEBUG
-  if(itsMarkerLogicalVolume)
-    itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-#else
-  if(itsMarkerLogicalVolume)
-    itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-#endif
-  
+  if(itsMarkerLogicalVolume) {
+    if (BDSExecOptions::Instance()->GetVisDebug()) {
+      itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+    } else {
+      itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+    }
+  }
 }
 
 void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)

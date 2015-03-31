@@ -913,15 +913,15 @@ BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
   }
 #ifdef BDSDEBUG 
   G4cout << "---->creating muspoiler,"
-	 << " name= " << _element.name 
-	 << " length= " << _element.l
-	 << " B= " << _element.B
+	 << " name = " << _element.name 
+	 << " length = " << _element.l
+	 << " B = " << _element.B
 	 << " tunnel material " << _element.tunnelMaterial
 	 << G4endl;
 #endif
         
 #ifdef BDSDEBUG
-  G4cout << "BDSMuSpoiler: " << _element.name << " " << _element.l*CLHEP::m << " " << " " << _element.B*CLHEP::tesla << G4endl;
+  G4cout << "BDSMuSpoiler: " << _element.name << " " << _element.l*CLHEP::m << " mm " << " " << _element.B*CLHEP::tesla << " MT " << G4endl;
 #endif
   
   return (new BDSMuSpoiler(_element.name,
