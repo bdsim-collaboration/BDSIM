@@ -16,11 +16,8 @@ struct Element {
   int precisionRegion;
   std::string name;
 
-  //double inR; double bpRad; /// inner radius and beam pipe radius of muon spoiler  
   double l; // l in metres
   double ks,k0,k1,k2,k3,angle;
-
-  //double aper,aperX, aperY; //old aperture model
 
   // beampipe information
   double beampipeThickness;

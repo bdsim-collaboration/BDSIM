@@ -19,7 +19,7 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType, G4bool globalC
   G4String apertureTypeLower = G4String(apertureType); // copy if first
   apertureTypeLower.toLower();
     
-  if ( (types.find(apertureType) == types.end()) and (types.find(apertureTypeLower) == types.end()) )
+  if ( (types.find(apertureType) == types.end()) && (types.find(apertureTypeLower) == types.end()) )
     {
       if (globalCheck){
 	// it's not a valid key

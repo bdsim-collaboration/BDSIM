@@ -52,6 +52,7 @@ void Parameters::flush() {
 
   precisionRegion = 0; precisionRegionset = 0;
   tilt = 0; tiltset = 0;
+  outR = 0; outRset = 0;
   
   // aperture model
   beampipeThickness = 0; beampipeThicknessset = 0;
@@ -164,6 +165,7 @@ void Parameters::inherit_properties(struct Element& e)
   if(!magnetGeometryTypeset) {magnetGeometryType = e.magnetGeometryType; magnetGeometryTypeset = 1;}
   if(!outerMaterialset)      {outerMaterial      = e.outerMaterial;      outerMaterialset = 1;}
   if(!outerDiameterset)      {outerDiameter = e.outerDiameter; outerDiameterset = 1;}
+  if(!outRset) { outR = e.outR; outRset = 1; }
 
   if(!gradientset) { gradient = e.gradient; gradientset = 1; }
 

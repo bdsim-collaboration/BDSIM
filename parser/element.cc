@@ -197,6 +197,7 @@ double Element::property_lookup(char* property_name)const{
   if(!strcmp(property_name,"aper3")) return aper3;
   if(!strcmp(property_name,"aper4")) return aper4;
   if(!strcmp(property_name,"outerDiameter")) return outerDiameter;
+  if(!strcmp(property_name,"outR")) return outR;
   if(!strcmp(property_name,"xsize")) return xsize;
   if(!strcmp(property_name,"ysize")) return ysize;
   if(!strcmp(property_name,"xdir")) return xdir;

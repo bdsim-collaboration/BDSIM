@@ -6,8 +6,9 @@
    Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
    Changed Samplers to account for plane and cylinder types (GABs code)
 */
-// gab:
+
 #include "BDSGlobalConstants.hh" 
+#include "BDSExecOptions.hh"
 #include "BDSMaterials.hh"
 #include "BDSSampler.hh"
 #include "BDSDebug.hh"
@@ -17,7 +18,6 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "BDSSamplerSD.hh"
-//#include "G4SDManager.hh"
 
 #include "BDSSDManager.hh"
 
@@ -77,11 +77,11 @@ void BDSSampler::BuildMarkerLogicalVolume()
   itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
   //itsMarkerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
-#ifdef BDSDEBUG
-  itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-#else
-  itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-#endif
+  if (BDSExecOptions::Instance()->GetVisDebug()) {
+    itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+  } else {
+    itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+  }
   itsMarkerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 }
 

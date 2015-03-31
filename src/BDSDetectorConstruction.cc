@@ -92,14 +92,14 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   theHitMaker(NULL),theParticleBounds(NULL),_globalRotation(NULL)
 {  
   verbose    = BDSExecOptions::Instance()->GetVerbose();
-  gflash     = BDSExecOptions::Instance()->GetGFlash();
-  gflashemax = BDSExecOptions::Instance()->GetGFlashEMax();
-  gflashemin = BDSExecOptions::Instance()->GetGFlashEMin();
 
   //initialize global rotation matrix
   _globalRotation = new G4RotationMatrix();
 
+  G4bool gflash = BDSExecOptions::Instance()->GetGFlash();
   if (gflash) {
+    G4double gflashemax = BDSExecOptions::Instance()->GetGFlashEMax();
+    G4double gflashemin = BDSExecOptions::Instance()->GetGFlashEMin();
     // GFlashStuff
     theParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
     theParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*CLHEP::GeV);
@@ -129,7 +129,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
 	   << theParticleBounds->GetEneToKill(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
 #endif
 
-    theHitMaker          = new GFlashHitMaker();                    // Makes the EnergieSpots 
+    theHitMaker          = new GFlashHitMaker();                    // Makes the EnergySpots 
   }
 }
 
@@ -310,13 +310,13 @@ void BDSDetectorConstruction::BuildWorld(){
 				   worldName);	       //its name
 
   // visual attributes
-#ifdef BDSDEBUG
-  G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
-  debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
-  logicWorld->SetVisAttributes(debugWorldVis);
-#else
-  logicWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-#endif
+  if (BDSExecOptions::Instance()->GetVisDebug()) {
+    G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
+    debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
+    logicWorld->SetVisAttributes(debugWorldVis);
+  } else {
+    logicWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+  }
 	
   // set limits
 #ifndef NOUSERLIMITS
@@ -531,6 +531,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 								    thecurrentitem->GetSPos() );
 	  BDSGlobalConstants::Instance()->AddLogicalVolumeInfo((*sensIt),theinfo);
 	  //set gflash parameterisation on volume if required
+	  G4bool gflash     = BDSExecOptions::Instance()->GetGFlash();
 	  if(gflash && ((*sensIt)->GetRegion() != precisionRegion) && (thecurrentitem->GetType()=="element"))
 	    {SetGFlashOnVolume(*sensIt);}
 	}
