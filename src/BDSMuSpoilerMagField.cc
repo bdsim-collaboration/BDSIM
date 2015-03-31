@@ -23,7 +23,6 @@ BDSMuSpoilerMagField::~BDSMuSpoilerMagField(){
 void BDSMuSpoilerMagField::GetFieldValue(const G4double Point[4],
 					      G4double *Bfield ) const
 {
-
   G4ThreeVector GlobalPosition= G4ThreeVector( Point[0], Point[1], Point[2]);  
   MuSpoilerNavigator->SetWorldVolume(G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->GetWorldVolume()); 
   MuSpoilerNavigator->LocateGlobalPointAndSetup(GlobalPosition);
@@ -32,12 +31,12 @@ void BDSMuSpoilerMagField::GetFieldValue(const G4double Point[4],
     GetGlobalToLocalTransform();  
   G4ThreeVector LocalR=GlobalAffine.TransformPoint(GlobalPosition); 
 
-  G4double BFactor=itsBField/LocalR.mag();
+  G4double LocalX = LocalR.x();
+  G4double LocalY = LocalR.y();
+  G4double LocalRadius = std::sqrt(LocalX*LocalX + LocalY*LocalY);
 
-  //G4double phi = LocalR.phi();
-
-  Bfield[0]= LocalR.y()*BFactor;
-  Bfield[1]= -LocalR.x()*BFactor;
+  Bfield[0]=  LocalY/LocalRadius * itsBField;
+  Bfield[1]= -LocalX/LocalRadius * itsBField;
   Bfield[2]=0;
 }
 
