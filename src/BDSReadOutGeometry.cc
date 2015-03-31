@@ -34,6 +34,8 @@ G4LogicalVolume* BDS::BuildReadOutVolume(G4String name,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  if (length < 1e-15) return NULL;
+
   G4double roRadius      = BDSGlobalConstants::Instance()->GetSamplerDiameter()*0.5;
   G4Material* roMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
   G4VSolid* roSolid      = NULL;
