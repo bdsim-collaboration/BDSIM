@@ -32,6 +32,6 @@ namespace BDS {
   G4LogicalVolume* BuildReadOutVolume(G4String name,
 				      G4double length,
 				      G4double angle);
-};
+}
 
 #endif
