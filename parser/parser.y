@@ -134,9 +134,9 @@ decl : VARIABLE ':' marker
      | VARIABLE ':' pcldrift
        {
 	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : pcldrift\n",$1->name);
+	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : pcldrift (drift)\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_PCLDRIFT);
+	   write_table(params,$1->name,_DRIFT);
 	   params.flush();
 	 }
        } 
@@ -560,24 +560,22 @@ parameters:
 		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
 		      { params.aper = $3; params.aperset = 1;}
 		    else
-		  if(!strcmp($1->name,"aperX") ||!strcmp($1->name,"apertureX") ) 
-		      { params.aperX = $3; params.aperXset = 1;}
+		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
+		    { params.aper1 = $3; params.aper1set = 1;}
 		    else
-		  if(!strcmp($1->name,"aperY") ||!strcmp($1->name,"apertureY") ) 
-		      { params.aperY = $3; params.aperYset = 1;}
+		  if(!strcmp($1->name,"aper2") ||!strcmp($1->name,"aperture2") ) 
+		    { params.aper2 = $3; params.aper2set = 1;}
 		    else
-		  if(!strcmp($1->name,"aperYUp") ||!strcmp($1->name,"apertureYUp") ) 
-		      { params.aperYUp = $3; params.aperYUpset = 1;}
+		  if(!strcmp($1->name,"aper3") ||!strcmp($1->name,"aperture3") ) 
+		    { params.aper3 = $3; params.aper3set = 1;}
 		    else
-		  if(!strcmp($1->name,"aperYDown") ||!strcmp($1->name,"apertureYDown") ) 
-		      { params.aperYDown = $3; params.aperYDownset = 1;}
+		  if(!strcmp($1->name,"aper4") ||!strcmp($1->name,"aperture4") ) 
+		    { params.aper4 = $3; params.aper4set = 1;}
 		    else
-		  if(!strcmp($1->name,"aperDy") ||!strcmp($1->name,"apertureDy") ) 
-		    { params.aperDy = $3; params.aperDyset = 1;}
+		  if(!strcmp($1->name,"boxSize")) 
+		    { params.boxSize = $3; params.boxSizeset = 1;}
 		    else
 		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
-		    else
-                  if(!strcmp($1->name,"inR") ) { params.inR = $3; params.inRset = 1;}
 		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
@@ -797,24 +795,22 @@ parameters:
 		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
 			      { params.aper = $3; params.aperset = 1;}
 		    else
-		  if(!strcmp($1->name,"aperX") ||!strcmp($1->name,"apertureX") ) 
-			      { params.aperX = $3; params.aperXset = 1;}
+		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
+		    { params.aper1 = $3; params.aper1set = 1;}
 		    else
-		  if(!strcmp($1->name,"aperY") ||!strcmp($1->name,"apertureY") ) 
-			      { params.aperY = $3; params.aperYset = 1;}
-		  else
-		  if(!strcmp($1->name,"aperYUp") ||!strcmp($1->name,"apertureYUp") ) 
-		      { params.aperYUp = $3; params.aperYUpset = 1;}
+		  if(!strcmp($1->name,"aper2") ||!strcmp($1->name,"aperture2") ) 
+		    { params.aper2 = $3; params.aper2set = 1;}
 		    else
-		  if(!strcmp($1->name,"aperYDown") ||!strcmp($1->name,"apertureYDown") ) 
-		      { params.aperYDown = $3; params.aperYDownset = 1;}
+		  if(!strcmp($1->name,"aper3") ||!strcmp($1->name,"aperture3") ) 
+		    { params.aper3 = $3; params.aper3set = 1;}
 		    else
-		  if(!strcmp($1->name,"aperDy") ||!strcmp($1->name,"apertureDy") ) 
-		    { params.aperDy = $3; params.aperDyset = 1;}
+		  if(!strcmp($1->name,"aper4") ||!strcmp($1->name,"aperture4") ) 
+		    { params.aper4 = $3; params.aper4set = 1;}
+		    else
+		  if(!strcmp($1->name,"boxSize")) 
+		    { params.boxSize = $3; params.boxSizeset = 1;}
 		    else
 		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
-		    else
-                  if(!strcmp($1->name,"inR") ) { params.inR = $3; params.inRset = 1;}
 		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
@@ -904,6 +900,17 @@ parameters:
 			 params.materialset = 1;
 			 params.material = $3;
 		       }
+		   if(!strcmp($1->name,"apertureType"))
+		       {
+			 params.apertureTypeset = 1;
+			 params.apertureType = $3;
+		       }
+		   else
+		   if(!strcmp($1->name,"beampipeMaterial"))
+			 {
+			   params.beampipeMaterialset = 1;
+			   params.beampipeMaterial = $3;
+			 }
 		   else
 		   if(!strcmp($1->name,"tunnelMaterial")) 
 		       {
@@ -993,7 +1000,19 @@ parameters:
 			 params.tunnelmaterialset = 1;
 			 params.tunnelMaterial = $3;
 		       }
-			 else
+		       else
+		       if(!strcmp($1->name,"apertureType"))
+			 {
+			   params.apertureTypeset = 1;
+			   params.apertureType = $3;
+			 }
+		       else
+		       if(!strcmp($1->name,"beampipeMaterial"))
+			 {
+			   params.beampipeMaterialset = 1;
+			   params.beampipeMaterial = $3;
+			 }
+		       else
                          if(!strcmp($1->name,"tunnelCavityMaterial")) 
 		       {
 			 params.tunnelcavitymaterialset = 1;

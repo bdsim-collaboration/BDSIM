@@ -21,7 +21,7 @@ BDSOutputBase* BDSOutputFactory::createOutput(BDSOutputFormat format) {
 #ifdef USE_ROOT
     combinedOutput->Add(new BDSOutputROOT());
 #endif
-    bdsOutput = combinedOutput;
+    return combinedOutput;
   }
   // should not happen, but to prevent compiler warning
   return new BDSOutputASCII();

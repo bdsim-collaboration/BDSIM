@@ -1,66 +1,66 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
+#ifndef BDSBEAMPIPE_H
+#define BDSBEAMPIPE_H
 
-   Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
-   Added GAB GetInnerLogicalVolume method
-*/
+#include "BDSGeometryComponent.hh"
 
-#ifndef BDSBeamPipe_h
-#define BDSBeamPipe_h 1
-
-#include "globals.hh"
+#include "globals.hh"               // geant4 globals / types
 #include "G4LogicalVolume.hh"
+#include "G4VSolid.hh"
+#include <utility>                  // for std::pair
 
-#include "G4VisAttributes.hh"
-#include "G4IntersectionSolid.hh"
-#include "G4Trd.hh"
-#include "G4Tubs.hh"
-#include "G4FieldManager.hh"
+/**
+ * @brief A holder class for all information required for a
+ * piece of beampipe.  This does not implement the construction
+ * of the beampipe. 
+ * 
+ * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ */
 
-#include "BDSEnergyCounterSD.hh"
-
-class BDSBeamPipe
+class BDSBeamPipe: public BDSGeometryComponent
 {
 public:
-  BDSBeamPipe(const G4String& aName, G4double aLength, G4double aRadius,
-	      G4double angle=0);
-  ~BDSBeamPipe();
-  
-  G4LogicalVolume* GetLogicalVolume();
-  G4LogicalVolume* GetInnerLogicalVolume();
-  G4ThreeVector GetPos();
-  G4RotationMatrix* GetRot();
-  
-  void SetBPFieldManager(G4FieldManager* aFieldManager);
-  void SetCoarseFieldManager(G4FieldManager* aFieldManager);
+  /// constructor has BDSGeometryComponent members first,
+  /// then everything extra for this derived class
+  BDSBeamPipe(G4VSolid*                 containerSolidIn,
+	      G4LogicalVolume*          containerLVIn,
+	      std::pair<double, double> extentXIn,
+	      std::pair<double, double> extentYIn,
+	      std::pair<double, double> extentZIn,
+	      G4VSolid*                 containerSubtractionSolidIn,
+	      G4LogicalVolume*          vacuumLVIn,
+	      G4bool                    containerIsCircularIn = false,
+	      G4double                  containerRadiusIn = 0.0
+	      );
+  ~BDSBeamPipe(); /// default destructor sufficient as G4 manages solids and LVs
+
+  /// access a solid for beampipe subtraction - note this is typically longer
+  /// than the actual beampipe for unambiguous subtraction
+  G4VSolid*        GetContainerSubtractionSolid();
+  /// access the vacuum volume to set fields and limits
+  G4LogicalVolume* GetVacuumLogicalVolume();
+  /// flag to tell whether the parent volume needn't use a subtraction
+  /// solid and can simply use a G4Tubs for example
+  G4bool           ContainerIsCircular();
+  /// if it is circular, we need the radius
+  G4double         GetContainerRadius();
   
 protected:
-  
-private:
-  G4LogicalVolume* itsLogicalVolume;
-  G4LogicalVolume* itsInnerLogicalVolume;
-  G4LogicalVolume* itsCoarseInnerLogicalVolume;
-  G4VisAttributes* SetVisAttributes();
-  
-  G4VisAttributes* itsVisAttributes;
-  
-  G4ThreeVector itsPos;
-  G4RotationMatrix* itsRot;
-  
-  G4Trd* itsTrd1;
-  G4Trd* itsTrd2;
-  G4IntersectionSolid* itsTubeInTrd;
-  G4IntersectionSolid* itsInnerTubeInTrd;
-  
-  G4Tubs* itsTube;
-  G4Tubs* itsInnerTube;
-  
-  BDSEnergyCounterSD* itsECounter;
+  G4VSolid*        containerSubtractionSolid;
+  G4LogicalVolume* vacuumLogicalVolume;
+  G4bool           containerIsCircular;
+  G4double         containerRadius;
 };
 
-inline G4LogicalVolume* BDSBeamPipe::GetInnerLogicalVolume()
-{return itsInnerLogicalVolume;}
+inline G4VSolid* BDSBeamPipe::GetContainerSubtractionSolid()
+{return containerSubtractionSolid;}
+
+inline G4LogicalVolume* BDSBeamPipe::GetVacuumLogicalVolume()
+{return vacuumLogicalVolume;}
+
+inline G4bool BDSBeamPipe::ContainerIsCircular()
+{return containerIsCircular;}
+
+inline G4double BDSBeamPipe::GetContainerRadius()
+{return containerRadius;}
 
 #endif

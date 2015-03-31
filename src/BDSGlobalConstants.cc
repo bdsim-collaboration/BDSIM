@@ -3,13 +3,22 @@
 Last modified 23.10.2007 by Steve Malton
 
 **/
+
+#include <cstdlib>
+
 #include "BDSGlobalConstants.hh"
+
 #include "parser/options.h"
+
+#include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
+
+#include "G4Colour.hh"
 #include "G4FieldManager.hh"
 #include "G4UniformMagField.hh"
-#include <cstdlib>
 #include "G4ThreeVector.hh"
+#include "G4UserLimits.hh"
+#include "G4VisAttributes.hh"
 
 extern Options options;
 
@@ -25,15 +34,15 @@ BDSGlobalConstants* BDSGlobalConstants::Instance(){
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0),itsParticleMomentum(0.0),itsParticleKineticEnergy(0.0),itsSMax(0.0)
 {
-  itsPhysListName = opt.physicsList;
-  itsPipeMaterial = opt.pipeMaterial;
-  itsVacMaterial = opt.vacMaterial;
-  itsEmptyMaterial = "G4_Galactic"; // space vacuum
+  itsPhysListName       = opt.physicsList;
+  itsBeamPipeMaterial   = opt.beampipeMaterial;
+  itsApertureType       = BDS::DetermineBeamPipeType(opt.apertureType,true); //true is flag for first global check
+  itsVacuumMaterial     = opt.vacMaterial;
+  itsEmptyMaterial      = "G4_Galactic"; // space vacuum
   itsTunnelMaterialName = opt.tunnelMaterial;
   itsTunnelCavityMaterialName = opt.tunnelCavityMaterial;
-  itsSoilMaterialName = opt.soilMaterial;
-
-  itsMagnetGeometry = opt.magnetGeometry;
+  itsSoilMaterialName   = opt.soilMaterial;
+  itsMagnetGeometry     = opt.magnetGeometry;
 
   itsSampleDistRandomly = true;
   itsGeometryBias = opt.geometryBias;
@@ -57,17 +66,21 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
     itsParticleTotalEnergy = itsBeamTotalEnergy;
   }
 
-  itsVacuumPressure = opt.vacuumPressure*CLHEP::bar;
   itsPlanckScatterFe = opt.planckScatterFe;
   //Fraction of events with leading particle biasing.
-  itsBeampipeRadius = opt.beampipeRadius * CLHEP::m;
-  if(itsBeampipeRadius == 0){
-    G4cerr << __METHOD_NAME__ << "Error: option \"beampipeRadius\" must be greater than 0" <<  G4endl;
-    exit(1);
-  }
-  itsBeampipeThickness = opt.beampipeThickness * CLHEP::m;
+
+  //beampipe
+  itsBeamPipeRadius = opt.beampipeRadius * CLHEP::m;
+  itsAper1 = opt.aper1*CLHEP::m;
+  itsAper2 = opt.aper2*CLHEP::m;
+  itsAper3 = opt.aper3*CLHEP::m;
+  itsAper4 = opt.aper4*CLHEP::m;
+  // note beampipetype already done before these checks! at top of this function
+  BDS::CheckApertureInfo(itsApertureType,itsBeamPipeRadius,itsAper1,itsAper2,itsAper3,itsAper4);
+  
+  itsBeamPipeThickness = opt.beampipeThickness * CLHEP::m;
   itsComponentBoxSize = opt.componentBoxSize * CLHEP::m;
-  if (itsComponentBoxSize < (itsBeampipeThickness + itsBeampipeRadius)){
+  if (itsComponentBoxSize < (itsBeamPipeThickness + itsBeamPipeRadius)){
     G4cerr << __METHOD_NAME__ << "Error: option \"boxSize\" must be greater than the sum of \"beampipeRadius\" and \"beamPipeThickness\" " << G4endl;
     exit(1);
   }
@@ -185,6 +198,33 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsLWCalOffset      = 0.0;
   itsMagnetPoleRadius = 0.0;
   itsMagnetPoleSize   = 0.0;
+
+  // initialise the default vis attributes and user limits that
+  // can be copied by various bits of geometry
+  InitVisAttributes();
+  InitDefaultUserLimits();
+}
+
+void BDSGlobalConstants::InitVisAttributes()
+{
+  //for vacuum volumes
+  invisibleVisAttr = new G4VisAttributes(G4Colour::Black());
+  invisibleVisAttr->SetVisibility(false);
+  invisibleVisAttr->SetForceSolid(true);
+
+  //for normally invisible volumes like marker / container volumes in debug mode
+  visibleDebugVisAttr = new G4VisAttributes(); //green
+  visibleDebugVisAttr->SetColour(0,0.6,0,0.1);
+  visibleDebugVisAttr->SetVisibility(true);
+  visibleDebugVisAttr->SetForceSolid(true);
+}
+
+void BDSGlobalConstants::InitDefaultUserLimits()
+{
+  //these must be copied and not attached directly
+  defaultUserLimits = new G4UserLimits("default_cuts");
+  defaultUserLimits->SetUserMinEkine( GetThresholdCutCharged() );
+  //user must set step length manually
 }
 
 void BDSGlobalConstants::InitRotationMatrices(){
@@ -231,7 +271,7 @@ G4RotationMatrix* BDSGlobalConstants::RotYM90XM90() const{
 }
 
 // a robust compiler-invariant method to convert from integer to G4String
-G4String BDSGlobalConstants::StringFromInt(G4int N) 
+G4String BDSGlobalConstants::StringFromInt(G4int N)const
 {
   if (N==0) return "0";
   G4int nLocal=N, nDigit=0, nMax=1;
@@ -247,7 +287,7 @@ G4String BDSGlobalConstants::StringFromInt(G4int N)
 }
 
 // a robust compiler-invariant method to convert from digit to G4String
-G4String BDSGlobalConstants::StringFromDigit(G4int N) 
+G4String BDSGlobalConstants::StringFromDigit(G4int N)const 
 {
   if(N<0 || N>9)
     G4Exception("Invalid Digit in BDSGlobalConstants::StringFromDigit", "-1", FatalException, "");
@@ -269,5 +309,6 @@ BDSGlobalConstants::~BDSGlobalConstants()
 {  
   delete itsZeroFieldManager;
   delete zeroMagField;
+  delete defaultUserLimits;
   _instance = 0;
 }

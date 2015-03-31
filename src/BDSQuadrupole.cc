@@ -20,9 +20,12 @@
 
 #include "BDSQuadrupole.hh"
 
+#include "BDSBeamPipeInfo.hh"
 #include "BDSMaterials.hh"
 #include "BDSQuadMagField.hh"
 #include "BDSQuadStepper.hh"
+#include "BDSEnergyCounterSD.hh"
+#include "BDSSDManager.hh"
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
@@ -33,31 +36,26 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-//============================================================
-
-BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength, 
-			     G4double bpRad, G4double FeRad,
-			     G4double bGrad, G4double tilt, G4double outR,
-                             std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-			     G4String aTunnelMaterial, G4String aMaterial, G4String spec):
-  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
+BDSQuadrupole::BDSQuadrupole(G4String         name,
+			     G4double         length,
+			     G4double         bGrad,
+			     BDSBeamPipeInfo  beamPipeInfoIn,
+			     G4double         boxSize,
+			     G4String         outerMaterial,
+			     G4String         tunnelMaterial,
+			     G4double         tunnelRadius,
+			     G4double         tunnelOffsetX):
+  BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBGrad(bGrad)
 {
-#ifdef BDSDEBUG 
-  G4cout<< __METHOD_NAME__ << "spec=" << spec << G4endl;
-#endif
-  // get specific quadrupole type
-  G4String qtype = getParameterValueString(spec, "type");
-#ifdef BDSDEBUG 
-  G4cout<< __METHOD_NAME__ << "qtype="<<qtype<<G4endl;
-#endif
-
-  SetOuterRadius(outR);
-  itsTilt=tilt;
+  G4String qtype = "cylinder";
 }
 
 void BDSQuadrupole::Build() 
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   BDSMultipole::Build();
   
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
@@ -100,78 +98,20 @@ void BDSQuadrupole::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)
 {
   // build magnet (geometry + magnetic field)
   // according to quad type
-    
   G4String geometry = BDSGlobalConstants::Instance()->GetMagnetGeometry();
   
   if(geometry =="standard") 
     BuildStandardOuterLogicalVolume(); // standard - quad with poles and pockets
-  else if(geometry =="cylinder")  
-    BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
+  else if(geometry =="cylinder")
+    BDSMultipole::BuildOuterLogicalVolume(false);
   else //default - cylinder - standard
-    BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
+    BDSMultipole::BuildOuterLogicalVolume(false);
 
-  //
-  // define sensitive volumes for hit generation
-  //
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-#ifdef BDSDEBUG
-    G4cout << "BDSQuadrupole.cc:> setting sensitive outer volume" << G4endl;
-#endif
-    AddSensitiveVolume(itsOuterLogicalVolume);
-  }
+  //remember if it's vacuum, it won't be built - have to check it's there
+  if (itsOuterLogicalVolume)
+    {itsOuterLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());}
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////
-// 				Cylindrical geometry					 //
-///////////////////////////////////////////////////////////////////////////////////////////
-
-
-void BDSQuadrupole::BuildCylindricalOuterLogicalVolume()
-{
-  G4double outerRadius = itsOuterR;
-  if(itsOuterR==0) outerRadius = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
-
-  outerRadius = outerRadius/sqrt(2.0); //Why divide by sqrt of 2?
-
-  itsOuterLogicalVolume=
-    new G4LogicalVolume(
-			
-			new G4Tubs(itsName+"_outer_solid",
-				   itsInnerIronRadius,
-				   outerRadius * sqrt(2.0),
-				   itsLength/2,
-				   0,CLHEP::twopi*CLHEP::radian),
-			BDSMaterials::Instance()->GetMaterial("Iron"),
-			itsName+"_outer");
-
-  // insert the outer volume into the marker volume
-  itsPhysiComp = 
-    new G4PVPlacement(
-		      0,                      // no rotation
-		      (G4ThreeVector)0,                      // its position
-		      itsOuterLogicalVolume,  // its logical volume
-		      itsName+"_outer_phys",  // its name
-		      itsMarkerLogicalVolume, // its mother  volume
-		      false,                  // no boolean operation
-		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());                     // copy number
-  
-#ifndef NOUSERLIMITS
-  itsOuterUserLimits =
-    new G4UserLimits("quadrupole cut",itsLength,DBL_MAX,BDSGlobalConstants::Instance()->GetMaxTime(),
-		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
-#endif
-  
-  // color-coding for the pole
-  G4VisAttributes* VisAtt = 
-    new G4VisAttributes(G4Colour(1., 0., 0.));
-  VisAtt->SetForceSolid(true);
-  itsOuterLogicalVolume->SetVisAttributes(VisAtt);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////
-// 				Detailed geometry					 //
-///////////////////////////////////////////////////////////////////////////////////////////
 void BDSQuadrupole::SetVisAttributes()
 {
   itsVisAttributes = new G4VisAttributes(true);
@@ -215,8 +155,6 @@ void BDSQuadrupole::BuildStandardOuterLogicalVolume()
 					router),
 			BDSMaterials::Instance()->GetMaterial("Iron"),
 			itsName+"_outer");
-
- /////////////////////////////////////////////////////////////////
   
   // Defining poles
   G4ThreeVector positionQuad = G4ThreeVector(0,0,0);
@@ -261,8 +199,6 @@ void BDSQuadrupole::BuildStandardOuterLogicalVolume()
     new G4VisAttributes(G4Colour(1., 0., 0.));
   VisAtt->SetForceSolid(true);
   PoleSLV->SetVisAttributes(VisAtt);
-
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////
     
   G4RotationMatrix* rm_outer = new G4RotationMatrix();
   rm_outer->rotateZ(360.0/n_poles/4.0*CLHEP::deg-itsTilt*180.0/CLHEP::pi*CLHEP::degree);
@@ -285,8 +221,4 @@ void BDSQuadrupole::BuildStandardOuterLogicalVolume()
 		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
-}
-
-BDSQuadrupole::~BDSQuadrupole()
-{
 }

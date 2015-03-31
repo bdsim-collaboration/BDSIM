@@ -21,6 +21,10 @@ namespace BDS {
   // remove white space and special characters in the name
   G4String PrepareSafeName(G4String name);
 
+  /// calculate the +- 1 orientation multiplier for absolute angles
+  /// seems trivial, but used in a lot of places so put in one place
+  G4int    CalculateOrientation(G4double angle);
+
 
   
 }

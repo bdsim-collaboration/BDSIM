@@ -91,7 +91,6 @@ private:
   std::vector<BDSBin*> bins;
   BDSBin*  overflow;
   BDSBin*  underflow;
-  G4double binwidth;
   G4String name;
   G4String title;
   G4int    entries;

@@ -9,6 +9,7 @@
 
 #include "BDSEnergyCounterSD.hh"
 #include "BDSEnergyCounterHit.hh"
+#include "BDSLogicalVolumeInfo.hh"
 #include "G4AffineTransform.hh"
 #include "G4Event.hh"
 #include "G4EventManager.hh"

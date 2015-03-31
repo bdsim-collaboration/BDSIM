@@ -16,15 +16,23 @@ struct Element {
   int precisionRegion;
   std::string name;
 
-  double inR; double bpRad; /// inner radius and beam pipe radius of muon spoiler  
   double l; // l in metres
   double ks,k0,k1,k2,k3,angle;
-  double beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut;
+
+  double aper; //old aperture model
+
+  double beampipeThickness;
+  double aper1, aper2, aper3, aper4; // new aperture model
+  std::string apertureType;
+  std::string beampipeMaterial;
+
+  double boxSize; //outer *diameter / full width* of component
+  
+  double tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut;
   double tscint, twindow, bmapZOffset; 
   double xdir, ydir, zdir, waveLength; /// for laser wire and 3d transforms
   double flatlength,taperlength; ///for realistic collimators
   double gradient; /// for rf cavities
-  double aperYUp, aperYDown, aperDy;  ///pcldrift
   double phi, theta, psi; /// for 3d transforms
   double tunnelRadius;
   double tunnelOffsetX;

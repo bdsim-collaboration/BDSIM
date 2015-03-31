@@ -9,7 +9,6 @@
 #include "G4LogicalVolume.hh"
 #include "G4VisAttributes.hh"
 #include "globals.hh"
-//#include "BDSBeamPipe.hh"
 #include "BDSEnergyCounterSD.hh"
 
 #include "G4MagneticField.hh"
@@ -19,8 +18,10 @@
 #include "G4CSGSolid.hh"
 #include "G4Tubs.hh"
 
+#include "BDSGeometryComponent.hh"
 
-class BDSAcceleratorComponent 
+
+class BDSAcceleratorComponent: public BDSGeometryComponent
 {
 public:
   //destructor
@@ -169,9 +170,7 @@ public:
 
 
 private:
-  //
-  //    Geometry building
-  //
+  /// Geometry building
 
   /// build marker logical volume
   virtual void BuildMarkerLogicalVolume() = 0;
@@ -241,7 +240,6 @@ protected:
   G4double itsK1, itsK2, itsK3;
   //G4RotationMatrix* itsRotation; // rotation matrix (not used)
   //G4ThreeVector itsPosition;
-  //  BDSBeamPipe* itsBeamPipe;
   G4MagIntegratorStepper*  itsOuterStepper;
   /// generic user limits
   G4UserLimits* itsUserLimits;

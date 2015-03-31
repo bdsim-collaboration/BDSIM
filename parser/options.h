@@ -91,7 +91,12 @@ struct Options {
   double    tunnelRadius;
   double    beampipeRadius;
   double    beampipeThickness;
-  std::string pipeMaterial;
+  std::string apertureType;
+  double      aper1;
+  double      aper2;
+  double      aper3;
+  double      aper4;
+  std::string beampipeMaterial;
   std::string vacMaterial;
   std::string tunnelMaterial;
   std::string tunnelCavityMaterial;

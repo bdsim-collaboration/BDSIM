@@ -7,14 +7,15 @@
    Changed StringFromInt to be the BDSGlobal version
 */
 
-#include "BDSGlobalConstants.hh" 
-#include "BDSDebug.hh"
-
 #include "BDSSextupole.hh"
 
+#include "BDSGlobalConstants.hh" 
+#include "BDSDebug.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSMaterials.hh"
 #include "BDSSextMagField.hh"
 #include "BDSSextStepper.hh"
+#include "BDSSDManager.hh"
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
@@ -25,20 +26,18 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-//============================================================
-
-BDSSextupole::BDSSextupole(G4String aName, G4double aLength, 
-			   G4double bpRad, G4double FeRad,
-			   G4double BDblPrime, G4double tilt, 
-			   G4double outR, 
-                           std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-                           G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
-  itsBDblPrime(BDblPrime)
-{
-  SetOuterRadius(outR);
-  itsTilt=tilt;
-}
+BDSSextupole::BDSSextupole(G4String        name,
+			   G4double        length,
+			   G4double        bDblPrime,
+			   BDSBeamPipeInfo beamPipeInfoIn,
+			   G4double        boxSize,
+			   G4String        outerMaterial,
+			   G4String        tunnelMaterial,
+			   G4double        tunnelRadius,
+			   G4double        tunnelOffsetX):
+  BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+  itsBDblPrime(bDblPrime)
+{;}
 
 void BDSSextupole::Build()
 {
@@ -78,98 +77,19 @@ void BDSSextupole::BuildOuterLogicalVolume(G4bool /*OuterMaterialIsVacuum*/)
 {
   // build magnet (geometry + magnetic field)
   // according to quad type
-  
   G4String geometry = BDSGlobalConstants::Instance()->GetMagnetGeometry();
   
   if(geometry =="standard") 
     BuildStandardOuterLogicalVolume(); // standard - quad with poles and pockets
-  else if(geometry =="cylinder")  
-    BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
+  else if(geometry =="cylinder")
+    BDSMultipole::BuildOuterLogicalVolume(false);
   else //default - cylinder - standard
-    BuildCylindricalOuterLogicalVolume(); // cylinder outer volume
+    BDSMultipole::BuildOuterLogicalVolume(false);
 
-  //
-  // define sensitive volumes for hit generation
-  //
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-    AddSensitiveVolume(itsOuterLogicalVolume);
-  }
+  //remember if it's vacuum, it won't be built - have to check it's there
+  if (itsOuterLogicalVolume)
+    {itsOuterLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());}
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////
-//				Cylindrical geometry					//
-//////////////////////////////////////////////////////////////////////////////////////////
-
-void BDSSextupole::BuildCylindricalOuterLogicalVolume()
-{
- 
-  G4double outerRadius = itsOuterR;
-  if(itsOuterR==0) outerRadius = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
-
-#ifdef DEBUG 
-  G4cout << __METHOD_NAME__ << "Outer volume inner radius :"
-         << " r= " << (itsInnerIronRadius)/CLHEP::m << " m"
-         << " l= " << aLength/2./CLHEP::m << " m"
-         << G4endl;
-#endif
-
-#ifdef DEBUG 
-  G4cout << __METHOD_NAME__ << "Outer radius :"
-         << " r= " << outerRadius/CLHEP::m << " m"
-         << " l= " << aLength/2./CLHEP::m << " m"
-         << G4endl;
-#endif
-  
-   itsOuterLogicalVolume=
-     new G4LogicalVolume(
-			new G4Tubs(itsName+"_outer_solid",
-				   itsInnerIronRadius,
-				   outerRadius,
-				   itsLength/2,
-				   0,CLHEP::twopi*CLHEP::radian),
-
-			
-			//BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
-			BDSMaterials::Instance()->GetMaterial("Iron"),
-			itsName+"_outer");
-
-
-    // color-coding for the pole
-  G4VisAttributes* VisAtt = 
-    new G4VisAttributes(G4Colour(1.,1.,0.));
-  VisAtt->SetForceSolid(true);
-
-
-  
-  itsPhysiComp = new G4PVPlacement(
-				   (G4RotationMatrix*)0,		      // no rotation
-				   (G4ThreeVector)0,                      // its position
-		      itsOuterLogicalVolume,  // its logical volume
-		      itsName+"_outer_phys",  // its name
-		      itsMarkerLogicalVolume, // its mother  volume
-		      false,		      // no boolean operation
-				   0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		      // copy number
-  
-  //Add the physical volumes to a vector which can be used for e.g. geometrical biasing
-  SetMultiplePhysicalVolumes(itsPhysiComp);
-
-  //
-  // set visualization attributes
-  //
-  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
-
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  itsOuterUserLimits =  new G4UserLimits("multipole cut");
-  itsOuterUserLimits->SetUserMinEkine( BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  itsOuterUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
-  itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
-#endif
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////
-//				Detailed geometry					//
-//////////////////////////////////////////////////////////////////////////////////////////
 
 void BDSSextupole::BuildStandardOuterLogicalVolume()
 {
@@ -217,7 +137,7 @@ itsOuterLogicalVolume=
 					rinner, 
 					router),
 			
-			//BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			//BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterialName()),
 			BDSMaterials::Instance()->GetMaterial("Iron"),
 			itsName+"_outer");
 
@@ -294,9 +214,6 @@ itsOuterLogicalVolume=
 
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
-
-
 void BDSSextupole::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
@@ -306,8 +223,4 @@ void BDSSextupole::BuildBPFieldAndStepper()
   BDSSextStepper* sextStepper=new BDSSextStepper(itsEqRhs);
   sextStepper->SetBDblPrime(itsBDblPrime);
   itsStepper = sextStepper;
-}
-
-BDSSextupole::~BDSSextupole()
-{
 }

@@ -55,12 +55,11 @@ private:
   /// build tunnel from _TUNNEL elements
   void BuildTunnel();
 
+  /// function to add the volume to the gflash parameterisation model
+  void SetGFlashOnVolume(G4LogicalVolume* volume);
+
   G4bool verbose;
 
-  G4int    gflash;
-  G4double gflashemax;
-  G4double gflashemin;
-    
   G4GeometrySampler* itsGeometrySampler;
 
   G4Region* precisionRegion;

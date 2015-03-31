@@ -8,13 +8,17 @@
 #include "G4String.hh"
 #include "G4AffineTransform.hh"
 
+#include "BDSBeamPipeType.hh"
 #include "BDSParticle.hh"
-#include "G4LogicalVolume.hh"
-#include "BDSLogicalVolumeInfo.hh"
 
 class G4FieldManager;
+class G4LogicalVolume;
 class G4ParticleDefinition;
 class G4UniformMagField;
+class G4UserLimits;
+class G4VisAttributes;
+
+class BDSLogicalVolumeInfo;
 
 struct Options;
 
@@ -39,200 +43,203 @@ private:
 
 public:
    /// access method 
-   static BDSGlobalConstants* Instance();
+  static BDSGlobalConstants* Instance();
   ~BDSGlobalConstants();
   
-  G4bool   GetDoPlanckScattering();
-  G4bool   GetCheckOverlaps();
-  G4double GetMinimumEpsilonStep();
-  G4double GetMaximumEpsilonStep();
-  G4double GetMaxTime();
-  G4double GetDeltaOneStep();
+  G4bool   GetDoPlanckScattering()const;
+  G4bool   GetCheckOverlaps()const;
+  G4double GetMinimumEpsilonStep()const;
+  G4double GetMaximumEpsilonStep()const;
+  G4double GetMaxTime()const;
+  G4double GetDeltaOneStep()const;
 
-  G4String StringFromInt(G4int anInt);
-  G4String StringFromDigit(G4int anInt);
+  G4String StringFromInt(G4int anInt)const;
+  G4String StringFromDigit(G4int anInt)const;
 
-  G4ParticleDefinition* GetParticleDefinition();
+  G4ParticleDefinition* GetParticleDefinition()const;
   void     SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
-  G4String GetParticleName();
+  G4String GetParticleName()const;
   void     SetParticleName(G4String aParticleName);
 
-  G4double GetLPBFraction();
-  G4double GetElossHistoBinWidth();
-  G4double GetElossHistoTransBinWidth(); //The transverse (x,y) bin width
-  G4double GetDefaultRangeCut();
+  G4double GetLPBFraction()const;
+  G4double GetElossHistoBinWidth()const;
+  G4double GetElossHistoTransBinWidth()const; //The transverse (x,y) bin width
+  G4double GetDefaultRangeCut()const;
 
-  G4double GetFFact();
+  G4double GetFFact()const;
 
-  G4double GetBeamKineticEnergy();
+  G4double GetBeamKineticEnergy()const;
   void     SetBeamKineticEnergy(G4double val);
-  G4double GetBeamTotalEnergy();
+  G4double GetBeamTotalEnergy()const;
   void     SetBeamTotalEnergy(G4double val);
-  G4double GetBeamMomentum();
+  G4double GetBeamMomentum()const;
   void     SetBeamMomentum(G4double val);
 
 
-  G4double GetParticleKineticEnergy();
+  G4double GetParticleKineticEnergy()const;
   void     SetParticleKineticEnergy(G4double val);
-  G4double GetParticleTotalEnergy();
-  G4double GetParticleMomentum();
+  G4double GetParticleTotalEnergy()const;
+  G4double GetParticleMomentum()const;
   void     SetParticleMomentum(G4double val);
 
 
-  G4double GetVacuumPressure();
-  G4double GetPlanckScatterFe();
+  G4double GetPlanckScatterFe()const;
 
-  G4double GetGammaToMuFe();
-  G4double GetAnnihiToMuFe();
-  G4double GetEeToHadronsFe();
-  G4bool   GetSampleDistRandomly();
-  G4bool   GetGeometryBias();
-  G4bool   GetUseEMLPB();
-  G4bool   GetUseHadLPB();
+  G4double GetGammaToMuFe()const;
+  G4double GetAnnihiToMuFe()const;
+  G4double GetEeToHadronsFe()const;
+  G4bool   GetSampleDistRandomly()const;
+  G4bool   GetGeometryBias()const;
+  G4bool   GetUseEMLPB()const;
+  G4bool   GetUseHadLPB()const;
   // Booleans determining which types of components are sensitive
-  G4bool   GetSensitiveComponents();
-  G4bool   GetSensitiveBeamPipe();
-  G4bool   GetSensitiveBLMs();
-  G4double GetComponentBoxSize();
-  G4double GetMagnetPoleSize();
-  G4double GetMagnetPoleRadius();
+  G4bool   GetSensitiveComponents()const;
+  G4bool   GetSensitiveBeamPipe()const;
+  G4bool   GetSensitiveBLMs()const;
+  G4double GetComponentBoxSize()const;
+  G4double GetMagnetPoleSize()const;
+  G4double GetMagnetPoleRadius()const;
 
   /// tunnel
-  G4bool   GetBuildTunnel(); 
-  G4bool   GetBuildTunnelFloor(); 
-  G4bool   GetShowTunnel(); 
-  G4double GetTunnelRadius(); 
-  G4double GetTunnelThickness(); 
-  G4double GetTunnelSoilThickness(); 
-  G4double GetTunnelFloorOffset(); 
-  G4double GetTunnelOffsetX(); 
-  G4double GetTunnelOffsetY(); 
+  G4bool   GetBuildTunnel()const; 
+  G4bool   GetBuildTunnelFloor()const; 
+  G4bool   GetShowTunnel()const; 
+  G4double GetTunnelRadius()const; 
+  G4double GetTunnelThickness()const; 
+  G4double GetTunnelSoilThickness()const; 
+  G4double GetTunnelFloorOffset()const; 
+  G4double GetTunnelOffsetX()const; 
+  G4double GetTunnelOffsetY()const; 
 
   // Beam loss monitors
-  G4double GetBlmRad();
-  G4double GetBlmLength();
+  G4double GetBlmRad()const;
+  G4double GetBlmLength()const;
 
   /// Beampipe
-  G4double GetBeampipeRadius(); 
-  G4double GetBeampipeThickness(); 
+  G4double GetBeamPipeRadius()const;
+  G4double GetAper1()const;
+  G4double GetAper2()const;
+  G4double GetAper3()const;
+  G4double GetAper4()const;
+  G4double GetBeamPipeThickness()const; 
 
   /// Sampler
-  G4double GetSamplerDiameter();
-  G4double GetSamplerLength();
+  G4double GetSamplerDiameter()const;
+  G4double GetSamplerLength()const;
 
   /// Chord stepping
-  G4double GetDeltaIntersection();
-  G4double GetDeltaChord();
-  G4double GetChordStepMinimum();
+  G4double GetDeltaIntersection()const;
+  G4double GetDeltaChord()const;
+  G4double GetChordStepMinimum()const;
 
   /// Threshold and Production cuts
-  G4double GetThresholdCutCharged();
-  G4double GetThresholdCutPhotons();
+  G4double GetThresholdCutCharged()const;
+  G4double GetThresholdCutPhotons()const;
 
-  G4double GetProdCutPhotons();
-  G4double GetProdCutPhotonsP();
-  G4double GetProdCutPhotonsA();
-  G4double GetProdCutElectrons();
-  G4double GetProdCutElectronsP();
-  G4double GetProdCutElectronsA();
-  G4double GetProdCutPositrons();
-  G4double GetProdCutPositronsP();
-  G4double GetProdCutPositronsA();
+  G4double GetProdCutPhotons()const;
+  G4double GetProdCutPhotonsP()const;
+  G4double GetProdCutPhotonsA()const;
+  G4double GetProdCutElectrons()const;
+  G4double GetProdCutElectronsP()const;
+  G4double GetProdCutElectronsA()const;
+  G4double GetProdCutPositrons()const;
+  G4double GetProdCutPositronsP()const;
+  G4double GetProdCutPositronsA()const;
 
   // Magnet geometry variable
 
-  G4String GetMagnetGeometry();
+  G4String GetMagnetGeometry()const;
 
   // Physical processes etc.
 
-  G4String GetPhysListName();
-  G4bool   GetSynchRadOn();
-  G4bool   GetDecayOn();
-  G4bool   GetSynchTrackPhotons();
-  G4double GetSynchLowX();
-  G4double GetSynchLowGamE();
-  G4int    GetSynchPhotonMultiplicity();
-  G4int    GetSynchMeanFreeFactor();
-  G4double GetLaserwireWavelength();
-  G4ThreeVector GetLaserwireDir();
+  G4String GetPhysListName()const;
+  G4bool   GetSynchRadOn()const;
+  G4bool   GetDecayOn()const;
+  G4bool   GetSynchTrackPhotons()const;
+  G4double GetSynchLowX()const;
+  G4double GetSynchLowGamE()const;
+  G4int    GetSynchPhotonMultiplicity()const;
+  G4int    GetSynchMeanFreeFactor()const;
+  G4double GetLaserwireWavelength()const;
+  G4ThreeVector GetLaserwireDir()const;
 
   // Use map to generate multiple laserwires with independent wavelength 
   // and direction
-  G4double GetLaserwireWavelength(G4String aName); 
-  G4ThreeVector GetLaserwireDir(G4String aName); 
+  G4double GetLaserwireWavelength(G4String aName)const; 
+  G4ThreeVector GetLaserwireDir(G4String aName)const; 
   void     SetLaserwireWavelength(G4String aName, G4double aWavelength);
   void     SetLaserwireDir(G4String aName, G4ThreeVector aDirection);
-  G4bool   GetLaserwireTrackPhotons();
-  G4bool   GetLaserwireTrackElectrons();
-  G4bool   GetTurnOnCerenkov();
-  G4bool GetTurnOnOpticalAbsorption();
-  G4bool GetTurnOnRayleighScattering();
-  G4bool GetTurnOnMieScattering();
-  G4bool GetTurnOnOpticalSurface();
-  G4bool GetTurnOnBirksSaturation();
-  G4double GetScintYieldFactor();
+  G4bool   GetLaserwireTrackPhotons()const;
+  G4bool   GetLaserwireTrackElectrons()const;
+  G4bool   GetTurnOnCerenkov()const;
+  G4bool   GetTurnOnOpticalAbsorption()const;
+  G4bool   GetTurnOnRayleighScattering()const;
+  G4bool   GetTurnOnMieScattering()const;
+  G4bool   GetTurnOnOpticalSurface()const;
+  G4bool   GetTurnOnBirksSaturation()const;
+  G4double GetScintYieldFactor()const;
 
-  G4bool   GetStoreMuonTrajectories();
-  G4double GetTrajCutGTZ();
-  G4double GetTrajCutLTR();
-  G4bool   GetStoreNeutronTrajectories();
-  G4bool   GetStoreTrajectory();
-  G4bool   GetIncludeIronMagFields();
-  G4bool   GetStopTracks();
+  G4bool   GetStoreMuonTrajectories()const;
+  G4double GetTrajCutGTZ()const;
+  G4double GetTrajCutLTR()const;
+  G4bool   GetStoreNeutronTrajectories()const;
+  G4bool   GetStoreTrajectory()const;
+  G4bool   GetIncludeIronMagFields()const;
+  G4bool   GetStopTracks()const;
   G4bool stopTracks; // kill tracks after interactions
 
-  G4double GetLengthSafety();
-  G4long   GetRandomSeed();
-  G4int    GetNumberToGenerate();
+  G4double GetLengthSafety()const;
+  G4long   GetRandomSeed()const;
+  G4int    GetNumberToGenerate()const;
   void     SetNumberToGenerate(G4int);
-  G4int    GetNumberOfEventsPerNtuple();
-  G4int    GetEventNumberOffset();
-  G4FieldManager* GetZeroFieldManager();
+  G4int    GetNumberOfEventsPerNtuple()const;
+  G4int    GetEventNumberOffset()const;
+  G4FieldManager* GetZeroFieldManager()const;
 
-  // G4bool   GetUseSynchPrimaryGen();
-  // G4double GetSynchPrimaryAngle();
-  // G4double GetSynchPrimaryLength();
+  // G4bool   GetUseSynchPrimaryGen()const;
+  // G4double GetSynchPrimaryAngle()const;
+  // G4double GetSynchPrimaryLength()const;
 
   // AI : for placet synchronization
   void     setWaitingForDump(G4bool flag);
-  G4bool   getWaitingForDump();
-  G4bool   getDumping();
-  G4bool   getReading();
+  G4bool   getWaitingForDump()const;
+  G4bool   getDumping()const;
+  G4bool   getReading()const;
   void     setReadFromStack(G4bool flag);
-  G4bool   getReadFromStack();
-  G4String GetFifo();
-  G4int    GetTurnsTaken();
+  G4bool   getReadFromStack()const;
+  G4String GetFifo()const;
+  G4int    GetTurnsTaken()const;
   void     IncrementTurnNumber();
   void     ResetTurnNumber();
-  G4int    GetTurnsToTake();
+  G4int    GetTurnsToTake()const;
 
-  G4AffineTransform GetDumpTransform();
+  G4AffineTransform GetDumpTransform()const;
   void              SetDumpTransform(G4AffineTransform tf);
 
-  G4String GetRefVolume();
-  G4int    GetRefCopyNo();
+  G4String GetRefVolume()const;
+  G4int    GetRefCopyNo()const;
 
-  const G4AffineTransform* GetRefTransform();
+  const G4AffineTransform* GetRefTransform()const;
   void                     SetRefTransform(G4AffineTransform& aTransform);
 
-  G4double GetSMax();
+  G4double GetSMax()const;
   void     SetSMax(G4double);
-  G4ThreeVector GetTeleporterDelta();
+  G4ThreeVector GetTeleporterDelta()const;
   void          SetTeleporterDelta(G4ThreeVector newteleporterdelta);
   void          SetTeleporterLength(G4double newteleporterlength);
-  G4double      GetTeleporterLength(); 
+  G4double      GetTeleporterLength()const; 
 
   // for general info about a logical volume - extendable data class
   // nominally used to get s position for energy loss
   // get the info for a given logical volume pointer
-  BDSLogicalVolumeInfo* GetLogicalVolumeInfo(G4LogicalVolume* logvolpointer);
+  BDSLogicalVolumeInfo* GetLogicalVolumeInfo(G4LogicalVolume* logvolpointer)const;
   // get a pointer to the map of log vol infos
-  std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* LogicalVolumeInfo(); 
+  std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* LogicalVolumeInfo();
   // add a new set of info to the map
   void AddLogicalVolumeInfo(G4LogicalVolume* logvolpointer, BDSLogicalVolumeInfo* bdslogvolinfo);
 
   /// initial particle
-  BDSParticle GetInitialPoint();
+  BDSParticle GetInitialPoint()const;
   void SetInitialPoint(BDSParticle& particle);
   
   // SPM : temp filestream for placet to read and write
@@ -260,7 +267,6 @@ private:
   /// particle energy
   G4double itsParticleTotalEnergy, itsParticleMomentum, itsParticleKineticEnergy;
   G4double itsLPBFraction;
-  G4double itsVacuumPressure;
   G4double itsPlanckScatterFe;
   G4double itsGammaToMuFe;
   G4double itsAnnihiToMuFe;
@@ -295,8 +301,12 @@ private:
   //Beam loss monitor geometry
   G4double itsBlmRad;
   G4double itsBlmLength;
-  G4double itsBeampipeRadius; 
-  G4double itsBeampipeThickness; 
+  G4double itsBeamPipeRadius;
+  G4double itsAper1;
+  G4double itsAper2;
+  G4double itsAper3;
+  G4double itsAper4;
+  G4double itsBeamPipeThickness;
   G4double itsSamplerDiameter;
   G4double itsSamplerLength;
   G4double itsDeltaIntersection;
@@ -359,6 +369,13 @@ private:
   G4RotationMatrix* _RotYM90X90;
   G4RotationMatrix* _RotYM90XM90;
 
+  void InitVisAttributes();
+  G4VisAttributes* invisibleVisAttr;
+  G4VisAttributes* visibleDebugVisAttr;
+
+  void InitDefaultUserLimits();
+  G4UserLimits* defaultUserLimits;
+
 public:
   G4RotationMatrix* RotY90() const;
   G4RotationMatrix* RotYM90() const;
@@ -367,20 +384,27 @@ public:
   G4RotationMatrix* RotYM90X90() const;
   G4RotationMatrix* RotYM90XM90() const;
 
-  G4double GetLWCalWidth();
-  G4double GetLWCalOffset();
-  G4String GetPipeMaterialName();
-  G4String GetVacuumMaterial();
-  G4String GetEmptyMaterial();
-  G4String GetSoilMaterialName();
-  G4String GetTunnelMaterialName();
-  G4String GetTunnelCavityMaterialName();
+  G4double GetLWCalWidth()const;
+  G4double GetLWCalOffset()const;
+  BDSBeamPipeType GetApertureType()const;
+  G4String GetBeamPipeMaterialName()const;
+  G4String GetVacuumMaterial()const;
+  G4String GetEmptyMaterial()const;
+  G4String GetSoilMaterialName()const;
+  G4String GetTunnelMaterialName()const;
+  G4String GetTunnelCavityMaterialName()const;
 
+  G4VisAttributes* GetInvisibleVisAttr()const;
+  G4VisAttributes* GetVisibleDebugVisAttr()const;
+
+  G4UserLimits* GetDefaultUserLimits()const;
+  
 private:
   G4double itsLWCalWidth;
   G4double itsLWCalOffset;
-  G4String itsPipeMaterial;              //beampipe material
-  G4String itsVacMaterial;               //vacuum inside beampipe
+  BDSBeamPipeType itsApertureType;       //aperture model to use by default
+  G4String itsBeamPipeMaterial;          //beampipe material
+  G4String itsVacuumMaterial;            //vacuum inside beampipe
   G4String itsEmptyMaterial;             //empty material for e.g. marker volumes
   G4String itsTunnelMaterialName;        //tunnel material
   G4String itsTunnelCavityMaterialName;  //tunnel cavity material
@@ -412,37 +436,37 @@ private:
 
 };
 
-inline G4double BDSGlobalConstants::GetElossHistoBinWidth()
+inline G4double BDSGlobalConstants::GetElossHistoBinWidth()const
 {return itsElossHistoBinWidth;}
 
-inline G4double BDSGlobalConstants::GetElossHistoTransBinWidth()
+inline G4double BDSGlobalConstants::GetElossHistoTransBinWidth()const
 {return itsElossHistoTransBinWidth;}
 
-inline G4double BDSGlobalConstants::GetDefaultRangeCut()
+inline G4double BDSGlobalConstants::GetDefaultRangeCut()const
 {return itsDefaultRangeCut;}
 
-inline G4double BDSGlobalConstants::GetFFact()
+inline G4double BDSGlobalConstants::GetFFact()const
 {return itsFFact;}
 
-inline G4double BDSGlobalConstants::GetMinimumEpsilonStep()
+inline G4double BDSGlobalConstants::GetMinimumEpsilonStep()const
 {return itsMinimumEpsilonStep;}
 
-inline G4double BDSGlobalConstants::GetMaximumEpsilonStep()
+inline G4double BDSGlobalConstants::GetMaximumEpsilonStep()const
 {return itsMaximumEpsilonStep;}
 
-inline G4double BDSGlobalConstants::GetMaxTime()
+inline G4double BDSGlobalConstants::GetMaxTime()const
 {return itsMaxTime;}
 
-inline G4double BDSGlobalConstants::GetDeltaOneStep()
+inline G4double BDSGlobalConstants::GetDeltaOneStep()const
 {return itsDeltaOneStep;}
 
-inline G4double BDSGlobalConstants::GetBeamKineticEnergy()
+inline G4double BDSGlobalConstants::GetBeamKineticEnergy()const
 {return itsBeamKineticEnergy;}
 
 inline void BDSGlobalConstants::SetBeamKineticEnergy(G4double val)
 {itsBeamKineticEnergy = val;}
 
-inline G4double BDSGlobalConstants::GetLPBFraction()
+inline G4double BDSGlobalConstants::GetLPBFraction()const
 {return itsLPBFraction;}
 
 inline void BDSGlobalConstants::SetLPBFraction(G4double val)
@@ -454,22 +478,22 @@ inline void BDSGlobalConstants::SetLPBFraction(G4double val)
     {itsLPBFraction = val;}
 }
 
-inline G4double BDSGlobalConstants::GetBeamTotalEnergy()
+inline G4double BDSGlobalConstants::GetBeamTotalEnergy()const
 {return itsBeamTotalEnergy;}
 
 inline void BDSGlobalConstants::SetBeamTotalEnergy(G4double val)
 {itsBeamTotalEnergy = val;}
 
-inline G4double BDSGlobalConstants::GetBeamMomentum()
+inline G4double BDSGlobalConstants::GetBeamMomentum()const
 {return itsBeamMomentum;}
 
 inline void BDSGlobalConstants::SetBeamMomentum(G4double val)
 {itsBeamMomentum = val;}
 
-inline G4ParticleDefinition* BDSGlobalConstants::GetParticleDefinition()
+inline G4ParticleDefinition* BDSGlobalConstants::GetParticleDefinition()const
 {return itsBeamParticleDefinition;}
 
-inline G4String BDSGlobalConstants::GetParticleName()
+inline G4String BDSGlobalConstants::GetParticleName()const
 {return itsParticleName;}
 
 inline void BDSGlobalConstants::SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition)
@@ -478,280 +502,292 @@ inline void BDSGlobalConstants::SetParticleDefinition(G4ParticleDefinition* aBea
 inline void BDSGlobalConstants::SetParticleName(G4String aParticleName)
 {itsParticleName = aParticleName;}
 
-inline G4double BDSGlobalConstants::GetVacuumPressure()
-{return itsVacuumPressure;}
-
-inline G4double BDSGlobalConstants::GetPlanckScatterFe()
+inline G4double BDSGlobalConstants::GetPlanckScatterFe()const
 {return itsPlanckScatterFe;}
 
-inline G4double BDSGlobalConstants::GetGammaToMuFe()
+inline G4double BDSGlobalConstants::GetGammaToMuFe()const
 {return itsGammaToMuFe;}
 
-inline G4double BDSGlobalConstants::GetAnnihiToMuFe()
+inline G4double BDSGlobalConstants::GetAnnihiToMuFe()const
 {return itsAnnihiToMuFe;}
 
-inline G4double BDSGlobalConstants::GetEeToHadronsFe()
+inline G4double BDSGlobalConstants::GetEeToHadronsFe()const
 {return itsEeToHadronsFe;}
 
-inline G4bool BDSGlobalConstants::GetSampleDistRandomly(){
+inline G4bool BDSGlobalConstants::GetSampleDistRandomly()const{
   return itsSampleDistRandomly;}
 
-inline G4bool BDSGlobalConstants::GetUseEMLPB(){
+inline G4bool BDSGlobalConstants::GetUseEMLPB()const{
   return itsUseEMLPB;}
 
-inline G4bool BDSGlobalConstants::GetUseHadLPB(){
+inline G4bool BDSGlobalConstants::GetUseHadLPB()const{
   return itsUseHadLPB;}
 
 //Booleans determining which types of components are sensitive
-inline  G4bool BDSGlobalConstants::GetSensitiveComponents()
+inline  G4bool BDSGlobalConstants::GetSensitiveComponents()const
 {return itsSensitiveComponents;}
 
-inline  G4bool BDSGlobalConstants::GetSensitiveBeamPipe()
+inline  G4bool BDSGlobalConstants::GetSensitiveBeamPipe()const
 {return itsSensitiveBeamPipe;}
 
-inline  G4bool BDSGlobalConstants::GetSensitiveBLMs()
+inline  G4bool BDSGlobalConstants::GetSensitiveBLMs()const
 {return itsSensitiveBLMs;}
 
-inline G4double BDSGlobalConstants::GetComponentBoxSize()
+inline G4double BDSGlobalConstants::GetComponentBoxSize()const
 {return itsComponentBoxSize;}
 
-inline G4double BDSGlobalConstants::GetMagnetPoleSize()
+inline G4double BDSGlobalConstants::GetMagnetPoleSize()const
 {return itsMagnetPoleSize;}
 
-inline G4double BDSGlobalConstants::GetMagnetPoleRadius()
+inline G4double BDSGlobalConstants::GetMagnetPoleRadius()const
 {return itsMagnetPoleRadius;}
 
-inline G4bool BDSGlobalConstants::GetBuildTunnel()
+inline G4bool BDSGlobalConstants::GetBuildTunnel()const
 {return itsBuildTunnel;}
 
-inline G4bool BDSGlobalConstants::GetBuildTunnelFloor()
+inline G4bool BDSGlobalConstants::GetBuildTunnelFloor()const
 {return itsBuildTunnelFloor;}
 
-inline G4double BDSGlobalConstants::GetTunnelRadius()
+inline G4double BDSGlobalConstants::GetTunnelRadius()const
 {return itsTunnelRadius;}
 
-inline G4double BDSGlobalConstants::GetTunnelThickness()
+inline G4double BDSGlobalConstants::GetTunnelThickness()const
 {return itsTunnelThickness;}
 
-inline G4double BDSGlobalConstants::GetTunnelSoilThickness()
+inline G4double BDSGlobalConstants::GetTunnelSoilThickness()const
 {return itsTunnelSoilThickness;}
 
-inline G4double BDSGlobalConstants::GetTunnelFloorOffset()
+inline G4double BDSGlobalConstants::GetTunnelFloorOffset()const
 {return itsTunnelFloorOffset;}
 
-inline G4double BDSGlobalConstants::GetTunnelOffsetX()
+inline G4double BDSGlobalConstants::GetTunnelOffsetX()const
 {return itsTunnelOffsetX;}
 
-inline G4double BDSGlobalConstants::GetTunnelOffsetY()
+inline G4double BDSGlobalConstants::GetTunnelOffsetY()const
 {return itsTunnelOffsetY;}
 
-inline G4bool BDSGlobalConstants::GetShowTunnel()
+inline G4bool BDSGlobalConstants::GetShowTunnel()const
 {return itsShowTunnel;}
 
-inline G4bool BDSGlobalConstants::GetGeometryBias()
+inline G4bool BDSGlobalConstants::GetGeometryBias()const
 {return itsGeometryBias;}
 
 //Beam loss monitors
 
-inline G4double BDSGlobalConstants::GetBlmRad()
+inline G4double BDSGlobalConstants::GetBlmRad()const
 {return itsBlmRad;}
 
-inline G4double BDSGlobalConstants::GetBlmLength()
+inline G4double BDSGlobalConstants::GetBlmLength()const
 {return itsBlmLength;}
 
-inline G4String BDSGlobalConstants::GetMagnetGeometry()
+inline G4String BDSGlobalConstants::GetMagnetGeometry()const
 {return itsMagnetGeometry;}
 
-inline G4double BDSGlobalConstants::GetBeampipeRadius() 
-{return itsBeampipeRadius;}
+inline G4double BDSGlobalConstants::GetBeamPipeRadius()const
+{return itsBeamPipeRadius;}
 
-inline G4double BDSGlobalConstants::GetBeampipeThickness() 
-{return itsBeampipeThickness;}
+inline G4double BDSGlobalConstants::GetAper1()const
+{return itsAper1;}
 
-inline G4double BDSGlobalConstants::GetSamplerDiameter() 
+inline G4double BDSGlobalConstants::GetAper2()const
+{return itsAper2;}
+
+inline G4double BDSGlobalConstants::GetAper3()const
+{return itsAper3;}
+
+inline G4double BDSGlobalConstants::GetAper4()const
+{return itsAper4;}
+
+inline G4double BDSGlobalConstants::GetBeamPipeThickness()const 
+{return itsBeamPipeThickness;}
+
+inline G4double BDSGlobalConstants::GetSamplerDiameter()const 
 {return itsSamplerDiameter;}
 
-inline G4double BDSGlobalConstants::GetSamplerLength() 
+inline G4double BDSGlobalConstants::GetSamplerLength()const 
 {return itsSamplerLength;}
 
-inline G4double BDSGlobalConstants::GetDeltaChord() 
+inline G4double BDSGlobalConstants::GetDeltaChord()const 
 {return itsDeltaChord;}
 
-inline G4double BDSGlobalConstants::GetDeltaIntersection() 
+inline G4double BDSGlobalConstants::GetDeltaIntersection()const 
 {return itsDeltaIntersection;}
 
-inline G4double BDSGlobalConstants::GetChordStepMinimum() 
+inline G4double BDSGlobalConstants::GetChordStepMinimum()const 
 {return itsChordStepMinimum;}
 
-inline G4double BDSGlobalConstants::GetThresholdCutCharged() 
+inline G4double BDSGlobalConstants::GetThresholdCutCharged()const 
 {return itsThresholdCutCharged;}
 
-inline G4double BDSGlobalConstants::GetThresholdCutPhotons() 
+inline G4double BDSGlobalConstants::GetThresholdCutPhotons()const 
 {return itsThresholdCutPhotons;}
 
-inline G4double BDSGlobalConstants::GetProdCutPhotons() 
+inline G4double BDSGlobalConstants::GetProdCutPhotons()const 
 {return itsProdCutPhotons;}
 
-inline G4double BDSGlobalConstants::GetProdCutPhotonsP() 
+inline G4double BDSGlobalConstants::GetProdCutPhotonsP()const 
 {return itsProdCutPhotonsP;}
 
-inline G4double BDSGlobalConstants::GetProdCutPhotonsA() 
+inline G4double BDSGlobalConstants::GetProdCutPhotonsA()const 
 {return itsProdCutPhotonsA;}
 
-inline G4double BDSGlobalConstants::GetProdCutElectrons() 
+inline G4double BDSGlobalConstants::GetProdCutElectrons()const 
 {return itsProdCutElectrons;}
 
-inline G4double BDSGlobalConstants::GetProdCutElectronsP() 
+inline G4double BDSGlobalConstants::GetProdCutElectronsP()const 
 {return itsProdCutElectronsP;}
 
-inline G4double BDSGlobalConstants::GetProdCutElectronsA() 
+inline G4double BDSGlobalConstants::GetProdCutElectronsA()const 
 {return itsProdCutElectronsA;}
 
-inline G4double BDSGlobalConstants::GetProdCutPositrons() 
+inline G4double BDSGlobalConstants::GetProdCutPositrons()const 
 {return itsProdCutPositrons;}
 
-inline G4double BDSGlobalConstants::GetProdCutPositronsP() 
+inline G4double BDSGlobalConstants::GetProdCutPositronsP()const 
 {return itsProdCutPositronsP;}
 
-inline G4double BDSGlobalConstants::GetProdCutPositronsA() 
+inline G4double BDSGlobalConstants::GetProdCutPositronsA()const 
 {return itsProdCutPositronsA;}
 
-inline G4String BDSGlobalConstants::GetPhysListName()
+inline G4String BDSGlobalConstants::GetPhysListName()const
 {return itsPhysListName;}
 
-inline G4bool BDSGlobalConstants::GetSynchRadOn()
+inline G4bool BDSGlobalConstants::GetSynchRadOn()const
 {return itsSynchRadOn;}
 
-inline G4bool BDSGlobalConstants::GetDecayOn()
+inline G4bool BDSGlobalConstants::GetDecayOn()const
 {return itsDecayOn;}
 
-inline G4bool BDSGlobalConstants::GetSynchTrackPhotons()
+inline G4bool BDSGlobalConstants::GetSynchTrackPhotons()const
 {return itsSynchTrackPhotons ;}
 
-inline G4double BDSGlobalConstants::GetSynchLowX()
+inline G4double BDSGlobalConstants::GetSynchLowX()const
 {return itsSynchLowX ;}
 
-inline G4double BDSGlobalConstants::GetSynchLowGamE()
+inline G4double BDSGlobalConstants::GetSynchLowGamE()const
 {return itsSynchLowGamE ;}
 
-inline G4int BDSGlobalConstants::GetSynchPhotonMultiplicity()
+inline G4int BDSGlobalConstants::GetSynchPhotonMultiplicity()const
 {return itsSynchPhotonMultiplicity ;}
 
-inline G4int BDSGlobalConstants::GetSynchMeanFreeFactor()
+inline G4int BDSGlobalConstants::GetSynchMeanFreeFactor()const
 {return itsSynchMeanFreeFactor ;}
 
-inline G4double BDSGlobalConstants::GetLaserwireWavelength()
+inline G4double BDSGlobalConstants::GetLaserwireWavelength()const
 {return itsLaserwireWavelength ;}
 
-inline G4ThreeVector BDSGlobalConstants::GetLaserwireDir()
+inline G4ThreeVector BDSGlobalConstants::GetLaserwireDir()const
 {return itsLaserwireDir ;}
 
-inline G4bool BDSGlobalConstants::GetLaserwireTrackPhotons()
+inline G4bool BDSGlobalConstants::GetLaserwireTrackPhotons()const
 {return itsLaserwireTrackPhotons ;}
 
-inline G4bool BDSGlobalConstants::GetLaserwireTrackElectrons()
+inline G4bool BDSGlobalConstants::GetLaserwireTrackElectrons()const
 {return itsLaserwireTrackElectrons ;}
 
-inline G4double BDSGlobalConstants::GetLengthSafety()
+inline G4double BDSGlobalConstants::GetLengthSafety()const
 {return itsLengthSafety;}
 
-inline G4bool BDSGlobalConstants::GetTurnOnCerenkov()
+inline G4bool BDSGlobalConstants::GetTurnOnCerenkov()const
 {return itsTurnOnCerenkov;}
 
-inline  G4bool BDSGlobalConstants::GetTurnOnOpticalAbsorption()
+inline  G4bool BDSGlobalConstants::GetTurnOnOpticalAbsorption()const
 { return itsTurnOnOpticalAbsorption;}
 
-inline  G4bool BDSGlobalConstants::GetTurnOnRayleighScattering()
+inline  G4bool BDSGlobalConstants::GetTurnOnRayleighScattering()const
 {return itsTurnOnRayleighScattering;}
 
-inline  G4bool BDSGlobalConstants::GetTurnOnMieScattering()
+inline  G4bool BDSGlobalConstants::GetTurnOnMieScattering()const
 {return itsTurnOnMieScattering;}
 
-inline  G4bool BDSGlobalConstants::GetTurnOnOpticalSurface()
+inline  G4bool BDSGlobalConstants::GetTurnOnOpticalSurface()const
 {return itsTurnOnOpticalSurface;}
 
-inline  G4bool BDSGlobalConstants::GetTurnOnBirksSaturation()
+inline  G4bool BDSGlobalConstants::GetTurnOnBirksSaturation()const
 {return itsTurnOnBirksSaturation;}
 
-inline  G4double BDSGlobalConstants::GetScintYieldFactor()
+inline  G4double BDSGlobalConstants::GetScintYieldFactor()const
 {return itsScintYieldFactor;}
 
-inline G4bool BDSGlobalConstants::GetIncludeIronMagFields()
+inline G4bool BDSGlobalConstants::GetIncludeIronMagFields()const
 {return itsIncludeIronMagFields;}
 
-inline G4bool BDSGlobalConstants::GetStoreMuonTrajectories()
+inline G4bool BDSGlobalConstants::GetStoreMuonTrajectories()const
 {return itsStoreMuonTrajectories;}
 
-inline G4double BDSGlobalConstants::GetTrajCutGTZ()
+inline G4double BDSGlobalConstants::GetTrajCutGTZ()const
 {return itsTrajCutGTZ;}
 
-inline G4double BDSGlobalConstants::GetTrajCutLTR()
+inline G4double BDSGlobalConstants::GetTrajCutLTR()const
 {return itsTrajCutLTR;}
 
-inline G4bool BDSGlobalConstants::GetStoreNeutronTrajectories()
+inline G4bool BDSGlobalConstants::GetStoreNeutronTrajectories()const
 {return itsStoreNeutronTrajectories;}
 
-inline G4bool BDSGlobalConstants::GetStoreTrajectory()
+inline G4bool BDSGlobalConstants::GetStoreTrajectory()const
 {return itsStoreTrajectory;}
 
-inline G4bool BDSGlobalConstants::GetStopTracks()
+inline G4bool BDSGlobalConstants::GetStopTracks()const
 {return stopTracks;}
 
-inline G4long BDSGlobalConstants::GetRandomSeed()
+inline G4long BDSGlobalConstants::GetRandomSeed()const
 {return itsRandomSeed;}
 
-inline G4int BDSGlobalConstants::GetNumberToGenerate()
+inline G4int BDSGlobalConstants::GetNumberToGenerate()const
 {return itsNumberToGenerate;}
 
 inline void BDSGlobalConstants::SetNumberToGenerate(G4int numberToGenerate)
 {itsNumberToGenerate = numberToGenerate;}
 
-inline G4int BDSGlobalConstants::GetNumberOfEventsPerNtuple()
+inline G4int BDSGlobalConstants::GetNumberOfEventsPerNtuple()const
 {return itsNumberOfEventsPerNtuple;}
 
-inline G4int BDSGlobalConstants::GetEventNumberOffset()
+inline G4int BDSGlobalConstants::GetEventNumberOffset()const
 {return itsEventNumberOffset;}
 
-inline G4FieldManager* BDSGlobalConstants::GetZeroFieldManager()
+inline G4FieldManager* BDSGlobalConstants::GetZeroFieldManager()const
 {return itsZeroFieldManager;}
 
-inline  G4double BDSGlobalConstants::GetLWCalWidth()
+inline  G4double BDSGlobalConstants::GetLWCalWidth()const
 {return itsLWCalWidth;}
 
-inline  G4double BDSGlobalConstants::GetLWCalOffset()
+inline  G4double BDSGlobalConstants::GetLWCalOffset()const
 {return itsLWCalOffset;}
 
-inline G4String BDSGlobalConstants::GetPipeMaterialName()
-{return itsPipeMaterial;}
+inline BDSBeamPipeType BDSGlobalConstants::GetApertureType()const
+{return itsApertureType;}
 
-inline G4String BDSGlobalConstants::GetVacuumMaterial()
-{return itsVacMaterial;}
+inline G4String BDSGlobalConstants::GetBeamPipeMaterialName()const
+{return itsBeamPipeMaterial;}
 
-inline G4String BDSGlobalConstants::GetEmptyMaterial()
+inline G4String BDSGlobalConstants::GetVacuumMaterial()const
+{return itsVacuumMaterial;}
+
+inline G4String BDSGlobalConstants::GetEmptyMaterial()const
 {return itsEmptyMaterial;}
 
-inline G4String BDSGlobalConstants::GetSoilMaterialName()
+inline G4String BDSGlobalConstants::GetSoilMaterialName()const
 {return itsSoilMaterialName;}
 
-inline G4String BDSGlobalConstants::GetTunnelMaterialName()
+inline G4String BDSGlobalConstants::GetTunnelMaterialName()const
 {return itsTunnelMaterialName;}
 
-inline G4String BDSGlobalConstants::GetTunnelCavityMaterialName()
+inline G4String BDSGlobalConstants::GetTunnelCavityMaterialName()const
 {return itsTunnelCavityMaterialName;}
 
-inline G4bool BDSGlobalConstants::GetDoPlanckScattering() 
+inline G4bool BDSGlobalConstants::GetDoPlanckScattering()const 
 {return itsDoPlanckScattering;}
 
-inline G4bool BDSGlobalConstants::GetCheckOverlaps() 
+inline G4bool BDSGlobalConstants::GetCheckOverlaps()const 
 {return itsCheckOverlaps;}
 
 //for map of laserwire wavelengths
-inline G4double BDSGlobalConstants::GetLaserwireWavelength(G4String aName)
-{return lwWavelength[aName];}
+inline G4double BDSGlobalConstants::GetLaserwireWavelength(G4String aName)const
+{return lwWavelength.at(aName);}
 
 //for map of laserwire wavelengths
-inline G4ThreeVector BDSGlobalConstants::GetLaserwireDir(G4String aName)
-{return lwDirection[aName];}
+inline G4ThreeVector BDSGlobalConstants::GetLaserwireDir(G4String aName)const
+{return lwDirection.at(aName);}
 
 inline void BDSGlobalConstants::SetLaserwireWavelength(G4String aName, G4double aWavelength)
 {lwWavelength[aName]=aWavelength;}
@@ -762,43 +798,43 @@ inline void BDSGlobalConstants::SetLaserwireDir(G4String aName, G4ThreeVector aD
 inline void BDSGlobalConstants::setWaitingForDump(G4bool flag)
 {isWaitingForDump = flag;} // waiting before all tracks arrive at a dump element
 
-inline G4bool BDSGlobalConstants::getWaitingForDump() 
+inline G4bool BDSGlobalConstants::getWaitingForDump()const 
 {return isWaitingForDump;}
 
-inline G4bool BDSGlobalConstants::getDumping()
+inline G4bool BDSGlobalConstants::getDumping()const
 {return isDumping;}
 
-inline G4bool BDSGlobalConstants::getReading()
+inline G4bool BDSGlobalConstants::getReading()const
 {return isReading;}
 
 inline void BDSGlobalConstants::setReadFromStack(G4bool flag)
 {isReadFromStack = flag;}
 
-inline G4bool BDSGlobalConstants::getReadFromStack()
+inline G4bool BDSGlobalConstants::getReadFromStack()const
 {return isReadFromStack;}
 
-inline G4String BDSGlobalConstants::GetFifo()
+inline G4String BDSGlobalConstants::GetFifo()const
 {return itsFifo;}
 
-inline G4AffineTransform BDSGlobalConstants::GetDumpTransform()
+inline G4AffineTransform BDSGlobalConstants::GetDumpTransform()const
 {return itsDumpTransform;}
 
 inline void BDSGlobalConstants::SetDumpTransform(G4AffineTransform tf)
 {itsDumpTransform=tf;}
 
-inline G4String BDSGlobalConstants::GetRefVolume()
+inline G4String BDSGlobalConstants::GetRefVolume()const
 {return itsRefVolume;}
 
-inline G4int BDSGlobalConstants::GetRefCopyNo()
+inline G4int BDSGlobalConstants::GetRefCopyNo()const
 {return itsRefCopyNo;}
 
-inline const G4AffineTransform* BDSGlobalConstants::GetRefTransform()
+inline const G4AffineTransform* BDSGlobalConstants::GetRefTransform()const
 {return &itsRefTransform;}
 
 inline void BDSGlobalConstants::SetRefTransform(G4AffineTransform& aTransform)
 {itsRefTransform=aTransform;}
 
-inline G4int BDSGlobalConstants::GetTurnsTaken()
+inline G4int BDSGlobalConstants::GetTurnsTaken()const
 {return itsTurnsTaken;}
 
 inline void  BDSGlobalConstants::IncrementTurnNumber()
@@ -807,16 +843,16 @@ inline void  BDSGlobalConstants::IncrementTurnNumber()
 inline void  BDSGlobalConstants::ResetTurnNumber()
 {itsTurnsTaken = 1;}
 
-inline G4int BDSGlobalConstants::GetTurnsToTake()
+inline G4int BDSGlobalConstants::GetTurnsToTake()const
 {return itsTurnsToTake;}
 
-inline G4double BDSGlobalConstants::GetSMax() 
+inline G4double BDSGlobalConstants::GetSMax()const 
 {return itsSMax;}
 
 inline void BDSGlobalConstants::SetSMax(G4double smax)
 {itsSMax=smax;}
 
-inline G4ThreeVector BDSGlobalConstants::GetTeleporterDelta()
+inline G4ThreeVector BDSGlobalConstants::GetTeleporterDelta()const
 {return teleporterdelta;}
 
 inline void BDSGlobalConstants::SetTeleporterDelta(G4ThreeVector newteleporterdelta)
@@ -825,11 +861,11 @@ inline void BDSGlobalConstants::SetTeleporterDelta(G4ThreeVector newteleporterde
 inline void BDSGlobalConstants::SetTeleporterLength(G4double newteleporterlength)
 {teleporterlength = newteleporterlength;}
 
-inline G4double BDSGlobalConstants::GetTeleporterLength()
+inline G4double BDSGlobalConstants::GetTeleporterLength()const
 {return teleporterlength;}
 
-inline BDSLogicalVolumeInfo* BDSGlobalConstants::GetLogicalVolumeInfo(G4LogicalVolume* logvolpointer)
-{return logicalvolumeinfo[logvolpointer];}
+inline BDSLogicalVolumeInfo* BDSGlobalConstants::GetLogicalVolumeInfo(G4LogicalVolume* logvolpointer)const
+{return logicalvolumeinfo.at(logvolpointer);}
 
 inline void BDSGlobalConstants::AddLogicalVolumeInfo(G4LogicalVolume* logvolpointer, BDSLogicalVolumeInfo* logvolinfo)
 {logicalvolumeinfo[logvolpointer] = logvolinfo;}
@@ -837,25 +873,34 @@ inline void BDSGlobalConstants::AddLogicalVolumeInfo(G4LogicalVolume* logvolpoin
 inline std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* BDSGlobalConstants::LogicalVolumeInfo()
 {return &logicalvolumeinfo;}
 
-inline G4double BDSGlobalConstants::GetParticleKineticEnergy()
+inline G4double BDSGlobalConstants::GetParticleKineticEnergy()const
 {return itsParticleKineticEnergy;}
 
 inline void BDSGlobalConstants::SetParticleKineticEnergy(G4double val)
 {itsParticleKineticEnergy = val;}
 
-inline G4double BDSGlobalConstants::GetParticleTotalEnergy()
+inline G4double BDSGlobalConstants::GetParticleTotalEnergy()const
 {return itsParticleTotalEnergy;}
 
-inline G4double BDSGlobalConstants::GetParticleMomentum()
+inline G4double BDSGlobalConstants::GetParticleMomentum()const
 {return itsParticleMomentum;}
 
 inline void BDSGlobalConstants::SetParticleMomentum(G4double val)
 {itsParticleMomentum = val;}
 
-inline BDSParticle BDSGlobalConstants::GetInitialPoint()
+inline BDSParticle BDSGlobalConstants::GetInitialPoint()const
 {return itsInitialPoint;}
 
 inline void BDSGlobalConstants::SetInitialPoint(BDSParticle& particle)
 {itsInitialPoint = particle;}
+
+inline G4VisAttributes* BDSGlobalConstants::GetInvisibleVisAttr()const
+{return invisibleVisAttr;}
+
+inline G4VisAttributes* BDSGlobalConstants::GetVisibleDebugVisAttr()const
+{return visibleDebugVisAttr;}
+
+inline G4UserLimits* BDSGlobalConstants::GetDefaultUserLimits()const
+{return defaultUserLimits;}
 
 #endif

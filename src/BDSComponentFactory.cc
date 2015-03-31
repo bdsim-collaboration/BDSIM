@@ -2,7 +2,6 @@
 #include "BDSExecOptions.hh"
 // elements
 #include "BDSDrift.hh"
-#include "BDSPCLDrift.hh"
 #include "BDSSectorBend.hh"
 #include "BDSRBend.hh"
 #include "BDSKicker.hh"
@@ -27,6 +26,8 @@
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
 #include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
+#include "BDSBeamPipeType.hh"
+#include "BDSBeamPipeInfo.hh"
 
 #include "parser/enums.h"
 #include "parser/elementlist.h"
@@ -45,6 +46,7 @@ bool debug1 = false;
 
 BDSComponentFactory::BDSComponentFactory(){
   verbose = BDSExecOptions::Instance()->GetVerbose();
+  lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
   //
   // compute magnetic rigidity brho
   // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * |charge(e)|)
@@ -61,23 +63,6 @@ BDSComponentFactory::BDSComponentFactory(){
   _brho *= (CLHEP::tesla*CLHEP::m);
 
   if (verbose || debug1) G4cout << "Rigidity (Brho) : "<< fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
-  //
-  // beampipe default outer radius (if not overridden by "aper" option)
-  //
-  _bpRad=BDSGlobalConstants::Instance()->GetBeampipeRadius();
-  if (verbose || debug1) G4cout<<"Default pipe outer radius= "<<_bpRad/CLHEP::m<< "m"
-			       << G4endl;
-
-  // I suspect FeRad is planned to be offered as an option for the inner radius
-  // of the iron in case it is different from the beampipe outer radius
-  // Not done yet.
-  _bpThick = BDSGlobalConstants::Instance()->GetBeampipeThickness();
-  //  _FeRad = _bpRad + _bpThick; //Needs to be the outer beam pipe radius - add the beam pipe thickness.
-  // if (verbose || debug1) G4cout<<"Default magnet inner radius= "<<_FeRad/CLHEP::m<< "m"
-  // 			      << G4endl;
-
-  _driftStartAper = _bpRad;
-  _driftEndAper = _bpRad;
 }
 
 BDSComponentFactory::~BDSComponentFactory(){
@@ -143,11 +128,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     G4cout << "BDSComponentFactory  - creating drift" << G4endl;
 #endif
     element = createDrift(); break; 
-  case _PCLDRIFT:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating pcl drift" << G4endl;
-#endif
-    element = createPCLDrift(); break; 
   case _RF:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating rf" << G4endl;
@@ -332,7 +312,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createTeleporter(){
   // after they've been created
   CalculateAndSetTeleporterDelta(BDSBeamline::Instance());
   G4double teleporterlength = BDSGlobalConstants::Instance()->GetTeleporterLength();
-  if(teleporterlength < BDSGlobalConstants::Instance()->GetLengthSafety()){
+  if(teleporterlength < lengthSafety){
       G4cerr << "---->NOT creating Teleporter, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
@@ -354,213 +334,70 @@ BDSAcceleratorComponent* BDSComponentFactory::createTeleporter(){
   }
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createDrift(){
-  G4double aper(0), aperX(0), aperY(0);
-  G4bool aperset = false;
-  G4double phiAngleIn(0.0), phiAngleOut(0.0);
-
-  // why is this set? - JS
-  _element.phiAngleIn=0;
-
-  if(_element.l < BDSGlobalConstants::Instance()->GetLengthSafety()) // skip too short elements
-    {
-      G4cerr << "---->NOT creating Drift,"
-             << " name= " << _element.name
-             << ", TOO SHORT LENGTH:"
-             << " l= " << _element.l << "m"
+BDSAcceleratorComponent* BDSComponentFactory::createDrift()
+{
+  //G4double tunnelOffsetX = BDSGlobalConstants::Instance()->GetTunnelOffsetX();
+  // like most elements, drift requires l > 4*lengthSafety
+  if(_element.l*CLHEP::m < 4*lengthSafety){
+    G4cerr << "---->NOT creating element, "
+             << " name = " << _element.name
+             << ", LENGTH TOO SHORT:"
+             << " l = " << _element.l*CLHEP::m << "m"
              << G4endl;
       return NULL;
-    }
-
-  G4double tunnelOffsetX = BDSGlobalConstants::Instance()->GetTunnelOffsetX();
-  if(_element.tunnelOffsetX<1e6) {
-    tunnelOffsetX = _element.tunnelOffsetX*CLHEP::m;
   }
-
-  if( _element.aper > 0 ) aper = _element.aper * CLHEP::m; //Set if aper specified for element
-  if( _element.aperX > 0 ) aperX = _element.aperX * CLHEP::m; //Set if aperX specified for element
-  if( _element.aperY > 0 ) aperY = _element.aperY * CLHEP::m; //Set if aperY specified for element
-  if( (aperX>0) || (aperY>0)){  //aperX or aperY override aper, aper set to the largest of aperX or aperY
-    aper=std::max(_element.aperX,_element.aperY);
-  }
+#ifdef BDSDEBUG
+  G4cout << "---->creating Drift,"
+	 << " name= " << _element.name
+	 << " l= " << _element.l << "m"
+	 << G4endl;
+#endif
   
-  if ( (aperX !=0) || (aperY != 0) || (aper != 0) || _element.phiAngleIn != 0 || _element.phiAngleOut !=0){
-    if (aperX==0 && aperY==0 && aper==0){
-      aperX=BDSGlobalConstants::Instance()->GetBeampipeRadius()/CLHEP::m;
-      aperY=BDSGlobalConstants::Instance()->GetBeampipeRadius()/CLHEP::m;
-      aper=BDSGlobalConstants::Instance()->GetBeampipeRadius()/CLHEP::m;
-    }
-    
-#ifdef BDSDEBUG
-    G4cout << "---->creating Drift,"
-	   << " name= " << _element.name
-	   << " l= " << _element.l << "m"
-	   << " aperX= " << aperX << "m"
-	   << " aperY= " << aperY << "m"
-	   << " aper = " << aper << "m"
-	   << " phiAngleIn= " << _element.phiAngleIn 
-	   << " phiAngleOut= " << _element.phiAngleOut 
-	   << G4endl;
-#endif
-	
-    //Create the phiAngleIn using BDSTransform3D
-    
-    aperset=true;
-    phiAngleIn = _element.phiAngleIn;
-    phiAngleOut = _element.phiAngleOut;
-
-  } else {
-    
-    //Taper circular beam pipe between elements.                                                                                                                        
-    _driftStartAper = _bpRad;
-    _driftEndAper = _bpRad;
-    if((_previousElement.type!=_ECOL)&&(_previousElement.type!=_RCOL)&&(_previousElement.type!=_MUSPOILER)){
-      if( _previousElement.aper > 1.e-10*CLHEP::m ) _driftStartAper = _previousElement.aper * CLHEP::m;
-    }
-    if((_nextElement.type!=_ECOL)&&(_nextElement.type!=_RCOL)&&(_nextElement.type!=_MUSPOILER)){
-      if( _nextElement.aper > 1.e-10*CLHEP::m ) _driftEndAper = _nextElement.aper * CLHEP::m;
-    }
-    
-#ifdef BDSDEBUG
-    G4cout << "---->creating Drift,"
-	   << " name= " << _element.name
-	   << " l= " << _element.l << "m"
-	   << " startAper= " << _bpRad/CLHEP::m << "m"
-	   << " endAper= " << _bpRad/CLHEP::m << "m"
-	   << G4endl;
-#endif
-
-    aperX = _driftStartAper;
-    aperY = _driftEndAper;
-    aperset = false;
-    aper = 0.0;
-    phiAngleIn = 0.0;
-    phiAngleOut = 0.0;
-  }
-
   return (new BDSDrift( _element.name,
 			_element.l*CLHEP::m,
-			_element.blmLocZ,
-			_element.blmLocTheta,
-			aperX, 
-			aperY, 
-			_element.tunnelMaterial, 
-			aperset, 
-			aper,
-			tunnelOffsetX, 
-			phiAngleIn, 
-			phiAngleOut));
+			PrepareBeamPipeInfo(_element)
+			));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createPCLDrift(){
-
-  if(_element.l < BDSGlobalConstants::Instance()->GetLengthSafety()) // skip too short elements
-    {
-      G4cerr << "Element too short!" << G4endl;
+BDSAcceleratorComponent* BDSComponentFactory::createRF()
+{
+  if(_element.l*CLHEP::m < 4*lengthSafety){
+    G4cerr << "---->NOT creating element, "
+             << " name = " << _element.name
+             << ", LENGTH TOO SHORT:"
+             << " l = " << _element.l*CLHEP::m << "m"
+             << G4endl;
       return NULL;
-    }
-
-  G4double aper=0;
-
-  //Check all apertures are set.
-  if (_element.aperY>BDSGlobalConstants::Instance()->GetLengthSafety()){
-    _element.aperYUp = _element.aperY;
-    _element.aperYDown = _element.aperY;
   }
   
-  if (_element.aperX<BDSGlobalConstants::Instance()->GetLengthSafety()){
-    G4cerr << "Error: BDSDetectorConstruction.cc, in building PCLDrift, aperX = " << _element.aperX << " is less than lengthSafety." << G4endl;
-    exit(1);
-  } 
-  if (_element.aperYUp<BDSGlobalConstants::Instance()->GetLengthSafety()){
-    G4cerr << "Error: BDSDetectorConstruction.cc, in building PCLDrift, aperYUp = " << _element.aperYUp << " is less than lengthSafety." << G4endl;
-    exit(1);
-  } 
-  if (_element.aperYDown<BDSGlobalConstants::Instance()->GetLengthSafety()){
-    G4cerr << "Error: BDSDetectorConstruction.cc, in building PCLDrift, aperYDown = " << _element.aperYDown << " is less than lengthSafety." << G4endl;
-    exit(1);
-  } 
-  
-  if( (_element.aperX>0) || (_element.aperY>0)){  //aperX or aperY override aper, aper set to the largest of aperX or aperY
-    aper=std::max(_element.aperX,_element.aperYUp+_element.aperDy);
-    aper=std::max(aper,_element.aperYDown+_element.aperDy);
-  }
-  
-  G4double tunnelOffsetX = BDSGlobalConstants::Instance()->GetTunnelOffsetX();
-  if(_element.tunnelOffsetX<1e6) {
-    tunnelOffsetX = _element.tunnelOffsetX*CLHEP::m;
-  }
- 
-  return (new BDSPCLDrift( _element.name,
-			   _element.l*CLHEP::m,
-			   _element.blmLocZ,
-			   _element.blmLocTheta,
-			   _element.aperX*CLHEP::m, _element.aperYUp*CLHEP::m, _element.aperYDown*CLHEP::m,_element.aperDy*CLHEP::m, _element.tunnelMaterial, aper, _element.tunnelRadius*CLHEP::m, tunnelOffsetX));
+  return (new BDSRfCavity( _element.name,
+			   _element.l * CLHEP::m,
+			   _element.gradient,
+			   PrepareBeamPipeInfo(_element),
+			   PrepareBoxSize(_element)));	
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createRF(){
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  
-  if(_element.l > 0) // skip zero-length elements
-    {
-      return (new BDSRfCavity( _element.name,
-					     _element.l * CLHEP::m,
-					     aper,
-					     _element.gradient,
-					     _element.tunnelMaterial,
-					     _element.material ) );
-    } else {
-    G4cerr << "---->NOT creating RF,"
-	   << " name= " << _element.name
-	   << ", TOO SHORT LENGTH:"
-	   << " l= " << _element.l << "m"
-	   << G4endl;
-    return NULL;
+BDSAcceleratorComponent* BDSComponentFactory::createSBend()
+{
+  if(_element.l*CLHEP::m < 4*lengthSafety){
+    G4cerr << "---->NOT creating element, "
+             << " name = " << _element.name
+             << ", LENGTH TOO SHORT:"
+             << " l = " << _element.l*CLHEP::m << "m"
+             << G4endl;
+      return NULL;
   }
-}
-
-BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
-  //
-  // geometry
-  //
-  G4double aper = _bpRad;
-  if( _element.aper > 0 ) aper = _element.aper * CLHEP::m; //Set if aper specified for element
-  if( (_element.aperX>0) || (_element.aperY>0)){  //aperX or aperY override aper, aper set to the largest of aperX or aperY
-    aper=std::max(_element.aperX,_element.aperY);
-  }
-  G4double FeRad = aper + _bpThick;
-  
-  if( _element.outR < aper/CLHEP::m)
-    {
-#ifdef BDSDEBUG
-      G4cout << _element.name << ": outer radius smaller than aperture: "
-	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cout << _element.name << ": setting outer radius to default = "
-	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
-#endif
-      _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
-    }
-  
   // arc length
   G4double length = _element.l*CLHEP::m;
   G4double magFieldLength = length;
   
-  //
   // magnetic field
-  //
-  
   // MAD conventions:
   // 1) a positive bend angle represents a bend to the right, i.e.
   // towards negative x values (even for negative _charges??)
   // 2) a positive K1 = 1/|Brho| dBy/dx means horizontal focusing of
   // positive charges
   // CHECK SIGNS 
-  //
-  
-  if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
-    _element.angle=1e-7 * CLHEP::rad;
-  }
   
   G4double bField;
   if(_element.B != 0) {
@@ -579,13 +416,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
-  //Should keep the correct geometry, therefore keep dipole withe zero angle.
-  if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) { // not possible due to check earlier - JS
-    return createDrift();
-  }
 
   //calculate number of sbends to split parent into
-
   //if maximum distance between arc path and straight path larger than 1mm, split sbend into N chunks,
   //this also works when maximum distance is less than 1mm as there will just be 1 chunk!
   double aperturePrecision = 1.0; // in mm
@@ -607,119 +439,83 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
       name << _element.name << "_" << i;
       std::string itsname = name.str();
       sbendline->addComponent( new BDSSectorBend( itsname,
-						  semilength, //NOTE
-						  aper,
-						  FeRad,
+						  semilength,
+						  semiangle,
 						  bField,
-						  semiangle,  //NOTE
-						  _element.outR * CLHEP::m,
-						  _element.blmLocZ,
-						  _element.blmLocTheta,
-						  _element.tilt,
 						  bPrime,
-						  _element.tunnelMaterial,
-						  _element.material,
-						  _element.aperX*CLHEP::m,
-						  _element.aperY*CLHEP::m )
-			       );
+						  PrepareBeamPipeInfo(_element),
+						  PrepareBoxSize(_element)
+						  ));
     }
   return sbendline;
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createRBend(){
-  //
-  // geometry
-  //
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  G4double FeRad = aper + _bpThick;
-  
-  if( _element.outR < aper/CLHEP::m)
-    {
-#ifdef BDSDEBUG
-      G4cout << _element.name << ": outer radius smaller than aperture: "
-	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cout << _element.name << ": setting outer radius to default = "
-	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
-#endif
-      _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
-    }
-  
-  G4double length = _element.l*CLHEP::m; //geometrical length
-  G4double magFieldLength = 2*std::min ( //length of magnetic field
-					((_element.l/_element.angle)*sin(_element.angle/2)
-					 - fabs(cos(_element.angle/2))*_element.outR*tan(_element.angle/2)/2), 
-					((_element.l/_element.angle)*sin(_element.angle/2)
-					 + fabs(cos(_element.angle/2))*_element.outR*tan(_element.angle/2)/2)
-					)*CLHEP::m;
+BDSAcceleratorComponent* BDSComponentFactory::createRBend()
+{
+  if(_element.l*CLHEP::m < 4*lengthSafety){
+    G4cerr << "---->NOT creating element, "
+             << " name = " << _element.name
+             << ", LENGTH TOO SHORT:"
+             << " l = " << _element.l*CLHEP::m << "m"
+             << G4endl;
+      return NULL;
+  }
+  // calculate length of central straight length and edge sections
+  // unfortunately, this has to be duplicated here as we need to
+  // calculated the magnetic field length (less than the full length)
+  // in case we need to calculate the field
+  G4double outerRadius = PrepareBoxSize(_element)*0.5;
+  G4double angle       = _element.angle;
+  G4double chordLength = _element.l*CLHEP::m;
+  G4double straightSectionChord = outerRadius / (tan(0.5*fabs(angle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(angle))) );
+  G4double magFieldLength = chordLength - (2.0*straightSectionChord);
 
-  G4double outR = _element.outR*CLHEP::m;
-  G4double itsAngle = _element.angle;
-  G4double b = outR / (tan(0.5*fabs(itsAngle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(itsAngle))) );
-  magFieldLength = length - (2.0*b);
-  
-  //
   // magnetic field
-  //
-  
   // CHECK SIGNS OF B, B', ANGLE
   G4double bField;
   if(_element.B != 0){
-    // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
+  // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
     bField = _element.B * CLHEP::tesla;
     G4double rho = _brho/bField;
     //_element.angle  = - bField * length / brho;
-    _element.angle  = - 2.0*asin(length/2.0/rho);
+    _element.angle  = - 2.0*asin(magFieldLength/2.0/rho);
+    G4cout << "calculated angle from field - now " << _element.angle << G4endl;
   }
   else{
     _element.angle *= -1;
     // arc length = radius*angle
     //            = (geometrical length/(2.0*sin(angle/2))*angle
-    G4double arclength = 0.5*magFieldLength * _element.angle / sin(_element.angle/2.0);
+    G4double arclength = 0.5*magFieldLength * fabs(_element.angle) / sin(fabs(_element.angle)*0.5);
     // B = Brho/rho = Brho/(arc length/angle)
     bField = - _brho * _element.angle / arclength * _charge; // charge in e units
     _element.B = bField/CLHEP::tesla;
+    G4cout << "calculated field from angle - angle,field = " << _element.angle << " " << _element.B << G4endl;
   }
   
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
-  
-  if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
-    return createDrift();
-  }
 
   return (new BDSRBend( _element.name,
-			length,
-			aper,
-			FeRad,
+			_element.l*CLHEP::m,
 			bField,
-			_element.angle,
-			_element.outR * CLHEP::m,
-			_element.blmLocZ,
-			_element.blmLocTheta,
-			_element.tilt * CLHEP::rad,
 			bPrime,
-			_element.tunnelMaterial,
-			_element.material ) );
+			_element.angle,
+			PrepareBeamPipeInfo(_element),
+			PrepareBoxSize(_element)
+			));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
-  // geometry
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  G4double FeRad = aper + _bpThick;
+  if(_element.l*CLHEP::m < 4*lengthSafety){
+    G4cerr << "---->NOT creating element, "
+             << " name = " << _element.name
+             << ", LENGTH TOO SHORT:"
+             << " l = " << _element.l*CLHEP::m << "m"
+             << G4endl;
+      return NULL;
+  }
 
-  if( _element.outR < aper/CLHEP::m)
-    {
-#ifdef BDSDEBUG
-      G4cout << _element.name << ": outer radius smaller than aperture: "
-	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cout << _element.name << ": setting outer radius to default = "
-	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
-#endif
-      _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
-    }
   G4double length = _element.l*CLHEP::m;
   
   // magnetic field
@@ -738,7 +534,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
-  
+
+  // LN I think we should build it anyway and the stepper should deal
+  // with this - ie so we still have the outer geometry
+  /*
   if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
     G4cerr << "---->NOT creating Hkick,"
 	   << " name= " << _element.name
@@ -750,37 +549,28 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
 	   << " tunnel material " << _element.tunnelMaterial
 	   << G4endl;
     return createDrift();
-  } 
-
+  }
+  */
   return (new BDSKicker( _element.name,
-			 length,
-			 aper,
-			 FeRad,
+			 _element.l * CLHEP::m,
 			 bField,
-			 _element.angle,
-			 _element.outR * CLHEP::m,
-			 _element.tilt * CLHEP::rad,
 			 bPrime,
-			 _element.tunnelMaterial,
-			 _element.material ) );
+			 _element.angle,
+			 false,   // it's a horizontal kicker
+			 PrepareBeamPipeInfo(_element),
+			 PrepareBoxSize(_element) ));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
-  // geometry
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  G4double FeRad = aper + _bpThick;
+  if(_element.l*CLHEP::m < 4*lengthSafety){
+    G4cerr << "---->NOT creating element, "
+             << " name = " << _element.name
+             << ", LENGTH TOO SHORT:"
+             << " l = " << _element.l*CLHEP::m << "m"
+             << G4endl;
+      return NULL;
+  }
   
-  if( _element.outR < aper/CLHEP::m)
-    {
-#ifdef BDSDEBUG
-      G4cout << _element.name << ": outer radius smaller than aperture: "
-	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cout << _element.name << ": setting outer radius to default = "
-	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
-#endif
-      _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
-    }
   G4double length = _element.l*CLHEP::m;
   
   // magnetic field
@@ -798,7 +588,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
-  
+
+  // LN I think we should build it anyway and the stepper should deal
+  // with this - ie so we still have the outer geometry
+  /*
   if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
     G4cerr << "---->NOT creating Vkick,"
 	   << " name= " << _element.name
@@ -811,84 +604,51 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
 	   << G4endl;
 
     return createDrift();
-  } 
-
+  }
+  */
   return (new BDSKicker( _element.name,
 			 _element.l * CLHEP::m,
-			 aper,
-			 FeRad,
 			 bField,
-			 _element.angle,
-			 _element.outR * CLHEP::m,
-			 (_element.tilt+CLHEP::pi/2)*CLHEP::rad,
 			 bPrime,
-			 _element.tunnelMaterial,
-			 _element.material ) );
+			 _element.angle,
+			 true,   // it's a vertical kicker
+			 PrepareBeamPipeInfo(_element),
+			 PrepareBoxSize(_element) ));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createQuad(){
-  //
-  // geometry
-  //
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  G4double FeRad = aper + _bpThick + 1*CLHEP::mm;
-
-  if( _element.outR < aper/CLHEP::m)
-    {
-#ifdef BDSDEBUG
-      G4cout << _element.name << ": outer radius smaller than aperture: "
-	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cout << _element.name << ": setting outer radius to default = "
-	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
-#endif
-      _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
-    }
-  
-	//
-	// magnetic field
-	//
-	// B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
-	// Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
+BDSAcceleratorComponent* BDSComponentFactory::createQuad()
+{
+  if(_element.l*CLHEP::m < 4*lengthSafety){
+    G4cerr << "---->NOT creating element, "
+             << " name = " << _element.name
+             << ", LENGTH TOO SHORT:"
+             << " l = " << _element.l*CLHEP::m << "m"
+             << G4endl;
+      return NULL;
+  }
+  // magnetic field
+  // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
+  // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
   
   return (new BDSQuadrupole( _element.name,
 			     _element.l * CLHEP::m,
-			     aper,
-			     FeRad,
-			     bPrime, 
-			     _element.tilt * CLHEP::rad,
-			     _element.outR * CLHEP::m,
-			     _element.blmLocZ,
-			     _element.blmLocTheta,
-			     _element.tunnelMaterial,
-			     _element.material,
-			     _element.spec ) );
+			     bPrime,
+			     PrepareBeamPipeInfo(_element),
+			     PrepareBoxSize(_element)));			     
 }  
   
-BDSAcceleratorComponent* BDSComponentFactory::createSextupole(){
-  //
-  // geometry
-  //
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  G4double FeRad = aper + _bpThick;
-  
-  if( _element.outR < aper/CLHEP::m)
-    {
-#ifdef BDSDEBUG
-      G4cout << _element.name << ": outer radius smaller than aperture: "
-	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cout << _element.name << ": setting outer radius to default = "
-	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
-#endif
-      _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
-    }
-  
-  //
-  // magnetic field
-  //
-  
+BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
+{
+  if(_element.l*CLHEP::m < 4*lengthSafety){
+    G4cerr << "---->NOT creating element, "
+             << " name = " << _element.name
+             << ", LENGTH TOO SHORT:"
+             << " l = " << _element.l*CLHEP::m << "m"
+             << G4endl;
+      return NULL;
+  }
+  // magnetic field 
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
   // brho is in Geant4 units, but k2 is not -> multiply k2 by m^-3
   G4double bDoublePrime = - _brho * (_element.k2 / CLHEP::m3);
@@ -901,9 +661,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole(){
 	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
 	 << " B''= " << bDoublePrime/(CLHEP::tesla/CLHEP::m2) << "T/m^2"
 	 << " tilt= " << _element.tilt << "rad"
-	 << " aper= " << aper/CLHEP::m << "m"
-	 << " outR= " << _element.outR << "m"
-	 << " FeRad= " << FeRad/CLHEP::m << "m"
 	 << " tunnel material " << _element.tunnelMaterial
 	 << " material= " << _element.material
 	 << G4endl;
@@ -911,41 +668,23 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole(){
   
   return (new BDSSextupole( _element.name,
 			    _element.l * CLHEP::m,
-			    aper,
-			    FeRad,
 			    bDoublePrime,
-			    _element.tilt * CLHEP::rad,
-			    _element.outR * CLHEP::m,
-			    _element.blmLocZ,
-			    _element.blmLocTheta,
-			    _element.tunnelMaterial,
-			    _element.material ) );
+			    PrepareBeamPipeInfo(_element),
+			    PrepareBoxSize(_element)));	
+  
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createOctupole(){
-
-  //
-  // geometry
-  //
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  G4double FeRad = aper + _bpThick;
-  
-  if( _element.outR < aper/CLHEP::m)
-    {
-#ifdef BDSDEBUG
-      G4cout << _element.name << ": outer radius smaller than aperture: "
-	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cout << _element.name << ": setting outer radius to default = "
-	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
-#endif
-      _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
-    }
-  
-  //
-  // magnetic field
-  //
-  
+BDSAcceleratorComponent* BDSComponentFactory::createOctupole()
+{
+  if(_element.l*CLHEP::m < 4*lengthSafety){
+    G4cerr << "---->NOT creating element, "
+             << " name = " << _element.name
+             << ", LENGTH TOO SHORT:"
+             << " l = " << _element.l*CLHEP::m << "m"
+             << G4endl;
+      return NULL;
+  }
+  // magnetic field  
   // B''' = d^3By/dx^3 = Brho * (1/Brho d^3By/dx^3) = Brho * k3
   // brho is in Geant4 units, but k3 is not -> multiply k3 by m^-4
   G4double bTriplePrime = - _brho * (_element.k3 / (CLHEP::m3*CLHEP::m));
@@ -958,64 +697,38 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole(){
 	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
 	 << " B'''= " << bTriplePrime/(CLHEP::tesla/CLHEP::m3) << "T/m^3"
 	 << " tilt= " << _element.tilt << "rad"
-	 << " aper= " << aper/CLHEP::m << "m"
-	 << " outR= " << _element.outR << "m"
-	 << " FeRad= " << FeRad/CLHEP::m << "m"
 	 << " tunnel material " << _element.tunnelMaterial
 	 << " material= " << _element.material
 	 << G4endl;
 #endif
   
-  return (new BDSOctupole( _element.name,
-			   _element.l * CLHEP::m,
-			   aper,
-			   FeRad,
-			   bTriplePrime,
-			   _element.tilt * CLHEP::rad,
-			   _element.outR * CLHEP::m,
-			   _element.blmLocZ,
-			   _element.blmLocTheta,
-			   _element.tunnelMaterial,
-			   _element.material ) );
+  return ( new BDSOctupole( _element.name,
+			    _element.l * CLHEP::m,
+			    bTriplePrime,
+			    PrepareBeamPipeInfo(_element),
+			    PrepareBoxSize(_element)));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createMultipole(){
-  
-  //
-  // geometry
-  //
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  
-  G4double FeRad = aper+ _bpThick;
-  
-  if( _element.outR < aper/CLHEP::m)
-    {
-#ifdef BDSDEBUG
-      G4cout << _element.name << ": outer radius smaller than aperture: "
-	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cout << _element.name << ": setting outer radius to default = "
-	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
-#endif
-      _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
-    }
-  
+BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
+{
+  if(_element.l*CLHEP::m < 4*lengthSafety){
+    G4cerr << "---->NOT creating element, "
+             << " name = " << _element.name
+             << ", LENGTH TOO SHORT:"
+             << " l = " << _element.l*CLHEP::m << "m"
+             << G4endl;
+      return NULL;
+  }
 #ifdef BDSDEBUG 
   G4cout << "---->creating Multipole,"
 	 << " name= " << _element.name
 	 << " l= " << _element.l << "m"
 	 << " tilt= " << _element.tilt << "rad"
-	 << " aper= " << aper/CLHEP::m << "m"
-	 << " outR= " << _element.outR << "m"
-	 << " FeRad= " << FeRad/CLHEP::m << "m"
 	 << " tunnel material " << _element.tunnelMaterial
 	 << " material= " << _element.material
 	 << G4endl;
 #endif
-  
-  //
   // magnetic field
-  //
   std::list<double>::iterator kit;
   
 #ifdef BDSDEBUG 
@@ -1045,42 +758,29 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole(){
 #ifdef BDSDEBUG 
   G4cout << "}" << G4endl;
 #endif
-  
+
   return (new BDSTMultipole( _element.name,
 			     _element.l * CLHEP::m,
-			     aper,
-			     FeRad,
-			     _element.tilt * CLHEP::rad,
-			     _element.outR * CLHEP::m,
 			     _element.knl,
 			     _element.ksl,
-			     _element.blmLocZ,
-			     _element.blmLocTheta,
-			     _element.tunnelMaterial, 
-			     _element.material 
-			     ) );
+			     PrepareBeamPipeInfo(_element),
+			     PrepareBoxSize(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createElement(){
+  if(_element.l*CLHEP::m < 4*lengthSafety){
+    G4cerr << "---->NOT creating element, "
+             << " name = " << _element.name
+             << ", LENGTH TOO SHORT:"
+             << " l = " << _element.l*CLHEP::m << "m"
+             << G4endl;
+      return NULL;
+  }
 
-  //
   // geometry
-  //
-  G4double aper = _bpRad;
+  G4double aper = BDSGlobalConstants::Instance()->GetBeamPipeRadius();
   if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  
-  /* Fix for element volume overlaps - do not set default outR!
-	if( _element.outR < aper/CLHEP::m)
-	{
-	#ifdef BDSDEBUG
-	G4cout << _element.name << ": outer radius smaller than aperture: "
-	<< "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-	G4cout << _element.name << ": setting outer radius to default = "
-	<< "aper+22*cm"<<G4endl;
-	#endif
-	_element.outR = 0.22;
-	}
-  */
+
 #ifdef BDSDEBUG 
   G4cout << "---->creating Element,"
 	 << " name= " << _element.name
@@ -1108,28 +808,16 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 			  _element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, tunnelOffsetX, _element.tunnelCavityMaterial));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createSolenoid(){
-
-  //
-  // geometry
-  //
-  G4double aper = _bpRad;
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
-  
-  G4double FeRad = aper+ _bpThick;
-  
-  if( _element.outR < aper/CLHEP::m)
-    {
-#ifdef BDSDEBUG
-      G4cout << _element.name << ": outer radius smaller than aperture: "
-	     << "aper= "<<aper/CLHEP::m<<"m outR= "<<_element.outR<<"m"<<G4endl;
-      G4cout << _element.name << ": setting outer radius to default = "
-	     << BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m)<< "m" << G4endl;
-#endif
-      _element.outR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/(2*CLHEP::m);
-    }
-  
-  //
+BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
+{
+  if(_element.l*CLHEP::m < 4*lengthSafety){
+    G4cerr << "---->NOT creating element, "
+             << " name = " << _element.name
+             << ", LENGTH TOO SHORT:"
+             << " l = " << _element.l*CLHEP::m << "m"
+             << G4endl;
+      return NULL;
+  }
   // magnetic field
   //
   // B = B/Brho * Brho = ks * Brho
@@ -1151,28 +839,27 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid(){
 	 << " ks= " << _element.ks << " m^-1"
 	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"
 	 << " B= " << bField/CLHEP::tesla << " T"
-	 << " aper= " << aper/CLHEP::m << " m"
-	 << " outR= " << _element.outR << " m"
-	 << " FeRad= " << FeRad/CLHEP::m << " m"
 	 << " tunnel material " << _element.tunnelMaterial
 	 << " material= " << _element.material
 	 << G4endl;
 #endif
+  
   return (new BDSSolenoid( _element.name,
 			   _element.l * CLHEP::m,
-			   aper,
-			   FeRad,
 			   bField,
-			   _element.outR*CLHEP::m,
-			   _element.blmLocZ,
-			   _element.blmLocTheta,
-			   _element.tunnelMaterial,
-			   _element.material
-			   ) );
+			   PrepareBeamPipeInfo(_element),
+			   PrepareBoxSize(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
-
+  if(_element.l*CLHEP::m < 4*lengthSafety){
+    G4cerr << "---->NOT creating element, "
+             << " name = " << _element.name
+             << ", LENGTH TOO SHORT:"
+             << " l = " << _element.l*CLHEP::m << "m"
+             << G4endl;
+      return NULL;
+  }
   G4Material* theMaterial;
   if(_element.material != "")
     theMaterial = BDSMaterials::Instance()->GetMaterial( _element.material );
@@ -1190,23 +877,11 @@ BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
 	 << " tunnel material " << _element.tunnelMaterial
 	 << G4endl;
 #endif
-  /*
-    return (new BDSRealisticCollimator(
-    _element.name,
-    _bpRad,
-    _element.xsize * CLHEP::m,
-    _element.ysize * CLHEP::m,
-    _RCOL,
-    _element.flatlength * CLHEP::m,
-    _element.taperlength * CLHEP::m,
-    theMaterial,
-    _element.outR*CLHEP::m) );
 
-  */
-
+  G4double radius = BDSGlobalConstants::Instance()->GetBeamPipeRadius();
   return (new BDSCollimator( _element.name,
 			     _element.l * CLHEP::m,
-			     _bpRad,
+			     radius,
 			     _element.xsize * CLHEP::m,
 			     _element.ysize * CLHEP::m,
 			     theMaterial,
@@ -1217,7 +892,14 @@ BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
-
+  if(_element.l*CLHEP::m < 4*lengthSafety){
+    G4cerr << "---->NOT creating element, "
+             << " name = " << _element.name
+             << ", LENGTH TOO SHORT:"
+             << " l = " << _element.l*CLHEP::m << "m"
+             << G4endl;
+      return NULL;
+  }
 #ifdef BDSDEBUG 
   G4cout << "---->creating muspoiler,"
 	 << " name= " << _element.name 
@@ -1226,40 +908,20 @@ BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
 	 << " tunnel material " << _element.tunnelMaterial
 	 << G4endl;
 #endif
-  G4String name = _element.name;
-  G4double length = _element.l*CLHEP::m;
-  G4double bField = _element.B * CLHEP::tesla;
-  G4double beamPipeRadius;
-  //        if(_element.aperSet){
-  beamPipeRadius = _element.aper*CLHEP::m;
-  //        } else {
-  //          beamPipeRadius = BDSGlobalConstants::Instance()->GetBeampipeRadius();
-  //        }
-  G4double innerRadius;
-  //        if (_element.inRset){
-  innerRadius = _element.inR*CLHEP::m;
-  //        } else {
-  //          innerRadius = beamPipeRadius;
-  //        }
-  G4double outerRadius = _element.outR*CLHEP::m;
         
 #ifdef BDSDEBUG
-  G4cout << "BDSMuSpoiler: " << name << " " << length/CLHEP::m << " " << outerRadius/CLHEP::m << " " << innerRadius/CLHEP::m << " " << bField/CLHEP::tesla << " " << beamPipeRadius/CLHEP::m << G4endl;
+  G4cout << "BDSMuSpoiler: " << _element.name << " " << _element.l*CLHEP::m << " " << " " << _element.B*CLHEP::tesla << G4endl;
 #endif
-
-  return (new BDSMuSpoiler(name,
-			   length,
-			   beamPipeRadius,
-			   innerRadius,
-			   outerRadius,
-			   bField, 
-			   _element.blmLocZ,
-			   _element.blmLocTheta,
-			   _element.tunnelMaterial));
-      
+  
+  return (new BDSMuSpoiler(_element.name,
+			   _element.l*CLHEP::m,
+			   _element.B * CLHEP::tesla,
+			   PrepareBeamPipeInfo(_element),
+			   PrepareBoxSize(_element) ));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createLaser(){
+  
   if(_element.l == 0) _element.l = 1e-8;
 	
 #ifdef BDSDEBUG 
@@ -1348,4 +1010,71 @@ BDSAcceleratorComponent* BDSComponentFactory::createTerminator(){
   return (new BDSTerminator(_element.name, 
 			    BDSGlobalConstants::Instance()->GetSamplerLength()
 			    ));
+}
+
+
+
+G4Material* BDSComponentFactory::PrepareBeamPipeMaterial(Element& element)
+{
+  G4Material* beamPipeMaterial;
+  if(element.beampipeMaterial == "")
+    {
+      G4String defaultMaterialName = BDSGlobalConstants::Instance()->GetBeamPipeMaterialName();
+      beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
+    }
+  else
+    { beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(element.beampipeMaterial); }
+  return beamPipeMaterial;
+}
+
+G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element& /*element*/)
+{
+  //in future do somethign relating to what's set in element
+  //also make some setting available in element
+  return BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
+}
+
+G4double BDSComponentFactory::PrepareBoxSize(Element& element)
+{
+  G4double boxSize = element.boxSize*CLHEP::m;
+  if (boxSize < 1e-6)
+    {//boxSize not set - use global option as default
+      boxSize = BDSGlobalConstants::Instance()->GetComponentBoxSize();
+    }
+  // returns in metres
+  return boxSize;
+}
+
+BDSBeamPipeInfo BDSComponentFactory::PrepareBeamPipeInfo(Element& element)
+{
+  BDSBeamPipeInfo info;
+  info.beamPipeType      = BDS::DetermineBeamPipeType(element.apertureType);
+
+  // note even if aperN in the element is 0 (ie unset), we should use
+  // the default aperture model from global constants (already in metres)
+  // aper1
+  if (element.aper1 == 0)
+    {info.aper1 = BDSGlobalConstants::Instance()->GetAper1();}
+  else
+    {info.aper1 = element.aper1*CLHEP::m;}
+  // aper2
+  if (element.aper2 == 0)
+    {info.aper2 = BDSGlobalConstants::Instance()->GetAper2();}
+  else
+    {info.aper2 = element.aper2*CLHEP::m;}
+  // aper3
+  if (element.aper3 == 0)
+    {info.aper3 = BDSGlobalConstants::Instance()->GetAper3();}
+  else
+    {info.aper3 = element.aper3*CLHEP::m;}
+  // aper4
+  if (element.aper4 == 0)
+    {info.aper4 = BDSGlobalConstants::Instance()->GetAper4();}
+  else
+    {info.aper4 = element.aper4*CLHEP::m;}
+  
+  info.vacuumMaterial    = PrepareVacuumMaterial(element);
+  info.beamPipeThickness = element.beampipeThickness*CLHEP::m;
+  info.beamPipeMaterial  = PrepareBeamPipeMaterial(element);
+  return info;
 }

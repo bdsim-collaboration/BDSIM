@@ -10,17 +10,23 @@
 #include "globals.hh"
 
 #include "BDSMultipole.hh"
+#include "BDSBeamPipeInfo.hh"
 
-class BDSDecapole :public BDSMultipole
+#include <list>
+
+class BDSDecapole: public BDSMultipole
 {
 public:
-  BDSDecapole(G4String aName, G4double aLength,
-	      G4double bpRad, G4double FeRad,
-	      G4double BQuadPrime, G4double tilt, G4double outR,
-              std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-              G4String aTunnelMaterial = "",
-	      G4String aMaterial = "");
-  ~BDSDecapole();
+  BDSDecapole(G4String        name,
+	      G4double        length,
+	      G4double        bQuadPrime,
+	      BDSBeamPipeInfo beamPipeInfo,
+	      G4double        boxSize,
+	      G4String        outerMaterial = "",
+	      G4String        tunnelMaterial = "",
+	      G4double        tunnelRadius = 0,
+	      G4double        tunnelOffsetX = 0);
+  ~BDSDecapole(){;};
 
 protected:
   virtual void Build();
@@ -29,7 +35,6 @@ private:
   G4double itsBQuadPrime;
 
   virtual void BuildBPFieldAndStepper();
-
   virtual void SetVisAttributes();
 };
 

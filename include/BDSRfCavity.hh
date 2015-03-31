@@ -9,6 +9,8 @@
 
 #include"globals.hh"
 
+#include "BDSMultipole.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSMaterials.hh"
 #include "G4LogicalVolume.hh"
 
@@ -20,20 +22,24 @@
 #include "G4MagErrorStepper.hh"
 #include "G4EqMagElectricField.hh"
 
-#include "BDSMultipole.hh"
+
 
 class BDSRfCavity :public BDSMultipole
 {
   public:
-  BDSRfCavity(G4String aName, G4double aLength,G4double bpRad, G4double grad, 
-              G4String aTunnelMaterial="",G4String aMaterial = "");
-    ~BDSRfCavity();
-
-  protected:
-
+  BDSRfCavity(G4String        name,
+	      G4double        length,
+	      G4double        grad,
+	      BDSBeamPipeInfo beamPipeInfoIn,
+	      G4double        boxSize,
+	      G4String        outerMaterial="",
+	      G4String        tunnelMaterial="",
+	      G4double        tunnelRadius=0,
+	      G4double        tunnelOffsetX=0);
+  ~BDSRfCavity(){;};
+  
   private:
 
-  virtual void Build();
   virtual void BuildBPFieldAndStepper();
 
   virtual void SetVisAttributes();
@@ -41,13 +47,10 @@ class BDSRfCavity :public BDSMultipole
   G4double itsGrad; // longitudinal E field grad in MV / m
 
   // field related objects:
-  //G4MagErrorStepper* itsStepper;
   G4UniformElectricField* itsEField;
   G4ChordFinder*          fChordFinder ;
   G4MagIntegratorStepper* fStepper ;
   G4MagInt_Driver*        fIntgrDriver;
-  G4FieldManager* fieldManager;
-
 };
 
 #endif

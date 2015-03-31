@@ -1,5 +1,6 @@
 #include "BDSGlobalConstants.hh" 
 
+#include "BDSBeamPipeInfo.hh"
 #include "BDSRfCavity.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
@@ -11,29 +12,29 @@
 
 #include "G4ExplicitEuler.hh"
 
-//============================================================
-
-BDSRfCavity::BDSRfCavity (G4String aName,G4double aLength, G4double bpRad, 
-			  G4double grad, G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName ,aLength, bpRad, bpRad, aTunnelMaterial, aMaterial),
-  itsEField(NULL),fChordFinder(NULL),fStepper(NULL),fIntgrDriver(NULL),fieldManager(NULL)
+BDSRfCavity::BDSRfCavity(G4String        name,
+			 G4double        length,
+			 G4double        grad,
+			 BDSBeamPipeInfo beamPipeInfoIn,
+			 G4double        boxSize,
+			 G4String        outerMaterial,
+			 G4String        tunnelMaterial,
+			 G4double        tunnelRadius,
+			 G4double        tunnelOffsetX):
+  BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+  itsGrad(grad)
 {
-  itsGrad = grad;
+  itsEField    = NULL;
+  fChordFinder = NULL;
+  fStepper     = NULL;
+  fIntgrDriver = NULL;
 }
-
-void BDSRfCavity::Build()
-{
-  BDSMultipole::Build();
-  itsInnerBPLogicalVolume->SetFieldManager(fieldManager,false);
-}
-
 
 void BDSRfCavity::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.25,0.25,0.5));
   itsVisAttributes->SetForceSolid(true);
 }
-
 
 void BDSRfCavity::BuildBPFieldAndStepper()
 {
@@ -45,7 +46,7 @@ void BDSRfCavity::BuildBPFieldAndStepper()
 
   G4EqMagElectricField* fEquation = new G4EqMagElectricField(itsEField);
 
-  fieldManager = new G4FieldManager();
+  itsBPFieldMgr = new G4FieldManager();
   
   fStepper = new G4ExplicitEuler( fEquation, nvar );
   //itsStepper = new G4ClassicalRK4( fEquation, nvar );
@@ -53,7 +54,7 @@ void BDSRfCavity::BuildBPFieldAndStepper()
   G4double fMinStep = BDSGlobalConstants::Instance()->GetChordStepMinimum();
  
 
-  fieldManager->SetDetectorField(itsEField );
+  itsBPFieldMgr->SetDetectorField(itsEField );
 
   delete fChordFinder;
 
@@ -64,10 +65,5 @@ void BDSRfCavity::BuildBPFieldAndStepper()
   fChordFinder = new G4ChordFinder(fIntgrDriver);
 
   fChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
-  fieldManager->SetChordFinder( fChordFinder );
-}
-
-
-BDSRfCavity::~BDSRfCavity()
-{
+  itsBPFieldMgr->SetChordFinder( fChordFinder );
 }

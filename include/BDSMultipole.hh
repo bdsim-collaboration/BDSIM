@@ -14,62 +14,31 @@
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "G4LogicalVolume.hh"
+#include "BDSBeamPipe.hh"
+#include "BDSBeamPipeInfo.hh"
 
 #include "G4FieldManager.hh"
 #include "G4ChordFinder.hh"
+#include "G4LogicalVolume.hh"
 #include "G4MagneticField.hh"
 #include "G4Mag_UsualEqRhs.hh"
+#include "G4Material.hh"
 #include "G4RotationMatrix.hh"
 #include "G4UserLimits.hh"
 
-class BDSMultipole :public BDSAcceleratorComponent
+
+class BDSMultipole: public BDSAcceleratorComponent
 {
 public:
-  BDSMultipole( G4String aName, 
-		G4double aLength,
-		G4double aBpRadius,
-		G4double aInnerIronRadius,
-		G4String aMaterial = "",
-		G4double aXAper=0.,
-		G4double aYAper=0.,
-		G4double angle=0.,
-		G4bool beampipeThicknessSet=false,
-		G4double beampipeThickness=-1);
-  
-  /// Constructor for components with tunnel material added
-  BDSMultipole( G4String aName, 
-		G4double aLength,
-		G4double aBpRadius,
-		G4double aInnerIronRadius,
-                G4String aTunnelMaterial = "",
-                G4String aMaterial="",
-		G4double aXAper=0.,
-		G4double aYAper=0.,
-		G4double angle=0.,
-		G4double tunnelRadius=0.,
-		G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
-		G4bool beampipeThicknessSet=false,
-		G4double beampipeThickess=-1);
-
-
-  /// Constructor for components with blms and tunnel material added
-  BDSMultipole( G4String aName, 
-		G4double aLength,
-		G4double aBpRadius,
-		G4double aInnerIronRadius,
-                std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-                G4String aTunnelMaterial = "",
-                G4String aMaterial="",
-		G4double aXAper=0.,
-		G4double aYAper=0.,
-		G4double angle=0.,
-		G4double tunnelRadius=0.,
-		G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
-		G4double phiAngleIn=0,
-		G4double phiAngleOut=0,
-		G4bool beampipeThicknessSet=false,
-		G4double beampipeThickness=-1);
+  // Constructor for new beampipe
+  BDSMultipole( G4String        name, 
+		G4double        length,
+		BDSBeamPipeInfo beamPipeInfo,
+		G4double        boxSize,
+		G4String        outerMaterial="",
+		G4String        tunnelMaterial="",
+		G4double        tunnelRadius=0,
+		G4double        tunnelOffsetX=0);
 
   virtual ~BDSMultipole();
 
@@ -77,8 +46,6 @@ protected:
   virtual void Build();
 
 private:
-  virtual void BuildMarkerLogicalVolume();
-  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
   /// build and set field manager and chord finder
   void BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
 		       G4MagneticField* aField);
@@ -93,11 +60,14 @@ private:
   void FinaliseBeampipe(G4String materialName = "",G4RotationMatrix* RotY=NULL);
 
 protected:
-  /// Standard beam pipe, cross section is elliptical (or circular)
-  // protected since called by BDSDrift::BuildBeampipe, change to private in future whenever possible
-  virtual void BuildBeampipe(G4String materialName = ""); 
-  /// Builds a tapered beam pipe (only used for drifts at the moment)
-  void BuildBeampipe(G4double startAper, G4double endAper, G4String materialName = "");
+  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+  /// general straight beampipe - can be overloaded by derived classes
+  virtual void BuildBeampipe();
+  /// common tasks after the beampipe solids have been defined.
+  /// derived classes that override BuildBeampipe implement this manually
+  /// in the contents of their BuildBeampipe
+  void BeamPipeCommonTasks();
 
   void BuildOuterFieldManager(G4int nPoles, G4double poleField, 
 			      G4double phiOffset);
@@ -115,32 +85,43 @@ protected:
   // beam pipe volumes
   G4LogicalVolume* itsBeampipeLogicalVolume;
   G4LogicalVolume* itsInnerBPLogicalVolume;
-
-  //-----------------------------
+  
   G4UserLimits* itsBeampipeUserLimits;
   G4VPhysicalVolume* itsPhysiComp;
   G4VPhysicalVolume* itsPhysiInner;
   G4FieldManager* itsBPFieldMgr;
   G4FieldManager* itsOuterFieldMgr;
 
-protected:   // these might need to be accessed from the child classes
   G4double itsInnerIronRadius;
-  G4double itsBeampipeThickness;
   
   G4VSolid* itsBeampipeSolid;
   G4VSolid* itsInnerBeampipeSolid;
 
   G4ChordFinder* itsChordFinder;
   G4MagneticField* itsOuterMagField;
+  
+  //for beampipe construction
+  BDSBeamPipeType beamPipeType;
+  G4double        aper1;
+  G4double        aper2;
+  G4double        aper3;
+  G4double        aper4;
+  G4Material*     vacuumMaterial;
+  G4double        beamPipeThickness;
+  G4Material*     beamPipeMaterial;
+  
+  //the constructed beampipe
+  BDSBeamPipe*    beampipe;
 
+  //for outer volume construction
+  G4double        boxSize;
+  
   // G4double itsStartOuterR;
   // G4double itsEndOuterR;
 
 private:
   /// constructor initialisation
   void ConstructorInit();
-
-  void SetBeampipeThickness(G4bool, G4double);
 };
 
 inline void BDSMultipole::SetOuterRadius(G4double outR)

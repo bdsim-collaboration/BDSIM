@@ -15,7 +15,6 @@
    Added ListMaterials function
 */
 
-#include "BDSGlobalConstants.hh" 
 #include "BDSExecOptions.hh"
 #include "BDSMaterials.hh"
 #include "G4NistManager.hh"
@@ -25,6 +24,9 @@
 
 #include "parser/element.h"
 #include "parser/elementlist.h"
+#include "parser/options.h"
+
+extern Options options;
 
 BDSMaterials* BDSMaterials::_instance = 0;
 
@@ -840,7 +842,7 @@ void BDSMaterials::Initialise()
 
   //Default vacuum (same composition as residual vacuum in warm sections of LHC).
   // can be overridden by vacMaterial option
-  G4double vacpressure=BDSGlobalConstants::Instance()->GetVacuumPressure();
+  G4double vacpressure=options.vacuumPressure*CLHEP::bar;
   density = (CLHEP::STP_Temperature/temperature) * (vacpressure/(1.*CLHEP::atmosphere))  * 29*CLHEP::g/(22.4*1.e-3*CLHEP::m3) ;
 #ifdef BDSDEBUG 
   G4cout<< " ***************** defining Vacuum"<<G4endl;
@@ -988,7 +990,7 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)
     std::map<G4String,G4Material*>::iterator iter = materials.find(aMaterial);
     if(iter != materials.end()) return (*iter).second;
     else{
-      G4String exceptionString = "BDSMaterials::GetMaterial - Material "+aMaterial+" not known. Aborting.";
+      G4String exceptionString = "BDSMaterials::GetMaterial - Material \""+aMaterial+"\" not known. Aborting.";
       G4Exception(exceptionString.c_str(), "-1", FatalException, "");
       exit(1);
     }

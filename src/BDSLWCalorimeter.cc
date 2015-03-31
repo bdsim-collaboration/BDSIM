@@ -102,11 +102,12 @@ void BDSLWCalorimeter::BuildBeampipe(G4double aLength)
 		       0.,itsBpRadius,
 		       aLength/2,
 		       0,CLHEP::twopi*CLHEP::radian);
-  
+
+  G4double beamPipeThickness = BDSGlobalConstants::Instance()->GetBeamPipeThickness();
   itsInnerBPTube=new G4Tubs(itsName+"_InnerTube",
 			    0.,
-			    itsBpRadius-BDSGlobalConstants::Instance()->GetBeampipeThickness(),
-			    aLength/2,
+			    itsBpRadius-beamPipeThickness,
+			    aLength*0.5,
 			    0,CLHEP::twopi*CLHEP::radian);
   itsBeampipeLogicalVolume=	
     new G4LogicalVolume(itsBPTube,
