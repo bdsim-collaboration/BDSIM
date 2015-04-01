@@ -59,7 +59,7 @@ public:
 						 G4Material* vacuumMaterialIn = NULL,
 					         G4double    beamPipeThicknessIn = 0,
 					         G4Material* beamPipeMaterialIn = NULL
-					         ) = 0;
+					         );
 
   /// create beampipe with an angled face on output side only
   virtual BDSBeamPipe* CreateBeamPipeAngledOut(  G4String    nameIn,
@@ -72,7 +72,7 @@ public:
 						 G4Material* vacuumMaterialIn = NULL,
 					         G4double    beamPipeThicknessIn = 0,
 					         G4Material* beamPipeMaterialIn = NULL
-					         ) = 0;
+					         );
   
   /// create beampipe with an angled face on both input adn output sides
   virtual BDSBeamPipe* CreateBeamPipeAngledInOut(G4String    nameIn,

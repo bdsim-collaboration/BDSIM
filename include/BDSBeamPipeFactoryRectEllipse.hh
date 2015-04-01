@@ -44,30 +44,6 @@ public:
 				      G4Material* beamPipeMaterialIn = NULL   // beampipe material
 				      );
   
-  virtual BDSBeamPipe* CreateBeamPipeAngledIn(G4String    nameIn,
-					      G4double    lengthIn,
-					      G4double    angleInIn,   // the normal angle of the input face
-					      G4double    aper1 = 0,
-					      G4double    aper2 = 0,
-					      G4double    aper3 = 0,
-					      G4double    aper4 = 0,
-					      G4Material* vacuumMaterialIn = NULL,
-					      G4double    beamPipeThicknessIn = 0,
-					      G4Material* beamPipeMaterialIn = NULL
-					      );
-  
-  virtual BDSBeamPipe* CreateBeamPipeAngledOut(G4String    nameIn,
-					       G4double    lengthIn,
-					       G4double    angleOutIn, // the normal angle of the output face
-					       G4double    aper1 = 0,
-					       G4double    aper2 = 0,
-					       G4double    aper3 = 0,
-					       G4double    aper4 = 0,
-					       G4Material* vacuumMaterialIn = NULL,
-					       G4double    beamPipeThicknessIn = 0,
-					       G4Material* beamPipeMaterialIn = NULL
-					       );
-  
   virtual BDSBeamPipe* CreateBeamPipeAngledInOut(G4String    nameIn,
 						 G4double    lengthIn,
 						 G4double    angleInIn,  // the normal angle of the input face
