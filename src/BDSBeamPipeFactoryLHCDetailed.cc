@@ -7,7 +7,6 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSSDManager.hh"
-#include "BDSUtilities.hh"                 // for calculateorientation
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4Box.hh"
@@ -20,7 +19,6 @@
 #include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
-#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
@@ -44,8 +42,10 @@ BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed():BDSBeamPipeFactor
   coolingPipeRadius         = 3.7*CLHEP::mm; // will be overwritten if needs be to fit inside beampipe
   coolingPipeYOffset        = 0.0;  //initialised only
   copperSkinThickness       = 75*CLHEP::um;
+  copperSkinSolid           = NULL; // the copper skin
   screenSolid               = NULL; // the beam screen (first bit of aperture)
   coolingPipeSolid          = NULL; // small cooling pipe above and below beam screen
+  copperSkinLV              = NULL;
   screenLV                  = NULL;
   coolingPipeLV             = NULL;
 }

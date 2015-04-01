@@ -5,20 +5,14 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSMaterials.hh"
 #include "BDSSDManager.hh"
-#include "BDSUtilities.hh"                 // for calculateorientation
 
 #include "globals.hh"                      // geant4 globals / types
-#include "G4Colour.hh"
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
-#include "G4PVPlacement.hh"
 #include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
 #include <cmath>
