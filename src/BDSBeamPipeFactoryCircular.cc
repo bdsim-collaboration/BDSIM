@@ -202,14 +202,7 @@ void BDSBeamPipeFactoryCircular::TestInputParameters(G4Material*&  vacuumMateria
 						     G4Material*&  beamPipeMaterialIn,
 						     G4double&     aper1In)
 {
-  if (!vacuumMaterialIn)
-    {vacuumMaterialIn = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
-
-  if (beamPipeThicknessIn < 1e-10)
-    {beamPipeThicknessIn = BDSGlobalConstants::Instance()->GetBeamPipeThickness();}
-
-  if (!beamPipeMaterialIn)
-    {beamPipeMaterialIn = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetBeamPipeMaterialName());}
+  BDSBeamPipeFactoryBase::TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn);
 
   if (aper1In < 1e-10)
     {aper1In = BDSGlobalConstants::Instance()->GetBeamPipeRadius();}
@@ -234,101 +227,21 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
 					 lengthIn,                       // full length for unambiguous subtraction
 					 0,                              // rotation start angle
 					 CLHEP::twopi);                  // rotation finish angle
+
+  BDSBeamPipeFactoryBase::CommonConstruction(nameIn,
+					     vacuumMaterialIn,
+					     beamPipeMaterialIn,
+					     lengthIn);
   
-  
-  // build the logical volumes
-  vacuumLV   = new G4LogicalVolume(vacuumSolid,
-				   vacuumMaterialIn,
-				   nameIn + "_vacuum_lv");
-  
-  beamPipeLV = new G4LogicalVolume(beamPipeSolid,
-				   beamPipeMaterialIn,
-				   nameIn + "_beampipe_lv");
-  
-  containerLV = new G4LogicalVolume(containerSolid,
-				    vacuumMaterialIn,
-				    nameIn + "_container_lv");
-  
-  // VISUAL ATTRIBUTES
-  // set visual attributes
-  // beampipe
-  G4VisAttributes* pipeVisAttr = new G4VisAttributes(G4Color(0.4,0.4,0.4));
-  pipeVisAttr->SetVisibility(true);
-  pipeVisAttr->SetForceSolid(true);
-  beamPipeLV->SetVisAttributes(pipeVisAttr);
-  // vacuum
-  vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-  // container
-  if (BDSExecOptions::Instance()->GetVisDebug()) {
-    containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-  } else {
-    containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-  }
-
-  // SENSITIVITY
-  // make the beampipe sensitive if required (attachd Sensitive Detector Class)
-  if (BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
-    {
-      //beampipes are sensitive - attach appropriate sd to the beampipe volume
-      beamPipeLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
-    }
-
-  // USER LIMITS
-  // set user limits based on bdsim user specified parameters
-
-#ifndef NOUSERLIMITS
-  G4UserLimits* beamPipeUserLimits = new G4UserLimits("beampipe_cuts");
-  G4double maxStepFactor = 0.5; // fraction of length for maximum step size
-  beamPipeUserLimits->SetMaxAllowedStep( lengthIn * maxStepFactor );
-  beamPipeUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  beamPipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-  //attach cuts to volumes
-  vacuumLV->SetUserLimits(beamPipeUserLimits);
-  beamPipeLV->SetUserLimits(beamPipeUserLimits);
-  containerLV->SetUserLimits(beamPipeUserLimits);
-#endif
-
-  // PLACEMENT
-  // place the components inside the container
-  // note we don't need the pointer for anything - it's registered upon construction with g4
-  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    (G4ThreeVector)0,             // position
-		    vacuumLV,                     // lv to be placed
-		    nameIn + "_vacuum_pv",        // name
-		    containerLV,                  // mother lv to be place in
-		    false,                        // no boolean operation
-		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
-
-  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    (G4ThreeVector)0,             // position
-		    beamPipeLV,                   // lv to be placed
-		    nameIn + "_beampipe_pv",      // name
-		    containerLV,                  // mother lv to be place in
-		    false,                        // no boolean operation
-		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
-
   // record extents
   std::pair<double,double> extX = std::make_pair(-containerRadiusIn,containerRadiusIn);
   std::pair<double,double> extY = std::make_pair(-containerRadiusIn,containerRadiusIn);
   std::pair<double,double> extZ = std::make_pair(-lengthIn*0.5,lengthIn*0.5);
-  
-  // build the BDSBeamPipe instance and return it
-  BDSBeamPipe* aPipe = new BDSBeamPipe(containerSolid,containerLV,extX,extY,extZ,
-				       containerSubtractionSolid,
-				       vacuumLV,true,containerRadiusIn);
 
-  // REGISTER all lvs
-  aPipe->RegisterLogicalVolume(vacuumLV); //using geometry component base class method
-  aPipe->RegisterLogicalVolume(beamPipeLV);
-  aPipe->RegisterLogicalVolume(containerLV);
-  
+  // build the BDSBeamPipe instance and return it
+  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerRadiusIn);
   return aPipe;
 }
-
 
 /// the angled ones have degeneracy in the geant4 solids they used so we can avoid code duplication
 /// by grouping common construction tasks
@@ -368,10 +281,4 @@ void BDSBeamPipeFactoryCircular::CreateGeneralAngledSolids(G4String      nameIn,
 				 CLHEP::twopi,                 // rotation finish angle
 				 inputfaceIn,                  // input face normal
 				 outputfaceIn);                // rotation finish angle
-}
-
-void BDSBeamPipeFactoryCircular::CalculateOrientations(G4double angleIn, G4double angleOut)
-{
-  orientationIn  = BDS::CalculateOrientation(angleIn);
-  orientationOut = BDS::CalculateOrientation(angleOut);
 }

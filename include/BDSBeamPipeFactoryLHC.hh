@@ -97,20 +97,7 @@ private:
 				 G4double      beamPipeThicknessIn,
 				 G4ThreeVector inputfaceIn,
 				 G4ThreeVector outputfaceIn);
-  G4VSolid*        vacuumSolid;
-  G4VSolid*        beamPipeSolid;
-  G4VSolid*        containerSolid;
-  G4VSolid*        containerSubtractionSolid;
-  G4LogicalVolume* vacuumLV;
-  G4LogicalVolume* beamPipeLV;
-  G4LogicalVolume* containerLV;
 
-  /// orientation -1,0,1 value - always use |angle| with trigonometric and then
-  /// multiply by this factor, 0 by default - determine this in one function
-  /// to avoid mistakes
-  G4int orientationIn;
-  G4int orientationOut;
-  void CalculateOrientations(G4double angleIn, G4double angleOut);
   /// function to create the container subtraction solid and avoid passing aper1,2,3 around further
   void CreateContainerSubtractionSolid(G4String& nameIn,
 				       G4double& lengthIn,
