@@ -117,14 +117,9 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipeAngledInOut(G4String   
    // test input parameters - set global options as default if not specified
   TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In);
 
-  CalculateOrientations(angleInIn, angleOutIn);
-  
-  G4double in_z  = cos(fabs(angleInIn)); // calculate components of normal vectors (in the end mag(normal) = 1)
-  G4double in_x  = sin(fabs(angleInIn)); // note full angle here as it's the exit angle
-  G4double out_z = cos(fabs(angleOutIn));
-  G4double out_x = sin(fabs(angleOutIn));
-  G4ThreeVector inputface  = G4ThreeVector(orientationIn*in_x, 0.0, -1.0*in_z); //-1 as pointing down in z for normal
-  G4ThreeVector outputface = G4ThreeVector(orientationOut*out_x, 0.0, out_z);   // no output face angle
+  std::pair<G4ThreeVector,G4ThreeVector> faces = CalculateFaces(angleInIn, angleOutIn);
+  G4ThreeVector inputface  = faces.first;
+  G4ThreeVector outputface = faces.second;
   
   CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, aper2In, beamPipeThicknessIn, inputface, outputface);
   

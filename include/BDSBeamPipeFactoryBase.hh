@@ -104,10 +104,10 @@ protected:
 					       std::pair<double,double> extZ,
 					       G4double containerRadius);
 
-  /// Calculate orientation
-  void CalculateOrientations(G4double angleIn, G4double angleOut);
+  /// Calculate input and output normal vector
+  std::pair<G4ThreeVector,G4ThreeVector> CalculateFaces(G4double angleInIn,
+							G4double angleOutIn);
 
-  //void CreateGeneralAngledSolids();
   void TestInputParameters(G4Material*& vacuumMaterialIn,
 			   G4double&    beamPipeThicknessIn,
 			   G4Material*& beamPipeMaterialIn);
@@ -138,11 +138,6 @@ protected:
   G4LogicalVolume* beamPipeLV;
   G4LogicalVolume* containerLV;
 
-  /// orientation -1,0,1 value - always use |angle| with trigonometric and then
-  /// multiply by this factor, 0 by default - determine this in one function
-  /// to avoid mistakes
-  G4int orientationIn;
-  G4int orientationOut;
 };
 
 #endif
