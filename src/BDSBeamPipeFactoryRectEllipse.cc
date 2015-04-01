@@ -187,10 +187,10 @@ void BDSBeamPipeFactoryRectEllipse::TestInputParameters(G4Material*&  vacuumMate
   if (aper2In < 1e-10)
     {aper2In = BDSGlobalConstants::Instance()->GetAper2();}
 
-  if (aper3In < 1e-1)
+  if (aper3In < 1e-10)
     {aper3In = BDSGlobalConstants::Instance()->GetAper3();}
 
-  if (aper4In < 1e-1)
+  if (aper4In < 1e-10)
     {aper4In = BDSGlobalConstants::Instance()->GetAper4();}
 }
 
