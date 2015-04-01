@@ -37,18 +37,8 @@ BDSBeamPipeFactoryRectangular* BDSBeamPipeFactoryRectangular::Instance()
   return _instance;
 }
 
-BDSBeamPipeFactoryRectangular::BDSBeamPipeFactoryRectangular()
+BDSBeamPipeFactoryRectangular::BDSBeamPipeFactoryRectangular():BDSBeamPipeFactoryBase()
 {
-  lengthSafety              = BDSGlobalConstants::Instance()->GetLengthSafety();
-  vacuumSolid               = NULL;
-  beamPipeSolid             = NULL;
-  containerSolid            = NULL;
-  containerSubtractionSolid = NULL;
-  vacuumLV                  = NULL;
-  beamPipeLV                = NULL;
-  containerLV               = NULL;
-  orientationIn             = 0;
-  orientationOut            = 0;
 }
 
 BDSBeamPipeFactoryRectangular::~BDSBeamPipeFactoryRectangular()

@@ -89,6 +89,9 @@ public:
 						 ) = 0;
 
 protected:
+  /// base constructor
+  BDSBeamPipeFactoryBase();
+  
   /// finalise beampipe construction
   void CommonConstruction(G4String    nameIn,
 			  G4Material* vacuumMaterialIn,
@@ -125,6 +128,7 @@ protected:
   virtual void PlaceComponents(G4String nameIn);
 
 protected:
+  G4double         lengthSafety;
   G4VSolid*        vacuumSolid;
   G4VSolid*        beamPipeSolid;
   G4VSolid*        containerSolid;

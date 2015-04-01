@@ -81,7 +81,6 @@ private:
 			   G4double&    aper2In,
 			   G4double&    aper3In);
 
-  G4double lengthSafety;
   G4double coldBoreThickness;
   G4double coolingPipeThickness;
   G4double coolingPipeRadius;

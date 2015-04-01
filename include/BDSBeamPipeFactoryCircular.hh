@@ -76,8 +76,6 @@ private:
 			   G4Material*& beamPipeMaterialIn,
 			   G4double&    aper1In);
 
-  G4double lengthSafety;
-
   //abstract common build features to one function
   //use member variables unique to this factory to pass them around
 

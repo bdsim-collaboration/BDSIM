@@ -34,18 +34,8 @@ BDSBeamPipeFactoryCircular* BDSBeamPipeFactoryCircular::Instance()
   return _instance;
 }
 
-BDSBeamPipeFactoryCircular::BDSBeamPipeFactoryCircular()
+BDSBeamPipeFactoryCircular::BDSBeamPipeFactoryCircular():BDSBeamPipeFactoryBase()
 {
-  lengthSafety              = BDSGlobalConstants::Instance()->GetLengthSafety();
-  vacuumSolid               = NULL;
-  beamPipeSolid             = NULL;
-  containerSolid            = NULL;
-  containerSubtractionSolid = NULL;
-  vacuumLV                  = NULL;
-  beamPipeLV                = NULL;
-  containerLV               = NULL;
-  orientationIn  = 0;
-  orientationOut = 0;
 }
 
 BDSBeamPipeFactoryCircular::~BDSBeamPipeFactoryCircular()

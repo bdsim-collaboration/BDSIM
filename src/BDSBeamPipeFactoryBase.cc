@@ -16,6 +16,20 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
+BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
+{
+  lengthSafety              = BDSGlobalConstants::Instance()->GetLengthSafety();
+  vacuumSolid               = NULL;
+  beamPipeSolid             = NULL;
+  containerSolid            = NULL;
+  containerSubtractionSolid = NULL;
+  vacuumLV                  = NULL;
+  beamPipeLV                = NULL;
+  containerLV               = NULL;
+  orientationIn  = 0;
+  orientationOut = 0;
+}
+
 void BDSBeamPipeFactoryBase::TestInputParameters(G4Material*&  vacuumMaterialIn,
 						 G4double&     beamPipeThicknessIn,
 						 G4Material*&  beamPipeMaterialIn)

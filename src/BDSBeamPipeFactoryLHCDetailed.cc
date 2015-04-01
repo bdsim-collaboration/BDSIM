@@ -37,27 +37,17 @@ BDSBeamPipeFactoryLHCDetailed* BDSBeamPipeFactoryLHCDetailed::Instance()
   return _instance;
 }
 
-BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed()
+BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed():BDSBeamPipeFactoryBase()
 {
-  lengthSafety              = BDSGlobalConstants::Instance()->GetLengthSafety();
   coldBoreThickness         = 1.5*CLHEP::mm;
   coolingPipeThickness      = 0.53*CLHEP::mm;
   coolingPipeRadius         = 3.7*CLHEP::mm; // will be overwritten if needs be to fit inside beampipe
   coolingPipeYOffset        = 0.0;  //initialised only
   copperSkinThickness       = 75*CLHEP::um;
-  vacuumSolid               = NULL; // the inner vacuum shape
   screenSolid               = NULL; // the beam screen (first bit of aperture)
   coolingPipeSolid          = NULL; // small cooling pipe above and below beam screen
-  beamPipeSolid             = NULL; // outer pipe between vacuum and cold bore
-  containerSolid            = NULL;
-  containerSubtractionSolid = NULL;
-  vacuumLV                  = NULL;
   screenLV                  = NULL;
   coolingPipeLV             = NULL;
-  beamPipeLV                = NULL;
-  containerLV               = NULL;
-  orientationIn  = 0;
-  orientationOut = 0;
 }
 
 BDSBeamPipeFactoryLHCDetailed::~BDSBeamPipeFactoryLHCDetailed()

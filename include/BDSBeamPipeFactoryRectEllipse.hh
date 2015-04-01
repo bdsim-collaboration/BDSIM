@@ -93,8 +93,6 @@ private:
 			   G4double&    aper3In,
 			   G4double&    aper4In);
 
-  G4double lengthSafety;
-
   //abstract common build features to one function
   //use member variables unique to this factory to pass them around
 
