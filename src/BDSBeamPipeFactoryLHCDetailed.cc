@@ -286,6 +286,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
   BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerRadiusIn);
 
   // REGISTER private lvs
+  aPipe->RegisterLogicalVolume(copperSkinLV);
   aPipe->RegisterLogicalVolume(screenLV);
   aPipe->RegisterLogicalVolume(coolingPipeLV);
   
