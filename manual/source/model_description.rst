@@ -2,6 +2,39 @@
 Model Description - Input Syntax
 ================================
 
+GMAD Syntax
+-----------
+
+GMAD is a language specifically for BDSIM but is made to be human readable
+and very similar to MADX.
+
+* arithmetic expressions can be defined
+* binary operators +, -, \*, /, ^ are valid
+* unary operators +, -, are valid
+* boolean operators <, >, <=, >=, <>, == are valid
+* every expression **must** end with a semi-colon;
+
+The following functions are provided
+
+* sqrt
+* cos
+* sin
+* tan
+* exp, e
+* log
+* acos
+* asin
+* abs
+
+Examples
+^^^^^^^^
+::
+
+   x = 1;
+   y = 2.5-x;
+   z = sin(x) + log(y) -8e5;
+
+
 Coordinates & Units
 -------------------
 
@@ -9,7 +42,7 @@ In Geant4, global euclidean coordinates are used for tracking purposes, however,
 in describing a lattice with BDISM, curvlinear coordinates are used as is common with
 accelerators (X,Y,S).
 
-The following units are used by default
+**GMAD uses SI units.**
 
 ==============================  =========================
 Name                            Units
@@ -33,12 +66,41 @@ pressure                        [atm] (atmosphere)
 mass number                     [g/mol]
 ==============================  =========================
 
+Some useful predefined values / units are:
+
+==========  =================================
+Name        Value
+==========  =================================
+pi          3.14159265358979
+GeV         1
+eV          :math:`10^{-9}`
+KeV         :math:`10^{-6}`
+MeV         :math:`10^{-3}`
+TeV         :math:`10^{3}`
+MV          1
+Tesla       1
+rad         1
+mrad        :math:`10^{-3}`
+clight      :math:`2.99792458 \times 10^{-9}`
+m           1
+cm          :math:`10^{-2}`
+mm          :math:`10^{-3}`
+um          :math:`10^{-6}`
+nm          :math:`10^{-9}`
+s           1
+ms          :math:`10^{-3}`
+us          :math:`10^{-6}`
+ns          :math:`10^{-9}`
+==========  =================================
+
+For example, one can write either 100*eV or 0.1*KeV to specify an energy in GMAD
+and both are equivalent.
+
 Lattice Description
 -------------------
 
 A model of the accelerator is given to BDSIM via input text files in the GMAD language.
-This is a language specifically for BDSIM but is made to be human readable and very similar
-to MADX. The overall program strucutre should follow:
+The overall program strucutre should follow:
 
 1) Component definition
 2) Sequence defention (of the already defined components)
@@ -80,23 +142,62 @@ The following elements may be defined
 * `element`_
 * `marker`_
 
+These are detailed in the following sections.
+
 drift
 ^^^^^
 
+.. figure:: figures/drift.png
+	    :width: 30%
+	    :align: right
+
+:code:`drift` defines a straight beam pipe with no field.
+
+Required attributes:
+
+================  ===================  ==========  =========
+parameter         description          default     required
+`l`               length [m]           0.1         yes
+`vacuumMaterial`  the vacuum material  vacuum      no
+                  to use, can be user
+		  defined
+================  ===================  ==========  =========
+
+
 rbend
 ^^^^^
+.. figure:: figures/rbend.png
+	    :width: 30%
+	    :align: right
+
 
 sbend
 ^^^^^
 
+.. figure:: figures/sbend.png
+	    :width: 30%
+	    :align: right
+
 quadrupole
 ^^^^^^^^^^
+
+.. figure:: figures/quadrupole.png
+	    :width: 30%
+	    :align: right
 
 sextupole
 ^^^^^^^^^
 
+.. figure:: figures/sextupole.png
+	    :width: 30%
+	    :align: right
+
 octupole
 ^^^^^^^^
+
+.. figure:: figures/octupole.png
+	    :width: 30%
+	    :align: right
 
 decapole
 ^^^^^^^^
@@ -134,32 +235,8 @@ element
 marker
 ^^^^^^
 
-
-Lattice Sequence
-----------------
-
-Samplers - Output
------------------
-
-Physics Lists
--------------
-
-Options
--------
-
-Beam Parameters
----------------
-
-.. _distributions-section:
-
-Beam Distributions
-------------------
-
-
-- gauss
-- gaussTwiss
-- reference
-
+Aperture Parameters
+^^^^^^^^^^^^^^^^^^^
 
 
 +-----------------+--------------+-------------------+-----------------+---------------+---------------+
@@ -186,6 +263,34 @@ Beam Distributions
 +-----------------+--------------+-------------------+-----------------+---------------+---------------+
 | octagon         | 4            | x half width      | y half width    | angle 1 [rad] | angle 2 [rad] |
 +-----------------+--------------+-------------------+-----------------+---------------+---------------+
+
+
+
+
+Lattice Sequence
+----------------
+
+Samplers - Output
+-----------------
+
+Physics Lists
+-------------
+
+Options
+-------
+
+Beam Parameters
+---------------
+
+.. _distributions-section:
+
+Beam Distributions
+------------------
+
+
+- gauss
+- gaussTwiss
+- reference
 
 
 after reading this, go back to the top in :ref:`distributions-section`
