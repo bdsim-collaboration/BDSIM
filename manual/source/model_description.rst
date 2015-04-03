@@ -2,8 +2,138 @@
 Model Description - Input Syntax
 ================================
 
+Coordinates & Units
+-------------------
+
+In Geant4, global euclidean coordinates are used for tracking purposes, however,
+in describing a lattice with BDISM, curvlinear coordinates are used as is common with
+accelerators (X,Y,S).
+
+The following units are used by default
+
+==============================  =========================
+Name                            Units
+==============================  =========================
+length                          [m] (metres)
+time                            [s] (seconds)
+angle                           [rad] (radians) 
+quadrupole coefficient          [m :math:`^{-2}` ]
+multipole coefficient 2n poles  [m :math:`^{-n}` ]
+electric voltage                [MV] (Megavolts)
+electric field strength         [MV/m]
+particle energy                 [GeV]
+particle mass                   [GeV/c :math:`^2` ]
+particle momentum               [GeV/c :math:`^2` ]
+beam current                    [A] (Amperes)
+particle charge                 [e] (elementary charges)
+emittances                      [pi m mrad]
+density                         [g/cm :math:`^{3}` ] 
+temperature                     [K] (Kelvin)
+pressure                        [atm] (atmosphere)
+mass number                     [g/mol]
+==============================  =========================
+
+Lattice Description
+-------------------
+
+A model of the accelerator is given to BDSIM via input text files in the GMAD language.
+This is a language specifically for BDSIM but is made to be human readable and very similar
+to MADX. The overall program strucutre should follow:
+
+1) Component definition
+2) Sequence defention (of the already defined components)
+3) Which sequence to use
+4) Where to record output (samplers)
+5) A beam distribution
+6) Options, including which physics lists, number to simulate etc.
+
+These are described in the following sections
+
 Lattice Elements
 ----------------
+
+Any element in BDSIM is descrbied with the following pattern::
+
+  type: name, paramter=value, parameter="string";
+
+.. note:: Notice the ':', the inverted commas for a string parameter and that each
+	  functional line must end with a semi-colon. Spaces will be ignored
+
+The following elements may be defined
+
+* `drift`_
+* `rbend`_
+* `sbend`_
+* `quadrupole`_
+* `sextupole`_
+* `octupole`_
+* `decapole`_
+* `multipole`_
+* `vkick`_
+* `hkick`_
+* `rf`_
+* `rcol`_
+* `ecol`_
+* `solenoid`_
+* `laser`_
+* `transform3d`_
+* `element`_
+* `marker`_
+
+drift
+^^^^^
+
+rbend
+^^^^^
+
+sbend
+^^^^^
+
+quadrupole
+^^^^^^^^^^
+
+sextupole
+^^^^^^^^^
+
+octupole
+^^^^^^^^
+
+decapole
+^^^^^^^^
+
+multipole
+^^^^^^^^^
+
+vkick
+^^^^^
+
+hkick
+^^^^^
+
+rf
+^^^^
+
+rcol
+^^^^
+
+ecol
+^^^^
+
+solenoid
+^^^^^^^^
+
+laser
+^^^^^
+
+transform3d
+^^^^^^^^^^^
+
+element
+^^^^^^^
+
+marker
+^^^^^^
+
 
 Lattice Sequence
 ----------------
@@ -22,8 +152,8 @@ Beam Parameters
 
 .. _distributions-section:
 
-Distributions
--------------
+Beam Distributions
+------------------
 
 
 - gauss
