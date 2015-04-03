@@ -3,6 +3,7 @@ Running BDSIM
 =============
 
 BDSIM can be executed in a terminal with extra arguments to specify various inputs.
+The angular brackets should not be used.
 
 +----------------------------+----------------------------------------------+
 | --file=<file>              | specify the input gmad file                  |
@@ -66,12 +67,62 @@ Interactively
 
 Features:
 
+* default option
 * interactive visualisation of accelerator model
 * ability to run individual events
 * typically slower than batch mode
+* no events run without user input
 
-To execute BDSIM in 
+To execute BDSIM in interactive mode, the user must simply not use the :code:`--batch` commmand.
+The user must also specify a macro file using the :code:`--vis_mac` option above otherwise, BDSIM
+will look for "vis.mac" in the current working directory. If not found, BDSIM will exit. Once
+executed a window such as this will appear (depending on the visualiser you use).
 
+.. figure:: figures/interactive_mode.png
+   :width: 70%
+   :align: center
+   :figclass: align-center
+
+   BDSIM running interactively with OpenGL Qt visualiser from Geant4.
+
+Note, the visualiser is part of Geant4 so if the desired visualiser isn't available, you
+must recopmile Geant4 with the correct visualiser (and subsequently BDSIM afterards). Geant4
+also uses the Cmake configuration system. The visualiser shown is the OpenGL Qt visualiser, which
+we recommend for its ease of use and high level of interactivity.
+
+Example vis.mac files can be found in the supplied BDSIM examples.
 
 In Batch Mode
 =============
+
+Features:
+
+* no interactive visualiser
+* faster
+* number of events run then program quits
+* no user input
+* typical use for a "job" on a farm
+
+To execute BDSIM in batch mode, simply use the :code:`--batch` execution option.
+
+Examples
+========
+::
+
+   bdsim --file=atf2.gmad --output=root --outfile=test1 --batch --seed=123
+
+This executes BDSIM for the ATF2 example with ROOT output to a file name "test1" in batch
+mode with a seed value of 123. The simulation runs the number of events specified by the
+:code:`ngenerate` options parameter in the input gmad file. ::
+
+      bdsim --file=sm.gmad --outfile=test2
+
+This executes BDSIM for the simpleMachine example with ASCII output (default) to a file named
+"test2". The program is run interactively and the window in Figure appears. From here, the
+user types::
+  
+  /run/beamOn 1
+
+In the visualiser terminal to run one event and visualise it.
+
+
