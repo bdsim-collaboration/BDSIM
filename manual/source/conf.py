@@ -203,7 +203,8 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
   ('index', 'BDSIM.tex', u'BDSIM Documentation',
-   u'L. Nevay, S. Boogert, L. Deacon, H. Garcia-Morales, J. Snuverink', 'manual'),
+   r'L. Nevay S. Boogert L. Deacon \\ H. Garcia-Morales J. Snuverink',
+   'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
