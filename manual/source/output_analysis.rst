@@ -19,4 +19,3 @@ ASCII Output
 
 .. autoclass:: pybdsim.Data.BDSAsciiData
    :members:
-	       
