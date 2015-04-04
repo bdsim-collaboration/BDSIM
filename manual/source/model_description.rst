@@ -325,7 +325,7 @@ parameter         description                  default     required
 		    
 decapole
 ^^^^^^^^
-.. warning:: to be completed - not yet implemented
+.. warning:: To be completed - not yet implemented
 
 `decapole` defines a decapole magnet. The strength parameter `k4` is defined as
 :math:`k4 = 1/(B \rho)~dB^{4}_{y}~/~dx^{4}~[m^{-5}]`. `k43` specifies a skew decapole
@@ -380,7 +380,7 @@ parameter         description                  default     required
 
 * The `aperture parameters`_ may also be specified.
 
-.. note:: be careful with the sign of the gradient with respect to the sign of
+.. note:: Be careful with the sign of the gradient with respect to the sign of
 	  the primary particle
 
 rcol
