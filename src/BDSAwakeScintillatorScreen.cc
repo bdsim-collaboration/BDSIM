@@ -28,8 +28,8 @@ typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
 //============================================================
-BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial=""):
-  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0), _mlScreen(NULL), _camera(NULL), _material(material), _thickness(thickness), _screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
+BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double windowScreenGap = 0, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial=""):
+  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0), _mlScreen(NULL), _camera(NULL), _material(material), _thickness(thickness), _windowScreenGap(windowScreenGap),_screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
 {
   _vacChambType=2;
   //Set as part of precision region (for energy loss monitoring)
@@ -293,7 +293,7 @@ void BDSAwakeScintillatorScreen::BuildScreen()
 {
   G4cout << "Building BDSAwakeMultilayerScreen...." << G4endl;
   G4double grainSize = 10*1e-6*CLHEP::m;
-  _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, grainSize, _windowThickness, _windowMaterial);
+  _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, _windowScreenGap, grainSize, _windowThickness, _windowMaterial);
   
   if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
     for(int i=0; i<_mlScreen->nLayers(); i++){

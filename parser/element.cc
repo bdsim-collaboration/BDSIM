@@ -112,6 +112,7 @@ void Element::flush() {
   phiAngleIn = 0;
   phiAngleOut = 0;
   tscint = 0;
+  windowScreenGap = 0;
   twindow = 0;
   tilt = 0;
   phi = 0;

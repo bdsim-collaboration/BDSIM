@@ -17,6 +17,7 @@ void Parameters::flush() {
   bmapZOffset = 0; bmapZOffsetset=0;
   r = 0; rset = 0;
   tscint = 0.0003; tscintset = 0;
+  windowScreenGap = 0; windowScreenGapset = 0;
   twindow = 0; twindowset = 0;
 
   // materials' parameters

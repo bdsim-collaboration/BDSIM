@@ -539,6 +539,7 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.scintmaterial = std::string(params.scintmaterial);
     std::cout << "scintmaterial: " << e.scintmaterial << " " <<  params.scintmaterial << std::endl;
     e.tscint = params.tscint;
+    e.windowScreenGap = params.windowScreenGap;
     e.angle = params.angle;
     e.twindow = params.twindow;
     e.windowmaterial = std::string(params.windowmaterial);

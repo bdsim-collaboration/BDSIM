@@ -26,6 +26,7 @@ struct Parameters {
   double ks; int ksset;   /// solenoid
 
   double tscint; int tscintset; ///thickness of scintillating part of screen
+  double windowScreenGap; int windowScreenGapset; ///air gap between window and screen
   double twindow; int twindowset; ///thickness of window
 
   std::list<double> knl;           /// multipole expansion coefficients

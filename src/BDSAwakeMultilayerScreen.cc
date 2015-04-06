@@ -7,8 +7,8 @@
 // #include "G4LogicalSkinSurface.hh"
 #include "BDSSampler.hh"
 
-BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double dgrain, G4double windowThickness, G4String windowMaterial):
-BDSMultilayerScreen(G4TwoVector(1*CLHEP::m,8*CLHEP::cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(thickness),  _dgrain(dgrain), _windowThickness(windowThickness),_windowMaterial(windowMaterial)
+BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double windowScreenGap, G4double dgrain, G4double windowThickness, G4String windowMaterial):
+  BDSMultilayerScreen(G4TwoVector(1*CLHEP::m,8*CLHEP::cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(thickness), _windowScreenGap(windowScreenGap), _dgrain(dgrain), _windowThickness(windowThickness),_windowMaterial(windowMaterial)
 {
   _fillFactor=0.5;
   _layerThickness=_dgrain;
@@ -29,6 +29,8 @@ void BDSAwakeMultilayerScreen::layers(){
   _gapSpacing=1*CLHEP::mm;
   preWindowSampler();
   windowLayer();
+  postWindowSampler();
+  windowScreenGap();
   preScreenSampler();
   backLayer();
   substrateLayer();
@@ -61,6 +63,10 @@ void BDSAwakeMultilayerScreen::preWindowSampler(){
   sampler((G4String)"preWindowSampler");
 }
 
+void BDSAwakeMultilayerScreen::postWindowSampler(){
+  sampler((G4String)"postWindowSampler");
+}
+
 void BDSAwakeMultilayerScreen::preScreenSampler(){
   sampler((G4String)"preScreenSampler");
 }
@@ -73,6 +79,14 @@ void BDSAwakeMultilayerScreen::windowLayer(){
   if(_windowThickness>0){
     BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),_windowThickness),(G4String)"windowLayer",_windowMaterial.data(),0,0);
     sl->color(G4Color(0.8,0.8,0.8,0.3));
+    screenLayer(sl);
+  }
+}
+
+void BDSAwakeMultilayerScreen::windowScreenGap(){
+  if(_windowScreenGap>0){
+    BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),_windowScreenGap),(G4String)"windowScreenGap","air",0,0);
+    sl->color(G4Color(0,0,0,0.3));
     screenLayer(sl);
   }
 }
