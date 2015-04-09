@@ -92,6 +92,11 @@ we recommend for its ease of use and high level of interactivity.
 
 Example vis.mac files can be found in the supplied BDSIM examples.
 
+.. note:: BDSIM simulates one particle at a time from the primary distribution and all of the
+	  associated secondaries. Each event is independent and different particles in the input
+	  bunch cannot interact with each other or their secondaries. This is an underlying feature
+	  of Geant4.
+
 In Batch Mode
 =============
 
