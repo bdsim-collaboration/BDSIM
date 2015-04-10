@@ -577,8 +577,8 @@ parameters:
 		    { params.boxSize = $3; params.boxSizeset = 1;}
 		    else
 		  if(!strcmp($1->name,"outR") )
-		    // for backwards compatibility
-		    { params.boxSize = 0.5 * $3; params.boxSize = 1;}
+		    // for backwards compatibility, boxSize = 2*outR
+		    { params.boxSize = 2 * $3; params.boxSize = 1;}
 		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
@@ -815,8 +815,8 @@ parameters:
 		    { params.boxSize = $3; params.boxSizeset = 1;}
 		    else
 		  if(!strcmp($1->name,"outR") )
-		    // for backwards compatibility
-		    { params.boxSize = 0.5 * $3; params.boxSize = 1;}
+		    // for backwards compatibility, boxSize = 2*outR
+		    { params.boxSize = 2 * $3; params.boxSize = 1;}
 		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
