@@ -779,14 +779,14 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 
   // geometry
   G4double aper = BDSGlobalConstants::Instance()->GetBeamPipeRadius();
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
+  if( _element.aper1 > 1.e-10*CLHEP::m ) aper = _element.aper1 * CLHEP::m;
 
 #ifdef BDSDEBUG 
   G4cout << "---->creating Element,"
 	 << " name= " << _element.name
 	 << " l= " << _element.l << "m"
 	 << " aper= " << aper/CLHEP::m << "m"
-	 << " outR= " << _element.outR << "m"
+	 << " outR= " << 0.5 * _element.boxSize << "m"
 	 << " bmapZOffset = "	<<  _element.bmapZOffset * CLHEP::m
 	 << " tunnel material " << _element.tunnelMaterial
 	 << " tunnel cavity material " << _element.tunnelCavityMaterial
@@ -805,7 +805,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 			  _element.bmapZOffset * CLHEP::m,
 			  _element.l * CLHEP::m,
 			  aper,
-			  _element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, tunnelOffsetX, _element.tunnelCavityMaterial));
+			  0.5 * _element.boxSize * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, tunnelOffsetX, _element.tunnelCavityMaterial));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
@@ -885,7 +885,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
 			     _element.xsize * CLHEP::m,
 			     _element.ysize * CLHEP::m,
 			     theMaterial,
-			     _element.outR*CLHEP::m,
+			     0.5*_element.boxSize*CLHEP::m,
 			     _element.blmLocZ,
 			     _element.blmLocTheta,
 			     _element.tunnelMaterial) );

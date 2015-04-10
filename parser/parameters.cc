@@ -54,11 +54,7 @@ void Parameters::flush() {
 
   beampipeThickness = 0; beampipeThicknessset = 0;
 
-  outR = 0; outRset = 0;
   tilt = 0; tiltset = 0;
-
-  // old aperture model
-  aper = 0; aperset = 0;
 
   // new aperture model
   aper1 = 0; aper1set = 0;
@@ -156,7 +152,6 @@ void Parameters::inherit_properties(struct Element& e)
     { componentsFractions = e.componentsFractions; componentsFractionsset = 1; }
 
   if(!beampipeThicknessset) { beampipeThickness = e.beampipeThickness; beampipeThicknessset = 1; }
-  if(!aperset) { aper = e.aper; aperset = 1; }
   // new aperture model
   if(!aper1set) { aper1 = e.aper1; aper1set = 1;}
   if(!aper2set) { aper2 = e.aper2; aper2set = 1;}
@@ -168,8 +163,6 @@ void Parameters::inherit_properties(struct Element& e)
   // component size
   if(!boxSizeset) { boxSize = e.boxSize; boxSizeset = 1;}
   
-  if(!outRset) { outR = e.outR; outRset = 1; }
-
   if(!gradientset) { gradient = e.gradient; gradientset = 1; }
 
   if(!tiltset) { tilt = e.tilt; tiltset = 1; }

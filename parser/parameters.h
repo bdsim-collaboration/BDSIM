@@ -54,9 +54,6 @@ struct Parameters {
   double phiAngleOut; int phiAngleOutset;   ///> outgoing bending angle for element
   double beampipeThickness; int beampipeThicknessset;
 
-  //old aperture model
-  double aper; int aperset;   ///> aperture (circular)
-
   //new aperture model
   double aper1; int aper1set;
   double aper2; int aper2set;
@@ -83,7 +80,6 @@ struct Parameters {
   double taperlength; int taperlengthset;
   double gradient; int gradientset;
 
-  double outR; int outRset; ///> outer radius of magnets
   double hgap, hgapset;
   double xsize, ysize; int xsizeset, ysizeset; ///> aperture (or laser spotsize for laser)
   double xdir, ydir, zdir, waveLength; int xdirset, ydirset, zdirset, waveLengthset;

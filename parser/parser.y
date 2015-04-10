@@ -556,9 +556,10 @@ parameters:
 		  else
 		   if(!strcmp($1->name,"beampipeThickness") ) 
 		      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
-		    else
+		   else
 		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
-		      { params.aper = $3; params.aperset = 1;}
+		    // for backwards compatibility
+		    { params.aper1 = $3; params.aper1set = 1;}
 		    else
 		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
 		    { params.aper1 = $3; params.aper1set = 1;}
@@ -575,7 +576,9 @@ parameters:
 		  if(!strcmp($1->name,"boxSize")) 
 		    { params.boxSize = $3; params.boxSizeset = 1;}
 		    else
-		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
+		  if(!strcmp($1->name,"outR") )
+		    // for backwards compatibility
+		    { params.boxSize = 0.5 * $3; params.boxSize = 1;}
 		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
@@ -793,7 +796,8 @@ parameters:
 			      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
 		    else
 		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
-			      { params.aper = $3; params.aperset = 1;}
+		    // for backwards compatibility
+		    { params.aper1 = $3; params.aper1set = 1;}
 		    else
 		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
 		    { params.aper1 = $3; params.aper1set = 1;}
@@ -810,7 +814,9 @@ parameters:
 		  if(!strcmp($1->name,"boxSize")) 
 		    { params.boxSize = $3; params.boxSizeset = 1;}
 		    else
-		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
+		  if(!strcmp($1->name,"outR") )
+		    // for backwards compatibility
+		    { params.boxSize = 0.5 * $3; params.boxSize = 1;}
 		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
