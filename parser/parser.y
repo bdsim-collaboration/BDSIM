@@ -898,6 +898,7 @@ parameters:
 		   else 
 		     if(!strcmp($1->name,"type")) 
 		       {
+			 printf("Warning : type parameter is currently ignored");
 			 //ignore the "type attribute for the moment"
 		       }
 		   else
@@ -906,7 +907,7 @@ parameters:
 			 params.materialset = 1;
 			 params.material = $3;
 		       }
-		   if(!strcmp($1->name,"apertureType"))
+		   else if(!strcmp($1->name,"apertureType"))
 		       {
 			 params.apertureTypeset = 1;
 			 params.apertureType = $3;
@@ -992,6 +993,7 @@ parameters:
 		     else 
 		     if(!strcmp($1->name,"type")) 
 		       {
+			 printf("Warning : type parameter is currently ignored");
 			 //ignore the "type attribute for the moment"
 		       }
                      else
