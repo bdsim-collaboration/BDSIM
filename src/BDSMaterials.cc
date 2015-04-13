@@ -642,8 +642,8 @@ void BDSMaterials::Initialise()
 
   // superconductor NbTi with Ti = 47% by weight
   tmpMaterial = new G4Material(name="nbti_87k", density=6.0471*CLHEP::g/CLHEP::cm3, 2);
-  tmpMaterial->AddMaterial(GetMaterial("Nb_87K"),1);
-  tmpMaterial->AddMaterial(GetMaterial("Ti_87K"),1);
+  tmpMaterial->AddMaterial(GetMaterial("Nb_87K"),fractionmass=0.53);
+  tmpMaterial->AddMaterial(GetMaterial("Ti_87K"),fractionmass=0.47);
   materials[name]=tmpMaterial;
 
   // naked superconductor NbTi wire with Cu/SC volume ratio (>= 4.0 and <4.8)
