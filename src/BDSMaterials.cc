@@ -624,32 +624,38 @@ void BDSMaterials::Initialise()
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   // Superconducting components of LHC magnet elements
+  // Definitions taken from FLUKA
 
   // Liquid helium at 1.9K  
-  tmpMaterial = new G4Material(name="lhe_1.9k", 0.1472*CLHEP::g/CLHEP::cm3, 1);
+  tmpMaterial = new G4Material(name="lhe_1.9k", 0.1472*CLHEP::g/CLHEP::cm3, 1, kStateLiquid, 1.9*CLHEP::kelvin);
   tmpMaterial->AddElement(elements["He"],1);
   materials[name]=tmpMaterial;
 
   // Niobium @ 87K
-  tmpMaterial = new G4Material(name="nb_87k", density=8.902*CLHEP::g/CLHEP::cm3, 1);
+  tmpMaterial = new G4Material(name="nb_87k", density=8.902*CLHEP::g/CLHEP::cm3, 1, kStateSolid, 87*CLHEP::kelvin);
   tmpMaterial->AddElement(elements["Nb"],1);
   materials[name]=tmpMaterial;
   
   // Titanium @ 87K
-  tmpMaterial = new G4Material(name="ti_87k", density=4.54*CLHEP::g/CLHEP::cm3, 1);
+  tmpMaterial = new G4Material(name="ti_87k", density=4.54*CLHEP::g/CLHEP::cm3, 1, kStateSolid, 87*CLHEP::kelvin);
   tmpMaterial->AddElement(elements["Ti"],1);
   materials[name]=tmpMaterial;  
 
   // superconductor NbTi with Ti = 47% by weight
-  tmpMaterial = new G4Material(name="nbti_87k", density=6.0471*CLHEP::g/CLHEP::cm3, 2);
+  tmpMaterial = new G4Material(name="nbti_87k", density=6.0471*CLHEP::g/CLHEP::cm3, 2, kStateSolid, 87*CLHEP::kelvin);
   tmpMaterial->AddMaterial(GetMaterial("Nb_87K"),fractionmass=0.53);
   tmpMaterial->AddMaterial(GetMaterial("Ti_87K"),fractionmass=0.47);
   materials[name]=tmpMaterial;
 
+  // copper at 4 Kelvin
+  tmpMaterial = new G4Material(name="cu_4k", density=8.96*CLHEP::g/CLHEP::cm3, 1, kStateSolid, 4*CLHEP::kelvin);
+  tmpMaterial->AddElement(elements["Cu"],1);
+  materials[name]=tmpMaterial;
+  
   // naked superconductor NbTi wire with Cu/SC volume ratio (>= 4.0 and <4.8)
-  tmpMaterial = new G4Material(name="nbti.1", density=8.4206*CLHEP::g/CLHEP::cm3, 3);
-  tmpMaterial->AddMaterial(GetMaterial("nbti_87k"),1);
-  tmpMaterial->AddElement(elements["C"],6);
+  tmpMaterial = new G4Material(name="nbti.1", density=8.4206*CLHEP::g/CLHEP::cm3, 2);
+  tmpMaterial->AddMaterial(GetMaterial("nbti_87k"),fractionmass=1.0/5.4);
+  tmpMaterial->AddMaterial(GetMaterial("cu_4k"),fractionmass=4.4/5.4);
   materials[name]=tmpMaterial;
   
   /////////////////////////////////////////////////////////////////////////////////////////////////
