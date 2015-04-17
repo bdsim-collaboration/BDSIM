@@ -448,7 +448,7 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
       // previously placed objects
       G4RotationMatrix* rm  = new G4RotationMatrix();
       G4double segmentAngle = CLHEP::twopi/(G4double)(2*order); // angle per pole
-      rm->rotateZ((n+0.5)*segmentAngle);
+      rm->rotateZ((n+0.5)*segmentAngle + CLHEP::pi*0.5);
 
       new G4PVPlacement(rm,                 // rotation
 			(G4ThreeVector)0,   // position
