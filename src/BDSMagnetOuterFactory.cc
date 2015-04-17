@@ -2,7 +2,7 @@
 #include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetOuterFactoryBase.hh"
 #include "BDSMagnetOuterFactoryCylindrical.hh"
-#include "BDSMagnetOuterFactoryPoles.hh"
+#include "BDSMagnetOuterFactoryPolesCircular.hh"
 #include "BDSMagnetOuterFactoryLHCLeft.hh"
 #include "BDSMagnetOuterFactoryLHCRight.hh"
 #include "BDSMagnetGeometryType.hh"
@@ -31,11 +31,25 @@ BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagne
 #endif
     return BDSMagnetOuterFactoryCylindrical::Instance();
     break;
-  case BDSMagnetGeometryType::normalconducting:
+  case BDSMagnetGeometryType::polescircular:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "normal conducting magnet factory" << G4endl;
+    G4cout << __METHOD_NAME__ << "poles with circular yoke factory" << G4endl;
 #endif
-    return BDSMagnetOuterFactoryPoles::Instance();
+    return BDSMagnetOuterFactoryPolesCircular::Instance();
+    break;
+  case BDSMagnetGeometryType::polessquare:
+#ifdef BDSDEBUG
+    G4cout << __METHOD_NAME__ << "poles with square yoke factory" << G4endl;
+#endif
+    //return BDSMagnetOuterFactoryPolesSquare::Instance(); // TBC
+    return BDSMagnetOuterFactoryPolesCircular::Instance();
+    break;
+  case BDSMagnetGeometryType::polesfaceted:
+#ifdef BDSDEBUG
+    G4cout << __METHOD_NAME__ << "poles with faceted yoke factory" << G4endl;
+#endif
+    //return BDSMagnetOuterFactoryPolesFaceted::Instance();
+    return BDSMagnetOuterFactoryPolesCircular::Instance();
     break;
   case BDSMagnetGeometryType::lhcleft:
 #ifdef BDSDEBUG
