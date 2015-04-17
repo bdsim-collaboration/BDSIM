@@ -14,11 +14,18 @@ public:
   ~BDSMagnetColours();
 
   G4Colour* GetMagnetColour(G4String magnetTypeName);
+  G4Colour* GetMagnetColour(G4int    magnetOrder);
 
 private:
   BDSMagnetColours(); //private constructor as singleton
   static BDSMagnetColours* _instance;
 
+  /// A map of the magnet name for which order it is, which
+  /// can be used to access the appropriate colour map
+  std::map<G4int, G4String> magnetName;
+
+  /// A map of the colour for each type of magnet by name -
+  /// one for each class that inherits the BDSMultipole class
   std::map<G4String, G4Colour*> colours;
 };
 
