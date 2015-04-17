@@ -22,12 +22,12 @@ BDSMagnetColours::BDSMagnetColours()
   magnetName[5] = "decapole";
   
   colours["default"]          = new G4Colour(1,     0.078, 0.576); // hot warning pink
-  colours["sectorbend"]       = new G4Colour(0,     0,     1);     // blue
-  colours["rectangularbend"]  = new G4Colour(0,     0,     1);     // blue
+  colours["sectorbend"]       = new G4Colour(0,     0.4,   0.8);   // blue
+  colours["rectangularbend"]  = new G4Colour(0,     0.4,   0.8);   // blue
   colours["quadrupole"]       = new G4Colour(1,     0,     0);     // red
-  colours["sextupole"]        = new G4Colour(1,     1,     0);     // yellow
-  colours["octupole"]         = new G4Colour(0,     1,     0);     // green
-  colours["decapole"]         = new G4Colour(0,     1,     0);     // green
+  colours["sextupole"]        = new G4Colour(1,     0.8,   0);     // yellow
+  colours["octupole"]         = new G4Colour(0,     0.6,   0.3);   // green
+  colours["decapole"]         = new G4Colour(0.4,   0,     0.8);   // green
   colours["solenoid"]         = new G4Colour(1,     0.549, 0);     // orange
   colours["multipole"]        = new G4Colour(0.466, 0.533, 0.6);   // slate gray
   colours["rfcavity"]         = new G4Colour(0.466, 0.533, 0.6);   // slate gray
