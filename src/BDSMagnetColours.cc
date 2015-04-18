@@ -32,8 +32,8 @@ BDSMagnetColours::BDSMagnetColours()
   colours["multipole"]        = new G4Colour(0.466, 0.533, 0.6);   // slate gray
   colours["rfcavity"]         = new G4Colour(0.466, 0.533, 0.6);   // slate gray
   colours["muspoiler"]        = new G4Colour(0,     0.807, 0.819); // "light blue" / tab blue
-  colours["vkicker"]          = new G4Colour(0,     0,     1);     // blue
-  colours["hkicker"]          = new G4Colour(0,     0,     1);     // blue
+  colours["vkicker"]          = new G4Colour(0,     0.4,   0.8);   // blue
+  colours["hkicker"]          = new G4Colour(0,     0.4,   0.8);   // blue
 }
 
 G4Colour* BDSMagnetColours::GetMagnetColour(G4String magnetTypeName)
