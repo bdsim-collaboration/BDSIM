@@ -253,7 +253,8 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String     
 
 /// functions below here are private to this particular factory
 void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiameter,
-							  BDSBeamPipe* beamPipe)
+							  BDSBeamPipe* beamPipe,
+							  G4double     /*order*/)
 {
   G4double bpRadius = beamPipe->GetContainerRadius();
   // check parameters are valid
@@ -472,11 +473,13 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  CalculatePoleAndYoke(outerDiameter, beamPipe);
+  CalculatePoleAndYoke(outerDiameter, beamPipe, order);
   CreatePoleSolid(name, length, order);
   CreateYokeAndContainerSolid(name, length, order);
   CreateLogicalVolumes(name, length, order, outerMaterial);
   PlaceComponents(name, order);
+
+  CleanUp();
 
   // record extents
   // container radius is just outerDiamter as yoke is circular
@@ -490,9 +493,12 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String
 							 containerLV,
 							 extX, extY, extZ);
   // REGISTER all lvs - using geometry component base class method
-  outer->RegisterLogicalVolume(poleLV);
+  //outer->RegisterLogicalVolume(poleLV);
   outer->RegisterLogicalVolume(yokeLV);
   outer->RegisterLogicalVolume(containerLV);
   
   return outer;
 }
+
+void BDSMagnetOuterFactoryPolesBase::CleanUp()
+{;}

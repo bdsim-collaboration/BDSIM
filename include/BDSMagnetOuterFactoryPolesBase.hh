@@ -123,7 +123,7 @@ public:
 					     G4Material*   outerMaterial = NULL   // material for outer volume
 					     );
   
-private:
+protected:
   //BDSMagnetOuterFactoryPolesBase(); //private constructor as singleton
   //static BDSMagnetOuterFactoryPoles* _instance;
 
@@ -156,12 +156,14 @@ private:
   G4double yokeFinishRadius;
 
   // functions
+
+  /// Empty containers for next use - this class is never deleted so can't rely on scope
+  virtual void CleanUp();
   
-  void CalculatePoleAndYoke(G4double     outerDiameter,
-			    BDSBeamPipe* beamPipe     );
+  virtual void CalculatePoleAndYoke(G4double     outerDiameter,
+				    BDSBeamPipe* beamPipe,
+				    G4double     order);
   
-  //only really one function needed for this factory
-  //private to this factory only
   //NOTE the poles are not joined (boolean union) to the outer yoke - there is a
   //gap of length safety. This won't affect physics results and speeds up tracking
   //as the solid is not a boolean of order Npoles + 1
@@ -183,8 +185,8 @@ private:
 				    G4Material* outerMaterial);
 
   /// Place the poles and yoke in the container volume
-  void PlaceComponents(G4String name,
-		       G4int    order);
+  virtual void PlaceComponents(G4String name,
+			       G4int    order);
 
   /// Common construction tasks to all methods - assemble yoke and poles in container
   BDSGeometryComponent* CommonConstructor(G4String     name,
