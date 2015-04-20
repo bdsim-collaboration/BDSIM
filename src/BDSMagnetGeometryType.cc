@@ -11,7 +11,7 @@ BDSMagnetGeometryType BDS::DetermineMagnetGeometryType(G4String geometryType, G4
   types["cylindrical"]       = BDSMagnetGeometryType::cylindrical;
   types["polescircular"]     = BDSMagnetGeometryType::polescircular;
   types["polessquare"]       = BDSMagnetGeometryType::polessquare;
-  types["polesfaceted"]      = BDSMagnetGeometryType::polesfaceted;
+  types["polesfacet"]        = BDSMagnetGeometryType::polesfacet;
   types["lhcleft"]           = BDSMagnetGeometryType::lhcleft;
   types["lhcright"]          = BDSMagnetGeometryType::lhcright;
   

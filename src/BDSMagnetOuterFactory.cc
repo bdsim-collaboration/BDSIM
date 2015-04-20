@@ -3,6 +3,7 @@
 #include "BDSMagnetOuterFactoryBase.hh"
 #include "BDSMagnetOuterFactoryCylindrical.hh"
 #include "BDSMagnetOuterFactoryPolesCircular.hh"
+#include "BDSMagnetOuterFactoryPolesFacet.hh"
 #include "BDSMagnetOuterFactoryPolesSquare.hh"
 #include "BDSMagnetOuterFactoryLHCLeft.hh"
 #include "BDSMagnetOuterFactoryLHCRight.hh"
@@ -44,12 +45,11 @@ BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagne
 #endif
     return BDSMagnetOuterFactoryPolesSquare::Instance();
     break;
-  case BDSMagnetGeometryType::polesfaceted:
+  case BDSMagnetGeometryType::polesfacet:
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << "poles with faceted yoke factory" << G4endl;
 #endif
-    //return BDSMagnetOuterFactoryPolesFaceted::Instance();
-    return BDSMagnetOuterFactoryPolesCircular::Instance();
+    return BDSMagnetOuterFactoryPolesFacet::Instance();
     break;
   case BDSMagnetGeometryType::lhcleft:
 #ifdef BDSDEBUG
