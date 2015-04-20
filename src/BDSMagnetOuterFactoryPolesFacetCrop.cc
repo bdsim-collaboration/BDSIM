@@ -1,4 +1,4 @@
-#include "BDSMagnetOuterFactoryPolesFacet.hh"
+#include "BDSMagnetOuterFactoryPolesFacetCrop.hh"
 
 #include "globals.hh"  // geant4 globals / types
 
@@ -9,23 +9,25 @@
 #include "G4Tubs.hh"
 #include "G4VSolid.hh"
 
-BDSMagnetOuterFactoryPolesFacet* BDSMagnetOuterFactoryPolesFacet::_instance = 0;
+BDSMagnetOuterFactoryPolesFacetCrop* BDSMagnetOuterFactoryPolesFacetCrop::_instance = 0;
 
-BDSMagnetOuterFactoryPolesFacet* BDSMagnetOuterFactoryPolesFacet::Instance()
+BDSMagnetOuterFactoryPolesFacetCrop* BDSMagnetOuterFactoryPolesFacetCrop::Instance()
 {
   if (_instance == 0)
-    {_instance = new BDSMagnetOuterFactoryPolesFacet();}
+    {_instance = new BDSMagnetOuterFactoryPolesFacetCrop();}
   return _instance;
 }
 
-BDSMagnetOuterFactoryPolesFacet::~BDSMagnetOuterFactoryPolesFacet()
+BDSMagnetOuterFactoryPolesFacetCrop::~BDSMagnetOuterFactoryPolesFacetCrop()
 {
   _instance = 0;
 }
 
-void BDSMagnetOuterFactoryPolesFacet::CreatePoleSolid(G4String     name,
-						      G4double     length,
-						      G4int        order)
+// NOTE unforunately can't get this through inheritance as BDSMagnetOuterFactoryPolesFacet
+// is a singleton with private constructor - so this method is duplicated
+void BDSMagnetOuterFactoryPolesFacetCrop::CreatePoleSolid(G4String     name,
+							  G4double     length,
+							  G4int        order)
 {
   // use base class to do all the work, then modify the pole by cropping
   // it with a box to get the right shape
@@ -61,25 +63,25 @@ void BDSMagnetOuterFactoryPolesFacet::CreatePoleSolid(G4String     name,
 				     
 }
 
-void BDSMagnetOuterFactoryPolesFacet::CreateYokeAndContainerSolid(G4String      name,
-								  G4double      length,
-								  G4int         order)
+void BDSMagnetOuterFactoryPolesFacetCrop::CreateYokeAndContainerSolid(G4String      name,
+								      G4double      length,
+								      G4int         order)
 {
   G4double segmentAngle = CLHEP::twopi / (2*order);
   
   G4double zPlanes[2] = {-length*0.5, length*0.5};
-  G4double innerRadii[order*2];
-  G4double outerRadii[order*2];
-  for (G4int i = 0; i < order*2; ++i)
+  G4double innerRadii[order*4];
+  G4double outerRadii[order*4];
+  for (G4int i = 0; i < order*4; ++i)
     {
       innerRadii[i] = yokeStartRadius;
       outerRadii[i] = yokeFinishRadius;
     }
   
   yokeSolid = new G4Polyhedra(name + "_yoke_solid",    // name
-			      CLHEP::pi*0.5,    // start angle
+			      CLHEP::pi*0.5 + segmentAngle*0.25,    // start angle
 			      CLHEP::twopi,            // sweep angle
-			      2*order,                 // number of sides
+			      4*order,                 // number of sides
 			      2,                       // number of z planes
 			      zPlanes,                 // z plane z coordinates
 			      innerRadii,
