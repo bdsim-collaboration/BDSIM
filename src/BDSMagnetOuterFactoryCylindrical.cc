@@ -353,6 +353,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G
   G4VisAttributes* outerVisAttr = new G4VisAttributes(*colour);
   outerVisAttr->SetVisibility(true);
   outerVisAttr->SetForceSolid(true);
+  outerVisAttr->SetForceLineSegmentsPerCircle(50);
   outerLV->SetVisAttributes(outerVisAttr);
   // container
 #ifdef BDSDEBUG
