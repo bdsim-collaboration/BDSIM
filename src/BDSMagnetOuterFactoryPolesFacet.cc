@@ -68,12 +68,12 @@ void BDSMagnetOuterFactoryPolesFacet::CreateYokeAndContainerSolid(G4String      
   G4double segmentAngle = CLHEP::twopi / (2*order);
   
   G4double zPlanes[2] = {-length*0.5, length*0.5};
-  G4double innerRadii[order*2];
-  G4double outerRadii[order*2];
+  std::vector<G4double> innerRadii;
+  std::vector<G4double> outerRadii;
   for (G4int i = 0; i < order*2; ++i)
     {
-      innerRadii[i] = yokeStartRadius;
-      outerRadii[i] = yokeFinishRadius;
+      innerRadii.push_back(yokeStartRadius);
+      outerRadii.push_back(yokeFinishRadius);
     }
   
   yokeSolid = new G4Polyhedra(name + "_yoke_solid",    // name
@@ -82,8 +82,8 @@ void BDSMagnetOuterFactoryPolesFacet::CreateYokeAndContainerSolid(G4String      
 			      2*order,                 // number of sides
 			      2,                       // number of z planes
 			      zPlanes,                 // z plane z coordinates
-			      innerRadii,
-			      outerRadii);
+			      innerRadii.data(),
+			      outerRadii.data());
 
   // note container must have hole in it for the beampipe to fit in!
   // poled geometry doesn't fit tightly to beampipe so can alays use a circular aperture
