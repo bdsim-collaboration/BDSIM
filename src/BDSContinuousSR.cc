@@ -34,7 +34,7 @@ BDSContinuousSR::BDSContinuousSR(const G4String& processName)
 
 G4VParticleChange* 
 BDSContinuousSR::PostStepDoIt(const G4Track& trackData,
-			      const G4Step& /*stepData*/)
+				     const G4Step& stepData)
 {
   aParticleChange.Initialize(trackData);
 
@@ -71,6 +71,7 @@ BDSContinuousSR::PostStepDoIt(const G4Track& trackData,
 
   if(GamEnergy>0)
     {
+      
       if (NewKinEnergy > 0.)
 	{
 	  //
@@ -85,9 +86,10 @@ BDSContinuousSR::PostStepDoIt(const G4Track& trackData,
 	  if (charge<0.) aParticleChange.ProposeTrackStatus(fStopAndKill);
 	  else       aParticleChange.ProposeTrackStatus(fStopButAlive);
 	}
+      
     }
   
-  return &aParticleChange;
+  return G4VDiscreteProcess::PostStepDoIt(trackData,stepData);
 }
 
 

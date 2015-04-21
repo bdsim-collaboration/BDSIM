@@ -43,7 +43,7 @@ BDSSynchrotronRadiation::BDSSynchrotronRadiation(const G4String& processName)
 
 G4VParticleChange* 
 BDSSynchrotronRadiation::PostStepDoIt(const G4Track& trackData,
-				      const G4Step& /*stepData*/)
+				      const G4Step& stepData)
 {
 #ifdef BDSDEBUG 
   G4cout << "BDSSynchrotronRadiation::PostStepDoIt" << G4endl;
@@ -72,7 +72,7 @@ BDSSynchrotronRadiation::PostStepDoIt(const G4Track& trackData,
 #ifdef BDSDEBUG 
       G4cout << "BDSSynchrotronRadiation::PostStepDoItG\nGamma<1000" << G4endl;
 #endif
-      return &aParticleChange;
+      return G4VDiscreteProcess::PostStepDoIt(trackData,stepData);;
     }
   G4double particleCharge = aDynamicParticle->GetCharge();
   
@@ -205,7 +205,7 @@ G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nParticle charge != 0.0" << G4e
 	  }
 	}
     }
-  return &aParticleChange;
+  return G4VDiscreteProcess::PostStepDoIt(trackData,stepData);;
 }
 
 BDSSynchrotronRadiation::~BDSSynchrotronRadiation(){
