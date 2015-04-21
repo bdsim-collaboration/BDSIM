@@ -401,6 +401,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G
   // REGISTER all lvs
   outer->RegisterLogicalVolume(outerLV); //using geometry component base class method
   outer->RegisterLogicalVolume(containerLV);
+
+  // sensitive volumes
+  outer->RegisterSensitiveVolume(outerLV);
   
   return outer;
 }

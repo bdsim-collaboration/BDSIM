@@ -189,12 +189,12 @@ protected:
 			       G4int    order);
 
   /// Common construction tasks to all methods - assemble yoke and poles in container
-  BDSGeometryComponent* CommonConstructor(G4String     name,
-					  G4double     length,
-					  BDSBeamPipe* beamPipe,
-					  G4int        order,
-					  G4double     outerDiameter,
-					  G4Material*  outerMaterial);
+  virtual BDSGeometryComponent* CommonConstructor(G4String     name,
+						  G4double     length,
+						  BDSBeamPipe* beamPipe,
+						  G4int        order,
+						  G4double     outerDiameter,
+						  G4Material*  outerMaterial);
   
   /// Test inputs for no null pointers or overlapping volumes due to poorly defined sizes
   void TestInputParameters(BDSBeamPipe* beamPipe,

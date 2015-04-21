@@ -1,5 +1,7 @@
 #include "BDSMagnetOuterFactoryPolesSquare.hh"
 
+#include "BDSBeamPipe.hh"
+#include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSMagnetColours.hh"
@@ -250,6 +252,26 @@ void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
 			BDSGlobalConstants::Instance()->GetCheckOverlaps()); // check overlaps
       //name + "_pole_" + printf("_%d_pv", n), // name
       }
+}
+
+BDSGeometryComponent* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4String     name,
+									  G4double     length,
+									  BDSBeamPipe* beamPipe,
+									  G4int        order,
+									  G4double     outerDiameter,
+									  G4Material*  outerMaterial)
+{
+  BDSGeometryComponent* outer = BDSMagnetOuterFactoryPolesBase::CommonConstructor(name, length, beamPipe,
+										  order, outerDiameter,
+										  outerMaterial);
+
+  outer->RegisterLogicalVolumes(poleLVs);
+
+  // sensitive volumes
+  outer->RegisterSensitiveVolume(yokeLV);
+  outer->RegisterSensitiveVolumes(poleLVs);
+
+  return outer;
 }
 
 void BDSMagnetOuterFactoryPolesSquare::CleanUp()

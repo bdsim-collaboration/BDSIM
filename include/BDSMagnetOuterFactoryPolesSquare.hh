@@ -54,6 +54,16 @@ private:
   /// Place the poles and yoke in the container volume
   virtual void PlaceComponents(G4String name,
 			       G4int    order);
+
+  /// Common construction tasks to all methods - assemble yoke and poles in container
+  /// have to override this as we have multiple pole logical volumes and they need to
+  /// be registered
+  virtual BDSGeometryComponent* CommonConstructor(G4String     name,
+						  G4double     length,
+						  BDSBeamPipe* beamPipe,
+						  G4int        order,
+						  G4double     outerDiameter,
+						  G4Material*  outerMaterial);
   
   /// Poles have to be different lengths to fit in a square - have to be unique
   /// therefore keep a vector of them

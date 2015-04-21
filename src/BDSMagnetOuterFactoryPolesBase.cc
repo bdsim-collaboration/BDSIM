@@ -493,9 +493,19 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String
 							 containerLV,
 							 extX, extY, extZ);
   // REGISTER all lvs - using geometry component base class method
-  //outer->RegisterLogicalVolume(poleLV);
+  // test if poleLV exists first as some derived classes use their own vector of
+  // poles and don't use this one - therefore it'll be null
+  if (poleLV) {
+    outer->RegisterLogicalVolume(poleLV); }
   outer->RegisterLogicalVolume(yokeLV);
   outer->RegisterLogicalVolume(containerLV);
+
+  // set sensitive volumes
+  // test if poleLV exists first as some derived classes use their own vector of
+  // poles and don't use this one - therefore it'll be null
+  if (poleLV) {
+    outer->RegisterSensitiveVolume(poleLV); }
+  outer->RegisterSensitiveVolume(yokeLV);
   
   return outer;
 }
