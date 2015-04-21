@@ -34,6 +34,7 @@ const BDSExecOptions* BDSExecOptions::Instance(){
 BDSExecOptions::BDSExecOptions(int argc, char **argv){
   inputFilename       = "optics.mad";
   visMacroFilename    = "vis.mac";
+  visDebug            = false;
   outputFilename      = "output";
   outputFormat        = BDSOutputFormat::_ASCII;
   outline             = false;
@@ -290,6 +291,7 @@ void BDSExecOptions::Print()const {
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " inputFilename: "       << std::setw(15) << inputFilename       << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " visMacroFilename: "    << std::setw(15) << visMacroFilename    << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " visDebug: "            << std::setw(15) << visDebug            << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFilename: "      << std::setw(15) << outputFilename      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFormat: "        << std::setw(15) << outputFormat        << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outlineFilename: "     << std::setw(15) << outlineFilename     << G4endl;
