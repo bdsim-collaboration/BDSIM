@@ -148,22 +148,17 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
 					     vacuumMaterialIn,
 					     beamPipeMaterialIn,
 					     lengthIn);
+
+
   
   // record extents
   std::pair<double,double> extX = std::make_pair(-containerRadiusIn,containerRadiusIn);
   std::pair<double,double> extY = std::make_pair(-containerRadiusIn,containerRadiusIn);
   std::pair<double,double> extZ = std::make_pair(-lengthIn*0.5,lengthIn*0.5);
 
-  // REGISTER all lvs
-  aPipe->RegisterLogicalVolume(vacuumLV); //using geometry component base class method
-  aPipe->RegisterLogicalVolume(beamPipeLV);
-  aPipe->RegisterLogicalVolume(containerLV);
+  return BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,
+								 containerRadiusIn);
 
-  // register sensitive volumes
-  aPipe->RegisterSensitiveVolume(beamPipeLV);
-  aPipe->RegisterSensitiveVolume(containerLV);
-  
-  return aPipe;
 }
 
 /// the angled ones have degeneracy in the geant4 solids they used so we can avoid code duplication

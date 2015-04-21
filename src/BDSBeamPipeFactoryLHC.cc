@@ -219,11 +219,6 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CommonFinalConstruction(G4String    nameIn,
   // build the BDSBeamPipe instance and return it
   BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerWidthIn);
 
-  // REGISTER all lvs
-  aPipe->RegisterLogicalVolume(vacuumLV); //using geometry component base class method
-  aPipe->RegisterLogicalVolume(beamPipeLV);
-  aPipe->RegisterLogicalVolume(containerLV);
-
   // register sensitive volumes
   aPipe->RegisterSensitiveVolume(beamPipeLV);
   aPipe->RegisterSensitiveVolume(containerLV);

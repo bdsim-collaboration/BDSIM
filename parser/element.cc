@@ -136,7 +136,6 @@ void Element::flush() {
   outerMaterial = "";
   outerDiameter = 0;
   
-  outR = 0;
   waveLength = 0;
 
   xdir = 0;
@@ -198,8 +197,8 @@ double Element::property_lookup(char* property_name)const{
   if(!strcmp(property_name,"aper3")) return aper3;
   if(!strcmp(property_name,"aper4")) return aper4;
   if(!strcmp(property_name,"outerDiameter")) return outerDiameter;
-  if(!strcmp(property_name,"boxSize")) return boxSize;
-  if(!strcmp(property_name,"outR")) return 0.5*boxSize;
+  if(!strcmp(property_name,"boxSize")) return outerDiameter;
+  if(!strcmp(property_name,"outR")) return 0.5*outerDiameter;
   if(!strcmp(property_name,"xsize")) return xsize;
   if(!strcmp(property_name,"ysize")) return ysize;
   if(!strcmp(property_name,"xdir")) return xdir;

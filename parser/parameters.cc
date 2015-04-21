@@ -166,7 +166,6 @@ void Parameters::inherit_properties(struct Element& e)
   if(!magnetGeometryTypeset) {magnetGeometryType = e.magnetGeometryType; magnetGeometryTypeset = 1;}
   if(!outerMaterialset)      {outerMaterial      = e.outerMaterial;      outerMaterialset = 1;}
   if(!outerDiameterset)      {outerDiameter = e.outerDiameter; outerDiameterset = 1;}
-  if(!outRset) { outR = e.outR; outRset = 1; }
 
   if(!gradientset) { gradient = e.gradient; gradientset = 1; }
 

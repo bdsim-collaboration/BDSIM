@@ -78,8 +78,6 @@ void BDSBeamPipeFactoryBase::CommonConstruction(G4String    nameIn,
   BuildLogicalVolumes(nameIn,vacuumMaterialIn,beamPipeMaterialIn);
   /// set visual attributes
   SetVisAttributes();
-  /// set beampipe to sensitive detector (if specified)
-  SetSensitivity();
 #ifndef NOUSERLIMITS
   /// set user limits
   SetUserLimits(lengthIn);
@@ -122,17 +120,6 @@ void BDSBeamPipeFactoryBase::SetVisAttributes() {
   } else {
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
   }
-}
-
-void BDSBeamPipeFactoryBase::SetSensitivity() {
-  // SENSITIVITY
-  // make the beampipe sensitive if required (attachd Sensitive Detector Class)
-  // all components are on axis and aligned to 0,0,0
-  if (BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
-    {
-      //beampipes are sensitive - attach appropriate sd to the beampipe volume
-      beamPipeLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
-    }
 }
 
 G4UserLimits* BDSBeamPipeFactoryBase::SetUserLimits(G4double lengthIn) {
@@ -189,6 +176,10 @@ BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(std::pair<d
   aPipe->RegisterLogicalVolume(vacuumLV); //using geometry component base class method
   aPipe->RegisterLogicalVolume(beamPipeLV);
   aPipe->RegisterLogicalVolume(containerLV);
+
+  // register sensitive volumes
+  aPipe->RegisterSensitiveVolume(beamPipeLV);
+  aPipe->RegisterSensitiveVolume(containerLV);
   
   return aPipe;
 }

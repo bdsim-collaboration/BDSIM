@@ -39,8 +39,17 @@
 
 //============================================================
 
-BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap, G4double bmapZOffset,
-		       G4double aLength, G4double bpRad, G4double outR, G4String aTunnelMaterial, G4double aTunnelRadius, G4double aTunnelOffsetX, G4String aTunnelCavityMaterial):
+BDSElement::BDSElement(G4String aName,
+		       G4String geometry,
+		       G4String bmap,
+		       G4double bmapZOffset,
+		       G4double aLength,
+		       G4double bpRad,
+		       G4double outR,
+		       G4String aTunnelMaterial,
+		       G4double aTunnelRadius,
+		       G4double aTunnelOffsetX,
+		       G4String aTunnelCavityMaterial):
   BDSAcceleratorComponent(
 			  aName,
 			  aLength,bpRad,0,0,

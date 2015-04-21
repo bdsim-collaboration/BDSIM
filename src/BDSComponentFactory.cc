@@ -814,8 +814,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 			  _element.bmapFile,
 			  _element.bmapZOffset * CLHEP::m,
 			  _element.l * CLHEP::m,
-			  aper,
-			  0.5 * _element.boxSize * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, tunnelOffsetX, _element.tunnelCavityMaterial));
+			  aper1,
+			  0.5 * _element.outerDiameter * CLHEP::m,
+			  _element.tunnelMaterial,
+			  _element.tunnelRadius,
+			  tunnelOffsetX,
+			  _element.tunnelMaterial));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
@@ -896,7 +900,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
 			     _element.xsize * CLHEP::m,
 			     _element.ysize * CLHEP::m,
 			     theMaterial,
-			     0.5*_element.boxSize*CLHEP::m,
+			     0.5*_element.outerDiameter*CLHEP::m,
 			     _element.blmLocZ,
 			     _element.blmLocTheta,
 			     _element.tunnelMaterial) );
