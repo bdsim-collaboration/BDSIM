@@ -11,6 +11,7 @@
 #include "BDSExecOptions.hh"
 #include "BDSDebug.hh"
 #include "BDSParticle.hh"
+#include "BDSRunManager.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSTrajectory.hh"
@@ -28,7 +29,6 @@
 
 #include "G4AffineTransform.hh"
 
-#include "G4RunManager.hh"
 #include <vector>
 
 #include "G4SDManager.hh"
@@ -108,7 +108,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   BDSParticle local(LocalPosition,LocalDirection,energy,t);
 
   G4int nEvent= 
-    G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+    BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   
   nEvent+=BDSGlobalConstants::Instance()->GetEventNumberOffset();
   

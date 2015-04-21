@@ -27,9 +27,6 @@
 
 #include "G4AffineTransform.hh"
 
-//#include "G4RunManager.hh"
-//#include "G4SDManager.hh"
-
 BDSDumpSD::BDSDumpSD(G4String name, G4String type):
   G4VSensitiveDetector(name),
   itsType(type)
@@ -58,7 +55,7 @@ G4bool BDSDumpSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 #endif
       BDSGlobalConstants::Instance()->setWaitingForDump(true);
       //Don't postpone to next event if this is the last event.
-      //      if(G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID()!=(BDSGlobalConstants::Instance()->GetNumberToGenerate()-1)){
+      //      if(BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID()!=(BDSGlobalConstants::Instance()->GetNumberToGenerate()-1)){
 	theTrack->SetTrackStatus(fPostponeToNextEvent);
 	//      }
       
@@ -69,11 +66,3 @@ G4bool BDSDumpSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   }
   return true;
 }
-
-unsigned int BDSDumpSD::nCounter = 0; 
-
-unsigned int BDSDumpSD::trackCounter = 0; 
-
-G4String BDSDumpSD::lastVolume = "";
-
-

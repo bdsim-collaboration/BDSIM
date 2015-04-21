@@ -120,7 +120,7 @@ void BDSBeamPipeFactoryBase::SetVisAttributes() {
   if (BDSExecOptions::Instance()->GetVisDebug()) {
     containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
   } else {
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+    containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
   }
 }
 

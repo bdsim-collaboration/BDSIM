@@ -44,8 +44,6 @@
 #include "G4TransportationManager.hh"
 #include "G4PropagatorInField.hh"
 #include "G4SDManager.hh"
-#include "G4RunManager.hh"
-
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
 #include "globals.hh"

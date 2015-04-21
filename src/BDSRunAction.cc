@@ -2,7 +2,6 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSOutputBase.hh" 
 #include "BDSRunAction.hh"
-#include "BDSRunManager.hh"
 #include "BDSDebug.hh"
 #include "BDSAnalysisManager.hh"
 #include "BDSBeamline.hh"

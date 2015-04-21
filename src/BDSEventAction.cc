@@ -3,6 +3,7 @@
 #include "BDSDebug.hh"
 #include "BDSEventAction.hh"
 #include "BDSOutputBase.hh" 
+#include "BDSRunManager.hh"
 #include "BDSTrajectory.hh"
 
 #include <list>
@@ -13,7 +14,6 @@
 #include "G4Event.hh"
 #include "G4EventManager.hh"
 #include "G4Run.hh"
-#include "G4RunManager.hh"
 #include "G4HCofThisEvent.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4Trajectory.hh"
@@ -275,7 +275,7 @@ void BDSEventAction::AddPrimaryHits(){
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   //Save the primary particle as a hit 
-  G4PrimaryVertex* primaryVertex= G4RunManager::GetRunManager()->GetCurrentEvent()->GetPrimaryVertex();
+  G4PrimaryVertex* primaryVertex= BDSRunManager::GetRunManager()->GetCurrentEvent()->GetPrimaryVertex();
   G4PrimaryParticle* primaryParticle=primaryVertex->GetPrimary();
   G4ThreeVector momDir = primaryParticle->GetMomentumDirection();
   G4double E = primaryParticle->GetTotalEnergy();
@@ -288,7 +288,7 @@ void BDSEventAction::AddPrimaryHits(){
   G4double t = primaryVertex->GetT0();
   G4double weight = primaryParticle->GetWeight();
   G4int PDGType=primaryParticle->GetPDGcode();
-  G4int nEvent = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+  G4int nEvent = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   G4String samplerName="primaries";
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
   bdsOutput->WritePrimary(samplerName, E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
