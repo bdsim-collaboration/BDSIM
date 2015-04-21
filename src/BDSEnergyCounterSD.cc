@@ -68,7 +68,7 @@ void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 }
 
 G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOutTH)
-{  
+{ 
   if(BDSGlobalConstants::Instance()->GetStopTracks())
     enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit()); // Why subtract the energy deposit of the step? Why not add?
   //this looks like accounting for conservation of energy when you're killing a particle
@@ -81,13 +81,23 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
 #endif
   //if the energy is 0, don't do anything
   if (enrg==0.) return false;      
-  
-  G4int nCopy=aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();
+
+  // can get the copy number from the read out geometry if it exists
+  G4int nCopy;
+  if (readOutTH)
+    {nCopy = readOutTH->GetCopyNumber();}
+  else
+    {nCopy = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();}
 #ifdef BDSDEBUG
   if(nCopy>0){
     G4cout << "BDSEnergyCounterSD::ProcessHits> nCopy = " << nCopy << G4endl;
   }
 #endif
+  /*
+  // LN - not sure why this arbritrary limit of NMAXCOPY is necessary 
+  // looks like it was to do with registering existing beamline elements to save memory
+  // but this wasn't fully implemented anyway and with recent changes, this would likely 
+  // be implemented in a different way
   if(nCopy>NMAXCOPY-1)
     {
       G4cerr << " BDSEnergyCounterSD: nCopy too large: nCopy = " << nCopy 
@@ -96,9 +106,25 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
 	     << G4endl;
       G4Exception("Killing program in BDSEnergyCounterSD::ProcessHits", "-1", FatalException, "");
     }
-  
-  // Get Translation and Rotation of Sampler Volume w.r.t the World Volume
-  G4AffineTransform tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
+  */
+  // Get translation and rotation of volume w.r.t the World Volume
+
+  // if there is a read out geometry volume, use that. Note there *should* always be a
+  // read out geometry volume for any sensitive volume (if they've been made sensitive)
+  // there is the possibility that there isn't a read out volume in which case the touchable
+  // object would be a null pointer and seg fault - must catch this
+  if (!readOutTH)
+    {
+      G4cout << __METHOD_NAME__ << "hit in a sensitive volume without readout geometry" << G4endl;
+      G4cerr << __METHOD_NAME__ << "hit not recorded!" << G4endl;
+      return true;
+    }
+
+  // get the coordinate transform from the read out geometry instead of the actual geometry
+  // read out geometry is in accelerator s,x,y coordinates along beam line axis
+  G4AffineTransform tf = readOutTH->GetHistory()->GetTopTransform();
+  // this was the old method of getting the transform
+  //G4AffineTransform tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
   G4ThreeVector posbefore = aStep->GetPreStepPoint()->GetPosition();
   G4ThreeVector posafter  = aStep->GetPostStepPoint()->GetPosition();
   //G4ThreeVector momDir = aStep->GetTrack()->GetMomentumDirection();
@@ -106,12 +132,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
   //calculate local coordinates
   G4ThreeVector posbeforelocal  = tf.TransformPoint(posbefore);
   G4ThreeVector posafterlocal   = tf.TransformPoint(posafter);
-  //G4ThreeVector LocalDirection = tf.TransformAxis(momDir);
 
-  //G4cout << "Global Position " << pos << G4endl;
-  //G4cout << "Local Position " << poslocal << G4endl << G4endl;
-
-  //calculate mean position of step
+  //calculate mean position of step (which is two points)
   //global
   Y = 0.5 * (posbefore.x() + posafter.x());
   Y = 0.5 * (posbefore.y() + posafter.y());
