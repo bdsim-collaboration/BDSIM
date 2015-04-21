@@ -51,11 +51,12 @@ void Parameters::flush() {
   tunnelOffsetX = 0; tunnelOffsetXset = 0;
 
   precisionRegion = 0; precisionRegionset = 0;
-  tilt = 0; tiltset = 0;
-  outR = 0; outRset = 0;
-  
-  // aperture model
+
   beampipeThickness = 0; beampipeThicknessset = 0;
+
+  tilt = 0; tiltset = 0;
+
+  // new aperture model
   aper1 = 0; aper1set = 0;
   aper2 = 0; aper2set = 0;
   aper3 = 0; aper3set = 0;

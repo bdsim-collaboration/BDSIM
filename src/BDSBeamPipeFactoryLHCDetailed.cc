@@ -7,7 +7,6 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSSDManager.hh"
-#include "BDSUtilities.hh"                 // for calculateorientation
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4Box.hh"
@@ -20,7 +19,6 @@
 #include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
-#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
@@ -37,27 +35,19 @@ BDSBeamPipeFactoryLHCDetailed* BDSBeamPipeFactoryLHCDetailed::Instance()
   return _instance;
 }
 
-BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed()
+BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed():BDSBeamPipeFactoryBase()
 {
-  lengthSafety              = BDSGlobalConstants::Instance()->GetLengthSafety();
   coldBoreThickness         = 1.5*CLHEP::mm;
   coolingPipeThickness      = 0.53*CLHEP::mm;
   coolingPipeRadius         = 3.7*CLHEP::mm; // will be overwritten if needs be to fit inside beampipe
   coolingPipeYOffset        = 0.0;  //initialised only
   copperSkinThickness       = 75*CLHEP::um;
-  vacuumSolid               = NULL; // the inner vacuum shape
+  copperSkinSolid           = NULL; // the copper skin
   screenSolid               = NULL; // the beam screen (first bit of aperture)
   coolingPipeSolid          = NULL; // small cooling pipe above and below beam screen
-  beamPipeSolid             = NULL; // outer pipe between vacuum and cold bore
-  containerSolid            = NULL;
-  containerSubtractionSolid = NULL;
-  vacuumLV                  = NULL;
+  copperSkinLV              = NULL;
   screenLV                  = NULL;
   coolingPipeLV             = NULL;
-  beamPipeLV                = NULL;
-  containerLV               = NULL;
-  orientationIn  = 0;
-  orientationOut = 0;
 }
 
 BDSBeamPipeFactoryLHCDetailed::~BDSBeamPipeFactoryLHCDetailed()
@@ -220,70 +210,6 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String    nameIn,  
   return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn, containerRadius);
 }
 
-
-
-BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipeAngledIn(G4String    nameIn,              // name
-								   G4double    lengthIn,            // length [mm]
-								   G4double    angleInIn,           // the normal angle of the input face
-								   G4double    aper1In,             // aperture parameter 1
-								   G4double    aper2In,             // aperture parameter 2
-								   G4double    aper3In,             // aperture parameter 3
-								   G4double    /*aper4In */,        // aperture parameter 4
-								   G4Material* vacuumMaterialIn,    // vacuum material
-								   G4double    beamPipeThicknessIn, // beampipe thickness [mm]
-								   G4Material* beamPipeMaterialIn   // beampipe material
-								   )
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // test input parameters - set global options as default if not specified
-  TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In,aper3In);
-
-  CalculateOrientations(angleInIn, 0);
-  
-  G4double in_z = cos(fabs(angleInIn)); // calculate components of normal vectors (in the end mag(normal) = 1)
-  G4double in_x = sin(fabs(angleInIn)); // note full angle here as it's the entrance angle
-  G4ThreeVector inputface  = G4ThreeVector(orientationIn*in_x, 0.0, -1.0*in_z); //-1 as pointing down in z for normal
-  G4ThreeVector outputface = G4ThreeVector(0.0, 0.0, 1.0);                    // no output face angle
-  G4double containerRadius = aper3In + beamPipeThicknessIn + lengthSafety + coldBoreThickness + lengthSafety;
-  
-  CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, aper2In, aper3In, beamPipeThicknessIn, inputface, outputface);
-  
-  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn, containerRadius);
-}
-
-BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipeAngledOut(G4String    nameIn,              // name
-								    G4double    lengthIn,            // length [mm]
-								    G4double    angleOutIn,          // the normal angle of the output face
-								    G4double    aper1In,             // aperture parameter 1
-								    G4double    aper2In,             // aperture parameter 2
-								    G4double    aper3In,             // aperture parameter 3
-								    G4double    /*aper4In*/,         // aperture parameter 4
-								    G4Material* vacuumMaterialIn,    // vacuum material
-								    G4double    beamPipeThicknessIn, // beampipe thickness [mm]
-								    G4Material* beamPipeMaterialIn   // beampipe material
-								    )
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // test input parameters - set global options as default if not specified
-  TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In,aper3In);
-
-  CalculateOrientations(0, angleOutIn);
-  
-  G4double out_z = cos(fabs(angleOutIn)); // calculate components of normal vectors (in the end mag(normal) = 1)
-  G4double out_x = sin(fabs(angleOutIn)); // note full angle here as it's the exit angle
-  G4ThreeVector inputface  = G4ThreeVector(0.0, 0.0, -1.0); //-1 as pointing down in z for normal
-  G4ThreeVector outputface = G4ThreeVector(orientationOut*out_x, 0.0, out_z);               // no output face angle
-  G4double containerRadius = aper3In + beamPipeThicknessIn + lengthSafety + coldBoreThickness + lengthSafety;
-  
-  CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, aper2In, aper3In, beamPipeThicknessIn, inputface, outputface);
-  
-  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn, containerRadius);
-}
-
 BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipeAngledInOut(G4String    nameIn,              // name
 								      G4double    lengthIn,            // length [mm]
 								      G4double    angleInIn,           // the normal angle of the input face
@@ -303,14 +229,10 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipeAngledInOut(G4String  
    // test input parameters - set global options as default if not specified
   TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In,aper3In);
 
-  CalculateOrientations(angleInIn, angleOutIn);
-  
-  G4double in_z  = cos(fabs(angleInIn)); // calculate components of normal vectors (in the end mag(normal) = 1)
-  G4double in_x  = sin(fabs(angleInIn)); // note full angle here as it's the exit angle
-  G4double out_z = cos(fabs(angleOutIn));
-  G4double out_x = sin(fabs(angleOutIn));
-  G4ThreeVector inputface  = G4ThreeVector(orientationIn*in_x, 0.0, -1.0*in_z); //-1 as pointing down in z for normal
-  G4ThreeVector outputface = G4ThreeVector(orientationOut*out_x, 0.0, out_z);               // no output face angle
+  std::pair<G4ThreeVector,G4ThreeVector> faces = CalculateFaces(angleInIn, angleOutIn);
+  G4ThreeVector inputface  = faces.first;
+  G4ThreeVector outputface = faces.second;
+
   G4double containerRadius = aper3In + beamPipeThicknessIn + lengthSafety + coldBoreThickness + lengthSafety;
   
   CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, aper2In, aper3In, beamPipeThicknessIn, inputface, outputface);
@@ -328,14 +250,7 @@ void BDSBeamPipeFactoryLHCDetailed::TestInputParameters(G4Material*&  vacuumMate
 							G4double&     aper2In,
 							G4double&     aper3In)
 {
-  if (!vacuumMaterialIn)
-    {vacuumMaterialIn = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
-
-  if (beamPipeThicknessIn < 1e-10)
-    {beamPipeThicknessIn = BDSGlobalConstants::Instance()->GetBeamPipeThickness();}
-
-  if (!beamPipeMaterialIn)
-    {beamPipeMaterialIn = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetBeamPipeMaterialName());}
+  BDSBeamPipeFactoryBase::TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn);
 
   if (aper1In < 1e-10)
     {aper1In = BDSGlobalConstants::Instance()->GetBeamPipeRadius();}
@@ -343,7 +258,7 @@ void BDSBeamPipeFactoryLHCDetailed::TestInputParameters(G4Material*&  vacuumMate
   if (aper2In < 1e-10)
     {aper2In = BDSGlobalConstants::Instance()->GetAper2();}
 
-  if (aper3In < 1e-1)
+  if (aper3In < 1e-10)
     {aper3In = BDSGlobalConstants::Instance()->GetAper3();}
 }
 
@@ -358,14 +273,47 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+
+  BDSBeamPipeFactoryBase::CommonConstruction(nameIn,
+					     vacuumMaterialIn,
+					     beamPipeMaterialIn,
+					     lengthIn);
+		    
+  // record extents
+  std::pair<double,double> extX = std::make_pair(-containerRadiusIn,containerRadiusIn);
+  std::pair<double,double> extY = std::make_pair(-containerRadiusIn,containerRadiusIn);
+  std::pair<double,double> extZ = std::make_pair(-lengthIn*0.5,lengthIn*0.5);
+  
+  // build the BDSBeamPipe instance and return it
+  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerRadiusIn);
+
+  // REGISTER private lvs
+  aPipe->RegisterLogicalVolume(copperSkinLV);
+  aPipe->RegisterLogicalVolume(screenLV);
+  aPipe->RegisterLogicalVolume(coolingPipeLV);
+  aPipe->RegisterLogicalVolume(beamPipeLV);
+  aPipe->RegisterLogicalVolume(containerLV);
+  aPipe->RegisterLogicalVolume(copperSkinLV);
+
+  // register sensitive volumes
+  aPipe->RegisterSensitiveVolume(screenLV);
+  aPipe->RegisterSensitiveVolume(coolingPipeLV);
+  aPipe->RegisterSensitiveVolume(beamPipeLV);
+  aPipe->RegisterSensitiveVolume(containerLV);
+  aPipe->RegisterSensitiveVolume(copperSkinLV);
+  
+  return aPipe;
+}
+
+void BDSBeamPipeFactoryLHCDetailed::BuildLogicalVolumes(G4String    nameIn,
+							G4Material* vacuumMaterialIn,
+							G4Material* beamPipeMaterialIn)
+{
+  BDSBeamPipeFactoryBase::BuildLogicalVolumes(nameIn,vacuumMaterialIn,beamPipeMaterialIn);
+
   // get materials
   G4Material* copper = BDSMaterials::Instance()->GetMaterial("Copper");
 
-  
-  // build the logical volumes
-  vacuumLV      = new G4LogicalVolume(vacuumSolid,
-				      vacuumMaterialIn,
-				      nameIn + "_vacuum_lv");
 
   copperSkinLV  = new G4LogicalVolume(copperSkinSolid,
 				      copper,
@@ -378,71 +326,42 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
   coolingPipeLV = new G4LogicalVolume(coolingPipeSolid,
 				      beamPipeMaterialIn,
 				      nameIn + "_cooling_pipe_lv");
-  
-  beamPipeLV    = new G4LogicalVolume(beamPipeSolid,
-				      beamPipeMaterialIn,
-				      nameIn + "_beampipe_lv");
-  
-  containerLV   = new G4LogicalVolume(containerSolid,
-				      vacuumMaterialIn,
-				      nameIn + "_container_lv");
-  
-  // VISUAL ATTRIBUTES
-  // set visual attributes
+}
+
+void BDSBeamPipeFactoryLHCDetailed::SetVisAttributes()
+{
+  BDSBeamPipeFactoryBase::SetVisAttributes();
+
   // copper skin
   G4VisAttributes* cuVisAttr   = new G4VisAttributes(G4Colour(0.722, 0.525, 0.043));
   cuVisAttr->SetForceLineSegmentsPerCircle(50);
   cuVisAttr->SetVisibility(true);
   cuVisAttr->SetForceSolid(true);
-
+  
   // beampipe
   G4VisAttributes* pipeVisAttr = new G4VisAttributes(G4Colour(0.4,0.4,0.4));
   pipeVisAttr->SetVisibility(true);
   pipeVisAttr->SetForceSolid(true);
   pipeVisAttr->SetForceLineSegmentsPerCircle(60);
-  
-  vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+
   copperSkinLV->SetVisAttributes(cuVisAttr);
   screenLV->SetVisAttributes(pipeVisAttr);
   coolingPipeLV->SetVisAttributes(pipeVisAttr);
-  beamPipeLV->SetVisAttributes(pipeVisAttr);
-  // container
-  if (BDSExecOptions::Instance()->GetVisDebug()) {
-    containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-  } else {
-    containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-  }
+}
 
-  // USER LIMITS - set user limits based on bdsim user specified parameters
-#ifndef NOUSERLIMITS
-  G4UserLimits* beamPipeUserLimits = new G4UserLimits("beampipe_cuts");
-  G4double maxStepFactor = 0.5; // fraction of length for maximum step size
-  beamPipeUserLimits->SetMaxAllowedStep( lengthIn * maxStepFactor );
-  beamPipeUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  beamPipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-  //attach cuts to volumes
-  vacuumLV->SetUserLimits(beamPipeUserLimits);
+G4UserLimits* BDSBeamPipeFactoryLHCDetailed::SetUserLimits(G4double lengthIn) {
+
+  G4UserLimits* beamPipeUserLimits = BDSBeamPipeFactoryBase::SetUserLimits(lengthIn);
   copperSkinLV->SetUserLimits(beamPipeUserLimits);
   screenLV->SetUserLimits(beamPipeUserLimits);
   coolingPipeLV->SetUserLimits(beamPipeUserLimits);
-  beamPipeLV->SetUserLimits(beamPipeUserLimits);
-  containerLV->SetUserLimits(beamPipeUserLimits);
-#endif
+  
+  return beamPipeUserLimits;
+}
 
-  // PLACEMENT
-  // place the components inside the container
-  // note we don't need the pointer for anything - it's registered upon construction with g4
-  
-  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    G4ThreeVector(0,0,0),         // position
-		    vacuumLV,                     // lv to be placed
-		    nameIn + "_vacuum_pv",        // name
-		    containerLV,                  // mother lv to be place in
-		    false,                        // no boolean operation
-		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
-  
+void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String nameIn) {
+  BDSBeamPipeFactoryBase::PlaceComponents(nameIn);
+
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    G4ThreeVector(0,0,0),         // position
 		    copperSkinLV,                 // lv to be placed
@@ -462,8 +381,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
 		    0,                            // copy number
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
 		    );
-  
-  
+
   G4ThreeVector* coolingPipeTopPosition    = new G4ThreeVector(0,coolingPipeYOffset,0);
   G4ThreeVector* coolingPipeBottomPosition = new G4ThreeVector(0,-coolingPipeYOffset,0);
   
@@ -486,47 +404,8 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
 		    0,                            // copy number
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
 		    );
-  
-  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    (G4ThreeVector)0,             // position
-		    beamPipeLV,                   // lv to be placed
-		    nameIn + "_beampipe_pv",      // name
-		    containerLV,                  // mother lv to be place in
-		    false,                        // no boolean operation
-		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
-		    
-  // record extents
-  std::pair<double,double> extX = std::make_pair(-containerRadiusIn,containerRadiusIn);
-  std::pair<double,double> extY = std::make_pair(-containerRadiusIn,containerRadiusIn);
-  std::pair<double,double> extZ = std::make_pair(-lengthIn*0.5,lengthIn*0.5);
-  
-  // build the BDSBeamPipe instance and return it
-  BDSBeamPipe* aPipe = new BDSBeamPipe(containerSolid,containerLV,extX,extY,extZ,
-				       containerSubtractionSolid,
-				       vacuumLV,true,containerRadiusIn);
-
-  // REGISTER all lvs
-  aPipe->RegisterLogicalVolume(vacuumLV); //using geometry component base class method
-  aPipe->RegisterLogicalVolume(screenLV);
-  aPipe->RegisterLogicalVolume(coolingPipeLV);
-  aPipe->RegisterLogicalVolume(beamPipeLV);
-  aPipe->RegisterLogicalVolume(containerLV);
-  aPipe->RegisterLogicalVolume(copperSkinLV);
-
-  // register sensitive volumes
-  aPipe->RegisterSensitiveVolume(screenLV);
-  aPipe->RegisterSensitiveVolume(coolingPipeLV);
-  aPipe->RegisterSensitiveVolume(beamPipeLV);
-  aPipe->RegisterSensitiveVolume(containerLV);
-  aPipe->RegisterSensitiveVolume(copperSkinLV);
-
-  
-  return aPipe;
 }
-
-
+  
 /// the angled ones have degeneracy in the geant4 solids they used so we can avoid code duplication
 /// by grouping common construction tasks
 void BDSBeamPipeFactoryLHCDetailed::CreateGeneralAngledSolids(G4String      nameIn,
@@ -687,10 +566,4 @@ void BDSBeamPipeFactoryLHCDetailed::CreateGeneralAngledSolids(G4String      name
 					 2*lengthIn,                       // long length for unambiguous subtraction
 					 0,                                // rotation start angle
 					 CLHEP::twopi);                    // rotation finish angle
-}
-
-void BDSBeamPipeFactoryLHCDetailed::CalculateOrientations(G4double angleIn, G4double angleOut)
-{
-  orientationIn  = BDS::CalculateOrientation(angleIn);
-  orientationOut = BDS::CalculateOrientation(angleOut);
 }

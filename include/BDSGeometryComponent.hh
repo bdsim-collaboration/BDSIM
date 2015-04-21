@@ -11,7 +11,7 @@
  * @brief A generic geometry component for a bdsim model
  * 
  * This class contains the minimum information required
- * for any object to be place in the bdsim model
+ * for any object to be placed in the bdsim model
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */

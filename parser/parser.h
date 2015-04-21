@@ -170,7 +170,7 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.lst = NULL;
   e.l = params.l;
 
-  //aperture model
+  //new aperture model
   e.aper1 = params.aper1;
   e.aper2 = params.aper2;
   e.aper3 = params.aper3;
@@ -253,7 +253,6 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   // RCOL
   e.flatlength = params.flatlength;
   e.taperlength = params.taperlength;
-  e.outR = params.outR;
   // Laser
   e.waveLength = params.waveLength;
   // Element, Tunnel

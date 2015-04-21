@@ -74,8 +74,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       
       // kill secondary photons
       
-      if( (aTrack->GetParentID() > 0) && 
-	  (aTrack->GetDefinition() == G4Gamma::GammaDefinition() ) )
+      if( (aTrack->GetParentID() > 0) && (aTrack->GetDefinition() == G4Gamma::GammaDefinition()) && !BDSGlobalConstants::Instance()->GetSynchRadOn())
 	{
 	  classification = fKill;
 	}

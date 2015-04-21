@@ -67,6 +67,7 @@ public:
   G4double GetElossHistoTransBinWidth()const; //The transverse (x,y) bin width
   G4double GetDefaultRangeCut()const;
 
+  /// magnetic field switch flag
   G4double GetFFact()const;
 
   G4double GetBeamKineticEnergy()const;
@@ -82,7 +83,6 @@ public:
   G4double GetParticleTotalEnergy()const;
   G4double GetParticleMomentum()const;
   void     SetParticleMomentum(G4double val);
-
 
   G4double GetPlanckScatterFe()const;
 

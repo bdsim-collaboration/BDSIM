@@ -26,7 +26,7 @@ Options::Options(){
   defaultRangeCut = 7e-4;
   ffact = 1.0;
   beamEnergy = 0.0;
-
+  
   X0 = 0.0, Y0 = 0.0, Z0 = 0.0;
   Xp0 = 0.0, Yp0 = 0.0, Zp0 = 0.0;
   T0 = 0.0;
@@ -170,6 +170,7 @@ void Options::print() const {
   std::cout<<"nominal energy        : " <<beamEnergy<<std::endl;
   std::cout<<"n macroparticles      : " <<numberToGenerate<<std::endl;
   std::cout<<"sigmaX                : " <<sigmaX<<std::endl;
+  std::cout<<"BV sign               : " <<ffact<<std::endl;
   std::cout<<"Cerenkov on           : " <<turnOnCerenkov<<std::endl;
   std::cout<<"Optical absorption on : " << turnOnOpticalAbsorption <<std::endl;
   std::cout<<"Mie scattering on     : " << turnOnMieScattering <<std::endl;
@@ -190,6 +191,7 @@ void Options::set_value(std::string name, double value )
   if(name == "elossHistotransBinWidth") {elossHistoTransBinWidth = value; return;}
   if(name == "defaultRangeCut") {defaultRangeCut = value; return;}
   if(name == "ffact") {ffact = value; return;}
+  if(name == "bv")  { ffact = value; return; } // MadX naming
   if(name == "energy") {beamEnergy = value; return;}
   if(name == "X0" ) { X0 = value; return; }
   if(name == "Y0" ) { Y0 = value; return; }

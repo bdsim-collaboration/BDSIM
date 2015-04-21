@@ -556,6 +556,10 @@ parameters:
 		  else
 		   if(!strcmp($1->name,"beampipeThickness") ) 
 		      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
+		   else
+		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
+		    // for backwards compatibility
+		    { params.aper1 = $3; params.aper1set = 1;}
 		    else
 		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
 		    { params.aper1 = $3; params.aper1set = 1;}
@@ -572,7 +576,9 @@ parameters:
 		  if(!strcmp($1->name,"outerDiameter")) 
 		    { params.outerDiameter = $3; params.outerDiameterset = 1;}
 		    else
-		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
+		  if(!strcmp($1->name,"outR") )
+		    // for backwards compatibility, boxSize = 2*outR
+		    { params.outerDiameter = 2 * $3; params.outerDiameterset = 1;}
 		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
@@ -789,6 +795,10 @@ parameters:
 		  if(!strcmp($1->name,"beampipeThickness") ) 
 			      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
 		    else
+		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
+		    // for backwards compatibility
+		    { params.aper1 = $3; params.aper1set = 1;}
+		    else
 		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
 		    { params.aper1 = $3; params.aper1set = 1;}
 		    else
@@ -804,10 +814,9 @@ parameters:
 		  if(!strcmp($1->name,"outerDiameter")) 
 		    { params.outerDiameter = $3; params.outerDiameterset = 1;}
 		    else
-		  if(!strcmp($1->name,"boxSize")) //for backwards compatability 
-		    { params.outerDiameter = $3; params.outerDiameterset = 1;}
-		    else
-		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
+		  if(!strcmp($1->name,"outR") )
+		    // for backwards compatibility, boxSize = 2*outR
+		    { params.outerDiameter = 2 * $3; params.outerDiameterset = 1;}
 		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
@@ -889,6 +898,7 @@ parameters:
 		   else 
 		     if(!strcmp($1->name,"type")) 
 		       {
+			 printf("Warning : type parameter is currently ignored");
 			 //ignore the "type attribute for the moment"
 		       }
 		   else
@@ -903,14 +913,7 @@ parameters:
 			 params.materialset = 1;
 			 params.material = $3;
 		       }
-		   else
-		   if(!strcmp($1->name,"magnetGeometryType")) 
-		       {
-		         params.magnetGeometryTypeset = 1;
-		         params.magnetGeometryType = $3;
-		       }
-		   else
-		   if(!strcmp($1->name,"apertureType"))
+		   else if(!strcmp($1->name,"apertureType"))
 		       {
 			 params.apertureTypeset = 1;
 			 params.apertureType = $3;
@@ -996,6 +999,7 @@ parameters:
 		     else 
 		     if(!strcmp($1->name,"type")) 
 		       {
+			 printf("Warning : type parameter is currently ignored");
 			 //ignore the "type attribute for the moment"
 		       }
                      else

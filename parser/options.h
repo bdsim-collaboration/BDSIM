@@ -28,11 +28,12 @@ struct Options {
   std::string distribFileFormat;
 
   int numberToGenerate;
-  int nlinesIgnore; /// ignore first lines in the input bunch file
+  int nlinesIgnore; ///> ignore first lines in the input bunch file
 
   double elossHistoBinWidth;
   double elossHistoTransBinWidth;
   double defaultRangeCut;
+  /// magnetic field flip (+1 default, -1: flip sign)
   double ffact;
   double beamEnergy;
 
@@ -83,7 +84,7 @@ struct Options {
   /// for element specification
   double xsize, ysize;
 
-  ///  int backgroundScaleFactor;
+  //  int backgroundScaleFactor;
 
   /// default magnet geometry parameters
   std::string magnetGeometryType;
@@ -156,9 +157,8 @@ struct Options {
   double   prodCutPositronsP;
   double   prodCutPositronsA;
 
-
   /// Tracking related parameters 
-  double   maximumTrackingTime; /// maximum tracking time per volume [s]
+  double   maximumTrackingTime; ///> maximum tracking time per volume [s]
   double   deltaChord;
   double   chordStepMinimum;
   double   deltaIntersection;
@@ -166,11 +166,11 @@ struct Options {
   double   maximumEpsilonStep;
   double   deltaOneStep;
   int      turnOnCerenkov;
-  int turnOnOpticalAbsorption;
-  int turnOnMieScattering;
-  int turnOnRayleighScattering;
-  int turnOnOpticalSurface;
-  int turnOnBirksSaturation;
+  int      turnOnOpticalAbsorption;
+  int      turnOnMieScattering;
+  int      turnOnRayleighScattering;
+  int      turnOnOpticalSurface;
+  int      turnOnBirksSaturation;
   int      synchRadOn;
   int      decayOn;
   int      synchTrackPhotons;
@@ -189,9 +189,9 @@ struct Options {
   int      storeTrajectory;
   int      stopTracks;
 
-  std::string fifo; /// fifo for BDSIM-placet
-  std::string refvolume; ///initial starting volume
-  int refcopyno; ///initial starting volume copy number
+  std::string fifo; ///> fifo for BDSIM-placet
+  std::string refvolume; ///> initial starting volume
+  int refcopyno; ///> initial starting volume copy number
   
   /// Ring parameters
   int      nturns;
