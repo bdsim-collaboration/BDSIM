@@ -953,7 +953,6 @@ void BDSPhysicsList::ConstructMerlin()
   }
 }
 
-
 void BDSPhysicsList::ConstructEM_Low_Energy()
 {
 #ifdef BDSDEBUG
