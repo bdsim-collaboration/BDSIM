@@ -37,9 +37,8 @@ BDSSynchrotronRadiation::BDSSynchrotronRadiation(const G4String& processName)
 {
   nExpConst=5*CLHEP::fine_structure_const/(2*sqrt(3.0))/CLHEP::electron_mass_c2;
   CritEngFac=3./2.*CLHEP::hbarc/pow(CLHEP::electron_mass_c2,3);
-  MeanFreePathCounter = 0; //Presumably this should be initialized to zero? LCD 18/4/11
-} 
-
+  MeanFreePathCounter = 0;
+}
 
 G4VParticleChange* 
 BDSSynchrotronRadiation::PostStepDoIt(const G4Track& trackData,
@@ -72,7 +71,7 @@ BDSSynchrotronRadiation::PostStepDoIt(const G4Track& trackData,
 #ifdef BDSDEBUG 
       G4cout << "BDSSynchrotronRadiation::PostStepDoItG\nGamma<1000" << G4endl;
 #endif
-      return G4VDiscreteProcess::PostStepDoIt(trackData,stepData);;
+      return G4VDiscreteProcess::PostStepDoIt(trackData,stepData);
     }
   G4double particleCharge = aDynamicParticle->GetCharge();
   
@@ -119,7 +118,7 @@ G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nParticle charge != 0.0" << G4e
       G4ThreeVector unitMomentum = aDynamicParticle->GetMomentumDirection();
       G4ThreeVector unitMcrossB = FieldValue.cross(unitMomentum);
       G4double perpB = unitMcrossB.mag() ;
-      std::deque<G4DynamicParticle*> listOfSecondaries;
+      std::vector<G4DynamicParticle*> listOfSecondaries;
       if(perpB > 0.0)
 	{
 #ifdef BDSDEBUG 
@@ -191,8 +190,7 @@ G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nParticle charge != 0.0" << G4e
             G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nAdding secondaries" << G4endl;
 #endif
               
-            aParticleChange.AddSecondary(listOfSecondaries.front()); 
-	    listOfSecondaries.pop_front();
+            aParticleChange.AddSecondary(listOfSecondaries[n]); 
 #ifdef BDSDEBUG 
             G4cout << "Adding secondary particle...\n";
 #endif
@@ -200,12 +198,12 @@ G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nParticle charge != 0.0" << G4e
 	  //Find out the weight of the gammas
 	  G4double gammaWeight = aParticleChange.GetParentWeight()/BDSGlobalConstants::Instance()->GetSynchPhotonMultiplicity();
 	  //Set the weights of the gammas
-	  for(int n=0;n<(int)listOfSecondaries.size();n++){
+	  for(unsigned int n=0;n<listOfSecondaries.size();n++){
 	    aParticleChange.GetSecondary(n)->SetWeight(gammaWeight);
 	  }
 	}
     }
-  return G4VDiscreteProcess::PostStepDoIt(trackData,stepData);;
+  return G4VDiscreteProcess::PostStepDoIt(trackData,stepData);
 }
 
 BDSSynchrotronRadiation::~BDSSynchrotronRadiation(){
