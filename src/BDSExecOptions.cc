@@ -156,7 +156,8 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 	verboseSteppingLevel = atoi(optarg);
       }
       if( !strcmp(LongOptions[OptionIndex].name , "output") ) {
-	if(!strcmp(optarg,"ascii") || !strcmp(optarg,"ASCII")) outputFormat=BDSOutputFormat::_ASCII;
+	if(!strcmp(optarg,"none") || !strcmp(optarg,"NONE")) outputFormat=BDSOutputFormat::_NONE;
+	else if(!strcmp(optarg,"ascii") || !strcmp(optarg,"ASCII")) outputFormat=BDSOutputFormat::_ASCII;
 	else if (!strcmp(optarg,"root") || !strcmp(optarg,"ROOT")) outputFormat=BDSOutputFormat::_ROOT;
 	else if (!strcmp(optarg,"combined") || !strcmp(optarg,"COMBINED")) outputFormat=BDSOutputFormat::_COMBINED;
 	else {
