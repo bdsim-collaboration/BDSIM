@@ -19,24 +19,20 @@
 
 class BDSRunManager:public G4RunManager
 {
-public: // with description
-  
-  static BDSRunManager* GetRunManager();
-  //  Static method which returns the singleton pointer of BDSRunManager or
-  // its derived class.
-  
 private:
-  static BDSRunManager* fRunManager;
+  // add keyword ThreadLocal for versions 10
+#if G4VERSION_NUMBER > 999
+  G4ThreadLocal
+#endif
+  static BDSRunManager* fRunManager; // needed since singleton inheritance won't work
 
-public: // with description
-    BDSRunManager();
-    virtual ~BDSRunManager();
-    //  The constructor and the destructor. The user must construct this class
-    // object at the beginning of his/her main() and must delete it at the 
-    // bottom of the main().
-
-public: 
+public:
+  BDSRunManager();
+  virtual ~BDSRunManager();
+  static BDSRunManager* GetRunManager();
+  
   // override virtual methods
+
   /// For additional output
   virtual void DoEventLoop(G4int n_event,const char* macroFile=0,G4int n_select=-1);
   /// Altered BeamOn function to account for Placet synchronisation

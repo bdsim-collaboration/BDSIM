@@ -76,7 +76,10 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   } else {
     bdsOutput->Commit(); // write and open new file
   }
-    
+
+  // delete analysis manager
+  delete BDSAnalysisManager::Instance();
+  
   // note difftime only calculates to the integer second
   G4cout << "Run Duration >> " << (int)difftime(stoptime,starttime) << " s" << G4endl;
 }

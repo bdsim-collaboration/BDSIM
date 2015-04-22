@@ -31,6 +31,7 @@ BDSRunManager::BDSRunManager():G4RunManager() {
 }
 
 BDSRunManager::~BDSRunManager(){
+  fRunManager = NULL;
 }
 
 void BDSRunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
