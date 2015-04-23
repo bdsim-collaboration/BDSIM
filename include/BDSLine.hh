@@ -7,8 +7,10 @@
 /**
  * @brief a class that hold multiple accelerator components
  * 
- * Not physically used in Geant4, only as placeholder. 
+ * Not physically used in Geant4, only as placeholder.
  * Therefore virtual methods are not specified, but could be in the future.
+ *
+ * Memory of components is not owned
  */
 
 class BDSLine :public BDSAcceleratorComponent

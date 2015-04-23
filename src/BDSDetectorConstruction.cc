@@ -45,8 +45,6 @@
 #include "G4TransportationManager.hh"
 #include "G4PropagatorInField.hh"
 #include "G4SDManager.hh"
-#include "G4RunManager.hh"
-
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
 #include "globals.hh"
@@ -262,6 +260,7 @@ void BDSDetectorConstruction::BuildBeamline(){
 	  for (BDSLine::BDSLineIterator i = line->begin(); i != line->end(); ++i) {
 	    BDSBeamline::Instance()->addComponent(*i);}
 	}
+	delete temp;
       }
       else {
 	//single component

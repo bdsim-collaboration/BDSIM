@@ -23,10 +23,6 @@ public:
   BDSDump(G4String aName,G4double aLength, G4String aTunnelMaterial="");
   ~BDSDump();
 
-  static int GetNumberOfDumps();
-  /// separate counter used in BDSRunManager
-  static int nUsedDumps;
-
 private:
 
   virtual void BuildMarkerLogicalVolume();

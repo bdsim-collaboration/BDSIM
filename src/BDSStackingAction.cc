@@ -13,10 +13,10 @@
 
 
 #include "BDSGlobalConstants.hh"
-#include "BDSStackingAction.hh"
 #include "BDSPhotonCounter.hh"
+#include "BDSRunManager.hh"
+#include "BDSStackingAction.hh"
 #include "G4SDManager.hh"
-#include "G4RunManager.hh"
 #include "G4Run.hh"
 #include "G4Event.hh"
 #include "G4ThreeVector.hh"
@@ -47,9 +47,9 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
   G4cout<<"N urgent tracks : "<<SM->GetNUrgentTrack() << G4endl;
   G4cout<<"N postponed tracks : "<<SM->GetNPostponedTrack() << G4endl;
   G4cout<<"Events to process : "<<
-    G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEventToBeProcessed()<<G4endl;
+    BDSRunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEventToBeProcessed()<<G4endl;
   G4cout<<"Number of event : "<<
-    G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEvent()<<G4endl;
+    BDSRunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEvent()<<G4endl;
 #endif
 
   //Kill all neutrinos
