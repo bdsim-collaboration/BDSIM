@@ -614,8 +614,6 @@ parameters:
 		  if(!strcmp($1->name,"e1")) {;}  //
                     else
 		  if(!strcmp($1->name,"e2")) {;}  //
-                    else
-		  if(!strcmp($1->name,"hgap")) {params.hgap = $3; params.hgapset=1;}  //
 		    else
 		  if(!strcmp($1->name,"A")) {params.A = $3; params.Aset = 1;}  // mass number
 		    else
@@ -629,10 +627,6 @@ parameters:
 		    else
 		  if(!strcmp($1->name,"waveLength")) {params.waveLength = $3; params.waveLengthset = 1;}
 		    else
-		  if(!strcmp($1->name,"taperlength")) {params.taperlength = $3; params.taperlengthset = 1;}
-		    else
-		  if(!strcmp($1->name,"flatlength")) {params.flatlength = $3; params.flatlengthset = 1;}
-                    else
 		  if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence
 		    else
                   if(!strcmp($1->name,"tscint")) { params.tscint = $3; params.tscintset = 1;} // thickness for a scintillator screen 
@@ -852,8 +846,6 @@ parameters:
                     else
 		  if(!strcmp($1->name,"e2")) {;}  //
 		    else
-		  if(!strcmp($1->name,"hgap")) {params.hgap = $3; params.hgapset=1;}  //
-		    else
 		  if(!strcmp($1->name,"A")) {params.A = $3; params.Aset = 1;}  // mass number
 		    else
 		  if(!strcmp($1->name,"Z")) {params.Z = $3; params.Zset = 1;}  // atomic number
@@ -865,12 +857,6 @@ parameters:
 		  if(!strcmp($1->name,"P")) {params.pressure = $3; params.pressureset = 1;}  // pressure
 		    else
 		  if(!strcmp($1->name,"waveLength")) {params.waveLength = $3; params.waveLengthset = 1;}
-		    else
-		  if(!strcmp($1->name,"taperlength")) {params.taperlength = $3; params.taperlengthset = 1;}
-		    else
-		  if(!strcmp($1->name,"flatlength")) {params.flatlength = $3; params.flatlengthset = 1;}
-                  /*   else */
-		  /* if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence */
 		  else {
 		      //                  if(VERBOSE)
 		      printf("Warning : unknown parameter %s\n",$1->name);
