@@ -527,7 +527,7 @@ void BDSOutputROOT::WriteHistogram(BDSHistogram1D* hIn)
   //always construct the histogram by bin edges - works both with constant
   //and variable bin width histograms
   // &vector[0] gives an array to the contents of the vector - ensured as
-  // standard is that the vector's contents are continuous
+  // standard is that the vector's contents are contiguous
   TH1D* h = new TH1D(hname, hIn->GetTitle(), hIn->GetNBins(), &binLowerEdges[0]);
 
   G4int i;
