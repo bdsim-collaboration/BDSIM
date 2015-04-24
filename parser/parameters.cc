@@ -30,14 +30,11 @@ void Parameters::flush() {
   componentsFractions.erase(componentsFractions.begin(),componentsFractions.end());
   componentsWeights.erase(componentsWeights.begin(),componentsWeights.end());
 
-  flatlength = 0; flatlengthset = 0;
-  taperlength = 0; taperlengthset = 0;
   angle = 0; angleset = 0;
   phiAngleIn = 0; phiAngleInset = 0;
   phiAngleOut = 0; phiAngleOutset = 0;
   xsize = 0; xsizeset = 0;
   ysize = 0; ysizeset = 0;
-  hgap = 0; hgapset = 0;    
   xdir = 0; xdirset = 0;
   ydir = 0; ydirset = 0;
   zdir = 0; zdirset = 0; 
@@ -129,9 +126,6 @@ void Parameters::inherit_properties(struct Element& e)
   if(!phiset) { phi = e.phi; phiset = 1; }
   if(!psiset) { psi = e.psi; psiset = 1; }
   if(!thetaset) { theta = e.theta; thetaset = 1; }
-  if(!hgapset) { hgap = e.hgap; hgapset = 1; }
-  if(!flatlengthset) { flatlength = e.flatlength; flatlengthset = 1; }
-  if(!taperlengthset) { taperlength = e.taperlength; taperlengthset = 1; }
 
   if(!tscintset) { tscint = e.tscint; tscintset = 1; }
   if(!twindowset) { twindow = e.twindow; twindowset = 1; }
