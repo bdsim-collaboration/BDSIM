@@ -219,8 +219,6 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.gradient = params.gradient;
   // SBend, RBend, (Awake)Screen
   e.angle = params.angle;
-  // SBend, RBend
-  e.hgap = params.hgap;
   // SBend, RBend, HKick, VKick, Quad
   e.k1 = params.k1;
   // SBend, RBend, HKick, VKick, Solenoid, MuSpoiler
@@ -250,9 +248,6 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.ksl = params.ksl;
   // Solenoid
   e.ks = params.ks;
-  // RCOL
-  e.flatlength = params.flatlength;
-  e.taperlength = params.taperlength;
   // Laser
   e.waveLength = params.waveLength;
   // Element, Tunnel

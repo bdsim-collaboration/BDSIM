@@ -30,10 +30,9 @@ struct Element {
   std::string outerMaterial;
   double outerDiameter;
   
-  double tilt,xsize,ysize,r,hgap,B, phiAngleIn, phiAngleOut;
+  double tilt,xsize,ysize,r,B, phiAngleIn, phiAngleOut;
   double tscint, twindow, bmapZOffset; 
   double xdir, ydir, zdir, waveLength; /// for laser wire and 3d transforms
-  double flatlength,taperlength; ///for realistic collimators
   double gradient; /// for rf cavities
   double phi, theta, psi; /// for 3d transforms
 

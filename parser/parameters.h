@@ -77,12 +77,8 @@ struct Parameters {
   ///which precision physics region the element is in (0 = none)
   int precisionRegion; int precisionRegionset;
 
-  
-  double flatlength; int flatlengthset;
-  double taperlength; int taperlengthset;
   double gradient; int gradientset;
 
-  double hgap, hgapset;
   double xsize, ysize; int xsizeset, ysizeset; ///> aperture (or laser spotsize for laser)
   double xdir, ydir, zdir, waveLength; int xdirset, ydirset, zdirset, waveLengthset;
 

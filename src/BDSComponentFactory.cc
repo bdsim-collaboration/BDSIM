@@ -886,8 +886,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
 	 << " name= " << _element.name 
 	 << " xaper= " << _element.xsize <<"m"
 	 << " yaper= " << _element.ysize <<"m"
-	 << " flatl= " << _element.flatlength <<"m"
-	 << " taper= " << _element.taperlength <<"m"
 	 << " material= " << _element.material
 	 << " tunnel material " << _element.tunnelMaterial
 	 << G4endl;
@@ -1126,6 +1124,8 @@ BDSBeamPipeInfo BDSComponentFactory::PrepareBeamPipeInfo(Element& element)
   
   info.vacuumMaterial    = PrepareVacuumMaterial(element);
   info.beamPipeThickness = element.beampipeThickness*CLHEP::m;
+  if (info.beamPipeThickness < 1e-10)
+    {info.beamPipeThickness = BDSGlobalConstants::Instance()->GetBeamPipeThickness();}
   info.beamPipeMaterial  = PrepareBeamPipeMaterial(element);
   return info;
 }

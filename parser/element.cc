@@ -118,11 +118,7 @@ void Element::flush() {
 
   gradient = 0;
 
-  flatlength = 0;
-  taperlength = 0;
-  hgap = 0;
-
-  // aperture model
+  // new aperture model
   beampipeThickness = 0;
   aper1 = 0;
   aper2 = 0;
@@ -210,9 +206,6 @@ double Element::property_lookup(char* property_name)const{
   if(!strcmp(property_name,"waveLength")) return waveLength;
   if(!strcmp(property_name,"tilt")) return tilt;
   if(!strcmp(property_name,"gradient")) return gradient;
-  if(!strcmp(property_name,"hgap")) return hgap;
-  if(!strcmp(property_name,"flatlength")) return flatlength;
-  if(!strcmp(property_name,"taperlength")) return taperlength;
 
   if(!strcmp(property_name,"A")) return A;
   if(!strcmp(property_name,"Z")) return Z;
