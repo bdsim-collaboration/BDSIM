@@ -53,6 +53,10 @@ protected:
   // we have to keep a registry of all logical volumes to be able to associate
   // information with them at construction time - for example S position - that
   // can't be stored in the Logical Volume class itself without modifying Geant
+
+private:
+  /// Private default constructor - force use of specified constructors
+  BDSGeometryComponent();
 };
 
 inline G4VSolid* BDSGeometryComponent::GetContainerSolid()
