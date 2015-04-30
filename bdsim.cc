@@ -92,7 +92,7 @@ void BDS_handle_aborts(int signal_number) {
   std::cout << "Trying to write and close output file" << std::endl;
   bdsOutput->Write();
   std::cout << "Abort Geant4 run" << std::endl;
-  G4RunManager::GetRunManager()->AbortRun();
+  BDSRunManager::GetRunManager()->AbortRun();
   std::cout << "Ave, Imperator, morituri te salutant!" << std::endl;
 }
 

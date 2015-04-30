@@ -72,7 +72,7 @@ void BDSAnalysisManager::Fill1DHistogram(G4int histoIndex, G4double value, G4dou
   histograms1d[histoIndex]->Fill(value,weight);
 }
 
-void  BDSAnalysisManager::CheckHistogramIndex(G4int histoIndex)
+void BDSAnalysisManager::CheckHistogramIndex(G4int histoIndex)
 {
   if ( ((size_t)histoIndex > histograms1d.size()) || histoIndex < 0 )
   {

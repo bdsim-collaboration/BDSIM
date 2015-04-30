@@ -31,8 +31,6 @@ BDSMuSpoiler::BDSMuSpoiler(G4String        name,
 			   G4double        tunnelOffsetX):
   BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
   itsBField(bField)
-  // outerMagField(NULL),
-  // outerFieldMgr(NULL)
 {;}
 
 void BDSMuSpoiler::BuildBPFieldAndStepper()
@@ -46,9 +44,6 @@ void BDSMuSpoiler::BuildOuterLogicalVolume(bool /*outerMaterialIsVacuum*/)
 {
   //whole point is the outerlogical volume so ignore the outerMaterialIsVacuum flag
   
-  //void BDSMuSpoiler::BuildMuSpoiler()
-  //{
-
   BDSMultipole::BuildOuterLogicalVolume(false);
 
   // prepare and attach field
@@ -77,6 +72,4 @@ void BDSMuSpoiler::SetVisAttributes()
 
 BDSMuSpoiler::~BDSMuSpoiler()
 {
-  // delete outerMagField;
-  // delete outerFieldMgr;
 }

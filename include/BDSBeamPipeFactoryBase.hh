@@ -6,6 +6,8 @@
 #include "globals.hh"         // geant4 globals / types
 #include "G4Material.hh"      // materials
 
+class G4UserLimits;
+
 /**
  * @brief abstract base class for beampipe factory classes
  * 
@@ -57,7 +59,7 @@ public:
 						 G4Material* vacuumMaterialIn = NULL,
 					         G4double    beamPipeThicknessIn = 0,
 					         G4Material* beamPipeMaterialIn = NULL
-					         ) = 0;
+					         );
 
   /// create beampipe with an angled face on output side only
   virtual BDSBeamPipe* CreateBeamPipeAngledOut(  G4String    nameIn,
@@ -70,7 +72,7 @@ public:
 						 G4Material* vacuumMaterialIn = NULL,
 					         G4double    beamPipeThicknessIn = 0,
 					         G4Material* beamPipeMaterialIn = NULL
-					         ) = 0;
+					         );
   
   /// create beampipe with an angled face on both input adn output sides
   virtual BDSBeamPipe* CreateBeamPipeAngledInOut(G4String    nameIn,
@@ -85,6 +87,57 @@ public:
 						 G4double    beamPipeThicknessIn = 0,
 						 G4Material* beamPipeMaterialIn = NULL
 						 ) = 0;
+
+protected:
+  /// base constructor
+  BDSBeamPipeFactoryBase();
+  
+  /// finalise beampipe construction
+  void CommonConstruction(G4String    nameIn,
+			  G4Material* vacuumMaterialIn,
+			  G4Material* beamPipeMaterialIn,
+			  G4double    lengthIn);
+
+  /// build beampipe and register logical volumes
+  BDSBeamPipe* BuildBeamPipeAndRegisterVolumes(std::pair<double,double> extX,
+					       std::pair<double,double> extY,
+					       std::pair<double,double> extZ,
+					       G4double containerRadius);
+
+  /// Calculate input and output normal vector
+  std::pair<G4ThreeVector,G4ThreeVector> CalculateFaces(G4double angleInIn,
+							G4double angleOutIn);
+
+  void TestInputParameters(G4Material*& vacuumMaterialIn,
+			   G4double&    beamPipeThicknessIn,
+			   G4Material*& beamPipeMaterialIn);
+  
+  // methods called by CommonConstruction, can be implmented by derived classes
+  
+  /// build logical volumes
+  virtual void BuildLogicalVolumes(G4String    nameIn,
+				   G4Material* vacuumMaterialIn,
+				   G4Material* beamPipeMaterialIn);
+  /// set visual attributes
+  virtual void SetVisAttributes();
+  /// set beampipe to sensitive detector (if specified)
+  virtual void SetSensitivity();
+  /// set user limits
+  virtual G4UserLimits* SetUserLimits(G4double lengthIn);
+  /// place volumes
+  virtual void PlaceComponents(G4String nameIn);
+
+protected:
+  G4double         lengthSafety;
+  G4VSolid*        vacuumSolid;
+  G4VSolid*        beamPipeSolid;
+  G4VSolid*        containerSolid;
+  /// longer (in length) version of container solid for unambiguous subtraction
+  G4VSolid*        containerSubtractionSolid; 
+  G4LogicalVolume* vacuumLV;
+  G4LogicalVolume* beamPipeLV;
+  G4LogicalVolume* containerLV;
+
 };
 
 #endif

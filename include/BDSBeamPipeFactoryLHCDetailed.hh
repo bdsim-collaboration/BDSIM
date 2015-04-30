@@ -33,30 +33,6 @@ public:
 				      G4Material* beamPipeMaterialIn = NULL   // beampipe material
 				      );
   
-  virtual BDSBeamPipe* CreateBeamPipeAngledIn(G4String    nameIn,
-					      G4double    lengthIn,
-					      G4double    angleInIn,   // the normal angle of the input face
-					      G4double    aper1 = 0,
-					      G4double    aper2 = 0,
-					      G4double    aper3 = 0,
-					      G4double    aper4 = 0,
-					      G4Material* vacuumMaterialIn = NULL,
-					      G4double    beamPipeThicknessIn = 0,
-					      G4Material* beamPipeMaterialIn = NULL
-					      );
-  
-  virtual BDSBeamPipe* CreateBeamPipeAngledOut(G4String    nameIn,
-					       G4double    lengthIn,
-					       G4double    angleOutIn, // the normal angle of the output face
-					       G4double    aper1 = 0,
-					       G4double    aper2 = 0,
-					       G4double    aper3 = 0,
-					       G4double    aper4 = 0,
-					       G4Material* vacuumMaterialIn = NULL,
-					       G4double    beamPipeThicknessIn = 0,
-					       G4Material* beamPipeMaterialIn = NULL
-					       );
-  
   virtual BDSBeamPipe* CreateBeamPipeAngledInOut(G4String    nameIn,
 						 G4double    lengthIn,
 						 G4double    angleInIn,  // the normal angle of the input face
@@ -81,7 +57,6 @@ private:
 			   G4double&    aper2In,
 			   G4double&    aper3In);
 
-  G4double lengthSafety;
   G4double coldBoreThickness;
   G4double coolingPipeThickness;
   G4double coolingPipeRadius;
@@ -104,26 +79,20 @@ private:
 				 G4double      beamPipeThicknessIn,
 				 G4ThreeVector inputfaceIn,
 				 G4ThreeVector outputfaceIn);
-  G4VSolid*        vacuumSolid;
+
+  virtual void          BuildLogicalVolumes(G4String    nameIn,
+					    G4Material* vacuumMaterialIn,
+					    G4Material* beamPipeMaterialIn);
+  virtual void          SetVisAttributes();
+  virtual G4UserLimits* SetUserLimits(G4double lengthIn);
+  virtual void          PlaceComponents(G4String nameIn);
+
   G4VSolid*        copperSkinSolid;
   G4VSolid*        screenSolid;
   G4VSolid*        coolingPipeSolid;
-  G4VSolid*        beamPipeSolid;
-  G4VSolid*        containerSolid;
-  G4VSolid*        containerSubtractionSolid;
-  G4LogicalVolume* vacuumLV;
   G4LogicalVolume* copperSkinLV;
   G4LogicalVolume* screenLV;
   G4LogicalVolume* coolingPipeLV;
-  G4LogicalVolume* beamPipeLV;
-  G4LogicalVolume* containerLV;
-
-  /// orientation -1,0,1 value - always use |angle| with trigonometric and then
-  /// multiply by this factor, 0 by default - determine this in one function
-  /// to avoid mistakes
-  G4int orientationIn;
-  G4int orientationOut;
-  void CalculateOrientations(G4double angleIn, G4double angleOut);
 };
   
 #endif

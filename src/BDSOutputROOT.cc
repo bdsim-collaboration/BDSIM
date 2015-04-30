@@ -559,7 +559,7 @@ void BDSOutputROOT::Commit()
 void BDSOutputROOT::Write()
 {
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
   if(theRootOutputFile && theRootOutputFile->IsOpen())

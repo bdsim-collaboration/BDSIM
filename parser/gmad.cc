@@ -220,7 +220,7 @@ double GetAper(int i)
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
-  return it->aper;  
+  return it->aper1;
 }
 
 double GetBeampipeThickness(int i)

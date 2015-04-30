@@ -556,9 +556,10 @@ parameters:
 		  else
 		   if(!strcmp($1->name,"beampipeThickness") ) 
 		      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
-		    else
+		   else
 		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
-		      { params.aper = $3; params.aperset = 1;}
+		    // for backwards compatibility
+		    { params.aper1 = $3; params.aper1set = 1;}
 		    else
 		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
 		    { params.aper1 = $3; params.aper1set = 1;}
@@ -575,7 +576,9 @@ parameters:
 		  if(!strcmp($1->name,"boxSize")) 
 		    { params.boxSize = $3; params.boxSizeset = 1;}
 		    else
-		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
+		  if(!strcmp($1->name,"outR") )
+		    // for backwards compatibility, boxSize = 2*outR
+		    { params.boxSize = 2 * $3; params.boxSizeset = 1;}
 		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
@@ -611,8 +614,6 @@ parameters:
 		  if(!strcmp($1->name,"e1")) {;}  //
                     else
 		  if(!strcmp($1->name,"e2")) {;}  //
-                    else
-		  if(!strcmp($1->name,"hgap")) {params.hgap = $3; params.hgapset=1;}  //
 		    else
 		  if(!strcmp($1->name,"A")) {params.A = $3; params.Aset = 1;}  // mass number
 		    else
@@ -626,10 +627,6 @@ parameters:
 		    else
 		  if(!strcmp($1->name,"waveLength")) {params.waveLength = $3; params.waveLengthset = 1;}
 		    else
-		  if(!strcmp($1->name,"taperlength")) {params.taperlength = $3; params.taperlengthset = 1;}
-		    else
-		  if(!strcmp($1->name,"flatlength")) {params.flatlength = $3; params.flatlengthset = 1;}
-                    else
 		  if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence
 		    else
                   if(!strcmp($1->name,"tscint")) { params.tscint = $3; params.tscintset = 1;} // thickness for a scintillator screen 
@@ -793,7 +790,8 @@ parameters:
 			      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
 		    else
 		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
-			      { params.aper = $3; params.aperset = 1;}
+		    // for backwards compatibility
+		    { params.aper1 = $3; params.aper1set = 1;}
 		    else
 		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
 		    { params.aper1 = $3; params.aper1set = 1;}
@@ -810,7 +808,9 @@ parameters:
 		  if(!strcmp($1->name,"boxSize")) 
 		    { params.boxSize = $3; params.boxSizeset = 1;}
 		    else
-		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
+		  if(!strcmp($1->name,"outR") )
+		    // for backwards compatibility, boxSize = 2*outR
+		    { params.boxSize = 2 * $3; params.boxSizeset = 1;}
 		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
@@ -846,8 +846,6 @@ parameters:
                     else
 		  if(!strcmp($1->name,"e2")) {;}  //
 		    else
-		  if(!strcmp($1->name,"hgap")) {params.hgap = $3; params.hgapset=1;}  //
-		    else
 		  if(!strcmp($1->name,"A")) {params.A = $3; params.Aset = 1;}  // mass number
 		    else
 		  if(!strcmp($1->name,"Z")) {params.Z = $3; params.Zset = 1;}  // atomic number
@@ -859,12 +857,6 @@ parameters:
 		  if(!strcmp($1->name,"P")) {params.pressure = $3; params.pressureset = 1;}  // pressure
 		    else
 		  if(!strcmp($1->name,"waveLength")) {params.waveLength = $3; params.waveLengthset = 1;}
-		    else
-		  if(!strcmp($1->name,"taperlength")) {params.taperlength = $3; params.taperlengthset = 1;}
-		    else
-		  if(!strcmp($1->name,"flatlength")) {params.flatlength = $3; params.flatlengthset = 1;}
-                  /*   else */
-		  /* if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence */
 		  else {
 		      //                  if(VERBOSE)
 		      printf("Warning : unknown parameter %s\n",$1->name);
@@ -892,6 +884,7 @@ parameters:
 		   else 
 		     if(!strcmp($1->name,"type")) 
 		       {
+			 printf("Warning : type parameter is currently ignored");
 			 //ignore the "type attribute for the moment"
 		       }
 		   else
@@ -900,7 +893,7 @@ parameters:
 			 params.materialset = 1;
 			 params.material = $3;
 		       }
-		   if(!strcmp($1->name,"apertureType"))
+		   else if(!strcmp($1->name,"apertureType"))
 		       {
 			 params.apertureTypeset = 1;
 			 params.apertureType = $3;
@@ -986,6 +979,7 @@ parameters:
 		     else 
 		     if(!strcmp($1->name,"type")) 
 		       {
+			 printf("Warning : type parameter is currently ignored");
 			 //ignore the "type attribute for the moment"
 		       }
                      else

@@ -779,14 +779,14 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 
   // geometry
   G4double aper = BDSGlobalConstants::Instance()->GetBeamPipeRadius();
-  if( _element.aper > 1.e-10*CLHEP::m ) aper = _element.aper * CLHEP::m;
+  if( _element.aper1 > 1.e-10*CLHEP::m ) aper = _element.aper1 * CLHEP::m;
 
 #ifdef BDSDEBUG 
   G4cout << "---->creating Element,"
 	 << " name= " << _element.name
 	 << " l= " << _element.l << "m"
 	 << " aper= " << aper/CLHEP::m << "m"
-	 << " outR= " << _element.outR << "m"
+	 << " outR= " << 0.5 * _element.boxSize << "m"
 	 << " bmapZOffset = "	<<  _element.bmapZOffset * CLHEP::m
 	 << " tunnel material " << _element.tunnelMaterial
 	 << " tunnel cavity material " << _element.tunnelCavityMaterial
@@ -805,7 +805,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 			  _element.bmapZOffset * CLHEP::m,
 			  _element.l * CLHEP::m,
 			  aper,
-			  _element.outR * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, tunnelOffsetX, _element.tunnelCavityMaterial));
+			  0.5 * _element.boxSize * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, tunnelOffsetX, _element.tunnelCavityMaterial));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
@@ -871,8 +871,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
 	 << " name= " << _element.name 
 	 << " xaper= " << _element.xsize <<"m"
 	 << " yaper= " << _element.ysize <<"m"
-	 << " flatl= " << _element.flatlength <<"m"
-	 << " taper= " << _element.taperlength <<"m"
 	 << " material= " << _element.material
 	 << " tunnel material " << _element.tunnelMaterial
 	 << G4endl;
@@ -885,7 +883,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
 			     _element.xsize * CLHEP::m,
 			     _element.ysize * CLHEP::m,
 			     theMaterial,
-			     _element.outR*CLHEP::m,
+			     0.5*_element.boxSize*CLHEP::m,
 			     _element.blmLocZ,
 			     _element.blmLocTheta,
 			     _element.tunnelMaterial) );
@@ -902,15 +900,15 @@ BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
   }
 #ifdef BDSDEBUG 
   G4cout << "---->creating muspoiler,"
-	 << " name= " << _element.name 
-	 << " length= " << _element.l
-	 << " B= " << _element.B
+	 << " name = " << _element.name 
+	 << " length = " << _element.l
+	 << " B = " << _element.B
 	 << " tunnel material " << _element.tunnelMaterial
 	 << G4endl;
 #endif
         
 #ifdef BDSDEBUG
-  G4cout << "BDSMuSpoiler: " << _element.name << " " << _element.l*CLHEP::m << " " << " " << _element.B*CLHEP::tesla << G4endl;
+  G4cout << "BDSMuSpoiler: " << _element.name << " " << _element.l*CLHEP::m << " mm " << " " << _element.B*CLHEP::tesla << " MT " << G4endl;
 #endif
   
   return (new BDSMuSpoiler(_element.name,
@@ -1075,6 +1073,8 @@ BDSBeamPipeInfo BDSComponentFactory::PrepareBeamPipeInfo(Element& element)
   
   info.vacuumMaterial    = PrepareVacuumMaterial(element);
   info.beamPipeThickness = element.beampipeThickness*CLHEP::m;
+  if (info.beamPipeThickness < 1e-10)
+    {info.beamPipeThickness = BDSGlobalConstants::Instance()->GetBeamPipeThickness();}
   info.beamPipeMaterial  = PrepareBeamPipeMaterial(element);
   return info;
 }

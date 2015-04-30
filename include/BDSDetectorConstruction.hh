@@ -76,7 +76,7 @@ private:
   G4UniformMagField* magField;      //pointer to the magnetic field
   G4UserLimits* BDSUserLimits;
 
-  G4VSensitiveDetector *  BDSSensitiveDetector;
+  G4VSensitiveDetector* BDSSensitiveDetector;
   
   // Gflash members                                                                                                                                                     
   std::vector<GFlashHomoShowerParameterisation*> theParameterisation;

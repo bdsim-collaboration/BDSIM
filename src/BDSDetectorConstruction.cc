@@ -44,8 +44,6 @@
 #include "G4TransportationManager.hh"
 #include "G4PropagatorInField.hh"
 #include "G4SDManager.hh"
-#include "G4RunManager.hh"
-
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
 #include "globals.hh"
@@ -261,6 +259,7 @@ void BDSDetectorConstruction::BuildBeamline(){
 	  for (BDSLine::BDSLineIterator i = line->begin(); i != line->end(); ++i) {
 	    BDSBeamline::Instance()->addComponent(*i);}
 	}
+	delete temp;
       }
       else {
 	//single component
@@ -310,13 +309,13 @@ void BDSDetectorConstruction::BuildWorld(){
 				   worldName);	       //its name
 
   // visual attributes
-#ifdef BDSDEBUG
-  G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
-  debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
-  logicWorld->SetVisAttributes(debugWorldVis);
-#else
-  logicWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-#endif
+  if (BDSExecOptions::Instance()->GetVisDebug()) {
+    G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
+    debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
+    logicWorld->SetVisAttributes(debugWorldVis);
+  } else {
+    logicWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+  }
 	
   // set limits
 #ifndef NOUSERLIMITS

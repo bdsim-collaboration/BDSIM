@@ -11,7 +11,7 @@
  * @brief A generic geometry component for a bdsim model
  * 
  * This class contains the minimum information required
- * for any object to be place in the bdsim model
+ * for any object to be placed in the bdsim model
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
@@ -52,7 +52,7 @@ protected:
   std::vector<G4LogicalVolume*> allLogicalVolumes;
   // we have to keep a registry of all logical volumes to be able to associate
   // information with them at construction time - for example S position - that
-  // can't be stored in the Logical Volume class itself without modifying geant
+  // can't be stored in the Logical Volume class itself without modifying Geant
 };
 
 inline G4VSolid* BDSGeometryComponent::GetContainerSolid()

@@ -3,6 +3,7 @@
 #include "BDSDebug.hh"
 #include "BDSEventAction.hh"
 #include "BDSOutputBase.hh" 
+#include "BDSRunManager.hh"
 #include "BDSTrajectory.hh"
 
 #include <list>
@@ -13,7 +14,6 @@
 #include "G4Event.hh"
 #include "G4EventManager.hh"
 #include "G4Run.hh"
-#include "G4RunManager.hh"
 #include "G4HCofThisEvent.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4Trajectory.hh"
@@ -161,13 +161,13 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   BDSEnergyCounterHitsCollection* primaryCounterHits = 
     (BDSEnergyCounterHitsCollection*)(HCE->GetHC(mySDMan->GetCollectionID("primary_counter")));
 
+  BDSAnalysisManager* analMan = BDSAnalysisManager::Instance();
   //if we have energy deposition hits, write them
   if(energyCounterHits)
     {
       bdsOutput->WriteEnergyLoss(energyCounterHits); // write hits
 
       //bin hits in histograms
-      BDSAnalysisManager* analMan = BDSAnalysisManager::Instance();
       for (G4int i = 0; i < energyCounterHits->entries(); i++)
 	{
 	  //general eloss histo
@@ -188,11 +188,11 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 	  bdsOutput->WritePrimaryLoss(thePrimaryLoss);
 	  bdsOutput->WritePrimaryHit(thePrimaryHit);
 	  // general histos
-	  BDSAnalysisManager::Instance()->Fill1DHistogram(0,thePrimaryHit->GetS()/CLHEP::m);
-	  BDSAnalysisManager::Instance()->Fill1DHistogram(1,thePrimaryLoss->GetS()/CLHEP::m);
+	  analMan->Fill1DHistogram(0,thePrimaryHit->GetS()/CLHEP::m);
+	  analMan->Fill1DHistogram(1,thePrimaryLoss->GetS()/CLHEP::m);
 	  // per element histos
-      	  BDSAnalysisManager::Instance()->Fill1DHistogram(3,thePrimaryHit->GetS()/CLHEP::m);
-	  BDSAnalysisManager::Instance()->Fill1DHistogram(4,thePrimaryLoss->GetS()/CLHEP::m);
+      	  analMan->Fill1DHistogram(3,thePrimaryHit->GetS()/CLHEP::m);
+	  analMan->Fill1DHistogram(4,thePrimaryLoss->GetS()/CLHEP::m);
 	}
     }
   }
@@ -202,13 +202,7 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #endif
   
   // if events per ntuples not set (default 0) - only write out at end 
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " getting number of events per ntuple..." << G4endl;
-#endif
   int evntsPerNtuple = BDSGlobalConstants::Instance()->GetNumberOfEventsPerNtuple();
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " finished getting number of events per ntuple." << G4endl;
-#endif
 
   if (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0)
     {
@@ -230,17 +224,17 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   }
     
   // Save interesting trajectories
-  G4TrajectoryContainer* TrajCont=evt->GetTrajectoryContainer();
-  if(!TrajCont) return;
-  TrajectoryVector* TrajVec=TrajCont->GetVector();
-  TrajectoryVector::iterator iT1;
   
   if(BDSGlobalConstants::Instance()->GetStoreTrajectory() ||
      BDSGlobalConstants::Instance()->GetStoreMuonTrajectories() ||
      BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories()){
 #ifdef BDSDEBUG
-  G4cout<<"BDSEventAction : storing trajectories"<<G4endl;
+    G4cout<<"BDSEventAction : storing trajectories"<<G4endl;
 #endif
+    G4TrajectoryContainer* TrajCont=evt->GetTrajectoryContainer();
+    if(!TrajCont) return;
+    TrajectoryVector* TrajVec=TrajCont->GetVector();
+    TrajectoryVector::iterator iT1;
     // clear out trajectories that don't reach point x
     for(iT1=TrajVec->begin();iT1<TrajVec->end();iT1++){
       this->Traj=(BDSTrajectory*)(*iT1);
@@ -251,7 +245,6 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
          ){ 
         this->interestingTrajectories.push_back(Traj);
       }
-      
     }
     //Output interesting trajectories
     if(interestingTrajectories.size()>0){
@@ -262,7 +255,7 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 
   //clear out the remaining trajectories
 #ifdef BDSDEBUG 
-  G4cout<<"BDSEventAction : deleting trajectories"<<G4endl;
+  //  G4cout<<"BDSEventAction : deleting trajectories"<<G4endl;
 #endif
   //  TrajCont->clearAndDestroy();
 #ifdef BDSDEBUG 
@@ -275,7 +268,7 @@ void BDSEventAction::AddPrimaryHits(){
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   //Save the primary particle as a hit 
-  G4PrimaryVertex* primaryVertex= G4RunManager::GetRunManager()->GetCurrentEvent()->GetPrimaryVertex();
+  G4PrimaryVertex* primaryVertex= BDSRunManager::GetRunManager()->GetCurrentEvent()->GetPrimaryVertex();
   G4PrimaryParticle* primaryParticle=primaryVertex->GetPrimary();
   G4ThreeVector momDir = primaryParticle->GetMomentumDirection();
   G4double E = primaryParticle->GetTotalEnergy();
@@ -288,7 +281,7 @@ void BDSEventAction::AddPrimaryHits(){
   G4double t = primaryVertex->GetT0();
   G4double weight = primaryParticle->GetWeight();
   G4int PDGType=primaryParticle->GetPDGcode();
-  G4int nEvent = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+  G4int nEvent = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   G4String samplerName="primaries";
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
   bdsOutput->WritePrimary(samplerName, E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);

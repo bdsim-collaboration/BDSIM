@@ -19,8 +19,6 @@ struct Element {
   double l; // l in metres
   double ks,k0,k1,k2,k3,angle;
 
-  double aper; //old aperture model
-
   double beampipeThickness;
   double aper1, aper2, aper3, aper4; // new aperture model
   std::string apertureType;
@@ -28,10 +26,9 @@ struct Element {
 
   double boxSize; //outer *diameter / full width* of component
   
-  double tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut;
+  double tilt,xsize,ysize,r,B, phiAngleIn, phiAngleOut;
   double tscint, twindow, bmapZOffset; 
   double xdir, ydir, zdir, waveLength; /// for laser wire and 3d transforms
-  double flatlength,taperlength; ///for realistic collimators
   double gradient; /// for rf cavities
   double phi, theta, psi; /// for 3d transforms
   double tunnelRadius;
