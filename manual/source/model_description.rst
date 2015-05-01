@@ -247,7 +247,7 @@ Examples
 """"""""
 ::
 
-   s1: sbend, l=14.5*m, angle=0.005, magnetGeometryType="LHCRight";
+   s1: sbend, l=14.5*m, angle=0.005, magnetGeometryType="lhcright";
    mb201x: sbend, l=304.2*cm, b=1.5*Tesla;
 
 quadrupole
@@ -604,7 +604,7 @@ Examples
    
 
 Aperture Parameters
-^^^^^^^^^^^^^^^^^^^
+-------------------
 
 For elements that contain a beam pipe, several aperture models can be used. These aperture
 parameters can be set as the default for every element using the :code:`option` command
@@ -637,20 +637,23 @@ are degenerate.
 +-------------------+--------------+-------------------+-----------------+---------------+---------------+
 | `elliptical`      | 2            | x semi-axis       | y semi-axis     | NA            | NA            |
 +-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `lhcscreensimple` | 3            | x half width of   | y half width of | radius of     | NA            |
+| `lhc`             | 3            | x half width of   | y half width of | radius of     | NA            |
 |                   |              | rectangle         | rectangle       | circle        |               |
 +-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `lhcscreen`       | 3            | x half width of   | y half width of | radius of     | NA            |
+| `lhcdetailed`     | 3            | x half width of   | y half width of | radius of     | NA            |
 |                   |              | rectangle         | rectangle       | circle        |               |
 +-------------------+--------------+-------------------+-----------------+---------------+---------------+
 | `rectellipse`     | 4            | x half width of   | y half width of | x semi-axis   | y semi-axis   |
 |                   |              | rectangle         | rectangle       | of ellipse    | of ellipse    |
 +-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `racetrack`       | 3            | horizontal offset | vertical offset | radius of     | NA            |
-|                   |              | of circle         | of circle       | circular part |               |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `octagon`         | 4            | x half width      | y half width    | angle 1 [rad] | angle 2 [rad] |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
+
+..
+  to be completed in code before being added to the manual
+  | `racetrack`       | 3            | horizontal offset | vertical offset | radius of     | NA            |
+  |                   |              | of circle         | of circle       | circular part |               |
+  +-------------------+--------------+-------------------+-----------------+---------------+---------------+
+  | `octagon`         | 4            | x half width      | y half width    | angle 1 [rad] | angle 2 [rad] |
+  +-------------------+--------------+-------------------+-----------------+---------------+---------------+
 
 These parameters can be set with the *option* command as the default parameters
 and also on a per element basis, that overrides the defaults for that specific element.
@@ -659,20 +662,153 @@ can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
 These are used differently for each aperture model and match the MADX aperture definitions.
 The required parameters and their meaning are given in the following table.
 
-Currently, only circular and rectangular are implemented.  More models will be completed shortly.
-
-The outer volume is represented (with the exception of the *drift* 
-element) by a cylinder with inner radius equal to the beampipe outer radius and
-with outer radius given by default by the global *boxSize* option, which
-can usually be overridden with the *outR* option.
+MADX `racetrack` and `octagon` are currently unavailable but will be completed shortly.
 
 Magnet Geometry Parameters
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+--------------------------
 
-.. warning:: To be completed
+As well as the beam pipe, magnet beam line elements also have further outer geometry beyond the
+beam pipe. This geometry typically represents the magnetic poles and yoke of the magnet but there
+are several geometry types to choose from.
 
-* `boxSize`
-* `outerDiameter`
+The magnet geometry is controlled by two parameters:
+
+=================  ======================================  =======  ===========
+parameter          description                             default  required
+`outerDiameter`    full width of magnet in metres          1 m      no
+`outerMaterial`    material of magnet                      "iron"   no
+=================  ======================================  =======  ===========
+
+.. deprecated:: 0.65
+		`boxSize` - this is still accepted by the parser for backwards compatability
+		but users should use the `outerDiameter` keyword where possible.
+
+.. note:: The choice of magnet outer geometry will significantly affect the beam loss pattern in the
+	  simulation as particles and radiation may propagate much further along the beam line when
+	  a magnet geometry with poles is used.
+
+.. note:: Should a custom selection of variousmagnet styles be required for your simulation, please
+	  contact us (see :ref:`feature-request` and this can be added - it is a relatively simple processes.
+
+Examples of the different styles of magnet geometry are shown below.
+
+Cylindrical (Default)
+^^^^^^^^^^^^^^^^^^^^^
+
+The beam pipe is surrounded by a cylinder of material (the default is iron) whose outer diameter
+is controlled by the `outerDiameter` parameter. In the case of beam pipes that are not circular
+in cross-section, the cylinder fits directly against the outside of the beam pipe.
+
+This geometry is the default and useful when a specific geometry is not known. The surrounding
+magnet volume acts to produce secondary radiation as well as act as material for energy deposition,
+therefore this geometry is best suited for the most general studies.
+
+This geometry will be selected by **not** specifying any `option, magnetGeometryType`. If however,
+another magnet geometry is used as `option, magnetGeometryType`, the `magnetGeometryType` keyword
+can be used to override this on a per element basis.
+
+.. |cylindricalquad| image:: figures/cylindrical_quadrupole.png
+			     :width: 60%
+				  
+.. |cylindricalsext| image:: figures/cylindrical_sextupole.png
+			     :width: 60%
+			  
++--------------------+---------------------+
+| |cylindricalquad|  +  |cylindricalsext|  +
++--------------------+---------------------+
+
+Poles Circular
+^^^^^^^^^^^^^^
+
+.. |circularquad| image:: figures/polecircular_quadrupole.png
+			  :width: 60%
+
+.. |circularsext| image:: figures/polecircular_sextupole.png
+			  :width: 60%
+			  
++-----------------+------------------+
+| |circularquad|  +  |circularsext|  +
++-----------------+------------------+
+
+Poles Square
+^^^^^^^^^^^^
+
+`outerDiameter` is the full width of the the magnet horizontally as shown in the figure below,
+ **not** the diagonal width.
+
+.. |squarequad| image:: figures/polesquare_quadrupole.png
+			:width: 60%
+
+.. |squaresext| image:: figures/polesquare_sextupole.png
+			:width: 60%
+			  
++---------------+----------------+
+| |squarequad|  +  |squaresext|  +
++---------------+----------------+
+
+Poles Faceted
+^^^^^^^^^^^^^
+
+`outerDiameter` is the full width through a pole on a flat side of the magnet.
+
+.. |facetquad| image:: figures/polefacet_quadrupole.png
+		       :width: 60%
+
+.. |facetsext| image:: figures/polefacet_sextupole.png
+		       :width: 60%
+			  
++--------------+---------------+
+| |facetquad|  +  |facetsext|  +
++--------------+---------------+
+
+Poles Faceted with Crop
+^^^^^^^^^^^^^^^^^^^^^^^
+
+`outerDiameter` is the full width horizontally as shown in the figure.
+
+.. |facetcropquad| image:: figures/polefacetcrop_quadrupole.png
+			   :width: 60%
+
+.. |facetcropsext| image:: figures/polefacetcrop_sextupole.png
+			   :width: 60%
+			  
++------------------+-------------------+
+| |facetcropquad|  +  |facetcropsext|  +
++------------------+-------------------+
+
+LHC Left & Right
+^^^^^^^^^^^^^^^^
+`lhcleft` and `lhcright` provide more detailed magnet geometry appropriate for the LHC. Here, the
+left and right suffixes refer to the shift of the magnet body with respect to the reference beam line.
+Therefore, `lhcleft` has the magnet body shifted to the left in the direction of beam travel and the
+'active' beam pipe is the right one.  Vica versa for the `lhcright` geometry.
+
+For this geometry, only the `sbend` and `quadrupole` have been implemented.  All other magnet geometry
+defaults to the cylindrical set.
+
+This geometry is parameterised to a degree regarding the beam pipe chosen.  Of course, parameters similar
+to the LHC make most sense as does use of the `lhcdetailed` aperture type. Examples are shown with various
+beam pipes and both `sbend` and `quadrupole` geometries.
+
+
+.. |lhcleft_sbend| image:: figures/lhcleft_sbend.png
+			   :width: 60%
+
+.. |lhcleft_quadrupole| image:: figures/lhcleft_quadrupole.png
+				:width: 60%
+
+.. |lhcleft_quadrupole_square| image:: figures/lhcleft_quadrupole_square.png
+				       :width: 60%
+
+.. |lhcleft_sextupole| image:: figures/lhcleft_sextupole.png
+			       :width: 60%
+
++-----------------------------+-----------------------+
+| |lhcleft_sbend|             | |lhcleft_quadrupole|  |
++-----------------------------+-----------------------+
+| |lhcleft_quadrupole_square| | |lhcleft_sextupole|   |
++-----------------------------+-----------------------+
+
 
 
 Lattice Sequence
