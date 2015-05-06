@@ -12,6 +12,7 @@ Last modified 23.10.2007 by Steve Malton
 
 #include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
+#include "BDSTunnelInfo.hh"
 
 #include "G4Colour.hh"
 #include "G4FieldManager.hh"
@@ -96,6 +97,14 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsTunnelFloorOffset = opt.tunnelFloorOffset * CLHEP::m;
   itsTunnelOffsetX = opt.tunnelOffsetX * CLHEP::m;
   itsTunnelOffsetY = opt.tunnelOffsetY * CLHEP::m;
+
+  // new tunnel
+  tunnelMaterial     = "concrete";
+  tunnelSoilMaterial = "soil";
+  tunnelSensitive    = true;
+  tunnelInfo = BDSTunnelInfo();
+
+  
   //Beam loss monitor (BLM) geometry
   itsBlmRad = opt.blmRad * CLHEP::m;
   itsBlmLength = opt.blmLength * CLHEP::m;

@@ -12,14 +12,15 @@
  */
 
 struct tunneltypes_def {
-  enum type { elliptical, circular, retangular, square, ilc, rectangularaboveground};
+  enum type { circular, elliptical, square, rectangular, ilc, rectangularaboveground};
 };
 
 typedef BDSTypeSafeEnum<tunneltypes_def,int> BDSTunnelType;
 
 namespace BDS {
-  BDSTunnelType DetermineBeamPipeType(G4String tunnelType, G4bool globalCheck=false);
+  BDSTunnelType DetermineTunnelType(G4String tunnelType, G4bool globalCheck=false);
 
+  /*
   /// function to check relevant aperture values are set.  This is really a dispatch function
   /// for other aperture specific methods below
   void CheckTunnelInfo(BDSTunnelType tunnelTypeIn,
@@ -45,7 +46,7 @@ namespace BDS {
   /// aperture info check for rectangular tunnel
   void InfoOKForSquare(G4double& tunnelOffsetX, G4double& tunnelOffsetY, G4bool& tunnelFloor, G4double& tunnelFloorOffset,
 		       G4double& tunnel1, G4double& tunnel2);
-
+  */
 }
 #endif
 

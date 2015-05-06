@@ -59,10 +59,13 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSGeometryComponent.hh"
 #include "BDSLine.hh"
 #include "BDSMaterials.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTerminator.hh"
+#include "BDSTunnelType.hh"
+#include "BDSTunnelFactory.hh"
 #include "BDSLogicalVolumeInfo.hh"
 #include "BDSComponentFactory.hh"
 
@@ -593,6 +596,33 @@ void BDSDetectorConstruction::ComponentPlacement(){
       //in BDSDetectorConstruction
       thecurrentitem->PrepareField(PhysiComponentPlace);
     }
+
+  
+  // build demo section of tunnel to check it works
+  BDSTunnelType tunnelType = BDS::DetermineTunnelType("circular");
+  G4Material*   soilMaterial = BDSMaterials::Instance()->GetMaterial("soil");
+  G4Material*   concrete     = BDSMaterials::Instance()->GetMaterial("concrete");
+  BDSGeometryComponent* aPieceOfTunnel = BDSTunnelFactory::Instance()->CreateTunnelSection(tunnelType,
+											   "tunny",
+											   2*CLHEP::m,
+											   1*CLHEP::m,
+											   0.5*CLHEP::m,
+											   concrete,
+											   soilMaterial,
+											   true,
+											   1*CLHEP::m,
+											   3*CLHEP::m,
+											   0);
+
+  new G4PVPlacement(0,  // its rotation
+		    G4ThreeVector(0,0,0), // its position
+		    "tunnel_pv",	    // its name
+		    aPieceOfTunnel->GetContainerLogicalVolume(), // its logical volume
+		    physiWorld,	    // its mother  volume
+		    false,	    // no boolean operation
+		    0,            // copy number
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());//overlap checking
+  
 }
 
 void BDSDetectorConstruction::BuildTunnel(){

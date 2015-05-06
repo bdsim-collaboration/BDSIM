@@ -10,6 +10,7 @@
 
 #include "BDSBeamPipeType.hh"
 #include "BDSParticle.hh"
+#include "BDSTunnelInfo.hh"
 
 class G4FieldManager;
 class G4LogicalVolume;
@@ -109,7 +110,13 @@ public:
   G4double GetTunnelSoilThickness()const; 
   G4double GetTunnelFloorOffset()const; 
   G4double GetTunnelOffsetX()const; 
-  G4double GetTunnelOffsetY()const; 
+  G4double GetTunnelOffsetY()const;
+
+  // new tunnel
+  G4String      GetTunnelMaterial()const;
+  G4String      GetTunnelSoilMaterial()const;
+  G4bool        GetSensitiveTunnel()const;
+  BDSTunnelInfo GetTunnelInfo()const;
 
   // Beam loss monitors
   G4double GetBlmRad()const;
@@ -294,6 +301,16 @@ private:
   G4double itsTunnelOffsetX;
   G4double itsTunnelOffsetY;
   G4bool   itsShowTunnel;
+
+
+  // new tunnel
+  G4String tunnelMaterial;
+  G4String tunnelSoilMaterial;
+  G4bool   tunnelSensitive;
+
+  // new - default tunnel model
+  BDSTunnelInfo tunnelInfo;
+  
   //Booleans determining which types of components are sensitive
   G4bool   itsSensitiveComponents;
   G4bool   itsSensitiveBeamPipe;
@@ -568,6 +585,20 @@ inline G4double BDSGlobalConstants::GetTunnelOffsetY()const
 
 inline G4bool BDSGlobalConstants::GetShowTunnel()const
 {return itsShowTunnel;}
+
+// new tunnel
+inline G4String BDSGlobalConstants::GetTunnelMaterial()const
+{return tunnelMaterial;}
+
+inline G4String BDSGlobalConstants::GetTunnelSoilMaterial()const
+{return tunnelSoilMaterial;}
+
+inline G4bool BDSGlobalConstants::GetSensitiveTunnel()const
+{return tunnelSensitive;}
+
+inline BDSTunnelInfo BDSGlobalConstants::GetTunnelInfo()const
+{return tunnelInfo;}
+
 
 inline G4bool BDSGlobalConstants::GetGeometryBias()const
 {return itsGeometryBias;}

@@ -20,7 +20,6 @@ struct BDSTunnelInfo {
 
   /// extra constructor to assign all members at once
   BDSTunnelInfo(BDSTunnelType tunnelTypeIn,
-		G4double      lengthIn,
 		G4double      tunnelThicknessIn,
 		G4double      tunnelSoilThicknessIn,
 		G4Material*   tunnelMaterialIn,

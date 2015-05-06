@@ -1,7 +1,8 @@
 #include "BDSTunnelFactoryBase.hh"
 
+#include "BDSDebug.hh"
 #include "BDSExecOptions.hh"          // for vis debug flag
-#incldue "BDSMaterials.hh"
+#include "BDSMaterials.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"            // for calculateorientation
@@ -10,46 +11,49 @@
 #include "G4Colour.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
+#include "G4PVPlacement.hh"
 #include "G4ThreeVector.hh"
 #include "G4VisAttributes.hh"
+#include "G4UserLimits.hh"
+
 
 BDSTunnelFactoryBase::BDSTunnelFactoryBase():
   tunnelSection(NULL),
   containerSolid(NULL), tunnelSolid(NULL), soilSolid(NULL), floorSolid(NULL),
-  containerLV(NULL), tunnelLV(NULL), soildLV(NULL), floorLV(NULL),
+  containerLV(NULL), tunnelLV(NULL), soilLV(NULL), floorLV(NULL),
   floorOffset(G4ThreeVector(0,0,0))
 {
   lengthSafety   = BDSGlobalConstants::Instance()->GetLengthSafety();
 }
 
-BDSGeometryComponent* BDSTunnelFactoryBase::CreateTunnelAngledIn(G4String      name,
-								 G4double      length,
-								 G4double      angleIn,
-								 G4double      tunnelThickness,
-								 G4double      tunnelSoilThickness,
-								 G4Material*   tunnelMaterial,
-								 G4Material*   tunnelSoilMaterial,
-								 G4bool        tunnelFloor,
-								 G4double      tunnelFloorOffset,
-								 G4double      tunnel1,
-								 G4double      tunnel2)
+BDSGeometryComponent* BDSTunnelFactoryBase::CreateTunnelSectionAngledIn(G4String      name,
+									G4double      length,
+									G4double      angleIn,
+									G4double      tunnelThickness,
+									G4double      tunnelSoilThickness,
+									G4Material*   tunnelMaterial,
+									G4Material*   tunnelSoilMaterial,
+									G4bool        tunnelFloor,
+									G4double      tunnelFloorOffset,
+									G4double      tunnel1,
+									G4double      tunnel2)
 {
   return CreateTunnelSectionAngledInOut(name, length, angleIn, 0, tunnelThickness,
 					tunnelSoilThickness, tunnelMaterial, tunnelSoilMaterial,
 					tunnelFloor, tunnelFloorOffset, tunnel1, tunnel2);
 }
 
-BDSGeometryComponent* BDSTunnelFactoryBase::CreateTunnelAngledOut(G4String      name,
-								  G4double      length,
-								  G4double      angleOut,
-								  G4double      tunnelThickness,
-								  G4double      tunnelSoilThickness,
-								  G4Material*   tunnelMaterial,
-								  G4Material*   tunnelSoilMaterial,
-								  G4bool        tunnelFloor,
-								  G4double      tunnelFloorOffset,
-								  G4double      tunnel1,
-								  G4double      tunnel2)
+BDSGeometryComponent* BDSTunnelFactoryBase::CreateTunnelSectionAngledOut(G4String      name,
+									 G4double      length,
+									 G4double      angleOut,
+									 G4double      tunnelThickness,
+									 G4double      tunnelSoilThickness,
+									 G4Material*   tunnelMaterial,
+									 G4Material*   tunnelSoilMaterial,
+									 G4bool        tunnelFloor,
+									 G4double      tunnelFloorOffset,
+									 G4double      tunnel1,
+									 G4double      tunnel2)
 {
   return CreateTunnelSectionAngledInOut(name, length, 0, angleOut, tunnelThickness,
 					tunnelSoilThickness, tunnelMaterial, tunnelSoilMaterial,
@@ -109,6 +113,7 @@ void BDSTunnelFactoryBase::CommonConstruction(G4String    name,
 
 {
   BuildLogicalVolumes(name, tunnelMaterial, tunnelSoilMaterial);
+  SetVisAttributes();
   SetUserLimits(length);
   PlaceComponents(name);
   PrepareGeometryComponent();
@@ -129,7 +134,7 @@ void BDSTunnelFactoryBase::BuildLogicalVolumes(G4String   name,
 				    tunnelMaterial,
 				    name + "_tunnel_lv");
   
-  soilLV      = new G4LogicalVolume(soilSoild,
+  soilLV      = new G4LogicalVolume(soilSolid,
 				    tunnelSoilMaterial,
 				    name + "_soil_lv");
 
@@ -137,7 +142,7 @@ void BDSTunnelFactoryBase::BuildLogicalVolumes(G4String   name,
   if (floorSolid)
     {
       floorLV     = new G4LogicalVolume(floorSolid,
-					floorMaterial,
+					tunnelMaterial,
 					name + "_floor_lv");
     }
 }
@@ -145,17 +150,15 @@ void BDSTunnelFactoryBase::BuildLogicalVolumes(G4String   name,
 void BDSTunnelFactoryBase::SetVisAttributes()
 { 
   // VISUAL ATTRIBUTES
-  // TBC - FIX COLOUR HERE FOR RGB NICE GREY
-  // tunnel & floor
-  G4VisAttributes* tunnelVisAttr = new G4VisAttributes(G4Colour(0.2,0.2,0.2));
+  // tunnel & floor - a nice grey
+  G4VisAttributes* tunnelVisAttr = new G4VisAttributes(G4Colour(0.545, 0.533, 0.470));
   tunnelVisAttr->SetVisibility(true);
   tunnelVisAttr->SetForceSolid(true);
   tunnelLV->SetVisAttributes(tunnelVisAttr);
   if (floorLV)
     {floorLV->SetVisAttributes(tunnelVisAttr);}
-  // soil
-  // TBC - FIX COLOUR HERE FOR RGB BROWN
-  G4VisAttributes* soilVisAttr = new G4VisAttributes(G4Colour(0.6,0.6,0.4));
+  // soil - brown
+  G4VisAttributes* soilVisAttr = new G4VisAttributes(G4Colour(0.545, 0.353, 0));
   soilVisAttr->SetVisibility(true);
   soilVisAttr->SetForceSolid(true);
   soilLV->SetVisAttributes(soilVisAttr);
@@ -184,20 +187,21 @@ void BDSTunnelFactoryBase::SetSensitiveVolumes()
   // uses read out geometry
   if (BDSGlobalConstants::Instance()->GetSensitiveTunnel())
     {
-      tunnelSection->RegisterSensitiveVolume(tunnelLV);
-      tunnelSection->RegisterSensitiveVolume(soilLV);
-      if (floorLV)
-	{tunnelSection->RegisterSensitiveVolume(floorLV);}
+      // ******* TBC********* uncomment when we merge in magnetouterbranch into develop / this one
+      //tunnelSection->RegisterSensitiveVolume(tunnelLV);
+      //tunnelSection->RegisterSensitiveVolume(soilLV);
+      //if (floorLV)
+      //{tunnelSection->RegisterSensitiveVolume(floorLV);}
     }
 }
 
-BDSTunnelFactoryBase::SetUserLimits(G4double length)
+void BDSTunnelFactoryBase::SetUserLimits(G4double length)
 {
   // USER LIMITS
   // set user limits based on bdsim user specified parameters
   G4UserLimits* tunnelUserLimits = new G4UserLimits("tunnel_cuts");
   G4double maxStepFactor = 0.5; // fraction of length for maximum step size
-  tunnelUserLimits->SetMaxAllowedStep( lengthIn * maxStepFactor );
+  tunnelUserLimits->SetMaxAllowedStep( length * maxStepFactor );
   tunnelUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   tunnelUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   //attach cuts to volumes
@@ -216,7 +220,7 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    (G4ThreeVector)0,             // position
 		    tunnelLV,                     // lv to be placed
-		    nameIn + "_tunnel_pv",        // name
+		    name + "_tunnel_pv",        // name
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
@@ -226,7 +230,7 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    (G4ThreeVector)0,             // position
 		    soilLV,                       // lv to be placed
-		    nameIn + "_soil_pv",          // name
+		    name + "_soil_pv",          // name
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
@@ -238,7 +242,7 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
       new G4PVPlacement((G4RotationMatrix*)0,     // no rotation
 			floorOffset,              // position
 			floorLV,                  // lv to be placed
-			nameIn + "_floor_pv",     // name
+			name + "_floor_pv",     // name
 			containerLV,              // mother lv to be place in
 			false,                    // no boolean operation
 			0,                        // copy number

@@ -15,16 +15,62 @@ public:
   
   ~BDSTunnelFactory();
 
-  BDSGeometryComponent* BuildTunnelSection(BDSTunnelType tunnelType,
-					   G4double      length,
-					   G4double      tunnelThickness,
-					   G4double      tunnelSoilThickness,
-					   G4Material*   tunnelMaterial,
-					   G4Material*   tunnelSoilMaterial,
-					   G4bool        tunnelFloor,
-					   G4double      tunnelFloorOffset,
-					   G4double      tunnel1,
-					   G4double      tunnel2);
+  BDSGeometryComponent* CreateTunnelSection(BDSTunnelType tunnelType,
+					    G4String      name,
+					    G4double      length,
+					    G4double      tunnelThickness,
+					    G4double      tunnelSoilThickness,
+					    G4Material*   tunnelMaterial,
+					    G4Material*   tunnelSoilMaterial,
+					    G4bool        tunnelFloor,
+					    G4double      tunnelFloorOffset,
+					    G4double      tunnel1,
+					    G4double      tunnel2);
+
+  /// Create a tunnel section with an angled input face and flat output face. Note,
+  /// this is implemented in this base class as a dispatch to the AngledInOut function.
+  BDSGeometryComponent* CreateTunnelSectionAngledIn(BDSTunnelType tunnelType,
+						    G4String      name,
+						    G4double      length,
+						    G4double      angleIn,
+						    G4double      tunnelThickness,
+						    G4double      tunnelSoilThickness,
+						    G4Material*   tunnelMaterial,
+						    G4Material*   tunnelSoilMaterial,
+						    G4bool        tunnelFloor,
+						    G4double      tunnelFloorOffset,
+						    G4double      tunnel1,
+						    G4double      tunnel2);
+
+  /// Create a tunnel section with an angled output face and flat input face. Note,
+  /// this is implemented in this base class as a dispatch to the AngledInOut function.
+  BDSGeometryComponent* CreateTunnelSectionAngledOut(BDSTunnelType tunnelType,
+						     G4String      name,
+						     G4double      length,
+						     G4double      angleOut,
+						     G4double      tunnelThickness,
+						     G4double      tunnelSoilThickness,
+						     G4Material*   tunnelMaterial,
+						     G4Material*   tunnelSoilMaterial,
+						     G4bool        tunnelFloor,
+						     G4double      tunnelFloorOffset,
+						     G4double      tunnel1,
+						     G4double      tunnel2);
+
+  /// Create a tunnel section with an angled input and output face. Pure virtual.
+  BDSGeometryComponent* CreateTunnelSectionAngledInOut(BDSTunnelType tunnelType,
+						       G4String      name,
+						       G4double      length,
+						       G4double      angleIn,
+						       G4double      angleOut,
+						       G4double      tunnelThickness,
+						       G4double      tunnelSoilThickness,
+						       G4Material*   tunnelMaterial,
+						       G4Material*   tunnelSoilMaterial,
+						       G4bool        tunnelFloor,
+						       G4double      tunnelFloorOffset,
+						       G4double      tunnel1,
+						       G4double      tunnel2);
 
 private:
   /// Private constructor as a singleton

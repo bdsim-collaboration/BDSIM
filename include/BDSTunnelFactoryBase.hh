@@ -25,34 +25,34 @@ class BDSTunnelFactoryBase
 {
 public:
   /// Create a tunnel section with flat input and output faces. Pure virtual.
-  virtual BDSGeometryComponent* BuildTunnelSection(G4String      name,
-						   G4double      length,
-						   G4double      tunnelThickness,
-						   G4double      tunnelSoilThickness,
-						   G4Material*   tunnelMaterial,
-						   G4Material*   tunnelSoilMaterial,
-						   G4bool        tunnelFloor,
-						   G4double      tunnelFloorOffset,
-						   G4double      tunnel1,
-						   G4double      tunnel2) = 0;
+  virtual BDSGeometryComponent* CreateTunnelSection(G4String      name,
+						    G4double      length,
+						    G4double      tunnelThickness,
+						    G4double      tunnelSoilThickness,
+						    G4Material*   tunnelMaterial,
+						    G4Material*   tunnelSoilMaterial,
+						    G4bool        tunnelFloor,
+						    G4double      tunnelFloorOffset,
+						    G4double      tunnel1,
+						    G4double      tunnel2) = 0;
 
   /// Create a tunnel section with an angled input face and flat output face. Note,
   /// this is implemented in this base class as a dispatch to the AngledInOut function.
-  virtual BDSGeometryComponent* BuildTunnelSectionAngledIn(G4String      name,
-							   G4double      length,
-							   G4double      angleIn,
-							   G4double      tunnelThickness,
-							   G4double      tunnelSoilThickness,
-							   G4Material*   tunnelMaterial,
-							   G4Material*   tunnelSoilMaterial,
-							   G4bool        tunnelFloor,
-							   G4double      tunnelFloorOffset,
-							   G4double      tunnel1,
-							   G4double      tunnel2);
+  virtual BDSGeometryComponent* CreateTunnelSectionAngledIn(G4String      name,
+							    G4double      length,
+							    G4double      angleIn,
+							    G4double      tunnelThickness,
+							    G4double      tunnelSoilThickness,
+							    G4Material*   tunnelMaterial,
+							    G4Material*   tunnelSoilMaterial,
+							    G4bool        tunnelFloor,
+							    G4double      tunnelFloorOffset,
+							    G4double      tunnel1,
+							    G4double      tunnel2);
 
   /// Create a tunnel section with an angled output face and flat input face. Note,
   /// this is implemented in this base class as a dispatch to the AngledInOut function.
-  virtual BDSGeometryComponent* BuildTunnelSectionAngledOut(G4String      name,
+  virtual BDSGeometryComponent* CreateTunnelSectionAngledOut(G4String      name,
 							    G4double      length,
 							    G4double      angleOut,
 							    G4double      tunnelThickness,
@@ -65,20 +65,23 @@ public:
 							    G4double      tunnel2);
 
   /// Create a tunnel section with an angled input and output face. Pure virtual.
-  virtual BDSGeometryComponent* BuildTunnelSectionAngledIn(G4String      name,
-							   G4double      length,
-							   G4double      angleIn,
-							   G4double      angleOut,
-							   G4double      tunnelThickness,
-							   G4double      tunnelSoilThickness,
-							   G4Material*   tunnelMaterial,
-							   G4Material*   tunnelSoilMaterial,
-							   G4bool        tunnelFloor,
-							   G4double      tunnelFloorOffset,
-							   G4double      tunnel1,
-							   G4double      tunnel2) = 0;
+  virtual BDSGeometryComponent* CreateTunnelSectionAngledInOut(G4String      name,
+							       G4double      length,
+							       G4double      angleIn,
+							       G4double      angleOut,
+							       G4double      tunnelThickness,
+							       G4double      tunnelSoilThickness,
+							       G4Material*   tunnelMaterial,
+							       G4Material*   tunnelSoilMaterial,
+							       G4bool        tunnelFloor,
+							       G4double      tunnelFloorOffset,
+							       G4double      tunnel1,
+							       G4double      tunnel2) = 0;
 
 protected:
+  /// protected default constructor so only derived classes can use it
+  BDSTunnelFactoryBase();
+  
   /// Calculate input and output normal vector
   std::pair<G4ThreeVector,G4ThreeVector> CalculateFaces(G4double angleIn,
 							G4double angleOut);
@@ -101,10 +104,13 @@ protected:
   virtual void BuildLogicalVolumes(G4String    name,
 				   G4Material* tunnelMaterial,
 				   G4Material* tunnelSoilMaterial);
+
+  /// Set the visual attributes for each logical volume
+  virtual void SetVisAttributes();
   
   /// Set user limits for all logical volumes in the tunnel section
   virtual void SetUserLimits(G4double length);
-
+  
   /// Prepare the output geometry component
   virtual void PrepareGeometryComponent();
 
@@ -128,12 +134,11 @@ protected:
 
   G4LogicalVolume* containerLV;
   G4LogicalVolume* tunnelLV;
-  G4LogicalVolume* soildLV;
+  G4LogicalVolume* soilLV;
   G4LogicalVolume* floorLV;
 
   G4ThreeVector floorOffset;
-
-}
+};
        
 
 

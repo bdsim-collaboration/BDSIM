@@ -2,7 +2,8 @@
 #include "BDSGeometryComponent.hh"
 #include "BDSTunnelFactory.hh"
 #include "BDSTunnelFactoryBase.hh"
-#include "BDSTunnelFactoryElliptical.hh"
+#include "BDSTunnelFactoryCircular.hh"
+//#include "BDSTunnelFactoryElliptical.hh"
 #include "BDSTunnelType.hh"
 
 #include "globals.hh"                        // geant4 globals / types
@@ -22,19 +23,25 @@ BDSTunnelFactory::BDSTunnelFactory()
 BDSTunnelFactoryBase* BDSTunnelFactory::GetAppropriateFactory(BDSTunnelType tunnelType)
 {
   switch(tunnelType.underlying()){
-
+  case BDSTunnelType::elliptical:
+#ifdef BDSDEBUG
+    G4cout << __METHOD_NAME__ << " circular beampipe factory" << G4endl;
+#endif
+    return BDSTunnelFactoryCircular::Instance();
+    break;
+    /*
   case BDSTunnelType::elliptical:
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " circular beampipe factory" << G4endl;
 #endif
     return BDSTunnelFactoryElliptial::Instance();
-    break;
+    break;*/
   default:
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << "unknown tunnel type \"" << tunnelType
-	   << "\" - elliptical tunnel factory by default" << G4endl;
+	   << "\" - using circular tunnel factory by default" << G4endl;
 #endif
-    return BDSTunnelFactoryElliptical::Instance();
+    return BDSTunnelFactoryCircular::Instance();
     break;
   }
 }
@@ -49,7 +56,7 @@ BDSGeometryComponent* BDSTunnelFactory::CreateTunnelSection(BDSTunnelType tunnel
 							    G4bool        tunnelFloor,
 							    G4double      tunnelFloorOffset,
 							    G4double      tunnel1,
-							    G4double      tunnel2);
+							    G4double      tunnel2)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -72,16 +79,16 @@ BDSGeometryComponent* BDSTunnelFactory::CreateTunnelSectionAngledIn(BDSTunnelTyp
 								    G4bool        tunnelFloor,
 								    G4double      tunnelFloorOffset,
 								    G4double      tunnel1,
-								    G4double      tunnel2);
+								    G4double      tunnel2)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSTunnelFactoryBase* factory = GetAppropriateFactory(tunnelType);
-  return factory->CreateTunnelSection(name, length, angleIn, tunnelThickness,
-				      tunnelSoilThickness, tunnelMaterial,
-				      tunnelSoilMaterial, tunnelFloor,
-				      tunnelFloorOffset, tunnel1, tunnel2);
+  return factory->CreateTunnelSectionAngledIn(name, length, angleIn, tunnelThickness,
+					      tunnelSoilThickness, tunnelMaterial,
+					      tunnelSoilMaterial, tunnelFloor,
+					      tunnelFloorOffset, tunnel1, tunnel2);
 }
 
 BDSGeometryComponent* BDSTunnelFactory::CreateTunnelSectionAngledOut(BDSTunnelType tunnelType,
@@ -95,16 +102,16 @@ BDSGeometryComponent* BDSTunnelFactory::CreateTunnelSectionAngledOut(BDSTunnelTy
 								     G4bool        tunnelFloor,
 								     G4double      tunnelFloorOffset,
 								     G4double      tunnel1,
-								     G4double      tunnel2);
+								     G4double      tunnel2)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSTunnelFactoryBase* factory = GetAppropriateFactory(tunnelType);
-  return factory->CreateTunnelSection(name, length, angleOut, tunnelThickness,
-				      tunnelSoilThickness, tunnelMaterial,
-				      tunnelSoilMaterial, tunnelFloor,
-				      tunnelFloorOffset, tunnel1, tunnel2);
+  return factory->CreateTunnelSectionAngledOut(name, length, angleOut, tunnelThickness,
+					       tunnelSoilThickness, tunnelMaterial,
+					       tunnelSoilMaterial, tunnelFloor,
+					       tunnelFloorOffset, tunnel1, tunnel2);
 }
 
 BDSGeometryComponent* BDSTunnelFactory::CreateTunnelSectionAngledInOut(BDSTunnelType tunnelType,
@@ -119,14 +126,14 @@ BDSGeometryComponent* BDSTunnelFactory::CreateTunnelSectionAngledInOut(BDSTunnel
 								       G4bool        tunnelFloor,
 								       G4double      tunnelFloorOffset,
 								       G4double      tunnel1,
-								       G4double      tunnel2);
+								       G4double      tunnel2)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSTunnelFactoryBase* factory = GetAppropriateFactory(tunnelType);
-  return factory->CreateTunnelSection(name, length, angleIn, angleOut,
-				      tunnelThickness, tunnelSoilThickness, tunnelMaterial,
-				      tunnelSoilMaterial, tunnelFloor,
-				      tunnelFloorOffset, tunnel1, tunnel2);
+  return factory->CreateTunnelSectionAngledInOut(name, length, angleIn, angleOut,
+						 tunnelThickness, tunnelSoilThickness, tunnelMaterial,
+						 tunnelSoilMaterial, tunnelFloor,
+						 tunnelFloorOffset, tunnel1, tunnel2);
 }
