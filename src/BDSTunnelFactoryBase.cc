@@ -20,8 +20,7 @@
 BDSTunnelFactoryBase::BDSTunnelFactoryBase():
   tunnelSection(NULL),
   containerSolid(NULL), tunnelSolid(NULL), soilSolid(NULL), floorSolid(NULL),
-  containerLV(NULL), tunnelLV(NULL), soilLV(NULL), floorLV(NULL),
-  floorOffset(G4ThreeVector(0,0,0))
+  containerLV(NULL), tunnelLV(NULL), soilLV(NULL), floorLV(NULL)
 {
   lengthSafety   = BDSGlobalConstants::Instance()->GetLengthSafety();
 }
@@ -154,13 +153,21 @@ void BDSTunnelFactoryBase::SetVisAttributes()
   G4VisAttributes* tunnelVisAttr = new G4VisAttributes(G4Colour(0.545, 0.533, 0.470));
   tunnelVisAttr->SetVisibility(true);
   tunnelVisAttr->SetForceSolid(true);
+  tunnelVisAttr->SetForceLineSegmentsPerCircle(50);
   tunnelLV->SetVisAttributes(tunnelVisAttr);
   if (floorLV)
-    {floorLV->SetVisAttributes(tunnelVisAttr);}
+    {
+      G4VisAttributes* floorVisAttr = new G4VisAttributes(G4Colour(0.5, 0.5, 0.45));
+      floorVisAttr->SetVisibility(true);
+      floorVisAttr->SetForceSolid(true);
+      floorVisAttr->SetForceLineSegmentsPerCircle(50);
+      floorLV->SetVisAttributes(floorVisAttr);
+    }
   // soil - brown
-  G4VisAttributes* soilVisAttr = new G4VisAttributes(G4Colour(0.545, 0.353, 0));
+  G4VisAttributes* soilVisAttr = new G4VisAttributes(G4Colour(0.545, 0.353, 0, 0.4));
   soilVisAttr->SetVisibility(true);
   soilVisAttr->SetForceSolid(true);
+  soilVisAttr->SetForceLineSegmentsPerCircle(50);
   soilLV->SetVisAttributes(soilVisAttr);
   // container
   if (BDSExecOptions::Instance()->GetVisDebug()) {
@@ -220,7 +227,7 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    (G4ThreeVector)0,             // position
 		    tunnelLV,                     // lv to be placed
-		    name + "_tunnel_pv",        // name
+		    name + "_tunnel_pv",          // name
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
@@ -230,7 +237,7 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    (G4ThreeVector)0,             // position
 		    soilLV,                       // lv to be placed
-		    name + "_soil_pv",          // name
+		    name + "_soil_pv",            // name
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
@@ -240,9 +247,9 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
   if (floorLV)
     {
       new G4PVPlacement((G4RotationMatrix*)0,     // no rotation
-			floorOffset,              // position
+			(G4ThreeVector)0,         // position
 			floorLV,                  // lv to be placed
-			name + "_floor_pv",     // name
+			name + "_floor_pv",       // name
 			containerLV,              // mother lv to be place in
 			false,                    // no boolean operation
 			0,                        // copy number
@@ -262,5 +269,4 @@ void BDSTunnelFactoryBase::TidyUp()
   tunnelLV       = NULL;
   soilLV         = NULL;
   floorLV        = NULL;
-  floorOffset    = G4ThreeVector(0,0,0);
 }

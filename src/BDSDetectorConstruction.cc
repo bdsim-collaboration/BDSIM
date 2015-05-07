@@ -602,20 +602,21 @@ void BDSDetectorConstruction::ComponentPlacement(){
   BDSTunnelType tunnelType = BDS::DetermineTunnelType("circular");
   G4Material*   soilMaterial = BDSMaterials::Instance()->GetMaterial("soil");
   G4Material*   concrete     = BDSMaterials::Instance()->GetMaterial("concrete");
+  G4double      tunnelLength = 50*CLHEP::m;
   BDSGeometryComponent* aPieceOfTunnel = BDSTunnelFactory::Instance()->CreateTunnelSection(tunnelType,
 											   "tunny",
-											   2*CLHEP::m,
-											   1*CLHEP::m,
-											   0.5*CLHEP::m,
+											   tunnelLength, // length
+											   0.5*CLHEP::m, // t thickness
+											   5*CLHEP::m, // s thickness
 											   concrete,
 											   soilMaterial,
 											   true,
 											   1*CLHEP::m,
-											   3*CLHEP::m,
+											   2*CLHEP::m,
 											   0);
 
   new G4PVPlacement(0,  // its rotation
-		    G4ThreeVector(0,0,0), // its position
+		    G4ThreeVector(0.5*CLHEP::m,-0.25*CLHEP::m,0.5*tunnelLength), // its position
 		    "tunnel_pv",	    // its name
 		    aPieceOfTunnel->GetContainerLogicalVolume(), // its logical volume
 		    physiWorld,	    // its mother  volume
