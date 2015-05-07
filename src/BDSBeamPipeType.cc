@@ -31,8 +31,8 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
   return returnValue;
 }
 
-void BDS::CheckApertureInfo(BDSBeamPipeType beamPipeTypeIn, G4double beamPipeRadius,
-			    G4double aper1, G4double aper2, G4double aper3, G4double aper4)
+void BDS::CheckApertureInfo(BDSBeamPipeType beamPipeTypeIn, G4double& beamPipeRadius,
+			    G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
   if (beamPipeTypeIn == BDSBeamPipeType::circular)
     {InfoOKForCircular(beamPipeRadius,aper1,aper2,aper3,aper4);}
@@ -50,7 +50,7 @@ void BDS::CheckApertureInfo(BDSBeamPipeType beamPipeTypeIn, G4double beamPipeRad
     {InfoOKForCircular(beamPipeRadius,aper1,aper2,aper3,aper4);}
 }
 
-void BDS::InfoOKForCircular(G4double beamPipeRadius, G4double aper1, G4double /*aper2*/, G4double /*aper3*/, G4double /*aper4*/)
+void BDS::InfoOKForCircular(G4double& beamPipeRadius, G4double& aper1, G4double& /*aper2*/, G4double& /*aper3*/, G4double& /*aper4*/)
 {
   if ((beamPipeRadius == 0) && (aper1 == 0)) {
       G4cerr << __METHOD_NAME__ << "Error: option \"beampipeRadius\" or \"aper1\" must be greater than 0 for all aperture types" << G4endl;
@@ -66,13 +66,13 @@ void BDS::InfoOKForCircular(G4double beamPipeRadius, G4double aper1, G4double /*
     }
 }
 
-void BDS::InfoOKForElliptical(G4double beamPipeRadius, G4double aper1, G4double aper2, G4double aper3, G4double aper4)
+void BDS::InfoOKForElliptical(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
   // can actually use the same checks for rectangular as two parameter
   InfoOKForRectangular(beamPipeRadius,aper1,aper2,aper3,aper4);
 }
 
-void BDS::InfoOKForRectangular(G4double beamPipeRadius, G4double aper1, G4double aper2, G4double aper3, G4double aper4)
+void BDS::InfoOKForRectangular(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
   // basic circular checks first - require at least one parameter for a square beam pipe
   InfoOKForCircular(beamPipeRadius,aper1,aper2,aper3,aper4);
@@ -92,7 +92,7 @@ void BDS::InfoOKForRectangular(G4double beamPipeRadius, G4double aper1, G4double
   }
 }
 
-void BDS::InfoOKForLHC(G4double beamPipeRadius, G4double aper1, G4double aper2, G4double aper3, G4double aper4)
+void BDS::InfoOKForLHC(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
   InfoOKForCircular(beamPipeRadius,aper1,aper2,aper3,aper4);
 
@@ -119,12 +119,12 @@ void BDS::InfoOKForLHC(G4double beamPipeRadius, G4double aper1, G4double aper2, 
   }
 }
 
-void BDS::InfoOKForLHCDetailed(G4double beamPipeRadius, G4double aper1, G4double aper2, G4double aper3, G4double aper4)
+void BDS::InfoOKForLHCDetailed(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
   InfoOKForLHC(beamPipeRadius,aper1,aper2,aper3,aper4);
 }
 
-void BDS::InfoOKForRectEllipse(G4double beamPipeRadius, G4double aper1, G4double aper2, G4double aper3, G4double aper4)
+void BDS::InfoOKForRectEllipse(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
   // basic checks
   InfoOKForCircular(beamPipeRadius,aper1,aper2,aper3,aper4);

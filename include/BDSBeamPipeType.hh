@@ -23,26 +23,26 @@ namespace BDS {
 
   /// function to check relevant aperture values are set.  This is really a dispatch function
   /// for other aperture specific methods below
-  void CheckApertureInfo(BDSBeamPipeType beamPipeTypeIn, G4double beamPipeRadius,
-			 G4double aper1, G4double aper2, G4double aper3, G4double aper4);
+  void CheckApertureInfo(BDSBeamPipeType beamPipeTypeIn, G4double& beamPipeRadius,
+			 G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
 
   /// aperture info check for circular aperture
-  void InfoOKForCircular(G4double beamPipeRadius, G4double aper1, G4double aper2, G4double aper3, G4double aper4);
+  void InfoOKForCircular(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
 
   /// aperture info check for elliptical aperture
-  void InfoOKForElliptical(G4double beamPipeRadius, G4double aper1, G4double aper2, G4double aper3, G4double aper4);
+  void InfoOKForElliptical(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
 
   /// aperture info check for rectangular aperture
-  void InfoOKForRectangular(G4double beamPipeRadius, G4double aper1, G4double aper2, G4double aper3, G4double aper4);
+  void InfoOKForRectangular(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
 
   /// aperture info check for lhc aperture
-  void InfoOKForLHC(G4double beamPipeRadius, G4double aper1, G4double aper2, G4double aper3, G4double aper4);
+  void InfoOKForLHC(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
 
   /// aperture info check for lhc detailed aperture
-  void InfoOKForLHCDetailed(G4double beamPipeRadius, G4double aper1, G4double aper2, G4double aper3, G4double aper4);
+  void InfoOKForLHCDetailed(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
 
   /// aperture info check for rectellipse aperture
-  void InfoOKForRectEllipse(G4double beamPipeRadius, G4double aper1, G4double aper2, G4double aper3, G4double aper4);
+  void InfoOKForRectEllipse(G4double& beamPipeRadius, G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
 }
 
 #endif
