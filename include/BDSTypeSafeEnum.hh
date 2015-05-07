@@ -30,8 +30,10 @@ public:
  
   BDSTypeSafeEnum() : val() {}
   BDSTypeSafeEnum(type v) : val(v) {}
+  /// return underlying value (can be used in switch statement)
   type underlying() const { return val; }
- 
+
+  ///@{ operators for ordering
   friend bool operator == (const BDSTypeSafeEnum & lhs, const BDSTypeSafeEnum & rhs) { return lhs.val == rhs.val; }
   friend bool operator != (const BDSTypeSafeEnum & lhs, const BDSTypeSafeEnum & rhs) { return lhs.val != rhs.val; }
   friend bool operator <  (const BDSTypeSafeEnum & lhs, const BDSTypeSafeEnum & rhs) { return lhs.val <  rhs.val; }
@@ -39,6 +41,7 @@ public:
   friend bool operator >  (const BDSTypeSafeEnum & lhs, const BDSTypeSafeEnum & rhs) { return lhs.val >  rhs.val; }
   friend bool operator >= (const BDSTypeSafeEnum & lhs, const BDSTypeSafeEnum & rhs) { return lhs.val >= rhs.val; }
   friend std::ostream& operator<< (std::ostream &out, const BDSTypeSafeEnum& a) {out << a.underlying(); return out;}
+  ///@}
 };
 
 #endif

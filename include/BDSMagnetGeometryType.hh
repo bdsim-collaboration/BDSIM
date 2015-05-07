@@ -20,12 +20,8 @@ struct magnetgeometrytypes_def {
 typedef BDSTypeSafeEnum<magnetgeometrytypes_def, G4int> BDSMagnetGeometryType;
 
 namespace BDS {
-  /// function to determine the type of the magnet geometry
-  BDSMagnetGeometryType DetermineMagnetGeometryType(G4String geometryType,
-						    G4bool   globalCheck = false);
+  /// function to determine the enum type of the magnet geometry (case-insensitive)
+  BDSMagnetGeometryType DetermineMagnetGeometryType(G4String geometryType);
 }
 
 #endif
-
-
-

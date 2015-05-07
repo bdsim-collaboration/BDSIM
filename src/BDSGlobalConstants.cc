@@ -36,7 +36,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
 {
   itsPhysListName       = opt.physicsList;
   itsBeamPipeMaterial   = opt.beampipeMaterial;
-  itsApertureType       = BDS::DetermineBeamPipeType(opt.apertureType,true); //true is flag for first global check
+  itsApertureType       = BDS::DetermineBeamPipeType(opt.apertureType);
   itsVacuumMaterial     = opt.vacMaterial;
   itsEmptyMaterial      = "G4_Galactic"; // space vacuum
   itsTunnelMaterialName = opt.tunnelMaterial;
@@ -85,7 +85,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
     G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" must be greater than 2x (\"beampipeRadius\" + \"beamPipeThickness\") " << G4endl;
     exit(1);
   }
-  itsMagnetGeometryType = BDS::DetermineMagnetGeometryType(opt.magnetGeometryType,true);//true is flag for first global check
+  itsMagnetGeometryType = BDS::DetermineMagnetGeometryType(opt.magnetGeometryType);
   itsOuterMaterialName  = opt.outerMaterialName;
 
   // tunnel

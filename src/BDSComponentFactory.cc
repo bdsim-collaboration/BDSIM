@@ -1052,7 +1052,10 @@ BDSMagnetOuterInfo BDSComponentFactory::PrepareMagnetOuterInfo(Element& element)
 {
   BDSMagnetOuterInfo info;
   // magnet geometry type
-  info.geometryType = BDS::DetermineMagnetGeometryType(element.magnetGeometryType);
+  if (element.magnetGeometryType == "")
+    info.geometryType = BDSGlobalConstants::Instance()->GetMagnetGeometryType();
+  else
+    info.geometryType = BDS::DetermineMagnetGeometryType(element.magnetGeometryType);
 
   // outer diameter
   G4double outerDiameter = element.outerDiameter*CLHEP::m;
@@ -1097,7 +1100,10 @@ G4double BDSComponentFactory::PrepareOuterDiameter(Element& element)
 BDSBeamPipeInfo BDSComponentFactory::PrepareBeamPipeInfo(Element& element)
 {
   BDSBeamPipeInfo info;
-  info.beamPipeType      = BDS::DetermineBeamPipeType(element.apertureType);
+  if (element.apertureType == "")
+    info.beamPipeType = BDSGlobalConstants::Instance()->GetApertureType();
+  else 
+    info.beamPipeType = BDS::DetermineBeamPipeType(element.apertureType);
 
   // note even if aperN in the element is 0 (ie unset), we should use
   // the default aperture model from global constants (already in metres)
