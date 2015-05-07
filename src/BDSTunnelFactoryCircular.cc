@@ -61,7 +61,7 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSection(G4String    
 
   // build the solids
   tunnelSolid = new G4Tubs(name + "_tunnel_solid",    // name
-			   tunnel1,                   // inner radius
+			   tunnel1 + lengthSafety,    // inner radius
 			   tunnel1 + tunnelThickness, // outer radius
 			   length*0.5 - lengthSafety, // z half length
 			   0,                         // start angle
@@ -81,27 +81,35 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSection(G4String    
   // build the floor if necessary
   if (tunnelFloor)
     {
+      G4double floorBoxRadius = 1.5*tunnel1; // will definitely encompass the tunnel
+      G4double floorCylinderRadius = tunnel1 - lengthSafety; // so it fits within the tunnel
+      G4double floorBoxDisplacement = tunnelFloorOffset + floorBoxRadius + lengthSafety;
+      
       G4VSolid* floorCylinder = new G4Tubs(name + "_floor_cylinder_solid", // name
 					   0,                              // inner radius
-					   tunnel1,                        // outer radius
+					   floorCylinderRadius,            // outer radius
 					   length*0.5 - lengthSafety,      // z half length
 					   0,                              // start angle
 					   CLHEP::twopi);                  // sweep angle
 
       G4VSolid* floorBox      = new G4Box(name + "_floor_box_solid",  // name
-					  1.5*tunnel1,                // x half width
-					  1.5*tunnel1,                // y half width
+					  floorBoxRadius,             // x half width
+					  floorBoxRadius,             // y half width
 					  length);                    // z half length
-      // z long for unambiguous subtraction
+      // box z length extra long for unambiguous subtraction
       
-      floorSolid = new G4SubtractionSolid(name + "_floor_solid",  // name
-					  floorBox,          // this
-					  floorCylinder,               // minus this,
-					  0,                      // rotation matrix
-					  floorOffset);           // translation
-      
-      // container should contain floor as well
-      // build container while we have necessary subtraction solids
+      floorSolid = new G4IntersectionSolid(name + "_floor_solid",                     // name
+					   floorCylinder,                             // this
+					   floorBox,                                  // minus this,
+					   0,                                         // rotation matrix
+					   G4ThreeVector(0,-floorBoxDisplacement,0)); // translation
+
+      // need to create a container for the tunnel + floor that only just contains it
+      // need to do the same trick again - prepare small floor container segment and union
+      // it with tunnel container. Container has to be a wee bit bigger so can't use the same
+      // solids sadly.
+
+      // floor container cylinder has to definitely overlaps with outside cylinder -> tunnel1*1.1
       G4VSolid* floorContainerCylinder = new G4Tubs(name + "_floor_cont_cyl_solid", // name
 						    0,                              // inner radius
 						    tunnel1*1.1,                    // outer radius
@@ -110,19 +118,22 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSection(G4String    
 						    CLHEP::twopi);                  // sweep angle
 
       G4VSolid* floorContainerBox = new G4Box(name + "_floor_cont_box_solid",  // name
-					      1.5*tunnel1,                     // x half width
-					      1.5*tunnel1,                     // y half width
+					      floorBoxRadius,                  // x half width
+					      floorBoxRadius,                  // y half width
 					      length);                         // z half length
-      // z long for unambiguous subtraction
-      G4ThreeVector* offset = new G4ThreeVector(0,tunnelFloorOffset-lengthSafety,0);
-      G4VSolid* floorContainerSolid = new G4SubtractionSolid(name + "_floor_cont_solid",  // name
-							     floorContainerCylinder,      // this
-							     floorContainerBox,           // minus this,
-							     0,                           // rotation matrix
-							     *offset);                    // translation
+      // z long for unambiguous intersection
+
+      // calculate box container offset - should be just above floor by lengthsafety (floor actually lowered
+      // by length safety a la rest of geometry to fit within its dimensions)
+      G4double floorBoxContDisp = floorBoxDisplacement - lengthSafety;
+      G4VSolid* floorContainerSolid = new G4IntersectionSolid(name + "_floor_cont_solid",           // name
+							      floorContainerCylinder,               // this
+							      floorContainerBox,                    // minus this,
+							      0,                                    // rotation matrix
+							      G4ThreeVector(0,-floorBoxContDisp,0));// translation
 
       G4VSolid* tunnelContainerSolid = new G4Tubs(name + "_tunnel_solid",    // name
-						  tunnel1 - lengthSafety,    // inner radius
+						  tunnel1,                   // inner radius
 						  containerRadius,           // outer radius
 						  length*0.5,                // z half length
 						  0,                         // start angle
@@ -135,7 +146,7 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSection(G4String    
   else
     {
       containerSolid = new G4Tubs(name + "_tunnel_container_solid", // name
-				  tunnel1 - lengthSafety,           // inner radius
+				  tunnel1,                          // inner radius
 				  containerRadius,                  // outer radius,
 				  length,                           // z half length
 				  0,                                // start angle
@@ -198,9 +209,14 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G
   // build the floor if necessary
   if (tunnelFloor)
     {
+      // these three lines are a repeat of the same part in the first function (~L211)
+      G4double floorBoxRadius = 1.5*tunnel1; // will definitely encompass the tunnel
+      G4double floorCylinderRadius = tunnel1 - lengthSafety; // so it fits within the tunnel
+      G4double floorBoxDisplacement = tunnelFloorOffset + floorBoxRadius + lengthSafety;
+      
       G4VSolid* floorCylinder = new G4CutTubs(name + "_floor_cylinder_solid", // name
 					      0,                              // inner radius
-					      tunnel1,                        // outer radius
+					      floorCylinderRadius,            // outer radius
 					      length*0.5 - lengthSafety,      // z half length
 					      0,                              // start angle
 					      CLHEP::twopi,                   // sweep angle
@@ -211,16 +227,15 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G
 					  1.5*tunnel1,                // x half width
 					  1.5*tunnel1,                // y half width
 					  length);                    // z half length
-      // z long for unambiguous subtraction
+      // z long for unambiguous intersection
       
-      floorSolid = new G4SubtractionSolid(name + "_floor_solid",    // name
-					  floorCylinder,            // this
-					  floorBox,                 // minus this,
-					  0,                        // rotation matrix
-					  floorOffset);             // translation
+      floorSolid = new G4IntersectionSolid(name + "_floor_solid",                      // name
+					   floorCylinder,                              // this
+					   floorBox,                                   // minus this,
+					   0,                                          // rotation matrix
+					   G4ThreeVector(0,-floorBoxDisplacement,0));  // translation
       
-      // container should contain floor as well
-      // build container while we have necessary subtraction solids
+      // floor container cylinder has to definitely overlaps with outside cylinder -> tunnel1*1.1
       G4VSolid* floorContainerCylinder = new G4CutTubs(name + "_floor_cont_cyl_solid", // name
 						       0,                              // inner radius
 						       tunnel1*1.1,                    // outer radius
@@ -234,13 +249,16 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G
 					      1.5*tunnel1,                     // x half width
 					      1.5*tunnel1,                     // y half width
 					      length);                         // z half length
-      // z long for unambiguous subtraction
-      G4ThreeVector* offset = new G4ThreeVector(0,tunnelFloorOffset-lengthSafety,0);
-      G4VSolid* floorContainerSolid = new G4SubtractionSolid(name + "_floor_cont_solid",  // name
-							     floorContainerCylinder,      // this
-							     floorContainerBox,           // minus this,
-							     0,                           // rotation matrix
-							     *offset);                    // translation
+      // floor container box z long for unambiguous intersection
+
+      // calculate box container offset - should be just above floor by lengthsafety (floor actually lowered
+      // by length safety a la rest of geometry to fit within its dimensions)
+      G4double floorBoxContDisp = floorBoxDisplacement - lengthSafety;
+      G4VSolid* floorContainerSolid = new G4IntersectionSolid(name + "_floor_cont_solid",           // name
+							      floorContainerCylinder,               // this
+							      floorContainerBox,                    // minus this,
+							      0,                                    // rotation matrix
+							      G4ThreeVector(0,-floorBoxContDisp,0));// translation
 
       G4VSolid* tunnelContainerSolid = new G4CutTubs(name + "_tunnel_solid",    // name
 						     tunnel1 - lengthSafety,    // inner radius
@@ -258,7 +276,7 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G
   else
     {
       containerSolid = new G4CutTubs(name + "_tunnel_container_solid", // name
-				     tunnel1 - lengthSafety,           // inner radius
+				     tunnel1,                          // inner radius
 				     containerRadius,                  // outer radius,
 				     length,                           // z half length
 				     0,                                // start angle
