@@ -802,10 +802,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 
 #ifdef BDSDEBUG 
   G4cout << "---->creating Element,"
-	 << " name= " << _element.name
-	 << " l= " << _element.l << "m"
-	 << " aper= " << aper/CLHEP::m << "m"
-	 << " outR= " << 0.5 * _element.boxSize << "m"
+	 << " name = " << _element.name
+	 << " l = " << _element.l << "m"
+	 << " aper = " << aper1/CLHEP::m << "m"
+	 << " outerDiameter = " << 0.5 * _element.outerDiameter << "m"
 	 << " bmapZOffset = "	<<  _element.bmapZOffset * CLHEP::m
 	 << " tunnel material " << _element.tunnelMaterial
 	 << " precision region " << _element.precisionRegion
