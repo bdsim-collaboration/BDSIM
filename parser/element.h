@@ -19,20 +19,28 @@ struct Element {
   double l; // l in metres
   double ks,k0,k1,k2,k3,angle;
 
+  // beampipe information
   double beampipeThickness;
   double aper1, aper2, aper3, aper4; // new aperture model
   std::string apertureType;
   std::string beampipeMaterial;
 
-  double boxSize; //outer *diameter / full width* of component
+  // magnet geometry
+  std::string magnetGeometryType;
+  std::string outerMaterial;
+  double outerDiameter;
   
   double tilt,xsize,ysize,r,B, phiAngleIn, phiAngleOut;
   double tscint, twindow, bmapZOffset; 
   double xdir, ydir, zdir, waveLength; /// for laser wire and 3d transforms
   double gradient; /// for rf cavities
   double phi, theta, psi; /// for 3d transforms
+
+  // tunnel geometry
+  std::string tunnelMaterial;
   double tunnelRadius;
   double tunnelOffsetX;
+  //std::string tunnelCavityMaterial;
   std::list<double> knl;
   std::list<double> ksl;
 
@@ -58,9 +66,6 @@ struct Element {
   std::string windowmaterial;
   std::string scintmaterial;
   std::string airmaterial;
-  std::string tunnelMaterial;
-  std::string tunnelCavityMaterial;
-
   std::string spec;  /// arbitrary specification to pass to beamline builder
   
   /// in case the element is a list itself (line)

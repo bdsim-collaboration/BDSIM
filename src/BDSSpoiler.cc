@@ -79,9 +79,8 @@ void BDSSpoiler::BuildInnerSpoiler()
 		      false,		   // no boolean operation
 		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());  // copy number 
 
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-    AddSensitiveVolume(itsSolidLogVol);
-  }
+  if(BDSGlobalConstants::Instance()->GetSensitiveComponents())
+    {RegisterSensitiveVolume(itsSolidLogVol);}
 
 #ifndef NOUSERLIMITS
   itsSolidLogVol->

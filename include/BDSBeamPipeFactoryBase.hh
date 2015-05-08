@@ -120,8 +120,6 @@ protected:
 				   G4Material* beamPipeMaterialIn);
   /// set visual attributes
   virtual void SetVisAttributes();
-  /// set beampipe to sensitive detector (if specified)
-  virtual void SetSensitivity();
   /// set user limits
   virtual G4UserLimits* SetUserLimits(G4double lengthIn);
   /// place volumes

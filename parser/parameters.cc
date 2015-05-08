@@ -61,8 +61,10 @@ void Parameters::flush() {
   apertureType=""; apertureTypeset = 0;
   beampipeMaterial = ""; beampipeMaterialset = 0;
 
-  // component size
-  boxSize = 0; boxSizeset = 0;
+  // magnet geometry
+  magnetGeometryType = ""; magnetGeometryTypeset = 0;
+  outerMaterial      = ""; outerMaterialset      = 0;
+  outerDiameter      = 0;  outerDiameterset      = 0;
 
   B  = 0; Bset  = 0;
   k0 = 0; k0set = 0;
@@ -145,8 +147,8 @@ void Parameters::inherit_properties(struct Element& e)
   if(!componentsFractionsset) 
     { componentsFractions = e.componentsFractions; componentsFractionsset = 1; }
 
+  // aperture model
   if(!beampipeThicknessset) { beampipeThickness = e.beampipeThickness; beampipeThicknessset = 1; }
-  // new aperture model
   if(!aper1set) { aper1 = e.aper1; aper1set = 1;}
   if(!aper2set) { aper2 = e.aper2; aper2set = 1;}
   if(!aper3set) { aper3 = e.aper3; aper3set = 1;}
@@ -154,9 +156,11 @@ void Parameters::inherit_properties(struct Element& e)
   if(!apertureTypeset) { apertureType = e.apertureType; apertureTypeset = 1;}
   if(!beampipeMaterialset) { beampipeMaterial = e.beampipeMaterial; beampipeMaterialset = 1;}
 
-  // component size
-  if(!boxSizeset) { boxSize = e.boxSize; boxSizeset = 1;}
-  
+  // magnet geometry
+  if(!magnetGeometryTypeset) {magnetGeometryType = e.magnetGeometryType; magnetGeometryTypeset = 1;}
+  if(!outerMaterialset)      {outerMaterial      = e.outerMaterial;      outerMaterialset = 1;}
+  if(!outerDiameterset)      {outerDiameter = e.outerDiameter; outerDiameterset = 1;}
+
   if(!gradientset) { gradient = e.gradient; gradientset = 1; }
 
   if(!tiltset) { tilt = e.tilt; tiltset = 1; }

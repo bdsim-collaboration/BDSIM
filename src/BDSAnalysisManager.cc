@@ -26,6 +26,7 @@ BDSAnalysisManager::~BDSAnalysisManager()
     {
       delete (*iter);
     }
+  _instance = NULL;
 }
 
 G4int BDSAnalysisManager::Create1DHistogram(G4String name,

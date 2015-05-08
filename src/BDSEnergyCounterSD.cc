@@ -17,6 +17,7 @@
 #include "G4LogicalVolume.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4RotationMatrix.hh"
+#include "G4SDManager.hh"
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
 #include "G4TouchableHistory.hh"
@@ -26,10 +27,14 @@
 
 #include <map>
 
+#define NMAXCOPY 5
+
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
   :G4VSensitiveDetector(name),
    energyCounterCollection(NULL),
    primaryCounterCollection(NULL),
+   HCIDe(-1),
+   HCIDp(-1),
    enrg(0.0),
    X(0.0),
    Y(0.0),
@@ -43,32 +48,26 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
   itsName = name;
   collectionName.insert("energy_counter");
   collectionName.insert("primary_counter");
-  #define NMAXCOPY 5
-  HitID = new G4int[NMAXCOPY];
 }
 
 BDSEnergyCounterSD::~BDSEnergyCounterSD()
-{
-  delete [] HitID;
-}
+{;}
 
 void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
-{
-  static G4int HCID = -1;
-  for(G4int i=0; i<NMAXCOPY;i++)HitID[i]=-1;
-
-  energyCounterCollection = new BDSEnergyCounterHitsCollection
-    (SensitiveDetectorName,collectionName[0]);
-  HCID = GetCollectionID(0);
-  HCE->AddHitsCollection(HCID,energyCounterCollection);
+{  
+  energyCounterCollection = new BDSEnergyCounterHitsCollection(SensitiveDetectorName,collectionName[0]);
+  if (HCIDe < 0)
+    {HCIDe = G4SDManager::GetSDMpointer()->GetCollectionID(energyCounterCollection);}
+  HCE->AddHitsCollection(HCIDe,energyCounterCollection);
 
   primaryCounterCollection = new BDSEnergyCounterHitsCollection
     (SensitiveDetectorName,collectionName[1]);
-  HCID = GetCollectionID(1);
-  HCE->AddHitsCollection(HCID,primaryCounterCollection);
+  if (HCIDp < 0)
+    {HCIDp = G4SDManager::GetSDMpointer()->GetCollectionID(primaryCounterCollection);}
+  HCE->AddHitsCollection(HCIDp,primaryCounterCollection);
 }
 
-G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
+G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOutTH)
 { 
   if(BDSGlobalConstants::Instance()->GetStopTracks())
     enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit()); // Why subtract the energy deposit of the step? Why not add?
@@ -82,13 +81,23 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 #endif
   //if the energy is 0, don't do anything
   if (enrg==0.) return false;      
-  
-  G4int nCopy=aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();
+
+  // can get the copy number from the read out geometry if it exists
+  G4int nCopy;
+  if (readOutTH)
+    {nCopy = readOutTH->GetCopyNumber();}
+  else
+    {nCopy = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();}
 #ifdef BDSDEBUG
   if(nCopy>0){
     G4cout << "BDSEnergyCounterSD::ProcessHits> nCopy = " << nCopy << G4endl;
   }
 #endif
+  /*
+  // LN - not sure why this arbritrary limit of NMAXCOPY is necessary 
+  // looks like it was to do with registering existing beamline elements to save memory
+  // but this wasn't fully implemented anyway and with recent changes, this would likely 
+  // be implemented in a different way
   if(nCopy>NMAXCOPY-1)
     {
       G4cerr << " BDSEnergyCounterSD: nCopy too large: nCopy = " << nCopy 
@@ -97,9 +106,25 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 	     << G4endl;
       G4Exception("Killing program in BDSEnergyCounterSD::ProcessHits", "-1", FatalException, "");
     }
-  
-  // Get Translation and Rotation of Sampler Volume w.r.t the World Volume
-  G4AffineTransform tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
+  */
+  // Get translation and rotation of volume w.r.t the World Volume
+
+  // if there is a read out geometry volume, use that. Note there *should* always be a
+  // read out geometry volume for any sensitive volume (if they've been made sensitive)
+  // there is the possibility that there isn't a read out volume in which case the touchable
+  // object would be a null pointer and seg fault - must catch this
+  if (!readOutTH)
+    {
+      G4cout << __METHOD_NAME__ << "hit in a sensitive volume without readout geometry" << G4endl;
+      G4cerr << __METHOD_NAME__ << "hit not recorded!" << G4endl;
+      return true;
+    }
+
+  // get the coordinate transform from the read out geometry instead of the actual geometry
+  // read out geometry is in accelerator s,x,y coordinates along beam line axis
+  G4AffineTransform tf = readOutTH->GetHistory()->GetTopTransform();
+  // this was the old method of getting the transform
+  //G4AffineTransform tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
   G4ThreeVector posbefore = aStep->GetPreStepPoint()->GetPosition();
   G4ThreeVector posafter  = aStep->GetPostStepPoint()->GetPosition();
   //G4ThreeVector momDir = aStep->GetTrack()->GetMomentumDirection();
@@ -107,12 +132,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   //calculate local coordinates
   G4ThreeVector posbeforelocal  = tf.TransformPoint(posbefore);
   G4ThreeVector posafterlocal   = tf.TransformPoint(posafter);
-  //G4ThreeVector LocalDirection = tf.TransformAxis(momDir);
 
-  //G4cout << "Global Position " << pos << G4endl;
-  //G4cout << "Local Position " << poslocal << G4endl << G4endl;
-
-  //calculate mean position of step
+  //calculate mean position of step (which is two points)
   //global
   Y = 0.5 * (posbefore.x() + posafter.x());
   Y = 0.5 * (posbefore.y() + posafter.y());

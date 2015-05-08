@@ -100,14 +100,14 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String    nameIn,  
   //copper skin inner edge for subtraction (actually just like vacuum + lengthSafety)
   G4VSolid* cuInnerCylSolid = new G4Tubs(nameIn + "_cu_inner_cylinder", // name
 					 0,                             // inner radius
-					 aper3In + lengthSafety,        // outer radius
+					 aper3In + 1*CLHEP::um,         // outer radius
 					 1.5*lengthIn,   // length big for unambiguous subtraction (but < outerlength)
 					 0,                             // rotation start angle
 					 CLHEP::twopi);                 // rotation finish angle
   //screen inner edge box solid (rectangular cross-section)
   G4VSolid* cuInnerRectSolid = new G4Box(nameIn + "_cu_inner_box", // name
-					 aper1In + lengthSafety,   // x half width
-					 aper2In + lengthSafety,   // y half width
+					 aper1In + 1*CLHEP::um,    // x half width
+					 aper2In + 1*CLHEP::um,    // y half width
 					 1.7*lengthIn); // z long for unambiguous intersection
   //screen inner intersection - 1.5*length long which is > half length for unambiguous subtraction later
   G4VSolid* cuInnerSolid = new G4IntersectionSolid(nameIn + "_cu_inner_solid", // name
@@ -135,16 +135,18 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String    nameIn,  
   
   //beampipe cylindrical solid (circular cross-section)
   //beampipe inner edge for subtraction (actually just like vacuum + lengthSafety)
+  //using large margin of 1um here to avoid misplacement errors with compound booleans in geant4 (empirical solution)
   G4VSolid* screenInnerCylSolid = new G4Tubs(nameIn + "_screen_inner_cylinder", // name
 					     0,                                 // inner radius
-					     aper3In + lengthSafety + copperSkinThickness + lengthSafety, // outer radius
+					     aper3In + copperSkinThickness + 1*CLHEP::um, // outer radius
 					     1.5*lengthIn,   // length big for unambiguous subtraction (but < outerlength)
 					     0,                                 // rotation start angle
 					     CLHEP::twopi);                     // rotation finish angle
   //screen inner edge box solid (rectangular cross-section)
+  //using large margin of 1um here to avoid misplacement errors with compound booleans in geant4 (empirical solution)
   G4VSolid* screenInnerRectSolid = new G4Box(nameIn + "_screen_inner_box", // name
-					     aper1In + lengthSafety + copperSkinThickness + lengthSafety, // x half width
-					     aper2In + lengthSafety + copperSkinThickness + lengthSafety, // y half width
+					     aper1In + copperSkinThickness + 1*CLHEP::um, // x half width
+					     aper2In + copperSkinThickness + 1*CLHEP::um, // y half width
 					     1.7*lengthIn); // z long for unambiguous intersection
   //screen inner intersection - 1.5*length long which is > half length for unambiguous subtraction later
   G4VSolid* screenInnerSolid = new G4IntersectionSolid(nameIn + "_screen_inner_solid", // name
@@ -179,7 +181,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String    nameIn,  
 				0,                                        // rotation start angle
 				CLHEP::twopi);                            // rotation finish angle
 
-  G4double coldBoreRadius = aper3In + lengthSafety + copperSkinThickness + lengthSafety + beamPipeThicknessIn + lengthSafety;
+  G4double coldBoreRadius = aper3In + copperSkinThickness + beamPipeThicknessIn + 1*CLHEP::um + 4*lengthSafety;
   // beampipe - ("coldbore") circular cross-section and sits outisde screen and cooling pipe
   beamPipeSolid = new G4Tubs(nameIn + "_beampipe_solid",         // name
 			     coldBoreRadius,                     // inner radius
@@ -189,7 +191,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String    nameIn,  
 			     CLHEP::twopi);                      // rotation finish angle
   
   //container cylindrical solid (circular cross-section)
-  G4double containerRadius = aper3In + copperSkinThickness + beamPipeThicknessIn + coldBoreThickness + 4*lengthSafety;
+  G4double containerRadius = coldBoreRadius+ coldBoreThickness + 1*CLHEP::um;
   containerSolid = new G4Tubs(nameIn + "_container_cylinder", // name
 			      0,                              // inner radius
 			      containerRadius,                // outer radius
@@ -289,6 +291,16 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
   aPipe->RegisterLogicalVolume(copperSkinLV);
   aPipe->RegisterLogicalVolume(screenLV);
   aPipe->RegisterLogicalVolume(coolingPipeLV);
+  aPipe->RegisterLogicalVolume(beamPipeLV);
+  aPipe->RegisterLogicalVolume(containerLV);
+  aPipe->RegisterLogicalVolume(copperSkinLV);
+
+  // register sensitive volumes
+  aPipe->RegisterSensitiveVolume(screenLV);
+  aPipe->RegisterSensitiveVolume(coolingPipeLV);
+  aPipe->RegisterSensitiveVolume(beamPipeLV);
+  aPipe->RegisterSensitiveVolume(containerLV);
+  aPipe->RegisterSensitiveVolume(copperSkinLV);
   
   return aPipe;
 }
@@ -306,7 +318,7 @@ void BDSBeamPipeFactoryLHCDetailed::BuildLogicalVolumes(G4String    nameIn,
   copperSkinLV  = new G4LogicalVolume(copperSkinSolid,
 				      copper,
 				      nameIn + "_copper_lv");
-
+  
   screenLV      = new G4LogicalVolume(screenSolid,
 				      beamPipeMaterialIn,
 				      nameIn + "_screen_lv");
@@ -322,6 +334,7 @@ void BDSBeamPipeFactoryLHCDetailed::SetVisAttributes()
 
   // copper skin
   G4VisAttributes* cuVisAttr   = new G4VisAttributes(G4Colour(0.722, 0.525, 0.043));
+  cuVisAttr->SetForceLineSegmentsPerCircle(50);
   cuVisAttr->SetVisibility(true);
   cuVisAttr->SetForceSolid(true);
   
@@ -329,6 +342,7 @@ void BDSBeamPipeFactoryLHCDetailed::SetVisAttributes()
   G4VisAttributes* pipeVisAttr = new G4VisAttributes(G4Colour(0.4,0.4,0.4));
   pipeVisAttr->SetVisibility(true);
   pipeVisAttr->SetForceSolid(true);
+  pipeVisAttr->SetForceLineSegmentsPerCircle(60);
 
   copperSkinLV->SetVisAttributes(cuVisAttr);
   screenLV->SetVisAttributes(pipeVisAttr);
@@ -349,15 +363,15 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String nameIn) {
   BDSBeamPipeFactoryBase::PlaceComponents(nameIn);
 
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    (G4ThreeVector)0,             // position
+		    G4ThreeVector(0,0,0),         // position
 		    copperSkinLV,                 // lv to be placed
-		    nameIn + "_vacuum_pv",        // name
+		    nameIn + "_copper_skin_pv",   // name
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
 		    );
-    
+  
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    (G4ThreeVector)0,             // position
 		    screenLV,                     // lv to be placed
@@ -433,7 +447,7 @@ void BDSBeamPipeFactoryLHCDetailed::CreateGeneralAngledSolids(G4String      name
   //copper skin inner edge for subtraction (actually just like vacuum + lengthSafety)
   G4VSolid* cuInnerCylSolid = new G4CutTubs(nameIn + "_cu_inner_cylinder", // name
 					    0,                             // inner radius
-					    aper3In + lengthSafety,        // outer radius
+					    aper3In + 1*CLHEP::um,         // outer radius
 					    1.5*lengthIn,   // length big for unambiguous subtraction (but < outerlength)
 					    0,                             // rotation start angle
 					    CLHEP::twopi,                  // rotation finish angle
@@ -441,8 +455,8 @@ void BDSBeamPipeFactoryLHCDetailed::CreateGeneralAngledSolids(G4String      name
 					    outputfaceIn);                 // output face normal
   //screen inner edge box solid (rectangular cross-section)
   G4VSolid* cuInnerRectSolid = new G4Box(nameIn + "_cu_inner_box", // name
-					 aper1In + lengthSafety,   // x half width
-					 aper2In + lengthSafety,   // y half width
+					 aper1In + 1*CLHEP::um,    // x half width
+					 aper2In + 1*CLHEP::um,    // y half width
 					 1.7*lengthIn); // z long for unambiguous intersection
   //screen inner intersection - 1.5*length long which is > half length for unambiguous subtraction later
   G4VSolid* cuInnerSolid = new G4IntersectionSolid(nameIn + "_cu_inner_solid", // name
@@ -474,7 +488,7 @@ void BDSBeamPipeFactoryLHCDetailed::CreateGeneralAngledSolids(G4String      name
   //beampipe inner edge for subtraction (actually just like vacuum + lengthSafety)
   G4VSolid* screenInnerCylSolid = new G4CutTubs(nameIn + "_screen_inner_cylinder", // name
 						0,                                 // inner radius
-						aper3In + lengthSafety + copperSkinThickness + lengthSafety, // outer radius
+						aper3In + copperSkinThickness + 1*CLHEP::um, // outer radius
 						1.5*lengthIn,   // length big for unambiguous subtraction (but < outerlength)
 						0,                                 // rotation start angle
 						CLHEP::twopi,                      // rotation finish angle
@@ -482,8 +496,8 @@ void BDSBeamPipeFactoryLHCDetailed::CreateGeneralAngledSolids(G4String      name
 						outputfaceIn);                     // output face normal
   //screen inner edge box solid (rectangular cross-section)
   G4VSolid* screenInnerRectSolid = new G4Box(nameIn + "_screen_inner_box", // name
-					     aper1In + lengthSafety + copperSkinThickness + lengthSafety, // x half width
-					     aper2In + lengthSafety + copperSkinThickness + lengthSafety, // y half width
+					     aper1In + copperSkinThickness + 1*CLHEP::um, // x half width
+					     aper2In + copperSkinThickness + 1*CLHEP::um, // y half width
 					     1.7*lengthIn); // z long for unambiguous intersection
   //screen inner intersection - 1.5*length long which is > half length for unambiguous subtraction later
   G4VSolid* screenInnerSolid = new G4IntersectionSolid(nameIn + "_screen_inner_solid", // name
@@ -525,7 +539,7 @@ void BDSBeamPipeFactoryLHCDetailed::CreateGeneralAngledSolids(G4String      name
 				   inputfaceIn,                              // input face normal
 				   outputfaceIn);                            // output face normal
 
-  G4double coldBoreRadius = aper3In + lengthSafety + copperSkinThickness + lengthSafety + beamPipeThicknessIn + lengthSafety;
+  G4double coldBoreRadius = aper3In + copperSkinThickness + beamPipeThicknessIn + 1*CLHEP::um + 4*lengthSafety;
   // beampipe - ("coldbore") circular cross-section and sits outisde screen and cooling pipe
   beamPipeSolid = new G4CutTubs(nameIn + "_beampipe_solid",         // name
 				coldBoreRadius,                     // inner radius
@@ -537,7 +551,7 @@ void BDSBeamPipeFactoryLHCDetailed::CreateGeneralAngledSolids(G4String      name
 				outputfaceIn);                      // output face normal
 
   //container cylindrical solid (circular cross-section)
-  G4double containerRadius = aper3In + copperSkinThickness + beamPipeThicknessIn + coldBoreThickness + 4*lengthSafety;
+  G4double containerRadius = coldBoreRadius + coldBoreThickness + 1*CLHEP::um;
   containerSolid = new G4Tubs(nameIn + "_container_cylinder", // name
 			      0,                              // inner radius
 			      containerRadius,                // outer radius

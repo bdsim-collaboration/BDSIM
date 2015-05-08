@@ -40,7 +40,6 @@ public:
   G4double GetAngle ();
 
   // geometry length of the component.
-
   virtual G4double GetYLength ();
   virtual G4double GetXLength ();
   virtual G4double GetArcLength ();   // note no z length - this is chord length
@@ -78,20 +77,21 @@ public:
   G4String GetTunnelCavityMaterial() const;
   BDSEnergyCounterSD* GetBDSEnergyCounter() const;
   
-  void SetBDSEnergyCounter( BDSEnergyCounterSD* anBDSEnergyCounter);
-  G4int GetCopyNumber() const;
-  G4double GetSPos() const;
-  void SetSPos(G4double spos);
-  void AddSensitiveVolume(G4LogicalVolume* aLogVol);
-  std::vector<G4LogicalVolume*> GetSensitiveVolumes();
-  void SetGFlashVolumes(G4LogicalVolume* aLogVol);
+  void             SetBDSEnergyCounter( BDSEnergyCounterSD* anBDSEnergyCounter);
+  G4int            GetCopyNumber() const;
+  G4double         GetSPos() const;
+  void             SetSPos(G4double spos);
+  void             SetGFlashVolumes(G4LogicalVolume* aLogVol);
   std::vector<G4LogicalVolume*> GetGFlashVolumes();
-  void SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
+  void             SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
   std::vector<G4VPhysicalVolume*> GetMultiplePhysicalVolumes();
-  void SetInnerMostLogicalVolume(G4LogicalVolume* aLogVol);
+  void             SetInnerMostLogicalVolume(G4LogicalVolume* aLogVol);
   G4LogicalVolume* GetInnerMostLogicalVolume() const;
-  G4UserLimits* GetInnerBPUserLimits();
-  G4UserLimits* GetUserLimits();
+  G4UserLimits*    GetInnerBPUserLimits();
+  G4UserLimits*    GetUserLimits();
+
+  /// access the read out geometry
+  inline G4LogicalVolume* GetReadOutLogicalVolume();
 
   // in case a mapped field is provided creates a field mesh in global coordinates
   virtual void PrepareField(G4VPhysicalVolume *referenceVolume); 
@@ -172,7 +172,7 @@ private:
 
   /// build marker logical volume
   virtual void BuildMarkerLogicalVolume() = 0;
-  /// set and return visual attributes
+  /// set visual attributes
   virtual void SetVisAttributes(); 
 
 protected:
@@ -183,7 +183,6 @@ protected:
   /// build beam loss monitors
   virtual void BuildBLMs();
 
-protected:
   /// set methods, protected
   void SetName(G4String aName);
   void SetType(G4String aType);
@@ -252,9 +251,7 @@ protected:
 
   /// Marker solid
   G4VSolid* itsMarkerSolidVolume;
-
-
-
+  
   /// Solid shapes used in building tunnel
   G4VSolid* itsTunnelSolid;
   G4VSolid* itsSoilSolid;
@@ -285,7 +282,8 @@ protected:
   G4UserLimits* itsSoilTunnelUserLimits;
   G4UserLimits* itsInnerTunnelUserLimits;
 
-
+  /// Read out geometry volume
+  G4LogicalVolume* readOutLV;
 
 private:
   /// assignment and copy constructor not implemented nor used
@@ -307,7 +305,6 @@ private:
   /// count of logical volumes shared with other instances; start at 0
   G4int itsCopyNumber;
   //  G4int itsCollectionID;
-  std::vector<G4LogicalVolume*> itsSensitiveVolumes;
   std::vector<G4LogicalVolume*> itsGFlashVolumes;
   //A vector containing the physical volumes in the accelerator component- to be used for geometric importance sampling etc.
   std::vector<G4VPhysicalVolume*> itsMultiplePhysicalVolumes;
@@ -428,8 +425,7 @@ inline G4VisAttributes* BDSAcceleratorComponent::GetVisAttributes() const
 {return itsVisAttributes;}
 
 inline void BDSAcceleratorComponent::SetVisAttributes()
-{itsVisAttributes = new G4VisAttributes(true);
-}
+{itsVisAttributes = new G4VisAttributes(true);}
 
 inline G4int BDSAcceleratorComponent::GetCopyNumber() const
 {return itsCopyNumber;}
@@ -440,32 +436,25 @@ inline G4double BDSAcceleratorComponent::GetSPos() const
 inline void BDSAcceleratorComponent::SetSPos(G4double spos)
 {itsSPos=spos;}
 
-inline  void BDSAcceleratorComponent::AddSensitiveVolume(G4LogicalVolume* aLogVol)
-{ itsSensitiveVolumes.push_back(aLogVol);}
-
-inline  std::vector<G4LogicalVolume*> BDSAcceleratorComponent::GetSensitiveVolumes()
-{return itsSensitiveVolumes;}
-
 inline void BDSAcceleratorComponent::SetGFlashVolumes(G4LogicalVolume* aLogVol)
-{ itsGFlashVolumes.push_back(aLogVol);}
+{itsGFlashVolumes.push_back(aLogVol);}
 
-inline  std::vector<G4LogicalVolume*> BDSAcceleratorComponent::GetGFlashVolumes()
+inline std::vector<G4LogicalVolume*> BDSAcceleratorComponent::GetGFlashVolumes()
 {return itsGFlashVolumes;}
 
 inline void BDSAcceleratorComponent::SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol)
-{ itsMultiplePhysicalVolumes.push_back(aPhysVol);}
+{itsMultiplePhysicalVolumes.push_back(aPhysVol);}
 
-inline  std::vector<G4VPhysicalVolume*> BDSAcceleratorComponent::GetMultiplePhysicalVolumes()
+inline std::vector<G4VPhysicalVolume*> BDSAcceleratorComponent::GetMultiplePhysicalVolumes()
 {return itsMultiplePhysicalVolumes;}
 
-inline  G4UserLimits* BDSAcceleratorComponent::GetUserLimits(){
-  return itsUserLimits;
-}
+inline G4UserLimits* BDSAcceleratorComponent::GetUserLimits()
+{return itsUserLimits;}
 
-inline  G4UserLimits* BDSAcceleratorComponent::GetInnerBPUserLimits()
-  {return itsInnerBeampipeUserLimits;}
+inline G4UserLimits* BDSAcceleratorComponent::GetInnerBPUserLimits()
+{return itsInnerBeampipeUserLimits;}
 
-inline  G4double BDSAcceleratorComponent::GetXOffset()
+inline G4double BDSAcceleratorComponent::GetXOffset()
 {return itsXOffset;}
 
 inline G4double BDSAcceleratorComponent::GetYOffset() 
@@ -483,6 +472,8 @@ inline G4double BDSAcceleratorComponent::GetTunnelOffsetX()
 inline G4double BDSAcceleratorComponent::GetTilt()
 {return itsTilt;}
 
+inline G4LogicalVolume* BDSAcceleratorComponent::GetReadOutLogicalVolume()
+{return readOutLV;}
 
 inline  G4double BDSAcceleratorComponent::getParameterValue(G4String spec, G4String name) const
 {
@@ -505,9 +496,7 @@ inline  G4double BDSAcceleratorComponent::getParameterValue(G4String spec, G4Str
       value = atof(val.c_str());
 
   }
-
   return value;
-
 }
 
 inline  G4String BDSAcceleratorComponent::getParameterValueString(G4String spec, G4String name) const
@@ -520,17 +509,14 @@ inline  G4String BDSAcceleratorComponent::getParameterValueString(G4String spec,
   int pos = spec.find(param);
   if( pos >= 0 )
     {
-      
       int pos2 = spec.find("&",pos);
       int pos3 = spec.length();
       int tend = pos2 < 0 ? pos3 : pos2; 
       int llen = tend - pos - param.length();
       
       value = spec.substr(pos + param.length(), llen);
-  }
-
+    }
   return value;
-
 }
 
 #endif

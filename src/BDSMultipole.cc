@@ -20,7 +20,7 @@
 #include <string>
 #include <algorithm> // for std::max
 
-#include "BDSMultipole.hh"
+
 #include "G4Box.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4LogicalVolume.hh"
@@ -34,36 +34,39 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-#include "BDSMaterials.hh"
-#include "BDSMultipoleOuterMagField.hh"
-
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSMaterials.hh"
+#include "BDSMagnetOuterFactory.hh"
+#include "BDSMagnetType.hh"
+#include "BDSMultipole.hh"
+#include "BDSMultipoleOuterMagField.hh"
 
-BDSMultipole::BDSMultipole( G4String        name, 
-			    G4double        length,
-			    BDSBeamPipeInfo info,
-			    G4double        boxSizeIn,
-			    G4String        outerMaterial,
-			    G4String        tunnelMaterial,
-			    G4double        tunnelRadius,
-			    G4double        tunnelOffsetX):
+BDSMultipole::BDSMultipole(BDSMagnetType      type,
+			   G4String           name,
+			   G4double           length,
+			   BDSBeamPipeInfo    info,
+			   BDSMagnetOuterInfo magnetOuterInfo,
+			   BDSTunnelInfo      tunnelInfo):
   BDSAcceleratorComponent(name,
 			  length,
 			  0,              //beampipe radius in AC
 			  0,0,            //aperx apery
-			  tunnelMaterial,
-			  outerMaterial,
+			  "",             //tunnel material name
+			  "",             //outer material name
 			  0,              //angle
 			  0,0,0,          // ???
-			  tunnelRadius,
-			  tunnelOffsetX),
-  itsInnerIronRadius(0), beamPipeType(info.beamPipeType),
+			  tunnelInfo.aper1,
+			  tunnelInfo.tunnelOffsetX),
+  itsType(type),itsInnerIronRadius(0), beamPipeType(info.beamPipeType),
   aper1(info.aper1), aper2(info.aper2), aper3(info.aper3), aper4(info.aper4),
   vacuumMaterial(info.vacuumMaterial), beamPipeThickness(info.beamPipeThickness),
-  beamPipeMaterial(info.beamPipeMaterial), boxSize(boxSizeIn)
+  beamPipeMaterial(info.beamPipeMaterial), boxSize(magnetOuterInfo.outerDiameter),
+  itsMagnetOuterInfo(magnetOuterInfo)
 {
   ConstructorInit();
 }
@@ -88,7 +91,9 @@ void BDSMultipole::ConstructorInit(){
 
   itsChordFinder=NULL;
   itsOuterMagField=NULL;
-  beampipe=NULL;
+
+  beampipe = NULL;
+  outer    = NULL;
 }
 
 void BDSMultipole::Build()
@@ -102,7 +107,8 @@ void BDSMultipole::Build()
   BDSAcceleratorComponent::Build(); //builds marker logical volume & itVisAttributes
   
   BuildBeampipe();
-  BuildOuterLogicalVolume();
+  BuildOuterVolume();
+  
   if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
     BuildTunnel();
   }
@@ -155,7 +161,10 @@ void BDSMultipole::BeamPipeCommonTasks()
   // register logical volumes using geometry component base class
   RegisterLogicalVolumes(beampipe->GetAllLogicalVolumes());
 
-
+  // register components as sensitive if required
+  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
+    {RegisterSensitiveVolumes(beampipe->GetAllSensitiveVolumes());}
+  
   // y rotation if using trapezoid marker volume for angled faces
   // LN - I don't think this works as itsPhiAngleIn Out not set properly
   // can revist when redo markervolumes without trapezoid
@@ -178,7 +187,6 @@ void BDSMultipole::BeamPipeCommonTasks()
   SetExtentX(beampipe->GetExtentX());
   SetExtentY(beampipe->GetExtentY());
   SetExtentZ(beampipe->GetExtentZ());
-  
 }
 
 void BDSMultipole::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
@@ -204,6 +212,101 @@ void BDSMultipole::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
     itsBPFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
 }
 
+void BDSMultipole::BuildOuterVolume()
+{
+  G4Material* outerMaterial          = itsMagnetOuterInfo.outerMaterial;
+  BDSMagnetGeometryType geometryType = itsMagnetOuterInfo.geometryType;
+  G4double outerDiameter             = itsMagnetOuterInfo.outerDiameter;
+
+  //build the right thing depending on the magnet type
+  //saves basically the same funciton in each derived class
+  BDSMagnetOuterFactory* theFactory = BDSMagnetOuterFactory::Instance();
+  switch(itsType.underlying()){
+  case BDSMagnetType::decapole:
+    outer = theFactory->CreateDecapole(geometryType,itsName,itsLength,beampipe,
+				       outerDiameter,outerMaterial);
+    break;
+  case BDSMagnetType::vkicker:
+    outer = theFactory->CreateKicker(geometryType,itsName,itsLength,beampipe,
+				     outerDiameter,true,outerMaterial);
+    break;
+  case BDSMagnetType::hkicker:
+    outer = theFactory->CreateKicker(geometryType,itsName,itsLength,beampipe,
+				     outerDiameter,false,outerMaterial);
+    break;
+  case BDSMagnetType::muspoiler:
+    outer = theFactory->CreateMuSpoiler(geometryType,itsName,itsLength,beampipe,
+					outerDiameter,outerMaterial);
+    break;
+  case BDSMagnetType::octupole:
+    outer = theFactory->CreateOctupole(geometryType,itsName,itsLength,beampipe,
+				       outerDiameter,outerMaterial);
+    break;
+  case BDSMagnetType::quadrupole:
+    outer = theFactory->CreateQuadrupole(geometryType,itsName,itsLength,beampipe,
+					 outerDiameter,outerMaterial);
+    break;
+  case BDSMagnetType::rectangularbend:
+    outer = theFactory->CreateRectangularBend(geometryType,itsName,itsLength,beampipe,
+					      outerDiameter,itsAngle,outerMaterial);
+    break;
+  case BDSMagnetType::rfcavity:
+    outer = theFactory->CreateRfCavity(geometryType,itsName,itsLength,beampipe,
+				       outerDiameter,outerMaterial);
+    break;
+  case BDSMagnetType::sectorbend:
+    outer = theFactory->CreateSectorBend(geometryType,itsName,itsLength,beampipe,
+					 outerDiameter,itsAngle,outerMaterial);
+    break;
+  case BDSMagnetType::sextupole:
+    outer = theFactory->CreateSextupole(geometryType,itsName,itsLength,beampipe,
+					outerDiameter,outerMaterial);
+    break;
+  case BDSMagnetType::solenoid:
+    outer = theFactory->CreateSolenoid(geometryType,itsName,itsLength,beampipe,
+				       outerDiameter,outerMaterial);
+    break;
+  case BDSMagnetType::multipole:
+    outer = theFactory->CreateMultipole(geometryType,itsName,itsLength,beampipe,
+					outerDiameter,outerMaterial);
+    break;
+  default:
+    G4cout << __METHOD_NAME__ << "unknown magnet type - no outer volume built" << G4endl;
+    outer = NULL;
+    break;
+  }
+
+  if(outer)
+    {
+      // register logical volumes using geometry component base class
+      RegisterLogicalVolumes(outer->GetAllLogicalVolumes());
+
+      // register components as sensitive if required
+      if(BDSGlobalConstants::Instance()->GetSensitiveComponents())
+	{RegisterSensitiveVolumes(outer->GetAllLogicalVolumes());}
+  
+      // y rotation if using trapezoid marker volume for angled faces
+      // LN - I don't think this works as itsPhiAngleIn Out not set properly
+      // can revist when redo markervolumes without trapezoid
+      G4RotationMatrix* RotY = NULL;
+      if ( (fabs(itsPhiAngleIn) > 0) || (fabs(itsPhiAngleOut)>0) )
+	{RotY=BDSGlobalConstants::Instance()->RotY90(); }
+      
+      // place outer volume
+      itsPhysiComp = new G4PVPlacement(RotY,                        // rotation
+				       outer->GetPlacementOffset(), // at normally (0,0,0)
+				       outer->GetContainerLogicalVolume(), // its logical volume
+				       itsName+"_outer_phys",       // its name
+				       itsMarkerLogicalVolume,      // its mother  volume
+				       false,                       // no boolean operation
+				       0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
+
+      //update extents
+      SetExtentX(outer->GetExtentX());
+      SetExtentY(outer->GetExtentY());
+      SetExtentZ(outer->GetExtentZ());
+    }
+}
 
 void BDSMultipole::BuildMarkerLogicalVolume()
 {
@@ -312,114 +415,6 @@ void BDSMultipole::BuildMarkerLogicalVolume()
   }
 }
 
-
-void BDSMultipole::BuildOuterLogicalVolume(G4bool outerMaterialIsVacuum)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // default cylindrical geometry for straight magnets only
-  
-  // check if outer volume is required
-  if (outerMaterialIsVacuum)
-    {return;} // no need to create another volume
-  
-  // test beampipe instance exists / has been built already
-  if (!beampipe){
-    G4cerr << __METHOD_NAME__ << " no beampipe has been built - can't wrap around it" << G4endl;
-    exit(1);
-  }
-
-  // build the logical volume
-  G4Material* material;
-  if(itsMaterial != "")
-    {material = BDSMaterials::Instance()->GetMaterial(itsMaterial);}
-  else
-    {material = BDSMaterials::Instance()->GetMaterial("Iron");}
-  
-  G4double lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
-  G4double outerRadius  = boxSize*0.5;
-  if (beampipe->ContainerIsCircular())
-    {
-      // simple circular beampipe - no need for a subtraction solid
-      G4double innerRadius = beampipe->GetContainerRadius()+lengthSafety;
-      
-      // check outerRadius is bigger
-      if ((boxSize*0.5) < innerRadius)
-	{
-	  G4cout << __METHOD_NAME__ << " - warning - beampipe is bigger than the boxSize" << G4endl
-		 << "setting boxSize to be just big enough to contain beampipe " << G4endl;
-	  outerRadius = innerRadius+1*CLHEP::cm;
-	}
-      itsOuterLogicalVolume = new G4LogicalVolume( new G4Tubs(itsName+"_outer_solid",
-							      innerRadius,
-							      outerRadius,
-							      (itsLength*0.5)-(2*lengthSafety),
-							      0,
-							      CLHEP::twopi),
-						   material,
-						   itsName+"_outer_lv");
-     
-    }
-  else
-    {
-      // not a simple circular beampipe - have to use subtraction solid
-      // check outer radius is really outside the beampipe
-      G4double maxX = std::max(beampipe->GetExtentX().first,beampipe->GetExtentX().second);
-      G4double maxY = std::max(beampipe->GetExtentY().first,beampipe->GetExtentY().second);
-      if (outerRadius < maxX)
-	{outerRadius = maxX + 1*CLHEP::cm;} //minimum extra size
-      if (outerRadius < maxY)
-	{outerRadius = maxY + 1*CLHEP::cm;}
-      G4double hypotenuse = sqrt(maxX*maxX + maxY*maxY);
-      if (outerRadius < hypotenuse)
-	{outerRadius = hypotenuse + 1*CLHEP::cm;}
-      
-      itsOuterLogicalVolume =
-	new G4LogicalVolume( new G4SubtractionSolid (itsName+"_outer_solid",
-						     new G4Tubs(itsName+"_outer_solid_cylinder",
-								0.0,  // solid cylinder for unambiguous subtraction
-								outerRadius,
-								itsLength*0.5 - 2.0*lengthSafety, // to ensure it's inside the marker volume
-								0,
-								CLHEP::twopi),
-						     beampipe->GetContainerSubtractionSolid()),
-						     material,
-						     itsName+"_outer_lv");
-    }
-
-  // set outer magnetic field if it's got one
-  if (itsOuterFieldMgr)
-    {itsOuterLogicalVolume->SetFieldManager(itsOuterFieldMgr,false);}
-  
-  RegisterLogicalVolume(itsOuterLogicalVolume);
-
-  // place the outer volume
-  itsPhysiComp = new G4PVPlacement((G4RotationMatrix*)0,   // no rotation
-				   (G4ThreeVector)0,       // its position
-				   itsOuterLogicalVolume,  // its logical volume
-				   itsName+"_outer_phys",  // its name
-				   itsMarkerLogicalVolume, // its mother  volume
-				   false,		   // no boolean operation
-				   0,                      // copy number
-				   BDSGlobalConstants::Instance()->GetCheckOverlaps());		      
-  
-  // set visualization attributes
-  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
-
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  itsOuterUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
-  itsOuterUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
-  itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
-#endif
-
-  //set the new extent of the magnet
-  SetExtentX(-outerRadius,outerRadius);
-  SetExtentY(-outerRadius,outerRadius);
-  SetExtentZ(-itsLength*0.5,itsLength*0.5);
-}
-
 void BDSMultipole::BuildOuterFieldManager(G4int nPoles, G4double poleField,
 					  G4double phiOffset)
 {
@@ -455,4 +450,9 @@ BDSMultipole::~BDSMultipole()
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;
+}
+
+void BDSMultipole::SetVisAttributes()
+{
+  return;
 }

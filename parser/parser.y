@@ -573,12 +573,12 @@ parameters:
 		  if(!strcmp($1->name,"aper4") ||!strcmp($1->name,"aperture4") ) 
 		    { params.aper4 = $3; params.aper4set = 1;}
 		    else
-		  if(!strcmp($1->name,"boxSize")) 
-		    { params.boxSize = $3; params.boxSizeset = 1;}
+		  if(!strcmp($1->name,"outerDiameter")) 
+		    { params.outerDiameter = $3; params.outerDiameterset = 1;}
 		    else
 		  if(!strcmp($1->name,"outR") )
 		    // for backwards compatibility, boxSize = 2*outR
-		    { params.boxSize = 2 * $3; params.boxSizeset = 1;}
+		    { params.outerDiameter = 2 * $3; params.outerDiameterset = 1;}
 		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
@@ -805,12 +805,12 @@ parameters:
 		  if(!strcmp($1->name,"aper4") ||!strcmp($1->name,"aperture4") ) 
 		    { params.aper4 = $3; params.aper4set = 1;}
 		    else
-		  if(!strcmp($1->name,"boxSize")) 
-		    { params.boxSize = $3; params.boxSizeset = 1;}
+		  if(!strcmp($1->name,"outerDiameter")) 
+		    { params.outerDiameter = $3; params.outerDiameterset = 1;}
 		    else
 		  if(!strcmp($1->name,"outR") )
 		    // for backwards compatibility, boxSize = 2*outR
-		    { params.boxSize = 2 * $3; params.boxSizeset = 1;}
+		    { params.outerDiameter = 2 * $3; params.outerDiameterset = 1;}
 		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
@@ -888,8 +888,14 @@ parameters:
 			 //ignore the "type attribute for the moment"
 		       }
 		   else
-		   if(!strcmp($1->name,"material")) 
+		   if(!strcmp($1->name,"outerMaterial")) 
 		       {
+			 params.outerMaterialset = 1;
+			 params.outerMaterial = $3;
+		       }
+		   else
+		   if(!strcmp($1->name,"material")) 
+		       {	 
 			 params.materialset = 1;
 			 params.material = $3;
 		       }
@@ -983,13 +989,19 @@ parameters:
 			 //ignore the "type attribute for the moment"
 		       }
                      else
-                       if(!strcmp($1->name,"material")) 
+                       if(!strcmp($1->name,"outerMaterial")) 
+                         {	 
+                           params.outerMaterialset = 1;
+                           params.outerMaterial = $3;
+                         }
+                       else
+		       if(!strcmp($1->name,"material")) 
                          {	 
                            params.materialset = 1;
                            params.material = $3;
                          }
                        else
-                         if(!strcmp($1->name,"tunnelMaterial")) 
+                       if(!strcmp($1->name,"tunnelMaterial")) 
 		       {
 			 params.tunnelmaterialset = 1;
 			 params.tunnelMaterial = $3;
@@ -1000,6 +1012,12 @@ parameters:
 			   params.apertureTypeset = 1;
 			   params.apertureType = $3;
 			 }
+		       else
+		       if(!strcmp($1->name,"magnetGeometryType")) 
+		       {
+		         params.magnetGeometryTypeset = 1;
+		         params.magnetGeometryType = $3;
+		       }
 		       else
 		       if(!strcmp($1->name,"beampipeMaterial"))
 			 {

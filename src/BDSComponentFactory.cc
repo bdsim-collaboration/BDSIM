@@ -1,5 +1,5 @@
 #include "BDSComponentFactory.hh"
-#include "BDSExecOptions.hh"
+
 // elements
 #include "BDSDrift.hh"
 #include "BDSSectorBend.hh"
@@ -25,14 +25,19 @@
 #include "BDSAwakeScintillatorScreen.hh"
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
-#include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
+
+// general
+#include "BDSBeamline.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSDebug.hh"
+#include "BDSExecOptions.hh"
+#include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetGeometryType.hh"
+#include "BDSTunnelInfo.hh"
 
 #include "parser/enums.h"
 #include "parser/elementlist.h"
-
-#include "BDSDebug.hh"
 
 #include <cmath>
 #include <sstream>
@@ -374,7 +379,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createRF()
 			   _element.l * CLHEP::m,
 			   _element.gradient,
 			   PrepareBeamPipeInfo(_element),
-			   PrepareBoxSize(_element)));	
+			   PrepareMagnetOuterInfo(_element),
+			   PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSBend()
@@ -409,7 +415,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend()
   else {
     _element.angle *= -1;
     //    bField = - 2 * _brho * sin(_element.angle/2.0) / magFieldLength;
-    bField = - _brho * _element.angle/magFieldLength * _charge; // charge in e units
+    // charge in e units
+    // multiply once more with ffact to not flip fields in bends
+    bField = - _brho * _element.angle/magFieldLength * _charge * BDSGlobalConstants::Instance()->GetFFact();
     _element.B = bField/CLHEP::tesla;
   }
   
@@ -444,8 +452,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend()
 						  bField,
 						  bPrime,
 						  PrepareBeamPipeInfo(_element),
-						  PrepareBoxSize(_element)
-						  ));
+						  PrepareMagnetOuterInfo(_element),
+						  PrepareTunnelInfo(_element)));
     }
   return sbendline;
 }
@@ -464,7 +472,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend()
   // unfortunately, this has to be duplicated here as we need to
   // calculated the magnetic field length (less than the full length)
   // in case we need to calculate the field
-  G4double outerRadius = PrepareBoxSize(_element)*0.5;
+  G4double outerRadius = PrepareOuterDiameter(_element)*0.5;
   G4double angle       = _element.angle;
   G4double chordLength = _element.l*CLHEP::m;
   G4double straightSectionChord = outerRadius / (tan(0.5*fabs(angle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(angle))) );
@@ -487,7 +495,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend()
     //            = (geometrical length/(2.0*sin(angle/2))*angle
     G4double arclength = 0.5*magFieldLength * fabs(_element.angle) / sin(fabs(_element.angle)*0.5);
     // B = Brho/rho = Brho/(arc length/angle)
-    bField = - _brho * _element.angle / arclength * _charge; // charge in e units
+    // charge in e units
+    // multiply once more with ffact to not flip fields in bends
+    bField = - _brho * _element.angle / arclength * _charge * BDSGlobalConstants::Instance()->GetFFact();
     _element.B = bField/CLHEP::tesla;
     G4cout << "calculated field from angle - angle,field = " << _element.angle << " " << _element.B << G4endl;
   }
@@ -502,8 +512,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend()
 			bPrime,
 			_element.angle,
 			PrepareBeamPipeInfo(_element),
-			PrepareBoxSize(_element)
-			));
+			PrepareMagnetOuterInfo(_element),
+			PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
@@ -527,7 +537,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
   }
   else{
     // B = Brho/rho = Brho/(arc length/angle)
-    bField = - _brho * _element.angle / length * _charge; // charge in e units
+    // charge in e units
+    // multiply once more with ffact to not flip fields in kicks defined with angle
+    bField = - _brho * _element.angle / length * _charge * BDSGlobalConstants::Instance()->GetFFact(); // charge in e units
     _element.B = bField/CLHEP::tesla;
   }
   
@@ -558,7 +570,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
 			 _element.angle,
 			 false,   // it's a horizontal kicker
 			 PrepareBeamPipeInfo(_element),
-			 PrepareBoxSize(_element) ));
+			 PrepareMagnetOuterInfo(_element),
+			 PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
@@ -582,7 +595,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
   }
   else{
     // B = Brho/rho = Brho/(arc length/angle)
-    bField = - _brho * _element.angle / length * _charge; // charge in e units
+    // charge in e units
+    // multiply once more with ffact to not flip fields in kicks
+    bField = - _brho * _element.angle / length * _charge * BDSGlobalConstants::Instance()->GetFFact();
     _element.B = bField/CLHEP::tesla;
   }
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
@@ -613,7 +628,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
 			 _element.angle,
 			 true,   // it's a vertical kicker
 			 PrepareBeamPipeInfo(_element),
-			 PrepareBoxSize(_element) ));
+			 PrepareMagnetOuterInfo(_element),
+			 PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createQuad()
@@ -630,12 +646,13 @@ BDSAcceleratorComponent* BDSComponentFactory::createQuad()
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
-  
+
   return (new BDSQuadrupole( _element.name,
 			     _element.l * CLHEP::m,
 			     bPrime,
 			     PrepareBeamPipeInfo(_element),
-			     PrepareBoxSize(_element)));			     
+			     PrepareMagnetOuterInfo(_element),
+			     PrepareTunnelInfo(_element)) );
 }  
   
 BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
@@ -662,7 +679,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
 	 << " B''= " << bDoublePrime/(CLHEP::tesla/CLHEP::m2) << "T/m^2"
 	 << " tilt= " << _element.tilt << "rad"
 	 << " tunnel material " << _element.tunnelMaterial
-	 << " material= " << _element.material
+	 << " material= " << _element.outerMaterial
 	 << G4endl;
 #endif
   
@@ -670,8 +687,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
 			    _element.l * CLHEP::m,
 			    bDoublePrime,
 			    PrepareBeamPipeInfo(_element),
-			    PrepareBoxSize(_element)));	
-  
+			    PrepareMagnetOuterInfo(_element),
+			    PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createOctupole()
@@ -698,7 +715,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole()
 	 << " B'''= " << bTriplePrime/(CLHEP::tesla/CLHEP::m3) << "T/m^3"
 	 << " tilt= " << _element.tilt << "rad"
 	 << " tunnel material " << _element.tunnelMaterial
-	 << " material= " << _element.material
+	 << " material= " << _element.outerMaterial
 	 << G4endl;
 #endif
   
@@ -706,7 +723,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole()
 			    _element.l * CLHEP::m,
 			    bTriplePrime,
 			    PrepareBeamPipeInfo(_element),
-			    PrepareBoxSize(_element)));
+			    PrepareMagnetOuterInfo(_element),
+			    PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
@@ -725,7 +743,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
 	 << " l= " << _element.l << "m"
 	 << " tilt= " << _element.tilt << "rad"
 	 << " tunnel material " << _element.tunnelMaterial
-	 << " material= " << _element.material
+	 << " material= " << _element.outerMaterial
 	 << G4endl;
 #endif
   // magnetic field
@@ -764,7 +782,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
 			     _element.knl,
 			     _element.ksl,
 			     PrepareBeamPipeInfo(_element),
-			     PrepareBoxSize(_element)));
+			     PrepareMagnetOuterInfo(_element),
+			     PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createElement(){
@@ -778,8 +797,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
   }
 
   // geometry
-  G4double aper = BDSGlobalConstants::Instance()->GetBeamPipeRadius();
-  if( _element.aper1 > 1.e-10*CLHEP::m ) aper = _element.aper1 * CLHEP::m;
+  G4double aper1 = BDSGlobalConstants::Instance()->GetBeamPipeRadius();
+  if( _element.aper1 > 1.e-10*CLHEP::m ) aper1 = _element.aper1 * CLHEP::m;
 
 #ifdef BDSDEBUG 
   G4cout << "---->creating Element,"
@@ -789,7 +808,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 	 << " outR= " << 0.5 * _element.boxSize << "m"
 	 << " bmapZOffset = "	<<  _element.bmapZOffset * CLHEP::m
 	 << " tunnel material " << _element.tunnelMaterial
-	 << " tunnel cavity material " << _element.tunnelCavityMaterial
 	 << " precision region " << _element.precisionRegion
 	 << G4endl;
 #endif
@@ -804,8 +822,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 			  _element.bmapFile,
 			  _element.bmapZOffset * CLHEP::m,
 			  _element.l * CLHEP::m,
-			  aper,
-			  0.5 * _element.boxSize * CLHEP::m , _element.tunnelMaterial, _element.tunnelRadius, tunnelOffsetX, _element.tunnelCavityMaterial));
+			  aper1,
+			  0.5 * _element.outerDiameter * CLHEP::m,
+			  _element.tunnelMaterial,
+			  _element.tunnelRadius,
+			  tunnelOffsetX,
+			  _element.tunnelMaterial));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
@@ -840,7 +862,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
 	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"
 	 << " B= " << bField/CLHEP::tesla << " T"
 	 << " tunnel material " << _element.tunnelMaterial
-	 << " material= " << _element.material
+	 << " material= " << _element.outerMaterial
 	 << G4endl;
 #endif
   
@@ -848,7 +870,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
 			   _element.l * CLHEP::m,
 			   bField,
 			   PrepareBeamPipeInfo(_element),
-			   PrepareBoxSize(_element)));
+			   PrepareMagnetOuterInfo(_element),
+			   PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
@@ -883,7 +906,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
 			     _element.xsize * CLHEP::m,
 			     _element.ysize * CLHEP::m,
 			     theMaterial,
-			     0.5*_element.boxSize*CLHEP::m,
+			     0.5*_element.outerDiameter*CLHEP::m,
 			     _element.blmLocZ,
 			     _element.blmLocTheta,
 			     _element.tunnelMaterial) );
@@ -915,7 +938,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
 			   _element.l*CLHEP::m,
 			   _element.B * CLHEP::tesla,
 			   PrepareBeamPipeInfo(_element),
-			   PrepareBoxSize(_element) ));
+			   PrepareMagnetOuterInfo(_element),
+			   PrepareTunnelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createLaser(){
@@ -1027,26 +1051,67 @@ G4Material* BDSComponentFactory::PrepareBeamPipeMaterial(Element& element)
 
 G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element& /*element*/)
 {
-  //in future do somethign relating to what's set in element
+  //in future do something relating to what's set in the element
   //also make some setting available in element
   return BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
 }
 
-G4double BDSComponentFactory::PrepareBoxSize(Element& element)
+BDSMagnetOuterInfo BDSComponentFactory::PrepareMagnetOuterInfo(Element& element)
 {
-  G4double boxSize = element.boxSize*CLHEP::m;
-  if (boxSize < 1e-6)
-    {//boxSize not set - use global option as default
-      boxSize = BDSGlobalConstants::Instance()->GetComponentBoxSize();
+  BDSMagnetOuterInfo info;
+  // magnet geometry type
+  if (element.magnetGeometryType == "")
+    info.geometryType = BDSGlobalConstants::Instance()->GetMagnetGeometryType();
+  else
+    info.geometryType = BDS::DetermineMagnetGeometryType(element.magnetGeometryType);
+
+  // outer diameter
+  G4double outerDiameter = element.outerDiameter*CLHEP::m;
+  if (outerDiameter < 1e-6)
+    {//outerDiameter not set - use global option as default
+      outerDiameter = BDSGlobalConstants::Instance()->GetOuterDiameter();
+    }
+  info.outerDiameter = outerDiameter;
+
+  // outer material
+  G4Material* outerMaterial;
+  if(element.outerMaterial == "")
+    {
+      G4String defaultMaterialName = BDSGlobalConstants::Instance()->GetOuterMaterialName();
+      outerMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
+    }
+  else
+    {outerMaterial = BDSMaterials::Instance()->GetMaterial(element.outerMaterial);}
+  info.outerMaterial = outerMaterial;
+  
+  return info;
+}
+
+BDSTunnelInfo BDSComponentFactory::PrepareTunnelInfo(Element& /*element*/)
+{
+  //in future do something relating to what's set in the element
+  BDSTunnelInfo info;
+  return info;
+}
+
+G4double BDSComponentFactory::PrepareOuterDiameter(Element& element)
+{
+  G4double outerDiameter = element.outerDiameter*CLHEP::m;
+  if (outerDiameter < 1e-6)
+    {//outerDiameter not set - use global option as default
+      outerDiameter = BDSGlobalConstants::Instance()->GetOuterDiameter();
     }
   // returns in metres
-  return boxSize;
+  return outerDiameter;
 }
 
 BDSBeamPipeInfo BDSComponentFactory::PrepareBeamPipeInfo(Element& element)
 {
   BDSBeamPipeInfo info;
-  info.beamPipeType      = BDS::DetermineBeamPipeType(element.apertureType);
+  if (element.apertureType == "")
+    info.beamPipeType = BDSGlobalConstants::Instance()->GetApertureType();
+  else 
+    info.beamPipeType = BDS::DetermineBeamPipeType(element.apertureType);
 
   // note even if aperN in the element is 0 (ie unset), we should use
   // the default aperture model from global constants (already in metres)

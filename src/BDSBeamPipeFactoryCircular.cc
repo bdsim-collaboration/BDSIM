@@ -148,15 +148,17 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
 					     vacuumMaterialIn,
 					     beamPipeMaterialIn,
 					     lengthIn);
+
+
   
   // record extents
   std::pair<double,double> extX = std::make_pair(-containerRadiusIn,containerRadiusIn);
   std::pair<double,double> extY = std::make_pair(-containerRadiusIn,containerRadiusIn);
   std::pair<double,double> extZ = std::make_pair(-lengthIn*0.5,lengthIn*0.5);
 
-  // build the BDSBeamPipe instance and return it
-  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerRadiusIn);
-  return aPipe;
+  return BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,
+								 containerRadiusIn);
+
 }
 
 /// the angled ones have degeneracy in the geant4 solids they used so we can avoid code duplication

@@ -16,20 +16,20 @@
 
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetType.hh"
 #include "BDSMultipole.hh"
 #include "BDSMuSpoiler.hh"
 #include "BDSMuSpoilerMagField.hh"
+#include "BDSTunnelInfo.hh"
 
-BDSMuSpoiler::BDSMuSpoiler(G4String        name,
-			   G4double        length,
-			   G4double        bField,
-			   BDSBeamPipeInfo beamPipeInfoIn,
-			   G4double        boxSize,
-			   G4String        outerMaterial,
-			   G4String        tunnelMaterial,
-			   G4double        tunnelRadius,
-			   G4double        tunnelOffsetX):
-  BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+BDSMuSpoiler::BDSMuSpoiler(G4String           name,
+			   G4double           length,
+			   G4double           bField,
+			   BDSBeamPipeInfo    beamPipeInfo,
+			   BDSMagnetOuterInfo magnetOuterInfo,
+			   BDSTunnelInfo      tunnelInfo):
+  BDSMultipole(BDSMagnetType::muspoiler,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
   itsBField(bField)
 {;}
 
@@ -40,11 +40,9 @@ void BDSMuSpoiler::BuildBPFieldAndStepper()
   return;
 }
 
-void BDSMuSpoiler::BuildOuterLogicalVolume(bool /*outerMaterialIsVacuum*/)
+void BDSMuSpoiler::BuildOuterVolume()
 {
-  //whole point is the outerlogical volume so ignore the outerMaterialIsVacuum flag
-  
-  BDSMultipole::BuildOuterLogicalVolume(false);
+  BDSMultipole::BuildOuterVolume();
 
   // prepare and attach field
   delete itsOuterMagField;
@@ -58,16 +56,9 @@ void BDSMuSpoiler::BuildOuterLogicalVolume(bool /*outerMaterialIsVacuum*/)
   if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0)
     {itsOuterFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());}
   //if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0)
-  //  {itsItsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());}
-  itsOuterLogicalVolume->SetFieldManager(itsOuterFieldMgr,false);
-
-}
-
-void BDSMuSpoiler::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(0.0,0.5,0.5));
-  itsVisAttributes->SetForceSolid(true);
-  itsVisAttributes->SetVisibility(true);
+  //  {itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());}
+  if(outer)
+    {outer->GetContainerLogicalVolume()->SetFieldManager(itsOuterFieldMgr,false);}
 }
 
 BDSMuSpoiler::~BDSMuSpoiler()

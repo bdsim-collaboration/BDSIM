@@ -8,6 +8,7 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSMaterials.hh"
+#include "BDSReadOutGeometry.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Colour.hh"
@@ -171,6 +172,8 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
   itsBlmOuterSolid=NULL;
   itsSPos = 0.0;
   itsCopyNumber = 0;
+
+  readOutLV = NULL;
 }
 
 BDSAcceleratorComponent::~BDSAcceleratorComponent ()
@@ -206,6 +209,7 @@ void BDSAcceleratorComponent::Initialise()
       //
       itsMarkerLogicalVolume=(*LogVol)[itsName];
     }
+  readOutLV = BDS::BuildReadOutVolume(itsName,itsLength,itsAngle);
 }
 
 void BDSAcceleratorComponent::Build()
@@ -692,7 +696,7 @@ void BDSAcceleratorComponent::BuildBLMs()
        
        //Set BLM gas as sensitive if option is chosen
        if(BDSGlobalConstants::Instance()->GetSensitiveBLMs()){
-         AddSensitiveVolume(itsBLMLogicalVolume);
+         RegisterSensitiveVolume(itsBLMLogicalVolume);
        }
 
        itsBlmCaseLogicalVolume = new G4LogicalVolume(itsBlmCaseSolid,

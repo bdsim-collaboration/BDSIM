@@ -3,7 +3,10 @@
 
 #include "BDSBeamPipeFactory.hh"
 #include "BDSDipoleStepper.hh"
+#include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetType.hh"
 #include "BDSSbendMagField.hh"
+#include "BDSTunnelInfo.hh"
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
@@ -20,14 +23,14 @@ BDSKicker::BDSKicker(G4String        name,
 		     G4double        angle,
 		     G4bool          verticalKicker,
 		     BDSBeamPipeInfo beamPipeInfo,
-		     G4double        boxSize,
-		     G4String        outerMaterial,
-		     G4String        tunnelMaterial,
-		     G4double        tunnelRadius,
-		     G4double        tunnelOffsetX):
-  BDSMultipole(name,length,beamPipeInfo,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+		     BDSMagnetOuterInfo magnetOuterInfo,
+		     BDSTunnelInfo      tunnelInfo):
+  BDSMultipole(BDSMagnetType::hkicker,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
   itsBField(bField),itsBGrad(bGrad),itsKickAngle(angle),isVerticalKicker(verticalKicker)
-{;}
+{
+  if (verticalKicker)
+    {itsType = BDSMagnetType::vkicker;}
+}
 
 void BDSKicker::Build()
 {
@@ -98,6 +101,9 @@ void BDSKicker::BuildBeampipe()
   // register logical volumes using geometry component base class
   RegisterLogicalVolumes(beampipe->GetAllLogicalVolumes());
 
+  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
+    {RegisterSensitiveVolumes(beampipe->GetAllSensitiveVolumes());}
+
   // if it's a vertical kicker, rotate the beam pipe by 90 degrees
   // this also rotates the dipole stepper in the vacuum volume
   G4RotationMatrix* kickerRotation = new G4RotationMatrix();
@@ -124,13 +130,6 @@ void BDSKicker::BuildBeampipe()
   }
   SetExtentZ(beampipe->GetExtentZ());
 } 
-
-void BDSKicker::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(0,0,1));
-  itsVisAttributes->SetForceSolid(true);
-}
-
 
 void BDSKicker::BuildBPFieldAndStepper()
 {

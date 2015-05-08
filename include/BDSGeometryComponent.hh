@@ -25,11 +25,14 @@ public:
 		       G4LogicalVolume* containerLVIn,
 		       std::pair<G4double,G4double> extentXIn,
 		       std::pair<G4double,G4double> extentYIn,
-		       std::pair<G4double,G4double> extentZIn);
+		       std::pair<G4double,G4double> extentZIn,
+		       G4ThreeVector                placementOffset = G4ThreeVector(0,0,0));
   ~BDSGeometryComponent(){;};  ///> Does not delete anything contained in pointers as G4 does that
 
   G4VSolid*         GetContainerSolid(); ///> get the solid of the container for possible subtraction
   G4LogicalVolume*  GetContainerLogicalVolume(); ///> get the logical volume of the container for placement
+  G4ThreeVector     GetPlacementOffset();///> get the offset from 0,0,0 that the object should ideally be placed in its parent
+  void SetPlacementOffset(G4ThreeVector& offsetIn);///> set the offset from 0,0,0 that the object should ideally be placed in its parent
   std::pair<G4double,G4double> GetExtentX(); ///> get -ve/+ve extent in local x
   std::pair<G4double,G4double> GetExtentY(); ///> get -ve/+ve extent in local y
   std::pair<G4double,G4double> GetExtentZ(); ///> get -ve/+ve extent in local z
@@ -41,6 +44,9 @@ public:
   void SetExtentZ(std::pair<G4double, G4double> extentZIn);
   void RegisterLogicalVolume(G4LogicalVolume* logicalVolume);
   void RegisterLogicalVolumes(std::vector<G4LogicalVolume*> logicalVolumes);
+  void RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume);
+  void RegisterSensitiveVolumes(std::vector<G4LogicalVolume*> sensitiveVolumes);
+  std::vector<G4LogicalVolume*> GetAllSensitiveVolumes();
   std::vector<G4LogicalVolume*> GetAllLogicalVolumes();
 
 protected:
@@ -52,6 +58,11 @@ protected:
   std::vector<G4LogicalVolume*> allLogicalVolumes;
   // we have to keep a registry of all logical volumes to be able to associate
   // information with them at construction time - for example S position - that
+  // can't be stored in the Logical Volume class itself without modifying geant
+  
+  /// registry of all volumes that should be made sensitive
+  std::vector<G4LogicalVolume*> allSensitiveVolumes;
+  G4ThreeVector                 placementOffset;
   // can't be stored in the Logical Volume class itself without modifying Geant
 
 private:
@@ -64,6 +75,12 @@ inline G4VSolid* BDSGeometryComponent::GetContainerSolid()
 
 inline G4LogicalVolume* BDSGeometryComponent::GetContainerLogicalVolume()
 {return containerLogicalVolume;}
+
+inline G4ThreeVector BDSGeometryComponent::GetPlacementOffset()
+{return placementOffset;}
+
+inline void BDSGeometryComponent::SetPlacementOffset(G4ThreeVector& offsetIn)
+{placementOffset = G4ThreeVector(offsetIn);}
 
 inline std::pair<G4double,G4double> BDSGeometryComponent::GetExtentX()
 {return extentX;}
@@ -100,5 +117,14 @@ inline void BDSGeometryComponent::RegisterLogicalVolumes(std::vector<G4LogicalVo
 
 inline std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllLogicalVolumes()
 {return allLogicalVolumes;}
+
+inline void BDSGeometryComponent::RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume)
+{allSensitiveVolumes.push_back(sensitiveVolume);}
+
+inline void BDSGeometryComponent::RegisterSensitiveVolumes(std::vector<G4LogicalVolume*> sensitiveVolumes)
+{allSensitiveVolumes.insert(allSensitiveVolumes.end(), sensitiveVolumes.begin(), sensitiveVolumes.end());}
+
+inline std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllSensitiveVolumes()
+{return allSensitiveVolumes;}
 
 #endif

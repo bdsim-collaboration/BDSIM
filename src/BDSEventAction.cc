@@ -26,6 +26,7 @@
 #include "BDSSampler.hh"
 #include "BDSSamplerCylinder.hh"
 #include "BDSSamplerHit.hh"
+#include "BDSSDManager.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSEnergyCounterSD.hh"
 #include "BDSAnalysisManager.hh"
@@ -38,8 +39,12 @@ extern BDSOutputBase* bdsOutput;         // output interface
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
 
 BDSEventAction::BDSEventAction():
-  SamplerCollID_plane(-1),SamplerCollID_cylin(-1),
-  Traj(NULL),trajEndPoint(NULL)
+  samplerCollID_plane(-1),
+  samplerCollID_cylin(-1),
+  energyCounterCollID(-1),
+  primaryCounterCollID(-1),
+  Traj(NULL),
+  trajEndPoint(NULL)
 { 
   verbose            = BDSExecOptions::Instance()->GetVerbose();
   verboseEvent       = BDSExecOptions::Instance()->GetVerboseEvent();
@@ -59,31 +64,28 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << " Processing begin of event action" << G4endl;
 #endif
+  // get pointer to analysis manager
+  analMan = BDSAnalysisManager::Instance();
 
+  // even number feedback
   G4int event_number = evt->GetEventID();
-
-  if ((event_number+1)%printModulo ==0)
-    {
-      G4cout << "\n---> Begin of event: " << event_number << G4endl;
-    }
-  
+  if ((event_number+1)%printModulo == 0)
+    {G4cout << "\n---> Begin of event: " << event_number << G4endl;}
   if(verboseEvent) G4cout << __METHOD_NAME__ << "event #"<<event_number<<G4endl ;
+
+  // get hit collection IDs for easy access
+  G4SDManager* g4SDMan = G4SDManager::GetSDMpointer();
+  if(samplerCollID_plane < 0)
+    {samplerCollID_plane    = g4SDMan->GetCollectionID("Sampler_plane");}
+  if(samplerCollID_cylin < 0)
+    {samplerCollID_cylin    = g4SDMan->GetCollectionID("Sampler_cylinder");}
+  if(energyCounterCollID < 0)
+    {energyCounterCollID  = g4SDMan->GetCollectionID("ec_on_axis_read_out/energy_counter");}
+  if(primaryCounterCollID < 0)
+    {primaryCounterCollID = g4SDMan->GetCollectionID("ec_on_axis_read_out/primary_counter");}
    
-  if( BDSSampler::GetNSamplers() > 0)
-    {   
-      SamplerCollID_plane = G4SDManager::GetSDMpointer()->GetCollectionID("Sampler_plane");
-    }
-   
-  if( BDSSamplerCylinder::GetNSamplers() > 0 )
-    {   
-      SamplerCollID_cylin = G4SDManager::GetSDMpointer()->GetCollectionID("Sampler_cylinder"); 
-    }
-   
-  //if( bdsOutput->GetLWCalorimeterNumber() > 0 )
-  //   {
-  //if (LWCalorimeterCollID==-1) 
-  //LWCalorimeterCollID = G4SDManager::GetSDMpointer()->GetCollectionID("LWCalorimeterCollection");
-  //   }
+  //if (lWCalorimeterCollID<1) 
+  //{lWCalorimeterCollID = G4SDManager::GetSDMpointer()->GetCollectionID("LWCalorimeterCollection");}
   FireLaserCompton=true;
    
 #ifdef BDSDEBUG
@@ -96,6 +98,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout<<"BDSEventAction : processing end of event action"<<G4endl;
 #endif
+  G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
 
   G4int event_number = evt->GetEventID();
   if(verboseEvent || verboseEventNumber == event_number){
@@ -113,8 +116,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #endif
   
   BDSSamplerHitsCollection*  SampHC=NULL;
-  if(SamplerCollID_plane>=0)
-    SampHC = (BDSSamplerHitsCollection*)(evt->GetHCofThisEvent()->GetHC(SamplerCollID_plane));
+  if(samplerCollID_plane>=0)
+    SampHC = (BDSSamplerHitsCollection*)(evt->GetHCofThisEvent()->GetHC(samplerCollID_plane));
   
   if(SampHC){
 #ifdef BDSDEBUG
@@ -128,17 +131,15 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   }
   SampHC=NULL;
   
-  // are there any cylindrical samplers?
-  // if so, record the hits
-
+  // are there any cylindrical samplers? if so, record the hits
 #ifdef BDSDEBUG
 G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #endif
+  if(samplerCollID_cylin>=0)
+    SampHC = (BDSSamplerHitsCollection*)(HCE->GetHC(samplerCollID_cylin));
 
-  if(SamplerCollID_cylin>=0)
-    SampHC = (BDSSamplerHitsCollection*)(evt->GetHCofThisEvent()->GetHC(SamplerCollID_cylin));
-
-  if (SampHC)  bdsOutput->WriteHits(SampHC);
+  if(SampHC)
+    {bdsOutput->WriteHits(SampHC);}
   
   // are there any Laser wire calorimeters?
   // TODO : check it !!! at present not writing LW stuff
@@ -147,26 +148,22 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   // if(LWCalorimeterCollID>=0) 
   //   LWCalHC=(BDSLWCalorimeterHitsCollection*)(evt->GetHCofThisEvent()->GetHC(LWCalorimeterCollID));
   // if (LWCalHC) bdsOutput->WriteHits(SampHC);
-
-
+  
   // create energy loss histogram
 #ifdef BDSDEBUG 
   G4cout<<"BDSEventAction : storing energy loss histograms"<<G4endl;
 #endif
-
-  G4SDManager* mySDMan = G4SDManager::GetSDMpointer();
-  G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
+  
   BDSEnergyCounterHitsCollection* energyCounterHits = 
-    (BDSEnergyCounterHitsCollection*)(HCE->GetHC(mySDMan->GetCollectionID("energy_counter")));
+    (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
   BDSEnergyCounterHitsCollection* primaryCounterHits = 
-    (BDSEnergyCounterHitsCollection*)(HCE->GetHC(mySDMan->GetCollectionID("primary_counter")));
+    (BDSEnergyCounterHitsCollection*)(HCE->GetHC(primaryCounterCollID));
 
   BDSAnalysisManager* analMan = BDSAnalysisManager::Instance();
   //if we have energy deposition hits, write them
   if(energyCounterHits)
     {
       bdsOutput->WriteEnergyLoss(energyCounterHits); // write hits
-
       //bin hits in histograms
       for (G4int i = 0; i < energyCounterHits->entries(); i++)
 	{
@@ -191,7 +188,7 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 	  analMan->Fill1DHistogram(0,thePrimaryHit->GetS()/CLHEP::m);
 	  analMan->Fill1DHistogram(1,thePrimaryLoss->GetS()/CLHEP::m);
 	  // per element histos
-      	  analMan->Fill1DHistogram(3,thePrimaryHit->GetS()/CLHEP::m);
+	  analMan->Fill1DHistogram(3,thePrimaryHit->GetS()/CLHEP::m);
 	  analMan->Fill1DHistogram(4,thePrimaryLoss->GetS()/CLHEP::m);
 	}
     }

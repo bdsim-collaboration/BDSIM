@@ -42,7 +42,8 @@ private:
   G4String itsName;
   BDSEnergyCounterHitsCollection* energyCounterCollection;
   BDSEnergyCounterHitsCollection* primaryCounterCollection;
-  G4int*   HitID;
+  G4int    HCIDe;
+  G4int    HCIDp;
   G4double enrg;
   G4double X,Y,Z,S; // global coordinates
   G4double x,y,z;   // local coordinates

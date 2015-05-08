@@ -178,14 +178,15 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.apertureType = params.apertureType;
   e.beampipeMaterial = params.beampipeMaterial;
 
-  // component size
-  e.boxSize = params.boxSize;
+  //magnet geometry
+  e.outerDiameter = params.outerDiameter;
+  e.outerMaterial = params.outerMaterial;
+  e.magnetGeometryType = params.magnetGeometryType;
   
   e.xsize = params.xsize;
   e.ysize = params.ysize;
   e.material = params.material;  
-  e.tunnelMaterial = params.tunnelMaterial;  
-  e.tunnelCavityMaterial = params.tunnelCavityMaterial;  
+  e.tunnelMaterial = params.tunnelMaterial;
   e.tunnelRadius = params.tunnelRadius;
   e.tunnelOffsetX = params.tunnelOffsetX;
   e.precisionRegion = params.precisionRegion;

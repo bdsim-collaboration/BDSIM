@@ -52,9 +52,9 @@ struct Parameters {
   double angle; int angleset;   ///> bending angle
   double phiAngleIn; int phiAngleInset;   ///> incoming bending angle for element
   double phiAngleOut; int phiAngleOutset;   ///> outgoing bending angle for element
-  double beampipeThickness; int beampipeThicknessset;
-
+  
   //new aperture model
+  double beampipeThickness; int beampipeThicknessset;
   double aper1; int aper1set;
   double aper2; int aper2set;
   double aper3; int aper3set;
@@ -62,8 +62,10 @@ struct Parameters {
   std::string apertureType; int apertureTypeset;
   std::string beampipeMaterial; int beampipeMaterialset;
 
-  //component size
-  double boxSize; int boxSizeset;
+  //magnet geometry
+  std::string magnetGeometryType; int magnetGeometryTypeset;
+  std::string outerMaterial;      int outerMaterialset;
+  double      outerDiameter;      int outerDiameterset;
   
   double phi, theta, psi; ///> for 3d transforms
   int phiset, thetaset, psiset;

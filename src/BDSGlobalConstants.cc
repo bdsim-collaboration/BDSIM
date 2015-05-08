@@ -37,13 +37,12 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
 {
   itsPhysListName       = opt.physicsList;
   itsBeamPipeMaterial   = opt.beampipeMaterial;
-  itsApertureType       = BDS::DetermineBeamPipeType(opt.apertureType,true); //true is flag for first global check
+  itsApertureType       = BDS::DetermineBeamPipeType(opt.apertureType);
   itsVacuumMaterial     = opt.vacMaterial;
   itsEmptyMaterial      = "G4_Galactic"; // space vacuum
   itsTunnelMaterialName = opt.tunnelMaterial;
   itsTunnelCavityMaterialName = opt.tunnelCavityMaterial;
   itsSoilMaterialName   = opt.soilMaterial;
-  itsMagnetGeometry     = opt.magnetGeometry;
 
   itsSampleDistRandomly = true;
   itsGeometryBias = opt.geometryBias;
@@ -80,15 +79,21 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   BDS::CheckApertureInfo(itsApertureType,itsBeamPipeRadius,itsAper1,itsAper2,itsAper3,itsAper4);
   
   itsBeamPipeThickness = opt.beampipeThickness * CLHEP::m;
-  itsComponentBoxSize = opt.componentBoxSize * CLHEP::m;
-  if (itsComponentBoxSize < (itsBeamPipeThickness + itsBeamPipeRadius)){
-    G4cerr << __METHOD_NAME__ << "Error: option \"boxSize\" must be greater than the sum of \"beampipeRadius\" and \"beamPipeThickness\" " << G4endl;
+
+  //magnet geometry
+  itsOuterDiameter = opt.outerDiameter * CLHEP::m;
+  if (itsOuterDiameter < 2*(itsBeamPipeThickness + itsBeamPipeRadius)){
+    G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" must be greater than 2x (\"beampipeRadius\" + \"beamPipeThickness\") " << G4endl;
     exit(1);
   }
+  itsMagnetGeometryType = BDS::DetermineMagnetGeometryType(opt.magnetGeometryType);
+  itsOuterMaterialName  = opt.outerMaterialName;
+
+  // tunnel
   itsBuildTunnel = opt.buildTunnel;
   itsBuildTunnelFloor = opt.buildTunnelFloor;  
   itsTunnelRadius = opt.tunnelRadius * CLHEP::m;
-  if (itsTunnelRadius < itsComponentBoxSize/2){
+  if (itsTunnelRadius < itsOuterDiameter*0.5){
     G4cerr << __METHOD_NAME__ << "> Error: option \"tunnelRadius\" must be greater than \"boxSize\"/2 " << G4endl;
     exit(1);
   }

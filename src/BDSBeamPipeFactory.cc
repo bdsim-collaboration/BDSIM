@@ -29,19 +29,19 @@ BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeTyp
 
   case BDSBeamPipeType::circular:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " circular beampipe factory" << G4endl;
+    G4cout << __METHOD_NAME__ << "circular beampipe factory" << G4endl;
 #endif
     return BDSBeamPipeFactoryCircular::Instance();
     break;
   case BDSBeamPipeType::elliptical:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " elliptical beampipe factory" << G4endl;
+    G4cout << __METHOD_NAME__ << "elliptical beampipe factory" << G4endl;
 #endif
     return BDSBeamPipeFactoryElliptical::Instance();
     break;
   case BDSBeamPipeType::rectangular:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " rectangular beampipe factory" << G4endl;
+    G4cout << __METHOD_NAME__ << "rectangular beampipe factory" << G4endl;
 #endif
     return BDSBeamPipeFactoryRectangular::Instance();
     break;

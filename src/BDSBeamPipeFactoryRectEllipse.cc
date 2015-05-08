@@ -213,6 +213,11 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CommonFinalConstruction(G4String    
   
   // build the BDSBeamPipe instance and return it
   BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerWidthIn);
+
+  // register sensitive volumes
+  aPipe->RegisterSensitiveVolume(beamPipeLV);
+  aPipe->RegisterSensitiveVolume(containerLV);
+
   return aPipe;
 }
 

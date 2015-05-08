@@ -37,6 +37,8 @@ void BDSDrift::Build() {
 								     itsBeamPipeInfo.beamPipeThickness,
 								     itsBeamPipeInfo.beamPipeMaterial
 								     );
+  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
+    {RegisterSensitiveVolumes(pipe->GetAllSensitiveVolumes());}
   
   itsMarkerLogicalVolume = pipe->GetContainerLogicalVolume();
 }

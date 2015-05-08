@@ -18,23 +18,22 @@
 
 #include "globals.hh"
 
-#include "BDSMultipole.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSMagnetOuterInfo.hh"
+#include "BDSMultipole.hh"
+#include "BDSTunnelInfo.hh"
 
 #include <list>
 
 class BDSSolenoid : public BDSMultipole
 {
 public:
-  BDSSolenoid(G4String        name,
-	      G4double        length,
-	      G4double        bField,
-	      BDSBeamPipeInfo beamPipeInfoIn,
-	      G4double        boxSize,
-	      G4String        outerMaterial="",
-	      G4String        tunnelMaterial="",
-	      G4double        tunnelRadius=0,
-	      G4double        tunnelOffsetX=0);
+  BDSSolenoid(G4String           name,
+	      G4double           length,
+	      G4double           bField,
+	      BDSBeamPipeInfo    beamPipeInfo,
+	      BDSMagnetOuterInfo magnetOuterInfo,
+	      BDSTunnelInfo      tunnelInfo);
   ~BDSSolenoid(){;};
 
 private:
@@ -42,8 +41,6 @@ private:
 
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
-
-  virtual void SetVisAttributes();
 };
 
 #endif

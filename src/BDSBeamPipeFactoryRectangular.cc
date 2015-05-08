@@ -173,6 +173,10 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CommonFinalConstruction(G4String    
 
   BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerRadius);
 
+  // register sensitive volumes
+  aPipe->RegisterSensitiveVolume(beamPipeLV);
+  aPipe->RegisterSensitiveVolume(containerLV);
+
   return aPipe;
 }
 
@@ -210,7 +214,7 @@ void BDSBeamPipeFactoryRectangular::CreateGeneralAngledSolids(G4String      name
 				  angledFaceRadius,              // outer radius
 				  (lengthIn*0.5)-2*lengthSafety, // half length - must fit within container
 				  0,                             // rotation start angle
-				  CLHEP::twopi,                  // rotation finish angle
+				  CLHEP::twopi,                  // rotation sweep angle
 				  inputfaceIn,                   // input face normal
 				  outputfaceIn);                 // output face normal
   

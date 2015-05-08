@@ -16,6 +16,9 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetType.hh"
+#include "BDSTunnelInfo.hh"
 
 #include "G4FieldManager.hh"
 #include "G4ChordFinder.hh"
@@ -31,15 +34,13 @@ class BDSMultipole: public BDSAcceleratorComponent
 {
 public:
   // Constructor for new beampipe
-  BDSMultipole( G4String        name, 
-		G4double        length,
-		BDSBeamPipeInfo beamPipeInfo,
-		G4double        boxSize,
-		G4String        outerMaterial="",
-		G4String        tunnelMaterial="",
-		G4double        tunnelRadius=0,
-		G4double        tunnelOffsetX=0);
-
+  BDSMultipole(BDSMagnetType      type,
+	       G4String           name, 
+	       G4double           length,
+	       BDSBeamPipeInfo    beamPipeInfo,
+	       BDSMagnetOuterInfo magnetOuterInfo,
+	       BDSTunnelInfo      tunnelInfo);
+  
   virtual ~BDSMultipole();
 
 protected:
@@ -61,7 +62,10 @@ private:
 
 protected:
   virtual void BuildMarkerLogicalVolume();
-  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+  
+  /// method to create outer volume
+  virtual void BuildOuterVolume();
+  
   /// general straight beampipe - can be overloaded by derived classes
   virtual void BuildBeampipe();
   /// common tasks after the beampipe solids have been defined.
@@ -76,7 +80,14 @@ protected:
   void SetStartOuterRadius(G4double outR);
   void SetEndOuterRadius(G4double outR);
 
+  // don't need but provide null implementation here so it needn't be
+  // in the derived classes
+  virtual void SetVisAttributes();
+
 protected:
+  // type
+  BDSMagnetType itsType;
+  
   // field related objects, set by BuildBPFieldAndStepper
   G4MagIntegratorStepper* itsStepper;
   G4MagneticField* itsMagField;
@@ -115,9 +126,15 @@ protected:
 
   //for outer volume construction
   G4double        boxSize;
-  
-  // G4double itsStartOuterR;
-  // G4double itsEndOuterR;
+
+  //the assembled outer logical volume
+  BDSGeometryComponent* outer;
+
+  //for the outer volume construction
+  BDSMagnetOuterInfo itsMagnetOuterInfo;
+
+  //for the tunnel construction
+  BDSTunnelInfo itsTunnelInfo;
 
 private:
   /// constructor initialisation

@@ -20,13 +20,10 @@ BDSTMultipole::BDSTMultipole(G4String            name,
 			     // (NOT multiplied by multipole length)
 			     std::list<G4double> aks, // list of skew multipole strengths
 			     // (NOT multiplied by multipole length)
-			     BDSBeamPipeInfo     beamPipeInfoIn,
-			     G4double            boxSize,
-			     G4String            outerMaterial,
-			     G4String            tunnelMaterial,
-			     G4double            tunnelRadius,
-			     G4double            tunnelOffsetX):
-  BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX)
+			     BDSBeamPipeInfo     beamPipeInfo,
+			     BDSMagnetOuterInfo  magnetOuterInfo,
+			     BDSTunnelInfo       tunnelInfo):
+  BDSMultipole(BDSMagnetType::multipole,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo)
 {
   CommonConstructor(akn,aks);
 }
@@ -91,12 +88,6 @@ void BDSTMultipole::CommonConstructor(std::list<G4double> akn, std::list<G4doubl
 #endif
 
   itsOrder = kn.size();
-}
-
-void BDSTMultipole::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(0.1,0.4,0.2));
-  itsVisAttributes->SetForceSolid(true);
 }
 
 void BDSTMultipole::BuildBPFieldAndStepper()

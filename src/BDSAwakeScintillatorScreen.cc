@@ -265,7 +265,7 @@ void BDSAwakeScintillatorScreen::Build(){
       if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
 	BuildTunnel();
       }
-      AddSensitiveVolume(itsMarkerLogicalVolume);
+      RegisterSensitiveVolume(itsMarkerLogicalVolume);
 }
 
 void BDSAwakeScintillatorScreen::BuildCamera(){
@@ -292,7 +292,7 @@ void BDSAwakeScintillatorScreen::BuildScreen()
   G4cout << "finished." << G4endl;
   //  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
   //    for(int i=0; i<_mlScreen->nLayers(); i++){
-  //      AddSensitiveVolume(_mlScreen[i].log());
+  //      RegisterSensitiveVolume(_mlScreen[i].log());
   //    }
   //  } 
   G4cout << "BDSAwakeScintillatorScreen: finished building geometry" << G4endl;

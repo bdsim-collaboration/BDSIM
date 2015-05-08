@@ -7,9 +7,13 @@
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDipoleStepper.hh"
+#include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetType.hh"
 #include "BDSMaterials.hh"
 #include "BDSSbendMagField.hh"
 #include "BDSSDManager.hh"
+#include "BDSTunnelInfo.hh"
+#include "BDSUtilities.hh"
 
 #include "G4FieldManager.hh"
 #include "G4IntersectionSolid.hh"
@@ -23,22 +27,19 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-BDSRBend::BDSRBend(G4String        name,
-		   G4double        length,
-		   G4double        bField,
-		   G4double        bGrad,
-		   G4double        angle,
-		   BDSBeamPipeInfo beamPipeInfoIn,
-		   G4double        boxSize,
-		   G4String        outerMaterial,
-		   G4String        tunnelMaterial,
-		   G4double        tunnelRadius,
-		   G4double        tunnelOffsetX):
-  BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+BDSRBend::BDSRBend(G4String           name,
+		   G4double           length,
+		   G4double           bField,
+		   G4double           bGrad,
+		   G4double           angle,
+		   BDSBeamPipeInfo    beamPipeInfo,
+		   BDSMagnetOuterInfo magnetOuterInfo,
+		   BDSTunnelInfo      tunnelInfo):
+  BDSMultipole(BDSMagnetType::rectangularbend,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
   itsBField(bField),itsBGrad(bGrad)
 {
-  itsAngle = angle;
-  G4cout << "ANGLE " << itsAngle << G4endl;
+  itsAngle    = angle;
+  outerRadius = magnetOuterInfo.outerDiameter*0.5; 
   CommonConstructor(length);
 }
 
@@ -48,13 +49,7 @@ void BDSRBend::CommonConstructor(G4double aLength)
   //full length along chord - just its length in case of rbend
   itsChordLength = aLength;
 
-  if (itsAngle < 0)
-    {orientation = -1;}
-  else
-    {orientation = 1;}
-
-  // sort out outer radius of magnet now
-  outerRadius = boxSize*0.5;
+  orientation = BDS::CalculateOrientation(itsAngle);
 
   // itsStraightSectionChord is the distance along the chord required to be used by a drift pipe so that
   // the outer logical volume (magnet cylinder - defined by outRadius) doesn't protrude
@@ -71,8 +66,8 @@ void BDSRBend::CommonConstructor(G4double aLength)
 
   G4double in_z = cos(0.5*fabs(itsAngle)); // calculate components of normal vectors (in the end mag(normal) = 1)
   G4double in_x = sin(0.5*fabs(itsAngle));
-  inputface  = G4ThreeVector(orientation*in_x, 0.0, -1.0*in_z); //-1 as pointing down in z for normal
-  outputface = G4ThreeVector(orientation*in_x, 0.0, in_z);
+  inputface  = G4ThreeVector(-orientation*in_x, 0.0, -1.0*in_z); //-1 as pointing down in z for normal
+  outputface = G4ThreeVector(-orientation*in_x, 0.0, in_z);
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Angle                   = " << itsAngle                 << G4endl;
@@ -110,12 +105,6 @@ void BDSRBend::Build()
       
       BuildOuterFieldManager(2, BFldIron,CLHEP::pi/2);
     }
-}
-
-void BDSRBend::SetVisAttributes()
-{
-  itsVisAttributes = new G4VisAttributes(G4Colour(0,0,1)); //blue
-  itsVisAttributes->SetForceSolid(true);
 }
 
 void BDSRBend::BuildBPFieldAndStepper()
@@ -170,6 +159,17 @@ void BDSRBend::BuildMarkerLogicalVolume()
   SetExtentX(-boxSize*0.5,boxSize*0.5);
   SetExtentY(-boxSize*0.5,boxSize*0.5);
   SetExtentZ(-itsChordLength*0.5,itsChordLength*0.5);
+}
+
+void BDSRBend::BuildOuterVolume()
+{
+  //need to make a shorter outer volume for rbend geometry
+  //let's cheat and use the base class method by fiddling the
+  //component length then setting it back - reduces code duplication
+  G4double originalLength = itsLength;
+  itsLength = itsMagFieldLength;
+  BDSMultipole::BuildOuterVolume();
+  itsLength = originalLength;
 }
 
 // construct a beampipe for r bend
@@ -261,114 +261,16 @@ void BDSRBend::BuildBeampipe()
    RegisterLogicalVolumes(bpFirstBit->GetAllLogicalVolumes());
    RegisterLogicalVolumes(beampipe->GetAllLogicalVolumes());
    RegisterLogicalVolumes(bpLastBit->GetAllLogicalVolumes());
+
+   // register components as sensitive if required
+   if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
+     {
+       RegisterSensitiveVolumes(bpFirstBit->GetAllSensitiveVolumes());
+       RegisterSensitiveVolumes(beampipe->GetAllSensitiveVolumes());
+       RegisterSensitiveVolumes(bpLastBit->GetAllSensitiveVolumes());
+     }
    
    SetExtentX(beampipe->GetExtentX()); //not exact but only central porition will use this
    SetExtentY(beampipe->GetExtentY());
    SetExtentZ(-itsChordLength*0.5,itsChordLength*0.5);
-}
-
-void BDSRBend::BuildOuterLogicalVolume(G4bool outerMaterialIsVacuum)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // check if outer volume is required
-  if (outerMaterialIsVacuum)
-    {return;} // no need to create another volume
-  
-  // build the logical volume
-  G4Material* material;
-  if(itsMaterial != "")
-    { material = BDSMaterials::Instance()->GetMaterial(itsMaterial);}
-  else
-    { material = BDSMaterials::Instance()->GetMaterial("Iron");}
-
-  G4double lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
-  // outerRadius defined in constructor / (temporary) common constructor
-  if (beampipe->ContainerIsCircular())
-    {
-      // simple circular beampipe - no need for a subtraction solid
-      G4double innerRadius = beampipe->GetContainerRadius()+lengthSafety;
-      
-      // check outerRadius is bigger
-      if (outerRadius < innerRadius)
-	{
-	  G4cout << __METHOD_NAME__ << " - warning - beampipe is bigger than the boxSize" << G4endl
-		 << "setting boxSize to be just big enough to contain beampipe " << G4endl;
-	  outerRadius = innerRadius+1*CLHEP::cm;
-	}
-      itsOuterLogicalVolume =
-	new G4LogicalVolume(new G4Tubs( itsName+"_outer_solid",            // name
-					innerRadius,
-					outerRadius,
-					itsMagFieldLength*0.5-2*lengthSafety,
-					0.0,                               // starting angle
-					2.0*CLHEP::pi),                    // finishing angle - full
-			    
-			    material,
-			    itsName+"_outer_lv");
-    }
-  else
-    {
-      // not a simple circular beampipe - have to use subtraction solid
-      // check outer radius is really outside the beampipe
-      G4double maxX = std::max(beampipe->GetExtentX().first,beampipe->GetExtentX().second);
-      G4double maxY = std::max(beampipe->GetExtentY().first,beampipe->GetExtentY().second);
-      if (outerRadius < maxX)
-	{outerRadius = maxX + 1*CLHEP::cm;} //minimum extra size
-      if (outerRadius < maxY)
-	{outerRadius = maxY + 1*CLHEP::cm;}
-      G4double hypotenuse = sqrt(maxX*maxX + maxY*maxY);
-      if (outerRadius < hypotenuse)
-	{outerRadius = hypotenuse + 1*CLHEP::cm;}
-      
-      itsOuterLogicalVolume =
-	new G4LogicalVolume( new G4SubtractionSolid (itsName+"_outer_solid",
-						     new G4Tubs( itsName+"_outer_solid_cylinder",   // name
-								 0.0,     // solid cylinder for unambiguous subtraction
-								 outerRadius,
-								 itsMagFieldLength*0.5-2*lengthSafety, // length about centre point
-								 0.0,                               // starting angle
-								 2.0*CLHEP::pi),                    // finishing angle - full
-						     beampipe->GetContainerSubtractionSolid() ),
-						     material,
-						     itsName+"_outer_lv");
-    }
-  
-  RegisterLogicalVolume(itsOuterLogicalVolume);
-  
-  //placement
-  G4ThreeVector magnetPos        = G4ThreeVector(magnetXShift,0,0);
-  new G4PVPlacement(0,                      // rotation
-		    magnetPos,              // position
-		    itsOuterLogicalVolume,  // logical volume
-		    itsName+"_solid",       // name
-		    itsMarkerLogicalVolume, // mother  volume
-		    false,                  // no boolean operation
-		    0,                      // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-
-  // note in multipole and other derived classes this is done in BuildOuterLogicalVolume after
-  // a private function has built the volume.  As we have only one method here, we'll go ahead
-  // and make it sensitive
-  // remember if it's vacuum, it won't be built - have to check it's there
-  if (itsOuterLogicalVolume)
-    {itsOuterLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());}
-  
-  // set visualization attributes
-  itsOuterLogicalVolume->SetVisAttributes(itsVisAttributes);
-
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  itsOuterUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
-  itsOuterUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
-  itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
-#endif
-
-  // set extent
-  SetExtentX(-outerRadius,outerRadius);
-  SetExtentY(-outerRadius,outerRadius);
-  SetExtentZ(-itsChordLength*0.5,itsChordLength*0.5);
-  // here outer volume is shorter than chordlength, but record that
-  // as maximum extent of the whole magnet
 }

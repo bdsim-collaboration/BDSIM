@@ -9,6 +9,7 @@
 #include "G4AffineTransform.hh"
 
 #include "BDSBeamPipeType.hh"
+#include "BDSMagnetGeometryType.hh"
 #include "BDSParticle.hh"
 #include "BDSTunnelInfo.hh"
 
@@ -97,7 +98,12 @@ public:
   G4bool   GetSensitiveComponents()const;
   G4bool   GetSensitiveBeamPipe()const;
   G4bool   GetSensitiveBLMs()const;
+
+  // Magnet geometry variable
   G4double GetComponentBoxSize()const;
+  BDSMagnetGeometryType GetMagnetGeometryType()const;
+  G4String GetOuterMaterialName()const;
+  G4double GetOuterDiameter()const;
   G4double GetMagnetPoleSize()const;
   G4double GetMagnetPoleRadius()const;
 
@@ -152,10 +158,6 @@ public:
   G4double GetProdCutPositrons()const;
   G4double GetProdCutPositronsP()const;
   G4double GetProdCutPositronsA()const;
-
-  // Magnet geometry variable
-
-  G4String GetMagnetGeometry()const;
 
   // Physical processes etc.
 
@@ -264,6 +266,8 @@ private:
   G4double itsElossHistoBinWidth;
   G4double itsElossHistoTransBinWidth;
   G4double itsDefaultRangeCut;
+  /// fudge factor, flips magnetic fields in elements (except for bends and kicks defined by angle, so that opposite charge and ffact -1 will produce same trajectory)
+  /// similar to BV flag in MadX
   G4double itsFFact;
 
   // initial bunch parameters
@@ -282,16 +286,19 @@ private:
   G4bool   itsGeometryBias;
   G4bool   itsUseEMLPB;
   G4bool   itsUseHadLPB;
-
-  G4String itsMagnetGeometry;
-
   G4double itsMinimumEpsilonStep;
   G4double itsMaximumEpsilonStep;
   G4double itsMaxTime;
   G4double itsDeltaOneStep;
-  G4double itsComponentBoxSize;
+
+  // magnet geometry
+  BDSMagnetGeometryType itsMagnetGeometryType;
+  G4String itsOuterMaterialName;
+  G4double itsOuterDiameter;
+  //G4double itsComponentBoxSize;
   G4double itsMagnetPoleSize;
   G4double itsMagnetPoleRadius;
+  
   G4bool   itsBuildTunnel;
   G4bool   itsBuildTunnelFloor;
   G4double itsTunnelRadius;
@@ -550,8 +557,17 @@ inline  G4bool BDSGlobalConstants::GetSensitiveBeamPipe()const
 inline  G4bool BDSGlobalConstants::GetSensitiveBLMs()const
 {return itsSensitiveBLMs;}
 
+inline BDSMagnetGeometryType BDSGlobalConstants::GetMagnetGeometryType()const
+{return itsMagnetGeometryType;}
+
+inline G4String BDSGlobalConstants::GetOuterMaterialName()const
+{return itsOuterMaterialName;}
+
+inline G4double BDSGlobalConstants::GetOuterDiameter()const
+{return itsOuterDiameter;}
+
 inline G4double BDSGlobalConstants::GetComponentBoxSize()const
-{return itsComponentBoxSize;}
+{return itsOuterDiameter;}
 
 inline G4double BDSGlobalConstants::GetMagnetPoleSize()const
 {return itsMagnetPoleSize;}
@@ -610,9 +626,6 @@ inline G4double BDSGlobalConstants::GetBlmRad()const
 
 inline G4double BDSGlobalConstants::GetBlmLength()const
 {return itsBlmLength;}
-
-inline G4String BDSGlobalConstants::GetMagnetGeometry()const
-{return itsMagnetGeometry;}
 
 inline G4double BDSGlobalConstants::GetBeamPipeRadius()const
 {return itsBeamPipeRadius;}

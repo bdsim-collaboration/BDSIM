@@ -12,6 +12,8 @@
 #include "BDSDecapole.hh"
 #include "BDSDecMagField.hh"
 #include "BDSDecStepper.hh"
+#include "BDSMagnetOuterInfo.hh"
+#include "BDSTunnelInfo.hh"
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
@@ -20,16 +22,13 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-BDSDecapole::BDSDecapole(G4String         name,
-			 G4double         length,
-			 G4double         bQuadPrime,
-			 BDSBeamPipeInfo  beamPipeInfo,
-			 G4double         boxSize,
-			 G4String         outerMaterial,
-			 G4String         tunnelMaterial,
-			 G4double         tunnelRadius,
-			 G4double         tunnelOffsetX):
-  BDSMultipole(name,length,beamPipeInfo,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+BDSDecapole::BDSDecapole(G4String           name,
+			 G4double           length,
+			 G4double           bQuadPrime,
+			 BDSBeamPipeInfo    beamPipeInfo,
+			 BDSMagnetOuterInfo magnetOuterInfo,
+			 BDSTunnelInfo      tunnelInfo):
+  BDSMultipole(BDSMagnetType::decapole,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
   itsBQuadPrime(bQuadPrime)
 {;}
 
@@ -58,12 +57,6 @@ void BDSDecapole::Build() {
       
       BuildOuterFieldManager(10, BFldIron,CLHEP::pi/10);
     }
-}
-
-void BDSDecapole::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(0,0,1)); //green
-  itsVisAttributes->SetForceSolid(true);
 }
 
 void BDSDecapole::BuildBPFieldAndStepper()

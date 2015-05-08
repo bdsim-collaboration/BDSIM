@@ -12,28 +12,19 @@
 
 #include "G4ExplicitEuler.hh"
 
-BDSRfCavity::BDSRfCavity(G4String        name,
-			 G4double        length,
-			 G4double        grad,
-			 BDSBeamPipeInfo beamPipeInfoIn,
-			 G4double        boxSize,
-			 G4String        outerMaterial,
-			 G4String        tunnelMaterial,
-			 G4double        tunnelRadius,
-			 G4double        tunnelOffsetX):
-  BDSMultipole(name,length,beamPipeInfoIn,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+BDSRfCavity::BDSRfCavity(G4String           name,
+			 G4double           length,
+			 G4double           grad,
+			 BDSBeamPipeInfo    beamPipeInfo,
+			 BDSMagnetOuterInfo magnetOuterInfo,
+			 BDSTunnelInfo      tunnelInfo):
+  BDSMultipole(BDSMagnetType::rfcavity,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
   itsGrad(grad)
 {
   itsEField    = NULL;
   fChordFinder = NULL;
   fStepper     = NULL;
   fIntgrDriver = NULL;
-}
-
-void BDSRfCavity::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(0.25,0.25,0.5));
-  itsVisAttributes->SetForceSolid(true);
 }
 
 void BDSRfCavity::BuildBPFieldAndStepper()
@@ -67,3 +58,4 @@ void BDSRfCavity::BuildBPFieldAndStepper()
   fChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
   itsBPFieldMgr->SetChordFinder( fChordFinder );
 }
+

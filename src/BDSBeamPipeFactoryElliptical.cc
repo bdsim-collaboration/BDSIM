@@ -175,6 +175,15 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CommonFinalConstruction(G4String    n
   
   BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerRadius);
 
+  // REGISTER all lvs
+  aPipe->RegisterLogicalVolume(vacuumLV); //using geometry component base class method
+  aPipe->RegisterLogicalVolume(beamPipeLV);
+  aPipe->RegisterLogicalVolume(containerLV);
+
+  // register sensitive volumes
+  aPipe->RegisterSensitiveVolume(beamPipeLV);
+  aPipe->RegisterSensitiveVolume(containerLV);
+  
   return aPipe;
 }
 

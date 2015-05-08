@@ -25,6 +25,7 @@
 
 #include "BDSDetectorConstruction.hh"
 
+#include "BDSAcceleratorModel.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
@@ -306,25 +307,35 @@ void BDSDetectorConstruction::BuildWorld(){
   
   G4String worldName="World";
   solidWorld = new G4Box(worldName, worldR.x(), worldR.y(), worldR.z());
-    
-  logicWorld = new G4LogicalVolume(solidWorld,	       //its solid
-				   BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()), //its material
-				   worldName);	       //its name
 
+  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  logicWorld = new G4LogicalVolume(solidWorld,	       // solid
+				   emptyMaterial,      // material
+				   worldName);	       // name
+
+  // read out geometry logical volume
+  // note g4logicalvolume has a private copy constructor so we have to repeat everything here annoyingly
+  G4LogicalVolume* readOutWorldLV = new G4LogicalVolume(solidWorld,    // solid
+							emptyMaterial, // material
+							worldName);    // name
+  
   // visual attributes
   if (BDSExecOptions::Instance()->GetVisDebug()) {
     G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
     debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
     logicWorld->SetVisAttributes(debugWorldVis);
+    readOutWorldLV->SetVisAttributes(debugWorldVis);
   } else {
     logicWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+    readOutWorldLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
   }
 	
   // set limits
 #ifndef NOUSERLIMITS
-  G4UserLimits* WorldUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
-  WorldUserLimits->SetMaxAllowedStep(worldR.z()*0.5);
-  logicWorld->SetUserLimits(WorldUserLimits);
+  G4UserLimits* worldUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
+  worldUserLimits->SetMaxAllowedStep(worldR.z()*0.5);
+  logicWorld->SetUserLimits(worldUserLimits);
+  readOutWorldLV->SetUserLimits(worldUserLimits);
 #endif
 
   // create regions
@@ -344,7 +355,7 @@ void BDSDetectorConstruction::BuildWorld(){
   
   precisionRegion->SetProductionCuts(theProductionCuts);
 #ifndef NOUSERLIMITS
-  precisionRegion->SetUserLimits(WorldUserLimits);
+  precisionRegion->SetUserLimits(worldUserLimits);
 #endif
 
   // place the world
@@ -357,6 +368,18 @@ void BDSDetectorConstruction::BuildWorld(){
                                  0,             // copy number
 				 BDSGlobalConstants::Instance()->GetCheckOverlaps());// overlap checking
 
+  // create the read out geometry world by creating another placement of the world logical volume
+  G4PVPlacement* readOutWorldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
+						    (G4ThreeVector)0,     // at (0,0,0)
+						    readOutWorldLV,	  // logical volume
+						    "readoutWorld",       // name
+						    NULL,		  // mother  volume
+						    false,		  // no boolean operation
+						    0,                    // copy number
+						    BDSGlobalConstants::Instance()->GetCheckOverlaps());// overlap checking
+
+  BDSAcceleratorModel::Instance()->SetReadOutWorldPV(readOutWorldPV);
+  BDSAcceleratorModel::Instance()->SetReadOutWorldLV(readOutWorldLV);
 }
 
 void BDSDetectorConstruction::ComponentPlacement(){
@@ -368,6 +391,12 @@ void BDSDetectorConstruction::ComponentPlacement(){
   G4ThreeVector localX(1.,0.,0.); 
   G4ThreeVector localY(0.,1.,0.);
   G4ThreeVector localZ(0.,0.,1.);
+
+  // few general variables that we don't need to get every
+  // time in the loop for component placement
+  G4VPhysicalVolume* readOutWorldPV       = BDSAcceleratorModel::Instance()->GetReadOutWorldPV();
+  G4VSensitiveDetector* energyCounterSDRO = BDSSDManager::Instance()->GetEnergyCounterOnAxisSDRO();
+  G4bool checkOverlaps                    = BDSGlobalConstants::Instance()->GetCheckOverlaps();
 
   for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
     {
@@ -489,6 +518,8 @@ void BDSDetectorConstruction::ComponentPlacement(){
       // get the logical volume to be placed
       G4LogicalVolume* LocalLogVol = thecurrentitem->GetMarkerLogicalVolume();
       G4String LogVolName          = LocalLogVol->GetName();
+      // read out geometry logical volume - note may not exist for each item - must be tested
+      G4LogicalVolume* readOutLV   = thecurrentitem->GetReadOutLogicalVolume();
       
       // add the volume to one of the regions
       if(thecurrentitem->GetPrecisionRegion())
@@ -503,12 +534,16 @@ void BDSDetectorConstruction::ComponentPlacement(){
 #ifdef BDSDEBUG
       G4cout<<"SETTING UP SENSITIVE VOLUMES..."<< G4endl;
 #endif
-
       // now register the spos and other info of this sensitive volume in global map
       // used by energy counter sd to get spos of that logical volume at histogram time
       BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( LogVolName,
-								thecurrentitem->GetSPos() );
-      BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(LocalLogVol,theinfo);
+								thecurrentitem->GetSPos());
+      if(readOutLV)
+	{BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(readOutLV,theinfo);}
+      else
+        {BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(LocalLogVol,theinfo);}
+
+      // this bit would also be unnecessary once all switched over to read out geometry
       // Register all logical volumes with sposition and any other information for later use
       std::vector<G4LogicalVolume*> allLVs = thecurrentitem->GetAllLogicalVolumes();
       std::vector<G4LogicalVolume*>::iterator allLVsIterator = allLVs.begin();
@@ -519,15 +554,19 @@ void BDSDetectorConstruction::ComponentPlacement(){
 											thecurrentitem->GetSPos())
 							       );
 	}
+
+      // make read out geometry sensitive
+      if (readOutLV)
+	{readOutLV->SetSensitiveDetector(energyCounterSDRO);}
       
       // old way of setting sensitive volumes - remains for now for components that haven't been changed
       // in future will be done in all component constructors
-      std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetSensitiveVolumes();
+      std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetAllSensitiveVolumes();
       std::vector<G4LogicalVolume*>::iterator sensIt= SensVols.begin();
       for(;sensIt != SensVols.end(); ++sensIt)
 	{
 	  //use already defined instance of Ecounter sd
-	  (*sensIt)->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
+	  (*sensIt)->SetSensitiveDetector(energyCounterSDRO);
 	  //register any volume that an ECounter is attached to
 	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( (*sensIt)->GetName(),
 								    thecurrentitem->GetSPos() );
@@ -564,15 +603,29 @@ void BDSDetectorConstruction::ComponentPlacement(){
       G4String LocalName=thecurrentitem->GetName()+"_phys";
       const int nCopy = thecurrentitem->GetCopyNumber();
       
-      G4PVPlacement* PhysiComponentPlace = 
-	new G4PVPlacement(rotateComponent,  // its rotation
-			  TargetPos,        // its position
-			  LocalName,	    // its name
-			  LocalLogVol,      // its logical volume
-			  physiWorld,	    // its mother  volume
-			  false,	    // no boolean operation
-			  nCopy,            // copy number
-			  BDSGlobalConstants::Instance()->GetCheckOverlaps());//overlap checking
+      G4PVPlacement* PhysiComponentPlace = new G4PVPlacement(rotateComponent,  // its rotation
+							     TargetPos,        // its position
+							     LocalName,	       // its name
+							     LocalLogVol,      // its logical volume
+							     physiWorld,       // its mother  volume
+							     false,	       // no boolean operation
+							     nCopy,            // copy number
+							     checkOverlaps);   //overlap checking
+
+      // place read out volume in read out world - if this component has one
+      if(readOutLV)
+	{
+	  // don't need the pointer for anything - purely instantiating registers it with g4
+	  new G4PVPlacement(rotateComponent, // its rotation
+			    TargetPos,       // its position
+			    LocalName,       // its name
+			    readOutLV,       // its logical volume
+			    readOutWorldPV,  // its mother  volume
+			    false,	     // no boolean operation
+			    nCopy,           // copy number
+			    checkOverlaps);  //overlap checking
+	}
+
 
       //this vector of physical volumes isn't used anywhere...
       fPhysicalVolumeVector.push_back(PhysiComponentPlace);
