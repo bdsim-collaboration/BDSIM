@@ -415,7 +415,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend()
   else {
     _element.angle *= -1;
     //    bField = - 2 * _brho * sin(_element.angle/2.0) / magFieldLength;
-    bField = - _brho * _element.angle/magFieldLength * _charge; // charge in e units
+    // charge in e units
+    // multiply once more with ffact to not flip fields in bends
+    bField = - _brho * _element.angle/magFieldLength * _charge * BDSGlobalConstants::Instance()->GetFFact();
     _element.B = bField/CLHEP::tesla;
   }
   
@@ -493,7 +495,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend()
     //            = (geometrical length/(2.0*sin(angle/2))*angle
     G4double arclength = 0.5*magFieldLength * fabs(_element.angle) / sin(fabs(_element.angle)*0.5);
     // B = Brho/rho = Brho/(arc length/angle)
-    bField = - _brho * _element.angle / arclength * _charge; // charge in e units
+    // charge in e units
+    // multiply once more with ffact to not flip fields in bends
+    bField = - _brho * _element.angle / arclength * _charge * BDSGlobalConstants::Instance()->GetFFact();
     _element.B = bField/CLHEP::tesla;
     G4cout << "calculated field from angle - angle,field = " << _element.angle << " " << _element.B << G4endl;
   }
@@ -533,7 +537,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
   }
   else{
     // B = Brho/rho = Brho/(arc length/angle)
-    bField = - _brho * _element.angle / length * _charge; // charge in e units
+    // charge in e units
+    // multiply once more with ffact to not flip fields in kicks defined with angle
+    bField = - _brho * _element.angle / length * _charge * BDSGlobalConstants::Instance()->GetFFact(); // charge in e units
     _element.B = bField/CLHEP::tesla;
   }
   
@@ -589,7 +595,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
   }
   else{
     // B = Brho/rho = Brho/(arc length/angle)
-    bField = - _brho * _element.angle / length * _charge; // charge in e units
+    // charge in e units
+    // multiply once more with ffact to not flip fields in kicks
+    bField = - _brho * _element.angle / length * _charge * BDSGlobalConstants::Instance()->GetFFact();
     _element.B = bField/CLHEP::tesla;
   }
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1

@@ -259,6 +259,8 @@ private:
   G4double itsElossHistoBinWidth;
   G4double itsElossHistoTransBinWidth;
   G4double itsDefaultRangeCut;
+  /// fudge factor, flips magnetic fields in elements (except for bends and kicks defined by angle, so that opposite charge and ffact -1 will produce same trajectory)
+  /// similar to BV flag in MadX
   G4double itsFFact;
 
   // initial bunch parameters
