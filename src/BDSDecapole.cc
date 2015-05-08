@@ -26,9 +26,8 @@ BDSDecapole::BDSDecapole(G4String           name,
 			 G4double           length,
 			 G4double           bQuadPrime,
 			 BDSBeamPipeInfo    beamPipeInfo,
-			 BDSMagnetOuterInfo magnetOuterInfo,
-			 BDSTunnelInfo      tunnelInfo):
-  BDSMultipole(BDSMagnetType::decapole,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
+			 BDSMagnetOuterInfo magnetOuterInfo):
+  BDSMultipole(BDSMagnetType::decapole,name,length,beamPipeInfo,magnetOuterInfo),
   itsBQuadPrime(bQuadPrime)
 {;}
 

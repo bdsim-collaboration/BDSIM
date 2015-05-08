@@ -31,7 +31,7 @@ BDSSamplerCylinder::
 BDSSamplerCylinder (G4String aName,G4double aLength,G4double aRadius):
   BDSAcceleratorComponent(
 			 aName,
-			 aLength,0,0,0),
+			 aLength),
   itsRadius(aRadius)
 {
   nThisSampler = nSamplers + 1;

@@ -21,9 +21,8 @@ BDSTMultipole::BDSTMultipole(G4String            name,
 			     std::list<G4double> aks, // list of skew multipole strengths
 			     // (NOT multiplied by multipole length)
 			     BDSBeamPipeInfo     beamPipeInfo,
-			     BDSMagnetOuterInfo  magnetOuterInfo,
-			     BDSTunnelInfo       tunnelInfo):
-  BDSMultipole(BDSMagnetType::multipole,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo)
+			     BDSMagnetOuterInfo  magnetOuterInfo):
+  BDSMultipole(BDSMagnetType::multipole,name,length,beamPipeInfo,magnetOuterInfo)
 {
   CommonConstructor(akn,aks);
 }

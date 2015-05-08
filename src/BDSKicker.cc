@@ -23,9 +23,8 @@ BDSKicker::BDSKicker(G4String        name,
 		     G4double        angle,
 		     G4bool          verticalKicker,
 		     BDSBeamPipeInfo beamPipeInfo,
-		     BDSMagnetOuterInfo magnetOuterInfo,
-		     BDSTunnelInfo      tunnelInfo):
-  BDSMultipole(BDSMagnetType::hkicker,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
+		     BDSMagnetOuterInfo magnetOuterInfo):
+  BDSMultipole(BDSMagnetType::hkicker,name,length,beamPipeInfo,magnetOuterInfo),
   itsBField(bField),itsBGrad(bGrad),itsKickAngle(angle),isVerticalKicker(verticalKicker)
 {
   if (verticalKicker)

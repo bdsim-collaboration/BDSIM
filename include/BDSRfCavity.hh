@@ -30,8 +30,7 @@ class BDSRfCavity :public BDSMultipole
 	      G4double           length,
 	      G4double           grad,
 	      BDSBeamPipeInfo    beamPipeInfoIn,
-	      BDSMagnetOuterInfo magnetOuterInfo,
-	      BDSTunnelInfo      tunnelInfo);
+	      BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSRfCavity(){;};
   
   private:

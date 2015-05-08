@@ -38,8 +38,7 @@ public:
 	       G4String           name, 
 	       G4double           length,
 	       BDSBeamPipeInfo    beamPipeInfo,
-	       BDSMagnetOuterInfo magnetOuterInfo,
-	       BDSTunnelInfo      tunnelInfo);
+	       BDSMagnetOuterInfo magnetOuterInfo);
   
   virtual ~BDSMultipole();
 
@@ -132,9 +131,6 @@ protected:
 
   //for the outer volume construction
   BDSMagnetOuterInfo itsMagnetOuterInfo;
-
-  //for the tunnel construction
-  BDSTunnelInfo itsTunnelInfo;
 
 private:
   /// constructor initialisation

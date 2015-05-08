@@ -159,7 +159,10 @@ public:
 			  G4double tunnelRadius=0.,
 			  G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
 			  G4String aTunnelCavityMaterial = "Air");
-
+  
+  BDSAcceleratorComponent(G4String name,
+			  G4double length);
+  
   G4VisAttributes* GetVisAttributes()const; ///> get visual attributes
   G4LogicalVolume* itsOuterLogicalVolume;
   G4LogicalVolume* itsMarkerLogicalVolume;

@@ -106,6 +106,14 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   ConstructorInit();
 }
 
+BDSAcceleratorComponent::BDSAcceleratorComponent(G4String name,
+						 G4double length):
+  BDSGeometryComponent(NULL,NULL),
+  itsName(name), itsLength(length)
+{
+  ConstructorInit();
+}
+
 inline void BDSAcceleratorComponent::ConstructorInit(){
   //  itsInnerBeampipeUserLimits =new G4UserLimits();
 #ifndef NOUSERLIMITS

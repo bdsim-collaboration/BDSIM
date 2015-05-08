@@ -30,8 +30,7 @@ public:
 		G4double           length,
 		G4double           bGrad,
 		BDSBeamPipeInfo    beamPipeInfo,
-		BDSMagnetOuterInfo magnetOuterInfo,
-		BDSTunnelInfo      tunnelInfo);
+		BDSMagnetOuterInfo magnetOuterInfo);
 		
   ~BDSQuadrupole(){;}
 

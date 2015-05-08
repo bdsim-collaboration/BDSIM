@@ -50,8 +50,7 @@ BDSMultipole::BDSMultipole(BDSMagnetType      type,
 			   G4String           name,
 			   G4double           length,
 			   BDSBeamPipeInfo    info,
-			   BDSMagnetOuterInfo magnetOuterInfo,
-			   BDSTunnelInfo      tunnelInfo):
+			   BDSMagnetOuterInfo magnetOuterInfo):
   BDSAcceleratorComponent(name,
 			  length,
 			  0,              //beampipe radius in AC
@@ -59,9 +58,7 @@ BDSMultipole::BDSMultipole(BDSMagnetType      type,
 			  "",             //tunnel material name
 			  "",             //outer material name
 			  0,              //angle
-			  0,0,0,          // ???
-			  tunnelInfo.aper1,
-			  tunnelInfo.tunnelOffsetX),
+			  0,0,0),         // ???
   itsType(type),itsInnerIronRadius(0), beamPipeType(info.beamPipeType),
   aper1(info.aper1), aper2(info.aper2), aper3(info.aper3), aper4(info.aper4),
   vacuumMaterial(info.vacuumMaterial), beamPipeThickness(info.beamPipeThickness),
@@ -71,7 +68,6 @@ BDSMultipole::BDSMultipole(BDSMagnetType      type,
   ConstructorInit();
 }
 
-			  
 void BDSMultipole::ConstructorInit(){
   itsStepper=NULL;
   itsMagField=NULL;

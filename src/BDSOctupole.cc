@@ -28,9 +28,8 @@ BDSOctupole::BDSOctupole(G4String           name,
 			 G4double           length,
 			 G4double           bTriplePrime,
 			 BDSBeamPipeInfo    beamPipeInfo,
-			 BDSMagnetOuterInfo magnetOuterInfo,
-			 BDSTunnelInfo      tunnelInfo):
-  BDSMultipole(BDSMagnetType::octupole,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
+			 BDSMagnetOuterInfo magnetOuterInfo):
+  BDSMultipole(BDSMagnetType::octupole,name,length,beamPipeInfo,magnetOuterInfo),
   itsBTriplePrime(bTriplePrime)
 {;}
 

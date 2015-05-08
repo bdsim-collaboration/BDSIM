@@ -17,8 +17,7 @@ public:
 	   G4double           bGrad,
 	   G4double           angle,
 	   BDSBeamPipeInfo    beamPipeInfo,
-	   BDSMagnetOuterInfo magnetOuterInfo,
-	   BDSTunnelInfo      tunnelInfo);
+	   BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSRBend(){;};
 
 private:

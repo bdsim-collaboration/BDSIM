@@ -27,7 +27,10 @@ extern LogVolMap* LogVol;
 //============================================================
 
 BDSScintillatorScreen::BDSScintillatorScreen (G4String aName, G4double tScint, G4double angle, G4String scintMaterial, G4String airMaterial):
-  BDSAcceleratorComponent(aName, tScint, 0, 0, 0),_scintillatorLayerMaterial(BDSMaterials::Instance()->GetMaterial(scintMaterial.data())),_airMaterial(BDSMaterials::Instance()->GetMaterial(airMaterial.data())),_screenAngle(angle),_scintillatorThickness(tScint)
+  BDSAcceleratorComponent(aName, tScint),
+  _scintillatorLayerMaterial(BDSMaterials::Instance()->GetMaterial(scintMaterial.data())),
+  _airMaterial(BDSMaterials::Instance()->GetMaterial(airMaterial.data())),
+  _screenAngle(angle),_scintillatorThickness(tScint)
 {
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();

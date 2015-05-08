@@ -65,7 +65,6 @@ private:
   G4Material*        PrepareBeamPipeMaterial(Element& element);
   G4Material*        PrepareVacuumMaterial(Element& element);
   BDSMagnetOuterInfo PrepareMagnetOuterInfo(Element& element);
-  BDSTunnelInfo      PrepareTunnelInfo(Element& element);
   G4double           PrepareOuterDiameter(Element& element);
   BDSBeamPipeInfo    PrepareBeamPipeInfo(Element& element);
 

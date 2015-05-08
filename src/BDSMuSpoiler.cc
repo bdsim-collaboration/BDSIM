@@ -27,9 +27,8 @@ BDSMuSpoiler::BDSMuSpoiler(G4String           name,
 			   G4double           length,
 			   G4double           bField,
 			   BDSBeamPipeInfo    beamPipeInfo,
-			   BDSMagnetOuterInfo magnetOuterInfo,
-			   BDSTunnelInfo      tunnelInfo):
-  BDSMultipole(BDSMagnetType::muspoiler,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
+			   BDSMagnetOuterInfo magnetOuterInfo):
+  BDSMultipole(BDSMagnetType::muspoiler,name,length,beamPipeInfo,magnetOuterInfo),
   itsBField(bField)
 {;}
 

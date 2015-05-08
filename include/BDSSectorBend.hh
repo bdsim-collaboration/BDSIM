@@ -19,8 +19,7 @@ public:
 		G4double           bFieldIn,
 		G4double           bGradIn,
 		BDSBeamPipeInfo    beamPipeInfo,
-		BDSMagnetOuterInfo magnetOuterInfo,
-		BDSTunnelInfo      tunnelInfo);
+		BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSSectorBend(){;};
 
   virtual G4double GetChordLength();

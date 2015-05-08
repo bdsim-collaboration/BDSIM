@@ -35,9 +35,8 @@ BDSSectorBend::BDSSectorBend(G4String           name,
 			     G4double           bField,
 			     G4double           bGrad,
 			     BDSBeamPipeInfo    beamPipeInfo,
-			     BDSMagnetOuterInfo magnetOuterInfo,
-			     BDSTunnelInfo      tunnelInfo):
-  BDSMultipole(BDSMagnetType::sectorbend,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
+			     BDSMagnetOuterInfo magnetOuterInfo):
+  BDSMultipole(BDSMagnetType::sectorbend,name,length,beamPipeInfo,magnetOuterInfo),
   itsBField(bField),itsBGrad(bGrad)
 {
   itsAngle = angle;

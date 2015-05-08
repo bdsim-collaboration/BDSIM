@@ -19,8 +19,7 @@ public:
 	      G4double           length,
 	      G4double           bTriplePrime,
 	      BDSBeamPipeInfo    beamPipeInfo,
-	      BDSMagnetOuterInfo magnetOuterInfo,
-	      BDSTunnelInfo      tunnelInfo);
+	      BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSOctupole(){;};
 
 protected:

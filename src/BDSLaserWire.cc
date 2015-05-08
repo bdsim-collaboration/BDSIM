@@ -17,7 +17,7 @@ BDSLaserWire::BDSLaserWire (G4String aName,G4double aLength,
 G4double aWavelength, G4ThreeVector aDirection):
   BDSAcceleratorComponent(
     aName,
-    aLength,0,0,0),
+    aLength),
   itsLaserCompton(NULL),
   itsLaserDirection(aDirection),itsLaserWavelength(aWavelength)
 {

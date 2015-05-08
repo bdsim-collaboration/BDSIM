@@ -21,8 +21,7 @@ public:
 	       G4double           length,
 	       G4double           bField,
 	       BDSBeamPipeInfo    beamPipeInfo,
-	       BDSMagnetOuterInfo magnetOuterInfo,
-	       BDSTunnelInfo      tunnnelInfo);
+	       BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSMuSpoiler();
 
 private:

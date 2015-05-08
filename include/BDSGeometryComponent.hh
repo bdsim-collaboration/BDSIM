@@ -64,10 +64,6 @@ protected:
   std::vector<G4LogicalVolume*> allSensitiveVolumes;
   G4ThreeVector                 placementOffset;
   // can't be stored in the Logical Volume class itself without modifying Geant
-
-private:
-  /// Private default constructor - force use of specified constructors
-  BDSGeometryComponent();
 };
 
 inline G4VSolid* BDSGeometryComponent::GetContainerSolid()

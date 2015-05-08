@@ -379,8 +379,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRF()
 			   _element.l * CLHEP::m,
 			   _element.gradient,
 			   PrepareBeamPipeInfo(_element),
-			   PrepareMagnetOuterInfo(_element),
-			   PrepareTunnelInfo(_element)));
+			   PrepareMagnetOuterInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSBend()
@@ -452,8 +451,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend()
 						  bField,
 						  bPrime,
 						  PrepareBeamPipeInfo(_element),
-						  PrepareMagnetOuterInfo(_element),
-						  PrepareTunnelInfo(_element)));
+						  PrepareMagnetOuterInfo(_element)));
     }
   return sbendline;
 }
@@ -512,8 +510,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend()
 			bPrime,
 			_element.angle,
 			PrepareBeamPipeInfo(_element),
-			PrepareMagnetOuterInfo(_element),
-			PrepareTunnelInfo(_element)));
+			PrepareMagnetOuterInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
@@ -570,8 +567,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
 			 _element.angle,
 			 false,   // it's a horizontal kicker
 			 PrepareBeamPipeInfo(_element),
-			 PrepareMagnetOuterInfo(_element),
-			 PrepareTunnelInfo(_element)));
+			 PrepareMagnetOuterInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
@@ -628,8 +624,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
 			 _element.angle,
 			 true,   // it's a vertical kicker
 			 PrepareBeamPipeInfo(_element),
-			 PrepareMagnetOuterInfo(_element),
-			 PrepareTunnelInfo(_element)));
+			 PrepareMagnetOuterInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createQuad()
@@ -651,8 +646,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createQuad()
 			     _element.l * CLHEP::m,
 			     bPrime,
 			     PrepareBeamPipeInfo(_element),
-			     PrepareMagnetOuterInfo(_element),
-			     PrepareTunnelInfo(_element)) );
+			     PrepareMagnetOuterInfo(_element)));
 }  
   
 BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
@@ -687,8 +681,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
 			    _element.l * CLHEP::m,
 			    bDoublePrime,
 			    PrepareBeamPipeInfo(_element),
-			    PrepareMagnetOuterInfo(_element),
-			    PrepareTunnelInfo(_element)));
+			    PrepareMagnetOuterInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createOctupole()
@@ -723,8 +716,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole()
 			    _element.l * CLHEP::m,
 			    bTriplePrime,
 			    PrepareBeamPipeInfo(_element),
-			    PrepareMagnetOuterInfo(_element),
-			    PrepareTunnelInfo(_element)));
+			    PrepareMagnetOuterInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
@@ -782,8 +774,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
 			     _element.knl,
 			     _element.ksl,
 			     PrepareBeamPipeInfo(_element),
-			     PrepareMagnetOuterInfo(_element),
-			     PrepareTunnelInfo(_element)));
+			     PrepareMagnetOuterInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createElement(){
@@ -870,8 +861,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
 			   _element.l * CLHEP::m,
 			   bField,
 			   PrepareBeamPipeInfo(_element),
-			   PrepareMagnetOuterInfo(_element),
-			   PrepareTunnelInfo(_element)));
+			   PrepareMagnetOuterInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
@@ -895,7 +885,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
 	 << " xaper= " << _element.xsize <<"m"
 	 << " yaper= " << _element.ysize <<"m"
 	 << " material= " << _element.material
-	 << " tunnel material " << _element.tunnelMaterial
 	 << G4endl;
 #endif
 
@@ -908,8 +897,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
 			     theMaterial,
 			     0.5*_element.outerDiameter*CLHEP::m,
 			     _element.blmLocZ,
-			     _element.blmLocTheta,
-			     _element.tunnelMaterial) );
+			     _element.blmLocTheta) );
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
@@ -926,7 +914,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
 	 << " name = " << _element.name 
 	 << " length = " << _element.l
 	 << " B = " << _element.B
-	 << " tunnel material " << _element.tunnelMaterial
 	 << G4endl;
 #endif
         
@@ -938,8 +925,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
 			   _element.l*CLHEP::m,
 			   _element.B * CLHEP::tesla,
 			   PrepareBeamPipeInfo(_element),
-			   PrepareMagnetOuterInfo(_element),
-			   PrepareTunnelInfo(_element)));
+			   PrepareMagnetOuterInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createLaser(){
@@ -1084,13 +1070,6 @@ BDSMagnetOuterInfo BDSComponentFactory::PrepareMagnetOuterInfo(Element& element)
     {outerMaterial = BDSMaterials::Instance()->GetMaterial(element.outerMaterial);}
   info.outerMaterial = outerMaterial;
   
-  return info;
-}
-
-BDSTunnelInfo BDSComponentFactory::PrepareTunnelInfo(Element& /*element*/)
-{
-  //in future do something relating to what's set in the element
-  BDSTunnelInfo info;
   return info;
 }
 
