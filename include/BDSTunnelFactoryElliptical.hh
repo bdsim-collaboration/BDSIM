@@ -69,7 +69,8 @@ private:
 						G4double    length,
 						G4Material* tunnelMaterial,
 						G4Material* soilMaterial,
-						G4double    containerRadius);
+						G4double    containerXRadius,
+						G4double    containerYRadius);
 
 };
   
