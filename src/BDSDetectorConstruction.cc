@@ -652,22 +652,38 @@ void BDSDetectorConstruction::ComponentPlacement(){
 
   
   // build demo section of tunnel to check it works
-  BDSTunnelType tunnelType = BDS::DetermineTunnelType("circular");
+  BDSTunnelType tunnelType = BDS::DetermineTunnelType("elliptical");
   G4Material*   soilMaterial = BDSMaterials::Instance()->GetMaterial("soil");
   G4Material*   concrete     = BDSMaterials::Instance()->GetMaterial("concrete");
   G4double      tunnelLength = 50*CLHEP::m;
+  
+  BDSGeometryComponent* aPieceOfTunnel = BDSTunnelFactory::Instance()->CreateTunnelSectionAngledInOut(tunnelType,
+												      "tunny",
+												      tunnelLength, // length
+												      0.2, //angle in
+												      0.3, //angle out
+												      0.5*CLHEP::m, // t thickness
+												      5*CLHEP::m, // s thickness
+												      concrete,
+												      soilMaterial,
+												      true,
+												      1*CLHEP::m,
+												      2*CLHEP::m,
+												      1.5*CLHEP::m);
+											   /*
   BDSGeometryComponent* aPieceOfTunnel = BDSTunnelFactory::Instance()->CreateTunnelSection(tunnelType,
 											   "tunny",
 											   tunnelLength, // length
 											   0.5*CLHEP::m, // t thickness
-											   5*CLHEP::m, // s thickness
-											   concrete,
-											   soilMaterial,
-											   true,
-											   1*CLHEP::m,
-											   2*CLHEP::m,
-											   0);
-
+											   5*CLHEP::m,   // s thickness
+											   concrete,     // t material
+											   soilMaterial, // s material
+											   true,         // floor?
+											   1*CLHEP::m,   // floor offset
+											   2*CLHEP::m,   // tunnel 1
+											   1.5*CLHEP::m);// tunnel 2 
+  */
+  
   new G4PVPlacement(0,  // its rotation
 		    G4ThreeVector(0.5*CLHEP::m,-0.25*CLHEP::m,0.5*tunnelLength), // its position
 		    "tunnel_pv",	    // its name

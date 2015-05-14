@@ -1,0 +1,410 @@
+#include "BDSTunnelFactoryBase.hh"
+#include "BDSTunnelFactoryElliptical.hh"
+
+#include "BDSDebug.hh"
+#include "BDSGeometryComponent.hh"
+#include "BDSTunnelInfo.hh"
+#include "BDSGlobalConstants.hh"
+
+#include "globals.hh"                 // geant4 globals / types
+#include "G4Box.hh"
+#include "G4CutTubs.hh"
+#include "G4EllipticalTube.hh"
+#include "G4IntersectionSolid.hh"
+#include "G4LogicalVolume.hh"
+#include "G4Material.hh"
+#include "G4SubtractionSolid.hh"
+#include "G4ThreeVector.hh"
+#include "G4Tubs.hh"
+#include "G4UnionSolid.hh"
+#include "G4VSolid.hh"
+
+#include <cmath>                           // sin, cos, fabs
+#include <utility>                         // for std::pair
+
+
+BDSTunnelFactoryElliptical* BDSTunnelFactoryElliptical::_instance = 0;
+
+BDSTunnelFactoryElliptical* BDSTunnelFactoryElliptical::Instance()
+{
+  if (_instance == 0)
+    {_instance = new BDSTunnelFactoryElliptical();}
+  return _instance;
+}
+
+BDSTunnelFactoryElliptical::BDSTunnelFactoryElliptical():BDSTunnelFactoryBase()
+{
+}
+
+BDSTunnelFactoryElliptical::~BDSTunnelFactoryElliptical()
+{
+  _instance = 0;
+}
+
+BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String      name,
+								      G4double      length,
+								      G4double      tunnelThickness,
+								      G4double      tunnelSoilThickness,
+								      G4Material*   tunnelMaterial,
+								      G4Material*   tunnelSoilMaterial,
+								      G4bool        tunnelFloor,
+								      G4double      tunnelFloorOffset,
+								      G4double      tunnel1,
+								      G4double      tunnel2)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  // test input parameters - set global options as default if not specified
+  TestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial,
+		      tunnelSoilMaterial, tunnelFloorOffset, tunnel1, tunnel2);
+
+  // build the solids
+  G4VSolid* tunnelOuterSolid = new G4EllipticalTube(name + "_tunnel_outer_solid", // name
+						    tunnel1 + tunnelThickness,    // x radius
+						    tunnel2 + tunnelThickness,    // y radius
+						    0.5*length - lengthSafety);   // z half length (to fit in container)
+  
+  G4VSolid* tunnelInnerSolid = new G4EllipticalTube(name + "_tunnel_outer_solid", // name
+						    tunnel1 + lengthSafety,       // x radius
+						    tunnel2 + lengthSafety,       // y radius
+						    length); // z half length - long for unambiguous subtraction
+
+  tunnelSolid = new G4SubtractionSolid(name + "_tunnel_solid", // name
+				       tunnelOuterSolid,      // this
+				       tunnelInnerSolid);     // minus this
+
+
+  G4double soil1R = tunnel1 + tunnelThickness + lengthSafety;
+  G4double soil2R = tunnel2 + tunnelThickness + lengthSafety;
+
+  G4VSolid* soilOuterSolid = new G4EllipticalTube(name + "_soil_outer_solid",   // name
+						  soil1R + tunnelSoilThickness, // x radius
+						  soil2R + tunnelSoilThickness, // y radius
+						  0.5*length - lengthSafety);   // z half length (to fit in container)
+  
+  G4VSolid* soilInnerSolid = new G4EllipticalTube(name + "_soil_outer_solid",   // name
+						  soil1R + lengthSafety,        // x radius
+						  soil2R + lengthSafety,        // y radius
+						  length); // z half length - long for unambiguous subtraction
+
+  soilSolid = new G4SubtractionSolid(name + "_soil_solid", // name
+				     soilOuterSolid,      // this
+				     soilInnerSolid);     // minus this
+
+  G4double containerRadius = std::max(soil1R,soil2R) + tunnelSoilThickness + lengthSafety;
+  
+  // build the floor if necessary
+  if (tunnelFloor)
+    {
+      G4double floorBoxRadius = 1.5 * std::max(tunnel1,tunnel2); // will definitely encompass the tunnel
+      G4double floorBoxDisplacement = tunnelFloorOffset + floorBoxRadius + lengthSafety;
+      
+      G4VSolid* floorEllipse = new G4EllipticalTube(name + "_floor_ellipse_solid", // name
+						    tunnel1,                       // x radius
+						    tunnel2,                       // y radius
+						    length*0.5 - lengthSafety);    // z half length
+
+      G4VSolid* floorBox     = new G4Box(name + "_floor_box_solid",  // name
+					 floorBoxRadius,             // x half width
+					 floorBoxRadius,             // y half width
+					 length);                    // z half length
+      // box z length extra long for unambiguous subtraction
+      
+      floorSolid = new G4IntersectionSolid(name + "_floor_solid",                     // name
+					   floorEllipse,                              // this
+					   floorBox,                                  // minus this,
+					   0,                                         // rotation matrix
+					   G4ThreeVector(0,-floorBoxDisplacement,0)); // translation
+
+      // need to create a container for the tunnel + floor that only just contains it
+      // need to do the same trick again - prepare small floor container segment and union
+      // it with tunnel container. Container has to be a wee bit bigger so can't use the same
+      // solids sadly.
+
+      // floor container cylinder has to definitely overlaps with outside cylinder -> tunnel1*1.1
+      G4VSolid* floorContainerEllipse = new G4EllipticalTube(name + "_floor_cont_ell_solid", // name
+							     tunnel1*1.1,                    // x radius
+							     tunnel2*1.1,                    // y radius
+							     length*0.5);                    // z half length
+      
+      // z long for unambiguous intersection
+
+      // calculate box container offset - should be just above floor by lengthsafety (floor actually lowered
+      // by length safety a la rest of geometry to fit within its dimensions)
+      G4double floorBoxContDisp = floorBoxDisplacement - lengthSafety;
+      G4VSolid* floorContainerSolid = new G4IntersectionSolid(name + "_floor_cont_solid",           // name
+							      floorContainerEllipse,                // this
+							      floorBox,                             // minus this,
+							      0,                                    // rotation matrix
+							      G4ThreeVector(0,-floorBoxContDisp,0));// translation
+
+      G4VSolid* tunnelContainerSolidOuter = new G4EllipticalTube(name + "_tunnel_cont_solid_outer",          // name
+								 soil1R + tunnelSoilThickness + lengthSafety,// x radius
+								 soil1R + tunnelSoilThickness + lengthSafety,// y radius
+								 length*0.5);
+
+      G4VSolid* tunnelContainerSolidInner = new G4EllipticalTube(name + "_tunnel_cont_solid_inner", // name
+								 tunnel1,                           // x radius
+								 tunnel2,                           // y radius
+								 length*0.5);
+
+      G4VSolid* tunnelContainerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid", // name
+							      tunnelContainerSolidOuter,   // this
+							      tunnelContainerSolidInner);  // minus this
+
+      containerSolid = new G4UnionSolid(name + "_container_solid", // name
+					tunnelContainerSolid,      // this
+					floorContainerSolid);      // plus this
+    }
+  else
+    {
+      // have to do a subtraction with an elliptical tube
+      G4VSolid* tunnelContainerSolidOuter = new G4EllipticalTube(name + "_tunnel_cont_solid_outer",          // name
+								 soil1R + tunnelSoilThickness + lengthSafety,// x radius
+								 soil1R + tunnelSoilThickness + lengthSafety,// y radius
+								 length*0.5);
+      
+      G4VSolid* tunnelContainerSolidInner = new G4EllipticalTube(name + "_tunnel_cont_solid_inner", // name
+								 tunnel1,                           // x radius
+								 tunnel2,                           // y radius
+								 length*0.5);
+
+      containerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid", // name
+					      tunnelContainerSolidOuter,   // this
+					      tunnelContainerSolidInner);  // minus this
+    } 
+
+  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerRadius);
+  
+  return tunnelSection; // member variable geometry component that's assembled in base class
+}
+
+
+BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSectionAngledInOut(G4String      name,
+									       G4double      length,
+									       G4double      angleIn,
+									       G4double      angleOut,
+									       G4double      tunnelThickness,
+									       G4double      tunnelSoilThickness,
+									       G4Material*   tunnelMaterial,
+									       G4Material*   tunnelSoilMaterial,
+									       G4bool        tunnelFloor,
+									       G4double      tunnelFloorOffset,
+									       G4double      tunnel1,
+									       G4double      tunnel2)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  // test input parameters - set global options as default if not specified
+  TestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial,
+		      tunnelSoilMaterial, tunnelFloorOffset, tunnel1, tunnel2);
+
+  std::pair<G4ThreeVector,G4ThreeVector> faces = CalculateFaces(angleIn, angleOut);
+  G4ThreeVector inputface  = faces.first;
+  G4ThreeVector outputface = faces.second;
+  
+  // build the solids
+
+  // create an intersection cut tubs to get the faces - make it bigger than everything else
+  // then make elliptical solids longer than they need to be
+  G4double intersectionRadius = ( std::max(tunnel1,tunnel2) + tunnelThickness + tunnelSoilThickness ) * 3;
+  G4VSolid* faceSolid = new G4CutTubs(name + "_face_intersection_solid", // name
+				      0,                                 // inner radius
+				      intersectionRadius,                // outer radius
+				      length*0.5 - lengthSafety,         // z half length
+				      0,                                 // start angle
+				      CLHEP::twopi,                      // sweep angle
+				      inputface,                         // input face normal vector
+				      outputface);                       // output face normal vector
+
+
+  // tunnel
+  G4VSolid* tunnelOuterSolid = new G4EllipticalTube(name + "_tunnel_outer_solid", // name
+						    tunnel1 + tunnelThickness,    // x radius
+						    tunnel2 + tunnelThickness,    // y radius
+						    length);                      // z half length
+  
+  G4VSolid* tunnelInnerSolid = new G4EllipticalTube(name + "_tunnel_outer_solid", // name
+						    tunnel1 + lengthSafety,       // x radius
+						    tunnel2 + lengthSafety,       // y radius
+						    length*1.5); // z half length - long for unambiguous subtraction
+
+  G4VSolid* tunnelSolidUnAngled = new G4SubtractionSolid(name + "_tunnel_square_solid", // name
+							 tunnelOuterSolid,      // this
+							 tunnelInnerSolid);     // minus this
+
+  // cut off the faces with the angled face solid
+  tunnelSolid = new G4IntersectionSolid(name + "_tunnel_solid", // name
+					tunnelSolidUnAngled,
+					faceSolid);
+
+  // soil solid
+  G4double soil1R = tunnel1 + tunnelThickness + lengthSafety;
+  G4double soil2R = tunnel2 + tunnelThickness + lengthSafety;
+
+  G4VSolid* soilOuterSolid = new G4EllipticalTube(name + "_soil_outer_solid",   // name
+						  soil1R + tunnelSoilThickness, // x radius
+						  soil2R + tunnelSoilThickness, // y radius
+						  length);   // z half length (to fit in container)
+  
+  G4VSolid* soilInnerSolid = new G4EllipticalTube(name + "_soil_outer_solid",   // name
+						  soil1R + lengthSafety,        // x radius
+						  soil2R + lengthSafety,        // y radius
+						  1.5*length); // z half length - long for unambiguous subtraction
+
+  G4VSolid* soilSolidUnAngled = new G4SubtractionSolid(name + "_soil_square_solid", // name
+						       soilOuterSolid,      // this
+						       soilInnerSolid);     // minus this
+  
+  soilSolid = new G4IntersectionSolid(name + "_soil_soild", // name
+				      soilSolidUnAngled,
+				      faceSolid);
+
+  G4double containerRadius = std::max(soil1R,soil2R) + tunnelSoilThickness + lengthSafety;
+  
+  // build the floor if necessary
+  if (tunnelFloor)
+    {
+      // these three lines are a repeat of the same part in the first function (~L211)
+      G4double floorBoxRadius = 1.5 * std::max(tunnel1,tunnel2); // will definitely encompass the tunnel
+      G4double floorBoxDisplacement = tunnelFloorOffset + floorBoxRadius + lengthSafety;
+
+      G4VSolid* floorEllipse = new G4EllipticalTube(name + "_floor_ellipse_solid", // name
+						    tunnel1,                       // x radius
+						    tunnel2,                       // y radius
+						    length);                       // z half length
+      // z long for unamibiguous intersection
+
+      // with the floor do the intersection first to avoid complications with the displacement
+      // of the subtraction box later
+      G4VSolid* floorEllipseAngled = new G4IntersectionSolid(name + "_floor_ell_angled_solid", // name
+							     floorEllipse,
+							     faceSolid);
+
+      G4VSolid* floorBox     = new G4Box(name + "_floor_box_solid",  // name
+					 floorBoxRadius,             // x half width
+					 floorBoxRadius,             // y half width
+					 length);                    // z half length
+      // box z length extra long for unambiguous subtraction
+
+      floorSolid = new G4IntersectionSolid(name + "_floor_solid",                     // name
+					   floorEllipseAngled,                        // this
+					   floorBox,                                  // minus this,
+					   0,                                         // rotation matrix
+					   G4ThreeVector(0,-floorBoxDisplacement,0)); // translation
+
+      // floor container cylinder has to definitely overlaps with outside cylinder -> tunnel1*1.1
+      G4VSolid* floorContainerEllAng = new G4EllipticalTube(name + "_floor_cont_ell_solid", // name
+							    tunnel1*1.1,                    // x radius
+							    tunnel2*1.1,                    // y radius
+							    length);                       // z half length
+      // z long for unambiguous intersection
+
+      G4VSolid* floorContainerEllipseAngled = new G4IntersectionSolid(name + "+floor_cont_ell_ang_solid", // name
+								      floorContainerEllAng,
+								      faceSolid);
+
+      // calculate box container offset - should be just above floor by lengthsafety (floor actually lowered
+      // by length safety a la rest of geometry to fit within its dimensions)
+      G4double floorBoxContDisp = floorBoxDisplacement - lengthSafety;
+      G4VSolid* floorContainerSolid = new G4IntersectionSolid(name + "_floor_cont_solid",           // name
+							      floorContainerEllipseAngled,          // this
+							      floorBox,                             // minus this,
+							      0,                                    // rotation matrix
+							      G4ThreeVector(0,-floorBoxContDisp,0));// translation
+
+      G4VSolid* tunnelContainerOuterSquare = new G4EllipticalTube(name + "_tunnel_cont_solid_outer",          // name
+								  soil1R + tunnelSoilThickness + lengthSafety,// x radius
+								  soil1R + tunnelSoilThickness + lengthSafety,// y radius
+								  length);
+
+      G4VSolid* tunnelContainerSolidOuterAngled = new G4IntersectionSolid(name + "_tunnel_cont_out_ang_solid", // name
+									  tunnelContainerOuterSquare,
+									  faceSolid);
+
+      G4VSolid* tunnelContainerSolidInner = new G4EllipticalTube(name + "_tunnel_cont_solid_inner", // name
+								 tunnel1,                           // x radius
+								 tunnel2,                           // y radius
+								 length*0.5);
+
+      G4VSolid* tunnelContainerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid",       // name
+							      tunnelContainerSolidOuterAngled,   // this
+							      tunnelContainerSolidInner);        // minus this
+
+      containerSolid = new G4UnionSolid(name + "_container_solid", // name
+					tunnelContainerSolid,      // this
+					floorContainerSolid);      // plus this
+      
+    }
+  else
+    {
+      containerSolid = new G4CutTubs(name + "_tunnel_container_solid", // name
+				     tunnel1,                          // inner radius
+				     containerRadius,                  // outer radius,
+				     length,                           // z half length
+				     0,                                // start angle
+				     CLHEP::twopi,                     // sweep angle
+				     inputface,                        // input face normal vector
+				     outputface);                      // output face normal vector
+    } 
+
+  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerRadius);
+
+  return tunnelSection;
+}
+
+/// functions below here are private to this particular factory
+void BDSTunnelFactoryElliptical::TestInputParameters(G4double&    length,
+						     G4double&    tunnelThickness,
+						     G4double&    tunnelSoilThickness,
+						     G4Material*& tunnelMaterial,
+						     G4Material*& tunnelSoilMaterial,
+						     G4double&    tunnelFloorOffset,
+						     G4double&    tunnel1,
+						     G4double&    tunnel2)
+{
+  CommontTestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial, tunnelSoilMaterial);
+
+  BDSTunnelInfo defaultModel = BDSGlobalConstants::Instance()->GetTunnelInfo();
+  if (tunnelFloorOffset < 1e-10)
+    {tunnelFloorOffset = defaultModel.tunnelFloorOffset;}
+  
+  if (tunnel1 < 1e-10)
+    {tunnel1 = defaultModel.tunnel1;}
+
+  if (tunnel2 < 1e-10)
+    {tunnel2 = defaultModel.tunnel2;}
+}
+
+/// only the solids are unique, once we have those, the logical volumes and placement in the
+/// container are the same.  group all this functionality together
+BDSGeometryComponent* BDSTunnelFactoryElliptical::CommonFinalConstruction(G4String    name,
+									G4double    length,
+									G4Material* tunnelMaterial,
+									G4Material* tunnelSoilMaterial,
+									G4double    containerRadius)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
+  BDSTunnelFactoryBase::CommonConstruction(name,
+					   tunnelMaterial,
+					   tunnelSoilMaterial,
+					   length);
+
+  // record extents
+  std::pair<double,double> extX = std::make_pair(-containerRadius, containerRadius);
+  std::pair<double,double> extY = std::make_pair(-containerRadius, containerRadius);
+  std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
+  
+  BDSGeometryComponent* aTunnelSegment = new BDSGeometryComponent(containerSolid,
+								  containerLV,
+								  extX,
+								  extY,
+								  extZ);
+
+  return aTunnelSegment;
+}
