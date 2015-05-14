@@ -20,7 +20,7 @@
 BDSTunnelFactoryBase::BDSTunnelFactoryBase():
   tunnelSection(NULL),
   containerSolid(NULL), tunnelSolid(NULL), soilSolid(NULL), floorSolid(NULL),
-  containerLV(NULL), tunnelLV(NULL), soilLV(NULL), floorLV(NULL)
+  containerLV(NULL), tunnelLV(NULL), soilLV(NULL), floorLV(NULL), floorDisplacement(G4ThreeVector(0,0,0))
 {
   lengthSafety   = BDSGlobalConstants::Instance()->GetLengthSafety();
 }
@@ -247,7 +247,7 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
   if (floorLV)
     {
       new G4PVPlacement((G4RotationMatrix*)0,     // no rotation
-			(G4ThreeVector)0,         // position
+			floorDisplacement,        // position
 			floorLV,                  // lv to be placed
 			name + "_floor_pv",       // name
 			containerLV,              // mother lv to be place in
@@ -260,13 +260,14 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
 
 void BDSTunnelFactoryBase::TidyUp()
 {
-  tunnelSection  = NULL;
-  containerSolid = NULL;
-  tunnelSolid    = NULL;
-  soilSolid      = NULL;
-  floorSolid     = NULL;
-  containerLV    = NULL;
-  tunnelLV       = NULL;
-  soilLV         = NULL;
-  floorLV        = NULL;
+  tunnelSection     = NULL;
+  containerSolid    = NULL;
+  tunnelSolid       = NULL;
+  soilSolid         = NULL;
+  floorSolid        = NULL;
+  containerLV       = NULL;
+  tunnelLV          = NULL;
+  soilLV            = NULL;
+  floorLV           = NULL;
+  floorDisplacement = G4ThreeVector(0,0,0);
 }
