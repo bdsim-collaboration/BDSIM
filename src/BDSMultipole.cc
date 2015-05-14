@@ -55,10 +55,9 @@ BDSMultipole::BDSMultipole(BDSMagnetType      type,
 			  length,
 			  0,              //beampipe radius in AC
 			  0,0,            //aperx apery
-			  "",             //tunnel material name
 			  "",             //outer material name
 			  0,              //angle
-			  0,0,0),         // ???
+			  0,0,0),         //offsets
   itsType(type),itsInnerIronRadius(0), beamPipeType(info.beamPipeType),
   aper1(info.aper1), aper2(info.aper2), aper3(info.aper3), aper4(info.aper4),
   vacuumMaterial(info.vacuumMaterial), beamPipeThickness(info.beamPipeThickness),

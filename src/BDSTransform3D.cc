@@ -14,7 +14,6 @@ BDSTransform3D::BDSTransform3D(G4String aName, G4double x,G4double y,G4double z,
 			  0,
 			  0,
 			  0,
-			  "",
                           "",
 			  0, // angle
 			  x, // x offset

@@ -309,7 +309,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createCSampler(){
 
 BDSAcceleratorComponent* BDSComponentFactory::createDump(){
   return (new BDSDump( _element.name,
-		       BDSGlobalConstants::Instance()->GetSamplerLength(),_element.tunnelMaterial ));
+		       BDSGlobalConstants::Instance()->GetSamplerLength()));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTeleporter(){
@@ -341,7 +341,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createTeleporter(){
 
 BDSAcceleratorComponent* BDSComponentFactory::createDrift()
 {
-  //G4double tunnelOffsetX = BDSGlobalConstants::Instance()->GetTunnelOffsetX();
   // like most elements, drift requires l > 4*lengthSafety
   if(_element.l*CLHEP::m < 4*lengthSafety){
     G4cerr << "---->NOT creating element, "
@@ -555,7 +554,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createHKick(){
 	   << ": REPLACED WITH Drift,"
 	   << " l= " << length/CLHEP::m << "m"
 	   << " aper= " << aper/CLHEP::m << "m"
-	   << " tunnel material " << _element.tunnelMaterial
 	   << G4endl;
     return createDrift();
   }
@@ -611,7 +609,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createVKick(){
 	   << ": REPLACED WITH Drift,"
 	   << " l= " << _element.l << "m"
 	   << " aper= " << aper/CLHEP::m << "m"
-	   << " tunnel material " << _element.tunnelMaterial
 	   << G4endl;
 
     return createDrift();
@@ -672,7 +669,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
 	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
 	 << " B''= " << bDoublePrime/(CLHEP::tesla/CLHEP::m2) << "T/m^2"
 	 << " tilt= " << _element.tilt << "rad"
-	 << " tunnel material " << _element.tunnelMaterial
 	 << " material= " << _element.outerMaterial
 	 << G4endl;
 #endif
@@ -707,7 +703,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole()
 	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
 	 << " B'''= " << bTriplePrime/(CLHEP::tesla/CLHEP::m3) << "T/m^3"
 	 << " tilt= " << _element.tilt << "rad"
-	 << " tunnel material " << _element.tunnelMaterial
 	 << " material= " << _element.outerMaterial
 	 << G4endl;
 #endif
@@ -734,7 +729,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
 	 << " name= " << _element.name
 	 << " l= " << _element.l << "m"
 	 << " tilt= " << _element.tilt << "rad"
-	 << " tunnel material " << _element.tunnelMaterial
 	 << " material= " << _element.outerMaterial
 	 << G4endl;
 #endif
@@ -798,27 +792,17 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 	 << " aper= " << aper/CLHEP::m << "m"
 	 << " outR= " << 0.5 * _element.boxSize << "m"
 	 << " bmapZOffset = "	<<  _element.bmapZOffset * CLHEP::m
-	 << " tunnel material " << _element.tunnelMaterial
 	 << " precision region " << _element.precisionRegion
 	 << G4endl;
 #endif
   
-  G4double tunnelOffsetX = BDSGlobalConstants::Instance()->GetTunnelOffsetX();
-  if(_element.tunnelOffsetX<1e6) {
-    tunnelOffsetX = _element.tunnelOffsetX*CLHEP::m;
-  }
-
   return (new BDSElement( _element.name,
 			  _element.geometryFile,
 			  _element.bmapFile,
 			  _element.bmapZOffset * CLHEP::m,
 			  _element.l * CLHEP::m,
 			  aper1,
-			  0.5 * _element.outerDiameter * CLHEP::m,
-			  _element.tunnelMaterial,
-			  _element.tunnelRadius,
-			  tunnelOffsetX,
-			  _element.tunnelMaterial));
+			  0.5 * _element.outerDiameter * CLHEP::m));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
@@ -852,7 +836,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
 	 << " ks= " << _element.ks << " m^-1"
 	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"
 	 << " B= " << bField/CLHEP::tesla << " T"
-	 << " tunnel material " << _element.tunnelMaterial
 	 << " material= " << _element.outerMaterial
 	 << G4endl;
 #endif

@@ -134,15 +134,11 @@ public:
 			  G4double aYAper,
                           std::list<G4double> blmLocZ, 
 			  std::list<G4double> blmLocTheta,
-                          G4String aTunnelMaterial = "",
 			  G4String aMaterial = "",
 			  G4double phi=0.,  // polar angle (used in hor. bends)
 			  G4double XOffset=0.,
 			  G4double YOffset=0.,
-			  G4double ZOffset=0.,
-			  G4double tunnelRadius=0.,
-			  G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
-                          G4String aTunnelCavityMaterial = "Air");
+			  G4double ZOffset=0.);
 
   BDSAcceleratorComponent (
 			  G4String& aName, 
@@ -150,15 +146,11 @@ public:
 			  G4double aBpRadius,
 			  G4double aXAper,
 			  G4double aYAper,
-                          G4String aTunnelMaterial = "",
 			  G4String aMaterial = "",
 			  G4double phi=0.,  // polar angle (used in hor. bends)
 			  G4double XOffset=0.,
 			  G4double YOffset=0.,
-			  G4double ZOffset=0.,
-			  G4double tunnelRadius=0.,
-			  G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
-			  G4String aTunnelCavityMaterial = "Air");
+			  G4double ZOffset=0.);
   
   BDSAcceleratorComponent(G4String name,
 			  G4double length);
