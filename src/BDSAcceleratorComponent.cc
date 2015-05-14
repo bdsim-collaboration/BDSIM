@@ -34,15 +34,11 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double aBpRadius,
 						  G4double aXAper,
 						  G4double aYAper, 
-						  G4String aTunnelMaterial,
 						  G4String aMaterial,
 						  G4double angle,
 						  G4double XOffset, 
 						  G4double YOffset,
-						  G4double ZOffset, 
-						  G4double tunnelRadius, 
-						  G4double tunnelOffsetX,
-						  G4String aTunnelCavityMaterial):
+						  G4double ZOffset):
   BDSGeometryComponent(NULL,NULL),
   itsName(aName),
   itsLength(aLength),
@@ -51,13 +47,9 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsYAper(aYAper),
   itsAngle(angle),
   itsMaterial(aMaterial),
-  itsTunnelMaterial(aTunnelMaterial),
   itsXOffset(XOffset),
   itsYOffset(YOffset), 
-  itsZOffset(ZOffset), 
-  itsTunnelRadius(tunnelRadius), 
-  itsTunnelOffsetX(tunnelOffsetX),
-  itsTunnelCavityMaterial(aTunnelCavityMaterial)
+  itsZOffset(ZOffset)
 {
   ConstructorInit();
 }
@@ -70,15 +62,11 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double aYAper, 
 						  std::list<G4double> blmLocZ, 
 						  std::list<G4double> blmLocTheta,
-						  G4String aTunnelMaterial,
 						  G4String aMaterial,
 						  G4double angle,
 						  G4double XOffset, 
 						  G4double YOffset,
-						  G4double ZOffset, 
-						  G4double tunnelRadius, 
-						  G4double tunnelOffsetX, 
-						  G4String aTunnelCavityMaterial):
+						  G4double ZOffset):
   BDSGeometryComponent(NULL,NULL),
   itsName(aName),
   itsLength(aLength),
@@ -89,13 +77,9 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsMaterial(aMaterial),
   itsBlmLocZ(blmLocZ), 
   itsBlmLocTheta(blmLocTheta),
-  itsTunnelMaterial(aTunnelMaterial),
   itsXOffset(XOffset),
   itsYOffset(YOffset), 
-  itsZOffset(ZOffset), 
-  itsTunnelRadius(tunnelRadius), 
-  itsTunnelOffsetX(tunnelOffsetX), 
-  itsTunnelCavityMaterial(aTunnelCavityMaterial)
+  itsZOffset(ZOffset)
 {
   if (itsBlmLocZ.size() != itsBlmLocTheta.size()){
     G4cerr << "BDSAcceleratorComponent: error, lists blmLocZ and blmLocTheta are of unequal size" << G4endl;

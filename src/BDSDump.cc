@@ -29,11 +29,10 @@ int BDSDump::nDumps=0;
 
 //============================================================
 
-BDSDump::BDSDump (G4String aName,G4double aLength, G4String aTunnelMaterial):
+BDSDump::BDSDump (G4String aName,G4double aLength):
   BDSAcceleratorComponent(
 			 aName,
-			 aLength,0,0,0,
-			 aTunnelMaterial)
+			 aLength,0,0,0)
 {
   SetName("Dump_"+BDSGlobalConstants::Instance()->StringFromInt(nDumps)+"_"+itsName);
   ++nDumps;

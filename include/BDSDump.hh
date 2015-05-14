@@ -20,7 +20,7 @@
 class BDSDump : public BDSAcceleratorComponent
 {
 public:
-  BDSDump(G4String aName,G4double aLength, G4String aTunnelMaterial="");
+  BDSDump(G4String aName,G4double aLength);
   ~BDSDump();
 
 private:
