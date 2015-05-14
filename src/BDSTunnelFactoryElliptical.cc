@@ -78,10 +78,14 @@ BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String  
   G4double soil1R = tunnel1 + tunnelThickness + lengthSafety;
   G4double soil2R = tunnel2 + tunnelThickness + lengthSafety;
 
-  G4VSolid* soilOuterSolid = new G4EllipticalTube(name + "_soil_outer_solid",   // name
-						  soil1R + tunnelSoilThickness, // x radius
-						  soil2R + tunnelSoilThickness, // y radius
-						  0.5*length - lengthSafety);   // z half length (to fit in container)
+  G4double soilOuterRadius = std::max(soil1R, soil2R) + tunnelSoilThickness;
+  
+  G4VSolid* soilOuterSolid = new G4Tubs(name + "_soil_outer_solid",   // name
+					0,                            // inner radius
+					soilOuterRadius,              // outer radius
+					0.5*length - lengthSafety,    // z half angle
+					0,                            // start angle
+					CLHEP::twopi);                // sweep angle
   
   G4VSolid* soilInnerSolid = new G4EllipticalTube(name + "_soil_outer_solid",   // name
 						  soil1R + lengthSafety,        // x radius
@@ -91,8 +95,9 @@ BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String  
   soilSolid = new G4SubtractionSolid(name + "_soil_solid", // name
 				     soilOuterSolid,      // this
 				     soilInnerSolid);     // minus this
-
-  G4double containerRadius = std::max(soil1R,soil2R) + tunnelSoilThickness + lengthSafety;
+  
+  G4double containerXRadius = soil1R + tunnelSoilThickness + lengthSafety;
+  G4double containerYRadius = soil2R + tunnelSoilThickness + lengthSafety;
   
   // build the floor if necessary
   if (tunnelFloor)
@@ -139,10 +144,12 @@ BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String  
 							      0,                                    // rotation matrix
 							      G4ThreeVector(0,-floorBoxContDisp,0));// translation
 
-      G4VSolid* tunnelContainerSolidOuter = new G4EllipticalTube(name + "_tunnel_cont_solid_outer",          // name
-								 soil1R + tunnelSoilThickness + lengthSafety,// x radius
-								 soil1R + tunnelSoilThickness + lengthSafety,// y radius
-								 length*0.5);
+      G4VSolid* tunnelContainerSolidOuter = new G4Tubs(name + "_tunnel_cont_solid_outer",     // name
+						       0,                                     // inner radius
+						       soilOuterRadius + lengthSafety,        // outer radius
+						       0.5*length,                            // z half angle
+						       0,                                     // start angle
+						       CLHEP::twopi);                         // sweep angle
 
       G4VSolid* tunnelContainerSolidInner = new G4EllipticalTube(name + "_tunnel_cont_solid_inner", // name
 								 tunnel1,                           // x radius
@@ -160,10 +167,12 @@ BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String  
   else
     {
       // have to do a subtraction with an elliptical tube
-      G4VSolid* tunnelContainerSolidOuter = new G4EllipticalTube(name + "_tunnel_cont_solid_outer",          // name
-								 soil1R + tunnelSoilThickness + lengthSafety,// x radius
-								 soil1R + tunnelSoilThickness + lengthSafety,// y radius
-								 length*0.5);
+      G4VSolid* tunnelContainerSolidOuter = new G4Tubs(name + "_tunnel_cont_solid_outer",     // name
+						       0,                                     // inner radius
+						       soilOuterRadius + lengthSafety,        // outer radius
+						       0.5*length,                            // z half angle
+						       0,                                     // start angle
+						       CLHEP::twopi);                         // sweep angle
       
       G4VSolid* tunnelContainerSolidInner = new G4EllipticalTube(name + "_tunnel_cont_solid_inner", // name
 								 tunnel1,                           // x radius
@@ -175,24 +184,24 @@ BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String  
 					      tunnelContainerSolidInner);  // minus this
     } 
 
-  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerRadius);
+  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius);
   
   return tunnelSection; // member variable geometry component that's assembled in base class
 }
 
 
 BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSectionAngledInOut(G4String      name,
-									       G4double      length,
-									       G4double      angleIn,
-									       G4double      angleOut,
-									       G4double      tunnelThickness,
-									       G4double      tunnelSoilThickness,
-									       G4Material*   tunnelMaterial,
-									       G4Material*   tunnelSoilMaterial,
-									       G4bool        tunnelFloor,
-									       G4double      tunnelFloorOffset,
-									       G4double      tunnel1,
-									       G4double      tunnel2)
+										 G4double      length,
+										 G4double      angleIn,
+										 G4double      angleOut,
+										 G4double      tunnelThickness,
+										 G4double      tunnelSoilThickness,
+										 G4Material*   tunnelMaterial,
+										 G4Material*   tunnelSoilMaterial,
+										 G4bool        tunnelFloor,
+										 G4double      tunnelFloorOffset,
+										 G4double      tunnel1,
+										 G4double      tunnel2)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -244,10 +253,14 @@ BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSectionAngledInOut
   G4double soil1R = tunnel1 + tunnelThickness + lengthSafety;
   G4double soil2R = tunnel2 + tunnelThickness + lengthSafety;
 
-  G4VSolid* soilOuterSolid = new G4EllipticalTube(name + "_soil_outer_solid",   // name
-						  soil1R + tunnelSoilThickness, // x radius
-						  soil2R + tunnelSoilThickness, // y radius
-						  length);   // z half length (to fit in container)
+  G4double soilOuterRadius = std::max(soil1R, soil2R) + tunnelSoilThickness;
+
+  G4VSolid* soilOuterSolid = new G4Tubs(name + "_soil_outer_solid",   // name
+					0,                            // inner radius
+					soilOuterRadius,              // outer radius
+					length,                       // z half angle
+					0,                            // start angle
+					CLHEP::twopi);                // sweep angle
   
   G4VSolid* soilInnerSolid = new G4EllipticalTube(name + "_soil_outer_solid",   // name
 						  soil1R + lengthSafety,        // x radius
@@ -262,7 +275,8 @@ BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSectionAngledInOut
 				      soilSolidUnAngled,
 				      faceSolid);
 
-  G4double containerRadius = std::max(soil1R,soil2R) + tunnelSoilThickness + lengthSafety;
+  G4double containerXRadius = soil1R + tunnelSoilThickness + lengthSafety;
+  G4double containerYRadius = soil2R + tunnelSoilThickness + lengthSafety;
   
   // build the floor if necessary
   if (tunnelFloor)
@@ -315,10 +329,12 @@ BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSectionAngledInOut
 							      0,                                    // rotation matrix
 							      G4ThreeVector(0,-floorBoxContDisp,0));// translation
 
-      G4VSolid* tunnelContainerOuterSquare = new G4EllipticalTube(name + "_tunnel_cont_solid_outer",          // name
-								  soil1R + tunnelSoilThickness + lengthSafety,// x radius
-								  soil1R + tunnelSoilThickness + lengthSafety,// y radius
-								  length);
+      G4VSolid* tunnelContainerOuterSquare = new G4Tubs(name + "_tunnel_cont_solid_outer",     // name
+							0,                                     // inner radius
+							soilOuterRadius + lengthSafety,        // outer radius
+							length,                                // z half angle
+							0,                                     // start angle
+							CLHEP::twopi);                         // sweep angle
 
       G4VSolid* tunnelContainerSolidOuterAngled = new G4IntersectionSolid(name + "_tunnel_cont_out_ang_solid", // name
 									  tunnelContainerOuterSquare,
@@ -340,17 +356,28 @@ BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSectionAngledInOut
     }
   else
     {
-      containerSolid = new G4CutTubs(name + "_tunnel_container_solid", // name
-				     tunnel1,                          // inner radius
-				     containerRadius,                  // outer radius,
-				     length,                           // z half length
-				     0,                                // start angle
-				     CLHEP::twopi,                     // sweep angle
-				     inputface,                        // input face normal vector
-				     outputface);                      // output face normal vector
+      G4VSolid* tunnelContainerOuterSquare = new G4Tubs(name + "_tunnel_cont_solid_outer",     // name
+							0,                                     // inner radius
+							soilOuterRadius + lengthSafety,        // outer radius
+							length,                                // z half angle
+							0,                                     // start angle
+							CLHEP::twopi);                         // sweep angle
+
+      G4VSolid* tunnelContainerSolidOuterAngled = new G4IntersectionSolid(name + "_tunnel_cont_out_ang_solid", // name
+									  tunnelContainerOuterSquare,
+									  faceSolid);
+
+      G4VSolid* tunnelContainerSolidInner = new G4EllipticalTube(name + "_tunnel_cont_solid_inner", // name
+								 tunnel1,                           // x radius
+								 tunnel2,                           // y radius
+								 length*0.5);
+
+      containerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid",       // name
+					      tunnelContainerSolidOuterAngled,   // this
+					      tunnelContainerSolidInner);        // minus this
     } 
 
-  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerRadius);
+  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius);
 
   return tunnelSection;
 }
@@ -381,10 +408,11 @@ void BDSTunnelFactoryElliptical::TestInputParameters(G4double&    length,
 /// only the solids are unique, once we have those, the logical volumes and placement in the
 /// container are the same.  group all this functionality together
 BDSGeometryComponent* BDSTunnelFactoryElliptical::CommonFinalConstruction(G4String    name,
-									G4double    length,
-									G4Material* tunnelMaterial,
-									G4Material* tunnelSoilMaterial,
-									G4double    containerRadius)
+									  G4double    length,
+									  G4Material* tunnelMaterial,
+									  G4Material* tunnelSoilMaterial,
+									  G4double    containerXRadius,
+									  G4double    containerYRadius)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -396,8 +424,8 @@ BDSGeometryComponent* BDSTunnelFactoryElliptical::CommonFinalConstruction(G4Stri
 					   length);
 
   // record extents
-  std::pair<double,double> extX = std::make_pair(-containerRadius, containerRadius);
-  std::pair<double,double> extY = std::make_pair(-containerRadius, containerRadius);
+  std::pair<double,double> extX = std::make_pair(-containerXRadius, containerXRadius);
+  std::pair<double,double> extY = std::make_pair(-containerYRadius, containerYRadius);
   std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
   
   BDSGeometryComponent* aTunnelSegment = new BDSGeometryComponent(containerSolid,
