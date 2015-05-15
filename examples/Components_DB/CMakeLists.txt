@@ -29,9 +29,6 @@ set(TESTING_ARGS "--batch")
 simple_testing(Component-Octupole "--file=octTest.gmad" "")
  
 set(TESTING_ARGS "--batch")
-simple_testing(Component-PCLDrift "--file=pcldriftTest.gmad" "")
- 
-set(TESTING_ARGS "--batch")
 simple_testing(Component-Quadrupole "--file=quadTest.gmad" "")
 
 set(TESTING_ARGS "--batch")

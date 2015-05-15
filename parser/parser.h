@@ -169,10 +169,18 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.name = std::string(name);
   e.lst = NULL;
   e.l = params.l;
-  e.aper = params.aper;
-  e.aperX = params.aperX;
-  e.aperY = params.aperY;
-  e.bpRad = params.bpRad;
+
+  //new aperture model
+  e.aper1 = params.aper1;
+  e.aper2 = params.aper2;
+  e.aper3 = params.aper3;
+  e.aper4 = params.aper4;
+  e.apertureType = params.apertureType;
+  e.beampipeMaterial = params.beampipeMaterial;
+
+  // component size
+  e.boxSize = params.boxSize;
+  
   e.xsize = params.xsize;
   e.ysize = params.ysize;
   e.material = params.material;  
@@ -181,6 +189,7 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.tunnelRadius = params.tunnelRadius;
   e.tunnelOffsetX = params.tunnelOffsetX;
   e.precisionRegion = params.precisionRegion;
+  // end of common parameters
 
   // specific parameters
   // JS: perhaps add a printout warning in case it is not used doesn't match the element; how to do this systematically?
@@ -202,13 +211,9 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   if(params.phiAngleOutset)
     e.phiAngleOut = params.phiAngleOut;
 
-  // Drift, PCL Drift
+  // Drift, Drift
   if(params.beampipeThicknessset)
     e.beampipeThickness = params.beampipeThickness;
-  // aperture for PCL drift
-  if(params.aperYUpset) e.aperYUp = params.aperYUp;	
-  if(params.aperYDownset) e.aperYDown = params.aperYDown;
-  if(params.aperDyset) e.aperDy = params.aperDy;
   // RF
   e.gradient = params.gradient;
   // SBend, RBend, (Awake)Screen
@@ -247,9 +252,6 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   // RCOL
   e.flatlength = params.flatlength;
   e.taperlength = params.taperlength;
-  // MuSpoiler
-  e.outR = params.outR;
-  e.inR = params.inR;
   // Laser
   e.waveLength = params.waveLength;
   // Element, Tunnel

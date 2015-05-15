@@ -177,13 +177,3 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   //The hit was stored, so the return value is "true".
   return true;
 }
-
-void BDSSamplerSD::EndOfEvent(G4HCofThisEvent* /*HCE*/)
-{
-}
-
-void BDSSamplerSD::clear(){} 
-
-void BDSSamplerSD::DrawAll(){} 
-
-void BDSSamplerSD::PrintAll(){} 

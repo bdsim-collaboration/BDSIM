@@ -15,7 +15,7 @@
  * struct color_def {
  *   enum type { red, green, blue };
  * };
- * typedef BDSTypeSafeEnum<color_def> color;
+ * typedef BDSTypeSafeEnum<color_def,int> color;
  * color c = color::red;
  * 
  */

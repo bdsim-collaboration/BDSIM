@@ -149,6 +149,11 @@ if(USE_ROOT)
     message(STATUS "ROOT support ON")
 endif()
 
+# find Boost
+# Disable cmake script from Boost package because it is broken on lxplus
+set(Boost_NO_BOOST_CMAKE ON)
+find_package(Boost REQUIRED)
+
 # add xercesc include path (possibly not needed with Geant4 CMake config):
 if(USE_AFS)
    if(APPLE)
@@ -432,3 +437,6 @@ include(CTest)
 include(bdsim_test_macros)
 add_subdirectory(examples)
 add_subdirectory(test)
+
+# Manual
+add_subdirectory(docs)

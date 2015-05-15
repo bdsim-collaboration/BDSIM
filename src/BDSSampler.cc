@@ -6,8 +6,9 @@
    Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
    Changed Samplers to account for plane and cylinder types (GABs code)
 */
-// gab:
+
 #include "BDSGlobalConstants.hh" 
+#include "BDSExecOptions.hh"
 #include "BDSMaterials.hh"
 #include "BDSSampler.hh"
 #include "BDSDebug.hh"
@@ -17,7 +18,8 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "BDSSamplerSD.hh"
-#include "G4SDManager.hh"
+
+#include "BDSSDManager.hh"
 
 //============================================================
 
@@ -45,8 +47,8 @@ BDSSampler::BDSSampler (G4String aName, G4double aLength):
 #endif
 
   // register sampler sensitive detector
-  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-  SDMan->AddNewDetector(SensitiveDetector);
+  //G4SDManager* SDMan = G4SDManager::GetSDMpointer();
+  //SDMan->AddNewDetector(SensitiveDetector);
 }
 
 void BDSSampler::Initialise()
@@ -64,7 +66,7 @@ void BDSSampler::BuildMarkerLogicalVolume()
 				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
 				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
 				  itsLength/2.0),
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
 			itsName);
   
 #ifndef NOUSERLIMITS
@@ -74,7 +76,13 @@ void BDSSampler::BuildMarkerLogicalVolume()
   itsOuterUserLimits->SetMaxAllowedStep(1*CLHEP::m);
   itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
-  itsMarkerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
+  //itsMarkerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
+  if (BDSExecOptions::Instance()->GetVisDebug()) {
+    itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+  } else {
+    itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+  }
+  itsMarkerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 }
 
 BDSSampler::~BDSSampler()

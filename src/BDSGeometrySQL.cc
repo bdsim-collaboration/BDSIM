@@ -143,7 +143,7 @@ void BDSGeometrySQL::SetCommonParams(BDSMySQLTable* aSQLTable, G4int k){
   _VisRed = _VisGreen = _VisBlue = 0.5;
   _VisAlpha = 0.5;
   _VisType = "S";
-  _Material = "VACUUM";
+  _Material = BDSGlobalConstants::Instance()->GetVacuumMaterial();
   _Name="";
   _PrecisionRegion=0;
   _ApproximationRegion=0;
@@ -708,7 +708,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildPCLTube(BDSMySQLTable* aSQLTable, G4int k)
   aperYUp = 50.*CLHEP::mm;
   aperYDown = 200.*CLHEP::mm;
   aperDy = 0.*CLHEP::mm;
-  thickness = BDSGlobalConstants::Instance()->GetBeampipeThickness();
+  thickness = BDSGlobalConstants::Instance()->GetBeamPipeThickness();
   length = 200.0*CLHEP::mm;
   
   if(aSQLTable->GetVariable("APERX")!=NULL)

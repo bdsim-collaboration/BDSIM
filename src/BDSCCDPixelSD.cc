@@ -77,9 +77,3 @@ void BDSCCDPixelSD::EndOfEvent(G4HCofThisEvent*HCE)
   G4int HCID = SDman->GetCollectionID(collectionName[0]);
   HCE->AddHitsCollection(HCID, CCDPixelCollection );
 }
-
-void BDSCCDPixelSD::clear(){} 
-
-void BDSCCDPixelSD::DrawAll(){} 
-
-void BDSCCDPixelSD::PrintAll(){} 

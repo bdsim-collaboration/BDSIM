@@ -102,6 +102,9 @@ endif()
 find_program(ROOTCINT_EXECUTABLE rootcint PATHS $ENV{ROOTSYS}/bin)
 find_program(GENREFLEX_EXECUTABLE genreflex PATHS $ENV{ROOTSYS}/bin)
 find_package(GCCXML)
+# set as advanced variable
+mark_as_advanced(FORCE ROOTCINT_EXECUTABLE)
+mark_as_advanced(FORCE GENREFLEX_EXECUTABLE)
 
 #----------------------------------------------------------------------------
 # function ROOT_GENERATE_DICTIONARY( dictionary   

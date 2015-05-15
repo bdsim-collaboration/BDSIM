@@ -21,29 +21,33 @@
 
 #include "globals.hh"
 #include "BDSMultipole.hh"
+#include "BDSBeamPipeInfo.hh"
 
 class BDSQuadrupole :public BDSMultipole
 {
 public:
-  BDSQuadrupole(G4String aName, G4double aLength,
-		G4double bpRad, G4double FeRad,
-		G4double bGrad, G4double tilt, G4double outR, 
-                std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-		 G4String aTunnelMaterial="", G4String aMaterial= "", G4String spec="");
-  ~BDSQuadrupole();
+  BDSQuadrupole(G4String        name,
+		G4double        length,
+		G4double        bGrad,
+		BDSBeamPipeInfo beamPipeInfo,
+		G4double        boxSize,
+		G4String        outerMaterial="",
+		G4String        tunnelMaterial="",
+		G4double        tunnelRadius=0,
+		G4double        tunnelOffsetX=0);
+		
+  ~BDSQuadrupole(){;}
 
 private:
   G4double itsBGrad;
   
   virtual void Build();
 
-  virtual void BuildOuterLogicalVolume(bool OuterMaterialIsVacuum = false);
+  virtual void BuildOuterLogicalVolume(bool outerMaterialIsVacuum = false);
   virtual void BuildBPFieldAndStepper();
   
   /// quad with poles and pockets
   void BuildStandardOuterLogicalVolume();
-  /// cylinder
-  void BuildCylindricalOuterLogicalVolume();
 
   void SetVisAttributes();
 };

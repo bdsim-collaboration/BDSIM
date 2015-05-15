@@ -74,9 +74,6 @@
 //=======================================================
 // Global variables 
 BDSOutputBase* bdsOutput=NULL;         // output interface
-BDSBunch       bdsBunch;               // bunch information 
-//=======================================================
-
 //=======================================================
 
 extern Options options;
@@ -102,7 +99,8 @@ void BDS_handle_aborts(int signal_number) {
 int main(int argc,char** argv) {
 
   /* Initialize executable command line options reader object */
-  BDSExecOptions::Instance(argc,argv)->Print();
+  const BDSExecOptions* execOptions = BDSExecOptions::Instance(argc,argv);
+  execOptions->Print();
   
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> DEBUG mode is on." << G4endl;
@@ -111,19 +109,25 @@ int main(int argc,char** argv) {
   //
   // Parse lattice file
   //
-  G4cout << __FUNCTION__ << "> Using input file : "<< BDSExecOptions::Instance()->GetInputFilename()<<G4endl;
+  G4cout << __FUNCTION__ << "> Using input file : "<< execOptions->GetInputFilename()<<G4endl;
   
-  gmad_parser(BDSExecOptions::Instance()->GetInputFilename());
+  gmad_parser(execOptions->GetInputFilename());
+
+  //
+  // parse options and explicitly initialise materials and global constants
+  //
+  BDSMaterials::Instance();
+  const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   
   //
   // initialize random number generator
   //
 
-  BDS::CreateRandomNumberGenerator();
-  BDS::SetSeed(); // set the seed from options or from exec options
-  if (BDSExecOptions::Instance()->SetSeedState()) //optionally load the seed state from file
-    {BDS::LoadSeedState(BDSExecOptions::Instance()->GetSeedStateFilename());}
-  BDS::WriteSeedState(); //write the current state once set / loaded
+  BDSRandom::CreateRandomNumberGenerator();
+  BDSRandom::SetSeed(); // set the seed from options or from exec options
+  if (execOptions->SetSeedState()) //optionally load the seed state from file
+    {BDSRandom::LoadSeedState(execOptions->GetSeedStateFilename());}
+  BDSRandom::WriteSeedState(); //write the current state once set / loaded
 
   // instantiate the specific type of bunch distribution (class),
   // get the corresponding parameters from the gmad parser info
@@ -131,7 +135,8 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Instantiating chosen bunch distribution." << G4endl;
 #endif
-  bdsBunch.SetOptions(options);
+  BDSBunch* bdsBunch = new BDSBunch();
+  bdsBunch->SetOptions(options);
   
   //
   // construct mandatory run manager (the G4 kernel) and
@@ -181,7 +186,6 @@ int main(int argc,char** argv) {
 #endif
   runManager->SetUserInitialization(detector);
 
-
   //
   // set user action classes
   //
@@ -199,8 +203,8 @@ int main(int argc,char** argv) {
   G4cout << __FUNCTION__ << "> User action - steppingaction"<<G4endl;
 #endif
   // Only add steppingaction if it is actually used, so do check here (for cpu reasons)
-  if (BDSGlobalConstants::Instance()->GetThresholdCutPhotons() > 0 || BDSGlobalConstants::Instance()->GetThresholdCutCharged() > 0
-      || BDSExecOptions::Instance()->GetVerboseStep()) {
+  if (globalConstants->GetThresholdCutPhotons() > 0 || globalConstants->GetThresholdCutCharged() > 0
+      || execOptions->GetVerboseStep()) {
     runManager->SetUserAction(new BDSSteppingAction);
   }
   
@@ -217,7 +221,7 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - primary generator"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSPrimaryGeneratorAction());
+  runManager->SetUserAction(new BDSPrimaryGeneratorAction(bdsBunch));
 
 
   //
@@ -231,10 +235,10 @@ int main(int argc,char** argv) {
   //
   // set verbosity levels
   //
-  runManager->SetVerboseLevel(BDSExecOptions::Instance()->GetVerboseRunLevel());
-  G4EventManager::GetEventManager()->SetVerboseLevel(BDSExecOptions::Instance()->GetVerboseEventLevel());
-  G4EventManager::GetEventManager()->GetTrackingManager()->SetVerboseLevel(BDSExecOptions::Instance()->GetVerboseTrackingLevel());
-  G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager()->SetVerboseLevel(BDSExecOptions::Instance()->GetVerboseSteppingLevel());
+  runManager->SetVerboseLevel(execOptions->GetVerboseRunLevel());
+  G4EventManager::GetEventManager()->SetVerboseLevel(execOptions->GetVerboseEventLevel());
+  G4EventManager::GetEventManager()->GetTrackingManager()->SetVerboseLevel(execOptions->GetVerboseTrackingLevel());
+  G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager()->SetVerboseLevel(execOptions->GetVerboseSteppingLevel());
   
   // Close the geometry
   G4bool bCloseGeometry = G4GeometryManager::GetInstance()->CloseGeometry();
@@ -247,7 +251,7 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
 #endif
-  bdsOutput = BDSOutputFactory::createOutput(BDSExecOptions::Instance()->GetOutputFormat());
+  bdsOutput = BDSOutputFactory::createOutput(execOptions->GetOutputFormat());
   G4cout.precision(10);
 
   // catch aborts to close output stream/file. perhaps not all are needed.
@@ -257,25 +261,25 @@ int main(int argc,char** argv) {
   signal(SIGINT, &BDS_handle_aborts); // interrupts
   
   // Write survey file
-  if(BDSExecOptions::Instance()->GetOutline()) {
+  if(execOptions->GetOutline()) {
 #ifdef BDSDEBUG 
     G4cout<<"contructing geometry interface"<<G4endl;
 #endif
-    BDSGeometryInterface* BDSGI = new BDSGeometryInterface(BDSExecOptions::Instance()->GetOutlineFilename());
+    BDSGeometryInterface* BDSGI = new BDSGeometryInterface(execOptions->GetOutlineFilename());
 
 #ifdef BDSDEBUG 
     G4cout << __FUNCTION__ << "> Writing survey file"<<G4endl;
 #endif
-    if(BDSExecOptions::Instance()->GetOutlineFormat()=="survey") BDSGI->Survey();
-    else if(BDSExecOptions::Instance()->GetOutlineFormat()=="optics") BDSGI->Optics();
+    if(execOptions->GetOutlineFormat()=="survey") BDSGI->Survey();
+    else if(execOptions->GetOutlineFormat()=="optics") BDSGI->Optics();
     else {
-      G4cout << __FUNCTION__ << "> Outlineformat " << BDSExecOptions::Instance()->GetOutlineFormat() << "is not known! exiting." << G4endl;
+      G4cout << __FUNCTION__ << "> Outlineformat " << execOptions->GetOutlineFormat() << "is not known! exiting." << G4endl;
       exit(1);
     }
   }
 
 
-  if(!BDSExecOptions::Instance()->GetBatch())   // Interactive mode
+  if(!execOptions->GetBatch())   // Interactive mode
     {
       G4UIsession* session=0;
       G4VisManager* visManager=0;
@@ -301,7 +305,7 @@ int main(int argc,char** argv) {
 #ifdef G4VIS_USE
       // get the pointer to the User Interface manager 
       G4UImanager* UIManager = G4UImanager::GetUIpointer();  
-      UIManager->ApplyCommand("/control/execute " + BDSExecOptions::Instance()->GetVisMacroFilename());    
+      UIManager->ApplyCommand("/control/execute " + execOptions->GetVisMacroFilename());    
 #endif
       session2->SessionStart();
       delete session2;
@@ -313,7 +317,7 @@ int main(int argc,char** argv) {
 #endif
   else           // Batch mode
     { 
-      runManager->BeamOn(BDSGlobalConstants::Instance()->GetNumberToGenerate());
+      runManager->BeamOn(globalConstants->GetNumberToGenerate());
     }
 
 
@@ -335,8 +339,8 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
 #endif
-  delete BDSExecOptions::Instance();
-  delete BDSGlobalConstants::Instance();
+  delete execOptions;
+  delete globalConstants;
   delete BDSMaterials::Instance();
 
 #ifdef BDSDEBUG 
@@ -344,8 +348,9 @@ int main(int argc,char** argv) {
 #endif
   delete runManager; 
 
+  delete bdsBunch;
+
   G4cout << __FUNCTION__ << "> End of Run, Thank you for using BDSIM!" << G4endl;
 
-   
   return 0;
 }

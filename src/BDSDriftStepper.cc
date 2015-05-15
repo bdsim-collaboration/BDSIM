@@ -7,19 +7,17 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSDriftStepper.hh"
+#include "G4Event.hh"
+#include "G4EventManager.hh"
 #include "G4ThreeVector.hh"
-
-extern G4int event_number;
-
 
 BDSDriftStepper::BDSDriftStepper(G4Mag_EqRhs *EqRhs)
    : G4MagIntegratorStepper(EqRhs,6)  // integrate over 6 variables only !!
-                                       // position & velocity
+                                      // position & velocity
 {
   verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
   verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
 }
-
 
 void BDSDriftStepper::AdvanceHelix( const G4double  yIn[],
 				    G4ThreeVector /*Bfld*/,
@@ -49,7 +47,7 @@ void BDSDriftStepper::AdvanceHelix( const G4double  yIn[],
       // dump step information for particular event
       //G4bool verboseStep       = BDSExecOptions::Instance()->GetVerboseStep();
       //G4int verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
-      if(verboseStep && verboseEventNumber == event_number)
+      if(verboseStep && verboseEventNumber == G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID())
 	{
 	  int G4precision = G4cout.precision();
 	  G4cout.precision(10);

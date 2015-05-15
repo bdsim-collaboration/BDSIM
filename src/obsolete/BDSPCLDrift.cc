@@ -30,12 +30,13 @@ BDSPCLDrift::BDSPCLDrift (G4String aName, G4double aLength,
   itsXAper=aperX;
 }
 
-void BDSPCLDrift::BuildBeampipe(G4String materialName){
-  G4Material *material;
+void BDSPCLDrift::BuildBeampipe(){
+  G4String materialName = "";
+  G4Material* material;
   if(materialName != ""){
     material = BDSMaterials::Instance()->GetMaterial( materialName );
   } else {
-    material = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName());
+    material = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetBeamPipeMaterialName());
   }
   
   // build beampipe

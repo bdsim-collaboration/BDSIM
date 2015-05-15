@@ -4,7 +4,6 @@
 #include "globals.hh"             // geant4 globals / types
 
 #include <vector>
-#include <iterator>
 
 BDSAnalysisManager* BDSAnalysisManager::_instance = 0;
 

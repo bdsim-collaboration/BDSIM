@@ -10,7 +10,7 @@
 
 #include <ctime>
 
-void BDS::CreateRandomNumberGenerator()
+void BDSRandom::CreateRandomNumberGenerator()
 {
   // choose the Random engine
 #ifdef BDSDEBUG
@@ -19,7 +19,7 @@ void BDS::CreateRandomNumberGenerator()
   CLHEP::HepRandom::setTheEngine(new CLHEP::HepJamesRandom);
 }
 
-void BDS::SetSeed()
+void BDSRandom::SetSeed()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " set the seed" << G4endl;
@@ -54,18 +54,18 @@ void BDS::SetSeed()
   G4cout << __METHOD_NAME__ << "> Random number generator's seed = "
 	 << CLHEP::HepRandom::getTheSeed() << G4endl;
 #ifdef BDSDEBUG
-  BDS::PrintFullSeedState();
+  BDSRandom::PrintFullSeedState();
 #endif
 }
 
-void BDS::PrintFullSeedState()
+void BDSRandom::PrintFullSeedState()
 {
   G4cout << __METHOD_NAME__ << "> Random number generator's state: " << G4endl << G4endl;
   CLHEP::HepRandom::saveFullState(G4cout);
   G4cout << G4endl;
 }
 
-void BDS::WriteSeedState()
+void BDSRandom::WriteSeedState()
 {
   // get the full seed state and write it to a file
   // Print generator full state to output 
@@ -81,7 +81,7 @@ void BDS::WriteSeedState()
     }
 }
 
-void BDS::LoadSeedState(G4String inSeedFilename)
+void BDSRandom::LoadSeedState(G4String inSeedFilename)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "> loading file: " << inSeedFilename << G4endl;
@@ -97,7 +97,7 @@ void BDS::LoadSeedState(G4String inSeedFilename)
     }
   ifseedstate.close();
 #ifdef BDSDEBUG
-  BDS::PrintFullSeedState();
+  BDSRandom::PrintFullSeedState();
 #endif
 }
 

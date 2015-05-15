@@ -2,9 +2,11 @@
 #include <sstream>
 #include <cmath>
 
+#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSAcceleratorComponent.hh"
+#include "BDSGeometryComponent.hh"
 #include "BDSMaterials.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
@@ -40,6 +42,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double tunnelRadius, 
 						  G4double tunnelOffsetX,
 						  G4String aTunnelCavityMaterial):
+  BDSGeometryComponent(NULL,NULL),
   itsName(aName),
   itsLength(aLength),
   itsBpRadius(aBpRadius),
@@ -75,6 +78,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double tunnelRadius, 
 						  G4double tunnelOffsetX, 
 						  G4String aTunnelCavityMaterial):
+  BDSGeometryComponent(NULL,NULL),
   itsName(aName),
   itsLength(aLength),
   itsBpRadius(aBpRadius),
@@ -208,6 +212,15 @@ void BDSAcceleratorComponent::Build()
 {
   SetVisAttributes(); // sets color attributes, virtual method
   BuildMarkerLogicalVolume(); // pure virtual provided by derived class
+
+  // visual attributes
+  if(itsMarkerLogicalVolume) {
+    if (BDSExecOptions::Instance()->GetVisDebug()) {
+      itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+    } else {
+      itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+    }
+  }
 }
 
 void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)

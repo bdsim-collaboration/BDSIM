@@ -1,6 +1,7 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSKicker.hh"
 
+#include "BDSBeamPipeFactory.hh"
 #include "BDSDipoleStepper.hh"
 #include "BDSSbendMagField.hh"
 
@@ -10,29 +11,27 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
+#include "G4PVPlacement.hh"
 
-//#include <map>
+BDSKicker::BDSKicker(G4String        name,
+		     G4double        length,
+		     G4double        bField,
+		     G4double        bGrad,
+		     G4double        angle,
+		     G4bool          verticalKicker,
+		     BDSBeamPipeInfo beamPipeInfo,
+		     G4double        boxSize,
+		     G4String        outerMaterial,
+		     G4String        tunnelMaterial,
+		     G4double        tunnelRadius,
+		     G4double        tunnelOffsetX):
+  BDSMultipole(name,length,beamPipeInfo,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+  itsBField(bField),itsBGrad(bGrad),itsKickAngle(angle),isVerticalKicker(verticalKicker)
+{;}
 
-BDSKicker::BDSKicker(G4String aName, G4double aLength, 
-		     G4double bpRad, G4double FeRad,
-		     G4double bField, G4double angle, G4double outR,
-		     G4double tilt, G4double bGrad, 
-		     G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName, aLength, bpRad, FeRad, aTunnelMaterial, aMaterial,
-	       0, 0, /*itsAngle=*/0)
+void BDSKicker::Build()
 {
-  SetOuterRadius(outR);
-  itsTilt      = tilt;
-  itsBField    = bField;
-  itsBGrad     = bGrad;
-  //use separate kick angle as kicker doesn't rotate reference trajectory
-  //bdsbeamline places things based on itsAngle
-  itsKickAngle = angle;
-}
-
-void BDSKicker::Build() {
   BDSMultipole::Build();
-
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4double polePos[4];
@@ -58,6 +57,73 @@ void BDSKicker::Build() {
     }
 }
 
+void BDSKicker::BuildBeampipe()
+{
+  // have to distinguish if it's a vertical or horizontal kicker
+  // but without rotating the aperture model - ie input parameters aper1
+  // still represents horizontal
+
+  G4double kickerAper1, kickerAper2;
+  if (isVerticalKicker)
+    {
+      kickerAper1 = aper2; //vertical is rotated in the end during placement
+      kickerAper2 = aper1; //so build aperture otherway - sway 1,2 - x,y
+    }
+  else
+    {
+      kickerAper1 = aper1;
+      kickerAper2 = aper2;
+    }
+  
+  beampipe =
+    BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeType,
+						   itsName,
+						   itsLength,
+						   kickerAper1,
+						   kickerAper2,
+						   aper3,
+						   aper4,
+						   vacuumMaterial,
+						   beamPipeThickness,
+						   beamPipeMaterial);
+
+  //manually do BeamPipeCommonTasks here as rotation in placement can be different
+
+  // SET FIELD
+  beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false);
+
+  itsMarkerLogicalVolume->
+    SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
+
+  // register logical volumes using geometry component base class
+  RegisterLogicalVolumes(beampipe->GetAllLogicalVolumes());
+
+  // if it's a vertical kicker, rotate the beam pipe by 90 degrees
+  // this also rotates the dipole stepper in the vacuum volume
+  G4RotationMatrix* kickerRotation = new G4RotationMatrix();
+  if (isVerticalKicker)
+    {kickerRotation->rotateZ(CLHEP::pi*0.5);}
+
+  // place beampipe
+  itsPhysiComp = new G4PVPlacement(kickerRotation,            // rotation
+				   (G4ThreeVector)0,          // at (0,0,0)
+				   beampipe->GetContainerLogicalVolume(),  // its logical volume
+				   itsName+"_bmp_phys",	      // its name
+				   itsMarkerLogicalVolume,    // its mother  volume
+				   false,                     // no boolean operation
+				   0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
+
+  // record extent of geometry
+  if (isVerticalKicker){
+    SetExtentX(beampipe->GetExtentY());
+    SetExtentY(beampipe->GetExtentX());
+  }
+  else {
+    SetExtentX(beampipe->GetExtentX());
+    SetExtentY(beampipe->GetExtentY());
+  }
+  SetExtentZ(beampipe->GetExtentZ());
+} 
 
 void BDSKicker::SetVisAttributes()
 {
@@ -78,8 +144,4 @@ void BDSKicker::BuildBPFieldAndStepper()
   dipoleStepper->SetBField(-itsBField); // note the - sign...
   dipoleStepper->SetBGrad(itsBGrad);
   itsStepper = dipoleStepper;
-}
-
-BDSKicker::~BDSKicker()
-{
 }

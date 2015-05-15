@@ -91,7 +91,7 @@ void BDSScintillatorScreen::BuildCameraScoringPlane(){
   
   //Build and place the volume...
   itsCameraScoringPlaneSolid = new G4Box("CameraScoringPlaneSolid",itsLength/2.0,_yLength/2.0,_scoringPlaneThickness/2.0);
-  itsCameraScoringPlaneLog = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog",0,0,0);
+  itsCameraScoringPlaneLog = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),"CameraScoringPlaneLog",0,0,0);
   itsCameraScoringPlaneLog->SetVisAttributes(_visAttScint);
   G4double dispX=-_xLength/2.0+_scoringPlaneThickness/2.0;
   G4double dispY=0;
@@ -121,7 +121,7 @@ void BDSScintillatorScreen::BuildScreenScoringPlane(){
   
   //Build and place the volume...
   itsScreenScoringPlaneSolid = new G4Box("ScreenScoringPlaneSolid",_screenWidth/2.0,_screenHeight/2.0,_scoringPlaneThickness/2.0);
-  itsScreenScoringPlaneLog = new G4LogicalVolume(itsScreenScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"ScreenScoringPlaneLog",0,0,0);
+  itsScreenScoringPlaneLog = new G4LogicalVolume(itsScreenScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),"ScreenScoringPlaneLog",0,0,0);
   itsScreenScoringPlaneLog->SetVisAttributes(_visAttSampler);
   G4double dispX=0;
   G4double dispY=0;

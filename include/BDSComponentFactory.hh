@@ -5,6 +5,8 @@
 #include "globals.hh"
 #include "parser/element.h"
 #include "BDSAcceleratorComponent.hh"
+#include "BDSBeamPipe.hh"
+#include "BDSBeamPipeInfo.hh"
 
 class ElementList; 
 
@@ -19,13 +21,11 @@ public:
  
 private:
   G4bool   verbose;
+
+  G4double lengthSafety;
   
   G4double _charge, _momentum, _brho;
-  G4double _bpRad, _bpThick; 
   
-  // drifts
-  G4String _driftName ;
-  G4double _driftStartAper, _driftEndAper;
   std::list<struct Element>::iterator _elementIter, _previousElementIter, _nextElementIter;
   /// beamline
   std::list<BDSAcceleratorComponent*> itsBeamline;
@@ -38,7 +38,6 @@ private:
   BDSAcceleratorComponent* createCSampler();
   BDSAcceleratorComponent* createDump();
   BDSAcceleratorComponent* createDrift();
-  BDSAcceleratorComponent* createPCLDrift();
   BDSAcceleratorComponent* createRF();
   BDSAcceleratorComponent* createSBend();
   BDSAcceleratorComponent* createRBend();
@@ -59,6 +58,12 @@ private:
   // for each of them - special cases need only for ring logic
   BDSAcceleratorComponent* createTerminator();
   BDSAcceleratorComponent* createTeleporter();
+
+  /// Utility function to prepare beampipe
+  G4Material*     PrepareBeamPipeMaterial(Element& element);
+  G4Material*     PrepareVacuumMaterial(Element& element);
+  G4double        PrepareBoxSize(Element& element);
+  BDSBeamPipeInfo PrepareBeamPipeInfo(Element& element);
 
 };
 #endif

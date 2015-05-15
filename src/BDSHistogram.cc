@@ -3,7 +3,6 @@
 #include <vector>
 #include <cfloat>
 #include <iostream>
-#include <iomanip>
 #include <string>
 #include <utility>
 #include "globals.hh"
@@ -65,8 +64,8 @@ BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4Stri
   // reserve size for speed optimisation
   bins.reserve(nbins);
 
-  // caculate binwidth
-  binwidth = (xmax - xmin) / (G4double)nbins;
+  // calculate binwidth
+  G4double binwidth = (xmax - xmin) / (G4double)nbins;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ 
 	 << " S min : "      << xmin 
@@ -114,7 +113,7 @@ BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4
   BDSBin* tempbin    = NULL;
   G4double binstart  = 0;
   G4double binfinish = 0;
-  if (binEdges.size() > 2)
+  if (binEdges.size() >= 2)
     {
       for (iter = binEdges.begin(); iter != (end-1); ++iter)
 	{
@@ -126,6 +125,12 @@ BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4
 	      bins.push_back(tempbin);
 	    }
 	}
+    }
+  else if (binEdges.size() == 1)
+    {
+      // default 1x 1m bin
+      tempbin = new BDSBin(binEdges.front(),binEdges.front()+1.0);
+      bins.push_back(tempbin);
     }
   // else just underflow and overflow
   // overflow bin
@@ -155,6 +160,8 @@ std::vector<BDSBin*> BDSHistogram1D::GetBins()const
 std::vector<G4double> BDSHistogram1D::GetBinValues()const
 {
   std::vector<G4double> result;
+  if (bins.size() < 1)
+    {return result;}
   for (std::vector<BDSBin*>::const_iterator i = bins.begin(); i != bins.end(); ++i)
     {result.push_back((*i)->GetValue());}
   return result;
@@ -163,6 +170,8 @@ std::vector<G4double> BDSHistogram1D::GetBinValues()const
 std::vector<std::pair<G4double, G4double> > BDSHistogram1D::GetBinXMeansAndTotals()const
 {
   std::vector<std::pair<G4double ,G4double> > result;
+  if (bins.size() < 1)
+    {return result;}
   for (std::vector<BDSBin*>::const_iterator i = bins.begin(); i != bins.end(); ++i)
     {result.push_back( (*i)->GetXMeanAndTotal() );}
   return result;
@@ -171,6 +180,8 @@ std::vector<std::pair<G4double, G4double> > BDSHistogram1D::GetBinXMeansAndTotal
 std::vector<G4double> BDSHistogram1D::GetBinLowerEdges() const
 {
   std::vector<G4double> result;
+  if (bins.size() < 1)
+    {return result;}
   for (std::vector<BDSBin*>::const_iterator i = bins.begin(); i != bins.end(); ++i)
     {result.push_back( (*i)->GetLowerEdge() );}
   return result;
@@ -267,7 +278,8 @@ void BDSHistogram1D::first()
 G4bool BDSHistogram1D::isLastBin()
 {
   // size safe evalutation of whether we're at the last item
-  return ((_iterBins != bins.end()) && (std::next(_iterBins) == bins.end()));
+  // can be done with std::next but prefer not to use c++11
+  return ((_iterBins != bins.end()) && (_iterBins + 1 == bins.end()));
 }
 
 G4bool BDSHistogram1D::isDone()

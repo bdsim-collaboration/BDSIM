@@ -3,7 +3,7 @@
 #include <iomanip>
 #include <unistd.h>
 
-#include "globals.hh" // geant4's globals that is...
+#include "globals.hh"
 
 #include "BDSDebug.hh"
 #include "BDSMaterials.hh"
@@ -13,7 +13,7 @@
 
 BDSExecOptions* BDSExecOptions::_instance=0;
 
-BDSExecOptions* BDSExecOptions::Instance(int argc, char **argv){
+const BDSExecOptions* BDSExecOptions::Instance(int argc, char **argv){
   if(_instance==0) {
     _instance = new BDSExecOptions(argc, argv);
     return _instance;
@@ -23,7 +23,7 @@ BDSExecOptions* BDSExecOptions::Instance(int argc, char **argv){
   }
 }
 
-BDSExecOptions* BDSExecOptions::Instance(){
+const BDSExecOptions* BDSExecOptions::Instance(){
   if(_instance==0) {
     G4Exception("BDSExecOptions::Instance was not initialised. Initialize first with BDSExecOptions::Instance(int argc, char **argv).", "-1", FatalException, "");
     return NULL;
@@ -40,7 +40,7 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv){
   outlineFilename     = "outline.dat";
   outlineFormat       = "";
 
-  gflash      = 0;
+  gflash      = false;
   gflashemax  = 10000;
   gflashemin  = 0.1;
 
@@ -49,7 +49,6 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv){
   verboseStep   = false;
   verboseEventNumber   = -1;
   batch         = false; 
-  listMaterials = false;
   
   verboseRunLevel      = 0;
   verboseEventLevel    = 0;
@@ -88,8 +87,9 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 					{ "verbose_G4tracking", 1, 0, 0 },
 					{ "verbose_G4stepping", 1, 0, 0 },
 					{ "file", 1, 0, 0 },
+					{ "vis_debug", 0, 0, 0 },
 					{ "vis_mac", 1, 0, 0 },
-					{ "gflash", 1, 0, 0 },
+					{ "gflash", 0, 0, 0 },
 					{ "gflashemax", 1, 0, 0 },
 					{ "gflashemin", 1, 0, 0 },
 					{ "output", 1, 0, 0 },
@@ -140,83 +140,64 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 	verboseEvent = true; 
       }
       if( !strcmp(LongOptions[OptionIndex].name , "verbose_event_num") ){
-	if(optarg)
-	  verboseEventNumber = atoi(optarg); 
+	verboseEventNumber = atoi(optarg);
       }
       if( !strcmp(LongOptions[OptionIndex].name , "verbose_G4run") ) {
-	if(optarg)
-	  verboseRunLevel = atoi(optarg);
+	verboseRunLevel = atoi(optarg);
       }
       if( !strcmp(LongOptions[OptionIndex].name , "verbose_G4event") ) {
-	if(optarg)
-	  verboseEventLevel = atoi(optarg);
+	verboseEventLevel = atoi(optarg);
       }
       if( !strcmp(LongOptions[OptionIndex].name , "verbose_G4tracking") )  {
-	if(optarg)
-	  verboseTrackingLevel = atoi(optarg);
+	verboseTrackingLevel = atoi(optarg);
       }
       if( !strcmp(LongOptions[OptionIndex].name , "verbose_G4stepping") ) {
-	if(optarg)
-	  verboseSteppingLevel = atoi(optarg);
+	verboseSteppingLevel = atoi(optarg);
       }
       if( !strcmp(LongOptions[OptionIndex].name , "output") ) {
-	if(optarg) {
-	  if(!strcmp(optarg,"ascii") || !strcmp(optarg,"ASCII")) outputFormat=BDSOutputFormat::_ASCII;
-	  else if (!strcmp(optarg,"root") || !strcmp(optarg,"ROOT")) outputFormat=BDSOutputFormat::_ROOT;
-	  else if (!strcmp(optarg,"combined") || !strcmp(optarg,"COMBINED")) outputFormat=BDSOutputFormat::_COMBINED;
-	  else {
-	    G4cerr<<"unknown output format "<<optarg<<G4endl;
-	    exit(1);
-	  }
-#ifndef USE_ROOT
-	  if (outputFormat == BDSOutputFormat::_ROOT || outputFormat == BDSOutputFormat::_COMBINED) {
-	    G4cerr << "ERROR outputFormat root, but BDSIM not configured with ROOT support!" << G4endl;
-	    G4cerr << "Use ascii instead, or recompile with ROOT!" << G4endl;
-	    exit(1);
-	  }
-#endif
+	if(!strcmp(optarg,"ascii") || !strcmp(optarg,"ASCII")) outputFormat=BDSOutputFormat::_ASCII;
+	else if (!strcmp(optarg,"root") || !strcmp(optarg,"ROOT")) outputFormat=BDSOutputFormat::_ROOT;
+	else if (!strcmp(optarg,"combined") || !strcmp(optarg,"COMBINED")) outputFormat=BDSOutputFormat::_COMBINED;
+	else {
+	  G4cerr<<"unknown output format "<<optarg<<G4endl;
+	  exit(1);
 	}
+#ifndef USE_ROOT
+	if (outputFormat == BDSOutputFormat::_ROOT || outputFormat == BDSOutputFormat::_COMBINED) {
+	  G4cerr << "ERROR outputFormat root, but BDSIM not configured with ROOT support!" << G4endl;
+	  G4cerr << "Use ascii instead, or recompile with ROOT!" << G4endl;
+	  exit(1);
+	}
+#endif
       }
       if( !strcmp(LongOptions[OptionIndex].name , "outfile") ) {
-	if(optarg) {
-	  outputFilename=optarg;
-	}
+	outputFilename=optarg;
       }
       if( !strcmp(LongOptions[OptionIndex].name , "outline") ) {
-	if(optarg) outlineFilename = optarg; 
+	outlineFilename = optarg; 
 	outline=true;
       }
       if( !strcmp(LongOptions[OptionIndex].name , "outline_type") ) {
-	if(optarg) outlineFormat = optarg; 
+	outlineFormat = optarg; 
 	outline=true;  // can't have outline type without turning on outline!
       }
       if( !strcmp(LongOptions[OptionIndex].name , "file") ) {
-	if(optarg) {
-	  inputFilename=optarg;
-	}
-	else {
-	  G4cout<<"please specify the lattice filename"<<G4endl;
-	}
+	inputFilename=optarg;
+      }
+      if( !strcmp(LongOptions[OptionIndex].name , "vis_debug") ) {
+	visDebug = true;
       }
       if( !strcmp(LongOptions[OptionIndex].name , "vis_mac") ) {
-	if(optarg) {
-	  visMacroFilename=optarg;
-	}
-	else {
-	  G4cout<<"please specify the visualization macro file"<<G4endl;
-	}
+	visMacroFilename=optarg;
       }
       if( !strcmp(LongOptions[OptionIndex].name , "gflash") ) {
-	if(optarg)
-	  gflash = atoi(optarg); 
+	gflash = true;
       }
       if( !strcmp(LongOptions[OptionIndex].name , "gflashemax") ) {
-	if(optarg)
-	  gflashemax = atof(optarg); 
+	gflashemax = atof(optarg);
       }
       if( !strcmp(LongOptions[OptionIndex].name , "gflashemin") ) {
-	if(optarg)
-	  gflashemin = atof(optarg); 
+	gflashemin = atof(optarg);
       }
       if( !strcmp(LongOptions[OptionIndex].name, "materials") ) {
 	BDSMaterials::ListMaterials();
@@ -230,9 +211,7 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 	setSeed = true;
       }
       if( !strcmp(LongOptions[OptionIndex].name, "seedstate") ){
-	if(optarg) {
-	  seedStateFilename = optarg;
-	}
+	seedStateFilename = optarg;
 	setSeedState = true;
       }
       break;
@@ -243,7 +222,7 @@ void BDSExecOptions::Parse(int argc, char **argv) {
   } 
 }
 
-void BDSExecOptions::Usage() {
+void BDSExecOptions::Usage()const {
   G4cout<<"bdsim : version 0.6.develop"<<G4endl;
   G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
   G4cout<<"        http://www.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BdSim"<<G4endl;
@@ -254,7 +233,7 @@ void BDSExecOptions::Usage() {
   G4cout<<"--file=<filename>      : specify the lattice and options file "<<G4endl
 	<<"--batch                : batch mode - no graphics"<<G4endl
 	<<"--circular             : assume circular machine - turn control"<<G4endl
-	<<"--gflash=N             : whether or not to turn on gFlash fast shower parameterisation. Default 0."<<G4endl
+	<<"--gflash               : turn on gFlash fast shower parameterisation. Default false."<<G4endl
 	<<"--gflashemax=N         : maximum energy for gflash shower parameterisation in GeV. Default 10000."<<G4endl
 	<<"--gflashemin=N         : minimum energy for gflash shower parameterisation in GeV. Default 0.1."<<G4endl
 	<<"--help                 : display this message"<<G4endl
@@ -275,6 +254,7 @@ void BDSExecOptions::Usage() {
 	<<"--verbose_G4run=N      : set Geant4 verbosity level (see Geant4 manual for details)"<<G4endl
 	<<"--verbose_G4stepping=N : set Geant4 Stepping manager verbosity level"<<G4endl
 	<<"--verbose_G4tracking=N : set Geant4 Tracking manager verbosity level [-1:5]"<<G4endl
+	<<"--vis_debug            : display all volumes in visualiser"<<G4endl
 	<<"--vis_mac=<file>       : file with the visualization macro script, default vis.mac"<<G4endl;
 }
 
@@ -304,10 +284,9 @@ void BDSExecOptions::SetBDSIMPATH(){
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " BDSIMPATH set to: " << itsBDSIMPATH << G4endl;
 #endif
-
 }
 
-void BDSExecOptions::Print() {
+void BDSExecOptions::Print()const {
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " inputFilename: "       << std::setw(15) << inputFilename       << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " visMacroFilename: "    << std::setw(15) << visMacroFilename    << G4endl;
@@ -322,7 +301,6 @@ void BDSExecOptions::Print() {
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseStep: "         << std::setw(15) << verboseStep         << G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " batch: "               << std::setw(15) << batch               << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outline: "             << std::setw(15) << outline             << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " listMaterials: "       << std::setw(15) << listMaterials       << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseRunLevel: "     << std::setw(15) << verboseRunLevel     << G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseEventLevel: "   << std::setw(15) << verboseEventLevel   << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseTrackingLevel: "<< std::setw(15) << verboseTrackingLevel<< G4endl;  

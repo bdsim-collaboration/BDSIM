@@ -31,7 +31,7 @@ protected:
 private:
   virtual void SetVisAttributes();
   virtual void BuildBLMs();
-  virtual void BuildBeampipe(G4String materialName = "");
+  virtual void BuildBeampipe();
   /// field related objects
   virtual void BuildBPFieldAndStepper();
 

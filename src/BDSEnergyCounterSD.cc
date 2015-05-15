@@ -9,22 +9,22 @@
 
 #include "BDSEnergyCounterSD.hh"
 #include "BDSEnergyCounterHit.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4LogicalVolume.hh"
-#include "G4Track.hh"
-#include "G4Step.hh"
-#include "G4ParticleDefinition.hh"
-#include "G4VTouchable.hh"
-#include "G4TouchableHistory.hh"
-#include "G4ios.hh"
-#include "G4RotationMatrix.hh"
-#include "G4ThreeVector.hh"
+#include "BDSLogicalVolumeInfo.hh"
 #include "G4AffineTransform.hh"
+#include "G4Event.hh"
+#include "G4EventManager.hh"
+#include "G4ios.hh"
+#include "G4LogicalVolume.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4RotationMatrix.hh"
+#include "G4Step.hh"
+#include "G4ThreeVector.hh"
+#include "G4TouchableHistory.hh"
+#include "G4Track.hh"
+#include "G4VPhysicalVolume.hh"
+#include "G4VTouchable.hh"
 
 #include <map>
-
-extern G4int event_number;
-
 
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
   :G4VSensitiveDetector(name),
@@ -109,7 +109,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4ThreeVector posafterlocal   = tf.TransformPoint(posafter);
   //G4ThreeVector LocalDirection = tf.TransformAxis(momDir);
 
-  //G4cout << "Gobal Position " << pos << G4endl;
+  //G4cout << "Global Position " << pos << G4endl;
   //G4cout << "Local Position " << poslocal << G4endl << G4endl;
 
   //calculate mean position of step
@@ -122,6 +122,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   x = 0.5 * (posbeforelocal.x() + posafterlocal.x());
   y = 0.5 * (posbeforelocal.y() + posafterlocal.y());
   z = 0.5 * (posbeforelocal.z() + posafterlocal.z());
+
+  G4int event_number = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
   
   if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) 
     {
@@ -228,6 +230,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
   y = poslocal.y();
   z = poslocal.z();
   
+  G4int event_number = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
+  
   if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) 
     {
       G4cout << " BDSEnergyCounterSD: Current Volume: " <<  volName 
@@ -278,18 +282,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
   
   return true;
 }
-
-void BDSEnergyCounterSD::EndOfEvent(G4HCofThisEvent* /*HCE*/)
-{}
-
-void BDSEnergyCounterSD::clear()
-{} 
-
-void BDSEnergyCounterSD::DrawAll()
-{} 
-
-void BDSEnergyCounterSD::PrintAll()
-{} 
 
 G4double BDSEnergyCounterSD::GetSPositionOfStep(G4Step* aStep)
 {

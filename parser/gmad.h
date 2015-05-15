@@ -28,8 +28,8 @@ extern "C" {
   double       GetLength(int);            // Length of element
   double       GetAngle(int);             // Angle of element
   double*      GetKs(int);                // All magnetic ks
-  double       GetAperX(int);             // Aperture in X
-  double       GetAperY(int);             // Aperture in Y
+  /* double       GetAperX(int);             // Aperture in X */
+  /* double       GetAperY(int);             // Aperture in Y */
   double       GetAper(int);              // General Aperture
   double       GetBeampipeThickness(int); // Beam Pipe Thickness
 

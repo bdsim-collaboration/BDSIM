@@ -51,7 +51,7 @@ void BDSAwakeMultilayerScreen::layers(){
 void BDSAwakeMultilayerScreen::sampler(G4String name){
   G4int nThisSampler = BDSSampler::GetNSamplers()+1;
   G4String samplerName = "Sampler_" + BDSGlobalConstants::Instance()->StringFromInt(nThisSampler) + "_" + name;
-  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),1*CLHEP::um),samplerName,"vacuum",0,0);
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),1*CLHEP::um),samplerName,BDSGlobalConstants::Instance()->GetVacuumMaterial(),0,0);
   sl->color(G4Color(1.0,0.0,0.0,0.3));
   sl->sampler();
   screenLayer(sl);

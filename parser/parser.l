@@ -69,7 +69,7 @@ char* yyfilename;
 
 marker { return MARKER; } // reserved elements
 drift { return DRIFT; }
-pcldrift { return PCLDRIFT; }
+pcldrift { return DRIFT; }
 rfcavity { return RF; }
 dipole { return DIPOLE; }
 sbend { return SBEND; } 

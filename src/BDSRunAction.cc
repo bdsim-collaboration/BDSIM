@@ -25,7 +25,8 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 
   // construct output histograms
   // calculate histogram dimensions
-  G4double smin, smax, binwidth, nbins;
+  G4double smin, smax, binwidth;
+  G4int nbins;
   smin     = 0.0;
   smax     = BDSGlobalConstants::Instance()->GetSMax()/CLHEP::m;
   binwidth = BDSGlobalConstants::Instance()->GetElossHistoBinWidth(); // CHECK UNITS

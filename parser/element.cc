@@ -36,7 +36,6 @@ void Element::print(int & ident)const{
   std::list<double>::const_iterator it;
   switch(type) {
   case _DRIFT:
-  case _PCLDRIFT:
   case _SBEND:
   case _RBEND:
   case _QUAD:
@@ -123,15 +122,17 @@ void Element::flush() {
   taperlength = 0;
   hgap = 0;
   beampipeThickness = 0;
-  aper = 0;
-  aperX = 0;
-  aperY = 0;
-  aperYUp = 0;
-  aperYDown = 0;
-  aperDy = 0;
-  inR = 0;
-  bpRad = 0;
-  outR = 0;
+  // new aperture model
+  aper1 = 0;
+  aper2 = 0;
+  aper3 = 0;
+  aper4 = 0;
+  apertureType = "";
+  beampipeMaterial = "";
+
+  // component size - for stuff outside beampipe if applicable
+  boxSize = 0;
+  
   waveLength = 0;
 
   xdir = 0;
@@ -185,15 +186,13 @@ double Element::property_lookup(char* property_name)const{
   if(!strcmp(property_name,"phiAngleIn")) return phiAngleIn;
   if(!strcmp(property_name,"phiAngleOut")) return phiAngleOut;
   if(!strcmp(property_name,"beampipeThickness")) return beampipeThickness;
-  if(!strcmp(property_name,"aper")) return aper;
-  if(!strcmp(property_name,"aperX")) return aperX;
-  if(!strcmp(property_name,"aperY")) return aperY;
-  if(!strcmp(property_name,"aperYUp")) return aperYUp;
-  if(!strcmp(property_name,"aperYDown")) return aperYDown;
-  if(!strcmp(property_name,"aperDy")) return aperDy;
-  if(!strcmp(property_name,"outR")) return outR;
-  if(!strcmp(property_name,"inR")) return inR;
-  if(!strcmp(property_name,"bpRad")) return bpRad;
+  if(!strcmp(property_name,"aper")) return aper1;
+  if(!strcmp(property_name,"aper1")) return aper1;
+  if(!strcmp(property_name,"aper2")) return aper2;
+  if(!strcmp(property_name,"aper3")) return aper3;
+  if(!strcmp(property_name,"aper4")) return aper4;
+  if(!strcmp(property_name,"boxSize")) return boxSize;
+  if(!strcmp(property_name,"outR")) return 0.5*boxSize;
   if(!strcmp(property_name,"xsize")) return xsize;
   if(!strcmp(property_name,"ysize")) return ysize;
   if(!strcmp(property_name,"xdir")) return xdir;
