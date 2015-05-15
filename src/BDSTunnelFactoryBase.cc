@@ -60,7 +60,7 @@ BDSGeometryComponent* BDSTunnelFactoryBase::CreateTunnelSectionAngledOut(G4Strin
 }
 
 std::pair<G4ThreeVector,G4ThreeVector> BDSTunnelFactoryBase::CalculateFaces(G4double angleIn,
-									      G4double angleOut)
+									    G4double angleOut)
 {
   /// orientation -1,0,1 value - always use |angle| with trigonometric and then
   /// multiply by this factor, 0 by default
@@ -132,11 +132,13 @@ void BDSTunnelFactoryBase::BuildLogicalVolumes(G4String   name,
   tunnelLV    = new G4LogicalVolume(tunnelSolid,
 				    tunnelMaterial,
 				    name + "_tunnel_lv");
-  
-  soilLV      = new G4LogicalVolume(soilSolid,
-				    tunnelSoilMaterial,
-				    name + "_soil_lv");
 
+  if (soilSolid)
+    {
+      soilLV      = new G4LogicalVolume(soilSolid,
+					tunnelSoilMaterial,
+					name + "_soil_lv");
+    }
   // remember the floor is optional
   if (floorSolid)
     {
@@ -149,6 +151,11 @@ void BDSTunnelFactoryBase::BuildLogicalVolumes(G4String   name,
 void BDSTunnelFactoryBase::SetVisAttributes()
 { 
   // VISUAL ATTRIBUTES
+
+  // note these could actually be owned by the factory or kept in one place as they're
+  // always the same - this would however mean that the objects would have a dependency
+  // on the factory which shouldn't happen - so waste a little memory just now on visattrs
+  
   // tunnel & floor - a nice grey
   G4VisAttributes* tunnelVisAttr = new G4VisAttributes(G4Colour(0.545, 0.533, 0.470));
   tunnelVisAttr->SetVisibility(true);
@@ -164,11 +171,14 @@ void BDSTunnelFactoryBase::SetVisAttributes()
       floorLV->SetVisAttributes(floorVisAttr);
     }
   // soil - brown
-  G4VisAttributes* soilVisAttr = new G4VisAttributes(G4Colour(0.545, 0.353, 0, 0.4));
-  soilVisAttr->SetVisibility(true);
-  soilVisAttr->SetForceSolid(true);
-  soilVisAttr->SetForceLineSegmentsPerCircle(50);
-  soilLV->SetVisAttributes(soilVisAttr);
+  if (soilLV)
+    {
+      G4VisAttributes* soilVisAttr = new G4VisAttributes(G4Colour(0.545, 0.353, 0, 0.4));
+      soilVisAttr->SetVisibility(true);
+      soilVisAttr->SetForceSolid(true);
+      soilVisAttr->SetForceLineSegmentsPerCircle(50);
+      soilLV->SetVisAttributes(soilVisAttr);
+    }
   // container
   if (BDSExecOptions::Instance()->GetVisDebug()) {
     containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
@@ -213,10 +223,11 @@ void BDSTunnelFactoryBase::SetUserLimits(G4double length)
   tunnelUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   //attach cuts to volumes
   tunnelLV->SetUserLimits(tunnelUserLimits);
-  soilLV->SetUserLimits(tunnelUserLimits);
-  containerLV->SetUserLimits(tunnelUserLimits);
+  if (soilLV)
+    {soilLV->SetUserLimits(tunnelUserLimits);}
   if (floorLV)
     {floorLV->SetUserLimits(tunnelUserLimits);}
+  containerLV->SetUserLimits(tunnelUserLimits);
 }
 
 void BDSTunnelFactoryBase::PlaceComponents(G4String name)
@@ -233,16 +244,18 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
 		    0,                            // copy number
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
 		    );
-
-  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    (G4ThreeVector)0,             // position
-		    soilLV,                       // lv to be placed
-		    name + "_soil_pv",            // name
-		    containerLV,                  // mother lv to be place in
-		    false,                        // no boolean operation
-		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
+  if (soilLV)
+    {
+      new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+			(G4ThreeVector)0,             // position
+			soilLV,                       // lv to be placed
+			name + "_soil_pv",            // name
+			containerLV,                  // mother lv to be place in
+			false,                        // no boolean operation
+			0,                            // copy number
+			BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
+			);
+    }
 
   if (floorLV)
     {
