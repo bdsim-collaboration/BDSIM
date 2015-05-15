@@ -4,6 +4,8 @@
 #include "BDSTunnelFactoryBase.hh"
 #include "BDSTunnelFactoryCircular.hh"
 #include "BDSTunnelFactoryElliptical.hh"
+#include "BDSTunnelFactoryRectangular.hh"
+#include "BDSTunnelFactorySquare.hh"
 #include "BDSTunnelType.hh"
 
 #include "globals.hh"                        // geant4 globals / types
@@ -25,15 +27,27 @@ BDSTunnelFactoryBase* BDSTunnelFactory::GetAppropriateFactory(BDSTunnelType tunn
   switch(tunnelType.underlying()){
   case BDSTunnelType::circular:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " circular beampipe factory" << G4endl;
+    G4cout << __METHOD_NAME__ << " circular tunnel factory" << G4endl;
 #endif
     return BDSTunnelFactoryCircular::Instance();
     break;
   case BDSTunnelType::elliptical:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " elliptical beampipe factory" << G4endl;
+    G4cout << __METHOD_NAME__ << " elliptical tunnel factory" << G4endl;
 #endif
     return BDSTunnelFactoryElliptical::Instance();
+    break;
+  case BDSTunnelType::rectangular:
+#ifdef BDSDEBUG
+    G4cout << __METHOD_NAME__ << " rectangular tunnel factory" << G4endl;
+#endif
+    return BDSTunnelFactoryRectangular::Instance();
+    break;
+  case BDSTunnelType::square:
+#ifdef BDSDEBUG
+    G4cout << __METHOD_NAME__ << " square tunnel factory" << G4endl;
+#endif
+    return BDSTunnelFactorySquare::Instance();
     break;
   default:
 #ifdef BDSDEBUG

@@ -53,6 +53,9 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSection(G4String    
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  // tidy up things from previous usage if any - base class method
+  TidyUp();
+  
   // test input parameters - set global options as default if not specified
   TestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial,
 		      tunnelSoilMaterial, tunnelFloorOffset, tunnel1);
@@ -173,6 +176,9 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  // tidy up things from previous usage if any - base class method
+  TidyUp();
+  
   // test input parameters - set global options as default if not specified
   TestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial,
 		      tunnelSoilMaterial, tunnelFloorOffset, tunnel1);

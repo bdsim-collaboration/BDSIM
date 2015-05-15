@@ -136,6 +136,8 @@ protected:
   G4LogicalVolume* tunnelLV;
   G4LogicalVolume* soilLV;
   G4LogicalVolume* floorLV;
+
+  G4ThreeVector floorDisplacement;
 };
        
 
