@@ -10,6 +10,7 @@
  */
 
 struct Tunnel {
+  std::string name; ///< name
   /// geometry type
   std::string type;
 
@@ -31,7 +32,7 @@ struct Tunnel {
   /// start and end element by name
   std::string startElement, endElement;
   
-  /// contructor
+  /// constructor
   Tunnel();
   
 };
