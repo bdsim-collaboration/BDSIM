@@ -18,7 +18,7 @@
 #include "G4UserLimits.hh"
 #include "BDSSamplerSD.hh"
 #include "G4SDManager.hh"
-
+#define BDSDEBUG 1
 //============================================================
 
 std::vector <G4String> BDSSampler::outputNames;
@@ -37,6 +37,9 @@ BDSSampler::BDSSampler (G4String aName, G4double aLength):
 			 aName,
 			 aLength,0,0,0)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   nThisSampler= nSamplers + 1;
   SetName("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
   nSamplers++;
@@ -47,6 +50,9 @@ BDSSampler::BDSSampler (G4String aName, G4double aLength):
   // register sampler sensitive detector
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   SDMan->AddNewDetector(SensitiveDetector);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
 void BDSSampler::Initialise()

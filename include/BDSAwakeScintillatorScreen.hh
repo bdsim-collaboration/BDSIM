@@ -20,7 +20,7 @@ Work in progress.
 class BDSAwakeScintillatorScreen :public BDSAcceleratorComponent
 {
 public:
-  BDSAwakeScintillatorScreen(G4String aName, G4String material, G4double thickness, G4double angle, G4double windowThickness, G4String windowMaterial);
+  BDSAwakeScintillatorScreen(G4String aName, G4String material, G4double thickness, G4double angle, G4double windowThickness, G4double windowScreenGap, G4String windowMaterial);
   virtual ~BDSAwakeScintillatorScreen();
 
 protected:
@@ -36,7 +36,6 @@ private:
   void BuildVacuumChamber2();
   virtual void SetVisAttributes();
   void ComputeDimensions();
-  virtual void BuildMarkerLogicalVolume();
   void BuildCameraScoringPlane();
   void BuildScreenScoringPlane();
   void BuildAwakeScintillatorMaterial();
@@ -125,6 +124,7 @@ private:
   G4double _cameraScreenDist;
   G4String _material;
   G4double _thickness;
+  G4double _windowScreenGap;
   G4double _screenAngle;
   G4double _windowThickness;
   G4String _windowMaterial;

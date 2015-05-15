@@ -17,14 +17,15 @@ struct Element {
   std::string name;
 
   double inR; double bpRad; /// inner radius and beam pipe radius of muon spoiler  
-  double l,ks,k0,k1,k2,k3,angle,beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut, tscint, twindow, bmapZOffset; // l in meter
+  double l,ks,k0,k1,k2,k3,angle,beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut, tscint, windowScreenGap, twindow, bmapZOffset; // l in meter
   double xdir, ydir, zdir, waveLength; /// for laser wire and 3d transforms
   double flatlength,taperlength; ///for realistic collimators
   double gradient; /// for rf cavities
   double aperYUp, aperYDown, aperDy;  ///pcldrift
   double phi, theta, psi; /// for 3d transforms
-  double tunnelRadius;
-  double tunnelOffsetX;
+  double tunnelRadius, tunnelOffsetX, floorBeamlineHeight, beamlineCeilingHeight, tunnelThickness, tunnelSoilThickness;
+  int tunnelRadiusset, tunnelOffsetXset, floorBeamlineHeightset, beamlineCeilingHeightset, tunnelThicknessset, tunnelSoilThicknessset;
+  int tunnelType, tunnelTypeset;
   std::list<double> knl;
   std::list<double> ksl;
 
@@ -48,6 +49,7 @@ struct Element {
   std::string bmapFile;
   std::string material;
   std::string windowmaterial;
+  std::string vacuummaterial;
   std::string scintmaterial;
   std::string airmaterial;
   std::string tunnelMaterial;

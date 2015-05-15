@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
+#include <float.h>
 
 extern const char* current_line;
 // extern const int VERBOSE;
@@ -111,6 +112,7 @@ void Element::flush() {
   phiAngleIn = 0;
   phiAngleOut = 0;
   tscint = 0;
+  windowScreenGap = 0;
   twindow = 0;
   tilt = 0;
   phi = 0;
@@ -159,17 +161,21 @@ void Element::flush() {
   */
 
   //material = "";
-  scintmaterial = "";
-  windowmaterial = "";
   spec = "";
   material="";
   scintmaterial="";
   windowmaterial="";
+  vacuummaterial="";
   airmaterial="";
   tunnelMaterial="";
   tunnelCavityMaterial="Air";
-  tunnelRadius=0;
-  tunnelOffsetX=1e6;
+  tunnelRadius=DBL_MAX; 
+  tunnelOffsetX=DBL_MAX; 
+  floorBeamlineHeight=DBL_MAX; 
+  beamlineCeilingHeight=DBL_MAX; 
+  tunnelThickness=DBL_MAX; 
+  tunnelSoilThickness=DBL_MAX;
+  tunnelType=-1; 
 }
 
 double Element::property_lookup(char* property_name)const{
@@ -215,7 +221,16 @@ double Element::property_lookup(char* property_name)const{
   if(!strcmp(property_name,"T")) return temper;
   if(!strcmp(property_name,"P")) return pressure;
 
-  std::cerr << "parser.h> Error: unkown property \"" << property_name << "\". Returning 0." << std::endl; 
+  //Tunnel properties
+  if(!strcmp(property_name,"tunnelRadius")) return tunnelRadius;
+  if(!strcmp(property_name,"tunnelOffsetX")) return tunnelOffsetX;
+  if(!strcmp(property_name,"floorBeamlineHeight")) return floorBeamlineHeight;
+  if(!strcmp(property_name,"beamlineCeilingHeight")) return beamlineCeilingHeight;
+  if(!strcmp(property_name,"tunnelThickness")) return tunnelThickness;
+  if(!strcmp(property_name,"tunnelSoilThickness")) return tunnelSoilThickness;
+  if(!strcmp(property_name,"tunnelType")) return tunnelType;
+
+  std::cerr << "element.cc> Error: unkown property \"" << property_name << "\". Returning 0." << std::endl; 
   exit(1);
   //what about property_lookup for attributes of type string, like material?
 }

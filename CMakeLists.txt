@@ -239,8 +239,8 @@ if (NOT Geant4_FOUND)
    # own module for versions of Geant4 (9.4 and older), last option:
    # ui_all and vis_all options not implemented in own FindGeant4.cmake
 
-   # MODULE keyword not defined in versions 2.6
-   if (${CMAKE_MAJOR_VERSION} GREATER 1 AND ${CMAKE_MINOR_VERSION} GREATER 7)
+   # MODULE keyword not defined in versions 2.8
+   if (${CMAKE_MAJOR_VERSION} GREATER 1 AND ${CMAKE_MINOR_VERSION} GREATER 8)
       find_package(Geant4 MODULE REQUIRED ui_all vis_all)
    else()
       find_package(Geant4 REQUIRED ui_all vis_all)

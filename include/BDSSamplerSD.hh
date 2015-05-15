@@ -44,6 +44,8 @@ private:
   G4String itsCollectionName;
   //G4int    itsHCID;
 
+  std::map<G4String, BDSParticle> itsReferenceParticleMap;
+
 };
 
 inline void BDSSamplerSD::SetType(G4String aType)

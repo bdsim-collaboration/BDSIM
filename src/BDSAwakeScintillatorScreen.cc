@@ -28,8 +28,8 @@ typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
 //============================================================
-BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial=""):
-  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0), _mlScreen(NULL), _camera(NULL), _material(material), _thickness(thickness), _screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
+BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double windowScreenGap = 0, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial=""):
+  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0), _mlScreen(NULL), _camera(NULL), _material(material), _thickness(thickness), _windowScreenGap(windowScreenGap),_screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
 {
   _vacChambType=2;
   //Set as part of precision region (for energy loss monitoring)
@@ -40,6 +40,10 @@ BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String
     _screenRotationMatrix->rotateY(_screenAngle);
 
   _vacRotationMatrix = new G4RotationMatrix();
+
+  BuildScreen();
+  BuildCamera();	//Need the screen and camera for the dimensions.
+  ComputeDimensions(); //Need the dimensions in order to build the tunnel.
 }
 
 void BDSAwakeScintillatorScreen::SetVisAttributes()
@@ -248,24 +252,26 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
 }
 
 void BDSAwakeScintillatorScreen::Build(){
-      SetVisAttributes(); 
-      BuildScreen();
-      BuildCamera();	
-      ComputeDimensions();
-      BuildMarkerLogicalVolume();
-      if(_vacChambType==2){
-	BuildVacuumChamber2();
-      } else {
-      BuildVacuumChamber1();
-      }
-      //      BuildScreenScoringPlane();
-      BuildCameraScoringPlane();
-      PlaceScreen();
-      //      PlaceCamera();
-      if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-	BuildTunnel();
-      }
-      AddSensitiveVolume(itsMarkerLogicalVolume);
+
+
+  BuildMarkerLogicalVolume();
+  SetVisAttributes(); 
+  if(_vacChambType==2){
+    BuildVacuumChamber2();
+  } else {
+    BuildVacuumChamber1();
+  }
+  BuildScreenScoringPlane();
+  BuildCameraScoringPlane();
+  PlaceScreen();
+  //      PlaceCamera();
+  if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
+    if(itsTunnel != NULL){
+      itsTunnel->motherVolume(GetMarkerLogicalVolume());
+      BuildTunnel();
+    }
+  }
+  AddSensitiveVolume(itsMarkerLogicalVolume);
 }
 
 void BDSAwakeScintillatorScreen::BuildCamera(){
@@ -287,14 +293,13 @@ void BDSAwakeScintillatorScreen::BuildScreen()
 {
   G4cout << "Building BDSAwakeMultilayerScreen...." << G4endl;
   G4double grainSize = 10*1e-6*CLHEP::m;
-  _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, grainSize, _windowThickness, _windowMaterial);
+  _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, _windowScreenGap, grainSize, _windowThickness, _windowMaterial);
   
-  G4cout << "finished." << G4endl;
-  //  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-  //    for(int i=0; i<_mlScreen->nLayers(); i++){
-  //      AddSensitiveVolume(_mlScreen[i].log());
-  //    }
-  //  } 
+  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
+    for(int i=0; i<_mlScreen->nLayers(); i++){
+      AddSensitiveVolume(_mlScreen->screenLayer(i)->log());
+    }
+  } 
   G4cout << "BDSAwakeScintillatorScreen: finished building geometry" << G4endl;
 }
 
@@ -336,9 +341,9 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   G4double x_thi = _totalThickness * std::sin(std::abs(_screenAngle));//Length due to the screen thickness
   
   //Vacuum chamber dimensions.
-  _vacThickness=2*CLHEP::mm;
+  _vacThickness=6*CLHEP::mm; //MBPS = 2mm
   _vacInnerWidth=7*CLHEP::cm;
-  _vacInnerHeight=7*CLHEP::cm;
+  _vacInnerHeight=7*CLHEP::cm;//MBPS = 7cm
   _vacHeight=_vacInnerHeight+2*_vacThickness;
   
   _vacWidth2=x_wid;
@@ -373,29 +378,6 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
 
 
 
-}
-
-void BDSAwakeScintillatorScreen::BuildMarkerLogicalVolume(){
-  itsMarkerSolidVolume=new G4Box( itsName+"_marker_solid",
-				  itsXLength/2.0,
-				  itsYLength/2.0,
-				  itsLength/2.0); //z half length 
-
-  itsMarkerLogicalVolume=new G4LogicalVolume
-    (itsMarkerSolidVolume, 
-     BDSMaterials::Instance()->GetMaterial("vacuum"),
-     itsName+"_marker_log");
-  G4VisAttributes* visAtt = new G4VisAttributes(G4Color(0,1,0));
-  visAtt->SetForceWireframe(true);
-  visAtt->SetVisibility(true);
-  itsMarkerLogicalVolume->SetVisAttributes(visAtt);
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  itsMarkerUserLimits =  new G4UserLimits();
-  itsMarkerUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
-  itsMarkerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  itsMarkerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
-#endif
 }
 
 void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){

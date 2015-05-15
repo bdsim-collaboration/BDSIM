@@ -585,11 +585,21 @@ parameters:
 		  else
 		  if(!strcmp($1->name,"fintx")) {;}  //
 		  else
-		  if(!strcmp($1->name,"tunnelRadius")) { params.tunnelRadius = $3; params.tunnelRadiusset = 1;} // tunnel radius
+		  if(!strcmp($1->name,"tunnelRadius")) { params.tunnelRadius = $3; params.tunnelRadiusset = 1;} 
 		  else
-		  if(!strcmp($1->name,"tunnelOffsetX")) { params.tunnelOffsetX = $3; params.tunnelOffsetXset = 1;} // tunnel offset
+		  if(!strcmp($1->name,"tunnelType")) { params.tunnelType = $3; params.tunnelTypeset = 1;} 
 		  else
-		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;} // tunnel offset
+		  if(!strcmp($1->name,"tunnelOffsetX")) { params.tunnelOffsetX = $3; params.tunnelOffsetXset = 1;} 
+		  else
+		  if(!strcmp($1->name,"floorBeamlineHeight")) { params.floorBeamlineHeight = $3; params.floorBeamlineHeightset = 1;}
+		  else
+		  if(!strcmp($1->name,"beamlineCeilingHeight")) { params.beamlineCeilingHeight = $3; params.beamlineCeilingHeightset = 1;} 
+		  else
+		  if(!strcmp($1->name,"tunnelThickness")) { params.tunnelThickness = $3; params.tunnelThicknessset = 1;}
+		  else
+		  if(!strcmp($1->name,"tunnelSoilThickness")) { params.tunnelSoilThickness = $3; params.tunnelSoilThicknessset = 1;} 
+		  else
+		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;} 
 		    else
 		  if(!strcmp($1->name,"e1")) {;}  //
                     else
@@ -616,6 +626,8 @@ parameters:
 		  if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence
 		    else
                   if(!strcmp($1->name,"tscint")) { params.tscint = $3; params.tscintset = 1;} // thickness for a scintillator screen 
+		  else
+                  if(!strcmp($1->name,"windowScreenGap")) { params.windowScreenGap = $3; params.windowScreenGapset = 1;} // thickness for a scintillator screen 
 		  else
                   if(!strcmp($1->name,"twindow")) { params.twindow = $3; params.twindowset = 1;} // thickness for a scintillator screen window 
 		    else
@@ -816,16 +828,26 @@ parameters:
 		  if(!strcmp($1->name,"psi"))  {params.psi = $3; params.psiset = 1;} // 3rd angle
 		    else
 		  if(!strcmp($1->name,"gradient"))  {params.gradient = $3; params.gradientset = 1;} // rf voltage
-		    else
-		  if(!strcmp($1->name,"fint")) {;} // fringe field parameters
 		  else
-		  if(!strcmp($1->name,"fintx")) {;}  //
+		    if(!strcmp($1->name,"fint")) {;} // fringe field parameters
 		  else
-		  if(!strcmp($1->name,"tunnelRadius")) { params.tunnelRadius = $3; params.tunnelRadiusset = 1;} // tunnel radius
+		      if(!strcmp($1->name,"fintx")) {;}  //
 		  else
-		  if(!strcmp($1->name,"tunnelOffsetX")) { params.tunnelOffsetX = $3; params.tunnelOffsetXset = 1;} // tunnel offset
+		  if(!strcmp($1->name,"tunnelRadius")) { params.tunnelRadius = $3; params.tunnelRadiusset = 1;} 
 		  else
-		    if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;} // tunnel offset
+		  if(!strcmp($1->name,"tunnelType")) { params.tunnelType = $3; params.tunnelTypeset = 1;} 
+		  else
+		  if(!strcmp($1->name,"tunnelOffsetX")) { params.tunnelOffsetX = $3; params.tunnelOffsetXset = 1;} 
+		  else
+		  if(!strcmp($1->name,"floorBeamlineHeight")) { params.floorBeamlineHeight = $3; params.floorBeamlineHeightset = 1;} 
+		  else
+		  if(!strcmp($1->name,"beamlineCeilingHeight")) { params.beamlineCeilingHeight = $3; params.beamlineCeilingHeightset = 1;} 
+		  else
+		  if(!strcmp($1->name,"tunnelThickness")) { params.tunnelThickness = $3; params.tunnelThicknessset = 1;} 
+		  else
+		  if(!strcmp($1->name,"tunnelSoilThickness")) { params.tunnelSoilThickness = $3; params.tunnelSoilThicknessset = 1;} 
+		  else
+		    if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;} 
 		    else
 		  if(!strcmp($1->name,"e1")) {;}  //
                     else
@@ -910,6 +932,12 @@ parameters:
 		       params.windowmaterial = $3; 
 		     } // material for a scintillator screen window
 		   else
+		   if(!strcmp($1->name,"vacuummaterial")) 
+		     {
+		       params.vacuummaterialset = 1;
+		       params.vacuummaterial = $3; 
+		     } // material for a scintillator screen vacuum
+		   else
 		   if(!strcmp($1->name,"airmaterial")) 
 		     {
 		       params.airmaterialset = 1;
@@ -978,6 +1006,11 @@ parameters:
 			   {	 
 			     params.windowmaterialset = 1;
 			     params.windowmaterial = $3;
+			   }
+			 if(!strcmp($1->name,"vacuummaterial")) 
+			   {	 
+			     params.vacuummaterialset = 1;
+			     params.vacuummaterial = $3;
 			   }
 			 else
 			   if(!strcmp($1->name,"airmaterial")) 

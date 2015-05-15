@@ -10,9 +10,10 @@ Last modified 23.10.2007 by Steve Malton
 #include "G4UniformMagField.hh"
 #include <cstdlib>
 #include "G4ThreeVector.hh"
+#include "G4ParticleTable.hh"
 
 extern Options options;
-
+#define DEBUG 1
 BDSGlobalConstants* BDSGlobalConstants::_instance = 0;
 
 BDSGlobalConstants* BDSGlobalConstants::Instance(){
@@ -38,6 +39,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsGeometryBias = opt.geometryBias;
   
   itsShowTunnel=opt.showTunnel;
+  itsTunnelType=opt.tunnelType;
   itsSensitiveComponents=opt.sensitiveBeamlineComponents;
   itsSensitiveBeamPipe=opt.sensitiveBeamPipe;
   itsSensitiveBLMs=opt.sensitiveBLMs;
@@ -55,6 +57,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   if (itsParticleTotalEnergy == 0) {
     itsParticleTotalEnergy = itsBeamTotalEnergy;
   }
+  //  itsBeamKineticEnergy = itsBeamTotalEnergy - itsBeamParticleDefinition->GetPDGMass();
 
   itsVacuumPressure = opt.vacuumPressure*CLHEP::bar;
   itsPlanckScatterFe = opt.planckScatterFe;
@@ -71,7 +74,6 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
     exit(1);
   }
   itsBuildTunnel = opt.buildTunnel;
-  itsBuildTunnelFloor = opt.buildTunnelFloor;  
   itsTunnelRadius = opt.tunnelRadius * CLHEP::m;
   if (itsTunnelRadius < itsComponentBoxSize/2){
     G4cerr << __METHOD_NAME__ << "> Error: option \"tunnelRadius\" must be grater than \"boxSize\"/2 " << G4endl;
@@ -79,9 +81,10 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   }
   itsTunnelThickness = opt.tunnelThickness * CLHEP::m; //Tunnel geometry options read from file
   itsTunnelSoilThickness = opt.tunnelSoilThickness * CLHEP::m;
-  itsTunnelFloorOffset = opt.tunnelFloorOffset * CLHEP::m;
+  itsFloorBeamlineHeight = opt.floorBeamlineHeight * CLHEP::m;
+  G4cout << __METHOD_NAME__ << "floorBeamlineHeight = " << itsFloorBeamlineHeight << G4endl;
+  itsBeamlineCeilingHeight = opt.beamlineCeilingHeight * CLHEP::m;
   itsTunnelOffsetX = opt.tunnelOffsetX * CLHEP::m;
-  itsTunnelOffsetY = opt.tunnelOffsetY * CLHEP::m;
   //Beam loss monitor (BLM) geometry
   itsBlmRad = opt.blmRad * CLHEP::m;
   itsBlmLength = opt.blmLength * CLHEP::m;

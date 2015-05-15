@@ -26,6 +26,7 @@ struct Parameters {
   double ks; int ksset;   /// solenoid
 
   double tscint; int tscintset; ///thickness of scintillating part of screen
+  double windowScreenGap; int windowScreenGapset; ///air gap between window and screen
   double twindow; int twindowset; ///thickness of window
 
   std::list<double> knl;           /// multipole expansion coefficients
@@ -58,10 +59,9 @@ struct Parameters {
   double aperY; int aperYset;   
   double phi, theta, psi; /// for 3d transforms
   int phiset, thetaset, psiset;
-  double tunnelRadius;
-  int tunnelRadiusset;
-  double tunnelOffsetX;
-  int tunnelOffsetXset;
+  double tunnelRadius, tunnelOffsetX, floorBeamlineHeight, beamlineCeilingHeight, tunnelThickness, tunnelSoilThickness;
+  int tunnelRadiusset, tunnelOffsetXset, floorBeamlineHeightset, beamlineCeilingHeightset, tunnelThicknessset, tunnelSoilThicknessset;
+  int tunnelType, tunnelTypeset;
 
   ///which precision physics region the element is in (0 = none)
   int precisionRegion; int precisionRegionset;
@@ -88,6 +88,7 @@ struct Parameters {
   //  std::string emap; int emapset;
   std::string material; int materialset;
   std::string tunnelMaterial; int tunnelmaterialset;
+  std::string tunnelSoilMaterial; int tunnelSoilMaterialset;
   std::string tunnelCavityMaterial; int tunnelcavitymaterialset;
 
   /// string to pass a custom type specification
@@ -107,6 +108,7 @@ struct Parameters {
 
   std::string  scintmaterial;  int scintmaterialset;
   std::string  windowmaterial;  int windowmaterialset;
+  std::string  vacuummaterial;  int vacuummaterialset;
   std::string  airmaterial;  int airmaterialset;
 
   // position of an element withing a sequence

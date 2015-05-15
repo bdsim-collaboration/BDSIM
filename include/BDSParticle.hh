@@ -39,6 +39,9 @@ private:
   /// track ID of parent
   G4int itsParentID;
 
+  //track length
+  G4double itsS;
+
 public:
   G4double GetX()const{return itsPosition.x();}
   G4double GetY()const{return itsPosition.y();}
@@ -47,13 +50,18 @@ public:
   G4double GetYp()const{return itsMomentum.y();}
   G4double GetZp()const{return itsMomentum.z();}
 
+  G4double GetS()const{return itsS;}
+  void SetS(G4double val){itsS = val;}
+
   G4double GetEnergy()const{return itsE;}
   G4double GetTime()const{return itsT;}
   G4double GetWeight()const{return itsWeight;}
   
   G4int GetTrackID()const{return itsTrackID;}
   G4int GetParentID()const{return itsParentID;}
-  
+
+  G4ThreeVector GetPosition()const{return itsPosition;}
+  G4ThreeVector GetDirection()const{return itsMomentum;}
 };
 
 #endif

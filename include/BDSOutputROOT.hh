@@ -62,12 +62,14 @@ private:
   float x_prod,xp_prod,y_prod,yp_prod,z_prod,zp_prod,E_prod,t_prod;
   float x_lastScat,xp_lastScat,y_lastScat,yp_lastScat,z_lastScat,zp_lastScat,E_lastScat,t_lastScat;
   float x,xp,y,yp,z,zp,E,t; //Edep;
+  float xRel,yRel,zRel,tRel; 
   float X,Xp,Y,Yp,Z,Zp,s,weight; //,EWeightZ;
   int part,nev, pID, track_id, turnnumber;
   float s_el,E_el;
   float x_el_p,y_el_p,z_el_p,E_el_p,s_el_p;
   int part_el_p, weight_el_p;
   char volumeName_el_p[100];
+  float sReference;
 
   void WriteRootHit(G4String Name, 
 		    G4double InitMom, 
@@ -98,10 +100,14 @@ private:
 		    G4double X, 
 		    G4double Y, 
 		    G4double Z, 
+		    G4double XRel, 
+		    G4double YRel, 
+		    G4double ZRel, 
+		    G4double TRel, 
 		    G4double XPrime, 
 		    G4double YPrime, 
 		    G4double ZPrime, 
-		    G4double T, 
+		    G4double t, //Local and global time coordinates.
 		    G4double GlobalX, 
 		    G4double GlobalY, 
 		    G4double GlobalZ, 
@@ -109,6 +115,7 @@ private:
 		    G4double GlobalYPrime, 
 		    G4double GlobalZPrime, 
 		    G4double S, 
+		    G4double SReference, 
 		    G4double Weight, 
 		    G4int    PDGtype, 
 		    G4int    EventNo, 

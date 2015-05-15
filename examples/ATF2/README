@@ -1,4 +1,0 @@
-Example based on Mark Woodleys MAD8 ATF2 decks
-
-1) Run mad8 and run saveline command 
-2) ../../util/mad2gmad.py -i SAVELINE -o FILENAME.gmad

@@ -1,7 +1,0 @@
-include quad.gmad;
-include options.gmad;
-include elec.gmad;
-
-use, period=lat;
-
-option, ngenerate=1000;

@@ -176,7 +176,12 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.tunnelMaterial = params.tunnelMaterial;  
   e.tunnelCavityMaterial = params.tunnelCavityMaterial;  
   e.tunnelRadius = params.tunnelRadius;
+  e.tunnelType = params.tunnelType;
   e.tunnelOffsetX = params.tunnelOffsetX;
+  e.floorBeamlineHeight = params.floorBeamlineHeight ;
+  e.beamlineCeilingHeight = params.beamlineCeilingHeight ;
+  e.tunnelThickness = params.tunnelThickness ;
+  e.tunnelSoilThickness = params.tunnelSoilThickness ;
   e.precisionRegion = params.precisionRegion;
   
   //specific parameters
@@ -534,10 +539,13 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.scintmaterial = std::string(params.scintmaterial);
     std::cout << "scintmaterial: " << e.scintmaterial << " " <<  params.scintmaterial << std::endl;
     e.tscint = params.tscint;
+    e.windowScreenGap = params.windowScreenGap;
     e.angle = params.angle;
     e.twindow = params.twindow;
     e.windowmaterial = std::string(params.windowmaterial);
+    e.vacuummaterial = std::string(params.vacuummaterial);
     std::cout << "windowmaterial: " << e.windowmaterial << " " <<  params.windowmaterial << std::endl;
+    std::cout << "vacuummaterial: " << e.vacuummaterial << " " <<  params.vacuummaterial << std::endl;
     break;
 
   default:

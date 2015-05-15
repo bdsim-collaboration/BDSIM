@@ -25,8 +25,10 @@ public:
 		BDSParticle prod,
 		BDSParticle last_scat,
 		BDSParticle local,
+		BDSParticle local_rel,
 		BDSParticle global,
 		G4double s,
+		G4double sReference,
 		G4double weight,
 		G4int PDGtype, G4int nEvent,
 		G4int ParentID, G4int TrackID,
@@ -50,15 +52,20 @@ private:
   ///point where the particle last scattered
   BDSParticle itsLastScat;
 
-  ///actual position and momentum direction in LOCAL coordinates, relative to
-  ///the sampler and to the ideal orbit
+  ///actual position and momentum direction in LOCAL coordinates ON THE SAMPLER PLANE, relative to
+  ///the sampler and to the z-axis of the ideal orbit
   BDSParticle itsLocal;
+
+  ///actual position and momentum direction in LOCAL coordinates, RELATIVE TO THE REFERENCE ORBIT IN TIME AND SPACE
+  BDSParticle itsLocal_rel;
 
   ///actual position and momentum direction in GLOBAL coordinates
   BDSParticle itsGlobal;
 
   ///total current track length
   G4double itsS;
+  ///total track length of the reference particle
+  G4double itsSReference;
 
   G4double itsWeight;
   G4int itsPDGtype;
@@ -131,6 +138,22 @@ public:
     {return itsLocal.GetZ();}
   inline G4double GetZPrime() const
     {return itsLocal.GetZp();}
+  inline G4double GetRelMom() const
+    {return itsLocal_rel.GetEnergy();}
+  inline G4double GetRelX() const
+    {return itsLocal_rel.GetX();}
+  inline G4double GetRelXPrime() const
+    {return itsLocal_rel.GetXp();}
+  inline G4double GetRelY() const
+    {return itsLocal_rel.GetY();}
+  inline G4double GetRelYPrime() const
+    {return itsLocal_rel.GetYp();}
+  inline G4double GetRelZ() const
+    {return itsLocal_rel.GetZ();}
+  inline G4double GetRelZPrime() const
+    {return itsLocal_rel.GetZp();}
+  inline G4double GetRelT() const
+    {return itsLocal_rel.GetTime();}
   inline G4double GetGlobalX() const
     {return itsGlobal.GetX();}
   inline G4double GetGlobalXPrime() const
@@ -143,10 +166,12 @@ public:
     {return itsGlobal.GetZ();}
   inline G4double GetGlobalZPrime() const
     {return itsGlobal.GetZp();}
-  inline G4double GetT() const
-    {return itsLocal.GetTime();}
+  inline G4double GetTGlobal() const
+    {return itsGlobal.GetTime();}
   inline G4double GetS() const
     {return itsS;}
+  inline G4double GetSReference() const
+    {return itsSReference;}
   inline G4double GetWeight() const
     {return itsWeight;}
   inline G4String GetName() const

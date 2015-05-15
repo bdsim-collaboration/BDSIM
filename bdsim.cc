@@ -56,6 +56,8 @@
 #include "G4SteppingManager.hh"
 #include "G4GeometryTolerance.hh"
 #include "G4TrajectoryDrawByCharge.hh"
+#include "G4TransportationManager.hh"
+#include "G4PropagatorInField.hh"
 
 #include "BDSBeamline.hh"
 #include "BDSBunch.hh"
@@ -242,6 +244,9 @@ int main(int argc,char** argv) {
     G4cerr << "bdsim.cc: error - geometry not closed." << G4endl;
     return 1;
   }
+
+  //Set the maximum acceptable step size
+  //  G4TransportationManager::GetTransportationManager()->GetPropagatorInField()->SetLargestAcceptableStep(1*CLHEP::m);
 
   //
   // set default output formats:

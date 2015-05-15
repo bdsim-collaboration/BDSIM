@@ -42,27 +42,6 @@ void BDSLWCalorimeter::Build()
   BuildBeampipe(itsLength);
 }
 
-void BDSLWCalorimeter::BuildMarkerLogicalVolume()
-{
-  G4double SampTransSize;
-  SampTransSize=2.*BDSGlobalConstants::Instance()->GetTunnelRadius();
-
-  itsMarkerLogicalVolume=
-    new G4LogicalVolume(
-			new G4Box(itsName+"_solid",
-				  SampTransSize,
-				  SampTransSize,
-				  itsLength/2),
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
-			itsName);
-  
-#ifndef NOUSERLIMITS
-  itsOuterUserLimits =new G4UserLimits();
-  itsOuterUserLimits->SetMaxAllowedStep(itsLength);
-  itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-  itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
-#endif
-}
 
 void BDSLWCalorimeter::BuildCal(G4double aLength)
 {

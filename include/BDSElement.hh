@@ -44,13 +44,10 @@ public:
    
 private:
 
-  virtual void BuildMarkerLogicalVolume();
   void SetVisAttributes();  
-
-  void BuildElementMarkerLogicalVolume();
-  void BuildGeometry();
   void PlaceComponents(G4String geometry, G4String bmap);
   void BuildMagField(G4bool forceToAllDaughters=false);
+  virtual void Build();
 
   G4String itsGeometry;
   G4String itsBmap;

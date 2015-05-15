@@ -5,7 +5,7 @@
 
 class BDSAwakeMultilayerScreen : public BDSMultilayerScreen{
 public:
-  BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double dgrain, G4double windowThickness, G4String windowMaterial);
+  BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double windowScreenGap, G4double dgrain, G4double windowThickness, G4String windowMaterial);
   virtual ~BDSAwakeMultilayerScreen();
   void surfaces();
   void place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol);
@@ -15,6 +15,8 @@ private:
   void layers();
   void sampler(G4String name);
   void preWindowSampler();
+  void postWindowSampler();
+  void windowScreenGap();
   void preScreenSampler();
   void postScreenSampler();
   void windowLayer();
@@ -31,6 +33,7 @@ private:
   void roughSurface();
   G4String _material;
   G4double _thickness;
+  G4double _windowScreenGap;
   G4double _gapWidth;
   G4double _gapSpacing;
   G4double _dgrain;
