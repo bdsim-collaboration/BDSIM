@@ -8,40 +8,23 @@
 
 #include "G4ios.hh" 
 #include "globals.hh"
-#include "Randomize.hh" 
-#include "G4Version.hh"
-#if G4VERSION_NUMBER > 899
 #include "G4VEnergyLossProcess.hh"
-#include "G4LossTableManager.hh"
-#else
-#include "G4VeEnergyLoss.hh"
-#endif
 #include "G4Track.hh"
 #include "G4Step.hh"
-#include "G4Gamma.hh"
 #include "G4Electron.hh"
 #include "G4Positron.hh"
-#include "G4OrderedTable.hh" 
-#include "G4PhysicsTable.hh"
-#include "G4PhysicsLogVector.hh"
 #include "BDSComptonEngine.hh"
 #include "BDSPlanckEngine.hh"
  
-#if G4VERSION_NUMBER > 899
 class BDSPlanckScatter : public G4VEnergyLossProcess
-#else
-class BDSPlanckScatter : public G4VeEnergyLoss
-#endif
 { 
   public:
  
      BDSPlanckScatter();
  
      ~BDSPlanckScatter();
-#if G4VERSION_NUMBER > 899
      virtual void InitialiseEnergyLossProcess(const G4ParticleDefinition*, const G4ParticleDefinition*);
      virtual void PrintInfo();
-#endif
 
      G4bool IsApplicable(const G4ParticleDefinition&);
      

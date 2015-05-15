@@ -27,11 +27,11 @@ BDSPCLTube::BDSPCLTube(G4double sizeX, G4double sizeYUp, G4double sizeYDown, G4d
 }
 
 void BDSPCLTube::BuildHollow(){
-#ifdef DEBUG
-  G4cout << "BDSPCLTube itsSizeX: " << itsSizeX/m << " m" << G4endl;
-  G4cout << "BDSPCLTube itsSizeYUp: " << itsSizeYUp/m << " m" << G4endl;
-  G4cout << "BDSPCLTube itsSizeYDown: " << itsSizeYDown/m << " m" << G4endl;
-  G4cout << "BDSPCLTube Dy: " << itsSizeDy/m << " m" << G4endl;
+#ifdef BDSDEBUG
+  G4cout << "BDSPCLTube itsSizeX: " << itsSizeX/CLHEP::m << " m" << G4endl;
+  G4cout << "BDSPCLTube itsSizeYUp: " << itsSizeYUp/CLHEP::m << " m" << G4endl;
+  G4cout << "BDSPCLTube itsSizeYDown: " << itsSizeYDown/CLHEP::m << " m" << G4endl;
+  G4cout << "BDSPCLTube Dy: " << itsSizeDy/CLHEP::m << " m" << G4endl;
 #endif
 
   G4RotationMatrix* nullrot  = new G4RotationMatrix();
@@ -124,11 +124,11 @@ void BDSPCLTube::BuildHollow(){
 
 void BDSPCLTube::Build(){
 
-#ifdef DEBUG
-  G4cout << "BDSPCLTube itsSizeX: " << itsSizeX/m << " m" << G4endl;
-  G4cout << "BDSPCLTube itsSizeYUp: " << itsSizeYUp/m << " m" << G4endl;
-  G4cout << "BDSPCLTube itsSizeYDown: " << itsSizeYDown/m << " m" << G4endl;
-  G4cout << "BDSPCLTube Dy: " << itsSizeDy/m << " m" << G4endl;
+#ifdef BDSDEBUG
+  G4cout << "BDSPCLTube itsSizeX: " << itsSizeX/CLHEP::m << " m" << G4endl;
+  G4cout << "BDSPCLTube itsSizeYUp: " << itsSizeYUp/CLHEP::m << " m" << G4endl;
+  G4cout << "BDSPCLTube itsSizeYDown: " << itsSizeYDown/CLHEP::m << " m" << G4endl;
+  G4cout << "BDSPCLTube Dy: " << itsSizeDy/CLHEP::m << " m" << G4endl;
 #endif
 
   G4RotationMatrix* nullrot  = new G4RotationMatrix();
@@ -158,7 +158,7 @@ void BDSPCLTube::Build(){
 
    middle_solid =new G4Box(itsName+"_middle_solid",
 			   itsSizeX,
-			   itsSizeDy/2.0+1*um,
+			   itsSizeDy/2.0+1*CLHEP::um,
 			   itsLength/2.0);
    
    threeVector1.setY(0);
@@ -198,7 +198,7 @@ void BDSPCLTube::Build(){
 }
 
 G4VSolid* BDSPCLTube::GetSolid(){
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Returning solid..." << G4endl;
 #endif
   return solid;

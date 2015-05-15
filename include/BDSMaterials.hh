@@ -19,30 +19,23 @@ class BDSMaterials
 {
 public:
 
-  
   static BDSMaterials* Instance();
   ~BDSMaterials(); //SPM
 
-  void Initialise(); //SPM
+  /// converts parser material list
+  void PrepareRequiredMaterials();
 
   void AddMaterial(G4Material* aMaterial,G4String aName); //SPM
   void AddMaterial(G4String aName, G4double itsZ, G4double itsA, G4double itsDensity); //SPM
 
-  void AddMaterial(	G4String aName, 
+  template <typename Type> void AddMaterial(
+			G4String aName, 
 			G4double itsDensity, 
 			G4State  itsState, 
 			G4double itsTemp, 
 			G4double itsPressure,
 			std::list<const char*> itsComponents,
-			std::list<G4double> itsComponentsFractions); //SPM
-
-  void AddMaterial(     G4String aName, 
-                        G4double itsDensity, 
-                        G4State  itsState, 
-                        G4double itsTemp,
-                        G4double itsPressure,
-                        std::list<const char*> itsComponents,
-                        std::list<G4int> itsComponentsWeights); //SPM
+			std::list<Type> itsComponentsFractions);
 
   void AddElement(G4Element* aElement,G4String aName); //SPM
   void AddElement(G4String aName, G4String aSymbol, G4double itsZ, G4double itsA); //SPM
@@ -61,11 +54,14 @@ protected:
   std::map<G4String,G4Material*> materials; //SPM
   std::map<G4String,G4Element*>  elements; //SPM
 private:
+  void Initialise(); //SPM
+
   static BDSMaterials* _instance;
-  G4Material* tmpMaterial;
-  G4Element* tmpElement;
   G4MaterialPropertiesTable* airMaterialPropertiesTable;
+  G4MaterialPropertiesTable* celluloseMaterialPropertiesTable;
   G4MaterialPropertiesTable* fsMaterialPropertiesTable;
+  G4MaterialPropertiesTable* petMaterialPropertiesTable;
+  G4MaterialPropertiesTable* vacMaterialPropertiesTable;
 
 };
 

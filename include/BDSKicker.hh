@@ -2,20 +2,7 @@
 #define BDSKicker_h 
 
 #include "globals.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-#include "myQuadStepper.hh"
-
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4PVPlacement.hh"               
-
 #include "BDSMultipole.hh"
-#include "BDSSbendMagField.hh"
-#include "G4Mag_EqRhs.hh"
 
 class BDSKicker:public BDSMultipole
 {
@@ -29,20 +16,16 @@ public:
   ~BDSKicker();
   
 protected:
+  virtual void Build();
 
 private:
   G4double itsBField;
   G4double itsBGrad;
+  G4double itsKickAngle;
 
-  void BuildBPFieldAndStepper();
+  virtual void BuildBPFieldAndStepper();
 
-  G4VisAttributes* SetVisAttributes();
-
-  // field related objects:
-  myQuadStepper* itsStepper;
-
-  BDSSbendMagField* itsMagField;
-  G4Mag_EqRhs* itsEqRhs;
+  virtual void SetVisAttributes();
 };
 
 #endif

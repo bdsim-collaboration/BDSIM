@@ -8,7 +8,6 @@
 
 #include "BDSPlanckEngine.hh"
 #include "G4ios.hh"
-#include "G4UnitsTable.hh"
 #include "Randomize.hh" 
 
  
@@ -17,7 +16,7 @@ BDSPlanckEngine::BDSPlanckEngine(G4double Temperature)
 {
  if(itsTemperature<=0.)
       {G4Exception("BDSPlanckEngine: Invalid Temperature", "-1", FatalException, "");}
-  kT=k_Boltzmann*Temperature;
+  kT=CLHEP::k_Boltzmann*Temperature;
 
   a=1.266;
   b=-0.6;
@@ -43,7 +42,7 @@ G4LorentzVector BDSPlanckEngine::PerformPlanck()
   // Generate Planck Spectrum photon; using method described by
   // H.Burkardt, SL/Note 93-73
 
-  G4double phi=twopi * G4UniformRand() ;
+  G4double phi=CLHEP::twopi * G4UniformRand() ;
   G4double sinphi=sin(phi);
   G4double cosphi=cos(phi);
 
@@ -87,5 +86,3 @@ G4LorentzVector BDSPlanckEngine::PerformPlanck()
  
  return itsFourMom;
 }
-
-

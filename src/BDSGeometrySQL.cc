@@ -1,3 +1,4 @@
+#include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSGeometrySQL.hh"
@@ -21,36 +22,21 @@
 #include "G4RegionStore.hh"
 #include "BDSMySQLWrapper.hh"
 #include "BDSMaterials.hh"
-#include "G4SDManager.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSampler.hh"
-#include "BDSOutput.hh"
 #include "BDSPCLTube.hh"
 #include <vector>
-#include <map>
 #include <cstdlib>
-#include "G4ClassicalRK4.hh"
 #include <cstring>
-#include "parser/getEnv.h"
 
-using namespace std;
-
-extern BDSSamplerSD* BDSSamplerSensDet;
-
-
-extern BDSOutput* bdsOutput;
-//extern BDSGlobalConstants* BDSGlobalConstants::Instance();
-
-BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength):
-  rotateComponent(NULL),itsMarkerVol(NULL),itsMagField(NULL),SensDet(NULL)
+BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength, G4LogicalVolume *marker):
+  rotateComponent(NULL),itsMarkerLength(markerlength),itsMarkerVol(marker)
 {
-  itsMarkerLength = markerlength;
-#ifdef DEBUG
+  VOL_LIST.push_back(itsMarkerVol);
+#ifdef BDSDEBUG
   G4cout << "BDSGeometrySQL constructor: loading SQL file " << DBfile << G4endl;
 #endif
-  G4String sBDSPATH = getEnv("BDSIMPATH");
-  G4String fullPath = sBDSPATH + DBfile;
-  ifs.open(fullPath.c_str());
+  ifs.open(DBfile.c_str());
   G4String exceptionString = "Unable to load SQL database file: " + DBfile;
   if(!ifs) G4Exception(exceptionString.c_str(), "-1", FatalException, "");
   align_in_volume = NULL;  //default alignment (does nothing)
@@ -82,22 +68,21 @@ BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength):
     approxProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsA(),G4ProductionCuts::GetIndex("e+"));
     _approximationRegionSQL->SetProductionCuts(approxProductionCuts);
     //  }
+    Construct();
 }
 
 BDSGeometrySQL::~BDSGeometrySQL(){
 }
 
-void BDSGeometrySQL::Construct(G4LogicalVolume *marker)
+void BDSGeometrySQL::Construct()
 {
-  itsMarkerVol = marker;
-  VOL_LIST.push_back(itsMarkerVol);
   G4String file;
   char buffer[1000];
   while (ifs>>file)
     {
       if(file.contains("#")) ifs.getline(buffer,1000); // This is a comment line
       else{
-	G4String sBDSPATH = getEnv("BDSIMPATH");
+	G4String sBDSPATH = BDSExecOptions::Instance()->GetBDSIMPATH();
 	G4String fullPath = sBDSPATH + file;
 	BuildSQLObjects(fullPath);}
     }
@@ -108,26 +93,20 @@ void BDSGeometrySQL::Construct(G4LogicalVolume *marker)
 
 void BDSGeometrySQL::BuildSQLObjects(G4String file)
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSGeometrySQL::BuildSQLObjects Loading file " << file << G4endl;
 #endif
 
-  G4String fullpath = BDSGlobalConstants::Instance()->GetBDSIMHOME();
-  fullpath += file; 
-#ifdef DEBUG
-  G4cout << "BDSGeometrySQL::BuildSQLObjects Full path is " << fullpath << G4endl;
-#endif
-
-  BDSMySQLWrapper sql(fullpath);
+  BDSMySQLWrapper sql(file);
   itsSQLTable=sql.ConstructTable();
 
   for (G4int i=0; i<(G4int)itsSQLTable.size(); i++)
     {
-#ifdef DEBUG
+#ifdef BDSDEBUG
       itsSQLTable[i]->Print();
 #endif
       _TableName = itsSQLTable[i]->GetName();
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " i = " << i << ", TableName = " << _TableName << G4endl;
 #endif
       G4int pos = _TableName.find("_");
@@ -190,7 +169,7 @@ void BDSGeometrySQL::SetCommonParams(BDSMySQLTable* aSQLTable, G4int k){
   if(_Name=="_SQL") _Name = _TableName+BDSGlobalConstants::Instance()->StringFromInt(k) + "_SQL";
   if(_Name=="") _Name = _TableName+BDSGlobalConstants::Instance()->StringFromInt(k);
   _Name = itsMarkerVol->GetName()+"_"+_Name;
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " k = " << k << ", _Name = " << _Name << G4endl;
 #endif
 }
@@ -256,7 +235,7 @@ void BDSGeometrySQL::SetPlacementParams(BDSMySQLTable* aSQLTable, G4int k){
       if(_Name=="_SQL") _Name = _TableName+BDSGlobalConstants::Instance()->StringFromInt(k) + "_SQL";
       if(_Name=="") _Name = _TableName+BDSGlobalConstants::Instance()->StringFromInt(k);
       _Name = itsMarkerVol->GetName()+"_"+_Name;
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " k = " << k << ", _Name = " << _Name << G4endl;
 #endif
 }
@@ -318,8 +297,8 @@ G4LogicalVolume* BDSGeometrySQL::BuildCone(BDSMySQLTable* aSQLTable, G4int k)
   
   //Defaults
   sphi =0.0;
-  dphi = twopi*radian;
-  length = rOuterStart = rOuterEnd = 10.*mm;
+  dphi = CLHEP::twopi*CLHEP::radian;
+  length = rOuterStart = rOuterEnd = 10.*CLHEP::mm;
   rInnerStart = rInnerEnd = 0.0;
   
   if(aSQLTable->GetVariable("LENGTH")!=NULL)
@@ -362,7 +341,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildEllipticalCone(BDSMySQLTable* aSQLTable, G
   G4double pzTopCut = 0;
   
   //Defaults
-  lengthZ = 10.*mm;
+  lengthZ = 10.*CLHEP::mm;
   
   if(aSQLTable->GetVariable("LENGTHZ")!=NULL)
     lengthZ = aSQLTable->GetVariable("LENGTHZ")->GetDblValue(k);
@@ -399,7 +378,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildPolyCone(BDSMySQLTable* aSQLTable, G4int k
   
   //Defaults
   sphi = 0.0;
-  dphi = twopi*radian;
+  dphi = CLHEP::twopi*CLHEP::radian;
   numZplanes = 0;
   
   if(aSQLTable->GetVariable("NZPLANES")!=NULL)
@@ -455,7 +434,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildPolyCone(BDSMySQLTable* aSQLTable, G4int k
 
 G4LogicalVolume* BDSGeometrySQL::BuildBox(BDSMySQLTable* aSQLTable, G4int k)
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
@@ -463,7 +442,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildBox(BDSMySQLTable* aSQLTable, G4int k)
   G4double lengthY;
   G4double lengthZ;
 
-  lengthX = lengthY = lengthZ = 10.*mm;
+  lengthX = lengthY = lengthZ = 10.*CLHEP::mm;
   
   if(aSQLTable->GetVariable("LENGTHX")!=NULL)
     lengthX = aSQLTable->GetVariable("LENGTHX")->GetDblValue(k);
@@ -541,11 +520,11 @@ G4LogicalVolume* BDSGeometrySQL::BuildTorus(BDSMySQLTable* aSQLTable, G4int k)
   G4double dphi;
   
   //Defaults
-  rSwept = 20.*mm;
-  rOuter = 10.*mm;
+  rSwept = 20.*CLHEP::mm;
+  rOuter = 10.*CLHEP::mm;
   rInner = 0.0;
   sphi = 0.0;
-  dphi=2*pi*radian;
+  dphi=2*CLHEP::pi*CLHEP::radian;
   
   if(aSQLTable->GetVariable("RINNER")!=NULL)
     rInner = aSQLTable->GetVariable("RINNER")->GetDblValue(k);
@@ -585,7 +564,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildSampler(BDSMySQLTable* aSQLTable, G4int k)
   G4double rOuterEnd;
   
   //Defaults
-  length = rOuterStart = rOuterEnd = 10.*mm;
+  length = rOuterStart = rOuterEnd = 10.*CLHEP::mm;
   rInnerStart = rInnerEnd = 0.0;
   
   if(aSQLTable->GetVariable("LENGTH")!=NULL)
@@ -615,7 +594,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildSampler(BDSMySQLTable* aSQLTable, G4int k)
 				rOuterEnd,
 				length/2,
 				0,
-				twopi*radian);
+				CLHEP::twopi*CLHEP::radian);
 
   G4LogicalVolume* aSamplerVol = 
     new G4LogicalVolume(aSampler,
@@ -624,16 +603,9 @@ G4LogicalVolume* BDSGeometrySQL::BuildSampler(BDSMySQLTable* aSQLTable, G4int k)
 
   _lengthUserLimit = length*0.5;
   
-  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-  if(BDSSampler::GetNSamplers()==0){
-    BDSSamplerSensDet = new BDSSamplerSD(_Name, "plane");
-    SDMan->AddNewDetector(BDSSamplerSensDet);
-  }
-  aSamplerVol->SetSensitiveDetector(BDSSamplerSensDet);
-  //SPM bdsOutput->nSamplers++;
-  BDSSampler::AddExternalSampler();
-  bdsOutput->SampName.push_back(BDSGlobalConstants::Instance()->StringFromInt(
-									      BDSSampler::GetNSamplers())+"_"+_Name+"_1");
+  aSamplerVol->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
+
+  BDSSampler::AddExternalSampler(BDSGlobalConstants::Instance()->StringFromInt(BDSSampler::GetNSamplers())+"_"+_Name+"_1");
   
   return aSamplerVol;
 }
@@ -648,11 +620,11 @@ G4LogicalVolume* BDSGeometrySQL::BuildTube(BDSMySQLTable* aSQLTable, G4int k)
   G4double dphi;
   
   //Defaults 
-  length = 100.*mm;
-  rOuter = 10.*mm;
+  length = 100.*CLHEP::mm;
+  rOuter = 10.*CLHEP::mm;
   rInner = 0.0;
   sphi = 0.0;
-  dphi=2*pi*radian;
+  dphi=2*CLHEP::pi*CLHEP::radian;
   
   if(aSQLTable->GetVariable("RINNER")!=NULL)
     rInner = aSQLTable->GetVariable("RINNER")->GetDblValue(k);
@@ -688,9 +660,9 @@ G4LogicalVolume* BDSGeometrySQL::BuildEllipticalTube(BDSMySQLTable* aSQLTable, G
   G4double lengthZ;
   
   //Defaults 
-  lengthX = 100.*mm;
-  lengthY = 50.*mm;
-  lengthZ = 200.*mm;
+  lengthX = 100.*CLHEP::mm;
+  lengthY = 50.*CLHEP::mm;
+  lengthZ = 200.*CLHEP::mm;
 
   if(aSQLTable->GetVariable("LENGTHX")!=NULL)
     lengthX = aSQLTable->GetVariable("LENGTHX")->GetDblValue(k);
@@ -732,12 +704,12 @@ G4LogicalVolume* BDSGeometrySQL::BuildPCLTube(BDSMySQLTable* aSQLTable, G4int k)
   G4double length;
   
   //Defaults 
-  aperX = 100.*mm;
-  aperYUp = 50.*mm;
-  aperYDown = 200.*mm;
-  aperDy = 0.*mm;
+  aperX = 100.*CLHEP::mm;
+  aperYUp = 50.*CLHEP::mm;
+  aperYDown = 200.*CLHEP::mm;
+  aperDy = 0.*CLHEP::mm;
   thickness = BDSGlobalConstants::Instance()->GetBeampipeThickness();
-  length = 200.0*mm;
+  length = 200.0*CLHEP::mm;
   
   if(aSQLTable->GetVariable("APERX")!=NULL)
     aperX = aSQLTable->GetVariable("APERX")->GetDblValue(k);
@@ -804,7 +776,7 @@ G4RotationMatrix* BDSGeometrySQL::RotateComponent(G4double psi,G4double phi,G4do
 }
 
 
-void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, vector<G4LogicalVolume*> VOL_LIST)
+void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4LogicalVolume*> VOL_LIST)
 {
   G4String::caseCompare cmpmode = G4String::ignoreCase;
   for(G4int k=0; k<_NVariables; k++) // Now run through and place according to
@@ -875,7 +847,7 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, vector<G4LogicalV
 	itsGFlashComponents.push_back(VOL_LIST[ID]);
       }
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " k = " << k << ", volume = " << VOL_LIST[ID]->GetName() << G4endl;
 #endif
       
@@ -918,7 +890,7 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, vector<G4LogicalV
 
 //      G4double P0 = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
 //      G4double brho=
-//	sqrt(pow(P0,2)- pow(electron_mass_c2,2))/(0.299792458 * (GeV/(tesla*m)));
+//	sqrt(pow(P0,2)- pow(electron_mass_c2,2))/(0.299792458 * (CLHEP::GeV/(CLHEP::tesla*CLHEP::m)));
 
       // compute magnetic rigidity brho
       // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * |charge(e)|)
@@ -928,47 +900,47 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, vector<G4LogicalV
       // momentum (in GeV/c)   
       G4double momentum = BDSGlobalConstants::Instance()->GetBeamMomentum();
       // rigidity (in T*m)
-      G4double brho = ( (momentum/GeV) / (0.299792458 * charge));
+      G4double brho = ( (momentum/CLHEP::GeV) / (0.299792458 * charge));
       // rigidity (in Geant4 units)
-      brho *= (tesla*m);
+      brho *= (CLHEP::tesla*CLHEP::m);
 
       if(_MagType.compareTo("QUAD",cmpmode)==0)
 	{
 	  HasFields = true;
 	  nPoleField = 1;
-	  QuadBgrad.push_back(- brho * _K1 / (m*m));
+	  QuadBgrad.push_back(- brho * _K1 / CLHEP::m2);
 	  Quadvol.push_back(PhysiComp->GetName());
-	  QuadVolBgrad[PhysiComp->GetName()]=(- brho * _K1 / (m*m));
+	  QuadVolBgrad[PhysiComp->GetName()]=(- brho * _K1 / CLHEP::m2);
 	}
 
       if(_MagType.compareTo("SEXT",cmpmode)==0)
 	{
 	  HasFields = true;
 	  nPoleField = 2;
-	  SextBgrad.push_back(- brho * _K2 / (m*m*m));
+	  SextBgrad.push_back(- brho * _K2 / CLHEP::m3);
 	  Sextvol.push_back(PhysiComp->GetName());
-	  SextVolBgrad[PhysiComp->GetName()]=(- brho * _K2 / (m*m*m));
+	  SextVolBgrad[PhysiComp->GetName()]=(- brho * _K2 / CLHEP::m3);
 	}
 
       if(_MagType.compareTo("OCT",cmpmode)==0)
 	{
 	  HasFields = true;
 	  nPoleField = 3;
-	  OctBgrad.push_back(- brho * _K3 / (m*m*m*m));
+	  OctBgrad.push_back(- brho * _K3 / (CLHEP::m2*CLHEP::m2));
 	  Octvol.push_back(PhysiComp->GetName());
-	  OctVolBgrad[PhysiComp->GetName()]=(- brho * _K3 / (m*m*m*m));
+	  OctVolBgrad[PhysiComp->GetName()]=(- brho * _K3 / (CLHEP::m2*CLHEP::m2));
 	}
 
       if(_FieldX || _FieldY || _FieldZ) //if any vols have non-zero field components
 	{
 	  HasFields = true;
 	  HasUniformField=true;
-#ifdef DEBUG
-	  G4cout << "BDSGeometrySQL> volume " << PhysiComp->GetName() << " has the following uniform field: " << _FieldX << " " << _FieldY << " " << _FieldZ << " " << endl;
+#ifdef BDSDEBUG
+	  G4cout << "BDSGeometrySQL> volume " << PhysiComp->GetName() << " has the following uniform field: " << _FieldX << " " << _FieldY << " " << _FieldZ << " " << G4endl;
 #endif
-	  UniformField.push_back(G4ThreeVector(_FieldX*tesla,_FieldY*tesla,_FieldZ*tesla));
+	  UniformField.push_back(G4ThreeVector(_FieldX*CLHEP::tesla,_FieldY*CLHEP::tesla,_FieldZ*CLHEP::tesla));
 	  Fieldvol.push_back(PhysiComp->GetName());
-	  UniformFieldVolField[PhysiComp->GetName()]=G4ThreeVector(_FieldX*tesla,_FieldY*tesla,_FieldZ*tesla);
+	  UniformFieldVolField[PhysiComp->GetName()]=G4ThreeVector(_FieldX*CLHEP::tesla,_FieldY*CLHEP::tesla,_FieldZ*CLHEP::tesla);
 	}
   }
 }

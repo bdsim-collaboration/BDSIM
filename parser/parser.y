@@ -10,21 +10,22 @@
   extern char* yyfilename;
 
   const int ECHO_GRAMMAR = 0; // print grammar rule expansion (for debugging)
-  const int VERBOSE = 0; // print warnings and errors
-  const int VERBOSE_EXPAND = 0; // print the process of line expansion 
+  const int VERBOSE = 0; // print more output
   const int INTERACTIVE = 0; // print output of commands (like in interactive mode)
+  /* for more debug with parser:
+     1) set yydebug to 1 in parser.tab.c (needs to be reset as this file gets overwritten from time to time!) 
+     2) add %debug below
+     3) compile bison with "-t" flag. This is automatically done when CMAKE_BUILD_TYPE equals Debug
+  */
 
 #include "parser.h"
 
   int execute = 1;
   int element_count = 1; // for samplers , ranges etc.
-#ifdef __cplusplus
-  using namespace std;
-#endif
 
 %}
 
-
+/* define stack type */
 %union{
   double dval;
   int ival;
@@ -33,6 +34,8 @@
   struct Array *array;
 }
 
+/* more debug output can be added with %debug" */
+//%debug
 
 %left '+' '-'
 %left '*' '/'
@@ -43,7 +46,7 @@
 %token <dval> NUMBER
 %token <symp> VARIABLE VECVAR FUNC 
 %token <str> STR
-%token MARKER ELEMENT DRIFT PCLDRIFT RF DIPOLE RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE MULTIPOLE SCREEN
+%token MARKER ELEMENT DRIFT PCLDRIFT RF DIPOLE RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token SOLENOID COLLIMATOR RCOL ECOL LINE SEQUENCE SPOILER ABSORBER LASER TRANSFORM3D MUSPOILER
 %token VKICK HKICK KICK
 %token PERIOD APERTURE FILENAME GAS PIPE TUNNEL MATERIAL ATOM
@@ -54,14 +57,25 @@
 %type <dval> aexpr
 %type <dval> expr
 %type <symp> assignment
-%type <array> vecexpr;
-%type <array> vectnum vectstr;
-%type <str> use_parameters;
-%type <ival> extension;
-%type <ival> newinstance;
+%type <array> vecexpr
+%type <array> vectnum vectstr
+%type <str> use_parameters
+%type <ival> extension
+%type <ival> newinstance
 %type <symp> sample_options
 %type <symp> csample_options
 %type <symp> gas_options
+
+/* printout format for debug output */
+/*
+%printer { fprintf (yyoutput, "%.10g", $$); } <dval>
+%printer { fprintf (yyoutput, "%d", $$); } <ival>
+%printer { fprintf (yyoutput, "\"%s\"", $$); } <str>
+%printer { fprintf (yyoutput, "\"%s\"", $$->name); } <symp>
+%printer { fprintf (yyoutput, "size %d, &%p", $$->size, (void*)$$->data); } <array>
+%printer { fprintf (yyoutput, "<>"); } <>
+*/
+
 %%
 
 input : 
@@ -281,6 +295,15 @@ decl : VARIABLE ':' marker
 	   params.flush();
 	 }
        }
+     | VARIABLE ':' awakescreen
+       {
+	 if(execute) {
+	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : awakescreen\n",$1->name);
+	   // check parameters and write into element table
+	   write_table(params,$1->name,_AWAKESCREEN);
+	   params.flush();
+	 }
+       }
      | VARIABLE ':' transform3d
        {
 	 if(execute)
@@ -297,11 +320,10 @@ decl : VARIABLE ':' marker
 	   {
 	     // create entry in the main table and add pointer to the parsed sequence
 	     if(ECHO_GRAMMAR) printf("VARIABLE : LINE %s\n",$1->name);
-	     //  list<struct Element>* tmp_list = new list<struct Element>;
-	     write_table(params,$1->name,_LINE,new list<struct Element>(tmp_list));
-	     // write_table(params,$1->name,_LINE,tmp_list);
-	      tmp_list.erase(tmp_list.begin(), tmp_list.end());
-	      tmp_list.~list<struct Element>();
+	     // copy tmp_list to params
+	     write_table(params,$1->name,_LINE,new std::list<struct Element>(tmp_list));
+	     // clean list
+	     tmp_list.clear();
 	   }
        }     
      | VARIABLE ':' sequence
@@ -310,8 +332,10 @@ decl : VARIABLE ':' marker
 	   {
              // create entry in the main table and add pointer to the parsed sequence
 	     if(ECHO_GRAMMAR) printf("VARIABLE : SEQUENCE %s\n",$1->name);
-	     write_table(params,$1->name,_SEQUENCE,new list<struct Element>(tmp_list));
-	     tmp_list.erase(tmp_list.begin(), tmp_list.end());
+	     // copy tmp_list to params
+	     write_table(params,$1->name,_SEQUENCE,new std::list<struct Element>(tmp_list));
+	     // clean list
+	     tmp_list.clear();
 	   }
        }
      | VARIABLE ':' extension
@@ -343,16 +367,17 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     if(ECHO_GRAMMAR) printf("edit : VARIABLE parameters   -- %s \n",$1->name);
-	     list<struct Element>::iterator it = element_lookup($1->name);
-	     list<struct Element>::iterator iterNULL = element_list.end();
-	     if(it == iterNULL)
+	     std::list<struct Element>::iterator it = element_list.find($1->name);
+	     std::list<struct Element>::iterator iterEnd = element_list.end();
+	     if(it == iterEnd)
 	       {
-		 if(VERBOSE) printf("type %s has not been defined\n",$1->name);
+		 //if(VERBOSE) 
+		 printf("type %s has not been defined\n",$1->name);
 	       }
 	     else
 	       {
 		 // inherit properties from the base type
-		 inherit_properties(*it);
+		 params.inherit_properties(*it);
 	       }
 		
 	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, typestr((*it).type));
@@ -436,6 +461,9 @@ laser : LASER ',' parameters
 screen : SCREEN ',' parameters
 ;
 
+awakescreen : AWAKESCREEN ',' parameters
+;
+
 transform3d : TRANSFORM3D ',' parameters
 ;
 
@@ -453,18 +481,19 @@ extension : VARIABLE ',' parameters
 	      if(execute)
 		{	 
 		  if(ECHO_GRAMMAR) printf("extension : VARIABLE parameters   -- %s \n",$1->name);
-		  list<struct Element>::iterator it = element_lookup($1->name);
-		  list<struct Element>::iterator iterNULL = element_list.end();
-		  if(it == iterNULL)
+		  std::list<struct Element>::iterator it = element_list.find($1->name);
+		  std::list<struct Element>::iterator iterEnd = element_list.end();
+		  if(it == iterEnd)
 		    {
-		      if(VERBOSE) printf("type %s has not been defined\n",$1->name);
+		      //		      if(VERBOSE) 
+		      printf("type %s has not been defined\n",$1->name);
 		      $$ = _NONE;
 		    }
 		  else
 		    {
 		      // inherit properties from the base type
 		      $$ = (*it).type;
-		      inherit_properties(*it);
+		      params.inherit_properties(*it);
 		    }
 		  
 		}
@@ -476,18 +505,19 @@ newinstance : VARIABLE
 	      if(execute)
 		{	 
 		  if(ECHO_GRAMMAR) printf("newinstance : VARIABLE -- %s \n",$1->name);
-		  list<struct Element>::iterator it = element_lookup($1->name);
-		  list<struct Element>::iterator iterNULL = element_list.end();
-		  if(it == iterNULL)
+		  std::list<struct Element>::iterator it = element_list.find($1->name);
+		  std::list<struct Element>::iterator iterEnd = element_list.end();
+		  if(it == iterEnd)
 		    {
-		      if(VERBOSE) printf("type %s has not been defined\n",$1->name);
+		      // if(VERBOSE)
+		      printf("type %s has not been defined\n",$1->name);
 		      $$ = _NONE;
 		    }
 		  else
 		    {
 		      // inherit properties from the base type
 		      $$ = (*it).type;
-		      inherit_properties(*it);
+		      params.inherit_properties(*it);
 		    }
 		  
 		}
@@ -499,10 +529,12 @@ parameters:
             {
 	      if(execute)
 		{
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                   printf("parameters, VARIABLE(%s) = aexpr(%.10g)\n",$1->name,$3);
 #endif
 		  if(!strcmp($1->name,"l")) { params.l = $3; params.lset = 1;} // length
+		  else
+		  if(!strcmp($1->name,"bmapZOffset")) { params.bmapZOffset = $3; params.bmapZOffsetset = 1;} // field map z offset
 		    else
 	          if(!strcmp($1->name,"B")) { params.B = $3; params.Bset = 1;} // dipole field
 		    else 
@@ -522,7 +554,7 @@ parameters:
 		  else
 		  if(!strcmp($1->name,"phiAngleOut")) { params.phiAngleOut = $3; params.phiAngleOutset = 1;} // element outgoing angle
 		  else
-		   if(!strcmp($1->name,"beampipeThickness") ||!strcmp($1->name,"beampipeThickness") ) 
+		   if(!strcmp($1->name,"beampipeThickness") ) 
 		      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
 		    else
 		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
@@ -576,7 +608,7 @@ parameters:
 		  else
 		  if(!strcmp($1->name,"tunnelOffsetX")) { params.tunnelOffsetX = $3; params.tunnelOffsetXset = 1;} // tunnel offset
 		  else
-		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = $3; params.precisionRegionset = 1;} // tunnel offset
+		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;} // tunnel offset
 		    else
 		  if(!strcmp($1->name,"e1")) {;}  //
                     else
@@ -602,6 +634,10 @@ parameters:
                     else
 		  if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence
 		    else
+                  if(!strcmp($1->name,"tscint")) { params.tscint = $3; params.tscintset = 1;} // thickness for a scintillator screen 
+		  else
+                  if(!strcmp($1->name,"twindow")) { params.twindow = $3; params.twindowset = 1;} // thickness for a scintillator screen window 
+		    else
                   if(VERBOSE) printf("Warning : unknown parameter %s\n",$1->name);
 		  
 		}
@@ -610,7 +646,7 @@ parameters:
              {
 	       if(execute) 
 		 {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                    printf("params,VARIABLE (%s) = vecexpr (%d)\n",$1->name,$3->size);
 #endif
                    if(!strcmp($1->name,"knl")) 
@@ -661,16 +697,18 @@ parameters:
                          set_vector(params.componentsFractions,$3);
                          delete[] $3->data;
                        }
-		     else 	  
-		       if(VERBOSE) printf("unknown parameter %s\n",$1->name);
+		    else {
+		      //                  if(VERBOSE)
+		      printf("Warning : unknown parameter %s\n",$1->name);
+		    }
 		 }
 	     }         
            | VARIABLE '=' vecexpr
              {
 	       if(execute) 
 		 {
-#ifdef DEBUG 
-                   printf("VARIABLE (%s) = vecexpr\n",$1->name);
+#ifdef BDSDEBUG 
+                   printf("VARIABLE (%s) = vecexpr (%d)\n",$1->name,$3->size);
 #endif
 		   if(!strcmp($1->name,"knl")) 
 		     {
@@ -720,15 +758,17 @@ parameters:
                          set_vector(params.componentsFractions,$3);
                          delete[] $3->data;
                        }
-		   else 	  
-		     if(VERBOSE) printf("unknown parameter %s\n",$1->name);
+		     else {
+		       //                  if(VERBOSE)
+		       printf("Warning : unknown parameter %s\n",$1->name);
+		     }
 		 }         
 	     }
           | VARIABLE '=' aexpr
             {
 	      if(execute)
 		{
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                   printf("VARIABLE (%s) = aexpr(%.10g)\n",$1->name,$3);
 #endif
 		  if(!strcmp($1->name,"l")) { params.l = $3; params.lset = 1;} // length
@@ -745,24 +785,36 @@ parameters:
 		    else 
 		  if(!strcmp($1->name,"k3")) { params.k3 = $3; params.k3set = 1;} // octupole coef.
 		    else 
-		      if(!strcmp($1->name,"angle")) { params.angle = $3; params.angleset = 1;} // dipole bending angle
-		      else
-			if(!strcmp($1->name,"phiAngleIn")) { params.phiAngleIn = $3; params.phiAngleInset = 1;} // element incoming angle
-			else
-		      if(!strcmp($1->name,"phiAngleOut")) { params.phiAngleOut = $3; params.phiAngleOutset = 1;} // element outgoing angle
-		      else
+		  if(!strcmp($1->name,"angle")) { params.angle = $3; params.angleset = 1;} // dipole bending angle
+		    else
+		  if(!strcmp($1->name,"phiAngleIn")) { params.phiAngleIn = $3; params.phiAngleInset = 1;} // element incoming angle
+		    else
+		  if(!strcmp($1->name,"phiAngleOut")) { params.phiAngleOut = $3; params.phiAngleOutset = 1;} // element outgoing angle
+		    else
+		  if(!strcmp($1->name,"beampipeThickness") ) 
+			      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
+		    else
 		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
 			      { params.aper = $3; params.aperset = 1;}
+		    else
 		  if(!strcmp($1->name,"aperX") ||!strcmp($1->name,"apertureX") ) 
 			      { params.aperX = $3; params.aperXset = 1;}
+		    else
 		  if(!strcmp($1->name,"aperY") ||!strcmp($1->name,"apertureY") ) 
 			      { params.aperY = $3; params.aperYset = 1;}
 		  else
-		 
-		  if(!strcmp($1->name,"beampipeThickness") ||!strcmp($1->name,"beampipeThickness") ) 
-			      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
-		  else
+		  if(!strcmp($1->name,"aperYUp") ||!strcmp($1->name,"apertureYUp") ) 
+		      { params.aperYUp = $3; params.aperYUpset = 1;}
+		    else
+		  if(!strcmp($1->name,"aperYDown") ||!strcmp($1->name,"apertureYDown") ) 
+		      { params.aperYDown = $3; params.aperYDownset = 1;}
+		    else
+		  if(!strcmp($1->name,"aperDy") ||!strcmp($1->name,"apertureDy") ) 
+		    { params.aperDy = $3; params.aperDyset = 1;}
+		    else
 		  if(!strcmp($1->name,"outR") ) { params.outR = $3; params.outRset = 1;}
+		    else
+                  if(!strcmp($1->name,"inR") ) { params.inR = $3; params.inRset = 1;}
 		    else
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
@@ -791,8 +843,8 @@ parameters:
 		  if(!strcmp($1->name,"tunnelRadius")) { params.tunnelRadius = $3; params.tunnelRadiusset = 1;} // tunnel radius
 		  else
 		  if(!strcmp($1->name,"tunnelOffsetX")) { params.tunnelOffsetX = $3; params.tunnelOffsetXset = 1;} // tunnel offset
-		    else
-		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = $3; params.precisionRegionset = 1;} // tunnel offset
+		  else
+		    if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;} // tunnel offset
 		    else
 		  if(!strcmp($1->name,"e1")) {;}  //
                     else
@@ -809,32 +861,37 @@ parameters:
 		  if(!strcmp($1->name,"T")) {params.temper = $3; params.temperset = 1;}  // temperature
 		    else
 		  if(!strcmp($1->name,"P")) {params.pressure = $3; params.pressureset = 1;}  // pressure
-		  //else
-		  //  if(!strcmp($1->name,"state")) {params.state = $3; params.stateset = 1;}  // state
 		    else
 		  if(!strcmp($1->name,"waveLength")) {params.waveLength = $3; params.waveLengthset = 1;}
 		    else
-		  if(VERBOSE) printf("Warning : unknown parameter %s\n",$1->name);
-		  
+		  if(!strcmp($1->name,"taperlength")) {params.taperlength = $3; params.taperlengthset = 1;}
+		    else
+		  if(!strcmp($1->name,"flatlength")) {params.flatlength = $3; params.flatlengthset = 1;}
+                  /*   else */
+		  /* if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence */
+		  else {
+		      //                  if(VERBOSE)
+		      printf("Warning : unknown parameter %s\n",$1->name);
+		  }
 		}
 	    }
           | VARIABLE '=' STR ',' parameters
              {
 	       if(execute) 
 		 {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                    printf("params,VARIABLE (%s) = str (%s)\n",$1->name,$3);
 #endif
 		   if(!strcmp($1->name,"geometry")) 
 		     {
 		       params.geomset = 1;
-		       strcpy(params.geometry, $3);
+		       params.geometry = $3;
 		     } 
 		   else
 		     if(!strcmp($1->name,"bmap")) 
 		       {
 			 params.geomset = 1;
-			 strcpy(params.bmap, $3);
+			 params.bmap = $3;
 		       }
 		   else 
 		     if(!strcmp($1->name,"type")) 
@@ -845,59 +902,79 @@ parameters:
 		   if(!strcmp($1->name,"material")) 
 		       {
 			 params.materialset = 1;
-			 strcpy(params.material, $3);
+			 params.material = $3;
 		       }
 		   else
 		   if(!strcmp($1->name,"tunnelMaterial")) 
 		       {
 			 params.tunnelmaterialset = 1;
-			 strcpy(params.tunnelMaterial, $3);
+			 params.tunnelMaterial = $3;
 		       }
 		   else 
 		   if(!strcmp($1->name,"tunnelCavityMaterial")) 
 		       {
 			 params.tunnelcavitymaterialset = 1;
-			 strcpy(params.tunnelCavityMaterial, $3);
+			 params.tunnelCavityMaterial = $3;
 		       }
 		   else 
+		   if(!strcmp($1->name,"scintmaterial")) 
+		     {
+		       params.scintmaterialset = 1;
+		       params.scintmaterial = $3; 
+		     } // material for a scintillator screen 
+		   else
+		   if(!strcmp($1->name,"windowmaterial")) 
+		     {
+		       params.windowmaterialset = 1;
+		       params.windowmaterial = $3; 
+		     } // material for a scintillator screen window
+		   else
+		   if(!strcmp($1->name,"airmaterial")) 
+		     {
+		       params.airmaterialset = 1;
+		       params.airmaterial = $3; 
+		     } // material for air around scintillator screen 
+		    else
 		   if(!strcmp($1->name,"spec")) 
 		       {
 			 params.specset = 1;
-			 strcpy(params.spec, $3);
+			 params.spec = $3;
 		       }
                    else 
                    if(!strcmp($1->name,"symbol"))
                        {
                          params.symbolset = 1;
-                         strcpy(params.symbol, $3);
+                         params.symbol = $3;
                        }
 		   else 
                    if(!strcmp($1->name,"state"))
                        {
                          params.stateset = 1;
-                         strcpy(params.state, $3);
+                         params.state = $3;
                        }
-		   else 
-		   if(VERBOSE) printf("unknown parameter %s\n",$1->name);
+		    else {
+		      //                  if(VERBOSE)
+		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
+		    }
 		 }
 	     }         
            | VARIABLE '=' STR
              {
 	       if(execute) 
 		 {
-#ifdef DEBUG 
-                   printf("VARIABLE (%s) = str\n",$1->name);
+#ifdef BDSDEBUG 
+                   printf("VARIABLE (%s) = str (%s)\n",$1->name,$3);
 #endif
 		   if(!strcmp($1->name,"geometry")) 
 		     {
 		       params.geomset = 1;
-		       strcpy(params.geometry, $3);
+		       params.geometry = $3;
 		     } 
 		   else
 		     if(!strcmp($1->name,"bmap")) 
 		       {
 			 params.geomset = 1;
-			 strcpy(params.bmap, $3);
+			 params.bmap = $3;
 		       }
 		     else 
 		     if(!strcmp($1->name,"type")) 
@@ -908,40 +985,59 @@ parameters:
                        if(!strcmp($1->name,"material")) 
                          {	 
                            params.materialset = 1;
-                           strcpy(params.material, $3);
+                           params.material = $3;
                          }
                        else
                          if(!strcmp($1->name,"tunnelMaterial")) 
-		       {	 
+		       {
 			 params.tunnelmaterialset = 1;
-			 strcpy(params.tunnelMaterial, $3);
+			 params.tunnelMaterial = $3;
 		       }
 			 else
                          if(!strcmp($1->name,"tunnelCavityMaterial")) 
-		       {	 
+		       {
 			 params.tunnelcavitymaterialset = 1;
-			 strcpy(params.tunnelCavityMaterial, $3);
+			 params.tunnelCavityMaterial = $3;
 		       }
+                       else
+			 if(!strcmp($1->name,"scintmaterial")) 
+			   {	 
+			     params.scintmaterialset = 1;
+			     params.scintmaterial = $3;
+			   }
+			 else if(!strcmp($1->name,"windowmaterial")) 
+			   {	 
+			     params.windowmaterialset = 1;
+			     params.windowmaterial = $3;
+			   }
+			 else
+			   if(!strcmp($1->name,"airmaterial")) 
+			     {	 
+			       params.airmaterialset = 1;
+			       params.airmaterial = $3;
+                         }
                      else
                    if(!strcmp($1->name,"spec")) 
 		       {
 			 params.specset = 1;
-			 strcpy(params.spec, $3);
+			 params.spec = $3;
 		       }
 		   else 
                    if(!strcmp($1->name,"symbol"))
                        {
                          params.symbolset = 1;
-                         strcpy(params.symbol, $3);
+                         params.symbol = $3;
                        }
 		   else 
                    if(!strcmp($1->name,"state"))
                        {
                          params.stateset = 1;
-                         strcpy(params.state, $3);
+                         params.state = $3;
                        }
-		   else 
-		   if(VERBOSE) printf("unknown parameter %s\n",$1->name);
+		    else {
+		      //                  if(VERBOSE)
+		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
+		    }
 		 }         
 	     }
 
@@ -966,7 +1062,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched sequence element, %s\n",$1->name);
 #endif
 		    // add to temporary element sequence
@@ -983,7 +1079,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched sequence element, %s * %d \n",$1->name,(int)$3);
 #endif
 		    // add to temporary element sequence
@@ -1001,7 +1097,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched sequence element, %s * %d \n",$3->name,(int)$1);
 #endif
                     // add to temporary element sequence
@@ -1019,7 +1115,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s\n",$1->name);
 #endif
                     // add to temporary element sequence
@@ -1036,7 +1132,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s * %d\n",$1->name,(int)$3);
 #endif
                     // add to temporary element sequence
@@ -1054,7 +1150,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s * %d\n",$3->name,(int)$1);
 #endif
                     // add to temporary element sequence
@@ -1072,7 +1168,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s\n",$2->name);
 #endif
                     // add to temporary element sequence
@@ -1089,7 +1185,7 @@ element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s\n",$2->name);
 #endif
                     // add to temporary element sequence
@@ -1109,7 +1205,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched sequence element, %s\n",$1->name);
 #endif
                     // add to temporary element sequence
@@ -1126,7 +1222,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched sequence element, %s * %d \n",$1->name,(int)$3);
 #endif
                     // add to temporary element sequence
@@ -1144,7 +1240,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched sequence element, %s * %d \n",$3->name,(int)$1);
 #endif
 		    // add to temporary element sequence
@@ -1162,7 +1258,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s\n",$1->name);
 #endif
                     // add to temporary element sequence
@@ -1179,7 +1275,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched last sequence element, %s * %d\n",$1->name,(int)$3);
 #endif
 		    // add to temporary element sequence
@@ -1197,7 +1293,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s * %d\n",$3->name,(int)$1);
 #endif
                     // add to temporary element sequence
@@ -1215,7 +1311,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s\n",$2->name);
 #endif
                     // add to temporary element sequence
@@ -1232,7 +1328,7 @@ rev_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s\n",$2->name);
 #endif
                     // add to temporary element sequence
@@ -1252,7 +1348,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched sequence element, %s\n",$1->name);
 #endif
 		    // add to temporary element sequence
@@ -1269,7 +1365,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
                     printf("matched sequence element, %s * %d \n",$1->name,(int)$3);
 #endif
 		    // add to temporary element sequence
@@ -1287,7 +1383,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched sequence element, %s * %d \n",$3->name,(int)$1);
 #endif
                     // add to temporary element sequence
@@ -1305,7 +1401,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s\n",$1->name);
 #endif
                     // add to temporary element sequence
@@ -1322,7 +1418,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s * %d\n",$1->name,(int)$3);
 #endif
 		    // add to temporary element sequence
@@ -1340,7 +1436,7 @@ seq_element_seq :
               {
 		if(execute)
 		  {
-#ifdef DEBUG
+#ifdef BDSDEBUG
                     printf("matched last sequence element, %s * %d\n",$3->name,(int)$1);
 #endif
                     // add to temporary element sequence
@@ -1385,7 +1481,7 @@ expr : aexpr
 	     if(INTERACTIVE) {
 	       if($1->type == _ARRAY)
 		 {
-		   for(list<double>::iterator it = $1->array.begin();
+		   for(std::list<double>::iterator it = $1->array.begin();
 		       it!=$1->array.end();it++)
 		     printf ("\t%.10g", (*it));
 		   printf("\n");
@@ -1423,8 +1519,10 @@ aexpr :  NUMBER               { $$ = $1;                         }
 	     }
 	   else
 	     {
-	       if(VERBOSE) printf("vector dimensions do not match");
-	       $$ = _undefined;
+	       // if(VERBOSE) 
+	       printf("vector dimensions do not match");
+	       exit(1);
+	       // $$ = _undefined;
 	     }
          } 
        // boolean stuff
@@ -1437,7 +1535,7 @@ aexpr :  NUMBER               { $$ = $1;                         }
         | VARIABLE '[' VARIABLE ']' 
           { 
 	    if(ECHO_GRAMMAR) printf("aexpr-> %s [ %s ]\n ",$1->name, $3->name); 
-	    $$ = property_lookup($1->name,$3->name);
+	    $$ = property_lookup(element_list,$1->name,$3->name);
 	  }// element attributes
  ; 
 
@@ -1458,7 +1556,7 @@ assignment :  VARIABLE '=' aexpr
               {
 		if(execute)
 		  {
-		    $1->array.erase($1->array.begin(),$1->array.end());
+		    $1->array.clear();
 		    for(int i=0;i<$3->size;i++)
 		      $1->array.push_back($3->data[i]);
 		    $1->type = _ARRAY;
@@ -1472,7 +1570,7 @@ assignment :  VARIABLE '=' aexpr
               {
 		if(execute)
 		  {
-		    $1->array.erase($1->array.begin(),$1->array.end());
+		    $1->array.clear();
 		    for(int i=0;i<$3->size;i++)
 		      $1->array.push_back($3->data[i]);
 		    $$ = $1;
@@ -1490,7 +1588,7 @@ vecexpr :   VECVAR
 	      $$->data = new double[$1->array.size()];
 	      $$->size = $1->array.size();
 	      //array_list.push_back($$);
-	      list<double>::iterator it;
+	      std::list<double>::iterator it;
 	      int i = 0;
 	      for(it=$1->array.begin();it!=$1->array.end();it++)
 		{
@@ -1712,15 +1810,15 @@ vectnum : '{' numbers '}'
       
 	        //array_list.push_back(a);
       
-	        list<double>::iterator it;
+	        std::list<double>::iterator it;
 		int i=0;      
 	        for(it=_tmparray.begin();it!=_tmparray.end();it++)
 	  	{
 	 	 $$->data[i++] = (*it);
 		}
-    	        _tmparray.erase(_tmparray.begin(),_tmparray.end());
+    	        _tmparray.clear();
 
-	        list<char*>::iterator lIter;
+	        std::list<char*>::iterator lIter;
 	        for(lIter = _tmpstring.begin(); lIter != _tmpstring.end(); lIter++)
 	          $$->symbols.push_back(*lIter);
 
@@ -1736,7 +1834,7 @@ vectstr : '[' letters ']'
 	    $$ = new struct Array;
 	    $$->size = _tmpstring.size();
 
-	    list<char*>::iterator iter;
+	    std::list<char*>::iterator iter;
 	    for(iter = _tmpstring.begin(); iter != _tmpstring.end(); iter++)
 	      $$->symbols.push_back(*iter);
 
@@ -1773,9 +1871,9 @@ letters :
 
 command : STOP             { if(execute) quit(); }
         | BEAM ',' beam_parameters
-        | PRINT            { if(execute) print( element_list ); }
-        | PRINT ',' LINE   { if(execute) print( beamline_list); }
-        | PRINT ',' OPTION { if(execute) print(options); }
+        | PRINT            { if(execute) element_list.print(); }
+        | PRINT ',' LINE   { if(execute) beamline_list.print(); }
+        | PRINT ',' OPTION { if(execute) options.print(); }
         | PRINT ',' VARIABLE 
           {
 	    if(execute)
@@ -1790,7 +1888,7 @@ command : STOP             { if(execute) quit(); }
 	      {
 		printf("\t");
 		
-		list<double>::iterator it;
+		std::list<double>::iterator it;
 		for(it=$3->array.begin();it!=$3->array.end();it++)
 		  {
 		    printf("  %.10g ",(*it));
@@ -1842,19 +1940,11 @@ command : STOP             { if(execute) quit(); }
 		params.flush();
 	      }
           }
-        | BETA0 ',' option_parameters // beta 0 (is a synonim of option, for clarity)
+        | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
           {
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> BETA0\n");
-	      }
-          }
-        | TWISS ',' option_parameters // twiss (again, is a synonim of option, for clarity)
-          {
-	    if(execute)
-	      {
-		set_value("doTwiss",1);
-		if(ECHO_GRAMMAR) printf("command -> TWISS\n");
 	      }
           }
         | DUMP ',' sample_options //  options for beam dump 
@@ -1930,8 +2020,11 @@ csample_options : VARIABLE '=' aexpr
 		      {
 			if( !strcmp($1->name,"r") ) params.r = $3;
 			else if (!strcmp($1->name,"l") ) params.l = $3;
-			else if(VERBOSE) 
-			  printf("Warning : CSAMPLER: unknown parameter %s \n",$1->name);
+			else {
+			  //                  if(VERBOSE)
+			  printf("Warning : CSAMPLER: unknown parameter : \"%s\"\n",$1->name);
+			  exit(1);
+			}
 		      }
 		  }   
                 | VARIABLE '=' STR
@@ -1939,7 +2032,7 @@ csample_options : VARIABLE '=' aexpr
 		    if(ECHO_GRAMMAR) printf("csample_opt -> %s =  %s \n",$1->name,$3);
 		    /* if(execute) */
 		    /*   { */
-		    /* 	;//set_value($1->name,string($3)); */
+		    /* 	;//options.set_value($1->name,string($3)); */
 		    /*   } */
 		  }   
                 | VARIABLE '=' aexpr ',' csample_options
@@ -1950,15 +2043,18 @@ csample_options : VARIABLE '=' aexpr
 		      {
 			if( !strcmp($1->name,"r") ) params.r = $3;
 			else if (!strcmp($1->name,"l") ) params.l = $3;
-			else if(VERBOSE) 
-			  printf("Warning : CSAMPLER: unknown parameter %s at line\n",$1->name);
+			else {
+			  //                  if(VERBOSE)
+			  printf("Warning : CSAMPLER: unknown parameter : \"%s\"\n",$1->name);
+			  exit(1);
+			}
 		      }
 
 		  }   
                 | VARIABLE '=' STR ',' csample_options
                   {
 		    if(ECHO_GRAMMAR) printf("csample_opt -> %s =  %s \n",$1->name,$3);
-		    // if(execute) //set_value($1->name,string($3));
+		    // if(execute) //options.set_value($1->name,string($3));
 		  }   
                 | sample_options ',' csample_options
                   {
@@ -1980,8 +2076,11 @@ gas_options : VARIABLE '=' aexpr
 		      {
 			if( !strcmp($1->name,"r") ) params.r = $3;
 			else if (!strcmp($1->name,"l") ) params.l = $3;
-			else if(VERBOSE) 
-			  printf("Warning : GAS: unknown parameter %s \n",$1->name);
+			else {
+			  //                  if(VERBOSE)
+			  printf("Warning : GAS: unknown parameter : \"%s\"\n",$1->name);
+			  exit(1);
+			}
 		      }
 		  }   
                 | VARIABLE '=' STR
@@ -1991,10 +2090,10 @@ gas_options : VARIABLE '=' aexpr
 		      {
 			if( !strcmp($1->name,"material") ) 
 			  {
-			    strcpy(params.material ,$3);
+			    params.material = $3;
 			    params.materialset = 1;
 			  }
-			//set_value($1->name,string($3));
+			//options.set_value($1->name,string($3));
 		      }
 		  }   
                 | VARIABLE '=' aexpr ',' gas_options
@@ -2005,8 +2104,11 @@ gas_options : VARIABLE '=' aexpr
 		      {
 			if( !strcmp($1->name,"r") ) params.r = $3;
 			else if (!strcmp($1->name,"l") ) params.l = $3;
-			else if(VERBOSE) 
-			  printf("Warning : GAS: unknown parameter %s at line\n",$1->name);
+			else {
+			  //                  if(VERBOSE)
+			  printf("Warning : GAS: unknown parameter : \"%s\"\n",$1->name);
+			  exit(1);
+			}
 		      }
 
 		  }   
@@ -2017,7 +2119,7 @@ gas_options : VARIABLE '=' aexpr
 		      {
 			  if( !strcmp($1->name,"material") ) 
 			    {
-			      strcpy(params.material ,$3);
+			      params.material = $3;
 			      params.materialset = 1;
 			    }
 		      }
@@ -2048,22 +2150,22 @@ option_parameters :
                   | VARIABLE '=' aexpr ',' option_parameters
                     {
 		      if(execute)
-			set_value($1->name,$3);
+			options.set_value($1->name,$3);
 		    }   
                   | VARIABLE '=' aexpr
                     {
 		      if(execute)
-			set_value($1->name,$3);
+			options.set_value($1->name,$3);
 		    } 
                   | VARIABLE '=' STR ',' option_parameters
                     {
 		      if(execute)
-			set_value($1->name,std::string($3));
+			options.set_value($1->name,std::string($3));
 		    }   
                   | VARIABLE '=' STR
                     {
 		      if(execute)
-			set_value($1->name,std::string($3));
+			options.set_value($1->name,std::string($3));
 		    }   
 ;
 
@@ -2071,22 +2173,22 @@ beam_parameters :
                 | VARIABLE '=' aexpr ',' beam_parameters
                   {
 		    if(execute)
-		      set_value($1->name,$3);
+		      options.set_value($1->name,$3);
 		  }   
                 | VARIABLE '=' aexpr
                   {
 		    if(execute)
-		      set_value($1->name,$3);
+		      options.set_value($1->name,$3);
 		  }   
                 | VARIABLE '=' STR ',' beam_parameters
                   {
 		    if(execute)
-		      set_value($1->name,string($3));
+		      options.set_value($1->name,std::string($3));
 		  }   
                 | VARIABLE '=' STR
                   {
 		    if(execute)
-		      set_value($1->name,string($3));
+		      options.set_value($1->name,std::string($3));
 		  }   
 ;
 

@@ -28,12 +28,12 @@ BDSWorld::~BDSWorld(){
   delete _size;
   /*
   delete _solidVolume;
-		  //		    gFlashRegion.back()->SetUserLimits(new G4UserLimits(var->GetLength()/10.0));
-		  //		    MultipleSensVols[i]->SetUserLimits(new G4UserLimits(var->GetLength()/10.0));
+		  //		    gFlashRegion.back()->SetUserLimits(new G4UserLimits(var->GetChordLength()/10.0));
+		  //		    MultipleSensVols[i]->SetUserLimits(new G4UserLimits(var->GetChordLength()/10.0));
 b
   delete _logicalVolume;
   delete _physicalVolume;
-  delete _instance;
+  _instance = 0;
   */
 }
 
@@ -62,7 +62,7 @@ void BDSWorld::calcSize(){
   _size->setX((BDSTunnelCavity::Instance()->widthMax()->x()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness())/2.0);
   _size->setY((BDSTunnelCavity::Instance()->widthMax()->y()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness())/2.0);
   _size->setZ((BDSTunnelCavity::Instance()->widthMax()->z())/2.0);
-  G4cout << "BDSWorld::calcSize() - size x, y, z = " << _size->x()/m << " " << _size->y()/m << " " << _size->z()/m << " m" << G4endl;
+  G4cout << "BDSWorld::calcSize() - size x, y, z = " << _size->x()/CLHEP::m << " " << _size->y()/CLHEP::m << " " << _size->z()/CLHEP::m << " m" << G4endl;
 }
 
 void BDSWorld::constructLogical(){
@@ -81,7 +81,7 @@ void BDSWorld::setVisAttributes(){
 void BDSWorld::setUserLimits(){
 #ifndef NOUSERLIMITS
   _userLimits =new G4UserLimits();
-  _userLimits->SetMaxAllowedStep(10*m);
+  _userLimits->SetMaxAllowedStep(10*CLHEP::m);
   _userLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   _userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   _logicalVolume->SetUserLimits(_userLimits);

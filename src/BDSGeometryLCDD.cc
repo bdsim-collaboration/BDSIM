@@ -3,12 +3,11 @@
 #include "BDSGeometryLCDD.hh"
 #include "BDSSbendMagField.hh"
 #include "G4Box.hh"
+#include "G4Colour.hh"
 #include "G4Tubs.hh"
 #include "G4Cons.hh"
-#include "G4Torus.hh"
 #include "G4Polycone.hh"
 #include "G4Polyhedra.hh"
-#include "G4SubtractionSolid.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -17,30 +16,14 @@
 #include "BDSMySQLWrapper.hh"
 #include "BDSMaterials.hh"
 #include "BDSSamplerSD.hh"
-#include "G4SDManager.hh"
-#include "BDSSamplerSD.hh"
-#include "BDSOutput.hh"
 #include "BDSDetectorSolenoidMagField.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "G4EqMagElectricField.hh"
-#include "G4NystromRK4.hh"
-#include "G4ChordFinder.hh"
 #include "G4TessellatedSolid.hh"
 #include "G4UniformMagField.hh"
 
-#include <vector>
-#include <map>
 #include <cstdlib>
-#include "G4ClassicalRK4.hh"
 #include <cstring>
-
-using namespace std;
-
-extern BDSSamplerSD* BDSSamplerSensDet;
-
-extern G4RotationMatrix* RotY90;
-extern BDSOutput* bdsOutput;
-//extern BDSGlobalConstants* BDSGlobalConstants::Instance();
+#include <list>
 
 BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):
   itsMarkerVol(NULL),itsMagField(NULL),itsUniformMagField(NULL)
@@ -61,67 +44,67 @@ BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):
   // define some standard constants
   CONST_REF aconst;
   aconst.name="pi";
-  aconst.value=pi;
+  aconst.value=CLHEP::pi;
   CONST_LIST.push_back(aconst);
 
   aconst.name="TWOPI";
-  aconst.value=twopi;
+  aconst.value=CLHEP::twopi;
   CONST_LIST.push_back(aconst);
 
   
   aconst.name="HALFPI";
-  aconst.value=halfpi;
+  aconst.value=CLHEP::halfpi;
   CONST_LIST.push_back(aconst);
 
   // define units using mm and radians =1 and tesla as =0.001
   aconst.name="radian";
-  aconst.value=radian;
+  aconst.value=CLHEP::radian;
   CONST_LIST.push_back(aconst);
 
   aconst.name="degree";
-  aconst.value=degree;
+  aconst.value=CLHEP::degree;
   CONST_LIST.push_back(aconst);
   
   aconst.name="mm";
-  aconst.value=mm;
+  aconst.value=CLHEP::mm;
   CONST_LIST.push_back(aconst);
   
   aconst.name="cm";
-  aconst.value=cm;
+  aconst.value=CLHEP::cm;
   CONST_LIST.push_back(aconst);
   
   aconst.name="m";
-  aconst.value=m;
+  aconst.value=CLHEP::m;
   CONST_LIST.push_back(aconst);
 
   aconst.name="cm2";
-  aconst.value=cm2;
+  aconst.value=CLHEP::cm2;
   CONST_LIST.push_back(aconst);
 
   aconst.name="cm3";
-  aconst.value=cm3;
+  aconst.value=CLHEP::cm3;
   CONST_LIST.push_back(aconst);
 
   aconst.name="tesla";
-  aconst.value=tesla;
+  aconst.value=CLHEP::tesla;
   CONST_LIST.push_back(aconst);
 
   aconst.name="g";
-  aconst.value=g;
+  aconst.value=CLHEP::g;
   CONST_LIST.push_back(aconst);
 
   aconst.name="kg";
-  aconst.value=kg;
+  aconst.value=CLHEP::kg;
   CONST_LIST.push_back(aconst);
 
   aconst.name="mol";
-  aconst.value=mole;
+  aconst.value=CLHEP::mole;
   CONST_LIST.push_back(aconst);
 
   aconst.name="mole";
-  aconst.value=mole;
+  aconst.value=CLHEP::mole;
   CONST_LIST.push_back(aconst);
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "BDSGeometryLCDD CONST_LIST defined units: " <<  G4endl;
   for(unsigned int i=0; i<CONST_LIST.size(); i++){
     G4cout << CONST_LIST[i].name << " " << CONST_LIST[i].value << G4endl;
@@ -225,7 +208,7 @@ void BDSGeometryLCDD::parseDoc()
        cur = cur->next;
      }
    if((!itsMagField) && (!itsUniformMagField)){
-#ifdef DEBUG
+#ifdef BDSDEBUG
      G4cout << "BDSGeometryLCDD.cc> No magnetic fields defined. Making default (zero) BDSMagField" << G4endl;
 #endif
      itsMagField = new BDSMagField();
@@ -538,12 +521,12 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	      Z = parseDblChar(xmlGetProp(cur,(const xmlChar*)"Z"));	   
 	       
 	      value = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"value"));	   
-	      BDSMaterials::Instance()->AddElement(name, formula, Z, value*unit/(g/mole)); 
+	      BDSMaterials::Instance()->AddElement(name, formula, Z, value*unit/(CLHEP::g/CLHEP::mole)); 
 	    } else {
 	       G4Exception("BDSGeometryLCDD.cc: not an atom, not currently implemented in BDSIM", "-1", FatalException, "");  
 	    }
 	  } else {
-	    G4cout << "Warning: BDSGeometryLCDD.cc: element " << formula << " already defined in BDSMaterials.cc" << endl; 
+	    G4cout << "Warning: BDSGeometryLCDD.cc: element " << formula << " already defined in BDSMaterials.cc" << G4endl;
 	  }
 	}
       else if ((!xmlStrcmp(cur->name, (const xmlChar *)"material")))
@@ -555,7 +538,7 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	   
 	   name = parseStrChar(xmlGetProp(cur,(const xmlChar*)"name"));	   
 	   if(BDSMaterials::Instance()->CheckMaterial(name)){
-	     G4cout << "Warning: BDSGeometryLCDD.cc: material " << name << " already defined in BDSMaterials.cc" << endl; 
+	     G4cout << "Warning: BDSGeometryLCDD.cc: material " << name << " already defined in BDSMaterials.cc" << G4endl;
 	   } else {
 
 	     G4int numFractions = 0;
@@ -579,7 +562,7 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 		 value = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"value"));
 		 unit = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"unit"));
 		 type = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"type"));
-#ifdef DEBUG
+#ifdef BDSDEBUG
 		 G4cout << "BDSGeometryLCDD:ParseMaterials value = " << value << ", unit = " << unit << ", type = " << type << G4endl; 
 #endif
 		 if (!strcmp("",type)){
@@ -601,20 +584,20 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	     std::list<G4double> fractions;
 
 	     tempcur = cur->xmlChildrenNode;
-#ifdef DEBUG
+#ifdef BDSDEBUG
 	     G4cout << "BDSGeometryLCDD::parseMATERIALS - making list of fractions/composites" << G4endl;
 #endif
 	     while(tempcur!=NULL){
-#ifdef DEBUG
+#ifdef BDSDEBUG
 	       G4cout << "BDSGeometryLCDD::parseMATERIALS - name = " << tempcur->name << G4endl;
 #endif	    
 	       if (!xmlStrcmp(tempcur->name, (const xmlChar *)"fraction")){
-#ifdef DEBUG
+#ifdef BDSDEBUG
 		 G4cout << "BDSGeometryLCDD::parseMATERIALS - component = " << parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref")) << G4endl;
 #endif
 		 components.push_back((G4String)parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref")).c_str()); 
 		 stComponents.push_back((G4String)parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref"))); 
-#ifdef DEBUG
+#ifdef BDSDEBUG
 		 G4cout << components.back() << G4endl;
 		 G4cout << "BDSGeometryLCDD::parseMATERIALS - fraction = " << parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"n")) << G4endl;
 #endif
@@ -622,13 +605,13 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	       } else if (!xmlStrcmp(tempcur->name, (const xmlChar *)"composite")){
 		 components.push_back((G4String)parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref")).c_str()); 
 		 stComponents.push_back((G4String)parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref"))); 
-		 weights.push_back(parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"n")));
+		 weights.push_back((G4int)parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"n")));
 	       }
 	       tempcur = tempcur->next;
 	     }
 
-	     list<const char*>::iterator sIter;
-	     list<G4String>::iterator stIter;
+	     std::list<const char*>::iterator sIter;
+	     std::list<G4String>::iterator stIter;
 
 	     //for(sIter = components.begin(), stIter = stComponents.begin();
 	     //	 sIter != components.end(), stIter!= stComponents.end();
@@ -643,32 +626,32 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	     for(stIter = stComponents.begin();
 	     	 stIter!= stComponents.end();
 	     	 stIter++){
-#ifdef DEBUG
+#ifdef BDSDEBUG
 	       G4cout << "String element: " << *stIter << G4endl;
 #endif
 	       components.push_back((*stIter).c_str());
-#ifdef DEBUG
+#ifdef BDSDEBUG
 	       G4cout << "Element: " << components.back() << G4endl;
 #endif
 	     }
 
 	     if (weights.size()>0){
-#ifdef DEBUG
-	     G4cout << "Size of weights: " << weights.size() << G4endl;
+#ifdef BDSDEBUG
+	       G4cout << "Size of weights: " << weights.size() << G4endl;
 #endif
-	     BDSMaterials::Instance()->AddMaterial(name, value*unit/(g/cm3), kStateSolid, 300, 1, components, weights);
+	       BDSMaterials::Instance()->AddMaterial(name, value*unit/(CLHEP::g/CLHEP::cm3), kStateSolid, 300, 1, components, weights);
 	     } else if(fractions.size()>0){
-#ifdef DEBUG
-	     G4cout << "Size of fractions: " << fractions.size() << G4endl;
+#ifdef BDSDEBUG
+	       G4cout << "Size of fractions: " << fractions.size() << G4endl;
 #endif
-	     BDSMaterials::Instance()->AddMaterial(name, value*unit/(g/cm3), kStateSolid, 300, 1, components, fractions);
+	       BDSMaterials::Instance()->AddMaterial(name, value*unit/(CLHEP::g/CLHEP::cm3), kStateSolid, 300, 1, components, fractions);
 	     } else G4Exception("BDSGeometry LCDD: Ill defined material fractions - list of fractions and weights empty.", "-1", FatalException, "");
 
+	   }
 	 }
-    }
       cur = cur->next;
-}
-return;
+    }
+  return;
 }
 
 
@@ -761,21 +744,21 @@ void BDSGeometryLCDD::parseVOLUME(xmlNodePtr cur)
        if ((!xmlStrcmp(cur->name, (const xmlChar *)"materialref")))
 	 {
 	   materialref = parseStrChar(xmlGetProp(cur,(const xmlChar*)"ref"));
-#ifdef DEBUG
+#ifdef BDSDEBUG
            G4cout << "BDSGeometryLCDD> materialref = " << materialref << G4endl; 
 #endif
 	 }
        else if ((!xmlStrcmp(cur->name, (const xmlChar *)"solidref")))
 	 {
 	   solidref = parseStrChar(xmlGetProp(cur,(const xmlChar*)"ref"));  
-#ifdef DEBUG
+#ifdef BDSDEBUG
            G4cout << "BDSGeometryLCDD> solidref = " << solidref << G4endl; 
 #endif
 	 }
        else if ((!xmlStrcmp(cur->name, (const xmlChar *)"visref")))
 	 {
 	   visref = parseStrChar(xmlGetProp(cur,(const xmlChar*)"ref")); 
-#ifdef DEBUG
+#ifdef BDSDEBUG
            G4cout << "BDSGeometryLCDD> visref = " << visref << G4endl; 
 #endif
 	 }

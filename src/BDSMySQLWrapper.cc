@@ -9,12 +9,11 @@
 */
 
 #include "BDSGlobalConstants.hh" 
+#include "BDSDebug.hh"
 
 #include <cstdlib>
-#include "BDSMaterials.hh"
 #include "BDSMySQLWrapper.hh"
 #include "BDSMySQLTable.hh"
-#include "BDSExecOptions.hh"
 
 #include<iostream>
 #include<boost/tokenizer.hpp>
@@ -24,9 +23,6 @@
 #include<vector>
 #include<sstream>
 
-using namespace std;
-using namespace boost;
-
 BDSMySQLWrapper::BDSMySQLWrapper (const G4String& SQLFileName)
   : ifs(SQLFileName.c_str()), ComponentN(0), tableN(-1)
   
@@ -34,17 +30,22 @@ BDSMySQLWrapper::BDSMySQLWrapper (const G4String& SQLFileName)
   _startOfFile=true;
   BeginTokens();
 
-#ifdef DEBUG
-  if(ifs) G4cout<<"BDSMySQLWrapper contructor: Loading SQL Filename="<<SQLFileName<<G4endl;
-  else G4cout<<"BDSMySQLWrapper constructor: Unable to load SQL file: "<<SQLFileName<<G4endl;
+  if(ifs) {
+#ifdef BDSDEBUG
+    G4cout<<"BDSMySQLWrapper contructor: Loading SQL Filename="<<SQLFileName<<G4endl;
 #endif
+  }
+  else {
+    G4cout<<"BDSMySQLWrapper constructor: Unable to load SQL file: "<<SQLFileName<<G4endl;
+    exit(1);
+  }
 }
 
 BDSMySQLWrapper::~BDSMySQLWrapper()
 {
 }
 
-vector<BDSMySQLTable*> BDSMySQLWrapper::ConstructTable ()
+std::vector<BDSMySQLTable*> BDSMySQLWrapper::ConstructTable ()
 {
   ComponentN=0;
   tableN=-1;
@@ -55,17 +56,19 @@ vector<BDSMySQLTable*> BDSMySQLWrapper::ConstructTable ()
 }
 
 void BDSMySQLWrapper::TokenizeLine(){
-  string token;
+  std::string token;
   _tokens.clear();
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;  
-  boost::char_separator<char> sep(", ",";()\n");
+  // http://www.boost.org/doc/libs/1_55_0b1/libs/tokenizer/char_separator.htm
+  // separate with , and space, keep ; ( ) and \n
+  boost::char_separator<char> sep(", ",";()\n"); 
   tokenizer tok(_currentLine, sep);
   for(tokenizer::iterator tok_iter=tok.begin(); tok_iter != tok.end(); ++tok_iter){
     token = *tok_iter;
     RemoveQuotesFromLine(token);
     RemoveWhitespace(token);
     _tokens.push_back(token);
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " - token: = <" << token << ">" << G4endl;
 #endif
   }
@@ -73,7 +76,7 @@ void BDSMySQLWrapper::TokenizeLine(){
 }
 
 bool BDSMySQLWrapper::NextToken(){
-  string line;
+  std::string line;
   ++_tokens_iter;
   if(_startOfFile){
     --_tokens_iter;
@@ -82,14 +85,14 @@ bool BDSMySQLWrapper::NextToken(){
     if(ifs.good()){
       ReadLine();
       TokenizeLine();
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " - Token() = " << Token() << G4endl;
 #endif
     }else{
       return false;
     }
   } else {
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " - Token() = " << Token() << G4endl;
 #endif
   }
@@ -122,7 +125,7 @@ void BDSMySQLWrapper::CreateTable(){
 
   _NEXTINPUT
     CurrentTableName=Token();
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " reading CurrentTableName: " << CurrentTableName << G4endl;
 #endif
   ProceedToEndOfLine();
@@ -135,13 +138,13 @@ void BDSMySQLWrapper::CreateTable(){
       _NEXTINPUT
 	} while((EmptyToken()) || (EndOfLine()));
     varname=Token();
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " reading varname: " << varname << G4endl;
 #endif
     if (varname.contains(";")) return; //Semicolon indicates end of table.
     _NEXTINPUT
       vartype=Token();
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " reading vartype: " << vartype << G4endl;
 #endif
     if (vartype.contains(";")) return; //Semicolon indicates end of table.
@@ -156,7 +159,7 @@ void BDSMySQLWrapper::CreateTable(){
 
 void BDSMySQLWrapper::Create(){
   _NEXT
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " reading input: " << Token() << G4endl;
 #endif
   if(Token()==CMD_DATABASE) {CreateDatabase();}
@@ -165,7 +168,7 @@ void BDSMySQLWrapper::Create(){
 
 void BDSMySQLWrapper::Insert(){
   _NEXT
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " reading input: " << Token() << G4endl;
 #endif
   if(Token()==CMD_INTO){InsertInto();}
@@ -193,11 +196,11 @@ void BDSMySQLWrapper::Values() {
 	  //	  G4Exception(excptnSstrm.str().c_str(), "-1", FatalException, "");
 	  //	  return;
 	}
-#ifdef DEBUG
+#ifdef BDSDEBUG
 	G4cout << __METHOD_NAME__ << " inserting value " << Token() << G4endl;
 #endif
 	if(table[j]->GetVariable(k)->GetVarType()=="DOUBLE")
-	  table[j]->GetVariable(k)->AddValue(atof(Token().c_str())*mm);
+	  table[j]->GetVariable(k)->AddValue(atof(Token().c_str())*CLHEP::mm);
 	else if(table[j]->GetVariable(k)->GetVarType()=="STRING")
 	  table[j]->GetVariable(k)->AddValue(Token().c_str());
 	else if(table[j]->GetVariable(k)->GetVarType()=="INTEGER")
@@ -235,21 +238,21 @@ bool BDSMySQLWrapper::EmptyToken(){
   return((*_tokens_iter)=="");
 }
 
-string BDSMySQLWrapper::Token(){
+std::string BDSMySQLWrapper::Token(){
   return *_tokens_iter;
 }
 
 void BDSMySQLWrapper::ProceedToEndOfLine(){
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   while(!EndOfLine()){
     _NEXT
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " " << Token() << G4endl;
 #endif
   }
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " finished." << G4endl;
 #endif
 }
@@ -265,19 +268,19 @@ void BDSMySQLWrapper::ReadLine(){
   //Put back the new line character
   _currentLine += ' ';
   _currentLine += '\n';
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " - _currentLine = " << _currentLine << G4endl;
 #endif
 }
 
-void BDSMySQLWrapper::RemoveCommentsFromLine(string& value){
+void BDSMySQLWrapper::RemoveCommentsFromLine(std::string& value){
   //Strip all characters after and including '#'
   unsigned pos = value.find('#');
-  string uncommented = value.substr(0,pos);
+  std::string uncommented = value.substr(0,pos);
   value=uncommented;
 }
 
-void BDSMySQLWrapper::RemoveQuotesFromLine(string& value){
+void BDSMySQLWrapper::RemoveQuotesFromLine(std::string& value){
   //Strip all "
   value.erase (std::remove(value.begin(), value.end(), '\"'), value.end());
 }

@@ -12,7 +12,6 @@
 
 #include "G4VSensitiveDetector.hh"
 #include "BDSSamplerHit.hh"
-#include "G4TransportationManager.hh"
 
 class G4Step;
 class G4HCofThisEvent;
@@ -33,10 +32,11 @@ public:
   void clear();
   void DrawAll();
   void PrintAll();
+  int itsHCID;
   
 private:
   BDSSamplerHitsCollection *SamplerCollection;
-  G4bool                    StoreHit;
+  // G4bool StoreHit;
   // G4int nStepsInSampler;
   // G4int maxNStepsInSampler;
   

@@ -30,7 +30,6 @@
 #define BDSUserTrackingAction_h 1
 
 #include "G4UserTrackingAction.hh"
-#include "BDSNeutronTrackInfo.hh"
 
 //class BDSUserTrackingAction : public G4UserTrackingAction {
 class BDSUserTrackingAction : public G4UserTrackingAction {
@@ -39,9 +38,7 @@ public:
   BDSUserTrackingAction(){;};
   ~BDSUserTrackingAction();
    
-  void PreUserTrackingAction(const G4Track*);
-
-private:
+  virtual void PreUserTrackingAction(const G4Track*);
 
 };
 

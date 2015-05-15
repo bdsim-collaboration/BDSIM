@@ -1,22 +1,8 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
-// This code implementation is the intellectual property of
-// the GEANT4 collaboration.
-//
-// By copying, distributing or modifying the Program (or any work
-// based on the Program) you indicate your acceptance of this statement,
-// and all its terms.
-//
-// $Id: BDSQuadStepper.cc,v 1.7 2007/11/14 12:43:25 malton Exp $
-//
-
 #include "BDSQuadStepper.hh"
 #include "G4ThreeVector.hh"
 #include "G4TransportationManager.hh"
+#include "G4Navigator.hh"
+#include "G4AffineTransform.hh"
 
 using std::max;
 extern G4double BDSLocalRadiusOfCurvature;
@@ -43,18 +29,18 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
   G4double InitPMag = GlobalP.mag();
   G4double kappa = - fPtrMagEqOfMot->FCof()*itsBGrad/InitPMag;
 
-#ifdef DEBUG
-  G4double charge = (fPtrMagEqOfMot->FCof())/c_light;
-  G4cout << "BDSQuadStepper: step= " << h/m << " m" << G4endl
-         << " x= " << yIn[0]/m << "m" << G4endl
-         << " y= " << yIn[1]/m << "m" << G4endl
-         << " z= " << yIn[2]/m << "m" << G4endl
-         << " px= " << yIn[3]/GeV << "GeV/c" << G4endl
-         << " py= " << yIn[4]/GeV << "GeV/c" << G4endl
-         << " pz= " << yIn[5]/GeV << "GeV/c" << G4endl
-         << " q= " << charge/eplus << "e" << G4endl
-         << " dBy/dx= " << itsBGrad/(tesla/m) << "T/m" << G4endl
-         << " k= " << kappa/(1./(m*m)) << "m^-2" << G4endl
+#ifdef BDSDEBUG
+  G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
+  G4cout << "BDSQuadStepper: step = " << h/CLHEP::m << " m" << G4endl
+         << " x  = " << yIn[0]/CLHEP::m     << " m"     << G4endl
+         << " y  = " << yIn[1]/CLHEP::m     << " m"     << G4endl
+         << " z  = " << yIn[2]/CLHEP::m     << " m"     << G4endl
+         << " px = " << yIn[3]/CLHEP::GeV   << " GeV/c" << G4endl
+         << " py = " << yIn[4]/CLHEP::GeV   << " GeV/c" << G4endl
+         << " pz = " << yIn[5]/CLHEP::GeV   << " GeV/c" << G4endl
+         << " q  = " << charge/CLHEP::eplus << " e"     << G4endl
+         << " dBy/dx = " << itsBGrad/(CLHEP::tesla/CLHEP::m) << " T/m" << G4endl
+         << " k = " << kappa/(1./CLHEP::m2) << " m^-2" << G4endl
          << G4endl; 
 #endif
 
@@ -91,11 +77,11 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
       G4ThreeVector LocalR=GlobalAffine.TransformPoint(GlobalR); 
       G4ThreeVector LocalRp=GlobalAffine.TransformAxis(InitMomDir);
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
       G4cout << "BDSQuadStepper: initial point in local coordinates:" << G4endl
-             << " x= " << LocalR[0]/m << "m" << G4endl
-             << " y= " << LocalR[1]/m << "m" << G4endl
-             << " z= " << LocalR[2]/m << "m" << G4endl
+             << " x= " << LocalR[0]/CLHEP::m << "m" << G4endl
+             << " y= " << LocalR[1]/CLHEP::m << "m" << G4endl
+             << " z= " << LocalR[2]/CLHEP::m << "m" << G4endl
              << " x'= " << LocalRp[0] << G4endl
              << " y'= " << LocalRp[1] << G4endl
              << " z'= " << LocalRp[2] << G4endl
@@ -121,8 +107,8 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
 
        // determine effective curvature 
       G4double R_1 = LocalRpp.mag();
-#ifdef DEBUG 
-      G4cout << " curvature= " << R_1*m << "m^-1" << G4endl;
+#ifdef BDSDEBUG 
+      G4cout << " curvature= " << R_1*CLHEP::m << "m^-1" << G4endl;
 #endif
       if(R_1>0.)
 	{
@@ -135,8 +121,11 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
 	  itsDist= h2/(8*R);
 
 	  // check for paraxial approximation:
-	  if((fabs(zp)>0.99)&&(fabs(kappa)<1.e-6))
+	  if(fabs(zp)>0.9)//&&(fabs(kappa)<1.e-6))
 	    {
+	      #ifdef BDSDEBUG
+	      G4cout << "paraxial approximation being used" << G4endl;
+	      #endif
 	      G4double rootK=sqrt(fabs(kappa*zp));
 	      G4double rootKh=rootK*h*zp;
 	      G4double X11,X12,X21,X22;
@@ -198,6 +187,9 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
 	  else
 	    // perform local helical steps (paraxial approx not safe)
 	    {
+	      #ifdef BDSDEBUG
+	      G4cout << "local helical steps" << G4endl;
+	      #endif
 	      // simple quadratic approx:	      
 	      G4double quadX= - kappa*x0*zp;
 	      G4double quadY=   kappa*y0*zp;
@@ -276,11 +268,11 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
 	  itsDist=0.;
 	}
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout << "BDSQuadStepper: final point in local coordinates:" << G4endl
-             << " x= " << LocalR[0]/m << "m" << G4endl
-             << " y= " << LocalR[1]/m << "m" << G4endl
-             << " z= " << LocalR[2]/m << "m" << G4endl
+             << " x= " << LocalR[0]/CLHEP::m << "m" << G4endl
+             << " y= " << LocalR[1]/CLHEP::m << "m" << G4endl
+             << " z= " << LocalR[2]/CLHEP::m << "m" << G4endl
              << " x'= " << LocalRp[0] << G4endl
              << " y'= " << LocalRp[1] << G4endl
              << " z'= " << LocalRp[2] << G4endl
@@ -341,7 +333,14 @@ void BDSQuadStepper::Stepper( const G4double yInput[],
       h = hstep ;
       AdvanceHelix(yIn, (G4ThreeVector)0, h, yTemp); 
       
-      for(i=0;i<nvar;i++) yErr[i] = yOut[i] - yTemp[i] ;
+      for(i=0;i<nvar;i++) {
+	yErr[i] = yOut[i] - yTemp[i] ;
+	// if error small, set error to 0
+	// this is done to prevent Geant4 going to smaller and smaller steps
+	// ideally use some of the global constants instead of hardcoding here
+	// could look at step size as well instead.
+	if (std::abs(yErr[i]) < 1e-7) yErr[i] = 0;
+      }
     }
 }
 

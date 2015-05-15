@@ -17,27 +17,18 @@
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4UniformMagField.hh"
-#include "BDSField.hh"
 #include "BDSMagField.hh"
 #include "G4CachedMagneticField.hh"
-#include "BDSXYMagField.hh"
 
 #include "G4EqMagElectricField.hh"
-#include "BDSRK4Stepper.hh"
 
 class BDSElement :public BDSAcceleratorComponent
 {
 public:
-  BDSElement(G4String aName, G4String geometry, G4String bmap, G4double aLength, 
-             G4double bpRad, G4double outR, G4String aTunnelMaterial="", G4double tunnelRadius=0., G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(), G4String aTunnelCavityMaterial="Air", int aPrecisionRegion=0);
+  BDSElement(G4String aName, G4String geometry, G4String bmap, G4double aBmapZOffset, G4double aLength, 
+             G4double bpRad, G4double outR, G4String aTunnelMaterial="", G4double tunnelRadius=0., G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(), G4String aTunnelCavityMaterial="Air");
   ~BDSElement();
-
-  void BuildElementMarkerLogicalVolume();
-  void BuildGeometry();
-  void PlaceComponents(G4String geometry, G4String bmap);
-  void BuildMagField(G4bool forceToAllDaughters=false);
 
   // creates a field mesh in global coordinates in case it is given by map
   void PrepareField(G4VPhysicalVolume *referenceVolume);
@@ -51,11 +42,19 @@ public:
 		      G4ThreeVector& localY,
 		      G4ThreeVector& localZ); 
    
-protected:
-  
-  G4VisAttributes* SetVisAttributes();  
-
 private:
+
+  virtual void BuildMarkerLogicalVolume();
+  void SetVisAttributes();  
+
+  void BuildElementMarkerLogicalVolume();
+  void BuildGeometry();
+  void PlaceComponents(G4String geometry, G4String bmap);
+  void BuildMagField(G4bool forceToAllDaughters=false);
+
+  G4String itsGeometry;
+  G4String itsBmap;
+
   G4String itsFieldVolName;
   G4bool itsFieldIsUniform;
   G4ChordFinder* fChordFinder;
@@ -64,11 +63,11 @@ private:
   G4EqMagElectricField* itsFEquation;
   G4Mag_UsualEqRhs* itsEqRhs;
 
-  BDSField *itsField;
   BDSMagField *itsMagField;
   G4CachedMagneticField *itsCachedMagField;
   G4UniformMagField *itsUniformMagField;
   G4double itsOuterR;
+  G4double itsBmapZOffset;
   // Volume to align incoming beamline on inside the marker volume
   // (set during Geometery construction)
   G4VPhysicalVolume* align_in_volume;

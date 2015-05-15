@@ -4,7 +4,6 @@
 #define BACKSCATTERBIAS_HH
 
 #include "G4WrapperProcess.hh"
-#include "G4RunManager.hh"
 
 class BDSBackScatterBias  :public G4WrapperProcess
 {
@@ -35,6 +34,8 @@ public: // with description
 				  );
   
 private:
+  /// assignment constructor not implemented nor used
+  BDSBackScatterBias& operator=(const BDSBackScatterBias&);
 
   G4double eFactor; // enhancement factor to the cross-setion
 

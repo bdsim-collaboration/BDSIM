@@ -16,14 +16,6 @@
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4VisAttributes.hh"
-
 
 class BDSDump : public BDSAcceleratorComponent
 {
@@ -35,16 +27,10 @@ public:
   /// separate counter used in BDSRunManager
   static int nUsedDumps;
 
-protected:
-
 private:
-  G4int nptwiss;
 
-  void DumpLogicalVolume();
-  G4VisAttributes* SetVisAttributes();
-
-  // field related objects:
-  G4VisAttributes* itsVisAttributes;
+  virtual void BuildMarkerLogicalVolume();
+  virtual void SetVisAttributes();
 
   /// number of total Dumps
   static int nDumps;

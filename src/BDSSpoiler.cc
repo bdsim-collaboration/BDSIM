@@ -5,68 +5,49 @@
 */
 #include "BDSGlobalConstants.hh" 
 #include "BDSSpoiler.hh"
+#include "BDSMaterials.hh"
+
+#include "G4Box.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
-#include "G4TransportationManager.hh"
 
-#include "G4SDManager.hh"
-
-#include <map>
-
-//============================================================
-//typedef std::map<G4String,MagFieldFunction*> PhysFieldMap;
-//extern PhysFieldMap* MagFieldMap;
-
-typedef std::map<G4String,int> LogVolCountMap;
-extern LogVolCountMap* LogVolCount;
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
-//extern G4double BDS_Threshold_Energy;
-extern BDSMaterials* theMaterials;
 //============================================================
 
 BDSSpoiler::BDSSpoiler (G4String& aName,G4double aLength,G4double bpRad,
 			  G4double xAper,G4double yAper,
 			  G4Material* SpoilerMaterial):
   BDSAcceleratorComponent(aName,
-			 aLength,bpRad,xAper,yAper,
-			 SetVisAttributes()),
+			 aLength,bpRad,xAper,yAper),
   itsPhysiComp(NULL), itsPhysiComp2(NULL), itsSolidLogVol(NULL), 
-  itsInnerLogVol(NULL), itsVisAttributes(NULL), itsEqRhs(NULL), 
-  itsSpoilerMaterial(SpoilerMaterial)
+  itsInnerLogVol(NULL), itsSpoilerMaterial(SpoilerMaterial)
 {
-  
-  if ( (*LogVolCount)[itsName]==0)
-    {
-      itsMarkerLogicalVolume=
-	new G4LogicalVolume(
-			    new G4Box(itsName,
-				      BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
-				      BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
-				      itsLength/2),
-			    theMaterials->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
-			    itsName);
-      BuildInnerSpoiler();
+}
 
-      (*LogVolCount)[itsName]=1;
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
-    }
-  else
-    {
-      (*LogVolCount)[itsName]++;
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-    }  
+void BDSSpoiler::Build()
+{
+  BDSAcceleratorComponent::Build();
+  BuildInnerSpoiler();
+}
+
+void BDSSpoiler::BuildMarkerLogicalVolume()
+{  
+  itsMarkerLogicalVolume=
+    new G4LogicalVolume(
+			new G4Box(itsName,
+				  BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
+				  BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
+				  itsLength/2),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			itsName);
 }
 
 
-G4VisAttributes* BDSSpoiler::SetVisAttributes()
+void BDSSpoiler::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.3,0.4,0.2));
-  return itsVisAttributes;
 }
 
 
@@ -85,7 +66,7 @@ void BDSSpoiler::BuildInnerSpoiler()
 				  itsXAper,
 				  itsYAper,
 				  itsLength/2),
-			theMaterials->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 			itsName+"_inner");
   
   itsPhysiComp2 = 
@@ -99,7 +80,7 @@ void BDSSpoiler::BuildInnerSpoiler()
 		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());  // copy number 
 
   if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-    SetSensitiveVolume(itsSolidLogVol);
+    AddSensitiveVolume(itsSolidLogVol);
   }
 
 #ifndef NOUSERLIMITS
@@ -121,11 +102,4 @@ void BDSSpoiler::BuildInnerSpoiler()
 
 BDSSpoiler::~BDSSpoiler()
 {
-  delete itsVisAttributes;
-
-  //  delete itsSolidLogVol;
-  //  delete itsInnerLogVol;
-
-  //delete itsPhysiComp;
-  //delete itsPhysiComp2;
 }

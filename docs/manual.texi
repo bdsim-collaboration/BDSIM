@@ -1,20 +1,20 @@
 \input texinfo @c -*-texinfo-*-
 @c %**start of header0.4
 @setfilename bdsim.info
-@settitle BDSIM User's Manual v0.6-dev
+@settitle BDSIM User's Manual v0.6
 @set lastupdate @today{}
-@set revision 0.6-dev
+@set revision 0.6
 @c %**end of header
 
 @setchapternewpage off
 
 @c @copying
-@c Copyright @copyright{} 2004-2013 Royal Holloway, University of London.
+@c Copyright @copyright{} 2004-2014 Royal Holloway, University of London.
 @c @end copying
 
 
 @titlepage
-@title BDSIM User's Manual v0.6-dev
+@title BDSIM User's Manual v0.6
 @author I. Agapov, S. T. Boogert, L. C. Deacon, 
 @author S. Malton, L. Nevay, J.Snuverink
 @author revision @value{revision}, last updated @value{lastupdate}
@@ -57,12 +57,12 @@ This file is updated automatically from @file{manual.texi}, last updated on
 @node Intro, Installation, Top, Top
 @chapter About BDSIM
 
-BDSIM is a Geant4 (@cite{1}) extension toolkit for simulation of particle
+BDSIM is a Geant4 [@cite{1}] extension toolkit for simulation of particle
 transport in accelerator beamlines.
 It provides a collection of classes representing typical accelerator
 components, a collection of physics processes for fast tracking, procedures of
 ``on the fly'' geometry construction and interfacing to ROOT analysis 
-(@cite{2}).
+[@cite{2}].
  
 
 @c cccccccccccccccccccccccccccccccccccccccccc
@@ -107,28 +107,33 @@ is if building shared libraries.
 where the options are
 
 @example
---file=<filename>    : specify the lattice file
---output=<fmt>       : output format (root|ascii), default ascii
---outfile=<file>     : output file name. Will be appended with _N
-                       where N = 0, 1, 2, 3... etc.
---vis_mac=<file>     : visualization macro script, default vis.mac
---help               : display this message
---verbose            : display general parameters before run
---verbose_event      : display information for every event
---verbose_step=N     : display tracking information after each step
---verbose_event_num  : display tracking information for event number N
---batch              : batch mode - no graphics
---outline=<file>     : print geometry/optics info to <file>
---outline_type=<fmt> : type of outline format
-                       where fmt = optics | survey
- --materials         : list materials included in BDSIM by default
+--file=<filename>     : specify the lattice file
+--output=<fmt>        : output format (root|ascii), default ascii
+--outfile=<file>      : output file name. Will be appended with _N
+                        where N = 0, 1, 2, 3... etc.
+--vis_mac=<file>      : visualization macro script, default vis.mac
+--gflash=N            : whether or not to turn on gFlash fast shower parameterisation. Default 0.
+--gflashemax=N        : maximum energy for gflash shower parameterisation in GeV. Default 10000.
+--gflashemin=N        : minimum energy for gflash shower parameterisation in GeV. Default 0.1.
+--help                : display this message
+--verbose             : display general parameters before run
+--verbose_event       : display information for every event
+--verbose_step        : display tracking information after each step
+--verbose_event_num=N : display tracking information for event number N
+--batch               : batch mode - no graphics
+--outline=<file>      : print geometry/optics info to <file>
+--outline_type=<fmt>  : type of outline format
+                        where fmt = optics | survey
+--materials           : list materials included in BDSIM by default
+--circular            : assume circular machine - turn control
+--seed=N              : the seed to use for the random number generator
+--seedstate=<file>    : file containing CLHEP::Random seed state - overrides other seed options
+
 @end example
 
 
-
-
-To run bdsim one first has to define the beamline geometry in a file which is
-then passes to bdsim via the @code{--file} command line option, for example
+To run BDSIM one first has to define the beamline geometry in a file which is
+then passes to BDSIM via the @code{--file} command line option, for example
 
 @example
 bdsim --file=line.gmad --output=root --batch
@@ -270,7 +275,7 @@ Available binary operators are: @code{+}, @code{-}, @code{*}, @code{/},
 
 Available unary operators are: @code{+}, @code{-}
 
-Available boolean operators are: @code{<}, @code{>}, @code{<=}, @code{>=},
+Available Boolean operators are: @code{<}, @code{>}, @code{<=}, @code{>=},
 @code{<>}, @code{==}
 
 Available functions @footnote{see add_func(..) in @code{parser/gmad.cc}} are:
@@ -312,6 +317,7 @@ Available functions @footnote{see add_func(..) in @code{parser/gmad.cc}} are:
 * line::
 * matdef::
 * laser::
+* gas::
 * spec keyword::
 * Element number::
 * Element attributes::
@@ -404,7 +410,7 @@ qq:q,k1=0.2;
 @node coordinate-system
 @subsection Coordinate system
 
-The usual accelerator coordinate system is assumed (see @cite{3}).
+The usual accelerator coordinate system is assumed, see [@cite{3}].
 
 @node units
 @subsection Units
@@ -456,9 +462,9 @@ There are some predefined numerical values@footnote{see add_var(..) in @code{par
 @c @item mp     @tab proton rest mass - DOESN'T SEEM TO BE IMPLEMENTED IN parser/gmad.cc
 @item GeV    @tab 1              @tab m      @tab 1             
 @item eV     @tab @math{10^{-9}} @tab cm     @tab @math{10^{-2}}
-@item KeV    @tab @math{10^{-6}} @tab mm     @tab @math{10^{-3}}
-@item MeV    @tab @math{10^{-3}} @tab um     @tab @math{10^(-6)}
-@item TeV    @tab @math{10^3}    @tab nm     @tab @math{10^(-9)}
+@item keV    @tab @math{10^{-6}} @tab mm     @tab @math{10^{-3}}
+@item MeV    @tab @math{10^{-3}} @tab um     @tab @math{10^{-6}}
+@item TeV    @tab @math{10^3}    @tab nm     @tab @math{10^{-9}}
 @item MV     @tab 1              @tab s      @tab 1             
 @item Tesla  @tab 1              @tab ms     @tab @math{10^{-3}}
 @item rad    @tab 1              @tab us     @tab @math{10^{-6}}
@@ -466,7 +472,7 @@ There are some predefined numerical values@footnote{see add_var(..) in @code{par
 @item clight @tab @math{2.99792458*10^8}
 @end multitable
 
-for example, one can write either 100*eV or 0.1*KeV when energy constants 
+for example, one can write either 100*eV or 0.1*keV when energy constants 
 are concerned.
 
 @node marker
@@ -740,7 +746,7 @@ Example :
 
 @subsection @code{muspoiler}
 
-@code{muspoiler} defines a muon spoiler, which is a rotationally megnetised iron cylinder with an inner radius, outer radius, magnetic field strength and length. 
+@code{muspoiler} defines a muon spoiler, which is a rotationally magnetised iron cylinder with an inner radius, outer radius, magnetic field strength and length. 
 Attributes:
 
 @itemize @bullet 
@@ -1031,6 +1037,7 @@ volume of the drift section. Attributes:
 @end example
 @*
 
+@node gas
 @subsection @code{gas}
 To be implemented in v0.5
 
@@ -1176,10 +1183,11 @@ For more details see the file @code{src/BDSMaterials.cc} or run the command
 * sample and csample::
 * dump::
 * use::
+* print::
 @end menu
 
 The execution control is performed in the GMAD input file through @code{option} and @code{sample}
-commands. How the results are recorded is controlledby the @code{sample} command.
+commands. How the results are recorded is controlled by the @code{sample} command.
 When the visualization is turned on, it is also controlled through Geant4 command prompt
 @*
 
@@ -1198,7 +1206,7 @@ The following options influence the geometry:
 @item @code{beampipeThickness} @tab default beampipe thickness [m]
 @item @code{pipeMaterial} @tab default beampipe material
 @item @code{boxSize} @tab default accelerator component size [m]
-@item @code{vacMaterial} @tab the beam pipe gas material (default ``Vacuum'', which is composed of 48.2\% H, 22.1\% C and 29.7 \% O, and has a temperature of 300K)
+@item @code{vacMaterial} @tab the beam pipe gas material (default ``Vacuum'', which is composed of 48.2% H, 22.1% C and 29.7% O, and has a temperature of 300K)
 @item @code{vacuumPressure} @tab the pressure of the beam pipe gas in bar (default 1e-12)
 @item @code{buildTunnel} @tab whether to build a tunnel (default=0)
 @item @code{buildTunnelFloor} @tab whether to add a floor to the tunnel (default=0)
@@ -1363,7 +1371,7 @@ has been chosen:
 @item @code{sigmaT} - RMS of time distribution in [s]
 @end itemize
 
-@item @code{distrType}=''gausstwiss'': a gaussian bunch defined by twiss parameters @cite{4}, emittance, energy and time:
+@item @code{distrType}=''gausstwiss'': a gaussian bunch defined by twiss parameters [@cite{4}], emittance, energy and time:
 @itemize @bullet
 @item @code{betx} - @math{\beta_x} in [m]
 @item @code{bety} - @math{\beta_y} in [m]
@@ -1383,14 +1391,24 @@ variables if they have been defined previously. It will also recalculate the Twi
 ranges between @code{M} and @code{6}
 @end itemize 
 
-@item @code{distrType}=''eshell'': an infinitely thin elliptic shell (locus) in @code{x,x'} and @code{y,y'} with given semiaxes:
+@item @code{distrType}=''eshell'': a thin elliptic shell (locus) in @code{x,x'} and @code{y,y'} with given semiaxes:
 @itemize @bullet
-@item @code{shellX}
-@item @code{shellXp}
-@item @code{shellY}
-@item @code{shellYp}
-@item @code{sigmaE}
+@item @code{shellX} - radius in [m]
+@item @code{shellXp} - radius in [rad]
+@item @code{shellY} - radius in [m]
+@item @code{shellYp} - radius in [rad]
+@item @code{sigmaE} - in [GeV]
 @end itemize
+
+The width of shell can also be specifed via the following parameters:
+@itemize @bullet
+@item @code{shellXWidth} - absolute width in [m]
+@item @code{shellXpWidth} - absolute width in [rad]
+@item @code{shellYWidth} - absolute width in [m]
+@item @code{shellYpWidth} - absolute width in [rad]
+@end itemize
+
+If left unspecified, these default to 0 and therefore the shell is infinitely thin.  Partilces are uniformly distributed in this width.
 
 @item @code{distrType}=``ring'': in the @code{x}, @code{y} plane the particles
 are uniformly distributed in @math{r} and in @math{\phi} inside a ring
@@ -1403,27 +1421,67 @@ about the nominal beam kinetic energy.
 @item @code{sigmaE} - RMS energy spread [GeV] 
 @end itemize
 
-@c @code{Square}
-@c @code{beam,distrType="square";}
+@item @code{distrType}=``circle'': filled circle in both @code{x,x'} and @code{y,y'} planes with uniform distribution in all dimensions. 
+The input parameters specify a radius R that is the same for both @code{x,x'} and @code{y,y'}, but it is denoted in input as @code{X}.
+@itemize @bullet
+@item @code{envelopeX} - radius in @code{x}, @code{y} - in [m]
+@item @code{envelopeXp} - radius in @code{x'}, @code{y'} - in [rad]
+@item @code{envelopeT} - full width in time - in [s]
+@item @code{envelopeE} - full width in energy - in [GeV]
+@end itemize
 
-@c @code{Circle}
-@c @code{beam,distrType="circle";}
+@item @code{distrType}=``square'': similar to circle - a filled square in both @code{x,x'} and @code{y,y'} planes with uniform distribution in all dimensions.  The input parameters specify the envelope.
+@itemize @bullet
+@item @code{envelopeX} - half width of square in @code{x} - in [m]
+@item @code{envelopeXp} - half width of square in @code{x'} - in [rad]
+@item @code{envelopeY} - half width of square in @code{y} - in [m]
+@item @code{envelopeYp} - half width of square in @code{y'} - in [rad]
+@item @code{envelopeT} - full with in time - in [s]
+@item @code{envelopeE} - full width in energy - in [GeV]
+@end itemize
+
+@item @code{distrType}=``userfile'': user defined file format and list of particles in ascii text file.
+@itemize @bullet
+@item @code{distrFile} - string (must be in inverted commas) filename where particles are listed
+@item @code{distrFileFormat} = string specifying columns in text file
+@end itemize
+
+You must also specify the general option in your gmad file (ie not under @code{beam}.
+
+@code{option, nlinesIgnore = N;} 
+
+where N is the integer number of liens to ignore in the file (for header purposes) - default 0.
 @end enumerate
 
-
-Example:
+Examples:
 
 @example
 
-@code{beam, particle="e+", energy=100*MeV, distrType="gauss", sigmaX=0.01,
-            sigmaXp=0.1, sigmaY=0.01, sigmaYp=0.1;}
-@c @code{beam, particle="e+", energy=100*MeV, nparticles=1000, distrType="gauss", sigmaX=0.01, sigmaXp=0.1, sigmaY=0.01, sigmaYp=0.1;}
+@code{beam, particle="e+",}
+@code{      energy=100*MeV,} 
+@code{      distrType="gauss",} 
+@code{      sigmaX=0.01,}
+@code{      sigmaXp=0.1,} 
+@code{      sigmaY=0.01,}
+@code{      sigmaYp=0.1;}
 
 @end example
 
+@example
+@code{beam,  particle="e-",}
+@code{       energy = 1*GeV,}
+@code{       distrType  = "userfile",}
+@code{       distrFile  = "9_UserFile.dat",}
+@code{       distrFileFormat = "x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:E[MeV]";}
+
+@code{option, nlinesIgnore = 0;}
+
+@end example
+Note, currently this distribution only works when bdsim is executed in the directory of the userfile. There are examples for all distribution types in @code{bdsimsource/test/BDSBunchTestFiles}.
+
 In alternative, one can pass to the simulation a file containing a list of
 particles to be generated. 
-For more details see @ref{Bunch description formats}.
+For more details see @ref{Bunch description formats} [DEPRECATED].
 
 @node sample and csample
 @subsection @code{sample} and @code{csample}
@@ -1470,8 +1528,8 @@ Samplers output the following parameters at the specified location:
 
 @node dump
 @subsection @code{dump}
-Used in conjuction with @code{option,fifo=<filename>} to output the bunch 
-distribution at a given point. If the specified output file is a fifo, the 
+Used in conjunction with @code{option,fifo=<filename>} to output the bunch 
+distribution at a given point. If the specified output file is a FIFO, the 
 distribution can be modified by an external program before being piped back in 
 to continue tracking. This is useful for including 
 multi-particle effects such as wakefields at given points in the lattice.
@@ -1496,6 +1554,17 @@ same format as this.
 
 @end example
 
+@node print
+@subsection @code{print}
+
+The @code{print} command will print the element list. It can also print
+the value of an option or a variable.
+
+@example
+
+@code{print, x;}
+
+@end example
 
 @c cccccccccccccccccccccccccccccccccccccccccc
 @c
@@ -1556,7 +1625,7 @@ via the @code{vis_mac} switch.
 
 @end example
 
-In interactive mode all the Geant4 interactive comamnds are available. For instance, to fire 100 particles type 
+In interactive mode all the Geant4 interactive commands are available. For instance, to fire 100 particles type 
 
 @code{/run/beamOn 100}
 
@@ -1569,7 +1638,7 @@ To display help menu
 
 @code{/help};
 
-For more details see @cite{1}.
+For more details see [@cite{1}].
 
 @c float Figure, fig1
 @c caption{ An screenshot with an example BDSIM visualization }
@@ -1603,7 +1672,7 @@ option, physicsList="em_standard";
 
 
 
-Several predefined physics lists are available. Some physics lists allow biasing and re-weighting for some processes e.g. muon production. To set the amount of biasing see @ref{option}. Further details of the QGSP, FTFP and BERT hadronic physics lists can be found in @cite{5}. 
+Several predefined physics lists are available. Some physics lists allow biasing and re-weighting for some processes e.g. muon production. To set the amount of biasing see @ref{option}. Further details of the QGSP, FTFP and BERT hadronic physics lists can be found in [@cite{5}]. 
 
 @multitable @columnfractions .3 .7
 @item @code{standard}          @tab transportation of primary particles only
@@ -1635,7 +1704,7 @@ to the boundary of the ``logical volume'' it is currently in (which could be, e.
 boundary between two adjacent elements) or by the mean free path of the activated processes. Then the particle is pushed
 to the new position and secondaries are generated if necessary. Each volume has an associated transportation algorithm.
 For an on-energy particle travelling close to the optical axis of a quadrupole, dipole or a drift, standard matrix transportation 
-algorithms are used @cite{4}. For multipoles of higher orders and for off-axis/energy particles Runge-Kutta methods are used.
+algorithms are used [@cite{4}]. For multipoles of higher orders and for off-axis/energy particles Runge-Kutta methods are used.
 
 
 @section Tracking accuracy
@@ -1861,28 +1930,28 @@ beam,  particle="e-",
 @node Known Issues, References, Bunch description formats, Top
 @appendix Known Issues
 
-A bug is present where a sampler attached to a bending magnet (RBend/SBend) will
-cause the magnetic field to fail to be set. The reference frame rotates 
-correctly but the particle trajectory does not follow. To work around this 
-issue, samplers should be attached to a marker rather than directly to the 
-magnet. For example:
+@c A bug is present where a sampler attached to a bending magnet (RBend/SBend) will
+@c cause the magnetic field to fail to be set. The reference frame rotates 
+@c correctly but the particle trajectory does not follow. To work around this 
+@c issue, samplers should be attached to a marker rather than directly to the 
+@c magnet. For example:
 
-@example
-@code{dip: sbend,l=1*m, angle=0.1;}
-@code{temp: line=(dip);}
-@code{use, period=temp;}
-@code{sample, range=dip;}
-@end example
+@c @example
+@c @code{dip: sbend,l=1*m, angle=0.1;}
+@c @code{temp: line=(dip);}
+@c @code{use, period=temp;}
+@c @code{sample, range=dip;}
+@c @end example
 
-should be replaced by:
+@c should be replaced by:
 
-@example
-@code{dip: sbend,l=1*m, angle=0.1;}
-@code{dipMark: marker;}
-@code{temp: line=(dipMark,dip);}
-@code{use, period=temp;}
-@code{sample, range=dipMark;}
-@end example
+@c @example
+@c @code{dip: sbend,l=1*m, angle=0.1;}
+@c @code{dipMark: marker;}
+@c @code{temp: line=(dipMark,dip);}
+@c @code{use, period=temp;}
+@c @code{sample, range=dipMark;}
+@c @end example
 
 Samplers attached to multiple instances of the same element incorrectly 
 register hits only from the first instance in all such samplers. For example:

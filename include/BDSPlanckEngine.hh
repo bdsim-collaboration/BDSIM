@@ -8,22 +8,10 @@
 
 #include "G4ios.hh" 
 #include "globals.hh"
-#include "Randomize.hh" 
-#include "G4Version.hh"
-#if G4VERSION_NUMBER > 899
-#include "G4VeLowEnergyLoss.hh"
-#else
-#include "G4VeEnergyLoss.hh"
-#endif
-#include "G4Track.hh"
-#include "G4Step.hh"
-#include "G4Gamma.hh"
-#include "G4Electron.hh"
-#include "G4Positron.hh"
-#include "G4OrderedTable.hh" 
-#include "G4PhysicsTable.hh"
-#include "G4PhysicsLogVector.hh"
- 
+#include "G4LorentzVector.hh"
+
+#include "CLHEP/Units/PhysicalConstants.h"
+
 class BDSPlanckEngine  
 { 
   public:
@@ -55,7 +43,7 @@ private:
 inline void BDSPlanckEngine::SetTemperature(G4double aTemperature)
 {
  itsTemperature=aTemperature;
- kT=k_Boltzmann* itsTemperature;
+ kT=CLHEP::k_Boltzmann* itsTemperature;
 }
 
 inline G4double BDSPlanckEngine::PlanckSpectrum(G4double x)

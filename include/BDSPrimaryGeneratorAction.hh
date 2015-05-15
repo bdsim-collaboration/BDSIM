@@ -13,46 +13,42 @@
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"
-#include <fstream>
-#include "BDSSynchrotronRadiation.hh"
-#include "BDSSamplerHit.hh"
+//#include <fstream>
+//#include "BDSSynchrotronRadiation.hh"
+//#include "BDSSamplerHit.hh"
 
 class G4ParticleGun;
 class G4Event;
-class BDSDetectorConstruction;
-
 
 class BDSPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
 public:
-  BDSPrimaryGeneratorAction(BDSDetectorConstruction*);    
+  BDSPrimaryGeneratorAction();    
   ~BDSPrimaryGeneratorAction();
   
 public:
-  void GeneratePrimaries(G4Event*);
+  virtual void GeneratePrimaries(G4Event*);
   
 private:
   G4ParticleGun*              particleGun;	  //pointer a to G4 service class
-  BDSDetectorConstruction*    BDSDetector;  //pointer to the geometry
   
   G4double weight;
  
   // beam data:
-  G4double beta_x,sig_z,KineticEnergy,
-    gamma,beta_y,sig_dp,emit_x,emit_y,charge;
+  //  G4double beta_x,sig_z,KineticEnergy,
+  // gamma,beta_y,sig_dp,emit_x,emit_y,charge;
 
-  G4double sig_x,sig_xp,sig_y,sig_yp,sig_t;
+  //  G4double sig_x,sig_xp,sig_y,sig_yp,sig_t;
   
-  std::ifstream InputBunchFile;
-  std::ifstream ExtractBunchFile;
+  //  std::ifstream InputBunchFile;
+  //std::ifstream ExtractBunchFile;
 
-  G4double logXfactor;
-  G4double logYfactor;
+  // G4double logXfactor;
+  // G4double logYfactor;
 
-  G4double itsSynchCritEng;
-  BDSSynchrotronRadiation* itsBDSSynchrotronRadiation;
+  // BDSSynchrotronRadiation* itsBDSSynchrotronRadiation;
 
-  BDSSamplerHitsCollection *itsSamplerHitsCollection;
+  //  BDSSamplerHitsCollection *itsSamplerHitsCollection;
 };
 
 #endif

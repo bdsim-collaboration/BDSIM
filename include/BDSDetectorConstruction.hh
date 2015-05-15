@@ -1,11 +1,3 @@
-/** BDSIM, v0.1   
-
-Last modified 15.11.2005 by Ilya Agapov
-
-**/
-
-//==============================================================
-
 #ifndef BDSDetectorConstruction_h
 #define BDSDetectorConstruction_h 
 
@@ -13,36 +5,24 @@ Last modified 15.11.2005 by Ilya Agapov
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 
-#include "BDSWorld.hh"
-#include "BDSMaterials.hh"
-#include "BDSBeamline.hh"
-
 #include "G4Region.hh"
-
-#include "G4IStore.hh"
 #include "G4GeometrySampler.hh"
 
-//GFlash parameterisation                                                                                                                                                     
+//GFlash parameterisation
 #include "GFlashHomoShowerParameterisation.hh"
-#include "G4FastSimulationManager.hh"
 #include "BDSShowerModel.hh"
 #include "GFlashHitMaker.hh"
 #include "GFlashParticleBounds.hh"
 
 
 class G4Box;
-class G4Tubs;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
-class G4Material;
 class G4UniformMagField;
-class BDSCalorimeterSD;
 class G4UserLimits;
 class G4VSensitiveDetector;
 
-class G4Navigator;
-
-//==============================================================
+class ElementList;
 
 class BDSDetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -52,40 +32,30 @@ public:
   ~BDSDetectorConstruction();
 
 public:
-     
-  G4VPhysicalVolume* Construct();
-  void SetMagField(const G4double afield);
-  void UpdateGeometry();
+  virtual G4VPhysicalVolume* Construct();
 
-  G4VIStore* CreateImportanceStore();
-  // inline G4IStore* GetIStore(){
-  //   return itsIStore;
-  // }
-
-  inline G4VPhysicalVolume* GetWorldVolume(){
-    return physiWorld;
-  }
-
-  // inline G4GeometrySampler* GetGeometrySampler(){
-  //   return itsGeometrySampler;
-  // }
-
-public:
-
-  G4double* GetWorldSize();
-  G4double GetWorldSizeX();
-  G4double GetWorldSizeY();
-  G4double GetWorldSizeZ();
+  inline G4VPhysicalVolume* GetWorldVolume()
+  {return physiWorld;}
   
 private:
+  /// assignment and copy constructor not implemented nor used
+  BDSDetectorConstruction& operator=(const BDSDetectorConstruction&);
+  BDSDetectorConstruction(BDSDetectorConstruction&);
+
+  G4VPhysicalVolume* ConstructBDS(ElementList& beamline_list);
+
+  void SetMagField(const G4double afield);
+  
+  /// converts parser beamline_list to BDSAcceleratorComponent with help of BDSComponentFactory
+  void BuildBeamline();
+  /// build world volume, and calculate positions
+  void BuildWorld();
+  /// placements
+  void ComponentPlacement();
+  /// build tunnel from _TUNNEL elements
+  void BuildTunnel();
+
   G4bool verbose;
-  G4bool outline;
-
-  void SetWorldSize(G4double*);
-  void SetWorldSizeX(G4double);
-  void SetWorldSizeY(G4double);
-  void SetWorldSizeZ(G4double);
-
 
   G4int    gflash;
   G4double gflashemax;
@@ -104,21 +74,16 @@ private:
   std::vector<G4double> itsWorldSize;
   std::vector< G4VPhysicalVolume * > fPhysicalVolumeVector; //a vector with all the physical volumes
 
-  void DefineMaterials();
-
-  G4VPhysicalVolume* ConstructBDS(std::list<struct Element>& beamline_list);
   G4UniformMagField* magField;      //pointer to the magnetic field
   G4UserLimits* BDSUserLimits;
 
   G4VSensitiveDetector *  BDSSensitiveDetector;
   
-  G4IStore* itsIStore;
-
   // Gflash members                                                                                                                                                     
   std::vector<GFlashHomoShowerParameterisation*> theParameterisation;
   GFlashHitMaker *theHitMaker;
   GFlashParticleBounds *theParticleBounds;
-  GFlashParticleBounds *theParticleBoundsVac;
+  //  GFlashParticleBounds *theParticleBoundsVac;
   std::vector<BDSShowerModel*> theFastShowerModel;
   std::vector<G4Region*> gFlashRegion;
 

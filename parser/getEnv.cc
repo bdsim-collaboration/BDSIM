@@ -14,7 +14,9 @@ std::string getEnv(const char* env)
     std::cout << __FUNCTION__ << "> getEnv - spacesOnly =" << spacesOnly << std::endl;
   }
   if((tmp==NULL) || (spacesOnly)){
+#ifdef BDSDEBUG
     std::cout << __FUNCTION__ << "> getEnv - no environment variable \"" << env << "\" is set" << std::endl;
+#endif
     return (const char*)"";
   } else {
     std::string stmp = (std::string)tmp+ "/";

@@ -1,29 +1,19 @@
-/* BDSIM, v0.4   
-
-19 May 2008 by Marchiori G.
-11 Oct 2007 by Steve Malton
-
-*/
-
-//==============================================================
-
-
-
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSMultipoleMagField.hh"
 
 #include "G4Navigator.hh"
+#include "G4ParticleDefinition.hh"
 #include "G4TransportationManager.hh"
-
-//std::ofstream testf;
+#include "BDSDebug.hh"
 
 BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4double> ks)
 {
 
-#ifdef DEBUG 
-    G4cout<<"Creating BDSMultipoleMagField"<<G4endl;
-    G4cout<<"size="<<kn.size()<<G4endl;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout<<"Creating BDSMultipoleMagField"<<G4endl;
+  G4cout<<"size="<<kn.size()<<G4endl;
 #endif
 
   // compute magnetic rigidity brho
@@ -32,15 +22,15 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
   // charge (in |e| units)
   G4double charge = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge();
   // momentum (in GeV/c)
-  G4double momentum = (BDSGlobalConstants::Instance()->GetBeamMomentum())/GeV;
+  G4double momentum = (BDSGlobalConstants::Instance()->GetBeamMomentum())/CLHEP::GeV;
   // rigidity (in T*m)
   G4double brho = ( momentum / (0.299792458 * fabs(charge)));
   // rigidity (in Geant4 units)
-  brho *= (tesla*m);
-#ifdef DEBUG 
+  brho *= (CLHEP::tesla*CLHEP::m);
+#ifdef BDSDEBUG 
     G4cout<<"beam charge="<<charge<<"e"<<G4endl;
     G4cout<<"beam momentum="<<momentum<<"GeV/c"<<G4endl;
-    G4cout<<"rigidity="<<brho/(tesla*m)<<"T*m"<<G4endl;
+    G4cout<<"rigidity="<<brho/(CLHEP::tesla*CLHEP::m)<<"T*m"<<G4endl;
 #endif
 
   // convert strengths Kn from BDSIM units (m^-n) to Geant4 internal units
@@ -55,14 +45,14 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
   for(it=bn.begin(), its=bs.begin();it!=bn.end();it++, its++)
     {
       n++;
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<<2*n<<"-pole strengths:"<<G4endl;
       G4cout<<"Kn : "<<(*it )<<"m^-"<<n<<G4endl;
       G4cout<<"Ks : "<<(*its)<<"m^-"<<n<<G4endl;
 #endif
-      (*it) *= brho/pow(m,n);
-      (*its) *= brho/pow(m,n);
-#ifdef DEBUG 
+      (*it) *= brho/pow(CLHEP::m,n);
+      (*its) *= brho/pow(CLHEP::m,n);
+#ifdef BDSDEBUG 
       G4cout<<2*n<<"-pole field coefficients:"<<G4endl;
       G4cout<<"Bn : "<<(*it )<<"T/m^"<<n-1<<G4endl;
       G4cout<<"Bs : "<<(*its)<<"T/m^"<<n-1<<G4endl;
@@ -71,7 +61,7 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
 
   // write field map to debug file
   /*
-    #ifdef DEBUG 
+    #ifdef BDSDEBUG 
     G4cout<<"Writing field map to file field.txt"<<G4endl;
     
     testf.open("field.txt");
@@ -81,14 +71,14 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
     
     testf<<"x(cm) y(cm) Bx(T) By(T) Bz(T) "<<G4endl;
     
-    for(G4double x=-1*cm;x<1*cm;x+=0.1*mm)
-    for(G4double y=-1*cm;y<1*cm;y+=0.1*mm){
+    for(G4double x=-1*CLHEP::cm;x<1*CLHEP::cm;x+=0.1*CLHEP::mm)
+    for(G4double y=-1*CLHEP::cm;y<1*CLHEP::cm;y+=0.1*CLHEP::mm){
     pt[0]= x;
     pt[1]= y;
     pt[2]= pt[3]=0;
 	GetFieldValue(pt,b);
-	testf<<x/cm<<" "<<y/cm<<" "
-        <<b[0]/tesla<<" "<<b[1]/tesla<<" "<<b[2]/tesla<<G4endl;
+	testf<<x/CLHEP::cm<<" "<<y/CLHEP::cm<<" "
+        <<b[0]/CLHEP::tesla<<" "<<b[1]/CLHEP::tesla<<" "<<b[2]/CLHEP::tesla<<G4endl;
         }
         #endif
   */
@@ -99,15 +89,14 @@ BDSMultipoleMagField::~BDSMultipoleMagField(){}
 void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
 		       G4double *Bfield ) const
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
   G4cout<<"Called GetFieldValue at position (in global coordinates): ("
-        <<Point[0]/cm<<" "<<Point[1]/cm<<" "<<Point[2]/cm
+        <<Point[0]/CLHEP::cm<<" "<<Point[1]/CLHEP::cm<<" "<<Point[2]/CLHEP::cm
         <<")cm"<<G4endl;
 #endif
 
-  //
   // convert global to local coordinates
-  //
   G4Navigator* MulNavigator=
     G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
   
@@ -119,9 +108,9 @@ void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
   G4AffineTransform GlobalAffine=MulNavigator->GetGlobalToLocalTransform();
   LocalR=GlobalAffine.TransformPoint(GlobalR); 
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout<<"Current position in local coordinates: ("
-        <<LocalR[0]/cm<<" "<<LocalR[1]/cm<<" "<<LocalR[2]/cm
+        <<LocalR[0]/CLHEP::cm<<" "<<LocalR[1]/CLHEP::cm<<" "<<LocalR[2]/CLHEP::cm
         <<") cm"<<G4endl;
 #endif
  
@@ -143,11 +132,11 @@ void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
 
   G4double r = sqrt(LocalR[0]*LocalR[0] + LocalR[1]*LocalR[1]);
   G4double phi;
-  if(fabs(r)>1.e-11*m) phi = atan2(LocalR[1],LocalR[0]);
+  if(fabs(r)>1.e-11*CLHEP::m) phi = atan2(LocalR[1],LocalR[0]);
   else phi = 0; // don't care
 
-#ifdef DEBUG 
-  G4cout<<"In local coordinates, r= "<<r/m<<"m, phi="<<phi<<"rad"<<G4endl;
+#ifdef BDSDEBUG 
+  G4cout<<"In local coordinates, r= "<<r/CLHEP::m<<"m, phi="<<phi<<"rad"<<G4endl;
 #endif
 
   G4int order=0;
@@ -175,11 +164,11 @@ void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
   LocalBField[1]=( br*sin(phi)+bphi*cos(phi) );
   LocalBField[2]=0;
 
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
   G4cout<<"order="<<order<<G4endl;
   G4cout<<"In local coordinates:"<<G4endl
-        <<"Br="<<br/tesla<<"T, Bphi="<<bphi/tesla<<"T, "
-        <<"Bx="<<LocalBField[0]/tesla<<"T, By="<<LocalBField[1]/tesla<<"T"
+        <<"Br="<<br/CLHEP::tesla<<"T, Bphi="<<bphi/CLHEP::tesla<<"T, "
+        <<"Bx="<<LocalBField[0]/CLHEP::tesla<<"T, By="<<LocalBField[1]/CLHEP::tesla<<"T"
         <<G4endl;
 #endif
 

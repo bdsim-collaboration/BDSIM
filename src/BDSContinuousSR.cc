@@ -9,18 +9,15 @@ Last modified 15.11.2005 by Ilya Agapov
 //  Synchrotron radiation energy loss process
 //
 
-#include <list>
-
-
-
 #include "BDSGlobalConstants.hh" 
 #include "BDSContinuousSR.hh"
 #include "G4ios.hh"
-#include "G4UnitsTable.hh"
+#include "CLHEP/Units/PhysicalConstants.h"
 
-#include "BDSAcceleratorComponent.hh"
-#include "BDSBeamline.hh"
-
+//--------------------------
+// SYNCHROTRON RAD ***
+G4double BDSLocalRadiusOfCurvature=DBL_MAX;// Used in Mean Free Path calc.
+//--------------------------
 
 BDSContinuousSR::BDSContinuousSR(const G4String& processName)
   : G4VDiscreteProcess(processName)
@@ -29,8 +26,8 @@ BDSContinuousSR::BDSContinuousSR(const G4String& processName)
 
   G4cout<<"initializing contSR"<<G4endl;
 
-  nExpConst=5*fine_structure_const/(2*sqrt(3.0))/electron_mass_c2;
-  CritEngFac=3./2.*hbarc/pow(electron_mass_c2,3);
+  nExpConst=5*CLHEP::fine_structure_const/(2*sqrt(3.0))/CLHEP::electron_mass_c2;
+  CritEngFac=3./2.*CLHEP::hbarc/pow(CLHEP::electron_mass_c2,3);
 
 } 
  
@@ -57,7 +54,7 @@ BDSContinuousSR::PostStepDoIt(const G4Track& trackData,
     G4double mass = aParticle->GetMass();
     G4double gamma = 1.e-3 * eEnergy / mass; // in 1.e3 units
     
-    G4double r0 = 2.817940325e-3*m; // classical electron radius in 1..e-12 units
+    G4double r0 = 2.817940325e-3*CLHEP::m; // classical electron radius in 1..e-12 units
 
     // G4cout<<"mass="<<mass<<G4endl;
 //     G4cout<<"energy="<<eEnergy<<G4endl;

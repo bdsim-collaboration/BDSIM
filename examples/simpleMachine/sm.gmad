@@ -1,0 +1,39 @@
+d1: drift, l=1*m;
+q1: quadrupole, l=10*m, k1=0.000000000000001;
+c1: rcol, l=10*m, ysize=5*mm, xsize=5*mm, material="Copper";
+
+l1: line = (d1,c1);
+use,period=l1;
+
+sample, range=d1;
+sample, range=c1;
+
+option, ngenerate=1,
+!	physicsList="QGSP_BERT",
+!	physicsList="hadronic_standard",
+	physicsList="em_standard",
+	beampipeRadius=5.0*cm,
+	beampipeThickness=5*cm,
+	boxSize=2.0*m,
+	tunnelRadius=2*m;
+
+option, chordStepMinimum    = 0.0000000000001 * m,
+        deltaIntersection   = 0.00000000001 * m,
+        deltaChord          = 0.000001 * m,
+        thresholdCutCharged = 1 * keV,
+        thresholdCutPhotons = 1 * keV,
+	defaultRangeCut=1*cm,	
+	prodCutPositrons=1*cm,
+	prodCutElectrons=1*cm,
+	prodCutPhotons=1*cm,
+	prodCutPositronsP=1*cm,
+	prodCutElectronsP=1*cm,
+	prodCutPhotonsP=1*cm;
+
+beam, particle="proton",
+      energy=10.0*GeV,
+      distrType="reference",
+      X0=0.0,
+      Y0=0.0,
+      Yp0=0.01;
+

@@ -5,11 +5,10 @@
 #include "globals.hh"
 #include "BDSXYMagField.hh"
 #include <fstream>
+#include <vector>
 #include "CLHEP/Vector/Rotation.h"
 
-using namespace std;
-
-G4double GetNearestValue(vector<struct XYFieldRecord> fieldValues, G4double x, G4double y,
+G4double GetNearestValue(std::vector<struct XYFieldRecord> fieldValues, G4double x, G4double y,
 			 G4double &bx,G4double &by, G4double &bz);
 
 BDSXYMagField::BDSXYMagField(G4String fname) :
@@ -47,27 +46,31 @@ G4bool  BDSXYMagField::DoesFieldChangeEnergy() const
 
 G4int BDSXYMagField::ReadFile(G4String fname)
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout<<"reading file "<<fname<<G4endl;
 #endif
   struct XYFieldRecord rec;
   
-  ifstream bmapif;
-  bmapif.open(fname);
+
+  // Open the file for reading.
+  std::ifstream bmapif;
+  bmapif.open(fname.c_str());
+  G4String exceptionString = "Unable to load field map file: " + fname;
+  if(!bmapif) G4Exception(exceptionString.c_str(), "-1", FatalException, "");
 
   while(bmapif.good())
     {
       bmapif>>rec.x>>rec.y>>rec.Bx>>rec.By>>rec.Bz; 
       
       if(!bmapif.good()) break;
-#ifdef DEBUG 
+#ifdef BDSDEBUG 
       G4cout<<"read: "<<rec.x<<" "<<rec.y<<" "<<rec.Bx<<" "<<rec.By<<" "<<rec.Bz<<" "<<G4endl;
 #endif
       itsFieldValues.push_back(rec);
     }
   
   bmapif.close();
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout<<"done"<<G4endl;
 #endif
   return 0;
@@ -77,8 +80,8 @@ G4int BDSXYMagField::ReadFile(G4String fname)
 // create a field mesh in the "world" coordinates from list of field values
 void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 {
-#ifdef DEBUG
-  G4cout<<"BDSElement:: create XY field mesh"<<G4endl;
+#ifdef BDSDEBUG
+  G4cout<<"BDSXYMagField:: create XY field mesh"<<G4endl;
 #endif
   ReadFile(itsFileName);
 
@@ -96,7 +99,7 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
   
   // determine mesh physical dimensions
   
-  vector<struct XYFieldRecord>::iterator it, itt;
+  std::vector<struct XYFieldRecord>::iterator it, itt;
   
 
   double xmax=0, ymax=0;
@@ -121,14 +124,14 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
       
       for(itt=itsFieldValues.begin();itt!=itsFieldValues.end();itt++)
 	{
-#ifdef DEBUG
+#ifdef BDSDEBUG
 	  G4cout<<(*it).x<<" "<<(*it).y<<" "<<" "<<(*it).Bx<<G4endl;
 #endif
 	  hxold = fabs((*it).x - (*itt).x);
-	  if( (hxold > 1.0e-11*m)&&(hxold<hx) ) hx = hxold;
+	  if( (hxold > 1.0e-11*CLHEP::m)&&(hxold<hx) ) hx = hxold;
 	  
 	  hyold = fabs((*it).y - (*itt).y);
-	  if( (hyold > 1.0e-11*m)&&(hyold<hy) ) hy = hyold;
+	  if( (hyold > 1.0e-11*CLHEP::m)&&(hyold<hy) ) hy = hyold;
 	  
 	}
     }
@@ -152,13 +155,12 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
   SetOriginRotation(*Rot);
   SetOriginTranslation(Trans);
 
-  G4double bx, by, bz, x, y;
-
   for(int i=0; i<nX;i++)
     for(int j=0;j<nY;j++)
       {
-	x =  i * hx - xHalf;
-	y =  j * hy - yHalf;
+	G4double bx=0., by=0., bz=0.;
+	G4double x = i * hx - xHalf;
+	G4double y = j * hy - yHalf;
 	
 	// find the closest measured point
 	// if the point is further than ... set to zero 
@@ -172,9 +174,9 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 
 
 	if(dist < tol) {
-	  SetBx(i,j,bx * tesla);
-	  SetBy(i,j,by * tesla);
-	  SetBz(i,j,bz * tesla);
+	  SetBx(i,j,bx * CLHEP::tesla);
+	  SetBy(i,j,by * CLHEP::tesla);
+	  SetBz(i,j,bz * CLHEP::tesla);
 	  
 	} else {
 	  SetBx(i,j,0.);
@@ -188,7 +190,7 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
   
   G4cout<<"writing test file"<<G4endl;
   
-  ofstream testf("btest.dat");
+  std::ofstream testf("btest.dat");
   
   for(int i=0; i<nX;i++)
     for(int j=0;j<nY;j++)
@@ -196,7 +198,7 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 	testf<<i<<" "<<j<<" "" "<<
 	  GetBx(i,j)<<" "<<
 	  GetBy(i,j)<<" "<<
-	  GetBz(i,j)<<endl;
+	  GetBz(i,j)<<std::endl;
       }
   
   testf.close();
@@ -207,7 +209,7 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 void BDSXYMagField::GetFieldValue(const G4double Point[4], G4double *Bfield ) const
 {
   G4double bx=0., by=0.;
-#if DEBUG
+#if BDSDEBUG
   G4double bz=0.;
 #endif
   G4int i=0,j=0;
@@ -235,7 +237,7 @@ void BDSXYMagField::GetFieldValue(const G4double Point[4], G4double *Bfield ) co
       } else {
 	bx = Bx[i][j];
 	by = By[i][j];
-#if DEBUG
+#if BDSDEBUG
 	bz = Bz[i][j];
 	G4cout << "Bx[" << i << "][" << j << "]=" << Bx[i][j] << G4endl;
 	G4cout << "By[" << i << "][" << j << "]=" << By[i][j] << G4endl;
@@ -254,7 +256,7 @@ void BDSXYMagField::GetFieldValue(const G4double Point[4], G4double *Bfield ) co
   Bfield[4] = 0;
   Bfield[5] = 0;
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout<<" field value requested : "<<Point[0]<<" , "<<Point[1]<<" , "<<Point[2]<<" , "<<Point[3]<<" : "<<
     i<<" , "<<j<<" , "<<"    "<<local[0]<<" "<<local[1]<<" "<<local[2]<<" "<<bx<<" "<<by<<" "<<bz<<G4endl;
 #endif
@@ -324,23 +326,25 @@ G4double BDSXYMagField::GetBz(int i,int j)
 }
 
 
-G4double GetNearestValue(vector<struct XYFieldRecord> fieldValues, G4double x, G4double y,
+G4double GetNearestValue(std::vector<struct XYFieldRecord> fieldValues, G4double x, G4double y,
 			 G4double &bx,G4double &by, G4double &bz)
 {
-  vector<struct XYFieldRecord>::iterator it;
+  std::vector<struct XYFieldRecord>::iterator it;
 
-  G4double dist = 10.e+10;
+  G4double nearestDist = 10.e+10;
 
   for(it = fieldValues.begin(); it!=fieldValues.end();it++)
     {
-      dist = sqrt( (x-(*it).x)*(x-(*it).x) + (y-(*it).y)*(y-(*it).y));
-      bx = (*it).Bx;
-      by = (*it).By;
-      bz = (*it).Bz;
+      G4double dist = sqrt( (x-(*it).x)*(x-(*it).x) + (y-(*it).y)*(y-(*it).y));
+      if (dist<nearestDist) {
+	nearestDist = dist;
+	bx = (*it).Bx;
+	by = (*it).By;
+	bz = (*it).Bz;
+      }
     }
 
-  return dist;
-  
+  return nearestDist;
 }
 
 
@@ -351,7 +355,7 @@ G4double GetNearestValue(vector<struct XYFieldRecord> fieldValues, G4double x, G
 // // create a field mesh in the "world" coordinates from list of field values
 // void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 // {
-//   G4cout<<"BDSElement:: create XY field mesh"<<G4endl;
+//   G4cout<<"BDSXYMagField:: create XY field mesh"<<G4endl;
   
 //   const G4RotationMatrix* Rot=referenceVolume->GetFrameRotation();
 //   const G4ThreeVector Trans=referenceVolume->GetFrameTranslation();
@@ -362,7 +366,7 @@ G4double GetNearestValue(vector<struct XYFieldRecord> fieldValues, G4double x, G
 //   // mesh physical dimensions
 
 
-//   vector<struct XYFieldRecord>::iterator it, itt;
+//   std::vector<struct XYFieldRecord>::iterator it, itt;
 
 
 //   double xmax=0, ymax=0;
@@ -440,8 +444,8 @@ G4double GetNearestValue(vector<struct XYFieldRecord> fieldValues, G4double x, G
 //   G4cout<<"rmax ="<<rmax<<G4endl;
 
 //   G4double x, y, z;
-//   vector<struct FieldRecord> vals;
-//   vector<double> rs;
+//   std::vector<struct FieldRecord> vals;
+//   std::vector<double> rs;
 
 //   for(int i=0; i<nX;i++)
 //      for(int j=0;j<nY;j++)
@@ -512,11 +516,11 @@ G4double GetNearestValue(vector<struct XYFieldRecord> fieldValues, G4double x, G
 // 	   //G4cout<<"writing values..."<<i<<" "<<j<<" "<<k<<G4endl;
 // 	   //G4cout<<"x"<<G4endl;
 	   
-// 	   itsField->SetBx(i,j,k,bxmean * tesla);
+// 	   itsField->SetBx(i,j,k,bxmean * CLHEP::tesla);
 	   
-// 	   itsField->SetBy(i,j,k,bymean * tesla);
+// 	   itsField->SetBy(i,j,k,bymean * CLHEP::tesla);
 	   
-// 	   itsField->SetBz(i,j,k,bzmean * tesla);
+// 	   itsField->SetBz(i,j,k,bzmean * CLHEP::tesla);
 
 	   
 

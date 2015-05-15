@@ -19,7 +19,6 @@
 #include "G4MagIntegratorStepper.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
-#include "G4Navigator.hh"
 
 class BDSSextStepper : public G4MagIntegratorStepper
 {

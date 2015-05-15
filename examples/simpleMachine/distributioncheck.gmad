@@ -1,0 +1,36 @@
+s1: sextupole, k1=0.5, l=4.5*m, outR=1.0*m,inR=0.8*m;
+q1: quadrupole, k1=0.5, l=4.5*m, spec="type=standard",outR=0.5*m,inR=0.8*m;
+t1: transform3d, length=0*m, psi=pi/3;
+t2: transform3d, psi=-pi/3;
+col1: rcol, l=4*m, xsize=1*mm, ysize=10*cm, material="Tungsten";
+d1: drift, l=3*m;
+l1: line = (s1,d1,t1,col1,t2,d1,q1,d1,col1);
+use,period=l1;
+sample, range=q1;
+
+option, ngenerate=10,
+	physicsList="standard",
+	beampipeRadius=5.0*cm,
+	boxSize=2.0*m,
+	tunnelRadius=2*m,
+	randomSeed=-1;
+
+!beam, particle="e-",
+!      energy=1.0,
+!      distrType="gauss",
+!      sigmaX=1e-6,
+!      sigmaY=1e-6,
+!      sigmaXp=1e-6,
+!      sigmaYp=1e-6,
+!      sigmaE=1e-6,
+!      sigmaT=1e-6;
+
+beam, particle="e-",
+      energy=1.0,
+      distrType="square",
+      envelopeX=1e-6,
+      envelopeY=1e-6,
+      envelopeXp=1e-6,
+      envelopeYp=1e-6,
+      envelopeT=1e-6,
+      envelopeE=1e-6;

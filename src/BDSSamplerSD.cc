@@ -9,8 +9,12 @@
 
 #include "BDSGlobalConstants.hh" 
 #include "BDSExecOptions.hh"
+#include "BDSDebug.hh"
+#include "BDSParticle.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSamplerHit.hh"
+#include "BDSTrajectory.hh"
+#include "BDSTrajectoryPoint.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Track.hh"
@@ -20,7 +24,6 @@
 #include "G4VTouchable.hh"
 #include "G4TouchableHistory.hh"
 #include "G4ios.hh"
-#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 
 #include "G4AffineTransform.hh"
@@ -30,18 +33,8 @@
 
 #include "G4SDManager.hh"
 
-//typedef std::vector<G4int> MuonTrackVector;
-//extern MuonTrackVector* theMuonTrackVector;
-
-extern G4double
-  initial_x, initial_xp,
-  initial_y, initial_yp,
-  initial_z, initial_zp,
-  initial_E, initial_t;
-
-
 BDSSamplerSD::BDSSamplerSD(G4String name, G4String type)
-  :G4VSensitiveDetector(name),SamplerCollection(NULL),
+  :G4VSensitiveDetector(name),itsHCID(-1),SamplerCollection(NULL),
    itsType(type)
 {
   itsCollectionName="Sampler_"+type;
@@ -51,43 +44,36 @@ BDSSamplerSD::BDSSamplerSD(G4String name, G4String type)
 BDSSamplerSD::~BDSSamplerSD()
 {;}
 
-void BDSSamplerSD::Initialize(G4HCofThisEvent*)
+void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
 {
   // Create Sampler hits collection
   SamplerCollection = new BDSSamplerHitsCollection(SensitiveDetectorName,itsCollectionName);
 
-  // Record the collection ID for later
-  //  G4SDManager *SDman = G4SDManager::GetSDMpointer();
-  //  itsHCID = SDman->GetCollectionID(itsCollectionName);
-
+  // Record id for use in EventAction to save time
+  if (itsHCID < 0){
+    itsHCID = G4SDManager::GetSDMpointer()->GetCollectionID(itsCollectionName);}
+  HCE->AddHitsCollection(itsHCID,SamplerCollection);
 }
 
 G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 {
-  G4Track* theTrack = aStep->GetTrack();
+  G4Track* theTrack         = aStep->GetTrack();
+  BDSTrajectory* bdsTraj    = new BDSTrajectory(theTrack);
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
-  //  G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
-  //  // tmp - only store muons
-  //     G4String pName=theTrack->GetDefinition()->GetParticleName();
-  //    if(pName=="mu+"||pName=="mu-")
-  // 	{ // tm
-  //Do not store hit if particles is "twiss" or "reference"
-  if(BDSGlobalConstants::Instance()->DoTwiss() || BDSGlobalConstants::Instance()->isReference) return false;
+  
   //Do not store hit if the particle is not on the boundary 
   if(preStepPoint->GetStepStatus()!=fGeomBoundary) return false;
-  
+
   //unique ID of track
   G4int TrackID = theTrack->GetTrackID();
   //unique ID of track's mother
   G4int ParentID = theTrack->GetParentID();
   //time since track creation
   G4double t = theTrack->GetGlobalTime();
-  //total track energy
-  
-  
-  G4double energy = theTrack->GetKineticEnergy()+ 
-    theTrack->GetDefinition()->GetPDGMass();
-  
+  //total track energy 
+  G4double energy = theTrack->GetKineticEnergy()+theTrack->GetDefinition()->GetPDGMass();
+  //Turn Number
+  G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();  
   
   //current particle position (global)
   G4ThreeVector pos = theTrack->GetPosition();
@@ -114,21 +100,13 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   //      G4ThreeVector LocalDirection=Rot*momDir; 
   G4ThreeVector LocalPosition = tf.TransformPoint(pos);
   G4ThreeVector LocalDirection = tf.TransformAxis(momDir);
-  
-  G4double x=LocalPosition.x();
-  G4double y=LocalPosition.y();
-  G4double z=LocalPosition.z();
-  G4double xPrime=LocalDirection.x();
-  G4double yPrime=LocalDirection.y();
+
   G4double zPrime=LocalDirection.z();
-  
-  // Changed z output by Samplers to be the position of the sampler
-  // not time of flight of the particle JCC 15/10/05
-  //G4double z=-(time*c_light-(pos.z()+BDSGlobalConstants::Instance()->GetWorldSizeZ()));
-  //G4double z=pos.z();
   if(zPrime<0) energy*=-1;
   // apply a correction that takes ac... gab to do later!
-  
+
+  BDSParticle local(LocalPosition,LocalDirection,energy,t);
+
   G4int nEvent= 
     G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   
@@ -140,89 +118,59 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   
   G4String pName=theTrack->GetDefinition()->GetParticleName();
   
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "BDSSamplerSD> Particle name: " << pName << G4endl;  
   G4cout << __METHOD_NAME__ << "BDSSamplerSD> PDG encoding: " << PDGtype << G4endl;  
   G4cout << __METHOD_NAME__ << "BDSSamplerSD> TrackID: " << TrackID << G4endl;  
 #endif
   
-  G4ThreeVector vtx=theTrack->GetVertexPosition();
-  G4ThreeVector dir=theTrack->GetVertexMomentumDirection();
-  
-  G4double 
-    start_x, start_xp,
-    start_y, start_yp,
-    start_z, start_zp,
-    start_E, start_t;
-  
-  if(pName!="e+" && pName!="e-") 
-    {
-      // store production point
-      start_x   =  vtx.x();
-      start_xp  =  dir.x();
-      start_y   =  vtx.y();
-      start_yp  =  dir.y();	  
-      start_z   =  vtx.z();
-      start_zp  =  dir.z();
-      
-      start_E   =  theTrack->GetVertexKineticEnergy()+ 
-	theTrack->GetDefinition()->GetPDGMass();
-      
-      start_t   = t - theTrack->GetLocalTime();
-    }
-  else
-    {// for electrons (and positrons) store the point of last scatter
-      start_x  = initial_x;
-      start_xp = initial_xp;
-      start_y  = initial_y;
-      start_yp = initial_yp;
-      start_z  = initial_z;
-      start_zp = initial_zp;
-      start_E  = initial_E;
-      start_t  = initial_t;
-    }
+  G4ThreeVector vtx               = theTrack->GetVertexPosition();
+  G4ThreeVector dir               = theTrack->GetVertexMomentumDirection();
+  G4ThreeVector posLastScatter    = bdsTraj->GetPositionOfLastScatter(theTrack);
+  G4ThreeVector momDirLastScatter = bdsTraj->GetMomDirAtLastScatter(theTrack);
+  G4double timeLastScatter        = bdsTraj->GetTimeAtLastScatter(theTrack);
+  G4double energyLastScatter      = bdsTraj->GetEnergyAtLastScatter(theTrack);
+  G4double vertexEnergy = theTrack->GetVertexKineticEnergy() + theTrack->GetParticleDefinition()->GetPDGMass();
+  G4double vertexTime             = bdsTraj->GetTimeAtVertex(theTrack);
+
+  // store production/scatter point
+  BDSParticle lastScatter(posLastScatter,momDirLastScatter,energyLastScatter,timeLastScatter);
+
+  //production point
+  BDSParticle production(vtx,dir,vertexEnergy,vertexTime);
+
+  // global point
+  BDSParticle global(pos,momDir,energy,t);
+
   G4double weight=theTrack->GetWeight();
-  
-  /*
-    if(BDSGlobalConstants::Instance()->GetStoreMuonTrajectories())
-    if(pName=="mu+"||pName=="mu-") 
-    theMuonTrackVector->push_back(theTrack->GetTrackID());
-  */
-  
+ 
   BDSSamplerHit* smpHit
     = new BDSSamplerHit(
 			SampName,
-			start_E,
-			start_x, start_xp,
-			start_y, start_yp,
-			start_z, start_zp,
-			start_t,
-			energy,
-			x, xPrime,
-			y, yPrime,
-			z, zPrime,
-			t,
+			BDSGlobalConstants::Instance()->GetInitialPoint(),
+			production,
+			lastScatter,
+			local,
+			global,
 			s,
 			weight,
-			PDGtype,nEvent, ParentID, TrackID);
-  smpHit->SetGlobalX(pos.x());
-  smpHit->SetGlobalY(pos.y());
-  smpHit->SetGlobalZ(pos.z());
-  smpHit->SetGlobalXPrime(momDir.x());
-  smpHit->SetGlobalYPrime(momDir.y());
-  smpHit->SetGlobalZPrime(momDir.z());
-  smpHit->SetType(itsType);
+			PDGtype,
+			nEvent, 
+			ParentID, 
+			TrackID,
+			turnstaken,
+			itsType);
   
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " Sampler : " << SampName << G4endl;
   G4cout << __METHOD_NAME__ << " Storing hit: E, x, y, z, xPrime, yPrime" << G4endl;
-  G4cout << __METHOD_NAME__ << " " << energy <<" "  << x << " " << y << " " << z << " " << xPrime << " " << yPrime << G4endl;
+  G4cout << __METHOD_NAME__ << " " << energy <<" "  << LocalPosition.x() << " " << LocalPosition.y() << " " << LocalPosition.z() << " " << LocalDirection.x() << " " << LocalDirection.y() << G4endl;
   G4cout << __METHOD_NAME__ << " Storing hit: E, x, y, z, xPrime, yPrime" << G4endl;
-  G4cout << __METHOD_NAME__ << " " << energy <<" "  << pos.x() << " " << pos.y() << " " << pos.z() << " " << xPrime << " " << yPrime << G4endl;
+  G4cout << __METHOD_NAME__ << " " << energy <<" "  << pos.x() << " " << pos.y() << " " << pos.z() << " " << LocalDirection.x() << " " << LocalDirection.y() << G4endl;
   G4cout << __METHOD_NAME__ << " entries in hits collection before inserting hit: " << SamplerCollection->entries() << G4endl;
 #endif
   SamplerCollection->insert(smpHit);
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " entries in hits collection after inserting hit: " << SamplerCollection->entries() << G4endl;
 #endif
 
@@ -230,15 +178,8 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   return true;
 }
 
-void BDSSamplerSD::EndOfEvent(G4HCofThisEvent*HCE)
+void BDSSamplerSD::EndOfEvent(G4HCofThisEvent* /*HCE*/)
 {
-  G4SDManager * SDman = G4SDManager::GetSDMpointer();
-  G4int HCID = SDman->GetCollectionID(itsCollectionName);
-  HCE->AddHitsCollection(HCID, SamplerCollection );
-
-  //  HCE->AddHitsCollection(itsHCID, SamplerCollection );
-
-
 }
 
 void BDSSamplerSD::clear(){} 

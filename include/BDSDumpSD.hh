@@ -15,9 +15,6 @@
 #define BDSDumpSD_h 
 
 #include "G4VSensitiveDetector.hh"
-#include "BDSSamplerHit.hh"
-#include "G4Navigator.hh"
-#include "G4TransportationManager.hh"
 
 class G4Step;
 class G4HCofThisEvent;
@@ -42,8 +39,8 @@ public:
 private:  
   G4String itsType;
   G4String itsCollectionName;
-  static G4int nCounter;
-  static G4int trackCounter;
+  static unsigned int nCounter;
+  static unsigned int trackCounter;
   static G4String lastVolume;
 };
 

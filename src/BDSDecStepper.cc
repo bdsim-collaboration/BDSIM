@@ -6,7 +6,6 @@
 
 #include "BDSDecStepper.hh"
 #include "G4ThreeVector.hh"
-#include "G4LineSection.hh"
 #include "G4TransportationManager.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
@@ -86,7 +85,7 @@ void BDSDecStepper::AdvanceHelix( const G4double  yIn[],
       // local r'' (for curvature)
       G4ThreeVector LocalRpp;
       // extra minus signs because x,y_machine = - x_,-y_geant_world
-      LocalRpp.setX(zp*By);
+      LocalRpp.setX( zp*By);
       LocalRpp.setY(-zp*Bx);
       LocalRpp.setZ( xp*By - yp*Bx);
       

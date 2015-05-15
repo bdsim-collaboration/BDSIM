@@ -8,9 +8,9 @@
 
 #include "BDSComptonEngine.hh"
 #include "G4ios.hh"
-#include "G4UnitsTable.hh"
-#include "Randomize.hh" 
 #include "G4LorentzRotation.hh"
+#include "Randomize.hh" 
+#include "CLHEP/Units/PhysicalConstants.h"
 
 BDSComptonEngine::BDSComptonEngine(){}
 
@@ -33,7 +33,7 @@ void BDSComptonEngine::PerformCompton()
   // Generate compton event; using method described in
   // H.Burkardt, SL/Note 93-73
   
-  G4double phi=twopi * G4UniformRand() ;
+  G4double phi=CLHEP::twopi * G4UniformRand() ;
   G4double sinphi=sin(phi);
   G4double cosphi=cos(phi);
   
@@ -69,7 +69,7 @@ void BDSComptonEngine::PerformCompton()
   sinth2=1.-costh2;
   
   // x is ratio of scattered to unscattered photon energy:
-  x = 1/(1+ GamInLab.e()*(1-costh)/electron_mass_c2);
+  x = 1/(1+ GamInLab.e()*(1-costh)/CLHEP::electron_mass_c2);
   
   //calculate weight of Compton relative to Thompson cross sections:
   weight_CovT= x* x * (x+1/x-sinth2)/(1+costh2);
@@ -93,7 +93,7 @@ void BDSComptonEngine::PerformCompton()
   itsScatteredEl.setPx(-itsScatteredGam.px());
   itsScatteredEl.setPy(-itsScatteredGam.py());
   itsScatteredEl.setPz(GamInLab.e()-itsScatteredGam.pz());
-  itsScatteredEl.setE( sqrt( pow(electron_mass_c2,2) +
+  itsScatteredEl.setE( sqrt( pow(CLHEP::electron_mass_c2,2) +
 			     pow(itsScatteredEl.px(),2)+
 			     pow(itsScatteredEl.py(),2)+
 			     pow(itsScatteredEl.pz(),2) ) );
@@ -137,7 +137,7 @@ void BDSComptonEngine::PerformHighEnergyCompton2()
   // Generate compton event; using method described in
   // H.Burkardt, SL/Note 93-73
   
-  G4double phi=twopi * G4UniformRand() ;
+  G4double phi=CLHEP::twopi * G4UniformRand() ;
   G4double sinphi=sin(phi);
   G4double cosphi=cos(phi);
   
@@ -172,7 +172,7 @@ void BDSComptonEngine::PerformHighEnergyCompton2()
   sinth=sqrt(sinth2);
 
   // x is ratio of scattered to unscattered photon energy:
-  x = 1/(1+ GamInLab.e()*(1-costh)/electron_mass_c2);
+  x = 1/(1+ GamInLab.e()*(1-costh)/CLHEP::electron_mass_c2);
 
   G4double Egam = x * GamInLab.e();
   
@@ -186,7 +186,7 @@ void BDSComptonEngine::PerformHighEnergyCompton2()
   itsScatteredEl.setPx(-itsScatteredGam.px());
   itsScatteredEl.setPy(-itsScatteredGam.py());
   itsScatteredEl.setPz(GamInLab.e()-itsScatteredGam.pz());
-  itsScatteredEl.setE( sqrt( pow(electron_mass_c2,2) +
+  itsScatteredEl.setE( sqrt( pow(CLHEP::electron_mass_c2,2) +
 			     pow(itsScatteredEl.px(),2)+
 			     pow(itsScatteredEl.py(),2)+
 			     pow(itsScatteredEl.pz(),2) ) );
@@ -208,7 +208,7 @@ void BDSComptonEngine::PerformHighEnergyCompton()
 {
 
   // Generate high energy compton event
-  G4double phi=twopi * G4UniformRand() ;
+  G4double phi=CLHEP::twopi * G4UniformRand() ;
   G4double sinphi=sin(phi);
   G4double cosphi=cos(phi);
   
@@ -216,7 +216,7 @@ void BDSComptonEngine::PerformHighEnergyCompton()
   G4LorentzVector ElInCM;
   G4double costh, costh2,sinth,sinth2;
   
-  //Boost the electon and gamma to the cm frame
+  //Boost the electron and gamma to the cm frame
   G4ThreeVector Boost=(itsIncomingEl+itsIncomingGam)/(itsIncomingEl.e()+itsIncomingGam.e());
   //  G4ThreeVector Boost=itsIncomingEl.boostVector();
 
@@ -236,7 +236,7 @@ void BDSComptonEngine::PerformHighEnergyCompton()
   G4double r1=0;
   G4double r2=0;
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "e_cms = " << e_cms << ", r2 = " << r2 << G4endl;
   
   G4cout << "Gamma CM E = " << GamInCM.e() << G4endl;
@@ -256,13 +256,13 @@ void BDSComptonEngine::PerformHighEnergyCompton()
     r2=G4UniformRand();
     t = pow(s+t_max,r1)*pow(s+t_min,1.-r1)-s;
     w = 0.5*(pow((s+t)/s,2)+1);
-#ifdef DEBUG
+#ifdef BDSDEBUG
     G4cout << "r1 = " << r1 << ", r2 = " << r2 << G4endl;
     G4cout << "s= " << s << ", t = " << t << ", w = " << w << ", w_max = " << w_max << G4endl;
 #endif
   }
   while(r2>(w/w_max));
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << "Finished: t = " << t << ", w = " << w << ", w_max = " << w_max << G4endl;
 #endif
 
@@ -288,7 +288,7 @@ void BDSComptonEngine::PerformHighEnergyCompton()
   itsScatteredEl.setPy(-p_trans_y_cms);
   itsScatteredEl.setPz(-p_long_cms);
   itsScatteredEl.setE(e_cms/2);
-  //  itsScatteredEl.setE(sqrt( pow(electron_mass_c2,2)+pow(its);
+  //  itsScatteredEl.setE(sqrt( pow(CLHEP::electron_mass_c2,2)+pow(its);
 
   /*
   itsScatteredGam.setPx(p_trans_x_cms);
@@ -299,7 +299,7 @@ void BDSComptonEngine::PerformHighEnergyCompton()
   itsScatteredEl.setPx(-itsScatteredGam.px());
   itsScatteredEl.setPy(-itsScatteredGam.py());
   itsScatteredEl.setPz(GamInCM.e()-itsScatteredGam.pz());
-  itsScatteredEl.setE( sqrt( pow(electron_mass_c2,2) +
+  itsScatteredEl.setE( sqrt( pow(CLHEP::electron_mass_c2,2) +
 			     pow(itsScatteredEl.px(),2)+
 			     pow(itsScatteredEl.py(),2)+
 			     pow(itsScatteredEl.pz(),2) ) );

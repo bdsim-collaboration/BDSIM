@@ -12,36 +12,23 @@
 #ifndef BDSGeometrySQL_h
 #define BDSGeometrySQL_h 1
 
+#include <fstream>
+#include <list>
+#include <vector>
+
 #include "globals.hh"
-#include "BDSMaterials.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Cons.hh"
-#include "G4Tubs.hh"
-#include "G4EllipticalTube.hh"
 #include "G4VisAttributes.hh"
 #include "G4UserLimits.hh"
 #include "BDSMySQLTable.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4MagIntegratorStepper.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4ChordFinder.hh"
-#include "G4FieldManager.hh"
-#include "BDSSamplerSD.hh"
-#include <fstream>
-#include <vector>
-#include <vector>
-#include "BDSMagFieldSQL.hh"
 #include "G4Region.hh"
-
-class BDSClassicalRK4;
 
 class BDSGeometrySQL
 {
 public:
-  BDSGeometrySQL(G4String DBfile, G4double markerlength);
+  BDSGeometrySQL(G4String DBfile, G4double markerlength,G4LogicalVolume *marker);
   ~BDSGeometrySQL();
-
-  void Construct(G4LogicalVolume *marker);
 
   // For List of uniform fields for volumes
   std::list<G4ThreeVector> UniformField;
@@ -108,6 +95,7 @@ private:
   G4Region* _precisionRegionSQL;
   G4Region* _approximationRegionSQL;
 
+  void Construct();
   void BuildSQLObjects(G4String file);
   void SetCommonParams(BDSMySQLTable*,G4int);
   void SetPlacementParams(BDSMySQLTable*,G4int);
@@ -135,10 +123,10 @@ private:
   std::ifstream ifs;
   G4LogicalVolume* itsMarkerVol;
   std::vector<BDSMySQLTable*> itsSQLTable;
-  BDSMagFieldSQL* itsMagField;
-  BDSSamplerSD* SensDet;
+  //  BDSMagFieldSQL* itsMagField;
+  //  BDSSamplerSD* SensDet;
 
-void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
+  void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
 
 protected:
 };

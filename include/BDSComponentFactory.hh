@@ -3,39 +3,37 @@
 
 #include <list>
 #include "globals.hh"
-#include "parser/gmad.h"
+#include "parser/element.h"
 #include "BDSAcceleratorComponent.hh"
+
+class ElementList; 
 
 class BDSComponentFactory{
 public:
   BDSComponentFactory();
   ~BDSComponentFactory();
-  BDSAcceleratorComponent* createComponent(std::list<struct Element>::iterator elementIter, std::list<struct Element>& beamline_list);
-  BDSAcceleratorComponent* createComponent(Element aElement, Element previousElement, Element nextElement);
-  BDSAcceleratorComponent* createComponent();
   
+  BDSAcceleratorComponent* createComponent(std::list<struct Element>::iterator elementIter, ElementList& beamline_list);
+  BDSAcceleratorComponent* createComponent(Element& aElement, Element& previousElement, Element& nextElement);
+  BDSAcceleratorComponent* createComponent();
+ 
 private:
   G4bool   verbose;
   
   G4double _charge, _momentum, _brho;
-  G4double _bpRad, _FeRad; 
-  // magnetic field moments (depending on the magnet type)
-  G4double _bField;       // dipole (constant) field (G4 units)
-  G4double _bPrime;       // quadrupole field gradient dBy/dx (G4 units)
-  G4double _bDoublePrime; // sextupole field coefficient d^2 By/dx^2 (G4 units)
-  G4double _bTriplePrime; // octupole field coefficient d^3 By/dy^3 (G4 units)
+  G4double _bpRad, _bpThick; 
   
-  // stuff for rescaling due to synchrotron radiation, IGNORING
-  G4double _synch_factor ;
   // drifts
-  G4double _driftLength;
   G4String _driftName ;
   G4double _driftStartAper, _driftEndAper;
   std::list<struct Element>::iterator _elementIter, _previousElementIter, _nextElementIter;
-  
-  
+  /// beamline
   std::list<BDSAcceleratorComponent*> itsBeamline;
+  /// parser data
   Element _element, _previousElement, _nextElement;
+  /// method to add common properties (not needed at creation!)
+  /// like aperture after creation
+  void addCommonProperties(BDSAcceleratorComponent* element);
   BDSAcceleratorComponent* createSampler();
   BDSAcceleratorComponent* createCSampler();
   BDSAcceleratorComponent* createDump();
@@ -52,11 +50,15 @@ private:
   BDSAcceleratorComponent* createMultipole();
   BDSAcceleratorComponent* createElement();
   BDSAcceleratorComponent* createSolenoid();
-  BDSAcceleratorComponent* createECol();
-  BDSAcceleratorComponent* createRCol();
+  BDSAcceleratorComponent* createCollimator();
   BDSAcceleratorComponent* createMuSpoiler();
   BDSAcceleratorComponent* createLaser();
   BDSAcceleratorComponent* createScreen();
+  BDSAcceleratorComponent* createAwakeScreen();
   BDSAcceleratorComponent* createTransform3D();
+  // for each of them - special cases need only for ring logic
+  BDSAcceleratorComponent* createTerminator();
+  BDSAcceleratorComponent* createTeleporter();
+
 };
 #endif

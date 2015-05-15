@@ -12,9 +12,6 @@
 #include "G4Mag_UsualEqRhs.hh"
 
 #include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4Box.hh"
-#include "G4EllipticalTube.hh"
 #include "G4VSolid.hh"
 #include "G4SubtractionSolid.hh"
 
@@ -22,18 +19,21 @@ class BDSCollimator :public BDSAcceleratorComponent
 {
 public:
   BDSCollimator(G4String aName, G4double aLength,G4double bpRad, 
-                G4double xAper, G4double yAper,G4int type,G4Material *collimatorMaterial, G4double outR, 
+                G4double xAper, G4double yAper,G4Material *collimatorMaterial, G4double outR, 
                 std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
 G4String aTunnelMaterial="");
   ~BDSCollimator();
 
 protected:
+  virtual void Build();
 
 private:
-  void BuildBLMs();
+  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildBLMs();
   void BuildInnerCollimator();
   void BuildCollimatorTunnel();
-  G4VisAttributes* SetVisAttributes();
+
+  virtual void SetVisAttributes();
 
   // Geometrical objects:
 
@@ -47,7 +47,6 @@ private:
   G4VSolid* itsOuterSolid;
   G4SubtractionSolid* itsSolid;
 
-
   G4Tubs* itsSoilTube;
   G4Tubs* itsTunnelTube;
   G4Tubs* itsInnerTunnelTube;
@@ -56,13 +55,10 @@ private:
   G4UserLimits* itsTunnelUserLimits;
   G4UserLimits* itsSoilTunnelUserLimits;
   G4UserLimits* itsInnerTunnelUserLimits;
-                    
-  G4VisAttributes* itsVisAttributes;
+  
   G4Mag_UsualEqRhs* itsEqRhs;
 
-private:
   G4Material* itsCollimatorMaterial;
-  //BDSEnergyCounterSD* itsEnergyCounterSD;
   G4double itsOuterR;
 };
 

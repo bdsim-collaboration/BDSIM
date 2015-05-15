@@ -25,4 +25,4 @@ private:
 };
 #endif
 
-#endif //from use_xml
+#endif

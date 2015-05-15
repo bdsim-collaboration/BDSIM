@@ -8,19 +8,8 @@
 #define BDSDecapole_h 1
 
 #include "globals.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-#include "BDSDecStepper.hh"
-
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4PVPlacement.hh"               
 
 #include "BDSMultipole.hh"
-#include "BDSDecMagField.hh"
 
 class BDSDecapole :public BDSMultipole
 {
@@ -33,22 +22,15 @@ public:
 	      G4String aMaterial = "");
   ~BDSDecapole();
 
-  void SynchRescale(G4double factor);
-
 protected:
+  virtual void Build();
 
 private:
   G4double itsBQuadPrime;
 
-  void BuildBPFieldAndStepper();
+  virtual void BuildBPFieldAndStepper();
 
-  G4VisAttributes* SetVisAttributes();
-
-  // field related objects:
-  BDSDecStepper* itsStepper;
-  BDSDecMagField* itsMagField;
-  G4Mag_UsualEqRhs* itsEqRhs;
-
+  virtual void SetVisAttributes();
 };
 
 #endif

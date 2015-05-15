@@ -1,40 +1,9 @@
-//  
-//   BDSIM, (C) 2001-2007
-//   
-//   version 0.4
-//  
-//
-//
-//   Rectangular bending magnet class
-//   - itsLength parameter internally stores the geometrical length 
-//   - itsAngle parameter internally stores the bending angle
-//   - to get the arc length use the GetArcLength() function
-//   - the volume is a trapezoid with pole faces perpendicular to the ideal
-//     orbit
-//     
-//   History
-//
-//
-
 #ifndef BDSSectorBend_h
 #define BDSSectorBend_h 
 
 #include "globals.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-#include "BDSHelixStepper.hh"
-#include "myQuadStepper.hh"
-
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4PVPlacement.hh"               
 
 #include "BDSMultipole.hh"
-#include "BDSSbendMagField.hh"
-#include "G4Mag_EqRhs.hh"
 
 class BDSSectorBend :public BDSMultipole
 {
@@ -48,31 +17,35 @@ public:
                 G4String aMaterial = "", G4double xAper=0, G4double yAper=0);
   ~BDSSectorBend();
 
-  void SynchRescale(G4double factor);
-
-  virtual G4double GetArcLength();
-
-protected:
+  virtual G4double GetChordLength();
 
 private:
   G4double itsBField;
   G4double itsBGrad;
+  
+  /// chord length in [m]
+  G4double itsChordLength;
 
-  void BuildBPFieldAndStepper();
-  void BuildSBMarkerLogicalVolume();
-  void BuildSBBeampipe();
-  void BuildSBOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+  /// normal vectors for faces when preparing solids
+  G4ThreeVector inputface;
+  G4ThreeVector outputface;
+  
+  /// orientation of shifts - depends on angle - calculations use absolute value of angle for safety
+  G4int orientation;
 
-  G4VisAttributes* SetVisAttributes();
+  virtual void Build();
+  virtual void BuildBPFieldAndStepper();
+  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildBeampipe(G4String materialName = "");
+  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
 
-  // field related objects:
-  myQuadStepper* itsStepper;
-  BDSSbendMagField* itsMagField;
-  G4Mag_EqRhs* itsEqRhs;
+  virtual void SetVisAttributes();
 
-  // G4int itsNSegments;
-  // G4double itsSegmentLength;
-  // G4double itsSegmentAngle;
+  /// quad with poles and pockets
+  void BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+  /// cylinder
+  void BuildCylindricalOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
+
 };
 
 #endif

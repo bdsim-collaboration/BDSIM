@@ -10,10 +10,10 @@
 #include "G4VSensitiveDetector.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "G4Navigator.hh"
-#include "G4TransportationManager.hh"
 #include "G4GFlashSpot.hh"
 #include "G4VGFlashSensitiveDetector.hh"
 
+class G4VProcess;
 class G4Step;
 class G4HCofThisEvent;
 class G4TouchableHistory;
@@ -32,19 +32,27 @@ public:
   void clear();
   void DrawAll();
   void PrintAll();
-               
+  G4double GetSPositionOfStep(G4Step* aStep);
+  G4double GetSPositionOfSpot(G4GFlashSpot* aSpot);
+  G4String GetName();
 
 private:
-  G4bool verbose;
+  /// assignment and copy constructor not implemented nor used
+  BDSEnergyCounterSD& operator=(const BDSEnergyCounterSD&);
+  BDSEnergyCounterSD(BDSEnergyCounterSD&);
+
+  G4bool   verbose;
   G4String itsName;
-  BDSEnergyCounterHitsCollection *BDSEnergyCounterCollection;
-  G4int* HitID;
+  BDSEnergyCounterHitsCollection* energyCounterCollection;
+  BDSEnergyCounterHitsCollection* primaryCounterCollection;
+  G4int*   HitID;
   G4double enrg;
-  G4double xpos;
-  G4double ypos;
-  G4double zpos;
+  G4double X,Y,Z,S; // global coordinates
+  G4double x,y,z;   // local coordinates
 };
 
+inline G4String BDSEnergyCounterSD::GetName()
+{return itsName;}
 
 
 #endif

@@ -1,13 +1,15 @@
-add_subdirectory(3d)
-add_subdirectory(ATF2)
-add_subdirectory(ATF2_old)
+# Copy example directory over for testing
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+
+set(TESTING_PERM_ARGS --batch)
+
+if (USE_ROOT)
+   set(TESTING_PERM_ARGS ${TESTING_PERM_ARGS} --output=root)
+endif()
+
 add_subdirectory(Components_DB)
-add_subdirectory(gasPipe)
-add_subdirectory(ggmad)
-add_subdirectory(hadronicTarget)
-add_subdirectory(Laser-Wire)
+add_subdirectory(ATF2)
 add_subdirectory(LHC)
-add_subdirectory(Mokka)
-add_subdirectory(rbendTarget)
-add_subdirectory(SR)
-add_subdirectory(twissGen)
+add_subdirectory(simpleMachine)
+
+add_subdirectory(features)

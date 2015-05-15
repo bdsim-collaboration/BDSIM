@@ -1,5 +1,5 @@
 d1: drift, l=0.5;
-e1: solenoid, l=0.1, k1=5.0;
+e1: solenoid, l=0.1, ks=0.005;
 d2: drift, l=0.5;
 
 lat : line = (d1,e1,d2);

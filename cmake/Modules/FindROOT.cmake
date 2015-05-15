@@ -10,11 +10,13 @@ MESSAGE(STATUS "Looking for ROOT...")
 
 if(EXISTS "${ROOTSYS}/bin/root-config")
   set(ROOT_CONFIG_EXECUTABLE "${ROOTSYS}/bin/root-config")
+elseif(EXISTS "${ROOTSYS}/bin/root-config5")
+  set(ROOT_CONFIG_EXECUTABLE "${ROOTSYS}/bin/root-config5")
 else()
   if($ENV{VERBOSE})
        message(STATUS "root-config not found in ROOTSYS, trying default PATHS")
   endif()
-  find_program(ROOT_CONFIG_EXECUTABLE root-config)
+  find_program(ROOT_CONFIG_EXECUTABLE NAMES root-config root-config5)
 endif()
 
 if(NOT ROOT_CONFIG_EXECUTABLE)
@@ -47,6 +49,13 @@ else()
     COMMAND ${ROOT_CONFIG_EXECUTABLE} --libs
     OUTPUT_VARIABLE ROOT_LIBRARIES
     OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+  # Hack to remove c++11 lib in favour of the one provided already
+  if (NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    SET(C11 "-stdlib=libc++")
+    STRING(REPLACE ${C11} "" ROOT_LIBRARIES_TEMP ${ROOT_LIBRARIES})
+    SET(ROOT_LIBRARIES ${ROOT_LIBRARIES_TEMP})
+  endif()
 
   execute_process(
     COMMAND ${ROOT_CONFIG_EXECUTABLE} --libdir

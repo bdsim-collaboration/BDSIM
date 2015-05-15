@@ -3,36 +3,20 @@
 #define BDSSynchrotronRadiation_h 1
 
 #include "BDSGlobalConstants.hh"
+#include "BDSMaterials.hh"
 
 #include "G4ios.hh" 
 #include "globals.hh"
-#include "Randomize.hh" 
 #include "G4VDiscreteProcess.hh"
 #include "G4Track.hh"
 #include "G4Step.hh"
-#include "G4Gamma.hh"
 #include "G4Electron.hh"
 #include "G4Positron.hh"
-#include "G4OrderedTable.hh" 
-#include "G4PhysicsTable.hh"
-#include "G4PhysicsLogVector.hh"
-#include "BDSComptonEngine.hh"
-#include "BDSMaterials.hh"
-#include "Randomize.hh"
-
-#include "G4ChordFinder.hh"
+#include "G4Field.hh"
 #include "G4FieldManager.hh"
-#include "G4MagIntegratorDriver.hh"
-#include "G4MagIntegratorStepper.hh"
-#include "G4FieldTrack.hh"
-
-#include "G4MagIntegratorDriver.hh"
-
-#include "G4Navigator.hh"
 #include "G4AffineTransform.hh"
+#include "G4NavigationHistory.hh"
 
-extern G4double BDSLocalRadiusOfCurvature;
- 
 class BDSSynchrotronRadiation : public G4VDiscreteProcess 
 { 
 public:
@@ -91,7 +75,7 @@ BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
   if(track.GetTotalEnergy()<BDSGlobalConstants::Instance()->GetThresholdCutCharged())
     return DBL_MAX;
   /*
-  G4double SynchOnZPos = (7.184+4.0) * m;
+  G4double SynchOnZPos = (7.184+4.0) * CLHEP::m;
   if(track.GetPosition().z() + BDSGlobalConstants::Instance()->GetWorldSizeZ() < SynchOnZPos)
     return DBL_MAX;
   */
@@ -125,7 +109,7 @@ BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
 	  InitMag=Rot*InitMag; 
 
 
-	  G4double Rlocal=(InitMag.z()/GeV)/(0.299792458 * Blocal/tesla) *m;
+	  G4double Rlocal=(InitMag.z()/CLHEP::GeV)/(0.299792458 * Blocal/CLHEP::tesla) *CLHEP::m;
 	  
 	  MeanFreePath=
 	    fabs(Rlocal)/(track.GetTotalEnergy()*nExpConst);
@@ -135,11 +119,11 @@ BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
 	  if(MeanFreePathCounter==BDSGlobalConstants::Instance()->GetSynchMeanFreeFactor())
 	    MeanFreePathCounter=0;
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
           G4cout<<"*****************SR*************************"<<G4endl;
           G4cout<<"Track momentum: "<<InitMag<<G4endl;
-          G4cout<<"Blocal="<<Blocal/tesla<<"  Rlocal="<<Rlocal/m<<G4endl;
-          G4cout<<track.GetVolume()->GetName()<<" mfp="<<MeanFreePath/m<<G4endl;
+          G4cout<<"Blocal="<<Blocal/CLHEP::tesla<<"  Rlocal="<<Rlocal/CLHEP::m<<G4endl;
+          G4cout<<track.GetVolume()->GetName()<<" mfp="<<MeanFreePath/CLHEP::m<<G4endl;
           G4cout<<"********************************************"<<G4endl;
 #endif
 

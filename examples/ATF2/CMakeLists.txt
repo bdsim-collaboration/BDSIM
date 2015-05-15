@@ -1,4 +1,3 @@
-execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-set(TESTING_ARGS "--batch")
+simple_testing(ATF2 "--file=atf.gmad" "")
 
-simple_testing(ATF2_LONG "--file=atf.gmad" "")
+add_subdirectory(old)

@@ -8,8 +8,6 @@
 
 #include "BDSDriftStepper.hh"
 #include "G4ThreeVector.hh"
-#include "G4LineSection.hh"
-#include "G4TransportationManager.hh"
 
 extern G4int event_number;
 
@@ -17,7 +15,10 @@ extern G4int event_number;
 BDSDriftStepper::BDSDriftStepper(G4Mag_EqRhs *EqRhs)
    : G4MagIntegratorStepper(EqRhs,6)  // integrate over 6 variables only !!
                                        // position & velocity
-{}
+{
+  verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
+  verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
+}
 
 
 void BDSDriftStepper::AdvanceHelix( const G4double  yIn[],
@@ -46,17 +47,17 @@ void BDSDriftStepper::AdvanceHelix( const G4double  yIn[],
 
 
       // dump step information for particular event
-      G4bool verboseStep       = BDSExecOptions::Instance()->GetVerboseStep();
-      G4int verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
+      //G4bool verboseStep       = BDSExecOptions::Instance()->GetVerboseStep();
+      //G4int verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
       if(verboseStep && verboseEventNumber == event_number)
 	{
 	  int G4precision = G4cout.precision();
 	  G4cout.precision(10);
-	  G4cout<<" h="<<h/m<<G4endl;
-	  G4cout<<"xIn="<<yIn[0]/m<<" yIn="<<yIn[1]/m<<
-	    " zIn="<<yIn[2]/m<<" v0="<<v0<<G4endl;
-	  G4cout<<"xOut="<<yDrift[0]/m<<" yOut="<<yDrift[1]/m<<
-	    "zOut="<<yDrift[2]/m<<G4endl;
+	  G4cout<<" h="<<h/CLHEP::m<<G4endl;
+	  G4cout<<"xIn="<<yIn[0]/CLHEP::m<<" yIn="<<yIn[1]/CLHEP::m<<
+	    " zIn="<<yIn[2]/CLHEP::m<<" v0="<<v0<<G4endl;
+	  G4cout<<"xOut="<<yDrift[0]/CLHEP::m<<" yOut="<<yDrift[1]/CLHEP::m<<
+	    "zOut="<<yDrift[2]/CLHEP::m<<G4endl;
 	  // set precision back
 	  G4cout.precision(G4precision);
 	}

@@ -8,24 +8,11 @@
 
 #include "G4ios.hh" 
 #include "globals.hh"
-#include "Randomize.hh" 
-#include "G4Version.hh"
-
-#if G4VERSION_NUMBER > 899
-#include "G4VEnergyLossProcess.hh"
-#else
-#include "G4VeEnergyLoss.hh"
-#endif
 
 #include "G4Track.hh"
 #include "G4Step.hh"
-#include "G4Gamma.hh"
-#include "G4Electron.hh"
-#include "G4Positron.hh"
-#include "G4OrderedTable.hh" 
-#include "G4PhysicsTable.hh"
-#include "G4PhysicsLogVector.hh"
- 
+#include "CLHEP/Units/PhysicalConstants.h"
+
 class BDSComptonEngine  
 { 
   public:
@@ -71,7 +58,7 @@ inline G4LorentzVector BDSComptonEngine::GetScatteredGamma()
 
 inline void BDSComptonEngine::SetIncomingPhoton4Vec(G4LorentzVector inGam)
 {itsIncomingGam=inGam;
- if(itsIncomingEl.e()<electron_mass_c2)
+ if(itsIncomingEl.e()<CLHEP::electron_mass_c2)
       {G4Exception("BDSComptonEngine: Invalid Electron Energy", "-1", FatalException, "");}
 
 }

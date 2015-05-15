@@ -12,16 +12,16 @@
 // SPM: Altered BeamOn function to account for Placet synchronisation
 //
 
+#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSExecOptions.hh"
 #include "G4Timer.hh"
 #include "CLHEP/Random/Random.h"
 
 #include "BDSRunManager.hh"
-#include "G4StateManager.hh"
-#include "G4UImanager.hh"
+//#include "G4StateManager.hh"
+//#include "G4UImanager.hh"
 
-#include "BDSDump.hh"
 #include "BDSWorld.hh"
 
 BDSRunManager* BDSRunManager::fRunManager = 0;
@@ -32,7 +32,6 @@ BDSRunManager* BDSRunManager::GetRunManager() {
 
 BDSRunManager::BDSRunManager() { 
   fRunManager = this;
-  nptwiss     = BDSExecOptions::Instance()->GetNPTwiss();
 }
 
 BDSRunManager::~BDSRunManager(){
@@ -49,13 +48,6 @@ void BDSRunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
     numberOfEventToBeProcessed = n_event;
     RunInitialization();
 
-    if(BDSDump::GetNumberOfDumps()!=0){
-      // Run reference bunch for dumps
-      BDSGlobalConstants::Instance()->isReference=true;
-      DoEventLoop(nptwiss,macroFile,0);
-      BDSGlobalConstants::Instance()->isReference=false;
-    }
-
     if(n_event>0) DoEventLoop(n_event,macroFile,n_select);
     RunTermination();
     while(!BDSGlobalConstants::Instance()->holdingQueue.empty()){
@@ -69,18 +61,19 @@ void BDSRunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
 
       BDSGlobalConstants::Instance()->setReadFromStack(false);
     }
-    BDSGlobalConstants::Instance()->referenceQueue.clear();
   }
 }
 
 void BDSRunManager::DoEventLoop(G4int n_event,const char* macroFile,G4int n_select)
 {
+  if(verboseLevel>0){
   // Print seed to try and recreate an event in a run 
-  G4cout << __METHOD_NAME__ << "Random number generator's seed=" 
+  G4cout << __METHOD_NAME__ << "> Random number generator's seed=" 
          << CLHEP::HepRandom::getTheSeed() << G4endl;
   // Print generator full state to output 
-  G4cout << __METHOD_NAME__ << "Random number generator's state: " << G4endl;
+  G4cout << __METHOD_NAME__ << "> Random number generator's state: " << G4endl;
   CLHEP::HepRandom::saveFullState(G4cout);
+  }
 
  //G4StateManager* stateManager = G4StateManager::GetStateManager();
 
@@ -101,23 +94,20 @@ void BDSRunManager::DoEventLoop(G4int n_event,const char* macroFile,G4int n_sele
   for( i_event=0; i_event<n_event; i_event++ )
   {
     if(verboseLevel>3){
-      G4cout << __METHOD_NAME__ << "event="<<i_event<<G4endl;
+      G4cout << __METHOD_NAME__ << " Event="<<i_event<<G4endl;
       // Print seed to try and recreate an event in a run
-      G4cout << __METHOD_NAME__ << "Random number generator's seed=" 
+      G4cout << __METHOD_NAME__ << "> Random number generator's seed=" 
 	     << CLHEP::HepRandom::getTheSeed() << G4endl;
     // Print generator full state to output 
-      G4cout << __METHOD_NAME__ << "Random number generator's state: " << G4endl;
+      G4cout << __METHOD_NAME__ << " Random number generator's state: " << G4endl;
       CLHEP::HepRandom::saveFullState(G4cout);
     }
-
-
 
     G4cout.flush();
 
     //    stateManager->SetNewState(EventProc);
 
     currentEvent = GenerateEvent(i_event);
-
     if(currentEvent == NULL) G4cerr<<__FILE__<<" : "<<__LINE__<<"Event generation failed "<<G4endl;
 
     eventManager->ProcessOneEvent(currentEvent);

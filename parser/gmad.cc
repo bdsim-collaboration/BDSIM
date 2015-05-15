@@ -4,14 +4,20 @@
  */
 
 #include "gmad.h"
+#include "elementlist.h"
+#include "parameters.h"
 #include "sym_table.h"
 
 #include <cmath>
+#include <cstdlib>
+#include <iostream>
+#include <list>
+#include <map>
 #include <string>
 #include <cstring>
 
 extern struct Parameters params;
-extern struct symtab *symtab;
+
 extern int yyparse();
 
 extern FILE *yyin;
@@ -21,22 +27,16 @@ extern int add_func(const char *name, double (*func)(double));
 extern int add_var(const char *name, double val,int is_reserved = 0);
 
 // aux. parser lists - to clear
-extern std::list<struct Element> element_list;
+extern ElementList element_list;
 extern std::list<struct Element> tmp_list;
+extern std::map<std::string, struct symtab*> symtab_map;
 
+extern void print(std::list<Element> l, int ident);
+
+namespace {
 void init()
 {
-
-  symtab = new struct symtab[NSYMS];
-  // member initialisation as members are used to check if symtab is already assigned and its type.
-  for(struct symtab* sp=symtab;sp<&symtab[NSYMS];sp++) {
-    sp->is_reserved=0;
-    sp->type=0;
-    sp->name=NULL;
-    sp->funcptr=NULL;
-    sp->value=0.0;
-  }
-
+  const int reserved = 1;
   // embedded arithmetical functions
   add_func("sqrt",sqrt);
   add_func("cos",cos);
@@ -50,104 +50,48 @@ void init()
   add_func("abs",fabs);
  
 
-  add_var("pi",4.0*atan(1),_RESERVED);
+  add_var("pi",4.0*atan(1),reserved);
 
-  add_var("TeV",1e+3,_RESERVED);
-  add_var("GeV",1.0 ,_RESERVED);
-  add_var("MeV",1e-3,_RESERVED);
-  add_var("KeV",1e-6,_RESERVED);
-  add_var("eV" ,1e-9,_RESERVED);
+  add_var("TeV",1e+3,reserved);
+  add_var("GeV",1.0 ,reserved);
+  add_var("MeV",1e-3,reserved);
+  add_var("KeV",1e-6,reserved);
+  add_var("eV" ,1e-9,reserved);
 
-  add_var("MV",1.0,_RESERVED);
+  add_var("MV",1.0,reserved);
 
-  add_var("Tesla",1.0,_RESERVED);
+  add_var("Tesla",1.0,reserved);
 
-  add_var("m"  ,1.0 ,_RESERVED);
-  add_var("cm" ,1e-2,_RESERVED);
-  add_var("mm" ,1e-3,_RESERVED);
-  add_var("um",1e-6,_RESERVED);
-  add_var("mum",1e-6,_RESERVED);
-  add_var("nm" ,1e-9,_RESERVED);
+  add_var("m"  ,1.0 ,reserved);
+  add_var("cm" ,1e-2,reserved);
+  add_var("mm" ,1e-3,reserved);
+  add_var("um",1e-6,reserved);
+  add_var("mum",1e-6,reserved);
+  add_var("nm" ,1e-9,reserved);
 
-  add_var("s"  ,1.0  ,_RESERVED);
-  add_var("ms" ,1.e-3,_RESERVED);
-  add_var("us",1.e-6,_RESERVED);
-  add_var("ns" ,1.e-9,_RESERVED);
+  add_var("s"  ,1.0  ,reserved);
+  add_var("ms" ,1.e-3,reserved);
+  add_var("us",1.e-6,reserved);
+  add_var("ns" ,1.e-9,reserved);
 
-  add_var("rad" ,1.0  ,_RESERVED);
-  add_var("mrad",1.e-3,_RESERVED);
+  add_var("rad" ,1.0  ,reserved);
+  add_var("mrad",1.e-3,reserved);
 
 
-  add_var("clight",2.99792458e+8,_RESERVED);
+  add_var("clight",2.99792458e+8,reserved);
 
   params.flush();
 
-  // Default Values for Options (the rest are set to 0)
-
-  options.maximumTrackingTime = 0.1;
-  options.vacuumPressure = 1e-12;
-  options.planckScatterFe = 1.0;
-  options.doPlanckScattering=0;
-  options.checkOverlaps=0;
-  options.synchPhotonMultiplicity = 1;
-  options.synchMeanFreeFactor = 1;
-  options.gammaToMuFe = 1;
-  options.annihiToMuFe = 1;
-  options.eeToHadronsFe = 1;
-  options.useEMLPB = 0;
-  options.useHadLPB = 0;
-  options.LPBFraction = 0;
-  options.includeIronMagFields = 0;
-  options.buildTunnel = 0;
-  options.buildTunnelFloor = 0;
-  options.showTunnel = 0;
-  options.tunnelOffsetX = 0;
-  options.tunnelOffsetY = 0;
-  options.tunnelSoilThickness = 0;
-  options.tunnelThickness = 0;
-  options.geometryBias = false;
-  options.ffact = 1.0;
-  options.elossHistoBinWidth = 1.0;
-  options.elossHistoTransBinWidth = 0.1;
-  options.defaultRangeCut = 7e-4;
-  options.prodCutPositrons=7e-4;
-  options.prodCutElectrons=7e-4;
-  options.prodCutPhotons=7e-4;
-  options.prodCutPositronsP=7e-4;
-  options.prodCutElectronsP=7e-4;
-  options.prodCutPhotonsP=7e-4;
-  options.prodCutPositronsA=1;
-  options.prodCutElectronsA=1;
-  options.prodCutPhotonsA=1;
-
-  //Beam loss monitors geometry
-  options.blmRad = 0.05;
-  options.blmLength = 0.18;
-  options.sensitiveBeamlineComponents = 1;
-  options.sensitiveBeamPipe = 1;
-  options.sensitiveBLMs = 1;
-  options.turnOnCerenkov = 1;
-  options.decayOn = 1;
-  //  options.synchRadOn = 0;
-  //tracking options
-  options.chordStepMinimum = 0.000001;
-  options.deltaIntersection = 0.00001;
-  options.deltaChord = 0.00001;
-  options.deltaOneStep = 0.00001;
-  options.minimumEpsilonStep=0;
-  options.maximumEpsilonStep=1e-7;
-  options.lengthSafety = 0.000000001;
-
+}
 }
 
 int gmad_parser(FILE *f)
 {
-
   init();
 
   yyin=f; 
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "gmad_parser> beginning to parse file" << std::endl;
 #endif
 
@@ -156,22 +100,24 @@ int gmad_parser(FILE *f)
       yyparse();
     }
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "gmad_parser> finished to parsing file" << std::endl;
 #endif
 
   // clear temporary stuff
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "gmad_parser> clearing temporary lists" << std::endl;
 #endif
   element_list.clear();
   tmp_list.clear();
-  
-  delete[] symtab;
-  symtab = 0;
+  std::map<std::string,symtab*>::iterator it;
+  for(it=symtab_map.begin();it!=symtab_map.end();++it) {
+    delete (*it).second;
+  }
+  symtab_map.clear();
 
-#ifdef DEBUG
+#ifdef BDSDEBUG
   std::cout << "gmad_parser> finished" << std::endl;
 #endif
 
@@ -182,15 +128,20 @@ int gmad_parser(FILE *f)
 
 int gmad_parser(std::string name)
 {
-#ifdef DEBUG
+  const int maxfilenamelength = 200;
+#ifdef BDSDEBUG
   std::cout << "gmad_parser> opening file" << std::endl;
 #endif
   FILE *f = fopen(name.c_str(),"r");
 
-  if(f==NULL) return -1;
+  if(f==NULL) {
 
-  yyfilename = new char[MAXFILENAMELENGTH];
-  strncpy(yyfilename,name.c_str(),MAXFILENAMELENGTH);
+    std::cerr << "gmad_parser> Can't open input file " << name << std::endl;
+    exit(1);
+  }
+
+  yyfilename = new char[maxfilenamelength];
+  strncpy(yyfilename,name.c_str(),maxfilenamelength);
 
   gmad_parser(f);
 
@@ -199,41 +150,82 @@ int gmad_parser(std::string name)
 
 
 /** Python interface **/ 
-int gmad_parser_c(char *name) 
+int GmadParser_c(char *name) 
 {
-  gmad_parser(name);
+  gmad_parser(std::string(name));
   return 0;
 }
 
-int get_nelements() 
+int GetNelements() 
 {
   return beamline_list.size();
 }  
 
-const char* get_name(int i) 
+const char* GetName(int i) 
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
-  return it->name;
+  return (it->name).c_str();
 }
 
-short get_type(int i) 
+short GetType(int i) 
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
   return it->type;
 }
 
-double get_length(int i) 
+double GetLength(int i) 
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
   return it->l;
 }
 
-double get_angle(int i) 
+double GetAngle(int i) 
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
   return it->angle;  
+}
+
+double* GetKs(int i)
+{
+  std::list<Element>::iterator it = beamline_list.begin();
+  std::advance(it, i);
+  double* result = new double[5];
+  result[0] = it->ks;
+  result[1] = it->k0;
+  result[2] = it->k1;
+  result[3] = it->k2;
+  result[4] = it->k3;
+  return result;
+}
+
+double GetAperX(int i) 
+{
+  std::list<Element>::iterator it = beamline_list.begin();
+  std::advance(it, i);
+  return it->aperX;  
+}
+
+double GetAperY(int i) 
+{
+  std::list<Element>::iterator it = beamline_list.begin();
+  std::advance(it, i);
+  return it->aperY;  
+}
+
+double GetAper(int i) 
+{
+  std::list<Element>::iterator it = beamline_list.begin();
+  std::advance(it, i);
+  return it->aper;  
+}
+
+double GetBeampipeThickness(int i)
+{
+  std::list<Element>::iterator it = beamline_list.begin();
+  std::advance(it, i);
+  return it->beampipeThickness;
 }

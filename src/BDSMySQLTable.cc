@@ -9,22 +9,16 @@
 */
 
 
-#include "BDSGlobalConstants.hh" 
-
 #include <cstdlib>
-#include "BDSMaterials.hh"
+#include <string>
+#include <vector>
+
 #include "BDSMySQLTable.hh"
-#include "BDSExecOptions.hh"
-
-using namespace std;
-
-#include"globals.hh"
-#include<string>
-#include<vector>
+#include "BDSDebug.hh"
 
 BDSMySQLTable::BDSMySQLTable (G4String aTableName)
 {
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " - creating new table named: " << aTableName << G4endl;
 #endif
   SetValidVarTypes();
@@ -39,12 +33,12 @@ void BDSMySQLTable::AddVariable(G4String aName, G4String aType){
   if(!isValidVarType(aType)){
     return;
   }
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " - adding variable: " << aName << " " << aType << " to table " << GetName() << G4endl;
 #endif
   itsVar.push_back(new BDSMySQLVariable(aName,aType));
   itsNVariables++;
-#ifdef DEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " - nVariables = " << GetNVariables() << G4endl;
 #endif
 }
@@ -97,7 +91,7 @@ BDSMySQLTable::~BDSMySQLTable()
 
 void BDSMySQLVariable::Print(){
   G4cout << __METHOD_NAME__ << G4endl;
-  string varType=GetVarType();
+  std::string varType=GetVarType();
   G4cout << GetName() << " " << GetVarType() << " " << G4endl;;
   for(int i=0; i<GetNVariables(); i++){
     if(varType=="DOUBLE") G4cout << GetDblValue(i) << G4endl;
