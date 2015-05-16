@@ -1,6 +1,14 @@
 #ifndef BDSBunchHalo_h
 #define BDSBunchHalo_h
 
+#include "BDSBunchInterface.hh"
+#include "Randomize.hh"
+#include "CLHEP/Matrix/Vector.h" 
+
+namespace CLHEP {
+  class RandFlat;
+}
+
 class BDSBunchHalo : public BDSBunchInterface { 
 
 private : 
@@ -18,6 +26,8 @@ private :
   G4double envelopeY;
   G4double envelopeXp; 
   G4double envelopeYp; 
+
+  CLHEP::RandFlat  *FlatGen;
 
 public : 
   BDSBunchHalo();
@@ -45,8 +55,6 @@ public :
   G4double GetEnvelopeY() {return envelopeY;}
   G4double GetEnvelopeXp(){return envelopeXp;}
   G4double GetEnvelopeYp(){return envelopeYp;}
-  G4double GetEnvelopeT() {return envelopeT;}
-  G4double GetEnvelopeE() {return envelopeE;}
 
 protected:
   void     SetBetaX(double newBetaX) {betaX    = newBetaX;}
