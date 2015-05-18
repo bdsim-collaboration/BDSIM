@@ -912,7 +912,7 @@ parameters:
 		   else
 		     if(!strcmp($1->name,"bmap")) 
 		       {
-			 params.geomset = 1;
+			 params.bmapset = 1;
 			 params.bmap = $3;
 		       }
 		   else 
@@ -1001,7 +1001,7 @@ parameters:
 		   else
 		     if(!strcmp($1->name,"bmap")) 
 		       {
-			 params.geomset = 1;
+			 params.bmapset = 1;
 			 params.bmap = $3;
 		       }
 		     else 
