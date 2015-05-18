@@ -19,6 +19,8 @@ void Parameters::flush() {
   tscint = 0.0003; tscintset = 0;
   windowScreenGap = 0; windowScreenGapset = 0;
   twindow = 0; twindowset = 0;
+  screenEndZ = 0; screenEndZset = 0;
+  poleStartZ = 0; poleStartZset = 0;
 
   // materials' parameters
   A = 0; Aset = 0; //g*mol^-1
@@ -144,6 +146,8 @@ void Parameters::inherit_properties(struct Element& e)
 
   if(!tscintset) { tscint = e.tscint; tscintset = 1; }
   if(!twindowset) { twindow = e.twindow; twindowset = 1; }
+  if(!screenEndZset) { screenEndZ = e.screenEndZ; screenEndZset = 1; }
+  if(!poleStartZset) { poleStartZ = e.poleStartZ; poleStartZset = 1; }
 
   //materials
   if(!Aset) { A = e.A; Aset = 1; }

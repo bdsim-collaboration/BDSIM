@@ -28,6 +28,8 @@ struct Parameters {
   double tscint; int tscintset; ///thickness of scintillating part of screen
   double windowScreenGap; int windowScreenGapset; ///air gap between window and screen
   double twindow; int twindowset; ///thickness of window
+  double screenEndZ; int screenEndZset;//z position of end of screen relative to beginning of magnet pole
+  double poleStartZ; int poleStartZset;//z position of beginning of magnet pole relative to beginning of element
 
   std::list<double> knl;           /// multipole expansion coefficients
   std::list<double> ksl;           /// skew multipole expansion

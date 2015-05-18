@@ -96,6 +96,7 @@ atom { return ATOM; }
 laser { return LASER; }
 screen { return SCREEN; }
 awakescreen { return AWAKESCREEN; }
+awakespectrometer { return AWAKESPECTROMETER; }
 
 line       { return LINE; } 
 

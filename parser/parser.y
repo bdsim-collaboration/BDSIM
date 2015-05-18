@@ -40,6 +40,7 @@
 %token <symp> VARIABLE VECVAR FUNC 
 %token <str> STR
 %token MARKER ELEMENT DRIFT PCLDRIFT RF DIPOLE RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE MULTIPOLE SCREEN AWAKESCREEN
+%token AWAKESPECTROMETER
 %token SOLENOID COLLIMATOR RCOL ECOL LINE SEQUENCE SPOILER ABSORBER LASER TRANSFORM3D MUSPOILER
 %token VKICK HKICK KICK
 %token PERIOD APERTURE FILENAME GAS PIPE TUNNEL MATERIAL ATOM
@@ -286,6 +287,15 @@ decl : VARIABLE ':' marker
 	   params.flush();
 	 }
        }
+     | VARIABLE ':' awakespectrometer
+       {
+	 if(execute) {
+	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : awakespectrometer\n",$1->name);
+	   // check parameters and write into element table
+	   write_table(params,$1->name,_AWAKESPECTROMETER);
+	   params.flush();
+	 }
+       }
      | VARIABLE ':' transform3d
        {
 	 if(execute)
@@ -443,6 +453,9 @@ screen : SCREEN ',' parameters
 ;
 
 awakescreen : AWAKESCREEN ',' parameters
+;
+
+awakespectrometer : AWAKESPECTROMETER ',' parameters
 ;
 
 transform3d : TRANSFORM3D ',' parameters
@@ -624,13 +637,19 @@ parameters:
 		  if(!strcmp($1->name,"flatlength")) {params.flatlength = $3; params.flatlengthset = 1;}
                     else
 		  if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence
-		    else
-                  if(!strcmp($1->name,"tscint")) { params.tscint = $3; params.tscintset = 1;} // thickness for a scintillator screen 
 		  else
-                  if(!strcmp($1->name,"windowScreenGap")) { params.windowScreenGap = $3; params.windowScreenGapset = 1;} // thickness for a scintillator screen 
+		  if(!strcmp($1->name,"tscint")) { params.tscint = $3; params.tscintset = 1;} // thickness for a scintillator screen 
+		  else
+		  if(!strcmp($1->name,"windowScreenGap")) { params.windowScreenGap = $3; params.windowScreenGapset = 1;} // thickness for a scintillator screen 
 		  else
                   if(!strcmp($1->name,"twindow")) { params.twindow = $3; params.twindowset = 1;} // thickness for a scintillator screen window 
-		    else
+                  else
+                  if(!strcmp($1->name,"screenEndZ")) { params.screenEndZ = $3; params.screenEndZset = 1;} // z distance from start of pole to screen 
+		  else
+                  if(!strcmp($1->name,"poleStartZ")) { params.poleStartZ = $3; params.poleStartZset = 1;} // z distance from start of element to start of pole 
+		  else
+                  if(!strcmp($1->name,"twindow")) { params.twindow = $3; params.twindowset = 1;} // thickness for a scintillator screen window 
+		  else
                   if(VERBOSE) printf("Warning : unknown parameter %s\n",$1->name);
 		  
 		}

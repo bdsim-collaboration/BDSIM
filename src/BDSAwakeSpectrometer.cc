@@ -1,6 +1,5 @@
 /* BDSIM code.    
-A scintillator screen.
-Work in progress.  
+AWAKE spectrometer.
 */
 
 #include "BDSGlobalConstants.hh" 
@@ -29,8 +28,8 @@ typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 
 //============================================================
-BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial=""):
-  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0), _mlScreen(NULL), _camera(NULL), _material(material), _thickness(thickness), _screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
+BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName, G4double length=2.7*CLHEP::m, G4double poleStartZ=62.733*CLHEP::cm, G4String material="lanex", G4double thickness = 0.3 * CLHEP::mm, G4double windowScreenGap=0, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial="G4_Al", G4double screenEndZ = (258-62.733)*CLHEP::cm):
+  BDSAcceleratorComponent(aName, length, 0, 0, 0), _mlScreen(NULL), _camera(NULL), _poleStartZ(poleStartZ), _screenEndZ(screenEndZ), _material(material), _thickness(thickness), _screenAngle(angle), _windowScreenGap(windowScreenGap), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
 {
   _vacChambType=2;
   //Set as part of precision region (for energy loss monitoring)
@@ -378,7 +377,7 @@ void BDSAwakeSpectrometer::Build(){
       BuildScreen();
       BuildCamera();	
       ComputeDimensions();
-      BuildMagnet();
+      //      BuildMagnet();
       BuildMarkerLogicalVolume();
       /*
       if(_vacChambType==2){
@@ -388,14 +387,17 @@ void BDSAwakeSpectrometer::Build(){
       }
       */
       //      BuildScreenScoringPlane();
-      BuildCameraScoringPlane();
-      PlaceMagnet();
+      //      BuildCameraScoringPlane();
+      //      PlaceMagnet();
       PlaceScreen();
       //      PlaceCamera();
-      if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-	BuildTunnel();
-      }
+      //      if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
+      //	BuildTunnel();
+      //      }
       AddSensitiveVolume(itsMarkerLogicalVolume);
+}
+
+void BDSAwakeSpectrometer::PlaceMagnet(){
 }
 
 void BDSAwakeSpectrometer::BuildCamera(){
@@ -417,7 +419,7 @@ void BDSAwakeSpectrometer::BuildScreen()
 {
   G4cout << "Building BDSAwakeMultilayerScreen...." << G4endl;
   G4double grainSize = 10*1e-6*CLHEP::m;
-  _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, grainSize, _windowThickness, _windowMaterial);
+  _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, _windowScreenGap ,grainSize, _windowThickness, _windowMaterial);
   
   G4cout << "finished." << G4endl;
   //  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
@@ -425,71 +427,64 @@ void BDSAwakeSpectrometer::BuildScreen()
   //      AddSensitiveVolume(_mlScreen[i].log());
   //    }
   //  } 
-  G4cout << "BDSAwakeSpectrometer: finished building geometry" << G4endl;
+  G4cout << "BDSAwakeSpectrometer: finished building screen" << G4endl;
 }
 
 void BDSAwakeSpectrometer::PlaceScreen(){
-  double zOffset = 0;//_totalThickness*cos(_screenAngle)/2.0;
-  double xOffset = -_totalThickness*sin(_screenAngle)/2.0;
   _mlScreen->place(_screenRotationMatrix,
-		   G4ThreeVector(xOffset,0,-_cameraScreenDist/2.0+zOffset),
+		   G4ThreeVector(_screenCentreX,0,_screenCentreZ),
 		   itsMarkerLogicalVolume
 		   );
 }
 
 void BDSAwakeSpectrometer::ComputeDimensions(){
-  //  itsXLength = itsYLength = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
-  //  itsXLength = std::max(itsXLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
-  //  itsYLength = std::max(itsYLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
-
-  //  _cameraScreenDist=(4.0)*CLHEP::m;
-  _cameraScreenDist=4*213*CLHEP::mm;
-
+  std::cout << __METHOD_NAME__ << std::endl;
+  //-------
+  //Screen dimensions.
   _screenWidth=_mlScreen->size().x();
   _screenHeight=_mlScreen->size().y();
-
+  std::cout << "... got screen dimensions... " << std::endl;
   //The scoring plane...
   _scoringPlaneThickness=1*CLHEP::um;
-
   _screenThickness = _mlScreen->size().z();
-  
-  _totalThickness =  
-    _screenThickness + 2*_scoringPlaneThickness;
-  
-  
-  //  G4double thi=_totalThickness+2*_cameraScreenDist+2*_camera->size().z()+2*_scoringPlaneThickness;
-
-  //Compute the marker volume length according to the screen thickness and width.
+  _totalThickness = _screenThickness + 2*_scoringPlaneThickness;
   G4double z_wid = _screenWidth * std::sin(std::abs(_screenAngle));//Length due to the screen width and angle
   G4double z_thi = _totalThickness * std::cos(std::abs(_screenAngle));//Length due to the screen thickness
+  _screen_z_dim = z_wid+z_thi;
   G4double x_wid = _screenWidth * std::cos(std::abs(_screenAngle));//Length due to the screen width and angle
   G4double x_thi = _totalThickness * std::sin(std::abs(_screenAngle));//Length due to the screen thickness
-  
+  _screen_x_dim = x_wid+x_thi;
   //Vacuum chamber dimensions.
   _vacThickness=2*CLHEP::mm;
   _vacInnerWidth=7*CLHEP::cm;
   _vacInnerHeight=7*CLHEP::cm;
   _vacHeight=_vacInnerHeight+2*_vacThickness;
+  _startZPos = -itsLength/2.0;
+  //Pole position
+  _poleStartZ += _startZPos;
+  //Screen position
+  _screenEndZ += _poleStartZ;
+  _screenCentreZ = _screenEndZ - _screen_z_dim/2.0;
+  _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0;
   
-  _vacWidth2=x_wid;
-  _vacDispX2=-_vacWidth2/4.0;
-  
-  if(_vacChambType==2){
-    _vacKevlarThickness=1e-30;
-    _vacMylarThickness=1e-30;
-    
-  }else{
-    _vacKevlarThickness=0.3*CLHEP::mm;
-    _vacMylarThickness=0.05*CLHEP::mm;
-  }
-  
-  _vacWidth1=_vacInnerWidth+_vacKevlarThickness+_vacMylarThickness+_vacThickness;
-  _vacDispX1=-((sqrt(2.0)/2.0)/2.0)*CLHEP::m-_vacWidth1/2.0-0.15*CLHEP::mm;
 
 
 
-  itsLength  = z_wid + z_thi +_cameraScreenDist;  
-  itsXLength = (x_wid +x_thi+2*_vacWidth1)+2*_cameraScreenDist;
+  //  itsXLength = itsYLength = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
+  //  itsXLength = std::max(itsXLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
+  //  itsYLength = std::max(itsYLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
+
+  _cameraScreenDist=(4.0)*CLHEP::m;
+  //  _cameraScreenDist=4*213*CLHEP::mm;
+
+
+  
+  //  G4double thi=_totalThickness+2*_cameraScreenDist+2*_camera->size().z()+2*_scoringPlaneThickness;
+
+  
+
+
+  itsXLength = (_screen_x_dim + 2*_vacWidth1)+2*_cameraScreenDist;
   itsYLength = std::max(_screenHeight,_camera->size().y());
   itsYLength = std::max(itsYLength,50*CLHEP::cm);
   std::cout << __METHOD_NAME__ << " " << itsLength << " " << itsXLength << " " << itsYLength << std::endl;
@@ -502,7 +497,7 @@ void BDSAwakeSpectrometer::ComputeDimensions(){
   
 
 
-
+  std::cout << __METHOD_END__ << std::endl;
 }
 
 void BDSAwakeSpectrometer::BuildMarkerLogicalVolume(){

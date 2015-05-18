@@ -548,6 +548,23 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     std::cout << "vacuummaterial: " << e.vacuummaterial << " " <<  params.vacuummaterial << std::endl;
     break;
 
+  case _AWAKESPECTROMETER:
+    e.type = _AWAKESPECTROMETER;
+    e.l = params.l;
+    e.screenEndZ = params.screenEndZ;
+    e.poleStartZ = params.poleStartZ;
+    e.scintmaterial = std::string(params.scintmaterial);
+    std::cout << "scintmaterial: " << e.scintmaterial << " " <<  params.scintmaterial << std::endl;
+    e.tscint = params.tscint;
+    e.windowScreenGap = params.windowScreenGap;
+    e.angle = params.angle;
+    e.twindow = params.twindow;
+    e.windowmaterial = std::string(params.windowmaterial);
+    e.vacuummaterial = std::string(params.vacuummaterial);
+    std::cout << "windowmaterial: " << e.windowmaterial << " " <<  params.windowmaterial << std::endl;
+    std::cout << "vacuummaterial: " << e.vacuummaterial << " " <<  params.vacuummaterial << std::endl;
+    break;
+
   default:
     break;  
 

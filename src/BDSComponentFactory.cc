@@ -26,6 +26,7 @@
 //#include "BDSRealisticCollimator.hh"
 #include "BDSScintillatorScreen.hh"
 #include "BDSAwakeScintillatorScreen.hh"
+#include "BDSAwakeSpectrometer.hh"
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
 #include "BDSDebug.hh"
@@ -245,6 +246,13 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     G4cout << "BDSComponentFactory  - creating awake screen" << G4endl;
 #endif
     element = createAwakeScreen();
+    addTunnel(element); 
+    break; 
+  case _AWAKESPECTROMETER:
+#ifdef BDSDEBUG
+    G4cout << "BDSComponentFactory  - creating awake spectrometer" << G4endl;
+#endif
+    element = createAwakeSpectrometer();
     addTunnel(element); 
     break; 
   case _TRANSFORM3D:
@@ -1344,6 +1352,21 @@ BDSAcceleratorComponent* BDSComponentFactory::createAwakeScreen(){
                << G4endl;
 #endif
 	return (new BDSAwakeScintillatorScreen(_element.name, _element.scintmaterial, _element.tscint*1e3, _element.windowScreenGap*1e3,_element.angle, _element.twindow*1e3, _element.windowmaterial)); //Name
+}
+
+
+BDSAcceleratorComponent* BDSComponentFactory::createAwakeSpectrometer(){
+	
+#ifdef BDSDEBUG 
+        G4cout << "---->creating AWAKE spectrometer,"
+	       << "twindow = " << _element.twindow*1e3/CLHEP::um << " um"
+	       << "tscint = " << _element.tscint*1e3/CLHEP::um << " um"
+	       << "windowScreenGap = " << _element.windowScreenGap*1e3/CLHEP::um << " um"
+	       << "windowmaterial = " << _element.windowmaterial << " um"
+	       << "scintmaterial = " << _element.scintmaterial << " um"
+               << G4endl;
+#endif
+	return (new BDSAwakeSpectrometer(_element.name, _element.l*1e3, _element.poleStartZ*1e3, _element.scintmaterial, _element.tscint*1e3, _element.windowScreenGap*1e3,_element.angle, _element.twindow*1e3, _element.windowmaterial, _element.screenEndZ*1e3));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){
