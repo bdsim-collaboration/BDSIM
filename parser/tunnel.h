@@ -14,18 +14,18 @@ struct Tunnel {
   /// geometry type
   std::string type;
 
-  /// radius
-  double   radius;
+  /// radius, aperture parameters
+  double   aper1;
+  double   aper2;
   /// offset x and y
   double   offsetX, offsetY;
   /// tunnel geometry parameters
-  double   tunnelThickness;
-  double   tunnelSoilThickness;
-  double   tunnelFloorOffset;
+  double   thickness;
+  double   soilThickness;
+  double   floorOffset;
   
   /// material
   std::string material;
-  //std::string tunnelCavityMaterial;
   /// soil
   std::string soilMaterial;
 
@@ -34,7 +34,15 @@ struct Tunnel {
   
   /// constructor
   Tunnel();
-  
+  /// reset
+  void clear();
+  /// print some properties
+  void print()const;
+
+  /// set methods by property name, numeric values
+  void set_value(std::string property, double value);
+  /// set methods by property name, string values
+  void set_value(std::string property, std::string value);
 };
 
 #endif
