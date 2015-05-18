@@ -44,9 +44,6 @@ void Parameters::flush() {
   theta = 0; thetaset = 0;
   psi = 0; psiset = 0;
 
-  tunnelRadius = 0; tunnelRadiusset = 0;
-  tunnelOffsetX = 0; tunnelOffsetXset = 0;
-
   precisionRegion = 0; precisionRegionset = 0;
 
   beampipeThickness = 0; beampipeThicknessset = 0;
@@ -96,8 +93,6 @@ void Parameters::flush() {
   scintmaterial = ""; scintmaterialset = 0;
   windowmaterial = "vacuum"; windowmaterialset = 0;
   airmaterial = ""; airmaterialset = 0;
-  tunnelMaterial = ""; tunnelmaterialset = 0;
-  tunnelCavityMaterial = ""; tunnelcavitymaterialset = 0;
   spec = ""; specset = 0;
   at = 0.0; atset = 0;
 }
@@ -175,10 +170,6 @@ void Parameters::inherit_properties(struct Element& e)
   if(!scintmaterialset) { scintmaterial = e.spec; scintmaterialset = 1; }
   if(!windowmaterialset) { windowmaterial = e.spec; windowmaterialset = 1; }
   if(!airmaterialset) { airmaterial = e.spec; airmaterialset = 1; }
-  if(!tunnelmaterialset) { tunnelMaterial = e.spec; tunnelmaterialset = 1; }
-  if(!tunnelcavitymaterialset) { tunnelCavityMaterial = e.spec; tunnelcavitymaterialset = 1; }
-  if(!tunnelRadiusset) { tunnelRadius = e.tunnelRadius; tunnelRadiusset = 1; }
-  if(!tunnelOffsetXset) { tunnelOffsetX = e.tunnelOffsetX; tunnelOffsetXset = 1; }
   if(!precisionRegionset) { precisionRegion = e.precisionRegion; precisionRegionset = 1; }
 
 }

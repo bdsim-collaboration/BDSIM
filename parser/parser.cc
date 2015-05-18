@@ -3,10 +3,10 @@
  *  Ilya Agapov 2005
  */
 
-
-#include "gmad.h"
 #include <cstdio>
 #include <iostream>
+
+#include "gmad.h"
 
 int main(int argc, char *argv[])
 {

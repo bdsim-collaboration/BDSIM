@@ -158,7 +158,6 @@ void Element::flush() {
       material;
   */
 
-  //material = "";
   scintmaterial = "";
   windowmaterial = "";
   spec = "";
@@ -166,12 +165,6 @@ void Element::flush() {
   scintmaterial="";
   windowmaterial="";
   airmaterial="";
-
-  // tunnel
-  tunnelMaterial="";
-  //tunnelCavityMaterial="Air";
-  tunnelRadius=0;
-  tunnelOffsetX=1e6;
 }
 
 double Element::property_lookup(char* property_name)const{

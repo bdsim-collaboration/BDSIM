@@ -91,6 +91,8 @@ struct Options {
   std::string outerMaterialName;
   double      outerDiameter;
 
+  int         includeIronMagFields;
+
   /// default beampipe parameters
   double      beampipeRadius;
   double      beampipeThickness;
@@ -103,12 +105,10 @@ struct Options {
   std::string vacMaterial;
 
   /// default tunnel parameters
-  double    tunnelRadius;
+  double      tunnelRadius;
   std::string tunnelMaterial;
   std::string tunnelCavityMaterial;
   std::string soilMaterial;
-
-  int      includeIronMagFields;
 
   /// tunnel geometry parameters
   int      buildTunnel;
@@ -116,10 +116,12 @@ struct Options {
   int      showTunnel;
   double   tunnelOffsetX;
   double   tunnelOffsetY;
-  double   samplerDiameter;
   double   tunnelThickness;
   double   tunnelSoilThickness;
   double   tunnelFloorOffset;
+
+  /// Sampler
+  double   samplerDiameter;
   
   ///Geometry biasing
   int      geometryBias;
@@ -133,7 +135,7 @@ struct Options {
   double   annihiToMuFe;
   double   eeToHadronsFe;
 
-  double scintYieldFactor;
+  double   scintYieldFactor;
  
   int      useEMLPB;
   int      useHadLPB;

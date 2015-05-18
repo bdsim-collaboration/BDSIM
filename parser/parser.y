@@ -65,6 +65,7 @@
 %type <symp> sample_options
 %type <symp> csample_options
 %type <symp> gas_options
+%type <symp> tunnel_options
 
 /* printout format for debug output */
 /*
@@ -605,11 +606,7 @@ parameters:
 		  else
 		  if(!strcmp($1->name,"fintx")) {;}  //
 		  else
-		  if(!strcmp($1->name,"tunnelRadius")) { params.tunnelRadius = $3; params.tunnelRadiusset = 1;} // tunnel radius
-		  else
-		  if(!strcmp($1->name,"tunnelOffsetX")) { params.tunnelOffsetX = $3; params.tunnelOffsetXset = 1;} // tunnel offset
-		  else
-		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;} // tunnel offset
+		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;}
 		    else
 		  if(!strcmp($1->name,"e1")) {;}  //
                     else
@@ -836,11 +833,7 @@ parameters:
 		  else
 		  if(!strcmp($1->name,"fintx")) {;}  //
 		  else
-		  if(!strcmp($1->name,"tunnelRadius")) { params.tunnelRadius = $3; params.tunnelRadiusset = 1;} // tunnel radius
-		  else
-		  if(!strcmp($1->name,"tunnelOffsetX")) { params.tunnelOffsetX = $3; params.tunnelOffsetXset = 1;} // tunnel offset
-		  else
-		    if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;} // tunnel offset
+		    if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;}
 		    else
 		  if(!strcmp($1->name,"e1")) {;}  //
                     else
@@ -911,18 +904,6 @@ parameters:
 			   params.beampipeMaterial = $3;
 			 }
 		   else
-		   if(!strcmp($1->name,"tunnelMaterial")) 
-		       {
-			 params.tunnelmaterialset = 1;
-			 params.tunnelMaterial = $3;
-		       }
-		   else 
-		   if(!strcmp($1->name,"tunnelCavityMaterial")) 
-		       {
-			 params.tunnelcavitymaterialset = 1;
-			 params.tunnelCavityMaterial = $3;
-		       }
-		   else 
 		   if(!strcmp($1->name,"scintmaterial")) 
 		     {
 		       params.scintmaterialset = 1;
@@ -1001,12 +982,6 @@ parameters:
                            params.material = $3;
                          }
                        else
-                       if(!strcmp($1->name,"tunnelMaterial")) 
-		       {
-			 params.tunnelmaterialset = 1;
-			 params.tunnelMaterial = $3;
-		       }
-		       else
 		       if(!strcmp($1->name,"apertureType"))
 			 {
 			   params.apertureTypeset = 1;
@@ -1025,12 +1000,6 @@ parameters:
 			   params.beampipeMaterial = $3;
 			 }
 		       else
-                         if(!strcmp($1->name,"tunnelCavityMaterial")) 
-		       {
-			 params.tunnelcavitymaterialset = 1;
-			 params.tunnelCavityMaterial = $3;
-		       }
-                       else
 			 if(!strcmp($1->name,"scintmaterial")) 
 			   {	 
 			     params.scintmaterialset = 1;
@@ -1962,13 +1931,12 @@ command : STOP             { if(execute) quit(); }
 		params.flush();
 	      }
           }
-        | TUNNEL ',' parameters // tunnel
+        | TUNNEL ',' tunnel_options // tunnel
           {
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> TUNNEL\n");
-		write_table(params,"tunnel",_TUNNEL);
-		params.flush();
+		add_tunnel(tunnel);
 	      }
           }
         | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
@@ -2177,6 +2145,28 @@ gas_options : VARIABLE '=' aexpr
                   }
 ;
 
+tunnel_options : VARIABLE '=' aexpr ',' tunnel_options
+                    {
+		      if(execute)
+			tunnel.set_value($1->name,$3);
+		    }
+                 | VARIABLE '=' aexpr
+                    {
+		      if(execute)
+			tunnel.set_value($1->name,$3);
+		    }
+                 | VARIABLE '=' STR ',' tunnel_options
+                    {
+		      if(execute)
+			tunnel.set_value($1->name,std::string($3));
+		    }
+                 | VARIABLE '=' STR
+                    {
+		      if(execute)
+			tunnel.set_value($1->name,std::string($3));
+		    }
+;
+
 option_parameters : 
                   | VARIABLE '=' aexpr ',' option_parameters
                     {
@@ -2224,7 +2214,6 @@ beam_parameters :
 ;
 
 %%
-
 
 
 int yyerror(const char *s)

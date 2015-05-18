@@ -65,13 +65,13 @@ void init()
   add_var("m"  ,1.0 ,reserved);
   add_var("cm" ,1e-2,reserved);
   add_var("mm" ,1e-3,reserved);
-  add_var("um",1e-6,reserved);
+  add_var("um" ,1e-6,reserved);
   add_var("mum",1e-6,reserved);
   add_var("nm" ,1e-9,reserved);
 
   add_var("s"  ,1.0  ,reserved);
   add_var("ms" ,1.e-3,reserved);
-  add_var("us",1.e-6,reserved);
+  add_var("us" ,1.e-6,reserved);
   add_var("ns" ,1.e-9,reserved);
 
   add_var("rad" ,1.0  ,reserved);
