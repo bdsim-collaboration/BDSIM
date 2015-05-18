@@ -789,8 +789,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
   G4cout << "---->creating Element,"
 	 << " name= " << _element.name
 	 << " l= " << _element.l << "m"
-	 << " aper= " << aper/CLHEP::m << "m"
-	 << " outR= " << 0.5 * _element.boxSize << "m"
+	 << " aper= " << aper1/CLHEP::m << "m"
+	 << " outR= " << 0.5 * _element.outerDiameter << "m"
 	 << " bmapZOffset = "	<<  _element.bmapZOffset * CLHEP::m
 	 << " precision region " << _element.precisionRegion
 	 << G4endl;
