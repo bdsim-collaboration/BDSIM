@@ -47,19 +47,19 @@ BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeTyp
     break;
   case BDSBeamPipeType::lhc:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " lhc beampipe factory" << G4endl;
+    G4cout << __METHOD_NAME__ << "lhc beampipe factory" << G4endl;
 #endif
     return BDSBeamPipeFactoryLHC::Instance();
     break;
   case BDSBeamPipeType::lhcdetailed:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " lhc detailed beampipe factory" << G4endl;
+    G4cout << __METHOD_NAME__ << "lhc detailed beampipe factory" << G4endl;
 #endif
     return BDSBeamPipeFactoryLHCDetailed::Instance();
     break;
   case BDSBeamPipeType::rectellipse:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " rectangular ellipse beampipe factory" << G4endl;
+    G4cout << __METHOD_NAME__ << "rectangular ellipse beampipe factory" << G4endl;
 #endif
     return BDSBeamPipeFactoryRectEllipse::Instance();
     break;

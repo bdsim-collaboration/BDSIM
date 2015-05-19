@@ -91,6 +91,9 @@ public:
 protected:
   /// base constructor
   BDSBeamPipeFactoryBase();
+
+  /// Initialiser and can be used to reset factory pointers after use
+  virtual void CleanUp();
   
   /// finalise beampipe construction
   void CommonConstruction(G4String    nameIn,
@@ -119,14 +122,17 @@ protected:
 				   G4Material* vacuumMaterialIn,
 				   G4Material* beamPipeMaterialIn);
   /// set visual attributes
-  virtual void SetVisAttributes();
+  virtual void          SetVisAttributes();
+
   /// set user limits
   virtual G4UserLimits* SetUserLimits(G4double lengthIn);
+
   /// place volumes
-  virtual void PlaceComponents(G4String nameIn);
+  virtual void          PlaceComponents(G4String nameIn);
 
 protected:
   G4double         lengthSafety;
+  G4double         nSegmentsPerCircle; // for visualisation improvement
   G4VSolid*        vacuumSolid;
   G4VSolid*        beamPipeSolid;
   G4VSolid*        containerSolid;

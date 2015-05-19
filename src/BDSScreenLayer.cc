@@ -11,7 +11,6 @@
 #include "G4UserLimits.hh"
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
-#include "BDSOutputBase.hh"
 
 //============================================================
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;

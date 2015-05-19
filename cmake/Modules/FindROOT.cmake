@@ -8,13 +8,16 @@
 
 MESSAGE(STATUS "Looking for ROOT...")
 
-if(EXISTS "${ROOTSYS}/bin/root-config")
+# look for root-config
+if(ROOT_CONFIG_EXECUTABLE AND EXISTS ${ROOT_CONFIG_EXECUTABLE})
+  # do nothing
+elseif(EXISTS "${ROOTSYS}/bin/root-config")
   set(ROOT_CONFIG_EXECUTABLE "${ROOTSYS}/bin/root-config")
 elseif(EXISTS "${ROOTSYS}/bin/root-config5")
   set(ROOT_CONFIG_EXECUTABLE "${ROOTSYS}/bin/root-config5")
 else()
   if($ENV{VERBOSE})
-       message(STATUS "root-config not found in ROOTSYS, trying default PATHS")
+       message(STATUS "root-config not found in ROOTSYS ${ROOTSYS}, trying default PATHS")
   endif()
   find_program(ROOT_CONFIG_EXECUTABLE NAMES root-config root-config5)
 endif()

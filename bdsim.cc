@@ -26,7 +26,7 @@
 #include "G4GeometryManager.hh"
 
 #ifdef G4VIS_USE
-#include "BDSVisManager.hh"
+#include "G4VisExecutive.hh"
 #endif
 
 #ifdef G4UI_USE
@@ -90,9 +90,8 @@ void BDS_handle_aborts(int signal_number) {
   std::cout << "BDSIM is about to crash or was interrupted! " << std::endl;
   std::cout << "With signal: " << strsignal(signal_number) << std::endl;
   std::cout << "Trying to write and close output file" << std::endl;
-  bdsOutput->Write();
-  std::cout << "Abort Geant4 run" << std::endl;
-  BDSRunManager::GetRunManager()->AbortRun();
+  std::cout << "Terminate run" << std::endl;
+  BDSRunManager::GetRunManager()->RunTermination();
   std::cout << "Ave, Imperator, morituri te salutant!" << std::endl;
 }
 
@@ -282,7 +281,6 @@ int main(int argc,char** argv) {
   if(!execOptions->GetBatch())   // Interactive mode
     {
       G4UIsession* session=0;
-      G4VisManager* visManager=0;
 #ifdef G4UI_USE_TCSH
       session = new G4UIterminal(new G4UItcsh);
 #else
@@ -293,8 +291,12 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
       G4cout<< __FUNCTION__ << "> Initializing Visualisation Manager"<<G4endl;
 #endif
-      visManager = new BDSVisManager;
+      // Initialize visualization
+      G4VisManager* visManager = new G4VisExecutive;
+      // G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
+      // G4VisManager* visManager = new G4VisExecutive("Quiet");
       visManager->Initialize();
+      
       G4TrajectoryDrawByCharge* trajModel1 = new G4TrajectoryDrawByCharge("trajModel1");
       visManager->RegisterModel(trajModel1);
       visManager->SelectTrajectoryModel(trajModel1->Name());

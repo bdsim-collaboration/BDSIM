@@ -24,7 +24,6 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
-#include "G4IntersectionSolid.hh"
 #include <cmath>
 #include <utility>                         // for std::pair
 #include <algorithm>                       // for std::max
@@ -34,9 +33,10 @@
 BDSMagnetOuterFactoryLHC::BDSMagnetOuterFactoryLHC(G4bool isLeftOffsetIn):
   isLeftOffset(isLeftOffsetIn)
 {
-  lengthSafety   = BDSGlobalConstants::Instance()->GetLengthSafety();
-  outerSolid     = NULL;
-  containerSolid = NULL;
+  lengthSafety       = BDSGlobalConstants::Instance()->GetLengthSafety();
+  nSegmentsPerCircle = 50;
+  outerSolid         = NULL;
+  containerSolid     = NULL;
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
@@ -75,7 +75,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
       dipolePosition = G4ThreeVector(massShift,0.,0.);
       BPseparation *= -1;
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "dipole to the Right" << G4endl;
+      G4cout << __METHOD_NAME__ << "dipole to the left" << G4endl;
 #endif
     }
   else
@@ -83,7 +83,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
       dipolePosition = G4ThreeVector(-massShift,0.,0.);
       massShift    *= -1;
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "dipole to the Left" << G4endl;
+      G4cout << __METHOD_NAME__ << "dipole to the right" << G4endl;
 #endif
     }
 
@@ -109,7 +109,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
       G4VSolid* containerSolidOuter = new G4CutTubs(name + "_contiainer_solid_outer",  // name
 						    0,                           // inner radius
 						    boxSize*0.5,                 // outer radius
-						    length*0.5,                  // half length
+						    centralHalfLength,           // half length
 						    0,                           // rotation start angle
 						    CLHEP::twopi,                // rotation finish angle
 						    inputface,                   // input face normal
@@ -132,7 +132,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
       G4VSolid* containerSolidOuter = new G4CutTubs(name + "_contiainer_solid_outer",  // name
 						    0,                           // inner radius
 						    boxSize*0.5,                 // outer radius
-						    length*0.5,                  // half length
+						    centralHalfLength,           // half length
 						    0,                           // rotation start angle
 						    CLHEP::twopi,                // rotation finish angle
 						    inputface,                   // input face normal
@@ -248,7 +248,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   // coil visualisation
   G4VisAttributes* coilVisAtt = new G4VisAttributes(G4Colour(0.9, 0.75, 0.)); //gold-ish colour
   coilVisAtt->SetForceSolid(true);
-  coilVisAtt->SetForceLineSegmentsPerCircle(50);
+  coilVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   coil1InnerLV->SetVisAttributes(coilVisAtt);
   coil1OuterLV->SetVisAttributes(coilVisAtt);
   coil2InnerLV->SetVisAttributes(coilVisAtt);
@@ -430,7 +430,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   // collar pole visualisation
   G4VisAttributes* collarVisAtt = new G4VisAttributes(G4Colour(0.9, 0.9, 0.9));
   collarVisAtt->SetForceSolid(true);
-  collarVisAtt->SetForceLineSegmentsPerCircle(50);
+  collarVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   collar1PoleTopInnerLV->SetVisAttributes(collarVisAtt);
   collar1PoleTopOuterLV->SetVisAttributes(collarVisAtt);
   collar1PoleBottomInnerLV->SetVisAttributes(collarVisAtt);
@@ -590,7 +590,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   // yoke visualisation
   G4VisAttributes* LHCblue = new G4VisAttributes(G4Colour(0.0, 0.5, 1.0));
   LHCblue->SetForceSolid(true);
-  LHCblue->SetForceLineSegmentsPerCircle(50);
+  LHCblue->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   yokeLV->SetVisAttributes(LHCblue);
   
   allLogicalVolumes.push_back(yokeLV); // register locally
@@ -624,6 +624,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 										    1*CLHEP::mm,       // beampipeThickness
 										    beamPipeMaterial); // beampipe material
 
+  
   G4LogicalVolume* secondBPLV = secondBP->GetContainerLogicalVolume();
   allLogicalVolumes.push_back(secondBPLV);
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
@@ -645,19 +646,19 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 
   // USER LIMITS for all components
 #ifndef NOUSERLIMITS
-  G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
-  G4double maxStepFactor = 0.5; // fraction of length for maximum step size
-  userLimits->SetMaxAllowedStep( length * maxStepFactor );
-  userLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  if (!allLogicalVolumes.empty()) {
+    G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
+    G4double maxStepFactor = 0.5; // fraction of length for maximum step size
+    userLimits->SetMaxAllowedStep( length * maxStepFactor );
+    userLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+    userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+    
+    for (std::vector<G4LogicalVolume*>::iterator i = allLogicalVolumes.begin(); i != allLogicalVolumes.end(); ++i)
+      {
+	(*i)->SetUserLimits(userLimits);
+      }
+  }
 #endif
-  
-  for (std::vector<G4LogicalVolume*>::iterator i = allLogicalVolumes.begin(); i != allLogicalVolumes.end(); ++i)
-    {
-#ifndef NOUSERLIMITS
-      (*i)->SetUserLimits(userLimits);
-#endif
-    }
   
   // record extents
   // container radius is the same for all methods as all cylindrical
@@ -696,28 +697,12 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String  
   CreateCylindricalSolids(name, length, beamPipe, boxSize);
   return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("rectangularbend"));
 }
-/*
+
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 								 G4double      length,
 								 BDSBeamPipe*  beamPipe,
 								 G4double      boxSize,
 								 G4Material*   outerMaterial)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  CreateCylindricalSolids(name, length, beamPipe, boxSize);
-  return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("quadrupole"));
-}
-*/
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
-									 G4double      length,
-									 BDSBeamPipe*  beamPipe,
-									 G4double      boxSize,
-									 G4Material*   outerMaterial)
 
 {
 #ifdef BDSDEBUG
@@ -748,7 +733,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
       dipolePosition = G4ThreeVector(massShift,0.,0.);
       BPseparation *= -1;
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "dipole to the Right" << G4endl;
+      G4cout << __METHOD_NAME__ << "quadrupole to the left" << G4endl;
 #endif
     }
   else
@@ -756,7 +741,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
       dipolePosition = G4ThreeVector(-massShift,0.,0.);
       massShift    *= -1;
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "dipole to the Left" << G4endl;
+      G4cout << __METHOD_NAME__ << "quadrupole to the right" << G4endl;
 #endif
     }
 
@@ -769,10 +754,10 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
       //container is similar but slightly wider and hollow (to allow placement of beampipe)
       //have to do subtraction as cuttubs aperture is central and the beampipe (active one) is not here
       G4VSolid* containerSolidOuter = new G4Tubs(name + "_contiainer_solid_outer",  // name
-						    0,                           // inner radius
-						    boxSize*0.5,                 // outer radius
-						    length*0.5,                  // half length
-						    0,                           // rotation start angle
+						 0,                           // inner radius
+						 boxSize*0.5,                 // outer radius
+						 length*0.5,                  // half length
+						 0,                           // rotation start angle
 						 CLHEP::twopi);                // rotation finish angle
 						    
       G4VSolid* containerSolidInner = new G4Tubs(name + "_contiainer_solid_inner",  // name
@@ -969,7 +954,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
   // coil visualisation
   G4VisAttributes* coilVisAtt = new G4VisAttributes(G4Colour(0.9, 0.75, 0.)); //gold-ish colour
   coilVisAtt->SetForceSolid(true);
-  coilVisAtt->SetForceLineSegmentsPerCircle(50);
+  coilVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   coil1InnerLV->SetVisAttributes(coilVisAtt);
   coil1OuterLV->SetVisAttributes(coilVisAtt);
   coil2InnerLV->SetVisAttributes(coilVisAtt);
@@ -1292,7 +1277,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
   // collar pole visualisation
   G4VisAttributes* collarVisAtt = new G4VisAttributes(G4Colour(0.9, 0.9, 0.9));
   collarVisAtt->SetForceSolid(true);
-  collarVisAtt->SetForceLineSegmentsPerCircle(50);
+  collarVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   collar1PoleTopInnerLV->SetVisAttributes(collarVisAtt);
   collar1PoleTopOuterLV->SetVisAttributes(collarVisAtt);
   collar1PoleBottomInnerLV->SetVisAttributes(collarVisAtt);
@@ -1511,7 +1496,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
   // yoke visualisation
   G4VisAttributes* LHCred = new G4VisAttributes(G4Colour(1.0, 0., 0.));
   LHCred->SetForceSolid(true);
-  LHCred->SetForceLineSegmentsPerCircle(50);
+  LHCred->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   yokeLV->SetVisAttributes(LHCred);
   
   allLogicalVolumes.push_back(yokeLV); // register locally
@@ -1531,20 +1516,19 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
   G4Material* beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
   G4Material* vacuumMaterial   = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
 
+  
   //use beampipe factories to create another beampipe (note no magnetic field for now...)
-  BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(BDSBeamPipeType::lhcdetailed,
-										    name,
-										    length-2*lengthSafety,
-										    0.0,        // entrane angle
-										    0.0,        // exit angle
-										    2.402*CLHEP::cm,   // aper1
-										    1.828*CLHEP::cm,   // aper2
-										    2.402*CLHEP::cm,   // aper3
-										    0,                 // aper4
-										    vacuumMaterial,    // vacuum material
-										    1*CLHEP::mm,       // beampipeThickness
-										    beamPipeMaterial); // beampipe material
-
+  BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipe(BDSBeamPipeType::lhcdetailed,
+									 name,
+									 length-2*lengthSafety,
+									 2.402*CLHEP::cm,   // aper1
+									 1.828*CLHEP::cm,   // aper2
+									 2.402*CLHEP::cm,   // aper3
+									 0,                 // aper4
+									 vacuumMaterial,    // vacuum material
+									 1*CLHEP::mm,       // beampipeThickness
+									 beamPipeMaterial); // beampipe material
+  
   G4LogicalVolume* secondBPLV = secondBP->GetContainerLogicalVolume();
   allLogicalVolumes.push_back(secondBPLV);
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
@@ -1566,20 +1550,20 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
 
   // USER LIMITS and SENSITIVITY for all components
 #ifndef NOUSERLIMITS
-  G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
-  G4double maxStepFactor = 0.5; // fraction of length for maximum step size
-  userLimits->SetMaxAllowedStep( length * maxStepFactor );
-  userLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-#endif
-  for (std::vector<G4LogicalVolume*>::iterator i = allLogicalVolumes.begin(); i != allLogicalVolumes.end(); ++i)
-    {
+  if (!allLogicalVolumes.empty()) {
+    G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
+    G4double maxStepFactor = 0.5; // fraction of length for maximum step size
+    userLimits->SetMaxAllowedStep( length * maxStepFactor );
+    userLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+    userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+    
+    for (std::vector<G4LogicalVolume*>::iterator i = allLogicalVolumes.begin(); i != allLogicalVolumes.end(); ++i) {
       (*i)->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
-#ifndef NOUSERLIMITS
       (*i)->SetUserLimits(userLimits);
-#endif
     }
-  
+  }
+#endif
+    
   // record extents
   // container radius is the same for all methods as all cylindrical
   G4double containerRadius = boxSize + lengthSafety;
@@ -1599,9 +1583,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
   
   return outer;
 }
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSextupole(G4String      name,
 								G4double      length,

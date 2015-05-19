@@ -16,7 +16,6 @@
 #include <cstdlib>
 #include <cstddef>
 #include <cmath>
-#include <map>
 #include <string>
 #include <algorithm> // for std::max
 
@@ -27,7 +26,6 @@
 #include "G4MagIntegratorStepper.hh"
 #include "G4MagneticField.hh"
 #include "G4PVPlacement.hh"
-#include "G4SubtractionSolid.hh"
 #include "G4Trap.hh"
 #include "G4Tubs.hh"
 #include "G4UserLimits.hh"
@@ -173,11 +171,10 @@ void BDSMultipole::BeamPipeCommonTasks()
     {RotY=BDSGlobalConstants::Instance()->RotY90(); }
 
   // place beampipe
-  itsPhysiComp = new G4PVPlacement(
-				   RotY,                      // rotation
+  itsPhysiComp = new G4PVPlacement(RotY,                      // rotation
 				   (G4ThreeVector)0,          // at (0,0,0)
 				   beampipe->GetContainerLogicalVolume(),  // its logical volume
-				   itsName+"_bmp_phys",	      // its name
+				   itsName+"_beampipe_pv",    // its name
 				   itsMarkerLogicalVolume,    // its mother  volume
 				   false,                     // no boolean operation
 				   0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number

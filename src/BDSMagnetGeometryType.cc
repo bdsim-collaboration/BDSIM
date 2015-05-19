@@ -7,6 +7,7 @@
 BDSMagnetGeometryType BDS::DetermineMagnetGeometryType(G4String geometryType)
 {
   std::map<G4String, BDSMagnetGeometryType> types;
+  types["none"]              = BDSMagnetGeometryType::none;
   types["cylindrical"]       = BDSMagnetGeometryType::cylindrical;
   types["polescircular"]     = BDSMagnetGeometryType::polescircular;
   types["polessquare"]       = BDSMagnetGeometryType::polessquare;
@@ -26,7 +27,7 @@ BDSMagnetGeometryType BDS::DetermineMagnetGeometryType(G4String geometryType)
 
   BDSMagnetGeometryType returnValue = types[geometryType];
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " determined geometry type to be " << returnValue << G4endl;
+  G4cout << __METHOD_NAME__ << " determined geometry type to be " << returnValue.underlying() << G4endl;
 #endif
   return returnValue;
 }

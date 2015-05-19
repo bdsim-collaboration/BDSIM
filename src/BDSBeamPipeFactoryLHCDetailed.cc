@@ -35,6 +35,17 @@ BDSBeamPipeFactoryLHCDetailed* BDSBeamPipeFactoryLHCDetailed::Instance()
   return _instance;
 }
 
+void BDSBeamPipeFactoryLHCDetailed::CleanUp()
+{
+  BDSBeamPipeFactoryBase::CleanUp();
+  copperSkinSolid  = NULL; // the copper skin
+  screenSolid      = NULL; // the beam screen (first bit of aperture)
+  coolingPipeSolid = NULL; // small cooling pipe above and below beam screen
+  copperSkinLV     = NULL;
+  screenLV         = NULL;
+  coolingPipeLV    = NULL;
+}
+
 BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed():BDSBeamPipeFactoryBase()
 {
   coldBoreThickness         = 1.5*CLHEP::mm;
@@ -42,12 +53,7 @@ BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed():BDSBeamPipeFactor
   coolingPipeRadius         = 3.7*CLHEP::mm; // will be overwritten if needs be to fit inside beampipe
   coolingPipeYOffset        = 0.0;  //initialised only
   copperSkinThickness       = 75*CLHEP::um;
-  copperSkinSolid           = NULL; // the copper skin
-  screenSolid               = NULL; // the beam screen (first bit of aperture)
-  coolingPipeSolid          = NULL; // small cooling pipe above and below beam screen
-  copperSkinLV              = NULL;
-  screenLV                  = NULL;
-  coolingPipeLV             = NULL;
+  CleanUp();
 }
 
 BDSBeamPipeFactoryLHCDetailed::~BDSBeamPipeFactoryLHCDetailed()
@@ -74,6 +80,9 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String    nameIn,  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  // clean up after last usage
+  CleanUp();
+  
   // test input parameters - set global options as default if not specified
   TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In,aper3In);
 
@@ -226,6 +235,9 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipeAngledInOut(G4String  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  // clean up after last usage
+  CleanUp();
+  
    // test input parameters - set global options as default if not specified
   TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In,aper3In);
 
@@ -334,7 +346,7 @@ void BDSBeamPipeFactoryLHCDetailed::SetVisAttributes()
 
   // copper skin
   G4VisAttributes* cuVisAttr   = new G4VisAttributes(G4Colour(0.722, 0.525, 0.043));
-  cuVisAttr->SetForceLineSegmentsPerCircle(50);
+  cuVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   cuVisAttr->SetVisibility(true);
   cuVisAttr->SetForceSolid(true);
   
@@ -342,7 +354,7 @@ void BDSBeamPipeFactoryLHCDetailed::SetVisAttributes()
   G4VisAttributes* pipeVisAttr = new G4VisAttributes(G4Colour(0.4,0.4,0.4));
   pipeVisAttr->SetVisibility(true);
   pipeVisAttr->SetForceSolid(true);
-  pipeVisAttr->SetForceLineSegmentsPerCircle(60);
+  pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
 
   copperSkinLV->SetVisAttributes(cuVisAttr);
   screenLV->SetVisAttributes(pipeVisAttr);
@@ -417,8 +429,7 @@ void BDSBeamPipeFactoryLHCDetailed::CreateGeneralAngledSolids(G4String      name
 							      G4ThreeVector inputfaceIn,
 							      G4ThreeVector outputfaceIn)
 {
-
-  #ifdef BDSDEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   
@@ -552,12 +563,14 @@ void BDSBeamPipeFactoryLHCDetailed::CreateGeneralAngledSolids(G4String      name
 
   //container cylindrical solid (circular cross-section)
   G4double containerRadius = coldBoreRadius + coldBoreThickness + 1*CLHEP::um;
-  containerSolid = new G4Tubs(nameIn + "_container_cylinder", // name
-			      0,                              // inner radius
-			      containerRadius,                // outer radius
-			      lengthIn*0.5,                   // half length
-			      0,                              // rotation start angle
-			      CLHEP::twopi);                  // rotation finish angle
+  containerSolid = new G4CutTubs(nameIn + "_container_cylinder", // name
+				 0,                              // inner radius
+				 containerRadius,                // outer radius
+				 lengthIn*0.5,                   // half length
+				 0,                              // rotation start angle
+				 CLHEP::twopi,                   // rotation finish angle
+				 inputfaceIn,                    // input face normal
+				 outputfaceIn);                  // output face normal
 
   //container cylindrical solid (circular cross-section)
   containerSubtractionSolid = new G4Tubs(nameIn + "_subtraction_cylinder", // name
