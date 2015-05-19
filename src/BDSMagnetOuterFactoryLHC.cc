@@ -110,7 +110,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
       G4VSolid* containerSolidOuter = new G4CutTubs(name + "_contiainer_solid_outer",  // name
 						    0,                           // inner radius
 						    boxSize*0.5,                 // outer radius
-						    length*0.5,                  // half length
+						    centralHalfLength,           // half length
 						    0,                           // rotation start angle
 						    CLHEP::twopi,                // rotation finish angle
 						    inputface,                   // input face normal
@@ -133,7 +133,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
       G4VSolid* containerSolidOuter = new G4CutTubs(name + "_contiainer_solid_outer",  // name
 						    0,                           // inner radius
 						    boxSize*0.5,                 // outer radius
-						    length*0.5,                  // half length
+						    centralHalfLength,           // half length
 						    0,                           // rotation start angle
 						    CLHEP::twopi,                // rotation finish angle
 						    inputface,                   // input face normal
