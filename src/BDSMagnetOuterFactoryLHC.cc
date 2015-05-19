@@ -24,7 +24,6 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
-#include "G4IntersectionSolid.hh"
 #include <cmath>
 #include <utility>                         // for std::pair
 #include <algorithm>                       // for std::max
@@ -1566,20 +1565,20 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
 
   // USER LIMITS and SENSITIVITY for all components
 #ifndef NOUSERLIMITS
-  G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
-  G4double maxStepFactor = 0.5; // fraction of length for maximum step size
-  userLimits->SetMaxAllowedStep( length * maxStepFactor );
-  userLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-#endif
-  for (std::vector<G4LogicalVolume*>::iterator i = allLogicalVolumes.begin(); i != allLogicalVolumes.end(); ++i)
-    {
+  if (!allLogicalVolumes.empty()) {
+    G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
+    G4double maxStepFactor = 0.5; // fraction of length for maximum step size
+    userLimits->SetMaxAllowedStep( length * maxStepFactor );
+    userLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+    userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+    
+    for (std::vector<G4LogicalVolume*>::iterator i = allLogicalVolumes.begin(); i != allLogicalVolumes.end(); ++i) {
       (*i)->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
-#ifndef NOUSERLIMITS
       (*i)->SetUserLimits(userLimits);
-#endif
     }
-  
+  }
+#endif
+    
   // record extents
   // container radius is the same for all methods as all cylindrical
   G4double containerRadius = boxSize + lengthSafety;
