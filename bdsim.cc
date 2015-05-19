@@ -26,7 +26,8 @@
 #include "G4GeometryManager.hh"
 
 #ifdef G4VIS_USE
-#include "BDSVisManager.hh"
+//#include "BDSVisManager.hh"
+#include "G4VisExecutive.hh"
 #endif
 
 #ifdef G4UI_USE
@@ -281,7 +282,6 @@ int main(int argc,char** argv) {
   if(!execOptions->GetBatch())   // Interactive mode
     {
       G4UIsession* session=0;
-      G4VisManager* visManager=0;
 #ifdef G4UI_USE_TCSH
       session = new G4UIterminal(new G4UItcsh);
 #else
@@ -292,8 +292,14 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
       G4cout<< __FUNCTION__ << "> Initializing Visualisation Manager"<<G4endl;
 #endif
-      visManager = new BDSVisManager;
+      // visManager = new BDSVisManager;
+      // visManager->Initialize();
+      // Initialize visualization
+      G4VisManager* visManager = new G4VisExecutive;
+      // G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
+      // G4VisManager* visManager = new G4VisExecutive("Quiet");
       visManager->Initialize();
+      
       G4TrajectoryDrawByCharge* trajModel1 = new G4TrajectoryDrawByCharge("trajModel1");
       visManager->RegisterModel(trajModel1);
       visManager->SelectTrajectoryModel(trajModel1->Name());
