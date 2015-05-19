@@ -16,7 +16,6 @@
 #include <cstdlib>
 #include <cstddef>
 #include <cmath>
-#include <map>
 #include <string>
 #include <algorithm> // for std::max
 
@@ -27,7 +26,6 @@
 #include "G4MagIntegratorStepper.hh"
 #include "G4MagneticField.hh"
 #include "G4PVPlacement.hh"
-#include "G4SubtractionSolid.hh"
 #include "G4Trap.hh"
 #include "G4Tubs.hh"
 #include "G4UserLimits.hh"

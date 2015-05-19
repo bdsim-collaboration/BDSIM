@@ -26,7 +26,6 @@
 #include "G4GeometryManager.hh"
 
 #ifdef G4VIS_USE
-//#include "BDSVisManager.hh"
 #include "G4VisExecutive.hh"
 #endif
 
@@ -292,8 +291,6 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
       G4cout<< __FUNCTION__ << "> Initializing Visualisation Manager"<<G4endl;
 #endif
-      // visManager = new BDSVisManager;
-      // visManager->Initialize();
       // Initialize visualization
       G4VisManager* visManager = new G4VisExecutive;
       // G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.

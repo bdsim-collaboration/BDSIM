@@ -2,8 +2,10 @@
 #define BDSTUNNELINFO
 
 #include "globals.hh"         // geant4 types / globals
-#include "G4Material.hh"
+#include "CLHEP/Units/SystemOfUnits.h"
 #include "BDSTunnelType.hh"
+
+class G4Material;
 
 /**
  * @brief Holder struct of all information required to
