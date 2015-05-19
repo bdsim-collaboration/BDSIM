@@ -45,7 +45,7 @@ void Tunnel::set_value(std::string property, double value )
   if (property=="soilThickness") {soilThickness = value; return;}
   if (property=="floorOffset")   {floorOffset = value; return;}
   
-  std::cerr << "Error: parser> unkown tunnel option \"" << property << "\"" << std::endl; 
+  std::cerr << "Error: parser> unknown tunnel option \"" << property << "\" with value " << value << std::endl; 
   exit(1);
 }
 
@@ -62,6 +62,6 @@ void Tunnel::set_value(std::string property, std::string value )
   if (property=="startElement") {startElement = value; return;}
   if (property=="endElement")   {endElement = value; return;}
 
-  std::cerr << "Error: parser> unkown tunnel option \"" << property << "\"" << std::endl;
+  std::cerr << "Error: parser> unknown tunnel option \"" << property << "\" with value " << value << std::endl;
   exit(1);
 }

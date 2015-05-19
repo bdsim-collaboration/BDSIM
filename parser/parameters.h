@@ -4,6 +4,7 @@
 #include <list>
 #include <string>
 
+struct Array;
 struct Element;
 
 /**
@@ -118,6 +119,13 @@ struct Parameters {
 
   /// print multipole expansion array
   void print()const;
+
+  /// set methods by property name, numeric values
+  void set_value(std::string property, double value);
+  /// set methods by property name, string values
+  void set_value(std::string property, std::string value);
+  /// set methods by property name, Array values
+  void set_value(std::string property, Array* value);
 
   /// constructor
   Parameters();
