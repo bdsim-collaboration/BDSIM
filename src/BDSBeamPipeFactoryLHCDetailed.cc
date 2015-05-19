@@ -346,7 +346,7 @@ void BDSBeamPipeFactoryLHCDetailed::SetVisAttributes()
 
   // copper skin
   G4VisAttributes* cuVisAttr   = new G4VisAttributes(G4Colour(0.722, 0.525, 0.043));
-  cuVisAttr->SetForceLineSegmentsPerCircle(50);
+  cuVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   cuVisAttr->SetVisibility(true);
   cuVisAttr->SetForceSolid(true);
   
@@ -354,7 +354,7 @@ void BDSBeamPipeFactoryLHCDetailed::SetVisAttributes()
   G4VisAttributes* pipeVisAttr = new G4VisAttributes(G4Colour(0.4,0.4,0.4));
   pipeVisAttr->SetVisibility(true);
   pipeVisAttr->SetForceSolid(true);
-  pipeVisAttr->SetForceLineSegmentsPerCircle(60);
+  pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
 
   copperSkinLV->SetVisAttributes(cuVisAttr);
   screenLV->SetVisAttributes(pipeVisAttr);
@@ -429,8 +429,7 @@ void BDSBeamPipeFactoryLHCDetailed::CreateGeneralAngledSolids(G4String      name
 							      G4ThreeVector inputfaceIn,
 							      G4ThreeVector outputfaceIn)
 {
-
-  #ifdef BDSDEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   

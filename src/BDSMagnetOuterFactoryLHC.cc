@@ -34,9 +34,10 @@
 BDSMagnetOuterFactoryLHC::BDSMagnetOuterFactoryLHC(G4bool isLeftOffsetIn):
   isLeftOffset(isLeftOffsetIn)
 {
-  lengthSafety   = BDSGlobalConstants::Instance()->GetLengthSafety();
-  outerSolid     = NULL;
-  containerSolid = NULL;
+  lengthSafety       = BDSGlobalConstants::Instance()->GetLengthSafety();
+  nSegmentsPerCircle = 50;
+  outerSolid         = NULL;
+  containerSolid     = NULL;
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
@@ -248,7 +249,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   // coil visualisation
   G4VisAttributes* coilVisAtt = new G4VisAttributes(G4Colour(0.9, 0.75, 0.)); //gold-ish colour
   coilVisAtt->SetForceSolid(true);
-  coilVisAtt->SetForceLineSegmentsPerCircle(50);
+  coilVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   coil1InnerLV->SetVisAttributes(coilVisAtt);
   coil1OuterLV->SetVisAttributes(coilVisAtt);
   coil2InnerLV->SetVisAttributes(coilVisAtt);
@@ -430,7 +431,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   // collar pole visualisation
   G4VisAttributes* collarVisAtt = new G4VisAttributes(G4Colour(0.9, 0.9, 0.9));
   collarVisAtt->SetForceSolid(true);
-  collarVisAtt->SetForceLineSegmentsPerCircle(50);
+  collarVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   collar1PoleTopInnerLV->SetVisAttributes(collarVisAtt);
   collar1PoleTopOuterLV->SetVisAttributes(collarVisAtt);
   collar1PoleBottomInnerLV->SetVisAttributes(collarVisAtt);
@@ -590,7 +591,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   // yoke visualisation
   G4VisAttributes* LHCblue = new G4VisAttributes(G4Colour(0.0, 0.5, 1.0));
   LHCblue->SetForceSolid(true);
-  LHCblue->SetForceLineSegmentsPerCircle(50);
+  LHCblue->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   yokeLV->SetVisAttributes(LHCblue);
   
   allLogicalVolumes.push_back(yokeLV); // register locally
@@ -624,6 +625,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 										    1*CLHEP::mm,       // beampipeThickness
 										    beamPipeMaterial); // beampipe material
 
+  
   G4LogicalVolume* secondBPLV = secondBP->GetContainerLogicalVolume();
   allLogicalVolumes.push_back(secondBPLV);
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
@@ -953,7 +955,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
   // coil visualisation
   G4VisAttributes* coilVisAtt = new G4VisAttributes(G4Colour(0.9, 0.75, 0.)); //gold-ish colour
   coilVisAtt->SetForceSolid(true);
-  coilVisAtt->SetForceLineSegmentsPerCircle(50);
+  coilVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   coil1InnerLV->SetVisAttributes(coilVisAtt);
   coil1OuterLV->SetVisAttributes(coilVisAtt);
   coil2InnerLV->SetVisAttributes(coilVisAtt);
@@ -1276,7 +1278,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
   // collar pole visualisation
   G4VisAttributes* collarVisAtt = new G4VisAttributes(G4Colour(0.9, 0.9, 0.9));
   collarVisAtt->SetForceSolid(true);
-  collarVisAtt->SetForceLineSegmentsPerCircle(50);
+  collarVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   collar1PoleTopInnerLV->SetVisAttributes(collarVisAtt);
   collar1PoleTopOuterLV->SetVisAttributes(collarVisAtt);
   collar1PoleBottomInnerLV->SetVisAttributes(collarVisAtt);
@@ -1495,7 +1497,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
   // yoke visualisation
   G4VisAttributes* LHCred = new G4VisAttributes(G4Colour(1.0, 0., 0.));
   LHCred->SetForceSolid(true);
-  LHCred->SetForceLineSegmentsPerCircle(50);
+  LHCred->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   yokeLV->SetVisAttributes(LHCred);
   
   allLogicalVolumes.push_back(yokeLV); // register locally
@@ -1583,9 +1585,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
   
   return outer;
 }
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSextupole(G4String      name,
 								G4double      length,
