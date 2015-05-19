@@ -16,6 +16,7 @@ Work in progress.
 #include "G4VSolid.hh"
 #include "BDSAwakeMultilayerScreen.hh"
 #include "BDSCCDCamera.hh"
+#include "BDS3DMagField.hh"
 
 class BDSAwakeSpectrometer :public BDSAcceleratorComponent
 {
@@ -25,7 +26,7 @@ class BDSAwakeSpectrometer :public BDSAcceleratorComponent
   
 
 public:
-  BDSAwakeSpectrometer(G4String aName, G4double length, G4double poleStartZ, G4String material, G4double thickness, G4double windowScreenGap, G4double angle, G4double windowThickness, G4String windowMaterial, G4double screenEndZ);
+  BDSAwakeSpectrometer(G4String aName, G4double length, G4String bmapFile, G4double bmapZOffset,G4double poleStartZ, G4String material, G4double thickness, G4double windowScreenGap, G4double angle, G4double windowThickness, G4String windowMaterial, G4double screenEndZ);
   virtual ~BDSAwakeSpectrometer();
 
 protected:
@@ -172,6 +173,10 @@ private:
   G4double _startZPos;
   G4double _screenCentreZ;
   G4double _screenCentreX;
+
+  G4String _bmapFile;
+  G4double _bmapZOffset;
+  BDS3DMagField* _magField;
 };
 
 #endif

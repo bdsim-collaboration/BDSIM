@@ -4,9 +4,33 @@
 
 #include "globals.hh"
 #include "BDSMagField.hh"
+#include "BDSExecOptions.hh"
 
 BDSMagField::BDSMagField():rotation(NULL)
 {
+}
+
+BDSMagField::BDSMagField(G4String bmap, G4double bmapZOffset):_bmap(bmap),_bmapZOffset(bmapZOffset)
+{
+  BDSMagField();
+  ParseBMapFormatAndFile();  
+}
+
+void BDSMagField::ParseBMapFormatAndFile(){
+  _bFormat="none";
+  if(_bmap != ""){
+    G4int pos = _bmap.find(":");
+    if(pos<0) {
+      G4cerr<<"WARNING: invalid B map reference format : "<<_bmap<<G4endl;
+    }
+    else {
+      _bFormat = _bmap.substr(0,pos);
+      _bFile = BDSExecOptions::Instance()->GetBDSIMPATH() + _bmap.substr(pos+1,_bmap.length() - pos); 
+#ifdef BDSDEBUG
+      G4cout << "BDSElement::PlaceComponents bmap file is " << _bFile << G4endl;
+#endif
+    }
+  }
 }
 
 BDSMagField::~BDSMagField()

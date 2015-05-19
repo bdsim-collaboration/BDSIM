@@ -14,6 +14,7 @@
 #define BDSGeometryLCDD_h 1
 
 #include "globals.hh"
+#include "BDSGeometry.hh"
 #include "BDSMaterials.hh"
 #include "G4UniformMagField.hh"
 #include "G4LogicalVolume.hh"
@@ -66,7 +67,7 @@ struct VIS_REF{
   G4VisAttributes* value;
 };
 
-class BDSGeometryLCDD
+class BDSGeometryLCDD : BDSGeometry
 {
 public:
   BDSGeometryLCDD(G4String LCDDfile);

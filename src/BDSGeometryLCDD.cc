@@ -1,6 +1,7 @@
 #ifdef USE_LCDD
 #include "BDSGlobalConstants.hh" 
 #include "BDSGeometryLCDD.hh"
+#include "BDSGeometryFormat.hh"
 #include "BDSSbendMagField.hh"
 #include "G4Box.hh"
 #include "G4Colour.hh"
@@ -25,8 +26,7 @@
 #include <cstring>
 #include <list>
 
-BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):
-  itsMarkerVol(NULL),itsMagField(NULL),itsUniformMagField(NULL)
+BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):itsMarkerVol(NULL),itsMagField(NULL),itsUniformMagField(NULL)
 {
 #ifndef NOUSERLIMITS
   itsUserLimits = new G4UserLimits();

@@ -14,11 +14,9 @@
 class BDSMagField : public G4MagneticField
 {
 public:
-
-  // mandatory members
-
   BDSMagField();
-  
+  BDSMagField(G4String bmap, G4double bmapZOffset);
+  // mandatory members
   ~BDSMagField();
 
   virtual G4bool   DoesFieldChangeEnergy() const;
@@ -42,10 +40,17 @@ public:
   G4RotationMatrix Rotation() const;
   G4ThreeVector translation;
 
+  const G4String bFile();
+  const G4String bFormat();
+
+  
 private:
   G4RotationMatrix* rotation;
-  
-  
+  G4String _bmap;
+  G4double _bmapZOffset;
+  G4String _bFile;
+  G4String _bFormat;
+  void ParseBMapFormatAndFile();
 };
 
 
