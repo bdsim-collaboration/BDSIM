@@ -12,6 +12,8 @@ class BDSSpec{
 public:
   ~BDSSpec();
   G4bool compare(BDSSpec* spec) const; //Compare to another spec object 
+  G4bool compare(G4String spec) const; 
+  void spec(G4String val);
   
 protected:
   BDSSpec(G4String spec, std::list<G4String> allowedSpecs);
@@ -21,7 +23,7 @@ private:
   virtual std::list<G4String> allowedSpecs() = 0;
   G4String _spec;
   std::list<G4String> _allowedSpecs;
-  G4bool compare(G4String spec) const; 
+  G4bool checkAllowed(G4String val) const;
 };
 #endif
 

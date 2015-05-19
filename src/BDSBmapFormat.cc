@@ -1,9 +1,13 @@
 #include "BDSBmapFormat.hh"
+BDSBmapFormat::BDSBmapFormat():BDSSpec(G4String("none"), allowedSpecs()){
+}
+
 BDSBmapFormat::~BDSBmapFormat()
 {;}
 
 BDSBmapFormat::BDSBmapFormat(G4String format):BDSSpec(format, allowedSpecs())
 {;}
+
 
 std::list<G4String> BDSBmapFormat::allowedSpecs(){
   std::list<G4String> tmp;

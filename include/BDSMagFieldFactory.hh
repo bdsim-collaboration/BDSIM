@@ -3,6 +3,7 @@
 
 #include "globals.hh"
 #include "BDSMagField.hh"
+#include "BDSBmapFormat.hh"
 
 class BDSMagFieldFactory{
 public:
@@ -14,12 +15,13 @@ public:
 private:
   G4String _bmap;
   G4String _bFile;
-  G4String _bFormat;
+  BDSBmapFormat* _bFormat;
   G4double _bmapZOffset;
 
   void parseFormatAndFilename();
 
   BDSMagField* build3DMagField();
   BDSMagField* buildXYMagField();
+  BDSMagField* buildZeroMagField();
 };
 #endif

@@ -5,6 +5,7 @@
 
 class BDSBmapFormat: public BDSSpec{
 public:
+  BDSBmapFormat(); //Sets to format "none"
   ~BDSBmapFormat();
   BDSBmapFormat(G4String format);
 
