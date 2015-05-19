@@ -38,9 +38,10 @@ BDSMagnetOuterFactoryCylindrical* BDSMagnetOuterFactoryCylindrical::Instance()
 
 BDSMagnetOuterFactoryCylindrical::BDSMagnetOuterFactoryCylindrical()
 {
-  lengthSafety   = BDSGlobalConstants::Instance()->GetLengthSafety();
-  outerSolid     = NULL;
-  containerSolid = NULL;
+  lengthSafety       = BDSGlobalConstants::Instance()->GetLengthSafety();
+  nSegmentsPerCircle = 50;
+  outerSolid         = NULL;
+  containerSolid     = NULL;
 }
 
 BDSMagnetOuterFactoryCylindrical::~BDSMagnetOuterFactoryCylindrical()
@@ -352,8 +353,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G
   // outer
   G4VisAttributes* outerVisAttr = new G4VisAttributes(*colour);
   outerVisAttr->SetVisibility(true);
-  outerVisAttr->SetForceSolid(true);
-  outerVisAttr->SetForceLineSegmentsPerCircle(50);
+  outerVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   outerLV->SetVisAttributes(outerVisAttr);
   // container
 #ifdef BDSDEBUG

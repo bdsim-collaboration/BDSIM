@@ -30,7 +30,8 @@
 
 BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase()
 {
-  lengthSafety     = BDSGlobalConstants::Instance()->GetLengthSafety();
+  lengthSafety       = BDSGlobalConstants::Instance()->GetLengthSafety();
+  nSegmentsPerCircle = 50;
   
   poleSolid        = NULL;
   yokeSolid        = NULL;
@@ -394,8 +395,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumes(G4String   name,
   G4Colour* magnetColour = BDSMagnetColours::Instance()->GetMagnetColour(order);
   G4VisAttributes* outerVisAttr = new G4VisAttributes(*magnetColour);
   outerVisAttr->SetVisibility(true);
-  outerVisAttr->SetForceSolid(true);
-  outerVisAttr->SetForceLineSegmentsPerCircle(50);
+  outerVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   poleLV->SetVisAttributes(outerVisAttr);
   yokeLV->SetVisAttributes(outerVisAttr);
   // container

@@ -133,6 +133,7 @@ private:
 			   G4Material*& outerMaterialIn);
 
   G4double  lengthSafety;
+  G4double  nSegmentsPerCircle; // for visualisation improvement
   G4VSolid* outerSolid;
   G4VSolid* containerSolid;
 };

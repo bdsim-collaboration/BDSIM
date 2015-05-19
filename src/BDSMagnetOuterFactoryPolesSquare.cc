@@ -168,8 +168,7 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
   G4Colour* magnetColour = BDSMagnetColours::Instance()->GetMagnetColour(order);
   G4VisAttributes* outerVisAttr = new G4VisAttributes(*magnetColour);
   outerVisAttr->SetVisibility(true);
-  outerVisAttr->SetForceSolid(true);
-  outerVisAttr->SetForceLineSegmentsPerCircle(50);
+  outerVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
 
   for (G4int n = 0; n < 2*order; ++n)
     {

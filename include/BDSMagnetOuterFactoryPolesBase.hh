@@ -128,6 +128,7 @@ protected:
   //static BDSMagnetOuterFactoryPoles* _instance;
 
   G4double         lengthSafety;
+  G4double         nSegmentsPerCircle; // for visualisation improvement
   G4VSolid*        poleSolid; /// solid for an individual pole that will be placed multiple times
   G4VSolid*        yokeSolid; /// solid for outer part that connects all poles
   G4VSolid*        containerSolid;
