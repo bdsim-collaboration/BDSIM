@@ -75,7 +75,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
       dipolePosition = G4ThreeVector(massShift,0.,0.);
       BPseparation *= -1;
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "dipole to the Right" << G4endl;
+      G4cout << __METHOD_NAME__ << "dipole to the left" << G4endl;
 #endif
     }
   else
@@ -83,7 +83,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
       dipolePosition = G4ThreeVector(-massShift,0.,0.);
       massShift    *= -1;
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "dipole to the Left" << G4endl;
+      G4cout << __METHOD_NAME__ << "dipole to the right" << G4endl;
 #endif
     }
 
@@ -696,28 +696,12 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String  
   CreateCylindricalSolids(name, length, beamPipe, boxSize);
   return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("rectangularbend"));
 }
-/*
+
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 								 G4double      length,
 								 BDSBeamPipe*  beamPipe,
 								 G4double      boxSize,
 								 G4Material*   outerMaterial)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  CreateCylindricalSolids(name, length, beamPipe, boxSize);
-  return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("quadrupole"));
-}
-*/
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
-									 G4double      length,
-									 BDSBeamPipe*  beamPipe,
-									 G4double      boxSize,
-									 G4Material*   outerMaterial)
 
 {
 #ifdef BDSDEBUG
@@ -748,7 +732,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
       dipolePosition = G4ThreeVector(massShift,0.,0.);
       BPseparation *= -1;
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "dipole to the Right" << G4endl;
+      G4cout << __METHOD_NAME__ << "quadrupole to the left" << G4endl;
 #endif
     }
   else
@@ -756,7 +740,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
       dipolePosition = G4ThreeVector(-massShift,0.,0.);
       massShift    *= -1;
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "dipole to the Left" << G4endl;
+      G4cout << __METHOD_NAME__ << "quadrupole to the right" << G4endl;
 #endif
     }
 
@@ -769,10 +753,10 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
       //container is similar but slightly wider and hollow (to allow placement of beampipe)
       //have to do subtraction as cuttubs aperture is central and the beampipe (active one) is not here
       G4VSolid* containerSolidOuter = new G4Tubs(name + "_contiainer_solid_outer",  // name
-						    0,                           // inner radius
-						    boxSize*0.5,                 // outer radius
-						    length*0.5,                  // half length
-						    0,                           // rotation start angle
+						 0,                           // inner radius
+						 boxSize*0.5,                 // outer radius
+						 length*0.5,                  // half length
+						 0,                           // rotation start angle
 						 CLHEP::twopi);                // rotation finish angle
 						    
       G4VSolid* containerSolidInner = new G4Tubs(name + "_contiainer_solid_inner",  // name

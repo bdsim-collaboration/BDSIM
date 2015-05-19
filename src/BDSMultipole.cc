@@ -173,11 +173,10 @@ void BDSMultipole::BeamPipeCommonTasks()
     {RotY=BDSGlobalConstants::Instance()->RotY90(); }
 
   // place beampipe
-  itsPhysiComp = new G4PVPlacement(
-				   RotY,                      // rotation
+  itsPhysiComp = new G4PVPlacement(RotY,                      // rotation
 				   (G4ThreeVector)0,          // at (0,0,0)
 				   beampipe->GetContainerLogicalVolume(),  // its logical volume
-				   itsName+"_bmp_phys",	      // its name
+				   itsName+"_beampipe_pv",    // its name
 				   itsMarkerLogicalVolume,    // its mother  volume
 				   false,                     // no boolean operation
 				   0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number

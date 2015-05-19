@@ -48,8 +48,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipe(G4String    nameIn,          
 						   G4double    /*aper4In*/,         // aperture parameter 4
 						   G4Material* vacuumMaterialIn,    // vacuum material
 						   G4double    beamPipeThicknessIn, // beampipe thickness [mm]
-						   G4Material* beamPipeMaterialIn   // beampipe material
-						   )
+						   G4Material* beamPipeMaterialIn)  // beampipe material
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -149,8 +148,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipeAngledInOut(G4String    nameIn
 							      G4double    /*aper4In */,        // aperture parameter 4
 							      G4Material* vacuumMaterialIn,    // vacuum material
 							      G4double    beamPipeThicknessIn, // beampipe thickness [mm]
-							      G4Material* beamPipeMaterialIn   // beampipe material
-							      )
+							      G4Material* beamPipeMaterialIn)  // beampipe material
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -238,7 +236,6 @@ void BDSBeamPipeFactoryLHC::CreateGeneralAngledSolids(G4String      nameIn,
 						      G4ThreeVector inputfaceIn,
 						      G4ThreeVector outputfaceIn)
 {
-  
   // build the solids
   //vacuum cylindrical solid (circular cross-section)
   G4VSolid* vacCylSolid = new G4CutTubs(nameIn + "_vacuum_cylinder", // name
