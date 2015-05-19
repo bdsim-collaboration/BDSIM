@@ -563,12 +563,14 @@ void BDSBeamPipeFactoryLHCDetailed::CreateGeneralAngledSolids(G4String      name
 
   //container cylindrical solid (circular cross-section)
   G4double containerRadius = coldBoreRadius + coldBoreThickness + 1*CLHEP::um;
-  containerSolid = new G4Tubs(nameIn + "_container_cylinder", // name
-			      0,                              // inner radius
-			      containerRadius,                // outer radius
-			      lengthIn*0.5,                   // half length
-			      0,                              // rotation start angle
-			      CLHEP::twopi);                  // rotation finish angle
+  containerSolid = new G4CutTubs(nameIn + "_container_cylinder", // name
+				 0,                              // inner radius
+				 containerRadius,                // outer radius
+				 lengthIn*0.5,                   // half length
+				 0,                              // rotation start angle
+				 CLHEP::twopi,                   // rotation finish angle
+				 inputfaceIn,                    // input face normal
+				 outputfaceIn);                  // output face normal
 
   //container cylindrical solid (circular cross-section)
   containerSubtractionSolid = new G4Tubs(nameIn + "_subtraction_cylinder", // name
