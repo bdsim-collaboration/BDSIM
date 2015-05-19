@@ -8,6 +8,7 @@
 #include "BDSMagnetOuterFactoryPolesSquare.hh"
 #include "BDSMagnetOuterFactoryLHCLeft.hh"
 #include "BDSMagnetOuterFactoryLHCRight.hh"
+#include "BDSMagnetOuterFactoryNone.hh"
 #include "BDSMagnetGeometryType.hh"
 
 #include "globals.hh"                        // geant4 globals / types
@@ -27,7 +28,13 @@ BDSMagnetOuterFactory::BDSMagnetOuterFactory()
 BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagnetGeometryType magnetTypeIn)
 {
   switch(magnetTypeIn.underlying()){
-
+    
+  case BDSMagnetGeometryType::none:
+#ifdef BDSDEBUG
+    G4cout << __METHOD_NAME__ << "'none' magnet factory (no outer geometry)" << G4endl;
+#endif
+    return BDSMagnetOuterFactoryNone::Instance();
+    break;
   case BDSMagnetGeometryType::cylindrical:
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << "cylindrical magnet factory" << G4endl;
