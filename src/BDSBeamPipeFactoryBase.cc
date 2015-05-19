@@ -18,6 +18,12 @@
 BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
 {
   lengthSafety              = BDSGlobalConstants::Instance()->GetLengthSafety();
+  nSegmentsPerCircle        = 50;
+  CleanUp();
+}
+
+void BDSBeamPipeFactoryBase::CleanUp()
+{
   vacuumSolid               = NULL;
   beamPipeSolid             = NULL;
   containerSolid            = NULL;

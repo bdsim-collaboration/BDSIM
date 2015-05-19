@@ -35,6 +35,17 @@ BDSBeamPipeFactoryLHCDetailed* BDSBeamPipeFactoryLHCDetailed::Instance()
   return _instance;
 }
 
+void BDSBeamPipeFactoryLHCDetailed::CleanUp()
+{
+  BDSBeamPipeFactoryBase::CleanUp();
+  copperSkinSolid  = NULL; // the copper skin
+  screenSolid      = NULL; // the beam screen (first bit of aperture)
+  coolingPipeSolid = NULL; // small cooling pipe above and below beam screen
+  copperSkinLV     = NULL;
+  screenLV         = NULL;
+  coolingPipeLV    = NULL;
+}
+
 BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed():BDSBeamPipeFactoryBase()
 {
   coldBoreThickness         = 1.5*CLHEP::mm;
@@ -42,12 +53,7 @@ BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed():BDSBeamPipeFactor
   coolingPipeRadius         = 3.7*CLHEP::mm; // will be overwritten if needs be to fit inside beampipe
   coolingPipeYOffset        = 0.0;  //initialised only
   copperSkinThickness       = 75*CLHEP::um;
-  copperSkinSolid           = NULL; // the copper skin
-  screenSolid               = NULL; // the beam screen (first bit of aperture)
-  coolingPipeSolid          = NULL; // small cooling pipe above and below beam screen
-  copperSkinLV              = NULL;
-  screenLV                  = NULL;
-  coolingPipeLV             = NULL;
+  CleanUp();
 }
 
 BDSBeamPipeFactoryLHCDetailed::~BDSBeamPipeFactoryLHCDetailed()
@@ -74,6 +80,9 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String    nameIn,  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  // clean up after last usage
+  CleanUp();
+  
   // test input parameters - set global options as default if not specified
   TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In,aper3In);
 
@@ -226,6 +235,9 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipeAngledInOut(G4String  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  // clean up after last usage
+  CleanUp();
+  
    // test input parameters - set global options as default if not specified
   TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In,aper3In);
 

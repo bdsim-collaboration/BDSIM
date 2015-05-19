@@ -91,6 +91,9 @@ public:
 protected:
   /// base constructor
   BDSBeamPipeFactoryBase();
+
+  /// Initialiser and can be used to reset factory pointers after use
+  virtual void CleanUp();
   
   /// finalise beampipe construction
   void CommonConstruction(G4String    nameIn,

@@ -22,6 +22,9 @@ public:
   /// Access cooling pipe information from factory for parameter tests
   G4double GetFullWidthOfCoolingPipe();
 
+  /// Clean up extra pointers particular to this factory before use
+  virtual void CleanUp();
+
   virtual BDSBeamPipe* CreateBeamPipe(G4String    nameIn,                     // name
 				      G4double    lengthIn,                   // length [mm]
 				      G4double    aper1 = 0,                  // aperture parameter 1

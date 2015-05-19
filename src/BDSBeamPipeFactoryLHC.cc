@@ -53,6 +53,9 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipe(G4String    nameIn,          
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+   // clean up after last usage
+  CleanUp();
+  
   // test input parameters - set global options as default if not specified
   TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In,aper3In);
 
@@ -153,6 +156,9 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipeAngledInOut(G4String    nameIn
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+   // clean up after last usage
+  CleanUp();
+  
    // test input parameters - set global options as default if not specified
   TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In,aper3In);
 
