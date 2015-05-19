@@ -1,8 +1,6 @@
 #include "BDSTunnelInfo.hh"
 
-#include "BDSMaterials.hh"
 #include "BDSTunnelType.hh"
-#include "globals.hh"             // geant4 globals / types
 #include "G4Material.hh"
 
 BDSTunnelInfo::BDSTunnelInfo()

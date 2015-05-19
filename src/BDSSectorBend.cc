@@ -9,21 +9,14 @@
 #include "BDSMagnetType.hh"
 #include "BDSMaterials.hh"
 #include "BDSSbendMagField.hh"
-#include "BDSSDManager.hh"
 #include "BDSTunnelInfo.hh"
 #include "BDSUtilities.hh"        // for calculateorientation
 
-#include "G4Polyhedra.hh"
-#include "G4Box.hh"
-#include "G4Tubs.hh"
 #include "G4CutTubs.hh"
-#include "G4EllipticalTube.hh"
 #include "G4SubtractionSolid.hh"
-#include "G4IntersectionSolid.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
 #include "G4VPhysicalVolume.hh"
 
