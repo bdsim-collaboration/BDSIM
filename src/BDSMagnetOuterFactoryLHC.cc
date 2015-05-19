@@ -1517,20 +1517,19 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
   G4Material* beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
   G4Material* vacuumMaterial   = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
 
+  
   //use beampipe factories to create another beampipe (note no magnetic field for now...)
-  BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(BDSBeamPipeType::lhcdetailed,
-										    name,
-										    length-2*lengthSafety,
-										    0.0,        // entrane angle
-										    0.0,        // exit angle
-										    2.402*CLHEP::cm,   // aper1
-										    1.828*CLHEP::cm,   // aper2
-										    2.402*CLHEP::cm,   // aper3
-										    0,                 // aper4
-										    vacuumMaterial,    // vacuum material
-										    1*CLHEP::mm,       // beampipeThickness
-										    beamPipeMaterial); // beampipe material
-
+  BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipe(BDSBeamPipeType::lhcdetailed,
+									 name,
+									 length-2*lengthSafety,
+									 2.402*CLHEP::cm,   // aper1
+									 1.828*CLHEP::cm,   // aper2
+									 2.402*CLHEP::cm,   // aper3
+									 0,                 // aper4
+									 vacuumMaterial,    // vacuum material
+									 1*CLHEP::mm,       // beampipeThickness
+									 beamPipeMaterial); // beampipe material
+  
   G4LogicalVolume* secondBPLV = secondBP->GetContainerLogicalVolume();
   allLogicalVolumes.push_back(secondBPLV);
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
