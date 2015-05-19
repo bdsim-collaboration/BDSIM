@@ -348,12 +348,10 @@ void BDSBeamPipeFactoryLHCDetailed::SetVisAttributes()
   G4VisAttributes* cuVisAttr   = new G4VisAttributes(G4Colour(0.722, 0.525, 0.043));
   cuVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   cuVisAttr->SetVisibility(true);
-  cuVisAttr->SetForceSolid(true);
   
   // beampipe
   G4VisAttributes* pipeVisAttr = new G4VisAttributes(G4Colour(0.4,0.4,0.4));
   pipeVisAttr->SetVisibility(true);
-  pipeVisAttr->SetForceSolid(true);
   pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
 
   copperSkinLV->SetVisAttributes(cuVisAttr);

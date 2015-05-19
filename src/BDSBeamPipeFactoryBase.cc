@@ -128,7 +128,6 @@ void BDSBeamPipeFactoryBase::SetVisAttributes()
   // beampipe
   G4VisAttributes* pipeVisAttr = new G4VisAttributes(G4Color(0.4,0.4,0.4));
   pipeVisAttr->SetVisibility(true);
-  pipeVisAttr->SetForceSolid(true);
   pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   beamPipeLV->SetVisAttributes(pipeVisAttr);
   // vacuum

@@ -68,7 +68,6 @@ void BDSCollimator::BuildMarkerLogicalVolume()
     //visual attributes      
     static G4VisAttributes* VisAtt1 =
       new G4VisAttributes(G4Colour(0., 0., 0.));
-    VisAtt1->SetForceSolid(true);
     itsInnerLogVol->SetVisAttributes(VisAtt1);
   }
 }
@@ -81,7 +80,6 @@ void BDSCollimator::BuildBLMs(){
 void BDSCollimator::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.3,0.4,0.2));
-  itsVisAttributes->SetForceSolid(true);
 }
 
 void BDSCollimator::BuildInnerCollimator()

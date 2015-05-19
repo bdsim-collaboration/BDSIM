@@ -247,7 +247,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 
   // coil visualisation
   G4VisAttributes* coilVisAtt = new G4VisAttributes(G4Colour(0.9, 0.75, 0.)); //gold-ish colour
-  coilVisAtt->SetForceSolid(true);
   coilVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   coil1InnerLV->SetVisAttributes(coilVisAtt);
   coil1OuterLV->SetVisAttributes(coilVisAtt);
@@ -429,7 +428,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 
   // collar pole visualisation
   G4VisAttributes* collarVisAtt = new G4VisAttributes(G4Colour(0.9, 0.9, 0.9));
-  collarVisAtt->SetForceSolid(true);
   collarVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   collar1PoleTopInnerLV->SetVisAttributes(collarVisAtt);
   collar1PoleTopOuterLV->SetVisAttributes(collarVisAtt);
@@ -589,7 +587,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 
   // yoke visualisation
   G4VisAttributes* LHCblue = new G4VisAttributes(G4Colour(0.0, 0.5, 1.0));
-  LHCblue->SetForceSolid(true);
   LHCblue->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   yokeLV->SetVisAttributes(LHCblue);
   
@@ -953,7 +950,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
 
   // coil visualisation
   G4VisAttributes* coilVisAtt = new G4VisAttributes(G4Colour(0.9, 0.75, 0.)); //gold-ish colour
-  coilVisAtt->SetForceSolid(true);
   coilVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   coil1InnerLV->SetVisAttributes(coilVisAtt);
   coil1OuterLV->SetVisAttributes(coilVisAtt);
@@ -1276,7 +1272,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
 
   // collar pole visualisation
   G4VisAttributes* collarVisAtt = new G4VisAttributes(G4Colour(0.9, 0.9, 0.9));
-  collarVisAtt->SetForceSolid(true);
   collarVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   collar1PoleTopInnerLV->SetVisAttributes(collarVisAtt);
   collar1PoleTopOuterLV->SetVisAttributes(collarVisAtt);
@@ -1495,7 +1490,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
 
   // yoke visualisation
   G4VisAttributes* LHCred = new G4VisAttributes(G4Colour(1.0, 0., 0.));
-  LHCred->SetForceSolid(true);
   LHCred->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   yokeLV->SetVisAttributes(LHCred);
   
@@ -1789,7 +1783,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CommonFinalConstructor(G4String 
   // outer
   G4VisAttributes* outerVisAttr = new G4VisAttributes(*colour);
   outerVisAttr->SetVisibility(true);
-  outerVisAttr->SetForceSolid(true);
   outerLV->SetVisAttributes(outerVisAttr);
   // container
 #ifdef BDSDEBUG
