@@ -90,9 +90,8 @@ void BDS_handle_aborts(int signal_number) {
   std::cout << "BDSIM is about to crash or was interrupted! " << std::endl;
   std::cout << "With signal: " << strsignal(signal_number) << std::endl;
   std::cout << "Trying to write and close output file" << std::endl;
-  bdsOutput->Write();
-  std::cout << "Abort Geant4 run" << std::endl;
-  BDSRunManager::GetRunManager()->AbortRun();
+  std::cout << "Terminate run" << std::endl;
+  BDSRunManager::GetRunManager()->RunTermination();
   std::cout << "Ave, Imperator, morituri te salutant!" << std::endl;
 }
 
