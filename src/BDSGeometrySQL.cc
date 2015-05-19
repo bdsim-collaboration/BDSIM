@@ -29,10 +29,9 @@
 #include <cstdlib>
 #include <cstring>
 
-BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength):
+BDSGeometrySQL::BDSGeometrySQL(G4String DBfile):
   rotateComponent(NULL),itsMarkerVol(NULL)
 {
-  itsMarkerLength = markerlength;
 #ifdef BDSDEBUG
   G4cout << "BDSGeometrySQL constructor: loading SQL file " << DBfile << G4endl;
 #endif
@@ -229,8 +228,8 @@ void BDSGeometrySQL::SetPlacementParams(BDSMySQLTable* aSQLTable, G4int k){
 	_InheritStyle = aSQLTable->GetVariable("INHERITSTYLE")->GetStrValue(k);
       if(aSQLTable->GetVariable("PARAMETERISATION")!=NULL)
 	_Parameterisation = aSQLTable->GetVariable("PARAMETERISATION")->GetStrValue(k);
-      if(_PARENTNAME=="") _PosZ-=itsMarkerLength/2; //Move definition of PosZ to front of element
-      _PARENTNAME=itsMarkerVol->GetName()+"_"+_PARENTNAME;
+      if(_PARENTNAME=="")_PosZ-=((G4Box*)(itsMarkerVol->GetSolid()))->GetZHalfLength(); //Move position to beginning of element
+      _PARENTNAME=_markerName + _PARENTNAME;
       if(aSQLTable->GetVariable("NAME")!=NULL)
 	_Name = aSQLTable->GetVariable("NAME")->GetStrValue(k);
       if(_Name=="_SQL") _Name = _TableName+BDSGlobalConstants::Instance()->StringFromInt(k) + "_SQL";
@@ -809,7 +808,6 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4Log
 	}
 
       if(_SetSensitive) SensitiveComponents.push_back(VOL_LIST[ID]);
-
       G4ThreeVector PlacementPoint(_PosX,_PosY,_PosZ);
 
       if(_InheritStyle.compareTo("",cmpmode)){ //True if InheritStyle is set

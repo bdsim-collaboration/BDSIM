@@ -13,12 +13,13 @@
 #ifndef BDSGeometryGDML_h
 #define BDSGeometryGDML_h 1
 #include "G4LogicalVolume.hh"
+#include "BDSGeometry.hh"
 
-class BDSGeometryGDML {
+class BDSGeometryGDML : public BDSGeometry{
 public:
   BDSGeometryGDML(G4String GMDLfile);
   ~BDSGeometryGDML();
-  void Construct(G4LogicalVolume *marker);
+  virtual void Construct(G4LogicalVolume *marker);
 private:
   G4String itsGDMLfile;
   G4LogicalVolume* itsMarkerVol;

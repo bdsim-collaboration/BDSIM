@@ -26,6 +26,7 @@
 #include <cstring>
 #include <list>
 
+
 BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):itsMarkerVol(NULL),itsMagField(NULL),itsUniformMagField(NULL)
 {
 #ifndef NOUSERLIMITS

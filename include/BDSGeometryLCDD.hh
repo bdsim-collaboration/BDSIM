@@ -67,7 +67,7 @@ struct VIS_REF{
   G4VisAttributes* value;
 };
 
-class BDSGeometryLCDD : BDSGeometry
+class BDSGeometryLCDD : public BDSGeometry
 {
 public:
   BDSGeometryLCDD(G4String LCDDfile);
@@ -94,7 +94,7 @@ public:
 
   G4RotationMatrix* RotateComponent(G4ThreeVector rotvalues);
 
-  void Construct(G4LogicalVolume *marker);
+  virtual void Construct(G4LogicalVolume *marker);
   std::vector<G4LogicalVolume*> SensitiveComponents;           //For registering the sensitive components
   //  std::vector<G4VPhysicalVolume*> itsMultiplePhysicalVolumes;
   std::vector<G4LogicalVolume*> VOL_LIST;

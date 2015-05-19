@@ -24,14 +24,15 @@
 #include <vector>
 //#include "BDSMagFieldSQL.hh"
 #include "G4Region.hh"
+#include "BDSGeometry.hh"
 
-class BDSGeometrySQL
+class BDSGeometrySQL: public BDSGeometry
 {
 public:
-  BDSGeometrySQL(G4String DBfile, G4double markerlength);
+  BDSGeometrySQL(G4String DBfile);
   ~BDSGeometrySQL();
 
-  void Construct(G4LogicalVolume *marker);
+  virtual void Construct(G4LogicalVolume *marker);
 
   // For List of uniform fields for volumes
   std::list<G4ThreeVector> UniformField;
@@ -121,7 +122,6 @@ private:
   G4RotationMatrix* rotateComponent;
   void PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4LogicalVolume*> VOL_LIST);
 
-  G4double itsMarkerLength;
   std::ifstream ifs;
   G4LogicalVolume* itsMarkerVol;
   std::vector<BDSMySQLTable*> itsSQLTable;
@@ -129,6 +129,8 @@ private:
   //  BDSSamplerSD* SensDet;
 
   void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
+
+  G4String _markerName; //The name given to the marker logical volume
 
 protected:
 };

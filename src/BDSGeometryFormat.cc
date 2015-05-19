@@ -1,5 +1,8 @@
 #include "BDSGeometryFormat.hh"
 
+BDSGeometryFormat::BDSGeometryFormat():BDSSpec((G4String)"none", allowedSpecs())
+{}
+
 BDSGeometryFormat::~BDSGeometryFormat()
 {;}
 

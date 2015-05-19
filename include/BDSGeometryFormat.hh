@@ -6,6 +6,7 @@
 
 class BDSGeometryFormat: public BDSSpec{
 public:
+  BDSGeometryFormat();
   ~BDSGeometryFormat();
   BDSGeometryFormat(G4String format);
 
