@@ -42,6 +42,10 @@
 #include <getopt.h>
 #include <signal.h>
 
+#ifdef __APPLE__
+#include <mach-o/dyld.h> // for executable path
+#endif
+
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
 #include "BDSPhysicsList.hh"
@@ -306,8 +310,62 @@ int main(int argc,char** argv) {
       G4UIExecutive* session2 = new G4UIExecutive(argc, argv);
 #ifdef G4VIS_USE
       // get the pointer to the User Interface manager 
-      G4UImanager* UIManager = G4UImanager::GetUIpointer();  
-      UIManager->ApplyCommand("/control/execute " + execOptions->GetVisMacroFilename());    
+      G4UImanager* UIManager = G4UImanager::GetUIpointer();
+      // check if visualisation file is present and readable
+      std::string visMacroFilename = execOptions->GetVisMacroFilename();
+      if (FILE *file = fopen(visMacroFilename.c_str(), "r")) {
+        fclose(file);
+      } else {
+      	// if not present use a default one (OGLSQt or DAWNFILE)
+	G4cout << __FUNCTION__ << "> WARNING: visualisation file " << visMacroFilename <<  " file not present, using default!" << G4endl;
+	// get path to executable (a little hackish, but ok since backup solution)
+
+	char path[1024];
+#ifdef __linux__
+	// linux code with /proc/self/exe
+#elif __APPLE__
+	uint32_t size = sizeof(path);
+	if (_NSGetExecutablePath(path, &size) == 0)
+	  printf("executable path is %s\n", path);
+	else
+	  printf("buffer too small; need size %u\n", size);
+#endif
+	std::string bdsimPath(path);
+	// remove executable from path
+	std::string::size_type found = bdsimPath.rfind("/"); // find the last '/'
+	if (found != std::string::npos){
+	  bdsimPath = bdsimPath.substr(0,found+1); // the path is the bit before that, including the '/'
+	}
+	
+	// difference between local build and install build:
+	std::string visPath;
+	std::string localPath = bdsimPath + "vis/vis.mac";
+	std::string installPath = bdsimPath + "../share/BDSIM/vis/vis.mac";
+	std::cout << "bdsimPath: " << bdsimPath << " localPath: " << localPath << " installPath: " << installPath << std::endl;
+	  
+	if (FILE *file = fopen(localPath.c_str(), "r")) {
+	  fclose(file);
+	  visPath = bdsimPath + "vis/";
+	} else if (FILE *file = fopen(installPath.c_str(), "r")) {
+	  fclose(file);
+	  visPath = bdsimPath + "../share/BDSIM/vis/";
+	} else {
+	  G4cout << __FUNCTION__ << "> ERROR: default visualisation file could not be found!" << G4endl;
+	}
+	
+#ifdef G4VIS_USE_OPENGLQT
+	visMacroFilename = visPath + "vis.mac";
+#else
+	visMacroFilename = visPath + "dawnfile.mac";
+#endif
+      }
+      
+      UIManager->ApplyCommand("/control/execute " + visMacroFilename);
+
+      std::string guiMacroFilename = "/usr/local/share/BDSIM/vis/gui.mac";
+      // add default gui
+      if (session2->IsGUI())
+	UIManager->ApplyCommand("/control/execute" + guiMacroFilename);
 #endif
       session2->SessionStart();
       delete session2;

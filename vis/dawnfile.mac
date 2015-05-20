@@ -4,6 +4,9 @@
 # Draw scene 
 /vis/drawVolume
 
+# Surface style
+/vis/viewer/set/style surface
+
 # Specify view angle:
 #/vis/viewer/set/viewpointVector -1 0 0
 /vis/viewer/set/lightsVector -1 0 0
