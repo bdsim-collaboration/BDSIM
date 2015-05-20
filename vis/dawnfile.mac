@@ -1,0 +1,19 @@
+# Invoke the DAWNFILE driver
+/vis/open DAWNFILE
+
+# Draw scene 
+/vis/drawVolume
+
+# Specify view angle:
+#/vis/viewer/set/viewpointVector -1 0 0
+/vis/viewer/set/lightsVector -1 0 0
+
+# Viewer
+/vis/viewer/set/background white
+/vis/viewer/set/viewpointThetaPhi 240 -30
+
+# Axes
+#/vis/scene/add/axes
+
+# Commit to Renderer
+/vis/viewer/flush

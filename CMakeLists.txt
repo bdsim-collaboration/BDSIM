@@ -225,6 +225,8 @@ if(USE_LCDD)
     message(STATUS "LCDD support ON")
 endif()
 
+# Find  GEANT4
+# with all available gui and visualisation options available
 # Try first with Geant4 built-in Config (versions 9.5 and higher should have it):
 if ($ENV{VERBOSE})
    set(Geant4_CONFIG_DEBUG TRUE)
@@ -313,7 +315,7 @@ endif()
 
 # cmake flags
 set(CMAKE_FLAGS "${CMAKE_FLAGS} ${CLHEP_DEFINITIONS}  ${WFLAGS}")
-set(BDSIM_FLAGS "${CMAKE_FLAGS} ${VIS_FLAGS} -DCLHEP_VERSION=${CLHEP_VERSION} -DG4VERSION=${G4_MAJOR_VERSION} -DG4MINORVERSION=${G4_MINOR_VERSION} ${BDSIM_FLAGS}")
+set(BDSIM_FLAGS "${CMAKE_FLAGS} -DCLHEP_VERSION=${CLHEP_VERSION} -DG4VERSION=${G4_MAJOR_VERSION} -DG4MINORVERSION=${G4_MINOR_VERSION} ${BDSIM_FLAGS}")
 # add original flags to cmake c and c++ flags
 set(CMAKE_C_FLAGS "${CMAKE_C_ORIG_FLAGS} ${BDSIM_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_ORIG_FLAGS} ${BDSIM_FLAGS}")
@@ -398,6 +400,9 @@ set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VER
 bdsim_install_targets(${executables} ${libraries})
 file(GLOB headers include/*.hh parser/*.h)
 bdsim_install_headers(${headers})
+
+# Visualisation directory
+add_subdirectory(vis)
 
 # Utils directory
 add_subdirectory(utils)
