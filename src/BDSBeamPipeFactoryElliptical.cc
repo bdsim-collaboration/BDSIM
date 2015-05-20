@@ -177,7 +177,7 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CommonFinalConstruction(G4String    n
   std::pair<double,double> extY = std::make_pair(-containerYHalfWidth,containerYHalfWidth);
   std::pair<double,double> extZ = std::make_pair(-lengthIn*0.5,lengthIn*0.5);
   // calculate radius if a tube were to be place around it
-  G4double containerRadius = sqrt(containerXHalfWidth*containerXHalfWidth + containerYHalfWidth*containerYHalfWidth);
+  G4double containerRadius = std::max(containerXHalfWidth, containerYHalfWidth);
   
   BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerRadius);
 
