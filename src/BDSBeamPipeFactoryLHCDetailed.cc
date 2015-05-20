@@ -35,17 +35,6 @@ BDSBeamPipeFactoryLHCDetailed* BDSBeamPipeFactoryLHCDetailed::Instance()
   return _instance;
 }
 
-void BDSBeamPipeFactoryLHCDetailed::CleanUp()
-{
-  BDSBeamPipeFactoryBase::CleanUp();
-  copperSkinSolid  = NULL; // the copper skin
-  screenSolid      = NULL; // the beam screen (first bit of aperture)
-  coolingPipeSolid = NULL; // small cooling pipe above and below beam screen
-  copperSkinLV     = NULL;
-  screenLV         = NULL;
-  coolingPipeLV    = NULL;
-}
-
 BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed():BDSBeamPipeFactoryBase()
 {
   coldBoreThickness         = 1.5*CLHEP::mm;
@@ -60,6 +49,40 @@ BDSBeamPipeFactoryLHCDetailed::~BDSBeamPipeFactoryLHCDetailed()
 {
   _instance = 0;
 }
+
+void BDSBeamPipeFactoryLHCDetailed::CleanUp()
+{
+  BDSBeamPipeFactoryBase::CleanUp();
+  copperSkinSolid  = NULL; // the copper skin
+  screenSolid      = NULL; // the beam screen (first bit of aperture)
+  coolingPipeSolid = NULL; // small cooling pipe above and below beam screen
+  copperSkinLV     = NULL;
+  screenLV         = NULL;
+  coolingPipeLV    = NULL;
+  
+  InitialiseGeometricalParameters();
+}
+
+void BDSBeamPipeFactoryLHCDetailed::InitialiseGeometricalParameters()
+{
+  vacRadius = 0, vacBoxX = 0, vacBoxY = 0;
+  
+  cuInnerRadius = 0, cuInnerBoxX = 0, cuInnerBoxY = 0;
+  cuOuterRadius = 0, cuOuterBoxX = 0, cuOuterBoxY = 0;
+  
+  bsInnerRadius = 0, bsInnerBoxX = 0, bsInnerBoxY = 0;
+  bsOuterRadius = 0, bsOuterBoxX = 0, bsOuterBoxY = 0;
+  
+  cbInnerRadius = 0, cbOuterRadius = 0;
+  
+  containerRadius = 0;
+  
+  vacHalfLength = 0;
+  halfLength = 0;
+  
+  coolingPipeYOffset = 0;
+}
+
 
 G4double BDSBeamPipeFactoryLHCDetailed::GetFullWidthOfCoolingPipe()
 {

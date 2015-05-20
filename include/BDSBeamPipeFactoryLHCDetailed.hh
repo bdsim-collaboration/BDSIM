@@ -80,6 +80,9 @@ private:
   virtual G4UserLimits* SetUserLimits(G4double lengthIn);
   virtual void          PlaceComponents(G4String nameIn);
 
+  /// Utility function to initialise the geometry parameters
+  void InitialiseGeometricalParameters();
+
   /// Calculate the various radii and geometrical parameters for this design
   /// based on the input aperture parameters
   void CalculateGeometricalParameters(G4double aper1,
