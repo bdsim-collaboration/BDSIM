@@ -17,6 +17,7 @@
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4UserLimits.hh"
+#include "G4MagneticField.hh"
 #include "G4UniformMagField.hh"
 #include "BDSMagField.hh"
 #include "G4CachedMagneticField.hh"
@@ -53,16 +54,14 @@ private:
   G4String itsBmap;
 
   G4String itsFieldVolName;
-  G4bool itsFieldIsUniform;
   G4ChordFinder* fChordFinder;
 
   G4MagIntegratorStepper* itsFStepper;
   G4EqMagElectricField* itsFEquation;
   G4Mag_UsualEqRhs* itsEqRhs;
 
-  BDSMagField *itsMagField;
+  G4MagneticField *itsMagField;
   G4CachedMagneticField *itsCachedMagField;
-  G4UniformMagField *itsUniformMagField;
   G4double itsOuterR;
   G4double itsBmapZOffset;
   // Volume to align incoming beamline on inside the marker volume

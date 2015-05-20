@@ -46,24 +46,11 @@ public:
   std::list<G4double> OctBgrad;
   std::list<G4String> Octvol;
 
-  std::map<G4String, G4ThreeVector> UniformFieldVolField;
-  std::map<G4String, G4double> QuadVolBgrad;
-  std::map<G4String, G4double> SextVolBgrad;
-  std::map<G4String, G4double> OctVolBgrad;
-
-  G4VPhysicalVolume* align_in_volume;
-  G4VPhysicalVolume* align_out_volume;
-  std::vector<G4LogicalVolume*> SensitiveComponents;
-  std::vector<G4LogicalVolume*> itsGFlashComponents;
-  std::vector<G4VPhysicalVolume*> itsMultiplePhysicalVolumes;
 
   std::vector<G4LogicalVolume*> VOL_LIST;
-  G4bool HasFields;
-  G4int nPoleField;
-  G4bool HasUniformField;
 
-  std::vector<G4VPhysicalVolume*> GetMultiplePhysicalVolumes();
-  std::vector<G4LogicalVolume*> GetGFlashComponents();
+
+
 
 private:
   G4int _NVariables;
@@ -128,20 +115,11 @@ private:
   //  BDSMagFieldSQL* itsMagField;
   //  BDSSamplerSD* SensDet;
 
-  void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
 
   G4String _markerName; //The name given to the marker logical volume
 
 protected:
 };
 
-inline void BDSGeometrySQL::SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol)
-{ itsMultiplePhysicalVolumes.push_back(aPhysVol);}
-
-inline  std::vector<G4VPhysicalVolume*> BDSGeometrySQL::GetMultiplePhysicalVolumes()
-{return itsMultiplePhysicalVolumes;}
-
-inline  std::vector<G4LogicalVolume*> BDSGeometrySQL::GetGFlashComponents()
-{return itsGFlashComponents;}
 
 #endif
