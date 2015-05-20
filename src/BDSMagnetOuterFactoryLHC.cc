@@ -38,6 +38,27 @@ BDSMagnetOuterFactoryLHC::BDSMagnetOuterFactoryLHC(G4bool isLeftOffsetIn):
   nSegmentsPerCircle = 50;
   outerSolid         = NULL;
   containerSolid     = NULL;
+  massShift          = 97.26*CLHEP::mm;
+  BPseparation       = 2*massShift;
+  coilFullThickness  = 118.6/2.0 - 56.0/2.0; // 41.3mm for two rows of coils, mm by default (for dipole)
+  innerCoilThickness = 0.5*coilFullThickness;
+  outerCoilThickness = 0.5*coilFullThickness;
+  collarThickness    = 0.9*coilFullThickness;
+}
+
+G4double BDSMagnetOuterFactoryLHC::GetCoilThickness()
+{
+  return coilFullThickness;
+}  
+
+G4double BDSMagnetOuterFactoryLHC::GetBeamPipeSeparation()
+{
+  return BPseparation;
+}
+
+G4double BDSMagnetOuterFactoryLHC::GetCollarThickness()
+{
+  return collarThickness;
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
@@ -58,8 +79,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   // geometrical constants
   // mass to the right or to the left
   G4ThreeVector dipolePosition;
-  G4double massShift          = 97.26*CLHEP::mm;
-  G4double BPseparation       = 2*massShift;
 
   // inner radius of container cut out for active beam pipe
   G4double containerInnerRadius = beamPipe->GetContainerRadius() + 1*CLHEP::um;
@@ -72,22 +91,30 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   G4double coilInnerFullAngle = CLHEP::pi - poleInnerFullAngle - 0.001; // 0.001 is small margin to avoid overlap
   G4double coilOuterFullAngle = CLHEP::pi - poleOuterFullAngle - 0.001;
 
-  // radial geometrical parameters for the coils & collars
-  G4double coilFullThickness  = 118.6/2.0 - 56.0/2.0; // 41.3mm for two rows of coils, mm by default
-  G4double innerCoilThickness = 0.5*coilFullThickness;
-  G4double outerCoilThickness = 0.5*coilFullThickness;
-  G4double collarThickness    = 0.9*coilFullThickness;
-  
+  // radial geometrical parameters for the coils & collars  
   G4double innerCoilInnerRadius = containerInnerRadius + 1*CLHEP::um;
   G4double innerCoilOuterRadius = innerCoilInnerRadius + innerCoilThickness;
   G4double outerCoilInnerRadius = innerCoilOuterRadius + 1*CLHEP::um;
   G4double outerCoilOuterRadius = outerCoilInnerRadius + outerCoilThickness;
   G4double collarInnerRadius    = outerCoilOuterRadius + 1*CLHEP::um;
   G4double collarOuterRadius    = collarInnerRadius    + collarThickness;
-  
-  //G4double collarOuterRadius  = 101.18*CLHEP::mm;
-  //G4double coilOuterRadius = beamPipe->GetContainerRadius() + 2*lengthSafety + 118.6/2.0 * CLHEP::mm - 56.0/2.0*CLHEP::mm ;
-  //118.6mm is the outer diameter of the coils, 56mm is the diameter of the coldbore
+
+  // ensure that the collars touch each other - set minimum for outer radius
+  if (collarOuterRadius < massShift)
+    {collarOuterRadius = 1.1*massShift;}
+
+  if (collarInnerRadius > (2*massShift - collarOuterRadius))
+    {// this means there may be overlapping volumes..
+      // would be even more complicated to be tolerant of this and optionally build coils to
+      // fit it all in
+      // this will be used primarily for lhc models within certain bounds - just print warning
+
+      std::string theException = "\nWarning the beam pipe is sufficiently large to cause ";
+      theException += "  overlapping volumes with the  non-magnetic collars - tracking problems";
+      theException += " will occur for secondaires in this magnet. consider using another";
+      theException += " type of magnet geometry.\n";
+      G4cerr << theException << G4endl;
+    }
   
   if (isLeftOffset)
     {
