@@ -135,6 +135,15 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
   _positionSList.push_back(_s_total);
   _rotationList.push_back(new G4RotationMatrix(*_rotation));
   _rotationGlobalList.push_back(new G4RotationMatrix(*_rotationGlobal));
+  // update iterators
+  _iterRotation=_rotationList.end();
+  _iterRotationGlobal=_rotationGlobalList.end();
+  _iterPosition=_positionList.end();
+  _iterPositionStart=_positionStartList.end();
+  _iterPositionEnd=_positionEndList.end();
+  _iterPositionFromCurrentCenter=_positionFromCurrentCenterList.end();
+  _iterPositionS=_positionSList.end();
+  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "finished." << G4endl;
   print();
