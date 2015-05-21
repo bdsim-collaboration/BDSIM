@@ -12,7 +12,7 @@
  */
 
 struct tunneltypes_def {
-  enum type { circular, elliptical, square, rectangular, ilc, rectangularaboveground};
+  enum type { circular, elliptical, square, rectangular, ilc, rectaboveground};
 };
 
 typedef BDSTypeSafeEnum<tunneltypes_def,int> BDSTunnelType;

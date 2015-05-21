@@ -7,12 +7,12 @@
 BDSTunnelType BDS::DetermineTunnelType(G4String tunnelType)
 {
   std::map<G4String, BDSTunnelType> types;
-  types["circular"]               = BDSTunnelType::circular;
-  types["elliptical"]             = BDSTunnelType::elliptical;
-  types["square"]                 = BDSTunnelType::square;
-  types["rectangular"]            = BDSTunnelType::rectangular;
-  types["ilc"]                    = BDSTunnelType::ilc;
-  types["rectangularaboveground"] = BDSTunnelType::rectangularaboveground;
+  types["circular"]        = BDSTunnelType::circular;
+  types["elliptical"]      = BDSTunnelType::elliptical;
+  types["square"]          = BDSTunnelType::square;
+  types["rectangular"]     = BDSTunnelType::rectangular;
+  types["ilc"]             = BDSTunnelType::ilc;
+  types["rectaboveground"] = BDSTunnelType::rectaboveground;
 
   tunnelType.toLower();
   

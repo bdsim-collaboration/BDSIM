@@ -5,6 +5,7 @@
 #include "BDSTunnelFactoryCircular.hh"
 #include "BDSTunnelFactoryElliptical.hh"
 #include "BDSTunnelFactoryRectangular.hh"
+#include "BDSTunnelFactoryRectAboveGround.hh"
 #include "BDSTunnelFactorySquare.hh"
 #include "BDSTunnelType.hh"
 
@@ -48,6 +49,12 @@ BDSTunnelFactoryBase* BDSTunnelFactory::GetAppropriateFactory(BDSTunnelType tunn
     G4cout << __METHOD_NAME__ << " square tunnel factory" << G4endl;
 #endif
     return BDSTunnelFactorySquare::Instance();
+    break;
+  case BDSTunnelType::rectaboveground:
+#ifdef BDSDEBUG
+    G4cout << __METHOD_NAME__ << " rectangular above ground tunnel factory" << G4endl;
+#endif
+    return BDSTunnelFactoryRectAboveGround::Instance();
     break;
   default:
 #ifdef BDSDEBUG
