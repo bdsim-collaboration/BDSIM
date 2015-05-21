@@ -2,6 +2,7 @@
 #define BDSUTILITIES_H
 
 #include "globals.hh"   // geant4 globals / types
+#include <string>
 
 /**
  * @brief Various utility functions that have no specific place - 
@@ -25,8 +26,15 @@ namespace BDS {
   /// seems trivial, but used in a lot of places so put in one place
   G4int    CalculateOrientation(G4double angle);
 
+  /// returns path from which BDSIM is executed
+  /// supports linux/unix and mac OS
+  std::string GetBDSIMExecPath();
 
-  
+  /** 
+      Try to catch abort signals. This is not guaranteed to work.
+      Main goal is to close output stream / files.
+  */
+  void HandleAborts(int signal_number);
 }
 
 
