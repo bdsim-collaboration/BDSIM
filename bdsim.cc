@@ -258,7 +258,6 @@ int main(int argc,char** argv) {
     }
   }
 
-
   if(!execOptions->GetBatch())   // Interactive mode
     {
       G4UIsession* session=0;
@@ -340,9 +339,7 @@ int main(int argc,char** argv) {
 #endif
       delete session;
 
-#ifdef G4VIS_USE
     }
-#endif
   else           // Batch mode
     { 
       runManager->BeamOn(globalConstants->GetNumberToGenerate());
