@@ -9,9 +9,10 @@ public:
   BDSGeometryFormat();
   ~BDSGeometryFormat();
   BDSGeometryFormat(G4String format);
-
+  //  virtual G4bool compare(G4String val) const; //Compare to string
+  
 private:
-  virtual std::list<G4String> allowedSpecs();
+  virtual void allowedSpecs();
   
 };
 #endif

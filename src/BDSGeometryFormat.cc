@@ -1,24 +1,37 @@
 #include "BDSGeometryFormat.hh"
+#include "BDSDebug.hh"
 
-BDSGeometryFormat::BDSGeometryFormat():BDSSpec((G4String)"none", allowedSpecs())
-{}
+BDSGeometryFormat::BDSGeometryFormat()
+{ 
+  allowedSpecs();
+}
 
 BDSGeometryFormat::~BDSGeometryFormat()
 {;}
 
-BDSGeometryFormat::BDSGeometryFormat(G4String format):BDSSpec(format, allowedSpecs())
-{;}
+BDSGeometryFormat::BDSGeometryFormat(G4String format)
+{
+  allowedSpecs();
+  spec(format);
+}
 
-std::list<G4String> BDSGeometryFormat::allowedSpecs(){
-  std::list<G4String> tmp;
-  tmp.push_back((G4String)"none");
-  tmp.push_back((G4String)"gmad");
-  tmp.push_back((G4String)"mokka");
+void BDSGeometryFormat::allowedSpecs(){
+  addAllowedSpec((G4String)"none");
+  addAllowedSpec((G4String)"gmad");
+  addAllowedSpec((G4String)"mokka");
 #ifdef USE_LCDD
-  tmp.push_back((G4String)"lcdd");
+  addAllowedSpec((G4String)"lcdd");
 #endif
 #ifdef USE_GDML
-  tmp.push_back((G4String)"gdml");
+  addAllowedSpec((G4String)"gdml");
 #endif
-  return tmp;
 }
+
+/*
+G4bool BDSGeometryFormat::compare(G4String val) const{
+  BDSGeometryFormat* testf = new BDSGeometryFormat(val);
+  G4bool result = compare(testf);
+  delete testf;
+  return result;
+}
+*/

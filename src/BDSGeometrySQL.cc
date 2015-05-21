@@ -29,7 +29,9 @@
 #include <cstdlib>
 #include <cstring>
 
-BDSGeometrySQL::BDSGeometrySQL(G4String DBfile):
+#define BDSDEBUG 1
+
+BDSGeometrySQL::BDSGeometrySQL(G4String DBfile):BDSGeometry(new BDSGeometryFormat("mokka"), DBfile),
   rotateComponent(NULL),itsMarkerVol(NULL)
 {
 #ifdef BDSDEBUG
@@ -65,6 +67,7 @@ BDSGeometrySQL::BDSGeometrySQL(G4String DBfile):
     approxProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsA(),G4ProductionCuts::GetIndex("e+"));
     _approximationRegionSQL->SetProductionCuts(approxProductionCuts);
     //  }
+    G4cout << __METHOD_END__ << G4endl;
 }
 
 BDSGeometrySQL::~BDSGeometrySQL(){
@@ -227,10 +230,16 @@ void BDSGeometrySQL::SetPlacementParams(BDSMySQLTable* aSQLTable, G4int k){
 	_InheritStyle = aSQLTable->GetVariable("INHERITSTYLE")->GetStrValue(k);
       if(aSQLTable->GetVariable("PARAMETERISATION")!=NULL)
 	_Parameterisation = aSQLTable->GetVariable("PARAMETERISATION")->GetStrValue(k);
-      if(_PARENTNAME=="")_PosZ-=length()/2.0; //Move position to beginning of element
-      _PARENTNAME=_markerName + _PARENTNAME;
-      if(aSQLTable->GetVariable("NAME")!=NULL)
+      if(_PARENTNAME==""){
+	G4cout << __METHOD_NAME__ << " - object has no parent. Subtracting " << length()/2.0 << " from _PosZ. " << G4endl;
+	_PosZ-=length()/2.0; //Move position to beginning of element
+      }
+      _PARENTNAME= itsMarkerVol->GetName() + "_" + _PARENTNAME;
+      G4cout << __METHOD_NAME__ << " parentname =  " << _PARENTNAME<< G4endl;
+      if(aSQLTable->GetVariable("NAME")!=NULL){
 	_Name = aSQLTable->GetVariable("NAME")->GetStrValue(k);
+	G4cout << __METHOD_NAME__ << " - object name: " << _Name << G4endl;
+      }
       if(_Name=="_SQL") _Name = _TableName+BDSGlobalConstants::Instance()->StringFromInt(k) + "_SQL";
       if(_Name=="") _Name = _TableName+BDSGlobalConstants::Instance()->StringFromInt(k);
       _Name = itsMarkerVol->GetName()+"_"+_Name;
@@ -789,6 +798,7 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4Log
 	    if(_PARENTNAME.compareTo(VOL_LIST[i]->GetName(),cmpmode)==0)
 	      {
 		PARENTID = i;
+		G4cout << __METHOD_NAME__ << " - PARENTID = " << i << G4endl;
 		continue;
 	      }
 	  }

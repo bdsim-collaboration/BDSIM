@@ -115,9 +115,6 @@ private:
   //  BDSMagFieldSQL* itsMagField;
   //  BDSSamplerSD* SensDet;
 
-
-  G4String _markerName; //The name given to the marker logical volume
-
 protected:
 };
 

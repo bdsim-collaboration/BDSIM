@@ -174,8 +174,9 @@ BDSAcceleratorComponent::~BDSAcceleratorComponent ()
 
 void BDSAcceleratorComponent::Initialise()
 {
+  G4cout << __METHOD_NAME__ << G4endl;
   /// check and build logical volume
-
+  
   // set copy number (count starts at 0)
   // post increment guarantees itsCopyNumber starts at 0!
   itsCopyNumber = (*LogVolCount)[itsName]++;
@@ -194,6 +195,7 @@ void BDSAcceleratorComponent::Initialise()
       //
       itsMarkerLogicalVolume=(*LogVol)[itsName];
     }
+  G4cout << __METHOD_END__ << G4endl;
 }
 
 void BDSAcceleratorComponent::Build()//Execute build methods common for all classes.

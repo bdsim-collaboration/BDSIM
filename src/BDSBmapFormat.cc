@@ -1,20 +1,31 @@
 #include "BDSBmapFormat.hh"
-BDSBmapFormat::BDSBmapFormat():BDSSpec(G4String("none"), allowedSpecs()){
+BDSBmapFormat::BDSBmapFormat(){
+  allowedSpecs();
 }
 
 BDSBmapFormat::~BDSBmapFormat()
 {;}
 
-BDSBmapFormat::BDSBmapFormat(G4String format):BDSSpec(format, allowedSpecs())
-{;}
-
-
-std::list<G4String> BDSBmapFormat::allowedSpecs(){
-  std::list<G4String> tmp;
-  tmp.push_back((G4String)"none");
-  tmp.push_back((G4String)"XY");
-  tmp.push_back((G4String)"3D");
-  tmp.push_back((G4String)"mokka");
-  tmp.push_back((G4String)"test");
-  return tmp;
+BDSBmapFormat::BDSBmapFormat(G4String format)
+{
+  allowedSpecs();
+  spec(format);
 }
+
+
+void BDSBmapFormat::allowedSpecs(){
+  addAllowedSpec((G4String)"none");
+  addAllowedSpec((G4String)"XY");
+  addAllowedSpec((G4String)"3D");
+  addAllowedSpec((G4String)"mokka");
+  addAllowedSpec((G4String)"test");
+}
+
+/*
+G4bool BDSBmapFormat::compare(G4String val) const{
+  BDSBmapFormat* testf = new BDSBmapFormat(val);
+  G4bool result = compare(testf);
+  delete testf;
+  return result;
+}
+*/

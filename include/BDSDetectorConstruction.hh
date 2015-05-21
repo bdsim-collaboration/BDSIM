@@ -25,6 +25,7 @@ Last modified 15.11.2005 by Ilya Agapov
 #include "GFlashHitMaker.hh"
 #include "GFlashParticleBounds.hh"
 
+#include "BDSColourWheel.hh"
 
 class G4Box;
 class G4LogicalVolume;
@@ -114,6 +115,8 @@ private:
   std::vector<G4Region*> gFlashRegion;
 
   G4RotationMatrix* _globalRotation;
+
+  BDSColourWheel* _colourWheel;
 };
 
 #endif

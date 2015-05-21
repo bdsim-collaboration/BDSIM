@@ -11,6 +11,8 @@ class BDSGeometry{
 public:
   BDSGeometry();
   ~BDSGeometry();
+  BDSGeometry(const char* format, G4String file);
+  BDSGeometry(G4String format, G4String file);
   BDSGeometry(BDSGeometryFormat* format, G4String file);
 
   BDSGeometryFormat* format() const;

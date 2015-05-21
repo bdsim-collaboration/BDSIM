@@ -71,6 +71,7 @@ private:
   // (set during Geometery construction)
   G4VPhysicalVolume* align_out_volume;
 
+  G4VisAttributes* _visAttDebug;
 };
 
 

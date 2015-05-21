@@ -10,17 +10,22 @@
 
 class BDSSpec{
 public:
+  BDSSpec();
   ~BDSSpec();
   G4bool compare(BDSSpec* spec) const; //Compare to another spec object 
-  G4bool compare(G4String spec) const; 
+  G4bool compare(G4String val) const; //Compare to string
+  G4bool compare(const char* val) const; //Compare to string
+  //  G4bool compare(G4String spec) const; 
   void spec(G4String val);
+  G4String spec();
+  void printAllowed() const;
   
 protected:
   BDSSpec(G4String spec, std::list<G4String> allowedSpecs);
-  G4String spec() const;
+  void addAllowedSpec(G4String val);
 
 private:
-  virtual std::list<G4String> allowedSpecs() = 0;
+  virtual void allowedSpecs() = 0;
   G4String _spec;
   std::list<G4String> _allowedSpecs;
   G4bool checkAllowed(G4String val) const;

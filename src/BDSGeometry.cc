@@ -8,6 +8,16 @@ BDSGeometry::~BDSGeometry()
 {;}
 
 
+/*
+BDSGeometry::BDSGeometry(const char* format, G4String file){
+  BDSGeometry((G4String)format,file);
+}
+
+BDSGeometry::BDSGeometry(G4String format, G4String file){
+  BDSGeometry(new BDSGeometryFormat(format), file);
+}
+*/
+
 BDSGeometry::BDSGeometry(BDSGeometryFormat* format, G4String file):_format(format),_file(file)
 {
   init();

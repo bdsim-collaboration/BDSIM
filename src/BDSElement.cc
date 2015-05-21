@@ -24,6 +24,7 @@
 #include "G4NystromRK4.hh"
 #include "BDSMagFieldFactory.hh"
 #include "BDSGeometryFactory.hh"
+#include "BDSDebug.hh"
 
 // geometry drivers
 #include "ggmad.hh"
@@ -63,6 +64,12 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap, G4doubl
 
 void BDSElement::Build(){
   BDSAcceleratorComponent::Build();
+
+  _visAttDebug = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
+  _visAttDebug->SetForceSolid(true);  
+  _visAttDebug->SetVisibility(true);
+  itsMarkerLogicalVolume->SetVisAttributes(_visAttDebug);
+  
   PlaceComponents(itsGeometry,itsBmap); // place components (from file) and build filed maps
   BuildTunnel();
 }
@@ -93,17 +100,23 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
   
   BDSMagFieldFactory* bFact = new BDSMagFieldFactory();
   itsMagField = bFact->buildMagField(bmap, itsBmapZOffset, geom);
-  if(itsMagField){
-    BuildMagField(true);
-  }
-
-  if(geom->format()->compare("lcdd")) {
+  //  itsMagField = new BDSMagField(); //Zero magnetic field.
+  BuildMagField(true);
+  
+#ifdef USE_LCDD
+  /*
+  G4cout << __METHOD_NAME__ << " - setting lcdd vis attributes." << G4endl;
+  if(geom->format()->spec()==(G4String)"lcdd") {
     //Make marker visible (temp debug)
     G4VisAttributes* VisAttLCDD = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
     VisAttLCDD->SetForceSolid(true);  
     VisAttLCDD->SetVisibility(false);
     itsMarkerLogicalVolume->SetVisAttributes(VisAttLCDD);
-  } 
+  }
+  */
+#endif 
+
+  G4cout << __METHOD_END__ << G4endl;
 }
 
 
@@ -116,52 +129,52 @@ void BDSElement::SetVisAttributes()
 
 void BDSElement::BuildMagField(G4bool forceToAllDaughters)
 {
-  
 #ifdef BDSDEBUG
-  G4cout << "BDSElement.cc::BuildMagField Building magnetic field...." << G4endl;
+    G4cout << "BDSElement.cc::BuildMagField Building magnetic field...." << G4endl;
 #endif
-  // create a field manager
-  G4FieldManager* fieldManager = new G4FieldManager();
-
-
+    // create a field manager
+    G4FieldManager* fieldManager = new G4FieldManager();
+    
+    
 #ifdef BDSDEBUG
-  G4cout << "BDSElement.cc> Building magnetic field..." << G4endl;
+    G4cout << "BDSElement.cc> Building magnetic field..." << G4endl;
 #endif
-  itsEqRhs = new G4Mag_UsualEqRhs(itsMagField);
-  itsFStepper = new G4NystromRK4(itsEqRhs);
-  fieldManager->SetDetectorField(itsMagField );
-  
+    itsEqRhs = new G4Mag_UsualEqRhs(itsMagField);
+    itsFStepper = new G4NystromRK4(itsEqRhs);
+    fieldManager->SetDetectorField(itsMagField );
+    
 #ifdef BDSDEBUG
-  G4cout << "BDSElement.cc> Setting stepping accuracy parameters..." << G4endl;
+    G4cout << "BDSElement.cc> Setting stepping accuracy parameters..." << G4endl;
 #endif
-  
-  if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0){
-    fieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
-  }
-  if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0){
-    fieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
-  }
-  if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>=0){
-    fieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
-  }
-  if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0){
-    fieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
-  }
-
-  G4MagInt_Driver* fIntgrDriver = new G4MagInt_Driver(BDSGlobalConstants::Instance()->GetChordStepMinimum(),
-						      itsFStepper, 
-						      itsFStepper->GetNumberOfVariables() );
-  fChordFinder = new G4ChordFinder(fIntgrDriver);
-  
-  fChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
-  
-  fieldManager->SetChordFinder( fChordFinder ); 
-  
+    
+    if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0){
+      fieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+    }
+    if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0){
+      fieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
+    }
+    if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>=0){
+      fieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
+    }
+    if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0){
+      fieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
+    }
+    
+    G4MagInt_Driver* fIntgrDriver = new G4MagInt_Driver(BDSGlobalConstants::Instance()->GetChordStepMinimum(),
+							itsFStepper, 
+							itsFStepper->GetNumberOfVariables() );
+    fChordFinder = new G4ChordFinder(fIntgrDriver);
+    
+    fChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
+    
+    fieldManager->SetChordFinder( fChordFinder ); 
+    
 #ifdef BDSDEBUG
-  G4cout << "BDSElement.cc> Setting the logical volume " << itsMarkerLogicalVolume->GetName() << " field manager... force to all daughters = " << forceToAllDaughters << G4endl;
+    G4cout << "BDSElement.cc> Setting the logical volume " << itsMarkerLogicalVolume->GetName() << " field manager... force to all daughters = " << forceToAllDaughters << G4endl;
 #endif
-  itsMarkerLogicalVolume->SetFieldManager(fieldManager,forceToAllDaughters);
+    itsMarkerLogicalVolume->SetFieldManager(fieldManager,forceToAllDaughters);
 }
+
 
 // creates a field mesh in the reference frame of a physical volume
 // from  b-field map value list 

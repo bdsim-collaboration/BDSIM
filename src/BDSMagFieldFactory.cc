@@ -20,28 +20,30 @@ G4MagneticField* BDSMagFieldFactory::buildMagField(G4String bmap="", G4double bm
   _bmap=bmap;
   _bmapZOffset=bmapZOffset;
   _geom=geom;
-
+  
   parseFormatAndFilename();
-  if (_bFormat->compare(G4String("3D"))) {
+  if (_bFormat->compare("3D")) {
     return build3DMagField();
   } 
-  else if (_bFormat->compare(G4String("XY"))){
+  else if (_bFormat->compare("XY")){
     return buildXYMagField();
   } 
-  else if (_bFormat->compare(G4String("none"))){
-    if (geom->format()->compare("lcdd")){
-      buildLCDDMagField();
+  else if (_bFormat->compare("none")){
+    if(_geom){
+      if (_geom->format()->compare(new BDSGeometryFormat("lcdd"))){
+	return buildLCDDMagField();
+      }
     }
   }
-  else if (_bFormat->compare(G4String("mokka")) || _bFormat->compare(G4String("none"))){
-    if (geom->format()->compare("mokka")){
-      buildSQLMagField();
-    } 
+  else if (_bFormat->compare("mokka") || _bFormat->compare("none")){
+    if(_geom){
+      if (_geom->format()->compare(new BDSGeometryFormat("mokka"))){
+	return buildSQLMagField();
+      } 
+    }
   }
-
-else {
-    return buildZeroMagField();
-  }
+  //If none of the above, return zero magnetic field.
+  return buildZeroMagField();
 }
 
 void BDSMagFieldFactory::parseFormatAndFilename(){
