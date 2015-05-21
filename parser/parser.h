@@ -17,12 +17,11 @@
 #include <cstdio>
 #include <cstring>
 #include <cmath>
+#include <iostream>
 #include <list>
 #include <map>
 #include <string>
 #include <vector>
-
-#include <iostream>
 
 #include "element.h"
 #include "elementlist.h"
@@ -30,6 +29,7 @@
 #include "gmad.h"
 #include "options.h"
 #include "parameters.h"
+#include "tunnel.h"
 
 int yyerror(const char *);
 
@@ -45,10 +45,11 @@ const int MAX_EXPAND_ITERATIONS = 50;
 std::list<double> _tmparray;  // for reading of arrays
 std::list<char*> _tmpstring;
 
+/// globals
 struct Parameters params;
 struct Options options;
-struct Element element;
-
+//struct Element element;
+struct Tunnel tunnel;
 
 // list of all encountered elements
 ElementList element_list;
@@ -57,8 +58,9 @@ ElementList element_list;
 std::list<struct Element> tmp_list;
 
 ElementList beamline_list;
-std::list<struct Element> material_list;
-std::list<struct Element> atom_list;
+std::list<struct Element>  material_list;
+std::list<struct Element>  atom_list;
+std::vector<struct Tunnel> tunnel_list;
 
 const char* current_line = "";
 const char* current_start = "";
@@ -69,87 +71,33 @@ std::map<std::string, struct symtab*> symtab_map;
 
 extern struct symtab * symlook(const char *s);
 
-// representation of arrays used in tokens
-struct Array {
-  std::vector<char*> symbols;
-  double *data;
-  int size;
-};
+// ***********************
+// functions declaration *
+// ***********************
 
-void set_vector(std::list<double>& dst, struct Array *src)
-{
-  for(int i=0; i< src->size;i++){
-    dst.push_back(src->data[i]);
-#ifdef BDSDEBUG 
-    std::cout << src->data[i] << " ";
-#endif
-  }
-#ifdef BDSDEBUG 
-  std::cout << std::endl;
-#endif
-}
-
-
-void set_vector(std::list<char*>& dst, struct Array *src)
-{
-  for(int i=0; i< src->size;i++){
-    dst.push_back(src->symbols[i]);
-#ifdef BDSDEBUG 
-    std::cout << src->symbols[i] << " ";
-#endif
-  }
-#ifdef BDSDEBUG 
-  std::cout << std::endl;
-#endif
-}
-
-void set_vector(std::list<const char*>& dst, struct Array *src)
-{
-  for(int i=0; i< src->size;i++){
-    dst.push_back(src->symbols[i]);
-#ifdef BDSDEBUG 
-    std::cout << src->symbols[i] << " ";
-#endif
-  }
-#ifdef BDSDEBUG 
-  std::cout << std::endl;
-#endif
-}
-
-void set_vector(std::list<std::string>& dst, struct Array *src)
-{
-  for(int i=0; i< src->size;i++){
-    dst.push_back((std::string)src->symbols[i]);
-#ifdef BDSDEBUG 
-    std::cout << (std::string)src->symbols[i] << " ";
-#endif
-  }
-#ifdef BDSDEBUG 
-  std::cout << std::endl;
-#endif
-}
-
-
-void set_vector(std::list<int>& dst, struct Array *src)
-{
-  for(int i=0; i< src->size;i++){
-    dst.push_back((int)(src->data[i]));
-#ifdef BDSDEBUG 
-    std::cout << (int)(src->data[i]) << " ";
-#endif
-  }
-#ifdef BDSDEBUG 
-  std::cout << std::endl;
-#endif
-}
-
+void quit();
 /// method that transfers parameters to element properties
 int write_table(struct Parameters pars,const char* name, int type, std::list<struct Element> *lst=NULL);
 int expand_line(const char *name, const char *start, const char *end);
+/// insert a sampler into beamline_list
+void add_sampler(char *name, char *before, int before_count);
+/// insert a cylindrical sampler into beamline_list
+void add_csampler(char *name, char *before, int before_count, double length, double rad);
+/// insert a beam dumper into beamline_list
+void add_dump(char *name, char *before, int before_count);
+/// insert beam gas                                             
+void add_gas(const char *name, const char *before, int before_count, std::string material);
+/// insert tunnel
+void add_tunnel(const char *name, Tunnel& tunnel);
+double property_lookup(ElementList& el_list, char *element_name, char *property_name);
 
-// *********************
-// functions
-// *********************
+// parser functions
+int add_func(const char *name, double (*func)(double));
+int add_var(const char *name, double value, int is_reserved = 0);
+
+// **************************
+// functions implementation *
+// **************************
 
 void quit()
 {
@@ -162,6 +110,7 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
 #ifdef BDSDEBUG 
   printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%d, lset = %d\n", params.k1, params.k2, params.k3, type, params.lset);
 #endif
+
   struct Element e;
   
   e.type = type;
@@ -186,9 +135,6 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.xsize = params.xsize;
   e.ysize = params.ysize;
   e.material = params.material;  
-  e.tunnelMaterial = params.tunnelMaterial;
-  e.tunnelRadius = params.tunnelRadius;
-  e.tunnelOffsetX = params.tunnelOffsetX;
   e.precisionRegion = params.precisionRegion;
   // end of common parameters
 
@@ -297,10 +243,6 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     atom_list.push_back(e);
     return 0;
 
-  case _TUNNEL:
-    e.l = -1;
-    break;
-
   case _AWAKESCREEN:
     std::cout << "scintmaterial: " << e.scintmaterial << " " <<  params.scintmaterial << std::endl;
     std::cout << "windowmaterial: " << e.windowmaterial << " " <<  params.windowmaterial << std::endl;
@@ -344,12 +286,12 @@ int expand_line(const char *charname, const char *start, const char* end)
   e.lst = NULL;
   
   beamline_list.push_back(e);
-  
-  if(VERBOSE) printf("expanding line %s, range = %s/%s\n",charname,start,end);
-  
+
+#ifdef BDSDEBUG 
+  printf("expanding line %s, range = %s/%s\n",charname,start,end);
+#endif
   if(!(*it).lst) return 0; //list empty
-  
-  
+    
   // first expand the whole range 
   std::list<struct Element>::iterator sit = (*it).lst->begin();
   std::list<struct Element>::iterator eit = (*it).lst->end();
@@ -489,7 +431,6 @@ int expand_line(const char *charname, const char *start, const char* end)
   return 0;
 }
 
-// insert a sampler into beamline_list
 void add_sampler(char *name, char *before, int before_count)
 {
 #ifdef BDSDEBUG 
@@ -509,7 +450,6 @@ void add_sampler(char *name, char *before, int before_count)
   beamline_list.insert(it,e);
 }
 
-// insert a cylindrical sampler into beamline_list
 void add_csampler(char *name, char *before, int before_count, double length, double rad)
 {
 #ifdef BDSDEBUG 
@@ -531,7 +471,6 @@ void add_csampler(char *name, char *before, int before_count, double length, dou
   beamline_list.insert(it,e);
 }
 
-// insert a beam dumper into beamline_list
 void add_dump(char *name, char *before, int before_count)
 {
 #ifdef BDSDEBUG 
@@ -551,7 +490,6 @@ void add_dump(char *name, char *before, int before_count)
   beamline_list.insert(it,e);
 }
 
-// insert beam gas                                             
 void add_gas(const char *name, const char *before, int before_count, std::string material)
 {
   printf("gas %s will be inserted into %s number %d\n",material.c_str(),before,before_count);
@@ -560,7 +498,18 @@ void add_gas(const char *name, const char *before, int before_count, std::string
   e.name = name;
   e.lst = NULL;
   element_list.insert(beamline_list.end(),e);
- 
+}
+
+void add_tunnel(Tunnel& tunnel)
+{
+  // copy from global
+  struct Tunnel t(tunnel);
+  // reset tunnel
+  tunnel.clear();
+#ifdef BDSDEBUG 
+  t.print();
+#endif
+  tunnel_list.push_back(t);
 }
 
 double property_lookup(ElementList& el_list, char *element_name, char *property_name)
@@ -588,13 +537,12 @@ int add_func(const char *name, double (*func)(double))
   return 0;
 }
 
-int add_var(const char *name, double value, int is_reserved = 0)
+int add_var(const char *name, double value, int is_reserved)
 {
   struct symtab *sp=symlook(name);
   sp->value=value;
   sp->is_reserved = is_reserved;
   return 0;
 }
-
 
 #endif

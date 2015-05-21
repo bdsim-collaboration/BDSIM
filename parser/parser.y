@@ -18,6 +18,7 @@
      3) compile bison with "-t" flag. This is automatically done when CMAKE_BUILD_TYPE equals Debug
   */
 
+#include "array.h"
 #include "parser.h"
 
   int execute = 1;
@@ -65,6 +66,7 @@
 %type <symp> sample_options
 %type <symp> csample_options
 %type <symp> gas_options
+%type <symp> tunnel_options
 
 /* printout format for debug output */
 /*
@@ -524,553 +526,36 @@ newinstance : VARIABLE
 	    }
 ;
 
-parameters: 
-          | VARIABLE '=' aexpr ',' parameters
+parameters: VARIABLE '=' aexpr ',' parameters
             {
 	      if(execute)
-		{
-#ifdef BDSDEBUG 
-                  printf("parameters, VARIABLE(%s) = aexpr(%.10g)\n",$1->name,$3);
-#endif
-		  if(!strcmp($1->name,"l")) { params.l = $3; params.lset = 1;} // length
-		  else
-		  if(!strcmp($1->name,"bmapZOffset")) { params.bmapZOffset = $3; params.bmapZOffsetset = 1;} // field map z offset
-		    else
-	          if(!strcmp($1->name,"B")) { params.B = $3; params.Bset = 1;} // dipole field
-		    else 
-		  if(!strcmp($1->name,"ks")) { params.ks = $3; params.ksset = 1;} // solenoid strength
-		    else
-		  if(!strcmp($1->name,"k0")) { params.k0 = $3; params.k0set = 1;} // dipole coef.
-		    else 
-		  if(!strcmp($1->name,"k1")) { params.k1 = $3; params.k1set = 1;} // quadrupole coef. 
-		    else
-		  if(!strcmp($1->name,"k2")) { params.k2 = $3; params.k2set = 1;} // sextupole coef.
-		    else 
-		  if(!strcmp($1->name,"k3")) { params.k3 = $3; params.k3set = 1;} // octupole coef.
-		    else 
-		  if(!strcmp($1->name,"angle")) { params.angle = $3; params.angleset = 1;} // dipole bending angle
-		  else
-		  if(!strcmp($1->name,"phiAngleIn")) { params.phiAngleIn = $3; params.phiAngleInset = 1;} // element incoming angle
-		  else
-		  if(!strcmp($1->name,"phiAngleOut")) { params.phiAngleOut = $3; params.phiAngleOutset = 1;} // element outgoing angle
-		  else
-		   if(!strcmp($1->name,"beampipeThickness") ) 
-		      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
-		   else
-		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
-		    // for backwards compatibility
-		    { params.aper1 = $3; params.aper1set = 1;}
-		    else
-		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
-		    { params.aper1 = $3; params.aper1set = 1;}
-		    else
-		  if(!strcmp($1->name,"aper2") ||!strcmp($1->name,"aperture2") ) 
-		    { params.aper2 = $3; params.aper2set = 1;}
-		    else
-		  if(!strcmp($1->name,"aper3") ||!strcmp($1->name,"aperture3") ) 
-		    { params.aper3 = $3; params.aper3set = 1;}
-		    else
-		  if(!strcmp($1->name,"aper4") ||!strcmp($1->name,"aperture4") ) 
-		    { params.aper4 = $3; params.aper4set = 1;}
-		    else
-		  if(!strcmp($1->name,"outerDiameter")) 
-		    { params.outerDiameter = $3; params.outerDiameterset = 1;}
-		    else
-		  if(!strcmp($1->name,"outR") )
-		    // for backwards compatibility, boxSize = 2*outR
-		    { params.outerDiameter = 2 * $3; params.outerDiameterset = 1;}
-		    else
-		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
-		    else
-		  if(!strcmp($1->name,"ysize") ) { params.ysize = $3; params.ysizeset = 1;}
-		    else
-		  if(!strcmp($1->name,"tilt")) { params.tilt = $3; params.tiltset = 1;}
-		    else
-		  if(!strcmp($1->name,"x")) {params.xdir = $3; params.xdirset = 1;} // x direction
-		    else
-		  if(!strcmp($1->name,"y")) {params.ydir = $3; params.ydirset = 1;} // y direction 
-		    else
-		  if(!strcmp($1->name,"z")) {params.zdir = $3; params.zdirset = 1;} // z direction 
-		    else
-		  if(!strcmp($1->name,"phi")) {params.phi = $3; params.phiset = 1;}  // polar angle
-		    else
-		  if(!strcmp($1->name,"theta"))  {params.theta = $3; params.thetaset = 1;} 
-		  // azimuthal angle
-		    else
-		  if(!strcmp($1->name,"psi"))  {params.psi = $3; params.psiset = 1;} // 3rd  angle
-		  else
-		  if(!strcmp($1->name,"gradient"))  {params.gradient = $3; params.gradientset = 1;} // rf voltage
-		  else
-		  if(!strcmp($1->name,"fint")) {;} // fringe field parameters
-		  else
-		  if(!strcmp($1->name,"fintx")) {;}  //
-		  else
-		  if(!strcmp($1->name,"tunnelRadius")) { params.tunnelRadius = $3; params.tunnelRadiusset = 1;} // tunnel radius
-		  else
-		  if(!strcmp($1->name,"tunnelOffsetX")) { params.tunnelOffsetX = $3; params.tunnelOffsetXset = 1;} // tunnel offset
-		  else
-		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;} // tunnel offset
-		    else
-		  if(!strcmp($1->name,"e1")) {;}  //
-                    else
-		  if(!strcmp($1->name,"e2")) {;}  //
-		    else
-		  if(!strcmp($1->name,"A")) {params.A = $3; params.Aset = 1;}  // mass number
-		    else
-		  if(!strcmp($1->name,"Z")) {params.Z = $3; params.Zset = 1;}  // atomic number
-		    else
-		  if(!strcmp($1->name,"density")) {params.density = $3; params.densityset = 1;}  // density
-                    else
-		  if(!strcmp($1->name,"T")) {params.temper = $3; params.temperset = 1;}  // temperature
-		    else
-		  if(!strcmp($1->name,"P")) {params.pressure = $3; params.pressureset = 1;}  // pressure
-		    else
-		  if(!strcmp($1->name,"waveLength")) {params.waveLength = $3; params.waveLengthset = 1;}
-		    else
-		  if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence
-		    else
-                  if(!strcmp($1->name,"tscint")) { params.tscint = $3; params.tscintset = 1;} // thickness for a scintillator screen 
-		  else
-                  if(!strcmp($1->name,"twindow")) { params.twindow = $3; params.twindowset = 1;} // thickness for a scintillator screen window 
-		    else
-                  if(VERBOSE) printf("Warning : unknown parameter %s\n",$1->name);
-		  
-		}
+		params.set_value($1->name,$3);
 	    }
-           | VARIABLE '=' vecexpr ',' parameters
-             {
-	       if(execute) 
-		 {
-#ifdef BDSDEBUG 
-                   printf("params,VARIABLE (%s) = vecexpr (%d)\n",$1->name,$3->size);
-#endif
-                   if(!strcmp($1->name,"knl")) 
-		     {
-		       params.knlset = 1;
-		       set_vector(params.knl,$3);
-		       delete[] $3->data;
-		     } 
-		   else
-		     if(!strcmp($1->name,"ksl")) 
-		       {
-			 params.kslset = 1;
-			 set_vector(params.ksl,$3);
-			 delete[] $3->data;
-		       }
-                     else
-		     if(!strcmp($1->name,"blmLocZ")) 
-		       {
-			 params.blmLocZset = 1;
-			 set_vector(params.blmLocZ,$3);
-			 delete[] $3->data;
-		       }
-		   else
-		     if(!strcmp($1->name,"blmLocTheta")) 
-		       {
-			 params.blmLocThetaset = 1;
-			 set_vector(params.blmLocTheta,$3);
-			 delete[] $3->data;
-		       }
-                   else
-                     if(!strcmp($1->name,"components"))
-                       {
-                         params.componentsset = 1;
-                         set_vector(params.components,$3);
-                         $3->symbols.clear();
-                       } 
-                   else
-                     if(!strcmp($1->name,"componentsWeights"))
-                       {
-                         params.componentsWeightsset = 1;
-                         set_vector(params.componentsWeights,$3);
-                         delete[] $3->data;
-                       }
-                   else
-                     if(!strcmp($1->name,"componentsFractions"))
-                       {
-                         params.componentsFractionsset = 1;
-                         set_vector(params.componentsFractions,$3);
-                         delete[] $3->data;
-                       }
-		    else {
-		      //                  if(VERBOSE)
-		      printf("Warning : unknown parameter %s\n",$1->name);
-		    }
-		 }
-	     }         
-           | VARIABLE '=' vecexpr
-             {
-	       if(execute) 
-		 {
-#ifdef BDSDEBUG 
-                   printf("VARIABLE (%s) = vecexpr (%d)\n",$1->name,$3->size);
-#endif
-		   if(!strcmp($1->name,"knl")) 
-		     {
-		       params.knlset = 1;
-		       set_vector(params.knl,$3);
-		       delete[] $3->data;
-		     } 
-		   else
-		     if(!strcmp($1->name,"ksl")) 
-		       {
-			 params.kslset = 1;
-			 set_vector(params.ksl,$3);
-			 delete[] $3->data;
-		       }
-                     else
-		       if(!strcmp($1->name,"blmLocZ")) 
-			 {
-			   params.blmLocZset = 1;
-			   set_vector(params.blmLocZ,$3);
-			   delete[] $3->data;
-			 }
-		       else
-			 if(!strcmp($1->name,"blmLocTheta")) 
-			   {
-			     params.blmLocThetaset = 1;
-			     set_vector(params.blmLocTheta,$3);
-			     delete[] $3->data;
-			   }
-			 else
-                     if(!strcmp($1->name,"components"))
-                       {
-                         params.componentsset = 1;
-                         set_vector(params.components,$3);
-                         delete[] $3->data;
-                       }
-                   else
-                     if(!strcmp($1->name,"componentsWeights"))
-                       {
-                         params.componentsWeightsset = 1;
-                         set_vector(params.componentsWeights,$3);
-                         delete[] $3->data;
-                       }
-                   else
-                     if(!strcmp($1->name,"componentsFractions"))
-                       {
-                         params.componentsFractionsset = 1;
-                         set_vector(params.componentsFractions,$3);
-                         delete[] $3->data;
-                       }
-		     else {
-		       //                  if(VERBOSE)
-		       printf("Warning : unknown parameter %s\n",$1->name);
-		     }
-		 }         
-	     }
           | VARIABLE '=' aexpr
             {
 	      if(execute)
-		{
-#ifdef BDSDEBUG 
-                  printf("VARIABLE (%s) = aexpr(%.10g)\n",$1->name,$3);
-#endif
-		  if(!strcmp($1->name,"l")) { params.l = $3; params.lset = 1;} // length
-		    else
-		  if(!strcmp($1->name,"B")) { params.B = $3; params.Bset = 1;} // dipole field 
-		    else 
-		  if(!strcmp($1->name,"ks")) { params.ks = $3; params.ksset = 1;} // solenoid strength
-		    else
-		  if(!strcmp($1->name,"k0")) { params.k0 = $3; params.k0set = 1;} // dipole coef.
-		    else 
-		  if(!strcmp($1->name,"k1")) { params.k1 = $3; params.k1set = 1;} // quadrupole coef.
-		    else
-		  if(!strcmp($1->name,"k2")) { params.k2 = $3; params.k2set = 1;} // sextupole coef.
-		    else 
-		  if(!strcmp($1->name,"k3")) { params.k3 = $3; params.k3set = 1;} // octupole coef.
-		    else 
-		  if(!strcmp($1->name,"angle")) { params.angle = $3; params.angleset = 1;} // dipole bending angle
-		    else
-		  if(!strcmp($1->name,"phiAngleIn")) { params.phiAngleIn = $3; params.phiAngleInset = 1;} // element incoming angle
-		    else
-		  if(!strcmp($1->name,"phiAngleOut")) { params.phiAngleOut = $3; params.phiAngleOutset = 1;} // element outgoing angle
-		    else
-		  if(!strcmp($1->name,"beampipeThickness") ) 
-			      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
-		    else
-		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
-		    // for backwards compatibility
-		    { params.aper1 = $3; params.aper1set = 1;}
-		    else
-		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
-		    { params.aper1 = $3; params.aper1set = 1;}
-		    else
-		  if(!strcmp($1->name,"aper2") ||!strcmp($1->name,"aperture2") ) 
-		    { params.aper2 = $3; params.aper2set = 1;}
-		    else
-		  if(!strcmp($1->name,"aper3") ||!strcmp($1->name,"aperture3") ) 
-		    { params.aper3 = $3; params.aper3set = 1;}
-		    else
-		  if(!strcmp($1->name,"aper4") ||!strcmp($1->name,"aperture4") ) 
-		    { params.aper4 = $3; params.aper4set = 1;}
-		    else
-		  if(!strcmp($1->name,"outerDiameter")) 
-		    { params.outerDiameter = $3; params.outerDiameterset = 1;}
-		    else
-		  if(!strcmp($1->name,"outR") )
-		    // for backwards compatibility, boxSize = 2*outR
-		    { params.outerDiameter = 2 * $3; params.outerDiameterset = 1;}
-		    else
-		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
-		    else
-		  if(!strcmp($1->name,"ysize") ) { params.ysize = $3; params.ysizeset = 1;}
-		    else
-		  if(!strcmp($1->name,"tilt")) { params.tilt = $3; params.tiltset = 1;}
-		    else
-		  if(!strcmp($1->name,"x")) {params.xdir = $3; params.xdirset = 1;} // x direction
-		    else
-		  if(!strcmp($1->name,"y")) {params.ydir = $3; params.ydirset = 1;} // y direction 
-		    else
-		  if(!strcmp($1->name,"z")) {params.zdir = $3; params.zdirset = 1;} // z direction 
-		    else
-		  if(!strcmp($1->name,"phi")) {params.phi = $3; params.phiset = 1;}  // polar angle
-		    else
-		  if(!strcmp($1->name,"theta"))  {params.theta = $3; params.thetaset = 1;} // azimuthal angle
-		    else
-		  if(!strcmp($1->name,"psi"))  {params.psi = $3; params.psiset = 1;} // 3rd angle
-		    else
-		  if(!strcmp($1->name,"gradient"))  {params.gradient = $3; params.gradientset = 1;} // rf voltage
-		    else
-		  if(!strcmp($1->name,"fint")) {;} // fringe field parameters
-		  else
-		  if(!strcmp($1->name,"fintx")) {;}  //
-		  else
-		  if(!strcmp($1->name,"tunnelRadius")) { params.tunnelRadius = $3; params.tunnelRadiusset = 1;} // tunnel radius
-		  else
-		  if(!strcmp($1->name,"tunnelOffsetX")) { params.tunnelOffsetX = $3; params.tunnelOffsetXset = 1;} // tunnel offset
-		  else
-		    if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;} // tunnel offset
-		    else
-		  if(!strcmp($1->name,"e1")) {;}  //
-                    else
-		  if(!strcmp($1->name,"e2")) {;}  //
-		    else
-		  if(!strcmp($1->name,"A")) {params.A = $3; params.Aset = 1;}  // mass number
-		    else
-		  if(!strcmp($1->name,"Z")) {params.Z = $3; params.Zset = 1;}  // atomic number
-		    else
-		  if(!strcmp($1->name,"density")) {params.density = $3; params.densityset = 1;}  // density
-                    else
-		  if(!strcmp($1->name,"T")) {params.temper = $3; params.temperset = 1;}  // temperature
-		    else
-		  if(!strcmp($1->name,"P")) {params.pressure = $3; params.pressureset = 1;}  // pressure
-		    else
-		  if(!strcmp($1->name,"waveLength")) {params.waveLength = $3; params.waveLengthset = 1;}
-		  else {
-		      //                  if(VERBOSE)
-		      printf("Warning : unknown parameter %s\n",$1->name);
-		  }
-		}
+		params.set_value($1->name,$3);
+	    }
+          | VARIABLE '=' vecexpr ',' parameters
+            {
+	      if(execute) 
+		params.set_value($1->name,$3);
+	    }
+          | VARIABLE '=' vecexpr
+            {
+	      if(execute) 
+		params.set_value($1->name,$3);
 	    }
           | VARIABLE '=' STR ',' parameters
-             {
-	       if(execute) 
-		 {
-#ifdef BDSDEBUG 
-                   printf("params,VARIABLE (%s) = str (%s)\n",$1->name,$3);
-#endif
-		   if(!strcmp($1->name,"geometry")) 
-		     {
-		       params.geomset = 1;
-		       params.geometry = $3;
-		     } 
-		   else
-		     if(!strcmp($1->name,"bmap")) 
-		       {
-			 params.geomset = 1;
-			 params.bmap = $3;
-		       }
-		   else 
-		     if(!strcmp($1->name,"type")) 
-		       {
-			 printf("Warning : type parameter is currently ignored");
-			 //ignore the "type attribute for the moment"
-		       }
-		   else
-		   if(!strcmp($1->name,"outerMaterial")) 
-		       {
-			 params.outerMaterialset = 1;
-			 params.outerMaterial = $3;
-		       }
-		   else
-		   if(!strcmp($1->name,"material")) 
-		       {	 
-			 params.materialset = 1;
-			 params.material = $3;
-		       }
-		   else if(!strcmp($1->name,"apertureType"))
-		       {
-			 params.apertureTypeset = 1;
-			 params.apertureType = $3;
-		       }
-		   else
-		   if(!strcmp($1->name,"beampipeMaterial"))
-			 {
-			   params.beampipeMaterialset = 1;
-			   params.beampipeMaterial = $3;
-			 }
-		   else
-		   if(!strcmp($1->name,"tunnelMaterial")) 
-		       {
-			 params.tunnelmaterialset = 1;
-			 params.tunnelMaterial = $3;
-		       }
-		   else 
-		   if(!strcmp($1->name,"tunnelCavityMaterial")) 
-		       {
-			 params.tunnelcavitymaterialset = 1;
-			 params.tunnelCavityMaterial = $3;
-		       }
-		   else 
-		   if(!strcmp($1->name,"scintmaterial")) 
-		     {
-		       params.scintmaterialset = 1;
-		       params.scintmaterial = $3; 
-		     } // material for a scintillator screen 
-		   else
-		   if(!strcmp($1->name,"windowmaterial")) 
-		     {
-		       params.windowmaterialset = 1;
-		       params.windowmaterial = $3; 
-		     } // material for a scintillator screen window
-		   else
-		   if(!strcmp($1->name,"airmaterial")) 
-		     {
-		       params.airmaterialset = 1;
-		       params.airmaterial = $3; 
-		     } // material for air around scintillator screen 
-		    else
-		   if(!strcmp($1->name,"spec")) 
-		       {
-			 params.specset = 1;
-			 params.spec = $3;
-		       }
-                   else 
-                   if(!strcmp($1->name,"symbol"))
-                       {
-                         params.symbolset = 1;
-                         params.symbol = $3;
-                       }
-		   else 
-                   if(!strcmp($1->name,"state"))
-                       {
-                         params.stateset = 1;
-                         params.state = $3;
-                       }
-		    else {
-		      //                  if(VERBOSE)
-		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
-		    }
-		 }
-	     }         
-           | VARIABLE '=' STR
-             {
-	       if(execute) 
-		 {
-#ifdef BDSDEBUG 
-                   printf("VARIABLE (%s) = str (%s)\n",$1->name,$3);
-#endif
-		   if(!strcmp($1->name,"geometry")) 
-		     {
-		       params.geomset = 1;
-		       params.geometry = $3;
-		     } 
-		   else
-		     if(!strcmp($1->name,"bmap")) 
-		       {
-			 params.geomset = 1;
-			 params.bmap = $3;
-		       }
-		     else 
-		     if(!strcmp($1->name,"type")) 
-		       {
-			 printf("Warning : type parameter is currently ignored");
-			 //ignore the "type attribute for the moment"
-		       }
-                     else
-                       if(!strcmp($1->name,"outerMaterial")) 
-                         {	 
-                           params.outerMaterialset = 1;
-                           params.outerMaterial = $3;
-                         }
-                       else
-		       if(!strcmp($1->name,"material")) 
-                         {	 
-                           params.materialset = 1;
-                           params.material = $3;
-                         }
-                       else
-                       if(!strcmp($1->name,"tunnelMaterial")) 
-		       {
-			 params.tunnelmaterialset = 1;
-			 params.tunnelMaterial = $3;
-		       }
-		       else
-		       if(!strcmp($1->name,"apertureType"))
-			 {
-			   params.apertureTypeset = 1;
-			   params.apertureType = $3;
-			 }
-		       else
-		       if(!strcmp($1->name,"magnetGeometryType")) 
-		       {
-		         params.magnetGeometryTypeset = 1;
-		         params.magnetGeometryType = $3;
-		       }
-		       else
-		       if(!strcmp($1->name,"beampipeMaterial"))
-			 {
-			   params.beampipeMaterialset = 1;
-			   params.beampipeMaterial = $3;
-			 }
-		       else
-                         if(!strcmp($1->name,"tunnelCavityMaterial")) 
-		       {
-			 params.tunnelcavitymaterialset = 1;
-			 params.tunnelCavityMaterial = $3;
-		       }
-                       else
-			 if(!strcmp($1->name,"scintmaterial")) 
-			   {	 
-			     params.scintmaterialset = 1;
-			     params.scintmaterial = $3;
-			   }
-			 else if(!strcmp($1->name,"windowmaterial")) 
-			   {	 
-			     params.windowmaterialset = 1;
-			     params.windowmaterial = $3;
-			   }
-			 else
-			   if(!strcmp($1->name,"airmaterial")) 
-			     {	 
-			       params.airmaterialset = 1;
-			       params.airmaterial = $3;
-                         }
-                     else
-                   if(!strcmp($1->name,"spec")) 
-		       {
-			 params.specset = 1;
-			 params.spec = $3;
-		       }
-		   else 
-                   if(!strcmp($1->name,"symbol"))
-                       {
-                         params.symbolset = 1;
-                         params.symbol = $3;
-                       }
-		   else 
-                   if(!strcmp($1->name,"state"))
-                       {
-                         params.stateset = 1;
-                         params.state = $3;
-                       }
-		    else {
-		      //                  if(VERBOSE)
-		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
-		    }
-		 }         
-	     }
+            {
+	      if(execute)
+		params.set_value($1->name,std::string($3));
+	    }
+          | VARIABLE '=' STR
+            {
+	      if(execute)
+		params.set_value($1->name,std::string($3));
+	    }
 
 line : LINE '=' '(' element_seq ')'
 ;
@@ -1962,13 +1447,12 @@ command : STOP             { if(execute) quit(); }
 		params.flush();
 	      }
           }
-        | TUNNEL ',' parameters // tunnel
+        | TUNNEL ',' tunnel_options // tunnel
           {
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> TUNNEL\n");
-		write_table(params,"tunnel",_TUNNEL);
-		params.flush();
+		add_tunnel(tunnel);
 	      }
           }
         | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
@@ -2177,6 +1661,28 @@ gas_options : VARIABLE '=' aexpr
                   }
 ;
 
+tunnel_options : VARIABLE '=' aexpr ',' tunnel_options
+                    {
+		      if(execute)
+			tunnel.set_value($1->name,$3);
+		    }
+                 | VARIABLE '=' aexpr
+                    {
+		      if(execute)
+			tunnel.set_value($1->name,$3);
+		    }
+                 | VARIABLE '=' STR ',' tunnel_options
+                    {
+		      if(execute)
+			tunnel.set_value($1->name,std::string($3));
+		    }
+                 | VARIABLE '=' STR
+                    {
+		      if(execute)
+			tunnel.set_value($1->name,std::string($3));
+		    }
+;
+
 option_parameters : 
                   | VARIABLE '=' aexpr ',' option_parameters
                     {
@@ -2224,7 +1730,6 @@ beam_parameters :
 ;
 
 %%
-
 
 
 int yyerror(const char *s)

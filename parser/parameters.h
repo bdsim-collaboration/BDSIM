@@ -4,6 +4,7 @@
 #include <list>
 #include <string>
 
+struct Array;
 struct Element;
 
 /**
@@ -69,10 +70,6 @@ struct Parameters {
   
   double phi, theta, psi; ///> for 3d transforms
   int phiset, thetaset, psiset;
-  double tunnelRadius;
-  int tunnelRadiusset;
-  double tunnelOffsetX;
-  int tunnelOffsetXset;
 
   ///which precision physics region the element is in (0 = none)
   int precisionRegion; int precisionRegionset;
@@ -89,8 +86,6 @@ struct Parameters {
   std::string bmap; int bmapset;
   //  std::string emap; int emapset;
   std::string material; int materialset;
-  std::string tunnelMaterial; int tunnelmaterialset;
-  std::string tunnelCavityMaterial; int tunnelcavitymaterialset;
 
   /// string to pass a custom type specification
   std::string spec; int specset;
@@ -124,6 +119,13 @@ struct Parameters {
 
   /// print multipole expansion array
   void print()const;
+
+  /// set methods by property name, numeric values
+  void set_value(std::string property, double value);
+  /// set methods by property name, string values
+  void set_value(std::string property, std::string value);
+  /// set methods by property name, Array values
+  void set_value(std::string property, Array* value);
 
   /// constructor
   Parameters();
