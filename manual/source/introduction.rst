@@ -25,7 +25,7 @@ What BDSIM is not intended for
 * Long term tracking studies
 * Simulating collective effects
 * Lattice optical design and optimisation
-* A replacment for SixTrack
+* A replacement for SixTrack
 
 Example Applications
 --------------------
@@ -33,7 +33,7 @@ Example Applications
 * LHC beam loss simulation
 * CLIC muon backgrounds studies
 * Laserwire signal to background ratio
-* ILC collimator efficieny study and detector backgrounds
+* ILC collimator efficiency study and detector backgrounds
   
 
 General Simulation Steps
@@ -59,7 +59,7 @@ locations to record output.
 BDSIM can then use the input file to simulate the passage of the desired number of
 particles and how they interact with the accelerator components themselves.
 Should a particle hit the beampipe, the physics processes of Geant4 will be used
-to claculate the interaction with the beampipe and and secondary particles that may
+to calculate the interaction with the beampipe and and secondary particles that may
 be produced.  Particles are recorded at user specified 'sampling' planes and energy
 deposition through the accelerator is recorded in both discrete 'hits' and a
 histogram as a function of distance along the accelerator.
@@ -69,8 +69,8 @@ and magnetic fields they like, however, in the case of an accelerator the
 typical geometry is highly repetitive and usually consists of either a beampipe
 or a beampipe with a magnet surrounding it. BDSIM generate Geant4 geometry
 automatically and uses custom 'steppers' for specific magnetic fields in place
-of normal Runge-Kutta integrators used by Geant4. Equations of motion descirbing
-particle motion in magnetic fields such as that of a quadruople or sector-bend have 
+of normal Runge-Kutta integrators used by Geant4. Equations of motion describing
+particle motion in magnetic fields such as that of a quadrupole or sector-bend have 
 analytical solutions that can be used in place of numerical integration. BDSIM
 uses these to provide fast and accurate thick lens tracking in vacuum.
 
