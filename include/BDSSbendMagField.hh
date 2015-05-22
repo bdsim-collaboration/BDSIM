@@ -5,9 +5,9 @@
 #include "G4ThreeVector.hh"
 #include "BDSMagField.hh"
 #include "G4Mag_EqRhs.hh"
-#include "G4UniformMagField.hh"
+#include "BDSUniformMagField.hh"
 
-class BDSSbendMagField : public G4UniformMagField 
+class BDSSbendMagField : public BDSUniformMagField 
 {
 public:  // with description
   

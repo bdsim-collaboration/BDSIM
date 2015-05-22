@@ -8,33 +8,13 @@
 #include "G4Navigator.hh"
 #include "G4TransportationManager.hh"
 
-BDSSolenoidMagField::BDSSolenoidMagField(G4double aBField):itsBField(aBField){
+BDSSolenoidMagField::BDSSolenoidMagField(G4double aBField):BDSUniformMagField(G4ThreeVector(0,0,aBField)), itsBField(aBField){
   G4cout<<"Using Geant4 transportation"<<G4endl;
 }
 BDSSolenoidMagField::~BDSSolenoidMagField(){}
 
-void BDSSolenoidMagField::GetFieldValue( const G4double* /*Point[4]*/,
-				      G4double *Bfield ) const
-{
-  G4Navigator* Navigator=
-    G4TransportationManager::GetTransportationManager()->
-    GetNavigatorForTracking();
- 
-  G4ThreeVector LocalR, GlobalR, LocalBField;
-
-  // commented out because solenoid field (uniform) does not depend on position
-  //GlobalR.setX(Point[0]);
-  //GlobalR.setY(Point[1]);
-  //GlobalR.setZ(Point[2]);
-  //G4AffineTransform GlobalAffine = Navigator->GetGlobalToLocalTransform();
-  //LocalR = GlobalAffine.TransformPoint(GlobalR); 
-
-  LocalBField = G4ThreeVector(0.0, 0.0, itsBField);
-  
-  G4AffineTransform LocalAffine = Navigator->GetLocalToGlobalTransform();
-  G4ThreeVector GlobalBField = LocalAffine.TransformAxis(LocalBField);
-
-  Bfield[0]=GlobalBField.x();
-  Bfield[1]=GlobalBField.y();
-  Bfield[2]=GlobalBField.z();
+void BDSSolenoidMagField::SetBField(G4double aBField){ 
+  itsBField = aBField; 
+  SetFieldValue(G4ThreeVector(0,0,itsBField));
 }
+

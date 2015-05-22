@@ -13,9 +13,9 @@
 
 #include <list>
 #include "G4Types.hh"
-#include "G4MagneticField.hh"
+#include "BDSMagField.hh"
 
-class BDSMultipoleMagField : public G4MagneticField
+class BDSMultipoleMagField : public BDSMagField
 {
 public:  // with description
 

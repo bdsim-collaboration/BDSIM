@@ -295,7 +295,7 @@ void BDSRBend::BuildBeampipe(G4String materialName)
   // set magnetic field inside beampipe
   //
  middleBeampipeLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
- middleInnerBPLogicalVolume->SetFieldManager(itsBPFieldMgr,false);
+ middleInnerBPLogicalVolume->SetFieldManager(itsFieldMgr,false);
 
 
   G4VPhysicalVolume* PhysiInner;

@@ -244,7 +244,7 @@ void BDSSectorBend::BuildBeampipe(G4String materialName)
   // set magnetic field inside beampipe
   //
   itsBeampipeLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
-  itsInnerBPLogicalVolume->SetFieldManager(itsBPFieldMgr,false);
+  itsInnerBPLogicalVolume->SetFieldManager(itsFieldMgr,false);
 
   //
   // set visualization attributes

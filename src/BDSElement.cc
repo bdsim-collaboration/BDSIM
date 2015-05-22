@@ -47,14 +47,12 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap, G4doubl
   BDSAcceleratorComponent(
 			  aName,
 			  aLength,bpRad,0,0,
-			  aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*CLHEP::m, aTunnelOffsetX*CLHEP::m, aTunnelCavityMaterial),
-  itsGeometry(geometry), itsBmap(bmap),
-  itsChordFinder(NULL), itsStepper(NULL), itsFEquation(NULL), itsEqRhs(NULL), 
-  itsMagField(NULL)
+			  aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*CLHEP::m, aTunnelOffsetX*CLHEP::m, aTunnelCavityMaterial, bmap, bmapZOffset)
+  
 {
+  itsGeometry=geometry;
   itsFieldVolName="";
   itsOuterR = outR;
-  itsBmapZOffset = bmapZOffset;
 
   // WARNING: ALign in and out will only apply to the first instance of the
   //          element. Subsequent copies will have no alignment set.
@@ -70,7 +68,7 @@ void BDSElement::Build(){
   _visAttDebug->SetVisibility(true);
   itsMarkerLogicalVolume->SetVisAttributes(_visAttDebug);
   
-  PlaceComponents(); // place components (from file) and build filed maps
+  PlaceComponents(); // place components (from file) and build field maps
   BuildTunnel();
 }
 
@@ -113,9 +111,8 @@ void BDSElement::PlaceComponents()
 #endif 
 
 
+  BuildFieldAndStepper();
 
-
-  G4cout << __METHOD_END__ << G4endl;
 }
 
 

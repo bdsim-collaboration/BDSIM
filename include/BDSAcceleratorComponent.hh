@@ -24,6 +24,10 @@
 #define __BDSACCELERATORCOMPONENT_H
 
 #include "BDSGlobalConstants.hh" 
+#include "BDSMagField.hh"
+#include "G4Mag_UsualEqRhs.hh"
+#include "G4FieldManager.hh"
+#include "G4ChordFinder.hh"
 
 #include <cstring>
 #include <list>
@@ -34,6 +38,7 @@
 //#include "BDSBeamPipe.hh"
 #include "BDSEnergyCounterSD.hh"
 #include "BDSTunnel.hh"
+#include "BDSGeometry.hh"
 
 #include "G4MagneticField.hh"
 #include "G4MagIntegratorStepper.hh"
@@ -152,12 +157,20 @@ protected:
   G4double itsBmapZOffset;
   G4ChordFinder* itsChordFinder;
   BDSGeometry* _geom;
+  G4FieldManager* itsFieldMgr;
 
+
+  virtual void BuildFieldAndStepper(); 
+  virtual void BuildBPFieldAndStepper(); 
+  virtual void SetBPFieldMgr();
+  void BuildBmapFieldAndStepper();
+  /// build and set field manager and chord finder
+  void BuildFieldMgr();
+  void BuildFieldMgr(G4MagIntegratorStepper* aStepper,
+		       G4MagneticField* aField);
+  
 
 public:
-  virtual void BuildFieldAndStepper() = 0; 
-  G4bool BuildBmapFieldAndStepper();
-
   BDSAcceleratorComponent (
 			  G4String& aName, 
 			  G4double aLength,
@@ -174,7 +187,9 @@ public:
 			  G4double ZOffset=0.,
 			  G4double tunnelRadius=0.,
 			  G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
-                          G4String aTunnelCavityMaterial = "Air");
+                          G4String aTunnelCavityMaterial = "Air",
+			  G4String bmap="",
+			  G4double bmapZOffset=0);
 
   BDSAcceleratorComponent (
 			  G4String& aName, 
@@ -190,7 +205,9 @@ public:
 			  G4double ZOffset=0.,
 			  G4double tunnelRadius=0.,
 			  G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
-			  G4String aTunnelCavityMaterial = "Air");
+			  G4String aTunnelCavityMaterial = "Air",
+			  G4String bmap="",
+			  G4double bmapZOffset=0);
 
   G4VisAttributes* GetVisAttributes()const; ///> get visual attributes
   G4LogicalVolume* itsOuterLogicalVolume;

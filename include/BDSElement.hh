@@ -46,12 +46,10 @@ public:
 private:
 
   void SetVisAttributes();  
-  void PlaceComponents(G4String geometry, G4String bmap);
+  void PlaceComponents();
   void BuildMagField(G4bool forceToAllDaughters=false);
   virtual void Build();
   virtual void BuildFieldAndStepper();
-  void BuildBmapFieldAndStepper();
-
   G4String itsGeometry;
   G4String itsFieldVolName;
 
