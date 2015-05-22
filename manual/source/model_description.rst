@@ -966,7 +966,7 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Function                                              |
 +==================================+=======================================================+
-| **Common Parameters**             |                                                       |
+| **Common Parameters**             |                                                      |
 +----------------------------------+-------------------------------------------------------+
 | beampipeRadius                   | default beam pipe inner radius [m]                    |
 +----------------------------------+-------------------------------------------------------+
@@ -991,7 +991,7 @@ as their value.
 | thresholdCutPhotons              | the minimum energy above which to simulate photons -  |
 |                                  | any below this energy will be killed                  |
 +----------------------------------+-------------------------------------------------------+
-| stopTracks                       | whether to track secondaries or not (default = 1)      |
+| stopTracks                       | whether to track secondaries or not (default = 1)     |
 +----------------------------------+-------------------------------------------------------+
 | circular                         | whether the accelerator is circular or not            |
 +----------------------------------+-------------------------------------------------------+
@@ -1046,7 +1046,7 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | prodCutElectrons                 | standard overall production cuts for electrons        |
 +----------------------------------+-------------------------------------------------------+
-| prodCutElectronsP                | precision production cuts for electrons                |
+| prodCutElectronsP                | precision production cuts for electrons               |
 +----------------------------------+-------------------------------------------------------+
 | prodCutPositrons                 | standard overall production cuts for positrons        |
 +----------------------------------+-------------------------------------------------------+
@@ -1066,11 +1066,11 @@ as their value.
 | eetoHadronsFe                    | the cross-section enhancement factor for the          |
 |                                  | electron-positron annihilation to hadrons process     |
 +----------------------------------+-------------------------------------------------------+
-| useEMLPB                         | whether to use electromagnetic lead particle biasing   |
+| useEMLPB                         | whether to use electromagnetic lead particle biasing  |
 |                                  | (default = 0)                                         |
 +----------------------------------+-------------------------------------------------------+
 | LPBFraction                      | the fraction of electromagnetic process in which      |
-|                                  | lead particle biasing is used ( 0 < LPBFraction < 1) |
+|                                  | lead particle biasing is used ( 0 < LPBFraction < 1)  |
 +----------------------------------+-------------------------------------------------------+
 | trajCutGTZ                       | global z position cut (minimum) for storing           |
 |                                  | trajectories                                          |
@@ -1112,7 +1112,7 @@ as their value.
 | tunnelOffsetY                    | vertical offset of the tunnel with respect to the     |
 |                                  | beam line reference trajectory                        |
 +----------------------------------+-------------------------------------------------------+
-| tunnelFLoorOffset                | the offset of the tunnel floor from the centre of the |
+| tunnelFloorOffset                | the offset of the tunnel floor from the centre of the |
 |                                  | tunnel                                                |
 +----------------------------------+-------------------------------------------------------+
 
