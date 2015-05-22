@@ -914,7 +914,7 @@ Physics Lists In BDSIM
 ============================  ======================================================================
 standard                      transportation of primary particles only - no scattering in material
 em_standard                   transportation of primary particles, ionization, bremsstrahlung,
-                              Cerenkov, multiple scattering/
+                              Cerenkov, multiple scattering.
 em_low                        the same as `em_standard` but using low energy electromagnetic models.
 em_single_scatter             **TBC**.
 em_muon                       `em_standard` plus muon production processes with biased muon
@@ -939,7 +939,7 @@ hadronic_FTFP_BERT            `em_standard` plus hadronic physics using the Frit
 hadronic_FTFP_BERT_muon       `hadronic_FTFP_BERT` plus muon production processes with biased muon
                               cross-sections.
 hadronic_QGSP_BERT_HP_muon    `hadronic_QGSP_BERT_muon` plus high precision low energy neutron
-                              scattering models
+                              scattering models.
 ============================  ======================================================================
 
 
@@ -966,7 +966,7 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Function                                              |
 +==================================+=======================================================+
-| **Common Parameters**             |                                                      |
+| **Common Parameters**            |                                                       |
 +----------------------------------+-------------------------------------------------------+
 | beampipeRadius                   | default beam pipe inner radius [m]                    |
 +----------------------------------+-------------------------------------------------------+
