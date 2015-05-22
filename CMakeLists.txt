@@ -416,3 +416,4 @@ add_subdirectory(test)
 
 # Manual
 add_subdirectory(docs)
+add_subdirectory(manual)
