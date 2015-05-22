@@ -6,7 +6,6 @@
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 
-#define BDSDEBUG 1
 
 BDSTunnelFactory::BDSTunnelFactory(){
 }

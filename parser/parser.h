@@ -544,8 +544,6 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.twindow = params.twindow;
     e.windowmaterial = std::string(params.windowmaterial);
     e.vacuummaterial = std::string(params.vacuummaterial);
-    std::cout << "windowmaterial: " << e.windowmaterial << " " <<  params.windowmaterial << std::endl;
-    std::cout << "vacuummaterial: " << e.vacuummaterial << " " <<  params.vacuummaterial << std::endl;
     break;
 
   case _AWAKESPECTROMETER:
@@ -564,8 +562,6 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.twindow = params.twindow;
     e.windowmaterial = std::string(params.windowmaterial);
     e.vacuummaterial = std::string(params.vacuummaterial);
-    std::cout << "windowmaterial: " << e.windowmaterial << " " <<  params.windowmaterial << std::endl;
-    std::cout << "vacuummaterial: " << e.vacuummaterial << " " <<  params.vacuummaterial << std::endl;
     break;
 
   default:

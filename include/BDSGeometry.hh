@@ -5,6 +5,7 @@
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4MagneticField.hh"
+#include "BDSMagField.hh"
 #include <vector>
 
 class BDSGeometry{
@@ -67,7 +68,7 @@ protected:
   std::map<G4String, G4double> _sextVolBgrad;
   std::map<G4String, G4double> _octVolBgrad;
 
-  G4MagneticField* _field;
+  BDSMagField* _field;
 };
 
 inline void BDSGeometry::SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol)

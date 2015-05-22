@@ -35,7 +35,7 @@
 
 //============================================================
 
-#define BDSDEBUG 1
+
 
 BDSQuadrupole::BDSQuadrupole(G4String aName, G4double aLength, 
 			     G4double bpRad, G4double FeRad,

@@ -3,6 +3,7 @@
 
 #include "BDSGlobalConstants.hh"
 #include "BDS3DMagField.hh"
+#include "BDSDebug.hh"
 
 BDS3DMagField::BDS3DMagField( const char* filename, double zOffset ) 
   :fZoffset(zOffset),invertX(false),invertY(false),invertZ(false)
@@ -17,6 +18,7 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
 	 << "\n-----------------------------------------------------------";
     
   G4cout << "\n ---> " "Reading the field grid from " << filename << " ... " << G4endl; 
+
   // Open the file for reading.
   std::ifstream file;
   file.open(filename);
@@ -64,7 +66,9 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
     for (iy=0; iy<ny; iy++) {
       for (iz=0; iz<nz; iz++) {
         file >> xval >> yval >> zval >> bx >> by >> bz;
+#ifdef BDSDEBUG
 	G4cout << "Read: " << xval << " " << yval << " " << zval << " " << bx << " " << by << " " << bz << G4endl;
+#endif
         if ( ix==0 && iy==0 && iz==0 ) {
           minx = xval * _lenUnit;
           miny = yval * _lenUnit;
@@ -85,41 +89,46 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
   G4cout << "\n ---> ... done reading " << G4endl;
 
   // G4cout << " Read values of field from file " << filename << G4endl; 
+#ifdef BDSDEBUG
   G4cout << " ---> assumed the order:  x, y, z, Bx, By, Bz "
 	 << "\n ---> Min values x,y,z: " 
 	 << minx/CLHEP::cm << " " << miny/CLHEP::cm << " " << minz/CLHEP::cm << " cm "
 	 << "\n ---> Max values x,y,z: " 
 	 << maxx/CLHEP::cm << " " << maxy/CLHEP::cm << " " << maxz/CLHEP::cm << " cm "
 	 << "\n ---> The field will be offset by " << zOffset/CLHEP::cm << " cm " << G4endl;
-
+#endif
   // Should really check that the limits are not the wrong way around.
   if (maxx < minx) {std::swap(maxx,minx); invertX = true;} 
   if (maxy < miny) {std::swap(maxy,miny); invertY = true;} 
   if (maxz < minz) {std::swap(maxz,minz); invertZ = true;} 
+#ifdef BDSDEBUG
   G4cout << "\nAfter reordering if neccesary"  
 	 << "\n ---> Min values x,y,z: " 
 	 << minx/CLHEP::cm << " " << miny/CLHEP::cm << " " << minz/CLHEP::cm << " cm "
 	 << " \n ---> Max values x,y,z: " 
 	 << maxx/CLHEP::cm << " " << maxy/CLHEP::cm << " " << maxz/CLHEP::cm << " cm ";
-
+#endif
   dx = maxx - minx;
   dy = maxy - miny;
   dz = maxz - minz;
+#ifdef BDSDEBUG
   G4cout << "\n ---> Dif values x,y,z (range): " 
 	 << dx/CLHEP::cm << " " << dy/CLHEP::cm << " " << dz/CLHEP::cm << " cm in z "
 	 << "\n-----------------------------------------------------------" << G4endl;
+#endif
 }
 
 void BDS3DMagField::GetFieldValue(const double point[4],
 				      double *Bfield ) const
 {
-
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   G4ThreeVector local;
 
   local[0] = point[0] + translation[0];
   local[1] = point[1] + translation[1];
   local[2] = point[2] + translation[2] + fZoffset;
-
   local *= Rotation();
 
 #ifdef BDSDEBUG
@@ -243,6 +252,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
     Bfield[1]/_fieldUnit << " " <<
     Bfield[2]/_fieldUnit <<
     G4endl;
+  G4cout << __METHOD_END__ << G4endl;
 #endif
 }
 

@@ -5,7 +5,7 @@
 #include "G4SubtractionSolid.hh"
 #include "G4IntersectionSolid.hh"
 #include "BDSDebug.hh"
-#define BDSDEBUG 1
+
 
 BDSRoundTunnel::BDSRoundTunnel(Element element, G4double length, G4double angle) :BDSTunnel(element, length, angle)
 {

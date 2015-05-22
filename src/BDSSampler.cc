@@ -18,7 +18,7 @@
 #include "G4UserLimits.hh"
 #include "BDSSamplerSD.hh"
 #include "G4SDManager.hh"
-#define BDSDEBUG 1
+
 //============================================================
 
 std::vector <G4String> BDSSampler::outputNames;

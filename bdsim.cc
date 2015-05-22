@@ -102,7 +102,11 @@ void BDS_handle_aborts(int signal_number) {
 int main(int argc,char** argv) {
 
   /* Initialize executable command line options reader object */
+#ifdef BDSDEBUG
   BDSExecOptions::Instance(argc,argv)->Print();
+#else
+  BDSExecOptions::Instance(argc,argv);
+#endif
   
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> DEBUG mode is on." << G4endl;

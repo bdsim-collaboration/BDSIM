@@ -7,10 +7,8 @@
 #include <sstream>
 #include <float.h>
 
-#define BDSDEBUG 1
 
 void BDSTunnel::Defaults(){
- G4cout << __METHOD_NAME__ << G4endl;
   _angle=0;
   _length=0;//Length and angle will be set according to the accelerator component.
   _material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetTunnelMaterialName());
@@ -31,7 +29,6 @@ void BDSTunnel::Defaults(){
 
 
 BDSTunnel::BDSTunnel(Element element, G4double length, G4double angle){//, BDSAcceleratorComponent* component){
-  G4cout << __METHOD_NAME__ << G4endl;
   Defaults();
   _length = length;
   _angle = angle;
@@ -61,7 +58,6 @@ void BDSTunnel::SetParameters(Element element){
   if (element.tunnelSoilThickness != DBL_MAX){
     soilThickness(element.tunnelSoilThickness);
   }
-  G4cout << __METHOD_END__ << G4endl;
 }
 /*
 void BDSTunnel::SetParameters(BDSAcceleratorComponent* element){
@@ -76,7 +72,6 @@ double BDSTunnel::radius() const{
 
 void BDSTunnel::radius(G4double val){
   _radius = val;
-  G4cout << __METHOD_NAME__ << " - radius set to " << _radius << G4endl;
 }
 
 
@@ -220,18 +215,17 @@ void BDSTunnel::CalculateDimensions(){
 }
 
 void BDSTunnel::Build(){
-  G4cout << __METHOD_NAME__ << G4endl;
   CheckExceptions();
+#ifdef BDSDEBUG
   print();
+#endif
   if(_bBuildTunnel){
-  G4cout << __METHOD_NAME__ << " - building solid volumes..." << G4endl;
   BuildSolidVolumes();
   BuildLogicalVolumes(); 
   PlaceLogicalVolumes();
   SetUserLimits();
   SetVisAttributes();
   }
-  G4cout << __METHOD_END__ << G4endl;
 }
 
 void BDSTunnel::BuildLogicalVolumes(){

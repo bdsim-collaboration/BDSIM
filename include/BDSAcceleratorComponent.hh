@@ -144,7 +144,20 @@ protected:
   // can't be in constructor as calls virtual methods
   virtual void Initialise();
 
+  // field related objects, set by BuildBPFieldAndStepper or BuildBmapFieldAndStepper
+  G4MagIntegratorStepper* itsStepper;
+  BDSMagField* itsMagField;
+  G4Mag_UsualEqRhs* itsEqRhs;
+  G4String itsBmap;
+  G4double itsBmapZOffset;
+  G4ChordFinder* itsChordFinder;
+  BDSGeometry* _geom;
+
+
 public:
+  virtual void BuildFieldAndStepper() = 0; 
+  G4bool BuildBmapFieldAndStepper();
+
   BDSAcceleratorComponent (
 			  G4String& aName, 
 			  G4double aLength,

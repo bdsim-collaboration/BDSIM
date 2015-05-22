@@ -84,7 +84,7 @@ typedef std::list<BDSEnergyCounterSD*>  ECList;
 ECList* theECList;
 
 //=========================================
-#define BDSDEBUG 1
+
 #ifdef BDSDEBUG
 bool debug = true;
 #else
@@ -246,7 +246,7 @@ void BDSDetectorConstruction::SetMagField(const G4double fieldValue){
   
   G4FieldManager* fieldMgr =
     G4TransportationManager::GetTransportationManager()->GetFieldManager();
-  magField = new G4UniformMagField(G4ThreeVector(0.,fieldValue,0.));  
+  magField = new BDSUniformMagField(G4ThreeVector(0.,fieldValue,0.));  
   fieldMgr->SetDetectorField(magField);
   fieldMgr->CreateChordFinder(magField);
 }

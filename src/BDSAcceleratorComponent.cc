@@ -16,7 +16,7 @@
 //     x  x   2002 by Blair
 //
 //
-#define BDSDEBUG 1
+
 
 #include <list>
 #include <sstream>
@@ -159,6 +159,10 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
   itsBlmOuterSolid=NULL;
   itsSPos = 0.0;
   itsCopyNumber = 0;
+
+  itsBmapZOffset=0;
+  itsBmap="";
+  _geom=NULL;
 }
 
 BDSAcceleratorComponent::~BDSAcceleratorComponent ()
@@ -174,7 +178,6 @@ BDSAcceleratorComponent::~BDSAcceleratorComponent ()
 
 void BDSAcceleratorComponent::Initialise()
 {
-  G4cout << __METHOD_NAME__ << G4endl;
   /// check and build logical volume
   
   // set copy number (count starts at 0)
@@ -195,7 +198,6 @@ void BDSAcceleratorComponent::Initialise()
       //
       itsMarkerLogicalVolume=(*LogVol)[itsName];
     }
-  G4cout << __METHOD_END__ << G4endl;
 }
 
 void BDSAcceleratorComponent::Build()//Execute build methods common for all classes.
@@ -238,7 +240,7 @@ void BDSAcceleratorComponent::BuildBendMarkerSolid(){
     exit(1);
   }
   
-  
+#ifdef BDSDEBUG  
   G4cout << "BDSAcceleratorComponent::MakeDefaultMarkerLogicalVolume> Trap parameters:  " << G4endl;
   G4cout  <<   
     transverseSize/2 << " " <<
@@ -252,7 +254,8 @@ void BDSAcceleratorComponent::BuildBendMarkerSolid(){
     xHalfLengthMinus << " " <<
     xHalfLengthMinus << " " <<
     0 << " " << G4endl;
-  
+#endif 
+
   itsMarkerSolidVolume = new G4Trap(itsName+"_trapezoid_marker",
 				    transverseSize/2.0, // z hlf lgth Dz
 				    atan((tan(itsPhiAngleOut)-tan(itsPhiAngleIn))/2.0), // pTheta
@@ -536,6 +539,65 @@ void BDSAcceleratorComponent::BuildBLMs()
    assemblyBlms->MakeImprint(itsMarkerLogicalVolume,blmTr3d);
  }
 }
+
+G4bool BDSAcceleratorComponent::BuildBmapFieldAndStepper()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - building magnetic field...." << G4endl;
+#endif
+  if(itsBmap=="") return false;
+
+  BDSMagFieldFactory* bFact = new BDSMagFieldFactory();
+  itsMagField = bFact->buildMagField(itsBmap, itsBmapZOffset, _geom);
+  BuildMagField(true);
+  
+  // create a field manager
+  G4FieldManager* fieldManager = new G4FieldManager();
+  
+  
+#ifdef BDSDEBUG
+  G4cout << "Building magnetic field..." << G4endl;
+#endif
+  itsEqRhs = new G4Mag_UsualEqRhs(itsMagField);
+  itsStepper = new G4NystromRK4(itsEqRhs);
+  fieldManager->SetDetectorField(itsMagField );
+  
+#ifdef BDSDEBUG
+  G4cout << "Setting stepping accuracy parameters..." << G4endl;
+#endif
+  
+  if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0){
+    fieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+  }
+  if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0){
+    fieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
+  }
+  if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>=0){
+    fieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
+  }
+  if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0){
+    fieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
+  }
+  
+  G4MagInt_Driver* fIntgrDriver = new G4MagInt_Driver(BDSGlobalConstants::Instance()->GetChordStepMinimum(),
+						      itsStepper, 
+						      itsStepper->GetNumberOfVariables() );
+  itsChordFinder = new G4ChordFinder(fIntgrDriver);
+  
+  itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
+  
+  fieldManager->SetChordFinder( itsChordFinder ); 
+  
+  G4bool forceToAllDaughters=true;
+  
+#ifdef BDSDEBUG
+  G4cout << "Setting the logical volume " << itsMarkerLogicalVolume->GetName() << " field manager... force to all daughters = " << forceToAllDaughters << G4endl;
+#endif
+  itsMarkerLogicalVolume->SetFieldManager(fieldManager,forceToAllDaughters);
+  return true;
+}
+
+
 
 //This Method is for investigating the Anomalous signal at LHC junction IP8
 // no longer used

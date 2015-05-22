@@ -6,7 +6,6 @@
 #include "BDSGeometryGDML.hh"
 #include "BDSDebug.hh"
 
-#define BDSDEBUG 1
 
 BDSGeometryFactory::BDSGeometryFactory(){
   _gFormat=new BDSGeometryFormat();
@@ -44,16 +43,10 @@ void BDSGeometryFactory::parseFormatAndFilename(){
     }
     else {
       G4String format = _geometry.substr(0,pos);
-      G4cout << __METHOD_NAME__ << " - geometry format is " << format << G4endl;
       _gFormat->spec(format);
       _gFile = BDSExecOptions::Instance()->GetBDSIMPATH() + _geometry.substr(pos+1,_geometry.length() - pos); 
-      G4cout << __METHOD_NAME__ << " - geometry file is " << _gFile << G4endl;
-
-#ifdef BDSDEBUG
-#endif
     }
   }
-  G4cout << __METHOD_END__ << G4endl;
 }
 
 BDSGeometry* BDSGeometryFactory::buildGmad(){
@@ -65,9 +58,7 @@ BDSGeometry* BDSGeometryFactory::buildLCDD(){
 }
 
 BDSGeometry* BDSGeometryFactory::buildMokka(){
-  G4cout << __METHOD_NAME__ << G4endl;
   return new BDSGeometrySQL(_gFile);
-  G4cout << __METHOD_NAME__ << G4endl;
 }
 
 BDSGeometry* BDSGeometryFactory::buildGDML(){

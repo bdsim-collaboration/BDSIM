@@ -20,7 +20,7 @@
 #include "BDSDetectorSolenoidMagField.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4TessellatedSolid.hh"
-#include "G4UniformMagField.hh"
+#include "BDSUniformMagField.hh"
 
 #include <cstdlib>
 #include <cstring>
@@ -394,7 +394,7 @@ void BDSGeometryLCDD::parseFIELDS(xmlNodePtr cur)
       G4double funit = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"funit"));
       G4double field = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"field")) * funit;
       const G4ThreeVector fieldVec(0,field,0);
-      _field=new G4UniformMagField(fieldVec);
+      _field=new BDSUniformMagField(fieldVec);
       _fieldIsUniform=true;
     }else if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"text"))){
     }  else {

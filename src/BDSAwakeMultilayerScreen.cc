@@ -120,28 +120,24 @@ void BDSAwakeMultilayerScreen::scintillatorLayer(){
   BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),_layerThickness),(G4String)"scintillatorLayer","gos_lanex",_gapWidth,_gapSpacing);
   sl->color(G4Color(0.0,1.0,0.0,0.3));
   screenLayer(sl);
-  G4cout << "finished." << G4endl;
 }
 
 void BDSAwakeMultilayerScreen::frontScintillatorLayer1(){
   BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),0.5*_layerThickness),(G4String)"scintillatorLayer","gos_lanex",_gapWidth,_gapSpacing);
   sl->color(G4Color(0.0,1.0,0.0,0.3));
   screenLayer(sl);
-  G4cout << "finished." << G4endl;
 }
 
 void BDSAwakeMultilayerScreen::frontScintillatorLayer2(){
   BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),0.5*_layerThickness),(G4String)"scintillatorLayer","gos_ri1",_gapWidth,_gapSpacing);
   sl->color(G4Color(0.0,1.0,0.0,0.3));
   screenLayer(sl);
-  G4cout << "finished." << G4endl;
 }
 
 void BDSAwakeMultilayerScreen::backScintillatorLayer(){
   BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),_firstLayerThickness),(G4String)"scintillatorLayer","gos_lanex",_gapWidth,_gapSpacing);
   sl->color(G4Color(0.0,1.0,0.0,0.3));
   screenLayer(sl);
-  G4cout << "finished." << G4endl;
 }
 
 

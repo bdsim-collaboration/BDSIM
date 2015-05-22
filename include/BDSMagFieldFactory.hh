@@ -2,17 +2,16 @@
 #define __BDSMAGFIELDFACTORY_
 
 #include "globals.hh"
-#include "G4MagneticField.hh"
-#include "G4CachedMagneticField.hh"
 #include "BDSBmapFormat.hh"
 #include "BDSGeometry.hh"
+#include "BDSMagField.hh"
 
 class BDSMagFieldFactory{
 public:
   BDSMagFieldFactory();
   ~BDSMagFieldFactory();
   
-  G4MagneticField* buildMagField(G4String bmap, G4double bmapZOffset, BDSGeometry* geom);
+  BDSMagField* buildMagField(G4String bmap, G4double bmapZOffset, BDSGeometry* geom);
  
 private:
   G4String _bmap;
@@ -24,10 +23,10 @@ private:
 
   void parseFormatAndFilename();
 
-  G4MagneticField* build3DMagField();
-  G4MagneticField* buildXYMagField();
-  G4MagneticField* buildLCDDMagField();
-  G4MagneticField* buildSQLMagField();
-  G4MagneticField* buildZeroMagField();
+  BDSMagField* build3DMagField();
+  BDSMagField* buildXYMagField();
+  BDSMagField* buildLCDDMagField();
+  BDSMagField* buildSQLMagField();
+  BDSMagField* buildZeroMagField();
 };
 #endif

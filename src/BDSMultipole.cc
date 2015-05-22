@@ -40,7 +40,7 @@
 #include "G4MagneticField.hh"
 
 #include <string>
-#define BDSDEBUG 1
+
 //============================================================
 BDSMultipole::BDSMultipole( G4String aName, 
 			    G4double aLength,
@@ -152,9 +152,7 @@ void BDSMultipole::Build()
   //
   // build beampipe (geometry + magnetic field)
   //
-  BuildBPFieldAndStepper();
-  BuildBPFieldMgr(itsStepper, itsMagField);
-
+  BuildFieldAndStepper();
   BDSAcceleratorComponent::Build();
   BuildOuterLogicalVolume();
   BuildBeampipe();
@@ -166,6 +164,27 @@ void BDSMultipole::Build()
 #ifdef BDSDEBUG
   G4cout << __METHOD_END__ << G4endl;
 #endif
+}
+
+void BDSMultipole::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
+				       G4MagneticField* aField){
+  itsChordFinder= new G4ChordFinder(aField,
+				    BDSGlobalConstants::Instance()->GetChordStepMinimum(),
+				    aStepper);
+  
+  itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
+  itsBPFieldMgr= new G4FieldManager();
+  itsBPFieldMgr->SetDetectorField(aField);
+  itsBPFieldMgr->SetChordFinder(itsChordFinder);
+  if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0){
+    itsBPFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
+  }
+  if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>0)
+    itsBPFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
+  if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0)
+    itsBPFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
+  if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0)
+    itsBPFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
 }
 
 void BDSMultipole::BuildBLMs(){
@@ -405,36 +424,6 @@ void BDSMultipole::FinaliseBeampipe(G4String materialName, G4RotationMatrix* Rot
   VisAtt1->SetVisibility(true);
   itsBeampipeLogicalVolume->SetVisAttributes(VisAtt1);
 }
-
-void BDSMultipole::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
-				   G4MagneticField* aField)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  itsChordFinder= 
-    new G4ChordFinder(aField,
-		      BDSGlobalConstants::Instance()->GetChordStepMinimum(),
-		      aStepper);
-
-  itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
-  itsBPFieldMgr= new G4FieldManager();
-  itsBPFieldMgr->SetDetectorField(aField);
-  itsBPFieldMgr->SetChordFinder(itsChordFinder);
-  if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0){
-    itsBPFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
-  }
-  if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>0)
-    itsBPFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
-  if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0)
-    itsBPFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
-  if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0)
-    itsBPFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
-#ifdef BDSDEBUG
-     G4cout << __METHOD_END__ << G4endl;
-#endif
-}
-
 
 void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
 {

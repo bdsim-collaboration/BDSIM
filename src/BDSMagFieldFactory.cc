@@ -6,6 +6,7 @@
 #include "BDSGeometrySQL.hh"
 #include "BDSMagFieldSQL.hh"
 #include "G4UniformMagField.hh"
+#include "BDSDebug.hh"
 #include <typeinfo>
 
 BDSMagFieldFactory::BDSMagFieldFactory(){
@@ -15,7 +16,7 @@ BDSMagFieldFactory::BDSMagFieldFactory(){
 BDSMagFieldFactory::~BDSMagFieldFactory(){}
 
 
-G4MagneticField* BDSMagFieldFactory::buildMagField(G4String bmap="", G4double bmapZOffset=0, BDSGeometry* geom=NULL)
+BDSMagField* BDSMagFieldFactory::buildMagField(G4String bmap="", G4double bmapZOffset=0, BDSGeometry* geom=NULL)
 {
   _bmap=bmap;
   _bmapZOffset=bmapZOffset;
@@ -23,6 +24,7 @@ G4MagneticField* BDSMagFieldFactory::buildMagField(G4String bmap="", G4double bm
   
   parseFormatAndFilename();
   if (_bFormat->compare("3D")) {
+    G4cout <<  __METHOD_NAME__ << " - building 3D mag field... " << G4endl;
     return build3DMagField();
   } 
   else if (_bFormat->compare("XY")){
@@ -62,15 +64,15 @@ void BDSMagFieldFactory::parseFormatAndFilename(){
   }
 }
 
-G4MagneticField* BDSMagFieldFactory::buildXYMagField(){
+BDSMagField* BDSMagFieldFactory::buildXYMagField(){
   return new BDSXYMagField(_bFile);
 }
 
-G4MagneticField* BDSMagFieldFactory::build3DMagField(){
+BDSMagField* BDSMagFieldFactory::build3DMagField(){
   return new BDS3DMagField(_bFile, _bmapZOffset);
 }
 
-G4MagneticField* BDSMagFieldFactory::buildSQLMagField(){
+BDSMagField* BDSMagFieldFactory::buildSQLMagField(){
   if(_geom->hasFields() || _bFile!=""){
     // Check for field file or volumes with fields
     // as there may be cases where there are no bFormats given
@@ -86,14 +88,10 @@ G4MagneticField* BDSMagFieldFactory::buildSQLMagField(){
   else return buildZeroMagField();
 }
 
-G4MagneticField* BDSMagFieldFactory::buildLCDDMagField(){
-  if(typeid(_geom->field()) == typeid(G4UniformMagField(0,0,0))){
-    return _geom->field();
-  } else {
-    return _geom->field();
-  }
+BDSMagField* BDSMagFieldFactory::buildLCDDMagField(){
+  return (BDSMagField*)_geom->field();
 }
 
-G4MagneticField* BDSMagFieldFactory::buildZeroMagField(){
+BDSMagField* BDSMagFieldFactory::buildZeroMagField(){
   return new BDSMagField(); //Zero magnetic field.
 }

@@ -33,7 +33,7 @@
 #include "parser/enums.h"
 #include "parser/elementlist.h"
 #include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
-#define BDSDEBUG 1
+
 #ifdef BDSDEBUG
 bool debug1 = true;
 #else
@@ -291,9 +291,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     exit(1);
     break;
   }
-
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " - adding common properties... " << G4endl;
-
+#endif
   if (element) {
     addCommonProperties(element);
     element->Initialise();
@@ -303,7 +303,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
 }
 
 void BDSComponentFactory::addCommonProperties(BDSAcceleratorComponent* component) {
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
+#endif
   component->SetPrecisionRegion(_element.precisionRegion);
   component->SetType(typestr(_element.type));
 
@@ -311,7 +313,9 @@ void BDSComponentFactory::addCommonProperties(BDSAcceleratorComponent* component
   component->SetK1(_element.k1);
   component->SetK2(_element.k2);
   component->SetK3(_element.k3);
+#ifdef BDSDEBUG
   G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
 void BDSComponentFactory::addTunnel(BDSAcceleratorComponent* component){
@@ -330,7 +334,6 @@ void BDSComponentFactory::addTunnel(BDSAcceleratorComponent* component){
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSampler(){
-  G4cout << __METHOD_NAME__ << G4endl;
   return (new BDSSampler(_element.name, BDSGlobalConstants::Instance()->GetSamplerLength()));
 }
 

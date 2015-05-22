@@ -32,7 +32,7 @@ public:
   ~BDSElement();
 
   // creates a field mesh in global coordinates in case it is given by map
-  void PrepareField(G4VPhysicalVolume *referenceVolume);
+  virtual void PrepareField(G4VPhysicalVolume *referenceVolume);
 
   void AlignComponent(G4ThreeVector& TargetPos, 
 		      G4RotationMatrix *TargetRot,
@@ -49,21 +49,14 @@ private:
   void PlaceComponents(G4String geometry, G4String bmap);
   void BuildMagField(G4bool forceToAllDaughters=false);
   virtual void Build();
+  virtual void BuildFieldAndStepper();
+  void BuildBmapFieldAndStepper();
 
   G4String itsGeometry;
-  G4String itsBmap;
-
   G4String itsFieldVolName;
-  G4ChordFinder* fChordFinder;
 
-  G4MagIntegratorStepper* itsFStepper;
-  G4EqMagElectricField* itsFEquation;
-  G4Mag_UsualEqRhs* itsEqRhs;
-
-  G4MagneticField *itsMagField;
   G4CachedMagneticField *itsCachedMagField;
   G4double itsOuterR;
-  G4double itsBmapZOffset;
   // Volume to align incoming beamline on inside the marker volume
   // (set during Geometery construction)
   G4VPhysicalVolume* align_in_volume;

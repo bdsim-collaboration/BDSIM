@@ -82,14 +82,16 @@ private:
   void BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
 		       G4MagneticField* aField);
 
-  /// define field and stepper
-  virtual void BuildBPFieldAndStepper()=0;
 
   /// build beam loss monitors
   virtual void BuildBLMs();
 
   /// Method for common parts of both Buildbeampipe methods
   void FinaliseBeampipe(G4String materialName = "",G4RotationMatrix* RotY=NULL);
+
+  /// define field and stepper
+  virtual void BuildBPFieldAndStepper() = 0;
+  virtual void BuildFieldAndStepper() = 0;
 
 protected:
   /// Standard beam pipe, cross section is elliptical (or circular)
@@ -105,12 +107,8 @@ protected:
   void SetStartOuterRadius(G4double outR);
   void SetEndOuterRadius(G4double outR);
 
-protected:
-  // field related objects, set by BuildBPFieldAndStepper
-  G4MagIntegratorStepper* itsStepper;
-  G4MagneticField* itsMagField;
-  G4Mag_UsualEqRhs* itsEqRhs;
 
+protected:
   // beam pipe volumes
   G4LogicalVolume* itsBeampipeLogicalVolume;
   G4LogicalVolume* itsInnerBPLogicalVolume;

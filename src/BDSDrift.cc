@@ -19,7 +19,7 @@
 #include "G4VPhysicalVolume.hh"
 
 #include <map>
-#define BDSDEBUG 1
+
 //============================================================
 
 BDSDrift::BDSDrift (G4String aName, 
@@ -70,15 +70,14 @@ void BDSDrift::BuildBeampipe(G4String materialName) {
 }
 
 void BDSDrift::Build() {
-  G4cout << __METHOD_NAME__ << G4endl;
   BDSMultipole::Build();
 
   G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
   VisAtt1->SetVisibility(false);
   VisAtt1->SetForceSolid(true);
   itsMarkerLogicalVolume->SetVisAttributes(VisAtt1);
-  G4cout << __METHOD_END__ << G4endl;
 }
+
 
 void BDSDrift::BuildBPFieldAndStepper(){
     // set up the magnetic field and stepper

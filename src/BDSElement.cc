@@ -18,10 +18,10 @@
 #include "G4UserLimits.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "BDS3DMagField.hh"
 #include "BDSXYMagField.hh"
 #include "BDSMagFieldSQL.hh"
 #include "G4NystromRK4.hh"
+#include "BDS3DMagField.hh"
 #include "BDSMagFieldFactory.hh"
 #include "BDSGeometryFactory.hh"
 #include "BDSDebug.hh"
@@ -49,7 +49,7 @@ BDSElement::BDSElement(G4String aName, G4String geometry, G4String bmap, G4doubl
 			  aLength,bpRad,0,0,
 			  aTunnelMaterial, "", 0., 0., 0., 0., aTunnelRadius*CLHEP::m, aTunnelOffsetX*CLHEP::m, aTunnelCavityMaterial),
   itsGeometry(geometry), itsBmap(bmap),
-  fChordFinder(NULL), itsFStepper(NULL), itsFEquation(NULL), itsEqRhs(NULL), 
+  itsChordFinder(NULL), itsStepper(NULL), itsFEquation(NULL), itsEqRhs(NULL), 
   itsMagField(NULL)
 {
   itsFieldVolName="";
@@ -70,38 +70,34 @@ void BDSElement::Build(){
   _visAttDebug->SetVisibility(true);
   itsMarkerLogicalVolume->SetVisAttributes(_visAttDebug);
   
-  PlaceComponents(itsGeometry,itsBmap); // place components (from file) and build filed maps
+  PlaceComponents(); // place components (from file) and build filed maps
   BuildTunnel();
 }
 
 // place components 
-void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
+void BDSElement::PlaceComponents()
 {
+  
   BDSGeometryFactory* gFact = new BDSGeometryFactory();
   
-  BDSGeometry* geom = gFact->buildGeometry(geometry);
-  geom->Construct(itsMarkerLogicalVolume);
+  _geom = gFact->buildGeometry(itsGeometry);
+  _geom->Construct(itsMarkerLogicalVolume);
   AddSensitiveVolume(itsMarkerLogicalVolume);
     
-  for(G4int id=0; id<(G4int)geom->GetSensitiveComponents().size(); id++){
-    AddSensitiveVolume(geom->GetSensitiveComponents()[id]);
+  for(G4int id=0; id<(G4int)_geom->GetSensitiveComponents().size(); id++){
+    AddSensitiveVolume(_geom->GetSensitiveComponents()[id]);
   }
   
-  for(unsigned int i=0; i<geom->GetMultiplePhysicalVolumes().size(); i++){
-    SetMultiplePhysicalVolumes(geom->GetMultiplePhysicalVolumes().at(i));
+  for(unsigned int i=0; i<_geom->GetMultiplePhysicalVolumes().size(); i++){
+    SetMultiplePhysicalVolumes(_geom->GetMultiplePhysicalVolumes().at(i));
   }
 
-  for(G4int id=0; id<(G4int)geom->GetGFlashComponents().size(); id++){
-    SetGFlashVolumes(geom->GetGFlashComponents()[id]);
+  for(G4int id=0; id<(G4int)_geom->GetGFlashComponents().size(); id++){
+    SetGFlashVolumes(_geom->GetGFlashComponents()[id]);
   }
   
-  align_in_volume = geom->align_in_volume();
-  align_out_volume = geom->align_out_volume();
-  
-  BDSMagFieldFactory* bFact = new BDSMagFieldFactory();
-  itsMagField = bFact->buildMagField(bmap, itsBmapZOffset, geom);
-  //  itsMagField = new BDSMagField(); //Zero magnetic field.
-  BuildMagField(true);
+  align_in_volume = _geom->align_in_volume();
+  align_out_volume = _geom->align_out_volume();
   
 #ifdef USE_LCDD
   /*
@@ -116,6 +112,9 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
   */
 #endif 
 
+
+
+
   G4cout << __METHOD_END__ << G4endl;
 }
 
@@ -126,64 +125,17 @@ void BDSElement::SetVisAttributes()
   itsVisAttributes=new G4VisAttributes(G4Colour(0.5,0.5,1));
 }
 
-
-void BDSElement::BuildMagField(G4bool forceToAllDaughters)
-{
-#ifdef BDSDEBUG
-    G4cout << "BDSElement.cc::BuildMagField Building magnetic field...." << G4endl;
-#endif
-    // create a field manager
-    G4FieldManager* fieldManager = new G4FieldManager();
-    
-    
-#ifdef BDSDEBUG
-    G4cout << "BDSElement.cc> Building magnetic field..." << G4endl;
-#endif
-    itsEqRhs = new G4Mag_UsualEqRhs(itsMagField);
-    itsFStepper = new G4NystromRK4(itsEqRhs);
-    fieldManager->SetDetectorField(itsMagField );
-    
-#ifdef BDSDEBUG
-    G4cout << "BDSElement.cc> Setting stepping accuracy parameters..." << G4endl;
-#endif
-    
-    if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0){
-      fieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
-    }
-    if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0){
-      fieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
-    }
-    if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>=0){
-      fieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
-    }
-    if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0){
-      fieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
-    }
-    
-    G4MagInt_Driver* fIntgrDriver = new G4MagInt_Driver(BDSGlobalConstants::Instance()->GetChordStepMinimum(),
-							itsFStepper, 
-							itsFStepper->GetNumberOfVariables() );
-    fChordFinder = new G4ChordFinder(fIntgrDriver);
-    
-    fChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
-    
-    fieldManager->SetChordFinder( fChordFinder ); 
-    
-#ifdef BDSDEBUG
-    G4cout << "BDSElement.cc> Setting the logical volume " << itsMarkerLogicalVolume->GetName() << " field manager... force to all daughters = " << forceToAllDaughters << G4endl;
-#endif
-    itsMarkerLogicalVolume->SetFieldManager(fieldManager,forceToAllDaughters);
+void BDSElement::BuildFieldAndStepper(){
+  BuildBmapFieldAndStepper();
 }
-
 
 // creates a field mesh in the reference frame of a physical volume
 // from  b-field map value list 
 // has to be called after the component is placed in the geometry
 void BDSElement::PrepareField(G4VPhysicalVolume *referenceVolume)
 {
-  if(!itsMagField) return;
-  if(typeid(itsMagField) == typeid(BDSMagField*)){
-    ((BDSMagField*)itsMagField)->Prepare(referenceVolume);
+  if(itsMagField!=NULL) {
+    itsMagField->Prepare(referenceVolume);
   }
 }
 
@@ -318,7 +270,4 @@ void BDSElement::AlignComponent(G4ThreeVector& TargetPos,
 
 BDSElement::~BDSElement()
 {
-  delete fChordFinder;
-  delete itsFStepper;
-  delete itsFEquation;
 }
