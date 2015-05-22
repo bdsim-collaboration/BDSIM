@@ -183,6 +183,8 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.tunnelThickness = params.tunnelThickness ;
   e.tunnelSoilThickness = params.tunnelSoilThickness ;
   e.precisionRegion = params.precisionRegion;
+  e.bmapFile = std::string(params.bmap);
+  if(params.bmapZOffsetset) e.bmapZOffset = params.bmapZOffset;
   
   //specific parameters
   switch(type) {
@@ -464,13 +466,10 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.type = _ELEMENT;
     e.l = params.l;
     e.geometryFile = std::string(params.geometry);
-    e.bmapFile = std::string(params.bmap);
     if(params.blmLocZset)
       e.blmLocZ = params.blmLocZ;
     if(params.blmLocThetaset)
       e.blmLocTheta = params.blmLocTheta;
-    if(params.bmapZOffsetset)
-      e.bmapZOffset = params.bmapZOffset;
     break;
 
   case _LINE:
@@ -549,12 +548,9 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   case _AWAKESPECTROMETER:
     e.type = _AWAKESPECTROMETER;
     e.l = params.l;
-    e.bmapFile = std::string(params.bmap);
     e.screenEndZ = params.screenEndZ;
     e.poleStartZ = params.poleStartZ;
     e.scintmaterial = std::string(params.scintmaterial);
-    if(params.bmapZOffsetset)
-      e.bmapZOffset = params.bmapZOffset;
     std::cout << "scintmaterial: " << e.scintmaterial << " " <<  params.scintmaterial << std::endl;
     e.tscint = params.tscint;
     e.windowScreenGap = params.windowScreenGap;

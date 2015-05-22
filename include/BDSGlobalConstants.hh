@@ -45,12 +45,15 @@ protected:
 
 private:
   static BDSGlobalConstants* _instance;
+  G4int _nAbortAttempts; //Wether a bdsim abort has been attempted.
 
 public:
    /// access method 
    static BDSGlobalConstants* Instance();
   ~BDSGlobalConstants();
   
+  inline G4int nAbortAttempts(){return _nAbortAttempts;}
+  inline void incrementAbortAttempts(){_nAbortAttempts+=1;}
   G4bool   GetDoPlanckScattering();
   G4bool   GetCheckOverlaps();
   G4double GetMinimumEpsilonStep();

@@ -49,7 +49,7 @@ private:
   void PlaceComponents();
   void BuildMagField(G4bool forceToAllDaughters=false);
   virtual void Build();
-  virtual void BuildFieldAndStepper();
+  //  virtual void BuildFieldAndStepper();
   G4String itsGeometry;
   G4String itsFieldVolName;
 

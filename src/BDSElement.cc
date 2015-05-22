@@ -112,19 +112,18 @@ void BDSElement::PlaceComponents()
 
 
   BuildFieldAndStepper();
-
 }
-
-
 
 void BDSElement::SetVisAttributes()
 {
   itsVisAttributes=new G4VisAttributes(G4Colour(0.5,0.5,1));
 }
 
+/*
 void BDSElement::BuildFieldAndStepper(){
   BuildBmapFieldAndStepper();
 }
+*/
 
 // creates a field mesh in the reference frame of a physical volume
 // from  b-field map value list 

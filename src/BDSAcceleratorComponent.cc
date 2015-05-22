@@ -48,7 +48,7 @@ LogVolCountMap* LogVolCount = new LogVolCountMap();
 
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 LogVolMap* LogVol = new LogVolMap();
-
+#define BDSDEBUG 1
 BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4String& aName,
 						  G4double aLength, 
@@ -552,8 +552,10 @@ void BDSAcceleratorComponent::BuildBLMs()
 
 void BDSAcceleratorComponent::BuildFieldAndStepper(){
   if(itsBmap!=""){
+    G4cout << __METHOD_NAME__ << " - building bmap field and stepper." << G4endl;
     BuildBmapFieldAndStepper();
   } else {
+    G4cout << __METHOD_NAME__ << " - building beampipe field and stepper." << G4endl;
     BuildBPFieldAndStepper();
     SetBPFieldMgr();
   }
