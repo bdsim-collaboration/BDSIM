@@ -8,8 +8,8 @@ The angular brackets should not be used.
 +----------------------------+----------------------------------------------+
 | --file=<file>              | specify the input gmad file                  |
 +----------------------------+----------------------------------------------+
-| --output=<fmt>             | output format "root", "ascii" (default)
-or combined   |
+| --output=<fmt>             | output format "root", "ascii" (default) or   |
+|                            | "combined"                     |
 +----------------------------+----------------------------------------------+
 | --outfile=<file>           | output file name. Will be appended with _N   |
 |                            | where N = 0, 1, 2, 3...                      |
