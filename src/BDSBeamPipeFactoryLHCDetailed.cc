@@ -39,7 +39,7 @@ BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed():BDSBeamPipeFactor
 {
   coldBoreThickness         = 1.5*CLHEP::mm;
   coolingPipeThickness      = 0.53*CLHEP::mm;
-  coolingPipeRadius         = 3.7*CLHEP::mm; // will be overwritten if needs be to fit inside beampipe
+  coolingPipeRadius         = 3.7*CLHEP::mm*0.5; // will be overwritten if needs be to fit inside beampipe
   coolingPipeYOffset        = 0.0;  //initialised only
   copperSkinThickness       = 75*CLHEP::um;
   CleanUp();
