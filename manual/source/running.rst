@@ -8,7 +8,8 @@ The angular brackets should not be used.
 +----------------------------+----------------------------------------------+
 | --file=<file>              | specify the input gmad file                  |
 +----------------------------+----------------------------------------------+
-| --output=<fmt>             | output format "root" or "ascii" (default)    |
+| --output=<fmt>             | output format "root", "ascii" (default) or   |
+|                            | "combined"                                   |
 +----------------------------+----------------------------------------------+
 | --outfile=<file>           | output file name. Will be appended with _N   |
 |                            | where N = 0, 1, 2, 3...                      |
@@ -73,7 +74,7 @@ Features:
 * typically slower than batch mode
 * no events run without user input
 
-To execute BDSIM in interactive mode, the user must simply not use the :code:`--batch` commmand.
+To execute BDSIM in interactive mode, the user must simply not use the :code:`--batch` command.
 The user must also specify a macro file using the :code:`--vis_mac` option above otherwise, BDSIM
 will look for "vis.mac" in the current working directory. If not found, BDSIM will exit. Once
 executed a window such as this will appear (depending on the visualiser you use).
@@ -86,7 +87,7 @@ executed a window such as this will appear (depending on the visualiser you use)
    BDSIM running interactively with OpenGL Qt visualiser from Geant4.
 
 Note, the visualiser is part of Geant4 so if the desired visualiser isn't available, you
-must recopmile Geant4 with the correct visualiser (and subsequently BDSIM afterards). Geant4
+must recompile Geant4 with the correct visualiser (and subsequently BDSIM afterwards). Geant4
 also uses the Cmake configuration system. The visualiser shown is the OpenGL Qt visualiser, which
 we recommend for its ease of use and high level of interactivity.
 

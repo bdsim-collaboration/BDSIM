@@ -5,7 +5,7 @@ Installation
 Obtaining  BDSIM
 ================
 
-BDSIM may be obtained either from the BDSIM webiste
+BDSIM may be obtained either from the BDSIM website
 (http://www.pp.rhul.ac.uk/twiki/bin/view/JAI/BdSim) or from the GIT repository
 (https://www.bitbucket.org/stewartboogert/bdsim). The user must compile it on
 their system and must have Geant4 already present (or access to AFS).
@@ -29,7 +29,7 @@ To download the source from the git repository, use the command::
   git clone https://bitbucket.org/stewartboogert/bdsim
 
 This will create a directory called ``bdsim``, inside which all the code, examples
-and documentation is provied. To obtain the python utilities that come with BDSIM,
+and documentation is provided. To obtain the python utilities that come with BDSIM,
 use the following commands::
 
   > cd bdsim
@@ -45,7 +45,7 @@ Requirements
 3) Flex 2.5.37 or higher
 4) Bison 2.3 or higher
 5) CLHEP 2.1.3.1 or higher
-6) Boost libraries (**to be removed**)
+6) Boost libraries
 
 Optional dependencies
   
@@ -60,7 +60,7 @@ available. You can test this in a terminal with::
   $G4LEVELGAMMADATA   $G4PIIDATA          $G4SAIDXSDATA
      
 If these do not exists, please source the Geant4 environmental script
-before installing BDISM and each time before using BDSIM. It is common
+before installing BDSIM and each time before using BDSIM. It is common
 to add this to your ``.bashrc`` or profile so that it's loaded automatically
 every time.::
 
@@ -135,7 +135,7 @@ This typically produces the following output, which is slightly different on eac
   -- Build files have been written to: /Users/nevay/physics/reps/bdsim-test2
 
 CMake will search your system for the required dependencies. In the above example, this
-proceeded without any errors. In the case where a required dependecy cannot be found,
+proceeded without any errors. In the case where a required dependency cannot be found,
 an error will be shown and CMake will stop. Please see `Configuring the BDSIM Build with
 CMake`_ for further details on how to fix this and further configure the BDSIM installation.
 
@@ -157,11 +157,11 @@ you can verify your installation using a series of tests included with BDSIM. ::
 Scientific Linux
 ----------------
 
-For SL5 you will have to use Geant 4.9.6 as Geant 4.10 onwards is not compatable.
+For SL5 you will have to use Geant 4.9.6 as Geant 4.10 onwards is not compatible.
 Older version of Geant4 can be downloaded from their
 `archive <http://geant4.web.cern.ch/geant4/support/source_archive.shtml>`_ . 
 For SL6, we recommend the latest version of Geant4, currently 4.10.1.  
-Once ready, make a directory **outisde** the BDSIM source directory to build
+Once ready, make a directory **outside** the BDSIM source directory to build
 BDSIM in::
 
   > ls
@@ -214,7 +214,7 @@ After this, the installation procedure for `Scientific Linux`_ should be followe
 Configuring the BDSIM Build with CMake
 --------------------------------------
 
-To either enter paths to dependcies manually, or edit the configuration, the following
+To either enter paths to dependencies manually, or edit the configuration, the following
 command will give you and interface to CMake (from ``bdsim-build`` directory)::
 
   > ccmake .
@@ -239,11 +239,25 @@ system folder. You can however, specify a different directory in the above **ccm
 configuration and that won't require the ``sudo`` command. The installation directory
 can be specified by editing the ``CMAKE_INSTALL_PREFIX`` variable.
 
-
-Making Doxygen Documentation
+Making the Manual
 ----------------------------
 
-From the build directory, after running ``make``, run the following command::
+For HTML from the build directory run the following command::
+
+  > make manual
+
+to make the HTML Manual in the folder ``manual/html``.
+
+And for pdflatex::
+
+  > make manual-pdf
+
+to make the pdf Manual in the folder ``manual/latex``.
+
+Making Doxygen Code Documentation
+----------------------------
+
+From the build directory run the following command::
 
   > make doc
 
@@ -272,7 +286,7 @@ Configure Geant4 using CMake ::
   > cmake ../geant4.10.04
 
 At this point it's useful to define the installation directory for Geant4 by
-modifying the CMake configuration as generally desbribed in
+modifying the CMake configuration as generally described in
 `Configuring the BDSIM Build with CMake`_. ::
 
   > ccmake .
@@ -320,14 +334,21 @@ please contact us (see :ref:`support-section`).
      
      You have successfully registered the following graphics systems.
      Current available graphics systems are:
+     ASCIITree (ATree)
+     DAWNFILE (DAWNFILE)
+     G4HepRep (HepRepXML)
      G4HepRepFile (HepRepFile)
-     OpenGLImmediateQt (OGLIQt)
+     OpenGLImmediateQt (OGLI, OGLIQt)
      OpenGLImmediateX (OGLIX)
-     OpenGLImmediateXm (OGLIXm)
-     OpenGLStoredQt (OGLSQt)
+     OpenGLImmediateXm (OGLIXm, OGLI_FALLBACK, OGLIQt_FALLBACK)
+     OpenGLStoredQt (OGL, OGLS, OGLSQt)
      OpenGLStoredX (OGLSX)
-     OpenGLStoredXm (OGLSXm)
+     OpenGLStoredXm (OGLSXm, OGL_FALLBACK, OGLS_FALLBACK, OGLSQt_FALLBACK)
+     RayTracer (RayTracer)
      RayTracerX (RayTracerX)
+     VRML1FILE (VRML1FILE)
+     VRML2FILE (VRML2FILE)
+     gMocrenFile (gMocrenFile)
    
    If your favourite is not there check that Geant4 is correctly compiled with those
    graphics system.
@@ -371,5 +392,5 @@ please contact us (see :ref:`support-section`).
 
 .. [#ncoresnote] If your computer supports hyper-threading, you can use twice the number of
 		 cores with the ``make -jN`` command. Ie a computer has 4 cores and supports
-		 hyper-threading, can suuport up to ``make -j8``.  Exceeding this number will
+		 hyper-threading, can support up to ``make -j8``.  Exceeding this number will
 		 result in slower than normal compilation.
