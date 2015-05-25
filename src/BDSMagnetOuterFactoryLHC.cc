@@ -38,33 +38,12 @@ BDSMagnetOuterFactoryLHC::BDSMagnetOuterFactoryLHC(G4bool isLeftOffsetIn):
   nSegmentsPerCircle = 50;
   outerSolid         = NULL;
   containerSolid     = NULL;
-  massShift          = 97.26*CLHEP::mm;
-  BPseparation       = 2*massShift;
-  coilFullThickness  = 118.6/2.0 - 56.0/2.0; // 41.3mm for two rows of coils, mm by default (for dipole)
-  innerCoilThickness = 0.5*coilFullThickness;
-  outerCoilThickness = 0.5*coilFullThickness;
-  collarThickness    = 0.9*coilFullThickness;
-}
-
-G4double BDSMagnetOuterFactoryLHC::GetCoilThickness()
-{
-  return coilFullThickness;
-}  
-
-G4double BDSMagnetOuterFactoryLHC::GetBeamPipeSeparation()
-{
-  return BPseparation;
-}
-
-G4double BDSMagnetOuterFactoryLHC::GetCollarThickness()
-{
-  return collarThickness;
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 								 G4double      length,
 								 BDSBeamPipe*  beamPipe,
-								 G4double      boxSize,
+								 G4double      outerDiameter,
 								 G4double      angle,
 								 G4Material*   outerMaterial)
 
