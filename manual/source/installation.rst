@@ -240,7 +240,7 @@ configuration and that won't require the ``sudo`` command. The installation dire
 can be specified by editing the ``CMAKE_INSTALL_PREFIX`` variable.
 
 Making the Manual
-----------------------------
+-----------------
 
 For HTML from the build directory run the following command::
 
@@ -255,7 +255,7 @@ And for pdflatex::
 to make the pdf Manual in the folder ``manual/latex``.
 
 Making Doxygen Code Documentation
-----------------------------
+---------------------------------
 
 From the build directory run the following command::
 

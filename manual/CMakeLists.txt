@@ -12,7 +12,7 @@ find_package(Sphinx)
 #endif()
 
 # configured documentation tools and intermediate build results
-set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/build")
+set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
 # Sphinx cache with pickled ReST documents
 set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/doctrees")
