@@ -91,8 +91,8 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   // these angles were calculated by visually analysing the coil layout graph in [2]
   G4double poleInnerFullAngle = 33./180.*2; //33 degrees half angle in radians
   G4double poleOuterFullAngle = 100./180.*2; //80 degrees half angle in radians
-  G4double coilInnerFullAngle = CLHEP::pi - poleInnerFullAngle - 0.001; // 0.001 is small margin to avoid overlap
-  G4double coilOuterFullAngle = CLHEP::pi - poleOuterFullAngle - 0.001;
+  G4double coilInnerFullAngle = CLHEP::pi - poleInnerFullAngle - 1e-5; // 0.001 is small margin to avoid overlap
+  G4double coilOuterFullAngle = CLHEP::pi - poleOuterFullAngle - 1e-5;
 
   // whether to build various components around active beam pipe depending on how wide it is
   // these ONLY apply to the components around the active beampipe
@@ -116,6 +116,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
       // pipe is too big to use with this geometry!
       G4cerr << __METHOD_NAME__ << "this beam pipe is too big to use with the LHC dipole geometry" << G4endl;
       G4cerr << "Please consider using a different magnet geometry for this particular magnet" << G4endl;
+      G4cerr << "Magnet named: " << name << G4endl;
       exit(1);
     }
 
@@ -211,6 +212,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   G4LogicalVolume* coil2InnerLV = NULL;
   G4LogicalVolume* coil2OuterLV = NULL;
   G4Material*      nbti         = BDSMaterials::Instance()->GetMaterial("NbTi.1");
+  G4Material* stainlesssteel    = BDSMaterials::Instance()->GetMaterial("stainlesssteel");
   G4VisAttributes* coilVisAtt   = new G4VisAttributes(G4Colour(0.9, 0.75, 0.)); //gold-ish colour
   coilVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   G4VSolid*        collar1PoleTopInnerSolid     = NULL;
@@ -223,6 +225,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   G4LogicalVolume* collar1PoleBottomOuterLV     = NULL;
   G4VisAttributes* collarVisAtt = new G4VisAttributes(G4Colour(0.9, 0.9, 0.9)); // grey
   collarVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+  G4bool checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
 
   if (buildInnerCoil)
     {
@@ -260,7 +263,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 			containerLV,            // its mother  volume
 			false,                  // no boolean operation
 			0, 
-			BDSGlobalConstants::Instance()->GetCheckOverlaps());
+			checkOverlaps);
       new G4PVPlacement(0,                      // rotation
 			-dipolePosition,        // position
 			coil2InnerLV,           // its logical volume
@@ -268,7 +271,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 			containerLV,            // its mother  volume
 			false,                  // no boolean operation
 			0, 
-			BDSGlobalConstants::Instance()->GetCheckOverlaps());
+			checkOverlaps);
 
       collar1PoleTopInnerSolid    = new G4CutTubs(name+"_collar1_pole_inner_top",      // name
 						  innerCoilInnerRadius,                // inner radius
@@ -287,10 +290,10 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 						  inputface,                           // input face normal
 						  outputface);                         // output face normal
       collar1PoleTopInnerLV    = new G4LogicalVolume(collar1PoleTopInnerSolid,
-						     BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+						     stainlesssteel,
 						     name+"_collar1_pole_top_inner_lv");
       collar1PoleBottomInnerLV = new G4LogicalVolume(collar1PoleBottomInnerSolid,
-						     BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+						     stainlesssteel,
 						     name+"_collar1_pole_bottom_inner_lv");
       
       collar1PoleTopInnerLV->SetVisAttributes(collarVisAtt);
@@ -305,14 +308,16 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 			name+"_collar1_pole_top_inner_pv",// its name
 			containerLV,                // its mother  volume
 			false,                      // no boolean operation
-			0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+			0,
+			checkOverlaps);
       new G4PVPlacement(0,                          // rotation
 			-dipolePosition,            // position
 			collar1PoleBottomInnerLV,   // its logical volume
 			name+"_collar1_pole_top_inner_pv",// its name
 			containerLV,                // its mother  volume
 			false,                      // no boolean operation
-			0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+			0,
+			checkOverlaps);
     }
   
   if (buildOuterCoil)
@@ -351,7 +356,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 			containerLV,            // its mother  volume
 			false,                  // no boolean operation
 			0, 
-			BDSGlobalConstants::Instance()->GetCheckOverlaps());
+			checkOverlaps);
       new G4PVPlacement(0,                      // rotation
 			-dipolePosition,        // position
 			coil2OuterLV,           // its logical volume
@@ -359,7 +364,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 			containerLV,            // its mother  volume
 			false,                  // no boolean operation
 			0, 
-			BDSGlobalConstants::Instance()->GetCheckOverlaps());
+			checkOverlaps);
 
       collar1PoleTopOuterSolid    = new G4CutTubs(name+"_collar1_pole_outer_top",      // name
 						  outerCoilInnerRadius,                // inner radius
@@ -379,10 +384,10 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 						  outputface);                         // output face normal
 
       collar1PoleTopOuterLV    = new G4LogicalVolume(collar1PoleTopOuterSolid,
-						     BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+						     stainlesssteel,
 						     name+"_collar1_pole_top_outer_lv");
       collar1PoleBottomOuterLV = new G4LogicalVolume(collar1PoleBottomOuterSolid,
-						     BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+						     stainlesssteel,
 						     name+"_collar1_pole_bottom_outer_lv");
       
       collar1PoleTopOuterLV->SetVisAttributes(collarVisAtt);
@@ -397,14 +402,16 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 			name+"_collar1_pole_top_inner_pv",// its name
 			containerLV,                      // its mother  volume
 			false,                            // no boolean operation
-			0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+			0,
+			checkOverlaps);
       new G4PVPlacement(0,                                // rotation
 			-dipolePosition,                  // position
 			collar1PoleBottomOuterLV,         // its logical volume
 			name+"_collar1_pole_top_inner_pv",// its name
 			containerLV,                      // its mother  volume
 			false,                            // no boolean operation
-			0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+			0,
+			checkOverlaps);
     }
   
   // coils on inactive beam pipe - always built
@@ -472,8 +479,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 		    containerLV,            // its mother  volume
 		    false,                  // no boolean operation
 		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-
+		    checkOverlaps);
   new G4PVPlacement(0,                      // rotation
 		    dipolePosition,         // position
 		    coil3OuterLV,           // its logical volume
@@ -481,7 +487,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 		    containerLV,            // its mother  volume
 		    false,                  // no boolean operation
 		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    checkOverlaps);
   new G4PVPlacement(0,                      // rotation
 		    dipolePosition,         // position
 		    coil4InnerLV,           // its logical volume
@@ -489,7 +495,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 		    containerLV,            // its mother  volume
 		    false,                  // no boolean operation
 		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    checkOverlaps);
   new G4PVPlacement(0,                      // rotation
 		    dipolePosition,         // position
 		    coil4OuterLV,           // its logical volume
@@ -497,7 +503,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 		    containerLV,            // its mother  volume
 		    false,                  // no boolean operation
 		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    checkOverlaps);
   
   // non-magnetic collars
   // collar pole solids  
@@ -536,16 +542,16 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   
   // collar pole logical volumes
   G4LogicalVolume* collar2PoleTopInnerLV    = new G4LogicalVolume(collar2PoleTopInnerSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+								  stainlesssteel,
 								  name+"_collar2_pole_top_inner_lv");
   G4LogicalVolume* collar2PoleTopOuterLV    = new G4LogicalVolume(collar2PoleTopOuterSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+								  stainlesssteel,
 								  name+"_collar2_pole_top_outer_lv");
   G4LogicalVolume* collar2PoleBottomInnerLV = new G4LogicalVolume(collar2PoleBottomInnerSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+								  stainlesssteel,
 								  name+"_collar2_pole_bottom_inner_lv");
   G4LogicalVolume* collar2PoleBottomOuterLV = new G4LogicalVolume(collar2PoleBottomOuterSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+								  stainlesssteel,
 								  name+"_collar2_pole_bottom_outer_lv");
 
   // collar pole visualisation
@@ -566,28 +572,32 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 		    name+"_collar2_pole_top_inner_pv",// its name
 		    containerLV,                      // its mother  volume
 		    false,                            // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    0,
+		    checkOverlaps);
   new G4PVPlacement(0,                                // rotation
 		    dipolePosition,                   // position
 		    collar2PoleTopOuterLV,            // its logical volume
 		    name+"_collar2_pole_top_inner_pv",// its name
 		    containerLV,                      // its mother  volume
 		    false,                            // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    0,
+		    checkOverlaps);
   new G4PVPlacement(0,                                // rotation
 		    dipolePosition,                   // position
 		    collar2PoleBottomInnerLV,         // its logical volume
 		    name+"_collar2_pole_top_inner_pv",// its name
 		    containerLV,                      // its mother  volume
 		    false,                            // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    0,
+		    checkOverlaps);
   new G4PVPlacement(0,                                // rotation
 		    dipolePosition,                   // position
 		    collar2PoleBottomOuterLV,         // its logical volume
 		    name+"_collar2_pole_top_inner_pv",// its name
 		    containerLV,                      // its mother  volume
 		    false,                            // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    0,
+		    checkOverlaps);
   
   // outer annulus of collar - two as slightly different lengths
   G4VSolid* collarAnnulus2 = new G4CutTubs(name+"_collar2_annulus_solid",    // name
@@ -618,7 +628,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 				 collarAnnulus2,          // solid1
 				 collarAnnulus1,          // solid2
 				 0,                       // rotation
-				 -2*dipolePosition);       // translation
+				 -2*dipolePosition);      // translation
     }
 
   /*
@@ -652,11 +662,10 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   G4VSolid* collarTotal = collars;
   
   G4LogicalVolume *collarsLV =  new G4LogicalVolume(collarTotal,
-						    BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
+						    stainlesssteel,
 						    name+"_collars_lv");
 
   // collar annulus visualisation attributes
-  collarsLV->SetVisAttributes(collarVisAtt);
   collarsLV->SetVisAttributes(collarVisAtt);
 
   allLogicalVolumes.push_back(collarsLV); // register locally
@@ -719,8 +728,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
+		    checkOverlaps);
   
   G4String defaultMaterialName = BDSGlobalConstants::Instance()->GetBeamPipeMaterialName();
   G4Material* beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
@@ -749,8 +757,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
+		    checkOverlaps);
   
   // visual attributes for container
   if (BDSExecOptions::Instance()->GetVisDebug())
@@ -768,9 +775,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
     userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
     
     for (std::vector<G4LogicalVolume*>::iterator i = allLogicalVolumes.begin(); i != allLogicalVolumes.end(); ++i)
-      {
-	(*i)->SetUserLimits(userLimits);
-      }
+      {(*i)->SetUserLimits(userLimits);}
   }
 #endif
   
@@ -815,7 +820,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String  
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 								 G4double      length,
 								 BDSBeamPipe*  beamPipe,
-								 G4double      boxSize,
+								 G4double      outerDiameter,
 								 G4Material*   outerMaterial)
 
 {
@@ -824,38 +829,76 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
 #endif
 
   // test input parameters - set global options as default if not specified
-  TestInputParameters(beamPipe,boxSize,outerMaterial);
+  TestInputParameters(beamPipe,outerDiameter,outerMaterial);
 
   // geometrical constants
-  // mass to the right or to the left
-  G4ThreeVector dipolePosition;
-  G4double      massShift     = 97.26*CLHEP::mm;
-  G4double beamPipeAxisSeparation       = 2*massShift;
-  G4double collarOuterRadius  = 101.18*CLHEP::mm;
-  // these angles were calculated by visually analysing the coil layout graph
-  // in lhc desigrn report Vol1, chapter 7, figure 7.1
-  G4double poleInnerFullAngle = CLHEP::pi/6.; //30 degrees angle in radians
-  G4double poleOuterFullAngle = CLHEP::pi/6.; //30 degrees angle in radians
-  G4double coilInnerFullAngle = CLHEP::pi/2. - poleInnerFullAngle;
-  G4double coilOuterFullAngle = CLHEP::pi/2. - poleOuterFullAngle;
-  G4double coilFullThickness  = 118.6/2.0 - 56.0/2.0; // 41.3mm for two rows of coils, mm by default
-  G4double coilOuterRadius = beamPipe->GetContainerRadius() + 2*lengthSafety + 118.6/2.0 * CLHEP::mm - 56.0/2.0*CLHEP::mm ;
-  //118.6mm is the outer diameter of the coils, 56mm is the diameter of the coldbore 
-  
+  // [1] LHC design report - Chapter 7, fig 7.3
+  // [2] LHC design report - Chapter 7, fig 7.1
+  G4double beamPipeAxisSeparation = 194.00*CLHEP::mm;               // at 1.9K
+  G4double massShift              = 0.5 * beamPipeAxisSeparation;   // central shift to geometry
+  //G4double collarBoxHalfHeight    = 60*CLHEP::mm;                 // [1] by visual inspection
+  G4double collarBoxHalfWidth     = 22*CLHEP::mm;                   // fits between outer coils
+
+  // radii
+  G4double containerInnerRadius   = beamPipe->GetContainerRadius()+1*CLHEP::um;
+  G4double coilInnerRadius        = containerInnerRadius + lengthSafety;
+  G4double coilInnerRadiusF       = 24.601*CLHEP::mm; // the fixed radius for the second pipe - F for fixed
+  G4double coilOuterRadius        = 60*CLHEP::mm;                   // [2] by visual inspection
+  G4double collarInnerRadius      = coilOuterRadius + lengthSafety;
+  G4double collarInnerRadiusF     = coilOuterRadius + lengthSafety;
+  G4double collarOuterRadius      = 101.18*CLHEP::mm;               // [1] - at 293K but don't have 1.9K measurement
+  G4double yokeOuterRadius        = 570.0*0.5*CLHEP::mm;            // [2] - at 293K but don't have 1.9K measurement
+
+  // angular setup of coils
+  // these angles were calculated by visually analysing the coil layout graph in [2]
+  G4double poleFullAngle    = CLHEP::pi/6.; //30 degrees angle in radians
+  G4double coilFullAngle    = CLHEP::pi/2. - poleFullAngle - 1e-5; // 1e-5 to prevent overlaps
+  G4double coilHalfAngle    = coilFullAngle*0.5;
+  G4double coilStartAngle   = -coilHalfAngle;
+  G4double poleStartAngle   = coilHalfAngle;
+  G4RotationMatrix* coil2rm = new G4RotationMatrix();
+  G4RotationMatrix* coil3rm = new G4RotationMatrix();
+  G4RotationMatrix* coil4rm = new G4RotationMatrix();
+  coil2rm->rotateZ(CLHEP::pi/2.0);
+  coil3rm->rotateZ(CLHEP::pi);
+  coil4rm->rotateZ(CLHEP::pi*1.5);
+
+  // whether to build various components around active beam pipe depending on how wide it is
+  // these ONLY apply to the components around the active beampipe
+  G4bool buildCoil         = true;
+  G4bool buildCollar       = true; // collar around the active beam pipe
+  if (coilInnerRadius > coilOuterRadius)
+    {buildCoil = false;}
+  // this still uses the boxHalfWidth but just as good as the collar annulli overlap slightly in the middle
+  // and this will protect against this
+  if ((coilInnerRadius > collarInnerRadius) && (coilInnerRadius < (massShift - collarBoxHalfWidth)))
+    {collarInnerRadius = containerInnerRadius + lengthSafety;}
+  if (coilInnerRadius > (massShift - collarBoxHalfWidth))
+    {buildCollar = false;}
+  if (coilInnerRadius > collarOuterRadius)
+    {
+      // pipe is too big to use with this geometry!
+      G4cerr << __METHOD_NAME__ << "this beam pipe is too big to use with the LHC dipole geometry" << G4endl;
+      G4cerr << "Please consider using a different magnet geometry for this particular magnet" << G4endl;
+      G4cerr << "Magnet named: " << name << G4endl;
+      exit(1);
+    }
+
+  G4ThreeVector dipolePosition; // translation of whole assembly relative to centre of active pipe
   if (isLeftOffset)
     {
       dipolePosition = G4ThreeVector(massShift,0.,0.);
-      beamPipeAxisSeparation *= -1;
+      beamPipeAxisSeparation  *= -1;
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "quadrupole to the left" << G4endl;
+      G4cout << __METHOD_NAME__ << "dipole to the left" << G4endl;
 #endif
     }
   else
     {
       dipolePosition = G4ThreeVector(-massShift,0.,0.);
-      massShift    *= -1;
+      //massShift     *= -1;
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "quadrupole to the right" << G4endl;
+      G4cout << __METHOD_NAME__ << "dipole to the right" << G4endl;
 #endif
     }
 
@@ -869,14 +912,14 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
       //have to do subtraction as cuttubs aperture is central and the beampipe (active one) is not here
       G4VSolid* containerSolidOuter = new G4Tubs(name + "_contiainer_solid_outer",  // name
 						 0,                           // inner radius
-						 boxSize*0.5,                 // outer radius
+						 yokeOuterRadius,             // outer radius
 						 length*0.5,                  // half length
 						 0,                           // rotation start angle
-						 CLHEP::twopi);                // rotation finish angle
+						 CLHEP::twopi);               // rotation finish angle
 						    
       G4VSolid* containerSolidInner = new G4Tubs(name + "_contiainer_solid_inner",  // name
 						 0,                                 // inner radius
-						 beamPipe->GetContainerRadius() + lengthSafety, // outer radius
+						 containerInnerRadius,              // outer radius
 						 length,                            // full length for unambiguous subtraction
 						 0,                                 // rotation start angle
 						 CLHEP::twopi);
@@ -890,11 +933,11 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
     {
       //container is similar but slightly wider
       G4VSolid* containerSolidOuter = new G4Tubs(name + "_contiainer_solid_outer",  // name
-						 0,                           // inner radius
-						 boxSize*0.5,                 // outer radius
-						 length*0.5,                  // half length
-						 0,                           // rotation start angle
-						 CLHEP::twopi);                // rotation finish angle
+						 0,                                 // inner radius
+						 yokeOuterRadius,                   // outer radius
+						 length*0.5,                        // half length
+						 0,                                 // rotation start angle
+						 CLHEP::twopi);                     // rotation finish angle
 						 
       containerSolid = new G4SubtractionSolid(name + "_container_solid",
 					      containerSolidOuter,
@@ -911,698 +954,309 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
   allLogicalVolumes.push_back(containerLV); //register it locally
 
   // coil solids
-  // Left and right
-  G4double innerRadius = beamPipe->GetContainerRadius() + 2*lengthSafety;
-  G4VSolid *coil1Inner = new G4Tubs(name+"_coil1_inner_solid",            // name
-				    innerRadius,                          // inner radius
-				    innerRadius + coilFullThickness*0.5,  // outer radius
-				    length*0.5-2*lengthSafety,            // length
-				    -coilInnerFullAngle*0.5,              // start angle
-				    coilInnerFullAngle);                   // sweep angle
-  G4VSolid *coil1Outer = new G4Tubs(name+"_coil1_outer_solid",            // name
-				    innerRadius + coilFullThickness*0.5+lengthSafety, // inner radius
-				    innerRadius + coilFullThickness,      // outer radius
-				    length*0.5-2*lengthSafety,            // length
-				    -coilOuterFullAngle*0.5,              // start angle
-				    coilOuterFullAngle);                   // sweep angle
-  G4VSolid *coil2Inner = new G4Tubs(name+"_coil2_inner_solid",            // name
-				    innerRadius,                          // inner radius
-				    innerRadius + coilFullThickness*0.5,  // outer radius
-				    length*0.5-2*lengthSafety,            // length
-				    CLHEP::pi-coilInnerFullAngle*0.5,     // start angle
-				    coilInnerFullAngle);                   // sweep angle
-  G4VSolid *coil2Outer = new G4Tubs(name+"_coil2_outer_solid",            // name
-				    innerRadius + coilFullThickness*0.5+lengthSafety, // inner radius
-				    innerRadius + coilFullThickness,      // outer radius
-				    length*0.5-2*lengthSafety,            // length
-				    CLHEP::pi-coilOuterFullAngle*0.5,     // start angle
-				    coilOuterFullAngle);                   // sweep angle
-  G4VSolid *coil3Inner = new G4Tubs(name+"_coil3_inner_solid",            // name
-				    innerRadius,                          // inner radius
-				    innerRadius + coilFullThickness*0.5,  // outer radius
-				    length*0.5-2*lengthSafety,    // length
-				    -coilInnerFullAngle*0.5,              // start angle
-				    coilInnerFullAngle);                   // sweep angle
-  G4VSolid *coil3Outer = new G4Tubs(name+"_coil3_outer_solid",            // name
-				    innerRadius + coilFullThickness*0.5+lengthSafety, // inner radius
-				    innerRadius + coilFullThickness,      // outer radius
-				    length*0.5-2*lengthSafety,    // length
-				    -coilOuterFullAngle*0.5,              // start angle
-				    coilOuterFullAngle);                   // sweep angle
-  G4VSolid *coil4Inner = new G4Tubs(name+"_coil4_inner_solid",            // name
-				    innerRadius,                          // inner radius
-				    innerRadius + coilFullThickness*0.5,  // outer radius
-				    length*0.5-2*lengthSafety,    // length
-				    CLHEP::pi-coilInnerFullAngle*0.5,     // start angle
-				    coilInnerFullAngle);                   // sweep angle
-  G4VSolid *coil4Outer = new G4Tubs(name+"_coil4_outer_solid",            // name
-				    innerRadius + coilFullThickness*0.5+lengthSafety, // inner radius
-				    innerRadius + coilFullThickness,      // outer radius
-				    length*0.5-2*lengthSafety,    // length
-				    CLHEP::pi-coilOuterFullAngle*0.5,     // start angle
-				    coilOuterFullAngle);                   // sweep angle
-  //Up and down
-  G4VSolid *coil5Inner = new G4Tubs(name+"_coil5_inner_solid",            // name
-				    innerRadius,                          // inner radius
-				    innerRadius + coilFullThickness*0.5,  // outer radius
-				    length*0.5-2*lengthSafety,            // length
-				    CLHEP::pi/2.-coilInnerFullAngle*0.5,              // start angle
-				    coilInnerFullAngle);                   // sweep angle
-  G4VSolid *coil5Outer = new G4Tubs(name+"_coil5_outer_solid",            // name
-				    innerRadius + coilFullThickness*0.5+lengthSafety, // inner radius
-				    innerRadius + coilFullThickness,      // outer radius
-				    length*0.5-2*lengthSafety,            // length
-				    CLHEP::pi/2.-coilOuterFullAngle*0.5,              // start angle
-				    coilOuterFullAngle);                   // sweep angle
-  G4VSolid *coil6Inner = new G4Tubs(name+"_coil6_inner_solid",            // name
-				    innerRadius,                          // inner radius
-				    innerRadius + coilFullThickness*0.5,  // outer radius
-				    length*0.5-2*lengthSafety,            // length
-				    -CLHEP::pi/2.-coilInnerFullAngle*0.5,     // start angle
-				    coilInnerFullAngle);                   // sweep angle
-  G4VSolid *coil6Outer = new G4Tubs(name+"_coil6_outer_solid",            // name
-				    innerRadius + coilFullThickness*0.5+lengthSafety, // inner radius
-				    innerRadius + coilFullThickness,      // outer radius
-				    length*0.5-2*lengthSafety,            // length
-				    -CLHEP::pi/2.-coilOuterFullAngle*0.5,     // start angle
-				    coilOuterFullAngle);                   // sweep angle
-  G4VSolid *coil7Inner = new G4Tubs(name+"_coil7_inner_solid",            // name
-				    innerRadius,                          // inner radius
-				    innerRadius + coilFullThickness*0.5,  // outer radius
-				    length*0.5-2*lengthSafety,    // length
-				    CLHEP::pi/2.-coilInnerFullAngle*0.5,              // start angle
-				    coilInnerFullAngle);                   // sweep angle
-  G4VSolid *coil7Outer = new G4Tubs(name+"_coil7_outer_solid",            // name
-				    innerRadius + coilFullThickness*0.5+lengthSafety, // inner radius
-				    innerRadius + coilFullThickness,      // outer radius
-				    length*0.5-2*lengthSafety,    // length
-				    CLHEP::pi/2.-coilOuterFullAngle*0.5,              // start angle
-				    coilOuterFullAngle);                   // sweep angle
-  G4VSolid *coil8Inner = new G4Tubs(name+"_coil8_inner_solid",            // name
-				    innerRadius,                          // inner radius
-				    innerRadius + coilFullThickness*0.5,  // outer radius
-				    length*0.5-2*lengthSafety,    // length
-				    -CLHEP::pi/2.-coilInnerFullAngle*0.5,     // start angle
-				    coilInnerFullAngle);                   // sweep angle
-  G4VSolid *coil8Outer = new G4Tubs(name+"_coil8_outer_solid",            // name
-				    innerRadius + coilFullThickness*0.5+lengthSafety, // inner radius
-				    innerRadius + coilFullThickness,      // outer radius
-				    length*0.5-2*lengthSafety,    // length
-				    -CLHEP::pi/2.-coilOuterFullAngle*0.5,     // start angle
-				    coilOuterFullAngle);                   // sweep angle
+  // only need one pole & coil per beampipe which can be repeatedly placed
+  // just inner radius can be different depending on active beam pipe hence two
+  G4VSolid*        coil1     = NULL;
+  G4VSolid*        coil2     = NULL;
+  G4LogicalVolume* coil1LV   = NULL;
+  G4LogicalVolume* coil2LV   = NULL;
 
+  // pole solids are the ones immediately after coilN clockwise
+  G4VSolid*        pole1     = NULL;
+  G4VSolid*        pole2     = NULL;
+  G4LogicalVolume* pole1LV   = NULL;
+  G4LogicalVolume* pole2LV   = NULL;
 
+  // collar solid - only need one as can union with itself but offset
+  G4VSolid*        collar    = NULL;
+  G4VSolid*        collars   = NULL; // union of two collars
+  G4LogicalVolume* collarsLV = NULL;
 
-
-  // coil logical volumes
-  G4Material* nbti = BDSMaterials::Instance()->GetMaterial("NbTi.1");
-  G4LogicalVolume* coil1InnerLV =  new G4LogicalVolume(coil1Inner,
-						       nbti,
-						       name+"_coil1_Inner_lv");
-  G4LogicalVolume* coil1OuterLV =  new G4LogicalVolume(coil1Outer,
-						       nbti,
-						       name+"_coil1_Inner_lv");
-  G4LogicalVolume* coil2InnerLV =  new G4LogicalVolume(coil2Inner,
-						       nbti,
-						       name+"_coil2_Inner_lv");
-  G4LogicalVolume* coil2OuterLV =  new G4LogicalVolume(coil2Outer,
-						       nbti,
-						       name+"_coil2_Inner_lv");
-  G4LogicalVolume* coil3InnerLV =  new G4LogicalVolume(coil3Inner,
-						       nbti,
-						       name+"_coil3_Inner_lv");
-  G4LogicalVolume* coil3OuterLV =  new G4LogicalVolume(coil3Outer,
-						       nbti,
-						       name+"_coil3_Inner_lv");
-  G4LogicalVolume* coil4InnerLV =  new G4LogicalVolume(coil4Inner,
-						       nbti,
-						       name+"_coil4_Inner_lv");
-  G4LogicalVolume* coil4OuterLV =  new G4LogicalVolume(coil4Outer,
-						       nbti,
-						       name+"_coil4_Inner_lv");
-  G4LogicalVolume* coil5InnerLV =  new G4LogicalVolume(coil5Inner,
-						       nbti,
-						       name+"_coil5_Inner_lv");
-  G4LogicalVolume* coil5OuterLV =  new G4LogicalVolume(coil5Outer,
-						       nbti,
-						       name+"_coil5_Inner_lv");
-  G4LogicalVolume* coil6InnerLV =  new G4LogicalVolume(coil6Inner,
-						       nbti,
-						       name+"_coil6_Inner_lv");
-  G4LogicalVolume* coil6OuterLV =  new G4LogicalVolume(coil6Outer,
-						       nbti,
-						       name+"_coil6_Inner_lv");
-  G4LogicalVolume* coil7InnerLV =  new G4LogicalVolume(coil7Inner,
-						       nbti,
-						       name+"_coil7_Inner_lv");
-  G4LogicalVolume* coil7OuterLV =  new G4LogicalVolume(coil7Outer,
-						       nbti,
-						       name+"_coil7_Inner_lv");
-  G4LogicalVolume* coil8InnerLV =  new G4LogicalVolume(coil8Inner,
-						       nbti,
-						       name+"_coil8_Inner_lv");
-  G4LogicalVolume* coil8OuterLV =  new G4LogicalVolume(coil8Outer,
-						       nbti,
-						       name+"_coil8_Inner_lv");
-
-  // coil visualisation
-  G4VisAttributes* coilVisAtt = new G4VisAttributes(G4Colour(0.9, 0.75, 0.)); //gold-ish colour
+  // materials and visual attributes
+  G4Material* nbti              = BDSMaterials::Instance()->GetMaterial("NbTi.1");
+  G4Material* iron              = BDSMaterials::Instance()->GetMaterial("iron");
+  G4Material* stainlesssteel    = BDSMaterials::Instance()->GetMaterial("stainlesssteel");
+  G4VisAttributes* coilVisAtt   = new G4VisAttributes(G4Colour(0.9, 0.75, 0.)); //gold-ish colour
   coilVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
-  coil1InnerLV->SetVisAttributes(coilVisAtt);
-  coil1OuterLV->SetVisAttributes(coilVisAtt);
-  coil2InnerLV->SetVisAttributes(coilVisAtt);
-  coil2OuterLV->SetVisAttributes(coilVisAtt);
-  coil3InnerLV->SetVisAttributes(coilVisAtt);
-  coil3OuterLV->SetVisAttributes(coilVisAtt);
-  coil4InnerLV->SetVisAttributes(coilVisAtt);
-  coil4OuterLV->SetVisAttributes(coilVisAtt);
-  coil5InnerLV->SetVisAttributes(coilVisAtt);
-  coil5OuterLV->SetVisAttributes(coilVisAtt);
-  coil6InnerLV->SetVisAttributes(coilVisAtt);
-  coil6OuterLV->SetVisAttributes(coilVisAtt);
-  coil7InnerLV->SetVisAttributes(coilVisAtt);
-  coil7OuterLV->SetVisAttributes(coilVisAtt);
-  coil8InnerLV->SetVisAttributes(coilVisAtt);
-  coil8OuterLV->SetVisAttributes(coilVisAtt);
+  G4VisAttributes* collarVisAtt = new G4VisAttributes(G4Colour(0.9, 0.9, 0.9)); // grey
+  collarVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
 
-  allLogicalVolumes.push_back(coil1InnerLV); // register locally
-  allLogicalVolumes.push_back(coil1OuterLV);
-  allLogicalVolumes.push_back(coil2InnerLV);
-  allLogicalVolumes.push_back(coil2OuterLV);
-  allLogicalVolumes.push_back(coil3InnerLV);
-  allLogicalVolumes.push_back(coil3OuterLV);
-  allLogicalVolumes.push_back(coil4InnerLV);
-  allLogicalVolumes.push_back(coil4OuterLV);
-  allLogicalVolumes.push_back(coil5InnerLV);
-  allLogicalVolumes.push_back(coil5OuterLV);
-  allLogicalVolumes.push_back(coil6InnerLV);
-  allLogicalVolumes.push_back(coil6OuterLV);
-  allLogicalVolumes.push_back(coil7InnerLV);
-  allLogicalVolumes.push_back(coil7OuterLV);
-  allLogicalVolumes.push_back(coil8InnerLV);
-  allLogicalVolumes.push_back(coil8OuterLV);
+  G4bool checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
+  
+  if (buildCoil)
+    {
+      // coil solid
+      coil1 = new G4Tubs(name+"_coil1_solid",          // name
+			 coilInnerRadius,              // inner radius
+			 coilOuterRadius,              // outer radius
+			 length*0.5-2*lengthSafety,    // z half length
+			 coilStartAngle,               // start angle
+			 coilFullAngle);               // sweep angle
+      // coil logical volumes
+      coil1LV = new G4LogicalVolume(coil1,             // solid
+				    nbti,              // material
+				    name+"_coil1_lv"); // name
+      coil1LV->SetVisAttributes(coilVisAtt);
+      allLogicalVolumes.push_back(coil1LV);
 
-  // coil placement
-  new G4PVPlacement(0,                      // rotation
-		    -dipolePosition,        // position
-		    coil1InnerLV,           // its logical volume
-		    name+"_coil1_inner_pv", // its name
-		    containerLV,            // its mother  volume
-		    false,                  // no boolean operation
-		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                      // rotation
-		    -dipolePosition,        // position
-		    coil1OuterLV,           // its logical volume
-		    name+"_coil1_outer_pv", // its name
-		    containerLV,            // its mother  volume
-		    false,                  // no boolean operation
-		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                      // rotation
-		    -dipolePosition,        // position
-		    coil2InnerLV,           // its logical volume
-		    name+"_coil2_inner_pv", // its name
-		    containerLV,            // its mother  volume
-		    false,                  // no boolean operation
-		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                      // rotation
-		    -dipolePosition,        // position
-		    coil2OuterLV,           // its logical volume
-		    name+"_coil2_outer_pv", // its name
-		    containerLV,            // its mother  volume
-		    false,                  // no boolean operation
-		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                      // rotation
-		    dipolePosition,         // position
-		    coil3InnerLV,           // its logical volume
-		    name+"_coil3_inner_pv", // its name
-		    containerLV,            // its mother  volume
-		    false,                  // no boolean operation
-		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                      // rotation
-		    dipolePosition,         // position
-		    coil3OuterLV,           // its logical volume
-		    name+"_coil3_outer_pv", // its name
-		    containerLV,            // its mother  volume
-		    false,                  // no boolean operation
-		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                      // rotation
-		    dipolePosition,         // position
-		    coil4InnerLV,           // its logical volume
-		    name+"_coil4_inner_pv", // its name
-		    containerLV,            // its mother  volume
-		    false,                  // no boolean operation
-		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                      // rotation
-		    dipolePosition,         // position
-		    coil4OuterLV,           // its logical volume
-		    name+"_coil4_outer_pv", // its name
-		    containerLV,            // its mother  volume
-		    false,                  // no boolean operation
-		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()); 
-  new G4PVPlacement(0,                      // rotation
-		    -dipolePosition,        // position
-		    coil5InnerLV,           // its logical volume
-		    name+"_coil5_inner_pv", // its name
-		    containerLV,            // its mother  volume
-		    false,                  // no boolean operation
-		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                      // rotation
-		    -dipolePosition,        // position
-		    coil5OuterLV,           // its logical volume
-		    name+"_coil5_outer_pv", // its name
-		    containerLV,            // its mother  volume
-		    false,                  // no boolean operation
-		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                      // rotation
-		    -dipolePosition,        // position
-		    coil6InnerLV,           // its logical volume
-		    name+"_coil6_inner_pv", // its name
-		    containerLV,            // its mother  volume
-		    false,                  // no boolean operation
-		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                      // rotation
-		    -dipolePosition,        // position
-		    coil6OuterLV,           // its logical volume
-		    name+"_coil6_outer_pv", // its name
-		    containerLV,            // its mother  volume
-		    false,                  // no boolean operation
-		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                      // rotation
-		    dipolePosition,         // position
-		    coil7InnerLV,           // its logical volume
-		    name+"_coil7_inner_pv", // its name
-		    containerLV,            // its mother  volume
-		    false,                  // no boolean operation
-		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                      // rotation
-		    dipolePosition,         // position
-		    coil7OuterLV,           // its logical volume
-		    name+"_coil7_outer_pv", // its name
-		    containerLV,            // its mother  volume
-		    false,                  // no boolean operation
-		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                      // rotation
-		    dipolePosition,         // position
-		    coil8InnerLV,           // its logical volume
-		    name+"_coil8_inner_pv", // its name
-		    containerLV,            // its mother  volume
-		    false,                  // no boolean operation
-		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                      // rotation
-		    dipolePosition,         // position
-		    coil8OuterLV,           // its logical volume
-		    name+"_coil8_outer_pv", // its name
-		    containerLV,            // its mother  volume
-		    false,                  // no boolean operation
-		    0, 
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()); 
+      // pole solid
+      pole1 = new G4Tubs(name+"_pole1_solid",          // name
+			 coilInnerRadius,              // inner radius
+			 coilOuterRadius,              // outer radius
+			 length*0.5 - lengthSafety,    // z half length
+			 poleStartAngle,               // start angle
+			 poleFullAngle);               // sweep angle
+      pole1LV = new G4LogicalVolume(pole1,             // solid
+				    stainlesssteel,    // material
+				    name+"_pole1_lv"); // name
+      pole1LV->SetVisAttributes(collarVisAtt);
+      allLogicalVolumes.push_back(pole1LV);
+
+      // coil placements
+      new G4PVPlacement(0,                  // rotation
+			-dipolePosition,    // position
+			coil1LV,            // logical volume
+			name + "_coil1_pv", // name
+			containerLV,        // mother volume
+			false,              // boolean operation
+			0,                  // copy number
+			checkOverlaps);
+      new G4PVPlacement(coil2rm,            // rotation
+			-dipolePosition,    // position
+			coil1LV,            // logical volume
+			name + "_coil2_pv", // name
+			containerLV,        // mother volume
+			false,              // boolean operation
+			0,                  // copy number
+			checkOverlaps);
+      new G4PVPlacement(coil3rm,            // rotation
+			-dipolePosition,    // position
+			coil1LV,            // logical volume
+			name + "_coil3_pv", // name
+			containerLV,        // mother volume
+			false,              // boolean operation
+			0,                  // copy number
+			checkOverlaps);
+      new G4PVPlacement(coil4rm,            // rotation
+			-dipolePosition,    // position
+			coil1LV,            // logical volume
+			name + "_coil4_pv", // name
+			containerLV,        // mother volume
+			false,              // boolean operation
+			0,                  // copy number
+			checkOverlaps);
+
+      // pole placements
+      new G4PVPlacement(0,                  // rotation
+			-dipolePosition,    // position
+			pole1LV,            // logical volume
+			name + "_pole1_pv", // name
+			containerLV,        // mother volume
+			false,              // boolean operation
+			0,                  // copy number
+			checkOverlaps);
+      new G4PVPlacement(coil2rm,            // rotation
+			-dipolePosition,    // position
+			pole1LV,            // logical volume
+			name + "_pole2_pv", // name
+			containerLV,        // mother volume
+			false,              // boolean operation
+			0,                  // copy number
+			checkOverlaps);
+      new G4PVPlacement(coil3rm,            // rotation
+			-dipolePosition,    // position
+			pole1LV,            // logical volume
+			name + "_pole3_pv", // name
+			containerLV,        // mother volume
+			false,              // boolean operation
+			0,                  // copy number
+			checkOverlaps);
+      new G4PVPlacement(coil4rm,            // rotation
+			-dipolePosition,    // position
+			pole1LV,            // logical volume
+			name + "_pole4_pv", // name
+			containerLV,        // mother volume
+			false,              // boolean operation
+			0,                  // copy number
+			checkOverlaps);
+    }
+  
+  // fixed coil
+  coil2   = new G4Tubs(name+"_coil2_solid",          // name
+		       coilInnerRadiusF,             // inner radius
+		       coilOuterRadius,              // outer radius
+		       length*0.5-2*lengthSafety,    // length
+		       coilStartAngle,               // start angle
+		       coilFullAngle);               // sweep angle
+  coil2LV = new G4LogicalVolume(coil1,               // solid
+				nbti,                // material
+				name+"_coil2_lv");   // name
+  coil2LV->SetVisAttributes(coilVisAtt);
+  allLogicalVolumes.push_back(coil2LV);
+  
+  // fixed pole
+  pole2   = new G4Tubs(name+"_pole2_solid",          // name
+		       coilInnerRadiusF,             // inner radius
+		       coilOuterRadius,              // outer radius
+		       length*0.5 - lengthSafety,    // z half length
+		       poleStartAngle,               // start angle
+		       poleFullAngle);               // sweep angle
+  pole2LV = new G4LogicalVolume(pole2,               // solid
+				stainlesssteel,      // material
+				name+"_pole2_lv");   // name
+  pole2LV->SetVisAttributes(collarVisAtt);
+  allLogicalVolumes.push_back(pole2LV);
+  
+  // fixed coil placements
+  new G4PVPlacement(0,                  // rotation
+		    dipolePosition,    // position
+		    coil2LV,            // logical volume
+		    name + "_coil5_pv", // name
+		    containerLV,        // mother volume
+		    false,              // boolean operation
+		    0,                  // copy number
+		    checkOverlaps);
+  new G4PVPlacement(coil2rm,            // rotation
+		    dipolePosition,    // position
+		    coil2LV,            // logical volume
+		    name + "_coil6_pv", // name
+		    containerLV,        // mother volume
+		    false,              // boolean operation
+		    0,                  // copy number
+		    checkOverlaps);
+  new G4PVPlacement(coil3rm,            // rotation
+		    dipolePosition,    // position
+		    coil2LV,            // logical volume
+		    name + "_coil7_pv", // name
+		    containerLV,        // mother volume
+		    false,              // boolean operation
+		    0,                  // copy number
+		    checkOverlaps);
+  new G4PVPlacement(coil4rm,            // rotation
+		    dipolePosition,    // position
+		    coil2LV,            // logical volume
+		    name + "_coil8_pv", // name
+		    containerLV,        // mother volume
+		    false,              // boolean operation
+		    0,                  // copy number
+		    checkOverlaps);
+  
+  // fixed pole placements
+  new G4PVPlacement(0,                  // rotation
+		    dipolePosition,    // position
+		    pole2LV,            // logical volume
+		    name + "_pole5_pv", // name
+		    containerLV,        // mother volume
+		    false,              // boolean operation
+		    0,                  // copy number
+		    checkOverlaps);
+  new G4PVPlacement(coil2rm,            // rotation
+		    dipolePosition,    // position
+		    pole2LV,            // logical volume
+		    name + "_pole6_pv", // name
+		    containerLV,        // mother volume
+		    false,              // boolean operation
+		    0,                  // copy number
+		    checkOverlaps);
+  new G4PVPlacement(coil3rm,            // rotation
+		    dipolePosition,    // position
+		    pole2LV,            // logical volume
+		    name + "_pole7_pv", // name
+		    containerLV,        // mother volume
+		    false,              // boolean operation
+		    0,                  // copy number
+		    checkOverlaps);
+  new G4PVPlacement(coil4rm,            // rotation
+		    dipolePosition,    // position
+		    pole2LV,            // logical volume
+		    name + "_pole8_pv", // name
+		    containerLV,        // mother volume
+		    false,              // boolean operation
+		    0,                  // copy number
+		    checkOverlaps);
   
   // non-magnetic collars
-  // collar pole solids
-  G4VSolid* collar1PoleTopInnerSolid    = new G4Tubs(name+"_collar1_pole_inner_top",      // name
-						     innerRadius,                         // inner radius
-						     innerRadius + coilFullThickness*0.5, // outer radius
-						     length*0.5 - 2*lengthSafety,         // length
-						     CLHEP::pi/4.-poleInnerFullAngle*0.5,// start angle
-						     poleInnerFullAngle);                  // sweep angle
-  G4VSolid* collar1PoleTopOuterSolid    = new G4Tubs(name+"_collar1_pole_outer_top",      // name
-						     innerRadius + coilFullThickness*0.5 + lengthSafety, // inner radius
-						     innerRadius + coilFullThickness,     // outer radius
-						     length*0.5 - 2*lengthSafety,         // length
-						     CLHEP::pi/4.-poleOuterFullAngle*0.5,// start angle
-						     poleOuterFullAngle);                  // sweep angle
-  G4VSolid* collar1PoleBottomInnerSolid = new G4Tubs(name+"_collar1_pole_inner_bottom",   // name
-						     innerRadius,                         // inner radius
-						     innerRadius + coilFullThickness*0.5, // outer radius
-						     length*0.5 - 2*lengthSafety,         // length
-						     CLHEP::pi*5./4.-poleInnerFullAngle*0.5,// start angle
-						     poleInnerFullAngle);                  // sweep angle						  
-  G4VSolid* collar1PoleBottomOuterSolid = new G4Tubs(name+"_collar1_pole_outer_bottom",   // name
-						     innerRadius + coilFullThickness*0.5 + lengthSafety, // inner radius
-						     innerRadius + coilFullThickness,     // outer radius
-						     length*0.5 - 2*lengthSafety,         // length
-						     CLHEP::pi*5./4.-poleOuterFullAngle*0.5,// start angle
-						     poleOuterFullAngle);                  // sweep angle  
-
-  G4VSolid* collar2PoleTopInnerSolid    = new G4Tubs(name+"_collar2_pole_inner_top",      // name
-						     innerRadius,                         // inner radius
-						     innerRadius + coilFullThickness*0.5, // outer radius
-						     0.5*length-2*lengthSafety,   // length
-						     CLHEP::pi*1./4.-poleInnerFullAngle*0.5,// start angle
-						     poleInnerFullAngle);                  // sweep angle
-  G4VSolid* collar2PoleTopOuterSolid    = new G4Tubs(name+"_collar2_pole_outer_top",      // name
-						     innerRadius + coilFullThickness*0.5 + lengthSafety, // inner radius
-						     innerRadius + coilFullThickness,     // outer radius
-						     0.5*length-2*lengthSafety,   // length
-						     CLHEP::pi*1./4.-poleOuterFullAngle*0.5,// start angle
-						     poleOuterFullAngle);                  // sweep anglel
-  G4VSolid* collar2PoleBottomInnerSolid = new G4Tubs(name+"_collar2_pole_inner_bottom",   // name
-						     innerRadius,                         // inner radius
-						     innerRadius + coilFullThickness*0.5, // outer radius
-						     0.5*length-2*lengthSafety,   // length
-						     CLHEP::pi*5./4.-poleInnerFullAngle*0.5,// start angle
-						     poleInnerFullAngle);                  // sweep angle
-  G4VSolid* collar2PoleBottomOuterSolid = new G4Tubs(name+"_collar2_pole_outer_bottom",   // name
-						     innerRadius + coilFullThickness*0.5 + lengthSafety, // inner radius
-						     innerRadius + coilFullThickness,     // outer radius
-						     0.5*length-2*lengthSafety,   // length
-						     CLHEP::pi*5./4.-poleOuterFullAngle*0.5,// start angle
-						     poleOuterFullAngle);                  // sweep angle
-
-
-  G4VSolid* collar3PoleTopInnerSolid    = new G4Tubs(name+"_collar3_pole_inner_top",      // name
-						     innerRadius,                         // inner radius
-						     innerRadius + coilFullThickness*0.5, // outer radius
-						     length*0.5 - 2*lengthSafety,         // length
-						     CLHEP::pi*3./4.-poleInnerFullAngle*0.5,// start angle
-						     poleInnerFullAngle);                  // sweep angle
-  G4VSolid* collar3PoleTopOuterSolid    = new G4Tubs(name+"_collar3_pole_outer_top",      // name
-						     innerRadius + coilFullThickness*0.5 + lengthSafety, // inner radius
-						     innerRadius + coilFullThickness,     // outer radius
-						     length*0.5 - 2*lengthSafety,         // length
-						     CLHEP::pi*3./4.-poleOuterFullAngle*0.5,// start angle
-						     poleOuterFullAngle);                  // sweep angle
-  G4VSolid* collar3PoleBottomInnerSolid = new G4Tubs(name+"_collar3_pole_inner_bottom",   // name
-						     innerRadius,                         // inner radius
-						     innerRadius + coilFullThickness*0.5, // outer radius
-						     length*0.5 - 2*lengthSafety,         // length
-						     CLHEP::pi*7./4.-poleInnerFullAngle*0.5,// start angle
-						     poleInnerFullAngle);                  // sweep angle						  
-  G4VSolid* collar3PoleBottomOuterSolid = new G4Tubs(name+"_collar3_pole_outer_bottom",   // name
-						     innerRadius + coilFullThickness*0.5 + lengthSafety, // inner radius
-						     innerRadius + coilFullThickness,     // outer radius
-						     length*0.5 - 2*lengthSafety,         // length
-						     CLHEP::pi*7./4.-poleOuterFullAngle*0.5,// start angle
-						     poleOuterFullAngle);                  // sweep angle
+  // collar pole solid
+  collar = new G4Tubs(name+"_collar_solid",        // name
+		      collarInnerRadiusF,          // inner radius
+		      collarOuterRadius,           // outer radius
+		      length*0.5 - 2*lengthSafety, // length
+		      0,                           // start angle
+		      CLHEP::twopi);               // sweep angle
+  collars = collar;
+  if (buildCollar)
+    {
+      if (collarInnerRadius == collarInnerRadiusF)
+	{
+	  // can save a solid by doing the union with the existing one if they're the same
+	  collars = new G4UnionSolid(name + "_collars_solid",  // name
+				     collar,                   // solid 1
+				     collar,                   // solid 2
+				     0,                        // rotation
+				     -2*dipolePosition);       // translation
+	}
+      else
+	{
+	  G4VSolid* collar2 = new G4Tubs(name+"_collar2_solid",      // name
+					 collarInnerRadius,          // inner radius
+					 collarOuterRadius,          // outer radius
+					 length*0.5-2*lengthSafety,  // length
+					 0,                          // starting angle
+					 CLHEP::twopi);              // angle of sweep
+	  collars = new G4UnionSolid(name + "_collars_solid", // name
+				     collar,                  // solid 1
+				     collar2,                 // solid 2
+				     0,                       // rotation
+				     -2*dipolePosition);      // translation
+	}
+    }
   
-  G4VSolid* collar4PoleTopInnerSolid    = new G4Tubs(name+"_collar4_pole_inner_top",      // name
-						     innerRadius,                         // inner radius
-						     innerRadius + coilFullThickness*0.5, // outer radius
-						     0.5*length-2*lengthSafety,   // length
-						     CLHEP::pi*3./4.-poleInnerFullAngle*0.5,// start angle
-						     poleInnerFullAngle);                  // sweep angle
-  G4VSolid* collar4PoleTopOuterSolid    = new G4Tubs(name+"_collar4_pole_outer_top",      // name
-						     innerRadius + coilFullThickness*0.5 + lengthSafety, // inner radius
-						     innerRadius + coilFullThickness,     // outer radius
-						     0.5*length-2*lengthSafety,   // length
-						     CLHEP::pi*3./4.-poleOuterFullAngle*0.5,// start angle
-						     poleOuterFullAngle);                  // sweep anglel
-  G4VSolid* collar4PoleBottomInnerSolid = new G4Tubs(name+"_collar4_pole_inner_bottom",   // name
-						     innerRadius,                         // inner radius
-						     innerRadius + coilFullThickness*0.5, // outer radius
-						     0.5*length-2*lengthSafety,   // length
-						     CLHEP::pi*7./4.-poleInnerFullAngle*0.5,// start angle
-						     poleInnerFullAngle);                  // sweep angle
-  G4VSolid* collar4PoleBottomOuterSolid = new G4Tubs(name+"_collar4_pole_outer_bottom",   // name
-						     innerRadius + coilFullThickness*0.5 + lengthSafety, // inner radius
-						     innerRadius + coilFullThickness,     // outer radius
-						     0.5*length-2*lengthSafety,   // length
-						     CLHEP::pi*7./4.-poleOuterFullAngle*0.5,// start angle
-						     poleOuterFullAngle);                  // sweep angle
-  
-  // collar pole logical volumes
-  G4LogicalVolume* collar1PoleTopInnerLV    = new G4LogicalVolume(collar1PoleTopInnerSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
-								  name+"_collar1_pole_top_inner_lv");
-  G4LogicalVolume* collar1PoleTopOuterLV    = new G4LogicalVolume(collar1PoleTopOuterSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
-								  name+"_collar1_pole_top_outer_lv");
-  G4LogicalVolume* collar1PoleBottomInnerLV = new G4LogicalVolume(collar1PoleBottomInnerSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
-								  name+"_collar1_pole_bottom_inner_lv");
-  G4LogicalVolume* collar1PoleBottomOuterLV = new G4LogicalVolume(collar1PoleBottomOuterSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
-								  name+"_collar1_pole_bottom_outer_lv");
-  G4LogicalVolume* collar2PoleTopInnerLV    = new G4LogicalVolume(collar2PoleTopInnerSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
-								  name+"_collar2_pole_top_inner_lv");
-  G4LogicalVolume* collar2PoleTopOuterLV    = new G4LogicalVolume(collar2PoleTopOuterSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
-								  name+"_collar2_pole_top_outer_lv");
-  G4LogicalVolume* collar2PoleBottomInnerLV = new G4LogicalVolume(collar2PoleBottomInnerSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
-								  name+"_collar2_pole_bottom_inner_lv");
-  G4LogicalVolume* collar2PoleBottomOuterLV = new G4LogicalVolume(collar2PoleBottomOuterSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
-								  name+"_collar2_pole_bottom_outer_lv");
+  collarsLV = new G4LogicalVolume(collars,
+				  stainlesssteel,
+				  name+"_collars_lv");
+  collarsLV->SetVisAttributes(collarVisAtt);
+  allLogicalVolumes.push_back(collarsLV); 
 
-
-  G4LogicalVolume* collar3PoleTopInnerLV    = new G4LogicalVolume(collar3PoleTopInnerSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
-								  name+"_collar3_pole_top_inner_lv");
-  G4LogicalVolume* collar3PoleTopOuterLV    = new G4LogicalVolume(collar3PoleTopOuterSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
-								  name+"_collar3_pole_top_outer_lv");
-  G4LogicalVolume* collar3PoleBottomInnerLV = new G4LogicalVolume(collar3PoleBottomInnerSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
-								  name+"_collar3_pole_bottom_inner_lv");
-  G4LogicalVolume* collar3PoleBottomOuterLV = new G4LogicalVolume(collar3PoleBottomOuterSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
-								  name+"_collar3_pole_bottom_outer_lv");
-  G4LogicalVolume* collar4PoleTopInnerLV    = new G4LogicalVolume(collar4PoleTopInnerSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
-								  name+"_collar4_pole_top_inner_lv");
-  G4LogicalVolume* collar4PoleTopOuterLV    = new G4LogicalVolume(collar4PoleTopOuterSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
-								  name+"_collar4_pole_top_outer_lv");
-  G4LogicalVolume* collar4PoleBottomInnerLV = new G4LogicalVolume(collar4PoleBottomInnerSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
-								  name+"_collar4_pole_bottom_inner_lv");
-  G4LogicalVolume* collar4PoleBottomOuterLV = new G4LogicalVolume(collar4PoleBottomOuterSolid,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
-								  name+"_collar4_pole_bottom_outer_lv");
-
-  // collar pole visualisation
-  G4VisAttributes* collarVisAtt = new G4VisAttributes(G4Colour(0.9, 0.9, 0.9));
-  collarVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
-  collar1PoleTopInnerLV->SetVisAttributes(collarVisAtt);
-  collar1PoleTopOuterLV->SetVisAttributes(collarVisAtt);
-  collar1PoleBottomInnerLV->SetVisAttributes(collarVisAtt);
-  collar1PoleBottomOuterLV->SetVisAttributes(collarVisAtt);
-  collar2PoleTopInnerLV->SetVisAttributes(collarVisAtt);
-  collar2PoleTopOuterLV->SetVisAttributes(collarVisAtt);
-  collar2PoleBottomInnerLV->SetVisAttributes(collarVisAtt);
-  collar2PoleBottomOuterLV->SetVisAttributes(collarVisAtt);
-  collar3PoleTopInnerLV->SetVisAttributes(collarVisAtt);
-  collar3PoleTopOuterLV->SetVisAttributes(collarVisAtt);
-  collar3PoleBottomInnerLV->SetVisAttributes(collarVisAtt);
-  collar3PoleBottomOuterLV->SetVisAttributes(collarVisAtt);
-  collar4PoleTopInnerLV->SetVisAttributes(collarVisAtt);
-  collar4PoleTopOuterLV->SetVisAttributes(collarVisAtt);
-  collar4PoleBottomInnerLV->SetVisAttributes(collarVisAtt);
-  collar4PoleBottomOuterLV->SetVisAttributes(collarVisAtt);
-  
-  allLogicalVolumes.push_back(collar1PoleTopInnerLV); // register locally
-  allLogicalVolumes.push_back(collar1PoleTopOuterLV);
-  allLogicalVolumes.push_back(collar1PoleBottomInnerLV);
-  allLogicalVolumes.push_back(collar1PoleBottomOuterLV);
-  allLogicalVolumes.push_back(collar2PoleTopInnerLV);
-  allLogicalVolumes.push_back(collar2PoleTopOuterLV);
-  allLogicalVolumes.push_back(collar2PoleBottomInnerLV);
-  allLogicalVolumes.push_back(collar2PoleBottomOuterLV);
-  
-  // collar pole placement
-  new G4PVPlacement(0,                          // rotation
-		    -dipolePosition,            // position
-		    collar1PoleTopInnerLV,      // its logical volume
-		    name+"_collar1_pole_top_inner_pv",// its name
-		    containerLV,                // its mother  volume
-		    false,                      // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                          // rotation
-		    -dipolePosition,            // position
-		    collar1PoleTopOuterLV,      // its logical volume
-		    name+"_collar1_pole_top_inner_pv",// its name
-		    containerLV,                // its mother  volume
-		    false,                      // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                          // rotation
-		    -dipolePosition,            // position
-		    collar1PoleBottomInnerLV,   // its logical volume
-		    name+"_collar1_pole_top_inner_pv",// its name
-		    containerLV,                // its mother  volume
-		    false,                      // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                          // rotation
-		    -dipolePosition,            // position
-		    collar1PoleBottomOuterLV,   // its logical volume
-		    name+"_collar1_pole_top_inner_pv",// its name
-		    containerLV,                // its mother  volume
-		    false,                      // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                          // rotation
-		    dipolePosition,             // position
-		    collar2PoleTopInnerLV,      // its logical volume
-		    name+"_collar2_pole_top_inner_pv",// its name
-		    containerLV,                // its mother  volume
-		    false,                      // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                          // rotation
-		    dipolePosition,             // position
-		    collar2PoleTopOuterLV,      // its logical volume
-		    name+"_collar2_pole_top_inner_pv",// its name
-		    containerLV,                // its mother  volume
-		    false,                      // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                          // rotation
-		    dipolePosition,             // position
-		    collar2PoleBottomInnerLV,   // its logical volume
-		    name+"_collar2_pole_top_inner_pv",// its name
-		    containerLV,                // its mother  volume
-		    false,                      // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                          // rotation
-		    dipolePosition,             // position
-		    collar2PoleBottomOuterLV,   // its logical volume
-		    name+"_collar2_pole_top_inner_pv",// its name
-		    containerLV,                // its mother  volume
-		    false,                      // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-
-  new G4PVPlacement(0,                          // rotation
-		    -dipolePosition,            // position
-		    collar3PoleTopInnerLV,      // its logical volume
-		    name+"_collar3_pole_top_inner_pv",// its name
-		    containerLV,                // its mother  volume
-		    false,                      // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                          // rotation
-		    -dipolePosition,            // position
-		    collar3PoleTopOuterLV,      // its logical volume
-		    name+"_collar3_pole_top_inner_pv",// its name
-		    containerLV,                // its mother  volume
-		    false,                      // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                          // rotation
-		    -dipolePosition,            // position
-		    collar3PoleBottomInnerLV,   // its logical volume
-		    name+"_collar3_pole_top_inner_pv",// its name
-		    containerLV,                // its mother  volume
-		    false,                      // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                          // rotation
-		    -dipolePosition,            // position
-		    collar3PoleBottomOuterLV,   // its logical volume
-		    name+"_collar3_pole_top_inner_pv",// its name
-		    containerLV,                // its mother  volume
-		    false,                      // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                          // rotation
-		    dipolePosition,             // position
-		    collar4PoleTopInnerLV,      // its logical volume
-		    name+"_collar4_pole_top_inner_pv",// its name
-		    containerLV,                // its mother  volume
-		    false,                      // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                          // rotation
-		    dipolePosition,             // position
-		    collar4PoleTopOuterLV,      // its logical volume
-		    name+"_collar4_pole_top_inner_pv",// its name
-		    containerLV,                // its mother  volume
-		    false,                      // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                          // rotation
-		    dipolePosition,             // position
-		    collar4PoleBottomInnerLV,   // its logical volume
-		    name+"_collar4_pole_top_inner_pv",// its name
-		    containerLV,                // its mother  volume
-		    false,                      // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  new G4PVPlacement(0,                          // rotation
-		    dipolePosition,             // position
-		    collar4PoleBottomOuterLV,   // its logical volume
-		    name+"_collar4_pole_top_inner_pv",// its name
-		    containerLV,                // its mother  volume
-		    false,                      // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  
-  // outer annulus of collar - two as slightly different lengths
-  G4VSolid* collarAnnulus1 = new G4Tubs(name+"_collar1_annulus_solid",      // name
-					coilOuterRadius + lengthSafety,     // inner radius
-					collarOuterRadius - lengthSafety,   // outer radius
-					length*0.5-2*lengthSafety,          // length
-					0,                                  // starting angle
-					CLHEP::twopi);                       // angle of sweep
-  
-  G4VSolid* collarAnnulus2 = new G4Tubs(name+"_collar_annulus_solid",       // name
-					coilOuterRadius + lengthSafety,     // inner radius
-					collarOuterRadius - lengthSafety,   // outer radius
-					0.5*length-2*lengthSafety,  // length
-					0,                                  // starting angle
-					CLHEP::twopi);                       // angle of sweep
+  new G4PVPlacement(0,                  // rotation
+		    dipolePosition,     // position
+		    collarsLV,          // its logical volume
+		    name+"_collars_pv", // its name
+		    containerLV,        // its mother  volume
+		    false,              // no boolean operation
+		    0,                  // copy number
+		    checkOverlaps);
 
   // prepare a solid to cut a hole in the outer yoke volume (can just use one twice)
-  // can't use the collarAnnuli as they're not solid - need them to be solid
-  G4VSolid* collarSubtractionCylinder = new G4Tubs(name+"_collar_subtraction_solid",    // name
-						   0,                                   // inner radius
-						   collarOuterRadius,                   // outer radius
-						   length,                              // double length for unambiguous subtraction
-						   0,                                   // starting angle
-						   CLHEP::twopi);                       // sweep angle
+  // can't use the existing collar solids as they're not solid - need them to be solid
+  G4VSolid* collarSubtractionCylinder = new G4Tubs(name+"_collar_subtraction_solid",  // name
+						   0,                                 // inner radius
+						   collarOuterRadius + lengthSafety,  // outer radius
+						   length,                            // double length for unambiguous subtraction
+						   0,                                 // starting angle
+						   CLHEP::twopi);                     // sweep angle
 
   G4VSolid* collarSubtractionCylinders = new G4UnionSolid(name + "_collar_subtraction_cylinders", // name
 							  collarSubtractionCylinder,              // solid1
 							  collarSubtractionCylinder,              // solid2 (here = solid1)
 							  0,                                      // rotation
 							  2*dipolePosition);                      // translation
-
-  // made of two rings, but they overlap slightly in the middle
-  G4VSolid* collarsAnnuliTogether = new G4UnionSolid(name+"_collars_annulus_solid",
-						     collarAnnulus1,
-						     collarAnnulus2,
-						     0,
-						     2*dipolePosition);
-
-  G4LogicalVolume *collarsAnnuliTogetherLV =  new G4LogicalVolume(collarsAnnuliTogether,
-								  BDSMaterials::Instance()->GetMaterial("stainlesssteel"),
-								  name+"_collars_annuli_lv");
-
-  // collar annulus visualisation attributes
-  collarsAnnuliTogetherLV->SetVisAttributes(collarVisAtt);
-  collarsAnnuliTogetherLV->SetVisAttributes(collarVisAtt);
-
-  allLogicalVolumes.push_back(collarsAnnuliTogetherLV); // register locally
-  
-  new G4PVPlacement(0,                        // rotation
-		    -dipolePosition,          // position
-		    collarsAnnuliTogetherLV,  // its logical volume
-		    name+"_collars_annlui_pv",// its name
-		    containerLV,              // its mother  volume
-		    false,                    // no boolean operation
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());  
  
   // outer iron yoke
   G4VSolid* yokeCylinder = new G4Tubs(name+"_yoke_cylinder_solid",     // name
 				      0.,                              // inner radius
-				      boxSize*0.5,                     // outer radius
-				      0.5*length-2*lengthSafety,// length
+				      yokeOuterRadius,                 // outer radius
+				      0.5*length-2*lengthSafety,       // length
 				      0,                               // starting angle
-				      CLHEP::twopi * CLHEP::rad);       // sweep angle
+				      CLHEP::twopi * CLHEP::rad);      // sweep angle
 
   G4VSolid* yoke = new G4SubtractionSolid(name+"_yoke_solid",             // name
 					  yokeCylinder,                   // from this
 					  collarSubtractionCylinders,     // subtract this
 					  0,
 					  -dipolePosition);               
-
   
   G4LogicalVolume* yokeLV = new G4LogicalVolume(yoke,
-						BDSMaterials::Instance()->GetMaterial("Iron"),
+						iron,
 						name+"_yoke_lv");
 
   // yoke visualisation
@@ -1620,8 +1274,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
+		    checkOverlaps);
 
   G4String defaultMaterialName = BDSGlobalConstants::Instance()->GetBeamPipeMaterialName();
   G4Material* beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
@@ -1632,9 +1285,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
   BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipe(BDSBeamPipeType::lhcdetailed,
 									 name,
 									 length-2*lengthSafety,
-									 2.402*CLHEP::cm,   // aper1
-									 1.828*CLHEP::cm,   // aper2
-									 2.402*CLHEP::cm,   // aper3
+									 2.202*CLHEP::cm,   // aper1
+									 1.714*CLHEP::cm,   // aper2
+									 2.202*CLHEP::cm,   // aper3
 									 0,                 // aper4
 									 vacuumMaterial,    // vacuum material
 									 1*CLHEP::mm,       // beampipeThickness
@@ -1649,8 +1302,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
+		    checkOverlaps);
   
   // visual attributes for container
   if (BDSExecOptions::Instance()->GetVisDebug())
@@ -1667,16 +1319,14 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
     userLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
     userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
     
-    for (std::vector<G4LogicalVolume*>::iterator i = allLogicalVolumes.begin(); i != allLogicalVolumes.end(); ++i) {
-      (*i)->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
-      (*i)->SetUserLimits(userLimits);
-    }
+    for (std::vector<G4LogicalVolume*>::iterator i = allLogicalVolumes.begin(); i != allLogicalVolumes.end(); ++i)
+      {(*i)->SetUserLimits(userLimits);}
   }
 #endif
     
   // record extents
   // container radius is the same for all methods as all cylindrical
-  G4double containerRadius = boxSize + lengthSafety;
+  G4double containerRadius = yokeOuterRadius;
   // massShift defined at very beginning of this function
   std::pair<double,double> extX = std::make_pair(-containerRadius+massShift,containerRadius+massShift); 
   std::pair<double,double> extY = std::make_pair(-containerRadius,containerRadius);
