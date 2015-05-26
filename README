@@ -18,7 +18,7 @@ The official mailing list:
 
 Written by G.A. Blair
 
-Maintained and developed by
+Currently maintained and developed by
 Stewart Boogert       <stewart.boogert@rhul.ac.uk>
 Lawrence Deacon       <ucaplde@ucl.ac.uk>
 Hector Garcia Morales <hector.garciamorales@rhul.ac.uk>
@@ -89,9 +89,11 @@ Directories
 
 parser/          : gmad parser
 examples/        : sample lattices
-docs/            : documentation
+docs/            : old documentation
+manual/          : new documentation
 include/         : header files
 src/             : source files
 cmake/           : cmake configuration files
 test/            : various test libraries
 utils/           : various "useful" scripts
+vis/             : default visualisation files
