@@ -53,6 +53,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  // note this geometry does not respond to outerDiameter - it's hard coded to the
+  // design of a sector bend for the lhc.  TestInputParameters requires it though
+  // to be the same check for the other methods
 
   // test input parameters - set global options as default if not specified
   TestInputParameters(beamPipe,outerDiameter,outerMaterial);
@@ -61,14 +64,14 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   // aper1 = 4.404cm / 2
   // aper2 = 3.428cm / 2
   // aper3 = 4.404cm / 2
-  // containerRadius -> 24.599mm
+  // containerRadius -> 24.599mm for lhc beampipe with these parameters
 
   // geometrical constants
   // [1] LHC design report - Chapter 7, fig 7.3
   // [2] LHC design report - Chapter 7, fig 7.1
   G4double beamPipeAxisSeparation = 194.00*CLHEP::mm;             // at 1.9K
   G4double massShift              = 0.5 * beamPipeAxisSeparation; // central shift to geometry
-  G4double collarBoxHalfHeight    = 60*CLHEP::mm;                 // [1] by visual inspection
+  //G4double collarBoxHalfHeight    = 60*CLHEP::mm;                 // [1] by visual inspection
   G4double collarBoxHalfWidth     = 22*CLHEP::mm;                 // fits between outer coils
 
   // radii
@@ -82,6 +85,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   G4double collarInnerRadius      = outerCoilOuterRadius + lengthSafety;
   G4double collarInnerRadiusF     = outerCoilOuterRadius + lengthSafety;
   G4double collarOuterRadius      = 101.18*CLHEP::mm;                    // [1] - at 293K but don't have 1.9K measurement
+  G4double yokeOuterRadius        = 570.0*0.5*CLHEP::mm;                 // [2] - at 293K but don't have 1.9K measurement
 
   // angular setup of coils
   // these angles were calculated by visually analysing the coil layout graph in [2]
@@ -101,6 +105,8 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
     {outerCoilInnerRadius = containerInnerRadius + lengthSafety;}
   if (innerCoilInnerRadius > outerCoilOuterRadius)
     {buildOuterCoil = false;}
+  // this still uses the boxHalfWidth but just as good as the collar annulli overlap slightly in the middle
+  // and this will protect against this
   if ((innerCoilInnerRadius > collarInnerRadius) && (innerCoilInnerRadius < (massShift - collarBoxHalfWidth)))
     {collarInnerRadius = containerInnerRadius + lengthSafety;}
   if (innerCoilInnerRadius > (massShift - collarBoxHalfWidth))
@@ -112,50 +118,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
       G4cerr << "Please consider using a different magnet geometry for this particular magnet" << G4endl;
       exit(1);
     }
-  
-  
-  /*
-  G4double massShift          = 97*CLHEP::mm; // at 1.9K
-  G4double beamPipeAxisSeparation       = 2*massShift;
-  G4double coilFullThickness  = 118.6/2.0 - 56.0/2.0; // 41.3mm for two rows of coils, mm by default (for dipole)
-  G4double innerCoilThickness = 0.5*coilFullThickness;
-  G4double outerCoilThickness = 0.5*coilFullThickness;
-  G4double collarThickness    = 0.9*coilFullThickness;
-  
-  // mass to the right or to the left
-  G4ThreeVector dipolePosition;
-
-  // inner radius of container cut out for active beam pipe
-  G4double containerInnerRadius = beamPipe->GetContainerRadius() + 1*CLHEP::um;
-
-  
-
-  // radial geometrical parameters for the coils & collars  
-  G4double innerCoilInnerRadius = containerInnerRadius + 1*CLHEP::um;
-  G4double innerCoilOuterRadius = innerCoilInnerRadius + innerCoilThickness;
-  G4double outerCoilInnerRadius = innerCoilOuterRadius + 1*CLHEP::um;
-  G4double outerCoilOuterRadius = outerCoilInnerRadius + outerCoilThickness;
-  G4double collarInnerRadius    = outerCoilOuterRadius + 1*CLHEP::um;
-  G4double collarOuterRadius    = collarInnerRadius    + collarThickness;
-
-  
-  // ensure that the collars touch each other - set minimum for outer radius
-  if (collarOuterRadius < massShift)
-    {collarOuterRadius = 1.1*massShift;}
-
-  if (collarInnerRadius > (2*massShift - collarOuterRadius))
-    {// this means there may be overlapping volumes..
-      // would be even more complicated to be tolerant of this and optionally build coils to
-      // fit it all in
-      // this will be used primarily for lhc models within certain bounds - just print warning
-
-      std::string theException = "\nWarning the beam pipe is sufficiently large to cause ";
-      theException += "  overlapping volumes with the  non-magnetic collars - tracking problems";
-      theException += " will occur for secondaires in this magnet. consider using another";
-      theException += " type of magnet geometry.\n";
-      G4cerr << theException << G4endl;
-    }
-  */
 
   G4ThreeVector dipolePosition; // translation of whole assembly relative to centre of active pipe
   if (isLeftOffset)
@@ -175,10 +137,10 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 #endif
     }
 
-    // calculate some geometrical parameters
-  G4int orientation   = BDS::CalculateOrientation(angle);
-  G4double zcomponent = cos(fabs(angle*0.5)); // calculate components of normal vectors (in the end mag(normal) = 1)
-  G4double xcomponent = sin(fabs(angle*0.5)); // note full angle here as it's the exit angle
+  // calculate some geometrical parameters
+  G4int orientation        = BDS::CalculateOrientation(angle);
+  G4double zcomponent      = cos(fabs(angle*0.5)); // calculate components of normal vectors (in the end mag(normal) = 1)
+  G4double xcomponent      = sin(fabs(angle*0.5)); // note full angle here as it's the exit angle
   G4ThreeVector inputface  = G4ThreeVector(-orientation*xcomponent, 0.0, -1.0*zcomponent); //-1 as pointing down in z for normal
   G4ThreeVector outputface = G4ThreeVector(-orientation*xcomponent, 0.0, zcomponent);   // no output face angle
 
@@ -196,7 +158,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
       //have to do subtraction as cuttubs aperture is central and the beampipe (active one) is not here
       G4VSolid* containerSolidOuter = new G4CutTubs(name + "_contiainer_solid_outer",  // name
 						    0,                           // inner radius
-						    outerDiameter*0.5,           // outer radius
+						    yokeOuterRadius,             // outer radius
 						    centralHalfLength,           // half length
 						    0,                           // rotation start angle
 						    CLHEP::twopi,                // rotation finish angle
@@ -219,7 +181,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
       //container is similar but slightly wider
       G4VSolid* containerSolidOuter = new G4CutTubs(name + "_contiainer_solid_outer",  // name
 						    0,                                 // inner radius
-						    outerDiameter*0.5,                 // outer radius
+						    yokeOuterRadius,                   // outer radius
 						    centralHalfLength,                 // half length
 						    0,                                 // rotation start angle
 						    CLHEP::twopi,                      // rotation finish angle
@@ -661,7 +623,8 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 
   /*
   // This part seems to not produce any overlapping volumes and no errors but won't render
-  // in anything but the raytracer.
+  // in anything but the raytracer. Requires commented out collarBoxHalfHeight at top of this
+  // method to be uncommented, plus new subtraction solid for yoke will need to written
   // ommitted for now
   
   G4VSolid* collarBox      = new G4Box(name + "_collar_box_solid",           // name
@@ -699,7 +662,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   allLogicalVolumes.push_back(collarsLV); // register locally
   
   new G4PVPlacement(0,                  // rotation
-		    G4ThreeVector(-massShift,0,0),     // position
+		    dipolePosition,     // position
 		    collarsLV,          // its logical volume
 		    name+"_collars_pv", // its name
 		    containerLV,        // its mother  volume
@@ -710,7 +673,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   // outer iron yoke
   G4VSolid* yokeCylinder = new G4CutTubs(name+"_yoke_cylinder_solid",     // name
 					 0.,                              // inner radius
-					 outerDiameter*0.5 - lengthSafety,// outer radius
+					 yokeOuterRadius - lengthSafety,  // outer radius
 					 centralHalfLength-2*lengthSafety,// length
 					 0,                               // starting angle
 					 CLHEP::twopi,                    // sweep angle
@@ -749,7 +712,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   allLogicalVolumes.push_back(yokeLV); // register locally
 
   // yoke placement
-  
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    G4ThreeVector(0,0,0),         // position
 		    yokeLV,                       // lv to be placed
@@ -814,7 +776,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   
   // record extents
   // container radius is the same for all methods as all cylindrical
-  G4double containerRadius = outerDiameter;
+  G4double containerRadius = yokeOuterRadius;
   // massShift defined at very beginning of this function
   std::pair<double,double> extX = std::make_pair(-containerRadius+massShift,containerRadius+massShift); 
   std::pair<double,double> extY = std::make_pair(-containerRadius,containerRadius);
@@ -1883,31 +1845,18 @@ void BDSMagnetOuterFactoryLHC::CreateCylindricalSolids(G4String     name,
     }
 }
 
-void BDSMagnetOuterFactoryLHC::TestInputParameters(BDSBeamPipe* beamPipe,
-						   G4double&    boxSize,
+void BDSMagnetOuterFactoryLHC::TestInputParameters(BDSBeamPipe* /*beamPipe*/,
+						   G4double&    outerDiameter,
 						   G4Material*& outerMaterial)// reference to a pointer
 {
   //function arguments by reference to they can be modified in place
   //check outer material is something
   if (!outerMaterial)
-    {outerMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());}
+    {outerMaterial = BDSMaterials::Instance()->GetMaterial("stainlesssteel");}
 
-  // ensure box size is bigger than the beampipe
-  if (beamPipe->ContainerIsCircular()) {
-    // if it's circular, just check radius
-    if (boxSize < 2*(beamPipe->GetContainerRadius()) )
-      {boxSize = 2*(beamPipe->GetContainerRadius()) + 1*CLHEP::mm;}
-  } else {
-    // it's not circular - have a look at extents
-    // +ve - -ve
-    G4double extentX = beamPipe->GetExtentX().second - beamPipe->GetExtentX().first;
-    G4double extentY = beamPipe->GetExtentY().second - beamPipe->GetExtentY().first;
-    if ( (boxSize < extentX) || (boxSize < extentY) ) {
-      // boxSize isn't sufficient for range in x or y
-      boxSize = std::max(extentX,extentY) + 1*CLHEP::mm;
-    }
-  }
-    
+  // ensure outerDiameter is > outerCollarDiameter - hard coded as specific to the lhc design
+  if (outerDiameter < 202*CLHEP::mm )
+    {outerDiameter = 202*CLHEP::mm;}
 }
 
 /// only the solids are unique, once we have those, the logical volumes and placement in the
