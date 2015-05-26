@@ -1,9 +1,3 @@
-// Geometry Interface Class
-// ========================
-//
-// A class of functions to output Geant4/Mokka/BDSIM parameters for elements
-// - to include geometry, optics, fields, etc.
-
 #include "BDSGlobalConstants.hh"
 #include "BDSGeometryInterface.hh"
 #include "BDSAcceleratorComponent.hh"

@@ -573,9 +573,9 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	    {SetGFlashOnVolume(*sensIt);}
 	}
       
-#ifdef BDSDEBUG
-      G4cout<<"ALIGNING COMPONENT..."<< G4endl;
-#endif	
+      // #ifdef BDSDEBUG
+      //       G4cout<<"ALIGNING COMPONENT..."<< G4endl;
+      // #endif	
       // Align Component - most cases does nothing. 
       // Currently only used for BDSElement	
       /*

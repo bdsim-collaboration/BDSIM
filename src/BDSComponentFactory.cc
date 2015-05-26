@@ -20,7 +20,6 @@
 #include "BDSTransform3D.hh"
 #include "BDSElement.hh"
 #include "BDSCollimator.hh"
-//#include "BDSRealisticCollimator.hh"
 #include "BDSScintillatorScreen.hh"
 #include "BDSAwakeScintillatorScreen.hh"
 #include "BDSTerminator.hh"
@@ -294,6 +293,9 @@ void BDSComponentFactory::addCommonProperties(BDSAcceleratorComponent* component
   component->SetK1(_element.k1);
   component->SetK2(_element.k2);
   component->SetK3(_element.k3);
+
+  // offsets and tilt
+  component->SetTilt(_element.tilt);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSampler(){

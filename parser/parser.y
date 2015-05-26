@@ -9,9 +9,10 @@
   extern int line_num;
   extern char* yyfilename;
 
-  const int ECHO_GRAMMAR = 0; // print grammar rule expansion (for debugging)
-  const int VERBOSE = 0; // print more output
-  const int INTERACTIVE = 0; // print output of commands (like in interactive mode)
+  const int PEDANTIC = 0; ///> strict checking, exits when element or parameter is not known
+  const int ECHO_GRAMMAR = 0; ///> print grammar rule expansion (for debugging)
+  const int VERBOSE = 0; ///> print more output
+  const int INTERACTIVE = 0; ///> print output of commands (like in interactive mode)
   /* for more debug with parser:
      1) set yydebug to 1 in parser.tab.c (needs to be reset as this file gets overwritten from time to time!) 
      2) add %debug below
@@ -371,8 +372,8 @@ decl : VARIABLE ':' marker
 	     std::list<struct Element>::iterator iterEnd = element_list.end();
 	     if(it == iterEnd)
 	       {
-		 //if(VERBOSE) 
 		 printf("type %s has not been defined\n",$1->name);
+		 if (PEDANTIC) exit(1);
 	       }
 	     else
 	       {
@@ -485,8 +486,8 @@ extension : VARIABLE ',' parameters
 		  std::list<struct Element>::iterator iterEnd = element_list.end();
 		  if(it == iterEnd)
 		    {
-		      //		      if(VERBOSE) 
 		      printf("type %s has not been defined\n",$1->name);
+		      if (PEDANTIC) exit(1);
 		      $$ = _NONE;
 		    }
 		  else
@@ -509,8 +510,8 @@ newinstance : VARIABLE
 		  std::list<struct Element>::iterator iterEnd = element_list.end();
 		  if(it == iterEnd)
 		    {
-		      // if(VERBOSE)
 		      printf("type %s has not been defined\n",$1->name);
+		      if (PEDANTIC) exit(1);
 		      $$ = _NONE;
 		    }
 		  else
@@ -632,9 +633,10 @@ parameters:
                   if(!strcmp($1->name,"tscint")) { params.tscint = $3; params.tscintset = 1;} // thickness for a scintillator screen 
 		  else
                   if(!strcmp($1->name,"twindow")) { params.twindow = $3; params.twindowset = 1;} // thickness for a scintillator screen window 
-		    else
-                  if(VERBOSE) printf("Warning : unknown parameter %s\n",$1->name);
-		  
+		  else {
+		    printf("Warning : unknown parameter %s\n",$1->name);
+		    if (PEDANTIC) exit(1);
+		  }
 		}
 	    }
            | VARIABLE '=' vecexpr ',' parameters
@@ -693,8 +695,8 @@ parameters:
                          delete[] $3->data;
                        }
 		    else {
-		      //                  if(VERBOSE)
 		      printf("Warning : unknown parameter %s\n",$1->name);
+		      if (PEDANTIC) exit(1);
 		    }
 		 }
 	     }         
@@ -754,8 +756,8 @@ parameters:
                          delete[] $3->data;
                        }
 		     else {
-		       //                  if(VERBOSE)
 		       printf("Warning : unknown parameter %s\n",$1->name);
+		       if (PEDANTIC) exit(1);
 		     }
 		 }         
 	     }
@@ -858,8 +860,8 @@ parameters:
 		    else
 		  if(!strcmp($1->name,"waveLength")) {params.waveLength = $3; params.waveLengthset = 1;}
 		  else {
-		      //                  if(VERBOSE)
-		      printf("Warning : unknown parameter %s\n",$1->name);
+		    printf("Warning : unknown parameter %s\n",$1->name);
+		    if (PEDANTIC) exit(1);
 		  }
 		}
 	    }
@@ -959,8 +961,8 @@ parameters:
                          params.state = $3;
                        }
 		    else {
-		      //                  if(VERBOSE)
 		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
+		      if (PEDANTIC) exit(1);
 		    }
 		 }
 	     }         
@@ -1066,8 +1068,8 @@ parameters:
                          params.state = $3;
                        }
 		    else {
-		      //                  if(VERBOSE)
 		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
+		      if (PEDANTIC) exit(1);
 		    }
 		 }         
 	     }
@@ -1550,7 +1552,6 @@ aexpr :  NUMBER               { $$ = $1;                         }
 	     }
 	   else
 	     {
-	       // if(VERBOSE) 
 	       printf("vector dimensions do not match");
 	       exit(1);
 	       // $$ = _undefined;
@@ -2052,7 +2053,6 @@ csample_options : VARIABLE '=' aexpr
 			if( !strcmp($1->name,"r") ) params.r = $3;
 			else if (!strcmp($1->name,"l") ) params.l = $3;
 			else {
-			  //                  if(VERBOSE)
 			  printf("Warning : CSAMPLER: unknown parameter : \"%s\"\n",$1->name);
 			  exit(1);
 			}
@@ -2075,7 +2075,6 @@ csample_options : VARIABLE '=' aexpr
 			if( !strcmp($1->name,"r") ) params.r = $3;
 			else if (!strcmp($1->name,"l") ) params.l = $3;
 			else {
-			  //                  if(VERBOSE)
 			  printf("Warning : CSAMPLER: unknown parameter : \"%s\"\n",$1->name);
 			  exit(1);
 			}
@@ -2108,7 +2107,6 @@ gas_options : VARIABLE '=' aexpr
 			if( !strcmp($1->name,"r") ) params.r = $3;
 			else if (!strcmp($1->name,"l") ) params.l = $3;
 			else {
-			  //                  if(VERBOSE)
 			  printf("Warning : GAS: unknown parameter : \"%s\"\n",$1->name);
 			  exit(1);
 			}
@@ -2136,7 +2134,6 @@ gas_options : VARIABLE '=' aexpr
 			if( !strcmp($1->name,"r") ) params.r = $3;
 			else if (!strcmp($1->name,"l") ) params.l = $3;
 			else {
-			  //                  if(VERBOSE)
 			  printf("Warning : GAS: unknown parameter : \"%s\"\n",$1->name);
 			  exit(1);
 			}
