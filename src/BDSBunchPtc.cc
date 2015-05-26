@@ -108,7 +108,7 @@ void BDSBunchPtc::LoadPtcFile() {
     this->ptcData.push_back(values);
   }
 
-    // set number of available rays in options 
+  // set number of available rays in options
   this->nRays = this->ptcData.size();
   BDSGlobalConstants::Instance()->SetNumberToGenerate(this->nRays);
 
