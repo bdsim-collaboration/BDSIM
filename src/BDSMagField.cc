@@ -5,8 +5,9 @@
 #include "globals.hh"
 #include "BDSMagField.hh"
 #include "BDSExecOptions.hh"
+#include "BDSDebug.hh"
 
-BDSMagField::BDSMagField():rotation(NULL)
+BDSMagField::BDSMagField():rotation(NULL), _isPrepared(false)
 {
 }
 
@@ -56,6 +57,14 @@ void BDSMagField::GetFieldValue(const G4double[4],G4double *Bfield ) const
   Bfield[0] = 0;
   Bfield[1] = 0;
   Bfield[2] = 0;
+}
+
+void BDSMagField::checkPrepared() const{
+  //Field must be prepared!
+  if(!_isPrepared){
+    G4String exceptionString = __METHOD_NAME__ + "- field has not been prepared. Rotation not set. Aborting.";
+    G4Exception(exceptionString.c_str(), "-1", FatalErrorInArgument, "");   
+  }
 }
 
 void BDSMagField::Prepare(G4VPhysicalVolume*)

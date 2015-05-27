@@ -125,15 +125,6 @@ void BDSElement::BuildFieldAndStepper(){
 }
 */
 
-// creates a field mesh in the reference frame of a physical volume
-// from  b-field map value list 
-// has to be called after the component is placed in the geometry
-void BDSElement::PrepareField(G4VPhysicalVolume *referenceVolume)
-{
-  if(itsMagField!=NULL) {
-    itsMagField->Prepare(referenceVolume);
-  }
-}
 
 // Rotates and positions the marker volume before it is placed in
 // BDSDetectorConstruction. It aligns the marker volume so that the

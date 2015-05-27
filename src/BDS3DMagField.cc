@@ -4,11 +4,14 @@
 #include "BDSGlobalConstants.hh"
 #include "BDS3DMagField.hh"
 #include "BDSDebug.hh"
+#include <boost/progress.hpp>
+#include "BDSProgressDisplay.hh"
+#include "BDSProgressBar.hh"
 
 BDS3DMagField::BDS3DMagField( const char* filename, double zOffset ) 
   :fZoffset(zOffset),invertX(false),invertY(false),invertZ(false)
 {    
-
+  
 
   _lenUnit= CLHEP::cm;
   _fieldUnit= CLHEP::tesla; 
@@ -36,6 +39,7 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
 	 << nx << " " << ny << " " << nz << " ] "
 	 << G4endl;
 
+  
   // Set up storage space for table
   xField.resize( nx );
   yField.resize( nx );
@@ -59,11 +63,18 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
     file.getline(buffer,256);
   } while ( buffer[1]!='0');
   
+  //Set up progress display
+  // 
+  double ndis = static_cast<double>(nx);
+  BDSProgressBar* progDis = new BDSProgressBar(ndis);
+  //  boost::progress_display* progDis = new boost::progress_display(ndis,std::cout);
+  double inc = 1;
   // Read in the data
   double xval=0.0,yval=0.0,zval=0.0,bx,by,bz;
   //  double permeability; // Not used in this example.
   for (ix=0; ix<nx; ix++) {
-    for (iy=0; iy<ny; iy++) {
+    //    G4cout << progDis->count() << " " << progDis->maxCount() << G4endl;
+     for (iy=0; iy<ny; iy++) {
       for (iz=0; iz<nz; iz++) {
         file >> xval >> yval >> zval >> bx >> by >> bz;
 #ifdef BDSDEBUG
@@ -79,6 +90,7 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
         zField[ix][iy][iz] = bz * _fieldUnit;
       }
     }
+     progDis->increment(inc);
   }
   file.close();
 
@@ -124,6 +136,9 @@ void BDS3DMagField::GetFieldValue(const double point[4],
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+
+  checkPrepared();
+
   G4ThreeVector local;
 
   local[0] = point[0] + translation[0];
@@ -257,6 +272,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
 }
 
 void BDS3DMagField::Prepare(G4VPhysicalVolume *referenceVolume){
+  _isPrepared=true;
   const G4RotationMatrix* Rot= referenceVolume->GetFrameRotation();
   const G4ThreeVector Trans=referenceVolume->GetFrameTranslation();
   SetOriginRotation(*Rot);

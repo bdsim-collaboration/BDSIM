@@ -48,7 +48,7 @@ LogVolCountMap* LogVolCount = new LogVolCountMap();
 
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 LogVolMap* LogVol = new LogVolMap();
-#define BDSDEBUG 1
+
 BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4String& aName,
 						  G4double aLength, 
@@ -377,10 +377,17 @@ void BDSAcceleratorComponent::BuildTunnel(){
 #endif
 }
 
-void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)
-{//do nothing by default
-  return;
+void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume *referenceVolume)
+{
+  // creates a field mesh in the reference frame of a physical volume
+  // from  b-field map value list 
+  // has to be called after the component is placed in the geometry
+  if(itsMagField!=NULL) {
+    itsMagField->Prepare(referenceVolume);
+  } 
 }
+
+
 
 void BDSAcceleratorComponent::CalculateLengths(){
 #ifdef BDSDEBUG

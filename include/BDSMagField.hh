@@ -54,6 +54,9 @@ private:
   G4String _bFile;
   G4String _bFormat;
   void ParseBMapFormatAndFile();
+protected:
+  void checkPrepared() const;
+  G4bool _isPrepared;
 };
 
 

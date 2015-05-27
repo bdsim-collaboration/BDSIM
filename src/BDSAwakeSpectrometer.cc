@@ -395,6 +395,7 @@ void BDSAwakeSpectrometer::Build(){
       //	BuildTunnel();
       //      }
       AddSensitiveVolume(itsMarkerLogicalVolume);
+      BuildMagnet();
       BuildFieldAndStepper();
 }
 

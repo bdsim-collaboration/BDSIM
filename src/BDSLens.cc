@@ -16,21 +16,18 @@
 BDSLens::BDSLens (G4String name, G4double diameter, G4double rho, G4double centreThickness):
 _name(name+"_Lens"), _diameter(diameter), _rho(rho), _centreThickness(centreThickness)
 {
-  G4cout << __METHOD_NAME__ << G4endl;
   build();
 }
 
 
 void BDSLens::visAtt()
 {
-  G4cout << __METHOD_NAME__ << G4endl;
   _visAtt=new G4VisAttributes(G4Colour(0.5,0.8,0.5,0.3));
   _visAtt->SetForceSolid(true);
   _log->SetVisAttributes(_visAtt);
 }
 
 void BDSLens::build(){
-  G4cout << __METHOD_NAME__ << G4endl;
   G4Tubs* tube = new G4Tubs(_name+"_tempTube", _diameter, _rho,_rho,0,CLHEP::twopi*CLHEP::radian);
   G4SubtractionSolid* sideA = new G4SubtractionSolid(_name+"_sideA",new G4Orb(_name+"_tempOrbA",_rho),tube);
   G4SubtractionSolid* sideB = new G4SubtractionSolid(_name+"_sideB",new G4Orb(_name+"_tempOrbB",_rho),tube);
@@ -49,12 +46,10 @@ void BDSLens::build(){
 }
 
 G4String BDSLens::name(){
-  G4cout << __METHOD_NAME__ << G4endl;
   return _name;
 }
 
 G4LogicalVolume* BDSLens::log(){
-  G4cout << __METHOD_NAME__ << G4endl;
   return _log;
 }
 

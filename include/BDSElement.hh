@@ -31,9 +31,6 @@ public:
              G4double bpRad, G4double outR, G4String aTunnelMaterial="", G4double tunnelRadius=0., G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(), G4String aTunnelCavityMaterial="Air");
   ~BDSElement();
 
-  // creates a field mesh in global coordinates in case it is given by map
-  virtual void PrepareField(G4VPhysicalVolume *referenceVolume);
-
   void AlignComponent(G4ThreeVector& TargetPos, 
 		      G4RotationMatrix *TargetRot,
 		      G4RotationMatrix& globalRotation,

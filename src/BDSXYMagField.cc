@@ -80,6 +80,7 @@ G4int BDSXYMagField::ReadFile(G4String fname)
 // create a field mesh in the "world" coordinates from list of field values
 void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 {
+  _isPrepared=true;
 #ifdef BDSDEBUG
   G4cout<<"BDSXYMagField:: create XY field mesh"<<G4endl;
 #endif
@@ -209,6 +210,9 @@ void BDSXYMagField::Prepare(G4VPhysicalVolume *referenceVolume)
 
 void BDSXYMagField::GetFieldValue(const G4double Point[4], G4double *Bfield ) const
 {
+  //Field must be prepared!
+  checkPrepared();
+
   G4double bx=0., by=0.;
 #if BDSDEBUG
   G4double bz=0.;
