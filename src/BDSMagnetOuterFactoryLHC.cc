@@ -1088,7 +1088,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
 		       length*0.5-2*lengthSafety,    // length
 		       coilStartAngle,               // start angle
 		       coilFullAngle);               // sweep angle
-  coil2LV = new G4LogicalVolume(coil1,               // solid
+  coil2LV = new G4LogicalVolume(coil2,               // solid
 				nbti,                // material
 				name+"_coil2_lv");   // name
   coil2LV->SetVisAttributes(coilVisAtt);
