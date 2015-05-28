@@ -26,5 +26,7 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*        containerSolidIn,
   extentY(extentYIn),
   extentZ(extentZIn),
   placementOffset(placementOffsetIn)
-{;}
+{
+  RegisterLogicalVolume(containerLVIn);
+}
 
