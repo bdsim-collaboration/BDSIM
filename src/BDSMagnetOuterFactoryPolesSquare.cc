@@ -198,7 +198,6 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
 				 outerMaterial,
 				 name + "_yoke_lv");
   yokeLV->SetVisAttributes(outerVisAttr);
-  yokeLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
 
   // container
   G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
@@ -276,11 +275,12 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4Stri
 										  outerMaterial);
 
   outer->RegisterLogicalVolumes(poleLVs);
+  outer->RegisterLogicalVolume(yokeLV);
 
   // sensitive volumes
-  outer->RegisterSensitiveVolume(yokeLV);
   outer->RegisterSensitiveVolumes(poleLVs);
-
+  outer->RegisterSensitiveVolume(yokeLV);
+  
   return outer;
 }
   

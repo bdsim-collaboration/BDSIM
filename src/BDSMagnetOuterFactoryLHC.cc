@@ -198,8 +198,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
 						     emptyMaterial,
 						     name + "_container_lv");
-
-  allLogicalVolumes.push_back(containerLV); //register it locally
     
   // coil solids
   G4VSolid*        coil1Inner   = NULL;
@@ -794,7 +792,11 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   outer->RegisterLogicalVolumes(allLogicalVolumes);
 
   // copy sensitive volumes if they exist
+  outer->RegisterSensitiveVolumes(allLogicalVolumes);
   outer->RegisterSensitiveVolumes(secondBP->GetAllSensitiveVolumes());
+
+  // allLogicalVolumes is a local variable and goes out of scope so doesn't
+  // need to be emptied or reset here
   
   return outer;
 }
@@ -949,8 +951,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
   G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
 						     emptyMaterial,
 						     name + "_container_lv");
-
-  allLogicalVolumes.push_back(containerLV); //register it locally
 
   // coil solids
   // only need one pole & coil per beampipe which can be repeatedly placed
@@ -1576,8 +1576,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CommonFinalConstructor(G4String 
 							 containerLV,
 							 extX, extY, extZ);
   // REGISTER all lvs
-  outer->RegisterLogicalVolume(outerLV); //using geometry component base class method
-  outer->RegisterLogicalVolume(containerLV);
+  outer->RegisterLogicalVolume(yokeLV); //using geometry component base class method
   
   return outer;
 }

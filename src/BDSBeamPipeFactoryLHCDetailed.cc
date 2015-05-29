@@ -365,19 +365,14 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
   // build the BDSBeamPipe instance and return it
   BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerRadius);
 
-  // REGISTER private lvs
-  aPipe->RegisterLogicalVolume(copperSkinLV);
+  // REGISTER private lvs (only ones not done by base class)
   aPipe->RegisterLogicalVolume(screenLV);
   aPipe->RegisterLogicalVolume(coolingPipeLV);
-  aPipe->RegisterLogicalVolume(beamPipeLV);
-  aPipe->RegisterLogicalVolume(containerLV);
   aPipe->RegisterLogicalVolume(copperSkinLV);
 
   // register sensitive volumes
   aPipe->RegisterSensitiveVolume(screenLV);
   aPipe->RegisterSensitiveVolume(coolingPipeLV);
-  aPipe->RegisterSensitiveVolume(beamPipeLV);
-  aPipe->RegisterSensitiveVolume(containerLV);
   aPipe->RegisterSensitiveVolume(copperSkinLV);
   
   return aPipe;
