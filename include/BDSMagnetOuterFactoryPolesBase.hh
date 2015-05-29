@@ -124,17 +124,6 @@ public:
 					     );
   
 protected:
-  //BDSMagnetOuterFactoryPolesBase(); //private constructor as singleton
-  //static BDSMagnetOuterFactoryPoles* _instance;
-
-  G4double         lengthSafety;
-  G4VSolid*        poleSolid; /// solid for an individual pole that will be placed multiple times
-  G4VSolid*        yokeSolid; /// solid for outer part that connects all poles
-  G4VSolid*        containerSolid;
-  G4LogicalVolume* poleLV;
-  G4LogicalVolume* yokeLV;
-  G4LogicalVolume* containerLV;
-
   // geometry parameters
   /// The fraction of the distance from the beam pipe to the outerDiameter/2 that each pole
   /// will take - always < 1
@@ -159,7 +148,8 @@ protected:
 
   /// Empty containers for next use - this class is never deleted so can't rely on scope
   virtual void CleanUp();
-  
+
+  /// Calculate the length of the pole and yoke radii based on the design
   virtual void CalculatePoleAndYoke(G4double     outerDiameter,
 				    BDSBeamPipe* beamPipe,
 				    G4double     order);
@@ -201,7 +191,16 @@ protected:
 			   G4double&    boxSizeIn,
 			   G4Material*& outerMaterialIn);
 
-
+  /// Kicker constructor - only difference between h and vkick is the 90 degree rotation
+  /// If it isn't vertical, then it's a horizontal kicker
+  virtual BDSGeometryComponent* KickerConstructor(G4String     name,
+						  G4double     length,
+						  G4double     angle,
+						  BDSBeamPipe* beamPipe,
+						  G4double     outerDiameter,
+						  G4Material*  outerMaterial,
+						  G4bool       isVertical);
+  
 };
 
 #endif

@@ -1,8 +1,12 @@
 #include "BDSGeometryComponent.hh"
+
+#include "BDSDebug.hh"
+
 #include "globals.hh"              // geant4 globals / types
 #include "G4VSolid.hh"
 #include "G4LogicalVolume.hh"
 #include <utility>                 // for std::pair
+#include <vector>
 
 BDSGeometryComponent::BDSGeometryComponent(G4VSolid*        containerSolidIn,
 					   G4LogicalVolume* containerLVIn):
@@ -26,5 +30,70 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*        containerSolidIn,
   extentY(extentYIn),
   extentZ(extentZIn),
   placementOffset(placementOffsetIn)
-{;}
+{
+  RegisterLogicalVolume(containerLVIn);
+}
 
+void BDSGeometryComponent::RegisterLogicalVolume(G4LogicalVolume* logicalVolume)
+{
+  // only register it if it doesn't exist already
+  // note search the vector each time something is added is quite computationally expensive
+  // but will protect against resetting sensitivity and possibly seg faults by doulby registered
+  // logical volumes.  Also, the number of volumes should be < 20 (at maximum) and is only done
+  // once at construction time so not as bad as it could be.
+  if (std::find(allLogicalVolumes.begin(), allLogicalVolumes.end(), logicalVolume) != allLogicalVolumes.end())
+	   {
+	     allLogicalVolumes.push_back(logicalVolume);
+#ifdef BDSDEBUG
+	     G4cout << __METHOD_NAME__ << "warning - logical volume \""
+		    << logicalVolume->GetName()
+		    << "\" alreay in this geometry component \"";
+	     if (containerSolid)
+	       {G4cout << containerSolid->GetName();}
+	     else
+	       {G4cout << " INVALID CONTAINER ";}
+	     G4cout << "\"" << G4endl;
+#endif
+	   }
+}
+
+void BDSGeometryComponent::RegisterLogicalVolumes(std::vector<G4LogicalVolume*> logicalVolumes)
+{
+  std::vector<G4LogicalVolume*>::iterator it = logicalVolumes.begin();
+  for (; it != logicalVolumes.end(); ++it)
+    {
+      RegisterLogicalVolume(*it);
+    }
+}
+
+void BDSGeometryComponent::RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume)
+{
+  // only register it if it doesn't exist already
+  // note search the vector each time something is added is quite computationally expensive
+  // but will protect against resetting sensitivity and possibly seg faults by doulby registered
+  // logical volumes.  Also, the number of volumes should be < 20 (at maximum) and is only done
+  // once at construction time so not as bad as it could be.
+  if (std::find(allSensitiveVolumes.begin(), allSensitiveVolumes.end(), sensitiveVolume) == allSensitiveVolumes.end())
+	   {
+	     allSensitiveVolumes.push_back(sensitiveVolume);
+#ifdef BDSDEBUG
+	     G4cout << __METHOD_NAME__ << "warning - sensitive volume \""
+		    << sensitiveVolume->GetName()
+		    << "\" alreay in this geometry component \"";
+	     if (containerSolid)
+	       {G4cout << containerSolid->GetName();}
+	     else
+	       {G4cout << " INVALID CONTAINER ";}
+	     G4cout << "\"" << G4endl;
+#endif
+	   }
+}
+
+void BDSGeometryComponent::RegisterSensitiveVolumes(std::vector<G4LogicalVolume*> sensitiveVolumes)
+{
+  std::vector<G4LogicalVolume*>::iterator it = sensitiveVolumes.begin();
+  for (; it != sensitiveVolumes.end(); ++it)
+    {
+      RegisterSensitiveVolume(*it);
+    }
+}

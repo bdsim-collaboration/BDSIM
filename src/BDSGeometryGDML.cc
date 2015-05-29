@@ -27,11 +27,9 @@ void BDSGeometryGDML::Construct(G4LogicalVolume *marker){
 
   G4VisAttributes* VisAtt = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
   VisAtt->SetVisibility(false);
-  VisAtt->SetForceSolid(true);
 
   G4VisAttributes* VisAtt2 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
   VisAtt2->SetVisibility(false);
-  VisAtt2->SetForceSolid(true);
 
     for (int i=0; i<topvol->GetNoDaughters(); i++){
     topvol->GetDaughter(i)->GetLogicalVolume()->SetVisAttributes(VisAtt);

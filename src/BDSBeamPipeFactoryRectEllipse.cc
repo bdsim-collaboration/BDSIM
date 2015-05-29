@@ -218,13 +218,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CommonFinalConstruction(G4String    
   std::pair<double,double> extZ = std::make_pair(-lengthIn*0.5,lengthIn*0.5);
   
   // build the BDSBeamPipe instance and return it
-  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerWidthIn);
-
-  // register sensitive volumes
-  aPipe->RegisterSensitiveVolume(beamPipeLV);
-  aPipe->RegisterSensitiveVolume(containerLV);
-
-  return aPipe;
+  return BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerWidthIn);
 }
 
 /// the angled ones have degeneracy in the geant4 solids they used so we can avoid code duplication

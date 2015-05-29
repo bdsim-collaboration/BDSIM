@@ -57,7 +57,7 @@ BDSMultipole::BDSMultipole(BDSMagnetType      type,
 			  "",             //tunnel material name
 			  "",             //outer material name
 			  0,              //angle
-			  0,0,0,          // ???
+			  0,0,0,          //offset
 			  tunnelInfo.aper1,
 			  tunnelInfo.tunnelOffsetX),
   itsType(type),itsInnerIronRadius(0), beamPipeType(info.beamPipeType),

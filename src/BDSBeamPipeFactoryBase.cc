@@ -19,6 +19,8 @@
 BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
 {
   lengthSafety              = BDSGlobalConstants::Instance()->GetLengthSafety();
+  checkOverlaps             = BDSGlobalConstants::Instance()->GetCheckOverlaps();
+  maxStepFactor             = 0.5; // fraction of length for maximum step size
   nSegmentsPerCircle        = 50;
   CleanUp();
 }
@@ -128,17 +130,15 @@ void BDSBeamPipeFactoryBase::SetVisAttributes()
   // beampipe
   G4VisAttributes* pipeVisAttr = new G4VisAttributes(G4Color(0.4,0.4,0.4));
   pipeVisAttr->SetVisibility(true);
-  pipeVisAttr->SetForceSolid(true);
   pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   beamPipeLV->SetVisAttributes(pipeVisAttr);
   // vacuum
   vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
   // container
-  if (BDSExecOptions::Instance()->GetVisDebug()) {
-    containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-  } else {
-    containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-  }
+  if (BDSExecOptions::Instance()->GetVisDebug())
+    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
+  else
+    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
 }
 
 G4UserLimits* BDSBeamPipeFactoryBase::SetUserLimits(G4double lengthIn)
@@ -149,7 +149,6 @@ G4UserLimits* BDSBeamPipeFactoryBase::SetUserLimits(G4double lengthIn)
   // USER LIMITS
   // set user limits based on bdsim user specified parameters
   G4UserLimits* beamPipeUserLimits = new G4UserLimits("beampipe_cuts");
-  G4double maxStepFactor = 0.5; // fraction of length for maximum step size
   beamPipeUserLimits->SetMaxAllowedStep( lengthIn * maxStepFactor );
   beamPipeUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   beamPipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
@@ -176,8 +175,7 @@ void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
+		    checkOverlaps);               // whether to check overlaps
   
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    (G4ThreeVector)0,             // position
@@ -186,8 +184,7 @@ void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
+		    checkOverlaps);               // whether to check overlaps
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(std::pair<double,double> extX,
@@ -203,11 +200,9 @@ BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(std::pair<d
   // REGISTER all lvs
   aPipe->RegisterLogicalVolume(vacuumLV); //using geometry component base class method
   aPipe->RegisterLogicalVolume(beamPipeLV);
-  aPipe->RegisterLogicalVolume(containerLV);
 
   // register sensitive volumes
   aPipe->RegisterSensitiveVolume(beamPipeLV);
-  aPipe->RegisterSensitiveVolume(containerLV);
   
   return aPipe;
 }

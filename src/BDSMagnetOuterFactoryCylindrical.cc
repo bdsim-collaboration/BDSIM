@@ -2,6 +2,7 @@
 
 #include "BDSBeamPipe.hh"
 #include "BDSDebug.hh"
+#include "BDSExecOptions.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetColours.hh"
@@ -37,11 +38,7 @@ BDSMagnetOuterFactoryCylindrical* BDSMagnetOuterFactoryCylindrical::Instance()
 }
 
 BDSMagnetOuterFactoryCylindrical::BDSMagnetOuterFactoryCylindrical()
-{
-  lengthSafety   = BDSGlobalConstants::Instance()->GetLengthSafety();
-  outerSolid     = NULL;
-  containerSolid = NULL;
-}
+{;}
 
 BDSMagnetOuterFactoryCylindrical::~BDSMagnetOuterFactoryCylindrical()
 {
@@ -58,6 +55,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4Strin
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  // clear up variables
+  CleanUp();
+  
   // test input parameters - set global options as default if not specified
   TestInputParameters(beamPipe,boxSize,outerMaterial);
 
@@ -70,14 +70,14 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4Strin
   if (beamPipe->ContainerIsCircular())
     {
       //circular beampipe so we can simply use its radius
-      outerSolid = new G4CutTubs(name + "_outer_solid",       // name
-				 beamPipe->GetContainerRadius() + 2*lengthSafety,  // inner radius
-				 boxSize*0.5,                 // outer radius
-				 length*0.5-2*lengthSafety,   // half length
-				 0,                           // rotation start angle
-				 CLHEP::twopi,                // rotation finish angle
-				 inputface,                   // input face normal
-				 outputface);                 // output face normal
+      yokeSolid = new G4CutTubs(name + "_yoke_solid",       // name
+				beamPipe->GetContainerRadius() + 2*lengthSafety,  // inner radius
+				boxSize*0.5,                 // outer radius
+				length*0.5-2*lengthSafety,   // half length
+				0,                           // rotation start angle
+				CLHEP::twopi,                // rotation finish angle
+				inputface,                   // input face normal
+				outputface);                 // output face normal
 
       //container is similar but slightly wider and hollow (to allow placement of beampipe)
       containerSolid = new G4CutTubs(name + "_contiainer_solid",  // name
@@ -91,16 +91,16 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4Strin
     }
   else
     {
-      G4VSolid* outerSolidCylinder = new G4CutTubs(name + "_outer_solid_cylinder",  // name
-						   0,  // inner radius - for unambiguous subtraction
-						   boxSize*0.5,                 // outer radius
-						   length*0.5-2*lengthSafety,   // half length
-						   0,                           // rotation start angle
-						   CLHEP::twopi,                // rotation finish angle
-						   inputface,                   // input face normal
-						   outputface);                 // output face normal
-      outerSolid = new G4SubtractionSolid(name + "_outer_solid",
-					  outerSolidCylinder,
+      G4VSolid* yokeSolidCylinder = new G4CutTubs(name + "_yoke_solid_cylinder",  // name
+						  0,  // inner radius - for unambiguous subtraction
+						  boxSize*0.5,                 // outer radius
+						  length*0.5-2*lengthSafety,   // half length
+						  0,                           // rotation start angle
+						  CLHEP::twopi,                // rotation finish angle
+						  inputface,                   // input face normal
+						  outputface);                 // output face normal
+      yokeSolid = new G4SubtractionSolid(name + "_yoke_solid",
+					  yokeSolidCylinder,
 					  beamPipe->GetContainerSubtractionSolid());
 
       //container is similar but slightly wider
@@ -128,7 +128,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
-#endif
+#endif  
   //rectangular bends currently just make a shorter straight volume, so ignore angle for now
   CreateCylindricalSolids(name, length, beamPipe, boxSize);
   return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("rectangularbend"));
@@ -255,15 +255,18 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolids(G4String     name
 							       BDSBeamPipe* beamPipe,
 							       G4double     boxSize)
 {
+  // clear up variables
+  CleanUp();
+  
   if (beamPipe->ContainerIsCircular())
     {
       //circular beampipe so we can simply use its radius
-      outerSolid = new G4Tubs(name + "_outer_solid",       // name
-			      beamPipe->GetContainerRadius() + 2*lengthSafety,  // inner radius
-			      boxSize*0.5,                 // outer radius
-			      length*0.5-2*lengthSafety,   // half length
-			      0,                           // rotation start angle
-			      CLHEP::twopi);               // rotation finish angle
+      yokeSolid = new G4Tubs(name + "_yoke_solid",       // name
+			     beamPipe->GetContainerRadius() + 2*lengthSafety,  // inner radius
+			     boxSize*0.5,                 // outer radius
+			     length*0.5-2*lengthSafety,   // half length
+			     0,                           // rotation start angle
+			     CLHEP::twopi);               // rotation finish angle
 
       //container is similar but slightly wider and hollow (to allow placement of beampipe)
       containerSolid = new G4Tubs(name + "_contiainer_solid",  // name
@@ -275,15 +278,15 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolids(G4String     name
     }
   else
     {
-      G4VSolid* outerSolidCylinder = new G4Tubs(name + "_outer_solid_cylinder",  // name
-						0,  // inner radius - for unambiguous subtraction
-						boxSize*0.5,                 // outer radius
-						length*0.5-2*lengthSafety,   // half length
-						0,                           // rotation start angle
-						CLHEP::twopi);               // rotation finish angle
-      outerSolid = new G4SubtractionSolid(name + "_outer_solid",
-					  outerSolidCylinder,
-					  beamPipe->GetContainerSubtractionSolid());
+      G4VSolid* yokeSolidCylinder = new G4Tubs(name + "_yoke_solid_cylinder",  // name
+					       0,  // inner radius - for unambiguous subtraction
+					       boxSize*0.5,                 // outer radius
+					       length*0.5-2*lengthSafety,   // half length
+					       0,                           // rotation start angle
+					       CLHEP::twopi);               // rotation finish angle
+      yokeSolid = new G4SubtractionSolid(name + "_yoke_solid",
+					 yokeSolidCylinder,
+					 beamPipe->GetContainerSubtractionSolid());
 
       //container is similar but slightly wider
       G4VSolid* containerSolidCylinder = new G4Tubs(name + "_container_solid_cylinder", // name
@@ -338,9 +341,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G
 #endif
   
   // build the logical volumes
-  G4LogicalVolume* outerLV   = new G4LogicalVolume(outerSolid,
-						   outerMaterial,
-						   name + "_outer_lv");
+  G4LogicalVolume* yokeLV   = new G4LogicalVolume(yokeSolid,
+						  outerMaterial,
+						  name + "_yoke_lv");
 
   G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
   G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
@@ -352,25 +355,22 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G
   // outer
   G4VisAttributes* outerVisAttr = new G4VisAttributes(*colour);
   outerVisAttr->SetVisibility(true);
-  outerVisAttr->SetForceSolid(true);
-  outerVisAttr->SetForceLineSegmentsPerCircle(50);
-  outerLV->SetVisAttributes(outerVisAttr);
+  outerVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+  yokeLV->SetVisAttributes(outerVisAttr);
   // container
-#ifdef BDSDEBUG
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-#else
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-#endif
+  if (BDSExecOptions::Instance()->GetVisDebug())
+    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
+  else
+    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
 
   // USER LIMITS - set user limits based on bdsim user specified parameters
 #ifndef NOUSERLIMITS
   G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
-  G4double maxStepFactor = 0.5; // fraction of length for maximum step size
   outerUserLimits->SetMaxAllowedStep( length * maxStepFactor );
   outerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   //attach cuts to volumes
-  outerLV->SetUserLimits(outerUserLimits);
+  yokeLV->SetUserLimits(outerUserLimits);
   containerLV->SetUserLimits(outerUserLimits);
 #endif
 
@@ -379,13 +379,12 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G
   // note we don't need the pointer for anything - it's registered upon construction with g4
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    (G4ThreeVector)0,             // position
-		    outerLV,                      // lv to be placed
-		    name + "_outer_pv",           // name
+		    yokeLV,                       // lv to be placed
+		    name + "_yoke_pv",            // name
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
+		    checkOverlaps); // whether to check overlaps
 
   // record extents
   // container radius is the same for all methods as all cylindrical
@@ -399,11 +398,10 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G
 							 containerLV,
 							 extX, extY, extZ);
   // REGISTER all lvs
-  outer->RegisterLogicalVolume(outerLV); //using geometry component base class method
-  outer->RegisterLogicalVolume(containerLV);
+  outer->RegisterLogicalVolume(yokeLV); //using geometry component base class method
 
   // sensitive volumes
-  outer->RegisterSensitiveVolume(outerLV);
+  outer->RegisterSensitiveVolume(yokeLV);
   
   return outer;
 }

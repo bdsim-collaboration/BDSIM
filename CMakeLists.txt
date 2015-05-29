@@ -225,6 +225,8 @@ if(USE_LCDD)
     message(STATUS "LCDD support ON")
 endif()
 
+# Find  GEANT4
+# with all available gui and visualisation options available
 # Try first with Geant4 built-in Config (versions 9.5 and higher should have it):
 if ($ENV{VERBOSE})
    set(Geant4_CONFIG_DEBUG TRUE)
@@ -271,51 +273,8 @@ if (Geant4_FOUND)
         message(STATUS "Geant4_LIBRARY_DIR: ${Geant4_LIBRARY_DIR}")
         message(STATUS "Geant4_LIBRARIES: ${Geant4_LIBRARIES}")
       endif()
-endif()
-
-if (NOT Geant4_FOUND)
-   # Module mode, should have found Geant4 already for 9.5 and newer
-   # own module for versions of Geant4 (9.4 and older), last option:
-   # ui_all and vis_all options not implemented in own FindGeant4.cmake
-
-   # MODULE keyword not defined in versions 2.6
-   if (${CMAKE_MAJOR_VERSION} GREATER 1 AND ${CMAKE_MINOR_VERSION} GREATER 7)
-      find_package(Geant4 MODULE REQUIRED ui_all vis_all)
-   else()
-      find_package(Geant4 REQUIRED ui_all vis_all)
-   endif()
-
-   # Local UseGeant4.cmake
-   set(Geant4_USE_FILE UseGeant4.cmake)
-   include(${Geant4_USE_FILE})
-   include_directories(${Geant4_INCLUDE_DIRS})
-
-   # set visualisation flags (to be fixed to automagic .. easier in Geant4 9.6)
-   # This should probably go soon
-   option(VIS_RAYTRACER "RayTracer visualisation" OFF)
-   option(VIS_RAYTRACERX "RayTracerX visualisation" OFF)
-   option(VIS_OPENGLQT "OpenGLQT visualisation" OFF)
-   option(VIS_OPENGLX "OpenGLX visualisation" OFF)
-   option(VIS_OPENINVENTOR "Open Inventor Visualisation" OFF)
-
-   set(VIS_FLAGS "-DG4VIS_USE")
-   if(VIS_RAYTRACER)
-	set(VIS_FLAGS "-DG4VIS_USE_RAYTRACER ${VIS_FLAGS}")
-   endif()
-   if(VIS_RAYTRACERX)
-	set(VIS_FLAGS "-DG4VIS_USE_RAYTRACERX ${VIS_FLAGS}")
-   endif()
-   if(VIS_OPENGLQT)
-	set(VIS_FLAGS "-DG4VIS_USE_OPENGLQT ${VIS_FLAGS}")
-   endif()
-   if(VIS_OPENGLX)
-	set(VIS_FLAGS "-DG4VIS_USE_OPENGLX ${VIS_FLAGS}")
-   endif()
-   if(VIS_OPENINVENTOR)
-	set(VIS_FLAGS "-DG4VIS_USE_OPENINVENTOR ${VIS_FLAGS}")
-   endif()
-
-   message(STATUS "Visualisation Flags: ${VIS_FLAGS}")
+elseif(Geant4_FOUND)
+      message(FATAL_ERROR "Geant4 not found. Exiting. You can help cmake by adding -DGeant4_PREFIX=<PATH>")
 endif()
 
 if (Geant4_VERSION AND NOT "${Geant4_VERSION}" MATCHES "UNKNOWN")
@@ -356,7 +315,7 @@ endif()
 
 # cmake flags
 set(CMAKE_FLAGS "${CMAKE_FLAGS} ${CLHEP_DEFINITIONS}  ${WFLAGS}")
-set(BDSIM_FLAGS "${CMAKE_FLAGS} ${VIS_FLAGS} -DCLHEP_VERSION=${CLHEP_VERSION} -DG4VERSION=${G4_MAJOR_VERSION} -DG4MINORVERSION=${G4_MINOR_VERSION} ${BDSIM_FLAGS}")
+set(BDSIM_FLAGS "${CMAKE_FLAGS} -DCLHEP_VERSION=${CLHEP_VERSION} -DG4VERSION=${G4_MAJOR_VERSION} -DG4MINORVERSION=${G4_MINOR_VERSION} ${BDSIM_FLAGS}")
 # add original flags to cmake c and c++ flags
 set(CMAKE_C_FLAGS "${CMAKE_C_ORIG_FLAGS} ${BDSIM_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_ORIG_FLAGS} ${BDSIM_FLAGS}")
@@ -442,6 +401,9 @@ bdsim_install_targets(${executables} ${libraries})
 file(GLOB headers include/*.hh parser/*.h)
 bdsim_install_headers(${headers})
 
+# Visualisation directory
+add_subdirectory(vis)
+
 # Utils directory
 add_subdirectory(utils)
 
@@ -454,3 +416,4 @@ add_subdirectory(test)
 
 # Manual
 add_subdirectory(docs)
+add_subdirectory(manual)

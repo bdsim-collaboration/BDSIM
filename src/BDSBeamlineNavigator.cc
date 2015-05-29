@@ -8,15 +8,8 @@ BDSBeamlineNavigator::BDSBeamlineNavigator():_s_total(0.0){
   _localY = new G4ThreeVector(0,1,0);
   _localZ = new G4ThreeVector(0,0,1);
 
-  _rotationLocal  = new G4RotationMatrix();
   _rotationGlobal = new G4RotationMatrix();
   _rotation       = new G4RotationMatrix();
-  
-  _position                  = new G4ThreeVector(0,0,0);
-  _positionStart             = new G4ThreeVector(0,0,0);
-  _positionEnd               = new G4ThreeVector(0,0,0);
-  _positionFromCurrentCenter = new G4ThreeVector(0,0,0);
-  _zHalfAngle                = new G4ThreeVector(0,0,0);
 
   _maximumExtentPositive = G4ThreeVector(1,1,1); //minimum world size
   _maximumExtentNegative = G4ThreeVector(1,1,1);
@@ -26,14 +19,8 @@ BDSBeamlineNavigator::~BDSBeamlineNavigator(){
   delete _localX;
   delete _localY;
   delete _localZ;
-  delete _rotationLocal;
   delete _rotationGlobal;
   delete _rotation;
-  delete _position;
-  delete _positionStart;
-  delete _positionEnd;
-  delete _positionFromCurrentCenter;
-  delete _zHalfAngle;
 
   // clear lists
   std::list<G4ThreeVector*>::iterator it = _positionList.begin();
@@ -55,8 +42,6 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  //Reset the local rotation matrix
-  *_rotationLocal = G4RotationMatrix();
   
   G4double angle  = var->GetAngle();
   G4double theta  = var->GetTheta();
@@ -72,11 +57,8 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
   
   if( var->GetType() == "transform3d"){
     _rotationGlobal->rotate(psi,_localZ);
-    _rotationLocal->rotate(psi,_localZ);
     _rotationGlobal->rotate(phi,_localY);   
-    _rotationLocal->rotate(phi,_localY);
     _rotationGlobal->rotate(theta,_localX);
-    _rotationLocal->rotate(theta,_localX);
     _localX->rotate(psi,*_localZ);
     _localY->rotate(psi,*_localZ);
     _localX->rotate(phi,*_localY);
@@ -86,19 +68,24 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
   }
   
   // define center of bended elements from the previous coordinate frame
-  _zHalfAngle->setX(_localZ->x());
-  _zHalfAngle->setY(_localZ->y());
-  _zHalfAngle->setZ(_localZ->z());
+  G4ThreeVector zHalfAngle;
+  zHalfAngle.setX(_localZ->x());
+  zHalfAngle.setY(_localZ->y());
+  zHalfAngle.setZ(_localZ->z());
   if( fabs(angle) > 1e-12 )
     {
-      _zHalfAngle->rotate(0.5*angle,*_localY);
+      zHalfAngle.rotate(0.5*angle,*_localY);
     }
   
   // target position - advance the coordinates
-  *_positionStart = (*_positionEnd);
-  *_position = (*_positionEnd) + (*_zHalfAngle) * ( length/2 );  // The target position is the centre of the component.
-  *_positionEnd = (*_position) + (*_zHalfAngle) * ( length/2 );  // The end position of the component.
-  *_positionFromCurrentCenter = (*_position) - (*_positionEnd)/2.0; //The position of the beam line component from the centre of the CURRENT beam line
+  G4ThreeVector positionStart(0,0,0);
+  if (!_positionEndList.empty()) {
+    positionStart = (*_positionEndList.back());
+  }
+
+  G4ThreeVector position = positionStart + zHalfAngle * ( length/2 );  // The target position is the centre of the component.
+  G4ThreeVector positionEnd = position + zHalfAngle * ( length/2 );  // The end position of the component.
+  G4ThreeVector positionFromCurrentCenter = position - positionEnd/2.0; //The position of the beam line component from the centre of the CURRENT beam line
   
   // rotate to the previous reference frame
   _rotation->transform(*_rotationGlobal);
@@ -126,8 +113,8 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
 
   // update extent of model for world volume definition
   // project size in global coordinates
-  G4ThreeVector thisextentpos = *_position + size.transform(*_rotationGlobal); 
-  G4ThreeVector thisextentneg = *_position - size.transform(*_rotationGlobal);
+  G4ThreeVector thisextentpos = position + size.transform(*_rotationGlobal); 
+  G4ThreeVector thisextentneg = position - size.transform(*_rotationGlobal);
   // loop over each size and compare to cumulative extent
   for (int i=0; i<3; i++)
     {
@@ -141,25 +128,31 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
   //update global s position max
   BDSGlobalConstants::Instance()->SetSMax(_s_total);
   
-  _positionList.push_back(new G4ThreeVector(*_position));
-  _positionStartList.push_back(new G4ThreeVector(*_positionStart));
-  _positionEndList.push_back(new G4ThreeVector(*_positionEnd));
-  _positionFromCurrentCenterList.push_back(new G4ThreeVector(*_positionFromCurrentCenter));
+  _positionList.push_back(new G4ThreeVector(position));
+  _positionStartList.push_back(new G4ThreeVector(positionStart));
+  _positionEndList.push_back(new G4ThreeVector(positionEnd));
+  _positionFromCurrentCenterList.push_back(new G4ThreeVector(positionFromCurrentCenter));
   _positionSList.push_back(_s_total);
   _rotationList.push_back(new G4RotationMatrix(*_rotation));
   _rotationGlobalList.push_back(new G4RotationMatrix(*_rotationGlobal));
+  // update iterators
+  _iterRotation=_rotationList.end();
+  _iterRotationGlobal=_rotationGlobalList.end();
+  _iterPosition=_positionList.end();
+  _iterPositionStart=_positionStartList.end();
+  _iterPositionEnd=_positionEndList.end();
+  _iterPositionFromCurrentCenter=_positionFromCurrentCenterList.end();
+  _iterPositionS=_positionSList.end();
+  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "finished." << G4endl;
-  print();
+  //print();
 #endif
 }
 
-
-void BDSBeamlineNavigator::print(){
-#ifdef BDSDEBUG
-  G4cout << "BDSBeamlineNavigator: _position = " << *_position << G4endl;
-  G4cout << "BDSBeamlineNavigator: _rotation = " << *_rotation << G4endl;
-#endif
+void BDSBeamlineNavigator::print()const{
+  G4cout << "BDSBeamlineNavigator: _position = " << *position() << G4endl;
+  G4cout << "BDSBeamlineNavigator: _rotation = " << *rotation() << G4endl;
 }
 
 void BDSBeamlineNavigator::first(){
@@ -186,50 +179,50 @@ void BDSBeamlineNavigator::next(){
   _iterPositionS++;
 }
 
-G4RotationMatrix* BDSBeamlineNavigator::rotation(){
+G4RotationMatrix* BDSBeamlineNavigator::rotation()const{
   return *_iterRotation;
 }
 
-G4RotationMatrix* BDSBeamlineNavigator::rotationGlobal(){
+G4RotationMatrix* BDSBeamlineNavigator::rotationGlobal()const{
   return *_iterRotationGlobal;
 }
 
-G4ThreeVector* BDSBeamlineNavigator::position(){
+G4ThreeVector* BDSBeamlineNavigator::position()const{
   return *_iterPosition;
 }
 
-G4ThreeVector* BDSBeamlineNavigator::positionStart(){
+G4ThreeVector* BDSBeamlineNavigator::positionStart()const{
   return *_iterPositionStart;
 }
 
-G4ThreeVector* BDSBeamlineNavigator::positionEnd(){
+G4ThreeVector* BDSBeamlineNavigator::positionEnd()const{
   return *_iterPositionEnd;
 }
 
-G4ThreeVector* BDSBeamlineNavigator::positionFromCurrentCenter(){
+G4ThreeVector* BDSBeamlineNavigator::positionFromCurrentCenter()const{
   return *_iterPositionFromCurrentCenter;
 }
 
-G4double BDSBeamlineNavigator::positionS(){
+G4double BDSBeamlineNavigator::positionS()const{
   return *_iterPositionS;
 }
 
-G4double BDSBeamlineNavigator::s_total(){
+G4double BDSBeamlineNavigator::s_total()const{
   return _s_total;
 }
 
-G4ThreeVector* BDSBeamlineNavigator::GetLastPosition(){
+G4ThreeVector* BDSBeamlineNavigator::GetLastPosition()const{
   return _positionEndList.back();
 }
 
-G4ThreeVector* BDSBeamlineNavigator::GetFirstPosition(){
+G4ThreeVector* BDSBeamlineNavigator::GetFirstPosition()const{
   return _positionStartList.front();
 }
 
-G4ThreeVector BDSBeamlineNavigator::GetMaximumExtentPositive(){
+G4ThreeVector BDSBeamlineNavigator::GetMaximumExtentPositive()const{
   return _maximumExtentPositive;
 }
 
-G4ThreeVector BDSBeamlineNavigator::GetMaximumExtentNegative(){
+G4ThreeVector BDSBeamlineNavigator::GetMaximumExtentNegative()const{
   return _maximumExtentNegative;
 }

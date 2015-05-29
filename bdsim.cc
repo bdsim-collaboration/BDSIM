@@ -23,7 +23,6 @@
 #ifdef G4UI_USE_TCSH
 #include "G4UItcsh.hh"
 #endif
-#include "G4GeometryManager.hh"
 
 #ifdef G4VIS_USE
 #include "G4VisExecutive.hh"
@@ -42,16 +41,8 @@
 #include <getopt.h>
 #include <signal.h>
 
-#include "BDSDetectorConstruction.hh"   
-#include "BDSEventAction.hh"
-#include "BDSPhysicsList.hh"
-#include "BDSPrimaryGeneratorAction.hh"
-#include "BDSRunAction.hh"
-#include "BDSSteppingAction.hh"
-#include "BDSStackingAction.hh"
-#include "BDSUserTrackingAction.hh"
-#include "BDSRunManager.hh"
 #include "G4EventManager.hh" // Geant4 includes
+#include "G4GeometryManager.hh"
 #include "G4TrackingManager.hh"
 #include "G4SteppingManager.hh"
 #include "G4GeometryTolerance.hh"
@@ -59,14 +50,21 @@
 
 #include "BDSBeamline.hh"
 #include "BDSBunch.hh"
+#include "BDSDetectorConstruction.hh"   
+#include "BDSEventAction.hh"
 #include "BDSGeometryInterface.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
+#include "BDSPhysicsList.hh"
+#include "BDSPrimaryGeneratorAction.hh"
+#include "BDSRunAction.hh"
+#include "BDSSteppingAction.hh"
+#include "BDSStackingAction.hh"
+#include "BDSUserTrackingAction.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
-//#ifdef USE_ROOT
-//#include "BDSScoreWriter.hh"
-//#endif
+#include "BDSRunManager.hh"
+#include "BDSUtilities.hh"
 
 #include "parser/gmad.h"  // GMAD parser
 #include "parser/options.h"
@@ -77,23 +75,6 @@ BDSOutputBase* bdsOutput=NULL;         // output interface
 //=======================================================
 
 extern Options options;
-
-void BDS_handle_aborts(int signal_number) {
-  /** 
-      Try to catch abort signals. This is not guaranteed to work.
-      Main goal is to close output stream / files.
-  */
-  // prevent recursive calling
-  static int nrOfCalls=0;
-  if (nrOfCalls>0) exit(1);
-  nrOfCalls++;
-  std::cout << "BDSIM is about to crash or was interrupted! " << std::endl;
-  std::cout << "With signal: " << strsignal(signal_number) << std::endl;
-  std::cout << "Trying to write and close output file" << std::endl;
-  std::cout << "Terminate run" << std::endl;
-  BDSRunManager::GetRunManager()->RunTermination();
-  std::cout << "Ave, Imperator, morituri te salutant!" << std::endl;
-}
 
 int main(int argc,char** argv) {
 
@@ -254,10 +235,10 @@ int main(int argc,char** argv) {
   G4cout.precision(10);
 
   // catch aborts to close output stream/file. perhaps not all are needed.
-  signal(SIGABRT, &BDS_handle_aborts); // aborts
-  signal(SIGTERM, &BDS_handle_aborts); // termination requests
-  signal(SIGSEGV, &BDS_handle_aborts); // segfaults
-  signal(SIGINT, &BDS_handle_aborts); // interrupts
+  signal(SIGABRT, &BDS::HandleAborts); // aborts
+  signal(SIGTERM, &BDS::HandleAborts); // termination requests
+  signal(SIGSEGV, &BDS::HandleAborts); // segfaults
+  signal(SIGINT,  &BDS::HandleAborts); // interrupts
   
   // Write survey file
   if(execOptions->GetOutline()) {
@@ -277,7 +258,6 @@ int main(int argc,char** argv) {
     }
   }
 
-
   if(!execOptions->GetBatch())   // Interactive mode
     {
       G4UIsession* session=0;
@@ -285,7 +265,7 @@ int main(int argc,char** argv) {
       session = new G4UIterminal(new G4UItcsh);
 #else
       session = new G4UIterminal();
-#endif    
+#endif
 
 #ifdef G4VIS_USE
 #ifdef BDSDEBUG 
@@ -306,17 +286,60 @@ int main(int argc,char** argv) {
       G4UIExecutive* session2 = new G4UIExecutive(argc, argv);
 #ifdef G4VIS_USE
       // get the pointer to the User Interface manager 
-      G4UImanager* UIManager = G4UImanager::GetUIpointer();  
-      UIManager->ApplyCommand("/control/execute " + execOptions->GetVisMacroFilename());    
+      G4UImanager* UIManager = G4UImanager::GetUIpointer();
+
+      std::string bdsimPath = BDS::GetBDSIMExecPath();
+      // difference between local build and install build:
+      std::string visPath;
+      std::string localPath = bdsimPath + "vis/vis.mac";
+      std::string installPath = bdsimPath + "../share/BDSIM/vis/vis.mac";
+	  
+      if (FILE *file = fopen(localPath.c_str(), "r")) {
+	fclose(file);
+	visPath = bdsimPath + "vis/";
+      } else if (FILE *file = fopen(installPath.c_str(), "r")) {
+	fclose(file);
+	visPath = bdsimPath + "../share/BDSIM/vis/";
+      } else {
+	G4cout << __FUNCTION__ << "> ERROR: default visualisation file could not be found!" << G4endl;
+      }
+
+      // check if visualisation file is present and readable
+      std::string visMacroFilename = execOptions->GetVisMacroFilename();
+      if (FILE *file = fopen(visMacroFilename.c_str(), "r")) {
+        fclose(file);
+      } else {
+      	// if not present use a default one (OGLSQt or DAWNFILE)
+	G4cout << __FUNCTION__ << "> WARNING: visualisation file " << visMacroFilename <<  " file not present, using default!" << G4endl;
+
+#ifdef G4VIS_USE_OPENGLQT
+	visMacroFilename = visPath + "vis.mac";
+#else
+	visMacroFilename = visPath + "dawnfile.mac";
+#endif
+      }
+      // execute visualisation file
+      UIManager->ApplyCommand("/control/execute " + visMacroFilename);
+
+      // add default gui
+      if (session2->IsGUI()) {
+	// Add icons
+	std::string iconMacroFilename = visPath + "icons.mac";
+	UIManager->ApplyCommand("/control/execute " + iconMacroFilename);
+	// add menus
+	std::string guiMacroFilename  = visPath + "gui.mac";
+	UIManager->ApplyCommand("/control/execute " + guiMacroFilename);
+	// add run icon:
+	std::string runButtonFilename = visPath + "run.png";
+	UIManager->ApplyCommand("/gui/addIcon \"Run beam on\" user_icon \"/run/beamOn 1\" " + runButtonFilename);
+      }
 #endif
       session2->SessionStart();
       delete session2;
 #endif
       delete session;
 
-#ifdef G4VIS_USE
     }
-#endif
   else           // Batch mode
     { 
       runManager->BeamOn(globalConstants->GetNumberToGenerate());

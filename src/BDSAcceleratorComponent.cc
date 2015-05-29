@@ -585,15 +585,12 @@ void BDSAcceleratorComponent::BuildTunnel()
     //
   VisAtt = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
   VisAtt->SetVisibility(true);
-  VisAtt->SetForceWireframe(true);  
   
   itsSoilTunnelLogicalVolume->SetVisAttributes(VisAtt);
   VisAtt1 = new G4VisAttributes(G4Colour(0.4, 0.4, 0.4));
   VisAtt1->SetVisibility(BDSGlobalConstants::Instance()->GetShowTunnel());
-  VisAtt1->SetForceSolid(true);
   VisAtt2 = new G4VisAttributes(G4Colour(0.0, 0.5, 0.5));
   VisAtt2->SetVisibility(false);
-  VisAtt2->SetForceSolid(true);
   itsTunnelMinusCavityLogicalVolume->SetVisAttributes(VisAtt1);
   itsMarkerLogicalVolume->SetVisAttributes(VisAtt);
   itsTunnelCavityLogicalVolume->SetVisAttributes(VisAtt2);
@@ -774,7 +771,6 @@ void BDSAcceleratorComponent::BuildGate()
   
   G4VisAttributes* VisAtt = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));
   VisAtt->SetVisibility(true);
-  VisAtt->SetForceSolid(true);
   itsGateLogicalVolume->SetVisAttributes(VisAtt);
   }
 */

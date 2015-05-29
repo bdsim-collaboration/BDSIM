@@ -69,7 +69,8 @@ public:
   G4RotationMatrix* GetRotation();
   G4ThreeVector GetPosition();
   
-  G4double GetTilt();  // component tilt 
+  void SetTilt(G4double);
+  G4double GetTilt()const;
   
   G4LogicalVolume* GetMarkerLogicalVolume() const;
 
@@ -469,7 +470,10 @@ inline G4double BDSAcceleratorComponent::GetTunnelRadius()
 inline G4double BDSAcceleratorComponent::GetTunnelOffsetX()
 {return itsTunnelOffsetX;}
 
-inline G4double BDSAcceleratorComponent::GetTilt()
+inline void BDSAcceleratorComponent::SetTilt(G4double tilt)
+{itsTilt=tilt;}
+
+inline G4double BDSAcceleratorComponent::GetTilt()const
 {return itsTilt;}
 
 inline G4LogicalVolume* BDSAcceleratorComponent::GetReadOutLogicalVolume()
