@@ -146,7 +146,7 @@ void BDSBeamlineNavigator::addComponent(BDSAcceleratorComponent* var){
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "finished." << G4endl;
-  print();
+  //print();
 #endif
 }
 
