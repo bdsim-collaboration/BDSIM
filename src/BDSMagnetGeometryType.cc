@@ -22,6 +22,10 @@ BDSMagnetGeometryType BDS::DetermineMagnetGeometryType(G4String geometryType)
     {
       // it's not a valid key
       G4cout << __METHOD_NAME__ << "\"" << geometryType << "\" is not a valid geometry type" << G4endl;
+      G4cout << "Available geometry types are:" << G4endl;
+      std::map<G4String, BDSMagnetGeometryType>::iterator it = types.begin();
+      for (; it != types.end(); ++it)
+	{G4cout << "\"" << (*it).first << "\"" << G4endl;}
       exit(1);
     }
 
