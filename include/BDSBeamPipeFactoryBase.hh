@@ -132,6 +132,8 @@ protected:
 
 protected:
   G4double         lengthSafety;
+  G4bool           checkOverlaps;
+  G4double         maxStepFactor;
   G4double         nSegmentsPerCircle; // for visualisation improvement
   G4VSolid*        vacuumSolid;
   G4VSolid*        beamPipeSolid;

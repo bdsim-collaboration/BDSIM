@@ -441,22 +441,20 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name) {
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    G4ThreeVector(0,0,0),         // position
 		    copperSkinLV,                 // lv to be placed
-		    name + "_copper_skin_pv",   // name
+		    name + "_copper_skin_pv",     // name
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
+		    checkOverlaps);               // whether to check overlaps
   
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    (G4ThreeVector)0,             // position
 		    screenLV,                     // lv to be placed
-		    name + "_screen_pv",        // name
+		    name + "_screen_pv",          // name
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
+		    checkOverlaps);               // whether to check overlaps
   
   G4ThreeVector* coolingPipeTopPosition    = new G4ThreeVector(0,coolingPipeYOffset,0);
   G4ThreeVector* coolingPipeBottomPosition = new G4ThreeVector(0,-coolingPipeYOffset,0);
@@ -464,12 +462,11 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name) {
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    *coolingPipeTopPosition,      // position
 		    coolingPipeLV,                // lv to be placed
-		    name + "_cooling_pipe_top_pv", // name
+		    name + "_cooling_pipe_top_pv",// name
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
+		    checkOverlaps);               // whether to check overlaps
 
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    *coolingPipeBottomPosition,   // position
@@ -478,8 +475,7 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name) {
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
+		    checkOverlaps);               // whether to check overlaps
 }
   
 /// the angled ones have degeneracy in the geant4 solids they used so we can avoid code duplication
