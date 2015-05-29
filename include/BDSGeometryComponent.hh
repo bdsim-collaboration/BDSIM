@@ -104,20 +104,8 @@ inline  void BDSGeometryComponent::SetExtentY(std::pair<G4double, G4double> exte
 inline  void BDSGeometryComponent::SetExtentZ(std::pair<G4double, G4double> extentZIn)
 {extentZ = extentZIn;}
 
-inline void BDSGeometryComponent::RegisterLogicalVolume(G4LogicalVolume* logicalVolume)
-{allLogicalVolumes.push_back(logicalVolume);}
-
-inline void BDSGeometryComponent::RegisterLogicalVolumes(std::vector<G4LogicalVolume*> logicalVolumes)
-{allLogicalVolumes.insert(allLogicalVolumes.end(), logicalVolumes.begin(), logicalVolumes.end());}
-
 inline std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllLogicalVolumes()
 {return allLogicalVolumes;}
-
-inline void BDSGeometryComponent::RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume)
-{allSensitiveVolumes.push_back(sensitiveVolume);}
-
-inline void BDSGeometryComponent::RegisterSensitiveVolumes(std::vector<G4LogicalVolume*> sensitiveVolumes)
-{allSensitiveVolumes.insert(allSensitiveVolumes.end(), sensitiveVolumes.begin(), sensitiveVolumes.end());}
 
 inline std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllSensitiveVolumes()
 {return allSensitiveVolumes;}
