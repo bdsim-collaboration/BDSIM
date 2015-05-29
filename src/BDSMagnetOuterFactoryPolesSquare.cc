@@ -1,6 +1,7 @@
 #include "BDSMagnetOuterFactoryPolesSquare.hh"
 
 #include "BDSBeamPipe.hh"
+#include "BDSExecOptions.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
@@ -34,9 +35,22 @@ BDSMagnetOuterFactoryPolesSquare* BDSMagnetOuterFactoryPolesSquare::Instance()
   return _instance;
 }
 
+BDSMagnetOuterFactoryPolesSquare::BDSMagnetOuterFactoryPolesSquare()
+{
+  CleanUp();
+}
+
 BDSMagnetOuterFactoryPolesSquare::~BDSMagnetOuterFactoryPolesSquare()
 {
   _instance = 0;
+}
+
+void BDSMagnetOuterFactoryPolesSquare::CleanUp()
+{
+  BDSMagnetOuterFactoryPolesBase::CleanUp();
+  poleRotations.clear();
+  poleSolids.clear();
+  poleLVs.clear();
 }
 
 void BDSMagnetOuterFactoryPolesSquare::CreatePoleSolid(G4String     name,
@@ -105,10 +119,10 @@ void BDSMagnetOuterFactoryPolesSquare::CreatePoleSolid(G4String     name,
       iPoleRM->rotateZ(rotationAngle); 
       // crop the singlepolesolid with the cropping box so it'll fit inside the outer square yoke
       G4IntersectionSolid* aSolid = new G4IntersectionSolid(name + "_pole_solid", // name
-								aSinglePoleSolid,
-								croppingBoxSolid,     // solid 2 - the one to be shifted
-								iPoleRM,              // rotation matrix
-								(G4ThreeVector)0);    // translation vector
+							    aSinglePoleSolid,
+							    croppingBoxSolid,     // solid 2 - the one to be shifted
+							    iPoleRM,              // rotation matrix
+							    (G4ThreeVector)0);    // translation vector
 					  
 								
       poleSolids.push_back(aSolid);
@@ -141,8 +155,8 @@ void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String     
   // poled geometry doesn't fit tightly to beampipe so can alays use a circular aperture
 
   G4VSolid* containerOuter = new G4Box(name + "_container_outer_solid", // name
-				       yokeFinishRadius*0.5,            // x half width
-				       yokeFinishRadius*0.5,            // y half width
+				       yokeFinishRadius,                // x half width
+				       yokeFinishRadius,                // y half width
 				       length*0.5);                     // x half width
 
   G4VSolid* containerInner = new G4Tubs(name + "_container_inner_solid", // name
@@ -176,7 +190,6 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
 						      outerMaterial,
 						      name + "_pole_lv");
       thisPole->SetVisAttributes(outerVisAttr);
-      thisPole->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterOnAxisSD());
       poleLVs.push_back(thisPole);
     }
 
@@ -192,17 +205,15 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
   containerLV = new G4LogicalVolume(containerSolid,
 				    emptyMaterial,
 				    name + "_container_lv");
-#ifdef BDSDEBUG
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-#else
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-#endif
+  if (BDSExecOptions::Instance()->GetVisDebug())
+    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
+  else
+    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
 
   // USER LIMITS
   // set user limits based on bdsim user specified parameters
 #ifndef NOUSERLIMITS
   G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
-  G4double maxStepFactor = 0.5; // fraction of length for maximum step size
   outerUserLimits->SetMaxAllowedStep( length * maxStepFactor );
   outerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
@@ -230,8 +241,7 @@ void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
 		    containerLV,                  // mother lv to be placed in
 		    false,                        // no boolean operation
 		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
+		    checkOverlaps);               // whether to check overlaps
   
   // pole placement
   G4double nPoles = 2*order;
@@ -249,7 +259,7 @@ void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
 			containerLV,        // mother lv to be placed in
 			false,              // no boolean operation
 			n,                  // copy number
-			BDSGlobalConstants::Instance()->GetCheckOverlaps()); // check overlaps
+			checkOverlaps);     // check overlaps
       //name + "_pole_" + printf("_%d_pv", n), // name
       }
 }
@@ -272,12 +282,5 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4Stri
   outer->RegisterSensitiveVolumes(poleLVs);
 
   return outer;
-}
-
-void BDSMagnetOuterFactoryPolesSquare::CleanUp()
-{
-  poleRotations.clear();
-  poleSolids.clear();
-  poleLVs.clear();
 }
   

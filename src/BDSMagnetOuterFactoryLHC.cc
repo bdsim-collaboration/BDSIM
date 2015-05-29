@@ -36,10 +36,7 @@
 BDSMagnetOuterFactoryLHC::BDSMagnetOuterFactoryLHC(G4bool isLeftOffsetIn):
   isLeftOffset(isLeftOffsetIn)
 {
-  lengthSafety       = BDSGlobalConstants::Instance()->GetLengthSafety();
-  nSegmentsPerCircle = 50;
-  outerSolid         = NULL;
-  containerSolid     = NULL;
+  CleanUp();
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
@@ -53,6 +50,8 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  CleanUp();
+  
   // note this geometry does not respond to outerDiameter - it's hard coded to the
   // design of a sector bend for the lhc.  TestInputParameters requires it though
   // to be the same check for the other methods
@@ -225,7 +224,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
   G4LogicalVolume* collar1PoleBottomOuterLV     = NULL;
   G4VisAttributes* collarVisAtt = new G4VisAttributes(G4Colour(0.9, 0.9, 0.9)); // grey
   collarVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
-  G4bool checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
 
   if (buildInnerCoil)
     {
@@ -677,7 +675,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 		    containerLV,        // its mother  volume
 		    false,              // no boolean operation
 		    0,                  // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());  
+		    checkOverlaps);  
   
   // outer iron yoke
   G4VSolid* yokeCylinder = new G4CutTubs(name+"_yoke_cylinder_solid",     // name
@@ -769,7 +767,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
 #ifndef NOUSERLIMITS
   if (!allLogicalVolumes.empty()) {
     G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
-    G4double maxStepFactor = 0.5; // fraction of length for maximum step size
     userLimits->SetMaxAllowedStep( length * maxStepFactor );
     userLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
     userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
@@ -812,6 +809,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  CleanUp();
   //rectangular bends currently just make a shorter straight volume, so ignore angle for now
   CreateCylindricalSolids(name, length, beamPipe, boxSize);
   return CommonFinalConstructor(name, length, boxSize, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("rectangularbend"));
@@ -827,6 +825,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  CleanUp();
 
   // test input parameters - set global options as default if not specified
   TestInputParameters(beamPipe,outerDiameter,outerMaterial);
@@ -980,8 +979,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
   coilVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   G4VisAttributes* collarVisAtt = new G4VisAttributes(G4Colour(0.9, 0.9, 0.9)); // grey
   collarVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
-
-  G4bool checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
   
   if (buildCoil)
     {
@@ -1314,7 +1311,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
 #ifndef NOUSERLIMITS
   if (!allLogicalVolumes.empty()) {
     G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
-    G4double maxStepFactor = 0.5; // fraction of length for maximum step size
     userLimits->SetMaxAllowedStep( length * maxStepFactor );
     userLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
     userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
@@ -1455,12 +1451,12 @@ void BDSMagnetOuterFactoryLHC::CreateCylindricalSolids(G4String     name,
   if (beamPipe->ContainerIsCircular())
     {
       //circular beampipe so we can simply use its radius
-      outerSolid = new G4Tubs(name + "_outer_solid",       // name
-			      beamPipe->GetContainerRadius() + 2*lengthSafety,  // inner radius
-			      boxSize*0.5,                 // outer radius
-			      length*0.5-2*lengthSafety,   // half length
-			      0,                           // rotation start angle
-			      CLHEP::twopi);               // rotation finish angle
+      yokeSolid = new G4Tubs(name + "_yoke_solid",       // name
+			     beamPipe->GetContainerRadius() + 2*lengthSafety,  // inner radius
+			     boxSize*0.5,                 // outer radius
+			     length*0.5-2*lengthSafety,   // half length
+			     0,                           // rotation start angle
+			     CLHEP::twopi);               // rotation finish angle
 
       //container is similar but slightly wider and hollow (to allow placement of beampipe)
       containerSolid = new G4Tubs(name + "_contiainer_solid",  // name
@@ -1472,16 +1468,16 @@ void BDSMagnetOuterFactoryLHC::CreateCylindricalSolids(G4String     name,
     }
   else
     {
-      G4VSolid* outerSolidCylinder = new G4Tubs(name + "_outer_solid_cylinder",  // name
-						0,  // inner radius - for unambiguous subtraction
-						boxSize*0.5,                 // outer radius
-						length*0.5-2*lengthSafety,   // half length
-						0,                           // rotation start angle
-						CLHEP::twopi);               // rotation finish angle
-      outerSolid = new G4SubtractionSolid(name + "_outer_solid",
-					  outerSolidCylinder,
-					  beamPipe->GetContainerSubtractionSolid());
-
+      G4VSolid* yokeSolidCylinder = new G4Tubs(name + "_yoke_solid_cylinder",  // name
+					       0,  // inner radius - for unambiguous subtraction
+					       boxSize*0.5,                 // outer radius
+					       length*0.5-2*lengthSafety,   // half length
+					       0,                           // rotation start angle
+					       CLHEP::twopi);               // rotation finish angle
+      yokeSolid = new G4SubtractionSolid(name + "_yoke_solid",
+					 yokeSolidCylinder,
+					 beamPipe->GetContainerSubtractionSolid());
+      
       //container is similar but slightly wider
       G4VSolid* containerSolidCylinder = new G4Tubs(name + "_container_solid_cylinder", // name
 						    0,  // inner radius - for unambiguous subtraction
@@ -1522,9 +1518,9 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CommonFinalConstructor(G4String 
 #endif
   
   // build the logical volumes
-  G4LogicalVolume* outerLV   = new G4LogicalVolume(outerSolid,
-						   outerMaterial,
-						   name + "_outer_lv");
+  G4LogicalVolume* yokeLV   = new G4LogicalVolume(yokeSolid,
+						  outerMaterial,
+						  name + "_yoke_lv");
 
   G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
   G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
@@ -1536,23 +1532,22 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CommonFinalConstructor(G4String 
   // outer
   G4VisAttributes* outerVisAttr = new G4VisAttributes(*colour);
   outerVisAttr->SetVisibility(true);
-  outerLV->SetVisAttributes(outerVisAttr);
+  yokeLV->SetVisAttributes(outerVisAttr);
   // container
-#ifdef BDSDEBUG
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-#else
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-#endif
+  // visual attributes for container
+  if (BDSExecOptions::Instance()->GetVisDebug())
+    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
+  else
+    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
 
   // USER LIMITS - set user limits based on bdsim user specified parameters
 #ifndef NOUSERLIMITS
   G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
-  G4double maxStepFactor = 0.5; // fraction of length for maximum step size
   outerUserLimits->SetMaxAllowedStep( length * maxStepFactor );
   outerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   //attach cuts to volumes
-  outerLV->SetUserLimits(outerUserLimits);
+  yokeLV->SetUserLimits(outerUserLimits);
   containerLV->SetUserLimits(outerUserLimits);
 #endif
 
@@ -1562,13 +1557,12 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CommonFinalConstructor(G4String 
   
   new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
 		    (G4ThreeVector)0,             // position
-		    outerLV,                      // lv to be placed
+		    yokeLV,                       // lv to be placed
 		    name + "_outer_pv",           // name
 		    containerLV,                  // mother lv to be place in
 		    false,                        // no boolean operation
 		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
+		    checkOverlaps);               // whether to check overlaps
   
   // record extents
   // container radius is the same for all methods as all cylindrical
