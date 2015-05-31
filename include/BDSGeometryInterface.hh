@@ -4,10 +4,8 @@
 #include "globals.hh"
 
 /** Geometry Interface Class
-//========================
-//
-// A class of functions to output Geant4/Mokka/BDSIM parameters for elements
-// - to include geometry, optics, fields, etc.
+ * @brief A class of functions to output Geant4/Mokka/BDSIM parameters for elements
+ * to include geometry, optics, fields, etc.
 */
 
 class BDSGeometryInterface
