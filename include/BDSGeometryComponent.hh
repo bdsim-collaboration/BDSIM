@@ -50,6 +50,9 @@ public:
   std::vector<G4LogicalVolume*> GetAllLogicalVolumes();
 
 protected:
+  /// Copy constructor
+  BDSGeometryComponent(BDSGeometryComponent& component);
+  
   G4VSolid*                 containerSolid;
   G4LogicalVolume*          containerLogicalVolume;
   std::pair<G4double, G4double> extentX;  //local -ve,+ve

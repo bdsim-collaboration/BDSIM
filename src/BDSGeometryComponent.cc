@@ -34,6 +34,15 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*        containerSolidIn,
   RegisterLogicalVolume(containerLVIn);
 }
 
+BDSGeometryComponent::BDSGeometryComponent(BDSGeometryComponent& component):
+  containerSolid(component.containerSolid),
+  containerLogicalVolume(component.containerLogicalVolume),
+  extentX(component.extentX),
+  extentY(component.extentY),
+  extentZ(component.extentZ),
+  placementOffset(component.placementOffset)
+{;}
+
 void BDSGeometryComponent::RegisterLogicalVolume(G4LogicalVolume* logicalVolume)
 {
   // only register it if it doesn't exist already
