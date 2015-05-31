@@ -98,17 +98,17 @@ void BDSTeleporter::SetVisAttributes()
 #endif
 }
 
-void CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
+void BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
 {
   // get position of last item in beamline
   // and then calculate necessary offset teleporter should apply
-  G4ThreeVector* lastitemposition   = thebeamline->GetLastPosition();
-  G4ThreeVector* firstitemposition  = thebeamline->GetFirstPosition();
-  G4ThreeVector  delta              = *lastitemposition/CLHEP::m - *firstitemposition/CLHEP::m;
+  G4ThreeVector lastitemposition   = thebeamline->GetLastItem()->GetPositionEnd();
+  G4ThreeVector firstitemposition  = thebeamline->GetFirstItem()->GetPositionStart();
+  G4ThreeVector  delta             = lastitemposition/CLHEP::m - firstitemposition/CLHEP::m;
 #ifdef BDSDEBUG
   G4cout << "Calculating Teleporter delta" << G4endl;
-  G4cout << "last item position  : " << *lastitemposition/CLHEP::m << G4endl;
-  G4cout << "first item position : " << *firstitemposition/CLHEP::m << G4endl;
+  G4cout << "last item position  : " << lastitemposition/CLHEP::m << G4endl;
+  G4cout << "first item position : " << firstitemposition/CLHEP::m << G4endl;
 #endif
   G4cout << "Teleport delta      : " << delta << G4endl;
   BDSGlobalConstants::Instance()->SetTeleporterDelta(delta*CLHEP::m);
@@ -124,7 +124,7 @@ void CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
 
 
 
-void AddTeleporterToEndOfBeamline(ElementList* beamline_list)
+void BDS::AddTeleporterToEndOfBeamline(ElementList* beamline_list)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << ": adding teleporter element to end of beamline" << G4endl;

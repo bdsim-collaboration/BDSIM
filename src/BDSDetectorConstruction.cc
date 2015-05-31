@@ -170,7 +170,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   ComponentPlacement();
 
 #ifdef BDSDEBUG
-  BDSBeamline::Instance()->print();
+  G4cout << BDSAcceleratorModel::Instance()->GetFlatBeamline();
 #endif
   
   // construct tunnel
@@ -182,8 +182,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
     delete (*it).lst;
   }
   beamline_list.clear();
-
-  if(verbose || debug) G4cout<<"end placement, size="<<BDSBeamline::Instance()->size()<<G4endl;
   
   if(verbose || debug) G4cout<<"Detector Construction done"<<G4endl; 
 
@@ -226,67 +224,87 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
 //=================================================================
 void BDSDetectorConstruction::BuildBeamline(){
   std::list<struct Element>::iterator it;
-  // Special ring machine bits
-  // Add teleporter to account for slight ring offset
-  // Add terminator to do ring turn counting logic
-  // Both only in case of a circular machine
-  // must be done before we parse the element list (for correct coordinates)
-  if (BDSExecOptions::Instance()->GetCircular()) {
-#ifdef BDSDEBUG
-    G4cout << "Circular machine - this is the last element - creating terminator & teleporter" << G4endl;
-#endif
-    AddTeleporterToEndOfBeamline(&beamline_list);
-    AddTerminatorToEndOfBeamline(&beamline_list);
-  }
 
   // convert the parsed element list to list of BDS elements
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
 
+  BDSBeamline* beamline = new BDSBeamline();
+
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
-  for(it = beamline_list.begin();it!=beamline_list.end();it++){
-
+  for(it = beamline_list.begin();it!=beamline_list.end();it++)
+    {
 #ifdef BDSDEBUG
-    G4cout << "BDSDetectorConstruction creating component " << (*it).name << G4endl;
+      G4cout << "BDSDetectorConstruction creating component " << (*it).name << G4endl;
 #endif
-
-    BDSAcceleratorComponent* temp = theComponentFactory->createComponent(it, beamline_list);
-    if(temp){
-      if (temp->GetType() == "line") {
-	// dynamic cast to access methods for iteration
-	BDSLine* line = dynamic_cast<BDSLine*>(temp);
-	if (line) {
-	  //line of components to be added individually
-	  for (BDSLine::BDSLineIterator i = line->begin(); i != line->end(); ++i) {
-	    BDSBeamline::Instance()->addComponent(*i);}
+      
+      BDSAcceleratorComponent* temp = theComponentFactory->createComponent(it, beamline_list);
+      if(temp)
+	{
+	  if (temp->GetType() == "line")
+	    {
+	      // dynamic cast to access methods for iteration
+	      BDSLine* line = dynamic_cast<BDSLine*>(temp);
+	      if (line)
+		{
+		  //line of components to be added individually
+		  for (BDSLine::BDSLineIterator i = line->begin(); i != line->end(); ++i)
+		    {
+		      beamline->AddComponent(*i);
+		      //BDSBeamline::Instance()->addComponent(*i);}
+		    }
+		  delete temp;
+		}
+	    }
+	  else
+	    {
+	      //single component
+	      //BDSBeamline::Instance()->addComponent(temp);
+	      beamline->AddComponent(temp);
+	    }
 	}
-	delete temp;
-      }
-      else {
-	//single component
-	BDSBeamline::Instance()->addComponent(temp);
-      }
     }
-  }
+
+  // Special circular machine bits
+  // Add teleporter to account for slight ring offset
+  // Add terminator to do ring turn counting logic
+  if (BDSExecOptions::Instance()->GetCircular())
+    {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
+#endif
+      BDS::CalculateAndSetTeleporterDelta(beamline);
+      BDSAcceleratorComponent* teleporter = theComponentFactory->createTeleporter();
+      if (teleporter)
+	{beamline->AddComponent(teleporter);}
+      BDSAcceleratorComponent* terminator = theComponentFactory->createTerminator();
+      if (terminator)
+	{beamline->AddComponent(terminator);}
+    }
   
   delete theComponentFactory;
-
+      
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "size of beamline element list: "<< beamline_list.size() << G4endl;
 #endif
-  G4cout << __METHOD_NAME__ << "size of theBeamline: "<< BDSBeamline::Instance()->size() << G4endl;
-
-  if (BDSBeamline::Instance()->size() == 0) {
-    G4cout << __METHOD_NAME__ << "beamline empty or no line selected! exiting" << G4endl;
-    exit(1);
-  }
+  G4cout << __METHOD_NAME__ << "size of the beamline: "<< beamline->size() << G4endl;
+  
+  if (beamline->size() == 0)
+    {
+      G4cout << __METHOD_NAME__ << "beamline empty or no line selected! exiting" << G4endl;
+      exit(1);
+    }
+  // register the beamline in the holder class for the full model
+  BDSAcceleratorModel::Instance()->RegisterFlatBeamline(beamline);
 }
 
 void BDSDetectorConstruction::BuildWorld(){
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  G4ThreeVector maxpositive = BDSBeamline::Instance()->GetMaximumExtentPositive();
-  G4ThreeVector maxnegative = BDSBeamline::Instance()->GetMaximumExtentNegative();
+  BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  
+  G4ThreeVector maxpositive = beamline->GetMaximumExtentPositive();
+  G4ThreeVector maxnegative = beamline->GetMaximumExtentNegative();
   G4ThreeVector worldR;
   for (int i = 0; i < 3; i++){
     worldR[i] = std::max(fabs(maxpositive[i]),fabs(maxnegative[i]));
@@ -374,12 +392,14 @@ void BDSDetectorConstruction::BuildWorld(){
 						    0,                    // copy number
 						    BDSGlobalConstants::Instance()->GetCheckOverlaps());// overlap checking
 
-  BDSAcceleratorModel::Instance()->SetReadOutWorldPV(readOutWorldPV);
-  BDSAcceleratorModel::Instance()->SetReadOutWorldLV(readOutWorldLV);
+  BDSAcceleratorModel::Instance()->RegisterReadOutWorldPV(readOutWorldPV);
+  BDSAcceleratorModel::Instance()->RegisterReadOutWorldLV(readOutWorldLV);
 }
 
 void BDSDetectorConstruction::ComponentPlacement(){
   if (verbose || debug) G4cout<<"starting placement procedure "<<G4endl;
+
+  BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
   
   G4ThreeVector TargetPos;          // position of component
   G4ThreeVector rlast = G4ThreeVector(0.,0.,0.);  // edge of last element coordinates
@@ -394,8 +414,11 @@ void BDSDetectorConstruction::ComponentPlacement(){
   G4VSensitiveDetector* energyCounterSDRO = BDSSDManager::Instance()->GetEnergyCounterOnAxisSDRO();
   G4bool checkOverlaps                    = BDSGlobalConstants::Instance()->GetCheckOverlaps();
 
-  for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
+  BDSBeamlineIterator it = beamline->begin();
+  for(; it != beamline->end(); ++it)
     {
+      BDSAcceleratorComponent* thecurrentitem = (*it)->GetAcceleratorComponent();
+      /*
       BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
 #ifdef BDSDEBUG
       G4cout << G4endl;
@@ -510,21 +533,26 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	delete rotateComponent;
 	continue;
       }
-
+      */
+      
       // get the logical volume to be placed
-      G4LogicalVolume* LocalLogVol = thecurrentitem->GetMarkerLogicalVolume();
-      G4String LogVolName          = LocalLogVol->GetName();
+      G4LogicalVolume* elementLV = (*it)->GetContainerLogicalVolume();
+      G4String         name      = (*it)->GetName();
+
+      // LocalLogVol
+      //G4String LogVolName          = LocalLogVol->GetName();
       // read out geometry logical volume - note may not exist for each item - must be tested
       G4LogicalVolume* readOutLV   = thecurrentitem->GetReadOutLogicalVolume();
+      //G4LogicalVolume* readOutLV   = thecurrentitem->GetReadOutLogicalVolume();
       
       // add the volume to one of the regions
       if(thecurrentitem->GetPrecisionRegion())
 	{
 #ifdef BDSDEBUG
-	  G4cout<<"ELEMENT IS IN PRECISION REGION: "<<thecurrentitem->GetPrecisionRegion()<< G4endl;
+	  G4cout << __METHOD_NAME__ << "element is in the precision region" << G4endl;
 #endif
-	  LocalLogVol->SetRegion(precisionRegion);
-	  precisionRegion->AddRootLogicalVolume(LocalLogVol);
+	  elementLV->SetRegion(precisionRegion);
+	  precisionRegion->AddRootLogicalVolume(elementLV);
 	}
       
 #ifdef BDSDEBUG
@@ -532,12 +560,12 @@ void BDSDetectorConstruction::ComponentPlacement(){
 #endif
       // now register the spos and other info of this sensitive volume in global map
       // used by energy counter sd to get spos of that logical volume at histogram time
-      BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( LogVolName,
-								thecurrentitem->GetSPos());
+      BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo(name,
+							       thecurrentitem->GetSPos());
       if(readOutLV)
 	{BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(readOutLV,theinfo);}
       else
-        {BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(LocalLogVol,theinfo);}
+        {BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(elementLV,theinfo);}
 
       // this bit would also be unnecessary once all switched over to read out geometry
       // Register all logical volumes with sposition and any other information for later use
@@ -595,14 +623,15 @@ void BDSDetectorConstruction::ComponentPlacement(){
       G4cout << "BDSDetectorConstruction : rotateComponent = " << *rotateComponent << G4endl;
       G4cout << "BDSDetectorConstruction : TargetPos        = " << TargetPos << G4endl;
 #endif	
-
-      G4String LocalName=thecurrentitem->GetName()+"_phys";
-      const int nCopy = thecurrentitem->GetCopyNumber();
       
-      G4PVPlacement* PhysiComponentPlace = new G4PVPlacement(rotateComponent,  // its rotation
-							     TargetPos,        // its position
-							     LocalName,	       // its name
-							     LocalLogVol,      // its logical volume
+      G4int nCopy         = thecurrentitem->GetCopyNumber();
+      G4RotationMatrix* r = (*it)->GetRotationMiddle();
+      G4ThreeVector     p = (*it)->GetPositionMiddle();
+      
+      G4PVPlacement* PhysiComponentPlace = new G4PVPlacement(r,                // its rotation
+							     p,                // its position
+							     name + "_pv",     // its name
+							     elementLV,        // its logical volume
 							     physiWorld,       // its mother  volume
 							     false,	       // no boolean operation
 							     nCopy,            // copy number
@@ -612,9 +641,9 @@ void BDSDetectorConstruction::ComponentPlacement(){
       if(readOutLV)
 	{
 	  // don't need the pointer for anything - purely instantiating registers it with g4
-	  new G4PVPlacement(rotateComponent, // its rotation
-			    TargetPos,       // its position
-			    LocalName,       // its name
+	  new G4PVPlacement(r,               // its rotation
+			    p,               // its position
+			    name + "_ro_ph", // its name
 			    readOutLV,       // its logical volume
 			    readOutWorldPV,  // its mother  volume
 			    false,	     // no boolean operation
@@ -626,18 +655,19 @@ void BDSDetectorConstruction::ComponentPlacement(){
       //this vector of physical volumes isn't used anywhere...
       fPhysicalVolumeVector.push_back(PhysiComponentPlace);
       std::vector<G4VPhysicalVolume*> MultiplePhysicalVolumes = thecurrentitem->GetMultiplePhysicalVolumes();
-      for (unsigned int i=0;i<MultiplePhysicalVolumes.size(); i++) fPhysicalVolumeVector.push_back(MultiplePhysicalVolumes.at(i));
+      for (unsigned int i=0;i<MultiplePhysicalVolumes.size(); i++)
+	{fPhysicalVolumeVector.push_back(MultiplePhysicalVolumes.at(i));}
 					    
 #ifdef BDSDEBUG 
       G4cout << "Volume name: " << LocalName << G4endl;
 #endif
-      if(BDSGlobalConstants::Instance()->GetRefVolume()+"_phys"==LocalName && 
+      if(BDSGlobalConstants::Instance()->GetRefVolume()+"_phys"== name && 
 	 BDSGlobalConstants::Instance()->GetRefCopyNo()==nCopy){
 #ifdef BDSDEBUG 
 	G4cout << "Setting new transform" <<G4endl;
 #endif
-	G4AffineTransform tf(*_globalRotation,TargetPos-G4ThreeVector(0,0,length/2));
-	BDSGlobalConstants::Instance()->SetRefTransform(tf);
+	//G4AffineTransform tf(*_globalRotation,TargetPos-G4ThreeVector(0,0,length/2));
+	//BDSGlobalConstants::Instance()->SetRefTransform(tf);
       }
 
       //this does nothing by default - only used by BDSElement

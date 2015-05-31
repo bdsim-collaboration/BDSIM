@@ -317,7 +317,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createDump(){
 BDSAcceleratorComponent* BDSComponentFactory::createTeleporter(){
   // This relies on things being added to the beamline immediately
   // after they've been created
-  CalculateAndSetTeleporterDelta(BDSBeamline::Instance());
   G4double teleporterlength = BDSGlobalConstants::Instance()->GetTeleporterLength();
   if(teleporterlength < lengthSafety){
       G4cerr << "---->NOT creating Teleporter, "
