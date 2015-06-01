@@ -17,6 +17,7 @@ Work in progress.
 #include "BDSAwakeMultilayerScreen.hh"
 #include "BDSCCDCamera.hh"
 #include "BDS3DMagField.hh"
+#include "BDSSpectrVacChamb.hh"
 
 class BDSAwakeSpectrometer :public BDSAcceleratorComponent
 {
@@ -45,6 +46,7 @@ private:
   void PlaceCoils();
   void BuildField();
   void BuildVacuumChamber();
+  void PlaceVacuumChamber();
   //To build the camera...
   void BuildCamera();
   void PlaceCamera();
@@ -130,6 +132,7 @@ private:
   G4double _scoringPlaneThickness;
 
   //Vacuum chamber dimensions
+  BDSSpectrVacChamb* _vacChamb;
   G4int _vacChambType;
   G4double _vacWindowHeight;
   G4double _vacMylarThickness;

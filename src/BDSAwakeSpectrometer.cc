@@ -16,7 +16,6 @@ AWAKE spectrometer.
 #include "G4UserLimits.hh"
 #include "G4SubtractionSolid.hh"
 #include "BDSDebug.hh"
-
 #include "BDSAwakeMultilayerScreen.hh"
 //#include "UltraFresnelLens.hh"
 //#include "UltraFresnelLensParameterisation.hh"
@@ -173,6 +172,7 @@ void BDSAwakeSpectrometer::BuildMagnet(){
   BuildCoils();
   BuildYoke();
   BuildVacuumChamber();
+  PlaceVacuumChamber();
 }
 
 void BDSAwakeSpectrometer::BuildCoils(){
@@ -264,8 +264,25 @@ void BDSAwakeSpectrometer::PlaceYoke(){
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
 }
 
-  void BDSAwakeSpectrometer::BuildField(){}
-  void BDSAwakeSpectrometer::BuildVacuumChamber(){}
+void BDSAwakeSpectrometer::BuildField(){}
+void BDSAwakeSpectrometer::BuildVacuumChamber(){
+  _vacChamb = new BDSSpectrVacChamb(itsName + "_vacChamb",
+				    itsLength,
+				    _poleStartZ,
+				    _screenEndZ,
+				    _screenWidth,
+				    _screenAngle,
+				    _vacInnerWidth,
+				    _vacInnerHeight,
+				    _vacThickness);
+  
+}
+
+void BDSAwakeSpectrometer::PlaceVacuumChamber(){
+  if(!_vacChamb){
+    _vacChamb->Place(itsMarkerLogicalVolume);
+  }
+}
 
 void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
   G4String tmp = "_cameraScoringPlane";
