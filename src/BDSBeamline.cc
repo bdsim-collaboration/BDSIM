@@ -17,14 +17,14 @@ BDSBeamline::BDSBeamline()
 
 BDSBeamline::~BDSBeamline()
 {
-  std::vector<BDSBeamlineElement*>::iterator it = begin();
+  BDSBeamlineIterator it = begin();
   for (; it != end(); ++it)
     {delete (*it);}
 }
 
 void BDSBeamline::PrintAllComponents(std::ostream& out) const
 {
-  std::vector<BDSBeamlineElement*>::const_iterator it = cbegin();
+  BDSBeamlineIterator it = begin();
   for (; it != cend(); ++it)
     {out << *(it);}
 }
