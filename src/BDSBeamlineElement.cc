@@ -16,15 +16,39 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* component,
 				       G4RotationMatrix*        rotationStartIn,
 				       G4RotationMatrix*        rotationMiddleIn,
 				       G4RotationMatrix*        rotationEndIn,
+				       G4ThreeVector            referencePositionStartIn,
+				       G4ThreeVector            referencePositionMiddleIn,
+				       G4ThreeVector            referencePositionEndIn,
+				       G4RotationMatrix*        referenceRotationStartIn,
+				       G4RotationMatrix*        referenceRotationMiddleIn,
+				       G4RotationMatrix*        referenceRotationEndIn,
 				       G4double                 sPositionStartIn,
 				       G4double                 sPositionMiddleIn,
 				       G4double                 sPositionEndIn):
   BDSGeometryComponent::BDSGeometryComponent(*(BDSGeometryComponent*)component),
   positionStart(positionStartIn), positionMiddle(positionMiddleIn), positionEnd(positionEndIn),
   rotationStart(rotationStartIn), rotationMiddle(rotationMiddleIn), rotationEnd(rotationEndIn),
+  referencePositionStart(referencePositionStartIn),
+  referencePositionMiddle(referencePositionMiddleIn),
+  referencePositionEnd(referencePositionEndIn),
+  referenceRotationStart(referenceRotationStartIn),
+  referenceRotationMiddle(referenceRotationMiddleIn),
+  referenceRotationEnd(referenceRotationEndIn),
   sPositionStart(sPositionStartIn), sPositionMiddle(sPositionMiddleIn), sPositionEnd(sPositionEndIn)
 {
   name = component->GetName();
+}
+
+BDSBeamlineElement::~BDSBeamlineElement()
+{
+  delete component;
+  delete rotationStart;
+  delete rotationMiddle;
+  delete rotationEnd;
+  delete referenceRotationStart;
+  delete referenceRotationMiddle;
+  delete referenceRotationEnd;
+  
 }
 
 std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &e)
