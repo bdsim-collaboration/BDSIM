@@ -21,12 +21,12 @@ class BDS3DMagField : public BDSMagField
   double minx, maxx, miny, maxy, minz, maxz;
   // The physical extent of the defined region
   double dx, dy, dz;
-  double fZoffset;
+  double fZoffset, fXoffset;
   bool invertX, invertY, invertZ;
   double _lenUnit, _fieldUnit;
   
 public:
-  BDS3DMagField(const char* filename, double zOffset );
+  BDS3DMagField(const char* filename, double zOffset, double xOffset );
   void  GetFieldValue( const  double Point[4],
 		       double *Bfield          ) const;
   virtual void Prepare(G4VPhysicalVolume *referenceVolume);

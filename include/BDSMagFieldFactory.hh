@@ -11,7 +11,7 @@ public:
   BDSMagFieldFactory();
   ~BDSMagFieldFactory();
   
-  BDSMagField* buildMagField(G4String bmap, G4double bmapZOffset, BDSGeometry* geom);
+  BDSMagField* buildMagField(G4String bmap, G4double bmapZOffset, BDSGeometry* geom, G4double bmapXOffset);
  
 private:
   G4String _bmap;
@@ -19,6 +19,7 @@ private:
   BDSBmapFormat* _bFormat;
   BDSGeometry* _geom;
   G4double _bmapZOffset;
+  G4double _bmapXOffset;
   G4double _cacheLength;
 
   void parseFormatAndFilename();

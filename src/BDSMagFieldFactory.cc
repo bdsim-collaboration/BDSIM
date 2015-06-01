@@ -16,11 +16,12 @@ BDSMagFieldFactory::BDSMagFieldFactory(){
 BDSMagFieldFactory::~BDSMagFieldFactory(){}
 
 
-BDSMagField* BDSMagFieldFactory::buildMagField(G4String bmap="", G4double bmapZOffset=0, BDSGeometry* geom=NULL)
+BDSMagField* BDSMagFieldFactory::buildMagField(G4String bmap="", G4double bmapZOffset=0, BDSGeometry* geom=NULL, G4double bmapXOffset=0)
 {
   _bmap=bmap;
   _bmapZOffset=bmapZOffset;
   _geom=geom;
+  _bmapXOffset=bmapXOffset;
   
   parseFormatAndFilename();
   if (_bFormat->compare("3D")) {
@@ -69,7 +70,7 @@ BDSMagField* BDSMagFieldFactory::buildXYMagField(){
 }
 
 BDSMagField* BDSMagFieldFactory::build3DMagField(){
-  return new BDS3DMagField(_bFile, _bmapZOffset);
+  return new BDS3DMagField(_bFile, _bmapZOffset, _bmapXOffset);
 }
 
 BDSMagField* BDSMagFieldFactory::buildSQLMagField(){

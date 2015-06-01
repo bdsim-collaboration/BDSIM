@@ -155,6 +155,7 @@ protected:
   G4Mag_UsualEqRhs* itsEqRhs;
   G4String itsBmap;
   G4double itsBmapZOffset;
+  G4double itsBmapXOffset;
   G4ChordFinder* itsChordFinder;
   BDSGeometry* _geom;
   G4FieldManager* itsFieldMgr;

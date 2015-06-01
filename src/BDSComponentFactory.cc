@@ -1123,7 +1123,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 	 << " l= " << _element.l << "m"
 	 << " aper= " << aper/CLHEP::m << "m"
 	 << " outR= " << _element.outR << "m"
-	 << " bmapZOffset = "	<<  _element.bmapZOffset * CLHEP::m
 	 << " tunnel material " << _element.tunnelMaterial
 	 << " tunnel cavity material " << _element.tunnelCavityMaterial
 	 << " precision region " << _element.precisionRegion
@@ -1369,7 +1368,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createAwakeSpectrometer(){
 	       << "scintmaterial = " << _element.scintmaterial << " um"
                << G4endl;
 #endif
-	return (new BDSAwakeSpectrometer(_element.name, _element.l*1e3,  _element.bmapFile, _element.bmapZOffset*1e3, _element.poleStartZ*1e3, _element.scintmaterial, _element.tscint*1e3, _element.windowScreenGap*1e3,_element.angle, _element.twindow*1e3, _element.windowmaterial, _element.screenEndZ*1e3));
+	return (new BDSAwakeSpectrometer(_element.name, _element.l*1e3,  _element.bmapFile,  _element.poleStartZ*1e3, _element.scintmaterial, _element.tscint*1e3, _element.windowScreenGap*1e3,_element.angle, _element.twindow*1e3, _element.windowmaterial, _element.screenEndZ*1e3));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){

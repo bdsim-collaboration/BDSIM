@@ -8,8 +8,8 @@
 #include "BDSProgressDisplay.hh"
 #include "BDSProgressBar.hh"
 
-BDS3DMagField::BDS3DMagField( const char* filename, double zOffset ) 
-  :fZoffset(zOffset),invertX(false),invertY(false),invertZ(false)
+BDS3DMagField::BDS3DMagField( const char* filename, double zOffset, double xOffset ) 
+  :fZoffset(zOffset),fXoffset(xOffset),invertX(false),invertY(false),invertZ(false)
 {    
   
 
@@ -107,7 +107,8 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset )
 	 << minx/CLHEP::cm << " " << miny/CLHEP::cm << " " << minz/CLHEP::cm << " cm "
 	 << "\n ---> Max values x,y,z: " 
 	 << maxx/CLHEP::cm << " " << maxy/CLHEP::cm << " " << maxz/CLHEP::cm << " cm "
-	 << "\n ---> The field will be offset by " << zOffset/CLHEP::cm << " cm " << G4endl;
+	 << "\n ---> The field will be offset by " << fZoffset/CLHEP::cm << " cm in z" << G4endl;
+	 << "\n ---> The field will be offset by " << fXoffset/CLHEP::cm << " cm in x" << G4endl;
 #endif
   // Should really check that the limits are not the wrong way around.
   if (maxx < minx) {std::swap(maxx,minx); invertX = true;} 
@@ -141,7 +142,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
 
   G4ThreeVector local;
 
-  local[0] = point[0] + translation[0];
+  local[0] = point[0] + translation[0] + fXoffset;
   local[1] = point[1] + translation[1];
   local[2] = point[2] + translation[2] + fZoffset;
   local *= Rotation();

@@ -26,7 +26,7 @@ class BDSAwakeSpectrometer :public BDSAcceleratorComponent
   
 
 public:
-  BDSAwakeSpectrometer(G4String aName, G4double length, G4String bmapFile, G4double bmapZOffset,G4double poleStartZ, G4String material, G4double thickness, G4double windowScreenGap, G4double angle, G4double windowThickness, G4String windowMaterial, G4double screenEnd);
+  BDSAwakeSpectrometer(G4String aName, G4double length, G4String bmapFile, G4double poleStartZ, G4String material, G4double thickness, G4double windowScreenGap, G4double angle, G4double windowThickness, G4String windowMaterial, G4double screenEnd);
   virtual ~BDSAwakeSpectrometer();
 
 protected:
@@ -40,7 +40,9 @@ private:
   void BuildYoke();
   void PlaceYoke();
   void BuildPoles();
+  void PlacePoles();
   void BuildCoils();
+  void PlaceCoils();
   void BuildField();
   void BuildVacuumChamber();
   //To build the camera...
@@ -68,13 +70,19 @@ private:
   G4ThreeVector itsMagnetPos;
   G4ThreeVector itsYokeSize;  
   G4ThreeVector itsYokePos;
+  G4ThreeVector itsPolePos;
   G4LogicalVolume* itsYokeLog;
   G4ThreeVector itsCoilSize;  
   G4ThreeVector itsCoilPos;
   G4ThreeVector itsUpperCoilPos;
   G4ThreeVector itsLowerCoilPos;
+  G4ThreeVector itsCoilPosLocal;
+  G4ThreeVector itsUpperCoilPosLocal;
+  G4ThreeVector itsLowerCoilPosLocal;
   G4LogicalVolume* itsCoilLog;
   G4ThreeVector itsApertureSize;
+  G4double itsPoleAperture;
+  G4double itsCoilAperture;
   G4ThreeVector itsAperturePos;
   G4ThreeVector itsPoleSize;
   G4ThreeVector itsUpperPolePos;
@@ -112,6 +120,7 @@ private:
 
   G4RotationMatrix* _screenRotationMatrix;
   G4RotationMatrix* _vacRotationMatrix;
+  G4RotationMatrix* _magRotationMatrix;
 
   //scoring plane
   G4double _totalThickness;

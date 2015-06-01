@@ -76,7 +76,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsXOffset(XOffset),
   itsYOffset(YOffset), 
   itsZOffset(ZOffset), 
-  itsBmap(bmap),itsBmapZOffset(bmapZOffset),
+  itsBmap(bmap),itsBmapZOffset(bmapZOffset),itsBmapXOffset(0),
   itsChordFinder(NULL), itsStepper(NULL),itsEqRhs(NULL), 
   itsMagField(NULL), itsFieldMgr(NULL)
 {
@@ -114,7 +114,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsXOffset(XOffset),
   itsYOffset(YOffset), 
   itsZOffset(ZOffset),
-  itsBmap(bmap),itsBmapZOffset(bmapZOffset),
+  itsBmap(bmap),itsBmapZOffset(bmapZOffset), itsBmapXOffset(0),
   itsChordFinder(NULL), itsStepper(NULL), itsEqRhs(NULL), 
   itsMagField(NULL), itsFieldMgr(NULL)
 
@@ -598,6 +598,7 @@ void BDSAcceleratorComponent::BuildFieldMgr(G4MagIntegratorStepper* aStepper,
 
 }
 
+
 void BDSAcceleratorComponent::BuildBmapFieldAndStepper()
 {
 #ifdef BDSDEBUG
@@ -605,7 +606,7 @@ void BDSAcceleratorComponent::BuildBmapFieldAndStepper()
 #endif
 
   BDSMagFieldFactory* bFact = new BDSMagFieldFactory();
-  itsMagField = bFact->buildMagField(itsBmap, itsBmapZOffset, _geom);
+  itsMagField = bFact->buildMagField(itsBmap, itsBmapZOffset, _geom, itsBmapXOffset);
     
   itsEqRhs = new G4Mag_UsualEqRhs(itsMagField);
   itsStepper = new G4NystromRK4(itsEqRhs);
