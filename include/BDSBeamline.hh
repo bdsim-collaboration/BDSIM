@@ -26,6 +26,8 @@
  * being 0,0,0. For placement from a different position, this should be applied
  * elsewhere when the placement is being performed and not in the calculated 
  * coordinates here.
+ * 
+ * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
 /// Forward declaration for iterator
