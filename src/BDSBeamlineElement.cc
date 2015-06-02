@@ -9,7 +9,7 @@
 
 #include <ostream>
 
-BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* component,
+BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 				       G4ThreeVector            positionStartIn,
 				       G4ThreeVector            positionMiddleIn,
 				       G4ThreeVector            positionEndIn,
@@ -25,7 +25,8 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* component,
 				       G4double                 sPositionStartIn,
 				       G4double                 sPositionMiddleIn,
 				       G4double                 sPositionEndIn):
-  BDSGeometryComponent::BDSGeometryComponent(*(BDSGeometryComponent*)component),
+  BDSGeometryComponent::BDSGeometryComponent(*(BDSGeometryComponent*)componentIn),
+  component(componentIn),
   positionStart(positionStartIn), positionMiddle(positionMiddleIn), positionEnd(positionEndIn),
   rotationStart(rotationStartIn), rotationMiddle(rotationMiddleIn), rotationEnd(rotationEndIn),
   referencePositionStart(referencePositionStartIn),
@@ -42,14 +43,16 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* component,
 
 BDSBeamlineElement::~BDSBeamlineElement()
 {
-  delete component;
+  // check if component exists - protects against null component added at beginning
+  // of beamline for coordinate initialisation
+  if (component)
+    {delete component;}
   delete rotationStart;
   delete rotationMiddle;
   delete rotationEnd;
   delete referenceRotationStart;
   delete referenceRotationMiddle;
-  delete referenceRotationEnd;
-  
+  delete referenceRotationEnd;  
 }
 
 std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &e)
