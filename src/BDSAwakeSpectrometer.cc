@@ -171,8 +171,6 @@ void BDSAwakeSpectrometer::BuildMagnet(){
   BuildPoles();
   BuildCoils();
   BuildYoke();
-  BuildVacuumChamber();
-  PlaceVacuumChamber();
 }
 
 void BDSAwakeSpectrometer::BuildCoils(){
@@ -227,6 +225,10 @@ void BDSAwakeSpectrometer::PlacePoles(){
   if(itsPoleLog == NULL){
     BuildPoles();
   }
+  if(itsYokeLog==NULL){
+    PlaceYoke();
+  }
+
   new G4PVPlacement(_magRotationMatrix,itsUpperPolePos,itsPoleLog,"PoleUpper",
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
 
@@ -239,16 +241,12 @@ void BDSAwakeSpectrometer::BuildYoke(){
     BuildCoils();
   }
   //Build the aperture solid...
-  G4VSolid* ApertureSolid = new G4Box("AperSolid1",itsApertureSize.x()/2.0,itsApertureSize.y()/2.0,itsApertureSize.z()/2.0);
+  G4VSolid* ApertureSolid = new G4Box("AperSolid1",itsApertureSize.x()/2.0,(itsApertureSize.y()+2*itsCoilSize.y())/2.0,itsApertureSize.z()/2.0);
   //  Build a block for the yoke..
   G4VSolid* YokeSolid1 = new G4Box("YokeSolid1",itsYokeSize.x()/2.0,itsYokeSize.y()/2.0,itsYokeSize.z()/2.0);
   // Subtract the aperture..
-  G4VSolid* YokeSolid2 = new G4SubtractionSolid("YokeSolid2", YokeSolid1,ApertureSolid, nullRotationMatrix, itsAperturePos);
-  //Subtract gaps for the coils..					       
-  G4ThreeVector upperCoilPosLocal;
-  G4ThreeVector lowerCoilPosLocal;
-  G4VSolid* YokeSolid3 = new G4SubtractionSolid("YokeSolid3", YokeSolid2,itsCoilLog->GetSolid(), nullRotationMatrix, itsUpperCoilPosLocal);
-  G4VSolid* YokeSolid = new G4SubtractionSolid("YokeSolid", YokeSolid3,itsCoilLog->GetSolid(), nullRotationMatrix, itsLowerCoilPosLocal);
+  G4VSolid* YokeSolid = new G4SubtractionSolid("YokeSolid", YokeSolid1,ApertureSolid, nullRotationMatrix, itsAperturePos);
+
   itsYokeLog = new G4LogicalVolume(YokeSolid, BDSMaterials::Instance()->GetMaterial("G4_Fe"),"itsYokeLog",0,0,0);
   G4VisAttributes* YokeVisAtt = new G4VisAttributes(G4Color(0,1,0,0.5));
   YokeVisAtt->SetForceSolid(true);
@@ -269,7 +267,7 @@ void BDSAwakeSpectrometer::BuildVacuumChamber(){
   _vacChamb = new BDSSpectrVacChamb(itsName + "_vacChamb",
 				    itsLength,
 				    _poleStartZ,
-				    _screenEndZ,
+				    _screenEndZ-std::abs(cos(_screenAngle)*_totalThickness),
 				    _screenWidth,
 				    _screenAngle,
 				    _vacInnerWidth,
@@ -280,8 +278,9 @@ void BDSAwakeSpectrometer::BuildVacuumChamber(){
 
 void BDSAwakeSpectrometer::PlaceVacuumChamber(){
   if(!_vacChamb){
-    _vacChamb->Place(itsMarkerLogicalVolume);
+    BuildVacuumChamber();
   }
+  _vacChamb->Place(itsMarkerLogicalVolume);
 }
 
 void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
@@ -488,7 +487,7 @@ void BDSAwakeSpectrometer::Build(){
       */
       //      BuildScreenScoringPlane();
       //      BuildCameraScoringPlane();
-      PlaceScreen();
+      //      PlaceScreen();
       //      PlaceCamera();
       //      if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
       //	BuildTunnel();
@@ -496,6 +495,8 @@ void BDSAwakeSpectrometer::Build(){
       AddSensitiveVolume(itsMarkerLogicalVolume);
       BuildMagnet();
       PlaceMagnet();
+      BuildVacuumChamber();
+      PlaceVacuumChamber();
       BuildFieldAndStepper();
 }
 
@@ -561,16 +562,17 @@ void BDSAwakeSpectrometer::ComputeDimensions(){
   _screen_x_dim = x_wid+x_thi;
   //Vacuum chamber dimensions.
   _vacThickness=2*CLHEP::mm;
-  _vacInnerWidth=7*CLHEP::cm;
-  _vacInnerHeight=7*CLHEP::cm;
-  _vacHeight=_vacInnerHeight+2*_vacThickness;
+  _vacHeight=6.7*CLHEP::cm;
+  _vacInnerWidth=_vacHeight-2*_vacThickness;
+  _vacInnerHeight=_vacHeight-2*_vacThickness;
+
   _startZPos = -itsLength/2.0;
   //Pole position
   _poleStartZ += _startZPos;
   //Screen position
   _screenEndZ += _poleStartZ;
   _screenCentreZ = _screenEndZ - _screen_z_dim/2.0;
-  _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0;
+  _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness;
   
 
   //  itsXLength = itsYLength = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;

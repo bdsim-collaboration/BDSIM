@@ -2,7 +2,7 @@
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
 #include "BDSDebug.hh"
-
+#define BDSDEBUG 1
 BDSBunchUserFile::BDSBunchUserFile(struct Options &opt){
   SetOptions(opt);
   ParseFileFormat();
@@ -395,11 +395,26 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 	G4cout<< "BDSBunch : " << z0 <<G4endl;
 #endif
       }
-      else if(it->name=="xp") { ReadValue(xp); xp *= ( CLHEP::radian * it->unit ); }
-      else if(it->name=="yp") { ReadValue(yp); yp *= ( CLHEP::radian * it->unit ); }
-      else if(it->name=="zp") { ReadValue(zp); zp *= ( CLHEP::radian * it->unit ); zpdef = true;}
+      else if(it->name=="xp") { ReadValue(xp); xp *= ( CLHEP::radian * it->unit ); 
+#ifdef BDSDEBUG 
+      G4cout<< "BDSBunch : " << xp <<G4endl;
+#endif
+      }
+      else if(it->name=="yp") { ReadValue(yp); yp *= ( CLHEP::radian * it->unit ); 
+#ifdef BDSDEBUG 
+      G4cout<< "BDSBunch : " << yp <<G4endl;
+#endif
+      }
+      else if(it->name=="zp") { ReadValue(zp); zp *= ( CLHEP::radian * it->unit ); zpdef = true;
+#ifdef BDSDEBUG 
+      G4cout<< "BDSBunch : " << zp <<G4endl;
+#endif
+      }
       else if(it->name=="pt") {
 	ReadValue(type);
+#ifdef BDSDEBUG 
+	G4cout<< "BDSBunch : " << type <<G4endl;
+#endif
 	if(InputBunchFile.good()){
 	  BDSGlobalConstants::Instance()->SetParticleName(G4ParticleTable::GetParticleTable()->FindParticle(type)->GetParticleName());
 	  BDSGlobalConstants::Instance()->SetParticleDefinition(G4ParticleTable::
@@ -412,8 +427,11 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 	    }
 	}
       }
-      else if(it->name=="weight") ReadValue(weight);
-      
+      else if(it->name=="weight"){ ReadValue(weight);
+#ifdef BDSDEBUG 
+	G4cout<< "BDSBunch : " << weight <<G4endl;
+#endif
+      }
       else if(it->name=="skip") {double dummy; ReadValue(dummy);}
       
       // compute zp from xp and yp if it hasn't been read from file

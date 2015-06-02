@@ -142,9 +142,9 @@ void BDS3DMagField::GetFieldValue(const double point[4],
 
   G4ThreeVector local;
 
-  local[0] = point[0] + translation[0] + fXoffset;
+  local[0] = point[0] + translation[0] - fXoffset;
   local[1] = point[1] + translation[1];
-  local[2] = point[2] + translation[2] + fZoffset;
+  local[2] = point[2] + translation[2] - fZoffset;
   local *= Rotation();
 
 #ifdef BDSDEBUG
