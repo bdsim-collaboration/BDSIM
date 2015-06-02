@@ -87,7 +87,7 @@ public:
   inline std::vector<BDSBeamlineElement*>::const_reverse_iterator rend()   const;
 
   /// output stream
-  friend std::ostream& operator<< (std::ostream &out, BDSBeamline const &beamline);
+  friend std::ostream& operator<< (std::ostream &out, BDSBeamline const &bl);
   
 private: 
   std::vector<BDSBeamlineElement*> beamline; ///< Beamline vector - the data

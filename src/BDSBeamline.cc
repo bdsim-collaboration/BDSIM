@@ -29,11 +29,11 @@ void BDSBeamline::PrintAllComponents(std::ostream& out) const
     {out << *(it);}
 }
 
-std::ostream& operator<< (std::ostream& out, BDSBeamline const &beamline)
+std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
 {
-  out << "BDSBeamline with " << beamline.size() << " elements"<< G4endl
+  out << "BDSBeamline with " << bl.size() << " elements"<< G4endl
       << "Elements are: " << G4endl;
-  beamline.PrintAllComponents(out);
+  bl.PrintAllComponents(out);
 
   return out;
 }
