@@ -345,8 +345,9 @@ int expand_line(const char *charname, const char *start, const char* end)
   
   beamline_list.push_back(e);
   
-  if(VERBOSE) printf("expanding line %s, range = %s/%s\n",charname,start,end);
-  
+#ifdef BDSDEBUG 
+  printf("expanding line %s, range = %s/%s\n",charname,start,end);
+#endif
   if(!(*it).lst) return 0; //list empty
   
   

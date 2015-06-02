@@ -3,7 +3,6 @@
 #include <cstdio>
 
 extern const char* current_line;
-// extern const int VERBOSE;
 
 void ElementList::push_back(Element& el) {
   // insert at back of list (insert() instead of push_back() to get iterator for map):
@@ -80,7 +79,6 @@ ElementList::ElementListIterator ElementList::find(std::string name,unsigned int
 }
 
 void ElementList::print(int ident) {
-  //  if(VERBOSE) 
   if(ident == 0) printf("using line %s\n",current_line);
 
   for(ElementListIterator it=begin();it!=end();it++)
