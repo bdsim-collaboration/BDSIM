@@ -2225,7 +2225,7 @@ beam_parameters :
 
 int yyerror(const char *s)
 {
-  printf("%s at line %d , file %s\n",s, line_num, yyfilename);
+  printf("%s at line %d (might not be exact!), file %s \n",s, line_num, yyfilename);
   exit(1);
 }
 
