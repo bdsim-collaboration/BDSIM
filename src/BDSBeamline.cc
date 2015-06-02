@@ -6,6 +6,9 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSSampler.hh"
+#include "BDSTiltOffset.hh"
+#include "BDSUtilities.hh"
 
 #include <iterator>
 #include <ostream>
@@ -13,13 +16,39 @@
 #include <vector>
 
 BDSBeamline::BDSBeamline()
-{;}
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  G4ThreeVector     zeroPos = G4ThreeVector(0,0,0);
+  G4RotationMatrix* zeroRot = new G4RotationMatrix();
+  BDSSampler* initialCoords = new BDSSampler("initial_coordinates",1e-4);
+  initialCoords->Initialise(); // builds and assigns volumes
+  beamline.push_back( new BDSBeamlineElement(initialCoords,
+					     zeroPos,
+					     zeroPos,
+					     zeroPos,
+					     zeroRot,
+					     zeroRot,
+					     zeroRot,
+					     zeroPos,
+					     zeroPos,
+					     zeroPos,
+					     zeroRot,
+					     zeroRot,
+					     zeroRot,
+					     0., 0., 0.)
+		      );
+}
 
 BDSBeamline::~BDSBeamline()
 {
   BDSBeamlineIterator it = begin();
   for (; it != end(); ++it)
     {delete (*it);}
+
+  // and delete the null one at the beginning
+  delete beamline[0];
 }
 
 void BDSBeamline::PrintAllComponents(std::ostream& out) const
@@ -100,4 +129,24 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
   
   // append it to the beam line
   beamline.push_back(element);
+}
+
+BDSBeamlineElement* BDSBeamline::front() const
+{
+  if (beamline.size() == 1)
+    {
+      G4cerr << __METHOD_NAME__ << "empty beamline" << G4endl;
+      exit(1);
+    }
+  return beamline.front();
+}
+
+BDSBeamlineElement* BDSBeamline::back() const
+{
+  if (beamline.size() == 1)
+    {
+      G4cerr << __METHOD_NAME__ << "empty beamline" << G4endl;
+      exit(1);
+    }
+  return beamline.back();
 }

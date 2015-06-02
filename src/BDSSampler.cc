@@ -39,16 +39,15 @@ BDSSampler::BDSSampler (G4String aName, G4double aLength):
 			 aName,
 			 aLength,0,0,0)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   nThisSampler= nSamplers + 1;
   SetName("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
   nSamplers++;
 #ifdef BDSDEBUG
   G4cout << "BDSSampler.cc Nsamplers " << nSamplers << G4endl;
 #endif
-
-  // register sampler sensitive detector
-  //G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-  //SDMan->AddNewDetector(SensitiveDetector);
 }
 
 void BDSSampler::Initialise()
@@ -60,14 +59,20 @@ void BDSSampler::Initialise()
 
 void BDSSampler::BuildMarkerLogicalVolume()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  G4VSolid* itsMarkerSolid = new G4Box(itsName+"_solid",
+				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
+				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
+				       itsLength/2.0);
   itsMarkerLogicalVolume=
-    new G4LogicalVolume(
-			new G4Box(itsName+"_solid",
-				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				  itsLength/2.0),
+    new G4LogicalVolume(itsMarkerSolid,
 			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
 			itsName);
+
+  containerSolid = itsMarkerSolid;
+  containerLogicalVolume = itsMarkerLogicalVolume;
   
 #ifndef NOUSERLIMITS
   itsOuterUserLimits =new G4UserLimits();

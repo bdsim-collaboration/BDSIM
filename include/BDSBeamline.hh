@@ -38,7 +38,14 @@ typedef std::vector<BDSBeamlineElement*>::const_iterator BDSBeamlineIterator;
 
 class BDSBeamline{
 public:
+  /// Add a null object at the beginning with initialised rotation matrices
+  /// and placement vectors so that the coordinates will always be there to
+  /// start from.  This also prevents calling back() on an empty vector
+  /// which leads to undefined behaviour. The begin function always starts
+  /// at one after this first null element so functions exterior to this
+  /// class don't need to test if the component is valid
   BDSBeamline();
+  
   ~BDSBeamline();
 
   /// Add a component and calculate its position and rotation with respect
@@ -66,9 +73,9 @@ public:
 
   // Accessors in a similar style to std::vector
   /// Return a reference to the first element
-  inline BDSBeamlineElement* front() const;
+  BDSBeamlineElement* front() const;
   /// Return a reference to the last element
-  inline BDSBeamlineElement* back()  const;
+  BDSBeamlineElement* back()  const;
   /// Return iterator to the beginning
   inline std::vector<BDSBeamlineElement*>::iterator begin();
   /// Return iterator to the end
@@ -125,14 +132,8 @@ inline G4ThreeVector BDSBeamline::GetMaximumExtentPositive()
 inline G4ThreeVector BDSBeamline::GetMaximumExtentNegative()
 {return G4ThreeVector(extentX.first, extentY.first, extentZ.first);}
 
-inline BDSBeamlineElement* BDSBeamline::front() const
-{return beamline.front();}
-
-inline BDSBeamlineElement* BDSBeamline::back() const
-{return beamline.back();}
-
 inline std::vector<BDSBeamlineElement*>::iterator BDSBeamline::begin()
-{return beamline.begin();}
+{return ++beamline.begin();}
 
 inline std::vector<BDSBeamlineElement*>::iterator BDSBeamline::end()
 {return beamline.end();}
@@ -141,18 +142,18 @@ inline std::vector<BDSBeamlineElement*>::reverse_iterator BDSBeamline::rbegin()
 {return beamline.rbegin();}
 
 inline std::vector<BDSBeamlineElement*>::reverse_iterator BDSBeamline::rend()
-{return beamline.rend();}
+{return beamline.rend()--;}
 
-inline std::vector<BDSBeamlineElement*>::const_iterator BDSBeamline::cbegin() const
-{return beamline.begin();}
+inline std::vector<BDSBeamlineElement*>::const_iterator BDSBeamline::begin() const
+{return ++beamline.begin();}
 
-inline std::vector<BDSBeamlineElement*>::const_iterator BDSBeamline::cend() const
+inline std::vector<BDSBeamlineElement*>::const_iterator BDSBeamline::end() const
 {return beamline.end();}
 
-inline std::vector<BDSBeamlineElement*>::const_reverse_iterator BDSBeamline::crbegin() const
+inline std::vector<BDSBeamlineElement*>::const_reverse_iterator BDSBeamline::rbegin() const
 {return beamline.rbegin();}
 
-inline std::vector<BDSBeamlineElement*>::const_reverse_iterator BDSBeamline::crend() const
-{return beamline.rend();}
+inline std::vector<BDSBeamlineElement*>::const_reverse_iterator BDSBeamline::rend() const
+{return beamline.rend()--;}
 
 #endif
