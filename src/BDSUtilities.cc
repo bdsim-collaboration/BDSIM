@@ -11,6 +11,7 @@
 #endif
 
 #include "BDSRunManager.hh"
+#include "parser/getEnv.h"
 
 G4bool BDS::non_alpha::operator()(char c)
 {
@@ -59,6 +60,32 @@ std::string BDS::GetBDSIMExecPath()
     bdsimPath = bdsimPath.substr(0,found+1); // the path is the bit before that, including the '/'
   }
   return bdsimPath;
+}
+
+G4String BDS::GetFullPath(G4String fileName)
+{
+  //Set fullPath to mirror what is done in parser.l (i.e. if no environment varible set, assume base filename path is that of the gmad file).
+  G4String fullPath = getEnv("BDSIMPATH");
+  if(fullPath.length()<=0){
+    G4String inputFilepath = "";
+    // get the path part of the supplied path to the main input file
+    G4String::size_type found = fileName.rfind("/"); // find the last '/'
+    if (found != G4String::npos){
+      inputFilepath = fileName.substr(0,found); // the path is the bit before that
+    } // else remains empty string
+    // need to know whether it's an absolute or relative path
+    if ((fileName.substr(0,1)) == "/"){
+      // the main file has an absolute path
+      fullPath = inputFilepath;
+    } else {
+      // the main file has a relative path
+      char cwdchars[200]; //filepath up to 200 characters
+      G4String cwd = (G4String)getcwd(cwdchars, sizeof(cwdchars)) + "/";
+      fullPath = cwd + inputFilepath;
+    }
+  }
+  fullPath += "/";
+  return fullPath;
 }
 
 void BDS::HandleAborts(int signal_number)

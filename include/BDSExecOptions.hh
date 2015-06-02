@@ -59,11 +59,9 @@ protected :
   BDSExecOptions(int argc, char** argv);
   static BDSExecOptions* _instance;
   
-  
 private :
   BDSExecOptions();
   void Parse(int arcg, char **argv);
-  void SetBDSIMPATH();
   
   G4String        inputFilename;    ///> input filename
   G4String        visMacroFilename; ///> visualisation filename
