@@ -25,7 +25,7 @@ BDSBeamline::~BDSBeamline()
 void BDSBeamline::PrintAllComponents(std::ostream& out) const
 {
   BDSBeamlineIterator it = begin();
-  for (; it != cend(); ++it)
+  for (; it != end(); ++it)
     {out << *(it);}
 }
 

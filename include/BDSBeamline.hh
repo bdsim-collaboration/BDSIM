@@ -48,7 +48,7 @@ public:
   /// Iterate over the beamline and print out the name, position, rotation
   /// and s position of each beamline element
   void PrintAllComponents(std::ostream& out) const;
-
+  
   BDSBeamlineElement* GetFirstItem();             ///< Return a reference to the first element
   BDSBeamlineElement* GetLastItem();              ///< Return a reference to the last element
 
@@ -78,13 +78,13 @@ public:
   /// Return reverse iterator to the reverse end
   inline std::vector<BDSBeamlineElement*>::reverse_iterator rend();
   /// Return iterator to the beginning
-  inline std::vector<BDSBeamlineElement*>::const_iterator cbegin() const;
+  inline std::vector<BDSBeamlineElement*>::const_iterator begin() const;
   /// Return iterator to the end
-  inline std::vector<BDSBeamlineElement*>::const_iterator cend()   const;
+  inline std::vector<BDSBeamlineElement*>::const_iterator end()   const;
   /// Return reverse iterator to the reverse beginning
-  inline std::vector<BDSBeamlineElement*>::const_reverse_iterator crbegin() const;
+  inline std::vector<BDSBeamlineElement*>::const_reverse_iterator rbegin() const;
   /// Return reverse iterator to the reverse end
-  inline std::vector<BDSBeamlineElement*>::const_reverse_iterator crend()   const;
+  inline std::vector<BDSBeamlineElement*>::const_reverse_iterator rend()   const;
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSBeamline const &beamline);
