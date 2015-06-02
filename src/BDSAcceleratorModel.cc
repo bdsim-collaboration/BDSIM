@@ -18,3 +18,13 @@ BDSAcceleratorModel::BDSAcceleratorModel():
   readOutWorldLV(NULL),
   flatBeamline(NULL)
 {;}
+
+BDSAcceleratorModel::~BDSAcceleratorModel()
+{
+  delete worldPV;
+  delete readOutWorldPV;
+  delete readOutWorldLV;
+  delete flatBeamline;
+
+  _instance = 0;
+}
