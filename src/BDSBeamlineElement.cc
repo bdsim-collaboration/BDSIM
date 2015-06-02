@@ -36,7 +36,8 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* component,
   referenceRotationEnd(referenceRotationEndIn),
   sPositionStart(sPositionStartIn), sPositionMiddle(sPositionMiddleIn), sPositionEnd(sPositionEndIn)
 {
-  name = component->GetName();
+  G4cout << componentIn->GetName() << G4endl;
+  G4cout << componentIn->GetPlacementOffset() << G4endl;
 }
 
 BDSBeamlineElement::~BDSBeamlineElement()

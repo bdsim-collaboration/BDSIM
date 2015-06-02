@@ -74,9 +74,6 @@ private:
 
   /// The accelerator component
   BDSAcceleratorComponent* component;
-
-  /// The name of the object
-  G4String name;
   
   ///@{ Global coordinates for the start, middle and end of this beamline element
   G4ThreeVector     positionStart;
@@ -116,7 +113,7 @@ inline BDSAcceleratorComponent* BDSBeamlineElement::GetAcceleratorComponent() co
 {return component;}
 
 inline G4String                 BDSBeamlineElement::GetName() const
-{return name;}
+{return component->GetName();}
 
 inline G4ThreeVector            BDSBeamlineElement::GetPositionStart() const
 {return positionStart;}
