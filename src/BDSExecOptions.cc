@@ -8,6 +8,7 @@
 #include "BDSDebug.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputFormat.hh"
+#include "BDSUtilities.hh"
 
 #include "parser/getEnv.h"
 
@@ -64,7 +65,11 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv){
   setSeedState      = false;
 
   Parse(argc, argv);
-  SetBDSIMPATH();
+  /// after parsing the absolute path can be reconstructed
+  itsBDSIMPATH = BDS::GetFullPath(inputFilename);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "BDSIMPATH set to: " << itsBDSIMPATH << G4endl;
+#endif
 }
 
 BDSExecOptions::~BDSExecOptions() {
@@ -258,34 +263,6 @@ void BDSExecOptions::Usage()const {
 	<<"--verbose_G4tracking=N : set Geant4 Tracking manager verbosity level [-1:5]"<<G4endl
 	<<"--vis_debug            : display all volumes in visualiser"<<G4endl
 	<<"--vis_mac=<file>       : file with the visualization macro script, default vis.mac"<<G4endl;
-}
-
-void BDSExecOptions::SetBDSIMPATH(){
-  //Set itsBDSIMPATH to mirror what is done in parser.l (i.e. if no environment varible set, assume base filename path is that of the gmad file).
-  itsBDSIMPATH = getEnv("BDSIMPATH");
-  if(itsBDSIMPATH.length()<=0){
-    G4String inputFilepath = "";
-    // get the path part of the supplied path to the main input file
-    G4String::size_type found = inputFilename.rfind("/"); // find the last '/'
-    if (found != G4String::npos){
-      inputFilepath = inputFilename.substr(0,found); // the path is the bit before that
-    } // else remains empty string
-    // need to know whether it's an absolute or relative path
-    if ((inputFilename.substr(0,1)) == "/"){
-      // the main file has an absolute path
-      itsBDSIMPATH = inputFilepath;
-    } else {
-      // the main file has a relative path
-      char cwdchars[200]; //filepath up to 200 characters
-      G4String cwd = (G4String)getcwd(cwdchars, sizeof(cwdchars)) + "/";
-      itsBDSIMPATH = cwd + inputFilepath;
-    
-    }
-  }
-  itsBDSIMPATH += "/";
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " BDSIMPATH set to: " << itsBDSIMPATH << G4endl;
-#endif
 }
 
 void BDSExecOptions::Print()const {
