@@ -21,6 +21,8 @@ in compressed tar format. To decompress use the following command::
 
   tar -xzf BDSIM-v064.tar.gz
 
+..  _from-git-repository:
+
 From the GIT Repository
 -----------------------
 

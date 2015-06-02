@@ -106,10 +106,6 @@ void BDSElement::BuildElementMarkerLogicalVolume(){
 			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
 			itsName);
 
-  
-  //-------------------------------------------------------------------------------------------------------------
-
-
 #ifdef BDSDEBUG 
   G4cout<<"marker volume : x/y="<<elementSize/CLHEP::m<<
     " m, l= "<<  (itsLength)/2/CLHEP::m <<" m"<<G4endl;

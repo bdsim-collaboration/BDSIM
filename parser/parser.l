@@ -42,10 +42,8 @@ char include_filename_stack[max_include_depth][maxfilenamelength];
 int include_linenum_stack[max_include_depth];
 int include_stack_ptr = 0;
 
-int line_num = 1;
+int line_num = 0;
 char* yyfilename;
-
-
 
 %}
 
@@ -65,7 +63,7 @@ char* yyfilename;
 "<>" { return NE; }
 "==" { return EQ; }
 
-"!".*/\n { }    // comments - ignore
+"!".*/\n {line_num++;}    // comments - ignore
 
 marker { return MARKER; } // reserved elements
 drift { return DRIFT; }
@@ -146,7 +144,7 @@ dump  { return DUMP; }
      else
        return VARIABLE; 
 }
-.    { return yytext[0]; }
+.    { return yytext[0]; } // return characters like * and /
 
 <incl>[ \t]*  // eat the whitespace
 <incl>[^ \t\n;]+ {
@@ -229,7 +227,9 @@ printf("parser> include filename is: %s \n",includefilename.c_str());
     }
 }
 
-[\n]  line_num++;
+\n   line_num++; // unix line separator
+\r\n line_num++; // windows line separator
+
 %%
 
 

@@ -7,13 +7,11 @@
 #include <iostream>
 
 extern const char* current_line;
-// extern const int VERBOSE;
 
 namespace {
   // helper method
   void print(std::list<struct Element> l, int ident=0)
   {
-    //  if(VERBOSE) 
     if(ident == 0) printf("using line %s\n",current_line);
   
     for(std::list<struct Element>::iterator it=l.begin();it!=l.end();it++)
