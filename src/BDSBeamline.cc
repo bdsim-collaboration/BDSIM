@@ -70,44 +70,125 @@ std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
 void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " adding component" << G4endl;
+  G4cout << __METHOD_NAME__ << "adding component" << G4endl;
 #endif
-  // test if component has finite length (different action in that case)
 
-  // calculate the reference placement position
-  // TBC!!!!
-  G4ThreeVector referencePositionStart  = G4ThreeVector(0,0,0);
-  G4ThreeVector referencePositionMiddle = G4ThreeVector(0,0,0);
-  G4ThreeVector referencePositionEnd    = G4ThreeVector(0,0,0);
-
+  // interrogate the item
+  G4double      length     = component->GetChordLength();
+  G4double      angle      = component->GetAngle();
+  BDSTiltOffset tiltOffset = component->GetTiltOffset();
+  G4bool hasFiniteLength   = BDS::IsFinite(length);
+  G4bool hasFiniteAngle    = BDS::IsFinite(angle);
+  G4bool hasFiniteTilt     = BDS::IsFinite(tiltOffset.GetTilt());
+  G4bool hasFiniteOffset   = BDS::IsFinite(tiltOffset.GetXOffset()) || BDS::IsFinite(tiltOffset.GetYOffset());
+  
+#ifdef BDSDEBUG
+  G4cout << "length               " << length     << " mm"         << G4endl;
+  G4cout << "angle                " << angle      << " rad"        << G4endl;
+  G4cout << "tilt offsetX offsetY " << tiltOffset << " rad mm mm " << G4endl;
+  G4cout << "hasFiniteLength      " << hasFiniteLength             << G4endl;
+  G4cout << "hasFiniteAngle       " << hasFiniteAngle              << G4endl;
+  G4cout << "hasFiniteTilt        " << hasFiniteTilt               << G4endl;
+  G4cout << "hasFiniteOffset      " << hasFIniteOffset             << G4endl;
+#endif
+  
   // calculate the reference placement rotation
-  // TBC!!!!
-  G4RotationMatrix* referenceRotationStart  = new G4RotationMatrix();
-  G4RotationMatrix* referenceRotationMiddle = new G4RotationMatrix();
-  G4RotationMatrix* referenceRotationEnd    = new G4RotationMatrix();
+  // rotations are done first as they're required to transform the spatial displacements
+  // copy the rotation matrix (cumulative along line) from end of last component
+  // can use beamline.back here as we'll always have one element added in the constructor
+  G4RotationMatrix* previousReferenceRotationEnd = beamline.back()->GetReferenceRotationEnd();
+  G4RotationMatrix* referenceRotationStart       = new G4RotationMatrix(*previousReferenceRotationEnd);
+  G4RotationMatrix* referenceRotationMiddle      = new G4RotationMatrix(*referenceRotationStart);
+  G4RotationMatrix* referenceRotationEnd         = new G4RotationMatrix(*referenceRotationStart);
+  // if the component induces an angle in the reference trajectory, rotate the mid and end point
+  // rotation matrices appropriately
+  if (hasFiniteAngle)
+    {
+      referenceRotationMiddle->rotateY(component->GetAngle() * 0.5); // middle rotated by half angle in x,z plane
+      referenceRotationEnd->rotateY(component->GetAngle());          // end rotated by full angle in x,z plane
+    }
 
+  // add the tilt to the rotation matrices (around z axis)
+  G4RotationMatrix* rotationStart, *rotationMiddle, *rotationEnd;
+  if (hasFiniteTilt)
+    {
+      G4double tilt = tiltOffset.GetTilt();
+      rotationStart  = new G4RotationMatrix(*referenceRotationStart);
+      rotationMiddle = new G4RotationMatrix(*referenceRotationMiddle);
+      rotationEnd    = new G4RotationMatrix(*referenceRotationEnd);
+      rotationStart->rotateZ(tilt);
+      rotationMiddle->rotateZ(tilt);
+      rotationEnd->rotateZ(tilt);
+    }
+  else
+    {
+      rotationStart  = new G4RotationMatrix(*referenceRotationStart);
+      rotationMiddle = new G4RotationMatrix(*referenceRotationMiddle);
+      rotationEnd    = new G4RotationMatrix(*referenceRotationEnd);
+    }
+  
+  // calculate the reference placement position
+  G4ThreeVector previousReferencePositionEnd = beamline.back()->GetReferencePositionEnd();
+  G4ThreeVector referencePositionStart, referencePositionMiddle, referencePositionEnd;
+  if (hasFiniteLength)
+    {
+      referencePositionStart  = previousReferencePositionEnd;
+      referencePositionMiddle = referencePositionStart + G4ThreeVector(0, 0, 0.5 * length).transform(*referenceRotationMiddle);
+      referencePositionEnd    = referencePositionStart + G4ThreeVector(0, 0, length).transform(*referenceRotationEnd);
+    }
+  else
+    {
+      // element has no finite size so all positions are previous end position
+      // likely this is a transform3d or similar - but not hard coded just for transform3d
+      referencePositionStart  = previousReferencePositionEnd;
+      referencePositionMiddle = previousReferencePositionEnd;
+      referencePositionEnd    = previousReferencePositionEnd;
+    }
+  
   // add the placement offset
-  G4double dx                  = component->GetXOffset();
-  G4double dy                  = component->GetYOffset();
-  G4ThreeVector displacement   = G4ThreeVector(dx,dy,0);
-  G4ThreeVector positionStart  = referencePositionStart  + displacement;
-  G4ThreeVector positionMiddle = referencePositionMiddle + displacement;
-  G4ThreeVector positionEnd    = referencePositionEnd    + displacement;
-
-  // add the tilt
-  // TBC!!!!
-  G4double tilt = component->GetTilt();
-  G4RotationMatrix* rotationStart  = new G4RotationMatrix(*referenceRotationStart);
-  rotationStart->rotateZ(tilt);
-  G4RotationMatrix* rotationMiddle = new G4RotationMatrix(*referenceRotationMiddle);
-  rotationMiddle->rotateZ(tilt);
-  G4RotationMatrix* rotationEnd    = new G4RotationMatrix(*referenceRotationEnd);
-  rotationEnd->rotateZ(tilt);
-
+  if (hasFiniteOffset)
+    {
+      G4double dx                  = tiltOffset.GetXOffset();
+      G4double dy                  = tiltOffset.GetYOffset();
+      // note the displacement is applied in the accelerator x and y frame so use
+      // the reference rotation rather than the one with tilt already applied
+      G4ThreeVector displacement   = G4ThreeVector(dx,dy,0).transform(*referenceRotationMiddle);
+      G4ThreeVector positionStart  = referencePositionStart  + displacement;
+      G4ThreeVector positionMiddle = referencePositionMiddle + displacement;
+      G4ThreeVector positionEnd    = referencePositionEnd    + displacement;
+    }
+  else
+    {
+      G4ThreeVector positionStart  = referencePositionStart;
+      G4ThreeVector positionMiddle = referencePositionMiddle;
+      G4ThreeVector positionEnd    = referencePositionEnd;
+    }
+  
   // calculate the s position
-  G4double sPositionStart  = 0;
-  G4double sPositionMiddle = 0;
-  G4double sPositionEnd    = 0;
+  G4double      previousSPositionEnd = beamline.back()->GetSPositionEnd();
+  G4double      arcLength            = component->GetArcLength();
+  G4double sPositionStart, sPositionMiddle, sPositionEnd;
+  sPositionStart  = previousSPositionEnd;
+  sPositionMiddle = previousSPositionEnd + 0.5 * arcLength;
+  sPositionEnd    = previousSPositionEnd + arcLength;
+
+
+#ifdef BDSDEBUG
+  // feedback about calculated coordinates
+  G4cout << "calculated coordinates in mm and rad are " << G4endl;
+  G4cout << "reference position start:  " << referencePositionStart   << G4endl;
+  G4cout << "reference position middle: " << referencePositionMiddle  << G4endl;
+  G4cout << "reference position end:    " << referencePositionEnd     << G4endl;
+  G4cout << "reference rotation start:  " << *referenceRotationStart  << G4endl;
+  G4cout << "reference rotation middle: " << *referenceRotationMiddle << G4endl;
+  G4cout << "reference rotation end:    " << *referenceRotationEnd    << G4endl;
+  G4cout << "position start:            " << positionStart            << G4endl;
+  G4cout << "position middle:           " << positionMiddle           << G4endl;
+  G4cout << "position end:              " << positionEnd              << G4endl;
+  G4cout << "rotation start:            " << *rotationStart           << G4endl;
+  G4cout << "rotation middle:           " << *rotationMiddle          << G4endl;
+  G4cout << "rotation end:              " << *rotationEnd             << G4endl;
+#endif
 
   // construct beamline element
   BDSBeamlineElement* element = new BDSBeamlineElement(component,

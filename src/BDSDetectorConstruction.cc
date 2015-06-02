@@ -418,129 +418,15 @@ void BDSDetectorConstruction::ComponentPlacement(){
   for(; it != beamline->end(); ++it)
     {
       BDSAcceleratorComponent* thecurrentitem = (*it)->GetAcceleratorComponent();
-      /*
-      BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
-#ifdef BDSDEBUG
-      G4cout << G4endl;
-#endif
-      G4double angle  = thecurrentitem->GetAngle();
-      G4double theta  = thecurrentitem->GetTheta();
-      G4double psi    = thecurrentitem->GetPsi();
-      G4double tilt   = thecurrentitem->GetTilt();
-      G4double phi    = thecurrentitem->GetPhi();
-      G4double length = thecurrentitem->GetChordLength();
-
-      if( thecurrentitem->GetType() == "transform3d")
-	{
-#ifdef BDSDEBUG 
-          G4cout<<"transform3d : "<<phi<<" "<<theta<<" "<<psi<<G4endl;
-#endif
-	  rtot(0) += thecurrentitem->GetXOffset(); 
-	  rtot(1) += thecurrentitem->GetYOffset(); 
-	  rtot(2) += thecurrentitem->GetZOffset(); 
-
-	  rlast(0) += thecurrentitem->GetXOffset();
-	  rlast(1) += thecurrentitem->GetYOffset(); 
-	  rlast(2) += thecurrentitem->GetZOffset(); 
-
-	  _globalRotation->rotate(psi,localZ);
-	  localX.rotate(psi,localZ);
-	  localY.rotate(psi,localZ);
-
-	  _globalRotation->rotate(phi,localY);
-	  localX.rotate(phi,localY);
-	  localZ.rotate(phi,localY);
-	  
-	  _globalRotation->rotate(theta,localX);
-	  localY.rotate(theta,localX);
-	  localZ.rotate(theta,localX);
-	  	  	  
-	  continue;
-	}
-      
-      // rotation matrix for component placement
-      G4RotationMatrix *rotateComponent = new G4RotationMatrix;
-
-      // tilted bends influence reference frame, otherwise just local tilt
-      if( fabs(angle) > 1e-12 )
-	{
-	  _globalRotation->rotate(tilt,localZ);
-	  localX.rotate(tilt,localZ);
-	  localY.rotate(tilt,localZ);
-	}
-      else 
-	rotateComponent->rotateZ(tilt);
-    
-      // define center of bended elements from the previous coordinate frame
-      G4ThreeVector zHalfAngle = localZ; 
-
-      if( fabs(angle) > 1e-12 ) 
-	{zHalfAngle.rotate(angle/2,localY);}
-
-#ifdef BDSDEBUG
-      G4cout << "zHalfAngle = " << zHalfAngle <<G4endl;
-      G4cout << "localZ     = " << localZ     <<G4endl;
-      G4cout << "localX     = " << localX     <<G4endl;
-      G4cout << "localY     = " << localY     <<G4endl;
-      G4cout << "rlast      = " << rlast      <<G4endl;
-      G4cout << "rtot       = " << rtot       <<G4endl;
-#endif
-      
-      // target position
-      TargetPos = rlast + zHalfAngle *  ( length/2 + BDSGlobalConstants::Instance()->GetLengthSafety()/2 );
-#ifdef BDSDEBUG 
-      G4cout<<"TargetPos  = "<<TargetPos<<G4endl;
-#endif
-
-      // advance the coordinates, but not for cylindrical samplers
-      //think this should be > samplerlength
-      if( ( ( thecurrentitem->GetType() != "csampler") || ( length <= BDSGlobalConstants::Instance()->GetSamplerLength() ) )  && ( thecurrentitem->GetType()!="element" ))
-	{
-#ifdef BDSDEBUG 
-          G4cout << thecurrentitem->GetType() << " "
-                 << thecurrentitem->GetName() << " "
-                 << G4endl;
-#endif
-	  rtot = rlast + zHalfAngle * length/2;
-	  rlast = rtot + zHalfAngle * length/2;
-	}
-
-      // rotate to the previous reference frame
-      rotateComponent->transform(*_globalRotation);
-      rotateComponent->invert();
-
-      // recompute global rotation
-      // define new coordinate system local frame	  
- 
-      // bends transform the coordinate system
-      if( thecurrentitem->GetType() == "sbend" || thecurrentitem->GetType() == "rbend") {
-	_globalRotation->rotate(angle,localY);
-	localX.rotate(angle,localY);
-	localZ.rotate(angle,localY);
-	
-	_globalRotation->rotate(theta,localX);
-	localY.rotate(theta,localX);
-	localZ.rotate(theta,localX);
-	
-	// bend trapezoids defined along z-axis
-	rotateComponent->rotateY(-angle/2.0);
-      } else if (thecurrentitem->GetMarkerLogicalVolume()->GetSolid()->GetName().contains("trapezoid") ) {
-	rotateComponent->rotateY(-CLHEP::twopi/4); //Drift trapezoids defined along z axis 
-      }
-      
-      // zero length components not placed (transform3d)
-      if(length<=0.) {
-	delete rotateComponent;
-	continue;
-      }
-      */
       
       // get the logical volume to be placed
       G4LogicalVolume* elementLV = (*it)->GetContainerLogicalVolume();
+      G4cout << elementLV->GetName()<< G4endl;
       G4String         name      = (*it)->GetName();
-
-      // LocalLogVol
-      //G4String LogVolName          = LocalLogVol->GetName();
+#ifdef BDSDEBUG
+      G4cout << "Placement of component named: " << name << G4endl;
+      G4cout << thecurrentitem->GetName() << G4endl;
+#endif
       // read out geometry logical volume - note may not exist for each item - must be tested
       G4LogicalVolume* readOutLV   = thecurrentitem->GetReadOutLogicalVolume();
       //G4LogicalVolume* readOutLV   = thecurrentitem->GetReadOutLogicalVolume();
@@ -561,7 +447,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
       // now register the spos and other info of this sensitive volume in global map
       // used by energy counter sd to get spos of that logical volume at histogram time
       BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo(name,
-							       thecurrentitem->GetSPos());
+							       (*it)->GetSPositionMiddle());
       if(readOutLV)
 	{BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(readOutLV,theinfo);}
       else
@@ -601,29 +487,6 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	    {SetGFlashOnVolume(*sensIt);}
 	}
       
-      // #ifdef BDSDEBUG
-      //       G4cout<<"ALIGNING COMPONENT..."<< G4endl;
-      // #endif	
-      // Align Component - most cases does nothing. 
-      // Currently only used for BDSElement	
-      /*
-      thecurrentitem->AlignComponent(//TargetPos,
-				     rlast,
-				     rotateComponent,
-				     *_globalRotation,
-				     rtot,
-				     rlast,
-				     localX,
-				     localY,
-				     localZ);
-      */
-
-#ifdef BDSDEBUG
-      G4cout << "Placing PHYSICAL COMPONENT..."<< G4endl;
-      G4cout << "BDSDetectorConstruction : rotateComponent = " << *rotateComponent << G4endl;
-      G4cout << "BDSDetectorConstruction : TargetPos        = " << TargetPos << G4endl;
-#endif	
-      
       G4int nCopy         = thecurrentitem->GetCopyNumber();
       G4RotationMatrix* r = (*it)->GetRotationMiddle();
       G4ThreeVector     p = (*it)->GetPositionMiddle();
@@ -659,7 +522,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	{fPhysicalVolumeVector.push_back(MultiplePhysicalVolumes.at(i));}
 					    
 #ifdef BDSDEBUG 
-      G4cout << "Volume name: " << LocalName << G4endl;
+      G4cout << "Volume name: " << name << G4endl;
 #endif
       if(BDSGlobalConstants::Instance()->GetRefVolume()+"_phys"== name && 
 	 BDSGlobalConstants::Instance()->GetRefCopyNo()==nCopy){
