@@ -9,6 +9,7 @@
 #include "BDSGeometryComponent.hh"
 #include "BDSMaterials.hh"
 #include "BDSReadOutGeometry.hh"
+#include "BDSTiltOffset.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Colour.hh"
@@ -42,7 +43,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double ZOffset, 
 						  G4double tunnelRadius, 
 						  G4double tunnelOffsetX,
-						  G4String aTunnelCavityMaterial):
+						  G4String aTunnelCavityMaterial,
+						  BDSTiltOffset tiltOffsetIn):
   BDSGeometryComponent(NULL,NULL),
   itsName(aName),
   itsLength(aLength),
@@ -57,7 +59,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsZOffset(ZOffset), 
   itsTunnelRadius(tunnelRadius), 
   itsTunnelOffsetX(tunnelOffsetX),
-  itsTunnelCavityMaterial(aTunnelCavityMaterial)
+  itsTunnelCavityMaterial(aTunnelCavityMaterial),
+  tiltOffset(tiltOffsetIn)
 {
   ConstructorInit();
 }
@@ -78,7 +81,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double ZOffset, 
 						  G4double tunnelRadius, 
 						  G4double tunnelOffsetX, 
-						  G4String aTunnelCavityMaterial):
+						  G4String aTunnelCavityMaterial,
+						  BDSTiltOffset tiltOffsetIn):
   BDSGeometryComponent(NULL,NULL),
   itsName(aName),
   itsLength(aLength),
@@ -95,7 +99,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsZOffset(ZOffset), 
   itsTunnelRadius(tunnelRadius), 
   itsTunnelOffsetX(tunnelOffsetX), 
-  itsTunnelCavityMaterial(aTunnelCavityMaterial)
+  itsTunnelCavityMaterial(aTunnelCavityMaterial),
+  tiltOffset(tiltOffsetIn)
 {
   if (itsBlmLocZ.size() != itsBlmLocTheta.size()){
     G4cerr << "BDSAcceleratorComponent: error, lists blmLocZ and blmLocTheta are of unequal size" << G4endl;
