@@ -1,10 +1,4 @@
-/* BDSIM code.    Version 1.0
-
-*/
-
 #include "BDSTransform3D.hh"
-
-//============================================================
 
 BDSTransform3D::BDSTransform3D(G4String aName, G4double x,G4double y,G4double z,
 			       G4double phi,G4double theta, G4double psi):
