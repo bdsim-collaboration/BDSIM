@@ -89,7 +89,7 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
   G4cout << "hasFiniteLength      " << hasFiniteLength             << G4endl;
   G4cout << "hasFiniteAngle       " << hasFiniteAngle              << G4endl;
   G4cout << "hasFiniteTilt        " << hasFiniteTilt               << G4endl;
-  G4cout << "hasFiniteOffset      " << hasFIniteOffset             << G4endl;
+  G4cout << "hasFiniteOffset      " << hasFiniteOffset             << G4endl;
 #endif
   
   // calculate the reference placement rotation
@@ -146,6 +146,7 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
     }
   
   // add the placement offset
+  G4ThreeVector positionStart, positionMiddle, positionEnd;
   if (hasFiniteOffset)
     {
       G4double dx                  = tiltOffset.GetXOffset();
@@ -153,15 +154,15 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
       // note the displacement is applied in the accelerator x and y frame so use
       // the reference rotation rather than the one with tilt already applied
       G4ThreeVector displacement   = G4ThreeVector(dx,dy,0).transform(*referenceRotationMiddle);
-      G4ThreeVector positionStart  = referencePositionStart  + displacement;
-      G4ThreeVector positionMiddle = referencePositionMiddle + displacement;
-      G4ThreeVector positionEnd    = referencePositionEnd    + displacement;
+      positionStart  = referencePositionStart  + displacement;
+      positionMiddle = referencePositionMiddle + displacement;
+      positionEnd    = referencePositionEnd    + displacement;
     }
   else
     {
-      G4ThreeVector positionStart  = referencePositionStart;
-      G4ThreeVector positionMiddle = referencePositionMiddle;
-      G4ThreeVector positionEnd    = referencePositionEnd;
+      positionStart  = referencePositionStart;
+      positionMiddle = referencePositionMiddle;
+      positionEnd    = referencePositionEnd;
     }
   
   // calculate the s position
