@@ -11,7 +11,6 @@
 
   const int PEDANTIC = 0; ///> strict checking, exits when element or parameter is not known
   const int ECHO_GRAMMAR = 0; ///> print grammar rule expansion (for debugging)
-  const int VERBOSE = 0; ///> print more output
   const int INTERACTIVE = 0; ///> print output of commands (like in interactive mode)
   /* for more debug with parser:
      1) set yydebug to 1 in parser.tab.c (needs to be reset as this file gets overwritten from time to time!) 
@@ -2226,7 +2225,7 @@ beam_parameters :
 
 int yyerror(const char *s)
 {
-  printf("%s at line %d , file %s\n",s, line_num, yyfilename);
+  printf("%s at line %d (might not be exact!), file %s \n",s, line_num, yyfilename);
   exit(1);
 }
 

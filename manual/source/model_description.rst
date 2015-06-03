@@ -1,3 +1,5 @@
+.. _model-description:
+
 ================================
 Model Description - Input Syntax
 ================================

@@ -1,7 +1,5 @@
 #include "options.h"
 
-#include "getEnv.h"
-
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
@@ -433,7 +431,7 @@ void Options::set_value(std::string name, std::string value )
   if(name == "xDistrType" ) { xDistribType = value; return; }
   if(name == "yDistrType" ) { yDistribType = value; return; }
   if(name == "zDistrType" ) { zDistribType = value; return; }
-  if(name == "distrFile" ) { distribFile = getEnv("BDSIMPATH")+value; return; }
+  if(name == "distrFile" ) { distribFile = value; return; }
   if(name == "distrFileFormat" ) { distribFileFormat = value; return; }
 
   //
