@@ -10,6 +10,7 @@
 #include "BDSBunchUserFile.hh"
 #include "BDSBunchTwiss.hh"
 #include "BDSBunchPtc.hh"
+#include "BDSBunchHalo.hh"
 
 BDSBunchInterface* BDSBunchFactory::createBunch(G4String distribType)
 {
