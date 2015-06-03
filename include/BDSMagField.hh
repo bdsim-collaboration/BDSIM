@@ -9,7 +9,6 @@
 #include "G4RotationMatrix.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UniformMagField.hh"
-#include "BDSMagFieldInterface.hh"
 
 #ifndef BDSMagField_h
 #define BDSMagField_h

@@ -4,6 +4,7 @@
 #include "G4PVPlacement.hh"
 #include "G4VisAttributes.hh"
 #include "BDSDebug.hh"
+#include "G4SubtractionSolid.hh"
 
 BDSSpectrVacChamb::BDSSpectrVacChamb(){}
 BDSSpectrVacChamb::~BDSSpectrVacChamb(){}
@@ -32,45 +33,98 @@ BDSSpectrVacChamb::BDSSpectrVacChamb(const G4String &name, G4double lengthZ, G4d
 void BDSSpectrVacChamb::Build(){
   BuildBox();
   BuildTrap();
+  BuildSideWall();
   BuildBoxInner();
-  BuildTrapInner();
 }
 
 void BDSSpectrVacChamb::Place(G4LogicalVolume* motherVolume){
 
-  new G4PVPlacement(_trapRotation,
-		    _trapTranslation,
-		    _logVolTrap,
-		    _name+"_physi_trap",
-		    motherVolume,
-		    false,
-		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  
-
-  new G4PVPlacement(_trapRotationInner,
-		    _trapTranslationInner,
+  new G4PVPlacement(_innerTrapRotation,
+		    _innerTrapTranslation,
 		    _innerLogVolTrap,
 		    _name+"_physi_trap_inner",
-		    _logVolTrap,
-		    false,
-		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-
-  new G4PVPlacement(_boxRotation,
-		   _boxTranslation,
-		   _logVolBox,
-		   _name+"_physi_box",
 		    motherVolume,
 		    false,
 		    0,
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
 
-  new G4PVPlacement(_boxRotationInner,
-		   _boxTranslationInner,
-		   _innerLogVolBox,
-		   _name+"_physi_box_inner",
-		    _logVolBox,
+  new G4PVPlacement(_upperTrapRotation,
+		    _upperTrapTranslation,
+		    _upperLogVolTrap,
+		    _name+"_physi_trap_upper",
+		    motherVolume,
+		    false,
+		    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+
+  new G4PVPlacement(_lowerTrapRotation,
+		    _lowerTrapTranslation,
+		    _lowerLogVolTrap,
+		    _name+"_physi_trap_lower",
+		    motherVolume,
+		    false,
+		    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+
+  new G4PVPlacement(_box1Rotation,
+		   _box1Translation,
+		   _logVolBox1,
+		   _name+"_physi_box1",
+		    motherVolume,
+		    false,
+		    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+
+  new G4PVPlacement(_box1RotationInner,
+		   _box1TranslationInner,
+		   _innerLogVolBox1,
+		   _name+"_physi_box1_inner",
+		    _logVolBox1,
+		    false,
+		    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+
+  new G4PVPlacement(_box2Rotation,
+		   _box2Translation,
+		   _logVolBox2,
+		   _name+"_physi_box2",
+		    motherVolume,
+		    false,
+		    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+
+  new G4PVPlacement(_box2RotationInner,
+		   _box2TranslationInner,
+		   _innerLogVolBox2,
+		   _name+"_physi_box2_inner",
+		    _logVolBox2,
+		    false,
+		    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+
+  new G4PVPlacement(_box3Rotation,
+		   _box3Translation,
+		   _logVolBox3,
+		   _name+"_physi_box3",
+		    motherVolume,
+		    false,
+		    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+
+  new G4PVPlacement(_box3RotationInner,
+		   _box3TranslationInner,
+		   _innerLogVolBox3,
+		   _name+"_physi_box3_inner",
+		    _logVolBox3,
+		    false,
+		    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+
+  new G4PVPlacement(_rotSideWall,
+		    _transSideWall,
+		    _logVolSideWall,
+		    _name+"_physi_side_wall",
+		    motherVolume,
 		    false,
 		    0,
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
@@ -90,68 +144,161 @@ void BDSSpectrVacChamb::SetParameters(const G4String &name, G4double lengthZ, G4
 }
 
 void BDSSpectrVacChamb::BuildBox(){
-  _boxSolid = new G4Box(_name+"_boxSolid", 
+  BuildBox1(); //Upstream box.
+  BuildBox2(); //Intermediate box.
+  BuildBox3(); //Downstream box.
+}
+
+void BDSSpectrVacChamb::BuildBox1(){
+  _box1Solid = new G4Box(_name+"_box1Solid", 
 			(_sizeX+2*_thickness)/2.0,
 			(_sizeY+2*_thickness)/2.0,
-			_lengthZ/2.0);
+			_box1LengthZ/2.0);
 
-  _logVolBox = new G4LogicalVolume(_boxSolid,
+  _logVolBox1 = new G4LogicalVolume(_box1Solid,
 				    BDSMaterials::Instance()->GetMaterial("G4_Fe"),
 				    _name+"_log");
   
-  G4VisAttributes* BoxVisAtt = new G4VisAttributes(G4Color(1.0,0.0,0.0,0.5));
-  BoxVisAtt->SetForceSolid(true);
-  BoxVisAtt->SetVisibility(true);
-  _logVolBox->SetVisAttributes(BoxVisAtt);
+  G4VisAttributes* Box1VisAtt = new G4VisAttributes(G4Color(1.0,0.0,0.0,0.5));
+  Box1VisAtt->SetForceSolid(true);
+  Box1VisAtt->SetVisibility(true);
+  _logVolBox1->SetVisAttributes(Box1VisAtt);
+}
+
+void BDSSpectrVacChamb::BuildBox2(){
+  _box2Solid = new G4Box(_name+"_box2Solid", 
+			(_sizeX+2*_thickness)/2.0,
+			(_sizeY+2*_thickness)/2.0,
+			_box2LengthZ/2.0);
+
+  _logVolBox2 = new G4LogicalVolume(_box2Solid,
+				    BDSMaterials::Instance()->GetMaterial("G4_Fe"),
+				    _name+"_log");
+  
+  G4VisAttributes* Box2VisAtt = new G4VisAttributes(G4Color(1.0,0.0,0.0,0.5));
+  Box2VisAtt->SetForceSolid(true);
+  Box2VisAtt->SetVisibility(true);
+  _logVolBox2->SetVisAttributes(Box2VisAtt);
+}
+
+void BDSSpectrVacChamb::BuildBox3(){
+  _box3Solid = new G4Box(_name+"_box3Solid", 
+			 (_sizeX+2*_thickness)/2.0,
+			 (_sizeY+2*_thickness)/2.0,
+			 _box3LengthZ/2.0);
+
+  _logVolBox3 = new G4LogicalVolume(_box3Solid,
+				    BDSMaterials::Instance()->GetMaterial("G4_Fe"),
+				    _name+"_log");
+  
+  G4VisAttributes* Box3VisAtt = new G4VisAttributes(G4Color(1.0,0.0,0.0,0.5));
+  Box3VisAtt->SetForceSolid(true);
+  Box3VisAtt->SetVisibility(true);
+  _logVolBox3->SetVisAttributes(Box3VisAtt);
 }
 
 void BDSSpectrVacChamb::BuildBoxInner(){
-  _boxSolidInner = new G4Box(_name+"_boxSolidInner", 
-			     _sizeX/2.0 + _thickness/2.0,
+  BuildBox1Inner();
+  BuildBox2Inner();
+  BuildBox3Inner();
+}
+  void BDSSpectrVacChamb::BuildBox1Inner(){
+  _box1SolidInner = new G4Box(_name+"_box1SolidInner", 
+			     _sizeX/2.0,
 			     _sizeY/2.0,
-			     _lengthZ/2.0);
+			     _box1LengthZ/2.0);
   
-  _innerLogVolBox = new G4LogicalVolume(_boxSolidInner,
+  _innerLogVolBox1 = new G4LogicalVolume(_box1SolidInner,
 					BDSMaterials::Instance()->GetMaterial("vacuum"),
 					_name+"_log");
   
-  G4VisAttributes* BoxInnerVisAtt = new G4VisAttributes(G4Color(0.0,1.0,0.0,0.5));
-  BoxInnerVisAtt->SetForceSolid(true);
-  BoxInnerVisAtt->SetVisibility(true);
-  _innerLogVolBox->SetVisAttributes(BoxInnerVisAtt);
+  G4VisAttributes* Box1InnerVisAtt = new G4VisAttributes(G4Color(0.0,1.0,0.0,0.5));
+  Box1InnerVisAtt->SetForceSolid(true);
+  Box1InnerVisAtt->SetVisibility(true);
+  _innerLogVolBox1->SetVisAttributes(Box1InnerVisAtt);
+}
+  void BDSSpectrVacChamb::BuildBox2Inner(){
+  _box2SolidInner = new G4Box(_name+"_box2SolidInner", 
+			      (_sizeX+_thickness)/2.0,
+			     _sizeY/2.0,
+			     _box2LengthZ/2.0);
+  
+  _innerLogVolBox2 = new G4LogicalVolume(_box2SolidInner,
+					BDSMaterials::Instance()->GetMaterial("vacuum"),
+					_name+"_log");
+  
+  G4VisAttributes* Box2InnerVisAtt = new G4VisAttributes(G4Color(0.0,1.0,0.0,0.5));
+  Box2InnerVisAtt->SetForceSolid(true);
+  Box2InnerVisAtt->SetVisibility(true);
+  _innerLogVolBox2->SetVisAttributes(Box2InnerVisAtt);
+}
+  void BDSSpectrVacChamb::BuildBox3Inner(){
+  _box3SolidInner = new G4Box(_name+"_box3SolidInner", 
+			     _sizeX/2.0,
+			     _sizeY/2.0,
+			     _box3LengthZ/2.0);
+  
+  _innerLogVolBox3 = new G4LogicalVolume(_box3SolidInner,
+					BDSMaterials::Instance()->GetMaterial("vacuum"),
+					_name+"_log");
+  
+  G4VisAttributes* Box3InnerVisAtt = new G4VisAttributes(G4Color(0.0,1.0,0.0,0.5));
+  Box3InnerVisAtt->SetForceSolid(true);
+  Box3InnerVisAtt->SetVisibility(true);
+  _innerLogVolBox3->SetVisAttributes(Box3InnerVisAtt);
 }
 
 
 void BDSSpectrVacChamb::BuildTrap(){
-  _trapSolid = new G4GenericTrap(_name+"_trapSolid",
-				 _trapLengthX/2.0, //Half length of the trapezoid component.
-				 _trapVertices
-				 );
+  _innerTrapSolid = new G4GenericTrap(_name+"_trapSolid",
+				      _trapLengthX/2.0, //Half length of the trapezoid component.
+				      _innerTrapVertices
+				      );
 
-  _logVolTrap = new G4LogicalVolume(_trapSolid,
+  _upperTrapSolid = new G4GenericTrap(_name+"_upperTrapSolid",
+				      _trapLengthX/2.0, //Half length of the trapezoid component.
+				      _upperTrapVertices
+				      );
+
+  _lowerTrapSolid = _upperTrapSolid;
+
+  _innerLogVolTrap = new G4LogicalVolume(_innerTrapSolid,
+				    BDSMaterials::Instance()->GetMaterial("vacuum"),
+				    _name+"_inner_trap_log");
+
+  _upperLogVolTrap = new G4LogicalVolume(_upperTrapSolid,
 				    BDSMaterials::Instance()->GetMaterial("G4_Fe"),
-				    _name+"_trap_log");
+				    _name+"_upper_trap_log");
+
+  _lowerLogVolTrap = new G4LogicalVolume(_lowerTrapSolid,
+				    BDSMaterials::Instance()->GetMaterial("G4_Fe"),
+				    _name+"_lower_trap_log");
   
-  G4VisAttributes* LogVolVisAtt = new G4VisAttributes(G4Color(1.0,0.0,0.0,0.4));
-  LogVolVisAtt->SetForceSolid(true);
-  LogVolVisAtt->SetVisibility(true);
-  _logVolTrap->SetVisAttributes(LogVolVisAtt);
+  G4VisAttributes* InnerTrapVisAtt = new G4VisAttributes(G4Color(1.0,0.0,0.0,0.4));
+  InnerTrapVisAtt->SetForceSolid(true);
+  InnerTrapVisAtt->SetVisibility(true);
+  _innerLogVolTrap->SetVisAttributes(InnerTrapVisAtt);
+  G4VisAttributes* OuterTrapVisAtt = new G4VisAttributes(G4Color(0.0,1.0,0.0,0.4));
+  OuterTrapVisAtt->SetForceSolid(true);
+  OuterTrapVisAtt->SetVisibility(true);
+  _lowerLogVolTrap->SetVisAttributes(OuterTrapVisAtt);
+  _upperLogVolTrap->SetVisAttributes(OuterTrapVisAtt);
 }
 
-void BDSSpectrVacChamb::BuildTrapInner(){
-  _trapSolidInner = new G4GenericTrap(_name+"_trapSolidInner",
-				 _trapLengthXIn/2.0, //Half length of the trapezoid component.
-				 _trapVerticesInner
-				 );
+void BDSSpectrVacChamb::BuildSideWall(){
+  _sideWallSolid = new G4Box(_name+"_sideWallSolid", 
+			     (_thickness)/2.0,
+			     (_sizeY+2*_thickness)/2.0,
+			     _sideWallLength/2.0);
 
-  _innerLogVolTrap = new G4LogicalVolume(_trapSolidInner,
-				    BDSMaterials::Instance()->GetMaterial("vacuum"),
-				    _name+"_trap_inner_log");
+  _logVolSideWall = new G4LogicalVolume(_sideWallSolid,
+				    BDSMaterials::Instance()->GetMaterial("G4_Fe"),
+				    _name+"_log");
   
-  G4VisAttributes* TrapInnerVisAtt = new G4VisAttributes(G4Color(0.0,0.0,1.0,0.3));
-  TrapInnerVisAtt->SetForceSolid(true);
-  TrapInnerVisAtt->SetVisibility(true);
-  _innerLogVolTrap->SetVisAttributes(TrapInnerVisAtt);
+  G4VisAttributes* SideWallVisAtt = new G4VisAttributes(G4Color(0.0,0.0,1.0,0.4));
+  SideWallVisAtt->SetForceSolid(true);
+  SideWallVisAtt->SetVisibility(true);
+  _logVolSideWall->SetVisAttributes(SideWallVisAtt);
 }
 
 void BDSSpectrVacChamb::CalculateGeometry(){
@@ -159,109 +306,85 @@ void BDSSpectrVacChamb::CalculateGeometry(){
   G4double trapLengthZ2=std::abs(_screenWidth*cos(_screenAngle));
   _trapLengthX=std::abs(_screenWidth*sin(_screenAngle));
   
-  G4double y1=-_sizeY/2.0-_thickness;
-  G4double y2= _sizeY/2.0+_thickness;
+  G4double y1=-_sizeY/2.0;
+  G4double y2= _sizeY/2.0;
 
   G4double x1=-_trapLengthZ/2.0;
   G4double x3=x1+_trapLengthZ;
   G4double x2=x3-trapLengthZ2;
 
-  _trapVertices.push_back(G4TwoVector(x1,y1));
-  _trapVertices.push_back(G4TwoVector(x1,y2));
-  _trapVertices.push_back(G4TwoVector(x3,y2));
-  _trapVertices.push_back(G4TwoVector(x3,y1));
-  _trapVertices.push_back(G4TwoVector(x2,y1));
-  _trapVertices.push_back(G4TwoVector(x2,y2));
-  _trapVertices.push_back(G4TwoVector(x2,y2));
-  _trapVertices.push_back(G4TwoVector(x2,y1));
+  _innerTrapVertices.push_back(G4TwoVector(x1,y1));
+  _innerTrapVertices.push_back(G4TwoVector(x1,y2));
+  _innerTrapVertices.push_back(G4TwoVector(x3,y2));
+  _innerTrapVertices.push_back(G4TwoVector(x3,y1));
+  _innerTrapVertices.push_back(G4TwoVector(x2,y1));
+  _innerTrapVertices.push_back(G4TwoVector(x2,y2));
+  _innerTrapVertices.push_back(G4TwoVector(x2,y2));
+  _innerTrapVertices.push_back(G4TwoVector(x2,y1));
 
-  //old
-  //  _trapTranslation.setZ((-_sizeX-_trapLengthX)/2.0);
-  //  _trapTranslation.setX(-_lengthZ/2.0+_magStartZ+_trapLengthZ/2.0);
+  G4double y1Up=-_thickness/2.0;
+  G4double y2Up= _thickness/2.0;
 
+  _upperTrapVertices.push_back(G4TwoVector(x1,y1Up));
+  _upperTrapVertices.push_back(G4TwoVector(x1,y2Up));
+  _upperTrapVertices.push_back(G4TwoVector(x3,y2Up));
+  _upperTrapVertices.push_back(G4TwoVector(x3,y1Up));
+  _upperTrapVertices.push_back(G4TwoVector(x2,y1Up));
+  _upperTrapVertices.push_back(G4TwoVector(x2,y2Up));
+  _upperTrapVertices.push_back(G4TwoVector(x2,y2Up));
+  _upperTrapVertices.push_back(G4TwoVector(x2,y1Up));
 
-  //  G4double sizeX=70*CLHEP::mm;
-  //  G4double trapLengthX=(sqrt(2)/2.0)*CLHEP::m;
-  //  G4double trapLengthZ=_vacuumEndZ-_magStartZ;
-  _trapTranslation.setX(  (_trapLengthX+_sizeX)/2.0 + _thickness);
+  _innerTrapTranslation.setX(  (_trapLengthX+_sizeX)/2.0 + _thickness);
   G4double localMagStartZ = _magStartZ + _lengthZ/2.0;
-  _trapTranslation.setZ(-_lengthZ/2.0 + _trapLengthZ/2.0 + localMagStartZ );
+  G4double localVacuumEndZ = _vacuumEndZ + _lengthZ/2.0;
+  _innerTrapTranslation.setZ(-_lengthZ/2.0 + _trapLengthZ/2.0 + localMagStartZ );
+  _innerTrapRotation = new G4RotationMatrix();
+  _innerTrapRotation->rotateX(CLHEP::pi);
+  _innerTrapRotation->rotateY(-CLHEP::pi/2.0);
 
+  _upperTrapRotation=_innerTrapRotation;
+  _upperTrapTranslation = _innerTrapTranslation;
+  _upperTrapTranslation.setY(_upperTrapTranslation.y() + _sizeY/2.0 + _thickness/2.0);
+  _lowerTrapRotation=_innerTrapRotation;
+  _lowerTrapTranslation = _innerTrapTranslation;
+  _lowerTrapTranslation.setY(_lowerTrapTranslation.y() - _sizeY/2.0 - _thickness/2.0);
 
+  _box1LengthZ=localMagStartZ;
+  _box3LengthZ=_lengthZ-localVacuumEndZ;
+  _box2LengthZ=_lengthZ-_box3LengthZ-_box1LengthZ;
 
-  _trapRotation = new G4RotationMatrix();
-  _trapRotation->rotateX(CLHEP::pi);
-  _trapRotation->rotateY(-CLHEP::pi/2.0);
+  G4double trapCentre = _magStartZ+_trapLengthZ/2.0;
 
-  //  _trapRotation->rotateY(-CLHEP::pi/4.0);
-  
-  //  _trapRotation->rotateY(_screenAngle);
-  
- 
-  
+  _box1Rotation=new G4RotationMatrix();
+  _box1RotationInner=new G4RotationMatrix();
+  _box1Translation.setZ(_magStartZ - _box1LengthZ/2.0);
 
+  _box2Rotation=new G4RotationMatrix();
+  _box2RotationInner=new G4RotationMatrix();
+  _box2TranslationInner.setX(_thickness/2.0);
+  _box2Translation.setZ(trapCentre);
 
-  _screenAngle2=atan(_trapLengthX/(x2-x1));
+  _box3Rotation=new G4RotationMatrix();
+  _box3RotationInner=new G4RotationMatrix();
+  _box3Translation.setZ(_vacuumEndZ+_box3LengthZ/2.0);
 
-  /*
-  G4double deltaZ1=0;//_thickness*std::abs(cos(_screenAngle));
-  G4double deltaZ2=_thickness*std::abs(cos(_screenAngle2));
-  G4double deltaX1=_thickness*std::abs(sin(_screenAngle))+_thickness*std::abs(cos(_screenAngle2));
-  */
+  G4double trapLengthZ1 = _trapLengthZ-trapLengthZ2;
+  _sideWallLength=sqrt(pow(trapLengthZ1,2)+pow(_trapLengthX,2));
+  G4double sideWallAngle=atan(_trapLengthX/trapLengthZ1);
+  _rotSideWall = new G4RotationMatrix();
+  _rotSideWall->rotateY(-sideWallAngle);
+  //  _rotSideWall->rotateY(-CLHEP::pi/2.0);
 
-
-  G4double deltaZ1=0;//_thickness*std::abs(cos(_screenAngle));
-  G4double deltaZ2=_thickness*std::abs(cos(_screenAngle2));
-  G4double deltaX1=_thickness*std::abs(cos(_screenAngle2));
-    //deltaZ2*std::abs(sin(_screenAngle));
-
-  //old
-  //  _trapLengthZIn=_trapLengthZ-deltaZ1-deltaZ2;
-  //  G4double trapLengthZ2In=trapLengthZ2-deltaZ1;
-  //  _trapLengthXIn=_trapLengthX-deltaX1 + _thickness;
-
-  _trapLengthZIn=_trapLengthZ-deltaZ2;
-  _trapLengthXIn=_trapLengthX-deltaX1;
-  
-
-  G4double y1In=-_sizeY/2.0;
-  G4double y2In= _sizeY/2.0;
-
-  G4double x1In=x1+deltaZ2;
-  G4double x3In=x3-deltaZ2;
-  //  G4double x2In=x3In-std::abs((_screenWidth-_thickness)*cos(_screenAngle))+deltaZ2;
-  G4double screenLength2 = x2-x1;
-  G4double x2In=x2;//+std::abs(cos(_screenAngle))*_thickness;
-
-
-  _trapVerticesInner.push_back(G4TwoVector(x1In,y1In));
-  _trapVerticesInner.push_back(G4TwoVector(x1In,y2In));
-  _trapVerticesInner.push_back(G4TwoVector(x3In,y2In));
-  _trapVerticesInner.push_back(G4TwoVector(x3In,y1In));
-  _trapVerticesInner.push_back(G4TwoVector(x2In,y1In));
-  _trapVerticesInner.push_back(G4TwoVector(x2In,y2In));
-  _trapVerticesInner.push_back(G4TwoVector(x2In,y2In));
-  _trapVerticesInner.push_back(G4TwoVector(x2In,y1In));
-
-  
-
-  _trapTranslationInner.setZ( -deltaX1/2.0  );
-  _trapTranslationInner.setX( deltaZ2 );
-
-  _trapRotationInner = new G4RotationMatrix();
-  //  _trapRotationInner=_trapRotation;
+  _transSideWall.setX(_sizeX/2.0 + _thickness + _trapLengthX/2.0 +  (_thickness/2.0)*cos(sideWallAngle));
+  _transSideWall.setZ(_magStartZ + trapLengthZ1/2.0 - (_thickness/2.0)*sin(sideWallAngle));
 
   printGeom();
-
-  _boxRotation=new G4RotationMatrix();
-  _boxRotationInner=new G4RotationMatrix();
-  _boxTranslationInner.setX(_thickness/2.0);
 }
 
 void BDSSpectrVacChamb::printGeom(){
   G4cout << __METHOD_NAME__ << G4endl;
-  printTrapVertices(_trapVertices, "_trapVertices");
-  printTrapVertices(_trapVerticesInner, "_trapVerticesInner");
+  printTrapVertices(_innerTrapVertices, "_innerTrapVertices");
+  printTrapVertices(_upperTrapVertices, "_upperTrapVertices");
 }
 
 void BDSSpectrVacChamb::printTrapVertices(std::vector<G4TwoVector> vertices, const G4String& name){

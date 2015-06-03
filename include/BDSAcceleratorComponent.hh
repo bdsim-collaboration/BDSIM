@@ -317,7 +317,6 @@ private:
   /// constructor initialisation
   void ConstructorInit();
   /// Calculate dimensions used for the marker volume etc.
-  void CalculateLengths();
 
 
   G4ThreeVector nullThreeVector;
@@ -339,6 +338,7 @@ private:
   //  G4double itsSynchEnergyLoss;
 protected:
   G4RotationMatrix* nullRotationMatrix;
+  virtual void CalculateLengths();
 };
 
 // Class BDSAcceleratorComponent 

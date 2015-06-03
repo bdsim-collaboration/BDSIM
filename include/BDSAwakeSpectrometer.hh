@@ -31,6 +31,7 @@ public:
   virtual ~BDSAwakeSpectrometer();
 
 protected:
+  virtual void CalculateLengths();
 
 private:
   virtual void Build();
@@ -59,7 +60,6 @@ private:
   void BuildVacuumChamber1();
   void BuildVacuumChamber2();
   virtual void SetVisAttributes();
-  void ComputeDimensions();
   virtual void BuildMarkerLogicalVolume();
   void BuildCameraScoringPlane();
   void BuildScreenScoringPlane();

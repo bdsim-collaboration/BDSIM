@@ -5,7 +5,6 @@
 #include "BDS3DMagField.hh"
 #include "BDSDebug.hh"
 #include <boost/progress.hpp>
-#include "BDSProgressDisplay.hh"
 #include "BDSProgressBar.hh"
 
 BDS3DMagField::BDS3DMagField( const char* filename, double zOffset, double xOffset ) 

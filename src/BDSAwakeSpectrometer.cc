@@ -475,7 +475,7 @@ void BDSAwakeSpectrometer::Build(){
       SetVisAttributes(); 
       BuildScreen();
       BuildCamera();	
-      ComputeDimensions();
+      CalculateLengths();
       //      BuildMagnet();
       BuildMarkerLogicalVolume();
       /*
@@ -543,8 +543,9 @@ void BDSAwakeSpectrometer::PlaceScreen(){
 		   );
 }
 
-void BDSAwakeSpectrometer::ComputeDimensions(){
+void BDSAwakeSpectrometer::CalculateLengths(){
   std::cout << __METHOD_NAME__ << std::endl;
+  BDSAcceleratorComponent::CalculateLengths();
   //-------
   //Screen dimensions.
   _screenWidth=_mlScreen->size().x();
@@ -574,10 +575,11 @@ void BDSAwakeSpectrometer::ComputeDimensions(){
   _screenCentreZ = _screenEndZ - _screen_z_dim/2.0;
   _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness;
   
-
-  //  itsXLength = itsYLength = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
-  //  itsXLength = std::max(itsXLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
-  //  itsYLength = std::max(itsYLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
+  /*
+  itsXLength = itsYLength = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
+  itsXLength = std::max(itsXLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
+  itsYLength = std::max(itsYLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
+  */
 
   _cameraScreenDist=(4.0)*CLHEP::m;
   //  _cameraScreenDist=4*213*CLHEP::mm;
@@ -590,9 +592,9 @@ void BDSAwakeSpectrometer::ComputeDimensions(){
 
 
   //  itsXLength = (_screen_x_dim + 2*_vacWidth1)+2*_cameraScreenDist;
-  itsXLength = std::max(2*std::abs(_screenCentreX)+_screen_x_dim, itsYokeSize.x()+2*std::abs(itsPolePos.x()));
-  itsYLength = std::max(std::max(_screenHeight,_camera->size().y()),itsYokeSize.y());
-  itsYLength = std::max(itsYLength,50*CLHEP::cm);
+  //  itsXLength = std::max(2*(std::abs(_screenCentreX)+_screen_x_dim), itsYokeSize.x()+2*std::abs(itsPolePos.x()));
+  //  itsYLength = std::max(std::max(_screenHeight,_camera->size().y()),itsYokeSize.y());
+  //  itsYLength = std::max(itsYLength,50*CLHEP::cm);
   std::cout << __METHOD_NAME__ << " " << itsLength << " " << itsXLength << " " << itsYLength << std::endl;
 
   _vacDispZ2=(-itsLength)/2.0+(_vacWidth2)/2.0;
