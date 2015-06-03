@@ -30,10 +30,15 @@ namespace BDS {
   /// supports linux/unix and mac OS
   std::string GetBDSIMExecPath();
 
-  /// get full absolute path where file can be found.
+  /// get full absolute directory path where file can be found.
   /// returns absolute path
-  G4String GetFullPath(G4String filename);
+  ///
+  /// option to exclude the filename path, such that
+  /// getFullPath(filename,true) + filename 
+  /// will return the absolute filename path
+  G4String GetFullPath(G4String filename, bool excludePathFromFileName=false);
 
+  
   /** 
       Try to catch abort signals. This is not guaranteed to work.
       Main goal is to close output stream / files.

@@ -2,6 +2,8 @@
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
 #include "BDSDebug.hh"
+#include "BDSExecOptions.hh"
+#include "BDSUtilities.hh"
 
 BDSBunchUserFile::BDSBunchUserFile():nlinesIgnore(0){
 #ifdef BDSDEBUG 
@@ -177,6 +179,12 @@ void BDSBunchUserFile::ParseFileFormat(){
 void BDSBunchUserFile::skip(G4int nvalues){
   G4double dummy_val;
   for(G4int i=0;i<nvalues;i++) ReadValue(dummy_val);
+}
+
+void BDSBunchUserFile::SetDistribFile(G4String filename){
+  //  G4String fullPATH = BDS::GetFullPath(filename,true);
+  G4String fullPATH = BDSExecOptions::Instance()->GetBDSIMPATH();
+  distribFile=fullPATH + filename;
 }
 
 void BDSBunchUserFile::SetOptions(struct Options &opt) {
