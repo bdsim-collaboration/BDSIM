@@ -1152,12 +1152,49 @@ section.
 
 Beam Distributions
 ^^^^^^^^^^^^^^^^^^
+The following beam distributions are available in BDSIM
 
-
-- gauss
-- gaussTwiss
 - reference
+- circle
+- square
+- ring
+- eshell
+- gauss
+- gausstwiss
+- halo
+- composite 
+- userfile
+- ptc 
 
+
+Reference
+^^^^^^^^^
+This is a single particle with the same position and angle defined by the following parameters. When these parameters are used in conjunction with the other distributions, it represents the centroid of the distribution. 
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| X0                               | Horizontal position [m]                               |
++----------------------------------+-------------------------------------------------------+
+| Y0                               | Vertical position [m]                                 |
++----------------------------------+-------------------------------------------------------+
+| Z0                               | Longitudinal position [m]                             |
++----------------------------------+-------------------------------------------------------+
+| Xp0                              | Horizontal angle []                                   |
++----------------------------------+-------------------------------------------------------+
+| Yp0                              | Vertical angle []                                     |
++----------------------------------+-------------------------------------------------------+
+
+gauss
+^^^^^
+
+gaussTwiss
+^^^^^^^^^^
+
+halo
+^^^^
+The halo distrubtion is effectively a flat phase space with the central beam core removed at :math:`\epsilon_{\rm core}`. The beam core is defined using the standard twiss parameters described previously. The implicit general form of a rotated, translated ellipse is  :math:`AX^2 + BXY + CY^2 + DX + EY + F = 0`
+where the coefficients can be related to the major :math:`a`, minor :math:`b`, rotation angle :math:`\theta` and centre :math:`(x_{c},y_{c})` via 
 
 Regions
 -------
@@ -1166,10 +1203,6 @@ In Geant4 it is possible to drive different *regions* each with their own produc
 In BDSIM three different regions exist, each with their own user defined production cuts (see *Physics*). 
 These are the default region, the precision region and the approximation region. Beamline elements 
 can be set to the precision region by setting the attribute *precisionRegion* equal to 1. For example:
-
-
-
-
 
 .. rubric:: Footnotes
 
