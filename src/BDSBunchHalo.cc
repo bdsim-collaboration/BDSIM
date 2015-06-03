@@ -49,5 +49,47 @@ void  BDSBunchHalo::SetOptions(struct Options &opt) {
 void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 				   G4double& xp, G4double& yp, G4double& zp,
 				   G4double& t , G4double&  E, G4double& weight) {
+
+  // Central orbit 
+  x0 = X0  * CLHEP::m;
+  y0 = Y0  * CLHEP::m;
+  z0 = Z0  * CLHEP::m;
+  xp = Xp0 * CLHEP::rad;
+  yp = Yp0 * CLHEP::rad;
+  z0 = Z0  * CLHEP::m; 
+
+  //  z0 += (T0 - envelopeT * (1.-2.*FlatGen->shoot())) * CLHEP::c_light * CLHEP::s;
+  z0 += 0;
+
+  while(true) {
+    // Flat 2x2d phase space
+    G4double dx  = envelopeX  * (1-2*FlatGen->shoot()) * CLHEP::m;
+    G4double dy  = envelopeY  * (1-2*FlatGen->shoot()) * CLHEP::m;
+    G4double dxp = envelopeXp * (1-2*FlatGen->shoot()) * CLHEP::rad;
+    G4double dyp = envelopeYp * (1-2*FlatGen->shoot()) * CLHEP::rad;
+
+    // compute single particle emittance 
+    double emitXSp = gammaX*pow(dx,2) + 2*alphaX*dx*dxp + betaX*pow(dxp,2);
+    double emitYSp = gammaY*pow(dy,2) + 2*alphaY*dy*dyp + betaX*pow(dyp,2);
+    
+    // check if particle is within normal beam core, if so continue generation
+    if (emitXSp< emitX && emitYSp< emitY) { 
+      continue;
+    }    
+    
+    // determine weight
+   
+
+    // add to reference orbit 
+    x0 += dx;
+    y0 += dy;
+    xp += dxp;
+    yp += dyp;
+    
+    zp = CalculateZp(xp,yp,Zp0);
+    t = 0 * CLHEP::s;
+    E = BDSGlobalConstants::Instance()->GetParticleKineticEnergy();
+  }
+
   return;
 }
