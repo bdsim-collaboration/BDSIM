@@ -45,10 +45,7 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 
 BDSBeamlineElement::~BDSBeamlineElement()
 {
-  // check if component exists - protects against null component added at beginning
-  // of beamline for coordinate initialisation
-  if (component)
-    {delete component;}
+  delete component;
   delete rotationStart;
   delete rotationMiddle;
   delete rotationEnd;
