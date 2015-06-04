@@ -11,7 +11,7 @@
  * @brief A generic geometry component for a bdsim model
  * 
  * This class contains the minimum information required
- * for any object to be placed in the bdsim model
+ * for any geometrical object for a bdsim geant4 model
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
@@ -27,27 +27,53 @@ public:
 		       std::pair<G4double,G4double> extentYIn,
 		       std::pair<G4double,G4double> extentZIn,
 		       G4ThreeVector                placementOffset = G4ThreeVector(0,0,0));
-  ~BDSGeometryComponent(){;};  ///> Does not delete anything contained in pointers as G4 does that
+  ~BDSGeometryComponent();
 
-  G4VSolid*         GetContainerSolid(); ///> get the solid of the container for possible subtraction
-  G4LogicalVolume*  GetContainerLogicalVolume(); ///> get the logical volume of the container for placement
-  G4ThreeVector     GetPlacementOffset();///> get the offset from 0,0,0 that the object should ideally be placed in its parent
-  void SetPlacementOffset(G4ThreeVector& offsetIn);///> set the offset from 0,0,0 that the object should ideally be placed in its parent
-  std::pair<G4double,G4double> GetExtentX(); ///> get -ve/+ve extent in local x
-  std::pair<G4double,G4double> GetExtentY(); ///> get -ve/+ve extent in local y
-  std::pair<G4double,G4double> GetExtentZ(); ///> get -ve/+ve extent in local z
-  void SetExtentX(G4double lowerX, G4double upperX); ///> set the extent in local x
-  void SetExtentY(G4double lowerY, G4double upperY); ///> set the extent in local y
-  void SetExtentZ(G4double lowerZ, G4double upperZ); ///> set the extent in local z
-  void SetExtentX(std::pair<G4double, G4double> extentXIn);
-  void SetExtentY(std::pair<G4double, G4double> extentYIn);
-  void SetExtentZ(std::pair<G4double, G4double> extentZIn);
+  /// Get the name from the container logical volume
+  G4String          GetName() const;
+  
+  /// Get the solid of the container for possible subtraction
+  G4VSolid*         GetContainerSolid() const;
+  
+  /// Get the logical volume of the container for placement
+  G4LogicalVolume*  GetContainerLogicalVolume() const;
+
+  /// Get the offset from 0,0,0 that the object should ideally be placed in its parent
+  G4ThreeVector     GetPlacementOffset() const;
+
+  /// Set the offset from 0,0,0 that the object should ideally be placed in its parent
+  void SetPlacementOffset(G4ThreeVector& offsetIn);
+  
+  std::pair<G4double,G4double> GetExtentX() const;   ///< get -ve/+ve extent in local x
+  std::pair<G4double,G4double> GetExtentY() const;   ///< get -ve/+ve extent in local y
+  std::pair<G4double,G4double> GetExtentZ() const;   ///< get -ve/+ve extent in local z
+  void SetExtentX(G4double lowerX, G4double upperX); ///< set the extent in local x
+  void SetExtentY(G4double lowerY, G4double upperY); ///< set the extent in local y
+  void SetExtentZ(G4double lowerZ, G4double upperZ); ///< set the extent in local z
+  void SetExtentX(std::pair<G4double, G4double> extentXIn); ///< set the extent in local x
+  void SetExtentY(std::pair<G4double, G4double> extentYIn); ///< set the extent in local y
+  void SetExtentZ(std::pair<G4double, G4double> extentZIn); ///< set the extent in local z
+
+  /// Register a logical volume as belonging to this geometry component, which then becomes
+  /// responsible for it
   void RegisterLogicalVolume(G4LogicalVolume* logicalVolume);
+
+  /// Apply RegisterLogicalVolume(G4LogicalVolume* logicalVolume) to a vector of logical volumes
   void RegisterLogicalVolumes(std::vector<G4LogicalVolume*> logicalVolumes);
+
+  /// Mark a volume as one that should be made sensitive using the read out geometry.  Note, if
+  /// a volume is already sensitive with a specialised sensitive detector, it should NOT be
+  /// registered using this method.
   void RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume);
+
+  /// Apply RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume) to a vector of logical volumes
   void RegisterSensitiveVolumes(std::vector<G4LogicalVolume*> sensitiveVolumes);
-  std::vector<G4LogicalVolume*> GetAllSensitiveVolumes();
-  std::vector<G4LogicalVolume*> GetAllLogicalVolumes();
+
+  /// Access all logical volumes belonging to this component
+  std::vector<G4LogicalVolume*> GetAllLogicalVolumes() const;
+  
+  /// Access all sensitive volumes belonging to this component
+  std::vector<G4LogicalVolume*> GetAllSensitiveVolumes() const;
 
 protected:
   /// Copy constructor
@@ -68,25 +94,28 @@ protected:
   G4ThreeVector                 placementOffset;
 };
 
-inline G4VSolid* BDSGeometryComponent::GetContainerSolid()
+inline G4String  BDSGeometryComponent::GetName() const
+{return containerLogicalVolume->GetName();}
+
+inline G4VSolid* BDSGeometryComponent::GetContainerSolid() const
 {return containerSolid;}
 
-inline G4LogicalVolume* BDSGeometryComponent::GetContainerLogicalVolume()
+inline G4LogicalVolume* BDSGeometryComponent::GetContainerLogicalVolume() const
 {return containerLogicalVolume;}
 
-inline G4ThreeVector BDSGeometryComponent::GetPlacementOffset()
+inline G4ThreeVector BDSGeometryComponent::GetPlacementOffset() const
 {return placementOffset;}
 
 inline void BDSGeometryComponent::SetPlacementOffset(G4ThreeVector& offsetIn)
 {placementOffset = G4ThreeVector(offsetIn);}
 
-inline std::pair<G4double,G4double> BDSGeometryComponent::GetExtentX()
+inline std::pair<G4double,G4double> BDSGeometryComponent::GetExtentX() const
 {return extentX;}
 
-inline std::pair<G4double,G4double> BDSGeometryComponent::GetExtentY()
+inline std::pair<G4double,G4double> BDSGeometryComponent::GetExtentY() const
 {return extentY;}
 
-inline std::pair<G4double,G4double> BDSGeometryComponent::GetExtentZ()
+inline std::pair<G4double,G4double> BDSGeometryComponent::GetExtentZ() const
 {return extentZ;}
 
 inline void BDSGeometryComponent::SetExtentX(G4double lowerX, G4double upperX)
@@ -107,10 +136,10 @@ inline  void BDSGeometryComponent::SetExtentY(std::pair<G4double, G4double> exte
 inline  void BDSGeometryComponent::SetExtentZ(std::pair<G4double, G4double> extentZIn)
 {extentZ = extentZIn;}
 
-inline std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllLogicalVolumes()
+inline std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllLogicalVolumes() const
 {return allLogicalVolumes;}
 
-inline std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllSensitiveVolumes()
+inline std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllSensitiveVolumes() const
 {return allSensitiveVolumes;}
 
 #endif
