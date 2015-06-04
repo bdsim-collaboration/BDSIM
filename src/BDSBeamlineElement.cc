@@ -25,7 +25,7 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 				       G4double                 sPositionStartIn,
 				       G4double                 sPositionMiddleIn,
 				       G4double                 sPositionEndIn):
-  BDSGeometryComponent::BDSGeometryComponent(*(BDSGeometryComponent*)componentIn),
+  BDSGeometryComponent(*((BDSGeometryComponent*)componentIn)),
   component(componentIn),
   positionStart(positionStartIn), positionMiddle(positionMiddleIn), positionEnd(positionEndIn),
   rotationStart(rotationStartIn), rotationMiddle(rotationMiddleIn), rotationEnd(rotationEndIn),
