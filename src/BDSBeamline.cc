@@ -84,7 +84,7 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
   G4bool hasFiniteOffset   = BDS::IsFinite(tiltOffset.GetXOffset()) || BDS::IsFinite(tiltOffset.GetYOffset());
   
 #ifdef BDSDEBUG
-  G4cout << "length               " << length     << " mm"         << G4endl;
+  G4cout << "chord length         " << length     << " mm"         << G4endl;
   G4cout << "angle                " << angle      << " rad"        << G4endl;
   G4cout << "tilt offsetX offsetY " << tiltOffset << " rad mm mm " << G4endl;
   G4cout << "hasFiniteLength      " << hasFiniteLength             << G4endl;
