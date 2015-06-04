@@ -418,9 +418,17 @@ void BDSDetectorConstruction::ComponentPlacement(){
   for(; it != beamline->end(); ++it)
     {
       BDSAcceleratorComponent* thecurrentitem = (*it)->GetAcceleratorComponent();
-      
+
+      if (thecurrentitem)
+	{G4cout << "it has a valid accelerator component" << G4endl;
+	  G4cout << "its type is " << thecurrentitem->GetType() << G4endl;}
       // get the logical volume to be placed
       G4LogicalVolume* elementLV = (*it)->GetContainerLogicalVolume();
+      if (!elementLV)
+	{
+	  G4cerr << __METHOD_NAME__ << "this accelerator component has no volume to be placed!" << G4endl;
+	  continue;
+	}
       G4cout << elementLV->GetName()<< G4endl;
       G4String         name      = (*it)->GetName();
 #ifdef BDSDEBUG

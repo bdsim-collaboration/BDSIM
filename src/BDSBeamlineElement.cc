@@ -40,7 +40,11 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   G4cout << componentIn->GetName() << G4endl;
   G4cout << componentIn->GetPlacementOffset() << G4endl;
   containerLogicalVolume = componentIn->GetContainerLogicalVolume();
-  G4cout << "TEST TEST TEST " << containerLogicalVolume->GetName() << G4endl;
+  if (containerLogicalVolume)
+    {G4cout << "has it" << G4endl;}
+  else
+    {G4cout << "no" << G4endl;}
+      //G4cout << "TEST TEST TEST " << containerLogicalVolume->GetName() << G4endl;
 }
 
 BDSBeamlineElement::~BDSBeamlineElement()

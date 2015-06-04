@@ -24,21 +24,22 @@ BDSBeamline::BDSBeamline()
   G4RotationMatrix* zeroRot = new G4RotationMatrix();
   BDSSampler* initialCoords = new BDSSampler("initial_coordinates",1e-4);
   initialCoords->Initialise(); // builds and assigns volumes
-  beamline.push_back( new BDSBeamlineElement(initialCoords,
-					     zeroPos,
-					     zeroPos,
-					     zeroPos,
-					     zeroRot,
-					     zeroRot,
-					     zeroRot,
-					     zeroPos,
-					     zeroPos,
-					     zeroPos,
-					     zeroRot,
-					     zeroRot,
-					     zeroRot,
-					     0., 0., 0.)
-		      );
+  BDSBeamlineElement* e = new BDSBeamlineElement(initialCoords,
+						 zeroPos,
+						 zeroPos,
+						 zeroPos,
+						 zeroRot,
+						 zeroRot,
+						 zeroRot,
+						 zeroPos,
+						 zeroPos,
+						 zeroPos,
+						 zeroRot,
+						 zeroRot,
+						 zeroRot,
+						 0., 0., 0.);
+  beamline.push_back(e);
+  G4cout << e->GetPositionStart() << G4endl;
 }
 
 BDSBeamline::~BDSBeamline()
