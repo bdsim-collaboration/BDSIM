@@ -135,7 +135,9 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
     {
       referencePositionStart  = previousReferencePositionEnd;
       referencePositionMiddle = referencePositionStart + G4ThreeVector(0, 0, 0.5 * length).transform(*referenceRotationMiddle);
-      referencePositionEnd    = referencePositionStart + G4ThreeVector(0, 0, length).transform(*referenceRotationEnd);
+      // remember the end position is the chord length along the half angle, not the full angle
+      // the particle achieves the full angle though by the end position.
+      referencePositionEnd    = referencePositionStart + G4ThreeVector(0, 0, length).transform(*referenceRotationMiddle);
     }
   else
     {
@@ -181,15 +183,15 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
   G4cout << "reference position start:  " << referencePositionStart   << G4endl;
   G4cout << "reference position middle: " << referencePositionMiddle  << G4endl;
   G4cout << "reference position end:    " << referencePositionEnd     << G4endl;
-  G4cout << "reference rotation start:  " << *referenceRotationStart  << G4endl;
-  G4cout << "reference rotation middle: " << *referenceRotationMiddle << G4endl;
-  G4cout << "reference rotation end:    " << *referenceRotationEnd    << G4endl;
+  G4cout << "reference rotation start:  " << *referenceRotationStart;
+  G4cout << "reference rotation middle: " << *referenceRotationMiddle;
+  G4cout << "reference rotation end:    " << *referenceRotationEnd;
   G4cout << "position start:            " << positionStart            << G4endl;
   G4cout << "position middle:           " << positionMiddle           << G4endl;
   G4cout << "position end:              " << positionEnd              << G4endl;
-  G4cout << "rotation start:            " << *rotationStart           << G4endl;
-  G4cout << "rotation middle:           " << *rotationMiddle          << G4endl;
-  G4cout << "rotation end:              " << *rotationEnd             << G4endl;
+  G4cout << "rotation start:            " << *rotationStart;
+  G4cout << "rotation middle:           " << *rotationMiddle;
+  G4cout << "rotation end:              " << *rotationEnd;
 #endif
 
   // construct beamline element
