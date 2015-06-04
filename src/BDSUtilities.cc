@@ -62,28 +62,32 @@ std::string BDS::GetBDSIMExecPath()
   return bdsimPath;
 }
 
-G4String BDS::GetFullPath(G4String fileName)
+G4String BDS::GetFullPath(G4String fileName, bool excludePathFromFileName)
 {
   //Set fullPath to mirror what is done in parser.l (i.e. if no environment varible set, assume base filename path is that of the gmad file).
   G4String fullPath = getEnv("BDSIMPATH");
   if(fullPath.length()<=0){
     G4String inputFilepath = "";
-    // get the path part of the supplied path to the main input file
-    G4String::size_type found = fileName.rfind("/"); // find the last '/'
-    if (found != G4String::npos){
-      inputFilepath = fileName.substr(0,found); // the path is the bit before that
-    } // else remains empty string
+    if (!excludePathFromFileName) {
+      // get the path part of the supplied path to the main input file
+      G4String::size_type found = fileName.rfind("/"); // find the last '/'
+      if (found != G4String::npos){
+	inputFilepath = fileName.substr(0,found); // the path is the bit before that
+      } // else remains empty string
+    }
     // need to know whether it's an absolute or relative path
     if ((fileName.substr(0,1)) == "/"){
       // the main file has an absolute path
       fullPath = inputFilepath;
     } else {
-      // the main file has a relative path
+      // the main file has a relative path or just the file name
       char cwdchars[200]; //filepath up to 200 characters
+      // get current working directory
       G4String cwd = (G4String)getcwd(cwdchars, sizeof(cwdchars)) + "/";
       fullPath = cwd + inputFilepath;
     }
   }
+  // add additional slash just to be safe
   fullPath += "/";
   return fullPath;
 }

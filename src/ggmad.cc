@@ -32,21 +32,12 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
   G4double x1=0, x2=0, y1=0, y2=0;
   G4double phi=0, theta=0, psi=0; // Euler angles - for rotation of components
   G4String material;
-  // G4double FieldX, FieldY, FieldZ;
-  // FieldX = FieldY = FieldZ = 0.0;
 
   G4Material *theMaterial;
-  G4Box *aBox;
-  G4Tubs *aTubs;
-  G4Cons *aCons;
-  //G4Trap *aTrap;
-  G4Trd *aTrd;
-
   G4LogicalVolume *lvol;
 
   G4VisAttributes *visAttr = new G4VisAttributes(true, G4Colour(0.2,0.2,0.2));
   visAttr->SetForceSolid(true);
-						 
 
   G4int count = 0;
 
@@ -82,10 +73,10 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    G4cout<<"creating box : "<<x0<<"  "<<y0<<" "<<z0<<G4endl;
 
 
-	    aBox = new G4Box("aBox" + G4String(count),
-			     x,   // half x
-			     y, // half y
-			     z ); // half z
+	    G4Box* aBox = new G4Box("aBox" + G4String(count),
+				    x,   // half x
+				    y, // half y
+				    z ); // half z
 	    
 	    lvol = new G4LogicalVolume(aBox,
 			theMaterial,
@@ -147,12 +138,12 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    phi0 = 0;
 	    dphi = 360; // degrees
 	    
-	    aTubs = new G4Tubs("aTubs" + G4String(count),
-			       rmin,   // inner R
-			       rmax, // outer R
-			       z, //z
-			       phi0,//phi 0 
-			       CLHEP::twopi * dphi / 360  ); //delta phi
+	    G4Tubs* aTubs = new G4Tubs("aTubs" + G4String(count),
+				       rmin,   // inner R
+				       rmax, // outer R
+				       z, //z
+				       phi0,//phi 0 
+				       CLHEP::twopi * dphi / 360  ); //delta phi
 	    
 	    lvol = new G4LogicalVolume(aTubs,
 				       theMaterial,
@@ -217,14 +208,14 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    phi0 = 0;
 	    dphi = 360; // degrees
 	    
-	    aCons = new G4Cons("aCons" + G4String(count),
-			       rmin,   // inner R
-			       rmax,
-			       rmin2,
-			       rmax2,
-			       z, //z
-			       phi0,//phi 0 
-			       CLHEP::twopi * dphi / 360  ); //delta phi
+	    G4Cons* aCons = new G4Cons("aCons" + G4String(count),
+				       rmin,   // inner R
+				       rmax,
+				       rmin2,
+				       rmax2,
+				       z, //z
+				       phi0,//phi 0 
+				       CLHEP::twopi * dphi / 360  ); //delta phi
 	    
 	    lvol = new G4LogicalVolume(aCons,
 				       theMaterial,
@@ -285,10 +276,10 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 		  z<<" "<<y<<" "<<x1<<" "<<x2<<G4endl;
 	    
 	    
-	    aTrd = new G4Trd("aTrd" + G4String(count),
-			     x1,x2,   // inner R
-			     y1,y2,
-			     z);
+	    G4Trd* aTrd = new G4Trd("aTrd" + G4String(count),
+				    x1,x2,   // inner R
+				    y1,y2,
+				    z);
 	    
 	    lvol = new G4LogicalVolume(aTrd,
 				       theMaterial,

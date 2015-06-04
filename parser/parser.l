@@ -170,8 +170,9 @@ if(bdsimpath.length()>0){
      // the main file has an absolute path
      includefilename = mainfilepath + (std::string)yytext;
    } else {
-     // the main file has a relative path
+     // the main file has a relative path or just the file name
      char cwdchars[200]; //filepath up to 200 characters
+     // get current working directory
      std::string cwd = (std::string)getcwd(cwdchars, sizeof(cwdchars)) + "/";
      includefilename = cwd + mainfilepath + (std::string)yytext;
    }
