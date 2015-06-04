@@ -47,6 +47,12 @@ BDSGeometryComponent::BDSGeometryComponent(BDSGeometryComponent& component):
   placementOffset(component.placementOffset)
 {;}
 
+BDSGeometryComponent::~BDSGeometryComponent()
+{
+  delete containerSolid;
+  delete containerLogicalVolume;
+}
+
 void BDSGeometryComponent::RegisterLogicalVolume(G4LogicalVolume* logicalVolume)
 {
   // only register it if it doesn't exist already
