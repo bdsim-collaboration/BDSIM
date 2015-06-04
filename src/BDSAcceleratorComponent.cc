@@ -23,12 +23,6 @@
 #include "G4AssemblyVolume.hh"
 #include "G4Transform3D.hh"
 
-typedef std::map<G4String,int> LogVolCountMap;
-LogVolCountMap* LogVolCount = new LogVolCountMap();
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-LogVolMap* LogVol = new LogVolMap();
-
 BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4String& aName,
 						  G4double aLength, 
@@ -194,26 +188,8 @@ BDSAcceleratorComponent::~BDSAcceleratorComponent ()
 
 void BDSAcceleratorComponent::Initialise()
 {
-  /// check and build logical volume
+  Build();
 
-  // set copy number (count starts at 0)
-  // post increment guarantees itsCopyNumber starts at 0!
-  itsCopyNumber = (*LogVolCount)[itsName]++;
-  if(itsCopyNumber == 0)
-    {
-      Build();
-      //
-      // append marker logical volume to volume map
-      //
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
-    }
-  else
-    {
-      //
-      // use already defined marker volume
-      //
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-    }
   readOutLV = BDS::BuildReadOutVolume(itsName,itsLength,itsAngle);
 }
 
@@ -234,13 +210,13 @@ void BDSAcceleratorComponent::Build()
   RegisterMarkerWithBaseClass();
 
   // visual attributes
-  if(itsMarkerLogicalVolume) {
-    if (BDSExecOptions::Instance()->GetVisDebug()) {
-      itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-    } else {
-      itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+  if(itsMarkerLogicalVolume)
+    {
+    if (BDSExecOptions::Instance()->GetVisDebug())
+      {itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
+    else
+      {itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
     }
-  }
 }
 
 void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)

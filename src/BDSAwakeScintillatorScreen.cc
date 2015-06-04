@@ -24,10 +24,6 @@ Work in progress.
 #include "G4Trap.hh"
 //#include "BDSOutputBase.hh"
 
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
-
-//============================================================
 BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial=""):
   BDSAcceleratorComponent(aName, 1.0, 0, 0, 0), _mlScreen(NULL), _camera(NULL), _material(material), _thickness(thickness), _screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
 {
@@ -92,10 +88,6 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
 
   new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX2,dispY2,dispZ2),itsCameraScoringPlaneLog2,_samplerName2,
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  
-  
-  (*LogVol)[_samplerName]=itsCameraScoringPlaneLog;
-  (*LogVol)[_samplerName2]=itsCameraScoringPlaneLog2;
 
   itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   itsCameraScoringPlaneLog2->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
@@ -129,9 +121,6 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX4,dispY4,dispZ4),itsCameraScoringPlaneLog4,_samplerName4,
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   
-  
-  (*LogVol)[_samplerName3]=itsCameraScoringPlaneLog3;
-  (*LogVol)[_samplerName4]=itsCameraScoringPlaneLog4;
   itsCameraScoringPlaneLog3->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   itsCameraScoringPlaneLog4->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   BDSSampler::AddExternalSampler(_samplerName3+"_1");
@@ -163,9 +152,6 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX6,dispY6,dispZ6),itsCameraScoringPlaneLog6,_samplerName6,
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
   
-  
-  (*LogVol)[_samplerName5]=itsCameraScoringPlaneLog5;
-  (*LogVol)[_samplerName6]=itsCameraScoringPlaneLog6;
   itsCameraScoringPlaneLog5->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   itsCameraScoringPlaneLog6->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   BDSSampler::AddExternalSampler(_samplerName5+"_1");
@@ -224,11 +210,6 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
 
   new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX,dispY,dispZ2),itsScreenScoringPlaneLog2,_screenSamplerName2,
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  
-  //--
-  (*LogVol)[_screenSamplerName]=itsScreenScoringPlaneLog;
-  
-  (*LogVol)[_screenSamplerName2]=itsScreenScoringPlaneLog2;
   
   //--
   itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
@@ -366,14 +347,8 @@ void BDSAwakeScintillatorScreen::ComputeDimensions(){
   std::cout << __METHOD_NAME__ << " " << itsLength << " " << itsXLength << " " << itsYLength << std::endl;
 
   _vacDispZ2=(-itsLength)/2.0+(_vacWidth2)/2.0;
-
-
-  _vacLength=itsLength;
-
   
-
-
-
+  _vacLength=itsLength;
 }
 
 void BDSAwakeScintillatorScreen::BuildMarkerLogicalVolume(){
@@ -483,15 +458,10 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
   winVisAttributes->SetForceSolid(true);
   winVisAttributes->SetVisibility(true);
   vacuumWindowLog->SetVisAttributes(winVisAttributes);
-
-
-
 }
 
-void BDSAwakeScintillatorScreen::BuildVacuumChamber2(){
-
-
-
+void BDSAwakeScintillatorScreen::BuildVacuumChamber2()
+{
   G4VSolid* vacuumOuterSolid = new G4Trap("vacuumOuterSolid",
 					  _vacWidth2/2.0,
 					  1.0*(-acos(0.0)+atan(2.0)),
