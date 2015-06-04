@@ -40,6 +40,7 @@ void BDSScintillatorScreen::Build()
   SetVisAttributes(); 
   ComputeDimensions();
   BuildMarkerLogicalVolume();
+  RegisterMarkerWithBaseClass();
   if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
     BuildTunnel();
   }

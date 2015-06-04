@@ -52,12 +52,13 @@ void BDSSamplerCylinder::Initialise()
 
 void BDSSamplerCylinder::BuildMarkerLogicalVolume()
 {
-  itsMarkerLogicalVolume=
-    new G4LogicalVolume(new G4Tubs(itsName+"_body",
-				   itsRadius-1.e-6*CLHEP::m,
-				   itsRadius,
-				   itsLength/2,
-				   0,CLHEP::twopi*CLHEP::radian),
+  itsMarkerSolidVolume = new G4Tubs(itsName+"_body",
+				    itsRadius-1.e-6*CLHEP::m,
+				    itsRadius,
+				    itsLength/2,
+				    0,
+				    CLHEP::twopi*CLHEP::radian);
+  itsMarkerLogicalVolume = new G4LogicalVolume(itsMarkerSolidVolume,
 			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
 			itsName);
       

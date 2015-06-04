@@ -184,6 +184,8 @@ private:
   virtual void SetVisAttributes(); 
 
 protected:
+  /// Attach marker solid and logical volume pointers to BDSGeometryComponent base class
+  void RegisterMarkerWithBaseClass();
   /// build logical volumes: marker, tunnel, field, blms etc.
   virtual void Build();
   /// build tunnel

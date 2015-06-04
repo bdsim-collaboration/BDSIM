@@ -33,11 +33,11 @@ BDSTerminator::BDSTerminator(G4String aName, G4double aLength):
 void BDSTerminator::BuildMarkerLogicalVolume()
 {
   //Bascially a copy of BDSSampler but with different sensitive detector added
-  G4Box* terminatorBox = new G4Box(itsName+"_solid",
+  itsMarkerSolidVolume = new G4Box(itsName+"_solid",
 				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
 				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
 				   itsLength/2.0);
-  itsMarkerLogicalVolume =new G4LogicalVolume(terminatorBox,
+  itsMarkerLogicalVolume =new G4LogicalVolume(itsMarkerSolidVolume,
 					      BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
 					      itsName);
   

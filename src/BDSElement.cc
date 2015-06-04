@@ -97,14 +97,15 @@ void BDSElement::BuildElementMarkerLogicalVolume(){
 
   G4double elementSize=std::max(elementSizeX, elementSizeY); 
   
+  itsMarkerSolidVolume = new G4Box(itsName+"generic_element",
+				   elementSize,
+				   elementSize,   
+				   itsLength/2.0);
 
-  itsMarkerLogicalVolume = 
-    new G4LogicalVolume(new G4Box(itsName+"generic_element",
-                                  elementSize,
-                                  elementSize,   
-				  itsLength/2.0),
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
-			itsName);
+  G4Material* material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  itsMarkerLogicalVolume = new G4LogicalVolume(itsMarkerSolidVolume,
+					       material,
+					       itsName);
 
 #ifdef BDSDEBUG 
   G4cout<<"marker volume : x/y="<<elementSize/CLHEP::m<<

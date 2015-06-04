@@ -217,10 +217,21 @@ void BDSAcceleratorComponent::Initialise()
   readOutLV = BDS::BuildReadOutVolume(itsName,itsLength,itsAngle);
 }
 
+void BDSAcceleratorComponent::RegisterMarkerWithBaseClass()
+{
+  // Register volumes with base class (BDSGeometryComponent)
+  RegisterLogicalVolume(itsMarkerLogicalVolume);
+
+  // Manually assign base class (BDSGeometryComponent) members as constructor used with null pointers
+  containerSolid         = itsMarkerSolidVolume;
+  containerLogicalVolume = itsMarkerLogicalVolume;
+}
+
 void BDSAcceleratorComponent::Build()
 {
   SetVisAttributes(); // sets color attributes, virtual method
   BuildMarkerLogicalVolume(); // pure virtual provided by derived class
+  RegisterMarkerWithBaseClass();
 
   // visual attributes
   if(itsMarkerLogicalVolume) {

@@ -47,12 +47,11 @@ void BDSLWCalorimeter::BuildMarkerLogicalVolume()
   G4double SampTransSize;
   SampTransSize=2.*BDSGlobalConstants::Instance()->GetTunnelRadius();
 
-  itsMarkerLogicalVolume=
-    new G4LogicalVolume(
-			new G4Box(itsName+"_solid",
-				  SampTransSize,
-				  SampTransSize,
-				  itsLength/2),
+  itsMarkerSolidVolume = new G4Box(itsName+"_solid",
+				   SampTransSize,
+				   SampTransSize,
+				   itsLength/2);
+  itsMarkerLogicalVolume = new G4LogicalVolume(itsMarkerSolidVolume,
 			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
 			itsName);
   
@@ -62,6 +61,9 @@ void BDSLWCalorimeter::BuildMarkerLogicalVolume()
   itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
+
+  // Use BDSAcceleratorComponent method to register marker volume / solid with base class
+  RegisterMarkerWithBaseClass();
 }
 
 void BDSLWCalorimeter::BuildCal(G4double aLength)

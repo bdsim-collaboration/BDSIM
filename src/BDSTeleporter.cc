@@ -41,12 +41,11 @@ void BDSTeleporter::Build()
 
 void BDSTeleporter::BuildMarkerLogicalVolume()
 {
-  itsMarkerLogicalVolume = 
-    new G4LogicalVolume(
-			new G4Box (itsName+"_solid",
+  itsMarkerSolidVolume = new G4Box(itsName+"_solid",
 				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
 				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				   itsLength/2.0),
+				   itsLength/2.0);
+  itsMarkerLogicalVolume = new G4LogicalVolume(itsMarkerSolidVolume,
 			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
 			itsName);
   itsMarkerLogicalVolume->SetFieldManager(itsFieldManager,false); // modelled from BDSMultipole.cc

@@ -247,25 +247,26 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
 #endif
 }
 
-void BDSAwakeScintillatorScreen::Build(){
-      SetVisAttributes(); 
-      BuildScreen();
-      BuildCamera();	
-      ComputeDimensions();
-      BuildMarkerLogicalVolume();
-      if(_vacChambType==2){
-	BuildVacuumChamber2();
-      } else {
-      BuildVacuumChamber1();
-      }
-      //      BuildScreenScoringPlane();
-      BuildCameraScoringPlane();
-      PlaceScreen();
-      //      PlaceCamera();
-      if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-	BuildTunnel();
-      }
-      RegisterSensitiveVolume(itsMarkerLogicalVolume);
+void BDSAwakeScintillatorScreen::Build()
+{
+  SetVisAttributes(); 
+  BuildScreen();
+  BuildCamera();	
+  ComputeDimensions();
+  BuildMarkerLogicalVolume();
+  if(_vacChambType==2){
+    BuildVacuumChamber2();
+  } else {
+    BuildVacuumChamber1();
+  }
+  //      BuildScreenScoringPlane();
+  BuildCameraScoringPlane();
+  PlaceScreen();
+  //      PlaceCamera();
+  if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
+    BuildTunnel();
+  }
+  RegisterSensitiveVolume(itsMarkerLogicalVolume);
 }
 
 void BDSAwakeScintillatorScreen::BuildCamera(){

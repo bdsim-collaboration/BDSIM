@@ -62,17 +62,13 @@ void BDSSampler::BuildMarkerLogicalVolume()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  G4VSolid* itsMarkerSolid = new G4Box(itsName+"_solid",
-				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				       itsLength/2.0);
-  itsMarkerLogicalVolume=
-    new G4LogicalVolume(itsMarkerSolid,
+  itsMarkerSolidVolume = new G4Box(itsName+"_solid",
+				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
+				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
+				   itsLength/2.0);
+  itsMarkerLogicalVolume = new G4LogicalVolume(itsMarkerSolidVolume,
 			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
-			itsName);
-
-  containerSolid = itsMarkerSolid;
-  containerLogicalVolume = itsMarkerLogicalVolume;
+					       itsName);
   
 #ifndef NOUSERLIMITS
   itsOuterUserLimits =new G4UserLimits();
@@ -82,11 +78,11 @@ void BDSSampler::BuildMarkerLogicalVolume()
   itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
   //itsMarkerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
-  if (BDSExecOptions::Instance()->GetVisDebug()) {
-    itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-  } else {
-    itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-  }
+  if (BDSExecOptions::Instance()->GetVisDebug())
+    {itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
+  else
+    {itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
+  
   itsMarkerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 }
 
