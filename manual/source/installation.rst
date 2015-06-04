@@ -5,21 +5,9 @@ Installation
 Obtaining  BDSIM
 ================
 
-BDSIM may be obtained either from the BDSIM website
-(http://www.pp.rhul.ac.uk/twiki/bin/view/JAI/BdSim) or from the GIT repository
+BDSIM may be obtained either from the BDSIM website from the GIT repository
 (https://www.bitbucket.org/stewartboogert/bdsim). The user must compile it on
 their system and must have Geant4 already present (or access to AFS).
-
-We **recommend obtaining BDSIM from the git repository** as this provides an easy
-method to obtain updates in the future.
-
-From the Website
-----------------
-
-The source can be downloaded from: http://twiki.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BDsimDownload
-in compressed tar format. To decompress use the following command::
-
-  tar -xzf BDSIM-v064.tar.gz
 
 ..  _from-git-repository:
 
