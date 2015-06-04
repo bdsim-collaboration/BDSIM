@@ -54,20 +54,25 @@ void BDSGeometryComponent::RegisterLogicalVolume(G4LogicalVolume* logicalVolume)
   // but will protect against resetting sensitivity and possibly seg faults by doulby registered
   // logical volumes.  Also, the number of volumes should be < 20 (at maximum) and is only done
   // once at construction time so not as bad as it could be.
-  if (std::find(allLogicalVolumes.begin(), allLogicalVolumes.end(), logicalVolume) != allLogicalVolumes.end())
+  if (std::find(allLogicalVolumes.begin(), allLogicalVolumes.end(), logicalVolume) == allLogicalVolumes.end())
 	   {
+	     // not found so register it
 	     allLogicalVolumes.push_back(logicalVolume);
-#ifdef BDSDEBUG
-	     G4cout << __METHOD_NAME__ << "warning - logical volume \""
-		    << logicalVolume->GetName()
-		    << "\" alreay in this geometry component \"";
-	     if (containerSolid)
-	       {G4cout << containerSolid->GetName();}
-	     else
-	       {G4cout << " INVALID CONTAINER ";}
-	     G4cout << "\"" << G4endl;
-#endif
 	   }
+#ifdef BDSDEBUG
+  else
+    {
+      // found - so don't register it
+      G4cout << __METHOD_NAME__ << "warning - logical volume \""
+	     << logicalVolume->GetName()
+	     << "\" already in this geometry component \"";
+      if (containerSolid)
+	{G4cout << containerSolid->GetName();}
+      else
+	{G4cout << " INVALID CONTAINER ";}
+      G4cout << "\"" << G4endl;
+#endif
+    }
 }
 
 void BDSGeometryComponent::RegisterLogicalVolumes(std::vector<G4LogicalVolume*> logicalVolumes)
@@ -88,18 +93,23 @@ void BDSGeometryComponent::RegisterSensitiveVolume(G4LogicalVolume* sensitiveVol
   // once at construction time so not as bad as it could be.
   if (std::find(allSensitiveVolumes.begin(), allSensitiveVolumes.end(), sensitiveVolume) == allSensitiveVolumes.end())
 	   {
+	     // not found so register it
 	     allSensitiveVolumes.push_back(sensitiveVolume);
-#ifdef BDSDEBUG
-	     G4cout << __METHOD_NAME__ << "warning - sensitive volume \""
-		    << sensitiveVolume->GetName()
-		    << "\" alreay in this geometry component \"";
-	     if (containerSolid)
-	       {G4cout << containerSolid->GetName();}
-	     else
-	       {G4cout << " INVALID CONTAINER ";}
-	     G4cout << "\"" << G4endl;
-#endif
 	   }
+  else
+    {
+      // found - so don't register it
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "warning - sensitive volume \""
+	     << sensitiveVolume->GetName()
+	     << "\" alreay in this geometry component \"";
+      if (containerSolid)
+	{G4cout << containerSolid->GetName();}
+      else
+	{G4cout << " INVALID CONTAINER ";}
+      G4cout << "\"" << G4endl;
+#endif
+    }
 }
 
 void BDSGeometryComponent::RegisterSensitiveVolumes(std::vector<G4LogicalVolume*> sensitiveVolumes)
