@@ -15,10 +15,10 @@ private:
   template <typename Type> G4bool ReadValue(Type &value);
   struct Doublet {
     G4String name;
-    G4double unit; // relative to SI units, i.e. mm=0.001 etc.
+    G4double unit; ///> relative to SI units, i.e. mm=0.001 etc.
   };
   std::list<struct Doublet> fields;
-  void SetDistribFile(G4String val) {distribFile=val;}
+  void SetDistribFile(G4String filename);
   void SetBunchFormat(G4String val) {bunchFormat=val;}
   void SetNLinesIgnore(G4int val)   {nlinesIgnore=val;}
   G4double ParseEnergyUnit(G4String &fmt);
@@ -27,21 +27,17 @@ private:
   G4double ParseTimeUnit(G4String &fmt);
 
 protected : 
-  G4String distribFile;
-  G4String bunchFormat;
-  G4int nlinesIgnore;
+  G4String distribFile; ///> bunch file
+  G4String bunchFormat; ///> the format of the file
+  G4int nlinesIgnore; ///> number of lines that will be ignored after each particle (default 0)
   
 public: 
   BDSBunchUserFile();
-  ~BDSBunchUserFile(); 
+  ~BDSBunchUserFile();
   virtual void SetOptions(struct Options& opt);
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 			       G4double& xp, G4double& yp, G4double& zp,
 			       G4double& t , G4double&  E, G4double& weight);  
-  
-  G4String GetDistribFile()  {return distribFile;}
-  G4String GetBunchFormat()  {return bunchFormat;}
-  G4int    GetNLinesIgnore() {return nlinesIgnore;}
 };
 
 #endif
