@@ -71,7 +71,7 @@ std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
 void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "adding component" << G4endl;
+  G4cout << G4endl << __METHOD_NAME__ << "adding component to beamline and calculating coordinates" << G4endl;
 #endif
 
   // interrogate the item
@@ -105,8 +105,11 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
   // rotation matrices appropriately
   if (hasFiniteAngle)
     {
-      referenceRotationMiddle->rotateY(component->GetAngle() * 0.5); // middle rotated by half angle in x,z plane
-      referenceRotationEnd->rotateY(component->GetAngle());          // end rotated by full angle in x,z plane
+      G4double angle = component->GetAngle();
+      // remember our definition of angle - +ve angle bends in -ve x direction in right
+      // handed coordinate system
+      referenceRotationMiddle->rotateY(-angle * 0.5); // middle rotated by half angle in x,z plane
+      referenceRotationEnd->rotateY(-angle);          // end rotated by full angle in x,z plane
     }
 
   // add the tilt to the rotation matrices (around z axis)
@@ -134,10 +137,16 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
   if (hasFiniteLength)
     {
       referencePositionStart  = previousReferencePositionEnd;
-      referencePositionMiddle = referencePositionStart + G4ThreeVector(0, 0, 0.5 * length).transform(*referenceRotationMiddle);
+      // calculate delta to mid point
+      G4ThreeVector md= G4ThreeVector(0, 0, 0.5 * length).transform(*referenceRotationMiddle);
+      // flip x coordinate only due our definition of angle
+      md.setX(md.x()*-1);
+      referencePositionMiddle = referencePositionStart + md;
       // remember the end position is the chord length along the half angle, not the full angle
       // the particle achieves the full angle though by the end position.
-      referencePositionEnd    = referencePositionStart + G4ThreeVector(0, 0, length).transform(*referenceRotationMiddle);
+      G4ThreeVector delta = G4ThreeVector(0, 0, length).transform(*referenceRotationMiddle);
+      delta.setX(delta.x()*-1);
+      referencePositionEnd = referencePositionStart + delta;
     }
   else
     {
@@ -214,6 +223,8 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
   
   // append it to the beam line
   beamline.push_back(element);
+
+  G4cout << __METHOD_NAME__ << "component added" << G4endl << G4endl;
 }
 
 BDSBeamlineElement* BDSBeamline::front() const
