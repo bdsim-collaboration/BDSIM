@@ -1,6 +1,7 @@
 #include "BDSBeamlineElement.hh"
 
 #include "BDSAcceleratorComponent.hh"
+#include "BDSDebug.hh"
 #include "BDSGeometryComponent.hh"
 
 #include "globals.hh" // geant4 globals / types
@@ -37,14 +38,15 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   referenceRotationEnd(referenceRotationEndIn),
   sPositionStart(sPositionStartIn), sPositionMiddle(sPositionMiddleIn), sPositionEnd(sPositionEndIn)
 {
-  G4cout << componentIn->GetName() << G4endl;
-  G4cout << componentIn->GetPlacementOffset() << G4endl;
-  containerLogicalVolume = componentIn->GetContainerLogicalVolume();
-  if (containerLogicalVolume)
-    {G4cout << "has it" << G4endl;}
+#ifdef BDSDEBUG
+  G4LogicalVolume* containerLV = component->GetContainerLogicalVolume();
+  G4cout << __METHOD_NAME__;
+  if (containerLV)
+    {G4cout << containerLV->GetName();}
   else
-    {G4cout << "no" << G4endl;}
-      //G4cout << "TEST TEST TEST " << containerLogicalVolume->GetName() << G4endl;
+    {G4cerr << "WARNING - supplied component as no container logical volume!" << G4endl;}
+  G4cout << G4endl;
+#endif
 }
 
 BDSBeamlineElement::~BDSBeamlineElement()
@@ -62,10 +64,10 @@ std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &e)
 {
   out << "Beamline element: " << e.component->GetName() << G4endl;
   out << "Start, middle & end position: "
-      << e.GetPositionStart() << " " << e.GetPositionMiddle() << " " << e.GetPositionEnd() << G4endl;
-  out << "Start, middle & end rotation: "
-    //<< e.GetRotationStart() << " " << e.GetRotationMiddle() << " " << e.GetRotationEnd() << G4endl;
-      << "Start, middle 7 end s position: "
+      << e.GetPositionStart()  << " " << e.GetPositionMiddle()  << " " << e.GetPositionEnd()  << G4endl
+      << "Start, middle & end rotation: "
+      << e.GetRotationStart()  << " " << e.GetRotationMiddle()  << " " << e.GetRotationEnd()  << G4endl
+      << "Start, middle & end s position: "
       << e.GetSPositionStart() << " " << e.GetSPositionMiddle() << " " << e.GetSPositionEnd() << G4endl;
 
   return out;
