@@ -161,10 +161,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   
   // placement procedure
   ComponentPlacement();
-
-#ifdef BDSDEBUG
-  G4cout << BDSAcceleratorModel::Instance()->GetFlatBeamline();
-#endif
   
   // construct tunnel
   BuildTunnel();
@@ -176,10 +172,11 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   }
   beamline_list.clear();
   
-  if(verbose || debug) G4cout<<"Detector Construction done"<<G4endl; 
+  if(verbose || debug) G4cout << __METHOD_NAME__ << "detector Construction done"<<G4endl; 
 
-#ifdef BDSDEBUG 
-  G4cout << *(G4Material::GetMaterialTable()) << G4endl;
+#ifdef BDSDEBUG
+  G4cout << G4endl << __METHOD_NAME__ << "printing material table" << G4endl;
+  G4cout << *(G4Material::GetMaterialTable()) << G4endl << G4endl;
 #endif
 
   if(verbose || debug) G4cout<<"Finished listing materials, returning physiWorld"<<G4endl; 
@@ -414,10 +411,9 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  exit(1);
 	}
       
-      G4String name = (*it)->GetName();
+      G4String name = (*it)->GetName(); // this is done after the checks as it really just passes down to acc component
 #ifdef BDSDEBUG
-      G4cout << "Placement of component named: " << name << G4endl;
-      G4cout << thecurrentitem->GetName() << G4endl;
+      G4cout << __METHOD_NAME__ << "placement of component named: " << name << G4endl;
 #endif
       // read out geometry logical volume - note may not exist for each item - must be tested
       G4LogicalVolume* readOutLV   = thecurrentitem->GetReadOutLogicalVolume();
