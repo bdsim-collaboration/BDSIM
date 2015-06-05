@@ -67,9 +67,15 @@ public:
 
   /// Get the number of elements
   std::vector<BDSBeamlineElement*>::size_type size() const;
-  
-  G4ThreeVector       GetMaximumExtentPositive(); ///< Get the maximum positive extent in all dimensions  
-  G4ThreeVector       GetMaximumExtentNegative(); ///< Get the maximum negative extent in all dimensions
+
+  /// Get the maximum positive extent in all dimensions  
+  G4ThreeVector GetMaximumExtentPositive() const;
+
+  /// Get the maximum negative extent in all dimensions
+  G4ThreeVector GetMaximumExtentNegative() const;
+
+  /// Get the maximum extent absolute in each dimension
+  G4ThreeVector GetMaximumExtentAbsolute() const;
 
   // Accessors in a similar style to std::vector
   /// Return a reference to the first element
@@ -102,9 +108,8 @@ private:
   G4double totalChordLength;
   G4double totalArcLength;
 
-  std::pair<G4double, G4double> extentX;     ///< +ve and -ve extent in X
-  std::pair<G4double, G4double> extentY;     ///< +ve and -ve extent in Y
-  std::pair<G4double, G4double> extentZ;     ///< +ve and -ve extent in Z
+  G4ThreeVector maximumExtentPositive; ///< maximum extent in the positive coordinates in each dimension
+  G4ThreeVector maximumExtentNegative; ///< maximum extent in the negative coordinates in each dimension
   
   /// assignment and copy constructor not implemented nor used
   BDSBeamline& operator=(const BDSBeamline&);
@@ -126,11 +131,11 @@ inline G4double BDSBeamline::GetTotalArcLength() const
 inline std::vector<BDSBeamlineElement*>::size_type BDSBeamline::size() const
 {return beamline.size();}
 
-inline G4ThreeVector BDSBeamline::GetMaximumExtentPositive()
-{return G4ThreeVector(extentX.second, extentY.second, extentZ.second);}
+inline G4ThreeVector BDSBeamline::GetMaximumExtentPositive() const
+{return maximumExtentPositive;}
 
-inline G4ThreeVector BDSBeamline::GetMaximumExtentNegative()
-{return G4ThreeVector(extentX.first, extentY.first, extentZ.first);}
+inline G4ThreeVector BDSBeamline::GetMaximumExtentNegative() const
+{return maximumExtentNegative;}
 
 inline std::vector<BDSBeamlineElement*>::iterator BDSBeamline::begin()
 {return ++beamline.begin();}

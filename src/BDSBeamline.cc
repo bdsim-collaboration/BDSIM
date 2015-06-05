@@ -40,6 +40,10 @@ BDSBeamline::BDSBeamline()
 						 0., 0., 0.);
   beamline.push_back(e);
   G4cout << e->GetPositionStart() << G4endl;
+
+  // initialise extents
+  maximumExtentPositive = G4ThreeVector(0,0,0);
+  maximumExtentNegative = G4ThreeVector(0,0,0);
 }
 
 BDSBeamline::~BDSBeamline()
@@ -82,15 +86,20 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
   G4bool hasFiniteAngle    = BDS::IsFinite(angle);
   G4bool hasFiniteTilt     = BDS::IsFinite(tiltOffset.GetTilt());
   G4bool hasFiniteOffset   = BDS::IsFinite(tiltOffset.GetXOffset()) || BDS::IsFinite(tiltOffset.GetYOffset());
+
+  G4ThreeVector eP = component->GetExtentPositive();
+  G4ThreeVector eN = component->GetExtentNegative();
   
 #ifdef BDSDEBUG
   G4cout << "chord length         " << length     << " mm"         << G4endl;
   G4cout << "angle                " << angle      << " rad"        << G4endl;
   G4cout << "tilt offsetX offsetY " << tiltOffset << " rad mm mm " << G4endl;
-  G4cout << "hasFiniteLength      " << hasFiniteLength             << G4endl;
-  G4cout << "hasFiniteAngle       " << hasFiniteAngle              << G4endl;
-  G4cout << "hasFiniteTilt        " << hasFiniteTilt               << G4endl;
-  G4cout << "hasFiniteOffset      " << hasFiniteOffset             << G4endl;
+  G4cout << "has finite length    " << hasFiniteLength             << G4endl;
+  G4cout << "has finite angle     " << hasFiniteAngle              << G4endl;
+  G4cout << "has finite tilt      " << hasFiniteTilt               << G4endl;
+  G4cout << "has finite offset    " << hasFiniteOffset             << G4endl;
+  G4cout << "extent positive      " << eP                          << G4endl;
+  G4cout << "extent negative      " << eN                          << G4endl;
 #endif
   
   // calculate the reference placement rotation
@@ -156,6 +165,19 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
       referencePositionMiddle = previousReferencePositionEnd;
       referencePositionEnd    = previousReferencePositionEnd;
     }
+
+  // calculate extents for world size determination
+  // project size in global coordinates
+  G4ThreeVector extentpos = referencePositionMiddle + eP.transform(*referenceRotationMiddle); 
+  G4ThreeVector extentneg = referencePositionMiddle - eN.transform(*referenceRotationMiddle);
+  // loop over each size and compare to cumulative extent
+  for (int i=0; i<3; i++)
+    {
+      if (extentpos[i] > maximumExtentPositive[i])
+	{maximumExtentPositive[i] = extentpos[i];}
+      if (extentneg[i] < maximumExtentNegative[i])
+	{maximumExtentNegative[i] = extentneg[i];}
+    }
   
   // add the placement offset
   G4ThreeVector positionStart, positionMiddle, positionEnd;
@@ -184,8 +206,7 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
   sPositionStart  = previousSPositionEnd;
   sPositionMiddle = previousSPositionEnd + 0.5 * arcLength;
   sPositionEnd    = previousSPositionEnd + arcLength;
-
-
+  
 #ifdef BDSDEBUG
   // feedback about calculated coordinates
   G4cout << "calculated coordinates in mm and rad are " << G4endl;
@@ -245,4 +266,14 @@ BDSBeamlineElement* BDSBeamline::back() const
       exit(1);
     }
   return beamline.back();
+}
+
+G4ThreeVector BDSBeamline::GetMaximumExtentAbsolute() const
+{
+  G4ThreeVector mEA;
+  for (int i=0; i<3; i++)
+    {
+      mEA[i] = std::max(std::abs(maximumExtentPositive[i]), std::abs(maximumExtentNegative[i]));
+    }
+  return mEA;
 }
