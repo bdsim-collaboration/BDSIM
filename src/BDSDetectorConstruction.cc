@@ -303,7 +303,8 @@ void BDSDetectorConstruction::BuildWorld()
   G4String worldName="World";
   solidWorld = new G4Box(worldName, worldR.x(), worldR.y(), worldR.z());
 
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  G4String    emptyMaterialName = BDSGlobalConstants::Instance()->GetEmptyMaterial();
+  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(emptyMaterialName);
   logicWorld = new G4LogicalVolume(solidWorld,	       // solid
 				   emptyMaterial,      // material
 				   worldName);	       // name
@@ -315,15 +316,19 @@ void BDSDetectorConstruction::BuildWorld()
 							worldName);    // name
   
   // visual attributes
-  if (BDSExecOptions::Instance()->GetVisDebug()) {
-    G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
-    debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
-    logicWorld->SetVisAttributes(debugWorldVis);
-    readOutWorldLV->SetVisAttributes(debugWorldVis);
-  } else {
-    logicWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-    readOutWorldLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-  }
+  if (BDSExecOptions::Instance()->GetVisDebug())
+    {
+      // copy the debug vis attributes but change to force wireframe
+      G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
+      debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
+      logicWorld->SetVisAttributes(debugWorldVis);
+      readOutWorldLV->SetVisAttributes(debugWorldVis);
+    }
+  else
+    {
+      logicWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+      readOutWorldLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+    }
 	
   // set limits
 #ifndef NOUSERLIMITS
@@ -395,25 +400,30 @@ void BDSDetectorConstruction::ComponentPlacement()
     {
       BDSAcceleratorComponent* thecurrentitem = (*it)->GetAcceleratorComponent();
 
-      if (thecurrentitem)
-	{G4cout << "it has a valid accelerator component" << G4endl;
-	  G4cout << "its type is " << thecurrentitem->GetType() << G4endl;}
-      // get the logical volume to be placed
+      // do a few checks to see everything's valid before dodgy placement could happen
+      if (!thecurrentitem)
+	{
+	  G4cerr << __METHOD_NAME__ << "beamline element does not contain valid BDSAcceleratorComponent" << G4endl;
+	  exit(1);
+	}
+      // check we can get the container logical volume to be placed
       G4LogicalVolume* elementLV = (*it)->GetContainerLogicalVolume();
       if (!elementLV)
 	{
 	  G4cerr << __METHOD_NAME__ << "this accelerator component has no volume to be placed!" << G4endl;
-	  continue;
+	  exit(1);
 	}
-      G4cout << elementLV->GetName()<< G4endl;
-      G4String         name      = (*it)->GetName();
+      
+      G4String name = (*it)->GetName();
 #ifdef BDSDEBUG
       G4cout << "Placement of component named: " << name << G4endl;
       G4cout << thecurrentitem->GetName() << G4endl;
 #endif
       // read out geometry logical volume - note may not exist for each item - must be tested
       G4LogicalVolume* readOutLV   = thecurrentitem->GetReadOutLogicalVolume();
-      //G4LogicalVolume* readOutLV   = thecurrentitem->GetReadOutLogicalVolume();
+      // make read out geometry sensitive
+      if (readOutLV)
+	{readOutLV->SetSensitiveDetector(energyCounterSDRO);}
       
       // add the volume to one of the regions
       if(thecurrentitem->GetPrecisionRegion())
@@ -449,28 +459,30 @@ void BDSDetectorConstruction::ComponentPlacement()
 							       );
 	}
 
-      // make read out geometry sensitive
-      if (readOutLV)
-	{readOutLV->SetSensitiveDetector(energyCounterSDRO);}
-      
+      // Use old way of setting sensitivity for volumes without read out LV
       // old way of setting sensitive volumes - remains for now for components that haven't been changed
       // in future will be done in all component constructors
-      std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetAllSensitiveVolumes();
-      std::vector<G4LogicalVolume*>::iterator sensIt= SensVols.begin();
-      for(;sensIt != SensVols.end(); ++sensIt)
+      // NOTE this also sets GFLASH so most volumes won't have GFLASH now
+      if (!readOutLV)
 	{
-	  //use already defined instance of Ecounter sd
-	  (*sensIt)->SetSensitiveDetector(energyCounterSDRO);
-	  //register any volume that an ECounter is attached to
-	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( (*sensIt)->GetName(),
-								    thecurrentitem->GetSPos() );
-	  BDSGlobalConstants::Instance()->AddLogicalVolumeInfo((*sensIt),theinfo);
-	  //set gflash parameterisation on volume if required
-	  G4bool gflash     = BDSExecOptions::Instance()->GetGFlash();
-	  if(gflash && ((*sensIt)->GetRegion() != precisionRegion) && (thecurrentitem->GetType()=="element"))
-	    {SetGFlashOnVolume(*sensIt);}
+	  std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetAllSensitiveVolumes();
+	  std::vector<G4LogicalVolume*>::iterator sensIt= SensVols.begin();
+	  for(;sensIt != SensVols.end(); ++sensIt)
+	    {
+	      //use already defined instance of Ecounter sd
+	      (*sensIt)->SetSensitiveDetector(energyCounterSDRO);
+	      //register any volume that an ECounter is attached to
+	      BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( (*sensIt)->GetName(),
+									thecurrentitem->GetSPos() );
+	      BDSGlobalConstants::Instance()->AddLogicalVolumeInfo((*sensIt),theinfo);
+	      //set gflash parameterisation on volume if required
+	      G4bool gflash     = BDSExecOptions::Instance()->GetGFlash();
+	      if(gflash && ((*sensIt)->GetRegion() != precisionRegion) && (thecurrentitem->GetType()=="element"))
+		{SetGFlashOnVolume(*sensIt);}
+	    }
 	}
-      
+
+      // get the placement details from the beamline component
       G4int nCopy         = thecurrentitem->GetCopyNumber();
       G4RotationMatrix* r = (*it)->GetRotationMiddle();
       G4ThreeVector     p = (*it)->GetPositionMiddle();
