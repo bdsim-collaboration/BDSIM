@@ -280,22 +280,20 @@ void BDSDetectorConstruction::BuildBeamline()
   BDSAcceleratorModel::Instance()->RegisterFlatBeamline(beamline);
 }
 
-void BDSDetectorConstruction::BuildWorld(){
+void BDSDetectorConstruction::BuildWorld()
+{
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
   
+  G4ThreeVector worldR = beamline->GetMaximumExtentAbsolute();
   G4ThreeVector maxpositive = beamline->GetMaximumExtentPositive();
   G4ThreeVector maxnegative = beamline->GetMaximumExtentNegative();
-  G4ThreeVector worldR;
-  for (int i = 0; i < 3; i++){
-    worldR[i] = std::max(fabs(maxpositive[i]),fabs(maxnegative[i]));
-  }
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " world extent positive : " << maxpositive << G4endl;
-  G4cout << __METHOD_NAME__ << " world extent negative : " << maxnegative << G4endl;
-  G4cout << __METHOD_NAME__ << " world half size determined to be strictly: " << worldR << G4endl;
+  G4cout << __METHOD_NAME__ << "world extent absolute: " << worldR      << G4endl;
+  G4cout << __METHOD_NAME__ << "world extent positive: " << maxpositive << G4endl;
+  G4cout << __METHOD_NAME__ << "world extent negative: " << maxnegative << G4endl;
 #endif
   worldR += G4ThreeVector(5000,5000,5000); //add 5m extra in every dimension
 #ifdef BDSDEBUG
