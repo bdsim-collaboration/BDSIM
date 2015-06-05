@@ -47,6 +47,13 @@ public:
   std::pair<G4double,G4double> GetExtentX() const;   ///< get -ve/+ve extent in local x
   std::pair<G4double,G4double> GetExtentY() const;   ///< get -ve/+ve extent in local y
   std::pair<G4double,G4double> GetExtentZ() const;   ///< get -ve/+ve extent in local z
+  
+  /// Get the extent of the object in the positive direction in all dimensions
+  G4ThreeVector GetExtentPositive() const;
+
+  /// Get the extent of the object in the negative direction in all dimensions
+  G4ThreeVector GetExtentNegative() const;
+  
   void SetExtentX(G4double lowerX, G4double upperX); ///< set the extent in local x
   void SetExtentY(G4double lowerY, G4double upperY); ///< set the extent in local y
   void SetExtentZ(G4double lowerZ, G4double upperZ); ///< set the extent in local z
@@ -117,6 +124,12 @@ inline std::pair<G4double,G4double> BDSGeometryComponent::GetExtentY() const
 
 inline std::pair<G4double,G4double> BDSGeometryComponent::GetExtentZ() const
 {return extentZ;}
+
+inline G4ThreeVector BDSGeometryComponent::GetExtentPositive() const
+{return G4ThreeVector(extentX.second, extentY.second, extentZ.second);}
+
+inline G4ThreeVector BDSGeometryComponent::GetExtentNegative() const
+{return G4ThreeVector(extentX.first, extentY.first, extentZ.first);}
 
 inline void BDSGeometryComponent::SetExtentX(G4double lowerX, G4double upperX)
 {extentX = std::make_pair(lowerX,upperX);}
