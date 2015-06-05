@@ -236,11 +236,7 @@ void BDSDetectorConstruction::BuildBeamline()
 		{
 		  //line of components to be added individually
 		  for (BDSLine::BDSLineIterator i = line->begin(); i != line->end(); ++i)
-		    {
-		      beamline->AddComponent(*i);
-		      //BDSBeamline::Instance()->addComponent(*i);}
-		    }
-		  delete temp;
+		    {beamline->AddComponent(*i);}
 		}
 	    }
 	  else
