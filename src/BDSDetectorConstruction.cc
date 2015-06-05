@@ -291,13 +291,13 @@ void BDSDetectorConstruction::BuildWorld()
   G4ThreeVector maxpositive = beamline->GetMaximumExtentPositive();
   G4ThreeVector maxnegative = beamline->GetMaximumExtentNegative();
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "world extent absolute: " << worldR      << G4endl;
   G4cout << __METHOD_NAME__ << "world extent positive: " << maxpositive << G4endl;
   G4cout << __METHOD_NAME__ << "world extent negative: " << maxnegative << G4endl;
+  G4cout << __METHOD_NAME__ << "world extent absolute: " << worldR      << G4endl;
 #endif
   worldR += G4ThreeVector(5000,5000,5000); //add 5m extra in every dimension
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " with 5m margin becomes in all dimensions : " << worldR << G4endl;
+  G4cout << __METHOD_NAME__ << "with 5m margin becomes in all dimensions: " << worldR << G4endl;
 #endif
   
   G4String worldName="World";

@@ -169,7 +169,8 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
   // calculate extents for world size determination
   // project size in global coordinates
   G4ThreeVector extentpos = referencePositionMiddle + eP.transform(*referenceRotationMiddle); 
-  G4ThreeVector extentneg = referencePositionMiddle - eN.transform(*referenceRotationMiddle);
+  G4ThreeVector extentneg = referencePositionMiddle + eN.transform(*referenceRotationMiddle);
+  // note extentneg is +eN.transform.. as eN is negative naturally
   // loop over each size and compare to cumulative extent
   for (int i=0; i<3; i++)
     {
