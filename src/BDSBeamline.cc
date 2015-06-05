@@ -76,6 +76,7 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
 {
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "adding component to beamline and calculating coordinates" << G4endl;
+  G4cout << "component name:      " << component->GetName() << G4endl;
 #endif
 
   // interrogate the item
