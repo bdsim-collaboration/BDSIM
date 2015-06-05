@@ -17,8 +17,6 @@
 //     15 Dec 2005 by Agapov beta
 //
 
-//=================================================================
-
 #include <list>
 #include <map>
 #include <vector>
@@ -81,8 +79,6 @@ bool debug = true;
 bool debug = false;
 #endif
 
-//=================================================================
-
 BDSDetectorConstruction::BDSDetectorConstruction():
   itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
   solidWorld(NULL),logicWorld(NULL),physiWorld(NULL),
@@ -130,9 +126,6 @@ BDSDetectorConstruction::BDSDetectorConstruction():
     theHitMaker          = new GFlashHitMaker();                    // Makes the EnergySpots 
   }
 }
-
-
-//=================================================================
 
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 {
@@ -196,8 +189,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
 
   return physiWorld;
 }
-
-//=================================================================
  
 void BDSDetectorConstruction::SetMagField(const G4double fieldValue){
   
@@ -208,7 +199,6 @@ void BDSDetectorConstruction::SetMagField(const G4double fieldValue){
   fieldMgr->CreateChordFinder(magField);
 }
 
-//=================================================================
 BDSDetectorConstruction::~BDSDetectorConstruction()
 { 
   delete precisionRegion;
@@ -218,14 +208,12 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
 
   delete theHitMaker;
   delete theParticleBounds;
-  //  delete theParticleBoundsVac;
 }
 
-//=================================================================
-void BDSDetectorConstruction::BuildBeamline(){
+void BDSDetectorConstruction::BuildBeamline()
+{
   std::list<struct Element>::iterator it;
 
-  // convert the parsed element list to list of BDS elements
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
 
   BDSBeamline* beamline = new BDSBeamline();
@@ -258,7 +246,6 @@ void BDSDetectorConstruction::BuildBeamline(){
 	  else
 	    {
 	      //single component
-	      //BDSBeamline::Instance()->addComponent(temp);
 	      beamline->AddComponent(temp);
 	    }
 	}
@@ -284,9 +271,9 @@ void BDSDetectorConstruction::BuildBeamline(){
   delete theComponentFactory;
       
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "size of beamline element list: "<< beamline_list.size() << G4endl;
+  G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< beamline_list.size() << G4endl;
 #endif
-  G4cout << __METHOD_NAME__ << "size of the beamline: "<< beamline->size() << G4endl;
+  G4cout << __METHOD_NAME__ << "size of the constructed beamline: "<< beamline->size() << G4endl;
   
   if (beamline->size() == 0)
     {
@@ -396,17 +383,12 @@ void BDSDetectorConstruction::BuildWorld(){
   BDSAcceleratorModel::Instance()->RegisterReadOutWorldLV(readOutWorldLV);
 }
 
-void BDSDetectorConstruction::ComponentPlacement(){
-  if (verbose || debug) G4cout<<"starting placement procedure "<<G4endl;
+void BDSDetectorConstruction::ComponentPlacement()
+{
+  if (verbose || debug)
+    {G4cout << G4endl << __METHOD_NAME__ << "- starting placement procedure" << G4endl;}
 
   BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
-  
-  G4ThreeVector TargetPos;          // position of component
-  G4ThreeVector rlast = G4ThreeVector(0.,0.,0.);  // edge of last element coordinates
-  G4ThreeVector rtot(0.,0.,0.);     // position of component, often same as TargetPos
-  G4ThreeVector localX(1.,0.,0.); 
-  G4ThreeVector localY(0.,1.,0.);
-  G4ThreeVector localZ(0.,0.,1.);
 
   // few general variables that we don't need to get every
   // time in the loop for component placement
@@ -450,7 +432,7 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	}
       
 #ifdef BDSDEBUG
-      G4cout<<"SETTING UP SENSITIVE VOLUMES..."<< G4endl;
+      G4cout << __METHOD_NAME__ << "setting up sensitive volumes with read out geometry" << G4endl;
 #endif
       // now register the spos and other info of this sensitive volume in global map
       // used by energy counter sd to get spos of that logical volume at histogram time
@@ -548,7 +530,8 @@ void BDSDetectorConstruction::ComponentPlacement(){
     }
 }
 
-void BDSDetectorConstruction::BuildTunnel(){
+void BDSDetectorConstruction::BuildTunnel()
+{
   std::list<struct Element>::iterator it;
   for(it = beamline_list.begin();it!=beamline_list.end();it++)
     {
