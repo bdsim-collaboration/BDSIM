@@ -516,18 +516,6 @@ void BDSDetectorConstruction::ComponentPlacement()
       std::vector<G4VPhysicalVolume*> MultiplePhysicalVolumes = thecurrentitem->GetMultiplePhysicalVolumes();
       for (unsigned int i=0;i<MultiplePhysicalVolumes.size(); i++)
 	{fPhysicalVolumeVector.push_back(MultiplePhysicalVolumes.at(i));}
-					    
-#ifdef BDSDEBUG 
-      G4cout << "Volume name: " << name << G4endl;
-#endif
-      if(BDSGlobalConstants::Instance()->GetRefVolume()+"_phys"== name && 
-	 BDSGlobalConstants::Instance()->GetRefCopyNo()==nCopy){
-#ifdef BDSDEBUG 
-	G4cout << "Setting new transform" <<G4endl;
-#endif
-	//G4AffineTransform tf(*_globalRotation,TargetPos-G4ThreeVector(0,0,length/2));
-	//BDSGlobalConstants::Instance()->SetRefTransform(tf);
-      }
 
       //this does nothing by default - only used by BDSElement
       //looks like it could just be done in its construction rather than
