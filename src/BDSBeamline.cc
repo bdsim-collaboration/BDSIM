@@ -247,7 +247,7 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
   // append it to the beam line
   beamline.push_back(element);
 
-  G4cout << __METHOD_NAME__ << "component added" << G4endl << G4endl;
+  G4cout << __METHOD_NAME__ << "component added" << G4endl;
 }
 
 BDSBeamlineElement* BDSBeamline::front() const
