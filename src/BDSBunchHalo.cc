@@ -69,27 +69,33 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
     G4double dyp = envelopeYp * (1-2*FlatGen->shoot()) * CLHEP::rad;
 
     // compute single particle emittance 
-    double emitXSp = gammaX*pow(dx,2) + 2*alphaX*dx*dxp + betaX*pow(dxp,2);
-    double emitYSp = gammaY*pow(dy,2) + 2*alphaY*dy*dyp + betaX*pow(dyp,2);
+    double emitXSp = gammaX*pow(dx,2) + 2.*alphaX*dx*dxp + betaX*pow(dxp,2);
+    double emitYSp = gammaY*pow(dy,2) + 2.*alphaY*dy*dyp + betaX*pow(dyp,2);
     
+    std::cout << "emittance> " << emitXSp << " " << emitX << " " << emitYSp << " " << emitY << std::endl;
+
     // check if particle is within normal beam core, if so continue generation
-    if (emitXSp< emitX && emitYSp< emitY) { 
+    if (emitXSp < emitX || emitYSp <emitY) { 
+      std::cout << "continue> " << std::endl;
       continue;
     }    
-    
-    // determine weight
-   
+    else {
+      // determine weight
 
-    // add to reference orbit 
-    x0 += dx;
-    y0 += dy;
-    xp += dxp;
-    yp += dyp;
-    
-    zp = CalculateZp(xp,yp,Zp0);
-    t = 0 * CLHEP::s;
-    E = BDSGlobalConstants::Instance()->GetParticleKineticEnergy();
+      // add to reference orbit 
+      x0 += dx;
+      y0 += dy;
+      xp += dxp;
+      yp += dyp;
+      
+      zp = CalculateZp(xp,yp,Zp0);
+      t = 0 * CLHEP::s;
+      E = BDSGlobalConstants::Instance()->GetParticleKineticEnergy();
+
+      G4cout << "selected> " << dx << " " << dy << " " << dxp << " " << dyp << std::endl;
+      
+      weight = 1.0;
+      return;
+    }
   }
-
-  return;
 }
