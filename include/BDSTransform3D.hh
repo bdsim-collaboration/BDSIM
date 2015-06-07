@@ -21,7 +21,7 @@ public:
   
 private:
   
-  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildContainerLogicalVolume(){;};
 };
 
 #endif
