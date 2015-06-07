@@ -16,16 +16,15 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 
-BDSKicker::BDSKicker(G4String        name,
-		     G4double        length,
-		     G4double        bField,
-		     G4double        bGrad,
-		     G4double        angle,
-		     G4bool          verticalKicker,
-		     BDSBeamPipeInfo beamPipeInfo,
-		     BDSMagnetOuterInfo magnetOuterInfo,
-		     BDSTunnelInfo      tunnelInfo):
-  BDSMultipole(BDSMagnetType::hkicker,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
+BDSKicker::BDSKicker(G4String           name,
+		     G4double           length,
+		     G4double           bField,
+		     G4double           bGrad,
+		     G4double           angle,
+		     G4bool             verticalKicker,
+		     BDSBeamPipeInfo*   beamPipeInfo,
+		     BDSMagnetOuterInfo magnetOuterInfo):
+  BDSMultipole(BDSMagnetType::hkicker,name,length,beamPipeInfo,magnetOuterInfo),
   itsBField(bField),itsBGrad(bGrad),itsKickAngle(angle),isVerticalKicker(verticalKicker)
 {
   if (verticalKicker)
@@ -69,34 +68,31 @@ void BDSKicker::BuildBeampipe()
   G4double kickerAper1, kickerAper2;
   if (isVerticalKicker)
     {
-      kickerAper1 = aper2; //vertical is rotated in the end during placement
-      kickerAper2 = aper1; //so build aperture otherway - sway 1,2 - x,y
+      kickerAper1 = beamPipeInfo->aper2; //vertical is rotated in the end during placement
+      kickerAper2 = beamPipeInfo->aper1; //so build aperture otherway - sway 1,2 - x,y
     }
   else
     {
-      kickerAper1 = aper1;
-      kickerAper2 = aper2;
+      kickerAper1 = beamPipeInfo->aper1;
+      kickerAper2 = beamPipeInfo->aper2;
     }
   
   beampipe =
-    BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeType,
-						   itsName,
-						   itsLength,
+    BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeInfo->beamPipeType,
+						   name,
+						   chordLength,
 						   kickerAper1,
 						   kickerAper2,
-						   aper3,
-						   aper4,
-						   vacuumMaterial,
-						   beamPipeThickness,
-						   beamPipeMaterial);
+						   beamPipeInfo->aper3,
+						   beamPipeInfo->aper4,
+						   beamPipeInfo->vacuumMaterial,
+						   beamPipeInfo->beamPipeThickness,
+						   beamPipeInfo->beamPipeMaterial);
 
   //manually do BeamPipeCommonTasks here as rotation in placement can be different
 
   // SET FIELD
   beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false);
-
-  itsMarkerLogicalVolume->
-    SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
 
   // register logical volumes using geometry component base class
   RegisterLogicalVolumes(beampipe->GetAllLogicalVolumes());
@@ -111,12 +107,12 @@ void BDSKicker::BuildBeampipe()
     {kickerRotation->rotateZ(CLHEP::pi*0.5);}
 
   // place beampipe
-  itsPhysiComp = new G4PVPlacement(kickerRotation,            // rotation
-				   (G4ThreeVector)0,          // at (0,0,0)
-				   beampipe->GetContainerLogicalVolume(),  // its logical volume
-				   itsName+"_bmp_phys",	      // its name
-				   itsMarkerLogicalVolume,    // its mother  volume
-				   false,                     // no boolean operation
+  itsPhysiComp = new G4PVPlacement(kickerRotation,                        // rotation
+				   (G4ThreeVector)0,                      // at (0,0,0)
+				   beampipe->GetContainerLogicalVolume(), // its logical volume
+				   name + "_beampipe_pv",	          // its name
+				   containerLogicalVolume,                // its mother  volume
+				   false,                                 // no boolean operation
 				   0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
 
   // record extent of geometry
@@ -135,7 +131,7 @@ void BDSKicker::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
   G4ThreeVector Bfield(0.,-itsBField,0.); // note the - sign...
-  itsMagField=new BDSSbendMagField(Bfield,itsLength,itsKickAngle);
+  itsMagField=new BDSSbendMagField(Bfield,chordLength,itsKickAngle);
   
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
   

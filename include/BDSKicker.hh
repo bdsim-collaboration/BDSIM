@@ -17,9 +17,8 @@ public:
 	    G4double           bGrad,
 	    G4double           angle,
 	    G4bool             verticalKicker,
-	    BDSBeamPipeInfo    beamPipeInfo,
-	    BDSMagnetOuterInfo magnetOuterInfo,
-	    BDSTunnelInfo      tunnelInfo);
+	    BDSBeamPipeInfo*   beamPipeInfo,
+	    BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSKicker(){;};
   
 protected:
