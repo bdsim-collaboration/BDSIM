@@ -77,8 +77,8 @@ void BDSGeometryComponent::RegisterLogicalVolume(G4LogicalVolume* logicalVolume)
       else
 	{G4cout << " INVALID CONTAINER ";}
       G4cout << "\"" << G4endl;
-#endif
     }
+#endif
 }
 
 void BDSGeometryComponent::RegisterLogicalVolumes(std::vector<G4LogicalVolume*> logicalVolumes)
