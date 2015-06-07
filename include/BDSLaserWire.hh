@@ -26,8 +26,7 @@ public:
   inline G4double GetLaserWavelength();
 
 private:
-  virtual void BuildMarkerLogicalVolume();
-  virtual void SetVisAttributes();
+  virtual void BuildContainerLogicalVolume();
 
   BDSLaserCompton* itsLaserCompton; // not used atm, JS
   G4ThreeVector itsLaserDirection;
