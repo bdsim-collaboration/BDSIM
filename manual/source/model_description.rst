@@ -1196,7 +1196,16 @@ gaussTwiss
 halo
 ^^^^
 The halo distrubtion is effectively a flat phase space with the central beam core removed at :math:`\epsilon_{\rm core}`. The beam core is defined using the standard twiss parameters described previously. The implicit general form of a rotated, translated ellipse is  :math:`AX^2 + BXY + CY^2 + DX + EY + F = 0`
-where the coefficients can be related to the major :math:`a`, minor :math:`b`, rotation angle :math:`\theta` and centre :math:`(x_{c},y_{c})` via 
+where the coefficients can be related to the major :math:`a`, minor :math:`b`, rotation angle :math:`\theta` and centre :math:`(x_{c},y_{c})` via
+
+
+.. math::
+
+   y = m x + c
+
+   \int_0^{\infty} x^{-2} dx
+
+   
 
 Regions
 -------
