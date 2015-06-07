@@ -28,7 +28,7 @@ private:
   void BuildScintillatorScreen();
   void SetVisAttributes();
   void ComputeDimensions();
-  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildContainerLogicalVolume();
   void BuildCameraScoringPlane();
   void BuildScreenScoringPlane();
   void BuildScintillatorMaterial();
