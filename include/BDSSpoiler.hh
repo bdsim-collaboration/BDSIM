@@ -17,8 +17,11 @@ class G4VPhysicalVolume;
 class BDSSpoiler :public BDSAcceleratorComponent
 {
 public:
-  BDSSpoiler(G4String& aName, G4double aLength,G4double bpRad, 
-	     G4double xAper, G4double yAper,G4Material* SpoilerMaterial);
+  BDSSpoiler(G4String name,
+	     G4double length,
+	     G4double xAper,
+	     G4double yAper,
+	     G4Material* SpoilerMaterial);
   ~BDSSpoiler();
 
 protected:
@@ -39,6 +42,9 @@ private:
                     
 private:
   G4Material* itsSpoilerMaterial;
+
+  G4double xAper;
+  G4double yAper;
 };
 
 #endif
