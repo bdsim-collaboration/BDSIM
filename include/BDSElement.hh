@@ -26,17 +26,11 @@
 class BDSElement :public BDSAcceleratorComponent
 {
 public:
-  BDSElement(G4String aName,
+  BDSElement(G4String name,
+	     G4double length, 
 	     G4String geometry,
 	     G4String bmap,
-	     G4double aBmapZOffset,
-	     G4double aLength, 
-             G4double bpRad,
-	     G4double outR,
-	     G4String aTunnelMaterial="",
-	     G4double tunnelRadius=0.,
-	     G4double tunnelOffsetX=0,
-	     G4String aTunnelCavityMaterial="Air");
+	     G4double aBmapZOffset);
   ~BDSElement();
 
   // creates a field mesh in global coordinates in case it is given by map
@@ -53,7 +47,7 @@ public:
    
 private:
 
-  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildContainerLogicalVolume();
   void SetVisAttributes();  
 
   void BuildElementMarkerLogicalVolume();
