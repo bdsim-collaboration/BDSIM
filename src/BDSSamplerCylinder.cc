@@ -15,8 +15,6 @@
 #include "BDSSamplerSD.hh"
 #include "G4SDManager.hh"
 
-//============================================================
-
 std::vector <G4String> BDSSamplerCylinder::outputNames;
 
 int BDSSamplerCylinder::nSamplers = 0;
@@ -28,14 +26,15 @@ int BDSSamplerCylinder::GetNSamplers() { return nSamplers; }
 void BDSSamplerCylinder::AddExternalSampler(G4String name) { nSamplers++; outputNames.push_back(name); }
 
 BDSSamplerCylinder::
-BDSSamplerCylinder (G4String aName,G4double aLength,G4double aRadius):
-  BDSAcceleratorComponent(
-			 aName,
-			 aLength,0,0,0),
+BDSSamplerCylinder (G4String name,G4double length,G4double aRadius):
+  BDSAcceleratorComponent(name,
+			  length,
+			  0,
+			  "samplercylinder"),
   itsRadius(aRadius)
 {
   nThisSampler = nSamplers + 1;
-  SetName("CSampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
+  //SetName("CSampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+name);
   nSamplers++;
 
   // register sampler sensitive detector
@@ -47,32 +46,28 @@ void BDSSamplerCylinder::Initialise()
 {
   BDSAcceleratorComponent::Initialise();
   
-  BDSSamplerCylinder::outputNames.push_back(itsName + "_phys_" + BDSGlobalConstants::Instance()->StringFromInt(GetCopyNumber()+1));
+  // to be fixed - see bdssampler for explanation
+  BDSSamplerCylinder::outputNames.push_back(name + "_phys_" );
 }
 
-void BDSSamplerCylinder::BuildMarkerLogicalVolume()
+void BDSSamplerCylinder::BuildContainerLogicalVolume()
 {
-  itsMarkerSolidVolume = new G4Tubs(itsName+"_body",
-				    itsRadius-1.e-6*CLHEP::m,
-				    itsRadius,
-				    itsLength/2,
-				    0,
-				    CLHEP::twopi*CLHEP::radian);
-  itsMarkerLogicalVolume = new G4LogicalVolume(itsMarkerSolidVolume,
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
-			itsName);
+  containerSolid = new G4Tubs(name+"_body",
+			      itsRadius-1.e-6*CLHEP::m,
+			      itsRadius,
+			      chordLength*0.5,
+			      0,
+			      CLHEP::twopi*CLHEP::radian);
+  containerLogicalVolume = new G4LogicalVolume(containerSolid,
+					       emptyMaterial,
+					       name);
       
 #ifndef NOUSERLIMITS
-  itsOuterUserLimits =new G4UserLimits();
+  G4UserLimits* itsOuterUserLimits =new G4UserLimits();
   itsOuterUserLimits->SetMaxAllowedStep(BDSGlobalConstants::Instance()->GetSamplerDiameter()/2.0);
-  itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
+  containerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
-  itsMarkerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
-}
-
-void BDSSamplerCylinder::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(1,0,1));
+  containerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
 }
 
 BDSSamplerCylinder::~BDSSamplerCylinder()

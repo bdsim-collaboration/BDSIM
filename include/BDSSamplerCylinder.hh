@@ -28,8 +28,7 @@ public:
 
 private:
   virtual void Initialise();
-  virtual void BuildMarkerLogicalVolume();
-  virtual void SetVisAttributes();
+  virtual void BuildContainerLogicalVolume();
 
   G4double itsRadius;
 
