@@ -70,13 +70,15 @@ Features:
 
 * default option
 * interactive visualisation of accelerator model
+* ability to view and rotate accelerator model
 * ability to run individual events
 * typically slower than batch mode
 * no events run without user input
 
 To execute BDSIM in interactive mode, the user must simply not use the :code:`--batch` command.
 The user must also specify a macro file using the :code:`--vis_mac` option above otherwise, BDSIM
-will look for "vis.mac" in the current working directory. If not found, BDSIM will exit. Once
+will look for "vis.mac" in the current working directory. If not found, BDSIM will use its own
+default visualisation settings (typically: Qt visualiser, extra convenient buttons). Once
 executed a window such as this will appear (depending on the visualiser you use).
 
 .. figure:: figures/interactive_mode.png

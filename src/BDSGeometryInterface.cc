@@ -1,7 +1,8 @@
+#include "BDSAcceleratorComponent.hh"
+#include "BDSAcceleratorModel.hh"
+#include "BDSBeamline.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSGeometryInterface.hh"
-#include "BDSAcceleratorComponent.hh"
-#include "BDSBeamline.hh"
 
 #include <fstream>
 #include <iomanip>
@@ -47,9 +48,11 @@ void BDSGeometryInterface::Optics()
 	 << setw(15) << "Aper_Type  "
 	 << G4endl;
 
-  for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
+  BDSBeamline* beamline  = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  BDSBeamlineIterator it = beamline->begin();
+  for(; it != beamline->end(); ++it)
     { 
-      BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
+      BDSAcceleratorComponent* thecurrentitem = (*it)->GetAcceleratorComponent();
       G4int aper_type; //1 = rect, 2 = circ, 3 = ellipse
       if(thecurrentitem->GetType() == "rcol" ) //RCOL
 	aper_type=1;
@@ -70,7 +73,7 @@ void BDSGeometryInterface::Optics()
 	     << setw(15) << thecurrentitem->GetType() << " "
 	     << setw(40) << thecurrentitem->GetName() << " "
 	     << setw(15) << thecurrentitem->GetChordLength()/CLHEP::m  << " "
-	     << setw(15) << BDSBeamline::Instance()->positionS()/CLHEP::m  << " "
+	     << setw(15) << (*it)->GetSPositionMiddle()/CLHEP::m  << " "
 	     << setw(15) << thecurrentitem->GetAngle()   << " "
 	     << setw(15) << thecurrentitem->GetK1()   << " "
 	     << setw(15) << thecurrentitem->GetK2()   << " "
@@ -122,14 +125,12 @@ void BDSGeometryInterface::Survey()
 	 << setw(12) << "K2[m^-3]    " << " "
 	 << setw(12) << "K3[m^-4]    " << " "
 	 << G4endl;
-  
-  G4double lengthTotal(0.0);
-  G4double arc_lengthTotal(0.0);
-  G4double length(0);
-  G4double spos(0);
-  for(BDSBeamline::Instance()->first();!BDSBeamline::Instance()->isDone();BDSBeamline::Instance()->next())
+
+  BDSBeamline* beamline  = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  BDSBeamlineIterator it = beamline->begin();
+  for(; it != beamline->end(); ++it)
     {
-      BDSAcceleratorComponent* thecurrentitem = BDSBeamline::Instance()->currentItem();
+      BDSAcceleratorComponent* thecurrentitem = (*it)->GetAcceleratorComponent();
       G4int aper_type; //1 = rect, 2 = circ, 3 = ellipse
       if(thecurrentitem->GetType() == "rcol" ) //RCOL
 	aper_type=1;
@@ -140,9 +141,10 @@ void BDSGeometryInterface::Survey()
       else aper_type=1;
       
       //G4double phi=0.0, theta=0.0, psi=0.0;
-      G4double phi   = BDSBeamline::Instance()->rotation()->getPhi();
-      G4double theta = BDSBeamline::Instance()->rotation()->getTheta();
-      G4double psi   = BDSBeamline::Instance()->rotation()->getPsi();
+      G4RotationMatrix* rm = (*it)->GetRotationMiddle();
+      G4double phi   = rm->getPhi();
+      G4double theta = rm->getTheta();
+      G4double psi   = rm->getPsi();
       /*
       if(thecurrentitem->GetRotation())
 	{
@@ -156,20 +158,22 @@ void BDSGeometryInterface::Survey()
       
       survey.precision(7);
       
-      length = thecurrentitem->GetArcLength()/CLHEP::m;
-      spos   = thecurrentitem->GetSPos()/CLHEP::m;
+      G4double sStart    = (*it)->GetSPositionStart() /CLHEP::m;
+      G4double sMiddle   = (*it)->GetSPositionMiddle()/CLHEP::m;
+      G4double sEnd      = (*it)->GetSPositionEnd()   /CLHEP::m;
+      G4ThreeVector pos  = (*it)->GetPositionMiddle();
       
       survey << std::left << std::setprecision(6) << std::fixed
 	     << setw(15) << thecurrentitem->GetType()                   << " "
 	     << setw(40) << thecurrentitem->GetName()                   << " "
-	     << setw(12) << spos - (length/2.0)                         << " " /*SStart*/
-	     << setw(12) << spos                                        << " " /*SMid*/
-	     << setw(12) << spos + (length/2.0)                         << " " /*SEnd*/
+	     << setw(12) << sStart                                      << " "
+	     << setw(12) << sMiddle                                     << " "
+	     << setw(12) << sEnd                                        << " "
 	     << setw(12) << thecurrentitem->GetChordLength()/CLHEP::m   << " "
 	     << setw(12) << thecurrentitem->GetArcLength()/CLHEP::m     << " "
-	     << setw(12) << BDSBeamline::Instance()->position()->x()/CLHEP::m  << " "
-	     << setw(12) << BDSBeamline::Instance()->position()->y()/CLHEP::m  << " "
-	     << setw(12) << BDSBeamline::Instance()->position()->z()/CLHEP::m  << " "
+	     << setw(12) << pos.x()/CLHEP::m                            << " "
+	     << setw(12) << pos.y()/CLHEP::m                            << " "
+	     << setw(12) << pos.z()/CLHEP::m                            << " "
 	     << setw(12) << phi/CLHEP::radian                           << " "
 	     << setw(12) << theta/CLHEP::radian                         << " "
 	     << setw(12) << psi/CLHEP::radian                           << " "
@@ -181,10 +185,8 @@ void BDSGeometryInterface::Survey()
 	     << setw(12) << thecurrentitem->GetK2()                     << " "
 	     << setw(12) << thecurrentitem->GetK3()                     << " "
 	     << G4endl;
-      lengthTotal+=thecurrentitem->GetChordLength()/CLHEP::m;
-      arc_lengthTotal+=thecurrentitem->GetArcLength()/CLHEP::m;
     }
-  survey << "### Total length = " << lengthTotal << "m" << G4endl;
-  survey << "### Total arc length = " <<  arc_lengthTotal << "m" << G4endl;
+  survey << "### Total length = " << beamline->GetTotalChordLength()/CLHEP::m << "m" << G4endl;
+  survey << "### Total arc length = " <<  beamline->GetTotalArcLength()/CLHEP::m << "m" << G4endl;
   survey.close();
 }

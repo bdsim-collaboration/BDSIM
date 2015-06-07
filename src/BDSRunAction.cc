@@ -1,10 +1,12 @@
+#include "BDSAcceleratorModel.hh"
+#include "BDSBeamline.hh"
+#include "BDSAnalysisManager.hh"
+#include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSOutputBase.hh" 
 #include "BDSRunAction.hh"
-#include "BDSDebug.hh"
-#include "BDSAnalysisManager.hh"
-#include "BDSBeamline.hh"
+
 #include "G4Run.hh"
 
 #include "globals.hh"               // geant4 globals / types
@@ -38,13 +40,11 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   // prepare bin edges for a by-element histogram
   std::vector<double> binedges;
   binedges.push_back(0.0);
-  G4double s_end = 0.0; // s position at the end of the element
-  for (BDSBeamline::Instance()->first(); !BDSBeamline::Instance()->isDone(); BDSBeamline::Instance()->next())
-    {
-      BDSAcceleratorComponent* item = BDSBeamline::Instance()->currentItem();
-      s_end += item->GetArcLength()/CLHEP::m; // use arc length as hits binned in S
-      binedges.push_back(s_end);
-    }
+  BDSBeamline* beamline  = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  BDSBeamlineIterator it = beamline->begin();
+  for(; it != beamline->end(); ++it)
+    {binedges.push_back((*it)->GetSPositionEnd()/CLHEP::m);}
+  
   // create per element ("pe") bin width histograms
   phitspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("PhitsPEHisto","Primary Hits per Element",binedges); //3
   plosspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("PlossPEHisto","Primary Loss per Element",binedges); //4

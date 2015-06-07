@@ -39,16 +39,15 @@ BDSSampler::BDSSampler (G4String aName, G4double aLength):
 			 aName,
 			 aLength,0,0,0)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   nThisSampler= nSamplers + 1;
   SetName("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
   nSamplers++;
 #ifdef BDSDEBUG
   G4cout << "BDSSampler.cc Nsamplers " << nSamplers << G4endl;
 #endif
-
-  // register sampler sensitive detector
-  //G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-  //SDMan->AddNewDetector(SensitiveDetector);
 }
 
 void BDSSampler::Initialise()
@@ -60,14 +59,16 @@ void BDSSampler::Initialise()
 
 void BDSSampler::BuildMarkerLogicalVolume()
 {
-  itsMarkerLogicalVolume=
-    new G4LogicalVolume(
-			new G4Box(itsName+"_solid",
-				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				  itsLength/2.0),
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  itsMarkerSolidVolume = new G4Box(itsName+"_solid",
+				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
+				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
+				   itsLength/2.0);
+  itsMarkerLogicalVolume = new G4LogicalVolume(itsMarkerSolidVolume,
 			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
-			itsName);
+					       itsName);
   
 #ifndef NOUSERLIMITS
   itsOuterUserLimits =new G4UserLimits();
@@ -77,11 +78,11 @@ void BDSSampler::BuildMarkerLogicalVolume()
   itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
   //itsMarkerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
-  if (BDSExecOptions::Instance()->GetVisDebug()) {
-    itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-  } else {
-    itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-  }
+  if (BDSExecOptions::Instance()->GetVisDebug())
+    {itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
+  else
+    {itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
+  
   itsMarkerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 }
 

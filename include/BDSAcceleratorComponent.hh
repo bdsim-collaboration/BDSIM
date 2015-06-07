@@ -9,7 +9,9 @@
 #include "G4LogicalVolume.hh"
 #include "G4VisAttributes.hh"
 #include "globals.hh"
+
 #include "BDSEnergyCounterSD.hh"
+#include "BDSTiltOffset.hh"
 
 #include "G4MagneticField.hh"
 #include "G4MagIntegratorStepper.hh"
@@ -39,6 +41,9 @@ public:
   // angle - for bends etc.
   G4double GetAngle ();
 
+  /// Accessor for tilt offset information
+  inline BDSTiltOffset GetTiltOffset() const;
+  
   // geometry length of the component.
   virtual G4double GetYLength ();
   virtual G4double GetXLength ();
@@ -143,7 +148,8 @@ public:
 			  G4double ZOffset=0.,
 			  G4double tunnelRadius=0.,
 			  G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
-                          G4String aTunnelCavityMaterial = "Air");
+                          G4String aTunnelCavityMaterial = "Air",
+			  BDSTiltOffset tiltOffsetIn = BDSTiltOffset());
 
   BDSAcceleratorComponent (
 			  G4String& aName, 
@@ -159,7 +165,8 @@ public:
 			  G4double ZOffset=0.,
 			  G4double tunnelRadius=0.,
 			  G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
-			  G4String aTunnelCavityMaterial = "Air");
+			  G4String aTunnelCavityMaterial = "Air",
+			  BDSTiltOffset tiltOffsetIn = BDSTiltOffset());
 
   G4VisAttributes* GetVisAttributes()const; ///> get visual attributes
   G4LogicalVolume* itsOuterLogicalVolume;
@@ -177,6 +184,8 @@ private:
   virtual void SetVisAttributes(); 
 
 protected:
+  /// Attach marker solid and logical volume pointers to BDSGeometryComponent base class
+  void RegisterMarkerWithBaseClass();
   /// build logical volumes: marker, tunnel, field, blms etc.
   virtual void Build();
   /// build tunnel
@@ -313,9 +322,14 @@ private:
   //  G4double itsZUpper;
   //  G4double itsSynchEnergyLoss;
 
+  BDSTiltOffset tiltOffset;
+
 };
 
-// Class BDSAcceleratorComponent 
+// Class BDSAcceleratorComponent
+
+inline BDSTiltOffset BDSAcceleratorComponent::GetTiltOffset() const
+{return tiltOffset;}
 
 inline G4double BDSAcceleratorComponent::GetChordLength ()
 {return itsLength;}

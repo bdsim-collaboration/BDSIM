@@ -49,8 +49,6 @@ std::ostream& operator<< (std::ostream &out, BDSBin const &bin)
   return out << "(" << bin.xmin << " , " << bin.xmax << ") : " << bin.total;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////
-
 BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4String nameIn, G4String titleIn):
   name(nameIn),title(titleIn),entries(0)
 {

@@ -45,14 +45,15 @@ void BDSDump::BuildMarkerLogicalVolume()
   G4double SampTransSize;
   SampTransSize=BDSGlobalConstants::Instance()->GetSamplerDiameter()/2.0;
 
-  itsMarkerLogicalVolume=
-    new G4LogicalVolume(
-			new G4Box(itsName+"_solid",
-				  SampTransSize,
-				  SampTransSize,
-				  itsLength/2.0),
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
-			itsName);
+  G4Material* material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()); 
+  itsMarkerSolidVolume = new G4Box(itsName+"_solid",
+				   SampTransSize,
+				   SampTransSize,
+				   itsLength/2.0);
+  
+  itsMarkerLogicalVolume = new G4LogicalVolume(itsMarkerSolidVolume,
+					       material,
+					       itsName);
 
 #ifndef NOUSERLIMITS
   itsOuterUserLimits =new G4UserLimits();

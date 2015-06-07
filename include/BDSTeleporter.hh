@@ -34,8 +34,10 @@ private:
   void BuildBPFieldMgr(G4MagIntegratorStepper* stepper,G4MagneticField* field);
 };
 
-void CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline);
-void AddTeleporterToEndOfBeamline(ElementList* beamline_list);
+namespace BDS {
+  void CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline);
+  void AddTeleporterToEndOfBeamline(ElementList* beamline_list);
+}
 
 
 #endif

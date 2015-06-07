@@ -33,13 +33,12 @@ void BDSSpoiler::Build()
 }
 
 void BDSSpoiler::BuildMarkerLogicalVolume()
-{  
-  itsMarkerLogicalVolume=
-    new G4LogicalVolume(
-			new G4Box(itsName,
-				  BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
-				  BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
-				  itsLength/2),
+{
+  itsMarkerSolidVolume = new G4Box(itsName,
+				   BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
+				   BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
+				   itsLength/2);
+  itsMarkerLogicalVolume = new G4LogicalVolume(itsMarkerSolidVolume,
 			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
 			itsName);
 }

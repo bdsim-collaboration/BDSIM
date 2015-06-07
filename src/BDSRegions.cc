@@ -7,7 +7,6 @@
 #include "BDSGlobalConstants.hh"
 #include "globals.hh"
 
-//#include "BDSWorld.hh"
 // #include "BDSMaterials.hh"
 // #include "BDSBeamline.hh"
 
@@ -72,9 +71,6 @@ void BDSRegions::buildPrecisionRegion(){
     _precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsP(),G4ProductionCuts::GetIndex("e+"));
   
   _precisionRegion->SetProductionCuts(_precisionProductionCuts);
-#ifndef NOUSERLIMITS
-  //  _precisionRegion->SetUserLimits(BDSWorld::Instance()->userLimits());
-#endif
 }
 
 void BDSRegions::buildGFlashRegion(){

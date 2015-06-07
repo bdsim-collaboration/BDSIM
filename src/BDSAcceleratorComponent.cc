@@ -9,6 +9,7 @@
 #include "BDSGeometryComponent.hh"
 #include "BDSMaterials.hh"
 #include "BDSReadOutGeometry.hh"
+#include "BDSTiltOffset.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Colour.hh"
@@ -21,12 +22,6 @@
 #include "G4IntersectionSolid.hh"
 #include "G4AssemblyVolume.hh"
 #include "G4Transform3D.hh"
-
-typedef std::map<G4String,int> LogVolCountMap;
-LogVolCountMap* LogVolCount = new LogVolCountMap();
-
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-LogVolMap* LogVol = new LogVolMap();
 
 BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4String& aName,
@@ -42,7 +37,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double ZOffset, 
 						  G4double tunnelRadius, 
 						  G4double tunnelOffsetX,
-						  G4String aTunnelCavityMaterial):
+						  G4String aTunnelCavityMaterial,
+						  BDSTiltOffset tiltOffsetIn):
   BDSGeometryComponent(NULL,NULL),
   itsName(aName),
   itsLength(aLength),
@@ -57,7 +53,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsZOffset(ZOffset), 
   itsTunnelRadius(tunnelRadius), 
   itsTunnelOffsetX(tunnelOffsetX),
-  itsTunnelCavityMaterial(aTunnelCavityMaterial)
+  itsTunnelCavityMaterial(aTunnelCavityMaterial),
+  tiltOffset(tiltOffsetIn)
 {
   ConstructorInit();
 }
@@ -78,7 +75,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double ZOffset, 
 						  G4double tunnelRadius, 
 						  G4double tunnelOffsetX, 
-						  G4String aTunnelCavityMaterial):
+						  G4String aTunnelCavityMaterial,
+						  BDSTiltOffset tiltOffsetIn):
   BDSGeometryComponent(NULL,NULL),
   itsName(aName),
   itsLength(aLength),
@@ -95,7 +93,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsZOffset(ZOffset), 
   itsTunnelRadius(tunnelRadius), 
   itsTunnelOffsetX(tunnelOffsetX), 
-  itsTunnelCavityMaterial(aTunnelCavityMaterial)
+  itsTunnelCavityMaterial(aTunnelCavityMaterial),
+  tiltOffset(tiltOffsetIn)
 {
   if (itsBlmLocZ.size() != itsBlmLocTheta.size()){
     G4cerr << "BDSAcceleratorComponent: error, lists blmLocZ and blmLocTheta are of unequal size" << G4endl;
@@ -189,42 +188,35 @@ BDSAcceleratorComponent::~BDSAcceleratorComponent ()
 
 void BDSAcceleratorComponent::Initialise()
 {
-  /// check and build logical volume
+  Build();
 
-  // set copy number (count starts at 0)
-  // post increment guarantees itsCopyNumber starts at 0!
-  itsCopyNumber = (*LogVolCount)[itsName]++;
-  if(itsCopyNumber == 0)
-    {
-      Build();
-      //
-      // append marker logical volume to volume map
-      //
-      (*LogVol)[itsName]=itsMarkerLogicalVolume;
-    }
-  else
-    {
-      //
-      // use already defined marker volume
-      //
-      itsMarkerLogicalVolume=(*LogVol)[itsName];
-    }
   readOutLV = BDS::BuildReadOutVolume(itsName,itsLength,itsAngle);
+}
+
+void BDSAcceleratorComponent::RegisterMarkerWithBaseClass()
+{
+  // Register volumes with base class (BDSGeometryComponent)
+  RegisterLogicalVolume(itsMarkerLogicalVolume);
+
+  // Manually assign base class (BDSGeometryComponent) members as constructor used with null pointers
+  containerSolid         = itsMarkerSolidVolume;
+  containerLogicalVolume = itsMarkerLogicalVolume;
 }
 
 void BDSAcceleratorComponent::Build()
 {
   SetVisAttributes(); // sets color attributes, virtual method
   BuildMarkerLogicalVolume(); // pure virtual provided by derived class
+  RegisterMarkerWithBaseClass();
 
   // visual attributes
-  if(itsMarkerLogicalVolume) {
-    if (BDSExecOptions::Instance()->GetVisDebug()) {
-      itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-    } else {
-      itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+  if(itsMarkerLogicalVolume)
+    {
+    if (BDSExecOptions::Instance()->GetVisDebug())
+      {itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
+    else
+      {itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
     }
-  }
 }
 
 void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)

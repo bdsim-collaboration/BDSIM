@@ -20,6 +20,10 @@ public:
   BDSAcceleratorComponent* createComponent(std::list<struct Element>::iterator elementIter, ElementList& beamline_list);
   BDSAcceleratorComponent* createComponent(Element& aElement, Element& previousElement, Element& nextElement);
   BDSAcceleratorComponent* createComponent();
+
+  // for each of them - special cases need only for ring logic
+  BDSAcceleratorComponent* createTerminator();
+  BDSAcceleratorComponent* createTeleporter();
  
 private:
   G4bool   verbose;
@@ -57,9 +61,6 @@ private:
   BDSAcceleratorComponent* createScreen();
   BDSAcceleratorComponent* createAwakeScreen();
   BDSAcceleratorComponent* createTransform3D();
-  // for each of them - special cases need only for ring logic
-  BDSAcceleratorComponent* createTerminator();
-  BDSAcceleratorComponent* createTeleporter();
 
   /// Utility function to prepare beampipe
   G4Material*        PrepareBeamPipeMaterial(Element& element);

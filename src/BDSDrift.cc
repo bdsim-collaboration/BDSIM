@@ -41,4 +41,13 @@ void BDSDrift::Build() {
     {RegisterSensitiveVolumes(pipe->GetAllSensitiveVolumes());}
   
   itsMarkerLogicalVolume = pipe->GetContainerLogicalVolume();
+  itsMarkerSolidVolume   = pipe->GetContainerSolid();
+
+  // Set extents
+  SetExtentX(pipe->GetExtentX());
+  SetExtentY(pipe->GetExtentY());
+  SetExtentZ(pipe->GetExtentZ());
+
+  // Use BDSAcceleratorComponent method to register marker volume / solid with base class
+  RegisterMarkerWithBaseClass();
 }

@@ -305,9 +305,15 @@ int main(int argc,char** argv) {
       }
 
       // check if visualisation file is present and readable
-      std::string visMacroFilename = execOptions->GetVisMacroFilename();
+      std::string visMacroName = execOptions->GetVisMacroFilename();
+      G4String visMacroFilename = execOptions->GetBDSIMPATH() + visMacroName;
+      // first relative to main path:
       if (FILE *file = fopen(visMacroFilename.c_str(), "r")) {
         fclose(file);
+      } else if (FILE *file = fopen(visMacroName.c_str(), "r")) {
+	// then try current path
+        fclose(file);
+	visMacroFilename = visMacroName;
       } else {
       	// if not present use a default one (OGLSQt or DAWNFILE)
 	G4cout << __FUNCTION__ << "> WARNING: visualisation file " << visMacroFilename <<  " file not present, using default!" << G4endl;
@@ -345,7 +351,6 @@ int main(int argc,char** argv) {
       runManager->BeamOn(globalConstants->GetNumberToGenerate());
     }
 
-
   //
   // job termination
   //
@@ -359,7 +364,6 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> BDSBeamline deleting..."<<G4endl;
 #endif
-  delete BDSBeamline::Instance();
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;

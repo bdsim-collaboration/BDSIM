@@ -3,6 +3,7 @@
 #include <cctype>
 #include <functional>
 #include <iostream>
+#include <limits>
 
 #include <signal.h>
 #include <unistd.h>
@@ -108,4 +109,12 @@ void BDS::HandleAborts(int signal_number)
   std::cout << "Terminate run" << std::endl;
   BDSRunManager::GetRunManager()->RunTermination();
   std::cout << "Ave, Imperator, morituri te salutant!" << std::endl;
+}
+
+G4bool BDS::IsFinite(const G4double& variable)
+{
+  if (std::abs(variable) > std::numeric_limits<double>::epsilon())
+    {return true;}
+  else
+    {return false;}
 }

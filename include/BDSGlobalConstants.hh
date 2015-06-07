@@ -218,12 +218,6 @@ public:
   G4AffineTransform GetDumpTransform()const;
   void              SetDumpTransform(G4AffineTransform tf);
 
-  G4String GetRefVolume()const;
-  G4int    GetRefCopyNo()const;
-
-  const G4AffineTransform* GetRefTransform()const;
-  void                     SetRefTransform(G4AffineTransform& aTransform);
-
   G4double GetSMax()const;
   void     SetSMax(G4double);
   G4ThreeVector GetTeleporterDelta()const;
@@ -422,9 +416,7 @@ private:
   G4bool   isReadFromStack;
   G4String itsFifo; // fifo for BDSIM-placet
   G4AffineTransform itsDumpTransform; //transform of frame from start to current dump element
-  G4String itsRefVolume;
-  G4int    itsRefCopyNo;
-  G4AffineTransform itsRefTransform;
+  
   // Turn Control
   G4int    itsTurnsTaken;
   G4int    itsTurnsToTake;
@@ -834,18 +826,6 @@ inline G4AffineTransform BDSGlobalConstants::GetDumpTransform()const
 
 inline void BDSGlobalConstants::SetDumpTransform(G4AffineTransform tf)
 {itsDumpTransform=tf;}
-
-inline G4String BDSGlobalConstants::GetRefVolume()const
-{return itsRefVolume;}
-
-inline G4int BDSGlobalConstants::GetRefCopyNo()const
-{return itsRefCopyNo;}
-
-inline const G4AffineTransform* BDSGlobalConstants::GetRefTransform()const
-{return &itsRefTransform;}
-
-inline void BDSGlobalConstants::SetRefTransform(G4AffineTransform& aTransform)
-{itsRefTransform=aTransform;}
 
 inline G4int BDSGlobalConstants::GetTurnsTaken()const
 {return itsTurnsTaken;}
