@@ -476,7 +476,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 	}
 
       // get the placement details from the beamline component
-      G4int nCopy         = thecurrentitem->GetCopyNumber();
+      G4int nCopy         = 0;
       G4RotationMatrix* r = (*it)->GetRotationMiddle();
       G4ThreeVector     p = (*it)->GetPositionMiddle();
       
