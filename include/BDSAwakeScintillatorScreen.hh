@@ -36,7 +36,7 @@ private:
   void BuildVacuumChamber2();
   virtual void SetVisAttributes();
   void ComputeDimensions();
-  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildContainerLogicalVolume();
   void BuildCameraScoringPlane();
   void BuildScreenScoringPlane();
   void BuildAwakeScintillatorMaterial();
@@ -63,10 +63,9 @@ private:
   G4VSolid* itsCameraScoringPlaneSolid;
   G4VSolid* itsScreenScoringPlaneSolid;
                     
-  //  G4Mag_UsualEqRhs* itsEqRhs;
-  
-private:
   G4double itsOuterR;
+  G4double itsXLength;
+  G4double itsYLength;
 
   G4RotationMatrix* _screenRotationMatrix;
   G4RotationMatrix* _vacRotationMatrix;
