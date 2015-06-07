@@ -24,28 +24,20 @@
 
 BDSSectorBend::BDSSectorBend(G4String           name,
 			     G4double           length,
-			     G4double           angle,
+			     G4double           angleIn,
 			     G4double           bField,
 			     G4double           bGrad,
-			     BDSBeamPipeInfo    beamPipeInfo,
-			     BDSMagnetOuterInfo magnetOuterInfo,
-			     BDSTunnelInfo      tunnelInfo):
-  BDSMultipole(BDSMagnetType::sectorbend,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
+			     BDSBeamPipeInfo*   beamPipeInfo,
+			     BDSMagnetOuterInfo magnetOuterInfo):
+  BDSMultipole(BDSMagnetType::sectorbend,name,length,beamPipeInfo,magnetOuterInfo),
   itsBField(bField),itsBGrad(bGrad)
 {
-  itsAngle = angle;
-  // arc length = radius*angle
-  //            = (chord length/(2.0*sin(angle/2))*angle
-  if (itsAngle == 0.0)
-     itsChordLength = itsLength;
-  else
-     itsChordLength = 2.0 * itsLength * sin(0.5*itsAngle) / itsAngle;
-
+  angle = angleIn;
   // prepare normal vectors for input and output planes
   // calculate components of normal vectors (in the end mag(normal) = 1)
-  orientation   = BDS::CalculateOrientation(itsAngle);
-  G4double in_z = cos(0.5*fabs(itsAngle)); 
-  G4double in_x = sin(0.5*fabs(itsAngle));
+  orientation   = BDS::CalculateOrientation(angleIn);
+  G4double in_z = cos(0.5*fabs(angleIn)); 
+  G4double in_x = sin(0.5*fabs(angleIn));
   inputface     = G4ThreeVector(-orientation*in_x, 0.0, -1.0*in_z);
   //-1 as pointing down in z for normal
   outputface    = G4ThreeVector(-orientation*in_x, 0.0, in_z);
@@ -85,7 +77,7 @@ void BDSSectorBend::BuildBPFieldAndStepper()
   // set up the magnetic field and stepper
   G4ThreeVector Bfield(0.,-itsBField,0.);
   // B-Field constructed with arc length for radius of curvature
-  itsMagField = new BDSSbendMagField(Bfield,itsLength,itsAngle);
+  itsMagField = new BDSSbendMagField(Bfield,arcLength,angle);
   itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
   BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
   
@@ -100,18 +92,18 @@ void BDSSectorBend::BuildBeampipe()
 #endif
 
   beampipe =
-    BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(beamPipeType,
-							      itsName,
-							      itsChordLength,
-							      -itsAngle*0.5,
-							      -itsAngle*0.5,
-							      aper1,
-							      aper2,
-							      aper3,
-							      aper4,
-							      vacuumMaterial,
-							      beamPipeThickness,
-							      beamPipeMaterial);
+    BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(beamPipeInfo->beamPipeType,
+							      name,
+							      chordLength,
+							      -angle*0.5,
+							      -angle*0.5,
+							      beamPipeInfo->aper1,
+							      beamPipeInfo->aper2,
+							      beamPipeInfo->aper3,
+							      beamPipeInfo->aper4,
+							      beamPipeInfo->vacuumMaterial,
+							      beamPipeInfo->beamPipeThickness,
+							      beamPipeInfo->beamPipeMaterial);
   
   BeamPipeCommonTasks(); //from bdsmultipole;
 }

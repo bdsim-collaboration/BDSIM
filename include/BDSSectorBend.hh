@@ -18,9 +18,8 @@ public:
 		G4double           angleIn,
 		G4double           bFieldIn,
 		G4double           bGradIn,
-		BDSBeamPipeInfo    beamPipeInfo,
-		BDSMagnetOuterInfo magnetOuterInfo,
-		BDSTunnelInfo      tunnelInfo);
+		BDSBeamPipeInfo*   beamPipeInfo,
+		BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSSectorBend(){;};
 
 private:
