@@ -1182,6 +1182,8 @@ This is a single particle with the same position and angle defined by the follow
 +----------------------------------+-------------------------------------------------------+
 | Z0                               | Longitudinal position [m]                             |
 +----------------------------------+-------------------------------------------------------+
+| T0                               | Longitudinal position [s]                             |
++----------------------------------+-------------------------------------------------------+
 | Xp0                              | Horizontal angle []                                   |
 +----------------------------------+-------------------------------------------------------+
 | Yp0                              | Vertical angle []                                     |
@@ -1190,22 +1192,119 @@ This is a single particle with the same position and angle defined by the follow
 gauss
 ^^^^^
 
+Uses the gausMatrix beam generator but with simplified input parameters opposed to a complete 
+beam sigma matrix. This beam distribution does not allow for correlations between phase space 
+coordinates.
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| sigmaX                           | Horizontal gaussian sigma [m]                         |
++----------------------------------+-------------------------------------------------------+
+| sigmaY                           | Vertical gaussian sigma [m]                           |
++----------------------------------+-------------------------------------------------------+
+| sigmaXp                          | Horizontal gaussian angle sigma []                    |
++----------------------------------+-------------------------------------------------------+
+| sigmaYp                          | Vertical gaussian angle sigma []                      |
++----------------------------------+-------------------------------------------------------+
+| sigmaE                           | Energy variation []                                   |
++----------------------------------+-------------------------------------------------------+
+| sigmaT                           | [s]                                                   |
++----------------------------------+-------------------------------------------------------+
+
+gausMatrix
+^^^^^^^^^^
+
+Uses the :math:`N` dimensional gaussian generator from `CLHEP`, `CLHEP::RandMultiGauss`. The generator
+is initialised by a :math:`6\times1` means vector and :math:`6\times 6` sigma matrix.  
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| sigmaNM                          | Sigma matrix element (N,M)                            |
++----------------------------------+-------------------------------------------------------+
+
 gaussTwiss
 ^^^^^^^^^^
 
+The beam parameters are defined by the usual :math:`\alpha`, :math:`\beta` and :math:`\gamma` from which
+the usual beam :math:`\sigma`-matrix is calculated, using the following equations 
+
+.. math:: 
+
+\sigma_{11} =  \epsilon_x \beta_x    \\
+\sigma_{12} = -\epsilon_x \alpha_x   \\
+\sigma_{21} = -\epsilon_x \alpha_x   \\
+\sigma_{22} =  \epsilon_x \gamma_x   \\
+\sigma_{33} =  \epsilon_y \beta_y    \\
+\sigma_{34} = -\epsilon_y \alpha_y   \\
+\sigma_{43} = -\epsilon_y \alpha_y   \\
+\sigma_{44} =  \epsilon_y \gamma_y   \\
+\sigma_{55} =  \sigma_{T}^2  \\
+\sigma_{66} =  \sigma_{E}^2  
+
+
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| emitx                            | Horizontal beam core emittance [m]                    |
++----------------------------------+-------------------------------------------------------+
+| emity                            | Vertical beam core emittance [m]                      |
++----------------------------------+-------------------------------------------------------+
+| betax                            | Horizontal beta function [m]                          |
++----------------------------------+-------------------------------------------------------+
+| betay                            | Vertical beta function [m]                            |
++----------------------------------+-------------------------------------------------------+
+| alfx                             | Horizontal alpha function                             |
++----------------------------------+-------------------------------------------------------+
+| alfy                             | Vertical alpha function                               |
++----------------------------------+-------------------------------------------------------+
+
 halo
 ^^^^
-The halo distrubtion is effectively a flat phase space with the central beam core removed at :math:`\epsilon_{\rm core}`. The beam core is defined using the standard twiss parameters described previously. The implicit general form of a rotated, translated ellipse is  :math:`AX^2 + BXY + CY^2 + DX + EY + F = 0`
-where the coefficients can be related to the major :math:`a`, minor :math:`b`, rotation angle :math:`\theta` and centre :math:`(x_{c},y_{c})` via
-
+The halo distrubtion is effectively a flat phase space with the central beam core removed at 
+:math:`\epsilon_{\rm core}`. The beam core is defined using the standard twiss parameters described 
+previously. The implicit general form of a rotated ellipse is  
 
 .. math::
 
-   y = m x + c
+\gamma x^2 + 2\alpha xx^{\prime} + \beta x^{\prime 2} = \epsilon
 
-   \int_0^{\infty} x^{-2} dx
+where the parameters have their usual meanings. A phase space point can be rejected or weighted 
+depending on the single particle emittance, which is calculated as    
 
-   
+.. math::
+
+\epsilon_{\rm SP} = \gammax^2 + 2\alpha xx^{\prime} + Cx^{\prime 2}
+
+if the single particle emittance is less than beam emittance so :math:`\epsilon_{\rm SP} \lt \epsilon_{\rm core}` the particle is rejected. 
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| emitx                            | Horizontal beam core emittance [m]                    |
++----------------------------------+-------------------------------------------------------+
+| emity                            | Vertical beam core emittance [m]                      |
++----------------------------------+-------------------------------------------------------+
+| betax                            | Horizontal beta function [m]                          |
++----------------------------------+-------------------------------------------------------+
+| betay                            | Vertical beta function [m]                            |
++----------------------------------+-------------------------------------------------------+
+| alfx                             | Horizontal alpha function                             |
++----------------------------------+-------------------------------------------------------+
+| alfy                             | Vertical alpha function                               |
++----------------------------------+-------------------------------------------------------+
+| envelopeX                        | Horitontal position maximum [m]                       |
++----------------------------------+-------------------------------------------------------+
+| envelopeY                        | Vertical position maximum [m]                         |
++----------------------------------+-------------------------------------------------------+
+| envelopeXp                       | Horitontal angle maximum [m]                          |
++----------------------------------+-------------------------------------------------------+
+| envelopeYp                       | Vertical angle maximum [m]                            |
++----------------------------------+-------------------------------------------------------+
+| haloPSWeightFunction             | Phase space weight function [string]                  |
++----------------------------------+-------------------------------------------------------+
 
 Regions
 -------
