@@ -14,8 +14,6 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*        containerSolidIn,
   containerLogicalVolume(containerLVIn),
   placementOffset(G4ThreeVector(0,0,0))
 {
-  if (containerLVIn)
-    {RegisterLogicalVolume(containerLVIn);}
   SetExtentX(0,0); // initialise only - unphysical - should be set by child class
   SetExtentY(0,0);
   SetExtentZ(0,0);
@@ -33,10 +31,7 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*                    containe
   extentY(extentYIn),
   extentZ(extentZIn),
   placementOffset(placementOffsetIn)
-{
-  if (containerLVIn)
-    {RegisterLogicalVolume(containerLVIn);}
-}
+{;}
 
 BDSGeometryComponent::BDSGeometryComponent(BDSGeometryComponent& component):
   containerSolid(component.containerSolid),
