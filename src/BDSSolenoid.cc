@@ -18,10 +18,9 @@
 BDSSolenoid::BDSSolenoid(G4String           name,
 			 G4double           length,
 			 G4double           bField,
-			 BDSBeamPipeInfo    beamPipeInfo,
-			 BDSMagnetOuterInfo magnetOuterInfo,
-			 BDSTunnelInfo      tunnelInfo):
-  BDSMultipole(BDSMagnetType::solenoid,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
+			 BDSBeamPipeInfo*   beamPipeInfo,
+			 BDSMagnetOuterInfo magnetOuterInfo):
+  BDSMultipole(BDSMagnetType::solenoid,name,length,beamPipeInfo,magnetOuterInfo),
   itsBField(bField)
 {;}
 
