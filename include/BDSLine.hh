@@ -21,16 +21,18 @@ public:
   // chosen not to distinguish between non-const and const cases
   typedef std::vector<BDSAcceleratorComponent*>::iterator BDSLineIterator;
 
-  BDSLine(G4String aName,std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta);
+  BDSLine(G4String name);
   ~BDSLine(){};
 
   void addComponent(BDSAcceleratorComponent* component);
   BDSLineIterator begin(){return line.begin();}
   BDSLineIterator end(){return line.end();}
 
+  virtual void Intialise();
+
 private:
   /// define pure virtual method
-  virtual void BuildMarkerLogicalVolume(){};
+  virtual void BuildContainerLogicalVolume(){};
 
   /// vector
   std::vector<BDSAcceleratorComponent*> line;

@@ -37,9 +37,7 @@ private:
   std::list<BDSAcceleratorComponent*> itsBeamline;
   /// parser data
   Element _element, _previousElement, _nextElement;
-  /// method to add common properties (not needed at creation!)
-  /// like aperture after creation
-  void addCommonProperties(BDSAcceleratorComponent* element);
+  
   BDSAcceleratorComponent* createSampler();
   BDSAcceleratorComponent* createCSampler();
   BDSAcceleratorComponent* createDump();
@@ -63,13 +61,16 @@ private:
   BDSAcceleratorComponent* createAwakeScreen();
   BDSAcceleratorComponent* createTransform3D();
 
-  /// Utility function to prepare beampipe
+  /// Testing function
+  G4bool HasSufficientMinimumLength(Element& element);
+  
+  ///@{ Utility function to prepare beampipe
   G4Material*        PrepareBeamPipeMaterial(Element& element);
   G4Material*        PrepareVacuumMaterial(Element& element);
   BDSMagnetOuterInfo PrepareMagnetOuterInfo(Element& element);
-  BDSTunnelInfo      PrepareTunnelInfo(Element& element);
   G4double           PrepareOuterDiameter(Element& element);
-  BDSBeamPipeInfo    PrepareBeamPipeInfo(Element& element);
+  BDSBeamPipeInfo*   PrepareBeamPipeInfo(Element& element);
+  ///@}
 
 };
 #endif
