@@ -50,7 +50,6 @@ private:
   
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
-  virtual void BuildMarkerLogicalVolume();
   virtual void BuildBeampipe();
   virtual void BuildOuterVolume(); // override this method to change length used
 

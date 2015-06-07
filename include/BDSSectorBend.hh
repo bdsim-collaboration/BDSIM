@@ -23,27 +23,16 @@ public:
 		BDSTunnelInfo      tunnelInfo);
   ~BDSSectorBend(){;};
 
-  virtual G4double GetChordLength();
-
 private:
   G4double itsBField;
   G4double itsBGrad;
-  
-  /// chord length in [m]
-  G4double itsChordLength;
-
-  /// normal vectors for faces when preparing solids
-  G4ThreeVector inputface;
-  G4ThreeVector outputface;
   
   /// orientation of shifts - depends on angle - calculations use absolute value of angle for safety
   G4int orientation;
 
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
-  virtual void BuildMarkerLogicalVolume();
   virtual void BuildBeampipe();
-  virtual void BuildOuterVolume();
 };
 
 #endif

@@ -33,18 +33,21 @@
 class BDSMultipole: public BDSAcceleratorComponent
 {
 public:
-  // Constructor for new beampipe
+  /// Magnet base class constructor that is for basic geometric information rather
+  /// magnetic field details, which are handled in the derived classes
   BDSMultipole(BDSMagnetType      type,
 	       G4String           name, 
 	       G4double           length,
-	       BDSBeamPipeInfo    beamPipeInfo,
-	       BDSMagnetOuterInfo magnetOuterInfo,
-	       BDSTunnelInfo      tunnelInfo);
+	       BDSBeamPipeInfo*   beamPipeInfo,
+	       BDSMagnetOuterInfo magnetOuterInfo);
   
   virtual ~BDSMultipole();
 
-protected:
-  virtual void Build();
+  ///@{ Magnet strengh parameter accessor - to be moved into its own class soon
+  G4double GetK1();
+  G4double GetK2();
+  G4double GetK3();
+  ///@}
 
 private:
   /// build and set field manager and chord finder
@@ -54,14 +57,13 @@ private:
   /// define field and stepper
   virtual void BuildBPFieldAndStepper()=0;
 
-  /// build beam loss monitors
-  virtual void BuildBLMs();
-
   /// Method for common parts of both Buildbeampipe methods
   void FinaliseBeampipe(G4String materialName = "",G4RotationMatrix* RotY=NULL);
 
 protected:
-  virtual void BuildMarkerLogicalVolume();
+
+  virtual void Build();
+  virtual void BuildContainerLogicalVolume();
   
   /// method to create outer volume
   virtual void BuildOuterVolume();
@@ -76,15 +78,11 @@ protected:
   void BuildOuterFieldManager(G4int nPoles, G4double poleField, 
 			      G4double phiOffset);
 
-  void SetOuterRadius(G4double outR);
-  void SetStartOuterRadius(G4double outR);
-  void SetEndOuterRadius(G4double outR);
-
-  // don't need but provide null implementation here so it needn't be
-  // in the derived classes
-  virtual void SetVisAttributes();
-
-protected:
+  ///@{ normal vector for faces when preparing solids
+  G4ThreeVector inputface;
+  G4ThreeVector outputface;
+  ///@}
+  
   // type
   BDSMagnetType itsType;
   
@@ -104,28 +102,19 @@ protected:
   G4FieldManager* itsOuterFieldMgr;
 
   G4double itsInnerIronRadius;
-  
-  G4VSolid* itsBeampipeSolid;
-  G4VSolid* itsInnerBeampipeSolid;
+
 
   G4ChordFinder* itsChordFinder;
   G4MagneticField* itsOuterMagField;
   
   //for beampipe construction
-  BDSBeamPipeType beamPipeType;
-  G4double        aper1;
-  G4double        aper2;
-  G4double        aper3;
-  G4double        aper4;
-  G4Material*     vacuumMaterial;
-  G4double        beamPipeThickness;
-  G4Material*     beamPipeMaterial;
+  BDSBeamPipeInfo* beamPipeInfo;
   
   //the constructed beampipe
   BDSBeamPipe*    beampipe;
 
   //for outer volume construction
-  G4double        boxSize;
+  G4double        outerDiameter;
 
   //the assembled outer logical volume
   BDSGeometryComponent* outer;
@@ -133,21 +122,8 @@ protected:
   //for the outer volume construction
   BDSMagnetOuterInfo itsMagnetOuterInfo;
 
-  //for the tunnel construction
-  BDSTunnelInfo itsTunnelInfo;
-
-private:
-  /// constructor initialisation
-  void ConstructorInit();
+  // Magnetic strength parameters
+  G4double itsK1, itsK2, itsK3;
 };
-
-inline void BDSMultipole::SetOuterRadius(G4double outR)
-{itsOuterR = outR;}
-
-inline void BDSMultipole::SetStartOuterRadius(G4double outR)
-{itsOuterR = outR;}
-
-inline void BDSMultipole::SetEndOuterRadius(G4double outR)
-{itsOuterR = outR;}
 
 #endif

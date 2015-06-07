@@ -93,52 +93,6 @@ void BDSSectorBend::BuildBPFieldAndStepper()
   dipoleStepper->SetBGrad(itsBGrad);
   itsStepper = dipoleStepper;
 }
-
-void BDSSectorBend::BuildMarkerLogicalVolume()
-{
-  G4double xLength, yLength;
-  xLength = yLength = std::max(itsOuterR,BDSGlobalConstants::Instance()->GetComponentBoxSize()/2);
-
-  G4double transverseSize = 2.0 * std::max(xLength, yLength); //factor of 2 fairly arbitrary i think
-
-#ifdef BDSDEBUG 
-  G4cout<<"marker volume : x/y="<<transverseSize/CLHEP::m<<
-    " m, l= "<<  (itsChordLength)/CLHEP::m <<" m"<<G4endl;
-#endif
-
-  //make marker volume from G4cuttubs - a cylinder along the chord line with angled faces defined by normal vectors
-  //this is done first so other solids (beam pipe) can be trimmed with the angled face
-  
-  itsMarkerSolidVolume = new G4CutTubs( itsName+"_marker",  // name
-					0.0,                // minimum radius = 0 for solid cylinder
-					transverseSize/2.0, // radius - determined above
-					itsChordLength/2.0, // length about centre point
-					0.0,                // starting angle
-					2.0*CLHEP::pi,      // finishing angle - full
-					inputface,          // input face normal vector
-					outputface );       // output face normal vector
-
-  G4String LocalLogicalName = itsName;
-  itsMarkerLogicalVolume=    
-    new G4LogicalVolume(itsMarkerSolidVolume,
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
-			LocalLogicalName+"_marker");
-
-#ifndef NOUSERLIMITS
-  itsMarkerUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
-  itsMarkerUserLimits->SetMaxAllowedStep(itsLength*0.5);
-  itsMarkerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
-#endif
-  
-  // zero field in the marker volume
-  itsMarkerLogicalVolume->
-    SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
-
-  SetExtentX(-transverseSize*0.5,transverseSize*0.5);
-  SetExtentY(-transverseSize*0.5,transverseSize*0.5);
-  SetExtentZ(-itsChordLength*0.5,itsChordLength*0.5);
-}
-
 void BDSSectorBend::BuildBeampipe()
 {
 #ifdef BDSDEBUG
@@ -160,20 +114,4 @@ void BDSSectorBend::BuildBeampipe()
 							      beamPipeMaterial);
   
   BeamPipeCommonTasks(); //from bdsmultipole;
-}
-
-void BDSSectorBend::BuildOuterVolume()
-{
-  //need to make a shorter outer volume for bend geometry
-  //let's cheat and use the base class method by fiddling the
-  //component length then setting it back - reduces code duplication
-  G4double originalLength = itsLength;
-  itsLength = itsChordLength;
-  BDSMultipole::BuildOuterVolume();
-  itsLength = originalLength;
-}
-
-G4double BDSSectorBend::GetChordLength()
-{
-  return itsChordLength;
 }
