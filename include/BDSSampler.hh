@@ -14,7 +14,7 @@
 class BDSSampler : public BDSAcceleratorComponent
 {
 public:
-  BDSSampler(G4String aName,G4double aLength);
+  BDSSampler(G4String name,G4double length);
   ~BDSSampler();
 
   static int GetNSamplers();
@@ -36,7 +36,7 @@ public:
 private:
   virtual void Initialise();
 
-  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildContainerLogicalVolume();
 
   /// id of sampler
   int nThisSampler;

@@ -21,8 +21,6 @@
 
 #include "BDSSDManager.hh"
 
-//============================================================
-
 std::vector <G4String> BDSSampler::outputNames;
 
 int BDSSampler::nSamplers = 0;
@@ -34,16 +32,13 @@ int BDSSampler::GetNSamplers() { return nSamplers; }
 
 void BDSSampler::AddExternalSampler(G4String name) { nSamplers++; outputNames.push_back(name); }
 
-BDSSampler::BDSSampler (G4String aName, G4double aLength):
-  BDSAcceleratorComponent(
-			 aName,
-			 aLength,0,0,0)
+BDSSampler::BDSSampler(G4String name, G4double length):
+  BDSAcceleratorComponent("Sampler_"+name, length, 0, "sampler")
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   nThisSampler= nSamplers + 1;
-  SetName("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
   nSamplers++;
 #ifdef BDSDEBUG
   G4cout << "BDSSampler.cc Nsamplers " << nSamplers << G4endl;
@@ -53,37 +48,44 @@ BDSSampler::BDSSampler (G4String aName, G4double aLength):
 void BDSSampler::Initialise()
 {
   BDSAcceleratorComponent::Initialise();
-  
-  BDSSampler::outputNames.push_back(itsName + "_phys_" + BDSGlobalConstants::Instance()->StringFromInt(GetCopyNumber()+1));
+
+  // TO BE FIXED - copy number was previously at the end as geant4 names
+  // placement placementnameyousupply+ "_copynumber".  In new scheme, objects
+  // don't know their placement and they're not duplicated so they don't know
+  // copy number - need to fix this for samplers
+  BDSSampler::outputNames.push_back(name + "_pv_1");
 }
 
-void BDSSampler::BuildMarkerLogicalVolume()
+void BDSSampler::BuildContainerLogicalVolume()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  itsMarkerSolidVolume = new G4Box(itsName+"_solid",
-				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				   itsLength/2.0);
-  itsMarkerLogicalVolume = new G4LogicalVolume(itsMarkerSolidVolume,
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
-					       itsName);
+  G4String name = GetName();
+  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  G4double samplerDiameter = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5; 
+  containerSolid = new G4Box(name + "_solid",
+			     samplerDiameter,
+			     samplerDiameter,
+			     chordLength*0.5);
+  containerLogicalVolume = new G4LogicalVolume(containerSolid,
+					       emptyMaterial,
+					       name);
   
 #ifndef NOUSERLIMITS
-  itsOuterUserLimits =new G4UserLimits();
+  G4UserLimits* itsOuterUserLimits = new G4UserLimits();
   //      double stepFactor=5;
   //      itsOuterUserLimits->SetMaxAllowedStep(itsLength*stepFactor);
   itsOuterUserLimits->SetMaxAllowedStep(1*CLHEP::m);
-  itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
+  containerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
-  //itsMarkerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
+  //containerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
   if (BDSExecOptions::Instance()->GetVisDebug())
-    {itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
+    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
   else
-    {itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
+    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
   
-  itsMarkerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
+  containerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 }
 
 BDSSampler::~BDSSampler()
