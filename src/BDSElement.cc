@@ -89,11 +89,8 @@ void BDSElement::BuildElementMarkerLogicalVolume(){
 #ifdef BDSDEBUG 
   G4cout<<"BDSElement : creating logical volume"<<G4endl;
 #endif
-  G4double elementSizeX=itsOuterR+BDSGlobalConstants::Instance()->GetLengthSafety()/2, elementSizeY = itsOuterR+BDSGlobalConstants::Instance()->GetLengthSafety()/2;
-  
-  
-  elementSizeX = std::max(elementSizeX, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
-  elementSizeY = std::max(elementSizeY, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
+  G4double elementSizeX = itsOuterR+BDSGlobalConstants::Instance()->GetLengthSafety()/2;
+  G4double elementSizeY = itsOuterR+BDSGlobalConstants::Instance()->GetLengthSafety()/2;
 
   G4double elementSize=std::max(elementSizeX, elementSizeY); 
   
@@ -159,11 +156,6 @@ void BDSElement::BuildElementMarkerLogicalVolume(){
   xHalfLengthPlus = (itsLength +  (elementSize/2.0)*(tan(itsPhiAngleOut)-tan(itsPhiAngleIn )))/2.0;
   
   
-  if((xHalfLengthPlus<0) || (xHalfLengthMinus<0)){
-    G4cerr << "Bend radius in " << itsName << " too small for this tunnel/component geometry. Exiting." << G4endl;
-    exit(1);
-  }
-  
   itsMarkerSolidVolume = new G4Trd(itsName+"_marker",
 				   xHalfLengthPlus,     // x hlf lgth at +z
 				   xHalfLengthMinus,    // x hlf lgth at -z
@@ -209,11 +201,6 @@ void BDSElement::BuildGeometry()
   }
   itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
-
-  //Build the tunnel
-  if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-    BuildTunnel();
-  }
 }
 
 // place components 

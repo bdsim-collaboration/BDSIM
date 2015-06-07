@@ -39,14 +39,10 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsApertureType       = BDS::DetermineBeamPipeType(opt.apertureType);
   itsVacuumMaterial     = opt.vacMaterial;
   itsEmptyMaterial      = "G4_Galactic"; // space vacuum
-  itsTunnelMaterialName = opt.tunnelMaterial;
-  itsTunnelCavityMaterialName = opt.tunnelCavityMaterial;
-  itsSoilMaterialName   = opt.soilMaterial;
 
   itsSampleDistRandomly = true;
   itsGeometryBias = opt.geometryBias;
   
-  itsShowTunnel=opt.showTunnel;
   itsSensitiveComponents=opt.sensitiveBeamlineComponents;
   itsSensitiveBeamPipe=opt.sensitiveBeamPipe;
   itsSensitiveBLMs=opt.sensitiveBLMs;
@@ -87,29 +83,11 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   }
   itsMagnetGeometryType = BDS::DetermineMagnetGeometryType(opt.magnetGeometryType);
   itsOuterMaterialName  = opt.outerMaterialName;
-
-  // tunnel
-  itsBuildTunnel = opt.buildTunnel;
-  itsBuildTunnelFloor = opt.buildTunnelFloor;  
-  itsTunnelRadius = opt.tunnelRadius * CLHEP::m;
-  if (itsTunnelRadius < itsOuterDiameter*0.5){
-    G4cerr << __METHOD_NAME__ << "> Error: option \"tunnelRadius\" must be greater than \"boxSize\"/2 " << G4endl;
-    exit(1);
-  }
-  itsTunnelThickness = opt.tunnelThickness * CLHEP::m; //Tunnel geometry options read from file
-  itsTunnelSoilThickness = opt.tunnelSoilThickness * CLHEP::m;
-  itsTunnelFloorOffset = opt.tunnelFloorOffset * CLHEP::m;
-  itsTunnelOffsetX = opt.tunnelOffsetX * CLHEP::m;
-  itsTunnelOffsetY = opt.tunnelOffsetY * CLHEP::m;
+  
   //Beam loss monitor (BLM) geometry
   itsBlmRad = opt.blmRad * CLHEP::m;
   itsBlmLength = opt.blmLength * CLHEP::m;
-  //Sampler geometry - default diameter is the tunnel diameter
-  if(opt.samplerDiameter==0){
-    itsSamplerDiameter=2*itsTunnelRadius;
-  } else {
-    itsSamplerDiameter = opt.samplerDiameter * CLHEP::m;
-  }
+  itsSamplerDiameter = opt.samplerDiameter * CLHEP::m;
   itsSamplerLength = 4E-8 * CLHEP::m;
   itsThresholdCutCharged = opt.thresholdCutCharged * CLHEP::GeV;
   itsThresholdCutPhotons = opt.thresholdCutPhotons * CLHEP::GeV;

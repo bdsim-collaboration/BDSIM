@@ -31,7 +31,6 @@ private:
   virtual void BuildMarkerLogicalVolume();
   virtual void BuildBLMs();
   void BuildInnerCollimator();
-  void BuildCollimatorTunnel();
 
   virtual void SetVisAttributes();
 
@@ -40,23 +39,10 @@ private:
   G4VPhysicalVolume* itsPhysiComp;
   G4VPhysicalVolume* itsPhysiComp2;
   G4LogicalVolume* itsSolidLogVol;
-  G4LogicalVolume* itsTempSolidLogVol;
   G4LogicalVolume* itsInnerLogVol;
 
   G4VSolid* itsInnerSolid;
   G4VSolid* itsOuterSolid;
-  G4SubtractionSolid* itsSolid;
-
-  G4Tubs* itsSoilTube;
-  G4Tubs* itsTunnelTube;
-  G4Tubs* itsInnerTunnelTube;
-  G4LogicalVolume* itsInnerTunnelLogicalVolume;
-  G4LogicalVolume* itsSoilTunnelLogicalVolume;
-  G4UserLimits* itsTunnelUserLimits;
-  G4UserLimits* itsSoilTunnelUserLimits;
-  G4UserLimits* itsInnerTunnelUserLimits;
-  
-  G4Mag_UsualEqRhs* itsEqRhs;
 
   G4Material* itsCollimatorMaterial;
   G4double itsOuterR;

@@ -161,9 +161,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   
   // placement procedure
   ComponentPlacement();
-  
-  // construct tunnel
-  BuildTunnel();
 
   // free the parser list
   std::list<struct Element>::iterator it;
@@ -519,48 +516,6 @@ void BDSDetectorConstruction::ComponentPlacement()
       thecurrentitem->PrepareField(PhysiComponentPlace);
     }
 }
-
-void BDSDetectorConstruction::BuildTunnel()
-{
-  std::list<struct Element>::iterator it;
-  for(it = beamline_list.begin();it!=beamline_list.end();it++)
-    {
-      if((*it).type==_TUNNEL ) {
-#ifdef BDSDEBUG
-	G4cout<<"BUILDING TUNNEL : "<<(*it).l<<"  "<<(*it).name<<G4endl;
-#endif
-	
-	G4String gFormat="",  GFile="";
-	G4String geometry = (*it).geometryFile;
-
-	// get geometry format and file
-	G4int pos = geometry.find(":");
-	
-	if(pos<0) { 
-	  G4cerr<<"WARNING: invalid geometry reference format : "<<geometry<<G4endl;
-	  gFormat="none";
-	}
-	
-	else {
-	  gFormat = geometry.substr(0,pos);
-	  GFile = geometry.substr(pos+1,geometry.length() - pos); 
-	}
-	
-#ifdef BDSDEBUG
-	G4cout<<"placing components\n: geometry format - "<<gFormat<<G4endl<<
-	  "file - "<<GFile<<G4endl;
-#endif
-	
-	if(gFormat=="gmad") {
-	 
-	  GGmadDriver ggmad(GFile);
-	  ggmad.Construct(logicWorld);
-	  
-	} else  G4cerr<<"Tunnel won't be build! "<<G4endl;
-      }
-    }
-}
-
 
 void BDSDetectorConstruction::SetGFlashOnVolume(G4LogicalVolume* volume)
 {

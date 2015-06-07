@@ -129,15 +129,7 @@ void BDSOutputROOT::Init()
       TrajTree->Branch("part",&part,"part/I");
     }
 
-  // build energy loss histogram
-  /*
-  G4double wx=(BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelOffsetX())*2;
-  G4double wy=(BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelOffsetY())*2;
-  G4double bs=BDSGlobalConstants::Instance()->GetComponentBoxSize();
-  G4double wmax=std::max(wx,wy);
-  wmax=std::max(wmax,bs);
-  */
-  
+  // build energy loss histogram  
   EnergyLossTree= new TTree("ElossTree", "Energy Loss");
   EnergyLossTree->Branch("s",&S_el,"s/F"); // (m)
   EnergyLossTree->Branch("E",&E_el,"E/F"); // (GeV)

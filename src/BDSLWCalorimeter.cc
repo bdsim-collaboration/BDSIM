@@ -45,7 +45,7 @@ void BDSLWCalorimeter::Build()
 void BDSLWCalorimeter::BuildMarkerLogicalVolume()
 {
   G4double SampTransSize;
-  SampTransSize=2.*BDSGlobalConstants::Instance()->GetTunnelRadius();
+  SampTransSize = BDSGlobalConstants::Instance()->GetSamplerDiameter() * CLHEP::mm;
 
   itsMarkerSolidVolume = new G4Box(itsName+"_solid",
 				   SampTransSize,
@@ -144,11 +144,11 @@ void BDSLWCalorimeter::BuildBeampipe(G4double aLength)
 		       false,	                  // no boolean operation
 		       0, BDSGlobalConstants::Instance()->GetCheckOverlaps()); // copy number
 #ifndef NOUSERLIMITS
-   itsBeampipeUserLimits =
+   G4UserLimits* itsBeampipeUserLimits =
      new G4UserLimits("beampipe cuts",DBL_MAX,DBL_MAX,DBL_MAX,
 		      BDSGlobalConstants::Instance()->GetThresholdCutCharged());
    
-   itsInnerBeampipeUserLimits =
+   G4UserLimits* itsInnerBeampipeUserLimits =
      new G4UserLimits("inner beamipe cuts",DBL_MAX,DBL_MAX,DBL_MAX,
 		      BDSGlobalConstants::Instance()->GetThresholdCutCharged());
    
@@ -163,6 +163,11 @@ void BDSLWCalorimeter::BuildBeampipe(G4double aLength)
    itsInnerBPLogicalVolume->SetUserLimits(itsInnerBeampipeUserLimits);
 #endif
    itsInnerBPLogicalVolume->SetFieldManager(itsBPFieldMgr,false) ;
+
+   // NOTE this should be rewritten to use the beampipe factory and
+   // attach these limits to the vector of logical volumes in the beampipe
+   // should that be desired
+   
    
    // now protect the fields inside the marker volume by giving the
    // marker a null magnetic field (otherwise G4VPlacement can

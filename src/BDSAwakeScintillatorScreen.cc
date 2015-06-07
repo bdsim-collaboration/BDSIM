@@ -244,9 +244,7 @@ void BDSAwakeScintillatorScreen::Build()
   BuildCameraScoringPlane();
   PlaceScreen();
   //      PlaceCamera();
-  if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-    BuildTunnel();
-  }
+  
   RegisterSensitiveVolume(itsMarkerLogicalVolume);
 }
 
@@ -289,11 +287,8 @@ void BDSAwakeScintillatorScreen::PlaceScreen(){
 		   );
 }
 
-void BDSAwakeScintillatorScreen::ComputeDimensions(){
-  //  itsXLength = itsYLength = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
-  //  itsXLength = std::max(itsXLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
-  //  itsYLength = std::max(itsYLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
-
+void BDSAwakeScintillatorScreen::ComputeDimensions()
+{
   //  _cameraScreenDist=(4.0)*CLHEP::m;
   _cameraScreenDist=4*213*CLHEP::mm;
 

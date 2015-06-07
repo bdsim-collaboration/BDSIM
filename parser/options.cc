@@ -80,7 +80,7 @@ Options::Options(){
   showTunnel = 0;
   tunnelOffsetX = 0;
   tunnelOffsetY = 0;
-  samplerDiameter = 0.0;
+  samplerDiameter = 5; // m
   tunnelThickness = 0.0;
   tunnelSoilThickness = 0.0;
   tunnelFloorOffset = 0.0;

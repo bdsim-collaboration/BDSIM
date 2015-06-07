@@ -60,9 +60,6 @@ public:
   G4double GetXOffset();  // frame offset 
   G4double GetYOffset();
   G4double GetZOffset();
-
-  G4double GetTunnelRadius();
-  G4double GetTunnelOffsetX();
   
   G4double GetAperX();
   G4double GetAperY();
@@ -78,9 +75,7 @@ public:
   G4double GetTilt()const;
   
   G4LogicalVolume* GetMarkerLogicalVolume() const;
-
-  G4LogicalVolume* GetTunnelLogicalVolume() const;
-  G4String GetTunnelCavityMaterial() const;
+  
   BDSEnergyCounterSD* GetBDSEnergyCounter() const;
   
   void             SetBDSEnergyCounter( BDSEnergyCounterSD* anBDSEnergyCounter);
@@ -101,21 +96,8 @@ public:
 
   // in case a mapped field is provided creates a field mesh in global coordinates
   virtual void PrepareField(G4VPhysicalVolume *referenceVolume); 
-
-  // in case a component requires specific alignment (e.g. SQL/BDSElement)
-  /*
-  virtual void AlignComponent(G4ThreeVector& TargetPos, 
-			      G4RotationMatrix *TargetRot,
-			      G4RotationMatrix& globalRotation,
-			      G4ThreeVector& rtot,
-			      G4ThreeVector& rlast,
-			      G4ThreeVector& localX,
-			      G4ThreeVector& localY,
-			      G4ThreeVector& localZ); 
-  */
   
   // get parameter value from the specification string
-
   G4double getParameterValue(G4String spec, G4String name) const;
   G4String getParameterValueString(G4String spec, G4String name) const;
 
@@ -147,7 +129,7 @@ public:
 			  G4double YOffset=0.,
 			  G4double ZOffset=0.,
 			  G4double tunnelRadius=0.,
-			  G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
+			  G4double tunnelOffsetX=0,
                           G4String aTunnelCavityMaterial = "Air",
 			  BDSTiltOffset tiltOffsetIn = BDSTiltOffset());
 
@@ -164,15 +146,13 @@ public:
 			  G4double YOffset=0.,
 			  G4double ZOffset=0.,
 			  G4double tunnelRadius=0.,
-			  G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
+			  G4double tunnelOffsetX=0,
 			  G4String aTunnelCavityMaterial = "Air",
 			  BDSTiltOffset tiltOffsetIn = BDSTiltOffset());
 
   G4VisAttributes* GetVisAttributes()const; ///> get visual attributes
   G4LogicalVolume* itsOuterLogicalVolume;
   G4LogicalVolume* itsMarkerLogicalVolume;
-  G4LogicalVolume* itsTunnelLogicalVolume;
-  G4LogicalVolume* itsTunnelFloorLogicalVolume;
 
 
 private:
@@ -186,10 +166,8 @@ private:
 protected:
   /// Attach marker solid and logical volume pointers to BDSGeometryComponent base class
   void RegisterMarkerWithBaseClass();
-  /// build logical volumes: marker, tunnel, field, blms etc.
+  /// build logical volumes: marker, field, blms etc.
   virtual void Build();
-  /// build tunnel
-  void BuildTunnel();
   /// build beam loss monitors
   virtual void BuildBLMs();
 
@@ -226,13 +204,11 @@ protected:
   G4VisAttributes* itsVisAttributes;
   std::list<G4double> itsBlmLocZ;
   std::list<G4double> itsBlmLocTheta;
-  G4String itsTunnelMaterial;
-  //Tunnel geom
+  
   G4double itsXOffset;
   G4double itsYOffset;
   G4double itsZOffset;
-  G4double itsTunnelRadius;
-  G4double itsTunnelOffsetX;  
+  
   /// component type, same as from typestr from enums.cc
   G4String itsType;
 
@@ -253,44 +229,17 @@ protected:
   /// specific user limits
   G4UserLimits* itsOuterUserLimits;
   G4UserLimits* itsMarkerUserLimits;
-  G4UserLimits* itsInnerBeampipeUserLimits;
-  G4LogicalVolume* itsInnerMostLogicalVolume;
-
-  G4String itsTunnelCavityMaterial;
+  
   G4int itsPrecisionRegion;
 
   /// Marker solid
   G4VSolid* itsMarkerSolidVolume;
-  
-  /// Solid shapes used in building tunnel
-  G4VSolid* itsTunnelSolid;
-  G4VSolid* itsSoilSolid;
-  G4VSolid* itsInnerTunnelSolid;
-  G4VSolid *itsTunnelCavity;
-  G4VSolid *itsLargerTunnelCavity;
-  G4VSolid *itsTunnelFloor;
-  G4VSolid* itsLargerInnerTunnelSolid; 
-  G4VSolid *itsTunnelMinusCavity;
-  G4CSGSolid* itsTunnelSizedBlock;
 
   /// BLM logical volumes
   G4LogicalVolume* itsBLMLogicalVolume;
   G4LogicalVolume* itsBlmCaseLogicalVolume;
   /// BLM physical volumes
   std::vector<G4VPhysicalVolume*> itsBLMPhysiComp;
-  /// Tunnel logical volumes
-  G4LogicalVolume* itsSoilTunnelLogicalVolume;
-  G4LogicalVolume* itsTunnelCavityLogicalVolume;
-  G4LogicalVolume*  itsTunnelMinusCavityLogicalVolume;
-  /// Tunnel physical volumes
-  G4VPhysicalVolume* itsTunnelPhysiInner;
-  G4VPhysicalVolume* itsTunnelPhysiComp;
-  G4VPhysicalVolume* itsTunnelFloorPhysiComp;
-  G4VPhysicalVolume* itsTunnelPhysiCompSoil;
-  /// Tunnel user limits
-  G4UserLimits* itsTunnelUserLimits;
-  G4UserLimits* itsSoilTunnelUserLimits;
-  G4UserLimits* itsInnerTunnelUserLimits;
 
   /// Read out geometry volume
   G4LogicalVolume* readOutLV;
@@ -303,9 +252,7 @@ private:
   void ConstructorInit();
   /// Calculate dimensions used for the marker volume etc.
   void CalculateLengths();
-
-  G4RotationMatrix* nullRotationMatrix;
-  G4RotationMatrix* tunnelRot;
+  
   G4VisAttributes* VisAtt;
   G4VisAttributes* VisAtt1;
   G4VisAttributes* VisAtt2;
@@ -429,13 +376,6 @@ inline void BDSAcceleratorComponent::SetPrecisionRegion (G4int precisionRegionTy
 inline G4LogicalVolume* BDSAcceleratorComponent::GetMarkerLogicalVolume() const
 {return itsMarkerLogicalVolume;}
 
-inline G4LogicalVolume* BDSAcceleratorComponent::GetInnerMostLogicalVolume() const
-{return itsInnerMostLogicalVolume;}
-
-inline void BDSAcceleratorComponent::
-SetInnerMostLogicalVolume(G4LogicalVolume* aLogVol)
-{itsInnerMostLogicalVolume = aLogVol;}
-
 inline G4VisAttributes* BDSAcceleratorComponent::GetVisAttributes() const
 {return itsVisAttributes;}
 
@@ -466,9 +406,6 @@ inline std::vector<G4VPhysicalVolume*> BDSAcceleratorComponent::GetMultiplePhysi
 inline G4UserLimits* BDSAcceleratorComponent::GetUserLimits()
 {return itsUserLimits;}
 
-inline G4UserLimits* BDSAcceleratorComponent::GetInnerBPUserLimits()
-{return itsInnerBeampipeUserLimits;}
-
 inline G4double BDSAcceleratorComponent::GetXOffset()
 {return itsXOffset;}
 
@@ -477,12 +414,6 @@ inline G4double BDSAcceleratorComponent::GetYOffset()
 
 inline G4double BDSAcceleratorComponent::GetZOffset()
 {return itsZOffset;}
-
-inline G4double BDSAcceleratorComponent::GetTunnelRadius()
-{return itsTunnelRadius;}
-
-inline G4double BDSAcceleratorComponent::GetTunnelOffsetX()
-{return itsTunnelOffsetX;}
 
 inline void BDSAcceleratorComponent::SetTilt(G4double tilt)
 {itsTilt=tilt;}

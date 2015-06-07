@@ -104,18 +104,7 @@ public:
   G4String GetOuterMaterialName()const;
   G4double GetOuterDiameter()const;
   G4double GetMagnetPoleSize()const;
-  G4double GetMagnetPoleRadius()const;
-
-  /// tunnel
-  G4bool   GetBuildTunnel()const; 
-  G4bool   GetBuildTunnelFloor()const; 
-  G4bool   GetShowTunnel()const; 
-  G4double GetTunnelRadius()const; 
-  G4double GetTunnelThickness()const; 
-  G4double GetTunnelSoilThickness()const; 
-  G4double GetTunnelFloorOffset()const; 
-  G4double GetTunnelOffsetX()const; 
-  G4double GetTunnelOffsetY()const; 
+  G4double GetMagnetPoleRadius()const; 
 
   // Beam loss monitors
   G4double GetBlmRad()const;
@@ -286,15 +275,6 @@ private:
   G4double itsMagnetPoleSize;
   G4double itsMagnetPoleRadius;
   
-  G4bool   itsBuildTunnel;
-  G4bool   itsBuildTunnelFloor;
-  G4double itsTunnelRadius;
-  G4double itsTunnelThickness;
-  G4double itsTunnelSoilThickness;
-  G4double itsTunnelFloorOffset;
-  G4double itsTunnelOffsetX;
-  G4double itsTunnelOffsetY;
-  G4bool   itsShowTunnel;
   //Booleans determining which types of components are sensitive
   G4bool   itsSensitiveComponents;
   G4bool   itsSensitiveBeamPipe;
@@ -391,9 +371,6 @@ public:
   G4String GetBeamPipeMaterialName()const;
   G4String GetVacuumMaterial()const;
   G4String GetEmptyMaterial()const;
-  G4String GetSoilMaterialName()const;
-  G4String GetTunnelMaterialName()const;
-  G4String GetTunnelCavityMaterialName()const;
 
   G4VisAttributes* GetInvisibleVisAttr()const;
   G4VisAttributes* GetVisibleDebugVisAttr()const;
@@ -407,9 +384,6 @@ private:
   G4String itsBeamPipeMaterial;          //beampipe material
   G4String itsVacuumMaterial;            //vacuum inside beampipe
   G4String itsEmptyMaterial;             //empty material for e.g. marker volumes
-  G4String itsTunnelMaterialName;        //tunnel material
-  G4String itsTunnelCavityMaterialName;  //tunnel cavity material
-  G4String itsSoilMaterialName;          //material around tunnel
   G4bool   isWaitingForDump;
   G4bool   isDumping;
   G4bool   isReading;
@@ -549,33 +523,6 @@ inline G4double BDSGlobalConstants::GetMagnetPoleSize()const
 
 inline G4double BDSGlobalConstants::GetMagnetPoleRadius()const
 {return itsMagnetPoleRadius;}
-
-inline G4bool BDSGlobalConstants::GetBuildTunnel()const
-{return itsBuildTunnel;}
-
-inline G4bool BDSGlobalConstants::GetBuildTunnelFloor()const
-{return itsBuildTunnelFloor;}
-
-inline G4double BDSGlobalConstants::GetTunnelRadius()const
-{return itsTunnelRadius;}
-
-inline G4double BDSGlobalConstants::GetTunnelThickness()const
-{return itsTunnelThickness;}
-
-inline G4double BDSGlobalConstants::GetTunnelSoilThickness()const
-{return itsTunnelSoilThickness;}
-
-inline G4double BDSGlobalConstants::GetTunnelFloorOffset()const
-{return itsTunnelFloorOffset;}
-
-inline G4double BDSGlobalConstants::GetTunnelOffsetX()const
-{return itsTunnelOffsetX;}
-
-inline G4double BDSGlobalConstants::GetTunnelOffsetY()const
-{return itsTunnelOffsetY;}
-
-inline G4bool BDSGlobalConstants::GetShowTunnel()const
-{return itsShowTunnel;}
 
 inline G4bool BDSGlobalConstants::GetGeometryBias()const
 {return itsGeometryBias;}
@@ -770,15 +717,6 @@ inline G4String BDSGlobalConstants::GetVacuumMaterial()const
 
 inline G4String BDSGlobalConstants::GetEmptyMaterial()const
 {return itsEmptyMaterial;}
-
-inline G4String BDSGlobalConstants::GetSoilMaterialName()const
-{return itsSoilMaterialName;}
-
-inline G4String BDSGlobalConstants::GetTunnelMaterialName()const
-{return itsTunnelMaterialName;}
-
-inline G4String BDSGlobalConstants::GetTunnelCavityMaterialName()const
-{return itsTunnelCavityMaterialName;}
 
 inline G4bool BDSGlobalConstants::GetDoPlanckScattering()const 
 {return itsDoPlanckScattering;}

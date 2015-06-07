@@ -56,9 +56,6 @@ private:
   /// Iterate over the beamline and place each BDSAcceleratorComponent in the world volume
   void ComponentPlacement();
   
-  /// build tunnel from _TUNNEL elements
-  void BuildTunnel();
-
   /// Function to add the volume to the gflash parameterisation model
   void SetGFlashOnVolume(G4LogicalVolume* volume);
 

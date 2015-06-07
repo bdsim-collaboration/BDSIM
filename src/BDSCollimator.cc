@@ -25,11 +25,8 @@ BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
   BDSAcceleratorComponent(aName,
 			  aLength,bpRad,xAper,yAper,
 			  blmLocZ, blmLocTheta, aTunnelMaterial),
-  itsPhysiComp(NULL), itsPhysiComp2(NULL), itsSolidLogVol(NULL), itsTempSolidLogVol(NULL),
-  itsInnerLogVol(NULL), itsInnerSolid(NULL), itsOuterSolid(NULL), itsSolid(NULL), itsSoilTube(NULL),
-  itsTunnelTube(NULL),  itsInnerTunnelTube(NULL), itsInnerTunnelLogicalVolume(NULL),
-  itsSoilTunnelLogicalVolume(NULL), itsTunnelUserLimits(NULL), itsSoilTunnelUserLimits(NULL),
-  itsInnerTunnelUserLimits(NULL), itsEqRhs(NULL),
+  itsPhysiComp(NULL), itsPhysiComp2(NULL), itsSolidLogVol(NULL),
+  itsInnerLogVol(NULL), itsInnerSolid(NULL), itsOuterSolid(NULL),
   itsCollimatorMaterial(CollimatorMaterial), itsOuterR(outR)
 {
   if(itsOuterR==0) itsOuterR = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
@@ -38,9 +35,6 @@ BDSCollimator::BDSCollimator (G4String aName,G4double aLength,G4double bpRad,
 void BDSCollimator::Build()
 {
   BDSAcceleratorComponent::Build();
-  if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-    BuildTunnel();
-  }
   BuildBLMs();
 }
 
@@ -48,9 +42,6 @@ void BDSCollimator::BuildMarkerLogicalVolume()
 {
   G4double xLength, yLength;
   xLength = yLength = std::max(itsOuterR,BDSGlobalConstants::Instance()->GetComponentBoxSize()/2);
-  
-  xLength = std::max(xLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
-  yLength = std::max(yLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
 
   itsMarkerLogicalVolume=new G4LogicalVolume
     (new G4Box( itsName+"_marker_log",

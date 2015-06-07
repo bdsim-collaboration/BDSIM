@@ -26,8 +26,17 @@
 class BDSElement :public BDSAcceleratorComponent
 {
 public:
-  BDSElement(G4String aName, G4String geometry, G4String bmap, G4double aBmapZOffset, G4double aLength, 
-             G4double bpRad, G4double outR, G4String aTunnelMaterial="", G4double tunnelRadius=0., G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(), G4String aTunnelCavityMaterial="Air");
+  BDSElement(G4String aName,
+	     G4String geometry,
+	     G4String bmap,
+	     G4double aBmapZOffset,
+	     G4double aLength, 
+             G4double bpRad,
+	     G4double outR,
+	     G4String aTunnelMaterial="",
+	     G4double tunnelRadius=0.,
+	     G4double tunnelOffsetX=0,
+	     G4String aTunnelCavityMaterial="Air");
   ~BDSElement();
 
   // creates a field mesh in global coordinates in case it is given by map

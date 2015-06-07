@@ -62,12 +62,6 @@ private:
   G4LogicalVolume* itsScreenScoringPlaneLog2;
   G4VSolid* itsCameraScoringPlaneSolid;
   G4VSolid* itsScreenScoringPlaneSolid;
-
-  G4LogicalVolume* itsInnerTunnelLogicalVolume;
-  G4LogicalVolume* itsSoilTunnelLogicalVolume;
-  G4UserLimits* itsTunnelUserLimits;
-  G4UserLimits* itsSoilTunnelUserLimits;
-  G4UserLimits* itsInnerTunnelUserLimits;
                     
   //  G4Mag_UsualEqRhs* itsEqRhs;
   

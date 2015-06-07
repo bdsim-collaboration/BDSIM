@@ -125,7 +125,7 @@ void BDSRBend::BuildBPFieldAndStepper()
 void BDSRBend::BuildMarkerLogicalVolume()
 {
   G4String LocalLogicalName=itsName;
-  G4double boxSize=BDSGlobalConstants::Instance()->GetComponentBoxSize()+BDSGlobalConstants::Instance()->GetTunnelRadius();
+  G4double boxSize=BDSGlobalConstants::Instance()->GetComponentBoxSize();
   
   // make marker volume from G4cuttubs - a cylinder along the chord line with angled faces defined by normal vectors
   // this is done first so other solids (beam pipe) can be trimmed with the angled face

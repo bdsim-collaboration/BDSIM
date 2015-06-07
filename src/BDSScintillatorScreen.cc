@@ -34,9 +34,6 @@ void BDSScintillatorScreen::Build()
   ComputeDimensions();
   BuildMarkerLogicalVolume();
   RegisterMarkerWithBaseClass();
-  if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
-    BuildTunnel();
-  }
   BuildScintillatorScreen();
 }
 
@@ -291,12 +288,8 @@ void BDSScintillatorScreen::BuildScintillatorOpticalProperties(){
 }
 
 
-void BDSScintillatorScreen::ComputeDimensions(){
-  
-  //  _xLength = _yLength = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
-  //  _xLength = std::max(_xLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
-  //  _yLength = std::max(_yLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
-
+void BDSScintillatorScreen::ComputeDimensions()
+{
   _screenWidth=1*CLHEP::m;
   _screenHeight=3*CLHEP::cm;
 
