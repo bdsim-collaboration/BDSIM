@@ -1231,17 +1231,16 @@ The beam parameters are defined by the usual :math:`\alpha`, :math:`\beta` and :
 the usual beam :math:`\sigma`-matrix is calculated, using the following equations 
 
 .. math:: 
-
-\sigma_{11} =  \epsilon_x \beta_x    \\
-\sigma_{12} = -\epsilon_x \alpha_x   \\
-\sigma_{21} = -\epsilon_x \alpha_x   \\
-\sigma_{22} =  \epsilon_x \gamma_x   \\
-\sigma_{33} =  \epsilon_y \beta_y    \\
-\sigma_{34} = -\epsilon_y \alpha_y   \\
-\sigma_{43} = -\epsilon_y \alpha_y   \\
-\sigma_{44} =  \epsilon_y \gamma_y   \\
-\sigma_{55} =  \sigma_{T}^2  \\
-\sigma_{66} =  \sigma_{E}^2  
+   \sigma_{11} & =  \epsilon_x \beta_x  \\
+   \sigma_{12} & = -\epsilon_x \alpha_x \\  
+   \sigma_{21} & = -\epsilon_x \alpha_x \\
+   \sigma_{22} & =  \epsilon_x \gamma_x \\
+   \sigma_{33} & =  \epsilon_y \beta_y \\
+   \sigma_{34} & = -\epsilon_y \alpha_y \\ 
+   \sigma_{43} & = -\epsilon_y \alpha_y \\
+   \sigma_{44} & =  \epsilon_y \gamma_y \\    
+   \sigma_{55} & =  \sigma_{T}^2 \\  
+   \sigma_{66} & =  \sigma_{E}^2  
 
 
 
@@ -1269,14 +1268,14 @@ previously. The implicit general form of a rotated ellipse is
 
 .. math::
 
-\gamma x^2 + 2\alpha xx^{\prime} + \beta x^{\prime 2} = \epsilon
+   \gamma x^2 + 2\alpha\;x\;x^{\prime} + \beta x^{\prime 2} = \epsilon
 
 where the parameters have their usual meanings. A phase space point can be rejected or weighted 
 depending on the single particle emittance, which is calculated as    
 
 .. math::
 
-\epsilon_{\rm SP} = \gammax^2 + 2\alpha xx^{\prime} + Cx^{\prime 2}
+   \epsilon_{\rm SP} = \gamma x^2 + 2\alpha\;x\;x^{\prime} + \beta x^{\prime 2}
 
 if the single particle emittance is less than beam emittance so :math:`\epsilon_{\rm SP} \lt \epsilon_{\rm core}` the particle is rejected. 
 
@@ -1305,6 +1304,39 @@ if the single particle emittance is less than beam emittance so :math:`\epsilon_
 +----------------------------------+-------------------------------------------------------+
 | haloPSWeightFunction             | Phase space weight function [string]                  |
 +----------------------------------+-------------------------------------------------------+
+
+composite
+^^^^^^^^^
+
+The horizontal, vertical and longitudinal phase spaces can be defined independently. The `xDistrType`, 
+`yDistrType` and `zDistrType` can be selected from all the other beam distribution types. All of the 
+appropriate parameters need to be defined.
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| xDistrType                       | Horizontal distribution type                          |
++----------------------------------+-------------------------------------------------------+
+| yDistrType                       | Vertical distribution type                            |
++----------------------------------+-------------------------------------------------------+
+| zDistrType                       | Longitudinal distribution type                        |
++----------------------------------+-------------------------------------------------------+
+
+
+userFile
+^^^^^^^^
+
+ptc
+^^^ 
+
+Output from MAD-X PTC used as input for BDSIM. 
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| distrFile                        | PTC output file                                       |
++----------------------------------+-------------------------------------------------------+
+
 
 Regions
 -------
