@@ -55,7 +55,8 @@ private:
   BDSAcceleratorComponent* createMultipole();
   BDSAcceleratorComponent* createElement();
   BDSAcceleratorComponent* createSolenoid();
-  BDSAcceleratorComponent* createCollimator();
+  BDSAcceleratorComponent* createRectangularCollimator();
+  BDSAcceleratorComponent* createEllipticalCollimator();
   BDSAcceleratorComponent* createMuSpoiler();
   BDSAcceleratorComponent* createLaser();
   BDSAcceleratorComponent* createScreen();

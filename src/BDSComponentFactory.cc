@@ -1,29 +1,30 @@
 #include "BDSComponentFactory.hh"
 
 // elements
+#include "BDSAwakeScintillatorScreen.hh"
+#include "BDSCollimatorElliptical.hh"
+#include "BDSCollimatorRectangular.hh"
 #include "BDSDrift.hh"
-#include "BDSSectorBend.hh"
-#include "BDSRBend.hh"
-#include "BDSKicker.hh"
-#include "BDSQuadrupole.hh"
-#include "BDSSextupole.hh"
-#include "BDSOctupole.hh"
-#include "BDSTMultipole.hh"
-#include "BDSRfCavity.hh"
-#include "BDSSolenoid.hh"
-#include "BDSSampler.hh"
-#include "BDSSamplerCylinder.hh"
 #include "BDSDump.hh"
+#include "BDSElement.hh"
+#include "BDSKicker.hh"
 #include "BDSLaserWire.hh"
 #include "BDSLine.hh"
 #include "BDSMuSpoiler.hh"
-#include "BDSTransform3D.hh"
-#include "BDSElement.hh"
-#include "BDSCollimator.hh"
+#include "BDSOctupole.hh"
+#include "BDSQuadrupole.hh"
+#include "BDSRBend.hh"
+#include "BDSRfCavity.hh"
+#include "BDSSampler.hh"
+#include "BDSSamplerCylinder.hh"
 #include "BDSScintillatorScreen.hh"
-#include "BDSAwakeScintillatorScreen.hh"
+#include "BDSSectorBend.hh"
+#include "BDSSextupole.hh"
+#include "BDSSolenoid.hh"
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
+#include "BDSTMultipole.hh"
+#include "BDSTransform3D.hh"
 
 // general
 #include "BDSBeamline.hh"
@@ -201,12 +202,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating ecol" << G4endl;
 #endif
-    element = createCollimator(); break; 
+    element = createEllipticalCollimator(); break; 
   case _RCOL:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating rcol" << G4endl;
 #endif
-    element = createCollimator(); break; 
+    element = createRectangularCollimator(); break; 
   case _MUSPOILER:    
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating muspoiler" << G4endl;
@@ -858,56 +859,58 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
 			   _element.l * CLHEP::m,
 			   bField,
 			   PrepareBeamPipeInfo(_element),
-			   PrepareMagnetOuterInfo(_element),
-			   PrepareTunnelInfo(_element)));
+			   PrepareMagnetOuterInfo(_element)));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createCollimator(){
-  if(_element.l*CLHEP::m < 4*lengthSafety){
-    G4cerr << "---->NOT creating element, "
-             << " name = " << _element.name
-             << ", LENGTH TOO SHORT:"
-             << " l = " << _element.l*CLHEP::m << "m"
-             << G4endl;
-      return NULL;
-  }
-  G4Material* theMaterial;
-  if(_element.material != "")
-    theMaterial = BDSMaterials::Instance()->GetMaterial( _element.material );
-  else
-    theMaterial = BDSMaterials::Instance()->GetMaterial( "Graphite" );
+BDSAcceleratorComponent* BDSComponentFactory::createRectangularCollimator()
+{
+  if(!HasSufficientMinimumLength(_element))
+    {return NULL;}
 
 #ifdef BDSDEBUG 
-  G4cout << "---->creating " << typestr(_element.type) << ","
-	 << " name= " << _element.name 
-	 << " xaper= " << _element.xsize <<"m"
-	 << " yaper= " << _element.ysize <<"m"
-	 << " material= " << _element.material
+  G4cout << "--->creating " << typestr(_element.type) << ","
+	 << " name     = " << _element.name 
+	 << " xaper    = " << _element.xsize <<" m"
+	 << " yaper    = " << _element.ysize <<" m"
+	 << " material = " << _element.material
 	 << G4endl;
 #endif
-
-  G4double radius = BDSGlobalConstants::Instance()->GetBeamPipeRadius();
-  return (new BDSCollimator( _element.name,
-			     _element.l * CLHEP::m,
-			     radius,
-			     _element.xsize * CLHEP::m,
-			     _element.ysize * CLHEP::m,
-			     theMaterial,
-			     0.5*_element.outerDiameter*CLHEP::m,
-			     _element.blmLocZ,
-			     _element.blmLocTheta,
-			     _element.tunnelMaterial) );
+  
+  return new BDSCollimatorRectangular(_element.name,
+				      _element.l*CLHEP::m,
+				      _element.outerDiameter*CLHEP::m,
+				      _element.xsize*CLHEP::m,
+				      _element.ysize*CLHEP::m,
+				      _element.material);
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler(){
-  if(_element.l*CLHEP::m < 4*lengthSafety){
-    G4cerr << "---->NOT creating element, "
-             << " name = " << _element.name
-             << ", LENGTH TOO SHORT:"
-             << " l = " << _element.l*CLHEP::m << "m"
-             << G4endl;
-      return NULL;
-  }
+BDSAcceleratorComponent* BDSComponentFactory::createEllipticalCollimator()
+{
+  if(!HasSufficientMinimumLength(_element))
+    {return NULL;}
+
+#ifdef BDSDEBUG 
+  G4cout << "--->creating " << typestr(_element.type) << ","
+	 << " name     = " << _element.name 
+	 << " xaper    = " << _element.xsize <<" m"
+	 << " yaper    = " << _element.ysize <<" m"
+	 << " material = " << _element.material
+	 << G4endl;
+#endif
+  
+  return new BDSCollimatorElliptical(_element.name,
+				     _element.l*CLHEP::m,
+				     _element.outerDiameter*CLHEP::m,
+				     _element.xsize*CLHEP::m,
+				     _element.ysize*CLHEP::m,
+				     _element.material);
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::createMuSpoiler()
+{
+  if(!HasSufficientMinimumLength(_element))
+    {return NULL;}
+  
 #ifdef BDSDEBUG 
   G4cout << "---->creating muspoiler,"
 	 << " name = " << _element.name 
