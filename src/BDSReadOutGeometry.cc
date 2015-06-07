@@ -28,13 +28,13 @@ G4VPhysicalVolume* BDSReadOutGeometry::Build()
 
 
 G4LogicalVolume* BDS::BuildReadOutVolume(G4String name,
-					 G4double length,
+					 G4double chordLength,
 					 G4double angle)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  if (length < 1e-15) return NULL;
+  if (chordLength < 1e-15) return NULL;
 
   G4double roRadius      = BDSGlobalConstants::Instance()->GetSamplerDiameter()*0.5;
   G4Material* roMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
@@ -45,7 +45,7 @@ G4LogicalVolume* BDS::BuildReadOutVolume(G4String name,
       roSolid = new G4Box(name + "_ro_solid", // name
 			  roRadius,           // x half width
 			  roRadius,           // y half width
-			  length*0.5);     // z half width
+			  chordLength*0.5);     // z half width
     }
   else
     {
@@ -60,7 +60,7 @@ G4LogicalVolume* BDS::BuildReadOutVolume(G4String name,
       roSolid = new G4CutTubs(name + "_ro_solid", // name
 			      0,                  // inner radius
 			      roRadius,           // outer radius
-			      length*0.5,         // half length (z)
+			      chordLength*0.5,         // half length (z)
 			      0,                  // rotation start angle
 			      CLHEP::twopi,       // rotation sweep angle
 			      inputface,          // input face normal vector
