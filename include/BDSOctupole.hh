@@ -18,9 +18,8 @@ public:
   BDSOctupole(G4String           name,
 	      G4double           length,
 	      G4double           bTriplePrime,
-	      BDSBeamPipeInfo    beamPipeInfo,
-	      BDSMagnetOuterInfo magnetOuterInfo,
-	      BDSTunnelInfo      tunnelInfo);
+	      BDSBeamPipeInfo*   beamPipeInfo,
+	      BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSOctupole(){;};
 
 protected:
