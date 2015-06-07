@@ -11,43 +11,27 @@
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeInfo.hh"
 
-BDSDrift::BDSDrift (G4String     nameIn, 
-		    G4double     lengthIn,
-		    BDSBeamPipeInfo beamPipeInfoIn):
-  BDSAcceleratorComponent(nameIn,
-			  lengthIn,
-			  beamPipeInfoIn.aper1,
-			  beamPipeInfoIn.aper1,
-			  beamPipeInfoIn.aper2,
-			  std::list<G4double>(),
-			  std::list<G4double>()),
-  itsBeamPipeInfo(beamPipeInfoIn)
-{;}
+BDSDrift::BDSDrift (G4String         name, 
+		    G4double         length,
+		    BDSBeamPipeInfo* beamPipeInfoIn):
+  BDSAcceleratorComponent(name, length, 0, "drift")
+{
+  beamPipeInfo = beamPipeInfoIn;
+}
 
-void BDSDrift::Build() {
-  
-  BDSBeamPipe* pipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(itsBeamPipeInfo.beamPipeType,
-								     itsName,
-								     itsLength,
-								     itsBeamPipeInfo.aper1,
-								     itsBeamPipeInfo.aper2,
-								     itsBeamPipeInfo.aper3,
-								     itsBeamPipeInfo.aper4,
-								     itsBeamPipeInfo.vacuumMaterial,
-								     itsBeamPipeInfo.beamPipeThickness,
-								     itsBeamPipeInfo.beamPipeMaterial
-								     );
+void BDSDrift::Build()
+{  
+  BDSBeamPipe* pipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
+								     chordLength,
+								     beamPipeInfo);
   if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
     {RegisterSensitiveVolumes(pipe->GetAllSensitiveVolumes());}
   
-  itsMarkerLogicalVolume = pipe->GetContainerLogicalVolume();
-  itsMarkerSolidVolume   = pipe->GetContainerSolid();
+  containerLogicalVolume = pipe->GetContainerLogicalVolume();
+  containerSolid         = pipe->GetContainerSolid();
 
   // Set extents
   SetExtentX(pipe->GetExtentX());
   SetExtentY(pipe->GetExtentY());
   SetExtentZ(pipe->GetExtentZ());
-
-  // Use BDSAcceleratorComponent method to register marker volume / solid with base class
-  RegisterMarkerWithBaseClass();
 }
