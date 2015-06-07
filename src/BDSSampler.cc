@@ -54,7 +54,7 @@ void BDSSampler::Initialise()
 {
   BDSAcceleratorComponent::Initialise();
   
-  BDSSampler::outputNames.push_back(itsName + "_phys_" + BDSGlobalConstants::Instance()->StringFromInt(GetCopyNumber()+1));
+  BDSSampler::outputNames.push_back(GetName());
 }
 
 void BDSSampler::BuildMarkerLogicalVolume()
