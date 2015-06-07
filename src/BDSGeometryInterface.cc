@@ -56,6 +56,7 @@ void BDSGeometryInterface::Optics()
       G4int aper_type; //1 = rect, 2 = circ, 3 = ellipse
       if(thecurrentitem->GetType() == "rcol" ) //RCOL
 	aper_type=1;
+      /*
       else if(thecurrentitem->GetType() == "ecol") //ECOL
 	{
 	  if(thecurrentitem->GetAperX()==thecurrentitem->GetAperY()) 
@@ -63,7 +64,7 @@ void BDSGeometryInterface::Optics()
 	  else aper_type=3;
 	}
       else aper_type=2; // circular is default
-      
+      */
       optics.setf(std::ios::fixed, std::ios::floatfield);
       optics.setf(std::ios::showpoint);
       
@@ -74,7 +75,11 @@ void BDSGeometryInterface::Optics()
 	     << setw(40) << thecurrentitem->GetName() << " "
 	     << setw(15) << thecurrentitem->GetChordLength()/CLHEP::m  << " "
 	     << setw(15) << (*it)->GetSPositionMiddle()/CLHEP::m  << " "
-	     << setw(15) << thecurrentitem->GetAngle()   << " "
+	     << setw(15) << thecurrentitem->GetAngle()   << " " << G4endl;
+
+      // need to rewrite this to use BDSBeamPipeInfo and possible magnet strenghts if
+      // can dynamic up cast to BDSMultipole ok
+	/*
 	     << setw(15) << thecurrentitem->GetK1()   << " "
 	     << setw(15) << thecurrentitem->GetK2()   << " "
 	     << setw(15) << thecurrentitem->GetK3()   << " "
@@ -83,6 +88,7 @@ void BDSGeometryInterface::Optics()
 	     << setw(15) << thecurrentitem->GetAperY()/CLHEP::m   << " "
 	     << setw(15) << aper_type   << " "
 	     << G4endl;
+	*/
 	}
       optics.close();
 
@@ -134,25 +140,18 @@ void BDSGeometryInterface::Survey()
       G4int aper_type; //1 = rect, 2 = circ, 3 = ellipse
       if(thecurrentitem->GetType() == "rcol" ) //RCOL
 	aper_type=1;
+      /*
       else if(thecurrentitem->GetType() == "ecol" ) //ECOL
 	if(thecurrentitem->GetAperX()==thecurrentitem->GetAperY()) 
 	  aper_type=2;
 	else aper_type=3;
       else aper_type=1;
-      
-      //G4double phi=0.0, theta=0.0, psi=0.0;
+      */
       G4RotationMatrix* rm = (*it)->GetRotationMiddle();
       G4double phi   = rm->getPhi();
       G4double theta = rm->getTheta();
       G4double psi   = rm->getPsi();
-      /*
-      if(thecurrentitem->GetRotation())
-	{
-	  phi = thecurrentitem->GetRotation()->getPhi();
-	  theta = thecurrentitem->GetRotation()->getTheta();
-	  psi = thecurrentitem->GetRotation()->getPsi();
-	}
-      */
+      
       survey.setf(std::ios::fixed, std::ios::floatfield);
       survey.setf(std::ios::showpoint);
       
@@ -176,7 +175,8 @@ void BDSGeometryInterface::Survey()
 	     << setw(12) << pos.z()/CLHEP::m                            << " "
 	     << setw(12) << phi/CLHEP::radian                           << " "
 	     << setw(12) << theta/CLHEP::radian                         << " "
-	     << setw(12) << psi/CLHEP::radian                           << " "
+	     << setw(12) << psi/CLHEP::radian                           << " " << G4endl;
+	/*
 	     << setw(12) << thecurrentitem->GetAperX()/CLHEP::m         << " "
 	     << setw(12) << thecurrentitem->GetAperY()/CLHEP::m         << " "
 	     << setw(8)  << aper_type                                   << " "
@@ -184,7 +184,7 @@ void BDSGeometryInterface::Survey()
 	     << setw(12) << thecurrentitem->GetK1()                     << " "
 	     << setw(12) << thecurrentitem->GetK2()                     << " "
 	     << setw(12) << thecurrentitem->GetK3()                     << " "
-	     << G4endl;
+	     << G4endl;*/
     }
   survey << "### Total length = " << beamline->GetTotalChordLength()/CLHEP::m << "m" << G4endl;
   survey << "### Total arc length = " <<  beamline->GetTotalArcLength()/CLHEP::m << "m" << G4endl;
