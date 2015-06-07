@@ -37,10 +37,10 @@
 BDSQuadrupole::BDSQuadrupole(G4String           name,
 			     G4double           length,
 			     G4double           bGrad,
-			     BDSBeamPipeInfo    beamPipeInfo,
-			     BDSMagnetOuterInfo magnetOuterInfo,
-			     BDSTunnelInfo      tunnelInfo):
-  BDSMultipole(BDSMagnetType::quadrupole,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),itsBGrad(bGrad)
+			     BDSBeamPipeInfo*   beamPipeInfo,
+			     BDSMagnetOuterInfo magnetOuterInfo):
+  BDSMultipole(BDSMagnetType::quadrupole,name,length,beamPipeInfo,magnetOuterInfo),
+  itsBGrad(bGrad)
 {;}
 
 void BDSQuadrupole::Build() 
