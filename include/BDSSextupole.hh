@@ -20,9 +20,8 @@ public:
   BDSSextupole(G4String           name,
 	       G4double           length,
 	       G4double           bDblPrime,
-	       BDSBeamPipeInfo    beamPipeInfo,
-	       BDSMagnetOuterInfo magnetOuterInfo,
-	       BDSTunnelInfo      tunnelInfo);
+	       BDSBeamPipeInfo*   beamPipeInfo,
+	       BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSSextupole(){;};
 
 private:

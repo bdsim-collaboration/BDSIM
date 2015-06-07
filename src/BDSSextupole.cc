@@ -26,10 +26,9 @@
 BDSSextupole::BDSSextupole(G4String           name,
 			   G4double           length,
 			   G4double           bDblPrime,
-			   BDSBeamPipeInfo    beamPipeInfo,
-			   BDSMagnetOuterInfo magnetOuterInfo,
-			   BDSTunnelInfo      tunnelInfo):
-  BDSMultipole(BDSMagnetType::sextupole,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
+			   BDSBeamPipeInfo*   beamPipeInfo,
+			   BDSMagnetOuterInfo magnetOuterInfo):
+  BDSMultipole(BDSMagnetType::sextupole,name,length,beamPipeInfo,magnetOuterInfo),
    itsBDblPrime(bDblPrime)
 {;}
 
