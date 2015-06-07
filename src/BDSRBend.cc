@@ -29,14 +29,13 @@ BDSRBend::BDSRBend(G4String           name,
 		   G4double           length,
 		   G4double           bField,
 		   G4double           bGrad,
-		   G4double           angle,
-		   BDSBeamPipeInfo    beamPipeInfo,
-		   BDSMagnetOuterInfo magnetOuterInfo,
-		   BDSTunnelInfo      tunnelInfo):
-  BDSMultipole(BDSMagnetType::rectangularbend,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
+		   G4double           angleIn,
+		   BDSBeamPipeInfo*   beamPipeInfo,
+		   BDSMagnetOuterInfo magnetOuterInfo):
+  BDSMultipole(BDSMagnetType::rectangularbend,name,length,beamPipeInfo,magnetOuterInfo),
   itsBField(bField),itsBGrad(bGrad)
 {
-  itsAngle    = angle;
+  angle       = angleIn;
   outerRadius = magnetOuterInfo.outerDiameter*0.5; 
   CommonConstructor(length);
 }
@@ -45,30 +44,30 @@ BDSRBend::BDSRBend(G4String           name,
 void BDSRBend::CommonConstructor(G4double aLength)
 {
   //full length along chord - just its length in case of rbend
-  itsChordLength = aLength;
+  chordLength = aLength;
 
-  orientation = BDS::CalculateOrientation(itsAngle);
+  orientation = BDS::CalculateOrientation(angle);
 
   // itsStraightSectionChord is the distance along the chord required to be used by a drift pipe so that
   // the outer logical volume (magnet cylinder - defined by outRadius) doesn't protrude
   // into the previous volume / outside the marker volume.  for zero angle, this is 0
 
-  itsStraightSectionChord     = outerRadius / (tan(0.5*fabs(itsAngle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(itsAngle))) );
-  itsMagFieldLength           = itsChordLength - (2.0*itsStraightSectionChord);
-  magnetXShift                = orientation*itsStraightSectionChord*tan(0.5*fabs(itsAngle));
+  itsStraightSectionChord     = outerRadius / (tan(0.5*fabs(angle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(angle))) );
+  itsMagFieldLength           = chordLength - (2.0*itsStraightSectionChord);
+  magnetXShift                = orientation*itsStraightSectionChord*tan(0.5*fabs(angle));
   G4ThreeVector magpos        = G4ThreeVector(magnetXShift, 0, 0);
   G4double      dz            = (itsMagFieldLength*0.5)+(itsStraightSectionChord*0.5);
   G4ThreeVector driftposstart = G4ThreeVector(0.5*magnetXShift, 0, -1*dz);
   G4ThreeVector driftposend   = G4ThreeVector(0.5*magnetXShift, 0, dz);
-  itsStraightSectionLength    = itsStraightSectionChord / (cos(0.5*fabs(itsAngle)));
+  itsStraightSectionLength    = itsStraightSectionChord / (cos(0.5*fabs(angle)));
 
-  G4double in_z = cos(0.5*fabs(itsAngle)); // calculate components of normal vectors (in the end mag(normal) = 1)
-  G4double in_x = sin(0.5*fabs(itsAngle));
+  G4double in_z = cos(0.5*fabs(angle)); // calculate components of normal vectors (in the end mag(normal) = 1)
+  G4double in_x = sin(0.5*fabs(angle));
   inputface  = G4ThreeVector(-orientation*in_x, 0.0, -1.0*in_z); //-1 as pointing down in z for normal
   outputface = G4ThreeVector(-orientation*in_x, 0.0, in_z);
   
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Angle                   = " << itsAngle                 << G4endl;
+  G4cout << __METHOD_NAME__ << "Angle                   = " << angle                    << G4endl;
   G4cout << __METHOD_NAME__ << "Straight section chord  = " << itsStraightSectionChord  << G4endl;
   G4cout << __METHOD_NAME__ << "Magnetic field length   = " << itsMagFieldLength        << G4endl;
   G4cout << __METHOD_NAME__ << "Straight section length = " << itsStraightSectionLength << G4endl;
@@ -109,11 +108,11 @@ void BDSRBend::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
   G4ThreeVector Bfield(0.,-itsBField,0.);
-  G4double arclength = fabs(itsAngle) * ((itsMagFieldLength*0.5) / sin(0.5*fabs(itsAngle)));
+  G4double arclength = fabs(angle) * ((itsMagFieldLength*0.5) / sin(0.5*fabs(angle)));
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " calculated arclength in dipole field: " << arclength << G4endl;
 #endif
-  itsMagField = new BDSSbendMagField(Bfield,arclength,itsAngle);
+  itsMagField = new BDSSbendMagField(Bfield,arclength,angle);
   itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
   
   BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
@@ -189,8 +188,8 @@ void BDSRBend::BuildBeampipe()
   new G4PVPlacement(straightStartRM,                         // rotation
 		    straightStartPos,                        // position
 		    bpFirstBit->GetContainerLogicalVolume(), // logical volume
-		    itsName+"_bp_start_phys",                // name
-		    itsMarkerLogicalVolume,                  // mother volume
+		    name+"_bp_start_phys",                // name
+		    containerLogicalVolume,                  // mother volume
 		    false,		                     // no booleanm operation
 		    0,                                       // copy number
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps() );
@@ -198,8 +197,8 @@ void BDSRBend::BuildBeampipe()
    new G4PVPlacement(0,                                      // rotation
 		     magnetPos,	                             // position
 		     beampipe->GetContainerLogicalVolume(),  // logical volume
-		     itsName+"_bp_phys",                     // name
-		     itsMarkerLogicalVolume,                 // mother volume
+		     name+"_bp_phys",                     // name
+		     containerLogicalVolume,                 // mother volume
 		     false,	                             // no boolean operation
 		     0,                                      // copy number
 		     BDSGlobalConstants::Instance()->GetCheckOverlaps() );
@@ -207,8 +206,8 @@ void BDSRBend::BuildBeampipe()
    new G4PVPlacement(straightEndRM,                          // rotation
 		     straightEndPos,	                     // position
 		     bpLastBit->GetContainerLogicalVolume(), // logical volume
-		     itsName+"_bp_end_phys",	             // name
-		     itsMarkerLogicalVolume,                 // mother volume
+		     name+"_bp_end_phys",	             // name
+		     containerLogicalVolume,                 // mother volume
 		     false,	                             // no boolean operation
 		     0,                                      // copy number
 		     BDSGlobalConstants::Instance()->GetCheckOverlaps() );
@@ -216,7 +215,7 @@ void BDSRBend::BuildBeampipe()
    // can't use BeamPipeCommonTasks() as it places the beampipe volume and that'll be wrong in this case
    // have to do everything manually here
    beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false);
-   itsMarkerLogicalVolume->
+   containerLogicalVolume->
     SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
    
    RegisterLogicalVolumes(bpFirstBit->GetAllLogicalVolumes());
@@ -233,5 +232,5 @@ void BDSRBend::BuildBeampipe()
    
    SetExtentX(beampipe->GetExtentX()); //not exact but only central porition will use this
    SetExtentY(beampipe->GetExtentY());
-   SetExtentZ(-itsChordLength*0.5,itsChordLength*0.5);
+   SetExtentZ(-chordLength*0.5,chordLength*0.5);
 }
