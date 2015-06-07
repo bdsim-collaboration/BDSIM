@@ -27,7 +27,7 @@ protected:
 private:
   void SetVisAttributes();
   virtual void Build();
-  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildContainerLogicalVolume();
   /// define field and stepper
   void BuildBPFieldAndStepper();
   /// build and set field manager and chord finder

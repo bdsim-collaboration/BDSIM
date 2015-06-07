@@ -19,11 +19,7 @@
 
 BDSTeleporter::BDSTeleporter(G4String name,
 			     G4double length):
-  BDSAcceleratorComponent(name,
-			  length,
-			  0,
-			  0,
-			  0),
+  BDSAcceleratorComponent(name, length, 0, "teleporter"),
   itsChordFinder(NULL),itsFieldManager(NULL),itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
 {
 #ifdef BDSDEBUG
@@ -39,16 +35,17 @@ void BDSTeleporter::Build()
   BDSAcceleratorComponent::Build(); // create logical volume and attach manager(stepper)
 }
 
-void BDSTeleporter::BuildMarkerLogicalVolume()
+void BDSTeleporter::BuildContainerLogicalVolume()
 {
-  itsMarkerSolidVolume = new G4Box(itsName+"_solid",
-				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				   itsLength/2.0);
-  itsMarkerLogicalVolume = new G4LogicalVolume(itsMarkerSolidVolume,
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
-			itsName);
-  itsMarkerLogicalVolume->SetFieldManager(itsFieldManager,false); // modelled from BDSMultipole.cc
+  G4double radius = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5;
+  containerSolid = new G4Box(name+"_container_solid",
+			     radius,
+			     radius,
+			     chordLength*0.5);
+  containerLogicalVolume = new G4LogicalVolume(containerSolid,
+					       emptyMaterial,
+					       name + "_container_lv");
+  containerLogicalVolume->SetFieldManager(itsFieldManager,false); // modelled from BDSMultipole.cc
 }
   
 void BDSTeleporter::BuildBPFieldAndStepper()
@@ -68,7 +65,7 @@ void BDSTeleporter::BuildBPFieldMgr( G4MagIntegratorStepper* stepper,
   //this is all copied from BDSMultipole.cc although names tidied a bit
   itsChordFinder = 
     new G4ChordFinder(field,
-    itsLength*0.5/CLHEP::m,
+    chordLength*0.5/CLHEP::m,
 		      stepper);
 
   itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
@@ -89,7 +86,7 @@ void BDSTeleporter::BuildBPFieldMgr( G4MagIntegratorStepper* stepper,
 void BDSTeleporter::SetVisAttributes()
 {
   //make it visible if debug build and invisible otherwise
-  itsVisAttributes = new G4VisAttributes(G4Colour(0.852,0.438,0.836,0.5));
+  G4VisAttributes* itsVisAttributes = new G4VisAttributes(G4Colour(0.852,0.438,0.836,0.5));
 #if defined BDSDEBUG
   itsVisAttributes->SetVisibility(true);
 #else
