@@ -407,7 +407,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       G4LogicalVolume* elementLV = (*it)->GetContainerLogicalVolume();
       if (!elementLV)
 	{
-	  G4cerr << __METHOD_NAME__ << "this accelerator component has no volume to be placed!" << G4endl;
+	  G4cerr << __METHOD_NAME__ << "this accelerator component " << (*it)->GetName() << " has no volume to be placed!" << G4endl;
 	  exit(1);
 	}
       

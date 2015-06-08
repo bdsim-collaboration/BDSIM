@@ -2,9 +2,8 @@
 #include "BDSDebug.hh"
 
 BDSBunchHalo::BDSBunchHalo() : BDSBunchInterface(), betaY(0.0), alphaX(0.0), alphaY(0.0), emitX(0.0), emitY(0.0), gammaX(0.0), gammaY(0.0), envelopeX(0.0), envelopeY(0.0), envelopeXp(0.0), envelopeYp(0.0) {
-  
+  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
 }
-
 
 BDSBunchHalo::BDSBunchHalo(G4double betaXIn,      G4double betaYIn, 
 			   G4double alphaXIn,     G4double alphaYIn,
@@ -15,7 +14,7 @@ BDSBunchHalo::BDSBunchHalo(G4double betaXIn,      G4double betaYIn,
 			   G4double Xp0In,        G4double Yp0In,      G4double Zp0In,			     
 			   G4double sigmaTIn,     G4double sigmaEIn) : BDSBunchInterface(X0In,Y0In,Z0In,T0In,Xp0In,Yp0In,Zp0In,sigmaTIn,sigmaEIn), betaX(betaXIn), betaY(betaYIn), alphaX(alphaXIn), alphaY(alphaYIn), emitX(emitXIn), emitY(emitYIn),   envelopeX(envelopeXIn), envelopeY(envelopeYIn), envelopeXp(envelopeXpIn), envelopeYp(envelopeYpIn) 
 {
-#ifdef BDSDEBUG 
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
@@ -72,11 +71,15 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
     double emitXSp = gammaX*pow(dx,2) + 2.*alphaX*dx*dxp + betaX*pow(dxp,2);
     double emitYSp = gammaY*pow(dy,2) + 2.*alphaY*dy*dyp + betaY*pow(dyp,2);
     
-    std::cout << "emittance> " << emitXSp << " " << emitX << " " << emitYSp << " " << emitY << std::endl;
+#ifdef BDSDEBUG
+    G4cout << "emittance> " << emitXSp << " " << emitX << " " << emitYSp << " " << emitY << G4endl;
+#endif
 
     // check if particle is within normal beam core, if so continue generation
     if (emitXSp < emitX || emitYSp <emitY) { 
-      std::cout << "continue> " << std::endl;
+#ifdef BDSDEBUG
+      G4cout << "continue> " << G4endl;
+#endif
       continue;
     }    
     else {
@@ -92,8 +95,10 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
       t = 0 * CLHEP::s;
       E = BDSGlobalConstants::Instance()->GetParticleKineticEnergy();
 
-      G4cout << "selected> " << dx << " " << dy << " " << dxp << " " << dyp << std::endl;
-      
+#ifdef BDSDEBUG
+      G4cout << "selected> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
+#endif
+     
       weight = 1.0;
       return;
     }
