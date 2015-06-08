@@ -70,7 +70,7 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 
     // compute single particle emittance 
     double emitXSp = gammaX*pow(dx,2) + 2.*alphaX*dx*dxp + betaX*pow(dxp,2);
-    double emitYSp = gammaY*pow(dy,2) + 2.*alphaY*dy*dyp + betaX*pow(dyp,2);
+    double emitYSp = gammaY*pow(dy,2) + 2.*alphaY*dy*dyp + betaY*pow(dyp,2);
     
     std::cout << "emittance> " << emitXSp << " " << emitX << " " << emitYSp << " " << emitY << std::endl;
 
