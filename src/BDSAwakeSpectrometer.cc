@@ -560,7 +560,7 @@ void BDSAwakeSpectrometer::Build(){
       */
       //      BuildScreenScoringPlane();
       //      BuildCameraScoringPlane();
-      //      PlaceScreen();
+      PlaceScreen();
       //      PlaceCamera();
       //      if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
       //	BuildTunnel();
