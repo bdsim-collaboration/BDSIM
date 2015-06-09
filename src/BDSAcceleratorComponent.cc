@@ -1,29 +1,16 @@
-#include <list>
-#include <sstream>
-#include <cmath>
-
+#include "BDSAcceleratorComponent.hh"
+#include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSUtilities.hh"
-
-#include "BDSAcceleratorComponent.hh"
-#include "BDSBeamPipeInfo.hh"
-#include "BDSGeometryComponent.hh"
 #include "BDSMaterials.hh"
 #include "BDSReadOutGeometry.hh"
-#include "BDSTiltOffset.hh"
-#include "G4Box.hh"
-#include "G4Tubs.hh"
-#include "G4Colour.hh"
-#include "G4VisAttributes.hh"
-#include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4PVPlacement.hh"
-#include "G4UserLimits.hh"
-#include "G4SubtractionSolid.hh"
-#include "G4IntersectionSolid.hh"
-#include "G4AssemblyVolume.hh"
-#include "G4Transform3D.hh"
+#include "BDSUtilities.hh"
+
+#include <cmath>
+
+
+struct BDSBeamPipeInfo;
+class BDSTiltOffset;
 
 BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4double         arcLengthIn,
@@ -43,6 +30,9 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   lengthSafety(BDSGlobalConstants::Instance()->GetLengthSafety())
 
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   readOutLV = NULL;
   itsSPos   = 0.0;
   emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
@@ -62,12 +52,18 @@ BDSAcceleratorComponent::~BDSAcceleratorComponent()
 
 void BDSAcceleratorComponent::Initialise()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   Build();
   readOutLV = BDS::BuildReadOutVolume(name, chordLength, angle);
 }
 
 void BDSAcceleratorComponent::Build()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   BuildContainerLogicalVolume(); // pure virtual provided by derived class
 
   // visual attributes

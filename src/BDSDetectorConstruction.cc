@@ -394,10 +394,11 @@ void BDSDetectorConstruction::ComponentPlacement()
 	{readOutLV->SetSensitiveDetector(energyCounterSDRO);}
       
       // add the volume to one of the regions
-      if(thecurrentitem->GetPrecisionRegion())
+      G4int precision = thecurrentitem->GetPrecisionRegion();
+      if(precision < 0)
 	{
 #ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << "element is in the precision region" << G4endl;
+	  G4cout << __METHOD_NAME__ << "element is in the precision region number: " << precision << G4endl;
 #endif
 	  elementLV->SetRegion(precisionRegion);
 	  precisionRegion->AddRootLogicalVolume(elementLV);

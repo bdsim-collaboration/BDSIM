@@ -44,6 +44,9 @@ BDSSectorBend::BDSSectorBend(G4String           name,
 
 void BDSSectorBend::Build()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   BDSMultipole::Build();
   
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())

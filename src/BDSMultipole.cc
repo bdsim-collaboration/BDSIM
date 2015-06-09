@@ -256,6 +256,9 @@ void BDSMultipole::BuildOuterVolume()
 
 void BDSMultipole::BuildContainerLogicalVolume()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   if (BDS::IsFinite(angle))
     {
       containerSolid = new G4CutTubs(name+"_container_solid",          // name
