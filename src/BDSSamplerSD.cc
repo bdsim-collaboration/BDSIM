@@ -114,6 +114,8 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   
   G4int nSampler=theTrack->GetVolume()->GetCopyNo()+1;
   G4String SampName = theTrack->GetVolume()->GetName()+"_"+BDSGlobalConstants::Instance()->StringFromInt(nSampler);
+  SampName = SampName.substr(0,SampName.find("_pv_1"));
+  
   G4int PDGtype=theTrack->GetDefinition()->GetPDGEncoding();
   
   G4String pName=theTrack->GetDefinition()->GetParticleName();

@@ -48,12 +48,8 @@ BDSSampler::BDSSampler(G4String name, G4double length):
 void BDSSampler::Initialise()
 {
   BDSAcceleratorComponent::Initialise();
-
-  // TO BE FIXED - copy number was previously at the end as geant4 names
-  // placement placementnameyousupply+ "_copynumber".  In new scheme, objects
-  // don't know their placement and they're not duplicated so they don't know
-  // copy number - need to fix this for samplers
-  BDSSampler::outputNames.push_back(name + "_pv_1");
+  
+  BDSSampler::outputNames.push_back(GetName());
 }
 
 void BDSSampler::BuildContainerLogicalVolume()

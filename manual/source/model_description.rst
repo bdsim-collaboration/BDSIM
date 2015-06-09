@@ -1154,11 +1154,186 @@ section.
 
 Beam Distributions
 ^^^^^^^^^^^^^^^^^^
+The following beam distributions are available in BDSIM
 
-
-- gauss
-- gaussTwiss
 - reference
+- circle
+- square
+- ring
+- eshell
+- gauss
+- gausstwiss
+- halo
+- composite 
+- userfile
+- ptc 
+
+
+Reference
+^^^^^^^^^
+This is a single particle with the same position and angle defined by the following parameters. When these parameters are used in conjunction with the other distributions, it represents the centroid of the distribution. 
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| X0                               | Horizontal position [m]                               |
++----------------------------------+-------------------------------------------------------+
+| Y0                               | Vertical position [m]                                 |
++----------------------------------+-------------------------------------------------------+
+| Z0                               | Longitudinal position [m]                             |
++----------------------------------+-------------------------------------------------------+
+| T0                               | Longitudinal position [s]                             |
++----------------------------------+-------------------------------------------------------+
+| Xp0                              | Horizontal angle []                                   |
++----------------------------------+-------------------------------------------------------+
+| Yp0                              | Vertical angle []                                     |
++----------------------------------+-------------------------------------------------------+
+
+gauss
+^^^^^
+
+Uses the gausMatrix beam generator but with simplified input parameters opposed to a complete 
+beam sigma matrix. This beam distribution does not allow for correlations between phase space 
+coordinates.
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| sigmaX                           | Horizontal gaussian sigma [m]                         |
++----------------------------------+-------------------------------------------------------+
+| sigmaY                           | Vertical gaussian sigma [m]                           |
++----------------------------------+-------------------------------------------------------+
+| sigmaXp                          | Horizontal gaussian angle sigma []                    |
++----------------------------------+-------------------------------------------------------+
+| sigmaYp                          | Vertical gaussian angle sigma []                      |
++----------------------------------+-------------------------------------------------------+
+| sigmaE                           | Energy variation []                                   |
++----------------------------------+-------------------------------------------------------+
+| sigmaT                           | [s]                                                   |
++----------------------------------+-------------------------------------------------------+
+
+gausMatrix
+^^^^^^^^^^
+
+Uses the :math:`N` dimensional gaussian generator from `CLHEP`, `CLHEP::RandMultiGauss`. The generator
+is initialised by a :math:`6\times1` means vector and :math:`6\times 6` sigma matrix.  
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| sigmaNM                          | Sigma matrix element (N,M)                            |
++----------------------------------+-------------------------------------------------------+
+
+gaussTwiss
+^^^^^^^^^^
+
+The beam parameters are defined by the usual :math:`\alpha`, :math:`\beta` and :math:`\gamma` from which
+the usual beam :math:`\sigma`-matrix is calculated, using the following equations 
+
+.. math:: 
+   \sigma_{11} & =  \epsilon_x \beta_x  \\
+   \sigma_{12} & = -\epsilon_x \alpha_x \\  
+   \sigma_{21} & = -\epsilon_x \alpha_x \\
+   \sigma_{22} & =  \epsilon_x \gamma_x \\
+   \sigma_{33} & =  \epsilon_y \beta_y \\
+   \sigma_{34} & = -\epsilon_y \alpha_y \\ 
+   \sigma_{43} & = -\epsilon_y \alpha_y \\
+   \sigma_{44} & =  \epsilon_y \gamma_y \\    
+   \sigma_{55} & =  \sigma_{T}^2 \\  
+   \sigma_{66} & =  \sigma_{E}^2  
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| emitx                            | Horizontal beam core emittance [m]                    |
++----------------------------------+-------------------------------------------------------+
+| emity                            | Vertical beam core emittance [m]                      |
++----------------------------------+-------------------------------------------------------+
+| betax                            | Horizontal beta function [m]                          |
++----------------------------------+-------------------------------------------------------+
+| betay                            | Vertical beta function [m]                            |
++----------------------------------+-------------------------------------------------------+
+| alfx                             | Horizontal alpha function                             |
++----------------------------------+-------------------------------------------------------+
+| alfy                             | Vertical alpha function                               |
++----------------------------------+-------------------------------------------------------+
+
+halo
+^^^^
+The halo distrubtion is effectively a flat phase space with the central beam core removed at 
+:math:`\epsilon_{\rm core}`. The beam core is defined using the standard twiss parameters described 
+previously. The implicit general form of a rotated ellipse is  
+
+.. math::
+
+   \gamma x^2 + 2\alpha\;x\;x^{\prime} + \beta x^{\prime 2} = \epsilon
+
+where the parameters have their usual meanings. A phase space point can be rejected or weighted 
+depending on the single particle emittance, which is calculated as    
+
+.. math::
+
+   \epsilon_{\rm SP} = \gamma x^2 + 2\alpha\;x\;x^{\prime} + \beta x^{\prime 2}
+
+if the single particle emittance is less than beam emittance so :math:`\epsilon_{\rm SP} \lt \epsilon_{\rm core}` the particle is rejected. 
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| emitx                            | Horizontal beam core emittance [m]                    |
++----------------------------------+-------------------------------------------------------+
+| emity                            | Vertical beam core emittance [m]                      |
++----------------------------------+-------------------------------------------------------+
+| betax                            | Horizontal beta function [m]                          |
++----------------------------------+-------------------------------------------------------+
+| betay                            | Vertical beta function [m]                            |
++----------------------------------+-------------------------------------------------------+
+| alfx                             | Horizontal alpha function                             |
++----------------------------------+-------------------------------------------------------+
+| alfy                             | Vertical alpha function                               |
++----------------------------------+-------------------------------------------------------+
+| envelopeX                        | Horitontal position maximum [m]                       |
++----------------------------------+-------------------------------------------------------+
+| envelopeY                        | Vertical position maximum [m]                         |
++----------------------------------+-------------------------------------------------------+
+| envelopeXp                       | Horitontal angle maximum [m]                          |
++----------------------------------+-------------------------------------------------------+
+| envelopeYp                       | Vertical angle maximum [m]                            |
++----------------------------------+-------------------------------------------------------+
+| haloPSWeightFunction             | Phase space weight function [string]                  |
++----------------------------------+-------------------------------------------------------+
+
+composite
+^^^^^^^^^
+
+The horizontal, vertical and longitudinal phase spaces can be defined independently. The `xDistrType`, 
+`yDistrType` and `zDistrType` can be selected from all the other beam distribution types. All of the 
+appropriate parameters need to be defined.
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| xDistrType                       | Horizontal distribution type                          |
++----------------------------------+-------------------------------------------------------+
+| yDistrType                       | Vertical distribution type                            |
++----------------------------------+-------------------------------------------------------+
+| zDistrType                       | Longitudinal distribution type                        |
++----------------------------------+-------------------------------------------------------+
+
+
+userFile
+^^^^^^^^
+
+ptc
+^^^ 
+
+Output from MAD-X PTC used as input for BDSIM. 
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| distrFile                        | PTC output file                                       |
++----------------------------------+-------------------------------------------------------+
 
 
 Regions
@@ -1168,10 +1343,6 @@ In Geant4 it is possible to drive different *regions* each with their own produc
 In BDSIM three different regions exist, each with their own user defined production cuts (see *Physics*). 
 These are the default region, the precision region and the approximation region. Beamline elements 
 can be set to the precision region by setting the attribute *precisionRegion* equal to 1. For example:
-
-
-
-
 
 .. rubric:: Footnotes
 
