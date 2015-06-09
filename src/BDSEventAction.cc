@@ -32,6 +32,7 @@ extern BDSOutputBase* bdsOutput;         // output interface
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
 
 BDSEventAction::BDSEventAction():
+  analMan(NULL),
   samplerCollID_plane(-1),
   samplerCollID_cylin(-1),
   energyCounterCollID(-1),

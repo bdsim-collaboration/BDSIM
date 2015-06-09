@@ -16,6 +16,8 @@ Options::Options(){
   zDistribType = "";
   distribFile = "";
   distribFileFormat = "";
+  haloPSWeightParameter = 1.0;
+  haloPSWeightFunction = "";
 
   numberToGenerate = 1;
   nlinesIgnore = 0;

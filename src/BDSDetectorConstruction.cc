@@ -31,7 +31,6 @@
 #include "BDSSDManager.hh"
 
 #include "G4UserLimits.hh"
-#include "G4GeometryManager.hh"
 #include "G4Region.hh"
 #include "G4ProductionCuts.hh"
 
@@ -60,7 +59,6 @@
 #include "BDSLine.hh"
 #include "BDSMaterials.hh"
 #include "BDSTeleporter.hh"
-#include "BDSTerminator.hh"
 #include "BDSLogicalVolumeInfo.hh"
 #include "BDSComponentFactory.hh"
 
