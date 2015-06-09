@@ -22,10 +22,10 @@
  * by placing beamline components inside parent volumes and therefore creating
  * a new beamline of parents.
  * 
- * Note, the beamline will only calculate coordinates relative to its start
- * being 0,0,0. For placement from a different position, this should be applied
- * elsewhere when the placement is being performed and not in the calculated 
- * coordinates here.
+ * Note, if initial coordinates other than 0,0,0 and null rotation are required,
+ * an appropriate Transform3D should be the first thing added to the beamline
+ * which will result in the appropriate shift - this will be reflected in the
+ * calculated world dimensions.
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
@@ -33,24 +33,35 @@
 /// Forward declaration for iterator
 class BDSBeamline;
 
+class BDSTransform3D;
+
 /// Iterator for beamline
 typedef std::vector<BDSBeamlineElement*>::const_iterator BDSBeamlineIterator;
 
 class BDSBeamline{
 public:
-  /// Add a null object at the beginning with initialised rotation matrices
-  /// and placement vectors so that the coordinates will always be there to
-  /// start from.  This also prevents calling back() on an empty vector
-  /// which leads to undefined behaviour. The begin function always starts
-  /// at one after this first null element so functions exterior to this
-  /// class don't need to test if the component is valid
+  /// Default constructor. Beamline started at 0,0,0 with beamline built along
+  /// the z axis.
   BDSBeamline();
+
+  /// Auxiliary constructor that allows a finite poition and rotation to be applied
+  /// at the beginning of the beamline in global coordinates. Rembmer the maximum
+  /// extents of the beamline will also be displaced.
+  BDSBeamline(G4ThreeVector     initialGlobalPosition,
+	      G4RotationMatrix* initialGlobalRotation);
   
   ~BDSBeamline();
 
   /// Add a component and calculate its position and rotation with respect
   /// to the beginning of the beamline
   void AddComponent(BDSAcceleratorComponent* component);
+
+  /// Apply a Transform3D rotation and translation to the reference
+  /// coordinates. Special method for the special case of unique component
+  /// Transform3D. Modifies the end rotation and position of the last element
+  /// in the beamline. Note this applies the offset dx,dy,dz first, then the rotation
+  /// of coordinates
+  void ApplyTransform3D(BDSTransform3D* component);
 
   /// Iterate over the beamline and print out the name, position, rotation
   /// and s position of each beamline element
@@ -98,6 +109,8 @@ public:
   inline std::vector<BDSBeamlineElement*>::const_reverse_iterator rbegin() const;
   /// Return reverse iterator to the reverse end
   inline std::vector<BDSBeamlineElement*>::const_reverse_iterator rend()   const;
+  /// Return whether the beamline is empty or not
+  inline G4bool empty() const;
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSBeamline const &bl);
@@ -110,6 +123,20 @@ private:
 
   G4ThreeVector maximumExtentPositive; ///< maximum extent in the positive coordinates in each dimension
   G4ThreeVector maximumExtentNegative; ///< maximum extent in the negative coordinates in each dimension
+
+  ///@{ Current rotation axes
+  ///  xARS = xAxisReferenceStart, M = Middle, E = End
+  G4ThreeVector xARS, yARS, zARS, xARM, yARM, zARM, xARE, yARE, zARE;
+  ///@}
+
+  /// Current reference rotation at the end of the previous element
+  G4RotationMatrix* previousReferenceRotationEnd;
+
+  /// Current reference position at the end of the previous element
+  G4ThreeVector previousReferencePositionEnd;
+
+  /// Current s coordinate at the end of the previous element
+  G4double previousSPositionEnd;
   
   /// assignment and copy constructor not implemented nor used
   BDSBeamline& operator=(const BDSBeamline&);
@@ -137,8 +164,14 @@ inline G4ThreeVector BDSBeamline::GetMaximumExtentPositive() const
 inline G4ThreeVector BDSBeamline::GetMaximumExtentNegative() const
 {return maximumExtentNegative;}
 
+inline BDSBeamlineElement* BDSBeamline::front() const
+{return beamline.front();}
+
+inline BDSBeamlineElement* BDSBeamline::back() const
+{return beamline.back();}
+
 inline std::vector<BDSBeamlineElement*>::iterator BDSBeamline::begin()
-{return ++beamline.begin();}
+{return beamline.begin();}
 
 inline std::vector<BDSBeamlineElement*>::iterator BDSBeamline::end()
 {return beamline.end();}
@@ -147,10 +180,10 @@ inline std::vector<BDSBeamlineElement*>::reverse_iterator BDSBeamline::rbegin()
 {return beamline.rbegin();}
 
 inline std::vector<BDSBeamlineElement*>::reverse_iterator BDSBeamline::rend()
-{return beamline.rend()--;}
+{return beamline.rend();}
 
 inline std::vector<BDSBeamlineElement*>::const_iterator BDSBeamline::begin() const
-{return ++beamline.begin();}
+{return beamline.begin();}
 
 inline std::vector<BDSBeamlineElement*>::const_iterator BDSBeamline::end() const
 {return beamline.end();}
@@ -159,6 +192,9 @@ inline std::vector<BDSBeamlineElement*>::const_reverse_iterator BDSBeamline::rbe
 {return beamline.rbegin();}
 
 inline std::vector<BDSBeamlineElement*>::const_reverse_iterator BDSBeamline::rend() const
-{return beamline.rend()--;}
+{return beamline.rend();}
+
+inline G4bool BDSBeamline::empty() const
+{return beamline.empty();}
 
 #endif
