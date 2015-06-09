@@ -13,7 +13,6 @@
 #include "BDSUtilities.hh"        // for calculateorientation
 
 #include "G4CutTubs.hh"
-#include "G4SubtractionSolid.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"

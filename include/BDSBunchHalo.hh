@@ -29,6 +29,9 @@ private :
 
   CLHEP::RandFlat  *FlatGen;
 
+  G4double weightParameter;
+  std::string weightFunction;
+
 public : 
   BDSBunchHalo();
   BDSBunchHalo(G4double betaX,      G4double betaY, 
@@ -55,6 +58,9 @@ public :
   G4double GetEnvelopeY() {return envelopeY;}
   G4double GetEnvelopeXp(){return envelopeXp;}
   G4double GetEnvelopeYp(){return envelopeYp;}
+  G4double GetWeightParamer(){return weightParameter;}
+  std::string GetWeightFunction() {return weightFunction;}
+
 
 protected:
   void     SetBetaX(double newBetaX) {betaX    = newBetaX;}
@@ -67,6 +73,15 @@ protected:
   void     SetEnvelopeY(G4double envelopeYIn)  {envelopeY = envelopeYIn;}
   void     SetEnvelopeXp(G4double envelopeXpIn){envelopeXp= envelopeXpIn;}
   void     SetEnvelopeYp(G4double envelopeYpIn){envelopeYp= envelopeYpIn;}
+  void     SetWeightParameter(G4double haloPSWeightParameter) {weightParameter = haloPSWeightParameter;}
+  void     SetWeightFunction(std::string haloPSWeightFunction) {
+    if(haloPSWeightFunction == "flat" || haloPSWeightFunction == "oneoverr" || haloPSWeightFunction == "exp") {
+      weightFunction = haloPSWeightFunction;
+    }
+    else {
+      weightFunction = ""; 
+    }
+  }
 };
 
 #endif

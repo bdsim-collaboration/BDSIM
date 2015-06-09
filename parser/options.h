@@ -26,6 +26,8 @@ struct Options {
   std::string zDistribType;
   std::string distribFile;
   std::string distribFileFormat;
+  double      haloPSWeightParameter;
+  std::string haloPSWeightFunction;
 
   int numberToGenerate;
   int nlinesIgnore; ///> ignore first lines in the input bunch file

@@ -16,6 +16,8 @@ Options::Options(){
   zDistribType = "";
   distribFile = "";
   distribFileFormat = "";
+  haloPSWeightParameter = 1.0;
+  haloPSWeightFunction = "";
 
   numberToGenerate = 1;
   nlinesIgnore = 0;
@@ -259,6 +261,9 @@ void Options::set_value(std::string name, double value )
   if(name == "Rmin" ) { Rmin = value; return; }
   if(name == "Rmax" ) { Rmax = value; return; }
 
+  // options for beam distrType="halo"
+  if(name == "haloPSWeightParameter") {haloPSWeightParameter= value; return;}
+
   //
   // numeric options for the"option" command
   //
@@ -433,6 +438,7 @@ void Options::set_value(std::string name, std::string value )
   if(name == "zDistrType" ) { zDistribType = value; return; }
   if(name == "distrFile" ) { distribFile = value; return; }
   if(name == "distrFileFormat" ) { distribFileFormat = value; return; }
+  if(name == "haloPSWeightFunction")  {haloPSWeightFunction = value; return;}
 
   //
   // string options for the "option" command
