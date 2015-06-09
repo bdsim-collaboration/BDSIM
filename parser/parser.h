@@ -30,7 +30,7 @@
 #include "gmad.h"
 #include "options.h"
 #include "parameters.h"
-
+#define BDSDEBUG 1
 int yyerror(const char *);
 
 extern FILE* yyin;
@@ -527,10 +527,15 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   case _SCREEN:
     e.type = _SCREEN;
     e.l = params.l;
+    if(params.layerThicknessesset)
+      e.layerThicknesses = params.layerThicknesses;
+    if(params.layerMaterialsset)
+      e.layerMaterials = params.layerMaterials;
     e.angle = params.angle;
-    e.tscint = params.tscint;
-    e.scintmaterial = std::string(params.scintmaterial);
-    e.airmaterial = params.airmaterial;  
+    if(params.beampipeThicknessset)
+      e.beampipeThickness = params.beampipeThickness;
+    e.screenXSize = params.screenXSize;
+    e.screenYSize = params.screenYSize;
     break;
 
   case _AWAKESCREEN:

@@ -576,6 +576,10 @@ parameters:
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
 		  if(!strcmp($1->name,"ysize") ) { params.ysize = $3; params.ysizeset = 1;}
+		  else
+		  if(!strcmp($1->name,"screenXSize") ) { params.screenXSize = $3; params.screenXSizeset = 1;}
+		    else
+		  if(!strcmp($1->name,"screenYSize") ) { params.screenYSize = $3; params.screenYSizeset = 1;}
 		    else
 		  if(!strcmp($1->name,"tilt")) { params.tilt = $3; params.tiltset = 1;}
 		    else
@@ -709,6 +713,24 @@ parameters:
                          set_vector(params.componentsFractions,$3);
                          delete[] $3->data;
                        }
+                   else
+                     if(!strcmp($1->name,"layerThicknesses"))
+                       {
+                         params.layerThicknessesset = 1;
+                         set_vector(params.layerThicknesses,$3);
+			 delete[] $3->data;
+                       }
+                   else
+                     if(!strcmp($1->name,"layerMaterials"))
+                       {
+			 std::cout << " - layer Materials ... " << std::endl;
+                         params.layerMaterialsset = 1;
+			 std::cout << " - layer Materials - set_vector ... " << std::endl;
+                         set_vector(params.layerMaterials,$3);
+			 std::cout << " - layer Materials - clear symbols ... " << std::endl;
+			 $3->symbols.clear();
+			 std::cout << " - layer Materials - done. " << std::endl;
+                       }
 		    else {
 		      //                  if(VERBOSE)
 		      printf("Warning : unknown parameter %s\n",$1->name);
@@ -831,6 +853,10 @@ parameters:
 		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
 		    else
 		  if(!strcmp($1->name,"ysize") ) { params.ysize = $3; params.ysizeset = 1;}
+		    else
+		  if(!strcmp($1->name,"screenXSize") ) { params.screenXSize = $3; params.screenXSizeset = 1;}
+		    else
+		  if(!strcmp($1->name,"screenYSize") ) { params.screenYSize = $3; params.screenYSizeset = 1;}
 		    else
 		  if(!strcmp($1->name,"tilt")) { params.tilt = $3; params.tiltset = 1;}
 		    else

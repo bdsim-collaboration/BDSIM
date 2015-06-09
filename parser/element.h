@@ -18,6 +18,7 @@ struct Element {
 
   double inR; double bpRad; /// inner radius and beam pipe radius of muon spoiler  
   double l,ks,k0,k1,k2,k3,angle,beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut, tscint, windowScreenGap, twindow, bmapZOffset; // l in meter
+  double screenXSize, screenYSize;
   double screenEndZ, poleStartZ;
   double xdir, ydir, zdir, waveLength; /// for laser wire and 3d transforms
   double flatlength,taperlength; ///for realistic collimators
@@ -45,6 +46,9 @@ struct Element {
   std::list<const char*> components;
   std::list<double> componentsFractions;
   std::list<int> componentsWeights;
+
+  std::list<double> layerThicknesses;
+  std::list<const char*> layerMaterials;
 
   std::string geometryFile;
   std::string bmapFile;

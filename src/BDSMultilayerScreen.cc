@@ -54,6 +54,9 @@ void BDSMultilayerScreen::computeDimensions(){
   G4cout << "Compute dimensions..." << G4endl;
   G4cout << "...z size..." << G4endl;
   G4double temp=0;
+  if(_screenLayers.size()==0){
+    G4Exception("Screen has no layers.", "-1", FatalException, "");
+  }
   for(unsigned int i=0; i<_screenLayers.size(); i++){
     G4cout << "..adding z size for layer number " << i << G4endl;
     temp += _screenLayers[i]->size().z();

@@ -27,12 +27,15 @@
 #include "BDSScintillatorScreen.hh"
 #include "BDSAwakeScintillatorScreen.hh"
 #include "BDSAwakeSpectrometer.hh"
+#include "BDSScreen.hh"
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
 #include "BDSDebug.hh"
 #include "parser/enums.h"
 #include "parser/elementlist.h"
 #include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
+#include <string>
+#include <list>
 
 #ifdef BDSDEBUG
 bool debug1 = true;
@@ -1332,13 +1335,37 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
         G4cout << "---->creating Screen,"
                << " name= "<< _element.name
                << " l=" << _element.l/CLHEP::m<<"m"
-               << " tscint=" << _element.tscint/CLHEP::m<<"m"
                << " angle=" << _element.angle/CLHEP::rad<<"rad"
-               << " scintmaterial=" << "ups923a"//_element.scintmaterial
-               << " airmaterial=" << "vacuum"//_element.airmaterial
                << G4endl;
 #endif
-	return (new BDSScintillatorScreen( _element.name, _element.tscint*CLHEP::m, (_element.angle-0.78539816339)*CLHEP::rad, "ups923a","vacuum")); //Name, scintillator thickness, angle in radians (relative to -45 degrees)
+	G4TwoVector size;
+	size.setX(_element.screenXSize*CLHEP::m);
+	size.setY(_element.screenYSize*CLHEP::m);
+	G4cout << __METHOD_NAME__ << " - size = " << size << G4endl;
+	G4double aper = _element.aper*CLHEP::m;
+	if(aper==0){
+	  aper=BDSGlobalConstants::Instance()->GetBeampipeRadius()/CLHEP::m;
+	}
+
+	BDSScreen* theScreen = new BDSScreen( _element.name, _element.l*CLHEP::m, true,
+					      aper, _element.tunnelMaterial, _element.tunnelOffsetX*CLHEP::m, size, _element.angle); 
+	if(_element.layerThicknesses.size() != _element.layerMaterials.size()){
+	  G4Exception("Material and ticknesses lists are of unequal size.", "-1", FatalException, "");
+	}
+
+	if(_element.layerThicknesses.size() == 0 ){
+	  G4Exception("Number of screen layers = 0.", "-1", FatalException, "");
+	}
+
+	std::list<const char*>::const_iterator itm;
+	std::list<double>::const_iterator itt;
+	for(itt = _element.layerThicknesses.begin(),
+	      itm = _element.layerMaterials.begin();
+	    itt != _element.layerThicknesses.end();
+	    itt++){
+	  theScreen->screenLayer((*itt)*CLHEP::m, *itm);
+	}
+	return theScreen;
 }
 
 

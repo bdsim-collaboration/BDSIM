@@ -21,6 +21,29 @@
 #include <map>
 
 //============================================================
+BDSDrift::BDSDrift (G4String aName, 
+		    G4double aLength, 
+ 		    G4double aperX, 
+		    G4double aperY, 
+		    G4String tunnelMaterial, 
+		    G4bool   aperset, 
+		    G4double aper, 
+		    G4double tunnelOffsetX):BDSMultipole(aName, 
+							 aLength, 
+							 aper, 
+							 aper, 
+							 tunnelMaterial, 
+							 "", 
+							 aperX, 
+							 aperY, 
+							 0, 
+							 0, 
+							 tunnelOffsetX),
+					    itsStartOuterR(0.0),
+					    itsEndOuterR(0.0),
+					    itsAperset(aperset){
+  init();
+					    }
 
 BDSDrift::BDSDrift (G4String aName, 
 		    G4double aLength, 
@@ -53,9 +76,13 @@ BDSDrift::BDSDrift (G4String aName,
   itsEndOuterR(0.0),
   itsAperset(aperset)
 {
+  init();
+}
+
+void BDSDrift::init(){
   if(!itsAperset){
-    itsStartOuterR=aperX + BDSGlobalConstants::Instance()->GetBeampipeThickness();
-    itsEndOuterR=aperY + BDSGlobalConstants::Instance()->GetBeampipeThickness();
+    itsStartOuterR=itsXAper + BDSGlobalConstants::Instance()->GetBeampipeThickness();
+    itsEndOuterR=itsYAper + BDSGlobalConstants::Instance()->GetBeampipeThickness();
     SetStartOuterRadius(itsStartOuterR);
     SetEndOuterRadius(itsEndOuterR);
   }

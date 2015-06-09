@@ -108,6 +108,8 @@ void Element::flush() {
   angle = 0;
   xsize = 0;
   ysize = 0;
+  screenXSize = 0;
+  screenYSize = 0;
   r = 0;
   phiAngleIn = 0;
   phiAngleOut = 0;
@@ -204,6 +206,8 @@ double Element::property_lookup(char* property_name)const{
   if(!strcmp(property_name,"bpRad")) return bpRad;
   if(!strcmp(property_name,"xsize")) return xsize;
   if(!strcmp(property_name,"ysize")) return ysize;
+  if(!strcmp(property_name,"screenXSize")) return screenXSize;
+  if(!strcmp(property_name,"screenYSize")) return screenYSize;
   if(!strcmp(property_name,"xdir")) return xdir;
   if(!strcmp(property_name,"ydir")) return ydir;
   if(!strcmp(property_name,"zdir")) return zdir;

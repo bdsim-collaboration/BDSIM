@@ -80,6 +80,7 @@ struct Parameters {
   double inR, bpRad; int inRset, bpRadset;/// inner radius and beam pipe radius of muon spoiler
   double hgap, hgapset;
   double xsize, ysize; int xsizeset, ysizeset; /// aperture (or laser spotsize for laser)
+  double screenXSize, screenYSize;   int screenXSizeset, screenYSizeset; //screen dimensions.
   double xdir, ydir, zdir, waveLength; int xdirset, ydirset, zdirset, waveLengthset;
 
   double tilt; int tiltset;   /// tilt
@@ -108,6 +109,10 @@ struct Parameters {
   std::list<double> componentsFractions; int componentsFractionsset;
   std::list<int> componentsWeights; int componentsWeightsset;
 
+  //For the layers of a multi -layer diagnostics screen.
+  std::list<const char*> layerMaterials; int layerMaterialsset;
+  std::list<double> layerThicknesses; int layerThicknessesset;
+  //For a spectrometer scintillator screen.
   std::string  scintmaterial;  int scintmaterialset;
   std::string  windowmaterial;  int windowmaterialset;
   std::string  vacuummaterial;  int vacuummaterialset;

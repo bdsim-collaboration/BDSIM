@@ -51,30 +51,57 @@ void BDSAwakeSpectrometer::MagnetDefaults(){
   //Gap between the coil faces.
   itsCoilAperture=180*CLHEP::mm;
   //Part of pole extending below coil
-  G4double outerPoleSize=50*CLHEP::mm;
+  G4double outerPoleSize=0.5*50*CLHEP::mm;
   //Initialise dimensions.
   itsYokeSize.set(
 		  902*CLHEP::mm,	
 		  1168*CLHEP::mm,   
 		  1*CLHEP::m
 		  );
+  
   itsCoilSize.set(
-		  (320+320+262)*CLHEP::mm,
+		  //  (320+320+262)*CLHEP::mm,
+		  262*CLHEP::mm,
 		  180*CLHEP::mm,
 		  (1000+320+285)*CLHEP::mm
 		  );
+  
   itsPoleSize.set(
 		  320*CLHEP::mm,
-		  itsCoilSize.y()+outerPoleSize,
+		  //itsCoilSize.y()+
+		  outerPoleSize,
 		  itsYokeSize.z()
 		  );
+  
+  itsYokeMiddleSize=itsYokeSize;
+  itsYokeMiddleSize.setY(2*itsCoilSize.y()+itsCoilAperture);
+  G4double yokeCoilGap=30*CLHEP::mm;
+  itsYokeMiddleSize.setX(itsYokeSize.x()-itsPoleSize.x()-itsCoilSize.x()-yokeCoilGap);
+  itsYokeUpperSize=itsYokeSize;
+  itsYokeUpperSize.setY((itsYokeSize.y()-itsYokeMiddleSize.y())/2.0);
+  itsYokeLowerSize=itsYokeUpperSize;
+  
+  itsMiddleCoilSize.set(
+		  itsPoleSize.x(),
+		  itsCoilSize.y(),
+		  itsCoilSize.x()
+		  );
+  
 
-  //The part of the aperture that is within the yoke.
-  itsApertureSize.set(
-		      (320+262+30)*CLHEP::mm,
-		      itsCoilAperture,
-		      itsYokeSize.z()
-		      );
+
+
+  //Yoke apertures.
+  itsAperture1Size.set(
+		       262*CLHEP::mm+yokeCoilGap,
+		       itsCoilAperture+2*itsCoilSize.y(),
+		       itsYokeSize.z()
+		       );
+  
+  itsAperture2Size.set(
+		       itsPoleSize.x(),
+		       itsPoleAperture,
+		       itsYokeSize.z()
+		       );
 
   //the position of the magnet centre relative to the marker volume.
   itsPolePos.set(
@@ -93,48 +120,93 @@ void BDSAwakeSpectrometer::MagnetDefaults(){
 		 itsPolePos.y(),
 		 itsPolePos.z()
 		 );
+
+  itsYokeUpperPos=itsYokePos;
+  itsYokeUpperPos.setX(itsPolePos.x()+(itsPoleSize.x()-itsYokeUpperSize.x())/2.0);
+  itsYokeUpperPos.setY(itsYokePos.y()+itsYokeMiddleSize.y()/2.0+itsYokeUpperSize.y()/2.0);
+
+  itsYokeMiddlePos=itsYokePos;
+  //  itsYokeMiddlePos.setX(-itsYokeSize.x()/2.0+itsYokeMiddleSize.x()/2.0);
+  itsYokeMiddlePos.setX(itsYokePos.x()-itsYokeSize.x()/2.0+itsYokeMiddleSize.x()/2.0);
+
+  itsYokeLowerPos=itsYokePos;
+  itsYokeLowerPos.setX(itsPolePos.x()+(itsPoleSize.x()-itsYokeUpperSize.x())/2.0);
+  itsYokeLowerPos.setY(itsYokePos.y()-itsYokeMiddleSize.y()/2.0-itsYokeUpperSize.y()/2.0);
 		 
   itsUpstreamCoilLength=285*CLHEP::mm; //The part of the could that sticks out of the upstream/downstream end;
   itsDownstreamCoilLength=320*CLHEP::mm;
   //The coil position relative to the marker volume.
   itsCoilPos.set(
-		 (itsYokeSize.x() + itsCoilSize.x())/2.0 - (320+262)*CLHEP::mm,
+		 // (itsYokeSize.x() + itsCoilSize.x())/2.0 - (320+262)*CLHEP::mm,
+		 itsYokeSize.x()/2.0 -itsAperture1Size.x() - itsAperture2Size.x() + yokeCoilGap + itsCoilSize.x()/2.0,
 		 0,
 		 (itsDownstreamCoilLength-itsUpstreamCoilLength)/2.0
 		 );
-  itsCoilPosLocal = itsCoilPos;
   itsCoilPos += itsYokePos;
-
-
+  
+  
   //Aperture position relative to the centre of the yoke.
-  itsAperturePos.set(
-		     (itsYokeSize.x()-itsApertureSize.x())/2.0, //C-type magnet, aperture is to the side.
+  itsAperture2Pos.set(
+		     (itsYokeSize.x()-itsAperture2Size.x())/2.0, //C-type magnet, aperture is to the side.
 		     0, //Aperture is centred vertically around the magnet centre.
 		     0
 		     );
+
+  itsAperture1Pos.set(
+		      itsYokeSize.x()/2.0-itsAperture2Size.x()-itsAperture1Size.x()/2.0, //C-type magnet, aperture is to the side.
+		      0, //Aperture is centred vertically around the magnet centre.
+		      0
+		      );
+
   //Upper coil position relative to marker volume centre.
   itsUpperCoilPos.set(
 		      itsCoilPos.x(),
-		      itsCoilPos.y()+(itsCoilSize.y()+itsApertureSize.y())/2.0,
+		      (itsCoilAperture+itsCoilSize.y())/2.0,
 		      itsCoilPos.z()
 		      );
   itsLowerCoilPos.set(
 		      itsCoilPos.x(),
-		      itsCoilPos.y()-(itsCoilSize.y()+itsApertureSize.y())/2.0,
+		      -(itsCoilAperture+itsCoilSize.y())/2.0,
 		      itsCoilPos.z()
 		      );
 
-  itsUpperCoilPosLocal.set(
-		      itsCoilPosLocal.x(),
-		      itsCoilPosLocal.y()+(itsCoilSize.y()+itsApertureSize.y())/2.0,
-		      itsCoilPosLocal.z()
-		      );
-  itsLowerCoilPosLocal.set(
-		      itsCoilPosLocal.x(),
-		      itsCoilPosLocal.y()-(itsCoilSize.y()+itsApertureSize.y())/2.0,
-		      itsCoilPosLocal.z()
-		      );
+  itsUpperFrontCoilPos.set(
+			   itsUpperCoilPos.x()+itsCoilSize.x()/2.0+itsMiddleCoilSize.x()/2.0,
+			   itsUpperCoilPos.y(),
+			   itsCoilPos.z()+itsCoilSize.z()/2.0-itsMiddleCoilSize.z()/2.0
+			   );
 
+  itsLowerFrontCoilPos.set(
+			   itsUpperCoilPos.x()+itsCoilSize.x()/2.0+itsMiddleCoilSize.x()/2.0,
+			   itsLowerCoilPos.y(),
+			   itsCoilPos.z()+itsCoilSize.z()/2.0-itsMiddleCoilSize.z()/2.0
+			   );
+
+  itsUpperRearCoilPos.set(
+			  itsUpperCoilPos.x()+itsCoilSize.x()/2.0+itsMiddleCoilSize.x()/2.0,
+			  itsUpperCoilPos.y(),
+			  itsCoilPos.z()-itsCoilSize.z()/2.0+itsMiddleCoilSize.z()/2.0
+			  );
+  
+  itsLowerRearCoilPos.set(
+			  itsUpperCoilPos.x()+itsCoilSize.x()/2.0+itsMiddleCoilSize.x()/2.0,
+			  itsLowerCoilPos.y(),
+			  itsCoilPos.z()-itsCoilSize.z()/2.0+itsMiddleCoilSize.z()/2.0
+			  );
+  
+
+  itsUpperLeftCoilPos.set(
+			  itsUpperCoilPos.x()+itsAperture2Size.x()+itsCoilSize.x(),
+			  itsUpperCoilPos.y(),
+			  itsUpperCoilPos.z()
+			  );
+  
+  itsLowerLeftCoilPos.set(
+			  itsLowerCoilPos.x()+itsAperture2Size.x()+itsCoilSize.x(),
+			  itsLowerCoilPos.y(),
+			  itsLowerCoilPos.z()
+			  );
+  
   itsUpperPolePos.set(
 		      itsPolePos.x(),
 		      itsPolePos.y()+(itsPoleSize.y()+itsPoleAperture)/2.0,
@@ -168,35 +240,35 @@ void BDSAwakeSpectrometer::SetVisAttributes()
 }
 
 void BDSAwakeSpectrometer::BuildMagnet(){
-  BuildPoles();
-  BuildCoils();
   BuildYoke();
+  BuildCoils();
 }
 
 void BDSAwakeSpectrometer::BuildCoils(){
-  if(itsCoilLog==NULL){
-    if(itsPoleLog==NULL){
-      BuildPoles();
-    }
-    G4ThreeVector size = itsCoilSize;
-    G4VSolid*  coilSolid1 = new G4Box("coilSolid1",size.x()/2.0,size.y()/2.0,size.z()/2.0);
-    G4ThreeVector subtractPos;
-    subtractPos.set(
-		    itsPolePos.x()-itsCoilPos.x(),
-		    0,
-		    -itsCoilPosLocal.z()
-		    );
-    G4VSolid* coilSolid = new G4SubtractionSolid("coilSolid", coilSolid1, itsPoleLog->GetSolid(), nullRotationMatrix, 
-						 subtractPos);
-						 
-        
-    itsCoilLog = new G4LogicalVolume(coilSolid, BDSMaterials::Instance()->GetMaterial("G4_Cu"),"itsCoilLog",0,0,0);
-    
-    G4VisAttributes* CoilVisAtt = new G4VisAttributes(G4Color(0.0,0.5,0.5,0.5));
-    CoilVisAtt->SetForceSolid(true);
-    CoilVisAtt->SetVisibility(true);
-    itsCoilLog->SetVisAttributes(CoilVisAtt);
-  }
+  G4ThreeVector size = itsCoilSize;
+  G4VSolid*  coilSolid = new G4Box("coilSolid",size.x()/2.0,size.y()/2.0,size.z()/2.0);
+  G4VSolid*  middleCoilSolid = new G4Box("middleCoilSolid",itsMiddleCoilSize.x()/2.0,itsMiddleCoilSize.y()/2.0,itsMiddleCoilSize.z()/2.0);
+  /*
+  G4ThreeVector subtractPos;
+  G4VSolid* coilSubtract = new G4Box("coilSubtract", itsAperture2Size.x()/2.0, size.y()/2.0,size.z()/2.0); 
+  subtractPos.set(
+		  itsPolePos.x()-itsCoilPos.x(),
+		  0,
+		  size.z()/2.0
+		  );
+  G4VSolid* coilSolid = new G4SubtractionSolid("coilSolid", coilSolid1, coilSubtract, nullRotationMatrix, 
+					       subtractPos);
+  */
+  
+  itsCoilLog = new G4LogicalVolume(coilSolid, BDSMaterials::Instance()->GetMaterial("G4_Cu"),"itsCoilLog",0,0,0);
+
+  itsMiddleCoilLog = new G4LogicalVolume(middleCoilSolid, BDSMaterials::Instance()->GetMaterial("G4_Cu"),"itsMiddleCoilLog",0,0,0);
+  
+  G4VisAttributes* CoilVisAtt = new G4VisAttributes(G4Color(0.0,0.5,0.5,0.5));
+  CoilVisAtt->SetForceSolid(true);
+  CoilVisAtt->SetVisibility(true);
+  itsCoilLog->SetVisAttributes(CoilVisAtt);
+  itsMiddleCoilLog->SetVisAttributes(CoilVisAtt);
 }
 
 void BDSAwakeSpectrometer::PlaceCoils(){
@@ -205,60 +277,61 @@ void BDSAwakeSpectrometer::PlaceCoils(){
   }
   new G4PVPlacement(_magRotationMatrix,itsUpperCoilPos,itsCoilLog,"CoilUpper",
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
-
+  
   new G4PVPlacement(_magRotationMatrix,itsLowerCoilPos,itsCoilLog,"CoilLower",
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
-}
-
-void BDSAwakeSpectrometer::BuildPoles(){
-  G4ThreeVector size = itsPoleSize;
-  G4VSolid* poleSolid = new G4Box("poleSolid",size.x()/2.0,size.y()/2.0,size.z()/2.0);
-  itsPoleLog = new G4LogicalVolume(poleSolid, BDSMaterials::Instance()->GetMaterial("G4_Fe"),"itsPoleLog",0,0,0);
-
-  G4VisAttributes* PoleVisAtt = new G4VisAttributes(G4Color(0.5,0.5,0.5,0.5));
-  PoleVisAtt->SetForceSolid(true);
-  PoleVisAtt->SetVisibility(true);
-  itsPoleLog->SetVisAttributes(PoleVisAtt);
-}
-
-void BDSAwakeSpectrometer::PlacePoles(){
-  if(itsPoleLog == NULL){
-    BuildPoles();
-  }
-  if(itsYokeLog==NULL){
-    PlaceYoke();
-  }
-
-  new G4PVPlacement(_magRotationMatrix,itsUpperPolePos,itsPoleLog,"PoleUpper",
+  
+  new G4PVPlacement(_magRotationMatrix,itsUpperLeftCoilPos,itsCoilLog,"CoilUpperLeft",
+		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+  
+  new G4PVPlacement(_magRotationMatrix,itsLowerLeftCoilPos,itsCoilLog,"CoilLowerLeft",
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
 
-  new G4PVPlacement(_magRotationMatrix,itsLowerPolePos,itsPoleLog,"PoleLower",
+  new G4PVPlacement(_magRotationMatrix,itsUpperFrontCoilPos,itsMiddleCoilLog,"CoilUpperFront",
+		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+  
+  new G4PVPlacement(_magRotationMatrix,itsLowerFrontCoilPos,itsMiddleCoilLog,"CoilLowerFront",
+		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+
+  new G4PVPlacement(_magRotationMatrix,itsUpperRearCoilPos,itsMiddleCoilLog,"CoilUpperRear",
+		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+  
+  new G4PVPlacement(_magRotationMatrix,itsLowerRearCoilPos,itsMiddleCoilLog,"CoilLowerRear",
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
 }
+
+
 
 void BDSAwakeSpectrometer::BuildYoke(){
-  if(itsCoilLog==NULL){
-    BuildCoils();
-  }
-  //Build the aperture solid...
-  G4VSolid* ApertureSolid = new G4Box("AperSolid1",itsApertureSize.x()/2.0,(itsApertureSize.y()+2*itsCoilSize.y())/2.0,itsApertureSize.z()/2.0);
-  //  Build a block for the yoke..
-  G4VSolid* YokeSolid1 = new G4Box("YokeSolid1",itsYokeSize.x()/2.0,itsYokeSize.y()/2.0,itsYokeSize.z()/2.0);
-  // Subtract the aperture..
-  G4VSolid* YokeSolid = new G4SubtractionSolid("YokeSolid", YokeSolid1,ApertureSolid, nullRotationMatrix, itsAperturePos);
+  G4VSolid* YokeUpperSolid = new G4Box("YokeSolid1",itsYokeUpperSize.x()/2.0,itsYokeUpperSize.y()/2.0,itsYokeUpperSize.z()/2.0);
 
-  itsYokeLog = new G4LogicalVolume(YokeSolid, BDSMaterials::Instance()->GetMaterial("G4_Fe"),"itsYokeLog",0,0,0);
+  itsYokeUpperLog = new G4LogicalVolume(YokeUpperSolid, BDSMaterials::Instance()->GetMaterial("G4_Fe"),"itsYokeUpperLog",0,0,0);
+
+  G4VSolid* YokeMiddleSolid = new G4Box("YokeSolid1",itsYokeMiddleSize.x()/2.0,itsYokeMiddleSize.y()/2.0,itsYokeMiddleSize.z()/2.0);
+
+  itsYokeMiddleLog = new G4LogicalVolume(YokeMiddleSolid, BDSMaterials::Instance()->GetMaterial("G4_Fe"),"itsYokeMiddleLog",0,0,0);
+
+  G4VSolid* YokeLowerSolid = new G4Box("YokeSolid1",itsYokeLowerSize.x()/2.0,itsYokeLowerSize.y()/2.0,itsYokeLowerSize.z()/2.0);
+
+  itsYokeLowerLog = new G4LogicalVolume(YokeLowerSolid, BDSMaterials::Instance()->GetMaterial("G4_Fe"),"itsYokeLowerLog",0,0,0);
+
   G4VisAttributes* YokeVisAtt = new G4VisAttributes(G4Color(0,1,0,0.5));
   YokeVisAtt->SetForceSolid(true);
   YokeVisAtt->SetVisibility(true);
-  itsYokeLog->SetVisAttributes(YokeVisAtt);
+  itsYokeUpperLog->SetVisAttributes(YokeVisAtt);
+  itsYokeMiddleLog->SetVisAttributes(YokeVisAtt);
+  itsYokeLowerLog->SetVisAttributes(YokeVisAtt);
 }
 
 void BDSAwakeSpectrometer::PlaceYoke(){
-  if(itsYokeLog == NULL){
+  if(itsYokeMiddleLog == NULL){
     BuildYoke();
   }
-  new G4PVPlacement(_magRotationMatrix,itsYokePos,itsYokeLog,"Yoke",
+  new G4PVPlacement(_magRotationMatrix,itsYokeUpperPos,itsYokeUpperLog,"YokeUpper",
+		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+  new G4PVPlacement(_magRotationMatrix,itsYokeMiddlePos,itsYokeMiddleLog,"YokeMiddle",
+		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+  new G4PVPlacement(_magRotationMatrix,itsYokeLowerPos,itsYokeLowerLog,"YokeLower",
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
 }
 
@@ -501,8 +574,7 @@ void BDSAwakeSpectrometer::Build(){
 }
 
 void BDSAwakeSpectrometer::PlaceMagnet(){
-  PlaceYoke();
-  PlacePoles();
+    PlaceYoke();
   PlaceCoils();
 }
 
