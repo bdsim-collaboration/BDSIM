@@ -66,17 +66,17 @@ Samplers
 Samplers record the particle position at the start of each element.  The following
 coordinates are recorded:
 
-=============== ============= ==================
+=============== ============= =============================
 Coordinate Name Units         Meaning
-=============== ============= ==================
-E0              GeV           Initial energy
-x0              :math:`\mu m` Initial x position
-y0              :math:`\mu m` Initial y position
-z0              :math:`\mu m` Initial z position
-xp0             rad           Initial x' position
-yp0             rad           Initial y' position
-zp0             rad           Initial z' position
-t0              s             Initial time
+=============== ============= =============================
+E0              GeV           Initial primary energy
+x0              :math:`\mu m` Initial primary x position
+y0              :math:`\mu m` Initial primary y position
+z0              :math:`\mu m` Initial primary z position
+xp0             rad           Initial primary x' position
+yp0             rad           Initial primary y' position
+zp0             rad           Initial primary z' position
+t0              s             Initial primary time
 E               GeV           Energy
 x               :math:`\mu m` x position
 y               :math:`\mu m` y position
@@ -98,7 +98,7 @@ nEvent          NA            event number
 parentID        NA            parent ID
 trackID         NA            track ID
 turnnumber      NA            turns completed
-=============== ============= ==================
+=============== ============= =============================
 
 .. note:: `rad` is not strictly correct for the prime units but is used in the small angle approximation.
 	  The prime is the differential of that position
