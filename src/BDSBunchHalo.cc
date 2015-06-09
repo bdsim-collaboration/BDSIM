@@ -3,6 +3,7 @@
 
 BDSBunchHalo::BDSBunchHalo() : BDSBunchInterface(), betaY(0.0), alphaX(0.0), alphaY(0.0), emitX(0.0), emitY(0.0), gammaX(0.0), gammaY(0.0), envelopeX(0.0), envelopeY(0.0), envelopeXp(0.0), envelopeYp(0.0) {
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
+  weightParameter=1.0;
 }
 
 BDSBunchHalo::BDSBunchHalo(G4double betaXIn,      G4double betaYIn, 
@@ -17,7 +18,8 @@ BDSBunchHalo::BDSBunchHalo(G4double betaXIn,      G4double betaYIn,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
+  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
+  weightParameter=1.0;
 }
 
 BDSBunchHalo::~BDSBunchHalo() 
@@ -43,6 +45,8 @@ void  BDSBunchHalo::SetOptions(struct Options &opt) {
   SetEnvelopeY(opt.envelopeY);
   SetEnvelopeXp(opt.envelopeXp);
   SetEnvelopeYp(opt.envelopeYp); 
+  SetWeightParameter(opt.haloPSWeightParameter);
+  SetWeightFunction(opt.haloPSWeightFunction);
 }
 
 void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
@@ -84,6 +88,27 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
     }    
     else {
       // determine weight
+      double wx = 0; 
+      double wy = 0; 
+      if(weightFunction == "flat" || weightFunction == "") { 
+	wx = 1.0;
+	wy = 1.0;
+      }
+      else if (weightFunction == "oneoverr") { 
+	wx = pow(emitX/fabs(emitXSp),weightParameter);
+	wy = pow(emitY/fabs(emitYSp),weightParameter);	
+      }
+      else if (weightFunction == "exp") {
+	wx = exp(-(emitXSp-emitX)/(emitX*weightParameter));
+	wy = exp(-(emitYSp-emitY)/(emitY*weightParameter));
+      }
+
+#ifdef BDSBEBUG
+      G4cout << emitXSp/emitX << " " << emitYSp/emitY << " " << wx << " " << wy << std::endl;
+#endif
+      // reject
+      if(FlatGen->shoot() > wx && FlatGen->shoot() > wy) 
+	continue;
 
       // add to reference orbit 
       x0 += dx;

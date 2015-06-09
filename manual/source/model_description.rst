@@ -1193,8 +1193,16 @@ gauss
 ^^^^^
 
 Uses the gausMatrix beam generator but with simplified input parameters opposed to a complete 
-beam sigma matrix. This beam distribution does not allow for correlations between phase space 
-coordinates.
+beam sigma matrix. This beam distribution has a diagonal :math:`\sigma`-matrix and does not allow for 
+correlations between phase space coordinates, so 
+
+.. math:: 
+   \sigma_{11} & =  \sigma_x^2   \\
+   \sigma_{22} & =  \sigma_x^{\prime 2}  \\
+   \sigma_{33} & =  \sigma_y^2   \\
+   \sigma_{44} & =  \sigma_y^{\prime 2}  \\    
+   \sigma_{55} & =  \sigma_{T}^2 \\  
+   \sigma_{66} & =  \sigma_{E}^2. 
 
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
@@ -1272,36 +1280,45 @@ where the parameters have their usual meanings. A phase space point can be rejec
 depending on the single particle emittance, which is calculated as    
 
 .. math::
-
    \epsilon_{\rm SP} = \gamma x^2 + 2\alpha\;x\;x^{\prime} + \beta x^{\prime 2}
 
-if the single particle emittance is less than beam emittance so :math:`\epsilon_{\rm SP} \lt \epsilon_{\rm core}` the particle is rejected. 
+if the single particle emittance is less than beam emittance so :math:`\epsilon_{\rm SP} \lt \epsilon_{\rm core}` 
+the particle is rejected. `haloPSWeightFunction` is a string that selects the function 
+:math:`f_{\rm haloWeight}(\epsilon_{\rm SP})` which is 1 at the ellipse defined by :math:`\epsilon_{\rm core}`. The
+weighting functions are either `flat`, one over emittance `oneoverr` or exponential `exp` so  
 
-+----------------------------------+-------------------------------------------------------+
-| Option                           | Description                                           |
-+==================================+=======================================================+
-| emitx                            | Horizontal beam core emittance [m]                    |
-+----------------------------------+-------------------------------------------------------+
-| emity                            | Vertical beam core emittance [m]                      |
-+----------------------------------+-------------------------------------------------------+
-| betax                            | Horizontal beta function [m]                          |
-+----------------------------------+-------------------------------------------------------+
-| betay                            | Vertical beta function [m]                            |
-+----------------------------------+-------------------------------------------------------+
-| alfx                             | Horizontal alpha function                             |
-+----------------------------------+-------------------------------------------------------+
-| alfy                             | Vertical alpha function                               |
-+----------------------------------+-------------------------------------------------------+
-| envelopeX                        | Horitontal position maximum [m]                       |
-+----------------------------------+-------------------------------------------------------+
-| envelopeY                        | Vertical position maximum [m]                         |
-+----------------------------------+-------------------------------------------------------+
-| envelopeXp                       | Horitontal angle maximum [m]                          |
-+----------------------------------+-------------------------------------------------------+
-| envelopeYp                       | Vertical angle maximum [m]                            |
-+----------------------------------+-------------------------------------------------------+
-| haloPSWeightFunction             | Phase space weight function [string]                  |
-+----------------------------------+-------------------------------------------------------+
+.. math:: 
+   f_{\rm haloWeight}(\epsilon_{\rm SP}) & = 1 
+   f_{\rm haloWeight}(\epsilon_{\rm SP}) & = \left(\frac{\epsilon_{\rm core}}{\epsilon_{\rm SP}}\right)^p \\
+   f_{\rm haloWeight}(\epsilon_{\rm SP}) & = \exp(-\frac{\epsilon_{SP}-\epsilon_{\rm core}}{p \epsilon_{\rm core}}
+   
++----------------------------------+-----------------------------------------------------------------------------+
+| Option                           | Description                                                                 |
++==================================+=============================================================================+
+| emitx                            | Horizontal beam core emittance [m] :math:`\epsilon_{{\rm core},x}`          |
++----------------------------------+-----------------------------------------------------------------------------+
+| emity                            | Vertical beam core emittance [m] :math:`\epsilon_{{\rm core},y}`            |
++----------------------------------+-----------------------------------------------------------------------------+
+| betax                            | Horizontal beta function [m]                                                |
++----------------------------------+-----------------------------------------------------------------------------+
+| betay                            | Vertical beta function [m]                                                  |
++----------------------------------+-----------------------------------------------------------------------------+
+| alfx                             | Horizontal alpha function                                                   |
++----------------------------------+-----------------------------------------------------------------------------+
+| alfy                             | Vertical alpha function                                                     |
++----------------------------------+-----------------------------------------------------------------------------+
+| envelopeX                        | Horitontal position maximum [m]                                             |
++----------------------------------+-----------------------------------------------------------------------------+
+| envelopeY                        | Vertical position maximum [m]                                               |
++----------------------------------+-----------------------------------------------------------------------------+
+| envelopeXp                       | Horitontal angle maximum [m]                                                |
++----------------------------------+-----------------------------------------------------------------------------+
+| envelopeYp                       | Vertical angle maximum [m]                                                  |
++----------------------------------+-----------------------------------------------------------------------------+
+| haloPSWeightFunction             | Phase space weight function [string]                                        |
++----------------------------------+-----------------------------------------------------------------------------+
+| haloPSWeightParameter            | Phase space weight function parameters []                                   |
++----------------------------------+-----------------------------------------------------------------------------+
 
 composite
 ^^^^^^^^^
