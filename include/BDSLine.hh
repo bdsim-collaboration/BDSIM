@@ -13,7 +13,7 @@
  * Memory of components is not owned
  */
 
-class BDSLine :public BDSAcceleratorComponent
+class BDSLine: public BDSAcceleratorComponent
 {
 public:
 
@@ -28,7 +28,9 @@ public:
   BDSLineIterator begin(){return line.begin();}
   BDSLineIterator end(){return line.end();}
 
-  virtual void Intialise();
+  /// Override the BDSAccelerator::Initialise() function to loop over the
+  /// line and call that function belonging to each member
+  virtual void Initialise();
 
 private:
   /// define pure virtual method

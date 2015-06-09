@@ -33,6 +33,7 @@
 /// Forward declaration for iterator
 class BDSBeamline;
 
+class BDSLine;
 class BDSTransform3D;
 
 /// Iterator for beamline
@@ -52,8 +53,13 @@ public:
   
   ~BDSBeamline();
 
-  /// Add a component and calculate its position and rotation with respect
+  /// Add a single component and calculate its position and rotation with respect
   /// to the beginning of the beamline
+  void AddSingleComponent(BDSAcceleratorComponent* component);
+
+  /// Add a component, but check to see if can be dynamically upcast to a line
+  /// in which case, loop over it and apply
+  /// AddSingleComponent(BDSAcceleratorComponent* component) to each component
   void AddComponent(BDSAcceleratorComponent* component);
 
   /// Apply a Transform3D rotation and translation to the reference

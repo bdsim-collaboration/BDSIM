@@ -6,6 +6,7 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSLine.hh"
 #include "BDSSampler.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
@@ -102,6 +103,17 @@ std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
 }
 
 void BDSBeamline::AddComponent(BDSAcceleratorComponent* component)
+{
+  if (BDSLine* line = dynamic_cast<BDSLine*>(component))
+    {
+      for (BDSLine::BDSLineIterator i = line->begin(); i != line->end(); ++i)
+	{AddSingleComponent(*i);}
+    }
+  else
+    {AddSingleComponent(component);}
+}
+
+void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component)
 {
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "adding component to beamline and calculating coordinates" << G4endl;

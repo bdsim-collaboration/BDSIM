@@ -265,25 +265,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     break;
   }
 
-  // add common properties and build geometry
   if (element)
     {element->Initialise();}
-  /*
-      // check if element is divided into multiple parts 
-      if (element->GetType() == "line") {
-	BDSLine* line = dynamic_cast<BDSLine*>(element);
-	if (line)
-	  {
-	    //line of components to be added individually
-	    for (BDSLine::BDSLineIterator i = line->begin(); i != line->end(); ++i)
-	      {(*i)->Initialise();}
-	  }
-      }
-      else
-	{element->Initialise();}
-    }
-    }*/
-
+  
   return element;
 }
 
@@ -411,6 +395,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend()
   //create Line to put them in
   BDSLine* sbendline = new BDSLine("sbendline");
   //create sbends and put them in the line
+  BDSBeamPipeInfo* bpInfo    = PrepareBeamPipeInfo(_element);
+  BDSMagnetOuterInfo moInfo = PrepareMagnetOuterInfo(_element);
   for (int i = 0; i < nSbends; ++i)
     {
       std::stringstream name;
@@ -421,8 +407,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend()
 						  semiangle,
 						  bField,
 						  bPrime,
-						  PrepareBeamPipeInfo(_element),
-						  PrepareMagnetOuterInfo(_element)));
+						  bpInfo,
+						  moInfo) );
     }
   return sbendline;
 }

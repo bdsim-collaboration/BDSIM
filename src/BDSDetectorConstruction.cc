@@ -219,24 +219,7 @@ void BDSDetectorConstruction::BuildBeamline()
       
       BDSAcceleratorComponent* temp = theComponentFactory->createComponent(it, beamline_list);
       if(temp)
-	{
-	  if (temp->GetType() == "line")
-	    {
-	      // dynamic cast to access methods for iteration
-	      BDSLine* line = dynamic_cast<BDSLine*>(temp);
-	      if (line)
-		{
-		  //line of components to be added individually
-		  for (BDSLine::BDSLineIterator i = line->begin(); i != line->end(); ++i)
-		    {beamline->AddComponent(*i);}
-		}
-	    }
-	  else
-	    {
-	      //single component
-	      beamline->AddComponent(temp);
-	    }
-	}
+	{beamline->AddComponent(temp);}
     }
 
   // Special circular machine bits
