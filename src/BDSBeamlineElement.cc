@@ -57,12 +57,11 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   zAxisReferenceEnd(zAxisReferenceEndIn)
 {
 #ifdef BDSDEBUG
-  G4LogicalVolume* containerLV = component->GetContainerLogicalVolume();
   G4cout << __METHOD_NAME__;
-  if (containerLV)
-    {G4cout << containerLV->GetName();}
+  if (componentIn)
+    {G4cout << componentIn->GetName();}
   else
-    {G4cerr << "WARNING - supplied component as no container logical volume!" << G4endl;}
+    {G4cerr << "WARNING - supplied component is in valid!" << G4endl;}
   G4cout << G4endl;
 #endif
 }
