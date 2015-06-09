@@ -4,9 +4,14 @@
    Copyright (c) 2004 by J.C.Carter.  ALL RIGHTS RESERVED. 
 */
 
-#include "BDSGlobalConstants.hh"
+#include "BDSAcceleratorComponent.hh"
+#include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSElement.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDS3DMagField.hh"
+#include "BDSXYMagField.hh"
+#include "BDSMagFieldSQL.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Torus.hh"
@@ -17,10 +22,7 @@
 #include "G4PVPlacement.hh"
 #include "G4UserLimits.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "BDSAcceleratorComponent.hh"
-#include "BDS3DMagField.hh"
-#include "BDSXYMagField.hh"
-#include "BDSMagFieldSQL.hh"
+
 #include "G4NystromRK4.hh"
 
 // geometry drivers

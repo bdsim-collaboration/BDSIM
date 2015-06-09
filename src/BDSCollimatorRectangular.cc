@@ -25,7 +25,7 @@ void BDSCollimatorRectangular::BuildInnerCollimator()
 			  chordLength);             // z half length
   // z half length long for unambiguous subtraction
 
-  vacuumSolid = new G4Box(name + "_inner_solid",    // name
+  vacuumSolid = new G4Box(name + "_vacuum_solid",   // name
 			  xAperture - lengthSafety, // x half width
 			  yAperture - lengthSafety, // y half width
 			  chordLength*0.5);         // z half length

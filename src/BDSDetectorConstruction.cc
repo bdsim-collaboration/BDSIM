@@ -393,25 +393,19 @@ void BDSDetectorConstruction::ComponentPlacement()
   for(; it != beamline->end(); ++it)
     {
       BDSAcceleratorComponent* thecurrentitem = (*it)->GetAcceleratorComponent();
-
       // do a few checks to see everything's valid before dodgy placement could happen
       if (!thecurrentitem)
-	{
-	  G4cerr << __METHOD_NAME__ << "beamline element does not contain valid BDSAcceleratorComponent" << G4endl;
-	  exit(1);
-	}
+	{G4cerr << __METHOD_NAME__ << "beamline element does not contain valid BDSAcceleratorComponent" << G4endl; exit(1);}
+      
       // check we can get the container logical volume to be placed
-      G4LogicalVolume* elementLV = (*it)->GetContainerLogicalVolume();
+      G4LogicalVolume* elementLV = thecurrentitem->GetContainerLogicalVolume();
       if (!elementLV)
-	{
-	  G4cerr << __METHOD_NAME__ << "this accelerator component has no volume to be placed!" << G4endl;
-	  exit(1);
-	}
+	{G4cerr << __METHOD_NAME__ << "this accelerator component " << (*it)->GetName() << " has no volume to be placed!" << G4endl;  exit(1);}
       
       G4String name = (*it)->GetName(); // this is done after the checks as it really just passes down to acc component
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "placement of component named: " << name << G4endl;
-#endif
+      if (verbose || debug)
+	{G4cout << __METHOD_NAME__ << "placement of component named: " << name << G4endl;}
+      
       // read out geometry logical volume - note may not exist for each item - must be tested
       G4LogicalVolume* readOutLV   = thecurrentitem->GetReadOutLogicalVolume();
       // make read out geometry sensitive
