@@ -744,12 +744,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createSolenoid()
   
 #ifdef BDSDEBUG 
   G4cout << "---->creating Solenoid,"
-	 << " name= " << _element.name
-	 << " l= " << _element.l << " m"
-	 << " ks= " << _element.ks << " m^-1"
-	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"
-	 << " B= " << bField/CLHEP::tesla << " T"
-	 << " material= " << _element.outerMaterial
+	 << " name = " << _element.name
+	 << " l = " << _element.l << " m,"
+	 << " ks = " << _element.ks << " m^-1,"
+	 << " brho = " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m,"
+	 << " B = " << bField/CLHEP::tesla << " T,"
+	 << " material = \"" << _element.outerMaterial << "\""
 	 << G4endl;
 #endif
   
@@ -767,10 +767,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createRectangularCollimator()
 
 #ifdef BDSDEBUG 
   G4cout << "--->creating " << typestr(_element.type) << ","
-	 << " name     = " << _element.name 
-	 << " xaper    = " << _element.xsize <<" m"
-	 << " yaper    = " << _element.ysize <<" m"
-	 << " material = " << _element.material
+	 << " name = " << _element.name  << ","
+	 << " x half aperture = " << _element.xsize <<" m,"
+	 << " y half aperture = " << _element.ysize <<" m,"
+	 << " material = \"" << _element.material << "\""
 	 << G4endl;
 #endif
   
@@ -789,10 +789,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createEllipticalCollimator()
 
 #ifdef BDSDEBUG 
   G4cout << "--->creating " << typestr(_element.type) << ","
-	 << " name     = " << _element.name 
-	 << " xaper    = " << _element.xsize <<" m"
-	 << " yaper    = " << _element.ysize <<" m"
-	 << " material = " << _element.material
+	 << " name = " << _element.name 
+	 << " x half aperture = " << _element.xsize <<" m,"
+	 << " y half aperture = " << _element.ysize <<" m,"
+	 << " material = \"" << _element.material << "\""
 	 << G4endl;
 #endif
   
