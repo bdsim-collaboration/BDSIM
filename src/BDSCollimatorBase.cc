@@ -29,11 +29,12 @@ BDSCollimatorBase::BDSCollimatorBase(G4String name,
   vacuumMaterial(vacuumMaterialIn)
 {
   if(outerDiameter==0)
-    {outerDiameter = BDSGlobalConstants::Instance()->GetComponentBoxSize()*0.5;}
+    {outerDiameter = BDSGlobalConstants::Instance()->GetOuterDiameter();}
 
-  if ( (xAperture > outerDiameter) || (yAperture > outerDiameter) )
+  if ( (xAperture > 0.5*outerDiameter) || (yAperture > 0.5*outerDiameter) )
     {
       G4cerr << __METHOD_NAME__ << "half aperture bigger than diameter!" << G4endl;
+      G4cerr << "Outer diameter is " << outerDiameter << " mm" << G4endl;
       exit(1);
     }
 
