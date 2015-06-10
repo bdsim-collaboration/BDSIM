@@ -25,7 +25,6 @@ protected:
   G4Mag_UsualEqRhs*       itsEqRhs;
 
 private:
-  void SetVisAttributes();
   virtual void Build();
   virtual void BuildContainerLogicalVolume();
   /// define field and stepper

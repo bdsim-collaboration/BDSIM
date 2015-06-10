@@ -1,9 +1,3 @@
-/* BDSIM
-   Author: L. Nevay,
-   Last modified 15/04/2014
-   Copyright (c) 2014.  ALL RIGHTS RESERVED.
-*/
-
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSTerminator.hh"

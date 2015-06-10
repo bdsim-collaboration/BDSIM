@@ -32,7 +32,7 @@ void BDSTeleporter::Build()
 {
   BuildBPFieldAndStepper();   // create custom stepper
   BuildBPFieldMgr(itsStepper,itsMagField);  // register it in a manager
-  BDSAcceleratorComponent::Build(); // create logical volume and attach manager(stepper)
+  BDSAcceleratorComponent::Build(); // create container and attach stepper
 }
 
 void BDSTeleporter::BuildContainerLogicalVolume()
@@ -83,42 +83,28 @@ void BDSTeleporter::BuildBPFieldMgr( G4MagIntegratorStepper* stepper,
     itsFieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
 }
 
-void BDSTeleporter::SetVisAttributes()
-{
-  //make it visible if debug build and invisible otherwise
-  G4VisAttributes* itsVisAttributes = new G4VisAttributes(G4Colour(0.852,0.438,0.836,0.5));
-#if defined BDSDEBUG
-  itsVisAttributes->SetVisibility(true);
-#else
-  itsVisAttributes->SetVisibility(false);
-#endif
-}
-
 void BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
 {
   // get position of last item in beamline
   // and then calculate necessary offset teleporter should apply
-  G4ThreeVector lastitemposition   = thebeamline->GetLastItem()->GetPositionEnd();
-  G4ThreeVector firstitemposition  = thebeamline->GetFirstItem()->GetPositionStart();
-  G4ThreeVector  delta             = lastitemposition/CLHEP::m - firstitemposition/CLHEP::m;
+  G4ThreeVector lastitemposition   = thebeamline->back()->GetReferencePositionEnd();
+  G4ThreeVector firstitemposition  = thebeamline->front()->GetReferencePositionStart();
+  G4ThreeVector  delta             = lastitemposition - firstitemposition;
 #ifdef BDSDEBUG
   G4cout << "Calculating Teleporter delta" << G4endl;
-  G4cout << "last item position  : " << lastitemposition/CLHEP::m << G4endl;
-  G4cout << "first item position : " << firstitemposition/CLHEP::m << G4endl;
+  G4cout << "last item position  : " << lastitemposition  << " mm" << G4endl;
+  G4cout << "first item position : " << firstitemposition << " mm" << G4endl;
 #endif
-  G4cout << "Teleport delta      : " << delta << G4endl;
-  BDSGlobalConstants::Instance()->SetTeleporterDelta(delta*CLHEP::m);
+  G4cout << "Teleport delta      : " << delta << " mm" << G4endl;
+  BDSGlobalConstants::Instance()->SetTeleporterDelta(delta);
   
   // calculate length of teleporter
   // beamline is built along z and sbend deflects in x
   // setting length here ensures that length is always the z difference
-  G4double teleporterlength       = fabs(delta.z()*CLHEP::m) - 1e-8*CLHEP::m;
-  G4cout << "Calculated teleporter length : " << teleporterlength/CLHEP::m << " m" << G4endl;
+  G4double teleporterlength       = fabs(delta.z()) - 1e-8;
+  G4cout << "Calculated teleporter length : " << teleporterlength << " mm" << G4endl;
   BDSGlobalConstants::Instance()->SetTeleporterLength(teleporterlength);
 }
-
-
-
 
 void BDS::AddTeleporterToEndOfBeamline(ElementList* beamline_list)
 {
