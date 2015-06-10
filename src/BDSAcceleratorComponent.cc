@@ -8,6 +8,7 @@
 
 #include <cmath>
 
+G4Material* BDSAcceleratorComponent::emptyMaterial = NULL;
 
 struct BDSBeamPipeInfo;
 class BDSTiltOffset;
@@ -35,7 +36,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 #endif
   readOutLV = NULL;
   itsSPos   = 0.0;
-  emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  if (!emptyMaterial)
+    {emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());}
   
   // calculate the chord length if the angle is finite
   if (BDS::IsFinite(angleIn))
