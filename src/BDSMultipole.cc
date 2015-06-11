@@ -2,7 +2,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnet.hh"
 #include "BDSMultipoleMagField.hh"
-#include "BDSTMultipole.hh"
+#include "BDSMultipole.hh"
 
 #include "G4FieldManager.hh"
 #include "G4HelixImplicitEuler.hh"
@@ -16,23 +16,22 @@
 
 class BDSTiltOffset;
 
-BDSTMultipole::BDSTMultipole(G4String            name,
-			     G4double            length,
-			     std::list<G4double> akn, // list of normal multipole strengths
-			     // (NOT multiplied by multipole length)
-			     std::list<G4double> aks, // list of skew multipole strengths
-			     // (NOT multiplied by multipole length)
-			     BDSBeamPipeInfo*    beamPipeInfo,
-			     BDSMagnetOuterInfo  magnetOuterInfo,
-			     BDSTiltOffset       tiltOffset):
+BDSMultipole::BDSMultipole(G4String            name,
+			   G4double            length,
+			   std::list<G4double> akn, // list of normal multipole strengths
+			   // (NOT multiplied by multipole length)
+			   std::list<G4double> aks, // list of skew multipole strengths
+			   // (NOT multiplied by multipole length)
+			   BDSBeamPipeInfo*    beamPipeInfo,
+			   BDSMagnetOuterInfo  magnetOuterInfo,
+			   BDSTiltOffset       tiltOffset):
   BDSMagnet(BDSMagnetType::multipole, name, length,
 	    beamPipeInfo, magnetOuterInfo, tiltOffset)
 {
   CommonConstructor(akn,aks);
 }
 
-
-void BDSTMultipole::CommonConstructor(std::list<G4double> akn, std::list<G4double> aks)
+void BDSMultipole::CommonConstructor(std::list<G4double> akn, std::list<G4double> aks)
 {
 #ifdef BDSDEBUG
   if (akn.size()>0){
@@ -93,7 +92,7 @@ void BDSTMultipole::CommonConstructor(std::list<G4double> akn, std::list<G4doubl
   itsOrder = kn.size();
 }
 
-void BDSTMultipole::BuildBPFieldAndStepper()
+void BDSMultipole::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
   itsMagField = new BDSMultipoleMagField(kn,ks);

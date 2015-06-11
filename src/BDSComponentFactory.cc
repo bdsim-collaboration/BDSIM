@@ -23,7 +23,7 @@
 #include "BDSSolenoid.hh"
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
-#include "BDSTMultipole.hh"
+#include "BDSMultipole.hh"
 #include "BDSTransform3D.hh"
 
 // general
@@ -686,12 +686,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
   G4cout << "}" << G4endl;
 #endif
 
-  return (new BDSTMultipole( _element.name,
-			     _element.l * CLHEP::m,
-			     _element.knl,
-			     _element.ksl,
-			     PrepareBeamPipeInfo(_element),
-			     PrepareMagnetOuterInfo(_element)));
+  return (new BDSMultipole( _element.name,
+			    _element.l * CLHEP::m,
+			    _element.knl,
+			    _element.ksl,
+			    PrepareBeamPipeInfo(_element),
+			    PrepareMagnetOuterInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createElement()

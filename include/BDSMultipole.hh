@@ -5,8 +5,8 @@
 
 */
 
-#ifndef BDSTMULTIPOLE_H
-#define BDSTMULTIPOLE_H
+#ifndef BDSMULTIPOLE_H
+#define BDSMULTIPOLE_H
 
 #include "BDSMagnet.hh"
 
@@ -18,19 +18,19 @@
 struct BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
-class BDSTMultipole: public BDSMagnet
+class BDSMultipole: public BDSMagnet
 {
 public:
-  BDSTMultipole(G4String            name,
-		G4double            length,
-		std::list<G4double> akn, // list of normal multipole strengths
+  BDSMultipole(G4String            name,
+	       G4double            length,
+	       std::list<G4double> akn, // list of normal multipole strengths
+	       // (NOT multiplied by multipole length)
+	       std::list<G4double> aks, // list of skew multipole strengths
 		                    // (NOT multiplied by multipole length)
-		std::list<G4double> aks, // list of skew multipole strengths
-		                    // (NOT multiplied by multipole length)
-		BDSBeamPipeInfo*    beamPipeInfo,
-		BDSMagnetOuterInfo  magnetOuterInfo,
-		BDSTiltOffset       tiltOffset = BDSTiltOffset());
-  ~BDSTMultipole(){;};
+	       BDSBeamPipeInfo*    beamPipeInfo,
+	       BDSMagnetOuterInfo  magnetOuterInfo,
+	       BDSTiltOffset       tiltOffset = BDSTiltOffset());
+  ~BDSMultipole(){;};
   
 private:
   /// old and new constructor contents in temporary function to avoid replicating

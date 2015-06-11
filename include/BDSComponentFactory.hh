@@ -1,5 +1,5 @@
-#ifndef __BDSCOMPONENTFACTORY_
-#define __BDSCOMPONENTFACTORY_
+#ifndef BDSCOMPONENTFACTORY_H
+#define BDSCOMPONENTFACTORY_H
 
 #include <list>
 #include "globals.hh"
