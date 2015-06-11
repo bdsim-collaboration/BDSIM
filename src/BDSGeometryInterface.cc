@@ -78,7 +78,7 @@ void BDSGeometryInterface::Optics()
 	     << setw(15) << thecurrentitem->GetAngle()   << " " << G4endl;
 
       // need to rewrite this to use BDSBeamPipeInfo and possible magnet strenghts if
-      // can dynamic up cast to BDSMultipole ok
+      // can dynamic up cast to BDSMagnet ok
 	/*
 	     << setw(15) << thecurrentitem->GetK1()   << " "
 	     << setw(15) << thecurrentitem->GetK2()   << " "

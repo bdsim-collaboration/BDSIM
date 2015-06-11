@@ -3,13 +3,13 @@
 
 #include "globals.hh"
 
-#include "BDSMultipole.hh"
+#include "BDSMagnet.hh"
 #include "BDSTiltOffset.hh"
 
 struct BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
-class BDSRBend :public BDSMultipole
+class BDSRBend: public BDSMagnet
 {
 public:
   BDSRBend(G4String           name,

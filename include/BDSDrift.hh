@@ -2,12 +2,11 @@
 #define BDSDRIFT_H
 
 #include "globals.hh"
-#include "BDSMultipole.hh"
+
 #include "BDSAcceleratorComponent.hh"
-#include "BDSBeamPipeInfo.hh"
 #include "BDSTiltOffset.hh"
 
-#include "G4Material.hh"
+struct BDSBeamPipeInfo;
 
 class BDSDrift: public BDSAcceleratorComponent
 {

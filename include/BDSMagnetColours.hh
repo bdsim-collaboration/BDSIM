@@ -25,7 +25,7 @@ private:
   std::map<G4int, G4String> magnetName;
 
   /// A map of the colour for each type of magnet by name -
-  /// one for each class that inherits the BDSMultipole class
+  /// one for each class that inherits the BDSMagnet class
   std::map<G4String, G4Colour*> colours;
 };
 

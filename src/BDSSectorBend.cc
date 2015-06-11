@@ -5,6 +5,7 @@
 
 #include "BDSBeamPipeFactory.hh"
 #include "BDSDipoleStepper.hh"
+#include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 #include "BDSMaterials.hh"
@@ -30,8 +31,8 @@ BDSSectorBend::BDSSectorBend(G4String           name,
 			     BDSBeamPipeInfo*   beamPipeInfo,
 			     BDSMagnetOuterInfo magnetOuterInfo,
 			     BDSTiltOffset      tiltOffset):
-  BDSMultipole(BDSMagnetType::sectorbend, name, length,
-	       beamPipeInfo, magnetOuterInfo, tiltOffset),
+  BDSMagnet(BDSMagnetType::sectorbend, name, length,
+	    beamPipeInfo, magnetOuterInfo, tiltOffset),
   itsBField(bField),itsBGrad(bGrad)
 {
   angle = angleIn;
@@ -50,7 +51,7 @@ void BDSSectorBend::Build()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  BDSMultipole::Build();
+  BDSMagnet::Build();
   
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {

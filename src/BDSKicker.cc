@@ -3,6 +3,7 @@
 
 #include "BDSBeamPipeFactory.hh"
 #include "BDSDipoleStepper.hh"
+#include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 #include "BDSSbendMagField.hh"
@@ -26,8 +27,8 @@ BDSKicker::BDSKicker(G4String           name,
 		     BDSBeamPipeInfo*   beamPipeInfo,
 		     BDSMagnetOuterInfo magnetOuterInfo,
 		     BDSTiltOffset      tiltOffset):
-  BDSMultipole(BDSMagnetType::hkicker, name, length,
-	       beamPipeInfo, magnetOuterInfo, tiltOffset),
+  BDSMagnet(BDSMagnetType::hkicker, name, length,
+	    beamPipeInfo, magnetOuterInfo, tiltOffset),
   itsBField(bField),
   itsBGrad(bGrad),
   itsKickAngle(angle),
@@ -39,7 +40,7 @@ BDSKicker::BDSKicker(G4String           name,
 
 void BDSKicker::Build()
 {
-  BDSMultipole::Build();
+  BDSMagnet::Build();
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4double polePos[4];

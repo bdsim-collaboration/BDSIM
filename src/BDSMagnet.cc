@@ -38,18 +38,18 @@
 #include "BDSMaterials.hh"
 #include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetType.hh"
-#include "BDSMultipole.hh"
+#include "BDSMagnet.hh"
 #include "BDSMultipoleOuterMagField.hh"
 #include "BDSUtilities.hh"
 
 class BDSTiltOffset;
 
-BDSMultipole::BDSMultipole(BDSMagnetType      type,
-			   G4String           name,
-			   G4double           length,
-			   BDSBeamPipeInfo*   beamPipeInfoIn,
-			   BDSMagnetOuterInfo magnetOuterInfo,
-			   BDSTiltOffset      tiltOffset):
+BDSMagnet::BDSMagnet(BDSMagnetType      type,
+		     G4String           name,
+		     G4double           length,
+		     BDSBeamPipeInfo*   beamPipeInfoIn,
+		     BDSMagnetOuterInfo magnetOuterInfo,
+		     BDSTiltOffset      tiltOffset):
   BDSAcceleratorComponent(name, length, 0, "magnet", tiltOffset),
   itsType(type),
   beamPipeInfo(beamPipeInfoIn),
@@ -79,7 +79,7 @@ BDSMultipole::BDSMultipole(BDSMagnetType      type,
   outer    = NULL;
 }
 
-void BDSMultipole::Build()
+void BDSMagnet::Build()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -92,7 +92,7 @@ void BDSMultipole::Build()
   BuildOuterVolume();
 }
 
-void BDSMultipole::BuildBeampipe()
+void BDSMagnet::BuildBeampipe()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -104,7 +104,7 @@ void BDSMultipole::BuildBeampipe()
   BeamPipeCommonTasks();
 }
 
-void BDSMultipole::BeamPipeCommonTasks()
+void BDSMagnet::BeamPipeCommonTasks()
 {
   //actual beam pipe ->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
   // SET FIELD
@@ -140,7 +140,7 @@ void BDSMultipole::BeamPipeCommonTasks()
 				   BDSGlobalConstants::Instance()->GetCheckOverlaps());
 }
 
-void BDSMultipole::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
+void BDSMagnet::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
 				   G4MagneticField* aField)
 {
   itsChordFinder= 
@@ -163,7 +163,7 @@ void BDSMultipole::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
     itsBPFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
 }
 
-void BDSMultipole::BuildOuterVolume()
+void BDSMagnet::BuildOuterVolume()
 {
   G4Material* outerMaterial          = itsMagnetOuterInfo.outerMaterial;
   BDSMagnetGeometryType geometryType = itsMagnetOuterInfo.geometryType;
@@ -253,7 +253,7 @@ void BDSMultipole::BuildOuterVolume()
     }
 }
 
-void BDSMultipole::BuildContainerLogicalVolume()
+void BDSMagnet::BuildContainerLogicalVolume()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -306,11 +306,11 @@ void BDSMultipole::BuildContainerLogicalVolume()
   SetExtentZ(-chordLength*0.5, chordLength*0.5);
 }
 
-void BDSMultipole::BuildOuterFieldManager(G4int nPoles, G4double poleField,
+void BDSMagnet::BuildOuterFieldManager(G4int nPoles, G4double poleField,
 					  G4double phiOffset)
 {
   if(nPoles<=0 || nPoles>10 || nPoles%2 !=0)
-    G4Exception("BDSMultipole: Invalid number of poles", "-1", FatalException, "");
+    G4Exception("BDSMagnet: Invalid number of poles", "-1", FatalException, "");
   itsOuterFieldMgr=NULL;
   if (poleField==0) return;
 
@@ -329,7 +329,7 @@ void BDSMultipole::BuildOuterFieldManager(G4int nPoles, G4double poleField,
   outer->GetContainerLogicalVolume()->SetFieldManager(itsOuterFieldMgr,false);
 }
 
-BDSMultipole::~BDSMultipole()
+BDSMagnet::~BDSMagnet()
 {
   delete itsBPFieldMgr;
   delete itsChordFinder;

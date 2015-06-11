@@ -1,6 +1,8 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh" 
+#include "BDSGlobalConstants.hh"
+#include "BDSMagnet.hh"
+#include "BDSMagnetOuterInfo.hh"
 #include "BDSSolenoid.hh"
 #include "BDSSolenoidMagField.hh"
 #include "BDSSolenoidStepper.hh"
@@ -22,14 +24,14 @@ BDSSolenoid::BDSSolenoid(G4String           name,
 			 BDSBeamPipeInfo*   beamPipeInfo,
 			 BDSMagnetOuterInfo magnetOuterInfo,
 			 BDSTiltOffset      tiltOffset):
-  BDSMultipole(BDSMagnetType::solenoid, name, length,
-	       beamPipeInfo, magnetOuterInfo, tiltOffset),
+  BDSMagnet(BDSMagnetType::solenoid, name, length,
+	    beamPipeInfo, magnetOuterInfo, tiltOffset),
   itsBField(bField)
 {;}
 
 void BDSSolenoid::Build()
 {
-  BDSMultipole::Build();
+  BDSMagnet::Build();
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4cout << __METHOD_NAME__ << "IncludeIronMagFields option not implemented for solenoid class"<<G4endl;

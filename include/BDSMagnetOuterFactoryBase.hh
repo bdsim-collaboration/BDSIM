@@ -20,7 +20,7 @@
  * implied by the factory name and omitting it will reduce the name length.
  *
  * Each factory should implement a method for every type of magnet - ie for
- * each class that inherits BDSMultipole.
+ * each class that inherits BDSMagnet.
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */

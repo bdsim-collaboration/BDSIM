@@ -20,8 +20,8 @@ BDSRfCavity::BDSRfCavity(G4String           name,
 			 BDSBeamPipeInfo*   beamPipeInfo,
 			 BDSMagnetOuterInfo magnetOuterInfo,
 			 BDSTiltOffset      tiltOffset):
-  BDSMultipole(BDSMagnetType::rfcavity, name, length,
-	       beamPipeInfo, magnetOuterInfo, tiltOffset),
+  BDSMagnet(BDSMagnetType::rfcavity, name, length,
+	    beamPipeInfo, magnetOuterInfo, tiltOffset),
   itsGrad(grad)
 {
   itsEField    = NULL;

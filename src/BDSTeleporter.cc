@@ -45,7 +45,7 @@ void BDSTeleporter::BuildContainerLogicalVolume()
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       emptyMaterial,
 					       name + "_container_lv");
-  containerLogicalVolume->SetFieldManager(itsFieldManager,false); // modelled from BDSMultipole.cc
+  containerLogicalVolume->SetFieldManager(itsFieldManager,false); // modelled from BDSMagnet.cc
 }
   
 void BDSTeleporter::BuildBPFieldAndStepper()
@@ -62,7 +62,7 @@ void BDSTeleporter::BuildBPFieldAndStepper()
 void BDSTeleporter::BuildBPFieldMgr( G4MagIntegratorStepper* stepper,
     G4MagneticField* field)
 {
-  //this is all copied from BDSMultipole.cc although names tidied a bit
+  //this is all copied from BDSMagnet.cc although names tidied a bit
   itsChordFinder = 
     new G4ChordFinder(field,
     chordLength*0.5/CLHEP::m,

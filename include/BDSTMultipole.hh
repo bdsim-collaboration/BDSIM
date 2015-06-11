@@ -8,7 +8,7 @@
 #ifndef BDSTMULTIPOLE_H
 #define BDSTMULTIPOLE_H
 
-#include "BDSMultipole.hh"
+#include "BDSMagnet.hh"
 
 #include "globals.hh"
 #include "G4Material.hh"
@@ -18,7 +18,7 @@
 struct BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
-class BDSTMultipole: public BDSMultipole
+class BDSTMultipole: public BDSMagnet
 {
 public:
   BDSTMultipole(G4String            name,

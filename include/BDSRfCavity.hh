@@ -7,7 +7,7 @@
 #ifndef BDSRFCAVITY_H
 #define BDSRFCAVITY_H
 
-#include "BDSMultipole.hh"
+#include "BDSMagnet.hh"
 #include "BDSTiltOffset.hh"
 
 #include "globals.hh" // geant4 types / globals
@@ -22,7 +22,7 @@
 struct BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
-class BDSRfCavity :public BDSMultipole
+class BDSRfCavity: public BDSMagnet
 {
   public:
   BDSRfCavity(G4String           name,

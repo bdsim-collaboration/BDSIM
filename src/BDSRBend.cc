@@ -32,8 +32,8 @@ BDSRBend::BDSRBend(G4String           name,
 		   BDSBeamPipeInfo*   beamPipeInfo,
 		   BDSMagnetOuterInfo magnetOuterInfo,
 		   BDSTiltOffset      tiltOffset):
-  BDSMultipole(BDSMagnetType::rectangularbend, name, length,
-	       beamPipeInfo, magnetOuterInfo, tiltOffset),
+  BDSMagnet(BDSMagnetType::rectangularbend, name, length,
+	    beamPipeInfo, magnetOuterInfo, tiltOffset),
   itsBField(bField),
   itsBGrad(bGrad)
 {
@@ -80,7 +80,7 @@ void BDSRBend::CommonConstructor(G4double aLength)
 
 void BDSRBend::Build()
 {
-  BDSMultipole::Build();
+  BDSMagnet::Build();
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4double polePos[4];
@@ -130,7 +130,7 @@ void BDSRBend::BuildOuterVolume()
   //component length then setting it back - reduces code duplication
   G4double originalLength = chordLength;
   chordLength = itsMagFieldLength;
-  BDSMultipole::BuildOuterVolume();
+  BDSMagnet::BuildOuterVolume();
   chordLength = originalLength;
 }
 

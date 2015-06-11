@@ -16,9 +16,10 @@
 
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
-#include "BDSMultipole.hh"
+#include "BDSMagnet.hh"
 #include "BDSMuSpoiler.hh"
 #include "BDSMuSpoilerMagField.hh"
 
@@ -30,8 +31,8 @@ BDSMuSpoiler::BDSMuSpoiler(G4String           name,
 			   BDSBeamPipeInfo*   beamPipeInfo,
 			   BDSMagnetOuterInfo magnetOuterInfo,
 			   BDSTiltOffset      tiltOffset):
-  BDSMultipole(BDSMagnetType::muspoiler, name, length,
-	       beamPipeInfo, magnetOuterInfo, tiltOffset),
+  BDSMagnet(BDSMagnetType::muspoiler, name, length,
+	    beamPipeInfo, magnetOuterInfo, tiltOffset),
   itsBField(bField)
 {;}
 
@@ -44,7 +45,7 @@ void BDSMuSpoiler::BuildBPFieldAndStepper()
 
 void BDSMuSpoiler::BuildOuterVolume()
 {
-  BDSMultipole::BuildOuterVolume();
+  BDSMagnet::BuildOuterVolume();
 
   // prepare and attach field
   delete itsOuterMagField;

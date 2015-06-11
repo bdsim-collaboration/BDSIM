@@ -8,13 +8,14 @@
 #define BDSMUSPOILER_H
 
 #include "globals.hh"
-#include "BDSBeamPipeInfo.hh"
-#include "BDSMagnetOuterInfo.hh"
-#include "BDSMultipole.hh"
+#include "BDSMagnet.hh"
 #include "BDSMuSpoilerMagField.hh"
 #include "BDSTiltOffset.hh"
 
-class BDSMuSpoiler :public BDSMultipole
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
+
+class BDSMuSpoiler: public BDSMagnet
 {
 public:
   BDSMuSpoiler(G4String           name,

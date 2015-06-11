@@ -9,8 +9,8 @@
    Removed StringFromInt function
 */
 
-#ifndef BDSMultipole_h
-#define BDSMultipole_h 
+#ifndef BDSMAGNET
+#define BDSMAGNET 
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
@@ -29,19 +29,19 @@
 #include "G4RotationMatrix.hh"
 #include "G4UserLimits.hh"
 
-class BDSMultipole: public BDSAcceleratorComponent
+class BDSMagnet: public BDSAcceleratorComponent
 {
 public:
   /// Magnet base class constructor that is for basic geometric information rather
   /// magnetic field details, which are handled in the derived classes
-  BDSMultipole(BDSMagnetType      type,
-	       G4String           name, 
-	       G4double           length,
-	       BDSBeamPipeInfo*   beamPipeInfo,
-	       BDSMagnetOuterInfo magnetOuterInfo,
-	       BDSTiltOffset      tiltOffset = BDSTiltOffset());
+  BDSMagnet(BDSMagnetType      type,
+	    G4String           name, 
+	    G4double           length,
+	    BDSBeamPipeInfo*   beamPipeInfo,
+	    BDSMagnetOuterInfo magnetOuterInfo,
+	    BDSTiltOffset      tiltOffset = BDSTiltOffset());
   
-  virtual ~BDSMultipole();
+  virtual ~BDSMagnet();
 
   ///@{ Magnet strengh parameter accessor - to be moved into its own class soon
   G4double GetK1();

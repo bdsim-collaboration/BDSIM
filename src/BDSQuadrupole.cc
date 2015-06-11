@@ -15,14 +15,12 @@
 //
 //
 
-#include "BDSGlobalConstants.hh" 
-#include "BDSDebug.hh"
-
-#include "BDSQuadrupole.hh"
-
 #include "BDSBeamPipeInfo.hh"
+#include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh" 
 #include "BDSMagnetType.hh"
 #include "BDSMagnetOuterInfo.hh"
+#include "BDSQuadrupole.hh"
 #include "BDSQuadMagField.hh"
 #include "BDSQuadStepper.hh"
 #include "BDSEnergyCounterSD.hh"
@@ -34,12 +32,16 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
+class BDSTiltOffset;
+
 BDSQuadrupole::BDSQuadrupole(G4String           name,
 			     G4double           length,
 			     G4double           bGrad,
 			     BDSBeamPipeInfo*   beamPipeInfo,
-			     BDSMagnetOuterInfo magnetOuterInfo):
-  BDSMultipole(BDSMagnetType::quadrupole,name,length,beamPipeInfo,magnetOuterInfo),
+			     BDSMagnetOuterInfo magnetOuterInfo,
+			     BDSTiltOffset      tiltOffset):
+  BDSMagnet(BDSMagnetType::quadrupole, name, length,
+	    beamPipeInfo, magnetOuterInfo, tiltOffset),
   itsBGrad(bGrad)
 {;}
 
@@ -48,7 +50,7 @@ void BDSQuadrupole::Build()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  BDSMultipole::Build();
+  BDSMagnet::Build();
   
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {

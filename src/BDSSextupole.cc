@@ -11,6 +11,7 @@
 
 #include "BDSGlobalConstants.hh" 
 #include "BDSBeamPipeInfo.hh"
+#include "BDSMagnet.hh"
 #include "BDSMagnetType.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSSextMagField.hh"
@@ -31,14 +32,14 @@ BDSSextupole::BDSSextupole(G4String           name,
 			   BDSBeamPipeInfo*   beamPipeInfo,
 			   BDSMagnetOuterInfo magnetOuterInfo,
 			   BDSTiltOffset      tiltOffset):
-  BDSMultipole(BDSMagnetType::sextupole, name, length,
-	       beamPipeInfo, magnetOuterInfo, tiltOffset),
+  BDSMagnet(BDSMagnetType::sextupole, name, length,
+	    beamPipeInfo, magnetOuterInfo, tiltOffset),
    itsBDblPrime(bDblPrime)
 {;}
 
 void BDSSextupole::Build()
 {
-  BDSMultipole::Build();
+  BDSMagnet::Build();
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4double polePos[4];

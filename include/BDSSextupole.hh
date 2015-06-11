@@ -9,7 +9,7 @@
 
 #include "globals.hh"
 
-#include "BDSMultipole.hh"
+#include "BDSMagnet.hh"
 #include "BDSTiltOffset.hh"
 
 #include <list>
@@ -17,7 +17,7 @@
 struct BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
-class BDSSextupole :public BDSMultipole
+class BDSSextupole: public BDSMagnet
 {
 public:
   BDSSextupole(G4String           name,

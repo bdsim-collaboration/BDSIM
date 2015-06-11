@@ -7,9 +7,9 @@
    Changed StringFromInt to be the BDSGlobal version
 */
 
-#include "BDSGlobalConstants.hh" 
-
 #include "BDSBeamPipeInfo.hh"
+#include "BDSGlobalConstants.hh" 
+#include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 #include "BDSOctupole.hh"
@@ -31,13 +31,13 @@ BDSOctupole::BDSOctupole(G4String           name,
 			 BDSBeamPipeInfo*   beamPipeInfo,
 			 BDSMagnetOuterInfo magnetOuterInfo,
 			 BDSTiltOffset      tiltOffset):
-  BDSMultipole(BDSMagnetType::octupole, name, length,
-	       beamPipeInfo, magnetOuterInfo, tiltOffset),
+  BDSMagnet(BDSMagnetType::octupole, name, length,
+	    beamPipeInfo, magnetOuterInfo, tiltOffset),
   itsBTriplePrime(bTriplePrime)
 {;}
 
 void BDSOctupole::Build() {
-  BDSMultipole::Build();
+  BDSMagnet::Build();
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4double polePos[4];

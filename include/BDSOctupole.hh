@@ -7,7 +7,7 @@
 #ifndef BDSOCTUPOLE_H
 #define BDSOCTUPOLE_H
 
-#include "BDSMultipole.hh"
+#include "BDSMagnet.hh"
 #include "BDSTiltOffset.hh"
 
 #include "globals.hh" // geant4 types / globals
@@ -16,7 +16,7 @@
 struct BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
-class BDSOctupole :public BDSMultipole
+class BDSOctupole: public BDSMagnet
 {
 public:
   BDSOctupole(G4String           name,

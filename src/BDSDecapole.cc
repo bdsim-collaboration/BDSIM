@@ -12,6 +12,7 @@
 #include "BDSDecapole.hh"
 #include "BDSDecMagField.hh"
 #include "BDSDecStepper.hh"
+#include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
 
 #include "G4FieldManager.hh"
@@ -29,13 +30,13 @@ BDSDecapole::BDSDecapole(G4String           name,
 			 BDSBeamPipeInfo*   beamPipeInfo,
 			 BDSMagnetOuterInfo magnetOuterInfo,
 			 BDSTiltOffset      tiltOffset):
-  BDSMultipole(BDSMagnetType::decapole, name, length,
-	       beamPipeInfo,magnetOuterInfo, tiltOffset),
+  BDSMagnet(BDSMagnetType::decapole, name, length,
+	    beamPipeInfo,magnetOuterInfo, tiltOffset),
   itsBQuadPrime(bQuadPrime)
 {;}
 
 void BDSDecapole::Build() {
-  BDSMultipole::Build();
+  BDSMagnet::Build();
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4double polePos[4];

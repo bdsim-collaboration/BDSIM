@@ -1,7 +1,8 @@
 #include "BDSBeamPipeInfo.hh"
-#include "BDSGlobalConstants.hh" 
-#include "BDSTMultipole.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSMagnet.hh"
 #include "BDSMultipoleMagField.hh"
+#include "BDSTMultipole.hh"
 
 #include "G4FieldManager.hh"
 #include "G4HelixImplicitEuler.hh"
@@ -24,8 +25,8 @@ BDSTMultipole::BDSTMultipole(G4String            name,
 			     BDSBeamPipeInfo*    beamPipeInfo,
 			     BDSMagnetOuterInfo  magnetOuterInfo,
 			     BDSTiltOffset       tiltOffset):
-  BDSMultipole(BDSMagnetType::multipole, name, length,
-	       beamPipeInfo, magnetOuterInfo, tiltOffset)
+  BDSMagnet(BDSMagnetType::multipole, name, length,
+	    beamPipeInfo, magnetOuterInfo, tiltOffset)
 {
   CommonConstructor(akn,aks);
 }
