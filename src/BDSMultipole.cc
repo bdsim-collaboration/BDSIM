@@ -19,7 +19,6 @@
 #include <string>
 #include <algorithm> // for std::max
 
-
 #include "G4Box.hh"
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
@@ -43,15 +42,15 @@
 #include "BDSMultipoleOuterMagField.hh"
 #include "BDSUtilities.hh"
 
+class BDSTiltOffset;
+
 BDSMultipole::BDSMultipole(BDSMagnetType      type,
 			   G4String           name,
 			   G4double           length,
 			   BDSBeamPipeInfo*   beamPipeInfoIn,
-			   BDSMagnetOuterInfo magnetOuterInfo):
-  BDSAcceleratorComponent(name,
-			  length,
-			  0,
-			  "magnet"),
+			   BDSMagnetOuterInfo magnetOuterInfo,
+			   BDSTiltOffset      tiltOffset):
+  BDSAcceleratorComponent(name, length, 0, "magnet", tiltOffset),
   itsType(type),
   beamPipeInfo(beamPipeInfoIn),
   outerDiameter(magnetOuterInfo.outerDiameter),

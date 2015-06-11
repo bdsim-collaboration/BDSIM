@@ -5,17 +5,20 @@
 
 */
 
-#ifndef BDSTMultipole_h
-#define BDSTMultipole_h 1
+#ifndef BDSTMULTIPOLE_H
+#define BDSTMULTIPOLE_H
+
+#include "BDSMultipole.hh"
 
 #include "globals.hh"
-#include "BDSMultipole.hh"
 #include "G4Material.hh"
-#include "BDSBeamPipeInfo.hh"
 
 #include <list>
 
-class BDSTMultipole :public BDSMultipole
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
+
+class BDSTMultipole: public BDSMultipole
 {
 public:
   BDSTMultipole(G4String            name,
@@ -25,7 +28,8 @@ public:
 		std::list<G4double> aks, // list of skew multipole strengths
 		                    // (NOT multiplied by multipole length)
 		BDSBeamPipeInfo*    beamPipeInfo,
-		BDSMagnetOuterInfo  magnetOuterInfo);
+		BDSMagnetOuterInfo  magnetOuterInfo,
+		BDSTiltOffset       tiltOffset = BDSTiltOffset());
   ~BDSTMultipole(){;};
   
 private:

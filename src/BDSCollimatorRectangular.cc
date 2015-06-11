@@ -5,17 +5,22 @@
 #include "G4Box.hh"
 #include "G4VSolid.hh"
 
+class BDSTiltOffset;
+
 BDSCollimatorRectangular::BDSCollimatorRectangular(G4String name,
 						   G4double length,
 						   G4double outerDiameter,
 						   G4double xAperture,
 						   G4double yAperture,
-						   G4String collimatorMaterial):
+						   G4String collimatorMaterial,
+						   G4String vacuumMaterial,
+						   BDSTiltOffset tiltOffset):
   BDSCollimatorBase(name, length, outerDiameter, "rcol",
 		    xAperture, yAperture,
-		    collimatorMaterial)
+		    collimatorMaterial,
+		    vacuumMaterial,
+		    tiltOffset)
 {;}
-
 
 void BDSCollimatorRectangular::BuildInnerCollimator()
 {

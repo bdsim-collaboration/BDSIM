@@ -1,4 +1,3 @@
-
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh" 
@@ -15,12 +14,16 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
+class BDSTiltOffset;
+
 BDSSolenoid::BDSSolenoid(G4String           name,
 			 G4double           length,
 			 G4double           bField,
 			 BDSBeamPipeInfo*   beamPipeInfo,
-			 BDSMagnetOuterInfo magnetOuterInfo):
-  BDSMultipole(BDSMagnetType::solenoid,name,length,beamPipeInfo,magnetOuterInfo),
+			 BDSMagnetOuterInfo magnetOuterInfo,
+			 BDSTiltOffset      tiltOffset):
+  BDSMultipole(BDSMagnetType::solenoid, name, length,
+	       beamPipeInfo, magnetOuterInfo, tiltOffset),
   itsBField(bField)
 {;}
 

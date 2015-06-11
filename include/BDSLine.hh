@@ -16,7 +16,6 @@
 class BDSLine: public BDSAcceleratorComponent
 {
 public:
-
   /// define iterator for ease of reading
   // chosen not to distinguish between non-const and const cases
   typedef std::vector<BDSAcceleratorComponent*>::iterator BDSLineIterator;

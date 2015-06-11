@@ -18,7 +18,7 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
-#include "BDSTunnelInfo.hh"
+#include "BDSTiltOffset.hh"
 
 #include "G4FieldManager.hh"
 #include "G4ChordFinder.hh"
@@ -29,7 +29,6 @@
 #include "G4RotationMatrix.hh"
 #include "G4UserLimits.hh"
 
-
 class BDSMultipole: public BDSAcceleratorComponent
 {
 public:
@@ -39,7 +38,8 @@ public:
 	       G4String           name, 
 	       G4double           length,
 	       BDSBeamPipeInfo*   beamPipeInfo,
-	       BDSMagnetOuterInfo magnetOuterInfo);
+	       BDSMagnetOuterInfo magnetOuterInfo,
+	       BDSTiltOffset      tiltOffset = BDSTiltOffset());
   
   virtual ~BDSMultipole();
 

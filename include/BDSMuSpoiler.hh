@@ -4,15 +4,15 @@
    Copyright (c) 2004 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 
-#ifndef BDSMuSpoiler_h
-#define BDSMuSpoiler_h 1
+#ifndef BDSMUSPOILER_H
+#define BDSMUSPOILER_H
 
 #include "globals.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMultipole.hh"
 #include "BDSMuSpoilerMagField.hh"
-#include "BDSTunnelInfo.hh"
+#include "BDSTiltOffset.hh"
 
 class BDSMuSpoiler :public BDSMultipole
 {
@@ -21,7 +21,8 @@ public:
 	       G4double           length,
 	       G4double           bField,
 	       BDSBeamPipeInfo*   beamPipeInfo,
-	       BDSMagnetOuterInfo magnetOuterInfo);
+	       BDSMagnetOuterInfo magnetOuterInfo,
+	       BDSTiltOffset      tiltOffset = BDSTiltOffset());
   ~BDSMuSpoiler();
 
 private:

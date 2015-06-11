@@ -4,15 +4,18 @@
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 
-#ifndef BDSSextupole_h
-#define BDSSextupole_h 1
+#ifndef BDSSEXTUPOLE_H
+#define BDSSEXTUPOLE_H
 
 #include "globals.hh"
 
 #include "BDSMultipole.hh"
-#include "BDSBeamPipeInfo.hh"
+#include "BDSTiltOffset.hh"
 
 #include <list>
+
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
 
 class BDSSextupole :public BDSMultipole
 {
@@ -21,7 +24,8 @@ public:
 	       G4double           length,
 	       G4double           bDblPrime,
 	       BDSBeamPipeInfo*   beamPipeInfo,
-	       BDSMagnetOuterInfo magnetOuterInfo);
+	       BDSMagnetOuterInfo magnetOuterInfo,
+	       BDSTiltOffset      tiltOffset = BDSTiltOffset());
   ~BDSSextupole(){;};
 
 private:

@@ -19,12 +19,15 @@ Work in progress.
 
 #include <map>
 
+class BDSTiltOffset;
+
 BDSScintillatorScreen::BDSScintillatorScreen(G4String name,
 					     G4double tScint,
 					     G4double angle,
 					     G4String scintMaterial,
-					     G4String airMaterial):
-  BDSAcceleratorComponent(name, 1e-7, 0, "scintillatorscreen"),
+					     G4String airMaterial,
+					     BDSTiltOffset tiltOffset):
+  BDSAcceleratorComponent(name, 1e-7, 0, "scintillatorscreen", tiltOffset),
   _scintillatorLayerMaterial(BDSMaterials::Instance()->GetMaterial(scintMaterial.data())),
   _airMaterial(BDSMaterials::Instance()->GetMaterial(airMaterial.data())),
   _screenAngle(angle),_scintillatorThickness(tScint)

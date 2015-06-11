@@ -9,7 +9,6 @@
 #include "BDSMagnetType.hh"
 #include "BDSMaterials.hh"
 #include "BDSSbendMagField.hh"
-#include "BDSTunnelInfo.hh"
 #include "BDSUtilities.hh"        // for calculateorientation
 
 #include "G4CutTubs.hh"
@@ -21,14 +20,18 @@
 
 #include "globals.hh"             // geant4 types / globals
 
+class BDSTiltOffset;
+
 BDSSectorBend::BDSSectorBend(G4String           name,
 			     G4double           length,
 			     G4double           angleIn,
 			     G4double           bField,
 			     G4double           bGrad,
 			     BDSBeamPipeInfo*   beamPipeInfo,
-			     BDSMagnetOuterInfo magnetOuterInfo):
-  BDSMultipole(BDSMagnetType::sectorbend,name,length,beamPipeInfo,magnetOuterInfo),
+			     BDSMagnetOuterInfo magnetOuterInfo,
+			     BDSTiltOffset      tiltOffset):
+  BDSMultipole(BDSMagnetType::sectorbend, name, length,
+	       beamPipeInfo, magnetOuterInfo, tiltOffset),
   itsBField(bField),itsBGrad(bGrad)
 {
   angle = angleIn;

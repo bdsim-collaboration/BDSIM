@@ -8,19 +8,26 @@ Work in progress.
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
+#include "BDSAwakeMultilayerScreen.hh"
+#include "BDSCCDCamera.hh"
+#include "BDSTiltOffset.hh"
+
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
-
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
-#include "BDSAwakeMultilayerScreen.hh"
-#include "BDSCCDCamera.hh"
 
 class BDSAwakeScintillatorScreen :public BDSAcceleratorComponent
 {
 public:
-  BDSAwakeScintillatorScreen(G4String aName, G4String material, G4double thickness, G4double angle, G4double windowThickness, G4String windowMaterial);
+  BDSAwakeScintillatorScreen(G4String aName,
+			     G4String material,
+			     G4double thickness,
+			     G4double angle,
+			     G4double windowThickness,
+			     G4String windowMaterial,
+			     BDSTiltOffset tiltOffset = BDSTiltOffset());
   virtual ~BDSAwakeScintillatorScreen();
 
 protected:

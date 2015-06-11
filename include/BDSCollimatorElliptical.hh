@@ -2,6 +2,7 @@
 #define BDSCOLLIMATORELLIPTICAL_H
 
 #include "BDSCollimatorBase.hh"
+#include "BDSTiltOffset.hh"
 
 #include "globals.hh" // geant4 globals / types
 
@@ -13,9 +14,11 @@ public:
   BDSCollimatorElliptical(G4String name,
 			  G4double length,
 			  G4double outerDiameter,
-			  G4double xApertureIn = 0,
-			  G4double yApertureIn = 0,
-			  G4String collimatorMaterial = "copper");
+			  G4double xApertureIn        = 0,
+			  G4double yApertureIn        = 0,
+			  G4String collimatorMaterial = "copper",
+			  G4String vacuumMaterial     = "vacuum",
+			  BDSTiltOffset tiltOffset    = BDSTiltOffset());
   ~BDSCollimatorElliptical(){;};
 
   virtual void BuildInnerCollimator();

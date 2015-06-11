@@ -23,12 +23,16 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
+class BDSTiltOffset;
+
 BDSSextupole::BDSSextupole(G4String           name,
 			   G4double           length,
 			   G4double           bDblPrime,
 			   BDSBeamPipeInfo*   beamPipeInfo,
-			   BDSMagnetOuterInfo magnetOuterInfo):
-  BDSMultipole(BDSMagnetType::sextupole,name,length,beamPipeInfo,magnetOuterInfo),
+			   BDSMagnetOuterInfo magnetOuterInfo,
+			   BDSTiltOffset      tiltOffset):
+  BDSMultipole(BDSMagnetType::sextupole, name, length,
+	       beamPipeInfo, magnetOuterInfo, tiltOffset),
    itsBDblPrime(bDblPrime)
 {;}
 

@@ -12,7 +12,7 @@
 #include "BDSMultipole.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuterInfo.hh"
-#include "BDSTunnelInfo.hh"
+#include "BDSTiltOffset.hh"
 
 #include <list>
 
@@ -23,7 +23,8 @@ public:
 	      G4double           length,
 	      G4double           bQuadPrime,
 	      BDSBeamPipeInfo*   beamPipeInfo,
-	      BDSMagnetOuterInfo magnetOuterInfo);
+	      BDSMagnetOuterInfo magnetOuterInfo,
+	      BDSTiltOffset      tiltOffset = BDSTiltOffset());
   ~BDSDecapole(){;};
 
 protected:

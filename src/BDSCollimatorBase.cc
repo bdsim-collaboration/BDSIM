@@ -13,6 +13,8 @@
 
 #include <map>
 
+class BDSTiltOffset;
+
 BDSCollimatorBase::BDSCollimatorBase(G4String name,
 				     G4double length,
 				     G4double outerDiameterIn,
@@ -20,8 +22,9 @@ BDSCollimatorBase::BDSCollimatorBase(G4String name,
 				     G4double xApertureIn,
 				     G4double yApertureIn,
 				     G4String collimatorMaterialIn,
-				     G4String vacuumMaterialIn):
-  BDSAcceleratorComponent(name, length, 0, type),
+				     G4String vacuumMaterialIn,
+				     BDSTiltOffset tiltOffset):
+  BDSAcceleratorComponent(name, length, 0, type, tiltOffset),
   outerDiameter(outerDiameterIn),
   xAperture(xApertureIn),
   yAperture(yApertureIn),

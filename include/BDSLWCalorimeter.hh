@@ -8,6 +8,7 @@
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
+#include "BDSTiltOffset.hh"
 
 class G4Box;
 class G4FieldManager;
@@ -21,7 +22,8 @@ class BDSLWCalorimeter :public BDSAcceleratorComponent
 public:
   BDSLWCalorimeter(G4String         name,
 		   G4double         length,
-		   BDSBeamPipeInfo* beamPipeInfo);
+		   BDSBeamPipeInfo* beamPipeInfo,
+		   BDSTiltOffset    tiltOffset = BDSTiltOffset());
   ~BDSLWCalorimeter();
 
 protected:

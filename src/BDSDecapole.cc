@@ -13,7 +13,6 @@
 #include "BDSDecMagField.hh"
 #include "BDSDecStepper.hh"
 #include "BDSMagnetOuterInfo.hh"
-#include "BDSTunnelInfo.hh"
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
@@ -22,12 +21,16 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
+class BDSTiltOffset;
+
 BDSDecapole::BDSDecapole(G4String           name,
 			 G4double           length,
 			 G4double           bQuadPrime,
 			 BDSBeamPipeInfo*   beamPipeInfo,
-			 BDSMagnetOuterInfo magnetOuterInfo):
-  BDSMultipole(BDSMagnetType::decapole,name,length,beamPipeInfo,magnetOuterInfo),
+			 BDSMagnetOuterInfo magnetOuterInfo,
+			 BDSTiltOffset      tiltOffset):
+  BDSMultipole(BDSMagnetType::decapole, name, length,
+	       beamPipeInfo,magnetOuterInfo, tiltOffset),
   itsBQuadPrime(bQuadPrime)
 {;}
 

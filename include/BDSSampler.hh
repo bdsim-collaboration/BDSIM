@@ -14,7 +14,8 @@
 class BDSSampler : public BDSAcceleratorComponent
 {
 public:
-  BDSSampler(G4String name,G4double length);
+  BDSSampler(G4String name,
+	     G4double length);
   ~BDSSampler();
 
   static int GetNSamplers();

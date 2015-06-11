@@ -6,7 +6,6 @@
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 #include "BDSSbendMagField.hh"
-#include "BDSTunnelInfo.hh"
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
@@ -16,6 +15,8 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 
+class BDSTiltOffset;
+
 BDSKicker::BDSKicker(G4String           name,
 		     G4double           length,
 		     G4double           bField,
@@ -23,9 +24,14 @@ BDSKicker::BDSKicker(G4String           name,
 		     G4double           angle,
 		     G4bool             verticalKicker,
 		     BDSBeamPipeInfo*   beamPipeInfo,
-		     BDSMagnetOuterInfo magnetOuterInfo):
-  BDSMultipole(BDSMagnetType::hkicker,name,length,beamPipeInfo,magnetOuterInfo),
-  itsBField(bField),itsBGrad(bGrad),itsKickAngle(angle),isVerticalKicker(verticalKicker)
+		     BDSMagnetOuterInfo magnetOuterInfo,
+		     BDSTiltOffset      tiltOffset):
+  BDSMultipole(BDSMagnetType::hkicker, name, length,
+	       beamPipeInfo, magnetOuterInfo, tiltOffset),
+  itsBField(bField),
+  itsBGrad(bGrad),
+  itsKickAngle(angle),
+  isVerticalKicker(verticalKicker)
 {
   if (verticalKicker)
     {itsType = BDSMagnetType::vkicker;}

@@ -1,12 +1,13 @@
-#ifndef BDSRBend_h
-#define BDSRBend_h 
+#ifndef BDSRBEND_H
+#define BDSRBEND_H 
 
 #include "globals.hh"
 
-#include "BDSBeamPipeInfo.hh"
-#include "BDSMagnetOuterInfo.hh"
 #include "BDSMultipole.hh"
-#include "BDSTunnelInfo.hh"
+#include "BDSTiltOffset.hh"
+
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
 
 class BDSRBend :public BDSMultipole
 {
@@ -17,7 +18,8 @@ public:
 	   G4double           bGrad,
 	   G4double           angle,
 	   BDSBeamPipeInfo*   beamPipeInfo,
-	   BDSMagnetOuterInfo magnetOuterInfo);
+	   BDSMagnetOuterInfo magnetOuterInfo,
+	   BDSTiltOffset      tiltOffset = BDSTiltOffset());
   ~BDSRBend(){;};
 
 private:

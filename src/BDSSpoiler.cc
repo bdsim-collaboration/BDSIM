@@ -14,12 +14,15 @@
 #include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
 
-BDSSpoiler::BDSSpoiler(G4String    name,
-		       G4double    length,
-		       G4double    xAperIn,
-		       G4double    yAperIn,
-		       G4Material* SpoilerMaterial):
-  BDSAcceleratorComponent(name, length, 0, "spoiler"),
+class BDSTiltOffset;
+
+BDSSpoiler::BDSSpoiler(G4String      name,
+		       G4double      length,
+		       G4double      xAperIn,
+		       G4double      yAperIn,
+		       G4Material*   SpoilerMaterial,
+		       BDSTiltOffset tiltOffset):
+  BDSAcceleratorComponent(name, length, 0, "spoiler", tiltOffset),
   itsPhysiComp(NULL), itsPhysiComp2(NULL), itsSolidLogVol(NULL), 
   itsInnerLogVol(NULL), itsSpoilerMaterial(SpoilerMaterial),
   xAper(xAperIn),

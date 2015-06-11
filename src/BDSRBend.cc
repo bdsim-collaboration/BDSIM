@@ -11,7 +11,6 @@
 #include "BDSMagnetType.hh"
 #include "BDSMaterials.hh"
 #include "BDSSbendMagField.hh"
-#include "BDSTunnelInfo.hh"
 #include "BDSUtilities.hh"
 
 #include "G4FieldManager.hh"
@@ -31,9 +30,12 @@ BDSRBend::BDSRBend(G4String           name,
 		   G4double           bGrad,
 		   G4double           angleIn,
 		   BDSBeamPipeInfo*   beamPipeInfo,
-		   BDSMagnetOuterInfo magnetOuterInfo):
-  BDSMultipole(BDSMagnetType::rectangularbend,name,length,beamPipeInfo,magnetOuterInfo),
-  itsBField(bField),itsBGrad(bGrad)
+		   BDSMagnetOuterInfo magnetOuterInfo,
+		   BDSTiltOffset      tiltOffset):
+  BDSMultipole(BDSMagnetType::rectangularbend, name, length,
+	       beamPipeInfo, magnetOuterInfo, tiltOffset),
+  itsBField(bField),
+  itsBGrad(bGrad)
 {
   angle       = angleIn;
   outerRadius = magnetOuterInfo.outerDiameter*0.5; 

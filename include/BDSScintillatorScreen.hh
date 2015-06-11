@@ -18,7 +18,12 @@ Work in progress.
 class BDSScintillatorScreen :public BDSAcceleratorComponent
 {
 public:
-  BDSScintillatorScreen(G4String aName, G4double tScint=0.3*CLHEP::mm, G4double angle=0, G4String scintMaterial="lanex", G4String airMaterial="air");
+  BDSScintillatorScreen(G4String      aName,
+			G4double      tScint        = 0.3*CLHEP::mm,
+			G4double      angle         = 0,
+			G4String      scintMaterial = "lanex",
+			G4String      airMaterial   = "air",
+			BDSTiltOffset tiltOffset    = BDSTiltOffset());
   ~BDSScintillatorScreen();
 
 protected:

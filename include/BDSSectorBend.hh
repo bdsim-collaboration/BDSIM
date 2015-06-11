@@ -1,14 +1,15 @@
-#ifndef BDSSectorBend_h
-#define BDSSectorBend_h 
+#ifndef BDSSECTORBEND_H
+#define BDSSECTORBEND_H 
 
 #include "globals.hh"
 
-#include "BDSBeamPipeInfo.hh"
-#include "BDSMagnetOuterInfo.hh"
 #include "BDSMultipole.hh"
-#include "BDSTunnelInfo.hh"
+#include "BDSTiltOffset.hh"
 
 #include <list>
+
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
 
 class BDSSectorBend :public BDSMultipole
 {
@@ -19,7 +20,8 @@ public:
 		G4double           bFieldIn,
 		G4double           bGradIn,
 		BDSBeamPipeInfo*   beamPipeInfo,
-		BDSMagnetOuterInfo magnetOuterInfo);
+		BDSMagnetOuterInfo magnetOuterInfo,
+		BDSTiltOffset      tiltOffset = BDSTiltOffset());
   ~BDSSectorBend(){;};
 
 private:

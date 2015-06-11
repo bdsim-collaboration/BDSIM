@@ -9,9 +9,11 @@ public:
   BDSCollimatorRectangular(G4String name,
 			   G4double length,
 			   G4double outerDiameter,
-			   G4double xApertureIn = 0,
-			   G4double yApertureIn = 0,
-			   G4String collimatorMaterial = "copper");
+			   G4double xApertureIn        = 0,
+			   G4double yApertureIn        = 0,
+			   G4String collimatorMaterial = "copper",
+			   G4String vacuumMaterial     = "vacuum",
+			   BDSTiltOffset tiltOffset    = BDSTiltOffset());
   ~BDSCollimatorRectangular(){;};
 
   virtual void BuildInnerCollimator();

@@ -21,14 +21,17 @@
 #include "BDSMultipole.hh"
 #include "BDSMuSpoiler.hh"
 #include "BDSMuSpoilerMagField.hh"
-#include "BDSTunnelInfo.hh"
+
+class BDSTiltOffset;
 
 BDSMuSpoiler::BDSMuSpoiler(G4String           name,
 			   G4double           length,
 			   G4double           bField,
 			   BDSBeamPipeInfo*   beamPipeInfo,
-			   BDSMagnetOuterInfo magnetOuterInfo):
-  BDSMultipole(BDSMagnetType::muspoiler,name,length,beamPipeInfo,magnetOuterInfo),
+			   BDSMagnetOuterInfo magnetOuterInfo,
+			   BDSTiltOffset      tiltOffset):
+  BDSMultipole(BDSMagnetType::muspoiler, name, length,
+	       beamPipeInfo, magnetOuterInfo, tiltOffset),
   itsBField(bField)
 {;}
 
