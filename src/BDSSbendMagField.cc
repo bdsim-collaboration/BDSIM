@@ -13,7 +13,7 @@
 BDSSbendMagField::BDSSbendMagField(const G4ThreeVector& aField,
 			       const G4double length,
 			       const G4double angle) 
-  :G4UniformMagField(aField)
+  :BDSUniformMagField(aField)
 {
   if(angle!=0.)
     {    // original

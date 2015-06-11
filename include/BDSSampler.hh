@@ -28,7 +28,6 @@ public:
 
 private:
   virtual void Initialise();
-
   virtual void BuildMarkerLogicalVolume();
 
   /// id of sampler

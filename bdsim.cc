@@ -89,20 +89,31 @@ void BDS_handle_aborts(int signal_number) {
       Try to catch abort signals. This is not guaranteed to work.
       Main goal is to close output stream / files.
   */
-
-  std::cout << "BDSIM is about to crash or was interrupted! " << std::endl;
-  std::cout << "With signal: " << strsignal(signal_number) << std::endl;
-  std::cout << "Trying to write and close output file" << std::endl;
-  bdsOutput->Write();
-  std::cout << "Abort Geant4 run" << std::endl;
-  G4RunManager::GetRunManager()->AbortRun();
-  std::cout << "Ave, Imperator, morituri te salutant!" << std::endl;
+  G4int nAtt = (G4int)BDSGlobalConstants::Instance()->nAbortAttempts();
+  if(nAtt == 0){
+    std::cout << "BDSIM is about to crash or was interrupted! " << std::endl;
+    std::cout << "With signal: " << strsignal(signal_number) << std::endl;
+    std::cout << "Trying to write and close output file" << std::endl;
+    bdsOutput->Write();
+    G4RunManager::GetRunManager()->AbortRun();
+    std::cout << "Ave, Imperator, morituri te salutant!" << std::endl;
+  } else if (nAtt==1){
+    bdsOutput->Write();
+  } else {
+    std::cout << "Failed to write and close output file." << std::endl;
+    exit(-1);  
+  }
+  BDSGlobalConstants::Instance()->incrementAbortAttempts();
 }
 
 int main(int argc,char** argv) {
 
   /* Initialize executable command line options reader object */
+#ifdef BDSDEBUG
   BDSExecOptions::Instance(argc,argv)->Print();
+#else
+  BDSExecOptions::Instance(argc,argv);
+#endif
   
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> DEBUG mode is on." << G4endl;
@@ -200,9 +211,9 @@ int main(int argc,char** argv) {
 #endif
   
   if (BDSGlobalConstants::Instance()->GetThresholdCutPhotons() > 0 || BDSGlobalConstants::Instance()->GetThresholdCutCharged() > 0
-      || BDSExecOptions::Instance()->GetVerboseStep()) {
-    runManager->SetUserAction(new BDSSteppingAction);
-  }
+      || BDSExecOptions::Instance()->GetVerboseStep() || BDSExecOptions::Instance()->GetVerboseEventNumber()>=0) {
+  runManager->SetUserAction(new BDSSteppingAction);
+}
   
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - trackingaction"<<G4endl;
@@ -246,7 +257,7 @@ int main(int argc,char** argv) {
   }
 
   //Set the maximum acceptable step size
-  //  G4TransportationManager::GetTransportationManager()->GetPropagatorInField()->SetLargestAcceptableStep(1*CLHEP::m);
+  G4TransportationManager::GetTransportationManager()->GetPropagatorInField()->SetLargestAcceptableStep(10*CLHEP::cm);
 
   //
   // set default output formats:

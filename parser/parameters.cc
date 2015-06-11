@@ -17,7 +17,10 @@ void Parameters::flush() {
   bmapZOffset = 0; bmapZOffsetset=0;
   r = 0; rset = 0;
   tscint = 0.0003; tscintset = 0;
+  windowScreenGap = 0; windowScreenGapset = 0;
   twindow = 0; twindowset = 0;
+  screenEndZ = 0; screenEndZset = 0;
+  poleStartZ = 0; poleStartZset = 0;
 
   // materials' parameters
   A = 0; Aset = 0; //g*mol^-1
@@ -28,10 +31,12 @@ void Parameters::flush() {
   state = "solid"; stateset = 0; // "solid", "liquid", or "gas"
   symbol = ""; symbolset = 0;
   componentsset = 0; componentsFractionsset = 0; componentsWeightsset = 0;
+  layerThicknessesset=0; layerMaterialsset=0;
   components.erase(components.begin(),components.end());
   componentsFractions.erase(componentsFractions.begin(),componentsFractions.end());
   componentsWeights.erase(componentsWeights.begin(),componentsWeights.end());
-
+  layerThicknesses.erase(layerThicknesses.begin(), layerThicknesses.end());
+  layerMaterials.erase(layerMaterials.begin(), layerMaterials.end());
   flatlength = 0; flatlengthset = 0;
   taperlength = 0; taperlengthset = 0;
   angle = 0; angleset = 0;
@@ -39,6 +44,8 @@ void Parameters::flush() {
   phiAngleOut = 0; phiAngleOutset = 0;
   xsize = 0; xsizeset = 0;
   ysize = 0; ysizeset = 0;
+  screenXSize = 0; screenXSizeset = 0;
+  screenYSize = 0; screenYSizeset = 0;
   hgap = 0; hgapset = 0;    
   xdir = 0; xdirset = 0;
   ydir = 0; ydirset = 0;
@@ -129,7 +136,8 @@ void Parameters::inherit_properties(struct Element& e)
   if(!phiAngleOutset) { phiAngleOut = e.phiAngleOut; phiAngleOutset = 1; }
   if(!xsizeset) { xsize = e.xsize; xsizeset = 1; }
   if(!ysizeset) { ysize = e.ysize; ysizeset = 1; }
- 
+  if(!screenXSizeset) { screenXSize = e.screenXSize; screenXSizeset = 1; }
+  if(!screenYSizeset) { screenYSize = e.screenYSize; screenYSizeset = 1; }
   if(!xdirset) { xdir = e.xdir; xdirset = 1; }
   if(!ydirset) { ydir = e.ydir; ydirset = 1; }
   if(!zdirset) { zdir = e.zdir; zdirset = 1; }
@@ -143,6 +151,8 @@ void Parameters::inherit_properties(struct Element& e)
 
   if(!tscintset) { tscint = e.tscint; tscintset = 1; }
   if(!twindowset) { twindow = e.twindow; twindowset = 1; }
+  if(!screenEndZset) { screenEndZ = e.screenEndZ; screenEndZset = 1; }
+  if(!poleStartZset) { poleStartZ = e.poleStartZ; poleStartZset = 1; }
 
   //materials
   if(!Aset) { A = e.A; Aset = 1; }
@@ -158,7 +168,10 @@ void Parameters::inherit_properties(struct Element& e)
     { componentsWeights = e.componentsWeights; componentsWeightsset = 1; }
   if(!componentsFractionsset) 
     { componentsFractions = e.componentsFractions; componentsFractionsset = 1; }
-
+  if(!layerThicknessesset) 
+    { layerThicknesses = e.layerThicknesses; layerThicknessesset = 1; }
+  if(!layerMaterialsset) 
+    { layerMaterials = e.layerMaterials; layerMaterialsset = 1; }
   if(!beampipeThicknessset) { beampipeThickness = e.beampipeThickness; beampipeThicknessset = 1; }
   if(!aperset) { aper = e.aper; aperset = 1; }
   if(!aperXset) { aperX = e.aperX; aperXset = 1; }

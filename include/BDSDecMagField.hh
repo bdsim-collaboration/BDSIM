@@ -7,9 +7,9 @@
 */
 
 #include "G4Types.hh"
-#include "G4MagneticField.hh"
+#include "BDSMagField.hh"
 
-class BDSDecMagField : public G4MagneticField
+class BDSDecMagField : public BDSMagField
 {
 public:  // with description
 

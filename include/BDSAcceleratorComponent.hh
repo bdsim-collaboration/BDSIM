@@ -24,6 +24,10 @@
 #define __BDSACCELERATORCOMPONENT_H
 
 #include "BDSGlobalConstants.hh" 
+#include "BDSMagField.hh"
+#include "G4Mag_UsualEqRhs.hh"
+#include "G4FieldManager.hh"
+#include "G4ChordFinder.hh"
 
 #include <cstring>
 #include <list>
@@ -34,6 +38,7 @@
 //#include "BDSBeamPipe.hh"
 #include "BDSEnergyCounterSD.hh"
 #include "BDSTunnel.hh"
+#include "BDSGeometry.hh"
 
 #include "G4MagneticField.hh"
 #include "G4MagIntegratorStepper.hh"
@@ -144,6 +149,28 @@ protected:
   // can't be in constructor as calls virtual methods
   virtual void Initialise();
 
+  // field related objects, set by BuildBPFieldAndStepper or BuildBmapFieldAndStepper
+  G4MagIntegratorStepper* itsStepper;
+  BDSMagField* itsMagField;
+  G4Mag_UsualEqRhs* itsEqRhs;
+  G4String itsBmap;
+  G4double itsBmapZOffset;
+  G4double itsBmapXOffset;
+  G4ChordFinder* itsChordFinder;
+  BDSGeometry* _geom;
+  G4FieldManager* itsFieldMgr;
+
+
+  virtual void BuildFieldAndStepper(); 
+  virtual void BuildBPFieldAndStepper(); 
+  virtual void SetBPFieldMgr();
+  void BuildBmapFieldAndStepper();
+  /// build and set field manager and chord finder
+  void BuildFieldMgr();
+  void BuildFieldMgr(G4MagIntegratorStepper* aStepper,
+		       G4MagneticField* aField);
+  
+
 public:
   BDSAcceleratorComponent (
 			  G4String& aName, 
@@ -161,7 +188,9 @@ public:
 			  G4double ZOffset=0.,
 			  G4double tunnelRadius=0.,
 			  G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
-                          G4String aTunnelCavityMaterial = "Air");
+                          G4String aTunnelCavityMaterial = "Air",
+			  G4String bmap="",
+			  G4double bmapZOffset=0);
 
   BDSAcceleratorComponent (
 			  G4String& aName, 
@@ -177,7 +206,9 @@ public:
 			  G4double ZOffset=0.,
 			  G4double tunnelRadius=0.,
 			  G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
-			  G4String aTunnelCavityMaterial = "Air");
+			  G4String aTunnelCavityMaterial = "Air",
+			  G4String bmap="",
+			  G4double bmapZOffset=0);
 
   G4VisAttributes* GetVisAttributes()const; ///> get visual attributes
   G4LogicalVolume* itsOuterLogicalVolume;
@@ -286,7 +317,6 @@ private:
   /// constructor initialisation
   void ConstructorInit();
   /// Calculate dimensions used for the marker volume etc.
-  void CalculateLengths();
 
 
   G4ThreeVector nullThreeVector;
@@ -308,6 +338,7 @@ private:
   //  G4double itsSynchEnergyLoss;
 protected:
   G4RotationMatrix* nullRotationMatrix;
+  virtual void CalculateLengths();
 };
 
 // Class BDSAcceleratorComponent 

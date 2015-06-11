@@ -30,7 +30,7 @@
 #include "gmad.h"
 #include "options.h"
 #include "parameters.h"
-
+#define BDSDEBUG 1
 int yyerror(const char *);
 
 extern FILE* yyin;
@@ -183,6 +183,8 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.tunnelThickness = params.tunnelThickness ;
   e.tunnelSoilThickness = params.tunnelSoilThickness ;
   e.precisionRegion = params.precisionRegion;
+  e.bmapFile = std::string(params.bmap);
+  if(params.bmapZOffsetset) e.bmapZOffset = params.bmapZOffset;
   
   //specific parameters
   switch(type) {
@@ -464,13 +466,10 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.type = _ELEMENT;
     e.l = params.l;
     e.geometryFile = std::string(params.geometry);
-    e.bmapFile = std::string(params.bmap);
     if(params.blmLocZset)
       e.blmLocZ = params.blmLocZ;
     if(params.blmLocThetaset)
       e.blmLocTheta = params.blmLocTheta;
-    if(params.bmapZOffsetset)
-      e.bmapZOffset = params.bmapZOffset;
     break;
 
   case _LINE:
@@ -528,10 +527,15 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   case _SCREEN:
     e.type = _SCREEN;
     e.l = params.l;
+    if(params.layerThicknessesset)
+      e.layerThicknesses = params.layerThicknesses;
+    if(params.layerMaterialsset)
+      e.layerMaterials = params.layerMaterials;
     e.angle = params.angle;
-    e.tscint = params.tscint;
-    e.scintmaterial = std::string(params.scintmaterial);
-    e.airmaterial = params.airmaterial;  
+    if(params.beampipeThicknessset)
+      e.beampipeThickness = params.beampipeThickness;
+    e.screenXSize = params.screenXSize;
+    e.screenYSize = params.screenYSize;
     break;
 
   case _AWAKESCREEN:
@@ -539,12 +543,26 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.scintmaterial = std::string(params.scintmaterial);
     std::cout << "scintmaterial: " << e.scintmaterial << " " <<  params.scintmaterial << std::endl;
     e.tscint = params.tscint;
+    e.windowScreenGap = params.windowScreenGap;
     e.angle = params.angle;
     e.twindow = params.twindow;
     e.windowmaterial = std::string(params.windowmaterial);
     e.vacuummaterial = std::string(params.vacuummaterial);
-    std::cout << "windowmaterial: " << e.windowmaterial << " " <<  params.windowmaterial << std::endl;
-    std::cout << "vacuummaterial: " << e.vacuummaterial << " " <<  params.vacuummaterial << std::endl;
+    break;
+
+  case _AWAKESPECTROMETER:
+    e.type = _AWAKESPECTROMETER;
+    e.l = params.l;
+    e.screenEndZ = params.screenEndZ;
+    e.poleStartZ = params.poleStartZ;
+    e.scintmaterial = std::string(params.scintmaterial);
+    std::cout << "scintmaterial: " << e.scintmaterial << " " <<  params.scintmaterial << std::endl;
+    e.tscint = params.tscint;
+    e.windowScreenGap = params.windowScreenGap;
+    e.angle = params.angle;
+    e.twindow = params.twindow;
+    e.windowmaterial = std::string(params.windowmaterial);
+    e.vacuummaterial = std::string(params.vacuummaterial);
     break;
 
   default:

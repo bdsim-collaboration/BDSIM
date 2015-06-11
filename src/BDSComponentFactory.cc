@@ -26,13 +26,17 @@
 //#include "BDSRealisticCollimator.hh"
 #include "BDSScintillatorScreen.hh"
 #include "BDSAwakeScintillatorScreen.hh"
+#include "BDSAwakeSpectrometer.hh"
+#include "BDSScreen.hh"
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
 #include "BDSDebug.hh"
 #include "parser/enums.h"
 #include "parser/elementlist.h"
 #include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
-#define BDSDEBUG 1
+#include <string>
+#include <list>
+
 #ifdef BDSDEBUG
 bool debug1 = true;
 #else
@@ -247,6 +251,13 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     element = createAwakeScreen();
     addTunnel(element); 
     break; 
+  case _AWAKESPECTROMETER:
+#ifdef BDSDEBUG
+    G4cout << "BDSComponentFactory  - creating awake spectrometer" << G4endl;
+#endif
+    element = createAwakeSpectrometer();
+    addTunnel(element); 
+    break; 
   case _TRANSFORM3D:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory  - creating transform3d" << G4endl;
@@ -283,9 +294,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
     exit(1);
     break;
   }
-
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " - adding common properties... " << G4endl;
-
+#endif
   if (element) {
     addCommonProperties(element);
     element->Initialise();
@@ -295,7 +306,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
 }
 
 void BDSComponentFactory::addCommonProperties(BDSAcceleratorComponent* component) {
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
+#endif
   component->SetPrecisionRegion(_element.precisionRegion);
   component->SetType(typestr(_element.type));
 
@@ -303,7 +316,9 @@ void BDSComponentFactory::addCommonProperties(BDSAcceleratorComponent* component
   component->SetK1(_element.k1);
   component->SetK2(_element.k2);
   component->SetK3(_element.k3);
+#ifdef BDSDEBUG
   G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
 void BDSComponentFactory::addTunnel(BDSAcceleratorComponent* component){
@@ -322,7 +337,6 @@ void BDSComponentFactory::addTunnel(BDSAcceleratorComponent* component){
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createSampler(){
-  G4cout << __METHOD_NAME__ << G4endl;
   return (new BDSSampler(_element.name, BDSGlobalConstants::Instance()->GetSamplerLength()));
 }
 
@@ -1112,7 +1126,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement(){
 	 << " l= " << _element.l << "m"
 	 << " aper= " << aper/CLHEP::m << "m"
 	 << " outR= " << _element.outR << "m"
-	 << " bmapZOffset = "	<<  _element.bmapZOffset * CLHEP::m
 	 << " tunnel material " << _element.tunnelMaterial
 	 << " tunnel cavity material " << _element.tunnelCavityMaterial
 	 << " precision region " << _element.precisionRegion
@@ -1322,13 +1335,37 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
         G4cout << "---->creating Screen,"
                << " name= "<< _element.name
                << " l=" << _element.l/CLHEP::m<<"m"
-               << " tscint=" << _element.tscint/CLHEP::m<<"m"
                << " angle=" << _element.angle/CLHEP::rad<<"rad"
-               << " scintmaterial=" << "ups923a"//_element.scintmaterial
-               << " airmaterial=" << "vacuum"//_element.airmaterial
                << G4endl;
 #endif
-	return (new BDSScintillatorScreen( _element.name, _element.tscint*CLHEP::m, (_element.angle-0.78539816339)*CLHEP::rad, "ups923a","vacuum")); //Name, scintillator thickness, angle in radians (relative to -45 degrees)
+	G4TwoVector size;
+	size.setX(_element.screenXSize*CLHEP::m);
+	size.setY(_element.screenYSize*CLHEP::m);
+	G4cout << __METHOD_NAME__ << " - size = " << size << G4endl;
+	G4double aper = _element.aper*CLHEP::m;
+	if(aper==0){
+	  aper=BDSGlobalConstants::Instance()->GetBeampipeRadius()/CLHEP::m;
+	}
+
+	BDSScreen* theScreen = new BDSScreen( _element.name, _element.l*CLHEP::m, true,
+					      aper, _element.tunnelMaterial, _element.tunnelOffsetX*CLHEP::m, size, _element.angle); 
+	if(_element.layerThicknesses.size() != _element.layerMaterials.size()){
+	  G4Exception("Material and ticknesses lists are of unequal size.", "-1", FatalException, "");
+	}
+
+	if(_element.layerThicknesses.size() == 0 ){
+	  G4Exception("Number of screen layers = 0.", "-1", FatalException, "");
+	}
+
+	std::list<const char*>::const_iterator itm;
+	std::list<double>::const_iterator itt;
+	for(itt = _element.layerThicknesses.begin(),
+	      itm = _element.layerMaterials.begin();
+	    itt != _element.layerThicknesses.end();
+	    itt++){
+	  theScreen->screenLayer((*itt)*CLHEP::m, *itm);
+	}
+	return theScreen;
 }
 
 
@@ -1338,11 +1375,27 @@ BDSAcceleratorComponent* BDSComponentFactory::createAwakeScreen(){
         G4cout << "---->creating Awake Screen,"
 	       << "twindow = " << _element.twindow*1e3/CLHEP::um << " um"
 	       << "tscint = " << _element.tscint*1e3/CLHEP::um << " um"
+	       << "windowScreenGap = " << _element.windowScreenGap*1e3/CLHEP::um << " um"
 	       << "windowmaterial = " << _element.windowmaterial << " um"
 	       << "scintmaterial = " << _element.scintmaterial << " um"
                << G4endl;
 #endif
-	return (new BDSAwakeScintillatorScreen(_element.name, _element.scintmaterial, _element.tscint*1e3, _element.angle, _element.twindow*1e3, _element.windowmaterial)); //Name
+	return (new BDSAwakeScintillatorScreen(_element.name, _element.scintmaterial, _element.tscint*1e3, _element.windowScreenGap*1e3,_element.angle, _element.twindow*1e3, _element.windowmaterial)); //Name
+}
+
+
+BDSAcceleratorComponent* BDSComponentFactory::createAwakeSpectrometer(){
+	
+#ifdef BDSDEBUG 
+        G4cout << "---->creating AWAKE spectrometer,"
+	       << "twindow = " << _element.twindow*1e3/CLHEP::um << " um"
+	       << "tscint = " << _element.tscint*1e3/CLHEP::um << " um"
+	       << "windowScreenGap = " << _element.windowScreenGap*1e3/CLHEP::um << " um"
+	       << "windowmaterial = " << _element.windowmaterial << " um"
+	       << "scintmaterial = " << _element.scintmaterial << " um"
+               << G4endl;
+#endif
+	return (new BDSAwakeSpectrometer(_element.name, _element.l*1e3,  _element.bmapFile,  _element.poleStartZ*1e3, _element.scintmaterial, _element.tscint*1e3, _element.windowScreenGap*1e3,_element.angle, _element.twindow*1e3, _element.windowmaterial, _element.screenEndZ*1e3));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){

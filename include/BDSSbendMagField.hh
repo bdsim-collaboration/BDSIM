@@ -3,10 +3,11 @@
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
-#include "G4UniformMagField.hh"
+#include "BDSMagField.hh"
 #include "G4Mag_EqRhs.hh"
+#include "BDSUniformMagField.hh"
 
-class BDSSbendMagField : public G4UniformMagField 
+class BDSSbendMagField : public BDSUniformMagField 
 {
 public:  // with description
   

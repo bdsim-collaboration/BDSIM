@@ -58,6 +58,7 @@ private:
   BDSAcceleratorComponent* createLaser();
   BDSAcceleratorComponent* createScreen();
   BDSAcceleratorComponent* createAwakeScreen();
+  BDSAcceleratorComponent* createAwakeSpectrometer();
   BDSAcceleratorComponent* createTransform3D();
   // for each of them - special cases need only for ring logic
   BDSAcceleratorComponent* createTerminator();

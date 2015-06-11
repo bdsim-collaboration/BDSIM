@@ -7,10 +7,10 @@
 #define BDSQUADMAGFIELD
 
 #include "G4Types.hh"
-#include "G4MagneticField.hh"
+#include "BDSMagField.hh"
 #include "G4Navigator.hh"
 
-class BDSQuadMagField : public G4MagneticField
+class BDSQuadMagField : public BDSMagField
 {
 public:  // with description
 

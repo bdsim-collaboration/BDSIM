@@ -15,13 +15,11 @@
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "G4LogicalVolume.hh"
-
+#include "G4RotationMatrix.hh"
+#include "G4UserLimits.hh"
 #include "G4FieldManager.hh"
 #include "G4ChordFinder.hh"
 #include "G4MagneticField.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4RotationMatrix.hh"
-#include "G4UserLimits.hh"
 
 class BDSMultipole :public BDSAcceleratorComponent
 {
@@ -78,12 +76,7 @@ protected:
 
 private:
   virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
-  /// build and set field manager and chord finder
-  void BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
-		       G4MagneticField* aField);
 
-  /// define field and stepper
-  virtual void BuildBPFieldAndStepper()=0;
 
   /// build beam loss monitors
   virtual void BuildBLMs();
@@ -105,12 +98,8 @@ protected:
   void SetStartOuterRadius(G4double outR);
   void SetEndOuterRadius(G4double outR);
 
-protected:
-  // field related objects, set by BuildBPFieldAndStepper
-  G4MagIntegratorStepper* itsStepper;
-  G4MagneticField* itsMagField;
-  G4Mag_UsualEqRhs* itsEqRhs;
 
+protected:
   // beam pipe volumes
   G4LogicalVolume* itsBeampipeLogicalVolume;
   G4LogicalVolume* itsInnerBPLogicalVolume;
@@ -119,7 +108,6 @@ protected:
   G4UserLimits* itsBeampipeUserLimits;
   G4VPhysicalVolume* itsPhysiComp;
   G4VPhysicalVolume* itsPhysiInner;
-  G4FieldManager* itsBPFieldMgr;
   G4FieldManager* itsOuterFieldMgr;
 
 protected:   // these might need to be accessed from the child classes
@@ -135,6 +123,8 @@ protected:   // these might need to be accessed from the child classes
   // G4double itsStartOuterR;
   // G4double itsEndOuterR;
 
+  virtual void SetBPFieldMgr();
+  
 private:
   /// constructor initialisation
   void ConstructorInit();

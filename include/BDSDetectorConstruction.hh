@@ -24,7 +24,8 @@ Last modified 15.11.2005 by Ilya Agapov
 #include "BDSShowerModel.hh"
 #include "GFlashHitMaker.hh"
 #include "GFlashParticleBounds.hh"
-
+#include "BDSUniformMagField.hh"
+#include "BDSColourWheel.hh"
 
 class G4Box;
 class G4LogicalVolume;
@@ -100,7 +101,7 @@ private:
   std::vector<G4double> itsWorldSize;
   std::vector< G4VPhysicalVolume * > fPhysicalVolumeVector; //a vector with all the physical volumes
 
-  G4UniformMagField* magField;      //pointer to the magnetic field
+  BDSMagField* magField;      //pointer to the magnetic field
   G4UserLimits* BDSUserLimits;
 
   G4VSensitiveDetector *  BDSSensitiveDetector;
@@ -114,6 +115,8 @@ private:
   std::vector<G4Region*> gFlashRegion;
 
   G4RotationMatrix* _globalRotation;
+
+  BDSColourWheel* _colourWheel;
 };
 
 #endif

@@ -30,7 +30,7 @@ BDSLWCalorimeter::BDSLWCalorimeter (G4String& aName,G4double aLength,
 			 aTunnelMaterial),
   itsBeampipeLogicalVolume(NULL),itsInnerBPLogicalVolume(NULL),itsPhysiInner(NULL),
   itsPhysiComp(NULL),itsLWCalLogicalVolume(NULL),itsBeampipeUserLimits(NULL),
-  itsBPFieldMgr(NULL),itsBPTube(NULL),itsInnerBPTube(NULL),itsLWCal(NULL),
+  itsBPTube(NULL),itsInnerBPTube(NULL),itsLWCal(NULL),
   itsPhysiLWCal(NULL)
 {
 }
@@ -138,7 +138,7 @@ void BDSLWCalorimeter::BuildBeampipe(G4double aLength)
    
    itsInnerBPLogicalVolume->SetUserLimits(itsInnerBeampipeUserLimits);
 #endif
-   itsInnerBPLogicalVolume->SetFieldManager(itsBPFieldMgr,false) ;
+   itsInnerBPLogicalVolume->SetFieldManager(itsFieldMgr,false) ;
    
    // now protect the fields inside the marker volume by giving the
    // marker a null magnetic field (otherwise G4VPlacement can

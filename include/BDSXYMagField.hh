@@ -41,7 +41,7 @@ public:
 
   G4int ReadFile(G4String fname);
 
-  void Prepare(G4VPhysicalVolume *referenceVolume);
+  virtual void Prepare(G4VPhysicalVolume *referenceVolume);
 
   void SetBx(G4int i,G4int j,G4double val);
   void SetBy(G4int i,G4int j,G4double val);

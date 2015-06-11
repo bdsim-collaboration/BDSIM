@@ -8,12 +8,13 @@
 #include "G4LogicalVolume.hh"
 
 #include <fstream>
+#include "BDSGeometry.hh"
 
-class GGmadDriver {
+class GGmadDriver : public BDSGeometry{
 
 public:
   GGmadDriver(G4String);
-  void Construct(G4LogicalVolume *marker);
+  virtual void Construct(G4LogicalVolume *marker);
 
 private:
   std::ifstream inputf;

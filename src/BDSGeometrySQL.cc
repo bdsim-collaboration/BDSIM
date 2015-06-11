@@ -29,21 +29,20 @@
 #include <cstdlib>
 #include <cstring>
 
-BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength):
+
+
+BDSGeometrySQL::BDSGeometrySQL(G4String DBfile):BDSGeometry(new BDSGeometryFormat("mokka"), DBfile),
   rotateComponent(NULL),itsMarkerVol(NULL)
 {
-  itsMarkerLength = markerlength;
 #ifdef BDSDEBUG
   G4cout << "BDSGeometrySQL constructor: loading SQL file " << DBfile << G4endl;
 #endif
   ifs.open(DBfile.c_str());
   G4String exceptionString = "Unable to load SQL database file: " + DBfile;
   if(!ifs) G4Exception(exceptionString.c_str(), "-1", FatalException, "");
-  align_in_volume = NULL;  //default alignment (does nothing)
-  align_out_volume = NULL;  //default alignment (does nothing)
-  HasFields = false;
-  nPoleField = 0;
-  HasUniformField = false;
+  _hasFields = false;
+  _nPoleField = 0;
+  _hasUniformField = false;
 
   //Set up the precision region
   G4String pRegName="precisionRegionSQL";
@@ -76,6 +75,7 @@ BDSGeometrySQL::~BDSGeometrySQL(){
 void BDSGeometrySQL::Construct(G4LogicalVolume *marker)
 {
   itsMarkerVol = marker;
+  _length=((G4Box*)itsMarkerVol->GetSolid())->GetZHalfLength()*2.0;
   VOL_LIST.push_back(itsMarkerVol);
   G4String file;
   char buffer[1000];
@@ -229,10 +229,13 @@ void BDSGeometrySQL::SetPlacementParams(BDSMySQLTable* aSQLTable, G4int k){
 	_InheritStyle = aSQLTable->GetVariable("INHERITSTYLE")->GetStrValue(k);
       if(aSQLTable->GetVariable("PARAMETERISATION")!=NULL)
 	_Parameterisation = aSQLTable->GetVariable("PARAMETERISATION")->GetStrValue(k);
-      if(_PARENTNAME=="") _PosZ-=itsMarkerLength/2; //Move definition of PosZ to front of element
-      _PARENTNAME=itsMarkerVol->GetName()+"_"+_PARENTNAME;
-      if(aSQLTable->GetVariable("NAME")!=NULL)
+      if(_PARENTNAME==""){
+	_PosZ-=length()/2.0; //Move position to beginning of element
+      }
+      _PARENTNAME= itsMarkerVol->GetName() + "_" + _PARENTNAME;
+      if(aSQLTable->GetVariable("NAME")!=NULL){
 	_Name = aSQLTable->GetVariable("NAME")->GetStrValue(k);
+      }
       if(_Name=="_SQL") _Name = _TableName+BDSGlobalConstants::Instance()->StringFromInt(k) + "_SQL";
       if(_Name=="") _Name = _TableName+BDSGlobalConstants::Instance()->StringFromInt(k);
       _Name = itsMarkerVol->GetName()+"_"+_Name;
@@ -808,8 +811,7 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4Log
 	    }
 	}
 
-      if(_SetSensitive) SensitiveComponents.push_back(VOL_LIST[ID]);
-
+      if(_SetSensitive) _sensitiveComponents.push_back(VOL_LIST[ID]);
       G4ThreeVector PlacementPoint(_PosX,_PosY,_PosZ);
 
       if(_InheritStyle.compareTo("",cmpmode)){ //True if InheritStyle is set
@@ -845,7 +847,7 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4Log
       }
 
       if(_Parameterisation.compareTo("GFLASH",cmpmode)==0){       
-	itsGFlashComponents.push_back(VOL_LIST[ID]);
+	_gFlashComponents.push_back(VOL_LIST[ID]);
       }
 
 #ifdef BDSDEBUG
@@ -864,29 +866,29 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4Log
       if(_align_in)
 	{
 	  // Make sure program stops and informs user if more than one alignment vol.
-	  if(align_in_volume!=NULL)
+	  if(align_in_volume()!=NULL)
 	    {
-	      G4cerr<<"\nBDSGeometrySQL.cc:486: Trying to align in-beam to SQL volume to " << PhysiComp->GetName() << " but alignment already set to " << align_in_volume->GetName() << G4endl;
+	      G4cerr<<"\nBDSGeometrySQL.cc:486: Trying to align in-beam to SQL volume to " << PhysiComp->GetName() << " but alignment already set to " << align_in_volume()->GetName() << G4endl;
 	      G4Exception("Aborting Program", "-1", FatalException, "");
 
 	    }
 
 	  else
-	    align_in_volume=PhysiComp;
+	    _align_in_volume=PhysiComp;
 
 	}
 
       if(_align_out)
 	{
-	  if(align_out_volume!=NULL)
+	  if(align_out_volume()!=NULL)
 	    {
-	      G4cerr<<"\nBDSGeometrySQL.cc:486: Trying to align out-beam to SQL volume to " << PhysiComp->GetName() << " but alignment already set to " << align_out_volume->GetName() << G4endl;
+	      G4cerr<<"\nBDSGeometrySQL.cc:486: Trying to align out-beam to SQL volume to " << PhysiComp->GetName() << " but alignment already set to " << align_out_volume()->GetName() << G4endl;
 	      G4Exception("Aborting Program", "-1", FatalException, "");
 
 	    }
 
 	  else
-	    align_out_volume=PhysiComp;
+	    _align_out_volume=PhysiComp;
 	}
 
 //      G4double P0 = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
@@ -907,41 +909,41 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4Log
 
       if(_MagType.compareTo("QUAD",cmpmode)==0)
 	{
-	  HasFields = true;
-	  nPoleField = 1;
+	  _hasFields = true;
+	  _nPoleField = 1;
 	  QuadBgrad.push_back(- brho * _K1 / CLHEP::m2);
 	  Quadvol.push_back(PhysiComp->GetName());
-	  QuadVolBgrad[PhysiComp->GetName()]=(- brho * _K1 / CLHEP::m2);
+	  _quadVolBgrad[PhysiComp->GetName()]=(- brho * _K1 / CLHEP::m2);
 	}
 
       if(_MagType.compareTo("SEXT",cmpmode)==0)
 	{
-	  HasFields = true;
-	  nPoleField = 2;
+	  _hasFields = true;
+	  _nPoleField = 2;
 	  SextBgrad.push_back(- brho * _K2 / CLHEP::m3);
 	  Sextvol.push_back(PhysiComp->GetName());
-	  SextVolBgrad[PhysiComp->GetName()]=(- brho * _K2 / CLHEP::m3);
+	  _sextVolBgrad[PhysiComp->GetName()]=(- brho * _K2 / CLHEP::m3);
 	}
 
       if(_MagType.compareTo("OCT",cmpmode)==0)
 	{
-	  HasFields = true;
-	  nPoleField = 3;
+	  _hasFields = true;
+	  _nPoleField = 3;
 	  OctBgrad.push_back(- brho * _K3 / (CLHEP::m2*CLHEP::m2));
 	  Octvol.push_back(PhysiComp->GetName());
-	  OctVolBgrad[PhysiComp->GetName()]=(- brho * _K3 / (CLHEP::m2*CLHEP::m2));
+	  _octVolBgrad[PhysiComp->GetName()]=(- brho * _K3 / (CLHEP::m2*CLHEP::m2));
 	}
 
       if(_FieldX || _FieldY || _FieldZ) //if any vols have non-zero field components
 	{
-	  HasFields = true;
-	  HasUniformField=true;
+	  _hasFields = true;
+	  _hasUniformField=true;
 #ifdef BDSDEBUG
 	  G4cout << "BDSGeometrySQL> volume " << PhysiComp->GetName() << " has the following uniform field: " << _FieldX << " " << _FieldY << " " << _FieldZ << " " << G4endl;
 #endif
 	  UniformField.push_back(G4ThreeVector(_FieldX*CLHEP::tesla,_FieldY*CLHEP::tesla,_FieldZ*CLHEP::tesla));
 	  Fieldvol.push_back(PhysiComp->GetName());
-	  UniformFieldVolField[PhysiComp->GetName()]=G4ThreeVector(_FieldX*CLHEP::tesla,_FieldY*CLHEP::tesla,_FieldZ*CLHEP::tesla);
+	  _uniformFieldVolField[PhysiComp->GetName()]=G4ThreeVector(_FieldX*CLHEP::tesla,_FieldY*CLHEP::tesla,_FieldZ*CLHEP::tesla);
 	}
   }
 }

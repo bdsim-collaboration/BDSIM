@@ -15,6 +15,15 @@ class BDSDrift :public BDSMultipole
 public:
   BDSDrift(G4String aName, 
 	   G4double aLength,
+	   G4double startAper, 
+	   G4double endAper = BDSGlobalConstants::Instance()->GetBeampipeRadius(), 
+	   G4String aTunnelMaterial = "", 
+	   G4bool aperset = false, 
+	   G4double aper = 0, 
+	   G4double tunnelOffsetX = BDSGlobalConstants::Instance()->GetTunnelOffsetX());
+
+  BDSDrift(G4String aName, 
+	   G4double aLength,
            std::list<G4double> blmLocZ, 
 	   std::list<G4double> blmLocTheta, 
 	   G4double startAper, 
@@ -37,6 +46,7 @@ private:
   G4double itsStartOuterR;
   G4double itsEndOuterR;
   G4bool itsAperset;
+  void init();
 };
 
 #endif

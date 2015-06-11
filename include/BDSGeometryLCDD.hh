@@ -14,6 +14,7 @@
 #define BDSGeometryLCDD_h 1
 
 #include "globals.hh"
+#include "BDSGeometry.hh"
 #include "BDSMaterials.hh"
 #include "G4UniformMagField.hh"
 #include "G4LogicalVolume.hh"
@@ -66,7 +67,7 @@ struct VIS_REF{
   G4VisAttributes* value;
 };
 
-class BDSGeometryLCDD
+class BDSGeometryLCDD : public BDSGeometry
 {
 public:
   BDSGeometryLCDD(G4String LCDDfile);
@@ -87,14 +88,11 @@ public:
   void parsePHYSVOL(xmlNodePtr cur, G4String volume_name);
   void parseFIELDS(xmlNodePtr cur);
 
-  BDSMagField* GetField();
-  G4UniformMagField* GetUniformField();
-  G4bool GetFieldIsUniform();
+
 
   G4RotationMatrix* RotateComponent(G4ThreeVector rotvalues);
 
-  void Construct(G4LogicalVolume *marker);
-  std::vector<G4LogicalVolume*> SensitiveComponents;           //For registering the sensitive components
+  virtual void Construct(G4LogicalVolume *marker);
   //  std::vector<G4VPhysicalVolume*> itsMultiplePhysicalVolumes;
   std::vector<G4LogicalVolume*> VOL_LIST;
   G4String parseStrChar(xmlChar* value);
@@ -117,7 +115,6 @@ private:
 #ifndef NOUSERLIMITS
   G4UserLimits* itsUserLimits;
 #endif
-  G4bool itsFieldIsUniform;
   G4String itsFieldVolName;
   // Fetching of imported objects
   G4VisAttributes* GetVisByName(G4String name);
@@ -152,11 +149,7 @@ private:
 
   G4double visRed, visGreen, visBlue;
 
-  //The magnetic field
-  BDSMagField* itsMagField;
-  G4UniformMagField* itsUniformMagField;
-
-protected:
+  G4bool _fieldIsUniform;
 };
 
 inline G4ThreeVector BDSGeometryLCDD::GetPosition(xmlNodePtr cur, G4double lunit)

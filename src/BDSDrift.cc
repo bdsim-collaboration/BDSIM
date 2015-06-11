@@ -19,8 +19,31 @@
 #include "G4VPhysicalVolume.hh"
 
 #include <map>
-#define BDSDEBUG 1
+
 //============================================================
+BDSDrift::BDSDrift (G4String aName, 
+		    G4double aLength, 
+ 		    G4double aperX, 
+		    G4double aperY, 
+		    G4String tunnelMaterial, 
+		    G4bool   aperset, 
+		    G4double aper, 
+		    G4double tunnelOffsetX):BDSMultipole(aName, 
+							 aLength, 
+							 aper, 
+							 aper, 
+							 tunnelMaterial, 
+							 "", 
+							 aperX, 
+							 aperY, 
+							 0, 
+							 0, 
+							 tunnelOffsetX),
+					    itsStartOuterR(0.0),
+					    itsEndOuterR(0.0),
+					    itsAperset(aperset){
+  init();
+					    }
 
 BDSDrift::BDSDrift (G4String aName, 
 		    G4double aLength, 
@@ -53,9 +76,13 @@ BDSDrift::BDSDrift (G4String aName,
   itsEndOuterR(0.0),
   itsAperset(aperset)
 {
+  init();
+}
+
+void BDSDrift::init(){
   if(!itsAperset){
-    itsStartOuterR=aperX + BDSGlobalConstants::Instance()->GetBeampipeThickness();
-    itsEndOuterR=aperY + BDSGlobalConstants::Instance()->GetBeampipeThickness();
+    itsStartOuterR=itsXAper + BDSGlobalConstants::Instance()->GetBeampipeThickness();
+    itsEndOuterR=itsYAper + BDSGlobalConstants::Instance()->GetBeampipeThickness();
     SetStartOuterRadius(itsStartOuterR);
     SetEndOuterRadius(itsEndOuterR);
   }
@@ -70,15 +97,14 @@ void BDSDrift::BuildBeampipe(G4String materialName) {
 }
 
 void BDSDrift::Build() {
-  G4cout << __METHOD_NAME__ << G4endl;
   BDSMultipole::Build();
 
   G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
   VisAtt1->SetVisibility(false);
   VisAtt1->SetForceSolid(true);
   itsMarkerLogicalVolume->SetVisAttributes(VisAtt1);
-  G4cout << __METHOD_END__ << G4endl;
 }
+
 
 void BDSDrift::BuildBPFieldAndStepper(){
     // set up the magnetic field and stepper

@@ -1,6 +1,7 @@
 #ifdef USE_LCDD
 #include "BDSGlobalConstants.hh" 
 #include "BDSGeometryLCDD.hh"
+#include "BDSGeometryFormat.hh"
 #include "BDSSbendMagField.hh"
 #include "G4Box.hh"
 #include "G4Colour.hh"
@@ -19,14 +20,14 @@
 #include "BDSDetectorSolenoidMagField.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4TessellatedSolid.hh"
-#include "G4UniformMagField.hh"
+#include "BDSUniformMagField.hh"
 
 #include <cstdlib>
 #include <cstring>
 #include <list>
 
-BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):
-  itsMarkerVol(NULL),itsMagField(NULL),itsUniformMagField(NULL)
+
+BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):itsMarkerVol(NULL),_fieldIsUniform(false)
 {
 #ifndef NOUSERLIMITS
   itsUserLimits = new G4UserLimits();
@@ -36,7 +37,6 @@ BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):
   }
 #endif
 
-  itsFieldIsUniform=false;
   itsFieldVolName="";
   itsLCDDfile = LCDDfile;
   visRed = visGreen = visBlue = 0.0;
@@ -114,8 +114,6 @@ BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):
 
 BDSGeometryLCDD::~BDSGeometryLCDD()
 {
-  delete itsUniformMagField;
-  delete itsMagField;
   delete itsUserLimits;
 }
 
@@ -124,20 +122,6 @@ void BDSGeometryLCDD::Construct(G4LogicalVolume *marker)
   itsMarkerVol = marker;
   parseDoc();
 
-}
-
-G4bool BDSGeometryLCDD::GetFieldIsUniform(){
-  return itsFieldIsUniform;
-}
-
-BDSMagField* BDSGeometryLCDD::GetField()
-{
-  return itsMagField;
-}
-
-G4UniformMagField* BDSGeometryLCDD::GetUniformField()
-{
-  return itsUniformMagField;
 }
 
 void BDSGeometryLCDD::parseDoc()
@@ -207,11 +191,11 @@ void BDSGeometryLCDD::parseDoc()
 	 }
        cur = cur->next;
      }
-   if((!itsMagField) && (!itsUniformMagField)){
+   if(!_field){
 #ifdef BDSDEBUG
      G4cout << "BDSGeometryLCDD.cc> No magnetic fields defined. Making default (zero) BDSMagField" << G4endl;
 #endif
-     itsMagField = new BDSMagField();
+     _field = new BDSMagField();
    }
 
    xmlFreeDoc(doc);
@@ -389,7 +373,7 @@ void BDSGeometryLCDD::parseFIELDS(xmlNodePtr cur)
   tempcur=tempcur->next;
   while (tempcur != NULL){
     if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"solenoid"))){
-      if(itsFieldIsUniform==true){
+      if(_fieldIsUniform==true){
 	G4Exception("BDSGeometryLCDD::parseFIELDS> making solenoid field but already built dipole field...", "-1", FatalException, "");
       } 
       G4String name = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"name"));
@@ -403,15 +387,15 @@ void BDSGeometryLCDD::parseFIELDS(xmlNodePtr cur)
       G4double zmin = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"zmin")) * lunit;
 
       //Make the magnetic field
-      itsMagField = new BDSDetectorSolenoidMagField(inner_field, outer_field, inner_radius, outer_radius, zmin, zmax);
+      _field = new BDSDetectorSolenoidMagField(inner_field, outer_field, inner_radius, outer_radius, zmin, zmax);
     }else if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"bdsimdipole"))){
       G4String name = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"name"));
       itsFieldVolName = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"volume"));
       G4double funit = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"funit"));
       G4double field = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"field")) * funit;
       const G4ThreeVector fieldVec(0,field,0);
-      itsUniformMagField=new G4UniformMagField(fieldVec);
-      itsFieldIsUniform=true;
+      _field=new BDSUniformMagField(fieldVec);
+      _fieldIsUniform=true;
     }else if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"text"))){
     }  else {
       G4cout << tempcur->name << G4endl;
@@ -775,7 +759,7 @@ void BDSGeometryLCDD::parseVOLUME(xmlNodePtr cur)
       alogvol->SetUserLimits(itsUserLimits);
 #endif
       
-      SensitiveComponents.push_back(alogvol);
+      _sensitiveComponents.push_back(alogvol);
       LOGVOL_LIST.push_back(alogvol);
 
       if(visref==""){ //Default vis settings

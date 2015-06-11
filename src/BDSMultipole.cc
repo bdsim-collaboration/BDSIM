@@ -40,7 +40,7 @@
 #include "G4MagneticField.hh"
 
 #include <string>
-#define BDSDEBUG 1
+
 //============================================================
 BDSMultipole::BDSMultipole( G4String aName, 
 			    G4double aLength,
@@ -126,7 +126,7 @@ void BDSMultipole::ConstructorInit(){
   itsBeampipeUserLimits=NULL;
   itsPhysiComp=NULL; 
   itsPhysiInner=NULL;
-  itsBPFieldMgr=NULL;
+  itsFieldMgr=NULL;
   itsOuterFieldMgr=NULL;
 
   itsBeampipeSolid=NULL;
@@ -152,9 +152,6 @@ void BDSMultipole::Build()
   //
   // build beampipe (geometry + magnetic field)
   //
-  BuildBPFieldAndStepper();
-  BuildBPFieldMgr(itsStepper, itsMagField);
-
   BDSAcceleratorComponent::Build();
   BuildOuterLogicalVolume();
   BuildBeampipe();
@@ -163,10 +160,12 @@ void BDSMultipole::Build()
   }
   //Build the beam loss monitors
   BuildBLMs();
+  BuildFieldAndStepper();
 #ifdef BDSDEBUG
   G4cout << __METHOD_END__ << G4endl;
 #endif
 }
+
 
 void BDSMultipole::BuildBLMs(){
   itsBlmLocationR=itsOuterR;
@@ -385,8 +384,6 @@ void BDSMultipole::FinaliseBeampipe(G4String materialName, G4RotationMatrix* Rot
   itsInnerBPLogicalVolume->SetUserLimits(itsInnerBeampipeUserLimits);
 #endif
   
-  itsBeampipeLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
-  itsInnerBPLogicalVolume->SetFieldManager(itsBPFieldMgr,false) ;
 
 
   
@@ -406,33 +403,10 @@ void BDSMultipole::FinaliseBeampipe(G4String materialName, G4RotationMatrix* Rot
   itsBeampipeLogicalVolume->SetVisAttributes(VisAtt1);
 }
 
-void BDSMultipole::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
-				   G4MagneticField* aField)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  itsChordFinder= 
-    new G4ChordFinder(aField,
-		      BDSGlobalConstants::Instance()->GetChordStepMinimum(),
-		      aStepper);
-
-  itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
-  itsBPFieldMgr= new G4FieldManager();
-  itsBPFieldMgr->SetDetectorField(aField);
-  itsBPFieldMgr->SetChordFinder(itsChordFinder);
-  if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0){
-    itsBPFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
-  }
-  if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>0)
-    itsBPFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
-  if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0)
-    itsBPFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
-  if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0)
-    itsBPFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
-#ifdef BDSDEBUG
-     G4cout << __METHOD_END__ << G4endl;
-#endif
+void BDSMultipole::SetBPFieldMgr(){
+  BuildFieldMgr(itsStepper, itsMagField);
+  itsBeampipeLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
+  itsInnerBPLogicalVolume->SetFieldManager(itsFieldMgr,false) ;
 }
 
 
@@ -538,7 +512,7 @@ void BDSMultipole::BuildOuterFieldManager(G4int nPoles, G4double poleField,
 
 BDSMultipole::~BDSMultipole()
 {
-  delete itsBPFieldMgr;
+  delete itsFieldMgr;
   delete itsChordFinder;
 #ifndef NOUSERLIMITS
   delete itsOuterUserLimits;

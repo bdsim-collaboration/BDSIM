@@ -16,7 +16,7 @@
 //     x  x   2002 by Blair
 //
 //
-#define BDSDEBUG 1
+
 
 #include <list>
 #include <sstream>
@@ -40,6 +40,8 @@
 #include "G4IntersectionSolid.hh"
 #include "G4AssemblyVolume.hh"
 #include "G4Transform3D.hh"
+#include "BDSMagFieldFactory.hh"
+#include "G4NystromRK4.hh"
 
 typedef std::map<G4String,int> LogVolCountMap;
 LogVolCountMap* LogVolCount = new LogVolCountMap();
@@ -61,7 +63,9 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double ZOffset, 
 						  G4double tunnelRadius, 
 						  G4double tunnelOffsetX,
-						  G4String aTunnelCavityMaterial):
+						  G4String aTunnelCavityMaterial,
+						  G4String bmap,
+						  G4double bmapZOffset):
   itsName(aName),
   itsLength(aLength),
   itsBpRadius(aBpRadius),
@@ -71,7 +75,10 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsMaterial(aMaterial),
   itsXOffset(XOffset),
   itsYOffset(YOffset), 
-  itsZOffset(ZOffset) 
+  itsZOffset(ZOffset), 
+  itsBmap(bmap),itsBmapZOffset(bmapZOffset),itsBmapXOffset(0),
+  itsChordFinder(NULL), itsStepper(NULL),itsEqRhs(NULL), 
+  itsMagField(NULL), itsFieldMgr(NULL)
 {
   ConstructorInit();
 }
@@ -92,7 +99,9 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
 						  G4double ZOffset, 
 						  G4double tunnelRadius, 
 						  G4double tunnelOffsetX, 
-						  G4String aTunnelCavityMaterial):
+						  G4String aTunnelCavityMaterial,
+						  G4String bmap,
+						  G4double bmapZOffset):
   itsName(aName),
   itsLength(aLength),
   itsBpRadius(aBpRadius),
@@ -104,7 +113,11 @@ BDSAcceleratorComponent::BDSAcceleratorComponent (
   itsBlmLocTheta(blmLocTheta),
   itsXOffset(XOffset),
   itsYOffset(YOffset), 
-  itsZOffset(ZOffset) 
+  itsZOffset(ZOffset),
+  itsBmap(bmap),itsBmapZOffset(bmapZOffset), itsBmapXOffset(0),
+  itsChordFinder(NULL), itsStepper(NULL), itsEqRhs(NULL), 
+  itsMagField(NULL), itsFieldMgr(NULL)
+
 {
   if (itsBlmLocZ.size() != itsBlmLocTheta.size()){
     G4cerr << "BDSAcceleratorComponent: error, lists blmLocZ and blmLocTheta are of unequal size" << G4endl;
@@ -159,6 +172,7 @@ inline void BDSAcceleratorComponent::ConstructorInit(){
   itsBlmOuterSolid=NULL;
   itsSPos = 0.0;
   itsCopyNumber = 0;
+  _geom=NULL;
 }
 
 BDSAcceleratorComponent::~BDSAcceleratorComponent ()
@@ -175,7 +189,7 @@ BDSAcceleratorComponent::~BDSAcceleratorComponent ()
 void BDSAcceleratorComponent::Initialise()
 {
   /// check and build logical volume
-
+  
   // set copy number (count starts at 0)
   // post increment guarantees itsCopyNumber starts at 0!
   itsCopyNumber = (*LogVolCount)[itsName]++;
@@ -236,7 +250,7 @@ void BDSAcceleratorComponent::BuildBendMarkerSolid(){
     exit(1);
   }
   
-  
+#ifdef BDSDEBUG  
   G4cout << "BDSAcceleratorComponent::MakeDefaultMarkerLogicalVolume> Trap parameters:  " << G4endl;
   G4cout  <<   
     transverseSize/2 << " " <<
@@ -250,7 +264,8 @@ void BDSAcceleratorComponent::BuildBendMarkerSolid(){
     xHalfLengthMinus << " " <<
     xHalfLengthMinus << " " <<
     0 << " " << G4endl;
-  
+#endif 
+
   itsMarkerSolidVolume = new G4Trap(itsName+"_trapezoid_marker",
 				    transverseSize/2.0, // z hlf lgth Dz
 				    atan((tan(itsPhiAngleOut)-tan(itsPhiAngleIn))/2.0), // pTheta
@@ -362,10 +377,17 @@ void BDSAcceleratorComponent::BuildTunnel(){
 #endif
 }
 
-void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)
-{//do nothing by default
-  return;
+void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume *referenceVolume)
+{
+  // creates a field mesh in the reference frame of a physical volume
+  // from  b-field map value list 
+  // has to be called after the component is placed in the geometry
+  if(itsMagField!=NULL) {
+    itsMagField->Prepare(referenceVolume);
+  } 
 }
+
+
 
 void BDSAcceleratorComponent::CalculateLengths(){
 #ifdef BDSDEBUG
@@ -534,6 +556,107 @@ void BDSAcceleratorComponent::BuildBLMs()
    assemblyBlms->MakeImprint(itsMarkerLogicalVolume,blmTr3d);
  }
 }
+
+void BDSAcceleratorComponent::BuildFieldAndStepper(){
+  if(itsBmap!=""){
+    G4cout << __METHOD_NAME__ << " - building bmap field and stepper." << G4endl;
+    BuildBmapFieldAndStepper();
+  } else {
+    G4cout << __METHOD_NAME__ << " - building beampipe field and stepper." << G4endl;
+    BuildBPFieldAndStepper();
+    SetBPFieldMgr();
+  }
+}
+
+void BDSAcceleratorComponent::BuildBPFieldAndStepper(){;}
+
+void BDSAcceleratorComponent::SetBPFieldMgr(){;}
+
+void BDSAcceleratorComponent::BuildFieldMgr(){
+  BuildFieldMgr(itsStepper, itsMagField);
+}
+
+void BDSAcceleratorComponent::BuildFieldMgr(G4MagIntegratorStepper* aStepper,
+					    G4MagneticField* aField){
+  itsChordFinder= new G4ChordFinder(aField,
+				    BDSGlobalConstants::Instance()->GetChordStepMinimum(),
+				    aStepper);
+  
+  itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
+  itsFieldMgr= new G4FieldManager();
+  itsFieldMgr->SetDetectorField(aField);
+  itsFieldMgr->SetChordFinder(itsChordFinder);
+  if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0){
+    itsFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
+  }
+  if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>0)
+    itsFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
+  if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0)
+    itsFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
+  if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0)
+    itsFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+
+}
+
+
+void BDSAcceleratorComponent::BuildBmapFieldAndStepper()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - building magnetic field...." << G4endl;
+#endif
+
+  BDSMagFieldFactory* bFact = new BDSMagFieldFactory();
+  itsMagField = bFact->buildMagField(itsBmap, itsBmapZOffset, _geom, itsBmapXOffset);
+    
+  itsEqRhs = new G4Mag_UsualEqRhs(itsMagField);
+  itsStepper = new G4NystromRK4(itsEqRhs);
+
+  if(itsStepper && itsMagField){
+    BuildFieldMgr(itsStepper, itsMagField);
+    itsMarkerLogicalVolume->SetFieldManager(itsFieldMgr,true);
+  }
+
+  /*
+  // create a field manager
+  G4FieldManager* fieldManager = new G4FieldManager();
+  fieldManager->SetDetectorField(itsMagField );
+  
+#ifdef BDSDEBUG
+  G4cout << "Setting stepping accuracy parameters..." << G4endl;
+#endif
+  
+  if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0){
+    fieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+  }
+  if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0){
+    fieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
+  }
+  if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>=0){
+    fieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
+  }
+  if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0){
+    fieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
+  }
+  
+  G4MagInt_Driver* fIntgrDriver = new G4MagInt_Driver(BDSGlobalConstants::Instance()->GetChordStepMinimum(),
+						      itsStepper, 
+						      itsStepper->GetNumberOfVariables() );
+  itsChordFinder = new G4ChordFinder(fIntgrDriver);
+  
+  itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
+  
+  fieldManager->SetChordFinder( itsChordFinder ); 
+  
+  G4bool forceToAllDaughters=true;
+  
+#ifdef BDSDEBUG
+  G4cout << "Setting the logical volume " << itsMarkerLogicalVolume->GetName() << " field manager... force to all daughters = " << forceToAllDaughters << G4endl;
+#endif
+itsMarkerLogicalVolume->SetFieldManager(fieldManager,forceToAllDaughters);
+  */
+}
+
+
 
 //This Method is for investigating the Anomalous signal at LHC junction IP8
 // no longer used

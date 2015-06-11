@@ -13,7 +13,7 @@ Last modified 23.10.2007 by Steve Malton
 #include "G4ParticleTable.hh"
 
 extern Options options;
-#define DEBUG 1
+
 BDSGlobalConstants* BDSGlobalConstants::_instance = 0;
 
 BDSGlobalConstants* BDSGlobalConstants::Instance(){
@@ -24,7 +24,7 @@ BDSGlobalConstants* BDSGlobalConstants::Instance(){
 }
 
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
-  itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0),itsParticleMomentum(0.0),itsParticleKineticEnergy(0.0),itsSMax(0.0)
+  itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0),itsParticleMomentum(0.0),itsParticleKineticEnergy(0.0),itsSMax(0.0),_nAbortAttempts(0)
 {
   itsPhysListName = opt.physicsList;
   itsPipeMaterial = opt.pipeMaterial;
@@ -82,7 +82,6 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsTunnelThickness = opt.tunnelThickness * CLHEP::m; //Tunnel geometry options read from file
   itsTunnelSoilThickness = opt.tunnelSoilThickness * CLHEP::m;
   itsFloorBeamlineHeight = opt.floorBeamlineHeight * CLHEP::m;
-  G4cout << __METHOD_NAME__ << "floorBeamlineHeight = " << itsFloorBeamlineHeight << G4endl;
   itsBeamlineCeilingHeight = opt.beamlineCeilingHeight * CLHEP::m;
   itsTunnelOffsetX = opt.tunnelOffsetX * CLHEP::m;
   //Beam loss monitor (BLM) geometry
@@ -124,10 +123,8 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsTurnOnBirksSaturation = opt.turnOnBirksSaturation;
   itsScintYieldFactor=opt.scintYieldFactor;
   itsSynchRadOn = opt.synchRadOn;
-  G4cout << "BDSGlobalConstants::Instance() synchRadOn = " << itsSynchRadOn << G4endl;
   itsDecayOn = opt.decayOn;
   itsSynchTrackPhotons= opt.synchTrackPhotons;
-  G4cout << __METHOD_NAME__ << "synchTrackphotons = " << itsSynchTrackPhotons << G4endl;
   itsSynchLowX = opt.synchLowX;
   itsSynchLowGamE = opt.synchLowGamE * CLHEP::GeV;  // lowest gamma energy
   itsSynchPhotonMultiplicity = opt.synchPhotonMultiplicity;
@@ -149,7 +146,6 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsTrajCutLTR = opt.trajCutLTR;
   itsStoreNeutronTrajectories = opt.storeNeutronTrajectories;
   itsStoreTrajectory = opt.storeTrajectory;
-  //G4cout<<"STOREA TRAJ = "<< itsStoreTrajectory<<G4endl;
   stopTracks = opt.stopTracks; 
   // defaults - parameters of the laserwire process
   itsLaserwireWavelength = 0.532 * CLHEP::micrometer;

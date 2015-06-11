@@ -26,7 +26,10 @@ struct Parameters {
   double ks; int ksset;   /// solenoid
 
   double tscint; int tscintset; ///thickness of scintillating part of screen
+  double windowScreenGap; int windowScreenGapset; ///air gap between window and screen
   double twindow; int twindowset; ///thickness of window
+  double screenEndZ; int screenEndZset;//z position of end of screen relative to beginning of magnet pole
+  double poleStartZ; int poleStartZset;//z position of beginning of magnet pole relative to beginning of element
 
   std::list<double> knl;           /// multipole expansion coefficients
   std::list<double> ksl;           /// skew multipole expansion
@@ -77,6 +80,7 @@ struct Parameters {
   double inR, bpRad; int inRset, bpRadset;/// inner radius and beam pipe radius of muon spoiler
   double hgap, hgapset;
   double xsize, ysize; int xsizeset, ysizeset; /// aperture (or laser spotsize for laser)
+  double screenXSize, screenYSize;   int screenXSizeset, screenYSizeset; //screen dimensions.
   double xdir, ydir, zdir, waveLength; int xdirset, ydirset, zdirset, waveLengthset;
 
   double tilt; int tiltset;   /// tilt
@@ -105,6 +109,10 @@ struct Parameters {
   std::list<double> componentsFractions; int componentsFractionsset;
   std::list<int> componentsWeights; int componentsWeightsset;
 
+  //For the layers of a multi -layer diagnostics screen.
+  std::list<const char*> layerMaterials; int layerMaterialsset;
+  std::list<double> layerThicknesses; int layerThicknessesset;
+  //For a spectrometer scintillator screen.
   std::string  scintmaterial;  int scintmaterialset;
   std::string  windowmaterial;  int windowmaterialset;
   std::string  vacuummaterial;  int vacuummaterialset;

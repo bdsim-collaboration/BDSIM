@@ -62,6 +62,7 @@ BDSMagFieldSQL::~BDSMagFieldSQL(){
 void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
 		       G4double *Bfield ) const
 {
+  checkPrepared();
   //    G4Navigator* itsIRNavigator=
   //    G4TransportationManager::GetTransportationManager()-> 
   //    GetNavigatorForTracking();
@@ -208,6 +209,7 @@ void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
 
 void BDSMagFieldSQL::Prepare(G4VPhysicalVolume *referenceVolume)
 {
+  _isPrepared=true;
   if(FieldFile==""){
     itsHasFieldMap=false;
   } else {

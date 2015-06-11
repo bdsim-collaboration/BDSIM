@@ -24,7 +24,7 @@
 #include "BDSSolenoidStepper.hh"
 #include "G4HelixImplicitEuler.hh"
 
-#include "G4UniformMagField.hh"
+#include "BDSUniformMagField.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
@@ -71,7 +71,7 @@ void BDSSolenoid::BuildBPFieldAndStepper()
 #else
   // using BDSIM
   G4ThreeVector Bfield(0.,0.,itsBField);
-  itsMagField=new G4UniformMagField(Bfield);
+  itsMagField=new BDSUniformMagField(Bfield);
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
   itsStepper=new BDSSolenoidStepper(itsEqRhs);
   BDSSolenoidStepper* solenoidStepper = dynamic_cast<BDSSolenoidStepper*>(itsStepper);

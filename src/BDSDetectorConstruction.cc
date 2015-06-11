@@ -144,6 +144,8 @@ BDSDetectorConstruction::BDSDetectorConstruction():
 
     theHitMaker          = new GFlashHitMaker();                    // Makes the EnergieSpots 
   }
+  //Initialise colour wheel
+  _colourWheel = new BDSColourWheel();
 }
 
 
@@ -244,7 +246,7 @@ void BDSDetectorConstruction::SetMagField(const G4double fieldValue){
   
   G4FieldManager* fieldMgr =
     G4TransportationManager::GetTransportationManager()->GetFieldManager();
-  magField = new G4UniformMagField(G4ThreeVector(0.,fieldValue,0.));  
+  magField = new BDSUniformMagField(G4ThreeVector(0.,fieldValue,0.));  
   fieldMgr->SetDetectorField(magField);
   fieldMgr->CreateChordFinder(magField);
 }
@@ -618,7 +620,8 @@ void BDSDetectorConstruction::ComponentPlacement(){
 	
       G4String LogVolName=LocalLogVol->GetName();
       // Set visualisation options for marker volumes - perhaps should be in base class..
-      G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0, 0.4));
+      G4VisAttributes* VisAtt1 = new G4VisAttributes(_colourWheel->colour());
+      _colourWheel->spin();
       VisAtt1->SetForceSolid(true);  
       // Set visible only if debug build, otherwise hidden
 #if defined BDSDEBUG
