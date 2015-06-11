@@ -45,6 +45,16 @@ private:
   G4double _firstBinderLayerThickness;
   G4double _nScintLayers;
   G4double _fillFactor;
- };
+
+  G4int _scintLayerCount;
+  G4int _binderLayerCount;
+  std::stringstream _ss;
+  G4String _binderLayerName;
+  G4String _scintLayerName;
+  
+  void incBinderLayer();
+  void incScintLayer();
+  
+};
 
 #endif

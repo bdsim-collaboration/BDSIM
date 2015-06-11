@@ -211,9 +211,9 @@ int main(int argc,char** argv) {
 #endif
   
   if (BDSGlobalConstants::Instance()->GetThresholdCutPhotons() > 0 || BDSGlobalConstants::Instance()->GetThresholdCutCharged() > 0
-      || BDSExecOptions::Instance()->GetVerboseStep()) {
-    runManager->SetUserAction(new BDSSteppingAction);
-  }
+      || BDSExecOptions::Instance()->GetVerboseStep() || BDSExecOptions::Instance()->GetVerboseEventNumber()>=0) {
+  runManager->SetUserAction(new BDSSteppingAction);
+}
   
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> User action - trackingaction"<<G4endl;

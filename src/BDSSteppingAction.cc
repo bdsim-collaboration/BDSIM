@@ -18,6 +18,10 @@
 #include "G4NavigationHistory.hh"
 #include "G4Track.hh"
 #include "G4VProcess.hh"
+#include "G4EventManager.hh"
+#include "G4Event.hh"
+
+extern G4int event_number;
 
 //====================================================
 
@@ -35,7 +39,7 @@ BDSSteppingAction::~BDSSteppingAction()
 
 void BDSSteppingAction::UserSteppingAction(const G4Step* ThisStep){
   _step = ThisStep;
-  if(BDSExecOptions::Instance()->GetVerboseStep()) {
+  if(BDSExecOptions::Instance()->GetVerboseStep() || (event_number == BDSExecOptions::Instance()->GetVerboseEventNumber())) {
     VerboseSteppingAction();
   }
   if (BDSGlobalConstants::Instance()->GetThresholdCutPhotons() > 0 || BDSGlobalConstants::Instance()->GetThresholdCutCharged() > 0) {

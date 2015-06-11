@@ -1,6 +1,5 @@
 //Based on the Geant4 example examples/advanced/purging_magnet/src/PurgMagTabulatedField3D.cc
 #include <iostream>
-
 #include "BDSGlobalConstants.hh"
 #include "BDS3DMagField.hh"
 #include "BDSDebug.hh"
@@ -8,7 +7,7 @@
 #include "BDSProgressBar.hh"
 
 BDS3DMagField::BDS3DMagField( const char* filename, double zOffset, double xOffset ) 
-  :fZoffset(zOffset),fXoffset(xOffset),invertX(false),invertY(false),invertZ(false)
+  :fZoffset(zOffset),fXoffset(xOffset),fYoffset(0),invertX(false),invertY(false),invertZ(false)
 {    
   
 
@@ -80,9 +79,9 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset, double xOffs
 	G4cout << "Read: " << xval << " " << yval << " " << zval << " " << bx << " " << by << " " << bz << G4endl;
 #endif
         if ( ix==0 && iy==0 && iz==0 ) {
-          minx = xval * _lenUnit;
-          miny = yval * _lenUnit;
-          minz = zval * _lenUnit;
+          minx = xval * _lenUnit + fXoffset;
+          miny = yval * _lenUnit + fYoffset;
+          minz = zval * _lenUnit + fZoffset;
         }
         xField[ix][iy][iz] = bx * _fieldUnit;
         yField[ix][iy][iz] = by * _fieldUnit;
@@ -93,9 +92,9 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset, double xOffs
   }
   file.close();
 
-  maxx = xval * _lenUnit;
-  maxy = yval * _lenUnit;
-  maxz = zval * _lenUnit;
+  maxx = xval * _lenUnit + fXoffset;
+  maxy = yval * _lenUnit + fYoffset;
+  maxz = zval * _lenUnit + fZoffset;
 
   G4cout << "\n ---> ... done reading " << G4endl;
 
@@ -106,7 +105,7 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset, double xOffs
 	 << minx/CLHEP::cm << " " << miny/CLHEP::cm << " " << minz/CLHEP::cm << " cm "
 	 << "\n ---> Max values x,y,z: " 
 	 << maxx/CLHEP::cm << " " << maxy/CLHEP::cm << " " << maxz/CLHEP::cm << " cm "
-	 << "\n ---> The field will be offset by " << fZoffset/CLHEP::cm << " cm in z" << G4endl;
+	 << "\n ---> The field will be offset by " << fZoffset/CLHEP::cm << " cm in z" 
 	 << "\n ---> The field will be offset by " << fXoffset/CLHEP::cm << " cm in x" << G4endl;
 #endif
   // Should really check that the limits are not the wrong way around.
@@ -137,12 +136,15 @@ void BDS3DMagField::GetFieldValue(const double point[4],
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
+  //Default - field is zero.
+  Bfield[0]=0; Bfield[1]=0; Bfield[2]=0;
+   
   checkPrepared();
 
   G4ThreeVector local;
 
   local[0] = point[0] + translation[0] - fXoffset;
-  local[1] = point[1] + translation[1];
+  local[1] = point[1] + translation[1] - fYoffset;
   local[2] = point[2] + translation[2] - fZoffset;
   local *= Rotation();
 
@@ -182,7 +184,6 @@ void BDS3DMagField::GetFieldValue(const double point[4],
     signz = -1;
   }
   */
-
   // Check that the point is within the defined region 
   if ( local[0]>=minx && local[0]<=maxx &&
        local[1]>=miny && local[1]<=maxy && 
@@ -193,11 +194,11 @@ void BDS3DMagField::GetFieldValue(const double point[4],
     double xfraction = (local[0] - minx) / dx;
     double yfraction = (local[1] - miny) / dy; 
     double zfraction = (local[2] - minz) / dz;
-
+    
     if (invertX) { xfraction = 1 - xfraction;}
     if (invertY) { yfraction = 1 - yfraction;}
     if (invertZ) { zfraction = 1 - zfraction;}
-
+    
     // Need addresses of these to pass to modf below.
     // modf uses its second argument as an OUTPUT argument.
     double xdindex, ydindex, zdindex;
@@ -213,52 +214,58 @@ void BDS3DMagField::GetFieldValue(const double point[4],
     int xindex = static_cast<int>(xdindex);
     int yindex = static_cast<int>(ydindex);
     int zindex = static_cast<int>(zdindex);
-    
-
+    //The indices must be less than nx-1 in order to be able to interpolate
+    if((xindex<nx-1) && (yindex < ny-1) && (zindex < nz -1) &&
+       (xindex>0) && (yindex >0) && (zindex >0)){
 #ifdef DEBUG_INTERPOLATING_FIELD
-    G4cout << "Local x,y,z: " << xlocal << " " << ylocal << " " << zlocal << G4endl;
-    G4cout << "Index x,y,z: " << xindex << " " << yindex << " " << zindex << G4endl;
-    double valx0z0, mulx0z0, valx1z0, mulx1z0;
-    double valx0z1, mulx0z1, valx1z1, mulx1z1;
-    //    valx0z0= table[xindex  ][0][zindex];  mulx0z0=  (1-xlocal) * (1-zlocal);
-    //    valx1z0= table[xindex+1][0][zindex];  mulx1z0=   xlocal    * (1-zlocal);
-    //    valx0z1= table[xindex  ][0][zindex+1]; mulx0z1= (1-xlocal) * zlocal;
-    //    valx1z1= table[xindex+1][0][zindex+1]; mulx1z1=  xlocal    * zlocal;
+      G4cout << "Local x,y,z: " << xlocal << " " << ylocal << " " << zlocal << G4endl;
+      G4cout << "Index x,y,z: " << xindex << " " << yindex << " " << zindex << G4endl;
+      G4cout << "n x,y,z: " << nx << " " << ny << " " << nz << G4endl;
+      double valx0z0, mulx0z0, valx1z0, mulx1z0;
+      double valx0z1, mulx0z1, valx1z1, mulx1z1;
+      //    valx0z0= table[xindex  ][0][zindex];  mulx0z0=  (1-xlocal) * (1-zlocal);
+      //    valx1z0= table[xindex+1][0][zindex];  mulx1z0=   xlocal    * (1-zlocal);
+      //    valx0z1= table[xindex  ][0][zindex+1]; mulx0z1= (1-xlocal) * zlocal;
+      //    valx1z1= table[xindex+1][0][zindex+1]; mulx1z1=  xlocal    * zlocal;
 #endif
-
-        // Full 3-dimensional version
-    Bfield[0] =
-      xField[xindex  ][yindex  ][zindex  ] * (1-xlocal) * (1-ylocal) * (1-zlocal) +
-      xField[xindex  ][yindex  ][zindex+1] * (1-xlocal) * (1-ylocal) *    zlocal  +
-      xField[xindex  ][yindex+1][zindex  ] * (1-xlocal) *    ylocal  * (1-zlocal) +
-      xField[xindex  ][yindex+1][zindex+1] * (1-xlocal) *    ylocal  *    zlocal  +
-      xField[xindex+1][yindex  ][zindex  ] *    xlocal  * (1-ylocal) * (1-zlocal) +
-      xField[xindex+1][yindex  ][zindex+1] *    xlocal  * (1-ylocal) *    zlocal  +
-      xField[xindex+1][yindex+1][zindex  ] *    xlocal  *    ylocal  * (1-zlocal) +
-      xField[xindex+1][yindex+1][zindex+1] *    xlocal  *    ylocal  *    zlocal ;
-    Bfield[1] = signy *(
-      yField[xindex  ][yindex  ][zindex  ] * (1-xlocal) * (1-ylocal) * (1-zlocal) +
-      yField[xindex  ][yindex  ][zindex+1] * (1-xlocal) * (1-ylocal) *    zlocal  +
-      yField[xindex  ][yindex+1][zindex  ] * (1-xlocal) *    ylocal  * (1-zlocal) +
-      yField[xindex  ][yindex+1][zindex+1] * (1-xlocal) *    ylocal  *    zlocal  +
-      yField[xindex+1][yindex  ][zindex  ] *    xlocal  * (1-ylocal) * (1-zlocal) +
-      yField[xindex+1][yindex  ][zindex+1] *    xlocal  * (1-ylocal) *    zlocal  +
-      yField[xindex+1][yindex+1][zindex  ] *    xlocal  *    ylocal  * (1-zlocal) +
-      yField[xindex+1][yindex+1][zindex+1] *    xlocal  *    ylocal  *    zlocal );
-    Bfield[2] = signz *(
-      zField[xindex  ][yindex  ][zindex  ] * (1-xlocal) * (1-ylocal) * (1-zlocal) +
-      zField[xindex  ][yindex  ][zindex+1] * (1-xlocal) * (1-ylocal) *    zlocal  +
-      zField[xindex  ][yindex+1][zindex  ] * (1-xlocal) *    ylocal  * (1-zlocal) +
-      zField[xindex  ][yindex+1][zindex+1] * (1-xlocal) *    ylocal  *    zlocal  +
-      zField[xindex+1][yindex  ][zindex  ] *    xlocal  * (1-ylocal) * (1-zlocal) +
-      zField[xindex+1][yindex  ][zindex+1] *    xlocal  * (1-ylocal) *    zlocal  +
-      zField[xindex+1][yindex+1][zindex  ] *    xlocal  *    ylocal  * (1-zlocal) +
-      zField[xindex+1][yindex+1][zindex+1] *    xlocal  *    ylocal  *    zlocal );
-
+      
+      // Full 3-dimensional version
+      Bfield[0] =
+	xField[xindex  ][yindex  ][zindex  ] * (1-xlocal) * (1-ylocal) * (1-zlocal) +
+	xField[xindex  ][yindex  ][zindex+1] * (1-xlocal) * (1-ylocal) *    zlocal  +
+	xField[xindex  ][yindex+1][zindex  ] * (1-xlocal) *    ylocal  * (1-zlocal) +
+	xField[xindex  ][yindex+1][zindex+1] * (1-xlocal) *    ylocal  *    zlocal  +
+	xField[xindex+1][yindex  ][zindex  ] *    xlocal  * (1-ylocal) * (1-zlocal) +
+	xField[xindex+1][yindex  ][zindex+1] *    xlocal  * (1-ylocal) *    zlocal  +
+	xField[xindex+1][yindex+1][zindex  ] *    xlocal  *    ylocal  * (1-zlocal) +
+	xField[xindex+1][yindex+1][zindex+1] *    xlocal  *    ylocal  *    zlocal ;
+      Bfield[1] = signy *(
+			  yField[xindex  ][yindex  ][zindex  ] * (1-xlocal) * (1-ylocal) * (1-zlocal) +
+			  yField[xindex  ][yindex  ][zindex+1] * (1-xlocal) * (1-ylocal) *    zlocal  +
+			  yField[xindex  ][yindex+1][zindex  ] * (1-xlocal) *    ylocal  * (1-zlocal) +
+			  yField[xindex  ][yindex+1][zindex+1] * (1-xlocal) *    ylocal  *    zlocal  +
+			  yField[xindex+1][yindex  ][zindex  ] *    xlocal  * (1-ylocal) * (1-zlocal) +
+			  yField[xindex+1][yindex  ][zindex+1] *    xlocal  * (1-ylocal) *    zlocal  +
+			  yField[xindex+1][yindex+1][zindex  ] *    xlocal  *    ylocal  * (1-zlocal) +
+			  yField[xindex+1][yindex+1][zindex+1] *    xlocal  *    ylocal  *    zlocal );
+      Bfield[2] = signz *(
+			  zField[xindex  ][yindex  ][zindex  ] * (1-xlocal) * (1-ylocal) * (1-zlocal) +
+			  zField[xindex  ][yindex  ][zindex+1] * (1-xlocal) * (1-ylocal) *    zlocal  +
+			  zField[xindex  ][yindex+1][zindex  ] * (1-xlocal) *    ylocal  * (1-zlocal) +
+			  zField[xindex  ][yindex+1][zindex+1] * (1-xlocal) *    ylocal  *    zlocal  +
+			  zField[xindex+1][yindex  ][zindex  ] *    xlocal  * (1-ylocal) * (1-zlocal) +
+			  zField[xindex+1][yindex  ][zindex+1] *    xlocal  * (1-ylocal) *    zlocal  +
+			  zField[xindex+1][yindex+1][zindex  ] *    xlocal  *    ylocal  * (1-zlocal) +
+			  zField[xindex+1][yindex+1][zindex+1] *    xlocal  *    ylocal  *    zlocal );
+    }else{
+#ifdef DEBUG_INTERPOLATING_FIELD
+      G4cout << __METHOD_NAME__ << " - point at edge of field map. Unable to interpolate. Setting field to zero."  << G4endl;
+#endif
+    }
   } else {
-    Bfield[0] = 0.0;
-    Bfield[1] = 0.0;
-    Bfield[2] = 0.0;
+#ifdef DEBUG_INTERPOLATING_FIELD
+    G4cout << __METHOD_NAME__ << " - outside field map. Unable to interpolate. Setting field to zero."  << G4endl;
+#endif
   }
 
 #ifdef BDSDEBUG

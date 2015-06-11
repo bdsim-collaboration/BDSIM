@@ -8,6 +8,7 @@
 #include "G4PVPlacement.hh"               
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
+#include "G4TransportationManager.hh"
 
 #include "BDSMultilayerScreen.hh"
 

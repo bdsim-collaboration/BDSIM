@@ -182,10 +182,10 @@ void BDSScreenLayer::sampler(){ //Make this layer a sampler scoring plane
   BDSSampler::AddExternalSampler(samplerName);
 
 #ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
-  itsScoringPlaneUserLimits->SetMaxAllowedStep(_size.z()*maxStepFactor);
-  _log->SetUserLimits(itsScoringPlaneUserLimits);
+  //  G4double maxStepFactor=0.5;
+  //  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
+  //  itsScoringPlaneUserLimits->SetMaxAllowedStep(_size.z()*maxStepFactor);
+  //  _log->SetUserLimits(itsScoringPlaneUserLimits);
 #endif
 }
 

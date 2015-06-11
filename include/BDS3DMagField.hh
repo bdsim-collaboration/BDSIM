@@ -21,7 +21,7 @@ class BDS3DMagField : public BDSMagField
   double minx, maxx, miny, maxy, minz, maxz;
   // The physical extent of the defined region
   double dx, dy, dz;
-  double fZoffset, fXoffset;
+  double fZoffset, fXoffset, fYoffset;
   bool invertX, invertY, invertZ;
   double _lenUnit, _fieldUnit;
   
