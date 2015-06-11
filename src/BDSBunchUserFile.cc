@@ -432,7 +432,7 @@ template <typename Type> G4bool  BDSBunchUserFile::ReadValue(Type &value){
   InputBunchFile>>value; 
   if (InputBunchFile.eof()){ //If the end of the file is reached go back to the beginning of the file.
     //this re reads the same file again to avoid crash - must always print warning
-    G4cout << "BDSBunch.cc> End of file reached. Returning to beginning of file." << G4endl;
+    G4cout << "BDSBunchUserFile.cc> End of file reached. Returning to beginning of file." << G4endl;
     CloseBunchFile();
     OpenBunchFile();
     InputBunchFile>>value; 
