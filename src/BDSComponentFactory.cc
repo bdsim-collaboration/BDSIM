@@ -307,7 +307,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createTeleporter(){
 	   << G4endl;
 #endif
 
-
     return( new BDSTeleporter(_element.name,
 			      teleporterlength ));
   }

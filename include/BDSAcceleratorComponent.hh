@@ -11,6 +11,34 @@
 
 #include <vector>
 
+/**
+ * @brief Abstract class that represents a component of an accelerator.
+ * It must be constructed with a name, length (arc), angle it
+ * induces (x,z plane in the local coordinates of the component) in 
+ * the reference trajectory and a string
+ * representing its type. The class has no concept of its position
+ * in the beamline or in global coordinates. This information is contained
+ * in an instance of BDSBeamlineElement.
+ * 
+ * This is an abstract class as the derived class must provide the 
+ * implementation of BuildContainerLogicalVolume() that constructs
+ * the basic container. This is the minimum required so that an instance
+ * of the derived class will operate with the rest of the placement machinery in
+ * BDSIM. Typically, a derived class overrides the Build() function as well.
+ * 
+ * The class provides deferred construction through the Initialise() function
+ * to allow two stage construction if it's required.
+ * 
+ * Note, the geometry of any derived component should be nominally constructed
+ * along local z axis (beam direction) and x,y are transverse dimensions in a 
+ * right-handed coordinate system.
+ * 
+ * This was significantly reworked in version 0.7 from the original. The indicator
+ * author is the maintainer of the new version.
+ * 
+ * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ */
+
 class BDSAcceleratorComponent: public BDSGeometryComponent
 {
 public:
@@ -59,7 +87,7 @@ public:
   // in case a mapped field is provided creates a field mesh in global coordinates
   virtual void PrepareField(G4VPhysicalVolume *referenceVolume); 
   
-  ///@{ Get parameter value from the specification string
+  ///@{ Get parameter value from the specification ('spec') string
   G4double GetParameterValue      (G4String spec, G4String name) const;
   G4String GetParameterValueString(G4String spec, G4String name) const;
   ///@}
@@ -68,31 +96,31 @@ public:
   friend class BDSComponentFactory;
   friend class BDSLine;
   
-  // To be revisited
-  G4double         GetSPos() const;
+  ///@{ This function should be revisited given recent changes (v0.7)
+  G4double         GetSPos() const; // maybe not needed due to new beamline
   void             SetSPos(G4double spos);
   void             SetGFlashVolumes(G4LogicalVolume* aLogVol);
   std::vector<G4LogicalVolume*> GetGFlashVolumes() const;
   void             SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
   std::vector<G4VPhysicalVolume*> GetMultiplePhysicalVolumes() const;
+  ///@}
 
 protected:
   /// initialise method
   /// checks if marker logical volume already exists and builds new one if not
   // can't be in constructor as calls virtual methods
   virtual void Initialise();
-
-  /// Attach marker solid and logical volume pointers to BDSGeometryComponent base class
-  void RegisterMarkerWithBaseClass();
   
-  /// build logical volumes: container, field, blms etc.
+  /// Build the container only. Should be overridden by derived class to add more geometry
+  /// apart from the container volume. The overridden Build() function can however, call
+  /// make use of this function to call BuildContainerLogicalVolume() by calling
+  /// BDSAcceleratorComponent::Build() at the beginning.
   virtual void Build();
 
-  /// Build the container logical volume that all parts of the component will
-  /// contained within - must be provided by derived class
+  /// Build the container solid and logical volume that all parts of the component will
+  /// contained within - must be provided by derived class.
   virtual void BuildContainerLogicalVolume() = 0;
-
-
+  
   ///@{ Const protected member variable that may not be changed by derived classes
   const G4String   name;
   const G4double   arcLength;
@@ -185,7 +213,6 @@ inline  G4double BDSAcceleratorComponent::GetParameterValue(G4String spec, G4Str
   int pos = spec.find(param);
   if( pos >= 0 )
     {
-      
       int pos2 = spec.find("&",pos);
       int pos3 = spec.length();
       int tend = pos2 < 0 ? pos3 : pos2; 
@@ -194,7 +221,6 @@ inline  G4double BDSAcceleratorComponent::GetParameterValue(G4String spec, G4Str
       std::string val = spec.substr(pos + param.length(), llen);
       
       value = atof(val.c_str());
-
   }
   return value;
 }
