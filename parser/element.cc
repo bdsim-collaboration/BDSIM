@@ -110,6 +110,8 @@ void Element::flush() {
   tscint = 0;
   twindow = 0;
   tilt = 0;
+  offsetX = 0;
+  offsetY = 0;
   phi = 0;
   psi = 0;
   theta = 0;
@@ -203,6 +205,8 @@ double Element::property_lookup(char* property_name)const{
   if(!strcmp(property_name,"theta")) return theta;
   if(!strcmp(property_name,"waveLength")) return waveLength;
   if(!strcmp(property_name,"tilt")) return tilt;
+  if(!strcmp(property_name,"offsetX")) return offsetX;
+  if(!strcmp(property_name,"offsetY")) return offsetY;
   if(!strcmp(property_name,"gradient")) return gradient;
 
   if(!strcmp(property_name,"A")) return A;

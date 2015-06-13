@@ -190,6 +190,9 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.tunnelRadius = params.tunnelRadius;
   e.tunnelOffsetX = params.tunnelOffsetX;
   e.precisionRegion = params.precisionRegion;
+
+  e.offsetX = params.offsetX;
+  e.offsetY = params.offsetY;
   // end of common parameters
 
   // specific parameters
