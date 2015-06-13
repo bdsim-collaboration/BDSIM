@@ -111,14 +111,14 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
       roSolid = new G4Box(name + "_ro_solid", // name
 			  roRadius,           // x half width
 			  roRadius,           // y half width
-			  chordLength*0.5);     // z half width
+			  chordLength*0.5);   // z half width
     }
   else
     {
       // angle is finite!
       G4int orientation = BDS::CalculateOrientation(angle);
-      G4double in_z     = cos(0.5*fabs(angle*0.5)); 
-      G4double in_x     = sin(0.5*fabs(angle*0.5));
+      G4double in_z     = cos(0.5*fabs(angle)); 
+      G4double in_x     = sin(0.5*fabs(angle));
       G4ThreeVector inputface  = G4ThreeVector(-orientation*in_x, 0.0, -1.0*in_z);
       //-1 as pointing down in z for normal
       G4ThreeVector outputface = G4ThreeVector(-orientation*in_x, 0.0, in_z);
@@ -126,7 +126,7 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
       roSolid = new G4CutTubs(name + "_ro_solid", // name
 			      0,                  // inner radius
 			      roRadius,           // outer radius
-			      chordLength*0.5,         // half length (z)
+			      chordLength*0.5,    // half length (z)
 			      0,                  // rotation start angle
 			      CLHEP::twopi,       // rotation sweep angle
 			      inputface,          // input face normal vector
