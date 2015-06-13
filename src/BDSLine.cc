@@ -3,7 +3,6 @@
 
 #include <vector>
 
-
 BDSLine::BDSLine(G4String name):
   BDSAcceleratorComponent(name,0,0,"line")
 {;}

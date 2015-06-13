@@ -8,7 +8,6 @@
 #define BDSRFCAVITY_H
 
 #include "BDSMagnet.hh"
-#include "BDSTiltOffset.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ChordFinder.hh"
@@ -29,8 +28,7 @@ class BDSRfCavity: public BDSMagnet
 	      G4double           length,
 	      G4double           grad,
 	      BDSBeamPipeInfo*   beamPipeInfoIn,
-	      BDSMagnetOuterInfo magnetOuterInfo,
-	      BDSTiltOffset      tiltOffset = BDSTiltOffset());
+	      BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSRfCavity(){;};
   
   private:

@@ -11,13 +11,10 @@
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
 
-class BDSTiltOffset;
-
 BDSDrift::BDSDrift (G4String         name, 
 		    G4double         length,
-		    BDSBeamPipeInfo* beamPipeInfoIn,
-		    BDSTiltOffset    tiltOffset):
-  BDSAcceleratorComponent(name, length, 0, "drift", tiltOffset)
+		    BDSBeamPipeInfo* beamPipeInfoIn):
+  BDSAcceleratorComponent(name, length, 0, "drift")
 {
   beamPipeInfo = beamPipeInfoIn;
 }

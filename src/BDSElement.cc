@@ -39,15 +39,12 @@
 
 #include <vector>
 
-class BDSTiltOffset;
-
 BDSElement::BDSElement(G4String      name,
 		       G4double      length,
 		       G4String      geometry,
 		       G4String      bmap,
-		       G4double      bmapZOffset,
-		       BDSTiltOffset tiltOffset):
-  BDSAcceleratorComponent(name, length, 0, "element", tiltOffset),
+		       G4double      bmapZOffset):
+  BDSAcceleratorComponent(name, length, 0, "element"),
   itsGeometry(geometry), itsBmap(bmap),
   fChordFinder(NULL), itsFStepper(NULL), itsFEquation(NULL), itsEqRhs(NULL), 
   itsMagField(NULL), itsCachedMagField(NULL), itsUniformMagField(NULL)

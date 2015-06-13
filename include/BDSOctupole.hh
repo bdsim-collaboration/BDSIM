@@ -8,7 +8,6 @@
 #define BDSOCTUPOLE_H
 
 #include "BDSMagnet.hh"
-#include "BDSTiltOffset.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Material.hh"
@@ -23,8 +22,7 @@ public:
 	      G4double           length,
 	      G4double           bTriplePrime,
 	      BDSBeamPipeInfo*   beamPipeInfo,
-	      BDSMagnetOuterInfo magnetOuterInfo,
-	      BDSTiltOffset      tiltOffset = BDSTiltOffset());
+	      BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSOctupole(){;};
 
 protected:

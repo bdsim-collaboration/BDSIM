@@ -12,16 +12,13 @@
 
 #include "G4ExplicitEuler.hh"
 
-class BDSTiltOffset;
-
 BDSRfCavity::BDSRfCavity(G4String           name,
 			 G4double           length,
 			 G4double           grad,
 			 BDSBeamPipeInfo*   beamPipeInfo,
-			 BDSMagnetOuterInfo magnetOuterInfo,
-			 BDSTiltOffset      tiltOffset):
+			 BDSMagnetOuterInfo magnetOuterInfo):
   BDSMagnet(BDSMagnetType::rfcavity, name, length,
-	    beamPipeInfo, magnetOuterInfo, tiltOffset),
+	    beamPipeInfo, magnetOuterInfo),
   itsGrad(grad)
 {
   itsEField    = NULL;

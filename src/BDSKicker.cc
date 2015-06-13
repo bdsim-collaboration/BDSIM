@@ -16,8 +16,6 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 
-class BDSTiltOffset;
-
 BDSKicker::BDSKicker(G4String           name,
 		     G4double           length,
 		     G4double           bField,
@@ -25,10 +23,9 @@ BDSKicker::BDSKicker(G4String           name,
 		     G4double           angle,
 		     G4bool             verticalKicker,
 		     BDSBeamPipeInfo*   beamPipeInfo,
-		     BDSMagnetOuterInfo magnetOuterInfo,
-		     BDSTiltOffset      tiltOffset):
+		     BDSMagnetOuterInfo magnetOuterInfo):
   BDSMagnet(BDSMagnetType::hkicker, name, length,
-	    beamPipeInfo, magnetOuterInfo, tiltOffset),
+	    beamPipeInfo, magnetOuterInfo),
   itsBField(bField),
   itsBGrad(bGrad),
   itsKickAngle(angle),

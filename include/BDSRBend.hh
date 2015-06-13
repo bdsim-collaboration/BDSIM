@@ -4,7 +4,6 @@
 #include "globals.hh"
 
 #include "BDSMagnet.hh"
-#include "BDSTiltOffset.hh"
 
 struct BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
@@ -18,8 +17,7 @@ public:
 	   G4double           bGrad,
 	   G4double           angle,
 	   BDSBeamPipeInfo*   beamPipeInfo,
-	   BDSMagnetOuterInfo magnetOuterInfo,
-	   BDSTiltOffset      tiltOffset = BDSTiltOffset());
+	   BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSRBend(){;};
 
 private:

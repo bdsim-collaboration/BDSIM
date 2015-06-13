@@ -16,16 +16,13 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-class BDSTiltOffset;
-
 BDSSolenoid::BDSSolenoid(G4String           name,
 			 G4double           length,
 			 G4double           bField,
 			 BDSBeamPipeInfo*   beamPipeInfo,
-			 BDSMagnetOuterInfo magnetOuterInfo,
-			 BDSTiltOffset      tiltOffset):
+			 BDSMagnetOuterInfo magnetOuterInfo):
   BDSMagnet(BDSMagnetType::solenoid, name, length,
-	    beamPipeInfo, magnetOuterInfo, tiltOffset),
+	    beamPipeInfo, magnetOuterInfo),
   itsBField(bField)
 {;}
 

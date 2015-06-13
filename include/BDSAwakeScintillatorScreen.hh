@@ -10,7 +10,6 @@ Work in progress.
 #include "BDSAcceleratorComponent.hh"
 #include "BDSAwakeMultilayerScreen.hh"
 #include "BDSCCDCamera.hh"
-#include "BDSTiltOffset.hh"
 
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
@@ -26,8 +25,7 @@ public:
 			     G4double thickness,
 			     G4double angle,
 			     G4double windowThickness,
-			     G4String windowMaterial,
-			     BDSTiltOffset tiltOffset = BDSTiltOffset());
+			     G4String windowMaterial);
   virtual ~BDSAwakeScintillatorScreen();
 
 protected:

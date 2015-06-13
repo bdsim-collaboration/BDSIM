@@ -30,10 +30,9 @@ BDSRBend::BDSRBend(G4String           name,
 		   G4double           bGrad,
 		   G4double           angleIn,
 		   BDSBeamPipeInfo*   beamPipeInfo,
-		   BDSMagnetOuterInfo magnetOuterInfo,
-		   BDSTiltOffset      tiltOffset):
+		   BDSMagnetOuterInfo magnetOuterInfo):
   BDSMagnet(BDSMagnetType::rectangularbend, name, length,
-	    beamPipeInfo, magnetOuterInfo, tiltOffset),
+	    beamPipeInfo, magnetOuterInfo),
   itsBField(bField),
   itsBGrad(bGrad)
 {

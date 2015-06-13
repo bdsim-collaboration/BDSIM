@@ -11,14 +11,11 @@
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 
-class BDSTiltOffset;
-
 BDSLaserWire::BDSLaserWire(G4String      name,
 			   G4double      length,
 			   G4double      wavelength,
-			   G4ThreeVector direction,
-			   BDSTiltOffset tiltOffset):
-  BDSAcceleratorComponent(name, length, 0, "laserwire", tiltOffset),
+			   G4ThreeVector direction):
+  BDSAcceleratorComponent(name, length, 0, "laserwire"),
   itsLaserCompton(NULL),
   itsLaserDirection(direction),
   itsLaserWavelength(wavelength)

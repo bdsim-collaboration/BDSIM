@@ -42,15 +42,12 @@
 #include "BDSMultipoleOuterMagField.hh"
 #include "BDSUtilities.hh"
 
-class BDSTiltOffset;
-
 BDSMagnet::BDSMagnet(BDSMagnetType      type,
 		     G4String           name,
 		     G4double           length,
 		     BDSBeamPipeInfo*   beamPipeInfoIn,
-		     BDSMagnetOuterInfo magnetOuterInfo,
-		     BDSTiltOffset      tiltOffset):
-  BDSAcceleratorComponent(name, length, 0, "magnet", tiltOffset),
+		     BDSMagnetOuterInfo magnetOuterInfo):
+  BDSAcceleratorComponent(name, length, 0, "magnet"),
   itsType(type),
   beamPipeInfo(beamPipeInfoIn),
   outerDiameter(magnetOuterInfo.outerDiameter),

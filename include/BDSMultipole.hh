@@ -28,8 +28,7 @@ public:
 	       std::list<G4double> aks, // list of skew multipole strengths
 		                    // (NOT multiplied by multipole length)
 	       BDSBeamPipeInfo*    beamPipeInfo,
-	       BDSMagnetOuterInfo  magnetOuterInfo,
-	       BDSTiltOffset       tiltOffset = BDSTiltOffset());
+	       BDSMagnetOuterInfo  magnetOuterInfo);
   ~BDSMultipole(){;};
   
 private:

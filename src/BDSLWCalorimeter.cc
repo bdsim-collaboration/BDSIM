@@ -22,13 +22,10 @@
 #include "BDSLWCalorimeterSD.hh"
 #include "G4SDManager.hh"
 
-class BDSTiltOffset;
-
 BDSLWCalorimeter::BDSLWCalorimeter(G4String         name,
 				   G4double         length,
-				   BDSBeamPipeInfo* beamPipeInfoIn,
-				   BDSTiltOffset    tiltOffset):
-  BDSAcceleratorComponent(name, length, 0, "lwcalorimeter", tiltOffset),
+				   BDSBeamPipeInfo* beamPipeInfoIn):
+  BDSAcceleratorComponent(name, length, 0, "lwcalorimeter"),
   itsBeampipeLogicalVolume(NULL),itsInnerBPLogicalVolume(NULL),itsPhysiInner(NULL),
   itsPhysiComp(NULL),itsLWCalLogicalVolume(NULL),itsBeampipeUserLimits(NULL),
   itsBPFieldMgr(NULL),itsBPTube(NULL),itsInnerBPTube(NULL),itsLWCal(NULL),
