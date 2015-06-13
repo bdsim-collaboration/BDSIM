@@ -586,6 +586,10 @@ parameters:
 		    else
 		  if(!strcmp($1->name,"tilt")) { params.tilt = $3; params.tiltset = 1;}
 		    else
+		  if(!strcmp($1->name,"offsetX")) { params.offsetX = $3; params.offsetX = 1;}
+		    else
+		  if(!strcmp($1->name,"offsetY")) { params.offsetY = $3; params.offsetY = 1;}
+		    else
 		  if(!strcmp($1->name,"x")) {params.xdir = $3; params.xdirset = 1;} // x direction
 		    else
 		  if(!strcmp($1->name,"y")) {params.ydir = $3; params.ydirset = 1;} // y direction 
@@ -818,6 +822,10 @@ parameters:
 		  if(!strcmp($1->name,"ysize") ) { params.ysize = $3; params.ysizeset = 1;}
 		    else
 		  if(!strcmp($1->name,"tilt")) { params.tilt = $3; params.tiltset = 1;}
+		    else
+		  if(!strcmp($1->name,"offsetX")) { params.offsetX = $3; params.offsetX = 1;}
+		    else
+		  if(!strcmp($1->name,"offsetY")) { params.offsetY = $3; params.offsetY = 1;}
 		    else
 		  if(!strcmp($1->name,"x")) {params.xdir = $3; params.xdirset = 1;} // x direction
 		    else

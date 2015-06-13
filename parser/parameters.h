@@ -83,6 +83,8 @@ struct Parameters {
   double xdir, ydir, zdir, waveLength; int xdirset, ydirset, zdirset, waveLengthset;
 
   double tilt; int tiltset;   ///> tilt
+  double offsetX; int offsetXset;   ///> offset X
+  double offsetY; int offsetYset;   ///> offset Y
 
   /// for external geometry and field definition files
   std::string geometry; int geomset;
