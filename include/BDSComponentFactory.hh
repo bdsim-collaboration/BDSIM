@@ -16,10 +16,9 @@ class BDSComponentFactory{
 public:
   BDSComponentFactory();
   ~BDSComponentFactory();
-  
-  BDSAcceleratorComponent* createComponent(std::list<struct Element>::iterator elementIter, ElementList& beamline_list);
-  BDSAcceleratorComponent* createComponent(Element& aElement, Element& previousElement, Element& nextElement);
-  BDSAcceleratorComponent* createComponent();
+
+  /// Create component from parser Element
+  BDSAcceleratorComponent* createComponent(Element& element);
 
   // for each of them - special cases need only for ring logic
   BDSAcceleratorComponent* createTerminator();
@@ -35,8 +34,8 @@ private:
   std::list<struct Element>::iterator _elementIter, _previousElementIter, _nextElementIter;
   /// beamline
   std::list<BDSAcceleratorComponent*> itsBeamline;
-  /// parser data
-  Element _element, _previousElement, _nextElement;
+  /// element for storing instead of passing around
+  Element _element;
   
   BDSAcceleratorComponent* createSampler();
   BDSAcceleratorComponent* createCSampler();
