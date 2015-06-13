@@ -74,50 +74,8 @@ BDSComponentFactory::BDSComponentFactory(){
 BDSComponentFactory::~BDSComponentFactory(){
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createComponent(std::list<struct Element>::iterator elementIter, ElementList& beamline_list){
-#ifdef BDSDEBUG
-  G4cout << "BDSComponentFactory::createComponent() making iterators" << G4endl;  
-#endif
-  _elementIter = elementIter;
-  _previousElementIter = elementIter; 
-  _nextElementIter= elementIter; 
-  if(_elementIter != beamline_list.begin()){
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory::createComponent() moving to previous element" << G4endl;  
-#endif
-    _previousElementIter--;
-  } 
-
-  _nextElementIter++;
-  if(_nextElementIter == beamline_list.end()){
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory::createComponent() at the end, not moving to next element" << G4endl;  
-#endif
-    _nextElementIter--;
-  } 
-#ifdef BDSDEBUG
-  G4cout << "BDSComponentFactory::createComponent() creating and returning component..." << G4endl;  
-#endif
-  return createComponent(*_elementIter, *_previousElementIter, *_nextElementIter);
-}
-
-BDSAcceleratorComponent* BDSComponentFactory::createComponent(Element& aElement, Element& previousElement, Element& nextElement){
-#ifdef BDSDEBUG
-  G4cout << "BDSComponentFactory::createComponent() creating element..." << G4endl;  
-#endif
-  _element = aElement;
-#ifdef BDSDEBUG
-  G4cout << "BDSComponentFactory::createComponent() creating previous element..." << G4endl;  
-#endif
-  _previousElement = previousElement;  
-#ifdef BDSDEBUG
-  G4cout << "BDSComponentFactory::createComponent() creating next element..." << G4endl;  
-#endif
-  _nextElement = nextElement;
-  return createComponent();
-}
-
-BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
+BDSAcceleratorComponent* BDSComponentFactory::createComponent(Element& elementIn){
+  _element = elementIn;
 #ifdef BDSDEBUG
   G4cout << "BDSComponentFactory::createComponent() element name = " << _element.name << G4endl;  
 #endif

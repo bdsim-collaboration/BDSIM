@@ -56,7 +56,6 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSEnergyCounterSD.hh"
-#include "BDSLine.hh"
 #include "BDSMaterials.hh"
 #include "BDSTeleporter.hh"
 #include "BDSLogicalVolumeInfo.hh"
@@ -217,7 +216,7 @@ void BDSDetectorConstruction::BuildBeamline()
       G4cout << "BDSDetectorConstruction creating component " << (*it).name << G4endl;
 #endif
       
-      BDSAcceleratorComponent* temp = theComponentFactory->createComponent(it, beamline_list);
+      BDSAcceleratorComponent* temp = theComponentFactory->createComponent(*it);
       BDSTiltOffset*     tiltOffset = theComponentFactory->createTiltOffset(*it);
       if(temp)
 	{beamline->AddComponent(temp, tiltOffset);}
