@@ -168,57 +168,58 @@ void BDSMagnet::BuildOuterVolume()
   G4Material* outerMaterial          = itsMagnetOuterInfo.outerMaterial;
   BDSMagnetGeometryType geometryType = itsMagnetOuterInfo.geometryType;
   G4double outerDiameter             = itsMagnetOuterInfo.outerDiameter;
-
+  G4double outerLength               = chordLength - 2*lengthSafety;
+  
   //build the right thing depending on the magnet type
   //saves basically the same funciton in each derived class
   BDSMagnetOuterFactory* theFactory = BDSMagnetOuterFactory::Instance();
   switch(itsType.underlying()){
   case BDSMagnetType::decapole:
-    outer = theFactory->CreateDecapole(geometryType,name,chordLength,beampipe,
+    outer = theFactory->CreateDecapole(geometryType,name,outerLength,beampipe,
 				       outerDiameter,outerMaterial);
     break;
   case BDSMagnetType::vkicker:
-    outer = theFactory->CreateKicker(geometryType,name,chordLength,beampipe,
+    outer = theFactory->CreateKicker(geometryType,name,outerLength,beampipe,
 				     outerDiameter,true,outerMaterial);
     break;
   case BDSMagnetType::hkicker:
-    outer = theFactory->CreateKicker(geometryType,name,chordLength,beampipe,
+    outer = theFactory->CreateKicker(geometryType,name,outerLength,beampipe,
 				     outerDiameter,false,outerMaterial);
     break;
   case BDSMagnetType::muspoiler:
-    outer = theFactory->CreateMuSpoiler(geometryType,name,chordLength,beampipe,
+    outer = theFactory->CreateMuSpoiler(geometryType,name,outerLength,beampipe,
 					outerDiameter,outerMaterial);
     break;
   case BDSMagnetType::octupole:
-    outer = theFactory->CreateOctupole(geometryType,name,chordLength,beampipe,
+    outer = theFactory->CreateOctupole(geometryType,name,outerLength,beampipe,
 				       outerDiameter,outerMaterial);
     break;
   case BDSMagnetType::quadrupole:
-    outer = theFactory->CreateQuadrupole(geometryType,name,chordLength,beampipe,
+    outer = theFactory->CreateQuadrupole(geometryType,name,outerLength,beampipe,
 					 outerDiameter,outerMaterial);
     break;
   case BDSMagnetType::rectangularbend:
-    outer = theFactory->CreateRectangularBend(geometryType,name,chordLength,beampipe,
+    outer = theFactory->CreateRectangularBend(geometryType,name,outerLength,beampipe,
 					      outerDiameter,angle,outerMaterial);
     break;
   case BDSMagnetType::rfcavity:
-    outer = theFactory->CreateRfCavity(geometryType,name,chordLength,beampipe,
+    outer = theFactory->CreateRfCavity(geometryType,name,outerLength,beampipe,
 				       outerDiameter,outerMaterial);
     break;
   case BDSMagnetType::sectorbend:
-    outer = theFactory->CreateSectorBend(geometryType,name,chordLength,beampipe,
+    outer = theFactory->CreateSectorBend(geometryType,name,outerLength,beampipe,
 					 outerDiameter,angle,outerMaterial);
     break;
   case BDSMagnetType::sextupole:
-    outer = theFactory->CreateSextupole(geometryType,name,chordLength,beampipe,
+    outer = theFactory->CreateSextupole(geometryType,name,outerLength,beampipe,
 					outerDiameter,outerMaterial);
     break;
   case BDSMagnetType::solenoid:
-    outer = theFactory->CreateSolenoid(geometryType,name,chordLength,beampipe,
+    outer = theFactory->CreateSolenoid(geometryType,name,outerLength,beampipe,
 				       outerDiameter,outerMaterial);
     break;
   case BDSMagnetType::multipole:
-    outer = theFactory->CreateMultipole(geometryType,name,chordLength,beampipe,
+    outer = theFactory->CreateMultipole(geometryType,name,outerLength,beampipe,
 					outerDiameter,outerMaterial);
     break;
   default:
@@ -240,7 +241,7 @@ void BDSMagnet::BuildOuterVolume()
       itsPhysiComp = new G4PVPlacement(0,                           // rotation
 				       outer->GetPlacementOffset(), // at normally (0,0,0)
 				       outer->GetContainerLogicalVolume(), // its logical volume
-				       name+"_outer_phys",          // its name
+				       name+"_outer_pv",            // its name
 				       containerLogicalVolume,      // its mother  volume
 				       false,                       // no boolean operation
 				       0,                           // copy number
