@@ -16,6 +16,19 @@ BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4Stri
   G4cout << __METHOD_NAME__ << "name: " << nameIn << ", title: " << titleIn << G4endl;
   G4cout << __METHOD_NAME__ << "xmin: " << xmin << ", xmax: " << xmax << ", nbins: " << nbins << G4endl;
 #endif
+  // test to see we have at least 1 bin
+  if (nbins < 1)
+    {
+      G4cerr << __METHOD_NAME__ << "must have at least 1 bin - nbins: " << nbins << G4endl;
+      exit(1);
+    }
+  if (xmax <= xmin)
+    {
+      G4cerr << __METHOD_NAME__ << "xmax must be greater than xmin: xmax = "
+	     << xmax << ", xmin = " << xmin << G4endl;
+      exit(1);
+    }
+  
   //underflow bin
   underflow = new BDSBin(DBL_MIN,xmin);
   

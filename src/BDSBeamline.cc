@@ -310,6 +310,10 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component)
   sPositionStart  = previousSPositionEnd;
   sPositionMiddle = previousSPositionEnd + 0.5 * arcLength;
   sPositionEnd    = previousSPositionEnd + arcLength;
+
+  // update the global constants
+  BDSGlobalConstants::Instance()->SetSMax(sPositionEnd*CLHEP::m);
+  
   /*
 #ifdef BDSDEBUG
   // feedback about calculated coordinates
