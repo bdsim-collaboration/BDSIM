@@ -6,7 +6,7 @@
 #include "G4VPhysicalVolume.hh"
 
 /**
- * @brief Class that generates readout geometry for enegy
+ * @brief Class that generates readout geometry for energy
  * counter sensitive detectors. A la Geant4, this would actually
  * construct a 'parallel' (not to be confused with the G4ParallelWorld
  * class, which is unrelated) world separately and after the main
@@ -25,13 +25,6 @@ class BDSReadOutGeometry: public G4VReadOutGeometry {
 
 private:
   G4VPhysicalVolume* Build();
-
 };
-
-namespace BDS {
-  G4LogicalVolume* BuildReadOutVolume(G4String name,
-				      G4double chordLength,
-				      G4double angle);
-}
 
 #endif

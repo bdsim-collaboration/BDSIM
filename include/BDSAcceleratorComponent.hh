@@ -149,7 +149,12 @@ private:
   /// Assignment and copy constructor not implemented nor used
   BDSAcceleratorComponent& operator=(const BDSAcceleratorComponent&);
   BDSAcceleratorComponent(BDSAcceleratorComponent&);
-  
+
+  /// Build readout geometry volume
+  G4LogicalVolume* BuildReadOutVolume(G4String name,
+				      G4double chordLength,
+				      G4double angle);
+
   G4LogicalVolume* readOutLV; ///< Read out geometry volume
 
   /// S coordinate - to be revisited / moved to BDSBeamlineElement
