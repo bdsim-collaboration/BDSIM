@@ -29,10 +29,17 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   G4double smin, smax, binwidth;
   G4int nbins;
   smin     = 0.0;
-  smax     = BDSGlobalConstants::Instance()->GetSMax()/CLHEP::m;
-  binwidth = BDSGlobalConstants::Instance()->GetElossHistoBinWidth(); // CHECK UNITS
+  smax     = BDSGlobalConstants::Instance()->GetSMax();
+  binwidth = BDSGlobalConstants::Instance()->GetElossHistoBinWidth();
   nbins    = (int) ceil((smax-smin)/binwidth); // rounding up so last bin definitely covers smax
   smax     = smin + (nbins*binwidth);          // redefine smax
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "histogram parameters calculated to be: " << G4endl;
+  G4cout << "s minimum: " << smin     << " mm" << G4endl;
+  G4cout << "s maximum: " << smax     << " mm" << G4endl;
+  G4cout << "bin width: " << binwidth << " mm" << G4endl;
+  G4cout << "# of bins: " << nbins    << G4endl;
+#endif
   // create the histograms
   phitsindex = BDSAnalysisManager::Instance()->Create1DHistogram("PhitsHisto","Primary Hits",nbins,smin,smax); //0
   plossindex = BDSAnalysisManager::Instance()->Create1DHistogram("PlossHisto","Primary Loss",nbins,smin,smax); //1

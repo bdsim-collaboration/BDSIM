@@ -312,7 +312,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component)
   sPositionEnd    = previousSPositionEnd + arcLength;
 
   // update the global constants
-  BDSGlobalConstants::Instance()->SetSMax(sPositionEnd*CLHEP::m);
+  BDSGlobalConstants::Instance()->SetSMax(sPositionEnd);
   
   /*
 #ifdef BDSDEBUG
