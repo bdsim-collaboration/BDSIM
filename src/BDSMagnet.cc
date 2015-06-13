@@ -240,7 +240,7 @@ void BDSMagnet::BuildOuterVolume()
       itsPhysiComp = new G4PVPlacement(0,                           // rotation
 				       outer->GetPlacementOffset(), // at normally (0,0,0)
 				       outer->GetContainerLogicalVolume(), // its logical volume
-				       name+"_outer_phys",          // its name
+				       name+"_outer_pv",            // its name
 				       containerLogicalVolume,      // its mother  volume
 				       false,                       // no boolean operation
 				       0,                           // copy number
@@ -260,21 +260,21 @@ void BDSMagnet::BuildContainerLogicalVolume()
 #endif
   if (BDS::IsFinite(angle))
     {
-      containerSolid = new G4CutTubs(name+"_container_solid",          // name
-				     0.0,                              // minimum radius - solid here
-				     outerDiameter*0.5 + lengthSafety, // radius - determined above
-				     chordLength*0.5,                  // length about centre point
-				     0.0,                              // starting angle
-				     2.0*CLHEP::pi,                    // sweep angle
-				     inputface,                        // input face normal vector
-				     outputface);                      // output face normal vector
+      containerSolid = new G4CutTubs(name+"_container_solid", // name
+				     0.0,                     // minimum radius - solid here
+				     outerDiameter*0.5,       // radius - determined above
+				     chordLength*0.5,         // length about centre point
+				     0.0,                     // starting angle
+				     2.0*CLHEP::pi,           // sweep angle
+				     inputface,               // input face normal vector
+				     outputface);             // output face normal vector
     }
   else
     {
       containerSolid = new G4Box(name + "_container_solid",
-				 outerDiameter*0.5 + lengthSafety,
-				 outerDiameter*0.5 + lengthSafety,
-				 chordLength/2);
+				 outerDiameter*0.5,
+				 outerDiameter*0.5,
+				 chordLength*0.5);
     }
     
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
