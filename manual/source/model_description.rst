@@ -77,7 +77,7 @@ Name        Value
 pi          3.14159265358979
 GeV         1
 eV          :math:`10^{-9}`
-KeV         :math:`10^{-6}`
+keV         :math:`10^{-6}`
 MeV         :math:`10^{-3}`
 TeV         :math:`10^{3}`
 MV          1
@@ -90,14 +90,26 @@ cm          :math:`10^{-2}`
 mm          :math:`10^{-3}`
 um          :math:`10^{-6}`
 nm          :math:`10^{-9}`
+pm          :math:`10^{-12}`
 s           1
 ms          :math:`10^{-3}`
 us          :math:`10^{-6}`
 ns          :math:`10^{-9}`
+ps          :math:`10^{-12}`
 ==========  =================================
 
-For example, one can write either 100*eV or 0.1*KeV to specify an energy in GMAD
+For example, one can write either :code:`100*eV` or :code:`0.1*keV` to specify an energy in GMAD
 and both are equivalent.
+
+
+Useful Commands
+---------------
+
+:code:`print;` prints all elements
+:code:`print, line;` prints all elements in line
+:code:`print, option;` prints value of option
+:code:`stop;` exists parser
+
 
 Lattice Description
 -------------------
