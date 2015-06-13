@@ -37,7 +37,8 @@ BDSCollimatorBase::BDSCollimatorBase(G4String name,
   if ( (xAperture > 0.5*outerDiameter) || (yAperture > 0.5*outerDiameter) )
     {
       G4cerr << __METHOD_NAME__ << "half aperture bigger than diameter!" << G4endl;
-      G4cerr << "Outer diameter is " << outerDiameter << " mm" << G4endl;
+      G4cerr << "Outer diameter is " << outerDiameter << " mm for component named: \""
+	     << name << "\"" << G4endl;
       exit(1);
     }
 

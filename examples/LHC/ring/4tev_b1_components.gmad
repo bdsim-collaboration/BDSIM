@@ -719,7 +719,7 @@ TCTVB4R2: rcol, ysize=0.2, l=1.0, xsize=0.2;
 TCTVB4R2_angle_neg: transform3d, psi=-0.0;
 DRIFT102: drift, aper=0.2*m, l=1.26*m;
 TCLIA4R2_angle_pos: transform3d, psi=1.571;
-TCLIA4R2: rcol, material="Graphite", l=1.0, xsize=1.27542, ysize=0.2;
+TCLIA4R2: rcol, material="Graphite", l=1.0, xsize=0.00127542, ysize=0.2;
 TCLIA4R2_angle_neg: transform3d, psi=-1.571;
 DRIFT103: drift, aper=0.2*m, l=36.461*m;
 DRIFT104: drift, aper=0.2*m, l=0.9655*m;
