@@ -27,4 +27,4 @@ include samplers.gmad;
 !sample, range = aqm16ff;
 !sample, range = ip;
 
-option, ngenerate=2000;
+option, ngenerate=100;
