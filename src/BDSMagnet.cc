@@ -259,11 +259,12 @@ void BDSMagnet::BuildContainerLogicalVolume()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  G4double containerRadius = outerDiameter*0.5+lengthSafety;
   if (BDS::IsFinite(angle))
     {
       containerSolid = new G4CutTubs(name+"_container_solid", // name
 				     0.0,                     // minimum radius - solid here
-				     outerDiameter*0.5,       // radius - determined above
+				     containerRadius,         // radius - determined above
 				     chordLength*0.5,         // length about centre point
 				     0.0,                     // starting angle
 				     2.0*CLHEP::pi,           // sweep angle
@@ -273,8 +274,8 @@ void BDSMagnet::BuildContainerLogicalVolume()
   else
     {
       containerSolid = new G4Box(name + "_container_solid",
-				 outerDiameter*0.5,
-				 outerDiameter*0.5,
+				 containerRadius,
+				 containerRadius,
 				 chordLength*0.5);
     }
     
@@ -301,9 +302,8 @@ void BDSMagnet::BuildContainerLogicalVolume()
   else
     {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
 
-  G4double transverseSize = outerDiameter*0.5 + lengthSafety;
-  SetExtentX(-transverseSize, transverseSize);
-  SetExtentY(-transverseSize, transverseSize);
+  SetExtentX(-containerRadius, containerRadius);
+  SetExtentY(-containerRadius, containerRadius);
   SetExtentZ(-chordLength*0.5, chordLength*0.5);
 }
 
