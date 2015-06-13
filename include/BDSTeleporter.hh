@@ -35,7 +35,6 @@ private:
 
 namespace BDS {
   void CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline);
-  void AddTeleporterToEndOfBeamline(ElementList* beamline_list);
 }
 
 

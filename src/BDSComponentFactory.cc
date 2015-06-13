@@ -428,7 +428,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend()
     G4double rho = _brho/bField;
     //_element.angle  = - bField * length / brho;
     _element.angle  = - 2.0*asin(magFieldLength/2.0/rho);
+#ifdef BDSDEBUG
     G4cout << "calculated angle from field - now " << _element.angle << G4endl;
+#endif
   }
   else{
     _element.angle *= -1;
@@ -440,7 +442,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createRBend()
     // multiply once more with ffact to not flip fields in bends
     bField = - _brho * _element.angle / arclength * _charge * BDSGlobalConstants::Instance()->GetFFact();
     _element.B = bField/CLHEP::tesla;
+#ifdef BDSDEBUG
     G4cout << "calculated field from angle - angle,field = " << _element.angle << " " << _element.B << G4endl;
+#endif
   }
   
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
