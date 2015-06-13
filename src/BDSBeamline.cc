@@ -138,20 +138,20 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   G4bool hasFiniteAngle    = BDS::IsFinite(angle);
   G4bool hasFiniteTilt     = BDS::IsFinite(tiltOffset->GetTilt());
   G4bool hasFiniteOffset   = BDS::IsFinite(tiltOffset->GetXOffset()) || BDS::IsFinite(tiltOffset->GetYOffset());
-
-  G4ThreeVector eP = component->GetExtentPositive();
-  G4ThreeVector eN = component->GetExtentNegative();
+  G4ThreeVector offset = G4ThreeVector(tiltOffset->GetXOffset(), tiltOffset->GetYOffset(), 0);
+  G4ThreeVector eP = component->GetExtentPositive() + offset;
+  G4ThreeVector eN = component->GetExtentNegative() + offset;
   
 #ifdef BDSDEBUG
-  G4cout << "chord length         " << length     << " mm"         << G4endl;
-  G4cout << "angle                " << angle      << " rad"        << G4endl;
-  G4cout << "tilt offsetX offsetY " << tiltOffset << " rad mm mm " << G4endl;
-  G4cout << "has finite length    " << hasFiniteLength             << G4endl;
-  G4cout << "has finite angle     " << hasFiniteAngle              << G4endl;
-  G4cout << "has finite tilt      " << hasFiniteTilt               << G4endl;
-  G4cout << "has finite offset    " << hasFiniteOffset             << G4endl;
-  G4cout << "extent positive      " << eP                          << G4endl;
-  G4cout << "extent negative      " << eN                          << G4endl;
+  G4cout << "chord length         " << length      << " mm"         << G4endl;
+  G4cout << "angle                " << angle       << " rad"        << G4endl;
+  G4cout << "tilt offsetX offsetY " << *tiltOffset << " rad mm mm " << G4endl;
+  G4cout << "has finite length    " << hasFiniteLength              << G4endl;
+  G4cout << "has finite angle     " << hasFiniteAngle               << G4endl;
+  G4cout << "has finite tilt      " << hasFiniteTilt                << G4endl;
+  G4cout << "has finite offset    " << hasFiniteOffset              << G4endl;
+  G4cout << "extent positive      " << eP                           << G4endl;
+  G4cout << "extent negative      " << eN                           << G4endl;
 #endif
   
   // Calculate the reference placement rotation
