@@ -22,8 +22,7 @@ public:
 			G4double      tScint        = 0.3*CLHEP::mm,
 			G4double      angle         = 0,
 			G4String      scintMaterial = "lanex",
-			G4String      airMaterial   = "air",
-			BDSTiltOffset tiltOffset    = BDSTiltOffset());
+			G4String      airMaterial   = "air");
   ~BDSScintillatorScreen();
 
 protected:

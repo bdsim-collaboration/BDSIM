@@ -14,8 +14,6 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-class BDSTiltOffset;
-
 BDSMultipole::BDSMultipole(G4String            name,
 			   G4double            length,
 			   std::list<G4double> akn, // list of normal multipole strengths
@@ -23,10 +21,9 @@ BDSMultipole::BDSMultipole(G4String            name,
 			   std::list<G4double> aks, // list of skew multipole strengths
 			   // (NOT multiplied by multipole length)
 			   BDSBeamPipeInfo*    beamPipeInfo,
-			   BDSMagnetOuterInfo  magnetOuterInfo,
-			   BDSTiltOffset       tiltOffset):
+			   BDSMagnetOuterInfo  magnetOuterInfo):
   BDSMagnet(BDSMagnetType::multipole, name, length,
-	    beamPipeInfo, magnetOuterInfo, tiltOffset)
+	    beamPipeInfo, magnetOuterInfo)
 {
   CommonConstructor(akn,aks);
 }

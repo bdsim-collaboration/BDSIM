@@ -12,8 +12,7 @@ public:
 			   G4double xApertureIn        = 0,
 			   G4double yApertureIn        = 0,
 			   G4String collimatorMaterial = "copper",
-			   G4String vacuumMaterial     = "vacuum",
-			   BDSTiltOffset tiltOffset    = BDSTiltOffset());
+			   G4String vacuumMaterial     = "vacuum");
   ~BDSCollimatorRectangular(){;};
 
   virtual void BuildInnerCollimator();

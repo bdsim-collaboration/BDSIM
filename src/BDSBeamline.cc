@@ -131,7 +131,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component)
   // interrogate the item
   G4double      length     = component->GetChordLength();
   G4double      angle      = component->GetAngle();
-  BDSTiltOffset tiltOffset = component->GetTiltOffset();
+  BDSTiltOffset tiltOffset = BDSTiltOffset(); // null for now
   G4bool hasFiniteLength   = BDS::IsFinite(length);
   G4bool hasFiniteAngle    = BDS::IsFinite(angle);
   G4bool hasFiniteTilt     = BDS::IsFinite(tiltOffset.GetTilt());

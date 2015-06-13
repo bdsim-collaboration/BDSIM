@@ -21,18 +21,15 @@
 
 #include "globals.hh"             // geant4 types / globals
 
-class BDSTiltOffset;
-
 BDSSectorBend::BDSSectorBend(G4String           name,
 			     G4double           length,
 			     G4double           angleIn,
 			     G4double           bField,
 			     G4double           bGrad,
 			     BDSBeamPipeInfo*   beamPipeInfo,
-			     BDSMagnetOuterInfo magnetOuterInfo,
-			     BDSTiltOffset      tiltOffset):
+			     BDSMagnetOuterInfo magnetOuterInfo):
   BDSMagnet(BDSMagnetType::sectorbend, name, length,
-	    beamPipeInfo, magnetOuterInfo, tiltOffset),
+	    beamPipeInfo, magnetOuterInfo),
   itsBField(bField),itsBGrad(bGrad)
 {
   angle = angleIn;

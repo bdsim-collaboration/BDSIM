@@ -4,7 +4,6 @@
 #include "globals.hh"
 
 #include "BDSMagnet.hh"
-#include "BDSTiltOffset.hh"
 
 #include <list>
 
@@ -20,8 +19,7 @@ public:
 		G4double           bFieldIn,
 		G4double           bGradIn,
 		BDSBeamPipeInfo*   beamPipeInfo,
-		BDSMagnetOuterInfo magnetOuterInfo,
-		BDSTiltOffset      tiltOffset = BDSTiltOffset());
+		BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSSectorBend(){;};
 
 private:

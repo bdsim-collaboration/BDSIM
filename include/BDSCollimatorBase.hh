@@ -3,7 +3,6 @@
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSMaterials.hh"
-#include "BDSTiltOffset.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4LogicalVolume.hh"
@@ -24,8 +23,7 @@ public:
 		    G4double xApertureIn = 0,
 		    G4double yApertureIn = 0,
 		    G4String collimatorMaterial = "copper",
-		    G4String vacuumMaterial     = "vacuum",
-		    BDSTiltOffset tiltOffset = BDSTiltOffset());
+		    G4String vacuumMaterial     = "vacuum");
   ~BDSCollimatorBase();
 
 protected:

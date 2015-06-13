@@ -18,7 +18,6 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
-#include "BDSTiltOffset.hh"
 
 #include "G4FieldManager.hh"
 #include "G4ChordFinder.hh"
@@ -38,8 +37,7 @@ public:
 	    G4String           name, 
 	    G4double           length,
 	    BDSBeamPipeInfo*   beamPipeInfo,
-	    BDSMagnetOuterInfo magnetOuterInfo,
-	    BDSTiltOffset      tiltOffset = BDSTiltOffset());
+	    BDSMagnetOuterInfo magnetOuterInfo);
   
   virtual ~BDSMagnet();
 

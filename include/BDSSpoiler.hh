@@ -8,7 +8,6 @@
 #define BDSSPOILER_H
 
 #include "BDSAcceleratorComponent.hh"
-#include "BDSTiltOffset.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4LogicalVolume.hh"
@@ -16,15 +15,14 @@
 class G4Material;
 class G4VPhysicalVolume;
 
-class BDSSpoiler :public BDSAcceleratorComponent
+class BDSSpoiler: public BDSAcceleratorComponent
 {
 public:
   BDSSpoiler(G4String      name,
 	     G4double      length,
 	     G4double      xAper,
 	     G4double      yAper,
-	     G4Material*   SpoilerMaterial,
-	     BDSTiltOffset tiltOffset = BDSTiltOffset());
+	     G4Material*   SpoilerMaterial);
   ~BDSSpoiler();
 
 protected:

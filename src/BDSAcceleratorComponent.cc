@@ -19,13 +19,11 @@ G4Material* BDSAcceleratorComponent::emptyMaterial = NULL;
 G4double    BDSAcceleratorComponent::lengthSafety  = -1;
 
 struct BDSBeamPipeInfo;
-class BDSTiltOffset;
 
 BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4double         arcLengthIn,
 						 G4double         angleIn,
 						 G4String         typeIn,
-						 BDSTiltOffset    tiltOffsetIn,
 						 G4int            precisionRegionIn,
 						 BDSBeamPipeInfo* beamPipeInfoIn):
   BDSGeometryComponent(NULL,NULL),
@@ -33,7 +31,6 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   arcLength(arcLengthIn),
   type(typeIn),
   angle(angleIn),
-  tiltOffset(tiltOffsetIn),
   precisionRegion(precisionRegionIn),
   beamPipeInfo(beamPipeInfoIn)
 {

@@ -11,7 +11,6 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSMaterials.hh"
 #include "BDSMagField.hh"
-#include "BDSTiltOffset.hh"
 
 #include "G4CachedMagneticField.hh"
 #include "G4ChordFinder.hh"
@@ -23,15 +22,14 @@
 #include "G4UserLimits.hh"
 #include "G4UniformMagField.hh"
 
-class BDSElement :public BDSAcceleratorComponent
+class BDSElement: public BDSAcceleratorComponent
 {
 public:
   BDSElement(G4String      name,
 	     G4double      length, 
 	     G4String      geometry,
 	     G4String      bmap,
-	     G4double      aBmapZOffset,
-	     BDSTiltOffset tiltOffset = BDSTiltOffset());
+	     G4double      aBmapZOffset);
   ~BDSElement();
 
   // creates a field mesh in global coordinates in case it is given by map

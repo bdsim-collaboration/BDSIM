@@ -23,16 +23,13 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-class BDSTiltOffset;
-
 BDSOctupole::BDSOctupole(G4String           name,
 			 G4double           length,
 			 G4double           bTriplePrime,
 			 BDSBeamPipeInfo*   beamPipeInfo,
-			 BDSMagnetOuterInfo magnetOuterInfo,
-			 BDSTiltOffset      tiltOffset):
+			 BDSMagnetOuterInfo magnetOuterInfo):
   BDSMagnet(BDSMagnetType::octupole, name, length,
-	    beamPipeInfo, magnetOuterInfo, tiltOffset),
+	    beamPipeInfo, magnetOuterInfo),
   itsBTriplePrime(bTriplePrime)
 {;}
 

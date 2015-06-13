@@ -7,7 +7,6 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh" 
-#include "BDSTiltOffset.hh"
 
 #include <vector>
 
@@ -55,7 +54,6 @@ public:
 			  G4double         arcLength,
 			  G4double         angle,
 			  G4String         type,
-			  BDSTiltOffset    tiltOffset      = BDSTiltOffset(),
 			  G4int            precisionRegion = 0,
 			  BDSBeamPipeInfo* beamPipeInfo    = NULL);
   
@@ -73,9 +71,6 @@ public:
   /// Get the angle the component induces in the reference trajector (rad). 
   /// Note, this is 0 for h and v kickers
   G4double GetAngle() const;
-
-  /// Accessor for tilt offset information
-  inline BDSTiltOffset GetTiltOffset() const;
   
   /// Access the length of the component.
   virtual G4double GetArcLength()   const; // note no z length - this is chord length
@@ -131,7 +126,6 @@ protected:
   ///@{ Protected member variable that can be modified by derived classes.
   G4double         chordLength;
   G4double         angle;
-  BDSTiltOffset    tiltOffset;
   G4int            precisionRegion;
   BDSBeamPipeInfo* beamPipeInfo;
   ///@}
@@ -184,9 +178,6 @@ inline G4String BDSAcceleratorComponent::GetType() const
 
 inline G4int BDSAcceleratorComponent::GetPrecisionRegion() const
 {return precisionRegion;}
-
-inline BDSTiltOffset BDSAcceleratorComponent::GetTiltOffset() const
-{return tiltOffset;}
 
 inline G4double BDSAcceleratorComponent::GetSPos() const
 {return itsSPos;}

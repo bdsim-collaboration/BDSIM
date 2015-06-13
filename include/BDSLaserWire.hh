@@ -9,7 +9,6 @@
 
 #include "globals.hh"  // geant4 types / globals
 #include "BDSAcceleratorComponent.hh"
-#include "BDSTiltOffset.hh"
 
 #include "BDSLaserCompton.hh"
 
@@ -19,8 +18,7 @@ public:
   BDSLaserWire(G4String aName,
 	       G4double aLength,
 	       G4double aWavelength,
-	       G4ThreeVector aDirection,
-	       BDSTiltOffset tiltOffset = BDSTiltOffset());
+	       G4ThreeVector aDirection);
   ~BDSLaserWire();
 
   inline void SetLaserDirection(G4ThreeVector aDirection);

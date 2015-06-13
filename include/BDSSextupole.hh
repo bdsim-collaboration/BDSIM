@@ -10,7 +10,6 @@
 #include "globals.hh"
 
 #include "BDSMagnet.hh"
-#include "BDSTiltOffset.hh"
 
 #include <list>
 
@@ -24,8 +23,7 @@ public:
 	       G4double           length,
 	       G4double           bDblPrime,
 	       BDSBeamPipeInfo*   beamPipeInfo,
-	       BDSMagnetOuterInfo magnetOuterInfo,
-	       BDSTiltOffset      tiltOffset = BDSTiltOffset());
+	       BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSSextupole(){;};
 
 private:

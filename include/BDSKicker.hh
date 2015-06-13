@@ -3,7 +3,6 @@
 
 #include "BDSMagnet.hh"
 #include "BDSMagnetType.hh"
-#include "BDSTiltOffset.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Material.hh"
@@ -21,8 +20,7 @@ public:
 	    G4double           angle,
 	    G4bool             verticalKicker,
 	    BDSBeamPipeInfo*   beamPipeInfo,
-	    BDSMagnetOuterInfo magnetOuterInfo,
-	    BDSTiltOffset      tiltOffset = BDSTiltOffset());
+	    BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSKicker(){;};
   
 protected:
