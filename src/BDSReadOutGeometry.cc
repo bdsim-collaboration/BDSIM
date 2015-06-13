@@ -34,12 +34,12 @@ G4LogicalVolume* BDS::BuildReadOutVolume(G4String name,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  if (chordLength < 1e-15) return NULL;
+  if (!BDS::IsFinite(chordLength)) return NULL;
 
   G4double roRadius      = BDSGlobalConstants::Instance()->GetSamplerDiameter()*0.5;
   G4Material* roMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
   G4VSolid* roSolid      = NULL;
-  if (angle < 1e-15)
+  if (!BDS::IsFinite(angle))
     {
       //angle is zero - build a box
       roSolid = new G4Box(name + "_ro_solid", // name
