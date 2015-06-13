@@ -124,5 +124,5 @@ G4double BDSBunchInterface::CalculateZp(G4double xp, G4double yp, G4double Zp0)c
   else
     zp = sqrt(1.-xp*xp -yp*yp);
 
-  return zp * CLHEP::rad;
+  return zp;
 }

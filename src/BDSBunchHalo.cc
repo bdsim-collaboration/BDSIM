@@ -79,6 +79,7 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
     double emitYSp = gammaY*pow(dy,2) + 2.*alphaY*dy*dyp + betaY*pow(dyp,2);
     
 #ifdef BDSDEBUG
+    G4cout << "phase space> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
     G4cout << "emittance> " << emitXSp << " " << emitX << " " << emitYSp << " " << emitY << G4endl;
 #endif
 
@@ -88,11 +89,11 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
       G4cout << "continue> " << G4endl;
 #endif
       continue;
-    }    
+    } 
     else {
-      // determine weight
-      double wx = 0; 
-      double wy = 0; 
+      // determine weight, initialise 1 so always passes
+      double wx = 1.0;
+      double wy = 1.0;
       if(weightFunction == "flat" || weightFunction == "") { 
 	wx = 1.0;
 	wy = 1.0;
@@ -105,9 +106,9 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 	wx = exp(-(emitXSp-emitX)/(emitX*weightParameter));
 	wy = exp(-(emitYSp-emitY)/(emitY*weightParameter));
       }
-
-#ifdef BDSBEBUG
-      G4cout << emitXSp/emitX << " " << emitYSp/emitY << " " << wx << " " << wy << std::endl;
+      
+#ifdef BDSDEBUG
+      G4cout << emitXSp/emitX << " " << emitYSp/emitY << " " << wx << " " << wy << G4endl;
 #endif
       // reject
       if(FlatGen->shoot() > wx && FlatGen->shoot() > wy) 
