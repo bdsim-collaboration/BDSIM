@@ -40,6 +40,11 @@ void BDSTerminator::BuildContainerLogicalVolume()
   containerLogicalVolume->SetUserLimits(new BDSTerminatorUserLimits(DBL_MAX,DBL_MAX,DBL_MAX,0.,0.));
   //these are default G4UserLimit values so everything will normally be tracked
   //BDSTerminatorUserLimits has the logic inside it to respond to turn number
+
+  // register extents with BDSGeometryComponent base class
+  SetExtentX(-radius,radius);
+  SetExtentY(-radius,radius);
+  SetExtentZ(-chordLength*0.5, chordLength*0.5);
 }
 
 BDSTerminator::~BDSTerminator()

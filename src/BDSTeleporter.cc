@@ -46,6 +46,11 @@ void BDSTeleporter::BuildContainerLogicalVolume()
 					       emptyMaterial,
 					       name + "_container_lv");
   containerLogicalVolume->SetFieldManager(itsFieldManager,false); // modelled from BDSMagnet.cc
+
+  // register extents with BDSGeometryComponent base class
+  SetExtentX(-radius,radius);
+  SetExtentY(-radius,radius);
+  SetExtentZ(-chordLength*0.5, chordLength*0.5);
 }
   
 void BDSTeleporter::BuildBPFieldAndStepper()
@@ -104,20 +109,6 @@ void BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
   G4double teleporterlength       = fabs(delta.z()) - 1e-8;
   G4cout << "Calculated teleporter length : " << teleporterlength << " mm" << G4endl;
   BDSGlobalConstants::Instance()->SetTeleporterLength(teleporterlength);
-}
-
-void BDS::AddTeleporterToEndOfBeamline(ElementList* beamline_list)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << ": adding teleporter element to end of beamline" << G4endl;
-#endif
-  //based on void add_sampler in parser.h
-  //create basic element with type teleporter and put on end
-  struct Element e;
-  e.type = _TELEPORTER;
-  e.name = "Teleporter";
-  e.lst  = NULL; 
-  beamline_list->push_back(e);
 }
 
 BDSTeleporter::~BDSTeleporter()
