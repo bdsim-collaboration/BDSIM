@@ -32,7 +32,8 @@ int BDSSampler::GetNSamplers() { return nSamplers; }
 
 void BDSSampler::AddExternalSampler(G4String name) { nSamplers++; outputNames.push_back(name); }
 
-BDSSampler::BDSSampler(G4String name, G4double length):
+BDSSampler::BDSSampler(G4String name,
+		       G4double length):
   BDSAcceleratorComponent("Sampler_"+name, length, 0, "sampler")
 {
 #ifdef BDSDEBUG
@@ -43,12 +44,6 @@ BDSSampler::BDSSampler(G4String name, G4double length):
 #ifdef BDSDEBUG
   G4cout << "BDSSampler.cc Nsamplers " << nSamplers << G4endl;
 #endif
-}
-
-void BDSSampler::Initialise()
-{
-  BDSAcceleratorComponent::Initialise();
-  
   BDSSampler::outputNames.push_back(GetName());
 }
 

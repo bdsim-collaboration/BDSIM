@@ -25,8 +25,9 @@ int BDSSamplerCylinder::GetNSamplers() { return nSamplers; }
 
 void BDSSamplerCylinder::AddExternalSampler(G4String name) { nSamplers++; outputNames.push_back(name); }
 
-BDSSamplerCylinder::
-BDSSamplerCylinder (G4String name,G4double length,G4double aRadius):
+BDSSamplerCylinder::BDSSamplerCylinder(G4String name,
+				       G4double length,
+				       G4double aRadius):
   BDSAcceleratorComponent(name,
 			  length,
 			  0,
@@ -40,12 +41,7 @@ BDSSamplerCylinder (G4String name,G4double length,G4double aRadius):
   // register sampler sensitive detector
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   SDMan->AddNewDetector(SensitiveDetector);
-}
 
-void BDSSamplerCylinder::Initialise()
-{
-  BDSAcceleratorComponent::Initialise();
-  
   // to be fixed - see bdssampler for explanation
   BDSSamplerCylinder::outputNames.push_back(name + "_phys_" );
 }

@@ -223,20 +223,26 @@ void BDSDetectorConstruction::BuildBeamline()
     }
 
   // Special circular machine bits
-  // Add teleporter to account for slight ring offset
   // Add terminator to do ring turn counting logic
+  // Add teleporter to account for slight ring offset
   if (BDSExecOptions::Instance()->GetCircular())
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
 #endif
       BDS::CalculateAndSetTeleporterDelta(beamline);
-      BDSAcceleratorComponent* teleporter = theComponentFactory->createTeleporter();
-      if (teleporter)
-	{beamline->AddComponent(teleporter);}
       BDSAcceleratorComponent* terminator = theComponentFactory->createTerminator();
       if (terminator)
-	{beamline->AddComponent(terminator);}
+        {
+	  terminator->Initialise();
+	  beamline->AddComponent(terminator);
+	}
+      BDSAcceleratorComponent* teleporter = theComponentFactory->createTeleporter();
+      if (teleporter)
+	{
+	  teleporter->Initialise();
+	  beamline->AddComponent(teleporter);
+	}
     }
   
   delete theComponentFactory;

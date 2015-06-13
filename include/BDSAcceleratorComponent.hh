@@ -95,6 +95,7 @@ public:
   /// BDSComponentFactory creates BDSAcceleratorComponents
   friend class BDSComponentFactory;
   friend class BDSLine;
+  friend class BDSDetectorConstruction;
   
   ///@{ This function should be revisited given recent changes (v0.7)
   G4double         GetSPos() const; // maybe not needed due to new beamline

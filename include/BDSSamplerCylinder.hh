@@ -27,7 +27,6 @@ public:
   static BDSSamplerSD* GetSensitiveDetector(){return SensitiveDetector;}
 
 private:
-  virtual void Initialise();
   virtual void BuildContainerLogicalVolume();
 
   G4double itsRadius;

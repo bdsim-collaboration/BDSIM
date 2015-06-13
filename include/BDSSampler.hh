@@ -26,7 +26,6 @@ public:
 
   /// access for external classes to sensitive detector
   static BDSSamplerSD* GetSensitiveDetector(){return SensitiveDetector;}
-
   
   /// BDSBeamline needs to be able to create a single element to initialise
   /// coordinates but can't simply use the factory as it only works with an
@@ -35,8 +34,6 @@ public:
   friend class BDSBeamline;
 
 private:
-  virtual void Initialise();
-
   virtual void BuildContainerLogicalVolume();
 
   /// id of sampler

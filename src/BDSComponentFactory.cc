@@ -291,25 +291,17 @@ BDSAcceleratorComponent* BDSComponentFactory::createTeleporter(){
   // This relies on things being added to the beamline immediately
   // after they've been created
   G4double teleporterlength = BDSGlobalConstants::Instance()->GetTeleporterLength();
-  if(teleporterlength < lengthSafety){
-      G4cerr << "---->NOT creating Teleporter, "
-             << " name = " << _element.name
-             << ", LENGTH TOO SHORT:"
-             << " l = " << teleporterlength << "m"
-             << G4endl;
-      return NULL;
-    }
-  else {
+  G4String name = "teleporter";
 #ifdef BDSDEBUG
     G4cout << "---->creating Teleporter,"
-	   << " name        = " << _element.name
-	   << " l           = " << teleporterlength/CLHEP::m << "m"
+	   << " name = " << name
+	   << ", l = " << teleporterlength/CLHEP::m << "m"
 	   << G4endl;
 #endif
 
-    return( new BDSTeleporter(_element.name,
+    return( new BDSTeleporter(name,
 			      teleporterlength ));
-  }
+  
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createDrift()
@@ -911,9 +903,19 @@ BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){
 	
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::createTerminator(){
-  return (new BDSTerminator(_element.name, 
-			    BDSGlobalConstants::Instance()->GetSamplerLength()));
+BDSAcceleratorComponent* BDSComponentFactory::createTerminator()
+{
+  G4String name   = "terminator";
+  G4double length = BDSGlobalConstants::Instance()->GetSamplerLength();
+#ifdef BDSDEBUG
+    G4cout << "---->creating Terminator,"
+	   << " name = " << name
+	   << " l = "    << length / CLHEP::m << "m"
+	   << G4endl;
+#endif
+  
+  return (new BDSTerminator("terminator", 
+			    length));
 }
 
 
