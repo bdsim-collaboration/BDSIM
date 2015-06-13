@@ -214,8 +214,16 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
 
   // add the tilt to the rotation matrices (around z axis)
   G4RotationMatrix* rotationStart, *rotationMiddle, *rotationEnd;
-  if (hasFiniteTilt)
+  if (hasFiniteTilt && !hasFiniteAngle)
     {
+      // note, don't apply tilt if the object has finite angle as this will cause
+      // geometry overlaps
+      if (hasFiniteAngle)
+	{
+	  G4String name = component->GetName();
+	  G4cout << __METHOD_NAME__ << "WARNING - element has tilt, but this will cause geometry"
+		 << " overlaps: " << name << " - omitting tilt" << G4endl;
+	}
       G4double tilt = tiltOffset->GetTilt();
       rotationStart  = new G4RotationMatrix(*referenceRotationStart);
       rotationMiddle = new G4RotationMatrix(*referenceRotationMiddle);
@@ -280,6 +288,13 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   if (hasFiniteOffset)
     {
       G4double dx                  = tiltOffset->GetXOffset();
+      if (hasFiniteAngle) // do not allow x offsets for bends as this will cause overlaps
+	{
+	  G4String name = component->GetName();
+	  G4cout << __METHOD_NAME__ << "WARNING - element has x offset, but this will cause geometry"
+		 << " overlaps: " << name << " - omitting x offset" << G4endl;
+	  dx = 0;
+	}
       G4double dy                  = tiltOffset->GetYOffset();
       // note the displacement is applied in the accelerator x and y frame so use
       // the reference rotation rather than the one with tilt already applied
