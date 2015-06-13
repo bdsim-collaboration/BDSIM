@@ -699,17 +699,12 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement()
   if(!HasSufficientMinimumLength(_element))
     {return NULL;}
   
-  // geometry
-  G4double aper1 = BDSGlobalConstants::Instance()->GetBeamPipeRadius();
-  if( _element.aper1 > 1.e-10*CLHEP::m ) aper1 = _element.aper1 * CLHEP::m;
-
 #ifdef BDSDEBUG 
   G4cout << "---->creating Element,"
 	 << " name = " << _element.name
 	 << " l = " << _element.l << "m"
-	 << " aper = " << aper1/CLHEP::m << "m"
-	 << " outerDiameter = " << 0.5 * _element.outerDiameter << "m"
-	 << " bmapZOffset = "	<<  _element.bmapZOffset * CLHEP::m
+	 << " outerDiameter = "  << 0.5 * _element.outerDiameter << "m"
+	 << " bmapZOffset = "	 <<  _element.bmapZOffset * CLHEP::m
 	 << " precision region " << _element.precisionRegion
 	 << G4endl;
 #endif

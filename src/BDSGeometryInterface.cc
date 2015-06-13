@@ -53,10 +53,11 @@ void BDSGeometryInterface::Optics()
   for(; it != beamline->end(); ++it)
     { 
       BDSAcceleratorComponent* thecurrentitem = (*it)->GetAcceleratorComponent();
+      /*
       G4int aper_type; //1 = rect, 2 = circ, 3 = ellipse
       if(thecurrentitem->GetType() == "rcol" ) //RCOL
 	aper_type=1;
-      /*
+
       else if(thecurrentitem->GetType() == "ecol") //ECOL
 	{
 	  if(thecurrentitem->GetAperX()==thecurrentitem->GetAperY()) 
@@ -137,10 +138,11 @@ void BDSGeometryInterface::Survey()
   for(; it != beamline->end(); ++it)
     {
       BDSAcceleratorComponent* thecurrentitem = (*it)->GetAcceleratorComponent();
+      /*
       G4int aper_type; //1 = rect, 2 = circ, 3 = ellipse
       if(thecurrentitem->GetType() == "rcol" ) //RCOL
 	aper_type=1;
-      /*
+
       else if(thecurrentitem->GetType() == "ecol" ) //ECOL
 	if(thecurrentitem->GetAperX()==thecurrentitem->GetAperY()) 
 	  aper_type=2;
