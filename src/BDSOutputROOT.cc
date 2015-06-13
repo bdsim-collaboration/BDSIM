@@ -411,7 +411,7 @@ void BDSOutputROOT::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec){
 	  G4bool saveTrajectory=true;
 	  
 	  if(!((parentID==0)&&(BDSGlobalConstants::Instance()->GetStoreTrajectory()))){ 
-	    if(!((std::abs(part==13))&&(BDSGlobalConstants::Instance()->GetStoreMuonTrajectories()))){ 
+	    if(!((std::abs(part)==13)&&(BDSGlobalConstants::Instance()->GetStoreMuonTrajectories()))){ 
 	      if(!((part==2112)&&(BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories()))){ 
 		saveTrajectory=false;
 	      }
