@@ -218,8 +218,9 @@ void BDSDetectorConstruction::BuildBeamline()
 #endif
       
       BDSAcceleratorComponent* temp = theComponentFactory->createComponent(it, beamline_list);
+      BDSTiltOffset*     tiltOffset = theComponentFactory->createTiltOffset(*it);
       if(temp)
-	{beamline->AddComponent(temp);}
+	{beamline->AddComponent(temp, tiltOffset);}
     }
 
   // Special circular machine bits

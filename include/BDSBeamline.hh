@@ -10,6 +10,8 @@
 #include <utility>    //for std::pair
 #include <vector>
 
+class BDSTiltOffset;
+
 /**
  * @brief A vector of BDSBeamlineElement instances - a beamline.
  * 
@@ -55,12 +57,12 @@ public:
 
   /// Add a single component and calculate its position and rotation with respect
   /// to the beginning of the beamline
-  void AddSingleComponent(BDSAcceleratorComponent* component);
+  void AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = NULL);
 
   /// Add a component, but check to see if can be dynamically upcast to a line
   /// in which case, loop over it and apply
   /// AddSingleComponent(BDSAcceleratorComponent* component) to each component
-  void AddComponent(BDSAcceleratorComponent* component);
+  void AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = NULL);
 
   /// Apply a Transform3D rotation and translation to the reference
   /// coordinates. Special method for the special case of unique component

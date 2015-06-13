@@ -23,6 +23,7 @@
 #include "BDSSolenoid.hh"
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
+#include "BDSTiltOffset.hh"
 #include "BDSMultipole.hh"
 #include "BDSTransform3D.hh"
 
@@ -597,7 +598,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createSextupole()
 	 << " k2= " << _element.k2 << "m^-3"
 	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
 	 << " B''= " << bDoublePrime/(CLHEP::tesla/CLHEP::m2) << "T/m^2"
-	 << " tilt= " << _element.tilt << "rad"
 	 << " material= " << _element.outerMaterial
 	 << G4endl;
 #endif
@@ -626,7 +626,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createOctupole()
 	 << " k3= " << _element.k3 << "m^-4"
 	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
 	 << " B'''= " << bTriplePrime/(CLHEP::tesla/CLHEP::m3) << "T/m^3"
-	 << " tilt= " << _element.tilt
 	 << " material= " << _element.outerMaterial
 	 << G4endl;
 #endif
@@ -647,7 +646,6 @@ BDSAcceleratorComponent* BDSComponentFactory::createMultipole()
   G4cout << "---->creating Multipole,"
 	 << " name= " << _element.name
 	 << " l= " << _element.l << "m"
-	 << " tilt= " << _element.tilt << "rad"
 	 << " material= " << _element.outerMaterial
 	 << G4endl;
 #endif
@@ -1037,4 +1035,13 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element& element)
     {info->beamPipeThickness = BDSGlobalConstants::Instance()->GetBeamPipeThickness();}
   info->beamPipeMaterial  = PrepareBeamPipeMaterial(element);
   return info;
+}
+
+BDSTiltOffset* BDSComponentFactory::createTiltOffset(Element& element)
+{
+  G4double xOffset = element.offsetX;
+  G4double yOffset = element.offsetY;
+  G4double tilt    = element.tilt;
+
+  return new BDSTiltOffset(xOffset, yOffset, tilt);
 }

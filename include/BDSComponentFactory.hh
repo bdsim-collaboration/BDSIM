@@ -10,7 +10,8 @@
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSTunnelInfo.hh"
 
-class ElementList; 
+class ElementList;
+class BDSTiltOffset;
 
 class BDSComponentFactory{
 public:
@@ -24,6 +25,8 @@ public:
   // for each of them - special cases need only for ring logic
   BDSAcceleratorComponent* createTerminator();
   BDSAcceleratorComponent* createTeleporter();
+  /// Create the tilt and offset information object by inspecting the parser element
+  BDSTiltOffset*           createTiltOffset(Element& element);
  
 private:
   G4bool   verbose;
