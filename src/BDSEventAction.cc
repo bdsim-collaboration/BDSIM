@@ -162,9 +162,9 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       for (G4int i = 0; i < energyCounterHits->entries(); i++)
 	{
 	  //general eloss histo
-	  analMan->Fill1DHistogram(2,(*energyCounterHits)[i]->GetS()/CLHEP::m,(*energyCounterHits)[i]->GetEnergy()/CLHEP::GeV);
+	  analMan->Fill1DHistogram(2,(*energyCounterHits)[i]->GetS(),(*energyCounterHits)[i]->GetEnergy()/CLHEP::GeV);
 	  //per element eloss histo
-	  analMan->Fill1DHistogram(5,(*energyCounterHits)[i]->GetS()/CLHEP::m,(*energyCounterHits)[i]->GetEnergy()/CLHEP::GeV);
+	  analMan->Fill1DHistogram(5,(*energyCounterHits)[i]->GetS(),(*energyCounterHits)[i]->GetEnergy()/CLHEP::GeV);
 	}
     }
 
@@ -179,11 +179,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  bdsOutput->WritePrimaryLoss(thePrimaryLoss);
 	  bdsOutput->WritePrimaryHit(thePrimaryHit);
 	  // general histos
-	  analMan->Fill1DHistogram(0,thePrimaryHit->GetS()/CLHEP::m);
-	  analMan->Fill1DHistogram(1,thePrimaryLoss->GetS()/CLHEP::m);
+	  analMan->Fill1DHistogram(0,thePrimaryHit->GetS());
+	  analMan->Fill1DHistogram(1,thePrimaryLoss->GetS());
 	  // per element histos
-	  analMan->Fill1DHistogram(3,thePrimaryHit->GetS()/CLHEP::m);
-	  analMan->Fill1DHistogram(4,thePrimaryLoss->GetS()/CLHEP::m);
+	  analMan->Fill1DHistogram(3,thePrimaryHit->GetS());
+	  analMan->Fill1DHistogram(4,thePrimaryLoss->GetS());
 	}
     }
   }
