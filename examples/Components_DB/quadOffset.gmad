@@ -1,6 +1,6 @@
 start: marker;
-d1: drift, l=0.05;
-q1: quadrupole, l=0.1, k1=30.0, offsetX=0.5*cm, offsetY=-0.1*cm, tilt=0.1*rad;
+d1: drift, l=0.05, offsetX=-50*cm;
+q1: quadrupole, l=0.1, k1=30.0, offsetX=50*cm, offsetY=-30*cm, tilt=0.1*rad;
 d2: drift, l=0.05;
 finish: marker;
 
