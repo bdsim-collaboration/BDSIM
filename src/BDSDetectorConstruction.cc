@@ -458,6 +458,10 @@ void BDSDetectorConstruction::ComponentPlacement()
       G4RotationMatrix* rr = (*it)->GetReferenceRotationMiddle();
       G4ThreeVector     rp = (*it)->GetReferencePositionMiddle();
       
+#ifdef BDSDEBUG
+	  G4cout << __METHOD_NAME__ << "placing mass geometry" << G4endl;
+	  G4cout << "position: " << p << ", rotation: " << *r << G4endl;
+#endif
       G4PVPlacement* PhysiComponentPlace = new G4PVPlacement(r,                // its rotation
 							     p,                // its position
 							     name + "_pv",     // its name
@@ -470,6 +474,10 @@ void BDSDetectorConstruction::ComponentPlacement()
       // place read out volume in read out world - if this component has one
       if(readOutLV)
 	{
+#ifdef BDSDEBUG
+	  G4cout << __METHOD_NAME__ << "placing readout geometry" << G4endl;
+	  G4cout << "position: " << rp << ", rotation: " << *rr << G4endl;
+#endif
 	  // don't need the pointer for anything - purely instantiating registers it with g4
 	  new G4PVPlacement(rr,              // its rotation
 			    rp,              // its position

@@ -54,17 +54,23 @@ BDSEnergyCounterSD::~BDSEnergyCounterSD()
 {;}
 
 void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
-{  
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   energyCounterCollection = new BDSEnergyCounterHitsCollection(SensitiveDetectorName,collectionName[0]);
   if (HCIDe < 0)
     {HCIDe = G4SDManager::GetSDMpointer()->GetCollectionID(energyCounterCollection);}
   HCE->AddHitsCollection(HCIDe,energyCounterCollection);
 
-  primaryCounterCollection = new BDSEnergyCounterHitsCollection
-    (SensitiveDetectorName,collectionName[1]);
+  primaryCounterCollection = new BDSEnergyCounterHitsCollection(SensitiveDetectorName,collectionName[1]);
   if (HCIDp < 0)
     {HCIDp = G4SDManager::GetSDMpointer()->GetCollectionID(primaryCounterCollection);}
   HCE->AddHitsCollection(HCIDp,primaryCounterCollection);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "HCID primaries: " << HCIDp << G4endl;
+  G4cout << __METHOD_NAME__ << "HCID energy:    " << HCIDe << G4endl;
+#endif
 }
 
 G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOutTH)
