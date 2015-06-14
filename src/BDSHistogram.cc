@@ -39,11 +39,11 @@ BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4Stri
   G4double binwidth = (xmax - xmin) / (G4double)nbins;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ 
-	 << " S min : "     << xmin 
-	 << " mm, S max : " << xmax 
-	 << " mm, nbins : " << nbins 
-	 << " Bin width: "  << binwidth 
-	 << " mm" << G4endl;
+	 << " S min : "    << xmin 
+	 << " m, S max : " << xmax 
+	 << " m, nbins : " << nbins 
+	 << " Bin width: " << binwidth 
+	 << " m" << G4endl;
 #endif
   G4double localmin, localmax;
   localmin = xmin;
