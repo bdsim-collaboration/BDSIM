@@ -23,7 +23,6 @@
 #include "BDSQuadrupole.hh"
 #include "BDSQuadMagField.hh"
 #include "BDSQuadStepper.hh"
-#include "BDSEnergyCounterSD.hh"
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
