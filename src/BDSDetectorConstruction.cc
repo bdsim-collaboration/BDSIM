@@ -434,27 +434,20 @@ void BDSDetectorConstruction::ComponentPlacement()
 							       );
 	}
 
-      // Use old way of setting sensitivity for volumes without read out LV
-      // old way of setting sensitive volumes - remains for now for components that haven't been changed
-      // in future will be done in all component constructors
-      // NOTE this also sets GFLASH so most volumes won't have GFLASH now
-      if (!readOutLV)
+      std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetAllSensitiveVolumes();
+      std::vector<G4LogicalVolume*>::iterator sensIt= SensVols.begin();
+      for(;sensIt != SensVols.end(); ++sensIt)
 	{
-	  std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetAllSensitiveVolumes();
-	  std::vector<G4LogicalVolume*>::iterator sensIt= SensVols.begin();
-	  for(;sensIt != SensVols.end(); ++sensIt)
-	    {
-	      //use already defined instance of Ecounter sd
-	      (*sensIt)->SetSensitiveDetector(energyCounterSDRO);
-	      //register any volume that an ECounter is attached to
-	      BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( (*sensIt)->GetName(),
-									thecurrentitem->GetSPos() );
-	      BDSGlobalConstants::Instance()->AddLogicalVolumeInfo((*sensIt),theinfo);
-	      //set gflash parameterisation on volume if required
-	      G4bool gflash     = BDSExecOptions::Instance()->GetGFlash();
-	      if(gflash && ((*sensIt)->GetRegion() != precisionRegion) && (thecurrentitem->GetType()=="element"))
-		{SetGFlashOnVolume(*sensIt);}
-	    }
+	  //use already defined instance of Ecounter sd
+	  (*sensIt)->SetSensitiveDetector(energyCounterSDRO);
+	  //register any volume that an ECounter is attached to
+	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( (*sensIt)->GetName(),
+								    thecurrentitem->GetSPos() );
+	  BDSGlobalConstants::Instance()->AddLogicalVolumeInfo((*sensIt),theinfo);
+	  //set gflash parameterisation on volume if required
+	  G4bool gflash     = BDSExecOptions::Instance()->GetGFlash();
+	  if(gflash && ((*sensIt)->GetRegion() != precisionRegion) && (thecurrentitem->GetType()=="element"))
+	    {SetGFlashOnVolume(*sensIt);}
 	}
 
       // get the placement details from the beamline component
