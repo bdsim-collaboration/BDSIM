@@ -56,6 +56,9 @@ BDSEnergyCounterSD* BDSSDManager::GetEnergyCounterOnAxisSDRO()
 
 void BDSSDManager::ConstructECounterSDOnAxisOnDemand()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // this CANNOT be used until the beamline has been
   // placed in detector construction and therefore the readout
   // geometry also exists - hence make this on demand

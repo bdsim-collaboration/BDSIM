@@ -434,27 +434,20 @@ void BDSDetectorConstruction::ComponentPlacement()
 							       );
 	}
 
-      // Use old way of setting sensitivity for volumes without read out LV
-      // old way of setting sensitive volumes - remains for now for components that haven't been changed
-      // in future will be done in all component constructors
-      // NOTE this also sets GFLASH so most volumes won't have GFLASH now
-      if (!readOutLV)
+      std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetAllSensitiveVolumes();
+      std::vector<G4LogicalVolume*>::iterator sensIt= SensVols.begin();
+      for(;sensIt != SensVols.end(); ++sensIt)
 	{
-	  std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetAllSensitiveVolumes();
-	  std::vector<G4LogicalVolume*>::iterator sensIt= SensVols.begin();
-	  for(;sensIt != SensVols.end(); ++sensIt)
-	    {
-	      //use already defined instance of Ecounter sd
-	      (*sensIt)->SetSensitiveDetector(energyCounterSDRO);
-	      //register any volume that an ECounter is attached to
-	      BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( (*sensIt)->GetName(),
-									thecurrentitem->GetSPos() );
-	      BDSGlobalConstants::Instance()->AddLogicalVolumeInfo((*sensIt),theinfo);
-	      //set gflash parameterisation on volume if required
-	      G4bool gflash     = BDSExecOptions::Instance()->GetGFlash();
-	      if(gflash && ((*sensIt)->GetRegion() != precisionRegion) && (thecurrentitem->GetType()=="element"))
-		{SetGFlashOnVolume(*sensIt);}
-	    }
+	  //use already defined instance of Ecounter sd
+	  (*sensIt)->SetSensitiveDetector(energyCounterSDRO);
+	  //register any volume that an ECounter is attached to
+	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( (*sensIt)->GetName(),
+								    thecurrentitem->GetSPos() );
+	  BDSGlobalConstants::Instance()->AddLogicalVolumeInfo((*sensIt),theinfo);
+	  //set gflash parameterisation on volume if required
+	  G4bool gflash     = BDSExecOptions::Instance()->GetGFlash();
+	  if(gflash && ((*sensIt)->GetRegion() != precisionRegion) && (thecurrentitem->GetType()=="element"))
+	    {SetGFlashOnVolume(*sensIt);}
 	}
 
       // get the placement details from the beamline component
@@ -465,6 +458,10 @@ void BDSDetectorConstruction::ComponentPlacement()
       G4RotationMatrix* rr = (*it)->GetReferenceRotationMiddle();
       G4ThreeVector     rp = (*it)->GetReferencePositionMiddle();
       
+#ifdef BDSDEBUG
+	  G4cout << __METHOD_NAME__ << "placing mass geometry" << G4endl;
+	  G4cout << "position: " << p << ", rotation: " << *r << G4endl;
+#endif
       G4PVPlacement* PhysiComponentPlace = new G4PVPlacement(r,                // its rotation
 							     p,                // its position
 							     name + "_pv",     // its name
@@ -477,6 +474,10 @@ void BDSDetectorConstruction::ComponentPlacement()
       // place read out volume in read out world - if this component has one
       if(readOutLV)
 	{
+#ifdef BDSDEBUG
+	  G4cout << __METHOD_NAME__ << "placing readout geometry" << G4endl;
+	  G4cout << "position: " << rp << ", rotation: " << *rr << G4endl;
+#endif
 	  // don't need the pointer for anything - purely instantiating registers it with g4
 	  new G4PVPlacement(rr,              // its rotation
 			    rp,              // its position
