@@ -97,7 +97,7 @@ void BDSSectorBend::BuildBeampipe()
   beampipe =
     BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(beamPipeInfo->beamPipeType,
 							      name,
-							      chordLength,
+							      chordLength - lengthSafety,
 							      -angle*0.5,
 							      -angle*0.5,
 							      beamPipeInfo->aper1,

@@ -139,7 +139,7 @@ void BDSRBend::BuildBeampipe()
   BDSBeamPipe* bpFirstBit =
     BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledOut(beamPipeInfo->beamPipeType,
 							    name,
-							    itsStraightSectionLength,
+							    itsStraightSectionLength - lengthSafety,
 							    -angle*0.5,
 							    beamPipeInfo->aper1,
 							    beamPipeInfo->aper2,
@@ -152,7 +152,7 @@ void BDSRBend::BuildBeampipe()
   beampipe =
     BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeInfo->beamPipeType,
 						   name,
-						   itsMagFieldLength,
+						   itsMagFieldLength - lengthSafety,
 						   beamPipeInfo->aper1,
 						   beamPipeInfo->aper2,
 						   beamPipeInfo->aper3,
@@ -164,7 +164,7 @@ void BDSRBend::BuildBeampipe()
   BDSBeamPipe* bpLastBit =
     BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledIn(beamPipeInfo->beamPipeType,
 							   name,
-							   itsStraightSectionLength,
+							   itsStraightSectionLength - lengthSafety,
 							   angle*0.5,
 							   beamPipeInfo->aper1,
 							   beamPipeInfo->aper2,

@@ -96,7 +96,7 @@ void BDSMagnet::BuildBeampipe()
 #endif
   
   beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
-							    chordLength,
+							    chordLength - lengthSafety,
 							    beamPipeInfo);
   BeamPipeCommonTasks();
 }
