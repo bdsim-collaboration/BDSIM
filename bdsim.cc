@@ -271,7 +271,7 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
       G4cout<< __FUNCTION__ << "> Initializing Visualisation Manager"<<G4endl;
 #endif
-      // Initialize visualization
+      // Initialize visualisation
       G4VisManager* visManager = new G4VisExecutive;
       // G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
       // G4VisManager* visManager = new G4VisExecutive("Quiet");
@@ -293,7 +293,7 @@ int main(int argc,char** argv) {
       std::string visPath;
       std::string localPath = bdsimPath + "vis/vis.mac";
       std::string installPath = bdsimPath + "../share/BDSIM/vis/vis.mac";
-	  
+      
       if (FILE *file = fopen(localPath.c_str(), "r")) {
 	fclose(file);
 	visPath = bdsimPath + "vis/";
@@ -306,18 +306,30 @@ int main(int argc,char** argv) {
 
       // check if visualisation file is present and readable
       std::string visMacroName = execOptions->GetVisMacroFilename();
+      bool useDefault = false;
+      // if not set use default visualisation file
+      if (visMacroName.empty()) useDefault = true;
       G4String visMacroFilename = execOptions->GetBDSIMPATH() + visMacroName;
-      // first relative to main path:
-      if (FILE *file = fopen(visMacroFilename.c_str(), "r")) {
-        fclose(file);
-      } else if (FILE *file = fopen(visMacroName.c_str(), "r")) {
-	// then try current path
-        fclose(file);
-	visMacroFilename = visMacroName;
-      } else {
-      	// if not present use a default one (OGLSQt or DAWNFILE)
-	G4cout << __FUNCTION__ << "> WARNING: visualisation file " << visMacroFilename <<  " file not present, using default!" << G4endl;
-
+      if (!useDefault) {
+	FILE* file = NULL;
+	// first relative to main path:
+	file = fopen(visMacroFilename.c_str(), "r");
+	if (file) {
+	  fclose(file);
+	} else {
+	  // then try current path
+	  file = fopen(visMacroName.c_str(), "r");
+	  if (file) {
+	    fclose(file);
+	    visMacroFilename = visMacroName;
+	  } else {
+	    // if not present use a default one (OGLSQt or DAWNFILE)
+	    G4cout << __FUNCTION__ << "> WARNING: visualisation file " << visMacroFilename <<  " file not present, using default!" << G4endl;
+	    useDefault = true;
+	  }
+	}
+      }
+      if (useDefault) {
 #ifdef G4VIS_USE_OPENGLQT
 	visMacroFilename = visPath + "vis.mac";
 #else
