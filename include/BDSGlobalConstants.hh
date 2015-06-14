@@ -391,15 +391,17 @@ private:
   G4String itsFifo; // fifo for BDSIM-placet
   G4AffineTransform itsDumpTransform; //transform of frame from start to current dump element
   
-  // Turn Control
+  ///@{ Turn Control
   G4int    itsTurnsTaken;
   G4int    itsTurnsToTake;
-  // Teleporter offset corrections
+  ///@}
+  ///@{ Teleporter offset corrections
   G4ThreeVector teleporterdelta;
   G4double      teleporterlength;
-  // beamline length
+  ///@}
+  /// beamline length in mm
   G4double itsSMax;
-  // logical volume info
+  /// logical volume info
   std::map<G4LogicalVolume* , BDSLogicalVolumeInfo*> logicalvolumeinfo;
   /// initial particle
   BDSParticle itsInitialPoint;
