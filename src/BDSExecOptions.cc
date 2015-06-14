@@ -34,7 +34,7 @@ const BDSExecOptions* BDSExecOptions::Instance(){
 
 BDSExecOptions::BDSExecOptions(int argc, char **argv){
   inputFilename       = "optics.mad";
-  visMacroFilename    = "vis.mac";
+  visMacroFilename    = "";
   visDebug            = false;
   outputFilename      = "output";
   outputFormat        = BDSOutputFormat::_ASCII;
@@ -262,7 +262,7 @@ void BDSExecOptions::Usage()const {
 	<<"--verbose_G4stepping=N : set Geant4 Stepping manager verbosity level"<<G4endl
 	<<"--verbose_G4tracking=N : set Geant4 Tracking manager verbosity level [-1:5]"<<G4endl
 	<<"--vis_debug            : display all volumes in visualiser"<<G4endl
-	<<"--vis_mac=<file>       : file with the visualization macro script, default vis.mac"<<G4endl;
+	<<"--vis_mac=<file>       : file with the visualisation macro script, default provided by BDSIM openGL (OGLSQt))"<<G4endl;
 }
 
 void BDSExecOptions::Print()const {
