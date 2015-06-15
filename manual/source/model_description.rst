@@ -105,10 +105,11 @@ and both are equivalent.
 Useful Commands
 ---------------
 
-:code:`print;` prints all elements
-:code:`print, line;` prints all elements in line
-:code:`print, option;` prints value of option
-:code:`stop;` exists parser
+* :code:`print;` prints all elements
+* :code:`print, line;` prints all elements in line
+* :code:`print, option;` prints the value of option
+* :code:`print, parameter;` prints the value of parameter, where parameter could be your own defined parameter
+* :code:`stop;` exists parser
 
 
 Lattice Description
@@ -693,6 +694,12 @@ parameter          description                             default  required
 `outerMaterial`    material of magnet                      "iron"   no
 =================  ======================================  =======  ===========
 
+.. versionadded:: 0.7
+
+		  `magnetGeometryType` parameter allows different generic magnet geometry
+		  libraries to be used. Before, only cyclindrical geometry was available.
+		  Examples of other geometry types are described below.
+
 .. deprecated:: 0.65
 		`boxSize` - this is still accepted by the parser for backwards compatibility
 		but users should use the `outerDiameter` keyword where possible.
@@ -734,6 +741,8 @@ can be used to override this on a per element basis.
 Poles Circular
 ^^^^^^^^^^^^^^
 
+.. versionadded:: 0.7
+
 .. |circularquad| image:: figures/polecircular_quadrupole.png
 			  :width: 60%
 
@@ -746,6 +755,8 @@ Poles Circular
 
 Poles Square
 ^^^^^^^^^^^^
+
+.. versionadded:: 0.7
 
 `outerDiameter` is the full width of the the magnet horizontally as shown in the figure below,
  **not** the diagonal width.
@@ -763,6 +774,8 @@ Poles Square
 Poles Faceted
 ^^^^^^^^^^^^^
 
+.. versionadded:: 0.7
+
 `outerDiameter` is the full width through a pole on a flat side of the magnet.
 
 .. |facetquad| image:: figures/polefacet_quadrupole.png
@@ -778,6 +791,8 @@ Poles Faceted
 Poles Faceted with Crop
 ^^^^^^^^^^^^^^^^^^^^^^^
 
+.. versionadded:: 0.7
+
 `outerDiameter` is the full width horizontally as shown in the figure.
 
 .. |facetcropquad| image:: figures/polefacetcrop_quadrupole.png
@@ -792,6 +807,9 @@ Poles Faceted with Crop
 
 LHC Left & Right
 ^^^^^^^^^^^^^^^^
+
+.. versionadded:: 0.7
+
 `lhcleft` and `lhcright` provide more detailed magnet geometry appropriate for the LHC. Here, the
 left and right suffixes refer to the shift of the magnet body with respect to the reference beam line.
 Therefore, `lhcleft` has the magnet body shifted to the left in the direction of beam travel and the
