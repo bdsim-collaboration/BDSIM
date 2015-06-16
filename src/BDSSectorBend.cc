@@ -108,5 +108,5 @@ void BDSSectorBend::BuildBeampipe()
 							      beamPipeInfo->beamPipeThickness,
 							      beamPipeInfo->beamPipeMaterial);
   
-  BeamPipeCommonTasks(); //from bdsmultipole;
+  BeamPipeCommonTasks(); //from BDSMagnet;
 }

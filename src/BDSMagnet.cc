@@ -26,7 +26,6 @@
 
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
-#include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"

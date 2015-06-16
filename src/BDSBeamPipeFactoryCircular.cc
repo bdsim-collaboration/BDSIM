@@ -86,7 +86,7 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,     
 BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledInOut(G4String    nameIn,              // name
 								   G4double    lengthIn,            // length [mm]
 								   G4double    angleInIn,           // the normal angle of the input face
-								   G4double    angleOutIn,          // the normal angle of the input face
+								   G4double    angleOutIn,          // the normal angle of the output face
 								   G4double    aper1In,             // aperture parameter 1
 								   G4double    /*aper2In*/,         // aperture parameter 2
 								   G4double    /*aper3In*/,         // aperture parameter 3
