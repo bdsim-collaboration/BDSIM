@@ -47,6 +47,11 @@ namespace BDS {
 
   /// Determine whether a parameter is finite
   G4bool IsFinite(const G4double& variable);
+
+  /// Integer to string representation
+  G4String StringFromInt(G4int anInt);
+  /// Single digit to string representation
+  G4String StringFromDigit(G4int anInt);
 }
 
 

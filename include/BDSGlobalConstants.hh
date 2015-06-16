@@ -54,9 +54,6 @@ public:
   G4double GetMaxTime()const;
   G4double GetDeltaOneStep()const;
 
-  G4String StringFromInt(G4int anInt)const;
-  G4String StringFromDigit(G4int anInt)const;
-
   G4ParticleDefinition* GetParticleDefinition()const;
   void     SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
   G4String GetParticleName()const;

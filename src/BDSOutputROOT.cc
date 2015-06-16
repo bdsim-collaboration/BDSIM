@@ -94,7 +94,7 @@ void BDSOutputROOT::Init()
   // if more than one file add number (starting at 0)
   int evntsPerNtuple = globalConstants->GetNumberOfEventsPerNtuple();
   if (evntsPerNtuple>0 || globalConstants->GetNumberToGenerate()>evntsPerNtuple) {
-    filename += "_" + globalConstants->StringFromInt(outputFileNumber);
+    filename += "_" + BDS::StringFromInt(outputFileNumber);
   }
   filename += ".root";
   

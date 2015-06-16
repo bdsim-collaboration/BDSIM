@@ -16,6 +16,7 @@ Work in progress.
 #include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
 #include "BDSDebug.hh"
+#include "BDSUtilities.hh"
 
 #include "BDSAwakeMultilayerScreen.hh"
 //#include "UltraFresnelLens.hh"
@@ -73,8 +74,8 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   _scoringPlaneName=name+tmp;
   int nThisSampler= BDSSampler::GetNSamplers() + 1;
   G4String ident="_camera";
-  _samplerName = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_scoringPlaneName);
-  _samplerName2 = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_scoringPlaneName+"_2");
+  _samplerName = ("Sampler_"+BDS::StringFromInt(nThisSampler)+"_"+_scoringPlaneName);
+  _samplerName2 = ("Sampler_"+BDS::StringFromInt(nThisSampler)+"_"+_scoringPlaneName+"_2");
 
   
   //Build and place the volume...
@@ -107,8 +108,8 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   BDSSampler::AddExternalSampler(_samplerName+"_1");
   BDSSampler::AddExternalSampler(_samplerName2+"_1");
 
-  _samplerName3 = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_scoringPlaneName+"_3");
-  _samplerName4 = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_scoringPlaneName+"_4");
+  _samplerName3 = ("Sampler_"+BDS::StringFromInt(nThisSampler)+"_"+_scoringPlaneName+"_3");
+  _samplerName4 = ("Sampler_"+BDS::StringFromInt(nThisSampler)+"_"+_scoringPlaneName+"_4");
 
   
   //Build and place the volume...
@@ -138,8 +139,8 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   BDSSampler::AddExternalSampler(_samplerName3+"_1");
   BDSSampler::AddExternalSampler(_samplerName4+"_1");
 
-  _samplerName5 = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_scoringPlaneName+"_5");
-  _samplerName6 = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_scoringPlaneName+"_6");
+  _samplerName5 = ("Sampler_"+BDS::StringFromInt(nThisSampler)+"_"+_scoringPlaneName+"_5");
+  _samplerName6 = ("Sampler_"+BDS::StringFromInt(nThisSampler)+"_"+_scoringPlaneName+"_6");
 
   
   //Build and place the volume...
@@ -204,8 +205,8 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
   _screenScoringPlaneName=name+tmp;
   int nThisSampler= BDSSampler::GetNSamplers() + 1;
   G4String ident="_screen";
-  _screenSamplerName = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_screenScoringPlaneName);
-  _screenSamplerName2 = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_screenScoringPlaneName+"_2");
+  _screenSamplerName = ("Sampler_"+BDS::StringFromInt(nThisSampler)+"_"+_screenScoringPlaneName);
+  _screenSamplerName2 = ("Sampler_"+BDS::StringFromInt(nThisSampler)+"_"+_screenScoringPlaneName+"_2");
   
   //Build and place the volume...
   itsScreenScoringPlaneSolid = new G4Box("ScreenScoringPlaneSolid",_screenWidth/2.0,_screenHeight/2.0,_scoringPlaneThickness/2.0);

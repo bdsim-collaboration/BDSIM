@@ -30,7 +30,7 @@ int BDSDump::nDumps=0;
 BDSDump::BDSDump (G4String name, G4double length):
   BDSAcceleratorComponent(name, length, 0, "dump")
 {
-  //SetName("Dump_"+BDSGlobalConstants::Instance()->StringFromInt(nDumps)+"_"+itsName);
+  //SetName("Dump_"+BDS::StringFromInt(nDumps)+"_"+itsName);
   ++nDumps;
   //BDSRoot->SetDumpNumber(nDumps);
 }

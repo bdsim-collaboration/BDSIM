@@ -15,7 +15,6 @@
 BDSTerminator::BDSTerminator(G4String name, G4double length):
   BDSAcceleratorComponent(name, length, 0, "terminator")
 {
-  //SetName("Terminator_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+name);
 }
 
 void BDSTerminator::BuildContainerLogicalVolume()
