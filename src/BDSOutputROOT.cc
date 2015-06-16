@@ -88,9 +88,15 @@ void BDSOutputROOT::BuildSamplerTree(G4String name){
 
 void BDSOutputROOT::Init()
 {
+  const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   // set up the root file
-  filename = BDSExecOptions::Instance()->GetOutputFilename() + "_" 
-    + BDSGlobalConstants::Instance()->StringFromInt(outputFileNumber) + ".root";
+  filename = BDSExecOptions::Instance()->GetOutputFilename();
+  // if more than one file add number (starting at 0)
+  int evntsPerNtuple = globalConstants->GetNumberOfEventsPerNtuple();
+  if (evntsPerNtuple>0 || globalConstants->GetNumberToGenerate()>evntsPerNtuple) {
+    filename += "_" + globalConstants->StringFromInt(outputFileNumber);
+  }
+  filename += ".root";
   
   G4cout<<"Setting up new file: "<<filename<<G4endl;
   theRootOutputFile=new TFile(filename,"RECREATE", "BDS output file");
@@ -114,12 +120,11 @@ void BDSOutputROOT::Init()
     }
   for(G4int i=0;i<BDSSamplerCylinder::GetNSamplers();i++)
     {
-      //G4String name="samp"+BDSGlobalConstants::Instance()->StringFromInt(i+1);
       G4String name=BDSSamplerCylinder::outputNames[i];
       BuildSamplerTree(name);
     }
 
-  if(BDSGlobalConstants::Instance()->GetStoreTrajectory() || BDSGlobalConstants::Instance()->GetStoreMuonTrajectories() || BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories()) 
+  if(globalConstants->GetStoreTrajectory() || globalConstants->GetStoreMuonTrajectories() || globalConstants->GetStoreNeutronTrajectories()) 
     // create a tree with trajectories
     {
       TTree* TrajTree = new TTree("Trajectories", "Trajectories");
