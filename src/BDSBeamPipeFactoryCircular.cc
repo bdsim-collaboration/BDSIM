@@ -11,13 +11,13 @@
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
+#include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
 #include "G4VSolid.hh"
 
 #include <cmath>
 #include <utility>                         // for std::pair
-
 
 BDSBeamPipeFactoryCircular* BDSBeamPipeFactoryCircular::_instance = 0;
 
@@ -185,17 +185,30 @@ void BDSBeamPipeFactoryCircular::CreateGeneralAngledSolids(G4String      nameIn,
 				CLHEP::twopi,                  // rotation finish angle
 				inputfaceIn,                   // input face normal
 				outputfaceIn );                // output face normal
-			              
   
-  beamPipeSolid = new G4CutTubs(nameIn + "_pipe_solid",        // name
-				aper1In + lengthSafety,        // inner radius + length safety to avoid overlaps
-				aper1In + beamPipeThicknessIn, // outer radius
-				lengthIn*0.5-2*lengthSafety,   // half length
-				0,                             // rotation start angle
-				CLHEP::twopi,                  // rotation finish angle
-				inputfaceIn,                   // input face normal
-				outputfaceIn );                // output face normal
+  // beampipesolid created as subtraction since direct G4CutTubs creation created scattering in sector bends. not really understood
   
+  G4VSolid* inside = new G4CutTubs(nameIn + "_pipe_inner_solid", // name
+				0,                               // inner radius + length safety to avoid overlaps
+				aper1In + lengthSafety,          // outer radius
+				lengthIn,                        // half length
+				0,                               // rotation start angle
+				CLHEP::twopi,                    // rotation finish angle
+				inputfaceIn,                     // input face normal
+				outputfaceIn );
+
+  G4VSolid* outer = new G4CutTubs(nameIn + "_pipe_outer_solid",  // name
+				0,                               // inner radius + length safety to avoid overlaps
+				aper1In + beamPipeThicknessIn,   // outer radius
+				lengthIn*0.5 - lengthSafety,     // half length
+				0,                               // rotation start angle
+				CLHEP::twopi,                    // rotation finish angle
+				inputfaceIn,                     // input face normal
+				outputfaceIn );
+  
+  beamPipeSolid = new G4SubtractionSolid(nameIn + "_pipe_solid",
+					 outer,
+					 inside);
 
   containerSolid = new G4CutTubs(nameIn + "_container_solid",  // name
 				 0,                            // inner radius
