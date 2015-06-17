@@ -37,6 +37,8 @@
 #include <string>
 #include <list>
 
+#define BDSDEBUG 1
+
 #ifdef BDSDEBUG
 bool debug1 = true;
 #else
@@ -299,9 +301,17 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
 #endif
   if (element) {
     addCommonProperties(element);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - initialising " << G4endl;
+#endif
     element->Initialise();
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - initialised. " << G4endl;
+#endif
   }
-
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - returning element." << G4endl;
+#endif
   return element;
 }
 
@@ -629,6 +639,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
       _element.material ) );
       
     */
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - returning sector bend " << G4endl;
+#endif
   return (new BDSSectorBend( _element.name,
 			     length,
 			     aper,

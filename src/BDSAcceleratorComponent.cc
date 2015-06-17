@@ -42,7 +42,7 @@
 #include "G4Transform3D.hh"
 #include "BDSMagFieldFactory.hh"
 #include "G4NystromRK4.hh"
-
+#define BDSDEBUG 1
 typedef std::map<G4String,int> LogVolCountMap;
 LogVolCountMap* LogVolCount = new LogVolCountMap();
 
@@ -208,6 +208,9 @@ void BDSAcceleratorComponent::Initialise()
       //
       itsMarkerLogicalVolume=(*LogVol)[itsName];
     }
+#ifdef BDSDEBUG
+  G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
 void BDSAcceleratorComponent::Build()//Execute build methods common for all classes.

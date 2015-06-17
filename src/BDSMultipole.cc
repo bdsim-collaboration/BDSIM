@@ -40,7 +40,7 @@
 #include "G4MagneticField.hh"
 
 #include <string>
-
+#define BDSDEBUG 1
 //============================================================
 BDSMultipole::BDSMultipole( G4String aName, 
 			    G4double aLength,
@@ -153,14 +153,30 @@ void BDSMultipole::Build()
   // build beampipe (geometry + magnetic field)
   //
   BDSAcceleratorComponent::Build();
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - building outer... " << G4endl;
+#endif
   BuildOuterLogicalVolume();
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - building beampipe... " << G4endl;
+#endif
   BuildBeampipe();
   if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - building tunnel... " << G4endl;
+#endif
     BuildTunnel();
   }
   //Build the beam loss monitors
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - building blms... " << G4endl;
+#endif
   BuildBLMs();
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - building field and stepper... " << G4endl;
+#endif
   BuildFieldAndStepper();
+
 #ifdef BDSDEBUG
   G4cout << __METHOD_END__ << G4endl;
 #endif
@@ -412,10 +428,15 @@ void BDSMultipole::SetBPFieldMgr(){
 
 void BDSMultipole::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
 {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << " - getting material... " << G4endl;
+#endif
   G4Material* material;
   if(itsMaterial != "") material = BDSMaterials::Instance()->GetMaterial(itsMaterial);
   else material = BDSMaterials::Instance()->GetMaterial("Iron");
-
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << " - getting radius... " << G4endl;
+#endif
   G4double outerRadius = itsOuterR;
   if(itsOuterR==0) outerRadius = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
 

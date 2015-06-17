@@ -19,7 +19,8 @@
 #include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
 #include "G4VPhysicalVolume.hh"
-
+#include "BDSDebug.hh"
+#define BDSDEBUG 1
 //============================================================
 
 BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength, 
@@ -31,14 +32,23 @@ BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength,
   BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial,
 	       aXAper, aYAper, angle)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   SetOuterRadius(outR);
   itsTilt=tilt;
   itsBField=bField;
   itsBGrad=bGrad;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
 void BDSSectorBend::Build()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   BDSMultipole::Build();
   //Build IP8Gate
   //      BuildGate();
@@ -66,6 +76,9 @@ void BDSSectorBend::Build()
       
       BuildOuterFieldManager(2, BFldIron,CLHEP::halfpi);
     }
+#ifdef BDSDEBUG
+  G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
 void BDSSectorBend::SetVisAttributes()
@@ -84,7 +97,8 @@ void BDSSectorBend::BuildBPFieldAndStepper()
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
   
   itsStepper = new BDSDipoleStepper(itsEqRhs);
-  BDSDipoleStepper* dipoleStepper = dynamic_cast<BDSDipoleStepper*>(itsStepper);
+  //  BDSDipoleStepper* dipoleStepper = dynamic_cast<BDSDipoleStepper*>(itsStepper);
+  BDSDipoleStepper* dipoleStepper = (BDSDipoleStepper*)itsStepper;
   dipoleStepper->SetBField(-itsBField); // note the - sign...
   dipoleStepper->SetBGrad(itsBGrad);
 }
@@ -94,7 +108,9 @@ void BDSSectorBend::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
   //
   // build magnet (geometry + magnetic field)
   //
-      
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   G4String geometry = BDSGlobalConstants::Instance()->GetMagnetGeometry();
  
   if(geometry =="standard") 
@@ -110,11 +126,17 @@ void BDSSectorBend::BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
   if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
     AddSensitiveVolume(itsOuterLogicalVolume);
   }
+#ifdef BDSDEBUG
+  G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
 // construct a beampipe for sector bend
 void BDSSectorBend::BuildBeampipe(G4String materialName)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   G4Material* material;
   if(materialName == "")
     {
@@ -196,7 +218,7 @@ void BDSSectorBend::BuildBeampipe(G4String materialName)
 		      itsName+"_InnerBmp",     // its name
 		      itsMarkerLogicalVolume,  // its mother volume
 		      false,		       // no booleanm operation
-		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		       // copy number
+		      0, false);		       // copy number
   
   SetMultiplePhysicalVolumes(PhysiInner);
 
@@ -209,7 +231,7 @@ void BDSSectorBend::BuildBeampipe(G4String materialName)
 		      itsName+"_bmp",	        // its name
 		      itsMarkerLogicalVolume,   // its mother volume
 		      false,		        // no boolean operation
-		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		        // copy number
+		      0, false);		        // copy number
   
   SetMultiplePhysicalVolumes(PhysiComp);
   //
@@ -290,7 +312,7 @@ void BDSSectorBend::BuildCylindricalOuterLogicalVolume(G4bool OuterMaterialIsVac
       - BDSGlobalConstants::Instance()->GetLengthSafety()/2;
 
     xHalfLengthPlus = (itsLength/itsAngle)*sin(itsAngle/2)
-    + fabs(cos(itsAngle/2)) * BDSGlobalConstants::Instance()->GetComponentBoxSize() * tan(itsAngle/2)/2
+      + fabs(cos(itsAngle/2)) * BDSGlobalConstants::Instance()->GetComponentBoxSize() * tan(itsAngle/2)/2
       - BDSGlobalConstants::Instance()->GetLengthSafety()/2;
     
     tubLen = std::max(xHalfLengthPlus,xHalfLengthMinus);
@@ -341,7 +363,7 @@ void BDSSectorBend::BuildCylindricalOuterLogicalVolume(G4bool OuterMaterialIsVac
                       itsName+"_solid",       // its name
                       itsMarkerLogicalVolume, // its mother  volume
                       false,                  // no boolean operation
-                      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());                     // copy number
+                      0, false);                     // copy number
 
   SetMultiplePhysicalVolumes(itsPhysiComp);
   G4double  maxStepFactor=0.5;
@@ -436,7 +458,7 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
                  0,               // its mother  volume
                  false,           // no boolean operations
                  0,               // copy number
-                 BDSGlobalConstants::Instance()->GetCheckOverlaps()); // checking overlaps 
+                 false); // checking overlaps 
 */
  
 
@@ -513,7 +535,7 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
 		    worldLV,             //its mother  volume
 		    false,                 //no boolean operation
 		    0,                     //copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());       // checking ove
+		    false);       // checking ove
   /*
   G4ThreeVector uz2 = G4ThreeVector(mag_extradius+mag_inradius,0.,0.); 
   
@@ -549,7 +571,7 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
 		    worldLV,             //its mother  volume
 		    false,                 //no boolean operation
 		    0,                     //copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());       // checking ove
+		    false);       // checking ove
 
    G4ThreeVector positionCoil2 = G4ThreeVector(coil_pos_x + magnet_shift,-coil_pos_y,tubLen/2.0);
   
@@ -560,7 +582,7 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
 		    worldLV,             //its mother  volume
 		    false,                 //no boolean operation
 		    0,                     //copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());       // checking ove
+		    false);       // checking ove
 
 
   double coil_pos_x2 = mag_extradius+coil_size_x;
@@ -575,7 +597,7 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
 		    worldLV,             //its mother  volume
 		    false,                 //no boolean operation
 		    0,                     //copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());       // checking ove
+		    false);       // checking ove
 
  G4ThreeVector positionCoil4 = G4ThreeVector(coil_pos_x2 + magnet_shift,-coil_pos_y2,tubLen/2.0);
   
@@ -586,7 +608,7 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
 		    worldLV,             //its mother  volume
 		    false,                 //no boolean operation
 		    0,                     //copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());       // checking ove
+		    false);       // checking ove
 
   ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -641,7 +663,7 @@ void BDSSectorBend::BuildStandardOuterLogicalVolume(G4bool OuterMaterialIsVacuum
                       itsName+"_solid",       // its name
                       itsMarkerLogicalVolume, // its mother  volume
                       false,                  // no boolean operation
-                      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());                     // copy number
+                      0, false);                     // copy number
 
   SetMultiplePhysicalVolumes(itsPhysiComp);
   G4double  maxStepFactor=0.5;

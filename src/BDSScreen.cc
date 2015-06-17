@@ -42,6 +42,11 @@ void BDSScreen::Build(){
   PlaceScreen(); //Place the screen in the beam pipe
 }
 
+void BDSScreen::BuildFieldAndStepper(){
+  G4cout << __METHOD_NAME__ << " - building bmap field and stepper." << G4endl;
+  BuildBmapFieldAndStepper();
+}
+
 void BDSScreen::screenLayer(G4double thickness, G4String material){
   std::stringstream ss;
   ss << _nLayers;

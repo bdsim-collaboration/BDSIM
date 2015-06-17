@@ -35,6 +35,7 @@ private:
   G4RotationMatrix* _screenRot;
   G4int _nLayers;
 
+  virtual void BuildFieldAndStepper(); 
 };
 
 #endif

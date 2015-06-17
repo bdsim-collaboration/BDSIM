@@ -268,5 +268,16 @@ G4double BDSDipoleStepper::DistChord()   const
   // from the Chord between the Initial and Final points.
 }
 
+void BDSDipoleStepper::SetBGrad(G4double aBGrad)
+{
+  itsBGrad=aBGrad;
+}
+
+void BDSDipoleStepper::SetBField(G4double aBField)
+{
+  itsBField=aBField;
+}
+
+
 BDSDipoleStepper::~BDSDipoleStepper()
 {}

@@ -64,15 +64,6 @@ private:
   
 };
 
-inline  void BDSDipoleStepper::SetBGrad(G4double aBGrad)
-{
-  itsBGrad=aBGrad;
-}
-
-inline  void BDSDipoleStepper::SetBField(G4double aBField)
-{
-  itsBField=aBField;
-}
 inline  void BDSDipoleStepper::SetLength(G4double aLength)
 {
   itsLength=aLength;

@@ -392,9 +392,9 @@ void BDSMaterials::Initialise()
   //Perspex.
   tmpMaterial = new G4Material
     (name="perspex", density = 1.18*CLHEP::g/CLHEP::cm3, 3, kStateSolid, 300*CLHEP::kelvin);
-  tmpMaterial->AddMaterial(materials["G4_C"],fractionmass=0.59984);
-  tmpMaterial->AddMaterial(materials["G4_O"],fractionmass=0.31961);
-  tmpMaterial->AddMaterial(materials["G4_H"],fractionmass=0.08055);
+  tmpMaterial->AddMaterial(GetMaterial("G4_C"),fractionmass=0.59984);
+  tmpMaterial->AddMaterial(GetMaterial("G4_O"),fractionmass=0.31961);
+  tmpMaterial->AddMaterial(GetMaterial("G4_H"),fractionmass=0.08055);
   materials[name] = tmpMaterial;
 
   //Invar.Temperature 2 kelvin. LDeacon 6th Feburary 2006
