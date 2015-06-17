@@ -526,7 +526,11 @@ void BDSOutputROOT::WriteHistogram(BDSHistogram1D* hIn)
   // &vector[0] gives an array to the contents of the vector - ensured as
   // standard is that the vector's contents are contiguous
   TH1D* h = new TH1D(hname, hIn->GetTitle(), hIn->GetNBins(), &binLowerEdges[0]);
-
+  // set label titles
+  h->GetXaxis()->SetTitle(hIn->GetXLabel());
+  h->GetYaxis()->SetTitle(hIn->GetYLabel());
+  h->GetXaxis()->CenterTitle();
+  h->GetYaxis()->CenterTitle();
   G4int i;
   for(hIn->first(),i = 1;!hIn->isDone();hIn->next(), i++)
     {

@@ -33,7 +33,9 @@ G4int BDSAnalysisManager::Create1DHistogram(G4String name,
 					    G4String title,
 					    G4int    nbins,
 					    G4double xmin,
-					    G4double xmax)
+					    G4double xmax,
+					    G4String xlabel,
+					    G4String ylabel)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__   << "Name: " << name
@@ -42,13 +44,15 @@ G4int BDSAnalysisManager::Create1DHistogram(G4String name,
 	 << ", Lower limit: " << xmin
 	 << ", Upper limit: " << xmax << G4endl;
 #endif
-  histograms1d.push_back(new BDSHistogram1D(xmin, xmax, nbins, name, title));
+  histograms1d.push_back(new BDSHistogram1D(xmin, xmax, nbins, name, title, xlabel, ylabel));
   return histograms1d.size();
 }
 
 G4int BDSAnalysisManager::Create1DHistogram(G4String name,
 					    G4String title,
-					    std::vector<double>& edges)
+					    std::vector<double>& edges,
+					    G4String xlabel,
+					    G4String ylabel)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Name: " << name
@@ -57,7 +61,7 @@ G4int BDSAnalysisManager::Create1DHistogram(G4String name,
 	 << ", Lower limit: " << edges.front()
 	 << ", Upper limit: " << edges.back() << G4endl;
 #endif
-  histograms1d.push_back(new BDSHistogram1D(edges,name, title));
+  histograms1d.push_back(new BDSHistogram1D(edges,name, title, xlabel, ylabel));
   return histograms1d.size();
 }
 
@@ -72,6 +76,8 @@ void BDSAnalysisManager::Fill1DHistogram(G4int histoIndex, G4double value, G4dou
   CheckHistogramIndex(histoIndex);
   histograms1d[histoIndex]->Fill(value,weight);
 }
+
+G4int BDSAnalysisManager::NumberOfHistograms()const{return histograms1d.size();}
 
 void BDSAnalysisManager::CheckHistogramIndex(G4int histoIndex)
 {

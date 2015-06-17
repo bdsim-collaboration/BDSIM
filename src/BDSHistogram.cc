@@ -9,8 +9,8 @@
 #include <utility>
 #include "globals.hh"
 
-BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4String nameIn, G4String titleIn):
-  name(nameIn),title(titleIn),entries(0)
+BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4String nameIn, G4String titleIn, G4String xlabelIn, G4String ylabelIn):
+  name(nameIn),title(titleIn),xlabel(xlabelIn),ylabel(ylabelIn),entries(0)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "name: " << nameIn << ", title: " << titleIn << G4endl;
@@ -63,8 +63,8 @@ BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4Stri
   first();
 }
 
-BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4String titleIn):
-  name(nameIn),title(titleIn),entries(0)
+BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4String titleIn, G4String xlabelIn, G4String ylabelIn):
+  name(nameIn),title(titleIn),xlabel(xlabelIn),ylabel(ylabelIn),entries(0)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "name: " << nameIn << ", title: " << titleIn << G4endl;
@@ -116,6 +116,12 @@ G4String BDSHistogram1D::GetName() const
 
 G4String BDSHistogram1D::GetTitle() const
 { return title;}
+
+G4String BDSHistogram1D::GetXLabel() const
+{ return xlabel;}
+
+G4String BDSHistogram1D::GetYLabel() const
+{ return ylabel;}
 
 void BDSHistogram1D::Empty()
 {

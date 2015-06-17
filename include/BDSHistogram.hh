@@ -20,10 +20,14 @@ public:
 		 G4double xmax,
 		 G4int    nbins,
 		 G4String nameIn="histogram",
-		 G4String titleIn="histogram");
+		 G4String titleIn="histogram",
+		 G4String xlabelIn="",
+		 G4String ylabelIn="");
   BDSHistogram1D(std::vector<G4double> binEdges,
 		 G4String name="histogram",
-		 G4String titleIn="histogram");
+		 G4String titleIn="histogram",
+		 G4String xlabelIn="",
+		 G4String ylabelIn="");
   ~BDSHistogram1D();
   
   void                                        Empty();
@@ -43,6 +47,8 @@ public:
   BDSBin*                                     GetLastBin() const;
   G4String                                    GetName() const;
   G4String                                    GetTitle() const;
+  G4String                                    GetXLabel() const;
+  G4String                                    GetYLabel() const;
   size_t                                      GetNBins() const;
   G4int                                       GetNEntries() const;
 
@@ -67,8 +73,10 @@ private:
   BDSBin*  underflow;
   G4String name;
   G4String title;
+  G4String xlabel;
+  G4String ylabel;
   G4int    entries;
-
+				  
   std::vector<BDSBin*>::const_iterator _iterBins;
 };
 
