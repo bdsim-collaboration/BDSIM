@@ -120,7 +120,7 @@ else()
    endif()
    find_package(CLHEP REQUIRED)
    message(STATUS "Looking for CLHEP... - found")
-   message(STATUS "FOUND CLHEP ${CLHEP_VERSION} in ${CLHEP_INCLUDE_DIRS}") 
+   message(STATUS "Found CLHEP ${CLHEP_VERSION} in ${CLHEP_INCLUDE_DIRS}")
 endif()
 include_directories(${CLHEP_INCLUDE_DIRS})
 
