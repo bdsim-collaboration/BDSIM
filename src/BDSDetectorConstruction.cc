@@ -250,7 +250,7 @@ void BDSDetectorConstruction::BuildBeamline()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< beamline_list.size() << G4endl;
 #endif
-  G4cout << __METHOD_NAME__ << "size of the constructed beamline: "<< beamline->size() << G4endl;
+  G4cout << __METHOD_NAME__ << "size of the constructed beamline: "<< beamline->size() << " with length " << beamline->GetTotalArcLength()/CLHEP::m << " m" << G4endl;
   
   if (beamline->size() == 0)
     {

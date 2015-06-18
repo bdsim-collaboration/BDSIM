@@ -563,8 +563,7 @@ void add_gas(const char *name, const char *before, int before_count, std::string
   e.type = _GAS;
   e.name = name;
   e.lst = NULL;
-  element_list.insert(beamline_list.end(),e);
- 
+  element_list.push_back(e);
 }
 
 double property_lookup(ElementList& el_list, char *element_name, char *property_name)
