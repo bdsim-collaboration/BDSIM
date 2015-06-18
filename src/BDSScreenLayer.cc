@@ -50,6 +50,14 @@ void BDSScreenLayer::buildScreen(){
   _solid  = new G4Box((_name+"_solid").c_str(),_size.x()/2.0,_size.y()/2.0,_size.z()/2.0);
   _log = new G4LogicalVolume(_solid,BDSMaterials::Instance()->GetMaterial(_material),(_name+"_log").c_str(),0,0,0);
   cutGrooves();
+
+#ifndef NOUSERLIMITS
+  G4double maxStepFactor=0.5;
+  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
+  itsScoringPlaneUserLimits->SetMaxAllowedStep(_size.z()*maxStepFactor);
+  _log->SetUserLimits(itsScoringPlaneUserLimits);
+#endif
+
 }
 
 void BDSScreenLayer::cutGrooves(){
@@ -182,10 +190,10 @@ void BDSScreenLayer::sampler(){ //Make this layer a sampler scoring plane
   BDSSampler::AddExternalSampler(samplerName);
 
 #ifndef NOUSERLIMITS
-  //  G4double maxStepFactor=0.5;
-  //  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
-  //  itsScoringPlaneUserLimits->SetMaxAllowedStep(_size.z()*maxStepFactor);
-  //  _log->SetUserLimits(itsScoringPlaneUserLimits);
+  G4double maxStepFactor=0.5;
+  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
+  itsScoringPlaneUserLimits->SetMaxAllowedStep(_size.z()*maxStepFactor);
+  _log->SetUserLimits(itsScoringPlaneUserLimits);
 #endif
 }
 

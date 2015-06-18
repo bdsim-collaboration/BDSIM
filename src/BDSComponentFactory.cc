@@ -36,6 +36,7 @@
 #include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
 #include <string>
 #include <list>
+#include <sstream>
 
 #define BDSDEBUG 1
 
@@ -1363,7 +1364,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
 	BDSScreen* theScreen = new BDSScreen( _element.name, _element.l*CLHEP::m, true,
 					      aper, _element.tunnelMaterial, _element.tunnelOffsetX*CLHEP::m, size, _element.angle); 
 	if(_element.layerThicknesses.size() != _element.layerMaterials.size()){
-	  G4Exception("Material and ticknesses lists are of unequal size.", "-1", FatalException, "");
+	  std::stringstream ss;
+	  ss << "Material and ticknesses lists are of unequal size.";
+	  ss<< _element.layerMaterials.size() << " and " << _element.layerThicknesses.size();
+	  G4Exception(ss.str().c_str(), "-1", FatalException, "");
 	}
 
 	if(_element.layerThicknesses.size() == 0 ){
@@ -1375,7 +1379,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
 	for(itt = _element.layerThicknesses.begin(),
 	      itm = _element.layerMaterials.begin();
 	    itt != _element.layerThicknesses.end();
-	    itt++){
+	    itt++, itm++){
 	  theScreen->screenLayer((*itt)*CLHEP::m, *itm);
 	}
 	return theScreen;
