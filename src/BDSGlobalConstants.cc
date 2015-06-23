@@ -12,6 +12,7 @@ Last modified 23.10.2007 by Steve Malton
 
 #include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
+#include "BDSExecOptions.hh"
 
 #include "G4Colour.hh"
 #include "G4FieldManager.hh"
@@ -127,7 +128,14 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsSynchPhotonMultiplicity = opt.synchPhotonMultiplicity;
   itsSynchMeanFreeFactor = opt.synchMeanFreeFactor;
   itsLengthSafety = opt.lengthSafety;
-  itsNumberToGenerate = opt.numberToGenerate;
+
+  // set the number of primaries to generate - exec options overrides whatever's in gmad
+  G4int nToGenerate = BDSExecOptions::Instance()->GetNGenerate();
+  if (nToGenerate < 0)
+    {itsNumberToGenerate = opt.numberToGenerate;}
+  else
+    {itsNumberToGenerate = nToGenerate;}
+  
   itsNumberOfEventsPerNtuple = opt.numberOfEventsPerNtuple;
   itsEventNumberOffset = opt.eventNumberOffset;
   itsRandomSeed = opt.randomSeed;
