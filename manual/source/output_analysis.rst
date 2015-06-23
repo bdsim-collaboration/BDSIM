@@ -16,18 +16,18 @@ Example: Plot Optical Functions with pybdsim
    import robdsim
 
    # load ROOT output file into robdsim
-   r=robdsim.robdsimOutput(“output.root”)
-   # calculate optics and write to output file “optics.dat"
-   r.CalculateOpticalFunctions(“optics.dat”)
+   r=robdsim.robdsimOutput("output.root")
+   # calculate optics and write to output file "optics.dat"
+   r.CalculateOpticalFunctions("optics.dat")
    # load optics file into pybdsim
-   a=pybdsim.Data.Load(“optics.dat”)
+   a=pybdsim.Data.Load("optics.dat")
 
    f = figure()
    # Plot sqrt Beta_x
    plot(a.S(),sqrt(a.Beta_x()),'.-',label='BDSIM')
 
    # compare with MadX file:
-   b = pymadx.Tfs(“madx.tfs")
+   b = pymadx.Tfs("madx.tfs")
    s = b.GetColumn("S")
    betx = b.GetColumn("BETX")
    plot(s,sqrt(betx),'.-',label='MadX')
