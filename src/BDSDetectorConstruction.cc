@@ -1,74 +1,49 @@
-//  
-//   BDSIM, (C) 2001-2007
-//   
-//   version 0.5-dev
-//  
-//
-//
-//   Geometry construction
-//
-//
-//   History
-//     19 May 2008 by Marchioni v.0.5-dev
-//     18 Mar 2008 by Malton v.0.5-dev
-//      3 Oct 2007 by Malton v.0.4
-//     21 Nov 2006 by Agapov v.0.3
-//     28 Mar 2006 by Agapov v.0.2
-//     15 Dec 2005 by Agapov beta
-//
-
-#include <list>
-#include <map>
-#include <vector>
-
 #include "BDSDetectorConstruction.hh"
 
+#include "BDSAcceleratorComponent.hh"
 #include "BDSAcceleratorModel.hh"
+#include "BDSBeamline.hh"
+#include "BDSComponentFactory.hh"
+#include "BDSDebug.hh"
+#include "BDSEnergyCounterSD.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSDebug.hh"
-
-#include "BDSSDManager.hh"
-
-#include "G4UserLimits.hh"
-#include "G4Region.hh"
-#include "G4ProductionCuts.hh"
-
-#include "G4Box.hh"
-#include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4PVPlacement.hh"
-#include "G4UniformMagField.hh"
-#include "G4TransportationManager.hh"
-#include "G4PropagatorInField.hh"
-#include "G4VisAttributes.hh"
-#include "G4Colour.hh"
-#include "globals.hh"
-#include "G4ios.hh"
-
-#include "G4Navigator.hh"
-#include "G4UniformMagField.hh"
-
-#include "G4Electron.hh"
-#include "G4Positron.hh"
-#include "G4Material.hh"
-
-#include "BDSAcceleratorComponent.hh"
-#include "BDSBeamline.hh"
-#include "BDSEnergyCounterSD.hh"
-#include "BDSMaterials.hh"
-#include "BDSTeleporter.hh"
 #include "BDSLogicalVolumeInfo.hh"
-#include "BDSComponentFactory.hh"
-
-#include "G4MagneticField.hh"
-#include "G4VSampler.hh"
-#include "G4GeometrySampler.hh"
+#include "BDSLogicalVolumeInfoRegistry.hh"
+#include "BDSMaterials.hh"
+#include "BDSSDManager.hh"
+#include "BDSTeleporter.hh"
 
 #include "ggmad.hh"
 #include "parser/element.h"
 #include "parser/elementlist.h"
 #include "parser/enums.h"
+
+#include "G4Box.hh"
+#include "G4Colour.hh"
+#include "G4Electron.hh"
+#include "G4GeometrySampler.hh"
+#include "G4LogicalVolume.hh"
+#include "G4MagneticField.hh"
+#include "G4Material.hh"
+#include "G4Navigator.hh"
+#include "G4Positron.hh"
+#include "G4ProductionCuts.hh"
+#include "G4PropagatorInField.hh"
+#include "G4PVPlacement.hh"
+#include "G4Region.hh"
+#include "G4TransportationManager.hh"
+#include "G4UniformMagField.hh"
+#include "G4UserLimits.hh"
+#include "G4VisAttributes.hh"
+#include "G4VPhysicalVolume.hh"
+#include "G4VSampler.hh"
+#include "globals.hh"
+
+#include <iterator>
+#include <list>
+#include <map>
+#include <vector>
 
 #ifdef BDSDEBUG
 bool debug = true;
@@ -219,10 +194,11 @@ void BDSDetectorConstruction::BuildBeamline()
 #endif
       
       BDSAcceleratorComponent* temp = theComponentFactory->createComponent(*it);
-      if(temp) {
-	BDSTiltOffset*     tiltOffset = theComponentFactory->createTiltOffset(*it);
-	beamline->AddComponent(temp, tiltOffset);
-      }
+      if(temp)
+	{
+	  BDSTiltOffset*     tiltOffset = theComponentFactory->createTiltOffset(*it);
+	  beamline->AddComponent(temp, tiltOffset);
+	}
     }
 
   // Special circular machine bits
@@ -391,8 +367,11 @@ void BDSDetectorConstruction::ComponentPlacement()
       G4LogicalVolume* elementLV = thecurrentitem->GetContainerLogicalVolume();
       if (!elementLV)
 	{G4cerr << __METHOD_NAME__ << "this accelerator component " << (*it)->GetName() << " has no volume to be placed!" << G4endl;  exit(1);}
-      
-      G4String name = (*it)->GetName(); // this is done after the checks as it really just passes down to acc component
+
+      // get the name -> note this is the plain name without _pv or _lv suffix just now
+      // comes from BDSAcceleratorComponent
+      // this is done after the checks as it really just passes down to acc component
+      G4String name = (*it)->GetName(); 
       if (verbose || debug)
 	{G4cout << __METHOD_NAME__ << "placement of component named: " << name << G4endl;}
       
@@ -404,7 +383,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       
       // add the volume to one of the regions
       G4int precision = thecurrentitem->GetPrecisionRegion();
-      if(precision < 0)
+      if(precision > 0)
 	{
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << "element is in the precision region number: " << precision << G4endl;
@@ -488,7 +467,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  G4cout << __METHOD_NAME__ << "placing readout geometry" << G4endl;
 	  G4cout << "position: " << rp << ", rotation: " << *rr << G4endl;
 #endif
-	  // don't need the pointer for anything - purely instantiating registers it with g4
+	  // don't need the returned pointer from new for anything - purely instantiating registers it with g4
 	  new G4PVPlacement(rr,              // its rotation
 			    rp,              // its position
 			    name + "_ro_pv", // its name
@@ -498,7 +477,6 @@ void BDSDetectorConstruction::ComponentPlacement()
 			    nCopy,           // copy number
 			    checkOverlaps);  //overlap checking
 	}
-
 
       //this vector of physical volumes isn't used anywhere...
       fPhysicalVolumeVector.push_back(PhysiComponentPlace);
