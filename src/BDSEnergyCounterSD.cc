@@ -3,13 +3,14 @@
    Last modified 24.7.2002
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
+#include "BDSEnergyCounterHit.hh"
+#include "BDSEnergyCounterSD.hh"
 #include "BDSExecOptions.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-
-#include "BDSEnergyCounterSD.hh"
-#include "BDSEnergyCounterHit.hh"
 #include "BDSLogicalVolumeInfo.hh"
+#include "BDSLogicalVolumeInfoRegistry.hh"
+
 #include "G4AffineTransform.hh"
 #include "G4Event.hh"
 #include "G4EventManager.hh"
@@ -24,8 +25,6 @@
 #include "G4Track.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VTouchable.hh"
-
-#include <map>
 
 #define NMAXCOPY 5
 
@@ -74,7 +73,7 @@ void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 }
 
 G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOutTH)
-{ 
+{
   if(BDSGlobalConstants::Instance()->GetStopTracks())
     enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit()); // Why subtract the energy deposit of the step? Why not add?
   //this looks like accounting for conservation of energy when you're killing a particle
@@ -88,12 +87,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
   //if the energy is 0, don't do anything
   if (enrg==0.) return false;      
 
-  // can get the copy number from the read out geometry if it exists
-  G4int nCopy;
-  if (readOutTH)
-    {nCopy = readOutTH->GetCopyNumber();}
-  else
-    {nCopy = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();}
+  G4int nCopy = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();
 #ifdef BDSDEBUG
   if(nCopy>0){
     G4cout << "BDSEnergyCounterSD::ProcessHits> nCopy = " << nCopy << G4endl;
@@ -114,23 +108,14 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
     }
   */
   // Get translation and rotation of volume w.r.t the World Volume
-
-  // if there is a read out geometry volume, use that. Note there *should* always be a
-  // read out geometry volume for any sensitive volume (if they've been made sensitive)
-  // there is the possibility that there isn't a read out volume in which case the touchable
-  // object would be a null pointer and seg fault - must catch this
-  if (!readOutTH)
-    {
-      G4cout << __METHOD_NAME__ << "hit in a sensitive volume without readout geometry" << G4endl;
-      G4cerr << __METHOD_NAME__ << "hit not recorded!" << G4endl;
-      return true;
-    }
-
   // get the coordinate transform from the read out geometry instead of the actual geometry
-  // read out geometry is in accelerator s,x,y coordinates along beam line axis
-  G4AffineTransform tf = readOutTH->GetHistory()->GetTopTransform();
-  // this was the old method of getting the transform
-  //G4AffineTransform tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
+  // if it exsits, else assume on axis. The read out geometry is in accelerator s,x,y
+  // coordinates along beam line axis
+  G4AffineTransform tf;
+  if (readOutTH)
+    {tf = readOutTH->GetHistory()->GetTopTransform();}
+  else
+    {tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());}
   G4ThreeVector posbefore = aStep->GetPreStepPoint()->GetPosition();
   G4ThreeVector posafter  = aStep->GetPostStepPoint()->GetPosition();
   //G4ThreeVector momDir = aStep->GetTrack()->GetMomentumDirection();
