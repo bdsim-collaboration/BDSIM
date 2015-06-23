@@ -78,7 +78,7 @@ void init()
 
   add_var("rad" ,1.0  ,reserved);
   add_var("mrad",1.e-3,reserved);
-
+  add_var("urad",1.e-6,reserved);
 
   add_var("clight",2.99792458e+8,reserved);
 
