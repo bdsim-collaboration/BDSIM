@@ -76,6 +76,8 @@ bool debug = true;
 bool debug = false;
 #endif
 
+typedef std::vector<G4LogicalVolume*>::iterator BDSLVIterator;
+
 BDSDetectorConstruction::BDSDetectorConstruction():
   itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
   solidWorld(NULL),logicWorld(NULL),physiWorld(NULL),
@@ -414,39 +416,46 @@ void BDSDetectorConstruction::ComponentPlacement()
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "setting up sensitive volumes with read out geometry" << G4endl;
 #endif
-      // now register the spos and other info of this sensitive volume in global map
-      // used by energy counter sd to get spos of that logical volume at histogram time
-      BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo(name,
-							       (*it)->GetSPositionMiddle());
+      // Register the spos and other info of this elemnet.
+      // Used by energy counter sd to get spos of that logical volume at histogram time.
+      // If it has a readout volume, that'll be used for sensitivity so only need to register
+      // that. Should only register what we need to as used for every energy hit (many many many)
       if(readOutLV)
-	{BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(readOutLV,theinfo);}
-      else
-        {BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(elementLV,theinfo);}
-
-      // this bit would also be unnecessary once all switched over to read out geometry
-      // Register all logical volumes with sposition and any other information for later use
-      std::vector<G4LogicalVolume*> allLVs = thecurrentitem->GetAllLogicalVolumes();
-      std::vector<G4LogicalVolume*>::iterator allLVsIterator = allLVs.begin();
-      for(;allLVsIterator != allLVs.end(); ++allLVsIterator)
 	{
-	  BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(*allLVsIterator,
-							       new BDSLogicalVolumeInfo((*allLVsIterator)->GetName(),
-											thecurrentitem->GetSPos())
-							       );
 	  // use the readOutLV name as this is what's accessed in BDSEnergyCounterSD
 	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo(name,
 								   (*it)->GetSPositionMiddle());
+	  BDSLogicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutLV, theinfo);
 	}
-
+      else
+        {
+	  // It doesn't have a read out volume, so register the same info with all logical volumes
+	  // the current BDSAcceleratorComponent  contains as any of them could be requested
+	  // by BDSEnergyCounterSD
+	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo(name,
+								   (*it)->GetSPositionMiddle());
+	  BDSLVIterator elementLVIterator = thecurrentitem->GetAllLogicalVolumes().begin();
+	  BDSLVIterator elementLVEnd      = thecurrentitem->GetAllLogicalVolumes().end();
+	  for (; elementLVIterator != elementLVEnd; ++elementLVIterator)
+	    {BDSLogicalVolumeInfoRegistry::Instance()->RegisterInfo(*elementLVIterator, theinfo);}
+	}
+      
       std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetAllSensitiveVolumes();
-      std::vector<G4LogicalVolume*>::iterator sensIt= SensVols.begin();
+      BDSLVIterator sensIt= SensVols.begin();
       for(;sensIt != SensVols.end(); ++sensIt)
 	{
-	  //use already defined instance of Ecounter sd
+	  // use already defined instance of Ecounter sd
+	  // we MUST attach this SD to each volume so that it produces
+	  // hits (using the read out geometry)
 	  (*sensIt)->SetSensitiveDetector(energyCounterSDRO);
 	  
 	  //set gflash parameterisation on volume if required
 	  G4bool gflash     = BDSExecOptions::Instance()->GetGFlash();
+	  //TBC - so glash is only used for 'element' types - perhaps this should be used
+	  //for other volumes too.  The logic of the if statement needs checked.
+	  //The check of the precision region really compares the region pointer of the
+	  //logical volume with that of our 'precision region' region. Unclear what the default
+	  //region value is in geant4 but it's not our region - no region by default.
 	  if(gflash && ((*sensIt)->GetRegion() != precisionRegion) && (thecurrentitem->GetType()=="element"))
 	    {SetGFlashOnVolume(*sensIt);}
 	}

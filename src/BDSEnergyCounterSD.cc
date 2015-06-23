@@ -129,7 +129,9 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
   Y = 0.5 * (posbefore.x() + posafter.x());
   Y = 0.5 * (posbefore.y() + posafter.y());
   Z = 0.5 * (posbefore.z() + posafter.z());
-  S = GetSPositionOfStep(aStep);
+  //note this'll work even without readOutTH
+  //in which case readOutTH is null
+  S = GetSPositionOfStep(aStep,readOutTH); 
   //local
   x = 0.5 * (posbeforelocal.x() + posafterlocal.x());
   y = 0.5 * (posbeforelocal.y() + posafterlocal.y());
@@ -185,24 +187,25 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
   energyCounterCollection->insert(ECHit);
   
   //record first scatter of primary if it exists
-  if (aStep->GetTrack()->GetParentID() == 0) {
-    //create a duplicate hit in the primarycounter hits collection
-    //there are usually a few - filter at end of event action
-    BDSEnergyCounterHit* PCHit = new BDSEnergyCounterHit(*ECHit);
-    //set the energy to be the full energy of the primary
-    //just now it's the wee bit of energy deposited in that step
-    G4double primaryEnergy = BDSGlobalConstants::Instance()->GetBeamKineticEnergy();
-    PCHit->SetEnergy(primaryEnergy);
-    primaryCounterCollection->insert(PCHit);
-  }
+  if (aStep->GetTrack()->GetParentID() == 0)
+    {
+      //create a duplicate hit in the primarycounter hits collection
+      //there are usually a few - filter at end of event action
+      BDSEnergyCounterHit* PCHit = new BDSEnergyCounterHit(*ECHit);
+      //set the energy to be the full energy of the primary
+      //just now it's the wee bit of energy deposited in that step
+      G4double primaryEnergy = BDSGlobalConstants::Instance()->GetBeamKineticEnergy();
+      PCHit->SetEnergy(primaryEnergy);
+      primaryCounterCollection->insert(PCHit);
+    }
   
   if(BDSGlobalConstants::Instance()->GetStopTracks())
-    aStep->GetTrack()->SetTrackStatus(fStopAndKill);
+    {aStep->GetTrack()->SetTrackStatus(fStopAndKill);}
    
   return true;
 }
 
-G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
+G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* readOutTH)
 { 
   enrg = aSpot->GetEnergySpot()->GetEnergy();
 #ifdef BDSDEBUG
@@ -236,7 +239,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
   Y = pos.x();
   Y = pos.y();
   Z = pos.z();
-  S = GetSPositionOfSpot(aSpot);
+  S = GetSPositionOfSpot(aSpot,readOutTH);
   //local
   x = poslocal.x();
   y = poslocal.y();
@@ -295,53 +298,63 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
   return true;
 }
 
-G4double BDSEnergyCounterSD::GetSPositionOfStep(G4Step* aStep)
+G4double BDSEnergyCounterSD::GetSPositionOfStep(G4Step* aStep, G4TouchableHistory* readOutTH)
 {
-  G4double thespos;
+  // note readOutTH will only exist when a read out volume exists
+  G4double sPosition;
   // Get the s position along the accelerator by querying the logical volume
   // Get the logical volume from this step
-  G4LogicalVolume* thevolume = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();  
-  // Find it's s position from global map made at constrcution time
-  typedef std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>::iterator it_type;
-  it_type search = BDSGlobalConstants::Instance()->LogicalVolumeInfo()->find(thevolume);
+  G4LogicalVolume* thevolume;
+  if (readOutTH)
+    {thevolume = readOutTH->GetVolume()->GetLogicalVolume();}
+  else
+    {thevolume = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();}
   
-  if (search == BDSGlobalConstants::Instance()->LogicalVolumeInfo()->end()){
-    //this means that the logical volume pointer doesn't exist in the map 
-    //checking this prevents segfaults
-    thespos = -1.0*CLHEP::m; // set to unreal s position to identify and not fail
-  }
-  else {
-    thespos = BDSGlobalConstants::Instance()->GetLogicalVolumeInfo(thevolume)->GetSPos();
-    G4ThreeVector     prestepposition = aStep->GetPreStepPoint()->GetPosition();
-    G4AffineTransform tf              = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
-    G4ThreeVector     prestepposlocal = tf.TransformPoint(prestepposition);
-    thespos += prestepposlocal.z();
-   }
-  return thespos;
+  BDSLogicalVolumeInfo* theInfo = BDSLogicalVolumeInfoRegistry::Instance()->GetInfo(thevolume);
+  if (theInfo)
+    {
+      sPosition = theInfo->GetSPos();
+      // that's the centre position of the element - now add the local s (z locally)
+      G4ThreeVector     prestepposition = aStep->GetPreStepPoint()->GetPosition();
+      G4AffineTransform tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
+      G4ThreeVector     prestepposlocal = tf.TransformPoint(prestepposition);
+      sPosition += prestepposlocal.z();
+    }
+  else
+    {
+      // This means that the logical volume pointer doesn't exist in the registry
+      // Supply an unphysical value to avoid crashing and easy debugging
+      sPosition = -1000;
+    }
+  return sPosition;
 }
 
-G4double BDSEnergyCounterSD::GetSPositionOfSpot(G4GFlashSpot* aSpot)
+G4double BDSEnergyCounterSD::GetSPositionOfSpot(G4GFlashSpot* aSpot, G4TouchableHistory* readOutTH)
 {
-  G4double thespos;
+  G4double sPosition;
   // Get the s position along the accelerator by querying the logical volume
   // Get the logical volume from this step
-  G4LogicalVolume* thevolume = aSpot->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
+  G4LogicalVolume* thevolume;
+  if (readOutTH)
+    {thevolume = readOutTH->GetVolume()->GetLogicalVolume();}
+  else
+    {thevolume = aSpot->GetTouchableHandle()->GetVolume()->GetLogicalVolume();}
 
-  // Find it's s position from global map made at constrcution time
-  typedef std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>::iterator it_type;
-  it_type search = BDSGlobalConstants::Instance()->LogicalVolumeInfo()->find(thevolume);
-  
-  if (search == BDSGlobalConstants::Instance()->LogicalVolumeInfo()->end()){
-    //this means that the logical volume pointer doesn't exist in the map 
-    //checking this prevents segfaults
-    thespos = -1.0*CLHEP::m; // set to unreal s position to identify and not fail
-  }
-  else {
-    thespos = BDSGlobalConstants::Instance()->GetLogicalVolumeInfo(thevolume)->GetSPos();
-    G4ThreeVector     pos = aSpot->GetPosition();
-    G4AffineTransform tf  = (aSpot->GetTouchableHandle()->GetHistory()->GetTopTransform());
-    G4ThreeVector localposition = tf.TransformPoint(pos);
-    thespos += localposition.z();
-   }
-  return thespos;
+  BDSLogicalVolumeInfo* theInfo = BDSLogicalVolumeInfoRegistry::Instance()->GetInfo(thevolume);
+  if (theInfo)
+    {
+      sPosition = theInfo->GetSPos();
+      // that's the centre position of the element - now add the local s (z locally)
+      G4ThreeVector     pos = aSpot->GetPosition();
+      G4AffineTransform tf  = (aSpot->GetTouchableHandle()->GetHistory()->GetTopTransform());
+      G4ThreeVector localposition = tf.TransformPoint(pos);
+      sPosition += localposition.z();
+    }
+  else
+    {
+      // This means that the logical volume pointer doesn't exist in the registry
+      // Supply an unphysical value to avoid crashing and easy debugging
+      sPosition = -1000;
+    }
+  return sPosition;
 }
