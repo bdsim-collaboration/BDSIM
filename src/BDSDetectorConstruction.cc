@@ -433,6 +433,9 @@ void BDSDetectorConstruction::ComponentPlacement()
 							       new BDSLogicalVolumeInfo((*allLVsIterator)->GetName(),
 											thecurrentitem->GetSPos())
 							       );
+	  // use the readOutLV name as this is what's accessed in BDSEnergyCounterSD
+	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo(name,
+								   (*it)->GetSPositionMiddle());
 	}
 
       std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetAllSensitiveVolumes();
@@ -441,10 +444,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 	{
 	  //use already defined instance of Ecounter sd
 	  (*sensIt)->SetSensitiveDetector(energyCounterSDRO);
-	  //register any volume that an ECounter is attached to
-	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( (*sensIt)->GetName(),
-								    thecurrentitem->GetSPos() );
-	  BDSGlobalConstants::Instance()->AddLogicalVolumeInfo((*sensIt),theinfo);
+	  
 	  //set gflash parameterisation on volume if required
 	  G4bool gflash     = BDSExecOptions::Instance()->GetGFlash();
 	  if(gflash && ((*sensIt)->GetRegion() != precisionRegion) && (thecurrentitem->GetType()=="element"))

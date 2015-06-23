@@ -93,8 +93,6 @@ public:
   friend class BDSDetectorConstruction;
   
   ///@{ This function should be revisited given recent changes (v0.7)
-  G4double         GetSPos() const; // maybe not needed due to new beamline
-  void             SetSPos(G4double spos);
   void             SetGFlashVolumes(G4LogicalVolume* aLogVol);
   std::vector<G4LogicalVolume*> GetGFlashVolumes() const;
   void             SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
@@ -151,9 +149,6 @@ private:
 
   G4LogicalVolume* readOutLV; ///< Read out geometry volume
 
-  /// S coordinate - to be revisited / moved to BDSBeamlineElement
-  G4double itsSPos;
-
   std::vector<G4LogicalVolume*> itsGFlashVolumes;
   //A vector containing the physical volumes in the accelerator component- to be used for geometric importance sampling etc.
 
@@ -178,12 +173,6 @@ inline G4String BDSAcceleratorComponent::GetType() const
 
 inline G4int BDSAcceleratorComponent::GetPrecisionRegion() const
 {return precisionRegion;}
-
-inline G4double BDSAcceleratorComponent::GetSPos() const
-{return itsSPos;}
-
-inline void BDSAcceleratorComponent::SetSPos(G4double spos)
-{itsSPos=spos;}
 
 inline void BDSAcceleratorComponent::SetGFlashVolumes(G4LogicalVolume* aLogVol)
 {itsGFlashVolumes.push_back(aLogVol);}
