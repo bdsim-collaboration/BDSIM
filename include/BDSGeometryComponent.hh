@@ -63,7 +63,7 @@ public:
 
   /// Register a logical volume as belonging to this geometry component, which then becomes
   /// responsible for it
-  void RegisterLogicalVolume(G4LogicalVolume* logicalVolume);
+  void RegisterLogicalVolume(G4LogicalVolume* logicalVolume, G4bool interalCheck = false);
 
   /// Apply RegisterLogicalVolume(G4LogicalVolume* logicalVolume) to a vector of logical volumes
   void RegisterLogicalVolumes(std::vector<G4LogicalVolume*> logicalVolumes);

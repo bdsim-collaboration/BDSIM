@@ -48,7 +48,7 @@ BDSGeometryComponent::~BDSGeometryComponent()
   delete containerLogicalVolume;
 }
 
-void BDSGeometryComponent::RegisterLogicalVolume(G4LogicalVolume* logicalVolume)
+void BDSGeometryComponent::RegisterLogicalVolume(G4LogicalVolume* logicalVolume, G4bool internalCheck)
 {
   // only register it if it doesn't exist already
   // note search the vector each time something is added is quite computationally expensive
@@ -60,6 +60,13 @@ void BDSGeometryComponent::RegisterLogicalVolume(G4LogicalVolume* logicalVolume)
 	     // not found so register it
 	     allLogicalVolumes.push_back(logicalVolume);
 	   }
+  else if (internalCheck)
+    {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "just an internal to check that this logical volume was registered" << G4endl;
+#endif
+      return;
+    }
 #ifdef BDSDEBUG
   else
     {
@@ -87,6 +94,13 @@ void BDSGeometryComponent::RegisterLogicalVolumes(std::vector<G4LogicalVolume*> 
 
 void BDSGeometryComponent::RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  // check the logical volume to which it pertains is registered in this component
+  // otherwise, register it
+  RegisterLogicalVolume(sensitiveVolume, true);
+  
   // only register it if it doesn't exist already
   // note search the vector each time something is added is quite computationally expensive
   // but will protect against resetting sensitivity and possibly seg faults by doulby registered
