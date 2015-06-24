@@ -84,6 +84,7 @@ MV          1
 Tesla       1
 rad         1
 mrad        :math:`10^{-3}`
+urad        :math:`10^{-6}`
 clight      :math:`2.99792458 \times 10^{8}`
 m           1
 cm          :math:`10^{-2}`
@@ -109,8 +110,8 @@ Useful Commands
 * :code:`print, line;` prints all elements in line
 * :code:`print, option;` prints the value of option
 * :code:`print, parameter;` prints the value of parameter, where parameter could be your own defined parameter
-* :code:`stop;` exists parser
-
+* :code:`stop;` or `return;` exists parser
+* :code:`if () {};` if construct
 
 Lattice Description
 -------------------
@@ -943,36 +944,58 @@ The physics list can be selected with the following syntax::
 
 Physics Lists In BDSIM
 ^^^^^^^^^^^^^^^^^^^^^^
-============================  ======================================================================
-standard                      transportation of primary particles only - no scattering in material
-em_standard                   transportation of primary particles, ionization, bremsstrahlung,
+
+.. table check in latex before commit
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+		    
+============================  ============================================================
+standard                      transportation of primary particles 
+                              only - no scattering in material.
+em_standard                   transportation of primary particles, 
+                              ionization, bremsstrahlung, 
                               Cerenkov, multiple scattering.
-em_low                        the same as `em_standard` but using low energy electromagnetic models.
+em_low                        the same as `em_standard` but using low 
+                              energy electromagnetic models.
 em_single_scatter             **TBC**.
-em_muon                       `em_standard` plus muon production processes with biased muon
+em_muon                       `em_standard` plus muon production 
+                              processes with biased muon 
                               cross-sections.
-lw                            list for laser wire simulation - `em_standard` and "laserwire"
-                              physics, which is Compton Scattering with total cross-section
+lw                            list for laser wire simulation - 
+                              `em_standard` and "laserwire" 
+                              physics, which is Compton Scattering 
+			      with total cross-section 
 			      renormalized to 1.
-merlin                        transportation of primary particles, and the following processes
-                              for electrons: multiple scattering, ionisation, and bremsstrahlung.
-hadronic_standard             `em_standard` plus fission, neutron capture, neutron and proton
+merlin                        transportation of primary particles, and 
+                              the following processes 
+                              for electrons: multiple scattering, 
+			      ionisation, and bremsstrahlung.
+hadronic_standard             `em_standard` plus fission, neutron 
+                              capture, neutron and proton 
                               elastic and inelastic scattering.
-hadronic_muon                 `hadronic_standard` plus muon production processes with biased muon
+hadronic_muon                 `hadronic_standard` plus muon production 
+                              processes with biased muon 
                               cross-sections.
-hadronic_QGSP_BERT            `em_standard` plus hadronic physics using the quark gluon string
-                              plasma (QGSP) model and the Bertini cascade model (BERT).
-hadronic_QGSP_BERT_muon       `hadronic_QGSP_BERT` plus muon production processes with biased muon
+hadronic_QGSP_BERT            `em_standard` plus hadronic physics 
+                              using the quark gluon string 
+                              plasma (QGSP) model and the Bertini 
+			      cascade model (BERT).
+hadronic_QGSP_BERT_muon       `hadronic_QGSP_BERT` plus muon 
+                              production processes with biased muon 
                               cross-sections.
-hadronic_FTFP_BERT            `em_standard` plus hadronic physics using the Fritiof model followed
-                              by Reggion cascade and Precompound and evaporation models for the
-			      nucleus de-excitation (FTFP) model and the Bertini cascade model
+hadronic_FTFP_BERT            `em_standard` plus hadronic physics 
+                              using the Fritiof model followed 
+                              by Reggion cascade and Precompound and 
+			      evaporation models for the 
+			      nucleus de-excitation (FTFP) model and 
+			      the Bertini cascade model 
 			      (BERT).
-hadronic_FTFP_BERT_muon       `hadronic_FTFP_BERT` plus muon production processes with biased muon
+hadronic_FTFP_BERT_muon       `hadronic_FTFP_BERT` plus muon 
+                              production processes with biased muon 
                               cross-sections.
-hadronic_QGSP_BERT_HP_muon    `hadronic_QGSP_BERT_muon` plus high precision low energy neutron
+hadronic_QGSP_BERT_HP_muon    `hadronic_QGSP_BERT_muon` plus high 
+                              precision low energy neutron 
                               scattering models.
-============================  ======================================================================
+============================  ============================================================
 
 
 Options
@@ -1250,8 +1273,8 @@ correlations between phase space coordinates, so
 | sigmaT                           | [s]                                                   |
 +----------------------------------+-------------------------------------------------------+
 
-gausMatrix
-^^^^^^^^^^
+gaussMatrix
+^^^^^^^^^^^
 
 Uses the :math:`N` dimensional gaussian generator from `CLHEP`, `CLHEP::RandMultiGauss`. The generator
 is initialised by a :math:`6\times1` means vector and :math:`6\times 6` sigma matrix.  
