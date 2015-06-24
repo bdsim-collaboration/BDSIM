@@ -84,6 +84,7 @@ MV          1
 Tesla       1
 rad         1
 mrad        :math:`10^{-3}`
+urad        :math:`10^{-6}`
 clight      :math:`2.99792458 \times 10^{8}`
 m           1
 cm          :math:`10^{-2}`
@@ -109,8 +110,8 @@ Useful Commands
 * :code:`print, line;` prints all elements in line
 * :code:`print, option;` prints the value of option
 * :code:`print, parameter;` prints the value of parameter, where parameter could be your own defined parameter
-* :code:`stop;` exists parser
-
+* :code:`stop;` or `return;` exists parser
+* :code:`if () {};` if construct
 
 Lattice Description
 -------------------

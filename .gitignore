@@ -39,7 +39,7 @@ ehthumbs.db
 Thumbs.db
 
 # Latex #
-######################
+#########
 *.aux
 *.out 
 
@@ -47,10 +47,6 @@ Thumbs.db
 #############
 !CMakeLists.txt
 
-# Manual #
-######################
-#manual/build/*
-manual/build/latex/*
-manual/build/html/*
-manual/build/doctrees/*
-!manual/build/latex/BDSIM.pdf
+# Build directories #
+#####################
+build*/*
