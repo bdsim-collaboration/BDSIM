@@ -71,6 +71,8 @@ public:
   /// Mark a volume as one that should be made sensitive using the read out geometry.  Note, if
   /// a volume is already sensitive with a specialised sensitive detector, it should NOT be
   /// registered using this method.
+  /// This method will also check and ensure that the sensitive logical volume is an already
+  /// registered logical volume with this geometry component.  
   void RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume);
 
   /// Apply RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume) to a vector of logical volumes
