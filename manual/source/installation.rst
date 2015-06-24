@@ -98,7 +98,7 @@ This typically produces the following output, which is slightly different on eac
   -- Check for working CXX compiler: /usr/bin/c++ -- works
   -- Detecting CXX compiler ABI info
   -- Detecting CXX compiler ABI info - done
-  -- Configuring BDSIM 0.6.develop
+  -- Configuring BDSIM 0.65
   -- Build Type RelWithDebInfo
   -- Compiler supports C++11
   -- Looking for CLHEP... - found
@@ -180,23 +180,31 @@ you can verify your installation using a serious of tests included with BDSIM.::
 
   > ctest -E LONG
 
-Scientific Linux with AFS Access
---------------------------------
+Linux with AFS Access
+---------------------
 
-When the machine has AFS connection, then the dependent packages like Geant4 can
-be taken from there and don't need to be installed. The same compiler version needs
+When the machine has AFS connection, the latest stable release binary is available::
+
+   /afs/cern.ch/user/j/jsnuveri/public/bdsim
+
+Before using the binary as always source the geant4 setup::
+
+   source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
+
+For compiling from source the dependent packages like Geant4 can
+be taken from AFS and don't need to be installed. The same compiler version needs
 to be used for BDSIM as the one for Geant4.  The following scripts must be sourced
 before using CMake.  
+
+For the versions 0.61 and onwards::
+
+  source /afs/cern.ch/user/j/jsnuveri/public/gcc47-setup.sh
+  source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
 
 For version 0.6 and older::
   
   source /afs/cern.ch/user/j/jsnuveri/public/gcc46-setup.sh
   source /afs/cern.ch/user/j/jsnuveri/public/geant4.9.6-setup.sh
-
-For the tags 0.61-0.63 and the develop branch::
-  
-  source /afs/cern.ch/user/j/jsnuveri/public/gcc47-setup.sh
-  source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
 
 After this, the installation procedure for `Scientific Linux`_ should be followed.
 
