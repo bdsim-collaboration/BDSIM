@@ -71,16 +71,55 @@ BDSComponentFactory::BDSComponentFactory(){
   if (verbose || debug1) G4cout << "Rigidity (Brho) : "<< fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
 }
 
-BDSComponentFactory::~BDSComponentFactory(){
+BDSComponentFactory::~BDSComponentFactory()
+{;}
+
+void BDSComponentFactory::RegisterComponent(BDSAcceleratorComponent* element)
+{
+  // note no checking as it should be registered in BDSComponentFactory::createComponent(Element& elementIn)
+  // unless it didn't exist before - so check already done
+  componentRegistry[element->GetName()] = element;
 }
+
+BDSAcceleratorComponent* BDSComponentFactory::GetAlreadyConstructedComponent(G4String name)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  std::map<G4String,BDSAcceleratorComponent*>::iterator search = componentRegistry.find(name);
+  if (search == componentRegistry.end())
+    {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "no such component already exists" << G4endl;
+#endif
+      return NULL;
+    }
+  else
+    {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "component already exists (by name) - return address of component" << G4endl;
+#endif
+      return componentRegistry[name];
+    }
+} 
 
 BDSAcceleratorComponent* BDSComponentFactory::createComponent(Element& elementIn){
   _element = elementIn;
 #ifdef BDSDEBUG
-  G4cout << "BDSComponentFactory::createComponent() element name = " << _element.name << G4endl;  
+  G4cout << __METHOD_NAME__ << "element name: \"" << _element.name << "\"" << G4endl;  
 #endif
+  // check if the component already exists and return that
+  //BDSAcceleratorComponent* element = GetAlreadyConstructedComponent(elementIn.name);
   BDSAcceleratorComponent* element = NULL;
-
+  if (element)
+    {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "using already manufactured component" << G4endl;
+#endif
+      return element;
+    }
+  // else null pointer - create the component - if no suitable create method, returns null as desired
+  
   switch(_element.type){
   case _SAMPLER:
 #ifdef BDSDEBUG
@@ -224,8 +263,13 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(Element& elementIn
     break;
   }
 
+  // note this test will only be reached (and therefore the component registered)
+  // if it both didn't exist and has been constructed
   if (element)
-    {element->Initialise();}
+    {
+      element->Initialise();
+      RegisterComponent(element);
+    }
   
   return element;
 }
@@ -340,27 +384,30 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " splitting sbend into " << nSbends << " sbends" << G4endl;
 #endif
+  // prepare one name for all that makes sense
+  std::stringstream name;
+  name << _element.name << "_1_of_" << nSbends;
+  std::string thename = name.str();
   //calculate their angle and length
-  double semiangle = _element.angle / (double) nSbends;
+  double semiangle  = _element.angle / (double) nSbends;
   double semilength = length / (double) nSbends;
   //create Line to put them in
   BDSLine* sbendline = new BDSLine("sbendline");
   //create sbends and put them in the line
-  BDSBeamPipeInfo* bpInfo    = PrepareBeamPipeInfo(_element);
+  BDSBeamPipeInfo*   bpInfo = PrepareBeamPipeInfo(_element);
   BDSMagnetOuterInfo moInfo = PrepareMagnetOuterInfo(_element);
+
+  // prepare one sbend segment
+  BDSSectorBend* oneBend = new BDSSectorBend(thename,
+					     semilength,
+					     semiangle,
+					     bField,
+					     bPrime,
+					     bpInfo,
+					     moInfo);
+  // create a line of this sbend repeatedly
   for (int i = 0; i < nSbends; ++i)
-    {
-      std::stringstream name;
-      name << _element.name << "_" << i;
-      std::string itsname = name.str();
-      sbendline->addComponent( new BDSSectorBend( itsname,
-						  semilength,
-						  semiangle,
-						  bField,
-						  bPrime,
-						  bpInfo,
-						  moInfo) );
-    }
+    {sbendline->addComponent(oneBend);}
   return sbendline;
 }
 

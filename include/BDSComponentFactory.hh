@@ -74,5 +74,17 @@ private:
   BDSBeamPipeInfo*   PrepareBeamPipeInfo(Element& element);
   ///@}
 
+  /// Registry of already created components
+  std::map<G4String,BDSAcceleratorComponent*> componentRegistry;
+
+  /// Register a constructed component to avoid duplicate construction.
+  /// Note this works by name. This is protected by the parser also being
+  /// intolerant of components with duplicated names - it'll throw an error
+  void RegisterComponent(BDSAcceleratorComponent* alreadyConstructedComponent);
+
+  /// Access the already constructed component by name. If no such component has
+  /// been created, this function returns a NULL pointer.
+  BDSAcceleratorComponent* GetAlreadyConstructedComponent(G4String name);
+
 };
 #endif
