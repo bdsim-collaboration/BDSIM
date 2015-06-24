@@ -30,16 +30,16 @@ use the following commands::
 Requirements
 ============
 
-1) Geant4 installed or access to **AFS** [#macafsnote]_. Version 4.9.6 or higher.
-2) CMake 2.6.4 or higher
+1) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.9.6 or higher.
+2) `CMake`_ 2.6.4 or higher
 3) Flex 2.5.37 or higher
 4) Bison 2.3 or higher
-5) CLHEP 2.1.3.1 or higher
-6) Boost libraries
+5) `CLHEP`_ 2.1.3.1 or higher
+6) `Boost`_ libraries
 
 Optional dependencies
   
-7) ROOT framework for binary data output
+7) `ROOT`_ framework for binary data output
 
 Note, even though installed, the Geant4 environmental variables must be
 available. You can test this in a terminal with::
@@ -67,7 +67,7 @@ The following sections detail the setup process for different operating systems.
 Mac OSX
 -------
 
-We recommend obtaining required packages using **MacPorts** package manager,
+We recommend obtaining `required packages <Requirements>`_ using `MacPorts`_ package manager,
 although they can be obtained both through other package managers and by
 manually downloading, compiling and installing the source for each.
 
@@ -147,6 +147,9 @@ you can verify your installation using a series of tests included with BDSIM. ::
 Scientific Linux
 ----------------
 
+Install the `required packages <Requirements>`_ preferably with a
+package manager.
+
 For SL5 you will have to use Geant 4.9.6 as Geant 4.10 onwards is not compatible.
 Older version of Geant4 can be downloaded from their
 `archive <http://geant4.web.cern.ch/geant4/support/source_archive.shtml>`_ . 
@@ -176,7 +179,7 @@ BDSIM can then be installed for access from anywhere on the system with::
 
 To change the installation directory, see `Configuring the BDSIM Build with CMake`_
 From any directory on your computer, ``bdsim`` should be available.  From the build directory
-you can verify your installation using a serious of tests included with BDSIM.::
+you can verify your installation using a series of tests included with BDSIM.::
 
   > ctest -E LONG
 
@@ -392,3 +395,12 @@ please contact us (see :ref:`support-section`).
 		 cores with the ``make -jN`` command. Ie a computer has 4 cores and supports
 		 hyper-threading, can support up to ``make -j8``.  Exceeding this number will
 		 result in slower than normal compilation.
+
+.. Links
+
+.. _Boost: http://www.boost.org/
+.. _CMake: http://www.cmake.org/
+.. _CLHEP: http://proj-clhep.web.cern.ch/
+.. _Geant4: http://geant4.cern.ch/
+.. _Macports: http://www.macports.org/
+.. _ROOT: http://root.cern.ch/
