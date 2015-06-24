@@ -7,6 +7,12 @@ Output Analysis
 ROOT Output
 -----------
 
+Note that several ROOT output files can be combined into one file with
+the command::
+
+  hadd combined.root output_0.root output_1.root output_2.root output_3.root
+
+
 Example: Plot Optical Functions with pybdsim
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ::
