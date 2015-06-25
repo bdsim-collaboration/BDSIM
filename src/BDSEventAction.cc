@@ -32,6 +32,7 @@ extern BDSOutputBase* bdsOutput;         // output interface
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
 
 BDSEventAction::BDSEventAction():
+  analMan(NULL),
   samplerCollID_plane(-1),
   samplerCollID_cylin(-1),
   energyCounterCollID(-1),
@@ -144,7 +145,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   
   // create energy loss histogram
 #ifdef BDSDEBUG 
-  G4cout<<"BDSEventAction : storing energy loss histograms"<<G4endl;
+  G4cout << __METHOD_NAME__ << ": storing energy loss histograms" << G4endl;
 #endif
   
   BDSEnergyCounterHitsCollection* energyCounterHits = 

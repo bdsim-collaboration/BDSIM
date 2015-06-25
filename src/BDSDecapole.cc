@@ -2,9 +2,6 @@
    Author: Grahame A. Blair, Royal Holloway, Univ. of London.
    Last modified 24.7.2002
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-   Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
-   Changed StringFromInt to be the BDSGlobal version
 */
 
 #include "BDSGlobalConstants.hh" 
@@ -12,8 +9,8 @@
 #include "BDSDecapole.hh"
 #include "BDSDecMagField.hh"
 #include "BDSDecStepper.hh"
+#include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
-#include "BDSTunnelInfo.hh"
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
@@ -25,15 +22,15 @@
 BDSDecapole::BDSDecapole(G4String           name,
 			 G4double           length,
 			 G4double           bQuadPrime,
-			 BDSBeamPipeInfo    beamPipeInfo,
-			 BDSMagnetOuterInfo magnetOuterInfo,
-			 BDSTunnelInfo      tunnelInfo):
-  BDSMultipole(BDSMagnetType::decapole,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
+			 BDSBeamPipeInfo*   beamPipeInfo,
+			 BDSMagnetOuterInfo magnetOuterInfo):
+  BDSMagnet(BDSMagnetType::decapole, name, length,
+	    beamPipeInfo,magnetOuterInfo),
   itsBQuadPrime(bQuadPrime)
 {;}
 
 void BDSDecapole::Build() {
-  BDSMultipole::Build();
+  BDSMagnet::Build();
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4double polePos[4];

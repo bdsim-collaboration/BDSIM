@@ -10,8 +10,9 @@
 #include "parser/gmad.h"  
 #include "parser/options.h"
 
-#include "BDSGlobalConstants.hh"
 #include "BDSBunch.hh"
+#include "BDSExecOptions.hh"
+#include "BDSGlobalConstants.hh"
 
 extern Options options;
 
@@ -21,13 +22,11 @@ int main(int argc,char** argv) {
   // default filename
   std::string filename = "./BDSBunchTestFiles/gmad";
 
-  /// first argument is gmad file
-  if (argc>1){
-    filename = argv[1];
-  }
+  const BDSExecOptions* execOptions = BDSExecOptions::Instance(argc,argv);
 
-  // fill options from file 
-  gmad_parser(filename);
+  G4cout << __FUNCTION__ << "> Using input file : "<< execOptions->GetInputFilename()<<G4endl;
+  
+  gmad_parser(execOptions->GetInputFilename());
 
   // Print options for distrib type 
   std::cout << "BDSBunchTest> distribFile : "      << options.distribFile << std::endl;
@@ -71,7 +70,7 @@ int main(int argc,char** argv) {
        << x0 << " " << y0 << " " << z0 << " " << xp << " "
        << yp << " " << zp << " " << t  << " " << E << " " 
        << weight << std::endl;    
-  }    
+  }
 
   // close output file
   of.close();

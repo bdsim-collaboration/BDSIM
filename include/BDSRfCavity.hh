@@ -4,17 +4,12 @@
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 
-#ifndef BDSRfCavity_h
-#define BDSRfCavity_h
+#ifndef BDSRFCAVITY_H
+#define BDSRFCAVITY_H
 
-#include"globals.hh"
+#include "BDSMagnet.hh"
 
-#include "BDSMultipole.hh"
-#include "BDSBeamPipeInfo.hh"
-#include "BDSMagnetOuterInfo.hh"
-#include "BDSMaterials.hh"
-#include "BDSTunnelInfo.hh"
-
+#include "globals.hh" // geant4 types / globals
 #include "G4ChordFinder.hh"
 #include "G4EqMagElectricField.hh"
 #include "G4FieldManager.hh"
@@ -23,15 +18,17 @@
 #include "G4UserLimits.hh"
 #include "G4UniformElectricField.hh"
 
-class BDSRfCavity :public BDSMultipole
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
+
+class BDSRfCavity: public BDSMagnet
 {
   public:
   BDSRfCavity(G4String           name,
 	      G4double           length,
 	      G4double           grad,
-	      BDSBeamPipeInfo    beamPipeInfoIn,
-	      BDSMagnetOuterInfo magnetOuterInfo,
-	      BDSTunnelInfo      tunnelInfo);
+	      BDSBeamPipeInfo*   beamPipeInfoIn,
+	      BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSRfCavity(){;};
   
   private:

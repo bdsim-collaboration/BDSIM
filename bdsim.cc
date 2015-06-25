@@ -258,7 +258,6 @@ int main(int argc,char** argv) {
     }
   }
 
-
   if(!execOptions->GetBatch())   // Interactive mode
     {
       G4UIsession* session=0;
@@ -272,7 +271,7 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
       G4cout<< __FUNCTION__ << "> Initializing Visualisation Manager"<<G4endl;
 #endif
-      // Initialize visualization
+      // Initialize visualisation
       G4VisManager* visManager = new G4VisExecutive;
       // G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
       // G4VisManager* visManager = new G4VisExecutive("Quiet");
@@ -294,7 +293,7 @@ int main(int argc,char** argv) {
       std::string visPath;
       std::string localPath = bdsimPath + "vis/vis.mac";
       std::string installPath = bdsimPath + "../share/BDSIM/vis/vis.mac";
-	  
+      
       if (FILE *file = fopen(localPath.c_str(), "r")) {
 	fclose(file);
 	visPath = bdsimPath + "vis/";
@@ -306,13 +305,31 @@ int main(int argc,char** argv) {
       }
 
       // check if visualisation file is present and readable
-      std::string visMacroFilename = execOptions->GetVisMacroFilename();
-      if (FILE *file = fopen(visMacroFilename.c_str(), "r")) {
-        fclose(file);
-      } else {
-      	// if not present use a default one (OGLSQt or DAWNFILE)
-	G4cout << __FUNCTION__ << "> WARNING: visualisation file " << visMacroFilename <<  " file not present, using default!" << G4endl;
-
+      std::string visMacroName = execOptions->GetVisMacroFilename();
+      bool useDefault = false;
+      // if not set use default visualisation file
+      if (visMacroName.empty()) useDefault = true;
+      G4String visMacroFilename = execOptions->GetBDSIMPATH() + visMacroName;
+      if (!useDefault) {
+	FILE* file = NULL;
+	// first relative to main path:
+	file = fopen(visMacroFilename.c_str(), "r");
+	if (file) {
+	  fclose(file);
+	} else {
+	  // then try current path
+	  file = fopen(visMacroName.c_str(), "r");
+	  if (file) {
+	    fclose(file);
+	    visMacroFilename = visMacroName;
+	  } else {
+	    // if not present use a default one (OGLSQt or DAWNFILE)
+	    G4cout << __FUNCTION__ << "> WARNING: visualisation file " << visMacroFilename <<  " file not present, using default!" << G4endl;
+	    useDefault = true;
+	  }
+	}
+      }
+      if (useDefault) {
 #ifdef G4VIS_USE_OPENGLQT
 	visMacroFilename = visPath + "vis.mac";
 #else
@@ -340,14 +357,11 @@ int main(int argc,char** argv) {
 #endif
       delete session;
 
-#ifdef G4VIS_USE
     }
-#endif
   else           // Batch mode
     { 
       runManager->BeamOn(globalConstants->GetNumberToGenerate());
     }
-
 
   //
   // job termination
@@ -362,7 +376,6 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> BDSBeamline deleting..."<<G4endl;
 #endif
-  delete BDSBeamline::Instance();
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;

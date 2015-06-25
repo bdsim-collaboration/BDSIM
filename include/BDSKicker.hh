@@ -1,14 +1,16 @@
-#ifndef BDSKicker_h
-#define BDSKicker_h 
+#ifndef BDSKICKER_H
+#define BDSKICKER_H 
 
-#include "globals.hh"
-#include "BDSMultipole.hh"
-#include "BDSBeamPipeInfo.hh"
-#include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnet.hh"
 #include "BDSMagnetType.hh"
+
+#include "globals.hh" // geant4 types / globals
 #include "G4Material.hh"
 
-class BDSKicker:public BDSMultipole
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
+
+class BDSKicker: public BDSMagnet
 {
 public:
   BDSKicker(G4String           name,
@@ -17,9 +19,8 @@ public:
 	    G4double           bGrad,
 	    G4double           angle,
 	    G4bool             verticalKicker,
-	    BDSBeamPipeInfo    beamPipeInfo,
-	    BDSMagnetOuterInfo magnetOuterInfo,
-	    BDSTunnelInfo      tunnelInfo);
+	    BDSBeamPipeInfo*   beamPipeInfo,
+	    BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSKicker(){;};
   
 protected:

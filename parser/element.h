@@ -29,8 +29,9 @@ struct Element {
   std::string magnetGeometryType;
   std::string outerMaterial;
   double outerDiameter;
-  
+
   double tilt,xsize,ysize,r,B, phiAngleIn, phiAngleOut;
+  double offsetX, offsetY;
   double tscint, twindow, bmapZOffset; 
   double xdir, ydir, zdir, waveLength; /// for laser wire and 3d transforms
   double gradient; /// for rf cavities

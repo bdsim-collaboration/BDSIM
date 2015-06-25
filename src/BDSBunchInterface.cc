@@ -115,8 +115,8 @@ CLHEP::RandMultiGauss* BDSBunchInterface::CreateMultiGauss(CLHEP::HepRandomEngin
 G4double BDSBunchInterface::CalculateZp(G4double xp, G4double yp, G4double Zp0)const
 {
   double zp;
-  if (xp*xp -yp*yp > 1) {
-    G4cout << "WARNING xp, yp too large, xp: " << xp << " yp: " << yp << G4endl;
+  if (xp*xp+yp*yp > 1) {
+    G4cout << __METHOD_NAME__ << "ERROR xp, yp too large, xp: " << xp << " yp: " << yp << G4endl;
     exit(1);
   }
   if (Zp0<0)
@@ -124,5 +124,5 @@ G4double BDSBunchInterface::CalculateZp(G4double xp, G4double yp, G4double Zp0)c
   else
     zp = sqrt(1.-xp*xp -yp*yp);
 
-  return zp * CLHEP::rad;
+  return zp;
 }

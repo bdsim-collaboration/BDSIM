@@ -6,7 +6,7 @@
 
 /**
  * @brief Type definition for everything that inherits
- * BDSMultipole - ie is a magnet
+ * BDSMagnet - ie is a magnet
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */

@@ -22,16 +22,15 @@ class G4UniformMagField;
 class G4UserLimits;
 class G4VSensitiveDetector;
 
+class BDSBeamline;
 class ElementList;
 
 class BDSDetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
-  
   BDSDetectorConstruction();
   ~BDSDetectorConstruction();
 
-public:
   virtual G4VPhysicalVolume* Construct();
 
   inline G4VPhysicalVolume* GetWorldVolume()
@@ -46,39 +45,39 @@ private:
 
   void SetMagField(const G4double afield);
   
-  /// converts parser beamline_list to BDSAcceleratorComponent with help of BDSComponentFactory
+  /// Convert the parser beamline_list to BDSAcceleratorComponents with help of BDSComponentFactory
+  /// and put in BDSBeamline container that calcualtes coordinates and extent of beamline
   void BuildBeamline();
-  /// build world volume, and calculate positions
+  
+  /// Build the world volume using the extent of the BDSBeamline instance created
+  /// in BuildBeamline()
   void BuildWorld();
-  /// placements
+  
+  /// Iterate over the beamline and place each BDSAcceleratorComponent in the world volume
   void ComponentPlacement();
-  /// build tunnel from _TUNNEL elements
-  void BuildTunnel();
-
-  /// function to add the volume to the gflash parameterisation model
+  
+  /// Function to add the volume to the gflash parameterisation model
   void SetGFlashOnVolume(G4LogicalVolume* volume);
 
   G4bool verbose;
 
   G4GeometrySampler* itsGeometrySampler;
 
-  G4Region* precisionRegion;
-  G4Region* gasRegion;
-
-  //  BDSWorld* _world;
+  G4Region*          precisionRegion;
+  G4Region*          gasRegion;
 
   G4Box*             solidWorld;    //pointer to the solid World 
   G4LogicalVolume*   logicWorld;    //pointer to the logical World
   G4VPhysicalVolume* physiWorld;    //pointer to the physical World
   std::vector<G4double> itsWorldSize;
-  std::vector< G4VPhysicalVolume * > fPhysicalVolumeVector; //a vector with all the physical volumes
+  std::vector<G4VPhysicalVolume*> fPhysicalVolumeVector; //a vector with all the physical volumes
 
   G4UniformMagField* magField;      //pointer to the magnetic field
   G4UserLimits* BDSUserLimits;
 
   G4VSensitiveDetector* BDSSensitiveDetector;
   
-  // Gflash members                                                                                                                                                     
+  // Gflash members
   std::vector<GFlashHomoShowerParameterisation*> theParameterisation;
   GFlashHitMaker *theHitMaker;
   GFlashParticleBounds *theParticleBounds;

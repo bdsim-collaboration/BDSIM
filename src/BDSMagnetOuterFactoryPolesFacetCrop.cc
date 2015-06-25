@@ -9,6 +9,8 @@
 #include "G4Tubs.hh"
 #include "G4VSolid.hh"
 
+#include <cmath>
+
 BDSMagnetOuterFactoryPolesFacetCrop* BDSMagnetOuterFactoryPolesFacetCrop::_instance = 0;
 
 BDSMagnetOuterFactoryPolesFacetCrop* BDSMagnetOuterFactoryPolesFacetCrop::Instance()
@@ -89,7 +91,8 @@ void BDSMagnetOuterFactoryPolesFacetCrop::CreateYokeAndContainerSolid(G4String  
 
   // note container must have hole in it for the beampipe to fit in!
   // poled geometry doesn't fit tightly to beampipe so can alays use a circular aperture
-  G4double yokeExtent   = yokeFinishRadius / cos(segmentAngle*0.5);
+  G4double yokeExtent   = yokeFinishRadius / cos(segmentAngle*0.25);
+  
   containerSolid = new G4Tubs(name + "_container_solid",       // name
 			      poleStartRadius,                 // start radius
 			      yokeExtent + lengthSafety,       // finish radius

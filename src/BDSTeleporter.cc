@@ -19,11 +19,7 @@
 
 BDSTeleporter::BDSTeleporter(G4String name,
 			     G4double length):
-  BDSAcceleratorComponent(name,
-			  length,
-			  0,
-			  0,
-			  0),
+  BDSAcceleratorComponent(name, length, 0, "teleporter"),
   itsChordFinder(NULL),itsFieldManager(NULL),itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
 {
 #ifdef BDSDEBUG
@@ -36,20 +32,25 @@ void BDSTeleporter::Build()
 {
   BuildBPFieldAndStepper();   // create custom stepper
   BuildBPFieldMgr(itsStepper,itsMagField);  // register it in a manager
-  BDSAcceleratorComponent::Build(); // create logical volume and attach manager(stepper)
+  BDSAcceleratorComponent::Build(); // create container and attach stepper
 }
 
-void BDSTeleporter::BuildMarkerLogicalVolume()
+void BDSTeleporter::BuildContainerLogicalVolume()
 {
-  itsMarkerLogicalVolume = 
-    new G4LogicalVolume(
-			new G4Box (itsName+"_solid",
-				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				   itsLength/2.0),
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
-			itsName);
-  itsMarkerLogicalVolume->SetFieldManager(itsFieldManager,false); // modelled from BDSMultipole.cc
+  G4double radius = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5;
+  containerSolid = new G4Box(name+"_container_solid",
+			     radius,
+			     radius,
+			     chordLength*0.5);
+  containerLogicalVolume = new G4LogicalVolume(containerSolid,
+					       emptyMaterial,
+					       name + "_container_lv");
+  containerLogicalVolume->SetFieldManager(itsFieldManager,false); // modelled from BDSMagnet.cc
+
+  // register extents with BDSGeometryComponent base class
+  SetExtentX(-radius,radius);
+  SetExtentY(-radius,radius);
+  SetExtentZ(-chordLength*0.5, chordLength*0.5);
 }
   
 void BDSTeleporter::BuildBPFieldAndStepper()
@@ -66,10 +67,10 @@ void BDSTeleporter::BuildBPFieldAndStepper()
 void BDSTeleporter::BuildBPFieldMgr( G4MagIntegratorStepper* stepper,
     G4MagneticField* field)
 {
-  //this is all copied from BDSMultipole.cc although names tidied a bit
+  //this is all copied from BDSMagnet.cc although names tidied a bit
   itsChordFinder = 
     new G4ChordFinder(field,
-    itsLength*0.5/CLHEP::m,
+    chordLength*0.5/CLHEP::m,
 		      stepper);
 
   itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
@@ -87,55 +88,27 @@ void BDSTeleporter::BuildBPFieldMgr( G4MagIntegratorStepper* stepper,
     itsFieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
 }
 
-void BDSTeleporter::SetVisAttributes()
-{
-  //make it visible if debug build and invisible otherwise
-  itsVisAttributes = new G4VisAttributes(G4Colour(0.852,0.438,0.836,0.5));
-#if defined BDSDEBUG
-  itsVisAttributes->SetVisibility(true);
-#else
-  itsVisAttributes->SetVisibility(false);
-#endif
-}
-
-void CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
+void BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
 {
   // get position of last item in beamline
   // and then calculate necessary offset teleporter should apply
-  G4ThreeVector* lastitemposition   = thebeamline->GetLastPosition();
-  G4ThreeVector* firstitemposition  = thebeamline->GetFirstPosition();
-  G4ThreeVector  delta              = *lastitemposition/CLHEP::m - *firstitemposition/CLHEP::m;
+  G4ThreeVector lastitemposition   = thebeamline->back()->GetReferencePositionEnd();
+  G4ThreeVector firstitemposition  = thebeamline->front()->GetReferencePositionStart();
+  G4ThreeVector  delta             = lastitemposition - firstitemposition;
 #ifdef BDSDEBUG
   G4cout << "Calculating Teleporter delta" << G4endl;
-  G4cout << "last item position  : " << *lastitemposition/CLHEP::m << G4endl;
-  G4cout << "first item position : " << *firstitemposition/CLHEP::m << G4endl;
+  G4cout << "last item position  : " << lastitemposition  << " mm" << G4endl;
+  G4cout << "first item position : " << firstitemposition << " mm" << G4endl;
 #endif
-  G4cout << "Teleport delta      : " << delta << G4endl;
-  BDSGlobalConstants::Instance()->SetTeleporterDelta(delta*CLHEP::m);
+  G4cout << "Teleport delta      : " << delta << " mm" << G4endl;
+  BDSGlobalConstants::Instance()->SetTeleporterDelta(delta);
   
   // calculate length of teleporter
   // beamline is built along z and sbend deflects in x
   // setting length here ensures that length is always the z difference
-  G4double teleporterlength       = fabs(delta.z()*CLHEP::m) - 1e-8*CLHEP::m;
-  G4cout << "Calculated teleporter length : " << teleporterlength/CLHEP::m << " m" << G4endl;
+  G4double teleporterlength       = fabs(delta.z()) - 1e-8;
+  G4cout << "Calculated teleporter length : " << teleporterlength << " mm" << G4endl;
   BDSGlobalConstants::Instance()->SetTeleporterLength(teleporterlength);
-}
-
-
-
-
-void AddTeleporterToEndOfBeamline(ElementList* beamline_list)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << ": adding teleporter element to end of beamline" << G4endl;
-#endif
-  //based on void add_sampler in parser.h
-  //create basic element with type teleporter and put on end
-  struct Element e;
-  e.type = _TELEPORTER;
-  e.name = "Teleporter";
-  e.lst  = NULL; 
-  beamline_list->push_back(e);
 }
 
 BDSTeleporter::~BDSTeleporter()

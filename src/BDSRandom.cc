@@ -28,7 +28,7 @@ void BDSRandom::SetSeed()
          << __METHOD_NAME__ << " seed from BDSExecOptions = "
          << BDSExecOptions::Instance()->GetSeed() << G4endl
          << __METHOD_NAME__ << " seed set in exec options : "
-	 << BDSExecOptions::Instance()->SetSeed() << G4endl;
+	 << BDSExecOptions::Instance()->IsSeedSet() << G4endl;
 #endif
   // get seed from options if set
   // override with seed from execoptions if specifed
@@ -41,7 +41,7 @@ void BDSRandom::SetSeed()
     seed = BDSGlobalConstants::Instance()->GetRandomSeed();
   
   // if the seed was set by command line (exec) option - override the general option
-  if(BDSExecOptions::Instance()->SetSeed())
+  if(BDSExecOptions::Instance()->IsSeedSet())
     {seed = BDSExecOptions::Instance()->GetSeed();}
 
 #ifdef BDSDEBUG

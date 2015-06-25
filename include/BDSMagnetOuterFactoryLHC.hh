@@ -25,18 +25,6 @@ class BDSMagnetOuterFactoryLHC: public BDSMagnetOuterFactoryBase
 public:
   BDSMagnetOuterFactoryLHC(G4bool isLeftOffset);
   ~BDSMagnetOuterFactoryLHC(){;};
-
-  /// Provide external access to the coil thickness so as to determine parameter suitability
-  /// In mm
-  G4double GetCoilThickness();
-
-  /// Provide external access to the separation between the two beam pipe axes (note central
-  /// points not edges) for testing parameter suitability
-  /// In mm
-  G4double GetBeamPipeSeparation();
-
-  // Provide external access to the collar thickness fo parameter testing (in mm)
-  G4double GetCollarThickness();
   
   /// sector bend outer volume
   virtual BDSGeometryComponent* CreateSectorBend(G4String      name,                // name
@@ -152,19 +140,7 @@ private:
   void TestInputParameters(BDSBeamPipe* beamPipe,
 			   G4double&    boxSizeIn,
 			   G4Material*& outerMaterialIn);
-
-  G4double  lengthSafety;
-  G4double  nSegmentsPerCircle; // for visualisation improvement
-  G4VSolid* outerSolid;
-  G4VSolid* containerSolid;
-
-  // geometrical parameters
-  G4double  massShift;
-  G4double  BPseparation;
-  G4double  coilFullThickness;
-  G4double  innerCoilThickness;
-  G4double  outerCoilThickness;
-  G4double  collarThickness;
+  
 };
 
 #endif

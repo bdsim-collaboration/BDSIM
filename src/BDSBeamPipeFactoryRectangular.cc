@@ -179,10 +179,6 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CommonFinalConstruction(G4String    
 
   BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerRadius);
 
-  // register sensitive volumes
-  aPipe->RegisterSensitiveVolume(beamPipeLV);
-  aPipe->RegisterSensitiveVolume(containerLV);
-
   return aPipe;
 }
 

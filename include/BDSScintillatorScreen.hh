@@ -18,7 +18,11 @@ Work in progress.
 class BDSScintillatorScreen :public BDSAcceleratorComponent
 {
 public:
-  BDSScintillatorScreen(G4String aName, G4double tScint=0.3*CLHEP::mm, G4double angle=0, G4String scintMaterial="lanex", G4String airMaterial="air");
+  BDSScintillatorScreen(G4String      aName,
+			G4double      tScint        = 0.3*CLHEP::mm,
+			G4double      angle         = 0,
+			G4String      scintMaterial = "lanex",
+			G4String      airMaterial   = "air");
   ~BDSScintillatorScreen();
 
 protected:
@@ -26,10 +30,9 @@ protected:
 private:
   virtual void Build();
   void BuildScintillatorScreen();
-  void BuildScintillatorScreenTunnel();
   void SetVisAttributes();
   void ComputeDimensions();
-  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildContainerLogicalVolume();
   void BuildCameraScoringPlane();
   void BuildScreenScoringPlane();
   void BuildScintillatorMaterial();
@@ -47,8 +50,8 @@ private:
   G4VPhysicalVolume* itsScintillatorLayerPhys;
   G4VPhysicalVolume* itsBaseLayerPhys;
   G4VPhysicalVolume* itsBackLayerPhys;
-  G4VPhysicalVolume* itsCameraScoringPlanePhys;
-  G4VPhysicalVolume* itsScreenScoringPlanePhys;
+  //G4VPhysicalVolume* itsCameraScoringPlanePhys;
+  //G4VPhysicalVolume* itsScreenScoringPlanePhys;
 
   G4LogicalVolume* itsFrontLayerLog;
   G4LogicalVolume* itsScintillatorLayerLog;
@@ -63,24 +66,14 @@ private:
   G4VSolid* itsBackLayerSolid;
   G4VSolid* itsCameraScoringPlaneSolid;
   G4VSolid* itsScreenScoringPlaneSolid;
-
-
-
-  G4LogicalVolume* itsInnerTunnelLogicalVolume;
-  G4LogicalVolume* itsSoilTunnelLogicalVolume;
-  G4UserLimits* itsTunnelUserLimits;
-  G4UserLimits* itsSoilTunnelUserLimits;
-  G4UserLimits* itsInnerTunnelUserLimits;
-                    
-  G4Mag_UsualEqRhs* itsEqRhs;
   
 private:
-  G4Material* _frontLayerMaterial;
+  //  G4Material* _frontLayerMaterial;
   G4Material* _scintillatorLayerMaterial;
-  G4Material* _baseLayerMaterial;
-  G4Material* _backLayerMaterial;
+  //G4Material* _baseLayerMaterial;
+  //G4Material* _backLayerMaterial;
   G4Material* _airMaterial;
-  G4double itsOuterR;
+  //G4double itsOuterR;
 
   G4double _screenWidth;
   G4double _screenHeight;

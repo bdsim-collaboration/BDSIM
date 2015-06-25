@@ -8,19 +8,24 @@ Work in progress.
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
+#include "BDSAwakeMultilayerScreen.hh"
+#include "BDSCCDCamera.hh"
+
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
-
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
-#include "BDSAwakeMultilayerScreen.hh"
-#include "BDSCCDCamera.hh"
 
 class BDSAwakeScintillatorScreen :public BDSAcceleratorComponent
 {
 public:
-  BDSAwakeScintillatorScreen(G4String aName, G4String material, G4double thickness, G4double angle, G4double windowThickness, G4String windowMaterial);
+  BDSAwakeScintillatorScreen(G4String aName,
+			     G4String material,
+			     G4double thickness,
+			     G4double angle,
+			     G4double windowThickness,
+			     G4String windowMaterial);
   virtual ~BDSAwakeScintillatorScreen();
 
 protected:
@@ -36,7 +41,7 @@ private:
   void BuildVacuumChamber2();
   virtual void SetVisAttributes();
   void ComputeDimensions();
-  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildContainerLogicalVolume();
   void BuildCameraScoringPlane();
   void BuildScreenScoringPlane();
   void BuildAwakeScintillatorMaterial();
@@ -62,17 +67,10 @@ private:
   G4LogicalVolume* itsScreenScoringPlaneLog2;
   G4VSolid* itsCameraScoringPlaneSolid;
   G4VSolid* itsScreenScoringPlaneSolid;
-
-  G4LogicalVolume* itsInnerTunnelLogicalVolume;
-  G4LogicalVolume* itsSoilTunnelLogicalVolume;
-  G4UserLimits* itsTunnelUserLimits;
-  G4UserLimits* itsSoilTunnelUserLimits;
-  G4UserLimits* itsInnerTunnelUserLimits;
                     
-  //  G4Mag_UsualEqRhs* itsEqRhs;
-  
-private:
   G4double itsOuterR;
+  G4double itsXLength;
+  G4double itsYLength;
 
   G4RotationMatrix* _screenRotationMatrix;
   G4RotationMatrix* _vacRotationMatrix;

@@ -31,11 +31,15 @@ public:
 			  G4String title,
 			  G4int    nbins,
 			  G4double xmin,
-			  G4double xmax);
+			  G4double xmax,
+			  G4String xlabel="",
+			  G4String ylabel="");
 
   G4int Create1DHistogram(G4String name,
 			  G4String title,
-			  std::vector<double>& edges);
+			  std::vector<double>& edges,
+			  G4String xlabel="",
+			  G4String ylabel="");
 
   /// Access a histogram
   BDSHistogram1D* GetHistogram(G4int index);
@@ -43,7 +47,8 @@ public:
   /// Fill a histogram
   void Fill1DHistogram(G4int histoIndex, G4double value, G4double weight=1.0);
   
-  
+  /// Return number of histograms
+  G4int NumberOfHistograms()const;
 
 private:
   /// private default constructor for singleton pattern

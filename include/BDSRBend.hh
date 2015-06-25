@@ -1,14 +1,14 @@
-#ifndef BDSRBend_h
-#define BDSRBend_h 
+#ifndef BDSRBEND_H
+#define BDSRBEND_H 
 
 #include "globals.hh"
 
-#include "BDSBeamPipeInfo.hh"
-#include "BDSMagnetOuterInfo.hh"
-#include "BDSMultipole.hh"
-#include "BDSTunnelInfo.hh"
+#include "BDSMagnet.hh"
 
-class BDSRBend :public BDSMultipole
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
+
+class BDSRBend: public BDSMagnet
 {
 public:
   BDSRBend(G4String           name,
@@ -16,9 +16,8 @@ public:
 	   G4double           bField,
 	   G4double           bGrad,
 	   G4double           angle,
-	   BDSBeamPipeInfo    beamPipeInfo,
-	   BDSMagnetOuterInfo magnetOuterInfo,
-	   BDSTunnelInfo      tunnelInfo);
+	   BDSBeamPipeInfo*   beamPipeInfo,
+	   BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSRBend(){;};
 
 private:
@@ -26,18 +25,11 @@ private:
   G4double itsBGrad;
   G4double itsMagFieldLength;
 
-  /// chord length in [m]
-  G4double itsChordLength;
-
   /// chord length of straight section (along main chord) [m]
   G4double itsStraightSectionChord;
 
   /// length of little straight sections on either side of dipole [m]
   G4double itsStraightSectionLength;
-  
-  /// normal vectors for faces when preparing solids
-  G4ThreeVector inputface;
-  G4ThreeVector outputface;
 
   /// x shift for magnet and beampipe from chord
   G4double magnetXShift;
@@ -50,7 +42,6 @@ private:
   
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
-  virtual void BuildMarkerLogicalVolume();
   virtual void BuildBeampipe();
   virtual void BuildOuterVolume(); // override this method to change length used
 

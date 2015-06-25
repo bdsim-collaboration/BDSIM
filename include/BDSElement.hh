@@ -4,30 +4,32 @@
    Copyright (c) 2004 by J.C.Carter.  ALL RIGHTS RESERVED. 
 */
 
-#ifndef BDSElement_h
-#define BDSElement_h 
+#ifndef BDSELEMENT_H
+#define BDSELEMENT_H 
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
+#include "BDSMagField.hh"
 
-#include "G4FieldManager.hh"
+#include "G4CachedMagneticField.hh"
 #include "G4ChordFinder.hh"
+#include "G4EqMagElectricField.hh"
+#include "G4FieldManager.hh"
+#include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4UserLimits.hh"
 #include "G4UniformMagField.hh"
-#include "BDSMagField.hh"
-#include "G4CachedMagneticField.hh"
 
-#include "G4EqMagElectricField.hh"
-
-class BDSElement :public BDSAcceleratorComponent
+class BDSElement: public BDSAcceleratorComponent
 {
 public:
-  BDSElement(G4String aName, G4String geometry, G4String bmap, G4double aBmapZOffset, G4double aLength, 
-             G4double bpRad, G4double outR, G4String aTunnelMaterial="", G4double tunnelRadius=0., G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(), G4String aTunnelCavityMaterial="Air");
+  BDSElement(G4String      name,
+	     G4double      length, 
+	     G4String      geometry,
+	     G4String      bmap,
+	     G4double      aBmapZOffset);
   ~BDSElement();
 
   // creates a field mesh in global coordinates in case it is given by map
@@ -44,7 +46,7 @@ public:
    
 private:
 
-  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildContainerLogicalVolume();
   void SetVisAttributes();  
 
   void BuildElementMarkerLogicalVolume();

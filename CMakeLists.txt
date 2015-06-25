@@ -87,7 +87,7 @@ if(UNIX)
     endif()
 endif()
 
-# We use afs version of Geant4/CLHEP if we are on lxplus by default:
+# Check for lxplus. We use afs version of Geant4/CLHEP if we are on lxplus by default:
 if(EXISTS "/afs/cern.ch" AND LXPLUS)
     option(USE_AFS "Use Geant4/CLHEP libraries from AFS" ON)
     if($ENV{VERBOSE})
@@ -114,11 +114,15 @@ if (USE_AFS AND NOT CLHEP_LIBRARY_DIR)
          set(CLHEP_LIBRARY_DIR  /afs/cern.ch/sw/lcg/external/clhep/2.1.4.1/x86_64-slc6-gcc46-opt/lib)
       endif()
    endif()
+else()
+   if($ENV{VERBOSE})
+      set(CLHEP_CONFIG_DEBUG TRUE)
+   endif()
+   find_package(CLHEP REQUIRED)
+   message(STATUS "Looking for CLHEP... - found")
+   message(STATUS "Found CLHEP ${CLHEP_VERSION} in ${CLHEP_INCLUDE_DIRS}")
 endif()
-
-set(CLHEP_VERSION 9)
-find_package(CLHEP REQUIRED)
-include_directories(${CLHEP_INCLUDE_DIR})
+include_directories(${CLHEP_INCLUDE_DIRS})
 
 # ROOT
 if ($ENV{ROOTSYS})
@@ -416,3 +420,4 @@ add_subdirectory(test)
 
 # Manual
 add_subdirectory(docs)
+add_subdirectory(manual)

@@ -31,7 +31,7 @@ public:
 
 private:
   /// Private constructor as singleton - nothing special here - all in parent class
-  BDSMagnetOuterFactoryPolesSquare(){;}; 
+  BDSMagnetOuterFactoryPolesSquare(); 
   static BDSMagnetOuterFactoryPolesSquare* _instance;
 
   virtual void CleanUp();

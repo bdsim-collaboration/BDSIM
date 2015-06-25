@@ -1,5 +1,5 @@
-#ifndef __BDSCOMPONENTFACTORY_
-#define __BDSCOMPONENTFACTORY_
+#ifndef BDSCOMPONENTFACTORY_H
+#define BDSCOMPONENTFACTORY_H
 
 #include <list>
 #include "globals.hh"
@@ -10,16 +10,22 @@
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSTunnelInfo.hh"
 
-class ElementList; 
+class ElementList;
+class BDSTiltOffset;
 
 class BDSComponentFactory{
 public:
   BDSComponentFactory();
   ~BDSComponentFactory();
-  
-  BDSAcceleratorComponent* createComponent(std::list<struct Element>::iterator elementIter, ElementList& beamline_list);
-  BDSAcceleratorComponent* createComponent(Element& aElement, Element& previousElement, Element& nextElement);
-  BDSAcceleratorComponent* createComponent();
+
+  /// Create component from parser Element
+  BDSAcceleratorComponent* createComponent(Element& element);
+
+  // for each of them - special cases need only for ring logic
+  BDSAcceleratorComponent* createTerminator();
+  BDSAcceleratorComponent* createTeleporter();
+  /// Create the tilt and offset information object by inspecting the parser element
+  BDSTiltOffset*           createTiltOffset(Element& element);
  
 private:
   G4bool   verbose;
@@ -31,11 +37,9 @@ private:
   std::list<struct Element>::iterator _elementIter, _previousElementIter, _nextElementIter;
   /// beamline
   std::list<BDSAcceleratorComponent*> itsBeamline;
-  /// parser data
-  Element _element, _previousElement, _nextElement;
-  /// method to add common properties (not needed at creation!)
-  /// like aperture after creation
-  void addCommonProperties(BDSAcceleratorComponent* element);
+  /// element for storing instead of passing around
+  Element _element;
+  
   BDSAcceleratorComponent* createSampler();
   BDSAcceleratorComponent* createCSampler();
   BDSAcceleratorComponent* createDump();
@@ -51,23 +55,24 @@ private:
   BDSAcceleratorComponent* createMultipole();
   BDSAcceleratorComponent* createElement();
   BDSAcceleratorComponent* createSolenoid();
-  BDSAcceleratorComponent* createCollimator();
+  BDSAcceleratorComponent* createRectangularCollimator();
+  BDSAcceleratorComponent* createEllipticalCollimator();
   BDSAcceleratorComponent* createMuSpoiler();
   BDSAcceleratorComponent* createLaser();
   BDSAcceleratorComponent* createScreen();
   BDSAcceleratorComponent* createAwakeScreen();
   BDSAcceleratorComponent* createTransform3D();
-  // for each of them - special cases need only for ring logic
-  BDSAcceleratorComponent* createTerminator();
-  BDSAcceleratorComponent* createTeleporter();
 
-  /// Utility function to prepare beampipe
+  /// Testing function
+  G4bool HasSufficientMinimumLength(Element& element);
+  
+  ///@{ Utility function to prepare beampipe
   G4Material*        PrepareBeamPipeMaterial(Element& element);
   G4Material*        PrepareVacuumMaterial(Element& element);
   BDSMagnetOuterInfo PrepareMagnetOuterInfo(Element& element);
-  BDSTunnelInfo      PrepareTunnelInfo(Element& element);
   G4double           PrepareOuterDiameter(Element& element);
-  BDSBeamPipeInfo    PrepareBeamPipeInfo(Element& element);
+  BDSBeamPipeInfo*   PrepareBeamPipeInfo(Element& element);
+  ///@}
 
 };
 #endif

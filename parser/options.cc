@@ -1,7 +1,5 @@
 #include "options.h"
 
-#include "getEnv.h"
-
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
@@ -18,6 +16,8 @@ Options::Options(){
   zDistribType = "";
   distribFile = "";
   distribFileFormat = "";
+  haloPSWeightParameter = 1.0;
+  haloPSWeightFunction = "";
 
   numberToGenerate = 1;
   nlinesIgnore = 0;
@@ -82,7 +82,7 @@ Options::Options(){
   showTunnel = 0;
   tunnelOffsetX = 0;
   tunnelOffsetY = 0;
-  samplerDiameter = 0.0;
+  samplerDiameter = 5; // m
   tunnelThickness = 0.0;
   tunnelSoilThickness = 0.0;
   tunnelFloorOffset = 0.0;
@@ -261,6 +261,9 @@ void Options::set_value(std::string name, double value )
   if(name == "Rmin" ) { Rmin = value; return; }
   if(name == "Rmax" ) { Rmax = value; return; }
 
+  // options for beam distrType="halo"
+  if(name == "haloPSWeightParameter") {haloPSWeightParameter= value; return;}
+
   //
   // numeric options for the"option" command
   //
@@ -370,7 +373,7 @@ void Options::set_value(std::string name, double value )
   if(name == "srLowX") { synchLowX = value; return; }
   if(name == "srLowGamE") { synchLowGamE = value; return; }
   if(name == "srMultiplicity") { synchPhotonMultiplicity = (int) value; return; }
-  if(name == "srMeamFreeFactor") { synchMeanFreeFactor = (int) value; return; }
+  if(name == "srMeanFreeFactor") { synchMeanFreeFactor = (int) value; return; }
 
   if(name == "prodCutPhotons" ) { prodCutPhotons = value; return; }
   if(name == "prodCutPhotonsP" ) { prodCutPhotonsP = value; return; }
@@ -433,8 +436,9 @@ void Options::set_value(std::string name, std::string value )
   if(name == "xDistrType" ) { xDistribType = value; return; }
   if(name == "yDistrType" ) { yDistribType = value; return; }
   if(name == "zDistrType" ) { zDistribType = value; return; }
-  if(name == "distrFile" ) { distribFile = getEnv("BDSIMPATH")+value; return; }
+  if(name == "distrFile" ) { distribFile = value; return; }
   if(name == "distrFileFormat" ) { distribFileFormat = value; return; }
+  if(name == "haloPSWeightFunction")  {haloPSWeightFunction = value; return;}
 
   //
   // string options for the "option" command

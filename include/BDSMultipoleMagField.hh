@@ -5,17 +5,14 @@
 
 */
 
-//==============================================================
-
-
-#ifndef BDSMultipoleMagField_h
-#define BDSMultipoleMagField_h
+#ifndef BDSMULTIPOLEMAGFIELD_H
+#define BDSMULTIPOLEMAGFIELD_H
 
 #include <list>
 #include "G4Types.hh"
 #include "G4MagneticField.hh"
 
-class BDSMultipoleMagField : public G4MagneticField
+class BDSMultipoleMagField: public G4MagneticField
 {
 public:  // with description
 

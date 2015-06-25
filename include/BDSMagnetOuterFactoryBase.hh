@@ -20,7 +20,7 @@
  * implied by the factory name and omitting it will reduce the name length.
  *
  * Each factory should implement a method for every type of magnet - ie for
- * each class that inherits BDSMultipole.
+ * each class that inherits BDSMagnet.
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
@@ -126,6 +126,25 @@ public:
 					     G4Material*  outerMaterial = NULL   // material for outer volume
 					     ) = 0;
 
+  /// Empty containers for next use - factories are never deleted so can't rely on scope
+  virtual void CleanUp();
+
+protected:
+  BDSMagnetOuterFactoryBase();
+  
+  // geometric pointers that will be used to pass around components
+  // within the factory (as different parts factorised so they can
+  // be overridden by the derived classes.
+  G4double         lengthSafety;
+  G4bool           checkOverlaps;      // to avoid using globalconstants a lot
+  G4double         nSegmentsPerCircle; // for visualisation improvement
+  G4double         maxStepFactor;      // for user limits
+  G4VSolid*        poleSolid; /// solid for an individual pole that will be placed multiple times
+  G4VSolid*        yokeSolid; /// solid for outer part that connects all poles
+  G4VSolid*        containerSolid;
+  G4LogicalVolume* poleLV;
+  G4LogicalVolume* yokeLV;
+  G4LogicalVolume* containerLV;
   
   
 };

@@ -20,13 +20,12 @@
 class BDSDump : public BDSAcceleratorComponent
 {
 public:
-  BDSDump(G4String aName,G4double aLength, G4String aTunnelMaterial="");
+  BDSDump(G4String aName,
+	  G4double aLength);
   ~BDSDump();
 
 private:
-
-  virtual void BuildMarkerLogicalVolume();
-  virtual void SetVisAttributes();
+  virtual void BuildContainerLogicalVolume();
 
   /// number of total Dumps
   static int nDumps;

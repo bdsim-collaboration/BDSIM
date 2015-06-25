@@ -15,10 +15,10 @@
 BDSRfCavity::BDSRfCavity(G4String           name,
 			 G4double           length,
 			 G4double           grad,
-			 BDSBeamPipeInfo    beamPipeInfo,
-			 BDSMagnetOuterInfo magnetOuterInfo,
-			 BDSTunnelInfo      tunnelInfo):
-  BDSMultipole(BDSMagnetType::rfcavity,name,length,beamPipeInfo,magnetOuterInfo,tunnelInfo),
+			 BDSBeamPipeInfo*   beamPipeInfo,
+			 BDSMagnetOuterInfo magnetOuterInfo):
+  BDSMagnet(BDSMagnetType::rfcavity, name, length,
+	    beamPipeInfo, magnetOuterInfo),
   itsGrad(grad)
 {
   itsEField    = NULL;

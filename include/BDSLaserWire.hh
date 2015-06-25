@@ -4,10 +4,10 @@
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 
-#ifndef BDSLaserWire_h
-#define BDSLaserWire_h 1
+#ifndef BDSLASERWIRE_H
+#define BDSLASERWIRE_H
 
-#include "globals.hh"
+#include "globals.hh"  // geant4 types / globals
 #include "BDSAcceleratorComponent.hh"
 
 #include "BDSLaserCompton.hh"
@@ -15,8 +15,10 @@
 class BDSLaserWire :public BDSAcceleratorComponent
 {
 public:
-  BDSLaserWire(G4String aName,G4double aLength,
-	       G4double aWavelength, G4ThreeVector aDirection);
+  BDSLaserWire(G4String aName,
+	       G4double aLength,
+	       G4double aWavelength,
+	       G4ThreeVector aDirection);
   ~BDSLaserWire();
 
   inline void SetLaserDirection(G4ThreeVector aDirection);
@@ -26,8 +28,7 @@ public:
   inline G4double GetLaserWavelength();
 
 private:
-  virtual void BuildMarkerLogicalVolume();
-  virtual void SetVisAttributes();
+  virtual void BuildContainerLogicalVolume();
 
   BDSLaserCompton* itsLaserCompton; // not used atm, JS
   G4ThreeVector itsLaserDirection;
