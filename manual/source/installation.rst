@@ -80,6 +80,8 @@ BDSIM in::
   > ls
   bdsim bdsim-build
 
+It is important that the build directory be outside the source directory as otherwise
+trouble may be encountered when receiving further updates from the git repository.
 From this directory use the following CMake command to configure the BDSIM
 installation::
 
@@ -122,7 +124,7 @@ This typically produces the following output, which is slightly different on eac
   -- Found FLEX: /opt/local/bin/flex (found version "2.5.37") 
   -- Configuring done
   -- Generating done
-  -- Build files have been written to: /Users/nevay/physics/reps/bdsim-test2
+  -- Build files have been written to: /Users/nevay/physics/reps/bdsim-build
 
 CMake will search your system for the required dependencies. In the above example, this
 proceeded without any errors. In the case where a required dependency cannot be found,
@@ -137,9 +139,16 @@ BDSIM can then be installed for access from anywhere on the system with::
   
   > sudo make install
 
-To change the installation directory, see `Configuring the BDSIM Build with CMake`_
-From any directory on your computer, ``bdsim`` should be available.  From the build directory
-you can verify your installation using a series of tests included with BDSIM. ::
+To change the installation directory, see `Configuring the BDSIM Build with CMake`_.
+From any directory on your computer, ``bdsim`` should be available.
+
+.. note:: This step is not stictly necessary. It is possible to simply create an alias to the
+	  exectuable ``bdsim`` that exists in the build directory in your shell profile. This
+	  is common practice for developers who may wish to have a debug build of the code as
+	  well as the normal release build.
+
+From the build directory you can verify your installation using a series of tests
+included with BDSIM. ::
 
   > ctest -E LONG
 
@@ -163,6 +172,8 @@ BDSIM in::
   > ls
   bdsim          bdsim-build
 
+It is important that the build directory be outside the source directory as otherwise
+trouble may be encountered when receiving further updates from the git repository.
 From this directory use the following CMake command to configure the BDSIM
 installation::
 
@@ -177,6 +188,11 @@ BDSIM can then be installed for access from anywhere on the system with::
   
   > sudo make install
 
+.. note:: This step is not stictly necessary. It is possible to simply create an alias to the
+	  exectuable ``bdsim`` that exists in the build directory in your shell profile. This
+	  is common practice for developers who may wish to have a debug build of the code as
+	  well as the normal release build.
+	  
 To change the installation directory, see `Configuring the BDSIM Build with CMake`_
 From any directory on your computer, ``bdsim`` should be available.  From the build directory
 you can verify your installation using a series of tests included with BDSIM.::
@@ -190,14 +206,14 @@ When the machine has AFS connection, the latest stable release binary is availab
 
    /afs/cern.ch/user/j/jsnuveri/public/bdsim
 
-Before using the binary as always source the geant4 setup::
+Before using the binary you must source the geant4 setup::
 
    source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
 
-For compiling from source the dependent packages like Geant4 can
-be taken from AFS and don't need to be installed. The same compiler version needs
-to be used for BDSIM as the one for Geant4.  The following scripts must be sourced
-before using CMake.  
+When compiling BDSIM from source, the dependent packages like Geant4 can
+be taken from AFS and don't need to be compiled and installed locally. The same
+compiler version needs to be used for BDSIM as the one that was used for Geant4.
+The following scripts must be sourced before using CMake.  
 
 For the versions 0.61 and onwards::
 
@@ -243,17 +259,23 @@ can be specified by editing the ``CMAKE_INSTALL_PREFIX`` variable.
 Making the Manual
 -----------------
 
-For HTML from the build directory run the following command::
+The manual is available online at http://www.pp.rhul.ac.uk/bdsim/manual and included
+as a pdf in the source directory, but if
+desired the user can compile the manual in both HTML and pdflatex from the build
+directory using the following command::
 
   > make manual
 
-to make the HTML Manual in the folder ``manual/html``.
-
-And for pdflatex::
+to make the HTML manual in the folder ``manual/html``. Similarly::
 
   > make manual-pdf
 
-to make the pdf Manual in the folder ``manual/latex``.
+will make the pdf Manual in the folder ``manual/latex``.
+
+.. note:: This requires the sphinx documentation system to be installed and all utility
+	  python packages to be availbe in python from any directory. The latexpdf build
+	  requuires a full installation of pdflatex to be available as well.
+
 
 Making Doxygen Code Documentation
 ---------------------------------
@@ -264,12 +286,13 @@ From the build directory run the following command::
 
 to make the Doxygen documentation in a folder called ``Doxygen``.
 
+.. note:: This requires the Doxygen documentation system to be installed.
+
 Geant4 Installation Guide
 -------------------------
 
-BDSIM now builds with the most recent versions of Geant4, but only the BDSIM develop
-branch. A new official version will be released soon (January 2015). If not built
-with **MacPorts** then download the 4.10.01 version or an older version from the
+As of version 0.65, BDSIM builds with the most recent versions of Geant4 (version 4.9.6 onwards).
+If not built with **MacPorts** then download the 4.10.01 version or an older version from the
 Geant archive. Move and unpack to a suitable place ::
 
   > tar -xzf geant4.10.04.tar.gz
@@ -388,8 +411,8 @@ please contact us (see :ref:`support-section`).
 
 .. rubric:: Footnotes
 
-.. [#macafsnote] Note, **AFS** is not supported with Mac OSX as there is no Mac compatible
-		 version of Geant4 available on AFS.
+.. [#macafsnote] Note, the use of **AFS** with the Mac OSX build of BDISM is not supported
+		 as there is no compatible version of Geant4 available on AFS.
 
 .. [#ncoresnote] If your computer supports hyper-threading, you can use twice the number of
 		 cores with the ``make -jN`` command. Ie a computer has 4 cores and supports
