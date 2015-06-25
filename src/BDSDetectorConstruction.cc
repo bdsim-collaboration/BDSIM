@@ -8,8 +8,8 @@
 #include "BDSEnergyCounterSD.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSLogicalVolumeInfo.hh"
-#include "BDSLogicalVolumeInfoRegistry.hh"
+#include "BDSPhysicalVolumeInfo.hh"
+#include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSMaterials.hh"
 #include "BDSSDManager.hh"
 #include "BDSTeleporter.hh"
@@ -395,30 +395,6 @@ void BDSDetectorConstruction::ComponentPlacement()
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "setting up sensitive volumes with read out geometry" << G4endl;
 #endif
-      // Register the spos and other info of this elemnet.
-      // Used by energy counter sd to get spos of that logical volume at histogram time.
-      // If it has a readout volume, that'll be used for sensitivity so only need to register
-      // that. Should only register what we need to as used for every energy hit (many many many)
-      if(readOutLV)
-	{
-	  // use the readOutLV name as this is what's accessed in BDSEnergyCounterSD
-	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo(name,
-								   (*it)->GetSPositionMiddle());
-	  BDSLogicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutLV, theinfo);
-	}
-      else
-        {
-	  // It doesn't have a read out volume, so register the same info with all logical volumes
-	  // the current BDSAcceleratorComponent  contains as any of them could be requested
-	  // by BDSEnergyCounterSD
-	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo(name,
-								   (*it)->GetSPositionMiddle());
-	  BDSLVIterator elementLVIterator = thecurrentitem->GetAllLogicalVolumes().begin();
-	  BDSLVIterator elementLVEnd      = thecurrentitem->GetAllLogicalVolumes().end();
-	  for (; elementLVIterator != elementLVEnd; ++elementLVIterator)
-	    {BDSLogicalVolumeInfoRegistry::Instance()->RegisterInfo(*elementLVIterator, theinfo);}
-	}
-      
       std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetAllSensitiveVolumes();
       BDSLVIterator sensIt= SensVols.begin();
       for(;sensIt != SensVols.end(); ++sensIt)
@@ -451,16 +427,17 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  G4cout << __METHOD_NAME__ << "placing mass geometry" << G4endl;
 	  G4cout << "position: " << p << ", rotation: " << *r << G4endl;
 #endif
-      G4PVPlacement* PhysiComponentPlace = new G4PVPlacement(r,                // its rotation
-							     p,                // its position
-							     name + "_pv",     // its name
-							     elementLV,        // its logical volume
-							     physiWorld,       // its mother  volume
-							     false,	       // no boolean operation
-							     nCopy,            // copy number
-							     checkOverlaps);   //overlap checking
+      G4PVPlacement* elementPV = new G4PVPlacement(r,                // its rotation
+						   p,                // its position
+						   name + "_pv",     // its name
+						   elementLV,        // its logical volume
+						   physiWorld,       // its mother  volume
+						   false,	       // no boolean operation
+						   nCopy,            // copy number
+						   checkOverlaps);   //overlap checking
 
       // place read out volume in read out world - if this component has one
+      G4PVPlacement* readOutPV = NULL;
       if(readOutLV)
 	{
 #ifdef BDSDEBUG
@@ -468,15 +445,43 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  G4cout << "position: " << rp << ", rotation: " << *rr << G4endl;
 #endif
 	  // don't need the returned pointer from new for anything - purely instantiating registers it with g4
-	  new G4PVPlacement(rr,              // its rotation
-			    rp,              // its position
-			    name + "_ro_pv", // its name
-			    readOutLV,       // its logical volume
-			    readOutWorldPV,  // its mother  volume
-			    false,	     // no boolean operation
-			    nCopy,           // copy number
-			    checkOverlaps);  //overlap checking
+	  readOutPV = new G4PVPlacement(rr,              // its rotation
+					rp,              // its position
+					name + "_ro_pv", // its name
+					readOutLV,       // its logical volume
+					readOutWorldPV,  // its mother  volume
+					false,	     // no boolean operation
+					nCopy,           // copy number
+					checkOverlaps);  //overlap checking
 	}
+
+      // Register the spos and other info of this elemnet.
+      // Used by energy counter sd to get spos of that logical volume at histogram time.
+      // If it has a readout volume, that'll be used for sensitivity so only need to register
+      // that. Should only register what we need to as used for every energy hit (many many many)
+      if(readOutPV)
+	{
+	  // use the readOutLV name as this is what's accessed in BDSEnergyCounterSD
+	  BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(name,
+								     name,
+								     (*it)->GetSPositionMiddle());
+	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutLV, theinfo);
+	}
+      else
+        {
+	  // It doesn't have a read out volume, so register the same info with all logical volumes
+	  // the current BDSAcceleratorComponent  contains as any of them could be requested
+	  // by BDSEnergyCounterSD
+	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo(name,
+								   name,
+								   (*it)->GetSPositionMiddle());
+	  BDSPVIterator elementLVIterator = thecurrentitem->GetAllLogicalVolumes().begin();
+	  BDSPVIterator elementLVEnd      = thecurrentitem->GetAllLogicalVolumes().end();
+	  for (; elementLVIterator != elementLVEnd; ++elementLVIterator)
+	    {BDSLogicalVolumeInfoRegistry::Instance()->RegisterInfo(*elementLVIterator, theinfo);}
+	}
+      
+      
 
       //this vector of physical volumes isn't used anywhere...
       fPhysicalVolumeVector.push_back(PhysiComponentPlace);
