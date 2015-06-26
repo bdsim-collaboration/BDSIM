@@ -33,13 +33,12 @@ namespace BDS {
   /// get full absolute directory path where file can be found.
   /// returns absolute path
   ///
-  /// option to exclude the filename path, such that
+  /// option to exclude the filename from path, such that
   /// getFullPath(filename,true) + filename 
   /// will return the absolute filename path
-  G4String GetFullPath(G4String filename, bool excludePathFromFileName=false);
+  G4String GetFullPath(G4String filename, bool excludeNameFromPath=false);
 
-  
-  /** 
+  /**
       Try to catch abort signals. This is not guaranteed to work.
       Main goal is to close output stream / files.
   */

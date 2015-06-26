@@ -4,14 +4,15 @@
    Copyright (c) 2004 by J.C.Carter.  ALL RIGHTS RESERVED. 
 */
 
+#include "BDSElement.hh"
+
+#include "BDS3DMagField.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
-#include "BDSElement.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDS3DMagField.hh"
-#include "BDSXYMagField.hh"
 #include "BDSMagFieldSQL.hh"
+#include "BDSUtilities.hh"
+#include "BDSXYMagField.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Torus.hh"
@@ -209,10 +210,12 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     gFormat="none";
     if(pos<0) { 
       G4cerr<<"WARNING: invalid geometry reference format : "<<geometry<<G4endl;
+      exit(1);
     }
     else {
       gFormat = geometry.substr(0,pos);
-      gFile = BDSExecOptions::Instance()->GetBDSIMPATH() + geometry.substr(pos+1,geometry.length() - pos);     
+      G4String fileName = geometry.substr(pos+1,geometry.length() - pos);
+      gFile = BDS::GetFullPath(fileName);
     }
   }
 
@@ -222,10 +225,12 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     G4int pos = bmap.find(":");
     if(pos<0) {
       G4cerr<<"WARNING: invalid B map reference format : "<<bmap<<G4endl;
+      exit(1);
     }
     else {
       bFormat = bmap.substr(0,pos);
-      bFile = BDSExecOptions::Instance()->GetBDSIMPATH() + bmap.substr(pos+1,bmap.length() - pos); 
+      G4String fileName = bmap.substr(pos+1,bmap.length() - pos);
+      bFile = BDS::GetFullPath(fileName);
 #ifdef BDSDEBUG
       G4cout << "BDSElement::PlaceComponents bmap file is " << bFile << G4endl;
 #endif
