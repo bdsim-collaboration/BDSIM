@@ -309,7 +309,7 @@ int main(int argc,char** argv) {
       bool useDefault = false;
       // if not set use default visualisation file
       if (visMacroName.empty()) useDefault = true;
-      G4String visMacroFilename = execOptions->GetBDSIMPATH() + visMacroName;
+      G4String visMacroFilename = BDS::GetFullPath(visMacroName);
       if (!useDefault) {
 	FILE* file = NULL;
 	// first relative to main path:
@@ -317,16 +317,9 @@ int main(int argc,char** argv) {
 	if (file) {
 	  fclose(file);
 	} else {
-	  // then try current path
-	  file = fopen(visMacroName.c_str(), "r");
-	  if (file) {
-	    fclose(file);
-	    visMacroFilename = visMacroName;
-	  } else {
-	    // if not present use a default one (OGLSQt or DAWNFILE)
-	    G4cout << __FUNCTION__ << "> WARNING: visualisation file " << visMacroFilename <<  " file not present, using default!" << G4endl;
-	    useDefault = true;
-	  }
+	  // if not present use a default one (OGLSQt or DAWNFILE)
+	  G4cout << __FUNCTION__ << "> WARNING: visualisation file " << visMacroFilename <<  " file not present, using default!" << G4endl;
+	  useDefault = true;
 	}
       }
       if (useDefault) {

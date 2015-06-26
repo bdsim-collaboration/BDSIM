@@ -59,7 +59,9 @@ protected :
 private :
   BDSExecOptions();
   void Parse(int arcg, char **argv);
-  
+  /// Helper method to set the BDSIMPath correctly
+  G4String GetPath(G4String filename);
+
   G4String        inputFilename;    ///> input filename
   G4String        visMacroFilename; ///> visualisation filename
   G4bool          visDebug;         ///> flag for visualisation debug
