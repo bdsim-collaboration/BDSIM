@@ -150,7 +150,10 @@ void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   iRay++;
 
   // if all particles are read, start at 0 again
-  if (iRay == nRays) iRay=0;
+  if (iRay == nRays) {
+    iRay=0;
+    G4cout << __METHOD_NAME__ << "End of file reached. Returning to beginning of file." << G4endl;
+  }
 
   return;
 }
