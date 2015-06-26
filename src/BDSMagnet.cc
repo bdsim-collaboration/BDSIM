@@ -2,11 +2,6 @@
    Author: Grahame A. Blair, Royal Holloway, Univ. of London.
    Last modified 24.7.2002
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-   Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
-   Added extra parameter to BuildLogicalVolume so that it is 
-     possible to set the material as either Iron or Vacuum
-   Removed StringFromInt function
 */
 
 #include "BDSExecOptions.hh"
@@ -31,7 +26,6 @@
 
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
-#include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
@@ -96,7 +90,7 @@ void BDSMagnet::BuildBeampipe()
 #endif
   
   beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
-							    chordLength,
+							    chordLength - lengthSafety,
 							    beamPipeInfo);
   BeamPipeCommonTasks();
 }

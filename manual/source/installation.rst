@@ -30,16 +30,16 @@ use the following commands::
 Requirements
 ============
 
-1) Geant4 installed or access to **AFS** [#macafsnote]_. Version 4.9.6 or higher.
-2) CMake 2.6.4 or higher
+1) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.9.6 or higher.
+2) `CMake`_ 2.6.4 or higher
 3) Flex 2.5.37 or higher
 4) Bison 2.3 or higher
-5) CLHEP 2.1.3.1 or higher
-6) Boost libraries
+5) `CLHEP`_ 2.1.3.1 or higher
+6) `Boost`_ libraries
 
 Optional dependencies
   
-7) ROOT framework for binary data output
+7) `ROOT`_ framework for binary data output
 
 Note, even though installed, the Geant4 environmental variables must be
 available. You can test this in a terminal with::
@@ -67,7 +67,7 @@ The following sections detail the setup process for different operating systems.
 Mac OSX
 -------
 
-We recommend obtaining required packages using **MacPorts** package manager,
+We recommend obtaining `required packages <Requirements>`_ using `MacPorts`_ package manager,
 although they can be obtained both through other package managers and by
 manually downloading, compiling and installing the source for each.
 
@@ -80,6 +80,8 @@ BDSIM in::
   > ls
   bdsim bdsim-build
 
+It is important that the build directory be outside the source directory as otherwise
+trouble may be encountered when receiving further updates from the git repository.
 From this directory use the following CMake command to configure the BDSIM
 installation::
 
@@ -98,7 +100,7 @@ This typically produces the following output, which is slightly different on eac
   -- Check for working CXX compiler: /usr/bin/c++ -- works
   -- Detecting CXX compiler ABI info
   -- Detecting CXX compiler ABI info - done
-  -- Configuring BDSIM 0.6.develop
+  -- Configuring BDSIM 0.65
   -- Build Type RelWithDebInfo
   -- Compiler supports C++11
   -- Looking for CLHEP... - found
@@ -122,7 +124,7 @@ This typically produces the following output, which is slightly different on eac
   -- Found FLEX: /opt/local/bin/flex (found version "2.5.37") 
   -- Configuring done
   -- Generating done
-  -- Build files have been written to: /Users/nevay/physics/reps/bdsim-test2
+  -- Build files have been written to: /Users/nevay/physics/reps/bdsim-build
 
 CMake will search your system for the required dependencies. In the above example, this
 proceeded without any errors. In the case where a required dependency cannot be found,
@@ -137,15 +139,25 @@ BDSIM can then be installed for access from anywhere on the system with::
   
   > sudo make install
 
-To change the installation directory, see `Configuring the BDSIM Build with CMake`_
-From any directory on your computer, ``bdsim`` should be available.  From the build directory
-you can verify your installation using a series of tests included with BDSIM. ::
+To change the installation directory, see `Configuring the BDSIM Build with CMake`_.
+From any directory on your computer, ``bdsim`` should be available.
+
+.. note:: This step is not stictly necessary. It is possible to simply create an alias to the
+	  exectuable ``bdsim`` that exists in the build directory in your shell profile. This
+	  is common practice for developers who may wish to have a debug build of the code as
+	  well as the normal release build.
+
+From the build directory you can verify your installation using a series of tests
+included with BDSIM. ::
 
   > ctest -E LONG
 
 
 Scientific Linux
 ----------------
+
+Install the `required packages <Requirements>`_ preferably with a
+package manager.
 
 For SL5 you will have to use Geant 4.9.6 as Geant 4.10 onwards is not compatible.
 Older version of Geant4 can be downloaded from their
@@ -160,6 +172,8 @@ BDSIM in::
   > ls
   bdsim          bdsim-build
 
+It is important that the build directory be outside the source directory as otherwise
+trouble may be encountered when receiving further updates from the git repository.
 From this directory use the following CMake command to configure the BDSIM
 installation::
 
@@ -174,29 +188,42 @@ BDSIM can then be installed for access from anywhere on the system with::
   
   > sudo make install
 
+.. note:: This step is not stictly necessary. It is possible to simply create an alias to the
+	  exectuable ``bdsim`` that exists in the build directory in your shell profile. This
+	  is common practice for developers who may wish to have a debug build of the code as
+	  well as the normal release build.
+	  
 To change the installation directory, see `Configuring the BDSIM Build with CMake`_
 From any directory on your computer, ``bdsim`` should be available.  From the build directory
-you can verify your installation using a serious of tests included with BDSIM.::
+you can verify your installation using a series of tests included with BDSIM.::
 
   > ctest -E LONG
 
-Scientific Linux with AFS Access
---------------------------------
+Linux with AFS Access
+---------------------
 
-When the machine has AFS connection, then the dependent packages like Geant4 can
-be taken from there and don't need to be installed. The same compiler version needs
-to be used for BDSIM as the one for Geant4.  The following scripts must be sourced
-before using CMake.  
+When the machine has AFS connection, the latest stable release binary is available::
+
+   /afs/cern.ch/user/j/jsnuveri/public/bdsim
+
+Before using the binary you must source the geant4 setup::
+
+   source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
+
+When compiling BDSIM from source, the dependent packages like Geant4 can
+be taken from AFS and don't need to be compiled and installed locally. The same
+compiler version needs to be used for BDSIM as the one that was used for Geant4.
+The following scripts must be sourced before using CMake.  
+
+For the versions 0.61 and onwards::
+
+  source /afs/cern.ch/user/j/jsnuveri/public/gcc47-setup.sh
+  source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
 
 For version 0.6 and older::
   
   source /afs/cern.ch/user/j/jsnuveri/public/gcc46-setup.sh
   source /afs/cern.ch/user/j/jsnuveri/public/geant4.9.6-setup.sh
-
-For the tags 0.61-0.63 and the develop branch::
-  
-  source /afs/cern.ch/user/j/jsnuveri/public/gcc47-setup.sh
-  source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
 
 After this, the installation procedure for `Scientific Linux`_ should be followed.
 
@@ -232,17 +259,23 @@ can be specified by editing the ``CMAKE_INSTALL_PREFIX`` variable.
 Making the Manual
 -----------------
 
-For HTML from the build directory run the following command::
+The manual is available online at http://www.pp.rhul.ac.uk/bdsim/manual and included
+as a pdf in the source directory, but if
+desired the user can compile the manual in both HTML and pdflatex from the build
+directory using the following command::
 
   > make manual
 
-to make the HTML Manual in the folder ``manual/html``.
-
-And for pdflatex::
+to make the HTML manual in the folder ``manual/html``. Similarly::
 
   > make manual-pdf
 
-to make the pdf Manual in the folder ``manual/latex``.
+will make the pdf Manual in the folder ``manual/latex``.
+
+.. note:: This requires the sphinx documentation system to be installed and all utility
+	  python packages to be availbe in python from any directory. The latexpdf build
+	  requuires a full installation of pdflatex to be available as well.
+
 
 Making Doxygen Code Documentation
 ---------------------------------
@@ -253,12 +286,13 @@ From the build directory run the following command::
 
 to make the Doxygen documentation in a folder called ``Doxygen``.
 
+.. note:: This requires the Doxygen documentation system to be installed.
+
 Geant4 Installation Guide
 -------------------------
 
-BDSIM now builds with the most recent versions of Geant4, but only the BDSIM develop
-branch. A new official version will be released soon (January 2015). If not built
-with **MacPorts** then download the 4.10.01 version or an older version from the
+As of version 0.65, BDSIM builds with the most recent versions of Geant4 (version 4.9.6 onwards).
+If not built with **MacPorts** then download the 4.10.01 version or an older version from the
 Geant archive. Move and unpack to a suitable place ::
 
   > tar -xzf geant4.10.04.tar.gz
@@ -377,10 +411,19 @@ please contact us (see :ref:`support-section`).
 
 .. rubric:: Footnotes
 
-.. [#macafsnote] Note, **AFS** is not supported with Mac OSX as there is no Mac compatible
-		 version of Geant4 available on AFS.
+.. [#macafsnote] Note, the use of **AFS** with the Mac OSX build of BDISM is not supported
+		 as there is no compatible version of Geant4 available on AFS.
 
 .. [#ncoresnote] If your computer supports hyper-threading, you can use twice the number of
 		 cores with the ``make -jN`` command. Ie a computer has 4 cores and supports
 		 hyper-threading, can support up to ``make -j8``.  Exceeding this number will
 		 result in slower than normal compilation.
+
+.. Links
+
+.. _Boost: http://www.boost.org/
+.. _CMake: http://www.cmake.org/
+.. _CLHEP: http://proj-clhep.web.cern.ch/
+.. _Geant4: http://geant4.cern.ch/
+.. _Macports: http://www.macports.org/
+.. _ROOT: http://root.cern.ch/

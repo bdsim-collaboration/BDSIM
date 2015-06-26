@@ -1,80 +1,57 @@
-//  
-//   BDSIM, (C) 2001-2007
-//   
-//   version 0.5-dev
-//  
-//
-//
-//   Geometry construction
-//
-//
-//   History
-//     19 May 2008 by Marchioni v.0.5-dev
-//     18 Mar 2008 by Malton v.0.5-dev
-//      3 Oct 2007 by Malton v.0.4
-//     21 Nov 2006 by Agapov v.0.3
-//     28 Mar 2006 by Agapov v.0.2
-//     15 Dec 2005 by Agapov beta
-//
-
-#include <list>
-#include <map>
-#include <vector>
-
 #include "BDSDetectorConstruction.hh"
 
+#include "BDSAcceleratorComponent.hh"
 #include "BDSAcceleratorModel.hh"
+#include "BDSBeamline.hh"
+#include "BDSComponentFactory.hh"
+#include "BDSDebug.hh"
+#include "BDSEnergyCounterSD.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSDebug.hh"
-
-#include "BDSSDManager.hh"
-
-#include "G4UserLimits.hh"
-#include "G4Region.hh"
-#include "G4ProductionCuts.hh"
-
-#include "G4Box.hh"
-#include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4PVPlacement.hh"
-#include "G4UniformMagField.hh"
-#include "G4TransportationManager.hh"
-#include "G4PropagatorInField.hh"
-#include "G4VisAttributes.hh"
-#include "G4Colour.hh"
-#include "globals.hh"
-#include "G4ios.hh"
-
-#include "G4Navigator.hh"
-#include "G4UniformMagField.hh"
-
-#include "G4Electron.hh"
-#include "G4Positron.hh"
-#include "G4Material.hh"
-
-#include "BDSAcceleratorComponent.hh"
-#include "BDSBeamline.hh"
-#include "BDSEnergyCounterSD.hh"
-#include "BDSMaterials.hh"
-#include "BDSTeleporter.hh"
 #include "BDSLogicalVolumeInfo.hh"
-#include "BDSComponentFactory.hh"
-
-#include "G4MagneticField.hh"
-#include "G4VSampler.hh"
-#include "G4GeometrySampler.hh"
+#include "BDSLogicalVolumeInfoRegistry.hh"
+#include "BDSMaterials.hh"
+#include "BDSSDManager.hh"
+#include "BDSTeleporter.hh"
 
 #include "ggmad.hh"
 #include "parser/element.h"
 #include "parser/elementlist.h"
 #include "parser/enums.h"
 
+#include "G4Box.hh"
+#include "G4Colour.hh"
+#include "G4Electron.hh"
+#include "G4GeometrySampler.hh"
+#include "G4LogicalVolume.hh"
+#include "G4MagneticField.hh"
+#include "G4Material.hh"
+#include "G4Navigator.hh"
+#include "G4Positron.hh"
+#include "G4ProductionCuts.hh"
+#include "G4PropagatorInField.hh"
+#include "G4PVPlacement.hh"
+#include "G4Region.hh"
+#include "G4TransportationManager.hh"
+#include "G4UniformMagField.hh"
+#include "G4UserLimits.hh"
+#include "G4VisAttributes.hh"
+#include "G4VPhysicalVolume.hh"
+#include "G4VSampler.hh"
+#include "globals.hh"
+
+#include <iterator>
+#include <list>
+#include <map>
+#include <vector>
+
 #ifdef BDSDEBUG
 bool debug = true;
 #else
 bool debug = false;
 #endif
+
+typedef std::vector<G4LogicalVolume*>::iterator BDSLVIterator;
 
 BDSDetectorConstruction::BDSDetectorConstruction():
   itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
@@ -217,9 +194,11 @@ void BDSDetectorConstruction::BuildBeamline()
 #endif
       
       BDSAcceleratorComponent* temp = theComponentFactory->createComponent(*it);
-      BDSTiltOffset*     tiltOffset = theComponentFactory->createTiltOffset(*it);
       if(temp)
-	{beamline->AddComponent(temp, tiltOffset);}
+	{
+	  BDSTiltOffset*     tiltOffset = theComponentFactory->createTiltOffset(*it);
+	  beamline->AddComponent(temp, tiltOffset);
+	}
     }
 
   // Special circular machine bits
@@ -250,7 +229,7 @@ void BDSDetectorConstruction::BuildBeamline()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< beamline_list.size() << G4endl;
 #endif
-  G4cout << __METHOD_NAME__ << "size of the constructed beamline: "<< beamline->size() << G4endl;
+  G4cout << __METHOD_NAME__ << "size of the constructed beamline: "<< beamline->size() << " with length " << beamline->GetTotalArcLength()/CLHEP::m << " m" << G4endl;
   
   if (beamline->size() == 0)
     {
@@ -388,8 +367,11 @@ void BDSDetectorConstruction::ComponentPlacement()
       G4LogicalVolume* elementLV = thecurrentitem->GetContainerLogicalVolume();
       if (!elementLV)
 	{G4cerr << __METHOD_NAME__ << "this accelerator component " << (*it)->GetName() << " has no volume to be placed!" << G4endl;  exit(1);}
-      
-      G4String name = (*it)->GetName(); // this is done after the checks as it really just passes down to acc component
+
+      // get the name -> note this is the plain name without _pv or _lv suffix just now
+      // comes from BDSAcceleratorComponent
+      // this is done after the checks as it really just passes down to acc component
+      G4String name = (*it)->GetName(); 
       if (verbose || debug)
 	{G4cout << __METHOD_NAME__ << "placement of component named: " << name << G4endl;}
       
@@ -401,7 +383,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       
       // add the volume to one of the regions
       G4int precision = thecurrentitem->GetPrecisionRegion();
-      if(precision < 0)
+      if(precision > 0)
 	{
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << "element is in the precision region number: " << precision << G4endl;
@@ -413,48 +395,48 @@ void BDSDetectorConstruction::ComponentPlacement()
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "setting up sensitive volumes with read out geometry" << G4endl;
 #endif
-      // now register the spos and other info of this sensitive volume in global map
-      // used by energy counter sd to get spos of that logical volume at histogram time
-      BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo(name,
-							       (*it)->GetSPositionMiddle());
+      // Register the spos and other info of this elemnet.
+      // Used by energy counter sd to get spos of that logical volume at histogram time.
+      // If it has a readout volume, that'll be used for sensitivity so only need to register
+      // that. Should only register what we need to as used for every energy hit (many many many)
       if(readOutLV)
-	{BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(readOutLV,theinfo);}
-      else
-        {BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(elementLV,theinfo);}
-
-      // this bit would also be unnecessary once all switched over to read out geometry
-      // Register all logical volumes with sposition and any other information for later use
-      std::vector<G4LogicalVolume*> allLVs = thecurrentitem->GetAllLogicalVolumes();
-      std::vector<G4LogicalVolume*>::iterator allLVsIterator = allLVs.begin();
-      for(;allLVsIterator != allLVs.end(); ++allLVsIterator)
 	{
-	  BDSGlobalConstants::Instance()->AddLogicalVolumeInfo(*allLVsIterator,
-							       new BDSLogicalVolumeInfo((*allLVsIterator)->GetName(),
-											thecurrentitem->GetSPos())
-							       );
+	  // use the readOutLV name as this is what's accessed in BDSEnergyCounterSD
+	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo(name,
+								   (*it)->GetSPositionMiddle());
+	  BDSLogicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutLV, theinfo);
 	}
-
-      // Use old way of setting sensitivity for volumes without read out LV
-      // old way of setting sensitive volumes - remains for now for components that haven't been changed
-      // in future will be done in all component constructors
-      // NOTE this also sets GFLASH so most volumes won't have GFLASH now
-      if (!readOutLV)
+      else
+        {
+	  // It doesn't have a read out volume, so register the same info with all logical volumes
+	  // the current BDSAcceleratorComponent  contains as any of them could be requested
+	  // by BDSEnergyCounterSD
+	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo(name,
+								   (*it)->GetSPositionMiddle());
+	  BDSLVIterator elementLVIterator = thecurrentitem->GetAllLogicalVolumes().begin();
+	  BDSLVIterator elementLVEnd      = thecurrentitem->GetAllLogicalVolumes().end();
+	  for (; elementLVIterator != elementLVEnd; ++elementLVIterator)
+	    {BDSLogicalVolumeInfoRegistry::Instance()->RegisterInfo(*elementLVIterator, theinfo);}
+	}
+      
+      std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetAllSensitiveVolumes();
+      BDSLVIterator sensIt= SensVols.begin();
+      for(;sensIt != SensVols.end(); ++sensIt)
 	{
-	  std::vector<G4LogicalVolume*> SensVols = thecurrentitem->GetAllSensitiveVolumes();
-	  std::vector<G4LogicalVolume*>::iterator sensIt= SensVols.begin();
-	  for(;sensIt != SensVols.end(); ++sensIt)
-	    {
-	      //use already defined instance of Ecounter sd
-	      (*sensIt)->SetSensitiveDetector(energyCounterSDRO);
-	      //register any volume that an ECounter is attached to
-	      BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( (*sensIt)->GetName(),
-									thecurrentitem->GetSPos() );
-	      BDSGlobalConstants::Instance()->AddLogicalVolumeInfo((*sensIt),theinfo);
-	      //set gflash parameterisation on volume if required
-	      G4bool gflash     = BDSExecOptions::Instance()->GetGFlash();
-	      if(gflash && ((*sensIt)->GetRegion() != precisionRegion) && (thecurrentitem->GetType()=="element"))
-		{SetGFlashOnVolume(*sensIt);}
-	    }
+	  // use already defined instance of Ecounter sd
+	  // we MUST attach this SD to each volume so that it produces
+	  // hits (using the read out geometry)
+	  (*sensIt)->SetSensitiveDetector(energyCounterSDRO);
+	  
+	  //set gflash parameterisation on volume if required
+	  G4bool gflash     = BDSExecOptions::Instance()->GetGFlash();
+	  //TBC - so glash is only used for 'element' types - perhaps this should be used
+	  //for other volumes too.  The logic of the if statement needs checked.
+	  //The check of the precision region really compares the region pointer of the
+	  //logical volume with that of our 'precision region' region. Unclear what the default
+	  //region value is in geant4 but it's not our region - no region by default.
+	  if(gflash && ((*sensIt)->GetRegion() != precisionRegion) && (thecurrentitem->GetType()=="element"))
+	    {SetGFlashOnVolume(*sensIt);}
 	}
 
       // get the placement details from the beamline component
@@ -465,6 +447,10 @@ void BDSDetectorConstruction::ComponentPlacement()
       G4RotationMatrix* rr = (*it)->GetReferenceRotationMiddle();
       G4ThreeVector     rp = (*it)->GetReferencePositionMiddle();
       
+#ifdef BDSDEBUG
+	  G4cout << __METHOD_NAME__ << "placing mass geometry" << G4endl;
+	  G4cout << "position: " << p << ", rotation: " << *r << G4endl;
+#endif
       G4PVPlacement* PhysiComponentPlace = new G4PVPlacement(r,                // its rotation
 							     p,                // its position
 							     name + "_pv",     // its name
@@ -477,7 +463,11 @@ void BDSDetectorConstruction::ComponentPlacement()
       // place read out volume in read out world - if this component has one
       if(readOutLV)
 	{
-	  // don't need the pointer for anything - purely instantiating registers it with g4
+#ifdef BDSDEBUG
+	  G4cout << __METHOD_NAME__ << "placing readout geometry" << G4endl;
+	  G4cout << "position: " << rp << ", rotation: " << *rr << G4endl;
+#endif
+	  // don't need the returned pointer from new for anything - purely instantiating registers it with g4
 	  new G4PVPlacement(rr,              // its rotation
 			    rp,              // its position
 			    name + "_ro_pv", // its name
@@ -487,7 +477,6 @@ void BDSDetectorConstruction::ComponentPlacement()
 			    nCopy,           // copy number
 			    checkOverlaps);  //overlap checking
 	}
-
 
       //this vector of physical volumes isn't used anywhere...
       fPhysicalVolumeVector.push_back(PhysiComponentPlace);

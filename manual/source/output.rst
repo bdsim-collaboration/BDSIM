@@ -29,7 +29,7 @@ Output Format Differences
 ROOT
 ^^^^
 
-With the root format, everything is recorded in one single file. If the
+With the ROOT format, everything is recorded in one single file. If the
 number of events simulated exceeds :code:`nperfile` a new file will be
 started. The chosen filename will be suffixed with :code:`_N.root` where
 :code:`N` is an integer.
@@ -95,7 +95,7 @@ s               m             Curvilinear S
 weight          NA            weight
 partID          NA            PDG ID number
 nEvent          NA            event number
-parentID        NA            parent ID
+parentID        NA            parent ID (0 means primary)
 trackID         NA            track ID
 turnnumber      NA            turns completed
 =============== ============= =============================

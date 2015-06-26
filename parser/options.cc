@@ -373,7 +373,7 @@ void Options::set_value(std::string name, double value )
   if(name == "srLowX") { synchLowX = value; return; }
   if(name == "srLowGamE") { synchLowGamE = value; return; }
   if(name == "srMultiplicity") { synchPhotonMultiplicity = (int) value; return; }
-  if(name == "srMeamFreeFactor") { synchMeanFreeFactor = (int) value; return; }
+  if(name == "srMeanFreeFactor") { synchMeanFreeFactor = (int) value; return; }
 
   if(name == "prodCutPhotons" ) { prodCutPhotons = value; return; }
   if(name == "prodCutPhotonsP" ) { prodCutPhotonsP = value; return; }

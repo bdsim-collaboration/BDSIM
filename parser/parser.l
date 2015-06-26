@@ -42,7 +42,7 @@ char include_filename_stack[max_include_depth][maxfilenamelength];
 int include_linenum_stack[max_include_depth];
 int include_stack_ptr = 0;
 
-int line_num = 0;
+int line_num = 1;
 char* yyfilename;
 
 %}
@@ -63,7 +63,8 @@ char* yyfilename;
 "<>" { return NE; }
 "==" { return EQ; }
 
-"!".*/\n {line_num++;}    // comments - ignore
+"!".*$    {line_num++;}    // comments - ignore
+"!".*     {line_num++;}    // comments at end of file (without return) - ignore
 
 marker { return MARKER; } // reserved elements
 drift { return DRIFT; }
@@ -224,7 +225,6 @@ printf("parser> include filename is: %s \n",includefilename.c_str());
       yy_switch_to_buffer(include_stack[include_stack_ptr]);
       strncpy( yyfilename, include_filename_stack[include_stack_ptr], maxfilenamelength) ;
       line_num = include_linenum_stack[include_stack_ptr];
-      
     }
 }
 

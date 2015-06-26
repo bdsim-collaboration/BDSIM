@@ -3,13 +3,14 @@
    Last modified 24.7.2002
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
+#include "BDSEnergyCounterHit.hh"
+#include "BDSEnergyCounterSD.hh"
 #include "BDSExecOptions.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-
-#include "BDSEnergyCounterSD.hh"
-#include "BDSEnergyCounterHit.hh"
 #include "BDSLogicalVolumeInfo.hh"
+#include "BDSLogicalVolumeInfoRegistry.hh"
+
 #include "G4AffineTransform.hh"
 #include "G4Event.hh"
 #include "G4EventManager.hh"
@@ -24,8 +25,6 @@
 #include "G4Track.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VTouchable.hh"
-
-#include <map>
 
 #define NMAXCOPY 5
 
@@ -54,21 +53,27 @@ BDSEnergyCounterSD::~BDSEnergyCounterSD()
 {;}
 
 void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
-{  
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   energyCounterCollection = new BDSEnergyCounterHitsCollection(SensitiveDetectorName,collectionName[0]);
   if (HCIDe < 0)
     {HCIDe = G4SDManager::GetSDMpointer()->GetCollectionID(energyCounterCollection);}
   HCE->AddHitsCollection(HCIDe,energyCounterCollection);
 
-  primaryCounterCollection = new BDSEnergyCounterHitsCollection
-    (SensitiveDetectorName,collectionName[1]);
+  primaryCounterCollection = new BDSEnergyCounterHitsCollection(SensitiveDetectorName,collectionName[1]);
   if (HCIDp < 0)
     {HCIDp = G4SDManager::GetSDMpointer()->GetCollectionID(primaryCounterCollection);}
   HCE->AddHitsCollection(HCIDp,primaryCounterCollection);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "HCID primaries: " << HCIDp << G4endl;
+  G4cout << __METHOD_NAME__ << "HCID energy:    " << HCIDe << G4endl;
+#endif
 }
 
 G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOutTH)
-{ 
+{
   if(BDSGlobalConstants::Instance()->GetStopTracks())
     enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit()); // Why subtract the energy deposit of the step? Why not add?
   //this looks like accounting for conservation of energy when you're killing a particle
@@ -82,12 +87,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
   //if the energy is 0, don't do anything
   if (enrg==0.) return false;      
 
-  // can get the copy number from the read out geometry if it exists
-  G4int nCopy;
-  if (readOutTH)
-    {nCopy = readOutTH->GetCopyNumber();}
-  else
-    {nCopy = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();}
+  G4int nCopy = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();
 #ifdef BDSDEBUG
   if(nCopy>0){
     G4cout << "BDSEnergyCounterSD::ProcessHits> nCopy = " << nCopy << G4endl;
@@ -108,23 +108,14 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
     }
   */
   // Get translation and rotation of volume w.r.t the World Volume
-
-  // if there is a read out geometry volume, use that. Note there *should* always be a
-  // read out geometry volume for any sensitive volume (if they've been made sensitive)
-  // there is the possibility that there isn't a read out volume in which case the touchable
-  // object would be a null pointer and seg fault - must catch this
-  if (!readOutTH)
-    {
-      G4cout << __METHOD_NAME__ << "hit in a sensitive volume without readout geometry" << G4endl;
-      G4cerr << __METHOD_NAME__ << "hit not recorded!" << G4endl;
-      return true;
-    }
-
   // get the coordinate transform from the read out geometry instead of the actual geometry
-  // read out geometry is in accelerator s,x,y coordinates along beam line axis
-  G4AffineTransform tf = readOutTH->GetHistory()->GetTopTransform();
-  // this was the old method of getting the transform
-  //G4AffineTransform tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
+  // if it exsits, else assume on axis. The read out geometry is in accelerator s,x,y
+  // coordinates along beam line axis
+  G4AffineTransform tf;
+  if (readOutTH)
+    {tf = readOutTH->GetHistory()->GetTopTransform();}
+  else
+    {tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());}
   G4ThreeVector posbefore = aStep->GetPreStepPoint()->GetPosition();
   G4ThreeVector posafter  = aStep->GetPostStepPoint()->GetPosition();
   //G4ThreeVector momDir = aStep->GetTrack()->GetMomentumDirection();
@@ -138,7 +129,9 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
   Y = 0.5 * (posbefore.x() + posafter.x());
   Y = 0.5 * (posbefore.y() + posafter.y());
   Z = 0.5 * (posbefore.z() + posafter.z());
-  S = GetSPositionOfStep(aStep);
+  //note this'll work even without readOutTH
+  //in which case readOutTH is null
+  S = GetSPositionOfStep(aStep,readOutTH); 
   //local
   x = 0.5 * (posbeforelocal.x() + posafterlocal.x());
   y = 0.5 * (posbeforelocal.y() + posafterlocal.y());
@@ -194,24 +187,25 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
   energyCounterCollection->insert(ECHit);
   
   //record first scatter of primary if it exists
-  if (aStep->GetTrack()->GetParentID() == 0) {
-    //create a duplicate hit in the primarycounter hits collection
-    //there are usually a few - filter at end of event action
-    BDSEnergyCounterHit* PCHit = new BDSEnergyCounterHit(*ECHit);
-    //set the energy to be the full energy of the primary
-    //just now it's the wee bit of energy deposited in that step
-    G4double primaryEnergy = BDSGlobalConstants::Instance()->GetBeamKineticEnergy();
-    PCHit->SetEnergy(primaryEnergy);
-    primaryCounterCollection->insert(PCHit);
-  }
+  if (aStep->GetTrack()->GetParentID() == 0)
+    {
+      //create a duplicate hit in the primarycounter hits collection
+      //there are usually a few - filter at end of event action
+      BDSEnergyCounterHit* PCHit = new BDSEnergyCounterHit(*ECHit);
+      //set the energy to be the full energy of the primary
+      //just now it's the wee bit of energy deposited in that step
+      G4double primaryEnergy = BDSGlobalConstants::Instance()->GetBeamKineticEnergy();
+      PCHit->SetEnergy(primaryEnergy);
+      primaryCounterCollection->insert(PCHit);
+    }
   
   if(BDSGlobalConstants::Instance()->GetStopTracks())
-    aStep->GetTrack()->SetTrackStatus(fStopAndKill);
+    {aStep->GetTrack()->SetTrackStatus(fStopAndKill);}
    
   return true;
 }
 
-G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
+G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* readOutTH)
 { 
   enrg = aSpot->GetEnergySpot()->GetEnergy();
 #ifdef BDSDEBUG
@@ -245,7 +239,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
   Y = pos.x();
   Y = pos.y();
   Z = pos.z();
-  S = GetSPositionOfSpot(aSpot);
+  S = GetSPositionOfSpot(aSpot,readOutTH);
   //local
   x = poslocal.x();
   y = poslocal.y();
@@ -304,53 +298,63 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot *aSpot,G4TouchableHistory*)
   return true;
 }
 
-G4double BDSEnergyCounterSD::GetSPositionOfStep(G4Step* aStep)
+G4double BDSEnergyCounterSD::GetSPositionOfStep(G4Step* aStep, G4TouchableHistory* readOutTH)
 {
-  G4double thespos;
+  // note readOutTH will only exist when a read out volume exists
+  G4double sPosition;
   // Get the s position along the accelerator by querying the logical volume
   // Get the logical volume from this step
-  G4LogicalVolume* thevolume = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();  
-  // Find it's s position from global map made at constrcution time
-  typedef std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>::iterator it_type;
-  it_type search = BDSGlobalConstants::Instance()->LogicalVolumeInfo()->find(thevolume);
+  G4LogicalVolume* thevolume;
+  if (readOutTH)
+    {thevolume = readOutTH->GetVolume()->GetLogicalVolume();}
+  else
+    {thevolume = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();}
   
-  if (search == BDSGlobalConstants::Instance()->LogicalVolumeInfo()->end()){
-    //this means that the logical volume pointer doesn't exist in the map 
-    //checking this prevents segfaults
-    thespos = -1.0*CLHEP::m; // set to unreal s position to identify and not fail
-  }
-  else {
-    thespos = BDSGlobalConstants::Instance()->GetLogicalVolumeInfo(thevolume)->GetSPos();
-    G4ThreeVector     prestepposition = aStep->GetPreStepPoint()->GetPosition();
-    G4AffineTransform tf              = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
-    G4ThreeVector     prestepposlocal = tf.TransformPoint(prestepposition);
-    thespos += prestepposlocal.z();
-   }
-  return thespos;
+  BDSLogicalVolumeInfo* theInfo = BDSLogicalVolumeInfoRegistry::Instance()->GetInfo(thevolume);
+  if (theInfo)
+    {
+      sPosition = theInfo->GetSPos();
+      // that's the centre position of the element - now add the local s (z locally)
+      G4ThreeVector     prestepposition = aStep->GetPreStepPoint()->GetPosition();
+      G4AffineTransform tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
+      G4ThreeVector     prestepposlocal = tf.TransformPoint(prestepposition);
+      sPosition += prestepposlocal.z();
+    }
+  else
+    {
+      // This means that the logical volume pointer doesn't exist in the registry
+      // Supply an unphysical value to avoid crashing and easy debugging
+      sPosition = -1000;
+    }
+  return sPosition;
 }
 
-G4double BDSEnergyCounterSD::GetSPositionOfSpot(G4GFlashSpot* aSpot)
+G4double BDSEnergyCounterSD::GetSPositionOfSpot(G4GFlashSpot* aSpot, G4TouchableHistory* readOutTH)
 {
-  G4double thespos;
+  G4double sPosition;
   // Get the s position along the accelerator by querying the logical volume
   // Get the logical volume from this step
-  G4LogicalVolume* thevolume = aSpot->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
+  G4LogicalVolume* thevolume;
+  if (readOutTH)
+    {thevolume = readOutTH->GetVolume()->GetLogicalVolume();}
+  else
+    {thevolume = aSpot->GetTouchableHandle()->GetVolume()->GetLogicalVolume();}
 
-  // Find it's s position from global map made at constrcution time
-  typedef std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>::iterator it_type;
-  it_type search = BDSGlobalConstants::Instance()->LogicalVolumeInfo()->find(thevolume);
-  
-  if (search == BDSGlobalConstants::Instance()->LogicalVolumeInfo()->end()){
-    //this means that the logical volume pointer doesn't exist in the map 
-    //checking this prevents segfaults
-    thespos = -1.0*CLHEP::m; // set to unreal s position to identify and not fail
-  }
-  else {
-    thespos = BDSGlobalConstants::Instance()->GetLogicalVolumeInfo(thevolume)->GetSPos();
-    G4ThreeVector     pos = aSpot->GetPosition();
-    G4AffineTransform tf  = (aSpot->GetTouchableHandle()->GetHistory()->GetTopTransform());
-    G4ThreeVector localposition = tf.TransformPoint(pos);
-    thespos += localposition.z();
-   }
-  return thespos;
+  BDSLogicalVolumeInfo* theInfo = BDSLogicalVolumeInfoRegistry::Instance()->GetInfo(thevolume);
+  if (theInfo)
+    {
+      sPosition = theInfo->GetSPos();
+      // that's the centre position of the element - now add the local s (z locally)
+      G4ThreeVector     pos = aSpot->GetPosition();
+      G4AffineTransform tf  = (aSpot->GetTouchableHandle()->GetHistory()->GetTopTransform());
+      G4ThreeVector localposition = tf.TransformPoint(pos);
+      sPosition += localposition.z();
+    }
+  else
+    {
+      // This means that the logical volume pointer doesn't exist in the registry
+      // Supply an unphysical value to avoid crashing and easy debugging
+      sPosition = -1000;
+    }
+  return sPosition;
 }

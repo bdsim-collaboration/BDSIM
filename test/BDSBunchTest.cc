@@ -31,6 +31,7 @@ int main(int argc,char** argv) {
   BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
 
   // Print options for distrib type 
+  std::cout << "BDSBunchTest> distribFile : "      << options.distribFile << std::endl;
   std::cout << "BDSBunchTest> distribType : "      << options.distribType << std::endl;
   std::cout << "BDSBunchTest> particle    : "      << options.particleName << std::endl;
   std::cout << "BDSBunchTest> particle    : "      << globalConstants->GetParticleName() << std::endl;

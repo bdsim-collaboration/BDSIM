@@ -34,7 +34,7 @@ const BDSExecOptions* BDSExecOptions::Instance(){
 
 BDSExecOptions::BDSExecOptions(int argc, char **argv){
   inputFilename       = "optics.mad";
-  visMacroFilename    = "vis.mac";
+  visMacroFilename    = "";
   visDebug            = false;
   outputFilename      = "output";
   outputFormat        = BDSOutputFormat::_ASCII;
@@ -63,6 +63,9 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv){
   setSeed           = false;
   seedStateFilename = "";
   setSeedState      = false;
+
+  // default is -1 so easy to test
+  nGenerate         = -1;
 
   Parse(argc, argv);
   /// after parsing the absolute path can be reconstructed
@@ -105,6 +108,7 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 					{ "circular", 0, 0, 0},
 					{ "seed", 1, 0, 0},
 					{ "seedstate",1,0,0},
+					{ "ngenerate", 1, 0, 0},
 					{ 0, 0, 0, 0 }};
   
   int OptionIndex = 0;
@@ -221,6 +225,9 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 	seedStateFilename = optarg;
 	setSeedState = true;
       }
+      if( !strcmp(LongOptions[OptionIndex].name, "ngenerate") ){
+	nGenerate = atof(optarg);
+      }
       break;
       
     default:
@@ -251,6 +258,8 @@ void BDSExecOptions::Usage()const {
 	<<"--output=<fmt>         : output format (root|ascii|combined), default ascii"<<G4endl
 	<<"--outfile=<file>       : output file name. Will be appended with _N"<<G4endl
         <<"                         where N = 0, 1, 2, 3... etc."<<G4endl
+	<<"--ngenerate=N          : the number of primary events to simulate - overrides the ngenerate " << G4endl
+	<<"                         option in the input gmad file" << G4endl
         <<"--seed=N               : the seed to use for the random number generator" <<G4endl
 	<<"--seedstate=<file>     : file containing CLHEP::Random seed state - overrides other seed options"<<G4endl
 	<<"--verbose              : display general parameters before run"<<G4endl
@@ -262,7 +271,7 @@ void BDSExecOptions::Usage()const {
 	<<"--verbose_G4stepping=N : set Geant4 Stepping manager verbosity level"<<G4endl
 	<<"--verbose_G4tracking=N : set Geant4 Tracking manager verbosity level [-1:5]"<<G4endl
 	<<"--vis_debug            : display all volumes in visualiser"<<G4endl
-	<<"--vis_mac=<file>       : file with the visualization macro script, default vis.mac"<<G4endl;
+	<<"--vis_mac=<file>       : file with the visualisation macro script, default provided by BDSIM openGL (OGLSQt))"<<G4endl;
 }
 
 void BDSExecOptions::Print()const {
@@ -281,6 +290,7 @@ void BDSExecOptions::Print()const {
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseStep: "         << std::setw(15) << verboseStep         << G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " batch: "               << std::setw(15) << batch               << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outline: "             << std::setw(15) << outline             << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " ngnerate: "            << std::setw(15) << nGenerate           << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseRunLevel: "     << std::setw(15) << verboseRunLevel     << G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseEventLevel: "   << std::setw(15) << verboseEventLevel   << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseTrackingLevel: "<< std::setw(15) << verboseTrackingLevel<< G4endl;  

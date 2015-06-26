@@ -18,8 +18,7 @@ class G4ParticleDefinition;
 class G4UniformMagField;
 class G4UserLimits;
 class G4VisAttributes;
-
-class BDSLogicalVolumeInfo;
+class G4VPhysicalVolume;
 
 struct Options;
 
@@ -53,9 +52,6 @@ public:
   G4double GetMaximumEpsilonStep()const;
   G4double GetMaxTime()const;
   G4double GetDeltaOneStep()const;
-
-  G4String StringFromInt(G4int anInt)const;
-  G4String StringFromDigit(G4int anInt)const;
 
   G4ParticleDefinition* GetParticleDefinition()const;
   void     SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
@@ -212,17 +208,8 @@ public:
   G4ThreeVector GetTeleporterDelta()const;
   void          SetTeleporterDelta(G4ThreeVector newteleporterdelta);
   void          SetTeleporterLength(G4double newteleporterlength);
-  G4double      GetTeleporterLength()const; 
-
-  // for general info about a logical volume - extendable data class
-  // nominally used to get s position for energy loss
-  // get the info for a given logical volume pointer
-  BDSLogicalVolumeInfo* GetLogicalVolumeInfo(G4LogicalVolume* logvolpointer)const;
-  // get a pointer to the map of log vol infos
-  std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* LogicalVolumeInfo();
-  // add a new set of info to the map
-  void AddLogicalVolumeInfo(G4LogicalVolume* logvolpointer, BDSLogicalVolumeInfo* bdslogvolinfo);
-
+  G4double      GetTeleporterLength()const;
+  
   /// initial particle
   BDSParticle GetInitialPoint()const;
   void SetInitialPoint(BDSParticle& particle);
@@ -391,16 +378,16 @@ private:
   G4String itsFifo; // fifo for BDSIM-placet
   G4AffineTransform itsDumpTransform; //transform of frame from start to current dump element
   
-  // Turn Control
+  ///@{ Turn Control
   G4int    itsTurnsTaken;
   G4int    itsTurnsToTake;
-  // Teleporter offset corrections
+  ///@}
+  ///@{ Teleporter offset corrections
   G4ThreeVector teleporterdelta;
   G4double      teleporterlength;
-  // beamline length
+  ///@}
+  /// beamline length in mm
   G4double itsSMax;
-  // logical volume info
-  std::map<G4LogicalVolume* , BDSLogicalVolumeInfo*> logicalvolumeinfo;
   /// initial particle
   BDSParticle itsInitialPoint;
 
@@ -794,15 +781,6 @@ inline void BDSGlobalConstants::SetTeleporterLength(G4double newteleporterlength
 
 inline G4double BDSGlobalConstants::GetTeleporterLength()const
 {return teleporterlength;}
-
-inline BDSLogicalVolumeInfo* BDSGlobalConstants::GetLogicalVolumeInfo(G4LogicalVolume* logvolpointer)const
-{return logicalvolumeinfo.at(logvolpointer);}
-
-inline void BDSGlobalConstants::AddLogicalVolumeInfo(G4LogicalVolume* logvolpointer, BDSLogicalVolumeInfo* logvolinfo)
-{logicalvolumeinfo[logvolpointer] = logvolinfo;}
-
-inline std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* BDSGlobalConstants::LogicalVolumeInfo()
-{return &logicalvolumeinfo;}
 
 inline G4double BDSGlobalConstants::GetParticleKineticEnergy()const
 {return itsParticleKineticEnergy;}

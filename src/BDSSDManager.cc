@@ -56,6 +56,9 @@ BDSEnergyCounterSD* BDSSDManager::GetEnergyCounterOnAxisSDRO()
 
 void BDSSDManager::ConstructECounterSDOnAxisOnDemand()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // this CANNOT be used until the beamline has been
   // placed in detector construction and therefore the readout
   // geometry also exists - hence make this on demand
@@ -63,7 +66,7 @@ void BDSSDManager::ConstructECounterSDOnAxisOnDemand()
   // object construction
   //on axis energy counter - uses read out geometry
   eCounterOnAxisRO = new BDSEnergyCounterSD("ec_on_axis_read_out");
-  G4VReadOutGeometry* roGeom = new BDSReadOutGeometry("readOutGeometry");
+  BDSReadOutGeometry* roGeom = new BDSReadOutGeometry("readOutGeometry");
   // although unnecessary for bdsim this MUST be called for geant4 to
   // register things properly
   // this method actually invokes roGeom->Build() which we have to implement

@@ -12,6 +12,7 @@ Last modified 23.10.2007 by Steve Malton
 
 #include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
+#include "BDSExecOptions.hh"
 
 #include "G4Colour.hh"
 #include "G4FieldManager.hh"
@@ -47,7 +48,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsSensitiveBeamPipe=opt.sensitiveBeamPipe;
   itsSensitiveBLMs=opt.sensitiveBLMs;
   itsDefaultRangeCut=opt.defaultRangeCut;
-  itsElossHistoBinWidth=opt.elossHistoBinWidth * CLHEP::m; //Longitudinal and transverse energy loss histogram bin widths
+  itsElossHistoBinWidth=opt.elossHistoBinWidth; //Longitudinal and transverse energy loss histogram bin widths
   itsElossHistoTransBinWidth=opt.elossHistoTransBinWidth;
   itsFFact=opt.ffact;
   itsParticleName=G4String(opt.particleName);
@@ -127,7 +128,14 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsSynchPhotonMultiplicity = opt.synchPhotonMultiplicity;
   itsSynchMeanFreeFactor = opt.synchMeanFreeFactor;
   itsLengthSafety = opt.lengthSafety;
-  itsNumberToGenerate = opt.numberToGenerate;
+
+  // set the number of primaries to generate - exec options overrides whatever's in gmad
+  G4int nToGenerate = BDSExecOptions::Instance()->GetNGenerate();
+  if (nToGenerate < 0)
+    {itsNumberToGenerate = opt.numberToGenerate;}
+  else
+    {itsNumberToGenerate = nToGenerate;}
+  
   itsNumberOfEventsPerNtuple = opt.numberOfEventsPerNtuple;
   itsEventNumberOffset = opt.eventNumberOffset;
   itsRandomSeed = opt.randomSeed;
@@ -249,41 +257,6 @@ G4RotationMatrix* BDSGlobalConstants::RotYM90X90() const{
 
 G4RotationMatrix* BDSGlobalConstants::RotYM90XM90() const{
   return _RotYM90XM90;
-}
-
-// a robust compiler-invariant method to convert from integer to G4String
-G4String BDSGlobalConstants::StringFromInt(G4int N)const
-{
-  if (N==0) return "0";
-  G4int nLocal=N, nDigit=0, nMax=1;
-  do { nDigit++;
-      nMax*=10;} while(N > nMax-1);
-  nMax/=10;
-  G4String Cnum;
-  do {Cnum+=StringFromDigit(nLocal/nMax);
-      nLocal-= nLocal/nMax * nMax;
-      nMax/=10;}   while(nMax>1);
-  if(nMax!=0)Cnum+=StringFromDigit(nLocal/nMax);
-  return Cnum;
-}
-
-// a robust compiler-invariant method to convert from digit to G4String
-G4String BDSGlobalConstants::StringFromDigit(G4int N)const 
-{
-  if(N<0 || N>9)
-    G4Exception("Invalid Digit in BDSGlobalConstants::StringFromDigit", "-1", FatalException, "");
-  G4String Cnum;
-  if(N==0)Cnum="0";
-  else if(N==1)Cnum="1";
-  else if(N==2)Cnum="2";
-  else if(N==3)Cnum="3";
-  else if(N==4)Cnum="4";
-  else if(N==5)Cnum="5";
-  else if(N==6)Cnum="6";
-  else if(N==7)Cnum="7";
-  else if(N==8)Cnum="8";
-  else if(N==9)Cnum="9"; 
-  return Cnum;
 }
 
 BDSGlobalConstants::~BDSGlobalConstants()
