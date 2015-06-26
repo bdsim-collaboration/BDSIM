@@ -81,7 +81,7 @@ public:
   /// Get the total length of the beamline - the sum of the chord length of each element
   inline G4double     GetTotalChordLength() const;
 
-  /// Get the total ARC length fo the beamline - ie the maximum s position
+  /// Get the total ARC length for the beamline - ie the maximum s position
   inline G4double     GetTotalArcLength() const;
 
   /// Get the number of elements

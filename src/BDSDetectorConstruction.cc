@@ -196,7 +196,7 @@ void BDSDetectorConstruction::BuildBeamline()
       BDSAcceleratorComponent* temp = theComponentFactory->createComponent(*it);
       if(temp)
 	{
-	  BDSTiltOffset*     tiltOffset = theComponentFactory->createTiltOffset(*it);
+	  BDSTiltOffset* tiltOffset = theComponentFactory->createTiltOffset(*it);
 	  beamline->AddComponent(temp, tiltOffset);
 	}
     }
@@ -231,7 +231,7 @@ void BDSDetectorConstruction::BuildBeamline()
 #endif
   G4cout << __METHOD_NAME__ << "size of the constructed beamline: "<< beamline->size() << " with length " << beamline->GetTotalArcLength()/CLHEP::m << " m" << G4endl;
   
-  if (beamline->size() == 0)
+  if (beamline->empty())
     {
       G4cout << __METHOD_NAME__ << "beamline empty or no line selected! exiting" << G4endl;
       exit(1);
