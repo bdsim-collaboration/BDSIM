@@ -8,7 +8,7 @@
 
 class BDSBunchSixTrack : public BDSBunchInterface { 
 private: 
-  G4int    nLoss;
+  G4int    nPart;
   G4String fileName;
 
   G4int    iPart; // current ray
@@ -25,7 +25,7 @@ public:
                                G4double& t , G4double&  E, G4double& weight);
   void SetDistribFile(G4String distribFileNameIn) {fileName = distribFileNameIn;}
   G4String GetDistribFile() {return fileName;}
-  G4int GetNParticles() {return nLoss;}
+  G4int GetNParticles() {return nPart;}
 };
 
 #endif

@@ -1,19 +1,16 @@
 #include "BDSBunchSixTrack.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
 #include <iostream>
-
 #include <fstream>
-#if __cplusplus>199711 // test for c++11 features
-#include <regex>
-#endif 
 
 BDSBunchSixTrack::BDSBunchSixTrack() { 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  this->iPart  = 0;
-
+  iPart  = 0;
+  nPart  = 0;
 
 }
 
@@ -57,10 +54,10 @@ void BDSBunchSixTrack::LoadSixTrackFile() {
   double type = 0.;
   double turns = 0.;
 
-  double *values =  new double[10];
-
   // read single line 
   while(infile >> sixtrackParticleID >> turn >> s >> x >> xp >> y >> yp >> en >> type >> turns){
+
+    double *values =  new double[10];
     
     // append values to storage vector
     values[0] = sixtrackParticleID;
@@ -73,9 +70,13 @@ void BDSBunchSixTrack::LoadSixTrackFile() {
     values[7] = en;
     values[8] = type;
     values[9] = turns;
+
+    this->sixtrackData.push_back(values);
+
   }
 
-  this->sixtrackData.push_back(values);
+  nPart = sixtrackData.size();
+  
   return;
 }
 
@@ -96,20 +97,24 @@ void BDSBunchSixTrack::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-
-  x0     = this->sixtrackData[this->iPart][0]*CLHEP::m+X0;
-  y0     = this->sixtrackData[this->iPart][2]*CLHEP::m+Y0;
-  z0     = this->sixtrackData[this->iPart][4]+Z0;
-  xp     = this->sixtrackData[this->iPart][1]*CLHEP::rad+Xp0;
-  yp     = this->sixtrackData[this->iPart][3]*CLHEP::rad+Yp0;
-  t      = (z0-Z0)/CLHEP::c_light+T0;
-  E      = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * (this->sixtrackData[this->iPart][5]+1.0);
-  zp     = CalculateZp(xp,yp,Zp0);
-  weight = 1.0; 
+  z0 = this->sixtrackData[this->iPart][2] * CLHEP::m;
+  x0 = this->sixtrackData[this->iPart][3] * CLHEP::mm; 
+  xp = this->sixtrackData[this->iPart][4] * CLHEP::mrad;
+  y0 = this->sixtrackData[this->iPart][5] * CLHEP::mm;
+  yp = this->sixtrackData[this->iPart][6] * CLHEP::mrad;
+  G4double beamenergy = BDSGlobalConstants::Instance()->GetParticleTotalEnergy();
+  E  = beamenergy + this->sixtrackData[this->iPart][7] * beamenergy;
+  weight = 1.;
+  t = 0.;
+  zp = CalculateZp(xp,yp,1.);
 
   this->iPart++;
 
-
+  // if all particles are read, start at 0 again
+  if (iPart == nPart) {
+    iPart=0;
+    G4cout << __METHOD_NAME__ << "End of file reached. Returning to beginning of file." << G4endl;
+  }
   return;
 }
 
