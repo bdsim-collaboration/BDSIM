@@ -291,7 +291,7 @@ to make the Doxygen documentation in a folder called ``Doxygen``.
 Geant4 Installation Guide
 -------------------------
 
-As of version 0.65, BDSIM builds with the most recent versions of Geant4 (version 4.9.6 onwards).
+As of version 0.6, BDSIM builds with the most recent versions of Geant4 (version 4.9.6 onwards).
 If not built with **MacPorts** then download the 4.10.01 version or an older version from the
 Geant archive. Move and unpack to a suitable place ::
 
