@@ -53,6 +53,7 @@
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
 #include "BDSGeometryInterface.hh"
+#include "BDSGeometryWriter.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
@@ -226,6 +227,20 @@ int main(int argc,char** argv) {
     G4cerr << "bdsim.cc: error - geometry not closed." << G4endl;
     return 1;
   }
+
+  if (BDSExecOptions::Instance()->ExportGeometry())
+    {
+      BDSGeometryWriter::Instance()->ExportGeometry(BDSExecOptions::Instance()->GetExportType(),
+						    BDSExecOptions::Instance()->GetExportFileName());
+      // clean up before exiting
+      G4GeometryManager::GetInstance()->OpenGeometry();
+      delete execOptions;
+      delete globalConstants;
+      delete BDSMaterials::Instance();
+      delete runManager;
+      delete bdsBunch;
+      return 0;
+    }
   
   // set default output formats:
 #ifdef BDSDEBUG
