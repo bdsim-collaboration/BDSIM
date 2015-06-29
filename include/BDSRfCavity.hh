@@ -12,10 +12,7 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4ChordFinder.hh"
 #include "G4EqMagElectricField.hh"
-#include "G4FieldManager.hh"
-#include "G4LogicalVolume.hh"
-#include "G4MagErrorStepper.hh"
-#include "G4UserLimits.hh"
+#include "G4MagIntegratorStepper.hh"
 #include "G4UniformElectricField.hh"
 
 struct BDSBeamPipeInfo;

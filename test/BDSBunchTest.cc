@@ -28,11 +28,13 @@ int main(int argc,char** argv) {
   
   gmad_parser(execOptions->GetInputFilename());
 
+  BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
+
   // Print options for distrib type 
   std::cout << "BDSBunchTest> distribFile : "      << options.distribFile << std::endl;
   std::cout << "BDSBunchTest> distribType : "      << options.distribType << std::endl;
   std::cout << "BDSBunchTest> particle    : "      << options.particleName << std::endl;
-  std::cout << "BDSBunchTest> particle    : "      << BDSGlobalConstants::Instance()->GetParticleName() << std::endl;
+  std::cout << "BDSBunchTest> particle    : "      << globalConstants->GetParticleName() << std::endl;
   std::cout << "BDSBunchTest> numberToGenerate : " << options.numberToGenerate << std::endl;
 
 
@@ -46,9 +48,9 @@ int main(int argc,char** argv) {
   G4Proton::ProtonDefinition();
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();  
-  BDSGlobalConstants::Instance()->SetParticleDefinition(particleTable->FindParticle(BDSGlobalConstants::Instance()->GetParticleName()));  
-  BDSGlobalConstants::Instance()->SetBeamMomentum(sqrt(pow(BDSGlobalConstants::Instance()->GetBeamTotalEnergy(),2)-pow(BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass(),2)));  
-  BDSGlobalConstants::Instance()->SetBeamKineticEnergy(BDSGlobalConstants::Instance()->GetBeamTotalEnergy()-BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass());
+  globalConstants->SetParticleDefinition(particleTable->FindParticle(globalConstants->GetParticleName()));  
+  globalConstants->SetBeamMomentum(sqrt(pow(globalConstants->GetBeamTotalEnergy(),2)-pow(globalConstants->GetParticleDefinition()->GetPDGMass(),2)));  
+  globalConstants->SetBeamKineticEnergy(globalConstants->GetBeamTotalEnergy()-globalConstants->GetParticleDefinition()->GetPDGMass());
 
   // Set options for bunch
   bdsBunch.SetOptions(options);

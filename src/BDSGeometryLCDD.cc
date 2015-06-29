@@ -1,7 +1,6 @@
 #ifdef USE_LCDD
 #include "BDSGlobalConstants.hh" 
 #include "BDSGeometryLCDD.hh"
-#include "BDSSbendMagField.hh"
 #include "G4Box.hh"
 #include "G4Colour.hh"
 #include "G4Tubs.hh"
@@ -13,7 +12,6 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4UserLimits.hh"
-#include "BDSMySQLWrapper.hh"
 #include "BDSMaterials.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSDetectorSolenoidMagField.hh"

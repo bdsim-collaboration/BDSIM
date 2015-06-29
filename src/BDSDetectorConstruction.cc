@@ -14,10 +14,8 @@
 #include "BDSSDManager.hh"
 #include "BDSTeleporter.hh"
 
-#include "ggmad.hh"
 #include "parser/element.h"
 #include "parser/elementlist.h"
-#include "parser/enums.h"
 
 #include "G4Box.hh"
 #include "G4Colour.hh"
@@ -196,7 +194,7 @@ void BDSDetectorConstruction::BuildBeamline()
       BDSAcceleratorComponent* temp = theComponentFactory->createComponent(*it);
       if(temp)
 	{
-	  BDSTiltOffset*     tiltOffset = theComponentFactory->createTiltOffset(*it);
+	  BDSTiltOffset* tiltOffset = theComponentFactory->createTiltOffset(*it);
 	  beamline->AddComponent(temp, tiltOffset);
 	}
     }
@@ -231,7 +229,7 @@ void BDSDetectorConstruction::BuildBeamline()
 #endif
   G4cout << __METHOD_NAME__ << "size of the constructed beamline: "<< beamline->size() << " with length " << beamline->GetTotalArcLength()/CLHEP::m << " m" << G4endl;
   
-  if (beamline->size() == 0)
+  if (beamline->empty())
     {
       G4cout << __METHOD_NAME__ << "beamline empty or no line selected! exiting" << G4endl;
       exit(1);
@@ -409,7 +407,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       else
         {
 	  // It doesn't have a read out volume, so register the same info with all logical volumes
-	  // the current BDSAcceleratorComponent  contains as any of them could be requested
+	  // the current BDSAcceleratorComponent contains as any of them could be requested
 	  // by BDSEnergyCounterSD
 	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo(name,
 								   (*it)->GetSPositionMiddle());

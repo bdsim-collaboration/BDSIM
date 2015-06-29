@@ -8,7 +8,6 @@
 #include "BDSMaterials.hh"
 
 #include "G4Box.hh"
-#include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 
 BDSLaserWire::BDSLaserWire(G4String      name,

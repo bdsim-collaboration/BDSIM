@@ -56,6 +56,7 @@ struct Options {
 
   /// for the circle/square beam distribution
   double envelopeX, envelopeXp, envelopeY, envelopeYp, envelopeT, envelopeE;
+  double envelopeR, envelopeRp;
 
   /// for the gaussian sigma matrix distribution
   double sigma11, sigma12, sigma13, sigma14, sigma15, sigma16;

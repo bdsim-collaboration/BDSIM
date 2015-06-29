@@ -12,16 +12,15 @@
 #include <cstddef>
 #include <cmath>
 #include <string>
-#include <algorithm> // for std::max
 
 #include "G4Box.hh"
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4MagneticField.hh"
+#include "G4Material.hh"
 #include "G4PVPlacement.hh"
 #include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
 #include "BDSBeamPipe.hh"
@@ -62,6 +61,8 @@ BDSMagnet::BDSMagnet(BDSMagnetType      type,
   itsPhysiInner=NULL;
   itsBPFieldMgr=NULL;
   itsOuterFieldMgr=NULL;
+
+  itsInnerIronRadius = 0.0;
   
   itsChordFinder=NULL;
   itsOuterMagField=NULL;
@@ -277,21 +278,6 @@ void BDSMagnet::BuildContainerLogicalVolume()
   // taken from FinaliseBeamPipe method - supposed to protect against fields being overridden
   containerLogicalVolume->
     SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
-
-  // USER LIMITS
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  G4UserLimits* itsMarkerUserLimits =  new G4UserLimits();
-  itsMarkerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
-  itsMarkerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  containerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
-#endif
-
-  // VIS ATTR
-  if (BDSExecOptions::Instance()->GetVisDebug())
-    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
-  else
-    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
 
   SetExtentX(-containerRadius, containerRadius);
   SetExtentY(-containerRadius, containerRadius);

@@ -7,7 +7,6 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "G4UserLimits.hh"
 #include "G4VSolid.hh"
 #include "G4SubtractionSolid.hh"
 

@@ -1,7 +1,6 @@
 #include "BDSTunnelInfo.hh"
 
 #include "BDSTunnelType.hh"
-#include "G4Material.hh"
 
 BDSTunnelInfo::BDSTunnelInfo()
 {

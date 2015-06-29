@@ -19,7 +19,6 @@
 #include "G4LogicalVolume.hh"
 #include "G4MagneticField.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "G4Material.hh"
 #include "G4RotationMatrix.hh"
 #include "G4UserLimits.hh"
 
@@ -95,7 +94,6 @@ protected:
   G4FieldManager* itsOuterFieldMgr;
 
   G4double itsInnerIronRadius;
-
 
   G4ChordFinder* itsChordFinder;
   G4MagneticField* itsOuterMagField;

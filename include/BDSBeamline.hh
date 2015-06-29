@@ -24,11 +24,6 @@ class BDSTiltOffset;
  * by placing beamline components inside parent volumes and therefore creating
  * a new beamline of parents.
  * 
- * Note, if initial coordinates other than 0,0,0 and null rotation are required,
- * an appropriate Transform3D should be the first thing added to the beamline
- * which will result in the appropriate shift - this will be reflected in the
- * calculated world dimensions.
- * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
@@ -55,10 +50,6 @@ public:
   
   ~BDSBeamline();
 
-  /// Add a single component and calculate its position and rotation with respect
-  /// to the beginning of the beamline
-  void AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = NULL);
-
   /// Add a component, but check to see if can be dynamically upcast to a line
   /// in which case, loop over it and apply
   /// AddSingleComponent(BDSAcceleratorComponent* component) to each component
@@ -81,7 +72,7 @@ public:
   /// Get the total length of the beamline - the sum of the chord length of each element
   inline G4double     GetTotalChordLength() const;
 
-  /// Get the total ARC length fo the beamline - ie the maximum s position
+  /// Get the total ARC length for the beamline - ie the maximum s position
   inline G4double     GetTotalArcLength() const;
 
   /// Get the number of elements
@@ -124,6 +115,10 @@ public:
   friend std::ostream& operator<< (std::ostream &out, BDSBeamline const &bl);
   
 private: 
+  /// Add a single component and calculate its position and rotation with respect
+  /// to the beginning of the beamline
+  void AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = NULL);
+
   std::vector<BDSBeamlineElement*> beamline; ///< Beamline vector - the data
 
   G4double totalChordLength;
