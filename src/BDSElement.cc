@@ -377,7 +377,11 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 #ifdef USE_GDML
     BDSGeometryGDML *GDML = new BDSGeometryGDML(gFile);
     GDML->Construct(containerLogicalVolume);
+    //    RegisterSensitiveVolume(containerLogicalVolume);
+    RegisterSensitiveVolumes(GDML->GetAllSensitiveVolumes());
     delete GDML;
+
+
 #else
     G4cout << "GDML support not selected during BDSIM configuration" << G4endl;
     G4Exception("Please re-compile BDSIM with USE_GDML flag", "-1", FatalException, "");
