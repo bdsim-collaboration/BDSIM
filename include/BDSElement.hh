@@ -60,7 +60,7 @@ private:
   virtual void Build();
 
   /// Required implementation from BDSAcceleratorComponent that builds the container volume.
-  /// Here, this method uses the outerDimater parameter from the constructor.
+  /// Here, this method uses the outerDiameter parameter from the constructor.
   virtual void BuildContainerLogicalVolume();
 
   /// Load the geometry and place the components inside the container logical volume.

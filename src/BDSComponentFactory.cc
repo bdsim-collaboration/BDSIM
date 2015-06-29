@@ -665,7 +665,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement()
 	 << " name = " << _element.name
 	 << " l = " << _element.l << "m"
 	 << " outerDiameter = "  << _element.outerDiameter << "m"
-	 << " bmapZOffset = "	 <<  _element.bmapZOffset * CLHEP::m << "mm"
+	 << " bmapZOffset = "	 << _element.bmapZOffset * CLHEP::m << "mm"
 	 << " precision region " << _element.precisionRegion
 	 << G4endl;
 #endif
