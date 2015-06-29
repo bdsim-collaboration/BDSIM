@@ -36,6 +36,7 @@
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSTunnelInfo.hh"
+#include "BDSUtilities.hh"
 
 #include "parser/enums.h"
 #include "parser/elementlist.h"
@@ -651,6 +652,13 @@ BDSAcceleratorComponent* BDSComponentFactory::createElement()
 {
   if(!HasSufficientMinimumLength(_element))
     {return NULL;}
+
+  if(!BDS::IsFinite(_element.outerDiameter))
+    {
+      G4cerr << __METHOD_NAME__ << "\"outerDiameter\" must be set for component named \""
+	     << _element.name << "\"" << G4endl;
+      exit(1);
+    }
   
 #ifdef BDSDEBUG 
   G4cout << "---->creating Element,"
