@@ -127,7 +127,11 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   // that can be placed.  Apply the transform and skip the rest of this function by returning
   // This modifies the "end" coordinates, rotation and axes of the last element in the beamline
   if (BDSTransform3D* transform = dynamic_cast<BDSTransform3D*>(component))
-    {ApplyTransform3D(transform); return;}
+    {
+      ApplyTransform3D(transform);
+      delete tiltOffset;
+      return;
+    }
 
   // if it's not a transform3d instance, continue as normal
   // interrogate the item
@@ -377,6 +381,9 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   
   // append it to the beam line
   beamline.push_back(element);
+
+  // free memory
+  delete tiltOffset;
 #ifdef BDSDEBUG
   G4cout << *element;
   G4cout << __METHOD_NAME__ << "component added" << G4endl;
