@@ -229,12 +229,13 @@ int main(int argc,char** argv) {
     return 1;
   }
 
-  if (BDSExecOptions::Instance()->ExportGeometry())
+  if (execOptions->ExportGeometry())
     {
-      BDSGeometryWriter::Instance()->ExportGeometry(BDSExecOptions::Instance()->GetExportType(),
-						    BDSExecOptions::Instance()->GetExportFileName());
+      BDSGeometryWriter::Instance()->ExportGeometry(execOptions->GetExportType(),
+						    execOptions->GetExportFileName());
       // clean up before exiting
       G4GeometryManager::GetInstance()->OpenGeometry();
+      delete BDSLogicalVolumeInfoRegistry::Instance();
       delete execOptions;
       delete globalConstants;
       delete BDSMaterials::Instance();
