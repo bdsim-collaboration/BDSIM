@@ -18,6 +18,7 @@
 #include "G4LogicalVolume.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4MagneticField.hh"
+#include "G4Material.hh"
 #include "G4PVPlacement.hh"
 #include "G4UserLimits.hh"
 #include "G4VPhysicalVolume.hh"
@@ -60,6 +61,8 @@ BDSMagnet::BDSMagnet(BDSMagnetType      type,
   itsPhysiInner=NULL;
   itsBPFieldMgr=NULL;
   itsOuterFieldMgr=NULL;
+
+  itsInnerIronRadius = 0.0;
   
   itsChordFinder=NULL;
   itsOuterMagField=NULL;
