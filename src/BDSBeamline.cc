@@ -7,7 +7,6 @@
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSLine.hh"
-#include "BDSSampler.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
 #include "BDSUtilities.hh"

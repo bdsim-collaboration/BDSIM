@@ -8,7 +8,6 @@
 #include "BDSSamplerCylinder.hh"
 #include "BDSDebug.hh"
 #include "G4Tubs.hh"
-#include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"

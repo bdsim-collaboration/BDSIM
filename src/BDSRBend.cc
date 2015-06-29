@@ -18,10 +18,6 @@
 #include "G4LogicalVolume.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4PVPlacement.hh"
-#include "G4Tubs.hh"
-#include "G4CutTubs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
 BDSRBend::BDSRBend(G4String           name,

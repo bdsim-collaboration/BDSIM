@@ -14,10 +14,8 @@
 #include "BDSSDManager.hh"
 #include "BDSTeleporter.hh"
 
-#include "ggmad.hh"
 #include "parser/element.h"
 #include "parser/elementlist.h"
-#include "parser/enums.h"
 
 #include "G4Box.hh"
 #include "G4Colour.hh"

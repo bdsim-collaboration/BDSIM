@@ -1,21 +1,19 @@
 #include "globals.hh" //G4 global constants & types
 #include "BDSTeleporter.hh"
 #include "BDSAcceleratorComponent.hh"
+#include "BDSBeamline.hh"
+#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-#include "G4VisAttributes.hh"
-#include "G4LogicalVolume.hh"
+#include "BDSMagField.hh"
+#include "BDSTeleporterStepper.hh"
+
 #include "G4Box.hh" 
-#include "BDSMaterials.hh"
 #include "G4ChordFinder.hh"
 #include "G4FieldManager.hh"
-#include "BDSDebug.hh"
-#include "BDSMagField.hh"
+#include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "BDSTeleporterStepper.hh"
 #include "G4ThreeVector.hh"
-#include "BDSBeamline.hh"
 #include <cmath>
-#include "parser/enums.h"
 
 BDSTeleporter::BDSTeleporter(G4String name,
 			     G4double length):

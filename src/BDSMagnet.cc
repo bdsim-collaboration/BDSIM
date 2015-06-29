@@ -12,7 +12,6 @@
 #include <cstddef>
 #include <cmath>
 #include <string>
-#include <algorithm> // for std::max
 
 #include "G4Box.hh"
 #include "G4CutTubs.hh"
@@ -21,7 +20,6 @@
 #include "G4MagneticField.hh"
 #include "G4PVPlacement.hh"
 #include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
 #include "BDSBeamPipe.hh"

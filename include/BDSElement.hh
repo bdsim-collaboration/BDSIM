@@ -19,7 +19,6 @@
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4Mag_EqRhs.hh"
-#include "G4UserLimits.hh"
 #include "G4UniformMagField.hh"
 
 /**
