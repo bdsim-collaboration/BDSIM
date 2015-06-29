@@ -6,7 +6,6 @@
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4VisAttributes.hh"
 #include "G4UserLimits.hh"
 #include "G4SDManager.hh"
 #include "BDSDebug.hh"

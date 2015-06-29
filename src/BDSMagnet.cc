@@ -12,16 +12,15 @@
 #include <cstddef>
 #include <cmath>
 #include <string>
-#include <algorithm> // for std::max
 
 #include "G4Box.hh"
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4MagneticField.hh"
+#include "G4Material.hh"
 #include "G4PVPlacement.hh"
 #include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
 #include "BDSBeamPipe.hh"
@@ -62,6 +61,8 @@ BDSMagnet::BDSMagnet(BDSMagnetType      type,
   itsPhysiInner=NULL;
   itsBPFieldMgr=NULL;
   itsOuterFieldMgr=NULL;
+
+  itsInnerIronRadius = 0.0;
   
   itsChordFinder=NULL;
   itsOuterMagField=NULL;

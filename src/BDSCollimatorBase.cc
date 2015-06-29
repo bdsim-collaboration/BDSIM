@@ -46,6 +46,8 @@ BDSCollimatorBase::BDSCollimatorBase(G4String name,
     }
 
   collimatorSolid = NULL;
+  innerSolid      = NULL;
+  vacuumSolid     = NULL;
 }
 
 void BDSCollimatorBase::BuildContainerLogicalVolume()

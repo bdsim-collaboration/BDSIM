@@ -24,11 +24,6 @@ class BDSTiltOffset;
  * by placing beamline components inside parent volumes and therefore creating
  * a new beamline of parents.
  * 
- * Note, if initial coordinates other than 0,0,0 and null rotation are required,
- * an appropriate Transform3D should be the first thing added to the beamline
- * which will result in the appropriate shift - this will be reflected in the
- * calculated world dimensions.
- * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
