@@ -9,7 +9,6 @@
 #include "BDSDipoleStepper.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
-#include "BDSMaterials.hh"
 #include "BDSSbendMagField.hh"
 #include "BDSUtilities.hh"
 
