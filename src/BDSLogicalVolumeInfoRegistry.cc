@@ -22,6 +22,10 @@ BDSLogicalVolumeInfoRegistry::BDSLogicalVolumeInfoRegistry()
 
 BDSLogicalVolumeInfoRegistry::~BDSLogicalVolumeInfoRegistry()
 {
+  for (BDSLVInfoIterator it=theRegister.begin(); it!=theRegister.end(); ++it) {
+    delete it->second;
+  }
+  
   _instance = 0;
 }
 
