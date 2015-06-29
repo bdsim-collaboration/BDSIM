@@ -581,13 +581,15 @@ element
 ^^^^^^^
 
 `element` defines an arbitrary element that's defined by external geometry and magnetic field
-maps. Several geometry formats are supported. The user must also supply the outer radius of the
-object for tunnel geometry compatibility.
+maps. Several geometry formats are supported. The user must supply the length (accurately) as
+well as a diameter such that the geometry will be contained in a box that has horizontal and
+vertical size of diameter.
 
 ================  ===============================  ==========  ===========
 parameter         description                      default     required
 `geometry`        filename of geometry             NA          yes
-`outR`            outermost radius [m]             NA          yes
+`l`               length                           NA          yes
+`outerDiameter`   diameter of component [m]        NA          yes
 `bmap`            filename of magnetic field map   NA          no
 ================  ===============================  ==========  ===========
 
@@ -595,12 +597,18 @@ parameter         description                      default     required
 `format` is the geometry format being used (`gdml` | `mokka`) and filename is the filename of
 the geometry file.
 
+.. note:: The length must be larger than the geometry so that it is contained within it and
+	  no overlapping geometry will be produced. However, care must be taken as the length
+	  will be the length of the component inserted in the beamline.  If this is much larger
+	  than the size requried for the geometry, the beam may be mismatched into the rest of
+	  the accelerator. A common practice is to add a picometre to the length of the geometry.
+
 Examples
 """"""""
 ::
 
-   detector: element, geometry="gdml:atlasreduced.gmdl", outR=20*m;
-   detec: element, geometry="mokka:qq.sql", bmap ="mokka:qq.bmap";
+   detector: element, geometry="gdml:atlasreduced.gmdl", outerDiameter=10*m,l=44*m;
+   detec: element, geometry="mokka:qq.sql", bmap ="mokka:qq.bmap", l=5*m, outerDiameter=0.76*m;
 
 
 marker

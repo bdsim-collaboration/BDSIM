@@ -40,12 +40,14 @@
 
 #include <vector>
 
-BDSElement::BDSElement(G4String      name,
-		       G4double      length,
-		       G4String      geometry,
-		       G4String      bmap,
-		       G4double      bmapZOffset):
+BDSElement::BDSElement(G4String name,
+		       G4double length,
+		       G4double outerDiameterIn,
+		       G4String geometry,
+		       G4String bmap,
+		       G4double bmapZOffset):
   BDSAcceleratorComponent(name, length, 0, "element"),
+  outerDiameter(outerDiameterIn),
   itsGeometry(geometry), itsBmap(bmap),
   fChordFinder(NULL), itsFStepper(NULL), itsFEquation(NULL), itsEqRhs(NULL), 
   itsMagField(NULL), itsCachedMagField(NULL), itsUniformMagField(NULL)
@@ -60,147 +62,43 @@ BDSElement::BDSElement(G4String      name,
   align_out_volume = NULL;
 }
 
+void BDSElement::Build()
+{
+  // base class build - builds container volume
+  BDSAcceleratorComponent::Build();
+
+  // construct the input geometry and b fields and place in the container
+  PlaceComponents(itsGeometry,itsBmap);
+}
+
 void BDSElement::BuildContainerLogicalVolume()
 {
 #ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << " building geometry of element named: \""
-	 << name << "\"" << G4endl;
-#endif
-  BuildGeometry(); // build element box
-      
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "completed geometry construction " << G4endl;
-#endif
-
-  PlaceComponents(itsGeometry,itsBmap); // place components (from file) and build filed maps
-}
-
-void BDSElement::BuildElementMarkerLogicalVolume()
-{  
-#ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  // TBC these really needs to be done automatically
-  // for now the geometry is constructed after the "marker" / container
-  // volume so it can be place inside - but how do we know how big it is?
-  G4double outerDiameter = 10*CLHEP::m;
-  G4double elementSizeX = outerDiameter*0.5 + lengthSafety;
-  G4double elementSizeY = outerDiameter*0.5 + lengthSafety;
-
-  G4double elementSize=std::max(elementSizeX, elementSizeY); 
   
   containerSolid = new G4Box(name + "_container_solid",
-			     elementSize,
-			     elementSize,   
+			     outerDiameter*0.5,
+			     outerDiameter*0.5,   
 			     chordLength*0.5);
   
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       emptyMaterial,
 					       name + "_container_lv");
-
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "container volume dimensions: x, y = "<< elementSize/CLHEP::m
-	 <<" m, l = "<<  chordLength/CLHEP::m <<" m"<<G4endl;
-#endif
-
-
-    //-----------------------------
-    /*
-      G4RotationMatrix* rotMatrix1 = new G4RotationMatrix();
-  rotMatrix1->rotateY(itsPhiAngleIn);
-  G4RotationMatrix* rotMatrix2 = new G4RotationMatrix();
-  rotMatrix1->rotateY(itsPhiAngleOut);
-  G4ThreeVector transVec1(0, 0, itsLength
-
-  containerLogicalVolume = new G4SubtactionSolid(itsName+"_generic_element",
-						 new G4SubtactionSolid(itsName+"_tempSolid1",
-								       new G4Box(itsName+"tempSolid1a",
-										 elementSize,
-										 elementSize,   
-										 itsLength/2),
-								       new G4Box(itsName+"tempSolid1b", 
-										 sin(itsPhiAngleIn)*elementSize*2, //Make sure it is wider than the solid being subtracted from
-										 elementSize,
-										 itsLength/2),
-								       rotMatrix1,
-								       transVec1),
-						 new  G4Box(itsName+"tempSolid2", 
-							    sin(itsPhiAngleOut)*elementSize*2, //Make sure it is wider than the solid being subtracted from
-							    elementSize,
-							    itsLength/2),
-						 rotMatrix2,
-						 transVec2);
-
-
-
-  G4LogicalVolume* tempBox1 = new G4LogicalVolume(new G4Box(itsName+"tempBox1", 
-							    sin(itsPhiAngleIn)*elementSize,
-							    elementSize,
-							    itsLength/2),
-						  BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
-						  itsName+"tempBox1Log"
-						  );
   
-
-    */
-
-  /*
-  G4double xHalfLengthPlus, xHalfLengthMinus;
-  xHalfLengthMinus = (itsLength + (elementSize/2.0)*(tan(itsPhiAngleIn) -tan(itsPhiAngleOut)))/2.0;
-  xHalfLengthPlus = (itsLength +  (elementSize/2.0)*(tan(itsPhiAngleOut)-tan(itsPhiAngleIn )))/2.0;
-  
-  
-  containerSolid = new G4Trd(itsName+"_marker",
-				   xHalfLengthPlus,     // x hlf lgth at +z
-				   xHalfLengthMinus,    // x hlf lgth at -z
-				   elementSize/2,           // y hlf lgth at +z
-				   elementSize/2,           // y hlf lgth at -z
-				   fabs(cos(itsAngle/2))*elementSize/2);// z hlf lgth
-  
-  G4String LocalLogicalName=itsName;
-  
-  containerLogicalVolume=    
-    new G4LogicalVolume(containerSolid,
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
-			LocalLogicalName+"_marker");
-  */
-  
-  G4UserLimits* itsMarkerUserLimits = new G4UserLimits(DBL_MAX,DBL_MAX,DBL_MAX, BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  G4double  maxStepFactor=5;
-  itsMarkerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
-  containerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
-  
-  
-  //
   // zero field in the marker volume
-  //
-  containerLogicalVolume->
-    SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
+  containerLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
+
+  SetExtentX(-outerDiameter*0.5, outerDiameter*0.5);
+  SetExtentY(-outerDiameter*0.5, outerDiameter*0.5);
+  SetExtentZ(-chordLength*0.5, chordLength*0.5);
 }
 
-void BDSElement::BuildGeometry()
-{
-  // multiple element instances not implemented yet!!!
-
-  // Build the marker logical volume 
-  BuildElementMarkerLogicalVolume();
-
-#ifndef NOUSERLIMITS
-  G4UserLimits* itsOuterUserLimits = new G4UserLimits();
-  G4double stepfactor=5;
-  itsOuterUserLimits->SetMaxAllowedStep(chordLength*stepfactor);
-  itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-  if(BDSGlobalConstants::Instance()->GetThresholdCutCharged()>0){
-    itsOuterUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  }
-  containerLogicalVolume->SetUserLimits(itsOuterUserLimits);
-#endif
-}
-
-// place components 
 void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 {
-
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   G4String gFormat="", bFormat="";
   G4String gFile="", bFile="";
 
