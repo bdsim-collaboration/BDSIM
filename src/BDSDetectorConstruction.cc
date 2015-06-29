@@ -407,7 +407,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       else
         {
 	  // It doesn't have a read out volume, so register the same info with all logical volumes
-	  // the current BDSAcceleratorComponent  contains as any of them could be requested
+	  // the current BDSAcceleratorComponent contains as any of them could be requested
 	  // by BDSEnergyCounterSD
 	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo(name,
 								   (*it)->GetSPositionMiddle());
