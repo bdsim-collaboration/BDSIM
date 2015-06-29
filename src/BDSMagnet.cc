@@ -278,21 +278,6 @@ void BDSMagnet::BuildContainerLogicalVolume()
   containerLogicalVolume->
     SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
 
-  // USER LIMITS
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  G4UserLimits* itsMarkerUserLimits =  new G4UserLimits();
-  itsMarkerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
-  itsMarkerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  containerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
-#endif
-
-  // VIS ATTR
-  if (BDSExecOptions::Instance()->GetVisDebug())
-    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
-  else
-    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
-
   SetExtentX(-containerRadius, containerRadius);
   SetExtentY(-containerRadius, containerRadius);
   SetExtentZ(-chordLength*0.5, chordLength*0.5);
