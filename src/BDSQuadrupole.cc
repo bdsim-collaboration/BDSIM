@@ -26,8 +26,6 @@
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Tubs.hh"
-#include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
 BDSQuadrupole::BDSQuadrupole(G4String           name,

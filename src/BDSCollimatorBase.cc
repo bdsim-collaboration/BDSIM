@@ -9,7 +9,6 @@
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"               
 #include "G4SubtractionSolid.hh"
-#include "G4UserLimits.hh"
 
 #include <map>
 
