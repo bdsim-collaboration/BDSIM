@@ -78,16 +78,16 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
     double emitXSp = gammaX*pow(dx,2) + 2.*alphaX*dx*dxp + betaX*pow(dxp,2);
     double emitYSp = gammaY*pow(dy,2) + 2.*alphaY*dy*dyp + betaY*pow(dyp,2);
     
-#ifdef BDSDEBUG
-    G4cout << "phase space> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
-    G4cout << "emittance> " << emitXSp << " " << emitX << " " << emitYSp << " " << emitY << G4endl;
-#endif
+// #ifdef BDSDEBUG
+//     G4cout << __METHOD_NAME__ << "phase space> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
+//     G4cout << __METHOD_NAME__ << "emittance> " << emitXSp << " " << emitX << " " << emitYSp << " " << emitY << G4endl;
+// #endif
 
     // check if particle is within normal beam core, if so continue generation
     if (emitXSp < emitX || emitYSp <emitY) { 
-#ifdef BDSDEBUG
-      G4cout << "continue> " << G4endl;
-#endif
+// #ifdef BDSDEBUG
+//       G4cout << __METHOD_NAME__ << "continue> " << G4endl;
+// #endif
       continue;
     } 
     else {
@@ -107,9 +107,9 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 	wy = exp(-(emitYSp-emitY)/(emitY*weightParameter));
       }
       
-#ifdef BDSDEBUG
-      G4cout << emitXSp/emitX << " " << emitYSp/emitY << " " << wx << " " << wy << G4endl;
-#endif
+// #ifdef BDSDEBUG
+//       G4cout << __METHOD_NAME__ << emitXSp/emitX << " " << emitYSp/emitY << " " << wx << " " << wy << G4endl;
+// #endif
       // reject
       if(FlatGen->shoot() > wx && FlatGen->shoot() > wy) 
 	continue;
@@ -125,7 +125,7 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
       E = BDSGlobalConstants::Instance()->GetParticleKineticEnergy();
 
 #ifdef BDSDEBUG
-      G4cout << "selected> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
+      G4cout << __METHOD_NAME__ << "selected> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
 #endif
      
       weight = 1.0;

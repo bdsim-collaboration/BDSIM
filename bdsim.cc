@@ -54,6 +54,7 @@
 #include "BDSEventAction.hh"
 #include "BDSGeometryInterface.hh"
 #include "BDSGeometryWriter.hh"
+#include "BDSLogicalVolumeInfoRegistry.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
@@ -388,6 +389,7 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
 #endif
+  delete BDSLogicalVolumeInfoRegistry::Instance();
   delete execOptions;
   delete globalConstants;
   delete BDSMaterials::Instance();

@@ -20,7 +20,6 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "BDSDumpSD.hh"
-#include "BDSMaterials.hh"
 #include "G4SDManager.hh"
 
 BDSDumpSD* BDSDumpSensDet;

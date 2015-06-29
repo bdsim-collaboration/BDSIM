@@ -3,7 +3,6 @@
 
 #include "globals.hh"
 #include "G4LogicalVolume.hh"
-#include "G4UserLimits.hh"
 #include "G4VSolid.hh"
 #include "G4TwoVector.hh"
 #include "BDSScreenLayer.hh"

@@ -5,8 +5,6 @@
 #include "BDSCCDPixel.hh"
 #include "G4LogicalVolume.hh"
 
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 #include <vector>
 #include "G4TwoVector.hh"

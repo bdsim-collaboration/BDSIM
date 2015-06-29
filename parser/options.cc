@@ -35,6 +35,7 @@ Options::Options(){
   betx = 0.0, bety = 0.0, alfx = 0.0, alfy = 0.0, emitx = 0.0, emity = 0.0;
   sigmaX = 0.0, sigmaXp = 0.0, sigmaY = 0.0, sigmaYp = 0.0;
   envelopeX = 0.0, envelopeXp = 0.0, envelopeY = 0.0, envelopeYp = 0.0, envelopeT = 0.0, envelopeE = 0.0;
+  envelopeR = 0.0, envelopeRp = 0.0;
   sigma11 = 0.0,sigma12 = 0.0,sigma13 = 0.0,sigma14 = 0.0,sigma15 = 0.0,sigma16 = 0.0;
   sigma22 = 0.0,sigma23 = 0.0,sigma24 = 0.0,sigma25 = 0.0,sigma26 = 0.0;
   sigma33 = 0.0,sigma34 = 0.0,sigma35 = 0.0,sigma36 = 0.0;
@@ -212,12 +213,14 @@ void Options::set_value(std::string name, double value )
   if(name == "sigmaYp" ) { sigmaYp = value; return; }
 
   // options for beam distrType="square" or distrType="circle"
-  if(name == "envelopeX" ) { envelopeX = value; return; }
-  if(name == "envelopeY" ) { envelopeY = value; return; }
+  if(name == "envelopeX"  ) { envelopeX  = value; return; }
+  if(name == "envelopeY"  ) { envelopeY  = value; return; }
   if(name == "envelopeXp" ) { envelopeXp = value; return; }
   if(name == "envelopeYp" ) { envelopeYp = value; return; }
-  if(name == "envelopeT" ) { envelopeT = value; return; }
-  if(name == "envelopeE" ) { envelopeE = value; return; }
+  if(name == "envelopeT"  ) { envelopeT  = value; return; }
+  if(name == "envelopeE"  ) { envelopeE  = value; return; }
+  if(name == "envelopeR"  ) { envelopeR  = value; return; }
+  if(name == "envelopeRp" ) { envelopeRp = value; return; }
 
   // options for beam distrType="gaussmatrix"
   if(name == "sigma11" ) { sigma11 = value; return; }

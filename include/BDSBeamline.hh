@@ -24,11 +24,6 @@ class BDSTiltOffset;
  * by placing beamline components inside parent volumes and therefore creating
  * a new beamline of parents.
  * 
- * Note, if initial coordinates other than 0,0,0 and null rotation are required,
- * an appropriate Transform3D should be the first thing added to the beamline
- * which will result in the appropriate shift - this will be reflected in the
- * calculated world dimensions.
- * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
@@ -54,10 +49,6 @@ public:
 	      G4RotationMatrix* initialGlobalRotation);
   
   ~BDSBeamline();
-
-  /// Add a single component and calculate its position and rotation with respect
-  /// to the beginning of the beamline
-  void AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = NULL);
 
   /// Add a component, but check to see if can be dynamically upcast to a line
   /// in which case, loop over it and apply
@@ -124,6 +115,10 @@ public:
   friend std::ostream& operator<< (std::ostream &out, BDSBeamline const &bl);
   
 private: 
+  /// Add a single component and calculate its position and rotation with respect
+  /// to the beginning of the beamline
+  void AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = NULL);
+
   std::vector<BDSBeamlineElement*> beamline; ///< Beamline vector - the data
 
   G4double totalChordLength;

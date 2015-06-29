@@ -6,10 +6,8 @@
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
-#include "G4UserLimits.hh"
 #include "BDSDebug.hh"
 
-#include "G4UserLimits.hh"
 #include <map>
 #include "G4TwoVector.hh"
 #include "BDSMaterials.hh"

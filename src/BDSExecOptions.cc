@@ -8,7 +8,6 @@
 #include "BDSDebug.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputFormat.hh"
-#include "BDSUtilities.hh"
 
 #include "parser/getEnv.h"
 
