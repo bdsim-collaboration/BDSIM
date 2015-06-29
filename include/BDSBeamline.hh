@@ -50,10 +50,6 @@ public:
   
   ~BDSBeamline();
 
-  /// Add a single component and calculate its position and rotation with respect
-  /// to the beginning of the beamline
-  void AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = NULL);
-
   /// Add a component, but check to see if can be dynamically upcast to a line
   /// in which case, loop over it and apply
   /// AddSingleComponent(BDSAcceleratorComponent* component) to each component
@@ -119,6 +115,10 @@ public:
   friend std::ostream& operator<< (std::ostream &out, BDSBeamline const &bl);
   
 private: 
+  /// Add a single component and calculate its position and rotation with respect
+  /// to the beginning of the beamline
+  void AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = NULL);
+
   std::vector<BDSBeamlineElement*> beamline; ///< Beamline vector - the data
 
   G4double totalChordLength;
