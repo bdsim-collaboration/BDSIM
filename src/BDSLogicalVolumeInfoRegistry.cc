@@ -1,4 +1,5 @@
 #include "BDSDebug.hh"
+#include "BDSLogicalVolumeInfo.hh"
 #include "BDSLogicalVolumeInfoRegistry.hh"
 
 #include "globals.hh" // geant4 globals / types - used for G4cerr
@@ -33,6 +34,8 @@ void BDSLogicalVolumeInfoRegistry::RegisterInfo(G4LogicalVolume* lvPointer,
     {//uh oh - we've found it somewhere - abort
       G4cerr << __METHOD_NAME__ << "this logical volume is already registered" << G4endl;
       G4cerr << __METHOD_NAME__ << "lv name is: " << lvPointer->GetName() << G4endl;
+      // release memory
+      delete info;
       return;
     }
 
@@ -51,6 +54,6 @@ BDSLogicalVolumeInfo* BDSLogicalVolumeInfoRegistry::GetInfo(G4LogicalVolume* log
       return NULL;
     }
   
-  //must've found it so access the map (safely) and return the object
-  return theRegister[logicalVolume];
+  //must've found it so return the object
+  return search->second;
 }
