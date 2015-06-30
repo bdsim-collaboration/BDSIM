@@ -73,7 +73,7 @@ release = '@BDSIM_VERSION@'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['pybdsim.rst', 'pymadx.rst', 'pymad8.rst']
+exclude_patterns = ['pybdsim.rst', 'pymadx.rst', 'pymad8.rst', 'version_history.rst']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
