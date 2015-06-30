@@ -32,6 +32,10 @@ public:
   virtual void WritePrimary(G4String,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int,G4int,G4int){}
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D*){}
+
+  virtual void WriteTrackerBunch(G4String, TRKBunch*, bool){}
+  virtual void WriteTrackerPrimaryLoss(TRKBunch*, int){}
+  
   virtual void Commit(){}  ///> close the file
   virtual void Write(){}   ///> close and open new file
 };

@@ -110,7 +110,6 @@ struct Options {
   std::string tunnelMaterial;
   std::string tunnelCavityMaterial;
   std::string soilMaterial;
-  std::string apertureType;
   bool        dontUseAperture;
 
   int      includeIronMagFields;

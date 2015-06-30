@@ -31,11 +31,11 @@ int main (int argc, char** argv){
   trkOutput = BDSOutputFactory::createOutput(BDSExecOptions::Instance()->GetOutputFormat());
 
   //initialise random numbers
-  BDS::CreateRandomNumberGenerator();
-  BDS::SetSeed(); // set the seed from options or from exec options
+  BDSRandom::CreateRandomNumberGenerator();
+  BDSRandom::SetSeed(); // set the seed from options or from exec options
   if (BDSExecOptions::Instance()->SetSeedState()) //optionally load the seed state from file
-    {BDS::LoadSeedState(BDSExecOptions::Instance()->GetSeedStateFilename());}
-  BDS::WriteSeedState(); //write the current state once set / loaded
+    {BDSRandom::LoadSeedState(BDSExecOptions::Instance()->GetSeedStateFilename());}
+  BDSRandom::WriteSeedState(); //write the current state once set / loaded
 
   //build bunch
   TRKBunch* bunch       = new TRKBunch(options);

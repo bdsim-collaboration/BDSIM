@@ -142,12 +142,16 @@ TRKAperture* TRKFactory::createAperture(Element& element) {
   //possible. it will just default to the general kind.
   //default case = aperturetype
   
-  if (dontuseaperture) {
-    return NULL; //no aperture at all - will never be check with this setting so no seg fault
-  }
-  else if (element.aper != 0) {
-    return new TRKApertureCircular(element.aper);
-  }
+  if (dontuseaperture)
+    {
+      return NULL; //no aperture at all - will never be check with this setting so no seg fault
+    }
+  else
+    {
+      return new TRKApertureCircular(element.aper1);
+    }
+  /*
+    // THIS SHOULD BE FIXED GIVEN THE NEW APERTURE MODELS AVAILABLE
   else if ((element.aperX != 0) && (element.aperY !=0)) {
     //must have been specified - now check whether one of the asymmetric aperture types is specified
     if (aperturetype == TRK::RECTANGULAR) {
@@ -162,6 +166,7 @@ TRKAperture* TRKFactory::createAperture(Element& element) {
   else {
     //must be circular then
     return defaultaperture;}
+  */
 }
 
 TRKLine* TRKFactory::createLine(ElementList& beamline_list) {
@@ -190,9 +195,6 @@ TRKElement* TRKFactory::createElement(Element& element) {
     trkelement = createLine(element);
     break;
   case _DRIFT:
-    trkelement = createDrift(element);
-    break;
-  case _PCLDRIFT:
     trkelement = createDrift(element);
     break;
   case _SBEND:

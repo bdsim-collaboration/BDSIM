@@ -10,7 +10,7 @@
 #include <iomanip>
 #include <sys/stat.h>
 
-
+#include "BDSGlobalConstants.hh" // should perhaps be removed for tracker stuff now
 #include "tracker/TRKBunch.hh"
 
 BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
