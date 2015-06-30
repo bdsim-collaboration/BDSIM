@@ -25,15 +25,12 @@ public:
   BDSEnergyCounterSD(G4String name);
   ~BDSEnergyCounterSD();
 
-  void Initialize(G4HCofThisEvent*HCE);
-  G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
-  G4bool ProcessHits(G4GFlashSpot*aSpot ,G4TouchableHistory* ROhist);
-  void EndOfEvent(G4HCofThisEvent*HCE);
-  void clear();
-  void DrawAll();
-  void PrintAll();
-  G4double GetSPositionOfStep(G4Step* aStep);
-  G4double GetSPositionOfSpot(G4GFlashSpot* aSpot);
+  virtual void Initialize(G4HCofThisEvent*HCE);
+  virtual G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
+  virtual G4bool ProcessHits(G4GFlashSpot*aSpot ,G4TouchableHistory* ROhist);
+
+  G4double GetSPositionOfStep(G4Step* aStep,       G4TouchableHistory* readOutTH);
+  G4double GetSPositionOfSpot(G4GFlashSpot* aSpot, G4TouchableHistory* readOutTH);
   G4String GetName();
 
 private:
@@ -45,7 +42,8 @@ private:
   G4String itsName;
   BDSEnergyCounterHitsCollection* energyCounterCollection;
   BDSEnergyCounterHitsCollection* primaryCounterCollection;
-  G4int*   HitID;
+  G4int    HCIDe;
+  G4int    HCIDp;
   G4double enrg;
   G4double X,Y,Z,S; // global coordinates
   G4double x,y,z;   // local coordinates

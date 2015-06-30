@@ -12,6 +12,11 @@
 #include "G4Allocator.hh"
 #include "G4ThreeVector.hh"
 
+class BDSEnergyCounterHit;
+
+typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
+extern G4Allocator<BDSEnergyCounterHit> BDSEnergyCounterHitAllocator;
+
 //LowestSPosPrimaryHit declaration at the bottom of this file
 //HighestSPosPrimaryHit declaration at the bottom of this file
 
@@ -185,9 +190,6 @@ inline G4int BDSEnergyCounterHit::GetEventNo()
 
 inline void BDSEnergyCounterHit::SetEventNo(G4int eventNoIn)
 {eventNo = eventNoIn;}
-
-typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
-extern G4Allocator<BDSEnergyCounterHit> BDSEnergyCounterHitAllocator;
 
 inline void* BDSEnergyCounterHit::operator new(size_t)
 {

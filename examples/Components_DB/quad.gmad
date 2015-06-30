@@ -1,48 +1,7 @@
 start: marker;
-d1a: drift, l=0.05;
-m1a: marker;
-d1b: drift, l=0.05;
-m1b: marker;
-d1c: drift, l=0.05;
-m1c: marker;
-d1d: drift, l=0.05;
-m1d: marker;
-d1e: drift, l=0.05;
-m1e: marker;
-d1f: drift, l=0.05;
-m1f: marker;
-d1g: drift, l=0.05;
-m1g: marker;
-d1h: drift, l=0.05;
-m1h: marker;
-d1i: drift, l=0.05;
-m1i: marker;
-d1j: drift, l=0.05;
-m1j: marker;
-
+d1: drift, l=0.05;
 q1: quadrupole, l=0.1, k1=30.0;
-
-m2a: marker;
-d2a: drift, l=0.05;
-m2b: marker;
-d2b: drift, l=0.05;
-m2c: marker;
-d2c: drift, l=0.05;
-m2d: marker;
-d2d: drift, l=0.05;
-m2e: marker;
-d2e: drift, l=0.05;
-m2f: marker;
-d2f: drift, l=0.05;
-m2g: marker;
-d2g: drift, l=0.05;
-m2h: marker;
-d2h: drift, l=0.05;
-m2i: marker;
-d2i: drift, l=0.05;
-m2j: marker;
-d2j: drift, l=0.05;
+d2: drift, l=0.05;
 finish: marker;
 
-lat : line = (start,d1a,m1a,d1b,m1b,d1c,m1c,d1d,m1d,d1e,m1e,d1f,m1f,d1g,m1g,d1h,m1h,d1i,m1i,d1j,m1j,q1,m2a,d2a,m2b,d2b,m2c,d2c,m2d,d2d,m2e,d2e,m2f,d2f,m2g,d2g,m2h,d2h,m2i,d2i,m2j,d2j,finish);
-
+lat : line = (start,d1,q1,d2,finish);

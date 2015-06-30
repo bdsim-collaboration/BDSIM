@@ -11,7 +11,7 @@ beam,  particle="e-",
 
 myGas: matdef, Z=7, A=14.00674, T=300, density=1, state="gas"; !Defines nitrogen gas at standard temperature (300K) and density of 1g/cm3
 
-option, vacMaterial="myGas"; !Sets the beam pipe vacuum material to myGas
+option, vacuumMaterial="myGas"; !Sets the beam pipe vacuum material to myGas
 
 gasPipe: drift, l=1; !Defines a 1 metre long beam pipe
 

@@ -1,78 +1,48 @@
-#include "BDSHistogram.hh"
+#include "BDSBin.hh"
 #include "BDSDebug.hh"
+#include "BDSHistogram.hh"
+
 #include <vector>
 #include <cfloat>
 #include <iostream>
-#include <iomanip>
 #include <string>
 #include <utility>
 #include "globals.hh"
 
-BDSBin::BDSBin(G4double inXmin, G4double inXmax)
-{
-  total =  0.0;
-  sumWeightsSquared = 0.0;
-  xmin  = inXmin;
-  xmax  = inXmax;
-  xmean = (xmax + xmin)/2.0;
-  /* // this creates a lot of output!
-#ifdef BDSDEBUG
-  G4cout << "New bin -> xmin: " << std::setw(7) << xmin 
-	 << " m, xmax:  "          << std::setw(7) << xmax 
-	 << " m, xmean: "          << std::setw(7) << xmean 
-	 << " m" << G4endl;
-#endif
-  */
-}
-
-BDSBin BDSBin::operator+= (const G4double& weight)
-{
-  total += weight;
-  sumWeightsSquared += weight*weight;
-  return *this;
-}
-
-bool BDSBin::InRange(G4double x)
-{
-  if ( x >= xmin && x < xmax)
-    {return true;}
-  else
-    {return false;}
-}
-
-std::pair<G4double, G4double> BDSBin::GetXMeanAndTotal()
-{
-  return std::make_pair(xmean,total);
-}
-
-std::ostream& operator<< (std::ostream &out, BDSBin const &bin)
-{
-  return out << "(" << bin.xmin << " , " << bin.xmax << ") : " << bin.total;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////
-
-BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4String nameIn, G4String titleIn):
-  name(nameIn),title(titleIn),entries(0)
+BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4String nameIn, G4String titleIn, G4String xlabelIn, G4String ylabelIn):
+  name(nameIn),title(titleIn),xlabel(xlabelIn),ylabel(ylabelIn),entries(0)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "name: " << nameIn << ", title: " << titleIn << G4endl;
   G4cout << __METHOD_NAME__ << "xmin: " << xmin << ", xmax: " << xmax << ", nbins: " << nbins << G4endl;
 #endif
+  // test to see we have at least 1 bin
+  if (nbins < 1)
+    {
+      G4cerr << __METHOD_NAME__ << "must have at least 1 bin - nbins: " << nbins << G4endl;
+      exit(1);
+    }
+  if (xmax <= xmin)
+    {
+      G4cerr << __METHOD_NAME__ << "xmax must be greater than xmin: xmax = "
+	     << xmax << ", xmin = " << xmin << G4endl;
+      exit(1);
+    }
+  
   //underflow bin
   underflow = new BDSBin(DBL_MIN,xmin);
   
   // reserve size for speed optimisation
   bins.reserve(nbins);
 
-  // caculate binwidth
-  binwidth = (xmax - xmin) / (G4double)nbins;
+  // calculate binwidth
+  G4double binwidth = (xmax - xmin) / (G4double)nbins;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ 
-	 << " S min : "      << xmin 
-	 << " m, S max : "   << xmax 
+	 << " S min : "    << xmin 
+	 << " m, S max : " << xmax 
 	 << " m, nbins : " << nbins 
-	 << " Bin width: "  << binwidth 
+	 << " Bin width: " << binwidth 
 	 << " m" << G4endl;
 #endif
   G4double localmin, localmax;
@@ -93,8 +63,8 @@ BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4Stri
   first();
 }
 
-BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4String titleIn):
-  name(nameIn),title(titleIn),entries(0)
+BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4String titleIn, G4String xlabelIn, G4String ylabelIn):
+  name(nameIn),title(titleIn),xlabel(xlabelIn),ylabel(ylabelIn),entries(0)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "name: " << nameIn << ", title: " << titleIn << G4endl;
@@ -146,6 +116,12 @@ G4String BDSHistogram1D::GetName() const
 
 G4String BDSHistogram1D::GetTitle() const
 { return title;}
+
+G4String BDSHistogram1D::GetXLabel() const
+{ return xlabel;}
+
+G4String BDSHistogram1D::GetYLabel() const
+{ return ylabel;}
 
 void BDSHistogram1D::Empty()
 {

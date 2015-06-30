@@ -953,7 +953,6 @@ void BDSPhysicsList::ConstructMerlin()
   }
 }
 
-
 void BDSPhysicsList::ConstructEM_Low_Energy()
 {
 #ifdef BDSDEBUG
@@ -1262,6 +1261,8 @@ void BDSPhysicsList::ConstructSR()
       pmanager->AddProcess(srProcess);
       pmanager->SetProcessOrderingToLast(srProcess,idxPostStep);
 
+      // JS : why is contSR switched off for positrons?
+      
       //G4int idx = pmanager->AddProcess(contSR);
       //      pmanager->SetProcessOrderingToLast(contSR,idxPostStep);
       //      pmanager->SetProcessActivation(idx, false);

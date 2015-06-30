@@ -3,7 +3,7 @@
 
 #include "globals.hh" //for G4string etc
 
-namespace BDS
+namespace BDSRandom
 {
   void CreateRandomNumberGenerator();
   void SetSeed();

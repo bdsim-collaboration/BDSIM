@@ -1,7 +1,6 @@
 #include "BDSOutputASCII.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"       // for BDS::non_alpha
 #include <cmath>
 #include <ctime>
@@ -23,10 +22,34 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
 
   // generate filenames
   basefilename = BDSExecOptions::Instance()->GetOutputFilename();
+  G4String originalname = basefilename;
   // lots of files - make a directory with the users permissions
-  mkdir(basefilename.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+  int status        = -1;
+  int nTimeAppended = 0;
+  while (status != 0)
+    {
+      status = mkdir(basefilename.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+      if (status != 0)
+	{
+	  if (nTimeAppended > 0)
+	    {basefilename = basefilename.substr(0, basefilename.size()-2);}
+	  std::stringstream ss;
+	  ss << basefilename << "_" << nTimeAppended;
+	  basefilename = ss.str();
+	  nTimeAppended += 1;
+	}
+    }
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "output directory called \"" << basefilename << "\" created." << G4endl;
+#endif
+  if (nTimeAppended > 0)
+    {
+      G4cout << __METHOD_NAME__ << "output directory \""
+	     << originalname << "\" already exists - making unique output directory called \""
+	     << basefilename << "\"" << G4endl;
+    }
   basefilename = basefilename + "/" + basefilename;
-  
+    
   filename = basefilename + ".txt"; //main output filename - for samplers
   G4String filenamePrimaries  = basefilename + ".primaries.txt"; // primaries
   G4String filenameELoss      = basefilename + ".eloss.txt";     // energy loss hits

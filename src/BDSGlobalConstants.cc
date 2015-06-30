@@ -3,13 +3,23 @@
 Last modified 23.10.2007 by Steve Malton
 
 **/
+
+#include <cstdlib>
+
 #include "BDSGlobalConstants.hh"
+
 #include "parser/options.h"
+
+#include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
+#include "BDSExecOptions.hh"
+
+#include "G4Colour.hh"
 #include "G4FieldManager.hh"
 #include "G4UniformMagField.hh"
-#include <cstdlib>
 #include "G4ThreeVector.hh"
+#include "G4UserLimits.hh"
+#include "G4VisAttributes.hh"
 
 extern Options options;
 
@@ -25,23 +35,15 @@ BDSGlobalConstants* BDSGlobalConstants::Instance(){
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0),itsParticleMomentum(0.0),itsParticleKineticEnergy(0.0),itsSMax(0.0)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  itsPhysListName = opt.physicsList;
-  itsPipeMaterial = opt.pipeMaterial;
-  itsVacMaterial = opt.vacMaterial;
-  itsEmptyMaterial = "G4_Galactic"; // space vacuum
-  itsTunnelMaterialName = opt.tunnelMaterial;
-  itsTunnelCavityMaterialName = opt.tunnelCavityMaterial;
-  itsSoilMaterialName = opt.soilMaterial;
-
-  itsMagnetGeometry = opt.magnetGeometry;
+  itsPhysListName       = opt.physicsList;
+  itsBeamPipeMaterial   = opt.beampipeMaterial;
+  itsApertureType       = BDS::DetermineBeamPipeType(opt.apertureType);
+  itsVacuumMaterial     = opt.vacMaterial;
+  itsEmptyMaterial      = "G4_Galactic"; // space vacuum
 
   itsSampleDistRandomly = true;
   itsGeometryBias = opt.geometryBias;
   
-  itsShowTunnel=opt.showTunnel;
   itsSensitiveComponents=opt.sensitiveBeamlineComponents;
   itsSensitiveBeamPipe=opt.sensitiveBeamPipe;
   itsSensitiveBLMs=opt.sensitiveBLMs;
@@ -60,41 +62,33 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
     itsParticleTotalEnergy = itsBeamTotalEnergy;
   }
 
-  itsVacuumPressure = opt.vacuumPressure*CLHEP::bar;
   itsPlanckScatterFe = opt.planckScatterFe;
   //Fraction of events with leading particle biasing.
-  itsBeampipeRadius = opt.beampipeRadius * CLHEP::m;
-  if(itsBeampipeRadius == 0){
-    G4cerr << __METHOD_NAME__ << "Error: option \"beampipeRadius\" must be greater than 0" <<  G4endl;
+
+  //beampipe
+  itsBeamPipeRadius = opt.beampipeRadius * CLHEP::m;
+  itsAper1 = opt.aper1*CLHEP::m;
+  itsAper2 = opt.aper2*CLHEP::m;
+  itsAper3 = opt.aper3*CLHEP::m;
+  itsAper4 = opt.aper4*CLHEP::m;
+  // note beampipetype already done before these checks! at top of this function
+  BDS::CheckApertureInfo(itsApertureType,itsBeamPipeRadius,itsAper1,itsAper2,itsAper3,itsAper4);
+  
+  itsBeamPipeThickness = opt.beampipeThickness * CLHEP::m;
+
+  //magnet geometry
+  itsOuterDiameter = opt.outerDiameter * CLHEP::m;
+  if (itsOuterDiameter < 2*(itsBeamPipeThickness + itsBeamPipeRadius)){
+    G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" must be greater than 2x (\"beampipeRadius\" + \"beamPipeThickness\") " << G4endl;
     exit(1);
   }
-  itsBeampipeThickness = opt.beampipeThickness * CLHEP::m;
-  itsComponentBoxSize = opt.componentBoxSize * CLHEP::m;
-  if (itsComponentBoxSize < (itsBeampipeThickness + itsBeampipeRadius)){
-    G4cerr << __METHOD_NAME__ << "Error: option \"boxSize\" must be greater than the sum of \"beampipeRadius\" and \"beamPipeThickness\" " << G4endl;
-    exit(1);
-  }
-  itsBuildTunnel = opt.buildTunnel;
-  itsBuildTunnelFloor = opt.buildTunnelFloor;  
-  itsTunnelRadius = opt.tunnelRadius * CLHEP::m;
-  if (itsTunnelRadius < itsComponentBoxSize/2){
-    G4cerr << __METHOD_NAME__ << "> Error: option \"tunnelRadius\" must be greater than \"boxSize\"/2 " << G4endl;
-    exit(1);
-  }
-  itsTunnelThickness = opt.tunnelThickness * CLHEP::m; //Tunnel geometry options read from file
-  itsTunnelSoilThickness = opt.tunnelSoilThickness * CLHEP::m;
-  itsTunnelFloorOffset = opt.tunnelFloorOffset * CLHEP::m;
-  itsTunnelOffsetX = opt.tunnelOffsetX * CLHEP::m;
-  itsTunnelOffsetY = opt.tunnelOffsetY * CLHEP::m;
+  itsMagnetGeometryType = BDS::DetermineMagnetGeometryType(opt.magnetGeometryType);
+  itsOuterMaterialName  = opt.outerMaterialName;
+  
   //Beam loss monitor (BLM) geometry
   itsBlmRad = opt.blmRad * CLHEP::m;
   itsBlmLength = opt.blmLength * CLHEP::m;
-  //Sampler geometry - default diameter is the tunnel diameter
-  if(opt.samplerDiameter==0){
-    itsSamplerDiameter=2*itsTunnelRadius;
-  } else {
-    itsSamplerDiameter = opt.samplerDiameter * CLHEP::m;
-  }
+  itsSamplerDiameter = opt.samplerDiameter * CLHEP::m;
   itsSamplerLength = 4E-8 * CLHEP::m;
   itsThresholdCutCharged = opt.thresholdCutCharged * CLHEP::GeV;
   itsThresholdCutPhotons = opt.thresholdCutPhotons * CLHEP::GeV;
@@ -134,7 +128,14 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsSynchPhotonMultiplicity = opt.synchPhotonMultiplicity;
   itsSynchMeanFreeFactor = opt.synchMeanFreeFactor;
   itsLengthSafety = opt.lengthSafety;
-  itsNumberToGenerate = opt.numberToGenerate;
+
+  // set the number of primaries to generate - exec options overrides whatever's in gmad
+  G4int nToGenerate = BDSExecOptions::Instance()->GetNGenerate();
+  if (nToGenerate < 0)
+    {itsNumberToGenerate = opt.numberToGenerate;}
+  else
+    {itsNumberToGenerate = nToGenerate;}
+  
   itsNumberOfEventsPerNtuple = opt.numberOfEventsPerNtuple;
   itsEventNumberOffset = opt.eventNumberOffset;
   itsRandomSeed = opt.randomSeed;
@@ -167,8 +168,6 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   G4cout << __METHOD_NAME__ << "itsFifo = " << itsFifo << G4endl;
   G4cout << __METHOD_NAME__ << "GetFifo() = " << GetFifo() << G4endl;
 #endif
-  itsRefVolume = opt.refvolume;
-  itsRefCopyNo = opt.refcopyno;
   itsIncludeIronMagFields = opt.includeIronMagFields;
   zeroMagField = new G4UniformMagField(G4ThreeVector());
   itsZeroFieldManager=new G4FieldManager();
@@ -192,11 +191,33 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsLWCalOffset      = 0.0;
   itsMagnetPoleRadius = 0.0;
   itsMagnetPoleSize   = 0.0;
-  teleporterdelta     = G4ThreeVector(0.,0.,0.);
-  teleporterlength    = 0.0;
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "finished constructor" << G4endl;
-#endif
+
+  // initialise the default vis attributes and user limits that
+  // can be copied by various bits of geometry
+  InitVisAttributes();
+  InitDefaultUserLimits();
+}
+
+void BDSGlobalConstants::InitVisAttributes()
+{
+  //for vacuum volumes
+  invisibleVisAttr = new G4VisAttributes(G4Colour::Black());
+  invisibleVisAttr->SetVisibility(false);
+  invisibleVisAttr->SetForceLineSegmentsPerCircle(50);
+
+  //for normally invisible volumes like marker / container volumes in debug mode
+  visibleDebugVisAttr = new G4VisAttributes(); //green
+  visibleDebugVisAttr->SetColour(0,0.6,0,0.1);
+  visibleDebugVisAttr->SetVisibility(true);
+  visibleDebugVisAttr->SetForceLineSegmentsPerCircle(50);
+}
+
+void BDSGlobalConstants::InitDefaultUserLimits()
+{
+  //these must be copied and not attached directly
+  defaultUserLimits = new G4UserLimits("default_cuts");
+  defaultUserLimits->SetUserMinEkine( GetThresholdCutCharged() );
+  //user must set step length manually
 }
 
 void BDSGlobalConstants::InitRotationMatrices(){
@@ -242,44 +263,10 @@ G4RotationMatrix* BDSGlobalConstants::RotYM90XM90() const{
   return _RotYM90XM90;
 }
 
-// a robust compiler-invariant method to convert from integer to G4String
-G4String BDSGlobalConstants::StringFromInt(G4int N) 
-{
-  if (N==0) return "0";
-  G4int nLocal=N, nDigit=0, nMax=1;
-  do { nDigit++;
-      nMax*=10;} while(N > nMax-1);
-  nMax/=10;
-  G4String Cnum;
-  do {Cnum+=StringFromDigit(nLocal/nMax);
-      nLocal-= nLocal/nMax * nMax;
-      nMax/=10;}   while(nMax>1);
-  if(nMax!=0)Cnum+=StringFromDigit(nLocal/nMax);
-  return Cnum;
-}
-
-// a robust compiler-invariant method to convert from digit to G4String
-G4String BDSGlobalConstants::StringFromDigit(G4int N) 
-{
-  if(N<0 || N>9)
-    G4Exception("Invalid Digit in BDSGlobalConstants::StringFromDigit", "-1", FatalException, "");
-  G4String Cnum;
-  if(N==0)Cnum="0";
-  else if(N==1)Cnum="1";
-  else if(N==2)Cnum="2";
-  else if(N==3)Cnum="3";
-  else if(N==4)Cnum="4";
-  else if(N==5)Cnum="5";
-  else if(N==6)Cnum="6";
-  else if(N==7)Cnum="7";
-  else if(N==8)Cnum="8";
-  else if(N==9)Cnum="9"; 
-  return Cnum;
-}
-
 BDSGlobalConstants::~BDSGlobalConstants()
 {  
   delete itsZeroFieldManager;
   delete zeroMagField;
+  delete defaultUserLimits;
   _instance = 0;
 }

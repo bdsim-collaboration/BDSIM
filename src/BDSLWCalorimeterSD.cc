@@ -6,6 +6,7 @@
 
 #include "BDSGlobalConstants.hh" 
 
+#include "BDSRunManager.hh"
 #include "BDSLWCalorimeterSD.hh"
 #include "BDSLWCalorimeterHit.hh"
 #include "G4VPhysicalVolume.hh"
@@ -21,7 +22,6 @@
 
 #include "G4AffineTransform.hh"
 
-#include "G4RunManager.hh"
 #include <vector>
 
 BDSLWCalorimeterSD::BDSLWCalorimeterSD(G4String name)
@@ -61,7 +61,7 @@ G4bool BDSLWCalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 #ifdef BDSDEBUG 
   G4cout << "Its Copy Number is: " << itsCopyNumber << G4endl; 
   G4cout << "The Volumer here is: " << aStep->GetTrack()->GetVolume()->GetName() << G4endl;
-  G4cout<<"edep="<<aStep->GetTotalEnergyDeposit()/CLHEP::GeV<<"Total so far="<<itsTotalEnergy/CLHEP::GeV<< " for event: " << G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID() << G4endl;
+  G4cout<<"edep="<<aStep->GetTotalEnergyDeposit()/CLHEP::GeV<<"Total so far="<<itsTotalEnergy/CLHEP::GeV<< " for event: " << BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID() << G4endl;
 #endif
   return true;
   
@@ -70,7 +70,7 @@ G4bool BDSLWCalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 void BDSLWCalorimeterSD::EndOfEvent(G4HCofThisEvent*HCE)
 {
   G4int nEvent= 
-	G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+    BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   /*
   G4cout << "ITS COPY NUMBER IS: " << itsCopyNumber << G4endl;
   G4cout << "ITS TOTAL ENERGY IS: " << itsTotalEnergy << G4endl;
@@ -88,9 +88,3 @@ void BDSLWCalorimeterSD::EndOfEvent(G4HCofThisEvent*HCE)
     { HCID = GetCollectionID(0); }
   HCE->AddHitsCollection( HCID, LWCalorimeterCollection );
 }
-
-void BDSLWCalorimeterSD::clear(){} 
-
-void BDSLWCalorimeterSD::DrawAll(){} 
-
-void BDSLWCalorimeterSD::PrintAll(){} 

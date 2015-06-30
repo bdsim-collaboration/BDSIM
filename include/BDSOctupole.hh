@@ -4,32 +4,33 @@
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 
-#ifndef BDSOctupole_h
-#define BDSOctupole_h 1
+#ifndef BDSOCTUPOLE_H
+#define BDSOCTUPOLE_H
 
-#include "globals.hh"
-#include "BDSMultipole.hh"
+#include "BDSMagnet.hh"
 
-class BDSOctupole :public BDSMultipole
+#include "globals.hh" // geant4 types / globals
+#include "G4Material.hh"
+
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
+
+class BDSOctupole: public BDSMagnet
 {
 public:
-  BDSOctupole(G4String aName, G4double aLength,
-	      G4double bpRad, G4double FeRad,
-	      G4double BTrpPrime, G4double tilt, G4double outR, 
-              std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-              G4String aTunnelMaterial = "",
-	      G4String aMaterial = "");
-  ~BDSOctupole();
+  BDSOctupole(G4String           name,
+	      G4double           length,
+	      G4double           bTriplePrime,
+	      BDSBeamPipeInfo*   beamPipeInfo,
+	      BDSMagnetOuterInfo magnetOuterInfo);
+  ~BDSOctupole(){;};
 
 protected:
   virtual void Build();
-
-private:
-  G4double itsBTrpPrime;
-
   virtual void BuildBPFieldAndStepper();
 
-  virtual void SetVisAttributes();
+private:
+  G4double itsBTriplePrime;
 };
 
 #endif

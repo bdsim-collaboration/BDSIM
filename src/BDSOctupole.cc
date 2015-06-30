@@ -2,42 +2,33 @@
    Author: Grahame A. Blair, Royal Holloway, Univ. of London.
    Last modified 24.7.2002
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-   Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
-   Changed StringFromInt to be the BDSGlobal version
 */
 
+#include "BDSBeamPipeInfo.hh"
 #include "BDSGlobalConstants.hh" 
-
+#include "BDSMagnet.hh"
+#include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetType.hh"
 #include "BDSOctupole.hh"
-
 #include "BDSOctMagField.hh"
 #include "BDSOctStepper.hh"
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Tubs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-//============================================================
-
-BDSOctupole::BDSOctupole(G4String aName, G4double aLength, 
-			 G4double bpRad, G4double FeRad,
-			 G4double BTrpPrime, G4double tilt, 
-			 G4double outR, 
-                         std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-                         G4String aTunnelMaterial, G4String aMaterial):
-  BDSMultipole(aName, aLength, bpRad, FeRad, blmLocZ, blmLocTheta, aTunnelMaterial, aMaterial),
-  itsBTrpPrime(BTrpPrime)
-{
-  SetOuterRadius(outR);
-  itsTilt=tilt;
-}
+BDSOctupole::BDSOctupole(G4String           name,
+			 G4double           length,
+			 G4double           bTriplePrime,
+			 BDSBeamPipeInfo*   beamPipeInfo,
+			 BDSMagnetOuterInfo magnetOuterInfo):
+  BDSMagnet(BDSMagnetType::octupole, name, length,
+	    beamPipeInfo, magnetOuterInfo),
+  itsBTriplePrime(bTriplePrime)
+{;}
 
 void BDSOctupole::Build() {
-  BDSMultipole::Build();
+  BDSMagnet::Build();
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4double polePos[4];
@@ -63,23 +54,13 @@ void BDSOctupole::Build() {
     }
 }
 
-void BDSOctupole::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(0,1,1));
-  itsVisAttributes->SetForceSolid(true);
-}
-
 void BDSOctupole::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
-  itsMagField=new BDSOctMagField(itsBTrpPrime);
+  itsMagField=new BDSOctMagField(itsBTriplePrime);
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
   
   BDSOctStepper* octStepper=new BDSOctStepper(itsEqRhs);
-  octStepper->SetBTrpPrime(itsBTrpPrime);
+  octStepper->SetBTrpPrime(itsBTriplePrime);
   itsStepper = octStepper;
-}
-
-BDSOctupole::~BDSOctupole()
-{
 }

@@ -26,13 +26,16 @@ struct Options {
   std::string zDistribType;
   std::string distribFile;
   std::string distribFileFormat;
+  double      haloPSWeightParameter;
+  std::string haloPSWeightFunction;
 
   int numberToGenerate;
-  int nlinesIgnore; /// ignore first lines in the input bunch file
+  int nlinesIgnore; ///> ignore first lines in the input bunch file
 
   double elossHistoBinWidth;
   double elossHistoTransBinWidth;
   double defaultRangeCut;
+  /// magnetic field flip (+1 default, -1: flip sign)
   double ffact;
   double beamEnergy;
 
@@ -53,6 +56,7 @@ struct Options {
 
   /// for the circle/square beam distribution
   double envelopeX, envelopeXp, envelopeY, envelopeYp, envelopeT, envelopeE;
+  double envelopeR, envelopeRp;
 
   /// for the gaussian sigma matrix distribution
   double sigma11, sigma12, sigma13, sigma14, sigma15, sigma16;
@@ -85,14 +89,24 @@ struct Options {
 
   //  int backgroundScaleFactor;
 
-  /// default geometry parameters
-  std::string magnetGeometry;
-  double    componentBoxSize;
-  double    tunnelRadius;
-  double    beampipeRadius;
-  double    beampipeThickness;
-  std::string pipeMaterial;
+  /// default magnet geometry parameters
+  std::string magnetGeometryType;
+  std::string outerMaterialName;
+  double      outerDiameter;
+
+  /// default beampipe parameters
+  double      beampipeRadius;
+  double      beampipeThickness;
+  std::string apertureType;
+  double      aper1;
+  double      aper2;
+  double      aper3;
+  double      aper4;
+  std::string beampipeMaterial;
   std::string vacMaterial;
+
+  /// default tunnel parameters
+  double    tunnelRadius;
   std::string tunnelMaterial;
   std::string tunnelCavityMaterial;
   std::string soilMaterial;
@@ -148,9 +162,8 @@ struct Options {
   double   prodCutPositronsP;
   double   prodCutPositronsA;
 
-
   /// Tracking related parameters 
-  double   maximumTrackingTime; /// maximum tracking time per volume [s]
+  double   maximumTrackingTime; ///> maximum tracking time per volume [s]
   double   deltaChord;
   double   chordStepMinimum;
   double   deltaIntersection;
@@ -184,9 +197,9 @@ struct Options {
   int      storeTrajectory;
   int      stopTracks;
 
-  std::string fifo; ///< fifo for BDSIM-placet
-  std::string refvolume; ///< initial starting volume
-  int refcopyno; ///< initial starting volume copy number
+  std::string fifo; ///> fifo for BDSIM-placet
+  std::string refvolume; ///> initial starting volume
+  int refcopyno; ///> initial starting volume copy number
   
   /// Ring parameters
   bool     circular;

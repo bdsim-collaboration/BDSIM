@@ -1,19 +1,27 @@
-#ifndef BDSKicker_h
-#define BDSKicker_h 
+#ifndef BDSKICKER_H
+#define BDSKICKER_H 
 
-#include "globals.hh"
-#include "BDSMultipole.hh"
+#include "BDSMagnet.hh"
+#include "BDSMagnetType.hh"
 
-class BDSKicker:public BDSMultipole
+#include "globals.hh" // geant4 types / globals
+#include "G4Material.hh"
+
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
+
+class BDSKicker: public BDSMagnet
 {
 public:
-  BDSKicker(G4String aName, G4double aLength,
-	    G4double bpRad, G4double FeRad,
-	    G4double bField, G4double angle, G4double outR,
-	    G4double tilt = 0, G4double bGrad=0, 
-            G4String aTunnelMaterial = "",
-	    G4String aMaterial = "");
-  ~BDSKicker();
+  BDSKicker(G4String           name,
+	    G4double           length,
+	    G4double           bField,
+	    G4double           bGrad,
+	    G4double           angle,
+	    G4bool             verticalKicker,
+	    BDSBeamPipeInfo*   beamPipeInfo,
+	    BDSMagnetOuterInfo magnetOuterInfo);
+  ~BDSKicker(){;};
   
 protected:
   virtual void Build();
@@ -22,10 +30,11 @@ private:
   G4double itsBField;
   G4double itsBGrad;
   G4double itsKickAngle;
+  G4bool   isVerticalKicker;
 
   virtual void BuildBPFieldAndStepper();
+  virtual void BuildBeampipe(); // overload multipole base class method
 
-  virtual void SetVisAttributes();
 };
 
 #endif

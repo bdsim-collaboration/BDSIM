@@ -11,10 +11,12 @@
 #include "BDSExecOptions.hh"
 #include "BDSDebug.hh"
 #include "BDSParticle.hh"
+#include "BDSRunManager.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPoint.hh"
+#include "BDSUtilities.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Track.hh"
@@ -28,7 +30,6 @@
 
 #include "G4AffineTransform.hh"
 
-#include "G4RunManager.hh"
 #include <vector>
 
 #include "G4SDManager.hh"
@@ -108,12 +109,14 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   BDSParticle local(LocalPosition,LocalDirection,energy,t);
 
   G4int nEvent= 
-    G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+    BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   
   nEvent+=BDSGlobalConstants::Instance()->GetEventNumberOffset();
   
   G4int nSampler=theTrack->GetVolume()->GetCopyNo()+1;
-  G4String SampName = theTrack->GetVolume()->GetName()+"_"+BDSGlobalConstants::Instance()->StringFromInt(nSampler);
+  G4String SampName = theTrack->GetVolume()->GetName()+"_"+BDS::StringFromInt(nSampler);
+  SampName = SampName.substr(0,SampName.find("_pv_1"));
+  
   G4int PDGtype=theTrack->GetDefinition()->GetPDGEncoding();
   
   G4String pName=theTrack->GetDefinition()->GetParticleName();
@@ -177,13 +180,3 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   //The hit was stored, so the return value is "true".
   return true;
 }
-
-void BDSSamplerSD::EndOfEvent(G4HCofThisEvent* /*HCE*/)
-{
-}
-
-void BDSSamplerSD::clear(){} 
-
-void BDSSamplerSD::DrawAll(){} 
-
-void BDSSamplerSD::PrintAll(){} 

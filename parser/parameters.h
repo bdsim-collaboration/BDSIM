@@ -16,20 +16,20 @@ struct Parameters {
 
   /// length, multipole coefficients
 
-  double B;  int Bset;    /// magnetic field
-  double l;  int lset;    /// length
+  double B;  int Bset;    ///> magnetic field
+  double l;  int lset;    ///> length
   double bmapZOffset; int bmapZOffsetset; //offset of the field map magnet field
-  double k0; int k0set;   /// dipole 
-  double k1; int k1set;   /// quadrupole
-  double k2; int k2set;   /// sextupole
-  double k3; int k3set;   /// octupole
-  double ks; int ksset;   /// solenoid
+  double k0; int k0set;   ///> dipole 
+  double k1; int k1set;   ///> quadrupole
+  double k2; int k2set;   ///> sextupole
+  double k3; int k3set;   ///> octupole
+  double ks; int ksset;   ///> solenoid
 
-  double tscint; int tscintset; ///thickness of scintillating part of screen
-  double twindow; int twindowset; ///thickness of window
+  double tscint; int tscintset; ///>thickness of scintillating part of screen
+  double twindow; int twindowset; ///>thickness of window
 
-  std::list<double> knl;           /// multipole expansion coefficients
-  std::list<double> ksl;           /// skew multipole expansion
+  std::list<double> knl;           ///> multipole expansion coefficients
+  std::list<double> ksl;           ///> skew multipole expansion
   
   int knlset; int kslset;
 
@@ -47,16 +47,27 @@ struct Parameters {
   
   /// placement, geometrical sizes etc.
 
-  double r; int rset; ///radius, i.e cylindrical sampler
+  double r; int rset; ///>radius, i.e cylindrical sampler
   
-  double angle; int angleset;   /// bending angle
-  double phiAngleIn; int phiAngleInset;   /// incoming bending angle for element
-  double phiAngleOut; int phiAngleOutset;   /// outgoing bending angle for element
-  double beampipeThickness; int beampipeThicknessset;  
-  double aper; int aperset;   /// aperture (circular)
-  double aperX; int aperXset;   /// aperture (elliptical)
-  double aperY; int aperYset;   
-  double phi, theta, psi; /// for 3d transforms
+  double angle; int angleset;   ///> bending angle
+  double phiAngleIn; int phiAngleInset;   ///> incoming bending angle for element
+  double phiAngleOut; int phiAngleOutset;   ///> outgoing bending angle for element
+  
+  //new aperture model
+  double beampipeThickness; int beampipeThicknessset;
+  double aper1; int aper1set;
+  double aper2; int aper2set;
+  double aper3; int aper3set;
+  double aper4; int aper4set;
+  std::string apertureType; int apertureTypeset;
+  std::string beampipeMaterial; int beampipeMaterialset;
+
+  //magnet geometry
+  std::string magnetGeometryType; int magnetGeometryTypeset;
+  std::string outerMaterial;      int outerMaterialset;
+  double      outerDiameter;      int outerDiameterset;
+  
+  double phi, theta, psi; ///> for 3d transforms
   int phiset, thetaset, psiset;
   double tunnelRadius;
   int tunnelRadiusset;
@@ -66,21 +77,14 @@ struct Parameters {
   ///which precision physics region the element is in (0 = none)
   int precisionRegion; int precisionRegionset;
 
-  double aperYUp; int aperYUpset;  
-  double aperYDown; int aperYDownset; 
-  double aperDy; int aperDyset;
-  
-  double flatlength; int flatlengthset;
-  double taperlength; int taperlengthset;
   double gradient; int gradientset;
 
-  double outR; int outRset; /// outer radius of magnets
-  double inR, bpRad; int inRset, bpRadset;/// inner radius and beam pipe radius of muon spoiler
-  double hgap, hgapset;
-  double xsize, ysize; int xsizeset, ysizeset; /// aperture (or laser spotsize for laser)
+  double xsize, ysize; int xsizeset, ysizeset; ///> aperture (or laser spotsize for laser)
   double xdir, ydir, zdir, waveLength; int xdirset, ydirset, zdirset, waveLengthset;
 
-  double tilt; int tiltset;   /// tilt
+  double tilt; int tiltset;   ///> tilt
+  double offsetX; int offsetXset;   ///> offset X
+  double offsetY; int offsetYset;   ///> offset Y
 
   /// for external geometry and field definition files
   std::string geometry; int geomset;

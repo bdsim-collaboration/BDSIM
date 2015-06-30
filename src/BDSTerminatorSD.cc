@@ -70,12 +70,3 @@ void BDSTerminatorSD::EndOfEvent(G4HCofThisEvent* /*HCE*/)
 {
   BDSGlobalConstants::Instance()->ResetTurnNumber();
 }
-
-void BDSTerminatorSD::clear()
-{} 
-
-void BDSTerminatorSD::DrawAll()
-{} 
-
-void BDSTerminatorSD::PrintAll()
-{} 

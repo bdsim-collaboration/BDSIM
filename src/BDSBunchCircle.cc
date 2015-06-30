@@ -36,8 +36,8 @@ void BDSBunchCircle::SetOptions(struct Options &opt) {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  SetEnvelopeR(opt.envelopeX); 
-  SetEnvelopeRp(opt.envelopeXp);
+  SetEnvelopeR(opt.envelopeR); 
+  SetEnvelopeRp(opt.envelopeRp);
   SetEnvelopeT(opt.envelopeT);
   SetEnvelopeE(opt.envelopeE);
   return; 

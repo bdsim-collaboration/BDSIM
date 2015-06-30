@@ -29,19 +29,12 @@ public:
   
   void SetType(G4String aType);
   
-  void Initialize(G4HCofThisEvent*HCE);
-  G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
-  void EndOfEvent(G4HCofThisEvent*HCE);
-  void clear();
-  void DrawAll();
-  void PrintAll();
+  virtual void Initialize(G4HCofThisEvent*HCE);
+  virtual G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
   
 private:  
   G4String itsType;
   G4String itsCollectionName;
-  static unsigned int nCounter;
-  static unsigned int trackCounter;
-  static G4String lastVolume;
 };
 
 inline void BDSDumpSD::SetType(G4String aType)

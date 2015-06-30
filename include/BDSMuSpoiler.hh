@@ -4,63 +4,37 @@
    Copyright (c) 2004 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 
-#ifndef BDSMuSpoiler_h
-#define BDSMuSpoiler_h 1
+#ifndef BDSMUSPOILER_H
+#define BDSMUSPOILER_H
 
 #include "globals.hh"
-#include "BDSAcceleratorComponent.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-
-#include "G4Box.hh"
+#include "BDSMagnet.hh"
 #include "BDSMuSpoilerMagField.hh"
-#include "G4FieldManager.hh"
 
-class BDSMuSpoiler :public BDSAcceleratorComponent
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
+
+class BDSMuSpoiler: public BDSMagnet
 {
 public:
-  BDSMuSpoiler(G4String& aName, G4double aLength,G4double bpRad, 
-	       G4double rInner, G4double rOuter,G4double BField, 
-               std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta,
-               G4String aTunnelMaterial="");
-
-
+  BDSMuSpoiler(G4String           name,
+	       G4double           length,
+	       G4double           bField,
+	       BDSBeamPipeInfo*   beamPipeInfo,
+	       BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSMuSpoiler();
 
 private:
-  virtual void SetVisAttributes();
-  void SetBPVisAttributes();
+  G4double     itsBField;
+  
+  /// build the necessary field for muspoiler
+  virtual void BuildBPFieldAndStepper();
 
-  // Geometrical objects:
+  /// override multipole method to attach outer field
+  virtual void BuildOuterVolume();
 
-  virtual void Build();
-  virtual void BuildMarkerLogicalVolume();
-  void         BuildBPFieldAndStepper();
-  void         BuildBeampipe();
-  virtual void BuildBLMs();
-  void         BuildMuSpoiler();
-
-  G4VPhysicalVolume* itsPhysiComp;
-  G4VPhysicalVolume* itsPhysiComp2;
-  G4VPhysicalVolume* itsPhysiInnerBP;
-  G4VPhysicalVolume* itsPhysiBP;
-  G4LogicalVolume*   itsSolidLogVol;
-  G4LogicalVolume*   itsInnerLogVol;
-  G4LogicalVolume*   itsBeampipeLogicalVolume;
-  G4LogicalVolume*   itsInnerBPLogicalVolume;
-  G4Tubs*            itsBPTube;
-  G4Tubs*            itsInnerBPTube;                 
-  G4VisAttributes*   itsBPVisAttributes;
-  G4double           itsBeampipeRadius;
-  G4double           itsInnerRadius;
-  G4double           itsOuterRadius;
-  G4double           itsBField;
-  BDSMuSpoilerMagField* itsMagField;
-  G4FieldManager*    itsFieldMgr;
+  // BDSMuSpoilerMagField* outerMagField;
+  // G4FieldManager*       outerFieldMgr;
 };
 
 #endif

@@ -16,18 +16,32 @@ struct Element {
   int precisionRegion;
   std::string name;
 
-  double inR; double bpRad; /// inner radius and beam pipe radius of muon spoiler  
   double l; // l in metres
   double ks,k0,k1,k2,k3,angle;
-  double beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut;
+
+  // beampipe information
+  double beampipeThickness;
+  double aper1, aper2, aper3, aper4; // new aperture model
+  std::string apertureType;
+  std::string beampipeMaterial;
+
+  // magnet geometry
+  std::string magnetGeometryType;
+  std::string outerMaterial;
+  double outerDiameter;
+
+  double tilt,xsize,ysize,r,B, phiAngleIn, phiAngleOut;
+  double offsetX, offsetY;
   double tscint, twindow, bmapZOffset; 
   double xdir, ydir, zdir, waveLength; /// for laser wire and 3d transforms
-  double flatlength,taperlength; ///for realistic collimators
   double gradient; /// for rf cavities
-  double aperYUp, aperYDown, aperDy;  ///pcldrift
   double phi, theta, psi; /// for 3d transforms
+
+  // tunnel geometry
+  std::string tunnelMaterial;
   double tunnelRadius;
   double tunnelOffsetX;
+  //std::string tunnelCavityMaterial;
   std::list<double> knl;
   std::list<double> ksl;
 
@@ -53,9 +67,6 @@ struct Element {
   std::string windowmaterial;
   std::string scintmaterial;
   std::string airmaterial;
-  std::string tunnelMaterial;
-  std::string tunnelCavityMaterial;
-
   std::string spec;  /// arbitrary specification to pass to beamline builder
   
   /// in case the element is a list itself (line)

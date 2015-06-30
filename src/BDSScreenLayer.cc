@@ -11,13 +11,6 @@
 #include "G4UserLimits.hh"
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
-#include "BDSOutputBase.hh"
-
-//============================================================
-typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
-extern LogVolMap* LogVol;
-
-//============================================================
 
 BDSScreenLayer::BDSScreenLayer(){
 }
@@ -175,7 +168,6 @@ void BDSScreenLayer::InternalMirror::compute(){
 }
 
 void BDSScreenLayer::sampler(){ //Make this layer a sampler scoring plane
-  (*LogVol)[_name] = _log;//Add to the map of logical volumes.
   G4String samplerName = _name + "_1";
 
   _log->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());

@@ -4,50 +4,41 @@
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 
-#ifndef BDSRfCavity_h
-#define BDSRfCavity_h
+#ifndef BDSRFCAVITY_H
+#define BDSRFCAVITY_H
 
-#include"globals.hh"
+#include "BDSMagnet.hh"
 
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-
-#include "G4FieldManager.hh"
+#include "globals.hh" // geant4 types / globals
 #include "G4ChordFinder.hh"
-#include "G4UserLimits.hh"
-
-#include "G4UniformElectricField.hh"
-#include "G4MagErrorStepper.hh"
 #include "G4EqMagElectricField.hh"
+#include "G4MagIntegratorStepper.hh"
+#include "G4UniformElectricField.hh"
 
-#include "BDSMultipole.hh"
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
 
-class BDSRfCavity :public BDSMultipole
+class BDSRfCavity: public BDSMagnet
 {
   public:
-  BDSRfCavity(G4String aName, G4double aLength,G4double bpRad, G4double grad, 
-              G4String aTunnelMaterial="",G4String aMaterial = "");
-    ~BDSRfCavity();
-
-  protected:
-
+  BDSRfCavity(G4String           name,
+	      G4double           length,
+	      G4double           grad,
+	      BDSBeamPipeInfo*   beamPipeInfoIn,
+	      BDSMagnetOuterInfo magnetOuterInfo);
+  ~BDSRfCavity(){;};
+  
   private:
 
-  virtual void Build();
   virtual void BuildBPFieldAndStepper();
-
-  virtual void SetVisAttributes();
 
   G4double itsGrad; // longitudinal E field grad in MV / m
 
   // field related objects:
-  //G4MagErrorStepper* itsStepper;
   G4UniformElectricField* itsEField;
   G4ChordFinder*          fChordFinder ;
   G4MagIntegratorStepper* fStepper ;
   G4MagInt_Driver*        fIntgrDriver;
-  G4FieldManager* fieldManager;
-
 };
 
 #endif

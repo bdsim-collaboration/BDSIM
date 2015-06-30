@@ -6,8 +6,6 @@ const char *typestr(int type) {
     return "marker";
   case _DRIFT :
     return "drift";
-  case _PCLDRIFT :
-    return "pcldrift";
   case _RF :
    return "rf";
   case _SBEND : 

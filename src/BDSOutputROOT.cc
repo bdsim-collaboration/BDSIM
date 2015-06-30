@@ -88,9 +88,15 @@ void BDSOutputROOT::BuildSamplerTree(G4String name){
 
 void BDSOutputROOT::Init()
 {
+  const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   // set up the root file
-  filename = BDSExecOptions::Instance()->GetOutputFilename() + "_" 
-    + BDSGlobalConstants::Instance()->StringFromInt(outputFileNumber) + ".root";
+  filename = BDSExecOptions::Instance()->GetOutputFilename();
+  // if more than one file add number (starting at 0)
+  int evntsPerNtuple = globalConstants->GetNumberOfEventsPerNtuple();
+  if (evntsPerNtuple>0 && globalConstants->GetNumberToGenerate()>evntsPerNtuple) {
+    filename += "_" + BDS::StringFromInt(outputFileNumber);
+  }
+  filename += ".root";
   
   G4cout<<"Setting up new file: "<<filename<<G4endl;
   theRootOutputFile=new TFile(filename,"RECREATE", "BDS output file");
@@ -114,12 +120,11 @@ void BDSOutputROOT::Init()
     }
   for(G4int i=0;i<BDSSamplerCylinder::GetNSamplers();i++)
     {
-      //G4String name="samp"+BDSGlobalConstants::Instance()->StringFromInt(i+1);
       G4String name=BDSSamplerCylinder::outputNames[i];
       BuildSamplerTree(name);
     }
 
-  if(BDSGlobalConstants::Instance()->GetStoreTrajectory() || BDSGlobalConstants::Instance()->GetStoreMuonTrajectories() || BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories()) 
+  if(globalConstants->GetStoreTrajectory() || globalConstants->GetStoreMuonTrajectories() || globalConstants->GetStoreNeutronTrajectories()) 
     // create a tree with trajectories
     {
       TTree* TrajTree = new TTree("Trajectories", "Trajectories");
@@ -129,15 +134,7 @@ void BDSOutputROOT::Init()
       TrajTree->Branch("part",&part,"part/I");
     }
 
-  // build energy loss histogram
-  /*
-  G4double wx=(BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelOffsetX())*2;
-  G4double wy=(BDSGlobalConstants::Instance()->GetTunnelRadius()+BDSGlobalConstants::Instance()->GetTunnelOffsetY())*2;
-  G4double bs=BDSGlobalConstants::Instance()->GetComponentBoxSize();
-  G4double wmax=std::max(wx,wy);
-  wmax=std::max(wmax,bs);
-  */
-  
+  // build energy loss histogram  
   EnergyLossTree= new TTree("ElossTree", "Energy Loss");
   EnergyLossTree->Branch("s",&S_el,"s/F"); // (m)
   EnergyLossTree->Branch("E",&E_el,"E/F"); // (GeV)
@@ -419,7 +416,7 @@ void BDSOutputROOT::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec){
 	  G4bool saveTrajectory=true;
 	  
 	  if(!((parentID==0)&&(BDSGlobalConstants::Instance()->GetStoreTrajectory()))){ 
-	    if(!((std::abs(part==13))&&(BDSGlobalConstants::Instance()->GetStoreMuonTrajectories()))){ 
+	    if(!((std::abs(part)==13)&&(BDSGlobalConstants::Instance()->GetStoreMuonTrajectories()))){ 
 	      if(!((part==2112)&&(BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories()))){ 
 		saveTrajectory=false;
 	      }
@@ -540,7 +537,11 @@ void BDSOutputROOT::WriteHistogram(BDSHistogram1D* hIn)
   // &vector[0] gives an array to the contents of the vector - ensured as
   // standard is that the vector's contents are contiguous
   TH1D* h = new TH1D(hname, hIn->GetTitle(), hIn->GetNBins(), &binLowerEdges[0]);
-
+  // set label titles
+  h->GetXaxis()->SetTitle(hIn->GetXLabel());
+  h->GetYaxis()->SetTitle(hIn->GetYLabel());
+  h->GetXaxis()->CenterTitle();
+  h->GetYaxis()->CenterTitle();
   G4int i;
   for(hIn->first(),i = 1;!hIn->isDone();hIn->next(), i++)
     {
@@ -570,7 +571,7 @@ void BDSOutputROOT::Commit()
 void BDSOutputROOT::Write()
 {
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
   if(theRootOutputFile && theRootOutputFile->IsOpen())
