@@ -220,6 +220,8 @@ void Parameters::set_value(std::string property, double value )
   if(property=="xsize") { xsize = value; xsizeset = 1; return;}
   if(property=="ysize") { ysize = value; ysizeset = 1; return;}
   if(property=="tilt") { tilt = value; tiltset = 1; return;}
+  if(property=="offsetX") { offsetX = value; offsetXset = 1; return;}
+  if(property=="offsetY") { offsetX = value; offsetYset = 1; return;}
   if(property=="x") {xdir = value; xdirset = 1; return;} // x direction
   if(property=="y") {ydir = value; ydirset = 1; return;} // y direction 
   if(property=="z") {zdir = value; zdirset = 1; return;} // z direction 
