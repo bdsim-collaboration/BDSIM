@@ -11,7 +11,6 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSRunManager.hh"
 
-#include "G4Timer.hh"
 #include "G4Version.hh"
 
 #include "CLHEP/Random/Random.h"

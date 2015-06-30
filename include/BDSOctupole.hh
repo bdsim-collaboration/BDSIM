@@ -4,21 +4,24 @@
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 
-#ifndef BDSOctupole_h
-#define BDSOctupole_h 1
+#ifndef BDSOCTUPOLE_H
+#define BDSOCTUPOLE_H
 
-#include "globals.hh"
-#include "BDSMultipole.hh"
-#include "BDSBeamPipeInfo.hh"
+#include "BDSMagnet.hh"
+
+#include "globals.hh" // geant4 types / globals
 #include "G4Material.hh"
 
-class BDSOctupole :public BDSMultipole
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
+
+class BDSOctupole: public BDSMagnet
 {
 public:
   BDSOctupole(G4String           name,
 	      G4double           length,
 	      G4double           bTriplePrime,
-	      BDSBeamPipeInfo    beamPipeInfo,
+	      BDSBeamPipeInfo*   beamPipeInfo,
 	      BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSOctupole(){;};
 

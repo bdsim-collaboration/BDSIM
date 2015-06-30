@@ -1,7 +1,8 @@
-
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh" 
+#include "BDSGlobalConstants.hh"
+#include "BDSMagnet.hh"
+#include "BDSMagnetOuterInfo.hh"
 #include "BDSSolenoid.hh"
 #include "BDSSolenoidMagField.hh"
 #include "BDSSolenoidStepper.hh"
@@ -9,24 +10,22 @@
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4MagneticField.hh"
-#include "G4Tubs.hh"
 #include "G4UniformMagField.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
 BDSSolenoid::BDSSolenoid(G4String           name,
 			 G4double           length,
 			 G4double           bField,
-			 BDSBeamPipeInfo    beamPipeInfo,
+			 BDSBeamPipeInfo*   beamPipeInfo,
 			 BDSMagnetOuterInfo magnetOuterInfo):
-  BDSMultipole(BDSMagnetType::solenoid,name,length,beamPipeInfo,magnetOuterInfo),
+  BDSMagnet(BDSMagnetType::solenoid, name, length,
+	    beamPipeInfo, magnetOuterInfo),
   itsBField(bField)
 {;}
 
 void BDSSolenoid::Build()
 {
-  BDSMultipole::Build();
+  BDSMagnet::Build();
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4cout << __METHOD_NAME__ << "IncludeIronMagFields option not implemented for solenoid class"<<G4endl;

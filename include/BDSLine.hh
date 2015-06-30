@@ -13,24 +13,27 @@
  * Memory of components is not owned
  */
 
-class BDSLine :public BDSAcceleratorComponent
+class BDSLine: public BDSAcceleratorComponent
 {
 public:
-
   /// define iterator for ease of reading
   // chosen not to distinguish between non-const and const cases
   typedef std::vector<BDSAcceleratorComponent*>::iterator BDSLineIterator;
 
-  BDSLine(G4String aName,std::list<G4double> blmLocZ, std::list<G4double> blmLocTheta);
+  BDSLine(G4String name);
   ~BDSLine(){};
 
   void addComponent(BDSAcceleratorComponent* component);
   BDSLineIterator begin(){return line.begin();}
   BDSLineIterator end(){return line.end();}
 
+  /// Override the BDSAccelerator::Initialise() function to loop over the
+  /// line and call that function belonging to each member
+  virtual void Initialise();
+
 private:
   /// define pure virtual method
-  virtual void BuildMarkerLogicalVolume(){};
+  virtual void BuildContainerLogicalVolume(){};
 
   /// vector
   std::vector<BDSAcceleratorComponent*> line;

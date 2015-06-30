@@ -69,20 +69,6 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4ThreeVector PartMomDir(xp,yp,zp);
   G4ThreeVector PartPosition(x0,y0,z0);
   
-  if(BDSGlobalConstants::Instance()->GetRefVolume()!=""){
-    const G4AffineTransform* tf = BDSGlobalConstants::Instance()->GetRefTransform();
-    LocalPos = tf->TransformPoint(PartPosition);
-    LocalMomDir = tf->TransformAxis(PartMomDir);
-#ifdef BDSDEBUG 
-    G4cout << PartPosition << G4endl;
-    G4cout << PartMomDir << G4endl;
-    G4cout << LocalPos << G4endl;
-    G4cout << LocalMomDir << G4endl;
-#endif
-    PartPosition = LocalPos;
-    PartMomDir = LocalMomDir;
-  }
-  
   particleGun->SetParticlePosition(PartPosition);
   particleGun->SetParticleEnergy(E);
   particleGun->SetParticleMomentumDirection(PartMomDir);

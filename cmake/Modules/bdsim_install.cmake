@@ -35,6 +35,11 @@ macro(bdsim_install_scripts)
         DESTINATION ${SCRIPT_DEST}
         COMPONENT Scripts)
 endmacro()
+macro(bdsim_install_vis)
+    install(FILES ${ARGN}
+        DESTINATION share/${PROJECT_NAME}/vis/
+        COMPONENT Visualisation)
+endmacro()
 
 # This macro fixes the MACOSX_BUNDLES
 # since we do not make a "traditional app"

@@ -10,9 +10,16 @@
 #include "BDSBunchUserFile.hh"
 #include "BDSBunchTwiss.hh"
 #include "BDSBunchPtc.hh"
+#include "BDSBunchSixTrack.hh"
+#include "BDSBunchHalo.hh"
 
 BDSBunchInterface* BDSBunchFactory::createBunch(G4String distribType)
 {
+
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   BDSBunchInterface* bdsBunch;
   if (distribType == "reference") 
     bdsBunch = new BDSBunchInterface();
@@ -26,8 +33,12 @@ BDSBunchInterface* BDSBunchFactory::createBunch(G4String distribType)
     bdsBunch = new BDSBunchRing();
   else if(distribType == "eshell") 
     bdsBunch = new BDSBunchEShell();
+  else if(distribType == "sixtrack") 
+    bdsBunch = new BDSBunchSixTrack();
   else if(distribType == "gausstwiss") 
     bdsBunch = new BDSBunchTwiss();
+  else if(distribType == "halo") 
+    bdsBunch = new BDSBunchHalo();
   else if(distribType == "userfile")
     bdsBunch = new BDSBunchUserFile();
   else if(distribType == "composite")

@@ -2,11 +2,8 @@
 
 #include "BDSBeamPipeInfo.hh"
 #include "BDSRfCavity.hh"
-#include "G4Tubs.hh"
-#include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4UserLimits.hh"
 
 #include "G4MagIntegratorDriver.hh"
 
@@ -15,9 +12,10 @@
 BDSRfCavity::BDSRfCavity(G4String           name,
 			 G4double           length,
 			 G4double           grad,
-			 BDSBeamPipeInfo    beamPipeInfo,
+			 BDSBeamPipeInfo*   beamPipeInfo,
 			 BDSMagnetOuterInfo magnetOuterInfo):
-  BDSMultipole(BDSMagnetType::rfcavity,name,length,beamPipeInfo,magnetOuterInfo),
+  BDSMagnet(BDSMagnetType::rfcavity, name, length,
+	    beamPipeInfo, magnetOuterInfo),
   itsGrad(grad)
 {
   itsEField    = NULL;

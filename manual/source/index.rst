@@ -18,10 +18,15 @@ Contents:
    model_preparation
    output
    output_analysis
+   python_modules
    support
+
+.. toctree::
+   :maxdepth: 1
+
    appendix1_tracking
    appendix2_geometry
-
+   history
 
 Indices and tables
 ==================

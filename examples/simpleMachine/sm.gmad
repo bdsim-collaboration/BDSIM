@@ -1,6 +1,7 @@
 d1: drift, l=1*m;
 q1: quadrupole, l=10*m, k1=0.000000000000001;
 c1: rcol, l=10*m, ysize=5*mm, xsize=5*mm, material="Copper";
+s1: sbend, l=1*m, angle=0.10; 
 
 l1: line = (d1,c1);
 use,period=l1;
@@ -33,7 +34,7 @@ option, chordStepMinimum    = 0.0000000000001 * m,
 beam, particle="proton",
       energy=10.0*GeV,
       distrType="reference",
+      ngenerate=1,
       X0=0.0,
       Y0=0.0,
       Yp0=0.01;
-

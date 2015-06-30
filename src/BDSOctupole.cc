@@ -2,39 +2,33 @@
    Author: Grahame A. Blair, Royal Holloway, Univ. of London.
    Last modified 24.7.2002
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-   Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
-   Changed StringFromInt to be the BDSGlobal version
 */
 
-#include "BDSGlobalConstants.hh" 
-
 #include "BDSBeamPipeInfo.hh"
+#include "BDSGlobalConstants.hh" 
+#include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 #include "BDSOctupole.hh"
 #include "BDSOctMagField.hh"
 #include "BDSOctStepper.hh"
-#include "BDSTunnelInfo.hh"
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Tubs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
 BDSOctupole::BDSOctupole(G4String           name,
 			 G4double           length,
 			 G4double           bTriplePrime,
-			 BDSBeamPipeInfo    beamPipeInfo,
+			 BDSBeamPipeInfo*   beamPipeInfo,
 			 BDSMagnetOuterInfo magnetOuterInfo):
-  BDSMultipole(BDSMagnetType::octupole,name,length,beamPipeInfo,magnetOuterInfo),
+  BDSMagnet(BDSMagnetType::octupole, name, length,
+	    beamPipeInfo, magnetOuterInfo),
   itsBTriplePrime(bTriplePrime)
 {;}
 
 void BDSOctupole::Build() {
-  BDSMultipole::Build();
+  BDSMagnet::Build();
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4double polePos[4];

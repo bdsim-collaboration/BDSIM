@@ -3,7 +3,8 @@
 
 #include "BDSTunnelType.hh"
 #include "globals.hh"         // geant4 types / globals
-#include "G4Material.hh"
+
+class G4Material;
 
 /**
  * @brief Holder struct of all information required to

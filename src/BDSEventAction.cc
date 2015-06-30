@@ -2,14 +2,18 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
 #include "BDSEventAction.hh"
-#include "BDSOutputBase.hh" 
-#include "BDSRunManager.hh"
-#include "BDSTrajectory.hh"
 
 #include <list>
 #include <map>
 #include <vector>
 #include <algorithm>
+
+#include "BDSAnalysisManager.hh"
+#include "BDSEnergyCounterHit.hh"
+#include "BDSOutputBase.hh" 
+#include "BDSRunManager.hh"
+#include "BDSSamplerHit.hh"
+#include "BDSTrajectory.hh"
 
 #include "G4Event.hh"
 #include "G4EventManager.hh"
@@ -23,22 +27,12 @@
 #include "G4PrimaryVertex.hh"
 #include "G4PrimaryParticle.hh"
 
-#include "BDSSampler.hh"
-#include "BDSSamplerCylinder.hh"
-#include "BDSSamplerHit.hh"
-#include "BDSSDManager.hh"
-#include "BDSEnergyCounterHit.hh"
-#include "BDSEnergyCounterSD.hh"
-#include "BDSAnalysisManager.hh"
-
-// #include "BDSLWCalorimeter.hh"
-// #include "BDSLWCalorimeterHit.hh"
-
 extern BDSOutputBase* bdsOutput;         // output interface
 
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
 
 BDSEventAction::BDSEventAction():
+  analMan(NULL),
   samplerCollID_plane(-1),
   samplerCollID_cylin(-1),
   energyCounterCollID(-1),
@@ -133,7 +127,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   
   // are there any cylindrical samplers? if so, record the hits
 #ifdef BDSDEBUG
-G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
+  G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #endif
   if(samplerCollID_cylin>=0)
     SampHC = (BDSSamplerHitsCollection*)(HCE->GetHC(samplerCollID_cylin));
@@ -151,7 +145,7 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
   
   // create energy loss histogram
 #ifdef BDSDEBUG 
-  G4cout<<"BDSEventAction : storing energy loss histograms"<<G4endl;
+  G4cout << __METHOD_NAME__ << ": storing energy loss histograms" << G4endl;
 #endif
   
   BDSEnergyCounterHitsCollection* energyCounterHits = 

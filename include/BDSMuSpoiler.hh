@@ -4,23 +4,23 @@
    Copyright (c) 2004 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 
-#ifndef BDSMuSpoiler_h
-#define BDSMuSpoiler_h 1
+#ifndef BDSMUSPOILER_H
+#define BDSMUSPOILER_H
 
 #include "globals.hh"
-#include "BDSBeamPipeInfo.hh"
-#include "BDSMagnetOuterInfo.hh"
-#include "BDSMultipole.hh"
+#include "BDSMagnet.hh"
 #include "BDSMuSpoilerMagField.hh"
-#include "BDSTunnelInfo.hh"
 
-class BDSMuSpoiler :public BDSMultipole
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
+
+class BDSMuSpoiler: public BDSMagnet
 {
 public:
   BDSMuSpoiler(G4String           name,
 	       G4double           length,
 	       G4double           bField,
-	       BDSBeamPipeInfo    beamPipeInfo,
+	       BDSBeamPipeInfo*   beamPipeInfo,
 	       BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSMuSpoiler();
 

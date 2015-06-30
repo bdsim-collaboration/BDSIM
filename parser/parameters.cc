@@ -52,6 +52,8 @@ void Parameters::flush() {
   beampipeThickness = 0; beampipeThicknessset = 0;
 
   tilt = 0; tiltset = 0;
+  offsetX = 0; offsetXset = 0;
+  offsetY = 0; offsetYset = 0;
 
   // new aperture model
   aper1 = 0; aper1set = 0;
@@ -162,6 +164,8 @@ void Parameters::inherit_properties(struct Element& e)
   if(!gradientset) { gradient = e.gradient; gradientset = 1; }
 
   if(!tiltset) { tilt = e.tilt; tiltset = 1; }
+  if(!offsetXset) { offsetX = e.offsetX; offsetXset = 1; }
+  if(!offsetYset) { offsetY = e.offsetY; offsetYset = 1; }
   if(!knlset) { knl = e.knl; knlset = 1; }
   if(!kslset) { ksl = e.ksl; kslset = 1; }
   //beam loss monitor locations

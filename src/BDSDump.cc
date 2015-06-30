@@ -20,59 +20,48 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "BDSDumpSD.hh"
-#include "BDSMaterials.hh"
 #include "G4SDManager.hh"
 
 BDSDumpSD* BDSDumpSensDet;
 
 int BDSDump::nDumps=0;
 
-//============================================================
-
-BDSDump::BDSDump (G4String aName,G4double aLength):
-  BDSAcceleratorComponent(
-			 aName,
-			 aLength,0,0,0)
+BDSDump::BDSDump (G4String name, G4double length):
+  BDSAcceleratorComponent(name, length, 0, "dump")
 {
-  SetName("Dump_"+BDSGlobalConstants::Instance()->StringFromInt(nDumps)+"_"+itsName);
+  //SetName("Dump_"+BDS::StringFromInt(nDumps)+"_"+itsName);
   ++nDumps;
   //BDSRoot->SetDumpNumber(nDumps);
 }
 
-void BDSDump::BuildMarkerLogicalVolume()
+void BDSDump::BuildContainerLogicalVolume()
 {
-  G4double SampTransSize;
-  SampTransSize=BDSGlobalConstants::Instance()->GetSamplerDiameter()/2.0;
-
-  itsMarkerLogicalVolume=
-    new G4LogicalVolume(
-			new G4Box(itsName+"_solid",
-				  SampTransSize,
-				  SampTransSize,
-				  itsLength/2.0),
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
-			itsName);
+  G4double radius = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5;
+  
+  containerSolid = new G4Box(name + "_container_solid",
+			     radius,
+			     radius,
+			     chordLength*0.5);
+  
+  containerLogicalVolume = new G4LogicalVolume(containerSolid,
+					       emptyMaterial,
+					       name + "_container_lv");
 
 #ifndef NOUSERLIMITS
-  itsOuterUserLimits =new G4UserLimits();
-  itsOuterUserLimits->SetMaxAllowedStep(itsLength);
+  G4UserLimits* itsOuterUserLimits = new G4UserLimits();
+  itsOuterUserLimits->SetMaxAllowedStep(chordLength);
   itsOuterUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-  itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
+  containerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
   // Sensitive Detector:
   if(nDumps==0)
     {
       G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-      BDSDumpSensDet=new BDSDumpSD(itsName,"plane");
+      BDSDumpSensDet=new BDSDumpSD(name,"plane");
       SDMan->AddNewDetector(BDSDumpSensDet);
     }
-  itsMarkerLogicalVolume->SetSensitiveDetector(BDSDumpSensDet);
-}
-
-void BDSDump::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(1,1,1));
+  containerLogicalVolume->SetSensitiveDetector(BDSDumpSensDet);
 }
 
 BDSDump::~BDSDump()

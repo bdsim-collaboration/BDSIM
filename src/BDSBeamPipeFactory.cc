@@ -8,6 +8,7 @@
 #include "BDSBeamPipeFactoryLHC.hh"
 #include "BDSBeamPipeFactoryLHCDetailed.hh"
 #include "BDSBeamPipeFactoryRectEllipse.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
 #include "globals.hh"                        // geant4 globals / types
 
@@ -47,19 +48,19 @@ BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeTyp
     break;
   case BDSBeamPipeType::lhc:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " lhc beampipe factory" << G4endl;
+    G4cout << __METHOD_NAME__ << "lhc beampipe factory" << G4endl;
 #endif
     return BDSBeamPipeFactoryLHC::Instance();
     break;
   case BDSBeamPipeType::lhcdetailed:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " lhc detailed beampipe factory" << G4endl;
+    G4cout << __METHOD_NAME__ << "lhc detailed beampipe factory" << G4endl;
 #endif
     return BDSBeamPipeFactoryLHCDetailed::Instance();
     break;
   case BDSBeamPipeType::rectellipse:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " rectangular ellipse beampipe factory" << G4endl;
+    G4cout << __METHOD_NAME__ << "rectangular ellipse beampipe factory" << G4endl;
 #endif
     return BDSBeamPipeFactoryRectEllipse::Instance();
     break;
@@ -71,6 +72,25 @@ BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeTyp
     break;
   }
 }
+
+BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(G4String         name,
+						G4double         length,
+						BDSBeamPipeInfo* bpi)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  return CreateBeamPipe(bpi->beamPipeType,
+			name,
+			length,
+			bpi->aper1,
+			bpi->aper2,
+			bpi->aper3,
+			bpi->aper4,
+			bpi->vacuumMaterial,
+			bpi->beamPipeThickness,
+			bpi->beamPipeMaterial);
+}
   
 BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(BDSBeamPipeType beamPipeType,
 						G4String        name,
@@ -81,8 +101,7 @@ BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(BDSBeamPipeType beamPipeType,
 						G4double        aper4,
 						G4Material*     vacuumMaterial,
 						G4double        beamPipeThickness,
-						G4Material*     beamPipeMaterial
-						)
+						G4Material*     beamPipeMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;

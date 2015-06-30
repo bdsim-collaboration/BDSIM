@@ -23,6 +23,8 @@ simple_testing(Component-Octupole "--file=octTest.gmad" "")
  
 simple_testing(Component-Quadrupole "--file=quadTest.gmad" "")
 
+simple_testing(Component-QuadrupoleOffset "--file=quadOffsetTest.gmad" "")
+
 simple_testing(Component-RBend "--file=rbenTest.gmad" "")
 
 simple_testing(Component-RCollimator "--file=rcolTest.gmad" "")

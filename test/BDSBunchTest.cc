@@ -10,8 +10,9 @@
 #include "parser/gmad.h"  
 #include "parser/options.h"
 
-#include "BDSGlobalConstants.hh"
 #include "BDSBunch.hh"
+#include "BDSExecOptions.hh"
+#include "BDSGlobalConstants.hh"
 
 extern Options options;
 
@@ -21,18 +22,19 @@ int main(int argc,char** argv) {
   // default filename
   std::string filename = "./BDSBunchTestFiles/gmad";
 
-  /// first argument is gmad file
-  if (argc>1){
-    filename = argv[1];
-  }
+  const BDSExecOptions* execOptions = BDSExecOptions::Instance(argc,argv);
 
-  // fill options from file 
-  gmad_parser(filename);
+  G4cout << __FUNCTION__ << "> Using input file : "<< execOptions->GetInputFilename()<<G4endl;
+  
+  gmad_parser(execOptions->GetInputFilename());
+
+  BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
 
   // Print options for distrib type 
+  std::cout << "BDSBunchTest> distribFile : "      << options.distribFile << std::endl;
   std::cout << "BDSBunchTest> distribType : "      << options.distribType << std::endl;
   std::cout << "BDSBunchTest> particle    : "      << options.particleName << std::endl;
-  std::cout << "BDSBunchTest> particle    : "      << BDSGlobalConstants::Instance()->GetParticleName() << std::endl;
+  std::cout << "BDSBunchTest> particle    : "      << globalConstants->GetParticleName() << std::endl;
   std::cout << "BDSBunchTest> numberToGenerate : " << options.numberToGenerate << std::endl;
 
 
@@ -46,9 +48,9 @@ int main(int argc,char** argv) {
   G4Proton::ProtonDefinition();
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();  
-  BDSGlobalConstants::Instance()->SetParticleDefinition(particleTable->FindParticle(BDSGlobalConstants::Instance()->GetParticleName()));  
-  BDSGlobalConstants::Instance()->SetBeamMomentum(sqrt(pow(BDSGlobalConstants::Instance()->GetBeamTotalEnergy(),2)-pow(BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass(),2)));  
-  BDSGlobalConstants::Instance()->SetBeamKineticEnergy(BDSGlobalConstants::Instance()->GetBeamTotalEnergy()-BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass());
+  globalConstants->SetParticleDefinition(particleTable->FindParticle(globalConstants->GetParticleName()));  
+  globalConstants->SetBeamMomentum(sqrt(pow(globalConstants->GetBeamTotalEnergy(),2)-pow(globalConstants->GetParticleDefinition()->GetPDGMass(),2)));  
+  globalConstants->SetBeamKineticEnergy(globalConstants->GetBeamTotalEnergy()-globalConstants->GetParticleDefinition()->GetPDGMass());
 
   // Set options for bunch
   bdsBunch.SetOptions(options);
@@ -60,17 +62,17 @@ int main(int argc,char** argv) {
   double x0, y0, z0, xp, yp, zp, t, E, weight;
   for(int i=0;i<options.numberToGenerate;i++) { 
     bdsBunch.GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
-    if(i% 1000 == 0 ) {
-      std::cout << i  << " " 
-		<< x0 << " " << y0 << " " << z0 << " " << xp << " "
-		<< yp << " " << zp << " " << t  << " " << E << " " 
+    if(i% 1 == 0 ) {
+      std::cout << "i = " << i  << " x0 = " 
+		<< x0 << " y0 = " << y0 << ", z0 " << z0 << ", xp = " << xp << ", yp = "
+		<< yp << ", zp = " << zp << ", t = " << t  << ", E = " << E << ", weight = " 
 		<< weight << std::endl;
     }
     of << i  << " " 
        << x0 << " " << y0 << " " << z0 << " " << xp << " "
        << yp << " " << zp << " " << t  << " " << E << " " 
        << weight << std::endl;    
-  }    
+  }
 
   // close output file
   of.close();

@@ -45,8 +45,6 @@ int include_stack_ptr = 0;
 int line_num = 1;
 char* yyfilename;
 
-
-
 %}
 
 %s ERROR
@@ -65,7 +63,8 @@ char* yyfilename;
 "<>" { return NE; }
 "==" { return EQ; }
 
-"!".*/\n { }    // comments - ignore
+"!".*$    {line_num++;}    // comments - ignore
+"!".*     {line_num++;}    // comments at end of file (without return) - ignore
 
 marker { return MARKER; } // reserved elements
 drift { return DRIFT; }
@@ -146,7 +145,7 @@ dump  { return DUMP; }
      else
        return VARIABLE; 
 }
-.    { return yytext[0]; }
+.    { return yytext[0]; } // return characters like * and /
 
 <incl>[ \t]*  // eat the whitespace
 <incl>[^ \t\n;]+ {
@@ -172,8 +171,9 @@ if(bdsimpath.length()>0){
      // the main file has an absolute path
      includefilename = mainfilepath + (std::string)yytext;
    } else {
-     // the main file has a relative path
+     // the main file has a relative path or just the file name
      char cwdchars[200]; //filepath up to 200 characters
+     // get current working directory
      std::string cwd = (std::string)getcwd(cwdchars, sizeof(cwdchars)) + "/";
      includefilename = cwd + mainfilepath + (std::string)yytext;
    }
@@ -225,11 +225,12 @@ printf("parser> include filename is: %s \n",includefilename.c_str());
       yy_switch_to_buffer(include_stack[include_stack_ptr]);
       strncpy( yyfilename, include_filename_stack[include_stack_ptr], maxfilenamelength) ;
       line_num = include_linenum_stack[include_stack_ptr];
-      
     }
 }
 
-[\n]  line_num++;
+\n   line_num++; // unix line separator
+\r\n line_num++; // windows line separator
+
 %%
 
 

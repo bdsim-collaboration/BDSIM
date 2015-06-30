@@ -3,8 +3,6 @@
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 
-#include <limits>
-
 #include "BDSGlobalConstants.hh" 
 #include "BDSDipoleStepper.hh"
 #include "G4ThreeVector.hh"

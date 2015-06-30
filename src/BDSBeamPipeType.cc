@@ -26,7 +26,7 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
 
   BDSBeamPipeType returnValue = types[apertureType];
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " determined aperture type to be " << returnValue << G4endl;
+  G4cout << __METHOD_NAME__ << "determined aperture type to be " << returnValue << G4endl;
 #endif
   return returnValue;
 }

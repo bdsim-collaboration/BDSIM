@@ -29,7 +29,7 @@ Output Format Differences
 ROOT
 ^^^^
 
-With the root format, everything is recorded in one single file. If the
+With the ROOT format, everything is recorded in one single file. If the
 number of events simulated exceeds :code:`nperfile` a new file will be
 started. The chosen filename will be suffixed with :code:`_N.root` where
 :code:`N` is an integer.
@@ -52,7 +52,7 @@ Histograms
 
 BDSIM produces six histograms by default during the simulation. These are: primary
 hits per bin width; primary losses per bin width; energy loss per metre (GeV);
-primary hits per element; primary losse per element; and Energy loss per element.
+primary hits per element; primary losses per element; and Energy loss per element.
 
 The per element histograms are integrated across the length of each element so they
 will have a different bin width. The other histograms are evenly binned according
@@ -66,17 +66,17 @@ Samplers
 Samplers record the particle position at the start of each element.  The following
 coordinates are recorded:
 
-=============== ============= ==================
+=============== ============= =============================
 Coordinate Name Units         Meaning
-=============== ============= ==================
-E0              GeV           Initial energy
-x0              :math:`\mu m` Initial x position
-y0              :math:`\mu m` Initial y position
-z0              :math:`\mu m` Initial z position
-xp0             rad           Initial x' position
-yp0             rad           Initial y' position
-zp0             rad           Initial z' position
-t0              s             Initial time
+=============== ============= =============================
+E0              GeV           Initial primary energy
+x0              :math:`\mu m` Initial primary x position
+y0              :math:`\mu m` Initial primary y position
+z0              :math:`\mu m` Initial primary z position
+xp0             rad           Initial primary x' position
+yp0             rad           Initial primary y' position
+zp0             rad           Initial primary z' position
+t0              s             Initial primary time
 E               GeV           Energy
 x               :math:`\mu m` x position
 y               :math:`\mu m` y position
@@ -95,10 +95,10 @@ s               m             Curvilinear S
 weight          NA            weight
 partID          NA            PDG ID number
 nEvent          NA            event number
-parentID        NA            parent ID
+parentID        NA            parent ID (0 means primary)
 trackID         NA            track ID
 turnnumber      NA            turns completed
-=============== ============= ==================
+=============== ============= =============================
 
 .. note:: `rad` is not strictly correct for the prime units but is used in the small angle approximation.
 	  The prime is the differential of that position
@@ -107,7 +107,7 @@ turnnumber      NA            turns completed
 Primary Coordinates
 -------------------
 
-The primary coordinates for each event are recorded in a similar fash to the samplers
+The primary coordinates for each event are recorded in a similar fashion to the samplers
 in their own file / tree.
 
 	       

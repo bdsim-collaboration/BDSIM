@@ -1,5 +1,6 @@
 #include "BDSBunchPtc.hh"
 #include "BDSDebug.hh"
+#include "BDSUtilities.hh"
 #include <iostream>
 
 #include <fstream>
@@ -13,18 +14,18 @@ BDSBunchPtc::BDSBunchPtc() {
 #endif
 
   // load inrays file in current directory 
-  this->fileName = "./inrays.madx";
+  fileName = "./inrays.madx";
   // Set ray counter to zero
-  this->iRay  = 0;
-  this->nRays = 0;
+  iRay  = 0;
+  nRays = 0;
 }
 
 BDSBunchPtc::~BDSBunchPtc() { 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  for(std::vector<double*>::iterator i = this->ptcData.begin();i!=this->ptcData.end();++i) {
-    delete *i;
+  for(std::vector<double*>::iterator i = ptcData.begin();i!=ptcData.end();++i) {
+    delete[] *i;
   }
 }
 
@@ -34,10 +35,10 @@ void BDSBunchPtc::LoadPtcFile() {
 #endif
 
   // open file and read line by line and extract values
-  std::ifstream ifstr(this->fileName);
+  std::ifstream ifstr(fileName);
 
   if (!ifstr)
-    { G4cout << __METHOD_NAME__ << "\"" << this->fileName << "\" file doesn't exist - exiting as no input" << G4endl;
+    { G4cout << __METHOD_NAME__ << "\"" << fileName << "\" file doesn't exist - exiting as no input" << G4endl;
       exit(1);
     }
 
@@ -105,12 +106,12 @@ void BDSBunchPtc::LoadPtcFile() {
     values[5] = pt; 
     
     // append values to storage vector
-    this->ptcData.push_back(values);
+    ptcData.push_back(values);
   }
 
-    // set number of available rays in options 
-  this->nRays = this->ptcData.size();
-  BDSGlobalConstants::Instance()->SetNumberToGenerate(this->nRays);
+  // set number of available rays in options
+  nRays = ptcData.size();
+  BDSGlobalConstants::Instance()->SetNumberToGenerate(nRays);
 
   return;
 }
@@ -121,8 +122,12 @@ void BDSBunchPtc::SetOptions(struct Options& opt) {
 #endif
 
   BDSBunchInterface::SetOptions(opt);
-  this->SetDistribFile((G4String)opt.distribFile); 
-  this->LoadPtcFile();
+  SetDistribFile((G4String)opt.distribFile); 
+  LoadPtcFile();
+}
+
+void BDSBunchPtc::SetDistribFile(G4String distribFileName){
+  fileName = BDS::GetFullPath(distribFileName);
 }
 
 void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
@@ -131,20 +136,23 @@ void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  x0     = this->ptcData[this->iRay][0]*CLHEP::m+X0;
-  y0     = this->ptcData[this->iRay][2]*CLHEP::m+Y0;
-  z0     = this->ptcData[this->iRay][4]+Z0;
-  xp     = this->ptcData[this->iRay][1]*CLHEP::rad+Xp0;
-  yp     = this->ptcData[this->iRay][3]*CLHEP::rad+Yp0;
+  x0     = ptcData[iRay][0]*CLHEP::m+X0;
+  y0     = ptcData[iRay][2]*CLHEP::m+Y0;
+  z0     = ptcData[iRay][4]+Z0;
+  xp     = ptcData[iRay][1]*CLHEP::rad+Xp0;
+  yp     = ptcData[iRay][3]*CLHEP::rad+Yp0;
   t      = (z0-Z0)/CLHEP::c_light+T0;
-  E      = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * (this->ptcData[this->iRay][5]+1.0);
+  E      = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * (ptcData[iRay][5]+1.0);
   zp     = CalculateZp(xp,yp,Zp0);
   weight = 1.0; 
 
-  this->iRay++;
+  iRay++;
 
   // if all particles are read, start at 0 again
-  if (this->iRay == this->nRays) this->iRay=0;
+  if (iRay == nRays) {
+    iRay=0;
+    G4cout << __METHOD_NAME__ << "End of file reached. Returning to beginning of file." << G4endl;
+  }
 
   return;
 }

@@ -19,8 +19,7 @@ class G4ParticleDefinition;
 class G4UniformMagField;
 class G4UserLimits;
 class G4VisAttributes;
-
-class BDSLogicalVolumeInfo;
+class G4VPhysicalVolume;
 
 struct Options;
 
@@ -54,9 +53,6 @@ public:
   G4double GetMaximumEpsilonStep()const;
   G4double GetMaxTime()const;
   G4double GetDeltaOneStep()const;
-
-  G4String StringFromInt(G4int anInt)const;
-  G4String StringFromDigit(G4int anInt)const;
 
   G4ParticleDefinition* GetParticleDefinition()const;
   void     SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
@@ -108,17 +104,6 @@ public:
   G4double GetMagnetPoleRadius()const;
 
   /// tunnel
-  G4bool   GetBuildTunnel()const; 
-  G4bool   GetBuildTunnelFloor()const; 
-  G4bool   GetShowTunnel()const; 
-  G4double GetTunnelRadius()const; 
-  G4double GetTunnelThickness()const; 
-  G4double GetTunnelSoilThickness()const; 
-  G4double GetTunnelFloorOffset()const; 
-  G4double GetTunnelOffsetX()const; 
-  G4double GetTunnelOffsetY()const;
-
-  // new tunnel
   G4String      GetTunnelMaterial()const;
   G4String      GetTunnelSoilMaterial()const;
   G4bool        GetSensitiveTunnel()const;
@@ -225,28 +210,13 @@ public:
   G4AffineTransform GetDumpTransform()const;
   void              SetDumpTransform(G4AffineTransform tf);
 
-  G4String GetRefVolume()const;
-  G4int    GetRefCopyNo()const;
-
-  const G4AffineTransform* GetRefTransform()const;
-  void                     SetRefTransform(G4AffineTransform& aTransform);
-
   G4double GetSMax()const;
   void     SetSMax(G4double);
   G4ThreeVector GetTeleporterDelta()const;
   void          SetTeleporterDelta(G4ThreeVector newteleporterdelta);
   void          SetTeleporterLength(G4double newteleporterlength);
-  G4double      GetTeleporterLength()const; 
-
-  // for general info about a logical volume - extendable data class
-  // nominally used to get s position for energy loss
-  // get the info for a given logical volume pointer
-  BDSLogicalVolumeInfo* GetLogicalVolumeInfo(G4LogicalVolume* logvolpointer)const;
-  // get a pointer to the map of log vol infos
-  std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* LogicalVolumeInfo();
-  // add a new set of info to the map
-  void AddLogicalVolumeInfo(G4LogicalVolume* logvolpointer, BDSLogicalVolumeInfo* bdslogvolinfo);
-
+  G4double      GetTeleporterLength()const;
+  
   /// initial particle
   BDSParticle GetInitialPoint()const;
   void SetInitialPoint(BDSParticle& particle);
@@ -299,17 +269,6 @@ private:
   G4double itsMagnetPoleSize;
   G4double itsMagnetPoleRadius;
   
-  G4bool   itsBuildTunnel;
-  G4bool   itsBuildTunnelFloor;
-  G4double itsTunnelRadius;
-  G4double itsTunnelThickness;
-  G4double itsTunnelSoilThickness;
-  G4double itsTunnelFloorOffset;
-  G4double itsTunnelOffsetX;
-  G4double itsTunnelOffsetY;
-  G4bool   itsShowTunnel;
-
-
   // new tunnel
   G4String tunnelMaterial;
   G4String tunnelSoilMaterial;
@@ -414,9 +373,6 @@ public:
   G4String GetBeamPipeMaterialName()const;
   G4String GetVacuumMaterial()const;
   G4String GetEmptyMaterial()const;
-  G4String GetSoilMaterialName()const;
-  G4String GetTunnelMaterialName()const;
-  G4String GetTunnelCavityMaterialName()const;
 
   G4VisAttributes* GetInvisibleVisAttr()const;
   G4VisAttributes* GetVisibleDebugVisAttr()const;
@@ -430,28 +386,23 @@ private:
   G4String itsBeamPipeMaterial;          //beampipe material
   G4String itsVacuumMaterial;            //vacuum inside beampipe
   G4String itsEmptyMaterial;             //empty material for e.g. marker volumes
-  G4String itsTunnelMaterialName;        //tunnel material
-  G4String itsTunnelCavityMaterialName;  //tunnel cavity material
-  G4String itsSoilMaterialName;          //material around tunnel
   G4bool   isWaitingForDump;
   G4bool   isDumping;
   G4bool   isReading;
   G4bool   isReadFromStack;
   G4String itsFifo; // fifo for BDSIM-placet
   G4AffineTransform itsDumpTransform; //transform of frame from start to current dump element
-  G4String itsRefVolume;
-  G4int    itsRefCopyNo;
-  G4AffineTransform itsRefTransform;
-  // Turn Control
+  
+  ///@{ Turn Control
   G4int    itsTurnsTaken;
   G4int    itsTurnsToTake;
-  // Teleporter offset corrections
+  ///@}
+  ///@{ Teleporter offset corrections
   G4ThreeVector teleporterdelta;
   G4double      teleporterlength;
-  // beamline length
+  ///@}
+  /// beamline length in mm
   G4double itsSMax;
-  // logical volume info
-  std::map<G4LogicalVolume* , BDSLogicalVolumeInfo*> logicalvolumeinfo;
   /// initial particle
   BDSParticle itsInitialPoint;
 
@@ -575,34 +526,7 @@ inline G4double BDSGlobalConstants::GetMagnetPoleSize()const
 inline G4double BDSGlobalConstants::GetMagnetPoleRadius()const
 {return itsMagnetPoleRadius;}
 
-inline G4bool BDSGlobalConstants::GetBuildTunnel()const
-{return itsBuildTunnel;}
-
-inline G4bool BDSGlobalConstants::GetBuildTunnelFloor()const
-{return itsBuildTunnelFloor;}
-
-inline G4double BDSGlobalConstants::GetTunnelRadius()const
-{return itsTunnelRadius;}
-
-inline G4double BDSGlobalConstants::GetTunnelThickness()const
-{return itsTunnelThickness;}
-
-inline G4double BDSGlobalConstants::GetTunnelSoilThickness()const
-{return itsTunnelSoilThickness;}
-
-inline G4double BDSGlobalConstants::GetTunnelFloorOffset()const
-{return itsTunnelFloorOffset;}
-
-inline G4double BDSGlobalConstants::GetTunnelOffsetX()const
-{return itsTunnelOffsetX;}
-
-inline G4double BDSGlobalConstants::GetTunnelOffsetY()const
-{return itsTunnelOffsetY;}
-
-inline G4bool BDSGlobalConstants::GetShowTunnel()const
-{return itsShowTunnel;}
-
-// new tunnel
+// tunnel
 inline G4String BDSGlobalConstants::GetTunnelMaterial()const
 {return tunnelMaterial;}
 
@@ -614,7 +538,6 @@ inline G4bool BDSGlobalConstants::GetSensitiveTunnel()const
 
 inline BDSTunnelInfo BDSGlobalConstants::GetTunnelInfo()const
 {return tunnelInfo;}
-
 
 inline G4bool BDSGlobalConstants::GetGeometryBias()const
 {return itsGeometryBias;}
@@ -810,15 +733,6 @@ inline G4String BDSGlobalConstants::GetVacuumMaterial()const
 inline G4String BDSGlobalConstants::GetEmptyMaterial()const
 {return itsEmptyMaterial;}
 
-inline G4String BDSGlobalConstants::GetSoilMaterialName()const
-{return itsSoilMaterialName;}
-
-inline G4String BDSGlobalConstants::GetTunnelMaterialName()const
-{return itsTunnelMaterialName;}
-
-inline G4String BDSGlobalConstants::GetTunnelCavityMaterialName()const
-{return itsTunnelCavityMaterialName;}
-
 inline G4bool BDSGlobalConstants::GetDoPlanckScattering()const 
 {return itsDoPlanckScattering;}
 
@@ -866,18 +780,6 @@ inline G4AffineTransform BDSGlobalConstants::GetDumpTransform()const
 inline void BDSGlobalConstants::SetDumpTransform(G4AffineTransform tf)
 {itsDumpTransform=tf;}
 
-inline G4String BDSGlobalConstants::GetRefVolume()const
-{return itsRefVolume;}
-
-inline G4int BDSGlobalConstants::GetRefCopyNo()const
-{return itsRefCopyNo;}
-
-inline const G4AffineTransform* BDSGlobalConstants::GetRefTransform()const
-{return &itsRefTransform;}
-
-inline void BDSGlobalConstants::SetRefTransform(G4AffineTransform& aTransform)
-{itsRefTransform=aTransform;}
-
 inline G4int BDSGlobalConstants::GetTurnsTaken()const
 {return itsTurnsTaken;}
 
@@ -907,15 +809,6 @@ inline void BDSGlobalConstants::SetTeleporterLength(G4double newteleporterlength
 
 inline G4double BDSGlobalConstants::GetTeleporterLength()const
 {return teleporterlength;}
-
-inline BDSLogicalVolumeInfo* BDSGlobalConstants::GetLogicalVolumeInfo(G4LogicalVolume* logvolpointer)const
-{return logicalvolumeinfo.at(logvolpointer);}
-
-inline void BDSGlobalConstants::AddLogicalVolumeInfo(G4LogicalVolume* logvolpointer, BDSLogicalVolumeInfo* logvolinfo)
-{logicalvolumeinfo[logvolpointer] = logvolinfo;}
-
-inline std::map<G4LogicalVolume*,BDSLogicalVolumeInfo*>* BDSGlobalConstants::LogicalVolumeInfo()
-{return &logicalvolumeinfo;}
 
 inline G4double BDSGlobalConstants::GetParticleKineticEnergy()const
 {return itsParticleKineticEnergy;}

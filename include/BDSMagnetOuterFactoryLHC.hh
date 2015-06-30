@@ -140,10 +140,7 @@ private:
   void TestInputParameters(BDSBeamPipe* beamPipe,
 			   G4double&    boxSizeIn,
 			   G4Material*& outerMaterialIn);
-
-  G4double  lengthSafety;
-  G4VSolid* outerSolid;
-  G4VSolid* containerSolid;
+  
 };
 
 #endif

@@ -21,8 +21,6 @@
 
 #include "BDSSDManager.hh"
 
-//============================================================
-
 std::vector <G4String> BDSSampler::outputNames;
 
 int BDSSampler::nSamplers = 0;
@@ -34,55 +32,51 @@ int BDSSampler::GetNSamplers() { return nSamplers; }
 
 void BDSSampler::AddExternalSampler(G4String name) { nSamplers++; outputNames.push_back(name); }
 
-BDSSampler::BDSSampler (G4String aName, G4double aLength):
-  BDSAcceleratorComponent(
-			 aName,
-			 aLength)
+BDSSampler::BDSSampler(G4String name,
+		       G4double length):
+  BDSAcceleratorComponent("Sampler_"+name, length, 0, "sampler")
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   nThisSampler= nSamplers + 1;
-  SetName("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
   nSamplers++;
 #ifdef BDSDEBUG
   G4cout << "BDSSampler.cc Nsamplers " << nSamplers << G4endl;
 #endif
-
-  // register sampler sensitive detector
-  //G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-  //SDMan->AddNewDetector(SensitiveDetector);
+  BDSSampler::outputNames.push_back(GetName());
 }
 
-void BDSSampler::Initialise()
+void BDSSampler::BuildContainerLogicalVolume()
 {
-  BDSAcceleratorComponent::Initialise();
-  
-  BDSSampler::outputNames.push_back(itsName + "_phys_" + BDSGlobalConstants::Instance()->StringFromInt(GetCopyNumber()+1));
-}
-
-void BDSSampler::BuildMarkerLogicalVolume()
-{
-  itsMarkerLogicalVolume=
-    new G4LogicalVolume(
-			new G4Box(itsName+"_solid",
-				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				  BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				  itsLength/2.0),
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
-			itsName);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  G4String name = GetName();
+  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  G4double samplerDiameter = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5; 
+  containerSolid = new G4Box(name + "_solid",
+			     samplerDiameter,
+			     samplerDiameter,
+			     chordLength*0.5);
+  containerLogicalVolume = new G4LogicalVolume(containerSolid,
+					       emptyMaterial,
+					       name);
   
 #ifndef NOUSERLIMITS
-  itsOuterUserLimits =new G4UserLimits();
+  G4UserLimits* itsOuterUserLimits = new G4UserLimits();
   //      double stepFactor=5;
   //      itsOuterUserLimits->SetMaxAllowedStep(itsLength*stepFactor);
   itsOuterUserLimits->SetMaxAllowedStep(1*CLHEP::m);
-  itsMarkerLogicalVolume->SetUserLimits(itsOuterUserLimits);
+  containerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
-  //itsMarkerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
-  if (BDSExecOptions::Instance()->GetVisDebug()) {
-    itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-  } else {
-    itsMarkerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-  }
-  itsMarkerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
+  //containerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
+  if (BDSExecOptions::Instance()->GetVisDebug())
+    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
+  else
+    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
+  
+  containerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 }
 
 BDSSampler::~BDSSampler()

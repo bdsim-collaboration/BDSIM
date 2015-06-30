@@ -136,6 +136,9 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.ysize = params.ysize;
   e.material = params.material;  
   e.precisionRegion = params.precisionRegion;
+
+  e.offsetX = params.offsetX;
+  e.offsetY = params.offsetY;
   // end of common parameters
 
   // specific parameters
@@ -497,7 +500,7 @@ void add_gas(const char *name, const char *before, int before_count, std::string
   e.type = _GAS;
   e.name = name;
   e.lst = NULL;
-  element_list.insert(beamline_list.end(),e);
+  element_list.push_back(e);
 }
 
 void add_tunnel(Tunnel& tunnel)

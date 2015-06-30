@@ -14,7 +14,8 @@
 class BDSSampler : public BDSAcceleratorComponent
 {
 public:
-  BDSSampler(G4String aName,G4double aLength);
+  BDSSampler(G4String name,
+	     G4double length);
   ~BDSSampler();
 
   static int GetNSamplers();
@@ -25,11 +26,15 @@ public:
 
   /// access for external classes to sensitive detector
   static BDSSamplerSD* GetSensitiveDetector(){return SensitiveDetector;}
+  
+  /// BDSBeamline needs to be able to create a single element to initialise
+  /// coordinates but can't simply use the factory as it only works with an
+  /// existing sequence from the parser. Need to make BDSBeamline a friend
+  /// to call private initialise member
+  friend class BDSBeamline;
 
 private:
-  virtual void Initialise();
-
-  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildContainerLogicalVolume();
 
   /// id of sampler
   int nThisSampler;

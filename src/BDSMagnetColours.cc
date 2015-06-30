@@ -34,6 +34,8 @@ BDSMagnetColours::BDSMagnetColours()
   colours["muspoiler"]        = new G4Colour(0,     0.807, 0.819); // "light blue" / tab blue
   colours["vkicker"]          = new G4Colour(0,     0.4,   0.8);   // blue
   colours["hkicker"]          = new G4Colour(0,     0.4,   0.8);   // blue
+  colours["coil"]             = new G4Colour(0.722, 0.451, 0.2);   // copper
+  colours["gdml"]             = new G4Colour(0.4  , 0.2,   0.0);   // poo brown
 }
 
 G4Colour* BDSMagnetColours::GetMagnetColour(G4String magnetTypeName)

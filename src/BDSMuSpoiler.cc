@@ -10,25 +10,27 @@
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"               
 #include "G4Tubs.hh"
-#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
-#include "BDSMultipole.hh"
+#include "BDSMagnet.hh"
 #include "BDSMuSpoiler.hh"
 #include "BDSMuSpoilerMagField.hh"
-#include "BDSTunnelInfo.hh"
+
+class BDSTiltOffset;
 
 BDSMuSpoiler::BDSMuSpoiler(G4String           name,
 			   G4double           length,
 			   G4double           bField,
-			   BDSBeamPipeInfo    beamPipeInfo,
+			   BDSBeamPipeInfo*   beamPipeInfo,
 			   BDSMagnetOuterInfo magnetOuterInfo):
-  BDSMultipole(BDSMagnetType::muspoiler,name,length,beamPipeInfo,magnetOuterInfo),
+  BDSMagnet(BDSMagnetType::muspoiler, name, length,
+	    beamPipeInfo, magnetOuterInfo),
   itsBField(bField)
 {;}
 
@@ -41,7 +43,7 @@ void BDSMuSpoiler::BuildBPFieldAndStepper()
 
 void BDSMuSpoiler::BuildOuterVolume()
 {
-  BDSMultipole::BuildOuterVolume();
+  BDSMagnet::BuildOuterVolume();
 
   // prepare and attach field
   delete itsOuterMagField;

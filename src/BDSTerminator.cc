@@ -1,9 +1,3 @@
-/* BDSIM
-   Author: L. Nevay,
-   Last modified 15/04/2014
-   Copyright (c) 2014.  ALL RIGHTS RESERVED.
-*/
-
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSTerminator.hh"
@@ -12,60 +6,50 @@
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4VisAttributes.hh"
 #include "G4UserLimits.hh"
 #include "G4SDManager.hh"
 #include "BDSDebug.hh"
 #include "parser/enums.h"
 
-int BDSTerminator::nSamplers=0;
-
-BDSTerminator::BDSTerminator(G4String aName, G4double aLength):
-  BDSAcceleratorComponent(
-			 aName,
-			 aLength,0,0,0)
+BDSTerminator::BDSTerminator(G4String name, G4double length):
+  BDSAcceleratorComponent(name, length, 0, "terminator")
 {
-  nThisSampler= nSamplers + 1;
-  SetName("Terminator_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+itsName);
-  nSamplers++;
 }
 
-void BDSTerminator::BuildMarkerLogicalVolume()
+void BDSTerminator::BuildContainerLogicalVolume()
 {
   //Bascially a copy of BDSSampler but with different sensitive detector added
-  G4Box* terminatorBox = new G4Box(itsName+"_solid",
-				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				   BDSGlobalConstants::Instance()->GetSamplerDiameter()/2,
-				   itsLength/2.0);
-  itsMarkerLogicalVolume =new G4LogicalVolume(terminatorBox,
-					      BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
-					      itsName);
+  G4double radius = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5;
+  containerSolid = new G4Box(name + "_container_solid",
+			     radius,
+			     radius,
+			     chordLength * 0.5);
+  containerLogicalVolume = new G4LogicalVolume(containerSolid,
+					       emptyMaterial,
+					       name + "_container_lv");
   
   // SENSITIVE DETECTOR
   G4SDManager* SDMan    = G4SDManager::GetSDMpointer();
-  G4VSensitiveDetector* theTerminator  = new BDSTerminatorSD(itsName);
+  G4VSensitiveDetector* theTerminator  = new BDSTerminatorSD(name);
   SDMan->AddNewDetector(theTerminator);
-  itsMarkerLogicalVolume->SetSensitiveDetector(theTerminator);
+  containerLogicalVolume->SetSensitiveDetector(theTerminator);
   
   // USER LIMITS - the logic of killing particles on last turn
-  itsMarkerLogicalVolume->SetUserLimits(new BDSTerminatorUserLimits(DBL_MAX,DBL_MAX,DBL_MAX,0.,0.));
+  containerLogicalVolume->SetUserLimits(new BDSTerminatorUserLimits(DBL_MAX,DBL_MAX,DBL_MAX,0.,0.));
   //these are default G4UserLimit values so everything will normally be tracked
   //BDSTerminatorUserLimits has the logic inside it to respond to turn number
-}
 
-void BDSTerminator::SetVisAttributes()
-{
-  itsVisAttributes = new G4VisAttributes(G4Colour(1,1,1));
+  // register extents with BDSGeometryComponent base class
+  SetExtentX(-radius,radius);
+  SetExtentY(-radius,radius);
+  SetExtentZ(-chordLength*0.5, chordLength*0.5);
 }
 
 BDSTerminator::~BDSTerminator()
-{
-  --nSamplers;
-}
+{;}
 
 void AddTerminatorToEndOfBeamline(ElementList* beamline_list)
 {
-
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << ": adding terminator element to end of beamline" << G4endl;
 #endif

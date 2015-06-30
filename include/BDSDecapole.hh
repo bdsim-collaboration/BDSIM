@@ -4,25 +4,25 @@
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 
-#ifndef BDSDecapole_h
-#define BDSDecapole_h 1
+#ifndef BDSDECAPOLE_H
+#define BDSDECAPOLE_H
 
 #include "globals.hh"
 
-#include "BDSMultipole.hh"
-#include "BDSBeamPipeInfo.hh"
-#include "BDSMagnetOuterInfo.hh"
-#include "BDSTunnelInfo.hh"
+#include "BDSMagnet.hh"
 
 #include <list>
 
-class BDSDecapole: public BDSMultipole
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
+
+class BDSDecapole: public BDSMagnet
 {
 public:
   BDSDecapole(G4String           name,
 	      G4double           length,
 	      G4double           bQuadPrime,
-	      BDSBeamPipeInfo    beamPipeInfo,
+	      BDSBeamPipeInfo*   beamPipeInfo,
 	      BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSDecapole(){;};
 

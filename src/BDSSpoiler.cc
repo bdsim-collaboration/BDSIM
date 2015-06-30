@@ -8,21 +8,21 @@
 #include "BDSMaterials.hh"
 
 #include "G4Box.hh"
-#include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
 
-//============================================================
-
-BDSSpoiler::BDSSpoiler (G4String& aName,G4double aLength,G4double bpRad,
-			  G4double xAper,G4double yAper,
-			  G4Material* SpoilerMaterial):
-  BDSAcceleratorComponent(aName,
-			 aLength,bpRad,xAper,yAper),
+BDSSpoiler::BDSSpoiler(G4String      name,
+		       G4double      length,
+		       G4double      xAperIn,
+		       G4double      yAperIn,
+		       G4Material*   SpoilerMaterial):
+  BDSAcceleratorComponent(name, length, 0, "spoiler"),
   itsPhysiComp(NULL), itsPhysiComp2(NULL), itsSolidLogVol(NULL), 
-  itsInnerLogVol(NULL), itsSpoilerMaterial(SpoilerMaterial)
+  itsInnerLogVol(NULL), itsSpoilerMaterial(SpoilerMaterial),
+  xAper(xAperIn),
+  yAper(yAperIn)
 {
 }
 
@@ -33,48 +33,40 @@ void BDSSpoiler::Build()
 }
 
 void BDSSpoiler::BuildMarkerLogicalVolume()
-{  
-  itsMarkerLogicalVolume=
-    new G4LogicalVolume(
-			new G4Box(itsName,
-				  BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
-				  BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
-				  itsLength/2),
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial()),
-			itsName);
-}
-
-
-void BDSSpoiler::SetVisAttributes()
 {
-  itsVisAttributes=new G4VisAttributes(G4Colour(0.3,0.4,0.2));
+  containerSolid = new G4Box(name,
+			     BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
+			     BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
+			     chordLength/2);
+  containerLogicalVolume = new G4LogicalVolume(containerSolid,
+					       emptyMaterial,
+					       name + "_container_lv");
 }
-
 
 void BDSSpoiler::BuildInnerSpoiler()
 {
   itsSolidLogVol=
-    new G4LogicalVolume(new G4Box(itsName+"_solid",
+    new G4LogicalVolume(new G4Box(name+"_solid",
 				  BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
 				  BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
-				  itsLength/2),
+				  chordLength/2),
 			itsSpoilerMaterial,
-			itsName+"_solid");
+			name+"_solid");
 
   itsInnerLogVol=
-    new G4LogicalVolume(new G4Box(itsName+"_inner",
-				  itsXAper,
-				  itsYAper,
-				  itsLength/2),
+    new G4LogicalVolume(new G4Box(name+"_inner",
+				  xAper,
+				  yAper,
+				  chordLength/2),
 			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
-			itsName+"_inner");
+			name+"_inner");
   
   itsPhysiComp2 = 
     new G4PVPlacement(
 		      (G4RotationMatrix*)0,		   // no rotation
 		      (G4ThreeVector)0,                   // its position
 		      itsInnerLogVol,      // its logical volume
-		      itsName+"_combined", // its name
+		      name+"_combined", // its name
 		      itsSolidLogVol,      // its mother  volume
 		      false,		   // no boolean operation
 		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());  // copy number 
@@ -92,8 +84,8 @@ void BDSSpoiler::BuildInnerSpoiler()
 		      (G4RotationMatrix*)0,		     // no rotation
 		      (G4ThreeVector)0,                     // its position
 		      itsSolidLogVol,    // its logical volume
-		      itsName+"_solid",	     // its name
-		      itsMarkerLogicalVolume, // its mother  volume
+		      name+"_solid",	     // its name
+		      containerLogicalVolume, // its mother  volume
 		      false,		     // no boolean operation
 		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		     // copy number  
 }

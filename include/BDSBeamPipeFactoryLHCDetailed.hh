@@ -22,6 +22,9 @@ public:
   /// Access cooling pipe information from factory for parameter tests
   G4double GetFullWidthOfCoolingPipe();
 
+  /// Clean up extra pointers particular to this factory before use
+  virtual void CleanUp();
+
   virtual BDSBeamPipe* CreateBeamPipe(G4String    nameIn,                     // name
 				      G4double    lengthIn,                   // length [mm]
 				      G4double    aper1 = 0,                  // aperture parameter 1
@@ -57,28 +60,18 @@ private:
 			   G4double&    aper2In,
 			   G4double&    aper3In);
 
-  G4double coldBoreThickness;
-  G4double coolingPipeThickness;
-  G4double coolingPipeRadius;
-  G4double coolingPipeYOffset;
-  G4double copperSkinThickness;
-
   //abstract common build features to one function
   //use member variables unique to this factory to pass them around
 
-  BDSBeamPipe* CommonFinalConstruction(G4String    nameIn,
-				       G4Material* vacuumMaterialIn,
-				       G4Material* beamPipeMaterialIn,
-				       G4double    lengthIn,
-				       G4double    containerRadiusIn);
-  void CreateGeneralAngledSolids(G4String      nameIn,
-				 G4double      lengthIn,
-				 G4double      aper1In,
-				 G4double      aper2In,
-				 G4double      aper3In,
-				 G4double      beamPipeThicknessIn,
-				 G4ThreeVector inputfaceIn,
-				 G4ThreeVector outputfaceIn);
+  BDSBeamPipe* CommonFinalConstruction(G4String    name,
+				       G4Material* vacuumMaterial,
+				       G4Material* beamPipeMaterial,
+				       G4double    length,
+				       G4double    containerRadius);
+  G4double CreateGeneralAngledSolids(G4String      name,
+				     G4double      length,
+				     G4ThreeVector inputface,
+				     G4ThreeVector outputface);
 
   virtual void          BuildLogicalVolumes(G4String    nameIn,
 					    G4Material* vacuumMaterialIn,
@@ -87,12 +80,55 @@ private:
   virtual G4UserLimits* SetUserLimits(G4double lengthIn);
   virtual void          PlaceComponents(G4String nameIn);
 
+  /// Utility function to initialise the geometry parameters
+  void InitialiseGeometricalParameters();
+
+  /// Calculate the various radii and geometrical parameters for this design
+  /// based on the input aperture parameters
+  void CalculateGeometricalParameters(G4double aper1,
+				      G4double aper2,
+				      G4double aper3,
+				      G4double beamPipeThickness,
+				      G4double length);
+
   G4VSolid*        copperSkinSolid;
   G4VSolid*        screenSolid;
   G4VSolid*        coolingPipeSolid;
   G4LogicalVolume* copperSkinLV;
   G4LogicalVolume* screenLV;
   G4LogicalVolume* coolingPipeLV;
+
+  // parameters that control the design
+  G4double coldBoreThickness;
+  G4double coolingPipeThickness;
+  G4double coolingPipeRadius;
+  G4double copperSkinThickness;
+
+  // calculated parameters below here
+  // vacuum volume
+  G4double vacRadius, vacBoxX, vacBoxY;
+  
+  // copper skin geometrical parameters
+  G4double cuInnerRadius, cuInnerBoxX, cuInnerBoxY;
+  G4double cuOuterRadius, cuOuterBoxX, cuOuterBoxY;
+
+  // beam screen geometrical parameters
+  G4double bsInnerRadius, bsInnerBoxX, bsInnerBoxY;
+  G4double bsOuterRadius, bsOuterBoxX, bsOuterBoxY;
+  
+  // cold bore geometrical parameters
+  G4double cbInnerRadius, cbOuterRadius;
+
+  // container geometrical parameters
+  G4double containerRadius;
+  
+  // general length variable (to avoid mistakes)
+  G4double vacHalfLength;
+  G4double halfLength;
+
+  // cooling pipe geometrical parameters
+  G4double coolingPipeYOffset;
+
 };
   
 #endif

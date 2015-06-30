@@ -3,6 +3,7 @@
 
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactoryBase.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
 
 #include "globals.hh"           // geant4 globals / types
@@ -14,6 +15,10 @@ public:
   static BDSBeamPipeFactory* Instance(); /// singleton pattern
   
   ~BDSBeamPipeFactory();
+
+  BDSBeamPipe* CreateBeamPipe(G4String         name,
+			      G4double         length,
+			      BDSBeamPipeInfo* bpi);
   
   BDSBeamPipe* CreateBeamPipe(BDSBeamPipeType beamPipeTypeIn,            // aperture type
 			      G4String        nameIn,                    // name
