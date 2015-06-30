@@ -49,13 +49,13 @@ void init()
   add_func("atan",atan);
   add_func("abs",fabs);
  
-
   add_var("pi",4.0*atan(1),reserved);
 
   add_var("TeV",1e+3,reserved);
   add_var("GeV",1.0 ,reserved);
   add_var("MeV",1e-3,reserved);
-  add_var("KeV",1e-6,reserved);
+  add_var("keV",1e-6,reserved);
+  add_var("KeV",1e-6,reserved); // for compatibility
   add_var("eV" ,1e-9,reserved);
 
   add_var("MV",1.0,reserved);
@@ -68,15 +68,17 @@ void init()
   add_var("um",1e-6,reserved);
   add_var("mum",1e-6,reserved);
   add_var("nm" ,1e-9,reserved);
+  add_var("pm" ,1e-12,reserved);
 
   add_var("s"  ,1.0  ,reserved);
   add_var("ms" ,1.e-3,reserved);
-  add_var("us",1.e-6,reserved);
+  add_var("us" ,1.e-6,reserved);
   add_var("ns" ,1.e-9,reserved);
+  add_var("ps" ,1.e-12,reserved);
 
   add_var("rad" ,1.0  ,reserved);
   add_var("mrad",1.e-3,reserved);
-
+  add_var("urad",1.e-6,reserved);
 
   add_var("clight",2.99792458e+8,reserved);
 
@@ -202,19 +204,6 @@ double* GetKs(int i)
   return result;
 }
 
-// double GetAperX(int i) 
-// {
-//   std::list<Element>::iterator it = beamline_list.begin();
-//   std::advance(it, i);
-//   return it->aperX;  
-// }
-
-// double GetAperY(int i) 
-// {
-//   std::list<Element>::iterator it = beamline_list.begin();
-//   std::advance(it, i);
-//   return it->aperY;  
-// }
 
 double GetAper(int i) 
 {

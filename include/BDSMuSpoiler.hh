@@ -4,36 +4,34 @@
    Copyright (c) 2004 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 
-#ifndef BDSMuSpoiler_h
-#define BDSMuSpoiler_h 1
+#ifndef BDSMUSPOILER_H
+#define BDSMUSPOILER_H
 
 #include "globals.hh"
-#include "BDSBeamPipeInfo.hh"
-#include "BDSMultipole.hh"
+#include "BDSMagnet.hh"
 #include "BDSMuSpoilerMagField.hh"
 
-class BDSMuSpoiler :public BDSMultipole
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
+
+class BDSMuSpoiler: public BDSMagnet
 {
 public:
-  BDSMuSpoiler(G4String     name,
-	       G4double     length,
-	       G4double     bField,
-	       BDSBeamPipeInfo beamPipeInfo,
-	       G4double     boxSize,
-	       G4String     outerMaterial="",
-	       G4String     tunnelMaterial="",
-	       G4double     tunnelRadius=0,
-	       G4double     tunnelOffsetX=0);
+  BDSMuSpoiler(G4String           name,
+	       G4double           length,
+	       G4double           bField,
+	       BDSBeamPipeInfo*   beamPipeInfo,
+	       BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSMuSpoiler();
 
 private:
   G4double     itsBField;
-
-  /// create the desired outer logical volume and attach the field to it
-  virtual void BuildOuterLogicalVolume(bool outerMaterialsIsVacuum);
+  
   /// build the necessary field for muspoiler
   virtual void BuildBPFieldAndStepper();
-  virtual void SetVisAttributes();
+
+  /// override multipole method to attach outer field
+  virtual void BuildOuterVolume();
 
   // BDSMuSpoilerMagField* outerMagField;
   // G4FieldManager*       outerFieldMgr;

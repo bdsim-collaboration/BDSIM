@@ -4,47 +4,36 @@
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 #include "BDSGlobalConstants.hh" 
-
 #include "BDSLaserWire.hh"
 #include "BDSMaterials.hh"
+
 #include "G4Box.hh"
-#include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 
-//============================================================
-
-BDSLaserWire::BDSLaserWire (G4String aName,G4double aLength,
-G4double aWavelength, G4ThreeVector aDirection):
-  BDSAcceleratorComponent(
-    aName,
-    aLength,0,0,0),
+BDSLaserWire::BDSLaserWire(G4String      name,
+			   G4double      length,
+			   G4double      wavelength,
+			   G4ThreeVector direction):
+  BDSAcceleratorComponent(name, length, 0, "laserwire"),
   itsLaserCompton(NULL),
-  itsLaserDirection(aDirection),itsLaserWavelength(aWavelength)
-{
-}
+  itsLaserDirection(direction),
+  itsLaserWavelength(wavelength)
+{;}
 
-void BDSLaserWire::BuildMarkerLogicalVolume()
+void BDSLaserWire::BuildContainerLogicalVolume()
 {
   G4double beamPipeRadius = BDSGlobalConstants::Instance()->GetBeamPipeRadius();
-  itsMarkerLogicalVolume=new G4LogicalVolume(
-					     new G4Box(itsName+"_solid",
-						       beamPipeRadius,
-						       beamPipeRadius,
-						       itsLength*0.5),
+  containerSolid = new G4Box(name +"_container_solid",
+			     beamPipeRadius,
+			     beamPipeRadius,
+			     chordLength*0.5);
+  containerLogicalVolume=new G4LogicalVolume(containerSolid,
 					     BDSMaterials::Instance()->GetMaterial("LaserVac"),
-					     itsName);
-  itsMarkerLogicalVolume->SetVisAttributes(itsVisAttributes);
+					     name + "_container_lv");
   BDSGlobalConstants::Instance()->
-    SetLaserwireWavelength(itsMarkerLogicalVolume->GetName(),itsLaserWavelength);
+    SetLaserwireWavelength(containerLogicalVolume->GetName(),itsLaserWavelength);
   BDSGlobalConstants::Instance()->
-    SetLaserwireDir(itsMarkerLogicalVolume->GetName(),itsLaserDirection);
-}
-
-void BDSLaserWire::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(0.,1.,0.));
-  itsVisAttributes->SetForceSolid(true);
-  itsVisAttributes->SetVisibility(true);
+    SetLaserwireDir(containerLogicalVolume->GetName(),itsLaserDirection);
 }
 
 BDSLaserWire::~BDSLaserWire()

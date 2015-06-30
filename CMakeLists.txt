@@ -4,9 +4,9 @@ project(BDSIM)
 
 # project version
 set( BDSIM_MAJOR_VERSION 0 )
-set( BDSIM_MINOR_VERSION 6 )
-set( BDSIM_PATCH_LEVEL 5 )
-set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}${BDSIM_PATCH_LEVEL})
+set( BDSIM_MINOR_VERSION 7 )
+set( BDSIM_PATCH_LEVEL 0 )
+set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
 message(STATUS "Configuring BDSIM ${BDSIM_VERSION}")
 
@@ -87,7 +87,7 @@ if(UNIX)
     endif()
 endif()
 
-# We use afs version of Geant4/CLHEP if we are on lxplus by default:
+# Check for lxplus. We use afs version of Geant4/CLHEP if we are on lxplus by default:
 if(EXISTS "/afs/cern.ch" AND LXPLUS)
     option(USE_AFS "Use Geant4/CLHEP libraries from AFS" ON)
     if($ENV{VERBOSE})
@@ -101,19 +101,28 @@ endif()
 if (USE_AFS AND NOT CLHEP_LIBRARY_DIR)
    if (APPLE)
       set(CLHEP_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.0.1/x86_64-mac106-gcc42-opt/include)
-      set(CLHEP_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.0.1/x86_64-mac106-gcc42-opt/lib)
+      set(CLHEP_LIBRARY_DIR  /afs/cern.ch/sw/lcg/external/clhep/2.1.0.1/x86_64-mac106-gcc42-opt/lib)
    elseif (RHL5)
       set(CLHEP_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.3.1/x86_64-slc5-gcc43-opt/include)
-      set(CLHEP_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.3.1/x86_64-slc5-gcc43-opt/lib)
+      set(CLHEP_LIBRARY_DIR  /afs/cern.ch/sw/lcg/external/clhep/2.1.3.1/x86_64-slc5-gcc43-opt/lib)
    elseif (RHL6)
-      set(CLHEP_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.4.1/x86_64-slc6-gcc47-opt/include)
-      set(CLHEP_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.4.1/x86_64-slc6-gcc47-opt/lib)
+      if (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
+         set(CLHEP_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.4.1/x86_64-slc6-gcc47-opt/include)
+         set(CLHEP_LIBRARY_DIR  /afs/cern.ch/sw/lcg/external/clhep/2.1.4.1/x86_64-slc6-gcc47-opt/lib)
+      else()
+         set(CLHEP_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.4.1/x86_64-slc6-gcc46-opt/include)
+         set(CLHEP_LIBRARY_DIR  /afs/cern.ch/sw/lcg/external/clhep/2.1.4.1/x86_64-slc6-gcc46-opt/lib)
+      endif()
    endif()
+else()
+   if($ENV{VERBOSE})
+      set(CLHEP_CONFIG_DEBUG TRUE)
+   endif()
+   find_package(CLHEP REQUIRED)
+   message(STATUS "Looking for CLHEP... - found")
+   message(STATUS "Found CLHEP ${CLHEP_VERSION} in ${CLHEP_INCLUDE_DIRS}")
 endif()
-
-set(CLHEP_VERSION 9)
-find_package(CLHEP REQUIRED)
-include_directories(${CLHEP_INCLUDE_DIR})
+include_directories(${CLHEP_INCLUDE_DIRS})
 
 # ROOT
 if ($ENV{ROOTSYS})
@@ -125,7 +134,11 @@ elseif(USE_AFS)
     elseif (RHL5)
         set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.07/x86_64-slc5-gcc43-opt/root")
     elseif (RHL6)
-        set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.24/x86_64-slc6-gcc47-opt/root")
+        if (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
+           set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.28/x86_64-slc6-gcc47-opt/root")
+	else()
+           set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.19/x86_64-slc6-gcc46-opt/root")
+        endif()
     endif()
     if($ENV{VERBOSE})
         message(STATUS "ROOTSYS: ${ROOTSYS}")
@@ -163,8 +176,13 @@ if(USE_AFS)
       set(XercesC_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc5-gcc43-opt/include)
       set(XercesC_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc5-gcc43-opt/lib)
    elseif(RHL6)
-      set(XercesC_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc6-gcc47-opt/include)
-      set(XercesC_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc6-gcc47-opt/lib)
+       if (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
+             set(XercesC_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc6-gcc47-opt/include)
+      	     set(XercesC_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc6-gcc47-opt/lib)
+       else() # for Geant4.9.6 on AFS
+             set(XercesC_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc6-gcc46-opt/include)
+      	     set(XercesC_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc6-gcc46-opt/lib)
+       endif()
    endif()
 endif()
 
@@ -211,6 +229,8 @@ if(USE_LCDD)
     message(STATUS "LCDD support ON")
 endif()
 
+# Find  GEANT4
+# with all available gui and visualisation options available
 # Try first with Geant4 built-in Config (versions 9.5 and higher should have it):
 if ($ENV{VERBOSE})
    set(Geant4_CONFIG_DEBUG TRUE)
@@ -257,51 +277,8 @@ if (Geant4_FOUND)
         message(STATUS "Geant4_LIBRARY_DIR: ${Geant4_LIBRARY_DIR}")
         message(STATUS "Geant4_LIBRARIES: ${Geant4_LIBRARIES}")
       endif()
-endif()
-
-if (NOT Geant4_FOUND)
-   # Module mode, should have found Geant4 already for 9.5 and newer
-   # own module for versions of Geant4 (9.4 and older), last option:
-   # ui_all and vis_all options not implemented in own FindGeant4.cmake
-
-   # MODULE keyword not defined in versions 2.6
-   if (${CMAKE_MAJOR_VERSION} GREATER 1 AND ${CMAKE_MINOR_VERSION} GREATER 7)
-      find_package(Geant4 MODULE REQUIRED ui_all vis_all)
-   else()
-      find_package(Geant4 REQUIRED ui_all vis_all)
-   endif()
-
-   # Local UseGeant4.cmake
-   set(Geant4_USE_FILE UseGeant4.cmake)
-   include(${Geant4_USE_FILE})
-   include_directories(${Geant4_INCLUDE_DIRS})
-
-   # set visualisation flags (to be fixed to automagic .. easier in Geant4 9.6)
-   # This should probably go soon
-   option(VIS_RAYTRACER "RayTracer visualisation" OFF)
-   option(VIS_RAYTRACERX "RayTracerX visualisation" OFF)
-   option(VIS_OPENGLQT "OpenGLQT visualisation" OFF)
-   option(VIS_OPENGLX "OpenGLX visualisation" OFF)
-   option(VIS_OPENINVENTOR "Open Inventor Visualisation" OFF)
-
-   set(VIS_FLAGS "-DG4VIS_USE")
-   if(VIS_RAYTRACER)
-	set(VIS_FLAGS "-DG4VIS_USE_RAYTRACER ${VIS_FLAGS}")
-   endif()
-   if(VIS_RAYTRACERX)
-	set(VIS_FLAGS "-DG4VIS_USE_RAYTRACERX ${VIS_FLAGS}")
-   endif()
-   if(VIS_OPENGLQT)
-	set(VIS_FLAGS "-DG4VIS_USE_OPENGLQT ${VIS_FLAGS}")
-   endif()
-   if(VIS_OPENGLX)
-	set(VIS_FLAGS "-DG4VIS_USE_OPENGLX ${VIS_FLAGS}")
-   endif()
-   if(VIS_OPENINVENTOR)
-	set(VIS_FLAGS "-DG4VIS_USE_OPENINVENTOR ${VIS_FLAGS}")
-   endif()
-
-   message(STATUS "Visualisation Flags: ${VIS_FLAGS}")
+elseif(Geant4_FOUND)
+      message(FATAL_ERROR "Geant4 not found. Exiting. You can help cmake by adding -DGeant4_PREFIX=<PATH>")
 endif()
 
 if (Geant4_VERSION AND NOT "${Geant4_VERSION}" MATCHES "UNKNOWN")
@@ -342,7 +319,7 @@ endif()
 
 # cmake flags
 set(CMAKE_FLAGS "${CMAKE_FLAGS} ${CLHEP_DEFINITIONS}  ${WFLAGS}")
-set(BDSIM_FLAGS "${CMAKE_FLAGS} ${VIS_FLAGS} -DCLHEP_VERSION=${CLHEP_VERSION} -DG4VERSION=${G4_MAJOR_VERSION} -DG4MINORVERSION=${G4_MINOR_VERSION} ${BDSIM_FLAGS}")
+set(BDSIM_FLAGS "${CMAKE_FLAGS} -DCLHEP_VERSION=${CLHEP_VERSION} -DG4VERSION=${G4_MAJOR_VERSION} -DG4MINORVERSION=${G4_MINOR_VERSION} ${BDSIM_FLAGS}")
 # add original flags to cmake c and c++ flags
 set(CMAKE_C_FLAGS "${CMAKE_C_ORIG_FLAGS} ${BDSIM_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_ORIG_FLAGS} ${BDSIM_FLAGS}")
@@ -428,6 +405,9 @@ bdsim_install_targets(${executables} ${libraries})
 file(GLOB headers include/*.hh parser/*.h)
 bdsim_install_headers(${headers})
 
+# Visualisation directory
+add_subdirectory(vis)
+
 # Utils directory
 add_subdirectory(utils)
 
@@ -439,4 +419,4 @@ add_subdirectory(examples)
 add_subdirectory(test)
 
 # Manual
-add_subdirectory(docs)
+add_subdirectory(manual)

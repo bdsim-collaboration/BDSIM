@@ -2,9 +2,6 @@
    Author: Grahame A. Blair, Royal Holloway, Univ. of London.
    Last modified 24.7.2002
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-   Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
-   Changed StringFromInt to be the BDSGlobal version
 */
 
 #include "BDSGlobalConstants.hh" 
@@ -12,29 +9,25 @@
 #include "BDSDecapole.hh"
 #include "BDSDecMagField.hh"
 #include "BDSDecStepper.hh"
+#include "BDSMagnet.hh"
+#include "BDSMagnetOuterInfo.hh"
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Tubs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-BDSDecapole::BDSDecapole(G4String         name,
-			 G4double         length,
-			 G4double         bQuadPrime,
-			 BDSBeamPipeInfo  beamPipeInfo,
-			 G4double         boxSize,
-			 G4String         outerMaterial,
-			 G4String         tunnelMaterial,
-			 G4double         tunnelRadius,
-			 G4double         tunnelOffsetX):
-  BDSMultipole(name,length,beamPipeInfo,boxSize,outerMaterial,tunnelMaterial,tunnelRadius,tunnelOffsetX),
+BDSDecapole::BDSDecapole(G4String           name,
+			 G4double           length,
+			 G4double           bQuadPrime,
+			 BDSBeamPipeInfo*   beamPipeInfo,
+			 BDSMagnetOuterInfo magnetOuterInfo):
+  BDSMagnet(BDSMagnetType::decapole, name, length,
+	    beamPipeInfo,magnetOuterInfo),
   itsBQuadPrime(bQuadPrime)
 {;}
 
 void BDSDecapole::Build() {
-  BDSMultipole::Build();
+  BDSMagnet::Build();
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4double polePos[4];
@@ -58,12 +51,6 @@ void BDSDecapole::Build() {
       
       BuildOuterFieldManager(10, BFldIron,CLHEP::pi/10);
     }
-}
-
-void BDSDecapole::SetVisAttributes()
-{
-  itsVisAttributes=new G4VisAttributes(G4Colour(0,0,1)); //green
-  itsVisAttributes->SetForceSolid(true);
 }
 
 void BDSDecapole::BuildBPFieldAndStepper()

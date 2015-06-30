@@ -7,13 +7,11 @@
 #include <iostream>
 
 extern const char* current_line;
-// extern const int VERBOSE;
 
 namespace {
   // helper method
   void print(std::list<struct Element> l, int ident=0)
   {
-    //  if(VERBOSE) 
     if(ident == 0) printf("using line %s\n",current_line);
   
     for(std::list<struct Element>::iterator it=l.begin();it!=l.end();it++)
@@ -112,17 +110,16 @@ void Element::flush() {
   tscint = 0;
   twindow = 0;
   tilt = 0;
+  offsetX = 0;
+  offsetY = 0;
   phi = 0;
   psi = 0;
   theta = 0;
 
   gradient = 0;
 
-  flatlength = 0;
-  taperlength = 0;
-  hgap = 0;
-  beampipeThickness = 0;
   // new aperture model
+  beampipeThickness = 0;
   aper1 = 0;
   aper2 = 0;
   aper3 = 0;
@@ -130,8 +127,10 @@ void Element::flush() {
   apertureType = "";
   beampipeMaterial = "";
 
-  // component size - for stuff outside beampipe if applicable
-  boxSize = 0;
+  // magnet geometry
+  magnetGeometryType  = "";
+  outerMaterial = "";
+  outerDiameter = 0;
   
   waveLength = 0;
 
@@ -167,8 +166,10 @@ void Element::flush() {
   scintmaterial="";
   windowmaterial="";
   airmaterial="";
+
+  // tunnel
   tunnelMaterial="";
-  tunnelCavityMaterial="Air";
+  //tunnelCavityMaterial="Air";
   tunnelRadius=0;
   tunnelOffsetX=1e6;
 }
@@ -191,8 +192,9 @@ double Element::property_lookup(char* property_name)const{
   if(!strcmp(property_name,"aper2")) return aper2;
   if(!strcmp(property_name,"aper3")) return aper3;
   if(!strcmp(property_name,"aper4")) return aper4;
-  if(!strcmp(property_name,"boxSize")) return boxSize;
-  if(!strcmp(property_name,"outR")) return 0.5*boxSize;
+  if(!strcmp(property_name,"outerDiameter")) return outerDiameter;
+  if(!strcmp(property_name,"boxSize")) return outerDiameter;
+  if(!strcmp(property_name,"outR")) return 0.5*outerDiameter;
   if(!strcmp(property_name,"xsize")) return xsize;
   if(!strcmp(property_name,"ysize")) return ysize;
   if(!strcmp(property_name,"xdir")) return xdir;
@@ -203,10 +205,9 @@ double Element::property_lookup(char* property_name)const{
   if(!strcmp(property_name,"theta")) return theta;
   if(!strcmp(property_name,"waveLength")) return waveLength;
   if(!strcmp(property_name,"tilt")) return tilt;
+  if(!strcmp(property_name,"offsetX")) return offsetX;
+  if(!strcmp(property_name,"offsetY")) return offsetY;
   if(!strcmp(property_name,"gradient")) return gradient;
-  if(!strcmp(property_name,"hgap")) return hgap;
-  if(!strcmp(property_name,"flatlength")) return flatlength;
-  if(!strcmp(property_name,"taperlength")) return taperlength;
 
   if(!strcmp(property_name,"A")) return A;
   if(!strcmp(property_name,"Z")) return Z;

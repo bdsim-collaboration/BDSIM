@@ -52,9 +52,9 @@ struct Parameters {
   double angle; int angleset;   ///> bending angle
   double phiAngleIn; int phiAngleInset;   ///> incoming bending angle for element
   double phiAngleOut; int phiAngleOutset;   ///> outgoing bending angle for element
-  double beampipeThickness; int beampipeThicknessset;
-
+  
   //new aperture model
+  double beampipeThickness; int beampipeThicknessset;
   double aper1; int aper1set;
   double aper2; int aper2set;
   double aper3; int aper3set;
@@ -62,8 +62,10 @@ struct Parameters {
   std::string apertureType; int apertureTypeset;
   std::string beampipeMaterial; int beampipeMaterialset;
 
-  //component size
-  double boxSize; int boxSizeset;
+  //magnet geometry
+  std::string magnetGeometryType; int magnetGeometryTypeset;
+  std::string outerMaterial;      int outerMaterialset;
+  double      outerDiameter;      int outerDiameterset;
   
   double phi, theta, psi; ///> for 3d transforms
   int phiset, thetaset, psiset;
@@ -75,16 +77,14 @@ struct Parameters {
   ///which precision physics region the element is in (0 = none)
   int precisionRegion; int precisionRegionset;
 
-  
-  double flatlength; int flatlengthset;
-  double taperlength; int taperlengthset;
   double gradient; int gradientset;
 
-  double hgap, hgapset;
   double xsize, ysize; int xsizeset, ysizeset; ///> aperture (or laser spotsize for laser)
   double xdir, ydir, zdir, waveLength; int xdirset, ydirset, zdirset, waveLengthset;
 
   double tilt; int tiltset;   ///> tilt
+  double offsetX; int offsetXset;   ///> offset X
+  double offsetY; int offsetYset;   ///> offset Y
 
   /// for external geometry and field definition files
   std::string geometry; int geomset;

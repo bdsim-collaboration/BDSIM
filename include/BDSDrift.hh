@@ -1,28 +1,25 @@
-#ifndef BDSDrift_h
-#define BDSDrift_h 1
+#ifndef BDSDRIFT_H
+#define BDSDRIFT_H
 
 #include "globals.hh"
-#include "BDSMultipole.hh"
+
 #include "BDSAcceleratorComponent.hh"
-#include "BDSBeamPipeInfo.hh"
 
-#include "G4Material.hh"
+struct BDSBeamPipeInfo;
 
-class BDSDrift :public BDSAcceleratorComponent
+class BDSDrift: public BDSAcceleratorComponent
 {
 public:
-  BDSDrift(G4String        nameIn, 
-	   G4double        lengthIn,
-	   BDSBeamPipeInfo beamPipeInfoIn);
+  BDSDrift(G4String         nameIn, 
+	   G4double         lengthIn,
+	   BDSBeamPipeInfo* beamPipeInfoIn);
   ~BDSDrift(){;};
 
 protected:
   void Build();
 
 private:
-  void BuildMarkerLogicalVolume(){;}; // to fulfill bdsacceleratorcomponent requirements
-
-  BDSBeamPipeInfo itsBeamPipeInfo;
+  void BuildContainerLogicalVolume(){;}; // to fulfill bdsacceleratorcomponent requirements
 };
 
 #endif

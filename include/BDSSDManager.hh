@@ -26,8 +26,10 @@ public:
   /// SD for samplers (cylinder type)
   BDSSamplerSD*       GetSamplerCylinderSD() {return samplerCylinder;} 
   /// SD for any component that's symmetric about the beam axis
-  BDSEnergyCounterSD* GetEnergyCounterOnAxisSD(){return eCounterOnAxis;} 
-
+  BDSEnergyCounterSD* GetEnergyCounterOnAxisSD(){return eCounterOnAxis;}
+  /// SD for any component that's symmetric about the beam axis and
+  /// uses the read out geometry
+  BDSEnergyCounterSD* GetEnergyCounterOnAxisSDRO();
   
 private:
   BDSSDManager(); /// private default constructor for singleton
@@ -37,7 +39,15 @@ private:
   BDSSamplerSD*       samplerPlane;
   BDSSamplerSD*       samplerCylinder;
   BDSEnergyCounterSD* eCounterOnAxis;
-  
+
+  // duplicate ecounter here that's made on demand
+  // and registered to read out geometry - this requires
+  // the readout geometry to be already created so can't
+  // be used during object construction
+  BDSEnergyCounterSD* eCounterOnAxisRO;
+
+  /// function to create the energy counter SD on demand
+  void ConstructECounterSDOnAxisOnDemand();
 };
 
 

@@ -1,7 +1,5 @@
 #include "options.h"
 
-#include "getEnv.h"
-
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
@@ -18,6 +16,8 @@ Options::Options(){
   zDistribType = "";
   distribFile = "";
   distribFileFormat = "";
+  haloPSWeightParameter = 1.0;
+  haloPSWeightFunction = "";
 
   numberToGenerate = 1;
   nlinesIgnore = 0;
@@ -35,6 +35,7 @@ Options::Options(){
   betx = 0.0, bety = 0.0, alfx = 0.0, alfy = 0.0, emitx = 0.0, emity = 0.0;
   sigmaX = 0.0, sigmaXp = 0.0, sigmaY = 0.0, sigmaYp = 0.0;
   envelopeX = 0.0, envelopeXp = 0.0, envelopeY = 0.0, envelopeYp = 0.0, envelopeT = 0.0, envelopeE = 0.0;
+  envelopeR = 0.0, envelopeRp = 0.0;
   sigma11 = 0.0,sigma12 = 0.0,sigma13 = 0.0,sigma14 = 0.0,sigma15 = 0.0,sigma16 = 0.0;
   sigma22 = 0.0,sigma23 = 0.0,sigma24 = 0.0,sigma25 = 0.0,sigma26 = 0.0;
   sigma33 = 0.0,sigma34 = 0.0,sigma35 = 0.0,sigma36 = 0.0;
@@ -56,11 +57,12 @@ Options::Options(){
 
   xsize=0.0, ysize=0.0;
 
-  magnetGeometry    = "cylinder";
-  componentBoxSize  = 0.0;
-  tunnelRadius      = 0.0;
-  beampipeRadius    = 0.0;
-  beampipeThickness = 0.0;
+  magnetGeometryType = "cylindrical";
+  outerMaterialName  = "iron";
+  outerDiameter      = 0.2;
+  tunnelRadius       = 2.0;
+  beampipeRadius     = 0.05;
+  beampipeThickness  = 0.005;
 
   apertureType      = "circular";
   aper1             = 0.0;
@@ -81,7 +83,7 @@ Options::Options(){
   showTunnel = 0;
   tunnelOffsetX = 0;
   tunnelOffsetY = 0;
-  samplerDiameter = 0.0;
+  samplerDiameter = 5; // m
   tunnelThickness = 0.0;
   tunnelSoilThickness = 0.0;
   tunnelFloorOffset = 0.0;
@@ -211,12 +213,14 @@ void Options::set_value(std::string name, double value )
   if(name == "sigmaYp" ) { sigmaYp = value; return; }
 
   // options for beam distrType="square" or distrType="circle"
-  if(name == "envelopeX" ) { envelopeX = value; return; }
-  if(name == "envelopeY" ) { envelopeY = value; return; }
+  if(name == "envelopeX"  ) { envelopeX  = value; return; }
+  if(name == "envelopeY"  ) { envelopeY  = value; return; }
   if(name == "envelopeXp" ) { envelopeXp = value; return; }
   if(name == "envelopeYp" ) { envelopeYp = value; return; }
-  if(name == "envelopeT" ) { envelopeT = value; return; }
-  if(name == "envelopeE" ) { envelopeE = value; return; }
+  if(name == "envelopeT"  ) { envelopeT  = value; return; }
+  if(name == "envelopeE"  ) { envelopeE  = value; return; }
+  if(name == "envelopeR"  ) { envelopeR  = value; return; }
+  if(name == "envelopeRp" ) { envelopeRp = value; return; }
 
   // options for beam distrType="gaussmatrix"
   if(name == "sigma11" ) { sigma11 = value; return; }
@@ -260,6 +264,9 @@ void Options::set_value(std::string name, double value )
   if(name == "Rmin" ) { Rmin = value; return; }
   if(name == "Rmax" ) { Rmax = value; return; }
 
+  // options for beam distrType="halo"
+  if(name == "haloPSWeightParameter") {haloPSWeightParameter= value; return;}
+
   //
   // numeric options for the"option" command
   //
@@ -269,7 +276,8 @@ void Options::set_value(std::string name, double value )
   if(name == "blmLength" ) { blmLength = value; return; }
 
   // options which influence the geometry
-  if(name == "boxSize" ) {componentBoxSize = value; return; }
+  if(name == "outerDiameter" ) {outerDiameter = value; return; }
+  if(name == "boxSize")        {outerDiameter = value; return; } // for backwards compatability
   if(name == "tunnelRadius" ) { tunnelRadius = value; return; }
   if(name == "beampipeThickness" ) { beampipeThickness = value; return; }
   if(name == "beampipeRadius" ) { beampipeRadius = value; return; }
@@ -368,7 +376,7 @@ void Options::set_value(std::string name, double value )
   if(name == "srLowX") { synchLowX = value; return; }
   if(name == "srLowGamE") { synchLowGamE = value; return; }
   if(name == "srMultiplicity") { synchPhotonMultiplicity = (int) value; return; }
-  if(name == "srMeamFreeFactor") { synchMeanFreeFactor = (int) value; return; }
+  if(name == "srMeanFreeFactor") { synchMeanFreeFactor = (int) value; return; }
 
   if(name == "prodCutPhotons" ) { prodCutPhotons = value; return; }
   if(name == "prodCutPhotonsP" ) { prodCutPhotonsP = value; return; }
@@ -431,21 +439,23 @@ void Options::set_value(std::string name, std::string value )
   if(name == "xDistrType" ) { xDistribType = value; return; }
   if(name == "yDistrType" ) { yDistribType = value; return; }
   if(name == "zDistrType" ) { zDistribType = value; return; }
-  if(name == "distrFile" ) { distribFile = getEnv("BDSIMPATH")+value; return; }
+  if(name == "distrFile" ) { distribFile = value; return; }
   if(name == "distrFileFormat" ) { distribFileFormat = value; return; }
+  if(name == "haloPSWeightFunction")  {haloPSWeightFunction = value; return;}
 
   //
   // string options for the "option" command
   //
 
   // options which influence the geometry
-  if(name == "magnetGeometry" )   { magnetGeometry   = value; return; }
-  if(name == "apertureType" )     { apertureType     = value; return; }
-  if(name == "beampipeMaterial" ) { beampipeMaterial = value; return; }
-  if(name == "vacuumMaterial" )   { vacMaterial      = value; return; }
-  if(name == "tunnelMaterial" )   { tunnelMaterial   = value; return; }
+  if(name == "magnetGeometryType" ){ magnetGeometryType = value; return; }
+  if(name == "outerMaterial" )     { outerMaterialName  = value; return; }
+  if(name == "apertureType" )      { apertureType       = value; return; }
+  if(name == "beampipeMaterial" )  { beampipeMaterial   = value; return; }
+  if(name == "vacuumMaterial" )    { vacMaterial        = value; return; }
+  if(name == "tunnelMaterial" )    { tunnelMaterial     = value; return; }
   if(name == "tunnelCavityMaterial" ) { tunnelCavityMaterial = value; return; }
-  if(name == "soilMaterial" )     { soilMaterial     = value; return; }
+  if(name == "soilMaterial" )      { soilMaterial       = value; return; }
   
   // options which influence the tracking
   if(name == "physicsList" ) { physicsList = value; return; } 

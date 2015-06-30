@@ -4,28 +4,26 @@
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 
-#ifndef BDSDecapole_h
-#define BDSDecapole_h 1
+#ifndef BDSDECAPOLE_H
+#define BDSDECAPOLE_H
 
 #include "globals.hh"
 
-#include "BDSMultipole.hh"
-#include "BDSBeamPipeInfo.hh"
+#include "BDSMagnet.hh"
 
 #include <list>
 
-class BDSDecapole: public BDSMultipole
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
+
+class BDSDecapole: public BDSMagnet
 {
 public:
-  BDSDecapole(G4String        name,
-	      G4double        length,
-	      G4double        bQuadPrime,
-	      BDSBeamPipeInfo beamPipeInfo,
-	      G4double        boxSize,
-	      G4String        outerMaterial = "",
-	      G4String        tunnelMaterial = "",
-	      G4double        tunnelRadius = 0,
-	      G4double        tunnelOffsetX = 0);
+  BDSDecapole(G4String           name,
+	      G4double           length,
+	      G4double           bQuadPrime,
+	      BDSBeamPipeInfo*   beamPipeInfo,
+	      BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSDecapole(){;};
 
 protected:
@@ -35,7 +33,6 @@ private:
   G4double itsBQuadPrime;
 
   virtual void BuildBPFieldAndStepper();
-  virtual void SetVisAttributes();
 };
 
 #endif

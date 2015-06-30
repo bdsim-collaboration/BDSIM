@@ -1,0 +1,37 @@
+#include "BDSMagnetGeometryType.hh"
+#include "BDSDebug.hh"
+#include "globals.hh"
+
+#include <map>
+
+BDSMagnetGeometryType BDS::DetermineMagnetGeometryType(G4String geometryType)
+{
+  std::map<G4String, BDSMagnetGeometryType> types;
+  types["none"]              = BDSMagnetGeometryType::none;
+  types["cylindrical"]       = BDSMagnetGeometryType::cylindrical;
+  types["polescircular"]     = BDSMagnetGeometryType::polescircular;
+  types["polessquare"]       = BDSMagnetGeometryType::polessquare;
+  types["polesfacet"]        = BDSMagnetGeometryType::polesfacet;
+  types["polesfacetcrop"]    = BDSMagnetGeometryType::polesfacetcrop;
+  types["lhcleft"]           = BDSMagnetGeometryType::lhcleft;
+  types["lhcright"]          = BDSMagnetGeometryType::lhcright;
+
+  geometryType.toLower();
+  
+  if (types.find(geometryType) == types.end())
+    {
+      // it's not a valid key
+      G4cout << __METHOD_NAME__ << "\"" << geometryType << "\" is not a valid geometry type" << G4endl;
+      G4cout << "Available geometry types are:" << G4endl;
+      std::map<G4String, BDSMagnetGeometryType>::iterator it = types.begin();
+      for (; it != types.end(); ++it)
+	{G4cout << "\"" << (*it).first << "\"" << G4endl;}
+      exit(1);
+    }
+
+  BDSMagnetGeometryType returnValue = types[geometryType];
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " determined geometry type to be " << returnValue.underlying() << G4endl;
+#endif
+  return returnValue;
+}

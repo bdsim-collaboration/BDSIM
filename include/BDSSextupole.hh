@@ -4,28 +4,26 @@
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
 
-#ifndef BDSSextupole_h
-#define BDSSextupole_h 1
+#ifndef BDSSEXTUPOLE_H
+#define BDSSEXTUPOLE_H
 
 #include "globals.hh"
 
-#include "BDSMultipole.hh"
-#include "BDSBeamPipeInfo.hh"
+#include "BDSMagnet.hh"
 
 #include <list>
 
-class BDSSextupole :public BDSMultipole
+struct BDSBeamPipeInfo;
+struct BDSMagnetOuterInfo;
+
+class BDSSextupole: public BDSMagnet
 {
 public:
-  BDSSextupole(G4String        name,
-	       G4double        length,
-	       G4double        bDblPrime,
-	       BDSBeamPipeInfo beamPipeInfoIn,
-	       G4double        boxSize,
-	       G4String        outerMaterial="",
-	       G4String        tunnelMaterial="",
-	       G4double        tunnelRadius=0,
-	       G4double        tunnelOffsetX=0);
+  BDSSextupole(G4String           name,
+	       G4double           length,
+	       G4double           bDblPrime,
+	       BDSBeamPipeInfo*   beamPipeInfo,
+	       BDSMagnetOuterInfo magnetOuterInfo);
   ~BDSSextupole(){;};
 
 private:
@@ -33,13 +31,7 @@ private:
 
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
-
-  virtual void BuildOuterLogicalVolume(G4bool OuterMaterialIsVacuum=false);
-
-  void BuildStandardOuterLogicalVolume();
   
-  virtual void SetVisAttributes();
-
 };
 
 #endif

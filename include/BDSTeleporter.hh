@@ -25,17 +25,17 @@ protected:
   G4Mag_UsualEqRhs*       itsEqRhs;
 
 private:
-  void SetVisAttributes();
   virtual void Build();
-  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildContainerLogicalVolume();
   /// define field and stepper
   void BuildBPFieldAndStepper();
   /// build and set field manager and chord finder
   void BuildBPFieldMgr(G4MagIntegratorStepper* stepper,G4MagneticField* field);
 };
 
-void CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline);
-void AddTeleporterToEndOfBeamline(ElementList* beamline_list);
+namespace BDS {
+  void CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline);
+}
 
 
 #endif

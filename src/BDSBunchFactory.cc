@@ -10,6 +10,7 @@
 #include "BDSBunchUserFile.hh"
 #include "BDSBunchTwiss.hh"
 #include "BDSBunchPtc.hh"
+#include "BDSBunchHalo.hh"
 
 BDSBunchInterface* BDSBunchFactory::createBunch(G4String distribType)
 {
@@ -28,6 +29,8 @@ BDSBunchInterface* BDSBunchFactory::createBunch(G4String distribType)
     bdsBunch = new BDSBunchEShell();
   else if(distribType == "gausstwiss") 
     bdsBunch = new BDSBunchTwiss();
+  else if(distribType == "halo") 
+    bdsBunch = new BDSBunchHalo();
   else if(distribType == "userfile")
     bdsBunch = new BDSBunchUserFile();
   else if(distribType == "composite")

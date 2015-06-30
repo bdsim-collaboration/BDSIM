@@ -54,6 +54,9 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipe(G4String    nameIn,  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  // clean up after last usage
+  CleanUp();
+  
   // test input parameters - set global options as default if not specified
   TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In,aper3In,aper4In);
 
@@ -146,6 +149,9 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipeAngledInOut(G4String  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  // clean up after last usage
+  CleanUp();
+  
    // test input parameters - set global options as default if not specified
   TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In,aper3In,aper4In);
 
@@ -212,8 +218,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CommonFinalConstruction(G4String    
   std::pair<double,double> extZ = std::make_pair(-lengthIn*0.5,lengthIn*0.5);
   
   // build the BDSBeamPipe instance and return it
-  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerWidthIn);
-  return aPipe;
+  return BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerWidthIn);
 }
 
 /// the angled ones have degeneracy in the geant4 solids they used so we can avoid code duplication

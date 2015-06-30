@@ -41,5 +41,3 @@ void BDSBunch::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
   return;
 }
-
-

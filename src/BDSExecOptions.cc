@@ -33,7 +33,8 @@ const BDSExecOptions* BDSExecOptions::Instance(){
 
 BDSExecOptions::BDSExecOptions(int argc, char **argv){
   inputFilename       = "optics.mad";
-  visMacroFilename    = "vis.mac";
+  visMacroFilename    = "";
+  visDebug            = false;
   outputFilename      = "output";
   outputFormat        = BDSOutputFormat::_ASCII;
   outline             = false;
@@ -62,8 +63,15 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv){
   seedStateFilename = "";
   setSeedState      = false;
 
+  // default is -1 so easy to test
+  nGenerate         = -1;
+
   Parse(argc, argv);
-  SetBDSIMPATH();
+  /// after parsing the absolute path can be reconstructed
+  itsBDSIMPATH = GetPath(inputFilename);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "BDSIMPATH set to: " << itsBDSIMPATH << G4endl;
+#endif
 }
 
 BDSExecOptions::~BDSExecOptions() {
@@ -99,6 +107,7 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 					{ "circular", 0, 0, 0},
 					{ "seed", 1, 0, 0},
 					{ "seedstate",1,0,0},
+					{ "ngenerate", 1, 0, 0},
 					{ 0, 0, 0, 0 }};
   
   int OptionIndex = 0;
@@ -155,7 +164,8 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 	verboseSteppingLevel = atoi(optarg);
       }
       if( !strcmp(LongOptions[OptionIndex].name , "output") ) {
-	if(!strcmp(optarg,"ascii") || !strcmp(optarg,"ASCII")) outputFormat=BDSOutputFormat::_ASCII;
+	if(!strcmp(optarg,"none") || !strcmp(optarg,"NONE")) outputFormat=BDSOutputFormat::_NONE;
+	else if(!strcmp(optarg,"ascii") || !strcmp(optarg,"ASCII")) outputFormat=BDSOutputFormat::_ASCII;
 	else if (!strcmp(optarg,"root") || !strcmp(optarg,"ROOT")) outputFormat=BDSOutputFormat::_ROOT;
 	else if (!strcmp(optarg,"combined") || !strcmp(optarg,"COMBINED")) outputFormat=BDSOutputFormat::_COMBINED;
 	else {
@@ -214,6 +224,9 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 	seedStateFilename = optarg;
 	setSeedState = true;
       }
+      if( !strcmp(LongOptions[OptionIndex].name, "ngenerate") ){
+	nGenerate = atof(optarg);
+      }
       break;
       
     default:
@@ -223,11 +236,6 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 }
 
 void BDSExecOptions::Usage()const {
-  G4cout<<"bdsim : version 0.65"<<G4endl;
-  G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
-  G4cout<<"        http://www.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BdSim"<<G4endl;
-  G4cout<<G4endl;
-
   G4cout<<"Usage: bdsim [options]"<<G4endl;
   G4cout<<"Options:"<<G4endl;
   G4cout<<"--file=<filename>      : specify the lattice and options file "<<G4endl
@@ -244,6 +252,8 @@ void BDSExecOptions::Usage()const {
 	<<"--output=<fmt>         : output format (root|ascii|combined), default ascii"<<G4endl
 	<<"--outfile=<file>       : output file name. Will be appended with _N"<<G4endl
         <<"                         where N = 0, 1, 2, 3... etc."<<G4endl
+	<<"--ngenerate=N          : the number of primary events to simulate - overrides the ngenerate " << G4endl
+	<<"                         option in the input gmad file" << G4endl
         <<"--seed=N               : the seed to use for the random number generator" <<G4endl
 	<<"--seedstate=<file>     : file containing CLHEP::Random seed state - overrides other seed options"<<G4endl
 	<<"--verbose              : display general parameters before run"<<G4endl
@@ -255,41 +265,14 @@ void BDSExecOptions::Usage()const {
 	<<"--verbose_G4stepping=N : set Geant4 Stepping manager verbosity level"<<G4endl
 	<<"--verbose_G4tracking=N : set Geant4 Tracking manager verbosity level [-1:5]"<<G4endl
 	<<"--vis_debug            : display all volumes in visualiser"<<G4endl
-	<<"--vis_mac=<file>       : file with the visualization macro script, default vis.mac"<<G4endl;
-}
-
-void BDSExecOptions::SetBDSIMPATH(){
-  //Set itsBDSIMPATH to mirror what is done in parser.l (i.e. if no environment varible set, assume base filename path is that of the gmad file).
-  itsBDSIMPATH = getEnv("BDSIMPATH");
-  if(itsBDSIMPATH.length()<=0){
-    G4String inputFilepath = "";
-    // get the path part of the supplied path to the main input file
-    G4String::size_type found = inputFilename.rfind("/"); // find the last '/'
-    if (found != G4String::npos){
-      inputFilepath = inputFilename.substr(0,found); // the path is the bit before that
-    } // else remains empty string
-    // need to know whether it's an absolute or relative path
-    if ((inputFilename.substr(0,1)) == "/"){
-      // the main file has an absolute path
-      itsBDSIMPATH = inputFilepath;
-    } else {
-      // the main file has a relative path
-      char cwdchars[200]; //filepath up to 200 characters
-      G4String cwd = (G4String)getcwd(cwdchars, sizeof(cwdchars)) + "/";
-      itsBDSIMPATH = cwd + inputFilepath;
-    
-    }
-  }
-  itsBDSIMPATH += "/";
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " BDSIMPATH set to: " << itsBDSIMPATH << G4endl;
-#endif
+	<<"--vis_mac=<file>       : file with the visualisation macro script, default provided by BDSIM openGL (OGLSQt))"<<G4endl;
 }
 
 void BDSExecOptions::Print()const {
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " inputFilename: "       << std::setw(15) << inputFilename       << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " visMacroFilename: "    << std::setw(15) << visMacroFilename    << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " visDebug: "            << std::setw(15) << visDebug            << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFilename: "      << std::setw(15) << outputFilename      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFormat: "        << std::setw(15) << outputFormat        << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outlineFilename: "     << std::setw(15) << outlineFilename     << G4endl;
@@ -301,6 +284,7 @@ void BDSExecOptions::Print()const {
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseStep: "         << std::setw(15) << verboseStep         << G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " batch: "               << std::setw(15) << batch               << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outline: "             << std::setw(15) << outline             << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " ngnerate: "            << std::setw(15) << nGenerate           << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseRunLevel: "     << std::setw(15) << verboseRunLevel     << G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseEventLevel: "   << std::setw(15) << verboseEventLevel   << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseTrackingLevel: "<< std::setw(15) << verboseTrackingLevel<< G4endl;  
@@ -309,4 +293,32 @@ void BDSExecOptions::Print()const {
   G4cout << __METHOD_NAME__ << std::setw(23) << " seed: "                << std::setw(15) << seed                << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " seedStateFilename: "   << std::setw(15) << seedStateFilename   << G4endl;
   return;
+}
+
+G4String BDSExecOptions::GetPath(G4String fileName)
+{
+  //Set fullPath to mirror what is done in parser.l (i.e. if no environment varible set, assume base filename path is that of the gmad file).
+  G4String fullPath = getEnv("BDSIMPATH");
+  if(fullPath.length()<=0){
+    G4String inputFilepath = "";
+    // get the path part of the supplied path to the main input file
+    G4String::size_type found = fileName.rfind("/"); // find the last '/'
+    if (found != G4String::npos){
+      inputFilepath = fileName.substr(0,found); // the path is the bit before that
+    } // else remains empty string
+    // need to know whether it's an absolute or relative path
+    if ((fileName.substr(0,1)) == "/"){
+      // the main file has an absolute path
+      fullPath = inputFilepath;
+    } else {
+      // the main file has a relative path or just the file name
+      char cwdchars[200]; //filepath up to 200 characters
+      // get current working directory
+      G4String cwd = (G4String)getcwd(cwdchars, sizeof(cwdchars)) + "/";
+      fullPath = cwd + inputFilepath;
+    }
+  }
+  // add additional slash just to be safe
+  fullPath += "/";
+  return fullPath;
 }

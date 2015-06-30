@@ -4,30 +4,39 @@
    Copyright (c) 2004 by J.C.Carter.  ALL RIGHTS RESERVED. 
 */
 
-#ifndef BDSElement_h
-#define BDSElement_h 
+#ifndef BDSELEMENT_H
+#define BDSELEMENT_H 
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
+#include "BDSMagField.hh"
 
-#include "G4FieldManager.hh"
+#include "G4CachedMagneticField.hh"
 #include "G4ChordFinder.hh"
+#include "G4EqMagElectricField.hh"
+#include "G4FieldManager.hh"
+#include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4Mag_EqRhs.hh"
-#include "G4UserLimits.hh"
 #include "G4UniformMagField.hh"
-#include "BDSMagField.hh"
-#include "G4CachedMagneticField.hh"
 
-#include "G4EqMagElectricField.hh"
+/**
+ * @brief A class that allows any arbritary geometry and magnetic field map to be used
+ * as an accelerator component in the beamline. Geometry and magnetic fields are imported
+ * from an external file (each) and can be specified in various formats.
+ *
+ */
 
-class BDSElement :public BDSAcceleratorComponent
+class BDSElement: public BDSAcceleratorComponent
 {
 public:
-  BDSElement(G4String aName, G4String geometry, G4String bmap, G4double aBmapZOffset, G4double aLength, 
-             G4double bpRad, G4double outR, G4String aTunnelMaterial="", G4double tunnelRadius=0., G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(), G4String aTunnelCavityMaterial="Air");
+  BDSElement(G4String      name,
+	     G4double      length,
+	     G4double      outerDiameterIn,
+	     G4String      geometry,
+	     G4String      bmap,
+	     G4double      aBmapZOffset);
   ~BDSElement();
 
   // creates a field mesh in global coordinates in case it is given by map
@@ -43,15 +52,24 @@ public:
 		      G4ThreeVector& localZ); 
    
 private:
+  /// Overridden method of BDSAcceleratorComponent that defines the build procedure
+  /// for this object. Calls BDSAcceleratorComponent::Build() first that builds the
+  /// container volume (using BuildContainerLogicalVolume() provided here). Then builds
+  /// the geometry and magnetic field maps from the supplied file.
+  virtual void Build();
 
-  virtual void BuildMarkerLogicalVolume();
-  void SetVisAttributes();  
+  /// Required implementation from BDSAcceleratorComponent that builds the container volume.
+  /// Here, this method uses the outerDiameter parameter from the constructor.
+  virtual void BuildContainerLogicalVolume();
 
-  void BuildElementMarkerLogicalVolume();
-  void BuildGeometry();
+  /// Load the geometry and place the components inside the container logical volume.
   void PlaceComponents(G4String geometry, G4String bmap);
+
+  /// Build the magnetic field
   void BuildMagField(G4bool forceToAllDaughters=false);
 
+  G4double outerDiameter;
+  
   G4String itsGeometry;
   G4String itsBmap;
 
@@ -66,7 +84,6 @@ private:
   BDSMagField *itsMagField;
   G4CachedMagneticField *itsCachedMagField;
   G4UniformMagField *itsUniformMagField;
-  G4double itsOuterR;
   G4double itsBmapZOffset;
   // Volume to align incoming beamline on inside the marker volume
   // (set during Geometery construction)
@@ -74,7 +91,6 @@ private:
   // Volume to align outgoing beamline on inside the marker volume
   // (set during Geometery construction)
   G4VPhysicalVolume* align_out_volume;
-
 };
 
 

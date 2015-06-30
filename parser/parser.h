@@ -178,17 +178,21 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.apertureType = params.apertureType;
   e.beampipeMaterial = params.beampipeMaterial;
 
-  // component size
-  e.boxSize = params.boxSize;
+  //magnet geometry
+  e.outerDiameter = params.outerDiameter;
+  e.outerMaterial = params.outerMaterial;
+  e.magnetGeometryType = params.magnetGeometryType;
   
   e.xsize = params.xsize;
   e.ysize = params.ysize;
   e.material = params.material;  
-  e.tunnelMaterial = params.tunnelMaterial;  
-  e.tunnelCavityMaterial = params.tunnelCavityMaterial;  
+  e.tunnelMaterial = params.tunnelMaterial;
   e.tunnelRadius = params.tunnelRadius;
   e.tunnelOffsetX = params.tunnelOffsetX;
   e.precisionRegion = params.precisionRegion;
+
+  e.offsetX = params.offsetX;
+  e.offsetY = params.offsetY;
   // end of common parameters
 
   // specific parameters
@@ -218,8 +222,6 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.gradient = params.gradient;
   // SBend, RBend, (Awake)Screen
   e.angle = params.angle;
-  // SBend, RBend
-  e.hgap = params.hgap;
   // SBend, RBend, HKick, VKick, Quad
   e.k1 = params.k1;
   // SBend, RBend, HKick, VKick, Solenoid, MuSpoiler
@@ -249,9 +251,6 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.ksl = params.ksl;
   // Solenoid
   e.ks = params.ks;
-  // RCOL
-  e.flatlength = params.flatlength;
-  e.taperlength = params.taperlength;
   // Laser
   e.waveLength = params.waveLength;
   // Element, Tunnel
@@ -349,8 +348,9 @@ int expand_line(const char *charname, const char *start, const char* end)
   
   beamline_list.push_back(e);
   
-  if(VERBOSE) printf("expanding line %s, range = %s/%s\n",charname,start,end);
-  
+#ifdef BDSDEBUG 
+  printf("expanding line %s, range = %s/%s\n",charname,start,end);
+#endif
   if(!(*it).lst) return 0; //list empty
   
   
@@ -563,8 +563,7 @@ void add_gas(const char *name, const char *before, int before_count, std::string
   e.type = _GAS;
   e.name = name;
   e.lst = NULL;
-  element_list.insert(beamline_list.end(),e);
- 
+  element_list.push_back(e);
 }
 
 double property_lookup(ElementList& el_list, char *element_name, char *property_name)
