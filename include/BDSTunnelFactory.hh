@@ -15,6 +15,7 @@ public:
   
   ~BDSTunnelFactory();
 
+  /// Create a tunnel section with straight input and output face.
   BDSGeometryComponent* CreateTunnelSection(BDSTunnelType tunnelType,
 					    G4String      name,
 					    G4double      length,
@@ -57,7 +58,7 @@ public:
 						     G4double      tunnel1,
 						     G4double      tunnel2);
 
-  /// Create a tunnel section with an angled input and output face. Pure virtual.
+  /// Create a tunnel section with an angled input and output face.
   BDSGeometryComponent* CreateTunnelSectionAngledInOut(BDSTunnelType tunnelType,
 						       G4String      name,
 						       G4double      length,
