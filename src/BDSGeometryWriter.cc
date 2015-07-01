@@ -1,3 +1,4 @@
+#include "BDSDebug.hh"
 #include "BDSGeometryWriter.hh"
 
 #include "globals.hh" // geant4 types / globals

@@ -80,6 +80,12 @@ extern Options options;
 
 int main(int argc,char** argv) {
 
+  // print header
+  G4cout<<"bdsim : version 0.7.develop"<<G4endl;
+  G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
+  G4cout<<"        http://www.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BdSim"<<G4endl;
+  G4cout<<G4endl;
+  
   /* Initialize executable command line options reader object */
   const BDSExecOptions* execOptions = BDSExecOptions::Instance(argc,argv);
   execOptions->Print();

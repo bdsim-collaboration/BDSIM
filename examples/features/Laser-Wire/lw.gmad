@@ -26,7 +26,7 @@ mk1: marker;
 !mk2: marker;
 !mk3: marker;
 
-cryoModule: element, l=12.4784*m, geometry="mokka:cryo1_geomlist.sql";
+cryoModule: element, l=12.4784*m, outerDiameter=12.5*m, geometry="mokka:cryo1_geomlist.sql";
 !cryoModule : drift, l=12.4784*m;
 !cryoModule2:element, l=11.6784*m, geometry="mokka:cryo2_geomlist.sql";
 
