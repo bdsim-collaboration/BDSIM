@@ -64,7 +64,7 @@ void BDSSDManager::ConstructECounterSDOnAxisOnDemand()
   // geometry also exists - hence make this on demand
   // the SDManager will be called early on to make samplers during
   // object construction
-  //on axis energy counter - uses read out geometry
+  // on axis energy counter - uses read out geometry
   eCounterOnAxisRO = new BDSEnergyCounterSD("ec_on_axis_read_out");
   BDSReadOutGeometry* roGeom = new BDSReadOutGeometry("readOutGeometry");
   // although unnecessary for bdsim this MUST be called for geant4 to

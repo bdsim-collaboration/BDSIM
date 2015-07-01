@@ -378,7 +378,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       // read out geometry logical volume - note may not exist for each item - must be tested
       G4LogicalVolume* readOutLV   = thecurrentitem->GetReadOutLogicalVolume();
       // make read out geometry sensitive
-      if (readOutLV)
+      if (readOutLV)       
 	{readOutLV->SetSensitiveDetector(energyCounterSDRO);}
       
       // add the volume to one of the regions
