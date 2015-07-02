@@ -126,7 +126,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
 
   //calculate mean position of step (which is two points)
   //global
-  Y = 0.5 * (posbefore.x() + posafter.x());
+  X = 0.5 * (posbefore.x() + posafter.x());
   Y = 0.5 * (posbefore.y() + posafter.y());
   Z = 0.5 * (posbefore.z() + posafter.z());
   //note this'll work even without readOutTH

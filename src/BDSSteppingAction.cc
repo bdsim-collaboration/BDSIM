@@ -52,7 +52,7 @@ void BDSSteppingAction::ThresholdCutSteppingAction(){
 	_step->GetTrack()->SetTrackStatus(fStopAndKill);
       }
   } else if (abs(pdgNr) == 11) {
-    //note this is 'thresholdcutcarged' but only works on electrons...
+    //note this is 'thresholdcutcharged' but only works on electrons...
     if(_step->GetTrack()->GetKineticEnergy()<BDSGlobalConstants::Instance()->GetThresholdCutCharged())
       {
 	_step->GetTrack()->SetTrackStatus(fStopAndKill);
