@@ -153,6 +153,11 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   // set precision back
   G4cout.precision(G4precision);
 
+  // feedback
+#ifdef BDSDEBUG
+  G4cout << *BDSPhysicalVolumeInfoRegistry::Instance();
+#endif
+
   return physiWorld;
 }
  
