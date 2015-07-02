@@ -1,4 +1,4 @@
-include options.gmad !Include the file "options.gmad"
+include optionsElectron.gmad !Include the file "options.gmad"
 
 beam,  particle="e-",
        energy= 250*GeV,

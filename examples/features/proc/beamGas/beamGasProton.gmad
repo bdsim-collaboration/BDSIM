@@ -1,7 +1,7 @@
-include options.gmad !Include the file "options.gmad"
+include optionsProton.gmad !Include the file "options.gmad"
 
-beam,  particle="e-",
-       energy= 250*GeV,
+beam,  particle="proton",
+       energy= 6.5*GeV,
        distrType="reference",
        X0=0.0*mm,
        Y0=0.0*mm,
@@ -33,4 +33,4 @@ sample, range = sampler3;
 sample, range = sampler4; 
 sample, range = sampler5; 
 
-option, ngenerate=5000; 
+option, ngenerate=10000; 
