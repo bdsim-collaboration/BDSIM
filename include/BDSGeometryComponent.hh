@@ -65,8 +65,22 @@ public:
   /// responsible for it
   void RegisterLogicalVolume(G4LogicalVolume* logicalVolume, G4bool interalCheck = false);
 
-  /// Apply RegisterLogicalVolume(G4LogicalVolume* logicalVolume) to a vector of logical volumes
+  /// Apply RegisterLogicalVolume() to a vector of logical volumes
   void RegisterLogicalVolumes(std::vector<G4LogicalVolume*> logicalVolumes);
+
+  /// Register a physical volume as belonging to this geometry component, which then becomes
+  /// responsible for it
+  void RegisterPhysicalVolume(G4VPhysicalVolume* physicalVolume, G4bool internalCheck = false);
+
+  /// Apply RegisterPhysicalVolume() to a vector of physical volumes
+  void RegisterPhysicalVolumes(std::vector<G4VPhysicalVolume*> physicalVolumes);
+
+  /// Register a rotation matrix as belonging to this geometry component, which then becomes
+  /// responsible for it
+  void RegisterRotationMatrix(G4RotationMatrix* rotationMatrix, G4bool internalCheck = false);
+
+  /// Apply Register RotationMatrix() to a vector of rotation matrices
+  void RegisterRotationMatrices(std::vector<G4RotationMatrix*> rotationMatrices);
 
   /// Mark a volume as one that should be made sensitive using the read out geometry.  Note, if
   /// a volume is already sensitive with a specialised sensitive detector, it should NOT be
@@ -84,6 +98,12 @@ public:
   /// Access all sensitive volumes belonging to this component
   std::vector<G4LogicalVolume*> GetAllSensitiveVolumes() const;
 
+  /// Access all physical volumes belonging to this component
+  std::vector<G4VPhysicalVolume*> GetAllPhysicalVolumes() const;
+
+  /// Access all rotation matrices belonging to this component
+  std::vector<G4RotationMatrix*> GetAllRotationMatrices() const;
+
 protected:
   /// Copy constructor
   BDSGeometryComponent(BDSGeometryComponent& component);
@@ -100,6 +120,13 @@ protected:
   
   /// registry of all volumes that should be made sensitive
   std::vector<G4LogicalVolume*> allSensitiveVolumes;
+
+  /// registry of all physical volumes belonging to this component
+  std::vector<G4VPhysicalVolume*> allPhysicalVolumes;
+
+  /// registry of all rotation matrices belonging to this component
+  std::vector<G4RotationMatrix*> allRotationMatrices;
+  
   G4ThreeVector                 placementOffset;
 };
 
@@ -156,5 +183,11 @@ inline std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllLogicalVolumes(
 
 inline std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllSensitiveVolumes() const
 {return allSensitiveVolumes;}
+
+inline std::vector<G4VPhysicalVolume*> BDSGeometryComponent::GetAllPhysicalVolumes() const
+{return allPhysicalVolumes;}
+
+inline std::vector<G4RotationMatrix*> BDSGeometryComponent::GetAllRotationMatrices() const
+{return allRotationMatrices;}
 
 #endif

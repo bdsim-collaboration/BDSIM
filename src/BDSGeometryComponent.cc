@@ -46,6 +46,18 @@ BDSGeometryComponent::~BDSGeometryComponent()
 {
   delete containerSolid;
   delete containerLogicalVolume;
+
+  std::vector<G4LogicalVolume*>::iterator itLV = allLogicalVolumes.begin();
+  for (; itLV != allLogicalVolumes.end(); ++itLV)
+    {delete (*itLV);}
+
+  std::vector<G4VPhysicalVolume*>::iterator itPV = allPhysicalVolumes.begin();
+  for (; itPV != allPhysicalVolumes.end(); ++itPV)
+    {delete (*itPV);}
+
+  std::vector<G4RotationMatrix*>::iterator itRM = allRotationMatrices.begin();
+  for (; itRM != allRotationMatrices.end(); ++itRM)
+    {delete (*itRM);}
 }
 
 void BDSGeometryComponent::RegisterLogicalVolume(G4LogicalVolume* logicalVolume, G4bool internalCheck)
@@ -91,6 +103,47 @@ void BDSGeometryComponent::RegisterLogicalVolumes(std::vector<G4LogicalVolume*> 
       RegisterLogicalVolume(*it);
     }
 }
+
+void BDSGeometryComponent::RegisterPhysicalVolume(G4VPhysicalVolume* physicalVolume, G4bool internalCheck)
+{
+  // only register it if it doesn't exist already
+  if (std::find(allPhysicalVolumes.begin(), allPhysicalVolumes.end(), physicalVolume) == allPhysicalVolumes.end())
+	   {
+	     // not found so register it
+	     allPhysicalVolumes.push_back(physicalVolume);
+	   }
+  else if (internalCheck)
+    {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "just an internal to check that this physical volume was registered" << G4endl;
+#endif
+      return;
+    }
+#ifdef BDSDEBUG
+  else
+    {
+      // found - so don't register it
+      G4cout << __METHOD_NAME__ << "warning - physical volume \""
+	     << physicalVolume->GetName()
+	     << "\" already in this geometry component \"";
+      if (containerSolid)
+	{G4cout << containerSolid->GetName();}
+      else
+	{G4cout << " INVALID CONTAINER ";}
+      G4cout << "\"" << G4endl;
+    }
+#endif
+}
+
+void BDSGeometryComponent::RegisterPhysicalVolumes(std::vector<G4VPhysicalVolume*> physicalVolumes)
+{
+  std::vector<G4VPhysicalVolume*>::iterator it = physicalVolumes.begin();
+  for (; it != physicalVolumes.end(); ++it)
+    {
+      RegisterPhysicalVolume(*it);
+    }
+}
+
 
 void BDSGeometryComponent::RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume)
 {
