@@ -1,7 +1,5 @@
 //XSBias with artificially scaled cross section
 
-#define BDSDEBUG 
-
 #include "BDSXSBias.hh"
 
 BDSXSBias::BDSXSBias(const G4String& aName,
