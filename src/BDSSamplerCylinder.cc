@@ -3,22 +3,23 @@
    Last modified 5.3.2005
    Copyright (c) 2005 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
-#include "BDSGlobalConstants.hh" 
+#include "BDSGlobalConstants.hh"
+#include "BDSExecOptions.hh"
 #include "BDSMaterials.hh"
 #include "BDSSamplerCylinder.hh"
 #include "BDSDebug.hh"
 #include "G4Tubs.hh"
-#include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "BDSSamplerSD.hh"
-#include "G4SDManager.hh"
+#include "BDSSDManager.hh"
 
 std::vector <G4String> BDSSamplerCylinder::outputNames;
 
 int BDSSamplerCylinder::nSamplers = 0;
 
+// created here, so only one is created with fixed known name
 BDSSamplerSD* BDSSamplerCylinder::SensitiveDetector=new BDSSamplerSD("BDSSamplerCylinder","cylinder");
 
 int BDSSamplerCylinder::GetNSamplers() { return nSamplers; }
@@ -36,17 +37,17 @@ BDSSamplerCylinder::BDSSamplerCylinder(G4String name,
 {
   nThisSampler = nSamplers + 1;
   nSamplers++;
-
-  // register sampler sensitive detector
-  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-  SDMan->AddNewDetector(SensitiveDetector);
-
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " Nsamplers " << nSamplers << G4endl;
+#endif
   // to be fixed - see bdssampler for explanation
-  BDSSamplerCylinder::outputNames.push_back(name + "_phys_" );
+  BDSSamplerCylinder::outputNames.push_back(GetName() + "_cylinder" );
 }
 
 void BDSSamplerCylinder::BuildContainerLogicalVolume()
 {
+  G4String name = GetName();
+  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
   containerSolid = new G4Tubs(name+"_body",
 			      itsRadius-1.e-6*CLHEP::m,
 			      itsRadius,
@@ -62,7 +63,11 @@ void BDSSamplerCylinder::BuildContainerLogicalVolume()
   itsOuterUserLimits->SetMaxAllowedStep(BDSGlobalConstants::Instance()->GetSamplerDiameter()/2.0);
   containerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
-  containerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
+    if (BDSExecOptions::Instance()->GetVisDebug())
+    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
+  else
+    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
+  containerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerCylinderSD());
 }
 
 BDSSamplerCylinder::~BDSSamplerCylinder()

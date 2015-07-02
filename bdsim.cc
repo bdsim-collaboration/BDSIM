@@ -53,6 +53,8 @@
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
 #include "BDSGeometryInterface.hh"
+#include "BDSGeometryWriter.hh"
+#include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
@@ -78,6 +80,12 @@ extern Options options;
 
 int main(int argc,char** argv) {
 
+  // print header
+  G4cout<<"bdsim : version 0.7.develop"<<G4endl;
+  G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
+  G4cout<<"        http://www.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BdSim"<<G4endl;
+  G4cout<<G4endl;
+  
   /* Initialize executable command line options reader object */
   const BDSExecOptions* execOptions = BDSExecOptions::Instance(argc,argv);
   execOptions->Print();
@@ -226,6 +234,21 @@ int main(int argc,char** argv) {
     G4cerr << "bdsim.cc: error - geometry not closed." << G4endl;
     return 1;
   }
+
+  if (execOptions->ExportGeometry())
+    {
+      BDSGeometryWriter::Instance()->ExportGeometry(execOptions->GetExportType(),
+						    execOptions->GetExportFileName());
+      // clean up before exiting
+      G4GeometryManager::GetInstance()->OpenGeometry();
+      delete BDSPhysicalVolumeInfoRegistry::Instance();
+      delete execOptions;
+      delete globalConstants;
+      delete BDSMaterials::Instance();
+      delete runManager;
+      delete bdsBunch;
+      return 0;
+    }
   
   // set default output formats:
 #ifdef BDSDEBUG
@@ -309,7 +332,7 @@ int main(int argc,char** argv) {
       bool useDefault = false;
       // if not set use default visualisation file
       if (visMacroName.empty()) useDefault = true;
-      G4String visMacroFilename = execOptions->GetBDSIMPATH() + visMacroName;
+      G4String visMacroFilename = BDS::GetFullPath(visMacroName);
       if (!useDefault) {
 	FILE* file = NULL;
 	// first relative to main path:
@@ -317,16 +340,9 @@ int main(int argc,char** argv) {
 	if (file) {
 	  fclose(file);
 	} else {
-	  // then try current path
-	  file = fopen(visMacroName.c_str(), "r");
-	  if (file) {
-	    fclose(file);
-	    visMacroFilename = visMacroName;
-	  } else {
-	    // if not present use a default one (OGLSQt or DAWNFILE)
-	    G4cout << __FUNCTION__ << "> WARNING: visualisation file " << visMacroFilename <<  " file not present, using default!" << G4endl;
-	    useDefault = true;
-	  }
+	  // if not present use a default one (OGLSQt or DAWNFILE)
+	  G4cout << __FUNCTION__ << "> WARNING: visualisation file " << visMacroFilename <<  " file not present, using default!" << G4endl;
+	  useDefault = true;
 	}
       }
       if (useDefault) {
@@ -380,6 +396,7 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
 #endif
+  delete BDSPhysicalVolumeInfoRegistry::Instance();
   delete execOptions;
   delete globalConstants;
   delete BDSMaterials::Instance();

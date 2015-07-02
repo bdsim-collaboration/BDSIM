@@ -29,9 +29,7 @@ The following functions are provided
 * asin
 * abs
 
-Examples
-^^^^^^^^
-::
+Examples::
 
    x = 1;
    y = 2.5-x;
@@ -181,9 +179,7 @@ parameter         description          default     required
 
 * The `aperture parameters`_ may also be specified.
 
-Examples
-""""""""
-::
+Examples::
 
    l203b: drift, l=1*m;
    l204c: drift, l=3*cm, beampipeRadius=10*cm;
@@ -222,9 +218,7 @@ parameter         description            default     required
 .. note:: As of v0.64 a combined quadrupole component is not possible, but is under
 	  development
 
-Examples
-""""""""
-::
+Examples::
 
    MRB20: rbend, l=3*m, angle=0.003;
    r1: rbend, l=5.43m, beampipeRadius=10*cm, B=2*Tesla;
@@ -259,9 +253,7 @@ parameter         description            default     required
 .. note:: As of v0.64 a combined quadrupole component is not possible, but is under
 	  development
 
-Examples
-""""""""
-::
+Examples::
 
    s1: sbend, l=14.5*m, angle=0.005, magnetGeometryType="lhcright";
    mb201x: sbend, l=304.2*cm, b=1.5*Tesla;
@@ -288,9 +280,7 @@ parameter         description                  default     required
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
 
-Examples
-""""""""
-::
+Examples::
 
    q1: quadrupole, l=0.3*m, k1=45.23;
    qm15ff: quadrupole, l=20*cm, k1=95.2;
@@ -317,9 +307,7 @@ parameter         description                  default     required
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
 
-Examples
-""""""""
-::
+Examples::
 
    sx1: sextupole, l=0.5*m, k2=4.678;
    sx2: sextupole, l=20*cm, k2=45.32, magnetGeometry="normalconducting";
@@ -346,9 +334,7 @@ parameter         description                  default     required
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
 
-Examples
-""""""""
-::
+Examples::
 
    oct4b: octupole, l=0.3*m, k3=32.9;
 		    
@@ -371,9 +357,7 @@ parameter         description                  default     required
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
 
-Examples
-""""""""
-::
+Examples::
 
    MXDEC3: decapole, l=0.3*m, k3=32.9;
   
@@ -386,9 +370,7 @@ multipole
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
 
-Examples
-""""""""
-::
+Examples::
 
    **To be completed**
 
@@ -400,9 +382,7 @@ vkick
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
 
-Examples
-""""""""
-::
+Examples::
 
    KX15v: vkick, angle=0.01*mrad;
 
@@ -414,9 +394,7 @@ hkick
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
 
-Examples
-""""""""
-::
+Examples::
 
    KX17h: hkick, angle=0.01;
 
@@ -437,9 +415,7 @@ parameter         description                  default     required
 .. note:: Be careful with the sign of the gradient with respect to the sign of
 	  the primary particle
 
-Examples
-""""""""
-::
+Examples::
 
    RF4f: rf, l=3*m, gradient=10*MV;
 
@@ -467,9 +443,7 @@ parameter         description                   default     required
 	  rotate the coordinate frame before and afterwards. See `transform3d`_ for further
 	  details and examples.
 
-Examples
-""""""""
-::
+Examples::
 
    TCP15: rcol, l=1.22*m, material="graphite", xsize=104*um, ysize=5*cm;
 
@@ -523,9 +497,7 @@ parameter         description                   default     required
 `outerDiameter`   outer full width [m]          global      no
 ================  ============================  ==========  ===========
 
-Examples
-""""""""
-::
+Examples::
 
    atlassol: solenoid, l=20*m, ks=0.004;
 
@@ -543,9 +515,7 @@ parameter         description                                        default    
 `waveLength`      laser wavelength [m]                               532*nm      yes
 ================  =================================================  ==========  ===========
 
-Examples
-""""""""
-::
+Examples::
 
    laserwire: laser, l=1*um, x=1, y=0, z=0, wavelength=532*nm;
 
@@ -571,9 +541,7 @@ parameter         description                   default     required
 .. note:: this permanently changes the coordinate frame, so care must be taken to undo any rotation
 	  if it intended for only one component.
 
-Examples
-""""""""
-::
+Examples::
 
    rcolrot: transform3d, psi=pi/2;
 
@@ -581,13 +549,15 @@ element
 ^^^^^^^
 
 `element` defines an arbitrary element that's defined by external geometry and magnetic field
-maps. Several geometry formats are supported. The user must also supply the outer radius of the
-object for tunnel geometry compatibility.
+maps. Several geometry formats are supported. The user must supply the length (accurately) as
+well as a diameter such that the geometry will be contained in a box that has horizontal and
+vertical size of diameter.
 
 ================  ===============================  ==========  ===========
 parameter         description                      default     required
 `geometry`        filename of geometry             NA          yes
-`outR`            outermost radius [m]             NA          yes
+`l`               length                           NA          yes
+`outerDiameter`   diameter of component [m]        NA          yes
 `bmap`            filename of magnetic field map   NA          no
 ================  ===============================  ==========  ===========
 
@@ -595,12 +565,16 @@ parameter         description                      default     required
 `format` is the geometry format being used (`gdml` | `mokka`) and filename is the filename of
 the geometry file.
 
-Examples
-""""""""
-::
+.. note:: The length must be larger than the geometry so that it is contained within it and
+	  no overlapping geometry will be produced. However, care must be taken as the length
+	  will be the length of the component inserted in the beamline.  If this is much larger
+	  than the size requried for the geometry, the beam may be mismatched into the rest of
+	  the accelerator. A common practice is to add a picometre to the length of the geometry.
 
-   detector: element, geometry="gdml:atlasreduced.gmdl", outR=20*m;
-   detec: element, geometry="mokka:qq.sql", bmap ="mokka:qq.bmap";
+Examples::
+
+   detector: element, geometry="gdml:atlasreduced.gmdl", outerDiameter=10*m,l=44*m;
+   detec: element, geometry="mokka:qq.sql", bmap ="mokka:qq.bmap", l=5*m, outerDiameter=0.76*m;
 
 
 marker
@@ -612,9 +586,7 @@ front of a component but how would you record particles exiting a particular com
 The intended method is to use a `marker` and place it in the sequence after that element
 then attach a sampler to the marker.
 
-Examples
-""""""""
-::
+Examples::
 
    m1: marker;
    
@@ -842,6 +814,34 @@ beam pipes and both `sbend` and `quadrupole` geometries.
 | |lhcleft_quadrupole_square| | |lhcleft_sextupole|   |
 +-----------------------------+-----------------------+
 
+Offsets & Tilts - Component Misalignment
+----------------------------------------
+
+To simulate a real accelerator it may be necessary to introduce measured placement offsets or misalignments
+and rotations. Every component can be displaced transversely and rotated along the axis of the beam propagation.
+
+.. note:: Components that have a finite angle (rbend and sbend) will only respond to vertical offsets as
+	  horizontal offsets and rotations may lead to overlapping geometry. This limitation will be addressed
+	  in posible future releases, but necessitates significant changes to the geometry construction.
+
+.. note:: A right-handed coordinate system is used and the beamline built along the `z` direction.
+	  
+The misalignments can be controlled through the following parameters
+
++--------------+-----------------------------------------------------------------------------------+
+| Parameter    | Default value                                                                     | 
++==============+===================================================================================+
+| `offsetX`    | horizontal displacement of the component [m]                                      |
++--------------+-----------------------------------------------------------------------------------+
+| `offsetY`    | vertical displacement of the component [m]                                        |
++--------------+-----------------------------------------------------------------------------------+
+| `tilt`       | rotation of component clockwise facing in the direction of the beamline `z` [rad] |
++--------------+-----------------------------------------------------------------------------------+
+
+Examples::
+
+  d1: drift, l=1*m, offsetX=1*cm;
+  d2: drift, l=0.5*m, offsetY = 0.3*cm, tilt=0.003;
 
 
 Lattice Sequence
@@ -884,9 +884,7 @@ beam line can be defined. This must be defined using the following syntax::
 
   use, period=<line_name>
 
-Examples
-""""""""
-::
+Examples::
    
    d1: drift, l=3.2*m;
    q1: quadrupole, l=20*cm, k1=4.5;
@@ -1145,31 +1143,33 @@ as their value.
 | nlinesIgnore                     | number of lines to ignore when reading user bunch     |
 |                                  | input files                                           |
 +----------------------------------+-------------------------------------------------------+
-| **Tunnel Parameters**            | **Currently Not Working**                             |
-+----------------------------------+-------------------------------------------------------+
-| buildTunnel                      | whether to build a tunnel (default = 0)               |
-+----------------------------------+-------------------------------------------------------+
-| builTunnelFloor                  | whether to add a floor to the tunnel                  |
-+----------------------------------+-------------------------------------------------------+
-| tunnelRadius                     | tunnel inner radius [m]                               |
-+----------------------------------+-------------------------------------------------------+
-| tunnelThickness                  | thickness of tunnel wall [m]                          |
-+----------------------------------+-------------------------------------------------------+
-| tunnelSoilThickness              | soil thickness outside tunnel wall [m]                |
-+----------------------------------+-------------------------------------------------------+
-| tunnelMaterial                   | material for tunnel wall                              |
-+----------------------------------+-------------------------------------------------------+
-| soilMaterial                     | material for soil outside tunnel wall                 |
-+----------------------------------+-------------------------------------------------------+
-| tunnelOffsetX                    | horizontal offset of the tunnel with respect to the   |
-|                                  | beam line reference trajectory                        |
-+----------------------------------+-------------------------------------------------------+
-| tunnelOffsetY                    | vertical offset of the tunnel with respect to the     |
-|                                  | beam line reference trajectory                        |
-+----------------------------------+-------------------------------------------------------+
-| tunnelFloorOffset                | the offset of the tunnel floor from the centre of the |
-|                                  | tunnel                                                |
-+----------------------------------+-------------------------------------------------------+
+
+..
+  | **Tunnel Parameters**            | **Currently Not Working**                             |
+  +----------------------------------+-------------------------------------------------------+
+  | buildTunnel                      | whether to build a tunnel (default = 0)               |
+  +----------------------------------+-------------------------------------------------------+
+  | builTunnelFloor                  | whether to add a floor to the tunnel                  |
+  +----------------------------------+-------------------------------------------------------+
+  | tunnelRadius                     | tunnel inner radius [m]                               |
+  +----------------------------------+-------------------------------------------------------+
+  | tunnelThickness                  | thickness of tunnel wall [m]                          |
+  +----------------------------------+-------------------------------------------------------+
+  | tunnelSoilThickness              | soil thickness outside tunnel wall [m]                |
+  +----------------------------------+-------------------------------------------------------+
+  | tunnelMaterial                   | material for tunnel wall                              |
+  +----------------------------------+-------------------------------------------------------+
+  | soilMaterial                     | material for soil outside tunnel wall                 |
+  +----------------------------------+-------------------------------------------------------+
+  | tunnelOffsetX                    | horizontal offset of the tunnel with respect to the   |
+  |                                  | beam line reference trajectory                        |
+  +----------------------------------+-------------------------------------------------------+
+  | tunnelOffsetY                    | vertical offset of the tunnel with respect to the     |
+  |                                  | beam line reference trajectory                        |
+  +----------------------------------+-------------------------------------------------------+
+  | tunnelFloorOffset                | the offset of the tunnel floor from the centre of the |
+  |                                  | tunnel                                                |
+  +----------------------------------+-------------------------------------------------------+
 
 Beam Parameters
 ---------------
@@ -1178,7 +1178,7 @@ To specify the input particle distribution to the accelerator model, the `beam` 
 used. This also specifies the particle species and **reference energy**, which is the
 design energy of the machine. This is used along with the particle species to calculate
 the momentum of the reference particle and therefore the magnetic field of dipole magnets
-if only the angle has been specified.
+if only the `angle` parameter has been specified.
 
 .. note:: A design energy can be specified and in addition, the central energy, of say
 	  a bunch with a Gaussian distribution, can be specified.
@@ -1209,43 +1209,95 @@ Beam Distributions
 ^^^^^^^^^^^^^^^^^^
 The following beam distributions are available in BDSIM
 
-- reference
-- circle
-- square
-- ring
-- eshell
-- gauss
-- gausstwiss
-- halo
-- composite 
-- userfile
-- ptc 
+- `reference`_
+- `gaussMatrix`_
+- `gauss`_
+- `gausstwiss`_
+- `circle`_
+- `square`_
+- `ring`_
+- `eshell`_
+- `halo`_
+- `composite`_ 
+- `userfile`_
+- `ptc`_ 
 
 
-Reference
+reference
 ^^^^^^^^^
-This is a single particle with the same position and angle defined by the following parameters. When these parameters are used in conjunction with the other distributions, it represents the centroid of the distribution. 
+This is a single particle with the same position and angle defined by the following parameters. The
+coordinates are the same for every particle fired using the reference distribution. It is therefore
+not likely to be useful to generate a large number of repeated events with this distribution.
+
+These parameters also act as central parameters for all other distributions. For example, a Gaussian
+distribution may defined with the `gauss`_ parameters but `X0` set to offset the centroid of the
+Gaussian with respect to the reference trajectory.
+
++----------------------------------+-------------------------------------------------------+----------+
+| Option                           | Description                                           | Default  |
++==================================+=======================================================+==========+
+| `X0`                             | Horizontal position [m]                               | 0        |
++----------------------------------+-------------------------------------------------------+----------+
+| `Y0`                             | Vertical position [m]                                 | 0        |
++----------------------------------+-------------------------------------------------------+----------+
+| `Z0`                             | Longitudinal position [m]                             | 0        |
++----------------------------------+-------------------------------------------------------+----------+
+| `T0`                             | Longitudinal position [s]                             | 0        |
++----------------------------------+-------------------------------------------------------+----------+
+| `Xp0`                            | Horizontal canonical momentum                         | 0        |
++----------------------------------+-------------------------------------------------------+----------+
+| `Yp0`                            | Vertical canonicla momentum                           | 0        |
++----------------------------------+-------------------------------------------------------+----------+
+
+Examples::
+
+  beam, particle = "e-",
+        energy = 10*GeV,
+	distrType = "reference";
+
+Generates a beam with all coordinates 0 at the nominal energy.::
+
+  beam, particle = "e-",
+        energy = 10*GeV,
+	distrType = "reference",
+	X0 = 100*um,
+	Y0 = 3.5*um;
+
+Generate a particle with an offset of 100 :math:`\mu\mathrm{m}` horizonally and 3.5 :math:`\mu\mathrm{m}` vertically.
+
+gaussMatrix
+^^^^^^^^^^^
+
+Uses the :math:`N` dimensional gaussian generator from `CLHEP`, `CLHEP::RandMultiGauss`. The generator
+is initialised by a :math:`6\times1` means vector and :math:`6\times 6` sigma matrix.  
+
+* All parameters from `reference`_ distribution as used as centroids.
 
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
 +==================================+=======================================================+
-| X0                               | Horizontal position [m]                               |
+| `sigmaNM`                        | Sigma matrix element (N,M)                            |
 +----------------------------------+-------------------------------------------------------+
-| Y0                               | Vertical position [m]                                 |
-+----------------------------------+-------------------------------------------------------+
-| Z0                               | Longitudinal position [m]                             |
-+----------------------------------+-------------------------------------------------------+
-| T0                               | Longitudinal position [s]                             |
-+----------------------------------+-------------------------------------------------------+
-| Xp0                              | Horizontal angle []                                   |
-+----------------------------------+-------------------------------------------------------+
-| Yp0                              | Vertical angle []                                     |
-+----------------------------------+-------------------------------------------------------+
+
+Examples::
+
+   beam, particle = "e-",
+         energy = 10*GeV,
+	 distrType = "reference",
+	 sigma11 = 100*um,
+	 sigma22 = 3*um,
+	 sigma33 = 50*um,
+	 sigma44 = 1.4*um,
+	 sigma55 = 1e-12,
+	 sigma66 = 1e-4,
+	 sigma12 = 1e-2,
+	 sigma34 = 1.4e-3;
+
 
 gauss
 ^^^^^
 
-Uses the gausMatrix beam generator but with simplified input parameters opposed to a complete 
+Uses the `gaussMatrix`_ beam generator but with simplified input parameters opposed to a complete 
 beam sigma matrix. This beam distribution has a diagonal :math:`\sigma`-matrix and does not allow for 
 correlations between phase space coordinates, so 
 
@@ -1255,35 +1307,26 @@ correlations between phase space coordinates, so
    \sigma_{33} & =  \sigma_y^2   \\
    \sigma_{44} & =  \sigma_y^{\prime 2}  \\    
    \sigma_{55} & =  \sigma_{T}^2 \\  
-   \sigma_{66} & =  \sigma_{E}^2. 
+   \sigma_{66} & =  \sigma_{E}^2.
+
+* All parameters from `reference`_ distribution as used as centroids.
 
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
 +==================================+=======================================================+
-| sigmaX                           | Horizontal gaussian sigma [m]                         |
+| `sigmaX`                         | Horizontal gaussian sigma [m]                         |
 +----------------------------------+-------------------------------------------------------+
-| sigmaY                           | Vertical gaussian sigma [m]                           |
+| `sigmaY`                         | Vertical gaussian sigma [m]                           |
 +----------------------------------+-------------------------------------------------------+
-| sigmaXp                          | Horizontal gaussian angle sigma []                    |
+| `sigmaXp`                        | Sigma of the horizontal canonical momentum            |
 +----------------------------------+-------------------------------------------------------+
-| sigmaYp                          | Vertical gaussian angle sigma []                      |
+| `sigmaYp`                        | Sigma of the vertical canonical momentum              |
 +----------------------------------+-------------------------------------------------------+
-| sigmaE                           | Energy variation []                                   |
+| `sigmaE`                         | Energy variation                                      |
 +----------------------------------+-------------------------------------------------------+
-| sigmaT                           | [s]                                                   |
+| `sigmaT`                         | Sigma of the temporal distribution [s]                |
 +----------------------------------+-------------------------------------------------------+
 
-gaussMatrix
-^^^^^^^^^^^
-
-Uses the :math:`N` dimensional gaussian generator from `CLHEP`, `CLHEP::RandMultiGauss`. The generator
-is initialised by a :math:`6\times1` means vector and :math:`6\times 6` sigma matrix.  
-
-+----------------------------------+-------------------------------------------------------+
-| Option                           | Description                                           |
-+==================================+=======================================================+
-| sigmaNM                          | Sigma matrix element (N,M)                            |
-+----------------------------------+-------------------------------------------------------+
 
 gaussTwiss
 ^^^^^^^^^^
@@ -1303,21 +1346,101 @@ the usual beam :math:`\sigma`-matrix is calculated, using the following equation
    \sigma_{55} & =  \sigma_{T}^2 \\  
    \sigma_{66} & =  \sigma_{E}^2  
 
+* All parameters from `reference`_ distribution as used as centroids.
+   
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
 +==================================+=======================================================+
-| emitx                            | Horizontal beam core emittance [m]                    |
+| `emitx`                          | Horizontal beam core emittance [m]                    |
 +----------------------------------+-------------------------------------------------------+
-| emity                            | Vertical beam core emittance [m]                      |
+| `emity`                          | Vertical beam core emittance [m]                      |
 +----------------------------------+-------------------------------------------------------+
-| betax                            | Horizontal beta function [m]                          |
+| `betax`                          | Horizontal beta function [m]                          |
 +----------------------------------+-------------------------------------------------------+
-| betay                            | Vertical beta function [m]                            |
+| `betay`                          | Vertical beta function [m]                            |
 +----------------------------------+-------------------------------------------------------+
-| alfx                             | Horizontal alpha function                             |
+| `alfx`                           | Horizontal alpha function                             |
 +----------------------------------+-------------------------------------------------------+
-| alfy                             | Vertical alpha function                               |
+| `alfy`                           | Vertical alpha function                               |
 +----------------------------------+-------------------------------------------------------+
+
+circle
+^^^^^^
+
+Beam of randomly distributed particles with a uniform distribution within a circle in each
+dimension dimension of phase space - `x` & `xp`; `y` & `yp`, `T` & `E` with each uncorrelated.
+Each parameter defines the maximum absolute extent in that dimension. Ie, the possible values
+range from `-envelopeX` to `envelopeX` for example.
+
+* All parameters from `reference`_ distribution as used as centroids.
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| `envelopeR`                      | Maximum position                                      |
++----------------------------------+-------------------------------------------------------+
+| `envelopeRp`                     | Maximum canonical momentum                            |
++----------------------------------+-------------------------------------------------------+
+| `envelopeT`                      | Maximum time offset [s]                               |
++----------------------------------+-------------------------------------------------------+
+| `envelopeE`                      | Maximum energy offset [GeV]                           |
++----------------------------------+-------------------------------------------------------+
+  
+
+square
+^^^^^^
+
+This distribution has the same properties and parameters as the `circle`_ distribution with the
+exception that the particles are randomly uniformly distributed within a square.
+
+* All parameters from `reference`_ distribution as used as centroids.
+
+
+ring
+^^^^
+
+The ring distribution randomly and uniformly fills a ring in `x` and `y` between two radii. For
+all other parameters, the `reference`_ coordinates are used - ie `xp`, `yp` etc.
+
+* All parameters from `reference`_ distribution as used as centroids.
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| `Rmin`                           | Minimum radius in `x` and `y` [m]                     |
++----------------------------------+-------------------------------------------------------+
+| `Rmax`                           | Maximum radius in `x` and `y` [m]                     |
++----------------------------------+-------------------------------------------------------+
+  
+
+eshell
+^^^^^^
+
+Defines an elliptical annulus in phase space in each dimension that's uncorrelated.
+
+* All parameters from `reference`_ distribution as used as centroids.
+  
++----------------------------------+--------------------------------------------------------------------+
+| Option                           | Description                                                        |
++==================================+====================================================================+
+| `shellX`                         | Ellipse semi-axis in phase space in horizontal position [m]        |
++----------------------------------+--------------------------------------------------------------------+
+| `shellXp`                        | Ellipse semi-axis in phase space in horizontal canonical momentum  |
++----------------------------------+--------------------------------------------------------------------+
+| `shellY`                         | Ellipse semi-axis in phase space in vertical position [m]          |
++----------------------------------+--------------------------------------------------------------------+
+| `shellYp`                        | Ellipse semi-axis in phase space in vertical momentum              |
++----------------------------------+--------------------------------------------------------------------+
+| `shellXWidth`                    | Spread of ellipse in phase space in horizontal position [m]        |
++----------------------------------+--------------------------------------------------------------------+
+| `shellXpWidth`                   | Spread of ellipse in phase space in horizontal canonical momentum  |
++----------------------------------+--------------------------------------------------------------------+
+| `shellYWidth`                    | Spread of ellipse in phase space in vertical position [m]          |
++----------------------------------+--------------------------------------------------------------------+
+| `shellYpWidth`                   | Spread of ellipse in phase space in vertical momentum              |
++----------------------------------+--------------------------------------------------------------------+
+
+
 
 halo
 ^^^^
@@ -1344,33 +1467,35 @@ weighting functions are either `flat`, one over emittance `oneoverr` or exponent
    f_{\rm haloWeight}(\epsilon_{\rm SP}) & = 1 \\
    f_{\rm haloWeight}(\epsilon_{\rm SP}) & = \left(\frac{\epsilon_{\rm core}}{\epsilon_{\rm SP}}\right)^p \\
    f_{\rm haloWeight}(\epsilon_{\rm SP}) & = \exp\left(-\frac{\epsilon_{SP}-\epsilon_{\rm core}}{p \epsilon_{\rm core}}\right)
-   
+
+* All parameters from `reference`_ distribution as used as centroids.
+  
 +----------------------------------+-----------------------------------------------------------------------------+
 | Option                           | Description                                                                 |
 +==================================+=============================================================================+
-| emitx                            | Horizontal beam core emittance [m] :math:`\epsilon_{{\rm core},x}`          |
+| `emitx`                          | Horizontal beam core emittance [m] :math:`\epsilon_{{\rm core},x}`          |
 +----------------------------------+-----------------------------------------------------------------------------+
-| emity                            | Vertical beam core emittance [m] :math:`\epsilon_{{\rm core},y}`            |
+| `emity`                          | Vertical beam core emittance [m] :math:`\epsilon_{{\rm core},y}`            |
 +----------------------------------+-----------------------------------------------------------------------------+
-| betax                            | Horizontal beta function [m]                                                |
+| `betax`                          | Horizontal beta function [m]                                                |
 +----------------------------------+-----------------------------------------------------------------------------+
-| betay                            | Vertical beta function [m]                                                  |
+| `betay`                          | Vertical beta function [m]                                                  |
 +----------------------------------+-----------------------------------------------------------------------------+
-| alfx                             | Horizontal alpha function                                                   |
+| `alfx`                           | Horizontal alpha function                                                   |
 +----------------------------------+-----------------------------------------------------------------------------+
-| alfy                             | Vertical alpha function                                                     |
+| `alfy`                           | Vertical alpha function                                                     |
 +----------------------------------+-----------------------------------------------------------------------------+
-| envelopeX                        | Horitontal position maximum [m]                                             |
+| `envelopeX`                      | Horitontal position maximum [m]                                             |
 +----------------------------------+-----------------------------------------------------------------------------+
-| envelopeY                        | Vertical position maximum [m]                                               |
+| `envelopeY`                      | Vertical position maximum [m]                                               |
 +----------------------------------+-----------------------------------------------------------------------------+
-| envelopeXp                       | Horitontal angle maximum [m]                                                |
+| `envelopeXp`                     | Horitontal angle maximum [m]                                                |
 +----------------------------------+-----------------------------------------------------------------------------+
-| envelopeYp                       | Vertical angle maximum [m]                                                  |
+| `envelopeYp`                     | Vertical angle maximum [m]                                                  |
 +----------------------------------+-----------------------------------------------------------------------------+
-| haloPSWeightFunction             | Phase space weight function [string]                                        |
+| `haloPSWeightFunction`           | Phase space weight function [string]                                        |
 +----------------------------------+-----------------------------------------------------------------------------+
-| haloPSWeightParameter            | Phase space weight function parameters []                                   |
+| `haloPSWeightParameter`          | Phase space weight function parameters []                                   |
 +----------------------------------+-----------------------------------------------------------------------------+
 
 composite
@@ -1378,32 +1503,71 @@ composite
 
 The horizontal, vertical and longitudinal phase spaces can be defined independently. The `xDistrType`, 
 `yDistrType` and `zDistrType` can be selected from all the other beam distribution types. All of the 
-appropriate parameters need to be defined.
+appropriate parameters need to be defined for each individual distribution.
+
+* All parameters from `reference`_ distribution as used as centroids.
 
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
 +==================================+=======================================================+
-| xDistrType                       | Horizontal distribution type                          |
+| `xDistrType`                     | Horizontal distribution type                          |
 +----------------------------------+-------------------------------------------------------+
-| yDistrType                       | Vertical distribution type                            |
+| `yDistrType`                     | Vertical distribution type                            |
 +----------------------------------+-------------------------------------------------------+
-| zDistrType                       | Longitudinal distribution type                        |
+| `zDistrType`                     | Longitudinal distribution type                        |
 +----------------------------------+-------------------------------------------------------+
+
+.. note:: It is currently not possible to use two differently specified versions of the same
+	  distribution within the composite distribution - ie gaussTwiss (parameter set 1) for x
+	  and gaussTwiss (parameter set 2) for y. They will have the same settings.
+
+Examples::
+
+  beam, particle="proton",
+        energy=3500*GeV,
+        distrType="composite",
+        xDistrType="eshell",
+        yDistrType="gausstwiss",
+        zDistrType="gausstwiss",
+        betx = 0.5*m,
+        bety = 0.5*m,
+        alfx = 0.00001234,
+        alfy = -0.0005425,
+        emitx = 1e-9, 
+        emity = 1e-9,
+        sigmaE = 0.00008836,
+        sigmaT = 0.00000000001,
+        shellX  = 150*um, 
+        shellY  = 103*um, 
+        shellXp = 1.456e-6,
+        shellYp = 2.4e-5,
+        shellXWidth = 10*um,
+        shellYWidth = 15*um,
+        shellXpWidth = 1e-9,
+        shellYpWidth = 1d-9;
 
 
 userFile
 ^^^^^^^^
 
 ptc
-^^^ 
+^^^
 
 Output from MAD-X PTC used as input for BDSIM. 
 
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
 +==================================+=======================================================+
-| distrFile                        | PTC output file                                       |
+| `distrFile`                      | PTC output file                                       |
 +----------------------------------+-------------------------------------------------------+
+
+
+
+Tunnel Geometry
+---------------
+
+The tunnel geometry is currently disabled in v0.7 as it is being reimplemented due to significant
+changes the geometry construction in BDSIM. This will be reintroduced in v0.8 very shortly.
 
 
 Regions

@@ -4,7 +4,7 @@ project(BDSIM)
 
 # project version
 set( BDSIM_MAJOR_VERSION 0 )
-set( BDSIM_MINOR_VERSION 6 )
+set( BDSIM_MINOR_VERSION 7 )
 set( BDSIM_PATCH_LEVEL develop )
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
@@ -419,5 +419,4 @@ add_subdirectory(examples)
 add_subdirectory(test)
 
 # Manual
-add_subdirectory(docs)
 add_subdirectory(manual)

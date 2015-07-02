@@ -1,5 +1,4 @@
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSGeometrySQL.hh"
 #include "G4Box.hh"
@@ -83,9 +82,9 @@ void BDSGeometrySQL::Construct()
     {
       if(file.contains("#")) ifs.getline(buffer,1000); // This is a comment line
       else{
-	G4String sBDSPATH = BDSExecOptions::Instance()->GetBDSIMPATH();
-	G4String fullPath = sBDSPATH + file;
-	BuildSQLObjects(fullPath);}
+	G4String fullPath = BDS::GetFullPath(file);
+	BuildSQLObjects(fullPath);
+      }
     }
   
   // Close Geomlist file

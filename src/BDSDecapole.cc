@@ -14,9 +14,6 @@
 
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Tubs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
 BDSDecapole::BDSDecapole(G4String           name,

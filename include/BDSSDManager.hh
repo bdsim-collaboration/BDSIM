@@ -12,6 +12,8 @@
  * SDs will be assigned in construction and not in detector
  * construciton afterwards as a post processing step. This 
  * instantiates all necessary SDs and holds them.
+ * 
+ * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
  */
 
 class BDSSDManager

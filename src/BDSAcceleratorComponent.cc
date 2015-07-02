@@ -10,6 +10,7 @@
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
+#include "G4UserLimits.hh"
 #include "G4VReadOutGeometry.hh"
 #include "G4VSolid.hh"
 
@@ -73,6 +74,17 @@ void BDSAcceleratorComponent::Build()
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BuildContainerLogicalVolume(); // pure virtual provided by derived class
+
+  // set user limits for container
+#ifndef NOUSERLIMITS
+  if(containerLogicalVolume) {
+    G4double maxStepFactor=0.5;
+    G4UserLimits* containerUserLimits =  new G4UserLimits();
+    containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
+    containerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+    containerLogicalVolume->SetUserLimits(containerUserLimits);
+  }
+#endif
 
   // visual attributes
   if(containerLogicalVolume)

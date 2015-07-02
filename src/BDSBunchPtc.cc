@@ -1,6 +1,6 @@
 #include "BDSBunchPtc.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
+#include "BDSUtilities.hh"
 #include <iostream>
 
 #include <fstream>
@@ -127,8 +127,7 @@ void BDSBunchPtc::SetOptions(struct Options& opt) {
 }
 
 void BDSBunchPtc::SetDistribFile(G4String distribFileName){
-  G4String fullPATH = BDSExecOptions::Instance()->GetBDSIMPATH();
-  fileName = fullPATH + distribFileName;
+  fileName = BDS::GetFullPath(distribFileName);
 }
 
 void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
@@ -150,7 +149,10 @@ void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   iRay++;
 
   // if all particles are read, start at 0 again
-  if (iRay == nRays) iRay=0;
+  if (iRay == nRays) {
+    iRay=0;
+    G4cout << __METHOD_NAME__ << "End of file reached. Returning to beginning of file." << G4endl;
+  }
 
   return;
 }

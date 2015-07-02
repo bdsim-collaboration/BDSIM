@@ -14,3 +14,5 @@ simple_testing(12_Composite "--file=12_CompositeTest.gmad" "")
 simple_testing(13_EShellWidth "--file=13_EShellWidthTest.gmad" "")
 simple_testing(14_Ptc "--file=14_PtcTest.gmad" "")
 simple_testing(15_Halo "--file=15_HaloTest.gmad" "")
+simple_testing(15_SixTrack "--file=15_SixTrack.gmad" "")
+
