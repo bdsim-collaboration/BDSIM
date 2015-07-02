@@ -208,7 +208,6 @@ BDSPhysicsList::BDSPhysicsList():  G4VUserPhysicsList()
 
   // construct particles
 
-  //defaultCutValue = 0.7*CLHEP::mm;  
   defaultCutValue = BDSGlobalConstants::Instance()->GetDefaultRangeCut()*CLHEP::m;  
   SetDefaultCutValue(BDSGlobalConstants::Instance()->GetDefaultRangeCut()*CLHEP::m);
 
