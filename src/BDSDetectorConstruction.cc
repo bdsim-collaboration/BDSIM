@@ -442,55 +442,56 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  G4cout << __METHOD_NAME__ << "placing readout geometry" << G4endl;
 	  G4cout << "position: " << rp << ", rotation: " << *rr << G4endl;
 #endif
+	  G4String readOutPVName = name + "_ro_pv";
 	  // don't need the returned pointer from new for anything - purely instantiating registers it with g4
 	  readOutPV = new G4PVPlacement(rr,              // its rotation
 					rp,              // its position
-					name + "_ro_pv", // its name
+					readOutPVName,   // its name
 					readOutLV,       // its logical volume
 					readOutWorldPV,  // its mother  volume
-					false,	     // no boolean operation
+					false,	         // no boolean operation
 					nCopy,           // copy number
 					checkOverlaps);  //overlap checking
-	}
 
-      // Register the spos and other info of this elemnet.
-      // Used by energy counter sd to get spos of that logical volume at histogram time.
-      // If it has a readout volume, that'll be used for sensitivity so only need to register
-      // that. Should only register what we need to as used for every energy hit (many many many)
-      if(readOutPV)
-	{
+	  // Register the spos and other info of this elemnet.
+	  // Used by energy counter sd to get spos of that logical volume at histogram time.
+	  // If it has a readout volume, that'll be used for sensitivity so only need to register
+	  // that. Should only register what we need to as used for every energy hit (many many many)
+	  
 	  // use the readOutLV name as this is what's accessed in BDSEnergyCounterSD
 	  BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(name,
-								     name,
+								     readOutPVName,
 								     (*it)->GetSPositionMiddle());
-	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutLV, theinfo);
+	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutPV, theinfo, true); // true = it's a read out volume
 	}
+      /*
       else
         {
+	  
 	  // It doesn't have a read out volume, so register the same info with all logical volumes
 	  // the current BDSAcceleratorComponent  contains as any of them could be requested
 	  // by BDSEnergyCounterSD
-	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo(name,
-								   name,
-								   (*it)->GetSPositionMiddle());
+	  BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(name,
+								     name,
+								     (*it)->GetSPositionMiddle());
 	  BDSPVIterator elementLVIterator = thecurrentitem->GetAllLogicalVolumes().begin();
 	  BDSPVIterator elementLVEnd      = thecurrentitem->GetAllLogicalVolumes().end();
 	  for (; elementLVIterator != elementLVEnd; ++elementLVIterator)
 	    {BDSLogicalVolumeInfoRegistry::Instance()->RegisterInfo(*elementLVIterator, theinfo);}
 	}
+      */
       
-      
-
+      /*
       //this vector of physical volumes isn't used anywhere...
       fPhysicalVolumeVector.push_back(PhysiComponentPlace);
       std::vector<G4VPhysicalVolume*> MultiplePhysicalVolumes = thecurrentitem->GetMultiplePhysicalVolumes();
       for (unsigned int i=0;i<MultiplePhysicalVolumes.size(); i++)
 	{fPhysicalVolumeVector.push_back(MultiplePhysicalVolumes.at(i));}
-
+      */
       //this does nothing by default - only used by BDSElement
       //looks like it could just be done in its construction rather than
       //in BDSDetectorConstruction
-      thecurrentitem->PrepareField(PhysiComponentPlace);
+      thecurrentitem->PrepareField(elementPV);
     }
 }
 
