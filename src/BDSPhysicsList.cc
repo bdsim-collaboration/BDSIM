@@ -244,8 +244,12 @@ void BDSPhysicsList::ConstructProcess()
 #if G4VERSION_NUMBER < 1000
     theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT();
 #else
-    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT();
+    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT();    
 #endif
+    //    theReferenceHadronicPhysList_xsbias = new BDSXSBias(); 
+    //    theReferenceHadronicPhysList_xsbias->RegisterProcess(theReferenceHadronicPhysList); 
+    //    theReferenceHadronicPhysList_xsbias->eFactor(1);    
+ 
     theReferenceEmPhysList = new G4EmStandardPhysics();
     theReferenceHadronicPhysList->ConstructProcess();
     theReferenceEmPhysList->ConstructProcess();
