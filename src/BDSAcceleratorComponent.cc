@@ -38,7 +38,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  readOutLV = NULL;
+  nTimesPlaced = 0;
+  readOutLV    = NULL;
 
   // initialise static members
   if (!emptyMaterial)

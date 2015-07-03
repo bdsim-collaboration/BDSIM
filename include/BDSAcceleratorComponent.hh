@@ -99,6 +99,15 @@ public:
   std::vector<G4VPhysicalVolume*> GetMultiplePhysicalVolumes() const;
   ///@}
 
+  /// Record of how many times this component has been placed (ie copies used).
+  G4int nTimesPlaced;
+
+  /// Increment (+1) the number of times this component has been placed (ie another copy used).
+  void  IncrementNTimesPlaced();
+
+  /// Get the number of times this component has been placed.
+  G4int GetNTimesPlaced();
+
 protected:
   /// initialise method
   /// checks if marker logical volume already exists and builds new one if not
@@ -185,6 +194,12 @@ inline void BDSAcceleratorComponent::SetMultiplePhysicalVolumes(G4VPhysicalVolum
 
 inline std::vector<G4VPhysicalVolume*> BDSAcceleratorComponent::GetMultiplePhysicalVolumes() const
 {return itsMultiplePhysicalVolumes;}
+
+inline void BDSAcceleratorComponent::IncrementNTimesPlaced()
+{nTimesPlaced++;}
+
+inline G4int BDSAcceleratorComponent::GetNTimesPlaced()
+{return nTimesPlaced;}
 
 inline G4LogicalVolume* BDSAcceleratorComponent::GetReadOutLogicalVolume() const
 {return readOutLV;}
