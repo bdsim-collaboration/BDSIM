@@ -8,7 +8,6 @@
 #include "BDSMagField.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "BDSBeamline.hh"
-#include "parser/elementlist.h"
 
 class BDSTeleporter: public BDSAcceleratorComponent
 {

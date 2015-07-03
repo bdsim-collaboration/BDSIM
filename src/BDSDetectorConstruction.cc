@@ -128,31 +128,20 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_l
   // build world and calculate coordinates
   BuildWorld();
 
-  // set default output formats for BDSDetector:
-  int G4precision = G4cout.precision(15);
-  
   // placement procedure
   ComponentPlacement();
 
   // free the parser list
-  std::list<struct Element>::iterator it;
-  for(it = beamline_list.begin();it!=beamline_list.end();it++) {
-    delete (*it).lst;
-  }
-  beamline_list.clear();
+  beamline_list.erase();
   
   if(verbose || debug) G4cout << __METHOD_NAME__ << "detector Construction done"<<G4endl; 
 
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "printing material table" << G4endl;
   G4cout << *(G4Material::GetMaterialTable()) << G4endl << G4endl;
-#endif
-
   if(verbose || debug) G4cout<<"Finished listing materials, returning physiWorld"<<G4endl; 
+#endif
   
-  // set precision back
-  G4cout.precision(G4precision);
-
   return physiWorld;
 }
  
@@ -345,6 +334,9 @@ void BDSDetectorConstruction::ComponentPlacement()
   if (verbose || debug)
     {G4cout << G4endl << __METHOD_NAME__ << "- starting placement procedure" << G4endl;}
 
+  // set default output formats for BDSDetector:
+  int G4precision = G4cout.precision(15);
+
   BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
 
   // few general variables that we don't need to get every
@@ -487,6 +479,8 @@ void BDSDetectorConstruction::ComponentPlacement()
       //in BDSDetectorConstruction
       thecurrentitem->PrepareField(PhysiComponentPlace);
     }
+  // set precision back
+  G4cout.precision(G4precision);
 }
 
 void BDSDetectorConstruction::SetGFlashOnVolume(G4LogicalVolume* volume)
