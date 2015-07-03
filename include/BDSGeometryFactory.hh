@@ -20,9 +20,13 @@ private:
   void parseFormatAndFilename();
 
   BDSGeometry* buildGmad();
+#ifdef USE_LCDD
   BDSGeometry* buildLCDD();
+#endif
   BDSGeometry* buildMokka();
+#ifdef USE_GDML
   BDSGeometry* buildGDML();
+#endif
   BDSGeometry* buildNone();
 };
 #endif

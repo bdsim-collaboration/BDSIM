@@ -1,9 +1,13 @@
 #include "BDSGeometryFactory.hh"
 #include "BDSExecOptions.hh"
 #include "ggmad.hh"
+#ifdef USE_LCDD
 #include "BDSGeometryLCDD.hh"
+#endif
 #include "BDSGeometrySQL.hh"
+#ifdef USE_GDML
 #include "BDSGeometryGDML.hh"
+#endif
 #include "BDSDebug.hh"
 
 
@@ -18,15 +22,19 @@ BDSGeometry* BDSGeometryFactory::buildGeometry(G4String geometry=""){
   if (_gFormat->compare("gmad")) {
     return buildGmad();
   } 
+#ifdef USE_LCDD
   else if (_gFormat->compare("lcdd")) {
     return buildLCDD();
   }
+#endif
   else if (_gFormat->compare("mokka")) {
     return buildMokka();
   }
+#ifdef USE_GDML
   else if (_gFormat->compare("gdml")) {
     return buildGDML();
   }
+#endif
   else if (_gFormat->compare("none")) {
     return buildNone();
   }
@@ -53,17 +61,21 @@ BDSGeometry* BDSGeometryFactory::buildGmad(){
   return new GGmadDriver(_gFile);
 }
 
+#ifdef USE_LCDD
 BDSGeometry* BDSGeometryFactory::buildLCDD(){
   return new BDSGeometryLCDD(_gFile);
 }
+#endif
 
 BDSGeometry* BDSGeometryFactory::buildMokka(){
   return new BDSGeometrySQL(_gFile);
 }
 
+#ifdef USE_GDML
 BDSGeometry* BDSGeometryFactory::buildGDML(){
   return new BDSGeometryGDML(_gFile);
 }
+#endif
 
 BDSGeometry* BDSGeometryFactory::buildNone(){
   return NULL;

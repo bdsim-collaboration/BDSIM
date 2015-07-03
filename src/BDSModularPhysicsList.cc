@@ -148,15 +148,18 @@ void BDSModularPhysicsList::SetCuts()
   G4VUserPhysicsList::SetCuts();
 
   SetCutsWithDefault();   
+  G4double cutPhot=BDSGlobalConstants::Instance()->GetProdCutPhotons();
+  G4double cutElec=BDSGlobalConstants::Instance()->GetProdCutElectrons();
+  G4double cutPosi=BDSGlobalConstants::Instance()->GetProdCutPositrons();
+
+  if(cutPhot>0)
+    SetCutValue(cutPhot,"gamma");
   
-  if(BDSGlobalConstants::Instance()->GetProdCutPhotons()>0)
-    SetCutValue(BDSGlobalConstants::Instance()->GetProdCutPhotons(),G4ProductionCuts::GetIndex("gamma"));
+  if(cutElec>0)
+    SetCutValue(cutElec,"e-");
   
-  if(BDSGlobalConstants::Instance()->GetProdCutElectrons()>0)
-    SetCutValue(BDSGlobalConstants::Instance()->GetProdCutElectrons(),G4ProductionCuts::GetIndex("e-"));
-  
-  if(BDSGlobalConstants::Instance()->GetProdCutPositrons()>0)
-    SetCutValue(BDSGlobalConstants::Instance()->GetProdCutPositrons(),G4ProductionCuts::GetIndex("e+"));
+  if(cutPosi>0)
+    SetCutValue(cutPosi,"e+" );
   
   DumpCutValuesTable(); 
 }  

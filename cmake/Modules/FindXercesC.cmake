@@ -31,11 +31,11 @@ else()
     FIND_LIBRARY(XercesC_LIBRARIES NAMES xerces-c PATH_SUFFIXES xercesc XercesC)
 endif()
 
-if($ENV{VERBOSE})
+#if($ENV{VERBOSE})
     message(STATUS "XercesC_INCLUDE_DIR: ${XercesC_INCLUDE_DIR}")
     message(STATUS "XercesC_LIBRARY_DIR: ${XercesC_LIBRARY_DIR}")
     message(STATUS "XercesC_LIBRARIES: ${XercesC_LIBRARIES}")
-endif()
+#endif()
 
 # final checks:
 IF (XercesC_INCLUDE_DIR AND XercesC_LIBRARIES)
