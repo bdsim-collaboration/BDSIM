@@ -389,6 +389,14 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddMaterial(materials["dy061"],fractionmass=0.004976);
   materials[name] = tmpMaterial;
 
+  //Perspex.
+  tmpMaterial = new G4Material
+    (name="perspex", density = 1.18*CLHEP::g/CLHEP::cm3, 3, kStateSolid, 300*CLHEP::kelvin);
+  tmpMaterial->AddMaterial(materials["G4_C"],fractionmass=0.59984);
+  tmpMaterial->AddMaterial(materials["G4_O"],fractionmass=0.31961);
+  tmpMaterial->AddMaterial(materials["G4_H"],fractionmass=0.08055);
+  materials[name] = tmpMaterial;
+
   //Invar.Temperature 2 kelvin. LDeacon 6th Feburary 2006
   tmpMaterial = new G4Material
     (name="invar"         , density=  8.1  *CLHEP::kg/CLHEP::m3, 2, kStateSolid, 2*CLHEP::kelvin);
@@ -1066,6 +1074,7 @@ void BDSMaterials::ListMaterials(){
   G4cout << "Aluminium" << G4endl;
   G4cout << "AralditeF" << G4endl;
   G4cout << "Beryllium" << G4endl;
+  G4cout << "BN5000" << G4endl;
   G4cout << "CarbonMonoxide" << G4endl;
   G4cout << "CarbonSteel" << G4endl;
   G4cout << "Concrete" << G4endl;
@@ -1073,7 +1082,6 @@ void BDSMaterials::ListMaterials(){
   G4cout << "Copper" << G4endl;
   G4cout << "Graphite" << G4endl;
   G4cout << "GraphiteFoam" << G4endl;
-  G4cout << "BN5000" << G4endl;
   G4cout << "Invar" << G4endl;
   G4cout << "Iron" << G4endl;
   G4cout << "LaserVac" << G4endl;
@@ -1082,6 +1090,7 @@ void BDSMaterials::ListMaterials(){
   G4cout << "LiquidHelium" << G4endl;
   G4cout << "NbTi" << G4endl;
   G4cout << "Niobium" << G4endl;
+  G4cout << "Perspex" << G4endl;
   G4cout << "Silicon" << G4endl;
   G4cout << "SmCo" << G4endl;
   G4cout << "Soil" << G4endl;
