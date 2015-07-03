@@ -148,7 +148,10 @@ void BDSGeometryComponent::RegisterPhysicalVolumes(std::vector<G4VPhysicalVolume
 void BDSGeometryComponent::RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << __METHOD_NAME__;
+  if (sensitiveVolume)
+    {G4cout << sensitiveVolume->GetName();}
+  G4cout << G4endl;
 #endif
   // check the logical volume to which it pertains is registered in this component
   // otherwise, register it

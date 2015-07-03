@@ -75,11 +75,14 @@ BDSComponentFactory::BDSComponentFactory(){
 BDSComponentFactory::~BDSComponentFactory()
 {;}
 
-void BDSComponentFactory::RegisterComponent(BDSAcceleratorComponent* element)
+void BDSComponentFactory::RegisterComponent(BDSAcceleratorComponent* accComponent)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << accComponent->GetName() << G4endl;
+#endif
   // note no checking as it should be registered in BDSComponentFactory::createComponent(Element& elementIn)
   // unless it didn't exist before - so check already done
-  componentRegistry[element->GetName()] = element;
+  componentRegistry[accComponent->GetName()] = accComponent;
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::GetAlreadyConstructedComponent(G4String name)
@@ -98,7 +101,7 @@ BDSAcceleratorComponent* BDSComponentFactory::GetAlreadyConstructedComponent(G4S
   else
     {
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "component already exists (by name) - return address of component" << G4endl;
+      G4cout << __METHOD_NAME__ << "component already exists (by name) - returning address of component" << G4endl;
 #endif
       return componentRegistry[name];
     }
