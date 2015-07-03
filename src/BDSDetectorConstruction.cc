@@ -41,6 +41,7 @@
 #include <iterator>
 #include <list>
 #include <map>
+#include <sstream>
 #include <vector>
 
 #ifdef BDSDEBUG
@@ -109,13 +110,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("e+"));
   gasRegion->SetProductionCuts(theGasProductionCuts);
   
-  if (verbose || debug) G4cout << "-->starting BDS construction \n"<<G4endl;
-  //construct bds
-  return ConstructBDS(beamline_list);
-}
-
-G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(ElementList& beamline_list)
-{  
+  if (verbose || debug) G4cout << __METHOD_NAME__ << "starting accelerator geometry construction\n" << G4endl;
+  
   // prepare materials for this run
   BDSMaterials::Instance()->PrepareRequiredMaterials();
   
@@ -418,17 +414,31 @@ void BDSDetectorConstruction::ComponentPlacement()
       G4ThreeVector     rp = (*it)->GetReferencePositionMiddle();
       
 #ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << "placing mass geometry" << G4endl;
-	  G4cout << "position: " << p << ", rotation: " << *r << G4endl;
+      G4cout << __METHOD_NAME__ << "placing mass geometry" << G4endl;
+      G4cout << "position: " << p << ", rotation: " << *r << G4endl;
 #endif
-      G4PVPlacement* elementPV = new G4PVPlacement(r,                // its rotation
-						   p,                // its position
-						   name + "_pv",     // its name
-						   elementLV,        // its logical volume
-						   physiWorld,       // its mother  volume
-						   false,	       // no boolean operation
-						   nCopy,            // copy number
-						   checkOverlaps);   //overlap checking
+
+      // prepare the placement name - if it's a duplicate placement, suffix the number of placement
+      // to the base name. Increment the number afterwards.
+      G4String placementName;
+      if (thecurrentitem->GetNTimesPlaced() < 1)
+	{placementName = name;}
+      else
+	{
+	  std::stringstream namestream;
+	  namestream << name << "_" << thecurrentitem->GetNTimesPlaced();
+	  placementName = namestream.str();
+	}
+      thecurrentitem->IncrementNTimesPlaced();
+      
+      G4PVPlacement* elementPV = new G4PVPlacement(r,                     // its rotation
+						   p,                     // its position
+						   placementName + "_pv", // its name
+						   elementLV,             // its logical volume
+						   physiWorld,            // its mother  volume
+						   false,	          // no boolean operation
+						   nCopy,                 // copy number
+						   checkOverlaps);        //overlap checking
 
       // place read out volume in read out world - if this component has one
       G4PVPlacement* readOutPV = NULL;
@@ -440,14 +450,14 @@ void BDSDetectorConstruction::ComponentPlacement()
 #endif
 	  G4String readOutPVName = name + "_ro_pv";
 	  // don't need the returned pointer from new for anything - purely instantiating registers it with g4
-	  readOutPV = new G4PVPlacement(rr,              // its rotation
-					rp,              // its position
-					readOutPVName,   // its name
-					readOutLV,       // its logical volume
-					readOutWorldPV,  // its mother  volume
-					false,	         // no boolean operation
-					nCopy,           // copy number
-					checkOverlaps);  //overlap checking
+	  readOutPV = new G4PVPlacement(rr,                       // its rotation
+					rp,                       // its position
+					placementName + "_ro_pv", // its name
+					readOutLV,                // its logical volume
+					readOutWorldPV,           // its mother  volume
+					false,	                  // no boolean operation
+					nCopy,                    // copy number
+					checkOverlaps);           //overlap checking
 
 	  // Register the spos and other info of this elemnet.
 	  // Used by energy counter sd to get spos of that logical volume at histogram time.

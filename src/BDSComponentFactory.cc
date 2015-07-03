@@ -107,14 +107,15 @@ BDSAcceleratorComponent* BDSComponentFactory::GetAlreadyConstructedComponent(G4S
     }
 } 
 
-BDSAcceleratorComponent* BDSComponentFactory::createComponent(Element& elementIn){
+BDSAcceleratorComponent* BDSComponentFactory::createComponent(Element& elementIn)
+{
   _element = elementIn;
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "element name: \"" << _element.name << "\"" << G4endl;  
+  G4cout << __METHOD_NAME__ << "named: \"" << _element.name << "\"" << G4endl;  
 #endif
   // check if the component already exists and return that
-  //BDSAcceleratorComponent* element = GetAlreadyConstructedComponent(elementIn.name);
-  BDSAcceleratorComponent* element = NULL;
+  BDSAcceleratorComponent* element = GetAlreadyConstructedComponent(_element.name);
+  //BDSAcceleratorComponent* element = NULL;
   if (element)
     {
 #ifdef BDSDEBUG
