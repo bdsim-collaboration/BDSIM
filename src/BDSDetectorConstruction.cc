@@ -56,12 +56,9 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
   solidWorld(NULL),logicWorld(NULL),physiWorld(NULL),
   magField(NULL),BDSUserLimits(NULL),BDSSensitiveDetector(NULL),
-  theHitMaker(NULL),theParticleBounds(NULL),_globalRotation(NULL)
+  theHitMaker(NULL),theParticleBounds(NULL)
 {  
   verbose    = BDSExecOptions::Instance()->GetVerbose();
-
-  //initialize global rotation matrix
-  _globalRotation = new G4RotationMatrix();
 
   G4bool gflash = BDSExecOptions::Instance()->GetGFlash();
   if (gflash) {
@@ -158,8 +155,6 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
 { 
   delete precisionRegion;
   gFlashRegion.clear();
-
-  delete _globalRotation;
 
   delete theHitMaker;
   delete theParticleBounds;
