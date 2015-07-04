@@ -20,6 +20,7 @@
 #include "G4Box.hh"
 #include "G4Colour.hh"
 #include "G4Electron.hh"
+#include "G4GeometryManager.hh"
 #include "G4GeometrySampler.hh"
 #include "G4LogicalVolume.hh"
 #include "G4MagneticField.hh"
@@ -53,48 +54,13 @@ bool debug = false;
 typedef std::vector<G4LogicalVolume*>::iterator BDSLVIterator;
 
 BDSDetectorConstruction::BDSDetectorConstruction():
-  itsGeometrySampler(NULL),precisionRegion(NULL),gasRegion(NULL),
-  solidWorld(NULL),logicWorld(NULL),physiWorld(NULL),
-  magField(NULL),BDSUserLimits(NULL),BDSSensitiveDetector(NULL),
+  precisionRegion(NULL),gasRegion(NULL),
+  magField(NULL),
   theHitMaker(NULL),theParticleBounds(NULL)
 {  
-  verbose    = BDSExecOptions::Instance()->GetVerbose();
-
-  G4bool gflash = BDSExecOptions::Instance()->GetGFlash();
-  if (gflash) {
-    G4double gflashemax = BDSExecOptions::Instance()->GetGFlashEMax();
-    G4double gflashemin = BDSExecOptions::Instance()->GetGFlashEMin();
-    // GFlashStuff
-    theParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
-    theParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*CLHEP::GeV);
-    theParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*CLHEP::GeV);
-    theParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-    
-    theParticleBounds->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),gflashemax*CLHEP::GeV);
-    theParticleBounds->SetMinEneToParametrise(*G4Positron::PositronDefinition(),gflashemin*CLHEP::GeV);
-    theParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-    
-    // theParticleBoundsVac  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
-    // theParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*CLHEP::GeV);
-    // theParticleBoundsVac->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),0*CLHEP::GeV);
-
-#ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "theParticleBounds - min E - electron: " 
-	   << theParticleBounds->GetMinEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< " GeV" << G4endl;
-    G4cout << __METHOD_NAME__ << "theParticleBounds - max E - electron: " 
-	   << theParticleBounds->GetMaxEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
-    G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - electron: " 
-	   << theParticleBounds->GetEneToKill(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
-    G4cout << __METHOD_NAME__ << "theParticleBounds - min E - positron: " 
-	   << theParticleBounds->GetMinEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
-    G4cout << __METHOD_NAME__ << "theParticleBounds - max E - positron: " 
-	   << theParticleBounds->GetMaxEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
-    G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - positron: " 
-	   << theParticleBounds->GetEneToKill(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
-#endif
-
-    theHitMaker          = new GFlashHitMaker();                    // Makes the EnergySpots 
-  }
+  verbose       = BDSExecOptions::Instance()->GetVerbose();
+  checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
+  InitialiseGFlash();
 }
 
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
@@ -139,7 +105,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 #ifdef BDSDEBUG
   G4cout << *BDSPhysicalVolumeInfoRegistry::Instance();
 #endif
-  return physiWorld;
+  return worldPV;
 }
  
 void BDSDetectorConstruction::SetMagField(const G4double fieldValue)
@@ -242,23 +208,23 @@ void BDSDetectorConstruction::BuildWorld()
 #endif
   worldR += G4ThreeVector(5000,5000,5000); //add 5m extra in every dimension
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "with 5m margin becomes in all dimensions: " << worldR << G4endl;
+  G4cout << __METHOD_NAME__ << "with 5m margin, it becomes in all dimensions: " << worldR << G4endl;
 #endif
   
-  G4String worldName="World";
-  solidWorld = new G4Box(worldName, worldR.x(), worldR.y(), worldR.z());
+  G4String worldName   = "World";
+  G4VSolid* worldSolid = new G4Box(worldName + "_solid", worldR.x(), worldR.y(), worldR.z());
 
   G4String    emptyMaterialName = BDSGlobalConstants::Instance()->GetEmptyMaterial();
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(emptyMaterialName);
-  logicWorld = new G4LogicalVolume(solidWorld,	       // solid
-				   emptyMaterial,      // material
-				   worldName);	       // name
-
+  G4Material* emptyMaterial     = BDSMaterials::Instance()->GetMaterial(emptyMaterialName);
+  G4LogicalVolume* worldLV      = new G4LogicalVolume(worldSolid,              // solid
+						      emptyMaterial,           // material
+						      worldName + "_lv");      // name
+  
   // read out geometry logical volume
   // note g4logicalvolume has a private copy constructor so we have to repeat everything here annoyingly
-  G4LogicalVolume* readOutWorldLV = new G4LogicalVolume(solidWorld,    // solid
-							emptyMaterial, // material
-							worldName);    // name
+  G4LogicalVolume* readOutWorldLV = new G4LogicalVolume(worldSolid,            // solid
+							emptyMaterial,         // material
+							worldName + "_ro_lv"); // name
   
   // visual attributes
   if (BDSExecOptions::Instance()->GetVisDebug())
@@ -266,12 +232,12 @@ void BDSDetectorConstruction::BuildWorld()
       // copy the debug vis attributes but change to force wireframe
       G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
       debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
-      logicWorld->SetVisAttributes(debugWorldVis);
+      worldLV->SetVisAttributes(debugWorldVis);
       readOutWorldLV->SetVisAttributes(debugWorldVis);
     }
   else
     {
-      logicWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+      worldLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
       readOutWorldLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
     }
 	
@@ -279,7 +245,7 @@ void BDSDetectorConstruction::BuildWorld()
 #ifndef NOUSERLIMITS
   G4UserLimits* worldUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
   worldUserLimits->SetMaxAllowedStep(worldR.z()*0.5);
-  logicWorld->SetUserLimits(worldUserLimits);
+  worldLV->SetUserLimits(worldUserLimits);
   readOutWorldLV->SetUserLimits(worldUserLimits);
 #endif
 
@@ -304,25 +270,28 @@ void BDSDetectorConstruction::BuildWorld()
 #endif
 
   // place the world
-  physiWorld = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
-  				 (G4ThreeVector)0,     // at (0,0,0)
-                                 logicWorld,	// its logical volume
-                                 worldName,	// its name
-                                 NULL,		// its mother  volume
-                                 false,		// no boolean operation
-                                 0,             // copy number
-				 BDSGlobalConstants::Instance()->GetCheckOverlaps());// overlap checking
+  worldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
+			      (G4ThreeVector)0,     // at (0,0,0)
+			      worldLV,	            // its logical volume
+			      worldName + "_pv",    // its name
+			      NULL,		    // its mother  volume
+			      false,		    // no boolean operation
+			      0,                    // copy number
+			      checkOverlaps);       // overlap checking
 
   // create the read out geometry world by creating another placement of the world logical volume
   G4PVPlacement* readOutWorldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
 						    (G4ThreeVector)0,     // at (0,0,0)
 						    readOutWorldLV,	  // logical volume
-						    "readoutWorld",       // name
+						    "readoutWorld_pv",    // name
 						    NULL,		  // mother  volume
 						    false,		  // no boolean operation
 						    0,                    // copy number
-						    BDSGlobalConstants::Instance()->GetCheckOverlaps());// overlap checking
+						    checkOverlaps);       // overlap checking
 
+  // Register the lv & pvs to the our holder class for the model
+  BDSAcceleratorModel::Instance()->RegisterWorldPV(worldPV);
+  
   BDSAcceleratorModel::Instance()->RegisterReadOutWorldPV(readOutWorldPV);
   BDSAcceleratorModel::Instance()->RegisterReadOutWorldLV(readOutWorldLV);
 }
@@ -341,7 +310,6 @@ void BDSDetectorConstruction::ComponentPlacement()
   // time in the loop for component placement
   G4VPhysicalVolume* readOutWorldPV       = BDSAcceleratorModel::Instance()->GetReadOutWorldPV();
   G4VSensitiveDetector* energyCounterSDRO = BDSSDManager::Instance()->GetEnergyCounterOnAxisSDRO();
-  G4bool checkOverlaps                    = BDSGlobalConstants::Instance()->GetCheckOverlaps();
 
   BDSBeamlineIterator it = beamline->begin();
   for(; it != beamline->end(); ++it)
@@ -433,7 +401,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 						   p,                     // its position
 						   placementName + "_pv", // its name
 						   elementLV,             // its logical volume
-						   physiWorld,            // its mother  volume
+						   worldPV,               // its mother  volume
 						   false,	          // no boolean operation
 						   nCopy,                 // copy number
 						   checkOverlaps);        //overlap checking
@@ -485,13 +453,6 @@ void BDSDetectorConstruction::ComponentPlacement()
 	}
       */
       
-      /*
-      //this vector of physical volumes isn't used anywhere...
-      fPhysicalVolumeVector.push_back(PhysiComponentPlace);
-      std::vector<G4VPhysicalVolume*> MultiplePhysicalVolumes = thecurrentitem->GetMultiplePhysicalVolumes();
-      for (unsigned int i=0;i<MultiplePhysicalVolumes.size(); i++)
-	{fPhysicalVolumeVector.push_back(MultiplePhysicalVolumes.at(i));}
-      */
       //this does nothing by default - only used by BDSElement
       //looks like it could just be done in its construction rather than
       //in BDSDetectorConstruction
@@ -499,6 +460,44 @@ void BDSDetectorConstruction::ComponentPlacement()
     }
   // set precision back
   G4cout.precision(G4precision);
+}
+
+void BDSDetectorConstruction::InitialiseGFlash()
+{
+  G4bool gflash = BDSExecOptions::Instance()->GetGFlash();
+  if (gflash)
+    {
+      G4double gflashemax = BDSExecOptions::Instance()->GetGFlashEMax();
+      G4double gflashemin = BDSExecOptions::Instance()->GetGFlashEMin();
+      theParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
+      theParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*CLHEP::GeV);
+      theParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*CLHEP::GeV);
+      theParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+      
+      theParticleBounds->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),gflashemax*CLHEP::GeV);
+      theParticleBounds->SetMinEneToParametrise(*G4Positron::PositronDefinition(),gflashemin*CLHEP::GeV);
+      theParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+      
+      // theParticleBoundsVac  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
+      // theParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*CLHEP::GeV);
+      // theParticleBoundsVac->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),0*CLHEP::GeV);
+
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "theParticleBounds - min E - electron: " 
+	     << theParticleBounds->GetMinEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< " GeV" << G4endl;
+      G4cout << __METHOD_NAME__ << "theParticleBounds - max E - electron: " 
+	     << theParticleBounds->GetMaxEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
+      G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - electron: " 
+	     << theParticleBounds->GetEneToKill(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
+      G4cout << __METHOD_NAME__ << "theParticleBounds - min E - positron: " 
+	     << theParticleBounds->GetMinEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
+      G4cout << __METHOD_NAME__ << "theParticleBounds - max E - positron: " 
+	     << theParticleBounds->GetMaxEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
+      G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - positron: " 
+	     << theParticleBounds->GetEneToKill(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
+#endif
+      theHitMaker = new GFlashHitMaker();                    // Makes the EnergySpots 
+    }
 }
 
 void BDSDetectorConstruction::SetGFlashOnVolume(G4LogicalVolume* volume)
