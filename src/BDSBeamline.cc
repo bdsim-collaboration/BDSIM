@@ -90,6 +90,14 @@ void BDSBeamline::PrintAllComponents(std::ostream& out) const
     {out << *(it);}
 }
 
+void BDSBeamline::PrintMemoryConsumption() const
+{
+  G4cout << __METHOD_NAME__ << "container size: " << sizeof(beamline) << G4endl;
+  G4cout << __METHOD_NAME__ << "beamline element cumulative size: " << sizeof(BDSBeamlineElement) * beamline.size() << G4endl;
+  G4cout << __METHOD_NAME__ << "full usage including components:  " << (sizeof(BDSBeamlineElement) + sizeof(BDSAcceleratorComponent)) * beamline.size() << G4endl;
+
+}
+
 std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
 {
   out << "BDSBeamline with " << bl.size() << " elements"<< G4endl

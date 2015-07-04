@@ -138,12 +138,12 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   // feedback
 #ifdef BDSDEBUG
   G4cout << *BDSPhysicalVolumeInfoRegistry::Instance();
-#endif  
+#endif
   return physiWorld;
 }
  
-void BDSDetectorConstruction::SetMagField(const G4double fieldValue){
-  
+void BDSDetectorConstruction::SetMagField(const G4double fieldValue)
+{  
   G4FieldManager* fieldMgr =
     G4TransportationManager::GetTransportationManager()->GetFieldManager();
   magField = new G4UniformMagField(G4ThreeVector(0.,fieldValue,0.));  
@@ -218,6 +218,9 @@ void BDSDetectorConstruction::BuildBeamline()
       G4cout << __METHOD_NAME__ << "beamline empty or no line selected! exiting" << G4endl;
       exit(1);
     }
+#ifdef BDSDEBUG
+  beamline->PrintMemoryConsumption();
+#endif
   // register the beamline in the holder class for the full model
   BDSAcceleratorModel::Instance()->RegisterFlatBeamline(beamline);
 }
