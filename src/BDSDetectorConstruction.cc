@@ -90,7 +90,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   // placement procedure
   ComponentPlacement();
 
-  // free the parser list
+  // free the parser list - an extern
   beamline_list.erase();
   
   if(verbose || debug) G4cout << __METHOD_NAME__ << "detector Construction done"<<G4endl; 
@@ -107,21 +107,13 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 #endif
   return worldPV;
 }
- 
-void BDSDetectorConstruction::SetMagField(const G4double fieldValue)
-{  
-  G4FieldManager* fieldMgr =
-    G4TransportationManager::GetTransportationManager()->GetFieldManager();
-  magField = new G4UniformMagField(G4ThreeVector(0.,fieldValue,0.));  
-  fieldMgr->SetDetectorField(magField);
-  fieldMgr->CreateChordFinder(magField);
-}
 
 BDSDetectorConstruction::~BDSDetectorConstruction()
 { 
   delete precisionRegion;
-  gFlashRegion.clear();
 
+  // glash stuff
+  gFlashRegion.clear();
   delete theHitMaker;
   delete theParticleBounds;
 }
