@@ -9,15 +9,15 @@
 
 #include "BDSDebug.hh"
 
-BDSOutputBase* BDSOutputFactory::createOutput(BDSOutputFormat format)
+BDSOutputBase* BDSOutputFactory::CreateOutput(BDSOutputFormat format)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "output format = " << format << G4endl;
 #endif
-  if (format == BDSOutputFormat::_NONE)
+  if (format == BDSOutputFormat::none)
     {return new BDSOutputNone();}
   
-  if (format == BDSOutputFormat::_COMBINED)
+  if (format == BDSOutputFormat::combined)
     {
       BDSOutputVector* combinedOutput = new BDSOutputVector();
       combinedOutput->Add(new BDSOutputASCII());
@@ -27,10 +27,10 @@ BDSOutputBase* BDSOutputFactory::createOutput(BDSOutputFormat format)
       return combinedOutput;
     }
   
-  else if (format == BDSOutputFormat::_ASCII)
+  else if (format == BDSOutputFormat::ascii)
     {return new BDSOutputASCII();}
   
-  else if (format == BDSOutputFormat::_ROOT)
+  else if (format == BDSOutputFormat::root)
     {
 #ifdef USE_ROOT
     return new BDSOutputROOT();
@@ -41,5 +41,5 @@ BDSOutputBase* BDSOutputFactory::createOutput(BDSOutputFormat format)
 #endif
     }
   else
-    {return NULL;}
+    {return new BDSOutputNone();} // absolute default - should not reach this
 }

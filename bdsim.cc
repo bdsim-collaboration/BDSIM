@@ -254,7 +254,7 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
 #endif
-  bdsOutput = BDSOutputFactory::createOutput(execOptions->GetOutputFormat());
+  bdsOutput = BDSOutputFactory::CreateOutput(execOptions->GetOutputFormat());
   G4cout.precision(10);
 
   // catch aborts to close output stream/file. perhaps not all are needed.

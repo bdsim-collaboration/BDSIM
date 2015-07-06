@@ -15,7 +15,7 @@ class BDSOutputFactory {
 
 public:
   /// factory method
-  static BDSOutputBase* createOutput(BDSOutputFormat format);
+  static BDSOutputBase* CreateOutput(BDSOutputFormat format);
 };
 
 #endif
