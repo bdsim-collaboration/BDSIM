@@ -118,14 +118,14 @@ void BDSModularPhysicsList::ConfigurePhysics(){
 void BDSModularPhysicsList::ConfigureOptical(){
   if (!_opticalPhysics) return;
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  _opticalPhysics->Configure(kCerenkov,  globals->GetTurnOnCerenkov());///< Cerenkov process index                                   
-  _opticalPhysics->Configure(kScintillation, true);///< Scintillation process index                              
-  _opticalPhysics->Configure(kAbsorption, globals->GetTurnOnOpticalAbsorption());///< Absorption process index                                 
-  _opticalPhysics->Configure(kRayleigh, globals->GetTurnOnRayleighScattering());///< Rayleigh scattering process index                        
-  _opticalPhysics->Configure(kMieHG, globals->GetTurnOnMieScattering());///< Mie scattering process index                             
-  _opticalPhysics->Configure(kBoundary, globals->GetTurnOnOpticalSurface());///< Boundary process index                                   
-  _opticalPhysics->Configure(kWLS, true);///< Wave Length Shifting process index                       
-    //    _opticalPhysics->Configure(kNoProcess,      globals->GetTurnOn< Number of processes, no selected process
+  _opticalPhysics->Configure(kCerenkov,      globals->GetTurnOnCerenkov());           ///< Cerenkov process index                                   
+  _opticalPhysics->Configure(kScintillation, true);                                   ///< Scintillation process index                              
+  _opticalPhysics->Configure(kAbsorption,    globals->GetTurnOnOpticalAbsorption());  ///< Absorption process index                                 
+  _opticalPhysics->Configure(kRayleigh,      globals->GetTurnOnRayleighScattering()); ///< Rayleigh scattering process index                        
+  _opticalPhysics->Configure(kMieHG,         globals->GetTurnOnMieScattering());      ///< Mie scattering process index                             
+  _opticalPhysics->Configure(kBoundary,      globals->GetTurnOnOpticalSurface());     ///< Boundary process index                                   
+  _opticalPhysics->Configure(kWLS,           true);                                    ///< Wave Length Shifting process index                       
+// _opticalPhysics->Configure(kNoProcess,      globals->GetTurnOn< Number of processes, no selected process
   _opticalPhysics->SetScintillationYieldFactor(globals->GetScintYieldFactor());
 }
 
@@ -172,17 +172,17 @@ void BDSModularPhysicsList::SetParticleDefinition(){
     }
   
   // set kinetic beam parameters other than total energy
-  BDSGlobalConstants::Instance()->SetBeamMomentum( sqrt(pow(BDSGlobalConstants::Instance()->GetBeamTotalEnergy(),2)-
-							pow(BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass(),2)) );
+  BDSGlobalConstants::Instance()->SetBeamMomentum(sqrt(pow(BDSGlobalConstants::Instance()->GetBeamTotalEnergy(),2)-
+						       pow(BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass(),2)) );
   
   BDSGlobalConstants::Instance()->SetBeamKineticEnergy(BDSGlobalConstants::Instance()->GetBeamTotalEnergy() - 
 						       BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() );
   
-  BDSGlobalConstants::Instance()->SetParticleMomentum( sqrt(pow(BDSGlobalConstants::Instance()->GetParticleTotalEnergy(),2)-
-                                    pow(BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass(),2)) );
+  BDSGlobalConstants::Instance()->SetParticleMomentum(sqrt(pow(BDSGlobalConstants::Instance()->GetParticleTotalEnergy(),2)-
+							   pow(BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass(),2)) );
   
   BDSGlobalConstants::Instance()->SetParticleKineticEnergy(BDSGlobalConstants::Instance()->GetParticleTotalEnergy() - 
-                                   BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() );
+							   BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() );
   
   G4cout << __METHOD_NAME__ << "Beam properties:"<<G4endl;
   G4cout << __METHOD_NAME__ << "Particle : " 

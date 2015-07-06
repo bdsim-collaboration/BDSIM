@@ -58,6 +58,7 @@
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
 #include "BDSPhysicsList.hh"
+#include "BDSModularPhysicsList.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRunAction.hh"
 #include "BDSSteppingAction.hh"
@@ -140,9 +141,14 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
-
-  BDSPhysicsList* PhysList=new BDSPhysicsList;
-  runManager->SetUserInitialization(PhysList);
+  if(options.modularPhysicsListsOn) {
+    BDSModularPhysicsList *physList = new BDSModularPhysicsList;
+    runManager->SetUserInitialization(physList);
+  }
+  else { 
+    BDSPhysicsList        *physList=new BDSPhysicsList;  
+    runManager->SetUserInitialization(physList);
+  }
   
 #ifdef BDSDEBUG 
   G4cout<< __FUNCTION__ << "> User init phys list"<<G4endl;
