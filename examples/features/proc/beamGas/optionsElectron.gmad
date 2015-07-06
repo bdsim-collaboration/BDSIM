@@ -15,6 +15,7 @@ option, beampipeRadius = 10 * cm,
         thresholdCutPhotons = 200 * MeV;
 
 
-option,physicsList="em_standard";
+option,modularPhysicsListsOn=1;
+option,physicsList="em";
 
 
