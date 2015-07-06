@@ -112,7 +112,6 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
   if (!BDS::IsFinite(chordLength)) return NULL;
 
   G4double roRadius      = BDSGlobalConstants::Instance()->GetSamplerDiameter()*0.5;
-  G4Material* roMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
   G4VSolid* roSolid      = NULL;
   if (!BDS::IsFinite(angle))
     {
@@ -145,7 +144,7 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
   // note material not strictly necessary in geant4 > v10, but required for
   // v9 even though not used and doesn't affect simulation - leave for compatability
   G4LogicalVolume* readOutLV =  new G4LogicalVolume(roSolid,          // solid
-						    roMaterial,       // material
+						    emptyMaterial,    // material
 						    name + "_ro_lv"); // name
 
   return readOutLV;
