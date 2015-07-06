@@ -48,7 +48,7 @@
 #include "G4GeometryTolerance.hh"
 #include "G4TrajectoryDrawByCharge.hh"
 
-#include "BDSBeamline.hh"
+#include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSBunch.hh"
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
@@ -247,6 +247,7 @@ int main(int argc,char** argv) {
       delete BDSMaterials::Instance();
       delete runManager;
       delete bdsBunch;
+      delete BDSAcceleratorComponentRegistry::Instance();
       return 0;
     }
   
@@ -400,12 +401,12 @@ int main(int argc,char** argv) {
   delete execOptions;
   delete globalConstants;
   delete BDSMaterials::Instance();
+  delete BDSAcceleratorComponentRegistry::Instance();
 
 #ifdef BDSDEBUG 
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif
-  delete runManager; 
-
+  delete runManager;
   delete bdsBunch;
 
   G4cout << __FUNCTION__ << "> End of Run, Thank you for using BDSIM!" << G4endl;
