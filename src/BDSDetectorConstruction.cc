@@ -78,9 +78,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   // prepare materials for this run
   BDSMaterials::Instance()->PrepareRequiredMaterials();
   
-  // set global magnetic field first
-  SetMagField(0.0); // necessary to set a global field; so choose zero
-  
   // construct the component list
   BuildBeamline();
 
