@@ -172,12 +172,13 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   // if not the first element in the beamline, copy the rotation matrix (cumulative along line)
   // from end of last component, else use initial rotation matrix (no copy to prevent memory leak)
   G4RotationMatrix* referenceRotationStart;
-  if (empty()) {
-    referenceRotationStart = previousReferenceRotationEnd;
-  } else {
-    previousReferenceRotationEnd = back()->GetReferenceRotationEnd();
-    referenceRotationStart  = new G4RotationMatrix(*previousReferenceRotationEnd);
-  }
+  if (empty())
+    {referenceRotationStart = previousReferenceRotationEnd;}
+  else
+    {
+      previousReferenceRotationEnd = back()->GetReferenceRotationEnd();
+      referenceRotationStart  = new G4RotationMatrix(*previousReferenceRotationEnd);
+    }
 
   G4RotationMatrix* referenceRotationMiddle = new G4RotationMatrix(*referenceRotationStart);
   G4RotationMatrix* referenceRotationEnd    = new G4RotationMatrix(*referenceRotationStart);
@@ -245,7 +246,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
     {
       // note, don't apply tilt if the object has finite angle as this will cause
       // geometry overlaps
-      if (hasFiniteAngle)
+      if (hasFiniteAngle && hasFiniteTilt)
 	{
 	  G4String name = component->GetName();
 	  G4cout << __METHOD_NAME__ << "WARNING - element has tilt, but this will cause geometry"
