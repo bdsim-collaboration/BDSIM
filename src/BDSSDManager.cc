@@ -25,7 +25,7 @@ BDSSDManager::~BDSSDManager()
 BDSSDManager::BDSSDManager()
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " Constructor - creating all necessary Sensitive Detectors" << G4endl;
+  G4cout << __METHOD_NAME__ << "Constructor - creating all necessary Sensitive Detectors" << G4endl;
 #endif
   //instantiate all necessary SD classes
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();

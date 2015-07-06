@@ -12,9 +12,7 @@ BDSPhysicalVolumeInfoRegistry* BDSPhysicalVolumeInfoRegistry::_instance = 0;
 BDSPhysicalVolumeInfoRegistry* BDSPhysicalVolumeInfoRegistry::Instance()
 {
   if (_instance == 0)
-    {
-      _instance = new BDSPhysicalVolumeInfoRegistry();
-    }
+    {_instance = new BDSPhysicalVolumeInfoRegistry();}
   return _instance;
 }
 
