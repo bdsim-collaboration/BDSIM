@@ -78,9 +78,8 @@ BDSBeamline::~BDSBeamline()
   for (; it != end(); ++it)
     {delete (*it);}
   // special case, if empty then previousReferenceRotationEnd is not used in the first element
-  if (size()==0) {
-    delete previousReferenceRotationEnd;
-  }
+  if (size()==0)
+    {delete previousReferenceRotationEnd;}
 }
 
 void BDSBeamline::PrintAllComponents(std::ostream& out) const
@@ -95,7 +94,6 @@ void BDSBeamline::PrintMemoryConsumption() const
   G4cout << __METHOD_NAME__ << "container size: " << sizeof(beamline) << G4endl;
   G4cout << __METHOD_NAME__ << "beamline element cumulative size: " << sizeof(BDSBeamlineElement) * beamline.size() << G4endl;
   G4cout << __METHOD_NAME__ << "full usage including components:  " << (sizeof(BDSBeamlineElement) + sizeof(BDSAcceleratorComponent)) * beamline.size() << G4endl;
-
 }
 
 std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
@@ -119,7 +117,7 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset
     }
   else
     {AddSingleComponent(component, tiltOffset);}
-  // free memory
+  // free memory - as once the rotations are calculated, this is no longer needed
   delete tiltOffset;
 }
 

@@ -35,7 +35,6 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 				       G4ThreeVector            xAxisReferenceEndIn,
 				       G4ThreeVector            yAxisReferenceEndIn,
 				       G4ThreeVector            zAxisReferenceEndIn):
-  BDSGeometryComponent(*((BDSGeometryComponent*)componentIn)),
   component(componentIn),
   positionStart(positionStartIn), positionMiddle(positionMiddleIn), positionEnd(positionEndIn),
   rotationStart(rotationStartIn), rotationMiddle(rotationMiddleIn), rotationEnd(rotationEndIn),
@@ -68,7 +67,6 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 
 BDSBeamlineElement::~BDSBeamlineElement()
 {
-  delete component;
   delete rotationStart;
   delete rotationMiddle;
   delete rotationEnd;

@@ -45,7 +45,6 @@ BDSGeometryComponent::BDSGeometryComponent(BDSGeometryComponent& component):
 BDSGeometryComponent::~BDSGeometryComponent()
 {
   delete containerSolid;
-  delete containerLogicalVolume;
 
   std::vector<G4LogicalVolume*>::iterator itLV = allLogicalVolumes.begin();
   for (; itLV != allLogicalVolumes.end(); ++itLV)

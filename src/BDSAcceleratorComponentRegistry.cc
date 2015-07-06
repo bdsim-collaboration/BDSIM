@@ -97,9 +97,7 @@ BDSAcceleratorComponent* BDSAcceleratorComponentRegistry::GetComponent(G4String 
     }
   else
     {return registry[name];}
-}
-
-  
+}  
 
 std::ostream& operator<< (std::ostream &out, BDSAcceleratorComponentRegistry const &r)
 {

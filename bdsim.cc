@@ -48,13 +48,12 @@
 #include "G4GeometryTolerance.hh"
 #include "G4TrajectoryDrawByCharge.hh"
 
-#include "BDSAcceleratorComponentRegistry.hh"
+#include "BDSAcceleratorModel.hh"
 #include "BDSBunch.hh"
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
 #include "BDSGeometryInterface.hh"
 #include "BDSGeometryWriter.hh"
-#include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
@@ -78,8 +77,8 @@ BDSOutputBase* bdsOutput=NULL;         // output interface
 
 extern Options options;
 
-int main(int argc,char** argv) {
-
+int main(int argc,char** argv)
+{
   // print header
   G4cout<<"bdsim : version 0.7.develop"<<G4endl;
   G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
@@ -241,13 +240,12 @@ int main(int argc,char** argv) {
 						    execOptions->GetExportFileName());
       // clean up before exiting
       G4GeometryManager::GetInstance()->OpenGeometry();
-      delete BDSPhysicalVolumeInfoRegistry::Instance();
+      delete BDSAcceleratorModel::Instance();
       delete execOptions;
       delete globalConstants;
       delete BDSMaterials::Instance();
       delete runManager;
       delete bdsBunch;
-      delete BDSAcceleratorComponentRegistry::Instance();
       return 0;
     }
   
@@ -397,11 +395,10 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
 #endif
-  delete BDSPhysicalVolumeInfoRegistry::Instance();
+  delete BDSAcceleratorModel::Instance();
   delete execOptions;
   delete globalConstants;
   delete BDSMaterials::Instance();
-  delete BDSAcceleratorComponentRegistry::Instance();
 
 #ifdef BDSDEBUG 
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
