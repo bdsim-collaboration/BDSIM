@@ -52,6 +52,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
     {chordLength = 2.0 * arcLengthIn * sin(0.5*angleIn) / angleIn;}
   else
     {chordLength = arcLengthIn;}
+
+  initialised = false;
 }
 
 BDSAcceleratorComponent::~BDSAcceleratorComponent()
@@ -62,11 +64,14 @@ BDSAcceleratorComponent::~BDSAcceleratorComponent()
 
 void BDSAcceleratorComponent::Initialise()
 {
+  if (initialised)
+    {return;} // protect against duplicated initialisation and memory leaks
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   Build();
   readOutLV = BuildReadOutVolume(name, chordLength, angle);
+  initialised = true; // record that this component has been initialised
 }
 
 void BDSAcceleratorComponent::Build()

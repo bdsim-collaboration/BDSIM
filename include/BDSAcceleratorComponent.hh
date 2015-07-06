@@ -163,6 +163,11 @@ private:
 
   // to be moved to geometry component
   std::vector<G4VPhysicalVolume*> itsMultiplePhysicalVolumes;
+
+  /// Boolean record of whether this component has been already initialised.
+  /// This check protects against duplicate initialisation and therefore the potential
+  /// memory leaks that would ensue.
+  G4bool initialised;
 };
 
 inline G4String BDSAcceleratorComponent::GetName() const
