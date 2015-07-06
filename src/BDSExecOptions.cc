@@ -292,8 +292,8 @@ void BDSExecOptions::Usage()const {
 	<<"--vis_mac=<file>          : file with the visualisation macro script, default provided by BDSIM openGL (OGLSQt))"<<G4endl;
 }
 
-void BDSExecOptions::Print()const {
-  G4cout << __METHOD_NAME__ << G4endl;
+void BDSExecOptions::Print()const
+{
   G4cout << __METHOD_NAME__ << std::setw(23) << " inputFilename: "       << std::setw(15) << inputFilename       << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " batch: "               << std::setw(15) << batch               << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " circular: "            << std::setw(15) << circular            << G4endl;
