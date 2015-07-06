@@ -62,14 +62,13 @@ void BDSTeleporter::BuildBPFieldAndStepper()
   itsStepper  = new BDSTeleporterStepper(itsEqRhs);
 }
 
-void BDSTeleporter::BuildBPFieldMgr( G4MagIntegratorStepper* stepper,
-    G4MagneticField* field)
+void BDSTeleporter::BuildBPFieldMgr(G4MagIntegratorStepper* stepper,
+				    G4MagneticField* field)
 {
   //this is all copied from BDSMagnet.cc although names tidied a bit
-  itsChordFinder = 
-    new G4ChordFinder(field,
-    chordLength*0.5/CLHEP::m,
-		      stepper);
+  itsChordFinder = new G4ChordFinder(field,
+				     chordLength/CLHEP::m,
+				     stepper);
 
   itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
   itsFieldManager = new G4FieldManager();

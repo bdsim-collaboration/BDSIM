@@ -1,19 +1,25 @@
+#include "BDSDebug.hh"
+#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSMaterials.hh"
 #include "BDSTerminator.hh"
 #include "BDSTerminatorSD.hh"
 #include "BDSTerminatorUserLimits.hh"
+
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "G4SDManager.hh"
-#include "BDSDebug.hh"
+
 #include "parser/enums.h"
 
 BDSTerminator::BDSTerminator(G4String name, G4double length):
   BDSAcceleratorComponent(name, length, 0, "terminator")
+{;}
+
+void BDSTerminator::Build()
 {
+  BuildContainerLogicalVolume();
 }
 
 void BDSTerminator::BuildContainerLogicalVolume()
@@ -39,6 +45,12 @@ void BDSTerminator::BuildContainerLogicalVolume()
   //these are default G4UserLimit values so everything will normally be tracked
   //BDSTerminatorUserLimits has the logic inside it to respond to turn number
 
+  // visual attributes
+  if (BDSExecOptions::Instance()->GetVisDebug())
+    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
+  else
+    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
+
   // register extents with BDSGeometryComponent base class
   SetExtentX(-radius,radius);
   SetExtentY(-radius,radius);
@@ -47,17 +59,3 @@ void BDSTerminator::BuildContainerLogicalVolume()
 
 BDSTerminator::~BDSTerminator()
 {;}
-
-void AddTerminatorToEndOfBeamline(ElementList* beamline_list)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << ": adding terminator element to end of beamline" << G4endl;
-#endif
-  //based on void add_sampler in parser.h
-  //create basic element with type teleporter and put on end
-  struct Element e;
-  e.type = _TERMINATOR;
-  e.name = "Terminator";
-  e.lst  = NULL; 
-  beamline_list->push_back(e);
-}
