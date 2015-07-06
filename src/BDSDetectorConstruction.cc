@@ -120,8 +120,7 @@ void BDSDetectorConstruction::BuildBeamline()
   std::list<struct Element>::iterator it;
 
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
-
-  BDSBeamline* beamline = new BDSBeamline();
+  BDSBeamline*         beamline            = new BDSBeamline();
 
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
   for(it = beamline_list.begin();it!=beamline_list.end();it++)
@@ -130,10 +129,10 @@ void BDSDetectorConstruction::BuildBeamline()
       G4cout << "BDSDetectorConstruction creating component " << (*it).name << G4endl;
 #endif
       
-      BDSAcceleratorComponent* temp = theComponentFactory->createComponent(*it);
+      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(*it);
       if(temp)
 	{
-	  BDSTiltOffset* tiltOffset = theComponentFactory->createTiltOffset(*it);
+	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(*it);
 	  beamline->AddComponent(temp, tiltOffset);
 	}
     }
@@ -147,13 +146,13 @@ void BDSDetectorConstruction::BuildBeamline()
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
 #endif
       BDS::CalculateAndSetTeleporterDelta(beamline);
-      BDSAcceleratorComponent* terminator = theComponentFactory->createTerminator();
+      BDSAcceleratorComponent* terminator = theComponentFactory->CreateTerminator();
       if (terminator)
         {
 	  terminator->Initialise();
 	  beamline->AddComponent(terminator);
 	}
-      BDSAcceleratorComponent* teleporter = theComponentFactory->createTeleporter();
+      BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter();
       if (teleporter)
 	{
 	  teleporter->Initialise();
@@ -385,6 +384,9 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  placementName = namestream.str();
 	}
       thecurrentitem->IncrementNTimesPlaced();
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "unique placement name: \"" << placementName << "_pv\"" << G4endl;
+#endif
       
       G4PVPlacement* elementPV = new G4PVPlacement(r,                     // its rotation
 						   p,                     // its position
