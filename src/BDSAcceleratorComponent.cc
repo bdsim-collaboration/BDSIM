@@ -116,11 +116,14 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
 #endif
   if (!BDS::IsFinite(chordLength)) return NULL;
 
-  G4double roRadius      = BDSGlobalConstants::Instance()->GetSamplerDiameter()*0.5;
+  G4double roRadius = 0;
+  G4double roRadiusFromSampler     = BDSGlobalConstants::Instance()->GetSamplerDiameter()*0.5;
+  
   G4VSolid* roSolid      = NULL;
   if (!BDS::IsFinite(angle))
     {
       //angle is zero - build a box
+      roRadius = roRadiusFromSampler;
       roSolid = new G4Box(name + "_ro_solid", // name
 			  roRadius,           // x half width
 			  roRadius,           // y half width
@@ -129,6 +132,13 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
   else
     {
       // angle is finite!
+      G4double roRadiusFromAngleLength =  std::abs(chordLength / angle); // s = r*theta -> r = s/theta
+      roRadius = std::min(roRadiusFromSampler,roRadiusFromAngleLength);
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "taking smaller of: sampler radius: " << roRadiusFromSampler
+	     << " mm, max possible radius: " << roRadiusFromAngleLength << " mm" << G4endl;
+#endif
+
       G4int orientation = BDS::CalculateOrientation(angle);
       G4double in_z     = cos(0.5*fabs(angle)); 
       G4double in_x     = sin(0.5*fabs(angle));
