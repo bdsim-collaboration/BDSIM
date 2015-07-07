@@ -42,7 +42,7 @@
 #include "G4Transform3D.hh"
 #include "BDSMagFieldFactory.hh"
 #include "G4NystromRK4.hh"
-#define BDSDEBUG 1
+
 typedef std::map<G4String,int> LogVolCountMap;
 LogVolCountMap* LogVolCount = new LogVolCountMap();
 

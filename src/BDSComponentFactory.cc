@@ -38,7 +38,6 @@
 #include <list>
 #include <sstream>
 
-#define BDSDEBUG 1
 
 #ifdef BDSDEBUG
 bool debug1 = true;

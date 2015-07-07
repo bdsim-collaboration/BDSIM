@@ -20,7 +20,7 @@
 #include "G4UserLimits.hh"
 #include "G4VPhysicalVolume.hh"
 #include "BDSDebug.hh"
-#define BDSDEBUG 1
+
 //============================================================
 
 BDSSectorBend::BDSSectorBend(G4String aName, G4double aLength, 
