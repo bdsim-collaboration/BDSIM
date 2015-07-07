@@ -14,7 +14,7 @@
 
 //============================================================
 BDSMultilayerScreen::BDSMultilayerScreen (G4TwoVector xysize, G4String name):
-  _xysize(xysize), _name(name+"_MultilayerScreen")
+  _xysize(xysize), _name(name+"_MultilayerScreen"), _colourWheel(new BDSColourWheel())
 {
   _size.setX(_xysize.x()); 
   _size.setY(_xysize.y());
@@ -30,7 +30,13 @@ void BDSMultilayerScreen::screenLayer(G4double thickness, G4String material, G4S
 }
 
 void BDSMultilayerScreen::screenLayer(BDSScreenLayer* layer){
+  _colourWheel->spin();
+  layer->color(_colourWheel->colour());
   _screenLayers.push_back(layer);
+}
+
+BDSScreenLayer* BDSMultilayerScreen::lastLayer(){
+  return screenLayer(nLayers()-1);
 }
 
 G4LogicalVolume* BDSMultilayerScreen::log(){

@@ -6,7 +6,7 @@
 #include <list>
 #include <string>
 #include <sstream>
-#define DEBUG 1
+
 BDSScreen::~BDSScreen(){
   delete _screenRot;
   delete _mlScreen;
@@ -33,7 +33,6 @@ BDSScreen::BDSScreen(G4String aName,
 
 void BDSScreen::Build(){
   BDSDrift::Build(); //Build the beam pipe geometry.
-
   G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.4, 0.4, 0.4, 0.3));
   VisAtt1->SetForceWireframe(true);
   VisAtt1->SetVisibility(true);
@@ -53,6 +52,7 @@ void BDSScreen::screenLayer(G4double thickness, G4String material){
   G4String lNum = ss.str();
   G4String lName = itsName+"_"+lNum;
   _mlScreen->screenLayer(thickness,material,lName);
+  AddSensitiveVolume(_mlScreen->lastLayer()->log());
   _nLayers++;
 }
 

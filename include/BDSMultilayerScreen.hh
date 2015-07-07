@@ -7,6 +7,7 @@
 #include "G4VSolid.hh"
 #include "G4TwoVector.hh"
 #include "BDSScreenLayer.hh"
+#include "BDSColourWheel.hh"
 
 class BDSMultilayerScreen 
 {
@@ -20,6 +21,7 @@ public:
   void screenLayer(BDSScreenLayer* layer);
   inline BDSScreenLayer* screenLayer(G4int layer){return _screenLayers[layer];}
   BDSScreenLayer* screenLayer(G4String layer);
+  BDSScreenLayer* lastLayer();
   inline G4double nLayers(){return _screenLayers.size();}
   void build();
   inline void phys(G4PVPlacement* phys){_phys = phys;}
@@ -41,6 +43,8 @@ private:
   void computeDimensions();
   void buildMotherVolume();
   void placeLayers();
+
+  BDSColourWheel* _colourWheel;
 };
 
 #endif

@@ -658,6 +658,9 @@ void BDSDetectorConstruction::ComponentPlacement(){
       for(G4int i=0; i<(G4int)SensVols.size(); i++)
 	{
 	  //use already defined instance of Ecounter sd
+#ifdef BDSDEBUG
+	  G4cout<<"... setting "<< SensVols[i]->GetName() << " as energy counter volume." << G4endl;
+#endif	
 	  SensVols[i]->SetSensitiveDetector(ECounter);	
 	  //register any volume that an ECounter is attached to
 	  BDSLogicalVolumeInfo* theinfo = new BDSLogicalVolumeInfo( SensVols[i]->GetName(),

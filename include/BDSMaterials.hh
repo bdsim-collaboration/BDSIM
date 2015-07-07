@@ -62,7 +62,10 @@ private:
   G4MaterialPropertiesTable* fsMaterialPropertiesTable;
   G4MaterialPropertiesTable* petMaterialPropertiesTable;
   G4MaterialPropertiesTable* vacMaterialPropertiesTable;
-
+  G4MaterialPropertiesTable* nbk7MaterialPropertiesTable;
+  G4MaterialPropertiesTable* mpt_YAG;
+  G4MaterialPropertiesTable* ups923a_mt;
+  G4MaterialPropertiesTable* pet_opaqueMaterialPropertiesTable;
 };
 
 #endif

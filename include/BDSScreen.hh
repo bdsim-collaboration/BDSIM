@@ -4,6 +4,7 @@
 #include "globals.hh"
 #include "BDSDrift.hh"
 #include "BDSMultilayerScreen.hh"
+#include "BDSColourWheel.hh"
 #include "G4TwoVector.hh"
 #include <list>
 

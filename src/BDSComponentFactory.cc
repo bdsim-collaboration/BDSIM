@@ -1350,6 +1350,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
                << " name= "<< _element.name
                << " l=" << _element.l/CLHEP::m<<"m"
                << " angle=" << _element.angle/CLHEP::rad<<"rad"
+	       << " precision region " << _element.precisionRegion
                << G4endl;
 #endif
 	G4TwoVector size;
@@ -1380,6 +1381,8 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
 	      itm = _element.layerMaterials.begin();
 	    itt != _element.layerThicknesses.end();
 	    itt++, itm++){
+	  G4cout << __METHOD_NAME__ << " - screeen layer: thickness: " << 
+	    *(itt)<< ", material "  << (*itm) << G4endl;
 	  theScreen->screenLayer((*itt)*CLHEP::m, *itm);
 	}
 	return theScreen;
