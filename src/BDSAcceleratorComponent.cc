@@ -18,6 +18,7 @@
 
 G4Material* BDSAcceleratorComponent::emptyMaterial = NULL;
 G4double    BDSAcceleratorComponent::lengthSafety  = -1;
+G4bool      BDSAcceleratorComponent::checkOverlaps = false;
 
 struct BDSBeamPipeInfo;
 
@@ -46,6 +47,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
     {emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());}
   if (lengthSafety < 0)
     {lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();}
+  checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
   
   // calculate the chord length if the angle is finite
   if (BDS::IsFinite(angleIn))

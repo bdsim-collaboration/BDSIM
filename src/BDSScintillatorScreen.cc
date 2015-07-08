@@ -67,16 +67,15 @@ void BDSScintillatorScreen::BuildFrontLayer(){
   itsFrontLayerLog = new G4LogicalVolume(itsFrontLayerSolid,BDSMaterials::Instance()->GetMaterial("Cellulose"),"CelluloseFront",0,0,0);
   itsFrontLayerLog->SetVisAttributes(_visAttFront);
   G4double dispZ=_frontThickness/2.0-_screenThickness/2.0;
-  itsFrontLayerPhys = new G4PVPlacement(
-					_screenRotationMatrix,
+  itsFrontLayerPhys = new G4PVPlacement(_screenRotationMatrix,
 					G4ThreeVector(0,0,dispZ),
 					itsFrontLayerLog,
 					"ScreenCelluloseFrontPhys",
 					containerLogicalVolume,
 					false,
 					0,
-					BDSGlobalConstants::Instance()->GetCheckOverlaps()
-					);                 
+					checkOverlaps);
+  RegisterPhysicalVolume(itsFrontLayerPhys);
   SetMultiplePhysicalVolumes(itsFrontLayerPhys);
 }
 
@@ -95,7 +94,7 @@ void BDSScintillatorScreen::BuildCameraScoringPlane(){
   G4double dispY=0;
   G4double dispZ=0;
   new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),G4ThreeVector(dispX,dispY,dispZ),itsCameraScoringPlaneLog,_samplerName,
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
   
   itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   //SPM bdsOutput->nSamplers++;
@@ -124,7 +123,7 @@ void BDSScintillatorScreen::BuildScreenScoringPlane(){
   G4double dispY=0;
   G4double dispZ=sqrt(2)*(-_screenThickness/2.0- _scoringPlaneThickness/2.0);
   new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX,dispY,dispZ),itsScreenScoringPlaneLog,_screenSamplerName,
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
   
   itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   //SPM bdsOutput->nSamplers++;
@@ -154,7 +153,7 @@ void BDSScintillatorScreen::BuildScintillatorLayer(){
   
   //Build and place the volume...
   itsScintillatorLayerPhys=  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ),itsScintillatorLayerLog,_screenSamplerName.c_str(),
-					       containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+					       containerLogicalVolume,false,0,checkOverlaps);
   SetMultiplePhysicalVolumes(itsScintillatorLayerPhys);
 
   /*

@@ -101,14 +101,16 @@ void BDSCollimatorBase::Build()
   RegisterLogicalVolume(collimatorLV);
   RegisterSensitiveVolume(collimatorLV);
 
-  new G4PVPlacement(0,                       // rotation
-		    (G4ThreeVector)0,        // position
-		    collimatorLV,            // its logical volume
-		    name + "_collimator_pv", // its name
-		    containerLogicalVolume,  // its mother  volume
-		    false,		     // no boolean operation
-		    0,		             // copy number  
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+  G4PVPlacement* collPV = new G4PVPlacement(0,                       // rotation
+					    (G4ThreeVector)0,        // position
+					    collimatorLV,            // its logical volume
+					    name + "_collimator_pv", // its name
+					    containerLogicalVolume,  // its mother  volume
+					    false,		     // no boolean operation
+					    0,		             // copy number  
+					    checkOverlaps);
+
+  RegisterPhysicalVolume(collPV);
 
   if (buildVacuumAndAperture)
     {
@@ -123,14 +125,16 @@ void BDSCollimatorBase::Build()
       vacuumLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 #endif
 
-      new G4PVPlacement(0,                       // rotation
-			(G4ThreeVector)0,        // position
-			vacuumLV,                // its logical volume
-			name + "_vacuum_pv",     // its name
-			containerLogicalVolume,  // its mother  volume
-			false,		         // no boolean operation
-			0,		         // copy number  
-			BDSGlobalConstants::Instance()->GetCheckOverlaps());
+      G4PVPlacement* vacPV = new G4PVPlacement(0,                       // rotation
+					       (G4ThreeVector)0,        // position
+					       vacuumLV,                // its logical volume
+					       name + "_vacuum_pv",     // its name
+					       containerLogicalVolume,  // its mother  volume
+					       false,		        // no boolean operation
+					       0,		        // copy number  
+					       checkOverlaps);
+
+      RegisterPhysicalVolume(vacPV);
     } 
 }
 

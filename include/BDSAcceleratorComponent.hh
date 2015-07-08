@@ -140,6 +140,7 @@ protected:
   /// Useful variables often used in construction
   static G4double    lengthSafety;
   static G4Material* emptyMaterial;
+  static G4bool      checkOverlaps;
   
 private:
   /// Private default constructor to force use of provided constructors, which
