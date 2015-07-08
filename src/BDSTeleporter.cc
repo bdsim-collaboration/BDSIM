@@ -112,4 +112,6 @@ BDSTeleporter::~BDSTeleporter()
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;
+  delete itsChordFinder;
+  delete itsFieldManager;
 }
