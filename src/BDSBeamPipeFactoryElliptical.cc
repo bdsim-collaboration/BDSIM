@@ -32,9 +32,8 @@ BDSBeamPipeFactoryElliptical* BDSBeamPipeFactoryElliptical::Instance()
   return _instance;
 }
 
-BDSBeamPipeFactoryElliptical::BDSBeamPipeFactoryElliptical():BDSBeamPipeFactoryBase()
-{
-}
+BDSBeamPipeFactoryElliptical::BDSBeamPipeFactoryElliptical()
+{;}
 
 BDSBeamPipeFactoryElliptical::~BDSBeamPipeFactoryElliptical()
 {
@@ -49,8 +48,7 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipe(G4String    nameIn,   
 							  G4double    /*aper4In*/,         // aperture parameter 4
 							  G4Material* vacuumMaterialIn,    // vacuum material
 							  G4double    beamPipeThicknessIn, // beampipe thickness [mm]
-							  G4Material* beamPipeMaterialIn   // beampipe material
-							  )
+							  G4Material* beamPipeMaterialIn)  // beampipe material
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -180,13 +178,6 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CommonFinalConstruction(G4String    n
   G4double containerRadius = std::max(containerXHalfWidth, containerYHalfWidth);
   
   BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerRadius);
-
-  // REGISTER all lvs
-  aPipe->RegisterLogicalVolume(vacuumLV); //using geometry component base class method
-  aPipe->RegisterLogicalVolume(beamPipeLV);
-
-  // register sensitive volumes
-  aPipe->RegisterSensitiveVolume(beamPipeLV);
   
   return aPipe;
 }
@@ -236,6 +227,9 @@ void BDSBeamPipeFactoryElliptical::CreateGeneralAngledSolids(G4String      nameI
   vacuumSolid     = new G4IntersectionSolid(nameIn + "_vacuum_solid",
 					    vacuumSolidLong,
 					    angledFaceSolid);
+
+  allSolids.push_back(angledFaceSolid);
+  allSolids.push_back(vacuumSolidLong);
   
   G4VSolid* beamPipeSolidInner; // construct rectangular beam pipe by subtracting an inner
   G4VSolid* beamPipeSolidOuter; // box from an outer one - only way
@@ -254,6 +248,10 @@ void BDSBeamPipeFactoryElliptical::CreateGeneralAngledSolids(G4String      nameI
   beamPipeSolidLong = new G4SubtractionSolid(nameIn + "_pipe_solid_long",
 					 beamPipeSolidOuter,
 					 beamPipeSolidInner); // outer minus inner
+  allSolids.push_back(beamPipeSolidInner);
+  allSolids.push_back(beamPipeSolidOuter);
+  allSolids.push_back(beamPipeSolidLong);
+  
   beamPipeSolid = new G4IntersectionSolid(nameIn + "_pipe_solid",
 					  beamPipeSolidLong,
 					  angledFaceSolid);
@@ -272,6 +270,9 @@ void BDSBeamPipeFactoryElliptical::CreateGeneralAngledSolids(G4String      nameI
 					   CLHEP::twopi,                     // rotation finish angle
 					   inputfaceIn,                      // input face normal
 					   outputfaceIn);                    // output face normal
+  allSolids.push_back(containerSolidLong);
+  allSolids.push_back(angledFaceSolidContainer);
+  
   containerSolid = new G4IntersectionSolid(nameIn + "_container_solid",
 					   containerSolidLong,
 					   angledFaceSolidContainer);

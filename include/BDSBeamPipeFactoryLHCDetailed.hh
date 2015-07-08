@@ -97,6 +97,10 @@ private:
   G4LogicalVolume* copperSkinLV;
   G4LogicalVolume* screenLV;
   G4LogicalVolume* coolingPipeLV;
+  G4PVPlacement*   copperSkinPV;
+  G4PVPlacement*   screenPV;
+  G4PVPlacement*   coolingPipeTopPV;
+  G4PVPlacement*   coolingPipeBottomPV;
 
   // parameters that control the design
   G4double coldBoreThickness;
@@ -128,7 +132,6 @@ private:
 
   // cooling pipe geometrical parameters
   G4double coolingPipeYOffset;
-
 };
   
 #endif
