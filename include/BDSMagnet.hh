@@ -80,23 +80,23 @@ protected:
   
   // field related objects, set by BuildBPFieldAndStepper
   G4MagIntegratorStepper* itsStepper;
-  G4MagneticField* itsMagField;
-  G4Mag_UsualEqRhs* itsEqRhs;
+  G4MagneticField*   itsMagField;
+  G4Mag_UsualEqRhs*  itsEqRhs;
 
   // beam pipe volumes
-  G4LogicalVolume* itsBeampipeLogicalVolume;
-  G4LogicalVolume* itsInnerBPLogicalVolume;
+  G4LogicalVolume*   itsBeampipeLogicalVolume;
+  G4LogicalVolume*   itsInnerBPLogicalVolume;
   
-  G4UserLimits* itsBeampipeUserLimits;
+  G4UserLimits*      itsBeampipeUserLimits;
   G4VPhysicalVolume* itsPhysiComp;
   G4VPhysicalVolume* itsPhysiInner;
-  G4FieldManager* itsBPFieldMgr;
-  G4FieldManager* itsOuterFieldMgr;
+  G4FieldManager*    itsBPFieldMgr;
+  G4FieldManager*    itsOuterFieldMgr;
 
   G4double itsInnerIronRadius;
 
-  G4ChordFinder* itsChordFinder;
-  G4MagneticField* itsOuterMagField;
+  G4ChordFinder*     itsChordFinder;
+  G4MagneticField*   itsOuterMagField;
   
   //for beampipe construction
   BDSBeamPipeInfo* beamPipeInfo;
