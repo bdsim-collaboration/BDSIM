@@ -413,19 +413,17 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
       else if(it->name=="pt") {
 	ReadValue(type);
 #ifdef BDSDEBUG 
-	G4cout<< "BDSBunch : " << type <<G4endl;
+	G4cout<< "BDSBunch : particle type = " << type <<G4endl;
 #endif
-	if(InputBunchFile.good()){
-	  BDSGlobalConstants::Instance()->SetParticleName(G4ParticleTable::GetParticleTable()->FindParticle(type)->GetParticleName());
-	  BDSGlobalConstants::Instance()->SetParticleDefinition(G4ParticleTable::
-								GetParticleTable()
-								->FindParticle(type));
-	  if(!BDSGlobalConstants::Instance()->GetParticleDefinition()) 
-	    {
-	      G4Exception("Particle not found, quitting!", "-1", FatalErrorInArgument, "");
-	      exit(1);
-	    }
-	}
+	BDSGlobalConstants::Instance()->SetParticleName(G4ParticleTable::GetParticleTable()->FindParticle(type)->GetParticleName());
+	BDSGlobalConstants::Instance()->SetParticleDefinition(G4ParticleTable::
+							      GetParticleTable()
+							      ->FindParticle(type));
+	if(!BDSGlobalConstants::Instance()->GetParticleDefinition()) 
+	  {
+	    G4Exception("Particle not found, quitting!", "-1", FatalErrorInArgument, "");
+	    exit(1);
+	  }
       }
       else if(it->name=="weight"){ ReadValue(weight);
 #ifdef BDSDEBUG 
