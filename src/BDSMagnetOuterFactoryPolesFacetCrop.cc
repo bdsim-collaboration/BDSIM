@@ -52,6 +52,7 @@ void BDSMagnetOuterFactoryPolesFacetCrop::CreatePoleSolid(G4String     name,
 				       poleFinishRadius,           // x half width
 				       poleFinishRadius,           // y half width
 				       length);                    // z half width
+  allSolids.push_back(subtractionBox);
   // z half width is full length for unambiguous subtraction
 
   // note translation is to centre of box which is nominal poleFinishRadius + half width
@@ -62,6 +63,7 @@ void BDSMagnetOuterFactoryPolesFacetCrop::CreatePoleSolid(G4String     name,
 				     subtractionBox,              // solid 2 - subtract this one
 				     0,                           // rotation
 				     boxTranslation);
+  allSolids.push_back(poleSolid); // now different from original pole solid
 				     
 }
 
