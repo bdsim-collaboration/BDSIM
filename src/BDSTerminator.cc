@@ -1,20 +1,18 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSSDManager.hh"
 #include "BDSTerminator.hh"
-#include "BDSTerminatorSD.hh"
 #include "BDSTerminatorUserLimits.hh"
 
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4UserLimits.hh"
-#include "G4SDManager.hh"
 
 #include "parser/enums.h"
 
 BDSTerminator::BDSTerminator(G4String name, G4double length):
-  BDSAcceleratorComponent(name, length, 0, "terminator")
+  BDSAcceleratorComponent(name, length, 0, "terminator"),
+  userLimits(NULL)
 {;}
 
 void BDSTerminator::Build()
@@ -35,13 +33,12 @@ void BDSTerminator::BuildContainerLogicalVolume()
 					       name + "_container_lv");
   
   // SENSITIVE DETECTOR
-  G4SDManager* SDMan    = G4SDManager::GetSDMpointer();
-  G4VSensitiveDetector* theTerminator  = new BDSTerminatorSD(name);
-  SDMan->AddNewDetector(theTerminator);
-  containerLogicalVolume->SetSensitiveDetector(theTerminator);
+  containerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetTerminatorSD());
   
   // USER LIMITS - the logic of killing particles on last turn
-  containerLogicalVolume->SetUserLimits(new BDSTerminatorUserLimits(DBL_MAX,DBL_MAX,DBL_MAX,0.,0.));
+  userLimits = new BDSTerminatorUserLimits(DBL_MAX,DBL_MAX,DBL_MAX,0.,0.);
+  RegisterUserLimits(userLimits);
+  containerLogicalVolume->SetUserLimits(userLimits);
   //these are default G4UserLimit values so everything will normally be tracked
   //BDSTerminatorUserLimits has the logic inside it to respond to turn number
 
