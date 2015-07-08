@@ -143,6 +143,8 @@ void BDSRBend::BuildBeampipe()
 							    beamPipeInfo->vacuumMaterial,
 							    beamPipeInfo->beamPipeThickness,
 							    beamPipeInfo->beamPipeMaterial);
+
+  InheritObjects(bpFirstBit);
   
   beampipe =
     BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeInfo->beamPipeType,
@@ -155,6 +157,8 @@ void BDSRBend::BuildBeampipe()
 						   beamPipeInfo->vacuumMaterial,
 						   beamPipeInfo->beamPipeThickness,
 						   beamPipeInfo->beamPipeMaterial);
+
+  InheritObjects(beampipe);
 
   BDSBeamPipe* bpLastBit =
     BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledIn(beamPipeInfo->beamPipeType,
@@ -169,6 +173,8 @@ void BDSRBend::BuildBeampipe()
 							   beamPipeInfo->beamPipeThickness,
 							   beamPipeInfo->beamPipeMaterial);
 
+  InheritObjects(bpLastBit);
+  
   // place logical volumes inside marker (container) volume
   // calculate offsets and rotations
   G4double straightSectionCentralZ = (itsMagFieldLength*0.5) + (itsStraightSectionChord*0.5);

@@ -3,6 +3,8 @@
 
 #include "BDSAcceleratorComponent.hh"
 
+class BDSTerminatorUserLimits;
+
 /** 
  * @brief Class for small control volume with dynamic user limits
  * that change based on the global constants parameter nturns. Used
@@ -25,6 +27,8 @@ private:
   /// Construct a simple box and attach an instance of the customised
   /// BDSTerminatorUserLimits() to it.
   virtual void BuildContainerLogicalVolume();
+
+  BDSTerminatorUserLimits* userLimits;
 };
 
 #endif

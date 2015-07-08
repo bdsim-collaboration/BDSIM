@@ -212,7 +212,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       BuildMagField(true);
     }
 
-    RegisterSensitiveVolumes(LCDD->SensitiveComponents);
+    RegisterSensitiveVolume(LCDD->SensitiveComponents);
     delete LCDD;
 #else
     G4cout << "LCDD support not selected during BDSIM configuration" << G4endl;
@@ -228,7 +228,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       SetMultiplePhysicalVolumes(Mokka->GetMultiplePhysicalVolumes().at(i));
     }
 
-    RegisterSensitiveVolumes(Mokka->SensitiveComponents);
+    RegisterSensitiveVolume(Mokka->SensitiveComponents);
 
     std::vector<G4LogicalVolume*> GFlashComps =Mokka->itsGFlashComponents;
     for(G4int id=0; id<(G4int)GFlashComps.size(); id++)
@@ -280,7 +280,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     BDSGeometryGDML *GDML = new BDSGeometryGDML(gFile);
     GDML->Construct(containerLogicalVolume);
     //    RegisterSensitiveVolume(containerLogicalVolume);
-    RegisterSensitiveVolumes(GDML->GetAllSensitiveVolumes());
+    RegisterSensitiveVolume(GDML->GetAllSensitiveVolumes());
     delete GDML;
 
 

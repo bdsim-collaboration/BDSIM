@@ -113,13 +113,8 @@ void BDSMagnet::BeamPipeCommonTasks()
   containerLogicalVolume->
     SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
   
-
-  // register logical volumes using geometry component base class
-  RegisterLogicalVolumes(beampipe->GetAllLogicalVolumes());
-
-  // register components as sensitive if required
-  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
-    {RegisterSensitiveVolumes(beampipe->GetAllSensitiveVolumes());}
+  // register logical & physical volumes  + rotation matrices using geometry component base class
+  InheritObjects(beampipe);
 
   // place beampipe
   itsPhysiComp = new G4PVPlacement(0,                         // rotation
@@ -130,10 +125,12 @@ void BDSMagnet::BeamPipeCommonTasks()
 				   false,                     // no boolean operation
 				   0,                         // copy number
 				   BDSGlobalConstants::Instance()->GetCheckOverlaps());
+
+  RegisterPhysicalVolume(itsPhysiComp);
 }
 
 void BDSMagnet::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
-				   G4MagneticField* aField)
+				G4MagneticField*        aField)
 {
   itsChordFinder= 
     new G4ChordFinder(aField,
@@ -223,11 +220,7 @@ void BDSMagnet::BuildOuterVolume()
   if(outer)
     {
       // register logical volumes using geometry component base class
-      RegisterLogicalVolumes(outer->GetAllLogicalVolumes());
-
-      // register components as sensitive if required
-      if(BDSGlobalConstants::Instance()->GetSensitiveComponents())
-	{RegisterSensitiveVolumes(outer->GetAllLogicalVolumes());}
+      InheritObjects(outer);
       
       // place outer volume
       itsPhysiComp = new G4PVPlacement(0,                           // rotation
@@ -239,6 +232,8 @@ void BDSMagnet::BuildOuterVolume()
 				       0,                           // copy number
 				       BDSGlobalConstants::Instance()->GetCheckOverlaps());
 
+      RegisterPhysicalVolume(itsPhysiComp);
+      
       //update extents
       SetExtentX(outer->GetExtentX());
       SetExtentY(outer->GetExtentY());
@@ -270,7 +265,7 @@ void BDSMagnet::BuildContainerLogicalVolume()
 				 containerRadius,
 				 chordLength*0.5);
     }
-    
+  
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       emptyMaterial,
 					       name + "_container_lv");

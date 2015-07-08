@@ -70,7 +70,7 @@ void BDSCollimatorBase::Build()
 				   outerDiameter * 0.5 - lengthSafety,
 				   outerDiameter * 0.5 - lengthSafety,
 				   chordLength*0.5 - lengthSafety);
-
+  RegisterSolid(outerSolid);
   // only do subtraction if aperture actually set
   G4bool buildVacuumAndAperture = (BDS::IsFinite(xAperture) && BDS::IsFinite(yAperture));
   if(buildVacuumAndAperture)
@@ -80,6 +80,7 @@ void BDSCollimatorBase::Build()
       collimatorSolid = new G4SubtractionSolid(name + "_collimator_solid", // name
 					       outerSolid,                 // solid 1
 					       innerSolid);                // minus solid 2
+      RegisterSolid(collimatorSolid);
     }
   else
     {collimatorSolid = outerSolid;}
@@ -92,6 +93,7 @@ void BDSCollimatorBase::Build()
   // set colour to dark green
   G4VisAttributes* collimatorVisAttr = new G4VisAttributes(G4Colour(0.3,0.4,0.2));
   collimatorLV->SetVisAttributes(collimatorVisAttr);
+  RegisterVisAttributes(collimatorVisAttr);
 
 #ifndef NOUSERLIMITS
   collimatorLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
