@@ -17,6 +17,8 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
+#include "G4MagneticField.hh"
+#include "BDSUniformMagField.hh"
 
 #include <map>
 
@@ -108,7 +110,9 @@ void BDSDrift::Build() {
 
 void BDSDrift::BuildBPFieldAndStepper(){
     // set up the magnetic field and stepper
-  itsMagField = new BDSMagField(); //Zero magnetic field.
+  //  itsMagField = new BDSMagField(); //Zero magnetic field.
+  G4ThreeVector zeroVec;
+  itsMagField=new BDSUniformMagField(zeroVec);
   itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
   itsStepper  = new BDSDriftStepper(itsEqRhs);
 }

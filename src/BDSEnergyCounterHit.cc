@@ -6,6 +6,7 @@
 
 #include "BDSEnergyCounterHit.hh"
 #include "G4ios.hh"
+#include "BDSDebug.hh"
 
 G4Allocator<BDSEnergyCounterHit> BDSEnergyCounterHitAllocator;
 
@@ -36,7 +37,8 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int nCopy,
   itsName(name),
   itsPrecisionRegion(precisionRegion),
   itsTurnsTaken(TurnsTaken)
-{}
+{
+}
 
 BDSEnergyCounterHit::~BDSEnergyCounterHit()
 {;}

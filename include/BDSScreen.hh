@@ -4,6 +4,7 @@
 #include "globals.hh"
 #include "BDSDrift.hh"
 #include "BDSMultilayerScreen.hh"
+#include "BDSColourWheel.hh"
 #include "G4TwoVector.hh"
 #include <list>
 
@@ -35,6 +36,7 @@ private:
   G4RotationMatrix* _screenRot;
   G4int _nLayers;
 
+  virtual void BuildFieldAndStepper(); 
 };
 
 #endif

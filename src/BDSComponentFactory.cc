@@ -36,6 +36,8 @@
 #include "BDSBeamline.hh" //needed to calculate offset at end for teleporter
 #include <string>
 #include <list>
+#include <sstream>
+
 
 #ifdef BDSDEBUG
 bool debug1 = true;
@@ -299,9 +301,17 @@ BDSAcceleratorComponent* BDSComponentFactory::createComponent(){
 #endif
   if (element) {
     addCommonProperties(element);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - initialising " << G4endl;
+#endif
     element->Initialise();
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - initialised. " << G4endl;
+#endif
   }
-
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - returning element." << G4endl;
+#endif
   return element;
 }
 
@@ -629,6 +639,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createSBend(){
       _element.material ) );
       
     */
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - returning sector bend " << G4endl;
+#endif
   return (new BDSSectorBend( _element.name,
 			     length,
 			     aper,
@@ -1336,6 +1349,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
                << " name= "<< _element.name
                << " l=" << _element.l/CLHEP::m<<"m"
                << " angle=" << _element.angle/CLHEP::rad<<"rad"
+	       << " precision region " << _element.precisionRegion
                << G4endl;
 #endif
 	G4TwoVector size;
@@ -1350,7 +1364,10 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
 	BDSScreen* theScreen = new BDSScreen( _element.name, _element.l*CLHEP::m, true,
 					      aper, _element.tunnelMaterial, _element.tunnelOffsetX*CLHEP::m, size, _element.angle); 
 	if(_element.layerThicknesses.size() != _element.layerMaterials.size()){
-	  G4Exception("Material and ticknesses lists are of unequal size.", "-1", FatalException, "");
+	  std::stringstream ss;
+	  ss << "Material and ticknesses lists are of unequal size.";
+	  ss<< _element.layerMaterials.size() << " and " << _element.layerThicknesses.size();
+	  G4Exception(ss.str().c_str(), "-1", FatalException, "");
 	}
 
 	if(_element.layerThicknesses.size() == 0 ){
@@ -1362,7 +1379,9 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
 	for(itt = _element.layerThicknesses.begin(),
 	      itm = _element.layerMaterials.begin();
 	    itt != _element.layerThicknesses.end();
-	    itt++){
+	    itt++, itm++){
+	  G4cout << __METHOD_NAME__ << " - screeen layer: thickness: " << 
+	    *(itt)<< ", material "  << (*itm) << G4endl;
 	  theScreen->screenLayer((*itt)*CLHEP::m, *itm);
 	}
 	return theScreen;

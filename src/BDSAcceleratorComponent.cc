@@ -208,6 +208,9 @@ void BDSAcceleratorComponent::Initialise()
       //
       itsMarkerLogicalVolume=(*LogVol)[itsName];
     }
+#ifdef BDSDEBUG
+  G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
 void BDSAcceleratorComponent::Build()//Execute build methods common for all classes.
