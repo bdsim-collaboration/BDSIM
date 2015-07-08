@@ -92,7 +92,7 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   G4double dispZ=-_cameraScreenDist/2.0;;
 
   new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),G4ThreeVector(dispX,dispY,dispZ),itsCameraScoringPlaneLog,_samplerName,
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
   
   itsCameraScoringPlaneLog2 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),"CameraScoringPlaneLog2",0,0,0);
   itsCameraScoringPlaneLog2->SetVisAttributes(_visAttSampler);
@@ -103,7 +103,7 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
 
 
   new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX2,dispY2,dispZ2),itsCameraScoringPlaneLog2,_samplerName2,
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
 
   itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   itsCameraScoringPlaneLog2->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
@@ -124,7 +124,7 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   G4double dispZ3=-_cameraScreenDist/2.0;;
 
   new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),G4ThreeVector(dispX3,dispY3,dispZ3),itsCameraScoringPlaneLog3,_samplerName3,
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
   
   itsCameraScoringPlaneLog4 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),"CameraScoringPlaneLog4",0,0,0);
   itsCameraScoringPlaneLog4->SetVisAttributes(_visAttSampler);
@@ -135,7 +135,7 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
 
 
   new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX4,dispY4,dispZ4),itsCameraScoringPlaneLog4,_samplerName4,
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
   
   itsCameraScoringPlaneLog3->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   itsCameraScoringPlaneLog4->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
@@ -155,7 +155,7 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   G4double dispZ5=-_cameraScreenDist/2.0;;
 
   new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),G4ThreeVector(dispX5,dispY5,dispZ5),itsCameraScoringPlaneLog5,_samplerName5,
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
   
   itsCameraScoringPlaneLog6 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),"CameraScoringPlaneLog6",0,0,0);
   itsCameraScoringPlaneLog6->SetVisAttributes(_visAttSampler);
@@ -166,7 +166,7 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
 
 
   new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX6,dispY6,dispZ6),itsCameraScoringPlaneLog6,_samplerName6,
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
   
   itsCameraScoringPlaneLog5->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   itsCameraScoringPlaneLog6->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
@@ -222,10 +222,10 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
   G4double dispZ=2*std::cos(std::abs(_screenAngle))*(_screenThickness/2.0+_scoringPlaneThickness/2.0)-_cameraScreenDist/2.0;
   G4double dispZ2=-2*std::cos(std::abs(_screenAngle))*(_screenThickness/2.0+_scoringPlaneThickness/2.0)-_cameraScreenDist/2.0;
   new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX,dispY,dispZ),itsScreenScoringPlaneLog,_screenSamplerName,
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
 
   new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX,dispY,dispZ2),itsScreenScoringPlaneLog2,_screenSamplerName2,
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
   
   //--
   itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
@@ -403,7 +403,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
 		    containerLogicalVolume, 
 		    false, 
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
+		    checkOverlaps
 		    );
 
   G4LogicalVolume* vacuumLog = new G4LogicalVolume(vacuumSolid, BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()), "vacuumLog",0,0,0);
@@ -416,7 +416,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
 		    vacuumOuterLog, 
 		    false, 
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
+		    checkOverlaps
 		    );
  
 
@@ -429,34 +429,34 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
   G4VSolid* mylarWindowSolid = new G4Box("mylarWindowSolid",_vacMylarThickness/2.0, _vacInnerHeight/2.0, _vacLength/2.0);
   G4LogicalVolume* mylarWindowLog = new G4LogicalVolume(mylarWindowSolid, BDSMaterials::Instance()->GetMaterial("G4_MYLAR"), "mylarWindowLog",0,0,0);
 
-  new G4PVPlacement(new G4RotationMatrix(), 
+  new G4PVPlacement(0, 
 		    G4ThreeVector(_vacWidth1/2.0-(_vacMylarThickness+_vacKevlarThickness)/2.0,0,0), 
 		    vacuumWindowLog, 
 		    "awakeScreenVacuumWindowPV", 
 		    vacuumOuterLog, 
 		    false, 
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
+		    checkOverlaps
 		    );
   
-  new G4PVPlacement(new G4RotationMatrix(), 
+  new G4PVPlacement(0, 
 		    G4ThreeVector((_vacKevlarThickness+_vacMylarThickness)/2.0 - _vacKevlarThickness/2.0,0,0), 
 		    kevlarWindowLog, 
 		    "awakeScreenKevlarVacuumWindowPV", 
 		    vacuumWindowLog, 
 		    false, 
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
+		    checkOverlaps
 		    );
 
-  new G4PVPlacement(new G4RotationMatrix(), 
+  new G4PVPlacement(0, 
 		    G4ThreeVector(-(_vacKevlarThickness+_vacMylarThickness)/2.0 + _vacMylarThickness/2.0,0,0), 
 		    mylarWindowLog, 
 		    "awakeScreenMylarVacuumWindowPV", 
 		    vacuumWindowLog, 
 		    false, 
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
+		    checkOverlaps
 		    );
 
   G4VisAttributes* vacVisAttributes=new G4VisAttributes(G4Colour(0.3,0.0,0.4,0.5));
@@ -508,7 +508,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber2()
 		    containerLogicalVolume, 
 		    false, 
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
+		    checkOverlaps
 		    );
 
   new G4PVPlacement(_vacRotationMatrix, 
@@ -518,7 +518,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber2()
 		    containerLogicalVolume, 
 		    false, 
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
+		    checkOverlaps
 		    );
 
   new G4PVPlacement(_vacRotationMatrix, 
@@ -528,7 +528,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber2()
 		    containerLogicalVolume, 
 		    false, 
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
+		    checkOverlaps
 		    );
 
 
