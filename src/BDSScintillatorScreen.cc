@@ -80,7 +80,6 @@ void BDSScintillatorScreen::BuildFrontLayer(){
 					0,
 					checkOverlaps);
   RegisterPhysicalVolume(itsFrontLayerPhys);
-  SetMultiplePhysicalVolumes(itsFrontLayerPhys);
 }
 
 void BDSScintillatorScreen::BuildCameraScoringPlane(){
@@ -158,7 +157,7 @@ void BDSScintillatorScreen::BuildScintillatorLayer(){
   //Build and place the volume...
   itsScintillatorLayerPhys=  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ),itsScintillatorLayerLog,_screenSamplerName.c_str(),
 					       containerLogicalVolume,false,0,checkOverlaps);
-  SetMultiplePhysicalVolumes(itsScintillatorLayerPhys);
+  RegisterPhysicalVolume(itsScintillatorLayerPhys);
 
   /*
     (*LogVol)[_screenSamplerName]=itsScintillatorLayerLog;

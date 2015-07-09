@@ -224,10 +224,6 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     G4cout << "BDSElement.cc: loading geometry sql file: BDSGeometrySQL(" << gFile << "," << chordLength << ")" << G4endl;
 #endif
     BDSGeometrySQL *Mokka = new BDSGeometrySQL(gFile,chordLength,containerLogicalVolume);
-    for(unsigned int i=0; i<Mokka->GetMultiplePhysicalVolumes().size(); i++){
-      SetMultiplePhysicalVolumes(Mokka->GetMultiplePhysicalVolumes().at(i));
-    }
-
     RegisterSensitiveVolume(Mokka->SensitiveComponents);
 
     std::vector<G4LogicalVolume*> GFlashComps =Mokka->itsGFlashComponents;
