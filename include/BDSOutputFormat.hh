@@ -13,7 +13,7 @@ typedef BDSTypeSafeEnum<outputformats_def, int> BDSOutputFormat;
 namespace BDS {
   /// Determine the output format to be used from the input string.
   BDSOutputFormat DetermineOutputFormat(G4String outputFormat);
-};
+}
 
 
 #endif
