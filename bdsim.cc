@@ -48,13 +48,12 @@
 #include "G4GeometryTolerance.hh"
 #include "G4TrajectoryDrawByCharge.hh"
 
-#include "BDSBeamline.hh"
+#include "BDSAcceleratorModel.hh"
 #include "BDSBunch.hh"
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
 #include "BDSGeometryInterface.hh"
 #include "BDSGeometryWriter.hh"
-#include "BDSLogicalVolumeInfoRegistry.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
@@ -79,8 +78,8 @@ BDSOutputBase* bdsOutput=NULL;         // output interface
 
 extern Options options;
 
-int main(int argc,char** argv) {
-
+int main(int argc,char** argv)
+{
   // print header
   G4cout<<"bdsim : version 0.7.develop"<<G4endl;
   G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
@@ -247,7 +246,7 @@ int main(int argc,char** argv) {
 						    execOptions->GetExportFileName());
       // clean up before exiting
       G4GeometryManager::GetInstance()->OpenGeometry();
-      delete BDSLogicalVolumeInfoRegistry::Instance();
+      delete BDSAcceleratorModel::Instance();
       delete execOptions;
       delete globalConstants;
       delete BDSMaterials::Instance();
@@ -260,7 +259,7 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
 #endif
-  bdsOutput = BDSOutputFactory::createOutput(execOptions->GetOutputFormat());
+  bdsOutput = BDSOutputFactory::CreateOutput(execOptions->GetOutputFormat());
   G4cout.precision(10);
 
   // catch aborts to close output stream/file. perhaps not all are needed.
@@ -402,7 +401,7 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
 #endif
-  delete BDSLogicalVolumeInfoRegistry::Instance();
+  delete BDSAcceleratorModel::Instance();
   delete execOptions;
   delete globalConstants;
   delete BDSMaterials::Instance();
@@ -410,8 +409,7 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif
-  delete runManager; 
-
+  delete runManager;
   delete bdsBunch;
 
   G4cout << __FUNCTION__ << "> End of Run, Thank you for using BDSIM!" << G4endl;

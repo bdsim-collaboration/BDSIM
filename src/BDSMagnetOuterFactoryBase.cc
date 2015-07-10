@@ -15,10 +15,20 @@ BDSMagnetOuterFactoryBase::BDSMagnetOuterFactoryBase()
 
 void BDSMagnetOuterFactoryBase::CleanUp()
 {
-  poleSolid        = NULL;
-  yokeSolid        = NULL;
-  containerSolid   = NULL;
-  poleLV           = NULL;
-  yokeLV           = NULL;
-  containerLV      = NULL;
+  poleSolid          = NULL;
+  yokeSolid          = NULL;
+  containerSolid     = NULL;
+  poleLV             = NULL;
+  yokeLV             = NULL;
+  containerLV        = NULL;
+  yokePV             = NULL;
+  outerVisAttributes = NULL;
+  outerUserLimits    = NULL;
+
+  allLogicalVolumes.clear();
+  allPhysicalVolumes.clear();
+  allRotationMatrices.clear();
+  allSolids.clear();
+  allVisAttributes.clear();
+  allUserLimits.clear();
 }

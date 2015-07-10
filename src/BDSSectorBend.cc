@@ -84,6 +84,7 @@ void BDSSectorBend::BuildBPFieldAndStepper()
   dipoleStepper->SetBGrad(itsBGrad);
   itsStepper = dipoleStepper;
 }
+
 void BDSSectorBend::BuildBeampipe()
 {
 #ifdef BDSDEBUG

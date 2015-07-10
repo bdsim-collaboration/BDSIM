@@ -78,7 +78,7 @@ BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(G4String         name,
 						BDSBeamPipeInfo* bpi)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << __METHOD_NAME__ << "using beam pipe information" << G4endl;
 #endif
   return CreateBeamPipe(bpi->beamPipeType,
 			name,

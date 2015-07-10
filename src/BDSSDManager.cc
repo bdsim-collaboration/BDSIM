@@ -5,7 +5,9 @@
 
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSLWCalorimeterSD.hh"
 #include "BDSSamplerSD.hh"
+#include "BDSTerminatorSD.hh"
 #include "BDSReadOutGeometry.hh"
 
 #include "G4VReadOutGeometry.hh"
@@ -20,12 +22,18 @@ BDSSDManager* BDSSDManager::Instance()
 }
 
 BDSSDManager::~BDSSDManager()
-{;}
+{
+  delete samplerPlane;
+  delete samplerCylinder;
+  delete eCounterOnAxis;
+  delete terminator;
+  delete eCounterOnAxisRO;
+}
 
 BDSSDManager::BDSSDManager()
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " Constructor - creating all necessary Sensitive Detectors" << G4endl;
+  G4cout << __METHOD_NAME__ << "Constructor - creating all necessary Sensitive Detectors" << G4endl;
 #endif
   //instantiate all necessary SD classes
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
@@ -44,13 +52,18 @@ BDSSDManager::BDSSDManager()
   //on axis energy counter - uses read out geometry
   eCounterOnAxis = new BDSEnergyCounterSD("ec_on_axis");
   SDMan->AddNewDetector(eCounterOnAxis);
+  
+  terminator  = new BDSTerminatorSD("terminator");
+  SDMan->AddNewDetector(terminator);
+
+  lwCalorimeter = new BDSLWCalorimeterSD("lw_calorimeter");
+  SDMan->AddNewDetector(lwCalorimeter);
 }
 
 BDSEnergyCounterSD* BDSSDManager::GetEnergyCounterOnAxisSDRO()
 {
   if (!eCounterOnAxisRO)
     {ConstructECounterSDOnAxisOnDemand();}
-
   return eCounterOnAxisRO;
 }
 

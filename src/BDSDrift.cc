@@ -24,8 +24,9 @@ void BDSDrift::Build()
   BDSBeamPipe* pipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
 								     chordLength,
 								     beamPipeInfo);
-  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
-    {RegisterSensitiveVolumes(pipe->GetAllSensitiveVolumes());}
+
+  // register logical volumes using geometry component base class
+  InheritObjects(pipe);
   
   containerLogicalVolume = pipe->GetContainerLogicalVolume();
   containerSolid         = pipe->GetContainerSolid();

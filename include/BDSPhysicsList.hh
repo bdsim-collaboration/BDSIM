@@ -20,6 +20,7 @@ Last modified 01.02.2006 by Ilya Agapov
 #include "G4OpBoundaryProcess.hh"
 #include "G4CoulombScattering.hh"
 
+#include <vector>
 
 class BDSPhysicsList: public G4VUserPhysicsList
 {
@@ -62,6 +63,9 @@ public:
   
 private:
   G4bool verbose;
+
+  /// A vector of all the physics lists names
+  std::vector<G4String> physicsListNames;
 
   G4Cerenkov*          theCerenkovProcess;
   G4Scintillation*     theScintillationProcess;

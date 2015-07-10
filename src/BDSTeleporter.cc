@@ -62,28 +62,26 @@ void BDSTeleporter::BuildBPFieldAndStepper()
   itsStepper  = new BDSTeleporterStepper(itsEqRhs);
 }
 
-void BDSTeleporter::BuildBPFieldMgr( G4MagIntegratorStepper* stepper,
-    G4MagneticField* field)
+void BDSTeleporter::BuildBPFieldMgr(G4MagIntegratorStepper* stepper,
+				    G4MagneticField* field)
 {
   //this is all copied from BDSMagnet.cc although names tidied a bit
-  itsChordFinder = 
-    new G4ChordFinder(field,
-    chordLength*0.5/CLHEP::m,
-		      stepper);
+  itsChordFinder = new G4ChordFinder(field,
+				     chordLength/CLHEP::m,
+				     stepper);
 
   itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
   itsFieldManager = new G4FieldManager();
   itsFieldManager->SetDetectorField(field);
   itsFieldManager->SetChordFinder(itsChordFinder);
-  if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0){
-    itsFieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
-  }
+  if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0)
+    {itsFieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());}
   if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>0)
-    itsFieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
+    {itsFieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());}
   if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0)
-    itsFieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
+    {itsFieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());}
   if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0)
-    itsFieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+    {itsFieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());}
 }
 
 void BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
@@ -92,7 +90,7 @@ void BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
   // and then calculate necessary offset teleporter should apply
   G4ThreeVector lastitemposition   = thebeamline->back()->GetReferencePositionEnd();
   G4ThreeVector firstitemposition  = thebeamline->front()->GetReferencePositionStart();
-  G4ThreeVector  delta             = lastitemposition - firstitemposition;
+  G4ThreeVector delta              = lastitemposition - firstitemposition;
 #ifdef BDSDEBUG
   G4cout << "Calculating Teleporter delta" << G4endl;
   G4cout << "last item position  : " << lastitemposition  << " mm" << G4endl;
@@ -114,4 +112,6 @@ BDSTeleporter::~BDSTeleporter()
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;
+  delete itsChordFinder;
+  delete itsFieldManager;
 }

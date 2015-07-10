@@ -6,7 +6,10 @@
 #include "globals.hh"         // geant4 globals / types
 #include "G4Material.hh"      // materials
 
+class G4LogicalVolume;
+class G4PVPlacement;
 class G4UserLimits;
+class G4VSolid;
 
 /**
  * @brief abstract base class for beampipe factory classes
@@ -58,8 +61,7 @@ public:
 					         G4double    aper4 = 0,
 						 G4Material* vacuumMaterialIn = NULL,
 					         G4double    beamPipeThicknessIn = 0,
-					         G4Material* beamPipeMaterialIn = NULL
-					         );
+					         G4Material* beamPipeMaterialIn = NULL);
 
   /// create beampipe with an angled face on output side only
   virtual BDSBeamPipe* CreateBeamPipeAngledOut(  G4String    nameIn,
@@ -71,8 +73,7 @@ public:
 					         G4double    aper4 = 0,
 						 G4Material* vacuumMaterialIn = NULL,
 					         G4double    beamPipeThicknessIn = 0,
-					         G4Material* beamPipeMaterialIn = NULL
-					         );
+					         G4Material* beamPipeMaterialIn = NULL);
   
   /// create beampipe with an angled face on both input adn output sides
   virtual BDSBeamPipe* CreateBeamPipeAngledInOut(G4String    nameIn,
@@ -85,8 +86,7 @@ public:
 						 G4double    aper4 = 0,
 						 G4Material* vacuumMaterialIn = NULL,
 						 G4double    beamPipeThicknessIn = 0,
-						 G4Material* beamPipeMaterialIn = NULL
-						 ) = 0;
+						 G4Material* beamPipeMaterialIn = NULL) = 0;
 
 protected:
   /// base constructor
@@ -143,7 +143,16 @@ protected:
   G4LogicalVolume* vacuumLV;
   G4LogicalVolume* beamPipeLV;
   G4LogicalVolume* containerLV;
+  G4PVPlacement*   vacuumPV;
+  G4PVPlacement*   beamPipePV;
 
+  // for non standard parts for easy registration - ie not the specific ones above
+  std::vector<G4LogicalVolume*>   allLogicalVolumes;
+  std::vector<G4VPhysicalVolume*> allPhysicalVolumes;
+  std::vector<G4RotationMatrix*>  allRotationMatrices;
+  std::vector<G4VSolid*>          allSolids;
+  std::vector<G4VisAttributes*>   allVisAttributes;
+  std::vector<G4UserLimits*>      allUserLimits;
 };
 
 #endif

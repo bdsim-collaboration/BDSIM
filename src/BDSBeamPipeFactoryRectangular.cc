@@ -31,9 +31,8 @@ BDSBeamPipeFactoryRectangular* BDSBeamPipeFactoryRectangular::Instance()
   return _instance;
 }
 
-BDSBeamPipeFactoryRectangular::BDSBeamPipeFactoryRectangular():BDSBeamPipeFactoryBase()
-{
-}
+BDSBeamPipeFactoryRectangular::BDSBeamPipeFactoryRectangular()
+{;}
 
 BDSBeamPipeFactoryRectangular::~BDSBeamPipeFactoryRectangular()
 {
@@ -48,8 +47,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipe(G4String    nameIn,  
 							   G4double    /*aper4In*/,         // aperture parameter 4
 							   G4Material* vacuumMaterialIn,    // vacuum material
 							   G4double    beamPipeThicknessIn, // beampipe thickness [mm]
-							   G4Material* beamPipeMaterialIn   // beampipe material
-							   )
+							   G4Material* beamPipeMaterialIn)  // beampipe material
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -80,6 +78,8 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipe(G4String    nameIn,  
 				 aper1In + beamPipeThicknessIn,  // x half width
 				 aper2In + beamPipeThicknessIn,  // y half width
 				 (lengthIn*0.5)-2*lengthSafety); // half length - lengthSafety to fit in container
+  allSolids.push_back(beamPipeSolidInner);
+  allSolids.push_back(beamPipeSolidOuter);
   beamPipeSolid = new G4SubtractionSolid(nameIn + "_pipe_solid",
 					 beamPipeSolidOuter,
 					 beamPipeSolidInner); // outer minus inner
@@ -104,8 +104,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipeAngledInOut(G4String  
 								      G4double    /*aper4In */,        // aperture parameter 4
 								      G4Material* vacuumMaterialIn,    // vacuum material
 								      G4double    beamPipeThicknessIn, // beampipe thickness [mm]
-								      G4Material* beamPipeMaterialIn   // beampipe material
-								      )
+								      G4Material* beamPipeMaterialIn)  // beampipe material
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -224,6 +223,10 @@ void BDSBeamPipeFactoryRectangular::CreateGeneralAngledSolids(G4String      name
 			      aper1In,                       // x half width
 			      aper2In,                       // y half width
 			      lengthIn);                     // full length for unambiguous boolean
+
+  allSolids.push_back(angledFaceSolid);
+  allSolids.push_back(vacuumSolidLong);
+  
   vacuumSolid     = new G4IntersectionSolid(nameIn + "_vacuum_solid",
 					    vacuumSolidLong,
 					    angledFaceSolid);
@@ -248,6 +251,10 @@ void BDSBeamPipeFactoryRectangular::CreateGeneralAngledSolids(G4String      name
   beamPipeSolid = new G4IntersectionSolid(nameIn + "_pipe_solid",
 					  beamPipeSolidLong,
 					  angledFaceSolid);
+
+  allSolids.push_back(beamPipeSolidInner);
+  allSolids.push_back(beamPipeSolidOuter);
+  allSolids.push_back(beamPipeSolidLong);
   
   G4double containerXHalfWidth = aper1In + beamPipeThicknessIn + lengthSafety;
   G4double containerYHalfWidth = aper2In + beamPipeThicknessIn + lengthSafety;
@@ -263,6 +270,8 @@ void BDSBeamPipeFactoryRectangular::CreateGeneralAngledSolids(G4String      name
 					   CLHEP::twopi,                     // rotation finish angle
 					   inputfaceIn,                      // input face normal
 					   outputfaceIn);                    // output face normal
+  allSolids.push_back(containerSolidLong);
+  allSolids.push_back(angledFaceSolidContainer);
   containerSolid = new G4IntersectionSolid(nameIn + "_container_solid",
 					   containerSolidLong,
 					   angledFaceSolidContainer);

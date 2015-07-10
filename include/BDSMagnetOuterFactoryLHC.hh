@@ -122,20 +122,6 @@ protected:
   G4bool IsLeftOffset(){return isLeftOffset;}
   
 private:
-  //only really one function needed for this factory
-  //private to this factory only
-  void CreateCylindricalSolids(G4String      name,                 // name
-			       G4double      length,               // length [mm]
-			       BDSBeamPipe*  beamPipe,             // beampipe
-			       G4double      boxSize);             // full width
-
-  /// common construction tasks to all methods
-  BDSGeometryComponent* CommonFinalConstructor(G4String    name,
-					       G4double    length,        // length [mm]
-					       G4double    boxSize,       // full width [mm]
-					       G4Material* outerMaterial,
-					       G4Colour*   colour);
-
   /// test inputs for no null pointers or overlapping volumes due to poorly defined sizes
   void TestInputParameters(BDSBeamPipe* beamPipe,
 			   G4double&    boxSizeIn,

@@ -63,5 +63,4 @@ void BDSMuSpoiler::BuildOuterVolume()
 }
 
 BDSMuSpoiler::~BDSMuSpoiler()
-{
-}
+{;}

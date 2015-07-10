@@ -59,9 +59,10 @@ void BDSSamplerCylinder::BuildContainerLogicalVolume()
 					       name);
       
 #ifndef NOUSERLIMITS
-  G4UserLimits* itsOuterUserLimits =new G4UserLimits();
-  itsOuterUserLimits->SetMaxAllowedStep(BDSGlobalConstants::Instance()->GetSamplerDiameter()/2.0);
-  containerLogicalVolume->SetUserLimits(itsOuterUserLimits);
+  G4UserLimits* outerUserLimits =new G4UserLimits();
+  outerUserLimits->SetMaxAllowedStep(BDSGlobalConstants::Instance()->GetSamplerDiameter()/2.0);
+  containerLogicalVolume->SetUserLimits(outerUserLimits);
+  RegisterUserLimits(outerUserLimits);
 #endif
     if (BDSExecOptions::Instance()->GetVisDebug())
     {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}

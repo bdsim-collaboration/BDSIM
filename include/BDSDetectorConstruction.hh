@@ -6,7 +6,6 @@
 #include "globals.hh"
 
 #include "G4Region.hh"
-#include "G4GeometrySampler.hh"
 
 //GFlash parameterisation
 #include "GFlashHomoShowerParameterisation.hh"
@@ -25,25 +24,20 @@ class G4VSensitiveDetector;
 class BDSBeamline;
 class ElementList;
 
-class BDSDetectorConstruction : public G4VUserDetectorConstruction
+class BDSDetectorConstruction: public G4VUserDetectorConstruction
 {
 public:
   BDSDetectorConstruction();
   ~BDSDetectorConstruction();
 
+  /// Overridden Geant4 method that must be implemented. Constructs the Geant4 geometry
+  /// and returns the finished world physical volume.
   virtual G4VPhysicalVolume* Construct();
-
-  inline G4VPhysicalVolume* GetWorldVolume()
-  {return physiWorld;}
   
 private:
   /// assignment and copy constructor not implemented nor used
   BDSDetectorConstruction& operator=(const BDSDetectorConstruction&);
   BDSDetectorConstruction(BDSDetectorConstruction&);
-
-  G4VPhysicalVolume* ConstructBDS(ElementList& beamline_list);
-
-  void SetMagField(const G4double afield);
   
   /// Convert the parser beamline_list to BDSAcceleratorComponents with help of BDSComponentFactory
   /// and put in BDSBeamline container that calcualtes coordinates and extent of beamline
@@ -55,27 +49,23 @@ private:
   
   /// Iterate over the beamline and place each BDSAcceleratorComponent in the world volume
   void ComponentPlacement();
+
+  /// Initialise GFlash particle bounds - parameterised energy deposition.
+  void InitialiseGFlash();
   
   /// Function to add the volume to the gflash parameterisation model
   void SetGFlashOnVolume(G4LogicalVolume* volume);
 
   G4bool verbose;
-
-  G4GeometrySampler* itsGeometrySampler;
+  G4bool checkOverlaps;
 
   G4Region*          precisionRegion;
   G4Region*          gasRegion;
 
-  G4Box*             solidWorld;    //pointer to the solid World 
-  G4LogicalVolume*   logicWorld;    //pointer to the logical World
-  G4VPhysicalVolume* physiWorld;    //pointer to the physical World
-  std::vector<G4double> itsWorldSize;
-  std::vector<G4VPhysicalVolume*> fPhysicalVolumeVector; //a vector with all the physical volumes
+  /// World physical volume
+  G4VPhysicalVolume* worldPV;
 
   G4UniformMagField* magField;      //pointer to the magnetic field
-  G4UserLimits* BDSUserLimits;
-
-  G4VSensitiveDetector* BDSSensitiveDetector;
   
   // Gflash members
   std::vector<GFlashHomoShowerParameterisation*> theParameterisation;
@@ -84,8 +74,6 @@ private:
   //  GFlashParticleBounds *theParticleBoundsVac;
   std::vector<BDSShowerModel*> theFastShowerModel;
   std::vector<G4Region*> gFlashRegion;
-
-  G4RotationMatrix* _globalRotation;
 };
 
 #endif

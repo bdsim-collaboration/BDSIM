@@ -462,6 +462,6 @@ void Options::set_value(std::string name, std::string value )
   // options for external code interfaces
   if(name == "fifo") { fifo = value; return; }
   if(name == "refvolume") { refvolume = value; return; }
-  std::cerr << "Error: parser.h> unkown option \"" << name << "\"" << std::endl; 
+  std::cerr << "Error: parser.h> unknown option \"" << name << "\"" << std::endl; 
   exit(1);
 }

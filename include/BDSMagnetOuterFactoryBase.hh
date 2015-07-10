@@ -7,6 +7,13 @@
 #include "globals.hh"         // geant4 globals / types
 #include "G4Material.hh"
 
+#include <vector>
+
+class G4UserLimits;
+class G4VisAttributes;
+class G4VPhysicalVolume;
+class G4VSolid;
+
 /**
  * @brief Abstract base class for magnet outer volume factories
  * 
@@ -135,18 +142,26 @@ protected:
   // geometric pointers that will be used to pass around components
   // within the factory (as different parts factorised so they can
   // be overridden by the derived classes.
-  G4double         lengthSafety;
-  G4bool           checkOverlaps;      // to avoid using globalconstants a lot
-  G4double         nSegmentsPerCircle; // for visualisation improvement
-  G4double         maxStepFactor;      // for user limits
-  G4VSolid*        poleSolid; /// solid for an individual pole that will be placed multiple times
-  G4VSolid*        yokeSolid; /// solid for outer part that connects all poles
-  G4VSolid*        containerSolid;
-  G4LogicalVolume* poleLV;
-  G4LogicalVolume* yokeLV;
-  G4LogicalVolume* containerLV;
-  
-  
+  G4double           lengthSafety;
+  G4bool             checkOverlaps;      // to avoid using globalconstants a lot
+  G4double           nSegmentsPerCircle; // for visualisation improvement
+  G4double           maxStepFactor;      // for user limits
+  G4VSolid*          poleSolid; /// solid for an individual pole that will be placed multiple times
+  G4VSolid*          yokeSolid; /// solid for outer part that connects all poles
+  G4VSolid*          containerSolid;
+  G4LogicalVolume*   poleLV;
+  G4LogicalVolume*   yokeLV;
+  G4LogicalVolume*   containerLV;
+  G4VPhysicalVolume* yokePV;
+  G4VisAttributes* outerVisAttributes;
+  G4UserLimits* outerUserLimits;
+
+  std::vector<G4LogicalVolume*>   allLogicalVolumes;
+  std::vector<G4VPhysicalVolume*> allPhysicalVolumes;
+  std::vector<G4RotationMatrix*>  allRotationMatrices;
+  std::vector<G4VSolid*>          allSolids;
+  std::vector<G4VisAttributes*>   allVisAttributes;
+  std::vector<G4UserLimits*>      allUserLimits;
 };
 
 #endif

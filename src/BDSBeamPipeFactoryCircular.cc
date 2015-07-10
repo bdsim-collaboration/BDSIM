@@ -141,6 +141,8 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  allSolids.push_back(vacuumSolid);
+  allSolids.push_back(beamPipeSolid);
   // prepare a longer container subtraction solid
   // doesn't have to be angled as it's only used for transverse subtraction
   containerSubtractionSolid = new G4Tubs(nameIn + "_container_sub_solid",// name
@@ -149,7 +151,7 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
 					 lengthIn,                       // full length for unambiguous subtraction
 					 0,                              // rotation start angle
 					 CLHEP::twopi);                  // rotation finish angle
-
+  
   BDSBeamPipeFactoryBase::CommonConstruction(nameIn,
 					     vacuumMaterialIn,
 					     beamPipeMaterialIn,
@@ -189,22 +191,23 @@ void BDSBeamPipeFactoryCircular::CreateGeneralAngledSolids(G4String      nameIn,
   // beampipesolid created as subtraction since direct G4CutTubs creation created scattering in sector bends. not really understood
   
   G4VSolid* inside = new G4CutTubs(nameIn + "_pipe_inner_solid", // name
-				0,                               // inner radius + length safety to avoid overlaps
-				aper1In + lengthSafety,          // outer radius
-				lengthIn,                        // half length
-				0,                               // rotation start angle
-				CLHEP::twopi,                    // rotation finish angle
-				inputfaceIn,                     // input face normal
-				outputfaceIn );
-
-  G4VSolid* outer = new G4CutTubs(nameIn + "_pipe_outer_solid",  // name
-				0,                               // inner radius + length safety to avoid overlaps
-				aper1In + beamPipeThicknessIn,   // outer radius
-				lengthIn*0.5 - lengthSafety,     // half length
-				0,                               // rotation start angle
-				CLHEP::twopi,                    // rotation finish angle
-				inputfaceIn,                     // input face normal
-				outputfaceIn );
+				   0,                               // inner radius + length safety to avoid overlaps
+				   aper1In + lengthSafety,          // outer radius
+				   lengthIn,                        // half length
+				   0,                               // rotation start angle
+				   CLHEP::twopi,                    // rotation finish angle
+				   inputfaceIn,                     // input face normal
+				   outputfaceIn );
+  G4VSolid* outer  = new G4CutTubs(nameIn + "_pipe_outer_solid",  // name
+				   0,                               // inner radius + length safety to avoid overlaps
+				   aper1In + beamPipeThicknessIn,   // outer radius
+				   lengthIn*0.5 - lengthSafety,     // half length
+				   0,                               // rotation start angle
+				   CLHEP::twopi,                    // rotation finish angle
+				   inputfaceIn,                     // input face normal
+				   outputfaceIn);
+  allSolids.push_back(inside);
+  allSolids.push_back(outer);
   
   beamPipeSolid = new G4SubtractionSolid(nameIn + "_pipe_solid",
 					 outer,
