@@ -30,7 +30,7 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   G4double smax     = BDSGlobalConstants::Instance()->GetSMax() / CLHEP::m;
   G4double binwidth = BDSGlobalConstants::Instance()->GetElossHistoBinWidth();
   G4int    nbins    = (int) ceil((smax-smin)/binwidth); // rounding up so last bin definitely covers smax
-  smax     = smin + (nbins*binwidth);          // redefine smax
+  smax              = smin + (nbins*binwidth);          // redefine smax
   G4String slabel   = "s [m]";
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "histogram parameters calculated to be: " << G4endl;
@@ -56,17 +56,17 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   plosspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("PlossPEHisto","Primary Loss per Element",binedges,slabel); //4
   elosspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("ElossPEHisto","Energy Loss per Element" ,binedges,slabel,"GeV"); //5
   
-  //Output feedback
+  // Output feedback
   G4cout << __METHOD_NAME__ << " Run " << aRun->GetRunID() << " start. Time is " << asctime(localtime(&starttime)) << G4endl;
 
 }
 
 void BDSRunAction::EndOfRunAction(const G4Run* aRun)
 {
-  //Get the current time
+  // Get the current time
   stoptime = time(NULL);
 
-  //Output feedback
+  // Output feedback
   G4cout << __METHOD_NAME__ << "Run " << aRun->GetRunID() << " end. Time is " << asctime(localtime(&stoptime)) << G4endl;
   
   // Write output
