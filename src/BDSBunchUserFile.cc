@@ -7,6 +7,7 @@ BDSBunchUserFile::BDSBunchUserFile(struct Options &opt){
   SetOptions(opt);
   ParseFileFormat();
   OpenBunchFile(); //
+  SkipLines();
 }
 
 BDSBunchUserFile::~BDSBunchUserFile(){
@@ -14,11 +15,18 @@ BDSBunchUserFile::~BDSBunchUserFile(){
 }
 
 void BDSBunchUserFile::OpenBunchFile(){
+  G4cout << __METHOD_NAME__ << " - opening " << distribFile << G4endl;
   InputBunchFile.open(distribFile);
   if(!InputBunchFile.good()){ 
     G4cerr<<"Cannot open bunch file "<< distribFile <<G4endl; 
     exit(1); 
   } 
+}
+
+void BDSBunchUserFile::SkipLines(){
+  //Skip the a number of lines defined by the user option.
+  G4cout << __METHOD_NAME__ << " - skipping " << nlinesIgnore << " lines" << G4endl;
+  skip((G4int)(nlinesIgnore * fields.size()));
 }
 
 void BDSBunchUserFile::CloseBunchFile(){
@@ -339,12 +347,6 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   bool tdef = false; //keeps record whether t has been read from file
   
   G4int type;
-  
-  //Skip the a number of lines defined by the user option.
-#ifdef BDSDEBUG 
-  G4cout << "BDSBunch : " << "UDEF_BUNCH: skipping " << nlinesIgnore << " lines" << G4endl;
-#endif
-  skip((G4int)(nlinesIgnore * fields.size()));
   
   std::list<struct BDSBunchUserFile::Doublet>::iterator it;
   for(it=fields.begin();it!=fields.end();it++)

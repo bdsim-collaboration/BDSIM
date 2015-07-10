@@ -10,6 +10,7 @@ private:
   BDSBunchUserFile(); //Must be constructed with options.
   void ParseFileFormat();
   void OpenBunchFile();
+  void SkipLines();
   void CloseBunchFile();
   void skip(G4int nvalues);
   std::ifstream InputBunchFile;
