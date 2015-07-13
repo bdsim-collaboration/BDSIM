@@ -1,3 +1,8 @@
+comp            : components
+proc            : basic processes
+geom            : geometry 
+vis             : visualisation 
+
 3d              : 3d-transform example
 Fluka           : Fluka model descriptions
 gasPipe         : Define vacuum gas example

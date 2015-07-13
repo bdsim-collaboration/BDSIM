@@ -9,6 +9,7 @@ Options::Options(){
   // Default Values for Options
 
   physicsList = "standard"; //default - standard (only transportation)
+  modularPhysicsListsOn = 0;
   particleName = "";
   distribType = "";
   xDistribType = ""; 
@@ -72,11 +73,11 @@ Options::Options(){
   aper3             = 0.0;
   aper4             = 0.0;
     
-  beampipeMaterial  = "StainlessSteel";
-  vacMaterial       = "Vacuum";
-  tunnelMaterial    = "concrete";
+  beampipeMaterial     = "StainlessSteel";
+  vacMaterial          = "Vacuum";
+  tunnelMaterial       = "concrete";
   tunnelCavityMaterial = "Air";
-  soilMaterial      = "soil";
+  soilMaterial         = "soil";
 
   includeIronMagFields = 0;
 
@@ -305,17 +306,7 @@ void Options::set_value(std::string name, double value )
   
   if(name == "showTunnel") {
     showTunnel = (int)value; return;
-  }
-
-  if(name == "synchRadOn") { 
-    synchRadOn=(int)value;
-    return; 
-  }
-
-  if(name == "decayOn") { 
-    decayOn = (int)value; return; 
-  }
-  
+  }  
   if(name == "tunnelOffsetX" ) { tunnelOffsetX = value; return; }
   if(name == "tunnelOffsetY" ) { tunnelOffsetY = value; return; }
   if(name == "samplerDiameter" ) { samplerDiameter = value; return; }
@@ -340,6 +331,15 @@ void Options::set_value(std::string name, double value )
   if(name == "deltaOneStep" ) { deltaOneStep = value; return; }
 
   // physics processes
+  if(name == "modularPhysicsListsOn") {
+    modularPhysicsListsOn = (int)value; return;
+  }
+  if(name == "synchRadOn") { 
+    synchRadOn=(int)value; return; 
+  }
+  if(name == "decayOn") { 
+    decayOn = (int)value; return; 
+  }
   if(name == "turnOnCerenkov") {
       turnOnCerenkov = (int)value; return;
   }
@@ -358,11 +358,9 @@ void Options::set_value(std::string name, double value )
   if(name == "turnOnBirksSaturation") {
       turnOnBirksSaturation = (int)value; return;
   }
-
   if(name == "srTrackPhotons") {
     synchTrackPhotons = (int)value; return;
   }
-
   if(name == "useEMLPB") { useEMLPB = (int)value; return; }
   if(name == "useHadLPB") { useHadLPB = (int)value; return; }
   if(name == "sensitiveBeamlineComponents") { sensitiveBeamlineComponents = (int)value; return; }
@@ -432,7 +430,7 @@ void Options::set_value(std::string name, double value )
   // aperture
   if(name == "dontUseAperture") {dontUseAperture = (bool)value; return;}
   
-  std::cerr << "Error: parser> unkown option \"" << name << "\"" << std::endl; 
+  std::cerr << "parser> Error: unknown option \"" << name << "\"" << std::endl; 
   exit(1);
 }
 
@@ -474,6 +472,6 @@ void Options::set_value(std::string name, std::string value )
   // options for external code interfaces
   if(name == "fifo") { fifo = value; return; }
   if(name == "refvolume") { refvolume = value; return; }
-  std::cerr << "Error: parser.h> unkown option \"" << name << "\"" << std::endl; 
+  std::cerr << "Error: parser.h> unknown option \"" << name << "\"" << std::endl; 
   exit(1);
 }

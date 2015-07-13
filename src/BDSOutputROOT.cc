@@ -13,7 +13,7 @@
 BDSOutputROOT::BDSOutputROOT():BDSOutputBase()
 {
 #ifdef BDSDEBUG
-  G4cout<<"output format ROOT"<<G4endl;
+  G4cout << __METHOD_NAME__ << "output format ROOT"<<G4endl;
 #endif
   theRootOutputFile = NULL;
   PrecisionRegionEnergyLossTree = NULL;
@@ -30,7 +30,11 @@ BDSOutputROOT::~BDSOutputROOT()
   }
 }
 
-void BDSOutputROOT::BuildSamplerTree(G4String name){
+void BDSOutputROOT::BuildSamplerTree(G4String name)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   TTree* SamplerTree = new TTree(name, "Sampler output");
   
   SamplerTree->Branch("E0",&E0,"E0/F"); // (GeV)
@@ -231,8 +235,11 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
 				 G4int    EventNo, 
 				 G4int    ParentID,
 				 G4int    TrackID, 
-				 G4int    TurnsTaken){
-
+				 G4int    TurnsTaken)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   TTree* sTree=(TTree*)gDirectory->Get(Name);
   if(!sTree) G4Exception("BDSOutputROOT: ROOT Sampler not found!", "-1", FatalException, "");
   E0=InitMom / CLHEP::GeV;
@@ -297,7 +304,11 @@ void BDSOutputROOT::WritePrimary(G4String samplerName,
 				 G4double weight,
 				 G4int    PDGType, 
 				 G4int    nEvent, 
-				 G4int    TurnsTaken){
+				 G4int    TurnsTaken)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   WriteRootHit(samplerName, 
 	       E, 
 	       x0, y0, z0, 
@@ -387,7 +398,11 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 }
 
 /// write a trajectory to file
-void BDSOutputROOT::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec){
+void BDSOutputROOT::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   //  G4int tID;
   G4TrajectoryPoint* TrajPoint;
   G4ThreeVector TrajPos;
@@ -442,6 +457,9 @@ void BDSOutputROOT::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec){
 
 void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   G4int n_hit = hc->entries();
   for (G4int i=0;i<n_hit;i++)
     {
@@ -473,6 +491,9 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 
 void BDSOutputROOT::WritePrimaryLoss(BDSEnergyCounterHit* hit)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   //copy variables from hit to root variables
   X_pl          = hit->GetX()/CLHEP::m;
   Y_pl          = hit->GetY()/CLHEP::m;
@@ -493,6 +514,9 @@ void BDSOutputROOT::WritePrimaryLoss(BDSEnergyCounterHit* hit)
 
 void BDSOutputROOT::WritePrimaryHit(BDSEnergyCounterHit* hit)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   //copy variables from hit to root variables
   X_ph          = hit->GetX()/CLHEP::m;
   Y_ph          = hit->GetY()/CLHEP::m;
@@ -524,6 +548,9 @@ void BDSOutputROOT::WriteTrackerPrimaryLoss(TRKBunch* /*lostBunch*/, int /*turns
 
 void BDSOutputROOT::WriteHistogram(BDSHistogram1D* hIn)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   G4String hname = hIn->GetName();
   hname = BDS::PrepareSafeName(hname);
 
@@ -563,6 +590,9 @@ void BDSOutputROOT::WriteHistogram(BDSHistogram1D* hIn)
 
 void BDSOutputROOT::Commit()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   Write();
   outputFileNumber++;
   Init();

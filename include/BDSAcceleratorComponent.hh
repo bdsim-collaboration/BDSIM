@@ -95,9 +95,16 @@ public:
   ///@{ This function should be revisited given recent changes (v0.7)
   void             SetGFlashVolumes(G4LogicalVolume* aLogVol);
   std::vector<G4LogicalVolume*> GetGFlashVolumes() const;
-  void             SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
-  std::vector<G4VPhysicalVolume*> GetMultiplePhysicalVolumes() const;
   ///@}
+
+  /// Record of how many times this component has been placed (ie copies used).
+  G4int nTimesPlaced;
+
+  /// Increment (+1) the number of times this component has been placed (ie another copy used).
+  void  IncrementNTimesPlaced();
+
+  /// Get the number of times this component has been placed.
+  G4int GetNTimesPlaced();
 
 protected:
   /// initialise method
@@ -131,6 +138,7 @@ protected:
   /// Useful variables often used in construction
   static G4double    lengthSafety;
   static G4Material* emptyMaterial;
+  static G4bool      checkOverlaps;
   
 private:
   /// Private default constructor to force use of provided constructors, which
@@ -152,8 +160,10 @@ private:
   std::vector<G4LogicalVolume*> itsGFlashVolumes;
   //A vector containing the physical volumes in the accelerator component- to be used for geometric importance sampling etc.
 
-  // to be moved to geometry component
-  std::vector<G4VPhysicalVolume*> itsMultiplePhysicalVolumes;
+  /// Boolean record of whether this component has been already initialised.
+  /// This check protects against duplicate initialisation and therefore the potential
+  /// memory leaks that would ensue.
+  G4bool initialised;
 };
 
 inline G4String BDSAcceleratorComponent::GetName() const
@@ -180,11 +190,11 @@ inline void BDSAcceleratorComponent::SetGFlashVolumes(G4LogicalVolume* aLogVol)
 inline std::vector<G4LogicalVolume*> BDSAcceleratorComponent::GetGFlashVolumes() const
 {return itsGFlashVolumes;}
 
-inline void BDSAcceleratorComponent::SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol)
-{itsMultiplePhysicalVolumes.push_back(aPhysVol);}
+inline void BDSAcceleratorComponent::IncrementNTimesPlaced()
+{nTimesPlaced++;}
 
-inline std::vector<G4VPhysicalVolume*> BDSAcceleratorComponent::GetMultiplePhysicalVolumes() const
-{return itsMultiplePhysicalVolumes;}
+inline G4int BDSAcceleratorComponent::GetNTimesPlaced()
+{return nTimesPlaced;}
 
 inline G4LogicalVolume* BDSAcceleratorComponent::GetReadOutLogicalVolume() const
 {return readOutLV;}

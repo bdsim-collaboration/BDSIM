@@ -212,7 +212,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       BuildMagField(true);
     }
 
-    RegisterSensitiveVolumes(LCDD->SensitiveComponents);
+    RegisterSensitiveVolume(LCDD->SensitiveComponents);
     delete LCDD;
 #else
     G4cout << "LCDD support not selected during BDSIM configuration" << G4endl;
@@ -224,11 +224,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     G4cout << "BDSElement.cc: loading geometry sql file: BDSGeometrySQL(" << gFile << "," << chordLength << ")" << G4endl;
 #endif
     BDSGeometrySQL *Mokka = new BDSGeometrySQL(gFile,chordLength,containerLogicalVolume);
-    for(unsigned int i=0; i<Mokka->GetMultiplePhysicalVolumes().size(); i++){
-      SetMultiplePhysicalVolumes(Mokka->GetMultiplePhysicalVolumes().at(i));
-    }
-
-    RegisterSensitiveVolumes(Mokka->SensitiveComponents);
+    RegisterSensitiveVolume(Mokka->SensitiveComponents);
 
     std::vector<G4LogicalVolume*> GFlashComps =Mokka->itsGFlashComponents;
     for(G4int id=0; id<(G4int)GFlashComps.size(); id++)
@@ -279,7 +275,11 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 #ifdef USE_GDML
     BDSGeometryGDML *GDML = new BDSGeometryGDML(gFile);
     GDML->Construct(containerLogicalVolume);
+    //    RegisterSensitiveVolume(containerLogicalVolume);
+    RegisterSensitiveVolume(GDML->GetAllSensitiveVolumes());
     delete GDML;
+
+
 #else
     G4cout << "GDML support not selected during BDSIM configuration" << G4endl;
     G4Exception("Please re-compile BDSIM with USE_GDML flag", "-1", FatalException, "");

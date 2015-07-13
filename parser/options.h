@@ -17,6 +17,7 @@ struct Options {
 
   /// list of pyhysics processes 
   std::string physicsList;
+  int modularPhysicsListsOn;
 
   /// beam parameters
   std::string particleName;

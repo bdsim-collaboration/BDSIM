@@ -13,12 +13,10 @@
 #include "BDSSampler.hh"
 #include "BDSDebug.hh"
 #include "G4Box.hh"
-#include "G4Tubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UserLimits.hh"
 #include "BDSSamplerSD.hh"
-
 #include "BDSSDManager.hh"
 
 std::vector <G4String> BDSSampler::outputNames;
@@ -36,13 +34,10 @@ BDSSampler::BDSSampler(G4String name,
 		       G4double length):
   BDSAcceleratorComponent("Sampler_"+name, length, 0, "sampler")
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   nThisSampler= nSamplers + 1;
   nSamplers++;
 #ifdef BDSDEBUG
-  G4cout << "BDSSampler.cc Nsamplers " << nSamplers << G4endl;
+  G4cout << __METHOD_NAME__ << " Nsamplers " << nSamplers << G4endl;
 #endif
   BDSSampler::outputNames.push_back(GetName());
 }
@@ -64,13 +59,11 @@ void BDSSampler::BuildContainerLogicalVolume()
 					       name);
   
 #ifndef NOUSERLIMITS
-  G4UserLimits* itsOuterUserLimits = new G4UserLimits();
-  //      double stepFactor=5;
-  //      itsOuterUserLimits->SetMaxAllowedStep(itsLength*stepFactor);
-  itsOuterUserLimits->SetMaxAllowedStep(1*CLHEP::m);
-  containerLogicalVolume->SetUserLimits(itsOuterUserLimits);
+  G4UserLimits* outerUserLimits = new G4UserLimits();
+  outerUserLimits->SetMaxAllowedStep(1*CLHEP::m);
+  containerLogicalVolume->SetUserLimits(outerUserLimits);
+  RegisterUserLimits(outerUserLimits);
 #endif
-  //containerLogicalVolume->SetSensitiveDetector(SensitiveDetector);
   if (BDSExecOptions::Instance()->GetVisDebug())
     {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
   else
@@ -82,6 +75,5 @@ void BDSSampler::BuildContainerLogicalVolume()
 BDSSampler::~BDSSampler()
 {
   --nSamplers;
-
   if(nSamplers<0) G4cerr << __METHOD_NAME__ << "WARNING: more samplers deleted than created!" << G4endl;
 }

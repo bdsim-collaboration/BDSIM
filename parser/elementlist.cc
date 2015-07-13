@@ -19,6 +19,14 @@ void ElementList::clear() {
   itsMap.clear();
 }
 
+void ElementList::erase() {
+  ElementListIterator it = begin();
+  for(;it!=end();it++) {
+    delete (*it).lst;
+  }
+  clear();
+}
+
 ElementList::ElementListIterator ElementList::erase(ElementListIterator it) {
 
   // find entry in map to erase:
@@ -54,10 +62,6 @@ ElementList::ElementListIterator ElementList::begin() {
 
 ElementList::ElementListIterator ElementList::end() {
   return itsList.end();
-}
-
-ElementList::ElementListIterator ElementList::back() {
-  return itsList.end()--;
 }
 
 ElementList::ElementListIterator ElementList::find(std::string name,unsigned int count) {

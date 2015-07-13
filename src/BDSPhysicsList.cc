@@ -8,7 +8,9 @@
 //    Physics lists
 //
 
-#include <iomanip>   
+#include <iomanip>
+#include <vector>
+#include <algorithm>
 
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
@@ -189,8 +191,30 @@
 
 
 
-BDSPhysicsList::BDSPhysicsList():  G4VUserPhysicsList()
+BDSPhysicsList::BDSPhysicsList(): G4VUserPhysicsList()
 {
+  physicsListNames = {"QGSP_BERT",
+		      "QGSP_BERT_muon",
+		      "QGSP_BERT_HP",
+		      "QGSP_BERT_HP_muon",
+		      "QGSP_BERT_HP_muon_em_low",
+		      "livemore",
+		      "penelope",
+		      "G4EmStandard",
+		      "standard",
+		      "em_standard",
+		      "em_single_scatter",
+		      "merlin",
+		      "em_low",
+		      "em_muon",
+		      "hadronic_standard",
+		      "hadronic_QGSP_BERT",
+		      "hadronic_QGSP_BERT_muon",
+		      "hadronic_FTFP_BERT",
+		      "hadronic_QGSP_BERT_HP_muon",
+		      "hadronic_FTFP_BERT_muon",
+		      "lw"};
+  
   theCerenkovProcess           = NULL;
   theScintillationProcess      = NULL;
   theAbsorptionProcess         = NULL;
@@ -208,7 +232,6 @@ BDSPhysicsList::BDSPhysicsList():  G4VUserPhysicsList()
 
   // construct particles
 
-  //defaultCutValue = 0.7*CLHEP::mm;  
   defaultCutValue = BDSGlobalConstants::Instance()->GetDefaultRangeCut()*CLHEP::m;  
   SetDefaultCutValue(BDSGlobalConstants::Instance()->GetDefaultRangeCut()*CLHEP::m);
 
@@ -236,7 +259,17 @@ void BDSPhysicsList::ConstructProcess()
 { 
 #if BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
-#endif 
+#endif
+
+  G4String physicsListName = BDSGlobalConstants::Instance()->GetPhysListName();
+  if (std::find(physicsListNames.begin(), physicsListNames.end(), physicsListName) == physicsListNames.end())
+    {
+      G4cerr << __METHOD_NAME__ << "unknown physics list " << physicsListName << G4endl;
+      G4cout << "Possible physics lists are:" << G4endl;
+      for (std::vector<G4String>::iterator it = physicsListNames.begin(); it != physicsListNames.end(); ++it)
+	{G4cout << "\"" << *it << "\"" << G4endl;}
+      exit(1);
+    }
 
   bool plistFound=false;
   //standard physics lists
@@ -244,8 +277,12 @@ void BDSPhysicsList::ConstructProcess()
 #if G4VERSION_NUMBER < 1000
     theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT();
 #else
-    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT();
+    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT();    
 #endif
+    //    theReferenceHadronicPhysList_xsbias = new BDSXSBias(); 
+    //    theReferenceHadronicPhysList_xsbias->RegisterProcess(theReferenceHadronicPhysList); 
+    //    theReferenceHadronicPhysList_xsbias->eFactor(1);    
+ 
     theReferenceEmPhysList = new G4EmStandardPhysics();
     theReferenceHadronicPhysList->ConstructProcess();
     theReferenceEmPhysList->ConstructProcess();

@@ -19,9 +19,18 @@ public:
   BDSGeometryGDML(G4String GMDLfile);
   ~BDSGeometryGDML();
   void Construct(G4LogicalVolume *marker);
+
+  /// Access all logical volumes belonging to this component
+  std::vector<G4LogicalVolume*> GetAllLogicalVolumes() const;  
+  /// Access all sensitive volumes belonging to this component
+  std::vector<G4LogicalVolume*> GetAllSensitiveVolumes() const;
+
 private:
-  G4String itsGDMLfile;
-  G4LogicalVolume* itsMarkerVol;
+  G4String                      GDMLfile;
+  G4LogicalVolume              *markerVol;
+  G4LogicalVolume              *gdmlWorld;
+  std::vector<G4LogicalVolume*> logicalVols; 
+  std::vector<G4LogicalVolume*> sensitiveVols;
 };
 #endif
 

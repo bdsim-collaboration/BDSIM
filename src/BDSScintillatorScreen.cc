@@ -34,6 +34,7 @@ BDSScintillatorScreen::BDSScintillatorScreen(G4String name,
   _screenRotationMatrix = new G4RotationMatrix();
   _screenAngle=angle;
   _screenRotationMatrix->rotateY(_screenAngle);
+  RegisterRotationMatrix(_screenRotationMatrix);
 }
 
 void BDSScintillatorScreen::Build()
@@ -53,12 +54,15 @@ void BDSScintillatorScreen::SetVisAttributes()
   _visAttScint=new G4VisAttributes(G4Colour(0.0,1.0,0.0,0.5));
   _visAttBase =new G4VisAttributes(G4Colour(0.3,0.3,0.3,0.5));
   _visAttSampler=new G4VisAttributes(G4Colour(0.2,0.2,0.0,0.5));
-  
-
   _visAttFront->SetForceSolid(true);
   _visAttScint->SetForceSolid(true);
   _visAttBase->SetForceSolid(true);
   _visAttSampler->SetForceSolid(true);
+  RegisterVisAttributes(itsVisAttributes);
+  RegisterVisAttributes(_visAttFront);
+  RegisterVisAttributes(_visAttScint);
+  RegisterVisAttributes(_visAttBase);
+  RegisterVisAttributes(_visAttSampler);
 }
 
 void BDSScintillatorScreen::BuildFrontLayer(){
@@ -67,17 +71,15 @@ void BDSScintillatorScreen::BuildFrontLayer(){
   itsFrontLayerLog = new G4LogicalVolume(itsFrontLayerSolid,BDSMaterials::Instance()->GetMaterial("Cellulose"),"CelluloseFront",0,0,0);
   itsFrontLayerLog->SetVisAttributes(_visAttFront);
   G4double dispZ=_frontThickness/2.0-_screenThickness/2.0;
-  itsFrontLayerPhys = new G4PVPlacement(
-					_screenRotationMatrix,
+  itsFrontLayerPhys = new G4PVPlacement(_screenRotationMatrix,
 					G4ThreeVector(0,0,dispZ),
 					itsFrontLayerLog,
 					"ScreenCelluloseFrontPhys",
 					containerLogicalVolume,
 					false,
 					0,
-					BDSGlobalConstants::Instance()->GetCheckOverlaps()
-					);                 
-  SetMultiplePhysicalVolumes(itsFrontLayerPhys);
+					checkOverlaps);
+  RegisterPhysicalVolume(itsFrontLayerPhys);
 }
 
 void BDSScintillatorScreen::BuildCameraScoringPlane(){
@@ -95,7 +97,7 @@ void BDSScintillatorScreen::BuildCameraScoringPlane(){
   G4double dispY=0;
   G4double dispZ=0;
   new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),G4ThreeVector(dispX,dispY,dispZ),itsCameraScoringPlaneLog,_samplerName,
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
   
   itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   //SPM bdsOutput->nSamplers++;
@@ -124,7 +126,7 @@ void BDSScintillatorScreen::BuildScreenScoringPlane(){
   G4double dispY=0;
   G4double dispZ=sqrt(2)*(-_screenThickness/2.0- _scoringPlaneThickness/2.0);
   new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX,dispY,dispZ),itsScreenScoringPlaneLog,_screenSamplerName,
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
   
   itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
   //SPM bdsOutput->nSamplers++;
@@ -154,8 +156,8 @@ void BDSScintillatorScreen::BuildScintillatorLayer(){
   
   //Build and place the volume...
   itsScintillatorLayerPhys=  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ),itsScintillatorLayerLog,_screenSamplerName.c_str(),
-					       containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  SetMultiplePhysicalVolumes(itsScintillatorLayerPhys);
+					       containerLogicalVolume,false,0,checkOverlaps);
+  RegisterPhysicalVolume(itsScintillatorLayerPhys);
 
   /*
     (*LogVol)[_screenSamplerName]=itsScintillatorLayerLog;
@@ -173,29 +175,60 @@ void BDSScintillatorScreen::BuildScintillatorLayer(){
   */
 }
 
-void BDSScintillatorScreen::BuildBaseLayer(){
+void BDSScintillatorScreen::BuildBaseLayer()
+{
   //The PET backing layer
   G4double dispZ=_scintillatorThickness+_frontThickness+_baseThickness/2.0-_screenThickness/2.0;
-  itsBaseLayerSolid = new G4Box("PETLayer",_screenWidth/2.0,_screenHeight/2.0,_baseThickness/2.0);
-  itsBaseLayerLog = new G4LogicalVolume(itsBaseLayerSolid,BDSMaterials::Instance()->GetMaterial("PET"),"PETLayer",0,0,0);
+  itsBaseLayerSolid = new G4Box("PETLayer",
+				_screenWidth/2.0,
+				_screenHeight/2.0,
+				_baseThickness/2.0);
+  RegisterSolid(itsBaseLayerSolid);
+  itsBaseLayerLog = new G4LogicalVolume(itsBaseLayerSolid,
+					BDSMaterials::Instance()->GetMaterial("PET"),
+					"PETLayer",
+					0,0,0);
+  RegisterLogicalVolume(itsBaseLayerLog);
   
   itsBaseLayerLog->SetVisAttributes(_visAttBase);
-  itsBaseLayerPhys =  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ),itsBaseLayerLog,"ScreenPETLayer",
-					containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  SetMultiplePhysicalVolumes(itsBaseLayerPhys);
+  itsBaseLayerPhys =  new G4PVPlacement(_screenRotationMatrix,
+					G4ThreeVector(0,0,dispZ),
+					itsBaseLayerLog,
+					"ScreenPETLayer",
+					containerLogicalVolume,
+					false,
+					0,
+					checkOverlaps);
+  RegisterPhysicalVolume(itsBaseLayerPhys);
 }
 
-void BDSScintillatorScreen::BuildBackLayer(){
+void BDSScintillatorScreen::BuildBackLayer()
+{
   G4double dispZ=_frontThickness+_scintillatorThickness+_baseThickness+_backThickness/2.0-_screenThickness/2.0;
-  itsBackLayerSolid = new G4Box("CelluloseBack",_screenWidth/2.0,_screenHeight/2.0,_backThickness/2.0);
-  itsBackLayerLog = new G4LogicalVolume(itsBackLayerSolid,BDSMaterials::Instance()->GetMaterial("Cellulose"),"CelluloseBack",0,0,0);
+  itsBackLayerSolid = new G4Box("CelluloseBack",
+				_screenWidth/2.0,
+				_screenHeight/2.0,
+				_backThickness/2.0);
+  RegisterSolid(itsBackLayerSolid);
+  itsBackLayerLog = new G4LogicalVolume(itsBackLayerSolid,
+					BDSMaterials::Instance()->GetMaterial("Cellulose"),
+					"CelluloseBack",
+					0,0,0);
+  RegisterLogicalVolume(itsBackLayerLog);
   itsBackLayerLog->SetVisAttributes(_visAttFront);
-  itsBackLayerPhys = new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ),itsBackLayerLog,"ScreenCelluloseBack",
-				       containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
-  SetMultiplePhysicalVolumes(itsBackLayerPhys);
+  itsBackLayerPhys = new G4PVPlacement(_screenRotationMatrix,
+				       G4ThreeVector(0,0,dispZ),
+				       itsBackLayerLog,
+				       "ScreenCelluloseBack",
+				       containerLogicalVolume,
+				       false,
+				       0,
+				       checkOverlaps);
+  RegisterPhysicalVolume(itsBackLayerPhys);
 }
 
-void BDSScintillatorScreen::BuildOpticalSurfaces(){
+void BDSScintillatorScreen::BuildOpticalSurfaces()
+{
   //Add the optical surfaces.
   //Mirrored surface between the phosphor and the PET backing.
   G4OpticalSurface* OpSurface=new G4OpticalSurface("OpSurface");
@@ -257,13 +290,14 @@ void BDSScintillatorScreen::BuildScintillatorScreen()
   G4cout << "BDSScintillatorScreen: finished building geometry" << G4endl;
 }
 
-void BDSScintillatorScreen::BuildScintillatorMaterial(){
+void BDSScintillatorScreen::BuildScintillatorMaterial()
+{
   BuildScintillatorCompound();
   BuildScintillatorOpticalProperties();
 }
 
-void BDSScintillatorScreen::BuildScintillatorCompound(){
-  
+void BDSScintillatorScreen::BuildScintillatorCompound()
+{  
   /*
   //Scintillator grains sudpended in a polyurethane elastomer with a specific fill factor
   G4double fill_factor=0.5; //i.e. fraction by volume
@@ -276,7 +310,8 @@ void BDSScintillatorScreen::BuildScintillatorCompound(){
   */
 }
 
-void BDSScintillatorScreen::BuildScintillatorOpticalProperties(){
+void BDSScintillatorScreen::BuildScintillatorOpticalProperties()
+{
   //Fill the material properties table of the _scintillatorLayerMaterial
 
   /*The below is required for mie scattering
@@ -290,8 +325,6 @@ void BDSScintillatorScreen::BuildScintillatorOpticalProperties(){
   //  _mptScintillatorMaterial->AddProperty("ABSLENGTH",    PhotonEnergy, Absorption1,     nEntries)
   //    ->SetSpline(true);
   */
-  
-
 }
 
 
@@ -342,11 +375,10 @@ void BDSScintillatorScreen::BuildContainerLogicalVolume()
   G4UserLimits* itsMarkerUserLimits =  new G4UserLimits();
   itsMarkerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
   itsMarkerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  RegisterUserLimits(itsMarkerUserLimits);
   containerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
 #endif
 }
 
-
 BDSScintillatorScreen::~BDSScintillatorScreen()
-{
-}
+{;}
