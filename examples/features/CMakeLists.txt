@@ -1,10 +1,5 @@
 add_subdirectory(comp)
 add_subdirectory(proc)
-add_subdirectory(3d)
-add_subdirectory(gasPipe)
-add_subdirectory(ggmad)
-add_subdirectory(hadronicTarget)
-add_subdirectory(Laser-Wire)
-add_subdirectory(Mokka)
-add_subdirectory(rbendTarget)
-
+add_subdirectory(proc_old)
+add_subdirectory(geom)
+add_subdirectory(vis)
