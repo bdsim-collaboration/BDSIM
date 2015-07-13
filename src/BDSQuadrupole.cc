@@ -172,9 +172,11 @@ void BDSQuadrupole::BuildCylindricalOuterLogicalVolume()
 		      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());                     // copy number
   
 #ifndef NOUSERLIMITS
-  itsOuterUserLimits =
-    new G4UserLimits("quadrupole cut",itsLength,DBL_MAX,BDSGlobalConstants::Instance()->GetMaxTime(),
-		     BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  itsOuterUserLimits = new G4UserLimits("quadrupole cuts");
+  G4double maxStepFactor=0.5;
+  itsOuterUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
+  itsOuterUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   itsOuterLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
   
