@@ -532,7 +532,7 @@ void BDSDetectorConstruction::InitialiseGFlash()
 		    G4ThreeVector(0.5*CLHEP::m,-0.25*CLHEP::m,0.5*tunnelLength), // its position
 		    "tunnel_pv",	    // its name
 		    aPieceOfTunnel->GetContainerLogicalVolume(), // its logical volume
-		    physiWorld,	    // its mother  volume
+		    worldPV,	    // its mother  volume
 		    false,	    // no boolean operation
 		    0,            // copy number
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps());//overlap checking
