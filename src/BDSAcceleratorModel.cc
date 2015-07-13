@@ -1,4 +1,6 @@
+#include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSAcceleratorModel.hh"
+#include "BDSPhysicalVolumeInfoRegistry.hh"
 
 BDSAcceleratorModel* BDSAcceleratorModel::_instance = 0;
 
@@ -17,7 +19,10 @@ BDSAcceleratorModel::BDSAcceleratorModel():
   readOutWorldPV(NULL),
   readOutWorldLV(NULL),
   flatBeamline(NULL)
-{;}
+{
+  BDSAcceleratorComponentRegistry::Instance();
+  BDSPhysicalVolumeInfoRegistry::Instance();
+}
 
 BDSAcceleratorModel::~BDSAcceleratorModel()
 {
@@ -25,6 +30,8 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
   delete readOutWorldPV;
   delete readOutWorldLV;
   delete flatBeamline;
+  delete BDSAcceleratorComponentRegistry::Instance();
+  delete BDSPhysicalVolumeInfoRegistry::Instance();
 
   _instance = 0;
 }

@@ -24,7 +24,7 @@ private:
   G4VPhysicsConstructor* _emPhysics;
   G4VPhysicsConstructor* _hadronicPhysics;
   G4VPhysicsConstructor* _muonPhysics;
-  G4OpticalPhysics* _opticalPhysics;
+  G4OpticalPhysics*      _opticalPhysics;
   G4VPhysicsConstructor* _decayPhysics;
   G4VPhysicsConstructor* _paramPhysics;
   G4VPhysicsConstructor* _synchRadPhysics;
@@ -35,6 +35,7 @@ private:
   void ConfigureOptical();
   void Register();
   G4String _physListName;
+
   //Physics constructor loaders.
   void LoadEm();			  
   void LoadEmLow();			  

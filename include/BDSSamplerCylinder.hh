@@ -5,7 +5,7 @@
 */
 
 #ifndef BDSSamplerCylinder_h
-#define BDSSamplerCylinder_h 1
+#define BDSSamplerCylinder_h
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
@@ -17,7 +17,9 @@ public:
   BDSSamplerCylinder(G4String aName,G4double aLength, G4double aRadius);
   ~BDSSamplerCylinder();
 
+  /// returns current number of cylindrical samplers
   static int GetNSamplers();
+  /// method to add sampler independent of beamline
   static void AddExternalSampler(G4String outputName);
 
   /// names of samplers for output

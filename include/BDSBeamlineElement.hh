@@ -2,7 +2,6 @@
 #define BDSBEAMLINEELEMENT_H
 
 #include "BDSAcceleratorComponent.hh"
-#include "BDSGeometryComponent.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4RotationMatrix.hh"
@@ -18,12 +17,12 @@
  * beamline / lattice.
  * 
  * Each instance of this class owns the position vectors and rotation matrices
- * as well as the accelerator component.
+ * BUT NOT the accelerator component - this is owned by the component registry.
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
-class BDSBeamlineElement: public BDSGeometryComponent
+class BDSBeamlineElement
 {
 public:
   BDSBeamlineElement(BDSAcceleratorComponent* component,

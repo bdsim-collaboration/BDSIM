@@ -143,6 +143,8 @@ void BDSRBend::BuildBeampipe()
 							    beamPipeInfo->vacuumMaterial,
 							    beamPipeInfo->beamPipeThickness,
 							    beamPipeInfo->beamPipeMaterial);
+
+  InheritObjects(bpFirstBit);
   
   beampipe =
     BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeInfo->beamPipeType,
@@ -155,6 +157,8 @@ void BDSRBend::BuildBeampipe()
 						   beamPipeInfo->vacuumMaterial,
 						   beamPipeInfo->beamPipeThickness,
 						   beamPipeInfo->beamPipeMaterial);
+
+  InheritObjects(beampipe);
 
   BDSBeamPipe* bpLastBit =
     BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledIn(beamPipeInfo->beamPipeType,
@@ -169,6 +173,8 @@ void BDSRBend::BuildBeampipe()
 							   beamPipeInfo->beamPipeThickness,
 							   beamPipeInfo->beamPipeMaterial);
 
+  InheritObjects(bpLastBit);
+  
   // place logical volumes inside marker (container) volume
   // calculate offsets and rotations
   G4double straightSectionCentralZ = (itsMagFieldLength*0.5) + (itsStraightSectionChord*0.5);
@@ -180,51 +186,45 @@ void BDSRBend::BuildBeampipe()
   G4ThreeVector straightStartPos = G4ThreeVector(orientation*magnetXShift*0.5,0,-straightSectionCentralZ);
   G4ThreeVector straightEndPos   = G4ThreeVector(orientation*magnetXShift*0.5,0,straightSectionCentralZ);
   G4ThreeVector magnetPos        = G4ThreeVector(orientation*magnetXShift,0,0);
+
+  RegisterRotationMatrix(straightStartRM);
+  RegisterRotationMatrix(straightEndRM);
   
-  new G4PVPlacement(straightStartRM,                         // rotation
-		    straightStartPos,                        // position
-		    bpFirstBit->GetContainerLogicalVolume(), // logical volume
-		    name+"_bp_start_phys",                // name
-		    containerLogicalVolume,                  // mother volume
-		    false,		                     // no booleanm operation
-		    0,                                       // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() );
+  G4PVPlacement* pipeStartPV = new G4PVPlacement(straightStartRM,                         // rotation
+						 straightStartPos,                        // position
+						 bpFirstBit->GetContainerLogicalVolume(), // logical volume
+						 name+"_bp_start_phys",                   // name
+						 containerLogicalVolume,                  // mother volume
+						 false,		                          // no booleanm operation
+						 0,                                       // copy number
+						 checkOverlaps);
 
-   new G4PVPlacement(0,                                      // rotation
-		     magnetPos,	                             // position
-		     beampipe->GetContainerLogicalVolume(),  // logical volume
-		     name+"_bp_phys",                     // name
-		     containerLogicalVolume,                 // mother volume
-		     false,	                             // no boolean operation
-		     0,                                      // copy number
-		     BDSGlobalConstants::Instance()->GetCheckOverlaps() );
+   G4PVPlacement* pipePV     = new G4PVPlacement(0,                                       // rotation
+						 magnetPos,	                          // position
+						 beampipe->GetContainerLogicalVolume(),   // logical volume
+						 name+"_bp_phys",                         // name
+						 containerLogicalVolume,                  // mother volume
+						 false,	                                  // no boolean operation
+						 0,                                       // copy number
+						 checkOverlaps);
 
-   new G4PVPlacement(straightEndRM,                          // rotation
-		     straightEndPos,	                     // position
-		     bpLastBit->GetContainerLogicalVolume(), // logical volume
-		     name+"_bp_end_phys",	             // name
-		     containerLogicalVolume,                 // mother volume
-		     false,	                             // no boolean operation
-		     0,                                      // copy number
-		     BDSGlobalConstants::Instance()->GetCheckOverlaps() );
-
+   G4PVPlacement* pipeEndRM  = new G4PVPlacement(straightEndRM,                           // rotation
+						 straightEndPos,	                  // position
+						 bpLastBit->GetContainerLogicalVolume(),  // logical volume
+						 name+"_bp_end_phys",	                  // name
+						 containerLogicalVolume,                  // mother volume
+						 false,	                                  // no boolean operation
+						 0,                                       // copy number
+						 checkOverlaps);
+   RegisterPhysicalVolume(pipeStartPV);
+   RegisterPhysicalVolume(pipePV);
+   RegisterPhysicalVolume(pipeEndRM);
+   
    // can't use BeamPipeCommonTasks() as it places the beampipe volume and that'll be wrong in this case
    // have to do everything manually here
    beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false);
    containerLogicalVolume->
     SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
-   
-   RegisterLogicalVolumes(bpFirstBit->GetAllLogicalVolumes());
-   RegisterLogicalVolumes(beampipe->GetAllLogicalVolumes());
-   RegisterLogicalVolumes(bpLastBit->GetAllLogicalVolumes());
-
-   // register components as sensitive if required
-   if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
-     {
-       RegisterSensitiveVolumes(bpFirstBit->GetAllSensitiveVolumes());
-       RegisterSensitiveVolumes(beampipe->GetAllSensitiveVolumes());
-       RegisterSensitiveVolumes(bpLastBit->GetAllSensitiveVolumes());
-     }
    
    SetExtentX(beampipe->GetExtentX()); //not exact but only central porition will use this
    SetExtentY(beampipe->GetExtentY());

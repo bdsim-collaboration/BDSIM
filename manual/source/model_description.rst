@@ -160,6 +160,25 @@ The following elements may be defined
 
 These are detailed in the following sections.
 
+Magnet Strength Polarity
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. note:: BDSIM strictly follows the MADX definition of magnet strength parameter
+	  `k` - "a **positive** `k` corresponds to **horizontal focussing** for a
+	  **positively** charged particle. This therefore indicates a positive `k`
+	  corresponds to horizontal defocussing for a negatively charged particle.
+	  However, MADX treats all particles as positively charged for tracking purposes.
+
+.. versionadded:: 0.7
+
+		  
+		  BDSIM currently treats k absolutely so to convert a MADX lattice for
+		  negatively particles, the MADX k values must be multiplied by -1. The
+		  pybdsim converter provides an option called `flipmagnets` for this
+		  purpose.  This may be revised in future releases depending on changes
+		  to MADX.
+		  
+
 drift
 ^^^^^
 
@@ -279,6 +298,7 @@ parameter         description                  default     required
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
+* See `Magnet Strength Polarity`_ for polarity notes.
 
 Examples::
 
@@ -306,6 +326,7 @@ parameter         description                  default     required
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
+* See `Magnet Strength Polarity`_ for polarity notes.
 
 Examples::
 
@@ -333,6 +354,7 @@ parameter         description                  default     required
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
+* See `Magnet Strength Polarity`_ for polarity notes.
 
 Examples::
 
@@ -356,6 +378,7 @@ parameter         description                  default     required
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
+* See `Magnet Strength Polarity`_ for polarity notes.
 
 Examples::
 
@@ -369,7 +392,8 @@ multipole
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
-
+* See `Magnet Strength Polarity`_ for polarity notes.
+  
 Examples::
 
    **To be completed**
@@ -496,6 +520,8 @@ parameter         description                   default     required
 `material`        outer material                Iron        no
 `outerDiameter`   outer full width [m]          global      no
 ================  ============================  ==========  ===========
+
+* See `Magnet Strength Polarity`_ for polarity notes.
 
 Examples::
 
@@ -1550,6 +1576,40 @@ Examples::
 userFile
 ^^^^^^^^
 
+The `userFile` distribution allows the user to supply an ASCII text file with particle coordinates
+that are tab-delimited. The column names and the units are specified in an input string.
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| `distrFile`                      | File path to ASCII data file                          |
++----------------------------------+-------------------------------------------------------+
+| `distrFileFormat`                | A string that details the column names and units      |
++----------------------------------+-------------------------------------------------------+
+
+Examples::
+
+  beam, particle = "e-",
+        energy = 1*GeV,
+        distrType  = "userfile",
+        distrFile  = "9_UserFile.dat",
+        distrFileFormat = "x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:E[MeV]";
+
+
+The corresponding `9_UserFile.dat` file looks like::
+
+  0 1 2 1 0 1000
+  0 1 0 1 0 1002
+  0 1 0 0 0 1003
+  0 0 2 0 0 1010
+  0 0 0 2 0 1100
+  0 0 0 4 0 1010
+  0 0 0 3 0 1010
+  0 0 0 4 0 1020
+  0 0 0 2 0 1000
+
+
+	
 ptc
 ^^^
 

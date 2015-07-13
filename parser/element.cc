@@ -208,7 +208,7 @@ double Element::property_lookup(char* property_name)const{
   if(!strcmp(property_name,"T")) return temper;
   if(!strcmp(property_name,"P")) return pressure;
 
-  std::cerr << "element.cc> Error: unknown property \"" << property_name << "\"" << std::endl; 
+  std::cerr << "parser.h> Error: unknown property \"" << property_name << "\". Returning 0." << std::endl; 
   exit(1);
   //what about property_lookup for attributes of type string, like material?
 }

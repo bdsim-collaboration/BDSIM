@@ -31,9 +31,15 @@ BDSTerminatorUserLimits::BDSTerminatorUserLimits(G4double ustepMax,
 		 utrakMax,
 		 utimeMax,
 		 uekinMin,
-		 urangMin), keeprunningEK(0.0), stoprunningEK(DBL_MAX)
+		 urangMin),
+  keeprunningEK(0.0),
+  stoprunningEK(DBL_MAX)
 {
-  verbose = BDSExecOptions::Instance()->GetVerbose();
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  verbose     = BDSExecOptions::Instance()->GetVerbose();
+  turnsToTake = BDSGlobalConstants::Instance()->GetTurnsToTake();
 }
 
 BDSTerminatorUserLimits::BDSTerminatorUserLimits(const G4String& type,
@@ -47,26 +53,30 @@ BDSTerminatorUserLimits::BDSTerminatorUserLimits(const G4String& type,
 	       utrakMax,
 	       utimeMax,
 	       uekinMin,
-	       urangMin), keeprunningEK(0.0), stoprunningEK(DBL_MAX)
+	       urangMin),
+  keeprunningEK(0.0),
+  stoprunningEK(DBL_MAX)
 {
-  verbose = BDSExecOptions::Instance()->GetVerbose();
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  verbose     = BDSExecOptions::Instance()->GetVerbose();
+  turnsToTake = BDSGlobalConstants::Instance()->GetTurnsToTake();
 }
 
-inline G4double BDSTerminatorUserLimits::GetUserMinEkine(const G4Track& trk)
+inline G4double BDSTerminatorUserLimits::GetUserMinEkine(const G4Track& /*trk*/)
 {
   // does the number of turns passed == number of turns to take
+  G4int turnsTaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " turns taken : " << BDSGlobalConstants::Instance()->GetTurnsTaken() << G4endl;
+  // for some reason the __METHOD_NAME__ can't identify this function so hard coded its name
+  G4cout << "BDSTerminatorUserLimits::GetUserMinEkine> turns taken : " << turnsTaken << G4endl;
 #endif
-  if ((BDSGlobalConstants::Instance()->GetTurnsTaken() == BDSGlobalConstants::Instance()->GetTurnsToTake())
-      && trk.GetTrackLength()/CLHEP::m > 1.0*CLHEP::m)
+  if (turnsTaken >= turnsToTake)
     {
-      //only stop if it's travelled at least one metre - protects against starting distribution
-      //starting inside terminator
-      if (verbose){
-	G4cout << "Requested number of turns completed - stopping all particles" << G4endl;
-	G4cout << "Track length: " << trk.GetTrackLength()/CLHEP::m << " m" << G4endl;
-      }
+#ifdef BDSDEBUG
+      G4cout << "Requested number of turns completed - stopping all particles" << G4endl;
+#endif
       return stoprunningEK;
     } // yes - stop: return DBL_MAX eV so no particles will be tracked
   else

@@ -1,8 +1,10 @@
 #ifndef BDSSDMANAGER_H
 #define BDSSDMANAGER_H
 
-#include "BDSSamplerSD.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSLWCalorimeterSD.hh"
+#include "BDSSamplerSD.hh"
+#include "BDSTerminatorSD.hh"
 
 /**
  * @brief A singleton class that holds all required sensitive
@@ -24,14 +26,24 @@ public:
   ~BDSSDManager();
 
   /// SD for samplers (plane type)
-  BDSSamplerSD*       GetSamplerPlaneSD() {return samplerPlane;}
+  inline BDSSamplerSD*       GetSamplerPlaneSD() const;
+
   /// SD for samplers (cylinder type)
-  BDSSamplerSD*       GetSamplerCylinderSD() {return samplerCylinder;} 
+  inline BDSSamplerSD*       GetSamplerCylinderSD() const;
+
   /// SD for any component that's symmetric about the beam axis
-  BDSEnergyCounterSD* GetEnergyCounterOnAxisSD(){return eCounterOnAxis;}
+  inline BDSEnergyCounterSD* GetEnergyCounterOnAxisSD() const;
+
+  /// SD for measuring turns around circular machine and terminating
+  /// particles appropriately.
+  inline BDSTerminatorSD*    GetTerminatorSD() const;
+  
   /// SD for any component that's symmetric about the beam axis and
   /// uses the read out geometry
   BDSEnergyCounterSD* GetEnergyCounterOnAxisSDRO();
+
+  /// SD for a laserwire calorimeter
+  BDSLWCalorimeterSD* GetLWCalorimeterSD() const;
   
 private:
   BDSSDManager(); /// private default constructor for singleton
@@ -41,6 +53,8 @@ private:
   BDSSamplerSD*       samplerPlane;
   BDSSamplerSD*       samplerCylinder;
   BDSEnergyCounterSD* eCounterOnAxis;
+  BDSTerminatorSD*    terminator;
+  BDSLWCalorimeterSD* lwCalorimeter;
 
   // duplicate ecounter here that's made on demand
   // and registered to read out geometry - this requires
@@ -52,7 +66,19 @@ private:
   void ConstructECounterSDOnAxisOnDemand();
 };
 
+inline BDSSamplerSD*       BDSSDManager::GetSamplerPlaneSD() const
+{return samplerPlane;}
 
+inline BDSSamplerSD*       BDSSDManager::GetSamplerCylinderSD() const
+{return samplerCylinder;}
 
+inline BDSEnergyCounterSD* BDSSDManager::GetEnergyCounterOnAxisSD() const
+{return eCounterOnAxis;}
+
+inline BDSTerminatorSD*    BDSSDManager::GetTerminatorSD() const
+{return terminator;}
+
+inline BDSLWCalorimeterSD* BDSSDManager::GetLWCalorimeterSD() const
+{return lwCalorimeter;}
 
 #endif

@@ -26,7 +26,7 @@ void BDSGeometryGDML::Construct(G4LogicalVolume *marker){
   G4GDMLParser *parser = new G4GDMLParser();
   parser->Read(GDMLfile);
   
-  G4LogicalVolume* gdmlWorld = parser->GetWorldVolume()->GetLogicalVolume();
+  gdmlWorld = parser->GetWorldVolume()->GetLogicalVolume();
 
   G4VisAttributes* visAtt = new G4VisAttributes(*BDSMagnetColours::Instance()->GetMagnetColour("gdml"));
   visAtt->SetVisibility(false);

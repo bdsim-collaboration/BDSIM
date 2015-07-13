@@ -61,10 +61,10 @@ void BDSSextupole::Build()
 void BDSSextupole::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
-  itsMagField=new BDSSextMagField(1*itsBDblPrime); //L Deacon testing field sign 4/7/12
-  itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
+  itsMagField = new BDSSextMagField(1*itsBDblPrime);
+  itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
 
-  BDSSextStepper* sextStepper=new BDSSextStepper(itsEqRhs);
+  BDSSextStepper* sextStepper = new BDSSextStepper(itsEqRhs);
   sextStepper->SetBDblPrime(itsBDblPrime);
   itsStepper = sextStepper;
 }

@@ -36,7 +36,7 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv){
   visMacroFilename    = "";
   visDebug            = false;
   outputFilename      = "output";
-  outputFormat        = BDSOutputFormat::_ASCII;
+  outputFormat        = BDSOutputFormat::ascii;
   outline             = false;
   outlineFilename     = "outline.dat";
   outlineFormat       = "";
@@ -169,21 +169,7 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 	verboseSteppingLevel = atoi(optarg);
       }
       if( !strcmp(LongOptions[OptionIndex].name , "output") ) {
-	if(!strcmp(optarg,"none") || !strcmp(optarg,"NONE")) outputFormat=BDSOutputFormat::_NONE;
-	else if(!strcmp(optarg,"ascii") || !strcmp(optarg,"ASCII")) outputFormat=BDSOutputFormat::_ASCII;
-	else if (!strcmp(optarg,"root") || !strcmp(optarg,"ROOT")) outputFormat=BDSOutputFormat::_ROOT;
-	else if (!strcmp(optarg,"combined") || !strcmp(optarg,"COMBINED")) outputFormat=BDSOutputFormat::_COMBINED;
-	else {
-	  G4cerr<<"unknown output format "<<optarg<<G4endl;
-	  exit(1);
-	}
-#ifndef USE_ROOT
-	if (outputFormat == BDSOutputFormat::_ROOT || outputFormat == BDSOutputFormat::_COMBINED) {
-	  G4cerr << "ERROR outputFormat root, but BDSIM not configured with ROOT support!" << G4endl;
-	  G4cerr << "Use ascii instead, or recompile with ROOT!" << G4endl;
-	  exit(1);
-	}
-#endif
+	outputFormat = BDS::DetermineOutputFormat(optarg);
       }
       if( !strcmp(LongOptions[OptionIndex].name , "outfile") ) {
 	outputFilename=optarg;
@@ -273,7 +259,7 @@ void BDSExecOptions::Usage()const {
 	<<"--outline=<file>          : print geometry info to <file>"<<G4endl
 	<<"--outline_type=<fmt>      : type of outline format"<<G4endl
 	<<"                            where fmt = optics | survey"<<G4endl
-	<<"--output=<fmt>            : output format (root|ascii|combined), default ascii"<<G4endl
+	<<"--output=<fmt>            : output format (root|ascii|combined|none), default ascii"<<G4endl
 	<<"--outfile=<file>          : output file name. Will be appended with _N"<<G4endl
         <<"                            where N = 0, 1, 2, 3... etc."<<G4endl
 	<<"--ngenerate=N             : the number of primary events to simulate - overrides the ngenerate " << G4endl
@@ -292,8 +278,8 @@ void BDSExecOptions::Usage()const {
 	<<"--vis_mac=<file>          : file with the visualisation macro script, default provided by BDSIM openGL (OGLSQt))"<<G4endl;
 }
 
-void BDSExecOptions::Print()const {
-  G4cout << __METHOD_NAME__ << G4endl;
+void BDSExecOptions::Print()const
+{
   G4cout << __METHOD_NAME__ << std::setw(23) << " inputFilename: "       << std::setw(15) << inputFilename       << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " batch: "               << std::setw(15) << batch               << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " circular: "            << std::setw(15) << circular            << G4endl;
@@ -304,7 +290,7 @@ void BDSExecOptions::Print()const {
   G4cout << __METHOD_NAME__ << std::setw(23) << " ngnerate: "            << std::setw(15) << nGenerate           << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outline: "             << std::setw(15) << outline             << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFilename: "      << std::setw(15) << outputFilename      << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " outputFormat: "        << std::setw(15) << outputFormat.underlying() << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " outputFormat: "        << std::setw(15) << outputFormat        << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outlineFilename: "     << std::setw(15) << outlineFilename     << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " seed: "                << std::setw(15) << seed                << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " seedStateFilename: "   << std::setw(15) << seedStateFilename   << G4endl;

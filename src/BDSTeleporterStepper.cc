@@ -7,8 +7,7 @@
 #include "G4EventManager.hh"
 
 BDSTeleporterStepper::BDSTeleporterStepper(G4Mag_EqRhs *EqRhs)
-   : G4MagIntegratorStepper(EqRhs,6)  // integrate over 6 variables only !!
-                                      // position & velocity
+   :G4MagIntegratorStepper(EqRhs,6)  // integrate over 6 variables only
 {
 #ifdef BDSDEBUG
   G4cout << "BDSTeleporterStepper Constructor " << G4endl;
@@ -19,8 +18,10 @@ BDSTeleporterStepper::BDSTeleporterStepper(G4Mag_EqRhs *EqRhs)
   //  turnnumberrecord.push_back((G4int)-1);
   //  turnstaken         = 0;
   teleporterdelta    = BDSGlobalConstants::Instance()->GetTeleporterDelta();
+#ifdef BDSDEBUG
+  verboseStep = true;
+#endif
 }
-
 
 void BDSTeleporterStepper::AdvanceHelix( const G4double  yIn[],
 					 G4ThreeVector /*Bfld*/,
@@ -37,8 +38,7 @@ void BDSTeleporterStepper::AdvanceHelix( const G4double  yIn[],
   
 #ifdef BDSDEBUG
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
-  G4cout << " Teleporter Stepper" << G4endl;
-  G4cout << "turnstaken " << turnstaken << G4endl;
+  G4cout << __METHOD_NAME__ << "turnstaken: " << turnstaken << G4endl;
 #endif
   //if (turnstaken != turnnumberrecord.back())
   if (1 == 1)
@@ -68,7 +68,7 @@ void BDSTeleporterStepper::AdvanceHelix( const G4double  yIn[],
       yOut[5] = yIn[5];
     }
   
-  // dump step information for particular event
+  // step information for particular event
   if(verboseStep || verboseEventNumber == G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID())
     {
       G4ThreeVector inA  = G4ThreeVector(yIn[0],yIn[1],yIn[2]);

@@ -18,7 +18,9 @@ public:
 	     G4double length);
   ~BDSSampler();
 
+  /// returns current number of samplers
   static int GetNSamplers();
+  /// method to add sampler independent of beamline
   static void AddExternalSampler(G4String outputName);
 
   /// names of samplers for output
@@ -27,12 +29,6 @@ public:
   /// access for external classes to sensitive detector
   static BDSSamplerSD* GetSensitiveDetector(){return SensitiveDetector;}
   
-  /// BDSBeamline needs to be able to create a single element to initialise
-  /// coordinates but can't simply use the factory as it only works with an
-  /// existing sequence from the parser. Need to make BDSBeamline a friend
-  /// to call private initialise member
-  friend class BDSBeamline;
-
 private:
   virtual void BuildContainerLogicalVolume();
 

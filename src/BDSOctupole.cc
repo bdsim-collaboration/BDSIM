@@ -27,7 +27,8 @@ BDSOctupole::BDSOctupole(G4String           name,
   itsBTriplePrime(bTriplePrime)
 {;}
 
-void BDSOctupole::Build() {
+void BDSOctupole::Build()
+{
   BDSMagnet::Build();
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {

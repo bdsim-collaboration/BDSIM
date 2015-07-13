@@ -113,6 +113,10 @@ public:
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSBeamline const &bl);
+
+  /// Feedback about memory consumption for this beamline instance - container size,
+  /// size of all BDSBeamlineElement() and size of all BDSAcceleratorComponent() stored.
+  void PrintMemoryConsumption() const;
   
 private: 
   /// Add a single component and calculate its position and rotation with respect

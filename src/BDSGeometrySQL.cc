@@ -859,7 +859,6 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4Log
 			    VOL_LIST[PARENTID],
 			    false,
 			    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
-	SetMultiplePhysicalVolumes(PhysiComp);
       if(_align_in)
 	{
 	  // Make sure program stops and informs user if more than one alignment vol.

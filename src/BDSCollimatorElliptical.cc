@@ -31,4 +31,6 @@ void BDSCollimatorElliptical::BuildInnerCollimator()
 				     xAperture - lengthSafety, // x half width
 				     yAperture - lengthSafety, // y half width
 				     chordLength * 0.5);       // z half length
+  RegisterSolid(innerSolid);
+  RegisterSolid(vacuumSolid);
 }

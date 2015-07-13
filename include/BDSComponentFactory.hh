@@ -19,13 +19,13 @@ public:
   ~BDSComponentFactory();
 
   /// Create component from parser Element
-  BDSAcceleratorComponent* createComponent(Element& element);
+  BDSAcceleratorComponent* CreateComponent(Element& element);
 
   // for each of them - special cases need only for ring logic
-  BDSAcceleratorComponent* createTerminator();
-  BDSAcceleratorComponent* createTeleporter();
+  BDSAcceleratorComponent* CreateTerminator();
+  BDSAcceleratorComponent* CreateTeleporter();
   /// Create the tilt and offset information object by inspecting the parser element
-  BDSTiltOffset*           createTiltOffset(Element& element);
+  BDSTiltOffset*           CreateTiltOffset(Element& element);
  
 private:
   G4bool   verbose;
@@ -40,28 +40,28 @@ private:
   /// element for storing instead of passing around
   Element _element;
   
-  BDSAcceleratorComponent* createSampler();
-  BDSAcceleratorComponent* createCSampler();
-  BDSAcceleratorComponent* createDump();
-  BDSAcceleratorComponent* createDrift();
-  BDSAcceleratorComponent* createRF();
-  BDSAcceleratorComponent* createSBend();
-  BDSAcceleratorComponent* createRBend();
-  BDSAcceleratorComponent* createHKick();
-  BDSAcceleratorComponent* createVKick();
-  BDSAcceleratorComponent* createQuad();  
-  BDSAcceleratorComponent* createSextupole();
-  BDSAcceleratorComponent* createOctupole();
-  BDSAcceleratorComponent* createMultipole();
-  BDSAcceleratorComponent* createElement();
-  BDSAcceleratorComponent* createSolenoid();
-  BDSAcceleratorComponent* createRectangularCollimator();
-  BDSAcceleratorComponent* createEllipticalCollimator();
-  BDSAcceleratorComponent* createMuSpoiler();
-  BDSAcceleratorComponent* createLaser();
-  BDSAcceleratorComponent* createScreen();
-  BDSAcceleratorComponent* createAwakeScreen();
-  BDSAcceleratorComponent* createTransform3D();
+  BDSAcceleratorComponent* CreateSampler();
+  BDSAcceleratorComponent* CreateCSampler();
+  BDSAcceleratorComponent* CreateDump();
+  BDSAcceleratorComponent* CreateDrift();
+  BDSAcceleratorComponent* CreateRF();
+  BDSAcceleratorComponent* CreateSBend();
+  BDSAcceleratorComponent* CreateRBend();
+  BDSAcceleratorComponent* CreateHKick();
+  BDSAcceleratorComponent* CreateVKick();
+  BDSAcceleratorComponent* CreateQuad();  
+  BDSAcceleratorComponent* CreateSextupole();
+  BDSAcceleratorComponent* CreateOctupole();
+  BDSAcceleratorComponent* CreateMultipole();
+  BDSAcceleratorComponent* CreateElement();
+  BDSAcceleratorComponent* CreateSolenoid();
+  BDSAcceleratorComponent* CreateRectangularCollimator();
+  BDSAcceleratorComponent* CreateEllipticalCollimator();
+  BDSAcceleratorComponent* CreateMuSpoiler();
+  BDSAcceleratorComponent* CreateLaser();
+  BDSAcceleratorComponent* CreateScreen();
+  BDSAcceleratorComponent* CreateAwakeScreen();
+  BDSAcceleratorComponent* CreateTransform3D();
 
   /// Testing function
   G4bool HasSufficientMinimumLength(Element& element);
@@ -73,6 +73,5 @@ private:
   G4double           PrepareOuterDiameter(Element& element);
   BDSBeamPipeInfo*   PrepareBeamPipeInfo(Element& element);
   ///@}
-
 };
 #endif

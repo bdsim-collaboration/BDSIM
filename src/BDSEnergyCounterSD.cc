@@ -8,8 +8,8 @@
 #include "BDSExecOptions.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSLogicalVolumeInfo.hh"
-#include "BDSLogicalVolumeInfoRegistry.hh"
+#include "BDSPhysicalVolumeInfo.hh"
+#include "BDSPhysicalVolumeInfoRegistry.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4Event.hh"
@@ -126,7 +126,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
 
   //calculate mean position of step (which is two points)
   //global
-  Y = 0.5 * (posbefore.x() + posafter.x());
+  X = 0.5 * (posbefore.x() + posafter.x());
   Y = 0.5 * (posbefore.y() + posafter.y());
   Z = 0.5 * (posbefore.z() + posafter.z());
   //note this'll work even without readOutTH
@@ -304,13 +304,13 @@ G4double BDSEnergyCounterSD::GetSPositionOfStep(G4Step* aStep, G4TouchableHistor
   G4double sPosition;
   // Get the s position along the accelerator by querying the logical volume
   // Get the logical volume from this step
-  G4LogicalVolume* thevolume;
+  G4VPhysicalVolume* thevolume;
   if (readOutTH)
-    {thevolume = readOutTH->GetVolume()->GetLogicalVolume();}
+    {thevolume = readOutTH->GetVolume();}
   else
-    {thevolume = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();}
+    {thevolume = aStep->GetPreStepPoint()->GetPhysicalVolume();}
   
-  BDSLogicalVolumeInfo* theInfo = BDSLogicalVolumeInfoRegistry::Instance()->GetInfo(thevolume);
+  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(thevolume);
   if (theInfo)
     {
       sPosition = theInfo->GetSPos();
@@ -334,13 +334,13 @@ G4double BDSEnergyCounterSD::GetSPositionOfSpot(G4GFlashSpot* aSpot, G4Touchable
   G4double sPosition;
   // Get the s position along the accelerator by querying the logical volume
   // Get the logical volume from this step
-  G4LogicalVolume* thevolume;
+  G4VPhysicalVolume* thevolume;
   if (readOutTH)
-    {thevolume = readOutTH->GetVolume()->GetLogicalVolume();}
+    {thevolume = readOutTH->GetVolume();}
   else
-    {thevolume = aSpot->GetTouchableHandle()->GetVolume()->GetLogicalVolume();}
+    {thevolume = aSpot->GetTouchableHandle()->GetVolume();}
 
-  BDSLogicalVolumeInfo* theInfo = BDSLogicalVolumeInfoRegistry::Instance()->GetInfo(thevolume);
+  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(thevolume);
   if (theInfo)
     {
       sPosition = theInfo->GetSPos();

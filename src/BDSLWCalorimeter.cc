@@ -1,14 +1,11 @@
-/* BDSIM code for LW Calorimeter.    Version 1.0
-   Author: John Carter, Royal Holloway, Univ. of London.
-   Last modified 26.7.2004
-   Copyright (c) 2004 by J.C.Carter.  ALL RIGHTS RESERVED. 
-*/
-
+#include "BDSAcceleratorComponent.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSLWCalorimeter.hh"
+#include "BDSSDManager.hh"
 #include "BDSMaterials.hh"
+
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
@@ -17,10 +14,6 @@
 #include "G4PVPlacement.hh"               
 #include "G4UserLimits.hh"
 
-#include "BDSAcceleratorComponent.hh"
-
-#include "BDSLWCalorimeterSD.hh"
-#include "G4SDManager.hh"
 
 BDSLWCalorimeter::BDSLWCalorimeter(G4String         name,
 				   G4double         length,
@@ -55,10 +48,11 @@ void BDSLWCalorimeter::BuildMarkerLogicalVolume()
 					       name + "_container_lv");
   
 #ifndef NOUSERLIMITS
-  G4UserLimits* itsOuterUserLimits =new G4UserLimits();
-  itsOuterUserLimits->SetMaxAllowedStep(chordLength);
-  itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-  containerLogicalVolume->SetUserLimits(itsOuterUserLimits);
+  G4UserLimits* outerUserLimits =new G4UserLimits();
+  outerUserLimits->SetMaxAllowedStep(chordLength);
+  outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  RegisterUserLimits(outerUserLimits);
+  containerLogicalVolume->SetUserLimits(outerUserLimits);
 #endif
 }
 
@@ -69,47 +63,44 @@ void BDSLWCalorimeter::BuildCal(G4double aLength)
 		     BDSGlobalConstants::Instance()->GetLWCalWidth()/2,
 		     BDSGlobalConstants::Instance()->GetLWCalWidth()/2,
 		     aLength/2);
+  RegisterSolid(itsLWCal);
   itsLWCalLogicalVolume=new G4LogicalVolume(itsLWCal,
 					    BDSMaterials::Instance()->GetMaterial("LeadTungstate"),
 					    name + "_lw_cal_lv");
-  G4RotationMatrix* Rot=NULL;
-  if(angle!=0)Rot=BDSGlobalConstants::Instance()->RotY90();
- 
-  itsPhysiLWCal = new G4PVPlacement(Rot,                     // rotation
+  RegisterLogicalVolume(itsLWCalLogicalVolume);
+  itsPhysiLWCal = new G4PVPlacement(0,                       // rotation
 				    G4ThreeVector(BDSGlobalConstants::Instance()->GetLWCalOffset(),0.,0.),
 				    itsLWCalLogicalVolume,   // its logical volume
 				    name +"_lw_cal_pv",	     // its name
 				    containerLogicalVolume,  // its mother  volume
 				    false,		     // no boolean operation
-				    0,
-				    BDSGlobalConstants::Instance()->GetCheckOverlaps()); // copy number
+				    0,                       // copy number
+				    checkOverlaps);
+  RegisterPhysicalVolume(itsPhysiLWCal);
   
-  // Sensitive Detector:
-  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
- 
-  BDSLWCalorimeterSD* SensDet=new BDSLWCalorimeterSD(name);
-  SDMan->AddNewDetector(SensDet);
-  
-  itsLWCalLogicalVolume->SetSensitiveDetector(SensDet);    
+  itsLWCalLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetLWCalorimeterSD());    
 }
+
 void BDSLWCalorimeter::BuildBeampipe()
 {
   BDSBeamPipe* pipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
 								     chordLength,
 								     beamPipeInfo);
-  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
-    {RegisterSensitiveVolumes(pipe->GetAllSensitiveVolumes());}
+
+  // register logical volumes using geometry component base class
+  InheritObjects(pipe);  
+
+  G4PVPlacement* beampipePV = new G4PVPlacement(0,                                 // rotation
+						(G4ThreeVector)0,                  // position
+						pipe->GetContainerLogicalVolume(), // its logical volume
+						name +"_beampipe_pv",              // its name
+						containerLogicalVolume,            // its mother  volume
+						false,		                   // no boolean operation
+						0,
+						checkOverlaps);                    // copy number
+
+  RegisterPhysicalVolume(beampipePV);
   
-
-  new G4PVPlacement(0,                                 // rotation
-		    (G4ThreeVector)0,                  // position
-		    pipe->GetContainerLogicalVolume(), // its logical volume
-		    name +"_beampipe_pv",              // its name
-		    containerLogicalVolume,            // its mother  volume
-		    false,		               // no boolean operation
-		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()); // copy number
-
   // Set extents
   SetExtentX(pipe->GetExtentX());
   SetExtentY(pipe->GetExtentY());
@@ -117,5 +108,4 @@ void BDSLWCalorimeter::BuildBeampipe()
 }
 
 BDSLWCalorimeter::~BDSLWCalorimeter()
-{
-}
+{;}

@@ -1,4 +1,4 @@
-include options.gmad !Include the file "options.gmad"
+include optionsElectron.gmad !Include the file "options.gmad"
 
 beam,  particle="e-",
        energy= 250*GeV,
@@ -33,4 +33,4 @@ sample, range = sampler3;
 sample, range = sampler4; 
 sample, range = sampler5; 
 
-option, ngenerate=5000; 
+option, ngenerate=100; 
