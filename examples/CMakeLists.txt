@@ -7,7 +7,6 @@ if (USE_ROOT)
    set(TESTING_PERM_ARGS ${TESTING_PERM_ARGS} --output=root)
 endif()
 
-add_subdirectory(Components_DB)
 add_subdirectory(ATF2)
 add_subdirectory(LHC)
 add_subdirectory(simpleMachine)
