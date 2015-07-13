@@ -93,27 +93,35 @@ void BDSOutputVector::WritePrimary(G4String samplerName,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  for (unsigned int i=0; i<output.size(); i++) {
-    output[i]->WritePrimary(samplerName,E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken);
-  }
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->WritePrimary(samplerName,E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken);}
 }
 
 void BDSOutputVector::WriteTrackerBunch(G4String samplerName, TRKBunch* bunch, bool primary)
 {
-  for (unsigned int i=0; i<output.size(); i++) {
-    output[i]->WriteTrackerBunch(samplerName,bunch,primary);
-  }
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->WriteTrackerBunch(samplerName,bunch,primary);}
 }
 
-void BDSOutputVector::WriteHistogram(BDSHistogram1D* histogramIn)
-{
+void BDSOutputVector::WriteTrackerPrimaryLoss(TRKBunch* lostBunch, int turnsTaken)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  for (unsigned int i=0; i<output.size(); i++) {
-    output[i]->WriteHistogram(histogramIn);
-  }
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->WriteTrackerPrimaryLoss(lostBunch, turnsTaken);}
+}
+
+void BDSOutputVector::WriteHistogram(BDSHistogram1D* histogramIn)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->WriteHistogram(histogramIn);}
 }
 
 void BDSOutputVector::Commit()

@@ -46,6 +46,9 @@ public:
 				 TRKBunch* bunch,
 				 bool primary=false);
 
+  /// write tracker primary particles
+  virtual void WriteTrackerPrimaryLoss(TRKBunch* lostBunch, int turnsTaken);
+
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn);
   /// write and close and open new file

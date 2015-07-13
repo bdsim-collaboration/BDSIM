@@ -28,7 +28,7 @@ int main (int argc, char** argv){
   
   //initialise output
   //trkOutput = BDSOutputFactory::Instance()->InitialiseOutput();
-  trkOutput = BDSOutputFactory::createOutput(BDSExecOptions::Instance()->GetOutputFormat());
+  trkOutput = BDSOutputFactory::CreateOutput(BDSExecOptions::Instance()->GetOutputFormat());
 
   //initialise random numbers
   BDSRandom::CreateRandomNumberGenerator();
