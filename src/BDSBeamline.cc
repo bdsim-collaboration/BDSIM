@@ -303,18 +303,16 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   G4ThreeVector positionStart, positionMiddle, positionEnd;
   if (hasFiniteOffset)
     {
-      G4double dx                  = tiltOffset->GetXOffset();
       if (hasFiniteAngle) // do not allow x offsets for bends as this will cause overlaps
 	{
 	  G4String name = component->GetName();
 	  G4cout << __METHOD_NAME__ << "WARNING - element has x offset, but this will cause geometry"
 		 << " overlaps: " << name << " - omitting x offset" << G4endl;
-	  dx = 0;
+	  offset.setX(0.0);
 	}
-      G4double dy                  = tiltOffset->GetYOffset();
       // note the displacement is applied in the accelerator x and y frame so use
       // the reference rotation rather than the one with tilt already applied
-      G4ThreeVector displacement   = G4ThreeVector(dx,dy,0).transform(*referenceRotationMiddle);
+      G4ThreeVector displacement   = offset.transform(*referenceRotationMiddle);
       positionStart  = referencePositionStart  + displacement;
       positionMiddle = referencePositionMiddle + displacement;
       positionEnd    = referencePositionEnd    + displacement;
