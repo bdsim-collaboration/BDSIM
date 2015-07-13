@@ -1029,6 +1029,9 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element& element)
 
 BDSTiltOffset* BDSComponentFactory::CreateTiltOffset(Element& element)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "offsetX,Y: " << element.offsetX << " " << element.offsetY << " tilt: " << element.tilt << G4endl;
+#endif
   G4double xOffset = element.offsetX * CLHEP::m;
   G4double yOffset = element.offsetY * CLHEP::m;
   G4double tilt    = element.tilt;
