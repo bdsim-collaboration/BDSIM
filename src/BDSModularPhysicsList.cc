@@ -25,7 +25,10 @@
 
 //Note: transportation process is constructed by default with classes derive from G4VModularPhysicsList
 
-BDSModularPhysicsList::BDSModularPhysicsList(): G4VModularPhysicsList(),_physListName(BDSGlobalConstants::Instance()->GetPhysListName()) {
+BDSModularPhysicsList::BDSModularPhysicsList():
+  G4VModularPhysicsList(),
+  _physListName(BDSGlobalConstants::Instance()->GetPhysListName())
+{
   SetVerboseLevel(1);
   _emPhysics=NULL;
   _hadronicPhysics=NULL;
@@ -44,11 +47,12 @@ BDSModularPhysicsList::BDSModularPhysicsList(): G4VModularPhysicsList(),_physLis
   SetCuts();
 }
 
-void BDSModularPhysicsList::Print(){
-}
+void BDSModularPhysicsList::Print()
+{;}
 
 //Parse the physicsList option
-void BDSModularPhysicsList::ParsePhysicsList(){
+void BDSModularPhysicsList::ParsePhysicsList()
+{
   if(_physListName.contains((G4String)"em")){
     if(_physListName.contains((G4String)"emlow")){
       LoadEmLow();
@@ -103,7 +107,8 @@ void BDSModularPhysicsList::ParsePhysicsList(){
   LoadCutsAndLimits();
 }
 
-void BDSModularPhysicsList::ConstructMinimumParticleSet(){
+void BDSModularPhysicsList::ConstructMinimumParticleSet()
+{
   //Minimum required set of particles required for tracking
   G4Electron::Electron();
   G4Positron::Positron();
@@ -111,11 +116,13 @@ void BDSModularPhysicsList::ConstructMinimumParticleSet(){
   G4AntiProton::AntiProton();
 }
 
-void BDSModularPhysicsList::ConfigurePhysics(){
+void BDSModularPhysicsList::ConfigurePhysics()
+{
   if(_opticalPhysics){ ConfigureOptical();}
 }
 
-void BDSModularPhysicsList::ConfigureOptical(){
+void BDSModularPhysicsList::ConfigureOptical()
+{
   if (!_opticalPhysics) return;
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   _opticalPhysics->Configure(kCerenkov,      globals->GetTurnOnCerenkov());           ///< Cerenkov process index                                   
@@ -129,7 +136,8 @@ void BDSModularPhysicsList::ConfigureOptical(){
   _opticalPhysics->SetScintillationYieldFactor(globals->GetScintYieldFactor());
 }
 
-void BDSModularPhysicsList::Register(){
+void BDSModularPhysicsList::Register()
+{
   std::vector<G4VPhysicsConstructor*>::iterator it;
   for(it = _constructors.begin(); it != _constructors.end(); it++){
     RegisterPhysics(*it);
@@ -137,8 +145,7 @@ void BDSModularPhysicsList::Register(){
 }
 
 BDSModularPhysicsList::~BDSModularPhysicsList()
-{ 
-}
+{;}
 
 
 void BDSModularPhysicsList::SetCuts()
@@ -206,7 +213,8 @@ void BDSModularPhysicsList::SetParticleDefinition()
 	 << BDSGlobalConstants::Instance()->GetBeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
 }
 
-void BDSModularPhysicsList::LoadEm(){			  
+void BDSModularPhysicsList::LoadEm()
+{			  
   if(!_emPhysics){
     _emPhysics = new G4EmStandardPhysics();		  
     _constructors.push_back(_emPhysics);			  
@@ -214,7 +222,8 @@ void BDSModularPhysicsList::LoadEm(){
   }		  
 }							  
 							  
-void BDSModularPhysicsList::LoadEmLow(){			  
+void BDSModularPhysicsList::LoadEmLow()
+{			  
   if(!_emPhysics){
     _emPhysics = new G4EmPenelopePhysics();		  
     _constructors.push_back(_emPhysics);			  
@@ -222,14 +231,16 @@ void BDSModularPhysicsList::LoadEmLow(){
   }
 }							  
 							  
-void BDSModularPhysicsList::LoadParameterisationPhysics(){  
+void BDSModularPhysicsList::LoadParameterisationPhysics()
+{  
   if(!_paramPhysics){
     _paramPhysics = new BDSParameterisationPhysics();	  
     _constructors.push_back(_paramPhysics);		  
   }
 }							  
 							  
-void BDSModularPhysicsList::LoadHadronic(){		  
+void BDSModularPhysicsList::LoadHadronic()
+{		  
   if(!_hadronicPhysics){
 #if G4VERSION_NUMBER < 1000
     _hadronicPhysics = new HadronPhysicsQGSP_BERT();
@@ -240,7 +251,8 @@ void BDSModularPhysicsList::LoadHadronic(){
   }
 }							  
 							  
-void BDSModularPhysicsList::LoadHadronicHP(){		  
+void BDSModularPhysicsList::LoadHadronicHP()
+{		  
   if(!_hadronicPhysics){
 #if G4VERSION_NUMBER < 1000
     _hadronicPhysics = new HadronPhysicsQGSP_BERT_HP();
@@ -251,35 +263,40 @@ void BDSModularPhysicsList::LoadHadronicHP(){
   }
 }							  
 							  
-void BDSModularPhysicsList::LoadSynchRad(){		  
+void BDSModularPhysicsList::LoadSynchRad()
+{		  
   if(!_synchRadPhysics){
     _synchRadPhysics = new BDSSynchRadPhysics();		  
     _constructors.push_back(_synchRadPhysics);		  
   }
 }							  
 							  
-void BDSModularPhysicsList::LoadMuon(){			  
+void BDSModularPhysicsList::LoadMuon()
+{			  
   if(!_muonPhysics){
     _muonPhysics = new BDSMuonPhysics();			  
     _constructors.push_back(_muonPhysics);		  
   }
 }							  
 							  
-void BDSModularPhysicsList::LoadOptical(){		  
+void BDSModularPhysicsList::LoadOptical()
+{		  
   if(!_opticalPhysics){
     _opticalPhysics = new G4OpticalPhysics();		  
     _constructors.push_back(_opticalPhysics);		  
   }
 }							  
 							  
-void BDSModularPhysicsList::LoadDecay(){			  
+void BDSModularPhysicsList::LoadDecay()
+{			  
   if(!_decayPhysics){
     _decayPhysics = new G4DecayPhysics();			  
     _constructors.push_back(_decayPhysics);		  
   }
 }                                                         
 
-void BDSModularPhysicsList::LoadCutsAndLimits(){			  
+void BDSModularPhysicsList::LoadCutsAndLimits()
+{			  
   if(!_cutsAndLimits){
     _cutsAndLimits = new BDSCutsAndLimits();			  
     _constructors.push_back(_cutsAndLimits);		  
