@@ -379,7 +379,6 @@ void BDSAwakeScintillatorScreen::BuildContainerLogicalVolume()
   G4double maxStepFactor=0.5;
   G4UserLimits* itsMarkerUserLimits =  new G4UserLimits();
   itsMarkerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
-  itsMarkerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   containerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
 #endif
 }

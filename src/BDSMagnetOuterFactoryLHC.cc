@@ -851,7 +851,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      n
     {
       G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
       userLimits->SetMaxAllowedStep( length * maxStepFactor );
-      userLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
       userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
       allUserLimits.push_back(userLimits);
       for (std::vector<G4LogicalVolume*>::iterator i = allLogicalVolumes.begin(); i != allLogicalVolumes.end(); ++i)
@@ -1441,16 +1440,16 @@ BDSGeometryComponent* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      n
 
   // USER LIMITS and SENSITIVITY for all components
 #ifndef NOUSERLIMITS
-  if (!allLogicalVolumes.empty()) {
-    G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
-    userLimits->SetMaxAllowedStep( length * maxStepFactor );
-    userLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-    userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-    allUserLimits.push_back(userLimits);
-    
-    for (std::vector<G4LogicalVolume*>::iterator i = allLogicalVolumes.begin(); i != allLogicalVolumes.end(); ++i)
-      {(*i)->SetUserLimits(userLimits);}
-  }
+  if (!allLogicalVolumes.empty())
+    {
+      G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
+      userLimits->SetMaxAllowedStep( length * maxStepFactor );
+      userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+      allUserLimits.push_back(userLimits);
+      
+      for (std::vector<G4LogicalVolume*>::iterator i = allLogicalVolumes.begin(); i != allLogicalVolumes.end(); ++i)
+	{(*i)->SetUserLimits(userLimits);}
+    }
 #endif
     
   // record extents

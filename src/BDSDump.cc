@@ -1,15 +1,3 @@
-//  
-//   BDSIM, (C) 2001-2007
-//    
-//   version 0.3 
-//   last modified : 08 May 2007 by agapov@pp.rhul.ac.uk
-//  
-
-
-//
-//    beam dumper/reader for online exchange with external codes
-//
-
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSDump.hh"
@@ -50,7 +38,6 @@ void BDSDump::BuildContainerLogicalVolume()
 #ifndef NOUSERLIMITS
   G4UserLimits* itsOuterUserLimits = new G4UserLimits();
   itsOuterUserLimits->SetMaxAllowedStep(chordLength);
-  itsOuterUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   containerLogicalVolume->SetUserLimits(itsOuterUserLimits);
 #endif
