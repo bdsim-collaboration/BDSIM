@@ -76,7 +76,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
 {
   if(BDSGlobalConstants::Instance()->GetStopTracks())
     enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit()); // Why subtract the energy deposit of the step? Why not add?
-  //this looks like accounting for conservation of energy when you're killing a particle
+    //this looks like accounting for conservation of energy when you're killing a particle
   //which may normally break energy conservation for the whole event
   //see developer guide 6.2.2...
   else
