@@ -1,0 +1,27 @@
+include electronOptions.gmad 
+
+beam,  particle="e-",
+       energy= 250*GeV,
+       distrType="reference",
+       X0=0.0*mm,
+       Y0=0.0*mm,
+       Xp0=0.0,
+       Yp0=0.0;
+
+myPipe1 : drift, l=1.0; 
+myPipe2 : drift, l=1.0;
+
+myBend  : sbend, l=1.0, angle=0.1*rad;
+sampler1 : marker;
+sampler2 : marker;
+sampler3 : marker;
+
+
+beamLine: line = (myPipe1, sampler1, myBend, sampler2, myPipe2, sampler3); !defines the beam line
+use, period=beamLine; !Chooses the beam line to use
+
+sample, range = sampler1;
+sample, range = sampler2; 
+sample, range = sampler3; 
+
+option, ngenerate=100; 

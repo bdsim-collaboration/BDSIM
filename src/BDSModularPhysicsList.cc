@@ -23,6 +23,8 @@
 #include "G4HadronPhysicsQGSP_BERT.hh"
 #endif
 
+#define BDSDEBUG
+
 //Note: transportation process is constructed by default with classes derive from G4VModularPhysicsList
 
 BDSModularPhysicsList::BDSModularPhysicsList():
@@ -45,6 +47,7 @@ BDSModularPhysicsList::BDSModularPhysicsList():
   ConstructMinimumParticleSet();
   SetParticleDefinition();
   SetCuts();
+  DumpCutValuesTable(100);
 }
 
 void BDSModularPhysicsList::Print()
@@ -151,23 +154,36 @@ BDSModularPhysicsList::~BDSModularPhysicsList()
 void BDSModularPhysicsList::SetCuts()
 {
   G4VUserPhysicsList::SetCuts();
-
+  
+  G4double defaultRangeCut  = BDSGlobalConstants::Instance()->GetDefaultRangeCut(); 
+  SetDefaultCutValue(defaultRangeCut);
   SetCutsWithDefault();   
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "Default production range cut (mm)   " << defaultRangeCut   << G4endl;
+#endif
 
   G4double prodCutPhotons   = BDSGlobalConstants::Instance()->GetProdCutPhotons();
   G4double prodCutElectrons = BDSGlobalConstants::Instance()->GetProdCutElectrons();
   G4double prodCutPositrons = BDSGlobalConstants::Instance()->GetProdCutPositrons();
+  G4double prodCutHadrons   = BDSGlobalConstants::Instance()->GetProdCutHadrons();
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Photon production range cut (mm)   " << prodCutPhotons   << G4endl;
   G4cout << __METHOD_NAME__ << "Electron production range cut (mm) " << prodCutElectrons << G4endl;
   G4cout << __METHOD_NAME__ << "Positron production range cut (mm) " << prodCutPositrons << G4endl;
+  G4cout << __METHOD_NAME__ << "Hadron production range cut (mm)   " << prodCutHadrons<< G4endl;
 #endif
 
   // BDSIM's default range cuts (0.7mm) are different from geant4 defaults (1mm) so always set.
   SetCutValue(prodCutPhotons,"gamma");
   SetCutValue(prodCutElectrons,"e-");
   SetCutValue(prodCutPositrons,"e+");
+
+  // Looping over specific particles?
+  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+  G4ParticleTable::G4PTblDicIterator* particleIterator = particleTable->GetIterator();
+ 
   
   DumpCutValuesTable(); 
 }  
