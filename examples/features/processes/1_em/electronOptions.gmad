@@ -12,10 +12,10 @@ option, beampipeRadius = 10 * cm,
         deltaIntersection = 0.000001 * m,
         deltaChord = 0.0001 * m,
 	elossHistoBinWidth = 0.01,
-	prodCutPhotons=10*m,
-	prodCutElectrons=10*m,
-	prodCutPositrons=10*m,
-	defaultRangeCut=10*m;
+	prodCutPhotons=0.1*m,
+	prodCutElectrons=0.1*m,
+	prodCutPositrons=0.1*m,
+	defaultRangeCut=0.1*m;
 
 option,modularPhysicsListsOn=1;
 option,physicsList="em";
