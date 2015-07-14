@@ -146,20 +146,27 @@ void BDSModularPhysicsList::SetCuts()
   G4VUserPhysicsList::SetCuts();
 
   SetCutsWithDefault();   
+
+  G4double prodCutPhotons   = BDSGlobalConstants::Instance()->GetProdCutPhotons();
+  G4double prodCutElectrons = BDSGlobalConstants::Instance()->GetProdCutElectrons();
+  G4double prodCutPositrons = BDSGlobalConstants::Instance()->GetProdCutPositrons();
   
-  if(BDSGlobalConstants::Instance()->GetProdCutPhotons()>0)
-    SetCutValue(BDSGlobalConstants::Instance()->GetProdCutPhotons(),G4ProductionCuts::GetIndex("gamma"));
-  
-  if(BDSGlobalConstants::Instance()->GetProdCutElectrons()>0)
-    SetCutValue(BDSGlobalConstants::Instance()->GetProdCutElectrons(),G4ProductionCuts::GetIndex("e-"));
-  
-  if(BDSGlobalConstants::Instance()->GetProdCutPositrons()>0)
-    SetCutValue(BDSGlobalConstants::Instance()->GetProdCutPositrons(),G4ProductionCuts::GetIndex("e+"));
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "Photon production range cut (mm)   " << prodCutPhotons   << G4endl;
+  G4cout << __METHOD_NAME__ << "Electron production range cut (mm) " << prodCutElectrons << G4endl;
+  G4cout << __METHOD_NAME__ << "Positron production range cut (mm) " << prodCutPositrons << G4endl;
+#endif
+
+  // BDSIM's default range cuts (0.7mm) are different from geant4 defaults (1mm) so always set.
+  SetCutValue(prodCutPhotons,"gamma");
+  SetCutValue(prodCutElectrons,"e-");
+  SetCutValue(prodCutPositrons,"e+");
   
   DumpCutValuesTable(); 
 }  
 
-void BDSModularPhysicsList::SetParticleDefinition(){
+void BDSModularPhysicsList::SetParticleDefinition()
+{
   // set primary particle definition and kinetic beam parameters other than total energy
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   BDSGlobalConstants::Instance()->SetParticleDefinition(particleTable->
