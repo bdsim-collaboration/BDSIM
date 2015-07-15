@@ -95,9 +95,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
 
   G4int event_number = evt->GetEventID();
-  if(verboseEvent || verboseEventNumber == event_number){
-    G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;
-  }
+  if(verboseEvent || verboseEventNumber == event_number)
+    {G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;}
  
 #ifdef BDSDEBUG 
   G4cout<<"BDSEventAction : storing hits"<<G4endl;
