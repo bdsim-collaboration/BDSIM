@@ -29,9 +29,6 @@ BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):
 #ifndef NOUSERLIMITS
   itsUserLimits = new G4UserLimits();
   itsUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-  if(BDSGlobalConstants::Instance()->GetThresholdCutCharged()>0){
-    itsUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  }
 #endif
 
   itsFieldIsUniform=false;

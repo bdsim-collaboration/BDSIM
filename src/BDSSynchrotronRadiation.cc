@@ -368,9 +368,7 @@ BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
   G4double MeanFreePath;
   G4FieldManager* TheFieldManager=
     track.GetVolume()->GetLogicalVolume()->GetFieldManager();
-
-  if(track.GetTotalEnergy()<BDSGlobalConstants::Instance()->GetThresholdCutCharged())
-    return DBL_MAX;
+  
   /*
   G4double SynchOnZPos = (7.184+4.0) * CLHEP::m;
   if(track.GetPosition().z() + BDSGlobalConstants::Instance()->GetWorldSizeZ() < SynchOnZPos)

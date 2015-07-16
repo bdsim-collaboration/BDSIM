@@ -259,9 +259,6 @@ G4UserLimits* BDSGeometrySQL::UserLimits(G4double var){
   G4UserLimits* UserLimits = new G4UserLimits();
   UserLimits->SetMaxAllowedStep(var*0.5);
   UserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-  if(BDSGlobalConstants::Instance()->GetThresholdCutCharged()>0){
-    UserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  }
   return UserLimits;
 }
 

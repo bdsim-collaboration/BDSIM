@@ -129,7 +129,8 @@ Options::Options(){
   prodCutPositrons=7e-4;
   prodCutPositronsP=7e-4;
   prodCutPositronsA=1;
-
+  
+  prodCutHadrons=1e-3;
 
   //tracking options
   maximumTrackingTime = 0.1;
@@ -386,6 +387,8 @@ void Options::set_value(std::string name, double value )
   if(name == "prodCutPositronsP" ) { prodCutPositronsP = value; return; }
   if(name == "prodCutPositronsA" ) { prodCutPositronsA = value; return; }
 
+  if(name == "prodCutHadrons" ) {prodCutHadrons = value; return; } 
+  
   // twiss parameters
   if(name == "betx" ) { betx = value; return; }
   if(name == "bety" ) { bety = value; return; }

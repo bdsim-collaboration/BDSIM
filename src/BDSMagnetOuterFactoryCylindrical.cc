@@ -373,8 +373,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G
   // USER LIMITS - set user limits based on bdsim user specified parameters
 #ifndef NOUSERLIMITS
   outerUserLimits = new G4UserLimits("outer_cuts");
-  outerUserLimits->SetMaxAllowedStep( length * maxStepFactor );
-  outerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  outerUserLimits->SetMaxAllowedStep(length * maxStepFactor);
   outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   //attach cuts to volumes
   yokeLV->SetUserLimits(outerUserLimits);

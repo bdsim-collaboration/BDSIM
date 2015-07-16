@@ -475,7 +475,6 @@ void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumes(G4String   name,
 #ifndef NOUSERLIMITS
   G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
   outerUserLimits->SetMaxAllowedStep( length * maxStepFactor );
-  outerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   allUserLimits.push_back(outerUserLimits);
   //attach cuts to volumes
@@ -667,7 +666,6 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String
 #ifndef NOUSERLIMITS
   G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
   outerUserLimits->SetMaxAllowedStep( length * maxStepFactor );
-  outerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   allUserLimits.push_back(outerUserLimits);
   // attach cuts to volumes
