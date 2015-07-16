@@ -28,6 +28,8 @@ BDSSDManager::~BDSSDManager()
   delete eCounterOnAxis;
   delete terminator;
   delete eCounterOnAxisRO;
+
+  _instance = 0;
 }
 
 BDSSDManager::BDSSDManager()

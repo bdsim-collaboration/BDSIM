@@ -64,7 +64,6 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
   InitialiseGFlash();
   BDSAcceleratorModel::Instance(); // instantiate the accelerator model holding class
-  BDSPhysicalVolumeInfoRegistry::Instance(); // instantiate the pv info registry
 }
 
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()

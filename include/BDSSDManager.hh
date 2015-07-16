@@ -21,7 +21,7 @@
 class BDSSDManager
 {
 public:
-  static BDSSDManager* Instance(); /// singleton accessort
+  static BDSSDManager* Instance(); /// singleton accessor
 
   ~BDSSDManager();
 

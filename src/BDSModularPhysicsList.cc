@@ -23,8 +23,6 @@
 #include "G4HadronPhysicsQGSP_BERT.hh"
 #endif
 
-#define BDSDEBUG
-
 //Note: transportation process is constructed by default with classes derive from G4VModularPhysicsList
 
 BDSModularPhysicsList::BDSModularPhysicsList():
