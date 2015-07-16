@@ -73,9 +73,7 @@ BDSContinuousSR::GetMeanFreePath(const G4Track& track,
   G4double MeanFreePath;
   G4FieldManager* TheFieldManager=
     track.GetVolume()->GetLogicalVolume()->GetFieldManager();
-
-  if(track.GetTotalEnergy()<BDSGlobalConstants::Instance()->GetThresholdCutCharged())
-    return DBL_MAX;
+  
   /*
   G4double SynchOnZPos = (7.184+4.0) * CLHEP::m;
   if(track.GetPosition().z() + BDSGlobalConstants::Instance()->GetWorldSizeZ() < SynchOnZPos)
@@ -95,9 +93,7 @@ BDSContinuousSR::GetMeanFreePath(const G4Track& track,
 	
       G4double Blocal= FieldValueVec[1];
       if ( FieldValueVec[0]!=0.)
-	Blocal=sqrt(Blocal*Blocal+FieldValueVec[0]*FieldValueVec[0]);
-
-      
+	Blocal=sqrt(Blocal*Blocal+FieldValueVec[0]*FieldValueVec[0]); 
  
       if(track.GetMaterial()==BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial())
 	 && Blocal !=0 )

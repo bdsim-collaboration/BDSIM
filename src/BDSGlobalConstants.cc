@@ -47,7 +47,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsSensitiveComponents=opt.sensitiveBeamlineComponents;
   itsSensitiveBeamPipe=opt.sensitiveBeamPipe;
   itsSensitiveBLMs=opt.sensitiveBLMs;
-  itsDefaultRangeCut=opt.defaultRangeCut;
+  itsDefaultRangeCut=opt.defaultRangeCut * CLHEP::m;
   itsElossHistoBinWidth=opt.elossHistoBinWidth; //Longitudinal and transverse energy loss histogram bin widths
   itsElossHistoTransBinWidth=opt.elossHistoTransBinWidth;
   itsFFact=opt.ffact;
@@ -101,6 +101,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsProdCutPositrons = opt.prodCutPositrons * CLHEP::m;
   itsProdCutPositronsP = opt.prodCutPositronsP * CLHEP::m;
   itsProdCutPositronsA = opt.prodCutPositronsA * CLHEP::m;
+ 
   itsDeltaChord = opt.deltaChord * CLHEP::m;
   itsChordStepMinimum = opt.chordStepMinimum * CLHEP::m;
   itsDeltaIntersection= opt.deltaIntersection * CLHEP::m;

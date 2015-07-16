@@ -89,7 +89,6 @@ void BDSAcceleratorComponent::Build()
     G4double maxStepFactor=0.5;
     G4UserLimits* containerUserLimits =  new G4UserLimits();
     containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
-    containerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
     containerLogicalVolume->SetUserLimits(containerUserLimits);
   }
 #endif

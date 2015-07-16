@@ -1,9 +1,9 @@
-set(TESTING_ARGS "--batch")
+set(TESTING_ARGS "--outfile=electron_250GeV_copper")
 simple_testing(electron_250GeV_copper "--file=electron_250GeV_copper.gmad" "")
-set(TESTING_ARGS "--batch")
+set(TESTING_ARGS "--outfile=electron_250GeV_stainless")
 simple_testing(electron_250Gev_stainless "--file=electron_250GeV_stainless.gmad" "")
-set(TESTING_ARGS "--batch")
+set(TESTING_ARGS "--outfile=electron_250GeV_titanium")
 simple_testing(electron_250GeV_titanium.gmad "--file=electron_250GeV_titanium.gmad" "")
-set(TESTING_ARGS "--batch")
+set(TESTING_ARGS "--outfile=electron_250GeV_tungsten")
 simple_testing(electron_250Gev_tungsten.gmad "--file=electron_250GeV_tungsten.gmad" "")
 

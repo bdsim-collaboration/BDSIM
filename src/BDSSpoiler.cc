@@ -76,15 +76,7 @@ void BDSSpoiler::BuildInnerSpoiler()
   
   if(BDSGlobalConstants::Instance()->GetSensitiveComponents())
     {RegisterSensitiveVolume(itsSolidLogVol);}
-
-#ifndef NOUSERLIMITS
-  G4UserLimits* uL = new G4UserLimits(DBL_MAX,
-				      DBL_MAX,
-				      BDSGlobalConstants::Instance()->GetMaxTime(),
-				      BDSGlobalConstants::Instance()-> GetThresholdCutCharged());
-  RegisterUserLimits(uL);
-  itsSolidLogVol->SetUserLimits(uL);
-#endif
+  
   itsPhysiComp = new G4PVPlacement(0,                      // no rotation
 				   (G4ThreeVector)0,       // its position
 				   itsSolidLogVol,         // its logical volume

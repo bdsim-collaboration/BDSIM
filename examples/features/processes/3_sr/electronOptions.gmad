@@ -11,11 +11,9 @@ option, beampipeRadius = 10 * cm,
         chordStepMinimum = 0.00000001 * m,
         deltaIntersection = 0.000001 * m,
         deltaChord = 0.0001 * m,
-	elossHistoBinWidth = 0.01,
-	prodCutPhotons=0.1*m,
-	prodCutElectrons=0.1*m,
-	prodCutPositrons=0.1*m,
-	defaultRangeCut=0.1*m;
+        thresholdCutCharged = 200 * MeV,
+        thresholdCutPhotons = 200 * MeV,
+	elossHistoBinWidth = 0.01;
 
 option,modularPhysicsListsOn=1;
 option,physicsList="em";

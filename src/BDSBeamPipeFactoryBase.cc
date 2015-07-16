@@ -164,7 +164,6 @@ G4UserLimits* BDSBeamPipeFactoryBase::SetUserLimits(G4double lengthIn)
   // set user limits based on bdsim user specified parameters
   G4UserLimits* beamPipeUserLimits = new G4UserLimits("beampipe_cuts");
   beamPipeUserLimits->SetMaxAllowedStep( lengthIn * maxStepFactor );
-  beamPipeUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   beamPipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   allUserLimits.push_back(beamPipeUserLimits);
   //attach cuts to volumes
