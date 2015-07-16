@@ -18,7 +18,9 @@ BDSAcceleratorModel::BDSAcceleratorModel():
   worldPV(NULL),
   readOutWorldPV(NULL),
   readOutWorldLV(NULL),
-  flatBeamline(NULL)
+  flatBeamline(NULL),
+  supportsBeamline(NULL),
+  tunnelBeamline(NULL)
 {
   BDSAcceleratorComponentRegistry::Instance();
   BDSPhysicalVolumeInfoRegistry::Instance();
@@ -30,6 +32,8 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
   delete readOutWorldPV;
   delete readOutWorldLV;
   delete flatBeamline;
+  delete supportsBeamline;
+  delete tunnelBeamline;
   delete BDSAcceleratorComponentRegistry::Instance();
   delete BDSPhysicalVolumeInfoRegistry::Instance();
 
