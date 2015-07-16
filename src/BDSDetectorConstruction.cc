@@ -375,31 +375,15 @@ void BDSDetectorConstruction::ComponentPlacement()
       G4cout << __METHOD_NAME__ << "placing mass geometry" << G4endl;
       G4cout << "position: " << p << ", rotation: " << *r << G4endl;
 #endif
-
-      // prepare the placement name - if it's a duplicate placement, suffix the number of placement
-      // to the base name. Increment the number afterwards.
-      G4String placementName;
-      if (thecurrentitem->GetNTimesPlaced() < 1)
-	{placementName = name;}
-      else
-	{
-	  std::stringstream namestream;
-	  namestream << name << "_" << thecurrentitem->GetNTimesPlaced();
-	  placementName = namestream.str();
-	}
-      thecurrentitem->IncrementNTimesPlaced();
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "unique placement name: \"" << placementName << "_pv\"" << G4endl;
-#endif
       
-      G4PVPlacement* elementPV = new G4PVPlacement(r,                     // its rotation
-						   p,                     // its position
-						   placementName + "_pv", // its name
-						   elementLV,             // its logical volume
-						   worldPV,               // its mother  volume
-						   false,	          // no boolean operation
-						   nCopy,                 // copy number
-						   checkOverlaps);        //overlap checking
+      G4PVPlacement* elementPV = new G4PVPlacement(r,                                 // its rotation
+						   p,                                 // its position
+						   (*it)->GetPlacementName() + "_pv", // its name
+						   elementLV,                         // its logical volume
+						   worldPV,                           // its mother  volume
+						   false,	                      // no boolean operation
+						   nCopy,                             // copy number
+						   checkOverlaps);                    //overlap checking
 
       // place read out volume in read out world - if this component has one
       G4PVPlacement* readOutPV = NULL;
@@ -411,14 +395,14 @@ void BDSDetectorConstruction::ComponentPlacement()
 #endif
 	  G4String readOutPVName = name + "_ro_pv";
 	  // don't need the returned pointer from new for anything - purely instantiating registers it with g4
-	  readOutPV = new G4PVPlacement(rr,                       // its rotation
-					rp,                       // its position
-					placementName + "_ro_pv", // its name
-					readOutLV,                // its logical volume
-					readOutWorldPV,           // its mother  volume
-					false,	                  // no boolean operation
-					nCopy,                    // copy number
-					checkOverlaps);           //overlap checking
+	  readOutPV = new G4PVPlacement(rr,                                   // its rotation
+					rp,                                   // its position
+					(*it)->GetPlacementName() + "_ro_pv", // its name
+					readOutLV,                            // its logical volume
+					readOutWorldPV,                       // its mother  volume
+					false,	                              // no boolean operation
+					nCopy,                                // copy number
+					checkOverlaps);                       //overlap checking
 
 	  // Register the spos and other info of this elemnet.
 	  // Used by energy counter sd to get spos of that logical volume at histogram time.

@@ -9,6 +9,7 @@
 #include "G4ThreeVector.hh"
 
 #include <ostream>
+#include <sstream>
 
 BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 				       G4ThreeVector            positionStartIn,
@@ -63,6 +64,19 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
     {G4cerr << "WARNING - supplied component is in valid!" << G4endl;}
   G4cout << G4endl;
 #endif
+
+  if (componentIn->GetNTimesPlaced() < 1)
+    {placementName = componentIn->GetName();}
+  else
+    {
+      std::stringstream namestream;
+      namestream << componentIn->GetName() << "_" << componentIn->GetNTimesPlaced();
+      placementName = namestream.str();
+    }
+  componentIn->IncrementNTimesPlaced();
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "unique placement name: \"" << placementName << "_pv\"" << G4endl;
+#endif  
 }
 
 BDSBeamlineElement::~BDSBeamlineElement()

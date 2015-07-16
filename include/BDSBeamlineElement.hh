@@ -56,6 +56,8 @@ public:
   ///@{ Accessor
   inline BDSAcceleratorComponent* GetAcceleratorComponent()    const;
   inline G4String                 GetName()                    const;
+  inline G4String                 GetPlacementName()           const;
+  inline G4LogicalVolume*         GetContainerLogicalVolume()  const;
   inline G4ThreeVector            GetPositionStart()           const;
   inline G4ThreeVector            GetPositionMiddle()          const;
   inline G4ThreeVector            GetPositionEnd()             const;
@@ -99,6 +101,12 @@ private:
 
   /// The accelerator component
   BDSAcceleratorComponent* component;
+
+  /// A unique name for placement with "_pv" suffix created for each element
+  /// when added to the beamline which is made by interrogating how many times
+  /// the BDSAcceleratorComponent has been placed (increments the accelerator
+  /// component placement counter).
+  G4String          placementName;
   
   ///@{ Global coordinates for the start, middle and end of this beamline element
   G4ThreeVector     positionStart;
@@ -152,6 +160,12 @@ inline BDSAcceleratorComponent* BDSBeamlineElement::GetAcceleratorComponent() co
 
 inline G4String                 BDSBeamlineElement::GetName() const
 {return component->GetName();}
+
+inline G4String                 BDSBeamlineElement::GetPlacementName() const
+{return placementName;}
+
+inline G4LogicalVolume*         BDSBeamlineElement::GetContainerLogicalVolume() const
+{return component->GetContainerLogicalVolume();}
 
 inline G4ThreeVector            BDSBeamlineElement::GetPositionStart() const
 {return positionStart;}
