@@ -23,6 +23,9 @@ struct Tunnel {
   double   thickness;
   double   soilThickness;
   double   floorOffset;
+
+  /// visibility
+  int      visible;
   
   /// material
   std::string material;
