@@ -81,7 +81,7 @@ Options::Options(){
 
   buildTunnel = 0;
   buildTunnelFloor = 0;
-  showTunnel = 0;
+  tunnelVisible = true;
   tunnelOffsetX = 0;
   tunnelOffsetY = 0;
   samplerDiameter = 5; // m
@@ -187,32 +187,30 @@ void Options::set_value(std::string name, double value )
 #ifdef BDSDEBUG
   std::cout << "parser> Setting value " << std::setw(25) << std::left << name << value << std::endl;
 #endif
-  //
   // numeric options for the "beam" command
-  //
-  if(name == "elossHistoBinWidth") {elossHistoBinWidth = value; return;}
+  if(name == "elossHistoBinWidth")      {elossHistoBinWidth = value; return;}
   if(name == "elossHistotransBinWidth") {elossHistoTransBinWidth = value; return;}
-  if(name == "defaultRangeCut") {defaultRangeCut = value; return;}
-  if(name == "ffact") {ffact = value; return;}
-  if(name == "bv")  { ffact = value; return; } // MadX naming
+  if(name == "defaultRangeCut")         {defaultRangeCut = value; return;}
+  if(name == "ffact")  {ffact = value; return;}
+  if(name == "bv")     {ffact = value; return;} // MadX naming
   if(name == "energy") {beamEnergy = value; return;}
-  if(name == "X0" ) { X0 = value; return; }
-  if(name == "Y0" ) { Y0 = value; return; }
-  if(name == "Z0" ) { Z0 = value; return; }
-  if(name == "T0" ) { T0 = value; return; }
-  if(name == "Xp0" ) { Xp0 = value; return; }
-  if(name == "Yp0" ) { Yp0 = value; return; }
-  if(name == "Zp0" ) { Zp0 = value; return; }
-  if(name == "E0") {E0 = value; return;}
+  if(name == "X0" )    {X0  = value; return;}
+  if(name == "Y0" )    {Y0  = value; return;}
+  if(name == "Z0" )    {Z0  = value; return;}
+  if(name == "T0" )    {T0  = value; return;}
+  if(name == "Xp0" )   {Xp0 = value; return;}
+  if(name == "Yp0" )   {Yp0 = value; return;}
+  if(name == "Zp0" )   {Zp0 = value; return;}
+  if(name == "E0")     {E0  = value; return;}
 
-  if(name == "sigmaT" ) { sigmaT = value; return; }
-  if(name == "sigmaE" ) { sigmaE = value; return; }
+  if(name == "sigmaT" ) {sigmaT = value; return;}
+  if(name == "sigmaE" ) {sigmaE = value; return;}
 
   // options for beam distrType="gauss"
-  if(name == "sigmaX" ) { sigmaX = value; return; }
-  if(name == "sigmaY" ) { sigmaY = value; return; }
-  if(name == "sigmaXp" ) { sigmaXp = value; return; }
-  if(name == "sigmaYp" ) { sigmaYp = value; return; }
+  if(name == "sigmaX" )  {sigmaX = value; return;}
+  if(name == "sigmaY" )  {sigmaY = value; return;}
+  if(name == "sigmaXp" ) {sigmaXp = value; return;}
+  if(name == "sigmaYp" ) {sigmaYp = value; return;}
 
   // options for beam distrType="square" or distrType="circle"
   if(name == "envelopeX"  ) { envelopeX  = value; return; }
@@ -268,10 +266,8 @@ void Options::set_value(std::string name, double value )
 
   // options for beam distrType="halo"
   if(name == "haloPSWeightParameter") {haloPSWeightParameter= value; return;}
-
-  //
+  
   // numeric options for the"option" command
-  //
 
   // options for beam loss monitor geometry
   if(name == "blmRad" ) { blmRad = value; return; }
@@ -288,33 +284,23 @@ void Options::set_value(std::string name, double value )
   if(name == "aper3" ) { aper3 = value; return; }
   if(name == "aper4" ) { aper4 = value; return; }
 
-  if(name == "includeIronMagFields") {
-    includeIronMagFields = (int)value; return;
-  } 
-
-  if(name == "buildTunnel") {
-      buildTunnel = (int)value; return;
-  }
-
-  if(name == "buildTunnelFloor") {
-    buildTunnelFloor = (int)value; return;
-  }
+  if(name == "samplerDiameter" )     {samplerDiameter = value;       return; }
   
-  if(name == "showTunnel") {
-    showTunnel = (int)value; return;
-  }  
-  if(name == "tunnelOffsetX" ) { tunnelOffsetX = value; return; }
-  if(name == "tunnelOffsetY" ) { tunnelOffsetY = value; return; }
-  if(name == "samplerDiameter" ) { samplerDiameter = value; return; }
-  if(name == "tunnelThickness" ) { tunnelThickness = value; return; }
-  if(name == "tunnelSoilThickness" ) { tunnelSoilThickness = value; return; }
-  if(name == "tunnelFloorOffset" ) { tunnelFloorOffset = value; return; }
+  if(name == "includeIronMagFields") {includeIronMagFields = (int)value; return;} 
 
-  //geometry biasing
-  if(name == "geometryBias") {
-    geometryBias = (int)value; return;
-  }
+  // tunnel options
+  if(name == "buildTunnel")          {buildTunnel = (int)value;      return;}
+  if(name == "buildTunnelFloor")     {buildTunnelFloor = (int)value; return;}
+  if(name == "showTunnel")           {tunnelVisible = (bool)value;   return;} // for backwards compatability
+  if(name == "tunnelVisible")        {tunnelVisible = (bool)value;   return;}
+  if(name == "tunnelOffsetX" )       {tunnelOffsetX = value;         return;}
+  if(name == "tunnelOffsetY" )       {tunnelOffsetY = value;         return;}
+  if(name == "tunnelThickness" )     {tunnelThickness = value;       return;}
+  if(name == "tunnelSoilThickness" ) {tunnelSoilThickness = value;   return;}
+  if(name == "tunnelFloorOffset" )   {tunnelFloorOffset = value;     return;}
 
+  // geometry biasing
+  if(name == "geometryBias") {geometryBias = (int)value; return;}
 
   // options which influence tracking 
   if(name == "maximumTrackingTime") {maximumTrackingTime = value; return;}
@@ -327,67 +313,45 @@ void Options::set_value(std::string name, double value )
   if(name == "deltaOneStep" ) { deltaOneStep = value; return; }
 
   // physics processes
-  if(name == "modularPhysicsListsOn") {
-    modularPhysicsListsOn = (int)value; return;
-  }
-  if(name == "synchRadOn") { 
-    synchRadOn=(int)value; return; 
-  }
-  if(name == "decayOn") { 
-    decayOn = (int)value; return; 
-  }
-  if(name == "turnOnCerenkov") {
-      turnOnCerenkov = (int)value; return;
-  }
-  if(name == "turnOnOpticalAbsorption") {
-      turnOnOpticalAbsorption = (int)value; return;
-  }
-  if(name == "turnOnMieScattering") {
-      turnOnMieScattering = (int)value; return;
-  }
-  if(name == "turnOnRayleighScattering") {
-      turnOnRayleighScattering = (int)value; return;
-  }
-  if(name == "turnOnOpticalSurface") {
-      turnOnOpticalSurface = (int)value; return;
-  }
-  if(name == "turnOnBirksSaturation") {
-      turnOnBirksSaturation = (int)value; return;
-  }
-  if(name == "srTrackPhotons") {
-    synchTrackPhotons = (int)value; return;
-  }
-  if(name == "useEMLPB") { useEMLPB = (int)value; return; }
-  if(name == "useHadLPB") { useHadLPB = (int)value; return; }
-  if(name == "sensitiveBeamlineComponents") { sensitiveBeamlineComponents = (int)value; return; }
-  if(name == "sensitiveBeamPipe") { sensitiveBeamPipe = (int)value; return; }
-  if(name == "sensitiveBLMs") { sensitiveBLMs = (int)value; return; }
-  if(name == "LPBFraction") { LPBFraction = value; return; }
-  if(name == "annihiToMuFe") { annihiToMuFe = value; return; }
-  if(name == "gammaToMuFe") { gammaToMuFe = value; return; }
-  if(name == "scintYieldFactor") { scintYieldFactor = value; return; }
-  if(name == "eeToHadronsFe") { eeToHadronsFe = value; return; }
-  if(name == "thresholdCutCharged" ) { thresholdCutCharged = (double)value; return; }
-  if(name == "thresholdCutPhotons" ) { thresholdCutPhotons = (double)value; return; }
-  if(name == "vacuumPressure") { vacuumPressure = (double)value; return; }
-  if(name == "planckScatterFe") { planckScatterFe = (double)value; return; }
-  if(name == "stopTracks") { stopTracks = (int) value; return; } 
-  if(name == "srLowX") { synchLowX = value; return; }
-  if(name == "srLowGamE") { synchLowGamE = value; return; }
-  if(name == "srMultiplicity") { synchPhotonMultiplicity = (int) value; return; }
-  if(name == "srMeanFreeFactor") { synchMeanFreeFactor = (int) value; return; }
-
-  if(name == "prodCutPhotons" ) { prodCutPhotons = value; return; }
-  if(name == "prodCutPhotonsP" ) { prodCutPhotonsP = value; return; }
-  if(name == "prodCutPhotonsA" ) { prodCutPhotonsA = value; return; }
-  if(name == "prodCutElectrons" ) { prodCutElectrons = value; return; }
-  if(name == "prodCutElectronsP" ) { prodCutElectronsP = value; return; }
-  if(name == "prodCutElectronsA" ) { prodCutElectronsA = value; return; }
-  if(name == "prodCutPositrons" ) { prodCutPositrons = value; return; }
-  if(name == "prodCutPositronsP" ) { prodCutPositronsP = value; return; }
-  if(name == "prodCutPositronsA" ) { prodCutPositronsA = value; return; }
-
-  if(name == "prodCutHadrons" ) {prodCutHadrons = value; return; } 
+  if(name == "modularPhysicsListsOn")    {modularPhysicsListsOn = (int)value; return;}
+  if(name == "synchRadOn")               {synchRadOn=(int)value; return;}
+  if(name == "decayOn")                  {decayOn = (int)value; return;}
+  if(name == "turnOnCerenkov")           {turnOnCerenkov = (int)value; return;}
+  if(name == "turnOnOpticalAbsorption")  {turnOnOpticalAbsorption = (int)value; return;}
+  if(name == "turnOnMieScattering")      {turnOnMieScattering = (int)value; return;}
+  if(name == "turnOnRayleighScattering") {turnOnRayleighScattering = (int)value; return;}
+  if(name == "turnOnOpticalSurface")     {turnOnOpticalSurface = (int)value; return;}
+  if(name == "turnOnBirksSaturation")    {turnOnBirksSaturation = (int)value; return;}
+  if(name == "srTrackPhotons")           {synchTrackPhotons = (int)value; return;}
+  if(name == "useEMLPB")                 {useEMLPB = (int)value; return; }
+  if(name == "useHadLPB")                {useHadLPB = (int)value; return; }
+  if(name == "sensitiveBeamlineComponents"){sensitiveBeamlineComponents = (int)value; return; }
+  if(name == "sensitiveBeamPipe")        {sensitiveBeamPipe = (int)value; return; }
+  if(name == "sensitiveBLMs")            {sensitiveBLMs = (int)value; return; }
+  if(name == "LPBFraction")              {LPBFraction = value; return; }
+  if(name == "annihiToMuFe")             {annihiToMuFe = value; return; }
+  if(name == "gammaToMuFe")              {gammaToMuFe = value; return; }
+  if(name == "scintYieldFactor")         {scintYieldFactor = value; return; }
+  if(name == "eeToHadronsFe")            {eeToHadronsFe = value; return; }
+  if(name == "thresholdCutCharged" )     {thresholdCutCharged = (double)value; return; }
+  if(name == "thresholdCutPhotons" )     {thresholdCutPhotons = (double)value; return; }
+  if(name == "vacuumPressure")           {vacuumPressure = (double)value; return; }
+  if(name == "planckScatterFe")          {planckScatterFe = (double)value; return; }
+  if(name == "stopTracks")               {stopTracks = (int) value; return; } 
+  if(name == "srLowX")                   {synchLowX = value; return; }
+  if(name == "srLowGamE")                {synchLowGamE = value; return; }
+  if(name == "srMultiplicity")           {synchPhotonMultiplicity = (int) value; return; }
+  if(name == "srMeanFreeFactor")         {synchMeanFreeFactor = (int) value; return; }
+  if(name == "prodCutPhotons" )          {prodCutPhotons = value; return; }
+  if(name == "prodCutPhotonsP" )         {prodCutPhotonsP = value; return; }
+  if(name == "prodCutPhotonsA" )         {prodCutPhotonsA = value; return; }
+  if(name == "prodCutElectrons" )        {prodCutElectrons = value; return; }
+  if(name == "prodCutElectronsP" )       {prodCutElectronsP = value; return; }
+  if(name == "prodCutElectronsA" )       {prodCutElectronsA = value; return; }
+  if(name == "prodCutPositrons" )        {prodCutPositrons = value; return; }
+  if(name == "prodCutPositronsP" )       {prodCutPositronsP = value; return; }
+  if(name == "prodCutPositronsA" )       {prodCutPositronsA = value; return; }
+  if(name == "prodCutHadrons" )          {prodCutHadrons = value; return; } 
   
   // twiss parameters
   if(name == "betx" ) { betx = value; return; }
@@ -407,8 +371,7 @@ void Options::set_value(std::string name, double value )
   if(name == "trajCutLTR") { trajCutLTR = (double) value; return; } 
 
   if(name == "storeNeutronTrajectory") { storeNeutronTrajectories = (int) value; return; } 
-  if(name == "storeNeutronTrajectories") { storeNeutronTrajectories = (int) value; return; } 
-
+  if(name == "storeNeutronTrajectories") { storeNeutronTrajectories = (int) value; return; }
 
   // options for generation and storage
   if(name == "randomSeed") { randomSeed = (int) value; return; }
@@ -432,35 +395,31 @@ void Options::set_value(std::string name, std::string value )
 #ifdef BDSDEBUG
   std::cout << "parser> Setting value " << std::setw(25) << std::left << name << value << std::endl;
 #endif
-  // 
   // string options for the "beam" command
-  //
-  if(name == "particle") { particleName = value; return; }
-  if(name == "distrType" ) { distribType = value; return; }
-  if(name == "xDistrType" ) { xDistribType = value; return; }
-  if(name == "yDistrType" ) { yDistribType = value; return; }
-  if(name == "zDistrType" ) { zDistribType = value; return; }
-  if(name == "distrFile" ) { distribFile = value; return; }
-  if(name == "distrFileFormat" ) { distribFileFormat = value; return; }
-  if(name == "haloPSWeightFunction")  {haloPSWeightFunction = value; return;}
-
-  //
+  if(name == "particle")             {particleName = value; return;}
+  if(name == "distrType" )           {distribType  = value; return;}
+  if(name == "xDistrType" )          {xDistribType = value; return;}
+  if(name == "yDistrType" )          {yDistribType = value; return;}
+  if(name == "zDistrType" )          {zDistribType = value; return;}
+  if(name == "distrFile" )           {distribFile  = value; return;}
+  if(name == "distrFileFormat" )     {distribFileFormat    = value; return;}
+  if(name == "haloPSWeightFunction") {haloPSWeightFunction = value; return;}
+  
   // string options for the "option" command
-  //
-
   // options which influence the geometry
-  if(name == "magnetGeometryType" ){ magnetGeometryType = value; return; }
-  if(name == "outerMaterial" )     { outerMaterialName  = value; return; }
-  if(name == "apertureType" )      { apertureType       = value; return; }
-  if(name == "beampipeMaterial" )  { beampipeMaterial   = value; return; }
-  if(name == "vacuumMaterial" )    { vacMaterial        = value; return; }
-  if(name == "tunnelMaterial" )    { tunnelMaterial     = value; return; }
-  if(name == "tunnelCavityMaterial" ) { tunnelCavityMaterial = value; return; }
-  if(name == "soilMaterial" )      { soilMaterial       = value; return; }
+  if(name == "magnetGeometryType" ){magnetGeometryType = value; return;}
+  if(name == "outerMaterial" )     {outerMaterialName  = value; return;}
+  if(name == "apertureType" )      {apertureType       = value; return;}
+  if(name == "beampipeMaterial" )  {beampipeMaterial   = value; return;}
+  if(name == "vacuumMaterial" )    {vacMaterial        = value; return;}
+
+  // tunnel options
+  if(name == "tunnelMaterial" )       {tunnelMaterial       = value; return;}
+  if(name == "tunnelCavityMaterial" ) {tunnelCavityMaterial = value; return;}
+  if(name == "soilMaterial" )         {soilMaterial         = value; return;}
   
   // options which influence the tracking
-  if(name == "physicsList" ) { physicsList = value; return; } 
-  
+  if(name == "physicsList" ) { physicsList = value; return; }
 
   // options for external code interfaces
   if(name == "fifo") { fifo = value; return; }

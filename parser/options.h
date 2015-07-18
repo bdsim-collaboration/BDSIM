@@ -117,7 +117,7 @@ struct Options {
   /// tunnel geometry parameters
   int      buildTunnel;
   int      buildTunnelFloor;
-  int      showTunnel;
+  bool     tunnelVisible;
   double   tunnelOffsetX;
   double   tunnelOffsetY;
   double   tunnelThickness;
