@@ -87,10 +87,9 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsOuterMaterialName  = opt.outerMaterialName;
 
   // tunnel
-  tunnelMaterial     = "concrete";
-  tunnelSoilMaterial = "soil";
-  tunnelSensitive    = true;
-  tunnelInfo = BDSTunnelInfo();
+  tunnelInfo = new BDSTunnelInfo();
+  tunnelInfo->sensitive=true;
+  // set defaults here
 
   //Beam loss monitor (BLM) geometry
   itsBlmRad = opt.blmRad * CLHEP::m;

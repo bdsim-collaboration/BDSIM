@@ -305,12 +305,12 @@ void BDSTunnelFactoryCircular::TestInputParameters(G4double&    length,
 {
   CommontTestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial, tunnelSoilMaterial);
 
-  BDSTunnelInfo defaultModel = BDSGlobalConstants::Instance()->GetTunnelInfo();
+  BDSTunnelInfo* defaultModel = BDSGlobalConstants::Instance()->GetTunnelInfo();
   if (tunnelFloorOffset < 1e-10)
-    {tunnelFloorOffset = defaultModel.tunnelFloorOffset;}
+    {tunnelFloorOffset = defaultModel->floorOffset;}
   
   if (tunnel1 < 1e-10)
-    {tunnel1 = defaultModel.tunnel1;}
+    {tunnel1 = defaultModel->aper1;}
 }
 
 /// only the solids are unique, once we have those, the logical volumes and placement in the

@@ -82,6 +82,8 @@ void BDSTunnelFactoryBase::CommontTestInputParameters(G4double&    length,
 						      G4Material*& tunnelMaterial,
 						      G4Material*& tunnelSoilMaterial)
 {
+  BDSTunnelInfo* defaultInfo = BDSGlobalConstants::Instance()->GetTunnelInfo();
+  
   if (length < 4*lengthSafety)
     {
       G4cerr << __METHOD_NAME__ << "tunnel section too short - length < 4*length safety " << G4endl;
@@ -99,10 +101,10 @@ void BDSTunnelFactoryBase::CommontTestInputParameters(G4double&    length,
       exit(1);
     }
   if (!tunnelMaterial)
-    {tunnelMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetTunnelMaterial());}
+    {tunnelMaterial = defaultInfo->material;}
 
   if (!tunnelSoilMaterial)
-    {tunnelSoilMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetTunnelSoilMaterial());}
+    {tunnelSoilMaterial = defaultInfo->soilMaterial;}
 }
 
 void BDSTunnelFactoryBase::CommonConstruction(G4String    name,
@@ -202,6 +204,7 @@ void BDSTunnelFactoryBase::SetSensitiveVolumes()
   // SENSITIVITY
   // make the tunnel sensitive if required
   // uses read out geometry
+  /*
   if (BDSGlobalConstants::Instance()->GetSensitiveTunnel())
     {
       // ******* TBC********* uncomment when we merge in magnetouterbranch into develop / this one
@@ -209,7 +212,7 @@ void BDSTunnelFactoryBase::SetSensitiveVolumes()
       //tunnelSection->RegisterSensitiveVolume(soilLV);
       //if (floorLV)
       //{tunnelSection->RegisterSensitiveVolume(floorLV);}
-    }
+      }*/
 }
 
 void BDSTunnelFactoryBase::SetUserLimits(G4double length)

@@ -104,10 +104,7 @@ public:
   G4double GetMagnetPoleRadius() const; 
 
   /// tunnel
-  G4String      GetTunnelMaterial()const;
-  G4String      GetTunnelSoilMaterial()const;
-  G4bool        GetSensitiveTunnel()const;
-  BDSTunnelInfo GetTunnelInfo()const;
+  BDSTunnelInfo* GetTunnelInfo() const;
 
   // Beam loss monitors
   G4double GetBlmRad() const;
@@ -272,13 +269,8 @@ private:
   G4double itsMagnetPoleSize;
   G4double itsMagnetPoleRadius;
   
-  // new tunnel
-  G4String tunnelMaterial;
-  G4String tunnelSoilMaterial;
-  G4bool   tunnelSensitive;
-
-  // new - default tunnel model
-  BDSTunnelInfo tunnelInfo;
+  // tunnel model
+  BDSTunnelInfo* tunnelInfo;
   
   //Booleans determining which types of components are sensitive
   G4bool   itsSensitiveComponents;
@@ -530,17 +522,7 @@ inline G4double BDSGlobalConstants::GetMagnetPoleSize() const
 inline G4double BDSGlobalConstants::GetMagnetPoleRadius() const
 {return itsMagnetPoleRadius;}
 
-// tunnel
-inline G4String BDSGlobalConstants::GetTunnelMaterial() const
-{return tunnelMaterial;}
-
-inline G4String BDSGlobalConstants::GetTunnelSoilMaterial() const
-{return tunnelSoilMaterial;}
-
-inline G4bool BDSGlobalConstants::GetSensitiveTunnel() const
-{return tunnelSensitive;}
-
-inline BDSTunnelInfo BDSGlobalConstants::GetTunnelInfo() const
+inline BDSTunnelInfo* BDSGlobalConstants::GetTunnelInfo() const
 {return tunnelInfo;}
 
 inline G4bool BDSGlobalConstants::GetGeometryBias() const
