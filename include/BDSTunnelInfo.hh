@@ -20,25 +20,48 @@ struct BDSTunnelInfo {
   BDSTunnelInfo();
 
   /// extra constructor to assign all members at once
-  BDSTunnelInfo(BDSTunnelType tunnelTypeIn,
-		G4double      tunnelThicknessIn,
-		G4double      tunnelSoilThicknessIn,
-		G4Material*   tunnelMaterialIn,
-		G4Material*   tunnelSoilMaterialIn,
-		G4bool        tunnelFloorIn,
-		G4double      tunnelFloorOffsetIn,
-		G4double      tunnel1In,
-		G4double      tunnel2In);
+  BDSTunnelInfo(BDSTunnelType typeIn,
+		G4double      thicknessIn,
+		G4double      soilThicknessIn,
+		G4Material*   materialIn,
+		G4Material*   soilMaterialIn,
+		G4bool        buildFloorIn,
+		G4double      floorOffsetIn,
+		G4double      aper1In,
+		G4double      aper2In,
+		G4bool        sensitiveIn);
 
-  BDSTunnelType tunnelType;
-  G4double      tunnelThickness;
-  G4double      tunnelSoilThickness;
-  G4Material*   tunnelMaterial;
-  G4Material*   tunnelSoilMaterial;
-  G4bool        tunnelFloor;
-  G4double      tunnelFloorOffset;
-  G4double      tunnel1;
-  G4double      tunnel2;
+  /// Similar constructor, with the exception that the materials are
+  /// provided in name form and looked up by this class to be converted
+  /// into actual G4Material pointers. The type is also provided as a
+  /// string and interpreted to a type.
+  BDSTunnelInfo(G4String typeIn,
+		G4double thicknessIn,
+		G4double soilThicknessIn,
+		G4String materialIn,
+		G4String soilMaterialIn,
+		G4bool   buildFloorIn,
+		G4double floorOffsetIn,
+		G4double aper1In,
+		G4double aper2In,
+		G4bool   sensitiveIn);
+
+  BDSTunnelType type;
+  G4double      thickness;
+  G4double      soilThickness;
+  G4Material*   material;
+  G4Material*   soilMaterial;
+  G4bool        buildFloor;
+  G4double      floorOffset;
+
+  /// Tunnel aperture / shape parameter 1
+  G4double      aper1;
+
+  /// Tunnel aperture / shape parameter 2
+  G4double      aper2;
+  
+  /// Is the tunnel sensitive?
+  G4bool        sensitive;
 };
 
 #endif
