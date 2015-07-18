@@ -92,28 +92,28 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   // set defaults here
 
   //Beam loss monitor (BLM) geometry
-  itsBlmRad = opt.blmRad * CLHEP::m;
-  itsBlmLength = opt.blmLength * CLHEP::m;
-  itsSamplerDiameter = opt.samplerDiameter * CLHEP::m;
-  itsSamplerLength = 4E-8 * CLHEP::m;
+  itsBlmRad              = opt.blmRad              * CLHEP::m;
+  itsBlmLength           = opt.blmLength           * CLHEP::m;
+  itsSamplerDiameter     = opt.samplerDiameter     * CLHEP::m;
+  itsSamplerLength       = 4E-8                    * CLHEP::m;
   itsThresholdCutCharged = opt.thresholdCutCharged * CLHEP::GeV;
   itsThresholdCutPhotons = opt.thresholdCutPhotons * CLHEP::GeV;
-  itsProdCutPhotons = opt.prodCutPhotons * CLHEP::m;
-  itsProdCutPhotonsP = opt.prodCutPhotonsP * CLHEP::m;
-  itsProdCutPhotonsA = opt.prodCutPhotonsA * CLHEP::m;
-  itsProdCutElectrons = opt.prodCutElectrons * CLHEP::m;
-  itsProdCutElectronsP = opt.prodCutElectronsP * CLHEP::m;
-  itsProdCutElectronsA = opt.prodCutElectronsA * CLHEP::m;
-  itsProdCutPositrons = opt.prodCutPositrons * CLHEP::m;
-  itsProdCutPositronsP = opt.prodCutPositronsP * CLHEP::m;
-  itsProdCutPositronsA = opt.prodCutPositronsA * CLHEP::m;
+  itsProdCutPhotons      = opt.prodCutPhotons      * CLHEP::m;
+  itsProdCutPhotonsP     = opt.prodCutPhotonsP     * CLHEP::m;
+  itsProdCutPhotonsA     = opt.prodCutPhotonsA     * CLHEP::m;
+  itsProdCutElectrons    = opt.prodCutElectrons    * CLHEP::m;
+  itsProdCutElectronsP   = opt.prodCutElectronsP   * CLHEP::m;
+  itsProdCutElectronsA   = opt.prodCutElectronsA   * CLHEP::m;
+  itsProdCutPositrons    = opt.prodCutPositrons    * CLHEP::m;
+  itsProdCutPositronsP   = opt.prodCutPositronsP   * CLHEP::m;
+  itsProdCutPositronsA   = opt.prodCutPositronsA   * CLHEP::m;
  
-  itsDeltaChord = opt.deltaChord * CLHEP::m;
-  itsChordStepMinimum = opt.chordStepMinimum * CLHEP::m;
-  itsDeltaIntersection= opt.deltaIntersection * CLHEP::m;
-  itsMinimumEpsilonStep = opt.minimumEpsilonStep;
-  itsMaximumEpsilonStep = opt.maximumEpsilonStep;
-  itsMaxTime = opt.maximumTrackingTime * CLHEP::s;
+  itsDeltaChord          = opt.deltaChord * CLHEP::m;
+  itsChordStepMinimum    = opt.chordStepMinimum * CLHEP::m;
+  itsDeltaIntersection   = opt.deltaIntersection * CLHEP::m;
+  itsMinimumEpsilonStep  = opt.minimumEpsilonStep;
+  itsMaximumEpsilonStep  = opt.maximumEpsilonStep;
+  itsMaxTime             = opt.maximumTrackingTime * CLHEP::s;
   
   itsDeltaOneStep = opt.deltaOneStep * CLHEP::m;
   itsDoPlanckScattering = opt.doPlanckScattering;

@@ -1,6 +1,7 @@
 #include "BDSBeamline.hh"
 #include "BDSDebug.hh"
 #include "BDSTunnelBuilder.hh"
+#include "BDSTunnelFactory.hh"
 
 #include "globals.hh"
 
@@ -54,9 +55,14 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
   BDSBeamline* tunnelLine   = new BDSBeamline();
   BDSBeamline* supportsLine = new BDSBeamline();
 
-  G4double cumulativeLength = 0;
-  G4double cumulativeAngle  = 0;
-  G4int    cumulativeNItems = 0;
+  // temporary variables to use as we go along
+  G4int    nTunnelSegments  = 0;
+  G4double cumulativeLength = 0; // integrated length since last tunnel break
+  G4double cumulativeAngle  = 0; // integrated angle since last tunnel break
+  G4int    cumulativeNItems = 0; // integraed number of accelerator components since last tunnel break
+  BDSGeometryComponent* tunnelSegment = NULL;
+  // shortcut
+  BDSTunnelFactory* tf = BDSTunnelFactory::Instance();
 
   BDSBeamlineIterator it = flatBeamline->begin();
   for (; it != flatBeamline->end(); ++it)
@@ -65,8 +71,11 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 	{
 	  // work out tunnel parameters
 	  // create tunnel segment
-	  // place in tunnel beam line
-	  // reset counters
+	  //tunnelSegment = tf->CreateTunnelSectionAngledInOut();
+	  
+	  // store segment in tunnel beam line
+	  // update / reset counters
+	  nTunnelSegments += 1;
 	  cumulativeLength = 0;
 	  cumulativeAngle  = 0;
 	  cumulativeNItems = 0;
