@@ -120,6 +120,9 @@ void BDSDetectorConstruction::InitialiseRegions()
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
+  // does this belong in BDSPhysicsList ??  Regions are required at construction
+  // time, but the only other place production cuts are set is in the physics list.
+
   // gas region
   gasRegion   = new G4Region("gasRegion");
   G4ProductionCuts* theGasProductionCuts = new G4ProductionCuts();
