@@ -108,21 +108,20 @@ struct Options {
   std::string beampipeMaterial;
   std::string vacMaterial;
 
-  /// default tunnel parameters
-  double      tunnelRadius;
-  std::string tunnelMaterial;
-  std::string tunnelCavityMaterial;
-  std::string soilMaterial;
-
   /// tunnel geometry parameters
-  int      buildTunnel;
-  int      buildTunnelFloor;
-  bool     tunnelVisible;
-  double   tunnelOffsetX;
-  double   tunnelOffsetY;
-  double   tunnelThickness;
-  double   tunnelSoilThickness;
-  double   tunnelFloorOffset;
+  bool        buildTunnel;
+  std::string tunnelType;
+  double      tunnelThickness;
+  double      tunnelSoilThickness;
+  std::string tunnelMaterial;
+  std::string soilMaterial;
+  bool        buildTunnelFloor;
+  double      tunnelFloorOffset;
+  double      tunnelAper1;
+  double      tunnelAper2;
+  bool        tunnelVisible;
+  double      tunnelOffsetX;
+  double      tunnelOffsetY;
 
   /// Sampler
   double   samplerDiameter;

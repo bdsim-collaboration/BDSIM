@@ -5,28 +5,29 @@
 #include <iostream>
 #include <string>
 
-Options::Options(){
+Options::Options()
+{
   // Default Values for Options
 
-  physicsList = "standard"; //default - standard (only transportation)
+  // very important options
+  physicsList           = "standard"; //default - standard (only transportation)
   modularPhysicsListsOn = 0;
-  particleName = "";
-  distribType = "";
-  xDistribType = ""; 
-  yDistribType = "";
-  zDistribType = "";
-  distribFile = "";
-  distribFileFormat = "";
-  haloPSWeightParameter = 1.0;
-  haloPSWeightFunction = "";
+  numberToGenerate      = 1;
+  randomSeed            = 0;
 
-  numberToGenerate = 1;
-  nlinesIgnore = 0;
-  elossHistoBinWidth = 1.0;
-  elossHistoTransBinWidth = 0.1;
-  defaultRangeCut = 7e-4;
-  ffact = 1.0;
-  beamEnergy = 0.0;
+  // beam options
+  particleName          = "";
+  distribType           = "";
+  xDistribType          = ""; 
+  yDistribType          = "";
+  zDistribType          = "";
+  distribFile           = "";
+  distribFileFormat     = "";
+  haloPSWeightParameter = 1.0;
+  haloPSWeightFunction  = "";
+  nlinesIgnore          = 0;
+  ffact                 = 1.0;
+  beamEnergy            = 0.0;
   
   X0 = 0.0, Y0 = 0.0, Z0 = 0.0;
   Xp0 = 0.0, Yp0 = 0.0, Zp0 = 0.0;
@@ -47,127 +48,128 @@ Options::Options(){
   shellXWidth=0.0, shellXpWidth=0.0, shellYWidth=0.0, shellYpWidth=0.0;
   Rmin=0.0, Rmax=0.0;
   sigmaE=0.0;
-
-  doPlanckScattering=0;
-  checkOverlaps=0;
-  numberOfEventsPerNtuple=0;
-  eventNumberOffset=0;
-
-  vacuumPressure = 1e-12;
-  planckScatterFe = 1.0;
-
+  
+  eventNumberOffset       = 0;
+  
+  // general geometrical prameters
+  checkOverlaps           = 0;
   xsize=0.0, ysize=0.0;
+  geometryBias            = 0;
 
-  magnetGeometryType = "cylindrical";
-  outerMaterialName  = "iron";
-  outerDiameter      = 0.2;
-  tunnelRadius       = 2.0;
-  beampipeRadius     = 0.05;
-  beampipeThickness  = 0.005;
-
-  apertureType      = "circular";
-  aper1             = 0.0;
-  aper2             = 0.0;
-  aper3             = 0.0;
-  aper4             = 0.0;
-    
+  // magnet geometry
+  magnetGeometryType   = "cylindrical";
+  outerMaterialName    = "iron";
+  outerDiameter        = 0.2;
+  includeIronMagFields = 0;
+  sensitiveBeamlineComponents = 1;
+  
+  // bean pipe / aperture
+  beampipeRadius       = 0.05;
+  beampipeThickness    = 0.005;
+  apertureType         = "circular";
+  aper1                = 0.0;
+  aper2                = 0.0;
+  aper3                = 0.0;
+  aper4                = 0.0;
   beampipeMaterial     = "StainlessSteel";
   vacMaterial          = "Vacuum";
-  tunnelMaterial       = "concrete";
-  tunnelCavityMaterial = "Air";
-  soilMaterial         = "soil";
-
-  includeIronMagFields = 0;
-
-  buildTunnel = 0;
-  buildTunnelFloor = 0;
-  tunnelVisible = true;
-  tunnelOffsetX = 0;
-  tunnelOffsetY = 0;
-  samplerDiameter = 5; // m
-  tunnelThickness = 0.0;
+  vacuumPressure       = 1e-12;
+  sensitiveBeamPipe    = 1;
+  
+  // tunnel options
+  buildTunnel         = false;
+  tunnelType          = "circular";
+  tunnelThickness     = 0.0;
   tunnelSoilThickness = 0.0;
-  tunnelFloorOffset = 0.0;
+  tunnelMaterial      = "concrete";
+  soilMaterial        = "soil";
+  buildTunnelFloor    = true;
+  tunnelFloorOffset   = 1.0; // m
+  tunnelAper1         = 2.0; // m
+  tunnelAper2         = 2.0; // m
+  tunnelVisible       = true;
+  tunnelOffsetX       = 0;
+  tunnelOffsetY       = 0;
 
-  geometryBias = 0;
-  //Beam loss monitors geometry
-  blmRad = 0.05;
-  blmLength = 0.18;
+  // samplers
+  samplerDiameter     = 5; // m
 
-  gammaToMuFe = 1;
-  annihiToMuFe = 1;
-  eeToHadronsFe = 1;
-  useEMLPB = 0;
-  useHadLPB = 0;
+  // beam loss monitors geometry
+  blmRad              = 0.05;
+  blmLength           = 0.18;
+  sensitiveBLMs               = 1;
 
-  sensitiveBeamlineComponents = 1;
-  sensitiveBeamPipe = 1;
-  sensitiveBLMs = 1;
-
-  turnOnCerenkov = 1;
-  turnOnOpticalAbsorption = 1;
-  turnOnMieScattering = 1;
+  // physics processes
+  gammaToMuFe              = 1;
+  annihiToMuFe             = 1;
+  eeToHadronsFe            = 1;
+  useEMLPB                 = 0;
+  useHadLPB                = 0;
+  doPlanckScattering       = 0;
+  planckScatterFe          = 1.0;
+  turnOnCerenkov           = 1;
+  turnOnOpticalAbsorption  = 1;
+  turnOnMieScattering      = 1;
   turnOnRayleighScattering = 1;
-  turnOnOpticalSurface = 1;
-  turnOnBirksSaturation = 1;
-  scintYieldFactor = 1.0;
-  decayOn = 1;
-  //  synchRadOn = 0;
+  turnOnOpticalSurface     = 1;
+  turnOnBirksSaturation    = 1;
+  scintYieldFactor         = 1.0;
+  decayOn                  = 1;
+  LPBFraction              = 0.0;
+  thresholdCutCharged      = 0.0;
+  thresholdCutPhotons      = 0.0;
+  defaultRangeCut          = 7e-4;
+  prodCutPhotons           = 7e-4;
+  prodCutPhotonsP          = 7e-4;
+  prodCutPhotonsA          = 1;
+  prodCutElectrons         = 7e-4;
+  prodCutElectronsP        = 7e-4;
+  prodCutElectronsA        = 1;
+  prodCutPositrons         = 7e-4;
+  prodCutPositronsP        = 7e-4;
+  prodCutPositronsA        = 1;
+  prodCutHadrons           = 1e-3;
 
+  // tracking options
+  lengthSafety             = 0.000000001; // be very careful adjusting this as it affects all the geometry
+  maximumTrackingTime      = 0.1;
+  deltaChord               = 0.00001; // m
+  chordStepMinimum         = 0.000001;// m
+  deltaIntersection        = 0.00001;
+  minimumEpsilonStep       = 5e-5;    // default value in Geant4, old value 0
+  maximumEpsilonStep       = 1e-3;    // default value in Geant4, old value 1e-7
+  deltaOneStep             = 0.5e-5;  // default value in Geant4, old value 0.00001;
 
-  LPBFraction = 0.0;
-
-  thresholdCutCharged = 0.0;
-  thresholdCutPhotons = 0.0;
-
-  prodCutPhotons=7e-4;
-  prodCutPhotonsP=7e-4;
-  prodCutPhotonsA=1;
-  prodCutElectrons=7e-4;
-  prodCutElectronsP=7e-4;
-  prodCutElectronsA=1;
-  prodCutPositrons=7e-4;
-  prodCutPositronsP=7e-4;
-  prodCutPositronsA=1;
+  // synchrotron radiation
+  synchRadOn               = 0;
+  synchTrackPhotons        = 0;
+  synchLowX                = 0.0;
+  synchLowGamE             = 0.0;
+  synchPhotonMultiplicity  = 1;
+  synchMeanFreeFactor      = 1;
   
-  prodCutHadrons=1e-3;
-
-  //tracking options
-  maximumTrackingTime = 0.1;
-  deltaChord = 0.00001; // m
-  chordStepMinimum = 0.000001; // m
-  deltaIntersection = 0.00001;
-  minimumEpsilonStep=5e-5; // default value in Geant4, old value 0
-  maximumEpsilonStep=1e-3; // default value in Geant4, old value 1e-7
-  deltaOneStep = 0.5e-5; // default value in Geant4, old value 0.00001;
-  turnOnCerenkov = 1;
-  synchRadOn = 0;
-  decayOn = 1;
-  synchTrackPhotons = 0;
-  synchLowX = 0.0;
-  synchLowGamE = 0.0;
-  synchPhotonMultiplicity = 1;
-  synchMeanFreeFactor = 1;
-  lengthSafety = 0.000000001;
-  randomSeed = 0;
-  
-  useTimer = 0;
-  storeMuonTrajectories = 0;
-  trajCutGTZ = 0.0;
-  trajCutLTR = 0.0;
+  // output / analysis options
+  numberOfEventsPerNtuple  = 0;
+  elossHistoBinWidth       = 1.0; // m
+  elossHistoTransBinWidth  = 0.1;
+  storeMuonTrajectories    = 0;
+  trajCutGTZ               = 0.0;
+  trajCutLTR               = 0.0;
   storeNeutronTrajectories = 0;
-  storeTrajectory = 0;
-  stopTracks = 0;
+  storeTrajectory          = 0;
+  stopTracks               = 0;
 
-  fifo = "";
-  refvolume = "";
-  refcopyno = 0;
+  fifo                     = "";
+  refvolume                = "";
+  refcopyno                = 0;
+  useTimer                 = 0;
 
-  // ring options
+  // circular options
   nturns = 1;
 }
 
-void Options::print() const {
+void Options::print() const
+{
   std::cout<<"Options               : " <<std::endl;
   std::cout<<"particle              : " <<particleName<<std::endl;
   std::cout<<"nominal energy        : " <<beamEnergy<<std::endl;
@@ -270,35 +272,37 @@ void Options::set_value(std::string name, double value )
   // numeric options for the"option" command
 
   // options for beam loss monitor geometry
-  if(name == "blmRad" ) { blmRad = value; return; }
-  if(name == "blmLength" ) { blmLength = value; return; }
+  if(name == "blmRad" )            {blmRad    = value; return; }
+  if(name == "blmLength" )         {blmLength = value; return; }
 
   // options which influence the geometry
-  if(name == "outerDiameter" ) {outerDiameter = value; return; }
-  if(name == "boxSize")        {outerDiameter = value; return; } // for backwards compatability
-  if(name == "tunnelRadius" ) { tunnelRadius = value; return; }
-  if(name == "beampipeThickness" ) { beampipeThickness = value; return; }
-  if(name == "beampipeRadius" ) { beampipeRadius = value; return; }
-  if(name == "aper1" ) { aper1 = value; return; }
-  if(name == "aper2" ) { aper2 = value; return; }
-  if(name == "aper3" ) { aper3 = value; return; }
-  if(name == "aper4" ) { aper4 = value; return; }
+  if(name == "outerDiameter" )     {outerDiameter     = value; return;}
+  if(name == "boxSize")            {outerDiameter     = value; return;} // for backwards compatability
+  if(name == "beampipeThickness" ) {beampipeThickness = value; return;}
+  if(name == "beampipeRadius" )    {beampipeRadius    = value; return;}
+  if(name == "aper1" )             {aper1             = value; return;}
+  if(name == "aper2" )             {aper2             = value; return;}
+  if(name == "aper3" )             {aper3             = value; return;}
+  if(name == "aper4" )             {aper4             = value; return;}
 
   if(name == "samplerDiameter" )     {samplerDiameter = value;       return; }
   
   if(name == "includeIronMagFields") {includeIronMagFields = (int)value; return;} 
 
   // tunnel options
-  if(name == "buildTunnel")          {buildTunnel = (int)value;      return;}
-  if(name == "buildTunnelFloor")     {buildTunnelFloor = (int)value; return;}
+  if(name == "buildTunnel")          {buildTunnel = (bool)value;     return;}
+  if(name == "tunnelThickness" )     {tunnelThickness = value;       return;}
+  if(name == "tunnelSoilThickness" ) {tunnelSoilThickness = value;   return;}
+  if(name == "buildTunnelFloor")     {buildTunnelFloor = (bool)value; return;}
+  if(name == "tunnelFloorOffset" )   {tunnelFloorOffset = value;     return;}
+  if(name == "tunnelAper1")          {tunnelAper1 = value;           return;}
+  if(name == "tunnelAper2")          {tunnelAper2 = value;           return;}
+  if(name == "tunnelRadius" )        {tunnelAper1 = value;           return;} // for backwards compatability
   if(name == "showTunnel")           {tunnelVisible = (bool)value;   return;} // for backwards compatability
   if(name == "tunnelVisible")        {tunnelVisible = (bool)value;   return;}
   if(name == "tunnelOffsetX" )       {tunnelOffsetX = value;         return;}
   if(name == "tunnelOffsetY" )       {tunnelOffsetY = value;         return;}
-  if(name == "tunnelThickness" )     {tunnelThickness = value;       return;}
-  if(name == "tunnelSoilThickness" ) {tunnelSoilThickness = value;   return;}
-  if(name == "tunnelFloorOffset" )   {tunnelFloorOffset = value;     return;}
-
+  
   // geometry biasing
   if(name == "geometryBias") {geometryBias = (int)value; return;}
 
@@ -414,9 +418,9 @@ void Options::set_value(std::string name, std::string value )
   if(name == "vacuumMaterial" )    {vacMaterial        = value; return;}
 
   // tunnel options
-  if(name == "tunnelMaterial" )       {tunnelMaterial       = value; return;}
-  if(name == "tunnelCavityMaterial" ) {tunnelCavityMaterial = value; return;}
-  if(name == "soilMaterial" )         {soilMaterial         = value; return;}
+  if(name == "tunnelType")         {tunnelType         = value; return;}
+  if(name == "tunnelMaterial" )    {tunnelMaterial     = value; return;}
+  if(name == "soilMaterial" )      {soilMaterial       = value; return;}
   
   // options which influence the tracking
   if(name == "physicsList" ) { physicsList = value; return; }
