@@ -11,8 +11,8 @@
  * @author I. Agapov
  */
 
-struct Options {
-
+struct Options
+{
   Options();
 
   /// list of pyhysics processes 
@@ -119,6 +119,7 @@ struct Options {
   double      tunnelFloorOffset;
   double      tunnelAper1;
   double      tunnelAper2;
+  bool        tunnelSensitive;
   bool        tunnelVisible;
   double      tunnelOffsetX;
   double      tunnelOffsetY;

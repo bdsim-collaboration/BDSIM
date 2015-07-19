@@ -22,7 +22,9 @@ BDSTunnelFactoryBase::BDSTunnelFactoryBase():
   containerSolid(NULL), tunnelSolid(NULL), soilSolid(NULL), floorSolid(NULL),
   containerLV(NULL), tunnelLV(NULL), soilLV(NULL), floorLV(NULL), floorDisplacement(G4ThreeVector(0,0,0))
 {
-  lengthSafety   = BDSGlobalConstants::Instance()->GetLengthSafety();
+  lengthSafety  = BDSGlobalConstants::Instance()->GetLengthSafety();
+  checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
+  defaultModel  = BDSGlobalConstants::Instance()->TunnelInfo();
 }
 
 BDSGeometryComponent* BDSTunnelFactoryBase::CreateTunnelSectionAngledIn(G4String      name,
@@ -81,9 +83,7 @@ void BDSTunnelFactoryBase::CommontTestInputParameters(G4double&    length,
 						      G4double&    tunnelSoilThickness,
 						      G4Material*& tunnelMaterial,
 						      G4Material*& tunnelSoilMaterial)
-{
-  BDSTunnelInfo* defaultInfo = BDSGlobalConstants::Instance()->GetTunnelInfo();
-  
+{ 
   if (length < 4*lengthSafety)
     {
       G4cerr << __METHOD_NAME__ << "tunnel section too short - length < 4*length safety " << G4endl;
@@ -101,10 +101,10 @@ void BDSTunnelFactoryBase::CommontTestInputParameters(G4double&    length,
       exit(1);
     }
   if (!tunnelMaterial)
-    {tunnelMaterial = defaultInfo->material;}
+    {tunnelMaterial = defaultModel->material;}
 
   if (!tunnelSoilMaterial)
-    {tunnelSoilMaterial = defaultInfo->soilMaterial;}
+    {tunnelSoilMaterial = defaultModel->soilMaterial;}
 }
 
 void BDSTunnelFactoryBase::CommonConstruction(G4String    name,
@@ -238,39 +238,35 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for anything - it's registered upon construction with g4
-  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    (G4ThreeVector)0,             // position
-		    tunnelLV,                     // lv to be placed
-		    name + "_tunnel_pv",          // name
-		    containerLV,                  // mother lv to be place in
-		    false,                        // no boolean operation
-		    0,                            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-		    );
+  new G4PVPlacement((G4RotationMatrix*)0,     // no rotation
+		    (G4ThreeVector)0,         // position
+		    tunnelLV,                 // lv to be placed
+		    name + "_tunnel_pv",      // name
+		    containerLV,              // mother lv to be place in
+		    false,                    // no boolean operation
+		    0,                        // copy number
+		    checkOverlaps);           // whether to check overlaps
   if (soilLV)
     {
-      new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-			(G4ThreeVector)0,             // position
-			soilLV,                       // lv to be placed
-			name + "_soil_pv",            // name
-			containerLV,                  // mother lv to be place in
-			false,                        // no boolean operation
-			0,                            // copy number
-			BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-			);
+      new G4PVPlacement((G4RotationMatrix*)0, // no rotation
+			(G4ThreeVector)0,     // position
+			soilLV,               // lv to be placed
+			name + "_soil_pv",    // name
+			containerLV,          // mother lv to be place in
+			false,                // no boolean operation
+			0,                    // copy number
+		        checkOverlaps);       // whether to check overlaps
     }
-
   if (floorLV)
     {
-      new G4PVPlacement((G4RotationMatrix*)0,     // no rotation
-			floorDisplacement,        // position
-			floorLV,                  // lv to be placed
-			name + "_floor_pv",       // name
-			containerLV,              // mother lv to be place in
-			false,                    // no boolean operation
-			0,                        // copy number
-			BDSGlobalConstants::Instance()->GetCheckOverlaps() // whether to check overlaps
-			);
+      new G4PVPlacement((G4RotationMatrix*)0, // no rotation
+			floorDisplacement,    // position
+			floorLV,              // lv to be placed
+			name + "_floor_pv",   // name
+			containerLV,          // mother lv to be place in
+			false,                // no boolean operation
+			0,                    // copy number
+		        checkOverlaps);       // whether to check overlaps
     }
 }
 

@@ -8,6 +8,8 @@
 #include "BDSGeometryComponent.hh"
 #include "BDSTunnelType.hh"
 
+struct BDSTunnelInfo;
+
 /**
  * @brief Abstract base class for tunnel factory classes
  * 
@@ -126,18 +128,18 @@ protected:
 
   BDSGeometryComponent* tunnelSection;
   
-  G4double  lengthSafety;
-  G4VSolid* containerSolid;
-  G4VSolid* tunnelSolid;
-  G4VSolid* soilSolid;
-  G4VSolid* floorSolid;
-
+  G4double         lengthSafety;
+  G4VSolid*        containerSolid;
+  G4VSolid*        tunnelSolid;
+  G4VSolid*        soilSolid;
+  G4VSolid*        floorSolid;
   G4LogicalVolume* containerLV;
   G4LogicalVolume* tunnelLV;
   G4LogicalVolume* soilLV;
   G4LogicalVolume* floorLV;
-
-  G4ThreeVector floorDisplacement;
+  G4ThreeVector    floorDisplacement;
+  G4bool           checkOverlaps;
+  BDSTunnelInfo*   defaultModel;
 };
        
 

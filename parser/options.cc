@@ -63,7 +63,7 @@ Options::Options()
   includeIronMagFields = 0;
   sensitiveBeamlineComponents = 1;
   
-  // bean pipe / aperture
+  // beam pipe / aperture
   beampipeRadius       = 0.05;
   beampipeThickness    = 0.005;
   apertureType         = "circular";
@@ -87,6 +87,7 @@ Options::Options()
   tunnelFloorOffset   = 1.0; // m
   tunnelAper1         = 2.0; // m
   tunnelAper2         = 2.0; // m
+  tunnelSensitive     = true;
   tunnelVisible       = true;
   tunnelOffsetX       = 0;
   tunnelOffsetY       = 0;
@@ -290,18 +291,19 @@ void Options::set_value(std::string name, double value )
   if(name == "includeIronMagFields") {includeIronMagFields = (int)value; return;} 
 
   // tunnel options
-  if(name == "buildTunnel")          {buildTunnel = (bool)value;     return;}
-  if(name == "tunnelThickness" )     {tunnelThickness = value;       return;}
-  if(name == "tunnelSoilThickness" ) {tunnelSoilThickness = value;   return;}
-  if(name == "buildTunnelFloor")     {buildTunnelFloor = (bool)value; return;}
-  if(name == "tunnelFloorOffset" )   {tunnelFloorOffset = value;     return;}
-  if(name == "tunnelAper1")          {tunnelAper1 = value;           return;}
-  if(name == "tunnelAper2")          {tunnelAper2 = value;           return;}
-  if(name == "tunnelRadius" )        {tunnelAper1 = value;           return;} // for backwards compatability
-  if(name == "showTunnel")           {tunnelVisible = (bool)value;   return;} // for backwards compatability
-  if(name == "tunnelVisible")        {tunnelVisible = (bool)value;   return;}
-  if(name == "tunnelOffsetX" )       {tunnelOffsetX = value;         return;}
-  if(name == "tunnelOffsetY" )       {tunnelOffsetY = value;         return;}
+  if(name == "buildTunnel")          {buildTunnel         = (bool)value; return;}
+  if(name == "tunnelThickness" )     {tunnelThickness     = value;       return;}
+  if(name == "tunnelSoilThickness" ) {tunnelSoilThickness = value;       return;}
+  if(name == "buildTunnelFloor")     {buildTunnelFloor    = (bool)value; return;}
+  if(name == "tunnelFloorOffset" )   {tunnelFloorOffset   = value;       return;}
+  if(name == "tunnelAper1")          {tunnelAper1         = value;       return;}
+  if(name == "tunnelAper2")          {tunnelAper2         = value;       return;}
+  if(name == "tunnelRadius" )        {tunnelAper1         = value;       return;} // for backwards compatability
+  if(name == "showTunnel")           {tunnelVisible       = (bool)value; return;} // for backwards compatability
+  if(name == "tunnelVisible")        {tunnelVisible       = (bool)value; return;}
+  if(name == "tunnelSensitive")      {tunnelSensitive     = (bool)value; return;}
+  if(name == "tunnelOffsetX" )       {tunnelOffsetX       = value;       return;}
+  if(name == "tunnelOffsetY" )       {tunnelOffsetY       = value;       return;}
   
   // geometry biasing
   if(name == "geometryBias") {geometryBias = (int)value; return;}

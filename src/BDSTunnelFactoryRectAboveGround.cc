@@ -339,8 +339,7 @@ void BDSTunnelFactoryRectAboveGround::TestInputParameters(G4double&    length,
 						     G4double&    tunnel2)
 {
   CommontTestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial, tunnelSoilMaterial);
-
-  BDSTunnelInfo* defaultModel = BDSGlobalConstants::Instance()->GetTunnelInfo();
+  
   if (tunnelFloorOffset < 1e-10)
     {tunnelFloorOffset = defaultModel->floorOffset;}
   
