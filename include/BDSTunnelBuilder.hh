@@ -35,9 +35,15 @@ private:
   /// parameters.
   G4bool BreakTunnel(G4double cumulativeLength,
 		     G4double cumulativeAngle,
-		     G4int    cumulativeNItems);
+		     G4int    cumulativeNItems,
+		     G4double cumulativeOffsetX,
+		     G4double cumulativeOffsetY);
 
   static BDSTunnelBuilder* _instance;
+
+  /// Maximum distance tolerable that the beamline can deviate from the previous
+  /// tunnel break point before another tunnel break point is made.
+  G4double displacementTolerance;  
 };
 
 
