@@ -27,12 +27,13 @@ BDSTunnelInfo::BDSTunnelInfo(BDSTunnelType typeIn,
 			     G4double      floorOffsetIn,
 			     G4double      aper1In,
 			     G4double      aper2In,
-			     G4bool        sensitiveIn):
+			     G4bool        sensitiveIn,
+			     G4bool        visibleIn):
   type(typeIn), thickness(thicknessIn),
   soilThickness(soilThicknessIn), material(materialIn),
   soilMaterial(soilMaterialIn), buildFloor(buildFloorIn),
   floorOffset(floorOffsetIn), aper1(aper1In), aper2(aper2In),
-  sensitive(sensitiveIn)
+  sensitive(sensitiveIn), visible(visibleIn)
 {;}
 
 BDSTunnelInfo::BDSTunnelInfo(G4String typeIn,
@@ -44,11 +45,12 @@ BDSTunnelInfo::BDSTunnelInfo(G4String typeIn,
 			     G4double floorOffsetIn,
 			     G4double aper1In,
 			     G4double aper2In,
-			     G4bool   sensitiveIn):
+			     G4bool   sensitiveIn,
+			     G4bool   visibleIn):
   thickness(thicknessIn), soilThickness(soilThicknessIn),
   buildFloor(buildFloorIn), floorOffset(floorOffsetIn),
   aper1(aper1In), aper2(aper2In),
-  sensitive(sensitiveIn)
+  sensitive(sensitiveIn), visible(visibleIn)
 {
   type         = BDS::DetermineTunnelType(typeIn);
   material     = BDSMaterials::Instance()->GetMaterial(materialIn);

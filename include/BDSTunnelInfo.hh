@@ -29,7 +29,8 @@ struct BDSTunnelInfo {
 		G4double      floorOffsetIn,
 		G4double      aper1In,
 		G4double      aper2In,
-		G4bool        sensitiveIn);
+		G4bool        sensitiveIn,
+		G4bool        visible = true);
 
   /// Similar constructor, with the exception that the materials are
   /// provided in name form and looked up by this class to be converted
@@ -44,7 +45,8 @@ struct BDSTunnelInfo {
 		G4double floorOffsetIn,
 		G4double aper1In,
 		G4double aper2In,
-		G4bool   sensitiveIn);
+		G4bool   sensitiveIn,
+		G4bool   visible = true);
 
   BDSTunnelType type;
   G4double      thickness;
@@ -62,6 +64,9 @@ struct BDSTunnelInfo {
   
   /// Is the tunnel sensitive?
   G4bool        sensitive;
+
+  /// Is the tunnel visible?
+  G4bool        visible;
 };
 
 #endif
