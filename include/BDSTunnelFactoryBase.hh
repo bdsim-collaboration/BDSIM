@@ -55,16 +55,16 @@ public:
   /// Create a tunnel section with an angled output face and flat input face. Note,
   /// this is implemented in this base class as a dispatch to the AngledInOut function.
   virtual BDSGeometryComponent* CreateTunnelSectionAngledOut(G4String      name,
-							    G4double      length,
-							    G4double      angleOut,
-							    G4double      tunnelThickness,
-							    G4double      tunnelSoilThickness,
-							    G4Material*   tunnelMaterial,
-							    G4Material*   tunnelSoilMaterial,
-							    G4bool        tunnelFloor,
-							    G4double      tunnelFloorOffset,
-							    G4double      tunnel1,
-							    G4double      tunnel2);
+							     G4double      length,
+							     G4double      angleOut,
+							     G4double      tunnelThickness,
+							     G4double      tunnelSoilThickness,
+							     G4Material*   tunnelMaterial,
+							     G4Material*   tunnelSoilMaterial,
+							     G4bool        tunnelFloor,
+							     G4double      tunnelFloorOffset,
+							     G4double      tunnel1,
+							     G4double      tunnel2);
 
   /// Create a tunnel section with an angled input and output face. Pure virtual.
   virtual BDSGeometryComponent* CreateTunnelSectionAngledInOut(G4String      name,

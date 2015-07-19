@@ -91,12 +91,12 @@ void BDSTunnelFactoryBase::CommontTestInputParameters(G4double&    length,
     }
   if (tunnelThickness < 2*lengthSafety)
     {
-      G4cerr << __METHOD_NAME__ << "tunnel section thickness too thin - thicknes < 2*length safety " << G4endl;
+      G4cerr << __METHOD_NAME__ << "tunnel section thickness too thin - thickness < 2*length safety " << G4endl;
       exit(1);
     }
   if (tunnelSoilThickness < 2*lengthSafety)
     {
-      G4cerr << __METHOD_NAME__ << "tunnel section soil thickness too thin - thicknes < 2*length safety "
+      G4cerr << __METHOD_NAME__ << "tunnel section soil thickness too thin - thickness < 2*length safety "
 	     << G4endl;
       exit(1);
     }
