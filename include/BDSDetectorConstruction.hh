@@ -38,6 +38,9 @@ private:
   /// assignment and copy constructor not implemented nor used
   BDSDetectorConstruction& operator=(const BDSDetectorConstruction&);
   BDSDetectorConstruction(BDSDetectorConstruction&);
+
+  /// Create and set parameters for various G4Regions
+  void InitialiseRegions();
   
   /// Convert the parser beamline_list to BDSAcceleratorComponents with help of BDSComponentFactory
   /// and put in BDSBeamline container that calcualtes coordinates and extent of beamline

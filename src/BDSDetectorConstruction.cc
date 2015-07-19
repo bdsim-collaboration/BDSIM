@@ -69,18 +69,13 @@ BDSDetectorConstruction::BDSDetectorConstruction():
 
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 {
-  gasRegion   = new G4Region("gasRegion");
-
-  G4ProductionCuts* theGasProductionCuts = new G4ProductionCuts();
-  theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("gamma"));
-  theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("e-"));
-  theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("e+"));
-  gasRegion->SetProductionCuts(theGasProductionCuts);
-  
   if (verbose || debug) G4cout << __METHOD_NAME__ << "starting accelerator geometry construction\n" << G4endl;
   
   // prepare materials for this run
   BDSMaterials::Instance()->PrepareRequiredMaterials();
+
+  // construct regions
+  InitialiseRegions();
   
   // construct the component list
   BuildBeamline();
@@ -103,10 +98,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   G4cout << G4endl << __METHOD_NAME__ << "printing material table" << G4endl;
   G4cout << *(G4Material::GetMaterialTable()) << G4endl << G4endl;
   if(verbose || debug) G4cout<<"Finished listing materials, returning physiWorld"<<G4endl; 
-#endif
   
-  // feedback
-#ifdef BDSDEBUG
   G4cout << *BDSPhysicalVolumeInfoRegistry::Instance();
 #endif
   return worldPV;
@@ -120,6 +112,29 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
   gFlashRegion.clear();
   delete theHitMaker;
   delete theParticleBounds;
+}
+
+void BDSDetectorConstruction::InitialiseRegions()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
+  // gas region
+  gasRegion   = new G4Region("gasRegion");
+  G4ProductionCuts* theGasProductionCuts = new G4ProductionCuts();
+  theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("gamma"));
+  theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("e-"));
+  theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("e+"));
+  gasRegion->SetProductionCuts(theGasProductionCuts);
+
+  // precision region
+  precisionRegion = new G4Region("precisionRegion");
+  G4ProductionCuts* theProductionCuts = new G4ProductionCuts();
+  theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsP(),"gamma");
+  theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutElectronsP(),"e-");
+  theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsP(),"e+");
+  precisionRegion->SetProductionCuts(theProductionCuts);
 }
 
 void BDSDetectorConstruction::BuildBeamline()
@@ -255,26 +270,6 @@ void BDSDetectorConstruction::BuildWorld()
   worldUserLimits->SetMaxAllowedStep(worldR.z()*0.5);
   worldLV->SetUserLimits(worldUserLimits);
   readOutWorldLV->SetUserLimits(worldUserLimits);
-#endif
-
-  // create regions
-#ifdef BDSDEBUG
-  G4cout<<"Creating regions..."<<G4endl;
-#endif
-  precisionRegion = new G4Region("precisionRegion");
-  G4ProductionCuts* theProductionCuts = new G4ProductionCuts();
-  if(BDSGlobalConstants::Instance()->GetProdCutPhotonsP()>0)
-    theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsP(),G4ProductionCuts::GetIndex("gamma"));
-
-  if(BDSGlobalConstants::Instance()->GetProdCutElectronsP()>0)
-    theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutElectronsP(),G4ProductionCuts::GetIndex("e-"));
-
-  if(BDSGlobalConstants::Instance()->GetProdCutPositronsP()>0)
-    theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsP(),G4ProductionCuts::GetIndex("e+"));
-  
-  precisionRegion->SetProductionCuts(theProductionCuts);
-#ifndef NOUSERLIMITS
-  precisionRegion->SetUserLimits(worldUserLimits);
 #endif
 
   // place the world
