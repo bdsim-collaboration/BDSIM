@@ -23,8 +23,6 @@
 #include "G4HadronPhysicsQGSP_BERT.hh"
 #endif
 
-#define BDSDEBUG
-
 //Note: transportation process is constructed by default with classes derive from G4VModularPhysicsList
 
 BDSModularPhysicsList::BDSModularPhysicsList():
@@ -181,9 +179,8 @@ void BDSModularPhysicsList::SetCuts()
   SetCutValue(prodCutPositrons,"e+");
 
   // Looping over specific particles?
-  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  G4ParticleTable::G4PTblDicIterator* particleIterator = particleTable->GetIterator();
- 
+  //G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+  //G4ParticleTable::G4PTblDicIterator* particleIterator = particleTable->GetIterator();
   
   DumpCutValuesTable(); 
 }  
