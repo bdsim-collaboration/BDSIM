@@ -21,6 +21,7 @@ option, beampipeRadius = 10 * cm,
 
 option,modularPhysicsListsOn=1;
 option,physicsList="em synchrad";
+option,srMultiplicity=1;
 
 !option,modularPhysicsListsOn=0;
 !option,physicsList="em_standard";
