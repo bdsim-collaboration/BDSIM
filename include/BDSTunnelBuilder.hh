@@ -43,7 +43,16 @@ private:
 
   /// Maximum distance tolerable that the beamline can deviate from the previous
   /// tunnel break point before another tunnel break point is made.
-  G4double displacementTolerance;  
+  G4double displacementTolerance;
+
+  /// Maximum number of items before split.
+  G4double maxItems;
+
+  /// Maximum length before split.
+  G4double maxLength;
+
+  /// Maximum angle before split.
+  G4double maxAngle;
 };
 
 

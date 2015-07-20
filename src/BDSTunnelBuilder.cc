@@ -1,5 +1,6 @@
 #include "BDSBeamline.hh"
 #include "BDSDebug.hh"
+#include "BDSTiltOffset.hh"
 #include "BDSTunnelBuilder.hh"
 #include "BDSTunnelFactory.hh"
 #include "BDSTunnelSegment.hh"
@@ -20,12 +21,16 @@ BDSTunnelBuilder* BDSTunnelBuilder::Instance()
 }
 
 BDSTunnelBuilder::BDSTunnelBuilder()
-{;}
+{
+  displacementTolerance = 50*CLHEP::cm;   // maximum displacemenet of beamline before split
+  maxItems              = 50;             // maximum number of items before split
+  maxLength             = 50*CLHEP::m;    // maximum length of tunnel segment
+  maxAngle              = 100*CLHEP::mrad; // maximum angle before split
+}
 
 BDSTunnelBuilder::~BDSTunnelBuilder()
 {  
   _instance = 0;
-  displacementTolerance = 50*CLHEP::cm;
 }
 
 G4bool BDSTunnelBuilder::BreakTunnel(G4double cumulativeLength,
@@ -37,15 +42,15 @@ G4bool BDSTunnelBuilder::BreakTunnel(G4double cumulativeLength,
   G4bool result = false;
 
   G4bool lengthTest = false;
-  if (cumulativeLength > 50*CLHEP::m)
+  if (cumulativeLength > maxLength)
     {lengthTest = true;}
 
   G4bool angleTest = false;
-  if (cumulativeAngle > 10*CLHEP::mrad)
+  if (cumulativeAngle > maxAngle)
     {angleTest = true;}
 
   G4bool nItemsTest = false;
-  if (cumulativeNItems > 10)
+  if (cumulativeNItems > maxItems)
     {nItemsTest = true;}
 
   G4bool dispXTest = false;
@@ -60,11 +65,14 @@ G4bool BDSTunnelBuilder::BreakTunnel(G4double cumulativeLength,
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "testing cumulative parameters" << G4endl;
-  G4cout << "Cumulative Length (mm): " << cumulativeLength << " test-> " << lengthTest << G4endl;
-  G4cout << "Cumulative Angle (rad): " << cumulativeAngle  << " test-> " << angleTest  << G4endl;
-  G4cout << "# of items:             " << cumulativeNItems << " test-> " << nItemsTest << G4endl;
-  G4cout << "Cumulative displacement X: " << cumulativeDisplacementX << " test-> " << dispXTest << G4endl;
-  G4cout << "Cumulative displacement Y: " << cumulativeDisplacementY << " test-> " << dispYTest << G4endl;
+  G4cout << "Cumulative Length (mm):    " << cumulativeLength << " > " << maxLength << " test-> " << lengthTest << G4endl;
+  G4cout << "Cumulative Angle (rad):    " << cumulativeAngle  << " > " << maxAngle  << " test-> " << angleTest  << G4endl;
+  G4cout << "# of items:                " << cumulativeNItems << " > " << maxItems  << " test-> " << nItemsTest << G4endl;
+  G4cout << "Cumulative displacement X: " << cumulativeDisplacementX << " > " << displacementTolerance
+	 << " test-> " << dispXTest << G4endl;
+  G4cout << "Cumulative displacement Y: " << cumulativeDisplacementY << " > " << displacementTolerance
+	 << " test-> " << dispYTest << G4endl;
+  G4cout << "Result:                    " << result << G4endl;
 #endif
   return result;
 }
@@ -104,12 +112,17 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
   BDSBeamlineIterator it = flatBeamline->begin();
   for (; it != flatBeamline->end(); ++it)
     {
+      G4bool isEnd   = it == (flatBeamline->end() - 1);
+#ifdef BDSDEBUG
+      if (isEnd)
+	{G4cout << "End of beam line - forcing break in tunnel" << G4endl;}
+#endif
       G4bool breakIt = BreakTunnel(cumulativeLength,
 				   cumulativeAngle,
 				   cumulativeNItems,
 				   cumulativeDisplacementX,
 				   cumulativeDisplacementY);
-      if (breakIt)
+      if (breakIt || isEnd)
 	{
 	  // work out tunnel parameters
 	  std::stringstream name;
@@ -142,6 +155,8 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 	  G4cout << "Start point (global): " << startPoint                 << G4endl;
 	  G4cout << "End point (global):   " << endPoint                   << G4endl;
 	  G4cout << "Has a finite angle:   " << isAngled                   << G4endl;
+	  G4cout << "Segment length:       " << segmentLength              << G4endl;
+	  G4cout << "Total angle:          " << cumulativeAngle            << G4endl;
 #endif
 	  
 	  // create tunnel segment
@@ -180,18 +195,37 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 	  // set length correctly - for normal accelerator components, we get the
 	  // arc length from the user, but in this case, we really start with the
 	  // chord length.
-	  G4double radiusOfCurvature = (segmentLength * 0.5) / cos(cumulativeAngle*0.5);
-	  G4double arcLength         = radiusOfCurvature * cumulativeAngle;
+	  G4double arcLength = segmentLength;
+	  if (isAngled)
+	    {
+	      G4double radiusOfCurvature = (segmentLength * 0.5) / sin(cumulativeAngle*0.5);
+	      G4double arcLength         = radiusOfCurvature * cumulativeAngle;
+#ifdef BDSDEBUG
+	      G4cout << __METHOD_NAME__ << "segment length: " << segmentLength << G4endl;
+	      G4cout << __METHOD_NAME__ << "arc length:     " << arcLength     << G4endl;
+#endif
+	    }
+
 	  BDSTunnelSegment* ts = new BDSTunnelSegment(name.str(),
 						      arcLength,
 						      cumulativeAngle,
 						      tunnelSegment);
+
+	  if (tunnelLine->empty())
+	    {
+	      BDSTiltOffset* tos = new BDSTiltOffset(offsetX,offsetY,0);
+	      tunnelLine->AddComponent(ts,tos);
+	    }
+	  else
+	    {tunnelLine->AddComponent(ts);} // append to tunnel beam line
 	  
-	  // update / reset counters
-	  nTunnelSegments += 1;
-	  cumulativeLength = 0;
-	  cumulativeAngle  = 0;
-	  cumulativeNItems = 0;
+	  // update / reset counters & iterators
+	  nTunnelSegments   += 1;
+	  cumulativeLength   = 0;
+	  cumulativeAngle    = 0;
+	  cumulativeNItems   = 0;
+	  startElement       = endElement; // next segment will begin where this one finishes
+	  previousEndElement = endElement; // mark the end of thhis element as the prevous end
 	}
       else
 	{
@@ -201,54 +235,5 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 	  endElement++; // advance the potential end element iterator
 	}
     }
-
-  
-  /*
-  // build demo section of tunnel to check it works
-  BDSTunnelType tunnelType = BDS::DetermineTunnelType("elliptical");
-  G4Material*   soilMaterial = BDSMaterials::Instance()->GetMaterial("soil");
-  G4Material*   concrete     = BDSMaterials::Instance()->GetMaterial("concrete");
-  G4double      tunnelLength = 50*CLHEP::m;
-  
-  BDSGeometryComponent* aPieceOfTunnel = BDSTunnelFactory::Instance()->CreateTunnelSectionAngledInOut(tunnelType,
-												      "tunny",
-												      tunnelLength, // length
-												      0.2, //angle in
-												      0.3, //angle out
-												      0.5*CLHEP::m, // t thickness
-												      5*CLHEP::m, // s thickness
-												      concrete,
-												      soilMaterial,
-												      true,
-												      1*CLHEP::m,
-												      2*CLHEP::m,
-												      1.5*CLHEP::m);
-											   
-  BDSGeometryComponent* aPieceOfTunnel = BDSTunnelFactory::Instance()->CreateTunnelSection(tunnelType,
-											   "tunny",
-											   tunnelLength, // length
-											   0.5*CLHEP::m, // t thickness
-											   5*CLHEP::m,   // s thickness
-											   concrete,     // t material
-											   soilMaterial, // s material
-											   true,         // floor?
-											   1*CLHEP::m,   // floor offset
-											   2*CLHEP::m,   // tunnel 1
-											   1.5*CLHEP::m);// tunnel 2 
-
-  
-  new G4PVPlacement(0,  // its rotation
-		    G4ThreeVector(0.5*CLHEP::m,-0.25*CLHEP::m,0.5*tunnelLength), // its position
-		    "tunnel_pv",	    // its name
-		    aPieceOfTunnel->GetContainerLogicalVolume(), // its logical volume
-		    worldPV,	    // its mother  volume
-		    false,	    // no boolean operation
-		    0,            // copy number
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());//overlap checking
-  */
-
-
-  
-  
   return std::make_pair(supportsLine,tunnelLine);
 }
