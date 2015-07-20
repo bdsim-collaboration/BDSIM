@@ -174,7 +174,8 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 								 defaultModel->buildFloor,    // build floor?
 								 defaultModel->floorOffset,   // floor offset
 								 defaultModel->aper1,         // 1st aperture param
-								 defaultModel->aper2);        // 2nd aperture param
+								 defaultModel->aper2,         // 2nd aperture param
+								 defaultModel->visible);      // is it visible 
 	    }
 	  else
 	    { // straight section
@@ -188,7 +189,8 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 						      defaultModel->buildFloor,    // build floor?
 						      defaultModel->floorOffset,   // floor offset
 						      defaultModel->aper1,         // 1st aperture param
-						      defaultModel->aper2);        // 2nd aperture param
+						      defaultModel->aper2,         // 2nd aperture param
+						      defaultModel->visible);      // is it visible
 	    }
 	  
 	  // store segment in tunnel beam line

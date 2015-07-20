@@ -48,7 +48,8 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSection(G4String    
 								    G4bool        tunnelFloor,
 								    G4double      tunnelFloorOffset,
 								    G4double      tunnel1,
-								    G4double      /*tunnel2*/)
+								    G4double      /*tunnel2*/,
+								    G4bool        visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -154,7 +155,7 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSection(G4String    
 				  CLHEP::twopi);                    // sweep angle
     } 
 
-  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerRadius);
+  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerRadius, visible);
   
   return tunnelSection; // member variable geometry component that's assembled in base class
 }
@@ -171,7 +172,8 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G
 									       G4bool        tunnelFloor,
 									       G4double      tunnelFloorOffset,
 									       G4double      tunnel1,
-									       G4double      /*tunnel2*/)
+									       G4double      /*tunnel2*/,
+									       G4bool        visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -289,7 +291,7 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G
 				     outputface);                      // output face normal vector
     } 
 
-  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerRadius);
+  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerRadius, visible);
 
   return tunnelSection;
 }
@@ -318,7 +320,8 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CommonFinalConstruction(G4String
 									G4double    length,
 									G4Material* tunnelMaterial,
 									G4Material* tunnelSoilMaterial,
-									G4double    containerRadius)
+									G4double    containerRadius,
+									G4bool      visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -327,7 +330,8 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CommonFinalConstruction(G4String
   BDSTunnelFactoryBase::CommonConstruction(name,
 					   tunnelMaterial,
 					   tunnelSoilMaterial,
-					   length);
+					   length,
+					   visible);
 
   // record extents
   std::pair<double,double> extX = std::make_pair(-containerRadius, containerRadius);

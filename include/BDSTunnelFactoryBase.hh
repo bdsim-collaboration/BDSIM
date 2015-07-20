@@ -36,7 +36,8 @@ public:
 						    G4bool        tunnelFloor,
 						    G4double      tunnelFloorOffset,
 						    G4double      tunnel1,
-						    G4double      tunnel2) = 0;
+						    G4double      tunnel2,
+						    G4bool        visible = true) = 0;
 
   /// Create a tunnel section with an angled input face and flat output face. Note,
   /// this is implemented in this base class as a dispatch to the AngledInOut function.
@@ -50,7 +51,8 @@ public:
 							    G4bool        tunnelFloor,
 							    G4double      tunnelFloorOffset,
 							    G4double      tunnel1,
-							    G4double      tunnel2);
+							    G4double      tunnel2,
+							    G4bool        visible = true);
 
   /// Create a tunnel section with an angled output face and flat input face. Note,
   /// this is implemented in this base class as a dispatch to the AngledInOut function.
@@ -64,7 +66,8 @@ public:
 							     G4bool        tunnelFloor,
 							     G4double      tunnelFloorOffset,
 							     G4double      tunnel1,
-							     G4double      tunnel2);
+							     G4double      tunnel2,
+							     G4bool        visible = true);
 
   /// Create a tunnel section with an angled input and output face. Pure virtual.
   virtual BDSGeometryComponent* CreateTunnelSectionAngledInOut(G4String      name,
@@ -78,7 +81,8 @@ public:
 							       G4bool        tunnelFloor,
 							       G4double      tunnelFloorOffset,
 							       G4double      tunnel1,
-							       G4double      tunnel2) = 0;
+							       G4double      tunnel2,
+							       G4bool        visible = true) = 0;
 
 protected:
   /// protected default constructor so only derived classes can use it
@@ -100,7 +104,8 @@ protected:
   virtual void CommonConstruction(G4String    name,
 				  G4Material* tunnelMaterial,
 				  G4Material* tunnelSoilMaterial,
-				  G4double    length);
+				  G4double    length,
+				  G4bool      visible);
 
   /// Build logical volumes from solids + materials
   virtual void BuildLogicalVolumes(G4String    name,
@@ -108,7 +113,7 @@ protected:
 				   G4Material* tunnelSoilMaterial);
 
   /// Set the visual attributes for each logical volume
-  virtual void SetVisAttributes();
+  virtual void SetVisAttributes(G4bool visible);
   
   /// Set user limits for all logical volumes in the tunnel section
   virtual void SetUserLimits(G4double length);

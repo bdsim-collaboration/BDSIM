@@ -37,7 +37,8 @@ BDSGeometryComponent* BDSTunnelFactoryBase::CreateTunnelSectionAngledIn(G4String
 									G4bool        tunnelFloor,
 									G4double      tunnelFloorOffset,
 									G4double      tunnel1,
-									G4double      tunnel2)
+									G4double      tunnel2,
+									G4bool        visible)
 {
   return CreateTunnelSectionAngledInOut(name, length, angleIn, 0, tunnelThickness,
 					tunnelSoilThickness, tunnelMaterial, tunnelSoilMaterial,
@@ -54,7 +55,8 @@ BDSGeometryComponent* BDSTunnelFactoryBase::CreateTunnelSectionAngledOut(G4Strin
 									 G4bool        tunnelFloor,
 									 G4double      tunnelFloorOffset,
 									 G4double      tunnel1,
-									 G4double      tunnel2)
+									 G4double      tunnel2,
+									 G4bool        visible)
 {
   return CreateTunnelSectionAngledInOut(name, length, 0, angleOut, tunnelThickness,
 					tunnelSoilThickness, tunnelMaterial, tunnelSoilMaterial,
@@ -110,11 +112,12 @@ void BDSTunnelFactoryBase::CommontTestInputParameters(G4double&    length,
 void BDSTunnelFactoryBase::CommonConstruction(G4String    name,
 					      G4Material* tunnelMaterial,
 					      G4Material* tunnelSoilMaterial,
-					      G4double    length)
+					      G4double    length,
+					      G4bool      visible)
 
 {
   BuildLogicalVolumes(name, tunnelMaterial, tunnelSoilMaterial);
-  SetVisAttributes();
+  SetVisAttributes(visible);
   SetUserLimits(length);
   PlaceComponents(name);
   PrepareGeometryComponent();
@@ -150,25 +153,23 @@ void BDSTunnelFactoryBase::BuildLogicalVolumes(G4String   name,
     }
 }
 
-void BDSTunnelFactoryBase::SetVisAttributes()
+void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
 { 
-  // VISUAL ATTRIBUTES
-
   // note these could actually be owned by the factory or kept in one place as they're
   // always the same - this would however mean that the objects would have a dependency
   // on the factory which shouldn't happen - so waste a little memory just now on visattrs
   
   // tunnel & floor - a nice grey
   G4VisAttributes* tunnelVisAttr = new G4VisAttributes(G4Colour(0.545, 0.533, 0.470));
-  tunnelVisAttr->SetVisibility(true);
-  tunnelVisAttr->SetForceSolid(true);
+  if (visible)
+    {tunnelVisAttr->SetVisibility(true);}
   tunnelVisAttr->SetForceLineSegmentsPerCircle(50);
   tunnelLV->SetVisAttributes(tunnelVisAttr);
   if (floorLV)
     {
       G4VisAttributes* floorVisAttr = new G4VisAttributes(G4Colour(0.5, 0.5, 0.45));
-      floorVisAttr->SetVisibility(true);
-      floorVisAttr->SetForceSolid(true);
+      if (visible)
+	{floorVisAttr->SetVisibility(true);}
       floorVisAttr->SetForceLineSegmentsPerCircle(50);
       floorLV->SetVisAttributes(floorVisAttr);
     }
@@ -176,17 +177,16 @@ void BDSTunnelFactoryBase::SetVisAttributes()
   if (soilLV)
     {
       G4VisAttributes* soilVisAttr = new G4VisAttributes(G4Colour(0.545, 0.353, 0, 0.4));
-      soilVisAttr->SetVisibility(true);
-      soilVisAttr->SetForceSolid(true);
+      if (visible)
+	{soilVisAttr->SetVisibility(true);}
       soilVisAttr->SetForceLineSegmentsPerCircle(50);
       soilLV->SetVisAttributes(soilVisAttr);
     }
   // container
-  if (BDSExecOptions::Instance()->GetVisDebug()) {
-    containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-  } else {
-    containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-  }
+  if (BDSExecOptions::Instance()->GetVisDebug())
+    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
+  else
+    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
 }
 
 void BDSTunnelFactoryBase::PrepareGeometryComponent()

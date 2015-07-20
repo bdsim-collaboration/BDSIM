@@ -22,30 +22,32 @@ public:
   virtual ~BDSTunnelFactoryRectangular();
   
   /// Create a tunnel section with flat input and output faces.
-  virtual BDSGeometryComponent* CreateTunnelSection(G4String      name,
-						    G4double      length,
-						    G4double      tunnelThickness,
-						    G4double      tunnelSoilThickness,
-						    G4Material*   tunnelMaterial,
-						    G4Material*   tunnelSoilMaterial,
-						    G4bool        tunnelFloor,
-						    G4double      tunnelFloorOffset,
-						    G4double      tunnel1,
-						    G4double      tunnel2);
+  virtual BDSGeometryComponent* CreateTunnelSection(G4String    name,
+						    G4double    length,
+						    G4double    tunnelThickness,
+						    G4double    tunnelSoilThickness,
+						    G4Material* tunnelMaterial,
+						    G4Material* tunnelSoilMaterial,
+						    G4bool      tunnelFloor,
+						    G4double    tunnelFloorOffset,
+						    G4double    tunnel1,
+						    G4double    tunnel2,
+						    G4bool      visible);
 
   /// Create a tunnel section with an angled input and output face.
-  virtual BDSGeometryComponent* CreateTunnelSectionAngledInOut(G4String      name,
-							       G4double      length,
-							       G4double      angleIn,
-							       G4double      angleOut,
-							       G4double      tunnelThickness,
-							       G4double      tunnelSoilThickness,
-							       G4Material*   tunnelMaterial,
-							       G4Material*   tunnelSoilMaterial,
-							       G4bool        tunnelFloor,
-							       G4double      tunnelFloorOffset,
-							       G4double      tunnel1,
-							       G4double      tunnel2);
+  virtual BDSGeometryComponent* CreateTunnelSectionAngledInOut(G4String    name,
+							       G4double    length,
+							       G4double    angleIn,
+							       G4double    angleOut,
+							       G4double    tunnelThickness,
+							       G4double    tunnelSoilThickness,
+							       G4Material* tunnelMaterial,
+							       G4Material* tunnelSoilMaterial,
+							       G4bool      tunnelFloor,
+							       G4double    tunnelFloorOffset,
+							       G4double    tunnel1,
+							       G4double    tunnel2,
+							       G4bool      visible);
 							       
 private:
   /// Singleton pattern instance
@@ -70,7 +72,8 @@ private:
 						G4Material* tunnelMaterial,
 						G4Material* soilMaterial,
 						G4double    containerXRadius,
-						G4double    containerYRadius);
+						G4double    containerYRadius,
+						G4bool      visible);
 
 };
   

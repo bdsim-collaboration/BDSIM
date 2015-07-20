@@ -50,7 +50,8 @@ BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String  
 								      G4bool        tunnelFloor,
 								      G4double      tunnelFloorOffset,
 								      G4double      tunnel1,
-								      G4double      tunnel2)
+								      G4double      tunnel2,
+								      G4bool        visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -187,24 +188,25 @@ BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String  
 					      tunnelContainerSolidInner);  // minus this
     } 
 
-  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius);
+  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius, visible);
   
   return tunnelSection; // member variable geometry component that's assembled in base class
 }
 
 
-BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSectionAngledInOut(G4String      name,
-										 G4double      length,
-										 G4double      angleIn,
-										 G4double      angleOut,
-										 G4double      tunnelThickness,
-										 G4double      tunnelSoilThickness,
-										 G4Material*   tunnelMaterial,
-										 G4Material*   tunnelSoilMaterial,
-										 G4bool        tunnelFloor,
-										 G4double      tunnelFloorOffset,
-										 G4double      tunnel1,
-										 G4double      tunnel2)
+BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSectionAngledInOut(G4String    name,
+										 G4double    length,
+										 G4double    angleIn,
+										 G4double    angleOut,
+										 G4double    tunnelThickness,
+										 G4double    tunnelSoilThickness,
+										 G4Material* tunnelMaterial,
+										 G4Material* tunnelSoilMaterial,
+										 G4bool      tunnelFloor,
+										 G4double    tunnelFloorOffset,
+										 G4double    tunnel1,
+										 G4double    tunnel2,
+										 G4bool      visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -383,7 +385,7 @@ BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSectionAngledInOut
 					      tunnelContainerSolidInner);        // minus this
     } 
 
-  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius);
+  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius, visible);
 
   return tunnelSection;
 }
@@ -417,7 +419,8 @@ BDSGeometryComponent* BDSTunnelFactoryElliptical::CommonFinalConstruction(G4Stri
 									  G4Material* tunnelMaterial,
 									  G4Material* tunnelSoilMaterial,
 									  G4double    containerXRadius,
-									  G4double    containerYRadius)
+									  G4double    containerYRadius,
+									  G4bool      visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -426,7 +429,8 @@ BDSGeometryComponent* BDSTunnelFactoryElliptical::CommonFinalConstruction(G4Stri
   BDSTunnelFactoryBase::CommonConstruction(name,
 					   tunnelMaterial,
 					   tunnelSoilMaterial,
-					   length);
+					   length,
+					   visible);
 
   // record extents
   std::pair<double,double> extX = std::make_pair(-containerXRadius, containerXRadius);

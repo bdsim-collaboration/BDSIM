@@ -31,7 +31,7 @@ BDSTunnelFactoryRectAboveGround* BDSTunnelFactoryRectAboveGround::Instance()
   return _instance;
 }
 
-BDSTunnelFactoryRectAboveGround::BDSTunnelFactoryRectAboveGround():BDSTunnelFactoryBase()
+BDSTunnelFactoryRectAboveGround::BDSTunnelFactoryRectAboveGround()
 {
   slabYHalfWidth = 1.5*CLHEP::m;
 }
@@ -42,16 +42,17 @@ BDSTunnelFactoryRectAboveGround::~BDSTunnelFactoryRectAboveGround()
   slabSolid      = NULL;
 }
 
-BDSGeometryComponent* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4String      name,
-									   G4double      length,
-									   G4double      tunnelThickness,
-									   G4double      tunnelSoilThickness,
-									   G4Material*   tunnelMaterial,
-									   G4Material*   tunnelSoilMaterial,
-									   G4bool        tunnelFloor,
-									   G4double      tunnelFloorOffset,
-									   G4double      tunnel1,
-									   G4double      tunnel2)
+BDSGeometryComponent* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4String    name,
+									   G4double    length,
+									   G4double    tunnelThickness,
+									   G4double    tunnelSoilThickness,
+									   G4Material* tunnelMaterial,
+									   G4Material* tunnelSoilMaterial,
+									   G4bool      tunnelFloor,
+									   G4double    tunnelFloorOffset,
+									   G4double    tunnel1,
+									   G4double    tunnel2,
+									   G4bool      visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -162,24 +163,25 @@ BDSGeometryComponent* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4Str
 					      tunnelContainerInner);       // minus this
     } 
 
-  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius);
+  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius, visible);
   
   return tunnelSection; // member variable geometry component that's assembled in base class
 }
 
 
-BDSGeometryComponent* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngledInOut(G4String      name,
-										 G4double      length,
-										 G4double      angleIn,
-										 G4double      angleOut,
-										 G4double      tunnelThickness,
-										 G4double      tunnelSoilThickness,
-										 G4Material*   tunnelMaterial,
-										 G4Material*   tunnelSoilMaterial,
-										 G4bool        tunnelFloor,
-										 G4double      tunnelFloorOffset,
-										 G4double      tunnel1,
-										 G4double      tunnel2)
+BDSGeometryComponent* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngledInOut(G4String    name,
+										      G4double    length,
+										      G4double    angleIn,
+										      G4double    angleOut,
+										      G4double    tunnelThickness,
+										      G4double    tunnelSoilThickness,
+										      G4Material* tunnelMaterial,
+										      G4Material* tunnelSoilMaterial,
+										      G4bool      tunnelFloor,
+										      G4double    tunnelFloorOffset,
+										      G4double    tunnel1,
+										      G4double    tunnel2,
+										      G4bool      visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -323,7 +325,7 @@ BDSGeometryComponent* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngled
 					      tunnelContainerSolidInner);  // minus this
     } 
 
-  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius);
+  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius, visible);
 
   return tunnelSection;
 }
@@ -353,11 +355,12 @@ void BDSTunnelFactoryRectAboveGround::TestInputParameters(G4double&    length,
 /// only the solids are unique, once we have those, the logical volumes and placement in the
 /// container are the same.  group all this functionality together
 BDSGeometryComponent* BDSTunnelFactoryRectAboveGround::CommonFinalConstruction(G4String    name,
-									  G4double    length,
-									  G4Material* tunnelMaterial,
-									  G4Material* tunnelSoilMaterial,
-									  G4double    containerXRadius,
-									  G4double    containerYRadius)
+									       G4double    length,
+									       G4Material* tunnelMaterial,
+									       G4Material* tunnelSoilMaterial,
+									       G4double    containerXRadius,
+									       G4double    containerYRadius,
+									       G4bool      visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -366,7 +369,8 @@ BDSGeometryComponent* BDSTunnelFactoryRectAboveGround::CommonFinalConstruction(G
   BDSTunnelFactoryBase::CommonConstruction(name,
 					   tunnelMaterial,
 					   tunnelSoilMaterial,
-					   length);
+					   length,
+					   visible);
 
   // record extents
   std::pair<double,double> extX = std::make_pair(-containerXRadius, containerXRadius);

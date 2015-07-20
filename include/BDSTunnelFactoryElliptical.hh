@@ -31,7 +31,8 @@ public:
 						    G4bool        tunnelFloor,
 						    G4double      tunnelFloorOffset,
 						    G4double      tunnel1,
-						    G4double      tunnel2);
+						    G4double      tunnel2,
+						    G4bool        visible);
 
   /// Create a tunnel section with an angled input and output face.
   virtual BDSGeometryComponent* CreateTunnelSectionAngledInOut(G4String      name,
@@ -45,7 +46,8 @@ public:
 							       G4bool        tunnelFloor,
 							       G4double      tunnelFloorOffset,
 							       G4double      tunnel1,
-							       G4double      tunnel2);
+							       G4double      tunnel2,
+							       G4bool        visible);
 							       
 private:
   /// Singleton pattern instance
@@ -70,7 +72,8 @@ private:
 						G4Material* tunnelMaterial,
 						G4Material* soilMaterial,
 						G4double    containerXRadius,
-						G4double    containerYRadius);
+						G4double    containerYRadius,
+						G4bool      visible);
 
 };
   

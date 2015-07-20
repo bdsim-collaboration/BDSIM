@@ -48,7 +48,8 @@ BDSGeometryComponent* BDSTunnelFactoryRectangular::CreateTunnelSection(G4String 
 								       G4bool        tunnelFloor,
 								       G4double      tunnelFloorOffset,
 								       G4double      tunnel1,
-								       G4double      tunnel2)
+								       G4double      tunnel2,
+								       G4bool        visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -154,24 +155,25 @@ BDSGeometryComponent* BDSTunnelFactoryRectangular::CreateTunnelSection(G4String 
 					      tunnelContainerSolidInner);  // minus this
     } 
 
-  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius);
+  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius, visible);
   
   return tunnelSection; // member variable geometry component that's assembled in base class
 }
 
 
-BDSGeometryComponent* BDSTunnelFactoryRectangular::CreateTunnelSectionAngledInOut(G4String      name,
-										 G4double      length,
-										 G4double      angleIn,
-										 G4double      angleOut,
-										 G4double      tunnelThickness,
-										 G4double      tunnelSoilThickness,
-										 G4Material*   tunnelMaterial,
-										 G4Material*   tunnelSoilMaterial,
-										 G4bool        tunnelFloor,
-										 G4double      tunnelFloorOffset,
-										 G4double      tunnel1,
-										 G4double      tunnel2)
+BDSGeometryComponent* BDSTunnelFactoryRectangular::CreateTunnelSectionAngledInOut(G4String    name,
+										  G4double    length,
+										  G4double    angleIn,
+										  G4double    angleOut,
+										  G4double    tunnelThickness,
+										  G4double    tunnelSoilThickness,
+										  G4Material* tunnelMaterial,
+										  G4Material* tunnelSoilMaterial,
+										  G4bool      tunnelFloor,
+										  G4double    tunnelFloorOffset,
+										  G4double    tunnel1,
+										  G4double    tunnel2,
+										  G4bool      visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -315,20 +317,20 @@ BDSGeometryComponent* BDSTunnelFactoryRectangular::CreateTunnelSectionAngledInOu
 					      tunnelContainerSolidInner);  // minus this
     } 
 
-  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius);
+  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius, visible);
 
   return tunnelSection;
 }
 
 /// functions below here are private to this particular factory
 void BDSTunnelFactoryRectangular::TestInputParameters(G4double&    length,
-						     G4double&    tunnelThickness,
-						     G4double&    tunnelSoilThickness,
-						     G4Material*& tunnelMaterial,
-						     G4Material*& tunnelSoilMaterial,
-						     G4double&    tunnelFloorOffset,
-						     G4double&    tunnel1,
-						     G4double&    tunnel2)
+						      G4double&    tunnelThickness,
+						      G4double&    tunnelSoilThickness,
+						      G4Material*& tunnelMaterial,
+						      G4Material*& tunnelSoilMaterial,
+						      G4double&    tunnelFloorOffset,
+						      G4double&    tunnel1,
+						      G4double&    tunnel2)
 {
   CommontTestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial, tunnelSoilMaterial);
   
@@ -345,11 +347,12 @@ void BDSTunnelFactoryRectangular::TestInputParameters(G4double&    length,
 /// only the solids are unique, once we have those, the logical volumes and placement in the
 /// container are the same.  group all this functionality together
 BDSGeometryComponent* BDSTunnelFactoryRectangular::CommonFinalConstruction(G4String    name,
-									  G4double    length,
-									  G4Material* tunnelMaterial,
-									  G4Material* tunnelSoilMaterial,
-									  G4double    containerXRadius,
-									  G4double    containerYRadius)
+									   G4double    length,
+									   G4Material* tunnelMaterial,
+									   G4Material* tunnelSoilMaterial,
+									   G4double    containerXRadius,
+									   G4double    containerYRadius,
+									   G4bool      visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -358,7 +361,8 @@ BDSGeometryComponent* BDSTunnelFactoryRectangular::CommonFinalConstruction(G4Str
   BDSTunnelFactoryBase::CommonConstruction(name,
 					   tunnelMaterial,
 					   tunnelSoilMaterial,
-					   length);
+					   length,
+					   visible);
 
   // record extents
   std::pair<double,double> extX = std::make_pair(-containerXRadius, containerXRadius);
