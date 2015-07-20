@@ -1,6 +1,22 @@
 include options.gmad;
-include drift.gmad;
+!include drift.gmad;
 include tunnel.gmad;
 include elec.gmad;
+
+d1: drift, l=1.2*m;
+
+lat : line = (d1,d1,d1,d1,d1,d1,d1,d1);
+
+option, tunnelThickness = 0.25*m,
+	buildTunnel     = 1,
+	tunnelType      = "circular",
+	tunnelAper1     = 1.5*m,
+	tunnelAper2     = 3*m,
+	tunnelVisible   = 1,
+	tunnelOffsetX   = 1*m,
+	tunnelFloorOffset = 1*m,
+	tunnelMaterial    = "concrete",
+	tunnelSoilThickness = 2*m,
+	tunnelOffsetX = 1*m;
 
 use, period=lat;
