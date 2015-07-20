@@ -19,12 +19,12 @@ void BDSSynchRadPhysics::ConstructParticle(){
 
 void BDSSynchRadPhysics::ConstructProcess(){
   if(_wasActivated) return;
-  _wasActivated=true;
-  _srProcess = new BDSSynchrotronRadiation();
-  _contSR= new BDSContinuousSR();
+  _wasActivated = true;
+  _srProcess    = new BDSSynchrotronRadiation();
+  _contSR       = new BDSContinuousSR();
 
 #if G4VERSION_NUMBER < 1000
-  theParticleTable = G4ParticleTable::GetParticleTable();
+  theParticleTable    = G4ParticleTable::GetParticleTable();
   theParticleIterator = theParticleTable->GetIterator();
   G4ParticleTable::G4PTblDicIterator* aParticleIterator = theParticleIterator;
 #endif
