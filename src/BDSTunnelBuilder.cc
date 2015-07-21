@@ -226,13 +226,23 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 	  cumulativeLength   = 0;
 	  cumulativeAngle    = 0;
 	  cumulativeNItems   = 0;
+	  cumulativeDisplacementX = 0;
+	  cumulativeDisplacementY = 0;
 	  startElement       = endElement; // next segment will begin where this one finishes
 	  previousEndElement = endElement; // mark the end of thhis element as the prevous end
 	}
       else
 	{
-	  cumulativeLength += (*it)->GetAcceleratorComponent()->GetChordLength();
-	  cumulativeAngle  += (*it)->GetAcceleratorComponent()->GetAngle();
+#ifdef BDSDEBUG
+	  G4cout << __METHOD_NAME__ << "moving to next item in beamline" << G4endl;
+#endif
+	  G4double length   = (*it)->GetAcceleratorComponent()->GetChordLength();
+	  G4double angle    = (*it)->GetAcceleratorComponent()->GetAngle();
+	  cumulativeLength += length;
+	  cumulativeAngle  += angle;
+	  cumulativeDisplacementX += sin(angle) * length;
+	  //cumulativeDisplacementY += 0; // currently ignore possibility of vertical bend
+	  //would still use angle, but would need to involve tilt and rotation axes
 	  cumulativeNItems += 1;
 	  endElement++; // advance the potential end element iterator
 	}
