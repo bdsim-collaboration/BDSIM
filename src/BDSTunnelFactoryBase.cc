@@ -20,7 +20,8 @@
 BDSTunnelFactoryBase::BDSTunnelFactoryBase():
   tunnelSection(NULL),
   containerSolid(NULL), tunnelSolid(NULL), soilSolid(NULL), floorSolid(NULL),
-  containerLV(NULL), tunnelLV(NULL), soilLV(NULL), floorLV(NULL), floorDisplacement(G4ThreeVector(0,0,0))
+  containerLV(NULL), tunnelLV(NULL), soilLV(NULL), floorLV(NULL),
+  floorDisplacement(G4ThreeVector(0,0,0))
 {
   lengthSafety  = BDSGlobalConstants::Instance()->GetLengthSafety();
   checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
@@ -113,6 +114,8 @@ void BDSTunnelFactoryBase::CommonConstruction(G4String    name,
 					      G4Material* tunnelMaterial,
 					      G4Material* tunnelSoilMaterial,
 					      G4double    length,
+					      G4double    containerXRadius,
+					      G4double    containerYRadius,
 					      G4bool      visible)
 
 {
@@ -120,7 +123,7 @@ void BDSTunnelFactoryBase::CommonConstruction(G4String    name,
   SetVisAttributes(visible);
   SetUserLimits(length);
   PlaceComponents(name);
-  PrepareGeometryComponent();
+  PrepareGeometryComponent(containerXRadius, containerYRadius, 0.5*length);
   SetSensitiveVolumes();
 }
 
@@ -189,7 +192,9 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
     {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
 }
 
-void BDSTunnelFactoryBase::PrepareGeometryComponent()
+void BDSTunnelFactoryBase::PrepareGeometryComponent(G4double containerXRadius,
+						    G4double containerYRadius,
+						    G4double containerZRadius)
 {
   // prepare final object and register logical volumes
   tunnelSection = new BDSGeometryComponent(containerSolid, containerLV);
@@ -197,6 +202,11 @@ void BDSTunnelFactoryBase::PrepareGeometryComponent()
   tunnelSection->RegisterLogicalVolume(soilLV);
   if (floorLV)
     {tunnelSection->RegisterLogicalVolume(floorLV);}
+
+  // record extents
+  tunnelSection->SetExtentX(std::make_pair(-containerXRadius, containerXRadius));
+  tunnelSection->SetExtentY(std::make_pair(-containerYRadius, containerYRadius));
+  tunnelSection->SetExtentZ(std::make_pair(-containerZRadius, containerZRadius));
 }
 
 void BDSTunnelFactoryBase::SetSensitiveVolumes()
@@ -222,7 +232,6 @@ void BDSTunnelFactoryBase::SetUserLimits(G4double length)
   G4UserLimits* tunnelUserLimits = new G4UserLimits("tunnel_cuts");
   G4double maxStepFactor = 0.5; // fraction of length for maximum step size
   tunnelUserLimits->SetMaxAllowedStep( length * maxStepFactor );
-  tunnelUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   tunnelUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   //attach cuts to volumes
   tunnelLV->SetUserLimits(tunnelUserLimits);

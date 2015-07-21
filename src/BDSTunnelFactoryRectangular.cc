@@ -30,9 +30,8 @@ BDSTunnelFactoryRectangular* BDSTunnelFactoryRectangular::Instance()
   return _instance;
 }
 
-BDSTunnelFactoryRectangular::BDSTunnelFactoryRectangular():BDSTunnelFactoryBase()
-{
-}
+BDSTunnelFactoryRectangular::BDSTunnelFactoryRectangular()
+{;}
 
 BDSTunnelFactoryRectangular::~BDSTunnelFactoryRectangular()
 {
@@ -77,29 +76,36 @@ BDSGeometryComponent* BDSTunnelFactoryRectangular::CreateTunnelSection(G4String 
 				       tunnelInnerSolid);     // minus this
 
 
-  G4double soil1R = tunnel1 + tunnelThickness + lengthSafety;
-  G4double soil2R = tunnel2 + tunnelThickness + lengthSafety;
+  G4double soilInnerX = tunnel1 + tunnelThickness + lengthSafety;
+  G4double soilInnerY = tunnel2 + tunnelThickness + lengthSafety;
 
-  G4double soilOuterRadius = std::max(soil1R, soil2R) + tunnelSoilThickness;
+  G4double soilOuterX = soilInnerX + tunnelSoilThickness;
+  G4double soilOuterY = soilInnerY + tunnelSoilThickness;
   
-  G4VSolid* soilOuterSolid = new G4Tubs(name + "_soil_outer_solid",   // name
-					0,                            // inner radius
-					soilOuterRadius,              // outer radius
-					0.5*length - lengthSafety,    // z half angle
-					0,                            // start angle
-					CLHEP::twopi);                // sweep angle
+  G4double containerX = soilOuterX + lengthSafety;
+  G4double containerY = soilOuterY + lengthSafety;
+
+  G4VSolid* soilOuterSolid = new G4Box(name + "_soild_outer_solid", // name
+				       soilOuterX,                  // x half width
+				       soilOuterY,                  // y half width
+				       0.5*length);                 // z half width
   
-  G4VSolid* soilInnerSolid = new G4Box(name + "_soil_outer_solid",   // name
-				       soil1R + lengthSafety,        // x radius
-				       soil2R + lengthSafety,        // y radius
+  G4VSolid* soilInnerSolid = new G4Box(name + "_soil_outer_solid",  // name
+				       soilInnerX,                  // x radius
+				       soilInnerY,                  // y radius
 				       length); // z half length - long for unambiguous subtraction
 
   soilSolid = new G4SubtractionSolid(name + "_soil_solid", // name
-				     soilOuterSolid,      // this
-				     soilInnerSolid);     // minus this
-  
-  G4double containerXRadius = soil1R + tunnelSoilThickness + lengthSafety;
-  G4double containerYRadius = soil2R + tunnelSoilThickness + lengthSafety;
+				     soilOuterSolid,       // this
+				     soilInnerSolid);      // minus this
+
+  // container solid depends on whether the floor is there or not, but can prepare the outer part for subtraction
+  G4VSolid* containerSolidOuter = new G4Box(name + "_container_outer_solid", // name
+					    containerX,                      // x half width
+					    containerY,                      // y half width
+					    length*0.5);                     // z half width
+  G4ThreeVector contInsideDisplacement;
+  G4VSolid*     containerSolidInner = NULL;
   
   // build the floor if necessary
   if (tunnelFloor)
@@ -113,51 +119,33 @@ BDSGeometryComponent* BDSTunnelFactoryRectangular::CreateTunnelSection(G4String 
 			     floorThickness*0.5,         // y half width
 			     0.5*length - lengthSafety); // z half width
       
-      // need to create a container for the tunnel + floor that only just contains it
-      G4VSolid* tunnelContainerSolidOuter = new G4Tubs(name + "_tunnel_cont_solid_outer",     // name
-						       0,                                     // inner radius
-						       soilOuterRadius + lengthSafety,        // outer radius
-						       0.5*length,                            // z half angle
-						       0,                                     // start angle
-						       CLHEP::twopi);                         // sweep angle
-
       G4double tunnelContInnerYRadius = ( tunnelFloorOffset + tunnel2 ) * 0.5;
-      G4VSolid* tunnelContainerSolidInner = new G4Box(name + "_tunnel_cont_solid_inner", // name
-						      tunnel1,                           // x radius
-						      tunnelContInnerYRadius,            // y radius
-						      length*0.5);
+      containerSolidInner = new G4Box(name + "_tunnel_cont_solid_inner", // name
+				      tunnel1,                           // x radius
+				      tunnelContInnerYRadius,            // y radius
+				      length*0.5);
 
       // offset the centre cut out by the difference between the vertical half widths of tunnel2 and tunnel2+floor
-      G4ThreeVector contInsideDisplacement = G4ThreeVector(0, tunnelContInnerYRadius - tunnel2, 0);
-      containerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid", // name
-					      tunnelContainerSolidOuter,   // this
-					      tunnelContainerSolidInner,   // minus this
-					      0,                           // rotate by this
-					      contInsideDisplacement);
+      contInsideDisplacement = G4ThreeVector(0, tunnelContInnerYRadius - tunnel2, 0); 
     }
   else
     {
-      // have to do a subtraction
-      G4VSolid* tunnelContainerSolidOuter = new G4Tubs(name + "_tunnel_cont_solid_outer",     // name
-						       0,                                     // inner radius
-						       soilOuterRadius + lengthSafety,        // outer radius
-						       length*0.5,                            // z half angle
-						       0,                                     // start angle
-						       CLHEP::twopi);                         // sweep angle
-      
-      G4VSolid* tunnelContainerSolidInner = new G4Box(name + "_tunnel_cont_solid_inner", // name
-						      tunnel1,                           // x radius
-						      tunnel2,                           // y radius
-						      length);
-
-      containerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid", // name
-					      tunnelContainerSolidOuter,   // this
-					      tunnelContainerSolidInner);  // minus this
-    } 
-
-  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius, visible);
+      containerSolidInner = new G4Box(name + "_tunnel_cont_solid_inner", // name
+				      tunnel1,                           // x radius
+				      tunnel2,                           // y radius
+				      length);
+      contInsideDisplacement = G4ThreeVector(0,0,0);
+    }
   
-  return tunnelSection; // member variable geometry component that's assembled in base class
+  containerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid", // name
+					  containerSolidOuter,         // this
+					  containerSolidInner,         // minus this
+					  0,                           // rotate by this
+					  contInsideDisplacement);
+
+  CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerX, containerY, visible);
+
+  return tunnelSection;
 }
 
 
@@ -225,38 +213,47 @@ BDSGeometryComponent* BDSTunnelFactoryRectangular::CreateTunnelSectionAngledInOu
 					faceSolid);
 
   // soil solid
-  G4double soil1R = tunnel1 + tunnelThickness + lengthSafety;
-  G4double soil2R = tunnel2 + tunnelThickness + lengthSafety;
+  G4double soilInnerX = tunnel1 + tunnelThickness + lengthSafety;
+  G4double soilInnerY = tunnel2 + tunnelThickness + lengthSafety;
 
-  G4double soilOuterRadius = std::max(soil1R, soil2R) + tunnelSoilThickness;
-
-  G4VSolid* soilOuterSolid = new G4Tubs(name + "_soil_outer_solid",   // name
-					0,                            // inner radius
-					soilOuterRadius,              // outer radius
-					length,                       // z half angle
-					0,                            // start angle
-					CLHEP::twopi);                // sweep angle
+  G4double soilOuterX = soilInnerX + tunnelSoilThickness;
+  G4double soilOuterY = soilInnerY + tunnelSoilThickness;
   
-  G4VSolid* soilInnerSolid = new G4Box(name + "_soil_outer_solid",   // name
-				       soil1R + lengthSafety,        // x radius
-				       soil2R + lengthSafety,        // y radius
+  G4double containerX = soilOuterX + lengthSafety;
+  G4double containerY = soilOuterY + lengthSafety;
+  
+  G4VSolid* soilOuterSolid = new G4Box(name + "_soil_outer_solid", // name
+				       soilOuterX,                 // x half width
+				       soilOuterY,                 // y half width
+				       length);                    // z half length
+  
+  G4VSolid* soilInnerSolid = new G4Box(name + "_soil_inner_solid", // name
+				       soilInnerX,                 // x radius
+				       soilInnerY,                 // y radius
 				       1.5*length); // z half length - long for unambiguous subtraction
-  
+
+  // cut out inside of big box of soil to get rectangular tube - purposively long for upcoming intersection
   G4VSolid* soilSolidUnAngled = new G4SubtractionSolid(name + "_soil_square_solid", // name
-						       soilOuterSolid,      // this
-						       soilInnerSolid);     // minus this
-  
+						       soilOuterSolid,              // this
+						       soilInnerSolid);             // minus this
+
+  // make it angled
   soilSolid = new G4IntersectionSolid(name + "_soil_soild", // name
 				      soilSolidUnAngled,
 				      faceSolid);
 
-  G4double containerXRadius = soil1R + tunnelSoilThickness + lengthSafety;
-  G4double containerYRadius = soil2R + tunnelSoilThickness + lengthSafety;
+
+  // container solid depends on whether the floor is there or not, but can prepare the outer part for subtraction
+  G4VSolid* containerSolidOuter = new G4Box(name + "_container_outer_solid", // name
+					    containerX,                      // x half width
+					    containerY,                      // y half width
+					    length*0.5);                     // z half width
+  G4ThreeVector contInsideDisplacement;
+  G4VSolid*     containerSolidInner = NULL;
   
   // build the floor if necessary
   if (tunnelFloor)
     {
-      // these three lines are a repeat of the same part in the first function (~L211)
       G4double floorThickness = tunnel2 - tunnelFloorOffset - lengthSafety;
 
       // placement vector for floor - assinging default 0,0,0 in base class
@@ -272,52 +269,31 @@ BDSGeometryComponent* BDSTunnelFactoryRectangular::CreateTunnelSectionAngledInOu
 					   faceSolid);
       
       // need to create a container for the tunnel + floor that only just contains it
-      G4VSolid* tunnelContainerSolidOuter = new G4CutTubs(name + "_tunnel_cont_solid_outer", // name
-							  0,                                 // inner radius
-							  soilOuterRadius + lengthSafety,    // outer radius
-							  0.5*length,                        // z half angle
-							  0,                                 // start angle
-							  CLHEP::twopi,                      // sweep angle
-							  inputface,                         // input face normal vector
-							  outputface);                       // output face normal vector
-
       G4double tunnelContInnerYRadius = ( tunnelFloorOffset + tunnel2 ) * 0.5;
-      G4VSolid* tunnelContainerSolidInner = new G4Box(name + "_tunnel_cont_solid_inner", // name
-						      tunnel1,                           // x radius
-						      tunnelContInnerYRadius,            // y radius
-						      length);
-
+      containerSolidInner = new G4Box(name + "_tunnel_cont_solid_inner", // name
+				      tunnel1,                           // x radius
+				      tunnelContInnerYRadius,            // y radius
+				      length);
+      
       // offset the centre cut out by the difference between the vertical half widths of tunnel2 and tunnel2+floor
-      G4ThreeVector contInsideDisplacement = G4ThreeVector(0, tunnelContInnerYRadius - tunnel2, 0);
-      containerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid", // name
-					      tunnelContainerSolidOuter,   // this
-					      tunnelContainerSolidInner,   // minus this
-					      0,                           // rotate by this
-					      contInsideDisplacement);      
+      contInsideDisplacement = G4ThreeVector(0, tunnelContInnerYRadius - tunnel2, 0); 
     }
   else
-    {
-      // have to do a subtraction
-      G4VSolid* tunnelContainerSolidOuter = new G4CutTubs(name + "_tunnel_cont_solid_outer",     // name
-							  0,                                     // inner radius
-							  soilOuterRadius + lengthSafety,        // outer radius
-							  0.5*length,                            // z half angle
-							  0,                                     // start angle
-							  CLHEP::twopi,                          // sweep angle
-							  inputface,                             // input normal vector
-							  outputface);                           // output normal vector
-      
-      G4VSolid* tunnelContainerSolidInner = new G4Box(name + "_tunnel_cont_solid_inner", // name
-						      tunnel1,                           // x radius
-						      tunnel2,                           // y radius
-						      length);
+    {      
+      containerSolidInner = new G4Box(name + "_tunnel_cont_solid_inner", // name
+				      tunnel1,                           // x radius
+				      tunnel2,                           // y radius
+				      length); // z half length - long for unambiguous subtraction
+      contInsideDisplacement = G4ThreeVector(0,0,0);
+    }
 
-      containerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid", // name
-					      tunnelContainerSolidOuter,   // this
-					      tunnelContainerSolidInner);  // minus this
-    } 
-
-  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius, visible);
+  containerSolid = new G4SubtractionSolid(name + "_container_solid", // name
+					  containerSolidOuter,       // this
+					  containerSolidInner,       // minus this
+					  0,                         // rotate by this
+					  contInsideDisplacement);      
+  
+  CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerX, containerY, visible);
 
   return tunnelSection;
 }
@@ -342,38 +318,4 @@ void BDSTunnelFactoryRectangular::TestInputParameters(G4double&    length,
 
   if (tunnel2 < 1e-10)
     {tunnel2 = defaultModel->aper2;}
-}
-
-/// only the solids are unique, once we have those, the logical volumes and placement in the
-/// container are the same.  group all this functionality together
-BDSGeometryComponent* BDSTunnelFactoryRectangular::CommonFinalConstruction(G4String    name,
-									   G4double    length,
-									   G4Material* tunnelMaterial,
-									   G4Material* tunnelSoilMaterial,
-									   G4double    containerXRadius,
-									   G4double    containerYRadius,
-									   G4bool      visible)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
-  BDSTunnelFactoryBase::CommonConstruction(name,
-					   tunnelMaterial,
-					   tunnelSoilMaterial,
-					   length,
-					   visible);
-
-  // record extents
-  std::pair<double,double> extX = std::make_pair(-containerXRadius, containerXRadius);
-  std::pair<double,double> extY = std::make_pair(-containerYRadius, containerYRadius);
-  std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
-  
-  BDSGeometryComponent* aTunnelSegment = new BDSGeometryComponent(containerSolid,
-								  containerLV,
-								  extX,
-								  extY,
-								  extZ);
-
-  return aTunnelSegment;
 }

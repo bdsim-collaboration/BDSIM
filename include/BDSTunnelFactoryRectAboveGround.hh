@@ -69,14 +69,6 @@ private:
 			   G4double&    tunnel1,
 			   G4double&    tunnel2);
 
-  BDSGeometryComponent* CommonFinalConstruction(G4String    name,
-						G4double    length,
-						G4Material* tunnelMaterial,
-						G4Material* soilMaterial,
-						G4double    containerXRadius,
-						G4double    containerYRadius,
-						G4bool      visible);
-
   G4VSolid* slabSolid;
   //G4double  slabXHalfWidth;
   G4double  slabYHalfWidth;

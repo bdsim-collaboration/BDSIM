@@ -66,7 +66,6 @@ BDSGeometryComponent* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4Str
 
   // build the solids
   // work out how wide the slab needs to be
-  G4cout << slabYHalfWidth << G4endl;
   G4double slabXHalfWidth = std::max(tunnel1, tunnel2) * 2;
   slabSolid = new G4Box(name + "_slab_solid",       // name
 			slabXHalfWidth,             // x half width
@@ -163,9 +162,9 @@ BDSGeometryComponent* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4Str
 					      tunnelContainerInner);       // minus this
     } 
 
-  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius, visible);
+  CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerXRadius, containerYRadius, visible);
   
-  return tunnelSection; // member variable geometry component that's assembled in base class
+  return tunnelSection;
 }
 
 
@@ -325,20 +324,20 @@ BDSGeometryComponent* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngled
 					      tunnelContainerSolidInner);  // minus this
     } 
 
-  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius, visible);
-
+  CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerXRadius, containerYRadius, visible);
+  
   return tunnelSection;
 }
 
 /// functions below here are private to this particular factory
 void BDSTunnelFactoryRectAboveGround::TestInputParameters(G4double&    length,
-						     G4double&    tunnelThickness,
-						     G4double&    tunnelSoilThickness,
-						     G4Material*& tunnelMaterial,
-						     G4Material*& tunnelSoilMaterial,
-						     G4double&    tunnelFloorOffset,
-						     G4double&    tunnel1,
-						     G4double&    tunnel2)
+							  G4double&    tunnelThickness,
+							  G4double&    tunnelSoilThickness,
+							  G4Material*& tunnelMaterial,
+							  G4Material*& tunnelSoilMaterial,
+							  G4double&    tunnelFloorOffset,
+							  G4double&    tunnel1,
+							  G4double&    tunnel2)
 {
   CommontTestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial, tunnelSoilMaterial);
   
@@ -350,38 +349,4 @@ void BDSTunnelFactoryRectAboveGround::TestInputParameters(G4double&    length,
 
   if (tunnel2 < 1e-10)
     {tunnel2 = defaultModel->aper2;}
-}
-
-/// only the solids are unique, once we have those, the logical volumes and placement in the
-/// container are the same.  group all this functionality together
-BDSGeometryComponent* BDSTunnelFactoryRectAboveGround::CommonFinalConstruction(G4String    name,
-									       G4double    length,
-									       G4Material* tunnelMaterial,
-									       G4Material* tunnelSoilMaterial,
-									       G4double    containerXRadius,
-									       G4double    containerYRadius,
-									       G4bool      visible)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
-  BDSTunnelFactoryBase::CommonConstruction(name,
-					   tunnelMaterial,
-					   tunnelSoilMaterial,
-					   length,
-					   visible);
-
-  // record extents
-  std::pair<double,double> extX = std::make_pair(-containerXRadius, containerXRadius);
-  std::pair<double,double> extY = std::make_pair(-containerYRadius, containerYRadius);
-  std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
-  
-  BDSGeometryComponent* aTunnelSegment = new BDSGeometryComponent(containerSolid,
-								  containerLV,
-								  extX,
-								  extY,
-								  extZ);
-
-  return aTunnelSegment;
 }

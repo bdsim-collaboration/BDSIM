@@ -32,9 +32,8 @@ BDSTunnelFactoryElliptical* BDSTunnelFactoryElliptical::Instance()
   return _instance;
 }
 
-BDSTunnelFactoryElliptical::BDSTunnelFactoryElliptical():BDSTunnelFactoryBase()
-{
-}
+BDSTunnelFactoryElliptical::BDSTunnelFactoryElliptical()
+{;}
 
 BDSTunnelFactoryElliptical::~BDSTunnelFactoryElliptical()
 {
@@ -188,7 +187,7 @@ BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String  
 					      tunnelContainerSolidInner);  // minus this
     } 
 
-  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius, visible);
+  CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerXRadius, containerYRadius, visible);
   
   return tunnelSection; // member variable geometry component that's assembled in base class
 }
@@ -385,7 +384,7 @@ BDSGeometryComponent* BDSTunnelFactoryElliptical::CreateTunnelSectionAngledInOut
 					      tunnelContainerSolidInner);        // minus this
     } 
 
-  CommonFinalConstruction(name, length, tunnelMaterial, tunnelSoilMaterial, containerXRadius, containerYRadius, visible);
+  CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerXRadius, containerYRadius, visible);
 
   return tunnelSection;
 }
@@ -410,38 +409,4 @@ void BDSTunnelFactoryElliptical::TestInputParameters(G4double&    length,
 
   if (tunnel2 < 1e-10)
     {tunnel2 = defaultModel->aper2;}
-}
-
-/// only the solids are unique, once we have those, the logical volumes and placement in the
-/// container are the same.  group all this functionality together
-BDSGeometryComponent* BDSTunnelFactoryElliptical::CommonFinalConstruction(G4String    name,
-									  G4double    length,
-									  G4Material* tunnelMaterial,
-									  G4Material* tunnelSoilMaterial,
-									  G4double    containerXRadius,
-									  G4double    containerYRadius,
-									  G4bool      visible)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
-  BDSTunnelFactoryBase::CommonConstruction(name,
-					   tunnelMaterial,
-					   tunnelSoilMaterial,
-					   length,
-					   visible);
-
-  // record extents
-  std::pair<double,double> extX = std::make_pair(-containerXRadius, containerXRadius);
-  std::pair<double,double> extY = std::make_pair(-containerYRadius, containerYRadius);
-  std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
-  
-  BDSGeometryComponent* aTunnelSegment = new BDSGeometryComponent(containerSolid,
-								  containerLV,
-								  extX,
-								  extY,
-								  extZ);
-
-  return aTunnelSegment;
 }

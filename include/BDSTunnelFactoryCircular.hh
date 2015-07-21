@@ -65,14 +65,6 @@ private:
 			   G4Material*& tunnelSoildMaterial,
 			   G4double&    tunnelFloorOffset,
 			   G4double&    tunnel1);
-
-  BDSGeometryComponent* CommonFinalConstruction(G4String    name,
-						G4double    length,
-						G4Material* tunnelMaterial,
-						G4Material* soilMaterial,
-						G4double    containerRadius,
-						G4bool      visible);
-
 };
   
 #endif

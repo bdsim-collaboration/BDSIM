@@ -105,6 +105,8 @@ protected:
 				  G4Material* tunnelMaterial,
 				  G4Material* tunnelSoilMaterial,
 				  G4double    length,
+				  G4double    containerXRadius,
+				  G4double    contianerYRadius,
 				  G4bool      visible);
 
   /// Build logical volumes from solids + materials
@@ -119,7 +121,9 @@ protected:
   virtual void SetUserLimits(G4double length);
   
   /// Prepare the output geometry component
-  virtual void PrepareGeometryComponent();
+  virtual void PrepareGeometryComponent(G4double containerXRadius,
+					G4double containerYRadius,
+					G4double containerZRadius);
 
   /// Set the sensitive volumes
   virtual void SetSensitiveVolumes();
