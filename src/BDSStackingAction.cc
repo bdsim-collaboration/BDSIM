@@ -64,16 +64,12 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
   if(BDSGlobalConstants::Instance()->GetStopTracks()) // if tracks killed after interaction
     {
       
-      // kill secondary electrons
+      // kill secondary electrons      
+      if( (aTrack->GetParentID() > 0) && (aTrack->GetDefinition() == G4Electron::ElectronDefinition() ) ) {
+	return fKill;
+      }
       
-      if( (aTrack->GetParentID() > 0) && 
-	  (aTrack->GetDefinition() == G4Electron::ElectronDefinition() ) )
-	{
-	  return fKill;
-	}
-      
-      // kill secondary photons
-      
+      // kill secondary photons      
       if( (aTrack->GetParentID() > 0) && (aTrack->GetDefinition() == G4Gamma::GammaDefinition()) && !BDSGlobalConstants::Instance()->GetSynchRadOn())
 	{
 	  classification = fKill;
@@ -81,8 +77,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       
       // kill secondary positrons
       
-      if( (aTrack->GetParentID() > 0) && 
-	  (aTrack->GetDefinition() == G4Positron::PositronDefinition() ) )
+      if((aTrack->GetParentID() > 0) && (aTrack->GetDefinition() == G4Positron::PositronDefinition()))
 	{
 	  return fKill;
 	}
