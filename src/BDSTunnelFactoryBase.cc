@@ -42,7 +42,7 @@ BDSGeometryComponent* BDSTunnelFactoryBase::CreateTunnelSectionAngledIn(G4String
 {
   return CreateTunnelSectionAngledInOut(name, length, angleIn, 0, tunnelThickness,
 					tunnelSoilThickness, tunnelMaterial, tunnelSoilMaterial,
-					tunnelFloor, tunnelFloorOffset, tunnel1, tunnel2);
+					tunnelFloor, tunnelFloorOffset, tunnel1, tunnel2, visible);
 }
 
 BDSGeometryComponent* BDSTunnelFactoryBase::CreateTunnelSectionAngledOut(G4String      name,
@@ -60,7 +60,7 @@ BDSGeometryComponent* BDSTunnelFactoryBase::CreateTunnelSectionAngledOut(G4Strin
 {
   return CreateTunnelSectionAngledInOut(name, length, 0, angleOut, tunnelThickness,
 					tunnelSoilThickness, tunnelMaterial, tunnelSoilMaterial,
-					tunnelFloor, tunnelFloorOffset, tunnel1, tunnel2);
+					tunnelFloor, tunnelFloorOffset, tunnel1, tunnel2, visible);
 }
 
 std::pair<G4ThreeVector,G4ThreeVector> BDSTunnelFactoryBase::CalculateFaces(G4double angleIn,
