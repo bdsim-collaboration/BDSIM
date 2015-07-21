@@ -11,18 +11,18 @@ beam,  particle="e-",
 myPipe1 : drift, l=1.0; 
 myPipe2 : drift, l=1.0;
 
-myBend   : sbend, l=10.0, angle=0.01*rad;        ! No SR scattering on beam pipe
+! myBend   : sbend, l=10.0, angle=0.01*rad;        ! No SR scattering on beam pipe
 ! myBend   : sbend, l=10.0, angle=0.025*rad;        ! Some SR scattering on beam pipe
-! myBend   : sbend, l=10.0, angle=0.030*rad;        ! Some more SR scattering on beam pipe
+! myBend   : sbend, l=10.0, angle=0.033*rad;        ! Some more SR scattering on beam pipe
 ! myBend   : sbend, l=10.0, angle=0.035*rad;        ! Some more SR scattering on beam pipe
-! myBend   : sbend, l=10.0, angle=0.040*rad;        ! Some more SR scattering on beam pipe (now the tracking does not finish)
+myBend   : sbend, l=10.0, angle=0.040*rad;        ! Some more SR scattering on beam pipe (now the tracking does not finish)
 
 
 sampler1 : marker;
 sampler2 : marker;
 sampler3 : marker;
 sampler4 : marker;
-! myCol1   : rcol, l=0.5, xsize=0, ysize=0, material="Copper";
+myCol1   : rcol, l=0.5, xsize=0, ysize=0, material="Copper";
 
 beamLine: line = (myPipe1, sampler1, myBend, sampler2, myPipe2, sampler3, sampler4); ! Without a collimator
 ! beamLine: line = (myPipe1, sampler1, myBend, sampler2, myPipe2, sampler3, myCol1, sampler4); ! With a collimator
@@ -33,4 +33,4 @@ sample, range = sampler2;
 sample, range = sampler3; 
 sample, range = sampler4;
 
-option, ngenerate=1000; 
+option, ngenerate=10000; 
