@@ -112,16 +112,16 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
   BDSBeamlineIterator it = flatBeamline->begin();
   for (; it != flatBeamline->end(); ++it)
     {
-      G4bool isEnd   = it == (flatBeamline->end() - 1);
-#ifdef BDSDEBUG
-      if (isEnd)
-	{G4cout << "End of beam line - forcing break in tunnel" << G4endl;}
-#endif
       G4bool breakIt = BreakTunnel(cumulativeLength,
 				   cumulativeAngle,
 				   cumulativeNItems,
 				   cumulativeDisplacementX,
 				   cumulativeDisplacementY);
+      G4bool isEnd   = it == (flatBeamline->end() - 1);
+#ifdef BDSDEBUG
+      if (isEnd)
+	{G4cout << "End of beam line - forcing break in tunnel" << G4endl;}
+#endif
       if (breakIt || isEnd)
 	{
 	  // work out tunnel parameters
@@ -150,13 +150,13 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << "determined tunnel segment to have the following parameters:" << G4endl;
-	  G4cout << "Start element name:   " << (*startElement)->GetName() << G4endl;
-	  G4cout << "End element name:     " << (*endElement)->GetName()   << G4endl;
-	  G4cout << "Start point (global): " << startPoint                 << G4endl;
-	  G4cout << "End point (global):   " << endPoint                   << G4endl;
-	  G4cout << "Has a finite angle:   " << isAngled                   << G4endl;
-	  G4cout << "Segment length:       " << segmentLength              << G4endl;
-	  G4cout << "Total angle:          " << cumulativeAngle            << G4endl;
+	  G4cout << "Start element name:   " << (*startElement)->GetPlacementName() << G4endl;
+	  G4cout << "End element name:     " << (*endElement)->GetPlacementName()   << G4endl;
+	  G4cout << "Start point (global): " << startPoint                          << G4endl;
+	  G4cout << "End point (global):   " << endPoint                            << G4endl;
+	  G4cout << "Has a finite angle:   " << isAngled                            << G4endl;
+	  G4cout << "Segment length:       " << segmentLength                       << G4endl;
+	  G4cout << "Total angle:          " << cumulativeAngle                     << G4endl;
 #endif
 	  
 	  // create tunnel segment
