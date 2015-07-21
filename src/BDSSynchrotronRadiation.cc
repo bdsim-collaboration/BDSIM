@@ -33,7 +33,7 @@
 #include "Randomize.hh" 
 #include "CLHEP/Units/PhysicalConstants.h"
 
-#define BDSDEBUG 
+// #define BDSDEBUG 
 
 BDSSynchrotronRadiation::BDSSynchrotronRadiation(const G4String& processName) : G4VDiscreteProcess(processName) { // initialization 
   nExpConst=5*CLHEP::fine_structure_const/(2*sqrt(3.0))/CLHEP::electron_mass_c2;
@@ -65,7 +65,7 @@ G4VParticleChange* BDSSynchrotronRadiation::PostStepDoIt(const G4Track& trackDat
   
   G4double gamma = aDynamicParticle->GetTotalEnergy()/aDynamicParticle->GetMass();
   
-  if(gamma <= 1.0e3 ) {
+  if(gamma <= 1.0e3) {
 #ifdef BDSDEBUG 
     G4cout << __METHOD_NAME__ << "Gamma<1000" << G4endl;
 #endif
@@ -86,7 +86,7 @@ G4VParticleChange* BDSSynchrotronRadiation::PostStepDoIt(const G4Track& trackDat
 #ifdef BDSDEBUG 
     G4cout << __METHOD_NAME__ << "Particle charge != 0.0" << G4endl;
 #endif
-    fieldMgr = fFieldPropagator->FindAndSetFieldManager( trackData.GetVolume() );
+    fieldMgr = fFieldPropagator->FindAndSetFieldManager(trackData.GetVolume());
     if ( fieldMgr != 0 )
       {
 	// If the field manager has no field, there is no field !	  
@@ -98,16 +98,18 @@ G4VParticleChange* BDSSynchrotronRadiation::PostStepDoIt(const G4Track& trackDat
     G4cout << __METHOD_NAME__ << "fieldExertsForce==true" << G4endl;
 #endif
       pField = fieldMgr->GetDetectorField() ;
+
       G4ThreeVector  globPosition = trackData.GetPosition() ;
       G4double       globPosVec[3], FieldValueVec[3] ;
+
       globPosVec[0] = globPosition.x() ;
       globPosVec[1] = globPosition.y() ;
       globPosVec[2] = globPosition.z() ;
       
       pField->GetFieldValue( globPosVec, FieldValueVec ) ;
-      FieldValue = G4ThreeVector( FieldValueVec[0],
-				  FieldValueVec[1],
-				  FieldValueVec[2]   );
+      FieldValue = G4ThreeVector(FieldValueVec[0],
+				 FieldValueVec[1],
+				 FieldValueVec[2]);
       
       G4ThreeVector unitMomentum = aDynamicParticle->GetMomentumDirection();
       G4ThreeVector unitMcrossB = FieldValue.cross(unitMomentum);
@@ -132,14 +134,13 @@ G4VParticleChange* BDSSynchrotronRadiation::PostStepDoIt(const G4Track& trackDat
 #ifdef BDSDEBUG 
 	    G4cout << __METHOD_NAME__ << "GamEnergy in range" << G4endl;
 #endif
-	    if((BDSGlobalConstants::Instance()->GetSynchTrackPhotons())&&
-	       (GamEnergy>BDSGlobalConstants::Instance()->GetSynchLowGamE()) ) {
+	    if((BDSGlobalConstants::Instance()->GetSynchTrackPhotons())&&(GamEnergy>BDSGlobalConstants::Instance()->GetSynchLowGamE()) ) {
 #ifdef BDSDEBUG 
 	      G4cout << __METHOD_NAME__ << "TrackPhotons" << G4endl;
 #endif
-	      G4DynamicParticle* aGamma= new G4DynamicParticle (G4Gamma::Gamma(), 
-								trackData.GetMomentumDirection(),
-								GamEnergy);
+	      G4DynamicParticle* aGamma= new G4DynamicParticle(G4Gamma::Gamma(), 
+							       trackData.GetMomentumDirection(),
+							       GamEnergy);
 	      listOfSecondaries.push_back(aGamma);
 #ifdef BDSDEBUG 
 	      G4cout << __METHOD_NAME__ << "Creating synchRad photon of energy : " << GamEnergy << G4endl;
@@ -163,8 +164,8 @@ G4VParticleChange* BDSSynchrotronRadiation::PostStepDoIt(const G4Track& trackDat
 	      aParticleChange.ProposeEnergy(NewKinEnergy);
 	    } 
 	    else { 
-	      aParticleChange.ProposeEnergy( 0. );
-	      aParticleChange.ProposeLocalEnergyDeposit (0.);
+	      aParticleChange.ProposeEnergy(0.);
+	      aParticleChange.ProposeLocalEnergyDeposit(0.);
 	      G4double charge= trackData.GetDynamicParticle()->GetCharge();
 	      if (charge<0.) aParticleChange.ProposeTrackStatus(fStopAndKill);
 	      else       aParticleChange.ProposeTrackStatus(fStopButAlive);
@@ -347,6 +348,13 @@ G4double BDSSynchrotronRadiation::SynRadC(G4double x) {
 G4double  BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
 						   G4double /*PreviousStepSize*/,
 						   G4ForceCondition* ForceCondition) {  
+
+  // Check if primary if not return large mean free path
+  if(track.GetParentID() !=0) {
+    // DBL_MAX
+    return DBL_MAX;    
+  }
+
   *ForceCondition = NotForced ;
 
   //   static G4FieldManager* lastFieldManager;
@@ -368,49 +376,57 @@ G4double  BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
     globPosVec[2] = globPosition.z() ;
     
     if(pField)
-      pField->GetFieldValue( globPosVec, FieldValueVec ) ; 
+      pField->GetFieldValue(globPosVec, FieldValueVec) ; 
 	
     G4double Blocal= FieldValueVec[1];
     if ( FieldValueVec[0]!=0.)
       Blocal=sqrt(Blocal*Blocal+FieldValueVec[0]*FieldValueVec[0]);
-
-      
- 
+       
+    // DangerousStuffHere, 1 line
     if(track.GetMaterial()==BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial())
        && Blocal !=0 ) {
       G4ThreeVector InitMag=track.GetMomentum();
       
-      // transform to the local coordinate frame
-      
+      // transform to the local coordinate frame      
       G4AffineTransform tf(track.GetTouchable()->GetHistory()->GetTopTransform().Inverse());
       const G4RotationMatrix Rot=tf.NetRotation();
       const G4ThreeVector Trans=-tf.NetTranslation();
       InitMag=Rot*InitMag; 
 
-
       G4double Rlocal=(InitMag.z()/CLHEP::GeV)/(0.299792458 * Blocal/CLHEP::tesla) *CLHEP::m;
       
       MeanFreePath = fabs(Rlocal)/(track.GetTotalEnergy()*nExpConst);
       MeanFreePath /= BDSGlobalConstants::Instance()->GetSynchMeanFreeFactor();
-
+      
       // reset mean free path counter
       if(MeanFreePathCounter>=BDSGlobalConstants::Instance()->GetSynchMeanFreeFactor())
 	    MeanFreePathCounter=0;
+
+      if(InitMag.mag() < 100.0) {
+	// DBL_MAX
+	return DBL_MAX;
+      }
 
 #ifdef BDSDEBUG
       G4cout<< __METHOD_NAME__ << G4endl;
       G4cout<< __METHOD_NAME__ << "Track momentum=" << InitMag << G4endl;
       G4cout<< __METHOD_NAME__ << "Blocal="<<Blocal/CLHEP::tesla<<"  Rlocal="<<Rlocal/CLHEP::m<<G4endl;
-      G4cout<< __METHOD_NAME__ << "Volume=" << track.GetVolume()->GetName()<<" mfp="<<MeanFreePath/CLHEP::m<<G4endl;
+      G4cout<< __METHOD_NAME__ << "Volume=" << track.GetVolume()->GetName() << G4endl;
+      G4cout<< __METHOD_NAME__ << "mfp="<<MeanFreePath/CLHEP::m << G4endl;
 #endif
+
 
       return MeanFreePath;
     }
-    else
+    else {
+      // DBL_MAX
       return DBL_MAX;
+    }
   }
-  else
+  else {
+    // DBL_MAX
     return DBL_MAX;
+  }
 }
 
 
