@@ -282,6 +282,8 @@ void BDSModularPhysicsList::LoadSynchRad()
     _synchRadPhysics = new BDSSynchRadPhysics();		  
     _constructors.push_back(_synchRadPhysics);		  
   }
+  // Switch on BDSGlobalConstants::SetSynchRadOn() to keep BDSPhysicsListCompatibility
+  BDSGlobalConstants::Instance()->SetSynchRadOn(true);
 }							  
 							  
 void BDSModularPhysicsList::LoadMuon()
