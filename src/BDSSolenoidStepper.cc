@@ -19,12 +19,12 @@ BDSSolenoidStepper::BDSSolenoidStepper(G4Mag_EqRhs *EqRhs)
   backupStepper     = new G4ClassicalRK4(EqRhs,6);
 }
 
-void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
-				       const G4double dydx[],
-				       G4ThreeVector,
-				       G4double  h,
-				       G4double  yOut[],
-				       G4double  yErr[])
+void BDSSolenoidStepper::AdvanceHelix(const G4double yIn[],
+				      const G4double dydx[],
+				      G4ThreeVector  /*bField*/,
+				      G4double       h,
+				      G4double       yOut[],
+				      G4double       yErr[])
 {
   const G4double *pIn      = yIn+3;
   G4ThreeVector GlobalR    = G4ThreeVector( yIn[0], yIn[1], yIn[2]);
@@ -245,11 +245,11 @@ void BDSSolenoidStepper::AdvanceHelix( const G4double  yIn[],
 }
 
 
-void BDSSolenoidStepper::Stepper( const G4double yInput[],
-				  const G4double dydx[],
-				  const G4double hstep,
-				  G4double yOut[],
-				  G4double yErr[]      )
+void BDSSolenoidStepper::Stepper(const G4double yInput[],
+				 const G4double dydx[],
+				 const G4double hstep,
+				       G4double yOut[],
+				       G4double yErr[])
 { 
   //simply perform one step here
   AdvanceHelix(yInput,dydx,(G4ThreeVector)0,hstep,yOut,yErr);

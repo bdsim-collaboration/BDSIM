@@ -107,13 +107,13 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsProdCutPositronsA   = opt.prodCutPositronsA   * CLHEP::m;
 
   // tracking accuracy
-  itsDeltaChord          = opt.deltaChord * CLHEP::m;
-  itsChordStepMinimum    = opt.chordStepMinimum * CLHEP::m;
-  itsDeltaIntersection   = opt.deltaIntersection * CLHEP::m;
+  itsDeltaChord          = opt.deltaChord          * CLHEP::m;
+  itsChordStepMinimum    = opt.chordStepMinimum    * CLHEP::m;
+  itsDeltaIntersection   = opt.deltaIntersection   * CLHEP::m;
   itsMinimumEpsilonStep  = opt.minimumEpsilonStep;
   itsMaximumEpsilonStep  = opt.maximumEpsilonStep;
   itsMaxTime             = opt.maximumTrackingTime * CLHEP::s;
-  itsDeltaOneStep        = opt.deltaOneStep * CLHEP::m;
+  itsDeltaOneStep        = opt.deltaOneStep        * CLHEP::m;
   
   itsDoPlanckScattering = opt.doPlanckScattering;
   itsCheckOverlaps = opt.checkOverlaps;
