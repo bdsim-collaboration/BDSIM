@@ -192,7 +192,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   // initialise the default vis attributes and user limits that
   // can be copied by various bits of geometry
   InitVisAttributes();
-  InitDefaultUserLimits();
+  InitDefaultUserLimits(); // should be done after itsMaxTime set
 }
 
 void BDSGlobalConstants::InitVisAttributes()
@@ -213,7 +213,7 @@ void BDSGlobalConstants::InitDefaultUserLimits()
 {
   //these must be copied and not attached directly
   defaultUserLimits = new G4UserLimits("default_cuts");
-  defaultUserLimits->SetUserMinEkine( GetThresholdCutCharged() );
+  defaultUserLimits->SetUserMaxTime(itsMaxTime);
   //user must set step length manually
 }
 
