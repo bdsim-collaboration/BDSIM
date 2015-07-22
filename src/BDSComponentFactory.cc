@@ -55,7 +55,8 @@ bool debug1 = true;
 bool debug1 = false;
 #endif
 
-BDSComponentFactory::BDSComponentFactory(){
+BDSComponentFactory::BDSComponentFactory()
+{
   verbose = BDSExecOptions::Instance()->GetVerbose();
   lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
   //
@@ -253,18 +254,21 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   return element;
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateSampler(){
+BDSAcceleratorComponent* BDSComponentFactory::CreateSampler()
+{
   return (new BDSSampler(_element.name, BDSGlobalConstants::Instance()->GetSamplerLength()));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateCSampler(){
+BDSAcceleratorComponent* BDSComponentFactory::CreateCSampler()
+{
   if( _element.l < 1.E-4 ) _element.l = 1.0 ;
   return (new BDSSamplerCylinder( _element.name,
 				  _element.l * CLHEP::m,
 				  _element.r * CLHEP::m ));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateDump(){
+BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
+{
   return (new BDSDump( _element.name,
 		       BDSGlobalConstants::Instance()->GetSamplerLength()));
 }

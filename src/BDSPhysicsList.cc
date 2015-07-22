@@ -225,11 +225,11 @@ BDSPhysicsList::BDSPhysicsList(): G4VUserPhysicsList()
   defaultCutValue = BDSGlobalConstants::Instance()->GetDefaultRangeCut()*CLHEP::m;  
   SetDefaultCutValue(BDSGlobalConstants::Instance()->GetDefaultRangeCut()*CLHEP::m);
 
-  G4cout  << __METHOD_NAME__ << "Charged Thresholdcut=" 
+  G4cout  << __METHOD_NAME__ << "Charged Thresholdcut = " 
 	  << BDSGlobalConstants::Instance()->GetThresholdCutCharged()/CLHEP::GeV<<" GeV"<<G4endl;
-  G4cout  << __METHOD_NAME__ << "Photon Thresholdcut=" 
+  G4cout  << __METHOD_NAME__ << "Photon Thresholdcut  = " 
 	  << BDSGlobalConstants::Instance()->GetThresholdCutPhotons()/CLHEP::GeV<<" GeV"<<G4endl;
-  G4cout  << __METHOD_NAME__ << "Default range cut=" 
+  G4cout  << __METHOD_NAME__ << "Default range cut    = " 
 	  << BDSGlobalConstants::Instance()->GetDefaultRangeCut()/CLHEP::m<<" m"<<G4endl;
 
   //This is the GEANT4 physics list verbose level.

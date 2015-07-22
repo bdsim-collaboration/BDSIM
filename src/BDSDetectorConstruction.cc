@@ -67,6 +67,8 @@ BDSDetectorConstruction::BDSDetectorConstruction():
 
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 {
+  G4cout << "Constructing the accelerator..." << G4endl;
+  
   gasRegion   = new G4Region("gasRegion");
 
   G4ProductionCuts* theGasProductionCuts = new G4ProductionCuts();
