@@ -76,7 +76,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   
   itsBeamPipeThickness = opt.beampipeThickness * CLHEP::m;
 
-  //magnet geometry
+  // magnet geometry
   itsOuterDiameter = opt.outerDiameter * CLHEP::m;
   if (itsOuterDiameter < 2*(itsBeamPipeThickness + itsBeamPipeRadius)){
     G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" must be greater than 2x (\"beampipeRadius\" + \"beamPipeThickness\") " << G4endl;
@@ -85,31 +85,36 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsMagnetGeometryType = BDS::DetermineMagnetGeometryType(opt.magnetGeometryType);
   itsOuterMaterialName  = opt.outerMaterialName;
   
-  //Beam loss monitor (BLM) geometry
-  itsBlmRad = opt.blmRad * CLHEP::m;
-  itsBlmLength = opt.blmLength * CLHEP::m;
-  itsSamplerDiameter = opt.samplerDiameter * CLHEP::m;
-  itsSamplerLength = 4E-8 * CLHEP::m;
+  // beam loss monitor (BLM) geometry
+  itsBlmRad              = opt.blmRad * CLHEP::m;
+  itsBlmLength           = opt.blmLength * CLHEP::m;
+
+  // samplers
+  itsSamplerDiameter     = opt.samplerDiameter * CLHEP::m;
+  itsSamplerLength       = 4E-8 * CLHEP::m;
+
+  // production thresholds
   itsThresholdCutCharged = opt.thresholdCutCharged * CLHEP::GeV;
   itsThresholdCutPhotons = opt.thresholdCutPhotons * CLHEP::GeV;
-  itsProdCutPhotons = opt.prodCutPhotons * CLHEP::m;
-  itsProdCutPhotonsP = opt.prodCutPhotonsP * CLHEP::m;
-  itsProdCutPhotonsA = opt.prodCutPhotonsA * CLHEP::m;
-  itsProdCutElectrons = opt.prodCutElectrons * CLHEP::m;
-  itsProdCutElectronsP = opt.prodCutElectronsP * CLHEP::m;
-  itsProdCutElectronsA = opt.prodCutElectronsA * CLHEP::m;
-  itsProdCutPositrons = opt.prodCutPositrons * CLHEP::m;
-  itsProdCutPositronsP = opt.prodCutPositronsP * CLHEP::m;
-  itsProdCutPositronsA = opt.prodCutPositronsA * CLHEP::m;
- 
-  itsDeltaChord = opt.deltaChord * CLHEP::m;
-  itsChordStepMinimum = opt.chordStepMinimum * CLHEP::m;
-  itsDeltaIntersection= opt.deltaIntersection * CLHEP::m;
-  itsMinimumEpsilonStep = opt.minimumEpsilonStep;
-  itsMaximumEpsilonStep = opt.maximumEpsilonStep;
-  itsMaxTime = opt.maximumTrackingTime * CLHEP::s;
+  itsProdCutPhotons      = opt.prodCutPhotons      * CLHEP::m;
+  itsProdCutPhotonsP     = opt.prodCutPhotonsP     * CLHEP::m;
+  itsProdCutPhotonsA     = opt.prodCutPhotonsA     * CLHEP::m;
+  itsProdCutElectrons    = opt.prodCutElectrons    * CLHEP::m;
+  itsProdCutElectronsP   = opt.prodCutElectronsP   * CLHEP::m;
+  itsProdCutElectronsA   = opt.prodCutElectronsA   * CLHEP::m;
+  itsProdCutPositrons    = opt.prodCutPositrons    * CLHEP::m;
+  itsProdCutPositronsP   = opt.prodCutPositronsP   * CLHEP::m;
+  itsProdCutPositronsA   = opt.prodCutPositronsA   * CLHEP::m;
+
+  // tracking accuracy
+  itsDeltaChord          = opt.deltaChord * CLHEP::m;
+  itsChordStepMinimum    = opt.chordStepMinimum * CLHEP::m;
+  itsDeltaIntersection   = opt.deltaIntersection * CLHEP::m;
+  itsMinimumEpsilonStep  = opt.minimumEpsilonStep;
+  itsMaximumEpsilonStep  = opt.maximumEpsilonStep;
+  itsMaxTime             = opt.maximumTrackingTime * CLHEP::s;
+  itsDeltaOneStep        = opt.deltaOneStep * CLHEP::m;
   
-  itsDeltaOneStep = opt.deltaOneStep * CLHEP::m;
   itsDoPlanckScattering = opt.doPlanckScattering;
   itsCheckOverlaps = opt.checkOverlaps;
   itsTurnOnCerenkov = opt.turnOnCerenkov;
@@ -128,7 +133,16 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsSynchLowGamE = opt.synchLowGamE * CLHEP::GeV;  // lowest gamma energy
   itsSynchPhotonMultiplicity = opt.synchPhotonMultiplicity;
   itsSynchMeanFreeFactor = opt.synchMeanFreeFactor;
-  itsLengthSafety = opt.lengthSafety;
+  if (opt.lengthSafety < 1e-15)
+    { // protect against poor lengthSafety choices that would cause potential overlaps
+      G4cerr << "Dangerously low \"lengthSafety\" value of: " << opt.lengthSafety
+	     << " m that will result in potential geometry overlaps!" << G4endl;
+      G4cerr << "This affects all geometry construction and should be carefully chosen!!!" << G4endl;
+      G4cerr << "The default value is 1 pm" << G4endl;
+      exit(1);
+    }
+  else
+    {itsLengthSafety = opt.lengthSafety * CLHEP::m;}
 
   // set the number of primaries to generate - exec options overrides whatever's in gmad
   G4int nToGenerate = BDSExecOptions::Instance()->GetNGenerate();
