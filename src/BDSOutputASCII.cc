@@ -30,9 +30,12 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
       if (status != 0)
 	{
 	  if (nTimeAppended > 0)
-	    {basefilename = basefilename.substr(0, basefilename.size()-2);}
+	    {basefilename = basefilename.substr(0, basefilename.size()-3);}
 	  std::stringstream ss;
-	  ss << basefilename << "_" << nTimeAppended;
+	  ss << basefilename << "_";
+	  if (nTimeAppended < 10)
+	    {ss << 0;}
+	  ss << nTimeAppended;
 	  basefilename = ss.str();
 	  nTimeAppended += 1;
 	}
