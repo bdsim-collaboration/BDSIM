@@ -4,7 +4,7 @@
 #include "BDSTunnelBuilder.hh"
 #include "BDSTunnelFactory.hh"
 #include "BDSTunnelSegment.hh"
-#include "BDSUtilities.hh"  // for is finite function
+#include "BDSUtilities.hh"  // for isfinite function
 
 #include "globals.hh"
 
@@ -94,7 +94,7 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
   G4int    nTunnelSegments            = 0;
   G4double cumulativeLength           = 0; // integrated length since last tunnel break
   G4double cumulativeAngle            = 0; // integrated angle since last tunnel break
-  G4int    cumulativeNItems           = 0; // integraed number of accelerator components since last tunnel break
+  G4int    cumulativeNItems           = 0; // integrated number of accelerator components since last tunnel break
   G4double cumulativeDisplacementX    = 0; // integrated offset from initial point - horizontal
   G4double cumulativeDisplacementY    = 0; // integrated offset from initial point - vertical
   BDSGeometryComponent* tunnelSegment = NULL;
@@ -106,7 +106,7 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
   // iterator to the BDSBeamlineElement where the current tunnel section will begin
   BDSBeamlineIterator startElement       = flatBeamline->begin();
 
-  // iterator to the BDSBeamlineElement where the cuurent tunnel section will end
+  // iterator to the BDSBeamlineElement where the current tunnel section will end
   BDSBeamlineIterator endElement         = flatBeamline->begin();
 
   BDSBeamlineIterator it = flatBeamline->begin();
@@ -117,7 +117,7 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 				   cumulativeNItems,
 				   cumulativeDisplacementX,
 				   cumulativeDisplacementY);
-      G4bool isEnd   = it == (flatBeamline->end() - 1);
+      G4bool isEnd   = (it == (flatBeamline->end() - 1));
 #ifdef BDSDEBUG
       if (isEnd)
 	{G4cout << "End of beam line - forcing break in tunnel" << G4endl;}
@@ -229,7 +229,7 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 	  cumulativeDisplacementX = 0;
 	  cumulativeDisplacementY = 0;
 	  startElement       = endElement; // next segment will begin where this one finishes
-	  previousEndElement = endElement; // mark the end of thhis element as the prevous end
+	  previousEndElement = endElement; // mark the end of this element as the prevous end
 	}
       else
 	{
