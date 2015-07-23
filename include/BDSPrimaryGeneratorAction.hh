@@ -29,12 +29,11 @@ public:
   
 private:
   /// pointer a to G4 service class
-  G4ParticleGun*              particleGun;	  
-  /// weight of the primaries
-  /// currently always 1 and not possible to change it
-  G4double weight;
+  G4ParticleGun*   particleGun;	  
+  /// weight of the primaries (currently always 1 and not possible to change it)
+  G4double         weight;
   /// pointer to the particle distribution generator
-  BDSBunch* bdsBunch;
+  BDSBunch*        bdsBunch;
 };
 
 #endif

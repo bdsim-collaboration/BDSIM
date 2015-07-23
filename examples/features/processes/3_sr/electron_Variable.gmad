@@ -1,7 +1,7 @@
 include electronOptions.gmad 
 
 beam,  particle="e-",
-       energy= 250*GeV,
+       energy= 50*MeV,
        distrType="reference",
        X0=0.0*mm,
        Y0=0.0*mm,
@@ -33,4 +33,4 @@ sample, range = sampler2;
 sample, range = sampler3; 
 sample, range = sampler4;
 
-option, ngenerate=100;
+option, ngenerate=10000; 
