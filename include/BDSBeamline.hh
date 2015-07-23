@@ -27,7 +27,7 @@ class BDSTiltOffset;
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
-/// Forward declaration for iterator
+/// Forward declaration for iterator so it can appear at the top
 class BDSBeamline;
 
 class BDSLine;
@@ -144,6 +144,9 @@ private:
 
   /// Current s coordinate at the end of the previous element
   G4double previousSPositionEnd;
+
+  /// Map of objects by name stored in this beam line.
+  std::map<G4String, BDSBeamlineElement*> components;
   
   /// assignment and copy constructor not implemented nor used
   BDSBeamline& operator=(const BDSBeamline&);
