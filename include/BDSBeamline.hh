@@ -66,9 +66,12 @@ public:
   /// and s position of each beamline element
   void PrintAllComponents(std::ostream& out) const;
   
-  BDSBeamlineElement* GetFirstItem();             ///< Return a reference to the first element
-  BDSBeamlineElement* GetLastItem();              ///< Return a reference to the last element
+  BDSBeamlineElement* GetFirstItem(); ///< Return a reference to the first element
+  BDSBeamlineElement* GetLastItem();  ///< Return a reference to the last element
 
+  /// Get an element by name. Returns null pointer if not found.
+  BDSBeamlineElement* GetElement(G4String name);
+  
   /// Get the total length of the beamline - the sum of the chord length of each element
   inline G4double     GetTotalChordLength() const;
 
@@ -123,6 +126,10 @@ private:
   /// to the beginning of the beamline
   void AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = NULL);
 
+  /// Register the fully created element to a map of names vs element pointers. Used to
+  /// look up transforms by name.
+  void RegisterElement(BDSBeamlineElement* element);
+
   std::vector<BDSBeamlineElement*> beamline; ///< Beamline vector - the data
 
   G4double totalChordLength;
@@ -145,7 +152,11 @@ private:
   /// Current s coordinate at the end of the previous element
   G4double previousSPositionEnd;
 
-  /// Map of objects by name stored in this beam line.
+  /// Map of objects by name stored in this beam line. For now,
+  /// only the base name (no suffix) will be used for the component
+  /// and also not the names of the internal components ie the beam pipe
+  /// name. This would result in a particularly large number of volumes
+  /// and may not always be unique.
   std::map<G4String, BDSBeamlineElement*> components;
   
   /// assignment and copy constructor not implemented nor used
