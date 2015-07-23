@@ -28,6 +28,11 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
 				    G4double yOut[],
 				    G4double yErr[])
 {
+  // UNCOMMENT TO USE ONLY the g4 stepper for testing
+  // use a classical Runge Kutta stepper here
+  //backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
+  //return;
+      
   G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
 #ifdef BDSDEBUG
   G4cout << "BDSDipoleStepper: step= " << h/CLHEP::m << " m" << G4endl
