@@ -80,6 +80,8 @@ BDSBeamline::~BDSBeamline()
   // special case, if empty then previousReferenceRotationEnd is not used in the first element
   if (size()==0)
     {delete previousReferenceRotationEnd;}
+  // components map goes out of scope - elements are already deleted - no need to
+  // explicitly delete
 }
 
 void BDSBeamline::PrintAllComponents(std::ostream& out) const
@@ -393,6 +395,9 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   // append it to the beam line
   beamline.push_back(element);
 
+  // register it by name
+  RegisterElement(element);
+
 #ifdef BDSDEBUG
   G4cout << *element;
   G4cout << __METHOD_NAME__ << "component added" << G4endl;
@@ -468,4 +473,36 @@ G4ThreeVector BDSBeamline::GetMaximumExtentAbsolute() const
       mEA[i] = std::max(std::abs(maximumExtentPositive[i]), std::abs(maximumExtentNegative[i]));
     }
   return mEA;
+}
+
+void BDSBeamline::RegisterElement(BDSBeamlineElement* element)
+{
+  // check if base name already registered (can be single component placed multiple times)
+  std::map<G4String, BDSBeamlineElement*>::iterator search = components.find(element->GetName());
+  if (search == components.end())
+    {
+      // not registered
+      components[element->GetName()] = element;
+    }
+  // else - already registered - pass it by
+  /*
+  search = components.find(element->GetPlacementName());
+  if (search == component.edn())
+    {
+      //not registered
+      components[element->GetPlacementName()] = element;
+      }*/ //
+  // UNCOMMENT WHEN MERGED WITH TUNNEL BR for better placement names
+  // else - already registered - pass it by
+}
+
+BDSBeamlineElement* BDSBeamline::GetElement(G4String name)
+{
+  std::map<G4String, BDSBeamlineElement*>::iterator search = components.find(name);
+  if (search == components.end())
+    {//wasn't found
+      return NULL;
+    }
+  else
+    {return search->second;}
 }

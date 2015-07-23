@@ -188,7 +188,7 @@ BDSPhysicsList::BDSPhysicsList(): G4VUserPhysicsList()
 		      "QGSP_BERT_HP",
 		      "QGSP_BERT_HP_muon",
 		      "QGSP_BERT_HP_muon_em_low",
-		      "livemore",
+		      "livermore",
 		      "penelope",
 		      "G4EmStandard",
 		      "standard",
@@ -198,6 +198,7 @@ BDSPhysicsList::BDSPhysicsList(): G4VUserPhysicsList()
 		      "em_low",
 		      "em_muon",
 		      "hadronic_standard",
+		      "hadronic_muon",
 		      "hadronic_QGSP_BERT",
 		      "hadronic_QGSP_BERT_muon",
 		      "hadronic_FTFP_BERT",
@@ -225,11 +226,11 @@ BDSPhysicsList::BDSPhysicsList(): G4VUserPhysicsList()
   defaultCutValue = BDSGlobalConstants::Instance()->GetDefaultRangeCut()*CLHEP::m;  
   SetDefaultCutValue(BDSGlobalConstants::Instance()->GetDefaultRangeCut()*CLHEP::m);
 
-  G4cout  << __METHOD_NAME__ << "Charged Thresholdcut=" 
+  G4cout  << __METHOD_NAME__ << "Charged Thresholdcut = " 
 	  << BDSGlobalConstants::Instance()->GetThresholdCutCharged()/CLHEP::GeV<<" GeV"<<G4endl;
-  G4cout  << __METHOD_NAME__ << "Photon Thresholdcut=" 
+  G4cout  << __METHOD_NAME__ << "Photon Thresholdcut  = " 
 	  << BDSGlobalConstants::Instance()->GetThresholdCutPhotons()/CLHEP::GeV<<" GeV"<<G4endl;
-  G4cout  << __METHOD_NAME__ << "Default range cut=" 
+  G4cout  << __METHOD_NAME__ << "Default range cut    = " 
 	  << BDSGlobalConstants::Instance()->GetDefaultRangeCut()/CLHEP::m<<" m"<<G4endl;
 
   //This is the GEANT4 physics list verbose level.
@@ -263,7 +264,7 @@ void BDSPhysicsList::ConstructProcess()
 
   bool plistFound=false;
   //standard physics lists
-  if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT"){
+  if(physicsListName == "QGSP_BERT"){
 #if G4VERSION_NUMBER < 1000
     theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT();
 #else
@@ -277,7 +278,7 @@ void BDSPhysicsList::ConstructProcess()
     theReferenceHadronicPhysList->ConstructProcess();
     theReferenceEmPhysList->ConstructProcess();
     plistFound=true;
-  } else if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP"){
+  } else if(physicsListName == "QGSP_BERT_HP"){
 #if G4VERSION_NUMBER < 1000
     theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT_HP();
 #else
@@ -287,7 +288,7 @@ void BDSPhysicsList::ConstructProcess()
     theReferenceEmPhysList = new G4EmStandardPhysics();
     theReferenceEmPhysList->ConstructProcess();
     plistFound=true;
-  } else if (BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP_muon"){ //Modified standard physics lists
+  } else if (physicsListName == "QGSP_BERT_HP_muon"){ //Modified standard physics lists
 #if G4VERSION_NUMBER < 1000
     theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT_HP();
 #else
@@ -296,7 +297,7 @@ void BDSPhysicsList::ConstructProcess()
     theReferenceHadronicPhysList->ConstructProcess();
     ConstructMuon();
     plistFound=true;
-  } else if (BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_muon"){
+  } else if (physicsListName == "QGSP_BERT_muon"){
 #if G4VERSION_NUMBER < 1000
     theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT();
 #else
@@ -305,7 +306,7 @@ void BDSPhysicsList::ConstructProcess()
     theReferenceHadronicPhysList->ConstructProcess();
     ConstructMuon();
     plistFound=true;
-  } else if(BDSGlobalConstants::Instance()->GetPhysListName() == "QGSP_BERT_HP_muon_em_low"){
+  } else if(physicsListName == "QGSP_BERT_HP_muon_em_low"){
 #if G4VERSION_NUMBER < 1000
     theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT_HP();
 #else
@@ -315,15 +316,15 @@ void BDSPhysicsList::ConstructProcess()
     ConstructMuon();
     ConstructEM_Low_Energy();
     plistFound=true;
-  } else if(BDSGlobalConstants::Instance()->GetPhysListName() == "livermore"){
+  } else if(physicsListName == "livermore"){
     G4EmLivermorePhysics* physList = new G4EmLivermorePhysics;
     physList->ConstructProcess();
     plistFound=true;
-  }else if(BDSGlobalConstants::Instance()->GetPhysListName() == "penelope"){
+  }else if(physicsListName == "penelope"){
     G4EmPenelopePhysics* physList = new G4EmPenelopePhysics;
     physList->ConstructProcess();
     plistFound=true;
-  }else if(BDSGlobalConstants::Instance()->GetPhysListName() == "G4EmStandard"){
+  }else if(physicsListName == "G4EmStandard"){
     G4EmStandardPhysics* physList = new G4EmStandardPhysics;
     physList->ConstructProcess();
     plistFound=true;
@@ -383,50 +384,50 @@ void BDSPhysicsList::ConstructProcess()
   
   if(plistFound) return;
   //Search BDSIM physics lists
-  if (BDSGlobalConstants::Instance()->GetPhysListName() == "standard") return;
+  if (physicsListName == "standard") return;
   // register physics processes here
   // standard e+/e-/gamma electromagnetic interactions
-  if(BDSGlobalConstants::Instance()->GetPhysListName() == "em_standard") 
+  if(physicsListName == "em_standard") 
     {
       ConstructEM();
     }
-  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "em_single_scatter") 
+  else if(physicsListName == "em_single_scatter") 
     {
       ConstructEMSingleScatter();
     }
-  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "merlin") 
+  else if(physicsListName == "merlin") 
     {
       ConstructMerlin();
     }
   
   // low energy em processes
-  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "em_low") 
+  else if(physicsListName == "em_low") 
     {
       ConstructEM_Low_Energy();
     }
       
   // standard electromagnetic + muon
-  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "em_muon") 
+  else if(physicsListName == "em_muon") 
     {
       ConstructEM();
       ConstructMuon();
     }
   // standard hadronic - photo-nuclear etc.
-  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_standard") 
+  else if(physicsListName == "hadronic_standard") 
     {
       ConstructEM();
       ConstructHadronic();
     }
       
   // standard electromagnetic + muon + hadronic
-  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_muon") 
+  else if(physicsListName == "hadronic_muon") 
     {
       ConstructEM();
       ConstructMuon();
       ConstructHadronic();
     }
   
-  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_QGSP_BERT") 
+  else if(physicsListName == "hadronic_QGSP_BERT") 
     {
       ConstructEM();
 #if G4VERSION_NUMBER < 1000
@@ -437,7 +438,7 @@ void BDSPhysicsList::ConstructProcess()
       theBDSIMPhysList->ConstructProcess();
     }
   
-  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_QGSP_BERT_muon") 
+  else if(physicsListName == "hadronic_QGSP_BERT_muon") 
     {
       ConstructEM();
       ConstructMuon();
@@ -449,7 +450,7 @@ void BDSPhysicsList::ConstructProcess()
       theBDSIMPhysList->ConstructProcess();
     }
   
-  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_FTFP_BERT"){
+  else if(physicsListName == "hadronic_FTFP_BERT"){
     ConstructEM();
 #if G4VERSION_NUMBER < 1000
     theBDSIMPhysList = new HadronPhysicsFTFP_BERT;
@@ -459,7 +460,7 @@ void BDSPhysicsList::ConstructProcess()
     theBDSIMPhysList->ConstructProcess();
   }
   
-  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_QGSP_BERT_HP_muon"){
+  else if(physicsListName == "hadronic_QGSP_BERT_HP_muon"){
     ConstructEM();
     ConstructMuon();
     ConstructHadronic();
@@ -471,7 +472,7 @@ void BDSPhysicsList::ConstructProcess()
     theBDSIMPhysList->ConstructProcess();
   }
       
-  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "hadronic_FTFP_BERT_muon"){
+  else if(physicsListName == "hadronic_FTFP_BERT_muon"){
     G4cout << __METHOD_NAME__ << "Using hadronic_FTFP_BERT_muon" << G4endl;
     ConstructEM();
     ConstructMuon();
@@ -484,12 +485,12 @@ void BDSPhysicsList::ConstructProcess()
   }
   // physics list for laser wire - standard em stuff +
   // weighted compton scattering from laser wire
-  else if(BDSGlobalConstants::Instance()->GetPhysListName() == "lw") {
+  else if(physicsListName == "lw") {
     ConstructEM();
     ConstructLaserWire();
   }
   else {
-    G4cerr<<"WARNING : Unknown physics list "<<BDSGlobalConstants::Instance()->GetPhysListName()<<G4endl;
+    G4cerr<<"WARNING : Unknown physics list "<<physicsListName<<G4endl;
     exit(1);
   }
 }

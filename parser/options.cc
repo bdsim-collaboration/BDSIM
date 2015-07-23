@@ -79,85 +79,85 @@ Options::Options(){
 
   includeIronMagFields = 0;
 
-  buildTunnel = 0;
-  buildTunnelFloor = 0;
-  showTunnel = 0;
-  tunnelOffsetX = 0;
-  tunnelOffsetY = 0;
-  samplerDiameter = 5; // m
-  tunnelThickness = 0.0;
-  tunnelSoilThickness = 0.0;
-  tunnelFloorOffset = 0.0;
+  buildTunnel          = 0;
+  buildTunnelFloor     = 0;
+  showTunnel           = 0;
+  tunnelOffsetX        = 0;
+  tunnelOffsetY        = 0;
+  samplerDiameter      = 5; // m
+  tunnelThickness      = 0.0;
+  tunnelSoilThickness  = 0.0;
+  tunnelFloorOffset    = 0.0;
 
   geometryBias = 0;
   //Beam loss monitors geometry
   blmRad = 0.05;
   blmLength = 0.18;
 
-  gammaToMuFe = 1;
-  annihiToMuFe = 1;
-  eeToHadronsFe = 1;
-  useEMLPB = 0;
-  useHadLPB = 0;
+  gammaToMuFe              = 1;
+  annihiToMuFe             = 1;
+  eeToHadronsFe            = 1;
+  useEMLPB                 = 0;
+  useHadLPB                = 0;
 
   sensitiveBeamlineComponents = 1;
-  sensitiveBeamPipe = 1;
-  sensitiveBLMs = 1;
+  sensitiveBeamPipe        = 1;
+  sensitiveBLMs            = 1;
 
-  turnOnCerenkov = 1;
-  turnOnOpticalAbsorption = 1;
-  turnOnMieScattering = 1;
+  turnOnCerenkov           = 1;
+  turnOnOpticalAbsorption  = 1;
+  turnOnMieScattering      = 1;
   turnOnRayleighScattering = 1;
-  turnOnOpticalSurface = 1;
-  turnOnBirksSaturation = 1;
-  scintYieldFactor = 1.0;
-  decayOn = 1;
+  turnOnOpticalSurface     = 1;
+  turnOnBirksSaturation    = 1;
+  scintYieldFactor         = 1.0;
+  decayOn                  = 1;
   //  synchRadOn = 0;
-
-
-  LPBFraction = 0.0;
-
-  thresholdCutCharged = 0.0;
-  thresholdCutPhotons = 0.0;
-
-  prodCutPhotons=7e-4;
-  prodCutPhotonsP=7e-4;
-  prodCutPhotonsA=1;
-  prodCutElectrons=7e-4;
-  prodCutElectronsP=7e-4;
-  prodCutElectronsA=1;
-  prodCutPositrons=7e-4;
-  prodCutPositronsP=7e-4;
-  prodCutPositronsA=1;
   
-  prodCutHadrons=1e-3;
+  LPBFraction              = 0.0;
+
+  thresholdCutCharged      = 0.0;
+  thresholdCutPhotons      = 0.0;
+
+  prodCutPhotons           = 7e-4;
+  prodCutPhotonsP          = 7e-4;
+  prodCutPhotonsA          = 1;
+  
+  prodCutElectrons         = 7e-4;
+  prodCutElectronsP        = 7e-4;
+  prodCutElectronsA        = 1;
+  
+  prodCutPositrons         = 7e-4;
+  prodCutPositronsP        = 7e-4;
+  prodCutPositronsA        = 1;
+  
+  prodCutHadrons           = 1e-3;
 
   //tracking options
-  maximumTrackingTime = 0.1;
-  deltaChord = 0.00001; // m
-  chordStepMinimum = 0.000001; // m
-  deltaIntersection = 0.00001;
-  minimumEpsilonStep=5e-5; // default value in Geant4, old value 0
-  maximumEpsilonStep=1e-3; // default value in Geant4, old value 1e-7
-  deltaOneStep = 0.5e-5; // default value in Geant4, old value 0.00001;
-  turnOnCerenkov = 1;
-  synchRadOn = 0;
-  decayOn = 1;
-  synchTrackPhotons = 0;
-  synchLowX = 0.0;
-  synchLowGamE = 0.0;
-  synchPhotonMultiplicity = 1;
-  synchMeanFreeFactor = 1;
-  lengthSafety = 0.000000001;
-  randomSeed = 0;
-  
-  useTimer = 0;
-  storeMuonTrajectories = 0;
-  trajCutGTZ = 0.0;
-  trajCutLTR = 0.0;
+  maximumTrackingTime      = 0.1;      // s
+  deltaChord               = 0.00001;  // m
+  chordStepMinimum         = 0.000001; // m
+  deltaIntersection        = 0.00001;
+  minimumEpsilonStep       = 5e-5;     // default value in Geant4, old value 0
+  maximumEpsilonStep       = 1e-3;     // default value in Geant4, old value 1e-7
+  deltaOneStep             = 0.5e-5;   // default value in Geant4, old value 0.00001;
+  turnOnCerenkov           = 1;
+  synchRadOn               = 0;
+  decayOn                  = 1;
+  synchTrackPhotons        = 0;
+  synchLowX                = 0.0;
+  synchLowGamE             = 0.0;
+  synchPhotonMultiplicity  = 1;
+  synchMeanFreeFactor      = 1;
+  lengthSafety             = 1e-12; // m
+  randomSeed               = 0;
+  useTimer                 = 0;
+  storeMuonTrajectories    = 0;
+  trajCutGTZ               = 0.0;
+  trajCutLTR               = 0.0;
   storeNeutronTrajectories = 0;
-  storeTrajectory = 0;
-  stopTracks = 0;
+  storeTrajectory          = 0;
+  stopTracks               = 0;
 
   fifo = "";
   refvolume = "";
