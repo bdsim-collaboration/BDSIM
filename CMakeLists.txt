@@ -56,6 +56,8 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 
     message(STATUS "Compiler supports C++11")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
+else()
+    message(FATAL_ERROR "C++ compiler ${CMAKE_CXX_COMPILER} does not support C++11")
 endif()
 
 set(CMAKE_C_ORIG_FLAGS "${CMAKE_C_FLAGS}")
