@@ -2,11 +2,12 @@
 #define BDSTUNNELBUILDER_H
 
 #include <utility>
+#include "globals.hh" // geant4 types / globals
 
 class BDSBeamline;
 
 /**
- * @brief A singleton class that constructs the necessary tunnel segments
+ * @brief A class that constructs the necessary tunnel segments
  * to fit around a beamline. It uses a beam line instance - the flat beam line
  * and creates a new beam line of tunnel segments that can then be placed.
  * 
@@ -16,8 +17,7 @@ class BDSBeamline;
 class BDSTunnelBuilder
 {
 public:
-  static BDSTunnelBuilder* Instance(); /// singleton accessor
-
+  BDSTunnelBuilder();
   ~BDSTunnelBuilder();
 
   /// Main function of class - use tunnel factories and builds segments
@@ -28,9 +28,6 @@ public:
   std::pair<BDSBeamline*,BDSBeamline*> BuildTunnelAndSupports(BDSBeamline* flatBeamLine);
 
 private:
-  /// Private default constructor as singleton
-  BDSTunnelBuilder();
-
   /// Decide whether this is a good point to break the tunnel based on various cumulative
   /// parameters.
   G4bool BreakTunnel(G4double cumulativeLength,
@@ -38,8 +35,6 @@ private:
 		     G4int    cumulativeNItems,
 		     G4double cumulativeOffsetX,
 		     G4double cumulativeOffsetY);
-
-  static BDSTunnelBuilder* _instance;
 
   /// Maximum distance tolerable that the beamline can deviate from the previous
   /// tunnel break point before another tunnel break point is made.

@@ -11,15 +11,6 @@
 #include <sstream>
 #include <utility>
 
-BDSTunnelBuilder* BDSTunnelBuilder::_instance = 0;
-
-BDSTunnelBuilder* BDSTunnelBuilder::Instance()
-{
-  if (_instance == 0)
-    {_instance = new BDSTunnelBuilder();}
-  return _instance;
-}
-
 BDSTunnelBuilder::BDSTunnelBuilder()
 {
   displacementTolerance = 50*CLHEP::cm;   // maximum displacemenet of beamline before split
@@ -29,9 +20,7 @@ BDSTunnelBuilder::BDSTunnelBuilder()
 }
 
 BDSTunnelBuilder::~BDSTunnelBuilder()
-{  
-  _instance = 0;
-}
+{;}
 
 G4bool BDSTunnelBuilder::BreakTunnel(G4double cumulativeLength,
 				     G4double cumulativeAngle,

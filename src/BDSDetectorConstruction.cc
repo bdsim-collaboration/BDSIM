@@ -211,7 +211,9 @@ void BDSDetectorConstruction::BuildTunnelAndSupports()
 #endif
   BDSBeamline* flatBeamLine = BDSAcceleratorModel::Instance()->GetFlatBeamline();
   std::pair<BDSBeamline*, BDSBeamline*> tunnelAndSupports;
-  tunnelAndSupports = BDSTunnelBuilder::Instance()->BuildTunnelAndSupports(flatBeamLine);
+  BDSTunnelBuilder* tb = new BDSTunnelBuilder();
+  tunnelAndSupports = tb->BuildTunnelAndSupports(flatBeamLine);
+  delete tb;
 
   BDSAcceleratorModel::Instance()->RegisterSupportsBeamline(tunnelAndSupports.first);
   BDSAcceleratorModel::Instance()->RegisterTunnelBeamline(tunnelAndSupports.second);
