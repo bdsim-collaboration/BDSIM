@@ -39,6 +39,9 @@
 #include "BDSTunnelInfo.hh"
 #include "BDSUtilities.hh"
 
+#include "globals.hh" // geant4 types / globals
+#include "G4GeometryTolerance.hh"
+
 #include "parser/enums.h"
 #include "parser/elementlist.h"
 
@@ -52,7 +55,8 @@ bool debug1 = true;
 bool debug1 = false;
 #endif
 
-BDSComponentFactory::BDSComponentFactory(){
+BDSComponentFactory::BDSComponentFactory()
+{
   verbose = BDSExecOptions::Instance()->GetVerbose();
   lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
   //
@@ -250,36 +254,47 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   return element;
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateSampler(){
+BDSAcceleratorComponent* BDSComponentFactory::CreateSampler()
+{
   return (new BDSSampler(_element.name, BDSGlobalConstants::Instance()->GetSamplerLength()));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateCSampler(){
+BDSAcceleratorComponent* BDSComponentFactory::CreateCSampler()
+{
   if( _element.l < 1.E-4 ) _element.l = 1.0 ;
   return (new BDSSamplerCylinder( _element.name,
 				  _element.l * CLHEP::m,
 				  _element.r * CLHEP::m ));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateDump(){
+BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
+{
   return (new BDSDump( _element.name,
 		       BDSGlobalConstants::Instance()->GetSamplerLength()));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(){
+BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter()
+{
   // This relies on things being added to the beamline immediately
   // after they've been created
-  G4double teleporterlength = BDSGlobalConstants::Instance()->GetTeleporterLength();
+  G4double teleporterLength = BDSGlobalConstants::Instance()->GetTeleporterLength() - 1e-8;
+
+  if (teleporterLength < 10*G4GeometryTolerance::GetInstance()->GetSurfaceTolerance())
+    {
+      G4cout << G4endl << __METHOD_NAME__ << "WARNING - no space to put in teleporter - skipping it!" << G4endl << G4endl;
+      return NULL;
+    }
+  
   G4String name = "teleporter";
 #ifdef BDSDEBUG
     G4cout << "---->creating Teleporter,"
 	   << " name = " << name
-	   << ", l = " << teleporterlength/CLHEP::m << "m"
+	   << ", l = " << teleporterLength/CLHEP::m << "m"
 	   << G4endl;
 #endif
 
     return( new BDSTeleporter(name,
-			      teleporterlength ));
+			      teleporterLength ));
   
 }
 

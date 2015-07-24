@@ -21,6 +21,8 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSSynchrotronRadiation.hh"
 #include "BDSBeamline.hh"
+#include "BDSDebug.hh"
+
 #include "G4AffineTransform.hh"
 #include "G4Field.hh"
 #include "G4FieldManager.hh"
@@ -31,6 +33,8 @@
 #include "Randomize.hh" 
 #include "CLHEP/Units/PhysicalConstants.h"
 
+// #define BDSDEBUG 
+
 BDSSynchrotronRadiation::BDSSynchrotronRadiation(const G4String& processName) : G4VDiscreteProcess(processName) { // initialization 
   nExpConst=5*CLHEP::fine_structure_const/(2*sqrt(3.0))/CLHEP::electron_mass_c2;
   CritEngFac=3./2.*CLHEP::hbarc/pow(CLHEP::electron_mass_c2,3);
@@ -40,9 +44,10 @@ BDSSynchrotronRadiation::BDSSynchrotronRadiation(const G4String& processName) : 
 G4VParticleChange* BDSSynchrotronRadiation::PostStepDoIt(const G4Track& trackData,
 							 const G4Step& stepData) {
 #ifdef BDSDEBUG 
-  G4cout << "BDSSynchrotronRadiation::PostStepDoIt" << G4endl;
+  G4cout << __METHOD_NAME__ << "Start " << G4endl;
 #endif
   aParticleChange.Initialize(trackData);
+
   //Allow reweight of the synchrotron photons
   aParticleChange.SetSecondaryWeightByProcess(true);
 
@@ -58,16 +63,14 @@ G4VParticleChange* BDSSynchrotronRadiation::PostStepDoIt(const G4Track& trackDat
   
   const G4DynamicParticle* aDynamicParticle=trackData.GetDynamicParticle();
   
-  G4double gamma = aDynamicParticle->GetTotalEnergy()/
-    (aDynamicParticle->GetMass()              );
+  G4double gamma = aDynamicParticle->GetTotalEnergy()/aDynamicParticle->GetMass();
   
-  if(gamma <= 1.0e3 )
-    {
+  if(gamma <= 1.0e3) {
 #ifdef BDSDEBUG 
-      G4cout << "BDSSynchrotronRadiation::PostStepDoItG\nGamma<1000" << G4endl;
+    G4cout << __METHOD_NAME__ << "Gamma<1000" << G4endl;
 #endif
-      return G4VDiscreteProcess::PostStepDoIt(trackData,stepData);
-    }
+    return G4VDiscreteProcess::PostStepDoIt(trackData,stepData);
+  }
   G4double particleCharge = aDynamicParticle->GetCharge();
   
   G4ThreeVector  FieldValue;
@@ -77,36 +80,36 @@ G4VParticleChange* BDSSynchrotronRadiation::PostStepDoIt(const G4Track& trackDat
   G4bool          fieldExertsForce = false;
   
   G4TransportationManager* transportMgr = G4TransportationManager::GetTransportationManager();
-
   G4PropagatorInField* fFieldPropagator = transportMgr->GetPropagatorInField();
-  if( (particleCharge != 0.0) )
-    {
+
+  if( (particleCharge != 0.0) ) {
 #ifdef BDSDEBUG 
-G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nParticle charge != 0.0" << G4endl;
+    G4cout << __METHOD_NAME__ << "Particle charge != 0.0" << G4endl;
 #endif
-      fieldMgr = fFieldPropagator->FindAndSetFieldManager( trackData.GetVolume() );
-      if ( fieldMgr != 0 )
-	{
-	  // If the field manager has no field, there is no field !
-	  
-	  fieldExertsForce = ( fieldMgr->GetDetectorField() != 0 );
-	}
-    }
-  if ( fieldExertsForce ) {
+    fieldMgr = fFieldPropagator->FindAndSetFieldManager(trackData.GetVolume());
+    if ( fieldMgr != 0 )
+      {
+	// If the field manager has no field, there is no field !	  
+	fieldExertsForce = ( fieldMgr->GetDetectorField() != 0 );
+      }
+  }
+  if(fieldExertsForce) {
 #ifdef BDSDEBUG 
-      G4cout << "BDSSynchrotronRadiation::PostStepDoIt\n fieldExertsForce==true" << G4endl;
+    G4cout << __METHOD_NAME__ << "fieldExertsForce==true" << G4endl;
 #endif
       pField = fieldMgr->GetDetectorField() ;
+
       G4ThreeVector  globPosition = trackData.GetPosition() ;
-      G4double  globPosVec[3], FieldValueVec[3] ;
+      G4double       globPosVec[3], FieldValueVec[3] ;
+
       globPosVec[0] = globPosition.x() ;
       globPosVec[1] = globPosition.y() ;
       globPosVec[2] = globPosition.z() ;
       
       pField->GetFieldValue( globPosVec, FieldValueVec ) ;
-      FieldValue = G4ThreeVector( FieldValueVec[0],
-				  FieldValueVec[1],
-				  FieldValueVec[2]   );
+      FieldValue = G4ThreeVector(FieldValueVec[0],
+				 FieldValueVec[1],
+				 FieldValueVec[2]);
       
       G4ThreeVector unitMomentum = aDynamicParticle->GetMomentumDirection();
       G4ThreeVector unitMcrossB = FieldValue.cross(unitMomentum);
@@ -114,79 +117,78 @@ G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nParticle charge != 0.0" << G4e
       std::vector<G4DynamicParticle*> listOfSecondaries;
       if(perpB > 0.0) {
 #ifdef BDSDEBUG 
-          G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nperpB>0.0" << G4endl;
+	G4cout << __METHOD_NAME__ << "perpB>0 " << G4endl;
 #endif
-          //Loop over multiplicity
-	  for (int i=0; i<BDSGlobalConstants::Instance()->GetSynchPhotonMultiplicity(); i++){
+	//Loop over multiplicity
+	for (int i=0; i<BDSGlobalConstants::Instance()->GetSynchPhotonMultiplicity(); i++){
 #ifdef BDSDEBUG 
-            G4cout  << "BDSSynchrotronRadiation::PostStepDoIt\nSynchPhotonMultiplicity" << G4endl;
+	  G4cout  << __METHOD_NAME__ << "SynchPhotonMultiplicity" << G4endl;
 #endif
-            //if(fabs(R)==0)
-	    G4double R=(aDynamicParticle->GetTotalMomentum()/CLHEP::GeV)/
-	      (0.299792458*particleCharge*perpB);
-	    GamEnergy=SynGenC(BDSGlobalConstants::Instance()->GetSynchLowX())*
-	      CritEngFac*pow(eEnergy,3)/fabs(R);
+	  //if(fabs(R)==0)
+	  G4double R=(aDynamicParticle->GetTotalMomentum()/CLHEP::GeV)/
+	    (0.299792458*particleCharge*perpB);
+	  GamEnergy=SynGenC(BDSGlobalConstants::Instance()->GetSynchLowX())*
+	    CritEngFac*pow(eEnergy,3)/fabs(R);
+	  
+	  if(GamEnergy>0 && GamEnergy < NewKinEnergy) {
+#ifdef BDSDEBUG 
+	    G4cout << __METHOD_NAME__ << "GamEnergy in range" << G4endl;
+#endif
+	    if((BDSGlobalConstants::Instance()->GetSynchTrackPhotons())&&(GamEnergy>BDSGlobalConstants::Instance()->GetSynchLowGamE()) ) {
+#ifdef BDSDEBUG 
+	      G4cout << __METHOD_NAME__ << "TrackPhotons" << G4endl;
+#endif
+	      G4DynamicParticle* aGamma= new G4DynamicParticle(G4Gamma::Gamma(), 
+							       trackData.GetMomentumDirection(),
+							       GamEnergy);
+	      listOfSecondaries.push_back(aGamma);
+#ifdef BDSDEBUG 
+	      G4cout << __METHOD_NAME__ << "Creating synchRad photon of energy : " << GamEnergy << G4endl;
+#endif
+	    }
 	    
-	    if(GamEnergy>0 && GamEnergy < NewKinEnergy) {
+	    //BDSBeamline::const_iterator iBeam;
+	    //G4double zpos=trackData.GetPosition().z();
+	    
+	    //   for(iBeam=BDSBeamline::Instance()->begin();
+	    // 	  iBeam!=BDSBeamline::Instance()->end() && zpos>=(*iBeam)->GetZUpper(); 
+	    // 	  iBeam++){}
+	    
+	    if(i==0 && MeanFreePathCounter==1) NewKinEnergy -= GamEnergy;
+	    
+	    if (NewKinEnergy > 0.) {
 #ifdef BDSDEBUG 
-                G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nGamEnergy in range" << G4endl;
+	      G4cout << __METHOD_NAME__ << "NewKinEnergy>0, NewKinEnergy=" << NewKinEnergy << G4endl;
 #endif
-                if((BDSGlobalConstants::Instance()->GetSynchTrackPhotons())&&
-		   (GamEnergy>BDSGlobalConstants::Instance()->GetSynchLowGamE()) ) {
-#ifdef BDSDEBUG 
-                    G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nTrackPhotons" << G4endl;
-#endif
-		    G4DynamicParticle* aGamma= new G4DynamicParticle (G4Gamma::Gamma(), 
-								      trackData.GetMomentumDirection(),
-								      GamEnergy);
-		    listOfSecondaries.push_back(aGamma);
-#ifdef BDSDEBUG 
-                    printf("Creating synchRad photon of energy %f\n",GamEnergy);
-#endif
-		  }
-		
-		//BDSBeamline::const_iterator iBeam;
-		//G4double zpos=trackData.GetPosition().z();
-		
-		//   for(iBeam=BDSBeamline::Instance()->begin();
-		// 	  iBeam!=BDSBeamline::Instance()->end() && zpos>=(*iBeam)->GetZUpper(); 
-		// 	  iBeam++){}
-		
-		if(i==0 && MeanFreePathCounter==1) NewKinEnergy -= GamEnergy;
-		
-		if (NewKinEnergy > 0.) {
-#ifdef BDSDEBUG 
-                    G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nNewKinEnergy>0.0" << G4endl;
-#endif
-                    // Update the incident particle 
-		    aParticleChange.ProposeEnergy(NewKinEnergy);
-		} 
-		else { 
-		    aParticleChange.ProposeEnergy( 0. );
-		    aParticleChange.ProposeLocalEnergyDeposit (0.);
-		    G4double charge= trackData.GetDynamicParticle()->GetCharge();
-		    if (charge<0.) aParticleChange.ProposeTrackStatus(fStopAndKill);
-		    else       aParticleChange.ProposeTrackStatus(fStopButAlive);
-		}
+	      // Update the incident particle 
+	      aParticleChange.ProposeEnergy(NewKinEnergy);
+	    } 
+	    else { 
+	      aParticleChange.ProposeEnergy(0.);
+	      aParticleChange.ProposeLocalEnergyDeposit(0.);
+	      G4double charge= trackData.GetDynamicParticle()->GetCharge();
+	      if (charge<0.) aParticleChange.ProposeTrackStatus(fStopAndKill);
+	      else       aParticleChange.ProposeTrackStatus(fStopButAlive);
 	    }
 	  }
-	  aParticleChange.SetNumberOfSecondaries(listOfSecondaries.size());
-
-	  for(unsigned int n=0;n<listOfSecondaries.size();n++) {
+	}
+	aParticleChange.SetNumberOfSecondaries(listOfSecondaries.size());
+	
+	for(unsigned int n=0;n<listOfSecondaries.size();n++) {
 #ifdef BDSDEBUG 
-            G4cout << "BDSSynchrotronRadiation::PostStepDoIt\nAdding secondaries" << G4endl;
+	  G4cout << __METHOD_NAME__ << "Adding secondaries" << G4endl;
 #endif              
-            aParticleChange.AddSecondary(listOfSecondaries[n]); 
+	  aParticleChange.AddSecondary(listOfSecondaries[n]); 
 #ifdef BDSDEBUG 
-            G4cout << "Adding secondary particle...\n";
+	  G4cout << __METHOD_NAME__ << "Added secondary particle...\n";
 #endif
-	  }
-	  //Find out the weight of the gammas
-	  G4double gammaWeight = aParticleChange.GetParentWeight()/BDSGlobalConstants::Instance()->GetSynchPhotonMultiplicity();
-	  //Set the weights of the gammas
-	  for(unsigned int n=0;n<listOfSecondaries.size();n++){
-	    aParticleChange.GetSecondary(n)->SetWeight(gammaWeight);
-	  }
+	}
+	//Find out the weight of the gammas
+	G4double gammaWeight = aParticleChange.GetParentWeight()/BDSGlobalConstants::Instance()->GetSynchPhotonMultiplicity();
+	//Set the weights of the gammas
+	for(unsigned int n=0;n<listOfSecondaries.size();n++){
+	  aParticleChange.GetSecondary(n)->SetWeight(gammaWeight);
+	}
       }
   }
   return G4VDiscreteProcess::PostStepDoIt(trackData,stepData);
@@ -346,11 +348,18 @@ G4double BDSSynchrotronRadiation::SynRadC(G4double x) {
 G4double  BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
 						   G4double /*PreviousStepSize*/,
 						   G4ForceCondition* ForceCondition) {  
+
+  // Check if primary if not return large mean free path
+  if(track.GetParentID() !=0) {
+    // DBL_MAX
+    return DBL_MAX;    
+  }
+
   *ForceCondition = NotForced ;
 
   //   static G4FieldManager* lastFieldManager;
 
-  G4double MeanFreePath;
+  G4double        MeanFreePath;
   G4FieldManager* TheFieldManager = track.GetVolume()->GetLogicalVolume()->GetFieldManager();
   
   /*
@@ -367,50 +376,57 @@ G4double  BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
     globPosVec[2] = globPosition.z() ;
     
     if(pField)
-      pField->GetFieldValue( globPosVec, FieldValueVec ) ; 
+      pField->GetFieldValue(globPosVec, FieldValueVec) ; 
 	
     G4double Blocal= FieldValueVec[1];
     if ( FieldValueVec[0]!=0.)
       Blocal=sqrt(Blocal*Blocal+FieldValueVec[0]*FieldValueVec[0]);
-
-      
- 
+       
+    // DangerousStuffHere, 1 line
     if(track.GetMaterial()==BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial())
        && Blocal !=0 ) {
       G4ThreeVector InitMag=track.GetMomentum();
       
-      // transform to the local coordinate frame
-      
+      // transform to the local coordinate frame      
       G4AffineTransform tf(track.GetTouchable()->GetHistory()->GetTopTransform().Inverse());
       const G4RotationMatrix Rot=tf.NetRotation();
       const G4ThreeVector Trans=-tf.NetTranslation();
       InitMag=Rot*InitMag; 
 
-
       G4double Rlocal=(InitMag.z()/CLHEP::GeV)/(0.299792458 * Blocal/CLHEP::tesla) *CLHEP::m;
       
       MeanFreePath = fabs(Rlocal)/(track.GetTotalEnergy()*nExpConst);
       MeanFreePath /= BDSGlobalConstants::Instance()->GetSynchMeanFreeFactor();
-
+      
       // reset mean free path counter
       if(MeanFreePathCounter>=BDSGlobalConstants::Instance()->GetSynchMeanFreeFactor())
 	    MeanFreePathCounter=0;
 
+      if(InitMag.mag() < 100.0) {
+	// DBL_MAX
+	return DBL_MAX;
+      }
+
 #ifdef BDSDEBUG
-      G4cout<<"*****************SR*************************"<<G4endl;
-      G4cout<<"Track momentum: "<<InitMag<<G4endl;
-      G4cout<<"Blocal="<<Blocal/CLHEP::tesla<<"  Rlocal="<<Rlocal/CLHEP::m<<G4endl;
-      G4cout<<track.GetVolume()->GetName()<<" mfp="<<MeanFreePath/CLHEP::m<<G4endl;
-      G4cout<<"********************************************"<<G4endl;
+      G4cout<< __METHOD_NAME__ << G4endl;
+      G4cout<< __METHOD_NAME__ << "Track momentum=" << InitMag << G4endl;
+      G4cout<< __METHOD_NAME__ << "Blocal="<<Blocal/CLHEP::tesla<<"  Rlocal="<<Rlocal/CLHEP::m<<G4endl;
+      G4cout<< __METHOD_NAME__ << "Volume=" << track.GetVolume()->GetName() << G4endl;
+      G4cout<< __METHOD_NAME__ << "mfp="<<MeanFreePath/CLHEP::m << G4endl;
 #endif
+
 
       return MeanFreePath;
     }
-    else
+    else {
+      // DBL_MAX
       return DBL_MAX;
+    }
   }
-  else
+  else {
+    // DBL_MAX
     return DBL_MAX;
+  }
 }
 
 

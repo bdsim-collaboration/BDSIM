@@ -151,6 +151,7 @@ public:
 
   G4String GetPhysListName() const;
   G4bool   GetSynchRadOn() const;
+  void     SetSynchRadOn(G4bool);
   G4bool   GetDecayOn() const;
   G4bool   GetSynchTrackPhotons() const;
   G4double GetSynchLowX() const;
@@ -625,6 +626,9 @@ inline G4String BDSGlobalConstants::GetPhysListName() const
 
 inline G4bool BDSGlobalConstants::GetSynchRadOn() const
 {return itsSynchRadOn;}
+
+inline void BDSGlobalConstants::SetSynchRadOn(G4bool synchRadOn) 
+{itsSynchRadOn = synchRadOn;}
 
 inline G4bool BDSGlobalConstants::GetDecayOn() const
 {return itsDecayOn;}

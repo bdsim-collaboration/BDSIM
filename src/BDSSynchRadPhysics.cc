@@ -21,7 +21,9 @@ void BDSSynchRadPhysics::ConstructProcess(){
   if(_wasActivated) return;
   _wasActivated = true;
   _srProcess    = new BDSSynchrotronRadiation();
+  _srProcessG4  = new G4SynchrotronRadiation();
   _contSR       = new BDSContinuousSR();
+
 
 #if G4VERSION_NUMBER < 1000
   theParticleTable    = G4ParticleTable::GetParticleTable();

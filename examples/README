@@ -1,5 +1,5 @@
 ATF2              : Accelerator Test Facility at KEK
-Components_DB     : Component testing
+features          : Feature testing
 ILC               : International Linear Collider
 LHC               : Large Hadron Collider
 simpleMachine     : Minimal machine with collimator for quick tests
