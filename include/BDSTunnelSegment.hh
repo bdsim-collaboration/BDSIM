@@ -27,7 +27,7 @@ public:
   /// with any geometry such as the supports to ensure they always fit without
   /// having detailed knowledge about the floor and tunnel geometry itself.
   BDSTunnelSegment(G4String              name,
-		   G4double              arcLength,
+		   G4double              chordLength,
 		   G4double              angle,
 		   BDSGeometryComponent* tunnelGeometry,
 		   G4VSolid*             innerIntersectionSolidIn);
@@ -44,13 +44,6 @@ public:
   virtual void BuildContainerLogicalVolume();
 
   G4VSolid* innerIntersectionSolid;
-
 };
-
-
-
-
-
-
 
 #endif

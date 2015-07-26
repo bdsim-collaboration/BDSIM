@@ -184,22 +184,8 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 	    }
 	  
 	  // store segment in tunnel beam line
-	  // set length correctly - for normal accelerator components, we get the
-	  // arc length from the user, but in this case, we really start with the
-	  // chord length.
-	  G4double arcLength = segmentLength;
-	  if (isAngled)
-	    {
-	      G4double radiusOfCurvature = (segmentLength * 0.5) / sin(cumulativeAngle*0.5);
-	      arcLength                  = radiusOfCurvature * cumulativeAngle;
-#ifdef BDSDEBUG
-	      G4cout << __METHOD_NAME__ << "segment length: " << segmentLength << G4endl;
-	      G4cout << __METHOD_NAME__ << "arc length:     " << arcLength     << G4endl;
-#endif
-	    }
-
 	  BDSTunnelSegment* ts = new BDSTunnelSegment(name.str(),
-						      arcLength,
+						      segmentLength,
 						      cumulativeAngle,
 						      tunnelSegment,
 						      NULL);
