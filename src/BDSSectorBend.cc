@@ -18,17 +18,22 @@
 #include "globals.hh"             // geant4 types / globals
 
 BDSSectorBend::BDSSectorBend(G4String           name,
-			     G4double           length,
+			     G4double           arcLength,
 			     G4double           angleIn,
 			     G4double           bField,
 			     G4double           bGrad,
 			     BDSBeamPipeInfo*   beamPipeInfo,
 			     BDSMagnetOuterInfo magnetOuterInfo):
-  BDSMagnet(BDSMagnetType::sectorbend, name, length,
+  BDSMagnet(BDSMagnetType::sectorbend, name, arcLength,
 	    beamPipeInfo, magnetOuterInfo),
   itsBField(bField),itsBGrad(bGrad)
 {
-  angle = angleIn;
+  /// BDSMagnet doesn't provide the ability to pass down angle to BDSAcceleratorComponent
+  /// - this results in a wrongly chord length
+  angle       = angleIn;
+  chordLength = 2.0 * arcLength * sin(0.5*angleIn) / angleIn;
+  G4double factor = 1 - 1e-4;
+  chordLength *= factor;
   // prepare normal vectors for input and output planes
   // calculate components of normal vectors (in the end mag(normal) = 1)
   orientation   = BDS::CalculateOrientation(angleIn);
@@ -37,6 +42,11 @@ BDSSectorBend::BDSSectorBend(G4String           name,
   inputface     = G4ThreeVector(-orientation*in_x, 0.0, -1.0*in_z);
   //-1 as pointing down in z for normal
   outputface    = G4ThreeVector(-orientation*in_x, 0.0, in_z);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "angle:        " << angle     << G4endl;
+  G4cout << __METHOD_NAME__ << "arc length:   " << arcLength << G4endl;
+  G4cout << __METHOD_NAME__ << "chord length: " << chordLength << G4endl;
+#endif
 }
 
 void BDSSectorBend::Build()

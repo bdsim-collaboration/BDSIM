@@ -99,122 +99,122 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   switch(_element.type){
   case _SAMPLER:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating sampler" << G4endl;
+    G4cout << "BDSComponentFactory - creating sampler" << G4endl;
 #endif
     element = CreateSampler(); break;
   case _DRIFT:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating drift" << G4endl;
+    G4cout << "BDSComponentFactory - creating drift" << G4endl;
 #endif
     element = CreateDrift(); break; 
   case _RF:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating rf" << G4endl;
+    G4cout << "BDSComponentFactory - creating rf" << G4endl;
 #endif
     element = CreateRF(); break; 
   case _SBEND:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating sbend" << G4endl;
+    G4cout << "BDSComponentFactory - creating sbend" << G4endl;
 #endif
     element = CreateSBend(); break; 
   case _RBEND:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating rbend" << G4endl;
+    G4cout << "BDSComponentFactory - creating rbend" << G4endl;
 #endif
     element = CreateRBend(); break; 
   case _HKICK:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating hkick" << G4endl;
+    G4cout << "BDSComponentFactory - creating hkick" << G4endl;
 #endif
     element = CreateHKick(); break; 
   case _VKICK:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating vkick" << G4endl;
+    G4cout << "BDSComponentFactory - creating vkick" << G4endl;
 #endif
     element = CreateVKick(); break; 
   case _QUAD:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating quadrupole" << G4endl;
+    G4cout << "BDSComponentFactory - creating quadrupole" << G4endl;
 #endif
     element = CreateQuad(); break; 
   case _SEXTUPOLE:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating sextupole" << G4endl;
+    G4cout << "BDSComponentFactory - creating sextupole" << G4endl;
 #endif
     element = CreateSextupole(); break; 
   case _OCTUPOLE:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating octupole" << G4endl;
+    G4cout << "BDSComponentFactory - creating octupole" << G4endl;
 #endif
     element = CreateOctupole(); break; 
   case _MULT:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating multipole" << G4endl;
+    G4cout << "BDSComponentFactory - creating multipole" << G4endl;
 #endif
     element = CreateMultipole(); break; 
   case _ELEMENT:    
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating element" << G4endl;
+    G4cout << "BDSComponentFactory - creating element" << G4endl;
 #endif
     element = CreateElement(); break; 
   case _CSAMPLER:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating csampler" << G4endl;
+    G4cout << "BDSComponentFactory - creating csampler" << G4endl;
 #endif
     element = CreateCSampler(); break; 
   case _DUMP:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating dump" << G4endl;
+    G4cout << "BDSComponentFactory - creating dump" << G4endl;
 #endif
     element = CreateDump(); break; 
   case _SOLENOID:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating solenoid" << G4endl;
+    G4cout << "BDSComponentFactory - creating solenoid" << G4endl;
 #endif
     element = CreateSolenoid(); break; 
   case _ECOL:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating ecol" << G4endl;
+    G4cout << "BDSComponentFactory - creating ecol" << G4endl;
 #endif
     element = CreateEllipticalCollimator(); break; 
   case _RCOL:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating rcol" << G4endl;
+    G4cout << "BDSComponentFactory - creating rcol" << G4endl;
 #endif
     element = CreateRectangularCollimator(); break; 
   case _MUSPOILER:    
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating muspoiler" << G4endl;
+    G4cout << "BDSComponentFactory - creating muspoiler" << G4endl;
 #endif
     element = CreateMuSpoiler(); break; 
   case _LASER:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating laser" << G4endl;
+    G4cout << "BDSComponentFactory - creating laser" << G4endl;
 #endif
     element = CreateLaser(); break; 
   case _SCREEN:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating screen" << G4endl;
+    G4cout << "BDSComponentFactory - creating screen" << G4endl;
 #endif
     element = CreateScreen(); break; 
   case _AWAKESCREEN:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating awake screen" << G4endl;
+    G4cout << "BDSComponentFactory - creating awake screen" << G4endl;
 #endif
     element = CreateAwakeScreen(); break; 
   case _TRANSFORM3D:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating transform3d" << G4endl;
+    G4cout << "BDSComponentFactory - creating transform3d" << G4endl;
 #endif
     element = CreateTransform3D(); break;
   case _TELEPORTER:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating teleporter" << G4endl;
+    G4cout << "BDSComponentFactory - creating teleporter" << G4endl;
 #endif
     element = CreateTeleporter(); break;
   case _TERMINATOR:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory  - creating terminator" << G4endl;
+    G4cout << "BDSComponentFactory - creating terminator" << G4endl;
 #endif
     element = CreateTerminator(); break;
 
@@ -345,20 +345,28 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   // CHECK SIGNS 
   
   G4double bField;
-  if(_element.B != 0) {
-    bField = _element.B * CLHEP::tesla;
-    G4double rho = _brho/bField;
-    //    _element.angle  = - 2.0*asin(magFieldLength/2.0/rho);
-    _element.angle  = - magFieldLength/rho;
-  }
-  else {
-    _element.angle *= -1;
-    //    bField = - 2 * _brho * sin(_element.angle/2.0) / magFieldLength;
-    // charge in e units
-    // multiply once more with ffact to not flip fields in bends
-    bField = - _brho * _element.angle/magFieldLength * _charge * BDSGlobalConstants::Instance()->GetFFact();
-    _element.B = bField/CLHEP::tesla;
-  }
+  if(_element.B != 0)
+    {
+      bField = _element.B * CLHEP::tesla;
+      G4double rho = _brho/bField;
+      //    _element.angle  = - 2.0*asin(magFieldLength/2.0/rho);
+      _element.angle  = - magFieldLength/rho;
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "angle calculated from B(" << bField << ") : " << _element.angle << G4endl;
+#endif
+    }
+  else
+    {
+      _element.angle *= -1;
+      //    bField = - 2 * _brho * sin(_element.angle/2.0) / magFieldLength;
+      // charge in e units
+      // multiply once more with ffact to not flip fields in bends
+      bField = - _brho * _element.angle/magFieldLength * _charge * BDSGlobalConstants::Instance()->GetFFact();
+      _element.B = bField/CLHEP::tesla;
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "B calculated from angle (" << _element.angle << ") : " << bField << G4endl;
+#endif
+    }
   
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2

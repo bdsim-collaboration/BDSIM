@@ -141,9 +141,8 @@ void BDSMagnet::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
   itsBPFieldMgr= new G4FieldManager();
   itsBPFieldMgr->SetDetectorField(aField);
   itsBPFieldMgr->SetChordFinder(itsChordFinder);
-  if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0){
-    itsBPFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
-  }
+  if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0)
+    {itsBPFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());}
   if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>0)
     itsBPFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
   if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0)
