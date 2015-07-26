@@ -8,7 +8,8 @@
 #include <regex>
 #endif 
 
-BDSBunchPtc::BDSBunchPtc() { 
+BDSBunchPtc::BDSBunchPtc()
+{ 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -20,16 +21,14 @@ BDSBunchPtc::BDSBunchPtc() {
   nRays = 0;
 }
 
-BDSBunchPtc::~BDSBunchPtc() { 
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  for(std::vector<double*>::iterator i = ptcData.begin();i!=ptcData.end();++i) {
-    delete[] *i;
-  }
+BDSBunchPtc::~BDSBunchPtc()
+{
+  for(std::vector<double*>::iterator i = ptcData.begin();i!=ptcData.end();++i)
+    {delete[] *i;}
 }
 
-void BDSBunchPtc::LoadPtcFile() { 
+void BDSBunchPtc::LoadPtcFile()
+{ 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -116,7 +115,8 @@ void BDSBunchPtc::LoadPtcFile() {
   return;
 }
 
-void BDSBunchPtc::SetOptions(struct Options& opt) {
+void BDSBunchPtc::SetOptions(struct Options& opt)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << " " << opt.distribFile << G4endl;
 #endif
@@ -126,13 +126,15 @@ void BDSBunchPtc::SetOptions(struct Options& opt) {
   LoadPtcFile();
 }
 
-void BDSBunchPtc::SetDistribFile(G4String distribFileName){
+void BDSBunchPtc::SetDistribFile(G4String distribFileName)
+{
   fileName = BDS::GetFullPath(distribFileName);
 }
 
 void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 				  G4double& xp, G4double& yp, G4double& zp,
-				  G4double& t , G4double&  E, G4double& weight) {
+				  G4double& t , G4double&  E, G4double& weight)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif

@@ -1,7 +1,7 @@
 #include "BDSBunchCircle.hh"
 #include "BDSDebug.hh"
 
-BDSBunchCircle::BDSBunchCircle() :
+BDSBunchCircle::BDSBunchCircle():
   BDSBunchInterface(), envelopeR(0.0), envelopeRp(0.0), envelopeT(0.0), envelopeE(0.0)
 {
 #ifdef BDSDEBUG 
@@ -26,13 +26,11 @@ BDSBunchCircle::BDSBunchCircle(G4double envelopeRIn, G4double envelopeRpIn,
 
 BDSBunchCircle::~BDSBunchCircle() 
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   delete FlatGen;
 }
 
-void BDSBunchCircle::SetOptions(struct Options &opt) {
+void BDSBunchCircle::SetOptions(struct Options &opt)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -45,7 +43,8 @@ void BDSBunchCircle::SetOptions(struct Options &opt) {
 
 void BDSBunchCircle::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		     G4double& xp, G4double& yp, G4double& zp,
-		     G4double& t , G4double&  E, G4double& weight) {
+		     G4double& t , G4double&  E, G4double& weight)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif

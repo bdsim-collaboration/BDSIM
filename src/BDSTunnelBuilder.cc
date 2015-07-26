@@ -13,10 +13,10 @@
 
 BDSTunnelBuilder::BDSTunnelBuilder()
 {
-  displacementTolerance = 50*CLHEP::cm;   // maximum displacemenet of beamline before split
-  maxItems              = 50;             // maximum number of items before split
-  maxLength             = 50*CLHEP::m;    // maximum length of tunnel segment
-  maxAngle              = 100*CLHEP::mrad; // maximum angle before split
+  displacementTolerance = 50  * CLHEP::cm;   // maximum displacemenet of beamline before split
+  maxItems              = 50;                // maximum number of items before split
+  maxLength             = 50  * CLHEP::m;    // maximum length of tunnel segment
+  maxAngle              = 100 * CLHEP::mrad; // maximum angle before split
 }
 
 BDSTunnelBuilder::~BDSTunnelBuilder()
@@ -138,7 +138,8 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 	  G4bool isAngled = BDS::IsFinite(cumulativeAngle);
 
 #ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << "determined tunnel segment to have the following parameters:" << G4endl;
+	  // __METHOD_NAME__ doesn't seem to work properly with pair return
+	  G4cout << "BDSTunnelBuilder::BuildTunnelAndSupports> determined tunnel segment to have the following parameters:" << G4endl;
 	  G4cout << "Start element name:   " << (*startElement)->GetPlacementName() << G4endl;
 	  G4cout << "End element name:     " << (*endElement)->GetPlacementName()   << G4endl;
 	  G4cout << "Start point (global): " << startPoint                          << G4endl;

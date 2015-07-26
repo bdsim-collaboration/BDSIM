@@ -1,8 +1,11 @@
 #include "BDSBunchTwiss.hh"
 #include "BDSDebug.hh"
 
-BDSBunchTwiss::BDSBunchTwiss() :
-  BDSBunchInterface(), betaX(0.0), betaY(0.0), alphaX(0.0), alphaY(0.0), emitX(0.0), emitY(0.0), gammaX(0.0), gammaY(0.0)
+BDSBunchTwiss::BDSBunchTwiss():
+  betaX(0.0), betaY(0.0),
+  alphaX(0.0), alphaY(0.0),
+  emitX(0.0), emitY(0.0),
+  gammaX(0.0), gammaY(0.0)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
@@ -16,8 +19,11 @@ BDSBunchTwiss::BDSBunchTwiss(G4double betaXIn,  G4double betaYIn,
 			     G4double emitXIn,  G4double emitYIn,
 			     G4double X0In,     G4double Y0In,       G4double Z0In,   G4double T0In, 
 			     G4double Xp0In,    G4double Yp0In,      G4double Zp0In,			     
-			     G4double sigmaTIn, G4double sigmaEIn) : 
-  BDSBunchInterface(X0In,Y0In,Z0In,T0In,Xp0In,Yp0In,Zp0In,sigmaTIn,sigmaEIn), betaX(betaXIn), betaY(betaYIn), alphaX(alphaXIn), alphaY(alphaYIn), emitX(emitXIn), emitY(emitYIn)
+			     G4double sigmaTIn, G4double sigmaEIn): 
+  BDSBunchInterface(X0In,Y0In,Z0In,T0In,Xp0In,Yp0In,Zp0In,sigmaTIn,sigmaEIn),
+  betaX(betaXIn), betaY(betaYIn),
+  alphaX(alphaXIn), alphaY(alphaYIn),
+  emitX(emitXIn), emitY(emitYIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
@@ -33,15 +39,13 @@ BDSBunchTwiss::BDSBunchTwiss(G4double betaXIn,  G4double betaYIn,
   CommonConstruction();
 }
 
-BDSBunchTwiss::~BDSBunchTwiss() {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
+BDSBunchTwiss::~BDSBunchTwiss()
+{
   delete GaussMultiGen;
 }
 
-void BDSBunchTwiss::SetOptions(struct Options& opt) {
+void BDSBunchTwiss::SetOptions(struct Options& opt)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -62,7 +66,8 @@ void BDSBunchTwiss::SetOptions(struct Options& opt) {
   return;
 }
 
-void BDSBunchTwiss::CommonConstruction() {
+void BDSBunchTwiss::CommonConstruction()
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -99,7 +104,8 @@ void BDSBunchTwiss::CommonConstruction() {
 
 void BDSBunchTwiss::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 				    G4double& xp, G4double& yp, G4double& zp,
-				    G4double& t , G4double&  E, G4double& weight) {
+				    G4double& t , G4double&  E, G4double& weight)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif

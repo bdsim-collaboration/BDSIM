@@ -4,38 +4,41 @@
 #include "BDSDebug.hh"
 #include "BDSUtilities.hh"
 
-BDSBunchUserFile::BDSBunchUserFile():nlinesIgnore(0){
+BDSBunchUserFile::BDSBunchUserFile():nlinesIgnore(0)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 }
 
-BDSBunchUserFile::~BDSBunchUserFile(){
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
+BDSBunchUserFile::~BDSBunchUserFile()
+{
   CloseBunchFile();
 }
 
-void BDSBunchUserFile::OpenBunchFile(){
+void BDSBunchUserFile::OpenBunchFile()
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   InputBunchFile.open(distribFile);
-  if(!InputBunchFile.good()){ 
-    G4cerr<<"Cannot open bunch file "<< distribFile <<G4endl; 
-    exit(1); 
-  } 
+  if(!InputBunchFile.good())
+    { 
+      G4cerr<<"Cannot open bunch file "<< distribFile <<G4endl; 
+      exit(1); 
+    }
 }
 
-void BDSBunchUserFile::CloseBunchFile(){
+void BDSBunchUserFile::CloseBunchFile()
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   InputBunchFile.close();
 }
 
-void BDSBunchUserFile::ParseFileFormat(){
+void BDSBunchUserFile::ParseFileFormat()
+{
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -254,7 +257,8 @@ G4double BDSBunchUserFile::ParseTimeUnit(G4String &fmt)
 
 void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		     G4double& xp, G4double& yp, G4double& zp,
-		     G4double& t , G4double&  E, G4double& weight) {
+		     G4double& t , G4double&  E, G4double& weight)
+{
 
   E = x0 = y0 = z0 = xp = yp = zp = t = 0;
   weight = 1;
@@ -352,7 +356,8 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   z0=z0+Z0*CLHEP::m;
 }
 
-template <typename Type> G4bool  BDSBunchUserFile::ReadValue(Type &value){
+template <typename Type> G4bool  BDSBunchUserFile::ReadValue(Type &value)
+{
   InputBunchFile>>value; 
   if (InputBunchFile.eof()){ //If the end of the file is reached go back to the beginning of the file.
     //this re reads the same file again to avoid crash - must always print warning
