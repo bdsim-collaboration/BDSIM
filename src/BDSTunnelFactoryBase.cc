@@ -5,6 +5,7 @@
 #include "BDSMaterials.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSTunnelSection.hh"
 #include "BDSUtilities.hh"            // for calculateorientation
 
 #include "globals.hh"                 // geant4 globals / types
@@ -20,44 +21,46 @@
 BDSTunnelFactoryBase::BDSTunnelFactoryBase():
   tunnelSection(NULL),
   containerSolid(NULL), tunnelSolid(NULL), soilSolid(NULL), floorSolid(NULL),
+  intersectionSolid(NULL),
   containerLV(NULL), tunnelLV(NULL), soilLV(NULL), floorLV(NULL),
-  floorDisplacement(G4ThreeVector(0,0,0))
+  floorDisplacement(G4ThreeVector(0,0,0)),
+  cumulativeAngle(0)
 {
   lengthSafety  = BDSGlobalConstants::Instance()->GetLengthSafety();
   checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
   defaultModel  = BDSGlobalConstants::Instance()->TunnelInfo();
 }
 
-BDSGeometryComponent* BDSTunnelFactoryBase::CreateTunnelSectionAngledIn(G4String      name,
-									G4double      length,
-									G4double      angleIn,
-									G4double      tunnelThickness,
-									G4double      tunnelSoilThickness,
-									G4Material*   tunnelMaterial,
-									G4Material*   tunnelSoilMaterial,
-									G4bool        tunnelFloor,
-									G4double      tunnelFloorOffset,
-									G4double      tunnel1,
-									G4double      tunnel2,
-									G4bool        visible)
+BDSTunnelSection* BDSTunnelFactoryBase::CreateTunnelSectionAngledIn(G4String      name,
+								    G4double      length,
+								    G4double      angleIn,
+								    G4double      tunnelThickness,
+								    G4double      tunnelSoilThickness,
+								    G4Material*   tunnelMaterial,
+								    G4Material*   tunnelSoilMaterial,
+								    G4bool        tunnelFloor,
+								    G4double      tunnelFloorOffset,
+								    G4double      tunnel1,
+								    G4double      tunnel2,
+								    G4bool        visible)
 {
   return CreateTunnelSectionAngledInOut(name, length, angleIn, 0, tunnelThickness,
 					tunnelSoilThickness, tunnelMaterial, tunnelSoilMaterial,
 					tunnelFloor, tunnelFloorOffset, tunnel1, tunnel2, visible);
 }
 
-BDSGeometryComponent* BDSTunnelFactoryBase::CreateTunnelSectionAngledOut(G4String      name,
-									 G4double      length,
-									 G4double      angleOut,
-									 G4double      tunnelThickness,
-									 G4double      tunnelSoilThickness,
-									 G4Material*   tunnelMaterial,
-									 G4Material*   tunnelSoilMaterial,
-									 G4bool        tunnelFloor,
-									 G4double      tunnelFloorOffset,
-									 G4double      tunnel1,
-									 G4double      tunnel2,
-									 G4bool        visible)
+BDSTunnelSection* BDSTunnelFactoryBase::CreateTunnelSectionAngledOut(G4String      name,
+								     G4double      length,
+								     G4double      angleOut,
+								     G4double      tunnelThickness,
+								     G4double      tunnelSoilThickness,
+								     G4Material*   tunnelMaterial,
+								     G4Material*   tunnelSoilMaterial,
+								     G4bool        tunnelFloor,
+								     G4double      tunnelFloorOffset,
+								     G4double      tunnel1,
+								     G4double      tunnel2,
+								     G4bool        visible)
 {
   return CreateTunnelSectionAngledInOut(name, length, 0, angleOut, tunnelThickness,
 					tunnelSoilThickness, tunnelMaterial, tunnelSoilMaterial,
@@ -67,6 +70,9 @@ BDSGeometryComponent* BDSTunnelFactoryBase::CreateTunnelSectionAngledOut(G4Strin
 std::pair<G4ThreeVector,G4ThreeVector> BDSTunnelFactoryBase::CalculateFaces(G4double angleIn,
 									    G4double angleOut)
 {
+  /// set cumulative angle
+  cumulativeAngle = angleIn + angleOut;
+  
   /// orientation -1,0,1 value - always use |angle| with trigonometric and then
   /// multiply by this factor, 0 by default
   G4int orientationIn  = BDS::CalculateOrientation(angleIn);
@@ -125,6 +131,7 @@ void BDSTunnelFactoryBase::CommonConstruction(G4String    name,
   PlaceComponents(name);
   PrepareGeometryComponent(containerXRadius, containerYRadius, 0.5*length);
   SetSensitiveVolumes();
+  PrepareTunnelSection(name, length);
 }
 
 void BDSTunnelFactoryBase::BuildLogicalVolumes(G4String   name,
@@ -168,6 +175,7 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
     {tunnelVisAttr->SetVisibility(true);}
   tunnelVisAttr->SetForceLineSegmentsPerCircle(50);
   tunnelLV->SetVisAttributes(tunnelVisAttr);
+  visAttributesToBeRegistered.push_back(tunnelVisAttr);
   if (floorLV)
     {
       G4VisAttributes* floorVisAttr = new G4VisAttributes(G4Colour(0.5, 0.5, 0.45));
@@ -175,6 +183,7 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
 	{floorVisAttr->SetVisibility(true);}
       floorVisAttr->SetForceLineSegmentsPerCircle(50);
       floorLV->SetVisAttributes(floorVisAttr);
+      visAttributesToBeRegistered.push_back(floorVisAttr);
     }
   // soil - brown
   if (soilLV)
@@ -184,6 +193,7 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
 	{soilVisAttr->SetVisibility(true);}
       soilVisAttr->SetForceLineSegmentsPerCircle(50);
       soilLV->SetVisAttributes(soilVisAttr);
+      visAttributesToBeRegistered.push_back(soilVisAttr);
     }
   // container
   if (BDSExecOptions::Instance()->GetVisDebug())
@@ -197,17 +207,33 @@ void BDSTunnelFactoryBase::PrepareGeometryComponent(G4double containerXRadius,
 						    G4double containerZRadius)
 {
   // prepare final object and register logical volumes
-  tunnelSection = new BDSGeometryComponent(containerSolid, containerLV);
-  tunnelSection->RegisterLogicalVolume(tunnelLV);
-  tunnelSection->RegisterLogicalVolume(soilLV);
+  tunnelComponent = new BDSGeometryComponent(containerSolid, containerLV);
+  tunnelComponent->RegisterLogicalVolume(tunnelLV);
+  tunnelComponent->RegisterLogicalVolume(soilLV);
   if (floorLV)
-    {tunnelSection->RegisterLogicalVolume(floorLV);}
+    {tunnelComponent->RegisterLogicalVolume(floorLV);}
+
+  // register objects
+  tunnelComponent->RegisterSolid(solidsToBeRegistered);
+  tunnelComponent->RegisterVisAttributes(visAttributesToBeRegistered);
+  tunnelComponent->RegisterUserLimits(userLimitsToBeRegistered);
 
   // record extents
-  tunnelSection->SetExtentX(std::make_pair(-containerXRadius, containerXRadius));
-  tunnelSection->SetExtentY(std::make_pair(-containerYRadius, containerYRadius));
-  tunnelSection->SetExtentZ(std::make_pair(-containerZRadius, containerZRadius));
+  tunnelComponent->SetExtentX(std::make_pair(-containerXRadius, containerXRadius));
+  tunnelComponent->SetExtentY(std::make_pair(-containerYRadius, containerYRadius));
+  tunnelComponent->SetExtentZ(std::make_pair(-containerZRadius, containerZRadius));
 }
+
+void BDSTunnelFactoryBase::PrepareTunnelSection(G4String name,
+						G4double chordLength)
+{
+  tunnelSection = new BDSTunnelSection(name,
+				       chordLength,
+				       cumulativeAngle,
+				       tunnelComponent,
+				       intersectionSolid);
+}
+  
 
 void BDSTunnelFactoryBase::SetSensitiveVolumes()
 {
@@ -231,7 +257,7 @@ void BDSTunnelFactoryBase::SetUserLimits(G4double length)
   // set user limits based on bdsim user specified parameters
   G4UserLimits* tunnelUserLimits = new G4UserLimits("tunnel_cuts");
   G4double maxStepFactor = 0.5; // fraction of length for maximum step size
-  tunnelUserLimits->SetMaxAllowedStep( length * maxStepFactor );
+  tunnelUserLimits->SetMaxAllowedStep(length * maxStepFactor);
   tunnelUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   //attach cuts to volumes
   tunnelLV->SetUserLimits(tunnelUserLimits);
@@ -240,6 +266,9 @@ void BDSTunnelFactoryBase::SetUserLimits(G4double length)
   if (floorLV)
     {floorLV->SetUserLimits(tunnelUserLimits);}
   containerLV->SetUserLimits(tunnelUserLimits);
+
+  // store for registration in finished component
+  userLimitsToBeRegistered.push_back(tunnelUserLimits);
 }
 
 void BDSTunnelFactoryBase::PlaceComponents(G4String name)
@@ -286,9 +315,14 @@ void BDSTunnelFactoryBase::TidyUp()
   tunnelSolid       = NULL;
   soilSolid         = NULL;
   floorSolid        = NULL;
+  intersectionSolid = NULL;
   containerLV       = NULL;
   tunnelLV          = NULL;
   soilLV            = NULL;
   floorLV           = NULL;
   floorDisplacement = G4ThreeVector(0,0,0);
+  cumulativeAngle   = 0;
+  solidsToBeRegistered.clear();
+  visAttributesToBeRegistered.clear();
+  userLimitsToBeRegistered.clear();
 }

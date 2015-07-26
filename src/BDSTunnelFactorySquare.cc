@@ -3,7 +3,6 @@
 #include "BDSTunnelFactoryRectangular.hh"
 
 #include "BDSDebug.hh"
-#include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSTunnelInfo.hh"
 
@@ -26,17 +25,17 @@ BDSTunnelFactorySquare::~BDSTunnelFactorySquare()
   _instance = 0;
 }
 
-BDSGeometryComponent* BDSTunnelFactorySquare::CreateTunnelSection(G4String    name,
-								  G4double    length,
-								  G4double    tunnelThickness,
-								  G4double    tunnelSoilThickness,
-								  G4Material* tunnelMaterial,
-								  G4Material* tunnelSoilMaterial,
-								  G4bool      tunnelFloor,
-								  G4double    tunnelFloorOffset,
-								  G4double    tunnel1,
-								  G4double    /*tunnel2*/,
-								  G4bool      visible)
+BDSTunnelSection* BDSTunnelFactorySquare::CreateTunnelSection(G4String    name,
+							      G4double    length,
+							      G4double    tunnelThickness,
+							      G4double    tunnelSoilThickness,
+							      G4Material* tunnelMaterial,
+							      G4Material* tunnelSoilMaterial,
+							      G4bool      tunnelFloor,
+							      G4double    tunnelFloorOffset,
+							      G4double    tunnel1,
+							      G4double    /*tunnel2*/,
+							      G4bool      visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -51,19 +50,19 @@ BDSGeometryComponent* BDSTunnelFactorySquare::CreateTunnelSection(G4String    na
 }
 
 
-BDSGeometryComponent* BDSTunnelFactorySquare::CreateTunnelSectionAngledInOut(G4String    name,
-									     G4double    length,
-									     G4double    angleIn,
-									     G4double    angleOut,
-									     G4double    tunnelThickness,
-									     G4double    tunnelSoilThickness,
-									     G4Material* tunnelMaterial,
-									     G4Material* tunnelSoilMaterial,
-									     G4bool      tunnelFloor,
-									     G4double    tunnelFloorOffset,
-									     G4double    tunnel1,
-									     G4double    /*tunnel2*/,
-									     G4bool      visible)
+BDSTunnelSection* BDSTunnelFactorySquare::CreateTunnelSectionAngledInOut(G4String    name,
+									 G4double    length,
+									 G4double    angleIn,
+									 G4double    angleOut,
+									 G4double    tunnelThickness,
+									 G4double    tunnelSoilThickness,
+									 G4Material* tunnelMaterial,
+									 G4Material* tunnelSoilMaterial,
+									 G4bool      tunnelFloor,
+									 G4double    tunnelFloorOffset,
+									 G4double    tunnel1,
+									 G4double    /*tunnel2*/,
+									 G4bool      visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;

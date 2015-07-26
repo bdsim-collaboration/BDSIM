@@ -7,6 +7,7 @@
 #include "BDSTunnelFactoryRectangular.hh"
 #include "BDSTunnelFactoryRectAboveGround.hh"
 #include "BDSTunnelFactorySquare.hh"
+#include "BDSTunnelSection.hh"
 #include "BDSTunnelType.hh"
 
 #include "globals.hh"                        // geant4 globals / types
@@ -65,19 +66,19 @@ BDSTunnelFactoryBase* BDSTunnelFactory::GetAppropriateFactory(BDSTunnelType tunn
     break;
   }
 }
-  
-BDSGeometryComponent* BDSTunnelFactory::CreateTunnelSection(BDSTunnelType tunnelType,
-							    G4String      name,
-							    G4double      length,
-							    G4double      tunnelThickness,
-							    G4double      tunnelSoilThickness,
-							    G4Material*   tunnelMaterial,
-							    G4Material*   tunnelSoilMaterial,
-							    G4bool        tunnelFloor,
-							    G4double      tunnelFloorOffset,
-							    G4double      tunnel1,
-							    G4double      tunnel2,
-							    G4bool        visible)
+
+BDSTunnelSection* BDSTunnelFactory::CreateTunnelSection(BDSTunnelType tunnelType,
+							G4String      name,
+							G4double      length,
+							G4double      tunnelThickness,
+							G4double      tunnelSoilThickness,
+							G4Material*   tunnelMaterial,
+							G4Material*   tunnelSoilMaterial,
+							G4bool        tunnelFloor,
+							G4double      tunnelFloorOffset,
+							G4double      tunnel1,
+							G4double      tunnel2,
+							G4bool        visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -89,19 +90,19 @@ BDSGeometryComponent* BDSTunnelFactory::CreateTunnelSection(BDSTunnelType tunnel
 				      tunnelFloorOffset, tunnel1, tunnel2, visible);
 }
 
-BDSGeometryComponent* BDSTunnelFactory::CreateTunnelSectionAngledIn(BDSTunnelType tunnelType,
-								    G4String      name,
-								    G4double      length,
-								    G4double      angleIn,
-								    G4double      tunnelThickness,
-								    G4double      tunnelSoilThickness,
-								    G4Material*   tunnelMaterial,
-								    G4Material*   tunnelSoilMaterial,
-								    G4bool        tunnelFloor,
-								    G4double      tunnelFloorOffset,
-								    G4double      tunnel1,
-								    G4double      tunnel2,
-								    G4bool        visible)
+BDSTunnelSection* BDSTunnelFactory::CreateTunnelSectionAngledIn(BDSTunnelType tunnelType,
+								G4String      name,
+								G4double      length,
+								G4double      angleIn,
+								G4double      tunnelThickness,
+								G4double      tunnelSoilThickness,
+								G4Material*   tunnelMaterial,
+								G4Material*   tunnelSoilMaterial,
+								G4bool        tunnelFloor,
+								G4double      tunnelFloorOffset,
+								G4double      tunnel1,
+								G4double      tunnel2,
+								G4bool        visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -113,19 +114,19 @@ BDSGeometryComponent* BDSTunnelFactory::CreateTunnelSectionAngledIn(BDSTunnelTyp
 					      tunnelFloorOffset, tunnel1, tunnel2, visible);
 }
 
-BDSGeometryComponent* BDSTunnelFactory::CreateTunnelSectionAngledOut(BDSTunnelType tunnelType,
-								     G4String      name,
-								     G4double      length,
-								     G4double      angleOut,
-								     G4double      tunnelThickness,
-								     G4double      tunnelSoilThickness,
-								     G4Material*   tunnelMaterial,
-								     G4Material*   tunnelSoilMaterial,
-								     G4bool        tunnelFloor,
-								     G4double      tunnelFloorOffset,
-								     G4double      tunnel1,
-								     G4double      tunnel2,
-								     G4bool        visible)
+BDSTunnelSection* BDSTunnelFactory::CreateTunnelSectionAngledOut(BDSTunnelType tunnelType,
+								 G4String      name,
+								 G4double      length,
+								 G4double      angleOut,
+								 G4double      tunnelThickness,
+								 G4double      tunnelSoilThickness,
+								 G4Material*   tunnelMaterial,
+								 G4Material*   tunnelSoilMaterial,
+								 G4bool        tunnelFloor,
+								 G4double      tunnelFloorOffset,
+								 G4double      tunnel1,
+								 G4double      tunnel2,
+								 G4bool        visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -137,20 +138,20 @@ BDSGeometryComponent* BDSTunnelFactory::CreateTunnelSectionAngledOut(BDSTunnelTy
 					       tunnelFloorOffset, tunnel1, tunnel2, visible);
 }
 
-BDSGeometryComponent* BDSTunnelFactory::CreateTunnelSectionAngledInOut(BDSTunnelType tunnelType,
-								       G4String      name,
-								       G4double      length,
-								       G4double      angleIn,
-								       G4double      angleOut,
-								       G4double      tunnelThickness,
-								       G4double      tunnelSoilThickness,
-								       G4Material*   tunnelMaterial,
-								       G4Material*   tunnelSoilMaterial,
-								       G4bool        tunnelFloor,
-								       G4double      tunnelFloorOffset,
-								       G4double      tunnel1,
-								       G4double      tunnel2,
-								       G4bool        visible)
+BDSTunnelSection* BDSTunnelFactory::CreateTunnelSectionAngledInOut(BDSTunnelType tunnelType,
+								   G4String      name,
+								   G4double      length,
+								   G4double      angleIn,
+								   G4double      angleOut,
+								   G4double      tunnelThickness,
+								   G4double      tunnelSoilThickness,
+								   G4Material*   tunnelMaterial,
+								   G4Material*   tunnelSoilMaterial,
+								   G4bool        tunnelFloor,
+								   G4double      tunnelFloorOffset,
+								   G4double      tunnel1,
+								   G4double      tunnel2,
+								   G4bool        visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;

@@ -2,8 +2,8 @@
 #include "BDSTunnelFactoryCircular.hh"
 
 #include "BDSDebug.hh"
-#include "BDSGeometryComponent.hh"
 #include "BDSTunnelInfo.hh"
+#include "BDSTunnelSection.hh"
 #include "BDSGlobalConstants.hh"
 
 #include "globals.hh"                 // geant4 globals / types
@@ -12,6 +12,7 @@
 #include "G4IntersectionSolid.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
+#include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
 #include "G4UnionSolid.hh"
@@ -38,17 +39,17 @@ BDSTunnelFactoryCircular::~BDSTunnelFactoryCircular()
   _instance = 0;
 }
 
-BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSection(G4String      name,
-								    G4double      length,
-								    G4double      tunnelThickness,
-								    G4double      tunnelSoilThickness,
-								    G4Material*   tunnelMaterial,
-								    G4Material*   tunnelSoilMaterial,
-								    G4bool        tunnelFloor,
-								    G4double      tunnelFloorOffset,
-								    G4double      tunnel1,
-								    G4double      /*tunnel2*/,
-								    G4bool        visible)
+BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSection(G4String      name,
+								G4double      length,
+								G4double      tunnelThickness,
+								G4double      tunnelSoilThickness,
+								G4Material*   tunnelMaterial,
+								G4Material*   tunnelSoilMaterial,
+								G4bool        tunnelFloor,
+								G4double      tunnelFloorOffset,
+								G4double      tunnel1,
+								G4double      /*tunnel2*/,
+								G4bool        visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -160,19 +161,19 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSection(G4String    
 }
 
 
-BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G4String      name,
-									       G4double      length,
-									       G4double      angleIn,
-									       G4double      angleOut,
-									       G4double      tunnelThickness,
-									       G4double      tunnelSoilThickness,
-									       G4Material*   tunnelMaterial,
-									       G4Material*   tunnelSoilMaterial,
-									       G4bool        tunnelFloor,
-									       G4double      tunnelFloorOffset,
-									       G4double      tunnel1,
-									       G4double      /*tunnel2*/,
-									       G4bool        visible)
+BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G4String      name,
+									   G4double      length,
+									   G4double      angleIn,
+									   G4double      angleOut,
+									   G4double      tunnelThickness,
+									   G4double      tunnelSoilThickness,
+									   G4Material*   tunnelMaterial,
+									   G4Material*   tunnelSoilMaterial,
+									   G4bool        tunnelFloor,
+									   G4double      tunnelFloorOffset,
+									   G4double      tunnel1,
+									   G4double      /*tunnel2*/,
+									   G4bool        visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -229,10 +230,14 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G
 					      outputface);                    // output face normal vector
 
       G4VSolid* floorBox      = new G4Box(name + "_floor_box_solid",  // name
-					  1.5*tunnel1,                // x half width
-					  1.5*tunnel1,                // y half width
+					  floorBoxRadius,             // x half width
+					  floorBoxRadius,             // y half width
 					  length);                    // z half length
       // z long for unambiguous intersection
+
+      // register solids
+      solidsToBeRegistered.push_back(floorCylinder);
+      solidsToBeRegistered.push_back(floorBox);
       
       floorSolid = new G4IntersectionSolid(name + "_floor_solid",                      // name
 					   floorCylinder,                              // this
@@ -256,6 +261,10 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G
 					      length);                         // z half length
       // floor container box z long for unambiguous intersection
 
+      // register solids
+      solidsToBeRegistered.push_back(floorContainerCylinder);
+      solidsToBeRegistered.push_back(floorContainerBox);
+
       // calculate box container offset - should be just above floor by lengthsafety (floor actually lowered
       // by length safety a la rest of geometry to fit within its dimensions)
       G4double floorBoxContDisp = floorBoxDisplacement - lengthSafety;
@@ -274,20 +283,49 @@ BDSGeometryComponent* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G
 						     inputface,                 // input face normal vector
 						     outputface);               // output face normal vector
 
+      // register solids
+      solidsToBeRegistered.push_back(floorContainerSolid);
+      solidsToBeRegistered.push_back(tunnelContainerSolid);
+
       containerSolid = new G4UnionSolid(name + "_container_solid", // name
 					tunnelContainerSolid,      // this
 					floorContainerSolid);      // plus this
+      
+      G4VSolid* intersectionSolidCylinder = new G4CutTubs(name + "_int_cyl_solid",  // name
+							  0,                        // inner radius
+							  tunnel1 - 2*lengthSafety, // outer radius
+							  length*0.5,               // z half length
+							  0,                        // start angle
+							  CLHEP::twopi,             // sweep angle
+							  inputface,                // input face normal vector
+							  outputface);              // output face normal vector
+      solidsToBeRegistered.push_back(intersectionSolidCylinder);
+
+      intersectionSolid = new G4SubtractionSolid(name + "_intersection_solid", // name
+						 intersectionSolidCylinder,    // this
+						 floorContainerSolid,          // minus this,
+						 0,                            // rotation
+						 G4ThreeVector(0,-floorBoxContDisp+lengthSafety,0)); // translation
     }
   else
     {
       containerSolid = new G4CutTubs(name + "_tunnel_container_solid", // name
 				     tunnel1,                          // inner radius
 				     containerRadius,                  // outer radius,
-				     length,                           // z half length
+				     length*0.5,                       // z half length
 				     0,                                // start angle
 				     CLHEP::twopi,                     // sweep angle
 				     inputface,                        // input face normal vector
 				     outputface);                      // output face normal vector
+
+      intersectionSolid = new G4CutTubs(name + "_tunnel_intersection_solid", // name
+					0,                                   // inner radius
+					tunnel1 - 2*lengthSafety,            // outer radius
+					length*0.5,                          // z half length
+					0,                                   // start angle
+					CLHEP::twopi,                        // sweep angle
+					inputface,                           // input face normal vector
+					outputface);                         // output face normal vector
     } 
 
   CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerRadius, containerRadius, visible);
