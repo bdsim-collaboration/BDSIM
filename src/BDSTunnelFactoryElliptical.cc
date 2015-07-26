@@ -73,6 +73,10 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String      
 						    tunnel2 + lengthSafety,       // y radius
 						    length); // z half length - long for unambiguous subtraction
 
+  // register solids
+  solidsToBeRegistered.push_back(tunnelOuterSolid);
+  solidsToBeRegistered.push_back(tunnelInnerSolid);
+  
   tunnelSolid = new G4SubtractionSolid(name + "_tunnel_solid", // name
 				       tunnelOuterSolid,      // this
 				       tunnelInnerSolid);     // minus this
@@ -94,6 +98,10 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String      
 						  soil1R + lengthSafety,        // x radius
 						  soil2R + lengthSafety,        // y radius
 						  length); // z half length - long for unambiguous subtraction
+
+  // register solids
+  solidsToBeRegistered.push_back(soilOuterSolid);
+  solidsToBeRegistered.push_back(soilInnerSolid);
 
   soilSolid = new G4SubtractionSolid(name + "_soil_solid", // name
 				     soilOuterSolid,      // this
@@ -118,6 +126,10 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String      
 					 floorBoxRadius,             // y half width
 					 length);                    // z half length
       // box z length extra long for unambiguous subtraction
+
+      // register solids
+      solidsToBeRegistered.push_back(floorEllipse);
+      solidsToBeRegistered.push_back(floorBox);
       
       floorSolid = new G4IntersectionSolid(name + "_floor_solid",                     // name
 					   floorEllipse,                              // this
@@ -163,6 +175,13 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String      
 							      tunnelContainerSolidOuter,   // this
 							      tunnelContainerSolidInner);  // minus this
 
+      // register solids
+      solidsToBeRegistered.push_back(floorContainerEllipse);
+      solidsToBeRegistered.push_back(floorContainerSolid);
+      solidsToBeRegistered.push_back(tunnelContainerSolidOuter);
+      solidsToBeRegistered.push_back(tunnelContainerSolidInner);
+      solidsToBeRegistered.push_back(tunnelContainerSolid);
+
       containerSolid = new G4UnionSolid(name + "_container_solid", // name
 					tunnelContainerSolid,      // this
 					floorContainerSolid);      // plus this
@@ -181,6 +200,10 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String      
 								 tunnel1,                           // x radius
 								 tunnel2,                           // y radius
 								 length*0.5);
+
+      // register solids
+      solidsToBeRegistered.push_back(tunnelContainerSolidOuter);
+      solidsToBeRegistered.push_back(tunnelContainerSolidInner);
 
       containerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid", // name
 					      tunnelContainerSolidOuter,   // this
@@ -251,6 +274,12 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSectionAngledInOut(G4S
 							 tunnelOuterSolid,      // this
 							 tunnelInnerSolid);     // minus this
 
+  // register solids
+  solidsToBeRegistered.push_back(faceSolid);
+  solidsToBeRegistered.push_back(tunnelOuterSolid);
+  solidsToBeRegistered.push_back(tunnelInnerSolid);
+  solidsToBeRegistered.push_back(tunnelSolidUnAngled);
+  
   // cut off the faces with the angled face solid
   tunnelSolid = new G4IntersectionSolid(name + "_tunnel_solid", // name
 					tunnelSolidUnAngled,
@@ -277,6 +306,11 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSectionAngledInOut(G4S
   G4VSolid* soilSolidUnAngled = new G4SubtractionSolid(name + "_soil_square_solid", // name
 						       soilOuterSolid,      // this
 						       soilInnerSolid);     // minus this
+
+  // register solids
+  solidsToBeRegistered.push_back(soilOuterSolid);
+  solidsToBeRegistered.push_back(soilInnerSolid);
+  solidsToBeRegistered.push_back(soilSolidUnAngled);
   
   soilSolid = new G4IntersectionSolid(name + "_soil_soild", // name
 				      soilSolidUnAngled,
@@ -309,6 +343,10 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSectionAngledInOut(G4S
 					 floorBoxRadius,             // y half width
 					 length);                    // z half length
       // box z length extra long for unambiguous subtraction
+
+      // register solids
+      solidsToBeRegistered.push_back(floorEllipse);
+      solidsToBeRegistered.push_back(floorBox);
 
       floorSolid = new G4IntersectionSolid(name + "_floor_solid",                     // name
 					   floorEllipseAngled,                        // this
@@ -356,6 +394,15 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSectionAngledInOut(G4S
 							      tunnelContainerSolidOuterAngled,   // this
 							      tunnelContainerSolidInner);        // minus this
 
+      // register solids
+      solidsToBeRegistered.push_back(floorContainerEllAng);
+      solidsToBeRegistered.push_back(floorContainerEllipseAngled);
+      solidsToBeRegistered.push_back(floorContainerSolid);
+      solidsToBeRegistered.push_back(tunnelContainerOuterSquare);
+      solidsToBeRegistered.push_back(tunnelContainerSolidOuterAngled);
+      solidsToBeRegistered.push_back(tunnelContainerSolidInner);
+      solidsToBeRegistered.push_back(tunnelContainerSolid);
+
       containerSolid = new G4UnionSolid(name + "_container_solid", // name
 					tunnelContainerSolid,      // this
 					floorContainerSolid);      // plus this
@@ -379,6 +426,11 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSectionAngledInOut(G4S
 								 tunnel2,                           // y radius
 								 length*0.5);
 
+      // register solids
+      solidsToBeRegistered.push_back(tunnelContainerOuterSquare);
+      solidsToBeRegistered.push_back(tunnelContainerSolidOuterAngled);
+      solidsToBeRegistered.push_back(tunnelContainerSolidInner);
+      
       containerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid",       // name
 					      tunnelContainerSolidOuterAngled,   // this
 					      tunnelContainerSolidInner);        // minus this

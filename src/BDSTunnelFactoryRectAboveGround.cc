@@ -87,6 +87,11 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4String 
 						     tunnelOuterSolid,           // this
 						     tunnelInnerSolid);          // minus this
 
+  // register solids
+  solidsToBeRegistered.push_back(tunnelOuterSolid);
+  solidsToBeRegistered.push_back(tunnelInnerSolid);
+  solidsToBeRegistered.push_back(tunnelRectSolid);
+
   G4double yDisp = tunnel2 + slabYHalfWidth + lengthSafety; // lengthSafety ensures clean union with floor plane
   G4ThreeVector slabDisplacement = G4ThreeVector(0,-yDisp,0);
   tunnelSolid = new G4UnionSolid(name + "_tunnel_solid", // name
@@ -129,6 +134,12 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4String 
 						 tunnelContInnerYRadius,            // y radius
 						 length*0.5);
 
+      // regsiter solids
+      solidsToBeRegistered.push_back(tunnelContainerOuterSlab);
+      solidsToBeRegistered.push_back(tunnelContainerOuterTunnel);
+      solidsToBeRegistered.push_back(tunnelContainerOuter);
+      solidsToBeRegistered.push_back(tunnelContainerInner);
+
       // offset the centre cut out by the difference between the vertical half widths of tunnel2 and tunnel2+floor
       G4ThreeVector contInsideDisplacement = G4ThreeVector(0, tunnelContInnerYRadius - tunnel2, 0);
       containerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid", // name
@@ -156,6 +167,12 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4String 
 						 tunnel1,                           // x radius
 						 tunnel2,                           // y radius
 						 length);
+
+      // regsiter solids
+      solidsToBeRegistered.push_back(tunnelContainerOuterSlab);
+      solidsToBeRegistered.push_back(tunnelContainerOuterTunnel);
+      solidsToBeRegistered.push_back(tunnelContainerOuter);
+      solidsToBeRegistered.push_back(tunnelContainerInner);
 
       containerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid", // name
 					      tunnelContainerOuter,        // this
@@ -225,6 +242,11 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngledInOu
 							 tunnelOuterSolid,      // this
 							 tunnelInnerSolid);     // minus this
 
+  // register solids
+  solidsToBeRegistered.push_back(tunnelOuterSolid);
+  solidsToBeRegistered.push_back(tunnelInnerSolid);
+  solidsToBeRegistered.push_back(tunnelSolidUnAngled);
+
   // cut off the faces with the angled face solid
   tunnelSolid = new G4IntersectionSolid(name + "_tunnel_solid", // name
 					tunnelSolidUnAngled,
@@ -251,6 +273,11 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngledInOu
   G4VSolid* soilSolidUnAngled = new G4SubtractionSolid(name + "_soil_square_solid", // name
 						       soilOuterSolid,      // this
 						       soilInnerSolid);     // minus this
+
+  // register solids
+  solidsToBeRegistered.push_back(soilOuterSolid);
+  solidsToBeRegistered.push_back(soilInnerSolid);
+  solidsToBeRegistered.push_back(soilSolidUnAngled);
   
   soilSolid = new G4IntersectionSolid(name + "_soil_soild", // name
 				      soilSolidUnAngled,
@@ -293,6 +320,11 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngledInOu
 						      tunnelContInnerYRadius,            // y radius
 						      length);
 
+      // register solids
+      solidsToBeRegistered.push_back(floorSolidSquare);
+      solidsToBeRegistered.push_back(tunnelContainerSolidOuter);
+      solidsToBeRegistered.push_back(tunnelContainerSolidInner);
+
       // offset the centre cut out by the difference between the vertical half widths of tunnel2 and tunnel2+floor
       G4ThreeVector contInsideDisplacement = G4ThreeVector(0, tunnelContInnerYRadius - tunnel2, 0);
       containerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid", // name
@@ -317,6 +349,10 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngledInOu
 						      tunnel1,                           // x radius
 						      tunnel2,                           // y radius
 						      length);
+
+      // register solids
+      solidsToBeRegistered.push_back(tunnelContainerSolidOuter);
+      solidsToBeRegistered.push_back(tunnelContainerSolidInner);
 
       containerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid", // name
 					      tunnelContainerSolidOuter,   // this
