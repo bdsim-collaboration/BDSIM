@@ -32,8 +32,6 @@ BDSSectorBend::BDSSectorBend(G4String           name,
   /// - this results in a wrongly chord length
   angle       = angleIn;
   chordLength = 2.0 * arcLength * sin(0.5*angleIn) / angleIn;
-  G4double factor = 1 - 1e-4;
-  chordLength *= factor;
   // prepare normal vectors for input and output planes
   // calculate components of normal vectors (in the end mag(normal) = 1)
   orientation   = BDS::CalculateOrientation(angleIn);
