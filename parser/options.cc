@@ -79,8 +79,8 @@ Options::Options()
   // tunnel options
   buildTunnel         = false;
   tunnelType          = "circular";
-  tunnelThickness     = 0.0;
-  tunnelSoilThickness = 0.0;
+  tunnelThickness     = 0.1;
+  tunnelSoilThickness = 1.0;
   tunnelMaterial      = "concrete";
   soilMaterial        = "soil";
   buildTunnelFloor    = true;
