@@ -191,7 +191,7 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 	  if (isAngled)
 	    {
 	      G4double radiusOfCurvature = (segmentLength * 0.5) / sin(cumulativeAngle*0.5);
-	      G4double arcLength         = radiusOfCurvature * cumulativeAngle;
+	      arcLength                  = radiusOfCurvature * cumulativeAngle;
 #ifdef BDSDEBUG
 	      G4cout << __METHOD_NAME__ << "segment length: " << segmentLength << G4endl;
 	      G4cout << __METHOD_NAME__ << "arc length:     " << arcLength     << G4endl;
