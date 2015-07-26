@@ -54,6 +54,11 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
     {chordLength = 2.0 * arcLengthIn * sin(0.5*angleIn) / angleIn;}
   else
     {chordLength = arcLengthIn;}
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "angle:        " << angleIn     << G4endl;
+  G4cout << __METHOD_NAME__ << "arc length:   " << arcLengthIn << G4endl;
+  G4cout << __METHOD_NAME__ << "chord length: " << chordLength << G4endl; 
+#endif
 
   initialised = false;
 }
