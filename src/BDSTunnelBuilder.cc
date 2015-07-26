@@ -200,7 +200,8 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 	  BDSTunnelSegment* ts = new BDSTunnelSegment(name.str(),
 						      arcLength,
 						      cumulativeAngle,
-						      tunnelSegment);
+						      tunnelSegment,
+						      NULL);
 
 	  if (tunnelLine->empty())
 	    {

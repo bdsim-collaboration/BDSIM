@@ -2,11 +2,15 @@
 
 #include <cmath>
 
+class G4VSolid;
+
 BDSTunnelSegment::BDSTunnelSegment(G4String              name,
 				   G4double              arcLength,
 				   G4double              angle,
-				   BDSGeometryComponent* tunnelGeometry):
-  BDSAcceleratorComponent(name, arcLength, angle, "tunnel")
+				   BDSGeometryComponent* tunnelGeometry,
+				   G4VSolid*             innerIntersectionSolidIn):
+  BDSAcceleratorComponent(name, arcLength, angle, "tunnel"),
+  innerIntersectionSolid(innerIntersectionSolidIn)
 {
   InheritObjects(tunnelGeometry);
   containerSolid         = tunnelGeometry->GetContainerSolid();

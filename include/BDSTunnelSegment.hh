@@ -5,6 +5,7 @@
 #include "globals.hh" // geant4 types / globals
 
 class BDSGeometryComponent;
+class G4VSolid;
 
 /**
  * @brief Class that represents a section of tunnel. Tunnel segments are
@@ -21,11 +22,15 @@ class BDSTunnelSegment: public BDSAcceleratorComponent
 {
 public:
   /// Constructor takes BDSGeometryComponent instance of already
-  /// constructed geometry.
+  /// constructed geometry. The inner intersection solid is a solid that
+  /// represents the cavity inside the tunnel. It can be used to intersect
+  /// with any geometry such as the supports to ensure they always fit without
+  /// having detailed knowledge about the floor and tunnel geometry itself.
   BDSTunnelSegment(G4String              name,
 		   G4double              arcLength,
 		   G4double              angle,
-		   BDSGeometryComponent* tunnelGeometry);
+		   BDSGeometryComponent* tunnelGeometry,
+		   G4VSolid*             innerIntersectionSolidIn);
 
   ~BDSTunnelSegment(){;}
 
@@ -37,6 +42,8 @@ public:
 
   /// Have to provide implementation - does nothing
   virtual void BuildContainerLogicalVolume();
+
+  G4VSolid* innerIntersectionSolid;
 
 };
 
