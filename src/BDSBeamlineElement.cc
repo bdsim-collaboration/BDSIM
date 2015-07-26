@@ -2,7 +2,6 @@
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSDebug.hh"
-#include "BDSGeometryComponent.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4RotationMatrix.hh"
@@ -26,16 +25,7 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 				       G4RotationMatrix*        referenceRotationEndIn,
 				       G4double                 sPositionStartIn,
 				       G4double                 sPositionMiddleIn,
-				       G4double                 sPositionEndIn,
-				       G4ThreeVector            xAxisReferenceStartIn,
-				       G4ThreeVector            yAxisReferenceStartIn,
-				       G4ThreeVector            zAxisReferenceStartIn,
-				       G4ThreeVector            xAxisReferenceMiddleIn,
-				       G4ThreeVector            yAxisReferenceMiddleIn,
-				       G4ThreeVector            zAxisReferenceMiddleIn,
-				       G4ThreeVector            xAxisReferenceEndIn,
-				       G4ThreeVector            yAxisReferenceEndIn,
-				       G4ThreeVector            zAxisReferenceEndIn):
+				       G4double                 sPositionEndIn):
   component(componentIn),
   positionStart(positionStartIn), positionMiddle(positionMiddleIn), positionEnd(positionEndIn),
   rotationStart(rotationStartIn), rotationMiddle(rotationMiddleIn), rotationEnd(rotationEndIn),
@@ -45,16 +35,7 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   referenceRotationStart(referenceRotationStartIn),
   referenceRotationMiddle(referenceRotationMiddleIn),
   referenceRotationEnd(referenceRotationEndIn),
-  sPositionStart(sPositionStartIn), sPositionMiddle(sPositionMiddleIn), sPositionEnd(sPositionEndIn),
-  xAxisReferenceStart(xAxisReferenceStartIn),
-  yAxisReferenceStart(yAxisReferenceStartIn),
-  zAxisReferenceStart(zAxisReferenceStartIn),
-  xAxisReferenceMiddle(xAxisReferenceMiddleIn),
-  yAxisReferenceMiddle(yAxisReferenceMiddleIn),
-  zAxisReferenceMiddle(zAxisReferenceMiddleIn),
-  xAxisReferenceEnd(xAxisReferenceEndIn),
-  yAxisReferenceEnd(yAxisReferenceEndIn),
-  zAxisReferenceEnd(zAxisReferenceEndIn)
+  sPositionStart(sPositionStartIn), sPositionMiddle(sPositionMiddleIn), sPositionEnd(sPositionEndIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__;
@@ -97,13 +78,7 @@ std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &e)
       << "Start, middle & end rotation: "
       << *(e.GetRotationStart())  << " " << *(e.GetRotationMiddle())  << " " << *(e.GetRotationEnd())  << G4endl
       << "Start, middle & end s position: "
-      << e.GetSPositionStart() << " " << e.GetSPositionMiddle() << " " << e.GetSPositionEnd() << G4endl
-      << "X axis at the start, middle & end: "
-      << e.GetXAxisReferenceStart() << " " << e.GetXAxisReferenceMiddle() << " " << e.GetXAxisReferenceEnd() << G4endl
-      << "Y axis at the start, middle & end: "
-      << e.GetYAxisReferenceStart() << " " << e.GetYAxisReferenceMiddle() << " " << e.GetYAxisReferenceEnd() << G4endl
-      << "Z axis at the start, middle & end: "
-      << e.GetZAxisReferenceStart() << " " << e.GetZAxisReferenceMiddle() << " " << e.GetZAxisReferenceEnd() << G4endl;
+      << e.GetSPositionStart() << " " << e.GetSPositionMiddle() << " " << e.GetSPositionEnd() << G4endl;
 
   return out;
 }

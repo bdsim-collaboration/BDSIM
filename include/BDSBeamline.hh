@@ -38,15 +38,12 @@ typedef std::vector<BDSBeamlineElement*>::const_iterator BDSBeamlineIterator;
 
 class BDSBeamline{
 public:
-  /// Default constructor. Beamline started at 0,0,0 with beamline built along
-  /// the z axis.
-  BDSBeamline();
-
-  /// Auxiliary constructor that allows a finite poition and rotation to be applied
+  /// Versatile basic constructor that allows a finite poition and rotation to be applied
   /// at the beginning of the beamline in global coordinates. Rembmer the maximum
-  /// extents of the beamline will also be displaced.
-  BDSBeamline(G4ThreeVector     initialGlobalPosition,
-	      G4RotationMatrix* initialGlobalRotation);
+  /// extents of the beamline will also be displaced. The default constructor is in effect
+  /// achieved via defaults
+  BDSBeamline(G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0,0),
+	      G4RotationMatrix* initialGlobalRotation = NULL);
   
   ~BDSBeamline();
 
@@ -121,7 +118,7 @@ public:
   /// size of all BDSBeamlineElement() and size of all BDSAcceleratorComponent() stored.
   void PrintMemoryConsumption() const;
   
-private: 
+private:
   /// Add a single component and calculate its position and rotation with respect
   /// to the beginning of the beamline
   void AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = NULL);
@@ -137,11 +134,6 @@ private:
 
   G4ThreeVector maximumExtentPositive; ///< maximum extent in the positive coordinates in each dimension
   G4ThreeVector maximumExtentNegative; ///< maximum extent in the negative coordinates in each dimension
-
-  ///@{ Current rotation axes
-  ///  xARS = xAxisReferenceStart, M = Middle, E = End
-  G4ThreeVector xARS, yARS, zARS, xARM, yARM, zARM, xARE, yARE, zARE;
-  ///@}
 
   /// Current reference rotation at the end of the previous element
   G4RotationMatrix* previousReferenceRotationEnd;
