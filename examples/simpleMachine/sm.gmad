@@ -15,21 +15,11 @@ option, ngenerate=1,
 	physicsList="em_standard",
 	beampipeRadius=5.0*cm,
 	beampipeThickness=5*cm,
-	boxSize=2.0*m,
-	tunnelRadius=2*m;
-
-option, chordStepMinimum    = 0.0000000000001 * m,
-        deltaIntersection   = 0.00000000001 * m,
-        deltaChord          = 0.000001 * m,
-        thresholdCutCharged = 1 * keV,
-        thresholdCutPhotons = 1 * keV,
+	outerDiameter=2.0*m,
 	defaultRangeCut=1*cm,	
 	prodCutPositrons=1*cm,
 	prodCutElectrons=1*cm,
-	prodCutPhotons=1*cm,
-	prodCutPositronsP=1*cm,
-	prodCutElectronsP=1*cm,
-	prodCutPhotonsP=1*cm;
+	prodCutPhotons=1*cm;
 
 beam, particle="proton",
       energy=10.0*GeV,
