@@ -50,7 +50,7 @@ public:
   
   ~BDSBeamline();
 
-  /// Add a component, but check to see if can be dynamically upcast to a line
+  /// Add a component, but check to see if it can be dynamically upcast to a line
   /// in which case, loop over it and apply
   /// AddSingleComponent(BDSAcceleratorComponent* component) to each component
   void AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = NULL);
@@ -61,6 +61,14 @@ public:
   /// in the beamline. Note this applies the offset dx,dy,dz first, then the rotation
   /// of coordinates
   void ApplyTransform3D(BDSTransform3D* component);
+
+  /// Add a preassembled beam line element. In this case, the coordinates will have been
+  /// calculated external to this class and as such, it's the responsibility of the
+  /// developer to make sure the coordinates are correct and do not cause overlaps. This
+  /// will be useful for tunnel construction for example or for a non-contiguous beamline.
+  /// Subsequent components added via the AddComponent() method will be appended in the usual
+  /// way to the end cooridinates of this element.
+  void AddBeamlineElement(BDSBeamlineElement* element);
 
   /// Iterate over the beamline and print out the name, position, rotation
   /// and s position of each beamline element

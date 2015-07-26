@@ -465,6 +465,18 @@ void BDSBeamline::ApplyTransform3D(BDSTransform3D* component)
   zARE.rotate(dTheta, xARE);
 }
 
+void BDSBeamline::AddBeamlineElement(BDSBeamlineElement* element)
+{
+  // append it to the beam line
+  beamline.push_back(element);
+
+  // register it by name
+  RegisterElement(element);
+
+  // no need to update any internal variables - that's done by
+  // AddSingleComponent()
+}
+
 G4ThreeVector BDSBeamline::GetMaximumExtentAbsolute() const
 {
   G4ThreeVector mEA;
