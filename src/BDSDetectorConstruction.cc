@@ -209,6 +209,8 @@ void BDSDetectorConstruction::BuildTunnelAndSupports()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  if (!BDSGlobalConstants::Instance()->BuildTunnel())
+    {return;} // don't build the tunnel
   BDSBeamline* flatBeamLine = BDSAcceleratorModel::Instance()->GetFlatBeamline();
   std::pair<BDSBeamline*, BDSBeamline*> tunnelAndSupports;
   BDSTunnelBuilder* tb = new BDSTunnelBuilder();
@@ -454,39 +456,41 @@ void BDSDetectorConstruction::ComponentPlacement()
       thecurrentitem->PrepareField(elementPV);
     }
 
-  // place supports
-  // use iterator from BDSBeamline.hh
-  BDSBeamline* supports = BDSAcceleratorModel::Instance()->GetSupportsBeamline();
-  BDSBeamlineIterator supportsIt = supports->begin();
-  G4PVPlacement* supportPV = NULL;
-  for(; supportsIt != supports->end(); ++supportsIt)
+  if (BDSGlobalConstants::Instance()->BuildTunnel())
     {
-      supportPV = new G4PVPlacement((*supportsIt)->GetRotationMiddle(),         // rotation
-				    (*supportsIt)->GetPositionMiddle(),         // position
-				    (*supportsIt)->GetPlacementName() + "_pv",  // placement name
-				    (*supportsIt)->GetContainerLogicalVolume(), // volume to be placed
-				    worldPV,                                    // volume to place it in
-				    false,                                      // no boolean operation
-				    0,                                          // copy number
-				    checkOverlaps);                             // overlap checking
+      // place supports
+      // use iterator from BDSBeamline.hh
+      BDSBeamline* supports = BDSAcceleratorModel::Instance()->GetSupportsBeamline();
+      BDSBeamlineIterator supportsIt = supports->begin();
+      G4PVPlacement* supportPV = NULL;
+      for(; supportsIt != supports->end(); ++supportsIt)
+	{
+	  supportPV = new G4PVPlacement((*supportsIt)->GetRotationMiddle(),         // rotation
+					(*supportsIt)->GetPositionMiddle(),         // position
+					(*supportsIt)->GetPlacementName() + "_pv",  // placement name
+					(*supportsIt)->GetContainerLogicalVolume(), // volume to be placed
+					worldPV,                                    // volume to place it in
+					false,                                      // no boolean operation
+					0,                                          // copy number
+					checkOverlaps);                             // overlap checking
+	}
+      
+      // place the tunnel
+      BDSBeamline* tunnel = BDSAcceleratorModel::Instance()->GetTunnelBeamline();
+      BDSBeamlineIterator tunnelIt = tunnel->begin();
+      G4PVPlacement* tunnelPV = NULL;
+      for(; tunnelIt != tunnel->end(); ++tunnelIt)
+	{
+	  tunnelPV = new G4PVPlacement((*tunnelIt)->GetRotationMiddle(),         // rotation
+				       (*tunnelIt)->GetPositionMiddle(),         // position
+				       (*tunnelIt)->GetPlacementName() + "_pv",  // placement name
+				       (*tunnelIt)->GetContainerLogicalVolume(), // volume to be placed
+				       worldPV,                                  // volume to place it in
+				       false,                                    // no boolean operation
+				       0,                                        // copy number
+				       checkOverlaps);                           // overlap checking
+	}
     }
-
-  // place the tunnel
-  BDSBeamline* tunnel = BDSAcceleratorModel::Instance()->GetTunnelBeamline();
-  BDSBeamlineIterator tunnelIt = tunnel->begin();
-  G4PVPlacement* tunnelPV = NULL;
-  for(; tunnelIt != tunnel->end(); ++tunnelIt)
-    {
-      tunnelPV = new G4PVPlacement((*tunnelIt)->GetRotationMiddle(),         // rotation
-				   (*tunnelIt)->GetPositionMiddle(),         // position
-				   (*tunnelIt)->GetPlacementName() + "_pv",  // placement name
-				   (*tunnelIt)->GetContainerLogicalVolume(), // volume to be placed
-				   worldPV,                                  // volume to place it in
-				   false,                                    // no boolean operation
-				   0,                                        // copy number
-				   checkOverlaps);                           // overlap checking
-    }
-  
   // set precision back
   G4cout.precision(G4precision);
 }
