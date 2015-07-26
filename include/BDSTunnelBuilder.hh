@@ -1,7 +1,6 @@
 #ifndef BDSTUNNELBUILDER_H
 #define BDSTUNNELBUILDER_H
 
-#include <utility>
 #include "globals.hh" // geant4 types / globals
 
 class BDSBeamline;
@@ -20,12 +19,11 @@ public:
   BDSTunnelBuilder();
   ~BDSTunnelBuilder();
 
-  /// Main function of class - use tunnel factories and builds segments
+  /// Main function of class - use tunnel factories and builds sections
   /// of tunnel around the flat beamline (of accelerator components).
   /// Tunnel segments are placed in order in a new beamline instance,
-  /// which is returned. Additionally, build supports for magnets at the
-  /// same time and put them in their own beamline.
-  std::pair<BDSBeamline*,BDSBeamline*> BuildTunnelAndSupports(BDSBeamline* flatBeamLine);
+  /// which is returned.
+  BDSBeamline* BuildTunnelSections(BDSBeamline* flatBeamLine);
 
 private:
   /// Decide whether this is a good point to break the tunnel based on various cumulative

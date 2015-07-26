@@ -81,7 +81,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   BuildBeamline();
 
   // build the tunnel and supports
-  BuildTunnelAndSupports();
+  BuildTunnel();
 
   // build world and calculate coordinates
   BuildWorld();
@@ -204,7 +204,7 @@ void BDSDetectorConstruction::BuildBeamline()
   BDSAcceleratorModel::Instance()->RegisterFlatBeamline(beamline);
 }
 
-void BDSDetectorConstruction::BuildTunnelAndSupports()
+void BDSDetectorConstruction::BuildTunnel()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -212,13 +212,12 @@ void BDSDetectorConstruction::BuildTunnelAndSupports()
   if (!BDSGlobalConstants::Instance()->BuildTunnel())
     {return;} // don't build the tunnel
   BDSBeamline* flatBeamLine = BDSAcceleratorModel::Instance()->GetFlatBeamline();
-  std::pair<BDSBeamline*, BDSBeamline*> tunnelAndSupports;
+  BDSBeamline* tunnelBeamline;
   BDSTunnelBuilder* tb = new BDSTunnelBuilder();
-  tunnelAndSupports = tb->BuildTunnelAndSupports(flatBeamLine);
+  tunnelBeamline = tb->BuildTunnelSections(flatBeamLine);
   delete tb;
-
-  BDSAcceleratorModel::Instance()->RegisterSupportsBeamline(tunnelAndSupports.first);
-  BDSAcceleratorModel::Instance()->RegisterTunnelBeamline(tunnelAndSupports.second);
+  
+  BDSAcceleratorModel::Instance()->RegisterTunnelBeamline(tunnelBeamline);
 }
 
 void BDSDetectorConstruction::BuildWorld()

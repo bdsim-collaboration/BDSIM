@@ -46,8 +46,8 @@ private:
   /// and put in BDSBeamline container that calcualtes coordinates and extent of beamline
   void BuildBeamline();
 
-  /// Build the tunnel and supports around the already constructed flat beam line.
-  void BuildTunnelAndSupports();
+  /// Build the tunnel around the already constructed flat beam line.
+  void BuildTunnel();
   
   /// Build the world volume using the extent of the BDSBeamline instance created
   /// in BuildBeamline()

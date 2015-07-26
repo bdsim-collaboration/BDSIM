@@ -9,7 +9,6 @@
 #include "globals.hh"
 
 #include <sstream>
-#include <utility>
 
 BDSTunnelBuilder::BDSTunnelBuilder()
 {
@@ -66,7 +65,7 @@ G4bool BDSTunnelBuilder::BreakTunnel(G4double cumulativeLength,
   return result;
 }
 
-std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BDSBeamline* flatBeamline)
+BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -77,7 +76,6 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
   G4double       offsetY      = BDSGlobalConstants::Instance()->TunnelOffsetY();
   
   BDSBeamline* tunnelLine   = new BDSBeamline();
-  BDSBeamline* supportsLine = new BDSBeamline();
 
   // temporary variables to use as we go along
   G4int    nTunnelSections            = 0;
@@ -218,5 +216,5 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 	  endElement++; // advance the potential end element iterator
 	}
     }
-  return std::make_pair(supportsLine,tunnelLine);
+  return tunnelLine;
 }
