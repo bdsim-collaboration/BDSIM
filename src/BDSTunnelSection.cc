@@ -1,8 +1,8 @@
-#include "BDSTunnelSegment.hh"
+#include "BDSTunnelSection.hh"
 
 class G4VSolid;
 
-BDSTunnelSegment::BDSTunnelSegment(G4String              name,
+BDSTunnelSection::BDSTunnelSection(G4String              name,
 				   G4double              chordLengthIn,
 				   G4double              angle,
 				   BDSGeometryComponent* tunnelGeometry,
@@ -24,8 +24,8 @@ BDSTunnelSegment::BDSTunnelSegment(G4String              name,
   extentZ                = tunnelGeometry->GetExtentZ();
 }
 
-void BDSTunnelSegment::Initialise()
+void BDSTunnelSection::Initialise()
 {;}
 
-void BDSTunnelSegment::BuildContainerLogicalVolume()
+void BDSTunnelSection::BuildContainerLogicalVolume()
 {;}
