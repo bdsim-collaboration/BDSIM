@@ -3,7 +3,7 @@
 #include "BDSTiltOffset.hh"
 #include "BDSTunnelBuilder.hh"
 #include "BDSTunnelFactory.hh"
-#include "BDSTunnelSegment.hh"
+#include "BDSTunnelSection.hh"
 #include "BDSUtilities.hh"  // for isfinite function
 
 #include "globals.hh"
@@ -80,13 +80,13 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
   BDSBeamline* supportsLine = new BDSBeamline();
 
   // temporary variables to use as we go along
-  G4int    nTunnelSegments            = 0;
+  G4int    nTunnelSections            = 0;
   G4double cumulativeLength           = 0; // integrated length since last tunnel break
   G4double cumulativeAngle            = 0; // integrated angle since last tunnel break
   G4int    cumulativeNItems           = 0; // integrated number of accelerator components since last tunnel break
   G4double cumulativeDisplacementX    = 0; // integrated offset from initial point - horizontal
   G4double cumulativeDisplacementY    = 0; // integrated offset from initial point - vertical
-  BDSGeometryComponent* tunnelSegment = NULL;
+  BDSTunnelSection* tunnelSection     = NULL;
   BDSTunnelFactory*     tf            = BDSTunnelFactory::Instance(); // shortcut
 
   // iterator to the BDSBeamlineElement where the previous tunnel section finished
@@ -115,7 +115,7 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 	{
 	  // work out tunnel parameters
 	  std::stringstream name;
-	  name << "tunnel_" << nTunnelSegments;
+	  name << "tunnel_" << nTunnelSections;
 
 	  // calculate start central point of tunnel
 	  G4ThreeVector startPoint         = (*startElement)->GetReferencePositionStart();
@@ -145,14 +145,14 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 	  G4cout << "Start point (global): " << startPoint                          << G4endl;
 	  G4cout << "End point (global):   " << endPoint                            << G4endl;
 	  G4cout << "Has a finite angle:   " << isAngled                            << G4endl;
-	  G4cout << "Segment length:       " << segmentLength                       << G4endl;
+	  G4cout << "Section length:       " << segmentLength                       << G4endl;
 	  G4cout << "Total angle:          " << cumulativeAngle                     << G4endl;
 #endif
 	  
 	  // create tunnel segment
 	  if (isAngled)
 	    { // use the angled faces
-	      tunnelSegment = tf->CreateTunnelSectionAngledInOut(defaultModel->type,          // type
+	      tunnelSection = tf->CreateTunnelSectionAngledInOut(defaultModel->type,          // type
 								 name.str(),                  // name
 								 segmentLength,               // length
 								 cumulativeAngle*0.5,         // input angle
@@ -169,7 +169,7 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 	    }
 	  else
 	    { // straight section
-	      tunnelSegment = tf->CreateTunnelSection(defaultModel->type,          // type
+	      tunnelSection = tf->CreateTunnelSection(defaultModel->type,          // type
 						      name.str(),                  // name
 						      segmentLength,               // length
 						      defaultModel->thickness,     // thickness
@@ -184,22 +184,16 @@ std::pair<BDSBeamline*,BDSBeamline*> BDSTunnelBuilder::BuildTunnelAndSupports(BD
 	    }
 	  
 	  // store segment in tunnel beam line
-	  BDSTunnelSegment* ts = new BDSTunnelSegment(name.str(),
-						      segmentLength,
-						      cumulativeAngle,
-						      tunnelSegment,
-						      NULL);
-
 	  if (tunnelLine->empty())
 	    {
 	      BDSTiltOffset* tos = new BDSTiltOffset(offsetX,offsetY,0);
-	      tunnelLine->AddComponent(ts,tos);
+	      tunnelLine->AddComponent(tunnelSection,tos);
 	    }
 	  else
-	    {tunnelLine->AddComponent(ts);} // append to tunnel beam line
+	    {tunnelLine->AddComponent(tunnelSection);} // append to tunnel beam line
 	  
 	  // update / reset counters & iterators
-	  nTunnelSegments   += 1;
+	  nTunnelSections   += 1;
 	  cumulativeLength   = 0;
 	  cumulativeAngle    = 0;
 	  cumulativeNItems   = 0;
