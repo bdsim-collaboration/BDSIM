@@ -61,9 +61,9 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   // get pointer to analysis manager
   analMan = BDSAnalysisManager::Instance();
 
-  // even number feedback
+  // number feedback
   G4int event_number = evt->GetEventID();
-  if ((event_number+1)%printModulo == 0)
+  if (event_number%printModulo == 0)
     {G4cout << "\n---> Begin of event: " << event_number << G4endl;}
   if(verboseEvent) G4cout << __METHOD_NAME__ << "event #"<<event_number<<G4endl ;
 
