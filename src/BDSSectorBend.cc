@@ -74,13 +74,12 @@ void BDSSectorBend::Build()
 void BDSSectorBend::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
-  G4ThreeVector Bfield(0.,-itsBField,0.);
+  G4ThreeVector Bfield(0.,itsBField,0.);
   // B-Field constructed with arc length for radius of curvature
   itsMagField = new BDSSbendMagField(Bfield,arcLength,angle);
   itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
   BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
-  
-  dipoleStepper->SetBField(-itsBField); // note the - sign...
+  dipoleStepper->SetBField(itsBField);
   dipoleStepper->SetBGrad(itsBGrad);
   itsStepper = dipoleStepper;
 }

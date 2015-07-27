@@ -102,7 +102,7 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector vnorm = vhat.cross(yhat);
   
   // radius of curvature
-  G4double R=-(InitMag/CLHEP::GeV)/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
+  G4double R=InitMag/CLHEP::GeV/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
 
   // include the charge of the particles
   R*=charge;
@@ -153,7 +153,7 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
       G4double x1,x1p,y1,y1p,z1p;
       //G4double z1;
       
-      G4double NomR = -(nominalEnergy/CLHEP::GeV)/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
+      G4double NomR = nominalEnergy/CLHEP::GeV/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
       
       G4double NominalPath = sqrt(NomR*NomR - LocalR.z()*LocalR.z()) - fabs(NomR)*cos(itsAngle/2);
       
