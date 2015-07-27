@@ -226,9 +226,6 @@ void BDSHistogram1D::Fill(G4double x, G4double weight)
 BDSHistogram1D::~BDSHistogram1D()
 {
   //must clear the bins from the heap
-#ifdef BDSDEBUG
-  G4cout << "BDSHistorgram1D > emptying bins" << G4endl;
-#endif
   for (std::vector<BDSBin*>::iterator i = bins.begin(); i != bins.end(); ++i)
     {delete *i;}
   delete underflow;
