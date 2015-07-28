@@ -280,7 +280,10 @@ will make the pdf Manual in the folder ``manual/latex``.
 Making Doxygen Code Documentation
 ---------------------------------
 
-From the build directory run the following command::
+Doxygen code documentation is available online at
+http://www.pp.rhul.ac.uk/bdsim/doxygen/
+
+If desired the user can create this from the build directory using the following command::
 
   > make doc
 
