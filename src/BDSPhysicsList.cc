@@ -567,29 +567,22 @@ void BDSPhysicsList::ConstructParticle()
 #include "G4ProductionCuts.hh"
 void BDSPhysicsList::SetCuts()
 {
-  if (verbose){
-    G4cout << __METHOD_NAME__ << " setting cuts\n";
-    
-  }
-  
   SetCutsWithDefault();   
 
+  G4double prodCutPhotons   = BDSGlobalConstants::Instance()->GetProdCutPhotons();
+  G4double prodCutElectrons = BDSGlobalConstants::Instance()->GetProdCutElectrons();
+  G4double prodCutPositrons = BDSGlobalConstants::Instance()->GetProdCutPositrons();
+  
+  G4cout << __METHOD_NAME__ << "Photon production range cut (mm)   " << prodCutPhotons   << G4endl;
+  G4cout << __METHOD_NAME__ << "Electron production range cut (mm) " << prodCutElectrons << G4endl;
+  G4cout << __METHOD_NAME__ << "Positron production range cut (mm) " << prodCutPositrons << G4endl;
 
+  // BDSIM's default range cuts (0.7mm) are different from geant4 defaults (1mm) so always set.
+  SetCutValue(prodCutPhotons,"gamma");
+  SetCutValue(prodCutElectrons,"e-");
+  SetCutValue(prodCutPositrons,"e+");
   
-    if(BDSGlobalConstants::Instance()->GetProdCutPhotons()>0)
-      SetCutValue(BDSGlobalConstants::Instance()->GetProdCutPhotons(),G4ProductionCuts::GetIndex("gamma"));
-  
-   if(BDSGlobalConstants::Instance()->GetProdCutElectrons()>0)
-     SetCutValue(BDSGlobalConstants::Instance()->GetProdCutElectrons(),G4ProductionCuts::GetIndex("e-"));
-  
-  if(BDSGlobalConstants::Instance()->GetProdCutPositrons()>0)
-    SetCutValue(BDSGlobalConstants::Instance()->GetProdCutPositrons(),G4ProductionCuts::GetIndex("e+"));
-  
-
-    
-  if(1)
-    DumpCutValuesTable(); 
-
+  DumpCutValuesTable();
 }
 
 
