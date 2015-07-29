@@ -11,7 +11,6 @@
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
-#include "G4UserLimits.hh"
 
 BDSSpoiler::BDSSpoiler(G4String      name,
 		       G4double      length,

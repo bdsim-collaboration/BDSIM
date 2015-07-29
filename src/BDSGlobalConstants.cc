@@ -105,7 +105,8 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsProdCutPositrons    = opt.prodCutPositrons    * CLHEP::m;
   itsProdCutPositronsP   = opt.prodCutPositronsP   * CLHEP::m;
   itsProdCutPositronsA   = opt.prodCutPositronsA   * CLHEP::m;
-
+  itsProdCutHadrons      = opt.prodCutHadrons      * CLHEP::m;
+  
   // tracking accuracy
   itsDeltaChord          = opt.deltaChord          * CLHEP::m;
   itsChordStepMinimum    = opt.chordStepMinimum    * CLHEP::m;

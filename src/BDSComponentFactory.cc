@@ -43,7 +43,6 @@
 #include "G4GeometryTolerance.hh"
 
 #include "parser/enums.h"
-#include "parser/elementlist.h"
 
 #include <cmath>
 #include <sstream>

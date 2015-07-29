@@ -10,7 +10,6 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
-#include "BDSUtilities.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4Event.hh"

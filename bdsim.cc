@@ -37,8 +37,6 @@
 
 #include <cstdlib>      // standard headers 
 #include <cstdio>
-#include <unistd.h>
-#include <getopt.h>
 #include <signal.h>
 
 #include "G4EventManager.hh" // Geant4 includes

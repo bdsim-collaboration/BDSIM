@@ -13,7 +13,6 @@
 #include "BDSUtilities.hh"
 
 #include "G4FieldManager.hh"
-#include "G4IntersectionSolid.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4PVPlacement.hh"

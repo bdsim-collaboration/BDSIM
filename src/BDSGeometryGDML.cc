@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include <cstring>
 
-BDSGeometryGDML::BDSGeometryGDML(G4String GDMLfileIn):markerVol(NULL){
+BDSGeometryGDML::BDSGeometryGDML(G4String GDMLfileIn):markerVol(NULL),gdmlWorld(NULL){
   GDMLfile = GDMLfileIn;
 }
 

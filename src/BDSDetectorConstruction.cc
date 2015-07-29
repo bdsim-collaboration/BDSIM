@@ -20,8 +20,6 @@
 #include "G4Box.hh"
 #include "G4Colour.hh"
 #include "G4Electron.hh"
-#include "G4GeometryManager.hh"
-#include "G4GeometrySampler.hh"
 #include "G4LogicalVolume.hh"
 #include "G4MagneticField.hh"
 #include "G4Material.hh"
@@ -32,11 +30,9 @@
 #include "G4PVPlacement.hh"
 #include "G4Region.hh"
 #include "G4TransportationManager.hh"
-#include "G4UniformMagField.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4VSampler.hh"
 #include "globals.hh"
 
 #include <iterator>
@@ -55,7 +51,7 @@ typedef std::vector<G4LogicalVolume*>::iterator BDSLVIterator;
 
 BDSDetectorConstruction::BDSDetectorConstruction():
   precisionRegion(NULL),gasRegion(NULL),
-  magField(NULL),
+  worldPV(NULL),magField(NULL),
   theHitMaker(NULL),theParticleBounds(NULL)
 {  
   verbose       = BDSExecOptions::Instance()->GetVerbose();
