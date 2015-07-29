@@ -164,12 +164,12 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
       // rotate about cumulative local y axis of beamline
       // middle rotated by half angle in local x,z plane
       G4ThreeVector unitY = G4ThreeVector(0,1,0);
-      referenceRotationMiddle->rotate(-angle * 0.5, unitY.transform(*previousReferenceRotationEnd));
+      referenceRotationMiddle->rotate(angle*0.5, unitY.transform(*previousReferenceRotationEnd));
       // end rotated by full angle in local x,z plane
-      unitY = G4ThreeVector(0,1,0);
-      referenceRotationEnd->rotate(-angle, unitY.transform(*previousReferenceRotationEnd));
+      G4ThreeVector unitYEnd = G4ThreeVector(0,1,0);
+      referenceRotationEnd->rotate(angle, unitYEnd.transform(*previousReferenceRotationEnd));
     }
-
+  
   // add the tilt to the rotation matrices (around z axis)
   G4RotationMatrix* rotationStart, *rotationMiddle, *rotationEnd;
   if (hasFiniteTilt && !hasFiniteAngle)
@@ -214,14 +214,12 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
     {
       referencePositionStart  = previousReferencePositionEnd;
       // calculate delta to mid point
-      G4ThreeVector md = G4ThreeVector(0, 0, 0.5 * length).transform(*referenceRotationMiddle);
-      // flip x coordinate only due our definition of angle
-      md.setX(md.x()*-1);
+      G4ThreeVector md = G4ThreeVector(0, 0, 0.5 * length);
+      md.transform(*referenceRotationMiddle);
       referencePositionMiddle = referencePositionStart + md;
       // remember the end position is the chord length along the half angle, not the full angle
       // the particle achieves the full angle though by the end position.
       G4ThreeVector delta = G4ThreeVector(0, 0, length).transform(*referenceRotationMiddle);
-      delta.setX(delta.x()*-1);
       referencePositionEnd = referencePositionStart + delta;
     }
   else
@@ -292,8 +290,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
 
   // update the global constants
   BDSGlobalConstants::Instance()->SetSMax(sPositionEnd);
-  
-  /*
+
 #ifdef BDSDEBUG
   // feedback about calculated coordinates
   G4cout << "calculated coordinates in mm and rad are " << G4endl;
@@ -310,7 +307,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   G4cout << "rotation middle:           " << *rotationMiddle;
   G4cout << "rotation end:              " << *rotationEnd;
 #endif
-  */
+  
   // construct beamline element
   BDSBeamlineElement* element = new BDSBeamlineElement(component,
 						       positionStart,
@@ -384,14 +381,42 @@ void BDSBeamline::ApplyTransform3D(BDSTransform3D* component)
   // transform the local dx,dy,dz displacement into the global frame then apply
   G4ThreeVector delta = G4ThreeVector(dx,dy,dz).transform(*previousReferenceRotationEnd);
   previousReferencePositionEnd = previousReferencePositionEnd + G4ThreeVector(dx,dy,dz);
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "existing end rotation matrix:" << *previousReferenceRotationEnd << G4endl;
+#endif
   
   // apply rotation
-  G4ThreeVector unitX = G4ThreeVector(1,0,0);
-  G4ThreeVector unitY = G4ThreeVector(0,1,0);
+  // euler angles must be applied in sequence about the cumulatively rotated axes
+  // use unit vectors that are transformed to the current cumulative rotation of the beamline
+  // as rotation axes for each angle.
   G4ThreeVector unitZ = G4ThreeVector(0,0,1);
-  previousReferenceRotationEnd->rotate(dPsi,   unitZ.transform(*previousReferenceRotationEnd));
-  previousReferenceRotationEnd->rotate(dPhi,   unitY.transform(*previousReferenceRotationEnd));
-  previousReferenceRotationEnd->rotate(dTheta, unitX.transform(*previousReferenceRotationEnd));
+  // transform to the current local z axis at the end of the beamline
+  unitZ.transform(*previousReferenceRotationEnd);
+  // apply the phi (alpha) euler angle about the z axis (step1)
+  previousReferenceRotationEnd->rotate(dPhi, unitZ);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "after apply Phi:" << *previousReferenceRotationEnd << G4endl;
+#endif
+  // apply the theta (beta) euler angle about the N or x' axis (step 2)
+  // transform a unit x to axes rotated by phi (called N or x')
+  G4ThreeVector unitX = G4ThreeVector(1,0,0);
+  unitX.transform(*previousReferenceRotationEnd);
+  // rotate about N by dTheta
+  previousReferenceRotationEnd->rotate(dTheta, unitX);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "after apply Phi & Theta:" << *previousReferenceRotationEnd << G4endl;
+#endif
+  // apply the psi (gamma) euler angle about the Z or z'' axis
+  G4ThreeVector unitZPP = G4ThreeVector(0,0,1); //Z Prime Prime
+  // get unit z to local axes already rotated by phi and theta hence zpp name
+  unitZPP.transform(*previousReferenceRotationEnd);
+  // rotate by psi about zpp
+  previousReferenceRotationEnd->rotate(dPsi, unitZPP);
+  
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "new end rotation matrix:" << *previousReferenceRotationEnd << G4endl;
+#endif
 }
 
 void BDSBeamline::AddBeamlineElement(BDSBeamlineElement* element)
