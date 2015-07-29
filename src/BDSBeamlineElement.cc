@@ -56,8 +56,11 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
     }
   componentIn->IncrementNTimesPlaced();
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "unique placement name: \"" << placementName << "_pv\"" << G4endl;
-#endif  
+  G4cout << __METHOD_NAME__ << "unique placement name: \"" << placementName << "_pv\"" << G4endl;
+#endif
+
+  // create the placement transform from supplied rotation matrices and vector
+  placementTransform = new G4Transform3D(*rotationMiddle, positionMiddle);
 }
 
 BDSBeamlineElement::~BDSBeamlineElement()

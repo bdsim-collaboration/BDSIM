@@ -6,6 +6,7 @@
 #include "globals.hh" // geant4 globals / types
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 #include <ostream>
 
@@ -64,6 +65,7 @@ public:
   inline G4double                 GetSPositionStart()          const;
   inline G4double                 GetSPositionMiddle()         const;
   inline G4double                 GetSPositionEnd()            const;
+  inline G4Transform3D*           GetPlacementTransform()      const;
   ///@}
 
   ///@{ Reassign the end variable as required when applying a transform
@@ -118,6 +120,10 @@ private:
   G4double          sPositionMiddle;
   G4double          sPositionEnd;
   ///@}
+
+  /// Transform made from positionMiddle and rotationMiddle. By using them as
+  /// a transform, the rotation matrix is the correct way around (inversion).
+  G4Transform3D*    placementTransform;
 };
 
 inline BDSAcceleratorComponent* BDSBeamlineElement::GetAcceleratorComponent() const
@@ -176,5 +182,8 @@ inline G4double                 BDSBeamlineElement::GetSPositionMiddle() const
 
 inline G4double                 BDSBeamlineElement::GetSPositionEnd() const
 {return sPositionEnd;}
+
+inline G4Transform3D*           BDSBeamlineElement::GetPlacementTransform() const
+{return placementTransform;}
 
 #endif

@@ -382,19 +382,18 @@ void BDSDetectorConstruction::ComponentPlacement()
 
       // get the placement details from the beamline component
       G4int nCopy         = 0;
-      G4RotationMatrix* r = (*it)->GetRotationMiddle();
-      G4ThreeVector     p = (*it)->GetPositionMiddle();
       // reference rotation and position for the read out volume
       G4RotationMatrix* rr = (*it)->GetReferenceRotationMiddle();
       G4ThreeVector     rp = (*it)->GetReferencePositionMiddle();
+      G4Transform3D*    pt = (*it)->GetPlacementTransform();
       
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "placing mass geometry" << G4endl;
-      G4cout << "position: " << p << ", rotation: " << *r << G4endl;
+      G4cout << "placement transform position: " << pt->getTranslation()  << G4endl;
+      G4cout << "placement transform rotation: " << pt->getRotation()  << G4endl; 
 #endif
       
-      G4PVPlacement* elementPV = new G4PVPlacement(r,                                 // its rotation
-						   p,                                 // its position
+      G4PVPlacement* elementPV = new G4PVPlacement(*pt,                               // placement transform
 						   (*it)->GetPlacementName() + "_pv", // its name
 						   elementLV,                         // its logical volume
 						   worldPV,                           // its mother  volume
