@@ -21,4 +21,19 @@ option, tunnelThickness = 0.25*m,
 	tunnelOffsetX = -1*m,
 	tunnelOffsetY = 20*cm;
 
+option, tunnelThickness = 0.5*m,
+	buildTunnel     = 1,
+	buildTunnelStraight=1,
+	tunnelType      = "square",
+	tunnelAper1     = 3*m,
+	tunnelAper2     = 1.5*m,
+	tunnelVisible   = 1,
+	tunnelOffsetX   = 1*m,
+	tunnelFloorOffset = 1*m,
+	tunnelMaterial    = "concrete",
+	tunnelSoilThickness = 2*m,
+	tunnelOffsetX = 1*m;
+
+option, checkOverlaps =1 ;
+
 use, period=lat;
