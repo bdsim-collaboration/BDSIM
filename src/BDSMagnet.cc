@@ -1,9 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
@@ -140,9 +134,8 @@ void BDSMagnet::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
   itsBPFieldMgr= new G4FieldManager();
   itsBPFieldMgr->SetDetectorField(aField);
   itsBPFieldMgr->SetChordFinder(itsChordFinder);
-  if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0){
-    itsBPFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
-  }
+  if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0)
+    {itsBPFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());}
   if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>0)
     itsBPFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
   if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0)

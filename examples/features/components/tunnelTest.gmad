@@ -1,0 +1,39 @@
+include options.gmad;
+!include drift.gmad;
+include tunnel.gmad;
+include elec.gmad;
+
+d1: drift, l=1.2*m;
+
+lat : line = (d1,d1,d1,d1,d1,d1,d1,d1);
+
+option, beampipeThickness = 1*cm;
+
+option, tunnelThickness = 0.25*m,
+	buildTunnel     = 1,
+	tunnelType      = "circular",
+	tunnelAper1     = 1.5*m,
+	tunnelAper2     = 3*m,
+	tunnelVisible   = 1,
+	tunnelFloorOffset = 1.2*m,
+	tunnelMaterial    = "concrete",
+	tunnelSoilThickness = 2*m,
+	tunnelOffsetX = -1*m,
+	tunnelOffsetY = 20*cm;
+
+option, tunnelThickness = 0.5*m,
+	buildTunnel     = 1,
+	buildTunnelStraight=1,
+	tunnelType      = "square",
+	tunnelAper1     = 3*m,
+	tunnelAper2     = 1.5*m,
+	tunnelVisible   = 1,
+	tunnelOffsetX   = 1*m,
+	tunnelFloorOffset = 1*m,
+	tunnelMaterial    = "concrete",
+	tunnelSoilThickness = 2*m,
+	tunnelOffsetX = 1*m;
+
+option, checkOverlaps =1 ;
+
+use, period=lat;

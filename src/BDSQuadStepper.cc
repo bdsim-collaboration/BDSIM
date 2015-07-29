@@ -10,23 +10,23 @@ extern G4double BDSLocalRadiusOfCurvature;
 BDSQuadStepper::BDSQuadStepper(G4Mag_EqRhs *EqRhs)
   : G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
                                       // position & velocity
-    itsBGrad(0.0),itsDist(0.0)
+    itsBGrad(0.0),itsDist(0.0),initialised(false)
 {
   fPtrMagEqOfMot = EqRhs;
-  QuadNavigator=new G4Navigator();
+  QuadNavigator  = new G4Navigator();
 }
 
 
-void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
-				   G4ThreeVector,
-				   G4double  h,
-				   G4double  yQuad[])
+void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
+				  G4ThreeVector /*bField*/,
+				  G4double        h,
+				  G4double        yQuad[])
 {
-  const G4double *pIn = yIn+3;
-  G4ThreeVector GlobalR = G4ThreeVector( yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector GlobalP = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
+  const G4double *pIn      = yIn+3;
+  G4ThreeVector GlobalR    = G4ThreeVector( yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector GlobalP    = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
   G4ThreeVector InitMomDir = GlobalP.unit();
-  G4double InitPMag = GlobalP.mag();
+  G4double InitPMag        = GlobalP.mag();
   // quad strength k
   G4double kappa = - fPtrMagEqOfMot->FCof()*itsBGrad/InitPMag;
 
@@ -44,12 +44,6 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
          << " k = " << kappa/(1./CLHEP::m2) << " m^-2" << G4endl
          << G4endl; 
 #endif
-
-  G4double h2=h*h;
-
-  QuadNavigator->SetWorldVolume(G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->GetWorldVolume()); 
-  QuadNavigator->LocateGlobalPointAndSetup(GlobalR);
-
   // relevant momentum scale is p_z, not P_tot:
   // check that the approximations are valid, else do a linear step:
   if(fabs(kappa)<1.e-12)
@@ -67,14 +61,19 @@ void BDSQuadStepper::AdvanceHelix( const G4double  yIn[],
       itsDist=0;
       return;
     }
-    
-  h2=h*h;
+  
+  if (!initialised)
+    {
+      G4VPhysicalVolume* worldPV = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->GetWorldVolume();
+      QuadNavigator->SetWorldVolume(worldPV);
+      initialised = true;
+    }
+  QuadNavigator->LocateGlobalPointAndSetup(GlobalR);
 
-  G4AffineTransform GlobalAffine=QuadNavigator->
-    GetGlobalToLocalTransform();
-
-  G4ThreeVector LocalR=GlobalAffine.TransformPoint(GlobalR); 
-  G4ThreeVector LocalRp=GlobalAffine.TransformAxis(InitMomDir);
+  G4double          h2           =h*h;
+  G4AffineTransform GlobalAffine = QuadNavigator->GetGlobalToLocalTransform();
+  G4ThreeVector     LocalR       = GlobalAffine.TransformPoint(GlobalR); 
+  G4ThreeVector     LocalRp      = GlobalAffine.TransformAxis(InitMomDir);
 
 #ifdef BDSDEBUG
   G4cout << "BDSQuadStepper: initial point in local coordinates:" << G4endl

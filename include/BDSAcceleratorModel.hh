@@ -46,13 +46,24 @@ public:
   /// Access the logical volume for the read out geometry
   inline G4LogicalVolume*   GetReadOutWorldLV();
 
-  /// Register the flat beamline - flat means that each element in the beamline represents
+  /// Register the flat beam line - flat means that each element in the beamline represents
   /// one element in the accelerator lattice
   inline void               RegisterFlatBeamline(BDSBeamline* beamlineIn);
 
-  /// Access flat beamline
+  /// Access flat beam line
   inline BDSBeamline*       GetFlatBeamline();
-  
+
+  /// Register the beam line containing all the magnet supports
+  inline void               RegisterSupportsBeamline(BDSBeamline* beamlineIn);
+
+  /// Access the beam line containing all the magnet supports
+  inline BDSBeamline*       GetSupportsBeamline();
+
+  /// Register the beam line containing all the tunnel segments
+  inline void               RegisterTunnelBeamline(BDSBeamline* beamlineIn);
+
+  /// Access the beam line containing all the tunnel segments
+  inline BDSBeamline*       GetTunnelBeamline(); 
 
 private:
   BDSAcceleratorModel(); ///< default constructor is private as singleton
@@ -63,7 +74,9 @@ private:
   G4VPhysicalVolume* readOutWorldPV; ///< physical volume for read out geometry
   G4LogicalVolume*   readOutWorldLV; ///< logical volume for read out geometry
 
-  BDSBeamline*       flatBeamline;   ///< flat beam line
+  BDSBeamline*       flatBeamline;     ///< flat beam line
+  BDSBeamline*       supportsBeamline; ///< element supports beam line
+  BDSBeamline*       tunnelBeamline;   ///< tunnel segments beam line
   
 };
 
@@ -90,5 +103,17 @@ inline void BDSAcceleratorModel::RegisterFlatBeamline(BDSBeamline* beamlineIn)
 
 inline BDSBeamline* BDSAcceleratorModel::GetFlatBeamline()
 {return flatBeamline;}
+
+inline void BDSAcceleratorModel::RegisterSupportsBeamline(BDSBeamline* beamlineIn)
+{supportsBeamline = beamlineIn;}
+
+inline BDSBeamline* BDSAcceleratorModel::GetSupportsBeamline()
+{return supportsBeamline;}
+
+inline void BDSAcceleratorModel::RegisterTunnelBeamline(BDSBeamline* beamlineIn)
+{tunnelBeamline = beamlineIn;}
+
+inline BDSBeamline* BDSAcceleratorModel::GetTunnelBeamline()
+{return tunnelBeamline;}
 
 #endif

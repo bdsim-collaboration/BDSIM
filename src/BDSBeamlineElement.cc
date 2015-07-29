@@ -2,13 +2,13 @@
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSDebug.hh"
-#include "BDSGeometryComponent.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 
 #include <ostream>
+#include <sstream>
 
 BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 				       G4ThreeVector            positionStartIn,
@@ -25,16 +25,7 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 				       G4RotationMatrix*        referenceRotationEndIn,
 				       G4double                 sPositionStartIn,
 				       G4double                 sPositionMiddleIn,
-				       G4double                 sPositionEndIn,
-				       G4ThreeVector            xAxisReferenceStartIn,
-				       G4ThreeVector            yAxisReferenceStartIn,
-				       G4ThreeVector            zAxisReferenceStartIn,
-				       G4ThreeVector            xAxisReferenceMiddleIn,
-				       G4ThreeVector            yAxisReferenceMiddleIn,
-				       G4ThreeVector            zAxisReferenceMiddleIn,
-				       G4ThreeVector            xAxisReferenceEndIn,
-				       G4ThreeVector            yAxisReferenceEndIn,
-				       G4ThreeVector            zAxisReferenceEndIn):
+				       G4double                 sPositionEndIn):
   component(componentIn),
   positionStart(positionStartIn), positionMiddle(positionMiddleIn), positionEnd(positionEndIn),
   rotationStart(rotationStartIn), rotationMiddle(rotationMiddleIn), rotationEnd(rotationEndIn),
@@ -44,16 +35,7 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   referenceRotationStart(referenceRotationStartIn),
   referenceRotationMiddle(referenceRotationMiddleIn),
   referenceRotationEnd(referenceRotationEndIn),
-  sPositionStart(sPositionStartIn), sPositionMiddle(sPositionMiddleIn), sPositionEnd(sPositionEndIn),
-  xAxisReferenceStart(xAxisReferenceStartIn),
-  yAxisReferenceStart(yAxisReferenceStartIn),
-  zAxisReferenceStart(zAxisReferenceStartIn),
-  xAxisReferenceMiddle(xAxisReferenceMiddleIn),
-  yAxisReferenceMiddle(yAxisReferenceMiddleIn),
-  zAxisReferenceMiddle(zAxisReferenceMiddleIn),
-  xAxisReferenceEnd(xAxisReferenceEndIn),
-  yAxisReferenceEnd(yAxisReferenceEndIn),
-  zAxisReferenceEnd(zAxisReferenceEndIn)
+  sPositionStart(sPositionStartIn), sPositionMiddle(sPositionMiddleIn), sPositionEnd(sPositionEndIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__;
@@ -63,6 +45,22 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
     {G4cerr << "WARNING - supplied component is in valid!" << G4endl;}
   G4cout << G4endl;
 #endif
+
+  if (componentIn->GetNTimesPlaced() < 1)
+    {placementName = componentIn->GetName();}
+  else
+    {
+      std::stringstream namestream;
+      namestream << componentIn->GetName() << "_" << componentIn->GetNTimesPlaced();
+      placementName = namestream.str();
+    }
+  componentIn->IncrementNTimesPlaced();
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "unique placement name: \"" << placementName << "_pv\"" << G4endl;
+#endif
+
+  // create the placement transform from supplied rotation matrices and vector
+  placementTransform = new G4Transform3D(*rotationMiddle, positionMiddle);
 }
 
 BDSBeamlineElement::~BDSBeamlineElement()
@@ -83,13 +81,7 @@ std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &e)
       << "Start, middle & end rotation: "
       << *(e.GetRotationStart())  << " " << *(e.GetRotationMiddle())  << " " << *(e.GetRotationEnd())  << G4endl
       << "Start, middle & end s position: "
-      << e.GetSPositionStart() << " " << e.GetSPositionMiddle() << " " << e.GetSPositionEnd() << G4endl
-      << "X axis at the start, middle & end: "
-      << e.GetXAxisReferenceStart() << " " << e.GetXAxisReferenceMiddle() << " " << e.GetXAxisReferenceEnd() << G4endl
-      << "Y axis at the start, middle & end: "
-      << e.GetYAxisReferenceStart() << " " << e.GetYAxisReferenceMiddle() << " " << e.GetYAxisReferenceEnd() << G4endl
-      << "Z axis at the start, middle & end: "
-      << e.GetZAxisReferenceStart() << " " << e.GetZAxisReferenceMiddle() << " " << e.GetZAxisReferenceEnd() << G4endl;
+      << e.GetSPositionStart() << " " << e.GetSPositionMiddle() << " " << e.GetSPositionEnd() << G4endl;
 
   return out;
 }

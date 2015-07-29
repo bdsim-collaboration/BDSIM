@@ -71,8 +71,7 @@ BDSGeometryComponent::~BDSGeometryComponent()
   for (; itUL != allUserLimits.end(); ++itUL)
     {delete (*itUL);}
   
-  if (containerSolid)
-    {delete containerSolid;}
+  delete containerSolid;
 }
 
 void BDSGeometryComponent::RegisterSolid(G4VSolid* solid, G4bool internalCheck)

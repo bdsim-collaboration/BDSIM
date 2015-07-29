@@ -125,9 +125,10 @@ void BDSBeamPipeFactoryBase::BuildLogicalVolumes(G4String    nameIn,
   beamPipeLV = new G4LogicalVolume(beamPipeSolid,
 				   beamPipeMaterialIn,
 				   nameIn + "_beampipe_lv");
-  
+
+  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
   containerLV = new G4LogicalVolume(containerSolid,
-				    vacuumMaterialIn,
+				    emptyMaterial,
 				    nameIn + "_container_lv");
   allLogicalVolumes.push_back(vacuumLV);
   allLogicalVolumes.push_back(beamPipeLV);

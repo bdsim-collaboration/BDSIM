@@ -1,9 +1,3 @@
-/** BDSIM, v0.4   
-
-Last modified 23.10.2007 by Steve Malton
-
-**/
-
 #include <cstdlib>
 
 #include "BDSGlobalConstants.hh"
@@ -13,6 +7,7 @@ Last modified 23.10.2007 by Steve Malton
 #include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
+#include "BDSTunnelInfo.hh"
 
 #include "G4Colour.hh"
 #include "G4FieldManager.hh"
@@ -25,10 +20,10 @@ extern Options options;
 
 BDSGlobalConstants* BDSGlobalConstants::_instance = 0;
 
-BDSGlobalConstants* BDSGlobalConstants::Instance(){
-  if(_instance==0) {
-    _instance = new BDSGlobalConstants(options);
-  }
+BDSGlobalConstants* BDSGlobalConstants::Instance()
+{
+  if(_instance==0)
+    {_instance = new BDSGlobalConstants(options);}
   return _instance;
 }
 
@@ -53,14 +48,14 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsFFact=opt.ffact;
   itsParticleName=G4String(opt.particleName);
   itsBeamTotalEnergy = opt.beamEnergy * CLHEP::GeV;
-  if (itsBeamTotalEnergy == 0) {
-    G4cerr << __METHOD_NAME__ << "Error: option \"beamenergy\" is not defined or must be greater than 0" <<  G4endl;
-    exit(1);
-  }
+  if (itsBeamTotalEnergy == 0)
+    {
+      G4cerr << __METHOD_NAME__ << "Error: option \"beamenergy\" is not defined or must be greater than 0" <<  G4endl;
+      exit(1);
+    }
   itsParticleTotalEnergy = opt.E0 * CLHEP::GeV; 
-  if (itsParticleTotalEnergy == 0) {
-    itsParticleTotalEnergy = itsBeamTotalEnergy;
-  }
+  if (itsParticleTotalEnergy == 0)
+    {itsParticleTotalEnergy = itsBeamTotalEnergy;}
 
   itsPlanckScatterFe = opt.planckScatterFe;
   //Fraction of events with leading particle biasing.
@@ -84,14 +79,31 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   }
   itsMagnetGeometryType = BDS::DetermineMagnetGeometryType(opt.magnetGeometryType);
   itsOuterMaterialName  = opt.outerMaterialName;
-  
+
+  // tunnel
+  buildTunnel            = opt.buildTunnel;
+  buildTunnelStraight    = opt.buildTunnelStraight;
+  tunnelInfo             = new BDSTunnelInfo(opt.tunnelType,
+					     opt.tunnelThickness     * CLHEP::m,
+					     opt.tunnelSoilThickness * CLHEP::m,
+					     opt.tunnelMaterial,
+					     opt.soilMaterial,
+					     opt.buildTunnelFloor,
+					     opt.tunnelFloorOffset   * CLHEP::m,
+					     opt.tunnelAper1         * CLHEP::m,
+					     opt.tunnelAper2         * CLHEP::m,
+					     opt.tunnelSensitive,
+					     opt.tunnelVisible);
+  tunnelOffsetX          = opt.tunnelOffsetX * CLHEP::m;
+  tunnelOffsetY          = opt.tunnelOffsetY * CLHEP::m;
+
   // beam loss monitor (BLM) geometry
-  itsBlmRad              = opt.blmRad * CLHEP::m;
-  itsBlmLength           = opt.blmLength * CLHEP::m;
+  itsBlmRad              = opt.blmRad              * CLHEP::m;
+  itsBlmLength           = opt.blmLength           * CLHEP::m;
 
   // samplers
-  itsSamplerDiameter     = opt.samplerDiameter * CLHEP::m;
-  itsSamplerLength       = 4E-8 * CLHEP::m;
+  itsSamplerDiameter     = opt.samplerDiameter     * CLHEP::m;
+  itsSamplerLength       = 4E-8                    * CLHEP::m;
 
   // production thresholds
   itsThresholdCutCharged = opt.thresholdCutCharged * CLHEP::GeV;
@@ -232,7 +244,8 @@ void BDSGlobalConstants::InitDefaultUserLimits()
   //user must set step length manually
 }
 
-void BDSGlobalConstants::InitRotationMatrices(){
+void BDSGlobalConstants::InitRotationMatrices()
+{
   _RotY90       = new G4RotationMatrix();
   _RotYM90      = new G4RotationMatrix();
   _RotX90       = new G4RotationMatrix();
@@ -251,29 +264,23 @@ void BDSGlobalConstants::InitRotationMatrices(){
 }
 
 //Methods to get the rotation matrices
-G4RotationMatrix* BDSGlobalConstants::RotY90() const{
-  return _RotY90;
-}
+G4RotationMatrix* BDSGlobalConstants::RotY90() const
+{return _RotY90;}
 
-G4RotationMatrix* BDSGlobalConstants::RotYM90() const{
-  return _RotYM90;
-}
+G4RotationMatrix* BDSGlobalConstants::RotYM90() const
+{return _RotYM90;}
 
-G4RotationMatrix* BDSGlobalConstants::RotX90() const{
-  return _RotX90;
-}
+G4RotationMatrix* BDSGlobalConstants::RotX90() const
+{return _RotX90;}
 
-G4RotationMatrix* BDSGlobalConstants::RotXM90() const{
-  return _RotXM90;
-}
+G4RotationMatrix* BDSGlobalConstants::RotXM90() const
+{return _RotXM90;}
 
-G4RotationMatrix* BDSGlobalConstants::RotYM90X90() const{
-  return _RotYM90X90;
-}
+G4RotationMatrix* BDSGlobalConstants::RotYM90X90() const
+{return _RotYM90X90;}
 
-G4RotationMatrix* BDSGlobalConstants::RotYM90XM90() const{
-  return _RotYM90XM90;
-}
+G4RotationMatrix* BDSGlobalConstants::RotYM90XM90() const
+{return _RotYM90XM90;}
 
 BDSGlobalConstants::~BDSGlobalConstants()
 {  

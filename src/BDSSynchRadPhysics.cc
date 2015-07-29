@@ -39,16 +39,16 @@ void BDSSynchRadPhysics::ConstructProcess(){
     if (particleName == "e-") {
       pmanager->AddProcess(_srProcess);
       pmanager->SetProcessOrderingToLast(_srProcess,idxPostStep);
-      G4int idx = pmanager->AddProcess(_contSR);
-      pmanager->SetProcessOrderingToLast(_contSR,idxPostStep);
-      pmanager->SetProcessActivation(idx, false);
+      //G4int idx = pmanager->AddProcess(_contSR);
+      //pmanager->SetProcessOrderingToLast(_contSR,idxPostStep);
+      //pmanager->SetProcessActivation(idx, false);
     }
     if (particleName == "e+") {
       pmanager->AddProcess(_srProcess);
       pmanager->SetProcessOrderingToLast(_srProcess,idxPostStep);
-      G4int idx = pmanager->AddProcess(_contSR);
-      pmanager->SetProcessOrderingToLast(_contSR,idxPostStep);
-      pmanager->SetProcessActivation(idx, false);
+      //G4int idx = pmanager->AddProcess(_contSR);
+      //pmanager->SetProcessOrderingToLast(_contSR,idxPostStep);
+      //pmanager->SetProcessActivation(idx, false);
     }
   }
   return;

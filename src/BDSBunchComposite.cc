@@ -2,7 +2,8 @@
 #include "BDSBunchFactory.hh"
 #include "BDSDebug.hh"
 
-BDSBunchComposite::BDSBunchComposite() {
+BDSBunchComposite::BDSBunchComposite()
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -11,16 +12,15 @@ BDSBunchComposite::BDSBunchComposite() {
   zBunch = NULL;
 }
 
-BDSBunchComposite::~BDSBunchComposite() {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
+BDSBunchComposite::~BDSBunchComposite()
+{
   delete xBunch;
   delete yBunch;
   delete zBunch;
 }
 
-void BDSBunchComposite::SetOptions(struct Options& opt) {
+void BDSBunchComposite::SetOptions(struct Options& opt)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -42,7 +42,8 @@ void BDSBunchComposite::SetOptions(struct Options& opt) {
 
 void BDSBunchComposite::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 					G4double& xp, G4double& yp, G4double& zp,
-					G4double& t , G4double&  E, G4double& weight) { 
+					G4double& t , G4double&  E, G4double& weight)
+{ 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif

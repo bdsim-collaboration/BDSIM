@@ -186,6 +186,7 @@ protected:
   std::vector<G4UserLimits*> allUserLimits;
   
   G4ThreeVector                 placementOffset;
+  // can't be stored in the Logical Volume class itself without modifying Geant
 };
 
 inline G4String  BDSGeometryComponent::GetName() const
