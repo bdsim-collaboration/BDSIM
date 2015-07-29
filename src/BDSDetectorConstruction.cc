@@ -224,11 +224,16 @@ void BDSDetectorConstruction::BuildWorld()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
-  
-  G4ThreeVector worldR = beamline->GetMaximumExtentAbsolute();
+  BDSBeamline* beamline;
+  // remember, the tunnel may not exist...
+  if (BDSGlobalConstants::Instance()->BuildTunnel())
+    {beamline = BDSAcceleratorModel::Instance()->GetTunnelBeamline();}
+  else
+    {beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();}
+  G4ThreeVector worldR      = beamline->GetMaximumExtentAbsolute();
   G4ThreeVector maxpositive = beamline->GetMaximumExtentPositive();
   G4ThreeVector maxnegative = beamline->GetMaximumExtentNegative();
+
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "world extent positive: " << maxpositive << G4endl;
   G4cout << __METHOD_NAME__ << "world extent negative: " << maxnegative << G4endl;
