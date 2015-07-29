@@ -126,21 +126,22 @@ BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSection(G4String     
 			     floorThickness*0.5,         // y half width
 			     0.5*length - lengthSafety); // z half width
       
-      G4double tunnelContInnerYRadius = ( tunnelFloorOffset + tunnel2 ) * 0.5;
+      G4double tunnelContInnerYRadius = tunnel2 - 0.5*floorThickness;
+      
       containerSolidInner = new G4Box(name + "_tunnel_cont_solid_inner", // name
 				      tunnel1,                           // x radius
 				      tunnelContInnerYRadius,            // y radius
 				      length*0.5);
 
       // offset the centre cut out by the difference between the vertical half widths of tunnel2 and tunnel2+floor
-      contInsideDisplacement = G4ThreeVector(0, tunnelContInnerYRadius - tunnel2, 0); 
+      contInsideDisplacement = G4ThreeVector(0, tunnel2-floorThickness, 0); 
     }
   else
     {
       containerSolidInner = new G4Box(name + "_tunnel_cont_solid_inner", // name
 				      tunnel1,                           // x radius
 				      tunnel2,                           // y radius
-				      length);
+				      length); // long z for unambiguous subtraction
       contInsideDisplacement = G4ThreeVector(0,0,0);
     }
   
