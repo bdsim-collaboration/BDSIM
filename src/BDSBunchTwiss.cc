@@ -14,15 +14,11 @@ BDSBunchTwiss::BDSBunchTwiss() :
 BDSBunchTwiss::BDSBunchTwiss(G4double betaXIn,  G4double betaYIn, 
 			     G4double alphaXIn, G4double alphaYIn,
 			     G4double emitXIn,  G4double emitYIn,
-			     G4double X0In,     G4double Y0In,       G4double Z0In,   G4double T0In, 
-			     G4double Xp0In,    G4double Yp0In,      G4double Zp0In,			     
+			     G4double X0In,     G4double Y0In,     G4double Z0In,   G4double T0In, 
+			     G4double Xp0In,    G4double Yp0In,    G4double Zp0In,
 			     G4double sigmaTIn, G4double sigmaEIn) : 
   BDSBunchInterface(X0In,Y0In,Z0In,T0In,Xp0In,Yp0In,Zp0In,sigmaTIn,sigmaEIn), betaX(betaXIn), betaY(betaYIn), alphaX(alphaXIn), alphaY(alphaYIn), emitX(emitXIn), emitY(emitYIn)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   GaussMultiGen = NULL;
 
   sigmaT = sigmaTIn; 

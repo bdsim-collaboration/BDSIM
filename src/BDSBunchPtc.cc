@@ -4,9 +4,7 @@
 #include <iostream>
 
 #include <fstream>
-#if __cplusplus>199711 // test for c++11 features
 #include <regex>
-#endif 
 
 BDSBunchPtc::BDSBunchPtc() { 
 #ifdef BDSDEBUG 
@@ -54,8 +52,6 @@ void BDSBunchPtc::LoadPtcFile() {
     double t=0.0;
     double pt=0.0;
     
-#if __cplusplus>199711 
-
     // create regular expressions 
     std::regex rex("\\sx\\s*=\\s*([0-9eE.+-]+)");
     std::regex rey("\\sy\\s*=\\s*([0-9eE.+-]+)");
@@ -86,11 +82,6 @@ void BDSBunchPtc::LoadPtcFile() {
     if(smpy.size() == 2) py = std::stod(smpy[1]);
     if(smt.size() == 2)  t  = std::stod(smt[1]);
     if(smpt.size() == 2) pt = std::stod(smpt[1]);
-#else
-    G4cout << __METHOD_NAME__ << " WARNING not using C++11 regex to parse file"
-	   << " - no particle coordinates read in - default all 0" << G4endl;
-#endif
-
 
 #ifdef BDSDEBUG 
     G4cout << __METHOD_NAME__ << "read line " << line << G4endl;

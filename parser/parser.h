@@ -312,8 +312,8 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   default:
     break;
   }
-
-  element_list.push_back(e);
+  // insert element with uniqueness requirement
+  element_list.push_back(e,true);
 
   return 0;
 }
@@ -563,7 +563,8 @@ void add_gas(const char *name, const char *before, int before_count, std::string
   e.type = _GAS;
   e.name = name;
   e.lst = NULL;
-  element_list.push_back(e);
+  // insert gas with uniqueness requirement
+  element_list.push_back(e,true);
 }
 
 double property_lookup(ElementList& el_list, char *element_name, char *property_name)

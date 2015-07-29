@@ -1,3 +1,10 @@
+V0.8 - 2015 / ?? / ??
+^^^^^^^^^^^^^^^^^^^^^
+
+* C++11 adopted
+* Make parser more robust against duplicate element names (issue #43)
+* Return error if superfluous arguments are present (issue #56)
+
 V0.7 - 2015 / 06 / 30
 ^^^^^^^^^^^^^^^^^^^^^
 
