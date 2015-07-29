@@ -82,6 +82,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
 
   // tunnel
   buildTunnel            = opt.buildTunnel;
+  buildTunnelStraight    = opt.buildTunnelStraight;
   tunnelInfo             = new BDSTunnelInfo(opt.tunnelType,
 					     opt.tunnelThickness     * CLHEP::m,
 					     opt.tunnelSoilThickness * CLHEP::m,

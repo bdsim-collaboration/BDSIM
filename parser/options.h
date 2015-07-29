@@ -110,6 +110,7 @@ struct Options
 
   /// tunnel geometry parameters
   bool        buildTunnel;
+  bool        buildTunnelStraight;
   std::string tunnelType;
   double      tunnelThickness;
   double      tunnelSoilThickness;

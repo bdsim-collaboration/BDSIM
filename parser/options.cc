@@ -78,6 +78,7 @@ Options::Options()
   
   // tunnel options
   buildTunnel         = false;
+  buildTunnelStraight = false;
   tunnelType          = "circular";
   tunnelThickness     = 0.1;
   tunnelSoilThickness = 1.0;
@@ -292,6 +293,7 @@ void Options::set_value(std::string name, double value )
 
   // tunnel options
   if(name == "buildTunnel")          {buildTunnel         = (bool)value; return;}
+  if(name == "buildTunnelStraight")  {buildTunnelStraight = (bool)value; return;}
   if(name == "tunnelThickness" )     {tunnelThickness     = value;       return;}
   if(name == "tunnelSoilThickness" ) {tunnelSoilThickness = value;       return;}
   if(name == "buildTunnelFloor")     {buildTunnelFloor    = (bool)value; return;}

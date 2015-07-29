@@ -104,10 +104,11 @@ public:
   G4double GetMagnetPoleRadius() const; 
 
   /// tunnel
-  G4bool         BuildTunnel()   const;
-  BDSTunnelInfo* TunnelInfo()    const;
-  G4double       TunnelOffsetX() const;
-  G4double       TunnelOffsetY() const;
+  G4bool         BuildTunnel()         const;
+  G4bool         BuildTunnelStraight() const;
+  BDSTunnelInfo* TunnelInfo()          const;
+  G4double       TunnelOffsetX()       const;
+  G4double       TunnelOffsetY()       const;
 
   // Beam loss monitors
   G4double GetBlmRad() const;
@@ -275,6 +276,7 @@ private:
   
   // tunnel model
   G4bool         buildTunnel;
+  G4bool         buildTunnelStraight;
   BDSTunnelInfo* tunnelInfo;
   G4double       tunnelOffsetX;
   G4double       tunnelOffsetY;
@@ -531,6 +533,9 @@ inline G4double BDSGlobalConstants::GetMagnetPoleRadius() const
 
 inline G4bool   BDSGlobalConstants::BuildTunnel() const
 {return buildTunnel;}
+
+inline G4bool   BDSGlobalConstants::BuildTunnelStraight() const
+{return buildTunnelStraight;}
 
 inline BDSTunnelInfo* BDSGlobalConstants::TunnelInfo() const
 {return tunnelInfo;}

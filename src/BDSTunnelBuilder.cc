@@ -96,6 +96,29 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
   // iterator to the BDSBeamlineElement where the current tunnel section will end
   BDSBeamlineIterator endElement         = flatBeamline->begin();
 
+  // if a straight tunnel, just build one long segment, add it to beam line and return
+  if (BDSGlobalConstants::Instance()->BuildTunnelStraight())
+    {
+      BDSBeamlineElement* lastElement = flatBeamline->back();
+      G4double segmentLength = lastElement->GetReferencePositionEnd().z();
+      tunnelSection = tf->CreateTunnelSection(defaultModel->type,          // type
+					      "tunnel",                    // name
+					      segmentLength,               // length
+					      defaultModel->thickness,     // thickness
+					      defaultModel->soilThickness, // soil thickness
+					      defaultModel->material,      // material
+					      defaultModel->soilMaterial,  // soil material
+					      defaultModel->buildFloor,    // build floor?
+					      defaultModel->floorOffset,   // floor offset
+					      defaultModel->aper1,         // 1st aperture param
+					      defaultModel->aper2,         // 2nd aperture param
+					      defaultModel->visible);      // is it visible
+      BDSTiltOffset* tos = new BDSTiltOffset(offsetX,offsetY,0);
+      tunnelLine->AddComponent(tunnelSection,tos);
+      G4cout << "SIZE " << tunnelLine->size() << G4endl;
+      return tunnelLine;
+    } 
+
   BDSBeamlineIterator it = flatBeamline->begin();
   for (; it != flatBeamline->end(); ++it)
     {
