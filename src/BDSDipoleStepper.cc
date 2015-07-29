@@ -1,5 +1,6 @@
-#include "BDSGlobalConstants.hh" 
+#include "BDSDebug.hh"
 #include "BDSDipoleStepper.hh"
+#include "BDSGlobalConstants.hh" 
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ClassicalRK4.hh"
@@ -252,7 +253,7 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
     }
   else
     {
-      #ifdef BDSDEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " local helical steps - using G4ClassicalRK4" << G4endl;
 #endif
       // use a classical Runge Kutta stepper here
