@@ -457,6 +457,7 @@ void BDSDetectorConstruction::ComponentPlacement()
     {
       // place supports
       // use iterator from BDSBeamline.hh
+      /*
       BDSBeamline* supports = BDSAcceleratorModel::Instance()->GetSupportsBeamline();
       BDSBeamlineIterator supportsIt = supports->begin();
       G4PVPlacement* supportPV = NULL;
@@ -470,7 +471,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 					false,                                      // no boolean operation
 					0,                                          // copy number
 					checkOverlaps);                             // overlap checking
-	}
+					}*/
       
       // place the tunnel
       BDSBeamline* tunnel = BDSAcceleratorModel::Instance()->GetTunnelBeamline();
