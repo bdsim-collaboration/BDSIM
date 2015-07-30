@@ -4,17 +4,17 @@
 
 #include <map>
 
-std::map<G4int, G4String> BDSMagnetTypeMap::types = {
-  {0,  "decapole"},
-  {1,  "hkicker"},
-  {2,  "vkicker"},
-  {3,  "muspoiler"},
-  {4,  "octupole"},
-  {5,  "quadrupole"},
-  {6,  "sectorbend"},
-  {7,  "rectangularbend"},
-  {8,  "rfcavity"},
-  {9,  "sextupole"},
-  {10, "solenoid"},
-  {11, "multipole"}
+std::map<BDSMagnetType, G4String> BDSMagnetTypeMap::types = {
+  {BDSMagnetType::decapole,        "decapole"},
+  {BDSMagnetType::hkicker,         "hkicker"},
+  {BDSMagnetType::vkicker,         "vkicker"},
+  {BDSMagnetType::muspoiler,       "muspoiler"},
+  {BDSMagnetType::octupole,        "octupole"},
+  {BDSMagnetType::quadrupole,      "quadrupole"},
+  {BDSMagnetType::sectorbend,      "sectorbend"},
+  {BDSMagnetType::rectangularbend, "rectangularbend"},
+  {BDSMagnetType::rfcavity,        "rfcavity"},
+  {BDSMagnetType::sextupole,       "sextupole"},
+  {BDSMagnetType::solenoid,        "solenoid"},
+  {BDSMagnetType::multipole,       "multipole"}
 };
