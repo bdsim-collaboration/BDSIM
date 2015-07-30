@@ -1,5 +1,4 @@
 #include "BDSBeamPipeInfo.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSMagnet.hh"
 #include "BDSMultipoleMagField.hh"
 #include "BDSMultipole.hh"

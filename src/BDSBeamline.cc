@@ -16,32 +16,6 @@
 #include <utility>  // for std::pair
 #include <vector>
 
-BDSBeamline::BDSBeamline()
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // initialise extents
-  totalChordLength      = 0;
-  totalArcLength        = 0;
-  maximumExtentPositive = G4ThreeVector(0,0,0);
-  maximumExtentNegative = G4ThreeVector(0,0,0);
-  
-  // initial rotation matrix
-  previousReferenceRotationEnd = new G4RotationMatrix();
-
-  // initial rotation axes
-  xARS = xARM = xARE = G4ThreeVector(1,0,0);
-  yARS = yARM = yARE = G4ThreeVector(0,1,0);
-  zARS = zARM = zARE = G4ThreeVector(0,0,1);
-
-  // initial position
-  previousReferencePositionEnd = G4ThreeVector(0,0,0);
-
-  // initial s coordinate
-  previousSPositionEnd = 0; 
-}
-
 BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
 			 G4RotationMatrix* initialGlobalRotation)
 {
@@ -57,13 +31,10 @@ BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
   maximumExtentNegative = G4ThreeVector(0,0,0);
   
   // initial rotation matrix
-  previousReferenceRotationEnd = initialGlobalRotation;
-
-  // initial rotation axes
-  xARS = xARM = xARE = G4ThreeVector(1,0,0);
-  yARS = yARM = yARE = G4ThreeVector(0,1,0);
-  zARS = zARM = zARE = G4ThreeVector(0,0,1);
-  // now apply the global rotation supplied to get the initial axes
+  if (initialGlobalRotation) // default is null
+    {previousReferenceRotationEnd = initialGlobalRotation;}
+  else
+    {previousReferenceRotationEnd = new G4RotationMatrix();}
 
   // initial position
   previousReferencePositionEnd = initialGlobalPosition;
@@ -145,15 +116,15 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
 
   // if it's not a transform3d instance, continue as normal
   // interrogate the item
-  G4double      length     = component->GetChordLength();
-  G4double      angle      = component->GetAngle();
-  G4bool hasFiniteLength   = BDS::IsFinite(length);
-  G4bool hasFiniteAngle    = BDS::IsFinite(angle);
-  G4bool hasFiniteTilt     = BDS::IsFinite(tiltOffset->GetTilt());
-  G4bool hasFiniteOffset   = BDS::IsFinite(tiltOffset->GetXOffset()) || BDS::IsFinite(tiltOffset->GetYOffset());
-  G4ThreeVector offset = G4ThreeVector(tiltOffset->GetXOffset(), tiltOffset->GetYOffset(), 0);
-  G4ThreeVector eP = component->GetExtentPositive() + offset;
-  G4ThreeVector eN = component->GetExtentNegative() + offset;
+  G4double      length   = component->GetChordLength();
+  G4double      angle    = component->GetAngle();
+  G4bool hasFiniteLength = BDS::IsFinite(length);
+  G4bool hasFiniteAngle  = BDS::IsFinite(angle);
+  G4bool hasFiniteTilt   = BDS::IsFinite(tiltOffset->GetTilt());
+  G4bool hasFiniteOffset = BDS::IsFinite(tiltOffset->GetXOffset()) || BDS::IsFinite(tiltOffset->GetYOffset());
+  G4ThreeVector offset   = G4ThreeVector(tiltOffset->GetXOffset(), tiltOffset->GetYOffset(), 0);
+  G4ThreeVector eP       = component->GetExtentPositive() + offset;
+  G4ThreeVector eN       = component->GetExtentNegative() + offset;
   
 #ifdef BDSDEBUG
   G4cout << "chord length         " << length      << " mm"         << G4endl;
@@ -182,25 +153,6 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
 
   G4RotationMatrix* referenceRotationMiddle = new G4RotationMatrix(*referenceRotationStart);
   G4RotationMatrix* referenceRotationEnd    = new G4RotationMatrix(*referenceRotationStart);
-
-  // get the axes to rotate about - note if we only worked where component angles worked in the
-  // x,y,z global axes, this would be unnecessary. However, with the ability to use Transform3D
-  // we can possibly rotate the beamline permenantly and therefore must keep the axes we rotate about
-  // rather than use the rotateX or rotateY functions for example, we must use rotate(angle,axis)
-  // if it isn't the first item, get the rotation axes from the last element and assign to local copy
-  if (!empty())
-    {
-      BDSBeamlineElement* last = back();
-      xARS = last->GetXAxisReferenceStart();
-      yARS = last->GetYAxisReferenceStart();
-      zARS = last->GetZAxisReferenceStart();
-      xARM = last->GetXAxisReferenceMiddle();
-      yARM = last->GetYAxisReferenceMiddle();
-      zARM = last->GetZAxisReferenceMiddle();
-      xARE = last->GetXAxisReferenceEnd();
-      yARE = last->GetYAxisReferenceEnd();
-      zARE = last->GetZAxisReferenceEnd();
-    }
   
   // if the component induces an angle in the reference trajectory, rotate the mid and end point
   // rotation matrices appropriately
@@ -211,25 +163,13 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
       // handed coordinate system
       // rotate about cumulative local y axis of beamline
       // middle rotated by half angle in local x,z plane
-      referenceRotationMiddle->rotate(-angle * 0.5, yARE);
+      G4ThreeVector unitY = G4ThreeVector(0,1,0);
+      referenceRotationMiddle->rotate(angle*0.5, unitY.transform(*previousReferenceRotationEnd));
       // end rotated by full angle in local x,z plane
-      referenceRotationEnd->rotate(-angle, yARE);
-
-      // copy unaffected axes to update for next element
-      xARS = xARE;
-      yARS = yARE;
-      zARS = zARE;
-      yARM = yARM;
-      //yARE = yARE; // truly stays the same
-      
-      // now apply the change in pointing vector the cumulative axes
-      // y axis will stay the same as angle only affects direction in x,z plane
-      xARM.rotate(-angle * 0.5, yARE); // middle by half angle
-      zARM.rotate(-angle * 0.5, yARE);
-      xARE.rotate(-angle,       yARE); // end by full angle
-      zARE.rotate(-angle,       yARE);
+      G4ThreeVector unitYEnd = G4ThreeVector(0,1,0);
+      referenceRotationEnd->rotate(angle, unitYEnd.transform(*previousReferenceRotationEnd));
     }
-
+  
   // add the tilt to the rotation matrices (around z axis)
   G4RotationMatrix* rotationStart, *rotationMiddle, *rotationEnd;
   if (hasFiniteTilt && !hasFiniteAngle)
@@ -238,9 +178,15 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
       rotationStart  = new G4RotationMatrix(*referenceRotationStart);
       rotationMiddle = new G4RotationMatrix(*referenceRotationMiddle);
       rotationEnd    = new G4RotationMatrix(*referenceRotationEnd);
-      rotationStart ->rotate(tilt, zARS);
-      rotationMiddle->rotate(tilt, zARM);
-      rotationEnd   ->rotate(tilt, zARE);
+
+      // transform a unit z vector with the rotation matrices to get the local axes
+      // of rotation to apply the tilt.
+      G4ThreeVector unitZ = G4ThreeVector(0,0,1);
+      rotationStart ->rotate(tilt, unitZ.transform(*referenceRotationStart));
+      unitZ = G4ThreeVector(0,0,1);
+      rotationMiddle->rotate(tilt, unitZ.transform(*referenceRotationMiddle));
+      unitZ = G4ThreeVector(0,0,1);
+      rotationEnd   ->rotate(tilt, unitZ.transform(*referenceRotationEnd));
     }
   else
     {
@@ -268,14 +214,12 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
     {
       referencePositionStart  = previousReferencePositionEnd;
       // calculate delta to mid point
-      G4ThreeVector md = G4ThreeVector(0, 0, 0.5 * length).transform(*referenceRotationMiddle);
-      // flip x coordinate only due our definition of angle
-      md.setX(md.x()*-1);
+      G4ThreeVector md = G4ThreeVector(0, 0, 0.5 * length);
+      md.transform(*referenceRotationMiddle);
       referencePositionMiddle = referencePositionStart + md;
       // remember the end position is the chord length along the half angle, not the full angle
       // the particle achieves the full angle though by the end position.
       G4ThreeVector delta = G4ThreeVector(0, 0, length).transform(*referenceRotationMiddle);
-      delta.setX(delta.x()*-1);
       referencePositionEnd = referencePositionStart + delta;
     }
   else
@@ -346,8 +290,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
 
   // update the global constants
   BDSGlobalConstants::Instance()->SetSMax(sPositionEnd);
-  
-  /*
+
 #ifdef BDSDEBUG
   // feedback about calculated coordinates
   G4cout << "calculated coordinates in mm and rad are " << G4endl;
@@ -364,7 +307,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   G4cout << "rotation middle:           " << *rotationMiddle;
   G4cout << "rotation end:              " << *rotationEnd;
 #endif
-  */
+  
   // construct beamline element
   BDSBeamlineElement* element = new BDSBeamlineElement(component,
 						       positionStart,
@@ -381,16 +324,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
 						       referenceRotationEnd,
 						       sPositionStart,
 						       sPositionMiddle,
-						       sPositionEnd,
-						       xARS,
-						       yARS,
-						       zARS,
-						       xARM,
-						       yARM,
-						       zARM,
-						       xARE,
-						       yARE,
-						       zARE);
+						       sPositionEnd);
   
   // append it to the beam line
   beamline.push_back(element);
@@ -441,28 +375,60 @@ void BDSBeamline::ApplyTransform3D(BDSTransform3D* component)
       BDSBeamlineElement* last = back();
       previousReferenceRotationEnd = last->GetReferenceRotationEnd();
       previousReferencePositionEnd = last->GetReferencePositionEnd();
-      xARE = last->GetXAxisReferenceEnd();
-      yARE = last->GetYAxisReferenceEnd();
-      zARE = last->GetZAxisReferenceEnd();
     }
 
   // apply position
   // transform the local dx,dy,dz displacement into the global frame then apply
   G4ThreeVector delta = G4ThreeVector(dx,dy,dz).transform(*previousReferenceRotationEnd);
   previousReferencePositionEnd = previousReferencePositionEnd + G4ThreeVector(dx,dy,dz);
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "existing end rotation matrix:" << *previousReferenceRotationEnd << G4endl;
+#endif
   
   // apply rotation
-  previousReferenceRotationEnd->rotate(dPsi,   zARE);
-  previousReferenceRotationEnd->rotate(dPhi,   yARE);
-  previousReferenceRotationEnd->rotate(dTheta, xARE);
+  // euler angles must be applied in sequence about the cumulatively rotated axes
+  // use unit vectors that are transformed to the current cumulative rotation of the beamline
+  // as rotation axes for each angle.
+  G4ThreeVector unitZ = G4ThreeVector(0,0,1);
+  // transform to the current local z axis at the end of the beamline
+  unitZ.transform(*previousReferenceRotationEnd);
+  // apply the phi (alpha) euler angle about the z axis (step1)
+  previousReferenceRotationEnd->rotate(dPhi, unitZ);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "after apply Phi:" << *previousReferenceRotationEnd << G4endl;
+#endif
+  // apply the theta (beta) euler angle about the N or x' axis (step 2)
+  // transform a unit x to axes rotated by phi (called N or x')
+  G4ThreeVector unitX = G4ThreeVector(1,0,0);
+  unitX.transform(*previousReferenceRotationEnd);
+  // rotate about N by dTheta
+  previousReferenceRotationEnd->rotate(dTheta, unitX);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "after apply Phi & Theta:" << *previousReferenceRotationEnd << G4endl;
+#endif
+  // apply the psi (gamma) euler angle about the Z or z'' axis
+  G4ThreeVector unitZPP = G4ThreeVector(0,0,1); //Z Prime Prime
+  // get unit z to local axes already rotated by phi and theta hence zpp name
+  unitZPP.transform(*previousReferenceRotationEnd);
+  // rotate by psi about zpp
+  previousReferenceRotationEnd->rotate(dPsi, unitZPP);
   
-  // apply rotation to axes of rotation
-  xARE.rotate(dPsi,   zARE);
-  yARE.rotate(dPsi,   zARE);
-  xARE.rotate(dPhi,   yARE);
-  zARE.rotate(dPhi,   yARE);
-  yARE.rotate(dTheta, xARE);
-  zARE.rotate(dTheta, xARE);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "new end rotation matrix:" << *previousReferenceRotationEnd << G4endl;
+#endif
+}
+
+void BDSBeamline::AddBeamlineElement(BDSBeamlineElement* element)
+{
+  // append it to the beam line
+  beamline.push_back(element);
+
+  // register it by name
+  RegisterElement(element);
+
+  // no need to update any internal variables - that's done by
+  // AddSingleComponent()
 }
 
 G4ThreeVector BDSBeamline::GetMaximumExtentAbsolute() const

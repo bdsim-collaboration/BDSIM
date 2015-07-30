@@ -33,4 +33,4 @@ sample, range = sampler3;
 sample, range = sampler4; 
 sample, range = sampler5; 
 
-option, ngenerate=100; 
+option, ngenerate=1; 

@@ -7,7 +7,6 @@
 #include "BDSExecOptions.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSMagnetColours.hh"
 #include "BDSMagnetOuterFactoryCylindrical.hh" // for default geometry
 #include "BDSMaterials.hh"
 #include "BDSSDManager.hh"

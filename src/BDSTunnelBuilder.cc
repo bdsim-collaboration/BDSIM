@@ -1,0 +1,243 @@
+#include "BDSBeamline.hh"
+#include "BDSDebug.hh"
+#include "BDSTiltOffset.hh"
+#include "BDSTunnelBuilder.hh"
+#include "BDSTunnelFactory.hh"
+#include "BDSTunnelSection.hh"
+#include "BDSUtilities.hh"  // for isfinite function
+
+#include "globals.hh"
+
+#include <sstream>
+
+BDSTunnelBuilder::BDSTunnelBuilder()
+{
+  displacementTolerance = 50  * CLHEP::cm;   // maximum displacemenet of beamline before split
+  maxItems              = 50;                // maximum number of items before split
+  maxLength             = 50  * CLHEP::m;    // maximum length of tunnel segment
+  maxAngle              = 100 * CLHEP::mrad; // maximum angle before split
+}
+
+BDSTunnelBuilder::~BDSTunnelBuilder()
+{;}
+
+G4bool BDSTunnelBuilder::BreakTunnel(G4double cumulativeLength,
+				     G4double cumulativeAngle,
+				     G4int    cumulativeNItems,
+				     G4double cumulativeDisplacementX,
+				     G4double cumulativeDisplacementY)
+{
+  G4bool result = false;
+
+  G4bool lengthTest = false;
+  if (cumulativeLength > maxLength)
+    {lengthTest = true;}
+
+  G4bool angleTest = false;
+  if (cumulativeAngle > maxAngle)
+    {angleTest = true;}
+
+  G4bool nItemsTest = false;
+  if (cumulativeNItems > maxItems)
+    {nItemsTest = true;}
+
+  G4bool dispXTest = false;
+  if (cumulativeDisplacementX > displacementTolerance)
+    {dispXTest = true;}
+
+  G4bool dispYTest = false;
+  if (cumulativeDisplacementY > displacementTolerance)
+    {dispYTest = true;}
+
+  result = lengthTest || angleTest || nItemsTest || dispXTest || dispYTest;
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "testing cumulative parameters" << G4endl;
+  G4cout << "Cumulative Length (mm):    " << cumulativeLength << " > " << maxLength << " test-> " << lengthTest << G4endl;
+  G4cout << "Cumulative Angle (rad):    " << cumulativeAngle  << " > " << maxAngle  << " test-> " << angleTest  << G4endl;
+  G4cout << "# of items:                " << cumulativeNItems << " > " << maxItems  << " test-> " << nItemsTest << G4endl;
+  G4cout << "Cumulative displacement X: " << cumulativeDisplacementX << " > " << displacementTolerance
+	 << " test-> " << dispXTest << G4endl;
+  G4cout << "Cumulative displacement Y: " << cumulativeDisplacementY << " > " << displacementTolerance
+	 << " test-> " << dispYTest << G4endl;
+  G4cout << "Result:                    " << result << G4endl;
+#endif
+  return result;
+}
+
+BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  
+  BDSTunnelInfo* defaultModel = BDSGlobalConstants::Instance()->TunnelInfo();
+  G4double       offsetX      = BDSGlobalConstants::Instance()->TunnelOffsetX();
+  G4double       offsetY      = BDSGlobalConstants::Instance()->TunnelOffsetY();
+  
+  BDSBeamline* tunnelLine   = new BDSBeamline();
+
+  // temporary variables to use as we go along
+  G4int    nTunnelSections            = 0;
+  G4double cumulativeLength           = 0; // integrated length since last tunnel break
+  G4double cumulativeAngle            = 0; // integrated angle since last tunnel break
+  G4int    cumulativeNItems           = 0; // integrated number of accelerator components since last tunnel break
+  G4double cumulativeDisplacementX    = 0; // integrated offset from initial point - horizontal
+  G4double cumulativeDisplacementY    = 0; // integrated offset from initial point - vertical
+  BDSTunnelSection* tunnelSection     = NULL;
+  BDSTunnelFactory*     tf            = BDSTunnelFactory::Instance(); // shortcut
+
+  // iterator to the BDSBeamlineElement where the previous tunnel section finished
+  BDSBeamlineIterator previousEndElement = flatBeamline->begin();
+
+  // iterator to the BDSBeamlineElement where the current tunnel section will begin
+  BDSBeamlineIterator startElement       = flatBeamline->begin();
+
+  // iterator to the BDSBeamlineElement where the current tunnel section will end
+  BDSBeamlineIterator endElement         = flatBeamline->begin();
+
+  // if a straight tunnel, just build one long segment, add it to beam line and return
+  if (BDSGlobalConstants::Instance()->BuildTunnelStraight())
+    {
+      BDSBeamlineElement* lastElement = flatBeamline->back();
+      G4double segmentLength = lastElement->GetReferencePositionEnd().z();
+      tunnelSection = tf->CreateTunnelSection(defaultModel->type,          // type
+					      "tunnel",                    // name
+					      segmentLength,               // length
+					      defaultModel->thickness,     // thickness
+					      defaultModel->soilThickness, // soil thickness
+					      defaultModel->material,      // material
+					      defaultModel->soilMaterial,  // soil material
+					      defaultModel->buildFloor,    // build floor?
+					      defaultModel->floorOffset,   // floor offset
+					      defaultModel->aper1,         // 1st aperture param
+					      defaultModel->aper2,         // 2nd aperture param
+					      defaultModel->visible);      // is it visible
+      BDSTiltOffset* tos = new BDSTiltOffset(offsetX,offsetY,0);
+      tunnelLine->AddComponent(tunnelSection,tos);
+      G4cout << "SIZE " << tunnelLine->size() << G4endl;
+      return tunnelLine;
+    } 
+
+  BDSBeamlineIterator it = flatBeamline->begin();
+  for (; it != flatBeamline->end(); ++it)
+    {
+      G4bool breakIt = BreakTunnel(cumulativeLength,
+				   cumulativeAngle,
+				   cumulativeNItems,
+				   cumulativeDisplacementX,
+				   cumulativeDisplacementY);
+      G4bool isEnd   = (it == (flatBeamline->end() - 1));
+#ifdef BDSDEBUG
+      if (isEnd)
+	{G4cout << "End of beam line - forcing break in tunnel" << G4endl;}
+#endif
+      if (breakIt || isEnd)
+	{
+	  // work out tunnel parameters
+	  std::stringstream name;
+	  name << "tunnel_" << nTunnelSections;
+
+	  // calculate start central point of tunnel
+	  G4ThreeVector startPoint         = (*startElement)->GetReferencePositionStart();
+	  G4ThreeVector startOffsetLocal   = G4ThreeVector(offsetX, offsetY, 0);
+	  G4RotationMatrix* startRot       = (*startElement)->GetReferenceRotationStart();	  
+	  G4ThreeVector startOffsetGlobal  = startOffsetLocal.transform(*startRot);
+	  startPoint                      += startOffsetGlobal;
+
+	  // calculate end central point of tunnel
+	  G4ThreeVector endPoint           = (*endElement)->GetReferencePositionEnd();
+	  G4ThreeVector endOffsetLocal     = G4ThreeVector(offsetX, offsetY, 0);
+	  G4RotationMatrix* endRot         = (*endElement)->GetReferenceRotationEnd();
+	  G4ThreeVector endOffsetGlobal    = endOffsetLocal.transform(*endRot);
+	  endPoint                        += endOffsetGlobal;
+
+	  // calculate length
+	  G4double segmentLength = (endPoint - startPoint).mag();
+
+	  // decide whether angled or not
+	  G4bool isAngled = BDS::IsFinite(cumulativeAngle);
+
+#ifdef BDSDEBUG
+	  // __METHOD_NAME__ doesn't seem to work properly with pair return
+	  G4cout << "BDSTunnelBuilder::BuildTunnelAndSupports> determined tunnel segment to have the following parameters:" << G4endl;
+	  G4cout << "Start element name:   " << (*startElement)->GetPlacementName() << G4endl;
+	  G4cout << "End element name:     " << (*endElement)->GetPlacementName()   << G4endl;
+	  G4cout << "Start point (global): " << startPoint                          << G4endl;
+	  G4cout << "End point (global):   " << endPoint                            << G4endl;
+	  G4cout << "Has a finite angle:   " << isAngled                            << G4endl;
+	  G4cout << "Section length:       " << segmentLength                       << G4endl;
+	  G4cout << "Total angle:          " << cumulativeAngle                     << G4endl;
+#endif
+	  
+	  // create tunnel segment
+	  if (isAngled)
+	    { // use the angled faces
+	      tunnelSection = tf->CreateTunnelSectionAngledInOut(defaultModel->type,          // type
+								 name.str(),                  // name
+								 segmentLength,               // length
+								 cumulativeAngle*0.5,         // input angle
+								 cumulativeAngle*0.5,         // output angle
+								 defaultModel->thickness,     // thickness
+								 defaultModel->soilThickness, // soil thickness
+								 defaultModel->material,      // material
+								 defaultModel->soilMaterial,  // soil material
+								 defaultModel->buildFloor,    // build floor?
+								 defaultModel->floorOffset,   // floor offset
+								 defaultModel->aper1,         // 1st aperture param
+								 defaultModel->aper2,         // 2nd aperture param
+								 defaultModel->visible);      // is it visible 
+	    }
+	  else
+	    { // straight section
+	      tunnelSection = tf->CreateTunnelSection(defaultModel->type,          // type
+						      name.str(),                  // name
+						      segmentLength,               // length
+						      defaultModel->thickness,     // thickness
+						      defaultModel->soilThickness, // soil thickness
+						      defaultModel->material,      // material
+						      defaultModel->soilMaterial,  // soil material
+						      defaultModel->buildFloor,    // build floor?
+						      defaultModel->floorOffset,   // floor offset
+						      defaultModel->aper1,         // 1st aperture param
+						      defaultModel->aper2,         // 2nd aperture param
+						      defaultModel->visible);      // is it visible
+	    }
+	  
+	  // store segment in tunnel beam line
+	  if (tunnelLine->empty())
+	    {
+	      BDSTiltOffset* tos = new BDSTiltOffset(offsetX,offsetY,0);
+	      tunnelLine->AddComponent(tunnelSection,tos);
+	    }
+	  else
+	    {tunnelLine->AddComponent(tunnelSection);} // append to tunnel beam line
+	  
+	  // update / reset counters & iterators
+	  nTunnelSections   += 1;
+	  cumulativeLength   = 0;
+	  cumulativeAngle    = 0;
+	  cumulativeNItems   = 0;
+	  cumulativeDisplacementX = 0;
+	  cumulativeDisplacementY = 0;
+	  startElement       = endElement; // next segment will begin where this one finishes
+	  previousEndElement = endElement; // mark the end of this element as the prevous end
+	}
+      else
+	{
+#ifdef BDSDEBUG
+	  G4cout << __METHOD_NAME__ << "moving to next item in beamline" << G4endl;
+#endif
+	  G4double length   = (*it)->GetAcceleratorComponent()->GetChordLength();
+	  G4double angle    = (*it)->GetAcceleratorComponent()->GetAngle();
+	  cumulativeLength += length;
+	  cumulativeAngle  += angle;
+	  cumulativeDisplacementX += sin(angle) * length;
+	  //cumulativeDisplacementY += 0; // currently ignore possibility of vertical bend
+	  //would still use angle, but would need to involve tilt and rotation axes
+	  cumulativeNItems += 1;
+	  endElement++; // advance the potential end element iterator
+	}
+    }
+  return tunnelLine;
+}

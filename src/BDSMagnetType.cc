@@ -1,0 +1,20 @@
+#include "BDSMagnetType.hh"
+
+#include "globals.hh" // geant4 types / globals
+
+#include <map>
+
+std::map<BDSMagnetType, G4String> BDSMagnetTypeMap::types = {
+  {BDSMagnetType::decapole,        "decapole"},
+  {BDSMagnetType::hkicker,         "hkicker"},
+  {BDSMagnetType::vkicker,         "vkicker"},
+  {BDSMagnetType::muspoiler,       "muspoiler"},
+  {BDSMagnetType::octupole,        "octupole"},
+  {BDSMagnetType::quadrupole,      "quadrupole"},
+  {BDSMagnetType::sectorbend,      "sectorbend"},
+  {BDSMagnetType::rectangularbend, "rectangularbend"},
+  {BDSMagnetType::rfcavity,        "rfcavity"},
+  {BDSMagnetType::sextupole,       "sextupole"},
+  {BDSMagnetType::solenoid,        "solenoid"},
+  {BDSMagnetType::multipole,       "multipole"}
+};

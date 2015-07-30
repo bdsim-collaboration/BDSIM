@@ -16,7 +16,7 @@ struct Element {
   int precisionRegion;
   std::string name;
 
-  double l; // l in metres
+  double l; ///< l in metres
   double ks,k0,k1,k2,k3,angle;
 
   // beampipe information
@@ -33,15 +33,10 @@ struct Element {
   double tilt,xsize,ysize,r,B, phiAngleIn, phiAngleOut;
   double offsetX, offsetY;
   double tscint, twindow, bmapZOffset; 
-  double xdir, ydir, zdir, waveLength; /// for laser wire and 3d transforms
-  double gradient; /// for rf cavities
-  double phi, theta, psi; /// for 3d transforms
+  double xdir, ydir, zdir, waveLength; ///< for laser wire and 3d transforms
+  double gradient; ///< for rf cavities
+  double phi, theta, psi; ///< for 3d transforms
 
-  // tunnel geometry
-  std::string tunnelMaterial;
-  double tunnelRadius;
-  double tunnelOffsetX;
-  //std::string tunnelCavityMaterial;
   std::list<double> knl;
   std::list<double> ksl;
 
@@ -67,7 +62,7 @@ struct Element {
   std::string windowmaterial;
   std::string scintmaterial;
   std::string airmaterial;
-  std::string spec;  /// arbitrary specification to pass to beamline builder
+  std::string spec;  ///< arbitrary specification to pass to beamline builder
   
   /// in case the element is a list itself (line)
   std::list <Element> *lst;

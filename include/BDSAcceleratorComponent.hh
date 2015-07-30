@@ -109,7 +109,7 @@ public:
 protected:
   /// initialise method
   /// checks if marker logical volume already exists and builds new one if not
-  // can't be in constructor as calls virtual methods
+  /// can't be in constructor as calls virtual methods
   virtual void Initialise();
   
   /// Build the container only. Should be overridden by derived class to add more geometry

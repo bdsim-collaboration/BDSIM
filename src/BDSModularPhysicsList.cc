@@ -8,7 +8,6 @@
 #include "G4EmStandardPhysics.hh"
 #include "BDSParameterisationPhysics.hh"
 #include "G4DecayPhysics.hh"
-#include "BDSSynchRadPhysics.hh"
 #include "G4Electron.hh"
 #include "G4Positron.hh"
 #include "G4Proton.hh"

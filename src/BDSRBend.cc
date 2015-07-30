@@ -13,7 +13,6 @@
 #include "BDSUtilities.hh"
 
 #include "G4FieldManager.hh"
-#include "G4IntersectionSolid.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4PVPlacement.hh"
@@ -103,7 +102,7 @@ void BDSRBend::Build()
 void BDSRBend::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
-  G4ThreeVector Bfield(0.,-itsBField,0.);
+  G4ThreeVector Bfield(0.,itsBField,0.);
   G4double arclength = fabs(angle) * ((itsMagFieldLength*0.5) / sin(0.5*fabs(angle)));
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " calculated arclength in dipole field: " << arclength << G4endl;
@@ -112,7 +111,7 @@ void BDSRBend::BuildBPFieldAndStepper()
   itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
   
   BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
-  dipoleStepper->SetBField(-itsBField); // note the - sign...
+  dipoleStepper->SetBField(itsBField);
   dipoleStepper->SetBGrad(itsBGrad);
   itsStepper = dipoleStepper;
 }

@@ -101,9 +101,13 @@ BDSAcceleratorComponent* BDSAcceleratorComponentRegistry::GetComponent(G4String 
 
 std::ostream& operator<< (std::ostream &out, BDSAcceleratorComponentRegistry const &r)
 {
+  // save flags since std::left changes the stream
+  std::ios_base::fmtflags ff = out.flags();
   out << "Accelerator Component Registry:" << G4endl;
   std::map<G4String, BDSAcceleratorComponent*>::const_iterator it = r.registry.begin();
   for (; it != r.registry.end(); ++it)
     {out << std::left << std::setw(15) << it->second->GetType() << " \"" << it->first << "\"" << G4endl;;}
+  // reset flags
+  out.flags(ff);
   return out;
 }

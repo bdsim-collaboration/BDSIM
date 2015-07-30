@@ -38,19 +38,16 @@ typedef std::vector<BDSBeamlineElement*>::const_iterator BDSBeamlineIterator;
 
 class BDSBeamline{
 public:
-  /// Default constructor. Beamline started at 0,0,0 with beamline built along
-  /// the z axis.
-  BDSBeamline();
-
-  /// Auxiliary constructor that allows a finite poition and rotation to be applied
+  /// Versatile basic constructor that allows a finite poition and rotation to be applied
   /// at the beginning of the beamline in global coordinates. Rembmer the maximum
-  /// extents of the beamline will also be displaced.
-  BDSBeamline(G4ThreeVector     initialGlobalPosition,
-	      G4RotationMatrix* initialGlobalRotation);
+  /// extents of the beamline will also be displaced. The default constructor is in effect
+  /// achieved via defaults
+  BDSBeamline(G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0,0),
+	      G4RotationMatrix* initialGlobalRotation = NULL);
   
   ~BDSBeamline();
 
-  /// Add a component, but check to see if can be dynamically upcast to a line
+  /// Add a component, but check to see if it can be dynamically upcast to a line
   /// in which case, loop over it and apply
   /// AddSingleComponent(BDSAcceleratorComponent* component) to each component
   void AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = NULL);
@@ -61,6 +58,14 @@ public:
   /// in the beamline. Note this applies the offset dx,dy,dz first, then the rotation
   /// of coordinates
   void ApplyTransform3D(BDSTransform3D* component);
+
+  /// Add a preassembled beam line element. In this case, the coordinates will have been
+  /// calculated external to this class and as such, it's the responsibility of the
+  /// developer to make sure the coordinates are correct and do not cause overlaps. This
+  /// will be useful for tunnel construction for example or for a non-contiguous beamline.
+  /// Subsequent components added via the AddComponent() method will be appended in the usual
+  /// way to the end cooridinates of this element.
+  void AddBeamlineElement(BDSBeamlineElement* element);
 
   /// Iterate over the beamline and print out the name, position, rotation
   /// and s position of each beamline element
@@ -113,7 +118,7 @@ public:
   /// size of all BDSBeamlineElement() and size of all BDSAcceleratorComponent() stored.
   void PrintMemoryConsumption() const;
   
-private: 
+private:
   /// Add a single component and calculate its position and rotation with respect
   /// to the beginning of the beamline
   void AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = NULL);
@@ -129,11 +134,6 @@ private:
 
   G4ThreeVector maximumExtentPositive; ///< maximum extent in the positive coordinates in each dimension
   G4ThreeVector maximumExtentNegative; ///< maximum extent in the negative coordinates in each dimension
-
-  ///@{ Current rotation axes
-  ///  xARS = xAxisReferenceStart, M = Middle, E = End
-  G4ThreeVector xARS, yARS, zARS, xARM, yARM, zARM, xARE, yARE, zARE;
-  ///@}
 
   /// Current reference rotation at the end of the previous element
   G4RotationMatrix* previousReferenceRotationEnd;

@@ -65,7 +65,7 @@ void init()
   add_var("m"  ,1.0 ,reserved);
   add_var("cm" ,1e-2,reserved);
   add_var("mm" ,1e-3,reserved);
-  add_var("um",1e-6,reserved);
+  add_var("um" ,1e-6,reserved);
   add_var("mum",1e-6,reserved);
   add_var("nm" ,1e-9,reserved);
   add_var("pm" ,1e-12,reserved);

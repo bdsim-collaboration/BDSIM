@@ -4,7 +4,7 @@
 #include "G4Version.hh"
 
 BDSSynchRadPhysics::BDSSynchRadPhysics():G4VPhysicsConstructor("BDSSynchRadPhysics"),
-					 _srProcess(NULL),_contSR(NULL),_wasActivated(false)
+					 _srProcess(NULL),_srProcessG4(NULL),_contSR(NULL),_wasActivated(false)
 {;}
 
 BDSSynchRadPhysics::~BDSSynchRadPhysics()
@@ -39,16 +39,16 @@ void BDSSynchRadPhysics::ConstructProcess(){
     if (particleName == "e-") {
       pmanager->AddProcess(_srProcess);
       pmanager->SetProcessOrderingToLast(_srProcess,idxPostStep);
-      G4int idx = pmanager->AddProcess(_contSR);
-      pmanager->SetProcessOrderingToLast(_contSR,idxPostStep);
-      pmanager->SetProcessActivation(idx, false);
+      //G4int idx = pmanager->AddProcess(_contSR);
+      //pmanager->SetProcessOrderingToLast(_contSR,idxPostStep);
+      //pmanager->SetProcessActivation(idx, false);
     }
     if (particleName == "e+") {
       pmanager->AddProcess(_srProcess);
       pmanager->SetProcessOrderingToLast(_srProcess,idxPostStep);
-      G4int idx = pmanager->AddProcess(_contSR);
-      pmanager->SetProcessOrderingToLast(_contSR,idxPostStep);
-      pmanager->SetProcessActivation(idx, false);
+      //G4int idx = pmanager->AddProcess(_contSR);
+      //pmanager->SetProcessOrderingToLast(_contSR,idxPostStep);
+      //pmanager->SetProcessActivation(idx, false);
     }
   }
   return;

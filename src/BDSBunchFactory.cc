@@ -15,7 +15,6 @@
 
 BDSBunchInterface* BDSBunchFactory::createBunch(G4String distribType)
 {
-
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
