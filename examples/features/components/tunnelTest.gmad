@@ -3,7 +3,7 @@ include options.gmad;
 include tunnel.gmad;
 include elec.gmad;
 
-d1: drift, l=1.2*m;
+d1: drift, l=1.2*m, apertureType="lhcdetailed", aper1=2.202*cm, aper2=1.714*cm, aper3=2.202*cm, beampipeThickness=1*mm;
 
 lat : line = (d1,d1,d1,d1,d1,d1,d1,d1);
 

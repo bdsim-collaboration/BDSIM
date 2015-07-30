@@ -59,6 +59,6 @@ sample, range = msb1e;
 !sample, range = mrb1b;
 !sample, range = mrb1e;
 
-option, ngenerate=11, nperfile=10;
+option, ngenerate=1;
 
 !print, line;

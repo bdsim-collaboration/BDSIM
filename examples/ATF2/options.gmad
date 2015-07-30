@@ -3,9 +3,10 @@
 option, beampipeRadius = 2 * cm,
         outerDiameter = 40 * cm,
         beampipeThickness   = 0.5 * cm,
-	prodCutPhotons      = 1*cm,
-	prodCutElectrons    = 1*cm,
-	prodCutPositrons    = 1*cm,
+	prodCutPhotons      = 20*cm,
+	prodCutElectrons    = 20*cm,
+	prodCutPositrons    = 20*cm,
+	defaultRangeCut = 20*cm,
 	stopTracks = 0,
 	elossHistoBinWidth = 0.01*m;
 
