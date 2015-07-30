@@ -477,17 +477,17 @@ void BDSDetectorConstruction::ComponentPlacement()
       // place the tunnel
       BDSBeamline* tunnel = BDSAcceleratorModel::Instance()->GetTunnelBeamline();
       BDSBeamlineIterator tunnelIt = tunnel->begin();
-      G4PVPlacement* tunnelPV = NULL;
       for(; tunnelIt != tunnel->end(); ++tunnelIt)
 	{
-	  tunnelPV = new G4PVPlacement((*tunnelIt)->GetRotationMiddle(),         // rotation
-				       (*tunnelIt)->GetPositionMiddle(),         // position
-				       (*tunnelIt)->GetPlacementName() + "_pv",  // placement name
-				       (*tunnelIt)->GetContainerLogicalVolume(), // volume to be placed
-				       worldPV,                                  // volume to place it in
-				       false,                                    // no boolean operation
-				       0,                                        // copy number
-				       checkOverlaps);                           // overlap checking
+	  /*G4PVPlacement* tunnelPV =*/
+	  new G4PVPlacement((*tunnelIt)->GetRotationMiddle(),         // rotation
+			    (*tunnelIt)->GetPositionMiddle(),         // position
+			    (*tunnelIt)->GetPlacementName() + "_pv",  // placement name
+			    (*tunnelIt)->GetContainerLogicalVolume(), // volume to be placed
+			    worldPV,                                  // volume to place it in
+			    false,                                    // no boolean operation
+			    0,                                        // copy number
+			    checkOverlaps);                           // overlap checking
 	}
     }
   // set precision back
