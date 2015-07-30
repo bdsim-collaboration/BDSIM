@@ -441,7 +441,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
     _element.angle *= -1;
     // arc length = radius*angle
     //            = (geometrical length/(2.0*sin(angle/2))*angle
-    G4double arclength = 0.5*magFieldLength * fabs(_element.angle) / sin(fabs(_element.angle)*0.5);
+    G4double arclength;
+    if (BDS::IsFinite(_element.angle)) {
+      arclength = 0.5*magFieldLength * fabs(_element.angle) / sin(fabs(_element.angle)*0.5);
+    } else {
+      arclength = magFieldLength;
+    }
     // B = Brho/rho = Brho/(arc length/angle)
     // charge in e units
     // multiply once more with ffact to not flip fields in bends

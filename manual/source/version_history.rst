@@ -2,8 +2,9 @@ V0.8 - 2015 / ?? / ??
 ^^^^^^^^^^^^^^^^^^^^^
 
 * C++11 adopted
-* Make parser more robust against duplicate element names (issue #43)
+* Remove dependency on boost (issue #57)
 * Return error if superfluous arguments are present (issue #56)
+* Make parser more robust against duplicate element names (issue #43)
 
 V0.7 - 2015 / 06 / 30
 ^^^^^^^^^^^^^^^^^^^^^
