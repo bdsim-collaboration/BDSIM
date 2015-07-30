@@ -164,11 +164,6 @@ if(USE_ROOT)
     message(STATUS "ROOT support ON")
 endif()
 
-# find Boost
-# Disable cmake script from Boost package because it is broken on lxplus
-set(Boost_NO_BOOST_CMAKE ON)
-find_package(Boost REQUIRED)
-
 # GDML (on by default)
 option( USE_GDML "Include GDML support."  ON )
 if(USE_GDML)
