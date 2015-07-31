@@ -184,19 +184,19 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4String 
   return tunnelSection;
 }
 
-BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngledInOut(G4String    name,
-										  G4double    length,
-										  G4double    angleIn,
-										  G4double    angleOut,
-										  G4double    tunnelThickness,
-										  G4double    tunnelSoilThickness,
-										  G4Material* tunnelMaterial,
-										  G4Material* tunnelSoilMaterial,
-										  G4bool      tunnelFloor,
-										  G4double    tunnelFloorOffset,
-										  G4double    tunnel1,
-										  G4double    tunnel2,
-										  G4bool      visible)
+BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngled(G4String      name,
+									     G4double      length,
+									     G4ThreeVector inputFace,
+									     G4ThreeVector outputFace,
+									     G4double      tunnelThickness,
+									     G4double      tunnelSoilThickness,
+									     G4Material*   tunnelMaterial,
+									     G4Material*   tunnelSoilMaterial,
+									     G4bool        tunnelFloor,
+									     G4double      tunnelFloorOffset,
+									     G4double      tunnel1,
+									     G4double      tunnel2,
+									     G4bool        visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -207,13 +207,8 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngledInOu
   // test input parameters - set global options as default if not specified
   TestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial,
 		      tunnelSoilMaterial, tunnelFloorOffset, tunnel1, tunnel2);
-
-  std::pair<G4ThreeVector,G4ThreeVector> faces = CalculateFaces(angleIn, angleOut);
-  G4ThreeVector inputface  = faces.first;
-  G4ThreeVector outputface = faces.second;
   
   // build the solids
-
   // create an intersection cut tubs to get the faces - make it bigger than everything else
   // then make elliptical solids longer than they need to be
   G4double intersectionRadius = ( std::max(tunnel1,tunnel2) + tunnelThickness + tunnelSoilThickness ) * 3;
@@ -223,8 +218,8 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngledInOu
 				      length*0.5 - lengthSafety,         // z half length
 				      0,                                 // start angle
 				      CLHEP::twopi,                      // sweep angle
-				      inputface,                         // input face normal vector
-				      outputface);                       // output face normal vector
+				      inputFace,                         // input face normal vector
+				      outputFace);                       // output face normal vector
 
 
   // tunnel
@@ -311,8 +306,8 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngledInOu
 							  0.5*length,                        // z half angle
 							  0,                                 // start angle
 							  CLHEP::twopi,                      // sweep angle
-							  inputface,                         // input face normal vector
-							  outputface);                       // output face normal vector
+							  inputFace,                         // input face normal vector
+							  outputFace);                       // output face normal vector
 
       G4double tunnelContInnerYRadius = ( tunnelFloorOffset + tunnel2 ) * 0.5;
       G4VSolid* tunnelContainerSolidInner = new G4Box(name + "_tunnel_cont_solid_inner", // name
@@ -342,8 +337,8 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngledInOu
 							  0.5*length,                            // z half angle
 							  0,                                     // start angle
 							  CLHEP::twopi,                          // sweep angle
-							  inputface,                             // input normal vector
-							  outputface);                           // output normal vector
+							  inputFace,                             // input normal vector
+							  outputFace);                           // output normal vector
       
       G4VSolid* tunnelContainerSolidInner = new G4Box(name + "_tunnel_cont_solid_inner", // name
 						      tunnel1,                           // x radius

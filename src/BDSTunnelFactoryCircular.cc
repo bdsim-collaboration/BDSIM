@@ -161,19 +161,19 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSection(G4String      na
 }
 
 
-BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G4String      name,
-									   G4double      length,
-									   G4double      angleIn,
-									   G4double      angleOut,
-									   G4double      tunnelThickness,
-									   G4double      tunnelSoilThickness,
-									   G4Material*   tunnelMaterial,
-									   G4Material*   tunnelSoilMaterial,
-									   G4bool        tunnelFloor,
-									   G4double      tunnelFloorOffset,
-									   G4double      tunnel1,
-									   G4double      /*tunnel2*/,
-									   G4bool        visible)
+BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngled(G4String      name,
+								      G4double      length,
+								      G4ThreeVector inputFace,
+								      G4ThreeVector outputFace,
+								      G4double      tunnelThickness,
+								      G4double      tunnelSoilThickness,
+								      G4Material*   tunnelMaterial,
+								      G4Material*   tunnelSoilMaterial,
+								      G4bool        tunnelFloor,
+								      G4double      tunnelFloorOffset,
+								      G4double      tunnel1,
+								      G4double      /*tunnel2*/,
+								      G4bool        visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -184,10 +184,6 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G4Str
   // test input parameters - set global options as default if not specified
   TestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial,
 		      tunnelSoilMaterial, tunnelFloorOffset, tunnel1);
-
-  std::pair<G4ThreeVector,G4ThreeVector> faces = CalculateFaces(angleIn, angleOut);
-  G4ThreeVector inputface  = faces.first;
-  G4ThreeVector outputface = faces.second;
   
   // build the solids
   tunnelSolid = new G4CutTubs(name + "_tunnel_solid",    // name
@@ -196,8 +192,8 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G4Str
 			      length*0.5 - lengthSafety, // z half length
 			      0,                         // start angle
 			      CLHEP::twopi,              // sweep angle
-			      inputface,                 // input face normal vector
-			      outputface);               // output face normal vector
+			      inputFace,                 // input face normal vector
+			      outputFace);               // output face normal vector
 
   G4double soilInnerR = tunnel1 + tunnelThickness + lengthSafety;
   G4double soilOuterR = soilInnerR + tunnelSoilThickness;
@@ -207,8 +203,8 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G4Str
 			      length*0.5 - lengthSafety, // z half length
 			      0,                         // start angle
 			      CLHEP::twopi,              // sweep angle 
-			      inputface,                 // input face normal vector
-			      outputface);               // output face normal vector
+			      inputFace,                 // input face normal vector
+			      outputFace);               // output face normal vector
 
   G4double containerRadius = soilOuterR + lengthSafety;
   
@@ -226,8 +222,8 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G4Str
 					      length*0.5 - lengthSafety,      // z half length
 					      0,                              // start angle
 					      CLHEP::twopi,                   // sweep angle
-					      inputface,                      // input face normal vector
-					      outputface);                    // output face normal vector
+					      inputFace,                      // input face normal vector
+					      outputFace);                    // output face normal vector
 
       G4VSolid* floorBox      = new G4Box(name + "_floor_box_solid",  // name
 					  floorBoxRadius,             // x half width
@@ -252,8 +248,8 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G4Str
 						       length*0.5,                     // z half length
 						       0,                              // start angle
 						       CLHEP::twopi,                   // sweep angle
-						       inputface,                      // input face normal
-						       outputface);                    // output face normal
+						       inputFace,                      // input face normal
+						       outputFace);                    // output face normal
 
       G4VSolid* floorContainerBox = new G4Box(name + "_floor_cont_box_solid",  // name
 					      1.5*tunnel1,                     // x half width
@@ -280,8 +276,8 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G4Str
 						     length*0.5,                // z half length
 						     0,                         // start angle
 						     CLHEP::twopi,              // sweep angle
-						     inputface,                 // input face normal vector
-						     outputface);               // output face normal vector
+						     inputFace,                 // input face normal vector
+						     outputFace);               // output face normal vector
 
       // register solids
       solidsToBeRegistered.push_back(floorContainerSolid);
@@ -297,8 +293,8 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G4Str
 							  length*0.5,               // z half length
 							  0,                        // start angle
 							  CLHEP::twopi,             // sweep angle
-							  inputface,                // input face normal vector
-							  outputface);              // output face normal vector
+							  inputFace,                // input face normal vector
+							  outputFace);              // output face normal vector
       solidsToBeRegistered.push_back(intersectionSolidCylinder);
 
       intersectionSolid = new G4SubtractionSolid(name + "_intersection_solid", // name
@@ -315,8 +311,8 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G4Str
 				     length*0.5,                       // z half length
 				     0,                                // start angle
 				     CLHEP::twopi,                     // sweep angle
-				     inputface,                        // input face normal vector
-				     outputface);                      // output face normal vector
+				     inputFace,                        // input face normal vector
+				     outputFace);                      // output face normal vector
 
       intersectionSolid = new G4CutTubs(name + "_tunnel_intersection_solid", // name
 					0,                                   // inner radius
@@ -324,8 +320,8 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngledInOut(G4Str
 					length*0.5,                          // z half length
 					0,                                   // start angle
 					CLHEP::twopi,                        // sweep angle
-					inputface,                           // input face normal vector
-					outputface);                         // output face normal vector
+					inputFace,                           // input face normal vector
+					outputFace);                         // output face normal vector
     } 
 
   CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerRadius, containerRadius, visible);

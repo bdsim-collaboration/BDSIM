@@ -36,19 +36,19 @@ public:
 						G4bool        visible);
 
   /// Create a tunnel section with an angled input and output face.
-  virtual BDSTunnelSection* CreateTunnelSectionAngledInOut(G4String      name,
-							   G4double      length,
-							   G4double      angleIn,
-							   G4double      angleOut,
-							   G4double      tunnelThickness,
-							   G4double      tunnelSoilThickness,
-							   G4Material*   tunnelMaterial,
-							   G4Material*   tunnelSoilMaterial,
-							   G4bool        tunnelFloor,
-							   G4double      tunnelFloorOffset,
-							   G4double      tunnel1,
-							   G4double      tunnel2,
-							   G4bool        visible);
+  virtual BDSTunnelSection* CreateTunnelSectionAngled(G4String      name,
+						      G4double      length,
+						      G4ThreeVector inputFace,
+						      G4ThreeVector outputFace,
+						      G4double      tunnelThickness,
+						      G4double      tunnelSoilThickness,
+						      G4Material*   tunnelMaterial,
+						      G4Material*   tunnelSoilMaterial,
+						      G4bool        tunnelFloor,
+						      G4double      tunnelFloorOffset,
+						      G4double      tunnel1,
+						      G4double      tunnel2,
+						      G4bool        visible);
 							       
 private:
   /// Singleton pattern instance

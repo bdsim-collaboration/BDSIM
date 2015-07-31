@@ -67,8 +67,28 @@ BDSTunnelSection* BDSTunnelFactoryBase::CreateTunnelSectionAngledOut(G4String   
 					tunnelFloor, tunnelFloorOffset, tunnel1, tunnel2, visible);
 }
 
-std::pair<G4ThreeVector,G4ThreeVector> BDSTunnelFactoryBase::CalculateFaces(G4double angleIn,
-									    G4double angleOut)
+BDSTunnelSection* BDSTunnelFactoryBase::CreateTunnelSectionAngledInOut(G4String      name,
+								       G4double      length,
+								       G4double      angleIn,
+								       G4double      angleOut,
+								       G4double      tunnelThickness,
+								       G4double      tunnelSoilThickness,
+								       G4Material*   tunnelMaterial,
+								       G4Material*   tunnelSoilMaterial,
+								       G4bool        tunnelFloor,
+								       G4double      tunnelFloorOffset,
+								       G4double      tunnel1,
+								       G4double      tunnel2,
+								       G4bool        visible)
+{
+  auto faces = CalculateFaces(angleIn,angleOut);
+  return CreateTunnelSectionAngled(name, length, faces.first, faces.second, tunnelThickness,
+				   tunnelSoilThickness, tunnelMaterial, tunnelSoilMaterial,
+				   tunnelFloor, tunnelFloorOffset, tunnel1, tunnel2, visible);
+}
+
+std::pair<G4ThreeVector, G4ThreeVector> BDSTunnelFactoryBase::CalculateFaces(G4double angleIn,
+									     G4double angleOut)
 {
   /// set cumulative angle
   cumulativeAngle = angleIn + angleOut;
@@ -84,7 +104,7 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSTunnelFactoryBase::CalculateFaces(G4do
   G4double out_x = sin(fabs(angleOut));
   G4ThreeVector inputface  = G4ThreeVector(orientationIn*in_x, 0.0, -1.0*in_z); //-1 as pointing down in z for normal
   G4ThreeVector outputface = G4ThreeVector(orientationOut*out_x, 0.0, out_z);   // no output face angle
-  return std::make_pair(inputface,outputface);
+  return std::make_pair(inputface, outputface);
 }
 
 void BDSTunnelFactoryBase::CommontTestInputParameters(G4double&    length,

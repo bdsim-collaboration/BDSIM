@@ -42,7 +42,7 @@ public:
 						G4double      tunnelFloorOffset,
 						G4double      tunnel1,
 						G4double      tunnel2,
-						G4bool        visible = true) = 0;
+						G4bool        visible) = 0;
 
   /// Create a tunnel section with an angled input face and flat output face. Note,
   /// this is implemented in this base class as a dispatch to the AngledInOut function.
@@ -57,7 +57,7 @@ public:
 							G4double      tunnelFloorOffset,
 							G4double      tunnel1,
 							G4double      tunnel2,
-							G4bool        visible = true);
+							G4bool        visible);
 
   /// Create a tunnel section with an angled output face and flat input face. Note,
   /// this is implemented in this base class as a dispatch to the AngledInOut function.
@@ -72,9 +72,12 @@ public:
 							 G4double      tunnelFloorOffset,
 							 G4double      tunnel1,
 							 G4double      tunnel2,
-							 G4bool        visible = true);
+							 G4bool        visible);
 
-  /// Create a tunnel section with an angled input and output face. Pure virtual.
+  /// Calculates the face normal vectors that all construction uses and then passes
+  /// along to the also public function CreateTunnelSectionAngled. This allows flexibility
+  /// in the way the tunnel segments are created - whether in a fairly flat 2d approach along
+  /// the beam line with only bending the horizontal plane (angles) or in 3d (vectors).
   virtual BDSTunnelSection* CreateTunnelSectionAngledInOut(G4String      name,
 							   G4double      length,
 							   G4double      angleIn,
@@ -87,15 +90,30 @@ public:
 							   G4double      tunnelFloorOffset,
 							   G4double      tunnel1,
 							   G4double      tunnel2,
-							   G4bool        visible = true) = 0;
+							   G4bool        visible);
+
+  /// Create a tunnel section with an angled input and output face. Pure virtual.
+  virtual BDSTunnelSection* CreateTunnelSectionAngled(G4String       name,
+						      G4double       length,
+						      G4ThreeVector  inputFaceIn,
+						      G4ThreeVector  outputFaceIn,
+						      G4double       tunnelThickness,
+						      G4double       tunnelSoilThickness,
+						      G4Material*    tunnelMaterial,
+						      G4Material*    tunnelSoilMaterial,
+						      G4bool         tunnelFloor,
+						      G4double       tunnelFloorOffset,
+						      G4double       tunnel1,
+						      G4double       tunnel2,
+						      G4bool         visible) = 0;
 
 protected:
   /// protected default constructor so only derived classes can use it
   BDSTunnelFactoryBase();
   
-  /// Calculate input and output normal vector
-  std::pair<G4ThreeVector,G4ThreeVector> CalculateFaces(G4double angleIn,
-							G4double angleOut);
+  /// Calculate and set (to member variables) the input and output normal vectors
+  std::pair<G4ThreeVector, G4ThreeVector> CalculateFaces(G4double angleIn,
+							 G4double angleOut);
 
   /// General basic viability tests for input parameters - these are only basic tests
   /// and not dependent on the accelerator model, other components or specific tunnel model
