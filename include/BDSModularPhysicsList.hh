@@ -3,9 +3,7 @@
 
 #include "G4VModularPhysicsList.hh"
 #include "G4OpticalPhysics.hh"
-#include "BDSDebug.hh"
 #include "G4VPhysicsConstructor.hh"
-#include "BDSMuonPhysics.hh"
 #include "BDSCutsAndLimits.hh"
 
 #include <vector>

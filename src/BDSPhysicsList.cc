@@ -591,8 +591,6 @@ void BDSPhysicsList::ConstructParticle()
 	 << BDSGlobalConstants::Instance()->GetBeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
 }
 
-#include "G4Region.hh"
-#include "G4ProductionCuts.hh"
 void BDSPhysicsList::SetCuts()
 {
   SetCutsWithDefault();   
