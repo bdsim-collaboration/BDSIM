@@ -1,12 +1,15 @@
 #include "BDSModularPhysicsList.hh"
+#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSMuonPhysics.hh"
+#include "BDSSynchRadPhysics.hh"
+#include "BDSParameterisationPhysics.hh"
+
 #include "G4EmPenelopePhysics.hh"
 #include "G4OpticalPhysics.hh"
 #include "G4OpticalProcessIndex.hh"
 #include "G4ParticleTable.hh"
-#include "BDSSynchRadPhysics.hh"
 #include "G4EmStandardPhysics.hh"
-#include "BDSParameterisationPhysics.hh"
 #include "G4DecayPhysics.hh"
 #include "G4Electron.hh"
 #include "G4Positron.hh"
@@ -45,6 +48,19 @@ BDSModularPhysicsList::BDSModularPhysicsList():
   SetParticleDefinition();
   SetCuts();
   DumpCutValuesTable(100);
+}
+
+
+BDSModularPhysicsList::~BDSModularPhysicsList()
+{
+  delete _emPhysics;
+  delete _hadronicPhysics;
+  delete _muonPhysics;
+  delete _opticalPhysics;
+  delete _decayPhysics;
+  delete _paramPhysics;
+  delete _synchRadPhysics;
+  delete _cutsAndLimits;
 }
 
 void BDSModularPhysicsList::Print()
@@ -143,10 +159,6 @@ void BDSModularPhysicsList::Register()
     RegisterPhysics(*it);
   }
 }
-
-BDSModularPhysicsList::~BDSModularPhysicsList()
-{;}
-
 
 void BDSModularPhysicsList::SetCuts()
 {
