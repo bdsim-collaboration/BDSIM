@@ -193,7 +193,7 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
   G4VisAttributes* tunnelVisAttr = new G4VisAttributes(G4Colour(0.545, 0.533, 0.470));
   if (visible)
     {tunnelVisAttr->SetVisibility(true);}
-  tunnelVisAttr->SetForceLineSegmentsPerCircle(50);
+  tunnelVisAttr->SetForceLineSegmentsPerCircle(100);
   tunnelLV->SetVisAttributes(tunnelVisAttr);
   visAttributesToBeRegistered.push_back(tunnelVisAttr);
   if (floorLV)
@@ -201,7 +201,7 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
       G4VisAttributes* floorVisAttr = new G4VisAttributes(G4Colour(0.5, 0.5, 0.45));
       if (visible)
 	{floorVisAttr->SetVisibility(true);}
-      floorVisAttr->SetForceLineSegmentsPerCircle(50);
+      floorVisAttr->SetForceLineSegmentsPerCircle(100);
       floorLV->SetVisAttributes(floorVisAttr);
       visAttributesToBeRegistered.push_back(floorVisAttr);
     }
