@@ -63,8 +63,10 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   
   //Do not store hit if the particle is not on the boundary 
-  if(preStepPoint->GetStepStatus()!=fGeomBoundary) return false;
-
+  if(preStepPoint->GetStepStatus()!=fGeomBoundary) {
+    delete bdsTraj;
+    return false;
+  }
   //unique ID of track
   G4int TrackID = theTrack->GetTrackID();
   //unique ID of track's mother
@@ -177,6 +179,8 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4cout << __METHOD_NAME__ << " entries in hits collection after inserting hit: " << SamplerCollection->entries() << G4endl;
 #endif
 
+  delete bdsTraj;
+  
   //The hit was stored, so the return value is "true".
   return true;
 }
