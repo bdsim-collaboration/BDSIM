@@ -52,16 +52,7 @@ BDSModularPhysicsList::BDSModularPhysicsList():
 
 
 BDSModularPhysicsList::~BDSModularPhysicsList()
-{
-  delete _emPhysics;
-  delete _hadronicPhysics;
-  delete _muonPhysics;
-  delete _opticalPhysics;
-  delete _decayPhysics;
-  delete _paramPhysics;
-  delete _synchRadPhysics;
-  delete _cutsAndLimits;
-}
+{;}
 
 void BDSModularPhysicsList::Print()
 {;}
