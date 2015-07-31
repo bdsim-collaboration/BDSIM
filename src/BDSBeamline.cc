@@ -19,11 +19,6 @@
 BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
 			 G4RotationMatrix* initialGlobalRotation)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "with initial position and rotation" << G4endl;
-  G4cout << "Initial position: " << initialGlobalPosition << G4endl;
-  G4cout << "Initial rotation: " << initialGlobalRotation << G4endl;
-#endif
   // initialise extents
   totalChordLength      = 0;
   totalArcLength        = 0;
@@ -35,6 +30,12 @@ BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
     {previousReferenceRotationEnd = initialGlobalRotation;}
   else
     {previousReferenceRotationEnd = new G4RotationMatrix();}
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "with initial position and rotation" << G4endl;
+  G4cout << "Initial position: " << initialGlobalPosition << G4endl;
+  G4cout << "Initial rotation: " << *previousReferenceRotationEnd << G4endl;
+#endif
 
   // initial position
   previousReferencePositionEnd = initialGlobalPosition;
