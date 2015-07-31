@@ -60,11 +60,13 @@ void BDSMySQLWrapper::TokenizeLine(){
 
   // Separate with comma and space, separate and keep with ; ( ) and \n
   // Done in 2 steps, once for dropped delimiters and then for the kept delimiters
-  // Delimiters are spaces (no tabs!) and/or commas
-  std::regex drop_delimiters("[ ,]+");
+  // Delimiters are spaces, tabs (changed from earlier versions) and/or commas, but no newlines
+  std::regex drop_delimiters("[ \t,]+");
 
   std::string &s = _currentLine;
-  // Specifying -1 as the fourth argument makes the function skip over any patterns matching the regex_obj, causing the iterator to iterate through the tokens—which consist of text between each occurrence of the pattern.
+  // Specifying -1 as the fourth argument makes the function skip over any patterns matching
+  // the regex_obj, causing the iterator to iterate through the tokens—which consist of text
+  // between each occurrence of the pattern.
   std::sregex_token_iterator tok_iter(s.begin(), s.end(), drop_delimiters, -1);
   
   // default constructor = end-of-sequence:
@@ -82,15 +84,16 @@ void BDSMySQLWrapper::TokenizeLine(){
     
       std::string token = *tok_iter2;
       
+      // only put non-empty tokens, but put empty strings ""
+      if (token.empty()) {
+	continue;
+      }
       RemoveQuotesFromLine(token);
       RemoveWhitespace(token);
-      // only put non-empty tokens
-      if (!token.empty()) {
-	_tokens.push_back(token);
+      _tokens.push_back(token);
 #ifdef BDSDEBUG
 	G4cout << __METHOD_NAME__ << " - token: = <" << token << ">" << G4endl;
 #endif
-      }
     }
   }
   BeginTokens();
