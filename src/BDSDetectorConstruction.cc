@@ -480,8 +480,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       //G4PVPlacement* tunnelPV = NULL;
       for(; tunnelIt != tunnel->end(); ++tunnelIt)
 	{
-	  new G4PVPlacement((*tunnelIt)->GetRotationMiddle(),         // rotation
-			    (*tunnelIt)->GetPositionMiddle(),         // position
+	  new G4PVPlacement(*(*tunnelIt)->GetPlacementTransform(),    // placement transform
 			    (*tunnelIt)->GetPlacementName() + "_pv",  // placement name
 			    (*tunnelIt)->GetContainerLogicalVolume(), // volume to be placed
 			    worldPV,                                  // volume to place it in
