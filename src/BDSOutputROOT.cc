@@ -469,18 +469,18 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
       EnergyLossTree->Fill();
       
       if((*hc)[i]->GetPrecisionRegion()){ //Only the precision region fills this tree, preserving every hit, its position and weight, instead of summing weighted energy in each beam line component.
-	weight_el_p  = (*hc)[i]->GetWeight();
-	E_el_p       = (*hc)[i]->GetEnergy()/CLHEP::GeV;
-	X_el_p       = (*hc)[i]->GetX()/CLHEP::m;
-	Y_el_p       = (*hc)[i]->GetY()/CLHEP::m;
-	Z_el_p       = (*hc)[i]->GetZ()/CLHEP::m;
-	S_el_p       = (*hc)[i]->GetS()/CLHEP::m;
-	x_el_p       = (*hc)[i]->Getx()/CLHEP::m;
-	y_el_p       = (*hc)[i]->Gety()/CLHEP::m;
-	z_el_p       = (*hc)[i]->Getz()/CLHEP::m;
-	part_el_p    = (*hc)[i]->GetPartID();
-	turnnumber   = (*hc)[i]->GetTurnsTaken();
-	eventno_el_p = (*hc)[i]->GetEventNo();
+	weight_el_p     = (*hc)[i]->GetWeight();
+	E_el_p          = (*hc)[i]->GetEnergy()/CLHEP::GeV;
+	X_el_p          = (*hc)[i]->GetX()/CLHEP::m;
+	Y_el_p          = (*hc)[i]->GetY()/CLHEP::m;
+	Z_el_p          = (*hc)[i]->GetZ()/CLHEP::m;
+	S_el_p          = (*hc)[i]->GetS()/CLHEP::m;
+	x_el_p          = (*hc)[i]->Getx()/CLHEP::m;
+	y_el_p          = (*hc)[i]->Gety()/CLHEP::m;
+	z_el_p          = (*hc)[i]->Getz()/CLHEP::m;
+	part_el_p       = (*hc)[i]->GetPartID();
+	turnnumber_el_p = (*hc)[i]->GetTurnsTaken();
+	eventno_el_p    = (*hc)[i]->GetEventNo();
 	//name - convert to char array for root
 	G4String temp = (*hc)[i]->GetName()+'\0';
 	strncpy(volumeName_el_p,temp.c_str(),sizeof(volumeName_el_p)-1);
