@@ -163,3 +163,11 @@ G4String BDS::StringFromDigit(G4int N)
   else if(N==9)Cnum="9"; 
   return Cnum;
 }
+
+void BDS::PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName)
+{
+  G4cout << "Rotation matrix - reference \"" << keyName << "\"" << *rm << G4endl;
+  G4cout << "unit x -> " << G4ThreeVector(1,0,0).transform(*rm) << G4endl;
+  G4cout << "unit y -> " << G4ThreeVector(0,1,0).transform(*rm) << G4endl;
+  G4cout << "unit z -> " << G4ThreeVector(0,0,1).transform(*rm) << G4endl;
+}
