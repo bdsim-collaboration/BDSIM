@@ -122,7 +122,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 
   BDSBeamlineIterator it = flatBeamline->begin();
 
-  // skip the first item if it's a sampler
+  // skip the first item if it's a sampler - so algorithm doesn't try to make null section before it
   if(IsASampler(it))
     {
 #ifdef BDSDEBUG
@@ -170,7 +170,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 	  G4ThreeVector startOffsetGlobal  = startOffsetLocal.transform(*startRot);
 	  startPoint                      += startOffsetGlobal;
 #ifdef BDSDEBUG
-	  BDS::PrintRotationMatrix(startRot, "START ROT");
+	  BDS::PrintRotationMatrix(startRot, "rotation at beginning of starting element");
 #endif
 
 	  // calculate end central point of tunnel
@@ -323,8 +323,9 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 	  cumulativeNItems   = 0;
 	  cumulativeDisplacementX = 0;
 	  cumulativeDisplacementY = 0;
-	  startElement       = endElement; // next segment will begin where this one finishes
-	  previousEndElement = endElement; // mark the end of this element as the prevous end
+	  startElement       = endElement; 
+	  startElement++; // next segment will begin where this one finishes
+	  previousEndElement = startElement; // (copy startElement) mark the end of this element as the prevous end
 	  if (nextItemIsSampler)
 	    { // skip the sampler - ie no tunnel around it
 	      startElement++;
