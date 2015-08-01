@@ -169,6 +169,9 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 	  G4RotationMatrix* startRot       = new G4RotationMatrix(*(*startElement)->GetReferenceRotationStart());
 	  G4ThreeVector startOffsetGlobal  = startOffsetLocal.transform(*startRot);
 	  startPoint                      += startOffsetGlobal;
+#ifdef BDSDEBUG
+	  BDS::PrintRotationMatrix(startRot, "START ROT");
+#endif
 
 	  // calculate end central point of tunnel
 	  G4ThreeVector endPoint           = (*endElement)->GetReferencePositionEnd();
@@ -200,21 +203,15 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 	  // get unit y by calculating x unit (starting element) cross direction of mid point (unit)
 	  G4ThreeVector unitXPrevious = G4ThreeVector(1,0,0).transform(*startRot);
 	  G4ThreeVector newUnitY      = newUnitZ.cross(unitXPrevious).unit();
-	  G4cout << " TEST new Y " << newUnitY << G4endl;
 	  // get unit x by calcualting y unit (starting element) cross direction of mid point (unit)
 	  G4ThreeVector unitYPrevious = G4ThreeVector(0,1,0).transform(*startRot);
 	  G4ThreeVector newUnitX      = unitYPrevious.cross(newUnitZ).unit();
-	  G4cout << " TEST new X " << newUnitX << G4endl;
 	  
 	  // create mid point rotation matrix from unit vectors at mid point
 	  G4RotationMatrix* rotationMiddle = new G4RotationMatrix(newUnitX, newUnitY, newUnitZ);
 	  
 	  // calculate length
-	  G4double segmentLength = (endPoint - startPoint).mag();
-	  // if the next item is a sampler - leave a very small gap for it - but big enough that
-	  // no overlaps will occur - 1um should do it
-	  if (nextItemIsSampler)
-	    {segmentLength -= 1*CLHEP::um;}
+	  G4double segmentLength = (endPoint - startPoint).mag() - 1*CLHEP::um; // -1um purely for safety purposes
 
 	  // decide whether angled or not
 	  G4bool isAngled = BDS::IsFinite(cumulativeAngle);
@@ -238,8 +235,29 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 	  if (isAngled)
 	    { // use the angled faces
 	      // make unit vectors for each face of the angled solid if required
-	      G4ThreeVector inputFace  = G4ThreeVector(0,0,-1).transform(*startRot);
-	      G4ThreeVector outputFace = G4ThreeVector(0,0,1).transform(*endRot);
+	      // We need the rotation matrix for the input face in the frame of the tunnel
+	      // segment. This really the difference between the incoming rotation matrix
+	      // and the rotation matrix of the tunnel segment (middle). To get the difference
+	      // we multiply the incoming by the inverse of the middle.
+	      // We can then use this rotation matrix to transform a -ve z unit vector for the
+	      // input face and a +ve z unit vector for the output face.
+	      // The benefit is that this works in 3D and does not rely on the (cumulative)
+	      // angle being averaged between the two faces - so each face can have a totally different
+	      // angle as required by the tunnel builder.
+	      G4RotationMatrix* middleInverse = new G4RotationMatrix(*rotationMiddle);
+	      middleInverse->invert(); // now it's the inverse
+	      G4RotationMatrix* inputFaceRotation  = new G4RotationMatrix((*startRot) * (*middleInverse));
+	      G4ThreeVector inputFace  = G4ThreeVector(0,0,-1).transform(*inputFaceRotation);
+	      G4RotationMatrix* outputFaceRotation = new G4RotationMatrix((*endRot) * (*middleInverse));
+	      G4ThreeVector outputFace = G4ThreeVector(0,0,1).transform(*outputFaceRotation);
+
+#ifdef BDSDEBUG
+	      BDS::PrintRotationMatrix(middleInverse,"middle inverse");
+	      BDS::PrintRotationMatrix(inputFaceRotation, "result");
+	      BDS::PrintRotationMatrix(outputFaceRotation, "result end ");
+	      G4cout << "tunnel segment input face normal determined to be:  " << inputFace  << G4endl;
+	      G4cout << "tunnel segment output face normal determined to be: " << outputFace << G4endl;
+#endif
 	      
 	      tunnelSection = tf->CreateTunnelSectionAngled(defaultModel->type,          // type
 							    name.str(),                  // name
