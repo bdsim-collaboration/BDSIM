@@ -272,7 +272,8 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 							    defaultModel->floorOffset,   // floor offset
 							    defaultModel->aper1,         // 1st aperture param
 							    defaultModel->aper2,         // 2nd aperture param
-							    defaultModel->visible);      // is it visible 
+							    defaultModel->visible);      // is it visible
+	      delete middleInverse;
 	    }
 	  else
 	    { // straight section

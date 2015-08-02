@@ -286,6 +286,7 @@ BDSGlobalConstants::~BDSGlobalConstants()
 {  
   delete itsZeroFieldManager;
   delete zeroMagField;
+  delete tunnelInfo;
   delete defaultUserLimits;
   _instance = 0;
 }

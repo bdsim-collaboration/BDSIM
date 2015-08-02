@@ -36,7 +36,6 @@
 #include "BDSExecOptions.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetGeometryType.hh"
-#include "BDSTunnelInfo.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals

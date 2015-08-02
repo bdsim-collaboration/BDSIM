@@ -19,7 +19,7 @@
 
 
 BDSTunnelFactoryBase::BDSTunnelFactoryBase():
-  tunnelSection(NULL),
+  tunnelComponent(NULL),tunnelSection(NULL),
   containerSolid(NULL), tunnelSolid(NULL), soilSolid(NULL), floorSolid(NULL),
   intersectionSolid(NULL),
   containerLV(NULL), tunnelLV(NULL), soilLV(NULL), floorLV(NULL),

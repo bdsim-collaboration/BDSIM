@@ -15,7 +15,6 @@
 #include "BDSTeleporter.hh"
 #include "BDSTunnelBuilder.hh"
 #include "BDSTunnelType.hh"
-#include "BDSTunnelFactory.hh"
 
 #include "parser/element.h"
 #include "parser/elementlist.h"

@@ -33,13 +33,13 @@ BDSTunnelFactoryRectAboveGround* BDSTunnelFactoryRectAboveGround::Instance()
 
 BDSTunnelFactoryRectAboveGround::BDSTunnelFactoryRectAboveGround()
 {
+  slabSolid      = NULL;
   slabYHalfWidth = 1.5*CLHEP::m;
 }
 
 BDSTunnelFactoryRectAboveGround::~BDSTunnelFactoryRectAboveGround()
 {
   _instance = 0;
-  slabSolid      = NULL;
 }
 
 BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4String    name,
