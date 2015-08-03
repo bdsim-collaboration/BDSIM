@@ -36,7 +36,8 @@ BDSEventAction::BDSEventAction():
   samplerCollID_cylin(-1),
   energyCounterCollID(-1),
   primaryCounterCollID(-1),
-  Traj(nullptr),
+  tunnelCollID(-1),
+  traj(nullptr),
   trajEndPoint(nullptr)
 { 
   verbose            = BDSExecOptions::Instance()->GetVerbose();
@@ -69,14 +70,15 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   // get hit collection IDs for easy access
   G4SDManager* g4SDMan = G4SDManager::GetSDMpointer();
   if(samplerCollID_plane < 0)
-    {samplerCollID_plane    = g4SDMan->GetCollectionID("Sampler_plane");}
+    {samplerCollID_plane  = g4SDMan->GetCollectionID("Sampler_plane");}
   if(samplerCollID_cylin < 0)
-    {samplerCollID_cylin    = g4SDMan->GetCollectionID("Sampler_cylinder");}
+    {samplerCollID_cylin  = g4SDMan->GetCollectionID("Sampler_cylinder");}
   if(energyCounterCollID < 0)
     {energyCounterCollID  = g4SDMan->GetCollectionID("ec_on_axis_read_out/energy_counter");}
   if(primaryCounterCollID < 0)
     {primaryCounterCollID = g4SDMan->GetCollectionID("ec_on_axis_read_out/primary_counter");}
-   
+  if(tunnelCollID < 0)
+    {tunnelCollID         = g4SDMan->GetCollectionID("tunnel_hits");} // defined in BDSSDManager.cc
   //if (lWCalorimeterCollID<1) 
   //{lWCalorimeterCollID = G4SDManager::GetSDMpointer()->GetCollectionID("LWCalorimeterCollection");}
   FireLaserCompton=true;
@@ -91,69 +93,58 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout<<"BDSEventAction : processing end of event action"<<G4endl;
 #endif
+  // Get the hits collection of this event - all hits from different SDs.
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
 
+  // Get event number information
   G4int event_number = evt->GetEventID();
   if(verboseEvent || verboseEventNumber == event_number)
     {G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;}
- 
-#ifdef BDSDEBUG 
-  G4cout<<"BDSEventAction : storing hits"<<G4endl;
-#endif 
-  //Record the primary events
+  
+  // Record the primary events
   AddPrimaryHits();
   
-#ifdef BDSDEBUG 
-  G4cout<<"BDSEventAction : processing planar hits collection"<<G4endl;
-#endif
-  
-  BDSSamplerHitsCollection*  SampHC=nullptr;
-  if(samplerCollID_plane>=0)
-    SampHC = (BDSSamplerHitsCollection*)(evt->GetHCofThisEvent()->GetHC(samplerCollID_plane));
-  
-  if(SampHC)
-    {
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " - sampler hits collection found. Writing hits." << G4endl;
-#endif
-      bdsOutput->WriteHits(SampHC);
-    }
-  else
-    {
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " - no sampler hits collection found. Not writing hits." << G4endl;
-#endif
-  	}
-  SampHC=nullptr;
-  
-  // are there any cylindrical samplers? if so, record the hits
-#ifdef BDSDEBUG
-  G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
-#endif
-  if(samplerCollID_cylin>=0)
-    SampHC = (BDSSamplerHitsCollection*)(HCE->GetHC(samplerCollID_cylin));
+  // Now process each of the hits collections in turn, writing them to output.
+  // After this, fill the appropriate histograms with information from this event.
 
+  // samplers
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << "processing sampler hits collection" << G4endl;
+#endif
+  BDSSamplerHitsCollection* SampHC = nullptr;
+  if(samplerCollID_plane >= 0)
+    {SampHC = (BDSSamplerHitsCollection*)(evt->GetHCofThisEvent()->GetHC(samplerCollID_plane));}
   if(SampHC)
     {bdsOutput->WriteHits(SampHC);}
   
-  // are there any Laser wire calorimeters?
-  // TODO : check it !!! at present not writing LW stuff
-  // remember to uncomment LWCalHC above if using this
-  //BDSLWCalorimeterHitsCollection* LWCalHC=nullptr;
-  // if(LWCalorimeterCollID>=0) 
-  //   LWCalHC=(BDSLWCalorimeterHitsCollection*)(evt->GetHCofThisEvent()->GetHC(LWCalorimeterCollID));
-  // if (LWCalHC) bdsOutput->WriteHits(SampHC);
-  
-  // create energy loss histogram
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << ": storing energy loss histograms" << G4endl;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "processing cylinder hits collection" << G4endl;
 #endif
-  
-  BDSEnergyCounterHitsCollection* energyCounterHits = 
-    (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
-  BDSEnergyCounterHitsCollection* primaryCounterHits = 
-    (BDSEnergyCounterHitsCollection*)(HCE->GetHC(primaryCounterCollID));
+  SampHC = nullptr;
+  if(samplerCollID_cylin >= 0)
+    {SampHC = (BDSSamplerHitsCollection*)(HCE->GetHC(samplerCollID_cylin));}
+  if(SampHC)
+    {bdsOutput->WriteHits(SampHC);}
 
+  // LASERWIRE - TO FIX / REIMPLEMENT
+  // remember to uncomment LWCalHC above if using this
+  // BDSLWCalorimeterHitsCollection* LWCalHC=nullptr;
+  // if(LWCalorimeterCollID >= 0) 
+  //   LWCalHC=(BDSLWCalorimeterHitsCollection*)(evt->GetHCofThisEvent()->GetHC(LWCalorimeterCollID));
+  // if (LWCalHC)
+  //    {bdsOutput->WriteHits(SampHC);}
+
+  // energy deposition collections - eloss, primary hits, primary losses, tunnel hits
+  BDSEnergyCounterHitsCollection* energyCounterHits  = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
+  BDSEnergyCounterHitsCollection* primaryCounterHits = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(primaryCounterCollID));
+  BDSTunnelHitsCollection*        tunnelHits         = nullptr;
+  if (BDSGlobalConstants::Instance()->BuildTunnel())
+    {tunnelHits = (BDSTunnelHitsCollection*)(HCE->GetHC(tunnelCollID));}
+
+  // fill histograms
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << "filling histograms & writing energy loss hits" << G4endl;
+#endif
   BDSAnalysisManager* analMan = BDSAnalysisManager::Instance();
   //if we have energy deposition hits, write them
   if(energyCounterHits)
@@ -174,27 +165,39 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
 
   //if we have primary hits, find the first one and write that
-  if(primaryCounterHits) {
-    if (primaryCounterHits->entries()>0){
-      BDSEnergyCounterHit* thePrimaryHit  = BDS::LowestSPosPrimaryHit(primaryCounterHits);
-      BDSEnergyCounterHit* thePrimaryLoss = BDS::HighestSPosPrimaryHit(primaryCounterHits);
-      //write
-      if (thePrimaryHit && thePrimaryLoss)
+  if(primaryCounterHits)
+    {
+      if (primaryCounterHits->entries()>0)
 	{
-	  bdsOutput->WritePrimaryLoss(thePrimaryLoss);
-	  bdsOutput->WritePrimaryHit(thePrimaryHit);
-	  G4double hitS  = thePrimaryHit->GetS()/CLHEP::m;
-	  G4double lossS = thePrimaryLoss->GetS()/CLHEP::m;
-	  // general histos
-	  analMan->Fill1DHistogram(0, hitS);
-	  analMan->Fill1DHistogram(1, lossS);
-	  // per element histos
-	  analMan->Fill1DHistogram(3, hitS);
-	  analMan->Fill1DHistogram(4, lossS);
+	  BDSEnergyCounterHit* thePrimaryHit  = BDS::LowestSPosPrimaryHit(primaryCounterHits);
+	  BDSEnergyCounterHit* thePrimaryLoss = BDS::HighestSPosPrimaryHit(primaryCounterHits);
+	  //write
+	  if (thePrimaryHit && thePrimaryLoss)
+	    {
+	      bdsOutput->WritePrimaryLoss(thePrimaryLoss);
+	      bdsOutput->WritePrimaryHit(thePrimaryHit);
+	      G4double hitS  = thePrimaryHit->GetS()/CLHEP::m;
+	      G4double lossS = thePrimaryLoss->GetS()/CLHEP::m;
+	      // general histos
+	      analMan->Fill1DHistogram(0, hitS);
+	      analMan->Fill1DHistogram(1, lossS);
+	      // per element histos
+	      analMan->Fill1DHistogram(3, hitS);
+	      analMan->Fill1DHistogram(4, lossS);
+	    }
 	}
     }
-  }
-  
+
+  // we should only try and access the tunnel hits collection if it was actually
+  // instantiated which won't happen if the tunnel isn't build and placed. During
+  // placement the SD is attached, which is done on demand as it's a read out one,
+  // so without placement, accessing this will cause a segfault.
+  if (BDSGlobalConstants::Instance()->BuildTunnel())
+    {
+      if (tunnelHits)
+	{bdsOutput->WriteTunnelHits(tunnelHits);} // write hits
+    }
+      
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " finished writing energy loss." << G4endl;
 #endif

@@ -231,6 +231,9 @@ void BDSOutputASCII::WritePrimaryLoss(BDSEnergyCounterHit* hit)
 void BDSOutputASCII::WritePrimaryHit(BDSEnergyCounterHit* /*hit*/)
 {}
 
+void BDSOutputASCII::WriteTunnelHits(BDSTunnelHitsCollection* /*hits*/)
+{}
+
 void BDSOutputASCII::WriteHistogram(BDSHistogram1D* histogramIn)
 {
   //prepare file name

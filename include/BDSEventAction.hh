@@ -39,6 +39,7 @@ private:
   //G4int lWCalorimeterCollID;
   G4int energyCounterCollID; ///< collection ID for energy deposition hits for read out geometry
   G4int primaryCounterCollID;///< collection ID for primary hits for read out geometry
+  G4int tunnelCollID;        ///< collection ID for tunnel hits from tunnel read out geometry
   
   G4int printModulo;
 

@@ -104,7 +104,7 @@ void BDSOutputROOT::Init()
   G4cout<<"Setting up new file: "<<filename<<G4endl;
   theRootOutputFile=new TFile(filename,"RECREATE", "BDS output file");
 
-  //build sampler tree
+  // Build sampler tree
   G4String primariesSamplerName="primaries";
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " building sampler tree named: " << primariesSamplerName << G4endl;
@@ -137,13 +137,13 @@ void BDSOutputROOT::Init()
       TrajTree->Branch("part",&part,"part/I");
     }
 
-  //Energy loss tree setup
+  // Energy loss tree setup
   EnergyLossTree= new TTree("ElossTree", "Energy Loss");
   EnergyLossTree->Branch("s",&S_el,"s/F"); // (m)
   EnergyLossTree->Branch("E",&E_el,"E/F"); // (GeV)
   EnergyLossTree->Branch("weight", &weight_el, "weight/F"); // weight
 
-  //Primary loss tree setup
+  // Primary loss tree setup
   PrimaryLossTree  = new TTree("PlossTree", "Primary Losses");
   PrimaryLossTree->Branch("X",          &X_pl,          "X/F"); // (m)
   PrimaryLossTree->Branch("Y",          &Y_pl,          "Y/F"); // (m)
@@ -158,7 +158,7 @@ void BDSOutputROOT::Init()
   PrimaryLossTree->Branch("turnnumber", &turnnumber_pl, "turnnumber/I");
   PrimaryLossTree->Branch("eventNo",    &eventno_pl,    "eventNo/I");
 
-  //Primary hits tree setup
+  // Primary hits tree setup
   PrimaryHitsTree  = new TTree("PhitsTree", "Primary Hits");
   PrimaryHitsTree->Branch("X",          &X_ph,          "X/F"); // (m)
   PrimaryHitsTree->Branch("Y",          &Y_ph,          "Y/F"); // (m)
@@ -172,8 +172,24 @@ void BDSOutputROOT::Init()
   PrimaryHitsTree->Branch("partID",     &part_ph,       "partID/I");
   PrimaryHitsTree->Branch("turnnumber", &turnnumber_ph, "turnnumber/I");
   PrimaryHitsTree->Branch("eventNo",    &eventno_ph,    "eventNo/I");
+
+  // Tunnel hits tree setup
+  TunnelLossTree = new TTree("TunnelHitsTree", "Tunnel Hits");
+  TunnelLossTree->Branch("E",           &E_tun,         "E/F");     // (GeV)
+  TunnelLossTree->Branch("S",           &S_tun,         "S/F");     // (m)
+  TunnelLossTree->Branch("r",           &r_tun,         "r/F");     // (m)
+  TunnelLossTree->Branch("theta",       &angle_tun,     "theta/F"); // (rad)
+
+  // Tunnel hits histogram
+  G4double smin     = 0.0;
+  G4double smax     = BDSGlobalConstants::Instance()->GetSMax() / CLHEP::m;
+  G4double binwidth = BDSGlobalConstants::Instance()->GetElossHistoBinWidth();
+  G4int    nbins    = (int) ceil((smax-smin)/binwidth); // rounding up so last bin definitely covers smax
+  smax              = smin + (nbins*binwidth);          // redefine smax
+  // x then y -> x is angle, y is s position
+  tunnelHitsHisto = new TH2F("tunnel_hits_histo","Tunnel Enegy Deposition",50,-CLHEP::pi-0.01,CLHEP::pi+0.01,nbins,0,smax);
   
-  //Precision region energy loss tree setup
+  // Precision region energy loss tree setup
   PrecisionRegionEnergyLossTree= new TTree("PrecisionRegionElossTree", "Energy Loss");
   PrecisionRegionEnergyLossTree->Branch("X",          &X_el_p,          "X/F"); // (m)
   PrecisionRegionEnergyLossTree->Branch("Y",          &Y_el_p,          "Y/F"); // (m)
@@ -242,53 +258,51 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
 #endif
   TTree* sTree=(TTree*)gDirectory->Get(Name);
   if(!sTree) G4Exception("BDSOutputROOT: ROOT Sampler not found!", "-1", FatalException, "");
-  E0          = InitMom     / CLHEP::GeV;
-  x0          = InitX       / CLHEP::micrometer;
-  y0          = InitY       / CLHEP::micrometer;
-  z0          = InitZ       / CLHEP::m;
-  xp0         = InitXPrime  / CLHEP::radian;
-  yp0         = InitYPrime  / CLHEP::radian;
-  zp0         = InitZPrime  / CLHEP::radian;
-  t0          = InitT       / CLHEP::ns;
-  E_prod      = ProdMom     / CLHEP::GeV;
-  x_prod      = ProdX       / CLHEP::micrometer;
-  y_prod      = ProdY       / CLHEP::micrometer;
-  z_prod      = ProdZ       / CLHEP::m;
-  xp_prod     = ProdXPrime  / CLHEP::radian;
-  yp_prod     = ProdYPrime  / CLHEP::radian;
-  zp_prod     = ProdZPrime  / CLHEP::radian;
-  t_prod      = ProdT       / CLHEP::ns;
-  E_lastScat  = LastScatMom / CLHEP::GeV;
-  x_lastScat  = LastScatX   / CLHEP::micrometer;
-  y_lastScat  = LastScatY   / CLHEP::micrometer;
-  z_lastScat  = LastScatZ   / CLHEP::m;
+  E0          = InitMom        / CLHEP::GeV;
+  x0          = InitX          / CLHEP::micrometer;
+  y0          = InitY          / CLHEP::micrometer;
+  z0          = InitZ          / CLHEP::m;
+  xp0         = InitXPrime     / CLHEP::radian;
+  yp0         = InitYPrime     / CLHEP::radian;
+  zp0         = InitZPrime     / CLHEP::radian;
+  t0          = InitT          / CLHEP::ns;
+  E_prod      = ProdMom        / CLHEP::GeV;
+  x_prod      = ProdX          / CLHEP::micrometer;
+  y_prod      = ProdY          / CLHEP::micrometer;
+  z_prod      = ProdZ          / CLHEP::m;
+  xp_prod     = ProdXPrime     / CLHEP::radian;
+  yp_prod     = ProdYPrime     / CLHEP::radian;
+  zp_prod     = ProdZPrime     / CLHEP::radian;
+  t_prod      = ProdT          / CLHEP::ns;
+  E_lastScat  = LastScatMom    / CLHEP::GeV;
+  x_lastScat  = LastScatX      / CLHEP::micrometer;
+  y_lastScat  = LastScatY      / CLHEP::micrometer;
+  z_lastScat  = LastScatZ      / CLHEP::m;
   xp_lastScat = LastScatXPrime / CLHEP::radian;
   yp_lastScat = LastScatYPrime / CLHEP::radian;
   zp_lastScat = LastScatZPrime / CLHEP::radian;
-  t_lastScat  = LastScatT   / CLHEP::ns;
-
-  E           =Mom / CLHEP::GeV;
-  //Edep=Edep / CLHEP::GeV;
-  x           = X / CLHEP::micrometer;
-  y           = Y / CLHEP::micrometer;
-  z           = Z / CLHEP::m;
-  xp          = XPrime / CLHEP::radian;
-  yp          = YPrime / CLHEP::radian;
-  zp          = ZPrime / CLHEP::radian;
-  t=T / CLHEP::ns;
-  X=GlobalX / CLHEP::m;
-  Y=GlobalY / CLHEP::m;
-  Z=GlobalZ / CLHEP::m;
-  Xp=GlobalXPrime / CLHEP::radian;
-  Yp=GlobalYPrime / CLHEP::radian;
-  Zp=GlobalZPrime / CLHEP::radian;
-  s=S / CLHEP::m;
-  weight=Weight;
-  part=PDGtype; 
-  nev=EventNo; 
-  pID=ParentID; 
-  track_id=TrackID;
-  turnnumber=TurnsTaken;
+  t_lastScat  = LastScatT      / CLHEP::ns;
+  E           = Mom            / CLHEP::GeV;
+  x           = X              / CLHEP::micrometer;
+  y           = Y              / CLHEP::micrometer;
+  z           = Z              / CLHEP::m;
+  xp          = XPrime         / CLHEP::radian;
+  yp          = YPrime         / CLHEP::radian;
+  zp          = ZPrime         / CLHEP::radian;
+  t           = T              / CLHEP::ns;
+  X           = GlobalX        / CLHEP::m;
+  Y           = GlobalY        / CLHEP::m;
+  Z           = GlobalZ        / CLHEP::m;
+  Xp          = GlobalXPrime   / CLHEP::radian;
+  Yp          = GlobalYPrime   / CLHEP::radian;
+  Zp          = GlobalZPrime   / CLHEP::radian;
+  s           = S              / CLHEP::m;
+  weight      = Weight;
+  part        = PDGtype; 
+  nev         = EventNo; 
+  pID         = ParentID; 
+  track_id    = TrackID;
+  turnnumber  = TurnsTaken;
   sTree->Fill();
 }
 
@@ -536,6 +550,24 @@ void BDSOutputROOT::WritePrimaryHit(BDSEnergyCounterHit* hit)
   //write to file
   PrimaryHitsTree->Fill();
 }
+
+  
+void BDSOutputROOT::WriteTunnelHits(BDSTunnelHitsCollection* tunnelHits)
+{
+  for (G4int i = 0; i < tunnelHits->entries(); i++)
+    {
+      BDSTunnelHit* hit = (*tunnelHits)[i];
+      E_tun     = hit->GetEnergy()/CLHEP::GeV;
+      S_tun     = hit->GetS()/CLHEP::m;
+      r_tun     = hit->Getr()/CLHEP::m;
+      angle_tun = hit->Gettheta();
+      TunnelLossTree->Fill();
+
+      // x,y,w -> angle,s,energy
+      tunnelHitsHisto->Fill(angle_tun, S_tun, E_tun);
+    }
+}
+
 
 void BDSOutputROOT::WriteHistogram(BDSHistogram1D* hIn)
 {
