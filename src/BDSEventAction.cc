@@ -46,7 +46,14 @@ BDSEventAction::BDSEventAction():
   isBatch            = BDSExecOptions::Instance()->GetBatch();
   useTunnel          = BDSGlobalConstants::Instance()->BuildTunnel();
 
-  if(isBatch) printModulo=10;
+  if(isBatch)
+    {
+      G4int nGenerate = BDSGlobalConstants::Instance()->GetNumberToGenerate();
+      G4double fraction = BDSGlobalConstants::Instance()->GetPrintModuloFraction();
+      printModulo = (G4int)ceil(nGenerate * fraction);
+      if (printModulo < 0)
+	{printModulo = 1;}
+    }
   else printModulo=1;
 }
 

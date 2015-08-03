@@ -46,6 +46,8 @@ public:
    /// access method 
   static BDSGlobalConstants* Instance();
   ~BDSGlobalConstants();
+
+  G4double GetPrintModuloFraction() const;
   
   G4bool   GetDoPlanckScattering() const;
   G4bool   GetCheckOverlaps() const;
@@ -364,6 +366,8 @@ private:
   void InitDefaultUserLimits();
   G4UserLimits* defaultUserLimits;
 
+  G4double printModuloFraction;
+
 public:
   G4RotationMatrix* RotY90() const;
   G4RotationMatrix* RotYM90() const;
@@ -415,6 +419,9 @@ private:
   void     SetLPBFraction(G4double val);
 
 };
+
+inline G4double BDSGlobalConstants::GetPrintModuloFraction() const
+{return printModuloFraction;}
 
 inline G4double BDSGlobalConstants::GetElossHistoBinWidth() const
 {return itsElossHistoBinWidth;}

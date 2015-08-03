@@ -205,6 +205,8 @@ struct Options
   /// Ring parameters
   int      nturns;
 
+  double   printModuloFraction;
+
   /// print some properties
   void print()const;
 

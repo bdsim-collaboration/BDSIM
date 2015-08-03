@@ -167,7 +167,9 @@ Options::Options()
   useTimer                 = 0;
 
   // circular options
-  nturns = 1;
+  nturns                   = 1;
+
+  printModuloFraction      = 0.1;
 }
 
 void Options::print() const
@@ -393,6 +395,8 @@ void Options::set_value(std::string name, double value )
   
   // option for rings
   if(name=="nturns") {nturns = (int) value; return; }
+
+  if(name=="printModuloFraction") {printModuloFraction = (double)value; return;}
   
   std::cerr << "parser> Error: unknown option \"" << name << "\" with value " << value << std::endl; 
   exit(1);

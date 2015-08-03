@@ -28,8 +28,14 @@ BDSGlobalConstants* BDSGlobalConstants::Instance()
 }
 
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
-  itsBeamParticleDefinition(nullptr),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0),itsParticleMomentum(0.0),itsParticleKineticEnergy(0.0),itsSMax(0.0)
+  itsBeamParticleDefinition(nullptr),
+  itsBeamMomentum(0.0),
+  itsBeamKineticEnergy(0.0),
+  itsParticleMomentum(0.0),
+  itsParticleKineticEnergy(0.0),
+  itsSMax(0.0)
 {
+  printModuloFraction   = opt.printModuloFraction;
   itsPhysListName       = opt.physicsList;
   itsBeamPipeMaterial   = opt.beampipeMaterial;
   itsApertureType       = BDS::DetermineBeamPipeType(opt.apertureType);
