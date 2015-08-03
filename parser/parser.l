@@ -140,7 +140,7 @@ dump  { return DUMP; }
      if(sp->funcptr)
        return FUNC;
      else 
-     if(sp->type == _ARRAY)
+     if(sp->type == symtab::symtabtype::_ARRAY)
        return VECVAR;
      else
        return VARIABLE; 

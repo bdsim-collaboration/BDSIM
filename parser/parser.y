@@ -995,7 +995,7 @@ expr : aexpr
 	 if(execute)
 	   {
 	     if(INTERACTIVE) {
-	       if($1->type == _ARRAY)
+	       if($1->type == symtab::symtabtype::_ARRAY)
 		 {
 		   for(std::list<double>::iterator it = $1->array.begin();
 		       it!=$1->array.end();it++)
@@ -1074,7 +1074,7 @@ assignment :  VARIABLE '=' aexpr
 		    $1->array.clear();
 		    for(int i=0;i<$3->size;i++)
 		      $1->array.push_back($3->data[i]);
-		    $1->type = _ARRAY;
+		    $1->type = symtab::symtabtype::_ARRAY;
 		    $$ = $1;
 		    delete[] $3->data;
 		    $3->size = 0;
