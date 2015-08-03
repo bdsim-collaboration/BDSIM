@@ -95,142 +95,142 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   
   BDSAcceleratorComponent* element = nullptr;
   switch(_element.type){
-  case _SAMPLER:
+  case ElementType::_SAMPLER:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating sampler" << G4endl;
 #endif
     element = CreateSampler(); break;
-  case _DRIFT:
+  case ElementType::_DRIFT:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating drift" << G4endl;
 #endif
     element = CreateDrift(); break; 
-  case _RF:
+  case ElementType::_RF:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating rf" << G4endl;
 #endif
     element = CreateRF(); break; 
-  case _SBEND:
+  case ElementType::_SBEND:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating sbend" << G4endl;
 #endif
     element = CreateSBend(); break; 
-  case _RBEND:
+  case ElementType::_RBEND:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating rbend" << G4endl;
 #endif
     element = CreateRBend(); break; 
-  case _HKICK:
+  case ElementType::_HKICK:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating hkick" << G4endl;
 #endif
     element = CreateHKick(); break; 
-  case _VKICK:
+  case ElementType::_VKICK:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating vkick" << G4endl;
 #endif
     element = CreateVKick(); break; 
-  case _QUAD:
+  case ElementType::_QUAD:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating quadrupole" << G4endl;
 #endif
     element = CreateQuad(); break; 
-  case _SEXTUPOLE:
+  case ElementType::_SEXTUPOLE:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating sextupole" << G4endl;
 #endif
     element = CreateSextupole(); break; 
-  case _OCTUPOLE:
+  case ElementType::_OCTUPOLE:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating octupole" << G4endl;
 #endif
     element = CreateOctupole(); break; 
-  case _MULT:
+  case ElementType::_MULT:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating multipole" << G4endl;
 #endif
     element = CreateMultipole(); break; 
-  case _ELEMENT:    
+  case ElementType::_ELEMENT:    
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating element" << G4endl;
 #endif
     element = CreateElement(); break; 
-  case _CSAMPLER:
+  case ElementType::_CSAMPLER:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating csampler" << G4endl;
 #endif
     element = CreateCSampler(); break; 
-  case _DUMP:
+  case ElementType::_DUMP:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating dump" << G4endl;
 #endif
     element = CreateDump(); break; 
-  case _SOLENOID:
+  case ElementType::_SOLENOID:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating solenoid" << G4endl;
 #endif
     element = CreateSolenoid(); break; 
-  case _ECOL:
+  case ElementType::_ECOL:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating ecol" << G4endl;
 #endif
     element = CreateEllipticalCollimator(); break; 
-  case _RCOL:
+  case ElementType::_RCOL:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating rcol" << G4endl;
 #endif
     element = CreateRectangularCollimator(); break; 
-  case _MUSPOILER:    
+  case ElementType::_MUSPOILER:    
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating muspoiler" << G4endl;
 #endif
     element = CreateMuSpoiler(); break; 
-  case _LASER:
+  case ElementType::_LASER:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating laser" << G4endl;
 #endif
     element = CreateLaser(); break; 
-  case _SCREEN:
+  case ElementType::_SCREEN:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating screen" << G4endl;
 #endif
     element = CreateScreen(); break; 
-  case _AWAKESCREEN:
+  case ElementType::_AWAKESCREEN:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating awake screen" << G4endl;
 #endif
     element = CreateAwakeScreen(); break; 
-  case _TRANSFORM3D:
+  case ElementType::_TRANSFORM3D:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating transform3d" << G4endl;
 #endif
     element = CreateTransform3D(); break;
-  case _TELEPORTER:
+  case ElementType::_TELEPORTER:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating teleporter" << G4endl;
 #endif
     element = CreateTeleporter(); break;
-  case _TERMINATOR:
+  case ElementType::_TERMINATOR:
 #ifdef BDSDEBUG
     G4cout << "BDSComponentFactory - creating terminator" << G4endl;
 #endif
     element = CreateTerminator(); break;
 
     // common types, but nothing to do here
-  case _MARKER:
-  case _LINE:
-  case _REV_LINE:
-  case _MATERIAL:
-  case _ATOM:
-  case _SEQUENCE:
-  case _GAS:
-  case _TUNNEL:
-  case _COLLIMATOR:
+  case ElementType::_MARKER:
+  case ElementType::_LINE:
+  case ElementType::_REV_LINE:
+  case ElementType::_MATERIAL:
+  case ElementType::_ATOM:
+  case ElementType::_SEQUENCE:
+  case ElementType::_GAS:
+  case ElementType::_TUNNEL:
+  case ElementType::_COLLIMATOR:
     element = nullptr;
     break;
   default:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory: type: " << _element.type << G4endl; 
+    G4cout << "BDSComponentFactory: type: " << typestr(_element.type) << G4endl; 
 #endif
     G4Exception("Error: BDSComponentFactory: type not found.", "-1", FatalErrorInArgument, "");   
     exit(1);

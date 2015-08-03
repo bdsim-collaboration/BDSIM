@@ -1,66 +1,66 @@
 #include "enums.h"
 
-const char *typestr(int type) {
+const char *typestr(ElementType type) {
   switch(type){
-  case _MARKER : 
+  case ElementType::_MARKER : 
     return "marker";
-  case _DRIFT :
+  case ElementType::_DRIFT :
     return "drift";
-  case _RF :
+  case ElementType::_RF :
    return "rf";
-  case _SBEND : 
+  case ElementType::_SBEND : 
     return "sbend";
-  case _RBEND :
+  case ElementType::_RBEND :
     return "rbend";
-  case _QUAD :
+  case ElementType::_QUAD :
     return "quadrupole";
-  case _SEXTUPOLE :
+  case ElementType::_SEXTUPOLE :
     return "sextupole";
-  case _OCTUPOLE :
+  case ElementType::_OCTUPOLE :
     return "octupole";
-  case _MULT :
+  case ElementType::_MULT :
     return "multipole";
-  case _SOLENOID : 
+  case ElementType::_SOLENOID : 
     return "solenoid";
-  case _ECOL : 
+  case ElementType::_ECOL : 
     return "ecol";
-  case _MUSPOILER : 
+  case ElementType::_MUSPOILER : 
     return "muspoiler";
-  case _VKICK :
+  case ElementType::_VKICK :
     return "vkick";
-  case _HKICK :
+  case ElementType::_HKICK :
     return "hkick";
-  case _RCOL : 
+  case ElementType::_RCOL : 
     return "rcol";
-  case _LINE :
+  case ElementType::_LINE :
     return "line";
-  case _REV_LINE :
+  case ElementType::_REV_LINE :
     return "rev_line";
-  case _SAMPLER :
+  case ElementType::_SAMPLER :
     return "sampler";
-  case _CSAMPLER:
+  case ElementType::_CSAMPLER:
     return "csampler";
-  case _GAS:
+  case ElementType::_GAS:
     return "gas";
-  case _TUNNEL:
+  case ElementType::_TUNNEL:
     return "tunnel";
-  case _MATERIAL:
+  case ElementType::_MATERIAL:
     return "material";
-  case _ATOM:
+  case ElementType::_ATOM:
     return "atom";
-  case _LASER:
+  case ElementType::_LASER:
     return "laser";
-  case _ELEMENT :
+  case ElementType::_ELEMENT :
     return "element";
-  case _TRANSFORM3D :
+  case ElementType::_TRANSFORM3D :
     return "transform3d";
-  case _SCREEN :
+  case ElementType::_SCREEN :
     return "screen";
- case _AWAKESCREEN :
+ case ElementType::_AWAKESCREEN :
     return "awakescreen";
-  case _TELEPORTER : 
+  case ElementType::_TELEPORTER : 
     return "teleporter";
-  case _TERMINATOR :
+  case ElementType::_TERMINATOR :
     return "terminator";
   default:
     return "none";
