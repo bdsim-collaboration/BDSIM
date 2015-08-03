@@ -42,6 +42,6 @@ enum class ElementType {
 
 namespace GMAD {
   const char *typestr(ElementType type);
-};
+}
 
 #endif
