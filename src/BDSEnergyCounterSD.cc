@@ -191,7 +191,9 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
       PCHit->SetEnergy(primaryEnergy);
       primaryCounterCollection->insert(PCHit);
     }
-  
+
+  // this will kill all particles - both primaries and secondaries, but if it's being
+  // recorded in an SD that means it's hit something, so ok
   if(BDSGlobalConstants::Instance()->GetStopTracks())
     {aStep->GetTrack()->SetTrackStatus(fStopAndKill);}
    
