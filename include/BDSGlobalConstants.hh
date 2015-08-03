@@ -11,6 +11,7 @@
 #include "BDSBeamPipeType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSParticle.hh"
+#include "BDSTunnelInfo.hh"
 
 class G4FieldManager;
 class G4LogicalVolume;
@@ -45,6 +46,8 @@ public:
    /// access method 
   static BDSGlobalConstants* Instance();
   ~BDSGlobalConstants();
+
+  G4double GetPrintModuloFraction() const;
   
   G4bool   GetDoPlanckScattering() const;
   G4bool   GetCheckOverlaps() const;
@@ -102,6 +105,13 @@ public:
   G4double GetMagnetPoleSize() const;
   G4double GetMagnetPoleRadius() const; 
 
+  /// tunnel
+  G4bool         BuildTunnel()         const;
+  G4bool         BuildTunnelStraight() const;
+  BDSTunnelInfo* TunnelInfo()          const;
+  G4double       TunnelOffsetX()       const;
+  G4double       TunnelOffsetY()       const;
+
   // Beam loss monitors
   G4double GetBlmRad() const;
   G4double GetBlmLength() const;
@@ -144,6 +154,7 @@ public:
 
   G4String GetPhysListName() const;
   G4bool   GetSynchRadOn() const;
+  void     SetSynchRadOn(G4bool);
   G4bool   GetDecayOn() const;
   G4bool   GetSynchTrackPhotons() const;
   G4double GetSynchLowX() const;
@@ -266,6 +277,13 @@ private:
   G4double itsMagnetPoleSize;
   G4double itsMagnetPoleRadius;
   
+  // tunnel model
+  G4bool         buildTunnel;
+  G4bool         buildTunnelStraight;
+  BDSTunnelInfo* tunnelInfo;
+  G4double       tunnelOffsetX;
+  G4double       tunnelOffsetY;
+  
   //Booleans determining which types of components are sensitive
   G4bool   itsSensitiveComponents;
   G4bool   itsSensitiveBeamPipe;
@@ -350,6 +368,8 @@ private:
   void InitDefaultUserLimits();
   G4UserLimits* defaultUserLimits;
 
+  G4double printModuloFraction;
+
 public:
   G4RotationMatrix* RotY90() const;
   G4RotationMatrix* RotYM90() const;
@@ -401,6 +421,9 @@ private:
   void     SetLPBFraction(G4double val);
 
 };
+
+inline G4double BDSGlobalConstants::GetPrintModuloFraction() const
+{return printModuloFraction;}
 
 inline G4double BDSGlobalConstants::GetElossHistoBinWidth() const
 {return itsElossHistoBinWidth;}
@@ -517,6 +540,21 @@ inline G4double BDSGlobalConstants::GetMagnetPoleSize() const
 inline G4double BDSGlobalConstants::GetMagnetPoleRadius() const
 {return itsMagnetPoleRadius;}
 
+inline G4bool   BDSGlobalConstants::BuildTunnel() const
+{return buildTunnel;}
+
+inline G4bool   BDSGlobalConstants::BuildTunnelStraight() const
+{return buildTunnelStraight;}
+
+inline BDSTunnelInfo* BDSGlobalConstants::TunnelInfo() const
+{return tunnelInfo;}
+
+inline G4double BDSGlobalConstants::TunnelOffsetX() const
+{return tunnelOffsetX;}
+
+inline G4double BDSGlobalConstants::TunnelOffsetY() const
+{return tunnelOffsetY;}
+
 inline G4bool BDSGlobalConstants::GetGeometryBias() const
 {return itsGeometryBias;}
 
@@ -602,6 +640,9 @@ inline G4String BDSGlobalConstants::GetPhysListName() const
 
 inline G4bool BDSGlobalConstants::GetSynchRadOn() const
 {return itsSynchRadOn;}
+
+inline void BDSGlobalConstants::SetSynchRadOn(G4bool synchRadOn) 
+{itsSynchRadOn = synchRadOn;}
 
 inline G4bool BDSGlobalConstants::GetDecayOn() const
 {return itsDecayOn;}

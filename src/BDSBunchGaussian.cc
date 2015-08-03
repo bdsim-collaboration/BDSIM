@@ -2,7 +2,7 @@
 #include <cstring>
 #include "BDSDebug.hh"
 
-BDSBunchGaussian::BDSBunchGaussian() : 
+BDSBunchGaussian::BDSBunchGaussian(): 
   BDSBunchInterface(),
   sigmaX(0.0),sigmaY(0.0),sigmaXp(0.0),sigmaYp(0.0)
 {
@@ -12,7 +12,7 @@ BDSBunchGaussian::BDSBunchGaussian() :
 
   meansGM = CLHEP::HepVector(6);
   sigmaGM = CLHEP::HepSymMatrix(6);
-  GaussMultiGen = NULL;
+  GaussMultiGen = nullptr;
 }
 
 BDSBunchGaussian::BDSBunchGaussian(G4double sigmaXIn, G4double sigmaYIn, G4double sigmaXpIn, G4double sigmaYpIn, 
@@ -100,15 +100,13 @@ BDSBunchGaussian::BDSBunchGaussian(G4double *sigma,
   G4cout << CLHEP::HepRandom::getTheEngine() << G4endl;
 }
 
-BDSBunchGaussian::~BDSBunchGaussian() {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
+BDSBunchGaussian::~BDSBunchGaussian()
+{
   delete GaussMultiGen;
 }
 
-void BDSBunchGaussian::SetOptions(struct Options& opt) {
+void BDSBunchGaussian::SetOptions(struct Options& opt)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -167,7 +165,8 @@ void BDSBunchGaussian::SetOptions(struct Options& opt) {
 
 void BDSBunchGaussian::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 				       G4double& xp, G4double& yp, G4double& zp,
-				       G4double& t , G4double&  E, G4double& weight) {
+				       G4double& t , G4double&  E, G4double& weight)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif

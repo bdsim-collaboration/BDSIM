@@ -18,9 +18,9 @@ BDSRfCavity::BDSRfCavity(G4String           name,
 	    beamPipeInfo, magnetOuterInfo),
   gradient(grad)
 {
-  eField      = NULL;
-  equation    = NULL;
-  intgrDriver = NULL;
+  eField      = nullptr;
+  equation    = nullptr;
+  intgrDriver = nullptr;
 }
 
 void BDSRfCavity::BuildBPFieldMgr()

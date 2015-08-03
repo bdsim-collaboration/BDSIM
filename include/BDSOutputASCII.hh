@@ -17,8 +17,8 @@
  * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
  */
 
-class BDSOutputASCII : public BDSOutputBase {
-
+class BDSOutputASCII: public BDSOutputBase
+{
 public: 
 
   BDSOutputASCII(); ///> default constructor
@@ -33,6 +33,8 @@ public:
   virtual void WritePrimaryLoss(BDSEnergyCounterHit*);
   /// write primary hits histo
   virtual void WritePrimaryHit(BDSEnergyCounterHit*);
+  /// write tunnel hits
+  virtual void WriteTunnelHits(BDSTunnelHitsCollection*);
   /// write a trajectory
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec);
   /// write primary hit

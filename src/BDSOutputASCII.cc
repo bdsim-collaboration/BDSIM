@@ -13,7 +13,7 @@
 #include "BDSGlobalConstants.hh" // should perhaps be removed for tracker stuff now
 #include "tracker/TRKBunch.hh"
 
-BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
+BDSOutputASCII::BDSOutputASCII()
 {
   time_t currenttime;
   time(&currenttime);
@@ -32,9 +32,12 @@ BDSOutputASCII::BDSOutputASCII():BDSOutputBase()
       if (status != 0)
 	{
 	  if (nTimeAppended > 0)
-	    {basefilename = basefilename.substr(0, basefilename.size()-2);}
+	    {basefilename = basefilename.substr(0, basefilename.size()-3);}
 	  std::stringstream ss;
-	  ss << basefilename << "_" << nTimeAppended;
+	  ss << basefilename << "_";
+	  if (nTimeAppended < 10)
+	    {ss << 0;}
+	  ss << nTimeAppended;
 	  basefilename = ss.str();
 	  nTimeAppended += 1;
 	}
@@ -123,6 +126,9 @@ BDSOutputASCII::~BDSOutputASCII()
 
 void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile, G4int PDGType, G4double Mom, G4double X, G4double Y, G4double Z, G4double S, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID, G4int TurnsTaken)
 {
+  // save flags since G4cout flags are changed
+  std::ios_base::fmtflags ff = outfile->flags();
+
   *outfile << std::left << std::setprecision(10) << std::fixed
 	   << std::setw(6)  << PDGType              << " "
 	   << std::setw(15) << Mom/CLHEP::GeV       << " "
@@ -138,6 +144,8 @@ void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile, G4int PDGType, G4doub
 	   << std::setw(8)  << TrackID              << " "
 	   << std::setw(5)  << TurnsTaken
 	   << G4endl;
+  // reset flags
+  outfile->flags(ff);
 }
 
 void BDSOutputASCII::WritePrimary(G4String /*samplerName*/, G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double /*zp*/,G4double /*t*/,G4double weight,G4int PDGType, G4int nEvent, G4int TurnsTaken){
@@ -149,20 +157,19 @@ void BDSOutputASCII::WriteHits(BDSSamplerHitsCollection *hc)
 {
   for (G4int i=0; i<hc->entries(); i++)
     {
-      WriteAsciiHit(
-		    &ofMain,
+      WriteAsciiHit(&ofMain,
 		    (*hc)[i]->GetPDGtype(),
 		    (*hc)[i]->GetMom(),
 		    (*hc)[i]->GetX(),
 		    (*hc)[i]->GetY(),
 		    (*hc)[i]->GetZ(),
 		    (*hc)[i]->GetS(),
-		    (*hc)[i]->GetXPrime(),
-		    (*hc)[i]->GetYPrime(),
+		    0,//(*hc)[i]->GetXPrime(),
+		    0,//(*hc)[i]->GetYPrime(),
 		    (*hc)[i]->GetEventNo(),
 		    (*hc)[i]->GetWeight(),
-		    (*hc)[i]->GetParentID(),
-		    (*hc)[i]->GetTrackID(),
+		    -1,//(*hc)[i]->GetParentID(),
+		    0, //(*hc)[i]->GetTrackID(),
 		    (*hc)[i]->GetTurnsTaken()
 		    );
     }
@@ -181,20 +188,20 @@ void BDSOutputASCII::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
   for (G4int i = 0; i < hc->entries(); i++)
     {
       // write the hits to the eloss file
-      WriteAsciiHit(
-		    &ofELoss,
+      // there's no saving by writing out zeros instead of values
+      WriteAsciiHit(&ofELoss,
 		    (*hc)[i]->GetPartID(),
 		    (*hc)[i]->GetEnergy(),
 		    (*hc)[i]->GetX(),
 		    (*hc)[i]->GetY(),
 		    (*hc)[i]->GetZ(),
 		    (*hc)[i]->GetS(),
-		    0.0,//(*hc)[i]->GetXPrime(),
-		    0.0,//(*hc)[i]->GetYPrime(),
-		    0,//(*hc)[i]->GetEventNo(),
+		    0, //(*hc)[i]->GetXPrime(),
+		    0, //(*hc)[i]->GetYPrime(),
+		    (*hc)[i]->GetEventNo(),
 		    (*hc)[i]->GetWeight(),
-		    0,//(*hc)[i]->GetParentID(),
-		    0,//(*hc)[i]->GetTrackID(),
+		    -1,//(*hc)[i]->GetParentID(),
+		    0, //(*hc)[i]->GetTrackID(),
 		    (*hc)[i]->GetTurnsTaken()
 		    );
     }
@@ -205,17 +212,16 @@ void BDSOutputASCII::WritePrimaryLoss(BDSEnergyCounterHit* hit)
 {
   //phist->Fill(hit->GetS()/CLHEP::m); //no weighting by energy - done in external analysis
 
-  WriteAsciiHit(
-		&ofPLoss,
+  WriteAsciiHit(&ofPLoss,
 		hit->GetPartID(),
 		hit->GetEnergy(),
 		hit->GetX(),
 		hit->GetY(),
 		hit->GetZ(),
 		hit->GetS(),
-		0.0,//hit->GetXPrime(),
-		0.0,//hit->GetYPrime(),
-		0,//hit->GetEventNo(),
+		0,//hit->GetXPrime(),
+		0,//hit->GetYPrime(),
+		hit->GetEventNo(),
 		hit->GetWeight(),
 		0,//hit->GetParentID(),
 		0,//hit->GetTrackID(),
@@ -285,6 +291,9 @@ void BDSOutputASCII::WriteTrackerPrimaryLoss(TRKBunch* lostBunch, int turnsTaken
   ofPLoss.flush();
 }
 
+
+void BDSOutputASCII::WriteTunnelHits(BDSTunnelHitsCollection* /*hits*/)
+{}
 
 void BDSOutputASCII::WriteHistogram(BDSHistogram1D* histogramIn)
 {

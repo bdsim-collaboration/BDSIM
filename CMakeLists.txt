@@ -56,6 +56,8 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 
     message(STATUS "Compiler supports C++11")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
+else()
+    message(FATAL_ERROR "C++ compiler ${CMAKE_CXX_COMPILER} does not support C++11")
 endif()
 
 set(CMAKE_C_ORIG_FLAGS "${CMAKE_C_FLAGS}")
@@ -162,41 +164,10 @@ if(USE_ROOT)
     message(STATUS "ROOT support ON")
 endif()
 
-# find Boost
-# Disable cmake script from Boost package because it is broken on lxplus
-set(Boost_NO_BOOST_CMAKE ON)
-find_package(Boost REQUIRED)
-
-# add xercesc include path (possibly not needed with Geant4 CMake config):
-if(USE_AFS)
-   if(APPLE)
-      set(XercesC_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.0/x86_64-mac106-gcc42-opt/include)
-      set(XercesC_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.0/x86_64-mac106-gcc42-opt/lib)
-   elseif(RHL5)
-      set(XercesC_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc5-gcc43-opt/include)
-      set(XercesC_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc5-gcc43-opt/lib)
-   elseif(RHL6)
-       if (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
-             set(XercesC_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc6-gcc47-opt/include)
-      	     set(XercesC_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc6-gcc47-opt/lib)
-       else() # for Geant4.9.6 on AFS
-             set(XercesC_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc6-gcc46-opt/include)
-      	     set(XercesC_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/XercesC/3.1.1p2/x86_64-slc6-gcc46-opt/lib)
-       endif()
-   endif()
-endif()
-
-find_package(XercesC)
-
 # GDML (on by default)
-if(XercesC_FOUND)
-    option( USE_GDML "Include GDML support."  ON )
-else()
-    option( USE_GDML "Include GDML support."  OFF )
-endif()
+option( USE_GDML "Include GDML support."  ON )
 if(USE_GDML)
     add_definitions("-DUSE_GDML")
-    include_directories(${XercesC_INCLUDE_DIR})
     message(STATUS "GDML support ON")
 endif()
 
@@ -379,7 +350,6 @@ add_executable(bdsimexec bdsim.cc)
 set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
 target_link_libraries(bdsimexec bdsim gmad)
 target_link_libraries(bdsim ${CLHEP_LIBRARIES})
-target_link_libraries(bdsim ${XercesC_LIBRARIES})
 #link_directories(${Geant4_LIBRARY_DIR})
 target_link_libraries(bdsim ${Geant4_LIBRARIES})
 

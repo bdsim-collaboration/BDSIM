@@ -4,6 +4,7 @@
 #include "BDSSamplerHit.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSTrajectory.hh"
+#include "BDSTunnelHit.hh"
 #include "BDSHistogram.hh"
 
 #include "G4Trajectory.hh"
@@ -13,24 +14,31 @@
 
 // virtual base class
 
-class BDSOutputBase {
-
+class BDSOutputBase
+{
 public: 
-
   BDSOutputBase(); // default constructor
   //  BDSOutput(BDSOutputFormat format);
   virtual ~BDSOutputBase(){};
 
   /// write sampler hit collection
   virtual void WriteHits(BDSSamplerHitsCollection*) = 0;
-  /// make energy loss histo
+  
+  /// write energy deposition hits
   virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*) = 0;
-  /// make primary loss histo - where primaries stop being primaries
-  virtual void WritePrimaryLoss(BDSEnergyCounterHit*) = 0;
-  /// make primary hits histo - where primaries impact
-  virtual void WritePrimaryHit(BDSEnergyCounterHit*) = 0;
+  
+  /// write where primaries stop being primaries
+  virtual void WritePrimaryLoss(BDSEnergyCounterHit* ploss) = 0;
+
+  /// write where primaries impact
+  virtual void WritePrimaryHit(BDSEnergyCounterHit* phits) = 0;
+
+  /// write tunnel hits
+  virtual void WriteTunnelHits(BDSTunnelHitsCollection* tunnelHits) = 0;
+  
   /// write a trajectory 
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec) = 0;
+  
   /// write primary hit
   virtual void WritePrimary(G4String samplerName, 
 			    G4double E,
@@ -52,8 +60,10 @@ public:
   /// write tracker bunch
   virtual void WriteTrackerBunch(G4String samplerName, TRKBunch* bunch, bool primary=false) = 0;
   virtual void WriteTrackerPrimaryLoss(TRKBunch* lostBunch, int turnsTaken) = 0;
+  
   /// write and close and open new file
   virtual void Commit()=0;
+  
   /// write and close the file
   virtual void Write()=0;
 

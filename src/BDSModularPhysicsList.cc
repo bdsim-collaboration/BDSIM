@@ -1,14 +1,16 @@
 #include "BDSModularPhysicsList.hh"
+#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSMuonPhysics.hh"
+#include "BDSSynchRadPhysics.hh"
+#include "BDSParameterisationPhysics.hh"
+
 #include "G4EmPenelopePhysics.hh"
 #include "G4OpticalPhysics.hh"
 #include "G4OpticalProcessIndex.hh"
 #include "G4ParticleTable.hh"
-#include "BDSSynchRadPhysics.hh"
 #include "G4EmStandardPhysics.hh"
-#include "BDSParameterisationPhysics.hh"
 #include "G4DecayPhysics.hh"
-#include "BDSSynchRadPhysics.hh"
 #include "G4Electron.hh"
 #include "G4Positron.hh"
 #include "G4Proton.hh"
@@ -23,8 +25,6 @@
 #include "G4HadronPhysicsQGSP_BERT.hh"
 #endif
 
-#define BDSDEBUG
-
 //Note: transportation process is constructed by default with classes derive from G4VModularPhysicsList
 
 BDSModularPhysicsList::BDSModularPhysicsList():
@@ -32,14 +32,14 @@ BDSModularPhysicsList::BDSModularPhysicsList():
   _physListName(BDSGlobalConstants::Instance()->GetPhysListName())
 {
   SetVerboseLevel(1);
-  _emPhysics=NULL;
-  _hadronicPhysics=NULL;
-  _muonPhysics=NULL;
-  _opticalPhysics=NULL;
-  _decayPhysics=NULL;
-  _paramPhysics=NULL;
-  _synchRadPhysics=NULL;
-  _cutsAndLimits=NULL;
+  _emPhysics=nullptr;
+  _hadronicPhysics=nullptr;
+  _muonPhysics=nullptr;
+  _opticalPhysics=nullptr;
+  _decayPhysics=nullptr;
+  _paramPhysics=nullptr;
+  _synchRadPhysics=nullptr;
+  _cutsAndLimits=nullptr;
   
   ParsePhysicsList();
   ConfigurePhysics();
@@ -49,6 +49,10 @@ BDSModularPhysicsList::BDSModularPhysicsList():
   SetCuts();
   DumpCutValuesTable(100);
 }
+
+
+BDSModularPhysicsList::~BDSModularPhysicsList()
+{;}
 
 void BDSModularPhysicsList::Print()
 {;}
@@ -147,10 +151,6 @@ void BDSModularPhysicsList::Register()
   }
 }
 
-BDSModularPhysicsList::~BDSModularPhysicsList()
-{;}
-
-
 void BDSModularPhysicsList::SetCuts()
 {
   G4VUserPhysicsList::SetCuts();
@@ -166,13 +166,13 @@ void BDSModularPhysicsList::SetCuts()
   G4double prodCutPhotons   = BDSGlobalConstants::Instance()->GetProdCutPhotons();
   G4double prodCutElectrons = BDSGlobalConstants::Instance()->GetProdCutElectrons();
   G4double prodCutPositrons = BDSGlobalConstants::Instance()->GetProdCutPositrons();
-  G4double prodCutHadrons   = BDSGlobalConstants::Instance()->GetProdCutHadrons();
+  //G4double prodCutHadrons   = BDSGlobalConstants::Instance()->GetProdCutHadrons();
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Photon production range cut (mm)   " << prodCutPhotons   << G4endl;
   G4cout << __METHOD_NAME__ << "Electron production range cut (mm) " << prodCutElectrons << G4endl;
   G4cout << __METHOD_NAME__ << "Positron production range cut (mm) " << prodCutPositrons << G4endl;
-  G4cout << __METHOD_NAME__ << "Hadron production range cut (mm)   " << prodCutHadrons<< G4endl;
+  //G4cout << __METHOD_NAME__ << "Hadron production range cut (mm)   " << prodCutHadrons<< G4endl;
 #endif
 
   // BDSIM's default range cuts (0.7mm) are different from geant4 defaults (1mm) so always set.
@@ -181,9 +181,8 @@ void BDSModularPhysicsList::SetCuts()
   SetCutValue(prodCutPositrons,"e+");
 
   // Looping over specific particles?
-  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  G4ParticleTable::G4PTblDicIterator* particleIterator = particleTable->GetIterator();
- 
+  //G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+  //G4ParticleTable::G4PTblDicIterator* particleIterator = particleTable->GetIterator();
   
   DumpCutValuesTable(); 
 }  
@@ -285,6 +284,8 @@ void BDSModularPhysicsList::LoadSynchRad()
     _synchRadPhysics = new BDSSynchRadPhysics();		  
     _constructors.push_back(_synchRadPhysics);		  
   }
+  // Switch on BDSGlobalConstants::SetSynchRadOn() to keep BDSPhysicsListCompatibility
+  BDSGlobalConstants::Instance()->SetSynchRadOn(true);
 }							  
 							  
 void BDSModularPhysicsList::LoadMuon()

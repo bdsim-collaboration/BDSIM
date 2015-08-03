@@ -48,7 +48,7 @@ BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4Stri
   G4double localmin, localmax;
   localmin = xmin;
   localmax = xmin + binwidth;
-  BDSBin* tempbin = NULL;
+  BDSBin* tempbin = nullptr;
   for (G4int i = 0; i < nbins; ++i)
     {
       tempbin = new BDSBin(localmin,localmax);
@@ -81,7 +81,7 @@ BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4
   //underflow bin
   underflow = new BDSBin(DBL_MIN,*iter);
   
-  BDSBin* tempbin    = NULL;
+  BDSBin* tempbin    = nullptr;
   G4double binstart  = 0;
   G4double binfinish = 0;
   if (binEdges.size() >= 2)
@@ -226,9 +226,6 @@ void BDSHistogram1D::Fill(G4double x, G4double weight)
 BDSHistogram1D::~BDSHistogram1D()
 {
   //must clear the bins from the heap
-#ifdef BDSDEBUG
-  G4cout << "BDSHistorgram1D > emptying bins" << G4endl;
-#endif
   for (std::vector<BDSBin*>::iterator i = bins.begin(); i != bins.end(); ++i)
     {delete *i;}
   delete underflow;

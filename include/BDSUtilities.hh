@@ -2,7 +2,11 @@
 #define BDSUTILITIES_H
 
 #include "globals.hh"   // geant4 globals / types
+#include "G4RotationMatrix.hh"
+
 #include <string>
+
+
 
 /**
  * @brief Various utility functions that have no specific place - 
@@ -38,10 +42,8 @@ namespace BDS {
   /// will return the absolute filename path
   G4String GetFullPath(G4String filename, bool excludeNameFromPath=false);
 
-  /**
-      Try to catch abort signals. This is not guaranteed to work.
-      Main goal is to close output stream / files.
-  */
+  /// Try to catch abort signals. This is not guaranteed to work.
+  /// Main goal is to close output stream / files.
   void HandleAborts(int signal_number);
 
   /// Determine whether a parameter is finite
@@ -51,6 +53,10 @@ namespace BDS {
   G4String StringFromInt(G4int anInt);
   /// Single digit to string representation
   G4String StringFromDigit(G4int anInt);
+
+  /// Print out details of a rotation matrix - the matrix itself, unit vectors.
+  /// Optional keyname to identify in output stream
+  void PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName = "unkown");
 }
 
 

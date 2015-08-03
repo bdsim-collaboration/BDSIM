@@ -55,7 +55,7 @@ public:
 			  G4double         angle,
 			  G4String         type,
 			  G4int            precisionRegion = 0,
-			  BDSBeamPipeInfo* beamPipeInfo    = NULL);
+			  BDSBeamPipeInfo* beamPipeInfo    = nullptr);
   
   virtual ~BDSAcceleratorComponent();
 
@@ -109,7 +109,7 @@ public:
 protected:
   /// initialise method
   /// checks if marker logical volume already exists and builds new one if not
-  // can't be in constructor as calls virtual methods
+  /// can't be in constructor as calls virtual methods
   virtual void Initialise();
   
   /// Build the container only. Should be overridden by derived class to add more geometry
@@ -139,6 +139,11 @@ protected:
   static G4double    lengthSafety;
   static G4Material* emptyMaterial;
   static G4bool      checkOverlaps;
+
+  /// Read out geometry volume. Protected so derived classes can fiddle if they require.
+  /// This is a possibility as derived classes can override Initialise which calls the
+  /// BuildReadOutVolume construction.
+  G4LogicalVolume* readOutLV; 
   
 private:
   /// Private default constructor to force use of provided constructors, which
@@ -155,7 +160,7 @@ private:
 				      G4double chordLength,
 				      G4double angle);
 
-  G4LogicalVolume* readOutLV; ///< Read out geometry volume
+ 
 
   std::vector<G4LogicalVolume*> itsGFlashVolumes;
   //A vector containing the physical volumes in the accelerator component- to be used for geometric importance sampling etc.

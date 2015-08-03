@@ -46,9 +46,9 @@ public:
 				      G4double    aper2 = 0,                 // aperture parameter 2
 				      G4double    aper3 = 0,                 // aperture parameter 3
 				      G4double    aper4 = 0,                 // aperture parameter 4
-				      G4Material* vacuumMaterialIn = NULL,   // vacuum material
+				      G4Material* vacuumMaterialIn = nullptr,   // vacuum material
 				      G4double    beamPipeThicknessIn = 0,   // beampipe thickness [mm]
-				      G4Material* beamPipeMaterialIn = NULL  // beampipe material
+				      G4Material* beamPipeMaterialIn = nullptr  // beampipe material
 				      ) = 0;
 
   /// create beampipe with an angled face on input side only
@@ -59,9 +59,9 @@ public:
 					         G4double    aper2 = 0,
 					         G4double    aper3 = 0,
 					         G4double    aper4 = 0,
-						 G4Material* vacuumMaterialIn = NULL,
+						 G4Material* vacuumMaterialIn = nullptr,
 					         G4double    beamPipeThicknessIn = 0,
-					         G4Material* beamPipeMaterialIn = NULL);
+					         G4Material* beamPipeMaterialIn = nullptr);
 
   /// create beampipe with an angled face on output side only
   virtual BDSBeamPipe* CreateBeamPipeAngledOut(  G4String    nameIn,
@@ -71,9 +71,9 @@ public:
 					         G4double    aper2 = 0,
 					         G4double    aper3 = 0,
 					         G4double    aper4 = 0,
-						 G4Material* vacuumMaterialIn = NULL,
+						 G4Material* vacuumMaterialIn = nullptr,
 					         G4double    beamPipeThicknessIn = 0,
-					         G4Material* beamPipeMaterialIn = NULL);
+					         G4Material* beamPipeMaterialIn = nullptr);
   
   /// create beampipe with an angled face on both input adn output sides
   virtual BDSBeamPipe* CreateBeamPipeAngledInOut(G4String    nameIn,
@@ -84,9 +84,9 @@ public:
 						 G4double    aper2 = 0,
 						 G4double    aper3 = 0,
 						 G4double    aper4 = 0,
-						 G4Material* vacuumMaterialIn = NULL,
+						 G4Material* vacuumMaterialIn = nullptr,
 						 G4double    beamPipeThicknessIn = 0,
-						 G4Material* beamPipeMaterialIn = NULL) = 0;
+						 G4Material* beamPipeMaterialIn = nullptr) = 0;
 
 protected:
   /// base constructor

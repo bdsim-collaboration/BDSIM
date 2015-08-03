@@ -48,8 +48,8 @@ BDSElement::BDSElement(G4String name,
   BDSAcceleratorComponent(name, length, 0, "element"),
   outerDiameter(outerDiameterIn),
   itsGeometry(geometry), itsBmap(bmap),
-  fChordFinder(NULL), itsFStepper(NULL), itsFEquation(NULL), itsEqRhs(NULL), 
-  itsMagField(NULL), itsCachedMagField(NULL), itsUniformMagField(NULL)
+  fChordFinder(nullptr), itsFStepper(nullptr), itsFEquation(nullptr), itsEqRhs(nullptr), 
+  itsMagField(nullptr), itsCachedMagField(nullptr), itsUniformMagField(nullptr)
 {
   itsFieldVolName="";
   itsFieldIsUniform=false;
@@ -57,8 +57,8 @@ BDSElement::BDSElement(G4String name,
 
   // WARNING: ALign in and out will only apply to the first instance of the
   //          element. Subsequent copies will have no alignment set.
-  align_in_volume = NULL;
-  align_out_volume = NULL;
+  align_in_volume = nullptr;
+  align_out_volume = nullptr;
 }
 
 void BDSElement::Build()
@@ -375,9 +375,9 @@ void BDSElement::AlignComponent(G4ThreeVector& TargetPos,
 {
   
   
-  if(align_in_volume == NULL)
+  if(align_in_volume == nullptr)
     {
-      if(align_out_volume == NULL)
+      if(align_out_volume == nullptr)
 	{
 	  // advance co-ords in usual way if no alignment volumes found
 	  
@@ -421,7 +421,7 @@ void BDSElement::AlignComponent(G4ThreeVector& TargetPos,
 	}
     }
 
-  if(align_in_volume != NULL)
+  if(align_in_volume != nullptr)
     {
 #ifdef BDSDEBUG
       G4cout << "BDSElement : Aligning incoming to SQL element " 
@@ -435,7 +435,7 @@ void BDSElement::AlignComponent(G4ThreeVector& TargetPos,
       inPos.transform((*TargetRot).inverse());
       TargetPos+=G4ThreeVector(inPos.x(), inPos.y(), 0.0);
       
-      if(align_out_volume == NULL)
+      if(align_out_volume == nullptr)
 	{
 	  // align outgoing (i.e. next component) to Marker Volume
 	  

@@ -33,16 +33,18 @@ private:
   G4bool verboseEvent;
   G4int  verboseEventNumber;
   G4bool isBatch;
+  G4bool useTunnel;
 
   G4int samplerCollID_plane;
   G4int samplerCollID_cylin;
   //G4int lWCalorimeterCollID;
   G4int energyCounterCollID; ///< collection ID for energy deposition hits for read out geometry
   G4int primaryCounterCollID;///< collection ID for primary hits for read out geometry
+  G4int tunnelCollID;        ///< collection ID for tunnel hits from tunnel read out geometry
   
   G4int printModulo;
 
-  BDSTrajectory* Traj;
+  BDSTrajectory* traj;
   BDSTrajectoryPoint* trajEndPoint;
   G4ThreeVector trajEndPointThreeVector;
   std::vector<BDSTrajectory*> interestingTrajectories;

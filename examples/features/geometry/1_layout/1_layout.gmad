@@ -1,0 +1,40 @@
+d1: drift, l=1*m;
+d2: drift, l=0.6*m;
+d3: drift, l=0.5*m;
+d4: drift, l=1.4*m;
+q1: quadrupole, l=0.5*m, k1=0.000000000000001;
+c1: rcol, l=1*m, ysize=5*mm, xsize=5*mm, material="Copper";
+s1: sbend, l=4*m, angle=0.3;
+s2: sbend, l=10*m, angle= -0.4;
+endoftheline: marker;
+t1: transform3d, psi=pi/2;
+
+l1: line = (d1,d2,t1,s2,d4,s1,s1,d4,c1,endoftheline);
+use,period=l1;
+
+!sample, range=s1;
+sample, range=d2;
+sample, range=s2;
+!sample, range=d3;
+sample, range=c1;
+sample, range=endoftheline;
+
+option, ngenerate=1,
+!	physicsList="QGSP_BERT",
+!	physicsList="hadronic_standard",
+	physicsList="em_standard",
+	beampipeRadius=5.0*cm,
+	beampipeThickness=5*cm,
+	outerDiameter=2.0*m,
+	defaultRangeCut=1*cm,	
+	prodCutPositrons=1*cm,
+	prodCutElectrons=1*cm,
+	prodCutPhotons=1*cm;
+
+beam, particle="proton",
+      energy=10.0*GeV,
+      distrType="reference",
+      ngenerate=1,
+      X0=0.0,
+      Y0=0.0;
+!      Yp0=0.01;

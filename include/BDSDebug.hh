@@ -2,14 +2,16 @@
 #define BDSDebug_h
 
 #include <cstddef>
-#include <string>
 #include <cstdio>
 #include <cstdlib>
+#include <string>
 
 inline std::string methodName(const std::string& prettyFunction)
 {
   size_t colons = prettyFunction.find("::");
   size_t begin = prettyFunction.substr(0,colons).rfind(" ") + 1;
+  // if function has pointer type then begin now is *, if so advance one more
+  if (prettyFunction[begin] == '*') {begin++;}
   size_t len = prettyFunction.rfind("(") - begin;
   return prettyFunction.substr(begin,len) +"> ";
 }

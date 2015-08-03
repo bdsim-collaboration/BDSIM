@@ -8,11 +8,9 @@
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 
-#include "parser/enums.h"
-
 BDSTerminator::BDSTerminator(G4String name, G4double length):
   BDSAcceleratorComponent(name, length, 0, "terminator"),
-  userLimits(NULL)
+  userLimits(nullptr)
 {;}
 
 void BDSTerminator::Build()

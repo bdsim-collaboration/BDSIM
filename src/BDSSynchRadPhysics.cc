@@ -4,7 +4,7 @@
 #include "G4Version.hh"
 
 BDSSynchRadPhysics::BDSSynchRadPhysics():G4VPhysicsConstructor("BDSSynchRadPhysics"),
-					 _srProcess(NULL),_contSR(NULL),_wasActivated(false)
+					 _srProcess(nullptr),_srProcessG4(nullptr),_contSR(nullptr),_wasActivated(false)
 {;}
 
 BDSSynchRadPhysics::~BDSSynchRadPhysics()
@@ -19,12 +19,14 @@ void BDSSynchRadPhysics::ConstructParticle(){
 
 void BDSSynchRadPhysics::ConstructProcess(){
   if(_wasActivated) return;
-  _wasActivated=true;
-  _srProcess = new BDSSynchrotronRadiation();
-  _contSR= new BDSContinuousSR();
+  _wasActivated = true;
+  _srProcess    = new BDSSynchrotronRadiation();
+  _srProcessG4  = new G4SynchrotronRadiation();
+  _contSR       = new BDSContinuousSR();
+
 
 #if G4VERSION_NUMBER < 1000
-  theParticleTable = G4ParticleTable::GetParticleTable();
+  theParticleTable    = G4ParticleTable::GetParticleTable();
   theParticleIterator = theParticleTable->GetIterator();
   G4ParticleTable::G4PTblDicIterator* aParticleIterator = theParticleIterator;
 #endif
@@ -37,16 +39,16 @@ void BDSSynchRadPhysics::ConstructProcess(){
     if (particleName == "e-") {
       pmanager->AddProcess(_srProcess);
       pmanager->SetProcessOrderingToLast(_srProcess,idxPostStep);
-      G4int idx = pmanager->AddProcess(_contSR);
-      pmanager->SetProcessOrderingToLast(_contSR,idxPostStep);
-      pmanager->SetProcessActivation(idx, false);
+      //G4int idx = pmanager->AddProcess(_contSR);
+      //pmanager->SetProcessOrderingToLast(_contSR,idxPostStep);
+      //pmanager->SetProcessActivation(idx, false);
     }
     if (particleName == "e+") {
       pmanager->AddProcess(_srProcess);
       pmanager->SetProcessOrderingToLast(_srProcess,idxPostStep);
-      G4int idx = pmanager->AddProcess(_contSR);
-      pmanager->SetProcessOrderingToLast(_contSR,idxPostStep);
-      pmanager->SetProcessActivation(idx, false);
+      //G4int idx = pmanager->AddProcess(_contSR);
+      //pmanager->SetProcessOrderingToLast(_contSR,idxPostStep);
+      //pmanager->SetProcessActivation(idx, false);
     }
   }
   return;

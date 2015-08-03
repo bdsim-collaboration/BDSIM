@@ -135,11 +135,11 @@ void BDSKicker::BuildBeampipe()
 void BDSKicker::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
-  G4ThreeVector Bfield(0.,-itsBField,0.); // note the - sign...
+  G4ThreeVector Bfield(0.,itsBField,0.);
   itsMagField = new BDSSbendMagField(Bfield,chordLength,itsKickAngle);
   itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
   BDSDipoleStepper* stepper = new BDSDipoleStepper(itsEqRhs);
-  stepper->SetBField(-itsBField); // note the - sign...
+  stepper->SetBField(itsBField);
   stepper->SetBGrad(itsBGrad);
   itsStepper = stepper; // assigned to base class pointer
 }

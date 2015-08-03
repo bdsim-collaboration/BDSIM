@@ -20,6 +20,7 @@
 #include "G4ParticleDefinition.hh"
 
 BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch* bdsBunchIn):
+  G4VUserPrimaryGeneratorAction(),
   weight(1),
   bdsBunch(bdsBunchIn)
 {

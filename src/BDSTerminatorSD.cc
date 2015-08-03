@@ -37,9 +37,13 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   // feedback info but only every 10 turns to avoid slow down and output bloat
   if (turnstaken % 10 == 0)
     {
+      // save flags since G4cout flags are changed
+      std::ios_base::fmtflags ff = G4cout.flags();
       G4cout << "Turn: " << std::right << std::setw(4) << std::fixed
 	     << turnstaken << " / " << std::left 
 	     << BDSGlobalConstants::Instance()->GetTurnsToTake() << G4endl;
+      // reset flags
+      G4cout.flags(ff);
     }
   
   G4Track* theTrack    = aStep->GetTrack();

@@ -19,14 +19,14 @@ const BDSExecOptions* BDSExecOptions::Instance(int argc, char **argv){
     return _instance;
   } else {
     G4Exception("BDSExecOptions::Instance is already initialized. Return pointer to singleton with BDSExecOptions::Instance()", "-1", FatalException, "");
-    return NULL;
+    return nullptr;
   }
 }
 
 const BDSExecOptions* BDSExecOptions::Instance(){
   if(_instance==0) {
     G4Exception("BDSExecOptions::Instance was not initialised. Initialize first with BDSExecOptions::Instance(int argc, char **argv).", "-1", FatalException, "");
-    return NULL;
+    return nullptr;
   } else 
     return _instance;
 }
@@ -115,7 +115,10 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 					{ "exportgeometryto", 1, 0, 0},
 					{ 0, 0, 0, 0 }};
   
-  int OptionIndex = 0;
+  int OptionIndex  = 0;
+  int OptionNumber = 0;
+  const char* optionName;
+  // return code
   int c;
  
   for(;;) {
@@ -135,90 +138,92 @@ void BDSExecOptions::Parse(int argc, char **argv) {
       exit(1);
       break;
     case 0:
-      if( !strcmp(LongOptions[OptionIndex].name , "help") ) {
+      OptionNumber++;
+      optionName = LongOptions[OptionIndex].name;
+      if( !strcmp(optionName , "help") ) {
 	Usage();
 	exit(0);
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "batch") ) {
+      if( !strcmp(optionName , "batch") ) {
 	batch = true;
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "verbose") ) {
+      if( !strcmp(optionName , "verbose") ) {
 	verbose = true; 
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "verbose_step") ) {
+      if( !strcmp(optionName , "verbose_step") ) {
 	verboseStep = true; 
 	// we shouldn't have verbose steps without verbose events etc.
 	verboseEvent = true;
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "verbose_event") ) {
+      if( !strcmp(optionName , "verbose_event") ) {
 	verboseEvent = true; 
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "verbose_event_num") ){
+      if( !strcmp(optionName , "verbose_event_num") ){
 	verboseEventNumber = atoi(optarg);
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "verbose_G4run") ) {
+      if( !strcmp(optionName , "verbose_G4run") ) {
 	verboseRunLevel = atoi(optarg);
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "verbose_G4event") ) {
+      if( !strcmp(optionName , "verbose_G4event") ) {
 	verboseEventLevel = atoi(optarg);
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "verbose_G4tracking") )  {
+      if( !strcmp(optionName , "verbose_G4tracking") )  {
 	verboseTrackingLevel = atoi(optarg);
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "verbose_G4stepping") ) {
+      if( !strcmp(optionName , "verbose_G4stepping") ) {
 	verboseSteppingLevel = atoi(optarg);
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "output") ) {
+      if( !strcmp(optionName , "output") ) {
 	outputFormat = BDS::DetermineOutputFormat(optarg);
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "outfile") ) {
+      if( !strcmp(optionName , "outfile") ) {
 	outputFilename=optarg;
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "outline") ) {
+      if( !strcmp(optionName , "outline") ) {
 	outlineFilename = optarg; 
 	outline=true;
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "outline_type") ) {
+      if( !strcmp(optionName , "outline_type") ) {
 	outlineFormat = optarg; 
 	outline=true;  // can't have outline type without turning on outline!
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "file") ) {
+      if( !strcmp(optionName , "file") ) {
 	inputFilename=optarg;
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "vis_debug") ) {
+      if( !strcmp(optionName , "vis_debug") ) {
 	visDebug = true;
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "vis_mac") ) {
+      if( !strcmp(optionName , "vis_mac") ) {
 	visMacroFilename=optarg;
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "gflash") ) {
+      if( !strcmp(optionName , "gflash") ) {
 	gflash = true;
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "gflashemax") ) {
+      if( !strcmp(optionName , "gflashemax") ) {
 	gflashemax = atof(optarg);
       }
-      if( !strcmp(LongOptions[OptionIndex].name , "gflashemin") ) {
+      if( !strcmp(optionName , "gflashemin") ) {
 	gflashemin = atof(optarg);
       }
-      if( !strcmp(LongOptions[OptionIndex].name, "materials") ) {
+      if( !strcmp(optionName, "materials") ) {
 	BDSMaterials::ListMaterials();
 	exit(0);
       }
-      if( !strcmp(LongOptions[OptionIndex].name, "circular")  ) {
+      if( !strcmp(optionName, "circular")  ) {
 	circular = true;
       }
-      if( !strcmp(LongOptions[OptionIndex].name, "seed")  ){
+      if( !strcmp(optionName, "seed")  ){
 	seed = atoi(optarg);
 	setSeed = true;
       }
-      if( !strcmp(LongOptions[OptionIndex].name, "seedstate") ){
+      if( !strcmp(optionName, "seedstate") ){
 	seedStateFilename = optarg;
 	setSeedState = true;
       }
-      if( !strcmp(LongOptions[OptionIndex].name, "ngenerate") ){
+      if( !strcmp(optionName, "ngenerate") ){
 	nGenerate = atof(optarg);
       }
-      if( !strcmp(LongOptions[OptionIndex].name, "exportgeometryto") ){
+      if( !strcmp(optionName, "exportgeometryto") ){
 	std::string fn = optarg;
 	if (fn.substr(fn.find_last_of(".") + 1) == "gdml")
 	  {
@@ -238,9 +243,23 @@ void BDSExecOptions::Parse(int argc, char **argv) {
       break;
       
     default:
+      G4cout << "Warning unknown returned character code " <<  c << G4endl;
       break;
     }
-  } 
+  }
+  // there should be no remaining options
+  if (OptionNumber < argc - 1) {
+    G4cout << "ERROR there are remaining options: " << G4endl;
+    for (int i=1; i<argc; i++) {
+      // options with '-' are ignored by getopt_long, other unknown options are covered
+      if (strncmp(argv[i], "-", 1)) {
+	G4cout << argv[i] << G4endl;
+      }
+    }
+    
+    G4cout << "Please check your input" << G4endl;
+    exit(1);
+  }
 }
 
 void BDSExecOptions::Usage()const {

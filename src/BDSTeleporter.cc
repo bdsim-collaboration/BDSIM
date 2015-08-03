@@ -18,7 +18,7 @@
 BDSTeleporter::BDSTeleporter(G4String name,
 			     G4double length):
   BDSAcceleratorComponent(name, length, 0, "teleporter"),
-  itsChordFinder(NULL),itsFieldManager(NULL),itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
+  itsChordFinder(nullptr),itsFieldManager(nullptr),itsStepper(nullptr),itsMagField(nullptr),itsEqRhs(nullptr)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " Constructing Teleporter of length: " 
@@ -102,9 +102,9 @@ void BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
   // calculate length of teleporter
   // beamline is built along z and sbend deflects in x
   // setting length here ensures that length is always the z difference
-  G4double teleporterlength       = fabs(delta.z()) - 1e-8;
-  G4cout << "Calculated teleporter length : " << teleporterlength << " mm" << G4endl;
-  BDSGlobalConstants::Instance()->SetTeleporterLength(teleporterlength);
+  G4double teleporterLength       = fabs(delta.z());
+  G4cout << "Calculated teleporter length : " << teleporterLength << " mm" << G4endl;
+  BDSGlobalConstants::Instance()->SetTeleporterLength(teleporterLength);
 }
 
 BDSTeleporter::~BDSTeleporter()

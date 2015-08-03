@@ -132,25 +132,25 @@ public:
   void InheritObjects(BDSGeometryComponent* component);
 
   /// Access all solids belonging to this component
-  std::vector<G4VSolid*> GetAllSolids() const;
+  std::vector<G4VSolid*>          GetAllSolids() const;
 
   /// Access all logical volumes belonging to this component
-  std::vector<G4LogicalVolume*> GetAllLogicalVolumes() const;
+  std::vector<G4LogicalVolume*>   GetAllLogicalVolumes() const;
   
   /// Access all sensitive volumes belonging to this component
-  std::vector<G4LogicalVolume*> GetAllSensitiveVolumes() const;
+  std::vector<G4LogicalVolume*>   GetAllSensitiveVolumes() const;
 
   /// Access all physical volumes belonging to this component
   std::vector<G4VPhysicalVolume*> GetAllPhysicalVolumes() const;
 
   /// Access all rotation matrices belonging to this component
-  std::vector<G4RotationMatrix*> GetAllRotationMatrices() const;
+  std::vector<G4RotationMatrix*>  GetAllRotationMatrices() const;
 
   /// Access all visualisation attributes belonging to this component
-  std::vector<G4VisAttributes*> GetAllVisAttributes() const;
+  std::vector<G4VisAttributes*>   GetAllVisAttributes() const;
 
   /// Access all user limits belonging to this component
-  std::vector<G4UserLimits*> GetAllUserLimits() const;
+  std::vector<G4UserLimits*>      GetAllUserLimits() const;
 
 protected:
   /// Copy constructor
@@ -183,9 +183,10 @@ protected:
   std::vector<G4VisAttributes*> allVisAttributes;
 
   /// registry of all user limits belonging to this component
-  std::vector<G4UserLimits*> allUserLimits;
+  std::vector<G4UserLimits*>    allUserLimits;
   
   G4ThreeVector                 placementOffset;
+  // can't be stored in the Logical Volume class itself without modifying Geant
 };
 
 inline G4String  BDSGeometryComponent::GetName() const

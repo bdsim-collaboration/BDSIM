@@ -32,7 +32,7 @@ public:
 						 BDSBeamPipe*  beamPipe,            // beampipe
 						 G4double      boxSize,             // full width
 						 G4double      angle,               // full bend angle [rad]
-						 G4Material*   outerMaterial = NULL // material for outer volume
+						 G4Material*   outerMaterial = nullptr // material for outer volume
 						 );
 
   /// rectangular bend outer volume
@@ -41,7 +41,7 @@ public:
 						      BDSBeamPipe*  beamPipe,            // beampipe
 						      G4double      boxSize,             // full width
 						      G4double      angle,               // full bend angle [rad]
-						      G4Material*   outerMaterial = NULL // material for outer volume
+						      G4Material*   outerMaterial = nullptr // material for outer volume
 						      );
   
   /// quadrupole outer volume
@@ -49,7 +49,7 @@ public:
 						 G4double      length,               // length [mm]
 						 BDSBeamPipe*  beamPipe,             // beampipe
 						 G4double      boxSize,              // full width
-						 G4Material*   outerMaterial = NULL  // material for outer volume
+						 G4Material*   outerMaterial = nullptr  // material for outer volume
 						 );
 
 
@@ -58,7 +58,7 @@ public:
 						G4double      length,               // length [mm]
 						BDSBeamPipe*  beamPipe,             // beampipe
 						G4double      boxSize,              // full width
-						G4Material*   outerMaterial = NULL  // material for outer volume
+						G4Material*   outerMaterial = nullptr  // material for outer volume
 						);
 
   /// octupole outer volume
@@ -66,7 +66,7 @@ public:
 					       G4double      length,                // length [mm]
 					       BDSBeamPipe*  beamPipe,              // beampipe
 					       G4double      boxSize,               // full width
-					       G4Material*   outerMaterial = NULL   // material for outer volume
+					       G4Material*   outerMaterial = nullptr   // material for outer volume
 					       );
 
   /// decapole outer volume
@@ -74,7 +74,7 @@ public:
 					       G4double      length,                // length [mm]
 					       BDSBeamPipe*  beamPipe,              // beampipe
 					       G4double      boxSize,               // full width
-					       G4Material*   outerMaterial = NULL   // material for outer volume
+					       G4Material*   outerMaterial = nullptr   // material for outer volume
 					       );
 
   /// solenoid  outer volume
@@ -82,7 +82,7 @@ public:
 					       G4double      length,                // length [mm]
 					       BDSBeamPipe*  beamPipe,              // beampipe
 					       G4double      boxSize,               // full width
-					       G4Material*   outerMaterial = NULL   // material for outer volume
+					       G4Material*   outerMaterial = nullptr   // material for outer volume
 					       );
 
   /// general multipole outer volume - could be any 2N order multipole
@@ -90,7 +90,7 @@ public:
 						G4double      length,               // length [mm]
 						BDSBeamPipe*  beamPipe,             // beampipe
 						G4double      boxSize,              // full width
-						G4Material*   outerMaterial = NULL  // material for outer volume
+						G4Material*   outerMaterial = nullptr  // material for outer volume
 						);
 
   /// RF cavity outer volume
@@ -98,7 +98,7 @@ public:
 					       G4double      length,                // length [mm]
 					       BDSBeamPipe*  beamPipe,              // beampipe
 					       G4double      boxSize,               // full width
-					       G4Material*   outerMaterial = NULL   // material for outer volume
+					       G4Material*   outerMaterial = nullptr   // material for outer volume
 					       );
 
   /// muon spoiler outer volume
@@ -106,7 +106,7 @@ public:
 						G4double      length,               // length [mm]
 						BDSBeamPipe*  beamPipe,             // beampipe
 						G4double      boxSize,              // full width
-						G4Material*   outerMaterial = NULL  // material for outer volume
+						G4Material*   outerMaterial = nullptr  // material for outer volume
 						);
 
   /// horizontal and vertical kicker outer volume
@@ -115,7 +115,7 @@ public:
 					     BDSBeamPipe*  beamPipe,              // beampipe
 					     G4double      boxSize,               // full width
 					     G4bool        vertical = true,       // is it a vertical kicker?
-					     G4Material*   outerMaterial = NULL   // material for outer volume
+					     G4Material*   outerMaterial = nullptr   // material for outer volume
 					     );
 protected:
   G4bool isLeftOffset;

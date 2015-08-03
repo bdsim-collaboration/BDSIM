@@ -59,6 +59,18 @@ void BDSOutputVector::WritePrimaryHit(BDSEnergyCounterHit* a)
 #endif
   for (unsigned int i=0; i<output.size(); i++)
     {output[i]->WritePrimaryHit(a);}
+<<<<<<< HEAD
+=======
+}
+
+void BDSOutputVector::WriteTunnelHits(BDSTunnelHitsCollection* a)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->WriteTunnelHits(a);}
+>>>>>>> develop
 }
 
 void BDSOutputVector::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
@@ -89,6 +101,7 @@ void BDSOutputVector::WritePrimary(G4String samplerName,
 #endif
   for (unsigned int i=0; i<output.size(); i++)
     {output[i]->WritePrimary(samplerName,E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken);}
+<<<<<<< HEAD
 }
 
 void BDSOutputVector::WriteTrackerBunch(G4String samplerName, TRKBunch* bunch, bool primary)
@@ -107,6 +120,8 @@ void BDSOutputVector::WriteTrackerPrimaryLoss(TRKBunch* lostBunch, int turnsTake
 #endif
   for (unsigned int i=0; i<output.size(); i++)
     {output[i]->WriteTrackerPrimaryLoss(lostBunch, turnsTaken);}
+=======
+>>>>>>> develop
 }
 
 void BDSOutputVector::WriteHistogram(BDSHistogram1D* histogramIn)

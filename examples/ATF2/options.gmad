@@ -1,16 +1,12 @@
 ! standard options for runing bdsim
 
 option, beampipeRadius = 2 * cm,
-        boxSize = 40 * cm,
-        tunnelRadius= 2.0 * m,
+        outerDiameter = 40 * cm,
         beampipeThickness   = 0.5 * cm,
-        chordStepMinimum    = 0.0000000001 * m,
-        deltaIntersection   = 0.00000001 * m,
-        deltaChord          = 0.001 * m,
-        lengthSafety        = 0.00001 * m,
-        thresholdCutCharged = 10 * MeV,
-        thresholdCutPhotons = 10 * MeV,
-	samplerDiameter = 4.0*m,
+	prodCutPhotons      = 20*cm,
+	prodCutElectrons    = 20*cm,
+	prodCutPositrons    = 20*cm,
+	defaultRangeCut = 20*cm,
 	stopTracks = 0,
 	elossHistoBinWidth = 0.01*m;
 

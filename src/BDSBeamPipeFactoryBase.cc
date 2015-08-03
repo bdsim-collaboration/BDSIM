@@ -27,15 +27,15 @@ BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
 
 void BDSBeamPipeFactoryBase::CleanUp()
 {
-  vacuumSolid               = NULL;
-  beamPipeSolid             = NULL;
-  containerSolid            = NULL;
-  containerSubtractionSolid = NULL;
-  vacuumLV                  = NULL;
-  beamPipeLV                = NULL;
-  containerLV               = NULL;
-  vacuumPV                  = NULL;
-  beamPipePV                = NULL;
+  vacuumSolid               = nullptr;
+  beamPipeSolid             = nullptr;
+  containerSolid            = nullptr;
+  containerSubtractionSolid = nullptr;
+  vacuumLV                  = nullptr;
+  beamPipeLV                = nullptr;
+  containerLV               = nullptr;
+  vacuumPV                  = nullptr;
+  beamPipePV                = nullptr;
 
   allLogicalVolumes.clear();
   allPhysicalVolumes.clear();
@@ -125,9 +125,10 @@ void BDSBeamPipeFactoryBase::BuildLogicalVolumes(G4String    nameIn,
   beamPipeLV = new G4LogicalVolume(beamPipeSolid,
 				   beamPipeMaterialIn,
 				   nameIn + "_beampipe_lv");
-  
+
+  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
   containerLV = new G4LogicalVolume(containerSolid,
-				    vacuumMaterialIn,
+				    emptyMaterial,
 				    nameIn + "_container_lv");
   allLogicalVolumes.push_back(vacuumLV);
   allLogicalVolumes.push_back(beamPipeLV);

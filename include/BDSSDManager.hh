@@ -6,6 +6,8 @@
 #include "BDSSamplerSD.hh"
 #include "BDSTerminatorSD.hh"
 
+class BDSTunnelSD;
+
 /**
  * @brief A singleton class that holds all required sensitive
  * detector class instances.  Each sensitive detector class
@@ -21,7 +23,7 @@
 class BDSSDManager
 {
 public:
-  static BDSSDManager* Instance(); /// singleton accessort
+  static BDSSDManager* Instance(); /// singleton accessor
 
   ~BDSSDManager();
 
@@ -44,9 +46,18 @@ public:
 
   /// SD for a laserwire calorimeter
   BDSLWCalorimeterSD* GetLWCalorimeterSD() const;
+
+  /// SD for any part of a tunnel. Symmetric about the tunnel construction axis
+  /// and uses a read out geometry to achieve this.
+  BDSTunnelSD* GetTunnelOnAxisSDRO();
   
 private:
-  BDSSDManager(); /// private default constructor for singleton
+  /// Private default constructor for singleton. Instantiate an instance
+  /// of each SD class that is held by this class and can be accessed and attached
+  /// to any volume as necessary. We only ever need one instance of an SD class and
+  /// they're looked up by geant4 using string compare as it's assumed that you'll only
+  /// have a few and not a unique instance for every volume.
+  BDSSDManager(); 
   static BDSSDManager* _instance;
 
   //SD instances
@@ -55,6 +66,7 @@ private:
   BDSEnergyCounterSD* eCounterOnAxis;
   BDSTerminatorSD*    terminator;
   BDSLWCalorimeterSD* lwCalorimeter;
+  BDSTunnelSD*        tunnel;
 
   // duplicate ecounter here that's made on demand
   // and registered to read out geometry - this requires
@@ -64,6 +76,11 @@ private:
 
   /// function to create the energy counter SD on demand
   void ConstructECounterSDOnAxisOnDemand();
+
+  BDSTunnelSD*        tunnelOnAxisRO;
+
+  /// function to create the tunnel SD on demand as it uses read out geometry
+  void ConstructTunnelSDOnAxisOnDemand();
 };
 
 inline BDSSamplerSD*       BDSSDManager::GetSamplerPlaneSD() const

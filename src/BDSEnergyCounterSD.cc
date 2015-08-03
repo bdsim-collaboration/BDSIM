@@ -10,7 +10,6 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
-#include "BDSUtilities.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4Event.hh"
@@ -31,8 +30,8 @@
 
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
   :G4VSensitiveDetector(name),
-   energyCounterCollection(NULL),
-   primaryCounterCollection(NULL),
+   energyCounterCollection(nullptr),
+   primaryCounterCollection(nullptr),
    HCIDe(-1),
    HCIDp(-1),
    enrg(0.0),
@@ -127,10 +126,9 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
 
   // get the s coordinate (central s + local z)
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(theVolume);
-  G4double sCentral = -1000;
+  S = -1000; // unphysical default value to allow easy identification in output
   if (theInfo)
-    {sCentral = theInfo->GetSPos();}
-  S = sCentral + z;
+    {S = theInfo->GetSPos() + z;}
   
   G4int event_number = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
   
@@ -192,7 +190,9 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
       PCHit->SetEnergy(primaryEnergy);
       primaryCounterCollection->insert(PCHit);
     }
-  
+
+  // this will kill all particles - both primaries and secondaries, but if it's being
+  // recorded in an SD that means it's hit something, so ok
   if(BDSGlobalConstants::Instance()->GetStopTracks())
     {aStep->GetTrack()->SetTrackStatus(fStopAndKill);}
    

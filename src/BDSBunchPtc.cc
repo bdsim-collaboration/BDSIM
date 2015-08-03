@@ -4,11 +4,10 @@
 #include <iostream>
 
 #include <fstream>
-#if __cplusplus>199711 // test for c++11 features
 #include <regex>
-#endif 
 
-BDSBunchPtc::BDSBunchPtc() { 
+BDSBunchPtc::BDSBunchPtc()
+{ 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -20,16 +19,14 @@ BDSBunchPtc::BDSBunchPtc() {
   nRays = 0;
 }
 
-BDSBunchPtc::~BDSBunchPtc() { 
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  for(std::vector<double*>::iterator i = ptcData.begin();i!=ptcData.end();++i) {
-    delete[] *i;
-  }
+BDSBunchPtc::~BDSBunchPtc()
+{
+  for(std::vector<double*>::iterator i = ptcData.begin();i!=ptcData.end();++i)
+    {delete[] *i;}
 }
 
-void BDSBunchPtc::LoadPtcFile() { 
+void BDSBunchPtc::LoadPtcFile()
+{ 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -54,8 +51,6 @@ void BDSBunchPtc::LoadPtcFile() {
     double t=0.0;
     double pt=0.0;
     
-#if __cplusplus>199711 
-
     // create regular expressions 
     std::regex rex("\\sx\\s*=\\s*([0-9eE.+-]+)");
     std::regex rey("\\sy\\s*=\\s*([0-9eE.+-]+)");
@@ -86,11 +81,6 @@ void BDSBunchPtc::LoadPtcFile() {
     if(smpy.size() == 2) py = std::stod(smpy[1]);
     if(smt.size() == 2)  t  = std::stod(smt[1]);
     if(smpt.size() == 2) pt = std::stod(smpt[1]);
-#else
-    G4cout << __METHOD_NAME__ << " WARNING not using C++11 regex to parse file"
-	   << " - no particle coordinates read in - default all 0" << G4endl;
-#endif
-
 
 #ifdef BDSDEBUG 
     G4cout << __METHOD_NAME__ << "read line " << line << G4endl;
@@ -116,7 +106,8 @@ void BDSBunchPtc::LoadPtcFile() {
   return;
 }
 
-void BDSBunchPtc::SetOptions(struct Options& opt) {
+void BDSBunchPtc::SetOptions(struct Options& opt)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << " " << opt.distribFile << G4endl;
 #endif
@@ -126,13 +117,15 @@ void BDSBunchPtc::SetOptions(struct Options& opt) {
   LoadPtcFile();
 }
 
-void BDSBunchPtc::SetDistribFile(G4String distribFileName){
+void BDSBunchPtc::SetDistribFile(G4String distribFileName)
+{
   fileName = BDS::GetFullPath(distribFileName);
 }
 
 void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 				  G4double& xp, G4double& yp, G4double& zp,
-				  G4double& t , G4double&  E, G4double& weight) {
+				  G4double& t , G4double&  E, G4double& weight)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif

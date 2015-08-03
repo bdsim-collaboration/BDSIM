@@ -11,8 +11,8 @@
  * @author I. Agapov
  */
 
-struct Options {
-
+struct Options
+{
   Options();
 
   /// list of pyhysics processes 
@@ -95,6 +95,8 @@ struct Options {
   std::string outerMaterialName;
   double      outerDiameter;
 
+  int         includeIronMagFields;
+
   /// default beampipe parameters
   double      beampipeRadius;
   double      beampipeThickness;
@@ -106,25 +108,26 @@ struct Options {
   std::string beampipeMaterial;
   std::string vacMaterial;
 
-  /// default tunnel parameters
-  double    tunnelRadius;
+  /// tunnel geometry parameters
+  bool        buildTunnel;
+  bool        buildTunnelStraight;
+  std::string tunnelType;
+  double      tunnelThickness;
+  double      tunnelSoilThickness;
   std::string tunnelMaterial;
-  std::string tunnelCavityMaterial;
   std::string soilMaterial;
+  bool        buildTunnelFloor;
+  double      tunnelFloorOffset;
+  double      tunnelAper1;
+  double      tunnelAper2;
+  bool        tunnelSensitive;
+  bool        tunnelVisible;
+  double      tunnelOffsetX;
+  double      tunnelOffsetY;
   bool        dontUseAperture;
 
-  int      includeIronMagFields;
-
-  /// tunnel geometry parameters
-  int      buildTunnel;
-  int      buildTunnelFloor;
-  int      showTunnel;
-  double   tunnelOffsetX;
-  double   tunnelOffsetY;
+  /// Sampler
   double   samplerDiameter;
-  double   tunnelThickness;
-  double   tunnelSoilThickness;
-  double   tunnelFloorOffset;
   
   ///Geometry biasing
   int      geometryBias;
@@ -206,6 +209,8 @@ struct Options {
   /// Ring parameters
   bool     circular;
   int      nturns;
+
+  double   printModuloFraction;
 
   /// print some properties
   void print()const;
