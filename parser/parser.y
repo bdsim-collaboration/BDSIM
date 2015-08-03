@@ -20,7 +20,7 @@
 
 #include "array.h"
 #include "parser.h"
-#include "enums.h"
+#include "elementtype.h"
   
   int execute = 1;
   int element_count = 1; // for samplers , ranges etc.
@@ -346,7 +346,7 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     ElementType type = static_cast<ElementType>($3);
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, typestr(type));
+	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, GMAD::typestr(type));
 	     if(type != ElementType::_NONE)
 	       {
 		 write_table(params,$1->name,type);
@@ -359,7 +359,7 @@ decl : VARIABLE ':' marker
          if(execute)
 	   {
 	     ElementType type = static_cast<ElementType>($3);
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, typestr(type));
+	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, GMAD::typestr(type));
 	     if(type != ElementType::_NONE)
 	       {
 		 write_table(params,$1->name,type);
@@ -385,7 +385,7 @@ decl : VARIABLE ':' marker
 		 params.inherit_properties(*it);
 	       }
 		
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, typestr((*it).type));
+	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, GMAD::typestr((*it).type));
 	     if((*it).type != ElementType::_NONE)
 	       {
 		 write_table(params,$1->name,(*it).type);

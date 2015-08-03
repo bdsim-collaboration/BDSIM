@@ -41,7 +41,7 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4GeometryTolerance.hh"
 
-#include "parser/enums.h"
+#include "parser/elementtype.h"
 
 #include <cmath>
 #include <sstream>
@@ -230,7 +230,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
     break;
   default:
 #ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory: type: " << typestr(_element.type) << G4endl; 
+    G4cout << "BDSComponentFactory: type: " << GMAD::typestr(_element.type) << G4endl; 
 #endif
     G4Exception("Error: BDSComponentFactory: type not found.", "-1", FatalErrorInArgument, "");   
     exit(1);
@@ -770,7 +770,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
     {return nullptr;}
 
 #ifdef BDSDEBUG 
-  G4cout << "--->creating " << typestr(_element.type) << ","
+  G4cout << "--->creating " << GMAD::typestr(_element.type) << ","
 	 << " name = " << _element.name  << ","
 	 << " x half aperture = " << _element.xsize <<" m,"
 	 << " y half aperture = " << _element.ysize <<" m,"
@@ -792,7 +792,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
     {return nullptr;}
 
 #ifdef BDSDEBUG 
-  G4cout << "--->creating " << typestr(_element.type) << ","
+  G4cout << "--->creating " << GMAD::typestr(_element.type) << ","
 	 << " name = " << _element.name 
 	 << " x half aperture = " << _element.xsize <<" m,"
 	 << " y half aperture = " << _element.ysize <<" m,"

@@ -1,5 +1,5 @@
-#ifndef __ENUMS_H
-#define __ENUMS_H
+#ifndef __ELEMENTTYPE_H
+#define __ELEMENTTYPE_H
 
 // types of elements
 
@@ -40,8 +40,8 @@ enum class ElementType {
   _TERMINATOR  = 99
 };
 
-//namespace parser {
-const char *typestr(ElementType type);
-//};
+namespace GMAD {
+  const char *typestr(ElementType type);
+};
 
 #endif

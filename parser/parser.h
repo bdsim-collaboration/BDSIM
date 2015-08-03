@@ -25,7 +25,7 @@
 
 #include "element.h"
 #include "elementlist.h"
-#include "enums.h"
+#include "elementtype.h"
 #include "gmad.h"
 #include "options.h"
 #include "parameters.h"

@@ -1,5 +1,6 @@
-#include "enums.h"
+#include "elementtype.h"
 
+namespace GMAD {
 const char *typestr(ElementType type) {
   switch(type){
   case ElementType::_MARKER : 
@@ -65,4 +66,5 @@ const char *typestr(ElementType type) {
   default:
     return "none";
   }
+}
 }

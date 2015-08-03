@@ -1,5 +1,5 @@
 #include "element.h"
-#include "enums.h"
+#include "elementtype.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -29,7 +29,7 @@ void Element::print(int & ident)const{
   for(int i=0;i<ident;i++)
     printf("--");
 
-  printf("->%s : %s",name.c_str(),typestr(type));
+  printf("->%s : %s",name.c_str(),GMAD::typestr(type));
 
   std::list<double>::const_iterator it;
   switch(type) {
