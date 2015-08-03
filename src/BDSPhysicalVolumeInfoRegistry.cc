@@ -86,7 +86,7 @@ BDSPhysicalVolumeInfo* BDSPhysicalVolumeInfoRegistry::GetInfo(G4VPhysicalVolume*
     {//uh oh - not found!
       G4cerr << __METHOD_NAME__ << "physical volume not found" << G4endl;
       G4cerr << __METHOD_NAME__ << "pv name is: " << physicalVolume->GetName() << G4endl;
-      return NULL;
+      return nullptr;
     }
 }
 

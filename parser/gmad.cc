@@ -136,7 +136,7 @@ int gmad_parser(std::string name)
 #endif
   FILE *f = fopen(name.c_str(),"r");
 
-  if(f==NULL) {
+  if(f==nullptr) {
 
     std::cerr << "gmad_parser> Can't open input file " << name << std::endl;
     exit(1);

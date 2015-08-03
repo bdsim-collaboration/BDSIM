@@ -21,7 +21,7 @@ struct symtab {
   std::list<double> array;
 
   // constructors
-  explicit symtab(const char* s):is_reserved(0),type(0),funcptr(NULL),value(0.0){
+  explicit symtab(const char* s):is_reserved(0),type(0),funcptr(nullptr),value(0.0){
     name=strdup(s);
   }
 };

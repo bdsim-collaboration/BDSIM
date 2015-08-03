@@ -21,7 +21,7 @@ namespace {
   }
 }
 
-Element::Element():lst(NULL) {
+Element::Element():lst(nullptr) {
   flush();
 }
 
@@ -85,7 +85,7 @@ void Element::print(int & ident)const{
   
   printf("\n");
   
-  if(lst != NULL)
+  if(lst != nullptr)
     {
       ::print(*lst,++ident);
       ident--;

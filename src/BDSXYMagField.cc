@@ -12,7 +12,7 @@ G4double GetNearestValue(std::vector<struct XYFieldRecord> fieldValues, G4double
 			 G4double &bx,G4double &by, G4double &bz);
 
 BDSXYMagField::BDSXYMagField(G4String fname) :
-  Bx(NULL), By(NULL), Bz(NULL), xHalf(0.0), yHalf(0.0), nX(0), nY(0), itsFileName(fname)
+  Bx(nullptr), By(nullptr), Bz(nullptr), xHalf(0.0), yHalf(0.0), nX(0), nY(0), itsFileName(fname)
 {
 }
 

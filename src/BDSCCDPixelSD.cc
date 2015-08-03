@@ -24,7 +24,7 @@
 
 
 BDSCCDPixelSD::BDSCCDPixelSD(G4String name)
-  :G4VSensitiveDetector(name),CCDPixelCollection(NULL)
+  :G4VSensitiveDetector(name),CCDPixelCollection(nullptr)
 {
   _collectionName="CCDPixel";
   collectionName.insert(_collectionName);

@@ -19,7 +19,7 @@
 #include <string>
 #include <cstring>
 #include <iostream>
-#include "parser.tab.h"
+#include "parser.tab.hh"
 #include "sym_table.h"
 #include "getEnv.h"
 #include <unistd.h>

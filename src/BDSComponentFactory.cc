@@ -93,7 +93,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
       return BDSAcceleratorComponentRegistry::Instance()->GetComponent(_element.name);
     }
   
-  BDSAcceleratorComponent* element = NULL;
+  BDSAcceleratorComponent* element = nullptr;
   switch(_element.type){
   case _SAMPLER:
 #ifdef BDSDEBUG
@@ -226,7 +226,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   case _GAS:
   case _TUNNEL:
   case _COLLIMATOR:
-    element = NULL;
+    element = nullptr;
     break;
   default:
 #ifdef BDSDEBUG
@@ -280,7 +280,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter()
   if (teleporterLength < 10*G4GeometryTolerance::GetInstance()->GetSurfaceTolerance())
     {
       G4cout << G4endl << __METHOD_NAME__ << "WARNING - no space to put in teleporter - skipping it!" << G4endl << G4endl;
-      return NULL;
+      return nullptr;
     }
   
   G4String name = "teleporter";
@@ -299,7 +299,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter()
 BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
 {
   if(!HasSufficientMinimumLength(_element))
-    {return NULL;}
+    {return nullptr;}
 
 #ifdef BDSDEBUG
   G4cout << "---->creating Drift,"
@@ -316,7 +316,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
 BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
 {
   if(!HasSufficientMinimumLength(_element))
-    {return NULL;}
+    {return nullptr;}
   
   return (new BDSRfCavity( _element.name,
 			   _element.l * CLHEP::m,
@@ -328,7 +328,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
 BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 {
   if(!HasSufficientMinimumLength(_element))
-    {return NULL;}
+    {return nullptr;}
   
   // arc length
   G4double length = _element.l*CLHEP::m;
@@ -411,7 +411,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 {
   if(!HasSufficientMinimumLength(_element))
-    {return NULL;}
+    {return nullptr;}
   
   // calculate length of central straight length and edge sections
   // unfortunately, this has to be duplicated here as we need to
@@ -472,7 +472,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 BDSAcceleratorComponent* BDSComponentFactory::CreateHKick()
 {
   if(!HasSufficientMinimumLength(_element))
-    {return NULL;}  
+    {return nullptr;}  
   
   G4double length = _element.l*CLHEP::m;
   
@@ -523,7 +523,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateHKick()
 BDSAcceleratorComponent* BDSComponentFactory::CreateVKick()
 {
   if(!HasSufficientMinimumLength(_element))
-    {return NULL;}
+    {return nullptr;}
   
   G4double length = _element.l*CLHEP::m;
   
@@ -575,7 +575,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateVKick()
 BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
 {
   if(!HasSufficientMinimumLength(_element))
-    {return NULL;}
+    {return nullptr;}
   
   // magnetic field
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
@@ -592,7 +592,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
 BDSAcceleratorComponent* BDSComponentFactory::CreateSextupole()
 {
   if(!HasSufficientMinimumLength(_element))
-    {return NULL;}
+    {return nullptr;}
   
   // magnetic field 
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
@@ -620,7 +620,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSextupole()
 BDSAcceleratorComponent* BDSComponentFactory::CreateOctupole()
 {
   if(!HasSufficientMinimumLength(_element))
-    {return NULL;}
+    {return nullptr;}
   
   // magnetic field  
   // B''' = d^3By/dx^3 = Brho * (1/Brho d^3By/dx^3) = Brho * k3
@@ -648,7 +648,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateOctupole()
 BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
 {
  if(!HasSufficientMinimumLength(_element))
-    {return NULL;}
+    {return nullptr;}
  
 #ifdef BDSDEBUG 
   G4cout << "---->creating Multipole,"
@@ -699,7 +699,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
 BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 {
   if(!HasSufficientMinimumLength(_element))
-    {return NULL;}
+    {return nullptr;}
 
   if(!BDS::IsFinite(_element.outerDiameter))
     {
@@ -730,7 +730,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 {
   if(!HasSufficientMinimumLength(_element))
-    {return NULL;}
+    {return nullptr;}
   
   // magnetic field
   //
@@ -767,7 +767,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 {
   if(!HasSufficientMinimumLength(_element))
-    {return NULL;}
+    {return nullptr;}
 
 #ifdef BDSDEBUG 
   G4cout << "--->creating " << typestr(_element.type) << ","
@@ -789,7 +789,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 {
   if(!HasSufficientMinimumLength(_element))
-    {return NULL;}
+    {return nullptr;}
 
 #ifdef BDSDEBUG 
   G4cout << "--->creating " << typestr(_element.type) << ","
@@ -811,7 +811,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
 {
   if(!HasSufficientMinimumLength(_element))
-    {return NULL;}
+    {return nullptr;}
   
 #ifdef BDSDEBUG 
   G4cout << "---->creating muspoiler,"
@@ -835,7 +835,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
 BDSAcceleratorComponent* BDSComponentFactory::CreateLaser()
 {
   if(!HasSufficientMinimumLength(_element))
-    {return NULL;}
+    {return nullptr;}
 	
 #ifdef BDSDEBUG 
   G4cout << "---->creating Laser,"
@@ -868,7 +868,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateLaser()
 BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
 {
   if(!HasSufficientMinimumLength(_element))
-    {return NULL;}
+    {return nullptr;}
 	
 #ifdef BDSDEBUG 
         G4cout << "---->creating Screen,"

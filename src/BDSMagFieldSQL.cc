@@ -206,7 +206,7 @@ void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
   G4cout << RLocalR.x()/CLHEP::m << " "<<RLocalR.y()/CLHEP::m << " "<<RLocalR.z()/CLHEP::m << " "<< LocalB.x()/CLHEP::tesla << " " << LocalB.y()/CLHEP::tesla << " " << LocalB.z()/CLHEP::tesla << G4endl;
 #endif
   //  delete aTouchable;
-  //  aTouchable = NULL;
+  //  aTouchable = nullptr;
   return;
 }
 

@@ -36,7 +36,7 @@ void BDSRandom::SetSeed()
   // if seed positive set it, else use the time
   long seed = 0;
   if(BDSGlobalConstants::Instance()->GetRandomSeed()<=0)
-    seed = time(NULL);
+    seed = time(nullptr);
   else
     seed = BDSGlobalConstants::Instance()->GetRandomSeed();
   

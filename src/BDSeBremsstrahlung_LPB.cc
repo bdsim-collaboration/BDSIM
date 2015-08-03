@@ -20,7 +20,7 @@ G4VParticleChange* eBremsstrahlung_LPB::PostStepDoIt(const G4Track& track, const
   std::vector<G4Track*> secondaries;
   
   //Particle change declaration
-  G4VParticleChange* particleChange = NULL;
+  G4VParticleChange* particleChange = nullptr;
 
   //Get secondaries
   particleChange = pRegProcess->PostStepDoIt(track, step);
@@ -91,7 +91,7 @@ G4VParticleChange* eBremsstrahlung_LPB_v2::PostStepDoIt(const G4Track& track, co
   std::vector<G4Track*> secondaries;
   
   //Particle change declaration
-  G4VParticleChange* particleChange = NULL;
+  G4VParticleChange* particleChange = nullptr;
 
   //Get secondaries
   particleChange = pRegProcess->PostStepDoIt(track, step);

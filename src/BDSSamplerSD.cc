@@ -35,7 +35,7 @@
 #include "G4SDManager.hh"
 
 BDSSamplerSD::BDSSamplerSD(G4String name, G4String type)
-  :G4VSensitiveDetector(name),itsHCID(-1),SamplerCollection(NULL),
+  :G4VSensitiveDetector(name),itsHCID(-1),SamplerCollection(nullptr),
    itsType(type)
 {
   itsCollectionName="Sampler_"+type;

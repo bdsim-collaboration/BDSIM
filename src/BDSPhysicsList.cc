@@ -206,18 +206,18 @@ BDSPhysicsList::BDSPhysicsList(): G4VUserPhysicsList()
 		      "hadronic_FTFP_BERT_muon",
 		      "lw"};
   
-  theCerenkovProcess           = NULL;
-  theScintillationProcess      = NULL;
-  theAbsorptionProcess         = NULL;
-  theRayleighScatteringProcess = NULL;
-  theMieHGScatteringProcess    = NULL;
-  theBoundaryProcess           = NULL;
+  theCerenkovProcess           = nullptr;
+  theScintillationProcess      = nullptr;
+  theAbsorptionProcess         = nullptr;
+  theRayleighScatteringProcess = nullptr;
+  theMieHGScatteringProcess    = nullptr;
+  theBoundaryProcess           = nullptr;
 
-  theReferenceHadronicPhysList = NULL;
-  theReferenceEmPhysList       = NULL;
-  theBDSIMPhysList             = NULL;
-  theHadPhysList1              = NULL;
-  theHadPhysList2              = NULL;
+  theReferenceHadronicPhysList = nullptr;
+  theReferenceEmPhysList       = nullptr;
+  theBDSIMPhysList             = nullptr;
+  theHadPhysList1              = nullptr;
+  theHadPhysList2              = nullptr;
 
   verbose = BDSExecOptions::Instance()->GetVerbose();
 

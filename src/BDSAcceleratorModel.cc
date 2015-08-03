@@ -15,12 +15,12 @@ BDSAcceleratorModel* BDSAcceleratorModel::Instance()
 
 
 BDSAcceleratorModel::BDSAcceleratorModel():
-  worldPV(NULL),
-  readOutWorldPV(NULL),
-  readOutWorldLV(NULL),
-  flatBeamline(NULL),
-  supportsBeamline(NULL),
-  tunnelBeamline(NULL)
+  worldPV(nullptr),
+  readOutWorldPV(nullptr),
+  readOutWorldLV(nullptr),
+  flatBeamline(nullptr),
+  supportsBeamline(nullptr),
+  tunnelBeamline(nullptr)
 {
   BDSAcceleratorComponentRegistry::Instance();
   BDSPhysicalVolumeInfoRegistry::Instance();

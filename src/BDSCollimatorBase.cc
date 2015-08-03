@@ -44,9 +44,9 @@ BDSCollimatorBase::BDSCollimatorBase(G4String name,
       collimatorMaterial = "Copper";
     }
 
-  collimatorSolid = NULL;
-  innerSolid      = NULL;
-  vacuumSolid     = NULL;
+  collimatorSolid = nullptr;
+  innerSolid      = nullptr;
+  vacuumSolid     = nullptr;
 }
 
 void BDSCollimatorBase::BuildContainerLogicalVolume()

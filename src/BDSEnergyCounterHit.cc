@@ -54,7 +54,7 @@ BDSEnergyCounterHit* BDS::LowestSPosPrimaryHit(BDSEnergyCounterHitsCollection* h
   if (indexofHit != -1)
     {return (*hc)[indexofHit];}
   else
-    {return NULL;}
+    {return nullptr;}
 }
 
 
@@ -74,5 +74,5 @@ BDSEnergyCounterHit* BDS::HighestSPosPrimaryHit(BDSEnergyCounterHitsCollection* 
   if (indexofHit != -1)
     {return (*hc)[indexofHit];}
   else
-    {return NULL;}
+    {return nullptr;}
 }

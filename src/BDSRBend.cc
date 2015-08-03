@@ -136,8 +136,8 @@ void BDSRBend::BuildOuterVolume()
 void BDSRBend::BuildBeampipe()
 {
   // check for finite length (can be negative if angle is zero or very small)
-  BDSBeamPipe* bpFirstBit = NULL;
-  BDSBeamPipe* bpLastBit  = NULL;
+  BDSBeamPipe* bpFirstBit = nullptr;
+  BDSBeamPipe* bpLastBit  = nullptr;
   if (itsStraightSectionLength - lengthSafety > 0) {
     bpFirstBit =
       BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledOut(beamPipeInfo->beamPipeType,

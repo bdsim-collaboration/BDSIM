@@ -9,8 +9,8 @@ BDSTunnelInfo::BDSTunnelInfo()
   type          = BDSTunnelType::circular;
   thickness     = 0.0;
   soilThickness = 0.0;
-  material      = NULL;
-  soilMaterial  = NULL;
+  material      = nullptr;
+  soilMaterial  = nullptr;
   buildFloor    = false;
   floorOffset   = 0.0;
   aper1         = 0.0;

@@ -42,7 +42,7 @@ BDSSDManager::BDSSDManager()
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
 
   // read out geometry SD - construct on demand
-  eCounterOnAxisRO = NULL;
+  eCounterOnAxisRO = nullptr;
 
   // sampler plane
   samplerPlane = new BDSSamplerSD("sampler_plane","plane");

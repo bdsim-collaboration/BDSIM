@@ -86,7 +86,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
   G4int    cumulativeNItems           = 0; // integrated number of accelerator components since last tunnel break
   G4double cumulativeDisplacementX    = 0; // integrated offset from initial point - horizontal
   G4double cumulativeDisplacementY    = 0; // integrated offset from initial point - vertical
-  BDSTunnelSection* tunnelSection     = NULL;
+  BDSTunnelSection* tunnelSection     = nullptr;
   BDSTunnelFactory*     tf            = BDSTunnelFactory::Instance(); // shortcut
 
   // iterator to the BDSBeamlineElement where the previous tunnel section finished

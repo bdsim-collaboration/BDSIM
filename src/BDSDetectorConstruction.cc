@@ -52,9 +52,9 @@ bool debug = false;
 typedef std::vector<G4LogicalVolume*>::iterator BDSLVIterator;
 
 BDSDetectorConstruction::BDSDetectorConstruction():
-  precisionRegion(NULL),gasRegion(NULL),
-  worldPV(NULL),magField(NULL),
-  theHitMaker(NULL),theParticleBounds(NULL)
+  precisionRegion(nullptr),gasRegion(nullptr),
+  worldPV(nullptr),magField(nullptr),
+  theHitMaker(nullptr),theParticleBounds(nullptr)
 {  
   verbose       = BDSExecOptions::Instance()->GetVerbose();
   checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
@@ -280,7 +280,7 @@ void BDSDetectorConstruction::BuildWorld()
 			      (G4ThreeVector)0,     // at (0,0,0)
 			      worldLV,	            // its logical volume
 			      worldName + "_pv",    // its name
-			      NULL,		    // its mother  volume
+			      nullptr,		    // its mother  volume
 			      false,		    // no boolean operation
 			      0,                    // copy number
 			      checkOverlaps);       // overlap checking
@@ -290,7 +290,7 @@ void BDSDetectorConstruction::BuildWorld()
 						    (G4ThreeVector)0,     // at (0,0,0)
 						    readOutWorldLV,	  // logical volume
 						    "readoutWorld_pv",    // name
-						    NULL,		  // mother  volume
+						    nullptr,		  // mother  volume
 						    false,		  // no boolean operation
 						    0,                    // copy number
 						    checkOverlaps);       // overlap checking
@@ -399,7 +399,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 						   checkOverlaps);                    //overlap checking
 
       // place read out volume in read out world - if this component has one
-      G4PVPlacement* readOutPV = NULL;
+      G4PVPlacement* readOutPV = nullptr;
       if(readOutLV)
 	{
 #ifdef BDSDEBUG
@@ -458,7 +458,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       /*
       BDSBeamline* supports = BDSAcceleratorModel::Instance()->GetSupportsBeamline();
       BDSBeamlineIterator supportsIt = supports->begin();
-      G4PVPlacement* supportPV = NULL;
+      G4PVPlacement* supportPV = nullptr;
       for(; supportsIt != supports->end(); ++supportsIt)
 	{
 	  supportPV = new G4PVPlacement((*supportsIt)->GetRotationMiddle(),         // rotation
@@ -474,7 +474,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       // place the tunnel
       BDSBeamline* tunnel = BDSAcceleratorModel::Instance()->GetTunnelBeamline();
       BDSBeamlineIterator tunnelIt = tunnel->begin();
-      //G4PVPlacement* tunnelPV = NULL;
+      //G4PVPlacement* tunnelPV = nullptr;
       for(; tunnelIt != tunnel->end(); ++tunnelIt)
 	{
 	  new G4PVPlacement(*(*tunnelIt)->GetPlacementTransform(),    // placement transform

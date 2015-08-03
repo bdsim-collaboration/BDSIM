@@ -19,14 +19,14 @@ const BDSExecOptions* BDSExecOptions::Instance(int argc, char **argv){
     return _instance;
   } else {
     G4Exception("BDSExecOptions::Instance is already initialized. Return pointer to singleton with BDSExecOptions::Instance()", "-1", FatalException, "");
-    return NULL;
+    return nullptr;
   }
 }
 
 const BDSExecOptions* BDSExecOptions::Instance(){
   if(_instance==0) {
     G4Exception("BDSExecOptions::Instance was not initialised. Initialize first with BDSExecOptions::Instance(int argc, char **argv).", "-1", FatalException, "");
-    return NULL;
+    return nullptr;
   } else 
     return _instance;
 }

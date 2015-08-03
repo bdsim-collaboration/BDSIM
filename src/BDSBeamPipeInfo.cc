@@ -8,9 +8,9 @@ BDSBeamPipeInfo::BDSBeamPipeInfo()
   aper2             = 0.0;
   aper3             = 0.0;
   aper4             = 0.0;
-  vacuumMaterial    = NULL;
+  vacuumMaterial    = nullptr;
   beamPipeThickness = 0.0;
-  beamPipeMaterial  = NULL;
+  beamPipeMaterial  = nullptr;
 }
 
 BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeType beamPipeTypeIn,

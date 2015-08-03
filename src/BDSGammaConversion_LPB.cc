@@ -20,7 +20,7 @@ G4VParticleChange* GammaConversion_LPB::PostStepDoIt(const G4Track& track, const
   std::vector<G4Track*> secondaries;
 
   //Declare particle change
-  G4VParticleChange* particleChange = NULL;
+  G4VParticleChange* particleChange = nullptr;
 
   //Get secondaries
   particleChange = pRegProcess->PostStepDoIt(track, step);
@@ -94,7 +94,7 @@ G4VParticleChange* GammaConversion_LPB_v2::PostStepDoIt(const G4Track& track, co
   std::vector<G4Track*> secondaries;
 
   //Declare particle change
-  G4VParticleChange* particleChange = NULL;
+  G4VParticleChange* particleChange = nullptr;
 
   //Get secondaries
   particleChange = pRegProcess->PostStepDoIt(track, step);
