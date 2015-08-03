@@ -25,9 +25,8 @@ BDSOutputROOT::BDSOutputROOT():BDSOutputBase()
 
 BDSOutputROOT::~BDSOutputROOT()
 {
-  if (theRootOutputFile && theRootOutputFile->IsOpen()) {
-    theRootOutputFile->Write();
-  }
+  if (theRootOutputFile && theRootOutputFile->IsOpen())
+    {theRootOutputFile->Write();}
 }
 
 void BDSOutputROOT::BuildSamplerTree(G4String name)
@@ -138,10 +137,11 @@ void BDSOutputROOT::Init()
       TrajTree->Branch("part",&part,"part/I");
     }
 
-  // build energy loss histogram  
+  //Energy loss tree setup
   EnergyLossTree= new TTree("ElossTree", "Energy Loss");
   EnergyLossTree->Branch("s",&S_el,"s/F"); // (m)
   EnergyLossTree->Branch("E",&E_el,"E/F"); // (GeV)
+  EnergyLossTree->Branch("weight", &weight_el, "weight/F"); // weight
 
   //Primary loss tree setup
   PrimaryLossTree  = new TTree("PlossTree", "Primary Losses");
@@ -242,39 +242,39 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
 #endif
   TTree* sTree=(TTree*)gDirectory->Get(Name);
   if(!sTree) G4Exception("BDSOutputROOT: ROOT Sampler not found!", "-1", FatalException, "");
-  E0=InitMom / CLHEP::GeV;
-  x0=InitX / CLHEP::micrometer;
-  y0=InitY / CLHEP::micrometer;
-  z0=InitZ / CLHEP::m;
-  xp0=InitXPrime / CLHEP::radian;
-  yp0=InitYPrime / CLHEP::radian;
-  zp0=InitZPrime / CLHEP::radian;
-  t0=InitT / CLHEP::ns;
-  E_prod=ProdMom / CLHEP::GeV;
-  x_prod=ProdX / CLHEP::micrometer;
-  y_prod=ProdY / CLHEP::micrometer;
-  z_prod=ProdZ / CLHEP::m;
-  xp_prod=ProdXPrime / CLHEP::radian;
-  yp_prod=ProdYPrime / CLHEP::radian;
-  zp_prod=ProdZPrime / CLHEP::radian;
-  t_prod=ProdT / CLHEP::ns;
-  E_lastScat=LastScatMom / CLHEP::GeV;
-  x_lastScat=LastScatX / CLHEP::micrometer;
-  y_lastScat=LastScatY / CLHEP::micrometer;
-  z_lastScat=LastScatZ / CLHEP::m;
-  xp_lastScat=LastScatXPrime / CLHEP::radian;
-  yp_lastScat=LastScatYPrime / CLHEP::radian;
-  zp_lastScat=LastScatZPrime / CLHEP::radian;
-  t_lastScat=LastScatT / CLHEP::ns;
+  E0          = InitMom     / CLHEP::GeV;
+  x0          = InitX       / CLHEP::micrometer;
+  y0          = InitY       / CLHEP::micrometer;
+  z0          = InitZ       / CLHEP::m;
+  xp0         = InitXPrime  / CLHEP::radian;
+  yp0         = InitYPrime  / CLHEP::radian;
+  zp0         = InitZPrime  / CLHEP::radian;
+  t0          = InitT       / CLHEP::ns;
+  E_prod      = ProdMom     / CLHEP::GeV;
+  x_prod      = ProdX       / CLHEP::micrometer;
+  y_prod      = ProdY       / CLHEP::micrometer;
+  z_prod      = ProdZ       / CLHEP::m;
+  xp_prod     = ProdXPrime  / CLHEP::radian;
+  yp_prod     = ProdYPrime  / CLHEP::radian;
+  zp_prod     = ProdZPrime  / CLHEP::radian;
+  t_prod      = ProdT       / CLHEP::ns;
+  E_lastScat  = LastScatMom / CLHEP::GeV;
+  x_lastScat  = LastScatX   / CLHEP::micrometer;
+  y_lastScat  = LastScatY   / CLHEP::micrometer;
+  z_lastScat  = LastScatZ   / CLHEP::m;
+  xp_lastScat = LastScatXPrime / CLHEP::radian;
+  yp_lastScat = LastScatYPrime / CLHEP::radian;
+  zp_lastScat = LastScatZPrime / CLHEP::radian;
+  t_lastScat  = LastScatT   / CLHEP::ns;
 
-  E=Mom / CLHEP::GeV;
+  E           =Mom / CLHEP::GeV;
   //Edep=Edep / CLHEP::GeV;
-  x=X / CLHEP::micrometer;
-  y=Y / CLHEP::micrometer;
-  z=Z / CLHEP::m;
-  xp=XPrime / CLHEP::radian;
-  yp=YPrime / CLHEP::radian;
-  zp=ZPrime / CLHEP::radian;
+  x           = X / CLHEP::micrometer;
+  y           = Y / CLHEP::micrometer;
+  z           = Z / CLHEP::m;
+  xp          = XPrime / CLHEP::radian;
+  yp          = YPrime / CLHEP::radian;
+  zp          = ZPrime / CLHEP::radian;
   t=T / CLHEP::ns;
   X=GlobalX / CLHEP::m;
   Y=GlobalY / CLHEP::m;
@@ -464,8 +464,10 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
   for (G4int i=0;i<n_hit;i++)
     {
       //all regions fill the energy loss tree....
-      E_el = (*hc)[i]->GetEnergy()/CLHEP::GeV;
-      S_el = (*hc)[i]->GetS()/CLHEP::m;
+      BDSEnergyCounterHit* hit = (*hc)[i];
+      E_el      = hit->GetEnergy()/CLHEP::GeV;
+      S_el      = hit->GetS()/CLHEP::m;
+      weight_el = hit->GetWeight();
       EnergyLossTree->Fill();
       
       if((*hc)[i]->GetPrecisionRegion()){ //Only the precision region fills this tree, preserving every hit, its position and weight, instead of summing weighted energy in each beam line component.

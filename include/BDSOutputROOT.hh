@@ -21,8 +21,8 @@
  * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
  */
 
-class BDSOutputROOT : public BDSOutputBase {
-
+class BDSOutputROOT: public BDSOutputBase
+{
 public: 
 
   BDSOutputROOT(); // default constructor
@@ -79,7 +79,7 @@ private:
   float X=0.0,Xp=0.0,Y=0.0,Yp=0.0,Z=0.0,Zp=0.0,s=0.0,weight=0.0; //,EWeightZ;
   int part=-1,nev=-1, pID=-1, track_id=-1, turnnumber=-1;
   /// energy loss histogram variables
-  float S_el=0.0,E_el=0.0;
+  float S_el=0.0, E_el=0.0, weight_el=0.0;
   /// primary loss histogram variables
   float X_pl=0.0,Y_pl=0.0,Z_pl=0.0,S_pl=0.0,x_pl=0.0,y_pl=0.0,z_pl=0.0,E_pl=0.0,weight_pl=0.0;
   int part_pl=-1, turnnumber_pl=-1, eventno_pl=-1;
