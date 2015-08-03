@@ -170,11 +170,11 @@ const char* GetName(int i)
   return (it->name).c_str();
 }
 
-short GetType(int i) 
+int GetType(int i) 
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
-  return it->type;
+  return static_cast<int>(it->type);
 }
 
 double GetLength(int i) 
@@ -204,12 +204,18 @@ double* GetKs(int i)
   return result;
 }
 
-
-double GetAper(int i) 
+double GetAper1(int i) 
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
   return it->aper1;
+}
+
+double GetAper2(int i) 
+{
+  std::list<Element>::iterator it = beamline_list.begin();
+  std::advance(it, i);
+  return it->aper2;
 }
 
 double GetBeampipeThickness(int i)

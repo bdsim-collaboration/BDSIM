@@ -1,5 +1,5 @@
 #include "element.h"
-#include "enums.h"
+#include "elementtype.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -29,25 +29,25 @@ void Element::print(int & ident)const{
   for(int i=0;i<ident;i++)
     printf("--");
 
-  printf("->%s : %s",name.c_str(),typestr(type));
+  printf("->%s : %s",name.c_str(),GMAD::typestr(type));
 
   std::list<double>::const_iterator it;
   switch(type) {
-  case _DRIFT:
-  case _SBEND:
-  case _RBEND:
-  case _QUAD:
-  case _SEXTUPOLE:
-  case _OCTUPOLE:
+  case ElementType::_DRIFT:
+  case ElementType::_SBEND:
+  case ElementType::_RBEND:
+  case ElementType::_QUAD:
+  case ElementType::_SEXTUPOLE:
+  case ElementType::_OCTUPOLE:
     printf(", l=%.10g, k0=%.10g, k1=%.10g, k2=%.10g, k3=%.10g, angle=%.10g,tilt=%.10g ",
 	   l,k0,k1,k2,k3,angle,tilt);
     break;
     
-  case _SOLENOID:
+  case ElementType::_SOLENOID:
     printf(", l=%.10g, ks=%.10g ", l, ks);
     break;
     
-  case _MULT:
+  case ElementType::_MULT:
     printf(" , knl={");
     for(it=knl.begin();it!=knl.end();++it)
       printf("%.10g, ",(*it));
@@ -57,25 +57,25 @@ void Element::print(int & ident)const{
     printf("}");
     break;
     
-  case _ELEMENT:
+  case ElementType::_ELEMENT:
     printf("\ngeometry file : %s\n",geometryFile.c_str());
     printf("B map file : %s\n",bmapFile.c_str());
     //printf("E map driver : %s\n",geometryFile);
     //printf("E map file : %s\n",geometryFile);
     break;
     
-  case _SCREEN:
+  case ElementType::_SCREEN:
     break;
     
-  case _CSAMPLER:
+  case ElementType::_CSAMPLER:
     printf(" length=%.10g, radius=%.10g",l, r);
     break;
     
-  case _TRANSFORM3D:
+  case ElementType::_TRANSFORM3D:
     printf(" xdir=%.10g, ydir=%.10g, zdir=%.10g,  phi=%.10g, theta=%.10g,psi=%.10g",
 	   xdir, ydir, zdir, phi, theta, psi);
     break;
-  case _MATERIAL:
+  case ElementType::_MATERIAL:
     printf(" A=%.10g, Z=%.10g, density=%.10g,  temper=%.10g, pressure=%.10g",
 	   A, Z, density, temper, pressure);
     break;
@@ -139,7 +139,7 @@ void Element::flush() {
   zdir = 0;
 
   name = "";
-  type = _NONE;
+  type = ElementType::_NONE;
   precisionRegion = 0;
 
   A = 0;
