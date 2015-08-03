@@ -34,7 +34,7 @@
 //parser info
 #include "parser/element.h"
 #include "parser/elementlist.h"
-#include "parser/enums.h"
+#include "parser/elementtype.h"
 #include "parser/options.h"
 
 //aperture
@@ -191,53 +191,53 @@ TRKElement* TRKFactory::createElement(Element& element) {
   TRKElement* trkelement = NULL;
   switch (element.type) {
 
-  case _LINE:
+  case ElementType::_LINE:
     trkelement = createLine(element);
     break;
-  case _DRIFT:
+  case ElementType::_DRIFT:
     trkelement = createDrift(element);
     break;
-  case _SBEND:
+  case ElementType::_SBEND:
     trkelement = createSBend(element);
     break;
-  case _RBEND:
+  case ElementType::_RBEND:
     trkelement = createRBend(element);;
     break;
-  case _QUAD:
+  case ElementType::_QUAD:
     trkelement = createQuadrupole(element);
     break;
-  case _SEXTUPOLE:
+  case ElementType::_SEXTUPOLE:
     trkelement = createSextupole(element);
     break;
-  case _OCTUPOLE:
+  case ElementType::_OCTUPOLE:
     trkelement = createOctupole(element);
     break;
-  // case _DECAPOLE:
+  // case ElementType::_DECAPOLE:
   //   trkelement = createDecapole(element);
     //    break;
-  case _SOLENOID:
+  case ElementType::_SOLENOID:
     trkelement = createSolenoid(element);
     break;
-  case _MULT:
+  case ElementType::_MULT:
     //TEMPORARY
     trkelement = createDrift(element);
     break;
-  case _ELEMENT:
+  case ElementType::_ELEMENT:
     //TEMPORARY
     trkelement = createDrift(element);
     break;
-  case _SAMPLER:
+  case ElementType::_SAMPLER:
     trkelement = createSampler(element);
     break;
-  case _RCOL:
+  case ElementType::_RCOL:
     trkelement = createDrift(element);
     break;
-  case _TRANSFORM3D:
+  case ElementType::_TRANSFORM3D:
     //TEMPORARY
     trkelement = NULL;
     break;
-  case _VKICK:
-  case _HKICK:
+  case ElementType::_VKICK:
+  case ElementType::_HKICK:
     trkelement = createDipole(element);
     break;
   default:
