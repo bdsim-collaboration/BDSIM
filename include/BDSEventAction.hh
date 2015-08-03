@@ -33,6 +33,7 @@ private:
   G4bool verboseEvent;
   G4int  verboseEventNumber;
   G4bool isBatch;
+  G4bool useTunnel;
 
   G4int samplerCollID_plane;
   G4int samplerCollID_cylin;

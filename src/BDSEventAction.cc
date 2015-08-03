@@ -44,6 +44,7 @@ BDSEventAction::BDSEventAction():
   verboseEvent       = BDSExecOptions::Instance()->GetVerboseEvent();
   verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
   isBatch            = BDSExecOptions::Instance()->GetBatch();
+  useTunnel          = BDSGlobalConstants::Instance()->BuildTunnel();
 
   if(isBatch) printModulo=10;
   else printModulo=1;
@@ -77,8 +78,11 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
     {energyCounterCollID  = g4SDMan->GetCollectionID("ec_on_axis_read_out/energy_counter");}
   if(primaryCounterCollID < 0)
     {primaryCounterCollID = g4SDMan->GetCollectionID("ec_on_axis_read_out/primary_counter");}
-  if(tunnelCollID < 0)
-    {tunnelCollID         = g4SDMan->GetCollectionID("tunnel_hits");} // defined in BDSSDManager.cc
+  if (useTunnel)
+    {
+      if(tunnelCollID < 0)
+	{tunnelCollID         = g4SDMan->GetCollectionID("tunnel_hits");} // defined in BDSSDManager.cc
+    }
   //if (lWCalorimeterCollID<1) 
   //{lWCalorimeterCollID = G4SDManager::GetSDMpointer()->GetCollectionID("LWCalorimeterCollection");}
   FireLaserCompton=true;
@@ -138,7 +142,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   BDSEnergyCounterHitsCollection* energyCounterHits  = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
   BDSEnergyCounterHitsCollection* primaryCounterHits = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(primaryCounterCollID));
   BDSTunnelHitsCollection*        tunnelHits         = nullptr;
-  if (BDSGlobalConstants::Instance()->BuildTunnel())
+  if (useTunnel)
     {tunnelHits = (BDSTunnelHitsCollection*)(HCE->GetHC(tunnelCollID));}
 
   // fill histograms
