@@ -422,8 +422,6 @@ void BDSBeamline::ApplyTransform3D(BDSTransform3D* component)
 
 void BDSBeamline::AddBeamlineElement(BDSBeamlineElement* element)
 {
-  G4cout << "max ext pos " << maximumExtentPositive << G4endl;
-  G4cout << "max ext neg " << maximumExtentNegative << G4endl;
   // calculate extents for world size determination
   // project size in global coordinates
   G4ThreeVector     referencePositionMiddle = element->GetReferencePositionMiddle();
@@ -431,12 +429,8 @@ void BDSBeamline::AddBeamlineElement(BDSBeamlineElement* element)
   BDSAcceleratorComponent* component        = element->GetAcceleratorComponent();
   G4ThreeVector eP                          = component->GetExtentPositive();
   G4ThreeVector eN                          = component->GetExtentNegative();
-  G4cout << "ep " << eP << G4endl;
-  G4cout << "en " << eN << G4endl;
   G4ThreeVector extentpos = referencePositionMiddle + eP.transform(*referenceRotationStart); 
   G4ThreeVector extentneg = referencePositionMiddle + eN.transform(*referenceRotationStart);
-  G4cout << "ep global " << extentpos << G4endl;
-  G4cout << "en global " << extentneg << G4endl;
   // note extentneg is +eN.transform.. as eN is negative naturally
   // loop over each size and compare to cumulative extent
   for (int i=0; i<3; i++)
@@ -446,8 +440,6 @@ void BDSBeamline::AddBeamlineElement(BDSBeamlineElement* element)
       if (extentneg[i] < maximumExtentNegative[i])
 	{maximumExtentNegative[i] = extentneg[i];}
     }
-  G4cout << "max ext pos " << maximumExtentPositive << G4endl;
-  G4cout << "max ext neg " << maximumExtentNegative << G4endl;
   // append it to the beam line
   beamline.push_back(element);
 
