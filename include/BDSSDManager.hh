@@ -6,6 +6,8 @@
 #include "BDSSamplerSD.hh"
 #include "BDSTerminatorSD.hh"
 
+class BDSTunnelSD;
+
 /**
  * @brief A singleton class that holds all required sensitive
  * detector class instances.  Each sensitive detector class
@@ -60,6 +62,7 @@ private:
   BDSEnergyCounterSD* eCounterOnAxis;
   BDSTerminatorSD*    terminator;
   BDSLWCalorimeterSD* lwCalorimeter;
+  BDSTunnelSD*        tunnel;
 
   // duplicate ecounter here that's made on demand
   // and registered to read out geometry - this requires

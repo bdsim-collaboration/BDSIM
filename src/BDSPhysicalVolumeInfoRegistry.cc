@@ -36,8 +36,14 @@ BDSPhysicalVolumeInfoRegistry::~BDSPhysicalVolumeInfoRegistry()
 
 void BDSPhysicalVolumeInfoRegistry::RegisterInfo(G4VPhysicalVolume*     physicalVolume,
 						 BDSPhysicalVolumeInfo* info,
-						 G4bool                 isReadOutVolume)
+						 G4bool                 isReadOutVolume,
+						 G4bool                 isTunnel)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "registering volume " << physicalVolume->GetName() << G4endl;
+  G4cout << __METHOD_NAME__ << "with info :        " << *info                     << G4endl;
+  G4cout << __METHOD_NAME__ << "is read out volume " << isReadOutVolume           << G4endl;
+#endif
   if (IsRegistered(physicalVolume))
     {//uh oh - we've found it somewhere - abort
       G4cerr << __METHOD_NAME__ << "this physical volume is already registered" << G4endl;
@@ -45,6 +51,12 @@ void BDSPhysicalVolumeInfoRegistry::RegisterInfo(G4VPhysicalVolume*     physical
       return;
     }
 
+  // if it's a tunnel one, register and return
+  if (isTunnel)
+    {
+      tunnelRegister[physicalVolume] = info;
+      return;
+    }
   // doesn't already exist so register it
   if (isReadOutVolume)
     {readOutRegister[physicalVolume] = info;}
@@ -55,9 +67,18 @@ void BDSPhysicalVolumeInfoRegistry::RegisterInfo(G4VPhysicalVolume*     physical
 #endif
 }
 
-BDSPhysicalVolumeInfo* BDSPhysicalVolumeInfoRegistry::GetInfo(G4VPhysicalVolume* physicalVolume)
+BDSPhysicalVolumeInfo* BDSPhysicalVolumeInfoRegistry::GetInfo(G4VPhysicalVolume* physicalVolume,
+							      G4bool             isTunnel)
 {
-  if (IsRegisteredToReadOutRegister(physicalVolume))
+  if (isTunnel)
+    {
+      tunnelSearch = tunnelRegister.find(physicalVolume);
+      if (tunnelSearch == tunnelRegister.end())
+	{return NULL;}
+      else
+	{return tunnelSearch->second;}
+    }
+  else if (IsRegisteredToReadOutRegister(physicalVolume))
     {return readOutSearch->second;}
   else if (IsRegisteredToBackupRegister(physicalVolume))
     {return backupSearch->second;}
@@ -91,6 +112,15 @@ G4bool BDSPhysicalVolumeInfoRegistry::IsRegisteredToBackupRegister(G4VPhysicalVo
   else
     {return true;}
 }
+
+ G4bool BDSPhysicalVolumeInfoRegistry::IsRegisteredToTunnelRegister(G4VPhysicalVolume* physicalVolume)
+ {
+   tunnelSearch = tunnelRegister.find(physicalVolume);
+   if (tunnelSearch == tunnelRegister.end())
+     {return false;}
+   else
+     {return true;}
+ }
 
 std::ostream& operator<< (std::ostream& out, BDSPhysicalVolumeInfoRegistry const &r)
 {
