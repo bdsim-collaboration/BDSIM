@@ -112,16 +112,19 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if(samplerCollID_plane>=0)
     SampHC = (BDSSamplerHitsCollection*)(evt->GetHCofThisEvent()->GetHC(samplerCollID_plane));
   
-  if(SampHC){
+  if(SampHC)
+    {
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " - planar hits collection found. Writing hits." << G4endl;
+      G4cout << __METHOD_NAME__ << " - sampler hits collection found. Writing hits." << G4endl;
 #endif
-    bdsOutput->WriteHits(SampHC);
-  } else {
+      bdsOutput->WriteHits(SampHC);
+    }
+  else
+    {
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " - no planar hits collection found. Not writing hits." << G4endl;
+      G4cout << __METHOD_NAME__ << " - no sampler hits collection found. Not writing hits." << G4endl;
 #endif
-  }
+    }
   SampHC=NULL;
   
   // are there any cylindrical samplers? if so, record the hits
@@ -160,10 +163,14 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       //bin hits in histograms
       for (G4int i = 0; i < energyCounterHits->entries(); i++)
 	{
+	  G4double s      = (*energyCounterHits)[i]->GetS()/CLHEP::m;
+	  G4double energy = (*energyCounterHits)[i]->GetEnergy()/CLHEP::GeV;
+	  G4double weight = (*energyCounterHits)[i]->GetWeight();
+	  G4double weightedEnergy = energy*weight;
 	  //general eloss histo
-	  analMan->Fill1DHistogram(2,(*energyCounterHits)[i]->GetS()/CLHEP::m,(*energyCounterHits)[i]->GetEnergy()/CLHEP::GeV);
+	  analMan->Fill1DHistogram(2, s, weightedEnergy);
 	  //per element eloss histo
-	  analMan->Fill1DHistogram(5,(*energyCounterHits)[i]->GetS()/CLHEP::m,(*energyCounterHits)[i]->GetEnergy()/CLHEP::GeV);
+	  analMan->Fill1DHistogram(5, s, weightedEnergy);
 	}
     }
 
@@ -177,12 +184,14 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	{
 	  bdsOutput->WritePrimaryLoss(thePrimaryLoss);
 	  bdsOutput->WritePrimaryHit(thePrimaryHit);
+	  G4double hitS  = thePrimaryHit->GetS()/CLHEP::m;
+	  G4double lossS = thePrimaryLoss->GetS()/CLHEP::m;
 	  // general histos
-	  analMan->Fill1DHistogram(0,thePrimaryHit->GetS()/CLHEP::m);
-	  analMan->Fill1DHistogram(1,thePrimaryLoss->GetS()/CLHEP::m);
+	  analMan->Fill1DHistogram(0, hitS);
+	  analMan->Fill1DHistogram(1, lossS);
 	  // per element histos
-	  analMan->Fill1DHistogram(3,thePrimaryHit->GetS()/CLHEP::m);
-	  analMan->Fill1DHistogram(4,thePrimaryLoss->GetS()/CLHEP::m);
+	  analMan->Fill1DHistogram(3, hitS);
+	  analMan->Fill1DHistogram(4, lossS);
 	}
     }
   }
