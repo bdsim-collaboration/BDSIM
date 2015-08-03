@@ -19,10 +19,10 @@
 
 
 BDSTunnelFactoryBase::BDSTunnelFactoryBase():
-  tunnelComponent(NULL),tunnelSection(NULL),
-  containerSolid(NULL), tunnelSolid(NULL), soilSolid(NULL), floorSolid(NULL),
-  intersectionSolid(NULL),
-  containerLV(NULL), tunnelLV(NULL), soilLV(NULL), floorLV(NULL),
+  tunnelComponent(nullptr),tunnelSection(nullptr),
+  containerSolid(nullptr), tunnelSolid(nullptr), soilSolid(nullptr), floorSolid(nullptr),
+  intersectionSolid(nullptr),
+  containerLV(nullptr), tunnelLV(nullptr), soilLV(nullptr), floorLV(nullptr),
   floorDisplacement(G4ThreeVector(0,0,0)),
   cumulativeAngle(0)
 {
@@ -330,16 +330,16 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
 
 void BDSTunnelFactoryBase::TidyUp()
 {
-  tunnelSection     = NULL;
-  containerSolid    = NULL;
-  tunnelSolid       = NULL;
-  soilSolid         = NULL;
-  floorSolid        = NULL;
-  intersectionSolid = NULL;
-  containerLV       = NULL;
-  tunnelLV          = NULL;
-  soilLV            = NULL;
-  floorLV           = NULL;
+  tunnelSection     = nullptr;
+  containerSolid    = nullptr;
+  tunnelSolid       = nullptr;
+  soilSolid         = nullptr;
+  floorSolid        = nullptr;
+  intersectionSolid = nullptr;
+  containerLV       = nullptr;
+  tunnelLV          = nullptr;
+  soilLV            = nullptr;
+  floorLV           = nullptr;
   floorDisplacement = G4ThreeVector(0,0,0);
   cumulativeAngle   = 0;
   solidsToBeRegistered.clear();

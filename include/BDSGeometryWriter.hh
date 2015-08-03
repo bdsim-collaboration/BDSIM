@@ -26,9 +26,9 @@ public:
 		      G4String geometryFileName);
 
   /// Write the geometry to specified output filename. The filename should
-  /// be the filename ending in .gdml. If the supplied volume is NULL (default),
+  /// be the filename ending in .gdml. If the supplied volume is nullptr (default),
   /// the world volume will be written out.
-  void WriteToGDML(G4String outputFileName, G4VPhysicalVolume* volume = NULL);
+  void WriteToGDML(G4String outputFileName, G4VPhysicalVolume* volume = nullptr);
 
 private:
   /// Private default constructor for singleton

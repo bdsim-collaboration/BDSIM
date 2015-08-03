@@ -312,7 +312,7 @@ inline G4LogicalVolume* BDSGeometryLCDD::GetLogVolByName(G4String name)
 
 inline G4String BDSGeometryLCDD::parseStrChar(xmlChar* value)
 {
-  if(value==NULL) return "";
+  if(value==nullptr) return "";
   G4String val = G4String((char*)value);
 #ifdef BDSDEBUG
   G4cout << "BDSGeometryLCDD:parseStrChar> value = " << value << G4endl;
@@ -323,7 +323,7 @@ inline G4String BDSGeometryLCDD::parseStrChar(xmlChar* value)
 
 inline G4bool BDSGeometryLCDD::parseBoolChar(xmlChar* value)
 {
-  if(value==NULL) return false;
+  if(value==nullptr) return false;
 #ifdef BDSDEBUG
   G4cout << "BDSGeometryLCDD:parseBoolChar> value = " << value << G4endl;
 #endif
@@ -337,7 +337,7 @@ inline G4bool BDSGeometryLCDD::parseBoolChar(xmlChar* value)
 
 inline G4double BDSGeometryLCDD::parseDblChar(xmlChar* value)
 {
-  if(value==NULL) return 0.0;
+  if(value==nullptr) return 0.0;
   G4String val = G4String((char*)value);
   stripwhitespace(val);
 #ifdef BDSDEBUG
@@ -684,23 +684,23 @@ inline void BDSGeometryLCDD::BuildPolycone(xmlNodePtr cur)
   xmlNodePtr tempcur = cur->xmlChildrenNode;
   
   G4int numZPlanes = 0;
-  while(tempcur!=NULL)
+  while(tempcur!=nullptr)
     {
       if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"zplane")))
 	numZPlanes++;
       tempcur = tempcur->next;
     }
   
-  G4double* zPlanes = NULL;
-  G4double* rInner = NULL;
-  G4double* rOuter = NULL;
+  G4double* zPlanes = nullptr;
+  G4double* rInner = nullptr;
+  G4double* rOuter = nullptr;
   zPlanes = new G4double[numZPlanes];
   rInner = new G4double[numZPlanes];
   rOuter = new G4double[numZPlanes];
   
   tempcur = cur->xmlChildrenNode;
   G4int i=0;
-  while(tempcur!=NULL)
+  while(tempcur!=nullptr)
     {
       if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"zplane")))
 	{
@@ -722,11 +722,11 @@ inline void BDSGeometryLCDD::BuildPolycone(xmlNodePtr cur)
 		       );
   
   delete [] rInner;
-  rInner = NULL;
+  rInner = nullptr;
   delete [] rOuter;
-  rOuter = NULL;
+  rOuter = nullptr;
   delete [] zPlanes;
-  zPlanes = NULL;
+  zPlanes = nullptr;
 }
 
 inline void BDSGeometryLCDD::BuildPolyhedra(xmlNodePtr cur)
@@ -734,23 +734,23 @@ inline void BDSGeometryLCDD::BuildPolyhedra(xmlNodePtr cur)
   xmlNodePtr tempcur = cur->xmlChildrenNode;
   
   G4int numZPlanes = 0;
-  while(tempcur!=NULL)
+  while(tempcur!=nullptr)
     {
       if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"zplane")))
 	numZPlanes++;
       tempcur = tempcur->next;
     }
   
-  G4double* zPlanes = NULL;
-  G4double* rInner = NULL;
-  G4double* rOuter = NULL;
+  G4double* zPlanes = nullptr;
+  G4double* rInner = nullptr;
+  G4double* rOuter = nullptr;
   zPlanes = new G4double[numZPlanes];
   rInner = new G4double[numZPlanes];
   rOuter = new G4double[numZPlanes];
   
   tempcur = cur->xmlChildrenNode;
   G4int i=0;
-  while(tempcur!=NULL)
+  while(tempcur!=nullptr)
     {
       if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"zplane")))
 	{
@@ -773,11 +773,11 @@ inline void BDSGeometryLCDD::BuildPolyhedra(xmlNodePtr cur)
 		       );
   
   delete [] rInner;
-  rInner = NULL;
+  rInner = nullptr;
   delete [] rOuter;
-  rOuter = NULL;
+  rOuter = nullptr;
   delete [] zPlanes;
-  zPlanes = NULL;
+  zPlanes = nullptr;
 }
 
 
@@ -793,13 +793,13 @@ inline void BDSGeometryLCDD::BuildSubtraction(xmlNodePtr cur)
   
   G4ThreeVector PlacementPoint = G4ThreeVector(0.,0.,0.);
 
-  G4RotationMatrix* componentRotation = NULL;
+  G4RotationMatrix* componentRotation = nullptr;
 
   G4ThreeVector FirstPlacementPoint = G4ThreeVector(0.,0.,0.);
 
   xmlNodePtr tempcur = cur->xmlChildrenNode;
   
-  while(tempcur!=NULL)
+  while(tempcur!=nullptr)
     {
       if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"first")))
 	firstname = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref"));
@@ -844,7 +844,7 @@ inline void BDSGeometryLCDD::BuildSubtraction(xmlNodePtr cur)
     }
   else
     {
-      // following will crash if componentRotation == NULL! - JS
+      // following will crash if componentRotation == nullptr! - JS
       G4Transform3D transform(*componentRotation,PlacementPoint);
       SOLID_LIST.push_back(new G4SubtractionSolid(name,
 						  GetSolidByName(firstname),
@@ -867,7 +867,7 @@ inline void BDSGeometryLCDD::BuildTessellated(xmlNodePtr cur){
   G4FacetVertexType iType=ABSOLUTE;
   G4ThreeVector vertex[4];
 
-  while(tempcur!=NULL) {
+  while(tempcur!=nullptr) {
     
     if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"triangular")) || (!xmlStrcmp(tempcur->name, (const xmlChar *)"quadrangular"))){
       sType = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"type"));

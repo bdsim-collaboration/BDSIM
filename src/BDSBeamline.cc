@@ -101,7 +101,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   G4cout << G4endl << __METHOD_NAME__ << "adding component to beamline and calculating coordinates" << G4endl;
   G4cout << "component name:      " << component->GetName() << G4endl;
 #endif
-  // if default NULL is supplied as tilt offset use a default 0,0,0,0 one
+  // if default nullptr is supplied as tilt offset use a default 0,0,0,0 one
   if (!tiltOffset)
     {tiltOffset = new BDSTiltOffset();}
   
@@ -494,7 +494,7 @@ BDSBeamlineElement* BDSBeamline::GetElement(G4String name)
   std::map<G4String, BDSBeamlineElement*>::iterator search = components.find(name);
   if (search == components.end())
     {//wasn't found
-      return NULL;
+      return nullptr;
     }
   else
     {return search->second;}

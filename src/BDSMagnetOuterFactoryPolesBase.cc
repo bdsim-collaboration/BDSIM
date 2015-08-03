@@ -501,7 +501,7 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
 
   allPhysicalVolumes.push_back(yokePV);
   // pole placement
-  G4PVPlacement* aPolePV = NULL;
+  G4PVPlacement* aPolePV = nullptr;
   for (G4int n = 0; n < 2*order; ++n)
     {
       // prepare a new rotation matrix - must be new and can't reuse the same one

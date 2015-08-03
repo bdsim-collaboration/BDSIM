@@ -7,9 +7,9 @@ BDSBunchComposite::BDSBunchComposite()
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  xBunch = NULL;
-  yBunch = NULL;
-  zBunch = NULL;
+  xBunch = nullptr;
+  yBunch = nullptr;
+  zBunch = nullptr;
 }
 
 BDSBunchComposite::~BDSBunchComposite()

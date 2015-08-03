@@ -8,7 +8,7 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo()
 {
   geometryType  = BDSMagnetGeometryType::cylindrical;
   outerDiameter = 0;
-  outerMaterial = NULL;
+  outerMaterial = nullptr;
 }
 
 BDSMagnetOuterInfo::BDSMagnetOuterInfo(BDSMagnetGeometryType geometryTypeIn,

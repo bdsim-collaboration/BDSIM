@@ -5,7 +5,7 @@
 #include "globals.hh"
 #include "BDSMagField.hh"
 
-BDSMagField::BDSMagField():rotation(NULL)
+BDSMagField::BDSMagField():rotation(nullptr)
 {
 }
 

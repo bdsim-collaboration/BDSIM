@@ -22,7 +22,7 @@ BDSRunAction::~BDSRunAction()
 void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 {
   //Get the current time
-  starttime = time(NULL);
+  starttime = time(nullptr);
 
   // construct output histograms
   // calculate histogram dimensions
@@ -64,7 +64,7 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 void BDSRunAction::EndOfRunAction(const G4Run* aRun)
 {
   // Get the current time
-  stoptime = time(NULL);
+  stoptime = time(nullptr);
 
   // Output feedback
   G4cout << __METHOD_NAME__ << "Run " << aRun->GetRunID() << " end. Time is " << asctime(localtime(&stoptime)) << G4endl;

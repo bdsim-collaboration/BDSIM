@@ -53,16 +53,16 @@ BDSBeamPipeFactoryLHCDetailed::~BDSBeamPipeFactoryLHCDetailed()
 void BDSBeamPipeFactoryLHCDetailed::CleanUp()
 {
   BDSBeamPipeFactoryBase::CleanUp();
-  copperSkinSolid     = NULL; // the copper skin
-  screenSolid         = NULL; // the beam screen (first bit of aperture)
-  coolingPipeSolid    = NULL; // small cooling pipe above and below beam screen
-  copperSkinLV        = NULL;
-  screenLV            = NULL;
-  coolingPipeLV       = NULL;
-  copperSkinPV        = NULL;
-  screenPV            = NULL;
-  coolingPipeTopPV    = NULL;
-  coolingPipeBottomPV = NULL;
+  copperSkinSolid     = nullptr; // the copper skin
+  screenSolid         = nullptr; // the beam screen (first bit of aperture)
+  coolingPipeSolid    = nullptr; // small cooling pipe above and below beam screen
+  copperSkinLV        = nullptr;
+  screenLV            = nullptr;
+  coolingPipeLV       = nullptr;
+  copperSkinPV        = nullptr;
+  screenPV            = nullptr;
+  coolingPipeTopPV    = nullptr;
+  coolingPipeBottomPV = nullptr;
   
   InitialiseGeometricalParameters();
 }

@@ -77,7 +77,7 @@ extern struct symtab * symlook(const char *s);
 
 void quit();
 /// method that transfers parameters to element properties
-int write_table(struct Parameters pars,const char* name, int type, std::list<struct Element> *lst=NULL);
+int write_table(struct Parameters pars,const char* name, int type, std::list<struct Element> *lst=nullptr);
 int expand_line(const char *name, const char *start, const char *end);
 /// insert a sampler into beamline_list
 void add_sampler(char *name, char *before, int before_count);
@@ -116,7 +116,7 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.type = type;
   // common parameters for all elements
   e.name = std::string(name);
-  e.lst = NULL;
+  e.lst = nullptr;
   e.l = params.l;
 
   //new aperture model
@@ -286,7 +286,7 @@ int expand_line(const char *charname, const char *start, const char* end)
   e.type = (*it).type;
   e.name = name;
   e.l = 0;
-  e.lst = NULL;
+  e.lst = nullptr;
   
   beamline_list.push_back(e);
 
@@ -332,7 +332,7 @@ int expand_line(const char *charname, const char *start, const char* end)
 	      // lookup the line in main list
 	      std::list<struct Element>::iterator tmpit = element_list.find((*it).name);
 	      
-	      if( (tmpit != iterEnd) && ( (*tmpit).lst != NULL) ) { // sublist found and not empty
+	      if( (tmpit != iterEnd) && ( (*tmpit).lst != nullptr) ) { // sublist found and not empty
 		
 #ifdef BDSDEBUG
 		printf("inserting sequence for %s - %s ...",(*it).name.c_str(),(*tmpit).name.c_str());
@@ -400,7 +400,7 @@ int expand_line(const char *charname, const char *start, const char* end)
   // rule - from first occurence of 'start' till first 'end' coming after 'start'
   
   
-  if( (start!=NULL)) // determine the start element
+  if( (start!=nullptr)) // determine the start element
     {
       sit = beamline_list.find(std::string(start));
       
@@ -415,7 +415,7 @@ int expand_line(const char *charname, const char *start, const char* end)
       
     }
   
-  if( (end!=NULL)) // determine the end element
+  if( (end!=nullptr)) // determine the end element
     {
       eit = beamline_list.find(std::string(end));
       
@@ -443,7 +443,7 @@ void add_sampler(char *name, char *before, int before_count)
   struct Element e;
   e.type = _SAMPLER;
   e.name = name;
-  e.lst = NULL;
+  e.lst = nullptr;
 
   std::list<struct Element>::iterator it = beamline_list.find(std::string(before),before_count);
   if (it==beamline_list.end()) {
@@ -464,7 +464,7 @@ void add_csampler(char *name, char *before, int before_count, double length, dou
   e.l = length;
   e.r = rad;
   e.name = name;
-  e.lst = NULL;
+  e.lst = nullptr;
 
   std::list<struct Element>::iterator it = beamline_list.find(std::string(before),before_count);
   if (it==beamline_list.end()) {
@@ -483,7 +483,7 @@ void add_dump(char *name, char *before, int before_count)
   struct Element e;
   e.type = _DUMP;
   e.name = name;
-  e.lst = NULL;
+  e.lst = nullptr;
 
   std::list<struct Element>::iterator it = beamline_list.find(std::string(before),before_count);
   if (it==beamline_list.end()) {
@@ -499,7 +499,7 @@ void add_gas(const char *name, const char *before, int before_count, std::string
   struct Element e;
   e.type = _GAS;
   e.name = name;
-  e.lst = NULL;
+  e.lst = nullptr;
   // insert gas with uniqueness requirement
   element_list.push_back(e,true);
 }

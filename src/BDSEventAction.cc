@@ -32,13 +32,13 @@ extern BDSOutputBase* bdsOutput;         // output interface
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
 
 BDSEventAction::BDSEventAction():
-  analMan(NULL),
+  analMan(nullptr),
   samplerCollID_plane(-1),
   samplerCollID_cylin(-1),
   energyCounterCollID(-1),
   primaryCounterCollID(-1),
-  Traj(NULL),
-  trajEndPoint(NULL)
+  Traj(nullptr),
+  trajEndPoint(nullptr)
 { 
   verbose            = BDSExecOptions::Instance()->GetVerbose();
   verboseEvent       = BDSExecOptions::Instance()->GetVerboseEvent();
@@ -108,7 +108,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   G4cout<<"BDSEventAction : processing planar hits collection"<<G4endl;
 #endif
   
-  BDSSamplerHitsCollection*  SampHC=NULL;
+  BDSSamplerHitsCollection*  SampHC=nullptr;
   if(samplerCollID_plane>=0)
     SampHC = (BDSSamplerHitsCollection*)(evt->GetHCofThisEvent()->GetHC(samplerCollID_plane));
   
@@ -122,7 +122,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     G4cout << __METHOD_NAME__ << " - no planar hits collection found. Not writing hits." << G4endl;
 #endif
   }
-  SampHC=NULL;
+  SampHC=nullptr;
   
   // are there any cylindrical samplers? if so, record the hits
 #ifdef BDSDEBUG
@@ -137,7 +137,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // are there any Laser wire calorimeters?
   // TODO : check it !!! at present not writing LW stuff
   // remember to uncomment LWCalHC above if using this
-  //BDSLWCalorimeterHitsCollection* LWCalHC=NULL;
+  //BDSLWCalorimeterHitsCollection* LWCalHC=nullptr;
   // if(LWCalorimeterCollID>=0) 
   //   LWCalHC=(BDSLWCalorimeterHitsCollection*)(evt->GetHCofThisEvent()->GetHC(LWCalorimeterCollID));
   // if (LWCalHC) bdsOutput->WriteHits(SampHC);

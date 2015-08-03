@@ -586,7 +586,7 @@ element_seq :
 		      struct Element e;
 		      e.name = $1->name;
 		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      tmp_list.push_front(e);
 		    }
 		  }
@@ -603,7 +603,7 @@ element_seq :
 		      struct Element e;
 		      e.name = $1->name;
 		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_front(e);
 		    }
@@ -621,7 +621,7 @@ element_seq :
 		      struct Element e;
 		      e.name = $3->name;
 		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_front(e);
 		    }
@@ -639,7 +639,7 @@ element_seq :
 		      struct Element e;
 		      e.name = $1->name;
 		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      tmp_list.push_front(e);
 		    }
 		  }
@@ -656,7 +656,7 @@ element_seq :
 		      struct Element e;
 		      e.name = $1->name;
 		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_front(e);
 		    }
@@ -674,7 +674,7 @@ element_seq :
 		      struct Element e;
 		      e.name = $3->name;
 		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_front(e);
 		    }
@@ -692,7 +692,7 @@ element_seq :
 		      struct Element e;
 		      e.name = $2->name;
 		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 	    	      tmp_list.push_front(e);
 		    }
 		  }
@@ -709,7 +709,7 @@ element_seq :
 		      struct Element e;
 		      e.name = $2->name;
 		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 	    	      tmp_list.push_front(e);
 		    }
 		  }
@@ -729,7 +729,7 @@ rev_element_seq :
 		      struct Element e;
 		      e.name = $1->name;
 		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      tmp_list.push_back(e);
 		    }
 		  }
@@ -746,7 +746,7 @@ rev_element_seq :
 		      struct Element e;
 		      e.name = $1->name;
 		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_back(e);
 		    }
@@ -764,7 +764,7 @@ rev_element_seq :
 		      struct Element e;
 		      e.name = $3->name;
 		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_back(e);
 		    }
@@ -782,7 +782,7 @@ rev_element_seq :
 		      struct Element e;
 		      e.name = $1->name;
 		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      tmp_list.push_back(e);
 		    }
 		  }
@@ -799,7 +799,7 @@ rev_element_seq :
 		      struct Element e;
 		      e.name = $1->name;
 		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_back(e);
 		    }
@@ -817,7 +817,7 @@ rev_element_seq :
 		      struct Element e;
 		      e.name = $3->name;
 		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_back(e);
 		    }
@@ -835,7 +835,7 @@ rev_element_seq :
 		      struct Element e;
 		      e.name = $2->name;
 		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 	    	      tmp_list.push_back(e);
 		    }
 		  }
@@ -852,7 +852,7 @@ rev_element_seq :
 		      struct Element e;
 		      e.name = $2->name;
 		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 	    	      tmp_list.push_back(e);
 		    }
 		  }
@@ -872,7 +872,7 @@ seq_element_seq :
 		      struct Element e;
 		      e.name = $1->name;
 		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      tmp_list.push_front(e);
 		    }
 		  }
@@ -889,7 +889,7 @@ seq_element_seq :
 		      struct Element e;
 		      e.name = $1->name;
 		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_front(e);
 		    }
@@ -907,7 +907,7 @@ seq_element_seq :
 		      struct Element e;
 		      e.name = $3->name;
 		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_front(e);
 		    }
@@ -925,7 +925,7 @@ seq_element_seq :
 		      struct Element e;
 		      e.name = $1->name;
 		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      tmp_list.push_front(e);
 		    }
 		  }
@@ -942,7 +942,7 @@ seq_element_seq :
 		      struct Element e;
 		      e.name = $1->name;
 		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_front(e);
 		    }
@@ -960,7 +960,7 @@ seq_element_seq :
 		      struct Element e;
 		      e.name = $3->name;
 		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_front(e);
 		    }
@@ -1481,8 +1481,8 @@ use_parameters :  VARIABLE
 		      {
 			$$ = $1->name;
 			current_line = $1->name;
-			current_start = NULL;
-			current_end = NULL;
+			current_start = nullptr;
+			current_end = nullptr;
 		      }
                   }
 		| PERIOD '=' VARIABLE
@@ -1491,8 +1491,8 @@ use_parameters :  VARIABLE
 		      {
 			$$ = $3->name;
 			current_line = $3->name;
-			current_start = NULL;
-			current_end = NULL;
+			current_start = nullptr;
+			current_end = nullptr;
 		      }
                   }
                 | PERIOD '=' VARIABLE ',' RANGE '=' VARIABLE '/' VARIABLE

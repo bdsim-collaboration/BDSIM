@@ -17,10 +17,10 @@ BDSLWCalorimeter::BDSLWCalorimeter(G4String         name,
 				   G4double         length,
 				   BDSBeamPipeInfo* beamPipeInfoIn):
   BDSAcceleratorComponent(name, length, 0, "lwcalorimeter"),
-  itsBeampipeLogicalVolume(NULL),itsInnerBPLogicalVolume(NULL),itsPhysiInner(NULL),
-  itsPhysiComp(NULL),itsLWCalLogicalVolume(NULL),itsBeampipeUserLimits(NULL),
-  itsBPFieldMgr(NULL),itsBPTube(NULL),itsInnerBPTube(NULL),itsLWCal(NULL),
-  itsPhysiLWCal(NULL)
+  itsBeampipeLogicalVolume(nullptr),itsInnerBPLogicalVolume(nullptr),itsPhysiInner(nullptr),
+  itsPhysiComp(nullptr),itsLWCalLogicalVolume(nullptr),itsBeampipeUserLimits(nullptr),
+  itsBPFieldMgr(nullptr),itsBPTube(nullptr),itsInnerBPTube(nullptr),itsLWCal(nullptr),
+  itsPhysiLWCal(nullptr)
 {
   beamPipeInfo = beamPipeInfoIn;
 }

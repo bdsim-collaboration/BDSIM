@@ -356,7 +356,7 @@ void GGmadDriver::getParameter(G4double& x, G4String name, G4String lastToken)
       if(token == "=")
 	{
 	  token = getWord();
-	  x = strtod(token.c_str(),NULL);
+	  x = strtod(token.c_str(),nullptr);
 	}
     }
 }

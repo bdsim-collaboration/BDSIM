@@ -30,8 +30,8 @@
 
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
   :G4VSensitiveDetector(name),
-   energyCounterCollection(NULL),
-   primaryCounterCollection(NULL),
+   energyCounterCollection(nullptr),
+   primaryCounterCollection(nullptr),
    HCIDe(-1),
    HCIDp(-1),
    enrg(0.0),

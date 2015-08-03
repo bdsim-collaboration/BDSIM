@@ -55,7 +55,7 @@ public:
 			  G4double         angle,
 			  G4String         type,
 			  G4int            precisionRegion = 0,
-			  BDSBeamPipeInfo* beamPipeInfo    = NULL);
+			  BDSBeamPipeInfo* beamPipeInfo    = nullptr);
   
   virtual ~BDSAcceleratorComponent();
 

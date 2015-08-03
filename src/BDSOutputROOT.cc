@@ -15,11 +15,11 @@ BDSOutputROOT::BDSOutputROOT():BDSOutputBase()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "output format ROOT"<<G4endl;
 #endif
-  theRootOutputFile = NULL;
-  PrecisionRegionEnergyLossTree = NULL;
-  EnergyLossTree    = NULL;
-  PrimaryHitsTree   = NULL;
-  PrimaryLossTree   = NULL;
+  theRootOutputFile = nullptr;
+  PrecisionRegionEnergyLossTree = nullptr;
+  EnergyLossTree    = nullptr;
+  PrimaryHitsTree   = nullptr;
+  PrimaryLossTree   = nullptr;
   Init(); // activate the output
 }
 
@@ -413,7 +413,7 @@ void BDSOutputROOT::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
   
   TrajTree=(TTree*)gDirectory->Get(name);
   
-  if(TrajTree == NULL) { G4cerr<<"TrajTree=NULL"<<G4endl; return;}
+  if(TrajTree == nullptr) { G4cerr<<"TrajTree=nullptr"<<G4endl; return;}
   
   if(TrajVec.size())
     {
@@ -602,7 +602,7 @@ void BDSOutputROOT::Write()
       theRootOutputFile->Write();
       theRootOutputFile->Close();
       delete theRootOutputFile;
-      theRootOutputFile=NULL;
+      theRootOutputFile=nullptr;
     }
   G4cout << __METHOD_NAME__ << " ...finished." << G4endl;
 }

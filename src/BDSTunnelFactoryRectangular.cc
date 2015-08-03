@@ -112,7 +112,7 @@ BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSection(G4String     
 					    containerY,                      // y half width
 					    length*0.5);                     // z half width
   G4ThreeVector contInsideDisplacement;
-  G4VSolid*     containerSolidInner = NULL;
+  G4VSolid*     containerSolidInner = nullptr;
   
   // build the floor if necessary
   if (tunnelFloor)
@@ -263,7 +263,7 @@ BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSectionAngled(G4Strin
 					    containerY,                      // y half width
 					    length*0.5);                     // z half width
   G4ThreeVector contInsideDisplacement;
-  G4VSolid*     containerSolidInner = NULL;
+  G4VSolid*     containerSolidInner = nullptr;
 
   solidsToBeRegistered.push_back(containerSolidOuter);
   

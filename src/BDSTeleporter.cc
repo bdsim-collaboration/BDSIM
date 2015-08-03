@@ -18,7 +18,7 @@
 BDSTeleporter::BDSTeleporter(G4String name,
 			     G4double length):
   BDSAcceleratorComponent(name, length, 0, "teleporter"),
-  itsChordFinder(NULL),itsFieldManager(NULL),itsStepper(NULL),itsMagField(NULL),itsEqRhs(NULL)
+  itsChordFinder(nullptr),itsFieldManager(nullptr),itsStepper(nullptr),itsMagField(nullptr),itsEqRhs(nullptr)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " Constructing Teleporter of length: " 
