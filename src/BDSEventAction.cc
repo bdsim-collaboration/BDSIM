@@ -1,20 +1,16 @@
+#include "BDSAnalysisManager.hh"
+#include "BDSDebug.hh"
+#include "BDSEnergyCounterHit.hh"
+#include "BDSEventAction.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
-#include "BDSDebug.hh"
-#include "BDSEventAction.hh"
-
-#include <list>
-#include <map>
-#include <vector>
-#include <algorithm>
-
-#include "BDSAnalysisManager.hh"
-#include "BDSEnergyCounterHit.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSRunManager.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSTrajectory.hh"
+#include "BDSTunnelHit.hh"
 
+#include "globals.hh"                  // geant4 types / globals
 #include "G4Event.hh"
 #include "G4EventManager.hh"
 #include "G4Run.hh"
@@ -22,12 +18,15 @@
 #include "G4TrajectoryContainer.hh"
 #include "G4Trajectory.hh"
 #include "G4SDManager.hh"
-#include "G4ios.hh"
-#include "Randomize.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4PrimaryParticle.hh"
 
-extern BDSOutputBase* bdsOutput;         // output interface
+#include <list>
+#include <map>
+#include <vector>
+#include <algorithm>
+
+extern BDSOutputBase* bdsOutput;       // output interface
 
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
 
@@ -215,78 +214,72 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
 
   // needed to draw trajectories and hits:
-  if(!isBatch) {
+  if(!isBatch)
+    {
 #ifdef BDSDEBUG 
-    G4cout<<"BDSEventAction : drawing"<<G4endl;
+      G4cout<<"BDSEventAction : drawing"<<G4endl;
 #endif
-    evt->Draw();
-  }
+      evt->Draw();
+    }
     
   // Save interesting trajectories
-  
+  traj = nullptr;
   if(BDSGlobalConstants::Instance()->GetStoreTrajectory() ||
      BDSGlobalConstants::Instance()->GetStoreMuonTrajectories() ||
-     BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories()){
+     BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories())
+    {
 #ifdef BDSDEBUG
-    G4cout<<"BDSEventAction : storing trajectories"<<G4endl;
+      G4cout<<"BDSEventAction : storing trajectories"<<G4endl;
 #endif
-    G4TrajectoryContainer* TrajCont=evt->GetTrajectoryContainer();
-    if(!TrajCont) return;
-    TrajectoryVector* TrajVec=TrajCont->GetVector();
-    TrajectoryVector::iterator iT1;
-    // clear out trajectories that don't reach point x
-    for(iT1=TrajVec->begin();iT1<TrajVec->end();iT1++){
-      this->Traj=(BDSTrajectory*)(*iT1);
-      this->trajEndPoint = (BDSTrajectoryPoint*)this->Traj->GetPoint((int)Traj->GetPointEntries()-1);
-      this->trajEndPointThreeVector = this->trajEndPoint->GetPosition();
-      if(trajEndPointThreeVector.z()/1000.0>BDSGlobalConstants::Instance()->GetTrajCutGTZ()  && 
-         (sqrt(pow(trajEndPointThreeVector.x()/1000.0,2) + pow(trajEndPointThreeVector.y()/1000.0,2))<BDSGlobalConstants::Instance()->GetTrajCutLTR())
-         ){ 
-        this->interestingTrajectories.push_back(Traj);
-      }
+      G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
+      if(!trajCont) return;
+      TrajectoryVector* trajVec = trajCont->GetVector();
+      // clear out trajectories that don't reach point x
+      for(auto iT1 = trajVec->begin(); iT1 < trajVec->end(); iT1++)
+	{
+	  traj=(BDSTrajectory*)(*iT1);
+	  trajEndPoint = (BDSTrajectoryPoint*)traj->GetPoint((int)traj->GetPointEntries()-1);
+	  trajEndPointThreeVector = trajEndPoint->GetPosition();
+	  G4bool greaterThanZInteresting = trajEndPointThreeVector.z()/CLHEP::m > BDSGlobalConstants::Instance()->GetTrajCutGTZ();
+	  G4double radius   = sqrt(pow(trajEndPointThreeVector.x()/CLHEP::m, 2) + pow(trajEndPointThreeVector.y()/CLHEP::m, 2));
+	  G4bool withinRInteresting = radius < BDSGlobalConstants::Instance()->GetTrajCutLTR();
+	  if (greaterThanZInteresting && withinRInteresting)
+	    {interestingTrajectories.push_back(traj);}
+	}
     }
     //Output interesting trajectories
-    if(interestingTrajectories.size()>0){
-      bdsOutput->WriteTrajectory(interestingTrajectories);
-      interestingTrajectories.clear();
-    }
-  }
-
-  //clear out the remaining trajectories
-#ifdef BDSDEBUG 
-  //  G4cout<<"BDSEventAction : deleting trajectories"<<G4endl;
-#endif
-  //  TrajCont->clearAndDestroy();
+    if(interestingTrajectories.size() > 0)
+      {
+	bdsOutput->WriteTrajectory(interestingTrajectories);
+	interestingTrajectories.clear();
+      }
+    
 #ifdef BDSDEBUG 
  G4cout<<"BDSEventAction : end of event action done"<<G4endl;
 #endif
 }
 
-void BDSEventAction::AddPrimaryHits(){
+void BDSEventAction::AddPrimaryHits()
+{
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   //Save the primary particle as a hit 
-  G4PrimaryVertex* primaryVertex= BDSRunManager::GetRunManager()->GetCurrentEvent()->GetPrimaryVertex();
-  G4PrimaryParticle* primaryParticle=primaryVertex->GetPrimary();
-  G4ThreeVector momDir = primaryParticle->GetMomentumDirection();
-  G4double E = primaryParticle->GetTotalEnergy();
-  G4double xp = momDir.x();
-  G4double yp = momDir.y();
-  G4double zp = momDir.z();
-  G4double x0 = primaryVertex->GetX0();
-  G4double y0 = primaryVertex->GetY0();
-  G4double z0 = primaryVertex->GetZ0();
-  G4double t = primaryVertex->GetT0();
-  G4double weight = primaryParticle->GetWeight();
-  G4int PDGType=primaryParticle->GetPDGcode();
-  G4int nEvent = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-  G4String samplerName="primaries";
-  G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  G4PrimaryVertex*   primaryVertex   = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetPrimaryVertex();
+  G4PrimaryParticle* primaryParticle = primaryVertex->GetPrimary();
+  G4ThreeVector      momDir          = primaryParticle->GetMomentumDirection();
+  G4double           E               = primaryParticle->GetTotalEnergy();
+  G4double           xp              = momDir.x();
+  G4double           yp              = momDir.y();
+  G4double           zp              = momDir.z();
+  G4double           x0              = primaryVertex->GetX0();
+  G4double           y0              = primaryVertex->GetY0();
+  G4double           z0              = primaryVertex->GetZ0();
+  G4double           t               = primaryVertex->GetT0();
+  G4double           weight          = primaryParticle->GetWeight();
+  G4int              PDGType         = primaryParticle->GetPDGcode();
+  G4int              nEvent          = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+  G4String           samplerName     = "primaries";
+  G4int              turnstaken      = BDSGlobalConstants::Instance()->GetTurnsTaken();
   bdsOutput->WritePrimary(samplerName, E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
-
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " finished" << G4endl;
-#endif
-  
 }

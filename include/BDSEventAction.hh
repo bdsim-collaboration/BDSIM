@@ -42,7 +42,7 @@ private:
   
   G4int printModulo;
 
-  BDSTrajectory* Traj;
+  BDSTrajectory* traj;
   BDSTrajectoryPoint* trajEndPoint;
   G4ThreeVector trajEndPointThreeVector;
   std::vector<BDSTrajectory*> interestingTrajectories;
