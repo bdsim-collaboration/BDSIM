@@ -18,6 +18,8 @@ BDSAcceleratorModel::BDSAcceleratorModel():
   worldPV(nullptr),
   readOutWorldPV(nullptr),
   readOutWorldLV(nullptr),
+  tunnelReadOutWorldPV(nullptr),
+  tunnelReadOutWorldLV(nullptr),
   flatBeamline(nullptr),
   supportsBeamline(nullptr),
   tunnelBeamline(nullptr)

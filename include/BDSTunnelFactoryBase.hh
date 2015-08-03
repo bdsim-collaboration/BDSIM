@@ -162,6 +162,18 @@ protected:
   /// constructed parts being accidently used in new object
   virtual void TidyUp();
 
+  /// Utility function to build straight section of read out volume for tunnel
+  virtual void BuildReadOutVolumeStraight(G4String name,
+					  G4double length,
+					  G4double radius);
+
+  /// Utility function to build angled section of read out volume for tunnel
+  virtual void BuildReadOutVolumeAngled(G4String      name,
+					G4double      length,
+					G4double      radius,
+					G4ThreeVector inputFace,
+					G4ThreeVector outputFace);
+    
   BDSGeometryComponent* tunnelComponent;
   BDSTunnelSection*     tunnelSection;
   
@@ -171,10 +183,12 @@ protected:
   G4VSolid*        soilSolid;
   G4VSolid*        floorSolid;
   G4VSolid*        intersectionSolid;
+  G4VSolid*        readOutSolid;
   G4LogicalVolume* containerLV;
   G4LogicalVolume* tunnelLV;
   G4LogicalVolume* soilLV;
   G4LogicalVolume* floorLV;
+  G4LogicalVolume* readOutLV;
   G4ThreeVector    floorDisplacement;
   G4bool           checkOverlaps;
   BDSTunnelInfo*   defaultModel;

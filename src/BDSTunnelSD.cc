@@ -70,7 +70,7 @@ G4bool BDSTunnelSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOutTH)
   else
     {energy = aStep->GetTotalEnergyDeposit();}
 #ifdef BDSDEBUG
-  G4cout << "BDSTunnelSD> enrg = " << enrg << G4endl;
+  G4cout << "BDSTunnelSD> energy = " << energy << G4endl;
 #endif
   //if the energy is 0, don't do anything
   if (energy==0.) return false;      
@@ -114,7 +114,7 @@ G4bool BDSTunnelSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOutTH)
 
   // local cylindrical coordinates for output
   r     = sqrt(x*x + y*y);
-  theta = tan(y/x);
+  theta = atan(y/x);
 
   // get the s coordinate (central s + local z)
   // true argument denotes it's a tunnel section

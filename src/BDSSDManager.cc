@@ -6,10 +6,11 @@
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterSD.hh"
 #include "BDSLWCalorimeterSD.hh"
+#include "BDSReadOutGeometry.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSTerminatorSD.hh"
+#include "BDSTunnelReadOutGeometry.hh"
 #include "BDSTunnelSD.hh"
-#include "BDSReadOutGeometry.hh"
 
 #include "G4VReadOutGeometry.hh"
 
@@ -48,32 +49,45 @@ BDSSDManager::BDSSDManager()
   samplerPlane = new BDSSamplerSD("sampler_plane","plane");
   SDMan->AddNewDetector(samplerPlane);
 
-  // sampler cylindrical
+  // Sampler cylindrical
   samplerCylinder = new BDSSamplerSD("sampler_cylinder","cylinder");
   SDMan->AddNewDetector(samplerCylinder);
 
-  // on axis energy counter - uses read out geometry
+  // On axis energy counter - DOES NOT use read out geometry, assumes everything is on axis.
+  // This is provided as a general use SD.
   eCounterOnAxis = new BDSEnergyCounterSD("ec_on_axis");
   SDMan->AddNewDetector(eCounterOnAxis);
 
-  // terminator sd to measure how many times that primary has passed through the terminator
+  // Terminator sd to measure how many times that primary has passed through the terminator
   terminator  = new BDSTerminatorSD("terminator");
   SDMan->AddNewDetector(terminator);
 
-  // lw calorimeter
+  // Lw calorimeter
   lwCalorimeter = new BDSLWCalorimeterSD("lw_calorimeter");
   SDMan->AddNewDetector(lwCalorimeter);
 
-  // tunnel sd
-  tunnel = new BDSTunnelSD("tunnel");
-  SDMan->AddNewDetector(tunnel);
+  // Tunnel read out SD - constructed on demand - uses tunnel read out geometry
+  tunnelOnAxisRO = nullptr;
 }
 
 BDSEnergyCounterSD* BDSSDManager::GetEnergyCounterOnAxisSDRO()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   if (!eCounterOnAxisRO)
     {ConstructECounterSDOnAxisOnDemand();}
   return eCounterOnAxisRO;
+}
+
+BDSTunnelSD* BDSSDManager::GetTunnelOnAxisSDRO()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  if (!tunnelOnAxisRO)
+    {ConstructTunnelSDOnAxisOnDemand();}
+  return tunnelOnAxisRO;
 }
 
 void BDSSDManager::ConstructECounterSDOnAxisOnDemand()
@@ -83,9 +97,9 @@ void BDSSDManager::ConstructECounterSDOnAxisOnDemand()
 #endif
   // this CANNOT be used until the beamline has been
   // placed in detector construction and therefore the readout
-  // geometry also exists - hence make this on demand
-  // the SDManager will be called early on to make samplers during
-  // object construction
+  // geometry also exists - hence make this on demand.
+  // The SDManager will be called early on to make samplers during
+  // object construction when the beamline won't exist which wouldn't work.
   // on axis energy counter - uses read out geometry
   eCounterOnAxisRO = new BDSEnergyCounterSD("ec_on_axis_read_out");
   BDSReadOutGeometry* roGeom = new BDSReadOutGeometry("readOutGeometry");
@@ -97,4 +111,27 @@ void BDSSDManager::ConstructECounterSDOnAxisOnDemand()
   eCounterOnAxisRO->SetROgeometry(roGeom); // attach the read out geometry to this SD
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   SDMan->AddNewDetector(eCounterOnAxisRO);
+}
+
+void BDSSDManager::ConstructTunnelSDOnAxisOnDemand()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  // this CANNOT be used until the beamline has been
+  // placed in detector construction and therefore the readout
+  // geometry also exists - hence make this on demand.
+  // The SDManager will be called early on to make samplers during
+  // object construction when the beamline won't exist which wouldn't work.
+  // on axis tunnel SD - uses read out geometry
+  tunnelOnAxisRO = new BDSTunnelSD("tunnel_on_axis");
+  BDSTunnelReadOutGeometry* roGeom = new BDSTunnelReadOutGeometry("tunnelReadOutGeometry");
+  // although unnecessary for bdsim this MUST be called for geant4 to
+  // register things properly
+  // this method actually invokes roGeom->Build() which we have to implement
+  // but geant4 must do this - so messy!  
+  roGeom->BuildROGeometry();
+  tunnelOnAxisRO->SetROgeometry(roGeom); // attach the read out geometry to this SD
+  G4SDManager* SDMan = G4SDManager::GetSDMpointer();
+  SDMan->AddNewDetector(tunnelOnAxisRO);
 }

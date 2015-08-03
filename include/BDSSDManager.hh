@@ -46,6 +46,10 @@ public:
 
   /// SD for a laserwire calorimeter
   BDSLWCalorimeterSD* GetLWCalorimeterSD() const;
+
+  /// SD for any part of a tunnel. Symmetric about the tunnel construction axis
+  /// and uses a read out geometry to achieve this.
+  BDSTunnelSD* GetTunnelOnAxisSDRO();
   
 private:
   /// Private default constructor for singleton. Instantiate an instance
@@ -72,6 +76,11 @@ private:
 
   /// function to create the energy counter SD on demand
   void ConstructECounterSDOnAxisOnDemand();
+
+  BDSTunnelSD*        tunnelOnAxisRO;
+
+  /// function to create the tunnel SD on demand as it uses read out geometry
+  void ConstructTunnelSDOnAxisOnDemand();
 };
 
 inline BDSSamplerSD*       BDSSDManager::GetSamplerPlaneSD() const
