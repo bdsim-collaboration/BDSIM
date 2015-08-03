@@ -8,6 +8,7 @@
 #include "BDSLWCalorimeterSD.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSTerminatorSD.hh"
+#include "BDSTunnelSD.hh"
 #include "BDSReadOutGeometry.hh"
 
 #include "G4VReadOutGeometry.hh"
@@ -28,6 +29,7 @@ BDSSDManager::~BDSSDManager()
   delete eCounterOnAxis;
   delete terminator;
   delete eCounterOnAxisRO;
+  delete tunnel;
 
   _instance = 0;
 }
@@ -37,29 +39,34 @@ BDSSDManager::BDSSDManager()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Constructor - creating all necessary Sensitive Detectors" << G4endl;
 #endif
-  //instantiate all necessary SD classes
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
 
-  //read out geometry SD - construct on demand
+  // read out geometry SD - construct on demand
   eCounterOnAxisRO = nullptr;
 
-  //sampler plane
+  // sampler plane
   samplerPlane = new BDSSamplerSD("sampler_plane","plane");
   SDMan->AddNewDetector(samplerPlane);
 
-  //sampler cylindrical
+  // sampler cylindrical
   samplerCylinder = new BDSSamplerSD("sampler_cylinder","cylinder");
   SDMan->AddNewDetector(samplerCylinder);
 
-  //on axis energy counter - uses read out geometry
+  // on axis energy counter - uses read out geometry
   eCounterOnAxis = new BDSEnergyCounterSD("ec_on_axis");
   SDMan->AddNewDetector(eCounterOnAxis);
-  
+
+  // terminator sd to measure how many times that primary has passed through the terminator
   terminator  = new BDSTerminatorSD("terminator");
   SDMan->AddNewDetector(terminator);
 
+  // lw calorimeter
   lwCalorimeter = new BDSLWCalorimeterSD("lw_calorimeter");
   SDMan->AddNewDetector(lwCalorimeter);
+
+  // tunnel sd
+  tunnel = new BDSTunnelSD("tunnel");
+  SDMan->AddNewDetector(tunnel);
 }
 
 BDSEnergyCounterSD* BDSSDManager::GetEnergyCounterOnAxisSDRO()

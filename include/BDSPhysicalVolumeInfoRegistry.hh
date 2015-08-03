@@ -45,14 +45,18 @@ public:
   /// volume, which is used as the key to access it. Optional isReadOutVolume flag
   /// means volume info will be stored in a separate register that will be searched
   /// first to minimise search time. If not found there, the main register will be
-  /// searched.
-  void RegisterInfo(G4VPhysicalVolume*      lvPointer,
+  /// searched. Optional flag isTunnel controls whether the info is stored to a
+  /// separate registry just for tunnel segments (not so many so quicker look up,
+  /// and / or doesn't pollute main registry -> slower).
+  void RegisterInfo(G4VPhysicalVolume*     lvPointer,
 		    BDSPhysicalVolumeInfo* info,
-		    G4bool                 isReadOutVolume = false);
+		    G4bool                 isReadOutVolume = false,
+		    G4bool                 isTunnel = false);
 
   /// Get the logical volume info for a particular logical volume (by address). Note,
-  /// returns null pointer if none found
-  BDSPhysicalVolumeInfo* GetInfo(G4VPhysicalVolume* logicalVolume);
+  /// returns null pointer if none found. If isTunnel, gets only from tunnelRegistry.
+  BDSPhysicalVolumeInfo* GetInfo(G4VPhysicalVolume* logicalVolume,
+				 G4bool             isTunnel = false);
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSPhysicalVolumeInfoRegistry const &r);
@@ -70,9 +74,13 @@ private:
   /// Check whether a physical volume is registered ot the general backup registry
   G4bool IsRegisteredToBackupRegister(G4VPhysicalVolume* physicalVolume);
 
+  // Check whether a physical volume is registered ot the tunel registry
+  G4bool IsRegisteredToTunnelRegister(G4VPhysicalVolume* physicalVolume);
+
   /// @{ Search iterator
   BDSPVInfoIterator readOutSearch;
   BDSPVInfoIterator backupSearch;
+  BDSPVInfoIterator tunnelSearch;
   /// @}
   
   /// The singleton instane
@@ -81,6 +89,7 @@ private:
   /// Registry is a map - note 'register' is a protected keyword.
   std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*> readOutRegister;
   std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*> backupRegister;
+  std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*> tunnelRegister;
 };
 
 

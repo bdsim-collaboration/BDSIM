@@ -93,9 +93,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "printing material table" << G4endl;
   G4cout << *(G4Material::GetMaterialTable()) << G4endl << G4endl;
-  if(verbose || debug) G4cout<<"Finished listing materials, returning physiWorld"<<G4endl; 
-  
-  G4cout << *BDSPhysicalVolumeInfoRegistry::Instance();
+  if(verbose || debug) {G4cout<<"Finished listing materials, returning physiWorld"<<G4endl}; 
 #endif
   return worldPV;
 }

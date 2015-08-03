@@ -6,6 +6,8 @@
 #include "BDSSamplerSD.hh"
 #include "BDSTerminatorSD.hh"
 
+class BDSTunnelSD;
+
 /**
  * @brief A singleton class that holds all required sensitive
  * detector class instances.  Each sensitive detector class
@@ -46,7 +48,12 @@ public:
   BDSLWCalorimeterSD* GetLWCalorimeterSD() const;
   
 private:
-  BDSSDManager(); /// private default constructor for singleton
+  /// Private default constructor for singleton. Instantiate an instance
+  /// of each SD class that is held by this class and can be accessed and attached
+  /// to any volume as necessary. We only ever need one instance of an SD class and
+  /// they're looked up by geant4 using string compare as it's assumed that you'll only
+  /// have a few and not a unique instance for every volume.
+  BDSSDManager(); 
   static BDSSDManager* _instance;
 
   //SD instances
@@ -55,6 +62,7 @@ private:
   BDSEnergyCounterSD* eCounterOnAxis;
   BDSTerminatorSD*    terminator;
   BDSLWCalorimeterSD* lwCalorimeter;
+  BDSTunnelSD*        tunnel;
 
   // duplicate ecounter here that's made on demand
   // and registered to read out geometry - this requires
