@@ -50,7 +50,7 @@ private:
   virtual void BuildBPFieldAndStepper()=0;
 
   /// Method for common parts of both Buildbeampipe methods
-  void FinaliseBeampipe(G4String materialName = "",G4RotationMatrix* RotY=NULL);
+  void FinaliseBeampipe(G4String materialName = "",G4RotationMatrix* RotY=nullptr);
 
 protected:
 

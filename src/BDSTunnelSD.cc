@@ -1,10 +1,6 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-#include "BDSEnergyCounterHit.hh"
-#include "BDSEnergyCounterSD.hh"
+#include "BDSTunnelHit.hh"
+#include "BDSTunnelSD.hh"
+
 #include "BDSExecOptions.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
@@ -26,66 +22,58 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4VTouchable.hh"
 
-#define NMAXCOPY 5
-
-BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
+BDSTunnelSD::BDSTunnelSD(G4String name)
   :G4VSensitiveDetector(name),
-   energyCounterCollection(nullptr),
-   primaryCounterCollection(nullptr),
-   HCIDe(-1),
-   HCIDp(-1),
-   enrg(0.0),
+   tunnelHitsCollection(NULL),
+   HCID(-1),
+   energy(0.0),
    X(0.0),
    Y(0.0),
    Z(0.0),
    S(0.0),
    x(0.0),
    y(0.0),
-   z(0.0)
+   z(0.0),
+   r(0.0),
+   theta(0.0)
 {
   verbose = BDSExecOptions::Instance()->GetVerbose();
-  itsName = name;
-  collectionName.insert("energy_counter");
-  collectionName.insert("primary_counter");
+  collectionName.insert("tunnel_hits");
 }
 
-BDSEnergyCounterSD::~BDSEnergyCounterSD()
+BDSTunnelSD::~BDSTunnelSD()
 {;}
 
-void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
+void BDSTunnelSD::Initialize(G4HCofThisEvent* HCE)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  energyCounterCollection = new BDSEnergyCounterHitsCollection(SensitiveDetectorName,collectionName[0]);
-  if (HCIDe < 0)
-    {HCIDe = G4SDManager::GetSDMpointer()->GetCollectionID(energyCounterCollection);}
-  HCE->AddHitsCollection(HCIDe,energyCounterCollection);
+  //SensitiveDetectorName is member variable name from G4VSensitiveDetector
+  tunnelHitsCollection = new BDSTunnelHitsCollection(SensitiveDetectorName,collectionName[0]);
+  if (HCID < 0)
+    {HCID = G4SDManager::GetSDMpointer()->GetCollectionID(tunnelHitsCollection);}
+  HCE->AddHitsCollection(HCID,tunnelHitsCollection);
 
-  primaryCounterCollection = new BDSEnergyCounterHitsCollection(SensitiveDetectorName,collectionName[1]);
-  if (HCIDp < 0)
-    {HCIDp = G4SDManager::GetSDMpointer()->GetCollectionID(primaryCounterCollection);}
-  HCE->AddHitsCollection(HCIDp,primaryCounterCollection);
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "HCID primaries: " << HCIDp << G4endl;
-  G4cout << __METHOD_NAME__ << "HCID energy:    " << HCIDe << G4endl;
+  G4cout << __METHOD_NAME__ << "HCID tunnel hits: " << HCID << G4endl;
 #endif
 }
 
-G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOutTH)
+G4bool BDSTunnelSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOutTH)
 {
   if(BDSGlobalConstants::Instance()->GetStopTracks())
-    enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit()); // Why subtract the energy deposit of the step? Why not add?
+    {energy = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit());} // Why subtract the energy deposit of the step? Why not add?
     //this looks like accounting for conservation of energy when you're killing a particle
   //which may normally break energy conservation for the whole event
   //see developer guide 6.2.2...
   else
-    enrg = aStep->GetTotalEnergyDeposit();
+    {energy = aStep->GetTotalEnergyDeposit();}
 #ifdef BDSDEBUG
-  G4cout << "BDSEnergyCounterSD> enrg = " << enrg << G4endl;
+  G4cout << "BDSTunnelSD> energy = " << energy << G4endl;
 #endif
   //if the energy is 0, don't do anything
-  if (enrg==0.) return false;      
+  if (energy==0.) return false;      
 
   G4int nCopy = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();
   
@@ -124,8 +112,13 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
   y = posafterlocal.y();
   z = posafterlocal.z();
 
+  // local cylindrical coordinates for output
+  r     = sqrt(x*x + y*y);
+  theta = atan(y/x);
+
   // get the s coordinate (central s + local z)
-  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(theVolume);
+  // true argument denotes it's a tunnel section
+  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(theVolume, true);
   S = -1000; // unphysical default value to allow easy identification in output
   if (theInfo)
     {S = theInfo->GetSPos() + z;}
@@ -134,18 +127,17 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
   
   if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) 
     {
-      G4cout << "BDSEnergyCounterSD: Current Volume: " 
+      G4cout << "BDSTunnelSD: Current Volume: " 
 	     << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() 
 	     << "\tEvent:  " << event_number 
-	     << "\tEnergy: " << enrg/CLHEP::GeV 
+	     << "\tEnergy: " << energy/CLHEP::GeV 
 	     << "GeV\tPosition: " << S/CLHEP::m <<" m"<< G4endl;
     }
   
   G4double weight = aStep->GetTrack()->GetWeight();
-  if (weight == 0){
-    G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl;
-    exit(1);
-  }
+  if (weight == 0)
+    {G4cerr << "Error: BDSTunnelSD: weight = 0" << G4endl; exit(1);}
+  
   G4int    ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
   G4String volName    = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
   G4String regionName = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetRegion()->GetName();
@@ -159,37 +151,25 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
   
   //create hits and put in hits collection of the event
   //do analysis / output in end of event action
-  BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
-						       enrg,
-						       X,
-						       Y,
-						       Z,
-						       S,
-						       x,
-						       y,
-						       z,
-						       volName, 
-						       ptype, 
-						       weight, 
-						       precisionRegion,
-						       turnstaken,
-						       event_number
-						       );
-  // don't worry, won't add 0 energy tracks as filtered at top by if statement
-  energyCounterCollection->insert(ECHit);
+  BDSTunnelHit* hit = new BDSTunnelHit(nCopy,
+				       energy,
+				       X,
+				       Y,
+				       Z,
+				       S,
+				       x,
+				       y,
+				       z,
+				       r,
+				       theta,
+				       ptype, 
+				       weight, 
+				       precisionRegion,
+				       turnstaken,
+				       event_number);
   
-  //record first scatter of primary if it exists
-  if (aStep->GetTrack()->GetParentID() == 0)
-    {
-      //create a duplicate hit in the primarycounter hits collection
-      //there are usually a few - filter at end of event action
-      BDSEnergyCounterHit* PCHit = new BDSEnergyCounterHit(*ECHit);
-      //set the energy to be the full energy of the primary
-      //just now it's the wee bit of energy deposited in that step
-      G4double primaryEnergy = BDSGlobalConstants::Instance()->GetBeamKineticEnergy();
-      PCHit->SetEnergy(primaryEnergy);
-      primaryCounterCollection->insert(PCHit);
-    }
+  // don't worry, won't add 0 energy tracks as filtered at top by if statement
+  tunnelHitsCollection->insert(hit);
 
   // this will kill all particles - both primaries and secondaries, but if it's being
   // recorded in an SD that means it's hit something, so ok
@@ -199,13 +179,13 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
   return true;
 }
 
-G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* readOutTH)
+G4bool BDSTunnelSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* readOutTH)
 { 
-  enrg = aSpot->GetEnergySpot()->GetEnergy();
+  energy = aSpot->GetEnergySpot()->GetEnergy();
 #ifdef BDSDEBUG
-  G4cout << "BDSEnergyCounterSD>gflash enrg = " << enrg << G4endl;
+  G4cout << "BDSTunnelSD>gflash energy = " << energy << G4endl;
 #endif
-  if (enrg==0.) return false;
+  if (energy==0.) return false;
 
   G4VPhysicalVolume* currentVolume;
   if (readOutTH)
@@ -232,8 +212,12 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
   y = poslocal.y();
   z = poslocal.z();
 
+  // local cylindrical coordinates for output
+  r     = sqrt(x*x + y*y);
+  theta = tan(y/x);
+
   // get the s coordinate (central s + local z)
-  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(currentVolume);
+  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(currentVolume, true);
   G4double sCentral = -1000;
   if (theInfo)
     {sCentral = theInfo->GetSPos();}
@@ -243,51 +227,39 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
   
   if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) 
     {
-      G4cout << " BDSEnergyCounterSD: Current Volume: " <<  volName 
+      G4cout << " BDSTunnelSD: Current Volume: " <<  volName 
 	     << " Event: "    << event_number 
-	     << " Energy: "   << enrg/CLHEP::GeV << " GeV"
+	     << " Energy: "   << energy/CLHEP::GeV << " GeV"
 	     << " Position: " << S/CLHEP::m   << " m" 
 	     << G4endl;
     }
   
   G4double weight = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetWeight();
-  if (weight == 0){
-    G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl;
-    exit(1);
-  }
+  if (weight == 0)
+    {G4cerr << "Error: BDSTunnelSD: weight = 0" << G4endl; exit(1);}
   int ptype = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetDefinition()->GetPDGEncoding();
 
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
   
   // see explanation in other processhits function
-  BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
-						       enrg,
-						       X,
-						       Y,
-						       Z,
-						       S,
-						       x,
-						       y,
-						       z,
-						       volName, 
-						       ptype, 
-						       weight, 
-						       0,
-						       turnstaken,
-						       event_number
-						       );
+  BDSTunnelHit* hit = new BDSTunnelHit(nCopy,
+				       energy,
+				       X,
+				       Y,
+				       Z,
+				       S,
+				       x,
+				       y,
+				       z,
+				       r,
+				       theta,
+				       ptype, 
+				       weight, 
+				       0,
+				       turnstaken,
+				       event_number);
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
-  energyCounterCollection->insert(ECHit);
-  
-  //record first scatter of primary if it exists
-  if (aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetParentID() == 0) {
-    //create a duplicate hit in the primarycounter hits collection
-    //there are usually a few - filter at end of event action
-    BDSEnergyCounterHit* PCHit = new BDSEnergyCounterHit(*ECHit);
-    G4double primaryEnergy = BDSGlobalConstants::Instance()->GetBeamKineticEnergy();
-    PCHit->SetEnergy(primaryEnergy);
-    primaryCounterCollection->insert(PCHit);
-  }
+  tunnelHitsCollection->insert(hit);
   
   return true;
 }

@@ -7,13 +7,13 @@
 G4Allocator<BDSTrajectoryPoint> bdsTrajectoryPointAllocator;
 
 BDSTrajectoryPoint::BDSTrajectoryPoint(){
-  _currentProcess=NULL;
+  _currentProcess=nullptr;
   _isScatteringProcess=false;
   _trackID = -1;
 }
 BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* aTrack):G4TrajectoryPoint(aTrack->GetPosition())
 {
-  _currentProcess=NULL;
+  _currentProcess=nullptr;
   _isScatteringProcess=false;
   _trackID = -1;
   //  G4cout << "Getting current process..." << G4endl;

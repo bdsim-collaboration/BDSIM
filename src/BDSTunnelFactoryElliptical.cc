@@ -210,6 +210,9 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String      
 					      tunnelContainerSolidInner);  // minus this
     } 
 
+  G4double radius = std::max(containerXRadius, containerYRadius);
+  BuildReadOutVolumeStraight(name, length, radius);
+  
   CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerXRadius, containerYRadius, visible);
   
   return tunnelSection; // member variable geometry component that's assembled in base class
@@ -429,7 +432,10 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSectionAngled(G4String
       containerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid",       // name
 					      tunnelContainerSolidOuterAngled,   // this
 					      tunnelContainerSolidInner);        // minus this
-    } 
+    }
+
+  G4double radius = std::max(containerXRadius, containerYRadius);
+  BuildReadOutVolumeAngled(name, length, radius, inputFace, outputFace);
 
   CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerXRadius, containerYRadius, visible);
 

@@ -71,7 +71,7 @@
 
 //=======================================================
 // Global variables 
-BDSOutputBase* bdsOutput=NULL;         // output interface
+BDSOutputBase* bdsOutput=nullptr;         // output interface
 //=======================================================
 
 extern Options options;
@@ -339,7 +339,7 @@ int main(int argc,char** argv)
       if (visMacroName.empty()) useDefault = true;
       G4String visMacroFilename = BDS::GetFullPath(visMacroName);
       if (!useDefault) {
-	FILE* file = NULL;
+	FILE* file = nullptr;
 	// first relative to main path:
 	file = fopen(visMacroFilename.c_str(), "r");
 	if (file) {

@@ -12,7 +12,7 @@
 #include "G4Track.hh"
 #include "G4VProcess.hh"
 
-BDSSteppingAction::BDSSteppingAction():_step(NULL)
+BDSSteppingAction::BDSSteppingAction():_step(nullptr)
 {;}
 
 BDSSteppingAction::~BDSSteppingAction()

@@ -32,14 +32,14 @@ BDSModularPhysicsList::BDSModularPhysicsList():
   _physListName(BDSGlobalConstants::Instance()->GetPhysListName())
 {
   SetVerboseLevel(1);
-  _emPhysics=NULL;
-  _hadronicPhysics=NULL;
-  _muonPhysics=NULL;
-  _opticalPhysics=NULL;
-  _decayPhysics=NULL;
-  _paramPhysics=NULL;
-  _synchRadPhysics=NULL;
-  _cutsAndLimits=NULL;
+  _emPhysics=nullptr;
+  _hadronicPhysics=nullptr;
+  _muonPhysics=nullptr;
+  _opticalPhysics=nullptr;
+  _decayPhysics=nullptr;
+  _paramPhysics=nullptr;
+  _synchRadPhysics=nullptr;
+  _cutsAndLimits=nullptr;
   
   ParsePhysicsList();
   ConfigurePhysics();

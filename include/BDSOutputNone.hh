@@ -26,6 +26,8 @@ public:
   virtual void WritePrimaryLoss(BDSEnergyCounterHit*){}
   /// write primary hits histo
   virtual void WritePrimaryHit(BDSEnergyCounterHit*){}
+  /// write tunnel hits
+  virtual void WriteTunnelHits(BDSTunnelHitsCollection*){}
   /// write a trajectory
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &){}
   /// write primary hit

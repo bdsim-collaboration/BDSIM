@@ -17,9 +17,9 @@ BDSMultilayerScreen::BDSMultilayerScreen (G4TwoVector xysize, G4String name):
   _size.setX(_xysize.x()); 
   _size.setY(_xysize.y());
   _size.setZ(0);
-  _solid=NULL;
-  _log=NULL;
-  _phys=NULL;
+  _solid=nullptr;
+  _log=nullptr;
+  _phys=nullptr;
 }
 
 void BDSMultilayerScreen::screenLayer(G4double thickness, G4String material, G4String name, G4double grooveWidth, G4double grooveSpatialFrequency){
@@ -78,7 +78,7 @@ void BDSMultilayerScreen::placeLayers(){
 
   for(unsigned int i=0; i<_screenLayers.size(); i++){
     pos.setZ(_screenLayerZPos[i]);
-    _screenLayers[i]->phys(new G4PVPlacement((G4RotationMatrix*)NULL,  //Create a new physical volume placement for each groove in the screen.
+    _screenLayers[i]->phys(new G4PVPlacement((G4RotationMatrix*)nullptr,  //Create a new physical volume placement for each groove in the screen.
 					     pos,
 					     _screenLayers[i]->log(),
 					     (G4String)(_screenLayers[i]->name()),

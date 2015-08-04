@@ -40,10 +40,10 @@ void BDSLens::build(){
 
   G4ThreeVector transVec;
   transVec.setZ(2*_rho-_centreThickness);
-  G4IntersectionSolid* intersectionA = new G4IntersectionSolid(_name+"_intersectionA", sideA, sideB, (G4RotationMatrix*)NULL,transVec);
+  G4IntersectionSolid* intersectionA = new G4IntersectionSolid(_name+"_intersectionA", sideA, sideB, (G4RotationMatrix*)nullptr,transVec);
   transVec.setZ(-1*_rho+_centreThickness/2.0);
-  //  _solid = new G4IntersectionSolid(_name+"_solid", new G4Box(_name+"tempBox",_diameter/2.0,_diameter/2.0,_centreThickness/2.0), intersectionA,(G4RotationMatrix*)NULL,transVec);
-  _solid = new G4IntersectionSolid(_name+"_solid", new G4Tubs(_name+"tempTube2",0,_diameter/2.0,_centreThickness/2.0,0,CLHEP::twopi*CLHEP::radian), intersectionA,(G4RotationMatrix*)NULL,transVec);
+  //  _solid = new G4IntersectionSolid(_name+"_solid", new G4Box(_name+"tempBox",_diameter/2.0,_diameter/2.0,_centreThickness/2.0), intersectionA,(G4RotationMatrix*)nullptr,transVec);
+  _solid = new G4IntersectionSolid(_name+"_solid", new G4Tubs(_name+"tempTube2",0,_diameter/2.0,_centreThickness/2.0,0,CLHEP::twopi*CLHEP::radian), intersectionA,(G4RotationMatrix*)nullptr,transVec);
   _log = new G4LogicalVolume(_solid,BDSMaterials::Instance()->GetMaterial("n-bk7"),(_name+"_log").c_str(),0,0,0);
   visAtt();
 }

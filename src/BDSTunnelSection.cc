@@ -6,7 +6,8 @@ BDSTunnelSection::BDSTunnelSection(G4String              name,
 				   G4double              chordLengthIn,
 				   G4double              angle,
 				   BDSGeometryComponent* tunnelGeometry,
-				   G4VSolid*             innerIntersectionSolidIn):
+				   G4VSolid*             innerIntersectionSolidIn,
+				   G4LogicalVolume*      readOutLVIn):
   BDSAcceleratorComponent(name, chordLengthIn, angle, "tunnel"),
   innerIntersectionSolid(innerIntersectionSolidIn)
 {
@@ -22,6 +23,9 @@ BDSTunnelSection::BDSTunnelSection(G4String              name,
   extentX                = tunnelGeometry->GetExtentX();
   extentY                = tunnelGeometry->GetExtentY();
   extentZ                = tunnelGeometry->GetExtentZ();
+
+  // set read out volume (protected member of BDSAcceleratorComponent)
+  readOutLV = readOutLVIn;
 }
 
 void BDSTunnelSection::Initialise()

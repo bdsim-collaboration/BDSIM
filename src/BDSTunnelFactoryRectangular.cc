@@ -112,7 +112,7 @@ BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSection(G4String     
 					    containerY,                      // y half width
 					    length*0.5);                     // z half width
   G4ThreeVector contInsideDisplacement;
-  G4VSolid*     containerSolidInner = NULL;
+  G4VSolid*     containerSolidInner = nullptr;
   
   // build the floor if necessary
   if (tunnelFloor)
@@ -151,6 +151,9 @@ BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSection(G4String     
 					  0,                           // rotate by this
 					  contInsideDisplacement);
 
+  G4double radius = std::max(containerX, containerY);
+  BuildReadOutVolumeStraight(name, length, radius);
+  
   CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerX, containerY, visible);
 
   return tunnelSection;
@@ -263,7 +266,7 @@ BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSectionAngled(G4Strin
 					    containerY,                      // y half width
 					    length*0.5);                     // z half width
   G4ThreeVector contInsideDisplacement;
-  G4VSolid*     containerSolidInner = NULL;
+  G4VSolid*     containerSolidInner = nullptr;
 
   solidsToBeRegistered.push_back(containerSolidOuter);
   
@@ -309,7 +312,10 @@ BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSectionAngled(G4Strin
 					  containerSolidOuter,       // this
 					  containerSolidInner,       // minus this
 					  0,                         // rotate by this
-					  contInsideDisplacement);      
+					  contInsideDisplacement);
+
+  G4double radius = std::max(containerX, containerY);
+  BuildReadOutVolumeAngled(name, length, radius, inputFace, outputFace);
   
   CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerX, containerY, visible);
 

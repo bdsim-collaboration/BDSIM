@@ -25,7 +25,7 @@
 
 #include "element.h"
 #include "elementlist.h"
-#include "enums.h"
+#include "elementtype.h"
 #include "gmad.h"
 #include "options.h"
 #include "parameters.h"
@@ -77,7 +77,7 @@ extern struct symtab * symlook(const char *s);
 
 void quit();
 /// method that transfers parameters to element properties
-int write_table(struct Parameters pars,const char* name, int type, std::list<struct Element> *lst=NULL);
+int write_table(struct Parameters pars,const char* name, ElementType type, std::list<struct Element> *lst=nullptr);
 int expand_line(const char *name, const char *start, const char *end);
 /// insert a sampler into beamline_list
 void add_sampler(char *name, char *before, int before_count);
@@ -105,10 +105,10 @@ void quit()
   exit(0);
 }
 
-int write_table(struct Parameters params,const char* name, int type, std::list<struct Element> *lst)
+int write_table(struct Parameters params,const char* name, ElementType type, std::list<struct Element> *lst)
 {
 #ifdef BDSDEBUG 
-  printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%d, lset = %d\n", params.k1, params.k2, params.k3, type, params.lset);
+  printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%s, lset = %d\n", params.k1, params.k2, params.k3, GMAD::typestr(type), params.lset);
 #endif
 
   struct Element e;
@@ -116,7 +116,7 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.type = type;
   // common parameters for all elements
   e.name = std::string(name);
-  e.lst = NULL;
+  e.lst = nullptr;
   e.l = params.l;
 
   //new aperture model
@@ -178,14 +178,14 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   e.spec = params.spec;
   // Sext
   if(params.k2set) {
-    if (type==_SEXTUPOLE) e.k2 = params.k2;
+    if (type==ElementType::_SEXTUPOLE) e.k2 = params.k2;
     else {
       printf("Warning: k2 will not be set for element %s of type %d\n",name, type);
     }
   }
   // Octupole
   if(params.k3set) {
-    if (type==_OCTUPOLE) e.k3 = params.k3;
+    if (type==ElementType::_OCTUPOLE) e.k3 = params.k3;
     else {
       printf("Warning: k3 will not be set for element %s of type %d\n",name, type);
     }
@@ -221,12 +221,12 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   // overwriting of other parameters or specific printing
   switch(type) {
 
-  case _LINE:
-  case _REV_LINE:
+  case ElementType::_LINE:
+  case ElementType::_REV_LINE:
     e.lst = lst;
     break;
 
-  case _MATERIAL:
+  case ElementType::_MATERIAL:
     e.A = params.A;
     e.Z = params.Z;
     e.density = params.density;
@@ -239,14 +239,14 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     material_list.push_back(e);
     return 0;
 
-  case _ATOM:
+  case ElementType::_ATOM:
     e.A = params.A;
     e.Z = params.Z;
     e.symbol = params.symbol;
     atom_list.push_back(e);
     return 0;
 
-  case _AWAKESCREEN:
+  case ElementType::_AWAKESCREEN:
     std::cout << "scintmaterial: " << e.scintmaterial << " " <<  params.scintmaterial << std::endl;
     std::cout << "windowmaterial: " << e.windowmaterial << " " <<  params.windowmaterial << std::endl;
     break;
@@ -273,7 +273,7 @@ int expand_line(const char *charname, const char *start, const char* end)
     printf("line '%s' not found\n",charname);
     return 1;
   }
-  if((*it).type != _LINE && (*it).type != _REV_LINE ) {
+  if((*it).type != ElementType::_LINE && (*it).type != ElementType::_REV_LINE ) {
     printf("'%s' is not a line\n",charname);
   }
 
@@ -286,7 +286,7 @@ int expand_line(const char *charname, const char *start, const char* end)
   e.type = (*it).type;
   e.name = name;
   e.l = 0;
-  e.lst = NULL;
+  e.lst = nullptr;
   
   beamline_list.push_back(e);
 
@@ -301,10 +301,10 @@ int expand_line(const char *charname, const char *start, const char* end)
   
   // copy the list into the resulting list
   switch((*it).type){
-  case _LINE:
+  case ElementType::_LINE:
     beamline_list.insert(beamline_list.end(),sit,eit);
     break;
-  case _REV_LINE:
+  case ElementType::_REV_LINE:
     beamline_list.insert(beamline_list.end(),(*it).lst->rbegin(),(*it).lst->rend());
     break;
   default:
@@ -324,31 +324,32 @@ int expand_line(const char *charname, const char *start, const char* end)
       for(it = ++beamline_list.begin();it!=beamline_list.end();it++ )
 	{
 #ifdef BDSDEBUG 
-	  printf("%s , %s \n",(*it).name.c_str(),typestr((*it).type));
+	  printf("%s , %s \n",(*it).name.c_str(),GMAD::typestr((*it).type));
 #endif
-	  if((*it).type == _LINE || (*it).type == _REV_LINE)  // list - expand further	  
+	  if((*it).type == ElementType::_LINE || (*it).type == ElementType::_REV_LINE)  // list - expand further	  
 	    {
 	      is_expanded = false;
 	      // lookup the line in main list
 	      std::list<struct Element>::iterator tmpit = element_list.find((*it).name);
 	      
-	      if( (tmpit != iterEnd) && ( (*tmpit).lst != NULL) ) { // sublist found and not empty
+	      if( (tmpit != iterEnd) && ( (*tmpit).lst != nullptr) ) { // sublist found and not empty
 		
 #ifdef BDSDEBUG
 		printf("inserting sequence for %s - %s ...",(*it).name.c_str(),(*tmpit).name.c_str());
 #endif
-		if((*it).type == _LINE)
+		if((*it).type == ElementType::_LINE)
 		  beamline_list.insert(it,(*tmpit).lst->begin(),(*tmpit).lst->end());
-		else if((*it).type == _REV_LINE){
+		else if((*it).type == ElementType::_REV_LINE){
 		  //iterate over list and invert any sublines contained within. SPM
 		  std::list<struct Element> tmpList;
 		  tmpList.insert(tmpList.end(),(*tmpit).lst->begin(),(*tmpit).lst->end());
-		  for(std::list<struct Element>::iterator 
-		      itLineInverter = tmpList.begin();
+		  for(std::list<struct Element>::iterator itLineInverter = tmpList.begin();
 		      itLineInverter != tmpList.end(); itLineInverter++){
-		    if((*itLineInverter).type == _LINE ||
-		       (*itLineInverter).type == _REV_LINE)
-		      (*itLineInverter).type *= -1;}
+		    if((*itLineInverter).type == ElementType::_LINE)
+		      (*itLineInverter).type = ElementType::_REV_LINE;
+		    else if ((*itLineInverter).type == ElementType::_REV_LINE)
+		      (*itLineInverter).type = ElementType::_LINE;
+		  }
 		  beamline_list.insert(it,tmpList.rbegin(),tmpList.rend());
 		}
 #ifdef BDSDEBUG
@@ -400,7 +401,7 @@ int expand_line(const char *charname, const char *start, const char* end)
   // rule - from first occurence of 'start' till first 'end' coming after 'start'
   
   
-  if( (start!=NULL)) // determine the start element
+  if( (start!=nullptr)) // determine the start element
     {
       sit = beamline_list.find(std::string(start));
       
@@ -415,7 +416,7 @@ int expand_line(const char *charname, const char *start, const char* end)
       
     }
   
-  if( (end!=NULL)) // determine the end element
+  if( (end!=nullptr)) // determine the end element
     {
       eit = beamline_list.find(std::string(end));
       
@@ -441,9 +442,9 @@ void add_sampler(char *name, char *before, int before_count)
 #endif
 
   struct Element e;
-  e.type = _SAMPLER;
+  e.type = ElementType::_SAMPLER;
   e.name = name;
-  e.lst = NULL;
+  e.lst = nullptr;
 
   std::list<struct Element>::iterator it = beamline_list.find(std::string(before),before_count);
   if (it==beamline_list.end()) {
@@ -460,11 +461,11 @@ void add_csampler(char *name, char *before, int before_count, double length, dou
 #endif
 
   struct Element e;
-  e.type = _CSAMPLER;
+  e.type = ElementType::_CSAMPLER;
   e.l = length;
   e.r = rad;
   e.name = name;
-  e.lst = NULL;
+  e.lst = nullptr;
 
   std::list<struct Element>::iterator it = beamline_list.find(std::string(before),before_count);
   if (it==beamline_list.end()) {
@@ -481,9 +482,9 @@ void add_dump(char *name, char *before, int before_count)
 #endif
 
   struct Element e;
-  e.type = _DUMP;
+  e.type = ElementType::_DUMP;
   e.name = name;
-  e.lst = NULL;
+  e.lst = nullptr;
 
   std::list<struct Element>::iterator it = beamline_list.find(std::string(before),before_count);
   if (it==beamline_list.end()) {
@@ -497,9 +498,9 @@ void add_gas(const char *name, const char *before, int before_count, std::string
 {
   printf("gas %s will be inserted into %s number %d\n",material.c_str(),before,before_count);
   struct Element e;
-  e.type = _GAS;
+  e.type = ElementType::_GAS;
   e.name = name;
-  e.lst = NULL;
+  e.lst = nullptr;
   // insert gas with uniqueness requirement
   element_list.push_back(e,true);
 }
