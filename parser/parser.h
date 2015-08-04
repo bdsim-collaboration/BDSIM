@@ -108,7 +108,7 @@ void quit()
 int write_table(struct Parameters params,const char* name, ElementType type, std::list<struct Element> *lst)
 {
 #ifdef BDSDEBUG 
-  printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%d, lset = %d\n", params.k1, params.k2, params.k3, typestr(type), params.lset);
+  printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%s, lset = %d\n", params.k1, params.k2, params.k3, GMAD::typestr(type), params.lset);
 #endif
 
   struct Element e;
@@ -324,7 +324,7 @@ int expand_line(const char *charname, const char *start, const char* end)
       for(it = ++beamline_list.begin();it!=beamline_list.end();it++ )
 	{
 #ifdef BDSDEBUG 
-	  printf("%s , %s \n",(*it).name.c_str(),typestr((*it).type));
+	  printf("%s , %s \n",(*it).name.c_str(),GMAD::typestr((*it).type));
 #endif
 	  if((*it).type == ElementType::_LINE || (*it).type == ElementType::_REV_LINE)  // list - expand further	  
 	    {
