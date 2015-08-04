@@ -26,7 +26,7 @@ BDSOutputFormat BDS::DetermineOutputFormat(G4String outputFormat)
     }
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "determined format \"" << outputFormat << "\" to be "
-	 << formats[outputFormat].underlying() << G4endl;
+	 << formats[outputFormat] << G4endl;
 #endif
   
   return formats[outputFormat];
