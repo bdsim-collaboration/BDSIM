@@ -425,7 +425,6 @@ void BDSDetectorConstruction::ComponentPlacement()
 	{
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << "placing readout geometry" << G4endl;
-	  G4cout << "position: " << rp << ", rotation: " << *rr << G4endl;
 #endif
 	  G4String readOutPVName = name + "_ro_pv";
 	  // don't need the returned pointer from new for anything - purely instantiating registers it with g4
