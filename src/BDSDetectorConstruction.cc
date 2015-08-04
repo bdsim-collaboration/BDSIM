@@ -402,7 +402,6 @@ void BDSDetectorConstruction::ComponentPlacement()
       // get the placement details from the beamline component
       G4int nCopy         = 0;
       // reference rotation and position for the read out volume
-      G4RotationMatrix* rr = (*it)->GetReferenceRotationMiddle();
       G4ThreeVector     rp = (*it)->GetReferencePositionMiddle();
       G4Transform3D*    pt = (*it)->GetPlacementTransform();
       
@@ -413,12 +412,12 @@ void BDSDetectorConstruction::ComponentPlacement()
 #endif
       
       G4PVPlacement* elementPV = new G4PVPlacement(*pt,                               // placement transform
-						   (*it)->GetPlacementName() + "_pv", // its name
-						   elementLV,                         // its logical volume
-						   worldPV,                           // its mother  volume
+						   (*it)->GetPlacementName() + "_pv", // name
+						   elementLV,                         // logical volume
+						   worldPV,                           // mother  volume
 						   false,	                      // no boolean operation
 						   nCopy,                             // copy number
-						   checkOverlaps);                    //overlap checking
+						   checkOverlaps);                    // overlap checking
       
       // place read out volume in read out world - if this component has one
       G4PVPlacement* readOutPV = nullptr;
@@ -430,14 +429,13 @@ void BDSDetectorConstruction::ComponentPlacement()
 #endif
 	  G4String readOutPVName = name + "_ro_pv";
 	  // don't need the returned pointer from new for anything - purely instantiating registers it with g4
-	  readOutPV = new G4PVPlacement(rr,                                   // its rotation
-					rp,                                   // its position
-					(*it)->GetPlacementName() + "_ro_pv", // its name
-					readOutLV,                            // its logical volume
-					readOutWorldPV,                       // its mother  volume
+	  readOutPV = new G4PVPlacement(*pt,                                  // placement transform
+					(*it)->GetPlacementName() + "_ro_pv", // name
+					readOutLV,                            // logical volume
+					readOutWorldPV,                       // mother  volume
 					false,	                              // no boolean operation
 					nCopy,                                // copy number
-					checkOverlaps);                       //overlap checking
+					checkOverlaps);                       // overlap checking
 	  
 	  // Register the spos and other info of this elemnet.
 	  // Used by energy counter sd to get spos of that logical volume at histogram time.
