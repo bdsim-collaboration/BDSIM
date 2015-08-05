@@ -1070,7 +1070,10 @@ as their value.
 | thresholdCutPhotons              | the minimum energy above which to simulate photons -  |
 |                                  | any below this energy will be killed                  |
 +----------------------------------+-------------------------------------------------------+
-| stopTracks                       | whether to track secondaries or not (default = 1)     |
+| stopSecondaries                  | whether to stop secondaries or not (default = false)  |
++----------------------------------+-------------------------------------------------------+
+| stopTracks                       | whether to stop tracks after                          |
+|                                  | interaction (default = false)                         |
 +----------------------------------+-------------------------------------------------------+
 | circular                         | whether the accelerator is circular or not            |
 +----------------------------------+-------------------------------------------------------+

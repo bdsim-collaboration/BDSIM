@@ -259,9 +259,7 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
       // use a classical Runge Kutta stepper here
       backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
     }
-      
 }
-
 
 void BDSDipoleStepper::Stepper(const G4double yInput[],
 			       const G4double dydx[],

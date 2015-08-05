@@ -490,7 +490,7 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
       
       if(hit->GetPrecisionRegion()){ //Only the precision region fills this tree, preserving every hit, its position and weight, instead of summing weighted energy in each beam line component.
 	//name - convert to char array for root
-	G4String temp = (*hc)[i]->GetName();
+	G4String temp = hit->GetName();
 	strncpy(volumeName,temp.c_str(),sizeof(volumeName)-1);
 	PrecisionRegionEnergyLossTree->Fill();
       }
