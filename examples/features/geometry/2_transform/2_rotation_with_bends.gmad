@@ -7,8 +7,9 @@ c1: rcol, l=1*m, ysize=5*mm, xsize=5*mm, material="Copper";
 s1: sbend, l=4*m, angle=0.3;
 s2: sbend, l=10*m, angle= -0.4;
 endoftheline: marker;
+t1: transform3d, psi=pi/2;
 
-l1: line = (d1,q1,d2,s2,d4,s1,s1,d4,q1,d4,c1,endoftheline);
+l1: line = (d1,d2,t1,s2,d4,s1,s1,d4,c1,endoftheline);
 use,period=l1;
 
 sample, range=endoftheline;
