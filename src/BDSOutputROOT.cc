@@ -417,54 +417,43 @@ void BDSOutputROOT::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  //  G4int tID;
-  G4TrajectoryPoint* TrajPoint;
-  G4ThreeVector TrajPos;
-  
-  TTree* TrajTree;
-  
   G4String name = "Trajectories";
   
-  TrajTree=(TTree*)gDirectory->Get(name);
+  TTree* TrajTree=(TTree*)gDirectory->Get(name);
   
   if(TrajTree == nullptr) { G4cerr<<"TrajTree=nullptr"<<G4endl; return;}
   
-  if(TrajVec.size())
+  for(auto iT=TrajVec.begin();iT<TrajVec.end();iT++)
     {
-      std::vector<BDSTrajectory*>::iterator iT;
+      G4Trajectory* Traj=(G4Trajectory*)(*iT);
+	  
+      G4int parentID=Traj->GetParentID();
+      part = Traj->GetPDGEncoding();
+	  
+      G4bool saveTrajectory=false;
+
+      // store primaries
+      if((parentID==0)&&(BDSGlobalConstants::Instance()->GetStoreTrajectory()))
+	{saveTrajectory = true;}
+      // store muons
+      else if((std::abs(part)==13)&&(BDSGlobalConstants::Instance()->GetStoreMuonTrajectories()))
+	{saveTrajectory = true;}
+      // store neutrons
+      else if((part==2112)&&(BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories()))
+	{saveTrajectory = true;}
+	  
+      if(!saveTrajectory) continue;
       
-      for(iT=TrajVec.begin();iT<TrajVec.end();iT++)
+      for(G4int j=0; j<Traj->GetPointEntries(); j++)
 	{
-	  G4Trajectory* Traj=(G4Trajectory*)(*iT);
+	  G4TrajectoryPoint* TrajPoint=(G4TrajectoryPoint*)Traj->GetPoint(j);
+	  G4ThreeVector TrajPos=TrajPoint->GetPosition();
 	  
-	  //	  tID=Traj->GetTrackID();	      
+	  x = TrajPos.x() / CLHEP::m;
+	  y = TrajPos.y() / CLHEP::m;
+	  z = TrajPos.z() / CLHEP::m;
 	  
-	  G4int parentID=Traj->GetParentID();
-	  part = Traj->GetPDGEncoding();
-	  
-	  G4bool saveTrajectory=true;
-	  
-	  if(!((parentID==0)&&(BDSGlobalConstants::Instance()->GetStoreTrajectory()))){ 
-	    if(!((std::abs(part)==13)&&(BDSGlobalConstants::Instance()->GetStoreMuonTrajectories()))){ 
-	      if(!((part==2112)&&(BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories()))){ 
-		saveTrajectory=false;
-	      }
-	    }
-	  }
-	  
-	  if(saveTrajectory){
-	    for(G4int j=0; j<Traj->GetPointEntries(); j++)
-	      {
-		TrajPoint=(G4TrajectoryPoint*)Traj->GetPoint(j);
-		TrajPos=TrajPoint->GetPosition();
-		
-		x = TrajPos.x() / CLHEP::m;
-		y = TrajPos.y() / CLHEP::m;
-		z = TrajPos.z() / CLHEP::m;
-		
-		TrajTree->Fill();
-	      }
-	  }
+	  TrajTree->Fill();
 	}
     }
 }
