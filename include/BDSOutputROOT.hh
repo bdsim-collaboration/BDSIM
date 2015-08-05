@@ -31,17 +31,17 @@ public:
   virtual ~BDSOutputROOT();
 
   /// write sampler hit collection
-  virtual void WriteHits(BDSSamplerHitsCollection*);
+  virtual void WriteHits(BDSSamplerHitsCollection*) override;
   /// make energy loss histo
-  virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*);
+  virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*) override;
   /// write primary loss histo
-  virtual void WritePrimaryLoss(BDSEnergyCounterHit*);
+  virtual void WritePrimaryLoss(BDSEnergyCounterHit*) override;
   /// write primary hits histo
-  virtual void WritePrimaryHit(BDSEnergyCounterHit*);
+  virtual void WritePrimaryHit(BDSEnergyCounterHit*) override;
   /// write tunnel hits
-  virtual void WriteTunnelHits(BDSTunnelHitsCollection*);
+  virtual void WriteTunnelHits(BDSTunnelHitsCollection*) override;
   /// write a trajectory 
-  virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec);
+  virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec) override;
   /// write primary hit
   virtual void WritePrimary(G4String samplerName, 
 			    G4double E,
@@ -55,12 +55,12 @@ public:
 			    G4double weight,
 			    G4int PDGType, 
 			    G4int nEvent, 
-			    G4int TurnsTaken);
+			    G4int TurnsTaken) override;
 
   /// write a histogram
-  virtual void WriteHistogram(BDSHistogram1D* histogramIn);
-  virtual void Commit();  /// close the file
-  virtual void Write();   /// close and open new file
+  virtual void WriteHistogram(BDSHistogram1D* histogramIn) override;
+  virtual void Commit() override;  ///> close the file
+  virtual void Write()  override;  ///> close and open new file
 
 private:
 
