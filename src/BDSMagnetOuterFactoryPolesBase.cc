@@ -328,7 +328,7 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiam
 
   // layout markers for the pole and yoke - radially out from centre
   poleStartRadius       = bpRadius + lengthSafety;
-  yokeFinishRadius      = outerDiameter*0.5;
+  yokeFinishRadius      = outerDiameter*0.5 - lengthSafety;
   G4double totalLength  = yokeFinishRadius - poleStartRadius;
   poleFinishRadius      = poleStartRadius + poleFraction*totalLength;
   yokeStartRadius       = poleFinishRadius + lengthSafety;

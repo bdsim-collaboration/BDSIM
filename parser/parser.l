@@ -9,7 +9,7 @@
 %x incl
 
 /*
-%option yylineno
+%option yylineno // use own improved line number info
 */
 
 %{

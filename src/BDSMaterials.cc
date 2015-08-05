@@ -48,7 +48,6 @@ void BDSMaterials::Initialise()
   //G4int iz, n;                       //iz=number of protons  in an isotope;
                                    // n=number of nucleons in an isotope;
 
-
   //G4double abundance;
   G4double fractionmass;
  //G4int ncomponents;
@@ -59,16 +58,10 @@ void BDSMaterials::Initialise()
   //
 #ifdef BDSDEBUG
   G4cout << "BDSMaterials: G4 predefined units: " << G4endl;
-  G4cout << "g= " << CLHEP::g << G4endl;
-  G4cout << "kg= " << CLHEP::kg << G4endl;
-  G4cout << "cm= " << CLHEP::cm << G4endl;
-  G4cout << "m= " << CLHEP::m << G4endl;
-  G4cout << "mm= " << CLHEP::mm << G4endl;
-  G4cout << "um= " << CLHEP::um << G4endl;
-  G4cout << "nm= " << CLHEP::nm << G4endl;
-  G4cout << "mole= " << CLHEP::mole << G4endl;
+  G4cout << "g= "      << CLHEP::g << G4endl;
+  G4cout << "m= "      << CLHEP::m << G4endl;
+  G4cout << "mole= "   << CLHEP::mole << G4endl;
   G4cout << "kelvin= " << CLHEP::kelvin << G4endl;
-  G4cout << "tesla= " << CLHEP::tesla << G4endl;
 #endif
   
   G4Element* tmpElement = new G4Element

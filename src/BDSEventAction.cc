@@ -63,7 +63,6 @@ BDSEventAction::~BDSEventAction()
 void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 { 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << " Processing begin of event action" << G4endl;
 #endif
   // get pointer to analysis manager

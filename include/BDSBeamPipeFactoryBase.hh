@@ -40,15 +40,15 @@ public:
   // internal member variables with the same name - avoiding 'itsVariable'
   
   /// create a flat ended beampipe
-  virtual BDSBeamPipe* CreateBeamPipe(G4String    nameIn,                    // name
-				      G4double    lengthIn,                  // length [mm]
-				      G4double    aper1 = 0,                 // aperture parameter 1
-				      G4double    aper2 = 0,                 // aperture parameter 2
-				      G4double    aper3 = 0,                 // aperture parameter 3
-				      G4double    aper4 = 0,                 // aperture parameter 4
-				      G4Material* vacuumMaterialIn = nullptr,   // vacuum material
-				      G4double    beamPipeThicknessIn = 0,   // beampipe thickness [mm]
-				      G4Material* beamPipeMaterialIn = nullptr  // beampipe material
+  virtual BDSBeamPipe* CreateBeamPipe(G4String    nameIn,                      // name
+				      G4double    lengthIn,                    // length [mm]
+				      G4double    aper1 = 0,                   // aperture parameter 1
+				      G4double    aper2 = 0,                   // aperture parameter 2
+				      G4double    aper3 = 0,                   // aperture parameter 3
+				      G4double    aper4 = 0,                   // aperture parameter 4
+				      G4Material* vacuumMaterialIn = nullptr,  // vacuum material
+				      G4double    beamPipeThicknessIn = 0,     // beampipe thickness [mm]
+				      G4Material* beamPipeMaterialIn = nullptr // beampipe material
 				      ) = 0;
 
   /// create beampipe with an angled face on input side only

@@ -54,9 +54,6 @@ BDSEnergyCounterSD::~BDSEnergyCounterSD()
 
 void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   energyCounterCollection = new BDSEnergyCounterHitsCollection(SensitiveDetectorName,collectionName[0]);
   if (HCIDe < 0)
     {HCIDe = G4SDManager::GetSDMpointer()->GetCollectionID(energyCounterCollection);}

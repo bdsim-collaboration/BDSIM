@@ -4,6 +4,20 @@
 
 #include <map>
 
+// dictionary for BDSMagnetGeometryType
+template<>
+std::map<BDSMagnetGeometryType, std::string>* BDSMagnetGeometryType::dictionary =
+  new std::map<BDSMagnetGeometryType, std::string> ({
+   {BDSMagnetGeometryType::none,          "none"},
+   {BDSMagnetGeometryType::cylindrical,   "cylindrical"},
+   {BDSMagnetGeometryType::polescircular, "polescircular"},
+   {BDSMagnetGeometryType::polessquare,   "polessquare"},
+   {BDSMagnetGeometryType::polesfacet,    "polesfacet"},
+   {BDSMagnetGeometryType::polesfacetcrop,"polesfacetcrop"},
+   {BDSMagnetGeometryType::lhcleft,       "lhcleft"},
+   {BDSMagnetGeometryType::lhcright,      "lhcright"},
+});	
+
 BDSMagnetGeometryType BDS::DetermineMagnetGeometryType(G4String geometryType)
 {
   std::map<G4String, BDSMagnetGeometryType> types;
@@ -31,7 +45,7 @@ BDSMagnetGeometryType BDS::DetermineMagnetGeometryType(G4String geometryType)
 
   BDSMagnetGeometryType returnValue = types[geometryType];
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " determined geometry type to be " << returnValue.underlying() << G4endl;
+  G4cout << __METHOD_NAME__ << " determined geometry type to be " << returnValue << G4endl;
 #endif
   return returnValue;
 }

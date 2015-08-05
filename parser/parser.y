@@ -8,7 +8,8 @@
 
   extern int line_num;
   extern char* yyfilename;
-
+  extern char* yytext;
+  
   const int PEDANTIC = 0; ///> strict checking, exits when element or parameter is not known
   const int ECHO_GRAMMAR = 0; ///> print grammar rule expansion (for debugging)
   const int INTERACTIVE = 0; ///> print output of commands (like in interactive mode)
@@ -1732,7 +1733,7 @@ beam_parameters :
 
 int yyerror(const char *s)
 {
-  printf("%s at line %d (might not be exact!), file %s \n",s, line_num, yyfilename);
+  printf("%s at line %d (might not be exact!), file %s \nsymbol '%s' unexpected\n",s, line_num, yyfilename, yytext);
   exit(1);
 }
 

@@ -1,19 +1,7 @@
 //  
 //   BDSIM, (C) 2001-2015
 //   
-//   version 0.6
-//  
-//
-//
-//   Main code
-//
-//
-//   History
-//     17 Jul 2007 by Malton v.0.4
-//     26 Jan 2007 by Agapov v.0.3
-//     28 Mar 2006 by Agapov v.0.2
-//     
-//
+//   version 0.8
 
 #include "BDSDebug.hh" 
 #include "BDSExecOptions.hh"     // executable command line options 
@@ -79,7 +67,7 @@ extern Options options;
 int main(int argc,char** argv)
 {
   // print header
-  G4cout<<"bdsim : version 0.7.develop"<<G4endl;
+  G4cout<<"bdsim : version 0.8"<<G4endl;
   G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
   G4cout<<"        http://www.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BdSim"<<G4endl;
   G4cout<<G4endl;
