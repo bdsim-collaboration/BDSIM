@@ -79,11 +79,11 @@ void BDSOutputROOT::BuildSamplerTree(G4String name)
   SamplerTree->Branch("Yp",&Yp,"Yp/F"); // (rad)
   SamplerTree->Branch("Zp",&Zp,"Zp/F"); // (rad)
   
-  SamplerTree->Branch("s",&s,"s/F"); // (m)
+  SamplerTree->Branch("s",&S,"s/F"); // (m)
   
   SamplerTree->Branch("weight",&weight,"weight/F");
   SamplerTree->Branch("partID",&part,"partID/I");
-  SamplerTree->Branch("nEvent",&nev,"nEvent/I");
+  SamplerTree->Branch("nEvent",&eventno,"nEvent/I");
   SamplerTree->Branch("parentID",&pID,"parentID/I");
   SamplerTree->Branch("trackID",&track_id,"trackID/I");
   SamplerTree->Branch("turnnumber",&turnnumber,"turnnumber/I");
@@ -139,46 +139,46 @@ void BDSOutputROOT::Init()
 
   // Energy loss tree setup
   EnergyLossTree= new TTree("ElossTree", "Energy Loss");
-  EnergyLossTree->Branch("s",&S_el,"s/F"); // (m)
-  EnergyLossTree->Branch("E",&E_el,"E/F"); // (GeV)
-  EnergyLossTree->Branch("weight", &weight_el, "weight/F"); // weight
+  EnergyLossTree->Branch("s",&S,"s/F"); // (m)
+  EnergyLossTree->Branch("E",&E,"E/F"); // (GeV)
+  EnergyLossTree->Branch("weight", &weight, "weight/F"); // weight
 
   // Primary loss tree setup
   PrimaryLossTree  = new TTree("PlossTree", "Primary Losses");
-  PrimaryLossTree->Branch("X",          &X_pl,          "X/F"); // (m)
-  PrimaryLossTree->Branch("Y",          &Y_pl,          "Y/F"); // (m)
-  PrimaryLossTree->Branch("Z",          &Z_pl,          "Z/F"); // (m)
-  PrimaryLossTree->Branch("S",          &S_pl,          "S/F"); // (m)
-  PrimaryLossTree->Branch("x",          &x_pl,          "x/F"); // (m)
-  PrimaryLossTree->Branch("y",          &y_pl,          "y/F"); // (m)
-  PrimaryLossTree->Branch("z",          &z_pl,          "z/F"); // (m)
-  PrimaryLossTree->Branch("E",          &E_pl,          "s/F"); // (GeV)
-  PrimaryLossTree->Branch("weight",     &weight_pl,     "weight/F");
-  PrimaryLossTree->Branch("partID",     &part_pl,       "partID/I");
-  PrimaryLossTree->Branch("turnnumber", &turnnumber_pl, "turnnumber/I");
-  PrimaryLossTree->Branch("eventNo",    &eventno_pl,    "eventNo/I");
+  PrimaryLossTree->Branch("X",          &X,          "X/F"); // (m)
+  PrimaryLossTree->Branch("Y",          &Y,          "Y/F"); // (m)
+  PrimaryLossTree->Branch("Z",          &Z,          "Z/F"); // (m)
+  PrimaryLossTree->Branch("S",          &S,          "S/F"); // (m)
+  PrimaryLossTree->Branch("x",          &x,          "x/F"); // (m)
+  PrimaryLossTree->Branch("y",          &y,          "y/F"); // (m)
+  PrimaryLossTree->Branch("z",          &z,          "z/F"); // (m)
+  PrimaryLossTree->Branch("E",          &E,          "s/F"); // (GeV)
+  PrimaryLossTree->Branch("weight",     &weight,     "weight/F");
+  PrimaryLossTree->Branch("partID",     &part,       "partID/I");
+  PrimaryLossTree->Branch("turnnumber", &turnnumber, "turnnumber/I");
+  PrimaryLossTree->Branch("eventNo",    &eventno,    "eventNo/I");
 
   // Primary hits tree setup
   PrimaryHitsTree  = new TTree("PhitsTree", "Primary Hits");
-  PrimaryHitsTree->Branch("X",          &X_ph,          "X/F"); // (m)
-  PrimaryHitsTree->Branch("Y",          &Y_ph,          "Y/F"); // (m)
-  PrimaryHitsTree->Branch("Z",          &Z_ph,          "Z/F"); // (m)
-  PrimaryHitsTree->Branch("S",          &S_ph,          "S/F"); // (m)
-  PrimaryHitsTree->Branch("x",          &x_ph,          "x/F"); // (m)
-  PrimaryHitsTree->Branch("y",          &y_ph,          "y/F"); // (m)
-  PrimaryHitsTree->Branch("z",          &z_ph,          "z/F"); // (m)
-  PrimaryHitsTree->Branch("E",          &E_ph,          "E/F"); // (GeV)
-  PrimaryHitsTree->Branch("weight",     &weight_ph,     "weight/F");
-  PrimaryHitsTree->Branch("partID",     &part_ph,       "partID/I");
-  PrimaryHitsTree->Branch("turnnumber", &turnnumber_ph, "turnnumber/I");
-  PrimaryHitsTree->Branch("eventNo",    &eventno_ph,    "eventNo/I");
+  PrimaryHitsTree->Branch("X",          &X,          "X/F"); // (m)
+  PrimaryHitsTree->Branch("Y",          &Y,          "Y/F"); // (m)
+  PrimaryHitsTree->Branch("Z",          &Z,          "Z/F"); // (m)
+  PrimaryHitsTree->Branch("S",          &S,          "S/F"); // (m)
+  PrimaryHitsTree->Branch("x",          &x,          "x/F"); // (m)
+  PrimaryHitsTree->Branch("y",          &y,          "y/F"); // (m)
+  PrimaryHitsTree->Branch("z",          &z,          "z/F"); // (m)
+  PrimaryHitsTree->Branch("E",          &E,          "E/F"); // (GeV)
+  PrimaryHitsTree->Branch("weight",     &weight,     "weight/F");
+  PrimaryHitsTree->Branch("partID",     &part,       "partID/I");
+  PrimaryHitsTree->Branch("turnnumber", &turnnumber, "turnnumber/I");
+  PrimaryHitsTree->Branch("eventNo",    &eventno,    "eventNo/I");
 
   // Tunnel hits tree setup
   TunnelLossTree = new TTree("TunnelHitsTree", "Tunnel Hits");
-  TunnelLossTree->Branch("E",           &E_tun,         "E/F");     // (GeV)
-  TunnelLossTree->Branch("S",           &S_tun,         "S/F");     // (m)
-  TunnelLossTree->Branch("r",           &r_tun,         "r/F");     // (m)
-  TunnelLossTree->Branch("theta",       &angle_tun,     "theta/F"); // (rad)
+  TunnelLossTree->Branch("E",           &E_tun,      "E/F");     // (GeV)
+  TunnelLossTree->Branch("S",           &S_tun,      "S/F");     // (m)
+  TunnelLossTree->Branch("r",           &r_tun,      "r/F");     // (m)
+  TunnelLossTree->Branch("theta",       &angle_tun,  "theta/F"); // (rad)
 
   // Tunnel hits histogram
   G4double smin     = 0.0;
@@ -191,19 +191,19 @@ void BDSOutputROOT::Init()
   
   // Precision region energy loss tree setup
   PrecisionRegionEnergyLossTree= new TTree("PrecisionRegionElossTree", "Energy Loss");
-  PrecisionRegionEnergyLossTree->Branch("X",          &X_el_p,          "X/F"); // (m)
-  PrecisionRegionEnergyLossTree->Branch("Y",          &Y_el_p,          "Y/F"); // (m)
-  PrecisionRegionEnergyLossTree->Branch("Z",          &Z_el_p,          "Z/F"); // (m)
-  PrecisionRegionEnergyLossTree->Branch("S",          &S_el_p,          "S/F"); // (m)
-  PrecisionRegionEnergyLossTree->Branch("x",          &x_el_p,          "x/F"); // (m)
-  PrecisionRegionEnergyLossTree->Branch("y",          &y_el_p,          "y/F"); // (m)
-  PrecisionRegionEnergyLossTree->Branch("z",          &z_el_p,          "z/F"); // (m)
-  PrecisionRegionEnergyLossTree->Branch("E",          &E_el_p,          "E/F"); // (GeV)
-  PrecisionRegionEnergyLossTree->Branch("weight",     &weight_el_p,     "weight/F");
-  PrecisionRegionEnergyLossTree->Branch("partID",     &part_el_p,       "partID/I");
-  PrecisionRegionEnergyLossTree->Branch("volumeName", &volumeName_el_p, "volumeName/C");
-  PrecisionRegionEnergyLossTree->Branch("turnnumber", &turnnumber_el_p, "turnnumber/I");
-  PrecisionRegionEnergyLossTree->Branch("eventNo",    &eventno_el_p,    "eventNo/I");
+  PrecisionRegionEnergyLossTree->Branch("X",          &X,          "X/F"); // (m)
+  PrecisionRegionEnergyLossTree->Branch("Y",          &Y,          "Y/F"); // (m)
+  PrecisionRegionEnergyLossTree->Branch("Z",          &Z,          "Z/F"); // (m)
+  PrecisionRegionEnergyLossTree->Branch("S",          &S,          "S/F"); // (m)
+  PrecisionRegionEnergyLossTree->Branch("x",          &x,          "x/F"); // (m)
+  PrecisionRegionEnergyLossTree->Branch("y",          &y,          "y/F"); // (m)
+  PrecisionRegionEnergyLossTree->Branch("z",          &z,          "z/F"); // (m)
+  PrecisionRegionEnergyLossTree->Branch("E",          &E,          "E/F"); // (GeV)
+  PrecisionRegionEnergyLossTree->Branch("weight",     &weight,     "weight/F");
+  PrecisionRegionEnergyLossTree->Branch("partID",     &part,       "partID/I");
+  PrecisionRegionEnergyLossTree->Branch("volumeName", &volumeName, "volumeName/C");
+  PrecisionRegionEnergyLossTree->Branch("turnnumber", &turnnumber, "turnnumber/I");
+  PrecisionRegionEnergyLossTree->Branch("eventNo",    &eventno,    "eventNo/I");
 }
 
 void BDSOutputROOT::WriteRootHit(G4String Name, 
@@ -296,10 +296,10 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
   Xp          = GlobalXPrime   / CLHEP::radian;
   Yp          = GlobalYPrime   / CLHEP::radian;
   Zp          = GlobalZPrime   / CLHEP::radian;
-  s           = S              / CLHEP::m;
+  S           = S              / CLHEP::m;
   weight      = Weight;
   part        = PDGtype; 
-  nev         = EventNo; 
+  eventno     = EventNo; 
   pID         = ParentID; 
   track_id    = TrackID;
   turnnumber  = TurnsTaken;
@@ -458,6 +458,23 @@ void BDSOutputROOT::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
     }
 }
 
+void BDSOutputROOT::FillHit(BDSEnergyCounterHit* hit)
+{
+  //copy variables from hit to root variables
+  X          = hit->GetX()/CLHEP::m;
+  Y          = hit->GetY()/CLHEP::m;
+  Z          = hit->GetZ()/CLHEP::m;
+  S          = hit->GetS()/CLHEP::m;
+  x          = hit->Getx()/CLHEP::m;
+  y          = hit->Gety()/CLHEP::m;
+  z          = hit->Getz()/CLHEP::m;
+  E          = hit->GetEnergy()/CLHEP::GeV;
+  weight     = hit->GetWeight();
+  part       = hit->GetPartID();
+  turnnumber = hit->GetTurnsTaken();
+  eventno    = hit->GetEventNo();
+}
+
 void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 {
 #ifdef BDSDEBUG
@@ -468,27 +485,13 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
     {
       //all regions fill the energy loss tree....
       BDSEnergyCounterHit* hit = (*hc)[i];
-      E_el      = hit->GetEnergy()/CLHEP::GeV;
-      S_el      = hit->GetS()/CLHEP::m;
-      weight_el = hit->GetWeight();
+      FillHit(hit);
       EnergyLossTree->Fill();
       
-      if((*hc)[i]->GetPrecisionRegion()){ //Only the precision region fills this tree, preserving every hit, its position and weight, instead of summing weighted energy in each beam line component.
-	weight_el_p     = (*hc)[i]->GetWeight();
-	E_el_p          = (*hc)[i]->GetEnergy()/CLHEP::GeV;
-	X_el_p          = (*hc)[i]->GetX()/CLHEP::m;
-	Y_el_p          = (*hc)[i]->GetY()/CLHEP::m;
-	Z_el_p          = (*hc)[i]->GetZ()/CLHEP::m;
-	S_el_p          = (*hc)[i]->GetS()/CLHEP::m;
-	x_el_p          = (*hc)[i]->Getx()/CLHEP::m;
-	y_el_p          = (*hc)[i]->Gety()/CLHEP::m;
-	z_el_p          = (*hc)[i]->Getz()/CLHEP::m;
-	part_el_p       = (*hc)[i]->GetPartID();
-	turnnumber_el_p = (*hc)[i]->GetTurnsTaken();
-	eventno_el_p    = (*hc)[i]->GetEventNo();
+      if(hit->GetPrecisionRegion()){ //Only the precision region fills this tree, preserving every hit, its position and weight, instead of summing weighted energy in each beam line component.
 	//name - convert to char array for root
 	G4String temp = (*hc)[i]->GetName();
-	strncpy(volumeName_el_p,temp.c_str(),sizeof(volumeName_el_p)-1);
+	strncpy(volumeName,temp.c_str(),sizeof(volumeName)-1);
 	PrecisionRegionEnergyLossTree->Fill();
       }
     }
@@ -500,19 +503,7 @@ void BDSOutputROOT::WritePrimaryLoss(BDSEnergyCounterHit* hit)
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   //copy variables from hit to root variables
-  X_pl          = hit->GetX()/CLHEP::m;
-  Y_pl          = hit->GetY()/CLHEP::m;
-  Z_pl          = hit->GetZ()/CLHEP::m;
-  S_pl          = hit->GetS()/CLHEP::m;
-  x_pl          = hit->Getx()/CLHEP::m;
-  y_pl          = hit->Gety()/CLHEP::m;
-  z_pl          = hit->Getz()/CLHEP::m;
-  E_pl          = hit->GetEnergy()/CLHEP::GeV;
-  weight_pl     = hit->GetWeight();
-  part_pl       = hit->GetPartID();
-  turnnumber_pl = hit->GetTurnsTaken();
-  eventno_pl    = hit->GetEventNo();
-  
+  FillHit(hit);
   //write to file
   PrimaryLossTree->Fill();
 }
@@ -523,19 +514,7 @@ void BDSOutputROOT::WritePrimaryHit(BDSEnergyCounterHit* hit)
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   //copy variables from hit to root variables
-  X_ph          = hit->GetX()/CLHEP::m;
-  Y_ph          = hit->GetY()/CLHEP::m;
-  Z_ph          = hit->GetZ()/CLHEP::m;
-  S_ph          = hit->GetS()/CLHEP::m;
-  x_ph          = hit->Getx()/CLHEP::m;
-  y_ph          = hit->Gety()/CLHEP::m;
-  z_ph          = hit->Getz()/CLHEP::m;
-  E_ph          = hit->GetEnergy()/CLHEP::GeV;
-  weight_ph     = hit->GetWeight();
-  part_ph       = hit->GetPartID();
-  turnnumber_ph = hit->GetTurnsTaken();
-  eventno_ph    = hit->GetEventNo();
-  
+  FillHit(hit);
   //write to file
   PrimaryHitsTree->Fill();
 }
