@@ -232,20 +232,20 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
 				 G4double LastScatZPrime, 
 				 G4double LastScatT, 
 				 G4double Mom, 
-				 G4double X, 
-				 G4double Y, 
-				 G4double Z, 
-				 G4double XPrime, 
-				 G4double YPrime, 
-				 G4double ZPrime, 
-				 G4double T, 
+				 G4double LocalX, 
+				 G4double LocalY, 
+				 G4double LocalZ, 
+				 G4double LocalXPrime, 
+				 G4double LocalYPrime, 
+				 G4double LocalZPrime, 
+				 G4double GlobalT, 
 				 G4double GlobalX, 
 				 G4double GlobalY, 
 				 G4double GlobalZ, 
 				 G4double GlobalXPrime, 
 				 G4double GlobalYPrime, 
 				 G4double GlobalZPrime, 
-				 G4double S, 
+				 G4double GlobalS, 
 				 G4double Weight, 
 				 G4int    PDGtype, 
 				 G4int    EventNo, 
@@ -283,20 +283,20 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
   zp_lastScat = LastScatZPrime / CLHEP::radian;
   t_lastScat  = LastScatT      / CLHEP::ns;
   E           = Mom            / CLHEP::GeV;
-  x           = X              / CLHEP::micrometer;
-  y           = Y              / CLHEP::micrometer;
-  z           = Z              / CLHEP::m;
-  xp          = XPrime         / CLHEP::radian;
-  yp          = YPrime         / CLHEP::radian;
-  zp          = ZPrime         / CLHEP::radian;
-  t           = T              / CLHEP::ns;
+  x           = LocalX         / CLHEP::micrometer;
+  y           = LocalY         / CLHEP::micrometer;
+  z           = LocalZ         / CLHEP::m;
+  xp          = LocalXPrime    / CLHEP::radian;
+  yp          = LocalYPrime    / CLHEP::radian;
+  zp          = LocalZPrime    / CLHEP::radian;
+  t           = GlobalT        / CLHEP::ns;
   X           = GlobalX        / CLHEP::m;
   Y           = GlobalY        / CLHEP::m;
   Z           = GlobalZ        / CLHEP::m;
   Xp          = GlobalXPrime   / CLHEP::radian;
   Yp          = GlobalYPrime   / CLHEP::radian;
   Zp          = GlobalZPrime   / CLHEP::radian;
-  S           = S              / CLHEP::m;
+  S           = GlobalS        / CLHEP::m;
   weight      = Weight;
   part        = PDGtype; 
   eventno     = EventNo; 
