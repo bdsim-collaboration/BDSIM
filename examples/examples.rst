@@ -11,3 +11,6 @@ documentation and in the .rst files beside the each example.
 
    features
    atf2
+   ilc
+   lhc
+   simpleMachine
