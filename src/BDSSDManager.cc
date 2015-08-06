@@ -30,7 +30,7 @@ BDSSDManager::~BDSSDManager()
   delete eCounterOnAxis;
   delete terminator;
   delete eCounterOnAxisRO;
-  delete tunnel;
+  delete tunnelOnAxisRO;
 
   _instance = 0;
 }
