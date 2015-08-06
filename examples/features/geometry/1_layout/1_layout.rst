@@ -1,5 +1,5 @@
-Layout Examples
-===============
+Layout
+======
 
 1_layout.gmad
 -------------
@@ -19,3 +19,10 @@ How to run::
 ------------------
 
 A small lattice with one of each component with default geometry options.
+
+How to run::
+  
+  bdsim --file=2_one_of_each.gmad
+
+.. figure:: 2_one_of_each.png
+	    :width: 70%

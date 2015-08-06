@@ -19,6 +19,7 @@ Contents:
    output
    output_analysis
    python_modules
+   visualisation
    examples/examples
    support
 
