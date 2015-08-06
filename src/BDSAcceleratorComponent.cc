@@ -16,7 +16,7 @@
 
 #include <cmath>
 
-G4Material* BDSAcceleratorComponent::emptyMaterial = NULL;
+G4Material* BDSAcceleratorComponent::emptyMaterial = nullptr;
 G4double    BDSAcceleratorComponent::lengthSafety  = -1;
 G4bool      BDSAcceleratorComponent::checkOverlaps = false;
 
@@ -28,7 +28,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4String         typeIn,
 						 G4int            precisionRegionIn,
 						 BDSBeamPipeInfo* beamPipeInfoIn):
-  BDSGeometryComponent(NULL,NULL),
+  BDSGeometryComponent(nullptr,nullptr),
   name(nameIn),
   arcLength(arcLengthIn),
   type(typeIn),
@@ -40,7 +40,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   nTimesPlaced = 0;
-  readOutLV    = NULL;
+  readOutLV    = nullptr;
 
   // initialise static members
   if (!emptyMaterial)
@@ -120,12 +120,12 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  if (!BDS::IsFinite(chordLength)) return NULL;
+  if (!BDS::IsFinite(chordLength)) return nullptr;
 
   G4double roRadius = 0;
   G4double roRadiusFromSampler     = BDSGlobalConstants::Instance()->GetSamplerDiameter()*0.5;
   
-  G4VSolid* roSolid      = NULL;
+  G4VSolid* roSolid      = nullptr;
   if (!BDS::IsFinite(angle))
     {
       //angle is zero - build a box

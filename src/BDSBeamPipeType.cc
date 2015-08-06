@@ -5,6 +5,18 @@
 
 #include <map>
 
+// dictionary for BDSBeamPipeType
+template<>
+std::map<BDSBeamPipeType, std::string>* BDSBeamPipeType::dictionary =
+  new std::map<BDSBeamPipeType, std::string> ({
+   {BDSBeamPipeType::circular,   "circular"},
+   {BDSBeamPipeType::elliptical, "elliptical"},
+   {BDSBeamPipeType::lhc,        "lhc"},
+   {BDSBeamPipeType::lhcdetailed,"lhcdetailed"},
+   {BDSBeamPipeType::rectangular,"rectangular"},
+   {BDSBeamPipeType::rectellipse,"rectellipse"}
+});	
+
 BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
 {
   std::map<G4String, BDSBeamPipeType> types;

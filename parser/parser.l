@@ -9,7 +9,7 @@
 %x incl
 
 /*
-%option yylineno
+%option yylineno // use own improved line number info
 */
 
 %{
@@ -19,7 +19,7 @@
 #include <string>
 #include <cstring>
 #include <iostream>
-#include "parser.tab.h"
+#include "parser.tab.hh"
 #include "sym_table.h"
 #include "getEnv.h"
 #include <unistd.h>
@@ -140,7 +140,7 @@ dump  { return DUMP; }
      if(sp->funcptr)
        return FUNC;
      else 
-     if(sp->type == _ARRAY)
+     if(sp->type == symtab::symtabtype::_ARRAY)
        return VECVAR;
      else
        return VARIABLE; 

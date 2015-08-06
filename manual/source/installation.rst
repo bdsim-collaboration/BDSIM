@@ -35,11 +35,10 @@ Requirements
 3) Flex 2.5.37 or higher
 4) Bison 2.3 or higher
 5) `CLHEP`_ 2.1.3.1 or higher
-6) `Boost`_ libraries
 
 Optional dependencies
   
-7) `ROOT`_ framework for binary data output
+6) `ROOT`_ framework for binary data output
 
 Note, even though installed, the Geant4 environmental variables must be
 available. You can test this in a terminal with::
@@ -107,7 +106,6 @@ This typically produces the following output, which is slightly different on eac
   -- Looking for ROOT...
   -- Found ROOT 5.34/26 in /opt/local/libexec/root5
   -- ROOT support ON
-  -- Boost version: 1.57.0
   -- Looking for XercesC... - found
   -- GDML support ON
   -- Looking for XML2... - found
@@ -424,7 +422,6 @@ please contact us (see :ref:`support-section`).
 
 .. Links
 
-.. _Boost: http://www.boost.org/
 .. _CMake: http://www.cmake.org/
 .. _CLHEP: http://proj-clhep.web.cern.ch/
 .. _Geant4: http://geant4.cern.ch/

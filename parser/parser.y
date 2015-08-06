@@ -8,19 +8,21 @@
 
   extern int line_num;
   extern char* yyfilename;
-
+  extern char* yytext;
+  
   const int PEDANTIC = 0; ///> strict checking, exits when element or parameter is not known
   const int ECHO_GRAMMAR = 0; ///> print grammar rule expansion (for debugging)
   const int INTERACTIVE = 0; ///> print output of commands (like in interactive mode)
   /* for more debug with parser:
-     1) set yydebug to 1 in parser.tab.c (needs to be reset as this file gets overwritten from time to time!) 
+     1) set yydebug to 1 in parser.tab.cc (needs to be reset as this file gets overwritten from time to time!) 
      2) add %debug below
      3) compile bison with "-t" flag. This is automatically done when CMAKE_BUILD_TYPE equals Debug
   */
 
 #include "array.h"
 #include "parser.h"
-
+#include "elementtype.h"
+  
   int execute = 1;
   int element_count = 1; // for samplers , ranges etc.
 
@@ -29,7 +31,7 @@
 /* define stack type */
 %union{
   double dval;
-  int ival;
+  int ival; // ElementType, but underlying type as not possible to have enum class in union, rely on static_casts
   struct symtab *symp;
   char *str;
   struct Array *array;
@@ -120,7 +122,7 @@ decl : VARIABLE ':' marker
 	 if(execute)  {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : marker\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_MARKER);
+	   write_table(params,$1->name,ElementType::_MARKER);
 	   params.flush();
 	 }
        }
@@ -129,7 +131,7 @@ decl : VARIABLE ':' marker
 	 if(execute) {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : drift\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_DRIFT);
+	   write_table(params,$1->name,ElementType::_DRIFT);
 	   params.flush();
 	 }
        }
@@ -138,7 +140,7 @@ decl : VARIABLE ':' marker
 	 if(execute) {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : pcldrift (drift)\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_DRIFT);
+	   write_table(params,$1->name,ElementType::_DRIFT);
 	   params.flush();
 	 }
        } 
@@ -147,7 +149,7 @@ decl : VARIABLE ':' marker
 	 if(execute) {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : rf\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_RF);
+	   write_table(params,$1->name,ElementType::_RF);
 	   params.flush();
 	 }
        } 
@@ -156,7 +158,7 @@ decl : VARIABLE ':' marker
 	 if(execute) {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : sbend\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_SBEND);
+	   write_table(params,$1->name,ElementType::_SBEND);
 	   params.flush();
 	 }
        }
@@ -165,7 +167,7 @@ decl : VARIABLE ':' marker
          if(execute) {
            if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : rbend\n",$1->name);
            // check parameters and write into element table
-           write_table(params,$1->name,_RBEND);
+           write_table(params,$1->name,ElementType::_RBEND);
            params.flush();
          }
        }
@@ -175,7 +177,7 @@ decl : VARIABLE ':' marker
 	 if(execute) {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : vkick\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_VKICK);
+	   write_table(params,$1->name,ElementType::_VKICK);
 	   params.flush();
 	 }
        }
@@ -184,7 +186,7 @@ decl : VARIABLE ':' marker
 	 if(execute) {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : hkick\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_HKICK);
+	   write_table(params,$1->name,ElementType::_HKICK);
 	   params.flush();
 	 }
        }
@@ -194,7 +196,7 @@ decl : VARIABLE ':' marker
 	   {
 	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : quad %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_QUAD);
+	     write_table(params,$1->name,ElementType::_QUAD);
 	     params.flush();
 	   }
        }
@@ -204,7 +206,7 @@ decl : VARIABLE ':' marker
 	   {
 	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : sext %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_SEXTUPOLE);
+	     write_table(params,$1->name,ElementType::_SEXTUPOLE);
 	     params.flush();
 	   }
        }
@@ -214,7 +216,7 @@ decl : VARIABLE ':' marker
 	   {
 	     if(ECHO_GRAMMAR) printf("VARIABLE : octupole %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_OCTUPOLE);
+	     write_table(params,$1->name,ElementType::_OCTUPOLE);
 	     params.flush();
 	   }
        }
@@ -224,7 +226,7 @@ decl : VARIABLE ':' marker
 	   {	 
 	     if(ECHO_GRAMMAR) printf("VARIABLE : multipole %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_MULT);
+	     write_table(params,$1->name,ElementType::_MULT);
 	     params.flush();	 
 	   }
        }
@@ -234,7 +236,7 @@ decl : VARIABLE ':' marker
 	   {
 	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : solenoid %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_SOLENOID);
+	     write_table(params,$1->name,ElementType::_SOLENOID);
 	     params.flush();
 	   }
        }
@@ -244,7 +246,7 @@ decl : VARIABLE ':' marker
 	   {
 	     if(ECHO_GRAMMAR) printf("VARIABLE : rcol %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_RCOL);
+	     write_table(params,$1->name,ElementType::_RCOL);
 	     params.flush();
 	   }
        }
@@ -254,7 +256,7 @@ decl : VARIABLE ':' marker
 	   {
 	     if(ECHO_GRAMMAR) printf("VARIABLE : ecol %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_ECOL);
+	     write_table(params,$1->name,ElementType::_ECOL);
 	     params.flush();
 	   }
        }
@@ -264,7 +266,7 @@ decl : VARIABLE ':' marker
 	   {
 	     if(ECHO_GRAMMAR) printf("VARIABLE : muspoiler %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_MUSPOILER);
+	     write_table(params,$1->name,ElementType::_MUSPOILER);
 	     params.flush();
 	   }
        }
@@ -274,7 +276,7 @@ decl : VARIABLE ':' marker
 	   {	 
 	     if(ECHO_GRAMMAR) printf("VARIABLE : element %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_ELEMENT);
+	     write_table(params,$1->name,ElementType::_ELEMENT);
 	     params.flush();	 
 	   }
        }
@@ -284,7 +286,7 @@ decl : VARIABLE ':' marker
 	   {	 
 	     if(ECHO_GRAMMAR) printf("VARIABLE : laser %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_LASER);
+	     write_table(params,$1->name,ElementType::_LASER);
 	     params.flush();	 
 	   }
        }
@@ -293,7 +295,7 @@ decl : VARIABLE ':' marker
 	 if(execute) {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : screen\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_SCREEN);
+	   write_table(params,$1->name,ElementType::_SCREEN);
 	   params.flush();
 	 }
        }
@@ -302,7 +304,7 @@ decl : VARIABLE ':' marker
 	 if(execute) {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : awakescreen\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_AWAKESCREEN);
+	   write_table(params,$1->name,ElementType::_AWAKESCREEN);
 	   params.flush();
 	 }
        }
@@ -312,7 +314,7 @@ decl : VARIABLE ':' marker
 	   {	 
 	     if(ECHO_GRAMMAR) printf("VARIABLE : transform3d %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_TRANSFORM3D);
+	     write_table(params,$1->name,ElementType::_TRANSFORM3D);
 	     params.flush();	 
 	   }
        }
@@ -323,7 +325,7 @@ decl : VARIABLE ':' marker
 	     // create entry in the main table and add pointer to the parsed sequence
 	     if(ECHO_GRAMMAR) printf("VARIABLE : LINE %s\n",$1->name);
 	     // copy tmp_list to params
-	     write_table(params,$1->name,_LINE,new std::list<struct Element>(tmp_list));
+	     write_table(params,$1->name,ElementType::_LINE,new std::list<struct Element>(tmp_list));
 	     // clean list
 	     tmp_list.clear();
 	   }
@@ -335,7 +337,7 @@ decl : VARIABLE ':' marker
              // create entry in the main table and add pointer to the parsed sequence
 	     if(ECHO_GRAMMAR) printf("VARIABLE : SEQUENCE %s\n",$1->name);
 	     // copy tmp_list to params
-	     write_table(params,$1->name,_SEQUENCE,new std::list<struct Element>(tmp_list));
+	     write_table(params,$1->name,ElementType::_SEQUENCE,new std::list<struct Element>(tmp_list));
 	     // clean list
 	     tmp_list.clear();
 	   }
@@ -344,10 +346,11 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, typestr($3));
-	     if($3 != _NONE)
+	     ElementType type = static_cast<ElementType>($3);
+	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, GMAD::typestr(type));
+	     if(type != ElementType::_NONE)
 	       {
-		 write_table(params,$1->name,$3);
+		 write_table(params,$1->name,type);
 	       }
 	     params.flush();
 	   }
@@ -356,10 +359,11 @@ decl : VARIABLE ':' marker
        {
          if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, typestr($3));
-	     if($3 != _NONE)
+	     ElementType type = static_cast<ElementType>($3);
+	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, GMAD::typestr(type));
+	     if(type != ElementType::_NONE)
 	       {
-		 write_table(params,$1->name,$3);
+		 write_table(params,$1->name,type);
 	       }
 	     params.flush();
 	   }
@@ -382,8 +386,8 @@ decl : VARIABLE ':' marker
 		 params.inherit_properties(*it);
 	       }
 		
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, typestr((*it).type));
-	     if((*it).type != _NONE)
+	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, GMAD::typestr((*it).type));
+	     if((*it).type != ElementType::_NONE)
 	       {
 		 write_table(params,$1->name,(*it).type);
 	       }
@@ -395,7 +399,7 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : Material, %s \n",$1->name);
-	     write_table(params,$1->name,_MATERIAL);
+	     write_table(params,$1->name,ElementType::_MATERIAL);
 	     params.flush();
 	   }
        }
@@ -404,7 +408,7 @@ decl : VARIABLE ':' marker
          if(execute)
            {
              if(ECHO_GRAMMAR) printf("decl -> VARIABLE : Atom, %s \n",$1->name);
-             write_table(params,$1->name,_ATOM);
+             write_table(params,$1->name,ElementType::_ATOM);
              params.flush();
            }
        }
@@ -489,12 +493,12 @@ extension : VARIABLE ',' parameters
 		    {
 		      printf("type %s has not been defined\n",$1->name);
 		      if (PEDANTIC) exit(1);
-		      $$ = _NONE;
+		      $$ = static_cast<int>(ElementType::_NONE);
 		    }
 		  else
 		    {
 		      // inherit properties from the base type
-		      $$ = (*it).type;
+		      $$ = static_cast<int>((*it).type);
 		      params.inherit_properties(*it);
 		    }
 		  
@@ -513,12 +517,12 @@ newinstance : VARIABLE
 		    {
 		      printf("type %s has not been defined\n",$1->name);
 		      if (PEDANTIC) exit(1);
-		      $$ = _NONE;
+		      $$ = static_cast<int>(ElementType::_NONE);
 		    }
 		  else
 		    {
 		      // inherit properties from the base type
-		      $$ = (*it).type;
+		      $$ = static_cast<int>((*it).type);
 		      params.inherit_properties(*it);
 		    }
 		  
@@ -585,8 +589,8 @@ element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_LINE;
+		      e.lst = nullptr;
 		      tmp_list.push_front(e);
 		    }
 		  }
@@ -602,8 +606,8 @@ element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_LINE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_front(e);
 		    }
@@ -620,8 +624,8 @@ element_seq :
 		    {
 		      struct Element e;
 		      e.name = $3->name;
-		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_LINE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_front(e);
 		    }
@@ -638,8 +642,8 @@ element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_LINE;
+		      e.lst = nullptr;
 		      tmp_list.push_front(e);
 		    }
 		  }
@@ -655,8 +659,8 @@ element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_LINE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_front(e);
 		    }
@@ -673,8 +677,8 @@ element_seq :
 		    {
 		      struct Element e;
 		      e.name = $3->name;
-		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_LINE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_front(e);
 		    }
@@ -691,8 +695,8 @@ element_seq :
 		    {
 		      struct Element e;
 		      e.name = $2->name;
-		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_REV_LINE;
+		      e.lst = nullptr;
 	    	      tmp_list.push_front(e);
 		    }
 		  }
@@ -708,8 +712,8 @@ element_seq :
 		    {
 		      struct Element e;
 		      e.name = $2->name;
-		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_REV_LINE;
+		      e.lst = nullptr;
 	    	      tmp_list.push_front(e);
 		    }
 		  }
@@ -728,8 +732,8 @@ rev_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_REV_LINE;
+		      e.lst = nullptr;
 		      tmp_list.push_back(e);
 		    }
 		  }
@@ -745,8 +749,8 @@ rev_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_REV_LINE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_back(e);
 		    }
@@ -763,8 +767,8 @@ rev_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $3->name;
-		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_REV_LINE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_back(e);
 		    }
@@ -781,8 +785,8 @@ rev_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_REV_LINE;
+		      e.lst = nullptr;
 		      tmp_list.push_back(e);
 		    }
 		  }
@@ -798,8 +802,8 @@ rev_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_REV_LINE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_back(e);
 		    }
@@ -816,8 +820,8 @@ rev_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $3->name;
-		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_REV_LINE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_back(e);
 		    }
@@ -834,8 +838,8 @@ rev_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $2->name;
-		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_LINE;
+		      e.lst = nullptr;
 	    	      tmp_list.push_back(e);
 		    }
 		  }
@@ -851,8 +855,8 @@ rev_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $2->name;
-		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_LINE;
+		      e.lst = nullptr;
 	    	      tmp_list.push_back(e);
 		    }
 		  }
@@ -871,8 +875,8 @@ seq_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.type = ElementType::_SEQUENCE;
+		      e.lst = nullptr;
 		      tmp_list.push_front(e);
 		    }
 		  }
@@ -888,8 +892,8 @@ seq_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.type = ElementType::_SEQUENCE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_front(e);
 		    }
@@ -906,8 +910,8 @@ seq_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $3->name;
-		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.type = ElementType::_SEQUENCE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_front(e);
 		    }
@@ -924,8 +928,8 @@ seq_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.type = ElementType::_SEQUENCE;
+		      e.lst = nullptr;
 		      tmp_list.push_front(e);
 		    }
 		  }
@@ -941,8 +945,8 @@ seq_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.type = ElementType::_SEQUENCE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_front(e);
 		    }
@@ -959,8 +963,8 @@ seq_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $3->name;
-		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.type = ElementType::_SEQUENCE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_front(e);
 		    }
@@ -995,7 +999,7 @@ expr : aexpr
 	 if(execute)
 	   {
 	     if(INTERACTIVE) {
-	       if($1->type == _ARRAY)
+	       if($1->type == symtab::symtabtype::_ARRAY)
 		 {
 		   for(std::list<double>::iterator it = $1->array.begin();
 		       it!=$1->array.end();it++)
@@ -1074,7 +1078,7 @@ assignment :  VARIABLE '=' aexpr
 		    $1->array.clear();
 		    for(int i=0;i<$3->size;i++)
 		      $1->array.push_back($3->data[i]);
-		    $1->type = _ARRAY;
+		    $1->type = symtab::symtabtype::_ARRAY;
 		    $$ = $1;
 		    delete[] $3->data;
 		    $3->size = 0;
@@ -1481,8 +1485,8 @@ use_parameters :  VARIABLE
 		      {
 			$$ = $1->name;
 			current_line = $1->name;
-			current_start = NULL;
-			current_end = NULL;
+			current_start = nullptr;
+			current_end = nullptr;
 		      }
                   }
 		| PERIOD '=' VARIABLE
@@ -1491,8 +1495,8 @@ use_parameters :  VARIABLE
 		      {
 			$$ = $3->name;
 			current_line = $3->name;
-			current_start = NULL;
-			current_end = NULL;
+			current_start = nullptr;
+			current_end = nullptr;
 		      }
                   }
                 | PERIOD '=' VARIABLE ',' RANGE '=' VARIABLE '/' VARIABLE
@@ -1729,7 +1733,7 @@ beam_parameters :
 
 int yyerror(const char *s)
 {
-  printf("%s at line %d (might not be exact!), file %s \n",s, line_num, yyfilename);
+  printf("%s at line %d (might not be exact!), file %s \nsymbol '%s' unexpected\n",s, line_num, yyfilename, yytext);
   exit(1);
 }
 

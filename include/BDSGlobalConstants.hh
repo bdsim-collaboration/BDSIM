@@ -46,6 +46,8 @@ public:
    /// access method 
   static BDSGlobalConstants* Instance();
   ~BDSGlobalConstants();
+
+  G4double GetPrintModuloFraction() const;
   
   G4bool   GetDoPlanckScattering() const;
   G4bool   GetCheckOverlaps() const;
@@ -184,8 +186,8 @@ public:
   G4bool   GetStoreNeutronTrajectories() const;
   G4bool   GetStoreTrajectory() const;
   G4bool   GetIncludeIronMagFields() const;
+  G4bool   GetStopSecondaries() const;
   G4bool   GetStopTracks() const;
-  G4bool stopTracks; // kill tracks after interactions
 
   G4double GetLengthSafety() const;
   G4long   GetRandomSeed() const;
@@ -265,7 +267,9 @@ private:
   G4double itsMaximumEpsilonStep;
   G4double itsMaxTime;
   G4double itsDeltaOneStep;
-
+  G4bool   stopTracks; ///> kill tracks after interactions
+  G4bool   stopSecondaries; ///> kill secondaries
+  
   // magnet geometry
   BDSMagnetGeometryType itsMagnetGeometryType;
   G4String itsOuterMaterialName;
@@ -364,6 +368,8 @@ private:
   void InitDefaultUserLimits();
   G4UserLimits* defaultUserLimits;
 
+  G4double printModuloFraction;
+
 public:
   G4RotationMatrix* RotY90() const;
   G4RotationMatrix* RotYM90() const;
@@ -415,6 +421,9 @@ private:
   void     SetLPBFraction(G4double val);
 
 };
+
+inline G4double BDSGlobalConstants::GetPrintModuloFraction() const
+{return printModuloFraction;}
 
 inline G4double BDSGlobalConstants::GetElossHistoBinWidth() const
 {return itsElossHistoBinWidth;}
@@ -706,6 +715,9 @@ inline G4bool BDSGlobalConstants::GetStoreNeutronTrajectories() const
 
 inline G4bool BDSGlobalConstants::GetStoreTrajectory() const
 {return itsStoreTrajectory;}
+
+inline G4bool BDSGlobalConstants::GetStopSecondaries() const
+{return stopSecondaries;}
 
 inline G4bool BDSGlobalConstants::GetStopTracks() const
 {return stopTracks;}

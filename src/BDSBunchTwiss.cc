@@ -11,7 +11,7 @@ BDSBunchTwiss::BDSBunchTwiss():
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  GaussMultiGen = NULL;   
+  GaussMultiGen = nullptr;   
 }
 
 BDSBunchTwiss::BDSBunchTwiss(G4double betaXIn,  G4double betaYIn, 
@@ -25,7 +25,7 @@ BDSBunchTwiss::BDSBunchTwiss(G4double betaXIn,  G4double betaYIn,
   alphaX(alphaXIn), alphaY(alphaYIn),
   emitX(emitXIn), emitY(emitYIn)
 {
-  GaussMultiGen = NULL;
+  GaussMultiGen = nullptr;
 
   sigmaT = sigmaTIn; 
   sigmaE = sigmaEIn;

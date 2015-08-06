@@ -28,8 +28,14 @@ BDSGlobalConstants* BDSGlobalConstants::Instance()
 }
 
 BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
-  itsBeamParticleDefinition(NULL),itsBeamMomentum(0.0),itsBeamKineticEnergy(0.0),itsParticleMomentum(0.0),itsParticleKineticEnergy(0.0),itsSMax(0.0)
+  itsBeamParticleDefinition(nullptr),
+  itsBeamMomentum(0.0),
+  itsBeamKineticEnergy(0.0),
+  itsParticleMomentum(0.0),
+  itsParticleKineticEnergy(0.0),
+  itsSMax(0.0)
 {
+  printModuloFraction   = opt.printModuloFraction;
   itsPhysListName       = opt.physicsList;
   itsBeamPipeMaterial   = opt.beampipeMaterial;
   itsApertureType       = BDS::DetermineBeamPipeType(opt.apertureType);
@@ -180,6 +186,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsStoreNeutronTrajectories = opt.storeNeutronTrajectories;
   itsStoreTrajectory = opt.storeTrajectory;
   //G4cout<<"STOREA TRAJ = "<< itsStoreTrajectory<<G4endl;
+  stopSecondaries = opt.stopSecondaries;
   stopTracks = opt.stopTracks; 
   // defaults - parameters of the laserwire process
   itsLaserwireWavelength = 0.532 * CLHEP::micrometer;
@@ -286,6 +293,7 @@ BDSGlobalConstants::~BDSGlobalConstants()
 {  
   delete itsZeroFieldManager;
   delete zeroMagField;
+  delete tunnelInfo;
   delete defaultUserLimits;
   _instance = 0;
 }

@@ -33,7 +33,7 @@ BDSMagnet::BDSMagnet(BDSMagnetType      type,
 		     G4double           length,
 		     BDSBeamPipeInfo*   beamPipeInfoIn,
 		     BDSMagnetOuterInfo magnetOuterInfo):
-  BDSAcceleratorComponent(name, length, 0, BDSMagnetTypeMap::types[type]),
+  BDSAcceleratorComponent(name, length, 0, (*BDSMagnetType::dictionary)[type]),
   itsType(type),
   beamPipeInfo(beamPipeInfoIn),
   outerDiameter(magnetOuterInfo.outerDiameter),
@@ -42,26 +42,26 @@ BDSMagnet::BDSMagnet(BDSMagnetType      type,
   inputface  = G4ThreeVector(0,0,0);
   outputface = G4ThreeVector(0,0,0);
   itsK1 = 0.0; itsK2 = 0.0; itsK3 = 0.0;
-  itsStepper=NULL;
-  itsMagField=NULL;
-  itsEqRhs=NULL;
+  itsStepper=nullptr;
+  itsMagField=nullptr;
+  itsEqRhs=nullptr;
 
-  itsBeampipeLogicalVolume=NULL;
-  itsInnerBPLogicalVolume=NULL;
+  itsBeampipeLogicalVolume=nullptr;
+  itsInnerBPLogicalVolume=nullptr;
 
-  itsBeampipeUserLimits=NULL;
-  itsPhysiComp=NULL; 
-  itsPhysiInner=NULL;
-  itsBPFieldMgr=NULL;
-  itsOuterFieldMgr=NULL;
+  itsBeampipeUserLimits=nullptr;
+  itsPhysiComp=nullptr; 
+  itsPhysiInner=nullptr;
+  itsBPFieldMgr=nullptr;
+  itsOuterFieldMgr=nullptr;
 
   itsInnerIronRadius = 0.0;
   
-  itsChordFinder=NULL;
-  itsOuterMagField=NULL;
+  itsChordFinder=nullptr;
+  itsOuterMagField=nullptr;
 
-  beampipe = NULL;
-  outer    = NULL;
+  beampipe = nullptr;
+  outer    = nullptr;
 }
 
 void BDSMagnet::Build()
@@ -205,7 +205,7 @@ void BDSMagnet::BuildOuterVolume()
     break;
   default:
     G4cout << __METHOD_NAME__ << "unknown magnet type - no outer volume built" << G4endl;
-    outer = NULL;
+    outer = nullptr;
     break;
   }
 
@@ -276,7 +276,7 @@ void BDSMagnet::BuildOuterFieldManager(G4int nPoles, G4double poleField,
 {
   if(nPoles<=0 || nPoles>10 || nPoles%2 !=0)
     G4Exception("BDSMagnet: Invalid number of poles", "-1", FatalException, "");
-  itsOuterFieldMgr=NULL;
+  itsOuterFieldMgr=nullptr;
   if (poleField==0) return;
 
   itsOuterMagField=new BDSMultipoleOuterMagField(nPoles,poleField,phiOffset);

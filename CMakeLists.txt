@@ -4,8 +4,8 @@ project(BDSIM)
 
 # project version
 set( BDSIM_MAJOR_VERSION 0 )
-set( BDSIM_MINOR_VERSION 7 )
-set( BDSIM_PATCH_LEVEL develop )
+set( BDSIM_MINOR_VERSION 8 )
+set( BDSIM_PATCH_LEVEL 0 )
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
 message(STATUS "Configuring BDSIM ${BDSIM_VERSION}")
@@ -163,11 +163,6 @@ if(USE_ROOT)
     include_directories(${ROOT_INCLUDE_DIR})
     message(STATUS "ROOT support ON")
 endif()
-
-# find Boost
-# Disable cmake script from Boost package because it is broken on lxplus
-set(Boost_NO_BOOST_CMAKE ON)
-find_package(Boost REQUIRED)
 
 # GDML (on by default)
 option( USE_GDML "Include GDML support."  ON )

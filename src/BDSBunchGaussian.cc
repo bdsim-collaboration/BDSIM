@@ -12,7 +12,7 @@ BDSBunchGaussian::BDSBunchGaussian():
 
   meansGM = CLHEP::HepVector(6);
   sigmaGM = CLHEP::HepSymMatrix(6);
-  GaussMultiGen = NULL;
+  GaussMultiGen = nullptr;
 }
 
 BDSBunchGaussian::BDSBunchGaussian(G4double sigmaXIn, G4double sigmaYIn, G4double sigmaXpIn, G4double sigmaYpIn, 

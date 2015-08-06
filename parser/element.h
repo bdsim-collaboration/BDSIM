@@ -5,6 +5,8 @@
 #include <list>
 #include <string>
 
+enum class ElementType;
+
 /**
  * @brief Element class
  * 
@@ -12,7 +14,7 @@
  */
 
 struct Element {
-  int type; ///< element enum
+  ElementType type; ///< element enum
   int precisionRegion;
   std::string name;
 

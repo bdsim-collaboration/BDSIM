@@ -26,7 +26,7 @@
 
 BDSLWCalorimeterSD::BDSLWCalorimeterSD(G4String name)
   :G4VSensitiveDetector(name),itsTotalEnergy(0.0),itsCopyNumber(-1),
-   LWCalorimeterCollection(NULL)
+   LWCalorimeterCollection(nullptr)
 {
   collectionName.insert("LWCalorimeterCollection");
 }

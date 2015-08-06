@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include <cstring>
 
-BDSGeometryGDML::BDSGeometryGDML(G4String GDMLfileIn):markerVol(NULL),gdmlWorld(NULL){
+BDSGeometryGDML::BDSGeometryGDML(G4String GDMLfileIn):markerVol(nullptr),gdmlWorld(nullptr){
   GDMLfile = GDMLfileIn;
 }
 
@@ -45,7 +45,7 @@ void BDSGeometryGDML::Construct(G4LogicalVolume *marker){
   }
   gdmlWorld->SetVisAttributes(visAtt);
   
-  new G4PVPlacement(NULL,
+  new G4PVPlacement(nullptr,
                     G4ThreeVector(0.,0.,0.),
                     gdmlWorld,
                     gdmlWorld->GetName()+"_PhysiComp",

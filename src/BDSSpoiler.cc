@@ -18,8 +18,8 @@ BDSSpoiler::BDSSpoiler(G4String      name,
 		       G4double      yAperIn,
 		       G4Material*   SpoilerMaterial):
   BDSAcceleratorComponent(name, length, 0, "spoiler"),
-  itsPhysiComp(NULL), itsPhysiComp2(NULL), itsSolidLogVol(NULL), 
-  itsInnerLogVol(NULL), itsSpoilerMaterial(SpoilerMaterial),
+  itsPhysiComp(nullptr), itsPhysiComp2(nullptr), itsSolidLogVol(nullptr), 
+  itsInnerLogVol(nullptr), itsSpoilerMaterial(SpoilerMaterial),
   xAper(xAperIn),
   yAper(yAperIn)
 {;}

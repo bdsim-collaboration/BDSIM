@@ -34,7 +34,7 @@ CREATE TABLE field_box (
 );
 
 
-INSERT INTO field_box VALUES (0.0, 0.0, 500.0, 0.0, 0.0, 1.0, "s", 500.0, 
+INSERT INTO field_box VALUES ("", 0.0, 0.0, 500.0, 0.0, 0.0, 1.0, "s", 500.0, 
 500.0, 1000.0, "vacuum", "my_field",0.0, 1.0, 0.0);
 
 

@@ -1,9 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
 #include "BDSEnergyCounterHit.hh"
 #include "G4ios.hh"
 
@@ -23,13 +17,9 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
 					 G4double weightIn, 
 					 G4bool   precisionRegionIn, 
 					 G4int    turnsTakenIn,
-					 G4int    eventNoIn
-					 ):
-  energy(energyIn*weightIn), 
-  energyWeightedX(XIn*energyIn*weightIn), 
-  energyWeightedY(YIn*energyIn*weightIn), 
-  energyWeightedZ(ZIn*energyIn*weightIn),
-  energyWeightedS(SIn*energyIn*weightIn),
+					 G4int    eventNoIn):
+  copyNumber(nCopyIn),
+  energy(energyIn),
   X(XIn),
   Y(YIn),
   Z(ZIn),
@@ -37,10 +27,9 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
   x(xIn),
   y(yIn),
   z(zIn),
-  weight(weightIn),
-  copyNumber(nCopyIn),
-  partID(partIDIn),
   name(nameIn),
+  partID(partIDIn),
+  weight(weightIn),
   precisionRegion(precisionRegionIn),
   turnsTaken(turnsTakenIn),
   eventNo(eventNoIn)
@@ -65,7 +54,7 @@ BDSEnergyCounterHit* BDS::LowestSPosPrimaryHit(BDSEnergyCounterHitsCollection* h
   if (indexofHit != -1)
     {return (*hc)[indexofHit];}
   else
-    {return NULL;}
+    {return nullptr;}
 }
 
 
@@ -85,5 +74,5 @@ BDSEnergyCounterHit* BDS::HighestSPosPrimaryHit(BDSEnergyCounterHitsCollection* 
   if (indexofHit != -1)
     {return (*hc)[indexofHit];}
   else
-    {return NULL;}
+    {return nullptr;}
 }

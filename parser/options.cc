@@ -141,6 +141,8 @@ Options::Options()
   minimumEpsilonStep       = 5e-5;    // default value in Geant4, old value 0
   maximumEpsilonStep       = 1e-3;    // default value in Geant4, old value 1e-7
   deltaOneStep             = 0.5e-5;  // default value in Geant4, old value 0.00001;
+  stopTracks               = false;
+  stopSecondaries          = false;
 
   // synchrotron radiation
   synchRadOn               = 0;
@@ -154,20 +156,18 @@ Options::Options()
   numberOfEventsPerNtuple  = 0;
   elossHistoBinWidth       = 1.0; // m
   elossHistoTransBinWidth  = 0.1;
-  storeMuonTrajectories    = 0;
+  storeMuonTrajectories    = false;
   trajCutGTZ               = 0.0;
   trajCutLTR               = 0.0;
-  storeNeutronTrajectories = 0;
-  storeTrajectory          = 0;
-  stopTracks               = 0;
-
+  storeNeutronTrajectories = false;
+  storeTrajectory          = false;
+  
   fifo                     = "";
-  refvolume                = "";
-  refcopyno                = 0;
-  useTimer                 = 0;
 
   // circular options
-  nturns = 1;
+  nturns                   = 1;
+
+  printModuloFraction      = 0.1;
 }
 
 void Options::print() const
@@ -341,11 +341,12 @@ void Options::set_value(std::string name, double value )
   if(name == "gammaToMuFe")              {gammaToMuFe = value; return; }
   if(name == "scintYieldFactor")         {scintYieldFactor = value; return; }
   if(name == "eeToHadronsFe")            {eeToHadronsFe = value; return; }
-  if(name == "thresholdCutCharged" )     {thresholdCutCharged = (double)value; return; }
-  if(name == "thresholdCutPhotons" )     {thresholdCutPhotons = (double)value; return; }
-  if(name == "vacuumPressure")           {vacuumPressure = (double)value; return; }
-  if(name == "planckScatterFe")          {planckScatterFe = (double)value; return; }
-  if(name == "stopTracks")               {stopTracks = (int) value; return; } 
+  if(name == "thresholdCutCharged" )     {thresholdCutCharged = value; return; }
+  if(name == "thresholdCutPhotons" )     {thresholdCutPhotons = value; return; }
+  if(name == "vacuumPressure")           {vacuumPressure = value; return; }
+  if(name == "planckScatterFe")          {planckScatterFe = value; return; }
+  if(name == "stopSecondaries")          {stopSecondaries = (bool) value; return; } 
+  if(name == "stopTracks")               {stopTracks = (bool) value; return; } 
   if(name == "srLowX")                   {synchLowX = value; return; }
   if(name == "srLowGamE")                {synchLowGamE = value; return; }
   if(name == "srMultiplicity")           {synchPhotonMultiplicity = (int) value; return; }
@@ -375,8 +376,8 @@ void Options::set_value(std::string name, double value )
   if(name == "storeTrajectories") { storeTrajectory = (int) value; return; } 
   if(name == "storeMuonTrajectory") { storeMuonTrajectories = (int) value; return; } 
   if(name == "storeMuonTrajectories") { storeMuonTrajectories = (int) value; return; } 
-  if(name == "trajCutGTZ") { trajCutGTZ = (double) value; return; } 
-  if(name == "trajCutLTR") { trajCutLTR = (double) value; return; } 
+  if(name == "trajCutGTZ") { trajCutGTZ = value; return; } 
+  if(name == "trajCutLTR") { trajCutLTR = value; return; } 
 
   if(name == "storeNeutronTrajectory") { storeNeutronTrajectories = (int) value; return; } 
   if(name == "storeNeutronTrajectories") { storeNeutronTrajectories = (int) value; return; }
@@ -388,11 +389,10 @@ void Options::set_value(std::string name, double value )
   if(name == "eventNumberOffset" ) { eventNumberOffset = (int)value; return; }
   if(name == "nlinesIgnore") { nlinesIgnore = (int) value; return; }
 
-  // options for neutrons
-  if(name=="refcopyno") { refcopyno = (int) value; return; }
-  
   // option for rings
   if(name=="nturns") {nturns = (int) value; return; }
+
+  if(name=="printModuloFraction") {printModuloFraction = value; return;}
   
   std::cerr << "parser> Error: unknown option \"" << name << "\" with value " << value << std::endl; 
   exit(1);
@@ -431,7 +431,6 @@ void Options::set_value(std::string name, std::string value )
 
   // options for external code interfaces
   if(name == "fifo") { fifo = value; return; }
-  if(name == "refvolume") { refvolume = value; return; }
   std::cerr << "Error: parser.h> unknown option \"" << name << "\" with value " << value  << std::endl; 
   exit(1);
 }

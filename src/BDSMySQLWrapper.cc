@@ -11,18 +11,17 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
 
-#include <cstdlib>
 #include "BDSMySQLWrapper.hh"
 #include "BDSMySQLTable.hh"
 
-#include<iostream>
-#include<boost/tokenizer.hpp>
-
-#include"globals.hh"
-#include<string>
-#include<vector>
-#include<sstream>
-
+#include "globals.hh"
+#include <cstdlib>
+#include <iostream>
+#include <regex>
+#include <sstream>
+#include <string>
+#include <vector>
+#
 BDSMySQLWrapper::BDSMySQLWrapper (const G4String& SQLFileName)
   : ifs(SQLFileName.c_str()), ComponentN(0), tableN(-1)
   
@@ -56,21 +55,46 @@ std::vector<BDSMySQLTable*> BDSMySQLWrapper::ConstructTable ()
 }
 
 void BDSMySQLWrapper::TokenizeLine(){
-  std::string token;
+  // empty old tokens
   _tokens.clear();
-  typedef boost::tokenizer<boost::char_separator<char> > tokenizer;  
-  // http://www.boost.org/doc/libs/1_55_0b1/libs/tokenizer/char_separator.htm
-  // separate with , and space, keep ; ( ) and \n
-  boost::char_separator<char> sep(", ",";()\n"); 
-  tokenizer tok(_currentLine, sep);
-  for(tokenizer::iterator tok_iter=tok.begin(); tok_iter != tok.end(); ++tok_iter){
-    token = *tok_iter;
-    RemoveQuotesFromLine(token);
-    RemoveWhitespace(token);
-    _tokens.push_back(token);
+
+  // Separate with comma and space, separate and keep with ; ( ) and \n
+  // Done in 2 steps, once for dropped delimiters and then for the kept delimiters
+  // Delimiters are spaces, tabs (changed from earlier versions) and/or commas, but no newlines
+  std::regex drop_delimiters("[ \t,]+");
+
+  std::string &s = _currentLine;
+  // Specifying -1 as the fourth argument makes the function skip over any patterns matching
+  // the regex_obj, causing the iterator to iterate through the tokens—which consist of text
+  // between each occurrence of the pattern.
+  std::sregex_token_iterator tok_iter(s.begin(), s.end(), drop_delimiters, -1);
+  
+  // default constructor = end-of-sequence:
+  std::sregex_token_iterator rend;
+  for (; tok_iter!=rend; ++tok_iter) {
+    std::string subtoken = *tok_iter;
+    //    G4cout << __METHOD_NAME__ << " - subtoken: = <" << subtoken << ">" << G4endl;
+
+    // keep ; ( ) 
+    std::regex keep_delimiters("[;\\(\\)]");
+    // delimiters (0) and remaining (-1)
+    std::sregex_token_iterator tok_iter2(subtoken.begin(), subtoken.end(), keep_delimiters, {-1, 0});
+
+    for (; tok_iter2!=rend; ++tok_iter2) { 
+    
+      std::string token = *tok_iter2;
+      
+      // only put non-empty tokens, but put empty strings ""
+      if (token.empty()) {
+	continue;
+      }
+      RemoveQuotesFromLine(token);
+      RemoveWhitespace(token);
+      _tokens.push_back(token);
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " - token: = <" << token << ">" << G4endl;
+	G4cout << __METHOD_NAME__ << " - token: = <" << token << ">" << G4endl;
 #endif
+    }
   }
   BeginTokens();
 }

@@ -8,7 +8,6 @@
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuterInfo.hh"
-#include "BDSTunnelInfo.hh"
 
 class ElementList;
 class BDSTiltOffset;

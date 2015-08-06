@@ -19,11 +19,6 @@
 BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
 			 G4RotationMatrix* initialGlobalRotation)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "with initial position and rotation" << G4endl;
-  G4cout << "Initial position: " << initialGlobalPosition << G4endl;
-  G4cout << "Initial rotation: " << initialGlobalRotation << G4endl;
-#endif
   // initialise extents
   totalChordLength      = 0;
   totalArcLength        = 0;
@@ -35,6 +30,12 @@ BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
     {previousReferenceRotationEnd = initialGlobalRotation;}
   else
     {previousReferenceRotationEnd = new G4RotationMatrix();}
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "with initial position and rotation" << G4endl;
+  G4cout << "Initial position: " << initialGlobalPosition << G4endl;
+  G4cout << "Initial rotation: " << *previousReferenceRotationEnd << G4endl;
+#endif
 
   // initial position
   previousReferencePositionEnd = initialGlobalPosition;
@@ -100,7 +101,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   G4cout << G4endl << __METHOD_NAME__ << "adding component to beamline and calculating coordinates" << G4endl;
   G4cout << "component name:      " << component->GetName() << G4endl;
 #endif
-  // if default NULL is supplied as tilt offset use a default 0,0,0,0 one
+  // if default nullptr is supplied as tilt offset use a default 0,0,0,0 one
   if (!tiltOffset)
     {tiltOffset = new BDSTiltOffset();}
   
@@ -421,6 +422,24 @@ void BDSBeamline::ApplyTransform3D(BDSTransform3D* component)
 
 void BDSBeamline::AddBeamlineElement(BDSBeamlineElement* element)
 {
+  // calculate extents for world size determination
+  // project size in global coordinates
+  G4ThreeVector     referencePositionMiddle = element->GetReferencePositionMiddle();
+  G4RotationMatrix* referenceRotationStart = element->GetReferenceRotationStart();
+  BDSAcceleratorComponent* component        = element->GetAcceleratorComponent();
+  G4ThreeVector eP                          = component->GetExtentPositive();
+  G4ThreeVector eN                          = component->GetExtentNegative();
+  G4ThreeVector extentpos = referencePositionMiddle + eP.transform(*referenceRotationStart); 
+  G4ThreeVector extentneg = referencePositionMiddle + eN.transform(*referenceRotationStart);
+  // note extentneg is +eN.transform.. as eN is negative naturally
+  // loop over each size and compare to cumulative extent
+  for (int i=0; i<3; i++)
+    {
+      if (extentpos[i] > maximumExtentPositive[i])
+	{maximumExtentPositive[i] = extentpos[i];}
+      if (extentneg[i] < maximumExtentNegative[i])
+	{maximumExtentNegative[i] = extentneg[i];}
+    }
   // append it to the beam line
   beamline.push_back(element);
 
@@ -467,7 +486,7 @@ BDSBeamlineElement* BDSBeamline::GetElement(G4String name)
   std::map<G4String, BDSBeamlineElement*>::iterator search = components.find(name);
   if (search == components.end())
     {//wasn't found
-      return NULL;
+      return nullptr;
     }
   else
     {return search->second;}

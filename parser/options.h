@@ -190,20 +190,20 @@ struct Options
   double   lengthSafety;
   long int randomSeed;
 
-  int      useTimer;
-  int      storeMuonTrajectories;
+  bool     storeMuonTrajectories;
   double   trajCutGTZ;
   double   trajCutLTR;
-  int      storeNeutronTrajectories;
-  int      storeTrajectory;
-  int      stopTracks;
+  bool     storeNeutronTrajectories;
+  bool     storeTrajectory;
+  bool     stopSecondaries;
+  bool     stopTracks;
 
   std::string fifo; ///> fifo for BDSIM-placet
-  std::string refvolume; ///> initial starting volume
-  int refcopyno; ///> initial starting volume copy number
   
   /// Ring parameters
   int      nturns;
+
+  double   printModuloFraction;
 
   /// print some properties
   void print()const;

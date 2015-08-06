@@ -50,19 +50,19 @@ BDSTunnelSection* BDSTunnelFactorySquare::CreateTunnelSection(G4String    name,
 }
 
 
-BDSTunnelSection* BDSTunnelFactorySquare::CreateTunnelSectionAngledInOut(G4String    name,
-									 G4double    length,
-									 G4double    angleIn,
-									 G4double    angleOut,
-									 G4double    tunnelThickness,
-									 G4double    tunnelSoilThickness,
-									 G4Material* tunnelMaterial,
-									 G4Material* tunnelSoilMaterial,
-									 G4bool      tunnelFloor,
-									 G4double    tunnelFloorOffset,
-									 G4double    tunnel1,
-									 G4double    /*tunnel2*/,
-									 G4bool      visible)
+BDSTunnelSection* BDSTunnelFactorySquare::CreateTunnelSectionAngled(G4String      name,
+								    G4double      length,
+								    G4ThreeVector inputFace,
+								    G4ThreeVector outputFace,
+								    G4double      tunnelThickness,
+								    G4double      tunnelSoilThickness,
+								    G4Material*   tunnelMaterial,
+								    G4Material*   tunnelSoilMaterial,
+								    G4bool        tunnelFloor,
+								    G4double      tunnelFloorOffset,
+								    G4double      tunnel1,
+								    G4double      /*tunnel2*/,
+								    G4bool        visible)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -70,11 +70,11 @@ BDSTunnelSection* BDSTunnelFactorySquare::CreateTunnelSectionAngledInOut(G4Strin
   // test input parameters - set global options as default if not specified
   TestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial,
 		      tunnelSoilMaterial, tunnelFloorOffset, tunnel1);
-  return BDSTunnelFactoryRectangular::Instance()->CreateTunnelSectionAngledInOut(name, length, angleIn, angleOut,
-										 tunnelThickness,
-										 tunnelSoilThickness, tunnelMaterial,
-										 tunnelSoilMaterial, tunnelFloor,
-										 tunnelFloorOffset, tunnel1, tunnel1, visible);
+  return BDSTunnelFactoryRectangular::Instance()->CreateTunnelSectionAngled(name, length, inputFace, outputFace,
+									    tunnelThickness,
+									    tunnelSoilThickness, tunnelMaterial,
+									    tunnelSoilMaterial, tunnelFloor,
+									    tunnelFloorOffset, tunnel1, tunnel1, visible);
 }
 
 

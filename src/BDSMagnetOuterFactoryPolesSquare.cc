@@ -251,7 +251,7 @@ void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
   
   // pole placement
   G4double nPoles = 2*order;
-  G4PVPlacement* aPlacement = NULL;
+  G4PVPlacement* aPlacement = nullptr;
   for (G4int n = 0; n < 2*order; ++n)
     {
       G4RotationMatrix* rm = new G4RotationMatrix();

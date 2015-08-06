@@ -10,7 +10,7 @@
 
 BDSTerminator::BDSTerminator(G4String name, G4double length):
   BDSAcceleratorComponent(name, length, 0, "terminator"),
-  userLimits(NULL)
+  userLimits(nullptr)
 {;}
 
 void BDSTerminator::Build()

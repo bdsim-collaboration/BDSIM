@@ -24,7 +24,7 @@
 #include <list>
 
 BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):
-  itsMarkerVol(NULL),itsMagField(NULL),itsUniformMagField(NULL)
+  itsMarkerVol(nullptr),itsMagField(nullptr),itsUniformMagField(nullptr)
 {
 #ifndef NOUSERLIMITS
   itsUserLimits = new G4UserLimits();
@@ -145,14 +145,14 @@ void BDSGeometryLCDD::parseDoc()
 
   doc = xmlParseFile(docname);
 
-  if (doc == NULL )
+  if (doc == nullptr )
   {
   G4Exception("Document not parsed successfully", "-1", FatalException, "");
   }
 
   cur = xmlDocGetRootElement(doc); //GO the first node
 
-  if (cur == NULL)
+  if (cur == nullptr)
   {
    xmlFreeDoc(doc);
    G4Exception("empty document", "-1", FatalException, "");
@@ -167,7 +167,7 @@ void BDSGeometryLCDD::parseDoc()
 
    cur = cur->xmlChildrenNode;
    
-   while (cur != NULL)
+   while (cur != nullptr)
      {
        if ((!xmlStrcmp(cur->name, (const xmlChar *)"header")))
 	 {
@@ -223,7 +223,7 @@ void BDSGeometryLCDD::parseHEADER(xmlNodePtr cur)
   
 
    xmlNodePtr tempcur = cur->xmlChildrenNode;
-   while (tempcur != NULL)
+   while (tempcur != nullptr)
      {
        if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"detector")))
 	 {
@@ -254,7 +254,7 @@ void BDSGeometryLCDD::parseDISPLAY(xmlNodePtr cur)
 {
   cur = cur->xmlChildrenNode;
 
-  while (cur != NULL)
+  while (cur != nullptr)
      {
        if ((!xmlStrcmp(cur->name, (const xmlChar *)"vis")))
 	 {
@@ -285,7 +285,7 @@ void BDSGeometryLCDD::parseVIS(xmlNodePtr cur)
 
   cur = cur->xmlChildrenNode;
   
-  while(cur!=NULL)
+  while(cur!=nullptr)
     {
       if ((!xmlStrcmp(cur->name, (const xmlChar *)"color")))
 	{
@@ -327,7 +327,7 @@ void BDSGeometryLCDD::parseLCDD(xmlNodePtr cur)
 {
   cur = cur->xmlChildrenNode;
 
-  while (cur != NULL)
+  while (cur != nullptr)
      {
        if ((!xmlStrcmp(cur->name, (const xmlChar *)"define")))
 	 {
@@ -356,7 +356,7 @@ void BDSGeometryLCDD::parseLCDD(xmlNodePtr cur)
 	   G4String version = parseStrChar(xmlGetProp(cur,(const xmlChar*)"version"));
 	   xmlNodePtr tempcur = cur->xmlChildrenNode;
 	 
-	   while(tempcur!=NULL)
+	   while(tempcur!=nullptr)
 	     {
 	       if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"world")))
 		 itsWorldRef = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref"));
@@ -364,7 +364,7 @@ void BDSGeometryLCDD::parseLCDD(xmlNodePtr cur)
 	     }
 
 	   	   G4LogicalVolume* topvol = GetLogVolByName(itsWorldRef);
-	   	   new G4PVPlacement(NULL,
+	   	   new G4PVPlacement(nullptr,
 	   	     G4ThreeVector(0.,0.,0.),
 				     topvol,
 				     topvol->GetName()+"_PhysiComp",
@@ -384,7 +384,7 @@ void BDSGeometryLCDD::parseFIELDS(xmlNodePtr cur)
 {
   xmlNodePtr tempcur = cur->xmlChildrenNode;
   tempcur=tempcur->next;
-  while (tempcur != NULL){
+  while (tempcur != nullptr){
     if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"solenoid"))){
       if(itsFieldIsUniform==true){
 	G4Exception("BDSGeometryLCDD::parseFIELDS> making solenoid field but already built dipole field...", "-1", FatalException, "");
@@ -422,7 +422,7 @@ void BDSGeometryLCDD::parseSTRUCTURE(xmlNodePtr cur)
 {
   cur = cur->xmlChildrenNode;
 
-  while (cur != NULL)
+  while (cur != nullptr)
      {
        
        if ((!xmlStrcmp(cur->name, (const xmlChar *)"volume")))
@@ -438,7 +438,7 @@ void BDSGeometryLCDD::parseDEFINE(xmlNodePtr cur)
 {
   cur = cur->xmlChildrenNode;
 
-  while (cur != NULL)
+  while (cur != nullptr)
      {
        
        if ((!xmlStrcmp(cur->name, (const xmlChar *)"rotation")))
@@ -485,7 +485,7 @@ void BDSGeometryLCDD::parseDEFINE(xmlNodePtr cur)
 void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 {
   cur = cur->xmlChildrenNode;
-  while (cur != NULL)
+  while (cur != nullptr)
     {
       if ((!xmlStrcmp(cur->name, (const xmlChar *)"define")))
 	{
@@ -544,7 +544,7 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	     G4bool fraction=false;
 	     
 	     tempcur = cur->xmlChildrenNode;
-	     while(tempcur!=NULL){
+	     while(tempcur!=nullptr){
 
 	       if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"fraction"))){
 		 numFractions++;
@@ -584,7 +584,7 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 #ifdef BDSDEBUG
 	     G4cout << "BDSGeometryLCDD::parseMATERIALS - making list of fractions/composites" << G4endl;
 #endif
-	     while(tempcur!=NULL){
+	     while(tempcur!=nullptr){
 #ifdef BDSDEBUG
 	       G4cout << "BDSGeometryLCDD::parseMATERIALS - name = " << tempcur->name << G4endl;
 #endif	    
@@ -656,7 +656,7 @@ void BDSGeometryLCDD::parseSOLID(xmlNodePtr cur)
 {
   cur = cur->xmlChildrenNode;
 
-  while (cur != NULL)
+  while (cur != nullptr)
      {
        
        if ((!xmlStrcmp(cur->name, (const xmlChar *)"tube")))
@@ -736,7 +736,7 @@ void BDSGeometryLCDD::parseVOLUME(xmlNodePtr cur)
   G4String solidref;
   G4String visref;
   xmlNodePtr origcur = cur;
-  while (cur != NULL)
+  while (cur != nullptr)
      {
        if ((!xmlStrcmp(cur->name, (const xmlChar *)"materialref")))
 	 {
@@ -785,7 +785,7 @@ void BDSGeometryLCDD::parseVOLUME(xmlNodePtr cur)
         alogvol->SetVisAttributes(GetVisByName(visref));
       }
       
-      while(origcur!=NULL)
+      while(origcur!=nullptr)
 	{
 	  if ((!xmlStrcmp(origcur->name, (const xmlChar *)"physvol")))
 	    {
@@ -812,12 +812,12 @@ void BDSGeometryLCDD::parsePHYSVOL(xmlNodePtr cur, G4String volume_name)
 
   G4String volumeref;
 
-  G4RotationMatrix* componentRotation = NULL;
+  G4RotationMatrix* componentRotation = nullptr;
   
   G4ThreeVector PlacementPoint;
 
 
-  while (cur != NULL)
+  while (cur != nullptr)
      {
        if ((!xmlStrcmp(cur->name, (const xmlChar *)"volumeref")))
 	 volumeref = parseStrChar(xmlGetProp(cur,(const xmlChar*)"ref"));

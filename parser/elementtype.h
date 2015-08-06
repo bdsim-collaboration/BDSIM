@@ -1,9 +1,9 @@
-#ifndef __ENUMS_H
-#define __ENUMS_H
+#ifndef __ELEMENTTYPE_H
+#define __ELEMENTTYPE_H
 
 // types of elements
 
-enum {
+enum class ElementType {
   _NONE = -1,
   _MARKER = 1,
   _DRIFT = 2,
@@ -40,12 +40,8 @@ enum {
   _TERMINATOR  = 99
 };
 
-const char *typestr(int type);
-
-// geometry and field formats
-/* enum { */
-/*   _GMAD = 0, */
-/*   _MOKKA = 1 */
-/* }; */
+namespace GMAD {
+  const char *typestr(ElementType type);
+}
 
 #endif

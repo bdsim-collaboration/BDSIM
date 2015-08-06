@@ -8,6 +8,7 @@
 
 #include "TROOT.h"
 #include "TH1F.h"
+#include "TH2F.h"
 #include "TFile.h"
 #include "TTree.h"
 
@@ -21,8 +22,8 @@
  * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
  */
 
-class BDSOutputROOT : public BDSOutputBase {
-
+class BDSOutputROOT: public BDSOutputBase
+{
 public: 
 
   BDSOutputROOT(); // default constructor
@@ -30,15 +31,17 @@ public:
   virtual ~BDSOutputROOT();
 
   /// write sampler hit collection
-  virtual void WriteHits(BDSSamplerHitsCollection*);
+  virtual void WriteHits(BDSSamplerHitsCollection*) override;
   /// make energy loss histo
-  virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*);
+  virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*) override;
   /// write primary loss histo
-  virtual void WritePrimaryLoss(BDSEnergyCounterHit*);
+  virtual void WritePrimaryLoss(BDSEnergyCounterHit*) override;
   /// write primary hits histo
-  virtual void WritePrimaryHit(BDSEnergyCounterHit*);
+  virtual void WritePrimaryHit(BDSEnergyCounterHit*) override;
+  /// write tunnel hits
+  virtual void WriteTunnelHits(BDSTunnelHitsCollection*) override;
   /// write a trajectory 
-  virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec);
+  virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec) override;
   /// write primary hit
   virtual void WritePrimary(G4String samplerName, 
 			    G4double E,
@@ -52,12 +55,12 @@ public:
 			    G4double weight,
 			    G4int PDGType, 
 			    G4int nEvent, 
-			    G4int TurnsTaken);
+			    G4int TurnsTaken) override;
 
   /// write a histogram
-  virtual void WriteHistogram(BDSHistogram1D* histogramIn);
-  virtual void Commit();  /// close the file
-  virtual void Write();   /// close and open new file
+  virtual void WriteHistogram(BDSHistogram1D* histogramIn) override;
+  virtual void Commit() override;  ///> close the file
+  virtual void Write()  override;  ///> close and open new file
 
 private:
 
@@ -71,26 +74,31 @@ private:
   TTree* EnergyLossTree;
   TTree* PrimaryLossTree;
   TTree* PrimaryHitsTree;
-  
-  float x0,xp0,y0,yp0,z0,zp0,E0,t0;
-  float x_prod,xp_prod,y_prod,yp_prod,z_prod,zp_prod,E_prod,t_prod;
-  float x_lastScat,xp_lastScat,y_lastScat,yp_lastScat,z_lastScat,zp_lastScat,E_lastScat,t_lastScat;
-  float x,xp,y,yp,z,zp,E,t; //Edep;
-  float X,Xp,Y,Yp,Z,Zp,s,weight; //,EWeightZ;
-  int part,nev, pID, track_id, turnnumber;
-  /// energy loss histogram variables
-  float S_el,E_el;
-  /// primary loss histogram variables
-  float X_pl,Y_pl,Z_pl,S_pl,x_pl,y_pl,z_pl,E_pl,weight_pl;
-  int part_pl, turnnumber_pl, eventno_pl;
-  /// primary hits histogram variables
-  float X_ph,Y_ph,Z_ph,S_ph,x_ph,y_ph,z_ph,E_ph,weight_ph;
-  int part_ph, turnnumber_ph, eventno_ph;
-  /// precision energy loss variables
-  float X_el_p,Y_el_p,Z_el_p,S_el_p,x_el_p,y_el_p,z_el_p,E_el_p;
-  int part_el_p, weight_el_p, turnnumber_el_p, eventno_el_p;
-  char volumeName_el_p[100];
+  TTree* TunnelLossTree;
 
+  TH2F*  tunnelHitsHisto;
+
+  // members for writing to TTrees
+  float x0=0.0,xp0=0.0,y0=0.0,yp0=0.0,z0=0.0,zp0=0.0,E0=0.0,t0=0.0;
+  float x_prod=0.0,xp_prod=0.0,y_prod=0.0,yp_prod=0.0,z_prod=0.0,zp_prod=0.0,E_prod=0.0,t_prod=0.0;
+  float x_lastScat=0.0,xp_lastScat=0.0,y_lastScat=0.0,yp_lastScat=0.0,z_lastScat=0.0,zp_lastScat=0.0,E_lastScat=0.0,t_lastScat=0.0;
+
+  /// local parameters
+  float x=0.0,xp=0.0,y=0.0,yp=0.0,z=0.0,zp=0.0,E=0.0,t=0.0;
+  /// global parameters
+  float X=0.0,Xp=0.0,Y=0.0,Yp=0.0,Z=0.0,Zp=0.0,S=0.0,weight=0.0;
+  /// PDG id, event number, parentID, trackID, turn number
+  int part=-1,eventno=-1, pID=-1, track_id=-1, turnnumber=-1;
+  
+  /// tunnel hits variables
+  float E_tun=0.0, S_tun=0.0, r_tun=0.0, angle_tun=0.0;
+
+  /// volume name
+  char volumeName[100];
+
+  /// fill members so that trees can be written
+  void FillHit(BDSEnergyCounterHit* hit);
+ 
   void WriteRootHit(G4String Name, 
 		    G4double InitMom, 
 		    G4double InitX, 
