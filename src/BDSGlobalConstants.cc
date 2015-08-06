@@ -186,6 +186,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsStoreNeutronTrajectories = opt.storeNeutronTrajectories;
   itsStoreTrajectory = opt.storeTrajectory;
   //G4cout<<"STOREA TRAJ = "<< itsStoreTrajectory<<G4endl;
+  stopSecondaries = opt.stopSecondaries;
   stopTracks = opt.stopTracks; 
   // defaults - parameters of the laserwire process
   itsLaserwireWavelength = 0.532 * CLHEP::micrometer;

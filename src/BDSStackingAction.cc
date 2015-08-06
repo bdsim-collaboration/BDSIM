@@ -60,10 +60,13 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       return fKill;
     }
   }
+
+  // kill secondaries
+  if(BDSGlobalConstants::Instance()->GetStopSecondaries() && (aTrack->GetParentID() > 0) )
+    {return fKill;}
   
   if(BDSGlobalConstants::Instance()->GetStopTracks()) // if tracks killed after interaction
     {
-      
       // kill secondary electrons      
       if( (aTrack->GetParentID() > 0) && (aTrack->GetDefinition() == G4Electron::ElectronDefinition() ) ) {
 	return fKill;
@@ -72,25 +75,22 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       // kill secondary photons      
       if( (aTrack->GetParentID() > 0) && (aTrack->GetDefinition() == G4Gamma::GammaDefinition()) && !BDSGlobalConstants::Instance()->GetSynchRadOn())
 	{
-	  classification = fKill;
+	  return fKill;
 	}
       
       // kill secondary positrons
-      
       if((aTrack->GetParentID() > 0) && (aTrack->GetDefinition() == G4Positron::PositronDefinition()))
 	{
 	  return fKill;
 	}
 
       // kill secondary protons/antiprotons
-      
       if( (aTrack->GetParentID() > 0) && 
 	  ( (aTrack->GetDefinition() == G4Proton::ProtonDefinition() ) ||
 	    (aTrack->GetDefinition() == G4AntiProton::AntiProtonDefinition()) ) )
 	{
 	  return fKill;
 	}
-      
     }
 
   if(BDSGlobalConstants::Instance()->getWaitingForDump()) // if waiting for placet synchronization
