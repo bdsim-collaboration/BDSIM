@@ -77,7 +77,7 @@ extern struct symtab * symlook(const char *s);
 
 void quit();
 /// method that transfers parameters to element properties
-int write_table(struct Parameters pars,const char* name, ElementType type, std::list<struct Element> *lst=nullptr);
+int write_table(const struct Parameters& pars,const char* name, ElementType type, std::list<struct Element> *lst=nullptr);
 int expand_line(const char *name, const char *start, const char *end);
 /// insert a sampler into beamline_list
 void add_sampler(char *name, char *before, int before_count);
@@ -105,7 +105,7 @@ void quit()
   exit(0);
 }
 
-int write_table(struct Parameters params,const char* name, ElementType type, std::list<struct Element> *lst)
+int write_table(const struct Parameters& params,const char* name, ElementType type, std::list<struct Element> *lst)
 {
 #ifdef BDSDEBUG 
   printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%s, lset = %d\n", params.k1, params.k2, params.k3, GMAD::typestr(type), params.lset);

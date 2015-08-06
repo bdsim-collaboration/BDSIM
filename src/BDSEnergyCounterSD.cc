@@ -26,8 +26,6 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4VTouchable.hh"
 
-#define NMAXCOPY 5
-
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
   :G4VSensitiveDetector(name),
    energyCounterCollection(nullptr),
