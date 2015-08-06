@@ -58,10 +58,6 @@ public:
   inline G4double Getz()               const;
   inline G4double Getr()               const;
   inline G4double Gettheta()           const;
-  inline G4double GetEnergyWeightedY() const; 
-  inline G4double GetEnergyWeightedZ() const;
-  inline G4double GetEnergyWeightedX() const;
-  inline G4double GetEnergyWeightedS() const;
   inline G4int    GetPartID()          const;
   inline G4double GetWeight()          const; 
   inline G4bool   GetPrecisionRegion() const;
@@ -73,10 +69,6 @@ private:
   BDSTunnelHit();
 
   G4double energy;
-  G4double energyWeightedX;
-  G4double energyWeightedY;
-  G4double energyWeightedZ;
-  G4double energyWeightedS;
   ///@{ global coordinates
   G4double X;
   G4double Y;

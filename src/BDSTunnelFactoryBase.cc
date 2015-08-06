@@ -6,7 +6,6 @@
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSDManager.hh"
-#include "BDSTunnelSD.hh"
 #include "BDSTunnelSection.hh"
 #include "BDSUtilities.hh"            // for calculateorientation
 
