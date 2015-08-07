@@ -8,8 +8,6 @@
 #include "BDSMagnetColours.hh"
 #include "BDSMagnetOuterFactoryCylindrical.hh" // for default geometry
 #include "BDSMaterials.hh"
-#include "BDSSDManager.hh"
-// #include "BDSUtilities.hh"                 // for calculateorientation - s and r bend
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4Box.hh"

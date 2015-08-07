@@ -6,7 +6,6 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSMagnetColours.hh"
-#include "BDSSDManager.hh"
 
 #include "globals.hh"
 
