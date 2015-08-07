@@ -6,7 +6,6 @@
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSDManager.hh"
-#include "BDSTunnelSD.hh"
 #include "BDSTunnelSection.hh"
 #include "BDSUtilities.hh"            // for calculateorientation
 
@@ -29,7 +28,9 @@ BDSTunnelFactoryBase::BDSTunnelFactoryBase():
   readOutLV(nullptr), floorDisplacement(G4ThreeVector(0,0,0)),
   cumulativeAngle(0)
 {
-  lengthSafety  = BDSGlobalConstants::Instance()->GetLengthSafety();
+  // use large length safety for tunnel construction to avoid stuck particles
+  // will not make difference to tracking so is acceptable to have 1um gap.
+  lengthSafety  = 1*CLHEP::um;
   checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
   defaultModel  = BDSGlobalConstants::Instance()->TunnelInfo();
 }

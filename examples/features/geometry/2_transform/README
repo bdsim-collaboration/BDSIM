@@ -1,6 +1,0 @@
-1_rotation.gmad - beam pipe, followed by tilted quadrupole. Achieved by using transform3d.
-		  This should *only* rotate about the beam axis.
-
-2_rotation_with_bends.gmaad - primitive medical gantry style beamline. Few strong sector
-                              bends separated by drifts. Transform3d makes the line bend
-                              vertically.

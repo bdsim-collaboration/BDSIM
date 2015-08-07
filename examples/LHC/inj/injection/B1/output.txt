@@ -1,3 +1,0 @@
-### BDSIM output created Thu May 12 09:56:04 2011
- ####
-# PT E[GeV] X[mum] Y[mum] Z[m] Xp[rad] Yp[rad]  

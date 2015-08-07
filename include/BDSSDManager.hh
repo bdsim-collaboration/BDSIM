@@ -66,7 +66,6 @@ private:
   BDSEnergyCounterSD* eCounterOnAxis;
   BDSTerminatorSD*    terminator;
   BDSLWCalorimeterSD* lwCalorimeter;
-  BDSTunnelSD*        tunnel;
 
   // duplicate ecounter here that's made on demand
   // and registered to read out geometry - this requires
