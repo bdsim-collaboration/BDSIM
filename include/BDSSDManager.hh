@@ -33,9 +33,6 @@ public:
   /// SD for samplers (cylinder type)
   inline BDSSamplerSD*       GetSamplerCylinderSD() const;
 
-  /// SD for any component that's symmetric about the beam axis
-  inline BDSEnergyCounterSD* GetEnergyCounterOnAxisSD() const;
-
   /// SD for measuring turns around circular machine and terminating
   /// particles appropriately.
   inline BDSTerminatorSD*    GetTerminatorSD() const;
@@ -63,11 +60,10 @@ private:
   //SD instances
   BDSSamplerSD*       samplerPlane;
   BDSSamplerSD*       samplerCylinder;
-  BDSEnergyCounterSD* eCounterOnAxis;
   BDSTerminatorSD*    terminator;
   BDSLWCalorimeterSD* lwCalorimeter;
 
-  // duplicate ecounter here that's made on demand
+  // ecounter here that's made on demand
   // and registered to read out geometry - this requires
   // the readout geometry to be already created so can't
   // be used during object construction
@@ -87,9 +83,6 @@ inline BDSSamplerSD*       BDSSDManager::GetSamplerPlaneSD() const
 
 inline BDSSamplerSD*       BDSSDManager::GetSamplerCylinderSD() const
 {return samplerCylinder;}
-
-inline BDSEnergyCounterSD* BDSSDManager::GetEnergyCounterOnAxisSD() const
-{return eCounterOnAxis;}
 
 inline BDSTerminatorSD*    BDSSDManager::GetTerminatorSD() const
 {return terminator;}
