@@ -241,7 +241,7 @@ struct symtab * symlook(const char *s)
   if (it!=symtab_map.end()) {
      return (*it).second;
   } else {
-    struct symtab* sp = new symtab(s);
+    struct symtab* sp = new symtab(sstring);
     std::pair<std::map<std::string,symtab*>::iterator,bool> ret = symtab_map.insert(std::make_pair(sstring,sp));
      return (*(ret.first)).second;
   }

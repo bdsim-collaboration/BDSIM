@@ -1,6 +1,9 @@
 #ifndef __ELEMENTTYPE_H
 #define __ELEMENTTYPE_H
 
+#include <ostream>
+#include <string>
+
 // types of elements
 
 enum class ElementType {
@@ -40,8 +43,10 @@ enum class ElementType {
   _TERMINATOR  = 99
 };
 
-namespace GMAD {
-  const char *typestr(ElementType type);
-}
+/// conversion from enum to string
+std::string typestr(ElementType type);
+
+/// output operator
+std::ostream& operator << (std::ostream& out, ElementType type);
 
 #endif

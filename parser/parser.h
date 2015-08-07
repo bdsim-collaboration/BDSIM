@@ -35,12 +35,9 @@ int yyerror(const char *);
 
 extern FILE* yyin;
 extern int yylex();
-
+extern const int ECHO_GRAMMAR;
 
 const int MAX_EXPAND_ITERATIONS = 50;
-//const int MAX_MULTIPOLE_ORDER = 5;
-
-//const int _undefined = 0;
 
 std::list<double> _tmparray;  // for reading of arrays
 std::list<char*> _tmpstring;
@@ -62,9 +59,9 @@ std::list<struct Element>  material_list;
 std::list<struct Element>  atom_list;
 std::vector<struct Tunnel> tunnel_list;
 
-const char* current_line = "";
-const char* current_start = "";
-const char* current_end = "";
+std::string current_line;
+std::string current_start;
+std::string current_end;
 
 //struct symtab *symtab; 
 std::map<std::string, struct symtab*> symtab_map;
@@ -77,19 +74,21 @@ extern struct symtab * symlook(const char *s);
 
 void quit();
 /// method that transfers parameters to element properties
-int write_table(const struct Parameters& pars,const char* name, ElementType type, std::list<struct Element> *lst=nullptr);
-int expand_line(const char *name, const char *start, const char *end);
+int write_table(const struct Parameters& pars,std::string name, ElementType type, std::list<struct Element> *lst=nullptr);
+int expand_line(std::string name, std::string start, std::string end);
 /// insert a sampler into beamline_list
-void add_sampler(char *name, char *before, int before_count);
+void add_sampler(std::string name, std::string before, int before_count);
 /// insert a cylindrical sampler into beamline_list
-void add_csampler(char *name, char *before, int before_count, double length, double rad);
+void add_csampler(std::string name, std::string before, int before_count, double length, double rad);
 /// insert a beam dumper into beamline_list
-void add_dump(char *name, char *before, int before_count);
+void add_dump(std::string name, std::string before, int before_count);
 /// insert beam gas                                             
-void add_gas(const char *name, const char *before, int before_count, std::string material);
+void add_gas(std::string name, std::string before, int before_count, std::string material);
 /// insert tunnel
-void add_tunnel(const char *name, Tunnel& tunnel);
-double property_lookup(ElementList& el_list, char *element_name, char *property_name);
+void add_tunnel(Tunnel& tunnel);
+double property_lookup(ElementList& el_list, std::string element_name, std::string property_name);
+/// add element to temporary element sequence tmp_list
+void add_element_temp(std::string name, int number, bool pushfront, ElementType linetype);
 
 // parser functions
 int add_func(const char *name, double (*func)(double));
@@ -105,17 +104,18 @@ void quit()
   exit(0);
 }
 
-int write_table(const struct Parameters& params,const char* name, ElementType type, std::list<struct Element> *lst)
+int write_table(const struct Parameters& params,std::string name, ElementType type, std::list<struct Element> *lst)
 {
+  if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << name << " : " << type << std::endl;
 #ifdef BDSDEBUG 
-  printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%s, lset = %d\n", params.k1, params.k2, params.k3, GMAD::typestr(type), params.lset);
+  printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%s, lset = %d\n", params.k1, params.k2, params.k3, typestr(type).c_str(), params.lset);
 #endif
 
   struct Element e;
   
   e.type = type;
   // common parameters for all elements
-  e.name = std::string(name);
+  e.name = name;
   e.lst = nullptr;
   e.l = params.l;
 
@@ -180,14 +180,14 @@ int write_table(const struct Parameters& params,const char* name, ElementType ty
   if(params.k2set) {
     if (type==ElementType::_SEXTUPOLE) e.k2 = params.k2;
     else {
-      printf("Warning: k2 will not be set for element %s of type %d\n",name, type);
+      std::cout << "Warning: k2 will not be set for element " << name << " of type " << type << std::endl;
     }
   }
   // Octupole
   if(params.k3set) {
     if (type==ElementType::_OCTUPOLE) e.k3 = params.k3;
     else {
-      printf("Warning: k3 will not be set for element %s of type %d\n",name, type);
+      std::cout << "Warning: k3 will not be set for element " << name << " of type " << type << std::endl;
     }
   }
   // Multipole
@@ -260,21 +260,20 @@ int write_table(const struct Parameters& params,const char* name, ElementType ty
   return 0;
 }
 
-int expand_line(const char *charname, const char *start, const char* end)
+int expand_line(std::string name, std::string start, std::string end)
 {
   std::list<struct Element>::const_iterator iterEnd = element_list.end();
   std::list<struct Element>::iterator it;
   
   struct Element e;
-  std::string name = std::string(charname);
   it = element_list.find(name);
 
-  if (it==element_list.end()) {
-    printf("line '%s' not found\n",charname);
+  if (it==iterEnd) {
+    std::cout << "line '" << name << "' not found" << std::endl;
     return 1;
   }
   if((*it).type != ElementType::_LINE && (*it).type != ElementType::_REV_LINE ) {
-    printf("'%s' is not a line\n",charname);
+    std::cout << "'" << name << "' is not a line" << std::endl;
   }
 
   // delete the previous beamline
@@ -291,7 +290,7 @@ int expand_line(const char *charname, const char *start, const char* end)
   beamline_list.push_back(e);
 
 #ifdef BDSDEBUG 
-  printf("expanding line %s, range = %s/%s\n",charname,start,end);
+  std::cout << "expanding line " << name << ", range = " << start << end << std::endl;
 #endif
   if(!(*it).lst) return 0; //list empty
     
@@ -324,7 +323,7 @@ int expand_line(const char *charname, const char *start, const char* end)
       for(it = ++beamline_list.begin();it!=beamline_list.end();it++ )
 	{
 #ifdef BDSDEBUG 
-	  printf("%s , %s \n",(*it).name.c_str(),GMAD::typestr((*it).type));
+	  std::cout << (*it).name << " , " << (*it).type << std::endl;
 #endif
 	  if((*it).type == ElementType::_LINE || (*it).type == ElementType::_REV_LINE)  // list - expand further	  
 	    {
@@ -375,7 +374,7 @@ int expand_line(const char *charname, const char *start, const char* end)
 		  
 		} else  // element of undefined type - neglecting
 		{
-		  printf("Warning : Expanding line %s : element %s has not been defined , skipping \n",charname,(*it).name.c_str());
+		  std::cout << "Warning : Expanding line " << name << " : element " << (*it).name << " has not been defined , skipping " << std::endl;
 		  beamline_list.erase(it--);
 		}
 	      
@@ -388,11 +387,10 @@ int expand_line(const char *charname, const char *start, const char* end)
       iteration++;
       if( iteration > MAX_EXPAND_ITERATIONS )
 	{
-	  printf("Error : Line expansion of '%s' seems to loop, \
-                     \n possible recursive line definition,quitting \n",charname);
-	  exit(0);
+	  std::cout << "Error : Line expansion of '" << name << "' seems to loop, " << std::endl
+		    << "possible recursive line definition, quitting" << std::endl;
+	  exit(1);
 	}
-      
     }// while
   
   
@@ -401,7 +399,7 @@ int expand_line(const char *charname, const char *start, const char* end)
   // rule - from first occurence of 'start' till first 'end' coming after 'start'
   
   
-  if( (start!=nullptr)) // determine the start element
+  if( !start.empty()) // determine the start element
     {
       sit = beamline_list.find(std::string(start));
       
@@ -410,17 +408,17 @@ int expand_line(const char *charname, const char *start, const char* end)
 	  sit = beamline_list.begin();
 	}
       
-      if(!strcmp(start,"#s")) sit = beamline_list.begin(); 
+      if(start == "#s") sit = beamline_list.begin(); 
       
       beamline_list.erase(beamline_list.begin(),sit);
       
     }
   
-  if( (end!=nullptr)) // determine the end element
+  if( !end.empty()) // determine the end element
     {
       eit = beamline_list.find(std::string(end));
       
-      if(!strcmp(end,"#e")) eit = beamline_list.end();
+      if(end == "#e") eit = beamline_list.end();
       
       beamline_list.erase(++eit,beamline_list.end());
     }
@@ -435,7 +433,7 @@ int expand_line(const char *charname, const char *start, const char* end)
   return 0;
 }
 
-void add_sampler(char *name, char *before, int before_count)
+void add_sampler(std::string name, std::string before, int before_count)
 {
 #ifdef BDSDEBUG 
   std::cout<<"inserting sampler before "<<before<<"["<<before_count<<"]"<<std::endl;
@@ -446,7 +444,7 @@ void add_sampler(char *name, char *before, int before_count)
   e.name = name;
   e.lst = nullptr;
 
-  std::list<struct Element>::iterator it = beamline_list.find(std::string(before),before_count);
+  std::list<struct Element>::iterator it = beamline_list.find(before,before_count);
   if (it==beamline_list.end()) {
     std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
     exit(1);
@@ -454,7 +452,7 @@ void add_sampler(char *name, char *before, int before_count)
   beamline_list.insert(it,e);
 }
 
-void add_csampler(char *name, char *before, int before_count, double length, double rad)
+void add_csampler(std::string name, std::string before, int before_count, double length, double rad)
 {
 #ifdef BDSDEBUG 
   std::cout<<"inserting csampler before "<<before<<"["<<before_count<<"]"<<std::endl;
@@ -467,7 +465,7 @@ void add_csampler(char *name, char *before, int before_count, double length, dou
   e.name = name;
   e.lst = nullptr;
 
-  std::list<struct Element>::iterator it = beamline_list.find(std::string(before),before_count);
+  std::list<struct Element>::iterator it = beamline_list.find(before,before_count);
   if (it==beamline_list.end()) {
     std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
     exit(1);
@@ -475,7 +473,7 @@ void add_csampler(char *name, char *before, int before_count, double length, dou
   beamline_list.insert(it,e);
 }
 
-void add_dump(char *name, char *before, int before_count)
+void add_dump(std::string name, std::string before, int before_count)
 {
 #ifdef BDSDEBUG 
   std::cout<<"inserting dump before "<<before<<"["<<before_count<<"]"<<std::endl;
@@ -486,7 +484,7 @@ void add_dump(char *name, char *before, int before_count)
   e.name = name;
   e.lst = nullptr;
 
-  std::list<struct Element>::iterator it = beamline_list.find(std::string(before),before_count);
+  std::list<struct Element>::iterator it = beamline_list.find(before,before_count);
   if (it==beamline_list.end()) {
     std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
     exit(1);
@@ -494,9 +492,9 @@ void add_dump(char *name, char *before, int before_count)
   beamline_list.insert(it,e);
 }
 
-void add_gas(const char *name, const char *before, int before_count, std::string material)
+void add_gas(std::string name, std::string before, int before_count, std::string material)
 {
-  printf("gas %s will be inserted into %s number %d\n",material.c_str(),before,before_count);
+  std::cout << "gas " << material << " will be inserted into " << before << " number " << before_count << std::endl;
   struct Element e;
   e.type = ElementType::_GAS;
   e.name = name;
@@ -517,17 +515,41 @@ void add_tunnel(Tunnel& tunnel)
   tunnel_list.push_back(t);
 }
 
-double property_lookup(ElementList& el_list, char *element_name, char *property_name)
+double property_lookup(ElementList& el_list, std::string element_name, std::string property_name)
 {
-   std::list<struct Element>::iterator it = el_list.find(std::string(element_name));
-   std::list<struct Element>::const_iterator iterEnd = el_list.end();
+  std::list<struct Element>::iterator it = el_list.find(element_name);
+  std::list<struct Element>::const_iterator iterEnd = el_list.end();
 
-   if(it == iterEnd) {
-     std::cerr << "parser.h> Error: unknown element \"" << element_name << "\". Returning 0." << std::endl; 
-     exit(1);
-   }
+  if(it == iterEnd) {
+    std::cerr << "parser.h> Error: unknown element \"" << element_name << "\". Returning 0." << std::endl; 
+    exit(1);
+  }
 
-   return (*it).property_lookup(property_name);
+  return (*it).property_lookup(property_name);
+}
+
+void add_element_temp(std::string name, int number, bool pushfront, ElementType linetype)
+{
+#ifdef BDSDEBUG
+  std::cout << "matched sequence element, " << name;
+  if (number > 1) std::cout << " * " << number;
+  std::cout << std::endl;
+#endif
+  // add to temporary element sequence
+  struct Element e;
+  e.name = name;
+  e.type = linetype;
+  e.lst = nullptr;
+  if (pushfront) {
+    for(int i=0;i<number;i++) {
+      tmp_list.push_front(e);
+    }
+  }
+  else {
+    for(int i=0;i<number;i++) {
+      tmp_list.push_back(e);
+    }
+  }
 }
 
 // ******************************************************
