@@ -21,8 +21,11 @@ option, ngenerate=100,
 	checkOverlaps=1,
 	elossHistoBinWidth=10*cm;
 
+! note buildTunnelStraight=0 means it will follow the beam line
+! this is the straight case
+
 option, buildTunnel=1,
-	buildTunnelStraight=1,
+	buildTunnelStraight=0,
 	tunnelType="circular",
 	tunnelThickness=1*m,
 	tunnelSoilThickness=5*m,
