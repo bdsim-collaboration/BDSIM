@@ -14,10 +14,10 @@
 
 BDSTunnelBuilder::BDSTunnelBuilder()
 {
-  displacementTolerance = 50  * CLHEP::cm;   // maximum displacemenet of beamline before split
-  maxItems              = 50;                // maximum number of items before split
-  maxLength             = 50  * CLHEP::m;    // maximum length of tunnel segment
-  maxAngle              = 1000 * CLHEP::mrad; // maximum angle before split
+  displacementTolerance = 50 * CLHEP::cm;   // maximum displacemenet of beamline before split
+  maxItems              = 50;               // maximum number of items before split
+  maxLength             = 50 * CLHEP::m;    // maximum length of tunnel segment
+  maxAngle              = 50 * CLHEP::mrad; // maximum angle before split
 }
 
 BDSTunnelBuilder::~BDSTunnelBuilder()
