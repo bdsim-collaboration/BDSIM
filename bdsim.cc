@@ -140,9 +140,9 @@ int main(int argc,char** argv)
   static G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Default geometry tolerances: surface " 
-	 << theGeometryTolerance->GetSurfaceTolerance() << " mm " 
+	 << theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m << " m " 
 	 << theGeometryTolerance->GetAngularTolerance() << " rad " 
-	 << theGeometryTolerance->GetRadialTolerance()  << " mm" << G4endl;
+	 << theGeometryTolerance->GetRadialTolerance()/CLHEP::m  << " m" << G4endl;
 #endif
   // This sets the tolerances for the geometry (1e-11 times this value)
   // Note, this doesn't actually have any affect on the size of the geometry,
