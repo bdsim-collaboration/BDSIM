@@ -143,16 +143,21 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 				   cumulativeDisplacementX,
 				   cumulativeDisplacementY);
       G4bool isEnd     = (it == (flatBeamline->end() - 1));
-#ifdef BDSDEBUG
+      // remember end points to just after the last element, not the last element itself
+
       if (isEnd)
-	{G4cout << "End of beam line - forcing break in tunnel" << G4endl;}
+	{
+	  endElement = it;
+#ifdef BDSDEBUG
+	  G4cout << "End of beam line - forcing break in tunnel" << G4endl;
+	  G4cout << "End element for tunnel set to: " << (*endElement)->GetPlacementName() << G4endl;
 #endif
+	}
+
       G4bool nextItemIsSampler = IsASampler(it);
 #ifdef BDSDEBUG
-      if (nextItemIsSampler)
-	{G4cout << __METHOD_NAME__ << "it's a sampler - break the tunnel around it" << G4endl;}
+      if (nextItemIsSampler){G4cout << __METHOD_NAME__ << "it's a sampler - break the tunnel around it" << G4endl;}
 #endif
-
       // it if matches any of the conditions, break the tunnel here (BEFORE) the item
       // pointed to by (*it)
       
@@ -324,13 +329,26 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 	  cumulativeNItems   = 0;
 	  cumulativeDisplacementX = 0;
 	  cumulativeDisplacementY = 0;
-	  startElement       = endElement; 
-	  startElement++; // next segment will begin where this one finishes
-	  previousEndElement = startElement; // (copy startElement) mark the end of this element as the prevous end
-	  if (nextItemIsSampler)
-	    { // skip the sampler - ie no tunnel around it
-	      startElement++;
-	      previousEndElement++;
+	  if (!isEnd)
+	    {
+#ifdef BDSDEBUG
+	      G4cout << __METHOD_NAME__ << "previous tunnel start element: " << (*startElement)->GetPlacementName() << G4endl;
+#endif
+	      startElement       = endElement;   // copy iterator
+	      previousEndElement = startElement; // (copy startElement) mark the end of this element as the prevous end
+	      startElement++;                    // next segment will begin where this one finishes
+#ifdef BDSDEBUG
+	      G4cout << __METHOD_NAME__ << "semi new start element: " << (*startElement)->GetPlacementName() << G4endl;
+#endif
+	      if (nextItemIsSampler)
+		{ // skip the sampler - ie no tunnel around it
+		  startElement++;
+		  previousEndElement++;
+		}
+#ifdef BDSDEBUG
+	  G4cout << __METHOD_NAME__ << "new start element: " << (*startElement)->GetPlacementName() << G4endl;
+	  G4cout << __METHOD_NAME__ << "new previous end element: " << (*previousEndElement)->GetPlacementName() << G4endl;
+#endif
 	    }
 	}
       else
