@@ -67,7 +67,7 @@ extern Options options;
 int main(int argc,char** argv)
 {
   // print header
-  G4cout<<"bdsim : version 0.8"<<G4endl;
+  G4cout<<"bdsim : version 0.8.develop"<<G4endl;
   G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
   G4cout<<"        http://www.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BdSim"<<G4endl;
   G4cout<<G4endl;
@@ -132,13 +132,9 @@ int main(int argc,char** argv)
     runManager->SetUserInitialization(physList);
   }
   else { 
-    BDSPhysicsList        *physList=new BDSPhysicsList;  
+    BDSPhysicsList        *physList = new BDSPhysicsList;  
     runManager->SetUserInitialization(physList);
   }
-  
-#ifdef BDSDEBUG 
-  G4cout<< __FUNCTION__ << "> User init phys list"<<G4endl;
-#endif
 
   // Set the geometry tolerance
   static G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
