@@ -14,7 +14,7 @@ class BDSTunnelSD;
  * need only be instantiated once and attached to the relevant
  * volume. More factorised geometry construction will mean
  * SDs will be assigned in construction and not in detector
- * construciton afterwards as a post processing step. This 
+ * construction afterwards as a post processing step. This 
  * instantiates all necessary SDs and holds them.
  * 
  * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>

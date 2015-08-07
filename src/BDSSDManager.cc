@@ -25,12 +25,7 @@ BDSSDManager* BDSSDManager::Instance()
 
 BDSSDManager::~BDSSDManager()
 {
-  delete samplerPlane;
-  delete samplerCylinder;
-  delete terminator;
-  delete eCounterOnAxisRO;
-  delete tunnelOnAxisRO;
-
+  // no need to delete SD's as they are all registered in G4SDManager
   _instance = 0;
 }
 
