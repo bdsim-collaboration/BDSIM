@@ -19,6 +19,7 @@ Contents:
    output
    output_analysis
    python_modules
+   robdsim
    visualisation
    examples/examples
    support
