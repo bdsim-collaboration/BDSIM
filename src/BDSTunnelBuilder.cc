@@ -219,22 +219,26 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 	  // calculate length
 	  G4double segmentLength = (endPoint - startPoint).mag() - 1*CLHEP::um; // -1um purely for safety purposes
 
-	  // decide whether angled or not
-	  G4bool isAngled = BDS::IsFinite(cumulativeAngle);
-
+	  // test if angled by comparing unit z vector at beginning and end
+	  // this works in 3d.
+	  G4ThreeVector unitZStart = G4ThreeVector(0,0,1).transform(*startRot);
+	  G4ThreeVector unitZEnd   = G4ThreeVector(0,0,1).transform(*endRot);
+	  G4ThreeVector unitZDiff  = unitZEnd - unitZStart;
+	  G4bool isAngled          = unitZDiff.mag() > 1e-30;
+	  
 #ifdef BDSDEBUG
-	  // __METHOD_NAME__ doesn't seem to work properly with pair return
-	  G4cout << "BDSTunnelBuilder::BuildTunnelAndSupports> determined tunnel segment to have the following parameters:" << G4endl;
-	  G4cout << "Start element name:   " << (*startElement)->GetPlacementName() << G4endl;
-	  G4cout << "End element name:     " << (*endElement)->GetPlacementName()   << G4endl;
-	  G4cout << "Start point (global): " << startPoint                          << G4endl;
-	  G4cout << "End point (global):   " << endPoint                            << G4endl;
-	  G4cout << "Has a finite angle:   " << isAngled                            << G4endl;
-	  G4cout << "Section length:       " << segmentLength                       << G4endl;
-	  G4cout << "Total angle:          " << cumulativeAngle                     << G4endl;
-	  G4cout << "Rotation start:       " << *startRot                           << G4endl;
-	  G4cout << "Rotation middle:      " << *rotationMiddle                     << G4endl;
-	  G4cout << "Rotation end:         " << *endRot                             << G4endl;
+	  G4cout << __METHOD_NAME__ << "determined tunnel segment to have the following parameters:" << G4endl;
+	  G4cout << "Start element name:      " << (*startElement)->GetPlacementName() << G4endl;
+	  G4cout << "End element name:        " << (*endElement)->GetPlacementName()   << G4endl;
+	  G4cout << "Start point (global):    " << startPoint                          << G4endl;
+	  G4cout << "End point (global):      " << endPoint                            << G4endl;
+	  G4cout << "Input and output unit Z: " << unitZStart << " " << unitZEnd << G4endl;
+	  G4cout << "Has a finite angle:      " << isAngled                            << G4endl;
+	  G4cout << "Section length:          " << segmentLength                       << G4endl;
+	  G4cout << "Total angle:             " << cumulativeAngle                     << G4endl;
+	  G4cout << "Rotation start:          " << *startRot                           << G4endl;
+	  G4cout << "Rotation middle:         " << *rotationMiddle                     << G4endl;
+	  G4cout << "Rotation end:            " << *endRot                             << G4endl;
 #endif
 	  
 	  // create tunnel segment
@@ -334,41 +338,53 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 	    {
 #ifdef BDSDEBUG
 	      G4cout << __METHOD_NAME__ << "previous tunnel start element: " << (*startElement)->GetPlacementName() << G4endl;
+	      G4cout << __METHOD_NAME__ << "previous tunnel end element:   " << (*endElement)->GetPlacementName()   << G4endl;
 #endif
-	      startElement       = endElement;   // copy iterator
-	      previousEndElement = startElement; // (copy startElement) mark the end of this element as the prevous end
+	      previousEndElement = endElement;   // (copy endElement) mark the end of this element as the prevous end
+	      startElement       = endElement;   // copy end element iterator
 	      startElement++;                    // next segment will begin where this one finishes
 #ifdef BDSDEBUG
-	      G4cout << __METHOD_NAME__ << "semi new start element: " << (*startElement)->GetPlacementName() << G4endl;
+	      G4cout << __METHOD_NAME__ << "new start element: " << (*startElement)->GetPlacementName() << G4endl;
 #endif
 	      if (nextItemIsSampler)
 		{ // skip the sampler - ie no tunnel around it
+#ifdef BDSDEBUG
+		  G4cout << __METHOD_NAME__ << "next item a sampler - skipping over it" << G4endl;
+#endif
 		  startElement++;
 		  previousEndElement++;
 		}
 #ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << "new start element: " << (*startElement)->GetPlacementName() << G4endl;
-	  G4cout << __METHOD_NAME__ << "new previous end element: " << (*previousEndElement)->GetPlacementName() << G4endl;
+	  G4cout << __METHOD_NAME__ << "new tunnel start element: " << (*startElement)->GetPlacementName() << G4endl;
+	  G4cout << __METHOD_NAME__ << "new tunnel previous end element: " << (*previousEndElement)->GetPlacementName() << G4endl;
 #endif
 	    }
-	}
+	} // end of scope of if (break section)
       else
 	{
 	  // else: don't break the tunnel here, move on to next element
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << "moving to next item in beamline" << G4endl;
 #endif
-	  G4double length   = (*it)->GetAcceleratorComponent()->GetChordLength();
-	  G4double angle    = (*it)->GetAcceleratorComponent()->GetAngle();
-	  cumulativeLength += length;
-	  cumulativeAngle  += angle;
-	  cumulativeDisplacementX += sin(angle) * length;
-	  //cumulativeDisplacementY += 0; // currently ignore possibility of vertical bend
-	  //would still use angle, but would need to involve tilt and rotation axes
-	  cumulativeNItems += 1;
 	  endElement++; // advance the potential end element iterator
 	}
-    }
+      
+      // accumulate angle and position
+      G4double length   = (*it)->GetAcceleratorComponent()->GetChordLength();
+      G4double angle    = (*it)->GetAcceleratorComponent()->GetAngle();
+      cumulativeLength += length;
+      cumulativeAngle  += angle;
+      cumulativeDisplacementX += sin(angle) * length;
+      //cumulativeDisplacementY += 0; // currently ignore possibility of vertical bend
+      //would still use angle, but would need to involve tilt and rotation axes
+      cumulativeNItems += 1;
+#ifdef BDSDEBUG
+      G4cout << "cumulative length:       " << cumulativeLength        << G4endl;
+      G4cout << "cumulative angle:        " << cumulativeAngle         << G4endl;
+      G4cout << "cumulative displacement: " << cumulativeDisplacementX << G4endl;
+      G4cout << "cumulative # items       " << cumulativeNItems        << G4endl;
+#endif
+    } // for loop scope end
   return tunnelLine;
 }
 
