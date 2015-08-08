@@ -121,20 +121,20 @@ BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSection(G4String     
 
       // placement vector for floor - assinging default 0,0,0 in base class
       floorDisplacement = G4ThreeVector(0, -(tunnelFloorOffset + floorThickness*0.5), 0);
-      floorSolid = new G4Box(name + "_floor_solid",      // name
-			     tunnel1,                    // x half width
-			     floorThickness*0.5,         // y half width
-			     0.5*length - lengthSafety); // z half width
+      floorSolid = new G4Box(name + "_floor_solid",             // name
+			     tunnel1 - lengthSafety,            // x half width
+			     floorThickness*0.5 - lengthSafety, // y half width
+			     0.5*length - lengthSafety);        // z half width
       
-      G4double tunnelContInnerYRadius = tunnel2 - 0.5*floorThickness;
+      G4double tunnelContInnerYRadius = tunnel2 - 0.5*floorThickness - lengthSafety;
       
       containerSolidInner = new G4Box(name + "_tunnel_cont_solid_inner", // name
 				      tunnel1,                           // x radius
 				      tunnelContInnerYRadius,            // y radius
-				      length*0.5);
+				      length); // long z for unambiguous subtraction
 
       // offset the centre cut out by the difference between the vertical half widths of tunnel2 and tunnel2+floor
-      contInsideDisplacement = G4ThreeVector(0, tunnel2-floorThickness, 0); 
+      contInsideDisplacement = G4ThreeVector(0, floorThickness*0.5, 0); 
     }
   else
     {
@@ -261,9 +261,10 @@ BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSectionAngled(G4Strin
   G4VSolid* containerSolidOuter = new G4Box(name + "_container_outer_solid", // name
 					    containerX,                      // x half width
 					    containerY,                      // y half width
-					    length*0.5);                     // z half width
+					    length); // z long for unambiguous intersection later
   G4ThreeVector contInsideDisplacement;
-  G4VSolid*     containerSolidInner = nullptr;
+  G4VSolid*     containerSolidInner  = nullptr;
+  G4VSolid*     containerSolidSquare = nullptr;
 
   solidsToBeRegistered.push_back(containerSolidOuter);
   
@@ -291,28 +292,29 @@ BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSectionAngled(G4Strin
       containerSolidInner = new G4Box(name + "_tunnel_cont_solid_inner", // name
 				      tunnel1,                           // x radius
 				      tunnelContInnerYRadius,            // y radius
-				      length);
+				      2*length); // z long for unambiguous subtraction
       
       // offset the centre cut out by the difference between the vertical half widths of tunnel2 and tunnel2+floor
-      contInsideDisplacement = G4ThreeVector(0, tunnelContInnerYRadius - tunnel2, 0); 
+      contInsideDisplacement = G4ThreeVector(0, -(tunnelContInnerYRadius - tunnel2), 0); 
     }
   else
     {      
       containerSolidInner = new G4Box(name + "_tunnel_cont_solid_inner", // name
 				      tunnel1,                           // x radius
 				      tunnel2,                           // y radius
-				      length); // z half length - long for unambiguous subtraction
+				      2*length); // z half length - long for unambiguous subtraction
       contInsideDisplacement = G4ThreeVector(0,0,0);
     }
 
-  containerSolid = new G4SubtractionSolid(name + "_container_solid", // name
-					  containerSolidOuter,       // this
-					  containerSolidInner,       // minus this
-					  0,                         // rotate by this
-					  contInsideDisplacement);
+  containerSolidSquare = new G4SubtractionSolid(name + "_container_square_solid", // name
+						containerSolidOuter,              // this
+						containerSolidInner,              // minus this
+						0,                                // rotate by this
+						contInsideDisplacement);          // with this displacment
 
-  G4double radius = std::max(containerX, containerY);
-  BuildReadOutVolumeAngled(name, length, radius, inputFace, outputFace);
+  containerSolid = new G4IntersectionSolid(name + "_container_solid", // name
+					   containerSolidSquare,
+					   faceSolid);
   
   CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerX,
 		     containerY, visible, inputFace, outputFace);
