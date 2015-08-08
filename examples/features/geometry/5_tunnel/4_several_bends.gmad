@@ -1,8 +1,12 @@
-d1: drift, l=20*m;
-c1: rcol, l=1*m, xsize=1*mm, ysize=1*mm, offsetX=5*mm, offsetY=3*mm, material="copper";
+d1: drift, l=10*m;
+s1: sbend, l=3*m, angle=0.1;
+s2: sbend, l=3*m, angle=0.2;
+c1: rcol, l=1*m, xsize=2*mm, ysize=2*mm, material="copper";
 endoftheline: marker;
 
-l1: line = (d1, c1, d1, endoftheline);
+sector: line = (d1,s1,d1,s1,d1);
+antisector: line = (d1,s2,d1,s2,d1,s2,d1);
+l1: line = (sector, c1, sector, endoftheline);
 use,period=l1;
 
 !sample, range=endoftheline;
@@ -21,8 +25,10 @@ option, ngenerate=1,
 	checkOverlaps=1,
 	elossHistoBinWidth=10*cm;
 
+! note buildTunnelStraight=0 means it will follow the beam line
+
 option, buildTunnel=1,
-	buildTunnelStraight=1,
+	buildTunnelStraight=0,
 	tunnelType="circular",
 	tunnelThickness=1*m,
 	tunnelSoilThickness=5*m,
@@ -30,8 +36,8 @@ option, buildTunnel=1,
 	soilMaterial="soil",
 	buildTunnelFloor=1,
 	tunnelFloorOffset=1.2*m,
-	tunnelAper1=5*m,
-	tunnelAper2=3*m,
+	tunnelAper1=3*m,
+	tunnelAper2=12*m,
 	tunnelSensitive=1,
 	tunnelVisible=1,
 	tunnelOffsetX=0.4*m,

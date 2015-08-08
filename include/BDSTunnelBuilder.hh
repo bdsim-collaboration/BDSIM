@@ -49,6 +49,9 @@ private:
 
   /// Maximum angle before split.
   G4double maxAngle;
+
+  /// Minimum length to angle ratio to allow a split.
+  G4double minLength;
 };
 
 
