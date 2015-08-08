@@ -14,10 +14,11 @@
 
 BDSTunnelBuilder::BDSTunnelBuilder()
 {
-  displacementTolerance = 50 * CLHEP::cm;   // maximum displacemenet of beamline before split
-  maxItems              = 50;               // maximum number of items before split
-  maxLength             = 50 * CLHEP::m;    // maximum length of tunnel segment
-  maxAngle              = 50 * CLHEP::mrad; // maximum angle before split
+  displacementTolerance = 50 * CLHEP::cm;    // maximum displacemenet of beamline before split
+  maxItems              = 50;                // maximum number of items before split
+  maxLength             = 50 * CLHEP::m;     // maximum length of tunnel segment
+  maxAngle              = 100 * CLHEP::mrad; // maximum angle before split
+  minLength             = 4000;              // minimum length
 }
 
 BDSTunnelBuilder::~BDSTunnelBuilder()
@@ -53,6 +54,15 @@ G4bool BDSTunnelBuilder::BreakTunnel(G4double cumulativeLength,
 
   result = lengthTest || angleTest || nItemsTest || dispXTest || dispYTest;
 
+  // ensure that it's not too sharp a turn
+  G4bool   lengthTestFail      = cumulativeLength < minLength;
+
+  if (lengthTestFail && result)
+    {
+      // result is positive -> split tunnel, but too short - continue to increase length
+      result = false;
+    }
+
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "testing cumulative parameters" << G4endl;
   G4cout << "Cumulative Length (mm):    " << cumulativeLength << " > " << maxLength << " test-> " << lengthTest << G4endl;
@@ -62,6 +72,7 @@ G4bool BDSTunnelBuilder::BreakTunnel(G4double cumulativeLength,
 	 << " test-> " << dispXTest << G4endl;
   G4cout << "Cumulative displacement Y: " << cumulativeDisplacementY << " > " << displacementTolerance
 	 << " test-> " << dispYTest << G4endl;
+  G4cout << "Length:                    " << cumulativeLength << " < " << minLength << " test-> " << lengthTestFail << G4endl;
   G4cout << "Result:                    " << result << G4endl;
 #endif
   return result;
