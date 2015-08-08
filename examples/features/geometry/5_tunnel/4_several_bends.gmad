@@ -6,12 +6,12 @@ endoftheline: marker;
 
 sector: line = (d1,s1,d1,s1,d1);
 antisector: line = (d1,s2,d1,s2,d1,s2,d1);
-l1: line = (sector, c1, antisector, endoftheline);
+l1: line = (sector, c1, sector, endoftheline);
 use,period=l1;
 
 !sample, range=endoftheline;
 
-option, ngenerate=100,
+option, ngenerate=1,
 !	physicsList="QGSP_BERT",
 	physicsList="hadronic em QGSP_BERT",
 !	physicsList="em_standard",

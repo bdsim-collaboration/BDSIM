@@ -1,14 +1,15 @@
 d1: drift, l=20*m;
 s1: sbend, l=3*m, angle=0.1;
 c1: rcol, l=1*m, xsize=2*mm, ysize=2*mm, material="copper";
+d2: drift, l=34.692*m;
 endoftheline: marker;
 
-l1: line = (d1, s1, d1, c1, d1, d1, d1, endoftheline);
+l1: line = (d1, s1, d1, c1, d1, d1, d1, d2, d2, endoftheline);
 use,period=l1;
 
 !sample, range=endoftheline;
 
-option, ngenerate=100,
+option, ngenerate=1,
 !	physicsList="QGSP_BERT",
 	physicsList="hadronic em QGSP_BERT",
 !	physicsList="em_standard",
