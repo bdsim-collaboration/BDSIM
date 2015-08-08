@@ -56,9 +56,11 @@ G4bool BDSTunnelBuilder::BreakTunnel(G4double cumulativeLength,
 
   // ensure that it's not too sharp a turn
   G4bool   lengthTestFail      = cumulativeLength < minLength;
-
-  if (lengthTestFail && result)
+  G4bool   angleIsFinite       = BDS::IsFinite(cumulativeAngle);
+  
+  if (lengthTestFail && result && angleIsFinite)
     {
+      // only in the case of bent items
       // result is positive -> split tunnel, but too short - continue to increase length
       result = false;
     }
@@ -148,6 +150,11 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
   // iterate over beam line and build tunnel segments
   for (; it != flatBeamline->end(); ++it)
     {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "iterator at:       " << (*it)->GetPlacementName()           << G4endl;
+      G4cout << __METHOD_NAME__ << "start iterator at: " << (*startElement)->GetPlacementName() << G4endl;
+      G4cout << __METHOD_NAME__ << "end iterator at:   " << (*endElement)->GetPlacementName()   << G4endl;
+#endif
       G4bool breakIt = BreakTunnel(cumulativeLength,
 				   cumulativeAngle,
 				   cumulativeNItems,
@@ -167,9 +174,14 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 	}
 
       G4bool nextItemIsSampler = IsASampler(it);
+
+      if (nextItemIsSampler)
+	{
 #ifdef BDSDEBUG
-      if (nextItemIsSampler){G4cout << __METHOD_NAME__ << "it's a sampler - break the tunnel around it" << G4endl;}
+	  G4cout << __METHOD_NAME__ << "it's a sampler - break the tunnel around it" << G4endl;
 #endif
+	  endElement--; // decrement the end element to avoid the sampler
+	}
       // it if matches any of the conditions, break the tunnel here (BEFORE) the item
       // pointed to by (*it)
       
@@ -196,11 +208,6 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 	  G4RotationMatrix* endRot         = new G4RotationMatrix(*(*endElement)->GetReferenceRotationEnd());
 	  G4ThreeVector endOffsetGlobal    = endOffsetLocal.transform(*endRot);
 	  endPoint                        += endOffsetGlobal;
-	  if (isEnd && (!BDSExecOptions::Instance()->GetCircular()))
-	    { // add a few metres on to clear the beam line
-	      endPoint += G4ThreeVector(0,0,5000).transform(*endRot);
-	    }
-	      
 
 	  G4double sStart = (*startElement)->GetSPositionStart();
 	  G4double sEnd   = (*endElement)->GetSPositionEnd();
@@ -364,6 +371,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 #endif
 		  startElement++;
 		  previousEndElement++;
+		  endElement = startElement; // end elmeent has to start at at least the 1st element
 		}
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << "new tunnel start element: " << (*startElement)->GetPlacementName() << G4endl;
@@ -381,8 +389,8 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 	}
       
       // accumulate angle and position
-      G4double length   = (*it)->GetAcceleratorComponent()->GetChordLength();
-      G4double angle    = (*it)->GetAcceleratorComponent()->GetAngle();
+      G4double length   = (*startElement)->GetAcceleratorComponent()->GetChordLength();
+      G4double angle    = (*startElement)->GetAcceleratorComponent()->GetAngle();
       cumulativeLength += length;
       cumulativeAngle  += angle;
       cumulativeDisplacementX += sin(angle) * length;
