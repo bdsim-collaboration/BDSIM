@@ -150,7 +150,8 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 	  endElement = it;
 #ifdef BDSDEBUG
 	  G4cout << "End of beam line - forcing break in tunnel" << G4endl;
-	  G4cout << "End element for tunnel set to: " << (*endElement)->GetPlacementName() << G4endl;
+	  G4cout << "End element for tunnel set to: " << (*endElement)->GetPlacementName()   << G4endl;
+	  G4cout << "Start element is:              " << (*startElement)->GetPlacementName() << G4endl;
 #endif
 	}
 
