@@ -101,7 +101,8 @@ int main(int argc,char** argv)
   BDSRandom::SetSeed(); // set the seed from options or from exec options
   if (execOptions->SetSeedState()) //optionally load the seed state from file
     {BDSRandom::LoadSeedState(execOptions->GetSeedStateFilename());}
-  BDSRandom::WriteSeedState(); //write the current state once set / loaded
+  if (BDSExecOptions::Instance()->GetOutputFormat() != BDSOutputFormat::none)
+    {BDSRandom::WriteSeedState();} //write the current state once set / loaded
 
   // instantiate the specific type of bunch distribution (class),
   // get the corresponding parameters from the gmad parser info
