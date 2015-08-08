@@ -124,3 +124,18 @@ How to run::
 
 .. figure:: 7_long_arc.png
 	    :width: 70%
+
+8_samplers.gmad
+---------------
+
+This examples is roughly based on `7_long_arc.gmad`_ (similar in form but not exactly) with the addition of
+samplers on every element, including a marker at the end as well as a superfluous one at the beginning. The
+tunnel geometry should break around these samplers leaving a 1 :math:`\mu m` gap to avoid geometrical
+overlaps.
+
+How to run::
+
+  bdsim --file=8_samplers.gmad
+
+.. figure:: 8_samplers.png
+	    :width: 70%
