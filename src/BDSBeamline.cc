@@ -493,14 +493,14 @@ void BDSBeamline::UpdateExtents(BDSBeamlineElement* element)
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << "start position (global):       " << referencePositionStart << G4endl;
   G4cout << "end position (global):         " << referencePositionEnd   << G4endl;
-  G4cout << "local extent +ve:              " << eP      << G4endl;
-  G4cout << "local extent -ve:              " << eN      << G4endl;
-  G4cout << "extent +ve at start in global: " << ePStart << G4endl;
-  G4cout << "extent -ve at start in global: " << eNStart << G4endl;
-  G4cout << "extent +ve at end in global:   " << ePEnd   << G4endl;
-  G4cout << "extent -ve at end in global:   " << eNEnd   << G4endl;
-  G4cout << "current global extent +ve:     " << maximumExtentPositive << G4endl;
-  G4cout << "current global extent -ve:     " << maximumExtentNegative << G4endl;
+  G4cout << "local extent +ve:              " << eP                     << G4endl;
+  G4cout << "local extent -ve:              " << eN                     << G4endl;
+  G4cout << "extent +ve at start in global: " << ePStart                << G4endl;
+  G4cout << "extent -ve at start in global: " << eNStart                << G4endl;
+  G4cout << "extent +ve at end in global:   " << ePEnd                  << G4endl;
+  G4cout << "extent -ve at end in global:   " << eNEnd                  << G4endl;
+  G4cout << "current global extent +ve:     " << maximumExtentPositive  << G4endl;
+  G4cout << "current global extent -ve:     " << maximumExtentNegative  << G4endl;
 #endif
   
   // loop over each size and compare to cumulative extent
@@ -520,6 +520,12 @@ void BDSBeamline::UpdateExtents(BDSBeamlineElement* element)
 	{maximumExtentPositive[i] = extentposEnd[i];}
       if (extentnegEnd[i] < maximumExtentNegative[i])
 	{maximumExtentNegative[i] = extentnegEnd[i];}
+    }
+  // end comparing negative extents with positive world just in case
+  for (int i=0; i<3; i++)
+    {
+      if (extentnegEnd[i] > maximumExtentPositive[i])
+	{maximumExtentPositive[i] = extentnegEnd[i];}
     }
 #ifdef BDSDEBUG
   G4cout << "new global extent +ve:         " << maximumExtentPositive << G4endl;
