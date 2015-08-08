@@ -26,7 +26,7 @@ BDSTunnelFactoryBase::BDSTunnelFactoryBase():
   intersectionSolid(nullptr), readOutSolid(nullptr),
   containerLV(nullptr), tunnelLV(nullptr), soilLV(nullptr), floorLV(nullptr),
   readOutLV(nullptr), floorDisplacement(G4ThreeVector(0,0,0)),
-  cumulativeAngle(0)
+  cumulativeAngle(0), readOutRadius(0)
 {
   // use large length safety for tunnel construction to avoid stuck particles
   // will not make difference to tracking so is acceptable to have 1um gap.
@@ -140,6 +140,29 @@ void BDSTunnelFactoryBase::CommontTestInputParameters(G4double&    length,
     {tunnelSoilMaterial = defaultModel->soilMaterial;}
 }
 
+void BDSTunnelFactoryBase::CommonConstruction(G4String      name,
+					      G4Material*   tunnelMaterial,
+					      G4Material*   tunnelSoilMaterial,
+					      G4double      length,
+					      G4double      containerXRadius,
+					      G4double      containerYRadius,
+					      G4bool        visible,
+					      G4ThreeVector inputFace,
+					      G4ThreeVector outputFace)
+
+{
+  readOutRadius = std::max(containerXRadius, containerYRadius);
+  BuildReadOutVolumeAngled(name, length, readOutRadius, inputFace, outputFace);
+  BuildLogicalVolumes(name, tunnelMaterial, tunnelSoilMaterial);
+  SetVisAttributes(visible);
+  SetUserLimits(length);
+  PlaceComponents(name);
+  PrepareGeometryComponent(containerXRadius, containerYRadius, 0.5*length);
+  SetSensitiveVolumes();
+  PrepareTunnelSection(name, length);
+}
+
+
 void BDSTunnelFactoryBase::CommonConstruction(G4String    name,
 					      G4Material* tunnelMaterial,
 					      G4Material* tunnelSoilMaterial,
@@ -149,6 +172,8 @@ void BDSTunnelFactoryBase::CommonConstruction(G4String    name,
 					      G4bool      visible)
 
 {
+  readOutRadius = std::max(containerXRadius, containerYRadius);
+  BuildReadOutVolumeStraight(name, length, readOutRadius);
   BuildLogicalVolumes(name, tunnelMaterial, tunnelSoilMaterial);
   SetVisAttributes(visible);
   SetUserLimits(length);
@@ -235,8 +260,8 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
     }
 }
 
-void BDSTunnelFactoryBase::PrepareGeometryComponent(G4double containerXRadius,
-						    G4double containerYRadius,
+void BDSTunnelFactoryBase::PrepareGeometryComponent(G4double /*containerXRadius*/,
+						    G4double /*containerYRadius*/,
 						    G4double containerZRadius)
 {
   // prepare final object and register logical volumes
@@ -252,8 +277,13 @@ void BDSTunnelFactoryBase::PrepareGeometryComponent(G4double containerXRadius,
   tunnelComponent->RegisterUserLimits(userLimitsToBeRegistered);
 
   // record extents
-  tunnelComponent->SetExtentX(std::make_pair(-containerXRadius, containerXRadius));
-  tunnelComponent->SetExtentY(std::make_pair(-containerYRadius, containerYRadius));
+  // use the read out geometry for the limits as it's the maximum of x and y
+  // in radius. The read out world is a duplicate of the real mass world so
+  // we fiddle the extents here as the extents of the read out don't exist and
+  // this is relatively safe as nothing will be placed against the outside edge
+  // of the soil.
+  tunnelComponent->SetExtentX(std::make_pair(-readOutRadius, readOutRadius));
+  tunnelComponent->SetExtentY(std::make_pair(-readOutRadius, readOutRadius));
   tunnelComponent->SetExtentZ(std::make_pair(-containerZRadius, containerZRadius));
 }
 
@@ -356,6 +386,7 @@ void BDSTunnelFactoryBase::TidyUp()
   readOutLV         = nullptr;
   floorDisplacement = G4ThreeVector(0,0,0);
   cumulativeAngle   = 0;
+  readOutRadius     = 0;
   solidsToBeRegistered.clear();
   visAttributesToBeRegistered.clear();
   userLimitsToBeRegistered.clear();
