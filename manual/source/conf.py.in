@@ -204,8 +204,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'BDSIM.tex', u'BDSIM Documentation',
-   r'L. Nevay S. Boogert L. Deacon \\ H. Garcia-Morales J. Snuverink',
+  ('index', 'BDSIM.tex', u'BDSIM Documentation', 'BDSIM Collaboration',
    'manual'),
 ]
 
@@ -250,7 +249,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'BDSIM', u'BDSIM Documentation',
-   u'L. Nevay, S. Boogert, L. Deacon, H. Garcia-Morales, J. Snuverink', 'BDSIM', 'One line description of project.',
+   u'BDSIM Collaboration', 'BDSIM', 'Beam Delivery Simluation - automatic Geant4 simluation of an accelerator',
    'Miscellaneous'),
 ]
 
@@ -271,9 +270,9 @@ texinfo_documents = [
 
 # Bibliographic Dublin Core info.
 epub_title = u'BDSIM'
-epub_author = u'L. Nevay, S. Boogert, L. Deacon, H. Garcia-Morales, J. Snuverink'
-epub_publisher = u'L. Nevay, S. Boogert, L. Deacon, H. Garcia-Morales, J. Snuverink'
-epub_copyright = u'2015, L. Nevay, S. Boogert, L. Deacon, H. Garcia-Morales, J. Snuverink'
+epub_author = u'BDSIM Collaboration'
+epub_publisher = u'BDSIM Collaboration'
+epub_copyright = u'BDSIM Collaboration'
 
 # The basename for the epub file. It defaults to the project name.
 #epub_basename = u'BDSIM'
