@@ -683,15 +683,22 @@ Magnet Geometry Parameters
 
 As well as the beam pipe, magnet beam line elements also have further outer geometry beyond the
 beam pipe. This geometry typically represents the magnetic poles and yoke of the magnet but there
-are several geometry types to choose from.
+are several geometry types to choose from. The possible different styles are described below.
 
-The magnet geometry is controlled by two parameters:
+The magnet geometry is controlled by the following parameters.
 
-=================  ======================================  =======  ===========
-parameter          description                             default  required
-`outerDiameter`    full width of magnet in metres          1 m      no
-`outerMaterial`    material of magnet                      "iron"   no
-=================  ======================================  =======  ===========
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+| parameter             | description                                                  | default       | required  |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+| `magnetGeometryType`  | The style of magnet geometry to use. One of:                 | `cylindrical` | no        |
+|                       | `cylindrical`, `polescircular`, `polessquare`, `polesfacet`, |               |           |
+|                       | `polesfacetcrop`, `lhcleft` and `lhcright`                   |               |           |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+| `outerDiameter`       | **full** horizontal width of the magnet (m)                  | 1 m           | no        |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+| `outerMaterial`       | material of the magnet                                       | "iron"        | no        |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+
 
 .. versionadded:: 0.7
 
@@ -703,17 +710,16 @@ parameter          description                             default  required
 		`boxSize` - this is still accepted by the parser for backwards compatibility
 		but users should use the `outerDiameter` keyword where possible.
 
-.. note:: The choice of magnet outer geometry will significantly affect the beam loss pattern in the
-	  simulation as particles and radiation may propagate much further along the beam line when
-	  a magnet geometry with poles is used.
+.. warning:: The choice of magnet outer geometry will significantly affect the beam loss pattern in the
+	     simulation as particles and radiation may propagate much further along the beam line when
+	     a magnet geometry with poles is used.
 
 .. note:: Should a custom selection of various magnet styles be required for your simulation, please
 	  contact us (see :ref:`feature-request` and this can be added - it is a relatively simple processes.
+	  
 
-Examples of the different styles of magnet geometry are shown below.
-
-Cylindrical (Default)
-^^^^^^^^^^^^^^^^^^^^^
+Cylindrical (Default) - "`cylindrical`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The beam pipe is surrounded by a cylinder of material (the default is iron) whose outer diameter
 is controlled by the `outerDiameter` parameter. In the case of beam pipes that are not circular
@@ -726,7 +732,7 @@ therefore this geometry is best suited for the most general studies.
 This geometry will be selected by **not** specifying any `option, magnetGeometryType`. If however,
 another magnet geometry is used as `option, magnetGeometryType`, the `magnetGeometryType` keyword
 can be used to override this on a per element basis.
-
+		    
 .. |cylindricalquad| image:: figures/cylindrical_quadrupole.png
 			     :width: 60%
 				  
@@ -737,8 +743,13 @@ can be used to override this on a per element basis.
 | |cylindricalquad|  +  |cylindricalsext|  +
 +--------------------+---------------------+
 
-Poles Circular
-^^^^^^^^^^^^^^
+Poles Circular - "`polescircular`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This magnet geometry has simple iron poles according to the order of the magnet and the yoke is
+represented by an annulus. Currently no coils are implemented. If a non-symmetric beam pipe
+geometry is used, the larger of the horizontal and vertical dimensions of the beam pipe will be
+used to create the circular aperture at the pole tips.
 
 .. versionadded:: 0.7
 
@@ -752,8 +763,12 @@ Poles Circular
 | |circularquad|  +  |circularsext|  +
 +-----------------+------------------+
 
-Poles Square
-^^^^^^^^^^^^
+Poles Square - "`polessquare`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This magnet geometry has again, individual poles according to the order of the magnet but the
+yoke is an upright square section to which the poles are attached. This geometry behaves in the
+same wasy as `polescircular` with regard to the beam pipe size.
 
 .. versionadded:: 0.7
 
@@ -770,12 +785,16 @@ Poles Square
 | |squarequad|  +  |squaresext|  +
 +---------------+----------------+
 
-Poles Faceted
-^^^^^^^^^^^^^
+Poles Faceted - "`polesfacet`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This magnet geometry is much like `polessquare`, however the yoke is such that the pole always
+joins at a flat piece of yoke and not in a corner. This geometry behaves in the
+same wasy as `polescircular` with regard to the beam pipe size.
 
 .. versionadded:: 0.7
 
-`outerDiameter` is the full width through a pole on a flat side of the magnet.
+`outerDiameter` is the full width as shown in the figure.
 
 .. |facetquad| image:: figures/polefacet_quadrupole.png
 		       :width: 60%
@@ -787,8 +806,12 @@ Poles Faceted
 | |facetquad|  +  |facetsext|  +
 +--------------+---------------+
 
-Poles Faceted with Crop
-^^^^^^^^^^^^^^^^^^^^^^^
+Poles Faceted with Crop - "`polesfacetcrop`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This magnet geometry is quite similar to `polesfacet`, but the yoke in between each
+pole is cropped to form another facet. This results in this magnet geometry having
+double the number of poles as sides.
 
 .. versionadded:: 0.7
 
@@ -804,8 +827,8 @@ Poles Faceted with Crop
 | |facetcropquad|  +  |facetcropsext|  +
 +------------------+-------------------+
 
-LHC Left & Right
-^^^^^^^^^^^^^^^^
+LHC Left & Right - "`lhcleft`" | "`lhcright`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. versionadded:: 0.7
 
@@ -947,6 +970,12 @@ a marker, place it in the sequence and then define a sampler that uses that mark
 .. note:: Samplers **can only** be defined **after** the main sequences has been defined
 	  using the `use` command (see `use - Defining which Line to Use`_). Failure to do
 	  so will result in an error and BDSIM will exit.
+
+.. warning:: A sampler attached to the first item (therefore at the beginning of the beamline)
+	     may not record all primary particles. This is due to the bunch distribution having
+	     a finite length in z and some of the particles (typically half) start in front of
+	     the sampler. This is not an error, but as expected. It is best not to put a sampler
+	     on the first element, but to use the recorded primary coordinates in the output.
 	  
 
 Physics Lists
