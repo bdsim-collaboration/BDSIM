@@ -683,9 +683,12 @@ Magnet Geometry Parameters
 
 As well as the beam pipe, magnet beam line elements also have further outer geometry beyond the
 beam pipe. This geometry typically represents the magnetic poles and yoke of the magnet but there
-are several geometry types to choose from. The possible different styles are described below.
+are several geometry types to choose from. The possible different styles are described below and
+syntax **examples** can be found in *examples/features/geometry/4_magnets/*.
 
 The magnet geometry is controlled by the following parameters.
+
+.. note:: These are all specified using the `option` command.
 
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | parameter             | description                                                  | default       | required  |
@@ -699,6 +702,11 @@ The magnet geometry is controlled by the following parameters.
 | `outerMaterial`       | material of the magnet                                       | "iron"        | no        |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 
+Example::
+
+  option, magnetGeometryType = "polesfacetcrop",
+          outerDiameter = 0.5*m;
+	  
 
 .. versionadded:: 0.7
 
