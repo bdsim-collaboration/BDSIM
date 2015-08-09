@@ -743,6 +743,11 @@ can be used to override this on a per element basis.
 | |cylindricalquad|  +  |cylindricalsext|  +
 +--------------------+---------------------+
 
+.. raw:: latex
+
+    \newpage
+    
+
 Poles Circular - "`polescircular`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -762,6 +767,11 @@ used to create the circular aperture at the pole tips.
 +-----------------+------------------+
 | |circularquad|  +  |circularsext|  +
 +-----------------+------------------+
+
+.. raw:: latex
+
+    \newpage
+
 
 Poles Square - "`polessquare`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -785,6 +795,10 @@ same wasy as `polescircular` with regard to the beam pipe size.
 | |squarequad|  +  |squaresext|  +
 +---------------+----------------+
 
+.. raw:: latex
+
+    \newpage
+
 Poles Faceted - "`polesfacet`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -806,6 +820,11 @@ same wasy as `polescircular` with regard to the beam pipe size.
 | |facetquad|  +  |facetsext|  +
 +--------------+---------------+
 
+.. raw:: latex
+
+    \newpage
+    
+
 Poles Faceted with Crop - "`polesfacetcrop`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -826,6 +845,11 @@ double the number of poles as sides.
 +------------------+-------------------+
 | |facetcropquad|  +  |facetcropsext|  +
 +------------------+-------------------+
+
+.. raw:: latex
+
+    \newpage
+
 
 LHC Left & Right - "`lhcleft`" | "`lhcright`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -862,6 +886,7 @@ beam pipes and both `sbend` and `quadrupole` geometries.
 +-----------------------------+-----------------------+
 | |lhcleft_quadrupole_square| | |lhcleft_sextupole|   |
 +-----------------------------+-----------------------+
+
 
 Offsets & Tilts - Component Misalignment
 ----------------------------------------
@@ -1682,15 +1707,18 @@ These parameters are shown schematically in the figure below. (gaps not to scale
 shown as an example).
 
 .. figure:: figures/tunnel/tunnel_parameters.pdf
-	    :width: 60%
+	    :width: 80%
 	    :align: center
 	    
-
+The soil around the tunnel is typically symmetric with the `tunnelSoilThickness` being added to
+the larger of the horizontal and vertical tunnel dimensions.
+		    
 .. note:: Construction of the tunnel geometry may fail in particular cases of different beam lines.
 	  Beam lines with very strong bends ( > 0.5 rad ) over a few metres may cause overlapping
 	  geometry. In future, it will be possible to override the automatic algorithm between
 	  certain elements in the beamline, but for now such situations must be avoided.
 
+	  
    
 Regions
 -------
