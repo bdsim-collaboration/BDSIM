@@ -1171,34 +1171,8 @@ as their value.
 | nlinesIgnore                     | number of lines to ignore when reading user bunch     |
 |                                  | input files                                           |
 +----------------------------------+-------------------------------------------------------+
-| **Tunnel Parameters**            | **Currently Not Working**                             |
-+----------------------------------+-------------------------------------------------------+
-| buildTunnel                      | whether to build a tunnel (default = 0)               |
-+----------------------------------+-------------------------------------------------------+
-| buildTunnelStraight              | whether to build a tunnel ignoring the beamline and   |
-|                                  | just in a straight line (default = 0)                 |
-+----------------------------------+-------------------------------------------------------+
-| builTunnelFloor                  | whether to add a floor to the tunnel                  |
-+----------------------------------+-------------------------------------------------------+
-| tunnelRadius                     | tunnel inner radius [m]                               |
-+----------------------------------+-------------------------------------------------------+
-| tunnelThickness                  | thickness of tunnel wall [m]                          |
-+----------------------------------+-------------------------------------------------------+
-| tunnelSoilThickness              | soil thickness outside tunnel wall [m]                |
-+----------------------------------+-------------------------------------------------------+
-| tunnelMaterial                   | material for tunnel wall                              |
-+----------------------------------+-------------------------------------------------------+
-| soilMaterial                     | material for soil outside tunnel wall                 |
-+----------------------------------+-------------------------------------------------------+
-| tunnelOffsetX                    | horizontal offset of the tunnel with respect to the   |
-|                                  | beam line reference trajectory                        |
-+----------------------------------+-------------------------------------------------------+
-| tunnelOffsetY                    | vertical offset of the tunnel with respect to the     |
-|                                  | beam line reference trajectory                        |
-+----------------------------------+-------------------------------------------------------+
-| tunnelFloorOffset                | the offset of the tunnel floor from the centre of the |
-|                                  | tunnel                                                |
-+----------------------------------+-------------------------------------------------------+
+
+* For **Tunnel** parameters, see, `Tunnel Geometry`_.
 
 Beam Parameters
 ---------------
@@ -1635,7 +1609,60 @@ BDSIM can build a tunnel around the beamline. Currently, there are two main ways
 2) The tunnel is just built in a straight line - this may be useful for linear colliders but
    may also cause geometry overlaps and the user is responsible for checking this!
 
+Examples of tunnel geometry can be found with the bdsim source code in */examples/features/geometry/tunnel*.
 
++----------------------------------+-------------------------------------------------------+
+| **Tunnel Parameters**            |                                                       |
++----------------------------------+-------------------------------------------------------+
+| buildTunnel                      | whether to build a tunnel (default = 0)               |
++----------------------------------+-------------------------------------------------------+
+| buildTunnelStraight              | whether to build a tunnel ignoring the beamline and   |
+|                                  | just in a straight line (default = 0)                 |
++----------------------------------+-------------------------------------------------------+
+| builTunnelFloor                  | whether to add a floor to the tunnel                  |
++----------------------------------+-------------------------------------------------------+
+| tunnelType                       | which style of tunnel to use - one of:                |
+|                                  | `circular`, `elliptical`, `square`, `rectangular`     |
+|                                  | (more to come in v0.9)                                |
++----------------------------------+-------------------------------------------------------+
+| tunnelAper1                      | tunnel aperture parameter #1 - typically              |
+|                                  | horizontal (m)                                        |
++----------------------------------+-------------------------------------------------------+
+| tunnelAper2                      | tunnel aperture parameter #2 - typically              |
+|                                  | vertical (m)                                          |
++----------------------------------+-------------------------------------------------------+
+| tunnelThickness                  | thickness of tunnel wall (m)                          |
++----------------------------------+-------------------------------------------------------+
+| tunnelSoilThickness              | soil thickness outside tunnel wall (m)                |
++----------------------------------+-------------------------------------------------------+
+| tunnelMaterial                   | material for tunnel wall                              |
++----------------------------------+-------------------------------------------------------+
+| soilMaterial                     | material for soil outside tunnel wall                 |
++----------------------------------+-------------------------------------------------------+
+| tunnelOffsetX                    | horizontal offset of the tunnel with respect to the   |
+|                                  | beam line reference trajectory                        |
++----------------------------------+-------------------------------------------------------+
+| tunnelOffsetY                    | vertical offset of the tunnel with respect to the     |
+|                                  | beam line reference trajectory                        |
++----------------------------------+-------------------------------------------------------+
+| tunnelFloorOffset                | the offset of the tunnel floor from the centre of the |
+|                                  | tunnel (**not** the beam line).                       |
++----------------------------------+-------------------------------------------------------+
+
+These parameters are shown schematically in the figure below. (gaps not to scale, elliptical
+shown as an example).
+
+.. figure:: figures/tunnel/tunnel_parameters.pdf
+	    :width: 60%
+	    :align: center
+	    
+
+.. note:: Construction of the tunnel geometry may fail in particular cases of different beam lines.
+	  Beam lines with very strong bends ( > 0.5 rad ) over a few metres may cause overlapping
+	  geometry. In future, it will be possible to override the automatic algorithm between
+	  certain elements in the beamline, but for now such situations must be avoided.
+
+   
 Regions
 -------
 
