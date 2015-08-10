@@ -62,98 +62,98 @@ private:
   G4String itsSampType;
   
 public:
-  inline G4double GetInitMom() const
-    {return itsInit.GetEnergy();}
+  inline G4double GetInitTotalEnergy() const
+  {return itsInit.GetTotalEnergy();}
   inline G4double GetInitX() const
-    {return itsInit.GetX();}
+  {return itsInit.GetX();}
   inline G4double GetInitXPrime() const
-    {return itsInit.GetXp();}
+  {return itsInit.GetXp();}
   inline G4double GetInitY() const
-    {return itsInit.GetY();}
+  {return itsInit.GetY();}
   inline G4double GetInitYPrime() const
-    {return itsInit.GetYp();}
+  {return itsInit.GetYp();}
   inline G4double GetInitZ() const
-    {return itsInit.GetZ();}
+  {return itsInit.GetZ();}
   inline G4double GetInitZPrime() const
-    {return itsInit.GetZp();}
+  {return itsInit.GetZp();}
   inline G4double GetInitT() const
-    {return itsInit.GetTime();}
-  inline G4double GetProdMom() const
-    {return itsProd.GetEnergy();}
+  {return itsInit.GetTime();}
+  inline G4double GetProdTotalEnergy() const
+  {return itsProd.GetTotalEnergy();}
   inline G4double GetProdX() const
-    {return itsProd.GetX();}
+  {return itsProd.GetX();}
   inline G4double GetProdXPrime() const
-    {return itsProd.GetXp();}
+  {return itsProd.GetXp();}
   inline G4double GetProdY() const
-    {return itsProd.GetY();}
+  {return itsProd.GetY();}
   inline G4double GetProdYPrime() const
-    {return itsProd.GetYp();}
+  {return itsProd.GetYp();}
   inline G4double GetProdZ() const
-    {return itsProd.GetZ();}
+  {return itsProd.GetZ();}
   inline G4double GetProdZPrime() const
-    {return itsProd.GetZp();}
+  {return itsProd.GetZp();}
   inline G4double GetProdT() const
-    {return itsProd.GetTime();}
-  inline G4double GetLastScatMom() const
-    {return itsLastScat.GetEnergy();}
+  {return itsProd.GetTime();}
+  inline G4double GetLastScatTotalEnergy() const
+  {return itsLastScat.GetTotalEnergy();}
   inline G4double GetLastScatX() const
-    {return itsLastScat.GetX();}
+  {return itsLastScat.GetX();}
   inline G4double GetLastScatXPrime() const
-    {return itsLastScat.GetXp();}
+  {return itsLastScat.GetXp();}
   inline G4double GetLastScatY() const
-    {return itsLastScat.GetY();}
+  {return itsLastScat.GetY();}
   inline G4double GetLastScatYPrime() const
-    {return itsLastScat.GetYp();}
+  {return itsLastScat.GetYp();}
   inline G4double GetLastScatZ() const
-    {return itsLastScat.GetZ();}
+  {return itsLastScat.GetZ();}
   inline G4double GetLastScatZPrime() const
-    {return itsLastScat.GetZp();}
+  {return itsLastScat.GetZp();}
   inline G4double GetLastScatT() const
-    {return itsLastScat.GetTime();}
-  inline G4double GetMom() const
-    {return itsLocal.GetEnergy();}
+  {return itsLastScat.GetTime();}
+  inline G4double GetTotalEnergy() const
+  {return itsLocal.GetTotalEnergy();}
   inline G4double GetX() const
-    {return itsLocal.GetX();}
+  {return itsLocal.GetX();}
   inline G4double GetXPrime() const
-    {return itsLocal.GetXp();}
+  {return itsLocal.GetXp();}
   inline G4double GetY() const
-    {return itsLocal.GetY();}
+  {return itsLocal.GetY();}
   inline G4double GetYPrime() const
-    {return itsLocal.GetYp();}
+  {return itsLocal.GetYp();}
   inline G4double GetZ() const
-    {return itsLocal.GetZ();}
+  {return itsLocal.GetZ();}
   inline G4double GetZPrime() const
-    {return itsLocal.GetZp();}
+  {return itsLocal.GetZp();}
   inline G4double GetGlobalX() const
-    {return itsGlobal.GetX();}
+  {return itsGlobal.GetX();}
   inline G4double GetGlobalXPrime() const
-    {return itsGlobal.GetXp();}
+  {return itsGlobal.GetXp();}
   inline G4double GetGlobalY() const
-    {return itsGlobal.GetY();}
+  {return itsGlobal.GetY();}
   inline G4double GetGlobalYPrime() const
-    {return itsGlobal.GetYp();}
+  {return itsGlobal.GetYp();}
   inline G4double GetGlobalZ() const
-    {return itsGlobal.GetZ();}
+  {return itsGlobal.GetZ();}
   inline G4double GetGlobalZPrime() const
-    {return itsGlobal.GetZp();}
+  {return itsGlobal.GetZp();}
   inline G4double GetT() const
-    {return itsLocal.GetTime();}
+  {return itsLocal.GetTime();}
   inline G4double GetS() const
-    {return itsS;}
+  {return itsS;}
   inline G4double GetWeight() const
-    {return itsWeight;}
+  {return itsWeight;}
   inline G4String GetName() const
-    {return itsName;}
+  {return itsName;}
   inline G4String GetType()
-    {return itsSampType;}
+  {return itsSampType;}
   inline G4int GetEventNo() const
-    {return itsEventNo;}
+  {return itsEventNo;}
   inline G4int GetPDGtype() const
-    {return itsPDGtype;}
+  {return itsPDGtype;}
   inline G4int GetParentID() const
-    {return itsParentID;}
+  {return itsParentID;}
   inline G4int GetTrackID() const
-    {return itsTrackID;}
+  {return itsTrackID;}
   inline G4int GetTurnsTaken() const
   {return itsTurnsTaken;}
 };
@@ -174,5 +174,3 @@ inline void BDSSamplerHit::operator delete(void *aHit)
 }
 
 #endif
-
-///

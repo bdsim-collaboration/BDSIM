@@ -74,7 +74,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   //time since track creation
   G4double t = theTrack->GetGlobalTime();
   //total track energy 
-  G4double energy = theTrack->GetKineticEnergy()+theTrack->GetDefinition()->GetPDGMass();
+  G4double energy = theTrack->GetTotalEnergy();
   //Turn Number
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();  
   
@@ -101,27 +101,20 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   
   //      G4ThreeVector LocalPosition=pos+Trans; 
   //      G4ThreeVector LocalDirection=Rot*momDir; 
-  G4ThreeVector LocalPosition = tf.TransformPoint(pos);
+  G4ThreeVector LocalPosition  = tf.TransformPoint(pos);
   G4ThreeVector LocalDirection = tf.TransformAxis(momDir);
+  BDSParticle   local(LocalPosition,LocalDirection,energy,t);
 
-  G4double zPrime=LocalDirection.z();
-  if(zPrime<0) energy*=-1;
-  // apply a correction that takes ac... gab to do later!
-
-  BDSParticle local(LocalPosition,LocalDirection,energy,t);
-
-  G4int nEvent= 
-    BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+  G4int nEvent = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   
   nEvent+=BDSGlobalConstants::Instance()->GetEventNumberOffset();
   
-  G4int nSampler=theTrack->GetVolume()->GetCopyNo()+1;
+  G4int nSampler    = theTrack->GetVolume()->GetCopyNo()+1;
   G4String SampName = theTrack->GetVolume()->GetName()+"_"+BDS::StringFromInt(nSampler);
   SampName = SampName.substr(0,SampName.find("_pv_1"));
   
-  G4int PDGtype=theTrack->GetDefinition()->GetPDGEncoding();
-  
-  G4String pName=theTrack->GetDefinition()->GetParticleName();
+  G4int    PDGtype = theTrack->GetDefinition()->GetPDGEncoding();
+  G4String pName   = theTrack->GetDefinition()->GetParticleName();
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "BDSSamplerSD> Particle name: " << pName << G4endl;  
@@ -147,24 +140,22 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   // global point
   BDSParticle global(pos,momDir,energy,t);
 
-  G4double weight=theTrack->GetWeight();
+  G4double weight = theTrack->GetWeight();
  
-  BDSSamplerHit* smpHit
-    = new BDSSamplerHit(
-			SampName,
-			BDSGlobalConstants::Instance()->GetInitialPoint(),
-			production,
-			lastScatter,
-			local,
-			global,
-			s,
-			weight,
-			PDGtype,
-			nEvent, 
-			ParentID, 
-			TrackID,
-			turnstaken,
-			itsType);
+  BDSSamplerHit* smpHit = new BDSSamplerHit(SampName,
+					    BDSGlobalConstants::Instance()->GetInitialPoint(),
+					    production,
+					    lastScatter,
+					    local,
+					    global,
+					    s,
+					    weight,
+					    PDGtype,
+					    nEvent, 
+					    ParentID, 
+					    TrackID,
+					    turnstaken,
+					    itsType);
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " Sampler : " << SampName << G4endl;

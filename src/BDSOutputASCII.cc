@@ -122,14 +122,26 @@ BDSOutputASCII::~BDSOutputASCII()
   }
 }
 
-void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile, G4int PDGType, G4double Mom, G4double X, G4double Y, G4double Z, G4double S, G4double XPrime, G4double YPrime, G4int EventNo, G4double Weight, G4int ParentID, G4int TrackID, G4int TurnsTaken)
+void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile,
+				   G4int    PDGType,
+				   G4double totalEnergy,
+				   G4double X,
+				   G4double Y,
+				   G4double Z,
+				   G4double S,
+				   G4double XPrime,
+				   G4double YPrime,
+				   G4int    EventNo,
+				   G4double Weight,
+				   G4int    ParentID,
+				   G4int    TrackID,
+				   G4int    TurnsTaken)
 {
   // save flags since G4cout flags are changed
   std::ios_base::fmtflags ff = outfile->flags();
 
   *outfile << std::left << std::setprecision(10) << std::fixed
 	   << std::setw(6)  << PDGType              << " "
-	   << std::setw(15) << Mom/CLHEP::GeV       << " "
 	   << std::setw(15) << X/CLHEP::micrometer  << " "
 	   << std::setw(15) << Y/CLHEP::micrometer  << " "
 	   << std::setw(15) << Z/CLHEP::micrometer  << " "
@@ -140,13 +152,27 @@ void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile, G4int PDGType, G4doub
 	   << std::setw(15) << Weight               << " "
 	   << std::setw(9)  << ParentID             << " "
 	   << std::setw(8)  << TrackID              << " "
+	   << std::setw(15) << totalEnergy/CLHEP::GeV << " "
 	   << std::setw(5)  << TurnsTaken
 	   << G4endl;
   // reset flags
   outfile->flags(ff);
 }
 
-void BDSOutputASCII::WritePrimary(G4String /*samplerName*/, G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double /*zp*/,G4double /*t*/,G4double weight,G4int PDGType, G4int nEvent, G4int TurnsTaken){
+void BDSOutputASCII::WritePrimary(G4String /*samplerName*/,
+				  G4double E,
+				  G4double x0,
+				  G4double y0,
+				  G4double z0,
+				  G4double xp,
+				  G4double yp,
+				  G4double /*zp*/,
+				  G4double /*t*/,
+				  G4double weight,
+				  G4int    PDGType,
+				  G4int    nEvent,
+				  G4int    TurnsTaken)
+{
   WriteAsciiHit(&ofPrimaries, PDGType, E, x0, y0, z0, /*s=*/0.0, xp, yp, nEvent, weight, 0, 1, TurnsTaken);
   ofPrimaries.flush();
 }
@@ -157,10 +183,10 @@ void BDSOutputASCII::WriteHits(BDSSamplerHitsCollection *hc)
     {
       WriteAsciiHit(&ofMain,
 		    (*hc)[i]->GetPDGtype(),
-		    (*hc)[i]->GetMom(),
 		    (*hc)[i]->GetX(),
 		    (*hc)[i]->GetY(),
 		    (*hc)[i]->GetZ(),
+		    (*hc)[i]->GetTotalEnergy(),
 		    (*hc)[i]->GetS(),
 		    0,//(*hc)[i]->GetXPrime(),
 		    0,//(*hc)[i]->GetYPrime(),

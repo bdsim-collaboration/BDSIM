@@ -44,7 +44,7 @@ public:
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec);
   /// write primary hit
   virtual void WritePrimary(G4String samplerName, 
-			    G4double E,
+			    G4double totalEnergy,
 			    G4double x0,
 			    G4double y0,
 			    G4double z0,
@@ -53,9 +53,9 @@ public:
 			    G4double zp,
 			    G4double t,
 			    G4double weight,
-			    G4int PDGType, 
-			    G4int nEvent, 
-			    G4int TurnsTaken);
+			    G4int    PDGType, 
+			    G4int    nEvent, 
+			    G4int    turnsTaken);
 
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn);
@@ -105,7 +105,7 @@ private:
   char volumeName_el_p[100];
 
   void WriteRootHit(G4String Name, 
-		    G4double InitMom, 
+		    G4double InitTotalenergy, 
 		    G4double InitX, 
 		    G4double InitY, 
 		    G4double InitZ, 
@@ -113,7 +113,7 @@ private:
 		    G4double InitYPrime, 
 		    G4double InitZPrime, 
 		    G4double InitT, 
-		    G4double ProdMom, 
+		    G4double ProdTotalenergy, 
 		    G4double ProdX, 
 		    G4double ProdY, 
 		    G4double ProdZ, 
@@ -121,7 +121,7 @@ private:
 		    G4double ProdYPrime, 
 		    G4double ProdZPrime, 
 		    G4double ProdT, 
-		    G4double LastScatMom, 
+		    G4double LastScatTotalenergy, 
 		    G4double LastScatX, 
 		    G4double LastScatY, 
 		    G4double LastScatZ, 
@@ -129,7 +129,7 @@ private:
 		    G4double LastScatYPrime, 
 		    G4double LastScatZPrime, 
 		    G4double LastScatT, 
-		    G4double Mom, 
+		    G4double Totalenergy, 
 		    G4double X, 
 		    G4double Y, 
 		    G4double Z, 
