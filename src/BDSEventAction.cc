@@ -230,11 +230,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if(!isBatch)
     {
 #ifdef BDSDEBUG 
-      G4cout<<"BDSEventAction : drawing"<<G4endl;
+      G4cout << __METHOD_NAME__ << "drawing the event"<<G4endl;
 #endif
       evt->Draw();
     }
-    
+  
   // Save interesting trajectories
   traj = nullptr;
   if(BDSGlobalConstants::Instance()->GetStoreTrajectory() ||

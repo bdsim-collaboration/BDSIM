@@ -131,8 +131,8 @@ void BDSOutputROOT::Init()
     // create a tree with trajectories
     {
       TTree* TrajTree = new TTree("Trajectories", "Trajectories");
-      TrajTree->Branch("x",&x,"x/F"); // (mum)
-      TrajTree->Branch("y",&y,"y/F"); // (mum)
+      TrajTree->Branch("x",&x,"x/F"); // (um)
+      TrajTree->Branch("y",&y,"y/F"); // (um)
       TrajTree->Branch("z",&z,"z/F"); // (m)
       TrajTree->Branch("part",&part,"part/I");
     }
