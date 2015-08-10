@@ -13,13 +13,15 @@
   const int ECHO_GRAMMAR = 0; ///> print grammar rule expansion (for debugging)
   const int INTERACTIVE = 0; ///> print output of commands (like in interactive mode)
   /* for more debug with parser:
-     1) set yydebug to 1 in parser.tab.c (needs to be reset as this file gets overwritten from time to time!) 
+     1) set yydebug to 1 in parser.tab.cc (needs to be reset as this file gets overwritten from time to time!) 
      2) add %debug below
      3) compile bison with "-t" flag. This is automatically done when CMAKE_BUILD_TYPE equals Debug
   */
 
+#include "array.h"
 #include "parser.h"
-
+#include "elementtype.h"
+  
   int execute = 1;
   int element_count = 1; // for samplers , ranges etc.
 
@@ -28,7 +30,7 @@
 /* define stack type */
 %union{
   double dval;
-  int ival;
+  int ival; // ElementType, but underlying type as not possible to have enum class in union, rely on static_casts
   struct symtab *symp;
   char *str;
   struct Array *array;
@@ -65,6 +67,7 @@
 %type <symp> sample_options
 %type <symp> csample_options
 %type <symp> gas_options
+%type <symp> tunnel_options
 
 /* printout format for debug output */
 /*
@@ -118,7 +121,7 @@ decl : VARIABLE ':' marker
 	 if(execute)  {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : marker\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_MARKER);
+	   write_table(params,$1->name,ElementType::_MARKER);
 	   params.flush();
 	 }
        }
@@ -127,7 +130,7 @@ decl : VARIABLE ':' marker
 	 if(execute) {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : drift\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_DRIFT);
+	   write_table(params,$1->name,ElementType::_DRIFT);
 	   params.flush();
 	 }
        }
@@ -136,7 +139,7 @@ decl : VARIABLE ':' marker
 	 if(execute) {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : pcldrift (drift)\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_DRIFT);
+	   write_table(params,$1->name,ElementType::_DRIFT);
 	   params.flush();
 	 }
        } 
@@ -145,7 +148,7 @@ decl : VARIABLE ':' marker
 	 if(execute) {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : rf\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_RF);
+	   write_table(params,$1->name,ElementType::_RF);
 	   params.flush();
 	 }
        } 
@@ -154,7 +157,7 @@ decl : VARIABLE ':' marker
 	 if(execute) {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : sbend\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_SBEND);
+	   write_table(params,$1->name,ElementType::_SBEND);
 	   params.flush();
 	 }
        }
@@ -163,7 +166,7 @@ decl : VARIABLE ':' marker
          if(execute) {
            if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : rbend\n",$1->name);
            // check parameters and write into element table
-           write_table(params,$1->name,_RBEND);
+           write_table(params,$1->name,ElementType::_RBEND);
            params.flush();
          }
        }
@@ -173,7 +176,7 @@ decl : VARIABLE ':' marker
 	 if(execute) {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : vkick\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_VKICK);
+	   write_table(params,$1->name,ElementType::_VKICK);
 	   params.flush();
 	 }
        }
@@ -182,7 +185,7 @@ decl : VARIABLE ':' marker
 	 if(execute) {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : hkick\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_HKICK);
+	   write_table(params,$1->name,ElementType::_HKICK);
 	   params.flush();
 	 }
        }
@@ -192,7 +195,7 @@ decl : VARIABLE ':' marker
 	   {
 	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : quad %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_QUAD);
+	     write_table(params,$1->name,ElementType::_QUAD);
 	     params.flush();
 	   }
        }
@@ -202,7 +205,7 @@ decl : VARIABLE ':' marker
 	   {
 	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : sext %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_SEXTUPOLE);
+	     write_table(params,$1->name,ElementType::_SEXTUPOLE);
 	     params.flush();
 	   }
        }
@@ -212,7 +215,7 @@ decl : VARIABLE ':' marker
 	   {
 	     if(ECHO_GRAMMAR) printf("VARIABLE : octupole %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_OCTUPOLE);
+	     write_table(params,$1->name,ElementType::_OCTUPOLE);
 	     params.flush();
 	   }
        }
@@ -222,7 +225,7 @@ decl : VARIABLE ':' marker
 	   {	 
 	     if(ECHO_GRAMMAR) printf("VARIABLE : multipole %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_MULT);
+	     write_table(params,$1->name,ElementType::_MULT);
 	     params.flush();	 
 	   }
        }
@@ -232,7 +235,7 @@ decl : VARIABLE ':' marker
 	   {
 	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : solenoid %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_SOLENOID);
+	     write_table(params,$1->name,ElementType::_SOLENOID);
 	     params.flush();
 	   }
        }
@@ -242,7 +245,7 @@ decl : VARIABLE ':' marker
 	   {
 	     if(ECHO_GRAMMAR) printf("VARIABLE : rcol %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_RCOL);
+	     write_table(params,$1->name,ElementType::_RCOL);
 	     params.flush();
 	   }
        }
@@ -252,7 +255,7 @@ decl : VARIABLE ':' marker
 	   {
 	     if(ECHO_GRAMMAR) printf("VARIABLE : ecol %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_ECOL);
+	     write_table(params,$1->name,ElementType::_ECOL);
 	     params.flush();
 	   }
        }
@@ -262,7 +265,7 @@ decl : VARIABLE ':' marker
 	   {
 	     if(ECHO_GRAMMAR) printf("VARIABLE : muspoiler %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_MUSPOILER);
+	     write_table(params,$1->name,ElementType::_MUSPOILER);
 	     params.flush();
 	   }
        }
@@ -272,7 +275,7 @@ decl : VARIABLE ':' marker
 	   {	 
 	     if(ECHO_GRAMMAR) printf("VARIABLE : element %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_ELEMENT);
+	     write_table(params,$1->name,ElementType::_ELEMENT);
 	     params.flush();	 
 	   }
        }
@@ -282,7 +285,7 @@ decl : VARIABLE ':' marker
 	   {	 
 	     if(ECHO_GRAMMAR) printf("VARIABLE : laser %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_LASER);
+	     write_table(params,$1->name,ElementType::_LASER);
 	     params.flush();	 
 	   }
        }
@@ -291,7 +294,7 @@ decl : VARIABLE ':' marker
 	 if(execute) {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : screen\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_SCREEN);
+	   write_table(params,$1->name,ElementType::_SCREEN);
 	   params.flush();
 	 }
        }
@@ -300,7 +303,7 @@ decl : VARIABLE ':' marker
 	 if(execute) {
 	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : awakescreen\n",$1->name);
 	   // check parameters and write into element table
-	   write_table(params,$1->name,_AWAKESCREEN);
+	   write_table(params,$1->name,ElementType::_AWAKESCREEN);
 	   params.flush();
 	 }
        }
@@ -310,7 +313,7 @@ decl : VARIABLE ':' marker
 	   {	 
 	     if(ECHO_GRAMMAR) printf("VARIABLE : transform3d %s \n",$1->name);
 	     // check parameters and write into element table
-	     write_table(params,$1->name,_TRANSFORM3D);
+	     write_table(params,$1->name,ElementType::_TRANSFORM3D);
 	     params.flush();	 
 	   }
        }
@@ -321,7 +324,7 @@ decl : VARIABLE ':' marker
 	     // create entry in the main table and add pointer to the parsed sequence
 	     if(ECHO_GRAMMAR) printf("VARIABLE : LINE %s\n",$1->name);
 	     // copy tmp_list to params
-	     write_table(params,$1->name,_LINE,new std::list<struct Element>(tmp_list));
+	     write_table(params,$1->name,ElementType::_LINE,new std::list<struct Element>(tmp_list));
 	     // clean list
 	     tmp_list.clear();
 	   }
@@ -333,7 +336,7 @@ decl : VARIABLE ':' marker
              // create entry in the main table and add pointer to the parsed sequence
 	     if(ECHO_GRAMMAR) printf("VARIABLE : SEQUENCE %s\n",$1->name);
 	     // copy tmp_list to params
-	     write_table(params,$1->name,_SEQUENCE,new std::list<struct Element>(tmp_list));
+	     write_table(params,$1->name,ElementType::_SEQUENCE,new std::list<struct Element>(tmp_list));
 	     // clean list
 	     tmp_list.clear();
 	   }
@@ -342,10 +345,11 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, typestr($3));
-	     if($3 != _NONE)
+	     ElementType type = static_cast<ElementType>($3);
+	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, GMAD::typestr(type));
+	     if(type != ElementType::_NONE)
 	       {
-		 write_table(params,$1->name,$3);
+		 write_table(params,$1->name,type);
 	       }
 	     params.flush();
 	   }
@@ -354,10 +358,11 @@ decl : VARIABLE ':' marker
        {
          if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, typestr($3));
-	     if($3 != _NONE)
+	     ElementType type = static_cast<ElementType>($3);
+	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, GMAD::typestr(type));
+	     if(type != ElementType::_NONE)
 	       {
-		 write_table(params,$1->name,$3);
+		 write_table(params,$1->name,type);
 	       }
 	     params.flush();
 	   }
@@ -380,8 +385,8 @@ decl : VARIABLE ':' marker
 		 params.inherit_properties(*it);
 	       }
 		
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, typestr((*it).type));
-	     if((*it).type != _NONE)
+	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, GMAD::typestr((*it).type));
+	     if((*it).type != ElementType::_NONE)
 	       {
 		 write_table(params,$1->name,(*it).type);
 	       }
@@ -393,7 +398,7 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : Material, %s \n",$1->name);
-	     write_table(params,$1->name,_MATERIAL);
+	     write_table(params,$1->name,ElementType::_MATERIAL);
 	     params.flush();
 	   }
        }
@@ -402,7 +407,7 @@ decl : VARIABLE ':' marker
          if(execute)
            {
              if(ECHO_GRAMMAR) printf("decl -> VARIABLE : Atom, %s \n",$1->name);
-             write_table(params,$1->name,_ATOM);
+             write_table(params,$1->name,ElementType::_ATOM);
              params.flush();
            }
        }
@@ -487,12 +492,12 @@ extension : VARIABLE ',' parameters
 		    {
 		      printf("type %s has not been defined\n",$1->name);
 		      if (PEDANTIC) exit(1);
-		      $$ = _NONE;
+		      $$ = static_cast<int>(ElementType::_NONE);
 		    }
 		  else
 		    {
 		      // inherit properties from the base type
-		      $$ = (*it).type;
+		      $$ = static_cast<int>((*it).type);
 		      params.inherit_properties(*it);
 		    }
 		  
@@ -511,12 +516,12 @@ newinstance : VARIABLE
 		    {
 		      printf("type %s has not been defined\n",$1->name);
 		      if (PEDANTIC) exit(1);
-		      $$ = _NONE;
+		      $$ = static_cast<int>(ElementType::_NONE);
 		    }
 		  else
 		    {
 		      // inherit properties from the base type
-		      $$ = (*it).type;
+		      $$ = static_cast<int>((*it).type);
 		      params.inherit_properties(*it);
 		    }
 		  
@@ -524,562 +529,36 @@ newinstance : VARIABLE
 	    }
 ;
 
-parameters: 
-          | VARIABLE '=' aexpr ',' parameters
+parameters: VARIABLE '=' aexpr ',' parameters
             {
 	      if(execute)
-		{
-#ifdef BDSDEBUG 
-                  printf("parameters, VARIABLE(%s) = aexpr(%.10g)\n",$1->name,$3);
-#endif
-		  if(!strcmp($1->name,"l")) { params.l = $3; params.lset = 1;} // length
-		  else
-		  if(!strcmp($1->name,"bmapZOffset")) { params.bmapZOffset = $3; params.bmapZOffsetset = 1;} // field map z offset
-		    else
-	          if(!strcmp($1->name,"B")) { params.B = $3; params.Bset = 1;} // dipole field
-		    else 
-		  if(!strcmp($1->name,"ks")) { params.ks = $3; params.ksset = 1;} // solenoid strength
-		    else
-		  if(!strcmp($1->name,"k0")) { params.k0 = $3; params.k0set = 1;} // dipole coef.
-		    else 
-		  if(!strcmp($1->name,"k1")) { params.k1 = $3; params.k1set = 1;} // quadrupole coef. 
-		    else
-		  if(!strcmp($1->name,"k2")) { params.k2 = $3; params.k2set = 1;} // sextupole coef.
-		    else 
-		  if(!strcmp($1->name,"k3")) { params.k3 = $3; params.k3set = 1;} // octupole coef.
-		    else 
-		  if(!strcmp($1->name,"angle")) { params.angle = $3; params.angleset = 1;} // dipole bending angle
-		  else
-		  if(!strcmp($1->name,"phiAngleIn")) { params.phiAngleIn = $3; params.phiAngleInset = 1;} // element incoming angle
-		  else
-		  if(!strcmp($1->name,"phiAngleOut")) { params.phiAngleOut = $3; params.phiAngleOutset = 1;} // element outgoing angle
-		  else
-		   if(!strcmp($1->name,"beampipeThickness") ) 
-		      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
-		   else
-		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
-		    // for backwards compatibility
-		    { params.aper1 = $3; params.aper1set = 1;}
-		    else
-		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
-		    { params.aper1 = $3; params.aper1set = 1;}
-		    else
-		  if(!strcmp($1->name,"aper2") ||!strcmp($1->name,"aperture2") ) 
-		    { params.aper2 = $3; params.aper2set = 1;}
-		    else
-		  if(!strcmp($1->name,"aper3") ||!strcmp($1->name,"aperture3") ) 
-		    { params.aper3 = $3; params.aper3set = 1;}
-		    else
-		  if(!strcmp($1->name,"aper4") ||!strcmp($1->name,"aperture4") ) 
-		    { params.aper4 = $3; params.aper4set = 1;}
-		    else
-		  if(!strcmp($1->name,"outerDiameter")) 
-		    { params.outerDiameter = $3; params.outerDiameterset = 1;}
-		    else
-		  if(!strcmp($1->name,"outR") )
-		    // for backwards compatibility, boxSize = 2*outR
-		    { params.outerDiameter = 2 * $3; params.outerDiameterset = 1;}
-		    else
-		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
-		    else
-		  if(!strcmp($1->name,"ysize") ) { params.ysize = $3; params.ysizeset = 1;}
-		    else
-		  if(!strcmp($1->name,"tilt")) { params.tilt = $3; params.tiltset = 1;}
-		    else
-		  if(!strcmp($1->name,"offsetX")) { params.offsetX = $3; params.offsetXset = 1;}
-		    else
-		  if(!strcmp($1->name,"offsetY")) { params.offsetY = $3; params.offsetYset = 1;}
-		    else
-		  if(!strcmp($1->name,"x")) {params.xdir = $3; params.xdirset = 1;} // x direction
-		    else
-		  if(!strcmp($1->name,"y")) {params.ydir = $3; params.ydirset = 1;} // y direction 
-		    else
-		  if(!strcmp($1->name,"z")) {params.zdir = $3; params.zdirset = 1;} // z direction 
-		    else
-		  if(!strcmp($1->name,"phi")) {params.phi = $3; params.phiset = 1;}  // polar angle
-		    else
-		  if(!strcmp($1->name,"theta"))  {params.theta = $3; params.thetaset = 1;} 
-		  // azimuthal angle
-		    else
-		  if(!strcmp($1->name,"psi"))  {params.psi = $3; params.psiset = 1;} // 3rd  angle
-		  else
-		  if(!strcmp($1->name,"gradient"))  {params.gradient = $3; params.gradientset = 1;} // rf voltage
-		  else
-		  if(!strcmp($1->name,"fint")) {;} // fringe field parameters
-		  else
-		  if(!strcmp($1->name,"fintx")) {;}  //
-		  else
-		  if(!strcmp($1->name,"tunnelRadius")) { params.tunnelRadius = $3; params.tunnelRadiusset = 1;} // tunnel radius
-		  else
-		  if(!strcmp($1->name,"tunnelOffsetX")) { params.tunnelOffsetX = $3; params.tunnelOffsetXset = 1;} // tunnel offset
-		  else
-		  if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;} // tunnel offset
-		    else
-		  if(!strcmp($1->name,"e1")) {;}  //
-                    else
-		  if(!strcmp($1->name,"e2")) {;}  //
-		    else
-		  if(!strcmp($1->name,"A")) {params.A = $3; params.Aset = 1;}  // mass number
-		    else
-		  if(!strcmp($1->name,"Z")) {params.Z = $3; params.Zset = 1;}  // atomic number
-		    else
-		  if(!strcmp($1->name,"density")) {params.density = $3; params.densityset = 1;}  // density
-                    else
-		  if(!strcmp($1->name,"T")) {params.temper = $3; params.temperset = 1;}  // temperature
-		    else
-		  if(!strcmp($1->name,"P")) {params.pressure = $3; params.pressureset = 1;}  // pressure
-		    else
-		  if(!strcmp($1->name,"waveLength")) {params.waveLength = $3; params.waveLengthset = 1;}
-		    else
-		  if(!strcmp($1->name,"at")) {params.at = $3; params.atset = 1;}  //position of an element within a sequence
-		    else
-                  if(!strcmp($1->name,"tscint")) { params.tscint = $3; params.tscintset = 1;} // thickness for a scintillator screen 
-		  else
-                  if(!strcmp($1->name,"twindow")) { params.twindow = $3; params.twindowset = 1;} // thickness for a scintillator screen window 
-		  else {
-		    printf("Warning : unknown parameter %s\n",$1->name);
-		    if (PEDANTIC) exit(1);
-		  }
-		}
+		params.set_value($1->name,$3);
 	    }
-           | VARIABLE '=' vecexpr ',' parameters
-             {
-	       if(execute) 
-		 {
-#ifdef BDSDEBUG 
-                   printf("params,VARIABLE (%s) = vecexpr (%d)\n",$1->name,$3->size);
-#endif
-                   if(!strcmp($1->name,"knl")) 
-		     {
-		       params.knlset = 1;
-		       set_vector(params.knl,$3);
-		       delete[] $3->data;
-		     } 
-		   else
-		     if(!strcmp($1->name,"ksl")) 
-		       {
-			 params.kslset = 1;
-			 set_vector(params.ksl,$3);
-			 delete[] $3->data;
-		       }
-                     else
-		     if(!strcmp($1->name,"blmLocZ")) 
-		       {
-			 params.blmLocZset = 1;
-			 set_vector(params.blmLocZ,$3);
-			 delete[] $3->data;
-		       }
-		   else
-		     if(!strcmp($1->name,"blmLocTheta")) 
-		       {
-			 params.blmLocThetaset = 1;
-			 set_vector(params.blmLocTheta,$3);
-			 delete[] $3->data;
-		       }
-                   else
-                     if(!strcmp($1->name,"components"))
-                       {
-                         params.componentsset = 1;
-                         set_vector(params.components,$3);
-                         $3->symbols.clear();
-                       } 
-                   else
-                     if(!strcmp($1->name,"componentsWeights"))
-                       {
-                         params.componentsWeightsset = 1;
-                         set_vector(params.componentsWeights,$3);
-                         delete[] $3->data;
-                       }
-                   else
-                     if(!strcmp($1->name,"componentsFractions"))
-                       {
-                         params.componentsFractionsset = 1;
-                         set_vector(params.componentsFractions,$3);
-                         delete[] $3->data;
-                       }
-		    else {
-		      printf("Warning : unknown parameter %s\n",$1->name);
-		      if (PEDANTIC) exit(1);
-		    }
-		 }
-	     }         
-           | VARIABLE '=' vecexpr
-             {
-	       if(execute) 
-		 {
-#ifdef BDSDEBUG 
-                   printf("VARIABLE (%s) = vecexpr (%d)\n",$1->name,$3->size);
-#endif
-		   if(!strcmp($1->name,"knl")) 
-		     {
-		       params.knlset = 1;
-		       set_vector(params.knl,$3);
-		       delete[] $3->data;
-		     } 
-		   else
-		     if(!strcmp($1->name,"ksl")) 
-		       {
-			 params.kslset = 1;
-			 set_vector(params.ksl,$3);
-			 delete[] $3->data;
-		       }
-                     else
-		       if(!strcmp($1->name,"blmLocZ")) 
-			 {
-			   params.blmLocZset = 1;
-			   set_vector(params.blmLocZ,$3);
-			   delete[] $3->data;
-			 }
-		       else
-			 if(!strcmp($1->name,"blmLocTheta")) 
-			   {
-			     params.blmLocThetaset = 1;
-			     set_vector(params.blmLocTheta,$3);
-			     delete[] $3->data;
-			   }
-			 else
-                     if(!strcmp($1->name,"components"))
-                       {
-                         params.componentsset = 1;
-                         set_vector(params.components,$3);
-                         delete[] $3->data;
-                       }
-                   else
-                     if(!strcmp($1->name,"componentsWeights"))
-                       {
-                         params.componentsWeightsset = 1;
-                         set_vector(params.componentsWeights,$3);
-                         delete[] $3->data;
-                       }
-                   else
-                     if(!strcmp($1->name,"componentsFractions"))
-                       {
-                         params.componentsFractionsset = 1;
-                         set_vector(params.componentsFractions,$3);
-                         delete[] $3->data;
-                       }
-		     else {
-		       printf("Warning : unknown parameter %s\n",$1->name);
-		       if (PEDANTIC) exit(1);
-		     }
-		 }         
-	     }
           | VARIABLE '=' aexpr
             {
 	      if(execute)
-		{
-#ifdef BDSDEBUG 
-                  printf("VARIABLE (%s) = aexpr(%.10g)\n",$1->name,$3);
-#endif
-		  if(!strcmp($1->name,"l")) { params.l = $3; params.lset = 1;} // length
-		    else
-		  if(!strcmp($1->name,"B")) { params.B = $3; params.Bset = 1;} // dipole field 
-		    else 
-		  if(!strcmp($1->name,"ks")) { params.ks = $3; params.ksset = 1;} // solenoid strength
-		    else
-		  if(!strcmp($1->name,"k0")) { params.k0 = $3; params.k0set = 1;} // dipole coef.
-		    else 
-		  if(!strcmp($1->name,"k1")) { params.k1 = $3; params.k1set = 1;} // quadrupole coef.
-		    else
-		  if(!strcmp($1->name,"k2")) { params.k2 = $3; params.k2set = 1;} // sextupole coef.
-		    else 
-		  if(!strcmp($1->name,"k3")) { params.k3 = $3; params.k3set = 1;} // octupole coef.
-		    else 
-		  if(!strcmp($1->name,"angle")) { params.angle = $3; params.angleset = 1;} // dipole bending angle
-		    else
-		  if(!strcmp($1->name,"phiAngleIn")) { params.phiAngleIn = $3; params.phiAngleInset = 1;} // element incoming angle
-		    else
-		  if(!strcmp($1->name,"phiAngleOut")) { params.phiAngleOut = $3; params.phiAngleOutset = 1;} // element outgoing angle
-		    else
-		  if(!strcmp($1->name,"beampipeThickness") ) 
-			      { params.beampipeThickness = $3; params.beampipeThicknessset = 1;}
-		    else
-		  if(!strcmp($1->name,"aper") ||!strcmp($1->name,"aperture") ) 
-		    // for backwards compatibility
-		    { params.aper1 = $3; params.aper1set = 1;}
-		    else
-		  if(!strcmp($1->name,"aper1") ||!strcmp($1->name,"aperture1") )  // new aperture model 
-		    { params.aper1 = $3; params.aper1set = 1;}
-		    else
-		  if(!strcmp($1->name,"aper2") ||!strcmp($1->name,"aperture2") ) 
-		    { params.aper2 = $3; params.aper2set = 1;}
-		    else
-		  if(!strcmp($1->name,"aper3") ||!strcmp($1->name,"aperture3") ) 
-		    { params.aper3 = $3; params.aper3set = 1;}
-		    else
-		  if(!strcmp($1->name,"aper4") ||!strcmp($1->name,"aperture4") ) 
-		    { params.aper4 = $3; params.aper4set = 1;}
-		    else
-		  if(!strcmp($1->name,"outerDiameter")) 
-		    { params.outerDiameter = $3; params.outerDiameterset = 1;}
-		    else
-		  if(!strcmp($1->name,"outR") )
-		    // for backwards compatibility, boxSize = 2*outR
-		    { params.outerDiameter = 2 * $3; params.outerDiameterset = 1;}
-		    else
-		  if(!strcmp($1->name,"xsize") ) { params.xsize = $3; params.xsizeset = 1;}
-		    else
-		  if(!strcmp($1->name,"ysize") ) { params.ysize = $3; params.ysizeset = 1;}
-		    else
-		  if(!strcmp($1->name,"tilt")) { params.tilt = $3; params.tiltset = 1;}
-		    else
-		  if(!strcmp($1->name,"offsetX")) { params.offsetX = $3; params.offsetX = 1;}
-		    else
-		  if(!strcmp($1->name,"offsetY")) { params.offsetY = $3; params.offsetY = 1;}
-		    else
-		  if(!strcmp($1->name,"x")) {params.xdir = $3; params.xdirset = 1;} // x direction
-		    else
-		  if(!strcmp($1->name,"y")) {params.ydir = $3; params.ydirset = 1;} // y direction 
-		    else
-		  if(!strcmp($1->name,"z")) {params.zdir = $3; params.zdirset = 1;} // z direction 
-		    else
-		  if(!strcmp($1->name,"phi")) {params.phi = $3; params.phiset = 1;}  // polar angle
-		    else
-		  if(!strcmp($1->name,"theta"))  {params.theta = $3; params.thetaset = 1;} // azimuthal angle
-		    else
-		  if(!strcmp($1->name,"psi"))  {params.psi = $3; params.psiset = 1;} // 3rd angle
-		    else
-		  if(!strcmp($1->name,"gradient"))  {params.gradient = $3; params.gradientset = 1;} // rf voltage
-		    else
-		  if(!strcmp($1->name,"fint")) {;} // fringe field parameters
-		  else
-		  if(!strcmp($1->name,"fintx")) {;}  //
-		  else
-		  if(!strcmp($1->name,"tunnelRadius")) { params.tunnelRadius = $3; params.tunnelRadiusset = 1;} // tunnel radius
-		  else
-		  if(!strcmp($1->name,"tunnelOffsetX")) { params.tunnelOffsetX = $3; params.tunnelOffsetXset = 1;} // tunnel offset
-		  else
-		    if(!strcmp($1->name,"precisionRegion")) { params.precisionRegion = (int)$3; params.precisionRegionset = 1;} // tunnel offset
-		    else
-		  if(!strcmp($1->name,"e1")) {;}  //
-                    else
-		  if(!strcmp($1->name,"e2")) {;}  //
-		    else
-		  if(!strcmp($1->name,"A")) {params.A = $3; params.Aset = 1;}  // mass number
-		    else
-		  if(!strcmp($1->name,"Z")) {params.Z = $3; params.Zset = 1;}  // atomic number
-		    else
-		  if(!strcmp($1->name,"density")) {params.density = $3; params.densityset = 1;}  // density
-                    else
-		  if(!strcmp($1->name,"T")) {params.temper = $3; params.temperset = 1;}  // temperature
-		    else
-		  if(!strcmp($1->name,"P")) {params.pressure = $3; params.pressureset = 1;}  // pressure
-		    else
-		  if(!strcmp($1->name,"waveLength")) {params.waveLength = $3; params.waveLengthset = 1;}
-		  else {
-		    printf("Warning : unknown parameter %s\n",$1->name);
-		    if (PEDANTIC) exit(1);
-		  }
-		}
+		params.set_value($1->name,$3);
+	    }
+          | VARIABLE '=' vecexpr ',' parameters
+            {
+	      if(execute) 
+		params.set_value($1->name,$3);
+	    }
+          | VARIABLE '=' vecexpr
+            {
+	      if(execute) 
+		params.set_value($1->name,$3);
 	    }
           | VARIABLE '=' STR ',' parameters
-             {
-	       if(execute) 
-		 {
-#ifdef BDSDEBUG 
-                   printf("params,VARIABLE (%s) = str (%s)\n",$1->name,$3);
-#endif
-		   if(!strcmp($1->name,"geometry")) 
-		     {
-		       params.geomset = 1;
-		       params.geometry = $3;
-		     } 
-		   else
-		     if(!strcmp($1->name,"bmap")) 
-		       {
-			 params.geomset = 1;
-			 params.bmap = $3;
-		       }
-		   else 
-		     if(!strcmp($1->name,"type")) 
-		       {
-			 printf("Warning : type parameter is currently ignored");
-			 //ignore the "type attribute for the moment"
-		       }
-		   else
-		   if(!strcmp($1->name,"outerMaterial")) 
-		       {
-			 params.outerMaterialset = 1;
-			 params.outerMaterial = $3;
-		       }
-		   else
-		   if(!strcmp($1->name,"material")) 
-		       {	 
-			 params.materialset = 1;
-			 params.material = $3;
-		       }
-		   else if(!strcmp($1->name,"apertureType"))
-		       {
-			 params.apertureTypeset = 1;
-			 params.apertureType = $3;
-		       }
-		   else
-		   if(!strcmp($1->name,"beampipeMaterial"))
-			 {
-			   params.beampipeMaterialset = 1;
-			   params.beampipeMaterial = $3;
-			 }
-		   else
-		   if(!strcmp($1->name,"tunnelMaterial")) 
-		       {
-			 params.tunnelmaterialset = 1;
-			 params.tunnelMaterial = $3;
-		       }
-		   else 
-		   if(!strcmp($1->name,"tunnelCavityMaterial")) 
-		       {
-			 params.tunnelcavitymaterialset = 1;
-			 params.tunnelCavityMaterial = $3;
-		       }
-		   else 
-		   if(!strcmp($1->name,"scintmaterial")) 
-		     {
-		       params.scintmaterialset = 1;
-		       params.scintmaterial = $3; 
-		     } // material for a scintillator screen 
-		   else
-		   if(!strcmp($1->name,"windowmaterial")) 
-		     {
-		       params.windowmaterialset = 1;
-		       params.windowmaterial = $3; 
-		     } // material for a scintillator screen window
-		   else
-		   if(!strcmp($1->name,"airmaterial")) 
-		     {
-		       params.airmaterialset = 1;
-		       params.airmaterial = $3; 
-		     } // material for air around scintillator screen 
-		    else
-		   if(!strcmp($1->name,"spec")) 
-		       {
-			 params.specset = 1;
-			 params.spec = $3;
-		       }
-                   else 
-                   if(!strcmp($1->name,"symbol"))
-                       {
-                         params.symbolset = 1;
-                         params.symbol = $3;
-                       }
-		   else 
-                   if(!strcmp($1->name,"state"))
-                       {
-                         params.stateset = 1;
-                         params.state = $3;
-                       }
-		    else {
-		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
-		      if (PEDANTIC) exit(1);
-		    }
-		 }
-	     }         
-           | VARIABLE '=' STR
-             {
-	       if(execute) 
-		 {
-#ifdef BDSDEBUG 
-                   printf("VARIABLE (%s) = str (%s)\n",$1->name,$3);
-#endif
-		   if(!strcmp($1->name,"geometry")) 
-		     {
-		       params.geomset = 1;
-		       params.geometry = $3;
-		     } 
-		   else
-		     if(!strcmp($1->name,"bmap")) 
-		       {
-			 params.geomset = 1;
-			 params.bmap = $3;
-		       }
-		     else 
-		     if(!strcmp($1->name,"type")) 
-		       {
-			 printf("Warning : type parameter is currently ignored");
-			 //ignore the "type attribute for the moment"
-		       }
-                     else
-                       if(!strcmp($1->name,"outerMaterial")) 
-                         {	 
-                           params.outerMaterialset = 1;
-                           params.outerMaterial = $3;
-                         }
-                       else
-		       if(!strcmp($1->name,"material")) 
-                         {	 
-                           params.materialset = 1;
-                           params.material = $3;
-                         }
-                       else
-                       if(!strcmp($1->name,"tunnelMaterial")) 
-		       {
-			 params.tunnelmaterialset = 1;
-			 params.tunnelMaterial = $3;
-		       }
-		       else
-		       if(!strcmp($1->name,"apertureType"))
-			 {
-			   params.apertureTypeset = 1;
-			   params.apertureType = $3;
-			 }
-		       else
-		       if(!strcmp($1->name,"magnetGeometryType")) 
-		       {
-		         params.magnetGeometryTypeset = 1;
-		         params.magnetGeometryType = $3;
-		       }
-		       else
-		       if(!strcmp($1->name,"beampipeMaterial"))
-			 {
-			   params.beampipeMaterialset = 1;
-			   params.beampipeMaterial = $3;
-			 }
-		       else
-                         if(!strcmp($1->name,"tunnelCavityMaterial")) 
-		       {
-			 params.tunnelcavitymaterialset = 1;
-			 params.tunnelCavityMaterial = $3;
-		       }
-                       else
-			 if(!strcmp($1->name,"scintmaterial")) 
-			   {	 
-			     params.scintmaterialset = 1;
-			     params.scintmaterial = $3;
-			   }
-			 else if(!strcmp($1->name,"windowmaterial")) 
-			   {	 
-			     params.windowmaterialset = 1;
-			     params.windowmaterial = $3;
-			   }
-			 else
-			   if(!strcmp($1->name,"airmaterial")) 
-			     {	 
-			       params.airmaterialset = 1;
-			       params.airmaterial = $3;
-                         }
-                     else
-                   if(!strcmp($1->name,"spec")) 
-		       {
-			 params.specset = 1;
-			 params.spec = $3;
-		       }
-		   else 
-                   if(!strcmp($1->name,"symbol"))
-                       {
-                         params.symbolset = 1;
-                         params.symbol = $3;
-                       }
-		   else 
-                   if(!strcmp($1->name,"state"))
-                       {
-                         params.stateset = 1;
-                         params.state = $3;
-                       }
-		    else {
-		      printf("Warning : unknown parameter : \"%s\"\n",$1->name);
-		      if (PEDANTIC) exit(1);
-		    }
-		 }         
-	     }
+            {
+	      if(execute)
+		params.set_value($1->name,std::string($3));
+	    }
+          | VARIABLE '=' STR
+            {
+	      if(execute)
+		params.set_value($1->name,std::string($3));
+	    }
 
 line : LINE '=' '(' element_seq ')'
 ;
@@ -1109,8 +588,8 @@ element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_LINE;
+		      e.lst = nullptr;
 		      tmp_list.push_front(e);
 		    }
 		  }
@@ -1126,8 +605,8 @@ element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_LINE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_front(e);
 		    }
@@ -1144,8 +623,8 @@ element_seq :
 		    {
 		      struct Element e;
 		      e.name = $3->name;
-		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_LINE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_front(e);
 		    }
@@ -1162,8 +641,8 @@ element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_LINE;
+		      e.lst = nullptr;
 		      tmp_list.push_front(e);
 		    }
 		  }
@@ -1179,8 +658,8 @@ element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_LINE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_front(e);
 		    }
@@ -1197,8 +676,8 @@ element_seq :
 		    {
 		      struct Element e;
 		      e.name = $3->name;
-		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_LINE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_front(e);
 		    }
@@ -1215,8 +694,8 @@ element_seq :
 		    {
 		      struct Element e;
 		      e.name = $2->name;
-		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_REV_LINE;
+		      e.lst = nullptr;
 	    	      tmp_list.push_front(e);
 		    }
 		  }
@@ -1232,8 +711,8 @@ element_seq :
 		    {
 		      struct Element e;
 		      e.name = $2->name;
-		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_REV_LINE;
+		      e.lst = nullptr;
 	    	      tmp_list.push_front(e);
 		    }
 		  }
@@ -1252,8 +731,8 @@ rev_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_REV_LINE;
+		      e.lst = nullptr;
 		      tmp_list.push_back(e);
 		    }
 		  }
@@ -1269,8 +748,8 @@ rev_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_REV_LINE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_back(e);
 		    }
@@ -1287,8 +766,8 @@ rev_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $3->name;
-		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_REV_LINE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_back(e);
 		    }
@@ -1305,8 +784,8 @@ rev_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_REV_LINE;
+		      e.lst = nullptr;
 		      tmp_list.push_back(e);
 		    }
 		  }
@@ -1322,8 +801,8 @@ rev_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_REV_LINE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_back(e);
 		    }
@@ -1340,8 +819,8 @@ rev_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $3->name;
-		      e.type = _REV_LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_REV_LINE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_back(e);
 		    }
@@ -1358,8 +837,8 @@ rev_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $2->name;
-		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_LINE;
+		      e.lst = nullptr;
 	    	      tmp_list.push_back(e);
 		    }
 		  }
@@ -1375,8 +854,8 @@ rev_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $2->name;
-		      e.type = _LINE;
-		      e.lst = NULL;
+		      e.type = ElementType::_LINE;
+		      e.lst = nullptr;
 	    	      tmp_list.push_back(e);
 		    }
 		  }
@@ -1395,8 +874,8 @@ seq_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.type = ElementType::_SEQUENCE;
+		      e.lst = nullptr;
 		      tmp_list.push_front(e);
 		    }
 		  }
@@ -1412,8 +891,8 @@ seq_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.type = ElementType::_SEQUENCE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_front(e);
 		    }
@@ -1430,8 +909,8 @@ seq_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $3->name;
-		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.type = ElementType::_SEQUENCE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_front(e);
 		    }
@@ -1448,8 +927,8 @@ seq_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.type = ElementType::_SEQUENCE;
+		      e.lst = nullptr;
 		      tmp_list.push_front(e);
 		    }
 		  }
@@ -1465,8 +944,8 @@ seq_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $1->name;
-		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.type = ElementType::_SEQUENCE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$3;i++)
 			tmp_list.push_front(e);
 		    }
@@ -1483,8 +962,8 @@ seq_element_seq :
 		    {
 		      struct Element e;
 		      e.name = $3->name;
-		      e.type = _SEQUENCE;
-		      e.lst = NULL;
+		      e.type = ElementType::_SEQUENCE;
+		      e.lst = nullptr;
 		      for(int i=0;i<(int)$1;i++)
 			tmp_list.push_front(e);
 		    }
@@ -1519,7 +998,7 @@ expr : aexpr
 	 if(execute)
 	   {
 	     if(INTERACTIVE) {
-	       if($1->type == _ARRAY)
+	       if($1->type == symtab::symtabtype::_ARRAY)
 		 {
 		   for(std::list<double>::iterator it = $1->array.begin();
 		       it!=$1->array.end();it++)
@@ -1598,7 +1077,7 @@ assignment :  VARIABLE '=' aexpr
 		    $1->array.clear();
 		    for(int i=0;i<$3->size;i++)
 		      $1->array.push_back($3->data[i]);
-		    $1->type = _ARRAY;
+		    $1->type = symtab::symtabtype::_ARRAY;
 		    $$ = $1;
 		    delete[] $3->data;
 		    $3->size = 0;
@@ -1970,13 +1449,12 @@ command : STOP             { if(execute) quit(); }
 		params.flush();
 	      }
           }
-        | TUNNEL ',' parameters // tunnel
+        | TUNNEL ',' tunnel_options // tunnel
           {
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> TUNNEL\n");
-		write_table(params,"tunnel",_TUNNEL);
-		params.flush();
+		add_tunnel(tunnel);
 	      }
           }
         | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
@@ -2006,8 +1484,8 @@ use_parameters :  VARIABLE
 		      {
 			$$ = $1->name;
 			current_line = $1->name;
-			current_start = NULL;
-			current_end = NULL;
+			current_start = nullptr;
+			current_end = nullptr;
 		      }
                   }
 		| PERIOD '=' VARIABLE
@@ -2016,8 +1494,8 @@ use_parameters :  VARIABLE
 		      {
 			$$ = $3->name;
 			current_line = $3->name;
-			current_start = NULL;
-			current_end = NULL;
+			current_start = nullptr;
+			current_end = nullptr;
 		      }
                   }
                 | PERIOD '=' VARIABLE ',' RANGE '=' VARIABLE '/' VARIABLE
@@ -2181,6 +1659,28 @@ gas_options : VARIABLE '=' aexpr
                   }
 ;
 
+tunnel_options : VARIABLE '=' aexpr ',' tunnel_options
+                    {
+		      if(execute)
+			tunnel.set_value($1->name,$3);
+		    }
+                 | VARIABLE '=' aexpr
+                    {
+		      if(execute)
+			tunnel.set_value($1->name,$3);
+		    }
+                 | VARIABLE '=' STR ',' tunnel_options
+                    {
+		      if(execute)
+			tunnel.set_value($1->name,std::string($3));
+		    }
+                 | VARIABLE '=' STR
+                    {
+		      if(execute)
+			tunnel.set_value($1->name,std::string($3));
+		    }
+;
+
 option_parameters : 
                   | VARIABLE '=' aexpr ',' option_parameters
                     {
@@ -2228,7 +1728,6 @@ beam_parameters :
 ;
 
 %%
-
 
 
 int yyerror(const char *s)

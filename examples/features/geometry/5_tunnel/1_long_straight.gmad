@@ -1,0 +1,49 @@
+d1: drift, l=20*m;
+c1: rcol, l=1*m, xsize=1*mm, ysize=1*mm, offsetX=5*mm, offsetY=3*mm, material="copper";
+endoftheline: marker;
+
+l1: line = (d1, c1, d1, endoftheline);
+use,period=l1;
+
+!sample, range=endoftheline;
+
+option, ngenerate=1,
+!	physicsList="QGSP_BERT",
+	physicsList="hadronic em QGSP_BERT",
+!	physicsList="em_standard",
+	beampipeRadius=10.0*cm,
+	beampipeThickness=3*cm,
+	outerDiameter=0.5*m,
+	defaultRangeCut=1*m,	
+	prodCutPositrons=1*m,
+	prodCutElectrons=1*m,
+	prodCutPhotons=1*m,
+	checkOverlaps=1,
+	elossHistoBinWidth=10*cm;
+
+option, buildTunnel=1,
+	buildTunnelStraight=1,
+	tunnelType="circular",
+	tunnelThickness=1*m,
+	tunnelSoilThickness=5*m,
+	tunnelMaterial="concrete",
+	soilMaterial="soil",
+	buildTunnelFloor=1,
+	tunnelFloorOffset=1.2*m,
+	tunnelAper1=5*m,
+	tunnelAper2=3*m,
+	tunnelSensitive=1,
+	tunnelVisible=1,
+	tunnelOffsetX=0.4*m,
+	tunnelOffsetY=-1.2*m;
+
+option, modularPhysicsListsOn=1;
+
+! note tunnelAper2 will be ignored by the circular tunnel model
+
+beam, particle="proton",
+      energy=100.0*GeV,
+      distrType="reference",
+      ngenerate=1,
+      X0=0.0,
+      Y0=0.0;

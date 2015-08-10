@@ -29,25 +29,30 @@ class ElementList {
   //typedef std::list<Element>::InputIterator ElementListInputIterator;
   typedef std::multimap<std::string, ElementListIterator>::iterator ElementMapIterator;
 
+  ///@{
   /// insert options (classic list inserts):
   /// inputiterator templated to account for reverse iterators
   template <typename ElementListInputIterator>
   ElementListIterator insert (ElementListInputIterator position, const Element& val);
   template <typename ElementListInputIterator>
   void insert (ElementListIterator position, ElementListInputIterator first, ElementListInputIterator last);
-  void push_back(Element& el);
+  ///@}
+  /// insert element at end of list
+  /// option to check for unique element name (exits in case name is not unique), false by default
+  void push_back(Element& el, bool unique=false);
   
   /// size of list
   int size()const;
-  /// empty
+  /// empty lists
   void clear();
-  /// erase element
+  ///@{ erase elements
+  void erase();
   ElementListIterator erase (ElementListIterator position);
   ElementListIterator erase (ElementListIterator first, ElementListIterator last);
+  ///@}
   /// begin/end iterator:
   ElementListIterator begin();
   ElementListIterator end();
-  ElementListIterator back();
 
   /// lookup method, returns iterator of list pointing to Element with name
   // TOOD: better list of iterators?

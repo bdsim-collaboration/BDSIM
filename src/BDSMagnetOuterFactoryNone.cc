@@ -40,7 +40,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateSectorBend(G4String      
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return NULL;
+  return nullptr;
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateRectangularBend(G4String      /*name*/,
@@ -53,7 +53,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateRectangularBend(G4String 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return NULL;
+  return nullptr;
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateQuadrupole(G4String      /*name*/,
@@ -65,7 +65,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateQuadrupole(G4String      
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return NULL;
+  return nullptr;
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateSextupole(G4String      /*name*/,
@@ -77,7 +77,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateSextupole(G4String      /
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return NULL;
+  return nullptr;
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateOctupole(G4String      /*name*/,
@@ -89,7 +89,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateOctupole(G4String      /*
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return NULL;
+  return nullptr;
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateDecapole(G4String      /*name*/,
@@ -101,7 +101,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateDecapole(G4String      /*
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return NULL;
+  return nullptr;
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateSolenoid(G4String      /*name*/,
@@ -113,7 +113,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateSolenoid(G4String      /*
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return NULL;
+  return nullptr;
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateMultipole(G4String      /*name*/,
@@ -125,7 +125,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateMultipole(G4String      /
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return NULL;
+  return nullptr;
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateRfCavity(G4String      /*name*/,
@@ -137,7 +137,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateRfCavity(G4String      /*
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return NULL;
+  return nullptr;
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateMuSpoiler(G4String      /*name*/,
@@ -149,7 +149,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateMuSpoiler(G4String      /
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return NULL;
+  return nullptr;
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateKicker(G4String      /*name*/,
@@ -162,5 +162,5 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateKicker(G4String      /*na
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return NULL;
+  return nullptr;
 }

@@ -1,0 +1,16 @@
+! standard options for runing bdsim
+
+option, beampipeRadius = 10 * cm,
+        boxSize = 1.9 * m,
+        tunnelRadius= 2.0 * m,
+        beampipeThickness = 0.5 * cm,
+        chordStepMinimum = 0.0000000001 * m,
+        deltaIntersection = 0.00000001 * m,
+        deltaChord = 0.001 * m,
+        lengthSafety = 0.00001 * m,
+        thresholdCutCharged = 100 * MeV,
+        thresholdCutPhotons = 1000 * KeV;
+
+
+option,physicsList="standard";
+option,ngenerate=1000;

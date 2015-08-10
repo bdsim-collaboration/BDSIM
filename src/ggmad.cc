@@ -16,7 +16,7 @@
 
 GGmadDriver::GGmadDriver(G4String file)
 {
-  G4cout << __METHOD_NAME__ << "> reading file : " << file << G4endl;
+  G4cout << __METHOD_NAME__ << "reading file: " << file << G4endl;
   inputf.open(file);
   if(!inputf.good()) {G4cerr<<"ggmad driver: error opening input file "<<file<<G4endl; exit(1);}
 }
@@ -356,7 +356,7 @@ void GGmadDriver::getParameter(G4double& x, G4String name, G4String lastToken)
       if(token == "=")
 	{
 	  token = getWord();
-	  x = strtod(token.c_str(),NULL);
+	  x = strtod(token.c_str(),nullptr);
 	}
     }
 }

@@ -31,9 +31,8 @@ BDSBeamPipeFactoryRectEllipse* BDSBeamPipeFactoryRectEllipse::Instance()
   return _instance;
 }
 
-BDSBeamPipeFactoryRectEllipse::BDSBeamPipeFactoryRectEllipse():BDSBeamPipeFactoryBase()
-{
-}
+BDSBeamPipeFactoryRectEllipse::BDSBeamPipeFactoryRectEllipse()
+{;}
 
 BDSBeamPipeFactoryRectEllipse::~BDSBeamPipeFactoryRectEllipse()
 {
@@ -71,6 +70,8 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipe(G4String    nameIn,  
 				     aper1In,                // x half width
 				     aper2In,                // y half width
 				     lengthIn); // z full width (long for unambiguous intersection)
+  allSolids.push_back(vacCylSolid);
+  allSolids.push_back(vacRectSolid);
   //intersection of both of these gives the desired shape
   vacuumSolid = new G4IntersectionSolid(nameIn + "_vacuum_solid", // name
 					vacCylSolid,              // solid 1
@@ -105,6 +106,14 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipe(G4String    nameIn,  
   G4VSolid* bpOuterSolid = new G4IntersectionSolid(nameIn + "_pipe_inner_solid", // name
 						   bpOuterCylSolid,              // solid 1
 						   bpOuterRectSolid);            // solid 2
+
+  allSolids.push_back(bpInnerCylSolid);
+  allSolids.push_back(bpInnerRectSolid);
+  allSolids.push_back(bpInnerSolid);
+  allSolids.push_back(bpOuterCylSolid);
+  allSolids.push_back(bpOuterRectSolid);
+  allSolids.push_back(bpOuterSolid);
+  
   //beampipe final subtraction between outer and inner edge
   beamPipeSolid = new G4SubtractionSolid(nameIn + "_pipe_solid",  // name
 					 bpOuterSolid,            // this
@@ -120,6 +129,10 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipe(G4String    nameIn,  
 				      aper1In + beamPipeThicknessIn + lengthSafety, // x half width
 				      aper2In + beamPipeThicknessIn + lengthSafety, // y half width
 				      lengthIn); // z full width (long for unambiguous intersection)
+
+  allSolids.push_back(contCylSolid);
+  allSolids.push_back(contRectSolid);
+  
   //intersection of both of these gives the desired shape
   containerSolid = new G4IntersectionSolid(nameIn + "_vacuum_solid", // name
 					   contCylSolid,             // solid 1
@@ -262,6 +275,12 @@ void BDSBeamPipeFactoryRectEllipse::CreateGeneralAngledSolids(G4String      name
 					      CLHEP::twopi,                      // rotation sweep angle
 					      inputfaceIn,                       // input face normal
 					      outputfaceIn);                     // output face normal
+
+  allSolids.push_back(vacCylSolid);
+  allSolids.push_back(vacRectSolid);
+  allSolids.push_back(longVacuumSolid);
+  allSolids.push_back(vacuumAngledSolid);
+  
   vacuumSolid = new G4IntersectionSolid(nameIn + "_vacuum_solid", // name
 					longVacuumSolid,          // solid 1
 					vacuumAngledSolid);       // solid 2
@@ -300,6 +319,14 @@ void BDSBeamPipeFactoryRectEllipse::CreateGeneralAngledSolids(G4String      name
   G4VSolid* longBeamPipeSolid = new G4SubtractionSolid(nameIn + "_long_pipe_solid",  // name
 						       bpOuterSolid,            // this
 						       bpInnerSolid);           // minus this
+
+  allSolids.push_back(bpInnerCylSolid);
+  allSolids.push_back(bpInnerRectSolid);
+  allSolids.push_back(bpInnerSolid);
+  allSolids.push_back(bpOuterCylSolid);
+  allSolids.push_back(bpOuterRectSolid);
+  allSolids.push_back(bpOuterSolid);
+  
   //final beampipe solid with correct shape and angled faces
   beamPipeSolid = new G4IntersectionSolid(nameIn + "_pipe_solid", // name
 					  longBeamPipeSolid,      // solid1
@@ -320,6 +347,10 @@ void BDSBeamPipeFactoryRectEllipse::CreateGeneralAngledSolids(G4String      name
   G4VSolid* longContainerSolid = new G4IntersectionSolid(nameIn + "_long_container_solid", // name
 							 contCylSolid,                     // solid 1
 							 contRectSolid);                   // solid 2
+
+  allSolids.push_back(contCylSolid);
+  allSolids.push_back(contRectSolid);
+  allSolids.push_back(longContainerSolid);
 
   containerSolid = new G4IntersectionSolid(nameIn + "_container_solid", // name
 					   longContainerSolid,          // solid 1
@@ -344,6 +375,9 @@ void BDSBeamPipeFactoryRectEllipse::CreateContainerSubtractionSolid(G4String& na
 					 aper1In + beamPipeThicknessIn + lengthSafety, // x half width
 					 aper2In + beamPipeThicknessIn + lengthSafety, // y half width
 					 1.7*lengthIn); // z full width (long for unambiguous intersection)
+  allSolids.push_back(contSubCylSolid);
+  allSolids.push_back(contSubRectSolid);
+  
   //intersection of both of these gives the desired shape
   containerSubtractionSolid = new G4IntersectionSolid(nameIn + "_subtraction_solid", // name
 						      contSubCylSolid,               // solid 1

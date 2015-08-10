@@ -2,11 +2,11 @@
 #define BDSBEAMLINEELEMENT_H
 
 #include "BDSAcceleratorComponent.hh"
-#include "BDSGeometryComponent.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 #include <ostream>
 
@@ -18,12 +18,12 @@
  * beamline / lattice.
  * 
  * Each instance of this class owns the position vectors and rotation matrices
- * as well as the accelerator component.
+ * BUT NOT the accelerator component - this is owned by the component registry.
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
-class BDSBeamlineElement: public BDSGeometryComponent
+class BDSBeamlineElement
 {
 public:
   BDSBeamlineElement(BDSAcceleratorComponent* component,
@@ -41,22 +41,15 @@ public:
 		     G4RotationMatrix*        referenceRotationEnd,
 		     G4double                 sPositionStart,
 		     G4double                 sPositionMiddle,
-		     G4double                 sPositionEnd,
-		     G4ThreeVector            xAxisReferenceStart,
-		     G4ThreeVector            yAxisReferenceStart,
-		     G4ThreeVector            zAxisReferenceStart,
-		     G4ThreeVector            xAxisReferenceMiddle,
-		     G4ThreeVector            yAxisReferenceMiddle,
-		     G4ThreeVector            zAxisReferenceMiddle,
-		     G4ThreeVector            xAxisReferenceEnd,
-		     G4ThreeVector            yAxisReferenceEnd,
-		     G4ThreeVector            zAxisReferenceEnd);
+		     G4double                 sPositionEnd);
 
   ~BDSBeamlineElement();
   
   ///@{ Accessor
   inline BDSAcceleratorComponent* GetAcceleratorComponent()    const;
   inline G4String                 GetName()                    const;
+  inline G4String                 GetPlacementName()           const;
+  inline G4LogicalVolume*         GetContainerLogicalVolume()  const;
   inline G4ThreeVector            GetPositionStart()           const;
   inline G4ThreeVector            GetPositionMiddle()          const;
   inline G4ThreeVector            GetPositionEnd()             const;
@@ -72,23 +65,12 @@ public:
   inline G4double                 GetSPositionStart()          const;
   inline G4double                 GetSPositionMiddle()         const;
   inline G4double                 GetSPositionEnd()            const;
-  inline G4ThreeVector            GetXAxisReferenceStart()     const;
-  inline G4ThreeVector            GetYAxisReferenceStart()     const;
-  inline G4ThreeVector            GetZAxisReferenceStart()     const;
-  inline G4ThreeVector            GetXAxisReferenceMiddle()    const;
-  inline G4ThreeVector            GetYAxisReferenceMiddle()    const;
-  inline G4ThreeVector            GetZAxisReferenceMiddle()    const;
-  inline G4ThreeVector            GetXAxisReferenceEnd()       const;
-  inline G4ThreeVector            GetYAxisReferenceEnd()       const;
-  inline G4ThreeVector            GetZAxisReferenceEnd()       const;
+  inline G4Transform3D*           GetPlacementTransform()      const;
   ///@}
 
   ///@{ Reassign the end variable as required when applying a transform
   inline void SetReferencePositionEnd(G4ThreeVector     newReferencePositionEnd);
   inline void SetReferenceRotationEnd(G4RotationMatrix* newReferenceRotatonEnd);
-  inline void SetXAxisReferenceEnd   (G4ThreeVector     newXAxisReferenceEnd);
-  inline void SetYAxisReferenceEnd   (G4ThreeVector     newYAxisReferenceEnd);
-  inline void SetZAxisReferenceEnd   (G4ThreeVector     newZAxisReferenceEnd);
   ///@}
 
   /// output stream
@@ -100,6 +82,12 @@ private:
 
   /// The accelerator component
   BDSAcceleratorComponent* component;
+
+  /// A unique name for placement with "_pv" suffix created for each element
+  /// when added to the beamline which is made by interrogating how many times
+  /// the BDSAcceleratorComponent has been placed (increments the accelerator
+  /// component placement counter).
+  G4String          placementName;
   
   ///@{ Global coordinates for the start, middle and end of this beamline element
   G4ThreeVector     positionStart;
@@ -133,19 +121,9 @@ private:
   G4double          sPositionEnd;
   ///@}
 
-  ///@{ Vector representing the local (X,Y,Z) axis after cumulative rotation and translation
-  ///   along the line. One for each of the start, middle and end of each component. These are
-  ///   required to apply the rotations about.
-  G4ThreeVector     xAxisReferenceStart;
-  G4ThreeVector     yAxisReferenceStart;
-  G4ThreeVector     zAxisReferenceStart;
-  G4ThreeVector     xAxisReferenceMiddle;
-  G4ThreeVector     yAxisReferenceMiddle;
-  G4ThreeVector     zAxisReferenceMiddle;
-  G4ThreeVector     xAxisReferenceEnd;
-  G4ThreeVector     yAxisReferenceEnd;
-  G4ThreeVector     zAxisReferenceEnd;
-  ///@}
+  /// Transform made from positionMiddle and rotationMiddle. By using them as
+  /// a transform, the rotation matrix is the correct way around (inversion).
+  G4Transform3D*    placementTransform;
 };
 
 inline BDSAcceleratorComponent* BDSBeamlineElement::GetAcceleratorComponent() const
@@ -153,6 +131,12 @@ inline BDSAcceleratorComponent* BDSBeamlineElement::GetAcceleratorComponent() co
 
 inline G4String                 BDSBeamlineElement::GetName() const
 {return component->GetName();}
+
+inline G4String                 BDSBeamlineElement::GetPlacementName() const
+{return placementName;}
+
+inline G4LogicalVolume*         BDSBeamlineElement::GetContainerLogicalVolume() const
+{return component->GetContainerLogicalVolume();}
 
 inline G4ThreeVector            BDSBeamlineElement::GetPositionStart() const
 {return positionStart;}
@@ -199,32 +183,7 @@ inline G4double                 BDSBeamlineElement::GetSPositionMiddle() const
 inline G4double                 BDSBeamlineElement::GetSPositionEnd() const
 {return sPositionEnd;}
 
-inline G4ThreeVector            BDSBeamlineElement::GetXAxisReferenceStart() const
-{return xAxisReferenceStart;}
-
-inline G4ThreeVector            BDSBeamlineElement::GetYAxisReferenceStart() const
-{return yAxisReferenceStart;}
-
-inline G4ThreeVector            BDSBeamlineElement::GetZAxisReferenceStart() const
-{return zAxisReferenceStart;}
-
-inline G4ThreeVector            BDSBeamlineElement::GetXAxisReferenceMiddle() const
-{return xAxisReferenceMiddle;}
-
-inline G4ThreeVector            BDSBeamlineElement::GetYAxisReferenceMiddle() const
-{return yAxisReferenceMiddle;}
-
-inline G4ThreeVector            BDSBeamlineElement::GetZAxisReferenceMiddle() const
-{return zAxisReferenceMiddle;}
-
-inline G4ThreeVector            BDSBeamlineElement::GetXAxisReferenceEnd() const
-{return xAxisReferenceEnd;}
-
-inline G4ThreeVector            BDSBeamlineElement::GetYAxisReferenceEnd() const
-{return yAxisReferenceEnd;}
-
-inline G4ThreeVector            BDSBeamlineElement::GetZAxisReferenceEnd() const
-{return zAxisReferenceEnd;}
-
+inline G4Transform3D*           BDSBeamlineElement::GetPlacementTransform() const
+{return placementTransform;}
 
 #endif

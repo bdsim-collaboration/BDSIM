@@ -11,12 +11,13 @@
  * @author I. Agapov
  */
 
-struct Options {
-
+struct Options
+{
   Options();
 
   /// list of pyhysics processes 
   std::string physicsList;
+  int modularPhysicsListsOn;
 
   /// beam parameters
   std::string particleName;
@@ -94,6 +95,8 @@ struct Options {
   std::string outerMaterialName;
   double      outerDiameter;
 
+  int         includeIronMagFields;
+
   /// default beampipe parameters
   double      beampipeRadius;
   double      beampipeThickness;
@@ -105,24 +108,25 @@ struct Options {
   std::string beampipeMaterial;
   std::string vacMaterial;
 
-  /// default tunnel parameters
-  double    tunnelRadius;
-  std::string tunnelMaterial;
-  std::string tunnelCavityMaterial;
-  std::string soilMaterial;
-
-  int      includeIronMagFields;
-
   /// tunnel geometry parameters
-  int      buildTunnel;
-  int      buildTunnelFloor;
-  int      showTunnel;
-  double   tunnelOffsetX;
-  double   tunnelOffsetY;
+  bool        buildTunnel;
+  bool        buildTunnelStraight;
+  std::string tunnelType;
+  double      tunnelThickness;
+  double      tunnelSoilThickness;
+  std::string tunnelMaterial;
+  std::string soilMaterial;
+  bool        buildTunnelFloor;
+  double      tunnelFloorOffset;
+  double      tunnelAper1;
+  double      tunnelAper2;
+  bool        tunnelSensitive;
+  bool        tunnelVisible;
+  double      tunnelOffsetX;
+  double      tunnelOffsetY;
+
+  /// Sampler
   double   samplerDiameter;
-  double   tunnelThickness;
-  double   tunnelSoilThickness;
-  double   tunnelFloorOffset;
   
   ///Geometry biasing
   int      geometryBias;
@@ -136,7 +140,7 @@ struct Options {
   double   annihiToMuFe;
   double   eeToHadronsFe;
 
-  double scintYieldFactor;
+  double   scintYieldFactor;
  
   int      useEMLPB;
   int      useHadLPB;
@@ -159,6 +163,8 @@ struct Options {
   double   prodCutPositrons;
   double   prodCutPositronsP;
   double   prodCutPositronsA;
+
+  double   prodCutHadrons;  
 
   /// Tracking related parameters 
   double   maximumTrackingTime; ///> maximum tracking time per volume [s]
@@ -198,6 +204,8 @@ struct Options {
   
   /// Ring parameters
   int      nturns;
+
+  double   printModuloFraction;
 
   /// print some properties
   void print()const;

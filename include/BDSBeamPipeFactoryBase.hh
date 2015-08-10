@@ -6,7 +6,10 @@
 #include "globals.hh"         // geant4 globals / types
 #include "G4Material.hh"      // materials
 
+class G4LogicalVolume;
+class G4PVPlacement;
 class G4UserLimits;
+class G4VSolid;
 
 /**
  * @brief abstract base class for beampipe factory classes
@@ -37,15 +40,15 @@ public:
   // internal member variables with the same name - avoiding 'itsVariable'
   
   /// create a flat ended beampipe
-  virtual BDSBeamPipe* CreateBeamPipe(G4String    nameIn,                    // name
-				      G4double    lengthIn,                  // length [mm]
-				      G4double    aper1 = 0,                 // aperture parameter 1
-				      G4double    aper2 = 0,                 // aperture parameter 2
-				      G4double    aper3 = 0,                 // aperture parameter 3
-				      G4double    aper4 = 0,                 // aperture parameter 4
-				      G4Material* vacuumMaterialIn = NULL,   // vacuum material
-				      G4double    beamPipeThicknessIn = 0,   // beampipe thickness [mm]
-				      G4Material* beamPipeMaterialIn = NULL  // beampipe material
+  virtual BDSBeamPipe* CreateBeamPipe(G4String    nameIn,                      // name
+				      G4double    lengthIn,                    // length [mm]
+				      G4double    aper1 = 0,                   // aperture parameter 1
+				      G4double    aper2 = 0,                   // aperture parameter 2
+				      G4double    aper3 = 0,                   // aperture parameter 3
+				      G4double    aper4 = 0,                   // aperture parameter 4
+				      G4Material* vacuumMaterialIn = nullptr,  // vacuum material
+				      G4double    beamPipeThicknessIn = 0,     // beampipe thickness [mm]
+				      G4Material* beamPipeMaterialIn = nullptr // beampipe material
 				      ) = 0;
 
   /// create beampipe with an angled face on input side only
@@ -56,10 +59,9 @@ public:
 					         G4double    aper2 = 0,
 					         G4double    aper3 = 0,
 					         G4double    aper4 = 0,
-						 G4Material* vacuumMaterialIn = NULL,
+						 G4Material* vacuumMaterialIn = nullptr,
 					         G4double    beamPipeThicknessIn = 0,
-					         G4Material* beamPipeMaterialIn = NULL
-					         );
+					         G4Material* beamPipeMaterialIn = nullptr);
 
   /// create beampipe with an angled face on output side only
   virtual BDSBeamPipe* CreateBeamPipeAngledOut(  G4String    nameIn,
@@ -69,10 +71,9 @@ public:
 					         G4double    aper2 = 0,
 					         G4double    aper3 = 0,
 					         G4double    aper4 = 0,
-						 G4Material* vacuumMaterialIn = NULL,
+						 G4Material* vacuumMaterialIn = nullptr,
 					         G4double    beamPipeThicknessIn = 0,
-					         G4Material* beamPipeMaterialIn = NULL
-					         );
+					         G4Material* beamPipeMaterialIn = nullptr);
   
   /// create beampipe with an angled face on both input adn output sides
   virtual BDSBeamPipe* CreateBeamPipeAngledInOut(G4String    nameIn,
@@ -83,10 +84,9 @@ public:
 						 G4double    aper2 = 0,
 						 G4double    aper3 = 0,
 						 G4double    aper4 = 0,
-						 G4Material* vacuumMaterialIn = NULL,
+						 G4Material* vacuumMaterialIn = nullptr,
 						 G4double    beamPipeThicknessIn = 0,
-						 G4Material* beamPipeMaterialIn = NULL
-						 ) = 0;
+						 G4Material* beamPipeMaterialIn = nullptr) = 0;
 
 protected:
   /// base constructor
@@ -143,7 +143,16 @@ protected:
   G4LogicalVolume* vacuumLV;
   G4LogicalVolume* beamPipeLV;
   G4LogicalVolume* containerLV;
+  G4PVPlacement*   vacuumPV;
+  G4PVPlacement*   beamPipePV;
 
+  // for non standard parts for easy registration - ie not the specific ones above
+  std::vector<G4LogicalVolume*>   allLogicalVolumes;
+  std::vector<G4VPhysicalVolume*> allPhysicalVolumes;
+  std::vector<G4RotationMatrix*>  allRotationMatrices;
+  std::vector<G4VSolid*>          allSolids;
+  std::vector<G4VisAttributes*>   allVisAttributes;
+  std::vector<G4UserLimits*>      allUserLimits;
 };
 
 #endif

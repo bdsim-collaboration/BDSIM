@@ -6,7 +6,7 @@
 #include "G4Version.hh"
 
 BDSParameterisationPhysics::BDSParameterisationPhysics():G4VPhysicsConstructor("BDSParameterisationPhysics"),_wasActivated(false),
-							 _fastSimulationManagerProcess(NULL)
+							 _fastSimulationManagerProcess(nullptr)
 {;}
 
 BDSParameterisationPhysics::~BDSParameterisationPhysics()

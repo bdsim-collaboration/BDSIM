@@ -16,8 +16,9 @@
 
 #include <cmath>
 
-G4Material* BDSAcceleratorComponent::emptyMaterial = NULL;
+G4Material* BDSAcceleratorComponent::emptyMaterial = nullptr;
 G4double    BDSAcceleratorComponent::lengthSafety  = -1;
+G4bool      BDSAcceleratorComponent::checkOverlaps = false;
 
 struct BDSBeamPipeInfo;
 
@@ -27,7 +28,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4String         typeIn,
 						 G4int            precisionRegionIn,
 						 BDSBeamPipeInfo* beamPipeInfoIn):
-  BDSGeometryComponent(NULL,NULL),
+  BDSGeometryComponent(nullptr,nullptr),
   name(nameIn),
   arcLength(arcLengthIn),
   type(typeIn),
@@ -38,19 +39,28 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  readOutLV = NULL;
+  nTimesPlaced = 0;
+  readOutLV    = nullptr;
 
   // initialise static members
   if (!emptyMaterial)
     {emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());}
   if (lengthSafety < 0)
     {lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();}
+  checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
   
   // calculate the chord length if the angle is finite
   if (BDS::IsFinite(angleIn))
     {chordLength = 2.0 * arcLengthIn * sin(0.5*angleIn) / angleIn;}
   else
     {chordLength = arcLengthIn;}
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "angle:        " << angleIn     << G4endl;
+  G4cout << __METHOD_NAME__ << "arc length:   " << arcLengthIn << G4endl;
+  G4cout << __METHOD_NAME__ << "chord length: " << chordLength << G4endl; 
+#endif
+
+  initialised = false;
 }
 
 BDSAcceleratorComponent::~BDSAcceleratorComponent()
@@ -61,11 +71,14 @@ BDSAcceleratorComponent::~BDSAcceleratorComponent()
 
 void BDSAcceleratorComponent::Initialise()
 {
+  if (initialised)
+    {return;} // protect against duplicated initialisation and memory leaks
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   Build();
   readOutLV = BuildReadOutVolume(name, chordLength, angle);
+  initialised = true; // record that this component has been initialised
 }
 
 void BDSAcceleratorComponent::Build()
@@ -81,7 +94,6 @@ void BDSAcceleratorComponent::Build()
     G4double maxStepFactor=0.5;
     G4UserLimits* containerUserLimits =  new G4UserLimits();
     containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
-    containerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
     containerLogicalVolume->SetUserLimits(containerUserLimits);
   }
 #endif
@@ -108,14 +120,16 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  if (!BDS::IsFinite(chordLength)) return NULL;
+  if (!BDS::IsFinite(chordLength)) return nullptr;
 
-  G4double roRadius      = BDSGlobalConstants::Instance()->GetSamplerDiameter()*0.5;
-  G4Material* roMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
-  G4VSolid* roSolid      = NULL;
+  G4double roRadius = 0;
+  G4double roRadiusFromSampler     = BDSGlobalConstants::Instance()->GetSamplerDiameter()*0.5;
+  
+  G4VSolid* roSolid      = nullptr;
   if (!BDS::IsFinite(angle))
     {
       //angle is zero - build a box
+      roRadius = roRadiusFromSampler;
       roSolid = new G4Box(name + "_ro_solid", // name
 			  roRadius,           // x half width
 			  roRadius,           // y half width
@@ -124,6 +138,13 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
   else
     {
       // angle is finite!
+      G4double roRadiusFromAngleLength =  std::abs(chordLength / angle); // s = r*theta -> r = s/theta
+      roRadius = std::min(roRadiusFromSampler,roRadiusFromAngleLength);
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "taking smaller of: sampler radius: " << roRadiusFromSampler
+	     << " mm, max possible radius: " << roRadiusFromAngleLength << " mm" << G4endl;
+#endif
+
       G4int orientation = BDS::CalculateOrientation(angle);
       G4double in_z     = cos(0.5*fabs(angle)); 
       G4double in_x     = sin(0.5*fabs(angle));
@@ -144,7 +165,7 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
   // note material not strictly necessary in geant4 > v10, but required for
   // v9 even though not used and doesn't affect simulation - leave for compatability
   G4LogicalVolume* readOutLV =  new G4LogicalVolume(roSolid,          // solid
-						    roMaterial,       // material
+						    emptyMaterial,    // material
 						    name + "_ro_lv"); // name
 
   return readOutLV;

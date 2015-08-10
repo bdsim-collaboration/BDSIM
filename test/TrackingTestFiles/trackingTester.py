@@ -88,7 +88,7 @@ class Test:
         
         ptc.Generate(self.nparticles,self.ptcfilepath)
         
-        bb  = pybdsim.Beam(self.particle,self.energy,'ptc')
+        bb  = pybdsim.Beam.Beam(self.particle,self.energy,'ptc')
         xb  = pymadx.Beam(self.particle,self.energy,'ptc')
         
         bb.SetDistribFileName(self.ptcfilename) 
@@ -164,7 +164,7 @@ class Test:
         My = madx.GetColumn('Y')*1e6 
         Mxp = madx.GetColumn('PX')
         Myp = madx.GetColumn('PY')
-        self.ptcoutput = {'x':Bx,'y':My,'xp':Mxp,'yp':Myp}
+        self.ptcoutput = {'x':Mx,'y':My,'xp':Mxp,'yp':Myp}
 
         fresx  = _np.nan_to_num(Mx - Bx)
         fresy  = _np.nan_to_num(My - By)
@@ -306,7 +306,7 @@ class Test:
         _plt.savefig(self.type_+'_residuals.png')
         
         #emittance
-        r = robdsim.robdsimOutput("test_0.root")
+        r = robdsim.robdsimOutput("test.root")
         r.CalculateOpticalFunctions("optics.dat")
         d = pybdsim.Data.Load("optics.dat")
         print 'Horizontal emittance bdsim (before,after) ',d.Emitt_x()

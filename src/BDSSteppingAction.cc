@@ -3,12 +3,6 @@
    Last modified 25.12.2003
    Copyright (c) 2003 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
-
-//====================================================
-//  Class description here ...
-//
-//====================================================
-
 #include "BDSSteppingAction.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
@@ -18,52 +12,25 @@
 #include "G4Track.hh"
 #include "G4VProcess.hh"
 
-//====================================================
-
-BDSSteppingAction::BDSSteppingAction():_step(NULL)
-{ 
-}
-
-//====================================================
+BDSSteppingAction::BDSSteppingAction():_step(nullptr)
+{;}
 
 BDSSteppingAction::~BDSSteppingAction()
-{}
+{;}
 
-//====================================================
-
-
-void BDSSteppingAction::UserSteppingAction(const G4Step* ThisStep){
+void BDSSteppingAction::UserSteppingAction(const G4Step* ThisStep)
+{
   _step = ThisStep;
-  if(BDSExecOptions::Instance()->GetVerboseStep()) {
-    VerboseSteppingAction();
-  }
-  if (BDSGlobalConstants::Instance()->GetThresholdCutPhotons() > 0 || BDSGlobalConstants::Instance()->GetThresholdCutCharged() > 0) {
-    ThresholdCutSteppingAction();
-  }
+  if(BDSExecOptions::Instance()->GetVerboseStep())
+    {VerboseSteppingAction();}
 }
 
-void BDSSteppingAction::ThresholdCutSteppingAction(){
-  // -------------  kill tracks according to cuts -------------------
-  G4int pdgNr = _step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
-  // this cuts apply to default region
-  if (pdgNr == 22) {
-    if(_step->GetTrack()->GetKineticEnergy()<BDSGlobalConstants::Instance()->GetThresholdCutPhotons())
-      {
-	_step->GetTrack()->SetTrackStatus(fStopAndKill);
-      }
-  } else if (abs(pdgNr) == 11) {
-    //note this is 'thresholdcutcarged' but only works on electrons...
-    if(_step->GetTrack()->GetKineticEnergy()<BDSGlobalConstants::Instance()->GetThresholdCutCharged())
-      {
-	_step->GetTrack()->SetTrackStatus(fStopAndKill);
-      }
-  }
-}
+void BDSSteppingAction::ThresholdCutSteppingAction()
+{;}
   
 void BDSSteppingAction::VerboseSteppingAction()
 { 
-  // ------------  output in case of verbose step ---------------------
-
+  //output in case of verbose step
   int ID=_step->GetTrack()->GetTrackID();
   int G4precision = G4cout.precision();
   G4cout.precision(10);
@@ -102,5 +69,3 @@ void BDSSteppingAction::VerboseSteppingAction()
   // set precision back
   G4cout.precision(G4precision);
 }
-  
-//====================================================

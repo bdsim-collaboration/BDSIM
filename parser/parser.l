@@ -19,7 +19,7 @@
 #include <string>
 #include <cstring>
 #include <iostream>
-#include "parser.tab.h"
+#include "parser.tab.hh"
 #include "sym_table.h"
 #include "getEnv.h"
 #include <unistd.h>
@@ -69,7 +69,7 @@ char* yyfilename;
 marker { return MARKER; } // reserved elements
 drift { return DRIFT; }
 pcldrift { return DRIFT; }
-rfcavity { return RF; }
+rf { return RF; }
 dipole { return DIPOLE; }
 sbend { return SBEND; } 
 rbend {return RBEND; }
@@ -140,7 +140,7 @@ dump  { return DUMP; }
      if(sp->funcptr)
        return FUNC;
      else 
-     if(sp->type == _ARRAY)
+     if(sp->type == symtab::symtabtype::_ARRAY)
        return VECVAR;
      else
        return VARIABLE; 

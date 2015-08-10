@@ -28,9 +28,7 @@ public:
   virtual void Initialize(G4HCofThisEvent*HCE);
   virtual G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
   virtual G4bool ProcessHits(G4GFlashSpot*aSpot ,G4TouchableHistory* ROhist);
-
-  G4double GetSPositionOfStep(G4Step* aStep,       G4TouchableHistory* readOutTH);
-  G4double GetSPositionOfSpot(G4GFlashSpot* aSpot, G4TouchableHistory* readOutTH);
+  
   G4String GetName();
 
 private:

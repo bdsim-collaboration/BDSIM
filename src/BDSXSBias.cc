@@ -3,7 +3,7 @@
 #include "BDSXSBias.hh"
 
 BDSXSBias::BDSXSBias(const G4String& aName,
-                                         G4ProcessType   aType)
+		     G4ProcessType   aType)
   : G4WrapperProcess(aName, aType), _eFactor(1)
 {
 }
@@ -18,36 +18,34 @@ BDSXSBias::~BDSXSBias()
 {
 }
 
-G4VParticleChange* BDSXSBias::PostStepDoIt(
-                                                   const G4Track& track,
-                                                   const G4Step&  stepData
-                                                   )
-{
+G4VParticleChange* BDSXSBias::PostStepDoIt(const G4Track& track,
+					   const G4Step&  stepData)
+{ 
 #ifdef BDSDEBUG
-  G4cout <<" ###PostStepDoIt " << G4endl;
-  G4cout << "BDSXSBias::PostStepDoit  Getting pChange" << G4endl;
+  G4cout << "BDSXSBias::PostStepDoIt>" << G4endl;
+  G4cout << "BDSXSBias::PostStepDoit> Getting pChange" << G4endl;
 #endif
   G4VParticleChange* pChange = pRegProcess->PostStepDoIt( track, stepData );
   pChange->SetVerboseLevel(0);
 #ifdef BDSDEBUG
-  G4cout << "BDSXSBias::PostStepDoit Choosing setsecondaryweightbyprocess" << G4endl;
+  G4cout << "BDSXSBias::PostStepDoit> Choosing SetSecondaryWeightByProcess" << G4endl;
 #endif
   pChange->SetSecondaryWeightByProcess(true);
   pChange->SetParentWeightByProcess(true);
 #ifdef BDSDEBUG
-  G4cout << "BDSXSBias::PostStepDoit Getting parent weight" << G4endl;
+  G4cout << "BDSXSBias::PostStepDoit> Getting parent weight" << G4endl;
 #endif
   G4double w =  pChange->GetParentWeight();
   G4double ws = w / eFactor();
   G4double survivalProb = w - ws;
   
 #ifdef BDSDEBUG
-  G4cout << "BDSXSBias::PostStepDoit Getting number of secondaries" << G4endl;
+  G4cout << "BDSXSBias::PostStepDoit> Getting number of secondaries" << G4endl;
 #endif
   G4int iNSec = pChange->GetNumberOfSecondaries();
 
 #ifdef BDSDEBUG  
-  G4cout << "BDSXSBias::PostStepDoit Setting secondary weights" << G4endl;
+  G4cout << "BDSXSBias::PostStepDoit> Setting secondary weights" << G4endl;
 #endif
 
   G4bool pionEvent = false;

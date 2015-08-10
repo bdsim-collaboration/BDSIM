@@ -31,13 +31,11 @@ BDSBunchEShell::BDSBunchEShell(G4double shellXIn, G4double shellXpIn,
 
 BDSBunchEShell::~BDSBunchEShell() 
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   delete FlatGen;
 }
 
-void BDSBunchEShell::SetOptions(struct Options& opt) {
+void BDSBunchEShell::SetOptions(struct Options& opt)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -54,7 +52,8 @@ void BDSBunchEShell::SetOptions(struct Options& opt) {
 
 void BDSBunchEShell::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 				    G4double& xp, G4double& yp, G4double& zp,
-				    G4double& t , G4double&  E, G4double& weight) {
+				    G4double& t , G4double&  E, G4double& weight)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif

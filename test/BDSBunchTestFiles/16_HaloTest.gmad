@@ -1,0 +1,5 @@
+include 16_Halo.gmad
+include options.gmad
+include fodo.gmad;
+
+option, ngenerate=1000;

@@ -1,10 +1,17 @@
 #include "elementlist.h"
 
 #include <cstdio>
+#include <cstdlib>
+#include <iostream>
 
 extern const char* current_line;
 
-void ElementList::push_back(Element& el) {
+void ElementList::push_back(Element& el, bool unique) {
+  // better to search in map (faster)
+  if (unique && itsMap.find(el.name) != itsMap.end()) {
+    std::cout << "ERROR: element already defined: " << el.name << std::endl;
+    exit(1);
+  }
   // insert at back of list (insert() instead of push_back() to get iterator for map):
   ElementListIterator it = itsList.insert(end(),el);
   itsMap.insert(std::pair<std::string,ElementListIterator>(el.name,it));
@@ -17,6 +24,14 @@ int ElementList::size()const {
 void ElementList::clear() {
   itsList.clear();
   itsMap.clear();
+}
+
+void ElementList::erase() {
+  ElementListIterator it = begin();
+  for(;it!=end();it++) {
+    delete (*it).lst;
+  }
+  clear();
 }
 
 ElementList::ElementListIterator ElementList::erase(ElementListIterator it) {
@@ -54,10 +69,6 @@ ElementList::ElementListIterator ElementList::begin() {
 
 ElementList::ElementListIterator ElementList::end() {
   return itsList.end();
-}
-
-ElementList::ElementListIterator ElementList::back() {
-  return itsList.end()--;
 }
 
 ElementList::ElementListIterator ElementList::find(std::string name,unsigned int count) {

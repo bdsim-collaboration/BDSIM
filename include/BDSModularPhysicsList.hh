@@ -3,9 +3,7 @@
 
 #include "G4VModularPhysicsList.hh"
 #include "G4OpticalPhysics.hh"
-#include "BDSDebug.hh"
 #include "G4VPhysicsConstructor.hh"
-#include "BDSMuonPhysics.hh"
 #include "BDSCutsAndLimits.hh"
 
 #include <vector>
@@ -24,7 +22,7 @@ private:
   G4VPhysicsConstructor* _emPhysics;
   G4VPhysicsConstructor* _hadronicPhysics;
   G4VPhysicsConstructor* _muonPhysics;
-  G4OpticalPhysics* _opticalPhysics;
+  G4OpticalPhysics*      _opticalPhysics;
   G4VPhysicsConstructor* _decayPhysics;
   G4VPhysicsConstructor* _paramPhysics;
   G4VPhysicsConstructor* _synchRadPhysics;
@@ -35,6 +33,7 @@ private:
   void ConfigureOptical();
   void Register();
   G4String _physListName;
+
   //Physics constructor loaders.
   void LoadEm();			  
   void LoadEmLow();			  

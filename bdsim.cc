@@ -1,19 +1,7 @@
 //  
 //   BDSIM, (C) 2001-2015
 //   
-//   version 0.6
-//  
-//
-//
-//   Main code
-//
-//
-//   History
-//     17 Jul 2007 by Malton v.0.4
-//     26 Jan 2007 by Agapov v.0.3
-//     28 Mar 2006 by Agapov v.0.2
-//     
-//
+//   version 0.8
 
 #include "BDSDebug.hh" 
 #include "BDSExecOptions.hh"     // executable command line options 
@@ -37,8 +25,6 @@
 
 #include <cstdlib>      // standard headers 
 #include <cstdio>
-#include <unistd.h>
-#include <getopt.h>
 #include <signal.h>
 
 #include "G4EventManager.hh" // Geant4 includes
@@ -48,16 +34,17 @@
 #include "G4GeometryTolerance.hh"
 #include "G4TrajectoryDrawByCharge.hh"
 
-#include "BDSBeamline.hh"
+#include "BDSAcceleratorModel.hh"
 #include "BDSBunch.hh"
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
 #include "BDSGeometryInterface.hh"
-#include "BDSLogicalVolumeInfoRegistry.hh"
+#include "BDSGeometryWriter.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
 #include "BDSPhysicsList.hh"
+#include "BDSModularPhysicsList.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRunAction.hh"
 #include "BDSSteppingAction.hh"
@@ -72,15 +59,15 @@
 
 //=======================================================
 // Global variables 
-BDSOutputBase* bdsOutput=NULL;         // output interface
+BDSOutputBase* bdsOutput=nullptr;         // output interface
 //=======================================================
 
 extern Options options;
 
-int main(int argc,char** argv) {
-
+int main(int argc,char** argv)
+{
   // print header
-  G4cout<<"bdsim : version 0.7"<<G4endl;
+  G4cout<<"bdsim : version 0.8"<<G4endl;
   G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
   G4cout<<"        http://www.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BdSim"<<G4endl;
   G4cout<<G4endl;
@@ -114,7 +101,8 @@ int main(int argc,char** argv) {
   BDSRandom::SetSeed(); // set the seed from options or from exec options
   if (execOptions->SetSeedState()) //optionally load the seed state from file
     {BDSRandom::LoadSeedState(execOptions->GetSeedStateFilename());}
-  BDSRandom::WriteSeedState(); //write the current state once set / loaded
+  if (BDSExecOptions::Instance()->GetOutputFormat() != BDSOutputFormat::none)
+    {BDSRandom::WriteSeedState();} //write the current state once set / loaded
 
   // instantiate the specific type of bunch distribution (class),
   // get the corresponding parameters from the gmad parser info
@@ -140,9 +128,14 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
-
-  BDSPhysicsList* PhysList=new BDSPhysicsList;
-  runManager->SetUserInitialization(PhysList);
+  if(options.modularPhysicsListsOn) {
+    BDSModularPhysicsList *physList = new BDSModularPhysicsList;
+    runManager->SetUserInitialization(physList);
+  }
+  else { 
+    BDSPhysicsList        *physList=new BDSPhysicsList;  
+    runManager->SetUserInitialization(physList);
+  }
   
 #ifdef BDSDEBUG 
   G4cout<< __FUNCTION__ << "> User init phys list"<<G4endl;
@@ -150,26 +143,29 @@ int main(int argc,char** argv) {
 
   // Set the geometry tolerance
   static G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
-  G4cout << __FUNCTION__ << "> Default geometry tolerances: surface " 
-	 << theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m << " m " 
-	 << theGeometryTolerance->GetAngularTolerance() << " " 
-	 << theGeometryTolerance->GetRadialTolerance()  << " " <<G4endl;
-  G4double worldMaximumExtent=1000*CLHEP::m;
-  // This sets the tolerances for the geometry (1e-11 times this value)
-  G4GeometryManager::GetInstance()->SetWorldMaximumExtent(worldMaximumExtent); 
 #ifdef BDSDEBUG
-  G4cout<<__FUNCTION__<<"> Geometry Tolerances: " << G4endl;
-  G4cout<<__FUNCTION__<<std::setw(23)<<" World Maximum Extent: "<<std::setw(15)<<worldMaximumExtent/CLHEP::m<<" m"<<G4endl;
-  G4cout<<__FUNCTION__<<std::setw(23)<<" Surface: "             <<std::setw(15)<<theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m<< " m"<<G4endl;
-  G4cout<<__FUNCTION__<<std::setw(23)<<" Angular: "             <<std::setw(15)<<theGeometryTolerance->GetAngularTolerance()<<G4endl;
-  G4cout<<__FUNCTION__<<std::setw(23)<<" Radial: "              <<std::setw(15)<<theGeometryTolerance->GetRadialTolerance()<<G4endl;
+  G4cout << __FUNCTION__ << "> Default geometry tolerances: surface " 
+	 << theGeometryTolerance->GetSurfaceTolerance() << " mm " 
+	 << theGeometryTolerance->GetAngularTolerance() << " rad " 
+	 << theGeometryTolerance->GetRadialTolerance()  << " mm" << G4endl;
 #endif
-  
-  G4cout << __FUNCTION__ << "> Constructing the accelerator"<<G4endl;
+  // This sets the tolerances for the geometry (1e-11 times this value)
+  // Note, this doesn't actually have any affect on the size of the geometry,
+  // and is only used to calculate the tolerance in geant4. This is really misleading
+  // naming on the part of geant4. There is no way to just set a tolerance directly.
+  G4double worldMaximumExtent=1000*CLHEP::m;
+  G4GeometryManager::GetInstance()->SetWorldMaximumExtent(worldMaximumExtent); 
+  G4cout << __FUNCTION__ << "> Geometry Tolerances: "     << G4endl;
+  G4cout << __FUNCTION__ << ">" << std::setw(22) << "Surface: " << std::setw(10) << theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m << " m"   << G4endl;
+  G4cout << __FUNCTION__ << ">" << std::setw(22) << "Angular: " << std::setw(10) << theGeometryTolerance->GetAngularTolerance()          << " rad" << G4endl;
+  G4cout << __FUNCTION__ << ">" << std::setw(22) << "Radial: "  << std::setw(10) << theGeometryTolerance->GetRadialTolerance()/CLHEP::m  << " m"   << G4endl;
+
+  // note this doesn't actually construct the accelerator - only instantiates the class.
+  // the run manager later calls the construct method
   BDSDetectorConstruction* detector = new BDSDetectorConstruction();
  
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> User init detector"<<G4endl;
+  G4cout << __FUNCTION__ << "> Registering user action - detector construction"<<G4endl;
 #endif
   runManager->SetUserInitialization(detector);
 
@@ -177,17 +173,17 @@ int main(int argc,char** argv) {
   // set user action classes
   //
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> User action - runaction"<<G4endl;
+  G4cout << __FUNCTION__ << "> Registering user action - runaction"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSRunAction);
 
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> User action - eventaction"<<G4endl;
+  G4cout << __FUNCTION__ << "> Registering user action - eventaction"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSEventAction());
 
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> User action - steppingaction"<<G4endl;
+  G4cout << __FUNCTION__ << "> Registering user action - steppingaction"<<G4endl;
 #endif
   // Only add steppingaction if it is actually used, so do check here (for cpu reasons)
   if (globalConstants->GetThresholdCutPhotons() > 0 || globalConstants->GetThresholdCutCharged() > 0
@@ -196,26 +192,25 @@ int main(int argc,char** argv) {
   }
   
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> User action - trackingaction"<<G4endl;
+  G4cout << __FUNCTION__ << "> Registering user action - trackingaction"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSUserTrackingAction);
 
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> User action - stackingaction"<<G4endl;
+  G4cout << __FUNCTION__ << "> Registering user action - stackingaction"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSStackingAction);
 
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> User action - primary generator"<<G4endl;
+  G4cout << __FUNCTION__ << "> Registering user action - primary generator"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSPrimaryGeneratorAction(bdsBunch));
-
-
+  
   //
   // Initialize G4 kernel
   //
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Init kernel"<<G4endl;
+  G4cout << __FUNCTION__ << "> Initialising Geant4 kernel"<<G4endl;
 #endif
   runManager->Initialize();
 
@@ -233,12 +228,27 @@ int main(int argc,char** argv) {
     G4cerr << "bdsim.cc: error - geometry not closed." << G4endl;
     return 1;
   }
+
+  if (execOptions->ExportGeometry())
+    {
+      BDSGeometryWriter::Instance()->ExportGeometry(execOptions->GetExportType(),
+						    execOptions->GetExportFileName());
+      // clean up before exiting
+      G4GeometryManager::GetInstance()->OpenGeometry();
+      delete BDSAcceleratorModel::Instance();
+      delete execOptions;
+      delete globalConstants;
+      delete BDSMaterials::Instance();
+      delete runManager;
+      delete bdsBunch;
+      return 0;
+    }
   
   // set default output formats:
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
 #endif
-  bdsOutput = BDSOutputFactory::createOutput(execOptions->GetOutputFormat());
+  bdsOutput = BDSOutputFactory::CreateOutput(execOptions->GetOutputFormat());
   G4cout.precision(10);
 
   // catch aborts to close output stream/file. perhaps not all are needed.
@@ -318,7 +328,7 @@ int main(int argc,char** argv) {
       if (visMacroName.empty()) useDefault = true;
       G4String visMacroFilename = BDS::GetFullPath(visMacroName);
       if (!useDefault) {
-	FILE* file = NULL;
+	FILE* file = nullptr;
 	// first relative to main path:
 	file = fopen(visMacroFilename.c_str(), "r");
 	if (file) {
@@ -380,7 +390,7 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
 #endif
-  delete BDSLogicalVolumeInfoRegistry::Instance();
+  delete BDSAcceleratorModel::Instance();
   delete execOptions;
   delete globalConstants;
   delete BDSMaterials::Instance();
@@ -388,8 +398,7 @@ int main(int argc,char** argv) {
 #ifdef BDSDEBUG 
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif
-  delete runManager; 
-
+  delete runManager;
   delete bdsBunch;
 
   G4cout << __FUNCTION__ << "> End of Run, Thank you for using BDSIM!" << G4endl;

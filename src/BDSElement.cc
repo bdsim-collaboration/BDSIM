@@ -48,8 +48,8 @@ BDSElement::BDSElement(G4String name,
   BDSAcceleratorComponent(name, length, 0, "element"),
   outerDiameter(outerDiameterIn),
   itsGeometry(geometry), itsBmap(bmap),
-  fChordFinder(NULL), itsFStepper(NULL), itsFEquation(NULL), itsEqRhs(NULL), 
-  itsMagField(NULL), itsCachedMagField(NULL), itsUniformMagField(NULL)
+  fChordFinder(nullptr), itsFStepper(nullptr), itsFEquation(nullptr), itsEqRhs(nullptr), 
+  itsMagField(nullptr), itsCachedMagField(nullptr), itsUniformMagField(nullptr)
 {
   itsFieldVolName="";
   itsFieldIsUniform=false;
@@ -57,8 +57,8 @@ BDSElement::BDSElement(G4String name,
 
   // WARNING: ALign in and out will only apply to the first instance of the
   //          element. Subsequent copies will have no alignment set.
-  align_in_volume = NULL;
-  align_out_volume = NULL;
+  align_in_volume = nullptr;
+  align_out_volume = nullptr;
 }
 
 void BDSElement::Build()
@@ -212,7 +212,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       BuildMagField(true);
     }
 
-    RegisterSensitiveVolumes(LCDD->SensitiveComponents);
+    RegisterSensitiveVolume(LCDD->SensitiveComponents);
     delete LCDD;
 #else
     G4cout << "LCDD support not selected during BDSIM configuration" << G4endl;
@@ -224,11 +224,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     G4cout << "BDSElement.cc: loading geometry sql file: BDSGeometrySQL(" << gFile << "," << chordLength << ")" << G4endl;
 #endif
     BDSGeometrySQL *Mokka = new BDSGeometrySQL(gFile,chordLength,containerLogicalVolume);
-    for(unsigned int i=0; i<Mokka->GetMultiplePhysicalVolumes().size(); i++){
-      SetMultiplePhysicalVolumes(Mokka->GetMultiplePhysicalVolumes().at(i));
-    }
-
-    RegisterSensitiveVolumes(Mokka->SensitiveComponents);
+    RegisterSensitiveVolume(Mokka->SensitiveComponents);
 
     std::vector<G4LogicalVolume*> GFlashComps =Mokka->itsGFlashComponents;
     for(G4int id=0; id<(G4int)GFlashComps.size(); id++)
@@ -279,7 +275,11 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 #ifdef USE_GDML
     BDSGeometryGDML *GDML = new BDSGeometryGDML(gFile);
     GDML->Construct(containerLogicalVolume);
+    //    RegisterSensitiveVolume(containerLogicalVolume);
+    RegisterSensitiveVolume(GDML->GetAllSensitiveVolumes());
     delete GDML;
+
+
 #else
     G4cout << "GDML support not selected during BDSIM configuration" << G4endl;
     G4Exception("Please re-compile BDSIM with USE_GDML flag", "-1", FatalException, "");
@@ -375,9 +375,9 @@ void BDSElement::AlignComponent(G4ThreeVector& TargetPos,
 {
   
   
-  if(align_in_volume == NULL)
+  if(align_in_volume == nullptr)
     {
-      if(align_out_volume == NULL)
+      if(align_out_volume == nullptr)
 	{
 	  // advance co-ords in usual way if no alignment volumes found
 	  
@@ -421,7 +421,7 @@ void BDSElement::AlignComponent(G4ThreeVector& TargetPos,
 	}
     }
 
-  if(align_in_volume != NULL)
+  if(align_in_volume != nullptr)
     {
 #ifdef BDSDEBUG
       G4cout << "BDSElement : Aligning incoming to SQL element " 
@@ -435,7 +435,7 @@ void BDSElement::AlignComponent(G4ThreeVector& TargetPos,
       inPos.transform((*TargetRot).inverse());
       TargetPos+=G4ThreeVector(inPos.x(), inPos.y(), 0.0);
       
-      if(align_out_volume == NULL)
+      if(align_out_volume == nullptr)
 	{
 	  // align outgoing (i.e. next component) to Marker Volume
 	  

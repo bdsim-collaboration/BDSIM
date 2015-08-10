@@ -1,0 +1,33 @@
+d1: drift, l=1*m;
+q1: quadrupole, l=0.5*m, k1=1.31;
+sex1: sextupole, l=0.5*m, k2=0.31;
+oct1: octupole, l=0.5*m, k3=3.31;
+sol1: solenoid, l=0.5*m, k0=1.31;
+sb1: sbend, l=4*m, angle=0.3;
+rb1: rbend, l=10*m, angle= -0.4;
+endoftheline: marker;
+
+l1: line = (d1,q1,d1,sex1,d1,oct1,d1,sol1,d1,sb1,d1,rb1,d1,endoftheline);
+use,period=l1;
+
+sample, range=endoftheline;
+
+option, ngenerate=1,
+!	physicsList="QGSP_BERT",
+!	physicsList="hadronic_standard",
+	physicsList="em_standard",
+	beampipeRadius=5.0*cm,
+	beampipeThickness=5*cm,
+	outerDiameter=2.0*m,
+	defaultRangeCut=1*cm,	
+	prodCutPositrons=1*cm,
+	prodCutElectrons=1*cm,
+	prodCutPhotons=1*cm,
+	checkOverlaps=1;
+
+beam, particle="proton",
+      energy=10.0*GeV,
+      distrType="reference",
+      ngenerate=1,
+      X0=0.0,
+      Y0=0.0;

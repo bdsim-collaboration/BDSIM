@@ -273,14 +273,14 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  // reset all pointers and variables to protect against bugs using previous use
+  // reset all pointers and variables to protect against bugs using previous use of factory
   CleanUp();
   
   CalculatePoleAndYoke(outerDiameter, beamPipe, order);
   CreatePoleSolid(name, length, order);
   CreateYokeAndContainerSolid(name, length, order);
   CreateLogicalVolumes(name, length, order, outerMaterial);
-  PlaceComponents(name, order);
+  PlaceComponents(name, order); //returns vector of PVs
   
   // record extents
   // container radius is just outerDiamter as yoke is circular
@@ -293,18 +293,21 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String
   BDSGeometryComponent* outer = new BDSGeometryComponent(containerSolid,
 							 containerLV,
 							 extX, extY, extZ);
-  // REGISTER all lvs - using geometry component base class method
-  // test if poleLV exists first as some derived classes use their own vector of
-  // poles and don't use this one - therefore it'll be null
-  if (poleLV) {
-    outer->RegisterLogicalVolume(poleLV); }
-  outer->RegisterLogicalVolume(yokeLV);
 
-  // set sensitive volumes
+  outer->RegisterRotationMatrix(allRotationMatrices);
+  outer->RegisterPhysicalVolume(allPhysicalVolumes);
+  outer->RegisterVisAttributes(allVisAttributes);
+  outer->RegisterUserLimits(allUserLimits);
+  
+  // Register logical volumes and set sensitivity
   // test if poleLV exists first as some derived classes use their own vector of
   // poles and don't use this one - therefore it'll be null
-  if (poleLV) {
-    outer->RegisterSensitiveVolume(poleLV); }
+  if (poleLV)
+    {
+      outer->RegisterLogicalVolume(poleLV);
+      outer->RegisterSensitiveVolume(poleLV);
+    }
+  outer->RegisterLogicalVolume(yokeLV);
   outer->RegisterSensitiveVolume(yokeLV);
   
   return outer;
@@ -325,7 +328,7 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiam
 
   // layout markers for the pole and yoke - radially out from centre
   poleStartRadius       = bpRadius + lengthSafety;
-  yokeFinishRadius      = outerDiameter*0.5;
+  yokeFinishRadius      = outerDiameter*0.5 - lengthSafety;
   G4double totalLength  = yokeFinishRadius - poleStartRadius;
   poleFinishRadius      = poleStartRadius + poleFraction*totalLength;
   yokeStartRadius       = poleFinishRadius + lengthSafety;
@@ -378,6 +381,10 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
 			       poleTip,              // solid 2
 			       0,                    // rotation matrix
 			       ellipsoidTranslation);// translation of poleTip
+
+  allSolids.push_back(poleTip);
+  allSolids.push_back(poleAnnulus);
+  allSolids.push_back(poleSolid);
 }
 
 void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String      name,
@@ -400,6 +407,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String      n
 			      length*0.5,                      // z half length
 			      0,                               // start angle
 			      CLHEP::twopi);                   // sweep angle
+  allSolids.push_back(yokeSolid);
 }
 
 void BDSMagnetOuterFactoryPolesBase::TestInputParameters(BDSBeamPipe* beamPipe,
@@ -453,6 +461,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumes(G4String   name,
   G4VisAttributes* outerVisAttr = new G4VisAttributes(*magnetColour);
   outerVisAttr->SetVisibility(true);
   outerVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+  allVisAttributes.push_back(outerVisAttr);
   poleLV->SetVisAttributes(outerVisAttr);
   yokeLV->SetVisAttributes(outerVisAttr);
   // container
@@ -466,8 +475,8 @@ void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumes(G4String   name,
 #ifndef NOUSERLIMITS
   G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
   outerUserLimits->SetMaxAllowedStep( length * maxStepFactor );
-  outerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  allUserLimits.push_back(outerUserLimits);
   //attach cuts to volumes
   poleLV->SetUserLimits(outerUserLimits);
   yokeLV->SetUserLimits(outerUserLimits);
@@ -481,33 +490,37 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for placements - it's registered upon construction with g4
-  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    (G4ThreeVector)0,             // position
-		    yokeLV,                       // lv to be placed
-		    name + "_yoke_pv",            // name
-		    containerLV,                  // mother lv to be placed in
-		    false,                        // no boolean operation
-		    0,                            // copy number
-		    checkOverlaps);               // whether to check overlaps
-  
+  yokePV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+			     (G4ThreeVector)0,             // position
+			     yokeLV,                       // lv to be placed
+			     name + "_yoke_pv",            // name
+			     containerLV,                  // mother lv to be placed in
+			     false,                        // no boolean operation
+			     0,                            // copy number
+			     checkOverlaps);               // whether to check overlaps
+
+  allPhysicalVolumes.push_back(yokePV);
   // pole placement
+  G4PVPlacement* aPolePV = nullptr;
   for (G4int n = 0; n < 2*order; ++n)
     {
       // prepare a new rotation matrix - must be new and can't reuse the same one
       // as the placement doesn't own it - changing the existing one will affect all
       // previously placed objects
       G4RotationMatrix* rm  = new G4RotationMatrix();
+      allRotationMatrices.push_back(rm);
       G4double segmentAngle = CLHEP::twopi/(G4double)(2*order); // angle per pole
       rm->rotateZ((n+0.5)*segmentAngle + CLHEP::pi*0.5);
 
-      new G4PVPlacement(rm,                 // rotation
-			(G4ThreeVector)0,   // position
-			poleLV,             // logical volume
-			name + "_pv",       // name      
-			containerLV,        // mother lv to be placed in
-			false,              // no boolean operation
-			n,                  // copy number
-			checkOverlaps);     // check overlaps
+      aPolePV = new G4PVPlacement(rm,                 // rotation
+				  (G4ThreeVector)0,   // position
+				  poleLV,             // logical volume
+				  name + "_pv",       // name      
+				  containerLV,        // mother lv to be placed in
+				  false,              // no boolean operation
+				  n,                  // copy number
+				  checkOverlaps);     // check overlaps
+      allPhysicalVolumes.push_back(aPolePV);
       //name + "_pole_" + printf("_%d_pv", n), // name
     }
 }
@@ -520,6 +533,8 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String
 									G4Material*  outerMaterial,
 									G4bool       isVertical)
 {
+  CleanUp();
+  
   // test input parameters
   
   // geometrical design parameters
@@ -558,10 +573,10 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String
   G4ThreeVector innerCoilTranslation = G4ThreeVector(innerCoilXOffset, 0, 0);
 
   // build container
-  G4VSolid* container  = new G4Box(name + "_container_solid",           // name
-				   containerHalfWidth,                  // x half width
-				   containerHalfHeight,                 // y half width
-				   length*0.5);                         // z half length
+  containerSolid  = new G4Box(name + "_container_solid",           // name
+			      containerHalfWidth,                  // x half width
+			      containerHalfHeight,                 // y half width
+			      length*0.5);                         // z half length
   
   // build yoke & pole piece
   G4VSolid* yokeBox    = new G4Box(name + "_yoke_box_solid",            // name
@@ -576,38 +591,46 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String
 
   G4double      yokeSubtractionXOffset = yokeHalfWidth * yokeWidthFraction * massOffset;
   G4ThreeVector yokeSubtractionOffset  = G4ThreeVector(yokeSubtractionXOffset,0,0);
-  G4VSolid* yoke       = new G4SubtractionSolid(name + "_yoke_solid",   // name
-						yokeBox,                // solid 1
-						yokeCutOut,             // minus solid 2
-						0,                      // rotation
-						yokeSubtractionOffset); // translation
+  yokeSolid = new G4SubtractionSolid(name + "_yoke_solid",   // name
+				     yokeBox,                // solid 1
+				     yokeCutOut,             // minus solid 2
+				     0,                      // rotation
+				     yokeSubtractionOffset); // translation
   
-  G4VSolid* pole       = new G4Box(name + "_pole_solid",                // name
-				   poleHalfWidth,                       // x half width
-				   poleHalfHeight,                      // y half width
-				   length*0.5 - lengthSafety);          // z half width
-  
+  poleSolid  = new G4Box(name + "_pole_solid",                // name
+			 poleHalfWidth,                       // x half width
+			 poleHalfHeight,                      // y half width
+			 length*0.5 - lengthSafety);          // z half width  
   // build coils
-  G4VSolid* coil       = new G4Box(name + "_coil_solid",                // name
-				   coilHalfWidth,                       // x half width
-				   coilHalfHeight,                      // y half width
-				   length*0.5 - lengthSafety);          // z half width
+  G4VSolid* coil = new G4Box(name + "_coil_solid",            // name
+			     coilHalfWidth,                   // x half width
+			     coilHalfHeight,                  // y half width
+			     length*0.5 - lengthSafety);      // z half width
+
+  allSolids.push_back(yokeBox);
+  allSolids.push_back(yokeCutOut);
+  allSolids.push_back(yokeSolid);
+  allSolids.push_back(poleSolid);
+  allSolids.push_back(coil);
 
   // logical volumes
   G4Material* copper = BDSMaterials::Instance()->GetMaterial("copper");
   G4Material* empty  = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
-  G4LogicalVolume* containerLV = new G4LogicalVolume(container,               // solid
-						     empty,                   // material
-						     name + "_container_lv"); // name
-  G4LogicalVolume* yokeLV      = new G4LogicalVolume(yoke,                    // solid
-						     outerMaterial,           // material
-						     name + "_yoke_lv");      // name
-  G4LogicalVolume* poleLV      = new G4LogicalVolume(pole,                    // solid
-						     outerMaterial,           // material
-						     name + "_pole_lv");      // name
-  G4LogicalVolume* coilLV      = new G4LogicalVolume(coil,                    // solid
-						     copper,                  // material
-						     name + "_coil_lv");      // name
+  containerLV = new G4LogicalVolume(containerSolid,          // solid
+				    empty,                   // material
+				    name + "_container_lv"); // name
+  yokeLV      = new G4LogicalVolume(yokeSolid,               // solid
+				    outerMaterial,           // material
+				    name + "_yoke_lv");      // name
+  poleLV      = new G4LogicalVolume(poleSolid,               // solid
+				    outerMaterial,           // material
+				    name + "_pole_lv");      // name
+  G4LogicalVolume* coilLV      = new G4LogicalVolume(coil,               // solid
+						     copper,             // material
+						     name + "_coil_lv"); // name
+
+  allLogicalVolumes.push_back(yokeLV); //not container as done separately in BDSGeometryComponent constructor
+  allLogicalVolumes.push_back(poleLV);
 
   // VISUAL ATTRIBUTES
   // set visual attributes
@@ -621,6 +644,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String
   G4Colour* magnetColour = BDSMagnetColours::Instance()->GetMagnetColour(magnetType);
   G4VisAttributes* outerVisAttr = new G4VisAttributes(*magnetColour);
   outerVisAttr->SetVisibility(true);
+  allVisAttributes.push_back(outerVisAttr);
   // no curved surfaces so don't need to set nsegments
   yokeLV->SetVisAttributes(outerVisAttr);
   poleLV->SetVisAttributes(outerVisAttr);
@@ -629,6 +653,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String
   G4Colour* coilColour  = BDSMagnetColours::Instance()->GetMagnetColour("coil");
   G4VisAttributes* coilVisAttr = new G4VisAttributes(*coilColour);
   coilVisAttr->SetVisibility(true);
+  allVisAttributes.push_back(coilVisAttr);
   coilLV->SetVisAttributes(coilVisAttr);
 
   // container
@@ -641,8 +666,8 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String
 #ifndef NOUSERLIMITS
   G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
   outerUserLimits->SetMaxAllowedStep( length * maxStepFactor );
-  outerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  allUserLimits.push_back(outerUserLimits);
   // attach cuts to volumes
   yokeLV->SetUserLimits(outerUserLimits);
   poleLV->SetUserLimits(outerUserLimits);
@@ -651,51 +676,57 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String
 #endif
 
   // place components
-  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    yokeTranslation,              // position
-		    yokeLV,                       // lv to be placed
-		    name + "_yoke_pv",            // name
-		    containerLV,                  // mother lv to be place in
-		    false,                        // no boolean operation
-		    0,                            // copy number
-		    checkOverlaps);
+  yokePV       = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+				   yokeTranslation,              // position
+				   yokeLV,                       // lv to be placed
+				   name + "_yoke_pv",            // name
+				   containerLV,                  // mother lv to be place in
+				   false,                        // no boolean operation
+				   0,                            // copy number
+				   checkOverlaps);
 
-  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    lowerPoleTranslation,         // position
-		    poleLV,                       // lv to be placed
-		    name + "_lower_pole_pv",      // name
-		    containerLV,                  // mother lv to be place in
-		    false,                        // no boolean operation
-		    0,                            // copy number
-		    checkOverlaps);
+  G4PVPlacement* poleLowerPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+						 lowerPoleTranslation,         // position
+						 poleLV,                       // lv to be placed
+						 name + "_lower_pole_pv",      // name
+						 containerLV,                  // mother lv to be place in
+						 false,                        // no boolean operation
+						 0,                            // copy number
+						 checkOverlaps);
 
-  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    upperPoleTranslation,         // position
-		    poleLV,                       // lv to be placed
-		    name + "_upper_pole_pv",      // name
-		    containerLV,                  // mother lv to be place in
-		    false,                        // no boolean operation
-		    0,                            // copy number
-		    checkOverlaps);
+  G4PVPlacement* poleUpperPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+						 upperPoleTranslation,         // position
+						 poleLV,                       // lv to be placed
+						 name + "_upper_pole_pv",      // name
+						 containerLV,                  // mother lv to be place in
+						 false,                        // no boolean operation
+						 0,                            // copy number
+						 checkOverlaps);
 
-  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    outerCoilTranslation,         // position
-		    coilLV,                       // lv to be placed
-		    name + "_outer_coil_pv",      // name
-		    containerLV,                  // mother lv to be place in
-		    false,                        // no boolean operation
-		    0,                            // copy number
-		    checkOverlaps);
+  G4PVPlacement* coilOuterPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+						 outerCoilTranslation,         // position
+						 coilLV,                       // lv to be placed
+						 name + "_outer_coil_pv",      // name
+						 containerLV,                  // mother lv to be place in
+						 false,                        // no boolean operation
+						 0,                            // copy number
+						 checkOverlaps);
 
-  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    innerCoilTranslation,         // position
-		    coilLV,                       // lv to be placed
-		    name + "_inner_coil_pv",      // name
-		    containerLV,                  // mother lv to be place in
-		    false,                        // no boolean operation
-		    0,                            // copy number
-		    checkOverlaps);
+  G4PVPlacement* coilInnerPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+						 innerCoilTranslation,         // position
+						 coilLV,                       // lv to be placed
+						 name + "_inner_coil_pv",      // name
+						 containerLV,                  // mother lv to be place in
+						 false,                        // no boolean operation
+						 0,                            // copy number
+						 checkOverlaps);
 
+  allPhysicalVolumes.push_back(yokePV);
+  allPhysicalVolumes.push_back(poleLowerPV);
+  allPhysicalVolumes.push_back(poleUpperPV);
+  allPhysicalVolumes.push_back(coilOuterPV);
+  allPhysicalVolumes.push_back(coilInnerPV);
+  
   // record extents
   // container radius is just outerDiamter as yoke is circular
   G4double containerRadius = 0.5*outerDiameter;
@@ -706,20 +737,17 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String
   std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
   
   // construct geometry component
-  BDSGeometryComponent* kicker = new BDSGeometryComponent(container,
+  BDSGeometryComponent* kicker = new BDSGeometryComponent(containerSolid,
 							  containerLV,
 							  extX, extY, extZ,
 							  containerTranslation);
 
-  // register logical volumes
-  kicker->RegisterLogicalVolume(yokeLV);
-  kicker->RegisterLogicalVolume(poleLV);
-  kicker->RegisterLogicalVolume(coilLV);
-
-  // register sensitive volumes
-  kicker->RegisterSensitiveVolume(yokeLV);
-  kicker->RegisterSensitiveVolume(poleLV);
-  kicker->RegisterSensitiveVolume(coilLV);
+  // register everything
+  kicker->RegisterLogicalVolume(allLogicalVolumes);
+  kicker->RegisterSensitiveVolume(allLogicalVolumes);
+  kicker->RegisterPhysicalVolume(allPhysicalVolumes);
+  kicker->RegisterVisAttributes(allVisAttributes);
+  kicker->RegisterUserLimits(allUserLimits);
   
   return kicker;
 }

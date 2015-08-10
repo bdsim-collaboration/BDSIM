@@ -27,7 +27,7 @@ class BDSTiltOffset;
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
-/// Forward declaration for iterator
+/// Forward declaration for iterator so it can appear at the top
 class BDSBeamline;
 
 class BDSLine;
@@ -38,22 +38,19 @@ typedef std::vector<BDSBeamlineElement*>::const_iterator BDSBeamlineIterator;
 
 class BDSBeamline{
 public:
-  /// Default constructor. Beamline started at 0,0,0 with beamline built along
-  /// the z axis.
-  BDSBeamline();
-
-  /// Auxiliary constructor that allows a finite poition and rotation to be applied
+  /// Versatile basic constructor that allows a finite poition and rotation to be applied
   /// at the beginning of the beamline in global coordinates. Rembmer the maximum
-  /// extents of the beamline will also be displaced.
-  BDSBeamline(G4ThreeVector     initialGlobalPosition,
-	      G4RotationMatrix* initialGlobalRotation);
+  /// extents of the beamline will also be displaced. The default constructor is in effect
+  /// achieved via defaults
+  BDSBeamline(G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0,0),
+	      G4RotationMatrix* initialGlobalRotation = nullptr);
   
   ~BDSBeamline();
 
-  /// Add a component, but check to see if can be dynamically upcast to a line
+  /// Add a component, but check to see if it can be dynamically upcast to a line
   /// in which case, loop over it and apply
   /// AddSingleComponent(BDSAcceleratorComponent* component) to each component
-  void AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = NULL);
+  void AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = nullptr);
 
   /// Apply a Transform3D rotation and translation to the reference
   /// coordinates. Special method for the special case of unique component
@@ -62,17 +59,32 @@ public:
   /// of coordinates
   void ApplyTransform3D(BDSTransform3D* component);
 
+  /// Add a preassembled beam line element. In this case, the coordinates will have been
+  /// calculated external to this class and as such, it's the responsibility of the
+  /// developer to make sure the coordinates are correct and do not cause overlaps. This
+  /// will be useful for tunnel construction for example or for a non-contiguous beamline.
+  /// Subsequent components added via the AddComponent() method will be appended in the usual
+  /// way to the end cooridinates of this element.
+  void AddBeamlineElement(BDSBeamlineElement* element);
+
   /// Iterate over the beamline and print out the name, position, rotation
   /// and s position of each beamline element
   void PrintAllComponents(std::ostream& out) const;
-  
-  BDSBeamlineElement* GetFirstItem();             ///< Return a reference to the first element
-  BDSBeamlineElement* GetLastItem();              ///< Return a reference to the last element
 
+  /// Once the beamline element has been constructed and all positions and rotations
+  /// use these to update the world extent of this beam line.
+  void UpdateExtents(BDSBeamlineElement* element);
+  
+  BDSBeamlineElement* GetFirstItem(); ///< Return a reference to the first element
+  BDSBeamlineElement* GetLastItem();  ///< Return a reference to the last element
+
+  /// Get an element by name. Returns null pointer if not found.
+  BDSBeamlineElement* GetElement(G4String name);
+  
   /// Get the total length of the beamline - the sum of the chord length of each element
   inline G4double     GetTotalChordLength() const;
 
-  /// Get the total ARC length fo the beamline - ie the maximum s position
+  /// Get the total ARC length for the beamline - ie the maximum s position
   inline G4double     GetTotalArcLength() const;
 
   /// Get the number of elements
@@ -96,28 +108,28 @@ public:
   inline std::vector<BDSBeamlineElement*>::iterator begin();
   /// Return iterator to the end
   inline std::vector<BDSBeamlineElement*>::iterator end();
-  /// Return reverse iterator to the reverse beginning
-  inline std::vector<BDSBeamlineElement*>::reverse_iterator rbegin();
-  /// Return reverse iterator to the reverse end
-  inline std::vector<BDSBeamlineElement*>::reverse_iterator rend();
   /// Return iterator to the beginning
   inline std::vector<BDSBeamlineElement*>::const_iterator begin() const;
   /// Return iterator to the end
   inline std::vector<BDSBeamlineElement*>::const_iterator end()   const;
-  /// Return reverse iterator to the reverse beginning
-  inline std::vector<BDSBeamlineElement*>::const_reverse_iterator rbegin() const;
-  /// Return reverse iterator to the reverse end
-  inline std::vector<BDSBeamlineElement*>::const_reverse_iterator rend()   const;
   /// Return whether the beamline is empty or not
   inline G4bool empty() const;
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSBeamline const &bl);
+
+  /// Feedback about memory consumption for this beamline instance - container size,
+  /// size of all BDSBeamlineElement() and size of all BDSAcceleratorComponent() stored.
+  void PrintMemoryConsumption() const;
   
-private: 
+private:
   /// Add a single component and calculate its position and rotation with respect
   /// to the beginning of the beamline
-  void AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = NULL);
+  void AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = nullptr);
+
+  /// Register the fully created element to a map of names vs element pointers. Used to
+  /// look up transforms by name.
+  void RegisterElement(BDSBeamlineElement* element);
 
   std::vector<BDSBeamlineElement*> beamline; ///< Beamline vector - the data
 
@@ -127,11 +139,6 @@ private:
   G4ThreeVector maximumExtentPositive; ///< maximum extent in the positive coordinates in each dimension
   G4ThreeVector maximumExtentNegative; ///< maximum extent in the negative coordinates in each dimension
 
-  ///@{ Current rotation axes
-  ///  xARS = xAxisReferenceStart, M = Middle, E = End
-  G4ThreeVector xARS, yARS, zARS, xARM, yARM, zARM, xARE, yARE, zARE;
-  ///@}
-
   /// Current reference rotation at the end of the previous element
   G4RotationMatrix* previousReferenceRotationEnd;
 
@@ -140,6 +147,13 @@ private:
 
   /// Current s coordinate at the end of the previous element
   G4double previousSPositionEnd;
+
+  /// Map of objects by name stored in this beam line. For now,
+  /// only the base name (no suffix) will be used for the component
+  /// and also not the names of the internal components ie the beam pipe
+  /// name. This would result in a particularly large number of volumes
+  /// and may not always be unique.
+  std::map<G4String, BDSBeamlineElement*> components;
   
   /// assignment and copy constructor not implemented nor used
   BDSBeamline& operator=(const BDSBeamline&);
@@ -179,23 +193,11 @@ inline std::vector<BDSBeamlineElement*>::iterator BDSBeamline::begin()
 inline std::vector<BDSBeamlineElement*>::iterator BDSBeamline::end()
 {return beamline.end();}
 
-inline std::vector<BDSBeamlineElement*>::reverse_iterator BDSBeamline::rbegin()
-{return beamline.rbegin();}
-
-inline std::vector<BDSBeamlineElement*>::reverse_iterator BDSBeamline::rend()
-{return beamline.rend();}
-
 inline std::vector<BDSBeamlineElement*>::const_iterator BDSBeamline::begin() const
 {return beamline.begin();}
 
 inline std::vector<BDSBeamlineElement*>::const_iterator BDSBeamline::end() const
 {return beamline.end();}
-
-inline std::vector<BDSBeamlineElement*>::const_reverse_iterator BDSBeamline::rbegin() const
-{return beamline.rbegin();}
-
-inline std::vector<BDSBeamlineElement*>::const_reverse_iterator BDSBeamline::rend() const
-{return beamline.rend();}
 
 inline G4bool BDSBeamline::empty() const
 {return beamline.empty();}

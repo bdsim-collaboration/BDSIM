@@ -31,7 +31,7 @@ BDSMagnetGeometryType BDS::DetermineMagnetGeometryType(G4String geometryType)
 
   BDSMagnetGeometryType returnValue = types[geometryType];
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " determined geometry type to be " << returnValue.underlying() << G4endl;
+  G4cout << __METHOD_NAME__ << " determined geometry type to be " << returnValue << G4endl;
 #endif
   return returnValue;
 }

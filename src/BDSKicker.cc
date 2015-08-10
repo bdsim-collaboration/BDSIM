@@ -96,17 +96,18 @@ void BDSKicker::BuildBeampipe()
   // SET FIELD
   beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false);
 
-  // register logical volumes using geometry component base class
-  RegisterLogicalVolumes(beampipe->GetAllLogicalVolumes());
+  // register objects using geometry component base class
+  InheritObjects(beampipe);
 
   if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
-    {RegisterSensitiveVolumes(beampipe->GetAllSensitiveVolumes());}
+    {RegisterSensitiveVolume(beampipe->GetAllSensitiveVolumes());}
 
   // if it's a vertical kicker, rotate the beam pipe by 90 degrees
   // this also rotates the dipole stepper in the vacuum volume
   G4RotationMatrix* kickerRotation = new G4RotationMatrix();
   if (isVerticalKicker)
     {kickerRotation->rotateZ(CLHEP::pi*0.5);}
+  RegisterRotationMatrix(kickerRotation);
 
   // place beampipe
   itsPhysiComp = new G4PVPlacement(kickerRotation,                        // rotation
@@ -117,6 +118,8 @@ void BDSKicker::BuildBeampipe()
 				   false,                                 // no boolean operation
 				   0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
 
+  RegisterPhysicalVolume(itsPhysiComp);
+  
   // record extent of geometry
   if (isVerticalKicker){
     SetExtentX(beampipe->GetExtentY());
@@ -132,13 +135,11 @@ void BDSKicker::BuildBeampipe()
 void BDSKicker::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
-  G4ThreeVector Bfield(0.,-itsBField,0.); // note the - sign...
-  itsMagField=new BDSSbendMagField(Bfield,chordLength,itsKickAngle);
-  
-  itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
-  
-  BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
-  dipoleStepper->SetBField(-itsBField); // note the - sign...
-  dipoleStepper->SetBGrad(itsBGrad);
-  itsStepper = dipoleStepper;
+  G4ThreeVector Bfield(0.,itsBField,0.);
+  itsMagField = new BDSSbendMagField(Bfield,chordLength,itsKickAngle);
+  itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
+  BDSDipoleStepper* stepper = new BDSDipoleStepper(itsEqRhs);
+  stepper->SetBField(itsBField);
+  stepper->SetBGrad(itsBGrad);
+  itsStepper = stepper; // assigned to base class pointer
 }

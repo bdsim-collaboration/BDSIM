@@ -124,13 +124,13 @@ void BDSGeometryInterface::Survey()
 	 << setw(12) << "Phi[rad]    " << " "
 	 << setw(12) << "Theta[rad]  " << " "
 	 << setw(12) << "Psi[rad]    " << " "
-	 << setw(12) << "AperX[m]    " << " "
+/*	 << setw(12) << "AperX[m]    " << " "
 	 << setw(12) << "AperY[m]    " << " "
 	 << setw(8)  << "Aper_Type   " << " "
 	 << setw(12) << "Angle[rad]  " << " "
 	 << setw(12) << "K1[m^-2]    " << " "
 	 << setw(12) << "K2[m^-3]    " << " "
-	 << setw(12) << "K3[m^-4]    " << " "
+	 << setw(12) << "K3[m^-4]    " << " "*/
 	 << G4endl;
 
   BDSBeamline* beamline  = BDSAcceleratorModel::Instance()->GetFlatBeamline();

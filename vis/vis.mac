@@ -13,14 +13,17 @@
 
 # Specify view angle:
 #/vis/viewer/set/viewpointVector -1 0 0
-/vis/viewer/set/lightsVector -1 0 0
-
-# Viewer
-/vis/viewer/set/background white
 /vis/viewer/set/viewpointThetaPhi 240 -30
+/vis/viewer/set/lightsVector -1 1 -1
+
+# Background
+/vis/viewer/set/background white
 
 # Axes
 #/vis/scene/add/axes
+
+# Trajectories
+#/vis/scene/endOfEventAction accumulate
 
 # Commit to Renderer
 /vis/viewer/flush

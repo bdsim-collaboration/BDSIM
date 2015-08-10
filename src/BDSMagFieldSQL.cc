@@ -1,12 +1,7 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 25.12.2003
-   Copyright (c) 2003 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
+#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh" 
-
 #include "BDSMagFieldSQL.hh"
+
 #include "G4Navigator.hh"
 #include "G4TransportationManager.hh"
 #include "G4RotationMatrix.hh"
@@ -14,6 +9,7 @@
 #include "G4TouchableHistoryHandle.hh"
 #include "G4TouchableHistory.hh"
 #include "G4NavigationHistory.hh"
+
 #include <list>
 #include <map>
 
@@ -45,10 +41,19 @@ BDSMagFieldSQL::BDSMagFieldSQL(const G4String& aFieldFile,
 			       std::map<G4String, G4double> aQuadVolBgrad,
 			       std::map<G4String, G4double> aSextVolBgrad,
 			       std::map<G4String, G4double> aOctVolBgrad,
-			       std::map<G4String, G4ThreeVector> aUniformFieldVolField, G4bool aHasNPoleFields, G4bool aHasUniformField)
-  :itsHasNPoleFields(aHasNPoleFields),itsHasUniformField(aHasUniformField),itsHasFieldMap(false),ifs(aFieldFile.c_str()),
-   itsMarkerLength(aMarkerLength), FieldFile(aFieldFile), itsUniformFieldVolField(aUniformFieldVolField),
-   itsQuadVolBgrad(aQuadVolBgrad), itsSextVolBgrad(aSextVolBgrad), itsOctVolBgrad(aOctVolBgrad), itsdz(0.0)
+			       std::map<G4String, G4ThreeVector> aUniformFieldVolField,
+			       G4bool aHasNPoleFields,
+			       G4bool aHasUniformField):
+  itsHasNPoleFields(aHasNPoleFields),
+  itsHasUniformField(aHasUniformField),
+  itsHasFieldMap(false),ifs(aFieldFile.c_str()),
+  itsMarkerLength(aMarkerLength),
+  FieldFile(aFieldFile),
+  itsUniformFieldVolField(aUniformFieldVolField),
+  itsQuadVolBgrad(aQuadVolBgrad),
+  itsSextVolBgrad(aSextVolBgrad),
+  itsOctVolBgrad(aOctVolBgrad),
+  itsdz(0.0)
 {
   //Define alternate navigator (see geant4 application developers manual section 4.1.8.2)
   itsIRNavigator=new G4Navigator();
@@ -201,26 +206,30 @@ void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
   G4cout << RLocalR.x()/CLHEP::m << " "<<RLocalR.y()/CLHEP::m << " "<<RLocalR.z()/CLHEP::m << " "<< LocalB.x()/CLHEP::tesla << " " << LocalB.y()/CLHEP::tesla << " " << LocalB.z()/CLHEP::tesla << G4endl;
 #endif
   //  delete aTouchable;
-  //  aTouchable = NULL;
+  //  aTouchable = nullptr;
   return;
 }
 
 
 void BDSMagFieldSQL::Prepare(G4VPhysicalVolume *referenceVolume)
 {
-  if(FieldFile==""){
-    itsHasFieldMap=false;
-  } else {
-    itsHasFieldMap=true;
-    G4cout<<"BDSMagFieldSQL:: creating SQL field map"<<G4endl;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  if(FieldFile=="")
+    {itsHasFieldMap = false;}
+  else
+    {
+      itsHasFieldMap = true;
+      G4cout << __METHOD_NAME__ << "creating SQL field map" << G4endl;
     
     if(!ifs)
       {
-	G4cerr<<"\nBDSMagFieldSQL.cc: Unable to open Field Map File: " << FieldFile << G4endl;
+	G4cerr << __METHOD_NAME__ << "Unable to open Field Map File: " << FieldFile << G4endl;
 	G4Exception("Aborting Program", "-1", FatalException, "");
       }
     else
-      G4cout << "Loading SQL Field Map file: " << FieldFile << G4endl;
+      {G4cout << "Loading SQL Field Map file: " << FieldFile << G4endl;}
     
     if(FieldFile.contains("inverse")) itsMarkerLength*=-1;
     double temp_z=0.0;
@@ -256,7 +265,9 @@ void BDSMagFieldSQL::Prepare(G4VPhysicalVolume *referenceVolume)
       itsdBz_by_dz.push_back( (itsBz[itsBz.size()-1] - itsBz[itsBz.size()-2]) / itsdz );
       itsBr_over_r.push_back(0.5 * itsdBz_by_dz[itsdBz_by_dz.size()-1] );
     }
-  
-  SetOriginRotation(*referenceVolume->GetFrameRotation());
+
+  const G4RotationMatrix* rot = referenceVolume->GetFrameRotation();
+  if (rot)
+    {SetOriginRotation(*rot);}
   SetOriginTranslation(referenceVolume->GetFrameTranslation());
 }

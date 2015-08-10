@@ -27,9 +27,7 @@ void BDSSolenoid::Build()
 {
   BDSMagnet::Build();
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
-    {
-      G4cout << __METHOD_NAME__ << "IncludeIronMagFields option not implemented for solenoid class"<<G4endl;
-    }
+    {G4cout << __METHOD_NAME__ << "IncludeIronMagFields option not implemented for solenoid class"<<G4endl;}
 }
 
 void BDSSolenoid::BuildBPFieldAndStepper()

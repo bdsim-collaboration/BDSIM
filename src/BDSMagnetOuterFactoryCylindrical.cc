@@ -27,7 +27,6 @@
 #include <utility>                         // for std::pair
 #include <algorithm>                       // for std::max
 
-
 BDSMagnetOuterFactoryCylindrical* BDSMagnetOuterFactoryCylindrical::_instance = 0;
 
 BDSMagnetOuterFactoryCylindrical* BDSMagnetOuterFactoryCylindrical::Instance()
@@ -99,6 +98,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4Strin
 						  CLHEP::twopi,                // rotation finish angle
 						  inputface,                   // input face normal
 						  outputface);                 // output face normal
+      allSolids.push_back(yokeSolidCylinder);
       yokeSolid = new G4SubtractionSolid(name + "_yoke_solid",
 					  yokeSolidCylinder,
 					  beamPipe->GetContainerSubtractionSolid());
@@ -112,6 +112,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4Strin
 						       CLHEP::twopi,                // rotation finish angle
 						       inputface,                   // input face normal
 						       outputface);                 // output face normal
+      allSolids.push_back(containerSolidCylinder);
       containerSolid = new G4SubtractionSolid(name + "_container_solid",
 					      containerSolidCylinder,
 					      beamPipe->GetContainerSubtractionSolid());
@@ -284,6 +285,7 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolids(G4String     name
 					       length*0.5-2*lengthSafety,   // half length
 					       0,                           // rotation start angle
 					       CLHEP::twopi);               // rotation finish angle
+      allSolids.push_back(yokeSolidCylinder);
       yokeSolid = new G4SubtractionSolid(name + "_yoke_solid",
 					 yokeSolidCylinder,
 					 beamPipe->GetContainerSubtractionSolid());
@@ -295,10 +297,12 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolids(G4String     name
 						    length*0.5,                  // half length
 						    0,                           // rotation start angle
 						    CLHEP::twopi);               // rotation finish angle
+      allSolids.push_back(containerSolidCylinder);
       containerSolid = new G4SubtractionSolid(name + "_container_solid",
 					      containerSolidCylinder,
 					      beamPipe->GetContainerSubtractionSolid());
     }
+  allSolids.push_back(yokeSolid);
 }
 
 void BDSMagnetOuterFactoryCylindrical::TestInputParameters(BDSBeamPipe* beamPipe,
@@ -311,21 +315,24 @@ void BDSMagnetOuterFactoryCylindrical::TestInputParameters(BDSBeamPipe* beamPipe
     {outerMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());}
 
   // ensure box size is bigger than the beampipe
-  if (beamPipe->ContainerIsCircular()) {
-    // if it's circular, just check radius
-    if (boxSize < 2*(beamPipe->GetContainerRadius()) )
-      {boxSize = 2*(beamPipe->GetContainerRadius()) + 1*CLHEP::mm;}
-  } else {
-    // it's not circular - have a look at extents
-    // +ve - -ve
-    G4double extentX = beamPipe->GetExtentX().second - beamPipe->GetExtentX().first;
-    G4double extentY = beamPipe->GetExtentY().second - beamPipe->GetExtentY().first;
-    if ( (boxSize < extentX) || (boxSize < extentY) ) {
-      // boxSize isn't sufficient for range in x or y
-      boxSize = std::max(extentX,extentY) + 1*CLHEP::mm;
+  if (beamPipe->ContainerIsCircular())
+    {
+      // if it's circular, just check radius
+      if (boxSize < 2*(beamPipe->GetContainerRadius()) )
+	{boxSize = 2*(beamPipe->GetContainerRadius()) + 1*CLHEP::mm;}
     }
-  }
-    
+  else
+    {
+      // it's not circular - have a look at extents
+      // +ve - -ve
+      G4double extentX = beamPipe->GetExtentX().second - beamPipe->GetExtentX().first;
+      G4double extentY = beamPipe->GetExtentY().second - beamPipe->GetExtentY().first;
+      if ( (boxSize < extentX) || (boxSize < extentY) )
+	{
+	  // boxSize isn't sufficient for range in x or y
+	  boxSize = std::max(extentX,extentY) + 1*CLHEP::mm;
+	}
+    }
 }
 
 /// only the solids are unique, once we have those, the logical volumes and placement in the
@@ -341,22 +348,22 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G
 #endif
   
   // build the logical volumes
-  G4LogicalVolume* yokeLV   = new G4LogicalVolume(yokeSolid,
-						  outerMaterial,
-						  name + "_yoke_lv");
+  yokeLV   = new G4LogicalVolume(yokeSolid,
+				 outerMaterial,
+				 name + "_yoke_lv");
 
   G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
-  G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
-						     emptyMaterial,
-						     name + "_container_lv");
+  containerLV = new G4LogicalVolume(containerSolid,
+				    emptyMaterial,
+				    name + "_container_lv");
   
   // VISUAL ATTRIBUTES
   // set visual attributes
   // outer
-  G4VisAttributes* outerVisAttr = new G4VisAttributes(*colour);
-  outerVisAttr->SetVisibility(true);
-  outerVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
-  yokeLV->SetVisAttributes(outerVisAttr);
+  outerVisAttributes = new G4VisAttributes(*colour);
+  outerVisAttributes->SetVisibility(true);
+  outerVisAttributes->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+  yokeLV->SetVisAttributes(outerVisAttributes);
   // container
   if (BDSExecOptions::Instance()->GetVisDebug())
     {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
@@ -365,9 +372,8 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G
 
   // USER LIMITS - set user limits based on bdsim user specified parameters
 #ifndef NOUSERLIMITS
-  G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
-  outerUserLimits->SetMaxAllowedStep( length * maxStepFactor );
-  outerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  outerUserLimits = new G4UserLimits("outer_cuts");
+  outerUserLimits->SetMaxAllowedStep(length * maxStepFactor);
   outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   //attach cuts to volumes
   yokeLV->SetUserLimits(outerUserLimits);
@@ -377,14 +383,14 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for anything - it's registered upon construction with g4
-  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    (G4ThreeVector)0,             // position
-		    yokeLV,                       // lv to be placed
-		    name + "_yoke_pv",            // name
-		    containerLV,                  // mother lv to be place in
-		    false,                        // no boolean operation
-		    0,                            // copy number
-		    checkOverlaps); // whether to check overlaps
+  yokePV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+			     (G4ThreeVector)0,             // position
+			     yokeLV,                       // lv to be placed
+			     name + "_yoke_pv",            // name
+			     containerLV,                  // mother lv to be place in
+			     false,                        // no boolean operation
+			     0,                            // copy number
+			     checkOverlaps); // whether to check overlaps
 
   // record extents
   // container radius is the same for all methods as all cylindrical
@@ -397,11 +403,16 @@ BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G
   BDSGeometryComponent* outer = new BDSGeometryComponent(containerSolid,
 							 containerLV,
 							 extX, extY, extZ);
-  // REGISTER all lvs
-  outer->RegisterLogicalVolume(yokeLV); //using geometry component base class method
-
-  // sensitive volumes
-  outer->RegisterSensitiveVolume(yokeLV);
   
+  // register all objects that go with the final geometry component (from internal vectors)
+  outer->RegisterSolid(allSolids);
+  outer->RegisterLogicalVolume(yokeLV);
+  outer->RegisterSensitiveVolume(yokeLV);
+  outer->RegisterPhysicalVolume(yokePV);
+  outer->RegisterVisAttributes(outerVisAttributes);
+  // no rotation matrices used in this factory
+#ifdef NOUSERLIMITS
+  RegisterUserLimit(outerUserLimits);
+#endif
   return outer;
 }

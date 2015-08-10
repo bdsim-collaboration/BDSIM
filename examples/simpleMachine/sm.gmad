@@ -1,13 +1,11 @@
-d1: drift, l=1*m;
-q1: quadrupole, l=10*m, k1=0.000000000000001;
-c1: rcol, l=10*m, ysize=5*mm, xsize=5*mm, material="Copper";
+d1: drift, l=1*m, apertureType="lhcdetailed", aper1=2.202*cm, aper2=1.714*cm, aper3=2.202*cm, beampipeThickness=1*mm;
+q1: quadrupole, l=1*m, k1=0.000000000000001, magnetGeometryType="polesfacet";
+c1: rcol, l=5*m, ysize=5*mm, xsize=5*mm, material="Copper";
 s1: sbend, l=1*m, angle=0.10; 
 
-l1: line = (d1,c1);
+l1: line = (d1, q1, d1, c1, d1, s1);
 use,period=l1;
 
-sample, range=d1;
-sample, range=c1;
 
 option, ngenerate=1,
 !	physicsList="QGSP_BERT",
@@ -15,26 +13,17 @@ option, ngenerate=1,
 	physicsList="em_standard",
 	beampipeRadius=5.0*cm,
 	beampipeThickness=5*cm,
-	boxSize=2.0*m,
-	tunnelRadius=2*m;
-
-option, chordStepMinimum    = 0.0000000000001 * m,
-        deltaIntersection   = 0.00000000001 * m,
-        deltaChord          = 0.000001 * m,
-        thresholdCutCharged = 1 * keV,
-        thresholdCutPhotons = 1 * keV,
+	outerDiameter=2.0*m,
 	defaultRangeCut=1*cm,	
 	prodCutPositrons=1*cm,
 	prodCutElectrons=1*cm,
-	prodCutPhotons=1*cm,
-	prodCutPositronsP=1*cm,
-	prodCutElectronsP=1*cm,
-	prodCutPhotonsP=1*cm;
+	prodCutPhotons=1*cm;
 
 beam, particle="proton",
       energy=10.0*GeV,
       distrType="reference",
       ngenerate=1,
-      X0=0.0,
-      Y0=0.0,
-      Yp0=0.01;
+      X0=0.001,
+      Y0=0.001;
+
+option, checkOverlaps=1;

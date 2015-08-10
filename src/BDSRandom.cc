@@ -14,7 +14,7 @@ void BDSRandom::CreateRandomNumberGenerator()
 {
   // choose the Random engine
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "> Initialising random number generator." << G4endl;
+  G4cout << __METHOD_NAME__ << "Initialising random number generator." << G4endl;
 #endif  
   CLHEP::HepRandom::setTheEngine(new CLHEP::HepJamesRandom);
 }
@@ -22,12 +22,12 @@ void BDSRandom::CreateRandomNumberGenerator()
 void BDSRandom::SetSeed()
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " set the seed" << G4endl;
-  G4cout << __METHOD_NAME__ << " seed from BDSGlobalConstants = " 
+  G4cout << __METHOD_NAME__ << "set the seed" << G4endl;
+  G4cout << __METHOD_NAME__ << "seed from BDSGlobalConstants = " 
 	 << BDSGlobalConstants::Instance()->GetRandomSeed() << G4endl
-         << __METHOD_NAME__ << " seed from BDSExecOptions = "
+         << __METHOD_NAME__ << "seed from BDSExecOptions = "
          << BDSExecOptions::Instance()->GetSeed() << G4endl
-         << __METHOD_NAME__ << " seed set in exec options : "
+         << __METHOD_NAME__ << "seed set in exec options : "
 	 << BDSExecOptions::Instance()->IsSeedSet() << G4endl;
 #endif
   // get seed from options if set
@@ -36,7 +36,7 @@ void BDSRandom::SetSeed()
   // if seed positive set it, else use the time
   long seed = 0;
   if(BDSGlobalConstants::Instance()->GetRandomSeed()<=0)
-    seed = time(NULL);
+    seed = time(nullptr);
   else
     seed = BDSGlobalConstants::Instance()->GetRandomSeed();
   
@@ -45,13 +45,13 @@ void BDSRandom::SetSeed()
     {seed = BDSExecOptions::Instance()->GetSeed();}
 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "> selected seed = " << seed << G4endl;
+  G4cout << __METHOD_NAME__ << "selected seed = " << seed << G4endl;
 #endif
 
   CLHEP::HepRandom::setTheSeed(seed);
 
   // feedback - get the seed from the generator itself (ensures set correctly)
-  G4cout << __METHOD_NAME__ << "> Random number generator's seed = "
+  G4cout << __METHOD_NAME__ << "Random number generator's seed = "
 	 << CLHEP::HepRandom::getTheSeed() << G4endl;
 #ifdef BDSDEBUG
   BDSRandom::PrintFullSeedState();
@@ -60,7 +60,7 @@ void BDSRandom::SetSeed()
 
 void BDSRandom::PrintFullSeedState()
 {
-  G4cout << __METHOD_NAME__ << "> Random number generator's state: " << G4endl << G4endl;
+  G4cout << __METHOD_NAME__ << "Random number generator's state: " << G4endl << G4endl;
   CLHEP::HepRandom::saveFullState(G4cout);
   G4cout << G4endl;
 }
@@ -76,7 +76,7 @@ void BDSRandom::WriteSeedState()
     {CLHEP::HepRandom::saveFullState(ofseedstate);}
   else
     {
-      G4cout << __METHOD_NAME__ << "> cannot open file : " << seedstatefilename << G4endl;
+      G4cout << __METHOD_NAME__ << "cannot open file : " << seedstatefilename << G4endl;
       exit(1);
     }
 }
@@ -84,7 +84,7 @@ void BDSRandom::WriteSeedState()
 void BDSRandom::LoadSeedState(G4String inSeedFilename)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "> loading file: " << inSeedFilename << G4endl;
+  G4cout << __METHOD_NAME__ << "loading file: " << inSeedFilename << G4endl;
 #endif
   std::ifstream ifseedstate;
   ifseedstate.open(inSeedFilename);
@@ -92,7 +92,7 @@ void BDSRandom::LoadSeedState(G4String inSeedFilename)
     {CLHEP::HepRandom::restoreFullState(ifseedstate);}
   else
     {
-      G4cout << __METHOD_NAME__ << "> cannot open file : " << inSeedFilename << G4endl;
+      G4cout << __METHOD_NAME__ << "cannot open file : " << inSeedFilename << G4endl;
       exit(1);
     }
   ifseedstate.close();
@@ -100,5 +100,3 @@ void BDSRandom::LoadSeedState(G4String inSeedFilename)
   BDSRandom::PrintFullSeedState();
 #endif
 }
-
-

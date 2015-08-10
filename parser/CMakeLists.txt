@@ -30,28 +30,26 @@ endif()
 
 # compile BISON, with debug if in Debug mode
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-   bison_target(PARSER parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.c
+   bison_target(PARSER parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.cc
 COMPILE_FLAGS "-t")
 else ()
-   bison_target(PARSER parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.c)
+   bison_target(PARSER parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.cc)
 endif()
 
-flex_target(SCANNER parser.l ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
+flex_target(SCANNER parser.l ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.cc)
 add_flex_bison_dependency(SCANNER PARSER)
-
-# make sure cmake compiles as c++
-SET_SOURCE_FILES_PROPERTIES(parser.tab.c lex.yy.c PROPERTIES LANGUAGE CXX )
 
 # You can also use file globbing, but that can cause confusion
 # when we have old makefiles and cmake next to each other.
 # Reason is old makefiles creates parser.cc/lex.yy.cc in source folder..
-add_library(gmad STATIC gmad.cc getEnv.cc element.cc elementlist.cc enums.cc options.cc parameters.cc ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+add_library(gmad STATIC gmad.cc getEnv.cc element.cc elementlist.cc elementtype.cc options.cc parameters.cc tunnel.cc ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
 
 if($ENV{VERBOSE})
 	message(STATUS "BISON_PARSER_OUTPUTS ${BISON_PARSER_OUTPUTS}") 
 	message(STATUS "FLEX_SCANNER_OUTPUTS ${FLEX_SCANNER_OUTPUTS}")
 endif()
 
-add_library(gmadShared SHARED gmad.cc getEnv.cc element.cc elementlist.cc enums.cc options.cc parameters.cc ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+add_library(gmadShared SHARED gmad.cc getEnv.cc element.cc
+elementlist.cc elementtype.cc options.cc parameters.cc tunnel.cc ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
 
 bdsim_install_targets(gmad gmadShared)

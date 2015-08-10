@@ -75,6 +75,7 @@ void BDSMagnetOuterFactoryPolesSquare::CreatePoleSolid(G4String     name,
 					 croppingBoxRadius,                 // x half width
 					 croppingBoxRadius,                 // y half width
 					 length);                           // z length
+  allSolids.push_back(croppingBoxSolid);
   // z length long for unambiguous intersection
   
   G4double poleLength          = poleFinishRadius - poleStartRadius - 2*lengthSafety;
@@ -108,6 +109,9 @@ void BDSMagnetOuterFactoryPolesSquare::CreatePoleSolid(G4String     name,
 						poleTip,              // solid 2
 						0,                    // rotation matrix
 						ellipsoidTranslation);// translation of poleTip
+  allSolids.push_back(poleTip);
+  allSolids.push_back(poleAnnulus);
+  allSolids.push_back(aSinglePoleSolid);
   
   // create different poles to fit inside square yoke
   G4RotationMatrix* iPoleRM;
@@ -116,7 +120,8 @@ void BDSMagnetOuterFactoryPolesSquare::CreatePoleSolid(G4String     name,
       iPoleRM = new G4RotationMatrix();
       G4double segmentAngle = CLHEP::twopi/nPoles; // angle per pole
       G4double rotationAngle = (0.5-i)*segmentAngle + CLHEP::pi*0.5;
-      iPoleRM->rotateZ(rotationAngle); 
+      iPoleRM->rotateZ(rotationAngle);
+      allRotationMatrices.push_back(iPoleRM);
       // crop the singlepolesolid with the cropping box so it'll fit inside the outer square yoke
       G4IntersectionSolid* aSolid = new G4IntersectionSolid(name + "_pole_solid", // name
 							    aSinglePoleSolid,
@@ -126,8 +131,6 @@ void BDSMagnetOuterFactoryPolesSquare::CreatePoleSolid(G4String     name,
 					  
 								
       poleSolids.push_back(aSolid);
-      
-      poleRotations.push_back(iPoleRM);
     }
 }
 
@@ -146,6 +149,8 @@ void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String     
 				  yokeStartRadius,            // y half width
 				  length);                    // z half length
   // inner length is 2x as long for unambiguous subtraction
+  allSolids.push_back(yokeOuter);
+  allSolids.push_back(yokeInner);
 
   yokeSolid = new G4SubtractionSolid(name + "_yoke_solid",    // name
 				     yokeOuter,
@@ -166,6 +171,8 @@ void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String     
 					0,                               // start angle
 					CLHEP::twopi);                   // sweep angle
   // length of inner is long for unambiguous subtraction
+  allSolids.push_back(containerOuter);
+  allSolids.push_back(containerInner);
 
   containerSolid = new G4SubtractionSolid(name + "_container_solid", // name
 					  containerOuter,
@@ -183,6 +190,7 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
   G4VisAttributes* outerVisAttr = new G4VisAttributes(*magnetColour);
   outerVisAttr->SetVisibility(true);
   outerVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+  allVisAttributes.push_back(outerVisAttr);
 
   for (G4int n = 0; n < 2*order; ++n)
     {
@@ -191,6 +199,7 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
 						      name + "_pole_lv");
       thisPole->SetVisAttributes(outerVisAttr);
       poleLVs.push_back(thisPole);
+      allLogicalVolumes.push_back(thisPole);
     }
 
   // yoke
@@ -214,16 +223,14 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
 #ifndef NOUSERLIMITS
   G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
   outerUserLimits->SetMaxAllowedStep( length * maxStepFactor );
-  outerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
   outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  allUserLimits.push_back(outerUserLimits);
   //attach cuts to volumes
   yokeLV->SetUserLimits(outerUserLimits);
   containerLV->SetUserLimits(outerUserLimits);
   std::vector<G4LogicalVolume*>::iterator j;
   for(j = poleLVs.begin(); j != poleLVs.end(); ++j)
-    {
-      (*j)->SetUserLimits(outerUserLimits);
-    }
+    {(*j)->SetUserLimits(outerUserLimits);}
 #endif
 }
 
@@ -233,32 +240,35 @@ void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for placements - it's registered upon construction with g4
-  new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-		    (G4ThreeVector)0,             // position
-		    yokeLV,                       // lv to be placed
-		    name + "_yoke_pv",            // name
-		    containerLV,                  // mother lv to be placed in
-		    false,                        // no boolean operation
-		    0,                            // copy number
-		    checkOverlaps);               // whether to check overlaps
+  yokePV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+			     (G4ThreeVector)0,             // position
+			     yokeLV,                       // lv to be placed
+			     name + "_yoke_pv",            // name
+			     containerLV,                  // mother lv to be placed in
+			     false,                        // no boolean operation
+			     0,                            // copy number
+			     checkOverlaps);               // whether to check overlaps
   
   // pole placement
   G4double nPoles = 2*order;
+  G4PVPlacement* aPlacement = nullptr;
   for (G4int n = 0; n < 2*order; ++n)
     {
       G4RotationMatrix* rm = new G4RotationMatrix();
       G4double segmentAngle = CLHEP::twopi/nPoles; // angle per pole
       G4double rotationAngle = (0.5-n)*segmentAngle + CLHEP::pi*0.5;
-      rm->rotateZ(-rotationAngle); 
+      rm->rotateZ(-rotationAngle);
+      allRotationMatrices.push_back(rm);
       // only need to test the end of one iterator as both should be the same length
-      new G4PVPlacement(rm,                 // rotation
-			(G4ThreeVector)0,   // position
-			poleLVs[n],         // logical volume
-			name + "_pole_pv",  // name      
-			containerLV,        // mother lv to be placed in
-			false,              // no boolean operation
-			n,                  // copy number
-			checkOverlaps);     // check overlaps
+      aPlacement = new G4PVPlacement(rm,                 // rotation
+				     (G4ThreeVector)0,   // position
+				     poleLVs[n],         // logical volume
+				     name + "_pole_pv",  // name      
+				     containerLV,        // mother lv to be placed in
+				     false,              // no boolean operation
+				     n,                  // copy number
+				     checkOverlaps);     // check overlaps
+      allPhysicalVolumes.push_back(aPlacement);
       //name + "_pole_" + printf("_%d_pv", n), // name
       }
 }
@@ -274,12 +284,8 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4Stri
 										  order, outerDiameter,
 										  outerMaterial);
 
-  outer->RegisterLogicalVolumes(poleLVs);
-  outer->RegisterLogicalVolume(yokeLV);
-
-  // sensitive volumes
-  outer->RegisterSensitiveVolumes(poleLVs);
-  outer->RegisterSensitiveVolume(yokeLV);
+  outer->RegisterLogicalVolume(poleLVs);
+  outer->RegisterSensitiveVolume(poleLVs);
   
   return outer;
 }

@@ -51,6 +51,9 @@ public:
   inline G4bool          SetSeedState() const            {return setSeedState;}
   inline G4String        GetSeedStateFilename() const    {return seedStateFilename;}
   inline G4int           GetNGenerate() const            {return nGenerate;}
+  inline G4bool          ExportGeometry() const          {return exportGeometry;}
+  inline G4String        GetExportType() const           {return exportType;}
+  inline G4String        GetExportFileName() const       {return exportFileName;}
 
 protected : 
   BDSExecOptions(int argc, char** argv);
@@ -106,6 +109,12 @@ private :
   G4String seedStateFilename; ///> The seed state filename
 
   G4int    nGenerate; ///> The number of primary events to simulate
+
+  ///@{ Parameter for controlling geometry export
+  G4bool   exportGeometry;
+  G4String exportType;
+  G4String exportFileName;
+  ///@}
 };
 
 #endif

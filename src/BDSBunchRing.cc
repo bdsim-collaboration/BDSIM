@@ -1,8 +1,9 @@
 #include "BDSBunchRing.hh"
 #include "BDSDebug.hh"
 
-BDSBunchRing::BDSBunchRing() : 
-  BDSBunchInterface(), rMin(0), rMax(0) {
+BDSBunchRing::BDSBunchRing(): 
+  rMin(0), rMax(0)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -13,21 +14,22 @@ BDSBunchRing::BDSBunchRing(G4double rMinIn,   G4double rMaxIn,
 			   G4double X0In,     G4double Y0In,       G4double Z0In,   G4double T0In, 
 			   G4double Xp0In,    G4double Yp0In,      G4double Zp0In,			     
 			   G4double sigmaTIn, G4double sigmaEIn) :
-  BDSBunchInterface(X0In,Y0In,Z0In,T0In,Xp0In,Yp0In,Zp0In,sigmaTIn,sigmaEIn), rMin(rMinIn), rMax(rMaxIn) {
+  BDSBunchInterface(X0In,Y0In,Z0In,T0In,Xp0In,Yp0In,Zp0In,sigmaTIn,sigmaEIn),
+  rMin(rMinIn), rMax(rMaxIn)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
 }
 
-BDSBunchRing::~BDSBunchRing() {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
+BDSBunchRing::~BDSBunchRing()
+{
   delete FlatGen;
 }
 
-void BDSBunchRing::SetOptions(struct Options& opt) {
+void BDSBunchRing::SetOptions(struct Options& opt)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -39,7 +41,8 @@ void BDSBunchRing::SetOptions(struct Options& opt) {
 
 void BDSBunchRing::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 				       G4double& xp, G4double& yp, G4double& zp,
-				       G4double& t , G4double&  E, G4double& weight) {
+				       G4double& t , G4double&  E, G4double& weight)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif

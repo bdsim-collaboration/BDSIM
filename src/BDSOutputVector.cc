@@ -1,45 +1,82 @@
 #include "BDSOutputVector.hh"
+#include "BDSDebug.hh"
 
-BDSOutputVector::BDSOutputVector(){}
-
-BDSOutputVector::~BDSOutputVector(){
-  for (unsigned int i=0; i<output.size(); i++) {
-    delete output[i];
-  }
+BDSOutputVector::BDSOutputVector()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
 }
 
-void BDSOutputVector::Add(BDSOutputBase* derived) {
+BDSOutputVector::~BDSOutputVector()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for (unsigned int i=0; i<output.size(); i++)
+    {delete output[i];}
+}
+
+void BDSOutputVector::Add(BDSOutputBase* derived)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "registering new output" << G4endl;
+#endif
   output.push_back(derived);
 }
 
-void BDSOutputVector::WriteHits(BDSSamplerHitsCollection* a){
-  for (unsigned int i=0; i<output.size(); i++) {
-    output[i]->WriteHits(a);
-  }
+void BDSOutputVector::WriteHits(BDSSamplerHitsCollection* a)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->WriteHits(a);}
 }
 
-void BDSOutputVector::WriteEnergyLoss(BDSEnergyCounterHitsCollection* a){
-  for (unsigned int i=0; i<output.size(); i++) {
-    output[i]->WriteEnergyLoss(a);
-  }
+void BDSOutputVector::WriteEnergyLoss(BDSEnergyCounterHitsCollection* a)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->WriteEnergyLoss(a);}
 }
 
-void BDSOutputVector::WritePrimaryLoss(BDSEnergyCounterHit* a){
-  for (unsigned int i=0; i<output.size(); i++) {
-    output[i]->WritePrimaryLoss(a);
-  }
+void BDSOutputVector::WritePrimaryLoss(BDSEnergyCounterHit* a)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->WritePrimaryLoss(a);}
 }
 
-void BDSOutputVector::WritePrimaryHit(BDSEnergyCounterHit* a){
-  for (unsigned int i=0; i<output.size(); i++) {
-    output[i]->WritePrimaryHit(a);
-  }
+void BDSOutputVector::WritePrimaryHit(BDSEnergyCounterHit* a)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->WritePrimaryHit(a);}
 }
 
-void BDSOutputVector::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec){
-  for (unsigned int i=0; i<output.size(); i++) {
-    output[i]->WriteTrajectory(TrajVec);
-  }
+void BDSOutputVector::WriteTunnelHits(BDSTunnelHitsCollection* a)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->WriteTunnelHits(a);}
+}
+
+void BDSOutputVector::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->WriteTrajectory(TrajVec);}
 }
 
 void BDSOutputVector::WritePrimary(G4String samplerName, 
@@ -56,25 +93,36 @@ void BDSOutputVector::WritePrimary(G4String samplerName,
 				   G4int    nEvent, 
 				   G4int    TurnsTaken)
 {
-  for (unsigned int i=0; i<output.size(); i++) {
-    output[i]->WritePrimary(samplerName,E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken);
-  }
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->WritePrimary(samplerName,E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken);}
 }
 
-void BDSOutputVector::WriteHistogram(BDSHistogram1D* histogramIn) {
-  for (unsigned int i=0; i<output.size(); i++) {
-    output[i]->WriteHistogram(histogramIn);
-  }
+void BDSOutputVector::WriteHistogram(BDSHistogram1D* histogramIn)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->WriteHistogram(histogramIn);}
 }
 
-void BDSOutputVector::Commit(){
-  for (unsigned int i=0; i<output.size(); i++) {
-    output[i]->Commit();
-  }
+void BDSOutputVector::Commit()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->Commit();}
 }
 
-void BDSOutputVector::Write(){
-  for (unsigned int i=0; i<output.size(); i++) {
-    output[i]->Write();
-  }
+void BDSOutputVector::Write()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->Write();}
 }

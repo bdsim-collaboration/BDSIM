@@ -1,41 +1,59 @@
+#include "BDSMaterials.hh"
 #include "BDSTunnelInfo.hh"
-
 #include "BDSTunnelType.hh"
+
+class G4Material;
 
 BDSTunnelInfo::BDSTunnelInfo()
 {
-  tunnelType      = BDSTunnelType::circular;
-  aper1           = 0.0;
-  aper2           = 0.0;
-  aper3           = 0.0;
-  aper4           = 0.0;
-  tunnelThickness = 0.0;
-  tunnelMaterial  = NULL;
-  soilThickness   = 0.0;
-  tunnelOffsetX   = 0.0;
-  tunnelOffsetY   = 0.0;
+  type          = BDSTunnelType::circular;
+  thickness     = 0.0;
+  soilThickness = 0.0;
+  material      = nullptr;
+  soilMaterial  = nullptr;
+  buildFloor    = false;
+  floorOffset   = 0.0;
+  aper1         = 0.0;
+  aper2         = 0.0;
+  sensitive     = false;
+  visible       = true;
 }
 
-BDSTunnelInfo::BDSTunnelInfo(BDSTunnelType tunnelTypeIn,
+BDSTunnelInfo::BDSTunnelInfo(BDSTunnelType typeIn,
+			     G4double      thicknessIn,
+			     G4double      soilThicknessIn,
+			     G4Material*   materialIn,
+			     G4Material*   soilMaterialIn,
+			     G4bool        buildFloorIn,
+			     G4double      floorOffsetIn,
 			     G4double      aper1In,
 			     G4double      aper2In,
-			     G4double      aper3In,
-			     G4double      aper4In,
-			     G4double      tunnelThicknessIn,
-			     G4Material*   tunnelMaterialIn,
-			     G4double      soilThicknessIn,
-			     G4double      tunnelOffsetXIn,
-			     G4double      tunnelOffsetYIn)
+			     G4bool        sensitiveIn,
+			     G4bool        visibleIn):
+  type(typeIn), thickness(thicknessIn),
+  soilThickness(soilThicknessIn), material(materialIn),
+  soilMaterial(soilMaterialIn), buildFloor(buildFloorIn),
+  floorOffset(floorOffsetIn), aper1(aper1In), aper2(aper2In),
+  sensitive(sensitiveIn), visible(visibleIn)
+{;}
+
+BDSTunnelInfo::BDSTunnelInfo(G4String typeIn,
+			     G4double thicknessIn,
+			     G4double soilThicknessIn,
+			     G4String materialIn,
+			     G4String soilMaterialIn,
+			     G4bool   buildFloorIn,
+			     G4double floorOffsetIn,
+			     G4double aper1In,
+			     G4double aper2In,
+			     G4bool   sensitiveIn,
+			     G4bool   visibleIn):
+  thickness(thicknessIn), soilThickness(soilThicknessIn),
+  buildFloor(buildFloorIn), floorOffset(floorOffsetIn),
+  aper1(aper1In), aper2(aper2In),
+  sensitive(sensitiveIn), visible(visibleIn)
 {
-  tunnelType = tunnelTypeIn;
-  aper1            = aper1In;
-  aper2            = aper2In;
-  aper3            = aper3In;
-  aper4            = aper4In;
-  tunnelThickness  = tunnelThicknessIn;
-  tunnelMaterial   = tunnelMaterialIn;
-  soilThickness    = soilThicknessIn;
-  tunnelOffsetX    = tunnelOffsetXIn;
-  tunnelOffsetY    = tunnelOffsetYIn;
+  type         = BDS::DetermineTunnelType(typeIn);
+  material     = BDSMaterials::Instance()->GetMaterial(materialIn);
+  soilMaterial = BDSMaterials::Instance()->GetMaterial(soilMaterialIn);
 }
-  

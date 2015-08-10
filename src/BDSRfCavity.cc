@@ -16,43 +16,42 @@ BDSRfCavity::BDSRfCavity(G4String           name,
 			 BDSMagnetOuterInfo magnetOuterInfo):
   BDSMagnet(BDSMagnetType::rfcavity, name, length,
 	    beamPipeInfo, magnetOuterInfo),
-  itsGrad(grad)
+  gradient(grad)
 {
-  itsEField    = NULL;
-  fChordFinder = NULL;
-  fStepper     = NULL;
-  fIntgrDriver = NULL;
+  eField      = nullptr;
+  equation    = nullptr;
+  intgrDriver = nullptr;
 }
+
+void BDSRfCavity::BuildBPFieldMgr()
+{;}
 
 void BDSRfCavity::BuildBPFieldAndStepper()
 {
   G4int nvar = 8;
 
   // set up the magnetic field and stepper
-  G4ThreeVector Efield(0.,0.,itsGrad * CLHEP::megavolt / CLHEP::m);
-  itsEField=new G4UniformElectricField(Efield);
-
-  G4EqMagElectricField* fEquation = new G4EqMagElectricField(itsEField);
-
+  G4ThreeVector eFieldVector(0., 0., gradient * CLHEP::megavolt / CLHEP::m);
+  eField        = new G4UniformElectricField(eFieldVector);
+  equation      = new G4EqMagElectricField(eField);
   itsBPFieldMgr = new G4FieldManager();
+  itsBPFieldMgr->SetDetectorField(eField);
+  itsStepper    = new G4ExplicitEuler(equation, nvar);
+
+  G4double minStep = BDSGlobalConstants::Instance()->GetChordStepMinimum();
   
-  fStepper = new G4ExplicitEuler( fEquation, nvar );
-  //itsStepper = new G4ClassicalRK4( fEquation, nvar );
-
-  G4double fMinStep = BDSGlobalConstants::Instance()->GetChordStepMinimum();
- 
-
-  itsBPFieldMgr->SetDetectorField(itsEField );
-
-  delete fChordFinder;
-
-  fIntgrDriver = new G4MagInt_Driver(fMinStep,
-                                     fStepper,
-                                     fStepper->GetNumberOfVariables() );
+  intgrDriver = new G4MagInt_Driver(minStep,
+				    itsStepper,
+				    itsStepper->GetNumberOfVariables() );
   
-  fChordFinder = new G4ChordFinder(fIntgrDriver);
-
-  fChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
-  itsBPFieldMgr->SetChordFinder( fChordFinder );
+  itsChordFinder = new G4ChordFinder(intgrDriver);
+  itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
+  itsBPFieldMgr->SetChordFinder(itsChordFinder);
 }
 
+BDSRfCavity::~BDSRfCavity()
+{
+  delete eField;
+  delete equation;
+  delete intgrDriver;
+}
