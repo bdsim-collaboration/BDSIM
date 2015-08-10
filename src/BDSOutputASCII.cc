@@ -67,9 +67,9 @@ BDSOutputASCII::BDSOutputASCII()
   headerstream << std::left << std::setprecision(10) << std::fixed
 	       << std::setw(6)  << "PDGID"    << " "
 	       << std::setw(15) << "E[GeV]"   << " "
-	       << std::setw(15) << "X[mum]"   << " "
-	       << std::setw(15) << "Y[mum]"   << " "
-	       << std::setw(15) << "Z[mum]"   << " "
+	       << std::setw(15) << "x[m]"     << " "
+	       << std::setw(15) << "y[m]"     << " "
+	       << std::setw(15) << "Z[m]"     << " "
 	       << std::setw(20) << "S[m]"     << " "
 	       << std::setw(15) << "Xp[rad]"  << " "
 	       << std::setw(15) << "Yp[rad]"  << " "
@@ -104,22 +104,26 @@ BDSOutputASCII::BDSOutputASCII()
 
 BDSOutputASCII::~BDSOutputASCII()
 {
-  if (ofMain.is_open()) {
-    ofMain.flush();
-    ofMain.close();
-  }
-  if (ofPrimaries.is_open()) {
-    ofPrimaries.flush();
-    ofPrimaries.close();
-  }
-  if (ofELoss.is_open()) {
-    ofELoss.flush();
-    ofELoss.close();
-  }
-  if (ofPLoss.is_open()) {
-    ofPLoss.flush();
-    ofPLoss.close();
-  }
+  if (ofMain.is_open())
+    {
+      ofMain.flush();
+      ofMain.close();
+    }
+  if (ofPrimaries.is_open())
+    {
+      ofPrimaries.flush();
+      ofPrimaries.close();
+    }
+  if (ofELoss.is_open())
+    {
+      ofELoss.flush();
+      ofELoss.close();
+    }
+  if (ofPLoss.is_open())
+    {
+      ofPLoss.flush();
+      ofPLoss.close();
+    }
 }
 
 void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile,
@@ -140,19 +144,19 @@ void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile,
   // save flags since G4cout flags are changed
   std::ios_base::fmtflags ff = outfile->flags();
 
-  *outfile << std::left << std::setprecision(10) << std::fixed
-	   << std::setw(6)  << PDGType              << " "
-	   << std::setw(15) << X/CLHEP::micrometer  << " "
-	   << std::setw(15) << Y/CLHEP::micrometer  << " "
-	   << std::setw(15) << Z/CLHEP::micrometer  << " "
-	   << std::setw(20) << S/CLHEP::m           << " "
-	   << std::setw(15) << XPrime/CLHEP::radian << " "
-	   << std::setw(15) << YPrime/CLHEP::radian << " "
-	   << std::setw(6)  << EventNo              << " "
-	   << std::setw(15) << Weight               << " "
-	   << std::setw(9)  << ParentID             << " "
-	   << std::setw(8)  << TrackID              << " "
+  *outfile << std::left     << std::setprecision(10)  << std::fixed
+	   << std::setw(6)  << PDGType                << " "
 	   << std::setw(15) << totalEnergy/CLHEP::GeV << " "
+	   << std::setw(15) << X/CLHEP::m             << " "
+	   << std::setw(15) << Y/CLHEP::m             << " "
+	   << std::setw(15) << Z/CLHEP::m             << " "
+	   << std::setw(20) << S/CLHEP::m             << " "
+	   << std::setw(15) << XPrime/CLHEP::radian   << " "
+	   << std::setw(15) << YPrime/CLHEP::radian   << " "
+	   << std::setw(6)  << EventNo                << " "
+	   << std::setw(15) << Weight                 << " "
+	   << std::setw(9)  << ParentID               << " "
+	   << std::setw(8)  << TrackID                << " "
 	   << std::setw(5)  << TurnsTaken
 	   << G4endl;
   // reset flags
@@ -183,17 +187,17 @@ void BDSOutputASCII::WriteHits(BDSSamplerHitsCollection *hc)
     {
       WriteAsciiHit(&ofMain,
 		    (*hc)[i]->GetPDGtype(),
-		    (*hc)[i]->GetX(),
-		    (*hc)[i]->GetY(),
-		    (*hc)[i]->GetZ(),
 		    (*hc)[i]->GetTotalEnergy(),
+		    (*hc)[i]->GetX(),          // local x
+		    (*hc)[i]->GetY(),          // local y
+		    (*hc)[i]->GetGlobalZ(),    // global z
 		    (*hc)[i]->GetS(),
-		    0,//(*hc)[i]->GetXPrime(),
-		    0,//(*hc)[i]->GetYPrime(),
+		    (*hc)[i]->GetXPrime(),
+		    (*hc)[i]->GetYPrime(),
 		    (*hc)[i]->GetEventNo(),
 		    (*hc)[i]->GetWeight(),
-		    -1,//(*hc)[i]->GetParentID(),
-		    0, //(*hc)[i]->GetTrackID(),
+		    (*hc)[i]->GetParentID(),
+		    (*hc)[i]->GetTrackID(),
 		    (*hc)[i]->GetTurnsTaken()
 		    );
     }
@@ -216,9 +220,9 @@ void BDSOutputASCII::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
       WriteAsciiHit(&ofELoss,
 		    (*hc)[i]->GetPartID(),
 		    (*hc)[i]->GetEnergy(),
-		    (*hc)[i]->GetX(),
-		    (*hc)[i]->GetY(),
-		    (*hc)[i]->GetZ(),
+		    (*hc)[i]->Getx(),          // local x
+		    (*hc)[i]->Gety(),          // local y
+		    (*hc)[i]->GetZ(),    // global z
 		    (*hc)[i]->GetS(),
 		    0, //(*hc)[i]->GetXPrime(),
 		    0, //(*hc)[i]->GetYPrime(),
@@ -234,13 +238,11 @@ void BDSOutputASCII::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 
 void BDSOutputASCII::WritePrimaryLoss(BDSEnergyCounterHit* hit)
 {
-  //phist->Fill(hit->GetS()/CLHEP::m); //no weighting by energy - done in external analysis
-
   WriteAsciiHit(&ofPLoss,
 		hit->GetPartID(),
 		hit->GetEnergy(),
-		hit->GetX(),
-		hit->GetY(),
+		hit->Getx(),
+		hit->Gety(),
 		hit->GetZ(),
 		hit->GetS(),
 		0,//hit->GetXPrime(),
