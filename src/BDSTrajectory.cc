@@ -4,23 +4,24 @@
 
 G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;
 
-
 BDSTrajectory::BDSTrajectory():G4Trajectory(){
 }
 
-BDSTrajectory::BDSTrajectory(const G4Track* aTrack):G4Trajectory(aTrack){
-  _positionOfLastScatter[aTrack->GetTrackID()]=aTrack->GetPosition();
-  _momDirAtLastScatter[aTrack->GetTrackID()]=aTrack->GetMomentumDirection();
-  _energyAtLastScatter[aTrack->GetTrackID()]=aTrack->GetTotalEnergy();
-  _timeAtLastScatter[aTrack->GetTrackID()]=aTrack->GetGlobalTime();
-  _timeAtVertex[aTrack->GetTrackID()]=aTrack->GetGlobalTime();
+BDSTrajectory::BDSTrajectory(const G4Track* aTrack):G4Trajectory(aTrack)
+{
+  _positionOfLastScatter[aTrack->GetTrackID()] = aTrack->GetPosition();
+  _momDirAtLastScatter[aTrack->GetTrackID()]   = aTrack->GetMomentumDirection();
+  _energyAtLastScatter[aTrack->GetTrackID()]   = aTrack->GetTotalEnergy();
+  _timeAtLastScatter[aTrack->GetTrackID()]     = aTrack->GetGlobalTime();
+  _timeAtVertex[aTrack->GetTrackID()]          = aTrack->GetGlobalTime();
 }
 
 BDSTrajectory::~BDSTrajectory(){
 }
 
-void BDSTrajectory::AppendStep(const G4Step* aStep){
-  G4Track* aTrack = aStep->GetTrack();
+void BDSTrajectory::AppendStep(const G4Step* aStep)
+{
+  G4Track*            aTrack = aStep->GetTrack();
   BDSTrajectoryPoint* tempTP = new BDSTrajectoryPoint(aTrack);
   if(tempTP->isScatteringProcess()){
     _positionOfLastScatter[aTrack->GetTrackID()]=aTrack->GetPosition();
@@ -31,22 +32,24 @@ void BDSTrajectory::AppendStep(const G4Step* aStep){
   delete tempTP;
 }
 
-void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory){
+void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
+{
   if(!secondTrajectory) return;
 
   BDSTrajectory* seco = (BDSTrajectory*)secondTrajectory;
-  for(std::map<G4int, G4ThreeVector>::iterator iter = seco->_positionOfLastScatter.begin();
-      iter!=seco->_positionOfLastScatter.end();
-      iter++){
-    _positionOfLastScatter.insert(*iter);
-  }
+  for(auto iter = seco->_positionOfLastScatter.begin();
+      iter != seco->_positionOfLastScatter.end();
+      iter++)
+    {_positionOfLastScatter.insert(*iter);}
   seco->_positionOfLastScatter.clear();
 }
 
-void BDSTrajectory::printData(){
+void BDSTrajectory::printData()
+{
 }
 
-void BDSTrajectory::printDataOfSteps(){
+void BDSTrajectory::printDataOfSteps()
+{
   BDSTrajectoryPoint* tj;
   for(int i = 0; i<GetPointEntries(); i++){
     tj = (BDSTrajectoryPoint*)GetPoint(i);
@@ -57,7 +60,8 @@ void BDSTrajectory::printDataOfSteps(){
   }
 }
 
-void BDSTrajectory::printDataOfSteps(G4Step* aStep){
+void BDSTrajectory::printDataOfSteps(G4Step* aStep)
+{
   G4int trackID = aStep->GetTrack()->GetTrackID();
   BDSTrajectoryPoint* tj;
   for(int i = 0; i<GetPointEntries(); i++){

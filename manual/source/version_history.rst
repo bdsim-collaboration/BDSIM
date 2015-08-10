@@ -13,7 +13,7 @@ New Features
   and subdirectories contain features.
 * Example documentation in manual and in place beside each example with
   example screenshots
-* Updated python utilities *pybdsim*, *pymadx*, *pymad8* and *robdsim*
+* Updated python utilities *pybdsim v0.1*, *pymadx v0.1*, *pymad8 v0.1* and *robdsim v0.2*
 * Repeated components are not duplicated in memory - previously, they would
   be repeatedly constructed. Reduced memory footprint
 * Component information comes from Physical Volumes instead of Logical Volumes
@@ -60,6 +60,16 @@ Physics
   variables from examples - these should be left unset unless the user knows
   their purpose.
 
+Output
+^^^^^^
+* Change all transverse output units to **metres** - manual updated accordingly
+* Change `z` in ASCII output to **global Z** instead of local z.
+* Recorded energy in output is now unweighted but energy recorded in convenince
+  energy loss histogram is. Could have lead to double weighting previously
+* Fix for global coordinates being written out as local coordinates in ROOT
+  output
+* Random number generator seed state not written out when no output is specified
+
 Parser
 ^^^^^^
 * Return error if superfluous arguments are present (issue #56)
@@ -74,12 +84,7 @@ General
 * Fix large memory leak for events with large number of particles - was due to
   accumulation of BDSTrajectory objects
 * Coverity fixes for missing, and superfluous headers & variables
-* Recorded energy in output is now unweighted but energy recorded in convenince
-  energy loss histogram is. Could have lead to double weighting previously
-* Fix for global coordinates being written out as local coordinates in ROOT
-  output
-* Random number generator seed state not written out when no output is specified
-  
+
 
 V0.702 2015 / 07 / 28 - Hotfix
 ==============================

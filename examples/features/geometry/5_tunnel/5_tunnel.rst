@@ -1,3 +1,5 @@
+.. _tunnel-examples:
+
 Tunnel Geometry
 ===============
 
