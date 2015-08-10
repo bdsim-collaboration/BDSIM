@@ -9,17 +9,16 @@
 #include "BDSUtilities.hh"
 #include "BDSHistogram.hh"
 
-
-BDSOutputROOT::BDSOutputROOT():BDSOutputBase()
+BDSOutputROOT::BDSOutputROOT()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "output format ROOT"<<G4endl;
 #endif
   theRootOutputFile = nullptr;
   PrecisionRegionEnergyLossTree = nullptr;
-  EnergyLossTree    = nullptr;
-  PrimaryHitsTree   = nullptr;
-  PrimaryLossTree   = nullptr;
+  EnergyLossTree                = nullptr;
+  PrimaryHitsTree               = nullptr;
+  PrimaryLossTree               = nullptr;
   Init(); // activate the output
 }
 
@@ -36,57 +35,57 @@ void BDSOutputROOT::BuildSamplerTree(G4String name)
 #endif
   TTree* SamplerTree = new TTree(name, "Sampler output");
   
-  SamplerTree->Branch("E0", &E0, "E0/F" ); // (GeV)
-  SamplerTree->Branch("x0", &x0, "x0/F" ); // (um)
-  SamplerTree->Branch("y0", &y0, "y0/F" ); // (um)
-  SamplerTree->Branch("z0", &z0, "z0/F" ); // (um)
-  SamplerTree->Branch("xp0",&xp0,"xp0/F"); // (rad)
-  SamplerTree->Branch("yp0",&yp0,"yp0/F"); // (rad)
-  SamplerTree->Branch("zp0",&zp0,"zp0/F"); // (rad)
-  SamplerTree->Branch("t0", &t0, "t0/F" ); // (ns)
+  SamplerTree->Branch("E0",  &E0,  "E0/F" ); // (GeV)
+  SamplerTree->Branch("x0",  &x0,  "x0/F" ); // (m)
+  SamplerTree->Branch("y0",  &y0,  "y0/F" ); // (m)
+  SamplerTree->Branch("z0",  &z0,  "z0/F" ); // (m)
+  SamplerTree->Branch("xp0", &xp0, "xp0/F"); // (rad)
+  SamplerTree->Branch("yp0", &yp0, "yp0/F"); // (rad)
+  SamplerTree->Branch("zp0", &zp0, "zp0/F"); // (rad)
+  SamplerTree->Branch("t0",  &t0,  "t0/F" ); // (ns)
 
-  SamplerTree->Branch("E_prod", &E_prod, "E_prod/F" ); // (GeV)
-  SamplerTree->Branch("x_prod", &x_prod, "x_prod/F" ); // (mum)
-  SamplerTree->Branch("y_prod", &y_prod, "y_prod/F" ); // (mum)
-  SamplerTree->Branch("z_prod", &z_prod, "z_prod/F" ); // (m)
-  SamplerTree->Branch("xp_prod",&xp_prod,"xp_prod/F"); // (rad)
-  SamplerTree->Branch("yp_prod",&yp_prod,"yp_prod/F"); // (rad)
-  SamplerTree->Branch("zp_prod",&zp_prod,"zp_prod/F"); // (rad)
-  SamplerTree->Branch("t_prod", &t_prod, "t_prod/F" ); // (ns)
+  SamplerTree->Branch("E_prod",  &E_prod,  "E_prod/F" ); // (GeV)
+  SamplerTree->Branch("x_prod",  &x_prod,  "x_prod/F" ); // (m)
+  SamplerTree->Branch("y_prod",  &y_prod,  "y_prod/F" ); // (m)
+  SamplerTree->Branch("z_prod",  &z_prod,  "z_prod/F" ); // (m)
+  SamplerTree->Branch("xp_prod", &xp_prod, "xp_prod/F"); // (rad)
+  SamplerTree->Branch("yp_prod", &yp_prod, "yp_prod/F"); // (rad)
+  SamplerTree->Branch("zp_prod", &zp_prod, "zp_prod/F"); // (rad)
+  SamplerTree->Branch("t_prod",  &t_prod,  "t_prod/F" ); // (ns)
 
-  SamplerTree->Branch("E_lastScat",&E_lastScat,"E_lastScat/F"); // (GeV)
-  SamplerTree->Branch("x_lastScat",&x_lastScat,"x_lastScat/F"); // (mum)
-  SamplerTree->Branch("y_lastScat",&y_lastScat,"y_lastScat/F"); // (mum)
-  SamplerTree->Branch("z_lastScat",&z_lastScat,"z_lastScat/F"); // (m)
-  SamplerTree->Branch("xp_lastScat",&xp_lastScat,"xp_lastScat/F"); // (rad)
-  SamplerTree->Branch("yp_lastScat",&yp_lastScat,"yp_lastScat/F"); // (rad)
-  SamplerTree->Branch("zp_lastScat",&zp_lastScat,"zp_lastScat/F"); // (rad)
-  SamplerTree->Branch("t_lastScat",&t_lastScat,"t_lastScat/F"); // (ns)
+  SamplerTree->Branch("E_lastScat",  &E_lastScat,  "E_lastScat/F");  // (GeV)
+  SamplerTree->Branch("x_lastScat",  &x_lastScat,  "x_lastScat/F");  // (m)
+  SamplerTree->Branch("y_lastScat",  &y_lastScat,  "y_lastScat/F");  // (m)
+  SamplerTree->Branch("z_lastScat",  &z_lastScat,  "z_lastScat/F");  // (m)
+  SamplerTree->Branch("xp_lastScat", &xp_lastScat, "xp_lastScat/F"); // (rad)
+  SamplerTree->Branch("yp_lastScat", &yp_lastScat, "yp_lastScat/F"); // (rad)
+  SamplerTree->Branch("zp_lastScat", &zp_lastScat, "zp_lastScat/F"); // (rad)
+  SamplerTree->Branch("t_lastScat",  &t_lastScat,  "t_lastScat/F");  // (ns)
   
-  SamplerTree->Branch("E",&E,"E/F"); // (GeV)
-  SamplerTree->Branch("x",&x,"x/F"); // (mum)
-  SamplerTree->Branch("y",&y,"y/F"); // (mum)
-  SamplerTree->Branch("z",&z,"z/F"); // (m)
-  SamplerTree->Branch("xp",&xp,"xp/F"); // (rad)
-  SamplerTree->Branch("yp",&yp,"yp/F"); // (rad)
-  SamplerTree->Branch("zp",&zp,"zp/F"); // (rad)
-  SamplerTree->Branch("t",&t,"t/F"); // (ns)
+  SamplerTree->Branch("E",  &E,  "E/F");  // (GeV)
+  SamplerTree->Branch("x",  &x,  "x/F");  // (m)
+  SamplerTree->Branch("y",  &y,  "y/F");  // (m)
+  SamplerTree->Branch("z",  &z,  "z/F");  // (m)
+  SamplerTree->Branch("xp", &xp, "xp/F"); // (rad)
+  SamplerTree->Branch("yp", &yp, "yp/F"); // (rad)
+  SamplerTree->Branch("zp", &zp, "zp/F"); // (rad)
+  SamplerTree->Branch("t",  &t,  "t/F");  // (ns)
   
-  SamplerTree->Branch("X",&X,"X/F"); // (mum)
-  SamplerTree->Branch("Y",&Y,"Y/F"); // (mum)
-  SamplerTree->Branch("Z",&Z,"Z/F"); // (m)
-  SamplerTree->Branch("Xp",&Xp,"Xp/F"); // (rad)
-  SamplerTree->Branch("Yp",&Yp,"Yp/F"); // (rad)
-  SamplerTree->Branch("Zp",&Zp,"Zp/F"); // (rad)
+  SamplerTree->Branch("X",  &X,  "X/F");  // (m)
+  SamplerTree->Branch("Y",  &Y,  "Y/F");  // (m)
+  SamplerTree->Branch("Z",  &Z,  "Z/F");  // (m)
+  SamplerTree->Branch("Xp", &Xp, "Xp/F"); // (rad)
+  SamplerTree->Branch("Yp", &Yp, "Yp/F"); // (rad)
+  SamplerTree->Branch("Zp", &Zp, "Zp/F"); // (rad)
   
-  SamplerTree->Branch("s",&s,"s/F"); // (m)
+  SamplerTree->Branch("S",  &s,   "S/F"); // (m)
   
-  SamplerTree->Branch("weight",&weight,"weight/F");
-  SamplerTree->Branch("partID",&part,"partID/I");
-  SamplerTree->Branch("nEvent",&nev,"nEvent/I");
-  SamplerTree->Branch("parentID",&pID,"parentID/I");
-  SamplerTree->Branch("trackID",&track_id,"trackID/I");
-  SamplerTree->Branch("turnnumber",&turnnumber,"turnnumber/I");
+  SamplerTree->Branch("weight",     &weight,     "weight/F");
+  SamplerTree->Branch("partID",     &part,       "partID/I");
+  SamplerTree->Branch("nEvent",     &nev,        "nEvent/I");
+  SamplerTree->Branch("parentID",   &pID,        "parentID/I");
+  SamplerTree->Branch("trackID",    &track_id,   "trackID/I");
+  SamplerTree->Branch("turnnumber", &turnnumber, "turnnumber/I");
 }
 
 void BDSOutputROOT::Init()
@@ -258,33 +257,33 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
 #endif
   TTree* sTree=(TTree*)gDirectory->Get(Name);
   if(!sTree) G4Exception("BDSOutputROOT: ROOT Sampler not found!", "-1", FatalException, "");
-  x0          = InitX          / CLHEP::micrometer;
-  y0          = InitY          / CLHEP::micrometer;
   E0          = InitTotalEnergy/ CLHEP::GeV;
+  x0          = InitX          / CLHEP::m;
+  y0          = InitY          / CLHEP::m;
   z0          = InitZ          / CLHEP::m;
   xp0         = InitXPrime     / CLHEP::radian;
   yp0         = InitYPrime     / CLHEP::radian;
   zp0         = InitZPrime     / CLHEP::radian;
   t0          = InitT          / CLHEP::ns;
-  x_prod      = ProdX          / CLHEP::micrometer;
-  y_prod      = ProdY          / CLHEP::micrometer;
   E_prod      = ProdTotalEnergy/ CLHEP::GeV;
+  x_prod      = ProdX          / CLHEP::m;
+  y_prod      = ProdY          / CLHEP::m;
   z_prod      = ProdZ          / CLHEP::m;
   xp_prod     = ProdXPrime     / CLHEP::radian;
   yp_prod     = ProdYPrime     / CLHEP::radian;
   zp_prod     = ProdZPrime     / CLHEP::radian;
   t_prod      = ProdT          / CLHEP::ns;
-  x_lastScat  = LastScatX      / CLHEP::micrometer;
-  y_lastScat  = LastScatY      / CLHEP::micrometer;
   E_lastScat  = LastScatTotalEnergy/ CLHEP::GeV;
+  x_lastScat  = LastScatX      / CLHEP::m;
+  y_lastScat  = LastScatY      / CLHEP::m;
   z_lastScat  = LastScatZ      / CLHEP::m;
   xp_lastScat = LastScatXPrime / CLHEP::radian;
   yp_lastScat = LastScatYPrime / CLHEP::radian;
   zp_lastScat = LastScatZPrime / CLHEP::radian;
   t_lastScat  = LastScatT      / CLHEP::ns;
-  x           = LocalX         / CLHEP::micrometer;
-  y           = LocalY         / CLHEP::micrometer;
   E           = TotalEnergy    / CLHEP::GeV;
+  x           = LocalX         / CLHEP::m;
+  y           = LocalY         / CLHEP::m;
   z           = LocalZ         / CLHEP::m;
   xp          = LocalXPrime    / CLHEP::radian;
   yp          = LocalYPrime    / CLHEP::radian;
