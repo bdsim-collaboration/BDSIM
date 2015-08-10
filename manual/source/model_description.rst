@@ -683,15 +683,30 @@ Magnet Geometry Parameters
 
 As well as the beam pipe, magnet beam line elements also have further outer geometry beyond the
 beam pipe. This geometry typically represents the magnetic poles and yoke of the magnet but there
-are several geometry types to choose from.
+are several geometry types to choose from. The possible different styles are described below and
+syntax **examples** can be found in *examples/features/geometry/4_magnets/*.
 
-The magnet geometry is controlled by two parameters:
+The magnet geometry is controlled by the following parameters.
 
-=================  ======================================  =======  ===========
-parameter          description                             default  required
-`outerDiameter`    full width of magnet in metres          1 m      no
-`outerMaterial`    material of magnet                      "iron"   no
-=================  ======================================  =======  ===========
+.. note:: These are all specified using the `option` command.
+
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+| parameter             | description                                                  | default       | required  |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+| `magnetGeometryType`  | The style of magnet geometry to use. One of:                 | `cylindrical` | no        |
+|                       | `cylindrical`, `polescircular`, `polessquare`, `polesfacet`, |               |           |
+|                       | `polesfacetcrop`, `lhcleft` and `lhcright`                   |               |           |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+| `outerDiameter`       | **full** horizontal width of the magnet (m)                  | 1 m           | no        |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+| `outerMaterial`       | material of the magnet                                       | "iron"        | no        |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+
+Example::
+
+  option, magnetGeometryType = "polesfacetcrop",
+          outerDiameter = 0.5*m;
+	  
 
 .. versionadded:: 0.7
 
@@ -703,17 +718,16 @@ parameter          description                             default  required
 		`boxSize` - this is still accepted by the parser for backwards compatibility
 		but users should use the `outerDiameter` keyword where possible.
 
-.. note:: The choice of magnet outer geometry will significantly affect the beam loss pattern in the
-	  simulation as particles and radiation may propagate much further along the beam line when
-	  a magnet geometry with poles is used.
+.. warning:: The choice of magnet outer geometry will significantly affect the beam loss pattern in the
+	     simulation as particles and radiation may propagate much further along the beam line when
+	     a magnet geometry with poles is used.
 
 .. note:: Should a custom selection of various magnet styles be required for your simulation, please
 	  contact us (see :ref:`feature-request` and this can be added - it is a relatively simple processes.
+	  
 
-Examples of the different styles of magnet geometry are shown below.
-
-Cylindrical (Default)
-^^^^^^^^^^^^^^^^^^^^^
+Cylindrical (Default) - "`cylindrical`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The beam pipe is surrounded by a cylinder of material (the default is iron) whose outer diameter
 is controlled by the `outerDiameter` parameter. In the case of beam pipes that are not circular
@@ -726,7 +740,7 @@ therefore this geometry is best suited for the most general studies.
 This geometry will be selected by **not** specifying any `option, magnetGeometryType`. If however,
 another magnet geometry is used as `option, magnetGeometryType`, the `magnetGeometryType` keyword
 can be used to override this on a per element basis.
-
+		    
 .. |cylindricalquad| image:: figures/cylindrical_quadrupole.png
 			     :width: 60%
 				  
@@ -737,8 +751,18 @@ can be used to override this on a per element basis.
 | |cylindricalquad|  +  |cylindricalsext|  +
 +--------------------+---------------------+
 
-Poles Circular
-^^^^^^^^^^^^^^
+.. raw:: latex
+
+    \newpage
+    
+
+Poles Circular - "`polescircular`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This magnet geometry has simple iron poles according to the order of the magnet and the yoke is
+represented by an annulus. Currently no coils are implemented. If a non-symmetric beam pipe
+geometry is used, the larger of the horizontal and vertical dimensions of the beam pipe will be
+used to create the circular aperture at the pole tips.
 
 .. versionadded:: 0.7
 
@@ -752,8 +776,17 @@ Poles Circular
 | |circularquad|  +  |circularsext|  +
 +-----------------+------------------+
 
-Poles Square
-^^^^^^^^^^^^
+.. raw:: latex
+
+    \newpage
+
+
+Poles Square - "`polessquare`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This magnet geometry has again, individual poles according to the order of the magnet but the
+yoke is an upright square section to which the poles are attached. This geometry behaves in the
+same wasy as `polescircular` with regard to the beam pipe size.
 
 .. versionadded:: 0.7
 
@@ -770,12 +803,20 @@ Poles Square
 | |squarequad|  +  |squaresext|  +
 +---------------+----------------+
 
-Poles Faceted
-^^^^^^^^^^^^^
+.. raw:: latex
+
+    \newpage
+
+Poles Faceted - "`polesfacet`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This magnet geometry is much like `polessquare`, however the yoke is such that the pole always
+joins at a flat piece of yoke and not in a corner. This geometry behaves in the
+same wasy as `polescircular` with regard to the beam pipe size.
 
 .. versionadded:: 0.7
 
-`outerDiameter` is the full width through a pole on a flat side of the magnet.
+`outerDiameter` is the full width as shown in the figure.
 
 .. |facetquad| image:: figures/polefacet_quadrupole.png
 		       :width: 60%
@@ -787,8 +828,17 @@ Poles Faceted
 | |facetquad|  +  |facetsext|  +
 +--------------+---------------+
 
-Poles Faceted with Crop
-^^^^^^^^^^^^^^^^^^^^^^^
+.. raw:: latex
+
+    \newpage
+    
+
+Poles Faceted with Crop - "`polesfacetcrop`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This magnet geometry is quite similar to `polesfacet`, but the yoke in between each
+pole is cropped to form another facet. This results in this magnet geometry having
+double the number of poles as sides.
 
 .. versionadded:: 0.7
 
@@ -804,8 +854,13 @@ Poles Faceted with Crop
 | |facetcropquad|  +  |facetcropsext|  +
 +------------------+-------------------+
 
-LHC Left & Right
-^^^^^^^^^^^^^^^^
+.. raw:: latex
+
+    \newpage
+
+
+LHC Left & Right - "`lhcleft`" | "`lhcright`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. versionadded:: 0.7
 
@@ -839,6 +894,7 @@ beam pipes and both `sbend` and `quadrupole` geometries.
 +-----------------------------+-----------------------+
 | |lhcleft_quadrupole_square| | |lhcleft_sextupole|   |
 +-----------------------------+-----------------------+
+
 
 Offsets & Tilts - Component Misalignment
 ----------------------------------------
@@ -947,6 +1003,12 @@ a marker, place it in the sequence and then define a sampler that uses that mark
 .. note:: Samplers **can only** be defined **after** the main sequences has been defined
 	  using the `use` command (see `use - Defining which Line to Use`_). Failure to do
 	  so will result in an error and BDSIM will exit.
+
+.. warning:: A sampler attached to the first item (therefore at the beginning of the beamline)
+	     may not record all primary particles. This is due to the bunch distribution having
+	     a finite length in z and some of the particles (typically half) start in front of
+	     the sampler. This is not an error, but as expected. It is best not to put a sampler
+	     on the first element, but to use the recorded primary coordinates in the output.
 	  
 
 Physics Lists
@@ -1174,34 +1236,8 @@ as their value.
 | nlinesIgnore                     | number of lines to ignore when reading user bunch     |
 |                                  | input files                                           |
 +----------------------------------+-------------------------------------------------------+
-| **Tunnel Parameters**            | **Currently Not Working**                             |
-+----------------------------------+-------------------------------------------------------+
-| buildTunnel                      | whether to build a tunnel (default = 0)               |
-+----------------------------------+-------------------------------------------------------+
-| buildTunnelStraight              | whether to build a tunnel ignoring the beamline and   |
-|                                  | just in a straight line (default = 0)                 |
-+----------------------------------+-------------------------------------------------------+
-| builTunnelFloor                  | whether to add a floor to the tunnel                  |
-+----------------------------------+-------------------------------------------------------+
-| tunnelRadius                     | tunnel inner radius [m]                               |
-+----------------------------------+-------------------------------------------------------+
-| tunnelThickness                  | thickness of tunnel wall [m]                          |
-+----------------------------------+-------------------------------------------------------+
-| tunnelSoilThickness              | soil thickness outside tunnel wall [m]                |
-+----------------------------------+-------------------------------------------------------+
-| tunnelMaterial                   | material for tunnel wall                              |
-+----------------------------------+-------------------------------------------------------+
-| soilMaterial                     | material for soil outside tunnel wall                 |
-+----------------------------------+-------------------------------------------------------+
-| tunnelOffsetX                    | horizontal offset of the tunnel with respect to the   |
-|                                  | beam line reference trajectory                        |
-+----------------------------------+-------------------------------------------------------+
-| tunnelOffsetY                    | vertical offset of the tunnel with respect to the     |
-|                                  | beam line reference trajectory                        |
-+----------------------------------+-------------------------------------------------------+
-| tunnelFloorOffset                | the offset of the tunnel floor from the centre of the |
-|                                  | tunnel                                                |
-+----------------------------------+-------------------------------------------------------+
+
+* For **Tunnel** parameters, see, `Tunnel Geometry`_.
 
 Beam Parameters
 ---------------
@@ -1638,7 +1674,63 @@ BDSIM can build a tunnel around the beamline. Currently, there are two main ways
 2) The tunnel is just built in a straight line - this may be useful for linear colliders but
    may also cause geometry overlaps and the user is responsible for checking this!
 
+Examples of tunnel geometry can be found with the bdsim source code in */examples/features/geometry/tunnel*.
 
++----------------------------------+-------------------------------------------------------+
+| **Tunnel Parameters**            |                                                       |
++----------------------------------+-------------------------------------------------------+
+| buildTunnel                      | whether to build a tunnel (default = 0)               |
++----------------------------------+-------------------------------------------------------+
+| buildTunnelStraight              | whether to build a tunnel ignoring the beamline and   |
+|                                  | just in a straight line (default = 0)                 |
++----------------------------------+-------------------------------------------------------+
+| builTunnelFloor                  | whether to add a floor to the tunnel                  |
++----------------------------------+-------------------------------------------------------+
+| tunnelType                       | which style of tunnel to use - one of:                |
+|                                  | `circular`, `elliptical`, `square`, `rectangular`     |
+|                                  | (more to come in v0.9)                                |
++----------------------------------+-------------------------------------------------------+
+| tunnelAper1                      | tunnel aperture parameter #1 - typically              |
+|                                  | horizontal (m)                                        |
++----------------------------------+-------------------------------------------------------+
+| tunnelAper2                      | tunnel aperture parameter #2 - typically              |
+|                                  | vertical (m)                                          |
++----------------------------------+-------------------------------------------------------+
+| tunnelThickness                  | thickness of tunnel wall (m)                          |
++----------------------------------+-------------------------------------------------------+
+| tunnelSoilThickness              | soil thickness outside tunnel wall (m)                |
++----------------------------------+-------------------------------------------------------+
+| tunnelMaterial                   | material for tunnel wall                              |
++----------------------------------+-------------------------------------------------------+
+| soilMaterial                     | material for soil outside tunnel wall                 |
++----------------------------------+-------------------------------------------------------+
+| tunnelOffsetX                    | horizontal offset of the tunnel with respect to the   |
+|                                  | beam line reference trajectory                        |
++----------------------------------+-------------------------------------------------------+
+| tunnelOffsetY                    | vertical offset of the tunnel with respect to the     |
+|                                  | beam line reference trajectory                        |
++----------------------------------+-------------------------------------------------------+
+| tunnelFloorOffset                | the offset of the tunnel floor from the centre of the |
+|                                  | tunnel (**not** the beam line).                       |
++----------------------------------+-------------------------------------------------------+
+
+These parameters are shown schematically in the figure below. (gaps not to scale, elliptical
+shown as an example).
+
+.. figure:: figures/tunnel/tunnel_parameters.pdf
+	    :width: 80%
+	    :align: center
+	    
+The soil around the tunnel is typically symmetric with the `tunnelSoilThickness` being added to
+the larger of the horizontal and vertical tunnel dimensions.
+		    
+.. note:: Construction of the tunnel geometry may fail in particular cases of different beam lines.
+	  Beam lines with very strong bends ( > 0.5 rad ) over a few metres may cause overlapping
+	  geometry. In future, it will be possible to override the automatic algorithm between
+	  certain elements in the beamline, but for now such situations must be avoided.
+
+	  
+   
 Regions
 -------
 

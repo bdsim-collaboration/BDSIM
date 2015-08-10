@@ -7,7 +7,6 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetColours.hh"
 #include "BDSMaterials.hh"
-#include "BDSSDManager.hh"
 #include "BDSUtilities.hh"                 // for calculateorientation
 
 #include "globals.hh"                      // geant4 globals / types

@@ -155,8 +155,6 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSection(G4String      na
 				  CLHEP::twopi);                    // sweep angle
     }
   
-  BuildReadOutVolumeStraight(name, length, containerRadius);
-  
   CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerRadius, containerRadius, visible);
 
   return tunnelSection;
@@ -328,7 +326,8 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngled(G4String  
 
   BuildReadOutVolumeAngled(name, length, containerRadius, inputFace, outputFace);
 
-  CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerRadius, containerRadius, visible);
+  CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerRadius,
+		     containerRadius, visible, inputFace, outputFace);
 
   return tunnelSection;
 }

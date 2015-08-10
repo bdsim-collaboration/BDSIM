@@ -3,14 +3,11 @@
 #include "BDSGeometryGDML.hh"
 #include "BDSMaterials.hh"
 #include "BDSMagnetColours.hh"
-#include "BDSSDManager.hh"
 
-#include "G4Colour.hh"
 #include "G4GDMLParser.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4VisAttributes.hh"
-#include "G4VPhysicalVolume.hh"
 #include <cstdlib>
 #include <cstring>
 
