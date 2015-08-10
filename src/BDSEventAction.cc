@@ -111,8 +111,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if(verboseEvent || verboseEventNumber == event_number)
     {G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;}
   
-  // Record the primary events
-  AddPrimaryHits();
+  // Record the primary vertex in output
+  WritePrimaryVertex();
   
   // Now process each of the hits collections in turn, writing them to output.
   // After this, fill the appropriate histograms with information from this event.
@@ -272,7 +272,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #endif
 }
 
-void BDSEventAction::AddPrimaryHits()
+void BDSEventAction::WritePrimaryVertex()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
