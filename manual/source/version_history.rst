@@ -9,7 +9,7 @@ New Features
 * C++11 adopted (required)
 * `stopSecondaries` option
 * Remove dependency on boost (issue #57)
-* Restructured examles directory - top level contains only full machines
+* Restructured examples directory - top level contains only full machines
   and subdirectories contain features.
 * Example documentation in manual and in place beside each example with
   example screenshots
@@ -92,7 +92,7 @@ V0.702 2015 / 07 / 28 - Hotfix
 V0.701 2015 / 07 / 02 - Hotfix
 ==============================
 
-* Fix for global X coordinate not written to output for energy depostion
+* Fix for global X coordinate not written to output for energy deposition
 
 V0.7 - 2015 / 06 / 30
 =====================
@@ -120,7 +120,7 @@ Bug fixes
 * Fix syntax error in parser on windows end of line character (issue #40).
 * Follow user paths properly (issue #24).
 * Parser can end on commented line (issue #41).
-* Introduction of more flexible and weigthed halo bunch distribution.
+* Introduction of more flexible and weighted halo bunch distribution.
 * Significant tidy of BDSAcceleratorComponent base class and derived classes.
 * Fix LHC magnet geometry overlaps and improve efficiency as well as more flexible with different beam pipes.
 * New BDSBeamline class used for component placement consistently in code.
@@ -131,7 +131,7 @@ V0.65 - 2015 / 04 / 10
 * New base class for any geometrical object BDSGeometryComponent.
 * New interchangeable beam pipes with 6 possible beam pipe shapes.
 * New sensitive detector manager to hold single instance of sd classes.
-* Introduction of G4Galatic material for 'empty' volumes rather than beam pipe vacuum.
+* Introduction of G4Galactic material for 'empty' volumes rather than beam pipe vacuum.
 * Possibility to write to multiple output formats at once.
 * Extensive removal of unnecessary headers throughout.
 * Updated python utilities.
