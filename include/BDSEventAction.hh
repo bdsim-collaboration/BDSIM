@@ -1,10 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
-
 #ifndef BDSEventAction_h
 #define BDSEventAction_h 
 
@@ -25,7 +18,7 @@ public:
 public:
   virtual void   BeginOfEventAction(const G4Event*);
   virtual void   EndOfEventAction(const G4Event*);
-  void AddPrimaryHits();
+  void           WritePrimaryVertex();
     
 private:
   BDSAnalysisManager* analMan;
