@@ -64,7 +64,7 @@ Output
 ^^^^^^
 * Change all transverse output units to **metres** - manual updated accordingly
 * Change `z` in ASCII output to **global Z** instead of local z.
-* Recorded energy in output is now unweighted but energy recorded in convenince
+* Recorded energy in output is now unweighted but energy recorded in convenience
   energy loss histogram is. Could have lead to double weighting previously
 * Fix for global coordinates being written out as local coordinates in ROOT
   output
@@ -74,7 +74,6 @@ Parser
 ^^^^^^
 * Return error if superfluous arguments are present (issue #56)
 * Make parser more robust against duplicate element names (issue #43)
-* Increase parser buffer to 1Mb
 * Fixed warnings about compiling c as c++ being deprecated behaviour
   
 General
@@ -83,7 +82,6 @@ General
 * Fix for boundary effects of energy deposition (issue #52)
 * Fix large memory leak for events with large number of particles - was due to
   accumulation of BDSTrajectory objects
-* Coverity fixes for missing, and superfluous headers & variables
 
 
 V0.702 2015 / 07 / 28 - Hotfix
