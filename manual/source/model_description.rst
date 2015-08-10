@@ -1671,7 +1671,15 @@ BDSIM can build a tunnel around the beamline. Currently, there are two main ways
 2) The tunnel is just built in a straight line - this may be useful for linear colliders but
    may also cause geometry overlaps and the user is responsible for checking this!
 
-Examples of tunnel geometry can be found with the bdsim source code in */examples/features/geometry/tunnel*.
+.. warning:: With option 2, the user is entirely responsible to ensure no overlaps occur
+	     (through good design). Also note that the samplers may overlap the tunnel
+	     depending on the tunnel geometry (samplers are square with half width of
+	     `samplerRadius`). In practice however, we haven't observed many ill effects
+	     because of this. Problems would take the form of 'stuck particles' and
+	     Geant4 would terminate that event.
+
+Examples of tunnel geometry can be found with the bdsim source code in */examples/features/geometry/tunnel*
+and are described in :ref:`tunnel-examples`. 
 
 +----------------------------------+-------------------------------------------------------+
 | **Tunnel Parameters**            |                                                       |
