@@ -1278,7 +1278,7 @@ Beam Distributions
 The following beam distributions are available in BDSIM
 
 - `reference`_
-- `gaussMatrix`_
+- `gaussmatrix`_
 - `gauss`_
 - `gausstwiss`_
 - `circle`_
@@ -1333,7 +1333,7 @@ Generates a beam with all coordinates 0 at the nominal energy.::
 
 Generate a particle with an offset of 100 :math:`\mu\mathrm{m}` horizonally and 3.5 :math:`\mu\mathrm{m}` vertically.
 
-gaussMatrix
+gaussmatrix
 ^^^^^^^^^^^
 
 Uses the :math:`N` dimensional gaussian generator from `CLHEP`, `CLHEP::RandMultiGauss`. The generator
@@ -1351,7 +1351,7 @@ Examples::
 
    beam, particle = "e-",
          energy = 10*GeV,
-	 distrType = "reference",
+	 distrType = "gaussmatrix",
 	 sigma11 = 100*um,
 	 sigma22 = 3*um,
 	 sigma33 = 50*um,
@@ -1365,7 +1365,7 @@ Examples::
 gauss
 ^^^^^
 
-Uses the `gaussMatrix`_ beam generator but with simplified input parameters opposed to a complete 
+Uses the `gaussmatrix`_ beam generator but with simplified input parameters opposed to a complete 
 beam sigma matrix. This beam distribution has a diagonal :math:`\sigma`-matrix and does not allow for 
 correlations between phase space coordinates, so 
 
@@ -1396,7 +1396,7 @@ correlations between phase space coordinates, so
 +----------------------------------+-------------------------------------------------------+
 
 
-gaussTwiss
+gausstwiss
 ^^^^^^^^^^
 
 The beam parameters are defined by the usual :math:`\alpha`, :math:`\beta` and :math:`\gamma` from which
