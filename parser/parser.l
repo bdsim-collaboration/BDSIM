@@ -26,7 +26,6 @@
 
 const int maxfilenamelength = 200;
 
-int match_var(char *name);
 struct symtab * symlook(const char *s);
 extern std::map<std::string, struct symtab*> symtab_map;
 extern int yyerror(const char *s);
