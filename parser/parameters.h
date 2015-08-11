@@ -100,7 +100,7 @@ struct Parameters {
   double pressure; int pressureset;
   std::string state; int stateset;
   std::string symbol; int symbolset;
-  std::list<const char*> components; int componentsset;
+  std::list<std::string> components; int componentsset;
   std::list<double> componentsFractions; int componentsFractionsset;
   std::list<int> componentsWeights; int componentsWeightsset;
 

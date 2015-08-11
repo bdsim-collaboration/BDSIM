@@ -575,7 +575,7 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	       G4Exception("BDSGeometry LCDD: Ill defined material fractions.", "-1", FatalException, "");
 	     }
 	     
-	     std::list<const char*> components;
+	     std::list<std::string> components;
 	     std::list<G4String> stComponents;
 	     std::list<G4int> weights;
 	     std::list<G4double> fractions;
@@ -592,22 +592,22 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 #ifdef BDSDEBUG
 		 G4cout << "BDSGeometryLCDD::parseMATERIALS - component = " << parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref")) << G4endl;
 #endif
-		 components.push_back((G4String)parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref")).c_str()); 
-		 stComponents.push_back((G4String)parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref"))); 
+		 components.push_back(parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref"))); 
+		 stComponents.push_back(parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref"))); 
 #ifdef BDSDEBUG
 		 G4cout << components.back() << G4endl;
 		 G4cout << "BDSGeometryLCDD::parseMATERIALS - fraction = " << parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"n")) << G4endl;
 #endif
 		 fractions.push_back(parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"n")));
 	       } else if (!xmlStrcmp(tempcur->name, (const xmlChar *)"composite")){
-		 components.push_back((G4String)parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref")).c_str()); 
-		 stComponents.push_back((G4String)parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref"))); 
+		 components.push_back(parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref"))); 
+		 stComponents.push_back(parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref"))); 
 		 weights.push_back((G4int)parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"n")));
 	       }
 	       tempcur = tempcur->next;
 	     }
 
-	     std::list<const char*>::iterator sIter;
+	     std::list<G4String>::iterator sIter;
 	     std::list<G4String>::iterator stIter;
 
 	     //for(sIter = components.begin(), stIter = stComponents.begin();
@@ -626,7 +626,7 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 #ifdef BDSDEBUG
 	       G4cout << "String element: " << *stIter << G4endl;
 #endif
-	       components.push_back((*stIter).c_str());
+	       components.push_back(*stIter);
 #ifdef BDSDEBUG
 	       G4cout << "Element: " << components.back() << G4endl;
 #endif

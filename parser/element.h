@@ -54,7 +54,7 @@ struct Element {
   double pressure;
   std::string state;
   std::string symbol;
-  std::list<const char*> components;
+  std::list<std::string> components;
   std::list<double> componentsFractions;
   std::list<int> componentsWeights;
 

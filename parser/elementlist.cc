@@ -3,8 +3,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <string>
 
-extern const char* current_line;
+extern std::string current_line;
 
 void ElementList::push_back(Element& el, bool unique) {
   // better to search in map (faster)
@@ -90,7 +91,7 @@ ElementList::ElementListIterator ElementList::find(std::string name,unsigned int
 }
 
 void ElementList::print(int ident) {
-  if(ident == 0) printf("using line %s\n",current_line);
+  if(ident == 0) printf("using line %s\n",current_line.c_str());
 
   for(ElementListIterator it=begin();it!=end();it++)
     {

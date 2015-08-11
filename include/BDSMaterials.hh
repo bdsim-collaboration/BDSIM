@@ -48,7 +48,7 @@ public:
 			G4State  itsState, 
 			G4double itsTemp, 
 			G4double itsPressure,
-			std::list<const char*> itsComponents,
+			std::list<std::string> itsComponents,
 			std::list<Type> itsComponentsFractions);
   ///@}
 
@@ -61,7 +61,6 @@ public:
 
   G4Material* GetMaterial(G4String aMaterial); 
   G4Element*  GetElement(G4String aSymbol); 
-  G4Element* GetElement(const char* aSymbol);
 
   G4bool CheckMaterial(G4String aMaterial); 
   G4bool CheckElement(G4String aSymbol); 

@@ -352,34 +352,34 @@ void Parameters::set_value(std::string property, std::string value )
 void Parameters::set_value(std::string property, Array* value)
 {
 #ifdef BDSDEBUG
-  std::cout << "parser> Setting value " << std::setw(25) << std::left << property << value->size << std::endl;
+  std::cout << "parser> Setting value " << std::setw(25) << std::left << property << std::endl;
 #endif
   if(property=="knl") 
     {
       knlset = 1;
       value->set_vector(knl);
-      delete[] value->data;
+      value->data.clear();
       return;
     } 
   if(property=="ksl") 
     {
       kslset = 1;
       value->set_vector(ksl);
-      delete[] value->data;
+      value->data.clear();
       return;
     }
   if(property=="blmLocZ") 
     {
       blmLocZset = 1;
       value->set_vector(blmLocZ);
-      delete[] value->data;
+      value->data.clear();
       return;
     }
   if(property=="blmLocTheta") 
     {
       blmLocThetaset = 1;
       value->set_vector(blmLocTheta);
-      delete[] value->data;
+      value->data.clear();
       return;
     }
   if(property=="components")
@@ -393,14 +393,14 @@ void Parameters::set_value(std::string property, Array* value)
     {
       componentsWeightsset = 1;
       value->set_vector(componentsWeights);
-      delete[] value->data;
+      value->data.clear();
       return;
     }
   if(property=="componentsFractions")
     {
       componentsFractionsset = 1;
       value->set_vector(componentsFractions);
-      delete[] value->data;
+      value->data.clear();
       return;
     }
 

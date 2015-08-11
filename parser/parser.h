@@ -40,7 +40,7 @@ extern const int ECHO_GRAMMAR;
 const int MAX_EXPAND_ITERATIONS = 50;
 
 std::list<double> _tmparray;  // for reading of arrays
-std::list<char*> _tmpstring;
+std::list<std::string> _tmpstring;
 
 /// globals
 struct Parameters params;
