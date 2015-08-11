@@ -33,13 +33,21 @@ macro(simple_testing test_name script expression)
     endif()
 endmacro()
 
+# a macro that adds a simple test
+# and then add a second test that compares two files
+# (e.g. an output file and a reference file)
 macro(compare_test test_name script file1 file2)
-    simple_testing("${test_name}" "${script}" "")
-    find_package(PythonInterp REQUIRED)
-    add_test(${test_name}_CheckOutput ${PYTHON_EXECUTABLE}
+   simple_testing("${test_name}" "${script}" "")
+   find_package(PythonInterp)
+   if (PYTHONINTERP_FOUND)
+       add_test(${test_name}_CheckOutput ${PYTHON_EXECUTABLE}
        ${CMAKE_SOURCE_DIR}/cmake/compare_files.py
        ${file1} ${file2})
-    set_tests_properties(${test_name}_CheckOutput PROPERTIES DEPENDS ${test_name})
+   else()
+       add_test(${test_name}_CheckOutput ${CMAKE_COMMAND} -E compare_files ${file1} ${file2})
+   endif()
+   # this test depends on the running of the original test
+   set_tests_properties(${test_name}_CheckOutput PROPERTIES DEPENDS ${test_name})
 endmacro()
 
 macro(unit_test test_name binary)
