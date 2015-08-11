@@ -17,14 +17,13 @@
 #include <cstdio>
 #include <map>
 #include <string>
+#include <vector>
 #include <cstring>
 #include <iostream>
 #include "parser.tab.hh"
 #include "sym_table.h"
 #include "getEnv.h"
 #include <unistd.h>
-
-const int maxfilenamelength = 200;
 
 struct symtab * symlook(const char *s);
 extern std::map<std::string, struct symtab*> symtab_map;
@@ -37,12 +36,12 @@ extern int yyerror(const char *s);
 
 const int max_include_depth = 10;
 YY_BUFFER_STATE include_stack[max_include_depth];
-char include_filename_stack[max_include_depth][maxfilenamelength];
+std::vector<std::string> include_filename_stack(max_include_depth);
 int include_linenum_stack[max_include_depth];
 int include_stack_ptr = 0;
 
 int line_num = 1;
-char* yyfilename;
+std::string yyfilename;
 
 %}
 
@@ -152,7 +151,7 @@ dump  { return DUMP; }
 //this is perhaps unnecessary now...
 std::string bdsimpath = (std::string)getEnv("BDSIMPATH");
 std::string includefilename = "";
-std::string mainfilename    = (std::string)yyfilename; //get the supplied main filename
+std::string mainfilename    = yyfilename; //get the supplied main filename
 std::string mainfilepath    = "";
 if(bdsimpath.length()>0){
 #ifdef BDSDEBUG
@@ -195,10 +194,10 @@ printf("parser> include filename is: %s \n",includefilename.c_str());
           // save info to the stack and load new buffer
           include_linenum_stack[include_stack_ptr] = line_num;
           line_num = 1;
-          strncpy(include_filename_stack[include_stack_ptr], yyfilename, maxfilenamelength);
-          strncpy(yyfilename,(char*)includefilename.c_str(),maxfilenamelength); //yytext
+          include_filename_stack[include_stack_ptr] = yyfilename;
+          yyfilename = includefilename; //yytext
 	  include_stack[include_stack_ptr++] = YY_CURRENT_BUFFER;
-          strncpy(include_filename_stack[include_stack_ptr], yyfilename, maxfilenamelength);
+          include_filename_stack[include_stack_ptr] = yyfilename;
 	  yy_switch_to_buffer(yy_create_buffer( yyin, YY_BUF_SIZE ) );
 	  //printf("done saving to stack\n");
     	}
@@ -222,7 +221,7 @@ printf("parser> include filename is: %s \n",includefilename.c_str());
       //printf("switching to previous buffer with %s\n", include_filename_stack[include_stack_ptr]);
       yy_delete_buffer(YY_CURRENT_BUFFER);
       yy_switch_to_buffer(include_stack[include_stack_ptr]);
-      strncpy( yyfilename, include_filename_stack[include_stack_ptr], maxfilenamelength) ;
+      yyfilename = include_filename_stack[include_stack_ptr];
       line_num = include_linenum_stack[include_stack_ptr];
     }
 }
