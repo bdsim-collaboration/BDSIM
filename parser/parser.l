@@ -25,7 +25,7 @@
 #include "getEnv.h"
 #include <unistd.h>
 
-struct symtab * symlook(const char *s);
+struct symtab * symlook(std::string s);
 extern std::map<std::string, struct symtab*> symtab_map;
 extern int yyerror(const char *s);
 
@@ -133,7 +133,7 @@ dump  { return DUMP; }
 ":="    { return '=';}  // alternative assignment 
 
 [a-zA-Z#][A-Za-z0-9_#.]* {
-     struct symtab *sp = symlook(yytext);
+     struct symtab *sp = symlook(std::string(yytext));
      yylval.symp=sp;
      if(sp->funcptr)
        return FUNC;
@@ -232,15 +232,14 @@ printf("parser> include filename is: %s \n",includefilename.c_str());
 %%
 
 
-struct symtab * symlook(const char *s)
+struct symtab * symlook(std::string s)
 {
-  std::string sstring = std::string(s);
-  std::map<std::string,symtab*>::iterator it = symtab_map.find(sstring);
+  std::map<std::string,symtab*>::iterator it = symtab_map.find(s);
   if (it!=symtab_map.end()) {
      return (*it).second;
   } else {
-    struct symtab* sp = new symtab(sstring);
-    std::pair<std::map<std::string,symtab*>::iterator,bool> ret = symtab_map.insert(std::make_pair(sstring,sp));
+    struct symtab* sp = new symtab(s);
+    std::pair<std::map<std::string,symtab*>::iterator,bool> ret = symtab_map.insert(std::make_pair(s,sp));
      return (*(ret.first)).second;
   }
 

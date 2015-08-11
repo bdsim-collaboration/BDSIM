@@ -23,8 +23,8 @@ extern int yyparse();
 extern FILE *yyin;
 extern std::string yyfilename;
 
-extern int add_func(const char *name, double (*func)(double));
-extern int add_var(const char *name, double val,int is_reserved = 0);
+extern int add_func(std::string name, double (*func)(double));
+extern int add_var(std::string name, double val,int is_reserved = 0);
 
 // aux. parser lists - to clear
 extern ElementList element_list;
