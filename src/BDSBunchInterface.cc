@@ -86,7 +86,8 @@ CLHEP::RandMultiGauss* BDSBunchInterface::CreateMultiGauss(CLHEP::HepRandomEngin
     G4cout << sigma << G4endl;
     G4cout << __METHOD_NAME__ << "adding a small error to zero diagonal elements" << G4endl;
 
-    double small_error = 1e-20;
+    // very small number especially for time, since the sigma goes with the square
+    double small_error = 1e-50;
     
     for (int i=0; i<6; i++) {
       if (sigma[i][i]==0) {
@@ -112,7 +113,14 @@ CLHEP::RandMultiGauss* BDSBunchInterface::CreateMultiGauss(CLHEP::HepRandomEngin
       }
     }
   }
- 
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "mean "  << G4endl
+	 << mu    << G4endl
+	 << __METHOD_NAME__ << "sigma " << G4endl
+	 << sigma << G4endl;
+#endif
+  
   return new CLHEP::RandMultiGauss(anEngine,mu,sigma); 
 }
 
