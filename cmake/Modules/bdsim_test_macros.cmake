@@ -25,11 +25,11 @@ macro(_run_test test_name args)
 endmacro()
 
 # A simple macro which runs a script and looks for some defined
-# string in std. out:
+# string in stdout and fails if found:
 macro(simple_testing test_name script expression)
     _run_test(${test_name} "${script}")
     if(NOT "${expression}" STREQUAL "")
-        set_tests_properties(${test_name} PROPERTIES PASS_REGULAR_EXPRESSION "${expression}")
+        set_tests_properties(${test_name} PROPERTIES FAIL_REGULAR_EXPRESSION "${expression}")
     endif()
 endmacro()
 

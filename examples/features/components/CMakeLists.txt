@@ -39,6 +39,6 @@ simple_testing(Component-Sextupole "--file=sextTest.gmad" "")
 
 simple_testing(Component-Solenoid "--file=soleTest.gmad" "")
 
-simple_testing(Component-Tunnel "--file=tunnelTest.gmad" "")
+simple_testing(Component-Tunnel "--file=tunnelTest.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-VKick "--file=vkickTest.gmad" "")
