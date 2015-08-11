@@ -179,7 +179,7 @@ if(bdsimpath.length()>0){
 #ifdef BDSDEBUG
 printf("parser> include filename is: %s \n",includefilename.c_str());
 #endif
-   printf("parser> reading file %s \n",(char*)includefilename.c_str());//yytext
+   printf("parser> reading file %s \n",includefilename.c_str());//yytext
      if( include_stack_ptr >= max_include_depth )
        {
          fprintf(stderr , "Error : Include depth exceeds %d\n",max_include_depth);
@@ -187,7 +187,7 @@ printf("parser> include filename is: %s \n",includefilename.c_str());
        }
      else
     {
-      yyin = fopen((char*)includefilename.c_str(), "r"); //yytext
+      yyin = fopen(includefilename.c_str(), "r"); //yytext
       if(yyin)
 	{
           //printf("saving to stack buffer n %d, file %s\n",include_stack_ptr,yyfilename );
@@ -203,7 +203,7 @@ printf("parser> include filename is: %s \n",includefilename.c_str());
     	}
       else
 	{
-	  fprintf(stderr, "Error : can't open %s\n", (char*)includefilename.c_str()); //yytext
+	  fprintf(stderr, "Error : can't open %s\n", includefilename.c_str()); //yytext
 	  exit(1);
 	}
     }
