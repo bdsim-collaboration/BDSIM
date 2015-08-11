@@ -14,7 +14,7 @@ class BDSTunnelSD;
  * need only be instantiated once and attached to the relevant
  * volume. More factorised geometry construction will mean
  * SDs will be assigned in construction and not in detector
- * construciton afterwards as a post processing step. This 
+ * construction afterwards as a post processing step. This 
  * instantiates all necessary SDs and holds them.
  * 
  * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
@@ -32,9 +32,6 @@ public:
 
   /// SD for samplers (cylinder type)
   inline BDSSamplerSD*       GetSamplerCylinderSD() const;
-
-  /// SD for any component that's symmetric about the beam axis
-  inline BDSEnergyCounterSD* GetEnergyCounterOnAxisSD() const;
 
   /// SD for measuring turns around circular machine and terminating
   /// particles appropriately.
@@ -63,12 +60,10 @@ private:
   //SD instances
   BDSSamplerSD*       samplerPlane;
   BDSSamplerSD*       samplerCylinder;
-  BDSEnergyCounterSD* eCounterOnAxis;
   BDSTerminatorSD*    terminator;
   BDSLWCalorimeterSD* lwCalorimeter;
-  BDSTunnelSD*        tunnel;
 
-  // duplicate ecounter here that's made on demand
+  // ecounter here that's made on demand
   // and registered to read out geometry - this requires
   // the readout geometry to be already created so can't
   // be used during object construction
@@ -88,9 +83,6 @@ inline BDSSamplerSD*       BDSSDManager::GetSamplerPlaneSD() const
 
 inline BDSSamplerSD*       BDSSDManager::GetSamplerCylinderSD() const
 {return samplerCylinder;}
-
-inline BDSEnergyCounterSD* BDSSDManager::GetEnergyCounterOnAxisSD() const
-{return eCounterOnAxis;}
 
 inline BDSTerminatorSD*    BDSSDManager::GetTerminatorSD() const
 {return terminator;}

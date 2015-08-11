@@ -6,7 +6,6 @@
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
-#include "BDSSDManager.hh"
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4Box.hh"

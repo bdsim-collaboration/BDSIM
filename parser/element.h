@@ -77,7 +77,7 @@ struct Element {
 
   /// property lookup by name (slow method)
   /// only for properties with type int/double!
-  double property_lookup(char* property_name)const;
+  double property_lookup(std::string property_name)const;
 
   /// constructor
   Element();

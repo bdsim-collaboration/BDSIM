@@ -26,8 +26,6 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4VTouchable.hh"
 
-#define NMAXCOPY 5
-
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
   :G4VSensitiveDetector(name),
    energyCounterCollection(nullptr),
@@ -139,10 +137,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
     }
   
   G4double weight = aStep->GetTrack()->GetWeight();
-  if (weight == 0){
-    G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl;
-    exit(1);
-  }
+  if (weight == 0)
+    {G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl; exit(1);}
   G4int    ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
   G4String volName    = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
   G4String regionName = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetRegion()->GetName();

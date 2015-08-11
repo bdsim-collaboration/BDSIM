@@ -70,6 +70,10 @@ public:
   /// Iterate over the beamline and print out the name, position, rotation
   /// and s position of each beamline element
   void PrintAllComponents(std::ostream& out) const;
+
+  /// Once the beamline element has been constructed and all positions and rotations
+  /// use these to update the world extent of this beam line.
+  void UpdateExtents(BDSBeamlineElement* element);
   
   BDSBeamlineElement* GetFirstItem(); ///< Return a reference to the first element
   BDSBeamlineElement* GetLastItem();  ///< Return a reference to the last element

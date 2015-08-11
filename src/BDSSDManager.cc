@@ -25,13 +25,7 @@ BDSSDManager* BDSSDManager::Instance()
 
 BDSSDManager::~BDSSDManager()
 {
-  delete samplerPlane;
-  delete samplerCylinder;
-  delete eCounterOnAxis;
-  delete terminator;
-  delete eCounterOnAxisRO;
-  delete tunnel;
-
+  // no need to delete SD's as they are all registered in G4SDManager
   _instance = 0;
 }
 
@@ -52,11 +46,6 @@ BDSSDManager::BDSSDManager()
   // Sampler cylindrical
   samplerCylinder = new BDSSamplerSD("sampler_cylinder","cylinder");
   SDMan->AddNewDetector(samplerCylinder);
-
-  // On axis energy counter - DOES NOT use read out geometry, assumes everything is on axis.
-  // This is provided as a general use SD.
-  eCounterOnAxis = new BDSEnergyCounterSD("ec_on_axis");
-  SDMan->AddNewDetector(eCounterOnAxis);
 
   // Terminator sd to measure how many times that primary has passed through the terminator
   terminator  = new BDSTerminatorSD("terminator");

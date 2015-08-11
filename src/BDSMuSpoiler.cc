@@ -13,7 +13,6 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
-#include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"

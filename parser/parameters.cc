@@ -274,7 +274,7 @@ void Parameters::set_value(std::string property, std::string value )
     }
   if(property=="type") 
     {
-      printf("Warning : type parameter is currently ignored");
+      printf("Warning : type parameter is currently ignored\n");
       //ignore the "type attribute for the moment"
       return;
     }

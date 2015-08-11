@@ -67,7 +67,7 @@ extern Options options;
 int main(int argc,char** argv)
 {
   // print header
-  G4cout<<"bdsim : version 0.8"<<G4endl;
+  G4cout<<"bdsim : version 0.8.develop"<<G4endl;
   G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
   G4cout<<"        http://www.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BdSim"<<G4endl;
   G4cout<<G4endl;
@@ -101,7 +101,8 @@ int main(int argc,char** argv)
   BDSRandom::SetSeed(); // set the seed from options or from exec options
   if (execOptions->SetSeedState()) //optionally load the seed state from file
     {BDSRandom::LoadSeedState(execOptions->GetSeedStateFilename());}
-  BDSRandom::WriteSeedState(); //write the current state once set / loaded
+  if (BDSExecOptions::Instance()->GetOutputFormat() != BDSOutputFormat::none)
+    {BDSRandom::WriteSeedState();} //write the current state once set / loaded
 
   // instantiate the specific type of bunch distribution (class),
   // get the corresponding parameters from the gmad parser info
@@ -132,21 +133,17 @@ int main(int argc,char** argv)
     runManager->SetUserInitialization(physList);
   }
   else { 
-    BDSPhysicsList        *physList=new BDSPhysicsList;  
+    BDSPhysicsList        *physList = new BDSPhysicsList;  
     runManager->SetUserInitialization(physList);
   }
-  
-#ifdef BDSDEBUG 
-  G4cout<< __FUNCTION__ << "> User init phys list"<<G4endl;
-#endif
 
   // Set the geometry tolerance
   static G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Default geometry tolerances: surface " 
-	 << theGeometryTolerance->GetSurfaceTolerance() << " mm " 
+	 << theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m << " m " 
 	 << theGeometryTolerance->GetAngularTolerance() << " rad " 
-	 << theGeometryTolerance->GetRadialTolerance()  << " mm" << G4endl;
+	 << theGeometryTolerance->GetRadialTolerance()/CLHEP::m  << " m" << G4endl;
 #endif
   // This sets the tolerances for the geometry (1e-11 times this value)
   // Note, this doesn't actually have any affect on the size of the geometry,

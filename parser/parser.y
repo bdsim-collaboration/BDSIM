@@ -120,7 +120,6 @@ atomic_stmt :
 decl : VARIABLE ':' marker
        {
 	 if(execute)  {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : marker\n",$1->name);
 	   // check parameters and write into element table
 	   write_table(params,$1->name,ElementType::_MARKER);
 	   params.flush();
@@ -129,7 +128,6 @@ decl : VARIABLE ':' marker
      | VARIABLE ':' drift
        {
 	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : drift\n",$1->name);
 	   // check parameters and write into element table
 	   write_table(params,$1->name,ElementType::_DRIFT);
 	   params.flush();
@@ -138,7 +136,6 @@ decl : VARIABLE ':' marker
      | VARIABLE ':' pcldrift
        {
 	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : pcldrift (drift)\n",$1->name);
 	   // check parameters and write into element table
 	   write_table(params,$1->name,ElementType::_DRIFT);
 	   params.flush();
@@ -147,7 +144,6 @@ decl : VARIABLE ':' marker
      | VARIABLE ':' rf
        {
 	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : rf\n",$1->name);
 	   // check parameters and write into element table
 	   write_table(params,$1->name,ElementType::_RF);
 	   params.flush();
@@ -156,7 +152,6 @@ decl : VARIABLE ':' marker
      | VARIABLE ':' sbend
        {  
 	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : sbend\n",$1->name);
 	   // check parameters and write into element table
 	   write_table(params,$1->name,ElementType::_SBEND);
 	   params.flush();
@@ -165,7 +160,6 @@ decl : VARIABLE ':' marker
      | VARIABLE ':' rbend
        {
          if(execute) {
-           if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : rbend\n",$1->name);
            // check parameters and write into element table
            write_table(params,$1->name,ElementType::_RBEND);
            params.flush();
@@ -175,7 +169,6 @@ decl : VARIABLE ':' marker
     | VARIABLE ':' vkick
        {  
 	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : vkick\n",$1->name);
 	   // check parameters and write into element table
 	   write_table(params,$1->name,ElementType::_VKICK);
 	   params.flush();
@@ -184,7 +177,6 @@ decl : VARIABLE ':' marker
     | VARIABLE ':' hkick
        {  
 	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : hkick\n",$1->name);
 	   // check parameters and write into element table
 	   write_table(params,$1->name,ElementType::_HKICK);
 	   params.flush();
@@ -194,7 +186,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)       
 	   {
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : quad %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_QUAD);
 	     params.flush();
@@ -204,7 +195,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : sext %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_SEXTUPOLE);
 	     params.flush();
@@ -214,7 +204,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("VARIABLE : octupole %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_OCTUPOLE);
 	     params.flush();
@@ -224,7 +213,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {	 
-	     if(ECHO_GRAMMAR) printf("VARIABLE : multipole %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_MULT);
 	     params.flush();	 
@@ -234,7 +222,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)       
 	   {
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : solenoid %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_SOLENOID);
 	     params.flush();
@@ -244,7 +231,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("VARIABLE : rcol %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_RCOL);
 	     params.flush();
@@ -254,7 +240,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("VARIABLE : ecol %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_ECOL);
 	     params.flush();
@@ -264,7 +249,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("VARIABLE : muspoiler %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_MUSPOILER);
 	     params.flush();
@@ -274,7 +258,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {	 
-	     if(ECHO_GRAMMAR) printf("VARIABLE : element %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_ELEMENT);
 	     params.flush();	 
@@ -284,7 +267,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {	 
-	     if(ECHO_GRAMMAR) printf("VARIABLE : laser %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_LASER);
 	     params.flush();	 
@@ -293,7 +275,6 @@ decl : VARIABLE ':' marker
      | VARIABLE ':' screen
        {
 	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : screen\n",$1->name);
 	   // check parameters and write into element table
 	   write_table(params,$1->name,ElementType::_SCREEN);
 	   params.flush();
@@ -302,7 +283,6 @@ decl : VARIABLE ':' marker
      | VARIABLE ':' awakescreen
        {
 	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : awakescreen\n",$1->name);
 	   // check parameters and write into element table
 	   write_table(params,$1->name,ElementType::_AWAKESCREEN);
 	   params.flush();
@@ -312,7 +292,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {	 
-	     if(ECHO_GRAMMAR) printf("VARIABLE : transform3d %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_TRANSFORM3D);
 	     params.flush();	 
@@ -322,8 +301,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     // create entry in the main table and add pointer to the parsed sequence
-	     if(ECHO_GRAMMAR) printf("VARIABLE : LINE %s\n",$1->name);
 	     // copy tmp_list to params
 	     write_table(params,$1->name,ElementType::_LINE,new std::list<struct Element>(tmp_list));
 	     // clean list
@@ -334,8 +311,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-             // create entry in the main table and add pointer to the parsed sequence
-	     if(ECHO_GRAMMAR) printf("VARIABLE : SEQUENCE %s\n",$1->name);
 	     // copy tmp_list to params
 	     write_table(params,$1->name,ElementType::_SEQUENCE,new std::list<struct Element>(tmp_list));
 	     // clean list
@@ -347,7 +322,7 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     ElementType type = static_cast<ElementType>($3);
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, GMAD::typestr(type));
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE : VARIABLE, " << $1->name << " : " << type << std::endl;
 	     if(type != ElementType::_NONE)
 	       {
 		 write_table(params,$1->name,type);
@@ -360,7 +335,7 @@ decl : VARIABLE ':' marker
          if(execute)
 	   {
 	     ElementType type = static_cast<ElementType>($3);
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, GMAD::typestr(type));
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE : VARIABLE, " << $1->name << " : " << type << std::endl;
 	     if(type != ElementType::_NONE)
 	       {
 		 write_table(params,$1->name,type);
@@ -372,12 +347,12 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("edit : VARIABLE parameters   -- %s \n",$1->name);
+	     if(ECHO_GRAMMAR) std::cout << "edit : VARIABLE parameters   -- " << $1->name << std::endl;
 	     std::list<struct Element>::iterator it = element_list.find($1->name);
 	     std::list<struct Element>::iterator iterEnd = element_list.end();
 	     if(it == iterEnd)
 	       {
-		 printf("type %s has not been defined\n",$1->name);
+		 std::cout << "type " << $1->name << " has not been defined" << std::endl;
 		 if (PEDANTIC) exit(1);
 	       }
 	     else
@@ -386,7 +361,7 @@ decl : VARIABLE ':' marker
 		 params.inherit_properties(*it);
 	       }
 		
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, GMAD::typestr((*it).type));
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE : VARIABLE, " << $1->name << " : " << (*it).type << std::endl;
 	     if((*it).type != ElementType::_NONE)
 	       {
 		 write_table(params,$1->name,(*it).type);
@@ -398,7 +373,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : Material, %s \n",$1->name);
 	     write_table(params,$1->name,ElementType::_MATERIAL);
 	     params.flush();
 	   }
@@ -407,7 +381,6 @@ decl : VARIABLE ':' marker
        {
          if(execute)
            {
-             if(ECHO_GRAMMAR) printf("decl -> VARIABLE : Atom, %s \n",$1->name);
              write_table(params,$1->name,ElementType::_ATOM);
              params.flush();
            }
@@ -486,12 +459,12 @@ extension : VARIABLE ',' parameters
             {
 	      if(execute)
 		{	 
-		  if(ECHO_GRAMMAR) printf("extension : VARIABLE parameters   -- %s \n",$1->name);
+		  if(ECHO_GRAMMAR) std::cout << "extension : VARIABLE parameters   -- " << $1->name << std::endl;
 		  std::list<struct Element>::iterator it = element_list.find($1->name);
 		  std::list<struct Element>::iterator iterEnd = element_list.end();
 		  if(it == iterEnd)
 		    {
-		      printf("type %s has not been defined\n",$1->name);
+		      std::cout << "type " << $1->name << " has not been defined" << std::endl;
 		      if (PEDANTIC) exit(1);
 		      $$ = static_cast<int>(ElementType::_NONE);
 		    }
@@ -510,12 +483,12 @@ newinstance : VARIABLE
             {
 	      if(execute)
 		{	 
-		  if(ECHO_GRAMMAR) printf("newinstance : VARIABLE -- %s \n",$1->name);
+		  std::cout << "newinstance : VARIABLE -- " << $1->name << std::endl;
 		  std::list<struct Element>::iterator it = element_list.find($1->name);
 		  std::list<struct Element>::iterator iterEnd = element_list.end();
 		  if(it == iterEnd)
 		    {
-		      printf("type %s has not been defined\n",$1->name);
+		      std::cout << "type " << $1->name << " has not been defined" << std::endl;
 		      if (PEDANTIC) exit(1);
 		      $$ = static_cast<int>(ElementType::_NONE);
 		    }
@@ -553,12 +526,12 @@ parameters: VARIABLE '=' aexpr ',' parameters
           | VARIABLE '=' STR ',' parameters
             {
 	      if(execute)
-		params.set_value($1->name,std::string($3));
+		params.set_value($1->name,$3);
 	    }
           | VARIABLE '=' STR
             {
 	      if(execute)
-		params.set_value($1->name,std::string($3));
+		params.set_value($1->name,$3);
 	    }
 
 line : LINE '=' '(' element_seq ')'
@@ -580,395 +553,97 @@ sequence : SEQUENCE '=' '(' seq_element_seq ')'
 element_seq : 
             | VARIABLE ',' element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched sequence element, %s\n",$1->name);
-#endif
-		    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_LINE;
-		      e.lst = nullptr;
-		      tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, 1, true, ElementType::_LINE);
 	      }
             | VARIABLE '*' NUMBER ',' element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched sequence element, %s * %d \n",$1->name,(int)$3);
-#endif
-		    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_LINE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$3;i++)
-			tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, (int)$3, true, ElementType::_LINE);
 	      }
             | NUMBER '*' VARIABLE ',' element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched sequence element, %s * %d \n",$3->name,(int)$1);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $3->name;
-		      e.type = ElementType::_LINE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$1;i++)
-			tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($3->name, (int)$1, true, ElementType::_LINE);
 	      }
             | VARIABLE
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched last sequence element, %s\n",$1->name);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_LINE;
-		      e.lst = nullptr;
-		      tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, 1, true, ElementType::_LINE);
 	      }
            | VARIABLE '*' NUMBER
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched last sequence element, %s * %d\n",$1->name,(int)$3);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_LINE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$3;i++)
-			tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, (int)$3, true, ElementType::_LINE);
 	      }
             | NUMBER '*' VARIABLE
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched last sequence element, %s * %d\n",$3->name,(int)$1);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $3->name;
-		      e.type = ElementType::_LINE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$1;i++)
-			tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($3->name, (int)$1, true, ElementType::_LINE);
 	      }
             | '-' VARIABLE ',' element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched last sequence element, %s\n",$2->name);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $2->name;
-		      e.type = ElementType::_REV_LINE;
-		      e.lst = nullptr;
-	    	      tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($2->name, 1, true, ElementType::_REV_LINE);
 	      }
             | '-' VARIABLE
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched last sequence element, %s\n",$2->name);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $2->name;
-		      e.type = ElementType::_REV_LINE;
-		      e.lst = nullptr;
-	    	      tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($2->name, 1, true, ElementType::_REV_LINE);
 	      }
 ;
 
 rev_element_seq : 
             | VARIABLE ',' rev_element_seq 
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched sequence element, %s\n",$1->name);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_REV_LINE;
-		      e.lst = nullptr;
-		      tmp_list.push_back(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, 1, false, ElementType::_REV_LINE);
 	      }
             | VARIABLE '*' NUMBER ',' rev_element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched sequence element, %s * %d \n",$1->name,(int)$3);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_REV_LINE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$3;i++)
-			tmp_list.push_back(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, int($3), false, ElementType::_REV_LINE);
 	      }
             | NUMBER '*' VARIABLE ',' rev_element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched sequence element, %s * %d \n",$3->name,(int)$1);
-#endif
-		    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $3->name;
-		      e.type = ElementType::_REV_LINE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$1;i++)
-			tmp_list.push_back(e);
-		    }
-		  }
+		if(execute) add_element_temp($3->name, int($1), false, ElementType::_REV_LINE);
 	      }
             | VARIABLE
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched last sequence element, %s\n",$1->name);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_REV_LINE;
-		      e.lst = nullptr;
-		      tmp_list.push_back(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, 1, false, ElementType::_REV_LINE);
 	      }
            | VARIABLE '*' NUMBER
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched last sequence element, %s * %d\n",$1->name,(int)$3);
-#endif
-		    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_REV_LINE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$3;i++)
-			tmp_list.push_back(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, int($3), false, ElementType::_REV_LINE);
 	      }
             | NUMBER '*' VARIABLE
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched last sequence element, %s * %d\n",$3->name,(int)$1);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $3->name;
-		      e.type = ElementType::_REV_LINE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$1;i++)
-			tmp_list.push_back(e);
-		    }
-		  }
+		if(execute) add_element_temp($3->name, int($1), false, ElementType::_REV_LINE);
 	      }
             | '-' VARIABLE ',' element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched last sequence element, %s\n",$2->name);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $2->name;
-		      e.type = ElementType::_LINE;
-		      e.lst = nullptr;
-	    	      tmp_list.push_back(e);
-		    }
-		  }
+		if(execute) add_element_temp($2->name, 1, false, ElementType::_LINE);
 	      }
             | '-' VARIABLE
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched last sequence element, %s\n",$2->name);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $2->name;
-		      e.type = ElementType::_LINE;
-		      e.lst = nullptr;
-	    	      tmp_list.push_back(e);
-		    }
-		  }
+		if(execute) add_element_temp($2->name, 1, false, ElementType::_LINE);
 	      }
 ;
 
 seq_element_seq : 
             | VARIABLE ',' seq_element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched sequence element, %s\n",$1->name);
-#endif
-		    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_SEQUENCE;
-		      e.lst = nullptr;
-		      tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, 1, true, ElementType::_SEQUENCE);
 	      }
             | VARIABLE '*' NUMBER ',' seq_element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched sequence element, %s * %d \n",$1->name,(int)$3);
-#endif
-		    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_SEQUENCE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$3;i++)
-			tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, int($3), true, ElementType::_SEQUENCE);
 	      }
             | NUMBER '*' VARIABLE ',' seq_element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched sequence element, %s * %d \n",$3->name,(int)$1);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $3->name;
-		      e.type = ElementType::_SEQUENCE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$1;i++)
-			tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($3->name, int($1), true, ElementType::_SEQUENCE);
 	      }
             | VARIABLE 
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched last sequence element, %s\n",$1->name);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_SEQUENCE;
-		      e.lst = nullptr;
-		      tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, 1, true, ElementType::_SEQUENCE);
 	      }
            | VARIABLE '*' NUMBER 
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched last sequence element, %s * %d\n",$1->name,(int)$3);
-#endif
-		    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_SEQUENCE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$3;i++)
-			tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, int($3), true, ElementType::_SEQUENCE);
 	      }
             | NUMBER '*' VARIABLE 
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched last sequence element, %s * %d\n",$3->name,(int)$1);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $3->name;
-		      e.type = ElementType::_SEQUENCE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$1;i++)
-			tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($3->name, int($1), true, ElementType::_SEQUENCE);
 	      }
 ;
 
@@ -1041,7 +716,6 @@ aexpr :  NUMBER               { $$ = $1;                         }
 	     {
 	       printf("vector dimensions do not match");
 	       exit(1);
-	       // $$ = _undefined;
 	     }
          } 
        // boolean stuff
@@ -1053,18 +727,18 @@ aexpr :  NUMBER               { $$ = $1;                         }
 	| aexpr EQ aexpr { $$ = ($1 == $3 )? 1 : 0; }
         | VARIABLE '[' VARIABLE ']' 
           { 
-	    if(ECHO_GRAMMAR) printf("aexpr-> %s [ %s ]\n ",$1->name, $3->name); 
+	    if(ECHO_GRAMMAR) std::cout << "aexpr-> " << $1->name << " [ " << $3->name << " ]" << std::endl; 
 	    $$ = property_lookup(element_list,$1->name,$3->name);
 	  }// element attributes
  ; 
 
 assignment :  VARIABLE '=' aexpr  
               {
-		if(ECHO_GRAMMAR) printf("%s \n",$1->name);
+		if(ECHO_GRAMMAR) std::cout << $1->name << std::endl;
 		if(execute)
 		  {
 		    if($1->is_reserved)
-		      printf("%s is reserved",$1->name);
+		      std::cout << $1->name << " is reserved" << std::endl;
 		    else
 		      {
 			$1->value = $3; $$=$1;       
@@ -1483,27 +1157,33 @@ use_parameters :  VARIABLE
                   {
 		    if(execute)
 		      {
-			$$ = $1->name;
+			char * cstr = new char [$1->name.length()+1];
+			std::strcpy (cstr, $1->name.c_str());
+			$$ = cstr;
 			current_line = $1->name;
-			current_start = nullptr;
-			current_end = nullptr;
+			current_start = "";
+			current_end = "";
 		      }
                   }
 		| PERIOD '=' VARIABLE
                   {
 		    if(execute)
 		      {
-			$$ = $3->name;
+			char * cstr = new char [$3->name.length()+1];
+			std::strcpy (cstr, $3->name.c_str());
+			$$ = cstr;
 			current_line = $3->name;
-			current_start = nullptr;
-			current_end = nullptr;
+			current_start = "";
+			current_end = "";
 		      }
                   }
                 | PERIOD '=' VARIABLE ',' RANGE '=' VARIABLE '/' VARIABLE
                   {
 		    if(execute)
 		      {
-			$$ = $3->name;
+			char * cstr = new char [$3->name.length()+1];
+			std::strcpy (cstr, $3->name.c_str());
+			$$ = cstr;
 			current_line = $3->name;
 			current_start = $7->name;
 			current_end = $9->name;
@@ -1511,42 +1191,39 @@ use_parameters :  VARIABLE
 		  }
 ;
 
-
-
 sample_options: RANGE '=' VARIABLE
-                { if(ECHO_GRAMMAR)  printf("sample_opt : RANGE =  %s \n",$3->name);
+                {
+		  if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << $3->name << std::endl;
 		  {
 		    if(execute) $$ = $3;
 		  }
                 }
               | RANGE '=' VARIABLE '[' NUMBER ']'
                 {
-                  if(ECHO_GRAMMAR) printf("sample_opt : RANGE =  %s [%.10g] \n",$3->name,$5);
-		    {
-		      if(execute) { $$ = $3; element_count = (int)$5; }
-		    }
+                  if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << $3->name << " [" << $5 << "]" << std::endl;
+		  {
+		    if(execute) { $$ = $3; element_count = (int)$5; }
+		  }
                 }
 ;
 
-
-
 csample_options : VARIABLE '=' aexpr
                   {
-		    if(ECHO_GRAMMAR) printf("csample_opt ->csopt , %s =  %.10g \n",$1->name,$3);
+		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << $1->name << " = " << $3 << std::endl;
 		    
 		    if(execute)
 		      {
-			if( !strcmp($1->name,"r") ) params.r = $3;
-			else if (!strcmp($1->name,"l") ) params.l = $3;
+			if( $1->name == "r") params.r = $3;
+			else if ($1->name == "l") params.l = $3;
 			else {
-			  printf("Warning : CSAMPLER: unknown parameter : \"%s\"\n",$1->name);
+			  std::cout << "Warning : CSAMPLER: unknown parameter : \"" << $1->name << "\"" << std::endl;
 			  exit(1);
 			}
 		      }
 		  }   
                 | VARIABLE '=' STR
                   {
-		    if(ECHO_GRAMMAR) printf("csample_opt -> %s =  %s \n",$1->name,$3);
+		    if(ECHO_GRAMMAR) std::cout << "csample_opt -> " << $1->name << " = " << $3 << std::endl;
 		    /* if(execute) */
 		    /*   { */
 		    /* 	;//options.set_value($1->name,string($3)); */
@@ -1554,14 +1231,14 @@ csample_options : VARIABLE '=' aexpr
 		  }   
                 | VARIABLE '=' aexpr ',' csample_options
                   {
-		    if(ECHO_GRAMMAR) printf("csample_opt ->csopt , %s =  %.10g \n",$1->name,$3);
+		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << $1->name << " = " << $3 << std::endl;
 		    
 		    if(execute)
 		      {
-			if( !strcmp($1->name,"r") ) params.r = $3;
-			else if (!strcmp($1->name,"l") ) params.l = $3;
+			if( $1->name == "r") params.r = $3;
+			else if ($1->name == "l") params.l = $3;
 			else {
-			  printf("Warning : CSAMPLER: unknown parameter : \"%s\"\n",$1->name);
+			  std::cout << "Warning : CSAMPLER: unknown parameter : \"" << $1->name << "\"" << std::endl;
 			  exit(1);
 			}
 		      }
@@ -1569,7 +1246,7 @@ csample_options : VARIABLE '=' aexpr
 		  }   
                 | VARIABLE '=' STR ',' csample_options
                   {
-		    if(ECHO_GRAMMAR) printf("csample_opt -> %s =  %s \n",$1->name,$3);
+		    if(ECHO_GRAMMAR) std::cout << "csample_opt -> " << $1->name << " = " << $3 << std::endl;
 		    // if(execute) //options.set_value($1->name,string($3));
 		  }   
                 | sample_options ',' csample_options
@@ -1586,41 +1263,41 @@ csample_options : VARIABLE '=' aexpr
 
 gas_options : VARIABLE '=' aexpr
                   {
-		    if(ECHO_GRAMMAR) printf("gas_opt -> , %s =  %.10g \n",$1->name,$3);
+		    if(ECHO_GRAMMAR) std::cout << "gas_opt -> , " << $1->name << " = " << $3 << std::endl;
 		    
 		    if(execute)
 		      {
-			if( !strcmp($1->name,"r") ) params.r = $3;
-			else if (!strcmp($1->name,"l") ) params.l = $3;
+			if( $1->name == "r") params.r = $3;
+			else if ($1->name == "l") params.l = $3;
 			else {
-			  printf("Warning : GAS: unknown parameter : \"%s\"\n",$1->name);
+			  std::cout << "Warning : GAS: unknown parameter : \"" << $1->name << "\"" << std::endl;
 			  exit(1);
 			}
 		      }
 		  }   
                 | VARIABLE '=' STR
                   {
-		    if(ECHO_GRAMMAR) printf("gas_opt -> %s =  %s \n",$1->name,$3);
+		    if(ECHO_GRAMMAR) std::cout << "gas_opt -> " << $1->name << " = " << $3 << std::endl;
 		    if(execute)
 		      {
-			if( !strcmp($1->name,"material") ) 
+			if( $1->name == "material")
 			  {
 			    params.material = $3;
 			    params.materialset = 1;
 			  }
-			//options.set_value($1->name,string($3));
+			//options.set_value($1->name,$3);
 		      }
 		  }   
                 | VARIABLE '=' aexpr ',' gas_options
                   {
-		    if(ECHO_GRAMMAR) printf("gas_opt -> , %s =  %.10g \n",$1->name,$3);
+		    if(ECHO_GRAMMAR) std::cout << "gas_opt -> " << $1->name << " = " << $3 << std::endl;
 		    
 		    if(execute)
 		      {
-			if( !strcmp($1->name,"r") ) params.r = $3;
-			else if (!strcmp($1->name,"l") ) params.l = $3;
+			if( $1->name == "r") params.r = $3;
+			else if ($1->name == "l") params.l = $3;
 			else {
-			  printf("Warning : GAS: unknown parameter : \"%s\"\n",$1->name);
+			  std::cout << "Warning : GAS: unknown parameter : \"" << $1->name << "\"" << std::endl;
 			  exit(1);
 			}
 		      }
@@ -1628,14 +1305,14 @@ gas_options : VARIABLE '=' aexpr
 		  }   
                 | VARIABLE '=' STR ',' gas_options
                   {
-		    if(ECHO_GRAMMAR) printf("csample_opt -> %s =  %s \n",$1->name,$3);
+		    if(ECHO_GRAMMAR) std::cout << "gas_opt -> " << $1->name << " = " << $3 << std::endl;
 		    if(execute)
 		      {
-			  if( !strcmp($1->name,"material") ) 
-			    {
-			      params.material = $3;
-			      params.materialset = 1;
-			    }
+			if( $1->name == "material")
+			  {
+			    params.material = $3;
+			    params.materialset = 1;
+			  }
 		      }
 		  }   
                 | RANGE '='  VARIABLE '/' VARIABLE ',' gas_options
@@ -1673,12 +1350,12 @@ tunnel_options : VARIABLE '=' aexpr ',' tunnel_options
                  | VARIABLE '=' STR ',' tunnel_options
                     {
 		      if(execute)
-			tunnel.set_value($1->name,std::string($3));
+			tunnel.set_value($1->name,$3);
 		    }
                  | VARIABLE '=' STR
                     {
 		      if(execute)
-			tunnel.set_value($1->name,std::string($3));
+			tunnel.set_value($1->name,$3);
 		    }
 ;
 
@@ -1696,12 +1373,12 @@ option_parameters :
                   | VARIABLE '=' STR ',' option_parameters
                     {
 		      if(execute)
-			options.set_value($1->name,std::string($3));
+			options.set_value($1->name,$3);
 		    }   
                   | VARIABLE '=' STR
                     {
 		      if(execute)
-			options.set_value($1->name,std::string($3));
+			options.set_value($1->name,$3);
 		    }   
 ;
 
@@ -1719,12 +1396,12 @@ beam_parameters :
                 | VARIABLE '=' STR ',' beam_parameters
                   {
 		    if(execute)
-		      options.set_value($1->name,std::string($3));
+		      options.set_value($1->name,$3);
 		  }   
                 | VARIABLE '=' STR
                   {
 		    if(execute)
-		      options.set_value($1->name,std::string($3));
+		      options.set_value($1->name,$3);
 		  }   
 ;
 

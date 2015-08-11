@@ -47,6 +47,14 @@ histograms and sampler output is produced in different text files.
 * The file with only :code:`.txt` is the main output from all samplers
 * The sampler output is recorded in simulation order, not spatial order
 
+The ASCII output is relatively limited compared to the root output.
+
+* The main :code:`filename.txt` file contains hits on samplers in the order they
+  happened and are not grouped by sampler.
+* In the energy loss, primary hits and primary loss files, `x'` and `y'` are always
+  0 as they are undefined in these cases.
+* In all files, local `x` and `y` are used whereas global `Z` is used.
+
 Histograms
 ----------
 
@@ -66,39 +74,39 @@ Samplers
 Samplers record the particle position at the start of each element.  The following
 coordinates are recorded:
 
-=============== ============= =============================
+=============== ============= ===================================
 Coordinate Name Units         Meaning
-=============== ============= =============================
+=============== ============= ===================================
 E0              GeV           Initial primary energy
-x0              :math:`\mu m` Initial primary x position
-y0              :math:`\mu m` Initial primary y position
-z0              :math:`\mu m` Initial primary z position
-xp0             rad           Initial primary x' position
-yp0             rad           Initial primary y' position
-zp0             rad           Initial primary z' position
-t0              s             Initial primary time
-E               GeV           Energy
-x               :math:`\mu m` x position
-y               :math:`\mu m` y position
-z               :math:`\mu m` z position
-xp              rad           x' position
-yp              rad           y' position
-zp              rad           z' position
-t               s             Time
-X               :math:`\mu m` Global x position
-Y               :math:`\mu m` Global y position
-Z               :math:`\mu m` Global z position
+x0              :math:`m`     Initial primary global x position
+y0              :math:`m`     Initial primary global y position
+z0              :math:`m`     Initial primary global z position
+xp0             rad           Initial primary global x' position
+yp0             rad           Initial primary global y' position
+zp0             rad           Initial primary global z' position
+t0              ns            Initial primary global time
+E               GeV           Total current energy
+x               :math:`m`     Local x position
+y               :math:`m`     Local y position
+z               :math:`m`     Local z position
+xp              rad           Local x' position
+yp              rad           Local y' position
+zp              rad           Local z' position
+t               ns            Time of flight
+X               :math:`m`     Global x position
+Y               :math:`m`     Global y position
+Z               :math:`m`     Global z position
 Xp              rad           Global x' position
 Yp              rad           Global y' position
 Zp              rad           Global z' position
 s               m             Curvilinear S
-weight          NA            weight
+weight          NA            Weight
 partID          NA            PDG ID number
-nEvent          NA            event number
-parentID        NA            parent ID (0 means primary)
-trackID         NA            track ID
-turnnumber      NA            turns completed
-=============== ============= =============================
+nEvent          NA            Event number
+parentID        NA            Parent ID (0 means primary)
+trackID         NA            Track ID
+turnnumber      NA            Turns completed
+=============== ============= ===================================
 
 .. note:: `rad` is not strictly correct for the prime units but is used in the small angle approximation.
 	  The prime is the differential of that position
@@ -110,4 +118,12 @@ Primary Coordinates
 The primary coordinates for each event are recorded in a similar fashion to the samplers
 in their own file / tree.
 
-	       
+.. warning:: A common issue is apparently half of the particles missing in the first sampler in
+	     the beam line. If a sampler is placed at the beginning of the beam line and a bunch
+	     distribution with a finite z width is used, approximately half of the particles will
+	     start in front of the sampler, never pass through it and never be registered. For this
+	     reason, putting a sampler at the beginning of a beam line should be avoided to avoid
+	     confusion. The primary output (either separate file in ASCII or as a tree in root) records
+	     all primary corrdinates before they enter the tracking in the geometry, so it always
+	     contains all primary particles.
+	     

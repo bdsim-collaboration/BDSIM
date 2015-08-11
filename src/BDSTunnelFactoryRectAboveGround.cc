@@ -179,9 +179,6 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4String 
 					      tunnelContainerInner);       // minus this
     }
 
-  G4double radius = std::max(containerXRadius, containerYRadius);
-  BuildReadOutVolumeStraight(name, length, radius);
-
   CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerXRadius, containerYRadius, visible);
   
   return tunnelSection;
@@ -356,11 +353,9 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngled(G4S
 					      tunnelContainerSolidOuter,   // this
 					      tunnelContainerSolidInner);  // minus this
     } 
-
-  G4double radius = std::max(containerXRadius, containerYRadius);
-  BuildReadOutVolumeAngled(name, length, radius, inputFace, outputFace);
   
-  CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerXRadius, containerYRadius, visible);
+  CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerXRadius,
+		     containerYRadius, visible, inputFace, outputFace);
   
   return tunnelSection;
 }
