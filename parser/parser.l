@@ -130,11 +130,16 @@ beta0 { return BETA0; }
 dump  { return DUMP; }
 
 \"[^"]*\" {
-  //strip quotes
-  
-  yylval.str=yytext+1;
-  yylval.str[strlen(yylval.str)-1]='\0';
-  return STR; 
+  //strip quotes and return string
+
+  // copy string without quotes, 
+  // memory needs to be allocated
+  // strndup allocates memory with malloc 
+  // strndup will add an end of string character
+  // memory needs to be freed with free()
+  // see e.g. http://linux.die.net/man/3/strdup
+  yylval.str = strndup(yytext+1,strlen(yytext)-2);
+  return STR;
 }
 
 ":="    { return '=';}  // alternative assignment 
