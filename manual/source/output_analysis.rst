@@ -85,7 +85,7 @@ ROOT classes and structure
 
 Then for each tree type (Eloss, PrecisionRegionElossPhits, Sampler)
 * Tree
-* TreeAnalysis  
+* TreeAnalysis
 
 Extending ROOT analysis 
 -----------------------
