@@ -7,7 +7,7 @@
 #include "G4VProcess.hh"
 
 BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(G4String  particleName,
-                                                         G4String name)
+						       G4String name)
   : G4VBiasingOperator(name), fSetup(true)
 {
   fParticleToBias = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
@@ -36,9 +36,9 @@ void BDSBOptrChangeCrossSection::StartRun()
   // -- Start by collecting processes under biasing, create needed biasing
   // -- operations and associate these operations to the processes:
   if(fSetup) {
-    const G4ProcessManager* processManager       = fParticleToBias->GetProcessManager();
-    const G4BiasingProcessSharedData* sharedData = G4BiasingProcessInterface::GetSharedData( processManager );
-    if ( sharedData ) {
+    const G4ProcessManager*           processManager = fParticleToBias->GetProcessManager();
+    const G4BiasingProcessSharedData* sharedData     = G4BiasingProcessInterface::GetSharedData(processManager);
+    if (sharedData) {
       // -- sharedData tested, as is can happen a user attaches an operator to a
       // -- volume but without defined BiasingProcessInterface processes.
       for (size_t i = 0 ; i < (sharedData->GetPhysicsBiasingProcessInterfaces()).size(); i++) {
@@ -65,7 +65,7 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   // -- process for a gamma below e+e- creation threshold has an DBL_MAX interaction
   // -- length. Nothing is done in this case (ie, let analog process to deal with the case)
   G4double analogInteractionLength =  callingProcess->GetWrappedProcess()->GetCurrentInteractionLength();
-  if ( analogInteractionLength > DBL_MAX/10. ) return 0;
+  if (analogInteractionLength > DBL_MAX/10.) return 0;
 
   // -- Analog cross-section is well-defined:
   G4double analogXS = 1./analogInteractionLength;
@@ -130,6 +130,6 @@ void BDSBOptrChangeCrossSection::OperationApplied(const G4BiasingProcessInterfac
 						  G4VBiasingOperation*,    
 						  const G4VParticleChange*                                  ) {
   G4BOptnChangeCrossSection* operation = fChangeCrossSectionOperations[callingProcess];
-  if (operation ==  occurenceOperationApplied) operation->SetInteractionOccured();
+  if (operation == occurenceOperationApplied) operation->SetInteractionOccured();
 }
 
