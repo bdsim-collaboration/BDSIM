@@ -18,11 +18,11 @@
 
 extern Options options;
 
-BDSGlobalConstants* BDSGlobalConstants::_instance = 0;
+BDSGlobalConstants* BDSGlobalConstants::_instance = nullptr;
 
 BDSGlobalConstants* BDSGlobalConstants::Instance()
 {
-  if(_instance==0)
+  if(_instance==nullptr)
     {_instance = new BDSGlobalConstants(options);}
   return _instance;
 }
@@ -295,5 +295,5 @@ BDSGlobalConstants::~BDSGlobalConstants()
   delete zeroMagField;
   delete tunnelInfo;
   delete defaultUserLimits;
-  _instance = 0;
+  _instance = nullptr;
 }

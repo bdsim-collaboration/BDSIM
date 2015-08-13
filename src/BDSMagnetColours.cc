@@ -5,13 +5,18 @@
 #include "G4Colour.hh"
 
 
-BDSMagnetColours* BDSMagnetColours::_instance = 0;
+BDSMagnetColours* BDSMagnetColours::_instance = nullptr;
 
 BDSMagnetColours* BDSMagnetColours::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSMagnetColours();}
   return _instance;
+}
+
+BDSMagnetColours::~BDSMagnetColours()
+{
+  _instance = nullptr;
 }
 
 BDSMagnetColours::BDSMagnetColours()

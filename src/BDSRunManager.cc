@@ -19,7 +19,7 @@
 #if G4VERSION_NUMBER > 999
 G4ThreadLocal
 #endif
-BDSRunManager* BDSRunManager::fRunManager = 0;
+BDSRunManager* BDSRunManager::fRunManager = nullptr;
 
 BDSRunManager* BDSRunManager::GetRunManager() { 
   return fRunManager; 

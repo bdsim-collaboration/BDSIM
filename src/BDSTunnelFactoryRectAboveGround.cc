@@ -22,11 +22,11 @@
 
 class BDSTunnelSection;
 
-BDSTunnelFactoryRectAboveGround* BDSTunnelFactoryRectAboveGround::_instance = 0;
+BDSTunnelFactoryRectAboveGround* BDSTunnelFactoryRectAboveGround::_instance = nullptr;
 
 BDSTunnelFactoryRectAboveGround* BDSTunnelFactoryRectAboveGround::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSTunnelFactoryRectAboveGround();}
   return _instance;
 }
@@ -39,7 +39,7 @@ BDSTunnelFactoryRectAboveGround::BDSTunnelFactoryRectAboveGround()
 
 BDSTunnelFactoryRectAboveGround::~BDSTunnelFactoryRectAboveGround()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4String    name,

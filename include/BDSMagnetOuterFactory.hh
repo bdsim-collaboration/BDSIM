@@ -13,7 +13,7 @@
 class BDSMagnetOuterFactory
 {
 public:
-  static BDSMagnetOuterFactory* Instance(); /// singleon pattern
+  static BDSMagnetOuterFactory* Instance(); /// singleton pattern
   
   ~BDSMagnetOuterFactory();
   

@@ -28,10 +28,10 @@
 
 extern Options options;
 
-BDSMaterials* BDSMaterials::_instance = 0;
+BDSMaterials* BDSMaterials::_instance = nullptr;
 
 BDSMaterials* BDSMaterials::Instance(){
-  if(_instance==0) {
+  if(_instance==nullptr) {
     _instance = new BDSMaterials();
   }
   return _instance;
@@ -1190,7 +1190,7 @@ BDSMaterials::~BDSMaterials(){
   delete petMaterialPropertiesTable;
   delete vacMaterialPropertiesTable;  
 
-  _instance = 0;
+  _instance = nullptr;
 }
 
 void BDSMaterials::PrepareRequiredMaterials()

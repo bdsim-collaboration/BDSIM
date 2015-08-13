@@ -23,11 +23,11 @@
 
 class BDSTunnelSection;
 
-BDSTunnelFactoryElliptical* BDSTunnelFactoryElliptical::_instance = 0;
+BDSTunnelFactoryElliptical* BDSTunnelFactoryElliptical::_instance = nullptr;
 
 BDSTunnelFactoryElliptical* BDSTunnelFactoryElliptical::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSTunnelFactoryElliptical();}
   return _instance;
 }
@@ -37,7 +37,7 @@ BDSTunnelFactoryElliptical::BDSTunnelFactoryElliptical()
 
 BDSTunnelFactoryElliptical::~BDSTunnelFactoryElliptical()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String      name,
