@@ -14,11 +14,11 @@
 
 #include "G4VReadOutGeometry.hh"
 
-BDSSDManager* BDSSDManager::_instance = 0;
+BDSSDManager* BDSSDManager::_instance = nullptr;
 
 BDSSDManager* BDSSDManager::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSSDManager();}
   return _instance;
 }
@@ -26,7 +26,7 @@ BDSSDManager* BDSSDManager::Instance()
 BDSSDManager::~BDSSDManager()
 {
   // no need to delete SD's as they are all registered in G4SDManager
-  _instance = 0;
+  _instance = nullptr;
 }
 
 BDSSDManager::BDSSDManager()

@@ -211,8 +211,9 @@ int main(int argc,char** argv)
 
   if (execOptions->ExportGeometry())
     {
-      BDSGeometryWriter::Instance()->ExportGeometry(execOptions->GetExportType(),
-						    execOptions->GetExportFileName());
+      BDSGeometryWriter geometrywriter;
+      geometrywriter.ExportGeometry(execOptions->GetExportType(),
+				    execOptions->GetExportFileName());
       // clean up before exiting
       G4GeometryManager::GetInstance()->OpenGeometry();
       delete BDSAcceleratorModel::Instance();

@@ -12,11 +12,11 @@
 #include <utility>                         // for std::pair
 #include <algorithm>                       // for std::max
 
-BDSMagnetOuterFactoryNone* BDSMagnetOuterFactoryNone::_instance = 0;
+BDSMagnetOuterFactoryNone* BDSMagnetOuterFactoryNone::_instance = nullptr;
 
 BDSMagnetOuterFactoryNone* BDSMagnetOuterFactoryNone::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSMagnetOuterFactoryNone();}
   return _instance;
 }
@@ -27,7 +27,7 @@ BDSMagnetOuterFactoryNone::BDSMagnetOuterFactoryNone()
 
 BDSMagnetOuterFactoryNone::~BDSMagnetOuterFactoryNone()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateSectorBend(G4String      /*name*/,
