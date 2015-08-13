@@ -21,11 +21,11 @@
 #include <utility>                         // for std::pair
 
 
-BDSBeamPipeFactoryRectangular* BDSBeamPipeFactoryRectangular::_instance = 0;
+BDSBeamPipeFactoryRectangular* BDSBeamPipeFactoryRectangular::_instance = nullptr;
 
 BDSBeamPipeFactoryRectangular* BDSBeamPipeFactoryRectangular::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSBeamPipeFactoryRectangular();}
   return _instance;
 }
@@ -35,7 +35,7 @@ BDSBeamPipeFactoryRectangular::BDSBeamPipeFactoryRectangular()
 
 BDSBeamPipeFactoryRectangular::~BDSBeamPipeFactoryRectangular()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipe(G4String    nameIn,              // name

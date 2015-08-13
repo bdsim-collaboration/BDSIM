@@ -21,10 +21,10 @@ extern struct Parameters params;
 extern int yyparse();
 
 extern FILE *yyin;
-extern char* yyfilename;
+extern std::string yyfilename;
 
-extern int add_func(const char *name, double (*func)(double));
-extern int add_var(const char *name, double val,int is_reserved = 0);
+extern int add_func(std::string name, double (*func)(double));
+extern int add_var(std::string name, double val,int is_reserved = 0);
 
 // aux. parser lists - to clear
 extern ElementList element_list;
@@ -130,20 +130,17 @@ int gmad_parser(FILE *f)
 
 int gmad_parser(std::string name)
 {
-  const int maxfilenamelength = 200;
 #ifdef BDSDEBUG
   std::cout << "gmad_parser> opening file" << std::endl;
 #endif
   FILE *f = fopen(name.c_str(),"r");
 
   if(f==nullptr) {
-
     std::cerr << "gmad_parser> Can't open input file " << name << std::endl;
     exit(1);
   }
 
-  yyfilename = new char[maxfilenamelength];
-  strncpy(yyfilename,name.c_str(),maxfilenamelength);
+  yyfilename = std::string(name);
 
   gmad_parser(f);
 

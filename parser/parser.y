@@ -525,13 +525,17 @@ parameters: VARIABLE '=' aexpr ',' parameters
 	    }
           | VARIABLE '=' STR ',' parameters
             {
-	      if(execute)
+	      if(execute) {
 		params.set_value($1->name,$3);
+	      }
+	      free($3);
 	    }
           | VARIABLE '=' STR
             {
-	      if(execute)
+	      if(execute) {
 		params.set_value($1->name,$3);
+	      }
+	      free($3);
 	    }
 
 line : LINE '=' '(' element_seq ')'
@@ -661,7 +665,7 @@ expr : aexpr
 	 if(execute)
 	   {
 	     if(INTERACTIVE)
-	       for(int i=0;i<$1->size;i++)
+	       for(int i=0;i<$1->data.size();i++)
 		 {
 		   printf(" %.10g ",$1->data[i]);
 		 }
@@ -706,10 +710,10 @@ aexpr :  NUMBER               { $$ = $1;                         }
        | '(' aexpr ')'         { $$ = $2;                         }
        | '<' vecexpr ',' vecexpr '>' // scalar product
          {
-	   if($2->size == $4->size)
+	   if($2->data.size() == $4->data.size())
 	     {
 	       $$ = 0;
-	       for(int i=0;i<$2->size;i++)
+	       for(int i=0;i<$2->data.size();i++)
 		 $$ += $2->data[i] * $4->data[i];
 	     }
 	   else
@@ -750,12 +754,11 @@ assignment :  VARIABLE '=' aexpr
 		if(execute)
 		  {
 		    $1->array.clear();
-		    for(int i=0;i<$3->size;i++)
+		    for(unsigned int i=0;i<$3->data.size();i++)
 		      $1->array.push_back($3->data[i]);
 		    $1->type = symtab::symtabtype::_ARRAY;
 		    $$ = $1;
-		    delete[] $3->data;
-		    $3->size = 0;
+		    $3->data.clear();
 		  }
               }
 
@@ -764,11 +767,10 @@ assignment :  VARIABLE '=' aexpr
 		if(execute)
 		  {
 		    $1->array.clear();
-		    for(int i=0;i<$3->size;i++)
+		    for(int i=0;i<$3->data.size();i++)
 		      $1->array.push_back($3->data[i]);
 		    $$ = $1;
-		    delete[] $3->data;
-		    $3->size = 0;
+		    $3->data.clear();
 		  }
               }
 ;
@@ -778,14 +780,10 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->data = new double[$1->array.size()];
-	      $$->size = $1->array.size();
-	      //array_list.push_back($$);
 	      std::list<double>::iterator it;
-	      int i = 0;
 	      for(it=$1->array.begin();it!=$1->array.end();it++)
 		{
-		  $$->data[i++] = (*it);
+		  $$->data.push_back(*it);
 		}
 	    }
         } 
@@ -794,19 +792,9 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->data = new double[$1->size];
-	      $$->size = $1->size;
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$1->size;i++)
-		{
-		  $$->data[i] = $1->data[i];
-		}
-	      
+	      $$->data = $1->data;
 	      // erase data in vect
-	      
-	      delete[] $1->data;
-	      $1->size = 0;
+	      $1->data.clear();
 	    }
 	}
        | vectstr
@@ -814,11 +802,8 @@ vecexpr :   VECVAR
 	  if(execute)
 	  {
 	    $$ = new struct Array;
-	    $$->size = $1->size;
 	    $$->symbols = $1->symbols;
-
 	    $1->symbols.clear();
-	    $1->size = 0;
 	  }
 	}
 
@@ -827,22 +812,15 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->size = ($1->size < $3->size )? $1->size : $3->size;
-	      $$->data = new double[$$->size];
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$$->size;i++)
+	      unsigned int size = ($1->data.size() < $3->data.size() )? $1->data.size() : $3->data.size();
+	      $$->data.resize(size);
+	      for(unsigned int i=0;i<size;i++)
 		{
 		  $$->data[i] = $1->data[i] + $3->data[i];
 		}
-	      
-	      
 	      // erase data in vect
-	      
-	      delete[] $1->data;
-	      delete[] $3->data;
-	      $1->size = 0;
-	      $3->size = 0;
+	      $1->data.clear();
+	      $3->data.clear();
 	    }
         }
       | vecexpr '-' vecexpr
@@ -850,22 +828,15 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->size = ($1->size < $3->size )? $1->size : $3->size;
-	      $$->data = new double[$$->size];
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$$->size;i++)
+	      unsigned int size = ($1->data.size() < $3->data.size() )? $1->data.size() : $3->data.size();
+	      $$->data.resize(size);
+	      for(unsigned int i=0;i<size;i++)
 		{
 		  $$->data[i] = $1->data[i] - $3->data[i];
 		}
-	      
-	      
 	      // erase data in vect
-	      
-	      delete[] $1->data;
-	      delete[] $3->data;
-	      $1->size = 0;
-	      $3->size = 0;
+	      $1->data.clear();
+	      $3->data.clear();
 	    }
 	}
        | vecexpr '+' aexpr
@@ -873,19 +844,14 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->size = $1->size;
-	      $$->data = new double[$$->size];
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$$->size;i++)
+	      unsigned int size = $1->data.size();
+	      $$->data.resize(size);
+	      for(unsigned int i=0;i<size;i++)
 		{
 		  $$->data[i] = $1->data[i] + $3;
 		}
-	      
 	      // erase data in vect
-	      
-	      delete[] $1->data;
-	      $1->size = 0;
+	      $1->data.clear();
 	    }
 	}
 
@@ -894,19 +860,14 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->size = $1->size;
-	      $$->data = new double[$$->size];
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$$->size;i++)
+	      unsigned int size = $1->data.size();
+	      $$->data.resize(size);
+	      for(unsigned int i=0;i<size;i++)
 		{
 		  $$->data[i] = $1->data[i] * $3;
 		}
-	      
 	      // erase data in vect
-	      
-	      delete[] $1->data;
-	      $1->size = 0;
+	      $1->data.clear();
 	    }
 	}
       | vecexpr '/' aexpr
@@ -914,19 +875,14 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->size = $1->size;
-	      $$->data = new double[$$->size];
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$$->size;i++)
+	      unsigned int size = $1->data.size();
+	      $$->data.resize(size);
+	      for(unsigned int i=0;i<size;i++)
 		{
 		  $$->data[i] = $1->data[i] / $3;
 		}
-	      
 	      // erase data in vect
-	      
-	      delete[] $1->data;
-	      $1->size = 0;
+	      $1->data.clear();
 	    }
 	}
        | aexpr '+' vecexpr
@@ -934,19 +890,14 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->size = $3->size;
-	      $$->data = new double[$$->size];
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$$->size;i++)
+	      unsigned int size = $3->data.size();
+	      $$->data.resize(size);
+	      for(unsigned int i=0;i<size;i++)
 		{
 		  $$->data[i] = $3->data[i] + $1;
 		}
-	      
 	      // erase data in vect
-	      
-	      delete[] $3->data;
-	      $3->size = 0;
+	      $3->data.clear();
 	    }
 	}
        | aexpr '-' vecexpr
@@ -954,19 +905,14 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->size = $3->size;
-	      $$->data = new double[$$->size];
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$$->size;i++)
+	      unsigned int size = $3->data.size();
+	      $$->data.resize(size);
+	      for(unsigned int i=0;i<size;i++)
 		{
-		  $$->data[i] = $1 - $3->data[i];
+		  $$->data[i] = $3->data[i] - $1;
 		}
-	      
 	      // erase data in vect
-	      
-	      delete[] $3->data;
-	      $3->size = 0;
+	      $3->data.clear();
 	    }
 	}
       | aexpr '*' vecexpr
@@ -974,19 +920,14 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->size = $3->size;
-	      $$->data = new double[$$->size];
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$$->size;i++)
+	      unsigned int size = $3->data.size();
+	      $$->data.resize(size);
+	      for(unsigned int i=0;i<size;i++)
 		{
 		  $$->data[i] = $1 * $3->data[i];
 		}
-	      
 	      // erase data in vect
-	      
-	      delete[] $3->data;
-	      $3->size = 0;
+	      $3->data.clear();
 	    }
 	}
 
@@ -998,23 +939,18 @@ vectnum : '{' numbers '}'
 	      {
 	        //printf("matched vector of size %d\n",_tmparray.size());
 	        $$ = new struct Array;
-	        $$->data = new double[_tmparray.size()];
-	        $$->size = _tmparray.size();
-      
-	        //array_list.push_back(a);
-      
 	        std::list<double>::iterator it;
-		int i=0;      
 	        for(it=_tmparray.begin();it!=_tmparray.end();it++)
-	  	{
-	 	 $$->data[i++] = (*it);
-		}
+		  {
+		    $$->data.push_back(*it);
+		  }
     	        _tmparray.clear();
 
-	        std::list<char*>::iterator lIter;
+	        std::list<std::string>::iterator lIter;
 	        for(lIter = _tmpstring.begin(); lIter != _tmpstring.end(); lIter++)
-	          $$->symbols.push_back(*lIter);
-
+		  {
+		    $$->symbols.push_back(*lIter);
+		  }
 	        _tmpstring.clear();
 	      }
 	}
@@ -1025,9 +961,7 @@ vectstr : '[' letters ']'
 	  if(execute)
 	  {
 	    $$ = new struct Array;
-	    $$->size = _tmpstring.size();
-
-	    std::list<char*>::iterator iter;
+	    std::list<std::string>::iterator iter;
 	    for(iter = _tmpstring.begin(); iter != _tmpstring.end(); iter++)
 	      $$->symbols.push_back(*iter);
 
@@ -1054,11 +988,13 @@ letters :
           {
             if(execute)
               _tmpstring.push_front($1);
+	    free($1);
           }
 	| STR
          {
            if(execute)
              _tmpstring.push_front($1);
+	   free($1);
          }
 ;
 
@@ -1092,7 +1028,7 @@ command : STOP             { if(execute) quit(); }
 	  }
         | USE ',' use_parameters { if(execute) expand_line(current_line,current_start, current_end);}
         | OPTION  ',' option_parameters
-	| ECHO STR { if(execute) printf("%s\n",$2); }
+	| ECHO STR { if(execute) {printf("%s\n",$2);} free($2); }
         | SAMPLE ',' sample_options 
           {
 	    if(execute)
@@ -1228,6 +1164,7 @@ csample_options : VARIABLE '=' aexpr
 		    /*   { */
 		    /* 	;//options.set_value($1->name,string($3)); */
 		    /*   } */
+		    free($3);
 		  }   
                 | VARIABLE '=' aexpr ',' csample_options
                   {
@@ -1248,6 +1185,7 @@ csample_options : VARIABLE '=' aexpr
                   {
 		    if(ECHO_GRAMMAR) std::cout << "csample_opt -> " << $1->name << " = " << $3 << std::endl;
 		    // if(execute) //options.set_value($1->name,string($3));
+		    free($3);
 		  }   
                 | sample_options ',' csample_options
                   {
@@ -1287,6 +1225,7 @@ gas_options : VARIABLE '=' aexpr
 			  }
 			//options.set_value($1->name,$3);
 		      }
+		    free($3);
 		  }   
                 | VARIABLE '=' aexpr ',' gas_options
                   {
@@ -1314,6 +1253,7 @@ gas_options : VARIABLE '=' aexpr
 			    params.materialset = 1;
 			  }
 		      }
+		    free($3);
 		  }   
                 | RANGE '='  VARIABLE '/' VARIABLE ',' gas_options
                   {
@@ -1351,11 +1291,13 @@ tunnel_options : VARIABLE '=' aexpr ',' tunnel_options
                     {
 		      if(execute)
 			tunnel.set_value($1->name,$3);
+		      free($3);
 		    }
                  | VARIABLE '=' STR
                     {
 		      if(execute)
 			tunnel.set_value($1->name,$3);
+		      free($3);
 		    }
 ;
 
@@ -1374,12 +1316,14 @@ option_parameters :
                     {
 		      if(execute)
 			options.set_value($1->name,$3);
+		      free($3);
 		    }   
                   | VARIABLE '=' STR
                     {
 		      if(execute)
 			options.set_value($1->name,$3);
-		    }   
+		      free($3);
+		    }
 ;
 
 beam_parameters :
@@ -1397,11 +1341,13 @@ beam_parameters :
                   {
 		    if(execute)
 		      options.set_value($1->name,$3);
+		    free($3);
 		  }   
                 | VARIABLE '=' STR
                   {
 		    if(execute)
 		      options.set_value($1->name,$3);
+		    free($3);
 		  }   
 ;
 

@@ -40,7 +40,7 @@ extern const int ECHO_GRAMMAR;
 const int MAX_EXPAND_ITERATIONS = 50;
 
 std::list<double> _tmparray;  // for reading of arrays
-std::list<char*> _tmpstring;
+std::list<std::string> _tmpstring;
 
 /// globals
 struct Parameters params;
@@ -66,7 +66,7 @@ std::string current_end;
 //struct symtab *symtab; 
 std::map<std::string, struct symtab*> symtab_map;
 
-extern struct symtab * symlook(const char *s);
+extern struct symtab * symlook(std::string s);
 
 // ***********************
 // functions declaration *
@@ -91,8 +91,8 @@ double property_lookup(ElementList& el_list, std::string element_name, std::stri
 void add_element_temp(std::string name, int number, bool pushfront, ElementType linetype);
 
 // parser functions
-int add_func(const char *name, double (*func)(double));
-int add_var(const char *name, double value, int is_reserved = 0);
+int add_func(std::string name, double (*func)(double));
+int add_var(std::string name, double value, int is_reserved = 0);
 
 // **************************
 // functions implementation *
@@ -557,14 +557,14 @@ void add_element_temp(std::string name, int number, bool pushfront, ElementType 
 // ******************************************************
 
 
-int add_func(const char *name, double (*func)(double))
+int add_func(std::string name, double (*func)(double))
 {
   struct symtab *sp=symlook(name);
   sp->funcptr=func;
   return 0;
 }
 
-int add_var(const char *name, double value, int is_reserved)
+int add_var(std::string name, double value, int is_reserved)
 {
   struct symtab *sp=symlook(name);
   sp->value=value;

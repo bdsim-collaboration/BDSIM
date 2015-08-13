@@ -5,11 +5,11 @@
 
 #include <vector>
 
-BDSAnalysisManager* BDSAnalysisManager::_instance = 0;
+BDSAnalysisManager* BDSAnalysisManager::_instance = nullptr;
 
 BDSAnalysisManager* BDSAnalysisManager::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {
       _instance = new BDSAnalysisManager();
     }

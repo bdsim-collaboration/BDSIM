@@ -18,11 +18,11 @@
 #include <cmath>
 #include <utility>                         // for std::pair
 
-BDSBeamPipeFactoryCircular* BDSBeamPipeFactoryCircular::_instance = 0;
+BDSBeamPipeFactoryCircular* BDSBeamPipeFactoryCircular::_instance = nullptr;
 
 BDSBeamPipeFactoryCircular* BDSBeamPipeFactoryCircular::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSBeamPipeFactoryCircular();}
   return _instance;
 }
@@ -33,7 +33,7 @@ BDSBeamPipeFactoryCircular::BDSBeamPipeFactoryCircular():BDSBeamPipeFactoryBase(
 
 BDSBeamPipeFactoryCircular::~BDSBeamPipeFactoryCircular()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,              // name

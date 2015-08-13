@@ -25,11 +25,11 @@
 #include <vector>
 #include <cmath>
 
-BDSMagnetOuterFactoryPolesSquare* BDSMagnetOuterFactoryPolesSquare::_instance = 0;
+BDSMagnetOuterFactoryPolesSquare* BDSMagnetOuterFactoryPolesSquare::_instance = nullptr;
 
 BDSMagnetOuterFactoryPolesSquare* BDSMagnetOuterFactoryPolesSquare::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSMagnetOuterFactoryPolesSquare();}
   return _instance;
 }
@@ -41,7 +41,7 @@ BDSMagnetOuterFactoryPolesSquare::BDSMagnetOuterFactoryPolesSquare()
 
 BDSMagnetOuterFactoryPolesSquare::~BDSMagnetOuterFactoryPolesSquare()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 void BDSMagnetOuterFactoryPolesSquare::CleanUp()

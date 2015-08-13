@@ -1,3 +1,27 @@
+V0.8.develop - 2015 / ?? / ??
+=============================
+
+New Features
+------------
+
+Bug fixes
+---------
+
+Geometry
+^^^^^^^^
+
+Physics
+^^^^^^^
+
+Parser
+^^^^^^
+
+* occasional material parser segfault fixed (issue #25)
+  
+General
+^^^^^^^
+
+
 V0.8 - 2015 / 08 / 10
 =====================
 

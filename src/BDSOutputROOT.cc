@@ -82,7 +82,7 @@ void BDSOutputROOT::BuildSamplerTree(G4String name)
   
   SamplerTree->Branch("weight",     &weight,     "weight/F");
   SamplerTree->Branch("partID",     &part,       "partID/I");
-  SamplerTree->Branch("nEvent",     &eventno,        "nEvent/I");
+  SamplerTree->Branch("nEvent",     &eventno,    "nEvent/I");
   SamplerTree->Branch("parentID",   &pID,        "parentID/I");
   SamplerTree->Branch("trackID",    &track_id,   "trackID/I");
   SamplerTree->Branch("turnnumber", &turnnumber, "turnnumber/I");

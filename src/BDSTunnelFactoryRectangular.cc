@@ -20,11 +20,11 @@
 #include <utility>                         // for std::pair
 
 
-BDSTunnelFactoryRectangular* BDSTunnelFactoryRectangular::_instance = 0;
+BDSTunnelFactoryRectangular* BDSTunnelFactoryRectangular::_instance = nullptr;
 
 BDSTunnelFactoryRectangular* BDSTunnelFactoryRectangular::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSTunnelFactoryRectangular();}
   return _instance;
 }
@@ -34,7 +34,7 @@ BDSTunnelFactoryRectangular::BDSTunnelFactoryRectangular()
 
 BDSTunnelFactoryRectangular::~BDSTunnelFactoryRectangular()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSection(G4String      name,

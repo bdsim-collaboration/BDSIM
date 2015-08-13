@@ -26,11 +26,11 @@
 #include <utility>                         // for std::pair
 #include <algorithm>                       // for std::max
 
-BDSMagnetOuterFactoryCylindrical* BDSMagnetOuterFactoryCylindrical::_instance = 0;
+BDSMagnetOuterFactoryCylindrical* BDSMagnetOuterFactoryCylindrical::_instance = nullptr;
 
 BDSMagnetOuterFactoryCylindrical* BDSMagnetOuterFactoryCylindrical::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSMagnetOuterFactoryCylindrical();}
   return _instance;
 }
@@ -40,7 +40,7 @@ BDSMagnetOuterFactoryCylindrical::BDSMagnetOuterFactoryCylindrical()
 
 BDSMagnetOuterFactoryCylindrical::~BDSMagnetOuterFactoryCylindrical()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String      name,

@@ -17,6 +17,7 @@
 #include <cstdio>
 #include <map>
 #include <string>
+#include <vector>
 #include <cstring>
 #include <iostream>
 #include "parser.tab.hh"
@@ -24,10 +25,7 @@
 #include "getEnv.h"
 #include <unistd.h>
 
-const int maxfilenamelength = 200;
-
-int match_var(char *name);
-struct symtab * symlook(const char *s);
+struct symtab * symlook(std::string s);
 extern std::map<std::string, struct symtab*> symtab_map;
 extern int yyerror(const char *s);
 
@@ -38,12 +36,12 @@ extern int yyerror(const char *s);
 
 const int max_include_depth = 10;
 YY_BUFFER_STATE include_stack[max_include_depth];
-char include_filename_stack[max_include_depth][maxfilenamelength];
+std::vector<std::string> include_filename_stack(max_include_depth);
 int include_linenum_stack[max_include_depth];
 int include_stack_ptr = 0;
 
 int line_num = 1;
-char* yyfilename;
+std::string yyfilename;
 
 %}
 
@@ -125,17 +123,22 @@ beta0 { return BETA0; }
 dump  { return DUMP; }
 
 \"[^"]*\" {
-  //strip quotes
-  
-  yylval.str=yytext+1;
-  yylval.str[strlen(yylval.str)-1]='\0';
-  return STR; 
+  //strip quotes and return string
+
+  // copy string without quotes, 
+  // memory needs to be allocated
+  // strndup allocates memory with malloc 
+  // strndup will add an end of string character
+  // memory needs to be freed with free()
+  // see e.g. http://linux.die.net/man/3/strdup
+  yylval.str = strndup(yytext+1,strlen(yytext)-2);
+  return STR;
 }
 
 ":="    { return '=';}  // alternative assignment 
 
 [a-zA-Z#][A-Za-z0-9_#.]* {
-     struct symtab *sp = symlook(yytext);
+     struct symtab *sp = symlook(std::string(yytext));
      yylval.symp=sp;
      if(sp->funcptr)
        return FUNC;
@@ -153,7 +156,7 @@ dump  { return DUMP; }
 //this is perhaps unnecessary now...
 std::string bdsimpath = (std::string)getEnv("BDSIMPATH");
 std::string includefilename = "";
-std::string mainfilename    = (std::string)yyfilename; //get the supplied main filename
+std::string mainfilename    = yyfilename; //get the supplied main filename
 std::string mainfilepath    = "";
 if(bdsimpath.length()>0){
 #ifdef BDSDEBUG
@@ -181,7 +184,7 @@ if(bdsimpath.length()>0){
 #ifdef BDSDEBUG
 printf("parser> include filename is: %s \n",includefilename.c_str());
 #endif
-   printf("parser> reading file %s \n",(char*)includefilename.c_str());//yytext
+   printf("parser> reading file %s \n",includefilename.c_str());//yytext
      if( include_stack_ptr >= max_include_depth )
        {
          fprintf(stderr , "Error : Include depth exceeds %d\n",max_include_depth);
@@ -189,23 +192,23 @@ printf("parser> include filename is: %s \n",includefilename.c_str());
        }
      else
     {
-      yyin = fopen((char*)includefilename.c_str(), "r"); //yytext
+      yyin = fopen(includefilename.c_str(), "r"); //yytext
       if(yyin)
 	{
           //printf("saving to stack buffer n %d, file %s\n",include_stack_ptr,yyfilename );
           // save info to the stack and load new buffer
           include_linenum_stack[include_stack_ptr] = line_num;
           line_num = 1;
-          strncpy(include_filename_stack[include_stack_ptr], yyfilename, maxfilenamelength);
-          strncpy(yyfilename,(char*)includefilename.c_str(),maxfilenamelength); //yytext
+          include_filename_stack[include_stack_ptr] = yyfilename;
+          yyfilename = includefilename; //yytext
 	  include_stack[include_stack_ptr++] = YY_CURRENT_BUFFER;
-          strncpy(include_filename_stack[include_stack_ptr], yyfilename, maxfilenamelength);
+          include_filename_stack[include_stack_ptr] = yyfilename;
 	  yy_switch_to_buffer(yy_create_buffer( yyin, YY_BUF_SIZE ) );
 	  //printf("done saving to stack\n");
     	}
       else
 	{
-	  fprintf(stderr, "Error : can't open %s\n", (char*)includefilename.c_str()); //yytext
+	  fprintf(stderr, "Error : can't open %s\n", includefilename.c_str()); //yytext
 	  exit(1);
 	}
     }
@@ -223,7 +226,7 @@ printf("parser> include filename is: %s \n",includefilename.c_str());
       //printf("switching to previous buffer with %s\n", include_filename_stack[include_stack_ptr]);
       yy_delete_buffer(YY_CURRENT_BUFFER);
       yy_switch_to_buffer(include_stack[include_stack_ptr]);
-      strncpy( yyfilename, include_filename_stack[include_stack_ptr], maxfilenamelength) ;
+      yyfilename = include_filename_stack[include_stack_ptr];
       line_num = include_linenum_stack[include_stack_ptr];
     }
 }
@@ -234,15 +237,14 @@ printf("parser> include filename is: %s \n",includefilename.c_str());
 %%
 
 
-struct symtab * symlook(const char *s)
+struct symtab * symlook(std::string s)
 {
-  std::string sstring = std::string(s);
-  std::map<std::string,symtab*>::iterator it = symtab_map.find(sstring);
+  std::map<std::string,symtab*>::iterator it = symtab_map.find(s);
   if (it!=symtab_map.end()) {
      return (*it).second;
   } else {
-    struct symtab* sp = new symtab(sstring);
-    std::pair<std::map<std::string,symtab*>::iterator,bool> ret = symtab_map.insert(std::make_pair(sstring,sp));
+    struct symtab* sp = new symtab(s);
+    std::pair<std::map<std::string,symtab*>::iterator,bool> ret = symtab_map.insert(std::make_pair(s,sp));
      return (*(ret.first)).second;
   }
 
