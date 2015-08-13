@@ -18,11 +18,11 @@ struct BDSMagnetOuterInfo;
 class BDSOctupole: public BDSMagnet
 {
 public:
-  BDSOctupole(G4String           name,
-	      G4double           length,
-	      G4double           bTriplePrime,
-	      BDSBeamPipeInfo*   beamPipeInfo,
-	      BDSMagnetOuterInfo magnetOuterInfo);
+  BDSOctupole(G4String            name,
+	      G4double            length,
+	      G4double            bTriplePrime,
+	      BDSBeamPipeInfo*    beamPipeInfo,
+	      BDSMagnetOuterInfo* magnetOuterInfo);
   ~BDSOctupole(){;};
 
 protected:

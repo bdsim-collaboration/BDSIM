@@ -27,11 +27,11 @@ class BDSMagnet: public BDSAcceleratorComponent
 public:
   /// Magnet base class constructor that is for basic geometric information rather
   /// magnetic field details, which are handled in the derived classes
-  BDSMagnet(BDSMagnetType      type,
-	    G4String           name, 
-	    G4double           length,
-	    BDSBeamPipeInfo*   beamPipeInfo,
-	    BDSMagnetOuterInfo magnetOuterInfo);
+  BDSMagnet(BDSMagnetType       type,
+	    G4String            name, 
+	    G4double            length,
+	    BDSBeamPipeInfo*    beamPipeInfo,
+	    BDSMagnetOuterInfo* magnetOuterInfo);
   
   virtual ~BDSMagnet();
 

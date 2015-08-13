@@ -13,11 +13,11 @@ struct BDSMagnetOuterInfo;
 class BDSSolenoid: public BDSMagnet
 {
 public:
-  BDSSolenoid(G4String           name,
-	      G4double           length,
-	      G4double           bField,
-	      BDSBeamPipeInfo*   beamPipeInfo,
-	      BDSMagnetOuterInfo magnetOuterInfo);
+  BDSSolenoid(G4String            name,
+	      G4double            length,
+	      G4double            bField,
+	      BDSBeamPipeInfo*    beamPipeInfo,
+	      BDSMagnetOuterInfo* magnetOuterInfo);
   ~BDSSolenoid(){;};
 
 private:

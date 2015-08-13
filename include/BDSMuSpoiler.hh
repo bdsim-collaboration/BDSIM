@@ -17,11 +17,11 @@ struct BDSMagnetOuterInfo;
 class BDSMuSpoiler: public BDSMagnet
 {
 public:
-  BDSMuSpoiler(G4String           name,
-	       G4double           length,
-	       G4double           bField,
-	       BDSBeamPipeInfo*   beamPipeInfo,
-	       BDSMagnetOuterInfo magnetOuterInfo);
+  BDSMuSpoiler(G4String            name,
+	       G4double            length,
+	       G4double            bField,
+	       BDSBeamPipeInfo*    beamPipeInfo,
+	       BDSMagnetOuterInfo* magnetOuterInfo);
   ~BDSMuSpoiler();
 
 private:

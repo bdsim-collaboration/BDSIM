@@ -28,11 +28,11 @@
 #include "BDSMultipoleOuterMagField.hh"
 #include "BDSUtilities.hh"
 
-BDSMagnet::BDSMagnet(BDSMagnetType      type,
-		     G4String           name,
-		     G4double           length,
-		     BDSBeamPipeInfo*   beamPipeInfoIn,
-		     BDSMagnetOuterInfo magnetOuterInfo):
+BDSMagnet::BDSMagnet(BDSMagnetType       type,
+		     G4String            name,
+		     G4double            length,
+		     BDSBeamPipeInfo*    beamPipeInfoIn,
+		     BDSMagnetOuterInfo* magnetOuterInfoIn):
   BDSAcceleratorComponent(name, length, 0, (*BDSMagnetType::dictionary)[type]),
   itsType(type),
   beamPipeInfo(beamPipeInfoIn),
@@ -146,9 +146,9 @@ void BDSMagnet::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
 
 void BDSMagnet::BuildOuterVolume()
 {
-  G4Material* outerMaterial          = itsMagnetOuterInfo.outerMaterial;
-  BDSMagnetGeometryType geometryType = itsMagnetOuterInfo.geometryType;
-  G4double outerDiameter             = itsMagnetOuterInfo.outerDiameter;
+  G4Material* outerMaterial          = magnetOuterInfo->outerMaterial;
+  BDSMagnetGeometryType geometryType = magnetOuterInfo->geometryType;
+  G4double outerDiameter             = magnetOuterInfo->outerDiameter - lengthSafetyLarge;
   G4double outerLength               = chordLength - 2*lengthSafety;
   
   //build the right thing depending on the magnet type
@@ -296,11 +296,9 @@ void BDSMagnet::BuildOuterFieldManager(G4int nPoles, G4double poleField,
 
 BDSMagnet::~BDSMagnet()
 {
+  delete magnetOuterInfo;
   delete itsBPFieldMgr;
   delete itsChordFinder;
-#ifndef NOUSERLIMITS
-  delete itsBeampipeUserLimits;
-#endif
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;

@@ -19,11 +19,11 @@ struct BDSMagnetOuterInfo;
 class BDSSextupole: public BDSMagnet
 {
 public:
-  BDSSextupole(G4String           name,
-	       G4double           length,
-	       G4double           bDblPrime,
-	       BDSBeamPipeInfo*   beamPipeInfo,
-	       BDSMagnetOuterInfo magnetOuterInfo);
+  BDSSextupole(G4String            name,
+	       G4double            length,
+	       G4double            bDblPrime,
+	       BDSBeamPipeInfo*    beamPipeInfo,
+	       BDSMagnetOuterInfo* magnetOuterInfo);
   ~BDSSextupole(){;};
 
 private:

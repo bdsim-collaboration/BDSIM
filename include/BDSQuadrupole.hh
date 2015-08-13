@@ -24,11 +24,11 @@ struct BDSMagnetOuterInfo;
 class BDSQuadrupole: public BDSMagnet
 {
 public:
-  BDSQuadrupole(G4String           name,
-		G4double           length,
-		G4double           bGrad,
-		BDSBeamPipeInfo*   beamPipeInfo,
-		BDSMagnetOuterInfo magnetOuterInfo);
+  BDSQuadrupole(G4String            name,
+		G4double            length,
+		G4double            bGrad,
+		BDSBeamPipeInfo*    beamPipeInfo,
+		BDSMagnetOuterInfo* magnetOuterInfo);
 		
   ~BDSQuadrupole(){;}
 

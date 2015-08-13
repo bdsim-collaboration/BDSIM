@@ -18,13 +18,13 @@
 #include "G4PVPlacement.hh"
 #include "G4VPhysicalVolume.hh"
 
-BDSRBend::BDSRBend(G4String           name,
-		   G4double           length,
-		   G4double           bField,
-		   G4double           bGrad,
-		   G4double           angleIn,
-		   BDSBeamPipeInfo*   beamPipeInfo,
-		   BDSMagnetOuterInfo magnetOuterInfo):
+BDSRBend::BDSRBend(G4String            name,
+		   G4double            length,
+		   G4double            bFieldIn,
+		   G4double            bGradIn,
+		   G4double            angleIn,
+		   BDSBeamPipeInfo*    beamPipeInfo,
+		   BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::rectangularbend, name, length,
 	    beamPipeInfo, magnetOuterInfo),
   itsBField(bField),

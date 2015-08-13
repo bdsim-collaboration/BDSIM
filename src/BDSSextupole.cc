@@ -20,11 +20,11 @@
 
 class BDSTiltOffset;
 
-BDSSextupole::BDSSextupole(G4String           name,
-			   G4double           length,
-			   G4double           bDblPrime,
-			   BDSBeamPipeInfo*   beamPipeInfo,
-			   BDSMagnetOuterInfo magnetOuterInfo):
+BDSSextupole::BDSSextupole(G4String            name,
+			   G4double            length,
+			   G4double            bDblPrime,
+			   BDSBeamPipeInfo*    beamPipeInfo,
+			   BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::sextupole, name, length,
 	    beamPipeInfo, magnetOuterInfo),
    itsBDblPrime(bDblPrime)

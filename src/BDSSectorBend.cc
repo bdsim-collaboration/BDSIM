@@ -17,13 +17,13 @@
 
 #include "globals.hh"             // geant4 types / globals
 
-BDSSectorBend::BDSSectorBend(G4String           name,
-			     G4double           arcLength,
-			     G4double           angleIn,
-			     G4double           bField,
-			     G4double           bGrad,
-			     BDSBeamPipeInfo*   beamPipeInfo,
-			     BDSMagnetOuterInfo magnetOuterInfo):
+BDSSectorBend::BDSSectorBend(G4String            name,
+			     G4double            arcLength,
+			     G4double            angleIn,
+			     G4double            bField,
+			     G4double            bGrad,
+			     BDSBeamPipeInfo*    beamPipeInfo,
+			     BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::sectorbend, name, arcLength,
 	    beamPipeInfo, magnetOuterInfo),
   itsBField(bField),itsBGrad(bGrad)

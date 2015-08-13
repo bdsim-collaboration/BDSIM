@@ -66,11 +66,11 @@ private:
   G4bool HasSufficientMinimumLength(Element& element);
   
   ///@{ Utility function to prepare beampipe
-  G4Material*        PrepareBeamPipeMaterial(Element& element);
-  G4Material*        PrepareVacuumMaterial(Element& element);
-  BDSMagnetOuterInfo PrepareMagnetOuterInfo(Element& element);
-  G4double           PrepareOuterDiameter(Element& element);
-  BDSBeamPipeInfo*   PrepareBeamPipeInfo(Element& element);
+  G4Material*         PrepareBeamPipeMaterial(Element& element);
+  G4Material*         PrepareVacuumMaterial(Element& element);
+  BDSMagnetOuterInfo* PrepareMagnetOuterInfo(Element& element);
+  G4double            PrepareOuterDiameter(Element& element);
+  BDSBeamPipeInfo*    PrepareBeamPipeInfo(Element& element);
   ///@}
 };
 #endif
