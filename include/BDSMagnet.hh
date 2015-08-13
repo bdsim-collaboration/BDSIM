@@ -1,9 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
 #ifndef BDSMAGNET
 #define BDSMAGNET 
 
@@ -21,6 +15,16 @@
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4RotationMatrix.hh"
 #include "G4UserLimits.hh"
+
+/**
+ * @brief Abstract base class that implements features common to all magnets. This
+ * includes the general construction pattern using the magnet outer geometry factories
+ * and the field related objects and attaching them to the necessary volumes. Each derived
+ * class must implement BuildBPFieldAndStepper() which constructs the field objects that
+ * are later attached to the vacuum volume.
+ * 
+ * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ */
 
 class BDSMagnet: public BDSAcceleratorComponent
 {
