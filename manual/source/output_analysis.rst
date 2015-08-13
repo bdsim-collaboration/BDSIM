@@ -57,16 +57,16 @@ Converting ROOT trees as numpy arrays
 -------------------------------------
 First root_numpy needs to be installed (from scratch)::
 
-   wget XXX
-   tar zxf XXX 
-   cd XXX 
+   wget https://pypi.python.org/packages/source/r/root_numpy/root_numpy-4.3.0.tar.gz
+   tar zxf root_numpy-4.3.0.tar.gz
+   cd root_numpy-4.3.0
    python2.7 setup.py build 
    sudo python2.7 setup.py install
 
 Or using PIP (mac):: 
 
    sudo port install py27-pip
-   pip install root_numpy 
+   sudo pip-2.7 install root_numpy 
 
 Extracting data from ROOT file::
 
