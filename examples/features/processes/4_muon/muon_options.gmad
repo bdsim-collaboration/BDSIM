@@ -10,4 +10,6 @@ option, beampipeRadius = 8*mm,     ! default drift radius
         annihiToMuFe=1e4,
         gammaToMuFe=1e4,
         eeToHadronsFe=1e4,
-        physicsList="em_muon";
+!        physicsList="em_muon";
+	modularPhysicsListsOn=1,
+	physicsList="em muon";
