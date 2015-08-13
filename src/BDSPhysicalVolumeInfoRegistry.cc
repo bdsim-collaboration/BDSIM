@@ -7,11 +7,11 @@
 
 #include <map>
 
-BDSPhysicalVolumeInfoRegistry* BDSPhysicalVolumeInfoRegistry::_instance = 0;
+BDSPhysicalVolumeInfoRegistry* BDSPhysicalVolumeInfoRegistry::_instance = nullptr;
 
 BDSPhysicalVolumeInfoRegistry* BDSPhysicalVolumeInfoRegistry::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSPhysicalVolumeInfoRegistry();}
   return _instance;
 }
@@ -31,7 +31,7 @@ BDSPhysicalVolumeInfoRegistry::~BDSPhysicalVolumeInfoRegistry()
   for (; it != backupRegister.end(); ++it)
     {delete it->second;}
   
-  _instance = 0;
+  _instance = nullptr;
 }
 
 void BDSPhysicalVolumeInfoRegistry::RegisterInfo(G4VPhysicalVolume*     physicalVolume,

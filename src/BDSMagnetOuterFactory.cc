@@ -13,17 +13,22 @@
 
 #include "globals.hh"                        // geant4 globals / types
 
-BDSMagnetOuterFactory* BDSMagnetOuterFactory::_instance = 0;
+BDSMagnetOuterFactory* BDSMagnetOuterFactory::_instance = nullptr;
 
 BDSMagnetOuterFactory* BDSMagnetOuterFactory::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSMagnetOuterFactory();}
   return _instance;
 }
 
 BDSMagnetOuterFactory::BDSMagnetOuterFactory()
 {;}
+
+BDSMagnetOuterFactory::~BDSMagnetOuterFactory()
+{
+  _instance = nullptr;
+}
 
 BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagnetGeometryType magnetTypeIn)
 {
