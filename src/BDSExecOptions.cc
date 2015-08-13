@@ -11,10 +11,10 @@
 
 #include "parser/getEnv.h"
 
-BDSExecOptions* BDSExecOptions::_instance=0;
+BDSExecOptions* BDSExecOptions::_instance=nullptr;
 
 const BDSExecOptions* BDSExecOptions::Instance(int argc, char **argv){
-  if(_instance==0) {
+  if(_instance==nullptr) {
     _instance = new BDSExecOptions(argc, argv);
     return _instance;
   } else {
@@ -24,7 +24,7 @@ const BDSExecOptions* BDSExecOptions::Instance(int argc, char **argv){
 }
 
 const BDSExecOptions* BDSExecOptions::Instance(){
-  if(_instance==0) {
+  if(_instance==nullptr) {
     G4Exception("BDSExecOptions::Instance was not initialised. Initialize first with BDSExecOptions::Instance(int argc, char **argv).", "-1", FatalException, "");
     return nullptr;
   } else 
@@ -79,7 +79,7 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv){
 }
 
 BDSExecOptions::~BDSExecOptions() {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 /** <Parse the command line options>

@@ -8,11 +8,11 @@
 
 #include "globals.hh"                 // geant4 globals / types
 
-BDSTunnelFactorySquare* BDSTunnelFactorySquare::_instance = 0;
+BDSTunnelFactorySquare* BDSTunnelFactorySquare::_instance = nullptr;
 
 BDSTunnelFactorySquare* BDSTunnelFactorySquare::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSTunnelFactorySquare();}
   return _instance;
 }
@@ -22,7 +22,7 @@ BDSTunnelFactorySquare::BDSTunnelFactorySquare()
 
 BDSTunnelFactorySquare::~BDSTunnelFactorySquare()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 BDSTunnelSection* BDSTunnelFactorySquare::CreateTunnelSection(G4String    name,

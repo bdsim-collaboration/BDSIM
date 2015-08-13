@@ -9,18 +9,18 @@
 #include "G4Tubs.hh"
 #include "G4VSolid.hh"
 
-BDSMagnetOuterFactoryPolesFacet* BDSMagnetOuterFactoryPolesFacet::_instance = 0;
+BDSMagnetOuterFactoryPolesFacet* BDSMagnetOuterFactoryPolesFacet::_instance = nullptr;
 
 BDSMagnetOuterFactoryPolesFacet* BDSMagnetOuterFactoryPolesFacet::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSMagnetOuterFactoryPolesFacet();}
   return _instance;
 }
 
 BDSMagnetOuterFactoryPolesFacet::~BDSMagnetOuterFactoryPolesFacet()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 void BDSMagnetOuterFactoryPolesFacet::CreatePoleSolid(G4String     name,

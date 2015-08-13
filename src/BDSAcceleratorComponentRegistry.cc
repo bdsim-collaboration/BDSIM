@@ -6,11 +6,11 @@
 #include <iomanip>
 
 
-BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::_instance = 0;
+BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::_instance = nullptr;
 
 BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSAcceleratorComponentRegistry();}
   return _instance;
 }
@@ -23,7 +23,7 @@ BDSAcceleratorComponentRegistry::~BDSAcceleratorComponentRegistry()
   std::map<G4String,BDSAcceleratorComponent*>::iterator i = registry.begin();
   for (; i != registry.end(); ++i)
     {delete i->second;}
-  _instance = 0;
+  _instance = nullptr;
 }
 
 void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent* component)

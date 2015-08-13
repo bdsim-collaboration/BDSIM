@@ -76,7 +76,7 @@ G4VParticleChange* BDSSynchrotronRadiation::PostStepDoIt(const G4Track& trackDat
   G4ThreeVector  FieldValue;
   const G4Field*   pField = 0 ;
   
-  G4FieldManager* fieldMgr=0;
+  G4FieldManager* fieldMgr=nullptr;
   G4bool          fieldExertsForce = false;
   
   G4TransportationManager* transportMgr = G4TransportationManager::GetTransportationManager();

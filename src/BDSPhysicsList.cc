@@ -1201,7 +1201,7 @@ void BDSPhysicsList::ConstructHadronic()
   theModel->SetTransport(theCascade);
   theModel->SetHighEnergyGenerator(theStringModel);
 
-  G4ProcessManager * aProcMan = 0;
+  G4ProcessManager * aProcMan = nullptr;
   
   aProcMan = G4Gamma::Gamma()->GetProcessManager();
   theGammaReaction->SetMaxEnergy(3.5*CLHEP::GeV);
