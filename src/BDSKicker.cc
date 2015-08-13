@@ -118,7 +118,7 @@ void BDSKicker::BuildBeampipe()
 					    false,                                 // no boolean operation
 					    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
 
-  RegisterPhysicalVolume(itsPhysiComp);
+  RegisterPhysicalVolume(pipePV);
   
   // record extent of geometry
   if (isVerticalKicker){
