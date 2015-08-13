@@ -88,19 +88,8 @@ protected:
   G4MagIntegratorStepper* itsStepper;
   G4MagneticField*   itsMagField;
   G4Mag_UsualEqRhs*  itsEqRhs;
-
-  // beam pipe volumes
-  G4LogicalVolume*   itsBeampipeLogicalVolume;
-  G4LogicalVolume*   itsInnerBPLogicalVolume;
-  
-  G4UserLimits*      itsBeampipeUserLimits;
-  G4VPhysicalVolume* itsPhysiComp;
-  G4VPhysicalVolume* itsPhysiInner;
   G4FieldManager*    itsBPFieldMgr;
   G4FieldManager*    itsOuterFieldMgr;
-
-  G4double itsInnerIronRadius;
-
   G4ChordFinder*     itsChordFinder;
   G4MagneticField*   itsOuterMagField;
   
@@ -113,13 +102,22 @@ protected:
   /// for outer volume construction
   G4double        outerDiameter;
 
-  //the assembled outer logical volume
+  /// Separate variable for the container radius so it can be changed if
+  /// required by specific magnet geomtry. Used in BDSMagnet::BuildContainerLogicalVolume().
+  G4double        containerRadius;
+
+  /// Model information for the outer volume construction
+  BDSMagnetOuterInfo* magnetOuterInfo;
+
+  /// Displacement (if required - default 0,0,0) for specific magnet geometry. Allows
+  /// derived classes to specify different geometry without having to override placement
+  /// which is provided in base class.
+  G4ThreeVector magnetOuterOffset;
+  
+  /// The assembled outer magnet geometry
   BDSGeometryComponent* outer;
 
-  //for the outer volume construction
-  BDSMagnetOuterInfo itsMagnetOuterInfo;
-
-  // Magnetic strength parameters
+  /// Magnetic strength parameters
   G4double itsK1, itsK2, itsK3;
 };
 
