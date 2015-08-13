@@ -9,7 +9,7 @@ class G4ParticleDefinition;
 
 class BDSBOptrChangeCrossSection : public G4VBiasingOperator {
 public:
-  BDSBOptrChangeCrossSection(G4String particleToBias, G4String name);
+  BDSBOptrChangeCrossSection(G4String particleToBias, G4String name = "ChangeXS");
   virtual ~BDSBOptrChangeCrossSection();
   virtual void StartRun();
 
