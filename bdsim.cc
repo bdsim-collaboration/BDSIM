@@ -138,7 +138,7 @@ int main(int argc,char** argv)
   }
 
   // Set the geometry tolerance
-  static G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
+  G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Default geometry tolerances: surface " 
 	 << theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m << " m " 
@@ -258,17 +258,7 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
     G4cout<<"contructing geometry interface"<<G4endl;
 #endif
-    BDSGeometryInterface* BDSGI = new BDSGeometryInterface(execOptions->GetOutlineFilename());
-
-#ifdef BDSDEBUG 
-    G4cout << __FUNCTION__ << "> Writing survey file"<<G4endl;
-#endif
-    if(execOptions->GetOutlineFormat()=="survey") BDSGI->Survey();
-    else if(execOptions->GetOutlineFormat()=="optics") BDSGI->Optics();
-    else {
-      G4cout << __FUNCTION__ << "> Outlineformat " << execOptions->GetOutlineFormat() << "is not known! exiting." << G4endl;
-      exit(1);
-    }
+    BDSGeometryInterface BDSGI(execOptions->GetOutlineFilename());
   }
 
   if(!execOptions->GetBatch())   // Interactive mode
