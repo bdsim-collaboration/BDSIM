@@ -22,6 +22,8 @@ G4bool      BDSAcceleratorComponent::checkOverlaps = false;
 
 struct BDSBeamPipeInfo;
 
+G4double const BDSAcceleratorComponent::lengthSafetyLarge = 1*CLHEP::um;
+
 BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4double         arcLengthIn,
 						 G4double         angleIn,
