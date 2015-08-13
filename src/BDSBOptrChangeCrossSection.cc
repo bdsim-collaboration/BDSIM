@@ -6,7 +6,7 @@
 #include "G4ParticleTable.hh"
 #include "G4VProcess.hh"
 
-BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(G4String  particleName,
+BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(G4String particleName,
 						       G4String name)
   : G4VBiasingOperator(name), fSetup(true)
 {
