@@ -31,7 +31,7 @@ BDSRBend::BDSRBend(G4String            name,
   itsBGrad(bGrad)
 {
   angle       = angleIn;
-  outerRadius = magnetOuterInfo.outerDiameter*0.5; 
+  outerRadius = magnetOuterInfo->outerDiameter*0.5; 
   CommonConstructor(length);
 }
 

@@ -32,6 +32,7 @@ Past Authors
 * John Carter (*RHUL*)
 * Olivier Dadoun (*LAL*)
 * Stephen Malton (*RHUL*)
+* G. Marchiori (*INFN*)
 * Will Parker (*RHUL*)
 * Jaime Van Oers (*RHUL*)
 

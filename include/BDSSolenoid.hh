@@ -1,5 +1,5 @@
-#ifndef __BDSSOLENOID_H
-#define __BDSSOLENOID_H
+#ifndef BDSSOLENOID_H
+#define BDSSOLENOID_H
 
 #include "globals.hh"
 

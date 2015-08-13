@@ -1,9 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 12.12.2004
-   Copyright (c) 2004 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
 #include "BDSGlobalConstants.hh" 
 
 #include "G4FieldManager.hh"

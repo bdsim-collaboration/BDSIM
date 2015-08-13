@@ -1,10 +1,3 @@
-/* BDSIM
-
-19 May 2008 by Marchiori G.
-17 Apr 2006 by Ilya Agapov
-
-*/
-
 #ifndef BDSMULTIPOLE_H
 #define BDSMULTIPOLE_H
 

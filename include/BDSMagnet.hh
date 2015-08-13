@@ -54,17 +54,23 @@ private:
 
 protected:
 
+  /// Overridden method of BDSAcceleratorComponent to not only build container, but
+  /// first construct field objects. After using BDSAcceleratorComponent::Build() to
+  /// build the container, the beam pipe and outer geometry are built.
   virtual void Build();
   virtual void BuildContainerLogicalVolume();
   
-  /// method to create outer volume
+  /// Construct and place the outer magnet geometry beit poled geometry or cylinders. This
+  /// function switches on the member variable of BDSMagnetType type, so is contained in the base class.
   virtual void BuildOuterVolume();
   
-  /// general straight beampipe - can be overloaded by derived classes
+  /// Construct a general straight piece of beampipe. Virtual so it can be overloaded
+  /// by derived classes as required - such as RBend.
   virtual void BuildBeampipe();
-  /// common tasks after the beampipe solids have been defined.
-  /// derived classes that override BuildBeampipe implement this manually
-  /// in the contents of their BuildBeampipe
+  
+  /// Common tasks after the beampipe solids have been defined. Called by BuildBeampipe().
+  /// Derived classes that override BuildBeampipe implement this manually
+  /// in the contents of their BuildBeampipe function.
   void BeamPipeCommonTasks();
 
   void BuildOuterFieldManager(G4int nPoles, G4double poleField, 
@@ -75,7 +81,7 @@ protected:
   G4ThreeVector outputface;
   ///@}
   
-  // type
+  /// Magnet type
   BDSMagnetType itsType;
   
   // field related objects, set by BuildBPFieldAndStepper
@@ -98,13 +104,13 @@ protected:
   G4ChordFinder*     itsChordFinder;
   G4MagneticField*   itsOuterMagField;
   
-  //for beampipe construction
+  /// Model information for the beam pipe
   BDSBeamPipeInfo* beamPipeInfo;
   
-  //the constructed beampipe
+  /// The constructed beampipe
   BDSBeamPipe*    beampipe;
 
-  //for outer volume construction
+  /// for outer volume construction
   G4double        outerDiameter;
 
   //the assembled outer logical volume
