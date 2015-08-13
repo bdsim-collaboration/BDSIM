@@ -372,7 +372,7 @@ set(executables bdsimexec)
 set(libraries bdsim)
 set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
 bdsim_install_targets(${executables} ${libraries})
-file(GLOB headers include/*.hh parser/*.h)
+file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh ${CMAKE_CURRENT_SOURCE_DIR}/parser/*.h)
 bdsim_install_headers(${headers})
 
 # Visualisation directory
