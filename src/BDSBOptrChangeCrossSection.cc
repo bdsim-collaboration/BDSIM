@@ -1,3 +1,8 @@
+// this class needs headers from Geant4 10.1
+
+#include "G4Version.hh"
+
+#if G4VERSION_NUMBER > 1009
 #include "BDSBOptrChangeCrossSection.hh"
 
 #include "G4BiasingProcessInterface.hh"
@@ -134,3 +139,4 @@ void BDSBOptrChangeCrossSection::OperationApplied(const G4BiasingProcessInterfac
   if (operation == occurenceOperationApplied) operation->SetInteractionOccured();
 }
 
+#endif

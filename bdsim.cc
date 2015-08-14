@@ -16,7 +16,11 @@
 #include "G4TrackingManager.hh"
 #include "G4SteppingManager.hh"
 #include "G4GeometryTolerance.hh"
+
+#include "G4Version.hh"
+#if G4VERSION_NUMBER > 999
 #include "G4GenericBiasingPhysics.hh"
+#endif
 
 #include "BDSAcceleratorModel.hh"
 #include "BDSBunch.hh"
@@ -122,12 +126,14 @@ int main(int argc,char** argv)
   if(GMAD::options.modularPhysicsListsOn) {
     BDSModularPhysicsList *physList = new BDSModularPhysicsList;
     /* Biasing */
+#if G4VERSION_NUMBER > 999
     G4GenericBiasingPhysics *physBias = new G4GenericBiasingPhysics();
     physBias->Bias("e-");
     physBias->Bias("e+");
     physBias->Bias("gamma");
     physBias->Bias("proton");
     physList->RegisterPhysics(physBias);
+#endif
     runManager->SetUserInitialization(physList);
   }
   else { 
