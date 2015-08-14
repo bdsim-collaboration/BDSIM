@@ -20,6 +20,7 @@
  * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
  */
 
+namespace GMAD {
 class ElementList {
 
  public:
@@ -89,5 +90,7 @@ void ElementList::insert(ElementListIterator position, ElementListInputIterator 
 extern ElementList beamline_list;
 extern std::list<Element> material_list;
 extern std::list<Element> atom_list;
+
+}
 
 #endif

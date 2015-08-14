@@ -6,6 +6,7 @@
 #include "gmad.h"
 #include "elementlist.h"
 #include "parameters.h"
+//#include "parser.h"
 #include "sym_table.h"
 
 #include <cmath>
@@ -16,23 +17,24 @@
 #include <string>
 #include <cstring>
 
-extern struct Parameters params;
+using namespace GMAD;
+
+namespace GMAD {
+  extern struct Parameters params;
+  extern std::string yyfilename;
+  extern int add_func(std::string name, double (*func)(double));
+  extern int add_var(std::string name, double val,int is_reserved = 0);
+
+  // aux. parser lists - to clear
+  extern ElementList element_list;
+  extern std::list<struct Element> tmp_list;
+  extern std::map<std::string, struct symtab*> symtab_map;
+}
 
 extern int yyparse();
-
 extern FILE *yyin;
-extern std::string yyfilename;
 
-extern int add_func(std::string name, double (*func)(double));
-extern int add_var(std::string name, double val,int is_reserved = 0);
-
-// aux. parser lists - to clear
-extern ElementList element_list;
-extern std::list<struct Element> tmp_list;
-extern std::map<std::string, struct symtab*> symtab_map;
-
-extern void print(std::list<Element> l, int ident);
-
+// anonymous namespace
 namespace {
 void init()
 {
@@ -87,7 +89,7 @@ void init()
 }
 }
 
-int gmad_parser(FILE *f)
+int GMAD::gmad_parser(FILE *f)
 {
   init();
 
@@ -128,7 +130,7 @@ int gmad_parser(FILE *f)
   return 0;
 }
 
-int gmad_parser(std::string name)
+int GMAD::gmad_parser(std::string name)
 {
 #ifdef BDSDEBUG
   std::cout << "gmad_parser> opening file" << std::endl;

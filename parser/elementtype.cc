@@ -1,12 +1,13 @@
 #include "elementtype.h"
 #include <string>
 
+using namespace GMAD;
 
-std::ostream& operator << (std::ostream& out, ElementType type) {
+std::ostream& GMAD::operator << (std::ostream& out, ElementType type) {
   return out << typestr(type);
 }
 
-std::string typestr(ElementType type) {
+std::string GMAD::typestr(ElementType type) {
   switch(type){
   case ElementType::_MARKER : 
     return "marker";

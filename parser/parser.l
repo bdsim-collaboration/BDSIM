@@ -20,19 +20,24 @@
 #include <vector>
 #include <cstring>
 #include <iostream>
-#include "parser.tab.hh"
 #include "sym_table.h"
+#include "parser.tab.hh"
 #include "getEnv.h"
 #include <unistd.h>
-
-struct symtab * symlook(std::string s);
-extern std::map<std::string, struct symtab*> symtab_map;
-extern int yyerror(const char *s);
 
 #ifdef _WIN32
 #include <io.h>
 #define YY_NO_UNISTD_H 1
 #endif
+
+extern int yyerror(const char *s);
+
+using namespace GMAD;
+
+namespace GMAD {
+
+struct symtab * symlook(std::string s);
+extern std::map<std::string, struct symtab*> symtab_map;
 
 const int max_include_depth = 10;
 YY_BUFFER_STATE include_stack[max_include_depth];
@@ -42,6 +47,8 @@ int include_stack_ptr = 0;
 
 int line_num = 1;
 std::string yyfilename;
+
+}
 
 %}
 
@@ -237,7 +244,7 @@ printf("parser> include filename is: %s \n",includefilename.c_str());
 %%
 
 
-struct symtab * symlook(std::string s)
+struct symtab * GMAD::symlook(std::string s)
 {
   std::map<std::string,symtab*>::iterator it = symtab_map.find(s);
   if (it!=symtab_map.end()) {

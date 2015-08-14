@@ -7,7 +7,11 @@
 #include <iostream>
 #include <string>
 
-extern std::string current_line;
+using namespace GMAD;
+
+namespace GMAD {
+  extern std::string current_line;
+}
 
 namespace {
   // helper method

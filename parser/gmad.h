@@ -12,6 +12,7 @@
 #include <cstdio>
 #include <string>
 
+namespace GMAD {
 enum class ElementType;
 
 // parse the input file and construct beamline_list and options 
@@ -34,5 +35,6 @@ extern "C" {
   double       GetAper2(int);             // Aperture 2
   double       GetBeampipeThickness(int); // Beam Pipe Thickness
 
+}
 }
 #endif

@@ -5,6 +5,8 @@
 #include <list>
 #include <string>
 
+namespace GMAD {
+
 enum class ElementType;
 
 /**
@@ -82,5 +84,6 @@ struct Element {
   /// constructor
   Element();
 };
-
+}
+ 
 #endif

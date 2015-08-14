@@ -7,6 +7,7 @@
 #include <vector>
 
 // representation of arrays used in tokens
+namespace GMAD {
 struct Array {
   std::vector<std::string> symbols;
   std::vector<double> data;
@@ -51,5 +52,6 @@ struct Array {
 #endif
   }
 };
+}
 
 #endif

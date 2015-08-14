@@ -21,7 +21,7 @@ public:
 	       G4double Xp0,    G4double Yp0,   G4double Zp0,
 	       G4double sigmaT, G4double sigmaE);
   ~BDSBunchRing(); 
-  void SetOptions(struct Options& opt);
+  void SetOptions(GMAD::Options& opt);
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);

@@ -29,7 +29,7 @@ BDSBunchCircle::~BDSBunchCircle()
   delete FlatGen;
 }
 
-void BDSBunchCircle::SetOptions(struct Options &opt)
+void BDSBunchCircle::SetOptions(GMAD::Options &opt)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;

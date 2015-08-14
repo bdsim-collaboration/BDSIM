@@ -35,6 +35,9 @@ int yyerror(const char *);
 
 extern FILE* yyin;
 extern int yylex();
+
+namespace GMAD {
+
 extern const int ECHO_GRAMMAR;
 
 const int MAX_EXPAND_ITERATIONS = 50;
@@ -572,4 +575,5 @@ int add_var(std::string name, double value, int is_reserved)
   return 0;
 }
 
+} // namespace
 #endif
