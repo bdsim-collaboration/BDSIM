@@ -29,7 +29,7 @@ private:
   {return 0;}
   virtual void OperationApplied(const G4BiasingProcessInterface* callingProcess,
 				G4BiasingAppliedCase             biasingCase,
-				G4VBiasingOperation*             occurenceOperationApplied,
+ 				G4VBiasingOperation*             occurenceOperationApplied,
 				G4double                         weightForOccurenceInteraction,
 				G4VBiasingOperation*             finalStateOperationApplied, 
 				const G4VParticleChange*         particleChangeProduced);  

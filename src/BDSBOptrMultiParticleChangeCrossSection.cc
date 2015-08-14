@@ -12,17 +12,21 @@ BDSBOptrMultiParticleChangeCrossSection::BDSBOptrMultiParticleChangeCrossSection
   : G4VBiasingOperator("NotSureWhatToCallThis")
 {}
 
+BDSBOptrMultiParticleChangeCrossSection::~BDSBOptrMultiParticleChangeCrossSection() 
+{}
+
 void BDSBOptrMultiParticleChangeCrossSection::AddParticle(G4String particleName)
 {
   const G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle( particleName );
   
-  if(particle == 0) {
-    G4ExceptionDescription ed;
-    ed << "Particle `" << particleName << "' not found !" << G4endl;
-    G4Exception("BDSBOptrMultiParticleChangeCrossSection::AddParticle(...)",
-		"BDSIM",JustWarning,ed);
-    return;
-  }
+  if(particle == 0) 
+    {
+      G4ExceptionDescription ed;
+      ed << "Particle `" << particleName << "' not found !" << G4endl;
+      G4Exception("BDSBOptrMultiParticleChangeCrossSection::AddParticle(...)",
+		  "BDSIM",JustWarning,ed);
+      return;
+    }
   
   BDSBOptrChangeCrossSection* optr = new BDSBOptrChangeCrossSection(particleName);
   fParticlesToBias.push_back(particle);

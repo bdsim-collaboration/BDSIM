@@ -79,7 +79,7 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   // -- Choose a constant cross-section bias. But at this level, this factor can be made
   // -- direction dependent, like in the exponential transform MCNP case, or it
   // -- can be chosen differently, depending on the process, etc.
-  G4double XStransformation = 2.0 ;
+  G4double XStransformation = 2.0;
   
   // -- fetch the operation associated to this callingProcess:
   G4BOptnChangeCrossSection*   operation = fChangeCrossSectionOperations[callingProcess];

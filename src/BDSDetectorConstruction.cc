@@ -16,6 +16,7 @@
 #include "BDSTunnelBuilder.hh"
 #include "BDSTunnelSD.hh"
 #include "BDSTunnelType.hh"
+#include "BDSBOptrMultiParticleChangeCrossSection.hh"
 
 #include "parser/element.h"
 #include "parser/elementlist.h"
@@ -85,6 +86,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 
   // placement procedure
   ComponentPlacement();
+
+  // implement bias operations on all volumes 
+  BuildPhysicsBias();
 
   // free the parser list - an extern
   GMAD::beamline_list.erase();
@@ -531,6 +535,26 @@ void BDSDetectorConstruction::ComponentPlacement()
   
   // set precision back
   G4cout.precision(G4precision);
+}
+
+void BDSDetectorConstruction::BuildPhysicsBias() 
+{
+
+  // First for beam line elements and accelerator vacuum 
+  BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+
+  for(BDSBeamlineIterator i = beamline->begin();i != beamline->end(); ++i) {
+    
+  } 
+  
+  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
+  eg->AddParticle("e-");  
+
+  // Second for tunnel
+  
+
+
+  return;
 }
 
 void BDSDetectorConstruction::InitialiseGFlash()
