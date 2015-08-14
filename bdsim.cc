@@ -16,7 +16,11 @@
 #include "G4TrackingManager.hh"
 #include "G4SteppingManager.hh"
 #include "G4GeometryTolerance.hh"
+
+#include "G4Version.hh"
+#if G4VERSION_NUMBER > 999
 #include "G4GenericBiasingPhysics.hh"
+#endif
 
 #include "BDSAcceleratorModel.hh"
 #include "BDSBunch.hh"
@@ -47,7 +51,9 @@
 BDSOutputBase* bdsOutput=nullptr;         // output interface
 //=======================================================
 
-extern Options options;
+namespace GMAD {
+  extern GMAD::Options options;
+}
 
 int main(int argc,char** argv)
 {
@@ -74,7 +80,7 @@ int main(int argc,char** argv)
   //
   G4cout << __FUNCTION__ << "> Using input file : "<< execOptions->GetInputFilename()<<G4endl;
   
-  gmad_parser(execOptions->GetInputFilename());
+  GMAD::gmad_parser(execOptions->GetInputFilename());
 
   //
   // parse options and explicitly initialise materials and global constants
@@ -100,7 +106,7 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> Instantiating chosen bunch distribution." << G4endl;
 #endif
   BDSBunch* bdsBunch = new BDSBunch();
-  bdsBunch->SetOptions(options);
+  bdsBunch->SetOptions(GMAD::options);
   
   //
   // construct mandatory run manager (the G4 kernel) and
@@ -117,15 +123,17 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
-  if(options.modularPhysicsListsOn) {
+  if(GMAD::options.modularPhysicsListsOn) {
     BDSModularPhysicsList *physList = new BDSModularPhysicsList;
     /* Biasing */
+#if G4VERSION_NUMBER > 999
     G4GenericBiasingPhysics *physBias = new G4GenericBiasingPhysics();
     physBias->Bias("e-");
     physBias->Bias("e+");
     physBias->Bias("gamma");
     physBias->Bias("proton");
     physList->RegisterPhysics(physBias);
+#endif
     runManager->SetUserInitialization(physList);
   }
   else { 

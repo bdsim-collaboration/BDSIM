@@ -1,3 +1,6 @@
+#include "G4Version.hh"
+#if G4VERSION_NUMBER > 999
+
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 #include "G4BiasingProcessInterface.hh"
 
@@ -74,3 +77,5 @@ OperationApplied(const G4BiasingProcessInterface*               callingProcess,
 								 finalStateOperationApplied,
 								 particleChangeProduced);
 }
+
+#endif

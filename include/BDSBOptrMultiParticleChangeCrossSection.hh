@@ -1,6 +1,10 @@
 #ifndef BDSBOPTRMULTIPARTICLECHANGECROSSSECTION_H
 #define BDSBOPTRMULTIPARTICLECHANGECROSSSECTION_H
 
+// this class uses classes from Geant4 10.0
+#include "G4Version.hh"
+#if G4VERSION_NUMBER > 999
+
 #include "G4VBiasingOperator.hh"
 class BDSBOptrChangeCrossSection;
 class G4ParticleDefinition; 
@@ -37,5 +41,6 @@ private:
   G4int fnInteractions;  
 };
 
+#endif
 
 #endif

@@ -91,7 +91,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   BuildPhysicsBias();
 
   // free the parser list - an extern
-  beamline_list.erase();
+  GMAD::beamline_list.erase();
   
   if(verbose || debug) G4cout << __METHOD_NAME__ << "detector Construction done"<<G4endl; 
 
@@ -141,22 +141,20 @@ void BDSDetectorConstruction::InitialiseRegions()
 
 void BDSDetectorConstruction::BuildBeamline()
 {
-  std::list<struct Element>::iterator it;
-
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
   BDSBeamline*         beamline            = new BDSBeamline();
 
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
-  for(it = beamline_list.begin();it!=beamline_list.end();it++)
+  for(auto element : GMAD::beamline_list)
     {
 #ifdef BDSDEBUG
-      G4cout << "BDSDetectorConstruction creating component " << (*it).name << G4endl;
+      G4cout << "BDSDetectorConstruction creating component " << (element).name << G4endl;
 #endif
       
-      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(*it);
+      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(element);
       if(temp)
 	{
-	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(*it);
+	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(element);
 	  beamline->AddComponent(temp, tiltOffset);
 	}
     }
@@ -187,7 +185,7 @@ void BDSDetectorConstruction::BuildBeamline()
   delete theComponentFactory;
       
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< beamline_list.size() << G4endl;
+  G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< GMAD::beamline_list.size() << G4endl;
 #endif
   G4cout << __METHOD_NAME__ << "size of the constructed beamline: "<< beamline->size() << " with length " << beamline->GetTotalArcLength()/CLHEP::m << " m" << G4endl;
   

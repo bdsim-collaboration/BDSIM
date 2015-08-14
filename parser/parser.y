@@ -6,33 +6,39 @@
 
 %{
 
-  extern int line_num;
-  extern char* yyfilename;
-  extern char* yytext;
-  
-  const int PEDANTIC = 0; ///> strict checking, exits when element or parameter is not known
-  const int ECHO_GRAMMAR = 0; ///> print grammar rule expansion (for debugging)
-  const int INTERACTIVE = 0; ///> print output of commands (like in interactive mode)
-  /* for more debug with parser:
-     1) set yydebug to 1 in parser.tab.cc (needs to be reset as this file gets overwritten from time to time!) 
-     2) add %debug below
-     3) compile bison with "-t" flag. This is automatically done when CMAKE_BUILD_TYPE equals Debug
-  */
-
 #include "array.h"
 #include "parser.h"
+#include "sym_table.h"
 #include "elementtype.h"
   
-  int execute = 1;
-  int element_count = 1; // for samplers , ranges etc.
+  using namespace GMAD;
 
+  extern char* yytext;
+
+  namespace GMAD {
+    extern int line_num;
+    extern char* yyfilename;
+  
+    const int PEDANTIC = 0; ///> strict checking, exits when element or parameter is not known
+    const int ECHO_GRAMMAR = 0; ///> print grammar rule expansion (for debugging)
+    const int INTERACTIVE = 0; ///> print output of commands (like in interactive mode)
+    /* for more debug with parser:
+       1) set yydebug to 1 in parser.tab.cc (needs to be reset as this file gets overwritten from time to time!) 
+       2) add %debug below
+       3) compile bison with "-t" flag. This is automatically done when CMAKE_BUILD_TYPE equals Debug
+    */
+
+    int execute = 1;
+    int element_count = 1; // for samplers , ranges etc.
+  }
 %}
 
 /* define stack type */
+
 %union{
   double dval;
   int ival; // ElementType, but underlying type as not possible to have enum class in union, rely on static_casts
-  struct symtab *symp;
+  GMAD::symtab *symp;
   char *str;
   struct Array *array;
 }

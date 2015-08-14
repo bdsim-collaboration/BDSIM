@@ -53,6 +53,8 @@ bool debug1 = true;
 bool debug1 = false;
 #endif
 
+using namespace GMAD;
+
 BDSComponentFactory::BDSComponentFactory()
 {
   verbose = BDSExecOptions::Instance()->GetVerbose();
