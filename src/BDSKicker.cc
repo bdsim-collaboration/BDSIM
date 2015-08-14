@@ -14,14 +14,14 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 
-BDSKicker::BDSKicker(G4String           name,
-		     G4double           length,
-		     G4double           bField,
-		     G4double           bGrad,
-		     G4double           angle,
-		     G4bool             verticalKicker,
-		     BDSBeamPipeInfo*   beamPipeInfo,
-		     BDSMagnetOuterInfo magnetOuterInfo):
+BDSKicker::BDSKicker(G4String            name,
+		     G4double            length,
+		     G4double            bField,
+		     G4double            bGrad,
+		     G4double            angle,
+		     G4bool              verticalKicker,
+		     BDSBeamPipeInfo*    beamPipeInfo,
+		     BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::hkicker, name, length,
 	    beamPipeInfo, magnetOuterInfo),
   itsBField(bField),
@@ -110,15 +110,15 @@ void BDSKicker::BuildBeampipe()
   RegisterRotationMatrix(kickerRotation);
 
   // place beampipe
-  itsPhysiComp = new G4PVPlacement(kickerRotation,                        // rotation
-				   (G4ThreeVector)0,                      // at (0,0,0)
-				   beampipe->GetContainerLogicalVolume(), // its logical volume
-				   name + "_beampipe_pv",	          // its name
-				   containerLogicalVolume,                // its mother  volume
-				   false,                                 // no boolean operation
-				   0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
+  G4PVPlacement* pipePV = new G4PVPlacement(kickerRotation,                        // rotation
+					    (G4ThreeVector)0,                      // at (0,0,0)
+					    beampipe->GetContainerLogicalVolume(), // its logical volume
+					    name + "_beampipe_pv",	          // its name
+					    containerLogicalVolume,                // its mother  volume
+					    false,                                 // no boolean operation
+					    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
 
-  RegisterPhysicalVolume(itsPhysiComp);
+  RegisterPhysicalVolume(pipePV);
   
   // record extent of geometry
   if (isVerticalKicker){

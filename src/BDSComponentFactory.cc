@@ -393,8 +393,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   //create Line to put them in
   BDSLine* sbendline = new BDSLine(_element.name);
   //create sbends and put them in the line
-  BDSBeamPipeInfo*   bpInfo = PrepareBeamPipeInfo(_element);
-  BDSMagnetOuterInfo moInfo = PrepareMagnetOuterInfo(_element);
+  BDSBeamPipeInfo*    bpInfo = PrepareBeamPipeInfo(_element);
+  BDSMagnetOuterInfo* moInfo = PrepareMagnetOuterInfo(_element);
 
   // prepare one sbend segment
   BDSSectorBend* oneBend = new BDSSectorBend(thename,
@@ -974,14 +974,14 @@ G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element& /*element*/)
   return BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
 }
 
-BDSMagnetOuterInfo BDSComponentFactory::PrepareMagnetOuterInfo(Element& element)
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element& element)
 {
-  BDSMagnetOuterInfo info;
+  BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
   // magnet geometry type
   if (element.magnetGeometryType == "")
-    info.geometryType = BDSGlobalConstants::Instance()->GetMagnetGeometryType();
+    info->geometryType = BDSGlobalConstants::Instance()->GetMagnetGeometryType();
   else
-    info.geometryType = BDS::DetermineMagnetGeometryType(element.magnetGeometryType);
+    info->geometryType = BDS::DetermineMagnetGeometryType(element.magnetGeometryType);
 
   // outer diameter
   G4double outerDiameter = element.outerDiameter*CLHEP::m;
@@ -989,7 +989,7 @@ BDSMagnetOuterInfo BDSComponentFactory::PrepareMagnetOuterInfo(Element& element)
     {//outerDiameter not set - use global option as default
       outerDiameter = BDSGlobalConstants::Instance()->GetOuterDiameter();
     }
-  info.outerDiameter = outerDiameter;
+  info->outerDiameter = outerDiameter;
 
   // outer material
   G4Material* outerMaterial;
@@ -1000,7 +1000,7 @@ BDSMagnetOuterInfo BDSComponentFactory::PrepareMagnetOuterInfo(Element& element)
     }
   else
     {outerMaterial = BDSMaterials::Instance()->GetMaterial(element.outerMaterial);}
-  info.outerMaterial = outerMaterial;
+  info->outerMaterial = outerMaterial;
   
   return info;
 }

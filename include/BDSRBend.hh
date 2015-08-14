@@ -11,25 +11,25 @@ struct BDSMagnetOuterInfo;
 class BDSRBend: public BDSMagnet
 {
 public:
-  BDSRBend(G4String           name,
-	   G4double           length,
-	   G4double           bField,
-	   G4double           bGrad,
-	   G4double           angle,
-	   BDSBeamPipeInfo*   beamPipeInfo,
-	   BDSMagnetOuterInfo magnetOuterInfo);
+  BDSRBend(G4String            name,
+	   G4double            length,
+	   G4double            bField,
+	   G4double            bGrad,
+	   G4double            angle,
+	   BDSBeamPipeInfo*    beamPipeInfo,
+	   BDSMagnetOuterInfo* magnetOuterInfo);
   ~BDSRBend(){;};
 
 private:
-  G4double itsBField;
-  G4double itsBGrad;
-  G4double itsMagFieldLength;
+  G4double bField;
+  G4double bGrad;
+  G4double magFieldLength;
 
   /// chord length of straight section (along main chord) [m]
-  G4double itsStraightSectionChord;
+  G4double straightSectionChord;
 
   /// length of little straight sections on either side of dipole [m]
-  G4double itsStraightSectionLength;
+  G4double straightSectionLength;
 
   /// x shift for magnet and beampipe from chord
   G4double magnetXShift;

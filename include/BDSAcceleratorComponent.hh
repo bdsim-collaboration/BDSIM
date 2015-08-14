@@ -143,7 +143,11 @@ protected:
   /// Read out geometry volume. Protected so derived classes can fiddle if they require.
   /// This is a possibility as derived classes can override Initialise which calls the
   /// BuildReadOutVolume construction.
-  G4LogicalVolume* readOutLV; 
+  G4LogicalVolume* readOutLV;
+
+  /// A larger length safety that can be used where tracking accuracty isn't required
+  /// or more tolerante geometry is requried (1um).
+  static G4double const lengthSafetyLarge;
   
 private:
   /// Private default constructor to force use of provided constructors, which

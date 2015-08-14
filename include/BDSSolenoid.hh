@@ -1,5 +1,5 @@
-#ifndef __BDSSOLENOID_H
-#define __BDSSOLENOID_H
+#ifndef BDSSOLENOID_H
+#define BDSSOLENOID_H
 
 #include "globals.hh"
 
@@ -13,11 +13,11 @@ struct BDSMagnetOuterInfo;
 class BDSSolenoid: public BDSMagnet
 {
 public:
-  BDSSolenoid(G4String           name,
-	      G4double           length,
-	      G4double           bField,
-	      BDSBeamPipeInfo*   beamPipeInfo,
-	      BDSMagnetOuterInfo magnetOuterInfo);
+  BDSSolenoid(G4String            name,
+	      G4double            length,
+	      G4double            bField,
+	      BDSBeamPipeInfo*    beamPipeInfo,
+	      BDSMagnetOuterInfo* magnetOuterInfo);
   ~BDSSolenoid(){;};
 
 private:
