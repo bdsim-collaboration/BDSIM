@@ -35,6 +35,7 @@
 #include "G4Region.hh"
 #include "G4TransportationManager.hh"
 #include "G4UserLimits.hh"
+#include "G4Version.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 #include "globals.hh"
@@ -539,6 +540,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 
 void BDSDetectorConstruction::BuildPhysicsBias() 
 {
+#if G4VERSION_NUMBER > 1009
 
   // First for beam line elements and accelerator vacuum 
   BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
@@ -566,7 +568,7 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   // Second for tunnel
   
 
-
+#endif
   return;
 }
 

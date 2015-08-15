@@ -145,8 +145,8 @@ protected:
   /// BuildReadOutVolume construction.
   G4LogicalVolume* readOutLV;
 
-  /// A larger length safety that can be used where tracking accuracty isn't required
-  /// or more tolerante geometry is requried (1um).
+  /// A larger length safety that can be used where tracking accuracy isn't required
+  /// or more tolerant geometry is required (1um).
   static G4double const lengthSafetyLarge;
   
 private:
