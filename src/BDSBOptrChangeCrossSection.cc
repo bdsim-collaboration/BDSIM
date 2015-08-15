@@ -4,6 +4,7 @@
 
 #if G4VERSION_NUMBER > 1009
 #include "BDSBOptrChangeCrossSection.hh"
+#include "BDSDebug.hh"
 
 #include "G4BiasingProcessInterface.hh"
 #include "G4BiasingProcessSharedData.hh"
@@ -70,12 +71,24 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   // -- Check if the analog cross-section well defined : for example, the conversion
   // -- process for a gamma below e+e- creation threshold has an DBL_MAX interaction
   // -- length. Nothing is done in this case (ie, let analog process to deal with the case)
+
+
   G4double analogInteractionLength =  callingProcess->GetWrappedProcess()->GetCurrentInteractionLength();
   if (analogInteractionLength > DBL_MAX/10.) return 0;
 
-  // -- Analog cross-section is well-defined:
-  G4double analogXS = 1./analogInteractionLength;
+  if(analogInteractionLength < 0) {
+    return 0;
+  }
 
+  G4double analogXS = 0;
+  if(analogInteractionLength > 0) {
+    analogXS = 1./analogInteractionLength;
+  }
+
+  //  G4cout << __METHOD_NAME__ <<   callingProcess->GetWrappedProcess()->GetProcessName() << " analogInteractionLength " 
+  //	 << analogInteractionLength << " analogXS " << analogXS << G4endl;
+
+  // -- Analog cross-section is well-defined:
   // -- Choose a constant cross-section bias. But at this level, this factor can be made
   // -- direction dependent, like in the exponential transform MCNP case, or it
   // -- can be chosen differently, depending on the process, etc.
@@ -97,11 +110,19 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   // -- only on the first time the operation is proposed, or if the interaction
   // -- occured. If the interaction did not occur for the process in the previous,
   // -- we update the number of interaction length instead of resampling.
+
+  // STB Just return the operation before the multiple sampling check
+  operation->SetBiasedCrossSection( XStransformation * analogXS );
+  operation->Sample();
+  return operation;
+
   if(previousOperation == 0) {
+    //    G4cout << __METHOD_NAME__ << " previousOperation==0 " << XStransformation * analogXS << G4endl;
     operation->SetBiasedCrossSection( XStransformation * analogXS );
     operation->Sample();
   }
   else {
+    //    G4cout << __METHOD_NAME__ << " previousOperation!=0 " << XStransformation * analogXS << G4endl;
     if(previousOperation != operation) {
       // -- should not happen !
       G4ExceptionDescription ed;

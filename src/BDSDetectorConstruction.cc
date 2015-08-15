@@ -544,11 +544,24 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
 
   for(BDSBeamlineIterator i = beamline->begin();i != beamline->end(); ++i) {
+    //    G4LogicalVolume *lv = (*i)->GetContainerLogicalVolume();
+    //    BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
+    //      eg->AddParticle("e-");  
+    //      eg->AttachTo(*i);
+
+    BDSAcceleratorComponent *ac = (*i)->GetAcceleratorComponent();    
+    auto lvs = ac->GetAllLogicalVolumes(); 
     
+    for(auto lvsi = lvs.begin(); lvsi != lvs.end(); ++lvsi) {
+
+      BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
+      eg->AddParticle("e-");  
+      eg->AttachTo(*lvsi);
+    }
+
+
   } 
   
-  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
-  eg->AddParticle("e-");  
 
   // Second for tunnel
   
