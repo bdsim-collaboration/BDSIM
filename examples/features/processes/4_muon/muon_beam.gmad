@@ -1,4 +1,4 @@
-beam,  particle="e-",
+beam,  particle="e+",
        distrType="reference",
        energy=1500.0*GeV,
        X0 = 0.0,
