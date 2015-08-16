@@ -557,7 +557,8 @@ void BDSDetectorConstruction::BuildPhysicsBias()
     for(auto lvsi = lvs.begin(); lvsi != lvs.end(); ++lvsi) {
 
       BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
-      eg->AddParticle("e-");  
+      eg->AddParticle("e-"); 
+      eg->AddParticle("e+"); 
       eg->AttachTo(*lvsi);
     }
 
