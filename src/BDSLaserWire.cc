@@ -33,5 +33,5 @@ void BDSLaserWire::BuildContainerLogicalVolume()
 
 BDSLaserWire::~BDSLaserWire()
 {
-  delete itsLaserCompton; itsLaserCompton = nullptr;
+  delete itsLaserCompton;
 }

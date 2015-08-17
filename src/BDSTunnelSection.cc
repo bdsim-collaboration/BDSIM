@@ -28,7 +28,7 @@ BDSTunnelSection::BDSTunnelSection(G4String              name,
 
 BDSTunnelSection::~BDSTunnelSection()
 {
-  delete innerIntersectionSolid; innerIntersectionSolid = nullptr;
+  delete innerIntersectionSolid;
 }
 
 void BDSTunnelSection::Initialise()

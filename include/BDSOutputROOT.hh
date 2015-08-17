@@ -59,12 +59,12 @@ public:
 
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn) override;
-  virtual void Commit() override;  ///> close the file
-  virtual void Write()  override;  ///> close and open new file
+  virtual void Commit() override;  ///< close the file
+  virtual void Write()  override;  ///< close and open new file
 
 private:
 
-  void Init(); /// output initialisation
+  void Init(); ///< output initialisation
 
   void BuildSamplerTree(G4String name);
   TFile* theRootOutputFile;
