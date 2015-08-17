@@ -171,7 +171,6 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   return operation;  
 }
 
-
 void BDSBOptrChangeCrossSection::OperationApplied(const G4BiasingProcessInterface*           callingProcess, 
 						  G4BiasingAppliedCase,
 						  G4VBiasingOperation*             occurenceOperationApplied,

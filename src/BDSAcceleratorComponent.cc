@@ -172,3 +172,4 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
 
   return readOutLV;
 }
+

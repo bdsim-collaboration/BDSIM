@@ -555,7 +555,6 @@ void BDSDetectorConstruction::BuildPhysicsBias()
     auto lvs = ac->GetAllLogicalVolumes(); 
     
     for(auto lvsi = lvs.begin(); lvsi != lvs.end(); ++lvsi) {
-
       BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
       eg->AddParticle("e-");
       eg->AddParticle("e+"); 
@@ -568,7 +567,6 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 
   // Second for tunnel
   
-
 #endif
   return;
 }
