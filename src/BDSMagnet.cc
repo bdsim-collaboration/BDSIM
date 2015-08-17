@@ -141,12 +141,13 @@ void BDSMagnet::BuildOuter()
   BDSMagnetGeometryType geometryType = magnetOuterInfo->geometryType;
   G4double outerDiameter             = magnetOuterInfo->outerDiameter - lengthSafetyLarge;
   G4double outerLength               = chordLength - 2*lengthSafety;
-
+  
   // chordLength is provided to the outer factory to make a new container for the whole
   // magnet object based on the shape of the magnet outer geometry.
   
   //build the right thing depending on the magnet type
   //saves basically the same funciton in each derived class
+  // RBEND does its own thing by override this method so isn't here
   BDSMagnetOuterFactory* theFactory  = BDSMagnetOuterFactory::Instance();
   switch(magnetType.underlying())
     {
@@ -173,10 +174,6 @@ void BDSMagnet::BuildOuter()
     case BDSMagnetType::quadrupole:
       outer = theFactory->CreateQuadrupole(geometryType,name,outerLength,beampipe,
 					   outerDiameter,chordLength,outerMaterial);
-      break;
-    case BDSMagnetType::rectangularbend:
-      outer = theFactory->CreateRectangularBend(geometryType,name,outerLength,beampipe,
-						outerDiameter,chordLength,angle,outerMaterial);
       break;
     case BDSMagnetType::rfcavity:
       outer = theFactory->CreateRfCavity(geometryType,name,outerLength,beampipe,
@@ -207,6 +204,7 @@ void BDSMagnet::BuildOuter()
   if(outer)
     {
       containerSolid = outer->GetMagnetContainer()->GetContainerSolid()->Clone();
+      outer->ClearMagnetContainer();
       InheritExtents(outer); //update extents
     }
 }
@@ -234,6 +232,9 @@ void BDSMagnet::BuildOuterFieldManager(G4int    nPoles,
 
 void BDSMagnet::AttachFieldToOuter()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   outer->GetContainerLogicalVolume()->SetFieldManager(itsOuterFieldMgr,false);
 }
 
