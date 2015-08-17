@@ -67,8 +67,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 
 BDSAcceleratorComponent::~BDSAcceleratorComponent()
 {
-  delete beamPipeInfo;
-  delete readOutLV;
+  delete beamPipeInfo; beamPipeInfo = nullptr;
+  delete readOutLV;    readOutLV    = nullptr;
 }
 
 void BDSAcceleratorComponent::Initialise()

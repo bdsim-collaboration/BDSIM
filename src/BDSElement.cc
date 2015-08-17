@@ -491,7 +491,7 @@ void BDSElement::AlignComponent(G4ThreeVector& TargetPos,
 
 BDSElement::~BDSElement()
 {
-  delete fChordFinder;
-  delete itsFStepper;
-  delete itsFEquation;
+  delete fChordFinder; fChordFinder = nullptr;
+  delete itsFStepper;  itsFStepper  = nullptr;
+  delete itsFEquation; itsFEquation = nullptr;
 }
