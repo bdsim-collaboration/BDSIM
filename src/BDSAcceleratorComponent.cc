@@ -91,12 +91,14 @@ void BDSAcceleratorComponent::Build()
 
   // set user limits for container
 #ifndef NOUSERLIMITS
-  if(containerLogicalVolume) {
-    G4double maxStepFactor=0.5;
-    G4UserLimits* containerUserLimits =  new G4UserLimits();
-    containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
-    containerLogicalVolume->SetUserLimits(containerUserLimits);
-  }
+  if(containerLogicalVolume)
+    {
+      G4double maxStepFactor=0.5;
+      G4UserLimits* containerUserLimits =  new G4UserLimits();
+      containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
+      containerLogicalVolume->SetUserLimits(containerUserLimits);
+      RegisterUserLimits(containerUserLimits);
+    }
 #endif
 
   // visual attributes

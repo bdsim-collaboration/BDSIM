@@ -67,12 +67,11 @@ void BDSMagnet::Build()
 #endif  
   BuildBeampipe();            // build beam pipe without placing it
   BuildBPFieldAndStepper();   // build magnetic field
-  InheritObjects(beampipe);   // inherit all beam pipe stuff
   AttachFieldToBeamPipe();    // attach the magnetic field to the vacuum
   BuildOuter();               // build outer and update container solid
+  /*
   if (outer)
     {
-      InheritObjects(outer);  // inherit all outer stuff
       // it would make sense to build the field here, but this is actually
       // called in each derived class.
       // each class works out the flux at the poles ignore the size of this magnet
@@ -82,7 +81,7 @@ void BDSMagnet::Build()
       //BuildOuterFieldManager(..) // unused currently - uncomment when reimplemented!!!
       //AttachFieldToOuter();
     }  
-  
+  */
   // calls BuildContainerLogicalVolume() (implemented in this class) which
   // builds the container if needed
   BDSAcceleratorComponent::Build(); 
@@ -318,10 +317,12 @@ void BDSMagnet::PlaceComponents()
 BDSMagnet::~BDSMagnet()
 {
   // safe to delete even if haven't been built as initialised to nullptr
-  delete magnetOuterInfo; magnetOuterInfo = nullptr;
-  delete itsBPFieldMgr;   itsBPFieldMgr   = nullptr;
-  delete itsChordFinder;  itsChordFinder  = nullptr;
-  delete itsMagField;     itsMagField     = nullptr;
-  delete itsEqRhs;        itsEqRhs        = nullptr;
-  delete itsStepper;      itsStepper      = nullptr;
+  delete outer;
+  delete beampipe;
+  delete magnetOuterInfo;
+  delete itsBPFieldMgr;
+  delete itsChordFinder;
+  delete itsMagField;
+  delete itsEqRhs;
+  delete itsStepper;
 }

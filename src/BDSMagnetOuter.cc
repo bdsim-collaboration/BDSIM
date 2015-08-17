@@ -36,5 +36,4 @@ void BDSMagnetOuter::ClearMagnetContainer()
 BDSMagnetOuter::~BDSMagnetOuter()
 {
   ClearMagnetContainer();
-  BDSGeometryComponent::~BDSGeometryComponent();
 }
