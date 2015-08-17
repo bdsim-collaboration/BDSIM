@@ -12,6 +12,7 @@ public:
   BDSBOptrChangeCrossSection(G4String particleToBias, G4String name = "ChangeXS");
   virtual ~BDSBOptrChangeCrossSection();
   virtual void StartRun();
+  void SetBias(G4String processName, G4double dBias);
 
 private: 
   virtual G4VBiasingOperation* ProposeOccurenceBiasingOperation(const G4Track* track,
@@ -30,7 +31,9 @@ private:
                                  G4VBiasingOperation*             finalStateOperationApplied, 
                                  const G4VParticleChange*         particleChangeProduced );
   std::map<const G4BiasingProcessInterface*, G4BOptnChangeCrossSection*> fChangeCrossSectionOperations;
+  std::map<const G4BiasingProcessInterface*, G4double>                   fXSScale;
   G4bool                                                                 fSetup;
+  G4String                                                               particleName;
   const G4ParticleDefinition*                                            fParticleToBias; 
   
 };

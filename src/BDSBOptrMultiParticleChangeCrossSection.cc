@@ -17,7 +17,7 @@ BDSBOptrMultiParticleChangeCrossSection::~BDSBOptrMultiParticleChangeCrossSectio
 
 void BDSBOptrMultiParticleChangeCrossSection::AddParticle(G4String particleName)
 {
-  const G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle( particleName );
+  const G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
   
   if(particle == 0) 
     {
@@ -32,6 +32,20 @@ void BDSBOptrMultiParticleChangeCrossSection::AddParticle(G4String particleName)
   fParticlesToBias.push_back(particle);
   fBOptrForParticle[particle] = optr;
 }
+
+void BDSBOptrMultiParticleChangeCrossSection::SetBias(G4String particleName, G4String process, G4double dBias) 
+{
+  const G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
+  if(particle == 0) {
+    G4ExceptionDescription ed;
+    ed << "Particle `" << particleName << "' not found !" << G4endl;
+    G4Exception("BDSBOptrMultiParticleChangeCrossSection::SetBias(...)",
+		"BDSIM",JustWarning,ed);
+    return;
+  }
+  fBOptrForParticle[particle]->SetBias(process,dBias);
+}
+
 
 G4VBiasingOperation* BDSBOptrMultiParticleChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track* track,
 											       const G4BiasingProcessInterface* callingProcess) {

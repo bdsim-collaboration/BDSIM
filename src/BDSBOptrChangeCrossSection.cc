@@ -13,9 +13,9 @@
 #include "G4ParticleTable.hh"
 #include "G4VProcess.hh"
 
-BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(G4String particleName,
+BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(G4String particleNameIn,
 						       G4String name)
-  : G4VBiasingOperator(name), fSetup(true)
+  : G4VBiasingOperator(name), fSetup(true), particleName(particleNameIn)
 {
   fParticleToBias = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
   
@@ -52,10 +52,22 @@ void BDSBOptrChangeCrossSection::StartRun()
 	const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
 	G4String operationName = "XSchange-"+wrapperProcess->GetWrappedProcess()->GetProcessName();
 	fChangeCrossSectionOperations[wrapperProcess] = new G4BOptnChangeCrossSection(operationName);
+	fXSScale[wrapperProcess] = 1.0;
       }
     }
     fSetup = false;
   }
+}
+
+void BDSBOptrChangeCrossSection::SetBias(G4String processName, G4double bias) {
+    const G4ProcessManager*           processManager = fParticleToBias->GetProcessManager();
+    const G4BiasingProcessSharedData* sharedData     = G4BiasingProcessInterface::GetSharedData(processManager);
+    for (size_t i = 0 ; i < (sharedData->GetPhysicsBiasingProcessInterfaces()).size(); i++) {
+      const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
+      if(processName == wrapperProcess->GetWrappedProcess()->GetProcessName()) { 
+	fXSScale[wrapperProcess] = bias;
+      }
+    }
 }
 
 G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track*                   track, 
@@ -93,12 +105,22 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   // -- direction dependent, like in the exponential transform MCNP case, or it
   // -- can be chosen differently, depending on the process, etc.
   G4double XStransformation = 1.0;
+
   
   // -- fetch the operation associated to this callingProcess:
   G4BOptnChangeCrossSection*   operation = fChangeCrossSectionOperations[callingProcess];
   // -- get the operation that was proposed to the process in the previous step:
   G4VBiasingOperation* previousOperation = callingProcess->GetPreviousOccurenceBiasingOperation();
+
+  //  if(callingProcess->GetWrappedProcess()->GetProcessName() == "AnnihiToMuPair" || 
+  //     callingProcess->GetWrappedProcess()->GetProcessName() == "ee2hadr" || 
+  //     callingProcess->GetWrappedProcess()->GetProcessName() == "annihil" || 
+  //     callingProcess->GetWrappedProcess()->GetProcessName() == "GammaToMuPair" ) {
+  //    XStransformation = 1e5;
+  //  }
   
+  XStransformation = fXSScale[callingProcess];
+    
   // -- now setup the operation to be returned to the process: this
   // -- consists in setting the biased cross-section, and in asking
   // -- the operation to sample its exponential interaction law.
