@@ -16,7 +16,7 @@ BDSDrift::BDSDrift (G4String         name,
 
 BDSDrift::~BDSDrift()
 {
-  delete pipe; pipe = nullptr;
+  delete pipe;
 }
 
 

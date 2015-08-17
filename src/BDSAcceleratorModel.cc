@@ -30,12 +30,12 @@ BDSAcceleratorModel::BDSAcceleratorModel():
 
 BDSAcceleratorModel::~BDSAcceleratorModel()
 {
-  delete worldPV;          worldPV          = nullptr;
-  delete readOutWorldPV;   readOutWorldPV   = nullptr;
-  delete readOutWorldLV;   readOutWorldLV   = nullptr;
-  delete flatBeamline;     flatBeamline     = nullptr;
-  delete supportsBeamline; supportsBeamline = nullptr;
-  delete tunnelBeamline;   tunnelBeamline   = nullptr;
+  delete worldPV;
+  delete readOutWorldPV;
+  delete readOutWorldLV;
+  delete flatBeamline;
+  delete supportsBeamline;
+  delete tunnelBeamline;
   delete BDSAcceleratorComponentRegistry::Instance();
   delete BDSPhysicalVolumeInfoRegistry::Instance();
 
