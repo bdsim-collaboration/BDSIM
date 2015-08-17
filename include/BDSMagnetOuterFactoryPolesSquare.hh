@@ -6,10 +6,11 @@
 #include "BDSBeamPipe.hh"
 
 #include "globals.hh"           // geant4 globals / types
-//#include "G4Colour.hh"
-//#include "G4Material.hh"
 #include "G4VSolid.hh"
 #include <vector>
+
+class G4Colour;
+class G4Material;
 
 /**
  * @brief Factory class for outer volume of magnets. Produces magnets
@@ -41,14 +42,15 @@ private:
 			       G4int        order);
 
   /// Create yoke that connects poles and container to put them in
-  virtual void CreateYokeAndContainerSolid(G4String      name,
-					   G4double      length,
-					   G4int         order);
+  virtual void CreateYokeAndContainerSolid(G4String name,
+					   G4double length,
+					   G4int    order,
+					   G4double magnetContainerRadius);
 
   /// Build the logical volumes from the solids assigning materials and colours and cuts
   virtual void CreateLogicalVolumes(G4String    name,
 				    G4double    length,
-				    G4int       order,
+				    G4Colour*   colour,
 				    G4Material* outerMaterial);
 
   /// Place the poles and yoke in the container volume

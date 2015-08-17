@@ -1,8 +1,7 @@
 #include "BDSMagnetOuterFactoryPolesSquare.hh"
 
 #include "BDSBeamPipe.hh"
-#include "BDSExecOptions.hh"
-#include "BDSGeometryComponent.hh"
+#include "BDSMagnetOuter.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSMagnetColours.hh"
@@ -50,12 +49,16 @@ void BDSMagnetOuterFactoryPolesSquare::CleanUp()
   poleRotations.clear();
   poleSolids.clear();
   poleLVs.clear();
+  order = 0;
 }
 
 void BDSMagnetOuterFactoryPolesSquare::CreatePoleSolid(G4String     name,
 						       G4double     length,
-						       G4int        order)
+						       G4int        orderIn)
 {
+  // record order to this class - this is the first method that uses it
+  order = orderIn;
+  
   G4int nPoles = 2*order;
   
   // full circle is divided into segments for each pole
@@ -133,9 +136,10 @@ void BDSMagnetOuterFactoryPolesSquare::CreatePoleSolid(G4String     name,
     }
 }
 
-void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String      name,
-								   G4double      length,
-								   G4int         /*order*/)
+void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String name,
+								   G4double length,
+								   G4int    /*order*/,
+								   G4double magnetContainerRadius)
 {
   // square yoke - have to do subtraction between two solid boxes
   G4VSolid* yokeOuter = new G4Box(name + "_yoke_outer_solid", // name
@@ -180,13 +184,10 @@ void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String     
 
 void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
 							    G4double    length,
-							    G4int       order,
+							    G4Colour*   colour,
 							    G4Material* outerMaterial)
 {
-  // VISUAL ATTRIBUTES
-  // set visual attributes
-  G4Colour* magnetColour = BDSMagnetColours::Instance()->GetMagnetColour(order);
-  G4VisAttributes* outerVisAttr = new G4VisAttributes(*magnetColour);
+  G4VisAttributes* outerVisAttr = new G4VisAttributes(*colour);
   outerVisAttr->SetVisibility(true);
   outerVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   allVisAttributes.push_back(outerVisAttr);
@@ -212,7 +213,7 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
   containerLV = new G4LogicalVolume(containerSolid,
 				    emptyMaterial,
 				    name + "_container_lv");
-  if (BDSExecOptions::Instance()->GetVisDebug())
+  if (visDebug)
     {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
   else
     {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}

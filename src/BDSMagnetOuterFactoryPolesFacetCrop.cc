@@ -67,9 +67,10 @@ void BDSMagnetOuterFactoryPolesFacetCrop::CreatePoleSolid(G4String     name,
 				     
 }
 
-void BDSMagnetOuterFactoryPolesFacetCrop::CreateYokeAndContainerSolid(G4String      name,
-								      G4double      length,
-								      G4int         order)
+void BDSMagnetOuterFactoryPolesFacetCrop::CreateYokeAndContainerSolid(G4String name,
+								      G4double length,
+								      G4int    order,
+								      G4double magnetContainerRadius)
 {
   G4double segmentAngle = CLHEP::twopi / (2*order);
 

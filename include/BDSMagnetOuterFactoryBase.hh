@@ -201,6 +201,15 @@ protected:
   std::vector<G4VSolid*>          allSolids;
   std::vector<G4VisAttributes*>   allVisAttributes;
   std::vector<G4UserLimits*>      allUserLimits;
+
+  std::pair<G4double, G4double>   magContExtentX;
+  std::pair<G4double, G4double>   magContExtentY;
+  std::pair<G4double, G4double>   magContExtentZ;
+  BDSGeometryComponent*           magnetContainer;
+
+  /// A larger length safety that can be used where tracking accuracty isn't required
+  /// or more tolerante geometry is requried (1um).
+  static G4double const lengthSafetyLarge;
 };
 
 #endif
