@@ -71,7 +71,14 @@ BDSGeometryComponent::~BDSGeometryComponent()
   for (; itUL != allUserLimits.end(); ++itUL)
     {delete (*itUL);}
   
-  delete containerSolid;
+  delete containerSolid; containerSolid = nullptr;
+}
+
+void BDSGeometryComponent::InheritExtents(BDSGeometryComponent* anotherComponent)
+{
+  SetExtentX(anotherComponent->GetExtentX());
+  SetExtentY(anotherComponent->GetExtentY());
+  SetExtentZ(anotherComponent->GetExtentZ());
 }
 
 void BDSGeometryComponent::RegisterSolid(G4VSolid* solid, G4bool internalCheck)
