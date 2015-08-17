@@ -269,8 +269,8 @@ private:
   G4double itsMaximumEpsilonStep;
   G4double itsMaxTime;
   G4double itsDeltaOneStep;
-  G4bool   stopTracks; ///> kill tracks after interactions
-  G4bool   stopSecondaries; ///> kill secondaries
+  G4bool   stopTracks; ///< kill tracks after interactions
+  G4bool   stopSecondaries; ///< kill secondaries
   
   // magnet geometry
   BDSMagnetGeometryType itsMagnetGeometryType;

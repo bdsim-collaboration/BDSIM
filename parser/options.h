@@ -32,7 +32,7 @@ struct Options
   std::string haloPSWeightFunction;
 
   int numberToGenerate;
-  int nlinesIgnore; ///> ignore first lines in the input bunch file
+  int nlinesIgnore; ///< ignore first lines in the input bunch file
 
   double elossHistoBinWidth;
   double elossHistoTransBinWidth;
@@ -168,7 +168,7 @@ struct Options
   double   prodCutHadrons;  
 
   /// Tracking related parameters 
-  double   maximumTrackingTime; ///> maximum tracking time per volume [s]
+  double   maximumTrackingTime; ///< maximum tracking time per volume [s]
   double   deltaChord;
   double   chordStepMinimum;
   double   deltaIntersection;
@@ -199,7 +199,7 @@ struct Options
   bool     stopSecondaries;
   bool     stopTracks;
 
-  std::string fifo; ///> fifo for BDSIM-placet
+  std::string fifo; ///< fifo for BDSIM-placet
   
   /// Ring parameters
   int      nturns;

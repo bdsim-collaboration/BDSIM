@@ -11,7 +11,7 @@ private:
   G4int    nRays;
   G4String fileName;
 
-  G4int    iRay; ///> current ray
+  G4int    iRay; ///< current ray
   std::vector<double*> ptcData; 
 
   void LoadPtcFile(); 
