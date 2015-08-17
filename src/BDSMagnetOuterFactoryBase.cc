@@ -1,3 +1,4 @@
+#include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
@@ -61,6 +62,9 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
 						     G4Colour*   colour,
 						     G4Material* outerMaterial)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   if (poleSolid)
     {
       poleLV   = new G4LogicalVolume(poleSolid,
@@ -122,6 +126,9 @@ void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidAngled(G4String      na
 								G4ThreeVector inputFace,
 								G4ThreeVector outputFace)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   magnetContainerSolid = new G4CutTubs(name + "_container_solid",   // name
 				       0,                           // inner radius
 				       magnetContainerRadius,       // outer radius
@@ -141,6 +148,9 @@ void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidStraight(G4String name,
 								  G4double magnetContainerLength,
 								  G4double magnetContainerRadius)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   magnetContainerSolid = new G4Tubs(name + "_container_solid",   // name
 				    0,                           // inner radius
 				    magnetContainerRadius,       // outer radius
