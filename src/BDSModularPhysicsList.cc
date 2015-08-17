@@ -4,6 +4,7 @@
 #include "BDSMuonPhysics.hh"
 #include "BDSSynchRadPhysics.hh"
 #include "BDSParameterisationPhysics.hh"
+#include "BDSExecOptions.hh"
 
 #include "G4EmPenelopePhysics.hh"
 #include "G4OpticalPhysics.hh"
@@ -48,6 +49,8 @@ BDSModularPhysicsList::BDSModularPhysicsList():
   SetParticleDefinition();
   SetCuts();
   DumpCutValuesTable(100);
+
+  verbose = BDSExecOptions::Instance()->GetVerbose();
 }
 
 
@@ -116,6 +119,8 @@ void BDSModularPhysicsList::ParsePhysicsList()
 
 void BDSModularPhysicsList::ConstructMinimumParticleSet()
 {
+  if(verbose || debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
   //Minimum required set of particles required for tracking
   G4Electron::Electron();
   G4Positron::Positron();
@@ -125,11 +130,15 @@ void BDSModularPhysicsList::ConstructMinimumParticleSet()
 
 void BDSModularPhysicsList::ConfigurePhysics()
 {
+  if(verbose || debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
   if(_opticalPhysics){ ConfigureOptical();}
 }
 
 void BDSModularPhysicsList::ConfigureOptical()
 {
+  if(verbose || debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
   if (!_opticalPhysics) return;
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   _opticalPhysics->Configure(kCerenkov,      globals->GetTurnOnCerenkov());           ///< Cerenkov process index                                   
@@ -145,6 +154,8 @@ void BDSModularPhysicsList::ConfigureOptical()
 
 void BDSModularPhysicsList::Register()
 {
+  if(verbose || debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
   std::vector<G4VPhysicsConstructor*>::iterator it;
   for(it = _constructors.begin(); it != _constructors.end(); it++){
     RegisterPhysics(*it);
@@ -153,8 +164,10 @@ void BDSModularPhysicsList::Register()
 
 void BDSModularPhysicsList::SetCuts()
 {
-  G4VUserPhysicsList::SetCuts();
-  
+  if(verbose || debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
+
+  G4VUserPhysicsList::SetCuts();  
   G4double defaultRangeCut  = BDSGlobalConstants::Instance()->GetDefaultRangeCut(); 
   SetDefaultCutValue(defaultRangeCut);
   SetCutsWithDefault();   
@@ -166,13 +179,13 @@ void BDSModularPhysicsList::SetCuts()
   G4double prodCutPhotons   = BDSGlobalConstants::Instance()->GetProdCutPhotons();
   G4double prodCutElectrons = BDSGlobalConstants::Instance()->GetProdCutElectrons();
   G4double prodCutPositrons = BDSGlobalConstants::Instance()->GetProdCutPositrons();
-  //G4double prodCutHadrons   = BDSGlobalConstants::Instance()->GetProdCutHadrons();
+  G4double prodCutHadrons   = BDSGlobalConstants::Instance()->GetProdCutHadrons();
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Photon production range cut (mm)   " << prodCutPhotons   << G4endl;
   G4cout << __METHOD_NAME__ << "Electron production range cut (mm) " << prodCutElectrons << G4endl;
   G4cout << __METHOD_NAME__ << "Positron production range cut (mm) " << prodCutPositrons << G4endl;
-  //G4cout << __METHOD_NAME__ << "Hadron production range cut (mm)   " << prodCutHadrons<< G4endl;
+  G4cout << __METHOD_NAME__ << "Hadron production range cut (mm)   " << prodCutHadrons<< G4endl;
 #endif
 
   // BDSIM's default range cuts (0.7mm) are different from geant4 defaults (1mm) so always set.
@@ -189,6 +202,9 @@ void BDSModularPhysicsList::SetCuts()
 
 void BDSModularPhysicsList::SetParticleDefinition()
 {
+  if(verbose || debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
+
   // set primary particle definition and kinetic beam parameters other than total energy
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   BDSGlobalConstants::Instance()->SetParticleDefinition(particleTable->
@@ -229,7 +245,9 @@ void BDSModularPhysicsList::SetParticleDefinition()
 }
 
 void BDSModularPhysicsList::LoadEm()
-{			  
+{
+  if(verbose || debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
   if(!_emPhysics){
     _emPhysics = new G4EmStandardPhysics();		  
     _constructors.push_back(_emPhysics);			  
@@ -238,7 +256,9 @@ void BDSModularPhysicsList::LoadEm()
 }							  
 							  
 void BDSModularPhysicsList::LoadEmLow()
-{			  
+{
+  if(verbose || debug) 
+    G4cout << __METHOD_NAME__ << G4endl;			  
   if(!_emPhysics){
     _emPhysics = new G4EmPenelopePhysics();		  
     _constructors.push_back(_emPhysics);			  
@@ -247,7 +267,9 @@ void BDSModularPhysicsList::LoadEmLow()
 }							  
 							  
 void BDSModularPhysicsList::LoadParameterisationPhysics()
-{  
+{
+  if(verbose || debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
   if(!_paramPhysics){
     _paramPhysics = new BDSParameterisationPhysics();	  
     _constructors.push_back(_paramPhysics);		  
@@ -255,7 +277,9 @@ void BDSModularPhysicsList::LoadParameterisationPhysics()
 }							  
 							  
 void BDSModularPhysicsList::LoadHadronic()
-{		  
+{
+  if(verbose || debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
   if(!_hadronicPhysics){
 #if G4VERSION_NUMBER < 1000
     _hadronicPhysics = new HadronPhysicsQGSP_BERT();
@@ -267,7 +291,9 @@ void BDSModularPhysicsList::LoadHadronic()
 }							  
 							  
 void BDSModularPhysicsList::LoadHadronicHP()
-{		  
+{
+  if(verbose || debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
   if(!_hadronicPhysics){
 #if G4VERSION_NUMBER < 1000
     _hadronicPhysics = new HadronPhysicsQGSP_BERT_HP();
@@ -279,7 +305,9 @@ void BDSModularPhysicsList::LoadHadronicHP()
 }							  
 							  
 void BDSModularPhysicsList::LoadSynchRad()
-{		  
+{		    
+  if(verbose || debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
   if(!_synchRadPhysics){
     _synchRadPhysics = new BDSSynchRadPhysics();		  
     _constructors.push_back(_synchRadPhysics);		  
@@ -290,6 +318,8 @@ void BDSModularPhysicsList::LoadSynchRad()
 							  
 void BDSModularPhysicsList::LoadMuon()
 {			  
+  if(verbose || debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
   if(!_muonPhysics){
     _muonPhysics = new BDSMuonPhysics();			  
     _constructors.push_back(_muonPhysics);		  
@@ -297,7 +327,9 @@ void BDSModularPhysicsList::LoadMuon()
 }							  
 							  
 void BDSModularPhysicsList::LoadOptical()
-{		  
+{
+  if(verbose || debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
   if(!_opticalPhysics){
     _opticalPhysics = new G4OpticalPhysics();		  
     _constructors.push_back(_opticalPhysics);		  
@@ -306,6 +338,8 @@ void BDSModularPhysicsList::LoadOptical()
 							  
 void BDSModularPhysicsList::LoadDecay()
 {			  
+  if(verbose || debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
   if(!_decayPhysics){
     _decayPhysics = new G4DecayPhysics();			  
     _constructors.push_back(_decayPhysics);		  
@@ -313,7 +347,11 @@ void BDSModularPhysicsList::LoadDecay()
 }                                                         
 
 void BDSModularPhysicsList::LoadCutsAndLimits()
-{			  
+{
+  if(verbose || debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
+  if(verbose || debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
   if(!_cutsAndLimits){
     _cutsAndLimits = new BDSCutsAndLimits();			  
     _constructors.push_back(_cutsAndLimits);		  

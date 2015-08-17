@@ -13,6 +13,7 @@
 
 #include "G4Event.hh"
 #include "G4EventManager.hh"
+#include "G4Version.hh"
 #include "globals.hh"
 #include  <vector>
 

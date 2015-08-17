@@ -16,6 +16,7 @@
 #include "BDSTunnelBuilder.hh"
 #include "BDSTunnelSD.hh"
 #include "BDSTunnelType.hh"
+#include "BDSBOptrMultiParticleChangeCrossSection.hh"
 
 #include "parser/element.h"
 #include "parser/elementlist.h"
@@ -34,6 +35,7 @@
 #include "G4Region.hh"
 #include "G4TransportationManager.hh"
 #include "G4UserLimits.hh"
+#include "G4Version.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 #include "globals.hh"
@@ -86,8 +88,11 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   // placement procedure
   ComponentPlacement();
 
+  // implement bias operations on all volumes 
+  BuildPhysicsBias();
+
   // free the parser list - an extern
-  beamline_list.erase();
+  GMAD::beamline_list.erase();
   
   if(verbose || debug) G4cout << __METHOD_NAME__ << "detector Construction done"<<G4endl; 
 
@@ -137,22 +142,20 @@ void BDSDetectorConstruction::InitialiseRegions()
 
 void BDSDetectorConstruction::BuildBeamline()
 {
-  std::list<struct Element>::iterator it;
-
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
   BDSBeamline*         beamline            = new BDSBeamline();
 
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
-  for(it = beamline_list.begin();it!=beamline_list.end();it++)
+  for(auto element : GMAD::beamline_list)
     {
 #ifdef BDSDEBUG
-      G4cout << "BDSDetectorConstruction creating component " << (*it).name << G4endl;
+      G4cout << "BDSDetectorConstruction creating component " << (element).name << G4endl;
 #endif
       
-      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(*it);
+      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(element);
       if(temp)
 	{
-	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(*it);
+	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(element);
 	  beamline->AddComponent(temp, tiltOffset);
 	}
     }
@@ -183,7 +186,7 @@ void BDSDetectorConstruction::BuildBeamline()
   delete theComponentFactory;
       
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< beamline_list.size() << G4endl;
+  G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< GMAD::beamline_list.size() << G4endl;
 #endif
   G4cout << __METHOD_NAME__ << "size of the constructed beamline: "<< beamline->size() << " with length " << beamline->GetTotalArcLength()/CLHEP::m << " m" << G4endl;
   
@@ -533,6 +536,41 @@ void BDSDetectorConstruction::ComponentPlacement()
   
   // set precision back
   G4cout.precision(G4precision);
+}
+
+void BDSDetectorConstruction::BuildPhysicsBias() 
+{
+#if G4VERSION_NUMBER > 1009
+
+  // First for beam line elements and accelerator vacuum 
+  BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+
+  for(BDSBeamlineIterator i = beamline->begin();i != beamline->end(); ++i) {
+    //    G4LogicalVolume *lv = (*i)->GetContainerLogicalVolume();
+    //    BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
+    //      eg->AddParticle("e-");  
+    //      eg->AttachTo(*i);
+
+    BDSAcceleratorComponent *ac = (*i)->GetAcceleratorComponent();    
+    auto lvs = ac->GetAllLogicalVolumes(); 
+    
+    for(auto lvsi = lvs.begin(); lvsi != lvs.end(); ++lvsi) {
+
+      BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
+      eg->AddParticle("e-");
+      eg->AddParticle("e+"); 
+      eg->AddParticle("gamma");
+      eg->AddParticle("proton");
+      eg->AttachTo(*lvsi);
+    }
+  } 
+  
+
+  // Second for tunnel
+  
+
+#endif
+  return;
 }
 
 void BDSDetectorConstruction::InitialiseGFlash()

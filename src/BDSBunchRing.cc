@@ -28,7 +28,7 @@ BDSBunchRing::~BDSBunchRing()
   delete FlatGen;
 }
 
-void BDSBunchRing::SetOptions(struct Options& opt)
+void BDSBunchRing::SetOptions(GMAD::Options& opt)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;

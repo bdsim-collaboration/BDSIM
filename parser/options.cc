@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 
+using namespace GMAD;
+
 Options::Options()
 {
   // Default Values for Options

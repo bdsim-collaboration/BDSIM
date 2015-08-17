@@ -177,7 +177,7 @@ void BDS::PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName)
 
 G4bool BDS::Geant4EnvironmentIsSet()
 {
-  std::vector<G4String> variables = {"G4ABLADATA",
+  std::vector<G4String> variables = {//"G4ABLADATA",
 				     "G4NEUTRONHPDATA",
 				     "G4RADIOACTIVEDATA",
 				     "G4LEDATA",

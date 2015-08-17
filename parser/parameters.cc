@@ -9,6 +9,8 @@
 #include "array.h"
 #include "element.h"
 
+using namespace GMAD;
+
 Parameters::Parameters() {
   flush();
 }

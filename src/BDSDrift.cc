@@ -25,9 +25,6 @@ void BDSDrift::Build()
   pipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
 							chordLength,
 							beamPipeInfo);
-  
-  // register logical volumes using geometry component base class
-  InheritObjects(pipe);
 
   // make the beam pipe container, this object's container
   containerLogicalVolume = pipe->GetContainerLogicalVolume();

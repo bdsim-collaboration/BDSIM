@@ -5,7 +5,11 @@
 #include <iostream>
 #include <string>
 
-extern std::string current_line;
+using namespace GMAD;
+
+namespace GMAD {
+  extern std::string current_line;
+}
 
 void ElementList::push_back(Element& el, bool unique) {
   // better to search in map (faster)

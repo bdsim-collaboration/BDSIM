@@ -1,6 +1,5 @@
 execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-set(TESTING_ARGS "--batch")
 simple_testing(Component-CSampler "--file=csamplerTest.gmad" "")
  
 simple_testing(Component-Decapole "--file=decaTest.gmad" "")

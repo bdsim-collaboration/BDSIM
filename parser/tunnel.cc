@@ -3,6 +3,8 @@
 #include <iomanip>
 #include <iostream>
 
+using namespace GMAD;
+
 Tunnel::Tunnel():
   aper1(0.0),aper2(0.0),
   offsetX(0.0),offsetY(0.0),

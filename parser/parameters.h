@@ -4,6 +4,8 @@
 #include <list>
 #include <string>
 
+namespace GMAD {
+
 struct Array;
 struct Element;
 
@@ -132,5 +134,6 @@ struct Parameters {
   /// constructor
   Parameters();
 };
+}
 
 #endif
