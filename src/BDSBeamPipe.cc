@@ -24,8 +24,5 @@ BDSBeamPipe::BDSBeamPipe(G4VSolid*                 containerSolidIn,
 
 BDSBeamPipe::~BDSBeamPipe()
 {
-  BDSGeometryComponent::~BDSGeometryComponent();
-
   delete containerSubtractionSolid; containerSubtractionSolid = nullptr;
-  delete vacuumLogicalVolume;       vacuumLogicalVolume = nullptr;
 }

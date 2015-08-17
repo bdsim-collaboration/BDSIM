@@ -70,8 +70,6 @@ BDSGeometryComponent::~BDSGeometryComponent()
   std::vector<G4UserLimits*>::iterator itUL = allUserLimits.begin();
   for (; itUL != allUserLimits.end(); ++itUL)
     {delete (*itUL);}
-  
-  delete containerSolid; containerSolid = nullptr;
 }
 
 void BDSGeometryComponent::InheritExtents(BDSGeometryComponent* anotherComponent)
