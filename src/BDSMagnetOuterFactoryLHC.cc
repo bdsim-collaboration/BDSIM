@@ -891,6 +891,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      na
 								G4double      length,
 								BDSBeamPipe*  beamPipe,
 								G4double      outerDiameter,
+								G4double      /*containerDiameter*/,
 								G4double      containerLength,
 								G4double      /*angle*/,
 								G4Material*   outerMaterial)
