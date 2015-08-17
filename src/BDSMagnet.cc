@@ -22,6 +22,7 @@
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
+#include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetType.hh"
 #include "BDSMagnet.hh"

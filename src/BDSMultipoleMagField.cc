@@ -7,7 +7,8 @@
 #include "G4TransportationManager.hh"
 #include "BDSDebug.hh"
 
-BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4double> ks)
+BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn,
+					   std::list<G4double> ks)
 {
 
 #ifdef BDSDEBUG
@@ -87,7 +88,7 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
 BDSMultipoleMagField::~BDSMultipoleMagField(){}
 
 void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
-		       G4double *Bfield ) const
+					  G4double *Bfield ) const
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;

@@ -97,20 +97,17 @@ void BDSSectorBend::BuildBeampipe()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "sector bend version " << G4endl;
 #endif
-
-  beampipe =
-    BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(beamPipeInfo->beamPipeType,
-							      name,
-							      chordLength - lengthSafety,
-							      -angle*0.5,
-							      -angle*0.5,
-							      beamPipeInfo->aper1,
-							      beamPipeInfo->aper2,
-							      beamPipeInfo->aper3,
-							      beamPipeInfo->aper4,
-							      beamPipeInfo->vacuumMaterial,
-							      beamPipeInfo->beamPipeThickness,
-							      beamPipeInfo->beamPipeMaterial);
-  
-  BeamPipeCommonTasks(); //from BDSMagnet;
+  BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
+  beampipe = factory->CreateBeamPipeAngledInOut(beamPipeInfo->beamPipeType,
+						name,
+						chordLength - lengthSafety,
+						-angle*0.5,
+						-angle*0.5,
+						beamPipeInfo->aper1,
+						beamPipeInfo->aper2,
+						beamPipeInfo->aper3,
+						beamPipeInfo->aper4,
+						beamPipeInfo->vacuumMaterial,
+						beamPipeInfo->beamPipeThickness,
+						beamPipeInfo->beamPipeMaterial);
 }
