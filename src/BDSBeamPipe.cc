@@ -21,3 +21,11 @@ BDSBeamPipe::BDSBeamPipe(G4VSolid*                 containerSolidIn,
   containerIsCircular(containerIsCircularIn),
   containerRadius(containerRadiusIn)
 {;}
+
+BDSBeamPipe::~BDSBeamPipe()
+{
+  BDSGeometryComponent::~BDSGeometryComponent();
+
+  delete containerSubtractionSolid; containerSubtractionSolid = nullptr;
+  delete vacuumLogicalVolume;       vacuumLogicalVolume = nullptr;
+}
