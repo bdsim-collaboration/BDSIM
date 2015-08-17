@@ -7,6 +7,7 @@
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDipoleStepper.hh"
+#include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 #include "BDSSbendMagField.hh"
@@ -28,15 +29,24 @@ BDSRBend::BDSRBend(G4String            name,
   BDSMagnet(BDSMagnetType::rectangularbend, name, length,
 	    beamPipeInfo, magnetOuterInfo),
   bField(bFieldIn),
-  bGrad(bGradIn)
+  bGrad(bGradIn),
+  bpFirstBit(nullptr),
+  bpLastBit(nullptr)
 {
   angle       = angleIn;
   outerRadius = magnetOuterInfo->outerDiameter*0.5; 
-  CommonConstructor(length);
+  CalculateLengths(length);
 }
 
+BDSRBend::~BDSRBend()
+{
+  if (bpFirstBit) // may not have been constructed
+    {delete bpFirstBit;}
+  if (bpLastBit) // may not have been constructed
+    {delete bpLastBit;}
+}
 
-void BDSRBend::CommonConstructor(G4double aLength)
+void BDSRBend::CalculateLengths(G4double aLength)
 {
   //full length along chord - just its length in case of rbend
   chordLength = aLength;
@@ -112,7 +122,7 @@ void BDSRBend::BuildBPFieldAndStepper()
   else
     {arclength = magFieldLength;}
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " calculated arclength in dipole field: " << arclength << G4endl;
+  G4cout << __METHOD_NAME__ << "calculated arclength in dipole field: " << arclength << G4endl;
 #endif
   itsMagField = new BDSSbendMagField(Bfield,arclength,angle);
   itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
@@ -125,20 +135,26 @@ void BDSRBend::BuildBPFieldAndStepper()
 
 void BDSRBend::BuildOuter()
 {
-  //need to make a shorter outer volume for rbend geometry
-  //let's cheat and use the base class method by fiddling the
-  //component length then setting it back - reduces code duplication
-  G4double originalLength = chordLength;
-  chordLength = magFieldLength;
-  BDSMagnet::BuildOuter();
-  chordLength = originalLength;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  G4Material* outerMaterial          = magnetOuterInfo->outerMaterial;
+  BDSMagnetGeometryType geometryType = magnetOuterInfo->geometryType; 
+  BDSMagnetOuterFactory* theFactory  = BDSMagnetOuterFactory::Instance();
+  G4double containerDiameter = 2*containerRadius;
+  
+  outer = theFactory->CreateRectangularBend(geometryType, name, magFieldLength, beampipe,
+					    outerDiameter, containerDiameter, chordLength,
+					    angle, outerMaterial);
+
+  containerSolid = outer->GetMagnetContainer()->GetContainerSolid()->Clone();
+  outer->ClearMagnetContainer(); // delete the magnet container as done with
+  InheritExtents(outer); //update extents
 }
 
 void BDSRBend::BuildBeampipe()
 {
   // check for finite length (can be negative if angle is zero or very small)
-  BDSBeamPipe* bpFirstBit = nullptr;
-  BDSBeamPipe* bpLastBit  = nullptr;
   G4double safeStraightSectionLength = straightSectionLength - lengthSafetyLarge;
   if (safeStraightSectionLength > 0)
     {
@@ -153,8 +169,6 @@ void BDSRBend::BuildBeampipe()
 									   beamPipeInfo->vacuumMaterial,
 									   beamPipeInfo->beamPipeThickness,
 									   beamPipeInfo->beamPipeMaterial);
-
-      InheritObjects(bpFirstBit);
       
       bpLastBit = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledIn(beamPipeInfo->beamPipeType,
 									 name,
@@ -167,8 +181,6 @@ void BDSRBend::BuildBeampipe()
 									 beamPipeInfo->vacuumMaterial,
 									 beamPipeInfo->beamPipeThickness,
 									 beamPipeInfo->beamPipeMaterial);
-      
-      InheritObjects(bpLastBit);
     }
   
   beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeInfo->beamPipeType,
@@ -182,8 +194,17 @@ void BDSRBend::BuildBeampipe()
 							    beamPipeInfo->beamPipeThickness,
 							    beamPipeInfo->beamPipeMaterial);
 
-  InheritObjects(beampipe);
+  G4double extentX = beampipe->GetExtentX().second + fabs(magnetOuterOffset.x());
+  SetExtentX(-extentX, extentX);
+  SetExtentY(beampipe->GetExtentY());
+  SetExtentZ(-chordLength*0.5,chordLength*0.5);
+}
 
+void BDSRBend::PlaceComponents()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // place logical volumes inside marker (container) volume
   // calculate offsets and rotations
   G4double straightSectionCentralZ = (magFieldLength*0.5) + (straightSectionChord*0.5);
@@ -234,14 +255,21 @@ void BDSRBend::BuildBeampipe()
 						    checkOverlaps);
       RegisterPhysicalVolume(pipeEndRM);
     }
-   
-  // can't use BeamPipeCommonTasks() as it places the beampipe volume and that'll be wrong in this case
-  // have to do everything manually here
-  beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false);
-  containerLogicalVolume->
-    SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
-  
-  SetExtentX(beampipe->GetExtentX()); //not exact but only central porition will use this
-  SetExtentY(beampipe->GetExtentY());
-  SetExtentZ(-chordLength*0.5,chordLength*0.5);
+
+  if (outer)
+    {
+      G4ThreeVector placementOffset = magnetOuterOffset + outer->GetPlacementOffset();
+      
+      // place outer volume
+      G4PVPlacement* magnetOuterPV = new G4PVPlacement(0,                           // rotation
+						       placementOffset,             // at normally (0,0,0)
+						       outer->GetContainerLogicalVolume(), // its logical volume
+						       name+"_outer_pv",            // its name
+						       containerLogicalVolume,      // its mother  volume
+						       false,                       // no boolean operation
+						       0,                           // copy number
+						       BDSGlobalConstants::Instance()->GetCheckOverlaps());
+
+      RegisterPhysicalVolume(magnetOuterPV);
+    }
 }
