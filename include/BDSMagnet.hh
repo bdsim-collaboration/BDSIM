@@ -71,8 +71,9 @@ protected:
   /// Attach the inner magnetic field to the beam pipe vacuum volume.
   void AttachFieldToBeamPipe();
 
-  /// Construct and place the outer magnet geometry beit poled geometry or cylinders. This
-  /// function switches on the member variable of BDSMagnetType type, so is contained in the base class.
+  /// Construct the outer magnet geometry beit poled geometry or cylinders. This
+  /// function switches on the member variable of BDSMagnetType type, so is contained in
+  /// the base class.
   virtual void BuildOuter();
   
   /// Construct the magnetic field for the outer magnet geometry. Virtual so derived classes
@@ -122,11 +123,11 @@ protected:
   /// and decide upon it. Default = true.
   G4bool          placeBeamPipe;
 
-  /// for outer volume construction
+  /// For outer volume construction
   G4double        outerDiameter;
 
   /// Separate variable for the container radius so it can be changed if
-  /// required by specific magnet geomtry. Used in BDSMagnet::BuildContainerLogicalVolume().
+  /// required by specific magnet geometry.
   G4double        containerRadius;
 
   /// Model information for the outer volume construction
