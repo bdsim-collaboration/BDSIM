@@ -48,21 +48,16 @@ public:
 
 private:
   /// build and set field manager and chord finder
-  void BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
-		       G4MagneticField* aField);
-
-  /// define field and stepper
-  virtual void BuildBPFieldAndStepper()=0;
-
-  /// Method for common parts of both Buildbeampipe methods
-  void FinaliseBeampipe(G4String materialName = "",G4RotationMatrix* RotY=nullptr);
+  void BuildBPFieldMgr();
 
 protected:
-
   /// Overridden method of BDSAcceleratorComponent to not only build container, but
   /// first construct field objects. After using BDSAcceleratorComponent::Build() to
   /// build the container, the beam pipe and outer geometry are built.
   virtual void Build();
+  
+  /// define field and stepper
+  virtual void BuildBPFieldAndStepper()=0;
   
   /// Construct a general straight piece of beampipe. Virtual so it can be overloaded
   /// by derived classes as required - such as RBend.

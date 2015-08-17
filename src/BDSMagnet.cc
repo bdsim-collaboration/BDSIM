@@ -65,23 +65,14 @@ void BDSMagnet::Build()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif  
-  BuildBeampipe();            // build beam pipe without placing it
-  BuildBPFieldAndStepper();   // build magnetic field
-  AttachFieldToBeamPipe();    // attach the magnetic field to the vacuum
-  BuildOuter();               // build outer and update container solid
-  /*
-  if (outer)
-    {
-      // it would make sense to build the field here, but this is actually
-      // called in each derived class.
-      // each class works out the flux at the poles ignore the size of this magnet
-      // and based on global constants (1 size for all) and then calls buildouterfieldmanager
-      // this is all done by overriding this method - Build() which is perhaps unnecessary
-      // and should be changed
-      //BuildOuterFieldManager(..) // unused currently - uncomment when reimplemented!!!
-      //AttachFieldToOuter();
-    }  
-  */
+  BuildBeampipe();           // build beam pipe without placing it
+  BuildBPFieldAndStepper();  // build magnetic field - provided by derived class
+  BuildBPFieldMgr();         // build the field manager - done here
+  AttachFieldToBeamPipe();   // attach the magnetic field to the vacuum
+  BuildOuter();              // build outer and update container solid
+  //BuildOuterFieldManager(..) // unused currently - uncomment when reimplemented!!!
+  //AttachFieldToOuter();
+  
   // calls BuildContainerLogicalVolume() (implemented in this class) which
   // builds the container if needed
   BDSAcceleratorComponent::Build(); 
@@ -100,19 +91,18 @@ void BDSMagnet::BuildBeampipe()
 							    beamPipeInfo);  
 }
 
-void BDSMagnet::BuildBPFieldMgr(G4MagIntegratorStepper* aStepper,
-				G4MagneticField*        aField)
+void BDSMagnet::BuildBPFieldMgr()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  itsChordFinder = new G4ChordFinder(aField,
+  itsChordFinder = new G4ChordFinder(itsMagField,
 				     BDSGlobalConstants::Instance()->GetChordStepMinimum(),
-				     aStepper);
+				     itsStepper);
 
   itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
   itsBPFieldMgr = new G4FieldManager();
-  itsBPFieldMgr->SetDetectorField(aField);
+  itsBPFieldMgr->SetDetectorField(itsMagField);
   itsBPFieldMgr->SetChordFinder(itsChordFinder);
 
   // these options are always non-zero so always set them
@@ -129,7 +119,16 @@ void BDSMagnet::AttachFieldToBeamPipe()
 #endif
   // SET FIELD
   if(itsBPFieldMgr)
-    {beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false);}
+    {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "field exists and attaching" << G4endl;
+#endif
+      beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false);
+    }
+#ifdef BDSDEBUG
+  else
+    {G4cout << __METHOD_NAME__ << "no field for beam pipe!" << G4endl;}
+#endif
 }
 
 void BDSMagnet::BuildOuter()
@@ -235,7 +234,14 @@ void BDSMagnet::AttachFieldToOuter()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  outer->GetContainerLogicalVolume()->SetFieldManager(itsOuterFieldMgr,false);
+  
+  if (outer)
+    {
+      if (itsOuterFieldMgr)
+	{outer->GetContainerLogicalVolume()->SetFieldManager(itsOuterFieldMgr,false);}
+      else
+	{outer->GetContainerLogicalVolume()->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);}
+    }
 }
 
 void BDSMagnet::BuildContainerLogicalVolume()
