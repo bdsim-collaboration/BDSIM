@@ -257,9 +257,6 @@ void BDSMagnet::BuildContainerLogicalVolume()
 						   emptyMaterial,
 						   name + "_container_lv");
       placeBeamPipe = true;
-
-      // taken from FinaliseBeamPipe method - supposed to protect against fields being overridden
-      containerLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
     }
   else
     {
@@ -276,10 +273,8 @@ void BDSMagnet::BuildContainerLogicalVolume()
   // G4LogicalVolume::AddDaughter, which calls 
   // pDaughterLogical->SetFieldManager(fFieldManager, true) - the
   // latter 'true' over-writes all the other fields
-
   // This shouldn't override the field attached to daughters (vacuum for example) which will
   // retain their field manager if one is already specified.
-  
   containerLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false); 
 }
 
