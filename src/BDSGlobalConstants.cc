@@ -16,18 +16,20 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
-extern Options options;
+namespace GMAD {
+  extern GMAD::Options options;
+}
 
 BDSGlobalConstants* BDSGlobalConstants::_instance = nullptr;
 
 BDSGlobalConstants* BDSGlobalConstants::Instance()
 {
   if(_instance==nullptr)
-    {_instance = new BDSGlobalConstants(options);}
+    {_instance = new BDSGlobalConstants(GMAD::options);}
   return _instance;
 }
 
-BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
+BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsBeamParticleDefinition(nullptr),
   itsBeamMomentum(0.0),
   itsBeamKineticEnergy(0.0),

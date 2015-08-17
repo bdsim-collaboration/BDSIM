@@ -11,6 +11,7 @@
  * @author I. Agapov
  */
 
+namespace GMAD {
 struct Options
 {
   Options();
@@ -212,5 +213,6 @@ struct Options
   void set_value(std::string name, double value);
   void set_value(std::string name, std::string value);
 };
+}
 
 #endif

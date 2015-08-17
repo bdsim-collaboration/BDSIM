@@ -44,7 +44,7 @@ BDSBunchInterface::BDSBunchInterface(G4double X0In, G4double Y0In, G4double Z0In
 BDSBunchInterface::~BDSBunchInterface()
 {;}
 
-void BDSBunchInterface::SetOptions(struct Options& opt)
+void BDSBunchInterface::SetOptions(GMAD::Options& opt)
 {
   X0 = opt.X0;
   Y0 = opt.Y0;

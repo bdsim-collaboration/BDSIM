@@ -40,7 +40,7 @@ BDSBunchTwiss::~BDSBunchTwiss()
   delete GaussMultiGen;
 }
 
-void BDSBunchTwiss::SetOptions(struct Options& opt)
+void BDSBunchTwiss::SetOptions(GMAD::Options& opt)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;

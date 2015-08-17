@@ -21,7 +21,9 @@ class G4UserLimits;
 class G4VisAttributes;
 class G4VPhysicalVolume;
 
-struct Options;
+namespace GMAD {
+  struct Options;
+}
 
 struct strCmp {
   G4bool operator()( const G4String s1, const G4String s2 ) const {
@@ -37,7 +39,7 @@ class BDSGlobalConstants
 {
 
 protected:
-  BDSGlobalConstants(struct Options&);
+  BDSGlobalConstants(GMAD::Options&);
 
 private:
   static BDSGlobalConstants* _instance;

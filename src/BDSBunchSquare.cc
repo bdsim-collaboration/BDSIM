@@ -34,7 +34,7 @@ BDSBunchSquare::~BDSBunchSquare()
   delete FlatGen;
 }
 
-void BDSBunchSquare::SetOptions(struct Options &opt)
+void BDSBunchSquare::SetOptions(GMAD::Options &opt)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
