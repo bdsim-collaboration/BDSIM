@@ -58,18 +58,23 @@ private:
   /// Common construction tasks to all methods - assemble yoke and poles in container
   /// have to override this as we have multiple pole logical volumes and they need to
   /// be registered
-  virtual BDSGeometryComponent* CommonConstructor(G4String     name,
-						  G4double     length,
-						  BDSBeamPipe* beamPipe,
-						  G4int        order,
-						  G4double     outerDiameter,
-						  G4Material*  outerMaterial);
+  virtual BDSMagnetOuter* CommonConstructor(G4String     name,
+					    G4double     length,
+					    BDSBeamPipe* beamPipe,
+					    G4int        order,
+					    G4double     outerDiameter,
+					    G4Material*  outerMaterial,
+					    G4double     magnetContainerLength);
   
   /// Poles have to be different lengths to fit in a square - have to be unique
   /// therefore keep a vector of them
   std::vector<G4RotationMatrix*> poleRotations;
   std::vector<G4VSolid*> poleSolids;
   std::vector<G4LogicalVolume*> poleLVs;
+
+  /// Need to pass order to CreateLogicalVolumes but should override for neatness and
+  /// therefore can't change the signature of the function, so pass by internal variable.
+  G4int order;
   
 };
 

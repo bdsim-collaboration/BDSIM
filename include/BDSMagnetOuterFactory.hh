@@ -1,9 +1,8 @@
 #ifndef BDSMAGNETOUTERFACTORY_H
 #define BDSMAGNETOUTERFACTORY_H
 
-#include "BDSGeometryComponent.hh"
-
 #include "BDSBeamPipe.hh"
+#include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterFactoryBase.hh"
 #include "BDSMagnetGeometryType.hh"
 
@@ -18,107 +17,118 @@ public:
   ~BDSMagnetOuterFactory();
   
   /// sector bend outer volume
-  virtual BDSGeometryComponent* CreateSectorBend(BDSMagnetGeometryType magnetType,          // magnet type
-						 G4String      name,                // name
-						 G4double      length,              // length [mm]
-						 BDSBeamPipe*  beamPipe,            // beampipe
-						 G4double      boxSize,             // full width
-						 G4double      angle,               // full bend angle [rad]
-						 G4Material*   outerMaterial = nullptr // material for outer volume
-						 );
-
+  virtual BDSMagnetOuter* CreateSectorBend(BDSMagnetGeometryType magnetType,   // magnet type
+					   G4String     name,                  // name
+					   G4double     length,                // length [mm]
+					   BDSBeamPipe* beamPipe,              // beampipe
+					   G4double     outerDiameter,         // full width
+					   G4double     containerLength,       // full length to make AccComp container
+					   G4double     angle,                 // full bend angle [rad]
+					   G4Material*  outerMaterial = nullptr// material for outer volume
+					   );
+  
   /// rectangular bend outer volume
-  virtual BDSGeometryComponent* CreateRectangularBend(BDSMagnetGeometryType magnetType,          // magnet type
-						      G4String      name,                // name
-						      G4double      length,              // length [mm]
-						      BDSBeamPipe*  beamPipe,            // beampipe
-						      G4double      boxSize,             // full width
-						      G4double      angle,               // full bend angle [rad]
-						      G4Material*   outerMaterial = nullptr // material for outer volume
-						      );
+  virtual BDSMagnetOuter* CreateRectangularBend(BDSMagnetGeometryType magnetType,   // magnet type
+						G4String     name,                  // name
+						G4double     length,                // length [mm]
+						BDSBeamPipe* beamPipe,              // beampipe
+						G4double     outerDiameter,         // full width
+						G4double     containerLength,       // full length to make AccComp container
+						G4double     angle,                 // full bend angle [rad]
+						G4Material*  outerMaterial = nullptr// material for outer volume
+						);
   
   /// quadrupole outer volume
-  virtual BDSGeometryComponent* CreateQuadrupole(BDSMagnetGeometryType magnetType,           // magnet type
-						 G4String      name,                 // name
-						 G4double      length,               // length [mm]
-						 BDSBeamPipe*  beamPipe,             // beampipe
-						 G4double      boxSize,              // full width
-						 G4Material*   outerMaterial = nullptr  // material for outer volume
-						 );
-
+  virtual BDSMagnetOuter* CreateQuadrupole(BDSMagnetGeometryType magnetType,   // magnet type
+					   G4String     name,                  // name
+					   G4double     length,                // length [mm]
+					   BDSBeamPipe* beamPipe,              // beampipe
+					   G4double     outerDiameter,         // full width
+					   G4double     containerLength,       // full length to make AccComp container
+					   G4Material*  outerMaterial = nullptr// material for outer volume
+					   );
+  
 
   /// sextupole outer volume
-  virtual BDSGeometryComponent* CreateSextupole(BDSMagnetGeometryType magnetType,           // magnet type
-						G4String      name,                 // name
-						G4double      length,               // length [mm]
-						BDSBeamPipe*  beamPipe,             // beampipe
-						G4double      boxSize,              // full width
-						G4Material*   outerMaterial = nullptr  // material for outer volume
-						);
-
+  virtual BDSMagnetOuter* CreateSextupole(BDSMagnetGeometryType magnetType,   // magnet type
+					  G4String     name,                  // name
+					  G4double     length,                // length [mm]
+					  BDSBeamPipe* beamPipe,              // beampipe
+					  G4double     outerDiameter,         // full width
+					  G4double     containerLength,       // full length to make AccComp container
+					  G4Material*  outerMaterial = nullptr// material for outer volume
+					  );
+  
   /// octupole outer volume
-  virtual BDSGeometryComponent* CreateOctupole(BDSMagnetGeometryType magnetType,            // magnet type
-					       G4String      name,                  // name
-					       G4double      length,                // length [mm]
-					       BDSBeamPipe*  beamPipe,              // beampipe
-					       G4double      boxSize,               // full width
-					       G4Material*   outerMaterial = nullptr   // material for outer volume
-					       );
-
+  virtual BDSMagnetOuter* CreateOctupole(BDSMagnetGeometryType magnetType,   // magnet type
+					 G4String     name,                  // name
+					 G4double     length,                // length [mm]
+					 BDSBeamPipe* beamPipe,              // beampipe
+					 G4double     outerDiameter,         // full width
+					 G4double     containerLength,       // full length to make AccComp container
+					 G4Material*  outerMaterial = nullptr// material for outer volume
+					 );
+  
   /// decapole outer volume
-  virtual BDSGeometryComponent* CreateDecapole(BDSMagnetGeometryType magnetType,            // magnet type
-					       G4String      name,                  // name
-					       G4double      length,                // length [mm]
-					       BDSBeamPipe*  beamPipe,              // beampipe
-					       G4double      boxSize,               // full width
-					       G4Material*   outerMaterial = nullptr   // material for outer volume
-					       );
-
+  virtual BDSMagnetOuter* CreateDecapole(BDSMagnetGeometryType magnetType,   // magnet type
+					 G4String     name,                  // name
+					 G4double     length,                // length [mm]
+					 BDSBeamPipe* beamPipe,              // beampipe
+					 G4double     outerDiameter,         // full width
+					 G4double     containerLength,       // full length to make AccComp container
+					 G4Material*  outerMaterial = nullptr// material for outer volume
+					 );
+  
   /// solenoid  outer volume
-  virtual BDSGeometryComponent* CreateSolenoid(BDSMagnetGeometryType magnetType,            // magnet type
-					       G4String      name,                  // name
-					       G4double      length,                // length [mm]
-					       BDSBeamPipe*  beamPipe,              // beampipe
-					       G4double      boxSize,               // full width
-					       G4Material*   outerMaterial = nullptr   // material for outer volume
-					       );
-
+  virtual BDSMagnetOuter* CreateSolenoid(BDSMagnetGeometryType magnetType,   // magnet type
+					 G4String     name,                  // name
+					 G4double     length,                // length [mm]
+					 BDSBeamPipe* beamPipe,              // beampipe
+					 G4double     outerDiameter,         // full width
+					 G4double     containerLength,       // full length to make AccComp container
+					 G4Material*  outerMaterial = nullptr// material for outer volume
+					 );
+  
   /// general multipole outer volume - could be any 2N order multipole
-  virtual BDSGeometryComponent* CreateMultipole(BDSMagnetGeometryType magnetType,           // magnet type
-						G4String      name,                 // name
-						G4double      length,               // length [mm]
-						BDSBeamPipe*  beamPipe,             // beampipe
-						G4double      boxSize,              // full width
-						G4Material*   outerMaterial = nullptr  // material for outer volume
-						);
-
+  virtual BDSMagnetOuter* CreateMultipole(BDSMagnetGeometryType magnetType,   // magnet type
+					  G4String     name,                  // name
+					  G4double     length,                // length [mm]
+					  BDSBeamPipe* beamPipe,              // beampipe
+					  G4double     outerDiameter,         // full width
+					  G4double     containerLength,       // full length to make AccComp container
+					  G4Material*  outerMaterial = nullptr// material for outer volume
+					  );
+  
   /// RF cavity outer volume
-  virtual BDSGeometryComponent* CreateRfCavity(BDSMagnetGeometryType magnetType,            // magnet type
-					       G4String      name,                  // name
-					       G4double      length,                // length [mm]
-					       BDSBeamPipe*  beamPipe,              // beampipe
-					       G4double      boxSize,               // full width
-					       G4Material*   outerMaterial = nullptr   // material for outer volume
-					       );
-
+  virtual BDSMagnetOuter* CreateRfCavity(BDSMagnetGeometryType magnetType,   // magnet type
+					 G4String     name,                  // name
+					 G4double     length,                // length [mm]
+					 BDSBeamPipe* beamPipe,              // beampipe
+					 G4double     outerDiameter,         // full width
+					 G4double     containerLength,       // full length to make AccComp container
+					 G4Material*  outerMaterial = nullptr// material for outer volume
+					 );
+  
   /// muon spoiler outer volume
-  virtual BDSGeometryComponent* CreateMuSpoiler(BDSMagnetGeometryType magnetType,           // magnet type
-						G4String      name,                 // name
-						G4double      length,               // length [mm]
-						BDSBeamPipe*  beamPipe,             // beampipe
-						G4double      boxSize,              // full width
-						G4Material*   outerMaterial = nullptr  // material for outer volume
-						);
-
+  virtual BDSMagnetOuter* CreateMuSpoiler(BDSMagnetGeometryType magnetType,   // magnet type
+					  G4String     name,                  // name
+					  G4double     length,                // length [mm]
+					  BDSBeamPipe* beamPipe,              // beampipe
+					  G4double     outerDiameter,         // full width
+					  G4double     containerLength,       // full length to make AccComp container
+					  G4Material*  outerMaterial = nullptr// material for outer volume
+					  );
+  
   /// horizontal and vertical kicker outer volume
-  virtual BDSGeometryComponent* CreateKicker(BDSMagnetGeometryType magnetType,            // magnet type
-					     G4String      name,                  // name
-					     G4double      length,                // length [mm]
-					     BDSBeamPipe*  beamPipe,              // beampipe
-					     G4double      boxSize,               // full width
-					     G4bool        vertical = true,       // is it a vertical kicker?
-					     G4Material*   outerMaterial = nullptr   // material for outer volume
-					     );
+  virtual BDSMagnetOuter* CreateKicker(BDSMagnetGeometryType magnetType,   // magnet type
+				       G4String     name,                  // name
+				       G4double     length,                // length [mm]
+				       BDSBeamPipe* beamPipe,              // beampipe
+				       G4double     outerDiameter,         // full width
+				       G4double     containerLength,       // full length to make AccComp container
+				       G4bool       vertical = true,       // is it a vertical kicker?
+				       G4Material*  outerMaterial = nullptr// material for outer volume
+				       );
 
 private:
   BDSMagnetOuterFactory();

@@ -65,9 +65,10 @@ void BDSMagnetOuterFactoryPolesFacet::CreatePoleSolid(G4String     name,
 				     
 }
 
-void BDSMagnetOuterFactoryPolesFacet::CreateYokeAndContainerSolid(G4String      name,
-								  G4double      length,
-								  G4int         order)
+void BDSMagnetOuterFactoryPolesFacet::CreateYokeAndContainerSolid(G4String name,
+								  G4double length,
+								  G4int    order,
+								  G4double magnetContainerRadius)
 {
   yokeStartRadius  *= 0.70710678; // * 1/sqrt(2)
   yokeFinishRadius *= 0.70710678; // * 1/sqrt(2)

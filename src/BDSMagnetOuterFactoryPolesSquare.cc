@@ -272,17 +272,18 @@ void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
       }
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4String     name,
-									  G4double     length,
-									  BDSBeamPipe* beamPipe,
-									  G4int        order,
-									  G4double     outerDiameter,
-									  G4Material*  outerMaterial)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4String     name,
+								    G4double     length,
+								    BDSBeamPipe* beamPipe,
+								    G4int        order,
+								    G4double     outerDiameter,
+								    G4Material*  outerMaterial,
+								    G4double     magnetContainerRadius)
 {
-  BDSGeometryComponent* outer = BDSMagnetOuterFactoryPolesBase::CommonConstructor(name, length, beamPipe,
-										  order, outerDiameter,
-										  outerMaterial);
-
+  BDSMagnetOuter* outer = BDSMagnetOuterFactoryPolesBase::CommonConstructor(name, length, beamPipe,
+									    order, outerDiameter,
+									    outerMaterial, magnetContainerRadius);
+  
   outer->RegisterLogicalVolume(poleLVs);
   outer->RegisterSensitiveVolume(poleLVs);
   
