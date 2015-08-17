@@ -13,6 +13,7 @@
 #include "BDSSbendMagField.hh"
 #include "BDSUtilities.hh"
 
+#include "G4CutTubs.hh"
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_EqRhs.hh"
@@ -147,9 +148,12 @@ void BDSRBend::BuildOuter()
 					    outerDiameter, containerDiameter, chordLength,
 					    angle, outerMaterial);
 
-  containerSolid = outer->GetMagnetContainer()->GetContainerSolid()->Clone();
-  outer->ClearMagnetContainer(); // delete the magnet container as done with
-  InheritExtents(outer); //update extents
+  if (outer)
+    {
+      containerSolid = outer->GetMagnetContainer()->GetContainerSolid()->Clone();
+      InheritExtents(outer->GetMagnetContainer()); //update extents
+      outer->ClearMagnetContainer(); // delete the magnet container as done with
+    }
 }
 
 void BDSRBend::BuildBeampipe()
@@ -200,6 +204,32 @@ void BDSRBend::BuildBeampipe()
   SetExtentZ(-chordLength*0.5,chordLength*0.5);
 }
 
+void BDSRBend::BuildContainerLogicalVolume()
+{
+  if (!outer)
+    {
+      // update container solid to hold all the beampipe segments as there's no outer
+      // and the default way won't suffice for rbend's unique geometry
+      G4double smallContainerRadius = extentX.second; // +ve extent - updated by build beam pipe
+      containerSolid = new G4CutTubs(name + "_container_solid", // name
+				     0,                         // inner radius
+				     smallContainerRadius,      // outer radius
+				     chordLength*0.5,           // half length
+				     0,                         // start angle
+				     CLHEP::twopi,              // sweep angle
+				     inputface,                 // input normal vector
+				     outputface);               // output normal vector
+
+    }
+
+  containerLogicalVolume = new G4LogicalVolume(containerSolid,
+					       emptyMaterial,
+					       name + "_container_lv");
+  
+  // supposed to protect against fields being overridden
+  containerLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
+}
+
 void BDSRBend::PlaceComponents()
 {
 #ifdef BDSDEBUG
@@ -217,7 +247,7 @@ void BDSRBend::PlaceComponents()
   G4ThreeVector straightEndPos   = G4ThreeVector(magnetXShift*0.5,0,straightSectionCentralZ);
 
   G4Transform3D straightStartTF(*straightStartRM, straightStartPos);
-  G4Transform3D straightEndTF(*straightEndRM,   straightEndPos);
+  G4Transform3D straightEndTF  (*straightEndRM,   straightEndPos);
 
   RegisterRotationMatrix(straightStartRM);
   RegisterRotationMatrix(straightEndRM);
@@ -226,33 +256,34 @@ void BDSRBend::PlaceComponents()
     {
       G4PVPlacement* pipeStartPV = new G4PVPlacement(straightStartTF,
 						     bpFirstBit->GetContainerLogicalVolume(), // logical volume
-						     name+"_bp_start_phys",                   // name
+						     name+"_beampipe_start_pv",               // name
 						     containerLogicalVolume,                  // mother volume
 						     false,		                      // no booleanm operation
 						     0,                                       // copy number
 						     checkOverlaps);
       RegisterPhysicalVolume(pipeStartPV);
     }
-  
-  G4PVPlacement* pipePV     = new G4PVPlacement(0,
-						magnetOuterOffset,
-						beampipe->GetContainerLogicalVolume(),   // logical volume
-						name+"_bp_phys",                         // name
-						containerLogicalVolume,                  // mother volume
-						false,	                                 // no boolean operation
-						0,                                       // copy number
-						checkOverlaps);
+
+  // no if(placeBeamPipe) here as custom procedure and rbend has different construction
+  G4PVPlacement* pipePV = new G4PVPlacement(0,
+					    magnetOuterOffset,
+					    beampipe->GetContainerLogicalVolume(),   // logical volume
+					    name+"_beampipe_pv",                     // name
+					    containerLogicalVolume,                  // mother volume
+					    false,	                             // no boolean operation
+					    0,                                       // copy number
+					    checkOverlaps);
   RegisterPhysicalVolume(pipePV);
 
   if (bpLastBit)
     {
-      G4PVPlacement* pipeEndRM  = new G4PVPlacement(straightEndTF,
-						    bpLastBit->GetContainerLogicalVolume(),  // logical volume
-						    name+"_bp_end_phys",	                  // name
-						    containerLogicalVolume,                  // mother volume
-						    false,	                                  // no boolean operation
-						    0,                                       // copy number
-						    checkOverlaps);
+      G4PVPlacement* pipeEndRM   = new G4PVPlacement(straightEndTF,
+						     bpLastBit->GetContainerLogicalVolume(),  // logical volume
+						     name+"_beampipe_end_pv",	              // name
+						     containerLogicalVolume,                  // mother volume
+						     false,	                              // no boolean operation
+						     0,                                       // copy number
+						     checkOverlaps);
       RegisterPhysicalVolume(pipeEndRM);
     }
 

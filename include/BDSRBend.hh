@@ -43,11 +43,12 @@ private:
   /// Extra start and finish piece of beam pipe
   BDSBeamPipe* bpFirstBit;
   BDSBeamPipe* bpLastBit;
-  
+
+  /// Override method from BDSAcceleratorComponent to detail construction process.
   virtual void Build();
 
-  /// Override so we can change the magnetic field length to just the length of the
-  /// straight section in the rbend
+  /// Required by BDSMagnet. We change the magnetic field length to just the length of the
+  /// straight section in the rbend here.
   virtual void BuildBPFieldAndStepper();
 
   /// Override method so we can build several bits of beam pipe
@@ -56,6 +57,12 @@ private:
   /// Override BDSMagnet::BuildOuter() so we can get a different length of central section
   /// and magnet container.
   virtual void BuildOuter();
+
+  /// Override BDSMagnet::BuildContainerLogicalVolume() so we can conditionally build the
+  /// correct container volume if no outer magnet geometry is built. In the case of an RBend
+  /// we can't simply use the central beam pipe segment as the container volume as it'll be too
+  /// small.
+  virtual void BuildContainerLogicalVolume();
 
   /// Place the beam pipe and outer geometry in the overall container. If there's no outer
   /// geometry, then we don't need to place either as the beam pipe becomes the container.
