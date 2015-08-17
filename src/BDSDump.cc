@@ -40,6 +40,7 @@ void BDSDump::BuildContainerLogicalVolume()
   itsOuterUserLimits->SetMaxAllowedStep(chordLength);
   itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   containerLogicalVolume->SetUserLimits(itsOuterUserLimits);
+  RegisterUserLimits(itsOuterUserLimits);
 #endif
   // Sensitive Detector:
   if(nDumps==0)

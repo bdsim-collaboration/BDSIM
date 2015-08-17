@@ -21,7 +21,8 @@ class BDSLWCalorimeter: public BDSAcceleratorComponent
 public:
   BDSLWCalorimeter(G4String         name,
 		   G4double         length,
-		   BDSBeamPipeInfo* beamPipeInfo);
+		   BDSBeamPipeInfo* beamPipeInfo,
+		   G4int            precisionRegion = 0);
   ~BDSLWCalorimeter();
 
 protected:

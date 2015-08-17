@@ -53,7 +53,7 @@ void BDSMuonPhysics::ConstructProcess(){
 
   while( (*aParticleIterator)() ){
     G4ParticleDefinition* particle = aParticleIterator->value();
-    G4ProcessManager* pmanager = particle->GetProcessManager();
+    //    G4ProcessManager* pmanager = particle->GetProcessManager();
     G4String particleName = particle->GetParticleName();
 
     if(particleName == "gamma"){

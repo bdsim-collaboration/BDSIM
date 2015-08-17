@@ -1,12 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-   Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
-   Changed Samplers to account for plane and cylinder types (GABs code)
-*/
-
 #include "BDSGlobalConstants.hh" 
 #include "BDSExecOptions.hh"
 #include "BDSMaterials.hh"

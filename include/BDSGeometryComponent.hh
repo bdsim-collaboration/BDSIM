@@ -40,7 +40,9 @@ public:
 		       std::pair<G4double,G4double> extentYIn,
 		       std::pair<G4double,G4double> extentZIn,
 		       G4ThreeVector                placementOffset = G4ThreeVector(0,0,0));
-  ~BDSGeometryComponent();
+  /// Copy constructor
+  BDSGeometryComponent(BDSGeometryComponent& component);
+  virtual ~BDSGeometryComponent();
 
   /// Get the name from the container logical volume
   G4String          GetName() const;
@@ -73,6 +75,9 @@ public:
   void SetExtentX(std::pair<G4double, G4double> extentXIn); ///< set the extent in local x
   void SetExtentY(std::pair<G4double, G4double> extentYIn); ///< set the extent in local y
   void SetExtentZ(std::pair<G4double, G4double> extentZIn); ///< set the extent in local z
+
+  /// Update the extents of this object with those of another object
+  void InheritExtents(BDSGeometryComponent* anotherComponent);
   
   /// Register a solid as belonging to this geometry component, which then becomes responsible
   /// for it. Note, the container solid given in the constructor is automatically registered.
@@ -153,8 +158,6 @@ public:
   std::vector<G4UserLimits*>      GetAllUserLimits() const;
 
 protected:
-  /// Copy constructor
-  BDSGeometryComponent(BDSGeometryComponent& component);
   
   G4VSolid*                 containerSolid;
   G4LogicalVolume*          containerLogicalVolume;
