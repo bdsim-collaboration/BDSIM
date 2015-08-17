@@ -5,6 +5,7 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 
@@ -62,23 +63,36 @@ protected:
   /// first construct field objects. After using BDSAcceleratorComponent::Build() to
   /// build the container, the beam pipe and outer geometry are built.
   virtual void Build();
-  virtual void BuildContainerLogicalVolume();
-  
-  /// Construct and place the outer magnet geometry beit poled geometry or cylinders. This
-  /// function switches on the member variable of BDSMagnetType type, so is contained in the base class.
-  virtual void BuildOuterVolume();
   
   /// Construct a general straight piece of beampipe. Virtual so it can be overloaded
   /// by derived classes as required - such as RBend.
   virtual void BuildBeampipe();
-  
-  /// Common tasks after the beampipe solids have been defined. Called by BuildBeampipe().
-  /// Derived classes that override BuildBeampipe implement this manually
-  /// in the contents of their BuildBeampipe function.
-  void BeamPipeCommonTasks();
 
-  void BuildOuterFieldManager(G4int nPoles, G4double poleField, 
-			      G4double phiOffset);
+  /// Attach the inner magnetic field to the beam pipe vacuum volume.
+  void AttachFieldToBeamPipe();
+
+  /// Construct and place the outer magnet geometry beit poled geometry or cylinders. This
+  /// function switches on the member variable of BDSMagnetType type, so is contained in the base class.
+  virtual void BuildOuter();
+  
+  /// Construct the magnetic field for the outer magnet geometry. Virtual so derived classes
+  /// may override as they need to - for example BDSMuSpoiler.
+  virtual void BuildOuterFieldManager(G4int    nPoles,
+				      G4double poleField, 
+				      G4double phiOffset);
+
+  /// Attach the outer magnetic field to the outer geometry container volume
+  void AttachFieldToOuter();
+
+  /// Necessary to provide this function a la BDSAcceleratorComponent. If there's an
+  /// outer geometry, the containerSolid will have been set and build it into a logical
+  /// volume. If no outer geometry, use the beam pipe container as this objects container
+  /// in which case no need to build any logical volumes. Update extents if necessary. 
+  virtual void BuildContainerLogicalVolume();
+
+  /// Place the beam pipe and outer geometry in the overall container. If there's no outer
+  /// geometry, then we don't need to place either as the beam pipe becomes the container.
+  virtual void PlaceComponents();
 
   ///@{ normal vector for faces when preparing solids
   G4ThreeVector inputface;
@@ -86,7 +100,7 @@ protected:
   ///@}
   
   /// Magnet type
-  BDSMagnetType itsType;
+  BDSMagnetType magnetType;
   
   // field related objects, set by BuildBPFieldAndStepper
   G4MagIntegratorStepper* itsStepper;
@@ -102,6 +116,11 @@ protected:
   
   /// The constructed beampipe
   BDSBeamPipe*    beampipe;
+
+  /// In the case where there's no magnet outer geometry, we just use the beam pipe
+  /// and therefore we don't need to place it again. Use this boolean to record that
+  /// and decide upon it. Default = true.
+  G4bool          placeBeamPipe;
 
   /// for outer volume construction
   G4double        outerDiameter;
@@ -119,7 +138,7 @@ protected:
   G4ThreeVector magnetOuterOffset;
   
   /// The assembled outer magnet geometry
-  BDSGeometryComponent* outer;
+  BDSMagnetOuter* outer;
 
   /// Magnetic strength parameters
   G4double itsK1, itsK2, itsK3;

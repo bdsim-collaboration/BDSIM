@@ -41,9 +41,18 @@ private:
   G4double outerRadius;
   
   virtual void Build();
+
+  /// Override so we can change the magnetic field length to just the length of the
+  /// straight section in the rbend
   virtual void BuildBPFieldAndStepper();
+
+  /// Override method so we can build several bits of beam pipe
   virtual void BuildBeampipe();
-  virtual void BuildOuterVolume(); // override this method to change length used
+
+  /// Override BDSMagnet::BuildOuter() so we can fudge the chordLength and use the
+  /// standard construction. Set the chord length to just the central length of the
+  /// rbend and then set back.
+  virtual void BuildOuter(); // override this method to change length used
 
   /// temporary function while old constructor still exists - used to avoid duplicating
   /// code in the mean time

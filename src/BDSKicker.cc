@@ -30,7 +30,7 @@ BDSKicker::BDSKicker(G4String            name,
   isVerticalKicker(verticalKicker)
 {
   if (verticalKicker)
-    {itsType = BDSMagnetType::vkicker;}
+    {magnetType = BDSMagnetType::vkicker;}
 }
 
 void BDSKicker::Build()

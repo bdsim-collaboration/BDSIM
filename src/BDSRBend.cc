@@ -123,18 +123,17 @@ void BDSRBend::BuildBPFieldAndStepper()
   itsStepper = dipoleStepper;
 }
 
-void BDSRBend::BuildOuterVolume()
+void BDSRBend::BuildOuter()
 {
   //need to make a shorter outer volume for rbend geometry
   //let's cheat and use the base class method by fiddling the
   //component length then setting it back - reduces code duplication
   G4double originalLength = chordLength;
   chordLength = magFieldLength;
-  BDSMagnet::BuildOuterVolume();
+  BDSMagnet::BuildOuter();
   chordLength = originalLength;
 }
 
-// construct a beampipe for r bend
 void BDSRBend::BuildBeampipe()
 {
   // check for finite length (can be negative if angle is zero or very small)
