@@ -141,7 +141,30 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
   G4cout << __METHOD_NAME__ << G4endl;
 #endif  
   //rectangular bends currently just make a shorter straight volume, so ignore angle for now
+
+  // clear up variables
+  CleanUp();
+  
+  // test input parameters - set global options as default if not specified
+  TestInputParameters(beamPipe,outerDiameter,outerMaterial);
+
+  G4int orientation   = BDS::CalculateOrientation(angle);
+  G4double zcomponent = cos(fabs(angle*0.5)); // calculate components of normal vectors (in the end mag(normal) = 1)
+  G4double xcomponent = sin(fabs(angle*0.5)); // note full angle here as it's the exit angle
+  G4ThreeVector inputface  = G4ThreeVector(-orientation*xcomponent, 0.0, -1.0*zcomponent); //-1 as pointing down in z for normal
+  G4ThreeVector outputface = G4ThreeVector(-orientation*xcomponent, 0.0, zcomponent);   // no output face angle
+
+  G4double magnetContainerRadius = 0.5*containerDiameter;
+  
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
+
+  // delete the magnet container solid created by default in CreateCylindricalSolids
+  // (common to all apart from this one)
+  delete magnetContainerSolid;
+  // make a new magnet container solid
+  BuildMagnetContainerSolidAngled(name, containerLength, magnetContainerRadius,
+				  inputface, outputface);
+  
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSMagnetColours::Instance()->GetMagnetColour("rectangularbend"));
 }
