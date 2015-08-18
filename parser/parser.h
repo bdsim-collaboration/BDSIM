@@ -157,6 +157,8 @@ int write_table(const struct Parameters& params,std::string name, ElementType ty
   e.ydir = params.ydir;
   e.zdir = params.zdir;
 
+  e.bias = params.bias;
+  
   // BLM
   if(params.blmLocZset)
     e.blmLocZ = params.blmLocZ;
