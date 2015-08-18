@@ -12,6 +12,7 @@
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSMaterials.hh"
 #include "BDSSDManager.hh"
+#include "BDSStepperBase.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTunnelBuilder.hh"
 #include "BDSTunnelSD.hh"
@@ -320,11 +321,13 @@ void BDSDetectorConstruction::BuildWorld()
 
   // Register the lv & pvs to the our holder class for the model
   BDSAcceleratorModel::Instance()->RegisterWorldPV(worldPV);
-  
   BDSAcceleratorModel::Instance()->RegisterReadOutWorldPV(readOutWorldPV);
   BDSAcceleratorModel::Instance()->RegisterReadOutWorldLV(readOutWorldLV);
   BDSAcceleratorModel::Instance()->RegisterTunnelReadOutWorldPV(tunnelReadOutWorldPV);
   BDSAcceleratorModel::Instance()->RegisterTunnelReadOutWorldLV(tunnelReadOutWorldLV);
+
+  // Register world PV with our steppers so they know which geometry to navigate
+  BDSStepperBase::AttachWorldVolumeToStepper(worldPV);
 }
 
 void BDSDetectorConstruction::ComponentPlacement()
