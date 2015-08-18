@@ -2,5 +2,5 @@ include muon_components.gmad;
 include muon_sequence.gmad;
 include muon_samplers.gmad;
 include muon_options.gmad;
-include muon_beam.gmad;
+include muon_beam_e-.gmad;
 
