@@ -24,5 +24,5 @@ BDSBeamPipe::BDSBeamPipe(G4VSolid*                 containerSolidIn,
 
 BDSBeamPipe::~BDSBeamPipe()
 {
-  delete containerSubtractionSolid; containerSubtractionSolid = nullptr;
+  delete containerSubtractionSolid;
 }

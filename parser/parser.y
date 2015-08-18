@@ -19,9 +19,9 @@
     extern int line_num;
     extern char* yyfilename;
   
-    const int PEDANTIC = 0; ///> strict checking, exits when element or parameter is not known
-    const int ECHO_GRAMMAR = 0; ///> print grammar rule expansion (for debugging)
-    const int INTERACTIVE = 0; ///> print output of commands (like in interactive mode)
+    const int PEDANTIC = 0; ///< strict checking, exits when element or parameter is not known
+    const int ECHO_GRAMMAR = 0; ///< print grammar rule expansion (for debugging)
+    const int INTERACTIVE = 0; ///< print output of commands (like in interactive mode)
     /* for more debug with parser:
        1) set yydebug to 1 in parser.tab.cc (needs to be reset as this file gets overwritten from time to time!) 
        2) add %debug below

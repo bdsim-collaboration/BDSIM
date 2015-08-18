@@ -109,9 +109,9 @@ void BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
 
 BDSTeleporter::~BDSTeleporter()
 {
-  delete itsMagField;     itsMagField     = nullptr;
-  delete itsEqRhs;        itsEqRhs        = nullptr;
-  delete itsStepper;      itsStepper      = nullptr;
-  delete itsChordFinder;  itsChordFinder  = nullptr;
-  delete itsFieldManager; itsFieldManager = nullptr;
+  delete itsMagField;
+  delete itsEqRhs;
+  delete itsStepper;
+  delete itsChordFinder;
+  delete itsFieldManager;
 }
