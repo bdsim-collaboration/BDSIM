@@ -89,15 +89,18 @@ rcol { return RCOL;}
 ecol { return ECOL; } 
 muspoiler { return MUSPOILER; } 
 element { return ELEMENT; }
-transform3d { return TRANSFORM3D ; }
-collimator { return COLLIMATOR; }
-gas { return GAS; }
-tunnel { return TUNNEL; }
-matdef { return MATERIAL; }
-atom { return ATOM; }
-laser { return LASER; }
 screen { return SCREEN; }
 awakescreen { return AWAKESCREEN; }
+transform3d { return TRANSFORM3D ; }
+laser { return LASER; }
+
+tunnel { return TUNNEL; }
+
+biasDef {return BIASDEF; }
+
+gas { return GAS; }
+matdef { return MATERIAL; }
+atom { return ATOM; }
 
 line       { return LINE; } 
 
