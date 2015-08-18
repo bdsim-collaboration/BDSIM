@@ -17,7 +17,7 @@ public:
   virtual ~BDSBOptrMultiParticleChangeCrossSection();
   
   void AddParticle(G4String particleName);
-  void SetBias(G4String particleName, G4String process, G4double dBias);
+  void SetBias(G4String particleName, G4String process, G4double dBias, G4int iPrimary);
   void StartTracking( const G4Track* track );
 
 private: 

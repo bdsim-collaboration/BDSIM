@@ -33,7 +33,7 @@ void BDSBOptrMultiParticleChangeCrossSection::AddParticle(G4String particleName)
   fBOptrForParticle[particle] = optr;
 }
 
-void BDSBOptrMultiParticleChangeCrossSection::SetBias(G4String particleName, G4String process, G4double dBias) 
+void BDSBOptrMultiParticleChangeCrossSection::SetBias(G4String particleName, G4String process, G4double dBias, G4int iPrimary) 
 {
   const G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
   if(particle == 0) {
@@ -43,7 +43,7 @@ void BDSBOptrMultiParticleChangeCrossSection::SetBias(G4String particleName, G4S
 		"BDSIM",JustWarning,ed);
     return;
   }
-  fBOptrForParticle[particle]->SetBias(process,dBias);
+  fBOptrForParticle[particle]->SetBias(process,dBias,iPrimary);
 }
 
 
@@ -51,11 +51,11 @@ G4VBiasingOperation* BDSBOptrMultiParticleChangeCrossSection::ProposeOccurenceBi
 											       const G4BiasingProcessInterface* callingProcess) {
   // -- examples of limitations imposed to apply the biasing:
   // -- limit application of biasing to primary particles only:
-  if ( track->GetParentID() != 0 ) return 0;
+  //  if ( track->GetParentID() != 0 ) return 0;
   // -- limit to at most 5 biased interactions:
-  if ( fnInteractions > 4 )        return 0;
+  //  if ( fnInteractions > 4 )        return 0;
   // -- and limit to a weight of at least 0.05:
-  if ( track->GetWeight() < 0.05 ) return 0;
+  //  if ( track->GetWeight() < 0.05 ) return 0;
   
   if ( fCurrentOperator ) return fCurrentOperator->GetProposedOccurenceBiasingOperation(track, callingProcess);
   else                    return 0;
