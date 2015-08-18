@@ -52,7 +52,8 @@ void BDSBOptrChangeCrossSection::StartRun()
 	const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
 	G4String operationName = "XSchange-"+wrapperProcess->GetWrappedProcess()->GetProcessName();
 	fChangeCrossSectionOperations[wrapperProcess] = new G4BOptnChangeCrossSection(operationName);
-	fXSScale[wrapperProcess] = 1.0;
+	fXSScale[wrapperProcess]      = 1.0;
+	fPrimaryScale[wrapperProcess] = 0;
       }
     }
     fSetup = false;
@@ -114,7 +115,7 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   G4VBiasingOperation* previousOperation = callingProcess->GetPreviousOccurenceBiasingOperation();
 
   // -- check for only scaling primary
-  if ( fPrimaryScale[callingProcess] && track->GetParentID() != 0 ) return 0;
+  if ( fPrimaryScale[callingProcess] == 1 && track->GetParentID() != 0 ) return 0;
   XStransformation = fXSScale[callingProcess];
 
 #if 0
