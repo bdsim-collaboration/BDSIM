@@ -59,13 +59,14 @@ void BDSBOptrChangeCrossSection::StartRun()
   }
 }
 
-void BDSBOptrChangeCrossSection::SetBias(G4String processName, G4double bias) {
+void BDSBOptrChangeCrossSection::SetBias(G4String processName, G4double bias, G4int iPrimary) {
     const G4ProcessManager*           processManager = fParticleToBias->GetProcessManager();
     const G4BiasingProcessSharedData* sharedData     = G4BiasingProcessInterface::GetSharedData(processManager);
     for (size_t i = 0 ; i < (sharedData->GetPhysicsBiasingProcessInterfaces()).size(); i++) {
       const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
       if(processName == wrapperProcess->GetWrappedProcess()->GetProcessName()) { 
-	fXSScale[wrapperProcess] = bias;
+	fXSScale[wrapperProcess]      = bias;
+	fPrimaryScale[wrapperProcess] = iPrimary;
       }
     }
 }
@@ -74,7 +75,7 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
 										  const G4BiasingProcessInterface* callingProcess) {
   // -----------------------------------------------------
   // -- Check if current particle type is the one to bias:
-  // -----------------------------------------------------
+  //  -----------------------------------------------------
   if ( track->GetDefinition() != fParticleToBias ) return 0;
     
   // ---------------------------------------------------------------------
@@ -112,14 +113,24 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   // -- get the operation that was proposed to the process in the previous step:
   G4VBiasingOperation* previousOperation = callingProcess->GetPreviousOccurenceBiasingOperation();
 
-  //  if(callingProcess->GetWrappedProcess()->GetProcessName() == "AnnihiToMuPair" || 
-  //     callingProcess->GetWrappedProcess()->GetProcessName() == "ee2hadr" || 
-  //     callingProcess->GetWrappedProcess()->GetProcessName() == "annihil" || 
-  //     callingProcess->GetWrappedProcess()->GetProcessName() == "GammaToMuPair" ) {
-  //    XStransformation = 1e5;
-  //  }
-  
+  // -- check for only scaling primary
+  if ( fPrimaryScale[callingProcess] && track->GetParentID() != 0 ) return 0;
   XStransformation = fXSScale[callingProcess];
+
+#if 0
+  if(callingProcess->GetWrappedProcess()->GetProcessName() == "AnnihiToMuPair" || 
+     //     callingProcess->GetWrappedProcess()->GetProcessName() == "ee2hadr" || 
+     //     callingProcess->GetWrappedProcess()->GetProcessName() == "annihil" || 
+     callingProcess->GetWrappedProcess()->GetProcessName() == "GammaToMuPair" ) {
+    //    G4cout << callingProcess->GetWrappedProcess()->GetProcessName() << G4endl;
+    XStransformation = 1e5;
+  }
+#endif
+
+  // STB Just return the operation before the multiple sampling check
+  operation->SetBiasedCrossSection( XStransformation * analogXS );
+  operation->Sample();
+  return operation;
     
   // -- now setup the operation to be returned to the process: this
   // -- consists in setting the biased cross-section, and in asking
@@ -132,11 +143,6 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   // -- only on the first time the operation is proposed, or if the interaction
   // -- occured. If the interaction did not occur for the process in the previous,
   // -- we update the number of interaction length instead of resampling.
-
-  // STB Just return the operation before the multiple sampling check
-  operation->SetBiasedCrossSection( XStransformation * analogXS );
-  operation->Sample();
-  return operation;
 
   if(previousOperation == 0) {
     //    G4cout << __METHOD_NAME__ << " previousOperation==0 " << XStransformation * analogXS << G4endl;
