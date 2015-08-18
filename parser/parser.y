@@ -391,6 +391,15 @@ decl : VARIABLE ':' marker
              params.flush();
            }
        }
+     | VARIABLE ':' tunnel
+       {
+         if(execute)
+           {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << $1->name << " : tunnel" << std::endl;
+	     tunnel.set_value("name",$1->name);
+	     add_tunnel(tunnel);
+           }
+       }
      | VARIABLE ':' xsecbias
        {
          if(execute)
@@ -468,6 +477,9 @@ matdef : MATERIAL ',' parameters
 ;
 
 atom : ATOM ',' parameters
+;
+
+tunnel : TUNNEL ',' tunnel_options
 ;
 
 xsecbias : XSECBIAS ',' xsecbias_options
