@@ -80,7 +80,6 @@ sbend { return SBEND; }
 rbend {return RBEND; }
 hkick { return HKICK; }
 vkick { return VKICK; }
-kicker { return KICK; } 
 quadrupole { return QUADRUPOLE; }
 sextupole { return SEXTUPOLE; }
 octupole { return OCTUPOLE; }
@@ -92,7 +91,6 @@ muspoiler { return MUSPOILER; }
 element { return ELEMENT; }
 transform3d { return TRANSFORM3D ; }
 collimator { return COLLIMATOR; }
-pipe { return PIPE; }
 gas { return GAS; }
 tunnel { return TUNNEL; }
 matdef { return MATERIAL; }
@@ -103,11 +101,8 @@ awakescreen { return AWAKESCREEN; }
 
 line       { return LINE; } 
 
-aperture {return APERTURE; } // reserved keywords
-filename { return FILENAME; }
 period { return PERIOD; }
 range { return RANGE; }
-cut { return CUT; }
 
 "if" { return IF; }
 "for" { return FOR; }
