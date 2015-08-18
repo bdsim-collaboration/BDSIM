@@ -412,79 +412,30 @@ decl : VARIABLE ':' marker
 ;
 
 marker : MARKER ;
-
-drift : DRIFT ',' parameters
-;
-
-pcldrift : PCLDRIFT ',' parameters
-;
-
-rf : RF ',' parameters
-;
-
-sbend : SBEND ',' parameters
-;
-
-rbend : RBEND ',' parameters
-;
-
-vkick : VKICK ',' parameters
-;
-
-hkick : HKICK ',' parameters
-;
-
-quad : QUADRUPOLE ',' parameters
-;
-
-sextupole : SEXTUPOLE ',' parameters
-;
-
-octupole : OCTUPOLE ',' parameters
-;
-
-multipole : MULTIPOLE ',' parameters
-;
-
-solenoid : SOLENOID ',' parameters
-;
-
-ecol : ECOL ',' parameters
-;
-
-muspoiler : MUSPOILER ',' parameters
-;
-
-rcol : RCOL ',' parameters
-;
-
-laser : LASER ',' parameters
-;
-
-screen : SCREEN ',' parameters
-;
-
-awakescreen : AWAKESCREEN ',' parameters
-;
-
-transform3d : TRANSFORM3D ',' parameters
-;
-
-element : ELEMENT ',' parameters
-;
-
-matdef : MATERIAL ',' parameters
-;
-
-atom : ATOM ',' parameters
-;
-
-tunnel : TUNNEL ',' tunnel_options
-;
-
-xsecbias : XSECBIAS ',' xsecbias_options
-;
-
+drift : DRIFT ',' parameters ;
+pcldrift : PCLDRIFT ',' parameters ;
+rf : RF ',' parameters ;
+sbend : SBEND ',' parameters ;
+rbend : RBEND ',' parameters ;
+vkick : VKICK ',' parameters ;
+hkick : HKICK ',' parameters ;
+quad : QUADRUPOLE ',' parameters ;
+sextupole : SEXTUPOLE ',' parameters ;
+octupole : OCTUPOLE ',' parameters ;
+multipole : MULTIPOLE ',' parameters ;
+solenoid : SOLENOID ',' parameters ;
+ecol : ECOL ',' parameters ;
+muspoiler : MUSPOILER ',' parameters ;
+rcol : RCOL ',' parameters ;
+laser : LASER ',' parameters ;
+screen : SCREEN ',' parameters ;
+awakescreen : AWAKESCREEN ',' parameters ;
+transform3d : TRANSFORM3D ',' parameters ;
+element : ELEMENT ',' parameters ;
+matdef : MATERIAL ',' parameters ;
+atom : ATOM ',' parameters ;
+tunnel : TUNNEL ',' tunnel_options ;
+xsecbias : XSECBIAS ',' xsecbias_options ;
 extension : VARIABLE ',' parameters
             {
 	      if(execute)
@@ -580,9 +531,7 @@ line : LINE '=' '-' '(' rev_element_seq ')'
 //sequence : SEQUENCE ',' params ',' '-' '(' rev_element_seq ')'
 //;
 
-sequence : SEQUENCE '=' '(' seq_element_seq ')'
-;
-
+sequence : SEQUENCE '=' '(' seq_element_seq ')' ;
 
 element_seq : 
             | VARIABLE ',' element_seq
@@ -1424,7 +1373,6 @@ beam_parameters :
 ;
 
 %%
-
 
 int yyerror(const char *s)
 {
