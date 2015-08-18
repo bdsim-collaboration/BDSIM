@@ -1,23 +1,21 @@
 #include "BDSDebug.hh"
 #include "BDSDipoleStepper.hh"
-#include "BDSGlobalConstants.hh" 
+#include "BDSGlobalConstants.hh"
+#include "BDSStepperBase.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ClassicalRK4.hh"
-#include "G4Navigator.hh"
 #include "G4TransportationManager.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
 
-BDSDipoleStepper::BDSDipoleStepper(G4Mag_EqRhs *EqRhs)
-  :G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
-                                     // position & velocity
-    itsLength(0.0),itsAngle(0.0),itsBGrad(0.0),
-    itsBField(0.0),itsDist(0.0), initialised(false)
+BDSDipoleStepper::BDSDipoleStepper(G4Mag_EqRhs* eqRHS):
+  BDSStepperBase(eqRHS, 6),
+  itsLength(0.0),itsAngle(0.0),
+  fPtrMagEqOfMot(eqRHS),
+  itsBGrad(0.0),itsBField(0.0),itsDist(0.0)
 {
-  fPtrMagEqOfMot  = EqRhs;
-  dipoleNavigator = new G4Navigator();
-  backupStepper   = new G4ClassicalRK4(EqRhs,6);
+  backupStepper   = new G4ClassicalRK4(eqRHS,6);
   nominalEnergy   = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
 }
 
@@ -78,17 +76,10 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
     }
 
   //G4double h2=h*h;
-
-  if (!initialised)
-    {
-      G4VPhysicalVolume* worldPV = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->GetWorldVolume();
-      dipoleNavigator->SetWorldVolume(worldPV);
-      initialised = true;
-    }
   
   // global to local
-  G4AffineTransform LocalAffine  = dipoleNavigator->GetLocalToGlobalTransform();
-  G4AffineTransform GlobalAffine = dipoleNavigator->GetGlobalToLocalTransform();
+  G4AffineTransform LocalAffine  = auxNavigator->GetLocalToGlobalTransform();
+  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
 
   G4ThreeVector LocalR           = GlobalAffine.TransformPoint(GlobalPosition); 
   G4ThreeVector LocalRp          = GlobalAffine.TransformAxis(InitMomDir);

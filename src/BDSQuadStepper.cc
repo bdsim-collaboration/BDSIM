@@ -1,21 +1,18 @@
+#include "BDSStepperBase.hh"
 #include "BDSQuadStepper.hh"
+
 #include "G4ThreeVector.hh"
 #include "G4TransportationManager.hh"
-#include "G4Navigator.hh"
 #include "G4AffineTransform.hh"
 
 using std::max;
 extern G4double BDSLocalRadiusOfCurvature;
 
-BDSQuadStepper::BDSQuadStepper(G4Mag_EqRhs *EqRhs)
-  : G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
-                                      // position & velocity
-    itsBGrad(0.0),itsDist(0.0),initialised(false)
-{
-  fPtrMagEqOfMot = EqRhs;
-  QuadNavigator  = new G4Navigator();
-}
-
+BDSQuadStepper::BDSQuadStepper(G4Mag_EqRhs* eqRHS):
+  BDSStepperBase(eqRHS, 6),
+  fPtrMagEqOfMot(eqRHS),
+  itsBGrad(0.0),itsDist(0.0)
+{;}
 
 void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
 				  G4ThreeVector /*bField*/,
@@ -62,16 +59,10 @@ void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
       return;
     }
   
-  if (!initialised)
-    {
-      G4VPhysicalVolume* worldPV = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->GetWorldVolume();
-      QuadNavigator->SetWorldVolume(worldPV);
-      initialised = true;
-    }
-  QuadNavigator->LocateGlobalPointAndSetup(GlobalR);
+  auxNavigator->LocateGlobalPointAndSetup(GlobalR);
 
   G4double          h2           =h*h;
-  G4AffineTransform GlobalAffine = QuadNavigator->GetGlobalToLocalTransform();
+  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
   G4ThreeVector     LocalR       = GlobalAffine.TransformPoint(GlobalR); 
   G4ThreeVector     LocalRp      = GlobalAffine.TransformAxis(InitMomDir);
 
@@ -277,8 +268,7 @@ void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
 	 << G4endl; 
 #endif
 
-  G4AffineTransform LocalAffine=QuadNavigator-> 
-    GetLocalToGlobalTransform();
+  G4AffineTransform LocalAffine = auxNavigator->GetLocalToGlobalTransform();
 
   GlobalR = LocalAffine.TransformPoint(LocalR); 
   GlobalP = InitPMag*LocalAffine.TransformAxis(LocalRp);
@@ -348,7 +338,5 @@ G4double BDSQuadStepper::DistChord()   const
 }
 
 BDSQuadStepper::~BDSQuadStepper()
-{
-  delete QuadNavigator;
-}
+{}
 

@@ -1,33 +1,17 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
-//
-// class BDSOctStepper
-//
-// Class description:
-// stepper for pure octupole magnetic field
-
-// History:
-// - Created. G.Blair 1/11/00
-
 #ifndef BDSOCTSTEPPER_HH
 #define BDSOCTSTEPPER_HH
+
+#include "BDSStepperBase.hh"
+
 #include "globals.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
-#include "G4Navigator.hh"
 
-class BDSOctStepper : public G4MagIntegratorStepper
+class BDSOctStepper: public BDSStepperBase
 {
-
-public:  // with description
-
+public:
   BDSOctStepper(G4Mag_EqRhs *EqRhs);
-
   ~BDSOctStepper();
 
   void Stepper( const G4double y[],

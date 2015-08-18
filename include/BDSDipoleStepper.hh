@@ -1,19 +1,17 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-*/
-
 #ifndef BDSDipoleStepper_HH
 #define BDSDipoleStepper_HH
+
+#include "BDSStepperBase.hh"
+
 #include "globals.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 #include "G4Navigator.hh"
 
-class BDSDipoleStepper : public G4MagIntegratorStepper
+class BDSDipoleStepper: public BDSStepperBase
 {
-
-public:  // with description
+public:
   
   BDSDipoleStepper(G4Mag_EqRhs *EqRhs);
   
@@ -59,18 +57,6 @@ private:
   G4double itsBGrad;
   G4double itsBField;
   G4double itsDist;
-
-  /// The navigator object used to locate a point in the geometry and
-  /// get the local position and rotation transforms without affecting
-  /// the real navigator that handles the tracking.
-  G4Navigator* dipoleNavigator;
-  
-  /// Record whether the class has been used or not. Use to get the
-  /// world volume for a local navigator object on first use. We have
-  /// to do this because the stepper objects are typically created before
-  /// the world is constructed and registered. However, we don't need to do
-  /// this every time - only once.
-  G4bool initialised;
 
   // use for high amplitude particles
   G4MagIntegratorStepper* backupStepper;

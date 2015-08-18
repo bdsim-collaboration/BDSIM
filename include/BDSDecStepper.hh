@@ -1,33 +1,17 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
-//
-// class BDSDecStepper
-//
-// Class description:
-// stepper for pure decapole magnetic field
-
-// History:
-//
-
 #ifndef BDSDECSTEPPER_HH
 #define BDSDECSTEPPER_HH
+
 #include "globals.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
-#include "G4Navigator.hh"
 
-class BDSDecStepper : public G4MagIntegratorStepper
+#include "BDSStepperBase.hh"
+
+class BDSDecStepper: public BDSStepperBase
 {
-
-public:  // with description
-
+public:
   BDSDecStepper(G4Mag_EqRhs *EqRhs);
-
   ~BDSDecStepper();
 
   void Stepper( const G4double y[],
@@ -42,13 +26,11 @@ public:  // with description
 
   G4double DistChord()   const;
   // Estimate maximum distance of curved solution and chord ... 
- 
+  
   void SetBQuadPrime(G4double aBQuadPrime);
   G4double GetBQuadPrime();
 
   void StepperName();
-
-public: // without description
   
   G4int IntegratorOrder()const { return 2; }
 
@@ -71,12 +53,10 @@ private:
   // Data stored in order to find the chord.
 
   G4double itsDist;
-
 };
 
 inline  void BDSDecStepper::SetBQuadPrime(G4double aBQuadPrime)
-{itsBQuadPrime=aBQuadPrime;
-}
+{itsBQuadPrime=aBQuadPrime;}
 
 inline G4double BDSDecStepper::GetBQuadPrime()
 {return itsBQuadPrime;}

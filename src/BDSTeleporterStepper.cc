@@ -1,13 +1,14 @@
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
+#include "BDSStepperBase.hh"
 
 #include "BDSTeleporterStepper.hh"
 #include "BDSDebug.hh"
 #include "G4Event.hh"
 #include "G4EventManager.hh"
 
-BDSTeleporterStepper::BDSTeleporterStepper(G4Mag_EqRhs *EqRhs)
-   :G4MagIntegratorStepper(EqRhs,6)  // integrate over 6 variables only
+BDSTeleporterStepper::BDSTeleporterStepper(G4Mag_EqRhs* eqRHS):
+  BDSStepperBase(eqRHS, 6)
 {
 #ifdef BDSDEBUG
   G4cout << "BDSTeleporterStepper Constructor " << G4endl;

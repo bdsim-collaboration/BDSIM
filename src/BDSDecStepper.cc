@@ -1,23 +1,18 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 25.12.2003
-   Copyright (c) 2003 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
 #include "BDSDecStepper.hh"
 #include "G4ThreeVector.hh"
 #include "G4TransportationManager.hh"
 
+#include "BDSStepperBase.hh"
+
 extern G4double BDSLocalRadiusOfCurvature;
 
-BDSDecStepper::BDSDecStepper(G4Mag_EqRhs *EqRhs)
-  : G4MagIntegratorStepper(EqRhs,6),   // integrate over 6 variables only !!
-                                       // position & velocity
-    itsBQuadPrime(0.0), itsDist(0.0)
-{
-  fPtrMagEqOfMot = EqRhs;
-}
-
+// integrate over 6 variables only - position and velocity
+BDSDecStepper::BDSDecStepper(G4Mag_EqRhs *EqRhs):
+  BDSStepperBase(EqRhs, 6),  
+  fPtrMagEqOfMot(EqRhs),
+  itsBQuadPrime(0.0),
+  itsDist(0.0)
+{;}
 
 void BDSDecStepper::AdvanceHelix( const G4double  yIn[],
                                    G4ThreeVector,
@@ -49,26 +44,11 @@ void BDSDecStepper::AdvanceHelix( const G4double  yIn[],
       itsDist=0;
     }
   else 
-    {      
-      G4Navigator* DecNavigator=
-	G4TransportationManager::GetTransportationManager()->
-	GetNavigatorForTracking();
-
-      G4AffineTransform LocalAffine=DecNavigator->GetLocalToGlobalTransform();
-
-
-      // gab_dec03>>
-      // position 
-      // gab_dec03
-      //      G4ThreeVector LocalR = DecNavigator->GetCurrentLocalCoordinate();
-      // position derivative r' (normalised to unity)
-      //      G4ThreeVector LocalRp= (DecNavigator->ComputeLocalAxis(v0)).unit();
-
-      G4AffineTransform GlobalAffine=DecNavigator->GetGlobalToLocalTransform();
+    {
+      G4AffineTransform LocalAffine  = auxNavigator->GetLocalToGlobalTransform();
+      G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
       G4ThreeVector LocalR=GlobalAffine.TransformPoint(GlobalPosition); 
       G4ThreeVector LocalRp=GlobalAffine.TransformAxis(InitMomDir);
-      // gab_dec03<<
-
 
       G4double x0=LocalR.x(); 
       G4double y0=LocalR.y();
@@ -151,10 +131,8 @@ void BDSDecStepper::Stepper( const G4double yInput[],
   AdvanceHelix(yInput,(G4ThreeVector)0,hstep,yOut);
 }
 
-G4double BDSDecStepper::DistChord()   const 
-{
-  return itsDist;
-}
+G4double BDSDecStepper::DistChord()const 
+{return itsDist;}
 
 BDSDecStepper::~BDSDecStepper()
 {}
