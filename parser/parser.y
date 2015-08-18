@@ -58,7 +58,7 @@
 %token MARKER ELEMENT DRIFT PCLDRIFT RF DIPOLE RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token SOLENOID RCOL ECOL LINE SEQUENCE LASER TRANSFORM3D MUSPOILER
 %token VKICK HKICK
-%token PERIOD GAS BIASDEF TUNNEL MATERIAL ATOM
+%token PERIOD GAS XSECBIAS TUNNEL MATERIAL ATOM
 %token BEAM OPTION PRINT RANGE STOP USE VALUE ECHO PRINTF SAMPLE CSAMPLE BETA0 TWISS DUMP
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -74,6 +74,7 @@
 %type <symp> csample_options
 %type <symp> gas_options
 %type <symp> tunnel_options
+%type <symp> xsecbias_options
 
 /* printout format for debug output */
 /*
@@ -390,6 +391,15 @@ decl : VARIABLE ':' marker
              params.flush();
            }
        }
+     | VARIABLE ':' xsecbias
+       {
+         if(execute)
+           {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << $1->name << " : xsecbias" << std::endl;
+	     xsecbias.set_value("name",$1->name);
+	     add_xsecbias(xsecbias);
+           }
+       }
 ;
 
 marker : MARKER ;
@@ -458,6 +468,9 @@ matdef : MATERIAL ',' parameters
 ;
 
 atom : ATOM ',' parameters
+;
+
+xsecbias : XSECBIAS ',' xsecbias_options
 ;
 
 extension : VARIABLE ',' parameters
@@ -1073,6 +1086,14 @@ command : STOP             { if(execute) quit(); }
 		add_tunnel(tunnel);
 	      }
           }
+        | XSECBIAS ',' xsecbias_options // xsecbias
+          {
+	    if(execute)
+	      {  
+		if(ECHO_GRAMMAR) printf("command -> XSECBIAS\n");
+		add_xsecbias(xsecbias);
+	      }
+          }
         | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
           {
 	    if(execute)
@@ -1303,6 +1324,40 @@ tunnel_options : VARIABLE '=' aexpr ',' tunnel_options
 		      if(execute)
 			tunnel.set_value($1->name,$3);
 		      free($3);
+		    }
+;
+
+xsecbias_options : VARIABLE '=' aexpr ',' xsecbias_options
+                    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
+		    }
+                 | VARIABLE '=' aexpr
+                    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
+		    }
+                 | VARIABLE '=' STR ',' xsecbias_options
+                    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
+		      free($3);
+		    }
+                 | VARIABLE '=' STR
+                    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
+		      free($3);
+		    }
+                 | VARIABLE '=' vecexpr ',' xsecbias_options
+		    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
+		    }
+                 | VARIABLE '=' vecexpr
+		    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
 		    }
 ;
 

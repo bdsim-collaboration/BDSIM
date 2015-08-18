@@ -2,15 +2,22 @@
 #define __PHYSICSBIASING_H
 
 #include <string>
+#include <list>
+
+namespace GMAD {
+  struct Array;
+}
 
 /**
- * @brief Physicsbiasing class for parser
+ * @brief Physics biasing class for parser
  * 
  * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk> 
  */
 
 namespace GMAD {
-  struct Physicsbiasing {
+  enum class PhysicsBiasingType {ALL=1,PRIMARY=2,SECONDARY=3};
+  
+  class PhysicsBiasing {
    
   public:
     std::string name; ///< name
@@ -20,11 +27,20 @@ namespace GMAD {
     std::string process;
     /// factors corresponding to process
     std::list<double> factor;
-    /// primary
-    std::list<double> primary;
+    /// flag which particles are biased
+    std::list<PhysicsBiasingType> flag;
+
+    /// constructor
+    PhysicsBiasing();
+    /// reset
+    void clear();
+    /// print some properties
+    void print()const;
 
     /// set methods by property name, numeric values
     void set_value(std::string property, double value);
+    /// set methods by property name, list of numeric values
+    void set_value(std::string property, Array* value);
     /// set methods by property name, string values
     void set_value(std::string property, std::string value);
   };

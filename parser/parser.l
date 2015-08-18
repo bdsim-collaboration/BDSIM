@@ -96,7 +96,7 @@ laser { return LASER; }
 
 tunnel { return TUNNEL; }
 
-biasDef {return BIASDEF; }
+xsecBias {return XSECBIAS; }
 
 gas { return GAS; }
 matdef { return MATERIAL; }
