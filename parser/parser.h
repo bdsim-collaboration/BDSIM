@@ -29,6 +29,7 @@
 #include "gmad.h"
 #include "options.h"
 #include "parameters.h"
+#include "physicsbiasing.h"
 #include "tunnel.h"
 
 int yyerror(const char *);
@@ -50,7 +51,8 @@ struct Parameters params;
 struct Options options;
 //struct Element element;
 struct Tunnel tunnel;
-
+class PhysicsBiasing xsecbias;
+ 
 // list of all encountered elements
 ElementList element_list;
 
@@ -61,6 +63,7 @@ ElementList beamline_list;
 std::list<struct Element>  material_list;
 std::list<struct Element>  atom_list;
 std::vector<struct Tunnel> tunnel_list;
+std::vector<PhysicsBiasing> xsecbias_list;
 
 std::string current_line;
 std::string current_start;
@@ -89,6 +92,8 @@ void add_dump(std::string name, std::string before, int before_count);
 void add_gas(std::string name, std::string before, int before_count, std::string material);
 /// insert tunnel
 void add_tunnel(Tunnel& tunnel);
+/// insert xsecbias
+void add_xsecbias(PhysicsBiasing& xsecbias);
 double property_lookup(ElementList& el_list, std::string element_name, std::string property_name);
 /// add element to temporary element sequence tmp_list
 void add_element_temp(std::string name, int number, bool pushfront, ElementType linetype);
@@ -152,6 +157,8 @@ int write_table(const struct Parameters& params,std::string name, ElementType ty
   e.ydir = params.ydir;
   e.zdir = params.zdir;
 
+  e.bias = params.bias;
+  
   // BLM
   if(params.blmLocZset)
     e.blmLocZ = params.blmLocZ;
@@ -518,6 +525,18 @@ void add_tunnel(Tunnel& tunnel)
   tunnel_list.push_back(t);
 }
 
+void add_xsecbias(PhysicsBiasing& xsecbias)
+{
+  // copy from global
+  PhysicsBiasing b(xsecbias);
+  // reset xsecbias
+  xsecbias.clear();
+#ifdef BDSDEBUG 
+  b.print();
+#endif
+  xsecbias_list.push_back(b);
+}
+ 
 double property_lookup(ElementList& el_list, std::string element_name, std::string property_name)
 {
   std::list<struct Element>::iterator it = el_list.find(element_name);
