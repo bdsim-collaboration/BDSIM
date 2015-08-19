@@ -550,8 +550,17 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   for (i = registry->begin(); i != registry->end(); ++i)
     {    
       auto lvs = i->second->GetAllLogicalVolumes();
-      //G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
-      
+
+      // Accelerator vacuum 
+      G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
+      if(vacuumLV) 
+	{
+	  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();      
+	  eg->AddParticle("proton");
+	  eg->AttachTo(vacuumLV);
+	}
+#if 0
+      // Accelerator material
       for (auto lvsi = lvs.begin(); lvsi != lvs.end(); ++lvsi)
 	{
 	  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
@@ -561,6 +570,7 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	  eg->AddParticle("proton");
 	  eg->AttachTo(*lvsi);
 	}
+#endif
     }  
 
   // Second for tunnel

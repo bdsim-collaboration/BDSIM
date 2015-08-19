@@ -128,10 +128,10 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   }
 #endif
 
-#if 0
+#if 1
   if(callingProcess->GetWrappedProcess()->GetProcessName() == "protonInelastic" && track->GetParentID() == 0) {
-    G4cout << analogXS << G4endl;
-    XStransformation = 1e60;
+    //    G4cout << analogXS << G4endl;
+    XStransformation = 1e13;
   }
 #endif
 

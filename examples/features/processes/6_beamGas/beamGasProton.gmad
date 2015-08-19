@@ -17,11 +17,12 @@ mass=14.0;
 T=300;
 k=1.38e-23;
 rho = p*mass*mu/(k*T)*1e3/1e6;
+print, rho;
 
 bpgas : matdef, Z=7, A=14.00674, T=300, density=rho, state="gas"; 
 option, vacuumMaterial="bpgas"; !Sets the beam pipe vacuum material to bpgas
 
-dd=2.5*m;
+dd=20.0*m;
 
 myPipe1 : drift, l=dd; 
 myPipe2 : drift, l=dd;
@@ -44,4 +45,4 @@ sample, range = sampler3;
 sample, range = sampler4; 
 sample, range = sampler5; 
 
-option, ngenerate=1e4; 
+option, ngenerate=1e3; 

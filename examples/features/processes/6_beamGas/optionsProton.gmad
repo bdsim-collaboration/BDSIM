@@ -9,4 +9,11 @@ option, beampipeRadius = 10 * cm,
         prodCutPositrons=1000*m;
 
 option,modularPhysicsListsOn=1;
-option,physicsList="hadronic optical synchrad";
+option,physicsList="hadronic";
+
+! 1 : all particles,
+! 2 : primary 
+! 3 : secondary 
+
+protonPrimaryVacuum: xsecBias, particle="proton", proc="protonInelastic", xsecfact={1e13}, flag={2}, logicalVolumes="acceleratorVacuum";
+
