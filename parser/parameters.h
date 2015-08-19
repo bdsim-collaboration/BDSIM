@@ -36,6 +36,9 @@ struct Parameters {
   
   int knlset; int kslset;
 
+  std::string bias; ///< physics biasing
+  int biasset;
+  
   ///List of beam loss monitor locations
   std::list<double> blmLocZ;
   std::list<double> blmLocTheta;
