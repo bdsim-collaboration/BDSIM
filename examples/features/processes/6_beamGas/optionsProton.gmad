@@ -3,10 +3,10 @@
 option, beampipeRadius = 10 * cm,
         outerDiameter = 1.9 * m,
         beampipeThickness = 0.5 * mm,
-	prodCutPhotons=0.1*m,
-	prodCutElectrons=0.1*m,
-	prodCutPositrons=0.1*m,
-	defaultRangeCut=0.1*m;
+        defaultRangeCut=1000*m,
+        prodCutPhotons=1000*m,
+        prodCutElectrons=1000*m,
+        prodCutPositrons=1000*m;
 
 option,modularPhysicsListsOn=1;
 option,physicsList="hadronic optical synchrad";
