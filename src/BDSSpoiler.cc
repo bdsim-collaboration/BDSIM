@@ -66,6 +66,7 @@ void BDSSpoiler::BuildInnerSpoiler()
   
   RegisterLogicalVolume(itsSolidLogVol);
   RegisterLogicalVolume(itsInnerLogVol);
+  SetAcceleratorVacuumLogicalVolume(itsInnerLogVol);
   RegisterPhysicalVolume(itsPhysiComp2);
   
   if(BDSGlobalConstants::Instance()->GetSensitiveComponents())

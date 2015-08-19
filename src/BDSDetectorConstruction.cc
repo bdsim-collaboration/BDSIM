@@ -549,7 +549,8 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 
   for (i = registry->begin(); i != registry->end(); ++i)
     {    
-      auto lvs = (i->second)->GetAllLogicalVolumes();
+      auto lvs = i->second->GetAllLogicalVolumes();
+      //G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
       
       for (auto lvsi = lvs.begin(); lvsi != lvs.end(); ++lvsi)
 	{

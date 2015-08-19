@@ -38,7 +38,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   angle(angleIn),
   precisionRegion(precisionRegionIn),
   beamPipeInfo(beamPipeInfoIn),
-  readOutLV(nullptr)
+  readOutLV(nullptr),
+  acceleratorVacuumLV(nullptr)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "(" << name << ")" << G4endl;

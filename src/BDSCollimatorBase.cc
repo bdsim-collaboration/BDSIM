@@ -49,6 +49,9 @@ BDSCollimatorBase::BDSCollimatorBase(G4String name,
   vacuumSolid     = nullptr;
 }
 
+BDSCollimatorBase::~BDSCollimatorBase()
+{;}
+
 void BDSCollimatorBase::BuildContainerLogicalVolume()
 {
   containerSolid = new G4Box(name + "_container_solid",
@@ -122,10 +125,11 @@ void BDSCollimatorBase::Build()
 						      name + "_vacuum_lv"); // name
 
       vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-      RegisterLogicalVolume(vacuumLV);
 #ifndef NOUSERLIMITS
       vacuumLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 #endif
+      SetAcceleratorVacuumLogicalVolume(vacuumLV);
+      RegisterLogicalVolume(vacuumLV);
 
       G4PVPlacement* vacPV = new G4PVPlacement(0,                       // rotation
 					       (G4ThreeVector)0,        // position
@@ -139,7 +143,4 @@ void BDSCollimatorBase::Build()
       RegisterPhysicalVolume(vacPV);
     } 
 }
-
-BDSCollimatorBase::~BDSCollimatorBase()
-{;}
 
