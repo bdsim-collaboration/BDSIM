@@ -79,6 +79,9 @@ void BDSMagnet::BuildBeampipe()
   beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
 							    chordLength - lengthSafety,
 							    beamPipeInfo);
+
+  SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
+  
   BeamPipeCommonTasks();
 }
 
@@ -97,9 +100,6 @@ void BDSMagnet::BeamPipeCommonTasks()
   // latter 'true' over-writes all the other fields
   
   containerLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
-  
-  // register logical & physical volumes  + rotation matrices using geometry component base class
-  InheritObjects(beampipe);
 
   // place beampipe
   G4PVPlacement* beamPipePV = new G4PVPlacement(0,                         // rotation
@@ -288,6 +288,7 @@ void BDSMagnet::BuildOuterFieldManager(G4int nPoles, G4double poleField,
 
 BDSMagnet::~BDSMagnet()
 {
+  delete beampipe;
   delete magnetOuterInfo;
   delete itsBPFieldMgr;
   delete itsChordFinder;

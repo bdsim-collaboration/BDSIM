@@ -30,6 +30,8 @@ void BDSDrift::Build()
   containerLogicalVolume = pipe->GetContainerLogicalVolume();
   containerSolid         = pipe->GetContainerSolid();
 
+  SetAcceleratorVacuumLogicalVolume(pipe->GetVacuumLogicalVolume());
+
   // update extents
   InheritExtents(pipe);
 }

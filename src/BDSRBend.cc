@@ -183,8 +183,6 @@ void BDSRBend::BuildBeampipe()
 							    beamPipeInfo->beamPipeThickness,
 							    beamPipeInfo->beamPipeMaterial);
 
-  InheritObjects(beampipe);
-
   // place logical volumes inside marker (container) volume
   // calculate offsets and rotations
   G4double straightSectionCentralZ = (magFieldLength*0.5) + (straightSectionChord*0.5);
