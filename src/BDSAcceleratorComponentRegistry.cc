@@ -4,6 +4,7 @@
 
 #include <ostream>
 #include <iomanip>
+#include <stdexcept>
 
 
 BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::_instance = nullptr;
@@ -68,7 +69,7 @@ G4bool BDSAcceleratorComponentRegistry::IsRegistered(G4String name)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "(G4String) named \"" << name << "\" -> ";
 #endif
-  std::map<G4String, BDSAcceleratorComponent*>::iterator search = registry.find(name);
+  iterator search = registry.find(name);
   if (search == registry.end())
     {
 #ifdef BDSDEBUG
@@ -90,13 +91,13 @@ BDSAcceleratorComponent* BDSAcceleratorComponentRegistry::GetComponent(G4String 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  if (!IsRegistered(name))
+  try
+    {return registry.at(name);}
+  catch (const std::out_of_range& /*oor*/)
     {
       G4cerr << __METHOD_NAME__ << "unkown component named: \"" << name << "\"" << G4endl;
-      exit(1);
+      return nullptr;
     }
-  else
-    {return registry[name];}
 }  
 
 std::ostream& operator<< (std::ostream &out, BDSAcceleratorComponentRegistry const &r)
@@ -104,7 +105,7 @@ std::ostream& operator<< (std::ostream &out, BDSAcceleratorComponentRegistry con
   // save flags since std::left changes the stream
   std::ios_base::fmtflags ff = out.flags();
   out << "Accelerator Component Registry:" << G4endl;
-  std::map<G4String, BDSAcceleratorComponent*>::const_iterator it = r.registry.begin();
+  BDSAcceleratorComponentRegistry::const_iterator it = r.registry.begin();
   for (; it != r.registry.end(); ++it)
     {out << std::left << std::setw(15) << it->second->GetType() << " \"" << it->first << "\"" << G4endl;;}
   // reset flags

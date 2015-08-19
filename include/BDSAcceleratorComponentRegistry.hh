@@ -3,7 +3,10 @@
 
 /**
  * @brief A registry of constructed BDSAcceleratorComponent instances that
- * can be searched.
+ * can be searched. Uses an std::map rather than unordered map as although 
+ * slower to access (less often and only at construction), a map is faster 
+ * for iterating than an unordered map, which will be required to apply 
+ * wrapper physics processes - relatively common.
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
@@ -17,6 +20,16 @@
 
 class BDSAcceleratorComponentRegistry
 {
+private:
+  /// Typedefs up first so we can declare public iterators.
+  /// Use a typedef for this specific map implementation so we can easily
+  /// define iterators and internal member variables without risking getting
+  /// the exact map declaration wrong. 
+  typedef std::map<G4String, BDSAcceleratorComponent*> RegistryMap;
+
+  /// Registry is a map - note 'register' is a protected keyword.
+  RegistryMap registry;
+  
 public:
   /// Singleton accessor
   static BDSAcceleratorComponentRegistry* Instance();
@@ -38,9 +51,17 @@ public:
   /// Check whether an accelerator component is already registered by name.
   G4bool IsRegistered(G4String componentName);
 
-  /// Access an already constructed component - will exit if no such component found
+  /// Access an already constructed component - will return null if no such component found.
+  /// This is safe as this registry is primarily used by BDSComponentFactory which can return
+  /// NULL to BDSDetectorConstruction safely if an invalid component is requested.
   BDSAcceleratorComponent* GetComponent(G4String name);
 
+  typedef RegistryMap::iterator       iterator;
+  typedef RegistryMap::const_iterator const_iterator;
+  iterator begin() {return registry.begin();}
+  iterator end()   {return registry.end();}
+  G4bool   empty() {return registry.empty();}
+  
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSAcceleratorComponentRegistry const &r);
 
@@ -51,8 +72,9 @@ private:
   /// The singleton instane
   static BDSAcceleratorComponentRegistry* _instance;
 
-  /// Registry is a map - note 'register' is a protected keyword.
-  std::map<G4String, BDSAcceleratorComponent*> registry;
+  /// assignment and copy constructor not implemented nor used
+  BDSAcceleratorComponentRegistry& operator=(const BDSAcceleratorComponentRegistry&);
+  BDSAcceleratorComponentRegistry(BDSAcceleratorComponentRegistry&);
 };
 
 
