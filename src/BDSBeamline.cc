@@ -86,7 +86,7 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset
 {
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
-      for (BDSLine::BDSLineIterator i = line->begin(); i != line->end(); ++i)
+      for (BDSLine::iterator i = line->begin(); i != line->end(); ++i)
 	{AddSingleComponent(*i, tiltOffset);}
     }
   else

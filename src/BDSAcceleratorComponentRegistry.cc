@@ -21,7 +21,7 @@ BDSAcceleratorComponentRegistry::BDSAcceleratorComponentRegistry()
 
 BDSAcceleratorComponentRegistry::~BDSAcceleratorComponentRegistry()
 {
-  std::map<G4String,BDSAcceleratorComponent*>::iterator i = registry.begin();
+  iterator i = registry.begin();
   for (; i != registry.end(); ++i)
     {delete i->second;}
   _instance = nullptr;
@@ -45,7 +45,7 @@ void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent*
       // register the line object itself
       registry[component->GetName()] = component;
       // now add all the components of the line individually using this very function
-      for (BDSLine::BDSLineIterator i = line->begin(); i != line->end(); ++i)
+      for (BDSLine::iterator i = line->begin(); i != line->end(); ++i)
 	{RegisterComponent(*i);}
     }
   else

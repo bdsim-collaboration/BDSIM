@@ -406,7 +406,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 					     moInfo);
   // create a line of this sbend repeatedly
   for (int i = 0; i < nSbends; ++i)
-    {sbendline->addComponent(oneBend);}
+    {sbendline->AddComponent(oneBend);}
   return sbendline;
 }
 
