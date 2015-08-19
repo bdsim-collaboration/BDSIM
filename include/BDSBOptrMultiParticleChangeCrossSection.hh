@@ -41,7 +41,7 @@ private:
   BDSBOptrChangeCrossSection*                                        fCurrentOperator;
 
   // -- count number of biased interations for current track:
-  G4int fnInteractions;  
+  G4int fnInteractions = 0;  
 };
 
 #endif
