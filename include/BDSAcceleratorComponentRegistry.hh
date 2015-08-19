@@ -58,9 +58,11 @@ public:
 
   typedef RegistryMap::iterator       iterator;
   typedef RegistryMap::const_iterator const_iterator;
-  iterator begin() {return registry.begin();}
-  iterator end()   {return registry.end();}
-  G4bool   empty() {return registry.empty();}
+  iterator       begin()       {return registry.begin();}
+  iterator       end()         {return registry.end();}
+  const_iterator begin() const {return registry.begin();}
+  const_iterator end()   const {return registry.end();}
+  G4bool         empty() const {return registry.empty();}
   
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSAcceleratorComponentRegistry const &r);

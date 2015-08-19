@@ -343,7 +343,7 @@ void BDSDetectorConstruction::ComponentPlacement()
   G4VPhysicalVolume* readOutWorldPV       = BDSAcceleratorModel::Instance()->GetReadOutWorldPV();
   G4VSensitiveDetector* energyCounterSDRO = BDSSDManager::Instance()->GetEnergyCounterOnAxisSDRO();
 
-  BDSBeamlineIterator it = beamline->begin();
+  BDSBeamline::iterator it = beamline->begin();
   for(; it != beamline->end(); ++it)
     {
       BDSAcceleratorComponent* thecurrentitem = (*it)->GetAcceleratorComponent();
@@ -481,7 +481,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       // use iterator from BDSBeamline.hh
       /*
       BDSBeamline* supports = BDSAcceleratorModel::Instance()->GetSupportsBeamline();
-      BDSBeamlineIterator supportsIt = supports->begin();
+      BDSBeamline::iterator supportsIt = supports->begin();
       G4PVPlacement* supportPV = nullptr;
       for(; supportsIt != supports->end(); ++supportsIt)
 	{
@@ -499,7 +499,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       G4VPhysicalVolume* tunnelReadOutWorldPV = BDSAcceleratorModel::Instance()->GetTunnelReadOutWorldPV();
       G4VSensitiveDetector* tunnelSDRO        = BDSSDManager::Instance()->GetTunnelOnAxisSDRO();
       BDSBeamline* tunnel                     = BDSAcceleratorModel::Instance()->GetTunnelBeamline();
-      BDSBeamlineIterator tunnelIt            = tunnel->begin();
+      BDSBeamline::iterator tunnelIt            = tunnel->begin();
       for(; tunnelIt != tunnel->end(); ++tunnelIt)
 	{
 	  BDSAcceleratorComponent* thecurrentitem = (*tunnelIt)->GetAcceleratorComponent();
