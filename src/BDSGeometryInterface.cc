@@ -61,7 +61,7 @@ void BDSGeometryInterface::Optics()
 	 << G4endl;
 
   BDSBeamline* beamline  = BDSAcceleratorModel::Instance()->GetFlatBeamline();
-  BDSBeamlineIterator it = beamline->begin();
+  BDSBeamline::iterator it = beamline->begin();
   for(; it != beamline->end(); ++it)
     { 
       BDSAcceleratorComponent* thecurrentitem = (*it)->GetAcceleratorComponent();
@@ -146,7 +146,7 @@ void BDSGeometryInterface::Survey()
 	 << G4endl;
 
   BDSBeamline* beamline  = BDSAcceleratorModel::Instance()->GetFlatBeamline();
-  BDSBeamlineIterator it = beamline->begin();
+  BDSBeamline::iterator it = beamline->begin();
   for(; it != beamline->end(); ++it)
     {
       BDSAcceleratorComponent* thecurrentitem = (*it)->GetAcceleratorComponent();

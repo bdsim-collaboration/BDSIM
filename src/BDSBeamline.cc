@@ -46,8 +46,7 @@ BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
 
 BDSBeamline::~BDSBeamline()
 {
-  BDSBeamlineIterator it = begin();
-  for (; it != end(); ++it)
+  for (iterator it = begin(); it != end(); ++it)
     {delete (*it);}
   // special case, if empty then previousReferenceRotationEnd is not used in the first element
   if (size()==0)
@@ -58,8 +57,7 @@ BDSBeamline::~BDSBeamline()
 
 void BDSBeamline::PrintAllComponents(std::ostream& out) const
 {
-  BDSBeamlineIterator it = begin();
-  for (; it != end(); ++it)
+  for (const_iterator it = begin(); it != end(); ++it)
     {out << *(it);}
 }
 
@@ -86,7 +84,7 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset
 {
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
-      for (BDSLine::BDSLineIterator i = line->begin(); i != line->end(); ++i)
+      for (BDSLine::iterator i = line->begin(); i != line->end(); ++i)
 	{AddSingleComponent(*i, tiltOffset);}
     }
   else

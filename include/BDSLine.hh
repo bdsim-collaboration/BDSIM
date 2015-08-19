@@ -2,6 +2,7 @@
 #define BDSLine_h 
 
 #include <vector>
+#include <iterator>
 #include "BDSAcceleratorComponent.hh"
 
 /**
@@ -15,18 +16,26 @@
 
 class BDSLine: public BDSAcceleratorComponent
 {
-public:
-  /// define iterator for ease of reading
-  // chosen not to distinguish between non-const and const cases
-  typedef std::vector<BDSAcceleratorComponent*>::iterator BDSLineIterator;
+private:
+  /// Private typedef first so it can be used throughout. Typedef for member
+  /// vector.
+  typedef std::vector<BDSAcceleratorComponent*> BDSLineVector;
 
+  /// Member vector to store components
+  BDSLineVector line;
+  
+public:
   BDSLine(G4String name);
   ~BDSLine(){};
 
-  void addComponent(BDSAcceleratorComponent* component);
-  BDSLineIterator begin(){return line.begin();}
-  BDSLineIterator end(){return line.end();}
+  void AddComponent(BDSAcceleratorComponent* component);
 
+  typedef BDSLineVector::iterator       iterator;
+  typedef BDSLineVector::const_iterator const_iterator;
+  iterator begin() {return line.begin();}
+  iterator end()   {return line.end();}
+  G4bool   empty() {return line.empty();}
+  
   /// Override the BDSAccelerator::Initialise() function to loop over the
   /// line and call that function belonging to each member
   virtual void Initialise();
@@ -35,8 +44,9 @@ private:
   /// define pure virtual method
   virtual void BuildContainerLogicalVolume(){};
 
-  /// vector
-  std::vector<BDSAcceleratorComponent*> line;
+  /// assignment and copy constructor not implemented nor used
+  BDSLine& operator=(const BDSLine&);
+  BDSLine(BDSLine&);
 };
 
 #endif

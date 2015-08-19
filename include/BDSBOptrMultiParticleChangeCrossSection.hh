@@ -33,13 +33,15 @@ private:
  				G4VBiasingOperation*             occurenceOperationApplied,
 				G4double                         weightForOccurenceInteraction,
 				G4VBiasingOperation*             finalStateOperationApplied, 
-				const G4VParticleChange*         particleChangeProduced);  
+				const G4VParticleChange*         particleChangeProduced) override;
+  // prevent compiler warning (since second G4VBiasingOperator::OperationApplied is hidden)
+  using G4VBiasingOperator::OperationApplied;
   std::map<const G4ParticleDefinition*, BDSBOptrChangeCrossSection*> fBOptrForParticle;
   std::vector<const G4ParticleDefinition*>                           fParticlesToBias;
   BDSBOptrChangeCrossSection*                                        fCurrentOperator;
 
   // -- count number of biased interations for current track:
-  G4int fnInteractions;  
+  G4int fnInteractions = 0;  
 };
 
 #endif
