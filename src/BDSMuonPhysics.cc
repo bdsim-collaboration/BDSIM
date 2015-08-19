@@ -2,7 +2,7 @@
 #include "BDSMuonPhysics.hh"
 #include "BDSXSBiasPhysics.hh"
 #include "BDSVProcess.hh"
-#include "BDSGlobalConstants.hh"
+//#include "BDSGlobalConstants.hh"
 
 #include "G4GammaConversionToMuons.hh"
 #include "G4eeToHadrons.hh"

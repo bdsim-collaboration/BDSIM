@@ -15,7 +15,6 @@
 #include <list>
 #include <map>
 #include <string>
-#include <cstring>
 
 using namespace GMAD;
 
