@@ -87,7 +87,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   G4cout << __METHOD_NAME__ << "named: \"" << _element.name << "\"" << G4endl;  
 #endif
   // check if the component already exists and return that
-  if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(_element.name))
+  if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(_element.name)) 
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "using already manufactured component" << G4endl;
@@ -700,7 +700,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 {
-  if(!HasSufficientMinimumLength(_element))
+  if(!HasSufficientMinimumLength(_element)) 
     {return nullptr;}
 
   if(!BDS::IsFinite(_element.outerDiameter))
@@ -739,11 +739,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   // B = B/Brho * Brho = ks * Brho
   // brho is in Geant4 units, but ks is not -> multiply ks by m^-1
   G4double bField;
-  if(_element.B != 0){
+  if(_element.B != 0) {
     bField = _element.B * CLHEP::tesla;
     _element.ks  = (bField/_brho) / CLHEP::m;
   }
-  else{
+  else {
     bField = (_element.ks/CLHEP::m) * _brho;
     _element.B = bField/CLHEP::tesla;
   }
@@ -860,11 +860,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateLaser()
     G4ThreeVector(_element.xdir,_element.ydir,_element.zdir);
   G4ThreeVector position  = G4ThreeVector(0,0,0);
 	
-  return (new BDSLaserWire( _element.name,
-			    length,
-			    lambda,
-			    direction) );
-	
+  return (new BDSLaserWire(_element.name, length, lambda, direction) );       
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
