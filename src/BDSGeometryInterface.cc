@@ -18,12 +18,12 @@ BDSGeometryInterface::BDSGeometryInterface(G4String filename):
 {
   const BDSExecOptions* execOptions = BDSExecOptions::Instance();
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Writing survey file"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Writing survey file"<<G4endl;
 #endif
   if(execOptions->GetOutlineFormat()=="survey") Survey();
   else if(execOptions->GetOutlineFormat()=="optics") Optics();
   else {
-    G4cout << __FUNCTION__ << "> Outlineformat " << execOptions->GetOutlineFormat() << "is not known! exiting." << G4endl;
+    G4cout << __METHOD_NAME__ << "Outlineformat " << execOptions->GetOutlineFormat() << "is not known! exiting." << G4endl;
     exit(1);
   }
 }

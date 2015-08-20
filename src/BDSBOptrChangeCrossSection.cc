@@ -128,6 +128,14 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   }
 #endif
 
+#if 1
+  if(callingProcess->GetWrappedProcess()->GetProcessName() == "protonInelastic" && track->GetParentID() == 0) {
+    //    G4cout << analogXS << G4endl;
+    XStransformation = 1e13;
+  }
+#endif
+
+
   // STB Just return the operation before the multiple sampling check
   operation->SetBiasedCrossSection( XStransformation * analogXS );
   operation->Sample();

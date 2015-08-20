@@ -82,6 +82,9 @@ std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
 
 void BDSBeamline::AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
 {
+  // if default nullptr is supplied as tilt offset use a default 0,0,0,0 one
+  if (!tiltOffset) {tiltOffset  = new BDSTiltOffset();}
+  
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
       for (BDSLine::iterator i = line->begin(); i != line->end(); ++i)
@@ -99,9 +102,6 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   G4cout << G4endl << __METHOD_NAME__ << "adding component to beamline and calculating coordinates" << G4endl;
   G4cout << "component name:      " << component->GetName() << G4endl;
 #endif
-  // if default nullptr is supplied as tilt offset use a default 0,0,0,0 one
-  if (!tiltOffset)
-    {tiltOffset = new BDSTiltOffset();}
   
   // Test if it's a BDSTransform3D instance - this is a unique component that requires
   // rotation in all dimensions and can skip normal addition as isn't a real volume

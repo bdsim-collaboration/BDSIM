@@ -982,27 +982,24 @@ command : STOP             { if(execute) quit(); }
         | PRINT            { if(execute) element_list.print(); }
         | PRINT ',' LINE   { if(execute) beamline_list.print(); }
         | PRINT ',' OPTION { if(execute) options.print(); }
+//        | PRINT ',' OPTION ',' VARIABLE { if(execute) options.print($5->name);}
         | PRINT ',' VARIABLE 
           {
-	    if(execute)
-	      {
-		printf("\t");
-		printf("\t%.10g\n",$3->value);
-	      }
+	    if(execute) {
+	      printf("\t%s = %.10g\n",$3->name.c_str(),$3->value);
+	    }
 	  } 
-        | PRINT ',' VECVAR 
+        | PRINT ',' VECVAR
           {
 	    if(execute)
 	      {
-		printf("\t");
-		
+		printf("\t%s = {",$3->name.c_str());
 		std::list<double>::iterator it;
 		for(it=$3->array.begin();it!=$3->array.end();it++)
 		  {
-		    printf("  %.10g ",(*it));
+		    printf(" %.10g ",(*it));
 		  }
-		
-		printf("\n");
+		printf("} \n");
 	      } 
 	  }
         | USE ',' use_parameters { if(execute) expand_line(current_line,current_start, current_end);}

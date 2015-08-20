@@ -87,7 +87,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   G4cout << __METHOD_NAME__ << "named: \"" << _element.name << "\"" << G4endl;  
 #endif
   // check if the component already exists and return that
-  if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(_element.name))
+  if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(_element.name)) 
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "using already manufactured component" << G4endl;
@@ -96,126 +96,57 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
     }
   
   BDSAcceleratorComponent* element = nullptr;
+#ifdef BDSDEBUG
+  G4cout << "BDSComponentFactory - creating " << _element.type << G4endl;
+#endif
   switch(_element.type){
   case ElementType::_SAMPLER:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating sampler" << G4endl;
-#endif
     element = CreateSampler(); break;
   case ElementType::_DRIFT:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating drift" << G4endl;
-#endif
     element = CreateDrift(); break; 
   case ElementType::_RF:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating rf" << G4endl;
-#endif
     element = CreateRF(); break; 
   case ElementType::_SBEND:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating sbend" << G4endl;
-#endif
     element = CreateSBend(); break; 
   case ElementType::_RBEND:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating rbend" << G4endl;
-#endif
     element = CreateRBend(); break; 
   case ElementType::_HKICK:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating hkick" << G4endl;
-#endif
     element = CreateHKick(); break; 
   case ElementType::_VKICK:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating vkick" << G4endl;
-#endif
     element = CreateVKick(); break; 
   case ElementType::_QUAD:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating quadrupole" << G4endl;
-#endif
     element = CreateQuad(); break; 
   case ElementType::_SEXTUPOLE:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating sextupole" << G4endl;
-#endif
     element = CreateSextupole(); break; 
   case ElementType::_OCTUPOLE:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating octupole" << G4endl;
-#endif
     element = CreateOctupole(); break; 
   case ElementType::_MULT:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating multipole" << G4endl;
-#endif
     element = CreateMultipole(); break; 
   case ElementType::_ELEMENT:    
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating element" << G4endl;
-#endif
     element = CreateElement(); break; 
   case ElementType::_CSAMPLER:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating csampler" << G4endl;
-#endif
     element = CreateCSampler(); break; 
   case ElementType::_DUMP:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating dump" << G4endl;
-#endif
     element = CreateDump(); break; 
   case ElementType::_SOLENOID:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating solenoid" << G4endl;
-#endif
     element = CreateSolenoid(); break; 
   case ElementType::_ECOL:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating ecol" << G4endl;
-#endif
     element = CreateEllipticalCollimator(); break; 
   case ElementType::_RCOL:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating rcol" << G4endl;
-#endif
     element = CreateRectangularCollimator(); break; 
   case ElementType::_MUSPOILER:    
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating muspoiler" << G4endl;
-#endif
     element = CreateMuSpoiler(); break; 
   case ElementType::_LASER:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating laser" << G4endl;
-#endif
     element = CreateLaser(); break; 
   case ElementType::_SCREEN:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating screen" << G4endl;
-#endif
     element = CreateScreen(); break; 
   case ElementType::_AWAKESCREEN:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating awake screen" << G4endl;
-#endif
     element = CreateAwakeScreen(); break; 
   case ElementType::_TRANSFORM3D:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating transform3d" << G4endl;
-#endif
     element = CreateTransform3D(); break;
   case ElementType::_TELEPORTER:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating teleporter" << G4endl;
-#endif
     element = CreateTeleporter(); break;
   case ElementType::_TERMINATOR:
-#ifdef BDSDEBUG
-    G4cout << "BDSComponentFactory - creating terminator" << G4endl;
-#endif
     element = CreateTerminator(); break;
 
     // common types, but nothing to do here
@@ -700,7 +631,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 {
-  if(!HasSufficientMinimumLength(_element))
+  if(!HasSufficientMinimumLength(_element)) 
     {return nullptr;}
 
   if(!BDS::IsFinite(_element.outerDiameter))
@@ -739,11 +670,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   // B = B/Brho * Brho = ks * Brho
   // brho is in Geant4 units, but ks is not -> multiply ks by m^-1
   G4double bField;
-  if(_element.B != 0){
+  if(_element.B != 0) {
     bField = _element.B * CLHEP::tesla;
     _element.ks  = (bField/_brho) / CLHEP::m;
   }
-  else{
+  else {
     bField = (_element.ks/CLHEP::m) * _brho;
     _element.B = bField/CLHEP::tesla;
   }
@@ -860,11 +791,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateLaser()
     G4ThreeVector(_element.xdir,_element.ydir,_element.zdir);
   G4ThreeVector position  = G4ThreeVector(0,0,0);
 	
-  return (new BDSLaserWire( _element.name,
-			    length,
-			    lambda,
-			    direction) );
-	
+  return (new BDSLaserWire(_element.name, length, lambda, direction) );       
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
