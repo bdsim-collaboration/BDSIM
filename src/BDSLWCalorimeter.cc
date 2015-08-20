@@ -80,16 +80,13 @@ void BDSLWCalorimeter::BuildCal(G4double aLength)
 
 void BDSLWCalorimeter::BuildBeampipe()
 {
-  BDSBeamPipe* pipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
-								     chordLength,
-								     beamPipeInfo);
-
-  // register logical volumes using geometry component base class
-  InheritObjects(pipe);  
+  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
+							    chordLength,
+							    beamPipeInfo);
 
   G4PVPlacement* beampipePV = new G4PVPlacement(0,                                 // rotation
 						(G4ThreeVector)0,                  // position
-						pipe->GetContainerLogicalVolume(), // its logical volume
+						beampipe->GetContainerLogicalVolume(), // its logical volume
 						name +"_beampipe_pv",              // its name
 						containerLogicalVolume,            // its mother  volume
 						false,		                   // no boolean operation
@@ -97,12 +94,27 @@ void BDSLWCalorimeter::BuildBeampipe()
 						checkOverlaps);                    // copy number
 
   RegisterPhysicalVolume(beampipePV);
-  
-  // Set extents
-  SetExtentX(pipe->GetExtentX());
-  SetExtentY(pipe->GetExtentY());
-  SetExtentZ(pipe->GetExtentZ());
+
+  InheritExtents(beampipe);
 }
 
+std::vector<G4LogicalVolume*> BDSLWCalorimeter::GetAllSensitiveVolumes() const
+{
+  if (!beampipe)
+    {return GetAllSensitiveVolumes();}
+  else
+    {
+      std::vector<G4LogicalVolume*> result;
+      for (auto i : beampipe->GetAllLogicalVolumes())
+	{result.push_back(i);}
+      for (auto i : GetAllLogicalVolumes())
+	{result.push_back(i);}
+      return result;
+    }
+}
+
+
 BDSLWCalorimeter::~BDSLWCalorimeter()
-{;}
+{
+  delete beampipe;
+}

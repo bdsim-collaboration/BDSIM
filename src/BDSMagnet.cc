@@ -202,9 +202,6 @@ void BDSMagnet::BuildOuterVolume()
 
   if(outer)
     {
-      // register logical volumes using geometry component base class
-      InheritObjects(outer);
-
       G4ThreeVector placementOffset = magnetOuterOffset + outer->GetPlacementOffset();
       
       // place outer volume
@@ -220,9 +217,7 @@ void BDSMagnet::BuildOuterVolume()
       RegisterPhysicalVolume(magnetOuterPV);
       
       //update extents
-      SetExtentX(outer->GetExtentX());
-      SetExtentY(outer->GetExtentY());
-      SetExtentZ(outer->GetExtentZ());
+      InheritExtents(outer);
     }
 }
 
@@ -288,22 +283,27 @@ void BDSMagnet::BuildOuterFieldManager(G4int nPoles, G4double poleField,
 
 std::vector<G4LogicalVolume*> BDSMagnet::GetAllSensitiveVolumes() const
 {
-  if (!beampipe)
-    {return GetAllSensitiveVolumes();}
-  else
+  std::vector<G4LogicalVolume*> result;
+  for (auto it : allLogicalVolumes)
+    {result.push_back(it);}
+  if (beampipe)
     {
-      std::vector<G4LogicalVolume*> result;
-      for (auto it : allLogicalVolumes)
-	{result.push_back(it);}
       for (auto it : beampipe->GetAllSensitiveVolumes())
 	{result.push_back(it);}
-      return result;
     }
+  if (outer)
+    {
+      for (auto it : outer->GetAllSensitiveVolumes())
+	{result.push_back(it);}
+    }
+  return result;
 }
 
 BDSMagnet::~BDSMagnet()
 {
   delete beampipe;
+  if (outer)
+    {delete outer;}
   delete magnetOuterInfo;
   delete itsBPFieldMgr;
   delete itsChordFinder;
