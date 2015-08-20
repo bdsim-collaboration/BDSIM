@@ -178,10 +178,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
       BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(element);
     }
   
-#ifdef BDSDEBUG
-  G4cout << *BDSAcceleratorComponentRegistry::Instance();
-#endif
-  
   return element;
 }
 
