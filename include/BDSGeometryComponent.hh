@@ -143,7 +143,7 @@ public:
   std::vector<G4LogicalVolume*>   GetAllLogicalVolumes() const;
   
   /// Access all sensitive volumes belonging to this component
-  std::vector<G4LogicalVolume*>   GetAllSensitiveVolumes() const;
+  virtual std::vector<G4LogicalVolume*>   GetAllSensitiveVolumes() const;
 
   /// Access all physical volumes belonging to this component
   std::vector<G4VPhysicalVolume*> GetAllPhysicalVolumes() const;

@@ -35,3 +35,17 @@ void BDSDrift::Build()
   // update extents
   InheritExtents(pipe);
 }
+
+std::vector<G4LogicalVolume*> BDSDrift::GetAllSensitiveVolumes() const
+{
+  std::vector<G4LogicalVolume*> result;
+  for (auto it : allLogicalVolumes)
+    {result.push_back(it);}
+
+  if (pipe)
+    {
+      for (auto it : pipe->GetAllSensitiveVolumes())
+	{result.push_back(it);}
+    }
+  return result;
+}
