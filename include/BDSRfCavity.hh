@@ -15,11 +15,11 @@ struct BDSMagnetOuterInfo;
 class BDSRfCavity: public BDSMagnet
 {
   public:
-  BDSRfCavity(G4String           name,
-	      G4double           length,
-	      G4double           grad,
-	      BDSBeamPipeInfo*   beamPipeInfoIn,
-	      BDSMagnetOuterInfo magnetOuterInfo);
+  BDSRfCavity(G4String            name,
+	      G4double            length,
+	      G4double            grad,
+	      BDSBeamPipeInfo*    beamPipeInfoIn,
+	      BDSMagnetOuterInfo* magnetOuterInfo);
   ~BDSRfCavity();
   
   private:

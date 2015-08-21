@@ -31,18 +31,18 @@ public:
 	      G4bool                    containerIsCircularIn = false,
 	      G4double                  containerRadiusIn = 0.0
 	      );
-  ~BDSBeamPipe(); /// default destructor sufficient as G4 manages solids and LVs
+  virtual ~BDSBeamPipe(); /// default destructor sufficient as G4 manages solids and LVs
 
-  /// access a solid for beampipe subtraction - note this is typically longer
+  /// Access a solid for beampipe subtraction - note this is typically longer
   /// than the actual beampipe for unambiguous subtraction
-  G4VSolid*        GetContainerSubtractionSolid();
-  /// access the vacuum volume to set fields and limits
-  G4LogicalVolume* GetVacuumLogicalVolume();
-  /// flag to tell whether the parent volume needn't use a subtraction
+  G4VSolid*        GetContainerSubtractionSolid() const;
+  /// Access the vacuum volume to set fields and limits
+  G4LogicalVolume* GetVacuumLogicalVolume() const;
+  /// Flag to tell whether the parent volume needn't use a subtraction
   /// solid and can simply use a G4Tubs for example
-  G4bool           ContainerIsCircular();
-  /// if it is circular, we need the radius
-  G4double         GetContainerRadius();
+  G4bool           ContainerIsCircular() const;
+  /// If it is circular, we need the radius
+  G4double         GetContainerRadius() const;
   
 protected:
   G4VSolid*        containerSubtractionSolid;
@@ -51,16 +51,16 @@ protected:
   G4double         containerRadius;
 };
 
-inline G4VSolid* BDSBeamPipe::GetContainerSubtractionSolid()
+inline G4VSolid* BDSBeamPipe::GetContainerSubtractionSolid() const
 {return containerSubtractionSolid;}
 
-inline G4LogicalVolume* BDSBeamPipe::GetVacuumLogicalVolume()
+inline G4LogicalVolume* BDSBeamPipe::GetVacuumLogicalVolume() const
 {return vacuumLogicalVolume;}
 
-inline G4bool BDSBeamPipe::ContainerIsCircular()
+inline G4bool BDSBeamPipe::ContainerIsCircular() const
 {return containerIsCircular;}
 
-inline G4double BDSBeamPipe::GetContainerRadius()
+inline G4double BDSBeamPipe::GetContainerRadius() const
 {return containerRadius;}
 
 #endif

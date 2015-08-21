@@ -56,6 +56,9 @@ private:
   /// Iterate over the beamline and place each BDSAcceleratorComponent in the world volume
   void ComponentPlacement();
 
+  /// Create biasing operations 
+  void BuildPhysicsBias();
+
   /// Initialise GFlash particle bounds - parameterised energy deposition.
   void InitialiseGFlash();
   

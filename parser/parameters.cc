@@ -9,6 +9,8 @@
 #include "array.h"
 #include "element.h"
 
+using namespace GMAD;
+
 Parameters::Parameters() {
   flush();
 }
@@ -82,6 +84,8 @@ void Parameters::flush() {
   knl.erase(knl.begin(),knl.end());
   ksl.erase(ksl.begin(),ksl.end());
 
+  biasset = 0;
+  
   //Beam loss monitor locations
   blmLocZset = 0;  blmLocThetaset = 0;
   blmLocZ.erase(blmLocZ.begin(), blmLocZ.end());
@@ -168,6 +172,8 @@ void Parameters::inherit_properties(struct Element& e)
   if(!offsetYset) { offsetY = e.offsetY; offsetYset = 1; }
   if(!knlset) { knl = e.knl; knlset = 1; }
   if(!kslset) { ksl = e.ksl; kslset = 1; }
+  // physics biasing
+  if(!biasset) {bias = e.bias; biasset = 1; }
   //beam loss monitor locations
   if(!blmLocZset) { blmLocZ = e.blmLocZ; blmLocZset = 1; }
   if(!blmLocThetaset) { blmLocTheta = e.blmLocTheta; blmLocThetaset = 1; }
@@ -342,6 +348,12 @@ void Parameters::set_value(std::string property, std::string value )
     {
       stateset = 1;
       state = value;
+      return;
+    }
+  if(property=="bias")
+    {
+      biasset = 1;
+      bias = value;
       return;
     }
   

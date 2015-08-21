@@ -20,19 +20,24 @@
 #include <vector>
 #include <cstring>
 #include <iostream>
-#include "parser.tab.hh"
 #include "sym_table.h"
+#include "parser.tab.hh"
 #include "getEnv.h"
 #include <unistd.h>
-
-struct symtab * symlook(std::string s);
-extern std::map<std::string, struct symtab*> symtab_map;
-extern int yyerror(const char *s);
 
 #ifdef _WIN32
 #include <io.h>
 #define YY_NO_UNISTD_H 1
 #endif
+
+extern int yyerror(const char *s);
+
+using namespace GMAD;
+
+namespace GMAD {
+
+struct symtab * symlook(std::string s);
+extern std::map<std::string, struct symtab*> symtab_map;
 
 const int max_include_depth = 10;
 YY_BUFFER_STATE include_stack[max_include_depth];
@@ -42,6 +47,8 @@ int include_stack_ptr = 0;
 
 int line_num = 1;
 std::string yyfilename;
+
+}
 
 %}
 
@@ -73,7 +80,6 @@ sbend { return SBEND; }
 rbend {return RBEND; }
 hkick { return HKICK; }
 vkick { return VKICK; }
-kicker { return KICK; } 
 quadrupole { return QUADRUPOLE; }
 sextupole { return SEXTUPOLE; }
 octupole { return OCTUPOLE; }
@@ -83,24 +89,23 @@ rcol { return RCOL;}
 ecol { return ECOL; } 
 muspoiler { return MUSPOILER; } 
 element { return ELEMENT; }
-transform3d { return TRANSFORM3D ; }
-collimator { return COLLIMATOR; }
-pipe { return PIPE; }
-gas { return GAS; }
-tunnel { return TUNNEL; }
-matdef { return MATERIAL; }
-atom { return ATOM; }
-laser { return LASER; }
 screen { return SCREEN; }
 awakescreen { return AWAKESCREEN; }
+transform3d { return TRANSFORM3D ; }
+laser { return LASER; }
+
+tunnel { return TUNNEL; }
+
+xsecBias {return XSECBIAS; }
+
+gas { return GAS; }
+matdef { return MATERIAL; }
+atom { return ATOM; }
 
 line       { return LINE; } 
 
-aperture {return APERTURE; } // reserved keywords
-filename { return FILENAME; }
 period { return PERIOD; }
 range { return RANGE; }
-cut { return CUT; }
 
 "if" { return IF; }
 "for" { return FOR; }
@@ -237,7 +242,7 @@ printf("parser> include filename is: %s \n",includefilename.c_str());
 %%
 
 
-struct symtab * symlook(std::string s)
+struct symtab * GMAD::symlook(std::string s)
 {
   std::map<std::string,symtab*>::iterator it = symtab_map.find(s);
   if (it!=symtab_map.end()) {

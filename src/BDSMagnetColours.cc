@@ -21,6 +21,7 @@ BDSMagnetColours::~BDSMagnetColours()
 
 BDSMagnetColours::BDSMagnetColours()
 {
+  magnetName[1] = "sectorbend";
   magnetName[2] = "quadrupole";
   magnetName[3] = "sextupole";
   magnetName[4] = "octupole";
@@ -57,7 +58,7 @@ G4Colour* BDSMagnetColours::GetMagnetColour(G4String magnetTypeName)
 
 G4Colour* BDSMagnetColours::GetMagnetColour(G4int magnetOrder)
 {
-  if (magnetOrder < 2)
+  if (magnetOrder < 1)
     { // too low order
       return colours["default"];
     }

@@ -70,8 +70,13 @@ BDSGeometryComponent::~BDSGeometryComponent()
   std::vector<G4UserLimits*>::iterator itUL = allUserLimits.begin();
   for (; itUL != allUserLimits.end(); ++itUL)
     {delete (*itUL);}
-  
-  delete containerSolid;
+}
+
+void BDSGeometryComponent::InheritExtents(BDSGeometryComponent* anotherComponent)
+{
+  SetExtentX(anotherComponent->GetExtentX());
+  SetExtentY(anotherComponent->GetExtentY());
+  SetExtentZ(anotherComponent->GetExtentZ());
 }
 
 void BDSGeometryComponent::RegisterSolid(G4VSolid* solid, G4bool internalCheck)
@@ -116,10 +121,7 @@ void BDSGeometryComponent::RegisterLogicalVolume(G4LogicalVolume* logicalVolume,
   // logical volumes.  Also, the number of volumes should be < 20 (at maximum) and is only done
   // once at construction time so not as bad as it could be.
   if (std::find(allLogicalVolumes.begin(), allLogicalVolumes.end(), logicalVolume) == allLogicalVolumes.end())
-	   {
-	     // not found so register it
-	     allLogicalVolumes.push_back(logicalVolume);
-	   }
+    {allLogicalVolumes.push_back(logicalVolume);} // not found so register it
   else if (internalCheck)
     {
 #ifdef BDSDEBUG
@@ -154,10 +156,7 @@ void BDSGeometryComponent::RegisterPhysicalVolume(G4VPhysicalVolume* physicalVol
 {
   // only register it if it doesn't exist already
   if (std::find(allPhysicalVolumes.begin(), allPhysicalVolumes.end(), physicalVolume) == allPhysicalVolumes.end())
-	   {
-	     // not found so register it
-	     allPhysicalVolumes.push_back(physicalVolume);
-	   }
+    {allPhysicalVolumes.push_back(physicalVolume);} // not found so register it
   else if (internalCheck)
     {
 #ifdef BDSDEBUG
@@ -192,10 +191,7 @@ void BDSGeometryComponent::RegisterRotationMatrix(G4RotationMatrix* rotationMatr
 {
   // only register it if it doesn't exist already
   if (std::find(allRotationMatrices.begin(), allRotationMatrices.end(), rotationMatrix) == allRotationMatrices.end())
-	   {
-	     // not found so register it
-	     allRotationMatrices.push_back(rotationMatrix);
-	   }
+    {allRotationMatrices.push_back(rotationMatrix);} // not found so register it
   else if (internalCheck)
     {
 #ifdef BDSDEBUG
@@ -244,10 +240,7 @@ void BDSGeometryComponent::RegisterSensitiveVolume(G4LogicalVolume* sensitiveVol
   // logical volumes.  Also, the number of volumes should be < 20 (at maximum) and is only done
   // once at construction time so not as bad as it could be.
   if (std::find(allSensitiveVolumes.begin(), allSensitiveVolumes.end(), sensitiveVolume) == allSensitiveVolumes.end())
-	   {
-	     // not found so register it
-	     allSensitiveVolumes.push_back(sensitiveVolume);
-	   }
+    {allSensitiveVolumes.push_back(sensitiveVolume);} // not found so register it
   else
     {
       // found - so don't register it

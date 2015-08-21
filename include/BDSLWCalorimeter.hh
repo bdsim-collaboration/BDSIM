@@ -1,13 +1,12 @@
-/* BDSIM code for LW Calorimeter.    Version 1.0
-   Author: John Carter, Royal Holloway, Univ. of London.
-   Last modified 26.7.2004
-   Copyright (c) 2004 by J.C.Carter.  ALL RIGHTS RESERVED. 
-*/
 #ifndef BDSLWCalorimeter_h
 #define BDSLWCalorimeter_h 1
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
+
+#include <vector>
+
+class BDSBeamPipe;
 
 class G4Box;
 class G4FieldManager;
@@ -21,9 +20,14 @@ class BDSLWCalorimeter: public BDSAcceleratorComponent
 public:
   BDSLWCalorimeter(G4String         name,
 		   G4double         length,
-		   BDSBeamPipeInfo* beamPipeInfo);
+		   BDSBeamPipeInfo* beamPipeInfo,
+		   G4int            precisionRegion = 0);
   ~BDSLWCalorimeter();
 
+  /// Access all sensitive volumes belonging to this component including
+  /// those belonging to the beam pipe
+  virtual std::vector<G4LogicalVolume*> GetAllSensitiveVolumes() const;
+  
 protected:
   virtual void Build();
 
@@ -45,6 +49,8 @@ private:
   G4Tubs* itsInnerBPTube;
   G4Box*  itsLWCal;
   G4VPhysicalVolume* itsPhysiLWCal;
+
+  BDSBeamPipe* beampipe;
 };
 
 #endif

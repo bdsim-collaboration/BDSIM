@@ -5,7 +5,7 @@
 #include <string>
 
 // types of elements
-
+namespace GMAD {
 enum class ElementType {
   _NONE = -1,
   _MARKER = 1,
@@ -48,5 +48,6 @@ std::string typestr(ElementType type);
 
 /// output operator
 std::ostream& operator << (std::ostream& out, ElementType type);
+}
 
 #endif

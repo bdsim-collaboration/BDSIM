@@ -77,7 +77,7 @@ void BDSBunchSixTrack::LoadSixTrackFile()
   return;
 }
 
-void BDSBunchSixTrack::SetOptions(struct Options& opt)
+void BDSBunchSixTrack::SetOptions(GMAD::Options& opt)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << " " << opt.distribFile << G4endl;

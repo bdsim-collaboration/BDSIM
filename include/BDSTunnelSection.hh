@@ -28,7 +28,7 @@ public:
 		   G4VSolid*             innerIntersectionSolidIn,
 		   G4LogicalVolume*      readOutLVIn);
 
-  ~BDSTunnelSection(){;}
+  ~BDSTunnelSection();
 
   /// Override BDSAcceleratorComponent::Initialise() method to avoid doing
   /// anything. Doing this avoids wrong and useless read out volume being created.

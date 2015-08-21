@@ -13,13 +13,13 @@ struct BDSMagnetOuterInfo;
 class BDSSectorBend: public BDSMagnet
 {
 public:
-  BDSSectorBend(G4String           nameIn,
-		G4double           lengthIn,
-		G4double           angleIn,
-		G4double           bFieldIn,
-		G4double           bGradIn,
-		BDSBeamPipeInfo*   beamPipeInfo,
-		BDSMagnetOuterInfo magnetOuterInfo);
+  BDSSectorBend(G4String            nameIn,
+		G4double            lengthIn,
+		G4double            angleIn,
+		G4double            bFieldIn,
+		G4double            bGradIn,
+		BDSBeamPipeInfo*    beamPipeInfo,
+		BDSMagnetOuterInfo* magnetOuterInfo);
   ~BDSSectorBend(){;};
 
 private:

@@ -3,11 +3,14 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
 #include <iostream>
 #include <string>
 
-extern std::string current_line;
+using namespace GMAD;
+
+namespace GMAD {
+  extern std::string current_line;
+}
 
 namespace {
   // helper method
@@ -119,6 +122,8 @@ void Element::flush() {
 
   gradient = 0;
 
+  bias = "";
+  
   // new aperture model
   beampipeThickness = 0;
   aper1 = 0;
@@ -163,8 +168,6 @@ void Element::flush() {
   windowmaterial = "";
   spec = "";
   material="";
-  scintmaterial="";
-  windowmaterial="";
   airmaterial="";
 }
 

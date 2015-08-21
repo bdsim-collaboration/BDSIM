@@ -11,11 +11,11 @@
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 
-BDSQuadrupole::BDSQuadrupole(G4String           name,
-			     G4double           length,
-			     G4double           bGrad,
-			     BDSBeamPipeInfo*   beamPipeInfo,
-			     BDSMagnetOuterInfo magnetOuterInfo):
+BDSQuadrupole::BDSQuadrupole(G4String            name,
+			     G4double            length,
+			     G4double            bGrad,
+			     BDSBeamPipeInfo*    beamPipeInfo,
+			     BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::quadrupole, name, length,
 	    beamPipeInfo, magnetOuterInfo),
   itsBGrad(bGrad)

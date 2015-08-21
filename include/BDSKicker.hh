@@ -13,14 +13,14 @@ struct BDSMagnetOuterInfo;
 class BDSKicker: public BDSMagnet
 {
 public:
-  BDSKicker(G4String           name,
-	    G4double           length,
-	    G4double           bField,
-	    G4double           bGrad,
-	    G4double           angle,
-	    G4bool             verticalKicker,
-	    BDSBeamPipeInfo*   beamPipeInfo,
-	    BDSMagnetOuterInfo magnetOuterInfo);
+  BDSKicker(G4String            name,
+	    G4double            length,
+	    G4double            bField,
+	    G4double            bGrad,
+	    G4double            angle,
+	    G4bool              verticalKicker,
+	    BDSBeamPipeInfo*    beamPipeInfo,
+	    BDSMagnetOuterInfo* magnetOuterInfo);
   ~BDSKicker(){;};
   
 protected:

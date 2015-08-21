@@ -17,6 +17,13 @@ public:
   virtual void SetCuts();
 
 private:
+  G4bool verbose;
+#ifdef BDSDEBUG 
+  bool debug = true;
+#else 
+  bool debug = false;
+#endif
+  
   void SetParticleDefinition();
   void ConstructMinimumParticleSet();
   G4VPhysicsConstructor* _emPhysics;

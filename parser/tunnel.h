@@ -9,6 +9,8 @@
  * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk> 
  */
 
+namespace GMAD {
+
 struct Tunnel {
   std::string name; ///< name
   /// geometry type
@@ -47,5 +49,6 @@ struct Tunnel {
   /// set methods by property name, string values
   void set_value(std::string property, std::string value);
 };
+}
 
 #endif
