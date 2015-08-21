@@ -321,7 +321,7 @@ void BDSMagnet::PlaceComponents()
 std::vector<G4LogicalVolume*> BDSMagnet::GetAllSensitiveVolumes() const
 {
   std::vector<G4LogicalVolume*> result;
-  for (auto it : allLogicalVolumes)
+  for (auto it : allSensitiveVolumes)
     {result.push_back(it);}
   if (beampipe)
     {
@@ -339,8 +339,7 @@ std::vector<G4LogicalVolume*> BDSMagnet::GetAllSensitiveVolumes() const
 BDSMagnet::~BDSMagnet()
 {
   delete beampipe;
-  if (outer)
-    {delete outer;}
+  delete outer;
   delete magnetOuterInfo;
   delete itsBPFieldMgr;
   delete itsChordFinder;

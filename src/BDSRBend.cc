@@ -309,7 +309,7 @@ void BDSRBend::PlaceComponents()
 std::vector<G4LogicalVolume*> BDSRBend::GetAllSensitiveVolumes() const
 {
   std::vector<G4LogicalVolume*> result;
-  for (auto it : allLogicalVolumes)
+  for (auto it : allSensitiveVolumes)
     {result.push_back(it);}
 
   if (beampipe)
@@ -320,13 +320,13 @@ std::vector<G4LogicalVolume*> BDSRBend::GetAllSensitiveVolumes() const
 
   if (bpFirstBit)
     {
-      for (auto it : beampipe->GetAllSensitiveVolumes())
+      for (auto it : bpFirstBit->GetAllSensitiveVolumes())
 	{result.push_back(it);}
     }
 
   if (bpLastBit)
     {
-      for (auto it : beampipe->GetAllSensitiveVolumes())
+      for (auto it : bpLastBit->GetAllSensitiveVolumes())
 	{result.push_back(it);}
     }
   return result;
