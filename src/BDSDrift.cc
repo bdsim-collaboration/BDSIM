@@ -39,7 +39,7 @@ void BDSDrift::Build()
 std::vector<G4LogicalVolume*> BDSDrift::GetAllSensitiveVolumes() const
 {
   std::vector<G4LogicalVolume*> result;
-  for (auto it : allLogicalVolumes)
+  for (auto it : allSensitiveVolumes)
     {result.push_back(it);}
 
   if (pipe)
