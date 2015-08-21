@@ -46,7 +46,7 @@ public:
   ///@}
 
   /// Access all sensitive volumes belonging to this component including
-  /// those belongin to the beam pipe
+  /// those belonging to the beam pipe
   virtual std::vector<G4LogicalVolume*> GetAllSensitiveVolumes() const;
 
 private:
