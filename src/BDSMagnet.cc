@@ -79,6 +79,9 @@ void BDSMagnet::BuildBeampipe()
   beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
 							    chordLength - lengthSafety,
 							    beamPipeInfo);
+
+  SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
+  
   BeamPipeCommonTasks();
 }
 
@@ -97,9 +100,6 @@ void BDSMagnet::BeamPipeCommonTasks()
   // latter 'true' over-writes all the other fields
   
   containerLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
-  
-  // register logical & physical volumes  + rotation matrices using geometry component base class
-  InheritObjects(beampipe);
 
   // place beampipe
   G4PVPlacement* beamPipePV = new G4PVPlacement(0,                         // rotation
@@ -202,9 +202,6 @@ void BDSMagnet::BuildOuterVolume()
 
   if(outer)
     {
-      // register logical volumes using geometry component base class
-      InheritObjects(outer);
-
       G4ThreeVector placementOffset = magnetOuterOffset + outer->GetPlacementOffset();
       
       // place outer volume
@@ -220,9 +217,7 @@ void BDSMagnet::BuildOuterVolume()
       RegisterPhysicalVolume(magnetOuterPV);
       
       //update extents
-      SetExtentX(outer->GetExtentX());
-      SetExtentY(outer->GetExtentY());
-      SetExtentZ(outer->GetExtentZ());
+      InheritExtents(outer);
     }
 }
 
@@ -286,8 +281,29 @@ void BDSMagnet::BuildOuterFieldManager(G4int nPoles, G4double poleField,
   outer->GetContainerLogicalVolume()->SetFieldManager(itsOuterFieldMgr,false);
 }
 
+std::vector<G4LogicalVolume*> BDSMagnet::GetAllSensitiveVolumes() const
+{
+  std::vector<G4LogicalVolume*> result;
+  for (auto it : allLogicalVolumes)
+    {result.push_back(it);}
+  if (beampipe)
+    {
+      for (auto it : beampipe->GetAllSensitiveVolumes())
+	{result.push_back(it);}
+    }
+  if (outer)
+    {
+      for (auto it : outer->GetAllSensitiveVolumes())
+	{result.push_back(it);}
+    }
+  return result;
+}
+
 BDSMagnet::~BDSMagnet()
 {
+  delete beampipe;
+  if (outer)
+    {delete outer;}
   delete magnetOuterInfo;
   delete itsBPFieldMgr;
   delete itsChordFinder;

@@ -1,0 +1,11 @@
+beam,  particle="proton",
+       energy= 6.5*GeV,
+       distrType="reference",
+       X0=0.0*mm,
+       Y0=0.0*mm,
+       Xp0=0.0,
+       Yp0=0.0;
+
+biasDef1: xsecBias, particle="e-", proc="all", xsecfact=10, flag=3;
+
+biasDef2: xsecBias, particle="e+", proc="eBrem eIoni msc", xsecfact={10,1,5}, flag={1,1,2};

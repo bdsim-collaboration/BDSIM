@@ -1,6 +1,7 @@
 #include "BDSDetectorConstruction.hh"
 
 #include "BDSAcceleratorComponent.hh"
+#include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSComponentFactory.hh"
@@ -190,6 +191,12 @@ void BDSDetectorConstruction::BuildBeamline()
   G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< GMAD::beamline_list.size() << G4endl;
 #endif
   G4cout << __METHOD_NAME__ << "size of the constructed beamline: "<< beamline->size() << " with length " << beamline->GetTotalArcLength()/CLHEP::m << " m" << G4endl;
+
+#ifdef BDSDEBUG
+  // print accelerator component registry
+  G4cout << *BDSAcceleratorComponentRegistry::Instance();
+#endif
+ 
   
   if (beamline->empty())
     {
@@ -345,7 +352,7 @@ void BDSDetectorConstruction::ComponentPlacement()
   G4VPhysicalVolume* readOutWorldPV       = BDSAcceleratorModel::Instance()->GetReadOutWorldPV();
   G4VSensitiveDetector* energyCounterSDRO = BDSSDManager::Instance()->GetEnergyCounterOnAxisSDRO();
 
-  BDSBeamlineIterator it = beamline->begin();
+  BDSBeamline::iterator it = beamline->begin();
   for(; it != beamline->end(); ++it)
     {
       BDSAcceleratorComponent* thecurrentitem = (*it)->GetAcceleratorComponent();
@@ -483,7 +490,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       // use iterator from BDSBeamline.hh
       /*
       BDSBeamline* supports = BDSAcceleratorModel::Instance()->GetSupportsBeamline();
-      BDSBeamlineIterator supportsIt = supports->begin();
+      BDSBeamline::iterator supportsIt = supports->begin();
       G4PVPlacement* supportPV = nullptr;
       for(; supportsIt != supports->end(); ++supportsIt)
 	{
@@ -501,7 +508,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       G4VPhysicalVolume* tunnelReadOutWorldPV = BDSAcceleratorModel::Instance()->GetTunnelReadOutWorldPV();
       G4VSensitiveDetector* tunnelSDRO        = BDSSDManager::Instance()->GetTunnelOnAxisSDRO();
       BDSBeamline* tunnel                     = BDSAcceleratorModel::Instance()->GetTunnelBeamline();
-      BDSBeamlineIterator tunnelIt            = tunnel->begin();
+      BDSBeamline::iterator tunnelIt            = tunnel->begin();
       for(; tunnelIt != tunnel->end(); ++tunnelIt)
 	{
 	  BDSAcceleratorComponent* thecurrentitem = (*tunnelIt)->GetAcceleratorComponent();
@@ -545,31 +552,37 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 {
 #if G4VERSION_NUMBER > 1009
 
-  // First for beam line elements and accelerator vacuum 
-  BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  BDSAcceleratorComponentRegistry* registry = BDSAcceleratorComponentRegistry::Instance();
+  // registry is a map, so iterator has first and second members for key and value respectively
+  BDSAcceleratorComponentRegistry::iterator i;
 
-  for(BDSBeamlineIterator i = beamline->begin();i != beamline->end(); ++i) {
-    //    G4LogicalVolume *lv = (*i)->GetContainerLogicalVolume();
-    //    BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
-    //      eg->AddParticle("e-");  
-    //      eg->AttachTo(*i);
+  for (i = registry->begin(); i != registry->end(); ++i)
+    {    
+      auto lvs = i->second->GetAllLogicalVolumes();
 
-    BDSAcceleratorComponent *ac = (*i)->GetAcceleratorComponent();    
-    auto lvs = ac->GetAllLogicalVolumes(); 
-    
-    for(auto lvsi = lvs.begin(); lvsi != lvs.end(); ++lvsi) {
-      BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
-      eg->AddParticle("e-");
-      eg->AddParticle("e+"); 
-      eg->AddParticle("gamma");
-      eg->AddParticle("proton");
-      eg->AttachTo(*lvsi);
-    }
-  } 
-  
+      // Accelerator vacuum 
+      G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
+      if(vacuumLV) 
+	{
+	  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();      
+	  eg->AddParticle("proton");
+	  eg->AttachTo(vacuumLV);
+	}
+#if 0
+      // Accelerator material
+      for (auto lvsi = lvs.begin(); lvsi != lvs.end(); ++lvsi)
+	{
+	  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
+	  eg->AddParticle("e-");
+	  eg->AddParticle("e+"); 
+	  eg->AddParticle("gamma");
+	  eg->AddParticle("proton");
+	  eg->AttachTo(*lvsi);
+	}
+#endif
+    }  
 
   // Second for tunnel
-  
 #endif
   return;
 }
