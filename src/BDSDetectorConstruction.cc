@@ -192,6 +192,12 @@ void BDSDetectorConstruction::BuildBeamline()
   G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< GMAD::beamline_list.size() << G4endl;
 #endif
   G4cout << __METHOD_NAME__ << "size of the constructed beamline: "<< beamline->size() << " with length " << beamline->GetTotalArcLength()/CLHEP::m << " m" << G4endl;
+
+#ifdef BDSDEBUG
+  // print accelerator component registry
+  G4cout << *BDSAcceleratorComponentRegistry::Instance();
+#endif
+ 
   
   if (beamline->empty())
     {

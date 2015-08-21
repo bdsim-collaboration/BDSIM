@@ -138,8 +138,6 @@ void BDSRBend::BuildOuterVolume()
 void BDSRBend::BuildBeampipe()
 {
   // check for finite length (can be negative if angle is zero or very small)
-  BDSBeamPipe* bpFirstBit = nullptr;
-  BDSBeamPipe* bpLastBit  = nullptr;
   G4double safeStraightSectionLength = straightSectionLength - lengthSafetyLarge;
   if (safeStraightSectionLength > 0)
     {
@@ -154,8 +152,6 @@ void BDSRBend::BuildBeampipe()
 									   beamPipeInfo->vacuumMaterial,
 									   beamPipeInfo->beamPipeThickness,
 									   beamPipeInfo->beamPipeMaterial);
-
-      InheritObjects(bpFirstBit);
       
       bpLastBit = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledIn(beamPipeInfo->beamPipeType,
 									 name,
@@ -169,7 +165,6 @@ void BDSRBend::BuildBeampipe()
 									 beamPipeInfo->beamPipeThickness,
 									 beamPipeInfo->beamPipeMaterial);
       
-      InheritObjects(bpLastBit);
     }
   
   beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeInfo->beamPipeType,
@@ -243,4 +238,31 @@ void BDSRBend::BuildBeampipe()
   SetExtentX(beampipe->GetExtentX()); //not exact but only central porition will use this
   SetExtentY(beampipe->GetExtentY());
   SetExtentZ(-chordLength*0.5,chordLength*0.5);
+}
+
+
+std::vector<G4LogicalVolume*> BDSRBend::GetAllSensitiveVolumes() const
+{
+  std::vector<G4LogicalVolume*> result;
+  for (auto it : allLogicalVolumes)
+    {result.push_back(it);}
+
+  if (beampipe)
+    {
+      for (auto it : beampipe->GetAllSensitiveVolumes())
+	{result.push_back(it);}
+    }
+
+  if (bpFirstBit)
+    {
+      for (auto it : beampipe->GetAllSensitiveVolumes())
+	{result.push_back(it);}
+    }
+
+  if (bpLastBit)
+    {
+      for (auto it : beampipe->GetAllSensitiveVolumes())
+	{result.push_back(it);}
+    }
+  return result;
 }
