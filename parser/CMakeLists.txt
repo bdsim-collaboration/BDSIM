@@ -43,7 +43,8 @@ add_flex_bison_dependency(SCANNER PARSER)
 # when we have old makefiles and cmake next to each other.
 # Reason is old makefiles creates parser.cc/lex.yy.cc in source folder..
 add_library(gmad STATIC gmad.cc getEnv.cc element.cc elementlist.cc
-elementtype.cc options.cc parameters.cc tunnel.cc physicsbiasing.cc
+elementtype.cc options.cc parameters.cc tunnel.cc physicsbiasing.cc 
+physicsbiasinglist.cc
 ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
 
 if($ENV{VERBOSE})
@@ -53,6 +54,6 @@ endif()
 
 add_library(gmadShared SHARED gmad.cc getEnv.cc element.cc
 elementlist.cc elementtype.cc options.cc parameters.cc tunnel.cc
-physicsbiasing.cc ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+physicsbiasing.cc physicsbiasinglist.cc ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
 
 bdsim_install_targets(gmad gmadShared)
