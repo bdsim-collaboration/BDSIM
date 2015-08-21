@@ -370,6 +370,7 @@ void BDSScintillatorScreen::BuildContainerLogicalVolume()
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       _airMaterial,
 					       name + "_container_lv");
+  
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
   G4UserLimits* itsMarkerUserLimits =  new G4UserLimits();

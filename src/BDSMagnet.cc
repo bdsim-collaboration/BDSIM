@@ -88,7 +88,9 @@ void BDSMagnet::BuildBeampipe()
   
   beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
 							    chordLength - lengthSafety,
-							    beamPipeInfo);  
+							    beamPipeInfo);
+
+  SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
 }
 
 void BDSMagnet::BuildBPFieldMgr()
@@ -316,11 +318,29 @@ void BDSMagnet::PlaceComponents()
     }
 }
 
+std::vector<G4LogicalVolume*> BDSMagnet::GetAllSensitiveVolumes() const
+{
+  std::vector<G4LogicalVolume*> result;
+  for (auto it : allLogicalVolumes)
+    {result.push_back(it);}
+  if (beampipe)
+    {
+      for (auto it : beampipe->GetAllSensitiveVolumes())
+	{result.push_back(it);}
+    }
+  if (outer)
+    {
+      for (auto it : outer->GetAllSensitiveVolumes())
+	{result.push_back(it);}
+    }
+  return result;
+}
+
 BDSMagnet::~BDSMagnet()
 {
-  // safe to delete even if haven't been built as initialised to nullptr
-  delete outer;
   delete beampipe;
+  if (outer)
+    {delete outer;}
   delete magnetOuterInfo;
   delete itsBPFieldMgr;
   delete itsChordFinder;

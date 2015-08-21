@@ -86,6 +86,7 @@ void BDSOutputROOT::BuildSamplerTree(G4String name)
   SamplerTree->Branch("parentID",   &pID,        "parentID/I");
   SamplerTree->Branch("trackID",    &track_id,   "trackID/I");
   SamplerTree->Branch("turnnumber", &turnnumber, "turnnumber/I");
+  SamplerTree->Branch("process",    &process);
 }
 
 void BDSOutputROOT::Init()
@@ -250,7 +251,8 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
 				 G4int    EventNo, 
 				 G4int    ParentID,
 				 G4int    TrackID, 
-				 G4int    TurnsTaken)
+				 G4int    TurnsTaken,
+				 G4String Process)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -302,6 +304,7 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
   pID         = ParentID; 
   track_id    = TrackID;
   turnnumber  = TurnsTaken;
+  process     = Process;
   sTree->Fill();
 }
 
@@ -345,7 +348,8 @@ void BDSOutputROOT::WritePrimary(G4String samplerName,
 	       nEvent, 
 	       0, 
 	       1, 
-	       turnsTaken);
+	       turnsTaken,
+	       "");
 }
 
 void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
@@ -405,8 +409,8 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 		   (*hc)[i]->GetEventNo(), 
 		   (*hc)[i]->GetParentID(), 
 		   (*hc)[i]->GetTrackID(),
-		   (*hc)[i]->GetTurnsTaken()
-		   );
+		   (*hc)[i]->GetTurnsTaken(),
+		   (*hc)[i]->GetProcess());
     }
 }
 

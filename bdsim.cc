@@ -63,14 +63,14 @@ int main(int argc,char** argv)
   G4cout<<"        http://www.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BdSim"<<G4endl;
   G4cout<<G4endl;
 
-  // check geant4 exists in the current environment
-  if (!BDS::Geant4EnvironmentIsSet())
-    {G4cout << "No Geant4 environmental variables found - please source geant4.sh environment" << G4endl; exit(1);}
-  
   /* Initialize executable command line options reader object */
   const BDSExecOptions* execOptions = BDSExecOptions::Instance(argc,argv);
   execOptions->Print();
   
+  // check geant4 exists in the current environment
+  if (!BDS::Geant4EnvironmentIsSet())
+    {G4cout << "No Geant4 environmental variables found - please source geant4.sh environment" << G4endl; exit(1);}
+
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> DEBUG mode is on." << G4endl;
 #endif  

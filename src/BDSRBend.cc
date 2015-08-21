@@ -304,3 +304,30 @@ void BDSRBend::PlaceComponents()
       RegisterPhysicalVolume(magnetOuterPV);
     }
 }
+
+
+std::vector<G4LogicalVolume*> BDSRBend::GetAllSensitiveVolumes() const
+{
+  std::vector<G4LogicalVolume*> result;
+  for (auto it : allLogicalVolumes)
+    {result.push_back(it);}
+
+  if (beampipe)
+    {
+      for (auto it : beampipe->GetAllSensitiveVolumes())
+	{result.push_back(it);}
+    }
+
+  if (bpFirstBit)
+    {
+      for (auto it : beampipe->GetAllSensitiveVolumes())
+	{result.push_back(it);}
+    }
+
+  if (bpLastBit)
+    {
+      for (auto it : beampipe->GetAllSensitiveVolumes())
+	{result.push_back(it);}
+    }
+  return result;
+}

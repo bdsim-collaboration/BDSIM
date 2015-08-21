@@ -48,6 +48,9 @@ struct Element {
   std::list<double> blmLocZ;
   std::list<double> blmLocTheta;
 
+  /// physics biasing process
+  std::string bias;
+  
   /// material properties
   double A; 
   double Z; 

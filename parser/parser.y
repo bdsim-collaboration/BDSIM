@@ -56,12 +56,11 @@
 %token <symp> VARIABLE VECVAR FUNC 
 %token <str> STR
 %token MARKER ELEMENT DRIFT PCLDRIFT RF DIPOLE RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE MULTIPOLE SCREEN AWAKESCREEN
-%token SOLENOID COLLIMATOR RCOL ECOL LINE SEQUENCE SPOILER ABSORBER LASER TRANSFORM3D MUSPOILER
-%token VKICK HKICK KICK
-%token PERIOD APERTURE FILENAME GAS PIPE TUNNEL MATERIAL ATOM
+%token SOLENOID RCOL ECOL LINE SEQUENCE LASER TRANSFORM3D MUSPOILER
+%token VKICK HKICK
+%token PERIOD GAS XSECBIAS TUNNEL MATERIAL ATOM
 %token BEAM OPTION PRINT RANGE STOP USE VALUE ECHO PRINTF SAMPLE CSAMPLE BETA0 TWISS DUMP
 %token IF ELSE BEGN END LE GE NE EQ FOR
-%token CUT
 
 %type <dval> aexpr
 %type <dval> expr
@@ -75,6 +74,7 @@
 %type <symp> csample_options
 %type <symp> gas_options
 %type <symp> tunnel_options
+%type <symp> xsecbias_options
 
 /* printout format for debug output */
 /*
@@ -391,76 +391,51 @@ decl : VARIABLE ':' marker
              params.flush();
            }
        }
+     | VARIABLE ':' tunnel
+       {
+         if(execute)
+           {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << $1->name << " : tunnel" << std::endl;
+	     tunnel.set_value("name",$1->name);
+	     add_tunnel(tunnel);
+           }
+       }
+     | VARIABLE ':' xsecbias
+       {
+         if(execute)
+           {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << $1->name << " : xsecbias" << std::endl;
+	     xsecbias.set_value("name",$1->name);
+	     add_xsecbias(xsecbias);
+           }
+       }
 ;
 
 marker : MARKER ;
-
-drift : DRIFT ',' parameters
-;
-
-pcldrift : PCLDRIFT ',' parameters
-;
-
-rf : RF ',' parameters
-;
-
-sbend : SBEND ',' parameters
-;
-
-rbend : RBEND ',' parameters
-;
-
-vkick : VKICK ',' parameters
-;
-
-hkick : HKICK ',' parameters
-;
-
-quad : QUADRUPOLE ',' parameters
-;
-
-sextupole : SEXTUPOLE ',' parameters
-;
-
-octupole : OCTUPOLE ',' parameters
-;
-
-multipole : MULTIPOLE ',' parameters
-;
-
-solenoid : SOLENOID ',' parameters
-;
-
-ecol : ECOL ',' parameters
-;
-
-muspoiler : MUSPOILER ',' parameters
-;
-
-rcol : RCOL ',' parameters
-;
-
-laser : LASER ',' parameters
-;
-
-screen : SCREEN ',' parameters
-;
-
-awakescreen : AWAKESCREEN ',' parameters
-;
-
-transform3d : TRANSFORM3D ',' parameters
-;
-
-element : ELEMENT ',' parameters
-;
-
-matdef : MATERIAL ',' parameters
-;
-
-atom : ATOM ',' parameters
-;
-
+drift : DRIFT ',' parameters ;
+pcldrift : PCLDRIFT ',' parameters ;
+rf : RF ',' parameters ;
+sbend : SBEND ',' parameters ;
+rbend : RBEND ',' parameters ;
+vkick : VKICK ',' parameters ;
+hkick : HKICK ',' parameters ;
+quad : QUADRUPOLE ',' parameters ;
+sextupole : SEXTUPOLE ',' parameters ;
+octupole : OCTUPOLE ',' parameters ;
+multipole : MULTIPOLE ',' parameters ;
+solenoid : SOLENOID ',' parameters ;
+ecol : ECOL ',' parameters ;
+muspoiler : MUSPOILER ',' parameters ;
+rcol : RCOL ',' parameters ;
+laser : LASER ',' parameters ;
+screen : SCREEN ',' parameters ;
+awakescreen : AWAKESCREEN ',' parameters ;
+transform3d : TRANSFORM3D ',' parameters ;
+element : ELEMENT ',' parameters ;
+matdef : MATERIAL ',' parameters ;
+atom : ATOM ',' parameters ;
+tunnel : TUNNEL ',' tunnel_options ;
+xsecbias : XSECBIAS ',' xsecbias_options ;
 extension : VARIABLE ',' parameters
             {
 	      if(execute)
@@ -556,9 +531,7 @@ line : LINE '=' '-' '(' rev_element_seq ')'
 //sequence : SEQUENCE ',' params ',' '-' '(' rev_element_seq ')'
 //;
 
-sequence : SEQUENCE '=' '(' seq_element_seq ')'
-;
-
+sequence : SEQUENCE '=' '(' seq_element_seq ')' ;
 
 element_seq : 
             | VARIABLE ',' element_seq
@@ -1009,27 +982,24 @@ command : STOP             { if(execute) quit(); }
         | PRINT            { if(execute) element_list.print(); }
         | PRINT ',' LINE   { if(execute) beamline_list.print(); }
         | PRINT ',' OPTION { if(execute) options.print(); }
+//        | PRINT ',' OPTION ',' VARIABLE { if(execute) options.print($5->name);}
         | PRINT ',' VARIABLE 
           {
-	    if(execute)
-	      {
-		printf("\t");
-		printf("\t%.10g\n",$3->value);
-	      }
+	    if(execute) {
+	      printf("\t%s = %.10g\n",$3->name.c_str(),$3->value);
+	    }
 	  } 
-        | PRINT ',' VECVAR 
+        | PRINT ',' VECVAR
           {
 	    if(execute)
 	      {
-		printf("\t");
-		
+		printf("\t%s = {",$3->name.c_str());
 		std::list<double>::iterator it;
 		for(it=$3->array.begin();it!=$3->array.end();it++)
 		  {
-		    printf("  %.10g ",(*it));
+		    printf(" %.10g ",(*it));
 		  }
-		
-		printf("\n");
+		printf("} \n");
 	      } 
 	  }
         | USE ',' use_parameters { if(execute) expand_line(current_line,current_start, current_end);}
@@ -1072,6 +1042,14 @@ command : STOP             { if(execute) quit(); }
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> TUNNEL\n");
 		add_tunnel(tunnel);
+	      }
+          }
+        | XSECBIAS ',' xsecbias_options // xsecbias
+          {
+	    if(execute)
+	      {  
+		if(ECHO_GRAMMAR) printf("command -> XSECBIAS\n");
+		add_xsecbias(xsecbias);
 	      }
           }
         | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
@@ -1307,6 +1285,40 @@ tunnel_options : VARIABLE '=' aexpr ',' tunnel_options
 		    }
 ;
 
+xsecbias_options : VARIABLE '=' aexpr ',' xsecbias_options
+                    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
+		    }
+                 | VARIABLE '=' aexpr
+                    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
+		    }
+                 | VARIABLE '=' STR ',' xsecbias_options
+                    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
+		      free($3);
+		    }
+                 | VARIABLE '=' STR
+                    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
+		      free($3);
+		    }
+                 | VARIABLE '=' vecexpr ',' xsecbias_options
+		    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
+		    }
+                 | VARIABLE '=' vecexpr
+		    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
+		    }
+;
+
 option_parameters : 
                   | VARIABLE '=' aexpr ',' option_parameters
                     {
@@ -1358,7 +1370,6 @@ beam_parameters :
 ;
 
 %%
-
 
 int yyerror(const char *s)
 {

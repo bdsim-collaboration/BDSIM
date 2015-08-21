@@ -34,7 +34,7 @@ void BDSVisManager::StartSession(G4int argc, char** argv) {
 
 #ifdef G4VIS_USE
 #ifdef BDSDEBUG 
-  G4cout<< __FUNCTION__ << "> Initializing Visualisation Manager"<<G4endl;
+  G4cout<< __METHOD_NAME__ << "Initializing Visualisation Manager"<<G4endl;
 #endif
   // Initialize visualisation
   G4VisManager* visManager = new G4VisExecutive;
@@ -64,7 +64,7 @@ void BDSVisManager::StartSession(G4int argc, char** argv) {
     fclose(file);
     visPath = bdsimPath + "../share/BDSIM/vis/";
   } else {
-    G4cout << __FUNCTION__ << "> ERROR: default visualisation file could not be found!" << G4endl;
+    G4cout << __METHOD_NAME__ << "ERROR: default visualisation file could not be found!" << G4endl;
   }
 
   // check if visualisation file is present and readable
@@ -81,7 +81,7 @@ void BDSVisManager::StartSession(G4int argc, char** argv) {
       fclose(file);
     } else {
       // if not present use a default one (OGLSQt or DAWNFILE)
-      G4cout << __FUNCTION__ << "> WARNING: visualisation file " << visMacroFilename <<  " file not present, using default!" << G4endl;
+      G4cout << __METHOD_NAME__ << "WARNING: visualisation file " << visMacroFilename <<  " file not present, using default!" << G4endl;
       useDefault = true;
     }
   }

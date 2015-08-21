@@ -8,6 +8,8 @@
 struct BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
+class BDSBeamPipe;
+
 class BDSRBend: public BDSMagnet
 {
 public:
@@ -19,6 +21,10 @@ public:
 	   BDSBeamPipeInfo*    beamPipeInfo,
 	   BDSMagnetOuterInfo* magnetOuterInfo);
   ~BDSRBend();
+
+  /// Access all sensitive volumes belonging to this component including those
+  /// of the custom beam pipe
+  virtual std::vector<G4LogicalVolume*> GetAllSensitiveVolumes() const;
 
 private:
   G4double bField;

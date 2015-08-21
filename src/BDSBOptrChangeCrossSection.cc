@@ -19,7 +19,7 @@ BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(G4String particleNameIn,
 {
   fParticleToBias = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
   
-  if ( fParticleToBias == 0 ) {
+  if ( fParticleToBias == nullptr ) {
     G4ExceptionDescription ed;
     ed << "Particle `" << particleName << "' not found !" << G4endl;
     G4Exception("BDSBOptrChangeCrossSection(...)","BDSIM",JustWarning,ed);
@@ -52,20 +52,22 @@ void BDSBOptrChangeCrossSection::StartRun()
 	const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
 	G4String operationName = "XSchange-"+wrapperProcess->GetWrappedProcess()->GetProcessName();
 	fChangeCrossSectionOperations[wrapperProcess] = new G4BOptnChangeCrossSection(operationName);
-	fXSScale[wrapperProcess] = 1.0;
+	fXSScale[wrapperProcess]      = 1.0;
+	fPrimaryScale[wrapperProcess] = 0;
       }
     }
     fSetup = false;
   }
 }
 
-void BDSBOptrChangeCrossSection::SetBias(G4String processName, G4double bias) {
+void BDSBOptrChangeCrossSection::SetBias(G4String processName, G4double bias, G4int iPrimary) {
     const G4ProcessManager*           processManager = fParticleToBias->GetProcessManager();
     const G4BiasingProcessSharedData* sharedData     = G4BiasingProcessInterface::GetSharedData(processManager);
     for (size_t i = 0 ; i < (sharedData->GetPhysicsBiasingProcessInterfaces()).size(); i++) {
       const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
       if(processName == wrapperProcess->GetWrappedProcess()->GetProcessName()) { 
-	fXSScale[wrapperProcess] = bias;
+	fXSScale[wrapperProcess]      = bias;
+	fPrimaryScale[wrapperProcess] = iPrimary;
       }
     }
 }
@@ -74,8 +76,8 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
 										  const G4BiasingProcessInterface* callingProcess) {
   // -----------------------------------------------------
   // -- Check if current particle type is the one to bias:
-  // -----------------------------------------------------
-  if ( track->GetDefinition() != fParticleToBias ) return 0;
+  //  -----------------------------------------------------
+  if ( track->GetDefinition() != fParticleToBias ) return nullptr;
     
   // ---------------------------------------------------------------------
   // -- select and setup the biasing operation for current callingProcess:
@@ -86,10 +88,10 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
 
 
   G4double analogInteractionLength =  callingProcess->GetWrappedProcess()->GetCurrentInteractionLength();
-  if (analogInteractionLength > DBL_MAX/10.) return 0;
+  if (analogInteractionLength > DBL_MAX/10.) return nullptr;
 
   if(analogInteractionLength < 0) {
-    return 0;
+    return nullptr;
   }
 
   G4double analogXS = 0;
@@ -112,14 +114,32 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   // -- get the operation that was proposed to the process in the previous step:
   G4VBiasingOperation* previousOperation = callingProcess->GetPreviousOccurenceBiasingOperation();
 
-  //  if(callingProcess->GetWrappedProcess()->GetProcessName() == "AnnihiToMuPair" || 
-  //     callingProcess->GetWrappedProcess()->GetProcessName() == "ee2hadr" || 
-  //     callingProcess->GetWrappedProcess()->GetProcessName() == "annihil" || 
-  //     callingProcess->GetWrappedProcess()->GetProcessName() == "GammaToMuPair" ) {
-  //    XStransformation = 1e5;
-  //  }
-  
+  // -- check for only scaling primary
+  if ( fPrimaryScale[callingProcess] == 1 && track->GetParentID() != 0 ) return nullptr;
   XStransformation = fXSScale[callingProcess];
+
+#if 0
+  if(callingProcess->GetWrappedProcess()->GetProcessName() == "AnnihiToMuPair" || 
+     //     callingProcess->GetWrappedProcess()->GetProcessName() == "ee2hadr" || 
+     //     callingProcess->GetWrappedProcess()->GetProcessName() == "annihil" || 
+     callingProcess->GetWrappedProcess()->GetProcessName() == "GammaToMuPair" ) {
+    //    G4cout << callingProcess->GetWrappedProcess()->GetProcessName() << G4endl;
+    XStransformation = 1e5;
+  }
+#endif
+
+#if 1
+  if(callingProcess->GetWrappedProcess()->GetProcessName() == "protonInelastic" && track->GetParentID() == 0) {
+    //    G4cout << analogXS << G4endl;
+    XStransformation = 1e13;
+  }
+#endif
+
+
+  // STB Just return the operation before the multiple sampling check
+  operation->SetBiasedCrossSection( XStransformation * analogXS );
+  operation->Sample();
+  return operation;
     
   // -- now setup the operation to be returned to the process: this
   // -- consists in setting the biased cross-section, and in asking
@@ -133,12 +153,7 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   // -- occured. If the interaction did not occur for the process in the previous,
   // -- we update the number of interaction length instead of resampling.
 
-  // STB Just return the operation before the multiple sampling check
-  operation->SetBiasedCrossSection( XStransformation * analogXS );
-  operation->Sample();
-  return operation;
-
-  if(previousOperation == 0) {
+  if(previousOperation == nullptr) {
     //    G4cout << __METHOD_NAME__ << " previousOperation==0 " << XStransformation * analogXS << G4endl;
     operation->SetBiasedCrossSection( XStransformation * analogXS );
     operation->Sample();
@@ -151,7 +166,7 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
       ed << "Logic problem in operation handling !" << G4endl;
       G4Exception("GB01BOptrChangeCrossSection::ProposeOccurenceBiasingOperation(...)",
 		  "exGB01.02",JustWarning,ed);
-      return 0;
+      return nullptr;
     }
     if(operation->GetInteractionOccured()) {
       operation->SetBiasedCrossSection( XStransformation * analogXS );
@@ -170,7 +185,6 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   }
   return operation;  
 }
-
 
 void BDSBOptrChangeCrossSection::OperationApplied(const G4BiasingProcessInterface*           callingProcess, 
 						  G4BiasingAppliedCase,
