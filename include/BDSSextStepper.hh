@@ -1,13 +1,15 @@
 #ifndef BDSSEXTSTEPPER_HH
 #define BDSSEXTSTEPPER_HH
 
-#include "BDSStepperBase.hh"
+#include "BDSAuxiliaryNavigator.hh"
 
 #include "globals.hh"
+#include "G4MagIntegratorStepper.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
-class BDSSextStepper: public BDSStepperBase
+class BDSSextStepper:
+  public G4MagIntegratorStepper, public BDSAuxiliaryNavigator
 {
 public:
   BDSSextStepper(G4Mag_EqRhs *EqRhs);
@@ -34,7 +36,6 @@ public:
   G4int IntegratorOrder()const { return 2; }
 
 protected:
-
   void AdvanceHelix( const G4double  yIn[],
 		     G4ThreeVector Bfld,
 		     G4double  h,

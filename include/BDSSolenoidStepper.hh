@@ -1,13 +1,15 @@
 #ifndef BDSSOLENOIDSTEPPER_HH
 #define BDSSOLENOIDSTEPPER_HH
 
-#include "BDSStepperBase.hh"
+#include "BDSAuxiliaryNavigator.hh"
 
 #include "globals.hh"
+#include "G4MagIntegratorStepper.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
-class BDSSolenoidStepper: public BDSStepperBase
+class BDSSolenoidStepper:
+  public G4MagIntegratorStepper, public BDSAuxiliaryNavigator
 {
 public:
   BDSSolenoidStepper(G4Mag_EqRhs *EqRhs);

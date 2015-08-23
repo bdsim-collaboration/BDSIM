@@ -1,16 +1,17 @@
 #include "BDSDebug.hh"
 #include "BDSDipoleStepper.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSStepperBase.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4AffineTransform.hh"
+#include "G4MagintegratorStepper.hh"
+#include "G4ThreeVector.hh"
 #include "G4ClassicalRK4.hh"
-#include "G4TransportationManager.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
 
 BDSDipoleStepper::BDSDipoleStepper(G4Mag_EqRhs* eqRHS):
-  BDSStepperBase(eqRHS, 6),
+  G4MagIntegratorStepper(eqRHS, 6),
   itsLength(0.0),itsAngle(0.0),
   fPtrMagEqOfMot(eqRHS),
   itsBGrad(0.0),itsBField(0.0),itsDist(0.0)

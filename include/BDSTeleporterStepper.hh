@@ -1,14 +1,16 @@
-#ifndef BDSTeleporterStepper_h
-#define BDSTeleporterStepper_h 1
+#ifndef BDSTELEPORTERSTEPPER_HH
+#define BDSTELEPORTERSTEPPER_HH
 
-#include "BDSStepperBase.hh"
+#include "BDSAuxiliaryNavigator.hh"
 
 #include "globals.hh" //G4 types and exceptions
+#include "G4MagIntegratorStepper.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 #include <vector>
 
-class BDSTeleporterStepper: public BDSStepperBase
+class BDSTeleporterStepper:
+  public G4MagIntegratorStepper, public BDSAuxiliaryNavigator
 {
 public:
   BDSTeleporterStepper(G4Mag_EqRhs *EqRhs);

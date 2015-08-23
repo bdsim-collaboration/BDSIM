@@ -1,15 +1,15 @@
-#include "BDSSolenoidStepper.hh"
-#include "BDSStepperBase.hh"
 #include "BDSDebug.hh"
+#include "BDSSolenoidStepper.hh"
 
-#include "G4ThreeVector.hh"
 #include "G4AffineTransform.hh"
+#include "G4MagintegratorStepper.hh"
+#include "G4ThreeVector.hh"
 #include "G4ClassicalRK4.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
 
 BDSSolenoidStepper::BDSSolenoidStepper(G4Mag_EqRhs* eqRHS):
-  BDSStepperBase(eqRHS, 6),
+  G4MagIntegratorStepper(eqRHS, 6),
   fPtrMagEqOfMot(eqRHS),
   itsBField(0.0), itsDist(0.0), nvar(6)
 {

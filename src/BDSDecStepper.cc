@@ -1,14 +1,15 @@
+#include "BDSDebug.hh"
 #include "BDSDecStepper.hh"
-#include "G4ThreeVector.hh"
-#include "G4TransportationManager.hh"
 
-#include "BDSStepperBase.hh"
+#include "G4AffineTransform.hh"
+#include "G4MagintegratorStepper.hh"
+#include "G4ThreeVector.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
 
 // integrate over 6 variables only - position and velocity
 BDSDecStepper::BDSDecStepper(G4Mag_EqRhs *EqRhs):
-  BDSStepperBase(EqRhs, 6),  
+  G4MagIntegratorStepper(EqRhs, 6),  
   fPtrMagEqOfMot(EqRhs),
   itsBQuadPrime(0.0),
   itsDist(0.0)

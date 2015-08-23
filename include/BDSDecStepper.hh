@@ -1,14 +1,15 @@
 #ifndef BDSDECSTEPPER_HH
 #define BDSDECSTEPPER_HH
 
+#include "BDSAuxiliaryNavigator.hh"
+
 #include "globals.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
-#include "BDSStepperBase.hh"
-
-class BDSDecStepper: public BDSStepperBase
+class BDSDecStepper:
+  public G4MagIntegratorStepper, public BDSAuxiliaryNavigator
 {
 public:
   BDSDecStepper(G4Mag_EqRhs *EqRhs);

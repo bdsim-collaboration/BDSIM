@@ -1,20 +1,18 @@
 #ifndef BDSDipoleStepper_HH
 #define BDSDipoleStepper_HH
 
-#include "BDSStepperBase.hh"
+#include "BDSAuxiliaryNavigator.hh"
 
 #include "globals.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
-#include "G4Navigator.hh"
 
-class BDSDipoleStepper: public BDSStepperBase
+class BDSDipoleStepper:
+  public G4MagIntegratorStepper, public BDSAuxiliaryNavigator
 {
 public:
-  
   BDSDipoleStepper(G4Mag_EqRhs *EqRhs);
-  
   ~BDSDipoleStepper();
   
   virtual void Stepper( const G4double y[],
@@ -37,8 +35,8 @@ public:
   virtual G4int IntegratorOrder()const { return 2; }
   G4double itsLength;
   G4double itsAngle;
+  
 protected:
-  //  --- Methods used to implement all the derived classes -----
   
   void AdvanceHelix(const G4double yIn[],
 		    const G4double dydx[],
@@ -48,7 +46,6 @@ protected:
 		          G4double yErr[]);
   
 private:
-  
   G4ThreeVector yInitial, yMidPoint, yFinal;
   // Data stored in order to find the chord.
   
@@ -62,8 +59,7 @@ private:
   G4MagIntegratorStepper* backupStepper;
 
   /// Total beam energy
-  G4double nominalEnergy;
-  
+  G4double nominalEnergy; 
 };
 
 inline  void BDSDipoleStepper::SetBGrad(G4double aBGrad)

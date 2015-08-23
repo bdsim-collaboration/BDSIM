@@ -1,14 +1,14 @@
 #include "BDSDebug.hh"
 #include "BDSOctStepper.hh"
-#include "BDSStepperBase.hh"
 
+#include "G4AffineTransform.hh"
+#include "G4MagintegratorStepper.hh"
 #include "G4ThreeVector.hh"
-#include "G4TransportationManager.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
 
 BDSOctStepper::BDSOctStepper(G4Mag_EqRhs* eqRHS):
-  BDSStepperBase(eqRHS, 6),
+  G4MagIntegratorStepper(eqRHS, 6),
   fPtrMagEqOfMot(eqRHS),
   itsBTrpPrime(0.0),
   itsDist(0.0)
