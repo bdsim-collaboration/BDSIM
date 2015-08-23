@@ -502,6 +502,9 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiam
 							  BDSBeamPipe* beamPipe,
 							  G4double     /*order*/)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   G4double bpRadius = beamPipe->GetContainerRadius();
   // check parameters are valid
   if (outerDiameter*0.5 < bpRadius)
@@ -524,6 +527,9 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
 						     G4double     length,
 						     G4int        order)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   G4int nPoles = 2*order;
   
   // full circle is divided into segments for each pole
@@ -578,6 +584,9 @@ void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String name,
 								 G4int    /*order*/,
 								 G4double magnetContainerLength)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // circular yoke so pretty easy
   yokeSolid = new G4Tubs(name + "_yoke_solid",      // name
 			 yokeStartRadius,           // start radius
@@ -605,6 +614,9 @@ void BDSMagnetOuterFactoryPolesBase::TestInputParameters(BDSBeamPipe* beamPipe,
 							 G4double&    outerDiameter,
 							 G4Material*& outerMaterial)// reference to a pointer
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   //function arguments by reference to they can be modified in place
   //check outer material is something
   if (!outerMaterial)
@@ -634,6 +646,9 @@ void BDSMagnetOuterFactoryPolesBase::TestInputParameters(BDSBeamPipe* beamPipe,
 void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
 						     G4int    order)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for placements - it's registered upon construction with g4
@@ -680,6 +695,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
 								  G4Material*  outerMaterial,
 								  G4bool       isVertical)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   CleanUp();
   
   // test input parameters

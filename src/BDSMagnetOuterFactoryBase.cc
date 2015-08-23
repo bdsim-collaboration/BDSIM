@@ -165,6 +165,9 @@ void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidStraight(G4String name,
   
 void BDSMagnetOuterFactoryBase::CreateMagnetContainerComponent()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   magnetContainer = new BDSGeometryComponent(magnetContainerSolid,
 					     magnetContainerLV,
 					     magContExtentX,

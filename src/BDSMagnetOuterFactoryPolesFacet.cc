@@ -1,3 +1,4 @@
+#include "BDSDebug.hh"
 #include "BDSMagnetOuterFactoryPolesFacet.hh"
 
 #include "globals.hh"  // geant4 globals / types
@@ -23,10 +24,29 @@ BDSMagnetOuterFactoryPolesFacet::~BDSMagnetOuterFactoryPolesFacet()
   _instance = nullptr;
 }
 
+void BDSMagnetOuterFactoryPolesFacet::CalculatePoleAndYoke(G4double     outerDiameter,
+							   BDSBeamPipe* beamPipe,
+							   G4double     order)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(outerDiameter, beamPipe, order);
+  
+  yokeStartRadius       *= 0.70710678; // * 1/sqrt(2)
+  yokeFinishRadius      *= 0.70710678; // * 1/sqrt(2)
+  magnetContainerRadius *= 0.70710678; // * 1/sqrt(2)
+  poleFinishRadius      *= 0.70710678; // * 1/sqrt(2)
+  poleFinishRadius      -= lengthSafety;
+}
+
 void BDSMagnetOuterFactoryPolesFacet::CreatePoleSolid(G4String     name,
 						      G4double     length,
 						      G4int        order)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // use base class to do all the work, then modify the pole by cropping
   // it with a box to get the right shape
   
@@ -38,8 +58,6 @@ void BDSMagnetOuterFactoryPolesFacet::CreatePoleSolid(G4String     name,
   BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(name,length,order);
   
   poleFinishRadius = tempPoleFinishRadius; // set it back to what it was
-  poleFinishRadius *= 0.70710678;
-  poleFinishRadius -= lengthSafety;
 
   G4VSolid* baseClassPoleSolid = poleSolid;
 
@@ -68,10 +86,11 @@ void BDSMagnetOuterFactoryPolesFacet::CreatePoleSolid(G4String     name,
 void BDSMagnetOuterFactoryPolesFacet::CreateYokeAndContainerSolid(G4String name,
 								  G4double length,
 								  G4int    order,
-								  G4double magnetContainerRadius)
+								  G4double magnetContainerLength)
 {
-  yokeStartRadius  *= 0.70710678; // * 1/sqrt(2)
-  yokeFinishRadius *= 0.70710678; // * 1/sqrt(2)
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   G4double zPlanes[2] = {-length*0.5, length*0.5};
   G4double innerRadii[2] = {yokeStartRadius, yokeStartRadius};
   G4double outerRadii[2] = {yokeFinishRadius, yokeFinishRadius};
@@ -110,4 +129,17 @@ void BDSMagnetOuterFactoryPolesFacet::CreateYokeAndContainerSolid(G4String name,
 					  containerOuterSolid,       // this
 					  containerInnerSolid);      // minus this with no translation or rotation
   
+  G4double magContOuterRadii[2] = {magnetContainerRadius, magnetContainerRadius};
+  magnetContainerSolid = new G4Polyhedra(name + "_container_solid", // name
+					 CLHEP::pi*0.5,                   // start angle
+					 CLHEP::twopi,                    // sweep angle
+					 2*order,                         // number of sides
+					 2,                               // number of z planes
+					 zPlanes,                         // z plane z coordinates
+					 contInnerRadii,
+					 magContOuterRadii);
+  
+  magContExtentX = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
+  magContExtentY = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
+  magContExtentX = std::make_pair(-magnetContainerLength*0.5, magnetContainerLength*0.5); 
 }

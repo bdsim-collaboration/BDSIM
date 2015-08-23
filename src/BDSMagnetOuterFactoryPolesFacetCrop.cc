@@ -1,3 +1,4 @@
+#include "BDSDebug.hh"
 #include "BDSMagnetOuterFactoryPolesFacetCrop.hh"
 
 #include "globals.hh"  // geant4 globals / types
@@ -31,6 +32,9 @@ void BDSMagnetOuterFactoryPolesFacetCrop::CreatePoleSolid(G4String     name,
 							  G4double     length,
 							  G4int        order)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // use base class to do all the work, then modify the pole by cropping
   // it with a box to get the right shape
   
@@ -70,8 +74,11 @@ void BDSMagnetOuterFactoryPolesFacetCrop::CreatePoleSolid(G4String     name,
 void BDSMagnetOuterFactoryPolesFacetCrop::CreateYokeAndContainerSolid(G4String name,
 								      G4double length,
 								      G4int    order,
-								      G4double magnetContainerRadius)
+								      G4double magnetContainerLength)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   G4double segmentAngle = CLHEP::twopi / (2*order);
 
   // 2 z positions so need the inner and outer radii at those z positions
@@ -113,5 +120,17 @@ void BDSMagnetOuterFactoryPolesFacetCrop::CreateYokeAndContainerSolid(G4String n
 					  containerOuterSolid,       // this
 					  containerInnerSolid);      // minus this with no translation or rotation
 
-
+  G4double magContOuterRadii[2] = {magnetContainerRadius, magnetContainerRadius};
+  magnetContainerSolid = new G4Polyhedra(name + "_container_solid",         // name
+					 CLHEP::pi*0.5 + segmentAngle*0.25, // start angle
+					 CLHEP::twopi,                      // sweep angle
+					 4*order,                           // number of sides
+					 2,                                 // number of z planes
+					 zPlanes,                           // z plane z coordinates
+					 contInnerRadii,
+					 magContOuterRadii);
+  
+  magContExtentX = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
+  magContExtentY = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
+  magContExtentX = std::make_pair(-magnetContainerLength*0.5, magnetContainerLength*0.5);
 }
