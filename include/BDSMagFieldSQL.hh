@@ -18,7 +18,7 @@
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSMagField.hh"
 
-class BDSMagFieldSQL: public BDSMagField, BDSAuxiliaryNavigator
+class BDSMagFieldSQL: public BDSMagField, public BDSAuxiliaryNavigator
 {
 public:  // with description
 

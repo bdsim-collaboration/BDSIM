@@ -6,7 +6,7 @@
 #include "G4Types.hh"
 #include "G4MagneticField.hh"
 
-class BDSDecMagField: public G4MagneticField, BDSAuxiliaryNavigator
+class BDSDecMagField: public G4MagneticField, public BDSAuxiliaryNavigator
 {
 public:
   BDSDecMagField(G4double aBQuadPrime);

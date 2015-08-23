@@ -6,7 +6,7 @@
 
 #include "BDSAuxiliaryNavigator.hh"
 
-class BDSMuSpoilerMagField: public G4MagneticField, BDSAuxiliaryNavigator
+class BDSMuSpoilerMagField: public G4MagneticField, public BDSAuxiliaryNavigator
 {
 public:
   BDSMuSpoilerMagField();
@@ -17,8 +17,8 @@ public:
   virtual ~BDSMuSpoilerMagField();
   // Constructor and destructor. No actions.
   
-  virtual void  GetFieldValue( const G4double Point[4],
-			       G4double *Bfield ) const;
+  virtual void  GetFieldValue(const G4double Point[4],
+			      G4double *Bfield ) const;
 
 private:
   G4double itsBField;

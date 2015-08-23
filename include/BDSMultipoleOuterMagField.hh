@@ -6,7 +6,7 @@
 
 #include "BDSAuxiliaryNavigator.hh"
 
-class BDSMultipoleOuterMagField: public G4MagneticField, BDSAuxiliaryNavigator
+class BDSMultipoleOuterMagField: public G4MagneticField, public BDSAuxiliaryNavigator
 {
 public:
   BDSMultipoleOuterMagField(G4int nPole,G4double polField, G4double phiOffset);

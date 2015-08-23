@@ -12,7 +12,7 @@
  * Derived from BDSQuadMagField.cc
  */
 
-class BDSDetectorSolenoidMagField: public BDSMagField, BDSAuxiliaryNavigator
+class BDSDetectorSolenoidMagField: public BDSMagField, public BDSAuxiliaryNavigator
 {
 public: 
   BDSDetectorSolenoidMagField(G4double BIn,

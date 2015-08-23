@@ -6,7 +6,7 @@
 
 #include "BDSAuxiliaryNavigator.hh"
 
-class BDSSextMagField: public G4MagneticField, BDSAuxiliaryNavigator
+class BDSSextMagField: public G4MagneticField, public BDSAuxiliaryNavigator
 {
 public:
   BDSSextMagField(G4double aBDblePrime);

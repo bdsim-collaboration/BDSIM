@@ -7,7 +7,7 @@
 
 #include "BDSAuxiliaryNavigator.hh"
 
-class BDSMultipoleMagField: public G4MagneticField, BDSAuxiliaryNavigator
+class BDSMultipoleMagField: public G4MagneticField, public BDSAuxiliaryNavigator
 {
 public:
   BDSMultipoleMagField(std::list<G4double> knl, std::list<G4double> ksl);
