@@ -11,16 +11,16 @@ beam,  particle="proton",
 myPipe1 : drift, l=0.01; 
 myPipe2 : drift, l=1.0;
 
-myCol1  : rcol, l=0.15, xsize=0, ysize=0, material="StainlessSteel";
-myCol2  : rcol, l=0.15, xsize=0, ysize=0, material="StainlessSteel";
-myCol3  : rcol, l=0.15, xsize=0, ysize=0, material="StainlessSteel";
-myCol4  : rcol, l=0.15, xsize=0, ysize=0, material="StainlessSteel";
-myCol5  : rcol, l=0.15, xsize=0, ysize=0, material="StainlessSteel";
-myCol6  : rcol, l=0.15, xsize=0, ysize=0, material="StainlessSteel";
-myCol7  : rcol, l=0.15, xsize=0, ysize=0, material="StainlessSteel";
-myCol8  : rcol, l=0.15, xsize=0, ysize=0, material="StainlessSteel";
-myCol9  : rcol, l=0.15, xsize=0, ysize=0, material="StainlessSteel";
-myCol10 : rcol, l=0.15, xsize=0, ysize=0, material="StainlessSteel";
+myCol1  : rcol, l=0.15, xsize=0, ysize=0, material="Carbon";
+myCol2  : rcol, l=0.15, xsize=0, ysize=0, material="Carbon";
+myCol3  : rcol, l=0.15, xsize=0, ysize=0, material="Carbon";
+myCol4  : rcol, l=0.15, xsize=0, ysize=0, material="Carbon";
+myCol5  : rcol, l=0.15, xsize=0, ysize=0, material="Carbon";
+myCol6  : rcol, l=0.15, xsize=0, ysize=0, material="Carbon";
+myCol7  : rcol, l=0.15, xsize=0, ysize=0, material="Carbon";
+myCol8  : rcol, l=0.15, xsize=0, ysize=0, material="Carbon";
+myCol9  : rcol, l=0.15, xsize=0, ysize=0, material="Carbon";
+myCol10 : rcol, l=0.15, xsize=0, ysize=0, material="Carbon";
 
 
 sampler1: marker;
