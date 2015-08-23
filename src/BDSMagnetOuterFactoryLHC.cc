@@ -85,6 +85,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   G4double collarInnerRadiusF     = outerCoilOuterRadius + lengthSafety;
   G4double collarOuterRadius      = 101.18*CLHEP::mm;                    // [1] - at 293K but don't have 1.9K measurement
   G4double yokeOuterRadius        = 570.0*0.5*CLHEP::mm;                 // [2] - at 293K but don't have 1.9K measurement
+  G4double magnetContainerRadius  = yokeOuterRadius + lengthSafetyLarge;
 
   // angular setup of coils
   // these angles were calculated by visually analysing the coil layout graph in [2]
@@ -169,11 +170,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 						 CLHEP::twopi);
       allSolids.push_back(containerSolidOuter);
       allSolids.push_back(containerSolidInner);
-      containerSolid = new G4SubtractionSolid(name + "_container_solid",   // name
-					      containerSolidOuter,         // outer bit
-					      containerSolidInner,         // subtract this from it
-					      0,                           // rotation
-					      -dipolePosition);            // translation
+      containerSolid = new G4SubtractionSolid(name + "_outer_container_solid",// name
+					      containerSolidOuter,            // outer bit
+					      containerSolidInner,            // subtract this from it
+					      0,                              // rotation
+					      -dipolePosition);               // translation
     }
   else
     {
@@ -187,17 +188,25 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 						    inputface,                         // input face normal
 						    outputface);                       // output face normal
       allSolids.push_back(containerSolidOuter);
-      containerSolid = new G4SubtractionSolid(name + "_container_solid",
+      containerSolid = new G4SubtractionSolid(name + "_outer_container_solid",
 					      containerSolidOuter,
 					      beamPipe->GetContainerSubtractionSolid(),
 					      0,                // rotation
 					      -dipolePosition); // translation
     }
 
+  // make the whole magnet container solid
+  BuildMagnetContainerSolidAngled(name, containerLength, magnetContainerRadius, inputface, outputface);
+  // make the logical volume too manually as we don't use the BDSMagnetOuterFactoryBase method for this
+
   G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  magnetContainerLV = new G4LogicalVolume(magnetContainerSolid,
+					  emptyMaterial,
+					  name + "_container_lv");
+  
   containerLV = new G4LogicalVolume(containerSolid,
 				    emptyMaterial,
-				    name + "_container_lv");
+				    name + "_outer_container_lv");
     
   // coil solids
   G4VSolid*        coil1Inner   = nullptr;
@@ -840,21 +849,26 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   
   // visual attributes for container
   if (visDebug)
-    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
+    {
+      containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+      magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+    }
   else
-    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
+    {
+      containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+      magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+    }
 
   // USER LIMITS for all components
 #ifndef NOUSERLIMITS
-  if (!allLogicalVolumes.empty())
-    {
-      G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
-      userLimits->SetMaxAllowedStep( length * maxStepFactor );
-      userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-      allUserLimits.push_back(userLimits);
-      for (std::vector<G4LogicalVolume*>::iterator i = allLogicalVolumes.begin(); i != allLogicalVolumes.end(); ++i)
-	{(*i)->SetUserLimits(userLimits);}
-    }
+  G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
+  userLimits->SetMaxAllowedStep( length * maxStepFactor );
+  userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  allUserLimits.push_back(userLimits);
+  for (auto i : allLogicalVolumes)
+    {i->SetUserLimits(userLimits);} // apply to general vector of logical volumes
+  containerLV->SetUserLimits(userLimits);
+  magnetContainerLV->SetUserLimits(userLimits);
 #endif
   
   // record extents
@@ -864,17 +878,22 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   std::pair<double,double> extX = std::make_pair(-containerRadius+massShift,containerRadius+massShift); 
   std::pair<double,double> extY = std::make_pair(-containerRadius,containerRadius);
   std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
+
+  magnetContainer = new BDSGeometryComponent(magnetContainerSolid,
+					     magnetContainerLV,
+					     magContExtentX,
+					     magContExtentY,
+					     magContExtentZ);
   
   // build the BDSMagnetOuter instance and return it
   BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
 					     containerLV,
 					     extX, extY, extZ,
-					     NULL,
+					     magnetContainer,
 					     dipolePosition);
 
-  outer->InheritObjects(secondBP);
-  
   // register objects
+  outer->InheritObjects(secondBP);
   outer->RegisterLogicalVolume(allLogicalVolumes);
   outer->RegisterSensitiveVolume(allLogicalVolumes);
   outer->RegisterPhysicalVolume(allPhysicalVolumes);
@@ -934,6 +953,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   G4double collarInnerRadiusF     = coilOuterRadius + lengthSafety;
   G4double collarOuterRadius      = 101.18*CLHEP::mm;               // [1] - at 293K but don't have 1.9K measurement
   G4double yokeOuterRadius        = 570.0*0.5*CLHEP::mm;            // [2] - at 293K but don't have 1.9K measurement
+  G4double magnetContainerRadius  = yokeOuterRadius + lengthSafetyLarge;
 
   // angular setup of coils
   // these angles were calculated by visually analysing the coil layout graph in [2]
@@ -1034,7 +1054,15 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 					      -dipolePosition); // translation
     }
 
+  // make the whole magnet container solid
+  BuildMagnetContainerSolidStraight(name, containerLength, magnetContainerRadius);
+  // make the logical volume too manually as we don't use the BDSMagnetOuterFactoryBase method for this
+
   G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+
+  magnetContainerLV = new G4LogicalVolume(magnetContainerSolid,
+					  emptyMaterial,
+					  name + "_container_lv");
   containerLV = new G4LogicalVolume(containerSolid,
 				    emptyMaterial,
 				    name + "_container_lv");
@@ -1436,22 +1464,26 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   
   // visual attributes for container
   if (visDebug)
-    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
+    {
+      containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+      magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+    }
   else
-    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
+    {
+      containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+      magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+    }
 
   // USER LIMITS and SENSITIVITY for all components
 #ifndef NOUSERLIMITS
-  if (!allLogicalVolumes.empty())
-    {
-      G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
-      userLimits->SetMaxAllowedStep( length * maxStepFactor );
-      userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-      allUserLimits.push_back(userLimits);
-      
-      for (std::vector<G4LogicalVolume*>::iterator i = allLogicalVolumes.begin(); i != allLogicalVolumes.end(); ++i)
-	{(*i)->SetUserLimits(userLimits);}
-    }
+  G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
+  userLimits->SetMaxAllowedStep( length * maxStepFactor );
+  userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  allUserLimits.push_back(userLimits);    
+  for (auto i : allLogicalVolumes)
+    {i->SetUserLimits(userLimits);}
+  containerLV->SetUserLimits(userLimits);
+  magnetContainerLV->SetUserLimits(userLimits);
 #endif
     
   // record extents
@@ -1462,13 +1494,20 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   std::pair<double,double> extY = std::make_pair(-containerRadius,containerRadius);
   std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
   
+  magnetContainer = new BDSGeometryComponent(magnetContainerSolid,
+					     magnetContainerLV,
+					     magContExtentX,
+					     magContExtentY,
+					     magContExtentZ);
+  
   // build the BDSMagnetOuter instance and return it
   BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
 					     containerLV,
 					     extX, extY, extZ,
-					     NULL,
+					     magnetContainer,
 					     dipolePosition);
-  // REGISTER all lvs
+  
+  // register objects
   outer->InheritObjects(secondBP);
   outer->RegisterSolid(allSolids);
   outer->RegisterLogicalVolume(allLogicalVolumes);
