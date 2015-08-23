@@ -1,0 +1,6 @@
+Debug					0
+InputFilePath				./electron_250GeV_copper.root
+OutputFileName				./electron_250GeV_copper_anal.root
+CalculateOpticalFunctions		0
+CalculateOpticalFunctionsFileName	./output.dat
+Histogram				Sampler_sampler4	{250}		{0:250}				E		E		1
