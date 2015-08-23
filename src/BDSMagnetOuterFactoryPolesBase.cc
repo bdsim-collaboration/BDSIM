@@ -235,7 +235,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
     }
 
   G4Colour* magnetColour = BDSMagnetColours::Instance()->GetMagnetColour(1); /*order = 1*/
-  CreateLogicalVolumes(name, length, magnetColour, outerMaterial);
+  
+  BDSMagnetOuterFactoryBase::CreateLogicalVolumes(name, length, magnetColour, outerMaterial);
 
   // PLACEMENT
   // place the components inside the container
