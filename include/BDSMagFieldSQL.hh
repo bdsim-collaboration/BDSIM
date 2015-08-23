@@ -1,9 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
 #ifndef BDSMagFieldSQL_h
 #define BDSMagFieldSQL_h 
 
@@ -20,9 +14,11 @@
 #include "G4Navigator.hh"
 #include "G4TouchableHistory.hh"
 #include "G4TouchableHistoryHandle.hh"
+
+#include "BDSAuxiliaryNavigator.hh"
 #include "BDSMagField.hh"
 
-class BDSMagFieldSQL : public BDSMagField
+class BDSMagFieldSQL: public BDSMagField, BDSAuxiliaryNavigator
 {
 public:  // with description
 
@@ -55,7 +51,6 @@ public:  // with description
   void Prepare(G4VPhysicalVolume *referenceVolume);
 
 private:
-  G4Navigator* itsIRNavigator;
   G4bool itsHasNPoleFields;
   G4bool itsHasUniformField;
   G4bool itsHasFieldMap;

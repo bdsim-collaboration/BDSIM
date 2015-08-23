@@ -1,15 +1,17 @@
+#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh" 
-
 #include "BDSMultipoleMagField.hh"
 
-#include "G4Navigator.hh"
+#include "G4AffineTransform.hh"
 #include "G4ParticleDefinition.hh"
+#include "G4ThreeVector.hh"
 #include "G4TransportationManager.hh"
-#include "BDSDebug.hh"
+
+#include <iterator>
+#include <list>
 
 BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4double> ks)
 {
-
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout<<"Creating BDSMultipoleMagField"<<G4endl;
@@ -86,8 +88,8 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
 
 BDSMultipoleMagField::~BDSMultipoleMagField(){}
 
-void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
-		       G4double *Bfield ) const
+void BDSMultipoleMagField::GetFieldValue(const G4double *Point,
+					 G4double *Bfield ) const
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -97,15 +99,12 @@ void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
 #endif
 
   // convert global to local coordinates
-  G4Navigator* MulNavigator=
-    G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
-  
   G4ThreeVector LocalR, GlobalR, LocalBField;
   
   GlobalR.setX(Point[0]);
   GlobalR.setY(Point[1]);
   GlobalR.setZ(Point[2]);
-  G4AffineTransform GlobalAffine=MulNavigator->GetGlobalToLocalTransform();
+  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
   LocalR=GlobalAffine.TransformPoint(GlobalR); 
 
 #ifdef BDSDEBUG
@@ -175,7 +174,7 @@ void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
   //
   // convert B field to global coordinate system
   //
-  G4AffineTransform LocalAffine = MulNavigator->GetLocalToGlobalTransform();
+  G4AffineTransform LocalAffine = auxNavigator->GetLocalToGlobalTransform();
   G4ThreeVector GlobalBField = LocalAffine.TransformAxis(LocalBField);
 
   // currently BDSRK4Stepper - unlike the other steppers like BDSSextStepper -
