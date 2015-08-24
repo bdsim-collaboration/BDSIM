@@ -14,9 +14,9 @@ To use the ROOT analysis (and the Python interface)::
    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$ROBDSIM (mac only)
    export PYTHON_PATH=$PYTHON_PATH:$ROBDSIM
    
-Note that several ROOT output files can be combined into one file with the command::
+Note that several ROOT analysis output (outpt of robdsimAnal) files can be combined into one file with the command::
 
-   robdsimCombine combined.root output_0.root output_1.root output_2.root output_3.root
+   robdsimComb combined.root output_0.root output_1.root output_2.root output_3.root
 
 Using the robdsim library from within ROOT::
 
