@@ -556,9 +556,9 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   BDSAcceleratorComponentRegistry::iterator i;
 
   // loop over xsec biases and find if any apply globally 
-  BDSBOptrMultiParticleChangeCrossSection* vacuumBias   = nullptr;
-  BDSBOptrMultiParticleChangeCrossSection* materialBias = nullptr;
-  BDSBOptrMultiParticleChangeCrossSection* tunnelBias   = nullptr;
+  // BDSBOptrMultiParticleChangeCrossSection* vacuumBias   = nullptr;
+  // BDSBOptrMultiParticleChangeCrossSection* materialBias = nullptr;
+  // BDSBOptrMultiParticleChangeCrossSection* tunnelBias   = nullptr;
   
  
   // apply biases
