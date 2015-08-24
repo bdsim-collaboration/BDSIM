@@ -23,11 +23,12 @@
 #include <map>
 
 #include "parser/element.h"
-#include "parser/elementlist.h"
 #include "parser/options.h"
 
 namespace GMAD {
   extern GMAD::Options options;
+  extern std::list<struct Element>  material_list;
+  extern std::list<struct Element>  atom_list;
 }
 
 BDSMaterials* BDSMaterials::_instance = nullptr;

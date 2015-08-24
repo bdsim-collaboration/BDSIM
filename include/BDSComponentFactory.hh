@@ -9,9 +9,6 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuterInfo.hh"
 
-namespace GMAD {
-  class ElementList;
-}
 class BDSTiltOffset;
 
 class BDSComponentFactory{

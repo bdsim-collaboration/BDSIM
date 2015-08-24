@@ -20,9 +20,8 @@
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 
 #include "parser/element.h"
-#include "parser/elementlist.h"
+#include "parser/fastlist.h"
 #include "parser/physicsbiasing.h"
-#include "parser/physicsbiasinglist.h"
 
 #include "G4Box.hh"
 #include "G4Colour.hh"
@@ -54,6 +53,10 @@ bool debug = true;
 #else
 bool debug = false;
 #endif
+
+namespace GMAD {
+  extern FastList<Element> beamline_list;
+}
 
 typedef std::vector<G4LogicalVolume*>::iterator BDSLVIterator;
 

@@ -24,7 +24,7 @@ int gmad_parser(std::string name);
 extern "C" {   
   int    GmadParser_c(char *name);
 
-  /* Interface to extern ElementList beamline_list */
+  /* Interface to extern beamline_list */
   int          GetNelements();            // Length of list
   int          GetType(int);              // Type of element 
   const char*  GetName(int);              // Name of element
