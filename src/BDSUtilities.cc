@@ -42,7 +42,7 @@ G4int BDS::CalculateOrientation(G4double angle)
   return orientation;
 }
 
-G4bool FileExists(G4String fileName)
+G4bool BDS::FileExists(G4String fileName)
 {
   std::ifstream infile(fileName.c_str());
   return infile.good();
