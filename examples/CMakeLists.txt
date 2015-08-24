@@ -10,7 +10,7 @@ set(TESTING_PERM_ARGS --batch)
 
 # if ROOT always output combined format
 if (USE_ROOT)
-   set(TESTING_PERM_ARGS ${TESTING_PERM_ARGS} --output=combined)
+   set(TESTING_PERM_ARGS ${TESTING_PERM_ARGS} --output=root)
 endif()
 
 add_subdirectory(ATF2)

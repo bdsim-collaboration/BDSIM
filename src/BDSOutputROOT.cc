@@ -25,7 +25,7 @@ BDSOutputROOT::BDSOutputROOT()
 BDSOutputROOT::~BDSOutputROOT()
 {
   if (theRootOutputFile && theRootOutputFile->IsOpen())
-    {theRootOutputFile->Write();}
+    {theRootOutputFile->Write(0,TObject::kOverwrite);}
 }
 
 void BDSOutputROOT::BuildSamplerTree(G4String name)
@@ -91,21 +91,33 @@ void BDSOutputROOT::BuildSamplerTree(G4String name)
 
 void BDSOutputROOT::Init()
 {
+  const BDSExecOptions*     execOptions     = BDSExecOptions::Instance();
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   // set up the root file
-  filename = BDSExecOptions::Instance()->GetOutputFilename();
+  // policy overwrite if output filename specifically set, otherwise increase
+  G4String basefilename = execOptions->GetOutputFilename();
   // if more than one file add number (starting at 0)
   int evntsPerNtuple = globalConstants->GetNumberOfEventsPerNtuple();
   if (evntsPerNtuple>0 && globalConstants->GetNumberToGenerate()>evntsPerNtuple) {
-    filename += "_" + BDS::StringFromInt(outputFileNumber);
+    basefilename += "_" + BDS::StringFromInt(outputFileNumber);
   }
-  filename += ".root";
+  filename = basefilename + ".root";
+  if (!BDSExecOptions::Instance()->GetOutputFilenameSet()) {
+    // check if file exists
+    int nTimeAppended = 1;
+    while (BDS::FileExists(filename)) {
+      // if exists remove trailing .root
+      filename = basefilename + "-" + std::to_string(nTimeAppended);
+      filename += ".root";
+      nTimeAppended +=1;
+    }
+  }
   
   G4cout<<"Setting up new file: "<<filename<<G4endl;
   theRootOutputFile=new TFile(filename,"RECREATE", "BDS output file");
 
   // Build sampler tree
-  G4String primariesSamplerName="primaries";
+  G4String primariesSamplerName="Primaries";
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " building sampler tree named: " << primariesSamplerName << G4endl;
 #endif
@@ -604,7 +616,7 @@ void BDSOutputROOT::Write()
       G4cout << __METHOD_NAME__ << " - ROOT file found and open, writing." << G4endl;
 #endif
       //Dump all other quantities to file...
-      theRootOutputFile->Write();
+      theRootOutputFile->Write(0,TObject::kOverwrite);
       theRootOutputFile->Close();
       delete theRootOutputFile;
       theRootOutputFile=nullptr;

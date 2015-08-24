@@ -28,6 +28,7 @@ public:
   inline G4String        GetVisMacroFilename() const     {return visMacroFilename;}
   inline G4bool          GetVisDebug() const             {return visDebug;}
   inline G4String        GetOutputFilename() const       {return outputFilename;}
+  inline G4bool          GetOutputFilenameSet() const    {return outputFilenameSet;}
   inline BDSOutputFormat GetOutputFormat() const         {return outputFormat;}
   inline G4bool          GetOutline() const              {return outline;}
   inline G4String        GetOutlineFilename() const      {return outlineFilename;}
@@ -71,6 +72,7 @@ private :
   
   ///@{ Parameter for output format
   G4String        outputFilename;
+  G4bool          outputFilenameSet;
   BDSOutputFormat outputFormat;
   ///@}
   
