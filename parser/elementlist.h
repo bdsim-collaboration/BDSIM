@@ -34,7 +34,7 @@ class ElementList {
   /// insert options (classic list inserts):
   /// inputiterator templated to account for reverse iterators
   template <typename ElementListInputIterator>
-  ElementListIterator insert (ElementListInputIterator position, const Element& val);
+  ElementListIterator insert(ElementListInputIterator position, const Element& val);
   template <typename ElementListInputIterator>
   void insert (ElementListIterator position, ElementListInputIterator first, ElementListInputIterator last);
   ///@}

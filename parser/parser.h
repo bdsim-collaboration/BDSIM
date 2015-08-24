@@ -30,6 +30,7 @@
 #include "options.h"
 #include "parameters.h"
 #include "physicsbiasing.h"
+#include "physicsbiasinglist.h"
 #include "tunnel.h"
 
 int yyerror(const char *);
@@ -63,7 +64,8 @@ ElementList beamline_list;
 std::list<struct Element>  material_list;
 std::list<struct Element>  atom_list;
 std::vector<struct Tunnel> tunnel_list;
-std::vector<PhysicsBiasing> xsecbias_list;
+//std::vector<PhysicsBiasing> xsecbias_list;
+PhysicsBiasingList xsecbias_list;
 
 std::string current_line;
 std::string current_start;

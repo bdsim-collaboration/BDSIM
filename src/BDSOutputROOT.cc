@@ -25,7 +25,7 @@ BDSOutputROOT::BDSOutputROOT()
 BDSOutputROOT::~BDSOutputROOT()
 {
   if (theRootOutputFile && theRootOutputFile->IsOpen())
-    {theRootOutputFile->Write();}
+    {theRootOutputFile->Write(0,TObject::kOverwrite);}
 }
 
 void BDSOutputROOT::BuildSamplerTree(G4String name)
@@ -117,7 +117,7 @@ void BDSOutputROOT::Init()
   theRootOutputFile=new TFile(filename,"RECREATE", "BDS output file");
 
   // Build sampler tree
-  G4String primariesSamplerName="primaries";
+  G4String primariesSamplerName="Primaries";
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " building sampler tree named: " << primariesSamplerName << G4endl;
 #endif
@@ -616,7 +616,7 @@ void BDSOutputROOT::Write()
       G4cout << __METHOD_NAME__ << " - ROOT file found and open, writing." << G4endl;
 #endif
       //Dump all other quantities to file...
-      theRootOutputFile->Write();
+      theRootOutputFile->Write(0,TObject::kOverwrite);
       theRootOutputFile->Close();
       delete theRootOutputFile;
       theRootOutputFile=nullptr;

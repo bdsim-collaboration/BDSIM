@@ -3,6 +3,7 @@
 
 #include <string>
 #include <list>
+#include <vector>
 
 namespace GMAD {
   struct Array;
@@ -46,6 +47,7 @@ namespace GMAD {
     /// set methods by property name, string values
     void set_value(std::string property, std::string value);
   };
+
 }
 
 #endif

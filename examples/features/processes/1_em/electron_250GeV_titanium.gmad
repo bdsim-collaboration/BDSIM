@@ -52,4 +52,4 @@ sample, range = sampler9;
 sample, range = sampler10; 
 sample, range = sampler11; 
 
-option, ngenerate=1; 
+option, ngenerate=100; 
