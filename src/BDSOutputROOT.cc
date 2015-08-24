@@ -94,7 +94,6 @@ void BDSOutputROOT::Init()
   const BDSExecOptions*     execOptions     = BDSExecOptions::Instance();
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   // set up the root file
-  // policy overwrite if output filename specifically set, otherwise increase
   G4String basefilename = execOptions->GetOutputFilename();
   // if more than one file add number (starting at 0)
   int evntsPerNtuple = globalConstants->GetNumberOfEventsPerNtuple();
@@ -102,7 +101,9 @@ void BDSOutputROOT::Init()
     basefilename += "_" + BDS::StringFromInt(outputFileNumber);
   }
   filename = basefilename + ".root";
-  if (!BDSExecOptions::Instance()->GetOutputFilenameSet()) {
+  // policy: overwrite if output filename specifically set, otherwise increase number
+  // always check in interactive mode
+  if (!execOptions->GetOutputFilenameSet() || !execOptions->GetBatch()) {
     // check if file exists
     int nTimeAppended = 1;
     while (BDS::FileExists(filename)) {
