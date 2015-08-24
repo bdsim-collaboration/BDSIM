@@ -5,12 +5,14 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURC
 # For overlap checking (needs option, checkOverlaps=1)
 set(OVERLAP_CHECK "Overlap is detected")
 
-# always test in batch mode (ASCII output is too large for some tests)
-set(TESTING_PERM_ARGS --batch --output=none)
+# always test in batch mode
+set(TESTING_PERM_ARGS --batch)
 
-# if ROOT output ROOT format
+# if ROOT output ROOT format, else none ASCII output is very large for some tests)
 if (USE_ROOT)
    set(TESTING_PERM_ARGS ${TESTING_PERM_ARGS} --output=root)
+else()
+   set(TESTING_PERM_ARGS ${TESTING_PERM_ARGS} --output=none)
 endif()
 
 add_subdirectory(ATF2)
