@@ -6,15 +6,13 @@ Output Analysis
 
 ROOT Output (robdsim)
 ---------------------
-To use the ROOT analysis (and the Python interface). robdsim should be built against your system version of ROOT::
+To use the ROOT analysis (and the Python interface)::
 
-   export ROBDSIM=:~/physics/reps/bdsim/utils/robdsim
+   export ROBDSIM=:<bdsim-build-dir>/utils/robdsim
    export PATH=$PATH:$ROBDSIM
-   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROBDSIM
+   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROBDSIM (linux only)
    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$ROBDSIM (mac only)
    export PYTHON_PATH=$PYTHON_PATH:$ROBDSIM
-   make clean
-   make robdsimAnalysis
    
 Note that several ROOT output files can be combined into one file with the command::
 
@@ -23,7 +21,7 @@ Note that several ROOT output files can be combined into one file with the comma
 Using the robdsim library from within ROOT::
 
    > root 
-   root [0] gSystem->Load("~/physics/reps/bdsim/utils/librobdsim.so")
+   root [0] gSystem->Load("<bdsim-build-dir>/utils/robdsim/librobdsim.so")
    root [1] r = new RobdsimAnalysis("analysisConfig.txt")
 
 Using the robdsim library from within Python::
