@@ -19,21 +19,29 @@ BDSOutputASCII::BDSOutputASCII()
   timestring = asctime(localtime(&currenttime));
   timestring = timestring.substr(0,timestring.size()-1);
   
+  // policy overwrite if output filename specifically set, otherwise increase
   // generate filenames
   basefilename = BDSExecOptions::Instance()->GetOutputFilename();
   G4String originalname = basefilename;
   // lots of files - make a directory with the users permissions
+  // see sysstat.h, e.g. http://pubs.opengroup.org/onlinepubs/007908799/xsh/sysstat.h.html
   int status        = -1;
   int nTimeAppended = 0;
   while (status != 0)
     {
       status = mkdir(basefilename.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+      if (BDSExecOptions::Instance()->GetOutputFilenameSet())
+	{
+	  // if this directory already exists or not, use this directory (should be checked for other error codes)
+	  break;
+	}
       if (status != 0)
 	{
 	  if (nTimeAppended > 0)
 	    {basefilename = basefilename.substr(0, basefilename.size()-3);}
 	  std::stringstream ss;
 	  ss << basefilename << "_";
+	  // if smaller than 10 add leading 0
 	  if (nTimeAppended < 10)
 	    {ss << 0;}
 	  ss << nTimeAppended;
