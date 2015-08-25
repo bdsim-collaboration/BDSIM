@@ -966,11 +966,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 
   // radii
   G4double containerInnerRadius   = beamPipe->GetContainerRadius()+1*CLHEP::um;
-  G4double coilInnerRadius        = containerInnerRadius + lengthSafety;
+  G4double coilInnerRadius        = containerInnerRadius + lengthSafetyLarge;
   G4double coilInnerRadiusF       = 24.601*CLHEP::mm; // the fixed radius for the second pipe - F for fixed
   G4double coilOuterRadius        = 60*CLHEP::mm;                   // [2] by visual inspection
-  G4double collarInnerRadius      = coilOuterRadius + lengthSafety;
-  G4double collarInnerRadiusF     = coilOuterRadius + lengthSafety;
+  G4double collarInnerRadius      = coilOuterRadius + lengthSafetyLarge;
+  G4double collarInnerRadiusF     = coilOuterRadius + lengthSafetyLarge;
   G4double collarOuterRadius      = 101.18*CLHEP::mm;               // [1] - at 293K but don't have 1.9K measurement
   G4double yokeOuterRadius        = 570.0*0.5*CLHEP::mm;            // [2] - at 293K but don't have 1.9K measurement
   G4double magnetContainerRadius  = yokeOuterRadius + lengthSafetyLarge;
@@ -978,7 +978,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   // angular setup of coils
   // these angles were calculated by visually analysing the coil layout graph in [2]
   G4double poleFullAngle    = CLHEP::pi/6.; //30 degrees angle in radians
-  G4double coilFullAngle    = CLHEP::pi/2. - poleFullAngle - 1e-5; // 1e-5 to prevent overlaps
+  G4double coilFullAngle    = CLHEP::pi/2. - poleFullAngle - 1e-3; // 1e-3 to prevent overlaps
   G4double coilHalfAngle    = coilFullAngle*0.5;
   G4double coilStartAngle   = -coilHalfAngle;
   G4double poleStartAngle   = coilHalfAngle;
@@ -991,7 +991,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   allRotationMatrices.push_back(coil2rm);
   allRotationMatrices.push_back(coil3rm);
   allRotationMatrices.push_back(coil4rm);
-
+  
   // whether to build various components around active beam pipe depending on how wide it is
   // these ONLY apply to the components around the active beampipe
   G4bool buildCoil         = true;
@@ -1004,7 +1004,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
     {collarInnerRadius = containerInnerRadius + lengthSafety;}
   if (coilInnerRadius > (massShift - collarBoxHalfWidth))
     {buildCollar = false;}
-  if (coilInnerRadius > collarOuterRadius)
+  G4bool buildAtAll = containerInnerRadius > (beamPipeAxisSeparation - collarOuterRadius - 1*CLHEP::mm);
+  if ((coilInnerRadius > collarOuterRadius) || buildAtAll)
     {
       // pipe is too big to use with this geometry!
       G4cerr << __METHOD_NAME__ << "this beam pipe is too big to use with the LHC dipole geometry" << G4endl;
@@ -1518,14 +1519,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 					     magnetContainerLV,
 					     magContExtentX,
 					     magContExtentY,
-					     magContExtentZ);
+					     magContExtentZ,
+					     dipolePosition);
   
   // build the BDSMagnetOuter instance and return it
   BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
 					     containerLV,
 					     extX, extY, extZ,
-					     magnetContainer,
-					     dipolePosition);
+					     magnetContainer);
   
   // register objects
   outer->InheritObjects(secondBP);
