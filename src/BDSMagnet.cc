@@ -204,9 +204,18 @@ void BDSMagnet::BuildOuter()
 
   if(outer)
     {
-      containerSolid = outer->GetMagnetContainer()->GetContainerSolid()->Clone();
+      // copy necessary bits out of BDSGeometryComponent that holds
+      // container information for whole magnet object provided by
+      // magnet outer factory.
+      BDSGeometryComponent* container = outer->GetMagnetContainer();
+      containerSolid    = container->GetContainerSolid()->Clone();
+      G4ThreeVector contOffset = container->GetPlacementOffset();
+      // set the main offset of the whole magnet which is placed w.r.t. the
+      // zero coordinate of the container solid
+      SetPlacementOffset(contOffset);
+      
+      InheritExtents(container); // update extents
       outer->ClearMagnetContainer();
-      InheritExtents(outer); //update extents
     }
 }
 
@@ -287,14 +296,15 @@ void BDSMagnet::PlaceComponents()
 #endif
   if (placeBeamPipe)
     {
+      G4ThreeVector beamPipeOffset = -1*GetPlacementOffset();
       // place beampipe
-      G4PVPlacement* beamPipePV = new G4PVPlacement(0,                         // rotation
-						    (G4ThreeVector)0,          // at (0,0,0)
+      G4PVPlacement* beamPipePV = new G4PVPlacement(0,                       // rotation
+						    beamPipeOffset,          // position in container
 						    beampipe->GetContainerLogicalVolume(),  // its logical volume
-						    name + "_beampipe_pv",     // its name
-						    containerLogicalVolume,    // its mother  volume
-						    false,                     // no boolean operation
-						    0,                         // copy number
+						    name + "_beampipe_pv",   // its name
+						    containerLogicalVolume,  // its mother  volume
+						    false,                   // no boolean operation
+						    0,                       // copy number
 						    BDSGlobalConstants::Instance()->GetCheckOverlaps());
       
       RegisterPhysicalVolume(beamPipePV);
@@ -302,16 +312,17 @@ void BDSMagnet::PlaceComponents()
 
   if (outer)
     {
-      G4ThreeVector placementOffset = magnetOuterOffset + outer->GetPlacementOffset();
+      //G4ThreeVector placementOffset = magnetOuterOffset + outer->GetPlacementOffset();
+      G4ThreeVector outerOffset = outer->GetPlacementOffset();
       
       // place outer volume
-      G4PVPlacement* magnetOuterPV = new G4PVPlacement(0,                           // rotation
-						       placementOffset,             // at normally (0,0,0)
+      G4PVPlacement* magnetOuterPV = new G4PVPlacement(0,                      // rotation
+						       outerOffset,            // at normally (0,0,0)
 						       outer->GetContainerLogicalVolume(), // its logical volume
-						       name+"_outer_pv",            // its name
-						       containerLogicalVolume,      // its mother  volume
-						       false,                       // no boolean operation
-						       0,                           // copy number
+						       name+"_outer_pv",       // its name
+						       containerLogicalVolume, // its mother  volume
+						       false,                  // no boolean operation
+						       0,                      // copy number
 						       BDSGlobalConstants::Instance()->GetCheckOverlaps());
 
       RegisterPhysicalVolume(magnetOuterPV);
