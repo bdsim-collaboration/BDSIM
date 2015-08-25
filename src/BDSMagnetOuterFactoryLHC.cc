@@ -146,8 +146,23 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   G4ThreeVector outputface = G4ThreeVector(-orientation*xcomponent, 0.0, zcomponent);   // no output face angle
 
   // lengths at different points transversely - dependent on left or right geometry as well as angle +ve or -ve
-  G4double centralHalfLength  = length*0.5 - orientation*0.5*beamPipeAxisSeparation*tan(fabs(angle*0.5)); // central axis of outer cylinder
-  G4double secondBPHalfLength = length*0.5 - orientation*beamPipeAxisSeparation*tan(fabs(angle*0.5));     // central axis of second beampipe
+  G4double centralHalfLength      = length*0.5 - orientation*0.5*beamPipeAxisSeparation*tan(fabs(angle*0.5)); // central axis of outer cylinder
+  // note container length is defined along the main beam axis - here our container is offset so the container length is also slightly different
+  G4double centralContainerLength = containerLength - orientation*beamPipeAxisSeparation*tan(fabs(angle*0.5)); // central axis of outer cylinder
+  //G4double centralContainerLength = 2*(centralHalfLength + lengthSafetyLarge) + 10*CLHEP::mm;
+  G4double secondBPHalfLength     = length*0.5 - orientation*beamPipeAxisSeparation*tan(fabs(angle*0.5));     // central axis of second beampipe
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "all calculated parameters: " << G4endl;
+  G4cout << "container inner radius:  " << containerInnerRadius << G4endl;
+  G4cout << "inner coil inner radius: " << innerCoilInnerRadius << G4endl;
+  G4cout << "inner coil outer radius: " << innerCoilOuterRadius << G4endl;
+  G4cout << "outer coil inner radius: " << outerCoilInnerRadius << G4endl;
+  G4cout << "outer coil outer radius: " << outerCoilOuterRadius << G4endl;
+  G4cout << "collar inner radius:     " << collarInnerRadius    << G4endl;
+  G4cout << "collar outer radius:     " << collarOuterRadius    << G4endl;
+  G4cout << "yoke outer radius:       " << yokeOuterRadius      << G4endl;
+#endif
   
   if (beamPipe->ContainerIsCircular())
     {
@@ -196,7 +211,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
     }
 
   // make the whole magnet container solid
-  BuildMagnetContainerSolidAngled(name, containerLength, magnetContainerRadius, inputface, outputface);
+  BuildMagnetContainerSolidAngled(name, centralContainerLength, magnetContainerRadius, inputface, outputface);
   // make the logical volume too manually as we don't use the BDSMagnetOuterFactoryBase method for this
 
   G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
