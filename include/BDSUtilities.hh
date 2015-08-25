@@ -3,6 +3,7 @@
 
 #include "globals.hh"   // geant4 globals / types
 #include "G4RotationMatrix.hh"
+#include "G4ThreeVector.hh"
 
 #include <string>
 
@@ -50,6 +51,7 @@ namespace BDS {
 
   /// Determine whether a parameter is finite
   G4bool IsFinite(const G4double& variable);
+  G4bool IsFinite(const G4ThreeVector& variable);
 
   /// Integer to string representation
   G4String StringFromInt(G4int anInt);
