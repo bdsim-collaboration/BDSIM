@@ -150,8 +150,14 @@ void BDSRBend::BuildOuter()
 
   if (outer)
     {
-      containerSolid = outer->GetMagnetContainer()->GetContainerSolid()->Clone();
-      InheritExtents(outer->GetMagnetContainer()); //update extents
+      BDSGeometryComponent* container = outer->GetMagnetContainer();
+      containerSolid    = container->GetContainerSolid()->Clone();
+      G4ThreeVector contOffset = container->GetPlacementOffset();
+      // set the main offset of the whole magnet which is placed w.r.t. the
+      // zero coordinate of the container solid
+      SetPlacementOffset(contOffset);
+
+      InheritExtents(container); // update extents
       outer->ClearMagnetContainer(); // delete the magnet container as done with
     }
 }
@@ -244,7 +250,9 @@ void BDSRBend::PlaceComponents()
   straightEndRM->rotateY(-angle*0.5);
   straightEndRM->rotateZ(CLHEP::pi);
   G4ThreeVector straightStartPos = G4ThreeVector(magnetXShift*0.5,0,-straightSectionCentralZ);
+  straightStartPos += -1*GetPlacementOffset();
   G4ThreeVector straightEndPos   = G4ThreeVector(magnetXShift*0.5,0,straightSectionCentralZ);
+  straightEndPos += -1*GetPlacementOffset();
 
   G4Transform3D straightStartTF(*straightStartRM, straightStartPos);
   G4Transform3D straightEndTF  (*straightEndRM,   straightEndPos);
@@ -265,8 +273,10 @@ void BDSRBend::PlaceComponents()
     }
 
   // no if(placeBeamPipe) here as custom procedure and rbend has different construction
+  G4ThreeVector outerOffset    = outer->GetPlacementOffset();
+  G4ThreeVector beamPipeOffset = GetPlacementOffset() + magnetOuterOffset + outerOffset;
   G4PVPlacement* pipePV = new G4PVPlacement(0,
-					    magnetOuterOffset,
+					    beamPipeOffset,
 					    beampipe->GetContainerLogicalVolume(),   // logical volume
 					    name+"_beampipe_pv",                     // name
 					    containerLogicalVolume,                  // mother volume
