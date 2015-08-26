@@ -8,6 +8,13 @@ simple_testing(Electron_250GeV_titanium_LONG "--file=electron_250GeV_titanium.gm
 set(TESTING_ARGS --outfile=electron_250GeV_tungsten)
 simple_testing(Electron_250Gev_tungsten_LONG "--file=electron_250GeV_tungsten.gmad" "")
 
+if(USE_ROBDSIM)
+    robdsimTest(electron_250GeV_copper)
+    robdsimTest(electron_250GeV_stainless)
+    robdsimTest(electron_250GeV_titanium)
+    robdsimTest(electron_250GeV_tungsten)
+endif()
+
 # short tests
 set(TESTING_ARGS --ngenerate=1)
 simple_testing(Electron_250GeV_copper_SHORT "--file=electron_250GeV_copper.gmad" "")
