@@ -930,15 +930,22 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      na
 								G4double      length,
 								BDSBeamPipe*  beamPipe,
 								G4double      outerDiameter,
-								G4double      /*containerDiameter*/,
+								G4double      containerDiameter,
 								G4double      containerLength,
-								G4double      /*angle*/,
+								G4double      angle,
 								G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return CreateSectorBend(name,length,beamPipe,outerDiameter,containerLength,0,outerMaterial);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRectangularBend(name,
+									     length,
+									     beamPipe,
+									     outerDiameter,
+									     containerDiameter,
+									     containerLength,
+									     angle,
+									     outerMaterial);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
