@@ -1,3 +1,3 @@
-simple_testing(ATF2 "--file=atf2.gmad" "")
+simple_testing(ATF2_LONG "--file=atf2.gmad" "")
 
 add_subdirectory(old)

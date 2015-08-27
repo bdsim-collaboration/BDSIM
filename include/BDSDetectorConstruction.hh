@@ -21,9 +21,6 @@ class G4UniformMagField;
 class G4UserLimits;
 class G4VSensitiveDetector;
 
-class BDSBeamline;
-class ElementList;
-
 class BDSDetectorConstruction: public G4VUserDetectorConstruction
 {
 public:

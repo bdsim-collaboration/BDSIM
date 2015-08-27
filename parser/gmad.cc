@@ -4,7 +4,8 @@
  */
 
 #include "gmad.h"
-#include "elementlist.h"
+#include "element.h"
+#include "fastlist.h"
 #include "parameters.h"
 //#include "parser.h"
 #include "sym_table.h"
@@ -24,8 +25,8 @@ namespace GMAD {
   extern int add_func(std::string name, double (*func)(double));
   extern int add_var(std::string name, double val,int is_reserved = 0);
 
-  // aux. parser lists - to clear
-  extern ElementList element_list;
+  extern FastList<Element> beamline_list;
+  extern FastList<Element> element_list;
   extern std::list<struct Element> tmp_list;
   extern std::map<std::string, struct symtab*> symtab_map;
 }

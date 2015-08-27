@@ -256,7 +256,9 @@ int main(int argc,char** argv)
   signal(SIGABRT, &BDS::HandleAborts); // aborts
   signal(SIGTERM, &BDS::HandleAborts); // termination requests
   signal(SIGSEGV, &BDS::HandleAborts); // segfaults
-  signal(SIGINT,  &BDS::HandleAborts); // interrupts
+  // no interrupts since ctest sends an interrupt signal when interrupted
+  // and then the BDSIM process somehow doesn't get killed
+  // signal(SIGINT,  &BDS::HandleAborts); // interrupts
   
   // Write survey file
   if(execOptions->GetOutline()) {

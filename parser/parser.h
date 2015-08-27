@@ -24,13 +24,12 @@
 #include <vector>
 
 #include "element.h"
-#include "elementlist.h"
+#include "fastlist.h"
 #include "elementtype.h"
 #include "gmad.h"
 #include "options.h"
 #include "parameters.h"
 #include "physicsbiasing.h"
-#include "physicsbiasinglist.h"
 #include "tunnel.h"
 
 int yyerror(const char *);
@@ -55,17 +54,16 @@ struct Tunnel tunnel;
 class PhysicsBiasing xsecbias;
  
 // list of all encountered elements
-ElementList element_list;
+FastList<Element> element_list;
 
 // temporary list
 std::list<struct Element> tmp_list;
 
-ElementList beamline_list;
+FastList<Element> beamline_list;
 std::list<struct Element>  material_list;
 std::list<struct Element>  atom_list;
 std::vector<struct Tunnel> tunnel_list;
-//std::vector<PhysicsBiasing> xsecbias_list;
-PhysicsBiasingList xsecbias_list;
+FastList<PhysicsBiasing> xsecbias_list;
 
 std::string current_line;
 std::string current_start;
@@ -96,7 +94,7 @@ void add_gas(std::string name, std::string before, int before_count, std::string
 void add_tunnel(Tunnel& tunnel);
 /// insert xsecbias
 void add_xsecbias(PhysicsBiasing& xsecbias);
-double property_lookup(ElementList& el_list, std::string element_name, std::string property_name);
+double property_lookup(FastList<Element>& el_list, std::string element_name, std::string property_name);
 /// add element to temporary element sequence tmp_list
 void add_element_temp(std::string name, int number, bool pushfront, ElementType linetype);
 
@@ -539,7 +537,7 @@ void add_xsecbias(PhysicsBiasing& xsecbias)
   xsecbias_list.push_back(b);
 }
  
-double property_lookup(ElementList& el_list, std::string element_name, std::string property_name)
+double property_lookup(FastList<Element>& el_list, std::string element_name, std::string property_name)
 {
   std::list<struct Element>::iterator it = el_list.find(element_name);
   std::list<struct Element>::const_iterator iterEnd = el_list.end();
