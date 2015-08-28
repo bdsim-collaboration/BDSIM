@@ -11,16 +11,16 @@ beam,  particle="e-",
 myPipe1 : drift, l=0.01; 
 myPipe2 : drift, l=1.0;
 
-myCol1  : rcol, l=0.05, xsize=0, ysize=0, material="Titanium";
-myCol2  : rcol, l=0.05, xsize=0, ysize=0, material="Titanium";
-myCol3  : rcol, l=0.05, xsize=0, ysize=0, material="Titanium";
-myCol4  : rcol, l=0.05, xsize=0, ysize=0, material="Titanium";
-myCol5  : rcol, l=0.05, xsize=0, ysize=0, material="Titanium";
-myCol6  : rcol, l=0.05, xsize=0, ysize=0, material="Titanium";
-myCol7  : rcol, l=0.05, xsize=0, ysize=0, material="Titanium";
-myCol8  : rcol, l=0.05, xsize=0, ysize=0, material="Titanium";
-myCol9  : rcol, l=0.05, xsize=0, ysize=0, material="Titanium";
-myCol10 : rcol, l=0.05, xsize=0, ysize=0, material="Titanium";
+myCol1  : rcol, l=0.20, xsize=0, ysize=0, material="Titanium";
+myCol2  : rcol, l=0.20, xsize=0, ysize=0, material="Titanium";
+myCol3  : rcol, l=0.20, xsize=0, ysize=0, material="Titanium";
+myCol4  : rcol, l=0.20, xsize=0, ysize=0, material="Titanium";
+myCol5  : rcol, l=0.20, xsize=0, ysize=0, material="Titanium";
+myCol6  : rcol, l=0.20, xsize=0, ysize=0, material="Titanium";
+myCol7  : rcol, l=0.20, xsize=0, ysize=0, material="Titanium";
+myCol8  : rcol, l=0.20, xsize=0, ysize=0, material="Titanium";
+myCol9  : rcol, l=0.20, xsize=0, ysize=0, material="Titanium";
+myCol10 : rcol, l=0.20, xsize=0, ysize=0, material="Titanium";
 
 
 sampler1: marker;
