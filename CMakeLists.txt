@@ -365,7 +365,7 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
 endif()
 
 get_target_property(binaryname bdsimexec OUTPUT_NAME)
-set(binary ${CMAKE_CURRENT_BINARY_DIR}/./${binaryname})
+set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/./${binaryname})
 
 # Install the targets:
 set(executables bdsimexec)

@@ -14,7 +14,7 @@ To use the ROOT analysis (and the Python interface)::
    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$ROBDSIM (mac only)
    export PYTHON_PATH=$PYTHON_PATH:$ROBDSIM
    
-Note that several ROOT analysis output (outpt of robdsimAnal) files can be combined into one file with the command::
+Note that several ROOT analysis output (output of robdsimAnal) files can be combined into one file with the command::
 
    robdsimComb combined.root output_0.root output_1.root output_2.root output_3.root
 
@@ -30,7 +30,7 @@ Using the robdsim library from within Python::
    In [1]: import robdsim
    In [2]: r = robdsim.RobdsimAnalysis("analysisConfig.txt")
 
-From the command line with the executable (containing the root output files and analysisConfig.txt)::
+From the command line with the executable (containing the ROOT output files and analysisConfig.txt)::
 
    > robdsimAnal analysisConfig.txt 
 
