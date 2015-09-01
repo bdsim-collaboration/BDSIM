@@ -2,6 +2,7 @@
 
 // elements
 #include "BDSAwakeScintillatorScreen.hh"
+#include "BDSCavityRF.hh"
 #include "BDSCollimatorElliptical.hh"
 #include "BDSCollimatorRectangular.hh"
 #include "BDSDrift.hh"
@@ -318,11 +319,25 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
   if(!HasSufficientMinimumLength(_element))
     {return nullptr;}
   
-  return (new BDSRfCavity( _element.name,
+  /*return (new BDSRfCavity( _element.name,
 			   _element.l * CLHEP::m,
 			   _element.gradient,
 			   PrepareBeamPipeInfo(_element),
 			   PrepareMagnetOuterInfo(_element)));
+  */
+  G4Material* cavityMaterial = BDSMaterials::Instance()->GetMaterial("copper");
+  G4Material* vacuumMaterial = BDSMaterials::Instance()->GetMaterial("vacuum");
+
+  return (new BDSCavityRF( _element.name,               //name
+			   "RFCavity",                  //type
+			   115.4 * CLHEP::mm,       //length
+			   cavityMaterial,              //cavity material
+			   vacuumMaterial,              //vacuum material 
+			   103.3 * CLHEP::mm, //outer diameter
+			   35.0 * CLHEP::mm , //iris radius
+			   5* CLHEP::mm   //thickness
+			   
+			   ));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
