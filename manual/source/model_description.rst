@@ -401,7 +401,7 @@ Examples::
 vkick
 ^^^^^
 
-`vkick` defines a vertical dipole magnet and has the same parameters as `sbend`.
+`vkick` or `vkicker` defines a vertical dipole magnet and has the same parameters as `sbend`.
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -413,7 +413,7 @@ Examples::
 hkick
 ^^^^^
 
-`hkick` defines a horizontal dipole magnet and has the same parameters as `sbend`.
+`hkick` or `hkicker` defines a horizontal dipole magnet and has the same parameters as `sbend`.
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -425,7 +425,7 @@ Examples::
 rf
 ^^^^
 
-`rf` defines an rf cavity
+`rf` or `rfcavity` defines an rf cavity
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
