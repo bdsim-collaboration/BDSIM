@@ -50,6 +50,7 @@ private:
   BDSAcceleratorComponent* CreateQuad();  
   BDSAcceleratorComponent* CreateSextupole();
   BDSAcceleratorComponent* CreateOctupole();
+  BDSAcceleratorComponent* CreateDecapole();
   BDSAcceleratorComponent* CreateMultipole();
   BDSAcceleratorComponent* CreateElement();
   BDSAcceleratorComponent* CreateSolenoid();

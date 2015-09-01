@@ -85,6 +85,7 @@ vkicker { return VKICK; }
 quadrupole { return QUADRUPOLE; }
 sextupole { return SEXTUPOLE; }
 octupole { return OCTUPOLE; }
+decapole { return DECAPOLE; }
 multipole { return MULTIPOLE; }
 solenoid { return SOLENOID; }
 rcol { return RCOL;}

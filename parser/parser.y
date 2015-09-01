@@ -55,7 +55,7 @@
 %token <dval> NUMBER
 %token <symp> VARIABLE VECVAR FUNC 
 %token <str> STR
-%token MARKER ELEMENT DRIFT PCLDRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE MULTIPOLE SCREEN AWAKESCREEN
+%token MARKER ELEMENT DRIFT PCLDRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token SOLENOID RCOL ECOL LINE SEQUENCE LASER TRANSFORM3D MUSPOILER
 %token VKICK HKICK
 %token PERIOD GAS XSECBIAS TUNNEL MATERIAL ATOM
@@ -212,6 +212,15 @@ decl : VARIABLE ':' marker
 	   {
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_OCTUPOLE);
+	     params.flush();
+	   }
+       }
+     | VARIABLE ':' decapole
+       {
+	 if(execute)
+	   {
+	     // check parameters and write into element table
+	     write_table(params,$1->name,ElementType::_DECAPOLE);
 	     params.flush();
 	   }
        }
@@ -422,6 +431,7 @@ hkick : HKICK ',' parameters ;
 quad : QUADRUPOLE ',' parameters ;
 sextupole : SEXTUPOLE ',' parameters ;
 octupole : OCTUPOLE ',' parameters ;
+decapole : DECAPOLE ',' parameters ;
 multipole : MULTIPOLE ',' parameters ;
 solenoid : SOLENOID ',' parameters ;
 ecol : ECOL ',' parameters ;

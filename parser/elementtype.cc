@@ -25,6 +25,8 @@ std::string GMAD::typestr(ElementType type) {
     return "sextupole";
   case ElementType::_OCTUPOLE :
     return "octupole";
+  case ElementType::_DECAPOLE :
+    return "decapole";
   case ElementType::_MULT :
     return "multipole";
   case ElementType::_SOLENOID : 

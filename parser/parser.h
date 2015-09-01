@@ -200,6 +200,13 @@ int write_table(const struct Parameters& params,std::string name, ElementType ty
       std::cout << "Warning: k3 will not be set for element " << name << " of type " << type << std::endl;
     }
   }
+  // Decapole
+  if(params.k4set) {
+    if (type==ElementType::_DECAPOLE) e.k4 = params.k4;
+    else {
+      std::cout << "Warning: k4 will not be set for element " << name << " of type " << type << std::endl;
+    }
+  }
   // Multipole
   if(params.knlset)
     e.knl = params.knl;

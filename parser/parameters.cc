@@ -75,6 +75,7 @@ void Parameters::flush() {
   k1 = 0; k1set = 0;
   k2 = 0; k2set = 0;
   k3 = 0; k3set = 0;
+  k4 = 0; k4set = 0;
   ks = 0; ksset = 0;
 
   gradient = 0; gradientset = 0;
@@ -119,6 +120,7 @@ void Parameters::inherit_properties(struct Element& e)
   if(!k1set) { k1 = e.k1; k1set = 1; }
   if(!k2set) { k2 = e.k2; k2set = 1; }
   if(!k3set) { k3 = e.k3; k3set = 1; }
+  if(!k4set) { k4 = e.k4; k4set = 1; }
   if(!angleset) { angle = e.angle; angleset = 1; }
   if(!phiAngleInset) { phiAngleIn = e.phiAngleIn; phiAngleInset = 1; }
   if(!phiAngleOutset) { phiAngleOut = e.phiAngleOut; phiAngleOutset = 1; }
@@ -201,6 +203,7 @@ void Parameters::set_value(std::string property, double value )
   if(property=="k1") { k1 = value; k1set = 1; return;} // quadrupole coef. 
   if(property=="k2") { k2 = value; k2set = 1; return;} // sextupole coef.
   if(property=="k3") { k3 = value; k3set = 1; return;} // octupole coef.
+  if(property=="k4") { k4 = value; k4set = 1; return;} // decapole coef.
   if(property=="angle") { angle = value; angleset = 1; return;} // dipole bending angle
   if(property=="phiAngleIn") { phiAngleIn = value; phiAngleInset = 1; return;} // element incoming angle
   if(property=="phiAngleOut") { phiAngleOut = value; phiAngleOutset = 1; return;} // element outgoing angle
