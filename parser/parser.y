@@ -55,7 +55,7 @@
 %token <dval> NUMBER
 %token <symp> VARIABLE VECVAR FUNC 
 %token <str> STR
-%token MARKER ELEMENT DRIFT PCLDRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
+%token MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token SOLENOID RCOL ECOL LINE SEQUENCE LASER TRANSFORM3D MUSPOILER
 %token VKICK HKICK
 %token PERIOD GAS XSECBIAS TUNNEL MATERIAL ATOM
@@ -139,14 +139,6 @@ decl : VARIABLE ':' marker
 	   params.flush();
 	 }
        }
-     | VARIABLE ':' pcldrift
-       {
-	 if(execute) {
-	   // check parameters and write into element table
-	   write_table(params,$1->name,ElementType::_DRIFT);
-	   params.flush();
-	 }
-       } 
      | VARIABLE ':' rf
        {
 	 if(execute) {
@@ -422,7 +414,6 @@ decl : VARIABLE ':' marker
 
 marker : MARKER ;
 drift : DRIFT ',' parameters ;
-pcldrift : PCLDRIFT ',' parameters ;
 rf : RF ',' parameters ;
 sbend : SBEND ',' parameters ;
 rbend : RBEND ',' parameters ;

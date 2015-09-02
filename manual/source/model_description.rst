@@ -158,7 +158,7 @@ The following elements may be defined
 * `element`_
 * `marker`_
 
-.. TODO add screen, awakescreen, pcldrift
+.. TODO add screen, awakescreen
 
 These are detailed in the following sections.
 

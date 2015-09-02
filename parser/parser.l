@@ -73,7 +73,6 @@ std::string yyfilename;
 
 marker { return MARKER; } // reserved elements
 drift { return DRIFT; }
-pcldrift { return DRIFT; }
 rf { return RF; }
 rfcavity { return RF; }
 sbend { return SBEND; } 
