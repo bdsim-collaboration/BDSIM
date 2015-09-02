@@ -7,7 +7,6 @@
 #include <string>
 
 
-
 /**
  * @brief Various utility functions that have no specific place - 
  * for example string manipulations, and checking
@@ -30,6 +29,9 @@ namespace BDS {
   /// seems trivial, but used in a lot of places so put in one place
   G4int    CalculateOrientation(G4double angle);
 
+  /// Checks if filename exists
+  G4bool FileExists(G4String filename);
+  
   /// Returns path from which BDSIM is executed
   /// supports linux/unix and mac OS
   std::string GetBDSIMExecPath();

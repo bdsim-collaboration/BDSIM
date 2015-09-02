@@ -21,7 +21,8 @@
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 
 #include "parser/element.h"
-#include "parser/elementlist.h"
+#include "parser/fastlist.h"
+#include "parser/physicsbiasing.h"
 
 #include "G4Box.hh"
 #include "G4Colour.hh"
@@ -53,6 +54,10 @@ bool debug = true;
 #else
 bool debug = false;
 #endif
+
+namespace GMAD {
+  extern FastList<Element> beamline_list;
+}
 
 typedef std::vector<G4LogicalVolume*>::iterator BDSLVIterator;
 
@@ -557,10 +562,15 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   // registry is a map, so iterator has first and second members for key and value respectively
   BDSAcceleratorComponentRegistry::iterator i;
 
+  // loop over xsec biases and find if any apply globally 
+  // BDSBOptrMultiParticleChangeCrossSection* vacuumBias   = nullptr;
+  // BDSBOptrMultiParticleChangeCrossSection* materialBias = nullptr;
+  // BDSBOptrMultiParticleChangeCrossSection* tunnelBias   = nullptr;
+  
+ 
+  // apply biases
   for (i = registry->begin(); i != registry->end(); ++i)
     {    
-      auto lvs = i->second->GetAllLogicalVolumes();
-
       // Accelerator vacuum 
       G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
       if(vacuumLV) 
@@ -569,8 +579,9 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	  eg->AddParticle("proton");
 	  eg->AttachTo(vacuumLV);
 	}
-#if 0
+
       // Accelerator material
+      auto lvs = i->second->GetAllLogicalVolumes();
       for (auto lvsi = lvs.begin(); lvsi != lvs.end(); ++lvsi)
 	{
 	  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
@@ -580,10 +591,10 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	  eg->AddParticle("proton");
 	  eg->AttachTo(*lvsi);
 	}
-#endif
     }  
 
   // Second for tunnel
+
 #endif
   return;
 }

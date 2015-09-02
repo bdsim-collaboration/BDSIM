@@ -3,8 +3,8 @@ add_executable(BDSBunchTest BDSBunchTest.cc)
 set_target_properties(BDSBunchTest PROPERTIES OUTPUT_NAME "BDSBunchTest" VERSION ${BDSIM_VERSION})
 target_link_libraries(BDSBunchTest bdsim gmad)
 
-# set binary
-set (binary BDSBunchTest)
+# set binary (for testing usage in macros)
+set (bdsimBinary BDSBunchTest)
 
 add_subdirectory(BDSBunchTestFiles)
 add_subdirectory(TrackingTestFiles)

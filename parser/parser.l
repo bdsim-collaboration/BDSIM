@@ -73,16 +73,18 @@ std::string yyfilename;
 
 marker { return MARKER; } // reserved elements
 drift { return DRIFT; }
-pcldrift { return DRIFT; }
 rf { return RF; }
-dipole { return DIPOLE; }
+rfcavity { return RF; }
 sbend { return SBEND; } 
 rbend {return RBEND; }
 hkick { return HKICK; }
+hkicker { return HKICK; }
 vkick { return VKICK; }
+vkicker { return VKICK; }
 quadrupole { return QUADRUPOLE; }
 sextupole { return SEXTUPOLE; }
 octupole { return OCTUPOLE; }
+decapole { return DECAPOLE; }
 multipole { return MULTIPOLE; }
 solenoid { return SOLENOID; }
 rcol { return RCOL;}

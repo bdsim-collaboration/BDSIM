@@ -42,6 +42,12 @@ G4int BDS::CalculateOrientation(G4double angle)
   return orientation;
 }
 
+G4bool BDS::FileExists(G4String fileName)
+{
+  std::ifstream infile(fileName.c_str());
+  return infile.good();
+}
+
 std::string BDS::GetBDSIMExecPath()
 {
   // get path to executable (platform dependent)

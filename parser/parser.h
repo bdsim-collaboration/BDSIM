@@ -24,7 +24,7 @@
 #include <vector>
 
 #include "element.h"
-#include "elementlist.h"
+#include "fastlist.h"
 #include "elementtype.h"
 #include "gmad.h"
 #include "options.h"
@@ -54,16 +54,16 @@ struct Tunnel tunnel;
 class PhysicsBiasing xsecbias;
  
 // list of all encountered elements
-ElementList element_list;
+FastList<Element> element_list;
 
 // temporary list
 std::list<struct Element> tmp_list;
 
-ElementList beamline_list;
+FastList<Element> beamline_list;
 std::list<struct Element>  material_list;
 std::list<struct Element>  atom_list;
 std::vector<struct Tunnel> tunnel_list;
-std::vector<PhysicsBiasing> xsecbias_list;
+FastList<PhysicsBiasing> xsecbias_list;
 
 std::string current_line;
 std::string current_start;
@@ -94,7 +94,7 @@ void add_gas(std::string name, std::string before, int before_count, std::string
 void add_tunnel(Tunnel& tunnel);
 /// insert xsecbias
 void add_xsecbias(PhysicsBiasing& xsecbias);
-double property_lookup(ElementList& el_list, std::string element_name, std::string property_name);
+double property_lookup(FastList<Element>& el_list, std::string element_name, std::string property_name);
 /// add element to temporary element sequence tmp_list
 void add_element_temp(std::string name, int number, bool pushfront, ElementType linetype);
 
@@ -190,14 +190,21 @@ int write_table(const struct Parameters& params,std::string name, ElementType ty
   if(params.k2set) {
     if (type==ElementType::_SEXTUPOLE) e.k2 = params.k2;
     else {
-      std::cout << "Warning: k2 will not be set for element " << name << " of type " << type << std::endl;
+      std::cout << "Warning: k2 will not be set for element \"" << name << "\" of type " << type << std::endl;
     }
   }
   // Octupole
   if(params.k3set) {
     if (type==ElementType::_OCTUPOLE) e.k3 = params.k3;
     else {
-      std::cout << "Warning: k3 will not be set for element " << name << " of type " << type << std::endl;
+      std::cout << "Warning: k3 will not be set for element \"" << name << "\" of type " << type << std::endl;
+    }
+  }
+  // Decapole
+  if(params.k4set) {
+    if (type==ElementType::_DECAPOLE) e.k4 = params.k4;
+    else {
+      std::cout << "Warning: k4 will not be set for element \"" << name << "\" of type " << type << std::endl;
     }
   }
   // Multipole
@@ -324,7 +331,6 @@ int expand_line(std::string name, std::string start, std::string end)
   // insert material entries.
   // TODO:::
   
-  
   // parse starting from the second element until the list is expanded
   int iteration = 0;
   while(!is_expanded)
@@ -382,10 +388,11 @@ int expand_line(std::string name, std::string start, std::string end)
 		  printf("done\n");
 #endif
 		  
-		} else  // element of undefined type - neglecting
+		} else  // element of undefined type
 		{
-		  std::cout << "Warning : Expanding line " << name << " : element " << (*it).name << " has not been defined , skipping " << std::endl;
-		  beamline_list.erase(it--);
+		  std::cerr << "Error : Expanding line \"" << name << "\" : element \"" << (*it).name << "\" has not been defined! " << std::endl;
+		  exit(1);
+		  // beamline_list.erase(it--);
 		}
 	      
 	    } else  // element - keep as it is 
@@ -397,7 +404,7 @@ int expand_line(std::string name, std::string start, std::string end)
       iteration++;
       if( iteration > MAX_EXPAND_ITERATIONS )
 	{
-	  std::cout << "Error : Line expansion of '" << name << "' seems to loop, " << std::endl
+	  std::cerr << "Error : Line expansion of '" << name << "' seems to loop, " << std::endl
 		    << "possible recursive line definition, quitting" << std::endl;
 	  exit(1);
 	}
@@ -537,7 +544,7 @@ void add_xsecbias(PhysicsBiasing& xsecbias)
   xsecbias_list.push_back(b);
 }
  
-double property_lookup(ElementList& el_list, std::string element_name, std::string property_name)
+double property_lookup(FastList<Element>& el_list, std::string element_name, std::string property_name)
 {
   std::list<struct Element>::iterator it = el_list.find(element_name);
   std::list<struct Element>::const_iterator iterEnd = el_list.end();

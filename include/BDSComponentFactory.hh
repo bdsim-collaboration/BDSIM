@@ -9,9 +9,6 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuterInfo.hh"
 
-namespace GMAD {
-  class ElementList;
-}
 class BDSTiltOffset;
 
 class BDSComponentFactory{
@@ -53,6 +50,7 @@ private:
   BDSAcceleratorComponent* CreateQuad();  
   BDSAcceleratorComponent* CreateSextupole();
   BDSAcceleratorComponent* CreateOctupole();
+  BDSAcceleratorComponent* CreateDecapole();
   BDSAcceleratorComponent* CreateMultipole();
   BDSAcceleratorComponent* CreateElement();
   BDSAcceleratorComponent* CreateSolenoid();

@@ -12,5 +12,3 @@ option, beampipeRadius = 10 * cm,
 
 option,modularPhysicsListsOn=1;
 option,physicsList="em";
-
-

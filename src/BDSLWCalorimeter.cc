@@ -101,13 +101,13 @@ void BDSLWCalorimeter::BuildBeampipe()
 std::vector<G4LogicalVolume*> BDSLWCalorimeter::GetAllSensitiveVolumes() const
 {
   if (!beampipe)
-    {return GetAllSensitiveVolumes();}
+    {return BDSGeometryComponent::GetAllSensitiveVolumes();}
   else
     {
       std::vector<G4LogicalVolume*> result;
-      for (auto i : beampipe->GetAllLogicalVolumes())
+      for (auto i : beampipe->GetAllSensitiveVolumes())
 	{result.push_back(i);}
-      for (auto i : GetAllLogicalVolumes())
+      for (auto i : BDSGeometryComponent::GetAllSensitiveVolumes())
 	{result.push_back(i);}
       return result;
     }

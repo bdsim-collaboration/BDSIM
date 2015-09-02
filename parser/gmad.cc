@@ -4,7 +4,8 @@
  */
 
 #include "gmad.h"
-#include "elementlist.h"
+#include "element.h"
+#include "fastlist.h"
 #include "parameters.h"
 //#include "parser.h"
 #include "sym_table.h"
@@ -24,8 +25,8 @@ namespace GMAD {
   extern int add_func(std::string name, double (*func)(double));
   extern int add_var(std::string name, double val,int is_reserved = 0);
 
-  // aux. parser lists - to clear
-  extern ElementList element_list;
+  extern FastList<Element> beamline_list;
+  extern FastList<Element> element_list;
   extern std::list<struct Element> tmp_list;
   extern std::map<std::string, struct symtab*> symtab_map;
 }
@@ -193,12 +194,13 @@ double* GetKs(int i)
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
-  double* result = new double[5];
+  double* result = new double[6];
   result[0] = it->ks;
   result[1] = it->k0;
   result[2] = it->k1;
   result[3] = it->k2;
   result[4] = it->k3;
+  result[5] = it->k4;
   return result;
 }
 

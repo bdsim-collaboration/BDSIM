@@ -6,24 +6,22 @@ Output Analysis
 
 ROOT Output (robdsim)
 ---------------------
-To use the ROOT analysis (and the Python interface). robdsim should be built against your system version of ROOT::
+To use the ROOT analysis (and the Python interface)::
 
-   export ROBDSIM=:~/physics/reps/bdsim/utils/robdsim
+   export ROBDSIM=<bdsim-build-dir>/utils/robdsim
    export PATH=$PATH:$ROBDSIM
-   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROBDSIM
+   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROBDSIM (linux only)
    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$ROBDSIM (mac only)
    export PYTHON_PATH=$PYTHON_PATH:$ROBDSIM
-   make clean
-   make robdsimAnalysis
    
-Note that several ROOT output files can be combined into one file with the command::
+Note that several ROOT analysis output (output of robdsimAnal) files can be combined into one file with the command::
 
-   robdsimCombine combined.root output_0.root output_1.root output_2.root output_3.root
+   robdsimComb combined.root output_0.root output_1.root output_2.root output_3.root
 
 Using the robdsim library from within ROOT::
 
    > root 
-   root [0] gSystem->Load("~/physics/reps/bdsim/utils/librobdsim.so")
+   root [0] gSystem->Load("<bdsim-build-dir>/utils/robdsim/librobdsim.so")
    root [1] r = new RobdsimAnalysis("analysisConfig.txt")
 
 Using the robdsim library from within Python::
@@ -32,7 +30,7 @@ Using the robdsim library from within Python::
    In [1]: import robdsim
    In [2]: r = robdsim.RobdsimAnalysis("analysisConfig.txt")
 
-From the command line with the executable (containing the root output files and analysisConfig.txt)::
+From the command line with the executable (containing the ROOT output files and analysisConfig.txt)::
 
    > robdsimAnal analysisConfig.txt 
 

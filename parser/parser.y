@@ -19,7 +19,7 @@
     extern int line_num;
     extern char* yyfilename;
   
-    const int PEDANTIC = 0; ///< strict checking, exits when element or parameter is not known
+    const int PEDANTIC = 1; ///< strict checking, exits when element or parameter is not known
     const int ECHO_GRAMMAR = 0; ///< print grammar rule expansion (for debugging)
     const int INTERACTIVE = 0; ///< print output of commands (like in interactive mode)
     /* for more debug with parser:
@@ -55,7 +55,7 @@
 %token <dval> NUMBER
 %token <symp> VARIABLE VECVAR FUNC 
 %token <str> STR
-%token MARKER ELEMENT DRIFT PCLDRIFT RF DIPOLE RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE MULTIPOLE SCREEN AWAKESCREEN
+%token MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token SOLENOID RCOL ECOL LINE SEQUENCE LASER TRANSFORM3D MUSPOILER
 %token VKICK HKICK
 %token PERIOD GAS XSECBIAS TUNNEL MATERIAL ATOM
@@ -139,14 +139,6 @@ decl : VARIABLE ':' marker
 	   params.flush();
 	 }
        }
-     | VARIABLE ':' pcldrift
-       {
-	 if(execute) {
-	   // check parameters and write into element table
-	   write_table(params,$1->name,ElementType::_DRIFT);
-	   params.flush();
-	 }
-       } 
      | VARIABLE ':' rf
        {
 	 if(execute) {
@@ -212,6 +204,15 @@ decl : VARIABLE ':' marker
 	   {
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_OCTUPOLE);
+	     params.flush();
+	   }
+       }
+     | VARIABLE ':' decapole
+       {
+	 if(execute)
+	   {
+	     // check parameters and write into element table
+	     write_table(params,$1->name,ElementType::_DECAPOLE);
 	     params.flush();
 	   }
        }
@@ -413,7 +414,6 @@ decl : VARIABLE ':' marker
 
 marker : MARKER ;
 drift : DRIFT ',' parameters ;
-pcldrift : PCLDRIFT ',' parameters ;
 rf : RF ',' parameters ;
 sbend : SBEND ',' parameters ;
 rbend : RBEND ',' parameters ;
@@ -422,6 +422,7 @@ hkick : HKICK ',' parameters ;
 quad : QUADRUPOLE ',' parameters ;
 sextupole : SEXTUPOLE ',' parameters ;
 octupole : OCTUPOLE ',' parameters ;
+decapole : DECAPOLE ',' parameters ;
 multipole : MULTIPOLE ',' parameters ;
 solenoid : SOLENOID ',' parameters ;
 ecol : ECOL ',' parameters ;

@@ -131,7 +131,7 @@ Lattice Elements
 
 Any element in BDSIM is described with the following pattern::
 
-  type: name, parameter=value, parameter="string";
+  name: type, parameter=value, parameter="string";
 
 .. note:: Notice the ':', the inverted commas for a string parameter and that each
 	  functional line must end with a semi-colon. Spaces will be ignored
@@ -157,6 +157,8 @@ The following elements may be defined
 * `transform3d`_
 * `element`_
 * `marker`_
+
+.. TODO add screen, awakescreen
 
 These are detailed in the following sections.
 
@@ -190,7 +192,7 @@ drift
 
 ================  ===================  ==========  =========
 parameter         description          default     required
-`l`               length [m]           0.1         yes
+`l`               length [m]           0           yes
 `vacuumMaterial`  the vacuum material  vacuum      no
                   to use, can be user
 		  defined
@@ -220,7 +222,7 @@ of the element volume and doesn't protrude into the previous and next elements.
 
 ================  =====================  ==========  ===========
 parameter         description            default     required
-`l`               length [m]             0.1         yes
+`l`               length [m]             0           yes
 `angle`           angle [rad]            0           yes, or `B`
 `B`               magnetic field [T]     0           yes
 `material`        magnet outer material  Iron        no
@@ -260,7 +262,7 @@ into 5 co-joined `sbend` magnets.
 
 ================  =====================  ==========  ===========
 parameter         description            default     required
-`l`               length [m]             0.1         yes
+`l`               length [m]             0           yes
 `angle`           angle [rad]            0           yes, or `B`
 `B`               magnetic field [T]     0           yes
 `material`        magnet outer material  Iron        no
@@ -285,14 +287,12 @@ quadrupole
 	    :align: right
 
 `quadrupole` defines a quadrupole magnet. The strength parameter `k1` is defined as
-:math:`k1 = 1/(B \rho)~dB_{y}~/~dx~[m^{-2}]`. `ks1` specifies a skew quadrupole
-component as with `k1` but rotated by 45 degrees.
+:math:`k1 = 1/(B \rho)~dB_{y}~/~dx~[m^{-2}]`.
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
-`l`               length [m]                   0.1         yes
+`l`               length [m]                   0           yes
 `k1`              quadrupole coefficient       0           yes
-`ks1`             skew quadrupole coefficient  0           no
 `material`        magnet outer material        Iron        no
 ================  ===========================  ==========  ===========
 
@@ -313,14 +313,12 @@ sextupole
 	    :align: right
 
 `sextupole` defines a sextupole magnet. The strength parameter `k2` is defined as
-:math:`k2 = 1/(B \rho)~dB^{2}_{y}~/~dx^{2}~[m^{-3}]`. `ks2` specifies a skew sextupole
-component as with `k2` but rotated by 30 degrees.
+:math:`k2 = 1/(B \rho)~dB^{2}_{y}~/~dx^{2}~[m^{-3}]`.
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
-`l`               length [m]                   0.1         yes
+`l`               length [m]                   0           yes
 `k2`              sextupole coefficient        0           yes
-`ks2`             skew sextupole coefficient   0           no
 `material`        magnet outer material        Iron        no
 ================  ===========================  ==========  ===========
 
@@ -341,14 +339,12 @@ octupole
 	    :align: right
 
 `octupole` defines an octupole magnet. The strength parameter `k3` is defined as
-:math:`k3 = 1/(B \rho)~dB^{3}_{y}~/~dx^{3}~[m^{-4}]`. `ks3` specifies a skew octupole
-component as with `k3` but rotated by 15 degrees.
+:math:`k3 = 1/(B \rho)~dB^{3}_{y}~/~dx^{3}~[m^{-4}]`.
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
-`l`               length [m]                   0.1         yes
+`l`               length [m]                   0           yes
 `k3`              octupole coefficient         0           yes
-`ks3`             skew octupole coefficient    0           no
 `material`        magnet outer material        Iron        no
 ================  ===========================  ==========  ===========
 
@@ -359,20 +355,19 @@ parameter         description                  default     required
 Examples::
 
    oct4b: octupole, l=0.3*m, k3=32.9;
-		    
+
 decapole
 ^^^^^^^^
-.. warning:: To be completed - not yet implemented
+
+.. TODO: add picture
 
 `decapole` defines a decapole magnet. The strength parameter `k4` is defined as
-:math:`k4 = 1/(B \rho)~dB^{4}_{y}~/~dx^{4}~[m^{-5}]`. `k43` specifies a skew decapole
-component as with `k4` but rotated by 7.5 degrees.
+:math:`k4 = 1/(B \rho)~dB^{4}_{y}~/~dx^{4}~[m^{-5}]`.
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
-`l`               length [m]                   0.1         yes
+`l`               length [m]                   0           yes
 `k4`              decapole coefficient         0           yes
-`ks4`             skew decapole coefficient    0           no
 `material`        magnet outer material        Iron        no
 ================  ===========================  ==========  ===========
 
@@ -382,13 +377,26 @@ parameter         description                  default     required
 
 Examples::
 
-   MXDEC3: decapole, l=0.3*m, k3=32.9;
-  
+   MXDEC3: decapole, l=0.3*m, k4=32.9;
 
 multipole
 ^^^^^^^^^
 
-`multipole` defines a general multipole magnet.
+.. TODO: add picture
+
+`multipole` defines a general multipole magnet. The strength parameter
+`knl` is a list defined as
+:math:`knl[n] = 1/(B \rho)~dB^{n}_{y}~/~dx^{n}~[m^{-(n+1)}]`
+starting with the quadrupole component.
+The skew strength parameter `ksl` is a list representing the skew coefficients.  
+   
+================  ===========================  ==========  ===========
+parameter         description                  default     required
+`l`               length [m]                   0           yes
+`knl`             list of normal coefficients  0           no
+`ksl`             list of skew coefficients    0           no
+`material`        magnet outer material        Iron        no
+================  ===========================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -396,12 +404,14 @@ multipole
   
 Examples::
 
-   **To be completed**
+   OCTUPOLE1 : multipole, l=0.5*m , knl={ 0,0,1 } , ksl={ 0,0,0 };
 
 vkick
 ^^^^^
 
-`vkick` defines a vertical dipole magnet and has the same parameters as `sbend`.
+.. TODO: add picture
+
+`vkick` or `vkicker` defines a vertical dipole magnet and has the same parameters as `sbend`.
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -413,7 +423,9 @@ Examples::
 hkick
 ^^^^^
 
-`hkick` defines a horizontal dipole magnet and has the same parameters as `sbend`.
+.. TODO: add picture
+
+`hkick` or `hkicker` defines a horizontal dipole magnet and has the same parameters as `sbend`.
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -425,12 +437,14 @@ Examples::
 rf
 ^^^^
 
-`rf` defines an rf cavity
+.. TODO: add picture
+
+`rf` or `rfcavity` defines an rf cavity
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
-`l`               length [m]                   0.1         yes
-`gradient`        field gradient [MV/m]         0           yes
+`l`               length [m]                   0           yes
+`gradient`        field gradient [MV/m]        0           yes
 `material`        outer material               Iron        no
 ================  ===========================  ==========  ===========
 
@@ -455,7 +469,7 @@ volume is square.
 
 ================  ============================  ==========  ===========
 parameter         description                   default     required
-`l`               length [m]                    0.1         yes
+`l`               length [m]                    0           yes
 `xsize`           horizontal half aperture [m]  0           yes
 `ysize`           vertical half aperture [m]    0           yes
 `material`        outer material                Iron        no
@@ -495,8 +509,8 @@ a beam pipe in the middle. There is no magnetic field in the beam pipe.
 
 ================  ============================  ==========  ===========
 parameter         description                   default     required
-`l`               length [m]                    0.1         yes
-`B`               magnetic field [T]            1           yes
+`l`               length [m]                    0           yes
+`B`               magnetic field [T]            0           yes
 `material`        outer material                Iron        no
 `outerDiameter`   outer full width [m]          global      no
 ================  ============================  ==========  ===========
@@ -515,7 +529,7 @@ defined as :math:`ks =`.
 
 ================  ============================  ==========  ===========
 parameter         description                   default     required
-`l`               length [m]                    0.1         yes
+`l`               length [m]                    0           yes
 `ks`              solenoid strength [ ]         0           yes
 `material`        outer material                Iron        no
 `outerDiameter`   outer full width [m]          global      no
@@ -536,7 +550,7 @@ of photons.
 
 ================  =================================================  ==========  ===========
 parameter         description                                        default     required
-`l`               length of drift section [m]                        0.1         yes
+`l`               length of drift section [m]                        0           yes
 `x`, `y`, `z`     components of laser direction vector (normalised)  (1,0,0)     yes
 `waveLength`      laser wavelength [m]                               532*nm      yes
 ================  =================================================  ==========  ===========
@@ -1143,7 +1157,7 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | **Geometry Parameters**          |                                                       |
 +----------------------------------+-------------------------------------------------------+
-| samplerDiameter                  | diameter of samplers (default 8 m) [m]                |
+| samplerDiameter                  | diameter of samplers (default 5 m) [m]                |
 +----------------------------------+-------------------------------------------------------+
 | includeIronMagFields             | whether to include magnetic fields in the magnet      |
 |                                  | poles                                                 |

@@ -36,6 +36,7 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv){
   visMacroFilename    = "";
   visDebug            = false;
   outputFilename      = "output";
+  outputFilenameSet   = false;
   outputFormat        = BDSOutputFormat::ascii;
   outline             = false;
   outlineFilename     = "outline.dat";
@@ -178,6 +179,7 @@ void BDSExecOptions::Parse(int argc, char **argv) {
       }
       if( !strcmp(optionName , "outfile") ) {
 	outputFilename=optarg;
+	outputFilenameSet=true;
       }
       if( !strcmp(optionName , "outline") ) {
 	outlineFilename = optarg; 
