@@ -131,7 +131,7 @@ Lattice Elements
 
 Any element in BDSIM is described with the following pattern::
 
-  type: name, parameter=value, parameter="string";
+  name: type, parameter=value, parameter="string";
 
 .. note:: Notice the ':', the inverted commas for a string parameter and that each
 	  functional line must end with a semi-colon. Spaces will be ignored
@@ -157,6 +157,8 @@ The following elements may be defined
 * `transform3d`_
 * `element`_
 * `marker`_
+
+.. TODO add screen, awakescreen, pcldrift
 
 These are detailed in the following sections.
 
