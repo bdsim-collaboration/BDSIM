@@ -192,7 +192,7 @@ drift
 
 ================  ===================  ==========  =========
 parameter         description          default     required
-`l`               length [m]           0.1         yes
+`l`               length [m]           0           yes
 `vacuumMaterial`  the vacuum material  vacuum      no
                   to use, can be user
 		  defined
@@ -222,7 +222,7 @@ of the element volume and doesn't protrude into the previous and next elements.
 
 ================  =====================  ==========  ===========
 parameter         description            default     required
-`l`               length [m]             0.1         yes
+`l`               length [m]             0           yes
 `angle`           angle [rad]            0           yes, or `B`
 `B`               magnetic field [T]     0           yes
 `material`        magnet outer material  Iron        no
@@ -262,7 +262,7 @@ into 5 co-joined `sbend` magnets.
 
 ================  =====================  ==========  ===========
 parameter         description            default     required
-`l`               length [m]             0.1         yes
+`l`               length [m]             0           yes
 `angle`           angle [rad]            0           yes, or `B`
 `B`               magnetic field [T]     0           yes
 `material`        magnet outer material  Iron        no
@@ -291,7 +291,7 @@ quadrupole
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
-`l`               length [m]                   0.1         yes
+`l`               length [m]                   0           yes
 `k1`              quadrupole coefficient       0           yes
 `material`        magnet outer material        Iron        no
 ================  ===========================  ==========  ===========
@@ -317,7 +317,7 @@ sextupole
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
-`l`               length [m]                   0.1         yes
+`l`               length [m]                   0           yes
 `k2`              sextupole coefficient        0           yes
 `material`        magnet outer material        Iron        no
 ================  ===========================  ==========  ===========
@@ -343,7 +343,7 @@ octupole
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
-`l`               length [m]                   0.1         yes
+`l`               length [m]                   0           yes
 `k3`              octupole coefficient         0           yes
 `material`        magnet outer material        Iron        no
 ================  ===========================  ==========  ===========
@@ -366,7 +366,7 @@ decapole
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
-`l`               length [m]                   0.1         yes
+`l`               length [m]                   0           yes
 `k4`              decapole coefficient         0           yes
 `material`        magnet outer material        Iron        no
 ================  ===========================  ==========  ===========
@@ -392,7 +392,7 @@ The skew strength parameter `ksl` is a list representing the skew coefficients.
    
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
-`l`               length [m]                   0.1         yes
+`l`               length [m]                   0           yes
 `knl`             list of normal coefficients  0           no
 `ksl`             list of skew coefficients    0           no
 `material`        magnet outer material        Iron        no
@@ -443,8 +443,8 @@ rf
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
-`l`               length [m]                   0.1         yes
-`gradient`        field gradient [MV/m]         0           yes
+`l`               length [m]                   0           yes
+`gradient`        field gradient [MV/m]        0           yes
 `material`        outer material               Iron        no
 ================  ===========================  ==========  ===========
 
@@ -469,7 +469,7 @@ volume is square.
 
 ================  ============================  ==========  ===========
 parameter         description                   default     required
-`l`               length [m]                    0.1         yes
+`l`               length [m]                    0           yes
 `xsize`           horizontal half aperture [m]  0           yes
 `ysize`           vertical half aperture [m]    0           yes
 `material`        outer material                Iron        no
@@ -509,8 +509,8 @@ a beam pipe in the middle. There is no magnetic field in the beam pipe.
 
 ================  ============================  ==========  ===========
 parameter         description                   default     required
-`l`               length [m]                    0.1         yes
-`B`               magnetic field [T]            1           yes
+`l`               length [m]                    0           yes
+`B`               magnetic field [T]            0           yes
 `material`        outer material                Iron        no
 `outerDiameter`   outer full width [m]          global      no
 ================  ============================  ==========  ===========
@@ -529,7 +529,7 @@ defined as :math:`ks =`.
 
 ================  ============================  ==========  ===========
 parameter         description                   default     required
-`l`               length [m]                    0.1         yes
+`l`               length [m]                    0           yes
 `ks`              solenoid strength [ ]         0           yes
 `material`        outer material                Iron        no
 `outerDiameter`   outer full width [m]          global      no
@@ -550,7 +550,8 @@ of photons.
 
 ================  =================================================  ==========  ===========
 parameter         description                                        default     required
-`l`               length of drift section [m]                        0.1         yes
+`l`               length of drift section [m]                        0
+ yes
 `x`, `y`, `z`     components of laser direction vector (normalised)  (1,0,0)     yes
 `waveLength`      laser wavelength [m]                               532*nm      yes
 ================  =================================================  ==========  ===========
@@ -1157,7 +1158,7 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | **Geometry Parameters**          |                                                       |
 +----------------------------------+-------------------------------------------------------+
-| samplerDiameter                  | diameter of samplers (default 8 m) [m]                |
+| samplerDiameter                  | diameter of samplers (default 5 m) [m]                |
 +----------------------------------+-------------------------------------------------------+
 | includeIronMagFields             | whether to include magnetic fields in the magnet      |
 |                                  | poles                                                 |
