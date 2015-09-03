@@ -2,7 +2,7 @@
 #include "BDSSextStepper.hh"
 
 #include "G4AffineTransform.hh"
-#include "G4MagintegratorStepper.hh"
+#include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
