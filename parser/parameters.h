@@ -48,7 +48,7 @@ struct Parameters {
   
   /// placement, geometrical sizes etc.
 
-  double r; int rset; ///>radius, i.e cylindrical sampler
+  double r; int rset; ///>radius, i.e. cylindrical sampler
   
   double angle; int angleset;   ///> bending angle
   double phiAngleIn; int phiAngleInset;   ///> incoming bending angle for element
@@ -74,7 +74,8 @@ struct Parameters {
   ///which precision physics region the element is in (0 = none)
   int precisionRegion; int precisionRegionset;
 
-  double gradient; int gradientset;
+  double gradient; int gradientset; ///> gradient for RF
+  std::string cavityModel; int cavityModelset; ///> cavitymodel for RF
 
   double xsize, ysize; int xsizeset, ysizeset; ///> aperture (or laser spotsize for laser)
   double xdir, ydir, zdir, waveLength; int xdirset, ydirset, zdirset, waveLengthset;

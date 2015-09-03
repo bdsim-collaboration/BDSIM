@@ -284,6 +284,12 @@ void Parameters::set_value(std::string property, std::string value )
       outerMaterial = value;
       return;
     }
+  if(property=="cavityModel") 
+    {
+      cavityModelset = 1;
+      cavityModel = value;
+      return;
+    }
   if(property=="material") 
     {	 
       materialset = 1;

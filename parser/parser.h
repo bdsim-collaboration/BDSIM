@@ -166,6 +166,7 @@ int write_table(const struct Parameters& params,std::string name, ElementType ty
     e.beampipeThickness = params.beampipeThickness;
   // RF
   e.gradient = params.gradient;
+  e.cavityModel = params.cavityModel;
   // SBend, RBend, (Awake)Screen
   e.angle = params.angle;
   // SBend, RBend, HKick, VKick, Quad

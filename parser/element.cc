@@ -150,22 +150,18 @@ void Element::flush() {
   pressure = 0;     //atm
   state = "";  //allowed values: "solid", "liquid", "gas"
 
-  /*  
-      knl = std::list<double>(0);
-      ksl = std::list<double>(0);
-      
-      geometryFile
-      bmapFile
-      material;
-  */
+  knl = std::list<double>(0);
+  ksl = std::list<double>(0);
+  
+  geometryFile = "";
+  bmapFile = "";
+  material="";
 
   scintmaterial = "";
   windowmaterial = "";
-  spec = "";
-  material="";
-  scintmaterial="";
-  windowmaterial="";
   airmaterial="";
+  cavityModel = "";
+  spec = "";
 }
 
 double Element::property_lookup(std::string property_name)const{
