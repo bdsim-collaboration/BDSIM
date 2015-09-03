@@ -11,7 +11,7 @@ BDSSbendMagField::BDSSbendMagField(const G4ThreeVector& aField,
 				   const G4double angle):
   G4UniformMagField(aField)
 {
-  if (BDS::IsFinite(angle)
+  if (BDS::IsFinite(angle))
     { // original
       //    itsLocalRadius=length/angle;
       itsLocalRadius=-length/angle;// minus sign for correct machine convention
