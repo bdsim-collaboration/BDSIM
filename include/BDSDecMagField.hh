@@ -1,22 +1,16 @@
-#ifndef BDSDECMAGFIELD
-#define BDSDECMAGFIELD
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
+#ifndef BDSDECMAGFIELD_H
+#define BDSDECMAGFIELD_H
+
+#include "BDSAuxiliaryNavigator.hh"
 
 #include "G4Types.hh"
 #include "G4MagneticField.hh"
 
-class BDSDecMagField : public G4MagneticField
+class BDSDecMagField: public G4MagneticField, public BDSAuxiliaryNavigator
 {
-public:  // with description
-
+public:
   BDSDecMagField(G4double aBQuadPrime);
   virtual ~BDSDecMagField();
-  // Constructor and destructor. No actions.
-
 
   virtual void  GetFieldValue( const G4double Point[4],
 			       G4double *Bfield ) const;
