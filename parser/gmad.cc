@@ -194,12 +194,13 @@ double* GetKs(int i)
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
-  double* result = new double[5];
+  double* result = new double[6];
   result[0] = it->ks;
   result[1] = it->k0;
   result[2] = it->k1;
   result[3] = it->k2;
   result[4] = it->k3;
+  result[5] = it->k4;
   return result;
 }
 

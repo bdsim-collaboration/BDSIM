@@ -773,6 +773,17 @@ qk4x: quadrupole, l=0.039335, k1=0.0, tilt=0.785398163397; ! removed aperture
 ! removed multipoleqf17xmult: multipole, k2l=0.594043850881e-2, t2=-0.674848646098, k3l=4.753578804672, t3=-0.092000951336; ! removed aperture
 ! removed multipoleqd18xmult: multipole, k2l=-0.857590169514e-2, t2=-0.530866035046, k3l=-1.348131746476, t3=-0.567703028647; ! removed aperture
 ! removed multipoleqf19xmult: multipole, k2l=0.216532376532e-2, t2=-0.485110162368, k3l=1.700254151153, t3=0.30600509311; ! removed aperture
+kex1mult: marker;
+bh1xmult: marker;
+bh2xmult: marker;
+qd10xmult: marker;
+qf11xmult: marker;
+qd12xmult: marker;
+qd16xmult: marker;
+qf17xmult: marker;
+qd18xmult: marker;
+qf19xmult: marker;
+
 l001: drift, l=0.923139039214;
 l002: drift, l=1.546029682371;
 l003: drift, l=0.147830505778;
@@ -1065,6 +1076,37 @@ sk1ff: sextupole, l=0.115, k2=0.0, tilt=0.523598775598; ! removed aperture
 ! removed multipolesd4ffmult: multipole, k3l=1.536794889731, t3=0.544019127847, k4l=34.207651702012, t4=0.370358867273, k5l=1.139831327616e4, t5=0.05707226654, k6l=1.716865640607e6, t6=0.32373364297, k7l=1.547386705252e9, t7=0.347669586997, k8l=1.382417942629e13, t8=0.191986217719e-2, k9l=3.168368378647e14, t9=-0.024085543678; ! removed aperture
 ! removed multipolesf1ffmult: multipole, k3l=-0.185616391535, t3=0.439822971503, k4l=-64.192335406026, t4=-0.628318530718, k5l=-6.573913866882e3, t5=0.270526034059, k6l=-3.248286851871e6, t6=-0.845986021717, k7l=-1.624143425936e9, t7=-4.19664418642, k8l=-6.106779281518e12, t8=-3.380702761113, k9l=-1.169383266674e13, t9=-1.082104136236; ! removed aperture
 ! removed multipolesd0ffmult: multipole, k3l=0.307221093406, t3=-0.076794487088, k4l=78.907312411757, t4=-0.628318530718, k5l=5.82103124349e3, t5=-0.239110107523, k6l=1.552274998264e6, t6=-0.566733341398, k7l=2.988129371658e9, t7=0.344702527269, k8l=9.996650988821e12, t8=0.286233997327, k9l=7.823465991251e13, t9=-0.251327412287; ! removed aperture
+b5ffmult: marker;
+b2ffmult: marker;
+b1ffmult: marker;
+qm16ffmult: marker;
+qm15ffmult: marker;
+qm14ffmult: marker;
+qm13ffmult: marker;
+qm12ffmult: marker;
+qm11ffmult: marker;
+qd10bffmult: marker;
+qd10affmult: marker;
+qf9bffmult: marker;
+qf9affmult: marker;
+qd8ffmult: marker;
+qf7ffmult: marker;
+qd6ffmult: marker;
+qf5bffmult: marker;
+qf5affmult: marker;
+qd4bffmult: marker;
+qd4affmult: marker;
+qf3ffmult: marker;
+qd2bffmult: marker;
+qd2affmult: marker;
+qf1ffmult: marker;
+qd0ffmult: marker;
+sf6ffmult: marker;
+sf5ffmult: marker;
+sd4ffmult: marker;
+sf1ffmult: marker;
+sd0ffmult: marker;
+
 l200: drift, l=0.019755;
 l201: drift, l=1.30151;
 l202: drift, l=1.30151;

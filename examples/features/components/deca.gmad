@@ -1,5 +1,5 @@
 d1: drift, l=0.5;
-df : decapole, l=0.5*m , k3 = 0.5 , tilt = 0.01;
+df : decapole, l=0.5*m , k4 = 0.5 , tilt = 0.01;
 d2: drift, l=0.5;
 
-lat : line = (d1,of,d2);
+lat : line = (d1,df,d2);

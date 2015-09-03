@@ -26,6 +26,7 @@ struct Parameters {
   double k1; int k1set;   ///< quadrupole
   double k2; int k2set;   ///< sextupole
   double k3; int k3set;   ///< octupole
+  double k4; int k4set;   ///< decapole
   double ks; int ksset;   ///< solenoid
 
   double tscint; int tscintset; ///<thickness of scintillating part of screen

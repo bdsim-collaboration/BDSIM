@@ -19,7 +19,7 @@
     extern int line_num;
     extern char* yyfilename;
   
-    const int PEDANTIC = 0; ///< strict checking, exits when element or parameter is not known
+    const int PEDANTIC = 1; ///< strict checking, exits when element or parameter is not known
     const int ECHO_GRAMMAR = 0; ///< print grammar rule expansion (for debugging)
     const int INTERACTIVE = 0; ///< print output of commands (like in interactive mode)
     /* for more debug with parser:
@@ -55,10 +55,10 @@
 %token <dval> NUMBER
 %token <symp> VARIABLE VECVAR FUNC 
 %token <str> STR
-%token MARKER ELEMENT DRIFT PCLDRIFT RF DIPOLE RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE MULTIPOLE SCREEN AWAKESCREEN
+%token MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token SOLENOID RCOL ECOL LINE SEQUENCE LASER TRANSFORM3D MUSPOILER
 %token VKICK HKICK
-%token PERIOD GAS XSECBIAS TUNNEL MATERIAL ATOM
+%token PERIOD XSECBIAS TUNNEL MATERIAL ATOM
 %token BEAM OPTION PRINT RANGE STOP USE VALUE ECHO PRINTF SAMPLE CSAMPLE BETA0 TWISS DUMP
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -72,7 +72,6 @@
 %type <ival> newinstance
 %type <symp> sample_options
 %type <symp> csample_options
-%type <symp> gas_options
 %type <symp> tunnel_options
 %type <symp> xsecbias_options
 
@@ -139,14 +138,6 @@ decl : VARIABLE ':' marker
 	   params.flush();
 	 }
        }
-     | VARIABLE ':' pcldrift
-       {
-	 if(execute) {
-	   // check parameters and write into element table
-	   write_table(params,$1->name,ElementType::_DRIFT);
-	   params.flush();
-	 }
-       } 
      | VARIABLE ':' rf
        {
 	 if(execute) {
@@ -212,6 +203,15 @@ decl : VARIABLE ':' marker
 	   {
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_OCTUPOLE);
+	     params.flush();
+	   }
+       }
+     | VARIABLE ':' decapole
+       {
+	 if(execute)
+	   {
+	     // check parameters and write into element table
+	     write_table(params,$1->name,ElementType::_DECAPOLE);
 	     params.flush();
 	   }
        }
@@ -413,7 +413,6 @@ decl : VARIABLE ':' marker
 
 marker : MARKER ;
 drift : DRIFT ',' parameters ;
-pcldrift : PCLDRIFT ',' parameters ;
 rf : RF ',' parameters ;
 sbend : SBEND ',' parameters ;
 rbend : RBEND ',' parameters ;
@@ -422,6 +421,7 @@ hkick : HKICK ',' parameters ;
 quad : QUADRUPOLE ',' parameters ;
 sextupole : SEXTUPOLE ',' parameters ;
 octupole : OCTUPOLE ',' parameters ;
+decapole : DECAPOLE ',' parameters ;
 multipole : MULTIPOLE ',' parameters ;
 solenoid : SOLENOID ',' parameters ;
 ecol : ECOL ',' parameters ;
@@ -1026,16 +1026,6 @@ command : STOP             { if(execute) quit(); }
 		params.flush();
 	      }
           }
-        | GAS ',' gas_options // beampipe gas
-          {
-	    if(execute)
-	      {  
-		if(ECHO_GRAMMAR) printf("command -> GAS\n");
-		add_gas("gas",$3->name, element_count, params.material);
-		element_count = 1;
-		params.flush();
-	      }
-          }
         | TUNNEL ',' tunnel_options // tunnel
           {
 	    if(execute)
@@ -1180,84 +1170,6 @@ csample_options : VARIABLE '=' aexpr
                   {
 		    if(ECHO_GRAMMAR) printf("csample_opt -> sopt\n");
 		    $$ = $1;
-                  }
-;
-
-gas_options : VARIABLE '=' aexpr
-                  {
-		    if(ECHO_GRAMMAR) std::cout << "gas_opt -> , " << $1->name << " = " << $3 << std::endl;
-		    
-		    if(execute)
-		      {
-			if( $1->name == "r") params.r = $3;
-			else if ($1->name == "l") params.l = $3;
-			else {
-			  std::cout << "Warning : GAS: unknown parameter : \"" << $1->name << "\"" << std::endl;
-			  exit(1);
-			}
-		      }
-		  }   
-                | VARIABLE '=' STR
-                  {
-		    if(ECHO_GRAMMAR) std::cout << "gas_opt -> " << $1->name << " = " << $3 << std::endl;
-		    if(execute)
-		      {
-			if( $1->name == "material")
-			  {
-			    params.material = $3;
-			    params.materialset = 1;
-			  }
-			//options.set_value($1->name,$3);
-		      }
-		    free($3);
-		  }   
-                | VARIABLE '=' aexpr ',' gas_options
-                  {
-		    if(ECHO_GRAMMAR) std::cout << "gas_opt -> " << $1->name << " = " << $3 << std::endl;
-		    
-		    if(execute)
-		      {
-			if( $1->name == "r") params.r = $3;
-			else if ($1->name == "l") params.l = $3;
-			else {
-			  std::cout << "Warning : GAS: unknown parameter : \"" << $1->name << "\"" << std::endl;
-			  exit(1);
-			}
-		      }
-
-		  }   
-                | VARIABLE '=' STR ',' gas_options
-                  {
-		    if(ECHO_GRAMMAR) std::cout << "gas_opt -> " << $1->name << " = " << $3 << std::endl;
-		    if(execute)
-		      {
-			if( $1->name == "material")
-			  {
-			    params.material = $3;
-			    params.materialset = 1;
-			  }
-		      }
-		    free($3);
-		  }   
-                | RANGE '='  VARIABLE '/' VARIABLE ',' gas_options
-                  {
-		    if(ECHO_GRAMMAR) printf("gas_opt -> range, csopt\n");
-
-		  }
-                | RANGE '='  VARIABLE '/' VARIABLE
-                  {
-		    if(ECHO_GRAMMAR) printf("gas_opt -> range\n");
-
-                  }
-                | RANGE '='  VARIABLE ',' gas_options
-                  {
-		    if(ECHO_GRAMMAR) printf("gas_opt -> range\n");
-		    $$ = $3;
-		  }
-                | RANGE '='  VARIABLE
-                  {
-		    if(ECHO_GRAMMAR) printf("gas_opt -> range\n");
-		    $$ = $3;
                   }
 ;
 

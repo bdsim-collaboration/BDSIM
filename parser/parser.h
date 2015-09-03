@@ -88,8 +88,6 @@ void add_sampler(std::string name, std::string before, int before_count);
 void add_csampler(std::string name, std::string before, int before_count, double length, double rad);
 /// insert a beam dumper into beamline_list
 void add_dump(std::string name, std::string before, int before_count);
-/// insert beam gas                                             
-void add_gas(std::string name, std::string before, int before_count, std::string material);
 /// insert tunnel
 void add_tunnel(Tunnel& tunnel);
 /// insert xsecbias
@@ -190,14 +188,21 @@ int write_table(const struct Parameters& params,std::string name, ElementType ty
   if(params.k2set) {
     if (type==ElementType::_SEXTUPOLE) e.k2 = params.k2;
     else {
-      std::cout << "Warning: k2 will not be set for element " << name << " of type " << type << std::endl;
+      std::cout << "Warning: k2 will not be set for element \"" << name << "\" of type " << type << std::endl;
     }
   }
   // Octupole
   if(params.k3set) {
     if (type==ElementType::_OCTUPOLE) e.k3 = params.k3;
     else {
-      std::cout << "Warning: k3 will not be set for element " << name << " of type " << type << std::endl;
+      std::cout << "Warning: k3 will not be set for element \"" << name << "\" of type " << type << std::endl;
+    }
+  }
+  // Decapole
+  if(params.k4set) {
+    if (type==ElementType::_DECAPOLE) e.k4 = params.k4;
+    else {
+      std::cout << "Warning: k4 will not be set for element \"" << name << "\" of type " << type << std::endl;
     }
   }
   // Multipole
@@ -324,7 +329,6 @@ int expand_line(std::string name, std::string start, std::string end)
   // insert material entries.
   // TODO:::
   
-  
   // parse starting from the second element until the list is expanded
   int iteration = 0;
   while(!is_expanded)
@@ -382,10 +386,11 @@ int expand_line(std::string name, std::string start, std::string end)
 		  printf("done\n");
 #endif
 		  
-		} else  // element of undefined type - neglecting
+		} else  // element of undefined type
 		{
-		  std::cout << "Warning : Expanding line " << name << " : element " << (*it).name << " has not been defined , skipping " << std::endl;
-		  beamline_list.erase(it--);
+		  std::cerr << "Error : Expanding line \"" << name << "\" : element \"" << (*it).name << "\" has not been defined! " << std::endl;
+		  exit(1);
+		  // beamline_list.erase(it--);
 		}
 	      
 	    } else  // element - keep as it is 
@@ -397,7 +402,7 @@ int expand_line(std::string name, std::string start, std::string end)
       iteration++;
       if( iteration > MAX_EXPAND_ITERATIONS )
 	{
-	  std::cout << "Error : Line expansion of '" << name << "' seems to loop, " << std::endl
+	  std::cerr << "Error : Line expansion of '" << name << "' seems to loop, " << std::endl
 		    << "possible recursive line definition, quitting" << std::endl;
 	  exit(1);
 	}
@@ -500,17 +505,6 @@ void add_dump(std::string name, std::string before, int before_count)
     exit(1);
   }
   beamline_list.insert(it,e);
-}
-
-void add_gas(std::string name, std::string before, int before_count, std::string material)
-{
-  std::cout << "gas " << material << " will be inserted into " << before << " number " << before_count << std::endl;
-  struct Element e;
-  e.type = ElementType::_GAS;
-  e.name = name;
-  e.lst = nullptr;
-  // insert gas with uniqueness requirement
-  element_list.push_back(e,true);
 }
 
 void add_tunnel(Tunnel& tunnel)

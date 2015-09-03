@@ -12,6 +12,7 @@
 #include "BDSLine.hh"
 #include "BDSMuSpoiler.hh"
 #include "BDSOctupole.hh"
+#include "BDSDecapole.hh"
 #include "BDSQuadrupole.hh"
 #include "BDSRBend.hh"
 #include "BDSRfCavity.hh"
@@ -120,6 +121,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
     element = CreateSextupole(); break; 
   case ElementType::_OCTUPOLE:
     element = CreateOctupole(); break; 
+  case ElementType::_DECAPOLE:
+    element = CreateDecapole(); break; 
   case ElementType::_MULT:
     element = CreateMultipole(); break; 
   case ElementType::_ELEMENT:    
@@ -156,7 +159,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   case ElementType::_MATERIAL:
   case ElementType::_ATOM:
   case ElementType::_SEQUENCE:
-  case ElementType::_GAS:
   case ElementType::_TUNNEL:
   case ElementType::_COLLIMATOR:
     element = nullptr;
@@ -570,6 +572,34 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateOctupole()
   return ( new BDSOctupole( _element.name,
 			    _element.l * CLHEP::m,
 			    bTriplePrime,
+			    PrepareBeamPipeInfo(_element),
+			    PrepareMagnetOuterInfo(_element)));
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateDecapole()
+{
+  if(!HasSufficientMinimumLength(_element))
+    {return nullptr;}
+  
+  // magnetic field  
+  // B''' = d^4By/dx^4 = Brho * (1/Brho d^4By/dx^4) = Brho * k4
+  // brho is in Geant4 units, but k4 is not -> multiply k4 by m^-5
+  G4double bQuadruplePrime = - _brho * (_element.k4 / (CLHEP::m3*CLHEP::m2));
+  
+#ifdef BDSDEBUG 
+  G4cout << "---->creating Decapole,"
+	 << " name= " << _element.name
+	 << " l= " << _element.l << "m"
+	 << " k4= " << _element.k4 << "m^-5"
+	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
+	 << " B''''= " << bQuadruplePrime/(CLHEP::tesla/CLHEP::m3*CLHEP::m) << "T/m^4"
+	 << " material= " << _element.outerMaterial
+	 << G4endl;
+#endif
+  
+  return ( new BDSDecapole( _element.name,
+			    _element.l * CLHEP::m,
+			    bQuadruplePrime,
 			    PrepareBeamPipeInfo(_element),
 			    PrepareMagnetOuterInfo(_element)));
 }

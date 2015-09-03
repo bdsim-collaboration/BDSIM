@@ -8,7 +8,7 @@ ROOT Output (robdsim)
 ---------------------
 To use the ROOT analysis (and the Python interface)::
 
-   export ROBDSIM=:<bdsim-build-dir>/utils/robdsim
+   export ROBDSIM=<bdsim-build-dir>/utils/robdsim
    export PATH=$PATH:$ROBDSIM
    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROBDSIM (linux only)
    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$ROBDSIM (mac only)

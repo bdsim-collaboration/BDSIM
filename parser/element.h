@@ -21,7 +21,7 @@ struct Element {
   std::string name;
 
   double l; ///< l in metres
-  double ks,k0,k1,k2,k3,angle;
+  double ks,k0,k1,k2,k3,k4,angle;
 
   // beampipe information
   double beampipeThickness;
