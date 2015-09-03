@@ -42,14 +42,14 @@ add_flex_bison_dependency(SCANNER PARSER)
 # You can also use file globbing, but that can cause confusion
 # when we have old makefiles and cmake next to each other.
 # Reason is old makefiles creates parser.cc/lex.yy.cc in source folder..
-add_library(gmad STATIC gmad.cc getEnv.cc element.cc elementlist.cc elementtype.cc options.cc parameters.cc tunnel.cc ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+add_library(gmad STATIC gmad.cc getEnv.cc cavitymodel.cc element.cc elementlist.cc elementtype.cc options.cc parameters.cc tunnel.cc ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
 
 if($ENV{VERBOSE})
 	message(STATUS "BISON_PARSER_OUTPUTS ${BISON_PARSER_OUTPUTS}") 
 	message(STATUS "FLEX_SCANNER_OUTPUTS ${FLEX_SCANNER_OUTPUTS}")
 endif()
 
-add_library(gmadShared SHARED gmad.cc getEnv.cc element.cc
+add_library(gmadShared SHARED gmad.cc getEnv.cc cavitymodel.cc element.cc
 elementlist.cc elementtype.cc options.cc parameters.cc tunnel.cc ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
 
 bdsim_install_targets(gmad gmadShared)

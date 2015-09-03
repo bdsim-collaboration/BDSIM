@@ -96,6 +96,8 @@ awakescreen { return AWAKESCREEN; }
 
 line       { return LINE; } 
 
+cavitymodel {return CAVITYMODEL; }
+
 aperture {return APERTURE; } // reserved keywords
 filename { return FILENAME; }
 period { return PERIOD; }

@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 
+#include "cavitymodel.h"
 #include "element.h"
 #include "elementlist.h"
 #include "elementtype.h"
@@ -47,7 +48,7 @@ struct Parameters params;
 struct Options options;
 //struct Element element;
 struct Tunnel tunnel;
-
+struct CavityModel cavitymodel;
 // list of all encountered elements
 ElementList element_list;
 
@@ -58,6 +59,7 @@ ElementList beamline_list;
 std::list<struct Element>  material_list;
 std::list<struct Element>  atom_list;
 std::vector<struct Tunnel> tunnel_list;
+std::vector<struct CavityModel> cavitymodel_list;
 
 std::string current_line;
 std::string current_start;
@@ -86,6 +88,8 @@ void add_dump(std::string name, std::string before, int before_count);
 void add_gas(std::string name, std::string before, int before_count, std::string material);
 /// insert tunnel
 void add_tunnel(Tunnel& tunnel);
+/// insert cavitymodel
+void add_cavitymodel(CavityModel& cavitymodel);
 double property_lookup(ElementList& el_list, std::string element_name, std::string property_name);
 /// add element to temporary element sequence tmp_list
 void add_element_temp(std::string name, int number, bool pushfront, ElementType linetype);
@@ -514,6 +518,18 @@ void add_tunnel(Tunnel& tunnel)
   t.print();
 #endif
   tunnel_list.push_back(t);
+}
+
+void add_cavitymodel(CavityModel& cavitymodel)
+{
+  // copy from global
+  struct CavityModel c(cavitymodel);
+  // reset cavitymodel
+  cavitymodel.clear();
+#ifdef BDSDEBUG 
+  c.print();
+#endif
+  cavitymodel_list.push_back(c);
 }
 
 double property_lookup(ElementList& el_list, std::string element_name, std::string property_name)

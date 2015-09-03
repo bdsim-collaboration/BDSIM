@@ -53,6 +53,7 @@
 %token SOLENOID COLLIMATOR RCOL ECOL LINE SEQUENCE SPOILER ABSORBER LASER TRANSFORM3D MUSPOILER
 %token VKICK HKICK KICK
 %token PERIOD APERTURE FILENAME GAS PIPE TUNNEL MATERIAL ATOM
+%token CAVITYMODEL
 %token BEAM OPTION PRINT RANGE STOP USE VALUE ECHO PRINTF SAMPLE CSAMPLE BETA0 TWISS DUMP
 %token IF ELSE BEGN END LE GE NE EQ FOR
 %token CUT
@@ -69,6 +70,7 @@
 %type <symp> csample_options
 %type <symp> gas_options
 %type <symp> tunnel_options
+%type <symp> cavitymodel_options
 
 /* printout format for debug output */
 /*
@@ -1068,6 +1070,14 @@ command : STOP             { if(execute) quit(); }
 		add_tunnel(tunnel);
 	      }
           }
+        | CAVITYMODEL ',' cavitymodel_options // cavitymodel
+          {
+	    if(execute)
+	      {  
+		if(ECHO_GRAMMAR) printf("command -> CAVITYMODEL\n");
+		add_cavitymodel(cavitymodel);
+	      }
+          }
         | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
           {
 	    if(execute)
@@ -1297,6 +1307,30 @@ tunnel_options : VARIABLE '=' aexpr ',' tunnel_options
                     {
 		      if(execute)
 			tunnel.set_value($1->name,$3);
+		      free($3);
+		    }
+;
+
+cavitymodel_options : VARIABLE '=' aexpr ',' cavitymodel_options
+                    {
+		      if(execute)
+			cavitymodel.set_value($1->name,$3);
+		    }
+                 | VARIABLE '=' aexpr
+                    {
+		      if(execute)
+			cavitymodel.set_value($1->name,$3);
+		    }
+                 | VARIABLE '=' STR ',' cavitymodel_options
+                    {
+		      if(execute)
+			cavitymodel.set_value($1->name,$3);
+		      free($3);
+		    }
+                 | VARIABLE '=' STR
+                    {
+		      if(execute)
+			cavitymodel.set_value($1->name,$3);
 		      free($3);
 		    }
 ;
