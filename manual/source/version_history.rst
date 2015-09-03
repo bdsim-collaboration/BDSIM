@@ -10,6 +10,17 @@ Bug fixes
 Geometry
 ^^^^^^^^
 
+* Magnets now have tightly fitting invisible container volumes as opposed to
+  large boxes before.
+* Changed return type of magnet outer geometry factories to new BDSMagnetOuter
+  class. This is because the container contruction is now delegated to the
+  magnet outer factory for tight fitting container volumes.
+* Extended examples and tests.
+* Fixed bug where the read out coordinates would also be offset by the offset
+  of the element.
+* Reduced dupliation in magnet outer factories.
+* Fixed overlaps in rbend geometry.
+
 Physics
 ^^^^^^^
 

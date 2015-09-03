@@ -446,7 +446,6 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  readOutPV = new G4PVPlacement(*ropt,                                  // placement transform
 					(*it)->GetPlacementName() + "_ro_pv", // name
 					readOutLV,                            // logical volume
-
 					readOutWorldPV,                       // mother  volume
 					false,	                              // no boolean operation
 					nCopy,                                // copy number
