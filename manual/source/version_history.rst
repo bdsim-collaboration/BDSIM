@@ -16,7 +16,14 @@ Physics
 Parser
 ^^^^^^
 
-* occasional material parser segfault fixed (issue #25)
+* Occasional material parser segfault fixed (issue #25)
+
+Tracking
+^^^^^^^^
+
+* Introducted a separate auxilliary G4Navigator to avoid accidentally moving
+  the particle during tracking when querying global to local transforms.
+
   
 General
 ^^^^^^^
