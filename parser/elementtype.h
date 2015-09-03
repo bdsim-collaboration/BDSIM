@@ -36,7 +36,6 @@ enum class ElementType {
   _SAMPLER = 41,
   _CSAMPLER = 42,
   _DUMP = 43,
-  _GAS = 51,
   _TUNNEL = 52,
   _TRANSFORM3D = 61,
   _MUSPOILER = 62,

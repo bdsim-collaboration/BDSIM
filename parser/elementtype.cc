@@ -49,8 +49,6 @@ std::string GMAD::typestr(ElementType type) {
     return "sampler";
   case ElementType::_CSAMPLER:
     return "csampler";
-  case ElementType::_GAS:
-    return "gas";
   case ElementType::_TUNNEL:
     return "tunnel";
   case ElementType::_MATERIAL:
