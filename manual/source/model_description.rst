@@ -1677,8 +1677,6 @@ Output from MAD-X PTC used as input for BDSIM.
 | `distrFile`                      | PTC output file                                       |
 +----------------------------------+-------------------------------------------------------+
 
-
-
 Tunnel Geometry
 ---------------
 
@@ -1747,11 +1745,86 @@ The soil around the tunnel is typically symmetric with the `tunnelSoilThickness`
 the larger of the horizontal and vertical tunnel dimensions.
 		    
 .. note:: Construction of the tunnel geometry may fail in particular cases of different beam lines.
-	  Beam lines with very strong bends ( > 0.5 rad ) over a few metres may cause overlapping
+	  Beam lines with very strong bends ( > 0.5 rad) over a few metres may cause overlapping
 	  geometry. In future, it will be possible to override the automatic algorithm between
 	  certain elements in the beamline, but for now such situations must be avoided.
 
-	  
+
+Material and Atoms
+------------------
+
+Materials and atoms can be added via the parser, just like lattice elements.
+
+If the material is composed by a single element, it can be defined using the **matdef** command with the following syntax::
+
+  materialname : matdef, Z=<int>, A=<double>, density=<double>, T=<double>, P=<double>, state=<char*>;
+
+=========  ========================== =============
+parameter  description                default
+Z          atomic number
+A          mass number [g/mol]
+density    density in [g/cm3]
+T          temperature in [K]         300
+P          pressure [atm]             1
+state      "solid", "liquid" or "gas" "solid"
+=========  ========================== =============
+
+Example::
+  
+  iron : matdef, Z=26, A=55.845, density=7.87;
+  
+If the material is made up by several components, first of all each of them must be specified with the **atom** keyword::
+  
+  elementname : atom, Z=<int>, A=<double>, symbol=<char*>;
+       
+=========  =====================
+parameter  description               
+Z          atomic number
+A          mass number [g/mol]
+symbol     atom symbol
+=========  =====================
+
+The compound material can be specified in two manners:
+
+**1.** If the number of atoms of each component in material unit is known, the following syntax can be used::
+
+   <material> : matdef, density=<double>, T=<double>, P=<double>,
+                state=<char*>, components=<[list<char*>]>,
+                componentsWeights=<{list<int>}>;
+
+================= ===================================================
+parameter         description               
+density           density in [g/cm3]
+components        list of symbols for material components
+componentsWeights number of atoms for each component in material unit
+================= ===================================================
+
+Example::
+  
+  niobium : atom, symbol="Nb", Z=41, A=92.906;
+  titanium : atom, symbol="Ti", Z=22, A=47.867;
+  NbTi : matdef, density=5.6, T=4.0, components=["Nb","Ti"], componentsWeights={1,1};
+
+**2.** On the other hand, if the mass fraction of each component is known, the following syntax can be used::
+     
+   <material> : matdef, density=<double>, T=<double>, P=<double>,
+                state=<char*>, components=<[list<char*>]>,
+                componentsFractions=<{list<double>}>;
+		  
+=================== ================================================
+parameter           description               
+components          list of symbols for material components
+componentsFractions mass fraction of each component in material unit
+=================== ================================================
+
+Example::
+  
+  samarium : atom, symbol="Sm", Z=62, A=150.4;
+  cobalt : atom, symbol="Co", Z=27, A=58.93;
+  SmCo : matdef, density=8.4, T=300.0, components=["Sm","Co"], componentFractions = {0.338,0.662};
+
+The second syntax can be used also to define materials which are composed by other materials (and not by atoms).
+Nb: Square brackets are required for the list of element symbols, curly brackets for the list of weights or fractions.
    
 Regions
 -------
@@ -1760,6 +1833,8 @@ In Geant4 it is possible to drive different *regions* each with their own produc
 In BDSIM three different regions exist, each with their own user defined production cuts (see *Physics*). 
 These are the default region, the precision region and the approximation region. Beamline elements 
 can be set to the precision region by setting the attribute *precisionRegion* equal to 1. For example:
+
+.. TODO region example missing
 
 .. rubric:: Footnotes
 
