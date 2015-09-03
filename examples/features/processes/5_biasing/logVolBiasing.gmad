@@ -2,7 +2,7 @@ include optionsBiasing.gmad
 
 biasDef1: xsecBias, particle="e-", proc="all", xsecfact=10, flag=3, logicalVolumes="acceleratorVacuum";
 biasDef2: xsecBias, particle="e+", proc="eBrem eIoni msc", xsecfact={10,1,5}, flag={1,1,2}, logicalVolumes="acceleratorMaterial";
-biasDef2: xsecBias, particle="e+", proc="eBrem eIoni msc", xsecfact={10,1,5}, flag={1,1,2}, logicalVolumes="tunnelMaterial";
+!biasDef2: xsecBias, particle="e+", proc="eBrem eIoni msc", xsecfact={10,1,5}, flag={1,1,2}, logicalVolumes="tunnelMaterial";
 
 d1 : drift, l=1*m;
 q1 : quadrupole, l=1*m, material="Iron";
