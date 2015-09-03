@@ -2,8 +2,6 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSMagFieldSQL.hh"
 
-#include "G4Navigator.hh"
-#include "G4TransportationManager.hh"
 #include "G4RotationMatrix.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4TouchableHistoryHandle.hh"
@@ -21,15 +19,13 @@ BDSMagFieldSQL::BDSMagFieldSQL(const G4String& aFieldFile,
 			       list<G4String> Quadvol, list<G4double> QuadBgrad,
 			       list<G4String> Sextvol, list<G4double> SextBgrad,
 			       list<G4String> Octvol, list<G4double> OctBgrad,
-			       list<G4String> Fieldvol, list<G4ThreeVector> UniformField)
-
-  :ifs(aFieldFile.c_str()),itsMarkerLength(aMarkerLength),FieldFile(aFieldFile),
-   itsQuadBgrad(QuadBgrad), itsQuadVol(Quadvol),
-   itsSextBgrad(SextBgrad), itsSextVol(Sextvol),
-   itsOctBgrad(OctBgrad), itsOctVol(Octvol),
-   itsUniformField(UniformField), itsFieldVol(Fieldvol)
-{
-}
+			       list<G4String> Fieldvol, list<G4ThreeVector> UniformField):
+  ifs(aFieldFile.c_str()),itsMarkerLength(aMarkerLength),FieldFile(aFieldFile),
+  itsQuadBgrad(QuadBgrad), itsQuadVol(Quadvol),
+  itsSextBgrad(SextBgrad), itsSextVol(Sextvol),
+  itsOctBgrad(OctBgrad), itsOctVol(Octvol),
+  itsUniformField(UniformField), itsFieldVol(Fieldvol)
+{;}
 #endif
 
 G4bool BDSMagFieldSQL::GetHasNPoleFields(){return itsHasNPoleFields;}
@@ -54,48 +50,39 @@ BDSMagFieldSQL::BDSMagFieldSQL(const G4String& aFieldFile,
   itsSextVolBgrad(aSextVolBgrad),
   itsOctVolBgrad(aOctVolBgrad),
   itsdz(0.0)
-{
-  //Define alternate navigator (see geant4 application developers manual section 4.1.8.2)
-  itsIRNavigator=new G4Navigator();
-}
+{;}
 
-BDSMagFieldSQL::~BDSMagFieldSQL(){
-  delete itsIRNavigator;
-}
+BDSMagFieldSQL::~BDSMagFieldSQL()
+{;}
 
 
 void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
 		       G4double *Bfield ) const
 {
-  //    G4Navigator* itsIRNavigator=
-  //    G4TransportationManager::GetTransportationManager()-> 
-  //    GetNavigatorForTracking();
-
-  itsIRNavigator->SetWorldVolume(G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->GetWorldVolume());
-
   G4ThreeVector LocalR, LocalB, RLocalR, FieldB, NPoleB, GlobalR(Point[0], Point[1], Point[2]);
   //  GlobalR.setX(Point[0]);
   //  GlobalR.setY(Point[1]);
   //  GlobalR.setZ(Point[2]);
 
-  itsIRNavigator->LocateGlobalPointAndSetup(GlobalR);
-  //  G4TouchableHistory* aTouchable = itsIRNavigator->CreateTouchableHistory();
-  G4TouchableHistoryHandle aTouchable = itsIRNavigator->CreateTouchableHistoryHandle();
+  auxNavigator->LocateGlobalPointAndSetup(GlobalR);
+  //  G4TouchableHistory* aTouchable = auxNavigator->CreateTouchableHistory();
+  G4TouchableHistoryHandle aTouchable = auxNavigator->CreateTouchableHistoryHandle();
   const G4AffineTransform GlobalToMarker=aTouchable->GetHistory()->GetTransform(1);
   //  const G4AffineTransform MarkerToGlobal=GlobalToMarker.Inverse();
-  RLocalR=GlobalToMarker.TransformPoint(GlobalR);
+  RLocalR = GlobalToMarker.TransformPoint(GlobalR);
   
-  if( fabs(RLocalR.z()) > fabs(itsMarkerLength/2) ){
-    // Outside of mokka region - field should be zero. This is needed
-    // because sometimes RKStepper asks for overly large steps (1km)
-    Bfield[0] = 0;
-    Bfield[1] = 0;
-    Bfield[2] = 0;
-    Bfield[3] = 0;
-    Bfield[4] = 0;
-    Bfield[5] = 0;
-    return;
-  }
+  if( fabs(RLocalR.z()) > fabs(itsMarkerLength/2) )
+    {
+      // Outside of mokka region - field should be zero. This is needed
+      // because sometimes RKStepper asks for overly large steps (1km)
+      Bfield[0] = 0;
+      Bfield[1] = 0;
+      Bfield[2] = 0;
+      Bfield[3] = 0;
+      Bfield[4] = 0;
+      Bfield[5] = 0;
+      return;
+    }
 
   G4bool inNPole = false;
   G4bool inField = false;
@@ -103,8 +90,8 @@ void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
 
   if(itsHasUniformField || itsHasNPoleFields){
     G4AffineTransform GlobalAffine, LocalAffine;
-    GlobalAffine=itsIRNavigator->GetGlobalToLocalTransform();
-    LocalAffine=itsIRNavigator->GetLocalToGlobalTransform();
+    GlobalAffine=auxNavigator->GetGlobalToLocalTransform();
+    LocalAffine=auxNavigator->GetLocalToGlobalTransform();
     LocalR=GlobalAffine.TransformPoint(GlobalR); 
     LocalR.setY(-LocalR.y());
     LocalR.setX(-LocalR.x());	  // -ve signs because of Geant Co-ord System

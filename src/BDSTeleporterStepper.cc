@@ -1,13 +1,14 @@
+#include "BDSAuxiliaryNavigator.hh"
+#include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
-
 #include "BDSTeleporterStepper.hh"
-#include "BDSDebug.hh"
-#include "G4Event.hh"
-#include "G4EventManager.hh"
 
-BDSTeleporterStepper::BDSTeleporterStepper(G4Mag_EqRhs *EqRhs)
-   :G4MagIntegratorStepper(EqRhs,6)  // integrate over 6 variables only
+#include "G4MagintegratorStepper.hh"
+#include "G4ThreeVector.hh"
+
+BDSTeleporterStepper::BDSTeleporterStepper(G4Mag_EqRhs* eqRHS):
+  G4MagIntegratorStepper(eqRHS, 6)
 {
 #ifdef BDSDEBUG
   G4cout << "BDSTeleporterStepper Constructor " << G4endl;
@@ -68,23 +69,21 @@ void BDSTeleporterStepper::AdvanceHelix( const G4double  yIn[],
       yOut[5] = yIn[5];
     }
   
-  // step information for particular event
-  if(verboseStep || verboseEventNumber == G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID())
-    {
-      G4ThreeVector inA  = G4ThreeVector(yIn[0],yIn[1],yIn[2]);
-      G4ThreeVector inB  = G4ThreeVector(yIn[3],yIn[4],yIn[5]);
-      G4ThreeVector outA = G4ThreeVector(yOut[0],yOut[1],yOut[2]);
-      G4ThreeVector outB = G4ThreeVector(yOut[3],yOut[4],yOut[5]);
-      int G4precision    = G4cout.precision();
-      G4cout.precision(10);
-      G4cout << __METHOD_NAME__ << G4endl;
-      G4cout << "h (step length) " << h   /CLHEP::m << G4endl;
-      G4cout << "Input x,y,z     " << inA /CLHEP::m << G4endl;
-      G4cout << "Input px,py,pz  " << inB /CLHEP::m << G4endl;
-      G4cout << "Output x,y,z    " << outA/CLHEP::m << G4endl;
-      G4cout << "Output px,py,pz " << outB/CLHEP::m << G4endl;
-      G4cout.precision(G4precision);
-    }
+#ifdef BDSDEBUG
+  G4ThreeVector inA  = G4ThreeVector(yIn[0],yIn[1],yIn[2]);
+  G4ThreeVector inB  = G4ThreeVector(yIn[3],yIn[4],yIn[5]);
+  G4ThreeVector outA = G4ThreeVector(yOut[0],yOut[1],yOut[2]);
+  G4ThreeVector outB = G4ThreeVector(yOut[3],yOut[4],yOut[5]);
+  int G4precision    = G4cout.precision();
+  G4cout.precision(10);
+  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << "h (step length) " << h   /CLHEP::m << G4endl;
+  G4cout << "Input x,y,z     " << inA /CLHEP::m << G4endl;
+  G4cout << "Input px,py,pz  " << inB /CLHEP::m << G4endl;
+  G4cout << "Output x,y,z    " << outA/CLHEP::m << G4endl;
+  G4cout << "Output px,py,pz " << outB/CLHEP::m << G4endl;
+  G4cout.precision(G4precision);
+#endif
 }
 
 void BDSTeleporterStepper::Stepper( const G4double yInput[],

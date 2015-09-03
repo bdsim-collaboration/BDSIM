@@ -3,6 +3,7 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSAcceleratorModel.hh"
+#include "BDSAuxiliaryNavigator.hh"
 #include "BDSBeamline.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
@@ -332,11 +333,14 @@ void BDSDetectorConstruction::BuildWorld()
 
   // Register the lv & pvs to the our holder class for the model
   BDSAcceleratorModel::Instance()->RegisterWorldPV(worldPV);
-  
   BDSAcceleratorModel::Instance()->RegisterReadOutWorldPV(readOutWorldPV);
   BDSAcceleratorModel::Instance()->RegisterReadOutWorldLV(readOutWorldLV);
   BDSAcceleratorModel::Instance()->RegisterTunnelReadOutWorldPV(tunnelReadOutWorldPV);
   BDSAcceleratorModel::Instance()->RegisterTunnelReadOutWorldLV(tunnelReadOutWorldLV);
+
+  // Register world PV with our auxiliary navigator so steppers and magnetic
+  // fields know which geometry to navigate to get local / global transforms
+  BDSAuxiliaryNavigator::AttachWorldVolumeToNavigator(worldPV);
 }
 
 void BDSDetectorConstruction::ComponentPlacement()

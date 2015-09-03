@@ -1825,7 +1825,37 @@ Example::
 
 The second syntax can be used also to define materials which are composed by other materials (and not by atoms).
 Nb: Square brackets are required for the list of element symbols, curly brackets for the list of weights or fractions.
-   
+
+Physics Biasing
+---------------
+
+A physics biasing process can be defined with the keyword **xsecbias**.
+
+.. note:: This only works with Geant4 version 10.1 or higher.
+
+=================== ================================================
+parameter           description               
+name                biasing process name
+particle            particle that will be biased
+proc                process(es) to be biased
+flag                flag which particles are biased for the process(es)
+                    (1=all, 2=primaries, 3=secondaries)
+xsecfact            biasing factor(s) for the process(es)
+logicalVolumes      logical volumes that the biasing process will
+                    be attached to (work in progress).
+                    Currently always attached to both vacuum
+		    and accelerator material
+=================== ================================================
+
+Example::
+
+  biasDef1: xsecBias, particle="e-", proc="all", xsecfact=10, flag=3, logicalVolumes="acceleratorVacuum";
+  biasDef2: xsecBias, particle="e+", proc="eBrem eIoni msc", xsecfact={10,1,5}, flag={1,1,2}, logicalVolumes="acceleratorMaterial";
+
+The process can also be attached to a specific element::
+
+  q1 : quadrupole, l=1*m, material="Iron", bias="biasDef1 biasDef2"; ! uses the process biasDef1 and biasDef2
+  
 Regions
 -------
 
