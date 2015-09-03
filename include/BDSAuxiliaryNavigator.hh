@@ -8,7 +8,7 @@
  * to convert from global to local coordinates. The prescribed method 
  * to do this is by using a G4Navigator instance. There is of course the 
  * main navigator for tracking, but requesting information on a global
- * point chanages the state of the navigator - ie the particle being 
+ * point changes the state of the navigator - ie the particle being 
  * tracked by the navigator is now that point. This is VERY dangerous.
  * 
  * This class provides a static auxiliary navigator that each derived 
