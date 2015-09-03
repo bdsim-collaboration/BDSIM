@@ -159,7 +159,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   case ElementType::_MATERIAL:
   case ElementType::_ATOM:
   case ElementType::_SEQUENCE:
-  case ElementType::_GAS:
   case ElementType::_TUNNEL:
   case ElementType::_COLLIMATOR:
     element = nullptr;

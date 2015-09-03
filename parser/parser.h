@@ -88,8 +88,6 @@ void add_sampler(std::string name, std::string before, int before_count);
 void add_csampler(std::string name, std::string before, int before_count, double length, double rad);
 /// insert a beam dumper into beamline_list
 void add_dump(std::string name, std::string before, int before_count);
-/// insert beam gas                                             
-void add_gas(std::string name, std::string before, int before_count, std::string material);
 /// insert tunnel
 void add_tunnel(Tunnel& tunnel);
 /// insert xsecbias
@@ -507,17 +505,6 @@ void add_dump(std::string name, std::string before, int before_count)
     exit(1);
   }
   beamline_list.insert(it,e);
-}
-
-void add_gas(std::string name, std::string before, int before_count, std::string material)
-{
-  std::cout << "gas " << material << " will be inserted into " << before << " number " << before_count << std::endl;
-  struct Element e;
-  e.type = ElementType::_GAS;
-  e.name = name;
-  e.lst = nullptr;
-  // insert gas with uniqueness requirement
-  element_list.push_back(e,true);
 }
 
 void add_tunnel(Tunnel& tunnel)

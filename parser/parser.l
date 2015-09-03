@@ -100,11 +100,10 @@ tunnel { return TUNNEL; }
 
 xsecBias {return XSECBIAS; }
 
-gas { return GAS; }
 matdef { return MATERIAL; }
 atom { return ATOM; }
 
-line       { return LINE; } 
+line { return LINE; } 
 
 period { return PERIOD; }
 range { return RANGE; }
