@@ -7,7 +7,6 @@
 
 extern G4double BDSLocalRadiusOfCurvature;
 
-// integrate over 6 variables only - position and velocity
 BDSDecStepper::BDSDecStepper(G4Mag_EqRhs *EqRhs):
   G4MagIntegratorStepper(EqRhs, 6),  
   fPtrMagEqOfMot(EqRhs),
@@ -21,12 +20,12 @@ void BDSDecStepper::AdvanceHelix( const G4double  yIn[],
 				   G4double  yDec[])
 {
   const G4double *pIn = yIn+3;
-  G4ThreeVector v0= G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
-  G4ThreeVector InitMomDir=v0.unit();
+  G4ThreeVector v0 = G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
+  G4ThreeVector InitMomDir = v0.unit();
 
-  G4ThreeVector GlobalPosition= G4ThreeVector( yIn[0], yIn[1], yIn[2]);  
-  G4double InitMag=v0.mag();
-  G4double kappa=  -fPtrMagEqOfMot->FCof()*itsBQuadPrime/InitMag;
+  G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);  
+  G4double InitMag = v0.mag();
+  G4double kappa   = -fPtrMagEqOfMot->FCof()*itsBQuadPrime/InitMag;
 
   // relevant momentum scale is p_z, not P_tot:
   // check that the approximations are valid, else do a linear step:
@@ -106,24 +105,23 @@ void BDSDecStepper::AdvanceHelix( const G4double  yIn[],
       else
 	{LocalR += h*LocalRp;}
        
-      GlobalPosition=LocalAffine.TransformPoint(LocalR); 
-      G4ThreeVector GlobalTangent=LocalAffine.TransformAxis(LocalRp)*InitMag;
+      GlobalPosition = LocalAffine.TransformPoint(LocalR); 
+      G4ThreeVector GlobalTangent = LocalAffine.TransformAxis(LocalRp)*InitMag;
       
-      yDec[0]   = GlobalPosition.x(); 
-      yDec[1]   = GlobalPosition.y(); 
-      yDec[2]   = GlobalPosition.z(); 
-				
+      yDec[0] = GlobalPosition.x(); 
+      yDec[1] = GlobalPosition.y(); 
+      yDec[2] = GlobalPosition.z(); 				
       yDec[3] = GlobalTangent.x();
       yDec[4] = GlobalTangent.y();
       yDec[5] = GlobalTangent.z();
     }
 }
 
-void BDSDecStepper::Stepper( const G4double yInput[],
+void BDSDecStepper::Stepper(const G4double yInput[],
 			    const G4double[],
 			    const G4double hstep,
 			    G4double yOut[],
-			    G4double yErr[]      )
+			    G4double yErr[])
 {  
   const G4int nvar = 6 ;
   
@@ -132,7 +130,7 @@ void BDSDecStepper::Stepper( const G4double yInput[],
   AdvanceHelix(yInput,(G4ThreeVector)0,hstep,yOut);
 }
 
-G4double BDSDecStepper::DistChord()const 
+G4double BDSDecStepper::DistChord() const 
 {return itsDist;}
 
 BDSDecStepper::~BDSDecStepper()

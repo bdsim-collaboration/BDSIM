@@ -24,6 +24,7 @@ public:
   // The stepsize is fixed, equal to h.
   // Integrates ODE starting values y[0 to 6]
   // Outputs yout[] and its estimated error yerr[].
+  // integrate over 6 variables only - position and velocity
 
   G4double DistChord()   const;
   // Estimate maximum distance of curved solution and chord ... 

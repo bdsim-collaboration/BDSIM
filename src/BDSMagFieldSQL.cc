@@ -69,19 +69,20 @@ void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
   G4TouchableHistoryHandle aTouchable = auxNavigator->CreateTouchableHistoryHandle();
   const G4AffineTransform GlobalToMarker=aTouchable->GetHistory()->GetTransform(1);
   //  const G4AffineTransform MarkerToGlobal=GlobalToMarker.Inverse();
-  RLocalR=GlobalToMarker.TransformPoint(GlobalR);
+  RLocalR = GlobalToMarker.TransformPoint(GlobalR);
   
-  if( fabs(RLocalR.z()) > fabs(itsMarkerLength/2) ){
-    // Outside of mokka region - field should be zero. This is needed
-    // because sometimes RKStepper asks for overly large steps (1km)
-    Bfield[0] = 0;
-    Bfield[1] = 0;
-    Bfield[2] = 0;
-    Bfield[3] = 0;
-    Bfield[4] = 0;
-    Bfield[5] = 0;
-    return;
-  }
+  if( fabs(RLocalR.z()) > fabs(itsMarkerLength/2) )
+    {
+      // Outside of mokka region - field should be zero. This is needed
+      // because sometimes RKStepper asks for overly large steps (1km)
+      Bfield[0] = 0;
+      Bfield[1] = 0;
+      Bfield[2] = 0;
+      Bfield[3] = 0;
+      Bfield[4] = 0;
+      Bfield[5] = 0;
+      return;
+    }
 
   G4bool inNPole = false;
   G4bool inField = false;

@@ -18,7 +18,7 @@ void BDSOctMagField::GetFieldValue(const G4double Point[4],
   
   auxNavigator->LocateGlobalPointAndSetup(GlobalR);
   G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
-  G4ThreeVector LocalR = GlobalAffine.TransformPoint(GlobalR); 
+  G4ThreeVector     LocalR       = GlobalAffine.TransformPoint(GlobalR); 
   
   Bfield[0] = (3*LocalR.x()*LocalR.x()*LocalR.y()-pow(LocalR.y(),3))*itsBTrpPrime/6.;
   Bfield[1] = (pow(LocalR.x(),3)-LocalR.x()*LocalR.y()*LocalR.y())*itsBTrpPrime/6.;

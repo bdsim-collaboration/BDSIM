@@ -14,16 +14,16 @@ BDSOctStepper::BDSOctStepper(G4Mag_EqRhs* eqRHS):
   itsDist(0.0)
 {;}
 
-void BDSOctStepper::AdvanceHelix( const G4double  yIn[],
-                                   G4ThreeVector,
-				   G4double  h,
-				   G4double  yOct[])
+void BDSOctStepper::AdvanceHelix(const G4double  yIn[],
+				 G4ThreeVector,
+				 G4double  h,
+				 G4double  yOct[])
 {
   const G4double *pIn = yIn+3;
-  G4ThreeVector v0= G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
-  G4ThreeVector InitMomDir=v0.unit();
+  G4ThreeVector v0 = G4ThreeVector(pIn[0], pIn[1], pIn[2]);  
+  G4ThreeVector InitMomDir = v0.unit();
 
-  G4ThreeVector GlobalPosition= G4ThreeVector( yIn[0], yIn[1], yIn[2]);  
+  G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);  
   G4double InitMag = v0.mag();
   G4double kappa   = -fPtrMagEqOfMot->FCof()*itsBTrpPrime/InitMag;
 

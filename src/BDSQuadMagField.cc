@@ -18,7 +18,7 @@ void BDSQuadMagField::GetFieldValue( const G4double Point[4],
   
   auxNavigator->LocateGlobalPointAndSetup(GlobalR);
   G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
-  G4ThreeVector LocalR = GlobalAffine.TransformPoint(GlobalR); 
+  G4ThreeVector     LocalR       = GlobalAffine.TransformPoint(GlobalR); 
   
   Bfield[0] = LocalR.y()*itsBGrad;
   Bfield[1] = LocalR.x()*itsBGrad;

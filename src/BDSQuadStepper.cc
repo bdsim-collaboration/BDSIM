@@ -20,8 +20,8 @@ void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
 				  G4double        yQuad[])
 {
   const G4double *pIn      = yIn+3;
-  G4ThreeVector GlobalR    = G4ThreeVector( yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector GlobalP    = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
+  G4ThreeVector GlobalR    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector GlobalP    = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
   G4ThreeVector InitMomDir = GlobalP.unit();
   G4double InitPMag        = GlobalP.mag();
   // quad strength k

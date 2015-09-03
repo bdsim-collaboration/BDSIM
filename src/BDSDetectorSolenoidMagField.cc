@@ -23,18 +23,14 @@ BDSDetectorSolenoidMagField::~BDSDetectorSolenoidMagField()
 void BDSDetectorSolenoidMagField::GetFieldValue(const G4double Point[4],
 						G4double *Bfield) const
 { 
-  G4ThreeVector LocalR, GlobalR;
-
-  GlobalR.setX(Point[0]);
-  GlobalR.setY(Point[1]);
-  GlobalR.setZ(Point[2]);
+  G4ThreeVector     GlobalR      = G4ThreeVector(Point[0], Point[1], Point[2]);
   G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
-  LocalR=GlobalAffine.TransformPoint(GlobalR); 
+  G4ThreeVector     LocalR       =GlobalAffine.TransformPoint(GlobalR); 
 
-  Bfield[0]=0;
-  Bfield[1]=0;
+  Bfield[0] = 0;
+  Bfield[1] = 0;
 
-  G4double zField=0;
+  G4double zField = 0;
 
   G4double localRad = sqrt(pow(LocalR.y(),2)+pow(LocalR.x(),2));
 
@@ -49,7 +45,7 @@ void BDSDetectorSolenoidMagField::GetFieldValue(const G4double Point[4],
   else
     {zField=0;}
 
-  Bfield[2]=zField;
+  Bfield[2] = zField;
 }
 
 

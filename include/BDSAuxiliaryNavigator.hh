@@ -8,12 +8,13 @@
  * to convert from global to local coordinates. The prescribed method 
  * to do this is by using a G4Navigator instance. There is of course the 
  * main navigator for tracking, but requesting information on a global
- * point chanages the state of the navigator - ie the particle as 
+ * point chanages the state of the navigator - ie the particle being 
  * tracked by the navigator is now that point. This is VERY dangerous.
  * 
  * This class provides a static auxiliary navigator that each derived 
- * class can use. This (being static) is not done to reduce memory usage but because
- * a navigating from an unknown place to anywhere in the geometry is
+ * class can use. Making the auxilliary navigator static is not done 
+ * to reduce memory usage but because navigating from an unknown place 
+ * to anywhere in the geometry is
  * much more costly than a relative move in the geometry. If we only
  * use one auxiliary navigator, it will always be relatively close
  * in the geometry even if a different stepper has been used and 
@@ -31,6 +32,7 @@ class BDSAuxiliaryNavigator
 {
 public:
   BDSAuxiliaryNavigator();
+  ~BDSAuxiliaryNavigator();
 
   static void AttachWorldVolumeToNavigator(G4VPhysicalVolume* worldPV);
 

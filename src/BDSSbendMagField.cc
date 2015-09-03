@@ -4,12 +4,14 @@
 #include "globals.hh"
 #include "BDSSbendMagField.hh"
 
+#include "BDSUtilities.hh"
+
 BDSSbendMagField::BDSSbendMagField(const G4ThreeVector& aField,
-			       const G4double length,
-			       const G4double angle) 
-  :G4UniformMagField(aField)
+				   const G4double length,
+				   const G4double angle):
+  G4UniformMagField(aField)
 {
-  if(angle!=0.)
+  if (BDS::IsFinite(angle)
     { // original
       //    itsLocalRadius=length/angle;
       itsLocalRadius=-length/angle;// minus sign for correct machine convention

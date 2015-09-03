@@ -14,6 +14,11 @@ BDSAuxiliaryNavigator::BDSAuxiliaryNavigator()
 #endif
 }
 
+BDSAuxiliaryNavigator::~BDSAuxiliaryNavigator()
+{
+  auxNavigator = nullptr;
+}
+
 void BDSAuxiliaryNavigator::AttachWorldVolumeToNavigator(G4VPhysicalVolume* worldPV)
 {
   auxNavigator->SetWorldVolume(worldPV);

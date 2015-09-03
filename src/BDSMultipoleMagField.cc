@@ -30,9 +30,9 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
   // rigidity (in Geant4 units)
   brho *= (CLHEP::tesla*CLHEP::m);
 #ifdef BDSDEBUG 
-    G4cout<<"beam charge="<<charge<<"e"<<G4endl;
-    G4cout<<"beam momentum="<<momentum<<"GeV/c"<<G4endl;
-    G4cout<<"rigidity="<<brho/(CLHEP::tesla*CLHEP::m)<<"T*m"<<G4endl;
+  G4cout<<"beam charge="<<charge<<"e"<<G4endl;
+  G4cout<<"beam momentum="<<momentum<<"GeV/c"<<G4endl;
+  G4cout<<"rigidity="<<brho/(CLHEP::tesla*CLHEP::m)<<"T*m"<<G4endl;
 #endif
 
   // convert strengths Kn from BDSIM units (m^-n) to Geant4 internal units

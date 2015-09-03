@@ -49,9 +49,9 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
 #endif
 
   const G4double *pIn = yIn+3;
-  G4ThreeVector v0    = G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
+  G4ThreeVector v0    = G4ThreeVector(pIn[0], pIn[1], pIn[2]);  
 
-  G4ThreeVector GlobalPosition = G4ThreeVector( yIn[0], yIn[1], yIn[2]);  
+  G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);  
   G4double      InitMag        = v0.mag();
   G4ThreeVector InitMomDir     = v0.unit();
 
@@ -95,10 +95,10 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector vnorm = vhat.cross(yhat);
   
   // radius of curvature
-  G4double R=InitMag/CLHEP::GeV/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
+  G4double R = InitMag/CLHEP::GeV/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
 
   // include the charge of the particles
-  R*=charge;
+  R *= charge;
   
   G4double Theta   = h/R;
 
@@ -110,26 +110,25 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
   SinT=2*CosT_ov_2*SinT_ov_2;
   
   // Save for Synchrotron Radiation calculations:
-  BDSLocalRadiusOfCurvature=R;
+  BDSLocalRadiusOfCurvature = R;
   
-  itsDist=fabs(R)*(1.-CosT_ov_2);
-
+  itsDist = fabs(R)*(1.-CosT_ov_2);
   
   // check for paraxial approximation:
   if(LocalRp.z() > 0.9)
   {
-      G4ThreeVector dPos=R*(SinT*vhat + (1-CosT)*vnorm);
+      G4ThreeVector dPos = R*(SinT*vhat + (1-CosT)*vnorm);
       
-      itsFinalPoint=LocalR+dPos;
-      itsFinalDir=CosT*vhat +SinT*vnorm;
+      itsFinalPoint = LocalR+dPos;
+      itsFinalDir   = CosT*vhat +SinT*vnorm;
   
       // gradient for quadrupolar field
-      G4double kappa= - fPtrMagEqOfMot->FCof()* ( itsBGrad) /InitMag; // was ist das? 
+      G4double kappa = - fPtrMagEqOfMot->FCof()* ( itsBGrad) /InitMag; // was ist das? 
       // ignore quadrupolar component for now as this needs fixing
       if(true || fabs(kappa)<1.e-12)
 	{// no gradient
-	  GlobalPosition=LocalAffine.TransformPoint(itsFinalPoint); 
-	  G4ThreeVector GlobalTangent=LocalAffine.TransformAxis(itsFinalDir);
+	  GlobalPosition = LocalAffine.TransformPoint(itsFinalPoint); 
+	  G4ThreeVector GlobalTangent = LocalAffine.TransformAxis(itsFinalDir);
 	
 	  GlobalTangent*=InitMag;
 	  
