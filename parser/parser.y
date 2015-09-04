@@ -11,7 +11,7 @@
   extern char* yytext;
   
   const int PEDANTIC = 0; ///> strict checking, exits when element or parameter is not known
-  const int ECHO_GRAMMAR = 0; ///> print grammar rule expansion (for debugging)
+  const int ECHO_GRAMMAR = 1; ///> print grammar rule expansion (for debugging)
   const int INTERACTIVE = 0; ///> print output of commands (like in interactive mode)
   /* for more debug with parser:
      1) set yydebug to 1 in parser.tab.cc (needs to be reset as this file gets overwritten from time to time!) 
@@ -387,6 +387,15 @@ decl : VARIABLE ':' marker
              params.flush();
            }
        }
+     | VARIABLE ':' cavitymodel
+       {
+         if(execute)
+           {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << $1->name << " : cavitymodel" << std::endl;
+	     cavitymodel.set_value("name",$1->name);
+	     add_cavitymodel(cavitymodel);
+           }
+       }
 ;
 
 marker : MARKER ;
@@ -456,6 +465,8 @@ matdef : MATERIAL ',' parameters
 
 atom : ATOM ',' parameters
 ;
+
+cavitymodel : CAVITYMODEL ',' cavitymodel_options
 
 extension : VARIABLE ',' parameters
             {

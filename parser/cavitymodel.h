@@ -13,6 +13,27 @@ struct CavityModel {
   std::string name; ///< name
   /// geometry type
   std::string type;
+  /// iris radius
+  double irisRadius;
+  /// equator radius
+  double equatorRadius;
+  /// half cell length
+  double halfCellLength;
+  /// equator ellipse semi axis;
+  double equatorEllipseSemiAxis;
+  /// iris horizontal axis
+  double irisHorizontalAxis;
+  /// iris vertical axis
+  double irisVerticalAxis;
+  /// tangent angle
+  double tangentLineAngle;
+  /// thickness
+  double thickness;
+  /// number of points that will be used to make the cell shape
+  /// more will be more accurate but will also increase tracking time
+  int numberOfPoints;
+  /// number of cells per cavity
+  int numberOfCells;
   
   /// constructor
   CavityModel();
