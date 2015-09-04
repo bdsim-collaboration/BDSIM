@@ -8,7 +8,14 @@
 #include "G4LogicalVolume.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
+
+//Elliptical Cavity:
 #include "G4Polycone.hh"
+
+//Pillbox:
+#include "G4Tubs.hh"
+#include "G4SubtractionSolid.hh"
+#include "G4UnionSolid.hh"
 
 #include <cmath>
 #include <vector>
@@ -301,4 +308,80 @@ void BDSCavity::BuildEllipticalCavityGeometry(//G4double irisRSemiAxis, //iris e
 
   
         
-  }
+  };
+
+void BDSCavity::BuildPillBoxCavityGeometry()
+{
+
+  //irisRadius should perhaps be changed to some variable higher up the class
+  //structure using beamPipeInfo?  
+  G4VSolid* outerSolid = new G4Tubs(name + "_outer_solid", //name
+				    irisRadius,                   //inner radius
+				    equatorRadius - lengthSafety, //equatorRadius
+				    0.5 * chordLength - lengthSafety, //half length
+				    0.0,                           //startAngle
+				    2*CLHEP::pi                    //spanningAngle
+				    );
+  
+  
+  //Creates a cylinder from which to subtract from larger cylinder.
+  //i.e hollows out the cavity
+  innerSolid = new G4Tubs(name + "_inner_solid", //name
+			  0.0,            //inner radius 
+			  equatorRadius - thickness,           //equatorRadius
+			  0.5 * (chordLength - thickness),     //Half length
+			  0.0,                   //starAngle
+			  2*CLHEP::pi           //spanningAngle
+			  );
+  
+  cavitySolid = new G4SubtractionSolid(name + "_collimator_solid",  //name
+				       outerSolid,                //solid1
+				       innerSolid                 //minus solid2
+				       );
+
+  //Vacuum:  Union of two solids.  One cylinder (VacuumInnerCavity) to fill the centre, and a longer,
+  // thinner cylinder (vaccumAperture) to fill the irises -> vacuumSolid
+  
+  G4VSolid* vacuumInnerCavity = new G4Tubs(name + "_vacuum_inner_cavity_solid",                       //name
+					   0.0,                                                //inner radius
+					   (equatorRadius - thickness) - lengthSafety,           //outer radius
+					   0.5 * (chordLength - thickness) - lengthSafety,     //half length
+					   0.0,                                                //start angle
+					   2*CLHEP::pi                                        //spanning angle
+					   );
+  
+  G4VSolid* vacuumAperture = new G4Tubs(name +"_vacuum_aperture_solid",        //name
+					0.0,                             //inner radius
+					irisRadius - lengthSafety,       //outer radius
+					0.5 * chordLength - lengthSafety,//length
+					0.0,                             //start angle
+					2*CLHEP::pi                     //spanning angle
+					);
+  vacuumSolid = new G4UnionSolid(name + "_vacuum_solid",  //name
+				 vacuumInnerCavity,       //solid one
+				 vacuumAperture           //Added to solid two.
+				 );
+  
+  cavityLV = new G4LogicalVolume(cavitySolid,          // solid
+						      cavityMaterial,          // material
+						      name + "_cavity_lv"); // name
+
+  G4VisAttributes* cavityVis = new G4VisAttributes();
+
+  cavityVis->SetColour(0.69,0.769,0.871); //light steel blue
+  cavityVis->SetVisibility(true);          //visible
+  cavityLV->SetVisAttributes(cavityVis);   //give  colour+visibility to the cavity logical volume
+
+  
+  vacuumLV = new G4LogicalVolume(vacuumSolid,           //solid
+				 vacuumMaterial,              //material
+				 name + "_vacuum_lv");
+
+  G4VisAttributes* vacuumVis = new G4VisAttributes(); //vistattributes instance 
+  vacuumVis->SetVisibility(false);                    //Make invisible
+  vacuumLV->SetVisAttributes(vacuumVis);              //give invisiblity to the vacuum LV.
+
+  
+  //There is thickness*radius*radius*pi voulme in either end which has no vacuum..  use boolean ops (addition) to build
+  
+}
