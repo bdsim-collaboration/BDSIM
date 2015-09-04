@@ -22,7 +22,8 @@ BDSCavityRF::BDSCavityRF(G4String name,
 
 void BDSCavityRF::Build()
 {
-  BuildEllipticalCavityGeometry();
+  //BuildEllipticalCavityGeometry();
+  BuildPillBoxCavityGeometry();
   BDSAcceleratorComponent::Build();
   PlaceComponents();
 }
