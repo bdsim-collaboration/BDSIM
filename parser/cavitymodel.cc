@@ -3,6 +3,8 @@
 #include <iomanip>
 #include <iostream>
 
+using namespace GMAD;
+
 CavityModel::CavityModel()
 {
   clear();
