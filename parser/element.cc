@@ -3,11 +3,14 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
 #include <iostream>
 #include <string>
 
-extern std::string current_line;
+using namespace GMAD;
+
+namespace GMAD {
+  extern std::string current_line;
+}
 
 namespace {
   // helper method
@@ -40,8 +43,9 @@ void Element::print(int & ident)const{
   case ElementType::_QUAD:
   case ElementType::_SEXTUPOLE:
   case ElementType::_OCTUPOLE:
-    printf(", l=%.10g, k0=%.10g, k1=%.10g, k2=%.10g, k3=%.10g, angle=%.10g,tilt=%.10g ",
-	   l,k0,k1,k2,k3,angle,tilt);
+  case ElementType::_DECAPOLE:
+    printf(", l=%.10g, k0=%.10g, k1=%.10g, k2=%.10g, k3=%.10g, k4=%.10g, angle=%.10g,tilt=%.10g ",
+	   l,k0,k1,k2,k3,k4,angle,tilt);
     break;
     
   case ElementType::_SOLENOID:
@@ -102,6 +106,7 @@ void Element::flush() {
   k1 = 0;
   k2 = 0;
   k3 = 0;
+  k4 = 0;
   angle = 0;
   xsize = 0;
   ysize = 0;
@@ -119,6 +124,8 @@ void Element::flush() {
 
   gradient = 0;
 
+  bias = "";
+  
   // new aperture model
   beampipeThickness = 0;
   aper1 = 0;
@@ -173,6 +180,7 @@ double Element::property_lookup(std::string property_name)const{
   if(property_name == "k1") return k1;
   if(property_name == "k2") return k2;
   if(property_name == "k3") return k3;
+  if(property_name == "k4") return k4;
   if(property_name == "angle") return angle;
   if(property_name == "phiAngleIn") return phiAngleIn;
   if(property_name == "phiAngleOut") return phiAngleOut;

@@ -1,33 +1,18 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
-//
-// class BDSOctStepper
-//
-// Class description:
-// stepper for pure octupole magnetic field
-
-// History:
-// - Created. G.Blair 1/11/00
-
 #ifndef BDSOCTSTEPPER_HH
 #define BDSOCTSTEPPER_HH
+
+#include "BDSAuxiliaryNavigator.hh"
+
 #include "globals.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
-#include "G4Navigator.hh"
 
-class BDSOctStepper : public G4MagIntegratorStepper
+class BDSOctStepper:
+  public G4MagIntegratorStepper, public BDSAuxiliaryNavigator
 {
-
-public:  // with description
-
+public:
   BDSOctStepper(G4Mag_EqRhs *EqRhs);
-
   ~BDSOctStepper();
 
   void Stepper( const G4double y[],
@@ -47,14 +32,10 @@ public:  // with description
   G4double GetBTrpPrime();
 
   void StepperName();
-
-public: // without description
   
   G4int IntegratorOrder()const { return 2; }
 
 protected:
-  //  --- Methods used to implement all the derived classes -----
-
   void AdvanceHelix( const G4double  yIn[],
 		     G4ThreeVector Bfld,
 		     G4double  h,
@@ -71,7 +52,6 @@ private:
   // Data stored in order to find the chord.
 
   G4double itsDist;
-
 };
 
 inline  void BDSOctStepper::SetBTrpPrime(G4double aBTrpPrime)

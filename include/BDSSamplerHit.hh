@@ -24,7 +24,8 @@ public:
 		G4int       ParentID,
 		G4int       TrackID,
 		G4int       TurnsTaken,
-		G4String    sampType);
+		G4String    sampType,
+		G4String    process);
 
   ~BDSSamplerHit();
   
@@ -60,6 +61,9 @@ private:
   G4int itsTrackID;
   G4int itsTurnsTaken;
   G4String itsSampType;
+
+  /// creating process
+  G4String itsProcess;
   
 public:
   inline G4double GetInitTotalEnergy() const
@@ -156,6 +160,8 @@ public:
   {return itsTrackID;}
   inline G4int GetTurnsTaken() const
   {return itsTurnsTaken;}
+  inline G4String GetProcess() const 
+  {return itsProcess;}
 };
 
 typedef G4THitsCollection<BDSSamplerHit> BDSSamplerHitsCollection;

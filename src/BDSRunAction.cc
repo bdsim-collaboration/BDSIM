@@ -47,7 +47,7 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   std::vector<double> binedges;
   binedges.push_back(0.0);
   BDSBeamline* beamline  = BDSAcceleratorModel::Instance()->GetFlatBeamline();
-  BDSBeamlineIterator it = beamline->begin();
+  BDSBeamline::iterator it = beamline->begin();
   for(; it != beamline->end(); ++it)
     {binedges.push_back((*it)->GetSPositionEnd()/CLHEP::m);}
   

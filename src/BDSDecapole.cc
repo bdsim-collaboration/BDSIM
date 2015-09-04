@@ -16,11 +16,11 @@
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 
-BDSDecapole::BDSDecapole(G4String           name,
-			 G4double           length,
-			 G4double           bQuadPrime,
-			 BDSBeamPipeInfo*   beamPipeInfo,
-			 BDSMagnetOuterInfo magnetOuterInfo):
+BDSDecapole::BDSDecapole(G4String            name,
+			 G4double            length,
+			 G4double            bQuadPrime,
+			 BDSBeamPipeInfo*    beamPipeInfo,
+			 BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::decapole, name, length,
 	    beamPipeInfo,magnetOuterInfo),
   itsBQuadPrime(bQuadPrime)

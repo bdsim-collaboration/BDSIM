@@ -14,7 +14,11 @@
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 
-extern Options options;
+namespace GMAD {
+  extern Options options;
+}
+
+using GMAD::options;
 
 int main(int argc,char** argv) {
   BDSBunch bdsBunch;
@@ -26,7 +30,7 @@ int main(int argc,char** argv) {
 
   G4cout << __FUNCTION__ << "> Using input file : "<< execOptions->GetInputFilename()<<G4endl;
   
-  gmad_parser(execOptions->GetInputFilename());
+  GMAD::gmad_parser(execOptions->GetInputFilename());
 
   BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
 

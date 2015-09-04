@@ -5,6 +5,8 @@
 #include <list>
 #include <string>
 
+namespace GMAD {
+
 enum class ElementType;
 
 /**
@@ -19,7 +21,7 @@ struct Element {
   std::string name;
 
   double l; ///< l in metres
-  double ks,k0,k1,k2,k3,angle;
+  double ks,k0,k1,k2,k3,k4,angle;
 
   // beampipe information
   double beampipeThickness;
@@ -46,6 +48,9 @@ struct Element {
   std::list<double> blmLocZ;
   std::list<double> blmLocTheta;
 
+  /// physics biasing process
+  std::string bias;
+  
   /// material properties
   double A; 
   double Z; 
@@ -83,5 +88,6 @@ struct Element {
   /// constructor
   Element();
 };
-
+}
+ 
 #endif

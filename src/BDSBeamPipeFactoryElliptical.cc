@@ -22,11 +22,11 @@
 #include <utility>                         // for std::pair
 
 
-BDSBeamPipeFactoryElliptical* BDSBeamPipeFactoryElliptical::_instance = 0;
+BDSBeamPipeFactoryElliptical* BDSBeamPipeFactoryElliptical::_instance = nullptr;
 
 BDSBeamPipeFactoryElliptical* BDSBeamPipeFactoryElliptical::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSBeamPipeFactoryElliptical();}
   return _instance;
 }
@@ -36,7 +36,7 @@ BDSBeamPipeFactoryElliptical::BDSBeamPipeFactoryElliptical()
 
 BDSBeamPipeFactoryElliptical::~BDSBeamPipeFactoryElliptical()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipe(G4String    nameIn,              // name

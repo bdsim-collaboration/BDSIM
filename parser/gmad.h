@@ -12,6 +12,7 @@
 #include <cstdio>
 #include <string>
 
+namespace GMAD {
 enum class ElementType;
 
 // parse the input file and construct beamline_list and options 
@@ -23,7 +24,7 @@ int gmad_parser(std::string name);
 extern "C" {   
   int    GmadParser_c(char *name);
 
-  /* Interface to extern ElementList beamline_list */
+  /* Interface to extern beamline_list */
   int          GetNelements();            // Length of list
   int          GetType(int);              // Type of element 
   const char*  GetName(int);              // Name of element
@@ -34,5 +35,6 @@ extern "C" {
   double       GetAper2(int);             // Aperture 2
   double       GetBeampipeThickness(int); // Beam Pipe Thickness
 
+}
 }
 #endif

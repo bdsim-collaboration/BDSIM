@@ -103,13 +103,13 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
   BDSTunnelFactory*     tf            = BDSTunnelFactory::Instance(); // shortcut
 
   // iterator to the BDSBeamlineElement where the previous tunnel section finished
-  BDSBeamlineIterator previousEndElement = flatBeamline->begin();
+  BDSBeamline::iterator previousEndElement = flatBeamline->begin();
 
   // iterator to the BDSBeamlineElement where the current tunnel section will begin
-  BDSBeamlineIterator startElement       = flatBeamline->begin();
+  BDSBeamline::iterator startElement       = flatBeamline->begin();
 
   // iterator to the BDSBeamlineElement where the current tunnel section will end
-  BDSBeamlineIterator endElement         = flatBeamline->begin();
+  BDSBeamline::iterator endElement         = flatBeamline->begin();
 
   // if a straight tunnel, just build one long segment, add it to beam line and return
   if (BDSGlobalConstants::Instance()->BuildTunnelStraight())
@@ -133,7 +133,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
       return tunnelLine;
     } 
 
-  BDSBeamlineIterator it = flatBeamline->begin();
+  BDSBeamline::iterator it = flatBeamline->begin();
 
   // skip the first item if it's a sampler - so algorithm doesn't try to make null section before it
   if(IsASampler(it))
@@ -407,7 +407,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
   return tunnelLine;
 }
 
-G4bool BDSTunnelBuilder::IsASampler(const BDSBeamlineIterator& iterator)
+G4bool BDSTunnelBuilder::IsASampler(const BDSBeamline::iterator& iterator)
 {
   BDSAcceleratorComponent* component = (*iterator)->GetAcceleratorComponent();
   BDSSampler* sampler = dynamic_cast<BDSSampler*>(component);

@@ -28,6 +28,7 @@ public:
   inline G4String        GetVisMacroFilename() const     {return visMacroFilename;}
   inline G4bool          GetVisDebug() const             {return visDebug;}
   inline G4String        GetOutputFilename() const       {return outputFilename;}
+  inline G4bool          GetOutputFilenameSet() const    {return outputFilenameSet;}
   inline BDSOutputFormat GetOutputFormat() const         {return outputFormat;}
   inline G4bool          GetOutline() const              {return outline;}
   inline G4String        GetOutlineFilename() const      {return outlineFilename;}
@@ -65,12 +66,13 @@ private :
   /// Helper method to set the BDSIMPath correctly
   G4String GetPath(G4String filename);
 
-  G4String        inputFilename;    ///> input filename
-  G4String        visMacroFilename; ///> visualisation filename
-  G4bool          visDebug;         ///> flag for visualisation debug
+  G4String        inputFilename;    ///< input filename
+  G4String        visMacroFilename; ///< visualisation filename
+  G4bool          visDebug;         ///< flag for visualisation debug
   
   ///@{ Parameter for output format
   G4String        outputFilename;
+  G4bool          outputFilenameSet;
   BDSOutputFormat outputFormat;
   ///@}
   
@@ -86,7 +88,7 @@ private :
   G4double gflashemin;
   ///@}
   
-  G4bool batch; ///> Flag for batch / interactive mode
+  G4bool batch; ///< Flag for batch / interactive mode
 
   ///@{ Geant4 verbose levels
   G4bool verbose;
@@ -100,15 +102,15 @@ private :
   G4int  verboseSteppingLevel;
   ///@}
   
-  G4bool circular; ///> Flag for circular machine
-  G4int  seed;     ///> The seed value for the random number generator
-  G4bool setSeed;  ///> If the seed was set by command line - override if specified in options
+  G4bool circular; ///< Flag for circular machine
+  G4int  seed;     ///< The seed value for the random number generator
+  G4bool setSeed;  ///< If the seed was set by command line - override if specified in options
   /// string that points to path where files are searched; based on environment variable or else input filename
   G4String itsBDSIMPATH;
-  G4bool   setSeedState;      ///> If seed state is specifed - use the state saved in it
-  G4String seedStateFilename; ///> The seed state filename
+  G4bool   setSeedState;      ///< If seed state is specifed - use the state saved in it
+  G4String seedStateFilename; ///< The seed state filename
 
-  G4int    nGenerate; ///> The number of primary events to simulate
+  G4int    nGenerate; ///< The number of primary events to simulate
 
   ///@{ Parameter for controlling geometry export
   G4bool   exportGeometry;

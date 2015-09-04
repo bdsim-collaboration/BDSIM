@@ -6,7 +6,7 @@
 class G4VPhysicalVolume;
 
 /**
- * @brief A singleton class for writing fully constructed geometry from BDSIM
+ * @brief A class for writing fully constructed geometry from BDSIM
  * out to other formats.
  * 
  * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
@@ -15,9 +15,7 @@ class G4VPhysicalVolume;
 class BDSGeometryWriter
 {
 public:
-  /// Singleton accessor
-  static BDSGeometryWriter* Instance();
-
+  BDSGeometryWriter();
   ~BDSGeometryWriter();
 
   /// Dispatch function that matchest the geometry type and uses the appropraite
@@ -29,12 +27,6 @@ public:
   /// be the filename ending in .gdml. If the supplied volume is nullptr (default),
   /// the world volume will be written out.
   void WriteToGDML(G4String outputFileName, G4VPhysicalVolume* volume = nullptr);
-
-private:
-  /// Private default constructor for singleton
-  BDSGeometryWriter();
-
-  static BDSGeometryWriter* _instance;
 };
 
 #endif

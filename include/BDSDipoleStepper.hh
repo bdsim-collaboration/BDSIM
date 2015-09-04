@@ -1,22 +1,18 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-*/
-
 #ifndef BDSDipoleStepper_HH
 #define BDSDipoleStepper_HH
+
+#include "BDSAuxiliaryNavigator.hh"
+
 #include "globals.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
-#include "G4Navigator.hh"
 
-class BDSDipoleStepper : public G4MagIntegratorStepper
+class BDSDipoleStepper:
+  public G4MagIntegratorStepper, public BDSAuxiliaryNavigator
 {
-
-public:  // with description
-  
+public:
   BDSDipoleStepper(G4Mag_EqRhs *EqRhs);
-  
   ~BDSDipoleStepper();
   
   virtual void Stepper( const G4double y[],
@@ -39,8 +35,8 @@ public:  // with description
   virtual G4int IntegratorOrder()const { return 2; }
   G4double itsLength;
   G4double itsAngle;
+  
 protected:
-  //  --- Methods used to implement all the derived classes -----
   
   void AdvanceHelix(const G4double yIn[],
 		    const G4double dydx[],
@@ -50,7 +46,6 @@ protected:
 		          G4double yErr[]);
   
 private:
-  
   G4ThreeVector yInitial, yMidPoint, yFinal;
   // Data stored in order to find the chord.
   
@@ -60,24 +55,11 @@ private:
   G4double itsBField;
   G4double itsDist;
 
-  /// The navigator object used to locate a point in the geometry and
-  /// get the local position and rotation transforms without affecting
-  /// the real navigator that handles the tracking.
-  G4Navigator* dipoleNavigator;
-  
-  /// Record whether the class has been used or not. Use to get the
-  /// world volume for a local navigator object on first use. We have
-  /// to do this because the stepper objects are typically created before
-  /// the world is constructed and registered. However, we don't need to do
-  /// this every time - only once.
-  G4bool initialised;
-
   // use for high amplitude particles
   G4MagIntegratorStepper* backupStepper;
 
   /// Total beam energy
-  G4double nominalEnergy;
-  
+  G4double nominalEnergy; 
 };
 
 inline  void BDSDipoleStepper::SetBGrad(G4double aBGrad)

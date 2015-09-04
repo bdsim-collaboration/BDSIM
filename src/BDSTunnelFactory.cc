@@ -12,17 +12,22 @@
 
 #include "globals.hh"                        // geant4 globals / types
 
-BDSTunnelFactory* BDSTunnelFactory::_instance = 0;
+BDSTunnelFactory* BDSTunnelFactory::_instance = nullptr;
 
 BDSTunnelFactory* BDSTunnelFactory::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSTunnelFactory();}
   return _instance;
 }
 
 BDSTunnelFactory::BDSTunnelFactory()
 {;}
+
+BDSTunnelFactory::~BDSTunnelFactory()
+{
+  _instance = nullptr;
+}
 
 BDSTunnelFactoryBase* BDSTunnelFactory::GetAppropriateFactory(BDSTunnelType tunnelType)
 {

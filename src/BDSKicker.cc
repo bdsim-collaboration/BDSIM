@@ -14,14 +14,14 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 
-BDSKicker::BDSKicker(G4String           name,
-		     G4double           length,
-		     G4double           bField,
-		     G4double           bGrad,
-		     G4double           angle,
-		     G4bool             verticalKicker,
-		     BDSBeamPipeInfo*   beamPipeInfo,
-		     BDSMagnetOuterInfo magnetOuterInfo):
+BDSKicker::BDSKicker(G4String            name,
+		     G4double            length,
+		     G4double            bField,
+		     G4double            bGrad,
+		     G4double            angle,
+		     G4bool              verticalKicker,
+		     BDSBeamPipeInfo*    beamPipeInfo,
+		     BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::hkicker, name, length,
 	    beamPipeInfo, magnetOuterInfo),
   itsBField(bField),
@@ -78,29 +78,23 @@ void BDSKicker::BuildBeampipe()
       kickerAper1 = beamPipeInfo->aper1;
       kickerAper2 = beamPipeInfo->aper2;
     }
-  
-  beampipe =
-    BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeInfo->beamPipeType,
-						   name,
-						   chordLength,
-						   kickerAper1,
-						   kickerAper2,
-						   beamPipeInfo->aper3,
-						   beamPipeInfo->aper4,
-						   beamPipeInfo->vacuumMaterial,
-						   beamPipeInfo->beamPipeThickness,
-						   beamPipeInfo->beamPipeMaterial);
+
+  BDSBeamPipeFactory* fac = BDSBeamPipeFactory::Instance();
+  beampipe = fac->CreateBeamPipe(beamPipeInfo->beamPipeType,
+				 name,
+				 chordLength,
+				 kickerAper1,
+				 kickerAper2,
+				 beamPipeInfo->aper3,
+				 beamPipeInfo->aper4,
+				 beamPipeInfo->vacuumMaterial,
+				 beamPipeInfo->beamPipeThickness,
+				 beamPipeInfo->beamPipeMaterial);
 
   //manually do BeamPipeCommonTasks here as rotation in placement can be different
 
   // SET FIELD
   beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false);
-
-  // register objects using geometry component base class
-  InheritObjects(beampipe);
-
-  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe())
-    {RegisterSensitiveVolume(beampipe->GetAllSensitiveVolumes());}
 
   // if it's a vertical kicker, rotate the beam pipe by 90 degrees
   // this also rotates the dipole stepper in the vacuum volume
@@ -110,15 +104,15 @@ void BDSKicker::BuildBeampipe()
   RegisterRotationMatrix(kickerRotation);
 
   // place beampipe
-  itsPhysiComp = new G4PVPlacement(kickerRotation,                        // rotation
-				   (G4ThreeVector)0,                      // at (0,0,0)
-				   beampipe->GetContainerLogicalVolume(), // its logical volume
-				   name + "_beampipe_pv",	          // its name
-				   containerLogicalVolume,                // its mother  volume
-				   false,                                 // no boolean operation
-				   0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
+  G4PVPlacement* pipePV = new G4PVPlacement(kickerRotation,                        // rotation
+					    (G4ThreeVector)0,                      // at (0,0,0)
+					    beampipe->GetContainerLogicalVolume(), // its logical volume
+					    name + "_beampipe_pv",	          // its name
+					    containerLogicalVolume,                // its mother  volume
+					    false,                                 // no boolean operation
+					    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
 
-  RegisterPhysicalVolume(itsPhysiComp);
+  RegisterPhysicalVolume(pipePV);
   
   // record extent of geometry
   if (isVerticalKicker){

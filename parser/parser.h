@@ -25,17 +25,21 @@
 
 #include "cavitymodel.h"
 #include "element.h"
-#include "elementlist.h"
+#include "fastlist.h"
 #include "elementtype.h"
 #include "gmad.h"
 #include "options.h"
 #include "parameters.h"
+#include "physicsbiasing.h"
 #include "tunnel.h"
 
 int yyerror(const char *);
 
 extern FILE* yyin;
 extern int yylex();
+
+namespace GMAD {
+
 extern const int ECHO_GRAMMAR;
 
 const int MAX_EXPAND_ITERATIONS = 50;
@@ -49,17 +53,20 @@ struct Options options;
 //struct Element element;
 struct Tunnel tunnel;
 struct CavityModel cavitymodel;
+class PhysicsBiasing xsecbias;
+ 
 // list of all encountered elements
-ElementList element_list;
+FastList<Element> element_list;
 
 // temporary list
 std::list<struct Element> tmp_list;
 
-ElementList beamline_list;
+FastList<Element> beamline_list;
 std::list<struct Element>  material_list;
 std::list<struct Element>  atom_list;
 std::vector<struct Tunnel> tunnel_list;
 std::vector<struct CavityModel> cavitymodel_list;
+FastList<PhysicsBiasing> xsecbias_list;
 
 std::string current_line;
 std::string current_start;
@@ -84,13 +91,13 @@ void add_sampler(std::string name, std::string before, int before_count);
 void add_csampler(std::string name, std::string before, int before_count, double length, double rad);
 /// insert a beam dumper into beamline_list
 void add_dump(std::string name, std::string before, int before_count);
-/// insert beam gas                                             
-void add_gas(std::string name, std::string before, int before_count, std::string material);
 /// insert tunnel
 void add_tunnel(Tunnel& tunnel);
 /// insert cavitymodel
 void add_cavitymodel(CavityModel& cavitymodel);
-double property_lookup(ElementList& el_list, std::string element_name, std::string property_name);
+/// insert xsecbias
+void add_xsecbias(PhysicsBiasing& xsecbias);
+double property_lookup(FastList<Element>& el_list, std::string element_name, std::string property_name);
 /// add element to temporary element sequence tmp_list
 void add_element_temp(std::string name, int number, bool pushfront, ElementType linetype);
 
@@ -153,6 +160,8 @@ int write_table(const struct Parameters& params,std::string name, ElementType ty
   e.ydir = params.ydir;
   e.zdir = params.zdir;
 
+  e.bias = params.bias;
+  
   // BLM
   if(params.blmLocZset)
     e.blmLocZ = params.blmLocZ;
@@ -185,14 +194,21 @@ int write_table(const struct Parameters& params,std::string name, ElementType ty
   if(params.k2set) {
     if (type==ElementType::_SEXTUPOLE) e.k2 = params.k2;
     else {
-      std::cout << "Warning: k2 will not be set for element " << name << " of type " << type << std::endl;
+      std::cout << "Warning: k2 will not be set for element \"" << name << "\" of type " << type << std::endl;
     }
   }
   // Octupole
   if(params.k3set) {
     if (type==ElementType::_OCTUPOLE) e.k3 = params.k3;
     else {
-      std::cout << "Warning: k3 will not be set for element " << name << " of type " << type << std::endl;
+      std::cout << "Warning: k3 will not be set for element \"" << name << "\" of type " << type << std::endl;
+    }
+  }
+  // Decapole
+  if(params.k4set) {
+    if (type==ElementType::_DECAPOLE) e.k4 = params.k4;
+    else {
+      std::cout << "Warning: k4 will not be set for element \"" << name << "\" of type " << type << std::endl;
     }
   }
   // Multipole
@@ -319,7 +335,6 @@ int expand_line(std::string name, std::string start, std::string end)
   // insert material entries.
   // TODO:::
   
-  
   // parse starting from the second element until the list is expanded
   int iteration = 0;
   while(!is_expanded)
@@ -377,10 +392,11 @@ int expand_line(std::string name, std::string start, std::string end)
 		  printf("done\n");
 #endif
 		  
-		} else  // element of undefined type - neglecting
+		} else  // element of undefined type
 		{
-		  std::cout << "Warning : Expanding line " << name << " : element " << (*it).name << " has not been defined , skipping " << std::endl;
-		  beamline_list.erase(it--);
+		  std::cerr << "Error : Expanding line \"" << name << "\" : element \"" << (*it).name << "\" has not been defined! " << std::endl;
+		  exit(1);
+		  // beamline_list.erase(it--);
 		}
 	      
 	    } else  // element - keep as it is 
@@ -392,7 +408,7 @@ int expand_line(std::string name, std::string start, std::string end)
       iteration++;
       if( iteration > MAX_EXPAND_ITERATIONS )
 	{
-	  std::cout << "Error : Line expansion of '" << name << "' seems to loop, " << std::endl
+	  std::cerr << "Error : Line expansion of '" << name << "' seems to loop, " << std::endl
 		    << "possible recursive line definition, quitting" << std::endl;
 	  exit(1);
 	}
@@ -497,17 +513,6 @@ void add_dump(std::string name, std::string before, int before_count)
   beamline_list.insert(it,e);
 }
 
-void add_gas(std::string name, std::string before, int before_count, std::string material)
-{
-  std::cout << "gas " << material << " will be inserted into " << before << " number " << before_count << std::endl;
-  struct Element e;
-  e.type = ElementType::_GAS;
-  e.name = name;
-  e.lst = nullptr;
-  // insert gas with uniqueness requirement
-  element_list.push_back(e,true);
-}
-
 void add_tunnel(Tunnel& tunnel)
 {
   // copy from global
@@ -532,7 +537,19 @@ void add_cavitymodel(CavityModel& cavitymodel)
   cavitymodel_list.push_back(c);
 }
 
-double property_lookup(ElementList& el_list, std::string element_name, std::string property_name)
+void add_xsecbias(PhysicsBiasing& xsecbias)
+{
+  // copy from global
+  PhysicsBiasing b(xsecbias);
+  // reset xsecbias
+  xsecbias.clear();
+#ifdef BDSDEBUG 
+  b.print();
+#endif
+  xsecbias_list.push_back(b);
+}
+ 
+double property_lookup(FastList<Element>& el_list, std::string element_name, std::string property_name)
 {
   std::list<struct Element>::iterator it = el_list.find(element_name);
   std::list<struct Element>::const_iterator iterEnd = el_list.end();
@@ -589,4 +606,5 @@ int add_var(std::string name, double value, int is_reserved)
   return 0;
 }
 
+} // namespace
 #endif

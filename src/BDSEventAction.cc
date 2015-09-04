@@ -292,7 +292,7 @@ void BDSEventAction::WritePrimaryVertex()
   G4double           weight          = primaryParticle->GetWeight();
   G4int              PDGType         = primaryParticle->GetPDGcode();
   G4int              nEvent          = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-  G4String           samplerName     = "primaries";
+  G4String           samplerName     = "Primaries";
   G4int              turnstaken      = BDSGlobalConstants::Instance()->GetTurnsTaken();
   bdsOutput->WritePrimary(samplerName, E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
 }

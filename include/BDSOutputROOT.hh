@@ -59,12 +59,12 @@ public:
 
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn) override;
-  virtual void Commit() override;  ///> close the file
-  virtual void Write()  override;  ///> close and open new file
+  virtual void Commit() override;  ///< close the file
+  virtual void Write()  override;  ///< close and open new file
 
 private:
 
-  void Init(); /// output initialisation
+  void Init(); ///< output initialisation
 
   void BuildSamplerTree(G4String name);
   TFile* theRootOutputFile;
@@ -82,6 +82,7 @@ private:
   float x0=0.0,xp0=0.0,y0=0.0,yp0=0.0,z0=0.0,zp0=0.0,E0=0.0,t0=0.0;
   float x_prod=0.0,xp_prod=0.0,y_prod=0.0,yp_prod=0.0,z_prod=0.0,zp_prod=0.0,E_prod=0.0,t_prod=0.0;
   float x_lastScat=0.0,xp_lastScat=0.0,y_lastScat=0.0,yp_lastScat=0.0,z_lastScat=0.0,zp_lastScat=0.0,E_lastScat=0.0,t_lastScat=0.0;
+  std::string process;
 
   /// local parameters
   float x=0.0,xp=0.0,y=0.0,yp=0.0,z=0.0,zp=0.0,E=0.0,t=0.0;
@@ -144,7 +145,8 @@ private:
 		    G4int    EventNo, 
 		    G4int    ParentID,
 		    G4int    TrackID, 
-		    G4int    TurnsTaken);
+		    G4int    TurnsTaken,
+		    G4String Process);
   
 };
 

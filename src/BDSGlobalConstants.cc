@@ -16,18 +16,20 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
-extern Options options;
+namespace GMAD {
+  extern GMAD::Options options;
+}
 
-BDSGlobalConstants* BDSGlobalConstants::_instance = 0;
+BDSGlobalConstants* BDSGlobalConstants::_instance = nullptr;
 
 BDSGlobalConstants* BDSGlobalConstants::Instance()
 {
-  if(_instance==0)
-    {_instance = new BDSGlobalConstants(options);}
+  if(_instance==nullptr)
+    {_instance = new BDSGlobalConstants(GMAD::options);}
   return _instance;
 }
 
-BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
+BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsBeamParticleDefinition(nullptr),
   itsBeamMomentum(0.0),
   itsBeamKineticEnergy(0.0),
@@ -295,5 +297,5 @@ BDSGlobalConstants::~BDSGlobalConstants()
   delete zeroMagField;
   delete tunnelInfo;
   delete defaultUserLimits;
-  _instance = 0;
+  _instance = nullptr;
 }

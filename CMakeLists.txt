@@ -365,14 +365,14 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
 endif()
 
 get_target_property(binaryname bdsimexec OUTPUT_NAME)
-set(binary ${CMAKE_CURRENT_BINARY_DIR}/./${binaryname})
+set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 
 # Install the targets:
 set(executables bdsimexec)
 set(libraries bdsim)
 set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
 bdsim_install_targets(${executables} ${libraries})
-file(GLOB headers include/*.hh parser/*.h)
+file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh ${CMAKE_CURRENT_SOURCE_DIR}/parser/*.h)
 bdsim_install_headers(${headers})
 
 # Visualisation directory

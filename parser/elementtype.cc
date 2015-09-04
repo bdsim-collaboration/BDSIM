@@ -1,12 +1,13 @@
 #include "elementtype.h"
 #include <string>
 
+using namespace GMAD;
 
-std::ostream& operator << (std::ostream& out, ElementType type) {
+std::ostream& GMAD::operator << (std::ostream& out, ElementType type) {
   return out << typestr(type);
 }
 
-std::string typestr(ElementType type) {
+std::string GMAD::typestr(ElementType type) {
   switch(type){
   case ElementType::_MARKER : 
     return "marker";
@@ -24,6 +25,8 @@ std::string typestr(ElementType type) {
     return "sextupole";
   case ElementType::_OCTUPOLE :
     return "octupole";
+  case ElementType::_DECAPOLE :
+    return "decapole";
   case ElementType::_MULT :
     return "multipole";
   case ElementType::_SOLENOID : 
@@ -46,8 +49,6 @@ std::string typestr(ElementType type) {
     return "sampler";
   case ElementType::_CSAMPLER:
     return "csampler";
-  case ElementType::_GAS:
-    return "gas";
   case ElementType::_TUNNEL:
     return "tunnel";
   case ElementType::_MATERIAL:

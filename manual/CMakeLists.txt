@@ -17,16 +17,6 @@ set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 # Sphinx cache with pickled ReST documents
 set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/doctrees")
 
-# copy source
-execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/source ${CMAKE_CURRENT_BINARY_DIR}/source)
-
-#make directory for examples
-execute_process(COMMAND mkdir -p ${BINARY_BUILD_DIR}/source/examples)
-
-#copy .rst and .png files from examples
-execute_process(COMMAND find ${CMAKE_CURRENT_SOURCE_DIR}/../examples
-\( -iname *.rst -o -iname *.png \) -exec cp {} ${BINARY_BUILD_DIR}/source/examples/. \;)
-
 # HTML output directory
 set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/html")
 # LATEX output directory
@@ -39,8 +29,16 @@ configure_file(
     "${BINARY_BUILD_DIR}/conf.py"
     @ONLY)
 
+#make directory for examples
+execute_process(COMMAND mkdir -p ${BINARY_BUILD_DIR}/source/examples)
+
+#copy .rst and .png files from examples (seems hard to get right syntax in custom_target)
+execute_process(COMMAND find ${CMAKE_CURRENT_SOURCE_DIR}/../examples \( -iname *.rst -o -iname *.png \) -exec cp {} ${BINARY_BUILD_DIR}/source/examples/. \; )
+
 add_custom_target(manual
-    ${SPHINX_EXECUTABLE}
+    # Copy sources to build directory
+    ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/source ${CMAKE_CURRENT_BINARY_DIR}/source
+    COMMAND ${SPHINX_EXECUTABLE}
         -q -b html
         -c "${BINARY_BUILD_DIR}"
         -d "${SPHINX_CACHE_DIR}"
@@ -51,7 +49,9 @@ add_custom_target(manual
 # The number of LaTeX runs is quite conservative, but I don't expect it
 # to get run often, so the little extra time won't hurt.
 add_custom_target(manual-pdf
-    ${SPHINX_EXECUTABLE}
+    # Copy sources to build directory
+    ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/source ${CMAKE_CURRENT_BINARY_DIR}/source
+    COMMAND ${SPHINX_EXECUTABLE}
         -q -b latex
         -c "${BINARY_BUILD_DIR}"
         -d "${SPHINX_CACHE_DIR}"

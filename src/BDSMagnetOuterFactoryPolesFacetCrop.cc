@@ -11,18 +11,18 @@
 
 #include <cmath>
 
-BDSMagnetOuterFactoryPolesFacetCrop* BDSMagnetOuterFactoryPolesFacetCrop::_instance = 0;
+BDSMagnetOuterFactoryPolesFacetCrop* BDSMagnetOuterFactoryPolesFacetCrop::_instance = nullptr;
 
 BDSMagnetOuterFactoryPolesFacetCrop* BDSMagnetOuterFactoryPolesFacetCrop::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSMagnetOuterFactoryPolesFacetCrop();}
   return _instance;
 }
 
 BDSMagnetOuterFactoryPolesFacetCrop::~BDSMagnetOuterFactoryPolesFacetCrop()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 // NOTE unforunately can't get this through inheritance as BDSMagnetOuterFactoryPolesFacet

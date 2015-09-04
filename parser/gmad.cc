@@ -4,8 +4,10 @@
  */
 
 #include "gmad.h"
-#include "elementlist.h"
+#include "element.h"
+#include "fastlist.h"
 #include "parameters.h"
+//#include "parser.h"
 #include "sym_table.h"
 
 #include <cmath>
@@ -14,25 +16,25 @@
 #include <list>
 #include <map>
 #include <string>
-#include <cstring>
 
-extern struct Parameters params;
+using namespace GMAD;
+
+namespace GMAD {
+  extern struct Parameters params;
+  extern std::string yyfilename;
+  extern int add_func(std::string name, double (*func)(double));
+  extern int add_var(std::string name, double val,int is_reserved = 0);
+
+  extern FastList<Element> beamline_list;
+  extern FastList<Element> element_list;
+  extern std::list<struct Element> tmp_list;
+  extern std::map<std::string, struct symtab*> symtab_map;
+}
 
 extern int yyparse();
-
 extern FILE *yyin;
-extern std::string yyfilename;
 
-extern int add_func(std::string name, double (*func)(double));
-extern int add_var(std::string name, double val,int is_reserved = 0);
-
-// aux. parser lists - to clear
-extern ElementList element_list;
-extern std::list<struct Element> tmp_list;
-extern std::map<std::string, struct symtab*> symtab_map;
-
-extern void print(std::list<Element> l, int ident);
-
+// anonymous namespace
 namespace {
 void init()
 {
@@ -87,7 +89,7 @@ void init()
 }
 }
 
-int gmad_parser(FILE *f)
+int GMAD::gmad_parser(FILE *f)
 {
   init();
 
@@ -128,7 +130,7 @@ int gmad_parser(FILE *f)
   return 0;
 }
 
-int gmad_parser(std::string name)
+int GMAD::gmad_parser(std::string name)
 {
 #ifdef BDSDEBUG
   std::cout << "gmad_parser> opening file" << std::endl;
@@ -192,12 +194,13 @@ double* GetKs(int i)
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
-  double* result = new double[5];
+  double* result = new double[6];
   result[0] = it->ks;
   result[1] = it->k0;
   result[2] = it->k1;
   result[3] = it->k2;
   result[4] = it->k3;
+  result[5] = it->k4;
   return result;
 }
 

@@ -1,7 +1,3 @@
-/* BDSIM code.
-
-*/
-
 #include "globals.hh"
 #include "BDSXYMagField.hh"
 #include <fstream>

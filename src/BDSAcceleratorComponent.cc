@@ -22,6 +22,8 @@ G4bool      BDSAcceleratorComponent::checkOverlaps = false;
 
 struct BDSBeamPipeInfo;
 
+G4double const BDSAcceleratorComponent::lengthSafetyLarge = 1*CLHEP::um;
+
 BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4double         arcLengthIn,
 						 G4double         angleIn,
@@ -29,19 +31,19 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4int            precisionRegionIn,
 						 BDSBeamPipeInfo* beamPipeInfoIn):
   BDSGeometryComponent(nullptr,nullptr),
+  nTimesPlaced(0),
   name(nameIn),
   arcLength(arcLengthIn),
   type(typeIn),
   angle(angleIn),
   precisionRegion(precisionRegionIn),
-  beamPipeInfo(beamPipeInfoIn)
+  beamPipeInfo(beamPipeInfoIn),
+  readOutLV(nullptr),
+  acceleratorVacuumLV(nullptr)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << __METHOD_NAME__ << "(" << name << ")" << G4endl;
 #endif
-  nTimesPlaced = 0;
-  readOutLV    = nullptr;
-
   // initialise static members
   if (!emptyMaterial)
     {emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());}
@@ -170,3 +172,4 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
 
   return readOutLV;
 }
+

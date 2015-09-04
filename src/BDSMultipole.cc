@@ -13,11 +13,11 @@
 BDSMultipole::BDSMultipole(G4String            name,
 			   G4double            length,
 			   std::list<G4double> akn, // list of normal multipole strengths
-			   // (NOT multiplied by multipole length)
+			                            // (NOT multiplied by multipole length)
 			   std::list<G4double> aks, // list of skew multipole strengths
-			   // (NOT multiplied by multipole length)
+			                            // (NOT multiplied by multipole length)
 			   BDSBeamPipeInfo*    beamPipeInfo,
-			   BDSMagnetOuterInfo  magnetOuterInfo):
+			   BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::multipole, name, length,
 	    beamPipeInfo, magnetOuterInfo)
 {

@@ -119,7 +119,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4ThreeVector momDirLastScatter = bdsTraj->GetMomDirAtLastScatter(theTrack);
   G4double timeLastScatter        = bdsTraj->GetTimeAtLastScatter(theTrack);
   G4double energyLastScatter      = bdsTraj->GetEnergyAtLastScatter(theTrack);
-  G4double vertexEnergy = theTrack->GetVertexKineticEnergy() + theTrack->GetParticleDefinition()->GetPDGMass();
+  G4double vertexEnergy           = theTrack->GetVertexKineticEnergy() + theTrack->GetParticleDefinition()->GetPDGMass();
   G4double vertexTime             = bdsTraj->GetTimeAtVertex(theTrack);
 
   // store production/scatter point
@@ -133,6 +133,11 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 
   G4double weight = theTrack->GetWeight();
  
+  // process that creating the particle
+  G4String process = "";
+  if(theTrack->GetCreatorProcess()) 
+    process = theTrack->GetCreatorProcess()->GetProcessName();
+  
   BDSSamplerHit* smpHit = new BDSSamplerHit(SampName,
 					    BDSGlobalConstants::Instance()->GetInitialPoint(),
 					    production,
@@ -146,7 +151,8 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 					    ParentID, 
 					    TrackID,
 					    turnstaken,
-					    itsType);
+					    itsType,
+					    process);
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " Sampler : " << SampName << G4endl;

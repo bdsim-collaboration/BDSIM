@@ -1,11 +1,11 @@
 #include "BDSMagnetOuterFactoryLHCRight.hh"
 #include "BDSMagnetOuterFactoryLHC.hh"
 
-BDSMagnetOuterFactoryLHCRight* BDSMagnetOuterFactoryLHCRight::_instance = 0;
+BDSMagnetOuterFactoryLHCRight* BDSMagnetOuterFactoryLHCRight::_instance = nullptr;
 
 BDSMagnetOuterFactoryLHCRight* BDSMagnetOuterFactoryLHCRight::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSMagnetOuterFactoryLHCRight();}
   return _instance;
 }
@@ -17,5 +17,5 @@ BDSMagnetOuterFactoryLHCRight::BDSMagnetOuterFactoryLHCRight():
 
 BDSMagnetOuterFactoryLHCRight::~BDSMagnetOuterFactoryLHCRight()
 {
-  _instance = 0;
+  _instance = nullptr;
 }

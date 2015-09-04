@@ -1,3 +1,34 @@
+V0.8.develop - 2015 / ?? / ??
+=============================
+
+New Features
+------------
+
+Bug fixes
+---------
+
+Geometry
+^^^^^^^^
+
+Physics
+^^^^^^^
+
+Parser
+^^^^^^
+
+* Occasional material parser segfault fixed (issue #25)
+
+Tracking
+^^^^^^^^
+
+* Introducted a separate auxilliary G4Navigator to avoid accidentally moving
+  the particle during tracking when querying global to local transforms.
+
+  
+General
+^^^^^^^
+
+
 V0.8 - 2015 / 08 / 10
 =====================
 

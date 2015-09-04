@@ -1,3 +1,6 @@
+#ifndef __SYM_TABLE_H
+#define __SYM_TABLE_H
+
 /* common header  for the lexer and the parser 
 to share 
 Symbol table for numeric variables and functions
@@ -6,6 +9,7 @@ Symbol table for numeric variables and functions
 #include <list>
 #include <string>
 
+namespace GMAD {
 struct symtab {
   enum class symtabtype {
     _INT=0,
@@ -23,3 +27,6 @@ struct symtab {
   // constructors
   explicit symtab(std::string s):is_reserved(0),type(symtabtype::_INT),name(s),funcptr(nullptr),value(0.0){}
 };
+}
+
+#endif

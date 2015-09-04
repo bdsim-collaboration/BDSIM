@@ -5,7 +5,7 @@
 #include <string>
 
 // types of elements
-
+namespace GMAD {
 enum class ElementType {
   _NONE = -1,
   _MARKER = 1,
@@ -15,20 +15,20 @@ enum class ElementType {
   _QUAD  = 5,
   _SEXTUPOLE  = 6,
   _OCTUPOLE = 7,
-  _MULT  = 8,
-  _SOLENOID = 9,
-  _ELEMENT = 10,
+  _DECAPOLE = 8,
+  _MULT  = 9,
+  _SOLENOID = 10,
   _LINE = 11,
   _REV_LINE= -11, //for line inversion in sublines
   _COLLIMATOR = 12, // obsolete?
   _ECOL = 13,
-  _MUSPOILER = 62,
   _RCOL = 14,
   _LASER=15,
   _MATERIAL=16,
   _RBEND=17,
   _ATOM = 18,
   _SEQUENCE = 19,
+  _ELEMENT = 20,
   _SCREEN = 21,
   _AWAKESCREEN = 22,
   _VKICK=31,
@@ -36,9 +36,9 @@ enum class ElementType {
   _SAMPLER = 41,
   _CSAMPLER = 42,
   _DUMP = 43,
-  _GAS = 51,
   _TUNNEL = 52,
   _TRANSFORM3D = 61,
+  _MUSPOILER = 62,
   _TELEPORTER  = 98,
   _TERMINATOR  = 99
 };
@@ -48,5 +48,6 @@ std::string typestr(ElementType type);
 
 /// output operator
 std::ostream& operator << (std::ostream& out, ElementType type);
+}
 
 #endif

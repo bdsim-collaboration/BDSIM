@@ -23,15 +23,18 @@
 #include <map>
 
 #include "parser/element.h"
-#include "parser/elementlist.h"
 #include "parser/options.h"
 
-extern Options options;
+namespace GMAD {
+  extern GMAD::Options options;
+  extern std::list<struct Element>  material_list;
+  extern std::list<struct Element>  atom_list;
+}
 
-BDSMaterials* BDSMaterials::_instance = 0;
+BDSMaterials* BDSMaterials::_instance = nullptr;
 
 BDSMaterials* BDSMaterials::Instance(){
-  if(_instance==0) {
+  if(_instance==nullptr) {
     _instance = new BDSMaterials();
   }
   return _instance;
@@ -875,7 +878,7 @@ void BDSMaterials::Initialise()
 
   //Default vacuum (same composition as residual vacuum in warm sections of LHC).
   // can be overridden by vacMaterial option
-  G4double vacpressure=options.vacuumPressure*CLHEP::bar;
+  G4double vacpressure=GMAD::options.vacuumPressure*CLHEP::bar;
   density = (CLHEP::STP_Temperature/temperature) * (vacpressure/(1.*CLHEP::atmosphere))  * 29*CLHEP::g/(22.4*1.e-3*CLHEP::m3) ;
 #ifdef BDSDEBUG 
   G4cout<< " ***************** defining Vacuum"<<G4endl;
@@ -1190,7 +1193,7 @@ BDSMaterials::~BDSMaterials(){
   delete petMaterialPropertiesTable;
   delete vacMaterialPropertiesTable;  
 
-  _instance = 0;
+  _instance = nullptr;
 }
 
 void BDSMaterials::PrepareRequiredMaterials()
@@ -1207,91 +1210,89 @@ void BDSMaterials::PrepareRequiredMaterials()
 
   // convert the parsed atom list to list of Geant4 G4Elements
   
-  std::list<struct Element>::iterator it;
-
   if (verbose || debug) G4cout << "parsing the atom list..."<< G4endl;
-  for(it = atom_list.begin();it!=atom_list.end();it++)
+  for(auto it : GMAD::atom_list)
   {
 #ifdef BDSDEBUG
     G4cout << "---->adding Atom, "
-           << "name= " << (*it).name << " "
-           << "symbol= " << (*it).symbol << " "
-           << "Z= " << (*it).Z << " "
-           << "A= " << (*it).A << "g/mole "
+           << "name= " << it.name << " "
+           << "symbol= " << it.symbol << " "
+           << "Z= " << it.Z << " "
+           << "A= " << it.A << "g/mole "
            << G4endl;
 #endif
 
-    AddElement((*it).name,(*it).symbol,(*it).Z,(*it).A);
+    AddElement(it.name,it.symbol,it.Z,it.A);
   }
-  if (verbose || debug) G4cout << "size of atom list: "<< atom_list.size() << G4endl;
+  if (verbose || debug) G4cout << "size of atom list: "<< GMAD::atom_list.size() << G4endl;
   
   // convert the parsed material list to list of Geant4 G4Materials
   if (verbose || debug) G4cout << "parsing the material list..."<< G4endl;
-  for(it = material_list.begin();it!=material_list.end();it++)
+  for(auto it : GMAD::material_list)
   {
     G4State itsState;
-    if      ((*it).state=="solid")  itsState = kStateSolid;
-    else if ((*it).state=="liquid") itsState = kStateLiquid;
-    else if ((*it).state=="gas")    itsState = kStateGas;
+    if      (it.state=="solid")  itsState = kStateSolid;
+    else if (it.state=="liquid") itsState = kStateLiquid;
+    else if (it.state=="gas")    itsState = kStateGas;
     else {
-      G4cout << "Unknown material state "<< (*it).state 
+      G4cout << "Unknown material state "<< it.state 
 	     << ", setting it to default (solid)"
 	     << G4endl;
-      (*it).state="solid";
+      it.state="solid";
       itsState = kStateSolid;
     }
 
-    if((*it).Z != 0) {
+    if(it.Z != 0) {
 #ifdef BDSDEBUG  
       G4cout << "---->adding Material, "
-             << "name= "<< (*it).name << " "
-             << "Z= " << (*it).Z << " "
-             << "A= " << (*it).A << "g/mole "
-             << "density= "<< (*it).density << "g/cm3 "
-	     << "state= " << (*it).state << " "
-	     << "T= " << (*it).temper << "K "
-	     << "P= " << (*it).pressure << "atm "
+             << "name= "<< it.name << " "
+             << "Z= " << it.Z << " "
+             << "A= " << it.A << "g/mole "
+             << "density= "<< it.density << "g/cm3 "
+	     << "state= " << it.state << " "
+	     << "T= " << it.temper << "K "
+	     << "P= " << it.pressure << "atm "
              << G4endl;
 #endif
-      AddMaterial((*it).name,
-		  (*it).Z,
-		  (*it).A,
-		  (*it).density,
+      AddMaterial(it.name,
+		  it.Z,
+		  it.A,
+		  it.density,
 		  itsState,
-		  (*it).temper,
-		  (*it).pressure);
+		  it.temper,
+		  it.pressure);
     }
-    else if((*it).components.size() != 0){
+    else if(it.components.size() != 0){
 #ifdef BDSDEBUG 
       G4cout << "---->adding Material, "
-	     << "name= "<< (*it).name << " "
-	     << "density= "<< (*it).density << "g/cm3 "
-	     << "state= " << (*it).state << " "
-	     << "T= " << (*it).temper << "K "
-	     << "P= " << (*it).pressure << "atm "
-	     << "ncomponents= " << (*it).components.size() << " "
+	     << "name= "<< it.name << " "
+	     << "density= "<< it.density << "g/cm3 "
+	     << "state= " << it.state << " "
+	     << "T= " << it.temper << "K "
+	     << "P= " << it.pressure << "atm "
+	     << "ncomponents= " << it.components.size() << " "
 	     << G4endl;
 #endif
 
-      if((*it).componentsWeights.size()==(*it).components.size()) {
+      if(it.componentsWeights.size()==it.components.size()) {
 	
-	AddMaterial((G4String)(*it).name,
-		    (G4double)(*it).density,
+	AddMaterial((G4String)it.name,
+		    (G4double)it.density,
 		    (G4State)itsState,
-		    (G4double)(*it).temper,
-		    (G4double)(*it).pressure,
-		    (std::list<std::string>)(*it).components,
-		    (std::list<G4int>)(*it).componentsWeights);
+		    (G4double)it.temper,
+		    (G4double)it.pressure,
+		    (std::list<std::string>)it.components,
+		    (std::list<G4int>)it.componentsWeights);
       }
-      else if((*it).componentsFractions.size()==(*it).components.size()) {
+      else if(it.componentsFractions.size()==it.components.size()) {
 
-        AddMaterial((*it).name,
-		    (*it).density,
+        AddMaterial(it.name,
+		    it.density,
 		    itsState,
-		    (*it).temper,
-		    (*it).pressure,
-		    (*it).components,
-		    (*it).componentsFractions);
+		    it.temper,
+		    it.pressure,
+		    it.components,
+		    it.componentsFractions);
       }
       else {
 	G4Exception("Badly defined material - number of components is not equal to number of weights or mass fractions!", "-1", FatalErrorInArgument, "");
@@ -1303,5 +1304,5 @@ void BDSMaterials::PrepareRequiredMaterials()
       exit(1);
     }
   }
-  if (verbose || debug) G4cout << "size of material list: "<< material_list.size() << G4endl;
+  if (verbose || debug) G4cout << "size of material list: "<< GMAD::material_list.size() << G4endl;
 }

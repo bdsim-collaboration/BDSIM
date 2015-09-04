@@ -25,7 +25,7 @@ BDSOutputROOT::BDSOutputROOT()
 BDSOutputROOT::~BDSOutputROOT()
 {
   if (theRootOutputFile && theRootOutputFile->IsOpen())
-    {theRootOutputFile->Write();}
+    {theRootOutputFile->Write(0,TObject::kOverwrite);}
 }
 
 void BDSOutputROOT::BuildSamplerTree(G4String name)
@@ -82,29 +82,43 @@ void BDSOutputROOT::BuildSamplerTree(G4String name)
   
   SamplerTree->Branch("weight",     &weight,     "weight/F");
   SamplerTree->Branch("partID",     &part,       "partID/I");
-  SamplerTree->Branch("nEvent",     &eventno,        "nEvent/I");
+  SamplerTree->Branch("nEvent",     &eventno,    "nEvent/I");
   SamplerTree->Branch("parentID",   &pID,        "parentID/I");
   SamplerTree->Branch("trackID",    &track_id,   "trackID/I");
   SamplerTree->Branch("turnnumber", &turnnumber, "turnnumber/I");
+  SamplerTree->Branch("process",    &process);
 }
 
 void BDSOutputROOT::Init()
 {
+  const BDSExecOptions*     execOptions     = BDSExecOptions::Instance();
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   // set up the root file
-  filename = BDSExecOptions::Instance()->GetOutputFilename();
+  G4String basefilename = execOptions->GetOutputFilename();
   // if more than one file add number (starting at 0)
   int evntsPerNtuple = globalConstants->GetNumberOfEventsPerNtuple();
   if (evntsPerNtuple>0 && globalConstants->GetNumberToGenerate()>evntsPerNtuple) {
-    filename += "_" + BDS::StringFromInt(outputFileNumber);
+    basefilename += "_" + BDS::StringFromInt(outputFileNumber);
   }
-  filename += ".root";
+  filename = basefilename + ".root";
+  // policy: overwrite if output filename specifically set, otherwise increase number
+  // always check in interactive mode
+  if (!execOptions->GetOutputFilenameSet() || !execOptions->GetBatch()) {
+    // check if file exists
+    int nTimeAppended = 1;
+    while (BDS::FileExists(filename)) {
+      // if exists remove trailing .root
+      filename = basefilename + "-" + std::to_string(nTimeAppended);
+      filename += ".root";
+      nTimeAppended +=1;
+    }
+  }
   
   G4cout<<"Setting up new file: "<<filename<<G4endl;
   theRootOutputFile=new TFile(filename,"RECREATE", "BDS output file");
 
   // Build sampler tree
-  G4String primariesSamplerName="primaries";
+  G4String primariesSamplerName="Primaries";
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " building sampler tree named: " << primariesSamplerName << G4endl;
 #endif
@@ -250,7 +264,8 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
 				 G4int    EventNo, 
 				 G4int    ParentID,
 				 G4int    TrackID, 
-				 G4int    TurnsTaken)
+				 G4int    TurnsTaken,
+				 G4String Process)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -302,6 +317,7 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
   pID         = ParentID; 
   track_id    = TrackID;
   turnnumber  = TurnsTaken;
+  process     = Process;
   sTree->Fill();
 }
 
@@ -345,7 +361,8 @@ void BDSOutputROOT::WritePrimary(G4String samplerName,
 	       nEvent, 
 	       0, 
 	       1, 
-	       turnsTaken);
+	       turnsTaken,
+	       "");
 }
 
 void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
@@ -405,8 +422,8 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 		   (*hc)[i]->GetEventNo(), 
 		   (*hc)[i]->GetParentID(), 
 		   (*hc)[i]->GetTrackID(),
-		   (*hc)[i]->GetTurnsTaken()
-		   );
+		   (*hc)[i]->GetTurnsTaken(),
+		   (*hc)[i]->GetProcess());
     }
 }
 
@@ -600,7 +617,7 @@ void BDSOutputROOT::Write()
       G4cout << __METHOD_NAME__ << " - ROOT file found and open, writing." << G4endl;
 #endif
       //Dump all other quantities to file...
-      theRootOutputFile->Write();
+      theRootOutputFile->Write(0,TObject::kOverwrite);
       theRootOutputFile->Close();
       delete theRootOutputFile;
       theRootOutputFile=nullptr;
