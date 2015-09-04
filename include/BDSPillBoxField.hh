@@ -3,7 +3,7 @@
 
 
 
-class BSDPillBoxField: public G4ElectroMagneticField
+class BDSPillBoxField: public G4ElectroMagneticField
 {
 public:
   BDSPillBoxField(G4double EFieldMax, G4double cavityRadius);
@@ -14,6 +14,7 @@ public:
 protected:
   G4double cavityRadius;
   G4double frequency; //angular frequency
+  G4double EFieldMax;
 private:
   
-}
+};
