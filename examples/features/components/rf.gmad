@@ -1,6 +1,6 @@
 d1: drift, l=0.5;
 rf1 : rf, l=5*m, gradient = 10 * MV / m;
-rf2 : rf, l=5*m, gradient = 10 * MV / m, cavityModel = "Tesla9Cell"
+rf2 : rf, l=5*m, gradient = 10 * MV / m, cavityModel = "Tesla9Cell";
 d2: drift, l=0.5;
 
 Tesla9Cell: cavityModel,
