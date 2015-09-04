@@ -4,7 +4,7 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSTeleporterStepper.hh"
 
-#include "G4MagintegratorStepper.hh"
+#include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
 
 BDSTeleporterStepper::BDSTeleporterStepper(G4Mag_EqRhs* eqRHS):
