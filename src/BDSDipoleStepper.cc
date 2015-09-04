@@ -4,7 +4,7 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
-#include "G4MagintegratorStepper.hh"
+#include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
 #include "G4ClassicalRK4.hh"
 
