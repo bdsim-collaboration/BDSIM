@@ -20,7 +20,7 @@
     extern char* yyfilename;
   
     const int PEDANTIC = 1; ///< strict checking, exits when element or parameter is not known
-    const int ECHO_GRAMMAR = 0; ///< print grammar rule expansion (for debugging)
+    const int ECHO_GRAMMAR = 1; ///< print grammar rule expansion (for debugging)
     const int INTERACTIVE = 0; ///< print output of commands (like in interactive mode)
     /* for more debug with parser:
        1) set yydebug to 1 in parser.tab.cc (needs to be reset as this file gets overwritten from time to time!) 
@@ -932,7 +932,28 @@ vectnum : '{' numbers '}'
 		  }
 	        _tmpstring.clear();
 	      }
-	}
+	  }
+        | '[' numbers ']'
+	  {
+	    if(execute)
+	      {
+	        //printf("matched vector of size %d\n",_tmparray.size());
+	        $$ = new struct Array;
+	        std::list<double>::iterator it;
+	        for(it=_tmparray.begin();it!=_tmparray.end();it++)
+		  {
+		    $$->data.push_back(*it);
+		  }
+    	        _tmparray.clear();
+
+	        std::list<std::string>::iterator lIter;
+	        for(lIter = _tmpstring.begin(); lIter != _tmpstring.end(); lIter++)
+		  {
+		    $$->symbols.push_back(*lIter);
+		  }
+	        _tmpstring.clear();
+	      }
+	  }
 ;
 
 vectstr : '[' letters ']'
@@ -947,10 +968,21 @@ vectstr : '[' letters ']'
 	    _tmpstring.clear();
 	  }
 	}
+        |'{' letters '}'
+	{
+	  if(execute)
+	  {
+	    $$ = new struct Array;
+	    std::list<std::string>::iterator iter;
+	    for(iter = _tmpstring.begin(); iter != _tmpstring.end(); iter++)
+	      $$->symbols.push_back(*iter);
+
+	    _tmpstring.clear();
+	  }
+	}
 ;
 
-numbers : 
-        | aexpr ',' numbers 
+numbers : aexpr ',' numbers 
           {
 	    if(execute)
 	      _tmparray.push_front($1);
@@ -962,8 +994,7 @@ numbers :
         }
 ;
 
-letters :
-	| STR ',' letters
+letters : STR ',' letters
           {
             if(execute)
               _tmpstring.push_front($1);
