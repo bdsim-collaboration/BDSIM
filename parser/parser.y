@@ -20,7 +20,7 @@
     extern char* yyfilename;
   
     const int PEDANTIC = 1; ///< strict checking, exits when element or parameter is not known
-    const int ECHO_GRAMMAR = 1; ///< print grammar rule expansion (for debugging)
+    const int ECHO_GRAMMAR = 0; ///< print grammar rule expansion (for debugging)
     const int INTERACTIVE = 0; ///< print output of commands (like in interactive mode)
     /* for more debug with parser:
        1) set yydebug to 1 in parser.tab.cc (needs to be reset as this file gets overwritten from time to time!) 
@@ -912,28 +912,10 @@ vecexpr :   VECVAR
 
 ;
 
-vectnum : '{' numbers '}' 
-	  {
-	    if(execute)
-	      {
-	        //printf("matched vector of size %d\n",_tmparray.size());
-	        $$ = new struct Array;
-	        std::list<double>::iterator it;
-	        for(it=_tmparray.begin();it!=_tmparray.end();it++)
-		  {
-		    $$->data.push_back(*it);
-		  }
-    	        _tmparray.clear();
+vectnumexec : '{' numbers '}'
+            | '[' numbers ']'
 
-	        std::list<std::string>::iterator lIter;
-	        for(lIter = _tmpstring.begin(); lIter != _tmpstring.end(); lIter++)
-		  {
-		    $$->symbols.push_back(*lIter);
-		  }
-	        _tmpstring.clear();
-	      }
-	  }
-        | '[' numbers ']'
+vectnum : vectnumexec
 	  {
 	    if(execute)
 	      {
@@ -956,31 +938,22 @@ vectnum : '{' numbers '}'
 	  }
 ;
 
-vectstr : '[' letters ']'
-	{
-	  if(execute)
-	  {
-	    $$ = new struct Array;
-	    std::list<std::string>::iterator iter;
-	    for(iter = _tmpstring.begin(); iter != _tmpstring.end(); iter++)
-	      $$->symbols.push_back(*iter);
-
-	    _tmpstring.clear();
-	  }
-	}
-        |'{' letters '}'
-	{
-	  if(execute)
-	  {
-	    $$ = new struct Array;
-	    std::list<std::string>::iterator iter;
-	    for(iter = _tmpstring.begin(); iter != _tmpstring.end(); iter++)
-	      $$->symbols.push_back(*iter);
-
-	    _tmpstring.clear();
-	  }
-	}
+vectstrexec : '[' letters ']'
+            | '{' letters '}'
 ;
+
+vectstr : vectstrexec
+	{
+	  if(execute)
+	  {
+	    $$ = new struct Array;
+	    std::list<std::string>::iterator iter;
+	    for(iter = _tmpstring.begin(); iter != _tmpstring.end(); iter++)
+	      $$->symbols.push_back(*iter);
+
+	    _tmpstring.clear();
+	  }
+	}
 
 numbers : aexpr ',' numbers 
           {
@@ -1262,8 +1235,7 @@ xsecbias_options : VARIABLE '=' aexpr ',' xsecbias_options
 		    }
 ;
 
-option_parameters : 
-                  | VARIABLE '=' aexpr ',' option_parameters
+option_parameters : VARIABLE '=' aexpr ',' option_parameters
                     {
 		      if(execute)
 			options.set_value($1->name,$3);
@@ -1287,8 +1259,7 @@ option_parameters :
 		    }
 ;
 
-beam_parameters :
-                | VARIABLE '=' aexpr ',' beam_parameters
+beam_parameters : VARIABLE '=' aexpr ',' beam_parameters
                   {
 		    if(execute)
 		      options.set_value($1->name,$3);
