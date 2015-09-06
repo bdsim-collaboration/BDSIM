@@ -30,12 +30,16 @@ namespace GMAD {
     double tangentLineAngle;
     /// thickness
     double thickness;
+    /// frequency in MHz (?)
+    double frequency;
+    /// phase in what unit?
+    double phase;
     /// number of points that will be used to make the cell shape
     /// more will be more accurate but will also increase tracking time
     int numberOfPoints;
     /// number of cells per cavity
     int numberOfCells;
-  
+    
     /// constructor
     CavityModel();
     /// reset
