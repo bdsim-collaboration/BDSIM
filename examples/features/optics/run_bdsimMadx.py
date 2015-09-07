@@ -3,13 +3,11 @@
 """
 This script executes the bdsimMadx tester.
 
-chmod a+x run_bdsimMadx.py                                     to allow execution
-
 ./run_bdsimMadx.py                                             to run default FODO example here
 ./run_bdsimMadx.py -c                                          to clean produced files
 ./run_bdsimMadx.py --file="fodo.madx"                          to run another madx file
 ./run_bdsimMadx.py --file="fodo.madx" --folder="fodofolder"    eg. to run tester in a different folder
-./run_bdsimMadx.py --foldername=" " -c                         to clean files if folder is used
+./run_bdsimMadx.py --folder=" " -c                             to clean files if folder is used
 ./run_bdsimMadx.py --option=value                              to set parameters and run
 
 options: filename, foldername, nparticles, verbose 
