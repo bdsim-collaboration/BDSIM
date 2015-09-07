@@ -447,8 +447,8 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  G4cout << __METHOD_NAME__ << "placing readout geometry" << G4endl;
 #endif
 	  G4String readOutPVName = name + "_ro_pv";
-	  // don't need the returned pointer from new for anything - purely instantiating registers it with g4
-	  readOutPV = new G4PVPlacement(*pt,                                  // placement transform
+	  G4Transform3D* ropt = (*it)->GetReadOutPlacementTransform();
+	  readOutPV = new G4PVPlacement(*ropt,                                  // placement transform
 					(*it)->GetPlacementName() + "_ro_pv", // name
 					readOutLV,                            // logical volume
 					readOutWorldPV,                       // mother  volume

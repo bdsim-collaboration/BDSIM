@@ -3,6 +3,9 @@
 #include "BDSRunManager.hh"
 #include "BDSUtilities.hh"
 
+#include "globals.hh" // geant4 types / globals
+#include "G4ThreeVector.hh"
+
 #include <algorithm>
 #include <cctype>
 #include <cstdlib>
@@ -133,6 +136,17 @@ void BDS::HandleAborts(int signal_number)
 G4bool BDS::IsFinite(const G4double& variable)
 {
   if (std::abs(variable) > std::numeric_limits<double>::epsilon())
+    {return true;}
+  else
+    {return false;}
+}
+
+G4bool BDS::IsFinite(const G4ThreeVector& variable)
+{
+  G4bool resultX = BDS::IsFinite(variable.x());
+  G4bool resultY = BDS::IsFinite(variable.y());
+  G4bool resultZ = BDS::IsFinite(variable.z());
+  if (resultX || resultY || resultZ)
     {return true;}
   else
     {return false;}

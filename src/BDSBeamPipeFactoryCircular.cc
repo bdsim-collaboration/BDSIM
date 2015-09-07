@@ -16,7 +16,7 @@
 #include "G4VSolid.hh"
 
 #include <cmath>
-#include <utility>                         // for std::pair
+#include <utility>               // for std::pair
 
 BDSBeamPipeFactoryCircular* BDSBeamPipeFactoryCircular::_instance = nullptr;
 
@@ -27,9 +27,8 @@ BDSBeamPipeFactoryCircular* BDSBeamPipeFactoryCircular::Instance()
   return _instance;
 }
 
-BDSBeamPipeFactoryCircular::BDSBeamPipeFactoryCircular():BDSBeamPipeFactoryBase()
-{
-}
+BDSBeamPipeFactoryCircular::BDSBeamPipeFactoryCircular()
+{;}
 
 BDSBeamPipeFactoryCircular::~BDSBeamPipeFactoryCircular()
 {

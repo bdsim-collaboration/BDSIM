@@ -27,7 +27,7 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
   G4ThreeVector GlobalPosition= G4ThreeVector( yIn[0], yIn[1], yIn[2]);  
   G4double InitMag=v0.mag();
   G4double kappa=  (-fPtrMagEqOfMot->FCof()*itsBDblPrime) /InitMag;
-
+  /*
 #ifdef BDSDEBUG  
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << "kappa                 : " << kappa << G4endl;
@@ -55,7 +55,7 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
          << G4endl 
          << G4endl;
 #endif 
-
+  */
    if(fabs(kappa)<1.e-12)
      {
        G4ThreeVector positionMove  = (h/InitMag) * v0;
