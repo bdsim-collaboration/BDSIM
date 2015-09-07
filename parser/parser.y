@@ -912,7 +912,10 @@ vecexpr :   VECVAR
 
 ;
 
-vectnum : '{' numbers '}' 
+vectnumexec : '{' numbers '}'
+            | '[' numbers ']'
+
+vectnum : vectnumexec
 	  {
 	    if(execute)
 	      {
@@ -932,10 +935,14 @@ vectnum : '{' numbers '}'
 		  }
 	        _tmpstring.clear();
 	      }
-	}
+	  }
 ;
 
-vectstr : '[' letters ']'
+vectstrexec : '[' letters ']'
+            | '{' letters '}'
+;
+
+vectstr : vectstrexec
 	{
 	  if(execute)
 	  {
@@ -947,10 +954,8 @@ vectstr : '[' letters ']'
 	    _tmpstring.clear();
 	  }
 	}
-;
 
-numbers : 
-        | aexpr ',' numbers 
+numbers : aexpr ',' numbers 
           {
 	    if(execute)
 	      _tmparray.push_front($1);
@@ -962,8 +967,7 @@ numbers :
         }
 ;
 
-letters :
-	| STR ',' letters
+letters : STR ',' letters
           {
             if(execute)
               _tmpstring.push_front($1);
@@ -1231,8 +1235,7 @@ xsecbias_options : VARIABLE '=' aexpr ',' xsecbias_options
 		    }
 ;
 
-option_parameters : 
-                  | VARIABLE '=' aexpr ',' option_parameters
+option_parameters : VARIABLE '=' aexpr ',' option_parameters
                     {
 		      if(execute)
 			options.set_value($1->name,$3);
@@ -1256,8 +1259,7 @@ option_parameters :
 		    }
 ;
 
-beam_parameters :
-                | VARIABLE '=' aexpr ',' beam_parameters
+beam_parameters : VARIABLE '=' aexpr ',' beam_parameters
                   {
 		    if(execute)
 		      options.set_value($1->name,$3);
