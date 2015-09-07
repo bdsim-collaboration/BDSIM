@@ -124,6 +124,6 @@ in their own file / tree.
 	     start in front of the sampler, never pass through it and never be registered. For this
 	     reason, putting a sampler at the beginning of a beam line should be avoided to avoid
 	     confusion. The primary output (either separate file in ASCII or as a tree in root) records
-	     all primary corrdinates before they enter the tracking in the geometry, so it always
+	     all primary coordinates before they enter the tracking in the geometry, so it always
 	     contains all primary particles.
 	     

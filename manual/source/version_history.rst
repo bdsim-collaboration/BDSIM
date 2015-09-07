@@ -21,7 +21,7 @@ Parser
 Tracking
 ^^^^^^^^
 
-* Introducted a separate auxilliary G4Navigator to avoid accidentally moving
+* Introduced a separate auxiliary G4Navigator to avoid accidentally moving
   the particle during tracking when querying global to local transforms.
 
   
