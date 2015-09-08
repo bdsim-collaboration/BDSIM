@@ -101,9 +101,6 @@ public:
   std::vector<G4LogicalVolume*> GetGFlashVolumes() const;
   ///@}
 
-  /// Record of how many times this component has been placed (ie copies used).
-  G4int nTimesPlaced;
-
   /// Increment (+1) the number of times this component has been placed (ie another copy used).
   void  IncrementNTimesPlaced();
 
@@ -139,6 +136,9 @@ protected:
   const G4String   type;
   ///@}
   
+  /// Record of how many times this component has been placed (ie copies used).
+  G4int nTimesPlaced;
+
   ///@{ Protected member variable that can be modified by derived classes.
   G4double         chordLength;
   G4double         angle;

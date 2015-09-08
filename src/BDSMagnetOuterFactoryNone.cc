@@ -2,7 +2,7 @@
 
 #include "BDSBeamPipe.hh"
 #include "BDSDebug.hh"
-#include "BDSGeometryComponent.hh"
+#include "BDSMagnetOuter.hh"
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4LogicalVolume.hh"
@@ -30,12 +30,13 @@ BDSMagnetOuterFactoryNone::~BDSMagnetOuterFactoryNone()
   _instance = nullptr;
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateSectorBend(G4String      /*name*/,
-								  G4double      /*length*/,
-								  BDSBeamPipe*  /*beamPipe*/,
-								  G4double      /*boxSize*/,
-								  G4double      /*angle*/,
-								  G4Material*   /*outerMaterial*/)
+BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSectorBend(G4String      /*name*/,
+							    G4double      /*length*/,
+							    BDSBeamPipe*  /*beamPipe*/,
+							    G4double      /*outerDiameter*/,
+							    G4double      /*containerLength*/,
+							    G4double      /*angle*/,
+							    G4Material*   /*outerMaterial*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -43,35 +44,13 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateSectorBend(G4String      
   return nullptr;
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateRectangularBend(G4String      /*name*/,
-								       G4double      /*length*/,
-								       BDSBeamPipe*  /*beamPipe*/,
-								       G4double      /*boxSize*/,
-								       G4double      /*angle*/,
-								       G4Material*   /*outerMaterial*/)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return nullptr;
-}
-
-BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateQuadrupole(G4String      /*name*/,
-								  G4double      /*length*/,
-								  BDSBeamPipe*  /*beamPipe*/,
-								  G4double      /*boxSize*/,
-								  G4Material*   /*outerMaterial*/)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return nullptr;
-}
-
-BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateSextupole(G4String      /*name*/,
+BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRectangularBend(G4String      /*name*/,
 								 G4double      /*length*/,
 								 BDSBeamPipe*  /*beamPipe*/,
-								 G4double      /*boxSize*/,
+								 G4double      /*outerDiameter*/,
+								 G4double      /*containerDiameter*/,
+								 G4double      /*containerLength*/,
+								 G4double      /*angle*/,
 								 G4Material*   /*outerMaterial*/)
 {
 #ifdef BDSDEBUG
@@ -80,11 +59,12 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateSextupole(G4String      /
   return nullptr;
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateOctupole(G4String      /*name*/,
-								G4double      /*length*/,
-								BDSBeamPipe*  /*beamPipe*/,
-								G4double      /*boxSize*/,
-								G4Material*   /*outerMaterial*/)
+BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateQuadrupole(G4String      /*name*/,
+							    G4double      /*length*/,
+							    BDSBeamPipe*  /*beamPipe*/,
+							    G4double      /*outerDiameter*/,
+							    G4double      /*containerLength*/,
+							    G4Material*   /*outerMaterial*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -92,11 +72,12 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateOctupole(G4String      /*
   return nullptr;
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateDecapole(G4String      /*name*/,
-								G4double      /*length*/,
-								BDSBeamPipe*  /*beamPipe*/,
-								G4double      /*boxSize*/,
-								G4Material*   /*outerMaterial*/)
+BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSextupole(G4String      /*name*/,
+							   G4double      /*length*/,
+							   BDSBeamPipe*  /*beamPipe*/,
+							   G4double      /*outerDiameter*/,
+							   G4double      /*containerLength*/,
+							   G4Material*   /*outerMaterial*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -104,11 +85,12 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateDecapole(G4String      /*
   return nullptr;
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateSolenoid(G4String      /*name*/,
-								G4double      /*length*/,
-								BDSBeamPipe*  /*beamPipe*/,
-								G4double      /*boxSize*/,
-								G4Material*   /*outerMaterial*/)
+BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateOctupole(G4String      /*name*/,
+							  G4double      /*length*/,
+							  BDSBeamPipe*  /*beamPipe*/,
+							  G4double      /*outerDiameter*/,
+							  G4double      /*containerLength*/,
+							  G4Material*   /*outerMaterial*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -116,11 +98,12 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateSolenoid(G4String      /*
   return nullptr;
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateMultipole(G4String      /*name*/,
-								 G4double      /*length*/,
-								 BDSBeamPipe*  /*beamPipe*/,
-								 G4double      /*boxSize*/,
-								 G4Material*   /*outerMaterial*/)
+BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateDecapole(G4String      /*name*/,
+							  G4double      /*length*/,
+							  BDSBeamPipe*  /*beamPipe*/,
+							  G4double      /*outerDiameter*/,
+							  G4double      /*containerLength*/,
+							  G4Material*   /*outerMaterial*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -128,11 +111,12 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateMultipole(G4String      /
   return nullptr;
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateRfCavity(G4String      /*name*/,
-								G4double      /*length*/,
-								BDSBeamPipe*  /*beamPipe*/,
-								G4double      /*boxSize*/,
-								G4Material*   /*outerMaterial*/)
+BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSolenoid(G4String      /*name*/,
+							  G4double      /*length*/,
+							  BDSBeamPipe*  /*beamPipe*/,
+							  G4double      /*outerDiameter*/,
+							  G4double      /*containerLength*/,
+							  G4Material*   /*outerMaterial*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -140,11 +124,12 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateRfCavity(G4String      /*
   return nullptr;
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateMuSpoiler(G4String      /*name*/,
-								 G4double      /*length*/,
-								 BDSBeamPipe*  /*beamPipe*/,
-								 G4double      /*boxSize*/,
-								 G4Material*   /*outerMaterial*/)
+BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMultipole(G4String      /*name*/,
+							   G4double      /*length*/,
+							   BDSBeamPipe*  /*beamPipe*/,
+							   G4double      /*outerDiameter*/,
+							   G4double      /*containerLength*/,
+							   G4Material*   /*outerMaterial*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -152,12 +137,39 @@ BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateMuSpoiler(G4String      /
   return nullptr;
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryNone::CreateKicker(G4String      /*name*/,
-							      G4double      /*length*/,
-							      BDSBeamPipe*  /*beamPipe*/,
-							      G4double      /*boxSize*/,
-							      G4bool        /*vertical*/,
-							      G4Material*   /*outerMaterial*/)
+BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRfCavity(G4String      /*name*/,
+							  G4double      /*length*/,
+							  BDSBeamPipe*  /*beamPipe*/,
+							  G4double      /*outerDiameter*/,
+							  G4double      /*containerLength*/,
+							  G4Material*   /*outerMaterial*/)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  return nullptr;
+}
+
+BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMuSpoiler(G4String      /*name*/,
+							   G4double      /*length*/,
+							   BDSBeamPipe*  /*beamPipe*/,
+							   G4double      /*outerDiameter*/,
+							   G4double      /*containerLength*/,
+							   G4Material*   /*outerMaterial*/)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  return nullptr;
+}
+
+BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateKicker(G4String      /*name*/,
+							G4double      /*length*/,
+							BDSBeamPipe*  /*beamPipe*/,
+							G4double      /*outerDiameter*/,
+							G4double      /*containerLength*/,
+							G4bool        /*vertical*/,
+							G4Material*   /*outerMaterial*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;

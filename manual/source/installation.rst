@@ -140,8 +140,8 @@ BDSIM can then be installed for access from anywhere on the system with::
 To change the installation directory, see `Configuring the BDSIM Build with CMake`_.
 From any directory on your computer, ``bdsim`` should be available.
 
-.. note:: This step is not stictly necessary. It is possible to simply create an alias to the
-	  exectuable ``bdsim`` that exists in the build directory in your shell profile. This
+.. note:: This step is not strictly necessary. It is possible to simply create an alias to the
+	  executable ``bdsim`` that exists in the build directory in your shell profile. This
 	  is common practice for developers who may wish to have a debug build of the code as
 	  well as the normal release build.
 
@@ -187,7 +187,7 @@ BDSIM can then be installed for access from anywhere on the system with::
   > sudo make install
 
 .. note:: This step is not stictly necessary. It is possible to simply create an alias to the
-	  exectuable ``bdsim`` that exists in the build directory in your shell profile. This
+	  executable ``bdsim`` that exists in the build directory in your shell profile. This
 	  is common practice for developers who may wish to have a debug build of the code as
 	  well as the normal release build.
 	  
@@ -271,8 +271,8 @@ to make the HTML manual in the folder ``manual/html``. Similarly::
 will make the pdf Manual in the folder ``manual/latex``.
 
 .. note:: This requires the sphinx documentation system to be installed and all utility
-	  python packages to be availbe in python from any directory. The latexpdf build
-	  requuires a full installation of pdflatex to be available as well.
+	  python packages to be available in python from any directory. The latexpdf build
+	  requires a full installation of pdflatex to be available as well.
 
 
 Making Doxygen Code Documentation
@@ -412,7 +412,7 @@ please contact us (see :ref:`support-section`).
 
 .. rubric:: Footnotes
 
-.. [#macafsnote] Note, the use of **AFS** with the Mac OSX build of BDISM is not supported
+.. [#macafsnote] Note, the use of **AFS** with the Mac OSX build of BDSIM is not supported
 		 as there is no compatible version of Geant4 available on AFS.
 
 .. [#ncoresnote] If your computer supports hyper-threading, you can use twice the number of

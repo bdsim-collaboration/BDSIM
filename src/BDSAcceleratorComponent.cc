@@ -31,10 +31,10 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4int            precisionRegionIn,
 						 BDSBeamPipeInfo* beamPipeInfoIn):
   BDSGeometryComponent(nullptr,nullptr),
-  nTimesPlaced(0),
   name(nameIn),
   arcLength(arcLengthIn),
   type(typeIn),
+  nTimesPlaced(0),
   angle(angleIn),
   precisionRegion(precisionRegionIn),
   beamPipeInfo(beamPipeInfoIn),
@@ -92,12 +92,14 @@ void BDSAcceleratorComponent::Build()
 
   // set user limits for container
 #ifndef NOUSERLIMITS
-  if(containerLogicalVolume) {
-    G4double maxStepFactor=0.5;
-    G4UserLimits* containerUserLimits =  new G4UserLimits();
-    containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
-    containerLogicalVolume->SetUserLimits(containerUserLimits);
-  }
+  if(containerLogicalVolume)
+    {
+      G4double maxStepFactor=0.5;
+      G4UserLimits* containerUserLimits =  new G4UserLimits();
+      containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
+      containerLogicalVolume->SetUserLimits(containerUserLimits);
+      RegisterUserLimits(containerUserLimits);
+    }
 #endif
 
   // visual attributes

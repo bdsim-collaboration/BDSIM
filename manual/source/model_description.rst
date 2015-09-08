@@ -39,7 +39,7 @@ Examples::
 Coordinates & Units
 -------------------
 
-In Geant4, global euclidean coordinates are used for tracking purposes, however,
+In Geant4, global Euclidean coordinates are used for tracking purposes, however,
 in describing a lattice with BDSIM, curvilinear coordinates are used as is common with
 accelerators (X,Y,S).
 
@@ -608,7 +608,7 @@ the geometry file.
 .. note:: The length must be larger than the geometry so that it is contained within it and
 	  no overlapping geometry will be produced. However, care must be taken as the length
 	  will be the length of the component inserted in the beamline.  If this is much larger
-	  than the size requried for the geometry, the beam may be mismatched into the rest of
+	  than the size required for the geometry, the beam may be mismatched into the rest of
 	  the accelerator. A common practice is to add a picometre to the length of the geometry.
 
 Examples::
@@ -725,7 +725,7 @@ Example::
 .. versionadded:: 0.7
 
 		  `magnetGeometryType` parameter allows different generic magnet geometry
-		  libraries to be used. Before, only cyclindrical geometry was available.
+		  libraries to be used. Before, only cylindrical geometry was available.
 		  Examples of other geometry types are described below.
 
 .. deprecated:: 0.65
@@ -800,7 +800,7 @@ Poles Square - "`polessquare`"
 
 This magnet geometry has again, individual poles according to the order of the magnet but the
 yoke is an upright square section to which the poles are attached. This geometry behaves in the
-same wasy as `polescircular` with regard to the beam pipe size.
+same way as `polescircular` with regard to the beam pipe size.
 
 .. versionadded:: 0.7
 
@@ -826,7 +826,7 @@ Poles Faceted - "`polesfacet`"
 
 This magnet geometry is much like `polessquare`, however the yoke is such that the pole always
 joins at a flat piece of yoke and not in a corner. This geometry behaves in the
-same wasy as `polescircular` with regard to the beam pipe size.
+same way as `polescircular` with regard to the beam pipe size.
 
 .. versionadded:: 0.7
 
@@ -918,7 +918,7 @@ and rotations. Every component can be displaced transversely and rotated along t
 
 .. note:: Components that have a finite angle (rbend and sbend) will only respond to vertical offsets as
 	  horizontal offsets and rotations may lead to overlapping geometry. This limitation will be addressed
-	  in posible future releases, but necessitates significant changes to the geometry construction.
+	  in possible future releases, but necessitates significant changes to the geometry construction.
 
 .. note:: A right-handed coordinate system is used and the beamline built along the `z` direction.
 	  
@@ -1345,7 +1345,7 @@ Generates a beam with all coordinates 0 at the nominal energy.::
 	X0 = 100*um,
 	Y0 = 3.5*um;
 
-Generate a particle with an offset of 100 :math:`\mu\mathrm{m}` horizonally and 3.5 :math:`\mu\mathrm{m}` vertically.
+Generate a particle with an offset of 100 :math:`\mu\mathrm{m}` horizontally and 3.5 :math:`\mu\mathrm{m}` vertically.
 
 gaussmatrix
 ^^^^^^^^^^^
@@ -1526,7 +1526,7 @@ Defines an elliptical annulus in phase space in each dimension that's uncorrelat
 
 halo
 ^^^^
-The halo distrubtion is effectively a flat phase space with the central beam core removed at 
+The halo distribution is effectively a flat phase space with the central beam core removed at 
 :math:`\epsilon_{\rm core}`. The beam core is defined using the standard twiss parameters described 
 previously. The implicit general form of a rotated ellipse is  
 
@@ -1567,11 +1567,11 @@ weighting functions are either `flat`, one over emittance `oneoverr` or exponent
 +----------------------------------+-----------------------------------------------------------------------------+
 | `alfy`                           | Vertical alpha function                                                     |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `envelopeX`                      | Horitontal position maximum [m]                                             |
+| `envelopeX`                      | Horizontal position maximum [m]                                             |
 +----------------------------------+-----------------------------------------------------------------------------+
 | `envelopeY`                      | Vertical position maximum [m]                                               |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `envelopeXp`                     | Horitontal angle maximum [m]                                                |
+| `envelopeXp`                     | Horizontal angle maximum [m]                                                |
 +----------------------------------+-----------------------------------------------------------------------------+
 | `envelopeYp`                     | Vertical angle maximum [m]                                                  |
 +----------------------------------+-----------------------------------------------------------------------------+

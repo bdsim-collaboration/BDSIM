@@ -5,8 +5,6 @@
 #include "G4Box.hh"
 #include "G4VSolid.hh"
 
-class BDSTiltOffset;
-
 BDSCollimatorRectangular::BDSCollimatorRectangular(G4String name,
 						   G4double length,
 						   G4double outerDiameter,

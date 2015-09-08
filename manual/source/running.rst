@@ -90,7 +90,7 @@ executed a window such as this will appear (depending on the visualiser you use)
 
 Note, the visualiser is part of Geant4 so if the desired visualiser isn't available, you
 must recompile Geant4 with the correct visualiser (and subsequently BDSIM afterwards). Geant4
-also uses the Cmake configuration system. The visualiser shown is the OpenGL Qt visualiser, which
+also uses the CMake configuration system. The visualiser shown is the OpenGL Qt visualiser, which
 we recommend for its ease of use and high level of interactivity.
 
 More details can be found in :ref:`Visualisation`.
