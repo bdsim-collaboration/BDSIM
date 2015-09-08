@@ -22,11 +22,11 @@
 
 class BDSTunnelSection;
 
-BDSTunnelFactoryRectAboveGround* BDSTunnelFactoryRectAboveGround::_instance = 0;
+BDSTunnelFactoryRectAboveGround* BDSTunnelFactoryRectAboveGround::_instance = nullptr;
 
 BDSTunnelFactoryRectAboveGround* BDSTunnelFactoryRectAboveGround::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSTunnelFactoryRectAboveGround();}
   return _instance;
 }
@@ -39,7 +39,7 @@ BDSTunnelFactoryRectAboveGround::BDSTunnelFactoryRectAboveGround()
 
 BDSTunnelFactoryRectAboveGround::~BDSTunnelFactoryRectAboveGround()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4String    name,
@@ -178,9 +178,6 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4String 
 					      tunnelContainerOuter,        // this
 					      tunnelContainerInner);       // minus this
     }
-
-  G4double radius = std::max(containerXRadius, containerYRadius);
-  BuildReadOutVolumeStraight(name, length, radius);
 
   CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerXRadius, containerYRadius, visible);
   
@@ -356,11 +353,9 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngled(G4S
 					      tunnelContainerSolidOuter,   // this
 					      tunnelContainerSolidInner);  // minus this
     } 
-
-  G4double radius = std::max(containerXRadius, containerYRadius);
-  BuildReadOutVolumeAngled(name, length, radius, inputFace, outputFace);
   
-  CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerXRadius, containerYRadius, visible);
+  CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerXRadius,
+		     containerYRadius, visible, inputFace, outputFace);
   
   return tunnelSection;
 }

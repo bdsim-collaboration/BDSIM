@@ -21,9 +21,6 @@ class G4UniformMagField;
 class G4UserLimits;
 class G4VSensitiveDetector;
 
-class BDSBeamline;
-class ElementList;
-
 class BDSDetectorConstruction: public G4VUserDetectorConstruction
 {
 public:
@@ -55,6 +52,9 @@ private:
   
   /// Iterate over the beamline and place each BDSAcceleratorComponent in the world volume
   void ComponentPlacement();
+
+  /// Create biasing operations 
+  void BuildPhysicsBias();
 
   /// Initialise GFlash particle bounds - parameterised energy deposition.
   void InitialiseGFlash();

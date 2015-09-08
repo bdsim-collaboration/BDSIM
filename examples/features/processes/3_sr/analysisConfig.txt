@@ -1,0 +1,14 @@
+Debug					0
+InputFilePath				./output.root
+OutputFileName				./analysis.root
+CalculateOpticalFunctions		1
+CalculateOpticalFunctionsFileName	./output.dat
+Histogram				Sampler_sampler4	elec_x		x		partID==11
+Histogram				Sampler_sampler4	elec_y		y		partID==11
+Histogram				Sampler_sampler4	elec_xy		y:x		partID==11
+Histogram				Sampler_sampler4	elec_E		E		partID==11
+Histogram				Sampler_sampler4	photon_x	x		partID==22
+Histogram				Sampler_sampler4	photon_y	y		partID==22
+Histogram				Sampler_sampler4	photon_xy	y:x		partID==22
+Histogram                               Sampler_sampler4        photon_E	E               partID==22
+Histogram				Sampler_sampler4	photon_Spec	log10(E)	partID==22

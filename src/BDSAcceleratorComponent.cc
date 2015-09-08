@@ -22,6 +22,8 @@ G4bool      BDSAcceleratorComponent::checkOverlaps = false;
 
 struct BDSBeamPipeInfo;
 
+G4double const BDSAcceleratorComponent::lengthSafetyLarge = 1*CLHEP::um;
+
 BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4double         arcLengthIn,
 						 G4double         angleIn,
@@ -32,16 +34,16 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   name(nameIn),
   arcLength(arcLengthIn),
   type(typeIn),
+  nTimesPlaced(0),
   angle(angleIn),
   precisionRegion(precisionRegionIn),
-  beamPipeInfo(beamPipeInfoIn)
+  beamPipeInfo(beamPipeInfoIn),
+  readOutLV(nullptr),
+  acceleratorVacuumLV(nullptr)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << __METHOD_NAME__ << "(" << name << ")" << G4endl;
 #endif
-  nTimesPlaced = 0;
-  readOutLV    = nullptr;
-
   // initialise static members
   if (!emptyMaterial)
     {emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());}
@@ -90,12 +92,14 @@ void BDSAcceleratorComponent::Build()
 
   // set user limits for container
 #ifndef NOUSERLIMITS
-  if(containerLogicalVolume) {
-    G4double maxStepFactor=0.5;
-    G4UserLimits* containerUserLimits =  new G4UserLimits();
-    containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
-    containerLogicalVolume->SetUserLimits(containerUserLimits);
-  }
+  if(containerLogicalVolume)
+    {
+      G4double maxStepFactor=0.5;
+      G4UserLimits* containerUserLimits =  new G4UserLimits();
+      containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
+      containerLogicalVolume->SetUserLimits(containerUserLimits);
+      RegisterUserLimits(containerUserLimits);
+    }
 #endif
 
   // visual attributes
@@ -170,3 +174,4 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
 
   return readOutLV;
 }
+

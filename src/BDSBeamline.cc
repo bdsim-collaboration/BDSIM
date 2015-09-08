@@ -46,8 +46,7 @@ BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
 
 BDSBeamline::~BDSBeamline()
 {
-  BDSBeamlineIterator it = begin();
-  for (; it != end(); ++it)
+  for (iterator it = begin(); it != end(); ++it)
     {delete (*it);}
   // special case, if empty then previousReferenceRotationEnd is not used in the first element
   if (size()==0)
@@ -58,8 +57,7 @@ BDSBeamline::~BDSBeamline()
 
 void BDSBeamline::PrintAllComponents(std::ostream& out) const
 {
-  BDSBeamlineIterator it = begin();
-  for (; it != end(); ++it)
+  for (const_iterator it = begin(); it != end(); ++it)
     {out << *(it);}
 }
 
@@ -84,9 +82,12 @@ std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
 
 void BDSBeamline::AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
 {
+  // if default nullptr is supplied as tilt offset use a default 0,0,0,0 one
+  if (!tiltOffset) {tiltOffset  = new BDSTiltOffset();}
+  
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
-      for (BDSLine::BDSLineIterator i = line->begin(); i != line->end(); ++i)
+      for (BDSLine::iterator i = line->begin(); i != line->end(); ++i)
 	{AddSingleComponent(*i, tiltOffset);}
     }
   else
@@ -101,9 +102,6 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   G4cout << G4endl << __METHOD_NAME__ << "adding component to beamline and calculating coordinates" << G4endl;
   G4cout << "component name:      " << component->GetName() << G4endl;
 #endif
-  // if default nullptr is supplied as tilt offset use a default 0,0,0,0 one
-  if (!tiltOffset)
-    {tiltOffset = new BDSTiltOffset();}
   
   // Test if it's a BDSTransform3D instance - this is a unique component that requires
   // rotation in all dimensions and can skip normal addition as isn't a real volume
@@ -126,17 +124,21 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   G4ThreeVector offset   = G4ThreeVector(tiltOffset->GetXOffset(), tiltOffset->GetYOffset(), 0);
   G4ThreeVector eP       = component->GetExtentPositive() + offset;
   G4ThreeVector eN       = component->GetExtentNegative() + offset;
+  G4ThreeVector placementOffset   = component->GetPlacementOffset();
+  G4bool hasFinitePlacementOffset = BDS::IsFinite(placementOffset);
   
 #ifdef BDSDEBUG
-  G4cout << "chord length         " << length      << " mm"         << G4endl;
-  G4cout << "angle                " << angle       << " rad"        << G4endl;
-  G4cout << "tilt offsetX offsetY " << *tiltOffset << " rad mm mm " << G4endl;
-  G4cout << "has finite length    " << hasFiniteLength              << G4endl;
-  G4cout << "has finite angle     " << hasFiniteAngle               << G4endl;
-  G4cout << "has finite tilt      " << hasFiniteTilt                << G4endl;
-  G4cout << "has finite offset    " << hasFiniteOffset              << G4endl;
-  G4cout << "extent positive      " << eP                           << G4endl;
-  G4cout << "extent negative      " << eN                           << G4endl;
+  G4cout << "chord length                " << length      << " mm"         << G4endl;
+  G4cout << "angle                       " << angle       << " rad"        << G4endl;
+  G4cout << "tilt offsetX offsetY        " << *tiltOffset << " rad mm mm " << G4endl;
+  G4cout << "has finite length           " << hasFiniteLength              << G4endl;
+  G4cout << "has finite angle            " << hasFiniteAngle               << G4endl;
+  G4cout << "has finite tilt             " << hasFiniteTilt                << G4endl;
+  G4cout << "has finite offset           " << hasFiniteOffset              << G4endl;
+  G4cout << "extent positive             " << eP                           << G4endl;
+  G4cout << "extent negative             " << eN                           << G4endl;
+  G4cout << "object placement offset     " << placementOffset              << G4endl;
+  G4cout << "has finite placement offset " << hasFinitePlacementOffset     << G4endl;
 #endif
   
   // Calculate the reference placement rotation
@@ -173,7 +175,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   
   // add the tilt to the rotation matrices (around z axis)
   G4RotationMatrix* rotationStart, *rotationMiddle, *rotationEnd;
-  if (hasFiniteTilt && !hasFiniteAngle)
+  if (hasFiniteTilt  && !hasFiniteAngle)
     {
       G4double tilt = tiltOffset->GetTilt();
       rotationStart  = new G4RotationMatrix(*referenceRotationStart);
@@ -231,26 +233,12 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
       referencePositionMiddle = previousReferencePositionEnd;
       referencePositionEnd    = previousReferencePositionEnd;
     }
-
-  // calculate extents for world size determination
-  // project size in global coordinates
-  G4ThreeVector extentpos = referencePositionMiddle + eP.transform(*referenceRotationMiddle); 
-  G4ThreeVector extentneg = referencePositionMiddle + eN.transform(*referenceRotationMiddle);
-  // note extentneg is +eN.transform.. as eN is negative naturally
-  // loop over each size and compare to cumulative extent
-  for (int i=0; i<3; i++)
-    {
-      if (extentpos[i] > maximumExtentPositive[i])
-	{maximumExtentPositive[i] = extentpos[i];}
-      if (extentneg[i] < maximumExtentNegative[i])
-	{maximumExtentNegative[i] = extentneg[i];}
-    }
   
   // add the placement offset
   G4ThreeVector positionStart, positionMiddle, positionEnd;
-  if (hasFiniteOffset)
+  if (hasFiniteOffset || hasFinitePlacementOffset)
     {
-      if (hasFiniteAngle) // do not allow x offsets for bends as this will cause overlaps
+      if (hasFiniteOffset && hasFiniteAngle) // do not allow x offsets for bends as this will cause overlaps
 	{
 	  G4String name = component->GetName();
 	  G4cout << __METHOD_NAME__ << "WARNING - element has x offset, but this will cause geometry"
@@ -259,7 +247,8 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
 	}
       // note the displacement is applied in the accelerator x and y frame so use
       // the reference rotation rather than the one with tilt already applied
-      G4ThreeVector displacement   = offset.transform(*referenceRotationMiddle);
+      G4ThreeVector total = offset + placementOffset;
+      G4ThreeVector displacement   = total.transform(*referenceRotationMiddle);
       positionStart  = referencePositionStart  + displacement;
       positionMiddle = referencePositionMiddle + displacement;
       positionEnd    = referencePositionEnd    + displacement;
@@ -326,6 +315,9 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
 						       sPositionStart,
 						       sPositionMiddle,
 						       sPositionEnd);
+
+  // calculate extents for world size determination
+  UpdateExtents(element);
   
   // append it to the beam line
   beamline.push_back(element);
@@ -422,24 +414,9 @@ void BDSBeamline::ApplyTransform3D(BDSTransform3D* component)
 
 void BDSBeamline::AddBeamlineElement(BDSBeamlineElement* element)
 {
-  // calculate extents for world size determination
-  // project size in global coordinates
-  G4ThreeVector     referencePositionMiddle = element->GetReferencePositionMiddle();
-  G4RotationMatrix* referenceRotationStart = element->GetReferenceRotationStart();
-  BDSAcceleratorComponent* component        = element->GetAcceleratorComponent();
-  G4ThreeVector eP                          = component->GetExtentPositive();
-  G4ThreeVector eN                          = component->GetExtentNegative();
-  G4ThreeVector extentpos = referencePositionMiddle + eP.transform(*referenceRotationStart); 
-  G4ThreeVector extentneg = referencePositionMiddle + eN.transform(*referenceRotationStart);
-  // note extentneg is +eN.transform.. as eN is negative naturally
-  // loop over each size and compare to cumulative extent
-  for (int i=0; i<3; i++)
-    {
-      if (extentpos[i] > maximumExtentPositive[i])
-	{maximumExtentPositive[i] = extentpos[i];}
-      if (extentneg[i] < maximumExtentNegative[i])
-	{maximumExtentNegative[i] = extentneg[i];}
-    }
+  // update world extent for this beam line
+  UpdateExtents(element);
+  
   // append it to the beam line
   beamline.push_back(element);
 
@@ -490,4 +467,71 @@ BDSBeamlineElement* BDSBeamline::GetElement(G4String name)
     }
   else
     {return search->second;}
+}
+
+
+void BDSBeamline::UpdateExtents(BDSBeamlineElement* element)
+{
+  // calculate extents for world size determination
+  // project size in global coordinates
+  G4ThreeVector     referencePositionStart = element->GetReferencePositionStart();
+  G4RotationMatrix* referenceRotationStart = element->GetReferenceRotationStart();
+  G4ThreeVector     referencePositionEnd   = element->GetReferencePositionEnd();
+  G4RotationMatrix* referenceRotationEnd   = element->GetReferenceRotationEnd();
+  BDSAcceleratorComponent* component       = element->GetAcceleratorComponent();
+  G4ThreeVector eP                         = component->GetExtentPositive();
+  eP.setZ(0); // we get the z position from the start point, so only need the transverse bits
+  G4ThreeVector eN                         = component->GetExtentNegative();
+  eN.setZ(0); // we get the z position from the start point, so only need the transverse bits
+  G4ThreeVector ePStart                    = G4ThreeVector(eP).transform(*referenceRotationStart);
+  G4ThreeVector eNStart                    = G4ThreeVector(eN).transform(*referenceRotationStart);
+  G4ThreeVector ePEnd                      = G4ThreeVector(eP).transform(*referenceRotationEnd);
+  G4ThreeVector eNEnd                      = G4ThreeVector(eN).transform(*referenceRotationEnd);
+  G4ThreeVector extentposStart             = referencePositionStart + ePStart;
+  G4ThreeVector extentnegStart             = referencePositionStart + eNStart;
+  G4ThreeVector extentposEnd               = referencePositionEnd   + ePEnd;
+  G4ThreeVector extentnegEnd               = referencePositionEnd   + eNEnd;
+ 
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << "start position (global):       " << referencePositionStart << G4endl;
+  G4cout << "end position (global):         " << referencePositionEnd   << G4endl;
+  G4cout << "local extent +ve:              " << eP                     << G4endl;
+  G4cout << "local extent -ve:              " << eN                     << G4endl;
+  G4cout << "extent +ve at start in global: " << ePStart                << G4endl;
+  G4cout << "extent -ve at start in global: " << eNStart                << G4endl;
+  G4cout << "extent +ve at end in global:   " << ePEnd                  << G4endl;
+  G4cout << "extent -ve at end in global:   " << eNEnd                  << G4endl;
+  G4cout << "current global extent +ve:     " << maximumExtentPositive  << G4endl;
+  G4cout << "current global extent -ve:     " << maximumExtentNegative  << G4endl;
+#endif
+  
+  // loop over each size and compare to cumulative extent
+  // do this at the start and end to be sure for long components
+  // start
+  for (int i=0; i<3; i++)
+    {
+      if (extentposStart[i] > maximumExtentPositive[i])
+	{maximumExtentPositive[i] = extentposStart[i];}
+      if (extentnegStart[i] < maximumExtentNegative[i])
+	{maximumExtentNegative[i] = extentnegStart[i];}
+    }
+  // end
+  for (int i=0; i<3; i++)
+    {
+      if (extentposEnd[i] > maximumExtentPositive[i])
+	{maximumExtentPositive[i] = extentposEnd[i];}
+      if (extentnegEnd[i] < maximumExtentNegative[i])
+	{maximumExtentNegative[i] = extentnegEnd[i];}
+    }
+  // end comparing negative extents with positive world just in case
+  for (int i=0; i<3; i++)
+    {
+      if (extentnegEnd[i] > maximumExtentPositive[i])
+	{maximumExtentPositive[i] = extentnegEnd[i];}
+    }
+#ifdef BDSDEBUG
+  G4cout << "new global extent +ve:         " << maximumExtentPositive << G4endl;
+  G4cout << "new global extent -ve:         " << maximumExtentNegative << G4endl;
+#endif
 }

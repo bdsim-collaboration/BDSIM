@@ -7,11 +7,11 @@
 
 #include <map>
 
-BDSPhysicalVolumeInfoRegistry* BDSPhysicalVolumeInfoRegistry::_instance = 0;
+BDSPhysicalVolumeInfoRegistry* BDSPhysicalVolumeInfoRegistry::_instance = nullptr;
 
 BDSPhysicalVolumeInfoRegistry* BDSPhysicalVolumeInfoRegistry::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSPhysicalVolumeInfoRegistry();}
   return _instance;
 }
@@ -31,7 +31,7 @@ BDSPhysicalVolumeInfoRegistry::~BDSPhysicalVolumeInfoRegistry()
   for (; it != backupRegister.end(); ++it)
     {delete it->second;}
   
-  _instance = 0;
+  _instance = nullptr;
 }
 
 void BDSPhysicalVolumeInfoRegistry::RegisterInfo(G4VPhysicalVolume*     physicalVolume,
@@ -40,14 +40,14 @@ void BDSPhysicalVolumeInfoRegistry::RegisterInfo(G4VPhysicalVolume*     physical
 						 G4bool                 isTunnel)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "registering volume " << physicalVolume->GetName() << G4endl;
-  G4cout << __METHOD_NAME__ << "with info :        " << *info                     << G4endl;
-  G4cout << __METHOD_NAME__ << "is read out volume " << isReadOutVolume           << G4endl;
+  G4cout << __METHOD_NAME__ << "registering volume:   " << physicalVolume->GetName() << G4endl;
+  G4cout << __METHOD_NAME__ << "with info:            " << *info                     << G4endl;
+  G4cout << __METHOD_NAME__ << "is a read out volume: " << isReadOutVolume           << G4endl;
 #endif
   if (IsRegistered(physicalVolume))
     {//uh oh - we've found it somewhere - abort
-      G4cerr << __METHOD_NAME__ << "this physical volume is already registered" << G4endl;
-      G4cerr << __METHOD_NAME__ << "pv name is: " << physicalVolume->GetName() << G4endl;
+      G4cerr << __METHOD_NAME__ << physicalVolume->GetName()
+	     << " is already registered" << G4endl;
       return;
     }
 

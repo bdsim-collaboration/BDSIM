@@ -1,9 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 12.12.2004
-   Copyright (c) 2004 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
 #ifndef BDSMUSPOILER_H
 #define BDSMUSPOILER_H
 
@@ -17,24 +11,26 @@ struct BDSMagnetOuterInfo;
 class BDSMuSpoiler: public BDSMagnet
 {
 public:
-  BDSMuSpoiler(G4String           name,
-	       G4double           length,
-	       G4double           bField,
-	       BDSBeamPipeInfo*   beamPipeInfo,
-	       BDSMagnetOuterInfo magnetOuterInfo);
+  BDSMuSpoiler(G4String            name,
+	       G4double            length,
+	       G4double            bField,
+	       BDSBeamPipeInfo*    beamPipeInfo,
+	       BDSMagnetOuterInfo* magnetOuterInfo);
   ~BDSMuSpoiler();
 
 private:
   G4double     itsBField;
   
-  /// build the necessary field for muspoiler
+  /// Override BDSMagnet function and do nothing so no field is
+  /// attached to the beam pipe
   virtual void BuildBPFieldAndStepper();
 
-  /// override multipole method to attach outer field
-  virtual void BuildOuterVolume();
-
-  // BDSMuSpoilerMagField* outerMagField;
-  // G4FieldManager*       outerFieldMgr;
+  /// Override BDSMagnet outer magnetic field constructor so
+  /// we can construct a mu spoiler field instead. Has to have
+  /// same signature, but doesn't need the arguments so commented out.
+  virtual void BuildOuterFieldManager(G4int    /*nPoles*/,
+				      G4double /*poleField*/,
+				      G4double /*phiOffset*/);
 };
 
 #endif

@@ -6,7 +6,7 @@
 #include "G4UniformMagField.hh"
 #include "G4Mag_EqRhs.hh"
 
-class BDSSbendMagField : public G4UniformMagField 
+class BDSSbendMagField: public G4UniformMagField 
 {
 public:  // with description
   

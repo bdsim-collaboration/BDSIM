@@ -22,11 +22,11 @@
 #include <utility>                         // for std::pair
 
 
-BDSTunnelFactoryCircular* BDSTunnelFactoryCircular::_instance = 0;
+BDSTunnelFactoryCircular* BDSTunnelFactoryCircular::_instance = nullptr;
 
 BDSTunnelFactoryCircular* BDSTunnelFactoryCircular::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSTunnelFactoryCircular();}
   return _instance;
 }
@@ -36,7 +36,7 @@ BDSTunnelFactoryCircular::BDSTunnelFactoryCircular()
 
 BDSTunnelFactoryCircular::~BDSTunnelFactoryCircular()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSection(G4String      name,
@@ -154,8 +154,6 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSection(G4String      na
 				  0,                                // start angle
 				  CLHEP::twopi);                    // sweep angle
     }
-  
-  BuildReadOutVolumeStraight(name, length, containerRadius);
   
   CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerRadius, containerRadius, visible);
 
@@ -328,7 +326,8 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngled(G4String  
 
   BuildReadOutVolumeAngled(name, length, containerRadius, inputFace, outputFace);
 
-  CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerRadius, containerRadius, visible);
+  CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerRadius,
+		     containerRadius, visible, inputFace, outputFace);
 
   return tunnelSection;
 }

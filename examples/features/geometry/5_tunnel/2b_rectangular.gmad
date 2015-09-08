@@ -1,0 +1,3 @@
+include 2_long_straight_following.gmad;
+
+option, tunnelType="rectangular";

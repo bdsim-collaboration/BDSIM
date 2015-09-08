@@ -34,5 +34,3 @@ from any location::
 .. include:: pymadx.rst
 	     
 .. include:: pymad8.rst
-
-	     

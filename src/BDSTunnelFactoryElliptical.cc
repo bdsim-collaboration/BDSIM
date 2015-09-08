@@ -23,11 +23,11 @@
 
 class BDSTunnelSection;
 
-BDSTunnelFactoryElliptical* BDSTunnelFactoryElliptical::_instance = 0;
+BDSTunnelFactoryElliptical* BDSTunnelFactoryElliptical::_instance = nullptr;
 
 BDSTunnelFactoryElliptical* BDSTunnelFactoryElliptical::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSTunnelFactoryElliptical();}
   return _instance;
 }
@@ -37,7 +37,7 @@ BDSTunnelFactoryElliptical::BDSTunnelFactoryElliptical()
 
 BDSTunnelFactoryElliptical::~BDSTunnelFactoryElliptical()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String      name,
@@ -208,10 +208,7 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSection(G4String      
       containerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid", // name
 					      tunnelContainerSolidOuter,   // this
 					      tunnelContainerSolidInner);  // minus this
-    } 
-
-  G4double radius = std::max(containerXRadius, containerYRadius);
-  BuildReadOutVolumeStraight(name, length, radius);
+    }
   
   CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerXRadius, containerYRadius, visible);
   
@@ -433,11 +430,9 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSectionAngled(G4String
 					      tunnelContainerSolidOuterAngled,   // this
 					      tunnelContainerSolidInner);        // minus this
     }
-
-  G4double radius = std::max(containerXRadius, containerYRadius);
-  BuildReadOutVolumeAngled(name, length, radius, inputFace, outputFace);
-
-  CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerXRadius, containerYRadius, visible);
+  
+  CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerXRadius,
+		     containerYRadius, visible, inputFace, outputFace);
 
   return tunnelSection;
 }

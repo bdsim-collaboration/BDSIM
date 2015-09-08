@@ -3,9 +3,9 @@
 
 #include "globals.hh"   // geant4 globals / types
 #include "G4RotationMatrix.hh"
+#include "G4ThreeVector.hh"
 
 #include <string>
-
 
 
 /**
@@ -30,6 +30,9 @@ namespace BDS {
   /// seems trivial, but used in a lot of places so put in one place
   G4int    CalculateOrientation(G4double angle);
 
+  /// Checks if filename exists
+  G4bool FileExists(G4String filename);
+  
   /// Returns path from which BDSIM is executed
   /// supports linux/unix and mac OS
   std::string GetBDSIMExecPath();
@@ -48,6 +51,7 @@ namespace BDS {
 
   /// Determine whether a parameter is finite
   G4bool IsFinite(const G4double& variable);
+  G4bool IsFinite(const G4ThreeVector& variable);
 
   /// Integer to string representation
   G4String StringFromInt(G4int anInt);
@@ -57,6 +61,9 @@ namespace BDS {
   /// Print out details of a rotation matrix - the matrix itself, unit vectors.
   /// Optional keyname to identify in output stream
   void PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName = "unkown");
+
+  /// Check if the geant4 environmental variables necessary for a run are set
+  G4bool Geant4EnvironmentIsSet();
 }
 
 

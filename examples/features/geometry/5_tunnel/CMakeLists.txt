@@ -1,0 +1,8 @@
+simple_testing(1a_tunnel_elliptical "--file=1a_elliptical.gmad" ${OVERLAP_CHECK})
+simple_testing(1b_tunnel_rectangular "--file=1b_rectangular.gmad" ${OVERLAP_CHECK})
+simple_testing(2a_tunnel_elliptical "--file=2a_elliptical.gmad" ${OVERLAP_CHECK})
+simple_testing(2b_tunnel_rectangular "--file=2b_rectangular.gmad" ${OVERLAP_CHECK})
+simple_testing(3a_tunnel_elliptical "--file=3a_elliptical.gmad" ${OVERLAP_CHECK})
+simple_testing(3b_tunnel_rectangular "--file=3b_rectangular.gmad" ${OVERLAP_CHECK})
+simple_testing(4a_tunnel_elliptical "--file=4a_elliptical.gmad" ${OVERLAP_CHECK})
+simple_testing(4b_tunnel_rectangular "--file=4b_rectangular.gmad" ${OVERLAP_CHECK})

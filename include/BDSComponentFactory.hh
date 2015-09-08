@@ -9,7 +9,6 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuterInfo.hh"
 
-class ElementList;
 class BDSTiltOffset;
 
 class BDSComponentFactory{
@@ -18,13 +17,13 @@ public:
   ~BDSComponentFactory();
 
   /// Create component from parser Element
-  BDSAcceleratorComponent* CreateComponent(Element& element);
+  BDSAcceleratorComponent* CreateComponent(GMAD::Element& element);
 
   // for each of them - special cases need only for ring logic
   BDSAcceleratorComponent* CreateTerminator();
   BDSAcceleratorComponent* CreateTeleporter();
   /// Create the tilt and offset information object by inspecting the parser element
-  BDSTiltOffset*           CreateTiltOffset(Element& element);
+  BDSTiltOffset*           CreateTiltOffset(GMAD::Element& element);
  
 private:
   G4bool   verbose;
@@ -33,11 +32,11 @@ private:
   
   G4double _charge, _momentum, _brho;
   
-  std::list<struct Element>::iterator _elementIter, _previousElementIter, _nextElementIter;
+  std::list<GMAD::Element>::iterator _elementIter, _previousElementIter, _nextElementIter;
   /// beamline
   std::list<BDSAcceleratorComponent*> itsBeamline;
   /// element for storing instead of passing around
-  Element _element;
+  GMAD::Element _element;
   
   BDSAcceleratorComponent* CreateSampler();
   BDSAcceleratorComponent* CreateCSampler();
@@ -51,6 +50,7 @@ private:
   BDSAcceleratorComponent* CreateQuad();  
   BDSAcceleratorComponent* CreateSextupole();
   BDSAcceleratorComponent* CreateOctupole();
+  BDSAcceleratorComponent* CreateDecapole();
   BDSAcceleratorComponent* CreateMultipole();
   BDSAcceleratorComponent* CreateElement();
   BDSAcceleratorComponent* CreateSolenoid();
@@ -63,14 +63,14 @@ private:
   BDSAcceleratorComponent* CreateTransform3D();
 
   /// Testing function
-  G4bool HasSufficientMinimumLength(Element& element);
+  G4bool HasSufficientMinimumLength(GMAD::Element& element);
   
   ///@{ Utility function to prepare beampipe
-  G4Material*        PrepareBeamPipeMaterial(Element& element);
-  G4Material*        PrepareVacuumMaterial(Element& element);
-  BDSMagnetOuterInfo PrepareMagnetOuterInfo(Element& element);
-  G4double           PrepareOuterDiameter(Element& element);
-  BDSBeamPipeInfo*   PrepareBeamPipeInfo(Element& element);
+  G4Material*         PrepareBeamPipeMaterial(GMAD::Element& element);
+  G4Material*         PrepareVacuumMaterial(GMAD::Element& element);
+  BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element& element);
+  G4double            PrepareOuterDiameter(GMAD::Element& element);
+  BDSBeamPipeInfo*    PrepareBeamPipeInfo(GMAD::Element& element);
   ///@}
 };
 #endif

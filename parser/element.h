@@ -5,6 +5,8 @@
 #include <list>
 #include <string>
 
+namespace GMAD {
+
 enum class ElementType;
 
 /**
@@ -19,7 +21,7 @@ struct Element {
   std::string name;
 
   double l; ///< l in metres
-  double ks,k0,k1,k2,k3,angle;
+  double ks,k0,k1,k2,k3,k4,angle;
 
   // beampipe information
   double beampipeThickness;
@@ -46,6 +48,9 @@ struct Element {
   std::list<double> blmLocZ;
   std::list<double> blmLocTheta;
 
+  /// physics biasing process
+  std::string bias;
+  
   /// material properties
   double A; 
   double Z; 
@@ -54,7 +59,7 @@ struct Element {
   double pressure;
   std::string state;
   std::string symbol;
-  std::list<const char*> components;
+  std::list<std::string> components;
   std::list<double> componentsFractions;
   std::list<int> componentsWeights;
 
@@ -77,10 +82,11 @@ struct Element {
 
   /// property lookup by name (slow method)
   /// only for properties with type int/double!
-  double property_lookup(char* property_name)const;
+  double property_lookup(std::string property_name)const;
 
   /// constructor
   Element();
 };
-
+}
+ 
 #endif

@@ -6,32 +6,39 @@
 
 %{
 
-  extern int line_num;
-  extern char* yyfilename;
-
-  const int PEDANTIC = 0; ///> strict checking, exits when element or parameter is not known
-  const int ECHO_GRAMMAR = 0; ///> print grammar rule expansion (for debugging)
-  const int INTERACTIVE = 0; ///> print output of commands (like in interactive mode)
-  /* for more debug with parser:
-     1) set yydebug to 1 in parser.tab.cc (needs to be reset as this file gets overwritten from time to time!) 
-     2) add %debug below
-     3) compile bison with "-t" flag. This is automatically done when CMAKE_BUILD_TYPE equals Debug
-  */
-
 #include "array.h"
 #include "parser.h"
+#include "sym_table.h"
 #include "elementtype.h"
   
-  int execute = 1;
-  int element_count = 1; // for samplers , ranges etc.
+  using namespace GMAD;
 
+  extern char* yytext;
+
+  namespace GMAD {
+    extern int line_num;
+    extern char* yyfilename;
+  
+    const int PEDANTIC = 1; ///< strict checking, exits when element or parameter is not known
+    const int ECHO_GRAMMAR = 0; ///< print grammar rule expansion (for debugging)
+    const int INTERACTIVE = 0; ///< print output of commands (like in interactive mode)
+    /* for more debug with parser:
+       1) set yydebug to 1 in parser.tab.cc (needs to be reset as this file gets overwritten from time to time!) 
+       2) add %debug below
+       3) compile bison with "-t" flag. This is automatically done when CMAKE_BUILD_TYPE equals Debug
+    */
+
+    int execute = 1;
+    int element_count = 1; // for samplers , ranges etc.
+  }
 %}
 
 /* define stack type */
+
 %union{
   double dval;
   int ival; // ElementType, but underlying type as not possible to have enum class in union, rely on static_casts
-  struct symtab *symp;
+  GMAD::symtab *symp;
   char *str;
   struct Array *array;
 }
@@ -48,13 +55,12 @@
 %token <dval> NUMBER
 %token <symp> VARIABLE VECVAR FUNC 
 %token <str> STR
-%token MARKER ELEMENT DRIFT PCLDRIFT RF DIPOLE RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE MULTIPOLE SCREEN AWAKESCREEN
-%token SOLENOID COLLIMATOR RCOL ECOL LINE SEQUENCE SPOILER ABSORBER LASER TRANSFORM3D MUSPOILER
-%token VKICK HKICK KICK
-%token PERIOD APERTURE FILENAME GAS PIPE TUNNEL MATERIAL ATOM
+%token MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
+%token SOLENOID RCOL ECOL LINE SEQUENCE LASER TRANSFORM3D MUSPOILER
+%token VKICK HKICK
+%token PERIOD XSECBIAS TUNNEL MATERIAL ATOM
 %token BEAM OPTION PRINT RANGE STOP USE VALUE ECHO PRINTF SAMPLE CSAMPLE BETA0 TWISS DUMP
 %token IF ELSE BEGN END LE GE NE EQ FOR
-%token CUT
 
 %type <dval> aexpr
 %type <dval> expr
@@ -66,8 +72,8 @@
 %type <ival> newinstance
 %type <symp> sample_options
 %type <symp> csample_options
-%type <symp> gas_options
 %type <symp> tunnel_options
+%type <symp> xsecbias_options
 
 /* printout format for debug output */
 /*
@@ -119,7 +125,6 @@ atomic_stmt :
 decl : VARIABLE ':' marker
        {
 	 if(execute)  {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : marker\n",$1->name);
 	   // check parameters and write into element table
 	   write_table(params,$1->name,ElementType::_MARKER);
 	   params.flush();
@@ -128,25 +133,14 @@ decl : VARIABLE ':' marker
      | VARIABLE ':' drift
        {
 	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : drift\n",$1->name);
 	   // check parameters and write into element table
 	   write_table(params,$1->name,ElementType::_DRIFT);
 	   params.flush();
 	 }
        }
-     | VARIABLE ':' pcldrift
-       {
-	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : pcldrift (drift)\n",$1->name);
-	   // check parameters and write into element table
-	   write_table(params,$1->name,ElementType::_DRIFT);
-	   params.flush();
-	 }
-       } 
      | VARIABLE ':' rf
        {
 	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : rf\n",$1->name);
 	   // check parameters and write into element table
 	   write_table(params,$1->name,ElementType::_RF);
 	   params.flush();
@@ -155,7 +149,6 @@ decl : VARIABLE ':' marker
      | VARIABLE ':' sbend
        {  
 	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : sbend\n",$1->name);
 	   // check parameters and write into element table
 	   write_table(params,$1->name,ElementType::_SBEND);
 	   params.flush();
@@ -164,7 +157,6 @@ decl : VARIABLE ':' marker
      | VARIABLE ':' rbend
        {
          if(execute) {
-           if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : rbend\n",$1->name);
            // check parameters and write into element table
            write_table(params,$1->name,ElementType::_RBEND);
            params.flush();
@@ -174,7 +166,6 @@ decl : VARIABLE ':' marker
     | VARIABLE ':' vkick
        {  
 	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : vkick\n",$1->name);
 	   // check parameters and write into element table
 	   write_table(params,$1->name,ElementType::_VKICK);
 	   params.flush();
@@ -183,7 +174,6 @@ decl : VARIABLE ':' marker
     | VARIABLE ':' hkick
        {  
 	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : hkick\n",$1->name);
 	   // check parameters and write into element table
 	   write_table(params,$1->name,ElementType::_HKICK);
 	   params.flush();
@@ -193,7 +183,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)       
 	   {
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : quad %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_QUAD);
 	     params.flush();
@@ -203,7 +192,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : sext %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_SEXTUPOLE);
 	     params.flush();
@@ -213,9 +201,17 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("VARIABLE : octupole %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_OCTUPOLE);
+	     params.flush();
+	   }
+       }
+     | VARIABLE ':' decapole
+       {
+	 if(execute)
+	   {
+	     // check parameters and write into element table
+	     write_table(params,$1->name,ElementType::_DECAPOLE);
 	     params.flush();
 	   }
        }
@@ -223,7 +219,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {	 
-	     if(ECHO_GRAMMAR) printf("VARIABLE : multipole %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_MULT);
 	     params.flush();	 
@@ -233,7 +228,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)       
 	   {
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : solenoid %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_SOLENOID);
 	     params.flush();
@@ -243,7 +237,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("VARIABLE : rcol %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_RCOL);
 	     params.flush();
@@ -253,7 +246,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("VARIABLE : ecol %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_ECOL);
 	     params.flush();
@@ -263,7 +255,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("VARIABLE : muspoiler %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_MUSPOILER);
 	     params.flush();
@@ -273,7 +264,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {	 
-	     if(ECHO_GRAMMAR) printf("VARIABLE : element %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_ELEMENT);
 	     params.flush();	 
@@ -283,7 +273,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {	 
-	     if(ECHO_GRAMMAR) printf("VARIABLE : laser %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_LASER);
 	     params.flush();	 
@@ -292,7 +281,6 @@ decl : VARIABLE ':' marker
      | VARIABLE ':' screen
        {
 	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : screen\n",$1->name);
 	   // check parameters and write into element table
 	   write_table(params,$1->name,ElementType::_SCREEN);
 	   params.flush();
@@ -301,7 +289,6 @@ decl : VARIABLE ':' marker
      | VARIABLE ':' awakescreen
        {
 	 if(execute) {
-	   if(ECHO_GRAMMAR) printf("decl -> VARIABLE (%s) : awakescreen\n",$1->name);
 	   // check parameters and write into element table
 	   write_table(params,$1->name,ElementType::_AWAKESCREEN);
 	   params.flush();
@@ -311,7 +298,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {	 
-	     if(ECHO_GRAMMAR) printf("VARIABLE : transform3d %s \n",$1->name);
 	     // check parameters and write into element table
 	     write_table(params,$1->name,ElementType::_TRANSFORM3D);
 	     params.flush();	 
@@ -321,8 +307,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     // create entry in the main table and add pointer to the parsed sequence
-	     if(ECHO_GRAMMAR) printf("VARIABLE : LINE %s\n",$1->name);
 	     // copy tmp_list to params
 	     write_table(params,$1->name,ElementType::_LINE,new std::list<struct Element>(tmp_list));
 	     // clean list
@@ -333,8 +317,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-             // create entry in the main table and add pointer to the parsed sequence
-	     if(ECHO_GRAMMAR) printf("VARIABLE : SEQUENCE %s\n",$1->name);
 	     // copy tmp_list to params
 	     write_table(params,$1->name,ElementType::_SEQUENCE,new std::list<struct Element>(tmp_list));
 	     // clean list
@@ -346,7 +328,7 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     ElementType type = static_cast<ElementType>($3);
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, GMAD::typestr(type));
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE : VARIABLE, " << $1->name << " : " << type << std::endl;
 	     if(type != ElementType::_NONE)
 	       {
 		 write_table(params,$1->name,type);
@@ -359,7 +341,7 @@ decl : VARIABLE ':' marker
          if(execute)
 	   {
 	     ElementType type = static_cast<ElementType>($3);
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, GMAD::typestr(type));
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE : VARIABLE, " << $1->name << " : " << type << std::endl;
 	     if(type != ElementType::_NONE)
 	       {
 		 write_table(params,$1->name,type);
@@ -371,12 +353,12 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("edit : VARIABLE parameters   -- %s \n",$1->name);
+	     if(ECHO_GRAMMAR) std::cout << "edit : VARIABLE parameters   -- " << $1->name << std::endl;
 	     std::list<struct Element>::iterator it = element_list.find($1->name);
 	     std::list<struct Element>::iterator iterEnd = element_list.end();
 	     if(it == iterEnd)
 	       {
-		 printf("type %s has not been defined\n",$1->name);
+		 std::cout << "type " << $1->name << " has not been defined" << std::endl;
 		 if (PEDANTIC) exit(1);
 	       }
 	     else
@@ -385,7 +367,7 @@ decl : VARIABLE ':' marker
 		 params.inherit_properties(*it);
 	       }
 		
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : VARIABLE, %s  :  %s\n",$1->name, GMAD::typestr((*it).type));
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE : VARIABLE, " << $1->name << " : " << (*it).type << std::endl;
 	     if((*it).type != ElementType::_NONE)
 	       {
 		 write_table(params,$1->name,(*it).type);
@@ -397,7 +379,6 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)
 	   {
-	     if(ECHO_GRAMMAR) printf("decl -> VARIABLE : Material, %s \n",$1->name);
 	     write_table(params,$1->name,ElementType::_MATERIAL);
 	     params.flush();
 	   }
@@ -406,91 +387,65 @@ decl : VARIABLE ':' marker
        {
          if(execute)
            {
-             if(ECHO_GRAMMAR) printf("decl -> VARIABLE : Atom, %s \n",$1->name);
              write_table(params,$1->name,ElementType::_ATOM);
              params.flush();
+           }
+       }
+     | VARIABLE ':' tunnel
+       {
+         if(execute)
+           {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << $1->name << " : tunnel" << std::endl;
+	     tunnel.set_value("name",$1->name);
+	     add_tunnel(tunnel);
+           }
+       }
+     | VARIABLE ':' xsecbias
+       {
+         if(execute)
+           {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << $1->name << " : xsecbias" << std::endl;
+	     xsecbias.set_value("name",$1->name);
+	     add_xsecbias(xsecbias);
            }
        }
 ;
 
 marker : MARKER ;
-
-drift : DRIFT ',' parameters
-;
-
-pcldrift : PCLDRIFT ',' parameters
-;
-
-rf : RF ',' parameters
-;
-
-sbend : SBEND ',' parameters
-;
-
-rbend : RBEND ',' parameters
-;
-
-vkick : VKICK ',' parameters
-;
-
-hkick : HKICK ',' parameters
-;
-
-quad : QUADRUPOLE ',' parameters
-;
-
-sextupole : SEXTUPOLE ',' parameters
-;
-
-octupole : OCTUPOLE ',' parameters
-;
-
-multipole : MULTIPOLE ',' parameters
-;
-
-solenoid : SOLENOID ',' parameters
-;
-
-ecol : ECOL ',' parameters
-;
-
-muspoiler : MUSPOILER ',' parameters
-;
-
-rcol : RCOL ',' parameters
-;
-
-laser : LASER ',' parameters
-;
-
-screen : SCREEN ',' parameters
-;
-
-awakescreen : AWAKESCREEN ',' parameters
-;
-
-transform3d : TRANSFORM3D ',' parameters
-;
-
-element : ELEMENT ',' parameters
-;
-
-matdef : MATERIAL ',' parameters
-;
-
-atom : ATOM ',' parameters
-;
-
+drift : DRIFT ',' parameters ;
+rf : RF ',' parameters ;
+sbend : SBEND ',' parameters ;
+rbend : RBEND ',' parameters ;
+vkick : VKICK ',' parameters ;
+hkick : HKICK ',' parameters ;
+quad : QUADRUPOLE ',' parameters ;
+sextupole : SEXTUPOLE ',' parameters ;
+octupole : OCTUPOLE ',' parameters ;
+decapole : DECAPOLE ',' parameters ;
+multipole : MULTIPOLE ',' parameters ;
+solenoid : SOLENOID ',' parameters ;
+ecol : ECOL ',' parameters ;
+muspoiler : MUSPOILER ',' parameters ;
+rcol : RCOL ',' parameters ;
+laser : LASER ',' parameters ;
+screen : SCREEN ',' parameters ;
+awakescreen : AWAKESCREEN ',' parameters ;
+transform3d : TRANSFORM3D ',' parameters ;
+element : ELEMENT ',' parameters ;
+matdef : MATERIAL ',' parameters ;
+atom : ATOM ',' parameters ;
+tunnel : TUNNEL ',' tunnel_options ;
+xsecbias : XSECBIAS ',' xsecbias_options ;
 extension : VARIABLE ',' parameters
             {
 	      if(execute)
 		{	 
-		  if(ECHO_GRAMMAR) printf("extension : VARIABLE parameters   -- %s \n",$1->name);
+		  if(ECHO_GRAMMAR) std::cout << "extension : VARIABLE parameters   -- " << $1->name << std::endl;
 		  std::list<struct Element>::iterator it = element_list.find($1->name);
 		  std::list<struct Element>::iterator iterEnd = element_list.end();
 		  if(it == iterEnd)
 		    {
-		      printf("type %s has not been defined\n",$1->name);
+		      std::cout << "type " << $1->name << " has not been defined" << std::endl;
 		      if (PEDANTIC) exit(1);
 		      $$ = static_cast<int>(ElementType::_NONE);
 		    }
@@ -509,12 +464,12 @@ newinstance : VARIABLE
             {
 	      if(execute)
 		{	 
-		  if(ECHO_GRAMMAR) printf("newinstance : VARIABLE -- %s \n",$1->name);
+		  std::cout << "newinstance : VARIABLE -- " << $1->name << std::endl;
 		  std::list<struct Element>::iterator it = element_list.find($1->name);
 		  std::list<struct Element>::iterator iterEnd = element_list.end();
 		  if(it == iterEnd)
 		    {
-		      printf("type %s has not been defined\n",$1->name);
+		      std::cout << "type " << $1->name << " has not been defined" << std::endl;
 		      if (PEDANTIC) exit(1);
 		      $$ = static_cast<int>(ElementType::_NONE);
 		    }
@@ -551,13 +506,17 @@ parameters: VARIABLE '=' aexpr ',' parameters
 	    }
           | VARIABLE '=' STR ',' parameters
             {
-	      if(execute)
-		params.set_value($1->name,std::string($3));
+	      if(execute) {
+		params.set_value($1->name,$3);
+	      }
+	      free($3);
 	    }
           | VARIABLE '=' STR
             {
-	      if(execute)
-		params.set_value($1->name,std::string($3));
+	      if(execute) {
+		params.set_value($1->name,$3);
+	      }
+	      free($3);
 	    }
 
 line : LINE '=' '(' element_seq ')'
@@ -572,402 +531,102 @@ line : LINE '=' '-' '(' rev_element_seq ')'
 //sequence : SEQUENCE ',' params ',' '-' '(' rev_element_seq ')'
 //;
 
-sequence : SEQUENCE '=' '(' seq_element_seq ')'
-;
-
+sequence : SEQUENCE '=' '(' seq_element_seq ')' ;
 
 element_seq : 
             | VARIABLE ',' element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched sequence element, %s\n",$1->name);
-#endif
-		    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_LINE;
-		      e.lst = nullptr;
-		      tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, 1, true, ElementType::_LINE);
 	      }
             | VARIABLE '*' NUMBER ',' element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched sequence element, %s * %d \n",$1->name,(int)$3);
-#endif
-		    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_LINE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$3;i++)
-			tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, (int)$3, true, ElementType::_LINE);
 	      }
             | NUMBER '*' VARIABLE ',' element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched sequence element, %s * %d \n",$3->name,(int)$1);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $3->name;
-		      e.type = ElementType::_LINE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$1;i++)
-			tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($3->name, (int)$1, true, ElementType::_LINE);
 	      }
             | VARIABLE
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched last sequence element, %s\n",$1->name);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_LINE;
-		      e.lst = nullptr;
-		      tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, 1, true, ElementType::_LINE);
 	      }
            | VARIABLE '*' NUMBER
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched last sequence element, %s * %d\n",$1->name,(int)$3);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_LINE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$3;i++)
-			tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, (int)$3, true, ElementType::_LINE);
 	      }
             | NUMBER '*' VARIABLE
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched last sequence element, %s * %d\n",$3->name,(int)$1);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $3->name;
-		      e.type = ElementType::_LINE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$1;i++)
-			tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($3->name, (int)$1, true, ElementType::_LINE);
 	      }
             | '-' VARIABLE ',' element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched last sequence element, %s\n",$2->name);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $2->name;
-		      e.type = ElementType::_REV_LINE;
-		      e.lst = nullptr;
-	    	      tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($2->name, 1, true, ElementType::_REV_LINE);
 	      }
             | '-' VARIABLE
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched last sequence element, %s\n",$2->name);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $2->name;
-		      e.type = ElementType::_REV_LINE;
-		      e.lst = nullptr;
-	    	      tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($2->name, 1, true, ElementType::_REV_LINE);
 	      }
 ;
 
 rev_element_seq : 
             | VARIABLE ',' rev_element_seq 
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched sequence element, %s\n",$1->name);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_REV_LINE;
-		      e.lst = nullptr;
-		      tmp_list.push_back(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, 1, false, ElementType::_REV_LINE);
 	      }
             | VARIABLE '*' NUMBER ',' rev_element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched sequence element, %s * %d \n",$1->name,(int)$3);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_REV_LINE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$3;i++)
-			tmp_list.push_back(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, int($3), false, ElementType::_REV_LINE);
 	      }
             | NUMBER '*' VARIABLE ',' rev_element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched sequence element, %s * %d \n",$3->name,(int)$1);
-#endif
-		    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $3->name;
-		      e.type = ElementType::_REV_LINE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$1;i++)
-			tmp_list.push_back(e);
-		    }
-		  }
+		if(execute) add_element_temp($3->name, int($1), false, ElementType::_REV_LINE);
 	      }
             | VARIABLE
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched last sequence element, %s\n",$1->name);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_REV_LINE;
-		      e.lst = nullptr;
-		      tmp_list.push_back(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, 1, false, ElementType::_REV_LINE);
 	      }
            | VARIABLE '*' NUMBER
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched last sequence element, %s * %d\n",$1->name,(int)$3);
-#endif
-		    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_REV_LINE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$3;i++)
-			tmp_list.push_back(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, int($3), false, ElementType::_REV_LINE);
 	      }
             | NUMBER '*' VARIABLE
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched last sequence element, %s * %d\n",$3->name,(int)$1);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $3->name;
-		      e.type = ElementType::_REV_LINE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$1;i++)
-			tmp_list.push_back(e);
-		    }
-		  }
+		if(execute) add_element_temp($3->name, int($1), false, ElementType::_REV_LINE);
 	      }
             | '-' VARIABLE ',' element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched last sequence element, %s\n",$2->name);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $2->name;
-		      e.type = ElementType::_LINE;
-		      e.lst = nullptr;
-	    	      tmp_list.push_back(e);
-		    }
-		  }
+		if(execute) add_element_temp($2->name, 1, false, ElementType::_LINE);
 	      }
             | '-' VARIABLE
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched last sequence element, %s\n",$2->name);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $2->name;
-		      e.type = ElementType::_LINE;
-		      e.lst = nullptr;
-	    	      tmp_list.push_back(e);
-		    }
-		  }
+		if(execute) add_element_temp($2->name, 1, false, ElementType::_LINE);
 	      }
 ;
 
 seq_element_seq : 
             | VARIABLE ',' seq_element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched sequence element, %s\n",$1->name);
-#endif
-		    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_SEQUENCE;
-		      e.lst = nullptr;
-		      tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, 1, true, ElementType::_SEQUENCE);
 	      }
             | VARIABLE '*' NUMBER ',' seq_element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG 
-                    printf("matched sequence element, %s * %d \n",$1->name,(int)$3);
-#endif
-		    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_SEQUENCE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$3;i++)
-			tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, int($3), true, ElementType::_SEQUENCE);
 	      }
             | NUMBER '*' VARIABLE ',' seq_element_seq
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched sequence element, %s * %d \n",$3->name,(int)$1);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $3->name;
-		      e.type = ElementType::_SEQUENCE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$1;i++)
-			tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($3->name, int($1), true, ElementType::_SEQUENCE);
 	      }
             | VARIABLE 
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched last sequence element, %s\n",$1->name);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_SEQUENCE;
-		      e.lst = nullptr;
-		      tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, 1, true, ElementType::_SEQUENCE);
 	      }
            | VARIABLE '*' NUMBER 
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched last sequence element, %s * %d\n",$1->name,(int)$3);
-#endif
-		    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $1->name;
-		      e.type = ElementType::_SEQUENCE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$3;i++)
-			tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($1->name, int($3), true, ElementType::_SEQUENCE);
 	      }
             | NUMBER '*' VARIABLE 
               {
-		if(execute)
-		  {
-#ifdef BDSDEBUG
-                    printf("matched last sequence element, %s * %d\n",$3->name,(int)$1);
-#endif
-                    // add to temporary element sequence
-		    {
-		      struct Element e;
-		      e.name = $3->name;
-		      e.type = ElementType::_SEQUENCE;
-		      e.lst = nullptr;
-		      for(int i=0;i<(int)$1;i++)
-			tmp_list.push_front(e);
-		    }
-		  }
+		if(execute) add_element_temp($3->name, int($1), true, ElementType::_SEQUENCE);
 	      }
 ;
 
@@ -985,7 +644,7 @@ expr : aexpr
 	 if(execute)
 	   {
 	     if(INTERACTIVE)
-	       for(int i=0;i<$1->size;i++)
+	       for(int i=0;i<$1->data.size();i++)
 		 {
 		   printf(" %.10g ",$1->data[i]);
 		 }
@@ -1030,17 +689,16 @@ aexpr :  NUMBER               { $$ = $1;                         }
        | '(' aexpr ')'         { $$ = $2;                         }
        | '<' vecexpr ',' vecexpr '>' // scalar product
          {
-	   if($2->size == $4->size)
+	   if($2->data.size() == $4->data.size())
 	     {
 	       $$ = 0;
-	       for(int i=0;i<$2->size;i++)
+	       for(int i=0;i<$2->data.size();i++)
 		 $$ += $2->data[i] * $4->data[i];
 	     }
 	   else
 	     {
 	       printf("vector dimensions do not match");
 	       exit(1);
-	       // $$ = _undefined;
 	     }
          } 
        // boolean stuff
@@ -1052,18 +710,18 @@ aexpr :  NUMBER               { $$ = $1;                         }
 	| aexpr EQ aexpr { $$ = ($1 == $3 )? 1 : 0; }
         | VARIABLE '[' VARIABLE ']' 
           { 
-	    if(ECHO_GRAMMAR) printf("aexpr-> %s [ %s ]\n ",$1->name, $3->name); 
+	    if(ECHO_GRAMMAR) std::cout << "aexpr-> " << $1->name << " [ " << $3->name << " ]" << std::endl; 
 	    $$ = property_lookup(element_list,$1->name,$3->name);
 	  }// element attributes
  ; 
 
 assignment :  VARIABLE '=' aexpr  
               {
-		if(ECHO_GRAMMAR) printf("%s \n",$1->name);
+		if(ECHO_GRAMMAR) std::cout << $1->name << std::endl;
 		if(execute)
 		  {
 		    if($1->is_reserved)
-		      printf("%s is reserved",$1->name);
+		      std::cout << $1->name << " is reserved" << std::endl;
 		    else
 		      {
 			$1->value = $3; $$=$1;       
@@ -1075,12 +733,11 @@ assignment :  VARIABLE '=' aexpr
 		if(execute)
 		  {
 		    $1->array.clear();
-		    for(int i=0;i<$3->size;i++)
+		    for(unsigned int i=0;i<$3->data.size();i++)
 		      $1->array.push_back($3->data[i]);
 		    $1->type = symtab::symtabtype::_ARRAY;
 		    $$ = $1;
-		    delete[] $3->data;
-		    $3->size = 0;
+		    $3->data.clear();
 		  }
               }
 
@@ -1089,11 +746,10 @@ assignment :  VARIABLE '=' aexpr
 		if(execute)
 		  {
 		    $1->array.clear();
-		    for(int i=0;i<$3->size;i++)
+		    for(int i=0;i<$3->data.size();i++)
 		      $1->array.push_back($3->data[i]);
 		    $$ = $1;
-		    delete[] $3->data;
-		    $3->size = 0;
+		    $3->data.clear();
 		  }
               }
 ;
@@ -1103,14 +759,10 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->data = new double[$1->array.size()];
-	      $$->size = $1->array.size();
-	      //array_list.push_back($$);
 	      std::list<double>::iterator it;
-	      int i = 0;
 	      for(it=$1->array.begin();it!=$1->array.end();it++)
 		{
-		  $$->data[i++] = (*it);
+		  $$->data.push_back(*it);
 		}
 	    }
         } 
@@ -1119,19 +771,9 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->data = new double[$1->size];
-	      $$->size = $1->size;
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$1->size;i++)
-		{
-		  $$->data[i] = $1->data[i];
-		}
-	      
+	      $$->data = $1->data;
 	      // erase data in vect
-	      
-	      delete[] $1->data;
-	      $1->size = 0;
+	      $1->data.clear();
 	    }
 	}
        | vectstr
@@ -1139,11 +781,8 @@ vecexpr :   VECVAR
 	  if(execute)
 	  {
 	    $$ = new struct Array;
-	    $$->size = $1->size;
 	    $$->symbols = $1->symbols;
-
 	    $1->symbols.clear();
-	    $1->size = 0;
 	  }
 	}
 
@@ -1152,22 +791,15 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->size = ($1->size < $3->size )? $1->size : $3->size;
-	      $$->data = new double[$$->size];
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$$->size;i++)
+	      unsigned int size = ($1->data.size() < $3->data.size() )? $1->data.size() : $3->data.size();
+	      $$->data.resize(size);
+	      for(unsigned int i=0;i<size;i++)
 		{
 		  $$->data[i] = $1->data[i] + $3->data[i];
 		}
-	      
-	      
 	      // erase data in vect
-	      
-	      delete[] $1->data;
-	      delete[] $3->data;
-	      $1->size = 0;
-	      $3->size = 0;
+	      $1->data.clear();
+	      $3->data.clear();
 	    }
         }
       | vecexpr '-' vecexpr
@@ -1175,22 +807,15 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->size = ($1->size < $3->size )? $1->size : $3->size;
-	      $$->data = new double[$$->size];
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$$->size;i++)
+	      unsigned int size = ($1->data.size() < $3->data.size() )? $1->data.size() : $3->data.size();
+	      $$->data.resize(size);
+	      for(unsigned int i=0;i<size;i++)
 		{
 		  $$->data[i] = $1->data[i] - $3->data[i];
 		}
-	      
-	      
 	      // erase data in vect
-	      
-	      delete[] $1->data;
-	      delete[] $3->data;
-	      $1->size = 0;
-	      $3->size = 0;
+	      $1->data.clear();
+	      $3->data.clear();
 	    }
 	}
        | vecexpr '+' aexpr
@@ -1198,19 +823,14 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->size = $1->size;
-	      $$->data = new double[$$->size];
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$$->size;i++)
+	      unsigned int size = $1->data.size();
+	      $$->data.resize(size);
+	      for(unsigned int i=0;i<size;i++)
 		{
 		  $$->data[i] = $1->data[i] + $3;
 		}
-	      
 	      // erase data in vect
-	      
-	      delete[] $1->data;
-	      $1->size = 0;
+	      $1->data.clear();
 	    }
 	}
 
@@ -1219,19 +839,14 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->size = $1->size;
-	      $$->data = new double[$$->size];
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$$->size;i++)
+	      unsigned int size = $1->data.size();
+	      $$->data.resize(size);
+	      for(unsigned int i=0;i<size;i++)
 		{
 		  $$->data[i] = $1->data[i] * $3;
 		}
-	      
 	      // erase data in vect
-	      
-	      delete[] $1->data;
-	      $1->size = 0;
+	      $1->data.clear();
 	    }
 	}
       | vecexpr '/' aexpr
@@ -1239,19 +854,14 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->size = $1->size;
-	      $$->data = new double[$$->size];
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$$->size;i++)
+	      unsigned int size = $1->data.size();
+	      $$->data.resize(size);
+	      for(unsigned int i=0;i<size;i++)
 		{
 		  $$->data[i] = $1->data[i] / $3;
 		}
-	      
 	      // erase data in vect
-	      
-	      delete[] $1->data;
-	      $1->size = 0;
+	      $1->data.clear();
 	    }
 	}
        | aexpr '+' vecexpr
@@ -1259,19 +869,14 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->size = $3->size;
-	      $$->data = new double[$$->size];
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$$->size;i++)
+	      unsigned int size = $3->data.size();
+	      $$->data.resize(size);
+	      for(unsigned int i=0;i<size;i++)
 		{
 		  $$->data[i] = $3->data[i] + $1;
 		}
-	      
 	      // erase data in vect
-	      
-	      delete[] $3->data;
-	      $3->size = 0;
+	      $3->data.clear();
 	    }
 	}
        | aexpr '-' vecexpr
@@ -1279,19 +884,14 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->size = $3->size;
-	      $$->data = new double[$$->size];
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$$->size;i++)
+	      unsigned int size = $3->data.size();
+	      $$->data.resize(size);
+	      for(unsigned int i=0;i<size;i++)
 		{
-		  $$->data[i] = $1 - $3->data[i];
+		  $$->data[i] = $3->data[i] - $1;
 		}
-	      
 	      // erase data in vect
-	      
-	      delete[] $3->data;
-	      $3->size = 0;
+	      $3->data.clear();
 	    }
 	}
       | aexpr '*' vecexpr
@@ -1299,70 +899,63 @@ vecexpr :   VECVAR
 	  if(execute)
 	    {
 	      $$ = new struct Array;
-	      $$->size = $3->size;
-	      $$->data = new double[$$->size];
-	      //array_list.push_back($$);
-	      
-	      for(int i=0;i<$$->size;i++)
+	      unsigned int size = $3->data.size();
+	      $$->data.resize(size);
+	      for(unsigned int i=0;i<size;i++)
 		{
 		  $$->data[i] = $1 * $3->data[i];
 		}
-	      
 	      // erase data in vect
-	      
-	      delete[] $3->data;
-	      $3->size = 0;
+	      $3->data.clear();
 	    }
 	}
 
 ;
 
-vectnum : '{' numbers '}' 
+vectnumexec : '{' numbers '}'
+            | '[' numbers ']'
+
+vectnum : vectnumexec
 	  {
 	    if(execute)
 	      {
 	        //printf("matched vector of size %d\n",_tmparray.size());
 	        $$ = new struct Array;
-	        $$->data = new double[_tmparray.size()];
-	        $$->size = _tmparray.size();
-      
-	        //array_list.push_back(a);
-      
 	        std::list<double>::iterator it;
-		int i=0;      
 	        for(it=_tmparray.begin();it!=_tmparray.end();it++)
-	  	{
-	 	 $$->data[i++] = (*it);
-		}
+		  {
+		    $$->data.push_back(*it);
+		  }
     	        _tmparray.clear();
 
-	        std::list<char*>::iterator lIter;
+	        std::list<std::string>::iterator lIter;
 	        for(lIter = _tmpstring.begin(); lIter != _tmpstring.end(); lIter++)
-	          $$->symbols.push_back(*lIter);
-
+		  {
+		    $$->symbols.push_back(*lIter);
+		  }
 	        _tmpstring.clear();
 	      }
-	}
+	  }
 ;
 
-vectstr : '[' letters ']'
+vectstrexec : '[' letters ']'
+            | '{' letters '}'
+;
+
+vectstr : vectstrexec
 	{
 	  if(execute)
 	  {
 	    $$ = new struct Array;
-	    $$->size = _tmpstring.size();
-
-	    std::list<char*>::iterator iter;
+	    std::list<std::string>::iterator iter;
 	    for(iter = _tmpstring.begin(); iter != _tmpstring.end(); iter++)
 	      $$->symbols.push_back(*iter);
 
 	    _tmpstring.clear();
 	  }
 	}
-;
 
-numbers : 
-        | aexpr ',' numbers 
+numbers : aexpr ',' numbers 
           {
 	    if(execute)
 	      _tmparray.push_front($1);
@@ -1374,16 +967,17 @@ numbers :
         }
 ;
 
-letters :
-	| STR ',' letters
+letters : STR ',' letters
           {
             if(execute)
               _tmpstring.push_front($1);
+	    free($1);
           }
 	| STR
          {
            if(execute)
              _tmpstring.push_front($1);
+	   free($1);
          }
 ;
 
@@ -1392,32 +986,29 @@ command : STOP             { if(execute) quit(); }
         | PRINT            { if(execute) element_list.print(); }
         | PRINT ',' LINE   { if(execute) beamline_list.print(); }
         | PRINT ',' OPTION { if(execute) options.print(); }
+//        | PRINT ',' OPTION ',' VARIABLE { if(execute) options.print($5->name);}
         | PRINT ',' VARIABLE 
           {
-	    if(execute)
-	      {
-		printf("\t");
-		printf("\t%.10g\n",$3->value);
-	      }
+	    if(execute) {
+	      printf("\t%s = %.10g\n",$3->name.c_str(),$3->value);
+	    }
 	  } 
-        | PRINT ',' VECVAR 
+        | PRINT ',' VECVAR
           {
 	    if(execute)
 	      {
-		printf("\t");
-		
+		printf("\t%s = {",$3->name.c_str());
 		std::list<double>::iterator it;
 		for(it=$3->array.begin();it!=$3->array.end();it++)
 		  {
-		    printf("  %.10g ",(*it));
+		    printf(" %.10g ",(*it));
 		  }
-		
-		printf("\n");
+		printf("} \n");
 	      } 
 	  }
         | USE ',' use_parameters { if(execute) expand_line(current_line,current_start, current_end);}
         | OPTION  ',' option_parameters
-	| ECHO STR { if(execute) printf("%s\n",$2); }
+	| ECHO STR { if(execute) {printf("%s\n",$2);} free($2); }
         | SAMPLE ',' sample_options 
           {
 	    if(execute)
@@ -1439,22 +1030,20 @@ command : STOP             { if(execute) quit(); }
 		params.flush();
 	      }
           }
-        | GAS ',' gas_options // beampipe gas
-          {
-	    if(execute)
-	      {  
-		if(ECHO_GRAMMAR) printf("command -> GAS\n");
-		add_gas("gas",$3->name, element_count, params.material);
-		element_count = 1;
-		params.flush();
-	      }
-          }
         | TUNNEL ',' tunnel_options // tunnel
           {
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> TUNNEL\n");
 		add_tunnel(tunnel);
+	      }
+          }
+        | XSECBIAS ',' xsecbias_options // xsecbias
+          {
+	    if(execute)
+	      {  
+		if(ECHO_GRAMMAR) printf("command -> XSECBIAS\n");
+		add_xsecbias(xsecbias);
 	      }
           }
         | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
@@ -1482,27 +1071,33 @@ use_parameters :  VARIABLE
                   {
 		    if(execute)
 		      {
-			$$ = $1->name;
+			char * cstr = new char [$1->name.length()+1];
+			std::strcpy (cstr, $1->name.c_str());
+			$$ = cstr;
 			current_line = $1->name;
-			current_start = nullptr;
-			current_end = nullptr;
+			current_start = "";
+			current_end = "";
 		      }
                   }
 		| PERIOD '=' VARIABLE
                   {
 		    if(execute)
 		      {
-			$$ = $3->name;
+			char * cstr = new char [$3->name.length()+1];
+			std::strcpy (cstr, $3->name.c_str());
+			$$ = cstr;
 			current_line = $3->name;
-			current_start = nullptr;
-			current_end = nullptr;
+			current_start = "";
+			current_end = "";
 		      }
                   }
                 | PERIOD '=' VARIABLE ',' RANGE '=' VARIABLE '/' VARIABLE
                   {
 		    if(execute)
 		      {
-			$$ = $3->name;
+			char * cstr = new char [$3->name.length()+1];
+			std::strcpy (cstr, $3->name.c_str());
+			$$ = cstr;
 			current_line = $3->name;
 			current_start = $7->name;
 			current_end = $9->name;
@@ -1510,57 +1105,55 @@ use_parameters :  VARIABLE
 		  }
 ;
 
-
-
 sample_options: RANGE '=' VARIABLE
-                { if(ECHO_GRAMMAR)  printf("sample_opt : RANGE =  %s \n",$3->name);
+                {
+		  if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << $3->name << std::endl;
 		  {
 		    if(execute) $$ = $3;
 		  }
                 }
               | RANGE '=' VARIABLE '[' NUMBER ']'
                 {
-                  if(ECHO_GRAMMAR) printf("sample_opt : RANGE =  %s [%.10g] \n",$3->name,$5);
-		    {
-		      if(execute) { $$ = $3; element_count = (int)$5; }
-		    }
+                  if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << $3->name << " [" << $5 << "]" << std::endl;
+		  {
+		    if(execute) { $$ = $3; element_count = (int)$5; }
+		  }
                 }
 ;
 
-
-
 csample_options : VARIABLE '=' aexpr
                   {
-		    if(ECHO_GRAMMAR) printf("csample_opt ->csopt , %s =  %.10g \n",$1->name,$3);
+		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << $1->name << " = " << $3 << std::endl;
 		    
 		    if(execute)
 		      {
-			if( !strcmp($1->name,"r") ) params.r = $3;
-			else if (!strcmp($1->name,"l") ) params.l = $3;
+			if( $1->name == "r") params.r = $3;
+			else if ($1->name == "l") params.l = $3;
 			else {
-			  printf("Warning : CSAMPLER: unknown parameter : \"%s\"\n",$1->name);
+			  std::cout << "Warning : CSAMPLER: unknown parameter : \"" << $1->name << "\"" << std::endl;
 			  exit(1);
 			}
 		      }
 		  }   
                 | VARIABLE '=' STR
                   {
-		    if(ECHO_GRAMMAR) printf("csample_opt -> %s =  %s \n",$1->name,$3);
+		    if(ECHO_GRAMMAR) std::cout << "csample_opt -> " << $1->name << " = " << $3 << std::endl;
 		    /* if(execute) */
 		    /*   { */
 		    /* 	;//options.set_value($1->name,string($3)); */
 		    /*   } */
+		    free($3);
 		  }   
                 | VARIABLE '=' aexpr ',' csample_options
                   {
-		    if(ECHO_GRAMMAR) printf("csample_opt ->csopt , %s =  %.10g \n",$1->name,$3);
+		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << $1->name << " = " << $3 << std::endl;
 		    
 		    if(execute)
 		      {
-			if( !strcmp($1->name,"r") ) params.r = $3;
-			else if (!strcmp($1->name,"l") ) params.l = $3;
+			if( $1->name == "r") params.r = $3;
+			else if ($1->name == "l") params.l = $3;
 			else {
-			  printf("Warning : CSAMPLER: unknown parameter : \"%s\"\n",$1->name);
+			  std::cout << "Warning : CSAMPLER: unknown parameter : \"" << $1->name << "\"" << std::endl;
 			  exit(1);
 			}
 		      }
@@ -1568,8 +1161,9 @@ csample_options : VARIABLE '=' aexpr
 		  }   
                 | VARIABLE '=' STR ',' csample_options
                   {
-		    if(ECHO_GRAMMAR) printf("csample_opt -> %s =  %s \n",$1->name,$3);
+		    if(ECHO_GRAMMAR) std::cout << "csample_opt -> " << $1->name << " = " << $3 << std::endl;
 		    // if(execute) //options.set_value($1->name,string($3));
+		    free($3);
 		  }   
                 | sample_options ',' csample_options
                   {
@@ -1580,82 +1174,6 @@ csample_options : VARIABLE '=' aexpr
                   {
 		    if(ECHO_GRAMMAR) printf("csample_opt -> sopt\n");
 		    $$ = $1;
-                  }
-;
-
-gas_options : VARIABLE '=' aexpr
-                  {
-		    if(ECHO_GRAMMAR) printf("gas_opt -> , %s =  %.10g \n",$1->name,$3);
-		    
-		    if(execute)
-		      {
-			if( !strcmp($1->name,"r") ) params.r = $3;
-			else if (!strcmp($1->name,"l") ) params.l = $3;
-			else {
-			  printf("Warning : GAS: unknown parameter : \"%s\"\n",$1->name);
-			  exit(1);
-			}
-		      }
-		  }   
-                | VARIABLE '=' STR
-                  {
-		    if(ECHO_GRAMMAR) printf("gas_opt -> %s =  %s \n",$1->name,$3);
-		    if(execute)
-		      {
-			if( !strcmp($1->name,"material") ) 
-			  {
-			    params.material = $3;
-			    params.materialset = 1;
-			  }
-			//options.set_value($1->name,string($3));
-		      }
-		  }   
-                | VARIABLE '=' aexpr ',' gas_options
-                  {
-		    if(ECHO_GRAMMAR) printf("gas_opt -> , %s =  %.10g \n",$1->name,$3);
-		    
-		    if(execute)
-		      {
-			if( !strcmp($1->name,"r") ) params.r = $3;
-			else if (!strcmp($1->name,"l") ) params.l = $3;
-			else {
-			  printf("Warning : GAS: unknown parameter : \"%s\"\n",$1->name);
-			  exit(1);
-			}
-		      }
-
-		  }   
-                | VARIABLE '=' STR ',' gas_options
-                  {
-		    if(ECHO_GRAMMAR) printf("csample_opt -> %s =  %s \n",$1->name,$3);
-		    if(execute)
-		      {
-			  if( !strcmp($1->name,"material") ) 
-			    {
-			      params.material = $3;
-			      params.materialset = 1;
-			    }
-		      }
-		  }   
-                | RANGE '='  VARIABLE '/' VARIABLE ',' gas_options
-                  {
-		    if(ECHO_GRAMMAR) printf("gas_opt -> range, csopt\n");
-
-		  }
-                | RANGE '='  VARIABLE '/' VARIABLE
-                  {
-		    if(ECHO_GRAMMAR) printf("gas_opt -> range\n");
-
-                  }
-                | RANGE '='  VARIABLE ',' gas_options
-                  {
-		    if(ECHO_GRAMMAR) printf("gas_opt -> range\n");
-		    $$ = $3;
-		  }
-                | RANGE '='  VARIABLE
-                  {
-		    if(ECHO_GRAMMAR) printf("gas_opt -> range\n");
-		    $$ = $3;
                   }
 ;
 
@@ -1672,17 +1190,52 @@ tunnel_options : VARIABLE '=' aexpr ',' tunnel_options
                  | VARIABLE '=' STR ',' tunnel_options
                     {
 		      if(execute)
-			tunnel.set_value($1->name,std::string($3));
+			tunnel.set_value($1->name,$3);
+		      free($3);
 		    }
                  | VARIABLE '=' STR
                     {
 		      if(execute)
-			tunnel.set_value($1->name,std::string($3));
+			tunnel.set_value($1->name,$3);
+		      free($3);
 		    }
 ;
 
-option_parameters : 
-                  | VARIABLE '=' aexpr ',' option_parameters
+xsecbias_options : VARIABLE '=' aexpr ',' xsecbias_options
+                    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
+		    }
+                 | VARIABLE '=' aexpr
+                    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
+		    }
+                 | VARIABLE '=' STR ',' xsecbias_options
+                    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
+		      free($3);
+		    }
+                 | VARIABLE '=' STR
+                    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
+		      free($3);
+		    }
+                 | VARIABLE '=' vecexpr ',' xsecbias_options
+		    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
+		    }
+                 | VARIABLE '=' vecexpr
+		    {
+		      if(execute)
+			xsecbias.set_value($1->name,$3);
+		    }
+;
+
+option_parameters : VARIABLE '=' aexpr ',' option_parameters
                     {
 		      if(execute)
 			options.set_value($1->name,$3);
@@ -1695,17 +1248,18 @@ option_parameters :
                   | VARIABLE '=' STR ',' option_parameters
                     {
 		      if(execute)
-			options.set_value($1->name,std::string($3));
+			options.set_value($1->name,$3);
+		      free($3);
 		    }   
                   | VARIABLE '=' STR
                     {
 		      if(execute)
-			options.set_value($1->name,std::string($3));
-		    }   
+			options.set_value($1->name,$3);
+		      free($3);
+		    }
 ;
 
-beam_parameters :
-                | VARIABLE '=' aexpr ',' beam_parameters
+beam_parameters : VARIABLE '=' aexpr ',' beam_parameters
                   {
 		    if(execute)
 		      options.set_value($1->name,$3);
@@ -1718,21 +1272,22 @@ beam_parameters :
                 | VARIABLE '=' STR ',' beam_parameters
                   {
 		    if(execute)
-		      options.set_value($1->name,std::string($3));
+		      options.set_value($1->name,$3);
+		    free($3);
 		  }   
                 | VARIABLE '=' STR
                   {
 		    if(execute)
-		      options.set_value($1->name,std::string($3));
+		      options.set_value($1->name,$3);
+		    free($3);
 		  }   
 ;
 
 %%
 
-
 int yyerror(const char *s)
 {
-  printf("%s at line %d (might not be exact!), file %s \n",s, line_num, yyfilename);
+  printf("%s at line %d (might not be exact!), file %s \nsymbol '%s' unexpected\n",s, line_num, yyfilename, yytext);
   exit(1);
 }
 

@@ -2,20 +2,20 @@
 
 #include "BDSBeamPipe.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
-#include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetColours.hh"
+#include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterFactoryCylindrical.hh" // for default geometry
 #include "BDSMaterials.hh"
-#include "BDSSDManager.hh"
-// #include "BDSUtilities.hh"                 // for calculateorientation - s and r bend
+#include "BDSUtilities.hh"
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4Box.hh"
 #include "G4Colour.hh"
+#include "G4CutTubs.hh"
 #include "G4EllipticalTube.hh"
 #include "G4LogicalVolume.hh"
+#include "G4IntersectionSolid.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
@@ -36,6 +36,7 @@ BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase()
   poleFraction        = 0.7;
   poleAngularFraction = 0.45;
   poleTipFraction     = 0.2;
+  bendHeightFraction  = 0.7;
 
   // now the base class constructor should be called first which
   // should call clean up (in the derived class) which should initialise
@@ -47,27 +48,25 @@ void BDSMagnetOuterFactoryPolesBase::CleanUp()
 {
   BDSMagnetOuterFactoryBase::CleanUp();
   
-  poleStartRadius  = 0;
-  poleFinishRadius = 0;
-  yokeStartRadius  = 0;
-  yokeFinishRadius = 0;
+  poleStartRadius       = 0;
+  poleFinishRadius      = 0;
+  yokeStartRadius       = 0;
+  yokeFinishRadius      = 0;
+  magnetContainerRadius = 0;
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      name,
-								       G4double      length,
-								       BDSBeamPipe*  beamPipe,
-								       G4double      outerDiameter,
-								       G4double      angle,
-								       G4Material*   outerMaterial)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      name,
+								 G4double      length,
+								 BDSBeamPipe*  beamPipe,
+								 G4double      outerDiameter,
+								 G4double      containerLength,
+								 G4double      angle,
+								 G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  CleanUp(); // doesn't use CommonConstructor so must do this manually
-  
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateSectorBend(name,length,beamPipe,outerDiameter,
-									angle,outerMaterial);
-  /*
+  CleanUp(); // doesn't use CommonConstructor so must do this manually2012
 
   // test input parameters - set global options as default if not specified
   TestInputParameters(beamPipe,outerDiameter,outerMaterial);
@@ -77,198 +76,381 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String 
   G4double xcomponent = sin(fabs(angle*0.5)); // note full angle here as it's the exit angle
   G4ThreeVector inputface  = G4ThreeVector(-orientation*xcomponent, 0.0, -1.0*zcomponent); //-1 as pointing down in z for normal
   G4ThreeVector outputface = G4ThreeVector(-orientation*xcomponent, 0.0, zcomponent);   // no output face angle
-  
-  if (beamPipe->ContainerIsCircular())
-    {
-      //circular beampipe so we can simply use its radius
-      outerSolid = new G4CutTubs(name + "_outer_solid",       // name
-				 beamPipe->GetContainerRadius() + 2*lengthSafety,  // inner radius
-				 outerDiameter*0.5,                 // outer radius
-				 length*0.5-2*lengthSafety,   // half length
-				 0,                           // rotation start angle
-				 CLHEP::twopi,                // rotation finish angle
-				 inputface,                   // input face normal
-				 outputface);                 // output face normal
 
-      //container is similar but slightly wider and hollow (to allow placement of beampipe)
-      containerSolid = new G4CutTubs(name + "_contiainer_solid",  // name
-				     beamPipe->GetContainerRadius() + lengthSafety, // inner radius
-				     outerDiameter*0.5 + lengthSafety,  // outer radius
-				     length*0.5,                  // half length
-				     0,                           // rotation start angle
-				     CLHEP::twopi,                // rotation finish angle
-				     inputface,                   // input face normal
-				     outputface);                 // output face normal
-    }
-  else
+  G4double beampipeRadiusX = std::max(beamPipe->GetExtentX().first, beamPipe->GetExtentX().second);
+  G4double beampipeRadiusY = std::max(beamPipe->GetExtentY().first, beamPipe->GetExtentY().second);
+
+  yokeFinishRadius = 0.5 * outerDiameter;
+  yokeStartRadius  = (poleFraction * yokeFinishRadius) + lengthSafetyLarge;
+  G4double yokeFinishRadiusY = yokeFinishRadius * bendHeightFraction;
+  G4double yokeThickness     = yokeFinishRadius - yokeStartRadius;
+  G4double yokeStartRadiusY  = yokeFinishRadiusY - yokeThickness;
+  G4double outerLength       = (0.5 * length) - lengthSafety;
+  // make angled face cylinder big enough to encompass it all
+  G4double angledFaceRadius  = 1.5 * sqrt(pow(yokeFinishRadius, 2) + pow(yokeFinishRadiusY, 2));
+
+  // protection
+  G4bool buildPoles = true;
+  if (yokeStartRadius < beampipeRadiusX)
+    {yokeStartRadius = beampipeRadiusX + lengthSafetyLarge;}
+  if (yokeFinishRadius < yokeStartRadius)
+    {yokeFinishRadius = yokeStartRadius + 1*CLHEP::mm;}
+  if (yokeStartRadiusY < beampipeRadiusY)
     {
-      G4VSolid* outerSolidCylinder = new G4CutTubs(name + "_outer_solid_cylinder",  // name
-						   0,  // inner radius - for unambiguous subtraction
-						   outerDiameter*0.5,                 // outer radius
-						   length*0.5-2*lengthSafety,   // half length
+      yokeStartRadiusY = beampipeRadiusY + lengthSafetyLarge;
+      buildPoles = false;
+    }
+  if (yokeFinishRadiusY < yokeStartRadiusY)
+    {
+      yokeFinishRadiusY = yokeStartRadiusY + 1*CLHEP::mm;
+      buildPoles = false;
+    }
+
+  if (yokeStartRadiusY - beampipeRadiusY < 1*CLHEP::mm)
+    {buildPoles = false;}
+  
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "beam pipe x max radius: " << beampipeRadiusX   << G4endl;
+  G4cout << __METHOD_NAME__ << "beam pipe y max radius: " << beampipeRadiusY   << G4endl;
+  G4cout << __METHOD_NAME__ << "outer diameter:         " << outerDiameter     << G4endl;
+  G4cout << __METHOD_NAME__ << "yoke start radius x:    " << yokeStartRadius   << G4endl;
+  G4cout << __METHOD_NAME__ << "yoke finish radius x:   " << yokeFinishRadius  << G4endl;
+  G4cout << __METHOD_NAME__ << "yoke thickness:         " << yokeThickness     << G4endl;
+  G4cout << __METHOD_NAME__ << "yoke start radius y:    " << yokeStartRadiusY  << G4endl;
+  G4cout << __METHOD_NAME__ << "yoke finish radius y:   " << yokeFinishRadiusY << G4endl;
+  G4cout << __METHOD_NAME__ << "outer z half length:    " << outerLength       << G4endl;
+  G4cout << __METHOD_NAME__ << "angled face radius:     " << angledFaceRadius  << G4endl;
+  G4cout << __METHOD_NAME__ << "build poles:            " << buildPoles        << G4endl;
+#endif
+
+  G4Box* containerSquareSolid = new G4Box(name + "_container_square_solid", // name
+					  yokeFinishRadius,                 // x half width
+					  yokeFinishRadiusY,                // y half width
+					  1.5 * outerLength); // z half width - long for unambiguous intersection
+  
+  G4CutTubs* angledFaceSolid = new G4CutTubs(name + "_angled_face_solid", // name
+					     0,                           // inner radius
+					     angledFaceRadius,            // outer radius
+					     outerLength,                 // half length - must fit within container
+					     0,                           // rotation start angle
+					     CLHEP::twopi,                // rotation sweep angle
+					     inputface,                   // input face normal
+					     outputface);                 // output face normal
+  allSolids.push_back(containerSquareSolid);
+  allSolids.push_back(angledFaceSolid);
+
+  G4VSolid* containerSolidSolid = new G4IntersectionSolid(name + "_container_solid_solid", // name
+							  containerSquareSolid,
+							  angledFaceSolid);
+
+  // always just cut a box out with the bounds of the beam pipe
+  G4VSolid* containerInner = new G4Box(name + "_container_inner",      // name
+				       beampipeRadiusX + lengthSafety, // x half width
+				       beampipeRadiusY + lengthSafety, // y half width
+				       length*3); // z long for unambiguous subtraction
+
+  allSolids.push_back(containerSolidSolid);
+  allSolids.push_back(containerInner);
+
+  // always need to do a subtraction so save memory by not creating another subtraciton solid
+  containerSolid = new G4SubtractionSolid(name + "_container_solid",      // name
+					  containerSolidSolid,            // this
+					  containerInner); // minus this
+
+  G4double contRX = yokeFinishRadius  + lengthSafetyLarge;
+  G4double contRY = yokeFinishRadiusY + lengthSafetyLarge;
+  G4Box* magnetContSqSolid = new G4Box(name + "_mag_cont_square_solid", // name
+				       contRX,                          // x half width
+				       contRY,                          // y half width
+				       containerLength); // z half width - long for unambiguous intersection
+  G4CutTubs* magnetAngledFaceSolid = new G4CutTubs(name + "_angled_face_solid", // name
+						   0,                           // inner radius
+						   angledFaceRadius,            // outer radius
+						   containerLength*0.5,         // half length - must fit within container
 						   0,                           // rotation start angle
-						   CLHEP::twopi,                // rotation finish angle
+						   CLHEP::twopi,                // rotation sweep angle
 						   inputface,                   // input face normal
 						   outputface);                 // output face normal
-      outerSolid = new G4SubtractionSolid(name + "_outer_solid",
-					  outerSolidCylinder,
-					  beamPipe->GetContainerSubtractionSolid());
+  allSolids.push_back(magnetContSqSolid);
+  allSolids.push_back(magnetAngledFaceSolid);
+  magnetContainerSolid = new G4IntersectionSolid(name + "_magnet_container_solid", // name
+						 magnetContSqSolid,
+						 magnetAngledFaceSolid);
 
-      //container is similar but slightly wider
-      G4VSolid* containerSolidCylinder = new G4CutTubs(name + "_container_solid_cylinder", // name
-						       0,  // inner radius - for unambiguous subtraction
-						       outerDiameter*0.5 + lengthSafety,  // outer radius
-						       length*0.5,                  // half length
-						       0,                           // rotation start angle
-						       CLHEP::twopi,                // rotation finish angle
-						       inputface,                   // input face normal
-						       outputface);                 // output face normal
-      containerSolid = new G4SubtractionSolid(name + "_container_solid",
-					      containerSolidCylinder,
-					      beamPipe->GetContainerSubtractionSolid());
+  G4double contRZ = 0.5*length;
+  BDSMagnetOuter* magnetContainer = new BDSMagnetOuter(magnetContainerSolid,
+								   NULL,
+								   std::make_pair(-contRX,contRX),
+								   std::make_pair(-contRY,contRY),
+							     std::make_pair(-contRZ,contRZ),
+							     NULL);
+  
+  G4Box* yokeOuter = new G4Box(name + "_yoke_outer_solid", // name
+			       yokeFinishRadius - lengthSafety,           // x half width
+			       yokeFinishRadiusY - lengthSafety,          // y half width
+			       1.5*outerLength);           // z half width
+
+  G4Box* yokeInner = new G4Box(name + "_yoke_inner_solid", // name
+			       yokeStartRadius,            // x half width
+			       yokeStartRadiusY,           // y half width
+			       2*outerLength);             // z half width
+  // z long for unambiguous first subtraction and second intersection
+
+  G4SubtractionSolid* yokeSquareSolid = new G4SubtractionSolid(name + "_yoke_square_solid", // name
+							       yokeOuter,                   // this
+							       yokeInner);                  // minus this
+  
+  yokeSolid = new G4IntersectionSolid(name + "_yoke_solid", // name
+				      yokeSquareSolid,
+				      angledFaceSolid);
+
+  allSolids.push_back(yokeOuter);
+  allSolids.push_back(yokeInner);
+
+  G4double poleWidth  = 1.7 * beamPipe->GetExtentX().second; // +ve x extent
+  if (poleWidth > yokeStartRadius)
+    {poleWidth = 0.7 * yokeStartRadius;}
+  G4double beamPipeY  = beamPipe->GetExtentY().second;
+  G4double poleHeight = yokeStartRadiusY - lengthSafety - beamPipe->GetExtentY().second;
+  G4double poleDisp   = (0.5 * poleHeight) + beamPipeY;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "beam pipe half height:  " << beamPipeY  << G4endl;
+  G4cout << __METHOD_NAME__ << "pole half width:        " << poleWidth  << G4endl;
+  G4cout << __METHOD_NAME__ << "pole half height:       " << poleHeight << G4endl;
+  G4cout << __METHOD_NAME__ << "pole y displacement:    " << poleDisp   << G4endl;
+#endif
+
+  poleSolid = nullptr;
+  if (buildPoles)
+    {
+      G4Box* poleSquareSolid = new G4Box(name + "_pole_square_solid", // name
+					 poleWidth,                   // x half width
+					 poleHeight*0.5,                  // y half width
+					 1.5*outerLength); // z half width - long for unambiguous intersection
+      allSolids.push_back(poleSquareSolid);
+      
+      poleSolid = new G4IntersectionSolid(name + "_pole_solid", // name
+					  poleSquareSolid,
+					  angledFaceSolid);
     }
-  return CommonFinalConstructor(name,length,outerDiameter,outerMaterial,BDSMagnetColours::Instance()->GetMagnetColour("sectorbend"));
-  */
+
+  G4Colour* magnetColour = BDSMagnetColours::Instance()->GetMagnetColour(1); /*order = 1*/
+  
+  BDSMagnetOuterFactoryBase::CreateLogicalVolumes(name, length, magnetColour, outerMaterial);
+
+  // PLACEMENT
+  // place the components inside the container
+  // note we don't need the pointer for placements - it's registered upon construction with g4
+  yokePV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+			     (G4ThreeVector)0,             // position
+			     yokeLV,                       // lv to be placed
+			     name + "_yoke_pv",            // name
+			     containerLV,                  // mother lv to be placed in
+			     false,                        // no boolean operation
+			     0,                            // copy number
+			     checkOverlaps);               // whether to check overlaps
+
+  allPhysicalVolumes.push_back(yokePV);
+
+  if (buildPoles)
+    {
+      G4PVPlacement* topPolePV = new G4PVPlacement(0,                           // rotation
+						   G4ThreeVector(0,poleDisp,0), // position
+						   poleLV,                      // logical volume
+						   name + "_top_pole_pv",       // name
+						   containerLV,                 // mother lv
+						   false,                       // no boolean operation
+						   0,                           // copy number
+						   checkOverlaps);              // check overlaps
+      
+      G4PVPlacement* botPolePV = new G4PVPlacement(0,                            // rotation
+						   G4ThreeVector(0,-poleDisp,0), // position
+						   poleLV,                       // logical volume
+						   name + "_bottom_pole_pv",     // name
+						   containerLV,                  // mother lv
+						   false,                        // no boolean operation 
+						   0,                            // copy number
+						   checkOverlaps);               // check overlaps
+      allPhysicalVolumes.push_back(topPolePV);
+      allPhysicalVolumes.push_back(botPolePV);
+    }
+  
+  // record extents
+  std::pair<double,double> extX = std::make_pair(-yokeFinishRadius,  yokeFinishRadius);
+  std::pair<double,double> extY = std::make_pair(-yokeFinishRadiusY, yokeFinishRadiusY);
+  std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
+  
+  // build the BDSMagnetOuter instance and return it
+  BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
+					     containerLV,
+					     extX, extY, extZ,
+					     magnetContainer);
+  
+  outer->RegisterSolid(allSolids);
+  outer->RegisterRotationMatrix(allRotationMatrices);
+  outer->RegisterPhysicalVolume(allPhysicalVolumes);
+  outer->RegisterVisAttributes(allVisAttributes);
+  outer->RegisterUserLimits(allUserLimits);
+  
+  // Register logical volumes and set sensitivity
+  outer->RegisterLogicalVolume(poleLV);
+  outer->RegisterSensitiveVolume(poleLV);
+  outer->RegisterLogicalVolume(yokeLV);
+  outer->RegisterSensitiveVolume(yokeLV);
+  
+  return outer;
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String      name,
-									    G4double      length,
-									    BDSBeamPipe*  beamPipe,
-									    G4double      outerDiameter,
-									    G4double      angle,
-									    G4Material*   outerMaterial)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String      name,
+								      G4double      length,
+								      BDSBeamPipe*  beamPipe,
+								      G4double      outerDiameter,
+								      G4double      containerDiameter,
+								      G4double      containerLength,
+								      G4double      angle,
+								      G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   CleanUp(); // doesn't use CommonConstructor so must do this manually
   
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRectangularBend(name,length,beamPipe,outerDiameter,
-									     angle,outerMaterial);
-  /*
-  //rectangular bends currently just make a shorter straight volume, so ignore angle for now
-  CreateCylindricalSolids(name, length, beamPipe, outerDiameter);
-  return CommonFinalConstructor(name, length, outerDiameter, outerMaterial, BDSMagnetColours::Instance()->GetMagnetColour("rectangularbend"));
-  */
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRectangularBend(name, length, beamPipe, outerDiameter,
+									     containerDiameter, containerLength,
+									     angle, outerMaterial);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CreateQuadrupole(G4String      name,
-								       G4double      length,
-								       BDSBeamPipe*  beamPipe,
-								       G4double      outerDiameter,
-								       G4Material*   outerMaterial)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateQuadrupole(G4String      name,
+								 G4double      length,
+								 BDSBeamPipe*  beamPipe,
+								 G4double      outerDiameter,
+								 G4double      containerLength,
+								 G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return CommonConstructor(name, length, beamPipe, 2, outerDiameter, outerMaterial);
+  return CommonConstructor(name, length, beamPipe, 2, outerDiameter, outerMaterial, containerLength);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CreateSextupole(G4String      name,
-								      G4double      length,
-								      BDSBeamPipe*  beamPipe,
-								      G4double      outerDiameter,
-								      G4Material*   outerMaterial)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSextupole(G4String      name,
+								G4double      length,
+								BDSBeamPipe*  beamPipe,
+								G4double      outerDiameter,
+								G4double      containerLength,
+								G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return CommonConstructor(name, length, beamPipe, 3, outerDiameter, outerMaterial);
+  return CommonConstructor(name, length, beamPipe, 3, outerDiameter, outerMaterial, containerLength);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CreateOctupole(G4String      name,
-								     G4double      length,
-								     BDSBeamPipe*  beamPipe,
-								     G4double      outerDiameter,
-								     G4Material*   outerMaterial)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateOctupole(G4String      name,
+							       G4double      length,
+							       BDSBeamPipe*  beamPipe,
+							       G4double      outerDiameter,
+							       G4double      containerLength,
+							       G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return CommonConstructor(name, length, beamPipe, 4, outerDiameter, outerMaterial);
+  return CommonConstructor(name, length, beamPipe, 4, outerDiameter, outerMaterial, containerLength);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CreateDecapole(G4String      name,
-								     G4double      length,
-								     BDSBeamPipe*  beamPipe,
-								     G4double      outerDiameter,
-								     G4Material*   outerMaterial)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDecapole(G4String      name,
+							       G4double      length,
+							       BDSBeamPipe*  beamPipe,
+							       G4double      outerDiameter,
+							       G4double      containerLength,
+							       G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return CommonConstructor(name, length, beamPipe, 5, outerDiameter, outerMaterial);
+  return CommonConstructor(name, length, beamPipe, 5, outerDiameter, outerMaterial, containerLength);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CreateSolenoid(G4String      name,
-								     G4double      length,
-								     BDSBeamPipe*  beamPipe,
-								     G4double      outerDiameter,
-								     G4Material*   outerMaterial)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSolenoid(G4String      name,
+							       G4double      length,
+							       BDSBeamPipe*  beamPipe,
+							       G4double      outerDiameter,
+							       G4double      containerLength,
+							       G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateSolenoid(name,length,beamPipe,outerDiameter,outerMaterial);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateSolenoid(name,length,beamPipe,outerDiameter,
+								      containerLength,outerMaterial);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CreateMultipole(G4String      name,
-								      G4double      length,
-								      BDSBeamPipe*  beamPipe,
-								      G4double      outerDiameter,
-								      G4Material*   outerMaterial)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMultipole(G4String      name,
+								G4double      length,
+								BDSBeamPipe*  beamPipe,
+								G4double      outerDiameter,
+								G4double      containerLength,
+								G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMultipole(name,length,beamPipe,outerDiameter,outerMaterial);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMultipole(name,length,beamPipe,outerDiameter,
+								       containerLength,outerMaterial);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CreateRfCavity(G4String      name,
-								     G4double      length,
-								     BDSBeamPipe*  beamPipe,
-								     G4double      outerDiameter,
-								     G4Material*   outerMaterial)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRfCavity(G4String      name,
+							       G4double      length,
+							       BDSBeamPipe*  beamPipe,
+							       G4double      outerDiameter,
+							       G4double      containerLength,
+							       G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRfCavity(name,length,beamPipe,outerDiameter,outerMaterial);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRfCavity(name,length,beamPipe,outerDiameter,
+								      containerLength,outerMaterial);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CreateMuSpoiler(G4String      name,
-								      G4double      length,
-								      BDSBeamPipe*  beamPipe,
-								      G4double      outerDiameter,
-								      G4Material*   outerMaterial)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMuSpoiler(G4String      name,
+								G4double      length,
+								BDSBeamPipe*  beamPipe,
+								G4double      outerDiameter,
+								G4double      containerLength,
+								G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMuSpoiler(name,length,beamPipe,outerDiameter,outerMaterial);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMuSpoiler(name,length,beamPipe,outerDiameter,
+								       containerLength,outerMaterial);
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,
-								   G4double      length,
-								   BDSBeamPipe*  beamPipe,
-								   G4double      outerDiameter,
-								   G4bool        vertical,
-								   G4Material*   outerMaterial)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,
+							     G4double      length,
+							     BDSBeamPipe*  beamPipe,
+							     G4double      outerDiameter,
+							     G4double      containerLength,
+							     G4bool        vertical,
+							     G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateKicker(name,length,beamPipe,outerDiameter,
-								    vertical,outerMaterial);
+								    containerLength,vertical,outerMaterial);
 }
 
 /// functions below here are private to this particular factory
-BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     name,
-									G4double     length,
-									BDSBeamPipe* beamPipe,
-									G4int        order,
-									G4double     outerDiameter,
-									G4Material*  outerMaterial)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     name,
+								  G4double     length,
+								  BDSBeamPipe* beamPipe,
+								  G4int        order,
+								  G4double     outerDiameter,
+								  G4Material*  outerMaterial,
+								  G4double     magnetContainerLength)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -278,8 +460,10 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String
   
   CalculatePoleAndYoke(outerDiameter, beamPipe, order);
   CreatePoleSolid(name, length, order);
-  CreateYokeAndContainerSolid(name, length, order);
-  CreateLogicalVolumes(name, length, order, outerMaterial);
+  CreateYokeAndContainerSolid(name, length, order, magnetContainerLength);  
+  G4Colour* magnetColour = BDSMagnetColours::Instance()->GetMagnetColour(order);
+  CreateLogicalVolumes(name, length, magnetColour, outerMaterial);
+  CreateMagnetContainerComponent();
   PlaceComponents(name, order); //returns vector of PVs
   
   // record extents
@@ -289,10 +473,11 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String
   std::pair<double,double> extY = std::make_pair(-containerRadius,containerRadius);
   std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
   
-  // build the BDSGeometryComponent instance and return it
-  BDSGeometryComponent* outer = new BDSGeometryComponent(containerSolid,
-							 containerLV,
-							 extX, extY, extZ);
+  // build the BDSMagnetOuter instance and return it
+  BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
+					     containerLV,
+					     extX, extY, extZ,
+					     magnetContainer);
 
   outer->RegisterRotationMatrix(allRotationMatrices);
   outer->RegisterPhysicalVolume(allPhysicalVolumes);
@@ -317,6 +502,9 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiam
 							  BDSBeamPipe* beamPipe,
 							  G4double     /*order*/)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   G4double bpRadius = beamPipe->GetContainerRadius();
   // check parameters are valid
   if (outerDiameter*0.5 < bpRadius)
@@ -328,16 +516,20 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiam
 
   // layout markers for the pole and yoke - radially out from centre
   poleStartRadius       = bpRadius + lengthSafety;
-  yokeFinishRadius      = outerDiameter*0.5;
+  yokeFinishRadius      = outerDiameter*0.5 - lengthSafety;
   G4double totalLength  = yokeFinishRadius - poleStartRadius;
   poleFinishRadius      = poleStartRadius + poleFraction*totalLength;
   yokeStartRadius       = poleFinishRadius + lengthSafety;
+  magnetContainerRadius = yokeFinishRadius + lengthSafetyLarge;
 }
 
 void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
 						     G4double     length,
 						     G4int        order)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   G4int nPoles = 2*order;
   
   // full circle is divided into segments for each pole
@@ -387,10 +579,14 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
   allSolids.push_back(poleSolid);
 }
 
-void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String      name,
-								 G4double      length,
-								 G4int         /*order*/)
+void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String name,
+								 G4double length,
+								 G4int    /*order*/,
+								 G4double magnetContainerLength)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // circular yoke so pretty easy
   yokeSolid = new G4Tubs(name + "_yoke_solid",      // name
 			 yokeStartRadius,           // start radius
@@ -401,92 +597,58 @@ void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String      n
 
   // note container must have hole in it for the beampipe to fit in!
   // poled geometry doesn't fit tightly to beampipe so can alays use a circular aperture
-  containerSolid = new G4Tubs(name + "_container_solid",       // name
+  containerSolid = new G4Tubs(name + "_outer_container_solid", // name
 			      poleStartRadius,                 // start radius
 			      yokeFinishRadius + lengthSafety, // finish radius
 			      length*0.5,                      // z half length
 			      0,                               // start angle
 			      CLHEP::twopi);                   // sweep angle
   allSolids.push_back(yokeSolid);
+
+  // magnet container radius calculated when poles are calculated and assigned to
+  // BDSMagnetOuterFactoryBase::magnetContainerRadius
+  BuildMagnetContainerSolidStraight(name, magnetContainerLength, magnetContainerRadius); 
 }
 
 void BDSMagnetOuterFactoryPolesBase::TestInputParameters(BDSBeamPipe* beamPipe,
 							 G4double&    outerDiameter,
 							 G4Material*& outerMaterial)// reference to a pointer
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   //function arguments by reference to they can be modified in place
   //check outer material is something
   if (!outerMaterial)
     {outerMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());}
 
   // ensure box size is bigger than the beampipe
-  if (beamPipe->ContainerIsCircular()) {
-    // if it's circular, just check radius
-    if (outerDiameter < 2*(beamPipe->GetContainerRadius()) )
-      {outerDiameter = 2*(beamPipe->GetContainerRadius()) + 1*CLHEP::mm;}
-  } else {
-    // it's not circular - have a look at extents
-    // +ve - -ve
-    G4double extentX = beamPipe->GetExtentX().second - beamPipe->GetExtentX().first;
-    G4double extentY = beamPipe->GetExtentY().second - beamPipe->GetExtentY().first;
-    if ( (outerDiameter < extentX) || (outerDiameter < extentY) ) {
-      // outerDiameter isn't sufficient for range in x or y
-      outerDiameter = std::max(extentX,extentY) + 1*CLHEP::mm;
+  if (beamPipe->ContainerIsCircular())
+    {
+      // if it's circular, just check radius
+      if (outerDiameter < 2*(beamPipe->GetContainerRadius()) )
+	{outerDiameter = 2*(beamPipe->GetContainerRadius()) + 1*CLHEP::mm;}
     }
-  }
-}
-
-void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumes(G4String   name,
-							  G4double   length,
-							  G4int      order,
-							  G4Material* outerMaterial)
-{  
-  // build the logical volumes
-  poleLV   = new G4LogicalVolume(poleSolid,
-				 outerMaterial,
-				 name + "_pole_lv");
-
-  yokeLV   = new G4LogicalVolume(yokeSolid,
-				 outerMaterial,
-				 name + "_yoke_lv");
-
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
-  containerLV = new G4LogicalVolume(containerSolid,
-				    emptyMaterial,
-				    name + "_container_lv");
-  
-  // VISUAL ATTRIBUTES
-  // set visual attributes
-  G4Colour* magnetColour = BDSMagnetColours::Instance()->GetMagnetColour(order);
-  G4VisAttributes* outerVisAttr = new G4VisAttributes(*magnetColour);
-  outerVisAttr->SetVisibility(true);
-  outerVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
-  allVisAttributes.push_back(outerVisAttr);
-  poleLV->SetVisAttributes(outerVisAttr);
-  yokeLV->SetVisAttributes(outerVisAttr);
-  // container
-  if (BDSExecOptions::Instance()->GetVisDebug())
-    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
   else
-    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
-
-  // USER LIMITS
-  // set user limits based on bdsim user specified parameters
-#ifndef NOUSERLIMITS
-  G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
-  outerUserLimits->SetMaxAllowedStep( length * maxStepFactor );
-  outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-  allUserLimits.push_back(outerUserLimits);
-  //attach cuts to volumes
-  poleLV->SetUserLimits(outerUserLimits);
-  yokeLV->SetUserLimits(outerUserLimits);
-  containerLV->SetUserLimits(outerUserLimits);
-#endif
+    {
+      // it's not circular - have a look at extents
+      // +ve - -ve
+      G4double extentX = beamPipe->GetExtentX().second - beamPipe->GetExtentX().first;
+      G4double extentY = beamPipe->GetExtentY().second - beamPipe->GetExtentY().first;
+      if ( (outerDiameter < extentX) || (outerDiameter < extentY) )
+	{
+	  // outerDiameter isn't sufficient for range in x or y
+	  outerDiameter = std::max(extentX,extentY) + 1*CLHEP::mm;
+	}
+    }
 }
 
 void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
 						     G4int    order)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for placements - it's registered upon construction with g4
@@ -525,14 +687,17 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
     }
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     name,
-									G4double     length,
-									G4double     angle,
-									BDSBeamPipe* beamPipe,
-									G4double     outerDiameter,
-									G4Material*  outerMaterial,
-									G4bool       isVertical)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     name,
+								  G4double     length,
+								  G4double     angle,
+								  BDSBeamPipe* beamPipe,
+								  G4double     outerDiameter,
+								  G4Material*  outerMaterial,
+								  G4bool       isVertical)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   CleanUp();
   
   // test input parameters
@@ -629,7 +794,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String
 						     copper,             // material
 						     name + "_coil_lv"); // name
 
-  allLogicalVolumes.push_back(yokeLV); //not container as done separately in BDSGeometryComponent constructor
+  allLogicalVolumes.push_back(yokeLV); //note container as done separately in BDSMagnetOuter constructor
   allLogicalVolumes.push_back(poleLV);
 
   // VISUAL ATTRIBUTES
@@ -657,7 +822,7 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String
   coilLV->SetVisAttributes(coilVisAttr);
 
   // container
-  if (BDSExecOptions::Instance()->GetVisDebug())
+  if (visDebug)
     {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
   else
     {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
@@ -737,11 +902,12 @@ BDSGeometryComponent* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String
   std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
   
   // construct geometry component
-  BDSGeometryComponent* kicker = new BDSGeometryComponent(containerSolid,
-							  containerLV,
-							  extX, extY, extZ,
-							  containerTranslation);
-
+  BDSMagnetOuter* kicker = new BDSMagnetOuter(containerSolid,
+					      containerLV,
+					      extX, extY, extZ,
+					      NULL, // TO BE COMPLETED!!!
+					      containerTranslation);
+  
   // register everything
   kicker->RegisterLogicalVolume(allLogicalVolumes);
   kicker->RegisterSensitiveVolume(allLogicalVolumes);

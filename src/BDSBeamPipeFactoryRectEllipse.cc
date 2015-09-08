@@ -5,7 +5,6 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSSDManager.hh"
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4Box.hh"
@@ -22,11 +21,11 @@
 #include <cmath>
 #include <utility>                         // for std::pair
 
-BDSBeamPipeFactoryRectEllipse* BDSBeamPipeFactoryRectEllipse::_instance = 0;
+BDSBeamPipeFactoryRectEllipse* BDSBeamPipeFactoryRectEllipse::_instance = nullptr;
 
 BDSBeamPipeFactoryRectEllipse* BDSBeamPipeFactoryRectEllipse::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSBeamPipeFactoryRectEllipse();}
   return _instance;
 }
@@ -36,7 +35,7 @@ BDSBeamPipeFactoryRectEllipse::BDSBeamPipeFactoryRectEllipse()
 
 BDSBeamPipeFactoryRectEllipse::~BDSBeamPipeFactoryRectEllipse()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipe(G4String    nameIn,              // name

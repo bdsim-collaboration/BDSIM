@@ -1,12 +1,11 @@
 #include "BDSMagnetOuterFactoryPolesSquare.hh"
 
 #include "BDSBeamPipe.hh"
-#include "BDSExecOptions.hh"
-#include "BDSGeometryComponent.hh"
+#include "BDSDebug.hh"
+#include "BDSMagnetOuter.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSMagnetColours.hh"
-#include "BDSSDManager.hh"
 
 #include "globals.hh"
 
@@ -26,11 +25,11 @@
 #include <vector>
 #include <cmath>
 
-BDSMagnetOuterFactoryPolesSquare* BDSMagnetOuterFactoryPolesSquare::_instance = 0;
+BDSMagnetOuterFactoryPolesSquare* BDSMagnetOuterFactoryPolesSquare::_instance = nullptr;
 
 BDSMagnetOuterFactoryPolesSquare* BDSMagnetOuterFactoryPolesSquare::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSMagnetOuterFactoryPolesSquare();}
   return _instance;
 }
@@ -42,7 +41,7 @@ BDSMagnetOuterFactoryPolesSquare::BDSMagnetOuterFactoryPolesSquare()
 
 BDSMagnetOuterFactoryPolesSquare::~BDSMagnetOuterFactoryPolesSquare()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 void BDSMagnetOuterFactoryPolesSquare::CleanUp()
@@ -51,12 +50,19 @@ void BDSMagnetOuterFactoryPolesSquare::CleanUp()
   poleRotations.clear();
   poleSolids.clear();
   poleLVs.clear();
+  order = 0;
 }
 
 void BDSMagnetOuterFactoryPolesSquare::CreatePoleSolid(G4String     name,
 						       G4double     length,
-						       G4int        order)
+						       G4int        orderIn)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  // record order to this class - this is the first method that uses it
+  order = orderIn;
+  
   G4int nPoles = 2*order;
   
   // full circle is divided into segments for each pole
@@ -134,10 +140,14 @@ void BDSMagnetOuterFactoryPolesSquare::CreatePoleSolid(G4String     name,
     }
 }
 
-void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String      name,
-								   G4double      length,
-								   G4int         /*order*/)
+void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String name,
+								   G4double length,
+								   G4int    /*order*/,
+								   G4double magnetContainerLength)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // square yoke - have to do subtraction between two solid boxes
   G4VSolid* yokeOuter = new G4Box(name + "_yoke_outer_solid", // name
 				  yokeFinishRadius,           // x half width
@@ -174,20 +184,29 @@ void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String     
   allSolids.push_back(containerOuter);
   allSolids.push_back(containerInner);
 
-  containerSolid = new G4SubtractionSolid(name + "_container_solid", // name
+  containerSolid = new G4SubtractionSolid(name + "_outer_container_solid", // name
 					  containerOuter,
 					  containerInner);
+
+  magnetContainerSolid = new G4Box(name + "_container_solid", // name
+				   magnetContainerRadius,     // x half length
+				   magnetContainerRadius,     // y half length
+				   magnetContainerLength*0.5);// z half length
+
+  magContExtentX = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
+  magContExtentY = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
+  magContExtentX = std::make_pair(-magnetContainerLength*0.5, magnetContainerLength*0.5);
 }
 
 void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
 							    G4double    length,
-							    G4int       order,
+							    G4Colour*   colour,
 							    G4Material* outerMaterial)
 {
-  // VISUAL ATTRIBUTES
-  // set visual attributes
-  G4Colour* magnetColour = BDSMagnetColours::Instance()->GetMagnetColour(order);
-  G4VisAttributes* outerVisAttr = new G4VisAttributes(*magnetColour);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  G4VisAttributes* outerVisAttr = new G4VisAttributes(*colour);
   outerVisAttr->SetVisibility(true);
   outerVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   allVisAttributes.push_back(outerVisAttr);
@@ -213,7 +232,7 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
   containerLV = new G4LogicalVolume(containerSolid,
 				    emptyMaterial,
 				    name + "_container_lv");
-  if (BDSExecOptions::Instance()->GetVisDebug())
+  if (visDebug)
     {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
   else
     {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
@@ -237,6 +256,9 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
 void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
 						       G4int    order)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for placements - it's registered upon construction with g4
@@ -273,17 +295,21 @@ void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
       }
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4String     name,
-									  G4double     length,
-									  BDSBeamPipe* beamPipe,
-									  G4int        order,
-									  G4double     outerDiameter,
-									  G4Material*  outerMaterial)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4String     name,
+								    G4double     length,
+								    BDSBeamPipe* beamPipe,
+								    G4int        order,
+								    G4double     outerDiameter,
+								    G4Material*  outerMaterial,
+								    G4double     magnetContainerRadius)
 {
-  BDSGeometryComponent* outer = BDSMagnetOuterFactoryPolesBase::CommonConstructor(name, length, beamPipe,
-										  order, outerDiameter,
-										  outerMaterial);
-
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  BDSMagnetOuter* outer = BDSMagnetOuterFactoryPolesBase::CommonConstructor(name, length, beamPipe,
+									    order, outerDiameter,
+									    outerMaterial, magnetContainerRadius);
+  
   outer->RegisterLogicalVolume(poleLVs);
   outer->RegisterSensitiveVolume(poleLVs);
   

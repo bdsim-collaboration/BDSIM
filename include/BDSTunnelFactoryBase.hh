@@ -123,6 +123,17 @@ protected:
 				  G4double&    tunnelSoilThickness,
 				  G4Material*& tunnelMaterial,
 				  G4Material*& tunnelSoilMaterial);
+
+
+  virtual void CommonConstruction(G4String      name,
+				  G4Material*   tunnelMaterial,
+				  G4Material*   tunnelSoilMaterial,
+				  G4double      length,
+				  G4double      containerXRadius,
+				  G4double      contianerYRadius,
+				  G4bool        visible,
+				  G4ThreeVector inputFace,
+				  G4ThreeVector outputFace);
   
   virtual void CommonConstruction(G4String    name,
 				  G4Material* tunnelMaterial,
@@ -197,6 +208,8 @@ protected:
   /// after going through the tunnel - only really needed to fulfill
   /// BDSAcceleratorComponent inheritance - unsed further downstream.
   G4double         cumulativeAngle;
+
+  G4double         readOutRadius;
 
   /// vectors of components that should be registered with the finished product
   /// which then owns the objects, rather than the factory derived from this class.

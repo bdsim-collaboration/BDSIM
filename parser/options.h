@@ -11,6 +11,7 @@
  * @author I. Agapov
  */
 
+namespace GMAD {
 struct Options
 {
   Options();
@@ -31,7 +32,7 @@ struct Options
   std::string haloPSWeightFunction;
 
   int numberToGenerate;
-  int nlinesIgnore; ///> ignore first lines in the input bunch file
+  int nlinesIgnore; ///< ignore first lines in the input bunch file
 
   double elossHistoBinWidth;
   double elossHistoTransBinWidth;
@@ -168,7 +169,7 @@ struct Options
   double   prodCutHadrons;  
 
   /// Tracking related parameters 
-  double   maximumTrackingTime; ///> maximum tracking time per volume [s]
+  double   maximumTrackingTime; ///< maximum tracking time per volume [s]
   double   deltaChord;
   double   chordStepMinimum;
   double   deltaIntersection;
@@ -194,17 +195,15 @@ struct Options
   std::string trackingType;
   int      trackingSteps; ///per element for tracker
 
-  int      useTimer;
-  int      storeMuonTrajectories;
+  bool     storeMuonTrajectories;
   double   trajCutGTZ;
   double   trajCutLTR;
-  int      storeNeutronTrajectories;
-  int      storeTrajectory;
-  int      stopTracks;
+  bool     storeNeutronTrajectories;
+  bool     storeTrajectory;
+  bool     stopSecondaries;
+  bool     stopTracks;
 
-  std::string fifo; ///> fifo for BDSIM-placet
-  std::string refvolume; ///> initial starting volume
-  int refcopyno; ///> initial starting volume copy number
+  std::string fifo; ///< fifo for BDSIM-placet
   
   /// Ring parameters
   bool     circular;
@@ -219,5 +218,6 @@ struct Options
   void set_value(std::string name, double value);
   void set_value(std::string name, std::string value);
 };
+}
 
 #endif

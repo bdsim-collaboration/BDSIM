@@ -1,0 +1,48 @@
+include optionsProton.gmad !Include the file "options.gmad"
+
+beam,  particle="proton",
+       energy= 6.5*TeV,
+       distrType="reference",
+       X0=0.0*mm,
+       Y0=0.0*mm,
+       Xp0=0.0,
+       Yp0=0.0;
+
+
+! density of nitrogen in UHV 
+p=1e-7; ! UHV pressure
+!p=1e5; !Atmospheric pressure
+mu=1.6605e-27;
+mass=14.0;
+T=300;
+k=1.38e-23;
+rho = p*mass*mu/(k*T)*1e3/1e6;
+print, rho;
+
+bpgas : matdef, Z=7, A=14.00674, T=300, density=rho, state="gas"; 
+option, vacuumMaterial="bpgas"; !Sets the beam pipe vacuum material to bpgas
+
+dd=20.0*m;
+
+myPipe1 : drift, l=dd; 
+myPipe2 : drift, l=dd;
+myPipe3 : drift, l=dd;
+myPipe4 : drift, l=dd;
+myPipe5 : drift, l=dd;
+
+sampler1: marker;
+sampler2: marker;
+sampler3: marker;
+sampler4: marker;
+sampler5: marker;
+
+beamLine: line = (myPipe1, sampler1, myPipe2, sampler2, myPipe3, sampler3, myPipe4, sampler4, myPipe5, sampler5); !defines the beam line
+use, period=beamLine; !Chooses the beam line to use
+
+sample, range = sampler1;
+sample, range = sampler2; 
+sample, range = sampler3; 
+sample, range = sampler4; 
+sample, range = sampler5; 
+
+option, ngenerate=1e3; 

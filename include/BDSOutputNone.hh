@@ -15,7 +15,7 @@ class BDSOutputNone : public BDSOutputBase {
 
 public: 
 
-  BDSOutputNone():BDSOutputBase(){} ///> default constructor
+  BDSOutputNone():BDSOutputBase(){} ///< default constructor
   virtual ~BDSOutputNone(){}
 
   /// write sampler hit collection
@@ -38,8 +38,8 @@ public:
   virtual void WriteTrackerBunch(G4String, TRKBunch*, bool){}
   virtual void WriteTrackerPrimaryLoss(TRKBunch*, int){}
   
-  virtual void Commit(){}  ///> close the file
-  virtual void Write(){}   ///> close and open new file
+  virtual void Commit(){}  ///< close the file
+  virtual void Write(){}   ///< close and open new file
 };
 
 extern BDSOutputBase* bdsOutput;

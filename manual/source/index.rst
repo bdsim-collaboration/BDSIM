@@ -10,7 +10,9 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
-   
+
+   licence
+   authorship
    introduction
    installation
    running
@@ -19,6 +21,8 @@ Contents:
    output
    output_analysis
    python_modules
+   visualisation
+   examples/examples
    support
 
 .. toctree::

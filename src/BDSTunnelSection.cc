@@ -18,14 +18,17 @@ BDSTunnelSection::BDSTunnelSection(G4String              name,
   // copy special bits from BDSGeometryComponent.  Can't use BDSGeometryComponent in
   // initialiser list as c++ only allows you to use constructors one up in the inheritance.
   InheritObjects(tunnelGeometry);
+  InheritExtents(tunnelGeometry);
   containerSolid         = tunnelGeometry->GetContainerSolid();
   containerLogicalVolume = tunnelGeometry->GetContainerLogicalVolume();
-  extentX                = tunnelGeometry->GetExtentX();
-  extentY                = tunnelGeometry->GetExtentY();
-  extentZ                = tunnelGeometry->GetExtentZ();
 
   // set read out volume (protected member of BDSAcceleratorComponent)
   readOutLV = readOutLVIn;
+}
+
+BDSTunnelSection::~BDSTunnelSection()
+{
+  delete innerIntersectionSolid;
 }
 
 void BDSTunnelSection::Initialise()

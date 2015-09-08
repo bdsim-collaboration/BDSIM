@@ -17,11 +17,11 @@ Manual Preparation
 An input gmad (text) file can be prepared manually in your favourite
 text editor easily by defining:
 
-1 Individual elements
-2 Define the order they appear in a :code:`line`
-3 Which :code:`period` to use - the above line
-4 Options such as the physics list and tracking cuts
-5 Input beam distribution
+1. Individual elements
+2. Define the order they appear in a :code:`line`
+3. Which :code:`period` to use - the above line
+4. Options such as the physics list and tracking cuts
+5. Input beam distribution
 
 Please see :ref:`model-description` for a description of the
 input syntax.
@@ -32,8 +32,8 @@ MADX Conversion
 A MADX lattice can be easily converted to a BDSIM gmad input file using the supplied
 python utilities. This is achieved by
 
-1 preparing a tfs file with madx containing all twiss table information
-2 converting the tfs file to gmad using pybdsim
+1. preparing a tfs file with madx containing all twiss table information
+2. converting the tfs file to gmad using pybdsim
 
 The twiss file can be prepared by appending the following MADX syntax to the
 end of your MADX script::

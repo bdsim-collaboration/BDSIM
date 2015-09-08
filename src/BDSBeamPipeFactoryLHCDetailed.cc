@@ -6,7 +6,6 @@
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
-#include "BDSSDManager.hh"
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4Box.hh"
@@ -26,11 +25,11 @@
 #include <utility>                         // for std::pair
 
 
-BDSBeamPipeFactoryLHCDetailed* BDSBeamPipeFactoryLHCDetailed::_instance = 0;
+BDSBeamPipeFactoryLHCDetailed* BDSBeamPipeFactoryLHCDetailed::_instance = nullptr;
 
 BDSBeamPipeFactoryLHCDetailed* BDSBeamPipeFactoryLHCDetailed::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSBeamPipeFactoryLHCDetailed();}
   return _instance;
 }
@@ -47,7 +46,7 @@ BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed():BDSBeamPipeFactor
 
 BDSBeamPipeFactoryLHCDetailed::~BDSBeamPipeFactoryLHCDetailed()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 void BDSBeamPipeFactoryLHCDetailed::CleanUp()

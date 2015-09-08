@@ -1,45 +1,31 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 25.12.2003
-   Copyright (c) 2003 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-// This code implementation is the intellectual property of
-// the GEANT4 collaboration.
-//
-// By copying, distributing or modifying the Program (or any work
-// based on the Program) you indicate your acceptance of this statement,
-// and all its terms.
-//
-// $Id: BDSOctStepper.cc,v 1.6 2007/05/10 16:23:22 malton Exp $
-// GEANT4 tag $Name:  $
-//
+#include "BDSDebug.hh"
 #include "BDSOctStepper.hh"
+
+#include "G4AffineTransform.hh"
+#include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
-#include "G4TransportationManager.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
 
-BDSOctStepper::BDSOctStepper(G4Mag_EqRhs *EqRhs)
-  : G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
-                                      // position & velocity
-    itsBTrpPrime(0.0), itsDist(0.0)
-{
-  fPtrMagEqOfMot = EqRhs;
-}
+BDSOctStepper::BDSOctStepper(G4Mag_EqRhs* eqRHS):
+  G4MagIntegratorStepper(eqRHS, 6),
+  fPtrMagEqOfMot(eqRHS),
+  itsBTrpPrime(0.0),
+  itsDist(0.0)
+{;}
 
-
-void BDSOctStepper::AdvanceHelix( const G4double  yIn[],
-                                   G4ThreeVector,
-				   G4double  h,
-				   G4double  yOct[])
+void BDSOctStepper::AdvanceHelix(const G4double  yIn[],
+				 G4ThreeVector,
+				 G4double  h,
+				 G4double  yOct[])
 {
   const G4double *pIn = yIn+3;
-  G4ThreeVector v0= G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
-  G4ThreeVector InitMomDir=v0.unit();
+  G4ThreeVector v0 = G4ThreeVector(pIn[0], pIn[1], pIn[2]);  
+  G4ThreeVector InitMomDir = v0.unit();
 
-  G4ThreeVector GlobalPosition= G4ThreeVector( yIn[0], yIn[1], yIn[2]);  
-  G4double InitMag=v0.mag();
-  G4double kappa=  -fPtrMagEqOfMot->FCof()*itsBTrpPrime/InitMag;
+  G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);  
+  G4double InitMag = v0.mag();
+  G4double kappa   = -fPtrMagEqOfMot->FCof()*itsBTrpPrime/InitMag;
 
   // relevant momentum scale is p_z, not P_tot:
   // check that the approximations are valid, else do a linear step:
@@ -58,27 +44,12 @@ void BDSOctStepper::AdvanceHelix( const G4double  yIn[],
       itsDist=0;
     }
   else 
-    {      
-      G4Navigator* OctNavigator=
-	G4TransportationManager::GetTransportationManager()->
-	GetNavigatorForTracking();
-
-      G4AffineTransform LocalAffine=OctNavigator->GetLocalToGlobalTransform();
-
-
-      // gab_dec03>>
-      // position 
-      //G4ThreeVector LocalR = OctNavigator->GetCurrentLocalCoordinate();
-      // position derivative r' (normalised to unity)
-      //G4ThreeVector LocalRp= (OctNavigator->ComputeLocalAxis(v0)).unit();
-
-      G4AffineTransform GlobalAffine=OctNavigator->GetGlobalToLocalTransform();
+    {
+      G4AffineTransform LocalAffine  = auxNavigator->GetLocalToGlobalTransform();
+      G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
       G4ThreeVector LocalR=GlobalAffine.TransformPoint(GlobalPosition); 
       G4ThreeVector LocalRp=GlobalAffine.TransformAxis(InitMomDir);
-      // gab_dec03<<
-
-
-
+      
       G4double x0=LocalR.x(); 
       G4double y0=LocalR.y();
       G4double z0=LocalR.z();
@@ -194,10 +165,8 @@ void BDSOctStepper::Stepper( const G4double yInput[],
   }
 }
 
-G4double BDSOctStepper::DistChord()   const 
-{
-  return itsDist;
-}
+G4double BDSOctStepper::DistChord() const 
+{return itsDist;}
 
 BDSOctStepper::~BDSOctStepper()
 {}

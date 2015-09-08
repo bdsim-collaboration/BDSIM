@@ -17,13 +17,13 @@
 
 #include "globals.hh"             // geant4 types / globals
 
-BDSSectorBend::BDSSectorBend(G4String           name,
-			     G4double           arcLength,
-			     G4double           angleIn,
-			     G4double           bField,
-			     G4double           bGrad,
-			     BDSBeamPipeInfo*   beamPipeInfo,
-			     BDSMagnetOuterInfo magnetOuterInfo):
+BDSSectorBend::BDSSectorBend(G4String            name,
+			     G4double            arcLength,
+			     G4double            angleIn,
+			     G4double            bField,
+			     G4double            bGrad,
+			     BDSBeamPipeInfo*    beamPipeInfo,
+			     BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::sectorbend, name, arcLength,
 	    beamPipeInfo, magnetOuterInfo),
   itsBField(bField),itsBGrad(bGrad)
@@ -97,20 +97,17 @@ void BDSSectorBend::BuildBeampipe()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "sector bend version " << G4endl;
 #endif
-
-  beampipe =
-    BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(beamPipeInfo->beamPipeType,
-							      name,
-							      chordLength - lengthSafety,
-							      -angle*0.5,
-							      -angle*0.5,
-							      beamPipeInfo->aper1,
-							      beamPipeInfo->aper2,
-							      beamPipeInfo->aper3,
-							      beamPipeInfo->aper4,
-							      beamPipeInfo->vacuumMaterial,
-							      beamPipeInfo->beamPipeThickness,
-							      beamPipeInfo->beamPipeMaterial);
-  
-  BeamPipeCommonTasks(); //from BDSMagnet;
+  BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
+  beampipe = factory->CreateBeamPipeAngledInOut(beamPipeInfo->beamPipeType,
+						name,
+						chordLength - lengthSafety,
+						-angle*0.5,
+						-angle*0.5,
+						beamPipeInfo->aper1,
+						beamPipeInfo->aper2,
+						beamPipeInfo->aper3,
+						beamPipeInfo->aper4,
+						beamPipeInfo->vacuumMaterial,
+						beamPipeInfo->beamPipeThickness,
+						beamPipeInfo->beamPipeMaterial);
 }

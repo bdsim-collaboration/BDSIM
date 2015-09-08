@@ -2,10 +2,10 @@
 #include "G4OpticalPhoton.hh"
 #include "G4ParticleDefinition.hh"
 
-BDSPhotonCounter* BDSPhotonCounter::_instance = 0;
+BDSPhotonCounter* BDSPhotonCounter::_instance = nullptr;
 
 BDSPhotonCounter* BDSPhotonCounter::Instance(){
-  if(_instance==0) {
+  if(_instance==nullptr) {
     _instance = new BDSPhotonCounter();
   }
   return _instance;
@@ -17,6 +17,7 @@ BDSPhotonCounter::BDSPhotonCounter(){
 }
 
 BDSPhotonCounter::~BDSPhotonCounter(){
+  _instance = nullptr;
 }
 
 void BDSPhotonCounter::countPhoton(const G4Track* aTrack){

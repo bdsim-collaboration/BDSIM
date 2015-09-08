@@ -78,6 +78,10 @@ public:
   
   /// Access the read out geometry
   inline G4LogicalVolume* GetReadOutLogicalVolume() const;
+
+  /// Access the vacuum volume the main beam goes through in this component if any. Default is
+  /// nullptr.
+  inline G4LogicalVolume* GetAcceleratorVacuumLogicalVolume() const {return acceleratorVacuumLV;}
   
   // in case a mapped field is provided creates a field mesh in global coordinates
   virtual void PrepareField(G4VPhysicalVolume *referenceVolume); 
@@ -96,9 +100,6 @@ public:
   void             SetGFlashVolumes(G4LogicalVolume* aLogVol);
   std::vector<G4LogicalVolume*> GetGFlashVolumes() const;
   ///@}
-
-  /// Record of how many times this component has been placed (ie copies used).
-  G4int nTimesPlaced;
 
   /// Increment (+1) the number of times this component has been placed (ie another copy used).
   void  IncrementNTimesPlaced();
@@ -121,6 +122,13 @@ protected:
   /// Build the container solid and logical volume that all parts of the component will
   /// contained within - must be provided by derived class.
   virtual void BuildContainerLogicalVolume() = 0;
+
+  /// Assign the accelerator tracking volume - only callable by derived classes - ie not public.
+  /// This is just setting a reference to the accelerator volume and it is not deleted by
+  /// this class (BDSAcceleratorComponent) - therefore, the derived class should also deal with
+  /// memory management of this volume - whether this is by using the inherited (from BDSGeometryComponent)
+  /// RegisterLogicalVolume() or by manually deleting itself.
+  inline void SetAcceleratorVacuumLogicalVolume(G4LogicalVolume* accVacLVIn) {acceleratorVacuumLV = accVacLVIn;}
   
   ///@{ Const protected member variable that may not be changed by derived classes
   const G4String   name;
@@ -128,6 +136,9 @@ protected:
   const G4String   type;
   ///@}
   
+  /// Record of how many times this component has been placed (ie copies used).
+  G4int nTimesPlaced;
+
   ///@{ Protected member variable that can be modified by derived classes.
   G4double         chordLength;
   G4double         angle;
@@ -143,7 +154,16 @@ protected:
   /// Read out geometry volume. Protected so derived classes can fiddle if they require.
   /// This is a possibility as derived classes can override Initialise which calls the
   /// BuildReadOutVolume construction.
-  G4LogicalVolume* readOutLV; 
+  G4LogicalVolume* readOutLV;
+
+  /// The logical volume in this component that is the volume the beam passes through that
+  /// is typically vacuum. Discretised in this way for cuts / physics process to be assigned
+  /// differently from general component material.
+  G4LogicalVolume* acceleratorVacuumLV;
+
+  /// A larger length safety that can be used where tracking accuracy isn't required
+  /// or more tolerant geometry is required (1um).
+  static G4double const lengthSafetyLarge;
   
 private:
   /// Private default constructor to force use of provided constructors, which

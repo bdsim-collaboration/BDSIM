@@ -7,19 +7,7 @@
 
 class G4VPhysicalVolume;
 
-BDSGeometryWriter* BDSGeometryWriter::_instance = 0;
-
-BDSGeometryWriter* BDSGeometryWriter::Instance()
-{
-  if (_instance == 0)
-    {_instance = new BDSGeometryWriter();}
-  return _instance;
-}
-
-BDSGeometryWriter::~BDSGeometryWriter()
-{
-  _instance = 0;
-}
+BDSGeometryWriter::~BDSGeometryWriter(){}
 
 BDSGeometryWriter::BDSGeometryWriter()
 {
@@ -40,6 +28,6 @@ void BDSGeometryWriter::WriteToGDML(G4String           outputFileName,
 {
   if (!volume)
     {volume = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->GetWorldVolume();}
-  G4GDMLParser* parser = new G4GDMLParser();
-  parser->Write(outputFileName, volume, true);
+  G4GDMLParser parser;
+  parser.Write(outputFileName, volume, true);
 }

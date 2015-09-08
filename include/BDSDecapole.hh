@@ -19,11 +19,11 @@ struct BDSMagnetOuterInfo;
 class BDSDecapole: public BDSMagnet
 {
 public:
-  BDSDecapole(G4String           name,
-	      G4double           length,
-	      G4double           bQuadPrime,
-	      BDSBeamPipeInfo*   beamPipeInfo,
-	      BDSMagnetOuterInfo magnetOuterInfo);
+  BDSDecapole(G4String            name,
+	      G4double            length,
+	      G4double            bQuadPrime,
+	      BDSBeamPipeInfo*    beamPipeInfo,
+	      BDSMagnetOuterInfo* magnetOuterInfo);
   ~BDSDecapole(){;};
 
 protected:

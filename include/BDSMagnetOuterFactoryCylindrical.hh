@@ -18,114 +18,128 @@ public:
   ~BDSMagnetOuterFactoryCylindrical();
   
   /// sector bend outer volume
-  virtual BDSGeometryComponent* CreateSectorBend(G4String      name,                // name
-						 G4double      length,              // length [mm]
-						 BDSBeamPipe*  beamPipe,            // beampipe
-						 G4double      boxSize,             // full width
-						 G4double      angle,               // full bend angle [rad]
-						 G4Material*   outerMaterial = nullptr // material for outer volume
-						 );
-
+  virtual BDSMagnetOuter* CreateSectorBend(G4String     name,                  // name
+					   G4double     length,                // length
+					   BDSBeamPipe* beamPipe,              // beampipe
+					   G4double     outerDiameter,         // full width
+					   G4double     containerLength,       // full length to make AccComp container
+					   G4double     angle,                 // full bend angle [rad]
+					   G4Material*  outerMaterial = nullptr// material for outer volume
+					   );
+  
   /// rectangular bend outer volume
-  virtual BDSGeometryComponent* CreateRectangularBend(G4String      name,                // name
-						      G4double      length,              // length [mm]
-						      BDSBeamPipe*  beamPipe,            // beampipe
-						      G4double      boxSize,             // full width
-						      G4double      angle,               // full bend angle [rad]
-						      G4Material*   outerMaterial = nullptr // material for outer volume
-						      );
+  virtual BDSMagnetOuter* CreateRectangularBend(G4String     name,                  // name
+						G4double     length,                // length
+						BDSBeamPipe* beamPipe,              // beampipe
+						G4double     outerDiameter,         // full width
+						G4double     containerDiameter,     // full width to make AccComp contianer
+						G4double     containerLength,       // full length to make AccComp container
+						G4double     angle,                 // full bend angle [rad]
+						G4Material*  outerMaterial = nullptr// material for outer volume
+						);
   
   /// quadrupole outer volume
-  virtual BDSGeometryComponent* CreateQuadrupole(G4String      name,                 // name
-						 G4double      length,               // length [mm]
-						 BDSBeamPipe*  beamPipe,             // beampipe
-						 G4double      boxSize,              // full width
-						 G4Material*   outerMaterial = nullptr  // material for outer volume
-						 );
+  virtual BDSMagnetOuter* CreateQuadrupole(G4String     name,                  // name
+					   G4double     length,                // length
+					   BDSBeamPipe* beamPipe,              // beampipe
+					   G4double     outerDiameter,         // full width
+					   G4double     containerLength,       // full length to make AccComp container
+					   G4Material*  outerMaterial = nullptr// material for outer volume
+					   );
 
 
   /// sextupole outer volume
-  virtual BDSGeometryComponent* CreateSextupole(G4String      name,                 // name
-						G4double      length,               // length [mm]
-						BDSBeamPipe*  beamPipe,             // beampipe
-						G4double      boxSize,              // full width
-						G4Material*   outerMaterial = nullptr  // material for outer volume
-						);
-
+  virtual BDSMagnetOuter* CreateSextupole(G4String     name,                  // name
+					  G4double     length,                // length
+					  BDSBeamPipe* beamPipe,              // beampipe
+					  G4double     outerDiameter,         // full width
+					  G4double     containerLength,       // full length to make AccComp container
+					  G4Material*  outerMaterial = nullptr// material for outer volume
+					  );
+  
   /// octupole outer volume
-  virtual BDSGeometryComponent* CreateOctupole(G4String      name,                  // name
-					       G4double      length,                // length [mm]
-					       BDSBeamPipe*  beamPipe,              // beampipe
-					       G4double      boxSize,               // full width
-					       G4Material*   outerMaterial = nullptr   // material for outer volume
-					       );
-
+  virtual BDSMagnetOuter* CreateOctupole(G4String     name,                  // name
+					 G4double     length,                // length 
+					 BDSBeamPipe* beamPipe,              // beampipe
+					 G4double     outerDiameter,         // full width
+					 G4double     containerLength,       // full length to make AccComp container
+					 G4Material*  outerMaterial = nullptr// material for outer volume
+					 );
+  
   /// decapole outer volume
-  virtual BDSGeometryComponent* CreateDecapole(G4String      name,                  // name
-					       G4double      length,                // length [mm]
-					       BDSBeamPipe*  beamPipe,              // beampipe
-					       G4double      boxSize,               // full width
-					       G4Material*   outerMaterial = nullptr   // material for outer volume
-					       );
-
+  virtual BDSMagnetOuter* CreateDecapole(G4String     name,                  // name
+					 G4double     length,                // length
+					 BDSBeamPipe* beamPipe,              // beampipe
+					 G4double     outerDiameter,         // full width
+					 G4double     containerLength,       // full length to make AccComp container
+					 G4Material*  outerMaterial = nullptr// material for outer volume
+					 );
+  
   /// solenoid  outer volume
-  virtual BDSGeometryComponent* CreateSolenoid(G4String      name,                  // name
-					       G4double      length,                // length [mm]
-					       BDSBeamPipe*  beamPipe,              // beampipe
-					       G4double      boxSize,               // full width
-					       G4Material*   outerMaterial = nullptr   // material for outer volume
-					       );
-
+  virtual BDSMagnetOuter* CreateSolenoid(G4String     name,                  // name
+					 G4double     length,                // length
+					 BDSBeamPipe* beamPipe,              // beampipe
+					 G4double     outerDiameter,         // full width
+					 G4double     containerLength,       // full length to make AccComp container
+					 G4Material*  outerMaterial = nullptr// material for outer volume
+					 );
+  
   /// general multipole outer volume - could be any 2N order multipole
-  virtual BDSGeometryComponent* CreateMultipole(G4String      name,                 // name
-						G4double      length,               // length [mm]
-						BDSBeamPipe*  beamPipe,             // beampipe
-						G4double      boxSize,              // full width
-						G4Material*   outerMaterial = nullptr  // material for outer volume
-						);
+  virtual BDSMagnetOuter* CreateMultipole(G4String     name,                  // name
+					  G4double     length,                // length
+					  BDSBeamPipe* beamPipe,              // beampipe
+					  G4double     outerDiameter,         // full width
+					  G4double     containerLength,       // full length to make AccComp container
+					  G4Material*  outerMaterial = nullptr// material for outer volume
+					  );
 
   /// RF cavity outer volume
-  virtual BDSGeometryComponent* CreateRfCavity(G4String      name,                  // name
-					       G4double      length,                // length [mm]
-					       BDSBeamPipe*  beamPipe,              // beampipe
-					       G4double      boxSize,               // full width
-					       G4Material*   outerMaterial = nullptr   // material for outer volume
-					       );
-
+  virtual BDSMagnetOuter* CreateRfCavity(G4String     name,                  // name
+					 G4double     length,                // length 
+					 BDSBeamPipe* beamPipe,              // beampipe
+					 G4double     outerDiameter,         // full width
+					 G4double     containerLength,       // full length to make AccComp container
+					 G4Material*  outerMaterial = nullptr// material for outer volume
+					 );
+  
   /// muon spoiler outer volume
-  virtual BDSGeometryComponent* CreateMuSpoiler(G4String      name,                 // name
-						G4double      length,               // length [mm]
-						BDSBeamPipe*  beamPipe,             // beampipe
-						G4double      boxSize,              // full width
-						G4Material*   outerMaterial = nullptr  // material for outer volume
-						);
+  virtual BDSMagnetOuter* CreateMuSpoiler(G4String     name,                  // name
+					  G4double     length,                // length
+					  BDSBeamPipe* beamPipe,              // beampipe
+					  G4double     outerDiameter,         // full width
+					  G4double     containerLength,       // full length to make AccComp container
+					  G4Material*  outerMaterial = nullptr// material for outer volume
+					  );
 
   /// horizontal and vertical kicker outer volume
-  virtual BDSGeometryComponent* CreateKicker(G4String      name,                  // name
-					     G4double      length,                // length [mm]
-					     BDSBeamPipe*  beamPipe,              // beampipe
-					     G4double      boxSize,               // full width
-					     G4bool        vertical = true,       // is it a vertical kicker?
-					     G4Material*   outerMaterial = nullptr   // material for outer volume
-					     );
-
+  virtual BDSMagnetOuter* CreateKicker(G4String     name,                  // name
+				       G4double     length,                // length
+				       BDSBeamPipe* beamPipe,              // beampipe
+				       G4double     outerDiameter,         // full width
+				       G4double     containerLength,       // full length to make AccComp container
+				       G4bool       vertical = true,       // is it a vertical kicker?
+				       G4Material*  outerMaterial = nullptr// material for outer volume
+				       );
+  
 private:
   BDSMagnetOuterFactoryCylindrical(); //private constructor as singleton
   static BDSMagnetOuterFactoryCylindrical* _instance;
 
   //only really one function needed for this factory
   //private to this factory only
-  void CreateCylindricalSolids(G4String      name,                 // name
-			       G4double      length,               // length [mm]
-			       BDSBeamPipe*  beamPipe,             // beampipe
-			       G4double      boxSize);             // full width
+  void CreateCylindricalSolids(G4String     name,                  // name
+			       G4double     length,                // full length
+			       BDSBeamPipe* beamPipe,              // beampipe
+			       G4double     magnetContainerLength, // magnet object container full length
+			       G4double     boxSize);              // full width
 
-  /// common construction tasks to all methods
-  BDSGeometryComponent* CommonFinalConstructor(G4String    name,
-					       G4double    length,        // length [mm]
-					       G4double    boxSize,       // full width [mm]
-					       G4Material* outerMaterial,
-					       G4Colour*   colour);
+  /// Only the solids are unique, once we have those, the logical volumes and placement in the
+  /// container are the same.  Group all this functionality together
+  BDSMagnetOuter* CommonFinalConstructor(G4String    name,
+					 G4double    length,        // length
+					 G4double    outerDiameter, // full width
+					 G4Material* outerMaterial,
+					 G4Colour*   colour);
 
   /// test inputs for no null pointers or overlapping volumes due to poorly defined sizes
   void TestInputParameters(BDSBeamPipe* beamPipe,

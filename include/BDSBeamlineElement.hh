@@ -46,26 +46,27 @@ public:
   ~BDSBeamlineElement();
   
   ///@{ Accessor
-  inline BDSAcceleratorComponent* GetAcceleratorComponent()    const;
-  inline G4String                 GetName()                    const;
-  inline G4String                 GetPlacementName()           const;
-  inline G4LogicalVolume*         GetContainerLogicalVolume()  const;
-  inline G4ThreeVector            GetPositionStart()           const;
-  inline G4ThreeVector            GetPositionMiddle()          const;
-  inline G4ThreeVector            GetPositionEnd()             const;
-  inline G4RotationMatrix*        GetRotationStart()           const;
-  inline G4RotationMatrix*        GetRotationMiddle()          const;
-  inline G4RotationMatrix*        GetRotationEnd()             const;
-  inline G4ThreeVector            GetReferencePositionStart()  const;
-  inline G4ThreeVector            GetReferencePositionMiddle() const;
-  inline G4ThreeVector            GetReferencePositionEnd()    const;
-  inline G4RotationMatrix*        GetReferenceRotationStart()  const;
-  inline G4RotationMatrix*        GetReferenceRotationMiddle() const;
-  inline G4RotationMatrix*        GetReferenceRotationEnd()    const;
-  inline G4double                 GetSPositionStart()          const;
-  inline G4double                 GetSPositionMiddle()         const;
-  inline G4double                 GetSPositionEnd()            const;
-  inline G4Transform3D*           GetPlacementTransform()      const;
+  inline BDSAcceleratorComponent* GetAcceleratorComponent()      const;
+  inline G4String                 GetName()                      const;
+  inline G4String                 GetPlacementName()             const;
+  inline G4LogicalVolume*         GetContainerLogicalVolume()    const;
+  inline G4ThreeVector            GetPositionStart()             const;
+  inline G4ThreeVector            GetPositionMiddle()            const;
+  inline G4ThreeVector            GetPositionEnd()               const;
+  inline G4RotationMatrix*        GetRotationStart()             const;
+  inline G4RotationMatrix*        GetRotationMiddle()            const;
+  inline G4RotationMatrix*        GetRotationEnd()               const;
+  inline G4ThreeVector            GetReferencePositionStart()    const;
+  inline G4ThreeVector            GetReferencePositionMiddle()   const;
+  inline G4ThreeVector            GetReferencePositionEnd()      const;
+  inline G4RotationMatrix*        GetReferenceRotationStart()    const;
+  inline G4RotationMatrix*        GetReferenceRotationMiddle()   const;
+  inline G4RotationMatrix*        GetReferenceRotationEnd()      const;
+  inline G4double                 GetSPositionStart()            const;
+  inline G4double                 GetSPositionMiddle()           const;
+  inline G4double                 GetSPositionEnd()              const;
+  inline G4Transform3D*           GetPlacementTransform()        const;
+  inline G4Transform3D*           GetReadOutPlacementTransform() const;
   ///@}
 
   ///@{ Reassign the end variable as required when applying a transform
@@ -124,6 +125,12 @@ private:
   /// Transform made from positionMiddle and rotationMiddle. By using them as
   /// a transform, the rotation matrix is the correct way around (inversion).
   G4Transform3D*    placementTransform;
+
+  /// Transform made from the referencePositionMiddle and referenceRottationMiddle.
+  /// The read out geometry should always align with the reference trajectory and
+  /// not the possibly offset position of the mass geometry, hence have a separate
+  /// transform for it.
+  G4Transform3D*    readOutPlacementTransform;
 };
 
 inline BDSAcceleratorComponent* BDSBeamlineElement::GetAcceleratorComponent() const
@@ -185,5 +192,8 @@ inline G4double                 BDSBeamlineElement::GetSPositionEnd() const
 
 inline G4Transform3D*           BDSBeamlineElement::GetPlacementTransform() const
 {return placementTransform;}
+
+inline G4Transform3D*           BDSBeamlineElement::GetReadOutPlacementTransform() const
+{return readOutPlacementTransform;}
 
 #endif

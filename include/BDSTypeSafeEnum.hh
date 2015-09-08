@@ -1,7 +1,9 @@
 #ifndef BDSTypeSafeEnum_h
 #define BDSTypeSafeEnum_h 
 
+#include <map>
 #include <ostream>
+#include <string>
 
 /**
  * @brief Improve type-safety of native enum data type in C++.
@@ -11,6 +13,8 @@
  * more info at 
  * https://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Type_Safe_Enum
  *
+ * the class includes a dictionary map that returns a customisable std::string
+ * 
  * Example:
  * struct color_def {
  *   enum type { red, green, blue };
@@ -33,6 +37,11 @@ public:
   /// return underlying value (can be used in switch statement)
   type underlying() const { return val; }
 
+  /// static map from to string (optional), needs to be defined explicitly
+  /// can be used for printing (in << operator)
+  // pointer used since static memory possibly doesn't know size of map at creation
+  static std::map<BDSTypeSafeEnum<def,inner>,std::string>* dictionary;
+  
   ///@{ operators for ordering
   friend bool operator == (const BDSTypeSafeEnum & lhs, const BDSTypeSafeEnum & rhs) { return lhs.val == rhs.val; }
   friend bool operator != (const BDSTypeSafeEnum & lhs, const BDSTypeSafeEnum & rhs) { return lhs.val != rhs.val; }
@@ -40,8 +49,18 @@ public:
   friend bool operator <= (const BDSTypeSafeEnum & lhs, const BDSTypeSafeEnum & rhs) { return lhs.val <= rhs.val; }
   friend bool operator >  (const BDSTypeSafeEnum & lhs, const BDSTypeSafeEnum & rhs) { return lhs.val >  rhs.val; }
   friend bool operator >= (const BDSTypeSafeEnum & lhs, const BDSTypeSafeEnum & rhs) { return lhs.val >= rhs.val; }
-  friend std::ostream& operator<< (std::ostream &out, const BDSTypeSafeEnum& a) {out << a.underlying(); return out;}
   ///@}
+  /// stream operator, returns string from dictionary if defined, else underlying type (typically int)
+  friend std::ostream& operator<< (std::ostream &out, const BDSTypeSafeEnum& a) {
+    if (dictionary) {out << (*dictionary)[a];}
+    else {out << a.underlying();}
+    return out;
+  }
 };
+
+/// general declaration, can be overwritten or appended
+// this seemed to cause a problem, so commented out and every class needs to define its map
+// template<typename def, typename inner>
+// std::map<BDSTypeSafeEnum<def,inner>,std::string>* BDSTypeSafeEnum<def,inner>::dictionary=nullptr;
 
 #endif

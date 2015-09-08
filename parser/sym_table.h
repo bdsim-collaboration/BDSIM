@@ -1,12 +1,15 @@
+#ifndef __SYM_TABLE_H
+#define __SYM_TABLE_H
+
 /* common header  for the lexer and the parser 
 to share 
 Symbol table for numeric variables and functions
 */
 
-#include <cstring>
 #include <list>
+#include <string>
 
-
+namespace GMAD {
 struct symtab {
   enum class symtabtype {
     _INT=0,
@@ -16,17 +19,14 @@ struct symtab {
 
   int is_reserved;
   symtabtype type;
-  char *name;
+  std::string name;
   double (*funcptr)(double);
   double value;
   std::list<double> array;
 
   // constructors
-  explicit symtab(const char* s):is_reserved(0),type(symtabtype::_INT),funcptr(nullptr),value(0.0){
-    name=strdup(s);
-  }
+  explicit symtab(std::string s):is_reserved(0),type(symtabtype::_INT),name(s),funcptr(nullptr),value(0.0){}
 };
- 
-struct symtab *symlook();
+}
 
-
+#endif

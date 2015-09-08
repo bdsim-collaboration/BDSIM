@@ -21,7 +21,9 @@ class G4UserLimits;
 class G4VisAttributes;
 class G4VPhysicalVolume;
 
-struct Options;
+namespace GMAD {
+  struct Options;
+}
 
 struct strCmp {
   G4bool operator()( const G4String s1, const G4String s2 ) const {
@@ -37,7 +39,7 @@ class BDSGlobalConstants
 {
 
 protected:
-  BDSGlobalConstants(struct Options&);
+  BDSGlobalConstants(GMAD::Options&);
 
 private:
   static BDSGlobalConstants* _instance;
@@ -186,8 +188,8 @@ public:
   G4bool   GetStoreNeutronTrajectories() const;
   G4bool   GetStoreTrajectory() const;
   G4bool   GetIncludeIronMagFields() const;
+  G4bool   GetStopSecondaries() const;
   G4bool   GetStopTracks() const;
-  G4bool stopTracks; // kill tracks after interactions
 
   G4double GetLengthSafety() const;
   G4long   GetRandomSeed() const;
@@ -268,7 +270,9 @@ private:
   G4double itsMaximumEpsilonStep;
   G4double itsMaxTime;
   G4double itsDeltaOneStep;
-
+  G4bool   stopTracks; ///< kill tracks after interactions
+  G4bool   stopSecondaries; ///< kill secondaries
+  
   // magnet geometry
   BDSMagnetGeometryType itsMagnetGeometryType;
   G4String itsOuterMaterialName;
@@ -715,6 +719,9 @@ inline G4bool BDSGlobalConstants::GetStoreNeutronTrajectories() const
 
 inline G4bool BDSGlobalConstants::GetStoreTrajectory() const
 {return itsStoreTrajectory;}
+
+inline G4bool BDSGlobalConstants::GetStopSecondaries() const
+{return stopSecondaries;}
 
 inline G4bool BDSGlobalConstants::GetStopTracks() const
 {return stopTracks;}

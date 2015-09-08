@@ -1,8 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
 #include "BDSGlobalConstants.hh" 
 #include "BDSLaserWire.hh"
 #include "BDSMaterials.hh"
@@ -30,10 +25,10 @@ void BDSLaserWire::BuildContainerLogicalVolume()
   containerLogicalVolume=new G4LogicalVolume(containerSolid,
 					     BDSMaterials::Instance()->GetMaterial("LaserVac"),
 					     name + "_container_lv");
-  BDSGlobalConstants::Instance()->
-    SetLaserwireWavelength(containerLogicalVolume->GetName(),itsLaserWavelength);
-  BDSGlobalConstants::Instance()->
-    SetLaserwireDir(containerLogicalVolume->GetName(),itsLaserDirection);
+  BDSGlobalConstants::Instance()->SetLaserwireWavelength(containerLogicalVolume->GetName(),itsLaserWavelength);
+  BDSGlobalConstants::Instance()->SetLaserwireDir(containerLogicalVolume->GetName(),itsLaserDirection);
+
+  SetAcceleratorVacuumLogicalVolume(containerLogicalVolume);
 }
 
 BDSLaserWire::~BDSLaserWire()

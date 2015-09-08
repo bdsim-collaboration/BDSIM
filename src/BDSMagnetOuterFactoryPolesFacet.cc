@@ -1,3 +1,4 @@
+#include "BDSDebug.hh"
 #include "BDSMagnetOuterFactoryPolesFacet.hh"
 
 #include "globals.hh"  // geant4 globals / types
@@ -9,24 +10,43 @@
 #include "G4Tubs.hh"
 #include "G4VSolid.hh"
 
-BDSMagnetOuterFactoryPolesFacet* BDSMagnetOuterFactoryPolesFacet::_instance = 0;
+BDSMagnetOuterFactoryPolesFacet* BDSMagnetOuterFactoryPolesFacet::_instance = nullptr;
 
 BDSMagnetOuterFactoryPolesFacet* BDSMagnetOuterFactoryPolesFacet::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSMagnetOuterFactoryPolesFacet();}
   return _instance;
 }
 
 BDSMagnetOuterFactoryPolesFacet::~BDSMagnetOuterFactoryPolesFacet()
 {
-  _instance = 0;
+  _instance = nullptr;
+}
+
+void BDSMagnetOuterFactoryPolesFacet::CalculatePoleAndYoke(G4double     outerDiameter,
+							   BDSBeamPipe* beamPipe,
+							   G4double     order)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(outerDiameter, beamPipe, order);
+  
+  yokeStartRadius       *= 0.70710678; // * 1/sqrt(2)
+  yokeFinishRadius      *= 0.70710678; // * 1/sqrt(2)
+  magnetContainerRadius *= 0.70710678; // * 1/sqrt(2)
+  poleFinishRadius      *= 0.70710678; // * 1/sqrt(2)
+  poleFinishRadius      -= lengthSafety;
 }
 
 void BDSMagnetOuterFactoryPolesFacet::CreatePoleSolid(G4String     name,
 						      G4double     length,
 						      G4int        order)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // use base class to do all the work, then modify the pole by cropping
   // it with a box to get the right shape
   
@@ -63,20 +83,17 @@ void BDSMagnetOuterFactoryPolesFacet::CreatePoleSolid(G4String     name,
 				     
 }
 
-void BDSMagnetOuterFactoryPolesFacet::CreateYokeAndContainerSolid(G4String      name,
-								  G4double      length,
-								  G4int         order)
+void BDSMagnetOuterFactoryPolesFacet::CreateYokeAndContainerSolid(G4String name,
+								  G4double length,
+								  G4int    order,
+								  G4double magnetContainerLength)
 {
-  G4double segmentAngle = CLHEP::twopi / (2*order);
-  
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   G4double zPlanes[2] = {-length*0.5, length*0.5};
-  std::vector<G4double> innerRadii;
-  std::vector<G4double> outerRadii;
-  for (G4int i = 0; i < order*2; ++i)
-    {
-      innerRadii.push_back(yokeStartRadius);
-      outerRadii.push_back(yokeFinishRadius);
-    }
+  G4double innerRadii[2] = {yokeStartRadius, yokeStartRadius};
+  G4double outerRadii[2] = {yokeFinishRadius, yokeFinishRadius};
   
   yokeSolid = new G4Polyhedra(name + "_yoke_solid",    // name
 			      CLHEP::pi*0.5,    // start angle
@@ -84,18 +101,45 @@ void BDSMagnetOuterFactoryPolesFacet::CreateYokeAndContainerSolid(G4String      
 			      2*order,                 // number of sides
 			      2,                       // number of z planes
 			      zPlanes,                 // z plane z coordinates
-			      innerRadii.data(),
-			      outerRadii.data());
+			      innerRadii,
+			      outerRadii);
+  
+  G4double contInnerRadii[2] = {0, 0}; // solid polyhedra
+  G4double contOuterRadii[2] = {yokeFinishRadius + lengthSafety, yokeFinishRadius + lengthSafety};
+  G4VSolid* containerOuterSolid = new G4Polyhedra(name + "_container_outer_solid", // name
+						  CLHEP::pi*0.5,                   // start angle
+						  CLHEP::twopi,                    // sweep angle
+						  2*order,                         // number of sides
+						  2,                               // number of z planes
+						  zPlanes,                         // z plane z coordinates
+						  contInnerRadii,
+						  contOuterRadii);
 
-  // note container must have hole in it for the beampipe to fit in!
-  // poled geometry doesn't fit tightly to beampipe so can alays use a circular aperture
-  G4double yokeExtent   = yokeFinishRadius / cos(segmentAngle*0.5);
-  containerSolid = new G4Tubs(name + "_container_solid",       // name
-			      poleStartRadius,                 // start radius
-			      yokeExtent + lengthSafety,       // finish radius
-			      length*0.5,                      // z half length
-			      0,                               // start angle
-			      CLHEP::twopi);                   // sweep angle
-
-  allSolids.push_back(yokeSolid);
+  G4VSolid* containerInnerSolid = new G4Tubs(name + "_container_solid",    // name
+					     0,                            // start radius
+					     poleStartRadius,              // finish radius
+					     length,                       // z half length
+					     0,                            // start angle
+					     CLHEP::twopi);                // sweep angle
+  // z long for unambiguous subtraction
+  allSolids.push_back(containerOuterSolid);
+  allSolids.push_back(containerInnerSolid);
+  
+  containerSolid = new G4SubtractionSolid(name + "_container_solid", // name
+					  containerOuterSolid,       // this
+					  containerInnerSolid);      // minus this with no translation or rotation
+  
+  G4double magContOuterRadii[2] = {magnetContainerRadius, magnetContainerRadius};
+  magnetContainerSolid = new G4Polyhedra(name + "_container_solid", // name
+					 CLHEP::pi*0.5,                   // start angle
+					 CLHEP::twopi,                    // sweep angle
+					 2*order,                         // number of sides
+					 2,                               // number of z planes
+					 zPlanes,                         // z plane z coordinates
+					 contInnerRadii,
+					 magContOuterRadii);
+  
+  magContExtentX = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
+  magContExtentY = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
+  magContExtentX = std::make_pair(-magnetContainerLength*0.5, magnetContainerLength*0.5); 
 }

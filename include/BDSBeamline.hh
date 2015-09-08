@@ -29,14 +29,18 @@ class BDSTiltOffset;
 
 /// Forward declaration for iterator so it can appear at the top
 class BDSBeamline;
-
 class BDSLine;
 class BDSTransform3D;
 
-/// Iterator for beamline
-typedef std::vector<BDSBeamlineElement*>::const_iterator BDSBeamlineIterator;
+class BDSBeamline
+{
+private:
+  /// Typedefs up first so we can declare public iterators.
+  typedef std::vector<BDSBeamlineElement*> BeamlineVector;
 
-class BDSBeamline{
+  /// Vector of beam line elements - the data.
+  BeamlineVector beamline;
+  
 public:
   /// Versatile basic constructor that allows a finite poition and rotation to be applied
   /// at the beginning of the beamline in global coordinates. Rembmer the maximum
@@ -70,6 +74,10 @@ public:
   /// Iterate over the beamline and print out the name, position, rotation
   /// and s position of each beamline element
   void PrintAllComponents(std::ostream& out) const;
+
+  /// Once the beamline element has been constructed and all positions and rotations
+  /// use these to update the world extent of this beam line.
+  void UpdateExtents(BDSBeamlineElement* element);
   
   BDSBeamlineElement* GetFirstItem(); ///< Return a reference to the first element
   BDSBeamlineElement* GetLastItem();  ///< Return a reference to the last element
@@ -84,7 +92,7 @@ public:
   inline G4double     GetTotalArcLength() const;
 
   /// Get the number of elements
-  std::vector<BDSBeamlineElement*>::size_type size() const;
+  BeamlineVector::size_type size() const {return beamline.size();}
 
   /// Get the maximum positive extent in all dimensions  
   G4ThreeVector GetMaximumExtentPositive() const;
@@ -95,22 +103,20 @@ public:
   /// Get the maximum extent absolute in each dimension
   G4ThreeVector GetMaximumExtentAbsolute() const;
 
+  typedef BeamlineVector::iterator       iterator;
+  typedef BeamlineVector::const_iterator const_iterator;
+  iterator       begin()       {return beamline.begin();}
+  iterator       end()         {return beamline.end();}
+  const_iterator begin() const {return beamline.begin();}
+  const_iterator end()   const {return beamline.end();}
+  G4bool         empty() const {return beamline.empty();}
+  
   // Accessors in a similar style to std::vector
   /// Return a reference to the first element
   BDSBeamlineElement* front() const;
   /// Return a reference to the last element
   BDSBeamlineElement* back()  const;
-  /// Return iterator to the beginning
-  inline std::vector<BDSBeamlineElement*>::iterator begin();
-  /// Return iterator to the end
-  inline std::vector<BDSBeamlineElement*>::iterator end();
-  /// Return iterator to the beginning
-  inline std::vector<BDSBeamlineElement*>::const_iterator begin() const;
-  /// Return iterator to the end
-  inline std::vector<BDSBeamlineElement*>::const_iterator end()   const;
-  /// Return whether the beamline is empty or not
-  inline G4bool empty() const;
-
+  
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSBeamline const &bl);
 
@@ -126,8 +132,6 @@ private:
   /// Register the fully created element to a map of names vs element pointers. Used to
   /// look up transforms by name.
   void RegisterElement(BDSBeamlineElement* element);
-
-  std::vector<BDSBeamlineElement*> beamline; ///< Beamline vector - the data
 
   G4double totalChordLength;
   G4double totalArcLength;
@@ -168,9 +172,6 @@ inline G4double BDSBeamline::GetTotalChordLength() const
 inline G4double BDSBeamline::GetTotalArcLength() const
 {return totalArcLength;}
 
-inline std::vector<BDSBeamlineElement*>::size_type BDSBeamline::size() const
-{return beamline.size();}
-
 inline G4ThreeVector BDSBeamline::GetMaximumExtentPositive() const
 {return maximumExtentPositive;}
 
@@ -182,20 +183,5 @@ inline BDSBeamlineElement* BDSBeamline::front() const
 
 inline BDSBeamlineElement* BDSBeamline::back() const
 {return beamline.back();}
-
-inline std::vector<BDSBeamlineElement*>::iterator BDSBeamline::begin()
-{return beamline.begin();}
-
-inline std::vector<BDSBeamlineElement*>::iterator BDSBeamline::end()
-{return beamline.end();}
-
-inline std::vector<BDSBeamlineElement*>::const_iterator BDSBeamline::begin() const
-{return beamline.begin();}
-
-inline std::vector<BDSBeamlineElement*>::const_iterator BDSBeamline::end() const
-{return beamline.end();}
-
-inline G4bool BDSBeamline::empty() const
-{return beamline.empty();}
 
 #endif

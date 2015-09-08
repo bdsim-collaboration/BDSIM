@@ -63,7 +63,6 @@ BDSEventAction::~BDSEventAction()
 void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 { 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << " Processing begin of event action" << G4endl;
 #endif
   // get pointer to analysis manager
@@ -112,8 +111,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if(verboseEvent || verboseEventNumber == event_number)
     {G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;}
   
-  // Record the primary events
-  AddPrimaryHits();
+  // Record the primary vertex in output
+  WritePrimaryVertex();
   
   // Now process each of the hits collections in turn, writing them to output.
   // After this, fill the appropriate histograms with information from this event.
@@ -231,11 +230,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if(!isBatch)
     {
 #ifdef BDSDEBUG 
-      G4cout<<"BDSEventAction : drawing"<<G4endl;
+      G4cout << __METHOD_NAME__ << "drawing the event"<<G4endl;
 #endif
       evt->Draw();
     }
-    
+  
   // Save interesting trajectories
   traj = nullptr;
   if(BDSGlobalConstants::Instance()->GetStoreTrajectory() ||
@@ -273,7 +272,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #endif
 }
 
-void BDSEventAction::AddPrimaryHits()
+void BDSEventAction::WritePrimaryVertex()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -293,7 +292,7 @@ void BDSEventAction::AddPrimaryHits()
   G4double           weight          = primaryParticle->GetWeight();
   G4int              PDGType         = primaryParticle->GetPDGcode();
   G4int              nEvent          = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-  G4String           samplerName     = "primaries";
+  G4String           samplerName     = "Primaries";
   G4int              turnstaken      = BDSGlobalConstants::Instance()->GetTurnsTaken();
   bdsOutput->WritePrimary(samplerName, E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
 }

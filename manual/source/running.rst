@@ -81,7 +81,7 @@ will look for "vis.mac" in the current working directory. If not found, BDSIM wi
 default visualisation settings (typically: Qt visualiser, extra convenient buttons). Once
 executed a window such as this will appear (depending on the visualiser you use).
 
-.. figure:: figures/interactive_mode.png
+.. figure:: figures/visualisation/qtvisualiser.png
    :width: 70%
    :align: center
    :figclass: align-center
@@ -90,10 +90,10 @@ executed a window such as this will appear (depending on the visualiser you use)
 
 Note, the visualiser is part of Geant4 so if the desired visualiser isn't available, you
 must recompile Geant4 with the correct visualiser (and subsequently BDSIM afterwards). Geant4
-also uses the Cmake configuration system. The visualiser shown is the OpenGL Qt visualiser, which
+also uses the CMake configuration system. The visualiser shown is the OpenGL Qt visualiser, which
 we recommend for its ease of use and high level of interactivity.
 
-Example vis.mac files can be found in the supplied BDSIM examples.
+More details can be found in :ref:`Visualisation`.
 
 .. note:: BDSIM simulates one particle at a time from the primary distribution and all of the
 	  associated secondaries. Each event is independent and different particles in the input

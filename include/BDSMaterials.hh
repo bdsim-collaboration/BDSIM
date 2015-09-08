@@ -35,21 +35,21 @@ public:
   */ 
   void AddMaterial(G4Material* aMaterial,G4String aName);
   void AddMaterial(G4String aName,
-		   G4double itsZ,
-		   G4double itsA,
-		   G4double itsDensity,
-		   G4State  itsState, 
-		   G4double itsTemp, 
-		   G4double itsPressure);
+		   G4double Z,
+		   G4double A,
+		   G4double density,
+		   G4State  state, 
+		   G4double temp, 
+		   G4double pressure);
 
   template <typename Type> void AddMaterial(
 			G4String aName, 
-			G4double itsDensity, 
-			G4State  itsState, 
-			G4double itsTemp, 
-			G4double itsPressure,
-			std::list<const char*> itsComponents,
-			std::list<Type> itsComponentsFractions);
+			G4double density, 
+			G4State  state, 
+			G4double temp, 
+			G4double pressure,
+			std::list<std::string> components,
+			std::list<Type> componentsFractions);
   ///@}
 
   void AddElement(G4Element* aElement,G4String aName);
@@ -61,7 +61,6 @@ public:
 
   G4Material* GetMaterial(G4String aMaterial); 
   G4Element*  GetElement(G4String aSymbol); 
-  G4Element* GetElement(const char* aSymbol);
 
   G4bool CheckMaterial(G4String aMaterial); 
   G4bool CheckElement(G4String aSymbol); 

@@ -60,7 +60,8 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 #endif
 
   // create the placement transform from supplied rotation matrices and vector
-  placementTransform = new G4Transform3D(*rotationMiddle, positionMiddle);
+  placementTransform        = new G4Transform3D(*rotationMiddle, positionMiddle);
+  readOutPlacementTransform = new G4Transform3D(*referenceRotationMiddle, referencePositionMiddle);
 }
 
 BDSBeamlineElement::~BDSBeamlineElement()

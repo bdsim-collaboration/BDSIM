@@ -4,6 +4,8 @@
 #include <list>
 #include <string>
 
+namespace GMAD {
+
 struct Array;
 struct Element;
 
@@ -17,23 +19,27 @@ struct Parameters {
 
   /// length, multipole coefficients
 
-  double B;  int Bset;    ///> magnetic field
-  double l;  int lset;    ///> length
+  double B;  int Bset;    ///< magnetic field
+  double l;  int lset;    ///< length
   double bmapZOffset; int bmapZOffsetset; //offset of the field map magnet field
-  double k0; int k0set;   ///> dipole 
-  double k1; int k1set;   ///> quadrupole
-  double k2; int k2set;   ///> sextupole
-  double k3; int k3set;   ///> octupole
-  double ks; int ksset;   ///> solenoid
+  double k0; int k0set;   ///< dipole 
+  double k1; int k1set;   ///< quadrupole
+  double k2; int k2set;   ///< sextupole
+  double k3; int k3set;   ///< octupole
+  double k4; int k4set;   ///< decapole
+  double ks; int ksset;   ///< solenoid
 
-  double tscint; int tscintset; ///>thickness of scintillating part of screen
-  double twindow; int twindowset; ///>thickness of window
+  double tscint; int tscintset; ///<thickness of scintillating part of screen
+  double twindow; int twindowset; ///<thickness of window
 
-  std::list<double> knl;           ///> multipole expansion coefficients
-  std::list<double> ksl;           ///> skew multipole expansion
+  std::list<double> knl;           ///< multipole expansion coefficients
+  std::list<double> ksl;           ///< skew multipole expansion
   
   int knlset; int kslset;
 
+  std::string bias; ///< physics biasing
+  int biasset;
+  
   ///List of beam loss monitor locations
   std::list<double> blmLocZ;
   std::list<double> blmLocTheta;
@@ -48,11 +54,11 @@ struct Parameters {
   
   /// placement, geometrical sizes etc.
 
-  double r; int rset; ///>radius, i.e cylindrical sampler
+  double r; int rset; ///<radius, i.e cylindrical sampler
   
-  double angle; int angleset;   ///> bending angle
-  double phiAngleIn; int phiAngleInset;   ///> incoming bending angle for element
-  double phiAngleOut; int phiAngleOutset;   ///> outgoing bending angle for element
+  double angle; int angleset;   ///< bending angle
+  double phiAngleIn; int phiAngleInset;   ///< incoming bending angle for element
+  double phiAngleOut; int phiAngleOutset;   ///< outgoing bending angle for element
   
   //new aperture model
   double beampipeThickness; int beampipeThicknessset;
@@ -68,7 +74,7 @@ struct Parameters {
   std::string outerMaterial;      int outerMaterialset;
   double      outerDiameter;      int outerDiameterset;
   
-  double phi, theta, psi; ///> for 3d transforms
+  double phi, theta, psi; ///< for 3d transforms
   int phiset, thetaset, psiset;
 
   ///which precision physics region the element is in (0 = none)
@@ -76,12 +82,12 @@ struct Parameters {
 
   double gradient; int gradientset;
 
-  double xsize, ysize; int xsizeset, ysizeset; ///> aperture (or laser spotsize for laser)
+  double xsize, ysize; int xsizeset, ysizeset; ///< aperture (or laser spotsize for laser)
   double xdir, ydir, zdir, waveLength; int xdirset, ydirset, zdirset, waveLengthset;
 
-  double tilt; int tiltset;   ///> tilt
-  double offsetX; int offsetXset;   ///> offset X
-  double offsetY; int offsetYset;   ///> offset Y
+  double tilt; int tiltset;   ///< tilt
+  double offsetX; int offsetXset;   ///< offset X
+  double offsetY; int offsetYset;   ///< offset Y
 
   /// for external geometry and field definition files
   std::string geometry; int geomset;
@@ -100,7 +106,7 @@ struct Parameters {
   double pressure; int pressureset;
   std::string state; int stateset;
   std::string symbol; int symbolset;
-  std::list<const char*> components; int componentsset;
+  std::list<std::string> components; int componentsset;
   std::list<double> componentsFractions; int componentsFractionsset;
   std::list<int> componentsWeights; int componentsWeightsset;
 
@@ -132,5 +138,6 @@ struct Parameters {
   /// constructor
   Parameters();
 };
+}
 
 #endif

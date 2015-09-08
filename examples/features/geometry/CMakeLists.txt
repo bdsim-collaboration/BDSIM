@@ -1,2 +1,7 @@
 add_subdirectory(ggmad)
 add_subdirectory(Mokka)
+add_subdirectory(1_layout)
+add_subdirectory(2_transform)
+add_subdirectory(3_beampipes)
+add_subdirectory(4_magnets)
+add_subdirectory(5_tunnel)

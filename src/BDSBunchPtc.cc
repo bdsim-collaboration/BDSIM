@@ -106,7 +106,7 @@ void BDSBunchPtc::LoadPtcFile()
   return;
 }
 
-void BDSBunchPtc::SetOptions(struct Options& opt)
+void BDSBunchPtc::SetOptions(GMAD::Options& opt)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << " " << opt.distribFile << G4endl;
@@ -129,12 +129,12 @@ void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  x0     = ptcData[iRay][0]*CLHEP::m+X0;
-  y0     = ptcData[iRay][2]*CLHEP::m+Y0;
-  z0     = ptcData[iRay][4]+Z0;
-  xp     = ptcData[iRay][1]*CLHEP::rad+Xp0;
-  yp     = ptcData[iRay][3]*CLHEP::rad+Yp0;
-  t      = (z0-Z0)/CLHEP::c_light+T0;
+  x0     = (ptcData[iRay][0] + X0) * CLHEP::m;
+  y0     = (ptcData[iRay][2] + Y0) * CLHEP::m;
+  z0     = (ptcData[iRay][4] + Z0) * CLHEP::m;
+  xp     = ptcData[iRay][1] * CLHEP::rad+Xp0;
+  yp     = ptcData[iRay][3] * CLHEP::rad+Yp0;
+  t      = (z0-Z0)*CLHEP::m / CLHEP::c_light + T0 * CLHEP::s;
   E      = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * (ptcData[iRay][5]+1.0);
   zp     = CalculateZp(xp,yp,Zp0);
   weight = 1.0; 

@@ -21,3 +21,8 @@ BDSBeamPipe::BDSBeamPipe(G4VSolid*                 containerSolidIn,
   containerIsCircular(containerIsCircularIn),
   containerRadius(containerRadiusIn)
 {;}
+
+BDSBeamPipe::~BDSBeamPipe()
+{
+  delete containerSubtractionSolid;
+}

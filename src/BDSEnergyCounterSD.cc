@@ -1,8 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
 #include "BDSEnergyCounterHit.hh"
 #include "BDSEnergyCounterSD.hh"
 #include "BDSExecOptions.hh"
@@ -25,8 +20,6 @@
 #include "G4Track.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VTouchable.hh"
-
-#define NMAXCOPY 5
 
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
   :G4VSensitiveDetector(name),
@@ -54,9 +47,6 @@ BDSEnergyCounterSD::~BDSEnergyCounterSD()
 
 void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   energyCounterCollection = new BDSEnergyCounterHitsCollection(SensitiveDetectorName,collectionName[0]);
   if (HCIDe < 0)
     {HCIDe = G4SDManager::GetSDMpointer()->GetCollectionID(energyCounterCollection);}
@@ -76,7 +66,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
 {
   if(BDSGlobalConstants::Instance()->GetStopTracks())
     enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit()); // Why subtract the energy deposit of the step? Why not add?
-    //this looks like accounting for conservation of energy when you're killing a particle
+  //this looks like accounting for conservation of energy when you're killing a particle
   //which may normally break energy conservation for the whole event
   //see developer guide 6.2.2...
   else
@@ -142,10 +132,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
     }
   
   G4double weight = aStep->GetTrack()->GetWeight();
-  if (weight == 0){
-    G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl;
-    exit(1);
-  }
+  if (weight == 0)
+    {G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl; exit(1);}
   G4int    ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
   G4String volName    = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
   G4String regionName = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetRegion()->GetName();

@@ -5,7 +5,6 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSSDManager.hh"
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4Box.hh"
@@ -22,11 +21,11 @@
 #include <utility>                         // for std::pair
 
 
-BDSBeamPipeFactoryLHC* BDSBeamPipeFactoryLHC::_instance = 0;
+BDSBeamPipeFactoryLHC* BDSBeamPipeFactoryLHC::_instance = nullptr;
 
 BDSBeamPipeFactoryLHC* BDSBeamPipeFactoryLHC::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSBeamPipeFactoryLHC();}
   return _instance;
 }
@@ -37,7 +36,7 @@ BDSBeamPipeFactoryLHC::BDSBeamPipeFactoryLHC():BDSBeamPipeFactoryBase()
 
 BDSBeamPipeFactoryLHC::~BDSBeamPipeFactoryLHC()
 {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipe(G4String    nameIn,              // name

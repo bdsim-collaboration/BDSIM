@@ -3,16 +3,20 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
 #include <iostream>
+#include <string>
 
-extern const char* current_line;
+using namespace GMAD;
+
+namespace GMAD {
+  extern std::string current_line;
+}
 
 namespace {
   // helper method
   void print(std::list<struct Element> l, int ident=0)
   {
-    if(ident == 0) printf("using line %s\n",current_line);
+    if(ident == 0) std::cout << "using line " << current_line << std::endl;
   
     for(std::list<struct Element>::iterator it=l.begin();it!=l.end();it++)
       {
@@ -29,7 +33,7 @@ void Element::print(int & ident)const{
   for(int i=0;i<ident;i++)
     printf("--");
 
-  printf("->%s : %s",name.c_str(),GMAD::typestr(type));
+  std::cout << "->" << name << " : " << type << std::endl;
 
   std::list<double>::const_iterator it;
   switch(type) {
@@ -39,8 +43,9 @@ void Element::print(int & ident)const{
   case ElementType::_QUAD:
   case ElementType::_SEXTUPOLE:
   case ElementType::_OCTUPOLE:
-    printf(", l=%.10g, k0=%.10g, k1=%.10g, k2=%.10g, k3=%.10g, angle=%.10g,tilt=%.10g ",
-	   l,k0,k1,k2,k3,angle,tilt);
+  case ElementType::_DECAPOLE:
+    printf(", l=%.10g, k0=%.10g, k1=%.10g, k2=%.10g, k3=%.10g, k4=%.10g, angle=%.10g,tilt=%.10g ",
+	   l,k0,k1,k2,k3,k4,angle,tilt);
     break;
     
   case ElementType::_SOLENOID:
@@ -101,6 +106,7 @@ void Element::flush() {
   k1 = 0;
   k2 = 0;
   k3 = 0;
+  k4 = 0;
   angle = 0;
   xsize = 0;
   ysize = 0;
@@ -118,6 +124,8 @@ void Element::flush() {
 
   gradient = 0;
 
+  bias = "";
+  
   // new aperture model
   beampipeThickness = 0;
   aper1 = 0;
@@ -162,51 +170,50 @@ void Element::flush() {
   windowmaterial = "";
   spec = "";
   material="";
-  scintmaterial="";
-  windowmaterial="";
   airmaterial="";
 }
 
-double Element::property_lookup(char* property_name)const{
-  if(!strcmp(property_name,"l")) return l;
-  if(!strcmp(property_name,"bmapZOffset")) return bmapZOffset;
-  if(!strcmp(property_name,"B")) return B;
-  if(!strcmp(property_name,"ks")) return ks;
-  if(!strcmp(property_name,"k0")) return k0;
-  if(!strcmp(property_name,"k1")) return k1;
-  if(!strcmp(property_name,"k2")) return k2;
-  if(!strcmp(property_name,"k3")) return k3;
-  if(!strcmp(property_name,"angle")) return angle;
-  if(!strcmp(property_name,"phiAngleIn")) return phiAngleIn;
-  if(!strcmp(property_name,"phiAngleOut")) return phiAngleOut;
-  if(!strcmp(property_name,"beampipeThickness")) return beampipeThickness;
-  if(!strcmp(property_name,"aper")) return aper1;
-  if(!strcmp(property_name,"aper1")) return aper1;
-  if(!strcmp(property_name,"aper2")) return aper2;
-  if(!strcmp(property_name,"aper3")) return aper3;
-  if(!strcmp(property_name,"aper4")) return aper4;
-  if(!strcmp(property_name,"outerDiameter")) return outerDiameter;
-  if(!strcmp(property_name,"boxSize")) return outerDiameter;
-  if(!strcmp(property_name,"outR")) return 0.5*outerDiameter;
-  if(!strcmp(property_name,"xsize")) return xsize;
-  if(!strcmp(property_name,"ysize")) return ysize;
-  if(!strcmp(property_name,"xdir")) return xdir;
-  if(!strcmp(property_name,"ydir")) return ydir;
-  if(!strcmp(property_name,"zdir")) return zdir;
-  if(!strcmp(property_name,"phi")) return phi;
-  if(!strcmp(property_name,"psi")) return psi;
-  if(!strcmp(property_name,"theta")) return theta;
-  if(!strcmp(property_name,"waveLength")) return waveLength;
-  if(!strcmp(property_name,"tilt")) return tilt;
-  if(!strcmp(property_name,"offsetX")) return offsetX;
-  if(!strcmp(property_name,"offsetY")) return offsetY;
-  if(!strcmp(property_name,"gradient")) return gradient;
+double Element::property_lookup(std::string property_name)const{
+  if(property_name == "l") return l;
+  if(property_name == "bmapZOffset") return bmapZOffset;
+  if(property_name == "B") return B;
+  if(property_name == "ks") return ks;
+  if(property_name == "k0") return k0;
+  if(property_name == "k1") return k1;
+  if(property_name == "k2") return k2;
+  if(property_name == "k3") return k3;
+  if(property_name == "k4") return k4;
+  if(property_name == "angle") return angle;
+  if(property_name == "phiAngleIn") return phiAngleIn;
+  if(property_name == "phiAngleOut") return phiAngleOut;
+  if(property_name == "beampipeThickness") return beampipeThickness;
+  if(property_name == "aper") return aper1;
+  if(property_name == "aper1") return aper1;
+  if(property_name == "aper2") return aper2;
+  if(property_name == "aper3") return aper3;
+  if(property_name == "aper4") return aper4;
+  if(property_name == "outerDiameter") return outerDiameter;
+  if(property_name == "boxSize") return outerDiameter;
+  if(property_name == "outR") return 0.5*outerDiameter;
+  if(property_name == "xsize") return xsize;
+  if(property_name == "ysize") return ysize;
+  if(property_name == "xdir") return xdir;
+  if(property_name == "ydir") return ydir;
+  if(property_name == "zdir") return zdir;
+  if(property_name == "phi") return phi;
+  if(property_name == "psi") return psi;
+  if(property_name == "theta") return theta;
+  if(property_name == "waveLength") return waveLength;
+  if(property_name == "tilt") return tilt;
+  if(property_name == "offsetX") return offsetX;
+  if(property_name == "offsetY") return offsetY;
+  if(property_name == "gradient") return gradient;
 
-  if(!strcmp(property_name,"A")) return A;
-  if(!strcmp(property_name,"Z")) return Z;
-  if(!strcmp(property_name,"density")) return density;
-  if(!strcmp(property_name,"T")) return temper;
-  if(!strcmp(property_name,"P")) return pressure;
+  if(property_name == "A") return A;
+  if(property_name == "Z") return Z;
+  if(property_name == "density") return density;
+  if(property_name == "T") return temper;
+  if(property_name == "P") return pressure;
 
   std::cerr << "parser.h> Error: unknown property \"" << property_name << "\". Returning 0." << std::endl; 
   exit(1);
