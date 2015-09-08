@@ -44,7 +44,6 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
   containerRadius = 0.5*outerDiameter;
   inputface       = G4ThreeVector(0,0,0);
   outputface      = G4ThreeVector(0,0,0);
-  itsK1 = 0.0; itsK2 = 0.0; itsK3 = 0.0;
   
   itsStepper       = nullptr;
   itsMagField      = nullptr;

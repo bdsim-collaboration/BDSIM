@@ -40,12 +40,6 @@ public:
   
   virtual ~BDSMagnet();
 
-  ///@{ Magnet strengh parameter accessor - to be moved into its own class soon
-  G4double GetK1();
-  G4double GetK2();
-  G4double GetK3();
-  ///@}
-
   /// Access all sensitive volumes belonging to this component including
   /// those belonging to the beam pipe
   virtual std::vector<G4LogicalVolume*> GetAllSensitiveVolumes() const;
@@ -139,9 +133,6 @@ protected:
   
   /// The assembled outer magnet geometry
   BDSMagnetOuter* outer;
-
-  /// Magnetic strength parameters
-  G4double itsK1, itsK2, itsK3;
 };
 
 #endif
