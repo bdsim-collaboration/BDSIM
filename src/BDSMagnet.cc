@@ -146,7 +146,7 @@ void BDSMagnet::BuildOuter()
   // magnet object based on the shape of the magnet outer geometry.
   
   //build the right thing depending on the magnet type
-  //saves basically the same funciton in each derived class
+  //saves basically the same function in each derived class
   // RBEND does its own thing by override this method so isn't here
   BDSMagnetOuterFactory* theFactory  = BDSMagnetOuterFactory::Instance();
   switch(magnetType.underlying())

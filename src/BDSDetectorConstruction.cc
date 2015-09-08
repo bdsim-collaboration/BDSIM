@@ -638,7 +638,7 @@ void BDSDetectorConstruction::InitialiseGFlash()
 
 void BDSDetectorConstruction::SetGFlashOnVolume(G4LogicalVolume* volume)
 {
-  // this has been taken from component placement and put in a separate funciton to make clearer
+  // this has been taken from component placement and put in a separate function to make clearer
   // for now.  perhaps should be revisited. LN
 
   //If not in the precision region....
