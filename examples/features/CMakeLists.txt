@@ -1,4 +1,5 @@
 add_subdirectory(components)
+add_subdirectory(optics)
 add_subdirectory(processes)
 add_subdirectory(processes_old)
 add_subdirectory(geometry)
