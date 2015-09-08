@@ -122,6 +122,7 @@ void BDSModularPhysicsList::ConstructMinimumParticleSet()
   if(verbose || debug) 
     G4cout << __METHOD_NAME__ << G4endl;
   //Minimum required set of particles required for tracking
+  G4Gamma::Gamma();
   G4Electron::Electron();
   G4Positron::Positron();
   G4Proton::Proton();
@@ -179,12 +180,12 @@ void BDSModularPhysicsList::SetCuts()
   G4double prodCutPhotons   = BDSGlobalConstants::Instance()->GetProdCutPhotons();
   G4double prodCutElectrons = BDSGlobalConstants::Instance()->GetProdCutElectrons();
   G4double prodCutPositrons = BDSGlobalConstants::Instance()->GetProdCutPositrons();
-  
+  G4double prodCutHadrons   = BDSGlobalConstants::Instance()->GetProdCutHadrons();  
+
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Photon production range cut (mm)   " << prodCutPhotons   << G4endl;
   G4cout << __METHOD_NAME__ << "Electron production range cut (mm) " << prodCutElectrons << G4endl;
   G4cout << __METHOD_NAME__ << "Positron production range cut (mm) " << prodCutPositrons << G4endl;
-  G4double prodCutHadrons   = BDSGlobalConstants::Instance()->GetProdCutHadrons();
   G4cout << __METHOD_NAME__ << "Hadron production range cut (mm)   " << prodCutHadrons<< G4endl;
 #endif
 
@@ -192,6 +193,7 @@ void BDSModularPhysicsList::SetCuts()
   SetCutValue(prodCutPhotons,"gamma");
   SetCutValue(prodCutElectrons,"e-");
   SetCutValue(prodCutPositrons,"e+");
+  SetCutValue(prodCutHadrons,"proton");
 
   // Looping over specific particles?
   //G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
