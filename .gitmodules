@@ -4,3 +4,6 @@
 [submodule "utils/pyfluka"]
 	path = utils/pyfluka
 	url = https://bitbucket.org/nevay/pyfluka.git
+[submodule "utils/pymadx"]
+	path = utils/pymadx
+	url = https://bitbucket.org/stewartboogert/pymadx
