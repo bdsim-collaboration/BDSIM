@@ -3,14 +3,13 @@
 """
 This script executes the bdsimMadx tester.
 
-./run_bdsimMadx.py                                             to run default to run a .madx file in current folder
-./run_bdsimMadx.py -c                                          to clean produced files
-./run_bdsimMadx.py --filepath=file.madx                        to run another madx file
-./run_bdsimMadx.py --filepath=folderpath/file.madx             eg. to run tester in a different folder
-./run_bdsimMadx.py --filepath=folderpath/file.madx             to clean files if folder is used
+./run_bdsimMadx.py --filepath=folderpath/file.madx             to run test on a .madx file
+./run_bdsimMadx.py --filepath=folderpath/file.madx -c          to clean files in the destination folder
 ./run_bdsimMadx.py --option1=value1, option2=value2            to set parameters and run
 
 options: filepath, nparticles, verbose 
+
+Example: run_bdsimMadx --filepath=1_fodo/FODO.madx             to run FODO example in 1_fodo folder
 
 Notes: 
 1. No quotation marks needed for option strings (eg. --filepath="/path/file" -> --filepath=/path/file)
@@ -53,7 +52,7 @@ def Main():
     usage = ''
     parser = optparse.OptionParser(usage)
     parser.add_option('-c','--clean',     action='store_true',default=False,help=Clean.__doc__)
-    parser.add_option('-f','--filepath',  action='store',     dest="filepath",  type="string", default="*.madx")
+    parser.add_option('-f','--filepath',  action='store',     dest="filepath",  type="string", default="None")
     parser.add_option('-n','--nparticles',action='store',     dest="nparticles",type="int",    default=1000)
     parser.add_option('-v','--verbose',   action='store_true',dest="verbose",                  default=False)
 
