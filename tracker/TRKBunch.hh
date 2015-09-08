@@ -15,7 +15,7 @@ typedef std::vector<TRKParticle>::iterator TRKBunchIter;
  */
 class TRKBunch { 
 public:
-  TRKBunch(struct Options& opt);
+  TRKBunch(GMAD::Options& opt);
   TRKBunch(const std::vector<TRKParticle>& particleVectorIn);
   ~TRKBunch();
   
@@ -37,7 +37,7 @@ private:
   int population;
   std::vector <TRKParticle> bunch;
   
-  void Populate(struct Options& opt); /// populate particles using options and random number generator
+  void Populate(struct GMAD::Options& opt); /// populate particles using options and random number generator
   std::pair<double,int> GetParticleMassAndCharge(std::string particlename);
 };
 

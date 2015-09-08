@@ -3,9 +3,10 @@
 
 #include "parser/options.h"
 
-extern Options options;
+extern GMAD::Options options;
 
-namespace TRK {
-  void CalculateKineticEnergy(Options& options);
+namespace TRK
+{
+  void CalculateKineticEnergy(GMAD::Options& options);
 }
 #endif

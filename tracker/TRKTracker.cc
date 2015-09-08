@@ -17,7 +17,7 @@
 typedef std::chrono::high_resolution_clock Clock;
 typedef std::chrono::milliseconds milliseconds;
 
-TRKTracker::TRKTracker(TRKLine* lineIn, TRKStrategy* strategyIn, Options& options):line(lineIn),strategy(strategyIn)
+TRKTracker::TRKTracker(TRKLine* lineIn, TRKStrategy* strategyIn, GMAD::Options& options):line(lineIn),strategy(strategyIn)
 {
   dontuseaperture = options.dontUseAperture;
   if (options.circular)
