@@ -1,6 +1,17 @@
 # find MadX quietly
 find_package(MadX QUIET)
-if (MADX_FOUND)
+# should perhaps also check for pybdsim and root_numpy
+#find_package(PythonLibs)
+find_package(PythonInterp QUIET)
+
+# find python modules
+include(FindPythonModule)
+find_python_module(root_numpy QUIET)
+find_python_module(pybdsim QUIET)
+find_python_module(pymadx QUIET)
+
+if (MADX_FOUND AND USE_ROOT AND USE_ROBDSIM AND PY_ROOT_NUMPY AND PY_PYBDSIM AND PY_PYMADX)
+  message(STATUS "Tracking tests enabled")
   message(STATUS "Found MadX: ${MADX_EXECUTABLE}")
   # add tests
   # 1_fodo
