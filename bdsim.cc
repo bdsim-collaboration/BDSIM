@@ -261,11 +261,11 @@ int main(int argc,char** argv)
   // signal(SIGINT,  &BDS::HandleAborts); // interrupts
   
   // Write survey file
-  if(execOptions->GetOutline()) {
+  if(execOptions->GetSurvey()) {
 #ifdef BDSDEBUG 
     G4cout<<"contructing geometry interface"<<G4endl;
 #endif
-    BDSSurvey BDSGI(execOptions->GetOutlineFilename());
+    BDSSurvey survey(execOptions->GetSurveyFilename());
   }
 
   if(!execOptions->GetBatch())   // Interactive mode
