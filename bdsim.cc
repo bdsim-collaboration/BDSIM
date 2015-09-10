@@ -52,7 +52,7 @@ BDSOutputBase* bdsOutput=nullptr;         // output interface
 //=======================================================
 
 namespace GMAD {
-  extern GMAD::Options options;
+  extern Options options;
 }
 
 int main(int argc,char** argv)
