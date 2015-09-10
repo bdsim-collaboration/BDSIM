@@ -78,6 +78,11 @@ void init()
   add_var("ns" ,1.e-9,reserved);
   add_var("ps" ,1.e-12,reserved);
 
+  add_var("Hz" ,1.0,  reserved);
+  add_var("kHz",1e+3, reserved);
+  add_var("MHz",1e+6, reserved);
+  add_var("GHz",1e+9, reserved);
+  
   add_var("rad" ,1.0  ,reserved);
   add_var("mrad",1.e-3,reserved);
   add_var("urad",1.e-6,reserved);
