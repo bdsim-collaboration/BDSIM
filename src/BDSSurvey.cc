@@ -1,9 +1,10 @@
+#include "BDSSurvey.hh"
+
 #include "BDSAcceleratorComponent.hh"
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
-#include "BDSGeometryInterface.hh"
 
 #include <fstream>
 #include <iomanip>
@@ -13,7 +14,7 @@
 
 using std::setw;
 
-BDSGeometryInterface::BDSGeometryInterface(G4String filename):
+BDSSurvey::BDSSurvey(G4String filename):
   itsFileName(filename)
 {
   const BDSExecOptions* execOptions = BDSExecOptions::Instance();
@@ -28,10 +29,10 @@ BDSGeometryInterface::BDSGeometryInterface(G4String filename):
   }
 }
 
-BDSGeometryInterface::~BDSGeometryInterface()
+BDSSurvey::~BDSSurvey()
 {}
 
-void BDSGeometryInterface::Optics()
+void BDSSurvey::Optics()
 {
   std::ofstream optics;
   
@@ -108,7 +109,7 @@ void BDSGeometryInterface::Optics()
 }
 
 
-void BDSGeometryInterface::Survey()
+void BDSSurvey::Survey()
 {
   std::ofstream survey;
 

@@ -1,5 +1,5 @@
-#ifndef BDSGeometryInterface_h
-#define BDSGeometryInterface_h 1
+#ifndef BDSSurvey_h
+#define BDSSurvey_h 1
 
 #include "globals.hh"
 
@@ -8,11 +8,11 @@
  * to include geometry, optics, fields, etc.
 */
 
-class BDSGeometryInterface
+class BDSSurvey
 {
 public:
-  BDSGeometryInterface(G4String filename);  
-  ~BDSGeometryInterface();
+  BDSSurvey(G4String filename);  
+  ~BDSSurvey();
 
   void Optics();
   void Survey();
