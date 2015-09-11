@@ -4,6 +4,7 @@
 #include "BDSAwakeScintillatorScreen.hh"
 #include "BDSCollimatorElliptical.hh"
 #include "BDSCollimatorRectangular.hh"
+#include "BDSDegrader.hh"
 #include "BDSDrift.hh"
 #include "BDSDump.hh"
 #include "BDSElement.hh"
@@ -138,7 +139,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   case ElementType::_RCOL:
     element = CreateRectangularCollimator(); break; 
   case ElementType::_MUSPOILER:    
-    element = CreateMuSpoiler(); break; 
+    element = CreateMuSpoiler(); break;
+  case ElementType::_DEGRADER:
+    element = CreateDegrader(); break;
   case ElementType::_LASER:
     element = CreateLaser(); break; 
   case ElementType::_SCREEN:
@@ -776,12 +779,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
   G4cout << "---->creating muspoiler,"
 	 << " name = " << _element.name 
 	 << " length = " << _element.l
-	 << " B = " << _element.B
+	 << " B = " << _element.B*CLHEP::tesla << " m*T"
 	 << G4endl;
-#endif
-        
-#ifdef BDSDEBUG
-  G4cout << "BDSMuSpoiler: " << _element.name << " " << _element.l*CLHEP::m << " mm " << " " << _element.B*CLHEP::tesla << " MT " << G4endl;
 #endif
   
   return (new BDSMuSpoiler(_element.name,
@@ -789,6 +788,25 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
 			   _element.B * CLHEP::tesla,
 			   PrepareBeamPipeInfo(_element),
 			   PrepareMagnetOuterInfo(_element)));
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
+{
+  if(!HasSufficientMinimumLength(_element))
+    {return nullptr;}
+
+#ifdef BDSDEBUG
+  G4cout << "---->creating degrader,"
+	 << " name = "   << _element.name
+	 << " length = " << _element.l
+	 << G4endl;
+#endif
+
+  return (new BDSDegrader(_element.name,
+			  _element.l*CLHEP::m,
+			  _element.outerDiameter*CLHEP::m,
+			  _element.material));
+
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateLaser()
