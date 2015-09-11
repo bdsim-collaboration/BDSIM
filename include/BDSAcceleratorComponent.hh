@@ -68,6 +68,9 @@ public:
   /// 0 = no precision region, 1 = precision region 1, 2 = precision region 2.
   G4int GetPrecisionRegion() const;
 
+  /// Access beam pipe information
+  BDSBeamPipeInfo* GetBeamPipeInfo() const;
+
   /// Get the angle the component induces in the reference trajector (rad). 
   /// Note, this is 0 for h and v kickers
   G4double GetAngle() const;
@@ -208,6 +211,9 @@ inline G4String BDSAcceleratorComponent::GetType() const
 
 inline G4int BDSAcceleratorComponent::GetPrecisionRegion() const
 {return precisionRegion;}
+
+inline BDSBeamPipeInfo* BDSAcceleratorComponent::GetBeamPipeInfo() const
+{return beamPipeInfo;}
 
 inline void BDSAcceleratorComponent::SetGFlashVolumes(G4LogicalVolume* aLogVol)
 {itsGFlashVolumes.push_back(aLogVol);}
