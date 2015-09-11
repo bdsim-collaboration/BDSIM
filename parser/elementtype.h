@@ -39,6 +39,7 @@ enum class ElementType {
   _TUNNEL      = 52,
   _TRANSFORM3D = 61,
   _MUSPOILER   = 62,
+  _DEGRADER    = 63,
   _TELEPORTER  = 98,
   _TERMINATOR  = 99
 };

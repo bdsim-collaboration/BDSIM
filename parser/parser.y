@@ -56,7 +56,7 @@
 %token <symp> VARIABLE VECVAR FUNC 
 %token <str> STR
 %token MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
-%token SOLENOID RCOL ECOL LINE SEQUENCE LASER TRANSFORM3D MUSPOILER
+%token SOLENOID RCOL ECOL LINE SEQUENCE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token VKICK HKICK
 %token PERIOD XSECBIAS TUNNEL MATERIAL ATOM
 %token BEAM OPTION PRINT RANGE STOP USE VALUE ECHO PRINTF SAMPLE CSAMPLE BETA0 TWISS DUMP
@@ -260,6 +260,15 @@ decl : VARIABLE ':' marker
 	     params.flush();
 	   }
        }
+     | VARIABLE ':' degrader
+       {
+	 if(execute)
+	   {
+	     // check parameters and write into element table
+	     write_table(params,$1->name,ElementType::_DEGRADER);
+	     params.flush();
+	   }
+       }
      | VARIABLE ':' element
        {
 	 if(execute)
@@ -426,6 +435,7 @@ multipole : MULTIPOLE ',' parameters ;
 solenoid : SOLENOID ',' parameters ;
 ecol : ECOL ',' parameters ;
 muspoiler : MUSPOILER ',' parameters ;
+degrader : DEGRADER ',' parameters ;
 rcol : RCOL ',' parameters ;
 laser : LASER ',' parameters ;
 screen : SCREEN ',' parameters ;
