@@ -57,6 +57,7 @@ private:
   BDSAcceleratorComponent* CreateRectangularCollimator();
   BDSAcceleratorComponent* CreateEllipticalCollimator();
   BDSAcceleratorComponent* CreateMuSpoiler();
+  BDSAcceleratorComponent* CreateDegrader();
   BDSAcceleratorComponent* CreateLaser();
   BDSAcceleratorComponent* CreateScreen();
   BDSAcceleratorComponent* CreateAwakeScreen();
