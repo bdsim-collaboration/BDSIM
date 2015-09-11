@@ -80,23 +80,33 @@ std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
   return out;
 }
 
-void BDSBeamline::AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
+std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
 {
+  std::vector<BDSBeamlineElement*> addedComponents;
+  BDSBeamlineElement* element = nullptr;
   // if default nullptr is supplied as tilt offset use a default 0,0,0,0 one
   if (!tiltOffset) {tiltOffset  = new BDSTiltOffset();}
   
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
       for (BDSLine::iterator i = line->begin(); i != line->end(); ++i)
-	{AddSingleComponent(*i, tiltOffset);}
+	{
+	  element = AddSingleComponent(*i, tiltOffset);
+	  if (element) addedComponents.push_back(element);
+	}
     }
   else
-    {AddSingleComponent(component, tiltOffset);}
+    {
+      element = AddSingleComponent(component, tiltOffset);
+      if (element) addedComponents.push_back(element);
+    }
   // free memory - as once the rotations are calculated, this is no longer needed
   delete tiltOffset;
+  
+  return addedComponents;
 }
 
-void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
+BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
 {
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "adding component to beamline and calculating coordinates" << G4endl;
@@ -110,7 +120,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   if (BDSTransform3D* transform = dynamic_cast<BDSTransform3D*>(component))
     {
       ApplyTransform3D(transform);
-      return;
+      return nullptr;
     }
 
   // if it's not a transform3d instance, continue as normal
@@ -329,6 +339,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   G4cout << *element;
   G4cout << __METHOD_NAME__ << "component added" << G4endl;
 #endif
+  return element;
 }
 
 void BDSBeamline::ApplyTransform3D(BDSTransform3D* component)

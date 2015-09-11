@@ -38,7 +38,6 @@
 #include "BDSRunManager.hh"
 #include "BDSSteppingAction.hh"
 #include "BDSStackingAction.hh"
-#include "BDSSurvey.hh"
 #include "BDSUserTrackingAction.hh"
 #include "BDSUtilities.hh"
 #include "BDSVisManager.hh"
@@ -260,14 +259,6 @@ int main(int argc,char** argv)
   // and then the BDSIM process somehow doesn't get killed
   // signal(SIGINT,  &BDS::HandleAborts); // interrupts
   
-  // Write survey file
-  if(execOptions->GetSurvey()) {
-#ifdef BDSDEBUG 
-    G4cout<<"contructing geometry interface"<<G4endl;
-#endif
-    BDSSurvey survey(execOptions->GetSurveyFilename());
-  }
-
   if(!execOptions->GetBatch())   // Interactive mode
     {
       BDSVisManager visManager;

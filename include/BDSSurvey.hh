@@ -2,6 +2,7 @@
 #define BDSSurvey_h 1
 
 #include <fstream>
+#include <vector>
 #include "globals.hh"
 
 namespace GMAD {
@@ -27,6 +28,8 @@ public:
   void WriteHeader();
   /// write line
   void Write(BDSBeamlineElement* component, GMAD::Element & element);
+  /// write multiple lines
+  void Write(std::vector<BDSBeamlineElement*> components, GMAD::Element & element);
   /// write summary
   void WriteSummary(BDSBeamline* beamline);
   
