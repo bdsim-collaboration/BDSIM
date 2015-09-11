@@ -1,7 +1,15 @@
 #ifndef BDSSurvey_h
 #define BDSSurvey_h 1
 
+#include <fstream>
 #include "globals.hh"
+
+namespace GMAD {
+  struct Element;
+}
+
+class BDSBeamline;
+class BDSBeamlineElement;
 
 /** Survey Class
  * @brief A class of functions to output Geant4/Mokka/BDSIM parameters for elements
@@ -15,13 +23,18 @@ public:
   BDSSurvey(G4String filename);  
   ~BDSSurvey();
 
+  /// write header
+  void WriteHeader();
+  /// write line
+  void Write(BDSBeamlineElement* component, GMAD::Element & element);
+  /// write summary
+  void WriteSummary(BDSBeamline* beamline);
   
 private:
 
-  /// write survey to file
-  void Survey();
-  /// filename
-  G4String itsFileName;
+  /// output file stream
+  std::ofstream survey;
+
 };
 
 #endif
