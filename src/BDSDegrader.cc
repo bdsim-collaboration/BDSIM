@@ -20,7 +20,8 @@ BDSDegrader::BDSDegrader (G4String   name,
                     G4int      numberWedges,
                     G4double   wedgeBasewidth,
                     G4double   wedgeHeight,
-                    G4double   degraderHeight):
+                    G4double   degraderHeight,
+                    G4double   materialThickness):
 BDSAcceleratorComponent(name, length, 0, "degrader")
 {;}
 
