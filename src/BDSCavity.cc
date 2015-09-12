@@ -1,6 +1,5 @@
 #include "BDSCavity.hh"
 #include "BDSAcceleratorComponent.hh"
-
 #include "G4PVPlacement.hh"
 #include "G4ThreeVector.hh"
 #include "G4Material.hh"
@@ -8,6 +7,8 @@
 #include "G4LogicalVolume.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
+#include "G4ElectroMagneticField.hh"
+
 
 //Elliptical Cavity:
 #include "G4Polycone.hh"
@@ -37,6 +38,15 @@ BDSCavity::BDSCavity(G4String name, //Any others to add here?
 {
 }
 
+void BDSCavity::BuildField()
+{
+}
+
+void BDSCavity::AttachField()
+{ 
+}
+
+
 void BDSCavity::PlaceComponents()
 {
   G4PVPlacement* vacuumPV = new G4PVPlacement(0, //Rotation
@@ -49,8 +59,8 @@ void BDSCavity::PlaceComponents()
 					      checkOverlaps         //check overlaps
 					      );
   
-  RegisterPhysicalVolume(vacuumPV); //BDSGeometryComponent
-
+  RegisterPhysicalVolume(vacuumPV);
+  
   G4PVPlacement* cavityPV = new G4PVPlacement(0, //Rotation
 					      G4ThreeVector(0,0,0), //Position
 					      cavityLV,             //Logical Volume to be place
@@ -60,15 +70,16 @@ void BDSCavity::PlaceComponents()
 					      0,                    //copy number
 					      checkOverlaps         //check overlaps
 					      );
-  RegisterPhysicalVolume(cavityPV); //BDSGeometryComponent
+  RegisterPhysicalVolume(cavityPV); 
 
 
 }
 
 
-void BDSCavity::BuildContainerLogicalVolume() //This ultimately comes from BDSGeometryComponent.  containerSolid and
-//containerLogicalVolume are protected g4solids/lvs of this base class.
+void BDSCavity::BuildContainerLogicalVolume() 
 {
+
+
   G4double outerRadius = equatorRadius + lengthSafety;
   containerSolid = new G4Tubs(name + "_container_solid", //name
 			      0.0,                       //innerRadius
@@ -87,19 +98,20 @@ void BDSCavity::BuildContainerLogicalVolume() //This ultimately comes from BDSGe
 
     }
 
-void BDSCavity::BuildEllipticalCavityGeometry(//G4double irisRSemiAxis, //iris ellipse vertical semiaxis.
-				     //G4double irisZSemiAxis, //iris ellipse horizontal semiaxis
-				     //G4double equatorRSemiAxis, //equator ellipse vertical semiaxis
-				     //G4double equatorZSemiAxis, //equator ellipse horizontal semiaxis
-				     //G4double tangentAngle, //Angle of line connecting ellipses to the vertical.
-				     //Ought to be the common tangent with most negative gradient for reasonable output
-				     //G4int noPoints //number of points forming each curved section.  Total points for entire quarter section will be 2*noPoints.
-					      )
+void BDSCavity::BuildEllipticalCavityGeometry(/*G4double irisRSemiAxis, //iris ellipse vertical semiaxis.
+					      G4double irisZSemiAxis, //iris ellipse horizontal semiaxis
+					      G4double equatorRSemiAxis, //equator ellipse vertical semiaxis
+					      G4double equatorZSemiAxis, //equator ellipse horizontal semiaxis
+					      G4double tangentAngle, //Angle of line connecting ellipses to the vertical. Ought to be the common tangent with most negative gradient for reasonable output
+					      G4int noPoints //number of points forming each curved section.  Total points for entire quarter section will be 2*noPoints.
+					      */)
   {
 
-    //Ellipse Centres (Ellipses defined parametrically)
-    //iris Centre:
 
+    //Checks on user inpurt
+      
+    //End checks on userinput
+    
     //::::::::::::::::::::HARD CODED FOR THE TIME BEING:::::::::::::::::::::::::::::::::::::::::::::::
     G4double irisRSemiAxis = 19 * CLHEP::mm ;  //iris ellipse vertical semiaxis.
     G4double irisZSemiAxis = 12 * CLHEP::mm ; //iris ellipse horizontal semiaxis
@@ -108,11 +120,12 @@ void BDSCavity::BuildEllipticalCavityGeometry(//G4double irisRSemiAxis, //iris e
     G4double tangentAngle = 13.3 * CLHEP::deg ;
     G4double irisRadius = 35.0 * CLHEP::mm ;
     G4int noPoints = 24;
-    
+
+    //The position of iris ellipse centre.  2D spherical coordinates.
     G4double zi = chordLength/2;
     G4double ri = irisRadius + irisRSemiAxis;
     
-    //Equator Centre:
+    //The position of the equator ellipse centre/
     G4double ze = 0.0;
     G4double re = equatorRadius - equatorRSemiAxis;
 
@@ -120,6 +133,7 @@ void BDSCavity::BuildEllipticalCavityGeometry(//G4double irisRSemiAxis, //iris e
     //gradient of line connecting the ellipses
     G4double m = tan(tangentAngle + 0.5*CLHEP::pi);
 
+    //Read out.
     std::cout << "m = " << m << std::endl;
     std::cout << "irisRSemiAxis = " << irisRSemiAxis << std::endl;
     std::cout << "irisZSemiAxis = " << irisZSemiAxis << std::endl;
@@ -134,15 +148,7 @@ void BDSCavity::BuildEllipticalCavityGeometry(//G4double irisRSemiAxis, //iris e
     G4double equatorParameterTangentPoint = atan(-equatorRSemiAxis/(m*equatorZSemiAxis));  //first quadrant as desired.
     std::cout << "irisParameterTangentPoint = " << irisParameterTangentPoint << std::endl;
     std::cout << "equatorParameterTangentPoint = " << equatorParameterTangentPoint << std::endl;
-    //Using values of z and y that give the cartesian coords of the tangent points (from the parameters)
-    //iris ellipse tangent point:
-    //  G4double irisZIntercept = zi + irisZSemiAxis*cos(irisParameterTangentPoint); 
-    //G4double irisRIntercept = ri + irisRSemiAxis*sin(irisParameterTangentPoint);
-    //equator ellipse tangent point:
-    //    G4double equatorZIntercept = ze + equatorZSemiAxis*cos(equatorParameterTangentPoint);
-    //G4double equatorRIntercept = re + equatorRSemiAxis*sin(equatorParameterTangentPoint);
-
-    
+        
     
     //The equator and iris ellipses are defined parametrically, equator(iris)Parameter is the parameter for generating the equator (iris) ellipse.
 
@@ -151,17 +157,17 @@ void BDSCavity::BuildEllipticalCavityGeometry(//G4double irisRSemiAxis, //iris e
     //therefore noPoints ought to be a multiple of four:
    
     noPoints = noPoints - (noPoints % 4);
+    std::cout << "noPoints is not a factor of 4:  rounding down to " << noPoints << std::endl;
     //little warning message here maybe that noPoints is being rounded..
-    G4int quarterNoPoints = noPoints / 4 ;            //each quarter is made up of quarterNoPoints
-    std::vector<G4double> equatorParameter;
-    std::vector<G4double> irisParameter;
-    std::vector<G4double> zCoord;
-    std::vector<G4double> rInnerCoord;
-    std::vector<G4double> rOuterCoord;
+    //Various vectors for holding coordinates
+    std::vector<G4double> equatorParameter; //Values of the parameter which generate the equator ellipse
+    std::vector<G4double> irisParameter;   //Values of a different parameter which generator the iris ellipse
+    std::vector<G4double> zCoord;           //coordinate along the z axis.  Consider having z first and then work backwards ot find t, more intuitive..?
+    std::vector<G4double> rInnerCoord;     //coordinate of r for inner boundary
+    std::vector<G4double> rOuterCoord;     //coordinate of r for the outer boundary.
 
     
-    //Generating the points for half cavity. I can then reflect in R-axis for full curve
-
+    //More print out    
     std::cout << "noPoints = " << noPoints << std::endl;
     
     std::cout << "ri = " << ri << std::endl;
@@ -185,52 +191,55 @@ void BDSCavity::BuildEllipticalCavityGeometry(//G4double irisRSemiAxis, //iris e
 	equatorParameter.push_back((CLHEP::pi - equatorParameterTangentPoint) - (CLHEP::pi - 2* equatorParameterTangentPoint)*i/((noPoints/2)-1)); //filling array with points between equator tangentpoint and pi/2
 	std::cout << "equatorParameter[" << i << "] =" << equatorParameter[i] << std::endl;	
       };
+    //Yet more print out.  Do something will all of this stuff.  Should only print out when necessary.
+    // std::cout << "ze = " << ze << std::endl;    
+    // std::cout << "zi = " << zi << std::endl;
+    // std::cout << "re = " << re << std::endl;
+    // std::cout << "ri = " << ri << std::endl;
 
-    std::cout << "ze = " << ze << std::endl;    
-    std::cout << "zi = " << zi << std::endl;
-    std::cout << "re = " << re << std::endl;
-    std::cout << "ri = " << ri << std::endl;
-
-    std::cout << "left iris points:" << std::endl;
-    for (int i = 0; i < noPoints/4; i++)
-      {
-	zCoord.push_back(- zi + irisZSemiAxis * cos(irisParameter[i]));
-	rInnerCoord.push_back(ri + irisRSemiAxis * sin(irisParameter[i]));
-	std::cout << "zCoord["  << i << "]" << " = " << zCoord[i] << std::endl ;
-      };
-    std::cout << "entire equator beginning from -z through to +z " << std::endl;
+     //Calculating the left most iris coordinates
+     std::cout << "left iris points:" << std::endl;
+     for (int i = 0; i < noPoints/4; i++)
+       {
+     	zCoord.push_back(- zi + irisZSemiAxis * cos(irisParameter[i]));
+     	rInnerCoord.push_back(ri + irisRSemiAxis * sin(irisParameter[i]));
+     	std::cout << "zCoord["  << i << "]" << " = " << zCoord[i] << std::endl ;
+       };
+     std::cout << "entire equator beginning from -z through to +z " << std::endl;
 
 
+     //Calculating the coordinates for the equator ellipse.
+     for (int i = 0; i < noPoints/2; i++)
+       {
+     	zCoord.push_back(ze + equatorZSemiAxis * cos(equatorParameter[i]));
+     	rInnerCoord.push_back(re + equatorRSemiAxis * sin(equatorParameter[i]));
+     	std::cout << "zCoord["  << i << "]" << " = " << zCoord[noPoints/4+i] << std::endl ;
+       }
 
-    for (int i = 0; i < noPoints/2; i++)
-      {
-	zCoord.push_back(ze + equatorZSemiAxis * cos(equatorParameter[i]));
-	rInnerCoord.push_back(re + equatorRSemiAxis * sin(equatorParameter[i]));
-	std::cout << "zCoord["  << i << "]" << " = " << zCoord[noPoints/4+i] << std::endl ;
-      }
-
-    std::cout << "right iris points" << std::endl;
-    for (int i = 0; i < noPoints/4; i++)
-      
-      {
-	zCoord.push_back(zi + irisZSemiAxis * cos(CLHEP::pi - irisParameter[noPoints/4 - 1 - i]));
-	rInnerCoord.push_back(ri + irisRSemiAxis * sin(CLHEP::pi - irisParameter[noPoints/4 - 1 - i]));
-	std::cout << "zCoord["  << i << "]" << " = " << zCoord[3*noPoints/4 + i] << std::endl ;
-      };
+    //Calculating the coordinates for the right ellipse
+     std::cout << "right iris points" << std::endl;
+     for (int i = 0; i < noPoints/4; i++)
+       {
+     	zCoord.push_back(zi + irisZSemiAxis * cos(CLHEP::pi - irisParameter[noPoints/4 - 1 - i]));
+     	rInnerCoord.push_back(ri + irisRSemiAxis * sin(CLHEP::pi - irisParameter[noPoints/4 - 1 - i]));
+     	std::cout << "zCoord["  << i << "]" << " = " << zCoord[3*noPoints/4 + i] << std::endl ;
+       };
     
 
     
-    double gradientAt_i = 0; //double to store the gradient at each point
+  
+    /*/More printout
     std::cout << "printing (z,r):" << std::endl;
-    for(int i = 0; i < zCoord.size(); ++i)
+    for(unsigned int i = 0; i < zCoord.size(); ++i) 
       {
 	std::cout << "element["  << i << "]" << " = " << "(" << zCoord[i] << "," << rInnerCoord[i] << ")" << std::endl;
       };
     
     std::cout << "numer of zcoords = " << zCoord.size() << std::endl;
     std::cout << "numer of rInnerCoords = " << rInnerCoord.size() << std::endl;
-
-    
+    */
+    double gradientAt_i = 0; //double to store the gradient at each point
+    //Investigate this area for the bug.
     for (int i = 0; i <  noPoints; i++)
       {
 	if (i == 0 || i == (noPoints - 1))
@@ -246,15 +255,19 @@ void BDSCavity::BuildEllipticalCavityGeometry(//G4double irisRSemiAxis, //iris e
 	    result = (thickness * pow( (gradientAt_i * gradientAt_i + 1),-0.5) + rInnerCoord[i]);
 	    //Reassign rOuterPoint from the perpendicular point to the vertical point
 	    rOuterCoord.push_back(rInnerCoord[i] + pow(thickness, 2.0)/(result - rInnerCoord[i]));
-      	      
+	    std::cout<< "rOuterCoord = [" << i << "] = " << rOuterCoord[i] << std::endl;
+	    std::cout<< "result = [" << i << "] = " << result << std::endl;
+	    std::cout<< "i = " << i << "-----> rOuterCoord[i] - rinnercoord[i] =" << rOuterCoord[i] - rInnerCoord[i] << std::endl;
+	   
 	  }
       };
     
-    std::cout << "building cavity solid " << std::endl;
-    std::cout << "number of points= " << noPoints << std::endl;
-    std::cout << "zrood=  " << zCoord.size() << std::endl;
-    std::cout << "rinner = " <<rInnerCoord.size() << std::endl;
-    std::cout << "r outer = "<<rOuterCoord.size() << std::endl;
+    // std::cout << "building cavity solid " << std::endl;
+    // std::cout << "number of points= " << noPoints << std::endl;
+    // std::cout << "zrood=  " << zCoord.size() << std::endl;
+    // std::cout << "rinner = " <<rInnerCoord.size() << std::endl;
+    // std::cout << "r outer = "<<rOuterCoord.size() << std::endl;
+    //initializing the solids and logical volumes.
     cavitySolid = new G4Polycone(name + "_cavity_solid", //name
 				 0.0,                     //start angle  
 				 2*CLHEP::pi,             //sweep angle
@@ -276,7 +289,7 @@ void BDSCavity::BuildEllipticalCavityGeometry(//G4double irisRSemiAxis, //iris e
     cavityLV->SetVisAttributes(cavityVis);   //give  colour+visibility to the cavity logical volume
 
     //Vaccuum:
-    std::cout << "building vacuum:" << std::endl;
+    //std::cout << "building vacuum:" << std::endl;
     //Making radial distance smaller by lengthSafety to ensure no overlap between vacuum and cavity solid, also ends will over lap so first and last z values are also reduced
     for (int i = 0; i < noPoints; i++)
       {
@@ -301,15 +314,10 @@ void BDSCavity::BuildEllipticalCavityGeometry(//G4double irisRSemiAxis, //iris e
     G4VisAttributes* vacuumVis = new G4VisAttributes(); //vistattributes instance 
     vacuumVis->SetVisibility(false);                    //Make invisible
     vacuumLV->SetVisAttributes(vacuumVis);              //give invisiblity to the vacuum LV.
-
-    
-   
-    
-
   
         
-  };
-
+  }
+//Do some work here on the vacuum. 
 void BDSCavity::BuildPillBoxCavityGeometry()
 {
 
@@ -357,14 +365,15 @@ void BDSCavity::BuildPillBoxCavityGeometry()
 					0.0,                             //start angle
 					2*CLHEP::pi                     //spanning angle
 					);
-  vacuumSolid = new G4UnionSolid(name + "_vacuum_solid",  //name
+  /*  vacuumSolid = new G4UnionSolid(name + "_vacuum_solid",  //name
 				 vacuumInnerCavity,       //solid one
 				 vacuumAperture           //Added to solid two.
-				 );
+				 );*/
+  vacuumSolid = vacuumAperture;
   
   cavityLV = new G4LogicalVolume(cavitySolid,          // solid
-						      cavityMaterial,          // material
-						      name + "_cavity_lv"); // name
+				 cavityMaterial,          // material
+				 name + "_cavity_lv"); // name
 
   G4VisAttributes* cavityVis = new G4VisAttributes();
 
