@@ -13,6 +13,8 @@ Tesla9Cell: cavitymodel,
 	    irisVerticalAxis = 19*mm,
 	    tangentLineAngle = 13.3*degrees,
 	    thickness = 1*mm,
+	    frequency = 1300*MHz,
+	    phase = 0.5*pi,
 	    numberOfPoints = 24,
 	    numberOfCells = 1;
 

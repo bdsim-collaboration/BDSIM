@@ -22,6 +22,8 @@ void CavityModel::clear()
   irisVerticalAxis = 0.0;
   tangentLineAngle = 0.0;
   thickness = 0.0;
+  frequency = 0.0;
+  phase = 0.0;
   numberOfPoints = 24;
   numberOfCells = 1;
 }
@@ -39,6 +41,8 @@ void CavityModel::print()const
 	    << "irisVerticalAxis "       << irisVerticalAxis << " " << std::endl
 	    << "tangentLineAngle "       << tangentLineAngle << " " << std::endl
 	    << "thickness "              << thickness << " " << std::endl
+	    << "frequency "              << frequency << " " << std::endl
+	    << "phase "                  << phase << " " << std::endl
 	    << "numberOfPoints "         << numberOfPoints << " " << std::endl
 	    << "numberOfCells "          << numberOfCells << " " << std::endl
 	    << std::endl;
@@ -58,6 +62,8 @@ void CavityModel::set_value(std::string property, double value )
   if (property=="irisVerticalAxis") {irisVerticalAxis = value; return;}
   if (property=="tangentLineAngle") {tangentLineAngle = value; return;}
   if (property=="thickness") {thickness = value; return;}
+  if (property=="frequency") {frequency = value; return;}
+  if (property=="phase") {phase = value; return;}
   if (property=="numberOfPoints") {numberOfPoints = value; return;}
   if (property=="numberOfCells") {numberOfCells = value; return;}
 
