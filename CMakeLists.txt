@@ -310,6 +310,8 @@ if(DOXYGEN_FOUND)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API documentation with Doxygen" VERBATIM
   )
+  # add 'make doxygen' to ctest
+  add_test(Doxygen_LONG make doc)
 endif(DOXYGEN_FOUND)
 
 #-----------------------------------------------------------------------
