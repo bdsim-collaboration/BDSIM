@@ -8,7 +8,7 @@ The element with user-defined physical geometry (see also :ref:`element`) is def
   
   <element_name> : element, geometry=format:filename, attributes
   
-where `format` must be set to `gmad`, `mokka` or `gdml` and `filename` must point to a file that contains the geometry descriptions. For example::
+where `format` must be set to `gmad`_, `mokka`_, `gdml`_ or `lcdd`_ and `filename` must point to a file that contains the geometry descriptions. For example::
   
   colli : element, geometry="gmad:colli.geo"
 
@@ -411,3 +411,10 @@ The Mokka element can be defined by the following command::
 
 GDML
 ----
+
+GDML (Geometry Description Markup Language) is an XML schema for detector description. To use Geant4 and BDSIM needs to be built with GDML usage on (default true). For more information we refer to the GDML `website <http://gdml.web.cern.ch/GDML/>`_ and `manual <http://gdml.web.cern.ch/GDML/doc/GDMLmanual.pdf>`_.
+
+LCDD
+----
+
+The LCDD (Linear Collider Detector Description) is based on `GDML`_. The syntax and usage is described in this `SLAC paper <http://www.slac.stanford.edu/cgi-wrap/getdoc/slac-pub-12350.pdf>`_.
