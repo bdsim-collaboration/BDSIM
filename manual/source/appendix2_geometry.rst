@@ -387,11 +387,13 @@ Append _ELLIPTICALCONE to the table name in order to make use of the G4Elliptica
 
 Note that the above parameters are used to define an elliptical cone with the following parametric equations (in the usual Geant4 way)::
 
-  x = XSEMIAXIS * (LENGTHZ - u) / u * Cos(v)
+  X = XSEMIAXIS * (LENGTHZ - u) / u * Cos(v)
   Y = YSEMIAXIS * (LENGTHZ - u) / u * Sin(v)
-  z = u
+  Z = u
 
-where v is between 0 and 2*PI and u between 0 and h respectively.
+.. include:: <isogrk1.txt>
+  
+where v is between 0 and 2 * |pgr| and u between 0 and h respectively.
 
 Creating a geometry list
 ^^^^^^^^^^^^^^^^^^^^^^^^
