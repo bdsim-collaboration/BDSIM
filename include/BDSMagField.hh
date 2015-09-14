@@ -1,36 +1,33 @@
-/* BDSIM code.
-
-*/
+#ifndef BDSMAGFIELD_H
+#define BDSMAGFIELD_H
 
 #include "G4MagneticField.hh"
 #include "G4CachedMagneticField.hh"
-#include "globals.hh"
+#include "globals.hh"               // geant4 globals / types
 #include "G4RotationMatrix.hh"
-#include "G4VPhysicalVolume.hh"
 
-#ifndef BDSMagField_h
-#define BDSMagField_h
+class G4VPhysicalVolume;
 
-class BDSMagField : public G4MagneticField
+/**
+ * @brief An abstract wrapper for G4MagneticField that provides the ability for a 
+ * field map supplied in local cartesian coordinates to global cartesian
+ * coordinates as required by Geant4 integrators. 
+ * 
+ * @author Lawrence Deacon <lawrence.deacon@ucl.ac.uk>
+ */
+
+class BDSMagField: public G4MagneticField
 {
 public:
-
-  // mandatory members
-
-  BDSMagField();
-  
+  BDSMagField(G4String bmap        = "",
+	      G4double bmapZOffset = "");  
   ~BDSMagField();
 
-  virtual G4bool   DoesFieldChangeEnergy() const;
+  /// Convert the local coordinates of the provided field mesh into
+  /// global coordinates.
+  virtual void Prepare(G4VPhysicalVolume* referenceVolume) = 0;
 
-  virtual void GetFieldValue(const G4double Point[4],G4double *Bfield ) const;
-
-  // create a field mesh in the global coordinates after the placement is known
-  virtual void Prepare(G4VPhysicalVolume *referenceVolume);
-
-  // aux members
-
-  void SetOriginRotation(G4RotationMatrix *rot);
+  void SetOriginRotation(G4RotationMatrix* rot);
   void SetOriginRotation(G4RotationMatrix rot);
   void SetOriginTranslation(G4ThreeVector trans);
 
@@ -40,11 +37,26 @@ public:
   virtual G4bool GetHasFieldMap();
 
   G4RotationMatrix Rotation() const;
-  G4ThreeVector translation;
+
+  const G4String GetBFile();
+  const G4String GetBFormat();
+  
+protected:
+  void CheckPrepared() const;
 
 private:
-  G4RotationMatrix* rotation;
+  /// Private default constructor to use provided one with defaults
+  BDSMagField();
   
+  void ParseBMapFormatAndFile();
+  
+  G4ThreeVector     translation;
+  G4RotationMatrix* rotation;
+  G4String          bmap;
+  G4double          bmapZOffset;
+  G4String          bFile;
+  G4String          bFormat;
+  G4bool            isPrepared;
   
 };
 
