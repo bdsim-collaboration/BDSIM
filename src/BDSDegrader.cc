@@ -46,7 +46,7 @@ void BDSDegrader::BuildContainerLogicalVolume()
     
     G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
     
-    G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
+    containerLogicalVolume = new G4LogicalVolume(containerSolid,
                                       emptyMaterial,
                                       name + "_container_lv");
 }
@@ -69,9 +69,22 @@ void BDSDegrader::Build()
                                                         name + "_degrader_lv"); // name
     RegisterLogicalVolume(degraderLV);
     
+    
     G4VisAttributes* degraderVisAttr = new G4VisAttributes(G4Colour(0.0,1.0,1.0));
     degraderLV->SetVisAttributes(degraderVisAttr);
     RegisterVisAttributes(degraderVisAttr);
+    
+    G4PVPlacement* degPV = new G4PVPlacement(0,                         // rotation
+                                              (G4ThreeVector)0,         // position
+                                              degraderLV,               // its logical volume
+                                              name + "_degrader_pv",    // its name
+                                              containerLogicalVolume,   // its mother  volume
+                                              false,                    // no boolean operation
+                                              0,                        // copy number  
+                                              checkOverlaps);
+    
+    RegisterPhysicalVolume(degPV);
+
     
     // solid
     // logical volume
