@@ -18,14 +18,16 @@
 
 BDSDegrader::BDSDegrader (G4String   name, 
                     G4double   length,
-                    G4double   outerDiameter,
-                    G4String   degraderMaterial,
+                    G4double   outerDiameterIn,
+                    G4String   degraderMaterialIn,
                     G4int      numberWedges,
                     G4double   wedgeBasewidth,
                     G4double   wedgeHeight,
                     G4double   degraderHeight,
                     G4double   materialThickness):
-BDSAcceleratorComponent(name, length, 0, "degrader")
+BDSAcceleratorComponent(name, length, 0, "degrader"),
+    outerDiameter(outerDiameterIn),
+    degraderMaterial(degraderMaterialIn)
 {;}
 
 BDSDegrader::~BDSDegrader()
@@ -53,8 +55,9 @@ void BDSDegrader::BuildContainerLogicalVolume()
 
 
 void BDSDegrader::Build()
-{  
-
+{
+    BDSAcceleratorComponent::Build();
+    
     G4VSolid* boxSolid = new G4Box(name + "_outer_solid",
                                    outerDiameter*0.5 - lengthSafety,
                                    outerDiameter*0.5 - lengthSafety,
