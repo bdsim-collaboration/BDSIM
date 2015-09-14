@@ -30,10 +30,21 @@ BDSDegrader::~BDSDegrader()
 
 void BDSDegrader::BuildContainerLogicalVolume()
 {
+        //WRONG G4Box* containerSolid = 
+    // containerSolid = new G4Boxsjfdlkdsjfl
+    // build solid - G4Box or G4Tubs - called containerSolid
+    // build logical volume - use BDSGlobalConstants::Instance()->GetEmptyMaterial()
+    // should be called containerLV
 
 }
 
 void BDSDegrader::Build()
 {  
+    
+    // solid
+    // logical volume
+    // vis attributes
+    // user limits
+    // place logical volume in containerLV
 
 }
