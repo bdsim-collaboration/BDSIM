@@ -8,15 +8,9 @@
 class G4VSolid;
 
 /**
- * @brief A singleton class that holds all required sensitive
- * detector class instances.  Each sensitive detector class
- * need only be instantiated once and attached to the relevant
- * volume. More factorised geometry construction will mean
- * SDs will be assigned in construction and not in detector
- * construction afterwards as a post processing step. This 
- * instantiates all necessary SDs and holds them.
+ * @brief A class for a degrader.
  * 
- * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
+ * @author Will Shields <william.shields.2010@live.rhul.ac.uk>
  */
 
 class BDSDegrader: public BDSAcceleratorComponent
@@ -37,11 +31,13 @@ public:
 protected:
     void Build();
     
-    
     void BuildContainerLogicalVolume();
     
-    G4VSolid* fullwedge;
-    G4VSolid* halfWedge;
+    G4double outerDiameter;
+    G4String degraderMaterial;
+
+    //G4VSolid* fullwedge;
+    //G4VSolid* halfWedge;
     
 };
 

@@ -1,6 +1,9 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSDegrader.hh"
+#include "BDSMaterials.hh"
+#include "BDSUtilities.hh"
+
 
 #include "G4Box.hh"
 #include "G4VisAttributes.hh"
@@ -35,11 +38,40 @@ void BDSDegrader::BuildContainerLogicalVolume()
     // build solid - G4Box or G4Tubs - called containerSolid
     // build logical volume - use BDSGlobalConstants::Instance()->GetEmptyMaterial()
     // should be called containerLV
-
+    
+    containerSolid = new G4Box(name + "_container_solid",
+                            outerDiameter*0.5,
+                            outerDiameter*0.5,
+                            chordLength*0.5);
+    
+    G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+    
+    G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
+                                      emptyMaterial,
+                                      name + "_container_lv");
 }
+
 
 void BDSDegrader::Build()
 {  
+
+    G4VSolid* boxSolid = new G4Box(name + "_outer_solid",
+                                   outerDiameter*0.5 - lengthSafety,
+                                   outerDiameter*0.5 - lengthSafety,
+                                   chordLength*0.5 - lengthSafety);
+    
+    RegisterSolid(boxSolid);
+    
+    G4Material* material = BDSMaterials::Instance()->GetMaterial(degraderMaterial);
+    
+    G4LogicalVolume* degraderLV = new G4LogicalVolume(boxSolid,                 // solid
+                                                        material,               // material
+                                                        name + "_degrader_lv"); // name
+    RegisterLogicalVolume(degraderLV);
+    
+    G4VisAttributes* degraderVisAttr = new G4VisAttributes(G4Colour(0.0,1.0,1.0));
+    degraderLV->SetVisAttributes(degraderVisAttr);
+    RegisterVisAttributes(degraderVisAttr);
     
     // solid
     // logical volume
