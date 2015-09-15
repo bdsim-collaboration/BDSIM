@@ -2,7 +2,9 @@
 #define BDSDEGRADER_H
 
 #include "globals.hh"
-
+#include "G4VSolid.hh"
+#include "G4SubtractionSolid.hh"
+#include "G4LogicalVolume.hh"
 #include "BDSAcceleratorComponent.hh"
 
 class G4VSolid;
@@ -35,9 +37,16 @@ protected:
     
     G4double outerDiameter;
     G4String degraderMaterial;
+    G4int numberWedges;
+    G4double wedgeBasewidth;
+    G4double wedgeHeight;
+    G4double degraderHeight;
+    G4double materialThickness;
 
-    //G4VSolid* fullwedge;
+    //G4VSolid* fullWedge;
     //G4VSolid* halfWedge;
+    //G4VSolid* base;
+
     
 };
 
