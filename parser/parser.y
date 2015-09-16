@@ -1,7 +1,5 @@
 /*
    bison grammar for the gmad parser
-   Ilya Agapov, Steve Malton 2005-2007
-   bdsim v.0.4
 */
 
 %{
@@ -17,7 +15,7 @@
 
   namespace GMAD {
     extern int line_num;
-    extern char* yyfilename;
+    extern std::string yyfilename;
   
     const int PEDANTIC = 1; ///< strict checking, exits when element or parameter is not known
     const int ECHO_GRAMMAR = 0; ///< print grammar rule expansion (for debugging)
@@ -119,8 +117,6 @@ atomic_stmt :
 		if(ECHO_GRAMMAR) printf("\natomic_stmt -> error\n");
 	      }
 ;
-
-
 
 decl : VARIABLE ':' marker
        {
@@ -409,6 +405,14 @@ decl : VARIABLE ':' marker
 	     add_xsecbias(xsecbias);
            }
        }
+      | VARIABLE ':' error_noparams
+      {
+	if(execute)
+	  {
+	    yyerror("ERROR: Element needs parameters");
+	    exit(1);
+	  }
+      }
 ;
 
 marker : MARKER ;
@@ -436,6 +440,32 @@ matdef : MATERIAL ',' parameters ;
 atom : ATOM ',' parameters ;
 tunnel : TUNNEL ',' tunnel_options ;
 xsecbias : XSECBIAS ',' xsecbias_options ;
+
+error_noparams : DRIFT;
+               | RF;
+               | SBEND;
+               | RBEND;
+               | VKICK;
+               | HKICK;
+               | QUADRUPOLE;
+               | SEXTUPOLE;
+               | OCTUPOLE;
+               | DECAPOLE;
+               | MULTIPOLE;
+               | SOLENOID;
+               | ECOL;
+               | MUSPOILER;
+               | RCOL;
+               | LASER;
+               | SCREEN;
+               | AWAKESCREEN;
+               | TRANSFORM3D;
+               | ELEMENT;
+               | MATERIAL;
+               | ATOM;
+               | TUNNEL;
+               | XSECBIAS;
+
 extension : VARIABLE ',' parameters
             {
 	      if(execute)
@@ -720,8 +750,10 @@ assignment :  VARIABLE '=' aexpr
 		if(ECHO_GRAMMAR) std::cout << $1->name << std::endl;
 		if(execute)
 		  {
-		    if($1->is_reserved)
-		      std::cout << $1->name << " is reserved" << std::endl;
+		    if($1->is_reserved) {
+		      std::cout << "ERROR: " << $1->name << " is reserved" << std::endl;
+		      exit(1);
+		    }
 		    else
 		      {
 			$1->value = $3; $$=$1;       
@@ -1287,7 +1319,8 @@ beam_parameters : VARIABLE '=' aexpr ',' beam_parameters
 
 int yyerror(const char *s)
 {
-  printf("%s at line %d (might not be exact!), file %s \nsymbol '%s' unexpected\n",s, line_num, yyfilename, yytext);
+  std::cout << s << " at line " << GMAD::line_num << " (might not be exact!), file " << yyfilename << std::endl;
+  std::cout << "symbol '" << yytext << "' unexpected" << std::endl;
   exit(1);
 }
 
