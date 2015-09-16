@@ -10,7 +10,7 @@
 class G4VSolid;
 
 /**
- * @brief A class for a degrader.
+ * @brief A class for a degrader. Based upon wedge design used in the PSI medical accelerator.
  * 
  * @author Will Shields <william.shields.2010@live.rhul.ac.uk>
  */
@@ -23,10 +23,9 @@ public:
                 G4double   outerDiameter,
                 G4String   degraderMaterial,
                 G4int      numberWedges     = 5,
-                G4double   wedgeBasewidth   = 10,
                 G4double   wedgeHeight      = 100,
                 G4double   degraderHeight   = 100,
-                G4double   materialThickness= 200);
+                G4double   materialThickness= 30);
     ~BDSDegrader();
     
 
@@ -42,11 +41,6 @@ protected:
     G4double wedgeHeight;
     G4double degraderHeight;
     G4double materialThickness;
-
-    //G4VSolid* fullWedge;
-    //G4VSolid* halfWedge;
-    //G4VSolid* base;
-
     
 };
 
