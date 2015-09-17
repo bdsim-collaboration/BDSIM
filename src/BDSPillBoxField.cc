@@ -26,7 +26,6 @@ G4bool BDSPillBoxField::DoesFieldChangeEnergy() const
 //global to local transfomrations?  learn more about this...
 void BDSPillBoxField::GetFieldValue(const G4double Point[4],G4double *Bfield ) const
 {
-
   G4ThreeVector LocalR;  //Vector to hold the local coordinates
   G4ThreeVector GlobalR; //Vector to hold the global coordinates
 
@@ -39,16 +38,7 @@ void BDSPillBoxField::GetFieldValue(const G4double Point[4],G4double *Bfield ) c
   G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform(); //transform to local
   LocalR = GlobalAffine.TransformPoint(GlobalR);  //initialize LocalR with local coords
   
-  std::cout << "Global X = " << GlobalR.x() << std::endl;
-  std::cout << "Global Y = " << GlobalR.y() << std::endl;
-  std::cout << "Global Z = " << GlobalR.z() << std::endl;
-  std::cout << "Local X = " << LocalR.x() << std::endl;
-  std::cout << "Local Y = " << LocalR.y() << std::endl;
-  std::cout << "Local Z = " << LocalR.z() << std::endl;
-  std::cout << "Time = " << Point[3] << std::endl;
-  //exit(1);
-  
-  //No z-dependence because this is TM010
+    //No z-dependence because this is TM010
   //We ignore the perturbation provided by the aperture
   //double theta = atan2(LocalR.y(),LocalR.x()); //Angle between x and y for converting B_theta to cart.
   //double B_theta = -(eFieldMax/CLHEP::c_light)*J_1()*sin(frequency*Point[3]);
@@ -57,14 +47,15 @@ void BDSPillBoxField::GetFieldValue(const G4double Point[4],G4double *Bfield ) c
 
 
   //Bfield[0] = B_theta*sin(theta);
-  Bfield[0] = eFieldMax*cos(Point[3]);
+  Bfield[0] = 0.0 ;//eFieldMax*cos(Point[3]);
   //Bfield[1] = B_theta*cos(theta);
-  Bfield[1] = 0;
-  Bfield[2] = 0; //B Field has no z-component.
+  Bfield[1] = 0.0;
+  Bfield[2] = 0.0; //B Field has no z-component.
   //E_z = eFieldMax*J_0(k_r*r) * cos(frequency t)
-  Bfield[3] = 0; //EField only along z-axis
-  Bfield[4] = 0; //Efield only along z-axis
+  Bfield[3] = 0.0; //EField only along z-axis
+  Bfield[4] = 0.0; //Efield only along z-axis
   Bfield[5] = eFieldMax*cos(Point[3]);
+  //Bfield[5] = eFieldMax;
   }
 
 BDSPillBoxField::~BDSPillBoxField()

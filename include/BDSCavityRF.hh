@@ -11,11 +11,11 @@ class BDSCavityRF: public BDSCavity
 {//I should have different constructors for static vs RF?
 public:
   BDSCavityRF(G4String name, 
-	      G4String type, 
 	      G4double length,
+	      G4String type, 
 	      G4Material* cavityMaterial,
 	      G4Material* vacuumMaterial,
-	      G4double equatorRadius, //Lrgst r from z axis
+	      G4double cavityRadius, //Lrgst r from z axis
 	      G4double irisRadius,
 	      G4double thickness,
 	      G4double frequency,
